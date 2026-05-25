@@ -1,0 +1,88 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import news from "../../../data/news.json";
+---
+
+<BaseLayout title="NEWS Admin | SARI">
+  <main class="admin-news">
+    <h1>NEWS追加</h1>
+
+    <section>
+      <h2>現在のNEWS</h2>
+      <ul id="newsList">
+        {news.map((item) => (
+          <li>
+            <strong>{item.date}</strong>　
+            {item.title}　
+            <small>{item.link}</small>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <label>
+      日付
+      <input id="date" type="text" placeholder="2026.05.25" />
+    </label>
+
+    <label>
+      タイトル
+      <input id="title" type="text" placeholder="お知らせタイトル" />
+    </label>
+
+    <label>
+      リンク
+      <input id="link" type="text" placeholder="/news/" />
+    </label>
+
+    <button id="add">追加</button>
+
+    <h2>保存用JSON</h2>
+    <textarea id="output" rows="10" readonly></textarea>
+  </main>
+
+  <script is:inline>
+    const initialNews = JSON.parse(`{JSON.stringify(news)}`);
+    const savedNews = JSON.parse(localStorage.getItem("sariNews") || "null");
+    let currentNews = savedNews || initialNews;
+
+    const newsList = document.getElementById("newsList");
+    const output = document.getElementById("output");
+
+    function render() {
+      newsList.innerHTML = currentNews
+        .map((item) => `
+          <li>
+            <strong>${item.date}</strong>　
+            ${item.title}　
+            <small>${item.link}</small>
+          </li>
+        `)
+        .join("");
+
+      output.value = JSON.stringify(currentNews, null, 2);
+      localStorage.setItem("sariNews", JSON.stringify(currentNews));
+    }
+
+    document.getElementById("add")?.addEventListener("click", () => {
+      const date = document.getElementById("date").value;
+      const title = document.getElementById("title").value;
+      const link = document.getElementById("link").value;
+
+      if (!date || !title) {
+        alert("日付とタイトルは必須です");
+        return;
+      }
+
+      currentNews.unshift({ date, title, link });
+
+      document.getElementById("date").value = "";
+      document.getElementById("title").value = "";
+      document.getElementById("link").value = "";
+
+      render();
+    });
+
+    render();
+  </script>
+</BaseLayout>

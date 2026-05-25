@@ -1,0 +1,33 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Header from "../../components/Header.astro";
+import Footer from "../../components/Footer.astro";
+import news from "../../data/news.json";
+---
+
+<BaseLayout title="NEWS | 紗理 / SARI">
+  <Header />
+
+  <main>
+    <div id="lowerWrap">
+      <div class="mainTitle">
+        <h1>NEWS</h1>
+      </div>
+
+      <section class="news-page">
+        <ul>
+          {news.map((item) => (
+            <li>
+              <a href={item.link || "#"}>
+                <span>{item.date}</span>
+                {item.title}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    </div>
+  </main>
+
+  <Footer />
+</BaseLayout>

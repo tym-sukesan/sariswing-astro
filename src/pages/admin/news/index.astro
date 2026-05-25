@@ -1,88 +1,128 @@
 ---
 import BaseLayout from "../../../layouts/BaseLayout.astro";
-import news from "../../../data/news.json";
+import { supabase } from "../../../lib/supabase";
+
+const { data: news } = await supabase
+  .from("news")
+  .select("*")
+  .order("date", { ascending: false });
 ---
 
 <BaseLayout title="NEWS Admin | SARI">
   <main class="admin-news">
-    <h1>NEWS追加</h1>
+    <h1>NEWS管理</h1>
+
+    <section>
+      <h2>NEWS追加</h2>
+
+      <label>
+        日付
+        <input id="date" type="date" />
+      </label>
+
+      <label>
+        タイトル
+        <input id="title" type="text" placeholder="お知らせタイトル" />
+      </label>
+
+      <button id="add">追加</button>
+
+      <p id="message"></p>
+    </section>
 
     <section>
       <h2>現在のNEWS</h2>
+
       <ul id="newsList">
-        {news.map((item) => (
-          <li>
-            <strong>{item.date}</strong>　
-            {item.title}　
-            <small>{item.link}</small>
+        {news?.map((item) => (
+          <li data-id={item.id}>
+            <input class="edit-date" type="date" value={item.date} />
+            <input class="edit-title" type="text" value={item.title} />
+
+            <button class="update">更新</button>
+            <button class="delete">削除</button>
           </li>
         ))}
       </ul>
     </section>
-
-    <label>
-      日付
-      <input id="date" type="text" placeholder="2026.05.25" />
-    </label>
-
-    <label>
-      タイトル
-      <input id="title" type="text" placeholder="お知らせタイトル" />
-    </label>
-
-    <label>
-      リンク
-      <input id="link" type="text" placeholder="/news/" />
-    </label>
-
-    <button id="add">追加</button>
-
-    <h2>保存用JSON</h2>
-    <textarea id="output" rows="10" readonly></textarea>
   </main>
 
-  <script is:inline>
-    const initialNews = JSON.parse(`{JSON.stringify(news)}`);
-    const savedNews = JSON.parse(localStorage.getItem("sariNews") || "null");
-    let currentNews = savedNews || initialNews;
+  <script is:inline type="module">
+    import { createClient } from "https://esm.sh/@supabase/supabase-js";
 
-    const newsList = document.getElementById("newsList");
-    const output = document.getElementById("output");
+    const supabase = createClient(
+      "https://vsbvndwuajjhnzpohghh.supabase.co",
+      "sb_publishable_sGvemzdx-fv_aKwzXebCYw_K1fVIwWa"
+    );
 
-    function render() {
-      newsList.innerHTML = currentNews
-        .map((item) => `
-          <li>
-            <strong>${item.date}</strong>　
-            ${item.title}　
-            <small>${item.link}</small>
-          </li>
-        `)
-        .join("");
+    const message = document.getElementById("message");
 
-      output.value = JSON.stringify(currentNews, null, 2);
-      localStorage.setItem("sariNews", JSON.stringify(currentNews));
-    }
-
-    document.getElementById("add")?.addEventListener("click", () => {
+    document.getElementById("add")?.addEventListener("click", async () => {
       const date = document.getElementById("date").value;
       const title = document.getElementById("title").value;
-      const link = document.getElementById("link").value;
 
       if (!date || !title) {
-        alert("日付とタイトルは必須です");
+        message.textContent = "日付とタイトルを入力してください。";
         return;
       }
 
-      currentNews.unshift({ date, title, link });
+      const { error } = await supabase.from("news").insert([{ date, title }]);
 
-      document.getElementById("date").value = "";
-      document.getElementById("title").value = "";
-      document.getElementById("link").value = "";
+      if (error) {
+        message.textContent = "保存に失敗しました：" + error.message;
+        return;
+      }
 
-      render();
+      message.textContent = "保存しました。";
+      location.reload();
     });
 
-    render();
+    document.querySelectorAll(".update").forEach((button) => {
+      button.addEventListener("click", async (event) => {
+        const li = event.target.closest("li");
+        const id = li.dataset.id;
+        const date = li.querySelector(".edit-date").value;
+        const title = li.querySelector(".edit-title").value;
+
+        if (!date || !title) {
+          message.textContent = "日付とタイトルを入力してください。";
+          return;
+        }
+
+        const { error } = await supabase
+          .from("news")
+          .update({ date, title })
+          .eq("id", id);
+
+        if (error) {
+          message.textContent = "更新に失敗しました：" + error.message;
+          return;
+        }
+
+        message.textContent = "更新しました。";
+        location.reload();
+      });
+    });
+
+    document.querySelectorAll(".delete").forEach((button) => {
+      button.addEventListener("click", async (event) => {
+        const li = event.target.closest("li");
+        const id = li.dataset.id;
+
+        if (!confirm("このNEWSを削除しますか？")) {
+          return;
+        }
+
+        const { error } = await supabase.from("news").delete().eq("id", id);
+
+        if (error) {
+          message.textContent = "削除に失敗しました：" + error.message;
+          return;
+        }
+
+        message.textContent = "削除しました。";
+        location.reload();
+      });
+    });
   </script>
 </BaseLayout>

@@ -1,0 +1,32 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Header from "../../components/Header.astro";
+import Footer from "../../components/Footer.astro";
+---
+
+<BaseLayout title="CONTACT | 紗理 / SARI">
+  <Header />
+
+<main>
+	<div id="lowerWrap">
+		<div class="mainTitle contact">
+			<h1>CONTACT</h1>
+		</div>
+		<div id="contactWrap" class="cf">
+			<div class="formArea">
+				<h2>CONTACT</h2>
+				<p class="contact_lead"><i class="fas fa-envelope-open-text"></i>出演依頼などに関するお問い合わせはコチラから</p>
+				<script charset="utf-8" type="text/javascript" src="//js.hsforms.net/forms/embed/v2.js"></script>
+				<script>
+					hbspt.forms.create({
+						region: "na1",
+						portalId: "46250616",
+						formId: "5ad1227e-bd92-4cf5-aa39-457b93b509b2"
+					});
+				</script>
+			</div>
+		</div>
+	</div>
+</main>
+  <Footer />
+</BaseLayout>

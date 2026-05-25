@@ -518,15 +518,15 @@ div.mainTitle {
     height: 600px;
 }
 div.mainTitle.about {
-    background: url(../img/bg_about.jpg) no-repeat center top;
+    background: url(/images/about/bg_about.jpg) no-repeat center top;
     background-size: cover;
 }
 div.mainTitle.contact {
-    background: url(../img/bg_contact.jpg) no-repeat center top;
+    background: url(/images/contact/bg_contact.jpg) no-repeat center top;
     background-size: cover;
 }
 div.mainTitle.discography {
-    background: url(../img/disco.jpg) no-repeat center top;
+    background: url(/images/discography/disco.jpg) no-repeat center top;
     background-size: cover;
 }
 #lowerWrap {
@@ -1192,7 +1192,7 @@ main.bgphoto_a .lighter {
 .band_description,
 .band_description_b,
 .band_description_c {
-    background-image: url(../img/img_pcv01.jpg);
+    background-image: url(/images/picevo/img_pcv01.jpg);
     background-repeat: no-repeat;
     clear: both;
     background-size: cover;
@@ -1200,12 +1200,12 @@ main.bgphoto_a .lighter {
     position: relative;
 }
 .band_description_b {
-    background-image: url(../img/img_sf_recording.jpg);
+    background-image: url(/images/swingfor/img_sf_recording.jpg);
     background-position: top right;
     height: 80vh;
 }
 .band_description_c {
-    background-image: url(../img/img_pcv02.jpg);
+    background-image: url(/images/picevo2/img_pcv02.jpg);
     height: 120vh;
 }
 .band_description_d {
@@ -1499,6 +1499,31 @@ footer .copyright {
     clear: both;
 }
 
+/* -- disc -- */
+
+.disc_detail h1.pichevo2 {
+    position: relative;
+    text-align: center;
+    height: 250px;
+}
+.disc_detail h1.pichevo2 span.target {
+    position: absolute;
+    top: 100px;
+    left: 0;
+    right: 0;
+    z-index: 2;
+}
+.disc_detail h1.pichevo2 span.target_b {
+    color: #999;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+    font-size: 10rem;
+    font-style: italic;
+    z-index: 1;
+}
 
 /* ----------------------------------------------------------------------------------------------------
 *  スマホ

@@ -1,11 +1,52 @@
 ---
-import Welcome from '../components/Welcome.astro';
-import Layout from '../layouts/Layout.astro';
-
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
 ---
 
-<Layout>
-	<Welcome />
-</Layout>
+<BaseLayout title="紗理 / SARI">
+  <Header />
+
+  <main>
+    <div id="topImages">
+      <img src="/images/top/004.jpg" />
+    </div>
+
+    <div id="to_webshop">
+      <a href="https://sariswing.com/musical-theater-songbook-vol-1/">
+        <img src="/images/top/img_websphop.jpg" />
+      </a>
+    </div>
+
+    <div id="scrollBtn">
+      <a href="#sec-instagram">
+        <img src="/images/top/scroll.png" />
+      </a>
+    </div>
+
+    <section id="sec-instagram" class="top-sec sec-instagram">
+      <h2 class="instaTitle">
+        <a href="https://www.instagram.com/sariswing/" target="_blank">
+          <span>INSTAGRAM</span><br />
+          日々のあれこれとレコードとつぶやき。<br />
+          @sariswing
+        </a>
+      </h2>
+    </section>
+
+    <section id="otonaJazz">
+      <h2>オトナの Jazz Time</h2>
+
+      <p>
+        Jazzの魅力を、ジャズシンガー紗理ならではの切り口でお届けする、
+        ラジオ日本「オトナのJazz Time」。
+      </p>
+
+      <a href="https://otonanojazztime.com/" target="_blank">
+        <img src="/images/top/otonajazz.jpg" />
+      </a>
+    </section>
+  </main>
+
+  <Footer />
+</BaseLayout>

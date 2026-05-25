@@ -1,0 +1,24 @@
+---
+const { title = "SARI SWING" } = Astro.props;
+---
+
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <script is:inline src="/js/jquery.min.js"></script>
+    <script is:inline src="/js/jquery.inview.js"></script>
+    <script is:inline src="/js/main.js"></script>
+    <link rel="stylesheet" href="/css/common.css" />
+    <link rel="stylesheet" href="/css/index.css" />
+    <link rel="stylesheet" href="/css/animate.css" />
+    <link href="https://fonts.googleapis.com/css?family=Poiret+One&display=swap" rel="stylesheet" />
+    <link href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" rel="stylesheet" />
+    <title>{title}</title>
+  </head>
+
+  <body>
+    <slot />
+  </body>
+</html>

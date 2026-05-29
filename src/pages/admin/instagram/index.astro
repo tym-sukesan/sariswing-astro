@@ -1,0 +1,191 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { supabase } from "../../../lib/supabase";
+
+const { data: posts } = await supabase
+  .from("instagram_posts")
+  .select("*")
+  .order("id", { ascending: false });
+---
+
+<BaseLayout title="Instagram Admin | SARI" admin>
+  <main class="admin-page admin-page--wide">
+    <div class="admin-page-header">
+      <a class="admin-back-link" href="/admin/">← 管理画面トップ</a>
+      <h1>Instagram管理</h1>
+    </div>
+
+    <section class="admin-card">
+      <h2>埋め込みコード追加</h2>
+
+      <div class="admin-form">
+        <label class="admin-form__field">
+          <span class="admin-form__label">埋め込みコード</span>
+          <textarea
+            id="embed_code"
+            rows="6"
+            placeholder="<blockquote class=&quot;instagram-media&quot; ...></blockquote>"
+          ></textarea>
+        </label>
+      </div>
+
+      <div class="admin-actions">
+        <button id="add" class="admin-button" type="button">追加</button>
+      </div>
+      <p id="message" class="admin-message"></p>
+    </section>
+
+    <section class="admin-card">
+      <h2>現在のInstagram埋め込み</h2>
+
+      <ul id="postList" class="admin-list instagram-admin-list">
+        {posts?.map((item) => (
+          <li class="admin-list__item instagram-admin-item" data-id={item.id}>
+            <div class="instagram-admin-item__preview">
+              {item.embed_code && (
+                <div class="instagram-admin-preview" set:html={item.embed_code} />
+              )}
+            </div>
+
+            <div class="instagram-admin-item__editor">
+              <div class="admin-form">
+                <label class="admin-form__field">
+                  <span class="admin-form__label">埋め込みコード</span>
+                  <textarea class="edit-embed-code" rows="6">{item.embed_code}</textarea>
+                </label>
+              </div>
+
+              <div class="admin-actions">
+                <button class="admin-button update" type="button">更新</button>
+                <button class="admin-button admin-button-danger delete" type="button">削除</button>
+              </div>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </section>
+  </main>
+
+  <script async src="https://www.instagram.com/embed.js"></script>
+
+  <script>
+    import { supabase } from "../../../lib/supabase";
+
+    const message = document.getElementById("message");
+
+    function processInstagramEmbeds() {
+      window.instgrm?.Embeds?.process();
+    }
+
+    window.processInstagramEmbeds = processInstagramEmbeds;
+
+    function waitForInstagramEmbeds() {
+      if (window.instgrm?.Embeds?.process) {
+        processInstagramEmbeds();
+        return;
+      }
+
+      let attempts = 0;
+      const timer = setInterval(() => {
+        attempts += 1;
+        if (window.instgrm?.Embeds?.process) {
+          processInstagramEmbeds();
+          clearInterval(timer);
+        } else if (attempts >= 25) {
+          clearInterval(timer);
+        }
+      }, 200);
+    }
+
+    function refreshItemPreview(li) {
+      const embedCode = li.querySelector(".edit-embed-code")?.value?.trim() ?? "";
+      const previewWrap = li.querySelector(".instagram-admin-item__preview");
+      if (!previewWrap) return;
+
+      let preview = previewWrap.querySelector(".instagram-admin-preview");
+
+      if (!embedCode) {
+        preview?.remove();
+        return;
+      }
+
+      if (!preview) {
+        preview = document.createElement("div");
+        preview.className = "instagram-admin-preview";
+        previewWrap.appendChild(preview);
+      }
+
+      preview.innerHTML = embedCode;
+      processInstagramEmbeds();
+      setTimeout(processInstagramEmbeds, 300);
+      setTimeout(processInstagramEmbeds, 1000);
+    }
+
+    waitForInstagramEmbeds();
+
+    document.getElementById("add")?.addEventListener("click", async () => {
+      const embed_code = document.getElementById("embed_code").value.trim();
+
+      if (!embed_code) {
+        message.textContent = "埋め込みコードを入力してください。";
+        return;
+      }
+
+      const { error } = await supabase.from("instagram_posts").insert([{ embed_code }]);
+
+      if (error) {
+        message.textContent = "保存に失敗しました：" + error.message;
+        return;
+      }
+
+      message.textContent = "保存しました。";
+      location.reload();
+    });
+
+    document.querySelectorAll(".update").forEach((button) => {
+      button.addEventListener("click", async (event) => {
+        const li = event.target.closest("li");
+        const id = li.dataset.id;
+        const embed_code = li.querySelector(".edit-embed-code").value.trim();
+
+        if (!embed_code) {
+          message.textContent = "埋め込みコードを入力してください。";
+          return;
+        }
+
+        const { error } = await supabase
+          .from("instagram_posts")
+          .update({ embed_code })
+          .eq("id", id);
+
+        if (error) {
+          message.textContent = "更新に失敗しました：" + error.message;
+          return;
+        }
+
+        refreshItemPreview(li);
+        message.textContent = "更新しました。";
+        location.reload();
+      });
+    });
+
+    document.querySelectorAll(".delete").forEach((button) => {
+      button.addEventListener("click", async (event) => {
+        const li = event.target.closest("li");
+        const id = li.dataset.id;
+
+        if (!confirm("このInstagram埋め込みを削除しますか？")) return;
+
+        const { error } = await supabase.from("instagram_posts").delete().eq("id", id);
+
+        if (error) {
+          message.textContent = "削除に失敗しました：" + error.message;
+          return;
+        }
+
+        message.textContent = "削除しました。";
+        location.reload();
+      });
+    });
+  </script>
+</BaseLayout>

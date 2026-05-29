@@ -1,12 +1,23 @@
-# Astro Starter Kit: Basics
+# SARI WEBSITE (Astro)
+
+## セットアップ
 
 ```sh
-npm create astro@latest -- --template basics
+npm install
+cp .env.example .env
+# .env に PUBLIC_SUPABASE_URL と PUBLIC_SUPABASE_ANON_KEY を設定
+npm run dev
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+## 本番公開
 
-## 🚀 Project Structure
+本番デプロイ前に [docs/production.md](docs/production.md) を必ず読んでください。
+
+- `/admin/` は Basic 認証必須
+- RLS は未適用（案: `scripts/supabase/rls-policies.sql`）
+- anon key は公開前提。service_role key はフロントに置かない
+
+## プロジェクト構成
 
 Inside of your Astro project, you'll see the following folders and files:
 

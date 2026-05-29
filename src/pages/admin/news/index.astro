@@ -1,98 +1,317 @@
 ---
 import BaseLayout from "../../../layouts/BaseLayout.astro";
-import { supabase } from "../../../lib/supabase";
+import NewsAdminItem from "../../../components/admin/NewsAdminItem.astro";
+import { fetchAllNews } from "../../../lib/news";
 
-const { data: news } = await supabase
-  .from("news")
-  .select("*")
-  .order("date", { ascending: false });
+const { data: news, error } = await fetchAllNews();
+const newsItems = news ?? [];
 ---
 
-<BaseLayout title="NEWS Admin | SARI">
-  <main class="admin-news">
-    <h1>NEWS管理</h1>
+<BaseLayout title="NEWS Admin | SARI" admin>
+  <main class="admin-page admin-page--wide">
+    <div class="admin-page-header">
+      <a class="admin-back-link" href="/admin/">← 管理画面トップ</a>
+      <h1>NEWS管理</h1>
+    </div>
 
-    <section>
+    {error && (
+      <section class="admin-card">
+        <p class="admin-message">NEWS を取得できませんでした: {error.message}</p>
+        <p>
+          <code>scripts/supabase/news-migration.sql</code> を実行し、slug / excerpt / content などのカラムを追加してください。
+        </p>
+      </section>
+    )}
+
+    <section class="admin-card">
       <h2>NEWS追加</h2>
 
-      <label>
-        日付
-        <input id="date" type="date" />
-      </label>
+      <form id="addNewsForm" class="admin-form admin-form--grid news-admin-form">
+        <div class="admin-form__row">
+          <label class="admin-form__field">
+            <span class="admin-form__label">日付</span>
+            <input data-field="date" name="date" type="date" required />
+          </label>
 
-      <label>
-        タイトル
-        <input id="title" type="text" placeholder="お知らせタイトル" />
-      </label>
+          <label class="admin-form__field">
+            <span class="admin-form__label">カテゴリ</span>
+            <input data-field="category" name="category" type="text" placeholder="TOUR / RELEASE / LIVE など" />
+          </label>
+        </div>
 
-      <button id="add">追加</button>
+        <div class="admin-form__row">
+          <label class="admin-form__field">
+            <span class="admin-form__label">タイトル</span>
+            <input data-field="title" name="title" type="text" required />
+          </label>
 
-      <p id="message"></p>
+          <label class="admin-form__field">
+            <span class="admin-form__label">slug（詳細ページ用）</span>
+            <input data-field="slug" name="slug" type="text" placeholder="例: picevo-tour-2026-summer" />
+            <span class="admin-form__hint">未入力時はタイトルから自動生成（日本語のみの場合は日付ベース）</span>
+          </label>
+        </div>
+
+        <div class="admin-form__row">
+          <label class="admin-form__field">
+            <span class="admin-form__label">リンクURL（任意）</span>
+            <input data-field="url" name="url" type="text" placeholder="/discography/... または https://..." />
+            <span class="admin-form__hint">
+              URL を設定すると詳細ページは作らず、このリンク先へ遷移します（一覧・トップのNEWSから直接リンク）。
+            </span>
+          </label>
+
+          <label class="admin-form__field">
+            <span class="admin-form__label">アイキャッチ画像URL</span>
+            <input data-field="image_url" name="image_url" type="text" placeholder="https://..." />
+          </label>
+        </div>
+
+        <label class="admin-form__field">
+          <span class="admin-form__label">抜粋</span>
+          <textarea data-field="excerpt" name="excerpt" rows="2" placeholder="一覧に表示する短い文"></textarea>
+        </label>
+
+        <label class="admin-form__field admin-form__field--content">
+          <span class="admin-form__label">本文（HTML可）</span>
+          <textarea data-field="content" name="content" rows="12" placeholder="<p>本文</p>"></textarea>
+        </label>
+
+        <label class="admin-form__checkbox">
+          <input data-field="is_published" name="is_published" type="checkbox" value="true" checked />
+          <span>公開する（is_published）</span>
+        </label>
+      </form>
+
+      <div class="admin-actions">
+        <button id="add" class="admin-button" type="button">追加</button>
+      </div>
+      <p id="message" class="admin-message"></p>
     </section>
 
-    <section>
+    <section class="admin-card">
       <h2>現在のNEWS</h2>
 
-      <ul id="newsList">
-        {news?.map((item) => (
-          <li data-id={item.id}>
-            <input class="edit-date" type="date" value={item.date} />
-            <input class="edit-title" type="text" value={item.title} />
+      <label class="news-admin-search">
+        <span class="news-admin-search__label">検索</span>
+        <input
+          id="newsSearch"
+          class="news-admin-search__input"
+          type="search"
+          placeholder="タイトル・カテゴリ・本文で検索"
+          autocomplete="off"
+        />
+      </label>
+      <p id="newsSearchStatus" class="news-admin-search__status is-hidden" aria-live="polite"></p>
 
-            <button class="update">更新</button>
-            <button class="delete">削除</button>
-          </li>
-        ))}
-      </ul>
+      {newsItems.length > 0 ? (
+        <>
+          <p id="newsSearchEmpty" class="news-admin-empty is-hidden">該当するNEWSはありません。</p>
+          <ul id="newsList" class="admin-list news-admin-list" data-page-size="10">
+            {newsItems.map((item, index) => (
+              <NewsAdminItem item={item} listIndex={index} />
+            ))}
+          </ul>
+          {newsItems.length > 10 && (
+            <button
+              type="button"
+              id="loadMoreNews"
+              class="admin-button admin-button-secondary news-admin-load-more"
+            >
+              さらに表示
+            </button>
+          )}
+        </>
+      ) : (
+        !error && <p class="news-admin-empty">登録されているNEWSはありません。</p>
+      )}
     </section>
   </main>
 
-  <script is:inline type="module">
-    import { createClient } from "https://esm.sh/@supabase/supabase-js";
-
-    const supabase = createClient(
-      "https://vsbvndwuajjhnzpohghh.supabase.co",
-      "sb_publishable_sGvemzdx-fv_aKwzXebCYw_K1fVIwWa"
-    );
+  <script>
+    import { supabase } from "../../../lib/supabase";
 
     const message = document.getElementById("message");
+    const addForm = document.getElementById("addNewsForm");
+
+    function slugifyTitle(title) {
+      const ascii = title
+        .toLowerCase()
+        .trim()
+        .replace(/[^\w\s-]/g, "")
+        .replace(/[\s_-]+/g, "-")
+        .replace(/^-+|-+$/g, "");
+      return ascii || null;
+    }
+
+    function generateSlug(title, date, explicitSlug) {
+      if (explicitSlug) return explicitSlug;
+      const fromTitle = slugifyTitle(title);
+      if (fromTitle) return fromTitle;
+      const normalized = (date || "").replace(/\./g, "-");
+      const datePart = normalized.match(/^\d{4}-\d{2}-\d{2}/)?.[0];
+      return `news-${datePart || Date.now()}`;
+    }
+
+    function getField(form, name) {
+      return form.querySelector(`[data-field="${name}"], [name="${name}"]`);
+    }
+
+    function buildNewsRecord(form) {
+      const date = getField(form, "date")?.value?.trim();
+      const title = getField(form, "title")?.value?.trim();
+      const url = getField(form, "url")?.value?.trim() || null;
+      const slugInput = getField(form, "slug")?.value?.trim();
+      const slug = url ? slugInput || null : generateSlug(title, date, slugInput);
+      const excerpt = getField(form, "excerpt")?.value?.trim() || null;
+      const content = getField(form, "content")?.value?.trim() || null;
+      const image_url = getField(form, "image_url")?.value?.trim() || null;
+      const category = getField(form, "category")?.value?.trim() || null;
+      const is_published = Boolean(getField(form, "is_published")?.checked);
+
+      return { date, title, url, slug, excerpt, content, image_url, category, is_published };
+    }
+
+    const PAGE_SIZE = 10;
+
+    function initPaginatedList(listEl, loadMoreBtn, emptyMessageEl) {
+      if (!listEl) return null;
+
+      const items = [...listEl.querySelectorAll(".news-admin-item")];
+      let visibleCount = PAGE_SIZE;
+      let searchActive = false;
+
+      function updatePagination() {
+        items.forEach((item, index) => {
+          item.classList.toggle("is-list-hidden", index >= visibleCount);
+        });
+
+        if (loadMoreBtn) {
+          loadMoreBtn.classList.toggle("is-hidden", visibleCount >= items.length);
+        }
+      }
+
+      function clearSearchFilter() {
+        searchActive = false;
+        items.forEach((item) => {
+          item.classList.remove("is-search-hidden");
+        });
+        if (emptyMessageEl) {
+          emptyMessageEl.classList.add("is-hidden");
+        }
+        listEl.classList.remove("is-hidden");
+        updatePagination();
+      }
+
+      function applySearch(query) {
+        const normalizedQuery = query.trim().toLowerCase();
+
+        if (!normalizedQuery) {
+          clearSearchFilter();
+          return items.length;
+        }
+
+        searchActive = true;
+        let matchCount = 0;
+
+        items.forEach((item) => {
+          const searchText = item.dataset.searchText ?? "";
+          const matches = searchText.includes(normalizedQuery);
+          item.classList.toggle("is-search-hidden", !matches);
+          item.classList.remove("is-list-hidden");
+          if (matches) matchCount += 1;
+        });
+
+        if (loadMoreBtn) {
+          loadMoreBtn.classList.add("is-hidden");
+        }
+
+        if (emptyMessageEl) {
+          emptyMessageEl.classList.toggle("is-hidden", matchCount > 0);
+        }
+
+        listEl.classList.toggle("is-hidden", matchCount === 0);
+
+        return matchCount;
+      }
+
+      updatePagination();
+
+      loadMoreBtn?.addEventListener("click", () => {
+        if (searchActive) return;
+        visibleCount += PAGE_SIZE;
+        updatePagination();
+      });
+
+      return { applySearch, clearSearchFilter };
+    }
+
+    const newsController = initPaginatedList(
+      document.getElementById("newsList"),
+      document.getElementById("loadMoreNews"),
+      document.getElementById("newsSearchEmpty")
+    );
+
+    const newsSearchInput = document.getElementById("newsSearch");
+    const newsSearchStatus = document.getElementById("newsSearchStatus");
+
+    newsSearchInput?.addEventListener("input", () => {
+      const query = newsSearchInput.value;
+      const matchCount = newsController?.applySearch(query) ?? 0;
+      const normalizedQuery = query.trim();
+
+      if (normalizedQuery) {
+        newsSearchStatus.textContent = `${matchCount}件見つかりました`;
+        newsSearchStatus.classList.remove("is-hidden");
+        return;
+      }
+
+      newsController?.clearSearchFilter();
+      newsSearchStatus.textContent = "";
+      newsSearchStatus.classList.add("is-hidden");
+    });
+
+    document.querySelectorAll(".toggle-edit").forEach((button) => {
+      button.addEventListener("click", (event) => {
+        const item = event.target.closest(".news-admin-item");
+        const form = item.querySelector(".news-edit-form");
+        const isHidden = form.classList.toggle("is-hidden");
+        button.textContent = isHidden ? "編集" : "閉じる";
+      });
+    });
 
     document.getElementById("add")?.addEventListener("click", async () => {
-      const date = document.getElementById("date").value;
-      const title = document.getElementById("title").value;
+      const payload = buildNewsRecord(addForm);
 
-      if (!date || !title) {
+      if (!payload.date || !payload.title) {
         message.textContent = "日付とタイトルを入力してください。";
         return;
       }
 
-      const { error } = await supabase.from("news").insert([{ date, title }]);
+      const { error } = await supabase.from("news").insert([payload]);
 
       if (error) {
         message.textContent = "保存に失敗しました：" + error.message;
         return;
       }
 
-      message.textContent = "保存しました。";
+      message.textContent = "保存しました。サイトを再ビルドすると /news/ に反映されます。";
       location.reload();
     });
 
     document.querySelectorAll(".update").forEach((button) => {
       button.addEventListener("click", async (event) => {
-        const li = event.target.closest("li");
-        const id = li.dataset.id;
-        const date = li.querySelector(".edit-date").value;
-        const title = li.querySelector(".edit-title").value;
+        const item = event.target.closest(".news-admin-item");
+        const form = item.querySelector(".news-edit-form");
+        const id = item.dataset.id;
+        const payload = buildNewsRecord(form);
 
-        if (!date || !title) {
+        if (!payload.date || !payload.title) {
           message.textContent = "日付とタイトルを入力してください。";
           return;
         }
 
-        const { error } = await supabase
-          .from("news")
-          .update({ date, title })
-          .eq("id", id);
+        const { error } = await supabase.from("news").update(payload).eq("id", id);
 
         if (error) {
           message.textContent = "更新に失敗しました：" + error.message;
@@ -104,14 +323,42 @@ const { data: news } = await supabase
       });
     });
 
-    document.querySelectorAll(".delete").forEach((button) => {
+    document.querySelectorAll(".duplicate").forEach((button) => {
       button.addEventListener("click", async (event) => {
-        const li = event.target.closest("li");
-        const id = li.dataset.id;
+        const item = event.target.closest(".news-admin-item");
+        const form = item.querySelector(".news-edit-form");
+        const payload = buildNewsRecord(form);
 
-        if (!confirm("このNEWSを削除しますか？")) {
+        if (!payload.date || !payload.title) {
+          message.textContent = "日付とタイトルを入力してください。";
           return;
         }
+
+        const duplicatePayload = {
+          ...payload,
+          title: `${payload.title}（複製）`,
+          slug: payload.slug ? `${payload.slug}-copy-${Date.now()}` : generateSlug(payload.title, payload.date, null),
+          is_published: false,
+        };
+
+        const { error } = await supabase.from("news").insert([duplicatePayload]);
+
+        if (error) {
+          message.textContent = "複製に失敗しました：" + error.message;
+          return;
+        }
+
+        message.textContent = "複製しました（非公開で追加）。必要に応じて編集してください。";
+        location.reload();
+      });
+    });
+
+    document.querySelectorAll(".delete").forEach((button) => {
+      button.addEventListener("click", async (event) => {
+        const item = event.target.closest(".news-admin-item");
+        const id = item.dataset.id;
+
+        if (!confirm("このNEWSを削除しますか？")) return;
 
         const { error } = await supabase.from("news").delete().eq("id", id);
 

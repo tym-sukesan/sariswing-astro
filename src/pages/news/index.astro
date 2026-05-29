@@ -2,43 +2,220 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import Header from "../../components/Header.astro";
 import Footer from "../../components/Footer.astro";
+import {
+  detectMissingNewsColumns,
+  fetchPublishedNews,
+  formatNewsDate,
+  getNewsListLink,
+  NEWS_COLUMNS,
+} from "../../lib/news";
 
-import { supabase } from "../../lib/supabase";
+const { data: posts, error } = await fetchPublishedNews();
+const missingColumns = detectMissingNewsColumns(error);
 
-const { data: news, error } = await supabase
-  .from("news")
-  .select("*")
-  .order("date", { ascending: false });
-
-console.log("news:", news);
-console.log("error:", error);
+const pageTitle = "NEWS | SARI WEBSITE";
+const pageDescription =
+  "紗理（SARI）の活動アーカイブ。TOUR、LIVE告知、リリース情報、特集記事などをお届けします。";
 ---
 
-<BaseLayout title="NEWS | 紗理 / SARI">
+<BaseLayout title={pageTitle} description={pageDescription} canonical="/news/">
   <Header />
 
   <main>
     <div id="lowerWrap">
-      <div class="mainTitle">
-        <h1>NEWS</h1>
-      </div>
+      <h1 class="postList_title">NEWS</h1>
 
-      <div class="news_wrap">
-{error && <p>エラー: {error.message}</p>}
+      <div class="entry-content news-index">
+        {error && (
+          <div class="news-index__error" role="alert">
+            <p>NEWS を取得できませんでした。</p>
+            <p>{error.message}</p>
+            {missingColumns.length > 0 ? (
+              <p>不足しているカラム: {missingColumns.join(", ")}</p>
+            ) : (
+              <p>
+                必要なカラム: {NEWS_COLUMNS.filter((column) => column !== "id").join(", ")}
+              </p>
+            )}
+            <p>
+              <code>scripts/supabase/news-migration.sql</code> を Supabase SQL Editor で実行してください。
+            </p>
+          </div>
+        )}
 
-{news && news.length > 0 ? (
-  news.map((item) => (
-    <div class="news_item">
-      <p>{item.date}</p>
-      <p>{item.title}</p>
-    </div>
-  ))
-) : (
-  <p>NEWSがありません</p>
-)}
+        {!error && posts.length > 0 ? (
+          <ul class="news-index__list">
+            {posts.map((post) => {
+              const link = getNewsListLink(post);
+
+              return (
+                <li class="news-index__item">
+                  {link ? (
+                    <a
+                      class="news-index__link"
+                      href={link.href}
+                      target={link.external ? "_blank" : undefined}
+                      rel={link.external ? "noopener noreferrer" : undefined}
+                    >
+                      <span class="news-index__row">
+                        <time class="news-index__date" datetime={post.date}>
+                          {formatNewsDate(post.date)}
+                        </time>
+                        <span class="news-index__title">{post.title}</span>
+                      </span>
+                      <span class="news-index__arrow" aria-hidden="true">→</span>
+                    </a>
+                  ) : (
+                    <div class="news-index__row-wrap">
+                      <span class="news-index__row">
+                        <time class="news-index__date" datetime={post.date}>
+                          {formatNewsDate(post.date)}
+                        </time>
+                        <span class="news-index__title">{post.title}</span>
+                      </span>
+                    </div>
+                  )}
+                </li>
+              );
+            })}
+          </ul>
+        ) : (
+          !error && <p class="news-index__empty">現在、公開中の記事はありません。</p>
+        )}
       </div>
     </div>
   </main>
 
   <Footer />
 </BaseLayout>
+
+<style>
+  .news-index {
+    width: 90%;
+    max-width: 980px;
+    margin: 0 auto 80px;
+  }
+
+  .news-index__error {
+    margin: 0 0 32px;
+    padding: 20px;
+    border-radius: 5px;
+    background: #fff5f5;
+    font-size: 1.4rem;
+    line-height: 1.7;
+    color: #633;
+  }
+
+  .news-index__error code {
+    font-size: 1.2rem;
+  }
+
+  .news-index__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .news-index__item {
+    margin: 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+  }
+
+  .news-index__link,
+  .news-index__row-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 20px 4px 20px 0;
+  }
+
+  .news-index__link {
+    color: #333;
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  .news-index__link:hover {
+    color: #008080;
+  }
+
+  .news-index__link:focus-visible {
+    outline: 2px solid #333;
+    outline-offset: 4px;
+  }
+
+  .news-index__row-wrap {
+    color: #333;
+  }
+
+  .news-index__row {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: baseline;
+    gap: 0 24px;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .news-index__date {
+    flex-shrink: 0;
+    font-size: 1.6rem;
+    line-height: 1.6;
+    letter-spacing: 0.12em;
+    opacity: 0.7;
+    white-space: nowrap;
+  }
+
+  .news-index__title {
+    flex: 1;
+    min-width: 0;
+    font-size: 1.6rem;
+    font-weight: normal;
+    line-height: 1.6;
+    letter-spacing: 0.08em;
+  }
+
+  .news-index__arrow {
+    flex-shrink: 0;
+    font-size: 1.4rem;
+    line-height: 1;
+    opacity: 0.35;
+    transition:
+      transform 0.2s ease,
+      opacity 0.2s ease;
+  }
+
+  .news-index__link:hover .news-index__arrow {
+    transform: translateX(4px);
+    opacity: 0.65;
+  }
+
+  .news-index__empty {
+    font-size: 1.5rem;
+    letter-spacing: 0.06em;
+    color: #666;
+  }
+
+  @media screen and (max-width: 768px) {
+    .news-index {
+      width: 94%;
+    }
+
+    .news-index__link,
+    .news-index__row-wrap {
+      padding: 16px 0;
+      gap: 12px;
+    }
+
+    .news-index__row {
+      flex-wrap: wrap;
+      gap: 6px 16px;
+    }
+
+    .news-index__date,
+    .news-index__title {
+      font-size: 1.45rem;
+    }
+  }
+</style>

@@ -1,0 +1,102 @@
+---
+import { supabase } from "../lib/supabase";
+
+const { data: posts, error } = await supabase
+  .from("instagram_posts")
+  .select("*")
+  .order("id", { ascending: false })
+  .limit(3);
+---
+
+<section id="sec-instagram" class="instagram-feed top-sec sec-instagram">
+  <h2 class="instaTitle"><span>INSTAGRAM</span></h2>
+
+  {error && <p class="instagram-feed__error">Instagramを取得できませんでした。</p>}
+
+  <div class="instagram-feed__items">
+    {posts?.map((post) =>
+      post.embed_code ? (
+        <div class="instagram-feed__item" set:html={post.embed_code} />
+      ) : null
+    )}
+  </div>
+</section>
+
+<script is:inline src="https://www.instagram.com/embed.js"></script>
+
+<style>
+  .instagram-feed {
+    width: 90%;
+    max-width: 1000px;
+    margin: 0 auto 80px;
+    padding: 24px 0 40px;
+    text-align: center;
+  }
+
+  .instagram-feed .instaTitle {
+    margin-bottom: 28px;
+  }
+
+  .instagram-feed__items {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+    justify-items: center;
+    align-items: start;
+  }
+
+  .instagram-feed__item {
+    width: 100%;
+    max-width: 340px;
+    min-width: 0;
+  }
+
+  .instagram-feed__item :global(blockquote.instagram-media) {
+    max-width: 100% !important;
+    min-width: 0 !important;
+    width: 100% !important;
+    margin: 0 auto !important;
+  }
+
+  .instagram-feed__error {
+    font-size: 1.4rem;
+    letter-spacing: 0.1em;
+    opacity: 0.7;
+  }
+
+  @media screen and (min-width: 768px) {
+    .instagram-feed__items {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 28px;
+    }
+
+    .instagram-feed__item {
+      max-width: none;
+    }
+  }
+
+  @media screen and (min-width: 1024px) {
+    .instagram-feed {
+      padding-top: 28px;
+    }
+
+    .instagram-feed__items {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 32px;
+    }
+  }
+
+  @media screen and (max-width: 767px) {
+    .instagram-feed {
+      padding-top: 20px;
+    }
+
+    .instagram-feed .instaTitle {
+      margin-bottom: 24px;
+    }
+
+    .instagram-feed__items {
+      gap: 20px;
+    }
+  }
+</style>

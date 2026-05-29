@@ -1,0 +1,329 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Header from "../../components/Header.astro";
+import Footer from "../../components/Footer.astro";
+import {
+  fetchPublishedNewsDetailPages,
+  formatNewsDate,
+  getAdjacentNews,
+  getNewsDescription,
+  getNewsDetailUrl,
+  resolveAbsoluteUrl,
+} from "../../lib/news";
+
+export async function getStaticPaths() {
+  const { data: posts, error } = await fetchPublishedNewsDetailPages();
+
+  if (error || posts.length === 0) {
+    return [];
+  }
+
+  return posts.map((post) => ({
+    params: { slug: post.slug! },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { data: posts } = await fetchPublishedNewsDetailPages();
+
+const image = post.image_url ?? null;
+const description = getNewsDescription(post);
+const canonical = getNewsDetailUrl(post);
+const pageTitle = `${post.title} | NEWS | SARI WEBSITE`;
+const { prev, next } = getAdjacentNews(posts, post.slug);
+
+const ogImageAbsolute = image
+  ? resolveAbsoluteUrl(image, Astro.site ?? Astro.url)
+  : undefined;
+---
+
+<BaseLayout
+  title={pageTitle}
+  description={description}
+  ogImage={ogImageAbsolute}
+  ogType="article"
+  canonical={canonical}
+>
+  <Header />
+
+  <main class="news-detail">
+    <article class="news-detail__inner">
+      <div class="news-detail__meta">
+        <time class="news-detail__date" datetime={post.date}>{formatNewsDate(post.date)}</time>
+        {post.category && <span class="news-detail__category">{post.category}</span>}
+      </div>
+
+      <h1 class="news-detail__title">{post.title}</h1>
+
+      {image && (
+        <figure class="news-detail__image">
+          <img src={image} alt={post.title} width="1200" height="750" loading="lazy" decoding="async" />
+        </figure>
+      )}
+
+      <div class="news-detail__content" set:html={post.content} />
+
+      {(prev || next) && (
+        <nav class="news-detail__nav" aria-label="記事ナビゲーション">
+          {prev ? (
+            <a class="news-detail__nav-link news-detail__nav-link--prev" href={getNewsDetailUrl(prev)}>
+              <span class="news-detail__nav-label">前の記事</span>
+              <span class="news-detail__nav-title">{prev.title}</span>
+            </a>
+          ) : (
+            <span class="news-detail__nav-placeholder" aria-hidden="true"></span>
+          )}
+
+          {next ? (
+            <a class="news-detail__nav-link news-detail__nav-link--next" href={getNewsDetailUrl(next)}>
+              <span class="news-detail__nav-label">次の記事</span>
+              <span class="news-detail__nav-title">{next.title}</span>
+            </a>
+          ) : (
+            <span class="news-detail__nav-placeholder" aria-hidden="true"></span>
+          )}
+        </nav>
+      )}
+
+      <p class="news-detail__back">
+        <a href="/news/">← NEWS 一覧へ</a>
+      </p>
+    </article>
+  </main>
+
+  <Footer />
+</BaseLayout>
+
+<style>
+  .news-detail {
+    position: relative;
+    box-sizing: border-box;
+    width: 100%;
+    margin: 0 auto;
+    padding: 96px 24px 120px;
+  }
+
+  .news-detail__inner {
+    width: 100%;
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 0;
+  }
+
+  .news-detail__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0 0.6em;
+    margin: 0 0 20px;
+    font-size: 14px;
+    line-height: 1.6;
+    letter-spacing: 0.12em;
+    color: #666;
+  }
+
+  .news-detail__date {
+    font-style: normal;
+    white-space: nowrap;
+  }
+
+  .news-detail__category {
+    font-size: inherit;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: #555;
+  }
+
+  .news-detail__category::before {
+    content: "\3000";
+  }
+
+  .news-detail h1.news-detail__title {
+    position: static;
+    top: auto;
+    left: auto;
+    width: auto;
+    margin: 0 0 32px;
+    padding: 0;
+    font-size: clamp(30px, 3.2vw, 48px);
+    font-weight: 400;
+    line-height: 1.5;
+    letter-spacing: 0.03em;
+    color: #222;
+    text-align: left;
+  }
+
+  .news-detail__image {
+    margin: 0;
+    padding: 0;
+    border: none;
+    background: transparent;
+  }
+
+  .news-detail__image img {
+    width: 100%;
+    max-width: 720px;
+    height: auto;
+    display: block;
+    margin: 36px auto;
+    border-radius: 5px;
+  }
+
+  .news-detail__content {
+    margin-top: 8px;
+    font-size: 16px;
+    line-height: 2;
+    letter-spacing: 0.04em;
+    color: #333;
+  }
+
+  .news-detail__content :global(p) {
+    margin: 0 0 1.5em;
+  }
+
+  .news-detail__content :global(h2) {
+    margin: 2.2em 0 0.9em;
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 1.6;
+    letter-spacing: 0.06em;
+    color: #222;
+  }
+
+  .news-detail__content :global(h3) {
+    margin: 1.8em 0 0.7em;
+    font-size: 18px;
+    font-weight: 500;
+    line-height: 1.6;
+    letter-spacing: 0.05em;
+    color: #222;
+  }
+
+  .news-detail__content :global(ul),
+  .news-detail__content :global(ol) {
+    margin: 0 0 1.5em;
+    padding-left: 1.5em;
+  }
+
+  .news-detail__content :global(li) {
+    margin-bottom: 0.5em;
+  }
+
+  .news-detail__content :global(a) {
+    color: #008080;
+    text-decoration: underline;
+  }
+
+  .news-detail__content :global(img) {
+    display: block;
+    width: 100%;
+    max-width: 760px;
+    height: auto;
+    margin: 2em auto;
+    border-radius: 5px;
+  }
+
+  .news-detail__content :global(strong) {
+    font-weight: bold;
+  }
+
+  .news-detail__nav {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px 24px;
+    margin-top: 64px;
+    padding-top: 28px;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+  }
+
+  .news-detail__nav-link {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+    padding: 0;
+    color: #555;
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  .news-detail__nav-link:hover {
+    color: #222;
+  }
+
+  .news-detail__nav-link--next {
+    text-align: right;
+  }
+
+  .news-detail__nav-label {
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    color: #888;
+  }
+
+  .news-detail__nav-title {
+    font-size: 14px;
+    font-weight: normal;
+    line-height: 1.6;
+    letter-spacing: 0.04em;
+  }
+
+  .news-detail__nav-placeholder {
+    display: block;
+  }
+
+  .news-detail__back {
+    margin: 48px 0 0;
+    font-size: 14px;
+    letter-spacing: 0.08em;
+  }
+
+  .news-detail__back a {
+    color: #777;
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  .news-detail__back a:hover {
+    color: #333;
+  }
+
+  @media screen and (max-width: 768px) {
+    .news-detail {
+      padding: 80px 20px 96px;
+    }
+
+    .news-detail__meta {
+      margin-bottom: 16px;
+      font-size: 13px;
+    }
+
+    .news-detail h1.news-detail__title {
+      margin-bottom: 28px;
+    }
+
+    .news-detail__image img {
+      margin: 24px auto;
+    }
+
+    .news-detail__content {
+      font-size: 15px;
+      line-height: 1.95;
+    }
+
+    .news-detail__nav {
+      grid-template-columns: 1fr;
+      gap: 24px;
+      margin-top: 48px;
+    }
+
+    .news-detail__nav-link--next {
+      text-align: left;
+    }
+
+    .news-detail__back {
+      margin-top: 40px;
+    }
+  }
+</style>

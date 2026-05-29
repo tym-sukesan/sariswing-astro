@@ -1,0 +1,89 @@
+{
+  "targetYear": 2026,
+  "targetArticleCount": 10,
+  "totalExtractedCount": 50,
+  "totalParsedCount": 50,
+  "duplicateImportKeyCount": 0,
+  "skippedDuplicateImportKeys": [],
+  "uniqueImportKeyCount": 50,
+  "articles": [
+    {
+      "wp_post_id": "2204",
+      "title": "［2026.1.10 SPECIAL LIVE］",
+      "link": "https://sariswing.com/2025/11/05/%ef%bc%bbspecial-live%ef%bc%bdmusical-theater-songbook-live-%e3%80%9cthe-art-room-sessions%e3%80%9c/",
+      "post_date": "2025-11-05 08:33:23",
+      "extractedCount": 0
+    },
+    {
+      "wp_post_id": "2243",
+      "title": "1月 LIVE SCHEDULE 2026",
+      "link": "https://sariswing.com/2025/11/17/1-%e6%9c%88-live-schedule-2026/",
+      "post_date": "2025-11-17 03:45:11",
+      "extractedCount": 7
+    },
+    {
+      "wp_post_id": "2275",
+      "title": "2月 LIVE SCHEDULE 2026",
+      "link": "https://sariswing.com/2025/12/08/2%e6%9c%88-live-schedule-2026/",
+      "post_date": "2025-12-08 07:34:54",
+      "extractedCount": 3
+    },
+    {
+      "wp_post_id": "2290",
+      "title": "3月 LIVE SCHEDULE 2026",
+      "link": "https://sariswing.com/2026/01/14/3%e6%9c%88-live-schedule-2026/",
+      "post_date": "2026-01-14 03:23:05",
+      "extractedCount": 6
+    },
+    {
+      "wp_post_id": "2307",
+      "title": "4月 LIVE SCHEDULE 2026",
+      "link": "https://sariswing.com/2026/02/16/4%e6%9c%88-live-schedule-2026/",
+      "post_date": "2026-02-16 07:37:42",
+      "extractedCount": 4
+    },
+    {
+      "wp_post_id": "2325",
+      "title": "5月 LIVE SCHEDULE 2026",
+      "link": "https://sariswing.com/2026/03/19/5%e6%9c%88-live-schedule-2026/",
+      "post_date": "2026-03-19 06:11:47",
+      "extractedCount": 7
+    },
+    {
+      "wp_post_id": "2329",
+      "title": "6月 LIVE SCHEDULE 2026",
+      "link": "https://sariswing.com/2026/04/09/6%e6%9c%88-live-schedule-2026/",
+      "post_date": "2026-04-09 03:31:57",
+      "extractedCount": 4
+    },
+    {
+      "wp_post_id": "2345",
+      "title": "7月 LIVE SCHEDULE 2026",
+      "link": "https://sariswing.com/2026/05/19/7%e6%9c%88-live-schedule-2026/",
+      "post_date": "2026-05-19 07:35:03",
+      "extractedCount": 5
+    },
+    {
+      "wp_post_id": "2358",
+      "title": "8月 LIVE SCHEDULE 2026",
+      "link": "https://sariswing.com/2026/05/19/8%e6%9c%88-live-schedule-2026/",
+      "post_date": "2026-05-19 07:48:01",
+      "extractedCount": 9
+    },
+    {
+      "wp_post_id": "2369",
+      "title": "【TOUR情報】ピチェヴォ 旅に出ます。2026 夏",
+      "link": "https://sariswing.com/2026/05/21/%e3%80%90tour%e6%83%85%e5%a0%b1%e3%80%91%e3%83%94%e3%83%81%e3%82%a7%e3%83%b4%e3%82%a9-%e6%97%85%e3%81%ab%e5%87%ba%e3%81%be%e3%81%99%e3%80%822026-%e5%a4%8f/",
+      "post_date": "2026-05-21 06:03:49",
+      "extractedCount": 5
+    }
+  ],
+  "emptyArticles": [
+    {
+      "wp_post_id": "2204",
+      "title": "［2026.1.10 SPECIAL LIVE］",
+      "link": "https://sariswing.com/2025/11/05/%ef%bc%bbspecial-live%ef%bc%bdmusical-theater-songbook-live-%e3%80%9cthe-art-room-sessions%e3%80%9c/",
+      "post_date": "2025-11-05 08:33:23"
+    }
+  ]
+}

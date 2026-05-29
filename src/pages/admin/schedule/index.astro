@@ -1,0 +1,514 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import ScheduleAdminItem from "../../../components/admin/ScheduleAdminItem.astro";
+import { supabase } from "../../../lib/supabase";
+
+const { data: venues } = await supabase.from("venues").select("*").order("name", { ascending: true });
+
+const { data: schedules } = await supabase
+  .from("schedules")
+  .select("*")
+  .order("date", { ascending: true });
+
+const timeTypeOptions = ["昼", "夜", "その他"];
+
+const today = new Date().toISOString().slice(0, 10);
+const upcomingSchedules = schedules?.filter((item) => item.date >= today) ?? [];
+const pastSchedules =
+  schedules?.filter((item) => item.date < today).sort((a, b) => b.date.localeCompare(a.date)) ?? [];
+---
+
+<BaseLayout title="Schedule Admin | SARI" admin>
+  <main class="admin-page admin-page--wide">
+    <div class="admin-page-header">
+      <a class="admin-back-link" href="/admin/">← 管理画面トップ</a>
+      <h1>Schedule管理</h1>
+    </div>
+
+    <section class="admin-card">
+      <h2>スケジュール追加</h2>
+
+      <form id="addScheduleForm" class="admin-form admin-form--grid">
+        <div class="admin-form__row">
+          <label class="admin-form__field">
+            <span class="admin-form__label">日付</span>
+            <input data-field="date" name="date" type="date" required />
+          </label>
+
+          <label class="admin-form__field">
+            <span class="admin-form__label">時間帯</span>
+            <select data-field="time_type" name="time_type">
+              {timeTypeOptions.map((option) => (
+                <option value={option}>{option}</option>
+              ))}
+            </select>
+          </label>
+        </div>
+
+        <div class="admin-form__row">
+          <label class="admin-form__field">
+            <span class="admin-form__label">会場（venues から選択）</span>
+            <select data-field="venue_id" name="venue_id">
+              <option value="">未選択</option>
+              {venues?.map((venue) => (
+                <option value="" data-venue-name={venue.name}>{venue.name}</option>
+              ))}
+            </select>
+            <span class="admin-form__hint">venues テーブルに id 列がないため、選択時は会場名のみ反映されます。</span>
+          </label>
+
+          <label class="admin-form__field">
+            <span class="admin-form__label">会場名（自由入力）</span>
+            <input data-field="venue_name" name="venue_name" type="text" placeholder="venue_id 未選択時に使用" />
+          </label>
+        </div>
+
+        <label class="admin-form__field">
+          <span class="admin-form__label">タイトル</span>
+          <input data-field="title" name="title" type="text" />
+        </label>
+
+        <div class="admin-form__row">
+          <label class="admin-form__field">
+            <span class="admin-form__label">開場時間</span>
+            <input data-field="open_time" name="open_time" type="text" placeholder="例: 18:00" />
+          </label>
+
+          <label class="admin-form__field">
+            <span class="admin-form__label">開演時間</span>
+            <input data-field="start_time" name="start_time" type="text" placeholder="例: 19:00" />
+          </label>
+        </div>
+
+        <div class="admin-form__row">
+          <label class="admin-form__field">
+            <span class="admin-form__label">料金</span>
+            <input data-field="price" name="price" type="text" />
+          </label>
+
+          <label class="admin-form__field">
+            <span class="admin-form__label">ジャンル</span>
+            <input data-field="genre" name="genre" type="text" />
+          </label>
+        </div>
+
+        <label class="admin-form__field">
+          <span class="admin-form__label">メンバー</span>
+          <input data-field="members" name="members" type="text" />
+        </label>
+
+        <label class="admin-form__field">
+          <span class="admin-form__label">予約URL</span>
+          <input data-field="reservation_url" name="reservation_url" type="url" placeholder="https://..." />
+        </label>
+
+        <label class="admin-form__field">
+          <span class="admin-form__label">画像URL</span>
+          <input data-field="image_url" name="image_url" type="url" placeholder="https://..." />
+        </label>
+
+        <label class="admin-form__field">
+          <span class="admin-form__label">備考</span>
+          <textarea data-field="note" name="note" rows="3"></textarea>
+        </label>
+
+        <div class="admin-form__row">
+          <label class="admin-form__checkbox">
+            <input data-field="is_published" name="is_published" type="checkbox" value="true" />
+            <span>公開する（is_published）</span>
+          </label>
+
+          <label class="admin-form__checkbox">
+            <input data-field="is_special" name="is_special" type="checkbox" value="true" />
+            <span>TOUR・特集掲載（is_special）</span>
+          </label>
+        </div>
+      </form>
+
+      <div class="admin-actions">
+        <button id="add" class="admin-button" type="button">追加</button>
+      </div>
+      <p id="message" class="admin-message"></p>
+    </section>
+
+    <section class="admin-card">
+      <label class="schedule-admin-search">
+        <span class="schedule-admin-search__label">検索</span>
+        <input
+          id="scheduleSearch"
+          class="schedule-admin-search__input"
+          type="search"
+          placeholder="タイトル・会場・ジャンル・メンバーで検索"
+          autocomplete="off"
+        />
+      </label>
+      <p id="scheduleSearchStatus" class="schedule-admin-search__status is-hidden" aria-live="polite"></p>
+
+      <h2>今後の予定</h2>
+
+      {upcomingSchedules.length > 0 ? (
+        <>
+          <p id="upcomingSearchEmpty" class="schedule-admin-empty is-hidden">該当する予定はありません。</p>
+          <ul id="upcomingScheduleList" class="admin-list schedule-admin-list" data-page-size="10">
+            {upcomingSchedules.map((item, index) => (
+              <ScheduleAdminItem
+                item={item}
+                venues={venues}
+                timeTypeOptions={timeTypeOptions}
+                listIndex={index}
+              />
+            ))}
+          </ul>
+          {upcomingSchedules.length > 10 && (
+            <button
+              type="button"
+              id="loadMoreUpcoming"
+              class="admin-button admin-button-secondary schedule-admin-load-more"
+              data-load-more="upcoming"
+            >
+              さらに表示
+            </button>
+          )}
+        </>
+      ) : (
+        <p class="schedule-admin-empty">今後の予定はありません。</p>
+      )}
+    </section>
+
+    {pastSchedules.length > 0 && (
+      <section class="admin-card">
+        <details class="schedule-admin-past">
+          <summary class="schedule-admin-past__summary">過去のスケジュール</summary>
+
+          <p id="pastSearchEmpty" class="schedule-admin-empty is-hidden">該当する予定はありません。</p>
+          <ul id="pastScheduleList" class="admin-list schedule-admin-list" data-page-size="10">
+            {pastSchedules.map((item, index) => (
+              <ScheduleAdminItem
+                item={item}
+                venues={venues}
+                timeTypeOptions={timeTypeOptions}
+                listIndex={index}
+              />
+            ))}
+          </ul>
+          {pastSchedules.length > 10 && (
+            <button
+              type="button"
+              id="loadMorePast"
+              class="admin-button admin-button-secondary schedule-admin-load-more"
+              data-load-more="past"
+            >
+              さらに表示
+            </button>
+          )}
+        </details>
+      </section>
+    )}
+  </main>
+
+  <script>
+    import { supabase } from "../../../lib/supabase";
+
+    const message = document.getElementById("message");
+    const addForm = document.getElementById("addScheduleForm");
+
+    function getField(form, name) {
+      return form.querySelector(`[data-field="${name}"], [name="${name}"]`);
+    }
+
+    function getTextValue(form, name) {
+      const field = getField(form, name);
+      if (!field) return "";
+      return field.value.trim();
+    }
+
+    function parseVenueId(value) {
+      if (value === "" || value === null || value === undefined) {
+        return null;
+      }
+
+      const parsed = Number(value);
+      return Number.isInteger(parsed) ? parsed : null;
+    }
+
+    function nullableText(value) {
+      return value === "" ? null : value;
+    }
+
+    function buildScheduleRecord(form) {
+      const venueIdRaw = getTextValue(form, "venue_id");
+      const openTimeRaw = getTextValue(form, "open_time");
+      const startTimeRaw = getTextValue(form, "start_time");
+      const isPublishedField = getField(form, "is_published");
+      const isSpecialField = getField(form, "is_special");
+
+      return {
+        date: getTextValue(form, "date"),
+        time_type: nullableText(getTextValue(form, "time_type")),
+        venue_id: parseVenueId(venueIdRaw),
+        venue_name: nullableText(getTextValue(form, "venue_name")),
+        title: nullableText(getTextValue(form, "title")),
+        genre: nullableText(getTextValue(form, "genre")),
+        open_time: openTimeRaw === "" ? null : openTimeRaw,
+        start_time: startTimeRaw === "" ? null : startTimeRaw,
+        price: nullableText(getTextValue(form, "price")),
+        members: nullableText(getTextValue(form, "members")),
+        reservation_url: nullableText(getTextValue(form, "reservation_url")),
+        note: nullableText(getTextValue(form, "note")),
+        image_url: nullableText(getTextValue(form, "image_url")),
+        is_published: isPublishedField ? isPublishedField.checked : false,
+        is_special: isSpecialField ? isSpecialField.checked : false,
+      };
+    }
+
+    function bindVenueSelect(form) {
+      const venueSelect = getField(form, "venue_id");
+      const venueNameInput = getField(form, "venue_name");
+      if (!venueSelect || !venueNameInput) return;
+
+      venueSelect.addEventListener("change", () => {
+        const selectedOption = venueSelect.options[venueSelect.selectedIndex];
+        const venueName = selectedOption?.dataset.venueName;
+        if (venueName) {
+          venueNameInput.value = venueName;
+        }
+      });
+    }
+
+    const PAGE_SIZE = 10;
+
+    function initPaginatedList(listEl, loadMoreBtn, emptyMessageEl) {
+      if (!listEl) return null;
+
+      const items = [...listEl.querySelectorAll(".schedule-admin-item")];
+      let visibleCount = PAGE_SIZE;
+      let searchActive = false;
+
+      function updatePagination() {
+        items.forEach((item, index) => {
+          item.classList.toggle("is-list-hidden", index >= visibleCount);
+        });
+
+        if (loadMoreBtn) {
+          loadMoreBtn.classList.toggle("is-hidden", visibleCount >= items.length);
+        }
+      }
+
+      function clearSearchFilter() {
+        searchActive = false;
+        items.forEach((item) => {
+          item.classList.remove("is-search-hidden");
+        });
+        if (emptyMessageEl) {
+          emptyMessageEl.classList.add("is-hidden");
+        }
+        listEl.classList.remove("is-hidden");
+        updatePagination();
+      }
+
+      function applySearch(query) {
+        const normalizedQuery = query.trim().toLowerCase();
+
+        if (!normalizedQuery) {
+          clearSearchFilter();
+          return items.length;
+        }
+
+        searchActive = true;
+        let matchCount = 0;
+
+        items.forEach((item) => {
+          const searchText = item.dataset.searchText ?? "";
+          const matches = searchText.includes(normalizedQuery);
+          item.classList.toggle("is-search-hidden", !matches);
+          item.classList.remove("is-list-hidden");
+          if (matches) matchCount += 1;
+        });
+
+        if (loadMoreBtn) {
+          loadMoreBtn.classList.add("is-hidden");
+        }
+
+        if (emptyMessageEl) {
+          emptyMessageEl.classList.toggle("is-hidden", matchCount > 0);
+        }
+
+        listEl.classList.toggle("is-hidden", matchCount === 0);
+
+        return matchCount;
+      }
+
+      updatePagination();
+
+      loadMoreBtn?.addEventListener("click", () => {
+        if (searchActive) return;
+        visibleCount += PAGE_SIZE;
+        updatePagination();
+      });
+
+      return { applySearch, clearSearchFilter };
+    }
+
+    const upcomingController = initPaginatedList(
+      document.getElementById("upcomingScheduleList"),
+      document.getElementById("loadMoreUpcoming"),
+      document.getElementById("upcomingSearchEmpty")
+    );
+    const pastController = initPaginatedList(
+      document.getElementById("pastScheduleList"),
+      document.getElementById("loadMorePast"),
+      document.getElementById("pastSearchEmpty")
+    );
+
+    const scheduleSearchInput = document.getElementById("scheduleSearch");
+    const scheduleSearchStatus = document.getElementById("scheduleSearchStatus");
+    const pastDetails = document.querySelector(".schedule-admin-past");
+
+    scheduleSearchInput?.addEventListener("input", () => {
+      const query = scheduleSearchInput.value;
+      const upcomingMatches = upcomingController?.applySearch(query) ?? 0;
+      const pastMatches = pastController?.applySearch(query) ?? 0;
+      const totalMatches = upcomingMatches + pastMatches;
+      const normalizedQuery = query.trim();
+
+      if (normalizedQuery) {
+        if (pastDetails && pastMatches > 0) {
+          pastDetails.open = true;
+        }
+
+        scheduleSearchStatus.textContent = `${totalMatches}件見つかりました`;
+        scheduleSearchStatus.classList.remove("is-hidden");
+        return;
+      }
+
+      upcomingController?.clearSearchFilter();
+      pastController?.clearSearchFilter();
+      scheduleSearchStatus.textContent = "";
+      scheduleSearchStatus.classList.add("is-hidden");
+    });
+
+    bindVenueSelect(addForm);
+    document.querySelectorAll(".schedule-edit-form").forEach(bindVenueSelect);
+
+    document.querySelectorAll(".toggle-edit").forEach((button) => {
+      button.addEventListener("click", (event) => {
+        const item = event.target.closest(".schedule-admin-item");
+        const form = item.querySelector(".schedule-edit-form");
+        const isHidden = form.classList.toggle("is-hidden");
+        button.textContent = isHidden ? "編集" : "閉じる";
+      });
+    });
+
+    document.getElementById("add")?.addEventListener("click", async () => {
+      const record = buildScheduleRecord(addForm);
+
+      if (!record.date) {
+        message.textContent = "日付を入力してください。";
+        return;
+      }
+
+      const payload = { ...record };
+      const { error } = await supabase.from("schedules").insert([payload]);
+
+      if (error) {
+        message.textContent = "保存に失敗しました：" + error.message;
+        return;
+      }
+
+      message.textContent = "保存しました。";
+      location.reload();
+    });
+
+    document.querySelectorAll(".update").forEach((button) => {
+      button.addEventListener("click", async (event) => {
+        const item = event.target.closest(".schedule-admin-item");
+        const id = item?.dataset.id;
+
+        if (!id) {
+          message.textContent = "IDが取得できないため更新できません。ページを再読み込みしてください。";
+          return;
+        }
+
+        const form = item.querySelector(".schedule-edit-form");
+
+        const record = buildScheduleRecord(form);
+
+        if (!record.date) {
+          message.textContent = "日付を入力してください。";
+          return;
+        }
+
+        const { error } = await supabase.from("schedules").update(record).eq("id", id);
+
+        if (error) {
+          message.textContent = "更新に失敗しました：" + error.message;
+          return;
+        }
+
+        message.textContent = "更新しました。";
+        location.reload();
+      });
+    });
+
+    document.querySelectorAll(".duplicate").forEach((button) => {
+      button.addEventListener("click", async (event) => {
+        if (!confirm("このスケジュールを複製しますか？")) return;
+
+        const item = event.target.closest(".schedule-admin-item");
+        const id = item?.dataset.id;
+
+        if (!id) {
+          message.textContent = "IDが取得できないため複製できません。ページを再読み込みしてください。";
+          return;
+        }
+
+        const form = item.querySelector(".schedule-edit-form");
+        const record = buildScheduleRecord(form);
+
+        if (!record.date) {
+          message.textContent = "日付を入力してください。";
+          return;
+        }
+
+        // id / import_key / wp_post_id / wp_source_url は複製に引き継がない
+        const { id: _id, import_key: _ik, wp_post_id: _wp, wp_source_url: _wps, ...rest } = record;
+        const duplicateTitle = rest.title ? `${rest.title} のコピー` : "無題のコピー";
+        const payload = { ...rest, title: duplicateTitle };
+
+        const { error } = await supabase.from("schedules").insert([payload]);
+
+        if (error) {
+          message.textContent = "複製に失敗しました：" + error.message;
+          return;
+        }
+
+        message.textContent = "複製しました。";
+        location.reload();
+      });
+    });
+
+    document.querySelectorAll(".delete").forEach((button) => {
+      button.addEventListener("click", async (event) => {
+        const item = event.target.closest(".schedule-admin-item");
+        const id = item?.dataset.id;
+
+        if (!id) {
+          message.textContent = "IDが取得できないため削除できません。ページを再読み込みしてください。";
+          return;
+        }
+
+        if (!confirm("このスケジュールを削除します。元に戻せません。よろしいですか？")) return;
+
+        const { error } = await supabase.from("schedules").delete().eq("id", id);
+
+        if (error) {
+          message.textContent = "削除に失敗しました：" + error.message;
+          return;
+        }
+
+        message.textContent = "削除しました。";
+        location.reload();
+      });
+    });
+  </script>
+</BaseLayout>

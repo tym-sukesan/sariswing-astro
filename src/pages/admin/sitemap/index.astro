@@ -1,0 +1,208 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="Sitemap Admin | SARI" admin>
+  <main class="admin-page admin-page--wide">
+    <div class="admin-page-header">
+      <a class="admin-back-link" href="/admin/">← 管理画面トップ</a>
+      <h1>Sitemap生成</h1>
+    </div>
+
+    <section class="admin-card sitemap-admin-card">
+      <h2>sitemap.xml 手動生成</h2>
+      <p class="sitemap-admin-help">
+        NEWS と Schedule の公開データを取得して sitemap.xml を生成します。内容を確認してコピーまたはダウンロードしてください。
+      </p>
+
+      <div class="admin-actions">
+        <button id="generateSitemap" class="admin-button" type="button">Sitemap生成</button>
+        <button id="copySitemap" class="admin-button admin-button-secondary" type="button">コピー</button>
+        <button id="downloadSitemap" class="admin-button admin-button-secondary" type="button">
+          sitemap.xml をダウンロード
+        </button>
+      </div>
+
+      <p id="sitemapCount" class="sitemap-admin-count" aria-live="polite">0件のURLを生成</p>
+      <p id="sitemapMessage" class="admin-message" aria-live="polite"></p>
+
+      <label class="admin-form__field sitemap-admin-output">
+        <span class="admin-form__label">sitemap.xml</span>
+        <textarea id="sitemapOutput" rows="18" readonly></textarea>
+      </label>
+    </section>
+  </main>
+
+  <script>
+    import { supabase } from "../../../lib/supabase";
+
+    const BASE_URL = "https://sariswing.com";
+    const STATIC_PATHS = ["/", "/about/", "/live-schedule/", "/news/", "/discography/", "/contact/"];
+
+    const generateButton = document.getElementById("generateSitemap");
+    const copyButton = document.getElementById("copySitemap");
+    const downloadButton = document.getElementById("downloadSitemap");
+    const output = document.getElementById("sitemapOutput");
+    const countText = document.getElementById("sitemapCount");
+    const message = document.getElementById("sitemapMessage");
+
+    function normalizeDate(value) {
+      if (!value) return null;
+      if (value instanceof Date) {
+        return Number.isNaN(value.getTime()) ? null : value.toISOString().slice(0, 10);
+      }
+      const text = String(value).trim();
+      const match = text.match(/^(\d{4}-\d{2}-\d{2})/);
+      if (match) return match[1];
+      const parsed = new Date(text);
+      if (Number.isNaN(parsed.getTime())) return null;
+      return parsed.toISOString().slice(0, 10);
+    }
+
+    function formatMonth(value) {
+      const normalized = normalizeDate(value);
+      return normalized ? normalized.slice(0, 7) : null;
+    }
+
+    function escapeXml(value) {
+      return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&apos;");
+    }
+
+    function buildSitemapXml(entries) {
+      const body = entries
+        .map((entry) => {
+          if (entry.lastmod) {
+            return `  <url>\n    <loc>${escapeXml(entry.loc)}</loc>\n    <lastmod>${entry.lastmod}</lastmod>\n  </url>`;
+          }
+          return `  <url>\n    <loc>${escapeXml(entry.loc)}</loc>\n  </url>`;
+        })
+        .join("\n");
+
+      return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${body}\n</urlset>`;
+    }
+
+    async function fetchPublishedNews() {
+      const { data, error } = await supabase
+        .from("news")
+        .select("slug,url,content,date")
+        .eq("is_published", true);
+
+      if (error) throw error;
+      return data ?? [];
+    }
+
+    async function fetchPublishedSchedules() {
+      const { data, error } = await supabase.from("schedules").select("date").eq("is_published", true);
+
+      if (error) throw error;
+      return data ?? [];
+    }
+
+    function buildEntries({ newsItems, scheduleItems }) {
+      const entries = [];
+      const addedLocs = new Set();
+
+      function pushEntry(path, lastmod = null) {
+        const loc = `${BASE_URL}${path}`;
+        if (addedLocs.has(loc)) return;
+        entries.push({ loc, lastmod });
+        addedLocs.add(loc);
+      }
+
+      STATIC_PATHS.forEach((path) => {
+        pushEntry(path);
+      });
+
+      const monthLastmodMap = new Map();
+      scheduleItems.forEach((item) => {
+        const month = formatMonth(item?.date);
+        const normalized = normalizeDate(item?.date);
+        if (!month) return;
+        const prev = monthLastmodMap.get(month);
+        if (!prev || (normalized && normalized > prev)) {
+          monthLastmodMap.set(month, normalized ?? prev ?? null);
+        }
+      });
+
+      [...monthLastmodMap.entries()]
+        .sort(([a], [b]) => a.localeCompare(b))
+        .forEach(([month, lastmod]) => {
+          pushEntry(`/live-schedule/${month}/`, lastmod);
+        });
+
+      newsItems.forEach((item) => {
+        const slug = item?.slug?.trim();
+        const url = item?.url?.trim();
+        const content = item?.content?.trim();
+        if (!slug || url || !content) return;
+        pushEntry(`/news/${slug}/`, normalizeDate(item?.date));
+      });
+
+      return entries;
+    }
+
+    async function generateSitemap() {
+      message.textContent = "";
+      generateButton.disabled = true;
+      generateButton.textContent = "生成中...";
+
+      try {
+        const [newsItems, scheduleItems] = await Promise.all([fetchPublishedNews(), fetchPublishedSchedules()]);
+        const entries = buildEntries({ newsItems, scheduleItems });
+        const xml = buildSitemapXml(entries);
+
+        output.value = xml;
+        countText.textContent = `${entries.length}件のURLを生成`;
+        message.textContent = "sitemap.xml を生成しました。";
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : "不明なエラーが発生しました。";
+        message.textContent = `生成に失敗しました: ${errorMessage}`;
+      } finally {
+        generateButton.disabled = false;
+        generateButton.textContent = "Sitemap生成";
+      }
+    }
+
+    copyButton?.addEventListener("click", async () => {
+      if (!output.value.trim()) {
+        message.textContent = "先に sitemap.xml を生成してください。";
+        return;
+      }
+
+      try {
+        await navigator.clipboard.writeText(output.value);
+        message.textContent = "クリップボードにコピーしました。";
+      } catch {
+        output.focus();
+        output.select();
+        const copied = document.execCommand("copy");
+        message.textContent = copied ? "クリップボードにコピーしました。" : "コピーに失敗しました。";
+      }
+    });
+
+    downloadButton?.addEventListener("click", () => {
+      if (!output.value.trim()) {
+        message.textContent = "先に sitemap.xml を生成してください。";
+        return;
+      }
+
+      const blob = new Blob([output.value], { type: "application/xml;charset=utf-8" });
+      const blobUrl = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = blobUrl;
+      link.download = "sitemap.xml";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(blobUrl);
+      message.textContent = "sitemap.xml をダウンロードしました。";
+    });
+
+    generateButton?.addEventListener("click", generateSitemap);
+  </script>
+</BaseLayout>

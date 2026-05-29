@@ -367,10 +367,36 @@ header .zdo_drawer_button .zdo_drawer_bar {
     background-color: #000;
 }
 
-#topImages {
+body:has(main.top-page),
+html:has(main.top-page) {
+    overflow-x: hidden;
+}
+
+body:has(main.top-page) {
+    min-width: 0;
+}
+
+#topImages,
+.top-hero {
+    position: relative;
+    box-sizing: border-box;
+    width: 100vw;
+    max-width: 100vw;
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
     margin-bottom: 50px;
-    transition: .8s;
-    transition-delay: .8s;
+    overflow: hidden;
+    transition: 0.8s;
+    transition-delay: 0.8s;
+}
+
+#topImages img,
+.top-hero__image {
+    display: block;
+    width: 100%;
+    max-width: none;
+    height: auto;
+    vertical-align: bottom;
 }
 #scrollBtn {
     position: absolute;
@@ -1636,7 +1662,12 @@ footer .copyright {
     section#sec-instagram {
         text-align: center;
     }
-    #topImages {
+    #topImages,
+    .top-hero {
+        width: 100vw;
+        max-width: 100vw;
+        margin-left: calc(50% - 50vw);
+        margin-right: calc(50% - 50vw);
         padding-top: 50px;
     }
     #scrollBtn {

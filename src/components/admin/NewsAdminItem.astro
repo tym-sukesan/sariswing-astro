@@ -1,0 +1,152 @@
+---
+import { formatNewsDate } from "../../lib/news";
+
+interface Props {
+  item: {
+    id: string | number;
+    date: string;
+    title: string;
+    slug?: string | null;
+    url?: string | null;
+    excerpt?: string | null;
+    content?: string | null;
+    image_url?: string | null;
+    category?: string | null;
+    is_published: boolean;
+  };
+  listIndex?: number;
+}
+
+const { item, listIndex = 0 } = Astro.props;
+
+const url = item.url?.trim() || "";
+const content = item.content?.trim() || "";
+const displayDate = formatNewsDate(item.date);
+
+function getLinkTypeLabel() {
+  if (url) {
+    return /^https?:\/\//i.test(url) ? "外部リンク" : "内部リンク";
+  }
+  if (content) return "詳細ページ";
+  return "一覧のみ";
+}
+
+const linkTypeLabel = getLinkTypeLabel();
+
+const searchText = [
+  item.date,
+  displayDate,
+  item.title,
+  item.category,
+  item.excerpt,
+  item.content,
+  item.url,
+  item.slug,
+  item.image_url,
+]
+  .filter(Boolean)
+  .join(" ")
+  .toLowerCase();
+---
+
+<li
+  class:list={[
+    "news-admin-item",
+    "admin-list__item",
+    { "is-list-hidden": listIndex >= 10 },
+  ]}
+  data-id={item.id}
+  data-list-index={listIndex}
+  data-search-text={searchText}
+>
+  <div class="news-admin-item__header">
+    <p class="news-admin-item__summary">
+      <span class="news-admin-item__date">{displayDate}</span>
+      {item.category && <span class="news-admin-item__category">{item.category}</span>}
+      <strong class="news-admin-item__title">{item.title}</strong>
+    </p>
+
+    <p class="news-admin-item__status">
+      {item.is_published ? "公開" : "非公開"} / {linkTypeLabel}
+    </p>
+
+    <div class="news-admin-item__actions admin-actions">
+      <button type="button" class="admin-button admin-button--small toggle-edit">編集</button>
+      <button type="button" class="admin-button admin-button--small admin-button-secondary duplicate">複製</button>
+      <button type="button" class="admin-button admin-button--small admin-button-danger delete">削除</button>
+    </div>
+  </div>
+
+  <form class="admin-form admin-form--grid news-edit-form is-hidden">
+    <div class="admin-form__row">
+      <label class="admin-form__field">
+        <span class="admin-form__label">日付</span>
+        <input data-field="date" name="date" type="date" value={item.date} required />
+      </label>
+
+      <label class="admin-form__field">
+        <span class="admin-form__label">カテゴリ</span>
+        <input data-field="category" name="category" type="text" value={item.category || ""} />
+      </label>
+    </div>
+
+    <div class="admin-form__row">
+      <label class="admin-form__field">
+        <span class="admin-form__label">タイトル</span>
+        <input data-field="title" name="title" type="text" value={item.title} required />
+      </label>
+
+      <label class="admin-form__field">
+        <span class="admin-form__label">slug（詳細ページ用）</span>
+        <input data-field="slug" name="slug" type="text" value={item.slug || ""} />
+        <span class="admin-form__hint">未入力時はタイトルから自動生成（日本語のみの場合は日付ベース）</span>
+      </label>
+    </div>
+
+    <div class="admin-form__row">
+      <label class="admin-form__field">
+        <span class="admin-form__label">リンクURL（任意）</span>
+        <input data-field="url" name="url" type="text" value={item.url || ""} placeholder="/discography/... または https://..." />
+        <span class="admin-form__hint">
+          URL を設定すると詳細ページは作らず、このリンク先へ遷移します（一覧・トップのNEWSから直接リンク）。
+        </span>
+      </label>
+
+      <label class="admin-form__field">
+        <span class="admin-form__label">アイキャッチ画像URL</span>
+        <input data-field="image_url" name="image_url" type="text" value={item.image_url || ""} />
+      </label>
+    </div>
+
+    <label class="admin-form__field">
+      <span class="admin-form__label">抜粋</span>
+      <textarea data-field="excerpt" name="excerpt" rows="2">{item.excerpt || ""}</textarea>
+    </label>
+
+    <label class="admin-form__field admin-form__field--content">
+      <span class="admin-form__label">本文（HTML可）</span>
+      <textarea data-field="content" name="content" rows="12">{item.content || ""}</textarea>
+    </label>
+
+    <label class="admin-form__checkbox">
+      <input data-field="is_published" name="is_published" type="checkbox" value="true" checked={item.is_published} />
+      <span>公開する（is_published）</span>
+    </label>
+
+    {!url && item.slug && (
+      <p class="admin-form__hint">
+        詳細ページ: <a href={`/news/${item.slug}/`} target="_blank" rel="noopener noreferrer">/news/{item.slug}/</a>
+      </p>
+    )}
+
+    {url && (
+      <p class="admin-form__hint">
+        リンク先: <a href={url} target="_blank" rel="noopener noreferrer">{url}</a>
+      </p>
+    )}
+
+    <div class="admin-actions">
+      <button class="admin-button update" type="button">更新</button>
+    </div>
+  </form>
+</li>

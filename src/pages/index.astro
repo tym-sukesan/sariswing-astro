@@ -3,14 +3,15 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import NewsList from "../components/NewsList.astro";
+import InstagramFeed from "../components/InstagramFeed.astro";
 ---
 
 <BaseLayout title="紗理 / SARI">
   <Header />
 
-  <main>
-    <div id="topImages">
-      <img src="/images/top/004.jpg" />
+  <main class="top-page">
+    <div id="topImages" class="top-hero">
+      <img class="top-hero__image" src="/images/top/004.jpg" alt="紗理 / SARI" width="1920" height="1080" />
     </div>
 
     <div id="to_webshop">
@@ -27,15 +28,7 @@ import NewsList from "../components/NewsList.astro";
 
     <NewsList />
 
-    <section id="sec-instagram" class="top-sec sec-instagram">
-      <h2 class="instaTitle">
-        <a href="https://www.instagram.com/sariswing/" target="_blank">
-          <span>INSTAGRAM</span><br />
-          日々のあれこれとレコードとつぶやき。<br />
-          @sariswing
-        </a>
-      </h2>
-    </section>
+    <InstagramFeed />
 
     <section id="otonaJazz">
       <h2>オトナの Jazz Time</h2>

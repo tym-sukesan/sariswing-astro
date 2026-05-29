@@ -1,0 +1,678 @@
+@charset "UTF-8";
+
+/* ----------------------------------------------------------------------------------------------------
+ *  管理画面共通
+ * --------------------------------------------------------------------------------------------------*/
+body.admin-body {
+  background: #f5f5f5;
+  min-height: 100vh;
+}
+
+.admin-page {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0 16px 64px;
+}
+
+.admin-page--wide {
+  max-width: 1120px;
+}
+
+.admin-page *,
+.admin-page *::before,
+.admin-page *::after {
+  box-sizing: border-box;
+}
+
+.admin-page-header {
+  margin: 0 0 32px;
+  padding: 48px 0 0;
+  text-align: left;
+}
+
+.admin-page-header h1 {
+  margin: 0;
+  font-size: clamp(28px, 4vw, 44px);
+  font-weight: 400;
+  line-height: 1.4;
+  color: #333;
+  letter-spacing: 0.06em;
+}
+
+.admin-back-link {
+  display: inline-block;
+  margin: 0 0 12px;
+  font-size: 1.3rem;
+  color: #888;
+  text-decoration: none;
+  letter-spacing: 0.06em;
+  transition: color 0.2s ease;
+}
+
+.admin-back-link:hover {
+  color: #333;
+}
+
+.admin-card {
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 20px 16px;
+  margin-bottom: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+.admin-card > h2 {
+  margin: 0 0 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #eee;
+  font-size: 1.6rem;
+  font-weight: bold;
+  color: #333;
+  letter-spacing: 0.08em;
+}
+
+.admin-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.admin-form__field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  font-size: 1.4rem;
+  color: #333;
+}
+
+.admin-form__label {
+  font-weight: bold;
+  letter-spacing: 0.05em;
+}
+
+.admin-form__hint {
+  font-size: 1.2rem;
+  line-height: 1.5;
+  color: #888;
+  letter-spacing: 0.04em;
+}
+
+.admin-form input[type="date"],
+.admin-form input[type="text"],
+.admin-form input[type="url"],
+.admin-form input[type="time"],
+.admin-form select,
+.admin-form textarea {
+  width: 100%;
+  max-width: 100%;
+  padding: 12px 14px;
+  font-size: 1.6rem;
+  line-height: 1.5;
+  color: #333;
+  background: #fafafa;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.admin-form select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23666' d='M6 8L0 0h12z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  padding-right: 36px;
+}
+
+.admin-form__checkbox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  font-size: 1.4rem;
+  cursor: pointer;
+}
+
+.admin-form__checkbox input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  cursor: pointer;
+  accent-color: #333;
+}
+
+.admin-form textarea {
+  min-height: 140px;
+  resize: vertical;
+  font-family: inherit;
+}
+
+.admin-form--grid {
+  gap: 14px;
+}
+
+.admin-form__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.admin-form__row .admin-form__hint {
+  grid-column: 1 / -1;
+}
+
+.is-hidden,
+.is-list-hidden,
+.is-search-hidden {
+  display: none !important;
+}
+
+.schedule-admin-search {
+  display: block;
+  margin-bottom: 20px;
+}
+
+.schedule-admin-search__label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: #555;
+  letter-spacing: 0.08em;
+}
+
+.schedule-admin-search__input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px 14px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: #fafafa;
+  font-size: 1.4rem;
+  font-family: inherit;
+}
+
+.schedule-admin-search__input:focus {
+  outline: none;
+  border-color: #999;
+  background: #fff;
+}
+
+.schedule-admin-search__status {
+  margin: 0 0 16px;
+  font-size: 1.3rem;
+  color: #666;
+}
+
+.admin-button--small {
+  min-height: 36px;
+  padding: 8px 14px;
+  font-size: 1.3rem;
+}
+
+.schedule-admin-list {
+  gap: 10px;
+}
+
+.schedule-admin-item {
+  padding: 12px 14px;
+}
+
+.schedule-admin-item__header {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.schedule-admin-item__summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.35em 0.6em;
+  margin: 0;
+  font-size: 1.4rem;
+  line-height: 1.5;
+  color: #333;
+}
+
+.schedule-admin-item__icon {
+  font-size: 1.6rem;
+  line-height: 1;
+}
+
+.schedule-admin-item__date {
+  font-weight: bold;
+}
+
+.schedule-admin-item__title {
+  font-weight: bold;
+}
+
+.schedule-admin-item__venue {
+  color: #666;
+}
+
+.schedule-admin-item__status {
+  margin: 0;
+  font-size: 1.2rem;
+  color: #777;
+  letter-spacing: 0.05em;
+}
+
+.schedule-admin-item__actions {
+  margin-top: 0;
+}
+
+.schedule-admin-item .schedule-edit-form {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px dashed #ddd;
+}
+
+.schedule-admin-empty {
+  margin: 0;
+  font-size: 1.4rem;
+  color: #777;
+}
+
+.schedule-admin-past {
+  margin: 0;
+}
+
+.schedule-admin-past__summary {
+  cursor: pointer;
+  font-size: 1.6rem;
+  font-weight: bold;
+  color: #333;
+  letter-spacing: 0.08em;
+  list-style: none;
+  margin-bottom: 0;
+}
+
+.schedule-admin-past[open] .schedule-admin-past__summary {
+  margin-bottom: 16px;
+}
+
+.schedule-admin-load-more {
+  margin-top: 16px;
+}
+
+.schedule-admin-past__summary::-webkit-details-marker {
+  display: none;
+}
+
+.schedule-admin-past__summary::before {
+  content: "▶ ";
+  font-size: 0.85em;
+}
+
+.schedule-admin-past[open] .schedule-admin-past__summary::before {
+  content: "▼ ";
+}
+
+.schedule-admin-past .schedule-admin-list {
+  margin-top: 8px;
+}
+
+/* Instagram管理 */
+.instagram-admin-list {
+  gap: 24px;
+}
+
+.instagram-admin-item {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+}
+
+.instagram-admin-item__preview {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.instagram-admin-preview {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  overflow: hidden;
+}
+
+.instagram-admin-preview blockquote.instagram-media {
+  max-width: 100% !important;
+  min-width: 0 !important;
+  width: 100% !important;
+  margin: 0 auto !important;
+}
+
+.instagram-admin-item__editor {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.instagram-admin-item__editor .admin-form {
+  margin: 0;
+  flex: 1;
+}
+
+.instagram-admin-item__editor .edit-embed-code {
+  min-height: 420px;
+  resize: vertical;
+}
+
+.instagram-admin-item__editor .admin-actions {
+  margin-top: 16px;
+}
+
+@media screen and (min-width: 769px) {
+  .instagram-admin-item {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 28px;
+    padding: 24px;
+  }
+
+  .instagram-admin-item__preview {
+    flex: 0 0 420px;
+    max-width: 420px;
+  }
+
+  .instagram-admin-item__editor {
+    flex: 1;
+  }
+
+  .instagram-admin-preview blockquote.instagram-media {
+    max-width: 400px !important;
+  }
+}
+
+/* NEWS管理 */
+.news-admin-search {
+  display: block;
+  margin-bottom: 20px;
+}
+
+.news-admin-search__label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: #555;
+  letter-spacing: 0.08em;
+}
+
+.news-admin-search__input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px 14px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: #fafafa;
+  font-size: 1.4rem;
+  font-family: inherit;
+}
+
+.news-admin-search__input:focus {
+  outline: none;
+  border-color: #999;
+  background: #fff;
+}
+
+.news-admin-search__status {
+  margin: 0 0 16px;
+  font-size: 1.3rem;
+  color: #666;
+}
+
+.news-admin-list {
+  gap: 10px;
+}
+
+.news-admin-item {
+  padding: 12px 14px;
+}
+
+.news-admin-item__header {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.news-admin-item__summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.35em 0.6em;
+  margin: 0;
+  font-size: 1.4rem;
+  line-height: 1.5;
+  color: #333;
+}
+
+.news-admin-item__date {
+  font-weight: bold;
+  letter-spacing: 0.08em;
+}
+
+.news-admin-item__category {
+  font-size: 1.2rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #666;
+}
+
+.news-admin-item__title {
+  font-weight: bold;
+}
+
+.news-admin-item__status {
+  margin: 0;
+  font-size: 1.2rem;
+  color: #777;
+  letter-spacing: 0.05em;
+}
+
+.news-admin-item__actions {
+  margin-top: 0;
+}
+
+.news-admin-item .news-edit-form {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px dashed #ddd;
+}
+
+.news-admin-empty {
+  margin: 0;
+  font-size: 1.4rem;
+  color: #777;
+}
+
+.news-admin-load-more {
+  margin-top: 16px;
+}
+
+.news-admin-form .admin-form__field--content textarea,
+.news-admin-item .admin-form__field--content textarea {
+  min-height: 280px;
+}
+
+.admin-form input:focus,
+.admin-form select:focus,
+.admin-form textarea:focus {
+  outline: none;
+  border-color: #999;
+  background: #fff;
+}
+
+.admin-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.admin-list__item {
+  padding: 16px;
+  background: #fafafa;
+  border: 1px solid #e8e8e8;
+  border-radius: 6px;
+}
+
+.admin-list__summary {
+  margin: 0 0 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px dashed #ddd;
+  font-size: 1.3rem;
+  line-height: 1.6;
+  color: #666;
+  letter-spacing: 0.05em;
+}
+
+.admin-list__summary strong {
+  color: #333;
+  font-size: 1.5rem;
+}
+
+.admin-button-secondary {
+  background: #666;
+}
+
+.admin-button-secondary:hover {
+  background: #888;
+}
+
+.admin-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.admin-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 10px 20px;
+  font-size: 1.4rem;
+  font-weight: bold;
+  letter-spacing: 0.08em;
+  color: #fff;
+  background: #333;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.admin-button:hover {
+  background: #555;
+}
+
+.admin-button-danger {
+  background: #a33;
+}
+
+.admin-button-danger:hover {
+  background: #c44;
+}
+
+.admin-button--menu {
+  width: 100%;
+  min-height: 52px;
+  font-size: 1.5rem;
+  font-weight: normal;
+  color: #333;
+  background: #fff;
+  border: 1px solid #ccc;
+  text-decoration: none;
+}
+
+.admin-button--menu:hover {
+  color: #666;
+  background: #fafafa;
+  border-color: #999;
+}
+
+.admin-button--menu.is-disabled {
+  color: #999;
+  cursor: default;
+  pointer-events: none;
+}
+
+.admin-message {
+  margin: 16px 0 0;
+  font-size: 1.4rem;
+  line-height: 1.6;
+  color: #a33;
+  letter-spacing: 0.05em;
+}
+
+.admin-message:empty {
+  display: none;
+}
+
+.admin-nav {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sitemap-admin-card .admin-actions {
+  margin-bottom: 12px;
+}
+
+.sitemap-admin-help {
+  margin: 0 0 16px;
+  font-size: 1.3rem;
+  line-height: 1.7;
+  color: #666;
+}
+
+.sitemap-admin-count {
+  margin: 0 0 10px;
+  font-size: 1.4rem;
+  color: #444;
+  letter-spacing: 0.05em;
+}
+
+.sitemap-admin-output {
+  margin-top: 10px;
+}
+
+.sitemap-admin-output textarea {
+  min-height: 340px;
+  font-family: SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace;
+}
+
+@media screen and (min-width: 480px) {
+  .admin-page {
+    padding: 0 24px 80px;
+  }
+
+  .admin-card {
+    padding: 28px 24px;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .admin-page-header {
+    padding-top: 32px;
+    margin-bottom: 24px;
+  }
+
+  .admin-form__row {
+    grid-template-columns: 1fr;
+  }
+}

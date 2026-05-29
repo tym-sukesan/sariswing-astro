@@ -1,0 +1,170 @@
+---
+import { getTimeTypeSymbol } from "../../lib/schedule";
+
+interface Props {
+  item: {
+    id?: string | number | null;
+    date: string;
+    time_type?: string | null;
+    title?: string | null;
+    venue_name?: string | null;
+    venue_id?: number | null;
+    genre?: string | null;
+    open_time?: string | null;
+    start_time?: string | null;
+    price?: string | null;
+    members?: string | null;
+    reservation_url?: string | null;
+    note?: string | null;
+    image_url?: string | null;
+    is_published?: boolean | null;
+    is_special?: boolean | null;
+  };
+  venues: { name: string }[] | null;
+  timeTypeOptions: string[];
+  listIndex?: number;
+}
+
+const { item, venues, timeTypeOptions, listIndex = 0 } = Astro.props;
+const symbol = getTimeTypeSymbol(item.time_type);
+
+const searchText = [item.date, item.title, item.venue_name, item.genre, item.members, item.price, item.note]
+  .filter(Boolean)
+  .join(" ")
+  .toLowerCase();
+---
+
+<li
+  class:list={[
+    "schedule-admin-item",
+    "admin-list__item",
+    { "is-list-hidden": listIndex >= 10 },
+  ]}
+  data-id={item.id ?? ""}
+  data-list-index={listIndex}
+  data-search-text={searchText}
+>
+  <div class="schedule-admin-item__header">
+    <p class="schedule-admin-item__summary">
+      {symbol && <span class="schedule-admin-item__icon" aria-hidden="true">{symbol}</span>}
+      <span class="schedule-admin-item__date">{item.date}</span>
+      <strong class="schedule-admin-item__title">{item.title || "（タイトル未設定）"}</strong>
+      {item.venue_name && <span class="schedule-admin-item__venue">{item.venue_name}</span>}
+    </p>
+
+    <p class="schedule-admin-item__status">
+      {item.is_published ? "公開" : "非公開"}
+      {item.is_special ? " / TOUR" : " / 通常"}
+    </p>
+
+    <div class="schedule-admin-item__actions admin-actions">
+      <button type="button" class="admin-button admin-button--small toggle-edit">編集</button>
+      <button type="button" class="admin-button admin-button--small admin-button-secondary duplicate">複製</button>
+      <button type="button" class="admin-button admin-button--small admin-button-danger delete">削除</button>
+    </div>
+  </div>
+
+  <form class="admin-form admin-form--grid schedule-edit-form is-hidden">
+    <div class="admin-form__row">
+      <label class="admin-form__field">
+        <span class="admin-form__label">日付</span>
+        <input data-field="date" name="date" type="date" value={item.date} />
+      </label>
+
+      <label class="admin-form__field">
+        <span class="admin-form__label">時間帯</span>
+        <select data-field="time_type" name="time_type">
+          {timeTypeOptions.map((option) => (
+            <option value={option} selected={item.time_type === option}>
+              {option}
+            </option>
+          ))}
+        </select>
+      </label>
+    </div>
+
+    <div class="admin-form__row">
+      <label class="admin-form__field">
+        <span class="admin-form__label">会場（venues から選択）</span>
+        <select data-field="venue_id" name="venue_id">
+          <option value="" selected={!item.venue_id}>未選択</option>
+          {venues?.map((venue) => (
+            <option value="" data-venue-name={venue.name} selected={item.venue_name === venue.name}>
+              {venue.name}
+            </option>
+          ))}
+        </select>
+      </label>
+
+      <label class="admin-form__field">
+        <span class="admin-form__label">会場名（自由入力）</span>
+        <input data-field="venue_name" name="venue_name" type="text" value={item.venue_name || ""} />
+      </label>
+    </div>
+
+    <label class="admin-form__field">
+      <span class="admin-form__label">タイトル</span>
+      <input data-field="title" name="title" type="text" value={item.title || ""} />
+    </label>
+
+    <div class="admin-form__row">
+      <label class="admin-form__field">
+        <span class="admin-form__label">開場時間</span>
+        <input data-field="open_time" name="open_time" type="text" value={item.open_time || ""} />
+      </label>
+
+      <label class="admin-form__field">
+        <span class="admin-form__label">開演時間</span>
+        <input data-field="start_time" name="start_time" type="text" value={item.start_time || ""} />
+      </label>
+    </div>
+
+    <div class="admin-form__row">
+      <label class="admin-form__field">
+        <span class="admin-form__label">料金</span>
+        <input data-field="price" name="price" type="text" value={item.price || ""} />
+      </label>
+
+      <label class="admin-form__field">
+        <span class="admin-form__label">ジャンル</span>
+        <input data-field="genre" name="genre" type="text" value={item.genre || ""} />
+      </label>
+    </div>
+
+    <label class="admin-form__field">
+      <span class="admin-form__label">メンバー</span>
+      <input data-field="members" name="members" type="text" value={item.members || ""} />
+    </label>
+
+    <label class="admin-form__field">
+      <span class="admin-form__label">予約URL</span>
+      <input data-field="reservation_url" name="reservation_url" type="url" value={item.reservation_url || ""} />
+    </label>
+
+    <label class="admin-form__field">
+      <span class="admin-form__label">画像URL</span>
+      <input data-field="image_url" name="image_url" type="url" value={item.image_url || ""} />
+    </label>
+
+    <label class="admin-form__field">
+      <span class="admin-form__label">備考</span>
+      <textarea data-field="note" name="note" rows="3">{item.note || ""}</textarea>
+    </label>
+
+    <div class="admin-form__row">
+      <label class="admin-form__checkbox">
+        <input data-field="is_published" name="is_published" type="checkbox" value="true" checked={item.is_published} />
+        <span>公開する（is_published）</span>
+      </label>
+
+      <label class="admin-form__checkbox">
+        <input data-field="is_special" name="is_special" type="checkbox" value="true" checked={item.is_special} />
+        <span>TOUR・特集掲載（is_special）</span>
+      </label>
+    </div>
+
+    <div class="admin-actions">
+      <button class="admin-button update" type="button">更新</button>
+    </div>
+  </form>
+</li>

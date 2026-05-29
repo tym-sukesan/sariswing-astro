@@ -1,0 +1,32 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="ADMIN | SARI" admin>
+  <main class="admin-page">
+    <div class="admin-page-header">
+      <h1>管理画面</h1>
+    </div>
+
+    <section class="admin-card">
+      <h2>メニュー</h2>
+
+      <nav aria-label="管理メニュー">
+        <ul class="admin-nav">
+          <li>
+            <a class="admin-button admin-button--menu" href="/admin/news/">NEWS管理</a>
+          </li>
+          <li>
+            <a class="admin-button admin-button--menu" href="/admin/instagram/">Instagram管理</a>
+          </li>
+          <li>
+            <a class="admin-button admin-button--menu" href="/admin/schedule/">Schedule管理</a>
+          </li>
+          <li>
+            <a class="admin-button admin-button--menu" href="/admin/sitemap/">Sitemap生成</a>
+          </li>
+        </ul>
+      </nav>
+    </section>
+  </main>
+</BaseLayout>

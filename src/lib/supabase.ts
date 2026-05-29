@@ -1,6 +1,12 @@
 import { createClient } from "@supabase/supabase-js";
 
-const supabaseUrl = "https://vsbvndwuajjhnzpohghh.supabase.co";
-const supabaseKey = "sb_publishable_sGvemzdx-fv_aKwzXebCYw_K1fVIwWa";
+const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY;
 
-export const supabase = createClient(supabaseUrl, supabaseKey);
+if (!supabaseUrl || !supabaseAnonKey) {
+  throw new Error(
+    "PUBLIC_SUPABASE_URL と PUBLIC_SUPABASE_ANON_KEY を設定してください（.env.example を参照）"
+  );
+}
+
+export const supabase = createClient(supabaseUrl, supabaseAnonKey);

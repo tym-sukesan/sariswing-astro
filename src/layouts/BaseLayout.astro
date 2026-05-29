@@ -1,5 +1,30 @@
 ---
-const { title = "SARI SWING" } = Astro.props;
+interface Props {
+  title?: string;
+  admin?: boolean;
+  description?: string;
+  ogImage?: string;
+  ogType?: string;
+  canonical?: string;
+}
+
+const {
+  title = "SARI SWING",
+  admin = false,
+  description,
+  ogImage,
+  ogType = "website",
+  canonical,
+} = Astro.props;
+
+const siteOrigin = Astro.site ?? Astro.url;
+const defaultOgImage = "/ogp.jpg";
+
+const canonicalUrl = new URL(canonical ?? Astro.url.pathname, siteOrigin).toString();
+
+const ogImageUrl = ogImage
+  ? new URL(ogImage, siteOrigin).toString()
+  : new URL(defaultOgImage, siteOrigin).toString();
 ---
 
 <!doctype html>
@@ -7,18 +32,31 @@ const { title = "SARI SWING" } = Astro.props;
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
+    {description && <meta name="description" content={description} />}
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="icon" href="/favicon.ico" />
+    <meta property="og:title" content={title} />
+    {description && <meta property="og:description" content={description} />}
+    <meta property="og:type" content={ogType} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    {description && <meta name="twitter:description" content={description} />}
+    <meta name="twitter:image" content={ogImageUrl} />
     <script is:inline src="/js/jquery.min.js"></script>
     <script is:inline src="/js/jquery.inview.js"></script>
     <script is:inline src="/js/main.js"></script>
     <link rel="stylesheet" href="/css/common.css" />
     <link rel="stylesheet" href="/css/index.css" />
+    {admin && <link rel="stylesheet" href="/css/admin.css" />}
     <link rel="stylesheet" href="/css/animate.css" />
     <link href="https://fonts.googleapis.com/css?family=Poiret+One&display=swap" rel="stylesheet" />
     <link href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" rel="stylesheet" />
     <title>{title}</title>
   </head>
 
-  <body>
+  <body class:list={{ "admin-body": admin }}>
     <slot />
   </body>
 </html>

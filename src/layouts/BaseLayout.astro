@@ -1,4 +1,6 @@
 ---
+import AdminDeployBar from "../components/admin/AdminDeployBar.astro";
+
 interface Props {
   title?: string;
   admin?: boolean;
@@ -60,6 +62,7 @@ const ogImageUrl = ogImage
   </head>
 
   <body class:list={{ "admin-body": admin }}>
+    {admin && <AdminDeployBar />}
     <slot />
   </body>
 </html>

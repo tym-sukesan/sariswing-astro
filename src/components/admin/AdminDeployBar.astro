@@ -1,0 +1,22 @@
+---
+---
+
+<aside class="admin-deploy-bar" aria-label="公開サイト更新">
+  <div class="admin-deploy-bar__inner">
+    <div class="admin-deploy-bar__text">
+      <p class="admin-deploy-bar__title">公開サイトを更新</p>
+      <p class="admin-deploy-bar__desc">
+        Supabase の変更を本番サイトに反映するには、再ビルド・FTP デプロイが必要です。
+      </p>
+    </div>
+    <div class="admin-deploy-bar__actions">
+      <button id="triggerDeploy" class="admin-button" type="button">公開サイトを更新</button>
+    </div>
+  </div>
+  <p id="deployMessage" class="admin-deploy-bar__message" aria-live="polite"></p>
+  <p id="deployHint" class="admin-deploy-bar__hint"></p>
+</aside>
+
+<script>
+  import "../../scripts/admin/deploy-trigger.ts";
+</script>

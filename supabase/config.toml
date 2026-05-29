@@ -1,0 +1,5 @@
+# Supabase ローカル開発用（Edge Function デプロイは supabase functions deploy を使用）
+# https://supabase.com/docs/guides/functions
+
+[functions.trigger-deploy]
+verify_jwt = false

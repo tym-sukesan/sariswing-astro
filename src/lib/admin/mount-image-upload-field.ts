@@ -63,7 +63,7 @@ function mountImageUploadField(
 
         button.disabled = true;
         const previousLabel = button.textContent;
-        button.textContent = "アップロード中...";
+        button.textContent = "画像を処理中...";
 
         try {
           const publicUrl = await uploadAdminImage(file, prefix);
@@ -143,7 +143,8 @@ export function appendImageUrlField(
 
   const hint = document.createElement("span");
   hint.className = "admin-form__hint";
-  hint.textContent = "URLを直接入力するか、下のボタンからアップロード（JPG / PNG / WebP・2MBまで）";
+  hint.textContent =
+    "URLを直接入力するか、下のボタンからアップロード（JPG / PNG / WebP・長辺1600px・2MBまで）";
 
   labelEl.append(labelSpan, urlInput, hint);
   wrap.append(labelEl);

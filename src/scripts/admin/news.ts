@@ -1,4 +1,5 @@
 import { createNewsAdminListItem } from "../../lib/admin/create-news-list-item";
+import { initImageUploadFields } from "../../lib/admin/mount-image-upload-field";
 import { initPaginatedList, type PaginatedListController } from "../../lib/admin/paginated-list";
 import { NEWS_SELECT, type NewsRecord } from "../../lib/news";
 import { supabase } from "../../lib/supabase";
@@ -91,6 +92,7 @@ function renderNewsList(items: NewsRecord[], newsList: HTMLElement) {
   items.forEach((item, index) => {
     newsList.append(createNewsAdminListItem(item, index));
   });
+  initImageUploadFields(newsList);
   updateListEmptyState(newsList);
 }
 
@@ -99,6 +101,8 @@ export function initNewsAdmin() {
   const addForm = document.getElementById("addNewsForm");
   const newsList = document.getElementById("newsList");
   const loadMoreBtn = document.getElementById("loadMoreNews");
+
+  initImageUploadFields(document);
 
   let newsController: PaginatedListController | null = null;
 

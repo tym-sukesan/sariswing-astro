@@ -637,6 +637,40 @@ body.admin-body {
   gap: 12px;
 }
 
+.admin-image-upload {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.admin-image-upload__toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.admin-image-upload__preview {
+  display: block;
+  max-width: 280px;
+  max-height: 200px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: #f8f8f8;
+}
+
+.admin-image-upload__preview.is-hidden {
+  display: none;
+}
+
+.admin-image-upload__button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 .sitemap-admin-card .admin-actions {
   margin-bottom: 12px;
 }

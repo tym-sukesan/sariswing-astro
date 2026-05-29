@@ -51,10 +51,15 @@ import BaseLayout from "../../../layouts/BaseLayout.astro";
             </span>
           </label>
 
-          <label class="admin-form__field">
-            <span class="admin-form__label">アイキャッチ画像URL</span>
-            <input data-field="image_url" name="image_url" type="text" placeholder="https://..." />
-          </label>
+          <div class="admin-image-upload" data-image-upload="news">
+            <label class="admin-form__field">
+              <span class="admin-form__label">アイキャッチ画像</span>
+              <input data-field="image_url" name="image_url" type="text" placeholder="https://..." />
+              <span class="admin-form__hint">
+                URLを直接入力するか、下のボタンからアップロード（JPG / PNG / WebP・2MBまで）
+              </span>
+            </label>
+          </div>
         </div>
 
         <label class="admin-form__field">

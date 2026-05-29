@@ -1,3 +1,4 @@
+import { appendImageUrlField } from "./mount-image-upload-field";
 import { getTimeTypeSymbol } from "../schedule";
 import { SCHEDULE_TIME_TYPE_OPTIONS, type ScheduleAdminRecord, type VenueOption } from "./schedule-constants";
 
@@ -235,12 +236,7 @@ export function createScheduleAdminListItem(
   reservationInput.value = item.reservation_url || "";
   appendField(form, "予約URL", reservationInput);
 
-  const imageInput = document.createElement("input");
-  imageInput.type = "url";
-  imageInput.name = "image_url";
-  imageInput.dataset.field = "image_url";
-  imageInput.value = item.image_url || "";
-  appendField(form, "画像URL", imageInput);
+  appendImageUrlField(form, "画像", item.image_url || "", "schedule");
 
   const noteArea = document.createElement("textarea");
   noteArea.name = "note";

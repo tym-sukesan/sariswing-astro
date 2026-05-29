@@ -1,3 +1,4 @@
+import { appendImageUrlField } from "./mount-image-upload-field";
 import { stripHtml } from "./strip-html";
 import { formatNewsDate, type NewsRecord } from "../news";
 
@@ -157,12 +158,7 @@ export function createNewsAdminListItem(item: NewsRecord, listIndex: number) {
   urlInput.value = item.url || "";
   appendField(row3, "リンクURL（任意）", urlInput);
 
-  const imageInput = document.createElement("input");
-  imageInput.type = "text";
-  imageInput.name = "image_url";
-  imageInput.dataset.field = "image_url";
-  imageInput.value = item.image_url || "";
-  appendField(row3, "アイキャッチ画像URL", imageInput);
+  appendImageUrlField(row3, "アイキャッチ画像", item.image_url || "", "news");
   form.append(row3);
 
   const excerptArea = document.createElement("textarea");

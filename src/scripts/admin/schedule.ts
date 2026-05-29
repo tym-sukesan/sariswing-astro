@@ -2,6 +2,7 @@ import {
   createScheduleAdminListItem,
   populateVenueSelect,
 } from "../../lib/admin/create-schedule-list-item";
+import { initImageUploadFields } from "../../lib/admin/mount-image-upload-field";
 import { initPaginatedList, type PaginatedListController } from "../../lib/admin/paginated-list";
 import {
   SCHEDULE_TIME_TYPE_OPTIONS,
@@ -144,6 +145,8 @@ export function initScheduleAdmin() {
   const pastList = document.getElementById("pastScheduleList");
   const addVenueSelect = document.getElementById("addVenueSelect");
 
+  initImageUploadFields(document);
+
   let venuesCache: VenueOption[] = [];
   let upcomingController: PaginatedListController | null = null;
   let pastController: PaginatedListController | null = null;
@@ -181,6 +184,9 @@ export function initScheduleAdmin() {
     past.forEach((item, index) => {
       pastList?.append(createScheduleAdminListItem(item, venues, index));
     });
+
+    if (upcomingList) initImageUploadFields(upcomingList);
+    if (pastList) initImageUploadFields(pastList);
 
     updateScheduleEmptyStates(upcoming.length, past.length);
     upcomingController?.refreshItems();

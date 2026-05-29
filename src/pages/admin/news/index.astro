@@ -1,10 +1,5 @@
 ---
 import BaseLayout from "../../../layouts/BaseLayout.astro";
-import NewsAdminItem from "../../../components/admin/NewsAdminItem.astro";
-import { fetchAllNews } from "../../../lib/news";
-
-const { data: news, error } = await fetchAllNews();
-const newsItems = news ?? [];
 ---
 
 <BaseLayout title="NEWS Admin | SARI" admin>
@@ -14,14 +9,9 @@ const newsItems = news ?? [];
       <h1>NEWS管理</h1>
     </div>
 
-    {error && (
-      <section class="admin-card">
-        <p class="admin-message">NEWS を取得できませんでした: {error.message}</p>
-        <p>
-          <code>scripts/supabase/news-migration.sql</code> を実行し、slug / excerpt / content などのカラムを追加してください。
-        </p>
-      </section>
-    )}
+    <p class="admin-form__hint admin-static-notice">
+      この一覧は Supabase から最新データを読み込んで表示します。公開サイト（/news/ ・トップなど）は静的HTMLのため、変更・削除を反映するには GitHub Actions での再ビルド・再デプロイが必要です。
+    </p>
 
     <section class="admin-card">
       <h2>NEWS追加</h2>
@@ -104,27 +94,19 @@ const newsItems = news ?? [];
       </label>
       <p id="newsSearchStatus" class="news-admin-search__status is-hidden" aria-live="polite"></p>
 
-      {newsItems.length > 0 ? (
-        <>
-          <p id="newsSearchEmpty" class="news-admin-empty is-hidden">該当するNEWSはありません。</p>
-          <ul id="newsList" class="admin-list news-admin-list" data-page-size="10">
-            {newsItems.map((item, index) => (
-              <NewsAdminItem item={item} listIndex={index} />
-            ))}
-          </ul>
-          {newsItems.length > 10 && (
-            <button
-              type="button"
-              id="loadMoreNews"
-              class="admin-button admin-button-secondary news-admin-load-more"
-            >
-              さらに表示
-            </button>
-          )}
-        </>
-      ) : (
-        !error && <p class="news-admin-empty">登録されているNEWSはありません。</p>
-      )}
+      <p id="newsListLoading" class="news-admin-empty">NEWS一覧を読み込み中…</p>
+      <p id="newsSearchEmpty" class="news-admin-empty is-hidden">該当するNEWSはありません。</p>
+      <p id="newsListEmpty" class="news-admin-empty is-hidden">登録されているNEWSはありません。</p>
+
+      <ul id="newsList" class="admin-list news-admin-list" data-page-size="10"></ul>
+
+      <button
+        type="button"
+        id="loadMoreNews"
+        class="admin-button admin-button-secondary news-admin-load-more is-hidden"
+      >
+        さらに表示
+      </button>
     </section>
   </main>
 

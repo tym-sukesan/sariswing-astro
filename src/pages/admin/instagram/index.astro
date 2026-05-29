@@ -1,11 +1,5 @@
 ---
 import BaseLayout from "../../../layouts/BaseLayout.astro";
-import { supabase } from "../../../lib/supabase";
-
-const { data: posts } = await supabase
-  .from("instagram_posts")
-  .select("*")
-  .order("id", { ascending: false });
 ---
 
 <BaseLayout title="Instagram Admin | SARI" admin>
@@ -14,6 +8,10 @@ const { data: posts } = await supabase
       <a class="admin-back-link" href="/admin/">← 管理画面トップ</a>
       <h1>Instagram管理</h1>
     </div>
+
+    <p class="admin-form__hint admin-static-notice">
+      この一覧は Supabase から最新データを読み込んで表示します。公開サイト（トップページなど）は静的HTMLのため、変更・削除を反映するには GitHub Actions で再ビルド・再デプロイが必要です。
+    </p>
 
     <section class="admin-card">
       <h2>埋め込みコード追加</h2>
@@ -38,31 +36,10 @@ const { data: posts } = await supabase
     <section class="admin-card">
       <h2>現在のInstagram埋め込み</h2>
 
-      <ul id="postList" class="admin-list instagram-admin-list">
-        {posts?.map((item) => (
-          <li class="admin-list__item instagram-admin-item" data-id={item.id}>
-            <div class="instagram-admin-item__preview">
-              {item.embed_code && (
-                <div class="instagram-admin-preview" set:html={item.embed_code} />
-              )}
-            </div>
+      <p id="postListLoading" class="news-admin-empty">Instagram一覧を読み込み中…</p>
+      <p id="postListEmpty" class="news-admin-empty is-hidden">登録されている埋め込みはありません。</p>
 
-            <div class="instagram-admin-item__editor">
-              <div class="admin-form">
-                <label class="admin-form__field">
-                  <span class="admin-form__label">埋め込みコード</span>
-                  <textarea class="edit-embed-code" rows="6">{item.embed_code}</textarea>
-                </label>
-              </div>
-
-              <div class="admin-actions">
-                <button class="admin-button update" type="button">更新</button>
-                <button class="admin-button admin-button-danger delete" type="button">削除</button>
-              </div>
-            </div>
-          </li>
-        ))}
-      </ul>
+      <ul id="postList" class="admin-list instagram-admin-list"></ul>
     </section>
   </main>
 

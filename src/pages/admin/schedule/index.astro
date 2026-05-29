@@ -1,21 +1,6 @@
 ---
 import BaseLayout from "../../../layouts/BaseLayout.astro";
-import ScheduleAdminItem from "../../../components/admin/ScheduleAdminItem.astro";
-import { supabase } from "../../../lib/supabase";
-
-const { data: venues } = await supabase.from("venues").select("*").order("name", { ascending: true });
-
-const { data: schedules } = await supabase
-  .from("schedules")
-  .select("*")
-  .order("date", { ascending: true });
-
-const timeTypeOptions = ["昼", "夜", "その他"];
-
-const today = new Date().toISOString().slice(0, 10);
-const upcomingSchedules = schedules?.filter((item) => item.date >= today) ?? [];
-const pastSchedules =
-  schedules?.filter((item) => item.date < today).sort((a, b) => b.date.localeCompare(a.date)) ?? [];
+import { SCHEDULE_TIME_TYPE_OPTIONS } from "../../../lib/admin/schedule-constants";
 ---
 
 <BaseLayout title="Schedule Admin | SARI" admin>
@@ -24,6 +9,10 @@ const pastSchedules =
       <a class="admin-back-link" href="/admin/">← 管理画面トップ</a>
       <h1>Schedule管理</h1>
     </div>
+
+    <p class="admin-form__hint admin-static-notice">
+      この一覧は Supabase から最新データを読み込んで表示します。公開サイト（/live-schedule/ ・トップなど）は静的HTMLのため、変更・削除を反映するには GitHub Actions での再ビルド・再デプロイが必要です。
+    </p>
 
     <section class="admin-card">
       <h2>スケジュール追加</h2>
@@ -38,7 +27,7 @@ const pastSchedules =
           <label class="admin-form__field">
             <span class="admin-form__label">時間帯</span>
             <select data-field="time_type" name="time_type">
-              {timeTypeOptions.map((option) => (
+              {SCHEDULE_TIME_TYPE_OPTIONS.map((option) => (
                 <option value={option}>{option}</option>
               ))}
             </select>
@@ -48,11 +37,8 @@ const pastSchedules =
         <div class="admin-form__row">
           <label class="admin-form__field">
             <span class="admin-form__label">会場（venues から選択）</span>
-            <select data-field="venue_id" name="venue_id">
-              <option value="">未選択</option>
-              {venues?.map((venue) => (
-                <option value="" data-venue-name={venue.name}>{venue.name}</option>
-              ))}
+            <select id="addVenueSelect" data-field="venue_id" name="venue_id">
+              <option value="">読み込み中…</option>
             </select>
             <span class="admin-form__hint">venues テーブルに id 列がないため、選択時は会場名のみ反映されます。</span>
           </label>
@@ -144,66 +130,40 @@ const pastSchedules =
       </label>
       <p id="scheduleSearchStatus" class="schedule-admin-search__status is-hidden" aria-live="polite"></p>
 
+      <p id="scheduleListLoading" class="schedule-admin-empty">スケジュール一覧を読み込み中…</p>
+
       <h2>今後の予定</h2>
 
-      {upcomingSchedules.length > 0 ? (
-        <>
-          <p id="upcomingSearchEmpty" class="schedule-admin-empty is-hidden">該当する予定はありません。</p>
-          <ul id="upcomingScheduleList" class="admin-list schedule-admin-list" data-page-size="10">
-            {upcomingSchedules.map((item, index) => (
-              <ScheduleAdminItem
-                item={item}
-                venues={venues}
-                timeTypeOptions={timeTypeOptions}
-                listIndex={index}
-              />
-            ))}
-          </ul>
-          {upcomingSchedules.length > 10 && (
-            <button
-              type="button"
-              id="loadMoreUpcoming"
-              class="admin-button admin-button-secondary schedule-admin-load-more"
-              data-load-more="upcoming"
-            >
-              さらに表示
-            </button>
-          )}
-        </>
-      ) : (
-        <p class="schedule-admin-empty">今後の予定はありません。</p>
-      )}
+      <p id="upcomingSearchEmpty" class="schedule-admin-empty is-hidden">該当する予定はありません。</p>
+      <p id="upcomingListEmpty" class="schedule-admin-empty is-hidden">今後の予定はありません。</p>
+      <ul id="upcomingScheduleList" class="admin-list schedule-admin-list" data-page-size="10"></ul>
+      <button
+        type="button"
+        id="loadMoreUpcoming"
+        class="admin-button admin-button-secondary schedule-admin-load-more is-hidden"
+        data-load-more="upcoming"
+      >
+        さらに表示
+      </button>
     </section>
 
-    {pastSchedules.length > 0 && (
-      <section class="admin-card">
-        <details class="schedule-admin-past">
-          <summary class="schedule-admin-past__summary">過去のスケジュール</summary>
+    <section id="pastScheduleSection" class="admin-card is-hidden">
+      <details class="schedule-admin-past">
+        <summary class="schedule-admin-past__summary">過去のスケジュール</summary>
 
-          <p id="pastSearchEmpty" class="schedule-admin-empty is-hidden">該当する予定はありません。</p>
-          <ul id="pastScheduleList" class="admin-list schedule-admin-list" data-page-size="10">
-            {pastSchedules.map((item, index) => (
-              <ScheduleAdminItem
-                item={item}
-                venues={venues}
-                timeTypeOptions={timeTypeOptions}
-                listIndex={index}
-              />
-            ))}
-          </ul>
-          {pastSchedules.length > 10 && (
-            <button
-              type="button"
-              id="loadMorePast"
-              class="admin-button admin-button-secondary schedule-admin-load-more"
-              data-load-more="past"
-            >
-              さらに表示
-            </button>
-          )}
-        </details>
-      </section>
-    )}
+        <p id="pastSearchEmpty" class="schedule-admin-empty is-hidden">該当する予定はありません。</p>
+        <p id="pastListEmpty" class="schedule-admin-empty is-hidden">過去のスケジュールはありません。</p>
+        <ul id="pastScheduleList" class="admin-list schedule-admin-list" data-page-size="10"></ul>
+        <button
+          type="button"
+          id="loadMorePast"
+          class="admin-button admin-button-secondary schedule-admin-load-more is-hidden"
+          data-load-more="past"
+        >
+          さらに表示
+        </button>
+      </details>
+    </section>
   </main>
 
   <script>

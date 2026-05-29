@@ -1,5 +1,10 @@
-import { initPaginatedList } from "../../lib/admin/paginated-list";
+import { createNewsAdminListItem } from "../../lib/admin/create-news-list-item";
+import { initPaginatedList, type PaginatedListController } from "../../lib/admin/paginated-list";
+import { NEWS_SELECT, type NewsRecord } from "../../lib/news";
 import { supabase } from "../../lib/supabase";
+
+const PUBLIC_SITE_REBUILD_MESSAGE =
+  "公開サイト（/news/ ・トップページなど）へ反映するには、GitHub Actions で再ビルド・再デプロイしてください。";
 
 function slugifyTitle(title: string) {
   const ascii = title
@@ -57,18 +62,78 @@ function getNewsItem(button: Element) {
   return button.closest(".news-admin-item");
 }
 
+function setListLoading(isLoading: boolean) {
+  const loading = document.getElementById("newsListLoading");
+  loading?.classList.toggle("is-hidden", !isLoading);
+}
+
+function updateListEmptyState(newsList: HTMLElement | null) {
+  const emptyEl = document.getElementById("newsListEmpty");
+  const loadMoreBtn = document.getElementById("loadMoreNews");
+  const itemCount = newsList?.querySelectorAll(".news-admin-item").length ?? 0;
+
+  emptyEl?.classList.toggle("is-hidden", itemCount > 0);
+  loadMoreBtn?.classList.toggle("is-hidden", itemCount <= 10);
+}
+
+async function fetchNewsFromSupabase() {
+  console.log("[news-admin] fetching latest news from Supabase");
+  const result = await supabase.from("news").select(NEWS_SELECT).order("date", { ascending: false });
+  console.log("[news-admin] supabase fetch result", {
+    error: result.error,
+    count: result.data?.length ?? 0,
+  });
+  return result;
+}
+
+function renderNewsList(items: NewsRecord[], newsList: HTMLElement) {
+  newsList.replaceChildren();
+  items.forEach((item, index) => {
+    newsList.append(createNewsAdminListItem(item, index));
+  });
+  updateListEmptyState(newsList);
+}
+
 export function initNewsAdmin() {
   const message = document.getElementById("message");
   const addForm = document.getElementById("addNewsForm");
   const newsList = document.getElementById("newsList");
+  const loadMoreBtn = document.getElementById("loadMoreNews");
 
-  const newsController = initPaginatedList({
-    listEl: newsList,
-    loadMoreBtn: document.getElementById("loadMoreNews"),
-    emptyMessageEl: document.getElementById("newsSearchEmpty"),
-    itemSelector: ".news-admin-item",
-    getSearchText: getNewsItemSearchText,
-  });
+  let newsController: PaginatedListController | null = null;
+
+  async function reloadNewsList() {
+    if (!newsList) return;
+
+    setListLoading(true);
+
+    const { data, error } = await fetchNewsFromSupabase();
+
+    setListLoading(false);
+
+    if (error) {
+      console.error("[news-admin] failed to load list", error);
+      alert(`NEWS一覧の取得に失敗しました: ${error.message}`);
+      if (message) message.textContent = `NEWS一覧の取得に失敗しました: ${error.message}`;
+      return;
+    }
+
+    renderNewsList((data ?? []) as NewsRecord[], newsList);
+    newsController?.refreshItems();
+    console.log("[news-admin] list rendered", { count: data?.length ?? 0 });
+  }
+
+  if (newsList) {
+    newsController = initPaginatedList({
+      listEl: newsList,
+      loadMoreBtn,
+      emptyMessageEl: document.getElementById("newsSearchEmpty"),
+      itemSelector: ".news-admin-item",
+      getSearchText: getNewsItemSearchText,
+    });
+  }
+
+  void reloadNewsList();
 
   const newsSearchInput = document.getElementById("newsSearch");
   const newsSearchStatus = document.getElementById("newsSearchStatus");
@@ -106,12 +171,13 @@ export function initNewsAdmin() {
     const { error } = await supabase.from("news").insert([payload]);
 
     if (error) {
+      alert(`保存に失敗しました: ${error.message}`);
       message.textContent = "保存に失敗しました：" + error.message;
       return;
     }
 
-    message.textContent = "保存しました。サイトを再ビルドすると /news/ に反映されます。";
-    location.reload();
+    message.textContent = `保存しました。${PUBLIC_SITE_REBUILD_MESSAGE}`;
+    await reloadNewsList();
   });
 
   newsList?.addEventListener("click", (event) => {
@@ -137,7 +203,7 @@ export function initNewsAdmin() {
 
         const id = item.getAttribute("data-id");
         if (!id) {
-          message.textContent = "IDが取得できないため更新できません。ページを再読み込みしてください。";
+          alert("IDが取得できないため更新できません。ページを再読み込みしてください。");
           return;
         }
 
@@ -151,12 +217,13 @@ export function initNewsAdmin() {
         const { error } = await supabase.from("news").update(payload).eq("id", id);
 
         if (error) {
+          alert(`更新に失敗しました: ${error.message}`);
           message.textContent = "更新に失敗しました：" + error.message;
           return;
         }
 
-        message.textContent = "更新しました。";
-        location.reload();
+        message.textContent = `更新しました。${PUBLIC_SITE_REBUILD_MESSAGE}`;
+        await reloadNewsList();
       })();
       return;
     }
@@ -186,37 +253,61 @@ export function initNewsAdmin() {
         const { error } = await supabase.from("news").insert([duplicatePayload]);
 
         if (error) {
+          alert(`複製に失敗しました: ${error.message}`);
           message.textContent = "複製に失敗しました：" + error.message;
           return;
         }
 
         message.textContent = "複製しました（非公開で追加）。必要に応じて編集してください。";
-        location.reload();
+        await reloadNewsList();
       })();
       return;
     }
 
     if (button.classList.contains("delete")) {
       void (async () => {
+        console.log("[news-admin] delete button clicked");
+
         if (!message) return;
 
         if (!confirm("このNEWSを削除しますか？")) return;
 
         const id = item.getAttribute("data-id");
         if (!id) {
-          message.textContent = "IDが取得できないため削除できません。ページを再読み込みしてください。";
+          alert("IDが取得できないため削除できません。ページを再読み込みしてください。");
           return;
         }
 
-        const { error } = await supabase.from("news").delete().eq("id", id);
+        console.log("[news-admin] deleting id:", id);
+
+        const { data, error, count } = await supabase
+          .from("news")
+          .delete({ count: "exact" })
+          .eq("id", id)
+          .select();
+
+        console.log("[news-admin] supabase delete result", { data, error, count });
 
         if (error) {
+          alert(`削除に失敗しました: ${error.message}`);
           message.textContent = "削除に失敗しました：" + error.message;
           return;
         }
 
-        message.textContent = "削除しました。";
-        location.reload();
+        if (count === 0) {
+          console.warn("[news-admin] delete returned count 0 for id:", id);
+          alert("削除対象が見つかりませんでした。一覧を再読み込みします。");
+          await reloadNewsList();
+          return;
+        }
+
+        console.log("[news-admin] delete success, removing item from DOM");
+        item.remove();
+        newsController?.refreshItems();
+        updateListEmptyState(newsList);
+
+        message.textContent = `削除しました。${PUBLIC_SITE_REBUILD_MESSAGE}`;
+        console.log("[news-admin] remove item complete");
       })();
     }
   });

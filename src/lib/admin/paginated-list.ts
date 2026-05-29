@@ -1,6 +1,7 @@
 export type PaginatedListController = {
   applySearch: (query: string) => number;
   clearSearchFilter: () => void;
+  refreshItems: () => void;
 };
 
 export type PaginatedListOptions = {
@@ -16,9 +17,18 @@ export function initPaginatedList(options: PaginatedListOptions): PaginatedListC
   const { listEl, loadMoreBtn, emptyMessageEl, itemSelector, getSearchText, pageSize = 10 } = options;
   if (!listEl) return null;
 
-  const items = [...listEl.querySelectorAll(itemSelector)];
+  let items = [...listEl.querySelectorAll(itemSelector)];
   let visibleCount = pageSize;
   let searchActive = false;
+
+  function refreshItems() {
+    items = [...listEl.querySelectorAll(itemSelector)];
+    visibleCount = pageSize;
+    searchActive = false;
+    emptyMessageEl?.classList.add("is-hidden");
+    listEl.classList.remove("is-hidden");
+    updatePagination();
+  }
 
   function updatePagination() {
     items.forEach((item, index) => {
@@ -78,5 +88,5 @@ export function initPaginatedList(options: PaginatedListOptions): PaginatedListC
     updatePagination();
   });
 
-  return { applySearch, clearSearchFilter };
+  return { applySearch, clearSearchFilter, refreshItems };
 }

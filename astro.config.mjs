@@ -9,6 +9,9 @@ const scheduleMonthUrls = await getScheduleSitemapUrls(site);
 // https://astro.build/config
 export default defineConfig({
   site,
+  build: {
+    assets: "assets",
+  },
   integrations: [
     sitemap({
       filter: (page) => !page.includes("/admin"),

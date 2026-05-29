@@ -1,0 +1,8 @@
+/** HTMLタグを除去して検索用テキストにする */
+export function stripHtml(value: string | null | undefined): string {
+  if (!value) return "";
+  return value
+    .replace(/<[^>]*>/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}

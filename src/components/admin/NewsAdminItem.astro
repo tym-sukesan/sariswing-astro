@@ -1,4 +1,5 @@
 ---
+import { stripHtml } from "../../lib/admin/strip-html";
 import { formatNewsDate } from "../../lib/news";
 
 interface Props {
@@ -38,15 +39,14 @@ const searchText = [
   displayDate,
   item.title,
   item.category,
-  item.excerpt,
-  item.content,
+  stripHtml(item.excerpt),
+  stripHtml(item.content),
   item.url,
   item.slug,
   item.image_url,
 ]
   .filter(Boolean)
-  .join(" ")
-  .toLowerCase();
+  .join(" ");
 ---
 
 <li
@@ -57,8 +57,8 @@ const searchText = [
   ]}
   data-id={item.id}
   data-list-index={listIndex}
-  data-search-text={searchText}
 >
+  <span class="news-admin-item__search-source" hidden>{searchText}</span>
   <div class="news-admin-item__header">
     <p class="news-admin-item__summary">
       <span class="news-admin-item__date">{displayDate}</span>

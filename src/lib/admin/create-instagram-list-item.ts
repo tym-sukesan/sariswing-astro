@@ -1,12 +1,14 @@
-export type InstagramAdminRecord = {
-  id: string | number;
-  embed_code?: string | null;
-};
+import type { InstagramPostRecord } from "../instagram-posts";
+
+export type InstagramAdminRecord = InstagramPostRecord;
 
 export function createInstagramAdminListItem(item: InstagramAdminRecord) {
   const li = document.createElement("li");
   li.className = "admin-list__item instagram-admin-item";
   li.dataset.id = String(item.id);
+  if (item.sort_order != null && Number.isFinite(item.sort_order)) {
+    li.dataset.sortOrder = String(item.sort_order);
+  }
 
   const previewWrap = document.createElement("div");
   previewWrap.className = "instagram-admin-item__preview";
@@ -24,6 +26,25 @@ export function createInstagramAdminListItem(item: InstagramAdminRecord) {
 
   const form = document.createElement("div");
   form.className = "admin-form";
+
+  const sortField = document.createElement("label");
+  sortField.className = "admin-form__field instagram-admin-item__sort-field";
+
+  const sortLabel = document.createElement("span");
+  sortLabel.className = "admin-form__label";
+  sortLabel.textContent = "表示順";
+
+  const sortInput = document.createElement("input");
+  sortInput.type = "number";
+  sortInput.className = "edit-sort-order";
+  sortInput.inputMode = "numeric";
+  sortInput.step = "1";
+  if (item.sort_order != null && Number.isFinite(item.sort_order)) {
+    sortInput.value = String(item.sort_order);
+  }
+
+  sortField.append(sortLabel, sortInput);
+  form.append(sortField);
 
   const label = document.createElement("label");
   label.className = "admin-form__field";

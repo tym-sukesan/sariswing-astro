@@ -36,6 +36,15 @@ import BaseLayout from "../../../layouts/BaseLayout.astro";
     <section class="admin-card">
       <h2>現在のInstagram埋め込み</h2>
 
+      <p class="admin-form__hint">数字が小さいほど上に表示されます</p>
+
+      <div class="admin-actions admin-actions--compact">
+        <button id="saveSortOrder" class="admin-button admin-button-secondary" type="button">
+          表示順を保存
+        </button>
+      </div>
+      <p id="sortOrderMessage" class="admin-message"></p>
+
       <p id="postListLoading" class="news-admin-empty">Instagram一覧を読み込み中…</p>
       <p id="postListEmpty" class="news-admin-empty is-hidden">登録されている埋め込みはありません。</p>
 

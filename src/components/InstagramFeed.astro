@@ -1,11 +1,9 @@
 ---
+import { sortInstagramPosts } from "../lib/instagram-posts";
 import { supabase } from "../lib/supabase";
 
-const { data: posts, error } = await supabase
-  .from("instagram_posts")
-  .select("*")
-  .order("id", { ascending: false })
-  .limit(3);
+const { data: rawPosts, error } = await supabase.from("instagram_posts").select("*");
+const posts = sortInstagramPosts(rawPosts ?? []).slice(0, 3);
 ---
 
 <section id="sec-instagram" class="instagram-feed top-sec sec-instagram">

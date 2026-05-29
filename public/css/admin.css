@@ -355,6 +355,14 @@ body.admin-body {
   min-width: 0;
 }
 
+.instagram-admin-item__sort-field {
+  max-width: 200px;
+}
+
+.instagram-admin-item__sort-field .edit-sort-order {
+  width: 100%;
+}
+
 .instagram-admin-item__editor .admin-form {
   margin: 0;
   flex: 1;

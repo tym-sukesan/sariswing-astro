@@ -2,6 +2,10 @@ import {
   createInstagramAdminListItem,
   type InstagramAdminRecord,
 } from "../../lib/admin/create-instagram-list-item";
+import {
+  nextSortOrderForNewPost,
+  sortInstagramPosts,
+} from "../../lib/instagram-posts";
 import { supabase } from "../../lib/supabase";
 
 declare global {
@@ -46,18 +50,14 @@ function updateInstagramEmptyState(postList: HTMLElement | null) {
 }
 
 async function fetchInstagramFromSupabase() {
-  console.log("[instagram-admin] fetching latest instagram from Supabase");
-  const result = await supabase
-    .from("instagram_posts")
-    .select("*")
-    .order("id", { ascending: false });
+  const result = await supabase.from("instagram_posts").select("*");
 
-  console.log("[instagram-admin] supabase fetch result", {
-    error: result.error,
-    count: result.data?.length ?? 0,
-  });
+  if (result.error) return result;
 
-  return result;
+  return {
+    ...result,
+    data: sortInstagramPosts((result.data ?? []) as InstagramAdminRecord[]),
+  };
 }
 
 function renderInstagramList(items: InstagramAdminRecord[], postList: HTMLElement) {
@@ -69,11 +69,36 @@ function renderInstagramList(items: InstagramAdminRecord[], postList: HTMLElemen
   processInstagramEmbeds();
   setTimeout(processInstagramEmbeds, 300);
   setTimeout(processInstagramEmbeds, 1000);
-  console.log("[instagram-admin] list rendered", { count: items.length });
+}
+
+function collectSortOrderUpdates(postList: HTMLElement) {
+  const updates: { id: string; sort_order: number }[] = [];
+
+  for (const item of postList.querySelectorAll(".instagram-admin-item")) {
+    const id = item.getAttribute("data-id");
+    const input = item.querySelector(".edit-sort-order");
+
+    if (!id || !(input instanceof HTMLInputElement)) continue;
+
+    const raw = input.value.trim();
+    if (raw === "") {
+      throw new Error("表示順をすべて入力してください。");
+    }
+
+    const sort_order = Number.parseInt(raw, 10);
+    if (!Number.isFinite(sort_order)) {
+      throw new Error("表示順は整数で入力してください。");
+    }
+
+    updates.push({ id, sort_order });
+  }
+
+  return updates;
 }
 
 export function initInstagramAdmin() {
   const message = document.getElementById("message");
+  const sortOrderMessage = document.getElementById("sortOrderMessage");
   const postList = document.getElementById("postList");
 
   window.processInstagramEmbeds = processInstagramEmbeds;
@@ -99,6 +124,40 @@ export function initInstagramAdmin() {
 
   void reloadInstagramList();
 
+  document.getElementById("saveSortOrder")?.addEventListener("click", async () => {
+    if (!postList || !sortOrderMessage) return;
+
+    let updates: { id: string; sort_order: number }[];
+    try {
+      updates = collectSortOrderUpdates(postList);
+    } catch (err) {
+      const text = err instanceof Error ? err.message : "表示順の入力内容を確認してください。";
+      sortOrderMessage.textContent = text;
+      return;
+    }
+
+    if (updates.length === 0) {
+      sortOrderMessage.textContent = "保存する投稿がありません。";
+      return;
+    }
+
+    const results = await Promise.all(
+      updates.map(({ id, sort_order }) =>
+        supabase.from("instagram_posts").update({ sort_order }).eq("id", id)
+      )
+    );
+
+    const failed = results.find((r) => r.error);
+    if (failed?.error) {
+      alert(`表示順の保存に失敗しました: ${failed.error.message}`);
+      sortOrderMessage.textContent = `表示順の保存に失敗しました：${failed.error.message}`;
+      return;
+    }
+
+    sortOrderMessage.textContent = `表示順を保存しました。${PUBLIC_SITE_REBUILD_MESSAGE}`;
+    await reloadInstagramList();
+  });
+
   document.getElementById("add")?.addEventListener("click", async () => {
     if (!message) return;
 
@@ -111,7 +170,21 @@ export function initInstagramAdmin() {
       return;
     }
 
-    const { error } = await supabase.from("instagram_posts").insert([{ embed_code }]);
+    const { data: existing, error: fetchError } = await supabase
+      .from("instagram_posts")
+      .select("sort_order");
+
+    if (fetchError) {
+      alert(`保存に失敗しました: ${fetchError.message}`);
+      message.textContent = "保存に失敗しました：" + fetchError.message;
+      return;
+    }
+
+    const sort_order = nextSortOrderForNewPost(existing ?? []);
+
+    const { error } = await supabase
+      .from("instagram_posts")
+      .insert([{ embed_code, sort_order }]);
 
     if (error) {
       alert(`保存に失敗しました: ${error.message}`);
@@ -119,7 +192,11 @@ export function initInstagramAdmin() {
       return;
     }
 
-    message.textContent = `保存しました。${PUBLIC_SITE_REBUILD_MESSAGE}`;
+    if (embedInput instanceof HTMLTextAreaElement) {
+      embedInput.value = "";
+    }
+
+    message.textContent = `保存しました（表示順: ${sort_order}）。${PUBLIC_SITE_REBUILD_MESSAGE}`;
     await reloadInstagramList();
   });
 
@@ -165,8 +242,6 @@ export function initInstagramAdmin() {
 
     if (button.classList.contains("delete")) {
       void (async () => {
-        console.log("[instagram-admin] delete button clicked");
-
         if (!message) return;
 
         if (!confirm("このInstagram埋め込みを削除しますか？")) return;
@@ -177,15 +252,11 @@ export function initInstagramAdmin() {
           return;
         }
 
-        console.log("[instagram-admin] deleting id:", id);
-
         const { data, error, count } = await supabase
           .from("instagram_posts")
           .delete({ count: "exact" })
           .eq("id", id)
           .select();
-
-        console.log("[instagram-admin] supabase delete result", { data, error, count });
 
         if (error) {
           alert(`削除に失敗しました: ${error.message}`);
@@ -199,12 +270,10 @@ export function initInstagramAdmin() {
           return;
         }
 
-        console.log("[instagram-admin] delete success, removing item from DOM");
         item.remove();
         updateInstagramEmptyState(postList);
 
         message.textContent = `削除しました。${PUBLIC_SITE_REBUILD_MESSAGE}`;
-        console.log("[instagram-admin] remove item complete");
       })();
     }
   });

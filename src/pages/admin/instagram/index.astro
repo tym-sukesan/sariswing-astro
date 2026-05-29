@@ -36,7 +36,11 @@ import BaseLayout from "../../../layouts/BaseLayout.astro";
     <section class="admin-card">
       <h2>現在のInstagram埋め込み</h2>
 
-      <p class="admin-form__hint">数字が小さいほど上に表示されます</p>
+      <p class="admin-form__hint">
+        数字が小さいほど上に表示されます。☰ 並び替えのドラッグ、または ↑ ↓ ボタンで順番を変えたあと「表示順を保存」してください。
+      </p>
+
+      <p id="sortOrderUnsaved" class="admin-message admin-message--warning is-hidden" aria-live="polite"></p>
 
       <div class="admin-actions admin-actions--compact">
         <button id="saveSortOrder" class="admin-button admin-button-secondary" type="button">

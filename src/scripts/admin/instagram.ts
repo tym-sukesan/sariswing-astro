@@ -3,6 +3,11 @@ import {
   type InstagramAdminRecord,
 } from "../../lib/admin/create-instagram-list-item";
 import {
+  collectSortOrderUpdates,
+  initInstagramSortReorder,
+  type InstagramSortReorderController,
+} from "../../lib/admin/instagram-sort-reorder";
+import {
   nextSortOrderForNewPost,
   sortInstagramPosts,
 } from "../../lib/instagram-posts";
@@ -71,38 +76,21 @@ function renderInstagramList(items: InstagramAdminRecord[], postList: HTMLElemen
   setTimeout(processInstagramEmbeds, 1000);
 }
 
-function collectSortOrderUpdates(postList: HTMLElement) {
-  const updates: { id: string; sort_order: number }[] = [];
-
-  for (const item of postList.querySelectorAll(".instagram-admin-item")) {
-    const id = item.getAttribute("data-id");
-    const input = item.querySelector(".edit-sort-order");
-
-    if (!id || !(input instanceof HTMLInputElement)) continue;
-
-    const raw = input.value.trim();
-    if (raw === "") {
-      throw new Error("表示順をすべて入力してください。");
-    }
-
-    const sort_order = Number.parseInt(raw, 10);
-    if (!Number.isFinite(sort_order)) {
-      throw new Error("表示順は整数で入力してください。");
-    }
-
-    updates.push({ id, sort_order });
-  }
-
-  return updates;
-}
-
 export function initInstagramAdmin() {
   const message = document.getElementById("message");
   const sortOrderMessage = document.getElementById("sortOrderMessage");
+  const sortOrderUnsaved = document.getElementById("sortOrderUnsaved");
   const postList = document.getElementById("postList");
 
   window.processInstagramEmbeds = processInstagramEmbeds;
   waitForInstagramEmbeds();
+
+  let sortReorderController: InstagramSortReorderController | null = null;
+
+  function bindSortReorder() {
+    if (!postList) return;
+    sortReorderController = initInstagramSortReorder(postList, sortOrderUnsaved);
+  }
 
   async function reloadInstagramList() {
     if (!postList) return;
@@ -120,6 +108,7 @@ export function initInstagramAdmin() {
     }
 
     renderInstagramList((data ?? []) as InstagramAdminRecord[], postList);
+    bindSortReorder();
   }
 
   void reloadInstagramList();
@@ -141,11 +130,22 @@ export function initInstagramAdmin() {
       return;
     }
 
+    const saveButton = document.getElementById("saveSortOrder");
+    if (saveButton instanceof HTMLButtonElement) {
+      saveButton.disabled = true;
+      saveButton.textContent = "保存中...";
+    }
+
     const results = await Promise.all(
       updates.map(({ id, sort_order }) =>
         supabase.from("instagram_posts").update({ sort_order }).eq("id", id)
       )
     );
+
+    if (saveButton instanceof HTMLButtonElement) {
+      saveButton.disabled = false;
+      saveButton.textContent = "表示順を保存";
+    }
 
     const failed = results.find((r) => r.error);
     if (failed?.error) {
@@ -155,6 +155,7 @@ export function initInstagramAdmin() {
     }
 
     sortOrderMessage.textContent = `表示順を保存しました。${PUBLIC_SITE_REBUILD_MESSAGE}`;
+    sortReorderController?.clearUnsavedNotice();
     await reloadInstagramList();
   });
 
@@ -203,6 +204,14 @@ export function initInstagramAdmin() {
   postList?.addEventListener("click", (event) => {
     const button = (event.target as Element | null)?.closest("button");
     if (!button || !postList.contains(button)) return;
+
+    if (
+      button.classList.contains("instagram-sort-handle") ||
+      button.classList.contains("instagram-sort-move-up") ||
+      button.classList.contains("instagram-sort-move-down")
+    ) {
+      return;
+    }
 
     const item = button.closest(".instagram-admin-item");
     if (!item) return;

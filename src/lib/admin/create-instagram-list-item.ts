@@ -10,6 +10,33 @@ export function createInstagramAdminListItem(item: InstagramAdminRecord) {
     li.dataset.sortOrder = String(item.sort_order);
   }
 
+  const sortBar = document.createElement("div");
+  sortBar.className = "instagram-admin-item__sort-bar";
+
+  const handle = document.createElement("button");
+  handle.type = "button";
+  handle.className = "instagram-sort-handle";
+  handle.setAttribute("aria-label", "ドラッグして並び替え");
+  handle.textContent = "☰ 並び替え";
+
+  const moveControls = document.createElement("div");
+  moveControls.className = "instagram-admin-item__move-controls";
+
+  const moveUp = document.createElement("button");
+  moveUp.type = "button";
+  moveUp.className = "admin-button admin-button--small instagram-sort-move-up";
+  moveUp.setAttribute("aria-label", "上へ移動");
+  moveUp.textContent = "↑";
+
+  const moveDown = document.createElement("button");
+  moveDown.type = "button";
+  moveDown.className = "admin-button admin-button--small instagram-sort-move-down";
+  moveDown.setAttribute("aria-label", "下へ移動");
+  moveDown.textContent = "↓";
+
+  moveControls.append(moveUp, moveDown);
+  sortBar.append(handle, moveControls);
+
   const previewWrap = document.createElement("div");
   previewWrap.className = "instagram-admin-item__preview";
 
@@ -76,7 +103,7 @@ export function createInstagramAdminListItem(item: InstagramAdminRecord) {
 
   actions.append(updateButton, deleteButton);
   editor.append(form, actions);
-  li.append(previewWrap, editor);
+  li.append(sortBar, previewWrap, editor);
 
   return li;
 }

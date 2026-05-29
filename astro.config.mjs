@@ -1,10 +1,15 @@
 // @ts-check
 import { defineConfig } from "astro/config";
 import sitemap from "@astrojs/sitemap";
-import { getScheduleSitemapUrls } from "./scripts/schedule-sitemap-urls.mjs";
+import {
+  getSitemapGeneratedDate,
+  getSitemapLastmodLookup,
+  pathnameFromSitemapUrl,
+} from "./scripts/sitemap-lastmod-data.mjs";
 
 const site = "https://sariswing.com";
-const scheduleMonthUrls = await getScheduleSitemapUrls(site);
+const generatedAt = getSitemapGeneratedDate();
+const lastmodLookup = await getSitemapLastmodLookup({ generatedAt });
 
 // https://astro.build/config
 export default defineConfig({
@@ -15,7 +20,15 @@ export default defineConfig({
   integrations: [
     sitemap({
       filter: (page) => !page.includes("/admin"),
-      customPages: scheduleMonthUrls,
+      serialize(item) {
+        const path = pathnameFromSitemapUrl(item.url);
+        const lastmodDate = lastmodLookup.get(path) ?? generatedAt;
+
+        return {
+          ...item,
+          lastmod: new Date(`${lastmodDate}T00:00:00.000Z`),
+        };
+      },
     }),
   ],
 });

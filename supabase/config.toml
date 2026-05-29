@@ -3,3 +3,6 @@
 
 [functions.trigger-deploy]
 verify_jwt = false
+
+[functions.deploy-status]
+verify_jwt = false

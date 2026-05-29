@@ -96,6 +96,7 @@ supabase link --project-ref YOUR_PROJECT_REF
 
 ```bash
 supabase functions deploy trigger-deploy --no-verify-jwt
+supabase functions deploy deploy-status --no-verify-jwt
 ```
 
 `supabase/config.toml` で `verify_jwt = false` にしているため、管理画面からは `x-deploy-secret` と anon key で呼び出します。

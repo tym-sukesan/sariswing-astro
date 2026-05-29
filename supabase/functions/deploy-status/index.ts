@@ -1,9 +1,10 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import {
+  fetchLatestWorkflowRun,
+  fetchWorkflowRun,
   getGitHubConfig,
   normalizeRunStatus,
   parseRepo,
-  waitForLatestWorkflowRun,
 } from "../_shared/github.ts";
 
 const corsHeaders = {
@@ -23,10 +24,6 @@ function jsonResponse(body: Record<string, unknown>, status: number) {
   });
 }
 
-function unauthorized() {
-  return jsonResponse({ error: "Unauthorized" }, 401);
-}
-
 function checkDeploySecret(req: Request): boolean {
   const deploySecret = Deno.env.get("DEPLOY_SHARED_SECRET");
   const clientSecret = req.headers.get("x-deploy-secret");
@@ -43,7 +40,7 @@ Deno.serve(async (req) => {
   }
 
   if (!checkDeploySecret(req)) {
-    return unauthorized();
+    return jsonResponse({ error: "Unauthorized" }, 401);
   }
 
   const config = getGitHubConfig();
@@ -57,44 +54,36 @@ Deno.serve(async (req) => {
   }
 
   const [owner, repo] = parsed;
-  const startedAt = new Date().toISOString();
-  const dispatchedAfterMs = Date.now();
 
-  const workflowUrl = `https://api.github.com/repos/${owner}/${repo}/actions/workflows/${encodeURIComponent(config.workflowFile)}/dispatches`;
-
-  const ghResponse = await fetch(workflowUrl, {
-    method: "POST",
-    headers: {
-      Accept: "application/vnd.github+json",
-      Authorization: `Bearer ${config.token}`,
-      "X-GitHub-Api-Version": "2022-11-28",
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ ref: config.ref }),
-  });
-
-  if (!ghResponse.ok) {
-    const detail = await ghResponse.text();
-    return jsonResponse(
-      {
-        error: "Deploy start failed",
-        status: ghResponse.status,
-        detail,
-      },
-      502
-    );
+  let runId: number | null = null;
+  try {
+    const body = await req.json();
+    if (body && typeof body.runId === "number") {
+      runId = body.runId;
+    }
+  } catch {
+    // empty body is allowed
   }
 
-  const run = await waitForLatestWorkflowRun(config, owner, repo, dispatchedAfterMs);
+  const run =
+    runId !== null
+      ? await fetchWorkflowRun(config, owner, repo, runId)
+      : await fetchLatestWorkflowRun(config, owner, repo);
+
+  if (!run) {
+    return jsonResponse({ error: "Run not found" }, 404);
+  }
+
+  const status = normalizeRunStatus(run);
 
   return jsonResponse(
     {
       ok: true,
-      startedAt,
-      runId: run?.id ?? null,
-      status: run ? normalizeRunStatus(run) : "running",
-      runCreatedAt: run?.created_at ?? startedAt,
-      runUpdatedAt: run?.updated_at ?? startedAt,
+      runId: run.id,
+      status,
+      runCreatedAt: run.created_at,
+      runUpdatedAt: run.updated_at,
+      completedAt: status !== "running" ? run.updated_at : null,
     },
     200
   );

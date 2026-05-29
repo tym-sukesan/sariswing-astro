@@ -1,15 +1,29 @@
 // @ts-check
 import { defineConfig } from "astro/config";
 import sitemap from "@astrojs/sitemap";
+import { fileURLToPath } from "node:url";
 import {
   getSitemapGeneratedDate,
   getSitemapLastmodLookup,
-  pathnameFromSitemapUrl,
+  patchSitemapFiles,
+  serializeSitemapItem,
 } from "./scripts/sitemap-lastmod-data.mjs";
 
 const site = "https://sariswing.com";
-const generatedAt = getSitemapGeneratedDate();
-const lastmodLookup = await getSitemapLastmodLookup({ generatedAt });
+const buildEnd = new Date();
+const generatedAt = getSitemapGeneratedDate(buildEnd);
+const lastmodLookup = await getSitemapLastmodLookup({ generatedAt, buildEnd });
+
+function sitemapLastmodFormatIntegration() {
+  return {
+    name: "sitemap-lastmod-format",
+    hooks: {
+      "astro:build:done": async ({ dir }) => {
+        await patchSitemapFiles(fileURLToPath(dir), lastmodLookup);
+      },
+    },
+  };
+}
 
 // https://astro.build/config
 export default defineConfig({
@@ -21,14 +35,9 @@ export default defineConfig({
     sitemap({
       filter: (page) => !page.includes("/admin"),
       serialize(item) {
-        const path = pathnameFromSitemapUrl(item.url);
-        const lastmodDate = lastmodLookup.get(path) ?? generatedAt;
-
-        return {
-          ...item,
-          lastmod: new Date(`${lastmodDate}T00:00:00.000Z`),
-        };
+        return serializeSitemapItem(item, lastmodLookup, generatedAt);
       },
     }),
+    sitemapLastmodFormatIntegration(),
   ],
 });

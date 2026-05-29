@@ -42,6 +42,11 @@ jobs:
           lftp -u "$LOLIPOP_FTP_USER","$LOLIPOP_FTP_PASSWORD" "$LOLIPOP_FTP_HOST" <<EOF
           set ftp:ssl-allow no
           set ftp:passive-mode on
-          mirror -R --delete --verbose dist/ "$LOLIPOP_FTP_REMOTE_DIR"
+          set net:max-retries 5
+          set net:timeout 30
+          set net:reconnect-interval-base 5
+          set net:reconnect-interval-max 30
+          set xfer:clobber on
+          mirror -R --verbose --parallel=1 dist/ "$LOLIPOP_FTP_REMOTE_DIR"
           bye
           EOF

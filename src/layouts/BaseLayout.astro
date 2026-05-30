@@ -34,6 +34,7 @@ const ogImageUrl = ogImage
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
+    {admin && <meta name="robots" content="noindex, nofollow" />}
     {description && <meta name="description" content={description} />}
     <link rel="canonical" href={canonicalUrl} />
     <link rel="icon" href="/favicon.ico" sizes="any" />

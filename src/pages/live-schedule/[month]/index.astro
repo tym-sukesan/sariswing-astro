@@ -38,7 +38,10 @@ export async function getStaticPaths() {
 const { monthLabel, schedules } = Astro.props;
 ---
 
-<BaseLayout title={`${monthLabel} | 紗理 / SARI`}>
+<BaseLayout
+  title={`${monthLabel} | 紗理 / SARI`}
+  description={`${monthLabel}のライブ・コンサート・イベントスケジュール。ジャズシンガー紗理（SARI）公式サイト。`}
+>
   <Header />
 
   <main>

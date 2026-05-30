@@ -14,7 +14,10 @@ if (error) {
 const mainHtml = resolveSitePageHtml(aboutPage, aboutMainFallback);
 ---
 
-<BaseLayout title="ABOUT | 紗理 / SARI">
+<BaseLayout
+  title="ABOUT | 紗理 / SARI"
+  description="ジャズシンガー紗理（SARI）のプロフィール、経歴、スタジオ作品、イベント活動など。ABOUT SARI。"
+>
   <Header />
 
   <main set:html={mainHtml} />

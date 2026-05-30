@@ -1,0 +1,37 @@
+# SARI SWING（紗理 / SARI）公式サイト
+
+> ジャズシンガー紗理（SARI）の公式ウェブサイトです。
+> ライブ告知、ニュース、ディスコグラフィー、プロフィールを掲載しています。
+
+## サイトについて
+
+- 言語: 日本語（一部英語表記あり）
+- 公式ドメイン: https://sariswing.com/
+- 更新: コンテンツの多くはビルド時に Supabase から取得した静的 HTML です。NEWS・スケジュール・About などの変更後は再ビルド・再デプロイで公開に反映されます。
+
+## 主要ページ
+
+- トップ: https://sariswing.com/
+- ABOUT（プロフィール・経歴・活動）: https://sariswing.com/about/
+- LIVE SCHEDULE（ライブ・イベント）: https://sariswing.com/live-schedule/
+- NEWS: https://sariswing.com/news/
+- DISCOGRAPHY: https://sariswing.com/discography/
+- CONTACT（出演依頼・お問い合わせ）: https://sariswing.com/contact/
+
+## ディスコグラフィー（代表）
+
+- Musical Theater Songbook vol.1: https://sariswing.com/discography/musical-theater-songbook-vol-1/
+- Swing For...: https://sariswing.com/discography/swingfor/
+- and I'll sing once more: https://sariswing.com/discography/and_ill_sing_once_more/
+- The Sweetest Sounds: https://sariswing.com/discography/the_sweetest_sounds/
+
+## 関連（サイト外）
+
+- BLOG（WordPress）: https://sariswing.com/blog/
+- ショップ: https://sariswing.stores.jp/
+- Instagram: https://www.instagram.com/sariswing/
+
+## クローラー向け
+
+- Sitemap: https://sariswing.com/sitemap-index.xml
+- 管理画面（インデックス対象外）: /admin/

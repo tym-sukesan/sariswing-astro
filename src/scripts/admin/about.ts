@@ -224,7 +224,7 @@ function renderRevisionList(revisions: SitePageRevisionRecord[]) {
   });
 
   if (message) {
-    message.textContent = `最新 ${revisions.length} 件を表示（最大50世代まで保持）`;
+    message.textContent = `最新 ${revisions.length} 件（DBは最大50世代まで保持・一覧はスクロールで参照）`;
   }
 }
 
@@ -411,15 +411,47 @@ async function saveAboutPage() {
   }
 }
 
+function closeRevisionDialog() {
+  const dialog = getRevisionDialog();
+  if (dialog?.open) {
+    dialog.close();
+  }
+}
+
 function initRevisionDialog() {
   const dialog = getRevisionDialog();
-  dialog?.querySelector("[data-close-revision-dialog]")?.addEventListener("click", () => {
-    dialog.close();
-  });
-  dialog?.addEventListener("click", (event) => {
-    if (event.target === dialog) {
-      dialog.close();
+  if (!dialog) return;
+
+  const inner = dialog.querySelector(".about-revision-dialog__inner");
+
+  dialog.addEventListener("click", (event) => {
+    const target = event.target;
+    if (!(target instanceof Element)) return;
+
+    if (target.closest("[data-close-revision-dialog]")) {
+      event.preventDefault();
+      closeRevisionDialog();
+      return;
     }
+
+    if (!inner) return;
+
+    const { clientX, clientY } = event;
+    const rect = inner.getBoundingClientRect();
+    const clickedOutside =
+      clientX < rect.left ||
+      clientX > rect.right ||
+      clientY < rect.top ||
+      clientY > rect.bottom;
+
+    if (clickedOutside) {
+      closeRevisionDialog();
+    }
+  });
+
+  dialog.addEventListener("cancel", (event) => {
+    event.preventDefault();
+    closeRevisionDialog();
   });
 }
 

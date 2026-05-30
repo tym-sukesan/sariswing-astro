@@ -54,18 +54,18 @@ import aboutMainFallback from "../../../data/about-main.html?raw";
     </section>
 
     <section class="admin-card about-admin-card">
+      <h2>プレビュー</h2>
+      <p class="admin-form__hint">保存前の内容を確認できます。スタイルは公開ページと同じ CSS が適用されます。</p>
+      <div id="aboutPreview" class="about-admin-preview"></div>
+    </section>
+
+    <section class="admin-card about-admin-card">
       <h2>バックアップ履歴</h2>
       <p class="admin-form__hint">
         保存のたびに、更新直前の HTML が自動でバックアップされます（最大50世代）。誤編集時は過去の版を確認して復元できます。
       </p>
       <p id="aboutRevisionMessage" class="about-revision-message" aria-live="polite"></p>
-      <div id="aboutRevisionList" class="about-revision-list"></div>
-    </section>
-
-    <section class="admin-card about-admin-card">
-      <h2>プレビュー</h2>
-      <p class="admin-form__hint">保存前の内容を確認できます。スタイルは公開ページと同じ CSS が適用されます。</p>
-      <div id="aboutPreview" class="about-admin-preview"></div>
+      <div id="aboutRevisionList" class="about-revision-list" tabindex="0" aria-label="バックアップ履歴一覧"></div>
     </section>
 
     <dialog id="aboutRevisionDialog" class="about-revision-dialog">

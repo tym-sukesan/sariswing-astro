@@ -60,19 +60,18 @@
 --   USING (true);
 
 -- -----------------------------------------------------------------------------
--- 6. site_pages — 固定ページ HTML（公開読み取り可）
+-- 6. site_pages / site_page_revisions — 管理画面 + ビルド時 SELECT
 -- -----------------------------------------------------------------------------
--- CREATE POLICY "site_pages_public_select"
---   ON public.site_pages
---   FOR SELECT
---   TO anon, authenticated
---   USING (true);
+-- 実行用 SQL（RLS 有効化済みで upsert が拒否される場合）:
+--   scripts/supabase/site-pages-rls-policies.sql
+--
+-- 方針: news / schedules / instagram_posts と同様、anon に FOR ALL（Basic 認証前提）
+-- 公開ビルド: site_pages を anon SELECT（全行）
+-- バックアップ: site_page_revisions も anon CRUD（/admin/about/ のみ利用想定）
 
 -- -----------------------------------------------------------------------------
--- 7. site_page_revisions — 管理画面バックアップ（公開読み取り不要）
+-- 7. （旧）site_page_revisions — 上記ファイルを参照
 -- -----------------------------------------------------------------------------
--- 履歴は /admin/ からのみ参照。RLS 有効化時は anon に SELECT を付けない。
--- 読み書きは authenticated または service_role 経由を想定。
 
 -- -----------------------------------------------------------------------------
 -- 8. 書き込み（INSERT / UPDATE / DELETE）

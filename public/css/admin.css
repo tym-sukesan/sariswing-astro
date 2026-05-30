@@ -740,39 +740,6 @@ body.admin-body {
   cursor: not-allowed;
 }
 
-.sitemap-admin-card .admin-actions {
-  margin-bottom: 12px;
-}
-
-.sitemap-admin-list {
-  margin: 0 0 1.2rem;
-  padding-left: 1.4rem;
-  line-height: 1.7;
-}
-
-.sitemap-admin-help {
-  margin: 0 0 16px;
-  font-size: 1.3rem;
-  line-height: 1.7;
-  color: #666;
-}
-
-.sitemap-admin-count {
-  margin: 0 0 10px;
-  font-size: 1.4rem;
-  color: #444;
-  letter-spacing: 0.05em;
-}
-
-.sitemap-admin-output {
-  margin-top: 10px;
-}
-
-.sitemap-admin-output textarea {
-  min-height: 340px;
-  font-family: SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace;
-}
-
 /* ----------------------------------------------------------------------------------------------------
  *  公開サイト更新バー
  * --------------------------------------------------------------------------------------------------*/

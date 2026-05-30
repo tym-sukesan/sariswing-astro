@@ -18,6 +18,7 @@
 -- ALTER TABLE public.instagram_posts ENABLE ROW LEVEL SECURITY;
 -- ALTER TABLE public.venues ENABLE ROW LEVEL SECURITY;
 -- ALTER TABLE public.site_pages ENABLE ROW LEVEL SECURITY;
+-- ALTER TABLE public.site_page_revisions ENABLE ROW LEVEL SECURITY;
 
 -- -----------------------------------------------------------------------------
 -- 2. schedules — 公開済みのみ anon で SELECT
@@ -68,7 +69,13 @@
 --   USING (true);
 
 -- -----------------------------------------------------------------------------
--- 7. 書き込み（INSERT / UPDATE / DELETE）
+-- 7. site_page_revisions — 管理画面バックアップ（公開読み取り不要）
+-- -----------------------------------------------------------------------------
+-- 履歴は /admin/ からのみ参照。RLS 有効化時は anon に SELECT を付けない。
+-- 読み書きは authenticated または service_role 経由を想定。
+
+-- -----------------------------------------------------------------------------
+-- 8. 書き込み（INSERT / UPDATE / DELETE）
 -- -----------------------------------------------------------------------------
 -- anon には書き込みポリシーを付けない（デフォルトで拒否）。
 -- 管理画面からの更新は、Auth 付きポリシーまたは API + service_role に移行する。

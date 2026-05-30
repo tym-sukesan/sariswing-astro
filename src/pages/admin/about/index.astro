@@ -26,19 +26,22 @@ import aboutMainFallback from "../../../data/about-main.html?raw";
         </ul>
       </div>
 
-      <label class="admin-form__field admin-form__field--content">
-        <span class="admin-form__label">About ページ HTML（&lt;main&gt; 内）</span>
-        <p id="aboutHtmlStats" class="about-admin-stats" aria-live="polite"></p>
-        <textarea
-          id="aboutHtmlContent"
-          class="about-admin-html-editor"
-          spellcheck="false"
-          wrap="soft"
-        ></textarea>
-        <span class="admin-form__hint">
-          公開ページの &lt;main&gt; 要素内にそのまま挿入されます。タグの閉じ忘れに注意してください。
-        </span>
-      </label>
+      <form class="admin-form" novalidate>
+        <label class="admin-form__field admin-form__field--content">
+          <span class="admin-form__label">About ページ HTML（&lt;main&gt; 内）</span>
+          <p id="aboutHtmlStats" class="about-admin-stats" aria-live="polite"></p>
+          <textarea
+            id="aboutHtmlContent"
+            class="about-admin-html-editor"
+            rows="20"
+            spellcheck="false"
+            wrap="soft"
+          ></textarea>
+          <span class="admin-form__hint">
+            公開ページの &lt;main&gt; 要素内にそのまま挿入されます。タグの閉じ忘れに注意してください。
+          </span>
+        </label>
+      </form>
 
       <div class="admin-actions">
         <button id="saveAbout" class="admin-button" type="button">保存</button>
@@ -51,10 +54,47 @@ import aboutMainFallback from "../../../data/about-main.html?raw";
     </section>
 
     <section class="admin-card about-admin-card">
+      <h2>バックアップ履歴</h2>
+      <p class="admin-form__hint">
+        保存のたびに、更新直前の HTML が自動でバックアップされます（最大50世代）。誤編集時は過去の版を確認して復元できます。
+      </p>
+      <p id="aboutRevisionMessage" class="about-revision-message" aria-live="polite"></p>
+      <div id="aboutRevisionList" class="about-revision-list"></div>
+    </section>
+
+    <section class="admin-card about-admin-card">
       <h2>プレビュー</h2>
       <p class="admin-form__hint">保存前の内容を確認できます。スタイルは公開ページと同じ CSS が適用されます。</p>
       <div id="aboutPreview" class="about-admin-preview"></div>
     </section>
+
+    <dialog id="aboutRevisionDialog" class="about-revision-dialog">
+      <div class="about-revision-dialog__inner">
+        <header class="about-revision-dialog__header">
+          <h2 id="aboutRevisionDialogTitle" class="about-revision-dialog__title"></h2>
+          <p id="aboutRevisionDialogMeta" class="about-revision-dialog__meta"></p>
+          <button
+            type="button"
+            class="about-revision-dialog__close"
+            data-close-revision-dialog
+            aria-label="閉じる"
+          >
+            ×
+          </button>
+        </header>
+        <textarea
+          id="aboutRevisionDialogContent"
+          class="about-revision-dialog__content"
+          readonly
+          spellcheck="false"
+        ></textarea>
+        <footer class="about-revision-dialog__footer">
+          <button type="button" class="admin-button admin-button-secondary" data-close-revision-dialog>
+            閉じる
+          </button>
+        </footer>
+      </div>
+    </dialog>
   </main>
 
   <script define:vars={{ aboutMainFallback }}>

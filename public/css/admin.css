@@ -775,8 +775,8 @@ body.admin-body {
   white-space: pre-line;
 }
 
-.about-admin-html-editor {
-  min-height: 800px;
+.about-admin-card textarea.about-admin-html-editor {
+  min-height: 450px;
   resize: vertical;
   overflow-x: hidden;
   overflow-y: auto;
@@ -788,6 +788,12 @@ body.admin-body {
   tab-size: 2;
 }
 
+@media screen and (min-width: 769px) {
+  .about-admin-card textarea.about-admin-html-editor {
+    min-height: clamp(700px, 70vh, 900px);
+  }
+}
+
 .about-admin-preview {
   margin-top: 12px;
   padding: 16px;
@@ -795,6 +801,142 @@ body.admin-body {
   border-radius: 6px;
   background: #fff;
   overflow-x: auto;
+}
+
+.about-revision-message {
+  margin: 0 0 12px;
+  font-size: 1.2rem;
+  color: #888;
+}
+
+.about-revision-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.about-revision-empty {
+  margin: 0;
+  font-size: 1.3rem;
+  line-height: 1.6;
+  color: #777;
+}
+
+.about-revision-empty--error {
+  color: #b33;
+}
+
+.about-revision-item {
+  margin: 0;
+  padding: 14px 16px;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  background: #fafafa;
+}
+
+.about-revision-item__title {
+  margin: 0 0 4px;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #333;
+}
+
+.about-revision-item__date {
+  margin: 0 0 12px;
+  font-size: 1.3rem;
+  color: #666;
+  font-variant-numeric: tabular-nums;
+}
+
+.about-revision-item__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.about-revision-dialog {
+  width: min(960px, calc(100vw - 32px));
+  max-height: calc(100vh - 32px);
+  margin: auto;
+  padding: 0;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+}
+
+.about-revision-dialog::backdrop {
+  background: rgba(0, 0, 0, 0.45);
+}
+
+.about-revision-dialog__inner {
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100vh - 32px);
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+}
+
+.about-revision-dialog__header {
+  position: relative;
+  padding: 20px 52px 12px 20px;
+  border-bottom: 1px solid #e8e8e8;
+}
+
+.about-revision-dialog__title {
+  margin: 0 0 4px;
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #333;
+}
+
+.about-revision-dialog__meta {
+  margin: 0;
+  font-size: 1.3rem;
+  color: #666;
+}
+
+.about-revision-dialog__close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  font-size: 2rem;
+  line-height: 1;
+  color: #666;
+  background: transparent;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.about-revision-dialog__close:hover {
+  background: #f0f0f0;
+}
+
+.about-revision-dialog__content {
+  flex: 1;
+  min-height: 320px;
+  max-height: min(70vh, 720px);
+  margin: 0;
+  padding: 16px;
+  resize: vertical;
+  border: none;
+  border-radius: 0;
+  font-family: SFMono-Regular, Consolas, Monaco, monospace;
+  font-size: 1.3rem;
+  line-height: 1.6;
+  color: #333;
+  background: #fafafa;
+}
+
+.about-revision-dialog__footer {
+  padding: 12px 20px 16px;
+  border-top: 1px solid #e8e8e8;
+  text-align: right;
 }
 
 /* ----------------------------------------------------------------------------------------------------

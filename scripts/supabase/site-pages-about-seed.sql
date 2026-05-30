@@ -1,0 +1,150 @@
+-- About ページ初期データ（site_pages テーブル作成後に実行）
+-- slug = 'about' の html_content に、現行 about ページの <main> 内 HTML を投入します。
+
+insert into public.site_pages (slug, title, html_content)
+values (
+  'about',
+  'ABOUT SARI',
+  $html<div id="lowerWrap">
+<div class="mainTitle about">
+<h1>ABOUT SARI</h1>
+</div>
+<div id="aboutTxt">
+<section>
+<div class="lead">
+<h2>Profile</h2>
+<h3>紗理 Vocal</h3>
+<p>横浜生まれ。ジャズサックス奏者の中村誠一<sup>※</sup>を父に持ったが、ジャズには興味をもたず、5歳よりダイアナ石山Song&Dance教室に通いダンスに没頭。ブロードウェイミュージカルナンバーを踊りながら歌い、歌うことが大好きになる。ミュージカル女優を目指してオーディションを受けていた高校二年次、父が貸してくれたエラ・フィッツジェラルドのCD『Ella sings Cole Porter』を聴き、稲妻が走ったかのような衝撃と感銘を受け、ジャズシンガーになる事を決意。<br>以来、エラのような温かでスウィンギーな歌声を届けたい、ジャズの素晴らしさを伝えたいと、多方面から奮闘中、修行の日々は続く。</p>
+<p style="font-size:12px;color:#636363;">※中村誠一・・・ ジャズテナーサックス奏者。初代山下洋輔トリオでデビュー、 フリージャズを演奏。その後、自己のグループ、ジョージ川口NewBig4で演奏活動を行う。 1978年渡米、ジョージ・コールマンに師事。『中村照夫とライジングサン』でボブ・ミンツァー などとクラブ、コンサートに出演。帰国後、NTV『今夜は最高』にタモリと出演。<br><a href="https://seiichijazz.com/" target="_blank" style="font-size:12px;color:#636363;">https://seiichijazz.com/</a></p>
+<h3>好きなもの</h3>
+<p>たまご あずき（小豆） 珈琲 赤ワイン 犬 工作 踊る 飲みながら料理 ミントグリーン</p>
+</div>
+</section>
+<section class="profInner">
+<h2 class="clear">Biography</h2>
+<table class="biography">
+<tr>
+<th>2007年</th>
+<td>洗足学園音楽大学ジャズヴォーカル科にてDana Hanchard氏に４年間師事。首席卒業。</td>
+</tr>
+<tr>
+<th>2008年</th>
+<td>渡米。ボストンBerklee College of musicにて2年間留学。</td>
+</tr>
+<tr>
+<th>2010年</th>
+<td>帰国。「第30回浅草JAZZコンテスト」で銀賞受賞。</td>
+</tr>
+<tr>
+<th>2013年</th>
+<td>Thelonious Monk institute of Jazz（セロニアス・モンク・ジャズ協会）がサポートする「Osaka Asian Dreams Jazz Competition 2013」でグランプリ受賞。<br>Thelonious Monk Jr.氏と共演を果たす。</td>
+</tr>
+<tr>
+<th>2013年</th>
+<td>デビューアルバム『The Sweetest Sounds』をリリース。</td>
+</tr>
+<tr>
+<th>2017年</th>
+<td>セカンドアルバム『and I’ll sing once more』をリリース。</td>
+</tr>
+<tr>
+<th>2017年</th>
+<td>ラジオ日本の番組「オトナのJazzTime」のパーソナリティーとして抜擢。毎週オンエア中。<br>テレビCM「プロポーズされたらゼクシィ」のナレーションとして抜擢。毎月オンエア中。</td>
+</tr>
+</table>
+
+<h2>Studio Works</h2>
+<h3>TVCM　サウンドロゴ</h3>
+<ul class="profList">
+<li>ブリジストン 『タイヤ館』 2007年～2008年</li>
+<li>KOSE Taiwan 『雪肌精』2014年</li>
+<li>NHK『みつかるEテレ』2017年～</li>
+<li>トヨタ『サポトヨ』2017年</li>
+<li>ニチガス『ニチガス営業物語／切り替えがカンタン』2019年</li>
+</ul>
+<h3>TVCM　バックミュージック</h3>
+<ul class="profList">
+<li>AJINOMOTO『味の素ギフト』2008年</li>
+<li>アサヒ飲料 『三ツ矢サイダー』 2008年</li>
+<li>UHA味覚糖『emaのど飴』2008年</li>
+<li>リクルート『タウンワーク』2012年</li>
+<li>セブンイレブン・ジャパン『ななチキ』2017年</li>
+<li>日本和装『2018秋 自分で』 2018年</li>
+<li>花王ニュービーズ『お洗たくにボタニカルの香りを』2018年</li>
+<li>TOYOTAミニバン『バンバン使えるエブリバディ・ミニバン』2018年</li>
+<li>Akatsuki Inc『八月のシンデレラナイン』 2019年</li>
+<li>AIDIS『ラストクラウディア』2019年</li>
+<li>公文式『くもんの子、一人ひとりのKUMO、生きる英語力』2019年</li>
+<li>Serta（サータ）『妥協しない人の、サータ｜山縣亮太』2019年</li>
+<li>洋服の青山『橋本環奈　フレッシャーズ』2020年</li>
+<li>ケンタッキーフライドチキン『ワイヤレスイヤホン』2020年</li>
+</ul>
+
+<h3>TVCM ナレーション</h3>
+<ul class="profList">
+<li>リクルート『ゼクシィ』2017年～</li>
+</ul>
+<h3>TVアニメ</h3>
+<ul class="profList">
+<li>『血界戦線＆BEYOND』2017年 劇中歌</li>
+</ul>
+<h3>映画</h3>
+<ul class="profList">
+<li>『ヤーチャイカ』2008年 主題歌　（覚和歌子、谷川俊太郎監督　カンヌ国際映画際出展作品）</li>
+</ul>
+		<h3>他レコーディング</h3>
+<ul class="profList">
+<li>ディズニーオンアイス2011年（日本語吹き替えの歌）<br>『アラジン』Whole new world ジャスミンのパート  『美女と野獣』Beauty and the Beast ベルのパート</li>
+<li>『ディズニーライブ！』2012年 2017年 2018年（日本語吹き替えの歌）メドレーコーラス</li>
+<li>株式会社Voltage モバイルアプリ『ダーリンは芸能人Love Duet』2013年　劇中歌</li>
+<li>株式会社Voltage モバイルアプリ『ルームシェア素顔のカレ Love Days』2015年　劇中歌</li>
+<li>株式会社ADIS モバイルアプリ『ラストクラウディア』2019年　劇中歌</li>
+<li>NBAバレエ団『リトルマーメイド』2019年　劇中歌コーラス</li>
+</ul>
+<h2>Event<span>（一部）</span></h2>
+<dl class="profLive">
+<dt>ハイアットリージェンシー瀬良垣アイランド沖縄</dt>
+<dd>「COUNTDOWN PARTY 2019 CABARET NIGHT」</dd>
+<dt>玉川髙島屋S・C</dt>
+<dd>「ホワイトエンジェル」</dd>
+<dt>福島空港内</dt>
+<dd>ふくしまFM公開録音「福島空港WINTER JAZZ LIVE2014」</dd>
+<dt>タワーレコード渋谷</dt>
+<dd>「Eve Liveful! Yellow Christmas♪」</dd>
+<dt>渋谷　東急百貨店本店</dt>
+<dd>「TOKYU AUTUMN STAGE in 第8回 渋谷音楽祭」　主催・企画Bunkamura</dd>
+<dt>新百合ケ丘エルミロード</dt>
+<dd>「くつろぎジャズライブ」</dd>
+<dt>新丸ビル</dt>
+<dd>I.W.HARPER Presents“JAZZ is Here”</dd>
+<dt>舞浜イクスピアリ</dt>
+<dd>セレブレーション・プラザ 特設ステージ</dd>
+<dt>山野楽器銀座</dt>
+<dd>「YAMANO オータム・ジャズ・キャンペーン"GINZA AUTUMN JAZZ LIVE」</dd>
+<dt>青山ブックセンター</dt>
+<dd>「タワレコ女子ジャズ部」のおでかけが楽しくなる音楽案内(駒草出版)刊行記念</dd>
+<dt>NHK横浜放送局１階</dt>
+<dd>「ヨコハマから届けよう、ジャズの元気」</dd>
+<dt>品川イーストタワー</dt>
+<dd>「品川イーストワンタワー スプリングフェア」</dd>
+</dl>
+
+<h2>Jazz Festival</h2>
+<ul class="profList">
+<li>横濱ジャズプロムナード</li>
+<li>金沢JazzStreet</li>
+<li>八ヶ岳ジャズフェスティバル</li>
+<li>旭ジャズまつり</li>
+<li>徳島ジャズストリート</li>
+<li>南郷サマージャズフェスティバル</li>
+<li>池袋ジャズフェスティバル</li>
+</ul>
+</section>
+</div>
+</div>
+$html$
+)
+on conflict (slug) do update set
+  title = excluded.title,
+  html_content = excluded.html_content,
+  updated_at = now();

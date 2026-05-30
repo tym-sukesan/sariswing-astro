@@ -740,6 +740,63 @@ body.admin-body {
   cursor: not-allowed;
 }
 
+.about-admin-warning {
+  margin: 0 0 20px;
+  padding: 14px 16px;
+  border: 1px solid #f0d9a8;
+  border-radius: 6px;
+  background: #fff8e6;
+  font-size: 1.3rem;
+  line-height: 1.7;
+  color: #5c4a1f;
+}
+
+.about-admin-warning p {
+  margin: 0 0 8px;
+}
+
+.about-admin-warning ul {
+  margin: 0;
+  padding-left: 1.4rem;
+}
+
+.about-admin-updated-at {
+  margin: 8px 0 0;
+  font-size: 1.2rem;
+  color: #888;
+}
+
+.about-admin-stats {
+  margin: 0 0 10px;
+  font-size: 1.3rem;
+  line-height: 1.7;
+  color: #666;
+  font-variant-numeric: tabular-nums;
+  white-space: pre-line;
+}
+
+.about-admin-html-editor {
+  min-height: 800px;
+  resize: vertical;
+  overflow-x: hidden;
+  overflow-y: auto;
+  font-family: SFMono-Regular, Consolas, Monaco, monospace;
+  font-size: 1.3rem;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  tab-size: 2;
+}
+
+.about-admin-preview {
+  margin-top: 12px;
+  padding: 16px;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  background: #fff;
+  overflow-x: auto;
+}
+
 /* ----------------------------------------------------------------------------------------------------
  *  公開サイト更新バー
  * --------------------------------------------------------------------------------------------------*/

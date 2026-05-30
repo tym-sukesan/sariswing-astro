@@ -17,6 +17,7 @@
 -- ALTER TABLE public.news ENABLE ROW LEVEL SECURITY;
 -- ALTER TABLE public.instagram_posts ENABLE ROW LEVEL SECURITY;
 -- ALTER TABLE public.venues ENABLE ROW LEVEL SECURITY;
+-- ALTER TABLE public.site_pages ENABLE ROW LEVEL SECURITY;
 
 -- -----------------------------------------------------------------------------
 -- 2. schedules — 公開済みのみ anon で SELECT
@@ -58,7 +59,16 @@
 --   USING (true);
 
 -- -----------------------------------------------------------------------------
--- 6. 書き込み（INSERT / UPDATE / DELETE）
+-- 6. site_pages — 固定ページ HTML（公開読み取り可）
+-- -----------------------------------------------------------------------------
+-- CREATE POLICY "site_pages_public_select"
+--   ON public.site_pages
+--   FOR SELECT
+--   TO anon, authenticated
+--   USING (true);
+
+-- -----------------------------------------------------------------------------
+-- 7. 書き込み（INSERT / UPDATE / DELETE）
 -- -----------------------------------------------------------------------------
 -- anon には書き込みポリシーを付けない（デフォルトで拒否）。
 -- 管理画面からの更新は、Auth 付きポリシーまたは API + service_role に移行する。

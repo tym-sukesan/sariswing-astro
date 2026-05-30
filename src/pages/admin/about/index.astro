@@ -1,0 +1,70 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import aboutMainFallback from "../../../data/about-main.html?raw";
+---
+
+<BaseLayout title="About Admin | SARI" admin>
+  <main class="admin-page admin-page--wide">
+    <div class="admin-page-header">
+      <a class="admin-back-link" href="/admin/">← 管理画面トップ</a>
+      <h1>About管理</h1>
+    </div>
+
+    <p class="admin-form__hint admin-static-notice">
+      この画面で編集した内容は Supabase に保存されます。公開サイト（/about/）へ反映するには、管理画面トップの「公開サイトを更新」から再ビルド・再デプロイしてください。
+    </p>
+
+    <section class="admin-card about-admin-card">
+      <h2>HTML編集</h2>
+
+      <div class="about-admin-warning" role="note">
+        <p><strong>注意</strong></p>
+        <ul>
+          <li>HTMLを壊すと表示が崩れる可能性があります。</li>
+          <li>不安な場合は変更前の内容をコピーしておいてください。</li>
+          <li>この内容は管理者のみが編集します（外部ユーザー入力には使いません）。</li>
+        </ul>
+      </div>
+
+      <label class="admin-form__field admin-form__field--content">
+        <span class="admin-form__label">About ページ HTML（&lt;main&gt; 内）</span>
+        <p id="aboutHtmlStats" class="about-admin-stats" aria-live="polite"></p>
+        <textarea
+          id="aboutHtmlContent"
+          class="about-admin-html-editor"
+          spellcheck="false"
+          wrap="soft"
+        ></textarea>
+        <span class="admin-form__hint">
+          公開ページの &lt;main&gt; 要素内にそのまま挿入されます。タグの閉じ忘れに注意してください。
+        </span>
+      </label>
+
+      <div class="admin-actions">
+        <button id="saveAbout" class="admin-button" type="button">保存</button>
+        <button id="refreshPreview" class="admin-button admin-button-secondary" type="button">
+          プレビュー更新
+        </button>
+      </div>
+      <p id="message" class="admin-message"></p>
+      <p id="updatedAt" class="about-admin-updated-at"></p>
+    </section>
+
+    <section class="admin-card about-admin-card">
+      <h2>プレビュー</h2>
+      <p class="admin-form__hint">保存前の内容を確認できます。スタイルは公開ページと同じ CSS が適用されます。</p>
+      <div id="aboutPreview" class="about-admin-preview"></div>
+    </section>
+  </main>
+
+  <script define:vars={{ aboutMainFallback }}>
+    const aboutTextarea = document.getElementById("aboutHtmlContent");
+    if (aboutTextarea instanceof HTMLTextAreaElement) {
+      aboutTextarea.value = aboutMainFallback;
+    }
+  </script>
+
+  <script>
+    import "../../../scripts/admin/about.ts";
+  </script>
+</BaseLayout>

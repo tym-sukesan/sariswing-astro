@@ -9,20 +9,26 @@ type DataResponse<T> = {
 };
 
 export async function getSitePageBySlug(slug: string): Promise<SitePageRecord | null> {
-  const result = await invokeAdminEdgeFunction<DataResponse<SitePageRecord | null>>({
-    action: "get_page",
-    slug,
-  });
+  const result = await invokeAdminEdgeFunction<DataResponse<SitePageRecord | null>>(
+    "admin-site-page",
+    {
+      action: "get_page",
+      slug,
+    }
+  );
   return result.data ?? null;
 }
 
 export async function saveSitePage(slug: string, title: string, html_content: string) {
-  const result = await invokeAdminEdgeFunction<DataResponse<SitePageRecord>>({
-    action: "save_page",
-    slug,
-    title,
-    html_content,
-  });
+  const result = await invokeAdminEdgeFunction<DataResponse<SitePageRecord>>(
+    "admin-site-page",
+    {
+      action: "save_page",
+      slug,
+      title,
+      html_content,
+    }
+  );
   if (!result.data) {
     throw new Error("保存結果が取得できませんでした。");
   }
@@ -30,27 +36,36 @@ export async function saveSitePage(slug: string, title: string, html_content: st
 }
 
 export async function listSitePageRevisions(pageSlug: string) {
-  const result = await invokeAdminEdgeFunction<DataResponse<SitePageRevisionRecord[]>>({
-    action: "list_revisions",
-    page_slug: pageSlug,
-  });
+  const result = await invokeAdminEdgeFunction<DataResponse<SitePageRevisionRecord[]>>(
+    "admin-site-page",
+    {
+      action: "list_revisions",
+      page_slug: pageSlug,
+    }
+  );
   return result.data ?? [];
 }
 
 export async function getSitePageRevisionById(id: number) {
-  const result = await invokeAdminEdgeFunction<DataResponse<SitePageRevisionRecord>>({
-    action: "get_revision",
-    id,
-  });
+  const result = await invokeAdminEdgeFunction<DataResponse<SitePageRevisionRecord>>(
+    "admin-site-page",
+    {
+      action: "get_revision",
+      id,
+    }
+  );
   return result.data ?? null;
 }
 
 export async function restoreSitePageRevision(id: number, title: string) {
-  const result = await invokeAdminEdgeFunction<DataResponse<SitePageRecord>>({
-    action: "restore_revision",
-    id,
-    title,
-  });
+  const result = await invokeAdminEdgeFunction<DataResponse<SitePageRecord>>(
+    "admin-site-page",
+    {
+      action: "restore_revision",
+      id,
+      title,
+    }
+  );
   if (!result.data) {
     throw new Error("復元結果が取得できませんでした。");
   }

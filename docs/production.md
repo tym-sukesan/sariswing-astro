@@ -20,8 +20,8 @@
 - **Instagram 管理**（`/admin/instagram/`）は Supabase Auth + Edge Function `admin-instagram` 経由です。
 - **About 管理**（`/admin/about/`）は Supabase Auth + Edge Function `admin-site-page` 経由です。
 - **NEWS 管理**（`/admin/news/`）は Supabase Auth + Edge Function `admin-news` 経由です。
+- **Schedule 管理**（`/admin/schedule/`）は Supabase Auth + Edge Function `admin-schedule` 経由です。
 - いずれも共有 API シークレットは `dist/` に埋め込みません（JWT セッションのみ）。
-- **Schedule** は従来どおり anon key で Supabase に直接接続します（RLS 未適用の間は改ざんリスクに注意）。
 - 可能であれば `dist/admin/` を公開ホストから除外するか、認証の後だけ配信してください。
 - GitHub Actions で `dist/` をFTPデプロイする場合、`dist/admin/` もアップロード対象に含まれます。**必ず本番サーバー側で `/admin/` に Basic 認証を設定**してください。
 
@@ -63,6 +63,7 @@ supabase link --project-ref YOUR_PROJECT_REF
 supabase functions deploy admin-instagram
 supabase functions deploy admin-site-page
 supabase functions deploy admin-news
+supabase functions deploy admin-schedule
 ```
 
 `SUPABASE_SERVICE_ROLE_KEY` は Edge ランタイムに自動注入されます（手動で Secrets に service_role をコピーする必要は通常ありません）。
@@ -205,6 +206,68 @@ supabase functions deploy admin-news
 2. **RLS だけ戻す**: `news` で anon `FOR ALL` ポリシーを一時復活、または `ALTER TABLE ... DISABLE ROW LEVEL SECURITY`（緊急時のみ）
 3. **Edge を残す**: RLS を緩めても Edge 経由の管理は継続可能
 
+## Schedule 管理（Supabase Auth + Edge Function）
+
+### 概要
+
+1. `/admin/login/` でログイン（未ログインで `/admin/schedule/` にアクセスすると `?next=/admin/schedule/` へリダイレクト）
+2. JWT 付きで `admin-schedule` Edge Function を呼び出し
+3. Edge 内で `app_metadata.role === "admin"` を確認後、`service_role` で `schedules` を CRUD
+4. 会場マスタ（`venues`）は Edge の `list` で **SELECT のみ**（管理画面の会場選択用）
+5. 公開 `/live-schedule/` は引き続き **ビルド時 anon SELECT**（`is_published = true`・変更なし）
+
+画像アップロード（Storage `images` / `schedule/` プレフィックス）は従来どおり。Schedule の保存のみ Edge 経由です。
+
+**UI の分割（今後 / 過去）・検索・ページネーション**はフロント側の既存ロジックのままです（`list` で全件取得後にクライアントで分類）。
+
+### Edge Function のデプロイ
+
+```bash
+supabase link --project-ref YOUR_PROJECT_REF
+supabase functions deploy admin-schedule
+```
+
+`verify_jwt = true` です。
+
+### 本番確認手順（RLS 適用前）
+
+1. `admin-schedule` をデプロイ
+2. フロント（`dist/admin/`）をデプロイ
+3. `/admin/login/` → `/admin/schedule/`
+4. 一覧（今後 / 過去）・検索・追加・編集・複製・削除・公開/非公開
+5. 会場選択・自由入力会場・画像アップロード
+6. ログアウト後、`/admin/schedule/` 直アクセスでログインへ戻ること
+
+### `schedules` RLS の適用タイミング
+
+**Edge + Schedule 管理の動作確認後** に `scripts/supabase/schedules-rls-select-published.sql` を実行してください。
+
+| 対象 | anon（適用後） |
+|------|----------------|
+| `schedules` | SELECT のみ、`is_published = true` |
+| `venues` | 既存 `venues-rls.sql` のまま（anon SELECT） |
+
+### RLS 適用前後の確認
+
+| 確認項目 | RLS 適用前 | RLS 適用後 |
+|----------|------------|------------|
+| `/admin/login/` → Schedule CRUD | OK（Edge） | OK（Edge） |
+| `/live-schedule/`（静的ビルド） | OK（anon SELECT 公開のみ） | OK（同上） |
+| 管理画面で非公開の一覧 | OK（Edge は全件） | OK（Edge は全件） |
+| ブラウザから anon 直 `insert` / `update` / `delete` | 可能（RLS 無効/FOR ALL 時） | **拒否** |
+
+### ロールバック
+
+1. **管理だけ戻す**: `schedule.ts` を anon 直 CRUD に戻して再デプロイ（非推奨）
+2. **RLS だけ戻す**: `schedules` で anon `FOR ALL` ポリシーを一時復活、または RLS 無効化（緊急時のみ）
+3. **Edge を残す**: RLS を緩めても Edge 経由の管理は継続可能
+
+### 注意点
+
+- **複製**は DB 上の id 指定で行います（フォームの未保存内容は含みません）。タイトルは「〇〇 のコピー」/「無題のコピー」、`is_published` 等は元行の値を引き継ぎます（従来のフォーム複製と同様の公開状態）。
+- `venues` は Edge 経由で取得します（`venues` RLS が anon SELECT のみでも管理画面は問題ありません）。
+- Schedule はフィールドが多いため、Edge デプロイ後は **追加・更新・複製** をそれぞれ一度ずつ確認してください。
+
 ## GitHub Actions 手動デプロイ（workflow_dispatch）
 
 `/.github/workflows/deploy.yml` で、GitHub Actions の手動実行による build + FTP deploy を行います。
@@ -284,10 +347,11 @@ supabase functions deploy deploy-status --no-verify-jwt
 supabase functions deploy admin-instagram
 supabase functions deploy admin-site-page
 supabase functions deploy admin-news
+supabase functions deploy admin-schedule
 ```
 
 - `trigger-deploy` / `deploy-status`: `verify_jwt = false`。`x-deploy-secret` と anon key で呼び出し。
-- `admin-instagram` / `admin-site-page` / `admin-news`: `verify_jwt = true`。ログイン後の **access_token**（Supabase Auth）で呼び出し。
+- `admin-instagram` / `admin-site-page` / `admin-news` / `admin-schedule`: `verify_jwt = true`。ログイン後の **access_token**（Supabase Auth）で呼び出し。
 
 Secrets の設定（CLI）例:
 

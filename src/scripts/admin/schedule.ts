@@ -4,12 +4,20 @@ import {
 } from "../../lib/admin/create-schedule-list-item";
 import { initImageUploadFields } from "../../lib/admin/mount-image-upload-field";
 import { initPaginatedList, type PaginatedListController } from "../../lib/admin/paginated-list";
+import { requireAdminSession, signOutAdmin } from "../../lib/admin/require-admin-session";
+import {
+  createSchedule,
+  deleteSchedule,
+  duplicateSchedule,
+  listScheduleAdminData,
+  updateSchedule,
+  type ScheduleWritePayload,
+} from "../../lib/admin/schedule-api";
 import {
   SCHEDULE_TIME_TYPE_OPTIONS,
   type ScheduleAdminRecord,
   type VenueOption,
 } from "../../lib/admin/schedule-constants";
-import { supabase } from "../../lib/supabase";
 
 const PUBLIC_SITE_REBUILD_MESSAGE =
   "公開サイト（/live-schedule/ ・トップページなど）へ反映するには、GitHub Actions で再ビルド・再デプロイしてください。";
@@ -45,7 +53,7 @@ function nullableText(value: string) {
   return value === "" ? null : value;
 }
 
-function buildScheduleRecord(form: ParentNode) {
+function buildScheduleRecord(form: ParentNode): ScheduleWritePayload {
   const venueIdRaw = getTextValue(form, "venue_id");
   const openTimeRaw = getTextValue(form, "open_time");
   const startTimeRaw = getTextValue(form, "start_time");
@@ -121,23 +129,6 @@ function bindEditFormVenueSelects() {
   document.querySelectorAll(".schedule-edit-form").forEach((form) => bindVenueSelect(form));
 }
 
-async function fetchScheduleAdminData() {
-  console.log("[schedule-admin] fetching latest schedule from Supabase");
-  const [schedulesResult, venuesResult] = await Promise.all([
-    supabase.from("schedules").select("*").order("date", { ascending: true }),
-    supabase.from("venues").select("*").order("name", { ascending: true }),
-  ]);
-
-  console.log("[schedule-admin] supabase fetch result", {
-    scheduleError: schedulesResult.error,
-    scheduleCount: schedulesResult.data?.length ?? 0,
-    venueError: venuesResult.error,
-    venueCount: venuesResult.data?.length ?? 0,
-  });
-
-  return { schedulesResult, venuesResult };
-}
-
 export function initScheduleAdmin() {
   const message = document.getElementById("message");
   const addForm = document.getElementById("addScheduleForm");
@@ -192,42 +183,29 @@ export function initScheduleAdmin() {
     upcomingController?.refreshItems();
     pastController?.refreshItems();
     bindEditFormVenueSelects();
-
-    console.log("[schedule-admin] list rendered", {
-      upcoming: upcoming.length,
-      past: past.length,
-    });
   }
 
   async function reloadScheduleList() {
     setScheduleLoading(true);
 
-    const { schedulesResult, venuesResult } = await fetchScheduleAdminData();
+    try {
+      const { schedules, venues } = await listScheduleAdminData();
 
-    setScheduleLoading(false);
+      venuesCache = venues;
 
-    if (schedulesResult.error) {
-      alert(`スケジュール一覧の取得に失敗しました: ${schedulesResult.error.message}`);
-      if (message) message.textContent = `スケジュール一覧の取得に失敗しました: ${schedulesResult.error.message}`;
-      return;
+      if (addVenueSelect instanceof HTMLSelectElement) {
+        populateVenueSelect(addVenueSelect, venuesCache);
+      }
+
+      renderScheduleLists(schedules, venuesCache);
+    } catch (err) {
+      const text = err instanceof Error ? err.message : "データの取得に失敗しました。";
+      alert(`スケジュール一覧の取得に失敗しました: ${text}`);
+      if (message) message.textContent = `スケジュール一覧の取得に失敗しました: ${text}`;
+    } finally {
+      setScheduleLoading(false);
     }
-
-    if (venuesResult.error) {
-      alert(`会場一覧の取得に失敗しました: ${venuesResult.error.message}`);
-      if (message) message.textContent = `会場一覧の取得に失敗しました: ${venuesResult.error.message}`;
-      return;
-    }
-
-    venuesCache = (venuesResult.data ?? []) as VenueOption[];
-
-    if (addVenueSelect instanceof HTMLSelectElement) {
-      populateVenueSelect(addVenueSelect, venuesCache);
-    }
-
-    renderScheduleLists((schedulesResult.data ?? []) as ScheduleAdminRecord[], venuesCache);
   }
-
-  void reloadScheduleList();
 
   const scheduleSearchInput = document.getElementById("scheduleSearch");
   const scheduleSearchStatus = document.getElementById("scheduleSearchStatus");
@@ -272,16 +250,15 @@ export function initScheduleAdmin() {
       return;
     }
 
-    const { error } = await supabase.from("schedules").insert([record]);
-
-    if (error) {
-      alert(`保存に失敗しました: ${error.message}`);
-      message.textContent = "保存に失敗しました：" + error.message;
-      return;
+    try {
+      await createSchedule(record);
+      message.textContent = `保存しました。${PUBLIC_SITE_REBUILD_MESSAGE}`;
+      await reloadScheduleList();
+    } catch (err) {
+      const text = err instanceof Error ? err.message : "保存に失敗しました。";
+      alert(`保存に失敗しました: ${text}`);
+      message.textContent = `保存に失敗しました：${text}`;
     }
-
-    message.textContent = `保存しました。${PUBLIC_SITE_REBUILD_MESSAGE}`;
-    await reloadScheduleList();
   });
 
   const attachListHandlers = (list: HTMLElement) => {
@@ -320,16 +297,15 @@ export function initScheduleAdmin() {
             return;
           }
 
-          const { error } = await supabase.from("schedules").update(record).eq("id", id);
-
-          if (error) {
-            alert(`更新に失敗しました: ${error.message}`);
-            message.textContent = "更新に失敗しました：" + error.message;
-            return;
+          try {
+            await updateSchedule(id, record);
+            message.textContent = `更新しました。${PUBLIC_SITE_REBUILD_MESSAGE}`;
+            await reloadScheduleList();
+          } catch (err) {
+            const text = err instanceof Error ? err.message : "更新に失敗しました。";
+            alert(`更新に失敗しました: ${text}`);
+            message.textContent = `更新に失敗しました：${text}`;
           }
-
-          message.textContent = `更新しました。${PUBLIC_SITE_REBUILD_MESSAGE}`;
-          await reloadScheduleList();
         })();
         return;
       }
@@ -340,37 +316,27 @@ export function initScheduleAdmin() {
 
           if (!confirm("このスケジュールを複製しますか？")) return;
 
-          const form = item.querySelector(".schedule-edit-form");
-          if (!form) return;
-
-          const record = buildScheduleRecord(form);
-
-          if (!record.date) {
-            message.textContent = "日付を入力してください。";
+          const id = item.getAttribute("data-id");
+          if (!id) {
+            alert("IDが取得できないため複製できません。ページを再読み込みしてください。");
             return;
           }
 
-          const duplicateTitle = record.title ? `${record.title} のコピー` : "無題のコピー";
-          const payload = { ...record, title: duplicateTitle };
-
-          const { error } = await supabase.from("schedules").insert([payload]);
-
-          if (error) {
-            alert(`複製に失敗しました: ${error.message}`);
-            message.textContent = "複製に失敗しました：" + error.message;
-            return;
+          try {
+            await duplicateSchedule(id);
+            message.textContent = "複製しました。";
+            await reloadScheduleList();
+          } catch (err) {
+            const text = err instanceof Error ? err.message : "複製に失敗しました。";
+            alert(`複製に失敗しました: ${text}`);
+            message.textContent = `複製に失敗しました：${text}`;
           }
-
-          message.textContent = "複製しました。";
-          await reloadScheduleList();
         })();
         return;
       }
 
       if (button.classList.contains("delete")) {
         void (async () => {
-          console.log("[schedule-admin] delete button clicked");
-
           if (!message) return;
 
           if (!confirm("このスケジュールを削除します。元に戻せません。よろしいですか？")) return;
@@ -381,44 +347,34 @@ export function initScheduleAdmin() {
             return;
           }
 
-          console.log("[schedule-admin] deleting id:", id);
+          try {
+            const result = await deleteSchedule(id);
 
-          const { data, error, count } = await supabase
-            .from("schedules")
-            .delete({ count: "exact" })
-            .eq("id", id)
-            .select();
+            if (result.count === 0) {
+              alert("削除対象が見つかりませんでした。一覧を再読み込みします。");
+              await reloadScheduleList();
+              return;
+            }
 
-          console.log("[schedule-admin] supabase delete result", { data, error, count });
+            item.remove();
 
-          if (error) {
-            alert(`削除に失敗しました: ${error.message}`);
-            message.textContent = "削除に失敗しました：" + error.message;
-            return;
+            const isPastItem = list.id === "pastScheduleList";
+            if (isPastItem) {
+              pastController?.refreshItems();
+            } else {
+              upcomingController?.refreshItems();
+            }
+
+            const upcomingCount = upcomingList?.querySelectorAll(".schedule-admin-item").length ?? 0;
+            const pastCount = pastList?.querySelectorAll(".schedule-admin-item").length ?? 0;
+            updateScheduleEmptyStates(upcomingCount, pastCount);
+
+            message.textContent = `削除しました。${PUBLIC_SITE_REBUILD_MESSAGE}`;
+          } catch (err) {
+            const text = err instanceof Error ? err.message : "削除に失敗しました。";
+            alert(`削除に失敗しました: ${text}`);
+            message.textContent = `削除に失敗しました：${text}`;
           }
-
-          if (count === 0) {
-            alert("削除対象が見つかりませんでした。一覧を再読み込みします。");
-            await reloadScheduleList();
-            return;
-          }
-
-          console.log("[schedule-admin] delete success, removing item from DOM");
-          item.remove();
-
-          const isPastItem = list.id === "pastScheduleList";
-          if (isPastItem) {
-            pastController?.refreshItems();
-          } else {
-            upcomingController?.refreshItems();
-          }
-
-          const upcomingCount = upcomingList?.querySelectorAll(".schedule-admin-item").length ?? 0;
-          const pastCount = pastList?.querySelectorAll(".schedule-admin-item").length ?? 0;
-          updateScheduleEmptyStates(upcomingCount, pastCount);
-
-          message.textContent = `削除しました。${PUBLIC_SITE_REBUILD_MESSAGE}`;
-          console.log("[schedule-admin] remove item complete");
         })();
       }
     });
@@ -426,6 +382,17 @@ export function initScheduleAdmin() {
 
   if (upcomingList) attachListHandlers(upcomingList);
   if (pastList) attachListHandlers(pastList);
+
+  void (async () => {
+    const ok = await requireAdminSession();
+    if (!ok) return;
+
+    document.getElementById("adminLogout")?.addEventListener("click", () => {
+      void signOutAdmin();
+    });
+
+    await reloadScheduleList();
+  })();
 }
 
 initScheduleAdmin();

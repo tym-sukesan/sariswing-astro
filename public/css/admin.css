@@ -41,6 +41,14 @@ body.admin-body {
   letter-spacing: 0.06em;
 }
 
+.admin-page-header--with-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px 24px;
+}
+
 .admin-back-link {
   display: inline-block;
   margin: 0 0 12px;
@@ -695,6 +703,11 @@ body.admin-body {
 
 .admin-message:empty {
   display: none;
+}
+
+.admin-message--error:not(.is-hidden) {
+  display: block;
+  color: #a33;
 }
 
 .admin-nav {

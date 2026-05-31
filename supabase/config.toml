@@ -6,3 +6,6 @@ verify_jwt = false
 
 [functions.deploy-status]
 verify_jwt = false
+
+[functions.admin-instagram]
+verify_jwt = true

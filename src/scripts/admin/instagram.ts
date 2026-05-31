@@ -8,10 +8,14 @@ import {
   type InstagramSortReorderController,
 } from "../../lib/admin/instagram-sort-reorder";
 import {
-  nextSortOrderForNewPost,
-  sortInstagramPosts,
-} from "../../lib/instagram-posts";
-import { supabase } from "../../lib/supabase";
+  createInstagramPost,
+  deleteInstagramPost,
+  listInstagramPosts,
+  updateInstagramEmbed,
+  updateInstagramSortOrders,
+} from "../../lib/admin/instagram-api";
+import { requireAdminSession, signOutAdmin } from "../../lib/admin/require-admin-session";
+import { sortInstagramPosts } from "../../lib/instagram-posts";
 
 declare global {
   interface Window {
@@ -54,17 +58,6 @@ function updateInstagramEmptyState(postList: HTMLElement | null) {
   document.getElementById("postListEmpty")?.classList.toggle("is-hidden", count > 0);
 }
 
-async function fetchInstagramFromSupabase() {
-  const result = await supabase.from("instagram_posts").select("*");
-
-  if (result.error) return result;
-
-  return {
-    ...result,
-    data: sortInstagramPosts((result.data ?? []) as InstagramAdminRecord[]),
-  };
-}
-
 function renderInstagramList(items: InstagramAdminRecord[], postList: HTMLElement) {
   postList.replaceChildren();
   items.forEach((item) => {
@@ -97,21 +90,29 @@ export function initInstagramAdmin() {
 
     setInstagramLoading(true);
 
-    const { data, error } = await fetchInstagramFromSupabase();
-
-    setInstagramLoading(false);
-
-    if (error) {
-      alert(`Instagram一覧の取得に失敗しました: ${error.message}`);
-      if (message) message.textContent = `Instagram一覧の取得に失敗しました: ${error.message}`;
-      return;
+    try {
+      const data = await listInstagramPosts();
+      setInstagramLoading(false);
+      renderInstagramList(sortInstagramPosts(data) as InstagramAdminRecord[], postList);
+      bindSortReorder();
+    } catch (err) {
+      setInstagramLoading(false);
+      const text = err instanceof Error ? err.message : "Instagram一覧の取得に失敗しました。";
+      alert(`Instagram一覧の取得に失敗しました: ${text}`);
+      if (message) message.textContent = `Instagram一覧の取得に失敗しました: ${text}`;
     }
-
-    renderInstagramList((data ?? []) as InstagramAdminRecord[], postList);
-    bindSortReorder();
   }
 
-  void reloadInstagramList();
+  void (async () => {
+    const ok = await requireAdminSession();
+    if (!ok) return;
+
+    document.getElementById("adminLogout")?.addEventListener("click", () => {
+      void signOutAdmin();
+    });
+
+    await reloadInstagramList();
+  })();
 
   document.getElementById("saveSortOrder")?.addEventListener("click", async () => {
     if (!postList || !sortOrderMessage) return;
@@ -136,27 +137,26 @@ export function initInstagramAdmin() {
       saveButton.textContent = "保存中...";
     }
 
-    const results = await Promise.all(
-      updates.map(({ id, sort_order }) =>
-        supabase.from("instagram_posts").update({ sort_order }).eq("id", id)
-      )
-    );
+    try {
+      await updateInstagramSortOrders(updates);
 
-    if (saveButton instanceof HTMLButtonElement) {
-      saveButton.disabled = false;
-      saveButton.textContent = "表示順を保存";
+      if (saveButton instanceof HTMLButtonElement) {
+        saveButton.disabled = false;
+        saveButton.textContent = "表示順を保存";
+      }
+
+      sortOrderMessage.textContent = `表示順を保存しました。${PUBLIC_SITE_REBUILD_MESSAGE}`;
+      sortReorderController?.clearUnsavedNotice();
+      await reloadInstagramList();
+    } catch (err) {
+      if (saveButton instanceof HTMLButtonElement) {
+        saveButton.disabled = false;
+        saveButton.textContent = "表示順を保存";
+      }
+      const text = err instanceof Error ? err.message : "表示順の保存に失敗しました。";
+      alert(`表示順の保存に失敗しました: ${text}`);
+      sortOrderMessage.textContent = `表示順の保存に失敗しました：${text}`;
     }
-
-    const failed = results.find((r) => r.error);
-    if (failed?.error) {
-      alert(`表示順の保存に失敗しました: ${failed.error.message}`);
-      sortOrderMessage.textContent = `表示順の保存に失敗しました：${failed.error.message}`;
-      return;
-    }
-
-    sortOrderMessage.textContent = `表示順を保存しました。${PUBLIC_SITE_REBUILD_MESSAGE}`;
-    sortReorderController?.clearUnsavedNotice();
-    await reloadInstagramList();
   });
 
   document.getElementById("add")?.addEventListener("click", async () => {
@@ -171,34 +171,20 @@ export function initInstagramAdmin() {
       return;
     }
 
-    const { data: existing, error: fetchError } = await supabase
-      .from("instagram_posts")
-      .select("sort_order");
+    try {
+      const result = await createInstagramPost(embed_code);
 
-    if (fetchError) {
-      alert(`保存に失敗しました: ${fetchError.message}`);
-      message.textContent = "保存に失敗しました：" + fetchError.message;
-      return;
+      if (embedInput instanceof HTMLTextAreaElement) {
+        embedInput.value = "";
+      }
+
+      message.textContent = `保存しました（表示順: ${result.sort_order ?? "—"}）。${PUBLIC_SITE_REBUILD_MESSAGE}`;
+      await reloadInstagramList();
+    } catch (err) {
+      const text = err instanceof Error ? err.message : "保存に失敗しました。";
+      alert(`保存に失敗しました: ${text}`);
+      message.textContent = `保存に失敗しました：${text}`;
     }
-
-    const sort_order = nextSortOrderForNewPost(existing ?? []);
-
-    const { error } = await supabase
-      .from("instagram_posts")
-      .insert([{ embed_code, sort_order }]);
-
-    if (error) {
-      alert(`保存に失敗しました: ${error.message}`);
-      message.textContent = "保存に失敗しました：" + error.message;
-      return;
-    }
-
-    if (embedInput instanceof HTMLTextAreaElement) {
-      embedInput.value = "";
-    }
-
-    message.textContent = `保存しました（表示順: ${sort_order}）。${PUBLIC_SITE_REBUILD_MESSAGE}`;
-    await reloadInstagramList();
   });
 
   postList?.addEventListener("click", (event) => {
@@ -235,16 +221,15 @@ export function initInstagramAdmin() {
           return;
         }
 
-        const { error } = await supabase.from("instagram_posts").update({ embed_code }).eq("id", id);
-
-        if (error) {
-          alert(`更新に失敗しました: ${error.message}`);
-          message.textContent = "更新に失敗しました：" + error.message;
-          return;
+        try {
+          await updateInstagramEmbed(id, embed_code);
+          message.textContent = `更新しました。${PUBLIC_SITE_REBUILD_MESSAGE}`;
+          await reloadInstagramList();
+        } catch (err) {
+          const text = err instanceof Error ? err.message : "更新に失敗しました。";
+          alert(`更新に失敗しました: ${text}`);
+          message.textContent = `更新に失敗しました：${text}`;
         }
-
-        message.textContent = `更新しました。${PUBLIC_SITE_REBUILD_MESSAGE}`;
-        await reloadInstagramList();
       })();
       return;
     }
@@ -261,28 +246,24 @@ export function initInstagramAdmin() {
           return;
         }
 
-        const { data, error, count } = await supabase
-          .from("instagram_posts")
-          .delete({ count: "exact" })
-          .eq("id", id)
-          .select();
+        try {
+          const result = await deleteInstagramPost(id);
 
-        if (error) {
-          alert(`削除に失敗しました: ${error.message}`);
-          message.textContent = "削除に失敗しました：" + error.message;
-          return;
+          if (result.count === 0) {
+            alert("削除対象が見つかりませんでした。一覧を再読み込みします。");
+            await reloadInstagramList();
+            return;
+          }
+
+          item.remove();
+          updateInstagramEmptyState(postList);
+
+          message.textContent = `削除しました。${PUBLIC_SITE_REBUILD_MESSAGE}`;
+        } catch (err) {
+          const text = err instanceof Error ? err.message : "削除に失敗しました。";
+          alert(`削除に失敗しました: ${text}`);
+          message.textContent = `削除に失敗しました：${text}`;
         }
-
-        if (count === 0) {
-          alert("削除対象が見つかりませんでした。一覧を再読み込みします。");
-          await reloadInstagramList();
-          return;
-        }
-
-        item.remove();
-        updateInstagramEmptyState(postList);
-
-        message.textContent = `削除しました。${PUBLIC_SITE_REBUILD_MESSAGE}`;
       })();
     }
   });

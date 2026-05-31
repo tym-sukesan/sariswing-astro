@@ -51,13 +51,11 @@
 --   USING (is_published = true);
 
 -- -----------------------------------------------------------------------------
--- 5. venues — 会場マスタは公開読み取り可（全行）
+-- 5. venues — 会場マスタ（anon SELECT のみ）
 -- -----------------------------------------------------------------------------
--- CREATE POLICY "venues_public_select"
---   ON public.venues
---   FOR SELECT
---   TO anon, authenticated
---   USING (true);
+-- 実行用 SQL: scripts/supabase/venues-rls.sql
+--
+-- CREATE POLICY "venues_public_select" … は venues-rls.sql の venues_anon_select に統合
 
 -- -----------------------------------------------------------------------------
 -- 6. site_pages / site_page_revisions — 管理画面 + ビルド時 SELECT

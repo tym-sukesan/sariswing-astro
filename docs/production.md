@@ -17,9 +17,82 @@
 ## `/admin/` 管理画面
 
 - 本番では **Basic 認証（または同等のアクセス制限）を必須** にしてください。
-- 管理画面は anon key で Supabase に接続します。RLS 未適用の間は、キーが漏れた場合にデータ改ざんのリスクがあります。
+- **Instagram 管理**（`/admin/instagram/`）は Supabase Auth + Edge Function `admin-instagram` 経由です。共有 API シークレットは `dist/` に埋め込みません。
+- **NEWS / Schedule / About** は従来どおり anon key で Supabase に直接接続します（RLS 未適用の間は改ざんリスクに注意）。
 - 可能であれば `dist/admin/` を公開ホストから除外するか、認証の後だけ配信してください。
 - GitHub Actions で `dist/` をFTPデプロイする場合、`dist/admin/` もアップロード対象に含まれます。**必ず本番サーバー側で `/admin/` に Basic 認証を設定**してください。
+
+## Instagram 管理（Supabase Auth + Edge Function）
+
+### 概要
+
+1. `/admin/login/` でメール・パスワード（Supabase Auth）にログイン
+2. JWT 付きで `admin-instagram` Edge Function を呼び出し
+3. Edge 内で `app_metadata.role === "admin"` を確認後、`service_role` で `instagram_posts` を CRUD
+4. 公開サイトの Instagram は引き続き **ビルド時 anon SELECT**（`InstagramFeed.astro`）
+
+`service_role` / `PUBLIC_ADMIN_API_SECRET` はフロント・GitHub Actions・リポジトリに置きません。
+
+### Supabase Dashboard — Authentication
+
+1. **Authentication → Providers → Email** を有効化
+2. **Authentication → Settings** で **Enable sign ups** をオフ（管理者は手動作成のみ推奨）
+3. **Authentication → Users → Add user** で管理者用メール・パスワードを作成
+
+### 管理者ロール（`app_metadata.role = "admin"`）
+
+Dashboard からユーザー作成後、SQL Editor で付与（メールを置き換え）:
+
+```sql
+update auth.users
+set raw_app_meta_data = coalesce(raw_app_meta_data, '{}'::jsonb) || '{"role":"admin"}'::jsonb
+where email = 'your-admin@example.com';
+```
+
+テンプレート: `scripts/supabase/admin-user-role.sql`
+
+### Edge Function のデプロイ
+
+`admin-instagram` は **JWT 検証あり**（`verify_jwt = true`）。`trigger-deploy` とは別です。
+
+```bash
+supabase link --project-ref YOUR_PROJECT_REF
+supabase functions deploy admin-instagram
+```
+
+`SUPABASE_SERVICE_ROLE_KEY` は Edge ランタイムに自動注入されます（手動で Secrets に service_role をコピーする必要は通常ありません）。
+
+ローカル動作確認:
+
+```bash
+supabase functions serve admin-instagram
+# 別ターミナル: /admin/login/ でログイン後、管理画面から操作するか、
+# access_token を取得して curl（Authorization: Bearer <access_token>）
+```
+
+### `instagram_posts` RLS の適用タイミング
+
+**Edge + 管理画面の動作確認が終わってから** 適用してください。
+
+1. `scripts/supabase/instagram-rls-select-only.sql` を SQL Editor で実行
+2. `npm run build` でトップページの Instagram が表示されることを確認
+3. `/admin/instagram/` でログイン後、追加・編集・並び順・削除が引き続き動くことを確認
+
+RLS 適用前でも、管理 CRUD は Edge（service_role）経由で動作します。適用後は anon からの直接 INSERT/UPDATE/DELETE が拒否されます。
+
+### RLS 適用前後の確認
+
+| 確認項目 | RLS 適用前 | RLS 適用後 |
+|----------|------------|------------|
+| `/admin/login/` → Instagram CRUD | OK（Edge） | OK（Edge） |
+| トップ Instagram（静的ビルド） | OK（anon SELECT） | OK（anon SELECT） |
+| ブラウザから anon 直 `insert` | 可能（RLS 無効/FOR ALL 時） | **拒否** |
+
+### ロールバック
+
+1. **管理だけ戻す**: 旧 `instagram.ts`（anon 直 CRUD）に戻して再デプロイ（非推奨・セキュリティ低下）
+2. **RLS だけ戻す**: `instagram_posts` で `anon FOR ALL` ポリシーを一時復活、または `ALTER TABLE ... DISABLE ROW LEVEL SECURITY`（緊急時のみ）
+3. **Edge を残す**: RLS を戻しても Edge 経由の管理は動作し続けます
 
 ## GitHub Actions 手動デプロイ（workflow_dispatch）
 
@@ -97,9 +170,11 @@ supabase link --project-ref YOUR_PROJECT_REF
 ```bash
 supabase functions deploy trigger-deploy --no-verify-jwt
 supabase functions deploy deploy-status --no-verify-jwt
+supabase functions deploy admin-instagram
 ```
 
-`supabase/config.toml` で `verify_jwt = false` にしているため、管理画面からは `x-deploy-secret` と anon key で呼び出します。
+- `trigger-deploy` / `deploy-status`: `verify_jwt = false`。`x-deploy-secret` と anon key で呼び出し。
+- `admin-instagram`: `verify_jwt = true`。ログイン後の **access_token**（Supabase Auth）で呼び出し。
 
 Secrets の設定（CLI）例:
 

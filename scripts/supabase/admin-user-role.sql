@@ -1,0 +1,13 @@
+-- =============================================================================
+-- 管理者ユーザーに app_metadata.role = "admin" を付与（SQL Editor / 手動実行）
+-- =============================================================================
+-- 1. Dashboard → Authentication → Users でユーザーを作成（Sign ups は無効推奨）
+-- 2. 下記の email を実際の管理者メールに置き換えて実行
+--
+-- Edge Function admin-instagram は user.app_metadata.role === "admin" のみ許可します。
+-- =============================================================================
+
+-- 例: メールで指定
+-- update auth.users
+-- set raw_app_meta_data = coalesce(raw_app_meta_data, '{}'::jsonb) || '{"role":"admin"}'::jsonb
+-- where email = 'admin@example.com';

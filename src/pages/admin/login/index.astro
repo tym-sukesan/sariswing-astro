@@ -1,0 +1,46 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="管理ログイン | SARI" admin>
+  <main class="admin-page">
+    <div class="admin-page-header">
+      <a class="admin-back-link" href="/admin/">← 管理画面トップ</a>
+      <h1>管理ログイン</h1>
+    </div>
+
+    <section class="admin-card">
+      <p class="admin-form__hint">
+        Instagram 管理用の Supabase Auth ログインです。NEWS / Schedule / About は従来どおりこのログインは不要です。
+      </p>
+
+      <form id="adminLoginForm" class="admin-form" novalidate>
+        <label class="admin-form__field">
+          <span class="admin-form__label">メールアドレス</span>
+          <input id="loginEmail" type="email" name="email" autocomplete="username" required />
+        </label>
+
+        <label class="admin-form__field">
+          <span class="admin-form__label">パスワード</span>
+          <input
+            id="loginPassword"
+            type="password"
+            name="password"
+            autocomplete="current-password"
+            required
+          />
+        </label>
+
+        <div class="admin-actions">
+          <button id="loginSubmit" class="admin-button" type="submit">ログイン</button>
+        </div>
+      </form>
+
+      <p id="loginError" class="admin-message admin-message--error is-hidden" role="alert"></p>
+    </section>
+  </main>
+
+  <script>
+    import "../../../scripts/admin/login.ts";
+  </script>
+</BaseLayout>

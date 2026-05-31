@@ -5,13 +5,18 @@ import aboutMainFallback from "../../../data/about-main.html?raw";
 
 <BaseLayout title="About Admin | SARI" admin>
   <main class="admin-page admin-page--wide">
-    <div class="admin-page-header">
-      <a class="admin-back-link" href="/admin/">← 管理画面トップ</a>
-      <h1>About管理</h1>
+    <div class="admin-page-header admin-page-header--with-actions">
+      <div>
+        <a class="admin-back-link" href="/admin/">← 管理画面トップ</a>
+        <h1>About管理</h1>
+      </div>
+      <button id="adminLogout" class="admin-button admin-button-secondary" type="button">
+        ログアウト
+      </button>
     </div>
 
     <p class="admin-form__hint admin-static-notice">
-      この画面で編集した内容は Supabase に保存されます。公開サイト（/about/）へ反映するには、管理画面トップの「公開サイトを更新」から再ビルド・再デプロイしてください。
+      この画面で編集した内容は Supabase Auth 経由の Edge Function で保存されます。公開サイト（/about/）へ反映するには、管理画面トップの「公開サイトを更新」から再ビルド・再デプロイしてください。
     </p>
 
     <section class="admin-card about-admin-card">

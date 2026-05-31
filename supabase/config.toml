@@ -9,3 +9,6 @@ verify_jwt = false
 
 [functions.admin-instagram]
 verify_jwt = true
+
+[functions.admin-site-page]
+verify_jwt = true

@@ -1,13 +1,13 @@
 import aboutMainFallback from "../../data/about-main.html?raw";
-import { fetchSitePageBySlug, SITE_PAGE_SELECT, type SitePageRecord } from "../../lib/site-pages";
 import {
-  createSitePageRevision,
-  fetchSitePageRevisionById,
-  fetchSitePageRevisions,
-  pruneSitePageRevisions,
-  type SitePageRevisionRecord,
-} from "../../lib/site-page-revisions";
-import { supabase } from "../../lib/supabase";
+  getSitePageBySlug,
+  getSitePageRevisionById,
+  listSitePageRevisions,
+  restoreSitePageRevision,
+  saveSitePage,
+} from "../../lib/admin/site-page-api";
+import { requireAdminSession, signOutAdmin } from "../../lib/admin/require-admin-session";
+import type { SitePageRevisionRecord } from "../../lib/site-page-revisions";
 
 const ABOUT_SLUG = "about";
 const ABOUT_TITLE = "ABOUT SARI";
@@ -131,44 +131,6 @@ function setRevisionActionsDisabled(disabled: boolean) {
   });
 }
 
-async function backupCurrentSitePage(pageSlug: string) {
-  const { data: current, error: fetchError } = await fetchSitePageBySlug(pageSlug);
-
-  if (fetchError) {
-    throw new Error(`現在の内容の取得に失敗しました: ${fetchError.message}`);
-  }
-
-  const html = current?.html_content?.trim();
-  if (!html) return;
-
-  const { error: insertError } = await createSitePageRevision(pageSlug, current!.html_content);
-  if (insertError) {
-    throw new Error(`バックアップの保存に失敗しました: ${insertError.message}`);
-  }
-
-  const { error: pruneError } = await pruneSitePageRevisions(pageSlug);
-  if (pruneError) {
-    throw new Error(`古いバックアップの削除に失敗しました: ${pruneError.message}`);
-  }
-}
-
-async function upsertSitePage(pageSlug: string, title: string, html_content: string) {
-  const now = new Date().toISOString();
-  return supabase
-    .from("site_pages")
-    .upsert(
-      {
-        slug: pageSlug,
-        title,
-        html_content,
-        updated_at: now,
-      },
-      { onConflict: "slug" }
-    )
-    .select(SITE_PAGE_SELECT)
-    .single();
-}
-
 function renderRevisionList(revisions: SitePageRevisionRecord[]) {
   const list = getRevisionListEl();
   const message = getRevisionMessageEl();
@@ -239,19 +201,18 @@ async function loadRevisionHistory() {
   loading.textContent = "バックアップ履歴を読み込み中…";
   list.append(loading);
 
-  const { data, error } = await fetchSitePageRevisions(ABOUT_SLUG);
-
-  if (error) {
+  try {
+    const data = await listSitePageRevisions(ABOUT_SLUG);
+    renderRevisionList(data);
+  } catch (err) {
     list.replaceChildren();
-    const err = document.createElement("p");
-    err.className = "about-revision-empty about-revision-empty--error";
-    err.textContent = `履歴の読み込みに失敗しました: ${error.message}`;
-    list.append(err);
+    const errEl = document.createElement("p");
+    errEl.className = "about-revision-empty about-revision-empty--error";
+    const text = err instanceof Error ? err.message : "履歴の読み込みに失敗しました。";
+    errEl.textContent = `履歴の読み込みに失敗しました: ${text}`;
+    list.append(errEl);
     if (message) message.textContent = "";
-    return;
   }
-
-  renderRevisionList(data);
 }
 
 function openRevisionDialog(revision: SitePageRevisionRecord, versionNumber: number) {
@@ -281,39 +242,19 @@ async function restoreRevision(revisionId: number, versionNumber: number) {
   setRevisionActionsDisabled(true);
   if (message) message.textContent = "復元中…";
 
-  const { data: revision, error: revisionError } = await fetchSitePageRevisionById(revisionId);
-
-  if (revisionError || !revision) {
-    setLoading(false);
-    setRevisionActionsDisabled(false);
-    const errMsg = revisionError?.message ?? "バックアップが見つかりません。";
-    alert(`復元に失敗しました: ${errMsg}`);
-    if (message) message.textContent = `復元に失敗しました: ${errMsg}`;
-    return;
-  }
-
-  if (revision.page_slug !== ABOUT_SLUG) {
-    setLoading(false);
-    setRevisionActionsDisabled(false);
-    alert("復元に失敗しました: 対象のバックアップが About 用ではありません。");
-    if (message) message.textContent = "復元に失敗しました: 対象のバックアップが About 用ではありません。";
-    return;
-  }
-
   try {
-    await backupCurrentSitePage(ABOUT_SLUG);
+    const revision = await getSitePageRevisionById(revisionId);
 
-    const { data, error } = await upsertSitePage(
-      ABOUT_SLUG,
-      ABOUT_TITLE,
-      revision.html_content
-    );
-
-    if (error) {
-      throw new Error(error.message);
+    if (!revision) {
+      throw new Error("バックアップが見つかりません。");
     }
 
-    const record = data as SitePageRecord;
+    if (revision.page_slug !== ABOUT_SLUG) {
+      throw new Error("対象のバックアップが About 用ではありません。");
+    }
+
+    const record = await restoreSitePageRevision(revisionId, ABOUT_TITLE);
+
     setEditorContent(revision.html_content);
     if (updatedAt) updatedAt.textContent = formatUpdatedAt(record.updated_at);
     if (message) {
@@ -338,33 +279,31 @@ async function loadAboutPage() {
 
   if (!textarea) return;
 
-  if (message) message.textContent = "Supabase から読み込み中…";
+  if (message) message.textContent = "読み込み中…";
 
-  const { data, error } = await fetchSitePageBySlug(ABOUT_SLUG);
+  try {
+    const record = await getSitePageBySlug(ABOUT_SLUG);
 
-  if (error) {
+    if (!record?.html_content?.trim()) {
+      setEditorContent(FALLBACK_HTML);
+      if (updatedAt) updatedAt.textContent = "";
+      if (message) {
+        message.textContent =
+          "Supabase に About データがありません。初期 HTML を表示しています。保存すると登録されます。";
+      }
+      return;
+    }
+
+    setEditorContent(record.html_content);
+    if (updatedAt) updatedAt.textContent = formatUpdatedAt(record.updated_at);
+    if (message) message.textContent = "";
+  } catch (err) {
     setEditorContent(textarea.value || FALLBACK_HTML);
+    const text = err instanceof Error ? err.message : "読み込みに失敗しました。";
     if (message) {
-      message.textContent = `Supabase の読み込みに失敗しました（ローカル初期HTMLを表示中）: ${error.message}`;
+      message.textContent = `読み込みに失敗しました（ローカル初期HTMLを表示中）: ${text}`;
     }
-    return;
   }
-
-  const record = data;
-
-  if (!record?.html_content?.trim()) {
-    setEditorContent(FALLBACK_HTML);
-    if (updatedAt) updatedAt.textContent = "";
-    if (message) {
-      message.textContent =
-        "Supabase に About データがありません。初期 HTML を表示しています。保存すると登録されます。";
-    }
-    return;
-  }
-
-  setEditorContent(record.html_content);
-  if (updatedAt) updatedAt.textContent = formatUpdatedAt(record.updated_at);
-  if (message) message.textContent = "";
 }
 
 async function saveAboutPage() {
@@ -386,15 +325,8 @@ async function saveAboutPage() {
   message.textContent = "保存中…";
 
   try {
-    await backupCurrentSitePage(ABOUT_SLUG);
+    const record = await saveSitePage(ABOUT_SLUG, ABOUT_TITLE, html_content);
 
-    const { data, error } = await upsertSitePage(ABOUT_SLUG, ABOUT_TITLE, html_content);
-
-    if (error) {
-      throw new Error(error.message);
-    }
-
-    const record = data as SitePageRecord;
     if (updatedAt) updatedAt.textContent = formatUpdatedAt(record.updated_at);
     updatePreview(html_content);
     updateHtmlStats(html_content);
@@ -468,8 +400,18 @@ export function initAboutAdmin() {
   }
 
   initRevisionDialog();
-  void loadAboutPage();
-  void loadRevisionHistory();
+
+  void (async () => {
+    const ok = await requireAdminSession();
+    if (!ok) return;
+
+    document.getElementById("adminLogout")?.addEventListener("click", () => {
+      void signOutAdmin();
+    });
+
+    await loadAboutPage();
+    await loadRevisionHistory();
+  })();
 
   textarea?.addEventListener("input", () => {
     updateHtmlStats(textarea.value);

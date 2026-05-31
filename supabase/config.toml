@@ -12,3 +12,6 @@ verify_jwt = true
 
 [functions.admin-site-page]
 verify_jwt = true
+
+[functions.admin-news]
+verify_jwt = true

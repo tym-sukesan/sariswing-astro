@@ -4,13 +4,18 @@ import BaseLayout from "../../../layouts/BaseLayout.astro";
 
 <BaseLayout title="NEWS Admin | SARI" admin>
   <main class="admin-page admin-page--wide">
-    <div class="admin-page-header">
-      <a class="admin-back-link" href="/admin/">← 管理画面トップ</a>
-      <h1>NEWS管理</h1>
+    <div class="admin-page-header admin-page-header--with-actions">
+      <div>
+        <a class="admin-back-link" href="/admin/">← 管理画面トップ</a>
+        <h1>NEWS管理</h1>
+      </div>
+      <button id="adminLogout" class="admin-button admin-button-secondary" type="button">
+        ログアウト
+      </button>
     </div>
 
     <p class="admin-form__hint admin-static-notice">
-      この一覧は Supabase から最新データを読み込んで表示します。公開サイト（/news/ ・トップなど）は静的HTMLのため、変更・削除を反映するには GitHub Actions での再ビルド・再デプロイが必要です。
+      この一覧は Supabase Auth 経由の Edge Function から読み込みます。公開サイト（/news/ ・トップなど）は静的HTMLのため、変更・削除を反映するには GitHub Actions で再ビルド・再デプロイが必要です。
     </p>
 
     <section class="admin-card">

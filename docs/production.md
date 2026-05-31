@@ -19,8 +19,9 @@
 - 本番では **Basic 認証（または同等のアクセス制限）を必須** にしてください。
 - **Instagram 管理**（`/admin/instagram/`）は Supabase Auth + Edge Function `admin-instagram` 経由です。
 - **About 管理**（`/admin/about/`）は Supabase Auth + Edge Function `admin-site-page` 経由です。
+- **NEWS 管理**（`/admin/news/`）は Supabase Auth + Edge Function `admin-news` 経由です。
 - いずれも共有 API シークレットは `dist/` に埋め込みません（JWT セッションのみ）。
-- **NEWS / Schedule** は従来どおり anon key で Supabase に直接接続します（RLS 未適用の間は改ざんリスクに注意）。
+- **Schedule** は従来どおり anon key で Supabase に直接接続します（RLS 未適用の間は改ざんリスクに注意）。
 - 可能であれば `dist/admin/` を公開ホストから除外するか、認証の後だけ配信してください。
 - GitHub Actions で `dist/` をFTPデプロイする場合、`dist/admin/` もアップロード対象に含まれます。**必ず本番サーバー側で `/admin/` に Basic 認証を設定**してください。
 
@@ -61,6 +62,7 @@ where email = 'your-admin@example.com';
 supabase link --project-ref YOUR_PROJECT_REF
 supabase functions deploy admin-instagram
 supabase functions deploy admin-site-page
+supabase functions deploy admin-news
 ```
 
 `SUPABASE_SERVICE_ROLE_KEY` は Edge ランタイムに自動注入されます（手動で Secrets に service_role をコピーする必要は通常ありません）。
@@ -151,6 +153,58 @@ supabase functions deploy admin-site-page
 2. **RLS だけ戻す**: `scripts/supabase/site-pages-rls-policies.sql`（anon FOR ALL）を再実行
 3. **Edge を残す**: RLS を緩めても Edge 経由の管理は継続可能
 
+## NEWS 管理（Supabase Auth + Edge Function）
+
+### 概要
+
+1. `/admin/login/` でログイン（未ログインで `/admin/news/` にアクセスすると `?next=/admin/news/` へリダイレクト）
+2. JWT 付きで `admin-news` Edge Function を呼び出し
+3. Edge 内で `app_metadata.role === "admin"` を確認後、`service_role` で `news` を CRUD
+4. 公開 `/news/`・トップ NEWS は引き続き **ビルド時 anon SELECT**（`is_published = true`・`src/lib/news.ts` 等は変更なし）
+
+画像アップロード（Storage `images`）は従来どおりブラウザから anon key で行います（NEWS 保存のみ Edge 経由）。
+
+### Edge Function のデプロイ
+
+```bash
+supabase link --project-ref YOUR_PROJECT_REF
+supabase functions deploy admin-news
+```
+
+`verify_jwt = true` です。Instagram / About と独立してデプロイできます。
+
+### 本番確認手順（RLS 適用前）
+
+1. `admin-news` をデプロイ
+2. フロント（`dist/admin/`）をデプロイ
+3. `/admin/login/` → `/admin/news/`
+4. 一覧表示・追加・編集・公開/非公開・複製（非公開）・削除
+5. アイキャッチ画像のアップロード（Storage）が従来どおり動くこと
+6. ログアウト後、`/admin/news/` 直アクセスでログインへ戻ること
+
+### `news` RLS の適用タイミング
+
+**Edge + NEWS 管理の動作確認後** に `scripts/supabase/news-rls-select-published.sql` を実行してください。
+
+| 対象 | anon（適用後） |
+|------|----------------|
+| `news` | SELECT のみ、`is_published = true` の行 |
+
+### RLS 適用前後の確認
+
+| 確認項目 | RLS 適用前 | RLS 適用後 |
+|----------|------------|------------|
+| `/admin/login/` → NEWS CRUD | OK（Edge） | OK（Edge） |
+| `/news/`・トップ NEWS（静的ビルド） | OK（anon SELECT 公開のみ） | OK（同上） |
+| 管理画面で非公開記事の一覧 | OK（Edge は全件） | OK（Edge は全件） |
+| ブラウザから anon 直 `insert` / `update` / `delete` | 可能（RLS 無効/FOR ALL 時） | **拒否** |
+
+### ロールバック
+
+1. **管理だけ戻す**: `news.ts` を anon 直 CRUD に戻して再デプロイ（非推奨）
+2. **RLS だけ戻す**: `news` で anon `FOR ALL` ポリシーを一時復活、または `ALTER TABLE ... DISABLE ROW LEVEL SECURITY`（緊急時のみ）
+3. **Edge を残す**: RLS を緩めても Edge 経由の管理は継続可能
+
 ## GitHub Actions 手動デプロイ（workflow_dispatch）
 
 `/.github/workflows/deploy.yml` で、GitHub Actions の手動実行による build + FTP deploy を行います。
@@ -228,10 +282,12 @@ supabase link --project-ref YOUR_PROJECT_REF
 supabase functions deploy trigger-deploy --no-verify-jwt
 supabase functions deploy deploy-status --no-verify-jwt
 supabase functions deploy admin-instagram
+supabase functions deploy admin-site-page
+supabase functions deploy admin-news
 ```
 
 - `trigger-deploy` / `deploy-status`: `verify_jwt = false`。`x-deploy-secret` と anon key で呼び出し。
-- `admin-instagram` / `admin-site-page`: `verify_jwt = true`。ログイン後の **access_token**（Supabase Auth）で呼び出し。
+- `admin-instagram` / `admin-site-page` / `admin-news`: `verify_jwt = true`。ログイン後の **access_token**（Supabase Auth）で呼び出し。
 
 Secrets の設定（CLI）例:
 

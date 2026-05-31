@@ -43,6 +43,15 @@ function validateId(id: unknown): string | Response {
   return String(id);
 }
 
+/** PostgREST の id 型（int / bigint / uuid）に合わせる */
+function parseRowId(id: string): string | number {
+  if (/^\d+$/.test(id)) {
+    const numeric = Number(id);
+    if (Number.isSafeInteger(numeric)) return numeric;
+  }
+  return id;
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
@@ -106,7 +115,7 @@ Deno.serve(async (req) => {
     const { error } = await service
       .from("instagram_posts")
       .update({ embed_code: embedResult })
-      .eq("id", id);
+      .eq("id", parseRowId(id));
 
     if (error) return jsonResponse({ error: error.message }, 500);
     return jsonResponse({ ok: true }, 200);
@@ -121,6 +130,8 @@ Deno.serve(async (req) => {
       return jsonResponse({ error: "Too many updates" }, 400);
     }
 
+    let updatedCount = 0;
+
     for (const item of updates) {
       const id = validateId(item?.id);
       if (id instanceof Response) return id;
@@ -129,15 +140,21 @@ Deno.serve(async (req) => {
         return jsonResponse({ error: "Invalid sort_order" }, 400);
       }
 
-      const { error } = await service
+      const rowId = parseRowId(id);
+      const { data, error } = await service
         .from("instagram_posts")
         .update({ sort_order })
-        .eq("id", id);
+        .eq("id", rowId)
+        .select("id, sort_order");
 
       if (error) return jsonResponse({ error: error.message }, 500);
+      if (!data?.length) {
+        return jsonResponse({ error: `No row updated for id: ${id}` }, 404);
+      }
+      updatedCount += data.length;
     }
 
-    return jsonResponse({ ok: true }, 200);
+    return jsonResponse({ ok: true, updatedCount }, 200);
   }
 
   if (action === "delete") {
@@ -147,7 +164,7 @@ Deno.serve(async (req) => {
     const { data, error } = await service
       .from("instagram_posts")
       .delete()
-      .eq("id", id)
+      .eq("id", parseRowId(id))
       .select("id");
 
     if (error) return jsonResponse({ error: error.message }, 500);

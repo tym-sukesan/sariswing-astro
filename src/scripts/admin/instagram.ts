@@ -3,6 +3,7 @@ import {
   type InstagramAdminRecord,
 } from "../../lib/admin/create-instagram-list-item";
 import {
+  applySortOrderFromDom,
   collectSortOrderUpdates,
   initInstagramSortReorder,
   type InstagramSortReorderController,
@@ -117,6 +118,9 @@ export function initInstagramAdmin() {
   document.getElementById("saveSortOrder")?.addEventListener("click", async () => {
     if (!postList || !sortOrderMessage) return;
 
+    // DOM の並びと入力欄の sort_order を同期（D&D 後に入力が古いままの場合がある）
+    applySortOrderFromDom(postList);
+
     let updates: { id: string; sort_order: number }[];
     try {
       updates = collectSortOrderUpdates(postList);
@@ -146,8 +150,8 @@ export function initInstagramAdmin() {
       }
 
       sortOrderMessage.textContent = `表示順を保存しました。${PUBLIC_SITE_REBUILD_MESSAGE}`;
-      sortReorderController?.clearUnsavedNotice();
       await reloadInstagramList();
+      sortReorderController?.refreshSavedSnapshot();
     } catch (err) {
       if (saveButton instanceof HTMLButtonElement) {
         saveButton.disabled = false;

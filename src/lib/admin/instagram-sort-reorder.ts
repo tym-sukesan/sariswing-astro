@@ -97,28 +97,9 @@ export type InstagramSortReorderController = {
   clearUnsavedNotice: () => void;
 };
 
-export function initInstagramSortReorder(
-  postList: HTMLElement,
-  unsavedNotice: HTMLElement | null
-): InstagramSortReorderController {
-  let savedSnapshot = getSortOrderSnapshot(postList);
+const listListenerAbortMap = new WeakMap<HTMLElement, AbortController>();
 
-  function updateUnsavedNotice() {
-    if (!unsavedNotice) return;
-
-    const dirty = getSortOrderSnapshot(postList) !== savedSnapshot;
-    unsavedNotice.textContent = dirty
-      ? "未保存の変更があります。「表示順を保存」で反映してください。"
-      : "";
-    unsavedNotice.classList.toggle("is-hidden", !dirty);
-    unsavedNotice.classList.toggle("is-warning", dirty);
-  }
-
-  function afterReorder() {
-    applySortOrderFromDom(postList);
-    updateUnsavedNotice();
-  }
-
+function bindItemDragListeners(postList: HTMLElement) {
   for (const item of postList.querySelectorAll<HTMLElement>(".instagram-admin-item")) {
     item.draggable = true;
 
@@ -141,6 +122,37 @@ export function initInstagramSortReorder(
       }
     });
   }
+}
+
+export function initInstagramSortReorder(
+  postList: HTMLElement,
+  unsavedNotice: HTMLElement | null
+): InstagramSortReorderController {
+  let savedSnapshot = getSortOrderSnapshot(postList);
+
+  function updateUnsavedNotice() {
+    if (!unsavedNotice) return;
+
+    const dirty = getSortOrderSnapshot(postList) !== savedSnapshot;
+    unsavedNotice.textContent = dirty
+      ? "未保存の変更があります。「表示順を保存」で反映してください。"
+      : "";
+    unsavedNotice.classList.toggle("is-hidden", !dirty);
+    unsavedNotice.classList.toggle("is-warning", dirty);
+  }
+
+  function afterReorder() {
+    applySortOrderFromDom(postList);
+    updateUnsavedNotice();
+  }
+
+  bindItemDragListeners(postList);
+
+  let listAbort = listListenerAbortMap.get(postList);
+  if (listAbort) listAbort.abort();
+  listAbort = new AbortController();
+  listListenerAbortMap.set(postList, listAbort);
+  const { signal } = listAbort;
 
   postList.addEventListener("dragover", (event) => {
     event.preventDefault();
@@ -161,14 +173,14 @@ export function initInstagramSortReorder(
       const last = postList.querySelector(".instagram-admin-item:last-child");
       last?.classList.add("is-drop-target");
     }
-  });
+  }, { signal });
 
   postList.addEventListener("dragleave", (event) => {
     if (event.target !== postList) return;
     for (const el of postList.querySelectorAll(".instagram-admin-item.is-drop-target")) {
       el.classList.remove("is-drop-target");
     }
-  });
+  }, { signal });
 
   postList.addEventListener("drop", (event) => {
     event.preventDefault();
@@ -194,7 +206,7 @@ export function initInstagramSortReorder(
     }
 
     afterReorder();
-  });
+  }, { signal });
 
   postList.addEventListener("click", (event) => {
     const button = (event.target as Element | null)?.closest("button");
@@ -211,7 +223,7 @@ export function initInstagramSortReorder(
     if (button.classList.contains("instagram-sort-move-down")) {
       if (moveItem(item, "down")) afterReorder();
     }
-  });
+  }, { signal });
 
   postList.addEventListener("input", (event) => {
     const target = event.target;
@@ -225,7 +237,7 @@ export function initInstagramSortReorder(
     }
 
     updateUnsavedNotice();
-  });
+  }, { signal });
 
   updateUnsavedNotice();
 

@@ -1,14 +1,35 @@
 import { supabaseAdmin } from "../../lib/supabase-admin";
 
-const DEFAULT_NEXT = "/admin/instagram/";
+const DEFAULT_NEXT = "/admin/";
+const LOGIN_PATH_PREFIX = "/admin/login";
+
+/** next クエリがあればその管理画面へ。なければ /admin/ */
+function resolveAdminNextPath(raw: string | null | undefined): string {
+  if (!raw?.trim()) return DEFAULT_NEXT;
+
+  let path: string;
+  try {
+    path = decodeURIComponent(raw.trim());
+  } catch {
+    return DEFAULT_NEXT;
+  }
+
+  if (!path.startsWith("/admin")) return DEFAULT_NEXT;
+
+  const base = path.replace(/\/+$/, "") || "/admin";
+  if (base === LOGIN_PATH_PREFIX || base.startsWith(`${LOGIN_PATH_PREFIX}/`)) {
+    return DEFAULT_NEXT;
+  }
+
+  if (base === "/admin") return "/admin/";
+  if (!base.startsWith("/admin/")) return DEFAULT_NEXT;
+
+  return path.endsWith("/") ? path : `${base}/`;
+}
 
 function getNextPath() {
   const params = new URLSearchParams(window.location.search);
-  const next = params.get("next")?.trim();
-  if (next && next.startsWith("/admin/")) {
-    return next;
-  }
-  return DEFAULT_NEXT;
+  return resolveAdminNextPath(params.get("next"));
 }
 
 async function redirectIfAlreadyLoggedIn() {

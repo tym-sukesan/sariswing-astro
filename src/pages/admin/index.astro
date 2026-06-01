@@ -4,8 +4,11 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 
 <BaseLayout title="ADMIN | SARI" admin>
   <main class="admin-page">
-    <div class="admin-page-header">
+    <div class="admin-page-header admin-page-header--with-actions">
       <h1>管理画面</h1>
+      <button id="adminLogout" class="admin-button admin-button-secondary" type="button">
+        ログアウト
+      </button>
     </div>
 
     <section class="admin-card">

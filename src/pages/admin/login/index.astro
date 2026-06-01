@@ -5,13 +5,10 @@ import BaseLayout from "../../../layouts/BaseLayout.astro";
 <BaseLayout title="管理ログイン | SARI" admin showDeployBar={false}>
   <main class="admin-page admin-page--login">
     <div class="admin-page-header">
-      <a class="admin-back-link" href="/admin/">← 管理画面トップ</a>
       <h1>管理ログイン</h1>
     </div>
 
     <section class="admin-card admin-login-card">
-      <p class="admin-login__lead">管理画面にログインしてください。</p>
-
       <form id="adminLoginForm" class="admin-form admin-login-form" novalidate>
         <label class="admin-form__field">
           <span class="admin-form__label">メールアドレス</span>
@@ -50,14 +47,6 @@ import BaseLayout from "../../../layouts/BaseLayout.astro";
 
   .admin-login-card {
     margin-bottom: 24px;
-  }
-
-  .admin-login__lead {
-    margin: 0 0 20px;
-    font-size: 1.4rem;
-    line-height: 1.6;
-    letter-spacing: 0.04em;
-    color: #555;
   }
 
   .admin-login-form {

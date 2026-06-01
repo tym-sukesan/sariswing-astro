@@ -1,9 +1,30 @@
 import { createClient, type User } from "npm:@supabase/supabase-js@2";
 
+/** カンマ区切り。例: ADMIN_EMAILS=you@example.com,sari@example.com */
+function getAdminEmailAllowlist(): Set<string> {
+  const raw = Deno.env.get("ADMIN_EMAILS") ?? "";
+  return new Set(
+    raw
+      .split(",")
+      .map((email) => email.trim().toLowerCase())
+      .filter(Boolean)
+  );
+}
+
 export function isAdminUser(user: User | null): boolean {
   if (!user) return false;
-  const role = user.app_metadata?.role;
-  return role === "admin";
+
+  if (user.app_metadata?.role === "admin") {
+    return true;
+  }
+
+  const email = user.email?.trim().toLowerCase();
+  if (!email) return false;
+
+  const allowlist = getAdminEmailAllowlist();
+  if (allowlist.size === 0) return false;
+
+  return allowlist.has(email);
 }
 
 export async function requireAdminUser(req: Request): Promise<{ user: User } | Response> {
@@ -33,7 +54,14 @@ export async function requireAdminUser(req: Request): Promise<{ user: User } | R
   }
 
   if (!isAdminUser(user)) {
-    return jsonResponse({ error: "Forbidden" }, 403);
+    return jsonResponse(
+      {
+        error: "Forbidden",
+        detail:
+          "Admin access required (app_metadata.role=admin or email listed in ADMIN_EMAILS)",
+      },
+      403
+    );
   }
 
   return { user };

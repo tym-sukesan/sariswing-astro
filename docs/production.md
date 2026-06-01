@@ -31,7 +31,7 @@
 
 1. `/admin/login/` でメール・パスワード（Supabase Auth）にログイン
 2. JWT 付きで `admin-instagram` Edge Function を呼び出し
-3. Edge 内で `app_metadata.role === "admin"` を確認後、`service_role` で `instagram_posts` を CRUD
+3. Edge 内で管理者 JWT を確認後（`app_metadata.role === "admin"` または `ADMIN_EMAILS`）、`service_role` で `instagram_posts` を CRUD
 4. 公開サイトの Instagram は引き続き **ビルド時 anon SELECT**（`InstagramFeed.astro`）
 
 `service_role` / `PUBLIC_ADMIN_API_SECRET` はフロント・GitHub Actions・リポジトリに置きません。
@@ -42,7 +42,18 @@
 2. **Authentication → Settings** で **Enable sign ups** をオフ（管理者は手動作成のみ推奨）
 3. **Authentication → Users → Add user** で管理者用メール・パスワードを作成
 
-### 管理者ロール（`app_metadata.role = "admin"`）
+### 管理者の付与（ロールまたはメール許可リスト）
+
+管理用 Edge Function（`admin-instagram` / `admin-site-page` / `admin-news` / `admin-schedule`）は、ログイン済み JWT に対して次の **いずれか** を満たすユーザーのみ許可します。
+
+| 方法 | 内容 |
+|------|------|
+| **A. ロール** | `app_metadata.role = "admin"` |
+| **B. メール許可リスト** | Edge Secrets の `ADMIN_EMAILS`（カンマ区切り・複数可） |
+
+未ログインは 401、ログイン済みだが管理者でない場合は **403 Forbidden**（ブラウザでは `Edge Function returned a non-2xx status code` と表示されることがあります）。
+
+#### 方法 A: SQL で `role = admin` を付与（推奨）
 
 Dashboard からユーザー作成後、SQL Editor で付与（メールを置き換え）:
 
@@ -52,7 +63,37 @@ set raw_app_meta_data = coalesce(raw_app_meta_data, '{}'::jsonb) || '{"role":"ad
 where email = 'your-admin@example.com';
 ```
 
+複数管理者:
+
+```sql
+update auth.users
+set raw_app_meta_data = coalesce(raw_app_meta_data, '{}'::jsonb) || '{"role":"admin"}'::jsonb
+where email in ('your-admin@example.com', 'sari-admin@example.com');
+```
+
 テンプレート: `scripts/supabase/admin-user-role.sql`
+
+#### 方法 B: `ADMIN_EMAILS`（Edge Secrets）
+
+ロールを付けずにメールだけで許可する場合（JWT 検証は維持）:
+
+```bash
+supabase secrets set ADMIN_EMAILS="your-admin@example.com,sari-admin@example.com"
+supabase functions deploy admin-instagram
+supabase functions deploy admin-site-page
+supabase functions deploy admin-news
+supabase functions deploy admin-schedule
+```
+
+**注意:** `admin-auth.ts` を変更したあとは、上記 4 関数を再デプロイしないと本番に反映されません。
+
+#### ログの確認（403 の切り分け）
+
+Supabase Dashboard → **Edge Functions** → 対象関数 → **Logs**
+
+- `403` + `Forbidden` … ログインはできているが管理者ではない（ロール未付与 / `ADMIN_EMAILS` 未登録）
+- `401` … JWT 無効・未送信
+- `500` + `Server configuration error` … `SUPABASE_URL` / `SUPABASE_ANON_KEY` 不足（本番では通常自動）
 
 ### Edge Function のデプロイ
 

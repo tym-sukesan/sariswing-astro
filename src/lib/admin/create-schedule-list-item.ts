@@ -194,14 +194,14 @@ export function createScheduleAdminListItem(
   openTimeInput.name = "open_time";
   openTimeInput.dataset.field = "open_time";
   openTimeInput.value = item.open_time || "";
-  appendField(row3, "開場時間", openTimeInput);
+  appendField(row3, "START", openTimeInput);
 
   const startTimeInput = document.createElement("input");
   startTimeInput.type = "text";
   startTimeInput.name = "start_time";
   startTimeInput.dataset.field = "start_time";
   startTimeInput.value = item.start_time || "";
-  appendField(row3, "開演時間", startTimeInput);
+  appendField(row3, "OPEN", startTimeInput);
   form.append(row3);
 
   const row4 = document.createElement("div");

@@ -67,3 +67,61 @@ export function getPublishedMonthsFromSchedules(
 export function getLiveScheduleMonthPath(month: string) {
   return `/schedule/${month}/`;
 }
+
+type VenueAreaSource = {
+  id?: string | number | null;
+  name?: string | null;
+  area?: string | null;
+};
+
+type ScheduleVenueSource = {
+  venue_id?: number | null;
+  venue_name?: string | null;
+};
+
+/** venues 一覧から area ルックアップ（venue_id 優先、次に name 一致） */
+export function buildVenueAreaLookup(venues: VenueAreaSource[] | null | undefined) {
+  const byId = new Map<number, string>();
+  const byName = new Map<string, string>();
+
+  for (const venue of venues ?? []) {
+    const area = venue.area?.trim();
+    if (!area) continue;
+
+    if (venue.id != null && venue.id !== "") {
+      byId.set(Number(venue.id), area);
+    }
+
+    const name = venue.name?.trim();
+    if (name) byName.set(name, area);
+  }
+
+  return { byId, byName };
+}
+
+export function resolveVenueArea(
+  schedule: ScheduleVenueSource,
+  lookup: ReturnType<typeof buildVenueAreaLookup>
+): string | null {
+  if (schedule.venue_id != null) {
+    const byId = lookup.byId.get(Number(schedule.venue_id));
+    if (byId) return byId;
+  }
+
+  const name = schedule.venue_name?.trim();
+  if (!name) return null;
+
+  return lookup.byName.get(name) ?? null;
+}
+
+/** area があるときは「{area} {venueName}」、なければ venueName のみ */
+export function formatScheduleVenueDisplay(
+  venueName: string | null | undefined,
+  venueArea: string | null | undefined
+): string | null {
+  const name = venueName?.trim();
+  if (!name) return null;
+
+  const area = venueArea?.trim();
+  return area ? `${area} ${name}` : name;
+}

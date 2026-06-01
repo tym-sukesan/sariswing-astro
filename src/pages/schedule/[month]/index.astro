@@ -4,28 +4,46 @@ import Header from "../../../components/Header.astro";
 import Footer from "../../../components/Footer.astro";
 import { supabase } from "../../../lib/supabase";
 import {
+  buildVenueAreaLookup,
   formatMonthLabel,
   formatScheduleDateLabel,
+  formatScheduleVenueDisplay,
   getTimeTypeSymbol,
   groupSchedulesByMonth,
   isImageUrl,
+  resolveVenueArea,
   sortSchedules,
 } from "../../../lib/schedule";
 
 export async function getStaticPaths() {
   const publicScheduleStartMonth = "2026-06";
-  const { data: schedules, error } = await supabase
-    .from("schedules")
-    .select("*")
-    .eq("is_published", true)
-    .gte("date", `${publicScheduleStartMonth}-01`);
+  const [schedulesResult, venuesResult] = await Promise.all([
+    supabase
+      .from("schedules")
+      .select("*")
+      .eq("is_published", true)
+      .gte("date", `${publicScheduleStartMonth}-01`),
+    supabase.from("venues").select("id, name, area"),
+  ]);
+
+  const { data: schedules, error } = schedulesResult;
 
   if (error) {
     console.error("[schedule] schedules の取得に失敗:", error.message);
     return [];
   }
 
-  const byMonth = groupSchedulesByMonth(schedules);
+  if (venuesResult.error) {
+    console.warn("[schedule] venues の取得に失敗:", venuesResult.error.message);
+  }
+
+  const venueAreaLookup = buildVenueAreaLookup(venuesResult.data);
+  const schedulesWithVenueArea = (schedules ?? []).map((item) => ({
+    ...item,
+    venue_area: resolveVenueArea(item, venueAreaLookup),
+  }));
+
+  const byMonth = groupSchedulesByMonth(schedulesWithVenueArea);
 
   return [...byMonth.entries()]
     .filter(([month]) => month >= publicScheduleStartMonth)
@@ -67,7 +85,10 @@ const { month, monthLabel, schedules } = Astro.props;
 
         {schedules.length > 0 ? (
           <ul class="month-schedule__list">
-            {schedules.map((item) => (
+            {schedules.map((item) => {
+              const venueLabel = formatScheduleVenueDisplay(item.venue_name, item.venue_area);
+
+              return (
               <li class="month-schedule__list-item">
                 <div
                   class:list={[
@@ -87,8 +108,8 @@ const { month, monthLabel, schedules } = Astro.props;
                           <span class="schedule-item__symbol">{getTimeTypeSymbol(item.time_type)}</span>
                         )}
                         <span class="schedule-item__date">{formatScheduleDateLabel(item.date)}</span>
-                        {item.venue_name && (
-                          <span class="schedule-item__venue">{item.venue_name}</span>
+                        {venueLabel && (
+                          <span class="schedule-item__venue">{venueLabel}</span>
                         )}
                       </p>
 
@@ -156,7 +177,8 @@ const { month, monthLabel, schedules } = Astro.props;
                   )}
                 </div>
               </li>
-            ))}
+              );
+            })}
           </ul>
         ) : (
           <p>この月のライブ予定はありません。</p>

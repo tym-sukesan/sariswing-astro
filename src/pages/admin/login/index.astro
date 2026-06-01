@@ -3,18 +3,16 @@ import BaseLayout from "../../../layouts/BaseLayout.astro";
 ---
 
 <BaseLayout title="管理ログイン | SARI" admin>
-  <main class="admin-page">
+  <main class="admin-page admin-page--login">
     <div class="admin-page-header">
       <a class="admin-back-link" href="/admin/">← 管理画面トップ</a>
       <h1>管理ログイン</h1>
     </div>
 
-    <section class="admin-card">
-      <p class="admin-form__hint">
-        Instagram 管理用の Supabase Auth ログインです。NEWS / Schedule / About は従来どおりこのログインは不要です。
-      </p>
+    <section class="admin-card admin-login-card">
+      <p class="admin-login__lead">管理画面にログインしてください。</p>
 
-      <form id="adminLoginForm" class="admin-form" novalidate>
+      <form id="adminLoginForm" class="admin-form admin-login-form" novalidate>
         <label class="admin-form__field">
           <span class="admin-form__label">メールアドレス</span>
           <input id="loginEmail" type="email" name="email" autocomplete="username" required />
@@ -31,7 +29,7 @@ import BaseLayout from "../../../layouts/BaseLayout.astro";
           />
         </label>
 
-        <div class="admin-actions">
+        <div class="admin-actions admin-login-form__actions">
           <button id="loginSubmit" class="admin-button" type="submit">ログイン</button>
         </div>
       </form>
@@ -44,3 +42,71 @@ import BaseLayout from "../../../layouts/BaseLayout.astro";
     import "../../../scripts/admin/login.ts";
   </script>
 </BaseLayout>
+
+<style>
+  .admin-page--login {
+    max-width: 480px;
+  }
+
+  .admin-login-card {
+    margin-bottom: 24px;
+  }
+
+  .admin-login__lead {
+    margin: 0 0 20px;
+    font-size: 1.4rem;
+    line-height: 1.6;
+    letter-spacing: 0.04em;
+    color: #555;
+  }
+
+  .admin-login-form {
+    gap: 18px;
+  }
+
+  .admin-login-form .admin-form__field {
+    width: 100%;
+  }
+
+  .admin-login-form input[type="email"],
+  .admin-login-form input[type="password"] {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    padding: 12px 14px;
+    font-size: 1.6rem;
+    line-height: 1.5;
+    color: #333;
+    background: #fafafa;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  .admin-login-form input[type="email"]:focus,
+  .admin-login-form input[type="password"]:focus {
+    outline: none;
+    border-color: #888;
+    background: #fff;
+  }
+
+  .admin-login-form__actions {
+    margin-top: 4px;
+  }
+
+  .admin-login-form__actions .admin-button {
+    width: 100%;
+  }
+
+  .admin-login-card .admin-message {
+    margin-top: 16px;
+  }
+
+  @media screen and (max-width: 520px) {
+    .admin-page--login {
+      max-width: 100%;
+    }
+  }
+</style>

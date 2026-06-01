@@ -40,71 +40,129 @@ export async function getStaticPaths() {
 }
 
 const { month, monthLabel, schedules } = Astro.props;
-const pageTitle = `${monthLabel} | 紗理 / SARI`;
-const pageDescription = `${monthLabel}（${month}）のライブスケジュール。`;
 ---
 
-<BaseLayout title={pageTitle} description={pageDescription} canonical={`/schedule/${month}/`}>
+<BaseLayout
+  title={`${monthLabel} | 紗理 / SARI`}
+  description={`${monthLabel}のライブ・コンサート・イベントスケジュール。ジャズシンガー紗理（SARI）公式サイト。`}
+  canonical={`/schedule/${month}/`}
+>
   <Header />
 
   <main>
     <div id="lowerWrap">
       <h1 class="postList_title">{monthLabel}</h1>
 
-      <div class="entry-content schedule-archive">
+      <div class="entry-content month-schedule">
+        <div class="schedule-legend" aria-label="ライブ時間帯の凡例">
+          <p class="schedule-legend__item">
+            <span class="schedule-legend__symbol">☀</span>
+            <span class="schedule-legend__text">= 昼のLIVE</span>
+          </p>
+          <p class="schedule-legend__item">
+            <span class="schedule-legend__symbol">☽</span>
+            <span class="schedule-legend__text">= 夜のLIVE</span>
+          </p>
+        </div>
+
         {schedules.length > 0 ? (
-          <ul class="schedule-list">
-            {schedules.map((item) => {
-              const timeSymbol = getTimeTypeSymbol(item.time_type);
-              const hasImage = isImageUrl(item.image_url);
-              return (
-                <li class="schedule-item">
-                  <article class="schedule-card">
-                    <div class="schedule-card__meta">
-                      <time class="schedule-card__date" datetime={item.date}>
-                        {formatScheduleDateLabel(item.date)}
-                      </time>
-                      {item.start_time && <span class="schedule-card__time">{timeSymbol}{item.start_time}</span>}
+          <ul class="month-schedule__list">
+            {schedules.map((item) => (
+              <li class="month-schedule__list-item">
+                <div
+                  class:list={[
+                    "schedule-card",
+                    { "schedule-card--tour": item.is_special },
+                  ]}
+                >
+                  <div
+                    class:list={[
+                      "schedule-card__inner",
+                      { "schedule-card__inner--with-image": isImageUrl(item.image_url) },
+                    ]}
+                  >
+                    <div class="schedule-card-body">
+                      <p class="schedule-item__line schedule-item__line--primary">
+                        {getTimeTypeSymbol(item.time_type) && (
+                          <span class="schedule-item__symbol">{getTimeTypeSymbol(item.time_type)}</span>
+                        )}
+                        <span class="schedule-item__date">{formatScheduleDateLabel(item.date)}</span>
+                        {item.venue_name && (
+                          <span class="schedule-item__venue">{item.venue_name}</span>
+                        )}
+                      </p>
+
+                      {(item.title || item.genre) && (
+                        <p class="schedule-item__line schedule-item__line--title">
+                          {item.title && (
+                            <span class="schedule-item__title">&lt;{item.title}&gt;</span>
+                          )}
+                          {item.genre && <span class="schedule-item__genre">{item.genre}</span>}
+                        </p>
+                      )}
+
+                      <dl class="schedule-card__details">
+                        {item.open_time && (
+                          <>
+                            <dt>開場</dt>
+                            <dd>{item.open_time}</dd>
+                          </>
+                        )}
+                        {item.start_time && (
+                          <>
+                            <dt>開演</dt>
+                            <dd>{item.start_time}</dd>
+                          </>
+                        )}
+                        {item.price && (
+                          <>
+                            <dt>料金</dt>
+                            <dd>{item.price}</dd>
+                          </>
+                        )}
+                        {item.members && (
+                          <>
+                            <dt>メンバー</dt>
+                            <dd>{item.members}</dd>
+                          </>
+                        )}
+                      </dl>
+
+                      {item.note && <p class="schedule-card__note">{item.note}</p>}
+
+                      {item.reservation_url && (
+                        <p class="schedule-card__action">
+                          <a
+                            href={item.reservation_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="schedule-card__button"
+                          >
+                            予約・詳細
+                          </a>
+                        </p>
+                      )}
                     </div>
 
-                    <h2 class="schedule-card__title">{item.title}</h2>
-
-                    {(item.venue_name || item.venue_text) && (
-                      <p class="schedule-card__venue">{item.venue_name ?? item.venue_text}</p>
+                    {isImageUrl(item.image_url) && (
+                      <div class="schedule-card-image">
+                        <img src={item.image_url} alt={item.title || monthLabel} loading="lazy" />
+                      </div>
                     )}
+                  </div>
 
-                    {item.description && <p class="schedule-card__description">{item.description}</p>}
-
-                    {hasImage && (
-                      <figure class="schedule-card__image">
-                        <img
-                          src={item.image_url!}
-                          alt={item.title}
-                          loading="lazy"
-                          decoding="async"
-                          width="1200"
-                          height="900"
-                        />
-                      </figure>
-                    )}
-
-                    {item.url && (
-                      <p class="schedule-card__link">
-                        <a href={item.url} target="_blank" rel="noopener noreferrer">
-                          詳細を見る
-                        </a>
-                      </p>
-                    )}
-                  </article>
-                </li>
-              );
-            })}
+                  {item.is_special && (
+                    <span class="schedule-card__tour">TOUR</span>
+                  )}
+                </div>
+              </li>
+            ))}
           </ul>
         ) : (
-          <p>この月の公開スケジュールはありません。</p>
+          <p>この月のライブ予定はありません。</p>
         )}
 
-        <p class="schedule-archive__back">
+        <p class="month-schedule__back">
           <a href="/schedule/">← LIVE SCHEDULE 一覧へ</a>
         </p>
       </div>
@@ -113,3 +171,275 @@ const pageDescription = `${monthLabel}（${month}）のライブスケジュー�
 
   <Footer />
 </BaseLayout>
+
+<style>
+  .month-schedule {
+    margin-bottom: 80px;
+  }
+
+  .schedule-legend {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 24px 48px;
+    margin: 0 0 40px;
+    padding: 20px 16px;
+    text-align: center;
+  }
+
+  .schedule-legend__item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0;
+    font-size: 2rem;
+    font-weight: bold;
+    line-height: 1.4;
+    letter-spacing: 0.08em;
+  }
+
+  .schedule-legend__symbol {
+    font-size: 2.4rem;
+    line-height: 1;
+  }
+
+  .schedule-legend__text {
+    font-size: 1.8rem;
+  }
+
+  .month-schedule__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+
+  .month-schedule__list-item {
+    margin: 0;
+  }
+
+  .schedule-card {
+    position: relative;
+    background: #f3ebdf;
+    border-radius: 5px;
+    padding: 24px 20px;
+  }
+
+  .schedule-card--tour {
+    padding-bottom: 36px;
+  }
+
+  .schedule-card__tour {
+    position: absolute;
+    right: 18px;
+    bottom: 14px;
+    margin: 0;
+    padding: 0;
+    font-size: 13px;
+    font-weight: normal;
+    line-height: 1;
+    letter-spacing: 0.14em;
+    color: #777;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .schedule-card__inner {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .schedule-card__inner--with-image {
+    display: grid;
+    grid-template-columns: 1fr min(280px, 38%);
+    align-items: start;
+    gap: 24px;
+  }
+
+  .schedule-card-body {
+    min-width: 0;
+  }
+
+  .schedule-item__line {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0 0.4em;
+    margin: 0;
+    line-height: 1.6;
+    letter-spacing: 0.05em;
+  }
+
+  .schedule-item__line--primary {
+    margin-bottom: 10px;
+    font-size: 2rem;
+    font-weight: bold;
+  }
+
+  .schedule-item__line--title {
+    margin-bottom: 18px;
+    font-size: 1.6rem;
+    font-weight: bold;
+  }
+
+  .schedule-item__symbol {
+    margin-right: 0.1em;
+  }
+
+  .schedule-item__title {
+    color: #008080;
+  }
+
+  .schedule-item__title::after {
+    content: "\3000";
+  }
+
+  .schedule-item__genre {
+    color: #ff99cc;
+  }
+
+  .schedule-card__details {
+    margin: 0;
+    display: grid;
+    grid-template-columns: 7em 1fr;
+    gap: 10px 16px;
+    font-size: 1.5rem;
+    line-height: 1.7;
+    letter-spacing: 0.06em;
+  }
+
+  .schedule-card__details dt {
+    margin: 0;
+    font-weight: bold;
+    opacity: 0.7;
+  }
+
+  .schedule-card__details dd {
+    margin: 0;
+  }
+
+  .schedule-card__note {
+    margin: 0;
+    padding-top: 14px;
+    border-top: 1px solid rgba(0, 0, 0, 0.15);
+    font-size: 1.5rem;
+    line-height: 1.7;
+    letter-spacing: 0.06em;
+  }
+
+  .schedule-card__action {
+    margin: 20px 0 0;
+  }
+
+  .schedule-card__button {
+    display: inline-block;
+    padding: 12px 28px;
+    font-size: 1.4rem;
+    letter-spacing: 0.12em;
+    color: #333;
+    text-decoration: none;
+    border: 1px solid #333;
+    background: #fff;
+    transition:
+      color 0.2s,
+      background 0.2s;
+  }
+
+  .schedule-card__button:hover {
+    color: #fff;
+    background: #333;
+  }
+
+  .schedule-card-image {
+    overflow: hidden;
+    border-radius: 5px;
+    background: #eee;
+  }
+
+  .schedule-card-image img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    min-height: 180px;
+    object-fit: cover;
+    border-radius: 5px;
+  }
+
+  .month-schedule__back {
+    margin: 48px 0 0;
+    font-size: 1.4rem;
+    letter-spacing: 0.08em;
+  }
+
+  .month-schedule__back a {
+    color: #666;
+    text-decoration: none;
+  }
+
+  .month-schedule__back a:hover {
+    color: #333;
+  }
+
+  @media screen and (max-width: 768px) {
+    .schedule-legend {
+      flex-direction: column;
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+
+    .schedule-legend__item {
+      font-size: 1.7rem;
+    }
+
+    .schedule-legend__symbol {
+      font-size: 2rem;
+    }
+
+    .schedule-legend__text {
+      font-size: 1.6rem;
+    }
+
+    .schedule-card {
+      padding: 20px 16px;
+    }
+
+    .schedule-card--tour {
+      padding-bottom: 32px;
+    }
+
+    .schedule-card__tour {
+      right: 14px;
+      bottom: 12px;
+      font-size: 12px;
+      letter-spacing: 0.12em;
+    }
+
+    .schedule-card__inner--with-image {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .schedule-item__line--primary,
+    .schedule-item__line--title {
+      font-size: 1.5rem;
+    }
+
+    .schedule-card__details {
+      grid-template-columns: 1fr;
+      gap: 4px;
+    }
+
+    .schedule-card__details dt {
+      margin-top: 8px;
+    }
+
+    .schedule-card-image img {
+      min-height: 160px;
+    }
+  }
+</style>

@@ -118,3 +118,179 @@ function formatMonthNameEn(month: number) {
 
   <Footer />
 </BaseLayout>
+
+<style>
+  .schedule-index {
+    margin-bottom: 80px;
+  }
+
+  .schedule-index__notice {
+    margin: 0 0 24px;
+    font-size: 1.5rem;
+    line-height: 1.8;
+    letter-spacing: 0.04em;
+  }
+
+  .schedule-index__notice a {
+    text-decoration: underline;
+  }
+
+  .schedule-index__years {
+    display: flex;
+    flex-direction: column;
+    gap: 48px;
+  }
+
+  .schedule-index__year-title {
+    margin: 0 0 24px;
+    font-size: 2.4rem;
+    font-weight: bold;
+    line-height: 1.4;
+    letter-spacing: 0.1em;
+  }
+
+  .schedule-index__grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 28px 24px;
+  }
+
+  .schedule-index__item {
+    margin: 0;
+  }
+
+  .schedule-index__card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-height: 100%;
+    padding: 24px 22px;
+    background: #f3ebdf;
+    border-radius: 5px;
+    color: #333;
+    text-decoration: none;
+    transition:
+      transform 0.2s ease,
+      box-shadow 0.2s ease;
+  }
+
+  .schedule-index__card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+  }
+
+  .schedule-index__month-en {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    max-width: 48%;
+    font-size: 0.95rem;
+    font-weight: normal;
+    line-height: 1.2;
+    letter-spacing: 0.22em;
+    text-align: right;
+    color: #333;
+    opacity: 0.18;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .schedule-index__arrow {
+    position: absolute;
+    right: 18px;
+    bottom: 16px;
+    font-size: 1.3rem;
+    line-height: 1;
+    opacity: 0.32;
+    transition:
+      transform 0.2s ease,
+      opacity 0.2s ease;
+  }
+
+  .schedule-index__card:hover .schedule-index__arrow {
+    transform: translateX(4px);
+    opacity: 0.5;
+  }
+
+  .schedule-index__card:focus-visible {
+    outline: 2px solid #333;
+    outline-offset: 3px;
+  }
+
+  .schedule-index__month {
+    font-size: 2.8rem;
+    font-weight: bold;
+    line-height: 1.2;
+    letter-spacing: 0.06em;
+  }
+
+  .schedule-index__detail {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0 0.5em;
+    font-size: 1.4rem;
+    line-height: 1.5;
+    letter-spacing: 0.08em;
+  }
+
+  .schedule-index__label {
+    font-weight: bold;
+  }
+
+  .schedule-index__year-label {
+    opacity: 0.75;
+  }
+
+  @media screen and (max-width: 1024px) {
+    .schedule-index__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 24px 20px;
+    }
+  }
+
+  @media screen and (max-width: 768px) {
+    .schedule-index__years {
+      gap: 40px;
+    }
+
+    .schedule-index__year-title {
+      margin-bottom: 20px;
+      font-size: 2rem;
+    }
+
+    .schedule-index__grid {
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+
+    .schedule-index__card {
+      padding: 20px 18px;
+    }
+
+    .schedule-index__month {
+      font-size: 2.4rem;
+    }
+
+    .schedule-index__detail {
+      font-size: 1.3rem;
+    }
+
+    .schedule-index__month-en {
+      top: 14px;
+      right: 14px;
+      font-size: 0.85rem;
+      letter-spacing: 0.18em;
+    }
+
+    .schedule-index__arrow {
+      right: 16px;
+      bottom: 14px;
+      font-size: 1.2rem;
+    }
+  }
+</style>

@@ -125,25 +125,25 @@ const { month, monthLabel, schedules } = Astro.props;
                       <dl class="schedule-card__details">
                         {item.open_time && (
                           <>
-                            <dt>START</dt>
+                            <dt>OPEN</dt>
                             <dd>{item.open_time}</dd>
                           </>
                         )}
                         {item.start_time && (
                           <>
-                            <dt>OPEN</dt>
+                            <dt>START</dt>
                             <dd>{item.start_time}</dd>
                           </>
                         )}
                         {item.price && (
                           <>
-                            <dt>料金</dt>
+                            <dt>CHARGE</dt>
                             <dd>{item.price}</dd>
                           </>
                         )}
                         {item.members && (
                           <>
-                            <dt>メンバー</dt>
+                            <dt>MEMBERS</dt>
                             <dd>{item.members}</dd>
                           </>
                         )}

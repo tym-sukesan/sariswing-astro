@@ -194,14 +194,14 @@ export function createScheduleAdminListItem(
   openTimeInput.name = "open_time";
   openTimeInput.dataset.field = "open_time";
   openTimeInput.value = item.open_time || "";
-  appendField(row3, "START", openTimeInput);
+  appendField(row3, "OPEN", openTimeInput);
 
   const startTimeInput = document.createElement("input");
   startTimeInput.type = "text";
   startTimeInput.name = "start_time";
   startTimeInput.dataset.field = "start_time";
   startTimeInput.value = item.start_time || "";
-  appendField(row3, "OPEN", startTimeInput);
+  appendField(row3, "START", startTimeInput);
   form.append(row3);
 
   const row4 = document.createElement("div");
@@ -212,7 +212,7 @@ export function createScheduleAdminListItem(
   priceInput.name = "price";
   priceInput.dataset.field = "price";
   priceInput.value = item.price || "";
-  appendField(row4, "料金", priceInput);
+  appendField(row4, "CHARGE", priceInput);
 
   const genreInput = document.createElement("input");
   genreInput.type = "text";
@@ -227,7 +227,7 @@ export function createScheduleAdminListItem(
   membersInput.name = "members";
   membersInput.dataset.field = "members";
   membersInput.value = item.members || "";
-  appendField(form, "メンバー", membersInput);
+  appendField(form, "MEMBERS", membersInput);
 
   const reservationInput = document.createElement("input");
   reservationInput.type = "url";

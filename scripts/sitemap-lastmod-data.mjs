@@ -6,6 +6,7 @@ import { loadEnv } from "vite";
 
 const SITE_TIMEZONE = "Asia/Tokyo";
 const JST_OFFSET = "+09:00";
+const PUBLIC_SCHEDULE_START_MONTH = "2026-06";
 
 /** @typedef {{ updated_at?: string | null; created_at?: string | null; date?: string | null; published_at?: string | null }} TimestampedRecord */
 
@@ -14,7 +15,7 @@ const JST_OFFSET = "+09:00";
 export const SITEMAP_STATIC_PATHS = [
   "/",
   "/about/",
-  "/live-schedule/",
+  "/schedule/",
   "/news/",
   "/discography/",
   "/contact/",
@@ -263,6 +264,7 @@ export async function getSitemapLastmodLookup(options = {}) {
   for (const item of scheduleItems) {
     const month = formatMonthFromDate(item.date);
     if (!month) continue;
+    if (month < PUBLIC_SCHEDULE_START_MONTH) continue;
 
     const resolved = resolveScheduleItemLastmod(item, buildEnd, generatedAt);
     const prev = monthLastmodMap.get(month);
@@ -273,7 +275,7 @@ export async function getSitemapLastmodLookup(options = {}) {
   }
 
   for (const [month, { entry }] of monthLastmodMap) {
-    lookup.set(`/live-schedule/${month}/`, entry);
+    lookup.set(`/schedule/${month}/`, entry);
   }
 
   for (const item of newsItems) {

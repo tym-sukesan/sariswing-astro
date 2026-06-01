@@ -20,7 +20,7 @@ import {
 } from "../../lib/admin/schedule-constants";
 
 const PUBLIC_SITE_REBUILD_MESSAGE =
-  "公開サイト（/live-schedule/ ・トップページなど）へ反映するには、GitHub Actions で再ビルド・再デプロイしてください。";
+  "公開サイト（/schedule/ ・トップページなど）へ反映するには、GitHub Actions で再ビルド・再デプロイしてください。";
 
 function getField(form: ParentNode, name: string) {
   const el = form.querySelector(`[data-field="${name}"], [name="${name}"]`);

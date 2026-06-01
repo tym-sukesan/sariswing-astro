@@ -65,5 +65,5 @@ export function getPublishedMonthsFromSchedules(
 }
 
 export function getLiveScheduleMonthPath(month: string) {
-  return `/live-schedule/${month}/`;
+  return `/schedule/${month}/`;
 }

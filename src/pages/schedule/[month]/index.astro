@@ -1,0 +1,115 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import Header from "../../../components/Header.astro";
+import Footer from "../../../components/Footer.astro";
+import { supabase } from "../../../lib/supabase";
+import {
+  formatMonthLabel,
+  formatScheduleDateLabel,
+  getTimeTypeSymbol,
+  groupSchedulesByMonth,
+  isImageUrl,
+  sortSchedules,
+} from "../../../lib/schedule";
+
+export async function getStaticPaths() {
+  const publicScheduleStartMonth = "2026-06";
+  const { data: schedules, error } = await supabase
+    .from("schedules")
+    .select("*")
+    .eq("is_published", true)
+    .gte("date", `${publicScheduleStartMonth}-01`);
+
+  if (error) {
+    console.error("[schedule] schedules の取得に失敗:", error.message);
+    return [];
+  }
+
+  const byMonth = groupSchedulesByMonth(schedules);
+
+  return [...byMonth.entries()]
+    .filter(([month]) => month >= publicScheduleStartMonth)
+    .map(([month, items]) => ({
+      params: { month },
+      props: {
+        month,
+        monthLabel: formatMonthLabel(month),
+        schedules: sortSchedules(items),
+      },
+    }));
+}
+
+const { month, monthLabel, schedules } = Astro.props;
+const pageTitle = `${monthLabel} | 紗理 / SARI`;
+const pageDescription = `${monthLabel}（${month}）のライブスケジュール。`;
+---
+
+<BaseLayout title={pageTitle} description={pageDescription} canonical={`/schedule/${month}/`}>
+  <Header />
+
+  <main>
+    <div id="lowerWrap">
+      <h1 class="postList_title">{monthLabel}</h1>
+
+      <div class="entry-content schedule-archive">
+        {schedules.length > 0 ? (
+          <ul class="schedule-list">
+            {schedules.map((item) => {
+              const timeSymbol = getTimeTypeSymbol(item.time_type);
+              const hasImage = isImageUrl(item.image_url);
+              return (
+                <li class="schedule-item">
+                  <article class="schedule-card">
+                    <div class="schedule-card__meta">
+                      <time class="schedule-card__date" datetime={item.date}>
+                        {formatScheduleDateLabel(item.date)}
+                      </time>
+                      {item.start_time && <span class="schedule-card__time">{timeSymbol}{item.start_time}</span>}
+                    </div>
+
+                    <h2 class="schedule-card__title">{item.title}</h2>
+
+                    {(item.venue_name || item.venue_text) && (
+                      <p class="schedule-card__venue">{item.venue_name ?? item.venue_text}</p>
+                    )}
+
+                    {item.description && <p class="schedule-card__description">{item.description}</p>}
+
+                    {hasImage && (
+                      <figure class="schedule-card__image">
+                        <img
+                          src={item.image_url!}
+                          alt={item.title}
+                          loading="lazy"
+                          decoding="async"
+                          width="1200"
+                          height="900"
+                        />
+                      </figure>
+                    )}
+
+                    {item.url && (
+                      <p class="schedule-card__link">
+                        <a href={item.url} target="_blank" rel="noopener noreferrer">
+                          詳細を見る
+                        </a>
+                      </p>
+                    )}
+                  </article>
+                </li>
+              );
+            })}
+          </ul>
+        ) : (
+          <p>この月の公開スケジュールはありません。</p>
+        )}
+
+        <p class="schedule-archive__back">
+          <a href="/schedule/">← LIVE SCHEDULE 一覧へ</a>
+        </p>
+      </div>
+    </div>
+  </main>
+
+  <Footer />
+</BaseLayout>

@@ -368,17 +368,18 @@ supabase functions deploy admin-schedule
 | `LOLIPOP_FTP_USER` | ロリポップ FTP ユーザー名 |
 | `LOLIPOP_FTP_PASSWORD` | ロリポップ FTP パスワード |
 | `LOLIPOP_FTP_REMOTE_DIR` | `dist/` のアップロード先ディレクトリ（例: `/public_html/`） |
-| `PUBLIC_DEPLOY_SHARED_SECRET` | 管理画面「公開サイトを更新」用（ビルド時に埋め込み。Supabase の `DEPLOY_SHARED_SECRET` と同じ値） |
-
 ## 管理画面からデプロイを起動（Supabase Edge Function）
 
 管理画面上部の **「公開サイトを更新」** ボタンから、GitHub Actions の `deploy.yml`（`workflow_dispatch`）を起動できます。GitHub Token はブラウザに露出しません。
 
 ### アーキテクチャ
 
-1. 管理画面（Basic 認証下）が `PUBLIC_DEPLOY_SHARED_SECRET` をヘッダ `x-deploy-secret` に付与して Edge Function を呼ぶ
-2. Edge Function が Supabase Secrets の `GITHUB_TOKEN` で GitHub API `workflow_dispatch` を実行
-3. 既存の build + FTP デプロイが走る
+1. 管理画面で Supabase Auth にログイン済みの管理者が、JWT 付きで `trigger-deploy` / `deploy-status` を呼ぶ
+2. Edge Function 内で `requireAdminUser`（`role=admin` または `ADMIN_EMAILS`）を検証
+3. 検証後、Supabase Secrets の `GITHUB_TOKEN` で GitHub API `workflow_dispatch` を実行
+4. 既存の build + FTP デプロイが走る
+
+未ログイン・管理者でないユーザーは Edge が 401 / 403 を返し、デプロイは開始されません。
 
 ### Supabase Secrets（Dashboard → Project Settings → Edge Functions → Secrets）
 
@@ -388,13 +389,6 @@ supabase functions deploy admin-schedule
 | `GITHUB_REPO` | `your-user/sariswing-astro` |
 | `GITHUB_WORKFLOW_FILE` | `deploy.yml` |
 | `GITHUB_REF` | `main`（デプロイ対象ブランチ） |
-| `DEPLOY_SHARED_SECRET` | ランダムな長い文字列（`.env` の `PUBLIC_DEPLOY_SHARED_SECRET` と同一） |
-
-### ローカル `.env` / GitHub Actions Secrets
-
-| 変数 | 用途 |
-|------|------|
-| `PUBLIC_DEPLOY_SHARED_SECRET` | 管理画面 JS にビルド時埋め込み（anon key と同様に公開前提。Basic 認証とセットで運用） |
 
 ### GitHub Fine-grained PAT の権限
 
@@ -420,16 +414,16 @@ supabase link --project-ref YOUR_PROJECT_REF
 関数のデプロイ:
 
 ```bash
-supabase functions deploy trigger-deploy --no-verify-jwt
-supabase functions deploy deploy-status --no-verify-jwt
+supabase functions deploy trigger-deploy
+supabase functions deploy deploy-status
 supabase functions deploy admin-instagram
 supabase functions deploy admin-site-page
 supabase functions deploy admin-news
 supabase functions deploy admin-schedule
 ```
 
-- `trigger-deploy` / `deploy-status`: `verify_jwt = false`。`x-deploy-secret` と anon key で呼び出し。
-- `admin-instagram` / `admin-site-page` / `admin-news` / `admin-schedule`: `verify_jwt = true`。ログイン後の **access_token**（Supabase Auth）で呼び出し。
+- `trigger-deploy` / `deploy-status` / 各 `admin-*`: いずれも `verify_jwt = true`。ログイン後の **access_token**（Supabase Auth）で呼び出し。管理者判定は Edge 内 `requireAdminUser`。
+- **再デプロイ必須:** 本変更前に `--no-verify-jwt` でデプロイしていた場合、必ず上記 2 関数を再デプロイしてください（旧版は secret のみで起動可能）。
 
 Secrets の設定（CLI）例:
 
@@ -437,22 +431,14 @@ Secrets の設定（CLI）例:
 supabase secrets set GITHUB_TOKEN=ghp_xxxx \
   GITHUB_REPO=owner/sariswing-astro \
   GITHUB_WORKFLOW_FILE=deploy.yml \
-  GITHUB_REF=main \
-  DEPLOY_SHARED_SECRET=your-long-random-secret
+  GITHUB_REF=main
 ```
 
-動作確認（ローカル）:
-
-```bash
-supabase functions serve trigger-deploy --no-verify-jwt
-curl -X POST "http://127.0.0.1:54321/functions/v1/trigger-deploy" \
-  -H "Authorization: Bearer YOUR_ANON_KEY" \
-  -H "x-deploy-secret: your-long-random-secret"
-```
+（`DEPLOY_SHARED_SECRET` は不要です。Dashboard に残っていても無視されます。）
 
 ### 注意
 
-- `PUBLIC_DEPLOY_SHARED_SECRET` はビルド成果物に含まれます。完全秘匿ではないため、`/admin/` の Basic 認証を必ず有効にしてください。
+- `/admin/` の Basic 認証は引き続き必須です（静的 HTML の露出対策）。
 - 連打防止のため `deploy.yml` に `concurrency: production-deploy` を設定済みです。
 
 ## RLS（Row Level Security）

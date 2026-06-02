@@ -2,10 +2,10 @@
 # https://supabase.com/docs/guides/functions
 
 [functions.trigger-deploy]
-verify_jwt = false
+verify_jwt = true
 
 [functions.deploy-status]
-verify_jwt = false
+verify_jwt = true
 
 [functions.admin-instagram]
 verify_jwt = true

@@ -1,4 +1,5 @@
-import { supabase } from "../../lib/supabase";
+import { fetchDeployStatus, triggerDeploy, type DeployRunStatus } from "../../lib/admin/deploy-api";
+import { supabaseAdmin } from "../../lib/supabase-admin";
 
 const STORAGE_KEY = "sariswing_last_deploy";
 const POLL_INTERVAL_MS = 12_000;
@@ -6,37 +7,12 @@ const MAX_POLL_DURATION_MS = 45 * 60 * 1000;
 const BUTTON_LABEL_IDLE = "公開サイトを更新";
 const BUTTON_LABEL_BUSY = "デプロイ中...";
 
-type DeployRunStatus = "running" | "success" | "failure";
-
 type StoredDeploy = {
   startedAt: string;
   completedAt?: string;
   status: DeployRunStatus;
   runId?: number | null;
 };
-
-type TriggerResponse = {
-  ok?: boolean;
-  error?: string;
-  detail?: string;
-  startedAt?: string;
-  runId?: number | null;
-  status?: DeployRunStatus;
-};
-
-type StatusResponse = {
-  ok?: boolean;
-  error?: string;
-  runId?: number;
-  status?: DeployRunStatus;
-  runCreatedAt?: string;
-  runUpdatedAt?: string;
-  completedAt?: string | null;
-};
-
-function getDeploySecret() {
-  return import.meta.env.PUBLIC_DEPLOY_SHARED_SECRET?.trim() ?? "";
-}
 
 function formatDateTime(iso: string) {
   const date = new Date(iso);
@@ -120,27 +96,6 @@ function renderStatus(
   }
 }
 
-async function invokeWithSecret<T>(functionName: string, body?: Record<string, unknown>) {
-  const deploySecret = getDeploySecret();
-  const options: {
-    method: "POST";
-    headers: { "x-deploy-secret": string };
-    body?: Record<string, unknown>;
-  } = {
-    method: "POST",
-    headers: { "x-deploy-secret": deploySecret },
-  };
-
-  if (body) {
-    options.body = body;
-  }
-
-  const { data, error } = await supabase.functions.invoke(functionName, options);
-
-  if (error) throw new Error(error.message);
-  return data as T;
-}
-
 function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
@@ -157,9 +112,7 @@ async function pollDeployStatus(runId: number | null, startedAt: string) {
   let currentRunId = runId;
 
   while (Date.now() - pollStarted < MAX_POLL_DURATION_MS) {
-    const payload = await invokeWithSecret<StatusResponse>("deploy-status", {
-      runId: currentRunId ?? undefined,
-    });
+    const payload = await fetchDeployStatus(currentRunId);
 
     if (!payload?.ok || !payload.status) {
       throw new Error(payload?.error ?? "状態の取得に失敗しました");
@@ -222,61 +175,76 @@ export function initAdminDeployBar() {
 
   renderLastDeploy(lastDeploy);
 
-  const deploySecret = getDeploySecret();
-  if (!deploySecret) {
-    message.textContent = "公開サイトの更新機能が設定されていません。管理者にお問い合わせください。";
-    button.disabled = true;
-    return;
-  }
+  void (async () => {
+    const {
+      data: { session },
+    } = await supabaseAdmin.auth.getSession();
 
-  button.addEventListener("click", async () => {
-    if (
-      !confirm(
-        "公開サイトを最新の内容に更新します。\n数分かかることがあります。よろしいですか？"
-      )
-    ) {
+    if (!session) {
+      message.textContent = "ログイン後に公開サイトを更新できます。";
+      button.disabled = true;
       return;
     }
 
-    setButtonBusy(button, true);
-    message.textContent = "";
-    message.classList.remove("is-error", "is-success");
-    statusEl.textContent = "🟡 実行中 更新を準備しています…";
-    statusEl.classList.remove("is-error", "is-success");
-    statusEl.classList.add("is-running");
-    if (hint) hint.textContent = "";
+    button.addEventListener("click", async () => {
+      const {
+        data: { session: clickSession },
+      } = await supabaseAdmin.auth.getSession();
 
-    try {
-      const payload = await invokeWithSecret<TriggerResponse>("trigger-deploy");
-
-      if (!payload?.ok) {
-        const detail = payload?.detail ? `（${payload.detail}）` : "";
-        throw new Error((payload?.error ?? "更新の開始に失敗しました") + detail);
+      if (!clickSession) {
+        message.textContent = "ログインが必要です。再度ログインしてください。";
+        message.classList.add("is-error");
+        return;
       }
 
-      const startedAt = payload.startedAt ?? new Date().toISOString();
-      message.textContent = `更新の開始を受け付けました（${formatDateTime(startedAt)}）`;
-      message.classList.add("is-success");
+      if (
+        !confirm(
+          "公開サイトを最新の内容に更新します。\n数分かかることがあります。よろしいですか？"
+        )
+      ) {
+        return;
+      }
 
-      saveStoredDeploy({
-        startedAt,
-        status: payload.status ?? "running",
-        runId: payload.runId ?? null,
-      });
-      renderLastDeploy(lastDeploy);
+      setButtonBusy(button, true);
+      message.textContent = "";
+      message.classList.remove("is-error", "is-success");
+      statusEl.textContent = "🟡 実行中 更新を準備しています…";
+      statusEl.classList.remove("is-error", "is-success");
+      statusEl.classList.add("is-running");
+      if (hint) hint.textContent = "";
 
-      await pollDeployStatus(payload.runId ?? null, startedAt);
-    } catch (err) {
-      const text = err instanceof Error ? err.message : "不明なエラーが発生しました。";
-      message.textContent = `更新を開始できませんでした。${text}`;
-      message.classList.add("is-error");
-      statusEl.textContent = "🔴 失敗 更新を開始できませんでした";
-      statusEl.classList.remove("is-running");
-      statusEl.classList.add("is-error");
-      if (hint) hint.textContent = "しばらくしてから再度お試しください。";
-      setButtonBusy(button, false);
-    }
-  });
+      try {
+        const payload = await triggerDeploy();
+
+        if (!payload?.ok) {
+          const detail = payload?.detail ? `（${payload.detail}）` : "";
+          throw new Error((payload?.error ?? "更新の開始に失敗しました") + detail);
+        }
+
+        const startedAt = payload.startedAt ?? new Date().toISOString();
+        message.textContent = `更新の開始を受け付けました（${formatDateTime(startedAt)}）`;
+        message.classList.add("is-success");
+
+        saveStoredDeploy({
+          startedAt,
+          status: payload.status ?? "running",
+          runId: payload.runId ?? null,
+        });
+        renderLastDeploy(lastDeploy);
+
+        await pollDeployStatus(payload.runId ?? null, startedAt);
+      } catch (err) {
+        const text = err instanceof Error ? err.message : "不明なエラーが発生しました。";
+        message.textContent = `更新を開始できませんでした。${text}`;
+        message.classList.add("is-error");
+        statusEl.textContent = "🔴 失敗 更新を開始できませんでした";
+        statusEl.classList.remove("is-running");
+        statusEl.classList.add("is-error");
+        if (hint) hint.textContent = "しばらくしてから再度お試しください。";
+        setButtonBusy(button, false);
+      }
+    });
+  })();
 }
 
 initAdminDeployBar();

@@ -1,37 +1,11 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
+import { requireAdminUser, corsHeaders, jsonResponse } from "../_shared/admin-auth.ts";
 import {
   getGitHubConfig,
   normalizeRunStatus,
   parseRepo,
   waitForLatestWorkflowRun,
 } from "../_shared/github.ts";
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type, x-deploy-secret",
-  "Access-Control-Allow-Methods": "POST, OPTIONS",
-};
-
-function jsonResponse(body: Record<string, unknown>, status: number) {
-  return new Response(JSON.stringify(body), {
-    status,
-    headers: {
-      ...corsHeaders,
-      "Content-Type": "application/json",
-    },
-  });
-}
-
-function unauthorized() {
-  return jsonResponse({ error: "Unauthorized" }, 401);
-}
-
-function checkDeploySecret(req: Request): boolean {
-  const deploySecret = Deno.env.get("DEPLOY_SHARED_SECRET");
-  const clientSecret = req.headers.get("x-deploy-secret");
-  return Boolean(deploySecret && clientSecret && clientSecret === deploySecret);
-}
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -42,9 +16,8 @@ Deno.serve(async (req) => {
     return jsonResponse({ error: "Method not allowed" }, 405);
   }
 
-  if (!checkDeploySecret(req)) {
-    return unauthorized();
-  }
+  const adminResult = await requireAdminUser(req);
+  if (adminResult instanceof Response) return adminResult;
 
   const config = getGitHubConfig();
   if (!config) {

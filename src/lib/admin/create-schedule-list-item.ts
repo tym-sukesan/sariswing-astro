@@ -1,4 +1,7 @@
-import { appendImageUrlField } from "./mount-image-upload-field";
+import {
+  initScheduleImageField,
+  resolveScheduleImageUrls,
+} from "./schedule-image-fields";
 import { formatAdminDeletedAt } from "./format-deleted-at";
 import { getTimeTypeSymbol } from "../schedule";
 import { SCHEDULE_TIME_TYPE_OPTIONS, type ScheduleAdminRecord, type VenueOption } from "./schedule-constants";
@@ -237,7 +240,9 @@ export function createScheduleAdminListItem(
   reservationInput.value = item.reservation_url || "";
   appendField(form, "予約URL", reservationInput);
 
-  appendImageUrlField(form, "画像", item.image_url || "", "schedule");
+  const imageFieldHost = document.createElement("div");
+  initScheduleImageField(imageFieldHost, "画像（複数可）", resolveScheduleImageUrls(item));
+  form.append(imageFieldHost);
 
   const noteArea = document.createElement("textarea");
   noteArea.name = "note";

@@ -15,6 +15,7 @@ export type ScheduleWritePayload = {
   reservation_url: string | null;
   note: string | null;
   image_url: string | null;
+  image_urls: string[] | null;
   is_published: boolean;
   is_special: boolean;
 };

@@ -3,9 +3,12 @@ import {
   createScheduleAdminListItem,
   populateVenueSelect,
 } from "../../lib/admin/create-schedule-list-item";
-import { initImageUploadFields } from "../../lib/admin/mount-image-upload-field";
 import { initPaginatedList, type PaginatedListController } from "../../lib/admin/paginated-list";
 import { requireAdminSession, signOutAdmin } from "../../lib/admin/require-admin-session";
+import {
+  collectScheduleImageUrls,
+  initScheduleImageField,
+} from "../../lib/admin/schedule-image-fields";
 import {
   createSchedule,
   deleteSchedule,
@@ -74,7 +77,8 @@ function buildScheduleRecord(form: ParentNode): ScheduleWritePayload {
     members: nullableText(getTextValue(form, "members")),
     reservation_url: nullableText(getTextValue(form, "reservation_url")),
     note: nullableText(getTextValue(form, "note")),
-    image_url: nullableText(getTextValue(form, "image_url")),
+    image_url: null,
+    image_urls: null,
     is_published: Boolean(getCheckbox(form, "is_published")?.checked),
     is_special: Boolean(getCheckbox(form, "is_special")?.checked),
   };
@@ -157,8 +161,6 @@ export function initScheduleAdmin() {
   const deletedScheduleList = document.getElementById("deletedScheduleList");
   const addVenueSelect = document.getElementById("addVenueSelect");
 
-  initImageUploadFields(document);
-
   let venuesCache: VenueOption[] = [];
   let upcomingController: PaginatedListController | null = null;
   let pastController: PaginatedListController | null = null;
@@ -196,9 +198,6 @@ export function initScheduleAdmin() {
     past.forEach((item, index) => {
       pastList?.append(createScheduleAdminListItem(item, venues, index));
     });
-
-    if (upcomingList) initImageUploadFields(upcomingList);
-    if (pastList) initImageUploadFields(pastList);
 
     updateScheduleEmptyStates(upcoming.length, past.length);
     upcomingController?.refreshItems();
@@ -266,11 +265,18 @@ export function initScheduleAdmin() {
   });
 
   if (addForm) bindVenueSelect(addForm);
+  const addImageFieldHost = document.getElementById("addScheduleImagesField");
+  if (addImageFieldHost instanceof HTMLElement) {
+    initScheduleImageField(addImageFieldHost, "画像（複数可）", []);
+  }
 
   document.getElementById("add")?.addEventListener("click", async () => {
     if (!addForm || !message) return;
 
     const record = buildScheduleRecord(addForm);
+    const imageUrls = collectScheduleImageUrls(addForm);
+    record.image_urls = imageUrls.length > 0 ? imageUrls : null;
+    record.image_url = imageUrls[0] ?? null;
 
     if (!record.date) {
       message.textContent = "日付を入力してください。";
@@ -318,6 +324,9 @@ export function initScheduleAdmin() {
           if (!form) return;
 
           const record = buildScheduleRecord(form);
+          const imageUrls = collectScheduleImageUrls(form);
+          record.image_urls = imageUrls.length > 0 ? imageUrls : null;
+          record.image_url = imageUrls[0] ?? null;
 
           if (!record.date) {
             message.textContent = "日付を入力してください。";

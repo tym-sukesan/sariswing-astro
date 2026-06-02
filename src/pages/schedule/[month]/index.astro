@@ -63,6 +63,19 @@ export async function getStaticPaths() {
 }
 
 const { month, monthLabel, schedules, prevMonth, nextMonth } = Astro.props;
+
+function resolveScheduleImageUrls(item: { image_urls?: unknown; image_url?: string | null }) {
+  if (Array.isArray(item.image_urls)) {
+    const normalized = item.image_urls
+      .filter((value): value is string => typeof value === "string")
+      .map((value) => value.trim())
+      .filter((value) => isImageUrl(value));
+    if (normalized.length > 0) return normalized;
+  }
+
+  const fallback = item.image_url?.trim() ?? "";
+  return isImageUrl(fallback) ? [fallback] : [];
+}
 ---
 
 <BaseLayout
@@ -92,6 +105,8 @@ const { month, monthLabel, schedules, prevMonth, nextMonth } = Astro.props;
           <ul class="month-schedule__list">
             {schedules.map((item) => {
               const venueLabel = formatScheduleVenueDisplay(item.venue_name, item.venue_area);
+              const imageUrls = resolveScheduleImageUrls(item);
+              const hasImages = imageUrls.length > 0;
 
               return (
               <li class="month-schedule__list-item">
@@ -104,7 +119,7 @@ const { month, monthLabel, schedules, prevMonth, nextMonth } = Astro.props;
                   <div
                     class:list={[
                       "schedule-card__inner",
-                      { "schedule-card__inner--with-image": isImageUrl(item.image_url) },
+                      { "schedule-card__inner--with-image": hasImages },
                     ]}
                   >
                     <div class="schedule-card-body">
@@ -170,10 +185,38 @@ const { month, monthLabel, schedules, prevMonth, nextMonth } = Astro.props;
                       )}
                     </div>
 
-                    {isImageUrl(item.image_url) && (
-                      <div class="schedule-card-image">
-                        <img src={item.image_url} alt={item.title || monthLabel} loading="lazy" />
-                      </div>
+                    {hasImages && (
+                      imageUrls.length === 1 ? (
+                        <div class="schedule-card-image">
+                          <img src={imageUrls[0]} alt={item.title || monthLabel} loading="lazy" />
+                        </div>
+                      ) : (
+                        <div class="schedule-carousel" data-schedule-carousel>
+                          <div class="schedule-carousel__viewport">
+                            {imageUrls.map((url, index) => (
+                              <img
+                                src={url}
+                                alt={item.title || monthLabel}
+                                loading="lazy"
+                                class="schedule-carousel__slide"
+                                data-carousel-slide
+                                hidden={index !== 0}
+                              />
+                            ))}
+                          </div>
+                          <div class="schedule-carousel__controls">
+                            <button type="button" class="schedule-carousel__button" data-carousel-prev>
+                              前へ
+                            </button>
+                            <span class="schedule-carousel__status" data-carousel-status>
+                              1 / {imageUrls.length}
+                            </span>
+                            <button type="button" class="schedule-carousel__button" data-carousel-next>
+                              次へ
+                            </button>
+                          </div>
+                        </div>
+                      )
                     )}
                   </div>
 
@@ -219,6 +262,45 @@ const { month, monthLabel, schedules, prevMonth, nextMonth } = Astro.props;
   </main>
 
   <Footer />
+
+  <script is:inline>
+    (() => {
+      const carousels = document.querySelectorAll("[data-schedule-carousel]");
+      for (const carousel of carousels) {
+        const slides = [...carousel.querySelectorAll("[data-carousel-slide]")];
+        if (slides.length <= 1) continue;
+
+        const status = carousel.querySelector("[data-carousel-status]");
+        const prevButton = carousel.querySelector("[data-carousel-prev]");
+        const nextButton = carousel.querySelector("[data-carousel-next]");
+        if (!(prevButton instanceof HTMLButtonElement) || !(nextButton instanceof HTMLButtonElement)) {
+          continue;
+        }
+
+        let current = 0;
+        const update = () => {
+          slides.forEach((slide, index) => {
+            (slide as HTMLElement).hidden = index !== current;
+          });
+          if (status) {
+            status.textContent = `${current + 1} / ${slides.length}`;
+          }
+        };
+
+        prevButton.addEventListener("click", () => {
+          current = (current - 1 + slides.length) % slides.length;
+          update();
+        });
+
+        nextButton.addEventListener("click", () => {
+          current = (current + 1) % slides.length;
+          update();
+        });
+
+        update();
+      }
+    })();
+  </script>
 </BaseLayout>
 
 <style>
@@ -430,6 +512,52 @@ const { month, monthLabel, schedules, prevMonth, nextMonth } = Astro.props;
     border-radius: 5px;
   }
 
+  .schedule-carousel {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .schedule-carousel__viewport {
+    overflow: hidden;
+    border-radius: 5px;
+    background: #eee;
+  }
+
+  .schedule-carousel__slide {
+    display: block;
+    width: 100%;
+    min-height: 180px;
+    object-fit: cover;
+    border-radius: 5px;
+  }
+
+  .schedule-carousel__controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+  }
+
+  .schedule-carousel__button {
+    min-width: 72px;
+    min-height: 36px;
+    border: 1px solid #333;
+    background: #fff;
+    color: #333;
+    cursor: pointer;
+    font-size: 1.3rem;
+    letter-spacing: 0.08em;
+  }
+
+  .schedule-carousel__status {
+    min-width: 64px;
+    text-align: center;
+    font-size: 1.3rem;
+    letter-spacing: 0.08em;
+    color: #555;
+  }
+
   .month-schedule__nav {
     display: grid;
     grid-template-columns: 1fr auto 1fr;
@@ -521,6 +649,10 @@ const { month, monthLabel, schedules, prevMonth, nextMonth } = Astro.props;
     }
 
     .schedule-card-image img {
+      min-height: 160px;
+    }
+
+    .schedule-carousel__slide {
       min-height: 160px;
     }
 

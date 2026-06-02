@@ -93,15 +93,7 @@ import { SCHEDULE_TIME_TYPE_OPTIONS } from "../../../lib/admin/schedule-constant
           <input data-field="reservation_url" name="reservation_url" type="url" placeholder="https://..." />
         </label>
 
-        <div class="admin-image-upload" data-image-upload="schedule">
-          <label class="admin-form__field">
-            <span class="admin-form__label">画像</span>
-            <input data-field="image_url" name="image_url" type="text" placeholder="https://..." />
-            <span class="admin-form__hint">
-              URLを直接入力するか、下のボタンからアップロード（JPG / PNG / WebP・長辺1600px・2MBまで）
-            </span>
-          </label>
-        </div>
+        <div id="addScheduleImagesField"></div>
 
         <label class="admin-form__field">
           <span class="admin-form__label">備考</span>

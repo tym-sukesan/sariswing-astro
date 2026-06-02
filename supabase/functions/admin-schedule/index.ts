@@ -21,6 +21,7 @@ const MAX_MEMBERS_LENGTH = 500;
 const MAX_URL_LENGTH = 2000;
 const MAX_NOTE_LENGTH = 10_000;
 const MAX_IMAGE_URL_LENGTH = 2000;
+const MAX_IMAGE_URLS = 12;
 
 type ActionBody = {
   action?: string;
@@ -68,6 +69,31 @@ function validateTimeType(value: unknown): string | null | Response {
   return normalized;
 }
 
+function validateImageUrls(values: unknown): string[] | Response {
+  if (values == null) return [];
+  if (!Array.isArray(values)) {
+    return jsonResponse({ error: "image_urls must be an array" }, 400);
+  }
+  if (values.length > MAX_IMAGE_URLS) {
+    return jsonResponse({ error: "image_urls is too long" }, 400);
+  }
+
+  const normalized: string[] = [];
+  for (const value of values) {
+    if (typeof value !== "string") {
+      return jsonResponse({ error: "image_urls must contain string values only" }, 400);
+    }
+    const url = normalizeOptionalString(value, MAX_IMAGE_URL_LENGTH);
+    if (!url) continue;
+    if (!/^https?:\/\//i.test(url)) {
+      return jsonResponse({ error: "image_urls must contain http(s) URLs only" }, 400);
+    }
+    normalized.push(url);
+  }
+
+  return normalized;
+}
+
 function validateScheduleRecord(record: unknown): ScheduleWritePayload | Response {
   if (!record || typeof record !== "object") {
     return jsonResponse({ error: "record is required" }, 400);
@@ -85,6 +111,10 @@ function validateScheduleRecord(record: unknown): ScheduleWritePayload | Respons
 
   const openTime = normalizeOptionalString(r.open_time, MAX_TIME_VALUE_LENGTH);
   const startTime = normalizeOptionalString(r.start_time, MAX_TIME_VALUE_LENGTH);
+  const imageUrls = validateImageUrls(r.image_urls);
+  if (imageUrls instanceof Response) return imageUrls;
+  const fallbackImageUrl = normalizeOptionalString(r.image_url, MAX_IMAGE_URL_LENGTH);
+  const mergedImageUrls = imageUrls.length > 0 ? imageUrls : fallbackImageUrl ? [fallbackImageUrl] : [];
 
   return {
     date,
@@ -99,7 +129,8 @@ function validateScheduleRecord(record: unknown): ScheduleWritePayload | Respons
     members: normalizeOptionalString(r.members, MAX_MEMBERS_LENGTH),
     reservation_url: normalizeOptionalString(r.reservation_url, MAX_URL_LENGTH),
     note: normalizeOptionalString(r.note, MAX_NOTE_LENGTH),
-    image_url: normalizeOptionalString(r.image_url, MAX_IMAGE_URL_LENGTH),
+    image_url: mergedImageUrls[0] ?? null,
+    image_urls: mergedImageUrls.length > 0 ? mergedImageUrls : null,
     is_published: Boolean(r.is_published),
     is_special: Boolean(r.is_special),
   };
@@ -120,6 +151,12 @@ function scheduleWritePayloadFromRow(row: ScheduleRecord): ScheduleWritePayload 
     reservation_url: row.reservation_url ?? null,
     note: row.note ?? null,
     image_url: row.image_url ?? null,
+    image_urls:
+      Array.isArray(row.image_urls) && row.image_urls.length > 0
+        ? row.image_urls.filter((value): value is string => typeof value === "string")
+        : row.image_url
+          ? [row.image_url]
+          : null,
     is_published: Boolean(row.is_published),
     is_special: Boolean(row.is_special),
   };

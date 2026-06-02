@@ -17,6 +17,7 @@ export type ScheduleAdminRecord = {
   reservation_url?: string | null;
   note?: string | null;
   image_url?: string | null;
+  image_urls?: string[] | null;
   is_published?: boolean | null;
   is_special?: boolean | null;
   deleted_at?: string | null;

@@ -23,6 +23,7 @@ export type ScheduleRecord = {
   reservation_url?: string | null;
   note?: string | null;
   image_url?: string | null;
+  image_urls?: string[] | null;
   is_published?: boolean | null;
   is_special?: boolean | null;
   deleted_at?: string | null;
@@ -42,6 +43,7 @@ export type ScheduleWritePayload = {
   reservation_url: string | null;
   note: string | null;
   image_url: string | null;
+  image_urls: string[] | null;
   is_published: boolean;
   is_special: boolean;
 };

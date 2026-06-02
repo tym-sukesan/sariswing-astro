@@ -198,7 +198,10 @@ function resolveScheduleImageUrls(item: { image_urls?: unknown; image_url?: stri
                                 src={url}
                                 alt={item.title || monthLabel}
                                 loading="lazy"
-                                class="schedule-carousel__slide"
+                                class:list={[
+                                  "schedule-carousel__slide",
+                                  { "is-active": index === 0 },
+                                ]}
                                 data-carousel-slide
                                 hidden={index !== 0}
                               />
@@ -280,7 +283,9 @@ function resolveScheduleImageUrls(item: { image_urls?: unknown; image_url?: stri
         let current = 0;
         const update = () => {
           slides.forEach((slide, index) => {
-            (slide as HTMLElement).hidden = index !== current;
+            const active = index === current;
+            slide.hidden = !active;
+            slide.classList.toggle("is-active", active);
           });
           if (status) {
             status.textContent = `${current + 1} / ${slides.length}`;
@@ -519,17 +524,29 @@ function resolveScheduleImageUrls(item: { image_urls?: unknown; image_url?: stri
   }
 
   .schedule-carousel__viewport {
+    position: relative;
     overflow: hidden;
+    min-height: 180px;
     border-radius: 5px;
     background: #eee;
   }
 
   .schedule-carousel__slide {
-    display: block;
+    position: absolute;
+    inset: 0;
+    display: none;
     width: 100%;
-    min-height: 180px;
+    height: 100%;
     object-fit: cover;
     border-radius: 5px;
+  }
+
+  .schedule-carousel__slide.is-active {
+    display: block;
+  }
+
+  .schedule-carousel__slide[hidden] {
+    display: none !important;
   }
 
   .schedule-carousel__controls {
@@ -652,7 +669,7 @@ function resolveScheduleImageUrls(item: { image_urls?: unknown; image_url?: stri
       min-height: 160px;
     }
 
-    .schedule-carousel__slide {
+    .schedule-carousel__viewport {
       min-height: 160px;
     }
 

@@ -1,0 +1,51 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="パスワード再設定 | SARI" admin showDeployBar={false}>
+  <main class="admin-page admin-page--auth">
+    <div class="admin-page-header">
+      <a class="admin-back-link" href="/admin/login/">← ログインに戻る</a>
+      <h1>パスワード再設定</h1>
+    </div>
+
+    <section class="admin-card admin-auth-card">
+      <p class="admin-auth-lead">
+        登録済みのメールアドレスを入力してください。パスワード再設定用のリンクをお送りします。
+      </p>
+
+      <form id="forgotPasswordForm" class="admin-form admin-auth-form" novalidate>
+        <label class="admin-form__field">
+          <span class="admin-form__label">メールアドレス</span>
+          <input
+            id="forgotPasswordEmail"
+            type="email"
+            name="email"
+            autocomplete="username"
+            required
+          />
+        </label>
+
+        <div class="admin-actions admin-auth-form__actions">
+          <button id="forgotPasswordSubmit" class="admin-button" type="submit">
+            再設定メールを送信
+          </button>
+        </div>
+      </form>
+
+      <p
+        id="forgotPasswordSuccess"
+        class="admin-message admin-message--success is-hidden"
+        role="status"
+      >
+        再設定メールを送信しました。メール内のリンクから新しいパスワードを設定してください。
+      </p>
+
+      <p id="forgotPasswordError" class="admin-message admin-message--error is-hidden" role="alert"></p>
+    </section>
+  </main>
+
+  <script>
+    import "../../../scripts/admin/forgot-password.ts";
+  </script>
+</BaseLayout>

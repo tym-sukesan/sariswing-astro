@@ -41,6 +41,22 @@
 1. **Authentication → Providers → Email** を有効化
 2. **Authentication → Settings** で **Enable sign ups** をオフ（管理者は手動作成のみ推奨）
 3. **Authentication → Users → Add user** で管理者用メール・パスワードを作成
+4. **Authentication → URL Configuration** で Site URL / Redirect URLs を設定（パスワード再設定用）
+
+#### Site URL / Redirect URLs（パスワード再設定）
+
+`/admin/forgot-password/` から送信する再設定メールは、Supabase Auth 経由で `/admin/reset-password/` へリダイレクトします。Dashboard の **Authentication → URL Configuration** に次を登録してください。
+
+| 項目 | 値 |
+|------|-----|
+| **Site URL** | `https://sariswing.com` |
+| **Redirect URLs** | `https://sariswing.com/admin/reset-password/` |
+| （ローカル開発） | `http://localhost:4321/admin/reset-password/` |
+| （ローカル開発） | `http://127.0.0.1:4321/admin/reset-password/` |
+
+- メール内リンクは `resetPasswordForEmail` の `redirectTo`（`{origin}/admin/reset-password/`）に従います
+- `/admin/login/`・`/admin/forgot-password/` は Redirect URLs に不要です（メールから直接遷移しないため）
+- 本番・ローカルで origin が異なるため、開発時は上記 localhost URL も追加してください
 
 ### 管理者の付与（ロールまたはメール許可リスト）
 

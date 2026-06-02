@@ -20,6 +20,91 @@ body.admin-body {
   max-width: 1120px;
 }
 
+.admin-page--auth {
+  max-width: 480px;
+}
+
+.admin-auth-card {
+  margin-bottom: 24px;
+}
+
+.admin-auth-lead {
+  margin: 0 0 20px;
+  font-size: 1.4rem;
+  line-height: 1.7;
+  color: #555;
+  letter-spacing: 0.04em;
+}
+
+.admin-auth-form {
+  gap: 18px;
+}
+
+.admin-auth-form .admin-form__field {
+  width: 100%;
+}
+
+.admin-auth-form input[type="email"],
+.admin-auth-form input[type="password"] {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  padding: 12px 14px;
+  font-size: 1.6rem;
+  line-height: 1.5;
+  color: #333;
+  background: #fafafa;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.admin-auth-form input[type="email"]:focus,
+.admin-auth-form input[type="password"]:focus {
+  outline: none;
+  border-color: #888;
+  background: #fff;
+}
+
+.admin-auth-form__actions {
+  margin-top: 4px;
+}
+
+.admin-auth-form__actions .admin-button {
+  width: 100%;
+}
+
+.admin-auth-card .admin-message {
+  margin-top: 16px;
+}
+
+.admin-auth-links {
+  margin: 16px 0 0;
+  text-align: center;
+  font-size: 1.3rem;
+}
+
+.admin-auth-links a {
+  color: #666;
+  text-decoration: underline;
+  letter-spacing: 0.04em;
+}
+
+.admin-auth-links a:hover {
+  color: #333;
+}
+
+.admin-auth-invalid {
+  margin-top: 8px;
+}
+
+.admin-message--success:not(.is-hidden) {
+  display: block;
+  color: #1a6b2e;
+}
+
 .admin-page *,
 .admin-page *::before,
 .admin-page *::after {
@@ -1073,5 +1158,9 @@ body.admin-body {
 
   .admin-form__row {
     grid-template-columns: 1fr;
+  }
+
+  .admin-page--auth {
+    max-width: 100%;
   }
 }

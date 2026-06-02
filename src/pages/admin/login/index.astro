@@ -3,13 +3,17 @@ import BaseLayout from "../../../layouts/BaseLayout.astro";
 ---
 
 <BaseLayout title="管理ログイン | SARI" admin showDeployBar={false}>
-  <main class="admin-page admin-page--login">
+  <main class="admin-page admin-page--auth">
     <div class="admin-page-header">
       <h1>管理ログイン</h1>
     </div>
 
-    <section class="admin-card admin-login-card">
-      <form id="adminLoginForm" class="admin-form admin-login-form" novalidate>
+    <section class="admin-card admin-auth-card">
+      <p id="loginResetSuccess" class="admin-message admin-message--success is-hidden" role="status">
+        パスワードを変更しました。新しいパスワードでログインしてください。
+      </p>
+
+      <form id="adminLoginForm" class="admin-form admin-auth-form" novalidate>
         <label class="admin-form__field">
           <span class="admin-form__label">メールアドレス</span>
           <input id="loginEmail" type="email" name="email" autocomplete="username" required />
@@ -26,10 +30,14 @@ import BaseLayout from "../../../layouts/BaseLayout.astro";
           />
         </label>
 
-        <div class="admin-actions admin-login-form__actions">
+        <div class="admin-actions admin-auth-form__actions">
           <button id="loginSubmit" class="admin-button" type="submit">ログイン</button>
         </div>
       </form>
+
+      <p class="admin-auth-links">
+        <a href="/admin/forgot-password/">パスワードをお忘れですか？</a>
+      </p>
 
       <p id="loginError" class="admin-message admin-message--error is-hidden" role="alert"></p>
     </section>
@@ -39,63 +47,3 @@ import BaseLayout from "../../../layouts/BaseLayout.astro";
     import "../../../scripts/admin/login.ts";
   </script>
 </BaseLayout>
-
-<style>
-  .admin-page--login {
-    max-width: 480px;
-  }
-
-  .admin-login-card {
-    margin-bottom: 24px;
-  }
-
-  .admin-login-form {
-    gap: 18px;
-  }
-
-  .admin-login-form .admin-form__field {
-    width: 100%;
-  }
-
-  .admin-login-form input[type="email"],
-  .admin-login-form input[type="password"] {
-    display: block;
-    width: 100%;
-    max-width: 100%;
-    box-sizing: border-box;
-    padding: 12px 14px;
-    font-size: 1.6rem;
-    line-height: 1.5;
-    color: #333;
-    background: #fafafa;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    -webkit-appearance: none;
-    appearance: none;
-  }
-
-  .admin-login-form input[type="email"]:focus,
-  .admin-login-form input[type="password"]:focus {
-    outline: none;
-    border-color: #888;
-    background: #fff;
-  }
-
-  .admin-login-form__actions {
-    margin-top: 4px;
-  }
-
-  .admin-login-form__actions .admin-button {
-    width: 100%;
-  }
-
-  .admin-login-card .admin-message {
-    margin-top: 16px;
-  }
-
-  @media screen and (max-width: 520px) {
-    .admin-page--login {
-      max-width: 100%;
-    }
-  }
-</style>

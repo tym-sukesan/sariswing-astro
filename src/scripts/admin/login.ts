@@ -49,7 +49,23 @@ function setLoginError(message: string) {
   el.classList.toggle("is-hidden", !message);
 }
 
+function showResetSuccessMessage() {
+  const params = new URLSearchParams(window.location.search);
+  if (params.get("reset") !== "success") return;
+
+  const el = document.getElementById("loginResetSuccess");
+  el?.classList.remove("is-hidden");
+
+  params.delete("reset");
+  const query = params.toString();
+  const nextUrl = query
+    ? `${window.location.pathname}?${query}`
+    : window.location.pathname;
+  window.history.replaceState(null, "", nextUrl);
+}
+
 export function initAdminLogin() {
+  showResetSuccessMessage();
   void redirectIfAlreadyLoggedIn();
 
   const form = document.getElementById("adminLoginForm");

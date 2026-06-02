@@ -6,6 +6,7 @@ const { data: news, error } = await supabase
   .from("news")
   .select("date, title, slug, url, content, is_published")
   .eq("is_published", true)
+  .is("deleted_at", null)
   .order("date", { ascending: false })
   .limit(3);
 ---

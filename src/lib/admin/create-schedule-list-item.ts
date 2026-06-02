@@ -1,4 +1,5 @@
 import { appendImageUrlField } from "./mount-image-upload-field";
+import { formatAdminDeletedAt } from "./format-deleted-at";
 import { getTimeTypeSymbol } from "../schedule";
 import { SCHEDULE_TIME_TYPE_OPTIONS, type ScheduleAdminRecord, type VenueOption } from "./schedule-constants";
 
@@ -277,5 +278,66 @@ export function createScheduleAdminListItem(
   form.append(formActions);
 
   li.append(header, form);
+  return li;
+}
+
+export function createScheduleAdminDeletedListItem(
+  item: ScheduleAdminRecord,
+  listIndex: number
+) {
+  const symbol = getTimeTypeSymbol(item.time_type);
+
+  const li = document.createElement("li");
+  li.className = "schedule-admin-item admin-list__item admin-list__item--deleted";
+  if (listIndex >= 10) li.classList.add("is-list-hidden");
+  li.dataset.id = String(item.id ?? "");
+  li.dataset.listIndex = String(listIndex);
+
+  const header = document.createElement("div");
+  header.className = "schedule-admin-item__header";
+
+  const summary = document.createElement("p");
+  summary.className = "schedule-admin-item__summary";
+
+  if (symbol) {
+    const icon = document.createElement("span");
+    icon.className = "schedule-admin-item__icon";
+    icon.setAttribute("aria-hidden", "true");
+    icon.textContent = symbol;
+    summary.append(icon);
+  }
+
+  const dateSpan = document.createElement("span");
+  dateSpan.className = "schedule-admin-item__date";
+  dateSpan.textContent = item.date;
+  summary.append(dateSpan);
+
+  const titleStrong = document.createElement("strong");
+  titleStrong.className = "schedule-admin-item__title";
+  titleStrong.textContent = item.title || "（タイトル未設定）";
+  summary.append(titleStrong);
+
+  if (item.venue_name) {
+    const venueSpan = document.createElement("span");
+    venueSpan.className = "schedule-admin-item__venue";
+    venueSpan.textContent = item.venue_name;
+    summary.append(venueSpan);
+  }
+
+  const status = document.createElement("p");
+  status.className = "schedule-admin-item__status";
+  status.textContent = `削除済み（${formatAdminDeletedAt(item.deleted_at)}）`;
+
+  const actions = document.createElement("div");
+  actions.className = "schedule-admin-item__actions admin-actions";
+
+  const restoreButton = document.createElement("button");
+  restoreButton.type = "button";
+  restoreButton.className = "admin-button admin-button--small restore";
+  restoreButton.textContent = "復元";
+  actions.append(restoreButton);
+
+  header.append(summary, status, actions);
+  li.append(header);
   return li;
 }

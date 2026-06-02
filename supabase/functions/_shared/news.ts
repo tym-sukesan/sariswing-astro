@@ -1,5 +1,5 @@
 export const NEWS_SELECT =
-  "id, date, title, slug, url, excerpt, content, image_url, category, is_published";
+  "id, date, title, slug, url, excerpt, content, image_url, category, is_published, deleted_at";
 
 export type NewsRecord = {
   id: string | number;
@@ -12,6 +12,7 @@ export type NewsRecord = {
   image_url?: string | null;
   category?: string | null;
   is_published: boolean;
+  deleted_at?: string | null;
 };
 
 export type NewsWritePayload = {

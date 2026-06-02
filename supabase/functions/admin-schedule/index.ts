@@ -153,7 +153,11 @@ Deno.serve(async (req) => {
 
   if (action === "list") {
     const [schedulesResult, venuesResult] = await Promise.all([
-      service.from("schedules").select(SCHEDULE_SELECT).order("date", { ascending: true }),
+      service
+        .from("schedules")
+        .select(SCHEDULE_SELECT)
+        .is("deleted_at", null)
+        .order("date", { ascending: true }),
       service.from("venues").select("*").order("name", { ascending: true }),
     ]);
 
@@ -173,6 +177,24 @@ Deno.serve(async (req) => {
           schedules: (schedulesResult.data ?? []) as ScheduleRecord[],
           venues: venues.map((v) => ({ name: v.name })),
         },
+      },
+      200
+    );
+  }
+
+  if (action === "list_deleted") {
+    const { data, error } = await service
+      .from("schedules")
+      .select(SCHEDULE_SELECT)
+      .not("deleted_at", "is", null)
+      .order("deleted_at", { ascending: false });
+
+    if (error) return jsonResponse({ error: error.message }, 500);
+
+    return jsonResponse(
+      {
+        ok: true,
+        data: (data ?? []) as ScheduleRecord[],
       },
       200
     );
@@ -202,6 +224,7 @@ Deno.serve(async (req) => {
       .from("schedules")
       .update(payload)
       .eq("id", parseRowId(id))
+      .is("deleted_at", null)
       .select(SCHEDULE_SELECT);
 
     if (error) return jsonResponse({ error: error.message }, 500);
@@ -219,6 +242,7 @@ Deno.serve(async (req) => {
       .from("schedules")
       .select(SCHEDULE_SELECT)
       .eq("id", parseRowId(id))
+      .is("deleted_at", null)
       .maybeSingle();
 
     if (fetchError) return jsonResponse({ error: fetchError.message }, 500);
@@ -244,8 +268,26 @@ Deno.serve(async (req) => {
 
     const { data, error } = await service
       .from("schedules")
-      .delete()
+      .update({ deleted_at: new Date().toISOString() })
       .eq("id", parseRowId(id))
+      .is("deleted_at", null)
+      .select("id");
+
+    if (error) return jsonResponse({ error: error.message }, 500);
+
+    const count = data?.length ?? 0;
+    return jsonResponse({ ok: true, count }, 200);
+  }
+
+  if (action === "restore") {
+    const id = validateId(body.id);
+    if (id instanceof Response) return id;
+
+    const { data, error } = await service
+      .from("schedules")
+      .update({ deleted_at: null })
+      .eq("id", parseRowId(id))
+      .not("deleted_at", "is", null)
       .select("id");
 
     if (error) return jsonResponse({ error: error.message }, 500);

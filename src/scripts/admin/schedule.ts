@@ -1,4 +1,5 @@
 import {
+  createScheduleAdminDeletedListItem,
   createScheduleAdminListItem,
   populateVenueSelect,
 } from "../../lib/admin/create-schedule-list-item";
@@ -9,7 +10,9 @@ import {
   createSchedule,
   deleteSchedule,
   duplicateSchedule,
+  listDeletedSchedules,
   listScheduleAdminData,
+  restoreSchedule,
   updateSchedule,
   type ScheduleWritePayload,
 } from "../../lib/admin/schedule-api";
@@ -129,11 +132,29 @@ function bindEditFormVenueSelects() {
   document.querySelectorAll(".schedule-edit-form").forEach((form) => bindVenueSelect(form));
 }
 
+function updateDeletedScheduleEmptyState(deletedList: HTMLElement | null) {
+  const emptyEl = document.getElementById("deletedScheduleListEmpty");
+  const section = document.getElementById("deletedScheduleSection");
+  const itemCount = deletedList?.querySelectorAll(".schedule-admin-item").length ?? 0;
+
+  emptyEl?.classList.toggle("is-hidden", itemCount > 0);
+  section?.classList.toggle("is-hidden", itemCount === 0);
+}
+
+function renderDeletedScheduleList(items: ScheduleAdminRecord[], deletedList: HTMLElement) {
+  deletedList.replaceChildren();
+  items.forEach((item, index) => {
+    deletedList.append(createScheduleAdminDeletedListItem(item, index));
+  });
+  updateDeletedScheduleEmptyState(deletedList);
+}
+
 export function initScheduleAdmin() {
   const message = document.getElementById("message");
   const addForm = document.getElementById("addScheduleForm");
   const upcomingList = document.getElementById("upcomingScheduleList");
   const pastList = document.getElementById("pastScheduleList");
+  const deletedScheduleList = document.getElementById("deletedScheduleList");
   const addVenueSelect = document.getElementById("addVenueSelect");
 
   initImageUploadFields(document);
@@ -189,7 +210,10 @@ export function initScheduleAdmin() {
     setScheduleLoading(true);
 
     try {
-      const { schedules, venues } = await listScheduleAdminData();
+      const [{ schedules, venues }, deleted] = await Promise.all([
+        listScheduleAdminData(),
+        listDeletedSchedules(),
+      ]);
 
       venuesCache = venues;
 
@@ -198,6 +222,9 @@ export function initScheduleAdmin() {
       }
 
       renderScheduleLists(schedules, venuesCache);
+      if (deletedScheduleList) {
+        renderDeletedScheduleList(deleted, deletedScheduleList);
+      }
     } catch (err) {
       const text = err instanceof Error ? err.message : "データの取得に失敗しました。";
       alert(`スケジュール一覧の取得に失敗しました: ${text}`);
@@ -339,7 +366,7 @@ export function initScheduleAdmin() {
         void (async () => {
           if (!message) return;
 
-          if (!confirm("このスケジュールを削除します。元に戻せません。よろしいですか？")) return;
+          if (!confirm("このスケジュールを削除しますか？削除済み一覧に移動し、公開サイトからは非表示になります。")) return;
 
           const id = item.getAttribute("data-id");
           if (!id) {
@@ -356,20 +383,9 @@ export function initScheduleAdmin() {
               return;
             }
 
-            item.remove();
+            await reloadScheduleList();
 
-            const isPastItem = list.id === "pastScheduleList";
-            if (isPastItem) {
-              pastController?.refreshItems();
-            } else {
-              upcomingController?.refreshItems();
-            }
-
-            const upcomingCount = upcomingList?.querySelectorAll(".schedule-admin-item").length ?? 0;
-            const pastCount = pastList?.querySelectorAll(".schedule-admin-item").length ?? 0;
-            updateScheduleEmptyStates(upcomingCount, pastCount);
-
-            message.textContent = `削除しました。${PUBLIC_SITE_REBUILD_MESSAGE}`;
+            message.textContent = `削除しました（削除済み一覧に移動）。${PUBLIC_SITE_REBUILD_MESSAGE}`;
           } catch (err) {
             const text = err instanceof Error ? err.message : "削除に失敗しました。";
             alert(`削除に失敗しました: ${text}`);
@@ -382,6 +398,41 @@ export function initScheduleAdmin() {
 
   if (upcomingList) attachListHandlers(upcomingList);
   if (pastList) attachListHandlers(pastList);
+
+  deletedScheduleList?.addEventListener("click", (event) => {
+    const button = (event.target as Element | null)?.closest("button.restore");
+    if (!button || !deletedScheduleList.contains(button)) return;
+
+    void (async () => {
+      if (!message) return;
+
+      const item = button.closest(".schedule-admin-item");
+      const id = item?.getAttribute("data-id");
+      if (!id) {
+        alert("IDが取得できないため復元できません。ページを再読み込みしてください。");
+        return;
+      }
+
+      if (!confirm("このスケジュールを復元しますか？")) return;
+
+      try {
+        const result = await restoreSchedule(id);
+
+        if (result.count === 0) {
+          alert("復元対象が見つかりませんでした。一覧を再読み込みします。");
+          await reloadScheduleList();
+          return;
+        }
+
+        await reloadScheduleList();
+        message.textContent = `復元しました。${PUBLIC_SITE_REBUILD_MESSAGE}`;
+      } catch (err) {
+        const text = err instanceof Error ? err.message : "復元に失敗しました。";
+        alert(`復元に失敗しました: ${text}`);
+        message.textContent = `復元に失敗しました：${text}`;
+      }
+    })();
+  });
 
   void (async () => {
     const ok = await requireAdminSession();

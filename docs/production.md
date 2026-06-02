@@ -218,9 +218,28 @@ supabase functions deploy admin-site-page
 1. `/admin/login/` でログイン（未ログインで `/admin/news/` にアクセスすると `?next=/admin/news/` へリダイレクト）
 2. JWT 付きで `admin-news` Edge Function を呼び出し
 3. Edge 内で `app_metadata.role === "admin"` を確認後、`service_role` で `news` を CRUD
-4. 公開 `/news/`・トップ NEWS は引き続き **ビルド時 anon SELECT**（`is_published = true`・`src/lib/news.ts` 等は変更なし）
+4. 公開 `/news/`・トップ NEWS は **ビルド時 anon SELECT**（`is_published = true` かつ `deleted_at IS NULL`）
 
 画像アップロード（Storage `images`）は従来どおりブラウザから anon key で行います（NEWS 保存のみ Edge 経由）。
+
+**論理削除:** 削除ボタンは `deleted_at = now()` に更新します。管理画面の「削除済みNEWS」から復元可能です（完全削除はありません）。
+
+### 論理削除マイグレーション（NEWS / Schedule 共通）
+
+1. Supabase SQL Editor で `scripts/supabase/soft-delete-news-schedules.sql` を実行
+   - `news.deleted_at` / `schedules.deleted_at` 列を追加（既存行は NULL）
+   - anon RLS を `is_published = true AND deleted_at IS NULL` に更新
+2. Edge Function を再デプロイ:
+
+```bash
+supabase functions deploy admin-news
+supabase functions deploy admin-schedule
+```
+
+3. フロント（`dist/admin/`）をデプロイ
+4. 確認: 削除 → 通常一覧・公開サイトから消える / 削除済み一覧に表示 / 復元 → 通常一覧に戻る / `npm run build` 後も削除済みは公開されない
+
+**注意:** マイグレーション前にフロントだけ先にデプロイすると、`.is("deleted_at", null)` 付きビルドが失敗する場合があります。**SQL → Edge 再デプロイ → フロント** の順を推奨します。
 
 ### Edge Function のデプロイ
 
@@ -236,7 +255,7 @@ supabase functions deploy admin-news
 1. `admin-news` をデプロイ
 2. フロント（`dist/admin/`）をデプロイ
 3. `/admin/login/` → `/admin/news/`
-4. 一覧表示・追加・編集・公開/非公開・複製（非公開）・削除
+4. 一覧表示・追加・編集・公開/非公開・複製（非公開）・削除（論理削除）・削除済み一覧での復元
 5. アイキャッチ画像のアップロード（Storage）が従来どおり動くこと
 6. ログアウト後、`/admin/news/` 直アクセスでログインへ戻ること
 
@@ -246,7 +265,7 @@ supabase functions deploy admin-news
 
 | 対象 | anon（適用後） |
 |------|----------------|
-| `news` | SELECT のみ、`is_published = true` の行 |
+| `news` | SELECT のみ、`is_published = true AND deleted_at IS NULL` の行 |
 
 ### RLS 適用前後の確認
 
@@ -271,9 +290,11 @@ supabase functions deploy admin-news
 2. JWT 付きで `admin-schedule` Edge Function を呼び出し
 3. Edge 内で `app_metadata.role === "admin"` を確認後、`service_role` で `schedules` を CRUD
 4. 会場マスタ（`venues`）は Edge の `list` で **SELECT のみ**（管理画面の会場選択用）
-5. 公開 `/live-schedule/` は引き続き **ビルド時 anon SELECT**（`is_published = true`・変更なし）
+5. 公開 `/schedule/` は **ビルド時 anon SELECT**（`is_published = true` かつ `deleted_at IS NULL`）
 
 画像アップロード（Storage `images` / `schedule/` プレフィックス）は従来どおり。Schedule の保存のみ Edge 経由です。
+
+**論理削除:** 削除ボタンは `deleted_at = now()` に更新します。管理画面の「削除済みスケジュール」から復元可能です。マイグレーション手順は上記 NEWS 節「論理削除マイグレーション」を参照してください。
 
 **UI の分割（今後 / 過去）・検索・ページネーション**はフロント側の既存ロジックのままです（`list` で全件取得後にクライアントで分類）。
 
@@ -291,7 +312,7 @@ supabase functions deploy admin-schedule
 1. `admin-schedule` をデプロイ
 2. フロント（`dist/admin/`）をデプロイ
 3. `/admin/login/` → `/admin/schedule/`
-4. 一覧（今後 / 過去）・検索・追加・編集・複製・削除・公開/非公開
+4. 一覧（今後 / 過去）・検索・追加・編集・複製・削除（論理削除）・削除済み一覧での復元・公開/非公開
 5. 会場選択・自由入力会場・画像アップロード
 6. ログアウト後、`/admin/schedule/` 直アクセスでログインへ戻ること
 
@@ -301,7 +322,7 @@ supabase functions deploy admin-schedule
 
 | 対象 | anon（適用後） |
 |------|----------------|
-| `schedules` | SELECT のみ、`is_published = true` |
+| `schedules` | SELECT のみ、`is_published = true AND deleted_at IS NULL` |
 | `venues` | 既存 `venues-rls.sql` のまま（anon SELECT） |
 
 ### RLS 適用前後の確認

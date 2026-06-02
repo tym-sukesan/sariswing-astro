@@ -220,8 +220,8 @@ async function fetchSupabaseRows() {
   const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
   const [newsResult, scheduleResult] = await Promise.all([
-    supabase.from("news").select("*").eq("is_published", true),
-    supabase.from("schedules").select("*").eq("is_published", true),
+    supabase.from("news").select("*").eq("is_published", true).is("deleted_at", null),
+    supabase.from("schedules").select("*").eq("is_published", true).is("deleted_at", null),
   ]);
 
   if (newsResult.error) {

@@ -25,6 +25,7 @@ export type ScheduleRecord = {
   image_url?: string | null;
   is_published?: boolean | null;
   is_special?: boolean | null;
+  deleted_at?: string | null;
 };
 
 export type ScheduleWritePayload = {

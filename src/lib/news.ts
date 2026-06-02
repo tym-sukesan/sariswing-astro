@@ -26,6 +26,7 @@ export type NewsRecord = {
   image_url?: string | null;
   category?: string | null;
   is_published: boolean;
+  deleted_at?: string | null;
 };
 
 export async function fetchPublishedNews() {
@@ -33,6 +34,7 @@ export async function fetchPublishedNews() {
     .from("news")
     .select(NEWS_SELECT)
     .eq("is_published", true)
+    .is("deleted_at", null)
     .order("date", { ascending: false });
 
   return {
@@ -51,7 +53,11 @@ export async function fetchPublishedNewsDetailPages() {
 }
 
 export async function fetchAllNews() {
-  const { data, error } = await supabase.from("news").select(NEWS_SELECT).order("date", { ascending: false });
+  const { data, error } = await supabase
+    .from("news")
+    .select(NEWS_SELECT)
+    .is("deleted_at", null)
+    .order("date", { ascending: false });
 
   return {
     data: (data ?? []) as NewsRecord[],

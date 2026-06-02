@@ -12,6 +12,7 @@ const { data: schedules, error } = await supabase
   .from("schedules")
   .select("date")
   .eq("is_published", true)
+  .is("deleted_at", null)
   .gte("date", PUBLIC_SCHEDULE_START_DATE)
   .order("date", { ascending: false });
 

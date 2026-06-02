@@ -33,6 +33,13 @@ export async function listNews(): Promise<NewsRecord[]> {
   return result.data ?? [];
 }
 
+export async function listDeletedNews(): Promise<NewsRecord[]> {
+  const result = await invokeAdminEdgeFunction<ListResponse>("admin-news", {
+    action: "list_deleted",
+  });
+  return result.data ?? [];
+}
+
 export async function createNews(record: NewsWritePayload) {
   return invokeAdminEdgeFunction<MutateResponse>("admin-news", {
     action: "create",
@@ -58,6 +65,13 @@ export async function duplicateNews(id: string) {
 export async function deleteNews(id: string) {
   return invokeAdminEdgeFunction<MutateResponse>("admin-news", {
     action: "delete",
+    id,
+  });
+}
+
+export async function restoreNews(id: string) {
+  return invokeAdminEdgeFunction<MutateResponse>("admin-news", {
+    action: "restore",
     id,
   });
 }

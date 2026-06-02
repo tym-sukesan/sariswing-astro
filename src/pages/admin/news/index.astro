@@ -118,6 +118,17 @@ import BaseLayout from "../../../layouts/BaseLayout.astro";
         さらに表示
       </button>
     </section>
+
+    <section id="deletedNewsSection" class="admin-card is-hidden">
+      <details class="admin-deleted-section" open>
+        <summary class="admin-deleted-section__summary">削除済みNEWS</summary>
+        <p class="admin-form__hint">
+          削除したNEWSはここに表示されます。復元すると通常一覧に戻ります。公開サイトへの反映には再ビルドが必要です。
+        </p>
+        <p id="deletedNewsListEmpty" class="news-admin-empty is-hidden">削除済みのNEWSはありません。</p>
+        <ul id="deletedNewsList" class="admin-list news-admin-list"></ul>
+      </details>
+    </section>
   </main>
 
   <script>

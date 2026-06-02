@@ -30,6 +30,12 @@ type ListResponse = {
   error?: string;
 };
 
+type DeletedListResponse = {
+  ok?: boolean;
+  data?: ScheduleAdminRecord[];
+  error?: string;
+};
+
 type MutateResponse = {
   ok?: boolean;
   data?: ScheduleAdminRecord;
@@ -45,6 +51,13 @@ export async function listScheduleAdminData(): Promise<ListData> {
     schedules: result.data?.schedules ?? [],
     venues: result.data?.venues ?? [],
   };
+}
+
+export async function listDeletedSchedules(): Promise<ScheduleAdminRecord[]> {
+  const result = await invokeAdminEdgeFunction<DeletedListResponse>("admin-schedule", {
+    action: "list_deleted",
+  });
+  return result.data ?? [];
 }
 
 export async function createSchedule(record: ScheduleWritePayload) {
@@ -72,6 +85,13 @@ export async function duplicateSchedule(id: string) {
 export async function deleteSchedule(id: string) {
   return invokeAdminEdgeFunction<MutateResponse>("admin-schedule", {
     action: "delete",
+    id,
+  });
+}
+
+export async function restoreSchedule(id: string) {
+  return invokeAdminEdgeFunction<MutateResponse>("admin-schedule", {
+    action: "restore",
     id,
   });
 }

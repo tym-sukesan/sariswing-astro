@@ -1,10 +1,15 @@
-import { createNewsAdminListItem } from "../../lib/admin/create-news-list-item";
+import {
+  createNewsAdminDeletedListItem,
+  createNewsAdminListItem,
+} from "../../lib/admin/create-news-list-item";
 import { initImageUploadFields } from "../../lib/admin/mount-image-upload-field";
 import {
   createNews,
   deleteNews,
   duplicateNews,
+  listDeletedNews,
   listNews,
+  restoreNews,
   updateNews,
   type NewsWritePayload,
 } from "../../lib/admin/news-api";
@@ -94,10 +99,28 @@ function renderNewsList(items: NewsRecord[], newsList: HTMLElement) {
   updateListEmptyState(newsList);
 }
 
+function updateDeletedListEmptyState(deletedList: HTMLElement | null) {
+  const emptyEl = document.getElementById("deletedNewsListEmpty");
+  const section = document.getElementById("deletedNewsSection");
+  const itemCount = deletedList?.querySelectorAll(".news-admin-item").length ?? 0;
+
+  emptyEl?.classList.toggle("is-hidden", itemCount > 0);
+  section?.classList.toggle("is-hidden", itemCount === 0);
+}
+
+function renderDeletedNewsList(items: NewsRecord[], deletedList: HTMLElement) {
+  deletedList.replaceChildren();
+  items.forEach((item, index) => {
+    deletedList.append(createNewsAdminDeletedListItem(item, index));
+  });
+  updateDeletedListEmptyState(deletedList);
+}
+
 export function initNewsAdmin() {
   const message = document.getElementById("message");
   const addForm = document.getElementById("addNewsForm");
   const newsList = document.getElementById("newsList");
+  const deletedNewsList = document.getElementById("deletedNewsList");
   const loadMoreBtn = document.getElementById("loadMoreNews");
 
   initImageUploadFields(document);
@@ -110,9 +133,12 @@ export function initNewsAdmin() {
     setListLoading(true);
 
     try {
-      const data = await listNews();
+      const [data, deleted] = await Promise.all([listNews(), listDeletedNews()]);
       renderNewsList(data, newsList);
       newsController?.refreshItems();
+      if (deletedNewsList) {
+        renderDeletedNewsList(deleted, deletedNewsList);
+      }
     } catch (err) {
       const text = err instanceof Error ? err.message : "NEWS一覧の取得に失敗しました。";
       alert(`NEWS一覧の取得に失敗しました: ${text}`);
@@ -250,7 +276,7 @@ export function initNewsAdmin() {
       void (async () => {
         if (!message) return;
 
-        if (!confirm("このNEWSを削除しますか？")) return;
+        if (!confirm("このNEWSを削除しますか？削除済み一覧に移動し、公開サイトからは非表示になります。")) return;
 
         const id = item.getAttribute("data-id");
         if (!id) {
@@ -267,11 +293,9 @@ export function initNewsAdmin() {
             return;
           }
 
-          item.remove();
-          newsController?.refreshItems();
-          updateListEmptyState(newsList);
+          await reloadNewsList();
 
-          message.textContent = `削除しました。${PUBLIC_SITE_REBUILD_MESSAGE}`;
+          message.textContent = `削除しました（削除済み一覧に移動）。${PUBLIC_SITE_REBUILD_MESSAGE}`;
         } catch (err) {
           const text = err instanceof Error ? err.message : "削除に失敗しました。";
           alert(`削除に失敗しました: ${text}`);
@@ -279,6 +303,41 @@ export function initNewsAdmin() {
         }
       })();
     }
+  });
+
+  deletedNewsList?.addEventListener("click", (event) => {
+    const button = (event.target as Element | null)?.closest("button.restore");
+    if (!button || !deletedNewsList.contains(button)) return;
+
+    void (async () => {
+      if (!message) return;
+
+      const item = button.closest(".news-admin-item");
+      const id = item?.getAttribute("data-id");
+      if (!id) {
+        alert("IDが取得できないため復元できません。ページを再読み込みしてください。");
+        return;
+      }
+
+      if (!confirm("このNEWSを復元しますか？")) return;
+
+      try {
+        const result = await restoreNews(id);
+
+        if (result.count === 0) {
+          alert("復元対象が見つかりませんでした。一覧を再読み込みします。");
+          await reloadNewsList();
+          return;
+        }
+
+        await reloadNewsList();
+        message.textContent = `復元しました。${PUBLIC_SITE_REBUILD_MESSAGE}`;
+      } catch (err) {
+        const text = err instanceof Error ? err.message : "復元に失敗しました。";
+        alert(`復元に失敗しました: ${text}`);
+        message.textContent = `復元に失敗しました：${text}`;
+      }
+    })();
   });
 
   void (async () => {

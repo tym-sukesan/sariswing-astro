@@ -1,4 +1,5 @@
 import { appendImageUrlField } from "./mount-image-upload-field";
+import { formatAdminDeletedAt } from "./format-deleted-at";
 import { stripHtml } from "./strip-html";
 import { formatNewsDate, type NewsRecord } from "../news";
 
@@ -224,5 +225,48 @@ export function createNewsAdminListItem(item: NewsRecord, listIndex: number) {
   form.append(formActions);
 
   li.append(header, form);
+  return li;
+}
+
+export function createNewsAdminDeletedListItem(item: NewsRecord, listIndex: number) {
+  const displayDate = formatNewsDate(item.date);
+
+  const li = document.createElement("li");
+  li.className = "news-admin-item admin-list__item admin-list__item--deleted";
+  if (listIndex >= 10) li.classList.add("is-list-hidden");
+  li.dataset.id = String(item.id);
+  li.dataset.listIndex = String(listIndex);
+
+  const header = document.createElement("div");
+  header.className = "news-admin-item__header";
+
+  const summary = document.createElement("p");
+  summary.className = "news-admin-item__summary";
+
+  const dateSpan = document.createElement("span");
+  dateSpan.className = "news-admin-item__date";
+  dateSpan.textContent = displayDate;
+  summary.append(dateSpan);
+
+  const titleStrong = document.createElement("strong");
+  titleStrong.className = "news-admin-item__title";
+  titleStrong.textContent = item.title;
+  summary.append(titleStrong);
+
+  const status = document.createElement("p");
+  status.className = "news-admin-item__status";
+  status.textContent = `削除済み（${formatAdminDeletedAt(item.deleted_at)}）`;
+
+  const actions = document.createElement("div");
+  actions.className = "news-admin-item__actions admin-actions";
+
+  const restoreButton = document.createElement("button");
+  restoreButton.type = "button";
+  restoreButton.className = "admin-button admin-button--small restore";
+  restoreButton.textContent = "復元";
+  actions.append(restoreButton);
+
+  header.append(summary, status, actions);
+  li.append(header);
   return li;
 }

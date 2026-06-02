@@ -100,6 +100,38 @@ body.admin-body {
   margin-top: 8px;
 }
 
+.admin-deleted-section {
+  margin: 0;
+}
+
+.admin-deleted-section__summary {
+  cursor: pointer;
+  font-size: 1.6rem;
+  font-weight: bold;
+  color: #333;
+  letter-spacing: 0.08em;
+  list-style: none;
+  margin-bottom: 16px;
+}
+
+.admin-deleted-section__summary::-webkit-details-marker {
+  display: none;
+}
+
+.admin-deleted-section__summary::before {
+  content: "▶ ";
+  font-size: 0.85em;
+}
+
+.admin-deleted-section[open] .admin-deleted-section__summary::before {
+  content: "▼ ";
+}
+
+.admin-list__item--deleted {
+  background: #f8f8f8;
+  border-color: #e0e0e0;
+}
+
 .admin-message--success:not(.is-hidden) {
   display: block;
   color: #1a6b2e;

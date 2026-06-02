@@ -26,6 +26,6 @@ CREATE POLICY "schedules_anon_select_published"
   ON public.schedules
   FOR SELECT
   TO anon
-  USING (is_published = true);
+  USING (is_published = true AND deleted_at IS NULL);
 
 -- INSERT / UPDATE / DELETE 用ポリシーは意図的に作成しない（anon は拒否）

@@ -22,6 +22,7 @@ export async function getStaticPaths() {
       .from("schedules")
       .select("*")
       .eq("is_published", true)
+      .is("deleted_at", null)
       .gte("date", `${publicScheduleStartMonth}-01`),
     supabase.from("venues").select("id, name, area"),
   ]);

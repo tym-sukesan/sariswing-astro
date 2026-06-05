@@ -37,8 +37,9 @@ URL → 静的 HTML → Astro → CMS → デプロイ
 | 3-G | Storage upload dry-run・seed URL rewrite 準備 | 完了 |
 | 3-H | JSON seed 管理 UI プロトタイプ（`/admin/`） | 完了 |
 | 3-I | CMS 仕様固定・実装計画 | 完了 |
-| 3-J | Staging Supabase seed insert（dry-run / --apply） | 進行中 |
-| 3-K+ | Staging CRUD・Auth・RLS | 予定 |
+| 3-J | Staging Supabase seed insert（dry-run / --apply） | 完了 |
+| 3-K | Supabase → Astro JSON export + build 確認 | 進行中 |
+| 3-L+ | Admin Supabase 接続・Auth・RLS | 予定 |
 
 ## ディレクトリ構成
 
@@ -58,6 +59,7 @@ tools/static-to-astro/
 │   ├── plan-storage-upload.mjs
 │   ├── rewrite-seed-image-urls.mjs
 │   ├── insert-supabase-seed.mjs
+│   ├── export-supabase-json.mjs
 │   ├── analyze-visual-diff.mjs
 │   ├── convert-static-to-astro.mjs
 │   ├── visual-diff.mjs
@@ -71,6 +73,7 @@ tools/static-to-astro/
 │       ├── storage-upload-planner.mjs
 │       ├── seed-url-rewriter.mjs
 │       ├── supabase-seed-inserter.mjs
+│       ├── supabase-json-exporter.mjs
 │       ├── visual-diff-analysis.mjs
 │       ├── visual-diff-runner.mjs
 │       └── ...
@@ -651,6 +654,74 @@ SELECT published, COUNT(*) FROM discography GROUP BY published;
 - service role key は `.env.local` のみ。フロント・Git に出さない
 - 本番 Supabase / Storage には接続しない
 - ルート `supabase/` や本番 `src/` には触れない
+
+### Phase 3-K: Supabase → Astro JSON export
+
+staging Supabase に投入済みの CMS データを **read-only** で読み取り、生成 Astro サイト（`output/generated-astro/`）の `src/data/*.json` を上書きします。export 後に `npm run build` で Schedule / Discography / HomeSchedule が壊れないことを確認します。
+
+**書き込み禁止:** insert / update / delete / upsert は行いません。
+
+#### 実行方法
+
+```bash
+node tools/static-to-astro/scripts/export-supabase-json.mjs \
+  --out-astro-dir tools/static-to-astro/output/generated-astro \
+  --report tools/static-to-astro/output/supabase-export/gosaki/SUPABASE_EXPORT_REPORT.md
+```
+
+| 項目 | 内容 |
+| --- | --- |
+| 認証 | `tools/static-to-astro/.env.local`（staging のみ） |
+| 読取テーブル | `schedule_months`, `schedules`, `discography`, `discography_tracks` |
+| 出力 JSON | `src/data/schedule-months.json`, `schedules.json`, `discography.json` |
+| 互換フィールド | `id`, `image`, `home_image`, `cover_image` 等（Astro コンポーネント向け） |
+| build | export 後に `npm run build` を自動実行（`--skip-build` で省略可） |
+| レポート | `SUPABASE_EXPORT_REPORT.md` + `CONVERSION_REPORT.md` 追記 |
+| コミット | `output/` は `.gitignore` 対象 |
+
+#### build 確認（手動）
+
+```bash
+cd tools/static-to-astro/output/generated-astro
+npm run build
+```
+
+#### 投入後確認 SQL（staging SQL Editor）
+
+export 前後で staging DB の件数・整合性を確認する場合:
+
+```sql
+-- 件数確認
+SELECT 'schedule_months' AS tbl, COUNT(*) FROM schedule_months
+UNION ALL
+SELECT 'schedules', COUNT(*) FROM schedules
+UNION ALL
+SELECT 'discography', COUNT(*) FROM discography
+UNION ALL
+SELECT 'discography_tracks', COUNT(*) FROM discography_tracks;
+
+-- Home掲載確認
+SELECT legacy_id, title, show_on_home, home_order
+FROM schedules
+WHERE show_on_home = true
+ORDER BY home_order;
+
+-- orphan schedules確認
+SELECT s.legacy_id, s.title, s.month
+FROM schedules s
+LEFT JOIN schedule_months m ON s.month = m.month
+WHERE m.month IS NULL;
+
+-- orphan tracks確認
+SELECT t.discography_legacy_id, t.track_number, t.title
+FROM discography_tracks t
+LEFT JOIN discography d ON t.discography_legacy_id = d.legacy_id
+WHERE d.legacy_id IS NULL;
+
+-- published確認
+SELECT published, COUNT(*) FROM schedules GROUP BY published;
+SELECT published, COUNT(*) FROM discography GROUP BY published;
+```
 
 ---
 

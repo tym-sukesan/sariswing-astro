@@ -27,6 +27,144 @@ const UPSERT_CONFLICT = {
   discography: "legacy_id",
 };
 
+/** Post-apply verification SQL (staging SQL Editor). Column names match current seed/schema. */
+export const POST_APPLY_VERIFICATION_SQL = `-- Row counts
+SELECT 'schedule_months' AS tbl, COUNT(*) FROM schedule_months
+UNION ALL
+SELECT 'schedules', COUNT(*) FROM schedules
+UNION ALL
+SELECT 'discography', COUNT(*) FROM discography
+UNION ALL
+SELECT 'discography_tracks', COUNT(*) FROM discography_tracks;
+
+-- Home display
+SELECT legacy_id, title, show_on_home, home_order
+FROM schedules
+WHERE show_on_home = true
+ORDER BY home_order;
+
+-- Orphan schedules (month not in schedule_months)
+SELECT s.legacy_id, s.title, s.month
+FROM schedules s
+LEFT JOIN schedule_months m ON s.month = m.month
+WHERE m.month IS NULL;
+
+-- Orphan tracks (discography_legacy_id not in discography)
+SELECT t.discography_legacy_id, t.track_number, t.title
+FROM discography_tracks t
+LEFT JOIN discography d ON t.discography_legacy_id = d.legacy_id
+WHERE d.legacy_id IS NULL;
+
+-- Published flags
+SELECT published, COUNT(*) FROM schedules GROUP BY published;
+SELECT published, COUNT(*) FROM discography GROUP BY published;`;
+
+/**
+ * Normalize and validate staging credentials (--apply preflight).
+ * @param {{ SUPABASE_URL?: string, SUPABASE_SERVICE_ROLE_KEY?: string }} raw
+ * @returns {{ supabaseUrl: string, serviceRoleKey: string }}
+ */
+export function preflightApplyEnv(raw) {
+  const errors = [];
+
+  const supabaseUrl = (raw.SUPABASE_URL ?? "").trim();
+  const serviceRoleKey = (raw.SUPABASE_SERVICE_ROLE_KEY ?? "").trim();
+
+  if (!supabaseUrl) {
+    errors.push("SUPABASE_URL is empty");
+  } else if (!supabaseUrl.startsWith("https://")) {
+    errors.push('SUPABASE_URL must start with "https://"');
+  }
+
+  if (!serviceRoleKey) {
+    errors.push("SUPABASE_SERVICE_ROLE_KEY is empty");
+  }
+
+  if (supabaseUrl && /prod|production/i.test(supabaseUrl)) {
+    errors.push(
+      'SUPABASE_URL contains "prod" or "production". Use a staging-only project URL.',
+    );
+  }
+
+  if (errors.length > 0) {
+    throw new Error(`Apply preflight failed:\n${errors.map((e) => `  - ${e}`).join("\n")}`);
+  }
+
+  return {
+    supabaseUrl: supabaseUrl.replace(/\/+$/, ""),
+    serviceRoleKey,
+  };
+}
+
+/**
+ * @param {string} schemaDraftPath
+ */
+export function analyzeSchemaDraft(schemaDraftPath) {
+  if (!fs.existsSync(schemaDraftPath)) {
+    return {
+      found: false,
+      hasDropTable: false,
+      uniqueConstraints: {
+        schedule_months_month: false,
+        schedules_legacy_id: false,
+        discography_legacy_id: false,
+        discography_tracks_composite: false,
+      },
+      warnings: ["schema-draft.sql not found"],
+    };
+  }
+
+  const sql = fs.readFileSync(schemaDraftPath, "utf8");
+  const hasDropTable = /\bdrop\s+table\b/i.test(sql);
+
+  const tracksTableMatch = sql.match(
+    /create\s+table\s+if\s+not\s+exists\s+discography_tracks\s*\(([\s\S]*?)\);/i,
+  );
+  const tracksTableBody = tracksTableMatch?.[1] ?? "";
+
+  const uniqueConstraints = {
+    schedule_months_month: /\bmonth\s+text\s+unique\b/i.test(sql),
+    schedules_legacy_id: /create\s+table\s+if\s+not\s+exists\s+schedules[\s\S]*?\blegacy_id\s+text\s+unique\b/i.test(
+      sql,
+    ),
+    discography_legacy_id:
+      /create\s+table\s+if\s+not\s+exists\s+discography[\s\S]*?\blegacy_id\s+text\s+unique\b/i.test(sql),
+    discography_tracks_composite:
+      /\bunique\b/i.test(tracksTableBody) &&
+      /discography_legacy_id/i.test(tracksTableBody) &&
+      /track_number/i.test(tracksTableBody),
+  };
+
+  const warnings = [];
+  if (hasDropTable) {
+    warnings.push('schema-draft.sql contains "DROP TABLE" — review before applying');
+  }
+  if (!uniqueConstraints.schedule_months_month) {
+    warnings.push("schedule_months.month UNIQUE not detected — upsert on month may fail");
+  }
+  if (!uniqueConstraints.schedules_legacy_id) {
+    warnings.push("schedules.legacy_id UNIQUE not detected — upsert may fail");
+  }
+  if (!uniqueConstraints.discography_legacy_id) {
+    warnings.push("discography.legacy_id UNIQUE not detected — upsert may fail");
+  }
+
+  return { found: true, hasDropTable, uniqueConstraints, warnings };
+}
+
+/** Throws if @supabase/supabase-js is not installed (--apply preflight). */
+export async function assertSupabaseJsAvailable() {
+  try {
+    await import("@supabase/supabase-js");
+  } catch {
+    throw new Error(
+      "@supabase/supabase-js is not installed.\n" +
+        "From tools/static-to-astro/ run:\n" +
+        "  npm install @supabase/supabase-js",
+    );
+  }
+}
+
 /**
  * @param {string} seedDir
  */
@@ -242,16 +380,8 @@ export function buildDryRunSummary(seedData) {
 }
 
 async function createSupabaseClient(supabaseUrl, serviceRoleKey) {
-  let createClient;
-  try {
-    ({ createClient } = await import("@supabase/supabase-js"));
-  } catch {
-    throw new Error(
-      "@supabase/supabase-js is not installed.\n" +
-        "From tools/static-to-astro/ run:\n" +
-        "  npm install @supabase/supabase-js",
-    );
-  }
+  await assertSupabaseJsAvailable();
+  const { createClient } = await import("@supabase/supabase-js");
 
   return createClient(supabaseUrl, serviceRoleKey, {
     auth: { persistSession: false, autoRefreshToken: false },

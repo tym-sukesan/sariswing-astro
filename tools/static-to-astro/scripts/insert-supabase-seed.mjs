@@ -15,9 +15,13 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import {
+  analyzeSchemaDraft,
+  assertSupabaseJsAvailable,
   buildDryRunSummary,
   insertToSupabase,
   loadSeedFiles,
+  POST_APPLY_VERIFICATION_SQL,
+  preflightApplyEnv,
   resolveSchemaDraftPath,
   validateSeedData,
 } from "./lib/supabase-seed-inserter.mjs";
@@ -101,23 +105,14 @@ function loadEnvLocal() {
     env[key] = value;
   }
 
-  const missing = ["SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY"].filter((key) => !env[key]);
+  const missing = ["SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY"].filter((key) => !(key in env));
   if (missing.length > 0) {
     throw new Error(
       `.env.local is missing required keys:\n${missing.map((key) => `  - ${key}`).join("\n")}`,
     );
   }
 
-  if (/prod|production/i.test(env.SUPABASE_URL)) {
-    throw new Error(
-      'SUPABASE_URL contains "prod" or "production". Use a staging-only project URL.',
-    );
-  }
-
-  return {
-    supabaseUrl: env.SUPABASE_URL,
-    serviceRoleKey: env.SUPABASE_SERVICE_ROLE_KEY,
-  };
+  return preflightApplyEnv(env);
 }
 
 function formatInsertSeedReport({
@@ -125,6 +120,7 @@ function formatInsertSeedReport({
   seedDir,
   reportPath,
   schemaDraftPath,
+  schemaAnalysis,
   summary,
   validation,
   applyResults,
@@ -210,13 +206,45 @@ function formatInsertSeedReport({
     `| discography | upsert on \`${summary.upsertKeys.discography}\` |`,
     `| discography_tracks | ${summary.upsertKeys.discography_tracks} |`,
     "",
+    "## schema-draft.sql (manual apply — not automated)",
+    "",
+    "- This CLI **does not** apply `schema-draft.sql`. A human must review and run it in the **staging** Supabase SQL Editor.",
+    "- **Staging only** at this phase. Do not apply to production Supabase.",
+    `- DROP TABLE present: **${schemaAnalysis.hasDropTable ? "yes — review before apply" : "no"}**`,
+    "- Required UNIQUE constraints for upsert:",
+    `  - \`schedule_months.month\`: ${schemaAnalysis.uniqueConstraints.schedule_months_month ? "detected" : "not detected"}`,
+    `  - \`schedules.legacy_id\`: ${schemaAnalysis.uniqueConstraints.schedules_legacy_id ? "detected" : "not detected"}`,
+    `  - \`discography.legacy_id\`: ${schemaAnalysis.uniqueConstraints.discography_legacy_id ? "detected" : "not detected"}`,
+    `  - \`discography_tracks (discography_legacy_id, track_number)\`: ${schemaAnalysis.uniqueConstraints.discography_tracks_composite ? "detected" : "not present — delete-then-insert used"}`,
+    "- `discography_tracks` uses **delete-then-insert** (no composite UNIQUE in current schema-draft.sql).",
+    "- For production, delete-then-insert **must run inside a transaction** to avoid partial data loss.",
+    "",
+  );
+
+  if (schemaAnalysis.warnings.length > 0) {
+    lines.push("Schema review warnings:", "");
+    for (const warning of schemaAnalysis.warnings) {
+      lines.push(`- ${warning}`);
+    }
+    lines.push("");
+  }
+
+  lines.push(
     "## Before --apply",
     "",
     "1. Create a **staging-only** Supabase project (not production).",
     "2. Copy `.env.example` to `.env.local` and set `SUPABASE_URL` + `SUPABASE_SERVICE_ROLE_KEY`.",
-    "3. Run `schema-draft.sql` manually in the staging SQL Editor (this script does not apply DDL).",
+    "3. Review `schema-draft.sql` (no DROP TABLE, UNIQUE keys present) and apply manually in staging SQL Editor.",
     "4. Install `@supabase/supabase-js` in `tools/static-to-astro/` if needed.",
     "5. Re-run with `--apply`.",
+    "",
+    "## Post-apply verification SQL (staging SQL Editor)",
+    "",
+    "Run after a successful `--apply` to confirm row counts and referential integrity:",
+    "",
+    "```sql",
+    POST_APPLY_VERIFICATION_SQL,
+    "```",
     "",
   );
 
@@ -313,21 +341,20 @@ async function main() {
     console.log("Validation: OK");
   }
 
-  console.log("Integrity:");
+  console.log(`orphan schedules: ${summary.orphanSchedules}`);
+  console.log(`orphan tracks: ${summary.orphanTracks}`);
+  console.log(`show_on_home: ${summary.homeSchedules}`);
   console.log(
-    `  schedules → schedule_months.month: ${summary.orphanSchedules === 0 ? "OK" : `${summary.orphanSchedules} orphan(s)`}`,
-  );
-  console.log(
-    `  discography_tracks → discography.legacy_id: ${summary.orphanTracks === 0 ? "OK" : `${summary.orphanTracks} orphan(s)`}`,
-  );
-  console.log(`  show_on_home: ${summary.homeSchedules}`);
-  console.log(
-    `  image URLs: total=${summary.imageUrls.total}, wix=${summary.imageUrls.wix}, supabase=${summary.imageUrls.supabase}, other=${summary.imageUrls.other}`,
+    `image URLs: total=${summary.imageUrls.total}, wix=${summary.imageUrls.wix}, supabase=${summary.imageUrls.supabase}`,
   );
   console.log("");
 
-  if (fs.existsSync(schemaDraftPath)) {
-    console.log(`schema-draft.sql: found (${schemaDraftPath})`);
+  const schemaAnalysis = analyzeSchemaDraft(schemaDraftPath);
+  if (schemaAnalysis.found) {
+    console.log(`schema-draft.sql: found`);
+    if (schemaAnalysis.hasDropTable) {
+      console.warn("  warning: schema-draft.sql contains DROP TABLE");
+    }
   } else {
     console.warn(`schema-draft.sql: missing (${schemaDraftPath})`);
   }
@@ -352,11 +379,13 @@ async function main() {
     let env;
     try {
       env = loadEnvLocal();
+      await assertSupabaseJsAvailable();
     } catch (err) {
       console.error(err.message);
       process.exit(1);
     }
 
+    console.log("Apply preflight: OK");
     console.log(`Connecting to staging: ${env.supabaseUrl}`);
     console.log("");
 
@@ -379,6 +408,7 @@ async function main() {
     }
     console.log("");
   } else {
+    console.log("Supabase: not connected (dry-run)");
     console.log("Dry-run complete. No Supabase writes were performed.");
     console.log("To apply after staging setup, re-run with --apply.");
     console.log("");
@@ -389,6 +419,7 @@ async function main() {
     seedDir,
     reportPath,
     schemaDraftPath,
+    schemaAnalysis: analyzeSchemaDraft(schemaDraftPath),
     summary,
     validation,
     applyResults,

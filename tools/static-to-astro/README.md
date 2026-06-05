@@ -572,18 +572,21 @@ tools/static-to-astro/
 
 #### 実行方法
 
+リポジトリルート（`sariswing-astro/`）から実行:
+
 ```bash
-# dry-run（デフォルト）— .env.local 不要
+# dry-run（デフォルト）— .env.local 不要、Supabase 未接続
 node tools/static-to-astro/scripts/insert-supabase-seed.mjs \
   --seed-dir tools/static-to-astro/output/supabase-seed/gosaki \
   --report tools/static-to-astro/output/supabase-seed/gosaki/INSERT_SEED_REPORT.md
 
-# staging へ実書き込み（事前に schema-draft.sql を SQL Editor で適用）
+# staging へ実書き込み（事前に schema-draft.sql を staging SQL Editor で手動適用）
 cd tools/static-to-astro && npm install @supabase/supabase-js
 cp .env.example .env.local   # staging の URL / service role key を記入
-node scripts/insert-supabase-seed.mjs \
-  --seed-dir output/supabase-seed/gosaki \
-  --report output/supabase-seed/gosaki/INSERT_SEED_REPORT.md \
+
+node tools/static-to-astro/scripts/insert-supabase-seed.mjs \
+  --seed-dir tools/static-to-astro/output/supabase-seed/gosaki \
+  --report tools/static-to-astro/output/supabase-seed/gosaki/INSERT_SEED_REPORT.md \
   --apply
 ```
 
@@ -591,13 +594,60 @@ node scripts/insert-supabase-seed.mjs \
 | --- | --- |
 | 投入順 | `schedule_months` → `schedules` → `discography` → `discography_tracks` |
 | upsert キー | `schedule_months.month`, `schedules.legacy_id`, `discography.legacy_id` |
-| tracks | schema に composite UNIQUE が無いため、対象アルバムの既存行削除後に insert |
-| DDL | `schema-draft.sql` は**手動適用のみ**（この CLI では実行しない） |
+| tracks | composite UNIQUE なし → 対象 `discography_legacy_id` の既存行削除後に insert |
+| DDL | `schema-draft.sql` は**手動適用のみ**（DROP TABLE の有無・UNIQUE 制約を人間が確認） |
+| `--apply` preflight | `https://` URL、末尾スラッシュ正規化、空キー拒否、prod/production URL 拒否 |
 | 出力 | `INSERT_SEED_REPORT.md`（`output/` は .gitignore） |
+
+#### schema-draft.sql 適用前の確認
+
+- この CLI は **DDL を自動適用しない**
+- staging Supabase SQL Editor で人間が内容を確認してから適用する
+- `DROP TABLE` が含まれていないか確認する
+- upsert に必要な UNIQUE: `schedule_months.month`, `schedules.legacy_id`, `discography.legacy_id`
+- `discography_tracks` は現状 delete-then-insert（本番ではトランザクション必須）
+
+#### 投入後確認 SQL（staging SQL Editor）
+
+`--apply` 成功後、件数・参照整合性を確認:
+
+```sql
+-- 件数確認
+SELECT 'schedule_months' AS tbl, COUNT(*) FROM schedule_months
+UNION ALL
+SELECT 'schedules', COUNT(*) FROM schedules
+UNION ALL
+SELECT 'discography', COUNT(*) FROM discography
+UNION ALL
+SELECT 'discography_tracks', COUNT(*) FROM discography_tracks;
+
+-- Home掲載確認
+SELECT legacy_id, title, show_on_home, home_order
+FROM schedules
+WHERE show_on_home = true
+ORDER BY home_order;
+
+-- orphan schedules確認
+SELECT s.legacy_id, s.title, s.month
+FROM schedules s
+LEFT JOIN schedule_months m ON s.month = m.month
+WHERE m.month IS NULL;
+
+-- orphan tracks確認
+SELECT t.discography_legacy_id, t.track_number, t.title
+FROM discography_tracks t
+LEFT JOIN discography d ON t.discography_legacy_id = d.legacy_id
+WHERE d.legacy_id IS NULL;
+
+-- published確認
+SELECT published, COUNT(*) FROM schedules GROUP BY published;
+SELECT published, COUNT(*) FROM discography GROUP BY published;
+```
 
 #### 安全ルール
 
-- `--apply` なしは完全 dry-run
+- `--apply` なしは完全 dry-run（Supabase 未接続）
+- `.env` / `.env.local` / `.env.*.local` は `.gitignore` 対象
 - service role key は `.env.local` のみ。フロント・Git に出さない
 - 本番 Supabase / Storage には接続しない
 - ルート `supabase/` や本番 `src/` には触れない

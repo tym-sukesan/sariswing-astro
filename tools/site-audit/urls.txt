@@ -1,0 +1,14 @@
+# Site audit targets — one public URL per line.
+# Lines starting with # are ignored.
+# Only audit pages you are authorized to capture.
+
+https://www.gosaki-piano.com/
+https://www.gosaki-piano.com/about
+https://www.gosaki-piano.com/2026-07
+https://www.gosaki-piano.com/2026-06
+https://www.gosaki-piano.com/2026-05
+https://www.gosaki-piano.com/2026-04
+https://www.gosaki-piano.com/2026-03
+https://www.gosaki-piano.com/discography
+https://www.gosaki-piano.com/contact
+https://www.gosaki-piano.com/link

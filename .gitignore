@@ -30,3 +30,7 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# site-audit generated prototypes
+tools/site-audit/prototype-static-gosaki*/
+tools/site-audit/prototype-static-v2/

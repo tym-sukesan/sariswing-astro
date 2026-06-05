@@ -1,0 +1,661 @@
+# static-to-astro
+
+静的 HTML サイトを解析し、Astro プロジェクトのたたき台を生成するツール。
+
+本番の `src/`・`public/`・`package.json`・`supabase/` には一切触れません。作業は `tools/static-to-astro/` 内のみです。生成物は `tools/static-to-astro/output/generated-astro/` に出力します。
+
+## 目的
+
+```text
+URL → 静的 HTML → Astro → CMS → デプロイ
+```
+
+のうち **「静的 HTML → Astro」** を自動化する。
+
+## スコープ
+
+| Phase | 内容 | 状態 |
+| --- | --- | --- |
+| 1 | 設計・解析 CLI・フィクスチャ | 完了 |
+| 2-A | 最小 Astro プロジェクト自動生成 | 完了 |
+| 2-B | 実案件 fixture・`CONVERSION_REPORT.md`・`trailingSlash`・JS整理 | 完了 |
+| 2-C | SEO/OGP/canonical/favicon、ナビ active、CONVERSION_REPORT SEO | 完了 |
+| 2-D | `--base-url`、実サイト由来 HTML 検証枠 | 完了 |
+| 2-E | gosaki 実サイト検証の正式化、`<main>` / Schedule 一覧仕様、品質レポート | 完了 |
+| 2-F | `site` / robots.txt / `@astrojs/sitemap`、SEO 公開準備レポート | 完了 |
+| 2-G | Playwright ビジュアル diff 下準備（スクリーンショット + 差分画像） | 完了 |
+| 2-H | Visual diff 結果分析・修正優先度・再比較ワークフロー | 完了 |
+| 2-I | High 差分目視・ソース CSS パス修正・再 diff | 完了 |
+| 2-J | 意図的 visual diff の設定・High 除外 | 完了 |
+| 2-K | CI 連携・自動合否判定、JSON-LD 等 | 予定 |
+| 3-A | CMS 候補抽出・更新領域分析レポート | 完了 |
+| 3-B | Schedule JSON seed 抽出・データ駆動表示プロトタイプ | 完了 |
+| 3-C | Home Schedule データ駆動化（`show_on_home`） | 完了 |
+| 3-D | Discography JSON seed・データ駆動表示 | 完了 |
+| 3-E | Supabase schema draft / seed JSON 生成 | 完了 |
+| 3-F | 画像 Storage 移行準備・URL 整理 | 完了 |
+| 3-G | Storage upload dry-run・seed URL rewrite 準備 | 完了 |
+| 3-H | JSON seed 管理 UI プロトタイプ（`/admin/`） | 完了 |
+| 3-I | CMS 仕様固定・実装計画 | 完了 |
+| 3-J+ | Staging Supabase 接続・CRUD・Auth | 予定 |
+
+## ディレクトリ構成
+
+```text
+tools/static-to-astro/
+├── README.md
+├── docs/design.md
+├── package.json
+├── scripts/
+│   ├── analyze-static-site.mjs
+│   ├── analyze-cms-candidates.mjs
+│   ├── extract-schedule-seed.mjs
+│   ├── sync-home-schedule.mjs
+│   ├── extract-discography-seed.mjs
+│   ├── generate-supabase-seed.mjs
+│   ├── prepare-storage-assets.mjs
+│   ├── plan-storage-upload.mjs
+│   ├── rewrite-seed-image-urls.mjs
+│   ├── analyze-visual-diff.mjs
+│   ├── convert-static-to-astro.mjs
+│   ├── visual-diff.mjs
+│   └── lib/
+│       ├── cms-candidates-analyzer.mjs
+│       ├── schedule-seed-extractor.mjs
+│       ├── home-schedule-sync.mjs
+│       ├── discography-seed-extractor.mjs
+│       ├── supabase-seed-generator.mjs
+│       ├── storage-assets-preparer.mjs
+│       ├── storage-upload-planner.mjs
+│       ├── seed-url-rewriter.mjs
+│       ├── visual-diff-analysis.mjs
+│       ├── visual-diff-runner.mjs
+│       └── ...
+├── fixtures/
+│   ├── sample-static-site/
+│   ├── realistic-static-site/
+│   └── gosaki-static-site/     # 手動配置（.gitignore 対象）
+└── output/
+    ├── gosaki-report.json
+    └── generated-astro/
+```
+
+## 実行方法
+
+リポジトリルート（`sariswing-astro/`）で実行。`cheerio` はルートの `package.json` を利用します。
+
+### 解析（Markdown / JSON）
+
+```bash
+node tools/static-to-astro/scripts/analyze-static-site.mjs \
+  tools/static-to-astro/fixtures/sample-static-site
+```
+
+### Astro たたき台生成（`--base-url` 推奨）
+
+```bash
+node tools/static-to-astro/scripts/convert-static-to-astro.mjs \
+  tools/static-to-astro/fixtures/realistic-static-site \
+  tools/static-to-astro/output/generated-astro \
+  --base-url https://studio-sakura.example.com
+```
+
+`--verify-build` を付けると、生成後に `npm install` → `npm run build` を実行し、結果（sitemap 含む）を `CONVERSION_REPORT.md` に記録します。
+
+`--base-url` 指定時は `astro.config.mjs` の `site`、`public/robots.txt`、`@astrojs/sitemap` も自動設定します。
+
+---
+
+## Phase 2-E: gosaki-static-site 実サイト検証
+
+### フィクスチャの用意
+
+以下が **存在する場合**、実サイト由来 HTML として検証します。存在しない場合はエラーにせず、手動でコピーしてから再実行してください。
+
+| 項目 | パス |
+| --- | --- |
+| コピー元（例） | `tools/site-audit/prototype-static-gosaki-v4/` |
+| コピー先 | `tools/static-to-astro/fixtures/gosaki-static-site/` |
+
+```bash
+cp -R tools/site-audit/prototype-static-gosaki-v4/* \
+  tools/static-to-astro/fixtures/gosaki-static-site/
+```
+
+`gosaki-static-site/` は `.gitignore` 対象です。ダミーは自動生成しません。
+
+### 検証手順（推奨コマンド）
+
+```bash
+# 1. 解析 + baseUrl プレビュー JSON
+node tools/static-to-astro/scripts/analyze-static-site.mjs \
+  tools/static-to-astro/fixtures/gosaki-static-site \
+  --json \
+  --base-url https://www.gosaki-piano.com \
+  --out tools/static-to-astro/output/gosaki-report.json
+
+# 2. 変換（build 結果もレポートに記録する場合）
+node tools/static-to-astro/scripts/convert-static-to-astro.mjs \
+  tools/static-to-astro/fixtures/gosaki-static-site \
+  tools/static-to-astro/output/generated-astro \
+  --base-url https://www.gosaki-piano.com \
+  --verify-build
+
+# 3. 生成物のビルド（--verify-build 未使用時）
+cd tools/static-to-astro/output/generated-astro
+npm install   # 初回のみ
+npm run build
+
+# 4. dev（ブラウザ確認）
+npm run dev
+```
+
+### dev 確認時の注意
+
+**ターミナルに表示された URL を必ず使う**こと（例: `http://localhost:4321/` や `http://127.0.0.1:4325/`）。過去セッションのポートを開くと 404 になることがあります。
+
+確認ルート例: `/`, `/schedule/`, `/schedule-2026-07/` … `/link/`
+
+---
+
+## Phase 2-G: Visual diff（Playwright）
+
+依存関係は **`tools/static-to-astro/package.json`** に閉じ込めています（ルート `package.json` は変更しません）。
+
+```bash
+cd tools/static-to-astro
+npm install
+npx playwright install chromium
+```
+
+### 手順
+
+```bash
+# 1. 変換 + build（dist を用意）
+node scripts/convert-static-to-astro.mjs \
+  fixtures/gosaki-static-site \
+  output/generated-astro \
+  --base-url https://www.gosaki-piano.com \
+  --verify-build
+
+# 2. ビジュアル diff（リポジトリルートからでも可）
+node tools/static-to-astro/scripts/visual-diff.mjs \
+  --source-dir tools/static-to-astro/fixtures/gosaki-static-site \
+  --astro-dir tools/static-to-astro/output/generated-astro \
+  --out-dir tools/static-to-astro/output/visual-diff/gosaki \
+  --routes /,/about/,/schedule/,/schedule-2026-07/,/contact/
+```
+
+| 項目 | 内容 |
+| --- | --- |
+| ソース側 | フィクスチャをローカル HTTP で配信（`/about/` → `about.html`） |
+| Astro 側 | **`dist/`** を静的配信（`npm run preview` ではなく build 成果物で安定比較） |
+| viewport | desktop 1440×1200、mobile 390×1200 |
+| 出力 | `output/visual-diff/gosaki/{source,astro,diff}/` + `VISUAL_DIFF_REPORT.md` |
+| レポート追記 | `output/generated-astro/CONVERSION_REPORT.md` に概要セクション |
+
+`--no-diff` でスクリーンショットのみ。`/schedule/` はソースに HTML が無い場合があり、Astro のみ撮影されます。
+
+`visual-diff.mjs` 完了時に **`VISUAL_DIFF_ANALYSIS.md`** も自動生成します（Phase 2-H）。既存成果物だけ分析する場合:
+
+```bash
+node tools/static-to-astro/scripts/analyze-visual-diff.mjs \
+  --out-dir tools/static-to-astro/output/visual-diff/gosaki \
+  --astro-dir tools/static-to-astro/output/generated-astro
+```
+
+---
+
+## Phase 2-H: Visual diff 結果分析・修正ワークフロー
+
+### 生成物
+
+| ファイル | 内容 |
+| --- | --- |
+| `VISUAL_DIFF_REPORT.md` | 撮影ログ・mismatch %（Phase 2-G） |
+| `VISUAL_DIFF_ANALYSIS.md` | 優先度・原因候補 A–H・画像リンク表（Phase 2-H） |
+| `CONVERSION_REPORT.md` | Visual diff / analysis 概要セクション追記 |
+
+### 原因カテゴリ（候補）
+
+- **A** 画像欠損・サイズ差
+- **B** フォント・外部フォント
+- **C** Header / nav 構造差
+- **D** main / section / wrapper
+- **E** レスポンシブ CSS
+- **F** JS / インライン script
+- **G** フォーム・iframe
+- **H** Astro 意図的改善（例: `/schedule/` 一覧）
+
+### 優先度
+
+| 優先度 | 目安 |
+| --- | --- |
+| **High** | mismatch ≥ 25%、または mobile ≥ 35% |
+| **Medium** | mismatch 10–25% |
+| **Low** | &lt; 10%、または astro-only |
+
+自動判定のみ — **公開前の最終判断は目視**。
+
+### Visual diff 後の修正ワークフロー
+
+1. `VISUAL_DIFF_REPORT.md` を確認
+2. `VISUAL_DIFF_ANALYSIS.md` を確認（スクリーンショットリンク表）
+3. **High** 優先の source / astro / diff 画像を目視
+4. 原因カテゴリ（A–H）を確定
+5. 必要なら **`tools/static-to-astro/`** 内の変換ツール・fixture を修正（本番 `src/` には触れない）
+6. 再度 `convert-static-to-astro.mjs`（`--verify-build` 推奨）
+7. 再度 `visual-diff.mjs`（分析は自動再生成）
+8. mismatch % が改善したか `VISUAL_DIFF_ANALYSIS.md` で比較
+
+### Phase 2-I: High 差分の目視・再 diff
+
+gosaki で判明した主因の一つは、**visual diff 用ソースサーバー**が `/about/` 等で `css/style.css` を誤った相対パスに解決し、ソースのみ無スタイルになっていたこと（偽陽性）。`rewriteSourceHtmlForRootServe()` で修正。
+
+```bash
+node tools/static-to-astro/scripts/visual-diff.mjs ...  # 再撮影
+node tools/static-to-astro/scripts/complete-phase2i-review.mjs \
+  --out-dir tools/static-to-astro/output/visual-diff/gosaki \
+  --astro-dir tools/static-to-astro/output/generated-astro
+```
+
+`VISUAL_DIFF_ANALYSIS.md` の **Phase 2-I** セクションに Fix/Accept/Intentional/Review と再 diff 表を追記。
+
+### Phase 2-J: Intentional visual differences
+
+Astro 化では元サイトを完全コピーせず、運用改善のために意図的に変更する場合があります（例: Schedule 月別プルダウン → `/schedule/` 一覧 + 単一 Schedule リンク）。visual diff では、こうした意図差分を設定ファイルで管理し、**High 件数からは除外**しつつレポート上は **Known intentional difference** として別枠表示します。意図差分でも、同一画面に他の崩れが混ざる可能性があるため **目視確認は省略しません**。
+
+設定: `config/intentional-diffs.gosaki.json`
+
+```bash
+node tools/static-to-astro/scripts/analyze-visual-diff.mjs \
+  --out-dir tools/static-to-astro/output/visual-diff/gosaki \
+  --astro-dir tools/static-to-astro/output/generated-astro \
+  --intentional-diffs tools/static-to-astro/config/intentional-diffs.gosaki.json
+
+node tools/static-to-astro/scripts/visual-diff.mjs \
+  --source-dir tools/static-to-astro/fixtures/gosaki-static-site \
+  --astro-dir tools/static-to-astro/output/generated-astro \
+  --out-dir tools/static-to-astro/output/visual-diff/gosaki \
+  --routes /,/about/,/schedule/,/schedule-2026-07/,/contact/ \
+  --intentional-diffs tools/static-to-astro/config/intentional-diffs.gosaki.json
+```
+
+`VISUAL_DIFF_ANALYSIS.md` の **Intentional differences** セクションと、`CONVERSION_REPORT.md` の **Visual diff intentional differences** を参照してください。
+
+---
+
+## Phase 3-A: CMS 候補抽出・更新領域分析
+
+静的 HTML（任意で生成 Astro）から、**CMS 化すべき領域**を抽出し `CMS_CANDIDATES_REPORT.md` にまとめます。目的は Supabase CMS や管理画面につなぐ前段階として、「どのページ・セクションが更新対象か」を可視化することです。
+
+### CMS化優先度
+
+| 優先度 | 目安 |
+| --- | --- |
+| **High** | 更新頻度が高く CMS 化の価値が大きい（例: 月別 Schedule、Home 週間ライブ） |
+| **Medium** | たまに更新（例: Discography、Profile） |
+| **Low** | 静的のままでよい可能性（例: Link 一覧、フッター SNS） |
+| **Manual** | 人間判断が必要（例: Contact フォーム・外部 embed） |
+
+`<!-- CMS_TARGET: ... -->` コメント、ファイル名、DOM パターン（`schedule-card` 等）から候補を分類します。
+
+### コマンド
+
+```bash
+node tools/static-to-astro/scripts/analyze-cms-candidates.mjs \
+  --input-dir tools/static-to-astro/fixtures/gosaki-static-site \
+  --astro-dir tools/static-to-astro/output/generated-astro \
+  --out tools/static-to-astro/output/cms-candidates/gosaki/CMS_CANDIDATES_REPORT.md
+```
+
+`--astro-dir` は省略可（静的 HTML のみ解析）。Supabase テーブル案はレポート内の**設計提案**のみで、DB 作成・接続は **Phase 3-C 以降**です。
+
+---
+
+## Phase 3-B: Schedule JSON seed・データ駆動表示
+
+`schedule-YYYY-MM.html` からライブ情報を抽出し、生成 Astro の `src/data/` に JSON seed を書き込みます。`/schedule/` 一覧と月別ページは `ScheduleList.astro` で JSON を表示します（Supabase 接続は**まだ行いません**）。
+
+### 推奨実行順
+
+```bash
+node tools/static-to-astro/scripts/convert-static-to-astro.mjs \
+  tools/static-to-astro/fixtures/gosaki-static-site \
+  tools/static-to-astro/output/generated-astro \
+  --base-url https://www.gosaki-piano.com \
+  --verify-build
+
+node tools/static-to-astro/scripts/extract-schedule-seed.mjs \
+  --input-dir tools/static-to-astro/fixtures/gosaki-static-site \
+  --out-dir tools/static-to-astro/output/generated-astro/src/data \
+  --report tools/static-to-astro/output/cms-candidates/gosaki/SCHEDULE_SEED_REPORT.md
+
+cd tools/static-to-astro/output/generated-astro && npm run build
+```
+
+### 出力
+
+| ファイル | 内容 |
+| --- | --- |
+| `src/data/schedules.json` | イベント一覧 |
+| `src/data/schedule-months.json` | 月別インデックス |
+| `src/components/ScheduleList.astro` | カード一覧コンポーネント |
+| `SCHEDULE_SEED_REPORT.md` | 抽出統計・Supabase スキーマ案 |
+
+### JSON → Supabase の考え方
+
+Phase 3-B の JSON は **移行前のローカル seed** です。将来は同じフィールドを `schedules` / `schedule_months` テーブルに投入し、Astro はビルド時 fetch または SSR で読み込みます。フライヤー画像 URL は Storage 移行後に差し替えが必要です。
+
+### 人間確認が必要な項目
+
+- 空の `時間：` / `料金：` 行
+- 非標準時間表記（`17:00〜19:00` 等）は `description` に含まれる場合あり
+- フライヤー未設定（placeholder のみ）が大半
+- Home の週間スケジュールは **Phase 3-C で JSON 化**（下記 `sync-home-schedule`）
+
+### Phase 3-C: Home Schedule データ駆動化
+
+`index.html` の `HOME_LIVE_SCHEDULE` 領域を検出し、既存 `schedules.json` のイベントと照合して `show_on_home` / `home_order` を付与します。トップページは `HomeSchedule.astro` で表示します。
+
+```bash
+node tools/static-to-astro/scripts/sync-home-schedule.mjs \
+  --input-dir tools/static-to-astro/fixtures/gosaki-static-site \
+  --schedules tools/static-to-astro/output/generated-astro/src/data/schedules.json \
+  --astro-dir tools/static-to-astro/output/generated-astro \
+  --report tools/static-to-astro/output/cms-candidates/gosaki/SCHEDULE_SEED_REPORT.md
+
+cd tools/static-to-astro/output/generated-astro && npm run build
+```
+
+| フィールド | 用途 |
+| --- | --- |
+| `show_on_home` | Home に掲載するか |
+| `home_order` | Home 内の表示順 |
+| `home_date_display` | Home 用日付表記（例: `3月25日(水)　LIVE`） |
+| `home_performers` / `home_address` / `home_image` | Home カード専用表示（index.html からコピー） |
+
+**Supabase 化の想定:** 同一テーブル `schedules` に `show_on_home`, `home_sort_order` 列を追加。管理画面でトグル・並べ替え。
+
+**手動確認:** 日付表記の年（デフォルト 2026）、alt-date-conflict フライヤー、未一致時の案B仮選定。
+
+### Phase 3-D: Discography JSON seed・データ駆動表示
+
+`discography.html` からリリース情報を抽出し、`discography.json` と `DiscographyList.astro` で `/discography/` をデータ駆動表示します。Supabase 接続は**まだ行いません**。
+
+```bash
+node tools/static-to-astro/scripts/extract-discography-seed.mjs \
+  --input-dir tools/static-to-astro/fixtures/gosaki-static-site \
+  --out-dir tools/static-to-astro/output/generated-astro/src/data \
+  --report tools/static-to-astro/output/cms-candidates/gosaki/DISCOGRAPHY_SEED_REPORT.md \
+  --astro-dir tools/static-to-astro/output/generated-astro
+
+cd tools/static-to-astro/output/generated-astro && npm run build
+```
+
+| 出力 | 内容 |
+| --- | --- |
+| `src/data/discography.json` | リリース + `tracks[]` |
+| `src/components/DiscographyList.astro` | 一覧コンポーネント |
+| `DISCOGRAPHY_SEED_REPORT.md` | 抽出統計・`discography` / `discography_tracks` テーブル案 |
+
+**JSON → Supabase:** `discography` 親テーブル + `discography_tracks` 子テーブル。`cover_image` は Storage 移行後に `cover_image_url` へ。
+
+**手動確認:** Release 行の価格・SOLD OUT 表記、会場販売のみのリリース、Wix 画像 URL。
+
+### Phase 3-E: Supabase schema draft / seed JSON
+
+既存の Astro 用 JSON seed から、**本番 Supabase には接続せず** 投入準備用の draft を生成します。
+
+```bash
+node tools/static-to-astro/scripts/generate-supabase-seed.mjs \
+  --data-dir tools/static-to-astro/output/generated-astro/src/data \
+  --out-dir tools/static-to-astro/output/supabase-seed/gosaki \
+  --report tools/static-to-astro/output/supabase-seed/gosaki/SUPABASE_SEED_REPORT.md \
+  --astro-dir tools/static-to-astro/output/generated-astro
+```
+
+| 出力 (`output/supabase-seed/gosaki/`) | 内容 |
+| --- | --- |
+| `schema-draft.sql` | テーブル定義 draft（**そのまま本番適用しない**） |
+| `seed-schedules.json` | schedules 行 |
+| `seed-schedule-months.json` | 月インデックス |
+| `seed-discography.json` | リリース（tracks 除く） |
+| `seed-discography-tracks.json` | トラック行 |
+| `SUPABASE_SEED_REPORT.md` | 件数・null 統計・Storage 注意 |
+
+**RLS / Auth / ルート `supabase/` への migration 追加は Phase 3-G 以降。** 入力 JSON が無い場合はエラーにせずレポートに「未生成」と記録します。
+
+### Phase 3-F: Storage 画像移行準備
+
+seed / data JSON 内の画像 URL を分類し、Supabase Storage 移行用マニフェストを生成します。**本番 Storage へのアップロードは行いません。**
+
+```bash
+node tools/static-to-astro/scripts/prepare-storage-assets.mjs \
+  --seed-dir tools/static-to-astro/output/supabase-seed/gosaki \
+  --data-dir tools/static-to-astro/output/generated-astro/src/data \
+  --out-dir tools/static-to-astro/output/storage-assets/gosaki \
+  --report tools/static-to-astro/output/storage-assets/gosaki/STORAGE_ASSETS_REPORT.md \
+  --astro-dir tools/static-to-astro/output/generated-astro
+```
+
+`--download` を付けた場合のみ `downloads/` にローカル保存（失敗しても続行）。seed JSON の URL **自動上書きはしません** — `storage-url-rewrite-plan.json` が差し替え案です。
+
+**著作権・利用許諾は人間確認必須。** Wix 由来画像の再ホスト可否を確認してから Phase 3-H でアップロードしてください。
+
+### Phase 3-G: Storage upload dry-run・seed URL rewrite 準備
+
+Phase 3-F のマニフェストをもとに、**本番 Supabase Storage へはアップロードせず** アップロード計画と seed JSON の URL 差し替え dry-run を行います。デフォルトは常に dry-run です。
+
+#### アップロード計画（dry-run）
+
+```bash
+node tools/static-to-astro/scripts/plan-storage-upload.mjs \
+  --manifest tools/static-to-astro/output/storage-assets/gosaki/storage-assets-manifest.json \
+  --out tools/static-to-astro/output/storage-assets/gosaki/STORAGE_UPLOAD_PLAN.md \
+  --bucket site-assets \
+  --public-base-url https://example.supabase.co/storage/v1/object/public/site-assets \
+  --astro-dir tools/static-to-astro/output/generated-astro
+```
+
+`storage-assets-manifest.json` を読み、`target_path` / `expected_public_url` / `local_file` の有無をレポートします。**実際のアップロードは行いません。**
+
+#### seed URL 差し替え（dry-run / `--apply`）
+
+```bash
+# dry-run（デフォルト — seed JSON は変更しない）
+node tools/static-to-astro/scripts/rewrite-seed-image-urls.mjs \
+  --seed-dir tools/static-to-astro/output/supabase-seed/gosaki \
+  --rewrite-plan tools/static-to-astro/output/storage-assets/gosaki/storage-url-rewrite-plan.json \
+  --public-base-url https://example.supabase.co/storage/v1/object/public/site-assets \
+  --report tools/static-to-astro/output/storage-assets/gosaki/SEED_REWRITE_REPORT.md \
+  --astro-dir tools/static-to-astro/output/generated-astro \
+  --supabase-report tools/static-to-astro/output/supabase-seed/gosaki/SUPABASE_SEED_REPORT.md
+
+# 実書き換え（`--apply` 必須 — バックアップ `seed-*.json.bak-YYYYMMDD-HHmmss` を作成）
+node tools/static-to-astro/scripts/rewrite-seed-image-urls.mjs \
+  ...同上... \
+  --apply
+```
+
+| 項目 | 内容 |
+| --- | --- |
+| 入力 | `storage-url-rewrite-plan.json` |
+| 変換例 | Wix `cover_image_url` → `{public-base-url}/gosaki/discography/discography-001.png` |
+| デフォルト | dry-run（seed 不変） |
+| `--apply` | seed JSON を書き換え + タイムスタンプ付きバックアップ |
+| 本番 Storage | **まだアップロードしない** |
+| 本番 Sariswing | **影響なし**（`tools/static-to-astro/output/` のみ） |
+
+#### `home_image_url`（schedules seed）
+
+Phase 3-G で `generate-supabase-seed.mjs` が Astro `schedules.json` の **`home_image`** を seed の **`home_image_url`** にマップします。`schema-draft.sql` の `schedules` テーブル案にも `home_image_url text` を追加済みです。本番 DB には未適用です。
+
+seed 再生成:
+
+```bash
+node tools/static-to-astro/scripts/generate-supabase-seed.mjs \
+  --data-dir tools/static-to-astro/output/generated-astro/src/data \
+  --out-dir tools/static-to-astro/output/supabase-seed/gosaki \
+  --report tools/static-to-astro/output/supabase-seed/gosaki/SUPABASE_SEED_REPORT.md \
+  --astro-dir tools/static-to-astro/output/generated-astro
+```
+
+rewrite plan を更新する場合は Phase 3-F の `prepare-storage-assets.mjs` を再実行してください。
+
+### Phase 3-H: Admin prototype（JSON seed 管理 UI）
+
+生成 Astro サイト内に **Supabase 接続前** の管理画面プロトタイプを追加します。Schedule / Discography の編集 UI・項目・操作感を確認するためのものです。
+
+**配置:** `tools/static-to-astro/output/generated-astro/` のみ（本番 Sariswing には未適用）
+
+| URL | 内容 |
+| --- | --- |
+| `/admin/` | ダッシュボード（件数・リンク） |
+| `/admin/schedules/` | Schedule 一覧・月別/Home フィルタ・編集フォーム mock |
+| `/admin/discography/` | Discography 一覧・tracks 表示・編集フォーム mock |
+
+**データ:** `src/data/schedules.json`, `schedule-months.json`, `discography.json`（Supabase seed 相当のフィールド名で表示）
+
+**保存:** 案A — 保存ボタン **disabled**。「Phase 3-I で Supabase 保存に接続」。本番 DB には書き込みません。
+
+**未実装:** Auth、RLS、Basic 認証、Supabase 接続。本番公開前は **必ず `/admin/` を保護** してください。
+
+```bash
+cd tools/static-to-astro/output/generated-astro
+npm run dev
+# → http://localhost:4321/admin/
+```
+
+レポート: `output/cms-candidates/gosaki/ADMIN_PROTOTYPE_REPORT.md`
+
+Supabase 接続・実保存は **Phase 3-J 以降**（Phase 3-I で仕様を先に固定）。
+
+### Phase 3-I: CMS 仕様固定・実装計画
+
+Supabase 接続**前**に、DB 設計・管理 UI 項目・Storage / Auth / RLS・公開サイト更新フローを文書化します。コード接続や本番 DB 保存は行いません。
+
+**成果物:** `output/cms-candidates/gosaki/CMS_IMPLEMENTATION_PLAN.md`
+
+| 固定した内容 |
+| --- |
+| Schedule / Discography テーブル・UI 項目分類（必須 / 通常 / 高度 / 読取専用） |
+| Home 表示仕様（`show_on_home`, `home_order`, 最大3件, 過去イベント扱い） |
+| Storage パス・bucket・URL 保存方針 |
+| Auth / RLS 原則（公開 read = published, 管理 write = admin role） |
+| 公開サイト更新フロー（Supabase → JSON export → build → deploy） |
+| デプロイ先比較（ロリポップ FTP / Vercel / Netlify / Cloudflare Pages） |
+| Phase 3-J〜O 実装順序 |
+
+**なぜ接続前に仕様固定か:** Admin プロトタイプ（3-H）で UI を確認した段階で、RLS・Storage・Auth の順序を誤ると安全に進められないため。Sariswing で得た知見を Kit 一般化してから staging 接続する。
+
+**次フェーズ:** Phase 3-J — tooling 用 staging Supabase + migration + seed insert（service role CLI のみ）。
+
+---
+
+## Phase 2-F: SEO 公開準備（site / robots / sitemap）
+
+`--base-url` **指定時のみ** 以下を生成します。未指定時は sitemap 連携・robots.txt は行いません（レポートに記録）。
+
+| 出力 | 内容 |
+| --- | --- |
+| `astro.config.mjs` | `site: '{baseUrl}'`、`integrations: [sitemap()]` |
+| `package.json` | `@astrojs/sitemap` を dependencies に追加 |
+| `public/robots.txt` | `Allow: /` + `Sitemap: {baseUrl}/sitemap-index.xml` |
+| `CONVERSION_REPORT.md` | **SEO publish readiness** セクション |
+
+`npm run build` 後、`dist/sitemap-index.xml` 等が生成されます（`--verify-build` で確認）。
+
+### gosaki 検証コマンド
+
+```bash
+node tools/static-to-astro/scripts/convert-static-to-astro.mjs \
+  tools/static-to-astro/fixtures/gosaki-static-site \
+  tools/static-to-astro/output/generated-astro \
+  --base-url https://www.gosaki-piano.com \
+  --verify-build
+```
+
+### realistic 回帰
+
+```bash
+node tools/static-to-astro/scripts/convert-static-to-astro.mjs \
+  tools/static-to-astro/fixtures/realistic-static-site \
+  tools/static-to-astro/output/generated-astro \
+  --base-url https://studio-sakura.example.com \
+  --verify-build
+```
+
+---
+
+## 正式仕様（Phase 2-E）
+
+### `<main>` ラッパー復元
+
+| 項目 | 内容 |
+| --- | --- |
+| 問題 | `extractMainHtml()` はソース `<main>` の**内側のみ**を抽出するため、`main { max-width }` が効かず本文が全幅になる |
+| 対策 | `BaseLayout.astro` で `<Header />` → `<main><slot /></main>` → `<Footer />` |
+| CSS | 統合 `global.css` に `main { max-width: ... }` がある場合、レポートに検出を記録 |
+| 未実装 | ソース `<main>` の `class` / `id` / `data-*` / `aria-*` のマージ（gosaki は属性なし `<main>`） |
+
+### Schedule 一覧ページ
+
+| 項目 | 内容 |
+| --- | --- |
+| 検出 | `schedule-YYYY-MM.html`（正規表現） |
+| 月別出力 | `src/pages/schedule-2026-03/index.astro` 等（従来どおり） |
+| 一覧出力 | `src/pages/schedule/index.astro` → ルート `/schedule/` |
+| 一覧の並び | 新しい月順（例: 2026.07 → 2026.03） |
+| CMS 向け | 一覧 HTML に `<!-- CMS_TARGET: SCHEDULE_INDEX -->` |
+
+### Header（月別リンク除外）
+
+| 項目 | 内容 |
+| --- | --- |
+| 方針 | 元サイトの Schedule プルダウンは**復元しない** |
+| Header | `Home / About / Schedule / Discography / Contact / Link` |
+| Schedule リンク先 | `/schedule/` のみ |
+| active | `scheduleNavActive()` — `/schedule/` と `/schedule-YYYY-MM/` で Schedule が active |
+
+`--base-url` 指定時:
+
+- `canonical` / `og:url` → `{baseUrl}{route}`
+- ローカル `og:image` → 絶対 URL
+
+---
+
+## 生成される Astro 構成
+
+```text
+output/generated-astro/
+├── CONVERSION_REPORT.md    # 実サイト検証 + SEO publish readiness
+├── package.json            # @astrojs/sitemap（baseUrl 指定時）
+├── astro.config.mjs        # site + trailingSlash + sitemap（baseUrl 指定時）
+├── public/
+│   ├── robots.txt          # baseUrl 指定時
+│   ├── images/
+│   └── assets/js/
+└── src/
+    ├── layouts/BaseLayout.astro
+    ├── components/Header.astro, Footer.astro
+    ├── pages/
+    │   ├── schedule/index.astro      # 自動生成（月別ページがある場合）
+    │   ├── schedule-2026-07/index.astro
+    │   └── ...
+    └── styles/global.css
+```
+
+## 今後の課題（Phase 2-I 以降）
+
+- ビジュアル diff の自動合否閾値・CI 連携（GitHub Actions）
+- JSON-LD（構造化データ）
+- フォームバックエンド接続
+- ソース `<main>` 属性の保持
+- CMS / Supabase 連携
+- **本番 Sariswing への適用は別作業**（ルート `src/` には触れない）
+
+## 関連
+
+- `tools/site-audit/` — 公開 URL 調査と静的 HTML プロトタイプ作成
+- 推奨フロー: site-audit → 静的再構築 → **static-to-astro**

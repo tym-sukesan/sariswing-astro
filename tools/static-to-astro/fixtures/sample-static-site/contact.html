@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sample Studio — Contact</title>
+  <meta name="description" content="お問い合わせフォーム。">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-wrap">
+      <p class="site-title"><a href="index.html"><img src="images/logo.svg" alt="Sample Studio" width="120" height="32"></a></p>
+      <nav class="global-nav" aria-label="Main navigation">
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="service.html">Service</a></li>
+          <li><a href="contact.html" class="is-current">Contact</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <h1>Contact</h1>
+    <form class="contact-form" action="https://example.com/submit" method="post">
+      <label for="name">Name</label>
+      <input id="name" name="name" type="text" required>
+      <label for="email">Email</label>
+      <input id="email" name="email" type="email" required>
+      <label for="message">Message</label>
+      <textarea id="message" name="message" rows="5" required></textarea>
+      <button type="submit">Send</button>
+    </form>
+  </main>
+
+  <footer class="site-footer">
+    <ul class="social-links" aria-label="Social media">
+      <li><a href="https://example.com/social" rel="noopener noreferrer">Social</a></li>
+    </ul>
+    <p class="copyright">© <span data-current-year>2025</span> Sample Studio.</p>
+  </footer>
+  <script src="js/main.js"></script>
+</body>
+</html>

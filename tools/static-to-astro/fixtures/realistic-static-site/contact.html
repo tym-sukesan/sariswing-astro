@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>お問い合わせ | Studio Sakura</title>
+  <meta name="description" content="体験レッスン・見学のお問い合わせ。アクセスマップ付き。">
+  <link rel="canonical" href="https://example.com/contact/">
+  <meta property="og:title" content="お問い合わせ | Studio Sakura">
+  <meta property="og:description" content="お問い合わせフォームとアクセス。">
+  <meta property="og:image" content="images/ogp.jpg">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://example.com/contact/">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <p class="logo"><a href="index.html"><img src="images/logo.svg" alt="Studio Sakura" width="140" height="36"></a></p>
+      <nav class="global-nav" aria-label="Main navigation">
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="lesson.html">Lesson</a></li>
+          <li><a href="contact.html" class="is-current">Contact</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <h1>お問い合わせ</h1>
+    <form class="contact-form" action="https://example.com/form/submit" method="post">
+      <label for="name">お名前</label>
+      <input id="name" name="name" type="text" required>
+      <label for="email">メールアドレス</label>
+      <input id="email" name="email" type="email" required>
+      <label for="message">メッセージ</label>
+      <textarea id="message" name="message" rows="6" required></textarea>
+      <button type="submit">送信</button>
+    </form>
+
+    <section class="map-wrap" aria-label="アクセスマップ">
+      <h2>アクセス</h2>
+      <iframe
+        title="Studio Sakura 地図"
+        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3240.0!2d139.7!3d35.68!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzXCsDQwJzQ4LjAiTiAxMznCsDQyJzAwLjAiRQ!5e0!3m2!1sja!2sjp!4v1"
+        width="600"
+        height="280"
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"
+      ></iframe>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p class="copyright">© <span data-current-year>2025</span> Studio Sakura</p>
+  </footer>
+  <script>
+    console.info("contact page inline init");
+  </script>
+  <script src="js/main.js"></script>
+  <script src="js/contact.js"></script>
+</body>
+</html>

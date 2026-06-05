@@ -1,0 +1,15 @@
+{
+  "name": "static-to-astro-tooling",
+  "private": true,
+  "type": "module",
+  "description": "CLI tooling for static-to-astro (convert, analyze, visual-diff). Not the production Sariswing site.",
+  "scripts": {
+    "visual-diff": "node scripts/visual-diff.mjs",
+    "analyze-visual-diff": "node scripts/analyze-visual-diff.mjs"
+  },
+  "devDependencies": {
+    "pixelmatch": "^7.1.0",
+    "playwright": "^1.55.0",
+    "pngjs": "^7.0.0"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "siteName": "gosaki-static-site",
+  "intentionalDiffs": [
+    {
+      "id": "schedule-nav-simplification-mobile",
+      "routePattern": "*",
+      "viewport": "mobile",
+      "category": "navigation",
+      "reason": "Schedule monthly submenu was intentionally replaced by a single Schedule link and a /schedule/ index page."
+    },
+    {
+      "id": "schedule-index-astro-only",
+      "route": "/schedule/",
+      "viewport": "*",
+      "category": "new-page",
+      "reason": "/schedule/ is a newly generated Astro index page and has no source HTML counterpart."
+    }
+  ]
+}

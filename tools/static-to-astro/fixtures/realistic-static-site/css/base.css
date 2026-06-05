@@ -1,0 +1,22 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Noto Sans JP", system-ui, sans-serif;
+  line-height: 1.7;
+  color: #1a1a1a;
+  background: #fafafa;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+a {
+  color: #2d5a87;
+}

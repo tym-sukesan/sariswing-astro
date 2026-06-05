@@ -1,0 +1,19 @@
+# Local-only fixtures (optional manual copies from site-audit prototypes)
+fixtures/gosaki-static-site/
+
+# Generated project artifacts (recreated by convert CLI)
+output/generated-astro/node_modules/
+output/generated-astro/dist/
+output/generated-astro/.astro/
+node_modules/
+
+# Visual diff artifacts (regenerable)
+output/visual-diff/
+
+# Generated outputs
+output/*
+!output/.gitkeep
+
+# Local env
+.env
+.env.local

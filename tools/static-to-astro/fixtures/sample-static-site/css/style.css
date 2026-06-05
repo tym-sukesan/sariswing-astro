@@ -1,0 +1,78 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  line-height: 1.6;
+  color: #222;
+}
+
+.site-header,
+.site-footer {
+  padding: 1rem 1.5rem;
+  background: #f4f4f4;
+}
+
+.header-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.global-nav ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.25rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+main {
+  max-width: 48rem;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+
+.hero {
+  margin-bottom: 2rem;
+}
+
+.hero img {
+  max-width: 100%;
+  height: auto;
+}
+
+.is-current {
+  font-weight: 700;
+}
+
+.contact-form label {
+  display: block;
+  margin-top: 1rem;
+}
+
+.contact-form input,
+.contact-form textarea {
+  width: 100%;
+  max-width: 24rem;
+}
+
+.social-links {
+  display: flex;
+  gap: 1rem;
+  padding: 0;
+  list-style: none;
+}
+
+.copyright {
+  margin-top: 1rem;
+  font-size: 0.875rem;
+  color: #666;
+}

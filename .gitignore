@@ -1,6 +1,10 @@
 # build output
 dist/
 
+# site-audit generated output
+tools/site-audit/output/
+tools/site-audit/prototype-static/
+
 # generated types
 .astro/
 

@@ -38,8 +38,9 @@ URL → 静的 HTML → Astro → CMS → デプロイ
 | 3-H | JSON seed 管理 UI プロトタイプ（`/admin/`） | 完了 |
 | 3-I | CMS 仕様固定・実装計画 | 完了 |
 | 3-J | Staging Supabase seed insert（dry-run / --apply） | 完了 |
-| 3-K | Supabase → Astro JSON export + build 確認 | 進行中 |
-| 3-L+ | Admin Supabase 接続・Auth・RLS | 予定 |
+| 3-K | Supabase → Astro JSON export + build 確認 | 完了 |
+| 3-L | Admin UI Supabase read-only 接続 | 進行中 |
+| 3-M+ | Admin save・Auth・RLS | 予定 |
 
 ## ディレクトリ構成
 
@@ -60,6 +61,7 @@ tools/static-to-astro/
 │   ├── rewrite-seed-image-urls.mjs
 │   ├── insert-supabase-seed.mjs
 │   ├── export-supabase-json.mjs
+│   ├── verify-admin-supabase-read.mjs
 │   ├── analyze-visual-diff.mjs
 │   ├── convert-static-to-astro.mjs
 │   ├── visual-diff.mjs
@@ -722,6 +724,55 @@ WHERE d.legacy_id IS NULL;
 SELECT published, COUNT(*) FROM schedules GROUP BY published;
 SELECT published, COUNT(*) FROM discography GROUP BY published;
 ```
+
+### Phase 3-L: Admin UI Supabase read-only
+
+`output/generated-astro/` 内の Admin プロトタイプ（`/admin/`）を **staging Supabase から read-only** で読み込みます。Astro ページの frontmatter（server-side / build-time）で `@supabase/supabase-js` を使い、**service role key をブラウザに出しません**。
+
+公開サイトの `src/data/*.json`（Phase 3-K export）はそのまま。Admin のみ Supabase direct read です。
+
+| 項目 | 内容 |
+| --- | --- |
+| 方式 | **Supabase direct read**（Astro frontmatter、非 API route） |
+| 認証 | `process.env.SUPABASE_URL` + `process.env.SUPABASE_SERVICE_ROLE_KEY` |
+| 書き込み | **禁止** — 保存ボタンは disabled のまま |
+| 配置 | `output/generated-astro/src/lib/supabase-admin-read.ts` |
+
+#### 実行手順（dev）
+
+```bash
+cd tools/static-to-astro
+set -a && source .env.local && set +a
+cd output/generated-astro
+npm install
+npm run dev
+```
+
+確認 URL: `/admin/`, `/admin/schedules/`, `/admin/discography/`
+
+#### build 確認
+
+```bash
+cd tools/static-to-astro
+node scripts/verify-admin-supabase-read.mjs
+```
+
+または手動:
+
+```bash
+cd tools/static-to-astro
+set -a && source .env.local && set +a
+cd output/generated-astro && npm run build
+```
+
+#### 成果物（output/ — .gitignore）
+
+- `output/generated-astro/src/lib/supabase-admin-read.ts`
+- `output/generated-astro/src/pages/admin/*.astro`（Supabase read 対応）
+- `output/cms-candidates/gosaki/ADMIN_SUPABASE_READ_REPORT.md`
+- `output/generated-astro/CONVERSION_REPORT.md`（Phase 3-L 追記）
+
+tooling 側（コミット可）: `scripts/verify-admin-supabase-read.mjs`, README
 
 ---
 

@@ -1030,6 +1030,34 @@ node tools/static-to-astro/scripts/verify-admin-schedule-ui-save.mjs \
 
 ---
 
+### Phase 3-P-F: Discography 1件 update API + UI save
+
+`/admin/discography/` から**選択中の1件だけ** `POST /api/admin/discography/update.json` で保存します。保存前に `confirm()` あり。**tracks / insert / delete / Storage は未実装。**
+
+| 項目 | 内容 |
+| --- | --- |
+| エンドポイント | `POST /api/admin/discography/update.json` |
+| UI保存対象 | 選択中 `legacy_id` 1件のみ |
+| 許可フィールド | `title`, `artist`, `release_date`, `year`, `label`, `catalog_number`, `description`, `purchase_url`, `streaming_url`, `published`, `sort_order` |
+| 禁止フィールド | `legacy_id`, `cover_image_url`, `tracks`, `source_*`, `created_at`, `updated_at` |
+| tracks | **読取専用** — `discography_tracks` テーブルには触れない |
+| 認証 | browser localStorage の Supabase session → Bearer token |
+
+#### 検証
+
+```bash
+node tools/static-to-astro/scripts/verify-admin-discography-ui-save.mjs \
+  --astro-dir tools/static-to-astro/output/generated-astro \
+  --legacy-id discography-001 \
+  --report tools/static-to-astro/output/rls/gosaki/ADMIN_DISCOGRAPHY_UI_SAVE_VERIFY_REPORT.md
+```
+
+Playwright で UI click E2E → 一時更新 → **cleanup で元の全フィールドに復元**。`discography_tracks` 不変・件数不変を確認。`--no-browser` で API fallback 可。
+
+出力: `output/rls/gosaki/ADMIN_DISCOGRAPHY_UI_SAVE_VERIFY_REPORT.md`
+
+---
+
 ## Phase 2-F: SEO 公開準備（site / robots / sitemap）
 
 `--base-url` **指定時のみ** 以下を生成します。未指定時は sitemap 連携・robots.txt は行いません（レポートに記録）。

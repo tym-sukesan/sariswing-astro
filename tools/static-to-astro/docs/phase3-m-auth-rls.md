@@ -133,8 +133,48 @@ node tools/static-to-astro/scripts/generate-rls-draft.mjs \
 
 7. `rls-verify.sql` を実行して RLS / policy / 件数を確認
 8. Phase 3-N: anon key クライアントで published のみ読めることを検証（`verify-anon-rls.mjs --apply`）
+9. Phase 3-O: Auth admin bootstrap（`bootstrap-admin-user.mjs --apply`）
 
 **注意:** Phase 3-N 初回検証で、policy 適用後も `GRANT SELECT` 未設定のため `permission denied for table schedules` が発生しました。以降は `rls-draft.sql` に GRANT を含めるため、新規 staging 適用時は SQL Editor で GRANT を別途実行する必要はありません（既存 staging は手動 GRANT 済み）。
+
+---
+
+## Phase 3-O: Auth user bootstrap + admin_users 登録
+
+staging 上で管理者 Auth ユーザーを作成（または既存再利用）し、`admin_users` に upsert します。`is_admin()` が true になることを CLI で検証します。
+
+### 実行
+
+```bash
+node tools/static-to-astro/scripts/bootstrap-admin-user.mjs \
+  --email admin@example.com \
+  --report tools/static-to-astro/output/rls/gosaki/ADMIN_USER_BOOTSTRAP_REPORT.md
+
+# apply — staging のみ
+node tools/static-to-astro/scripts/bootstrap-admin-user.mjs \
+  --email admin@example.com \
+  --report tools/static-to-astro/output/rls/gosaki/ADMIN_USER_BOOTSTRAP_REPORT.md \
+  --apply
+```
+
+### パスワード
+
+- **推奨:** `.env.local` の `SUPABASE_ADMIN_PASSWORD`（Git に含めない）
+- `--password` も可だがシェル履歴に残るため非推奨
+- 既存 Auth ユーザー再利用時はパスワードを変更しない
+
+### 安全
+
+- CMS テーブル（schedule / discography 等）への insert/update/delete **禁止**
+- service role / anon key / password / access token をログ・レポートに出力しない
+- 既存 Auth ユーザーを削除しない
+- Admin UI 保存は Phase 3-O では有効化しない
+
+### 検証
+
+- service role: `admin_users` 行・`role=admin`・`user_id` 一致
+- anon client: `signInWithPassword`（新規ユーザーまたはパスワード既知時）
+- RPC: ログイン後 `is_admin()`（既存ユーザー再利用で sign-in スキップ時は次フェーズで API route から検証）
 
 ---
 

@@ -857,6 +857,42 @@ node tools/static-to-astro/scripts/verify-anon-rls.mjs \
 
 ---
 
+### Phase 3-O: Auth user bootstrap + admin_users 登録
+
+staging で管理者 Auth ユーザーを作成（または既存再利用）し、`admin_users` に登録します。**Admin UI 保存はまだ無効**。**CMS テーブルには書き込みません。**
+
+| 項目 | 内容 |
+| --- | --- |
+| デフォルト | dry-run（読取のみ） |
+| `--apply` | Auth ユーザー作成/再利用 + `admin_users` upsert |
+| 書込対象 | Auth + `admin_users` のみ |
+| CMS テーブル | **変更なし** |
+| 既存 Auth ユーザー | 削除しない・パスワード変更しない |
+
+#### 実行
+
+```bash
+# dry-run
+node tools/static-to-astro/scripts/bootstrap-admin-user.mjs \
+  --email your-admin@example.com \
+  --report tools/static-to-astro/output/rls/gosaki/ADMIN_USER_BOOTSTRAP_REPORT.md
+
+# apply（staging のみ — 本番では実行しない）
+# パスワードは .env.local の SUPABASE_ADMIN_PASSWORD 推奨（シェル履歴に残さない）
+node tools/static-to-astro/scripts/bootstrap-admin-user.mjs \
+  --email your-admin@example.com \
+  --report tools/static-to-astro/output/rls/gosaki/ADMIN_USER_BOOTSTRAP_REPORT.md \
+  --apply
+```
+
+`.env.local`: `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `SUPABASE_ANON_KEY`（apply 時）, `SUPABASE_ADMIN_PASSWORD`（新規ユーザー時推奨）。
+
+**service role key** は Auth 作成・`admin_users` 登録のみ。**password / token / key はログ出力しません。**
+
+出力: `output/rls/gosaki/ADMIN_USER_BOOTSTRAP_REPORT.md`
+
+---
+
 ## Phase 2-F: SEO 公開準備（site / robots / sitemap）
 
 `--base-url` **指定時のみ** 以下を生成します。未指定時は sitemap 連携・robots.txt は行いません（レポートに記録）。

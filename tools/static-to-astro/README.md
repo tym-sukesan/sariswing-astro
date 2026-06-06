@@ -40,8 +40,9 @@ URL → 静的 HTML → Astro → CMS → デプロイ
 | 3-J | Staging Supabase seed insert（dry-run / --apply） | 完了 |
 | 3-K | Supabase → Astro JSON export + build 確認 | 完了 |
 | 3-L | Admin UI Supabase read-only 接続 | 完了 |
-| 3-M | Auth / RLS SQL draft 生成 | 進行中 |
-| 3-N+ | RLS staging 適用・Admin save | 予定 |
+| 3-M | Auth / RLS SQL draft 生成 | 完了 |
+| 3-N | RLS staging 適用・anon 公開読取検証 | 進行中 |
+| 3-O+ | Admin save・Auth bootstrap | 予定 |
 
 ## ディレクトリ構成
 
@@ -64,6 +65,7 @@ tools/static-to-astro/
 │   ├── export-supabase-json.mjs
 │   ├── verify-admin-supabase-read.mjs
 │   ├── generate-rls-draft.mjs
+│   ├── verify-anon-rls.mjs
 │   ├── analyze-visual-diff.mjs
 │   ├── convert-static-to-astro.mjs
 │   ├── visual-diff.mjs
@@ -79,6 +81,7 @@ tools/static-to-astro/
 │       ├── supabase-seed-inserter.mjs
 │       ├── supabase-json-exporter.mjs
 │       ├── rls-draft-generator.mjs
+│       ├── anon-rls-verifier.mjs
 │       ├── visual-diff-analysis.mjs
 │       ├── visual-diff-runner.mjs
 │       └── ...
@@ -785,6 +788,7 @@ CMS テーブル向け **Auth / RLS policy draft** を生成します。**Supaba
 | --- | --- |
 | 管理者モデル（推奨候補） | `admin_users` テーブル + `is_admin()` |
 | Public read | `published = true`（tracks は親 discography も published） |
+| Table GRANT | `GRANT SELECT` on CMS tables to anon / authenticated（policy とセット必須） |
 | Admin write | `is_admin()` で CMS テーブル CRUD（draft のみ） |
 | Admin UI 保存 | **まだ無効** |
 | service role | RLS バイパス — ブラウザに出さない |
@@ -800,11 +804,11 @@ node tools/static-to-astro/scripts/generate-rls-draft.mjs \
 
 | ファイル | 内容 |
 | --- | --- |
-| `rls-draft.sql` | `admin_users`, `is_admin()`, RLS enable, policies |
+| `rls-draft.sql` | `admin_users`, `is_admin()`, GRANT SELECT, RLS enable, policies |
 | `rls-verify.sql` | 適用後確認 SQL |
 | `RLS_IMPLEMENTATION_REPORT.md` | 概要・安全スキャン・次ステップ |
 
-詳細: `docs/phase3-m-auth-rls.md`
+**GRANT SELECT:** RLS policy だけでは Data API 経由の anon `select` が `permission denied for table` になる場合があります。public read には **GRANT + policy の両方**が必要です。`service_role` は RLS バイパス、`anon` / `authenticated` は grant + policy がセットです。詳細: `docs/phase3-m-auth-rls.md`
 
 #### 危険 SQL チェック（生成後）
 
@@ -817,9 +821,39 @@ grep -Ei "drop table|drop schema|truncate|delete from" \
 
 #### staging 適用（手動 — Phase 3-M では実行しない）
 
-1. `rls-draft.sql` を staging SQL Editor で実行
+1. `rls-draft.sql` を staging SQL Editor で実行（**GRANT SELECT 含む**）
 2. Auth ユーザー作成 → service role で `admin_users` に 1 行 insert
 3. `rls-verify.sql` で確認
+
+### Phase 3-N continued: anon 公開読取 RLS 検証
+
+staging で RLS 適用後、**anon / publishable key** が `published = true` の行のみ読めることを検証します。テスト行は `rls-test-*` のみ作成・削除します。
+
+**前提:** `rls-draft.sql` の **GRANT SELECT** が適用済みであること。policy のみだと `permission denied for table schedules` となる（Phase 3-N 初回で確認済み）。`rls-draft.sql` 再生成後は GRANT も同ファイルに含まれます。
+
+| 項目 | 内容 |
+| --- | --- |
+| デフォルト | dry-run（読取のみ、書込なし） |
+| `--apply` | service role でテスト行作成 → anon 検証 → cleanup |
+| 既存 seed | **変更・削除しない** |
+| 削除対象 | `rls-test-*` のみ |
+
+#### 実行
+
+```bash
+# dry-run
+node tools/static-to-astro/scripts/verify-anon-rls.mjs \
+  --report tools/static-to-astro/output/rls/gosaki/ANON_RLS_VERIFY_REPORT.md
+
+# apply（staging のみ — 本番では実行しない）
+node tools/static-to-astro/scripts/verify-anon-rls.mjs \
+  --report tools/static-to-astro/output/rls/gosaki/ANON_RLS_VERIFY_REPORT.md \
+  --apply
+```
+
+`.env.local` に `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `SUPABASE_ANON_KEY`（`sb_publishable_...` 可）が必要です。**キーはログ出力しません。**
+
+出力: `output/rls/gosaki/ANON_RLS_VERIFY_REPORT.md`
 
 ---
 

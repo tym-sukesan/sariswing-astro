@@ -28,6 +28,27 @@ Phase 3-M では **SQL 生成のみ** 行います。Supabase への自動接続
 - `schedule_months`, `schedules`, `discography`: `published = true`
 - `discography_tracks`: 親 `discography.legacy_id` が `published = true` の行のみ
 
+### GRANT SELECT（public read に必須）
+
+RLS policy だけを適用しても、Supabase Data API（PostgREST）経由の anon `select` が通らない場合があります。`permission denied for table <name>` となる典型例です。
+
+**public read policy を機能させるには、対象テーブルへの `SELECT` grant が policy とセットで必要**です。
+
+| ロール | RLS | テーブル GRANT |
+| --- | --- | --- |
+| **service_role** | バイパス | 不要（RLS バイパス） |
+| **anon / authenticated** | policy で行フィルタ | **`GRANT SELECT` 必須** |
+
+`rls-draft.sql` セクション 3 に以下を含めます（Phase 3-N 検証で staging 手動適用済み）:
+
+```sql
+GRANT USAGE ON SCHEMA public TO anon, authenticated;
+GRANT SELECT ON public.schedule_months, public.schedules,
+  public.discography, public.discography_tracks TO anon, authenticated;
+```
+
+`admin_users` への public `SELECT` grant は付与しません（管理者のみ参照）。
+
 ### Admin write
 
 - `is_admin()` が true の authenticated ユーザーのみ CMS テーブルを CRUD 可能
@@ -90,7 +111,7 @@ node tools/static-to-astro/scripts/generate-rls-draft.mjs \
 
 | ファイル | 内容 |
 | --- | --- |
-| `rls-draft.sql` | `admin_users`, `is_admin()`, RLS enable, policies |
+| `rls-draft.sql` | `admin_users`, `is_admin()`, GRANT SELECT, RLS enable, policies |
 | `rls-verify.sql` | 適用後確認 SQL |
 | `RLS_IMPLEMENTATION_REPORT.md` | 概要・安全チェック・次フェーズ |
 
@@ -101,7 +122,7 @@ node tools/static-to-astro/scripts/generate-rls-draft.mjs \
 1. **staging のみ** — 本番 Supabase には適用しない
 2. Phase 3-J で `schema-draft.sql` 適用・seed 投入済みであることを確認
 3. `rls-draft.sql` を全文レビュー（`DROP TABLE` 等が無いこと）
-4. staging Supabase **SQL Editor** で `rls-draft.sql` を実行
+4. staging Supabase **SQL Editor** で `rls-draft.sql` を実行（**GRANT SELECT 含む** — policy のみでは anon read 不可）
 5. Supabase Auth で管理者ユーザーを作成（Dashboard）
 6. service role セッションで初回 admin を登録:
 
@@ -111,7 +132,9 @@ node tools/static-to-astro/scripts/generate-rls-draft.mjs \
    ```
 
 7. `rls-verify.sql` を実行して RLS / policy / 件数を確認
-8. Phase 3-N: anon key クライアントで published のみ読めることを検証
+8. Phase 3-N: anon key クライアントで published のみ読めることを検証（`verify-anon-rls.mjs --apply`）
+
+**注意:** Phase 3-N 初回検証で、policy 適用後も `GRANT SELECT` 未設定のため `permission denied for table schedules` が発生しました。以降は `rls-draft.sql` に GRANT を含めるため、新規 staging 適用時は SQL Editor で GRANT を別途実行する必要はありません（既存 staging は手動 GRANT 済み）。
 
 ---
 

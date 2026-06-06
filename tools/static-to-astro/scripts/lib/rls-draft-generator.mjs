@@ -22,6 +22,10 @@ export const RLS_DRAFT_SQL = `-- RLS / Auth draft (Phase 3-M)
 -- Admin write:  is_admin() via admin_users table (authenticated)
 -- Service role: bypasses RLS — CLI / server-side only, NEVER expose to browser
 --
+-- GRANT + policy: anon / authenticated need BOTH table SELECT grants AND RLS policies
+-- for Data API reads. RLS policies alone may still yield "permission denied for table".
+-- service_role bypasses RLS but anon / authenticated do not — grant + policy required.
+--
 -- Recommended admin model: admin_users table (see docs/phase3-m-auth-rls.md)
 -- Final decision: TBD — confirm with project owner before production apply.
 
@@ -66,7 +70,22 @@ revoke all on function public.is_admin() from public;
 grant execute on function public.is_admin() to authenticated;
 
 -- ---------------------------------------------------------------------------
--- 3. Enable RLS
+-- 3. Table privileges for public read (anon / authenticated)
+-- ---------------------------------------------------------------------------
+-- RLS policies alone do not grant table access via Supabase Data API / PostgREST.
+-- Without SELECT grants, anon clients get "permission denied for table <name>".
+-- Public read policies require BOTH:
+--   1. GRANT SELECT on the target tables (this section)
+--   2. RLS policies with published = true (section 5)
+-- service_role bypasses RLS; anon / authenticated need grant + policy together.
+grant usage on schema public to anon, authenticated;
+grant select on public.schedule_months to anon, authenticated;
+grant select on public.schedules to anon, authenticated;
+grant select on public.discography to anon, authenticated;
+grant select on public.discography_tracks to anon, authenticated;
+
+-- ---------------------------------------------------------------------------
+-- 4. Enable RLS
 -- ---------------------------------------------------------------------------
 alter table public.schedule_months enable row level security;
 alter table public.schedules enable row level security;
@@ -75,7 +94,7 @@ alter table public.discography_tracks enable row level security;
 alter table public.admin_users enable row level security;
 
 -- ---------------------------------------------------------------------------
--- 4. Public read policies (published rows only)
+-- 5. Public read policies (published rows only)
 -- ---------------------------------------------------------------------------
 
 -- schedule_months
@@ -118,7 +137,7 @@ create policy "discography_tracks_public_select"
   );
 
 -- ---------------------------------------------------------------------------
--- 5. Admin policies (full CRUD on CMS tables)
+-- 6. Admin policies (full CRUD on CMS tables)
 -- ---------------------------------------------------------------------------
 
 -- schedule_months
@@ -158,7 +177,7 @@ create policy "discography_tracks_admin_all"
   with check (public.is_admin());
 
 -- ---------------------------------------------------------------------------
--- 6. admin_users policies
+-- 7. admin_users policies
 -- ---------------------------------------------------------------------------
 -- Bootstrap: insert first admin via SQL Editor (service role bypasses RLS), e.g.:
 --   insert into public.admin_users (user_id, email, role)
@@ -353,6 +372,17 @@ export function formatRlsImplementationReport({ outDir, dangerousScan }) {
     "| discography | `published = true` | ALL |",
     "| discography_tracks | parent `discography.published = true` | ALL |",
     "| admin_users | — | SELECT/INSERT/UPDATE/DELETE for admins only |",
+    "",
+    "## Table privileges (GRANT SELECT)",
+    "",
+    "anon / authenticated public read requires **both** `GRANT SELECT` on CMS tables and RLS policies.",
+    "RLS policies alone may still return `permission denied for table` via Data API.",
+    "service_role bypasses RLS; anon / authenticated need grant + policy.",
+    "",
+    "Included in `rls-draft.sql` section 3:",
+    "",
+    "- `GRANT USAGE ON SCHEMA public TO anon, authenticated`",
+    "- `GRANT SELECT` on `schedule_months`, `schedules`, `discography`, `discography_tracks`",
     "",
     "## Security notes",
     "",

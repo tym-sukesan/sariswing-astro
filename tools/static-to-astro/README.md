@@ -920,6 +920,34 @@ node tools/static-to-astro/scripts/verify-admin-api-auth.mjs \
 
 ---
 
+### Phase 3-P-B: Schedule 1件 update API
+
+`POST /api/admin/schedules/update.json` で **`legacy_id` 指定の1件だけ** `schedules` を update します。insert / delete / upsert / 一括更新は**禁止**。**Admin UI 保存ボタンは disabled のまま**（案A）。
+
+| 項目 | 内容 |
+| --- | --- |
+| エンドポイント | `POST /api/admin/schedules/update.json` |
+| 認証 | `Authorization: Bearer <access_token>` 必須 |
+| 未ログイン | HTTP 401 `error: unauthenticated` |
+| 非 admin | HTTP 403 `error: forbidden` |
+| 許可フィールド | `title`, `venue`, `published`, …（最小: title/venue/published） |
+| 禁止フィールド | `legacy_id`, `date`, `month`, `source_*`, `image_url`, … |
+
+#### 検証
+
+```bash
+node tools/static-to-astro/scripts/verify-admin-schedule-update.mjs \
+  --astro-dir tools/static-to-astro/output/generated-astro \
+  --legacy-id schedule-2026-03-011 \
+  --report tools/static-to-astro/output/rls/gosaki/ADMIN_SCHEDULE_UPDATE_VERIFY_REPORT.md
+```
+
+検証 CLI は **1件だけ一時更新 → cleanup で元の title/venue/published に復元** します。件数変化なし・key leak scan 実施。
+
+出力: `output/rls/gosaki/ADMIN_SCHEDULE_UPDATE_VERIFY_REPORT.md`
+
+---
+
 ## Phase 2-F: SEO 公開準備（site / robots / sitemap）
 
 `--base-url` **指定時のみ** 以下を生成します。未指定時は sitemap 連携・robots.txt は行いません（レポートに記録）。

@@ -1002,6 +1002,34 @@ Playwright で UI click E2E → 拡張フィールドを一時更新 → **clean
 
 ---
 
+### Phase 3-P-E: Home featured 掲載数チェック（最大3件）
+
+Admin UI から Schedule を保存する際、`schedules.show_on_home = true` の件数が **最大3件** を超えないよう API で拒否します。設計上は **featured on home** モジュールの上限チェックとして整理しており、将来 `news.featured_on_home` / `events.show_on_home` などへ拡張可能です。**Discography / News 実装 / Storage は未実装。**
+
+| 項目 | 内容 |
+| --- | --- |
+| 定数 | `HOME_FEATURED_LIMIT = 3` |
+| 今回の対象 | `schedules.show_on_home` |
+| 将来の拡張 | `news.featured_on_home`, `events.show_on_home`, `works.featured_on_home` 等 |
+| 4件目の追加 | HTTP 400 `home_featured_limit_exceeded` |
+| 整合性 | `show_on_home = true` は `published = true` 必須 |
+| UI表示 | `Home featured: N / 3`、上限時の注意書き |
+
+#### 検証
+
+```bash
+node tools/static-to-astro/scripts/verify-admin-schedule-ui-save.mjs \
+  --astro-dir tools/static-to-astro/output/generated-astro \
+  --legacy-id schedule-2026-03-011 \
+  --report tools/static-to-astro/output/rls/gosaki/ADMIN_SCHEDULE_UI_SAVE_VERIFY_REPORT.md
+```
+
+通常 UI save → cleanup restore → **4件目掲載を API で拒否**（limit validation は API 経由）→ final home featured count = 3 を確認。
+
+出力: `output/rls/gosaki/ADMIN_SCHEDULE_UI_SAVE_VERIFY_REPORT.md`
+
+---
+
 ## Phase 2-F: SEO 公開準備（site / robots / sitemap）
 
 `--base-url` **指定時のみ** 以下を生成します。未指定時は sitemap 連携・robots.txt は行いません（レポートに記録）。

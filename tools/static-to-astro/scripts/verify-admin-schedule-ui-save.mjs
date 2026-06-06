@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Verify Admin schedule UI save (Phase 3-P-D).
+ * Verify Admin schedule UI save (Phase 3-P-E).
  *
  * Usage:
  *   node scripts/verify-admin-schedule-ui-save.mjs \
@@ -16,6 +16,7 @@ import { loadAdminApiEnv, resolveAdminEmailForVerify } from "./lib/admin-api-aut
 import {
   appendPhase3PCToConversionReport,
   appendPhase3PDToConversionReport,
+  appendPhase3PEToConversionReport,
   formatAdminScheduleUiSaveReport,
   runAdminScheduleUiSaveVerification,
 } from "./lib/admin-schedule-ui-save-verifier.mjs";
@@ -122,7 +123,7 @@ async function main() {
     process.exit(1);
   }
 
-  console.log("static-to-astro verify-admin-schedule-ui-save (Phase 3-P-D)");
+  console.log("static-to-astro verify-admin-schedule-ui-save (Phase 3-P-E)");
   console.log(`  Astro:     ${astroDir}`);
   console.log(`  Legacy id: ${opts.legacyId}`);
   console.log(`  Browser:   ${opts.noBrowser ? "no (--no-browser)" : "yes (Playwright)"}`);
@@ -168,10 +169,19 @@ async function main() {
     console.log(`Save status UI exists: ${result.saveStatusUiExists ? "yes" : "no"}`);
   }
   if (result.uiSave) {
-    console.log(`Admin UI save: ${result.uiSave.ok ? "success" : "failed"}${result.uiClickE2e ? "" : " (API fallback)"}`);
+    console.log(`Normal UI save: ${result.uiSave.ok ? "success" : "failed"}${result.uiClickE2e ? "" : " (API fallback)"}`);
   }
   if (result.expandedFieldsUpdate) {
     console.log(`Expanded fields update: ${result.expandedFieldsUpdate.ok ? "success" : "failed"}`);
+  }
+  if (result.homeFeaturedLimitValidation) {
+    const lv = result.homeFeaturedLimitValidation;
+    console.log(`Home featured count: ${lv.baselineHomeCount ?? "?"} / 3`);
+    console.log(`Home featured limit validation: ${lv.ok ? "PASS" : "FAIL"}${lv.mode === "api" ? " (API)" : ""}`);
+    console.log(`Attempted 4th home item: ${lv.rejected ? "rejected" : "not rejected"}`);
+  }
+  if (result.finalHomeFeaturedCount != null) {
+    console.log(`Final home featured count: ${result.finalHomeFeaturedCount}`);
   }
   if (result.cleanupRestore) {
     console.log(`Cleanup restore: ${result.cleanupRestore.ok ? "success" : "failed"}`);
@@ -205,6 +215,12 @@ async function main() {
   });
 
   appendPhase3PDToConversionReport(astroDir, {
+    passed: result.passed,
+    host: result.host,
+    legacyId: result.legacyId,
+  });
+
+  appendPhase3PEToConversionReport(astroDir, {
     passed: result.passed,
     host: result.host,
     legacyId: result.legacyId,

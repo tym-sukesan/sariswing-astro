@@ -1,5 +1,5 @@
 /**
- * Admin schedule UI save verification (Phase 3-P-C / 3-P-D).
+ * Admin schedule UI save verification (Phase 3-P-C / 3-P-D / 3-P-E).
  */
 
 import fs from "node:fs";
@@ -15,8 +15,11 @@ import {
 } from "./admin-api-auth-verifier.mjs";
 import {
   EXPECTED_SCHEDULE_COUNT,
+  HOME_FEATURED_LIMIT,
   SCHEDULE_SAVE_FIELDS,
+  countHomeFeaturedSchedules,
   fetchScheduleRow,
+  findNonHomeFeaturedLegacyId,
   countSchedules,
   postScheduleUpdate,
   scheduleRecordsEqual,
@@ -74,6 +77,79 @@ export function buildExpandedRestoreUpdates(original) {
     show_on_home: original.show_on_home,
     home_order: original.home_order,
     published: original.published,
+  };
+}
+
+/**
+ * Attempt to feature a 4th schedule on home; expect API rejection.
+ * @param {{ baseUrl: string, service: import('@supabase/supabase-js').SupabaseClient, accessToken: string, excludeLegacyId: string }} opts
+ */
+export async function runHomeFeaturedLimitValidation({
+  baseUrl,
+  service,
+  accessToken,
+  excludeLegacyId,
+}) {
+  const baselineHomeCount = await countHomeFeaturedSchedules(service);
+  const atLimit = baselineHomeCount === HOME_FEATURED_LIMIT;
+
+  const candidateLegacyId = await findNonHomeFeaturedLegacyId(service, excludeLegacyId);
+  if (!atLimit) {
+    return {
+      ok: false,
+      mode: "api",
+      baselineHomeCount,
+      expectedHomeCount: HOME_FEATURED_LIMIT,
+      atLimit,
+      candidateLegacyId,
+      rejected: false,
+      recordUnchanged: false,
+      finalHomeCount: baselineHomeCount,
+      error: `Expected ${HOME_FEATURED_LIMIT} home featured schedules, found ${baselineHomeCount}`,
+    };
+  }
+  if (!candidateLegacyId) {
+    return {
+      ok: false,
+      mode: "api",
+      baselineHomeCount,
+      expectedHomeCount: HOME_FEATURED_LIMIT,
+      atLimit,
+      candidateLegacyId: null,
+      rejected: false,
+      recordUnchanged: false,
+      finalHomeCount: baselineHomeCount,
+      error: "No published schedule with show_on_home=false found for limit test",
+    };
+  }
+
+  const beforeAttempt = await fetchScheduleRow(service, candidateLegacyId);
+  const attempt = await postScheduleUpdate(
+    baseUrl,
+    { legacy_id: candidateLegacyId, updates: { show_on_home: true } },
+    accessToken,
+  );
+  const afterAttempt = await fetchScheduleRow(service, candidateLegacyId);
+  const finalHomeCount = await countHomeFeaturedSchedules(service);
+
+  const rejected =
+    attempt.status === 400 &&
+    attempt.json?.ok === false &&
+    attempt.json?.error === "home_featured_limit_exceeded";
+  const recordUnchanged = scheduleRecordsEqual(beforeAttempt, afterAttempt);
+
+  return {
+    ok: rejected && recordUnchanged && finalHomeCount === HOME_FEATURED_LIMIT,
+    mode: "api",
+    baselineHomeCount,
+    expectedHomeCount: HOME_FEATURED_LIMIT,
+    atLimit,
+    candidateLegacyId,
+    rejected,
+    rejectionStatus: attempt.status,
+    rejectionError: attempt.json?.error ?? null,
+    recordUnchanged,
+    finalHomeCount,
   };
 }
 
@@ -177,6 +253,8 @@ export async function runAdminScheduleUiSaveVerification({
     saveStatusUiExists: false,
     uiSave: null,
     expandedFieldsUpdate: null,
+    homeFeaturedLimitValidation: null,
+    homeFeaturedDisplayExists: false,
     uiClickE2e: false,
     cleanupRestore: null,
     finalRecordEqualsOriginal: null,
@@ -236,6 +314,9 @@ export async function runAdminScheduleUiSaveVerification({
       pageRes.html.includes('id="save-status"') &&
       pageRes.html.includes('id="save-status-text"');
     result.uiSaveAvailability = result.saveButtonExists && result.saveStatusUiExists;
+    result.homeFeaturedDisplayExists =
+      pageRes.html.includes('id="home-featured-count"') &&
+      pageRes.html.includes(` / ${HOME_FEATURED_LIMIT}`);
 
     const { accessToken, refreshToken, client } = await signInAdminUser({
       supabaseUrl: env.supabaseUrl,
@@ -326,25 +407,42 @@ export async function runAdminScheduleUiSaveVerification({
     result.finalCounts = { schedules: await countSchedules(service) };
     result.countsUnchanged = result.finalCounts.schedules === baselineCount;
 
+    if (!result.cleanupRestore.ok || !result.finalRecordEqualsOriginal) {
+      result.errors.push("Cleanup restore failed — schedule not restored");
+    }
+
+    result.homeFeaturedLimitValidation = await runHomeFeaturedLimitValidation({
+      baseUrl,
+      service,
+      accessToken,
+      excludeLegacyId: legacyId,
+    });
+    if (result.homeFeaturedLimitValidation.error) {
+      result.errors.push(result.homeFeaturedLimitValidation.error);
+    }
+    if (!result.homeFeaturedLimitValidation.ok) {
+      result.errors.push("Home featured limit validation failed");
+    }
+
+    result.finalHomeFeaturedCount = result.homeFeaturedLimitValidation.finalHomeCount;
+
     const secrets = [env.serviceRoleKey, env.adminPassword, accessToken, refreshToken].filter(
       Boolean,
     );
     const hits = scanDirForSecrets(path.join(astroDir, "dist"), secrets);
     result.keyLeakScan = { ok: hits.length === 0, hitCount: hits.length };
 
-    if (!result.cleanupRestore.ok || !result.finalRecordEqualsOriginal) {
-      result.errors.push("Cleanup restore failed — schedule not restored");
-    }
-
     result.passed =
       result.build.ok &&
       result.pageCheck.ok &&
       result.uiSaveAvailability &&
+      result.homeFeaturedDisplayExists &&
       result.uiSave?.ok &&
       result.expandedFieldsUpdate?.ok &&
       result.cleanupRestore.ok &&
       result.finalRecordEqualsOriginal === true &&
       result.countsUnchanged === true &&
+      result.homeFeaturedLimitValidation?.ok &&
       result.keyLeakScan.ok;
 
     return result;
@@ -384,7 +482,7 @@ export function formatAdminScheduleUiSaveReport({ reportPath, result, elapsedMs 
     "# ADMIN_SCHEDULE_UI_SAVE_VERIFY_REPORT",
     "",
     `Generated at: ${new Date().toISOString()}`,
-    "Mode: **verify (Phase 3-P-D)**",
+    "Mode: **verify (Phase 3-P-E)**",
     `Supabase host: \`${result.host}\``,
     `Target legacy_id: \`${result.legacyId}\``,
     `Admin email: \`${result.email}\``,
@@ -392,7 +490,8 @@ export function formatAdminScheduleUiSaveReport({ reportPath, result, elapsedMs 
     "",
     "## Phase",
     "",
-    "Phase **3-P-D**: Schedule save fields extended beyond title/venue/published.",
+    "Phase **3-P-E**: Home featured limit check added (`HOME_FEATURED_LIMIT = 3`).",
+    "Target field: `schedules.show_on_home`. Concept generalizes to future modules such as `news.featured_on_home`.",
     "",
     "## Allowed save fields",
     "",
@@ -422,13 +521,14 @@ export function formatAdminScheduleUiSaveReport({ reportPath, result, elapsedMs 
       `- Save button exists: ${result.saveButtonExists ? "yes" : "no"}`,
       `- Save status UI exists: ${result.saveStatusUiExists ? "yes" : "no"}`,
       `- UI save availability: ${result.uiSaveAvailability ? "yes" : "no"}`,
+      `- Home featured count display: ${result.homeFeaturedDisplayExists ? "yes" : "no"}`,
       "",
     );
   }
 
   if (result.uiSave) {
     lines.push(
-      "## Admin UI save",
+      "## Normal UI save",
       "",
       `- UI click E2E: ${result.uiClickE2e ? "yes (Playwright)" : "no (--no-browser / API fallback)"}`,
       `- Selected legacy_id: \`${result.legacyId}\``,
@@ -456,6 +556,25 @@ export function formatAdminScheduleUiSaveReport({ reportPath, result, elapsedMs 
     lines.push("");
   }
 
+  if (result.homeFeaturedLimitValidation) {
+    const lv = result.homeFeaturedLimitValidation;
+    lines.push(
+      "## Home featured limit validation",
+      "",
+      `- HOME_FEATURED_LIMIT: ${HOME_FEATURED_LIMIT}`,
+      `- Target field: \`schedules.show_on_home\``,
+      `- Mode: ${lv.mode === "api" ? "API (limit rejection test)" : lv.mode}`,
+      `- Baseline home featured count: ${lv.baselineHomeCount} / ${HOME_FEATURED_LIMIT}`,
+      `- At limit before test: ${lv.atLimit ? "yes" : "no"}`,
+      `- Candidate legacy_id: \`${lv.candidateLegacyId ?? "none"}\``,
+      `- Attempted 4th home item rejected: ${lv.rejected ? "yes" : "no"}`,
+      `- Record unchanged after rejection: ${lv.recordUnchanged ? "yes" : "no"}`,
+      `- Result: ${lv.ok ? "PASS" : "FAIL"}`,
+      `- Final home featured count: ${lv.finalHomeCount}`,
+      "",
+    );
+  }
+
   if (result.cleanupRestore) {
     lines.push(
       "## Cleanup restore",
@@ -471,6 +590,7 @@ export function formatAdminScheduleUiSaveReport({ reportPath, result, elapsedMs 
       "## Final counts",
       "",
       `- schedules: ${result.finalCounts.schedules} (expected ${EXPECTED_SCHEDULE_COUNT})`,
+      `- home featured: ${result.finalHomeFeaturedCount ?? "n/a"} (expected ${HOME_FEATURED_LIMIT})`,
       `- Counts unchanged: ${result.countsUnchanged ? "yes" : "no"}`,
       "",
     );
@@ -491,7 +611,7 @@ export function formatAdminScheduleUiSaveReport({ reportPath, result, elapsedMs 
     "",
     "- insert / delete / upsert: **none**",
     "- update scope: **single row by legacy_id only**",
-    "- Home note: max 3 home items planned; overflow check deferred to Phase 3-P-E",
+    `- Home featured limit: **${HOME_FEATURED_LIMIT}** (\`schedules.show_on_home\`; extensible to other featured-on-home modules)`,
     "- tokens / keys / passwords: **not logged or displayed**",
     "",
     "## Overall",
@@ -511,8 +631,8 @@ export function formatAdminScheduleUiSaveReport({ reportPath, result, elapsedMs 
   lines.push(
     "## Next phases",
     "",
-    "- Phase 3-P-E: Home 掲載数チェック（最大3件）",
     "- Phase 3-P-F: Discography update API + UI save",
+    "- Phase 3-P-G: News featured-on-home module (future)",
     "- Phase 3-Q: Production deploy review",
     "",
     "---",
@@ -577,6 +697,37 @@ export function appendPhase3PDToConversionReport(astroDir, summary) {
 
   let content = fs.readFileSync(reportPath, "utf8");
   const marker = "## Admin schedule UI save — expanded fields (Phase 3-P-D)";
+  if (content.includes(marker)) {
+    content = `${content.split(marker)[0].trimEnd()}${block}`;
+  } else {
+    content = `${content.trimEnd()}${block}`;
+  }
+  fs.writeFileSync(reportPath, content, "utf8");
+}
+
+/**
+ * @param {string} astroDir
+ * @param {{ passed: boolean, host: string, legacyId: string }} summary
+ */
+export function appendPhase3PEToConversionReport(astroDir, summary) {
+  const reportPath = path.join(path.resolve(astroDir), "CONVERSION_REPORT.md");
+  if (!fs.existsSync(reportPath)) return;
+
+  const block = [
+    "",
+    "## Admin schedule home featured limit (Phase 3-P-E)",
+    "",
+    `- **Target:** \`${summary.legacyId}\``,
+    `- **Host:** \`${summary.host}\``,
+    `- **Result:** ${summary.passed ? "PASS" : "FAIL"}`,
+    `- **Limit:** HOME_FEATURED_LIMIT = 3 (\`schedules.show_on_home\`)`,
+    `- **Concept:** featured-on-home module (extensible to news/events/works)`,
+    `- **Report:** \`tools/static-to-astro/output/rls/gosaki/ADMIN_SCHEDULE_UI_SAVE_VERIFY_REPORT.md\``,
+    "",
+  ].join("\n");
+
+  let content = fs.readFileSync(reportPath, "utf8");
+  const marker = "## Admin schedule home featured limit (Phase 3-P-E)";
   if (content.includes(marker)) {
     content = `${content.split(marker)[0].trimEnd()}${block}`;
   } else {

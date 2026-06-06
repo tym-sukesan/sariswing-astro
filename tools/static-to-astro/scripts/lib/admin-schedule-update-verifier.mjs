@@ -16,6 +16,7 @@ import {
 
 export const SCHEDULE_UPDATE_ENDPOINT = "/api/admin/schedules/update.json";
 export const EXPECTED_SCHEDULE_COUNT = 60;
+export const HOME_FEATURED_LIMIT = 3;
 
 export const SCHEDULE_SAVE_FIELDS = [
   "title",
@@ -76,6 +77,39 @@ export async function countSchedules(service) {
   const { count, error } = await service.from("schedules").select("*", { count: "exact", head: true });
   if (error) throw new Error(`count schedules: ${error.message}`);
   return count ?? 0;
+}
+
+/**
+ * Count schedules with show_on_home = true (home featured module for schedules).
+ * @param {import('@supabase/supabase-js').SupabaseClient} service
+ */
+export async function countHomeFeaturedSchedules(service) {
+  const { count, error } = await service
+    .from("schedules")
+    .select("*", { count: "exact", head: true })
+    .eq("show_on_home", true);
+  if (error) throw new Error(`count home featured schedules: ${error.message}`);
+  return count ?? 0;
+}
+
+/**
+ * Pick one schedule not currently featured on home.
+ * @param {import('@supabase/supabase-js').SupabaseClient} service
+ * @param {string} [excludeLegacyId]
+ */
+export async function findNonHomeFeaturedLegacyId(service, excludeLegacyId) {
+  let query = service
+    .from("schedules")
+    .select("legacy_id")
+    .eq("show_on_home", false)
+    .eq("published", true)
+    .limit(1);
+  if (excludeLegacyId) {
+    query = query.neq("legacy_id", excludeLegacyId);
+  }
+  const { data, error } = await query.maybeSingle();
+  if (error) throw new Error(`find non-home schedule: ${error.message}`);
+  return data?.legacy_id ?? null;
 }
 
 /**

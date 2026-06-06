@@ -39,8 +39,9 @@ URL → 静的 HTML → Astro → CMS → デプロイ
 | 3-I | CMS 仕様固定・実装計画 | 完了 |
 | 3-J | Staging Supabase seed insert（dry-run / --apply） | 完了 |
 | 3-K | Supabase → Astro JSON export + build 確認 | 完了 |
-| 3-L | Admin UI Supabase read-only 接続 | 進行中 |
-| 3-M+ | Admin save・Auth・RLS | 予定 |
+| 3-L | Admin UI Supabase read-only 接続 | 完了 |
+| 3-M | Auth / RLS SQL draft 生成 | 進行中 |
+| 3-N+ | RLS staging 適用・Admin save | 予定 |
 
 ## ディレクトリ構成
 
@@ -62,6 +63,7 @@ tools/static-to-astro/
 │   ├── insert-supabase-seed.mjs
 │   ├── export-supabase-json.mjs
 │   ├── verify-admin-supabase-read.mjs
+│   ├── generate-rls-draft.mjs
 │   ├── analyze-visual-diff.mjs
 │   ├── convert-static-to-astro.mjs
 │   ├── visual-diff.mjs
@@ -76,6 +78,7 @@ tools/static-to-astro/
 │       ├── seed-url-rewriter.mjs
 │       ├── supabase-seed-inserter.mjs
 │       ├── supabase-json-exporter.mjs
+│       ├── rls-draft-generator.mjs
 │       ├── visual-diff-analysis.mjs
 │       ├── visual-diff-runner.mjs
 │       └── ...
@@ -773,6 +776,50 @@ cd output/generated-astro && npm run build
 - `output/generated-astro/CONVERSION_REPORT.md`（Phase 3-L 追記）
 
 tooling 側（コミット可）: `scripts/verify-admin-supabase-read.mjs`, README
+
+### Phase 3-M: Auth / RLS SQL draft
+
+CMS テーブル向け **Auth / RLS policy draft** を生成します。**Supabase には接続・適用しません。** staging SQL Editor で人間がレビューしてから適用してください。
+
+| 項目 | 内容 |
+| --- | --- |
+| 管理者モデル（推奨候補） | `admin_users` テーブル + `is_admin()` |
+| Public read | `published = true`（tracks は親 discography も published） |
+| Admin write | `is_admin()` で CMS テーブル CRUD（draft のみ） |
+| Admin UI 保存 | **まだ無効** |
+| service role | RLS バイパス — ブラウザに出さない |
+
+#### 実行
+
+```bash
+node tools/static-to-astro/scripts/generate-rls-draft.mjs \
+  --out-dir tools/static-to-astro/output/rls/gosaki
+```
+
+#### 生成ファイル（`output/rls/gosaki/` — .gitignore）
+
+| ファイル | 内容 |
+| --- | --- |
+| `rls-draft.sql` | `admin_users`, `is_admin()`, RLS enable, policies |
+| `rls-verify.sql` | 適用後確認 SQL |
+| `RLS_IMPLEMENTATION_REPORT.md` | 概要・安全スキャン・次ステップ |
+
+詳細: `docs/phase3-m-auth-rls.md`
+
+#### 危険 SQL チェック（生成後）
+
+```bash
+grep -Ei "drop table|drop schema|truncate|delete from" \
+  tools/static-to-astro/output/rls/gosaki/rls-draft.sql
+```
+
+`drop policy if exists` のみ OK。`DROP TABLE` / `TRUNCATE` / `DELETE FROM` は含めません。
+
+#### staging 適用（手動 — Phase 3-M では実行しない）
+
+1. `rls-draft.sql` を staging SQL Editor で実行
+2. Auth ユーザー作成 → service role で `admin_users` に 1 行 insert
+3. `rls-verify.sql` で確認
 
 ---
 

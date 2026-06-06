@@ -948,6 +948,32 @@ node tools/static-to-astro/scripts/verify-admin-schedule-update.mjs \
 
 ---
 
+### Phase 3-P-C: Admin UI Schedule 1件 save
+
+`/admin/schedules/` から**選択中の1件だけ** `POST /api/admin/schedules/update.json` で保存します。保存前に `confirm()` あり。**Discography / insert / delete は未実装。**
+
+| 項目 | 内容 |
+| --- | --- |
+| UI保存対象 | 選択中 `legacy_id` 1件のみ |
+| 許可フィールド | `title`, `venue`, `published` |
+| 認証 | browser localStorage の Supabase session → Bearer token |
+| 保存ボタン | 未選択 / 未ログイン / 保存中は disabled |
+
+#### 検証
+
+```bash
+node tools/static-to-astro/scripts/verify-admin-schedule-ui-save.mjs \
+  --astro-dir tools/static-to-astro/output/generated-astro \
+  --legacy-id schedule-2026-03-011 \
+  --report tools/static-to-astro/output/rls/gosaki/ADMIN_SCHEDULE_UI_SAVE_VERIFY_REPORT.md
+```
+
+Playwright で UI click E2E → cleanup で元の title/venue/published に復元。`--no-browser` で API fallback 可。
+
+出力: `output/rls/gosaki/ADMIN_SCHEDULE_UI_SAVE_VERIFY_REPORT.md`
+
+---
+
 ## Phase 2-F: SEO 公開準備（site / robots / sitemap）
 
 `--base-url` **指定時のみ** 以下を生成します。未指定時は sitemap 連携・robots.txt は行いません（レポートに記録）。

@@ -893,6 +893,33 @@ node tools/static-to-astro/scripts/bootstrap-admin-user.mjs \
 
 ---
 
+### Phase 3-P-A: Admin API route 認証確認
+
+generated-astro に `GET /api/admin/me.json` を追加し、**Authorization: Bearer access_token** で admin 判定を返します。**保存 API は未実装**。**CMS / admin_users への書込なし。**
+
+| 項目 | 内容 |
+| --- | --- |
+| エンドポイント | `GET /api/admin/me.json` |
+| 認証 | `Authorization: Bearer <access_token>` |
+| service role | server-side のみ（`admin_users` 照会・`getUser(token)` 補助） |
+| Admin UI 保存 | **まだ無効** |
+
+#### 検証
+
+```bash
+node tools/static-to-astro/scripts/verify-admin-api-auth.mjs \
+  --astro-dir tools/static-to-astro/output/generated-astro \
+  --report tools/static-to-astro/output/rls/gosaki/ADMIN_API_AUTH_VERIFY_REPORT.md
+```
+
+`.env.local`: `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `SUPABASE_ANON_KEY`, `SUPABASE_ADMIN_PASSWORD`（必須）。email は `--email` / `SUPABASE_ADMIN_EMAIL` / git `user.email`。
+
+**key leak scan:** `dist/` に service role key / password / token が含まれないことを確認。**秘密値はログに出しません。**
+
+出力: `output/rls/gosaki/ADMIN_API_AUTH_VERIFY_REPORT.md`
+
+---
+
 ## Phase 2-F: SEO 公開準備（site / robots / sitemap）
 
 `--base-url` **指定時のみ** 以下を生成します。未指定時は sitemap 連携・robots.txt は行いません（レポートに記録）。

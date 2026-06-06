@@ -178,6 +178,30 @@ node tools/static-to-astro/scripts/bootstrap-admin-user.mjs \
 
 ---
 
+## Phase 3-P-A: Admin API route 認証確認
+
+`GET /api/admin/me.json` がログイン済みユーザーについて `admin: true/false` を返すことを確認します。保存処理は未実装です。
+
+### レスポンス例
+
+| 状態 | JSON |
+| --- | --- |
+| 未ログイン | `{ ok: true, authenticated: false, admin: false }` |
+| ログイン済み非admin | `{ ok: true, authenticated: true, admin: false, email }` |
+| admin | `{ ok: true, authenticated: true, admin: true, email }` |
+
+token / key / password はレスポンスに含めません。
+
+### 検証 CLI
+
+```bash
+node tools/static-to-astro/scripts/verify-admin-api-auth.mjs \
+  --astro-dir tools/static-to-astro/output/generated-astro \
+  --report tools/static-to-astro/output/rls/gosaki/ADMIN_API_AUTH_VERIFY_REPORT.md
+```
+
+---
+
 ## Rollback（staging のみ — 手動）
 
 本番では実行しない。draft 適用を取り消す場合の参考:

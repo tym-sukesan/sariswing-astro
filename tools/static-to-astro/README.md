@@ -1058,6 +1058,34 @@ Playwright で UI click E2E → 一時更新 → **cleanup で元の全フィー
 
 ---
 
+### Phase 3-P-G: Discography tracks update API + UI save
+
+`/admin/discography/` から**選択中 Discography の既存 tracks だけ** `POST /api/admin/discography/tracks/update.json` で保存します。**track 追加・削除・track_number 変更・discography 本体更新は禁止。**
+
+| 項目 | 内容 |
+| --- | --- |
+| エンドポイント | `POST /api/admin/discography/tracks/update.json` |
+| 識別キー | `discography_legacy_id` + `track_number` |
+| 許可フィールド | `title`, `sort_order`（各 track 内） |
+| 禁止 | insert / delete / upsert / track_number 変更 / discography 本体更新 |
+| UI | 「Tracksを保存」ボタン（Discography 本体保存と分離）、保存前 `confirm()` |
+| 認証 | browser localStorage の Supabase session → Bearer token |
+
+#### 検証
+
+```bash
+node tools/static-to-astro/scripts/verify-admin-discography-tracks-ui-save.mjs \
+  --astro-dir tools/static-to-astro/output/generated-astro \
+  --legacy-id discography-001 \
+  --report tools/static-to-astro/output/rls/gosaki/ADMIN_DISCOGRAPHY_TRACKS_UI_SAVE_VERIFY_REPORT.md
+```
+
+Playwright で tracks 1〜2件を一時更新 → **cleanup で元 tracks に復元**。discography 本体不変・tracks 件数不変を確認。`--no-browser` で API fallback 可。
+
+出力: `output/rls/gosaki/ADMIN_DISCOGRAPHY_TRACKS_UI_SAVE_VERIFY_REPORT.md`
+
+---
+
 ## Phase 2-F: SEO 公開準備（site / robots / sitemap）
 
 `--base-url` **指定時のみ** 以下を生成します。未指定時は sitemap 連携・robots.txt は行いません（レポートに記録）。

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Verify Admin schedule UI save (Phase 3-P-C).
+ * Verify Admin schedule UI save (Phase 3-P-D).
  *
  * Usage:
  *   node scripts/verify-admin-schedule-ui-save.mjs \
@@ -15,6 +15,7 @@ import { fileURLToPath } from "node:url";
 import { loadAdminApiEnv, resolveAdminEmailForVerify } from "./lib/admin-api-auth-verifier.mjs";
 import {
   appendPhase3PCToConversionReport,
+  appendPhase3PDToConversionReport,
   formatAdminScheduleUiSaveReport,
   runAdminScheduleUiSaveVerification,
 } from "./lib/admin-schedule-ui-save-verifier.mjs";
@@ -121,7 +122,7 @@ async function main() {
     process.exit(1);
   }
 
-  console.log("static-to-astro verify-admin-schedule-ui-save (Phase 3-P-C)");
+  console.log("static-to-astro verify-admin-schedule-ui-save (Phase 3-P-D)");
   console.log(`  Astro:     ${astroDir}`);
   console.log(`  Legacy id: ${opts.legacyId}`);
   console.log(`  Browser:   ${opts.noBrowser ? "no (--no-browser)" : "yes (Playwright)"}`);
@@ -169,6 +170,9 @@ async function main() {
   if (result.uiSave) {
     console.log(`Admin UI save: ${result.uiSave.ok ? "success" : "failed"}${result.uiClickE2e ? "" : " (API fallback)"}`);
   }
+  if (result.expandedFieldsUpdate) {
+    console.log(`Expanded fields update: ${result.expandedFieldsUpdate.ok ? "success" : "failed"}`);
+  }
   if (result.cleanupRestore) {
     console.log(`Cleanup restore: ${result.cleanupRestore.ok ? "success" : "failed"}`);
   }
@@ -195,6 +199,12 @@ async function main() {
   fs.writeFileSync(reportPath, report, "utf8");
 
   appendPhase3PCToConversionReport(astroDir, {
+    passed: result.passed,
+    host: result.host,
+    legacyId: result.legacyId,
+  });
+
+  appendPhase3PDToConversionReport(astroDir, {
     passed: result.passed,
     host: result.host,
     legacyId: result.legacyId,

@@ -17,17 +17,56 @@ import {
 export const SCHEDULE_UPDATE_ENDPOINT = "/api/admin/schedules/update.json";
 export const EXPECTED_SCHEDULE_COUNT = 60;
 
+export const SCHEDULE_SAVE_FIELDS = [
+  "title",
+  "venue",
+  "open_time",
+  "start_time",
+  "price",
+  "description",
+  "show_on_home",
+  "home_order",
+  "published",
+];
+
+const RECORD_SELECT =
+  "legacy_id,title,venue,open_time,start_time,price,description,show_on_home,home_order,published";
+
 /**
  * @param {import('@supabase/supabase-js').SupabaseClient} service
  */
 export async function fetchScheduleRow(service, legacyId) {
   const { data, error } = await service
     .from("schedules")
-    .select("legacy_id,title,venue,published")
+    .select(RECORD_SELECT)
     .eq("legacy_id", legacyId)
     .maybeSingle();
   if (error) throw new Error(`fetch schedule: ${error.message}`);
   return data;
+}
+
+export function scheduleRecordsEqual(a, b) {
+  if (!a || !b) return false;
+  for (const field of SCHEDULE_SAVE_FIELDS) {
+    const left = a[field];
+    const right = b[field];
+    if (field === "show_on_home" || field === "published") {
+      if (Boolean(left) !== Boolean(right)) return false;
+      continue;
+    }
+    if (field === "home_order") {
+      const ln = left == null || left === "" ? null : Number(left);
+      const rn = right == null || right === "" ? null : Number(right);
+      if (ln !== rn) return false;
+      continue;
+    }
+    if ((left ?? null) !== (right ?? null)) return false;
+  }
+  return true;
+}
+
+function recordsEqual(a, b) {
+  return scheduleRecordsEqual(a, b);
 }
 
 /**
@@ -65,11 +104,6 @@ export async function postScheduleUpdate(baseUrl, body, token) {
   }
 
   return { status: res.status, json };
-}
-
-function recordsEqual(a, b) {
-  if (!a || !b) return false;
-  return a.title === b.title && a.venue === b.venue && a.published === b.published;
 }
 
 /**

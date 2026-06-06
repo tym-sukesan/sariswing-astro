@@ -1,5 +1,5 @@
 /**
- * Admin schedule UI save verification (Phase 3-P-C).
+ * Admin schedule UI save verification (Phase 3-P-C / 3-P-D).
  */
 
 import fs from "node:fs";
@@ -15,12 +15,30 @@ import {
 } from "./admin-api-auth-verifier.mjs";
 import {
   EXPECTED_SCHEDULE_COUNT,
+  SCHEDULE_SAVE_FIELDS,
   fetchScheduleRow,
   countSchedules,
   postScheduleUpdate,
+  scheduleRecordsEqual,
 } from "./admin-schedule-update-verifier.mjs";
 
 export const ADMIN_SCHEDULES_PAGE = "/admin/schedules/";
+
+export const SCHEDULE_SAVE_ALLOWED_FIELDS = [...SCHEDULE_SAVE_FIELDS];
+
+export const SCHEDULE_SAVE_FORBIDDEN_FIELDS = [
+  "id",
+  "legacy_id",
+  "date",
+  "year",
+  "month",
+  "created_at",
+  "updated_at",
+  "source_file",
+  "source_route",
+  "image_url",
+  "home_image_url",
+];
 
 /**
  * @param {string} supabaseUrl
@@ -31,9 +49,32 @@ export function supabaseStorageKey(supabaseUrl) {
   return `sb-${ref}-auth-token`;
 }
 
-function recordsEqual(a, b) {
-  if (!a || !b) return false;
-  return a.title === b.title && a.venue === b.venue && a.published === b.published;
+export function buildExpandedTestUpdates(original) {
+  return {
+    title: `${original.title ?? ""} [UI SAVE TEST]`,
+    venue: `${original.venue ?? ""} [TEST]`,
+    open_time: "18:00",
+    start_time: "19:00",
+    price: "Test Charge 9999",
+    description: "UI save test description",
+    show_on_home: false,
+    home_order: 99,
+    published: original.published,
+  };
+}
+
+export function buildExpandedRestoreUpdates(original) {
+  return {
+    title: original.title,
+    venue: original.venue,
+    open_time: original.open_time,
+    start_time: original.start_time,
+    price: original.price,
+    description: original.description,
+    show_on_home: original.show_on_home,
+    home_order: original.home_order,
+    published: original.published,
+  };
 }
 
 /**
@@ -46,15 +87,14 @@ export async function fetchAdminSchedulesPage(baseUrl) {
 }
 
 /**
- * @param {{ baseUrl: string, env: object, email: string, legacyId: string, session: object, storageKey: string }} opts
+ * @param {{ baseUrl: string, legacyId: string, session: object, storageKey: string, testUpdates: object }} opts
  */
 export async function runPlaywrightUiSave({
   baseUrl,
-  env,
-  email,
   legacyId,
   session,
   storageKey,
+  testUpdates,
 }) {
   const { chromium } = await import("playwright");
 
@@ -81,16 +121,20 @@ export async function runPlaywrightUiSave({
 
     await page.locator(`#schedule-table tbody tr[data-id="${legacyId}"]`).click();
 
-    const original = await page.evaluate(() => ({
-      title: document.querySelector('input[name="title"]')?.value ?? "",
-      venue: document.querySelector('input[name="venue"]')?.value ?? "",
-    }));
+    await page.locator('input[name="title"]').fill(String(testUpdates.title ?? ""));
+    await page.locator('input[name="venue"]').fill(String(testUpdates.venue ?? ""));
+    await page.locator('input[name="open_time"]').fill(String(testUpdates.open_time ?? ""));
+    await page.locator('input[name="start_time"]').fill(String(testUpdates.start_time ?? ""));
+    await page.locator('input[name="price"]').fill(String(testUpdates.price ?? ""));
+    await page.locator('textarea[name="description"]').fill(String(testUpdates.description ?? ""));
+    await page.locator('input[name="show_on_home"]').setChecked(Boolean(testUpdates.show_on_home));
+    await page.locator('input[name="published"]').setChecked(Boolean(testUpdates.published));
 
-    const testTitle = `${original.title} [UI SAVE TEST]`;
-    const testVenue = `${original.venue} [TEST]`;
-
-    await page.locator('input[name="title"]').fill(testTitle);
-    await page.locator('input[name="venue"]').fill(testVenue);
+    if (testUpdates.home_order == null || testUpdates.home_order === "") {
+      await page.locator('input[name="home_order"]').fill("");
+    } else {
+      await page.locator('input[name="home_order"]').fill(String(testUpdates.home_order));
+    }
 
     await saveBtn.click();
     await page.waitForFunction(
@@ -103,8 +147,7 @@ export async function runPlaywrightUiSave({
     return {
       ok: statusText === "Saved",
       statusText,
-      testTitle,
-      testVenue,
+      testUpdates,
     };
   } finally {
     await browser.close();
@@ -133,6 +176,7 @@ export async function runAdminScheduleUiSaveVerification({
     saveButtonExists: false,
     saveStatusUiExists: false,
     uiSave: null,
+    expandedFieldsUpdate: null,
     uiClickE2e: false,
     cleanupRestore: null,
     finalRecordEqualsOriginal: null,
@@ -154,11 +198,13 @@ export async function runAdminScheduleUiSaveVerification({
 
   let original;
   let baselineCount;
+  const testUpdates = {};
 
   try {
     original = await fetchScheduleRow(service, legacyId);
     if (!original) throw new Error(`Target schedule not found: ${legacyId}`);
     baselineCount = await countSchedules(service);
+    Object.assign(testUpdates, buildExpandedTestUpdates(original));
   } catch (err) {
     result.errors.push(err.message);
     return result;
@@ -205,16 +251,16 @@ export async function runAdminScheduleUiSaveVerification({
     }
 
     const storageKey = supabaseStorageKey(env.supabaseUrl);
+    const expectedAfterSave = { ...original, ...testUpdates };
 
     if (useBrowser) {
       result.uiClickE2e = true;
       const uiResult = await runPlaywrightUiSave({
         baseUrl,
-        env,
-        email,
         legacyId,
         session,
         storageKey,
+        testUpdates,
       });
 
       result.uiSave = {
@@ -224,50 +270,59 @@ export async function runAdminScheduleUiSaveVerification({
       };
 
       const afterUiSave = await fetchScheduleRow(service, legacyId);
-      if (
-        !afterUiSave ||
-        afterUiSave.title !== uiResult.testTitle ||
-        afterUiSave.venue !== uiResult.testVenue
-      ) {
-        result.errors.push("Supabase record does not match UI save values");
+      const expandedOk = Boolean(afterUiSave) && scheduleRecordsEqual(afterUiSave, expectedAfterSave);
+      result.expandedFieldsUpdate = {
+        ok: expandedOk,
+        fields: SCHEDULE_SAVE_FIELDS,
+        testUpdates,
+      };
+
+      if (!expandedOk) {
+        result.errors.push("Supabase record does not match expanded UI save values");
         result.uiSave.ok = false;
       }
     } else {
       result.uiClickE2e = false;
-      const testTitle = `${original.title ?? ""} [UI SAVE TEST]`;
-      const testVenue = `${original.venue ?? ""} [TEST]`;
       const apiSave = await postScheduleUpdate(
         baseUrl,
-        { legacy_id: legacyId, updates: { title: testTitle, venue: testVenue } },
+        { legacy_id: legacyId, updates: testUpdates },
         accessToken,
       );
+      const afterApiSave = await fetchScheduleRow(service, legacyId);
+      const expandedOk =
+        apiSave.status === 200 &&
+        apiSave.json.ok === true &&
+        scheduleRecordsEqual(afterApiSave, expectedAfterSave);
+
       result.uiSave = {
-        ok: apiSave.status === 200 && apiSave.json.ok === true,
+        ok: expandedOk,
         mode: "api-fallback (--no-browser)",
         status: apiSave.status,
       };
+      result.expandedFieldsUpdate = {
+        ok: expandedOk,
+        fields: SCHEDULE_SAVE_FIELDS,
+        testUpdates,
+      };
     }
 
+    const restoreUpdates = buildExpandedRestoreUpdates(original);
     const restore = await postScheduleUpdate(
       baseUrl,
       {
         legacy_id: legacyId,
-        updates: {
-          title: original.title,
-          venue: original.venue,
-          published: original.published,
-        },
+        updates: restoreUpdates,
       },
       accessToken,
     );
 
     const afterRestore = await fetchScheduleRow(service, legacyId);
     result.cleanupRestore = {
-      ok: restore.status === 200 && restore.json.ok === true && recordsEqual(afterRestore, original),
+      ok: restore.status === 200 && restore.json.ok === true && scheduleRecordsEqual(afterRestore, original),
       status: restore.status,
     };
 
-    result.finalRecordEqualsOriginal = recordsEqual(afterRestore, original);
+    result.finalRecordEqualsOriginal = scheduleRecordsEqual(afterRestore, original);
     result.finalCounts = { schedules: await countSchedules(service) };
     result.countsUnchanged = result.finalCounts.schedules === baselineCount;
 
@@ -286,6 +341,7 @@ export async function runAdminScheduleUiSaveVerification({
       result.pageCheck.ok &&
       result.uiSaveAvailability &&
       result.uiSave?.ok &&
+      result.expandedFieldsUpdate?.ok &&
       result.cleanupRestore.ok &&
       result.finalRecordEqualsOriginal === true &&
       result.countsUnchanged === true &&
@@ -299,11 +355,7 @@ export async function runAdminScheduleUiSaveVerification({
         baseUrl,
         {
           legacy_id: legacyId,
-          updates: {
-            title: original.title,
-            venue: original.venue,
-            published: original.published,
-          },
+          updates: buildExpandedRestoreUpdates(original),
         },
         (
           await signInAdminUser({
@@ -332,11 +384,23 @@ export function formatAdminScheduleUiSaveReport({ reportPath, result, elapsedMs 
     "# ADMIN_SCHEDULE_UI_SAVE_VERIFY_REPORT",
     "",
     `Generated at: ${new Date().toISOString()}`,
-    "Mode: **verify**",
+    "Mode: **verify (Phase 3-P-D)**",
     `Supabase host: \`${result.host}\``,
     `Target legacy_id: \`${result.legacyId}\``,
     `Admin email: \`${result.email}\``,
     "Secrets: *(not logged)*",
+    "",
+    "## Phase",
+    "",
+    "Phase **3-P-D**: Schedule save fields extended beyond title/venue/published.",
+    "",
+    "## Allowed save fields",
+    "",
+    ...SCHEDULE_SAVE_ALLOWED_FIELDS.map((field) => `- \`${field}\``),
+    "",
+    "## Forbidden save fields",
+    "",
+    ...SCHEDULE_SAVE_FORBIDDEN_FIELDS.map((field) => `- \`${field}\``),
     "",
   ];
 
@@ -379,6 +443,19 @@ export function formatAdminScheduleUiSaveReport({ reportPath, result, elapsedMs 
     lines.push("");
   }
 
+  if (result.expandedFieldsUpdate) {
+    lines.push(
+      "## Expanded fields update",
+      "",
+      `- Result: ${result.expandedFieldsUpdate.ok ? "success" : "failed"}`,
+      "- Temporarily updated fields:",
+    );
+    for (const [key, value] of Object.entries(result.expandedFieldsUpdate.testUpdates ?? {})) {
+      lines.push(`  - \`${key}\`: ${JSON.stringify(value)}`);
+    }
+    lines.push("");
+  }
+
   if (result.cleanupRestore) {
     lines.push(
       "## Cleanup restore",
@@ -414,7 +491,7 @@ export function formatAdminScheduleUiSaveReport({ reportPath, result, elapsedMs 
     "",
     "- insert / delete / upsert: **none**",
     "- update scope: **single row by legacy_id only**",
-    "- UI save fields: title, venue, published only",
+    "- Home note: max 3 home items planned; overflow check deferred to Phase 3-P-E",
     "- tokens / keys / passwords: **not logged or displayed**",
     "",
     "## Overall",
@@ -434,7 +511,8 @@ export function formatAdminScheduleUiSaveReport({ reportPath, result, elapsedMs 
   lines.push(
     "## Next phases",
     "",
-    "- Phase 3-P-D: Discography update API + UI save",
+    "- Phase 3-P-E: Home 掲載数チェック（最大3件）",
+    "- Phase 3-P-F: Discography update API + UI save",
     "- Phase 3-Q: Production deploy review",
     "",
     "---",
@@ -468,6 +546,37 @@ export function appendPhase3PCToConversionReport(astroDir, summary) {
 
   let content = fs.readFileSync(reportPath, "utf8");
   const marker = "## Admin schedule UI save (Phase 3-P-C)";
+  if (content.includes(marker)) {
+    content = `${content.split(marker)[0].trimEnd()}${block}`;
+  } else {
+    content = `${content.trimEnd()}${block}`;
+  }
+  fs.writeFileSync(reportPath, content, "utf8");
+}
+
+/**
+ * @param {string} astroDir
+ * @param {{ passed: boolean, host: string, legacyId: string }} summary
+ */
+export function appendPhase3PDToConversionReport(astroDir, summary) {
+  const reportPath = path.join(path.resolve(astroDir), "CONVERSION_REPORT.md");
+  if (!fs.existsSync(reportPath)) return;
+
+  const block = [
+    "",
+    "## Admin schedule UI save — expanded fields (Phase 3-P-D)",
+    "",
+    `- **Target:** \`${summary.legacyId}\``,
+    `- **Host:** \`${summary.host}\``,
+    `- **Result:** ${summary.passed ? "PASS" : "FAIL"}`,
+    `- **Scope:** selected row only; title, venue, open_time, start_time, price, description, show_on_home, home_order, published`,
+    `- **Home note:** max 3 home items planned; overflow check in Phase 3-P-E`,
+    `- **Report:** \`tools/static-to-astro/output/rls/gosaki/ADMIN_SCHEDULE_UI_SAVE_VERIFY_REPORT.md\``,
+    "",
+  ].join("\n");
+
+  let content = fs.readFileSync(reportPath, "utf8");
+  const marker = "## Admin schedule UI save — expanded fields (Phase 3-P-D)";
   if (content.includes(marker)) {
     content = `${content.split(marker)[0].trimEnd()}${block}`;
   } else {

@@ -1,0 +1,145 @@
+# Template: Public-dist FTP deploy (Phase 3-V)
+#
+# COPY to .github/workflows/ and customize paths/secrets when ready.
+# DO NOT enable against production FTP until checklist in docs/public-dist-ftp-deploy.md is complete.
+#
+# Deploy target: tools/static-to-astro/output/static-public/<site>/public-dist/
+# NEVER deploy: dist/client/, dist/server/, admin/, api/admin/, .env.local
+
+name: Public-dist FTP Deploy (template)
+
+on:
+  workflow_dispatch:
+    inputs:
+      site_slug:
+        description: Site slug under output/static-public/
+        required: true
+        default: gosaki
+      fixture_dir:
+        description: Static HTML fixture directory
+        required: true
+        default: tools/static-to-astro/fixtures/gosaki-static-site
+      base_url:
+        description: Production site origin (canonical / sitemap)
+        required: true
+        default: https://www.gosaki-piano.com
+
+concurrency:
+  group: public-dist-ftp-${{ github.workflow }}-${{ inputs.site_slug }}
+  cancel-in-progress: false
+
+jobs:
+  build-and-deploy-public-dist:
+    runs-on: ubuntu-latest
+
+    env:
+      TOOL_ROOT: tools/static-to-astro
+      ASTRO_OUT: tools/static-to-astro/output/generated-astro
+      SITE_SLUG: ${{ inputs.site_slug }}
+      PUBLIC_DIST: tools/static-to-astro/output/static-public/${{ inputs.site_slug }}/public-dist
+      STATIC_PUBLIC_REPORT: tools/static-to-astro/output/static-public/${{ inputs.site_slug }}/STATIC_PUBLIC_ARTIFACT_REPORT.md
+      DEPLOY_MANIFEST: tools/static-to-astro/output/static-public/${{ inputs.site_slug }}/static-public-manifest.json
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install tool dependencies (@supabase/supabase-js for export CLI)
+        working-directory: ${{ env.TOOL_ROOT }}
+        run: npm install --no-save @supabase/supabase-js@^2.107.0
+
+      - name: Write staging Supabase env from GitHub Secrets
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        run: |
+          umask 077
+          cat > "${{ env.TOOL_ROOT }}/.env.local" <<EOF
+          SUPABASE_URL=${SUPABASE_URL}
+          SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY}
+          SUPABASE_ANON_KEY=${SUPABASE_ANON_KEY}
+          EOF
+
+      - name: Convert static HTML to Astro (with Admin CMS template)
+        run: |
+          node "${{ env.TOOL_ROOT }}/scripts/convert-static-to-astro.mjs" \
+            "${{ inputs.fixture_dir }}" \
+            "${{ env.ASTRO_OUT }}" \
+            --base-url "${{ inputs.base_url }}" \
+            --with-admin-cms
+
+      - name: Export Supabase JSON to generated-astro
+        run: |
+          node "${{ env.TOOL_ROOT }}/scripts/export-supabase-json.mjs" \
+            --out-astro-dir "${{ env.ASTRO_OUT }}" \
+            --report "${{ env.TOOL_ROOT }}/output/supabase-export/${{ inputs.site_slug }}/SUPABASE_EXPORT_REPORT.md" \
+            --skip-build
+
+      - name: Build generated-astro (hybrid / Node adapter)
+        working-directory: ${{ env.ASTRO_OUT }}
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        run: |
+          npm install
+          npm run build
+
+      - name: Verify static public artifact (admin excluded copy)
+        run: |
+          node "${{ env.TOOL_ROOT }}/scripts/verify-static-public-artifact.mjs" \
+            --astro-dir "${{ env.ASTRO_OUT }}" \
+            --report "${{ env.STATIC_PUBLIC_REPORT }}"
+
+      - name: Assert safeForStaticFtp before deploy
+        env:
+          DEPLOY_MANIFEST: ${{ env.DEPLOY_MANIFEST }}
+        run: |
+          node -e "
+          import fs from 'node:fs';
+          const manifestPath = process.env.DEPLOY_MANIFEST;
+          const m = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+          if (!m.safeForStaticFtp) {
+            console.error('safeForStaticFtp is not true — abort deploy');
+            process.exit(1);
+          }
+          if (m.directClientUploadRecommended) {
+            console.error('directClientUploadRecommended must be false for FTP template');
+            process.exit(1);
+          }
+          console.log('safeForStaticFtp: true');
+          "
+
+      - name: Install lftp
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y lftp
+
+      - name: Deploy public-dist to FTP (NOT dist/client, NOT dist/server)
+        env:
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+          FTP_SERVER_DIR: ${{ secrets.FTP_SERVER_DIR }}
+        run: |
+          test -d "${{ env.PUBLIC_DIST }}"
+          test ! -d "${{ env.ASTRO_OUT }}/dist/server" || echo "dist/server exists (Node only — not deployed)"
+          lftp -u "$FTP_USERNAME","$FTP_PASSWORD" "$FTP_SERVER" <<EOF
+          set ftp:ssl-allow no
+          set ftp:passive-mode on
+          set net:max-retries 5
+          set net:timeout 30
+          set xfer:clobber on
+          mirror -R --verbose --delete --parallel=3 "${{ env.PUBLIC_DIST }}/" "$FTP_SERVER_DIR"
+          bye
+          EOF
+
+      - name: Cleanup staging env file
+        if: always()
+        run: rm -f "${{ env.TOOL_ROOT }}/.env.local"

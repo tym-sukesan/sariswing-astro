@@ -1221,6 +1221,35 @@ node tools/static-to-astro/scripts/verify-static-public-artifact.mjs \
 
 ---
 
+### Phase 3-V: Deploy workflow（public-dist 対象 FTP CI）
+
+Phase 3-T の `public-dist/` を **FTP 公開対象** とする GitHub Actions **テンプレート** と dry-run verifier を用意します。**本番 FTP 実行・root workflow 有効化は行いません。**
+
+| 項目 | 内容 |
+| --- | --- |
+| Workflow テンプレート | `templates/github-actions/public-dist-ftp-deploy.yml` |
+| Deploy 対象 | `output/static-public/<site>/public-dist/` **のみ** |
+| 禁止 | `dist/client/` 直 deploy、`dist/server/`、`/admin/`、`/api/admin/`、`.env.local` |
+| Gate | `verify-static-public-artifact.mjs` + `safeForStaticFtp` assert |
+
+#### Workflow テンプレート検証
+
+```bash
+node tools/static-to-astro/scripts/verify-public-dist-deploy-workflow.mjs \
+  --workflow-template tools/static-to-astro/templates/github-actions/public-dist-ftp-deploy.yml \
+  --report tools/static-to-astro/output/deploy/gosaki/PUBLIC_DIST_DEPLOY_WORKFLOW_REPORT.md
+```
+
+#### GitHub Secrets（テンプレート参照名のみ）
+
+`FTP_SERVER`, `FTP_USERNAME`, `FTP_PASSWORD`, `FTP_SERVER_DIR`, `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `SUPABASE_ANON_KEY`
+
+詳細: [docs/public-dist-ftp-deploy.md](docs/public-dist-ftp-deploy.md)
+
+**未実装:** 本番 FTP deploy、Storage upload、Admin 別ホスト実 deploy
+
+---
+
 ## Phase 2-F: SEO 公開準備（site / robots / sitemap）
 
 `--base-url` **指定時のみ** 以下を生成します。未指定時は sitemap 連携・robots.txt は行いません（レポートに記録）。

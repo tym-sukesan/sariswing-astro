@@ -1,0 +1,238 @@
+# gosaki Staging Runbook（Phase G-1）
+
+**目的:** gosaki staging 検証の **实际操作手順書**  
+**作業ディレクトリ:** リポジトリ root（`sariswing-astro/`）  
+**対象:** `tools/static-to-astro/`  
+**site profile:** `musician` / **site slug:** `gosaki`
+
+**Phase G-1 境界:** staging Supabase への export/build/verifier は doc 上の手順。**staging FTP 反映・本番 FTP・本番 Supabase には接続しない。**
+
+関連: [gosaki-staging-operations.md](./gosaki-staging-operations.md) / [gosaki-staging-secrets-checklist.md](./gosaki-staging-secrets-checklist.md)
+
+---
+
+## A. 前提
+
+| 項目 | 値 |
+| --- | --- |
+| リポジトリ | `sariswing-astro` |
+| 作業 cwd | プロジェクト root |
+| fixture | `tools/static-to-astro/fixtures/gosaki-static-site` |
+| 生成先 | `tools/static-to-astro/output/generated-astro` |
+| profile | `musician` |
+| secrets | `tools/static-to-astro/.env.local`（Git 管理外・**staging 向けのみ**） |
+
+---
+
+## B. 事前確認
+
+作業開始前に実行:
+
+```bash
+git status
+git grep -n -i -E "ysktoyamax|bikusari" || true
+```
+
+確認:
+
+- working tree が意図どおりか
+- 個人メール等が tracked ファイルに含まれていないか
+- `.env.local` が `git status` に出ていないこと
+
+---
+
+## C. Admin CMS つき再生成
+
+```bash
+node tools/static-to-astro/scripts/convert-static-to-astro.mjs \
+  tools/static-to-astro/fixtures/gosaki-static-site \
+  tools/static-to-astro/output/generated-astro \
+  --base-url https://www.gosaki-piano.com \
+  --verify-build \
+  --with-admin-cms \
+  --site-profile musician
+```
+
+**確認:** `CONVERSION_REPORT.md` に Site profile / Admin CMS セクション。`npm run build` が `--verify-build` 内で成功。
+
+---
+
+## D. Local Admin で編集（任意）
+
+Admin save を行う場合:
+
+```bash
+cd tools/static-to-astro/output/generated-astro
+npm run dev
+```
+
+ブラウザで `/admin/` を開き、Schedule / Discography を編集。  
+**注意:** API は Node dev サーバー上でのみ動作。FTP 上では動かない。
+
+作業後、プロジェクト root に戻る:
+
+```bash
+cd ../../..
+```
+
+（`generated-astro` から見て `tools/static-to-astro/output` → repo root は 3 段上）
+
+---
+
+## E. Supabase export（staging → JSON）
+
+**前提:** `tools/static-to-astro/.env.local` に staging Supabase の URL / keys が設定済み。**本番 Supabase URL を使わない。**
+
+```bash
+node tools/static-to-astro/scripts/export-supabase-json.mjs \
+  --out-astro-dir tools/static-to-astro/output/generated-astro \
+  --report tools/static-to-astro/output/supabase-export/gosaki/SUPABASE_EXPORT_REPORT.md
+```
+
+**確認:** `src/data/schedules.json`, `discography.json`, `schedule-months.json` が更新。レポートに secret 実値なし。
+
+---
+
+## F. Build
+
+プロジェクト root から:
+
+```bash
+cd tools/static-to-astro/output/generated-astro && npm run build && cd ../../..
+```
+
+または:
+
+```bash
+npm run build --prefix tools/static-to-astro/output/generated-astro
+```
+
+**確認:** `dist/client/`（および hybrid 時 `dist/server/`）が生成。build エラーなし。
+
+---
+
+## G. static-public artifact 検証
+
+```bash
+node tools/static-to-astro/scripts/verify-static-public-artifact.mjs \
+  --astro-dir tools/static-to-astro/output/generated-astro \
+  --report tools/static-to-astro/output/static-public/gosaki/STATIC_PUBLIC_ARTIFACT_REPORT.md
+```
+
+**確認:**
+
+- `output/static-public/gosaki/public-dist/` が生成
+- `static-public-manifest.json` の `safeForStaticFtp: true`
+- secret leak scan OK
+- public-dist に admin HTML が含まれない
+
+---
+
+## H. CMS minimal loop 検証
+
+**注意:** staging Supabase 接続・dev server 起動・一時的な DB 更新を含む。本番 Supabase では実行しない。
+
+```bash
+node tools/static-to-astro/scripts/verify-cms-minimal-loop.mjs \
+  --astro-dir tools/static-to-astro/output/generated-astro \
+  --report tools/static-to-astro/output/rls/gosaki/CMS_MINIMAL_LOOP_VERIFY_REPORT.md
+```
+
+**確認:** レポート overall PASS。対象 legacy_id（既定: `schedule-2026-03-011`, `discography-001`, track 1）で loop 完走。
+
+---
+
+## I. Storage asset plan（dry-run）
+
+```bash
+node tools/static-to-astro/scripts/plan-storage-assets.mjs \
+  --seed-dir tools/static-to-astro/output/supabase-seed/gosaki \
+  --site-slug gosaki \
+  --report tools/static-to-astro/output/storage/gosaki/STORAGE_ASSET_PLAN_REPORT.md \
+  --manifest tools/static-to-astro/output/storage/gosaki/storage-asset-plan.json
+```
+
+**確認:** `uploads performed: no`。Wix/external は review-required のまま（自動再ホストなし）。
+
+---
+
+## J. deploy workflow template 検証
+
+```bash
+node tools/static-to-astro/scripts/verify-public-dist-deploy-workflow.mjs \
+  --workflow-template tools/static-to-astro/templates/github-actions/public-dist-ftp-deploy.yml \
+  --report tools/static-to-astro/output/deploy/gosaki/PUBLIC_DIST_DEPLOY_WORKFLOW_REPORT.md
+```
+
+**確認:** template が public-dist のみを deploy 対象としている。root `.github/workflows/` は変更しない。
+
+---
+
+## K. site profile 検証（任意）
+
+```bash
+node tools/static-to-astro/scripts/verify-site-profiles.mjs \
+  --report tools/static-to-astro/output/site-profiles/SITE_PROFILE_VERIFY_REPORT.md
+```
+
+---
+
+## L. output 削除（任意）
+
+生成物は **基本コミットしない**。レポート確認後:
+
+```bash
+rm -rf tools/static-to-astro/output
+git status --short
+```
+
+**注意:** 削除前に必要な verifier レポートをローカル保存または共有。  
+ルート `output/` がある場合も同様に削除可:
+
+```bash
+rm -rf output
+```
+
+---
+
+## M. staging FTP 反映
+
+**Phase G-1 では実行しない。**
+
+将来 Phase G-2 で:
+
+1. staging FTP 先（`GOSAKI_STAGING_FTP_*`）を用意
+2. `public-dist/` のみ mirror
+3. 反映前後で manifest + rollback tarball を保存
+
+gosaki **本番 FTP** への接続は本番化ゲート PASS 後の別フェーズ。
+
+---
+
+## 推奨実行順（フル検証）
+
+```text
+B 事前確認
+→ C 再生成
+→ H CMS minimal loop（または D 手動 Admin → E export）
+→ F build
+→ G static-public
+→ I storage plan
+→ J deploy template
+→ L output 削除（任意）
+```
+
+---
+
+## トラブル時
+
+| 症状 | 対処 |
+| --- | --- |
+| export が permission denied | staging RLS / GRANT を確認。`verify-anon-rls.mjs` 参照 |
+| build 失敗 | `CONVERSION_REPORT.md` Build verification セクション |
+| public-dist に admin | `verify-static-public-artifact` を再実行。`dist/client` 直 mirror 禁止 |
+| secret leak FAIL | `.env.local` が dist に混入していないか確認。再 build |
+
+---
+
+Phase G-1 Runbook。FTP deploy 実行・本番接続は含まない。

@@ -1341,6 +1341,26 @@ node tools/static-to-astro/scripts/verify-site-profiles.mjs \
 
 ---
 
+### Phase G-1: gosaki staging 運用設計
+
+CMS Kit 実用化プロトタイプとして **gosaki staging** の役割・secrets・Admin 運用・export/build/public-dist・rollback を doc 化しました。**本番 FTP / 本番 Supabase / gosaki 本番 FTP には接続しません。**
+
+| ドキュメント | 内容 |
+| --- | --- |
+| [docs/gosaki-staging-operations.md](docs/gosaki-staging-operations.md) | 環境役割・運用フロー・Admin 比較・分離・rollback・本番化ゲート |
+| [docs/gosaki-staging-runbook.md](docs/gosaki-staging-runbook.md) | コマンドベース操作手順 |
+| [docs/gosaki-staging-secrets-checklist.md](docs/gosaki-staging-secrets-checklist.md) | `.env.local` / GitHub Secrets 命名・混同防止・監査 |
+
+**短期運用:** Local Admin（`npm run dev`）→ staging Supabase 保存 → export → build → `verify-static-public-artifact` → public-dist 確認
+
+**Phase G-1 未実施:** FTP deploy 実行、Storage upload、GitHub Actions 有効化、本番公開
+
+**secrets:** staging / prod は `GOSAKI_STAGING_*` / `GOSAKI_PROD_*` で分離
+
+**次フェーズ:** Phase G-2（public-dist deploy を **staging FTP のみ** で検証）
+
+---
+
 ## Phase 2-F: SEO 公開準備（site / robots / sitemap）
 
 `--base-url` **指定時のみ** 以下を生成します。未指定時は sitemap 連携・robots.txt は行いません（レポートに記録）。

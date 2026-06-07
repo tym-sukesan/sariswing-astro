@@ -1324,6 +1324,23 @@ node tools/static-to-astro/scripts/verify-site-profiles.mjs \
 
 ---
 
+### Phase 3-X-A: Sariswing 差分整理 + gosaki 実用化ロードマップ
+
+本番運用中の **Sariswing CMS** と **CMS Kit / gosaki** の差分を整理し、CMS Kit 実用化検証を **gosaki 主戦場** で進める方針を doc 化しました。**Sariswing 本体・本番 Supabase / FTP / Storage には触れません。**
+
+| ドキュメント | 内容 |
+| --- | --- |
+| [docs/sariswing-vs-cms-kit-gap-analysis.md](docs/sariswing-vs-cms-kit-gap-analysis.md) | 位置づけ・機能比較・移植注意・結論 |
+| [docs/gosaki-production-readiness-roadmap.md](docs/gosaki-production-readiness-roadmap.md) | 残タスク・Phase G-1〜G-7・公開前チェックリスト |
+
+**方針:**
+
+- **Sariswing** = 成功事例・比較対象・将来移植先（本番は直接触らない）
+- **gosaki + musician profile** = CMS Kit 商品化プロトタイプの検証主戦場
+- **次フェーズ推奨:** Phase G-1（gosaki staging 運用設計）または Phase 3-Y（readiness verifier）
+
+---
+
 ## Phase 2-F: SEO 公開準備（site / robots / sitemap）
 
 `--base-url` **指定時のみ** 以下を生成します。未指定時は sitemap 連携・robots.txt は行いません（レポートに記録）。

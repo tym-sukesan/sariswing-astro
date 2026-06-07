@@ -1129,6 +1129,28 @@ node tools/static-to-astro/scripts/verify-cms-minimal-loop.mjs \
 
 ---
 
+### Phase 3-R: 商品化・本番化前レビュー
+
+Phase 3-Q までで **CMS 最小ループは staging 上で成立** していますが、Admin/API/adapter の多くは **`output/generated-astro` に直接実装** されており、generator 統合前の状態です。本フェーズでは **実装を増やさず**、商品化・本番化前の棚卸しと次フェーズ設計を行います。
+
+| 項目 | 内容 |
+| --- | --- |
+| 目的 | 汎用ツール / サイトテンプレート / CMS Kit / gosaki fixture の境界整理 |
+| レビュー本編 | [`docs/phase3-r-productization-review.md`](docs/phase3-r-productization-review.md) |
+| CMS Kit 構成案 | [`docs/cms-kit-architecture.md`](docs/cms-kit-architecture.md) |
+| generator 統合計画 | [`docs/generated-astro-integration-plan.md`](docs/generated-astro-integration-plan.md) |
+
+**現時点の結論（要約）:**
+
+- CMS 最小ループ（Admin → Supabase → export → build → HTML → cleanup）は PASS
+- **Storage upload / deploy 自動化 / 本番 Supabase 接続は未実装**
+- **Sariswing / ロリポップ FTP 型**では公開サイトは **完全静的**、Admin は **別ホスト or CLI** が現実的
+- 次優先: **Phase 3-S**（generator テンプレート化）→ **3-T**（Admin 分離）→ **3-U**（Storage）
+
+**本番では実行しない:** 本レビューはドキュメント作成のみ。本番 Sariswing / Supabase / Storage には触れません。
+
+---
+
 ## Phase 2-F: SEO 公開準備（site / robots / sitemap）
 
 `--base-url` **指定時のみ** 以下を生成します。未指定時は sitemap 連携・robots.txt は行いません（レポートに記録）。

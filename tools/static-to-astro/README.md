@@ -1191,6 +1191,36 @@ node tools/static-to-astro/scripts/convert-static-to-astro.mjs \
 
 ---
 
+### Phase 3-T: Admin別ホスト / static-only公開 build分離
+
+`--with-admin-cms` の hybrid build 出力を **静的 FTP 公開** と **Admin/API（Node）** に分離できるか検証・整理します。
+
+| パス | 役割 | FTP |
+| --- | --- | --- |
+| `dist/client/` | 公開 HTML/CSS（**`admin/` HTML が混在しうる**） | 直アップロード非推奨 |
+| `dist/server/` | Node SSR + `/api/admin/*` | **不可** |
+| `output/static-public/gosaki/public-dist/` | admin 除外済み静的 artifact | **FTP 推奨** |
+
+#### 検証 CLI
+
+```bash
+node tools/static-to-astro/scripts/verify-static-public-artifact.mjs \
+  --astro-dir tools/static-to-astro/output/generated-astro \
+  --report tools/static-to-astro/output/static-public/gosaki/STATIC_PUBLIC_ARTIFACT_REPORT.md
+```
+
+- `--public-dir` 未指定時: `dist/client` → `dist` の順で自動検出
+- **secret leak scan**、Admin/API 混在チェック、**除外コピー + manifest** 生成
+- `static-public-manifest.json`: `safeForStaticFtp`, `excluded: ["admin"]` 等
+
+#### 運用方針
+
+- **公開サイト:** `public-dist/` をロリポップ FTP 等へ
+- **Admin/API:** Node 対応ホスト、ローカル dev、または将来別アプリ（[docs/admin-hosting-strategy.md](docs/admin-hosting-strategy.md)）
+- 公開 HTML は `src/data/*.json` から静的生成 → **Supabase key 不要**
+
+---
+
 ## Phase 2-F: SEO 公開準備（site / robots / sitemap）
 
 `--base-url` **指定時のみ** 以下を生成します。未指定時は sitemap 連携・robots.txt は行いません（レポートに記録）。

@@ -1,0 +1,19 @@
+---
+import AdminLayout from "../../components/admin/AdminLayout.astro";
+import ScheduleEditorMock from "../../components/admin/ScheduleEditorMock.astro";
+import { fetchAdminCmsData } from "../../lib/supabase-admin-read.ts";
+
+const cms = await fetchAdminCmsData();
+---
+
+<AdminLayout title="Schedule 管理" currentNav="schedules" readMeta={cms.meta}>
+  <h1 class="admin-page-title">Schedule 管理</h1>
+  <p class="admin-lead">
+    Schedule 管理 UI — 選択中の <code>schedules</code> 1件を保存可能（Phase 3-P-C）。全 {cms.counts.schedules} 件読込。
+  </p>
+  <ScheduleEditorMock
+    schedules={cms.schedules}
+    months={cms.scheduleMonths}
+    readMeta={cms.meta}
+  />
+</AdminLayout>

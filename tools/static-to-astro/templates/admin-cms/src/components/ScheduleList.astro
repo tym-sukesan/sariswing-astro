@@ -1,0 +1,77 @@
+---
+/**
+ * Renders schedule cards from JSON seed (Phase 3-B).
+ * @see src/data/schedules.json
+ */
+interface ScheduleEvent {
+  id: string;
+  date: string | null;
+  date_display?: string | null;
+  title?: string | null;
+  venue?: string | null;
+  open_time?: string | null;
+  start_time?: string | null;
+  price?: string | null;
+  description?: string | null;
+  image?: string | null;
+}
+
+interface Props {
+  events: ScheduleEvent[];
+}
+
+const { events } = Astro.props;
+
+function formatTimeLine(ev: ScheduleEvent) {
+  if (ev.open_time && ev.start_time) {
+    return `開場 ${ev.open_time} / 開演 ${ev.start_time}`;
+  }
+  if (ev.open_time) return `開場 ${ev.open_time}`;
+  if (ev.start_time) return `開演 ${ev.start_time}`;
+  return "";
+}
+
+function descriptionLines(text: string | null | undefined) {
+  if (!text) return [];
+  return text.split(/\n/).filter(Boolean);
+}
+---
+
+<div class="surface-block">
+  <ul class="schedule-list">
+    {
+      events.map((ev) => {
+        const timeLine = formatTimeLine(ev);
+        const extraLines = descriptionLines(ev.description);
+        return (
+          <li class="schedule-card">
+            <div class="schedule-card__body">
+              {ev.date_display && <p class="schedule-card__date">{ev.date_display}</p>}
+              {ev.title && <p class="schedule-card__title">{ev.title}</p>}
+              {ev.venue && <p class="schedule-card__meta">会場：{ev.venue}</p>}
+              {(timeLine || ev.description?.startsWith("時間：")) && (
+                <p class="schedule-card__meta">
+                  時間：{timeLine || ev.description?.replace(/^時間：/, "")}
+                </p>
+              )}
+              {ev.price && <p class="schedule-card__meta">料金：{ev.price}</p>}
+              {extraLines.map((line) => {
+                if (line.startsWith("時間：") && !timeLine) return null;
+                return <p class="schedule-card__meta">{line}</p>;
+              })}
+            </div>
+            <div class="schedule-card__flyer">
+              {ev.image ? (
+                <img src={ev.image} alt="" width="200" height="200" loading="lazy" />
+              ) : (
+                <div class="flyer-placeholder" role="img" aria-label="Flyer pending">
+                  Flyer / Image pending
+                </div>
+              )}
+            </div>
+          </li>
+        );
+      })
+    }
+  </ul>
+</div>

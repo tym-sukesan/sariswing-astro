@@ -1,0 +1,94 @@
+---
+/**
+ * Discography releases from JSON seed (Phase 3-D).
+ */
+import discography from "../data/discography.json";
+
+interface Track {
+  number: number;
+  title: string;
+}
+
+interface Release {
+  id: string;
+  title: string | null;
+  artist: string | null;
+  heading?: string | null;
+  release_date: string | null;
+  year: number | null;
+  label: string | null;
+  catalog_number: string | null;
+  release_display?: string | null;
+  description: string | null;
+  cover_image: string | null;
+  cover_alt?: string | null;
+  tracks: Track[];
+  streaming_url: string | null;
+  purchase_url: string | null;
+}
+
+const releases = (discography as Release[]).sort(
+  (a, b) => (a.sort_order ?? 99) - (b.sort_order ?? 99),
+);
+
+---
+
+<ul class="discography-list">
+  {
+    releases.map((r) => (
+      <li class="discography-item">
+        <div class="discography-item__cover">
+          {r.cover_image ? (
+            <img
+              src={r.cover_image}
+              alt={r.cover_alt ?? r.title ?? "Release cover"}
+              width="260"
+              height="260"
+              loading="lazy"
+            />
+          ) : (
+            <div class="flyer-placeholder" role="img" aria-label="Cover pending">
+              Cover pending
+            </div>
+          )}
+        </div>
+        <div class="discography-item__body">
+          <h3>{r.heading ?? (r.title && r.artist ? `「${r.title}」/ ${r.artist}` : r.title)}</h3>
+          {r.release_display && (
+            <p>
+              <strong>Release</strong> {r.release_display}
+            </p>
+          )}
+          {r.description &&
+            r.description.split(/\n/).map((line) => <p>{line}</p>)}
+          {r.tracks?.length > 0 && (
+            <>
+              <p>
+                <strong>Track List</strong>
+              </p>
+              <ul>
+                {r.tracks.map((t) => (
+                  <li>{t.title}</li>
+                ))}
+              </ul>
+            </>
+          )}
+          {r.purchase_url && (
+            <p>
+              <a href={r.purchase_url} rel="noopener noreferrer">
+                オンラインショップ
+              </a>
+            </p>
+          )}
+          {r.streaming_url && (
+            <p>
+              <a href={r.streaming_url} rel="noopener noreferrer">
+                各種サブスク
+              </a>
+            </p>
+          )}
+        </div>
+      </li>
+    ))
+  }
+</ul>

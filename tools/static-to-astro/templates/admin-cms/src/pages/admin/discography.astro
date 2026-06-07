@@ -1,0 +1,16 @@
+---
+import AdminLayout from "../../components/admin/AdminLayout.astro";
+import DiscographyEditorMock from "../../components/admin/DiscographyEditorMock.astro";
+import { fetchAdminCmsData } from "../../lib/supabase-admin-read.ts";
+
+const cms = await fetchAdminCmsData();
+---
+
+<AdminLayout title="Discography 管理" currentNav="discography" readMeta={cms.meta}>
+  <h1 class="admin-page-title">Discography 管理</h1>
+  <p class="admin-lead">
+    Supabase 管理 UI — <code>discography</code> 1件保存 + <code>discography_tracks</code> 読取専用（{cms.counts.discography}
+    リリース · {cms.counts.discography_tracks} tracks）
+  </p>
+  <DiscographyEditorMock releases={cms.discography} readMeta={cms.meta} />
+</AdminLayout>

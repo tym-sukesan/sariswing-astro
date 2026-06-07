@@ -1,0 +1,79 @@
+---
+/**
+ * Home featured / weekly schedule from schedules.json (Phase 3-C).
+ */
+import schedules from "../data/schedules.json";
+
+interface ScheduleEvent {
+  id: string;
+  date: string | null;
+  date_display?: string | null;
+  home_date_display?: string | null;
+  title?: string | null;
+  venue?: string | null;
+  open_time?: string | null;
+  start_time?: string | null;
+  price?: string | null;
+  description?: string | null;
+  home_performers?: string | null;
+  home_address?: string | null;
+  home_phone?: string | null;
+  home_image?: string | null;
+  source_route?: string;
+  month?: string;
+  show_on_home?: boolean;
+  home_order?: number | null;
+}
+
+const homeEvents = (schedules as ScheduleEvent[])
+  .filter((s) => s.show_on_home)
+  .sort((a, b) => (a.home_order ?? 99) - (b.home_order ?? 99));
+
+const latestMonth = homeEvents[0]?.month ?? "2026-07";
+const monthRoute = `/schedule-${latestMonth}/`;
+---
+
+<section class="section-block home-schedule">
+  <h2 class="section-heading">This Week's Live Schedule</h2>
+  <!-- CMS_TARGET: HOME_LIVE_SCHEDULE (data-driven Phase 3-C) -->
+  <div class="surface-block">
+    {
+      homeEvents.map((ev) => (
+        <article class="schedule-card">
+          <div class="schedule-card__body">
+            <p class="schedule-card__date">
+              <a href={ev.source_route}>{ev.home_date_display ?? ev.date_display ?? ev.date}</a>
+            </p>
+            {ev.venue && <p class="schedule-card__venue">{ev.venue}</p>}
+            {(ev.open_time || ev.start_time) && (
+              <p class="schedule-card__meta">
+                OPEN {ev.open_time ?? "—"} / START {ev.start_time ?? "—"}
+              </p>
+            )}
+            {ev.price && <p class="schedule-card__meta">CHARGE {ev.price}</p>}
+            {ev.home_performers && (
+              <p class="schedule-card__performers">{ev.home_performers}</p>
+            )}
+            {ev.home_address && <p class="schedule-card__address">{ev.home_address}</p>}
+            {ev.home_phone && <p class="schedule-card__meta">☎︎{ev.home_phone}</p>}
+          </div>
+          <div class="schedule-card__flyer">
+            {ev.home_image ? (
+              <img src={ev.home_image} alt="" width="259" height="259" loading="lazy" />
+            ) : (
+              <div class="flyer-placeholder" role="img" aria-label="Flyer pending">
+                Flyer / Image pending
+              </div>
+            )}
+          </div>
+        </article>
+      ))
+    }
+  </div>
+  <p class="prototype-note">
+    Phase 3-C: featured events from <code>schedules.json</code> (<code>show_on_home</code>).
+    <a href="/schedule/">Schedule index</a>
+    {" · "}
+    <a href={monthRoute}>月別スケジュール（{latestMonth.replace("-", ".")} ほか）</a>
+  </p>
+</section>

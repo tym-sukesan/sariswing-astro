@@ -1,0 +1,53 @@
+---
+import "../../styles/admin.css";
+import type { AdminReadMeta } from "../../lib/supabase-admin-read.ts";
+
+interface Props {
+  title: string;
+  description?: string;
+  currentNav?: "home" | "schedules" | "discography";
+  readMeta?: AdminReadMeta;
+}
+
+const { title, description = "", currentNav = "home", readMeta } = Astro.props;
+const fullTitle = `${title} | Admin Prototype`;
+const badge =
+  readMeta?.dataSource === "supabase-direct-read"
+    ? `Supabase read · ${readMeta.host ?? "staging"}`
+    : "Supabase read · env required";
+---
+
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>{fullTitle}</title>
+    {description ? <meta name="description" content={description} /> : null}
+  </head>
+  <body class="admin-body">
+    <div class="admin-shell">
+      <header class="admin-header">
+        <a class="admin-header__brand" href="/admin/">Admin Prototype</a>
+        <nav class="admin-header__nav" aria-label="Admin navigation">
+          <a href="/admin/" aria-current={currentNav === "home" ? "page" : undefined}>Dashboard</a>
+          <a href="/admin/schedules/" aria-current={currentNav === "schedules" ? "page" : undefined}
+            >Schedules</a
+          >
+          <a
+            href="/admin/discography/"
+            aria-current={currentNav === "discography" ? "page" : undefined}>Discography</a
+          >
+        </nav>
+        <span class="admin-header__badge">{badge}</span>
+      </header>
+      <main class="admin-main">
+        <slot />
+      </main>
+      <footer class="admin-footer">
+        static-to-astro Phase 3-L — read-only staging Supabase. Save / Auth / RLS not enabled.
+      </footer>
+    </div>
+  </body>
+</html>

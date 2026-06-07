@@ -1,0 +1,582 @@
+---
+import type { AdminReadMeta } from "../../lib/supabase-admin-read.ts";
+
+interface Track {
+  number: number;
+  title: string;
+  sort_order?: number | null;
+}
+
+interface DiscographyRow {
+  legacy_id: string;
+  title: string;
+  artist: string | null;
+  release_date: string | null;
+  year?: number | null;
+  catalog_number: string | null;
+  label: string | null;
+  description: string | null;
+  cover_image_url: string | null;
+  purchase_url: string | null;
+  streaming_url: string | null;
+  published: boolean;
+  sort_order?: number | null;
+  tracks: Track[];
+}
+
+interface Props {
+  releases: DiscographyRow[];
+  readMeta?: AdminReadMeta;
+}
+
+const { releases, readMeta } = Astro.props;
+const trackTotal = releases.reduce((n, r) => n + r.tracks.length, 0);
+const sourceLabel =
+  readMeta?.dataSource === "supabase-direct-read"
+    ? `Supabase direct read (${readMeta.host ?? "staging"})`
+    : "Supabase unavailable — check env vars";
+---
+
+<section class="admin-notice" role="status">
+  <strong>Phase 3-P-G · discography + tracks save</strong>
+  Data source: {sourceLabel}. Discography body: selected release only. Tracks: existing rows only (
+  <code>title</code>, <code>sort_order</code> — no add/delete). Requires Supabase login session. Keys and
+  tokens are never displayed.
+</section>
+
+<div class="admin-stats">
+  <div class="admin-stat">
+    <span class="admin-stat__label">Releases</span>
+    <span class="admin-stat__value">{releases.length}</span>
+  </div>
+  <div class="admin-stat">
+    <span class="admin-stat__label">Tracks</span>
+    <span class="admin-stat__value">{trackTotal}</span>
+  </div>
+</div>
+
+<div class="admin-grid-2">
+  <div>
+    <div class="admin-card">
+      <h2>一覧</h2>
+      <div class="admin-disc-list" id="disc-list">
+        {
+          releases.map((row) => (
+            <button
+              type="button"
+              class="admin-disc-item"
+              data-id={row.legacy_id}
+              aria-label={`Edit ${row.title}`}
+            >
+              {row.cover_image_url ? (
+                <img src={row.cover_image_url} alt="" width="56" height="56" loading="lazy" />
+              ) : (
+                <span
+                  style="width:56px;height:56px;background:#e2e8f0;border-radius:4px;display:block"
+                  aria-hidden="true"
+                />
+              )}
+              <div>
+                <p class="admin-disc-item__title">{row.title}</p>
+                <p class="admin-disc-item__meta">
+                  {row.artist ?? "—"} · {row.release_date ?? "—"} · {row.tracks.length} tracks
+                </p>
+              </div>
+            </button>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <div class="admin-card">
+      <h2>編集フォーム</h2>
+      <p class="admin-hint" id="disc-hint">リリースを選択してください。</p>
+      <p class="admin-save-scope" id="save-scope" hidden>
+        保存対象: <code id="save-scope-id"></code>（1件のみ）
+      </p>
+      <p class="admin-save-status" id="save-status" aria-live="polite">
+        Discography save: <span id="save-status-text">Not connected</span>
+      </p>
+      <p class="admin-save-status" id="tracks-save-status" aria-live="polite">
+        Tracks save: <span id="tracks-save-status-text">Not connected</span>
+      </p>
+      <form class="admin-form" id="disc-form" hidden>
+        <label>
+          legacy_id
+          <input type="text" name="legacy_id" disabled />
+        </label>
+        <label>
+          title
+          <input type="text" name="title" />
+        </label>
+        <label>
+          artist
+          <input type="text" name="artist" />
+        </label>
+        <div class="admin-form-row-2">
+          <label>
+            release_date
+            <input type="date" name="release_date" />
+          </label>
+          <label>
+            year
+            <input type="number" name="year" />
+          </label>
+        </div>
+        <div class="admin-form-row-2">
+          <label>
+            catalog_number
+            <input type="text" name="catalog_number" />
+          </label>
+          <label>
+            label
+            <input type="text" name="label" />
+          </label>
+        </div>
+        <label>
+          description
+          <textarea name="description" rows="3" />
+        </label>
+        <label>
+          cover_image_url
+          <input type="url" name="cover_image_url" disabled />
+        </label>
+        <label>
+          purchase_url
+          <input type="url" name="purchase_url" />
+        </label>
+        <label>
+          streaming_url
+          <input type="url" name="streaming_url" />
+        </label>
+        <div class="admin-form-row-2">
+          <label>
+            sort_order
+            <input type="number" name="sort_order" />
+          </label>
+          <label class="admin-checkbox-row">
+            <input type="checkbox" name="published" />
+            published
+          </label>
+        </div>
+        <div>
+          <p class="admin-hint" style="margin:0 0 0.35rem;font-weight:600;color:#334155">
+            tracks（既存行のみ · <code>track_number</code> 変更不可）
+          </p>
+          <div class="admin-tracks-editor" id="disc-tracks-editor" />
+          <div class="admin-actions admin-actions--tracks">
+            <button type="button" class="admin-btn admin-btn--secondary" id="save-tracks-btn" disabled>
+              Tracksを保存（既存のみ）
+            </button>
+            <span class="admin-hint">POST /api/admin/discography/tracks/update.json</span>
+          </div>
+        </div>
+        <div class="admin-actions">
+          <button type="button" class="admin-btn admin-btn--primary" id="save-disc-btn" disabled>
+            Discographyを保存（選択中1件）
+          </button>
+          <span class="admin-hint">POST /api/admin/discography/update.json</span>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script define:vars={{ releases }}>
+  const UPDATE_API = "/api/admin/discography/update.json";
+  const TRACKS_UPDATE_API = "/api/admin/discography/tracks/update.json";
+  const form = document.getElementById("disc-form");
+  const hint = document.getElementById("disc-hint");
+  const saveScope = document.getElementById("save-scope");
+  const saveScopeId = document.getElementById("save-scope-id");
+  const saveStatusText = document.getElementById("save-status-text");
+  const tracksSaveStatusText = document.getElementById("tracks-save-status-text");
+  const saveBtn = document.getElementById("save-disc-btn");
+  const saveTracksBtn = document.getElementById("save-tracks-btn");
+  const tracksEditorEl = document.getElementById("disc-tracks-editor");
+  const items = [...document.querySelectorAll(".admin-disc-item")];
+  const byId = new Map(
+    releases.map((r) => [
+      r.legacy_id,
+      {
+        ...r,
+        year: r.year ?? null,
+        sort_order: r.sort_order ?? null,
+        tracks: (r.tracks ?? []).map((t) => ({
+          number: t.number,
+          title: t.title,
+          sort_order: t.sort_order ?? t.number ?? null,
+        })),
+      },
+    ]),
+  );
+
+  let selectedId = null;
+  let savingDisc = false;
+  let savingTracks = false;
+
+  function findAccessToken() {
+    try {
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (!key || !key.startsWith("sb-") || !key.endsWith("-auth-token")) continue;
+        const raw = localStorage.getItem(key);
+        if (!raw) continue;
+        const parsed = JSON.parse(raw);
+        if (parsed && parsed.access_token) return parsed.access_token;
+      }
+    } catch (_err) {
+      return null;
+    }
+    return null;
+  }
+
+  function setDiscSaveStatus(text) {
+    if (saveStatusText) saveStatusText.textContent = text;
+  }
+
+  function setTracksSaveStatus(text) {
+    if (tracksSaveStatusText) tracksSaveStatusText.textContent = text;
+  }
+
+  function updateSaveControls() {
+    const token = findAccessToken();
+    const hasSelection = Boolean(selectedId && byId.has(selectedId));
+
+    if (!hasSelection) {
+      setDiscSaveStatus("Not connected");
+      setTracksSaveStatus("Not connected");
+      if (saveBtn) saveBtn.disabled = true;
+      if (saveTracksBtn) saveTracksBtn.disabled = true;
+      if (saveScope) saveScope.hidden = true;
+      return;
+    }
+
+    if (saveScope) {
+      saveScope.hidden = false;
+      if (saveScopeId) saveScopeId.textContent = selectedId;
+    }
+
+    if (savingDisc) {
+      setDiscSaveStatus("Saving...");
+      if (saveBtn) saveBtn.disabled = true;
+    } else if (!token) {
+      setDiscSaveStatus("Login required");
+      if (saveBtn) saveBtn.disabled = true;
+    } else {
+      setDiscSaveStatus("Ready");
+      if (saveBtn) saveBtn.disabled = false;
+    }
+
+    if (savingTracks) {
+      setTracksSaveStatus("Saving...");
+      if (saveTracksBtn) saveTracksBtn.disabled = true;
+    } else if (!token) {
+      setTracksSaveStatus("Login required");
+      if (saveTracksBtn) saveTracksBtn.disabled = true;
+    } else {
+      setTracksSaveStatus("Ready");
+      if (saveTracksBtn) saveTracksBtn.disabled = false;
+    }
+  }
+
+  function syncListItem(id) {
+    const row = byId.get(id);
+    const btn = items.find((el) => el.dataset.id === id);
+    if (!row || !btn) return;
+    const titleEl = btn.querySelector(".admin-disc-item__title");
+    const metaEl = btn.querySelector(".admin-disc-item__meta");
+    if (titleEl) titleEl.textContent = row.title ?? "—";
+    if (metaEl) {
+      metaEl.textContent = `${row.artist ?? "—"} · ${row.release_date ?? "—"} · ${(row.tracks ?? []).length} tracks`;
+    }
+  }
+
+  function renderTracksEditor(tracks) {
+    if (!tracksEditorEl) return;
+    tracksEditorEl.innerHTML = "";
+    for (const t of tracks ?? []) {
+      const row = document.createElement("div");
+      row.className = "admin-track-row";
+      row.dataset.trackNumber = String(t.number);
+
+      const numLabel = document.createElement("label");
+      numLabel.textContent = "#";
+      const numInput = document.createElement("input");
+      numInput.type = "text";
+      numInput.value = String(t.number);
+      numInput.readOnly = true;
+      numInput.setAttribute("aria-label", `track_number ${t.number}`);
+      numLabel.appendChild(numInput);
+
+      const titleLabel = document.createElement("label");
+      titleLabel.textContent = "title";
+      const titleInput = document.createElement("input");
+      titleInput.type = "text";
+      titleInput.className = "track-title-input";
+      titleInput.value = t.title ?? "";
+      titleLabel.appendChild(titleInput);
+
+      const sortLabel = document.createElement("label");
+      sortLabel.textContent = "sort";
+      const sortInput = document.createElement("input");
+      sortInput.type = "number";
+      sortInput.className = "track-sort-input";
+      sortInput.value = t.sort_order ?? "";
+      sortLabel.appendChild(sortInput);
+
+      row.appendChild(numLabel);
+      row.appendChild(titleLabel);
+      row.appendChild(sortLabel);
+      tracksEditorEl.appendChild(row);
+    }
+  }
+
+  function collectTracksFromEditor() {
+    if (!tracksEditorEl) return [];
+    const rows = [...tracksEditorEl.querySelectorAll(".admin-track-row")];
+    return rows.map((row) => {
+      const trackNumber = Number(row.dataset.trackNumber);
+      const title = row.querySelector(".track-title-input")?.value ?? "";
+      const sortRaw = row.querySelector(".track-sort-input")?.value?.trim() ?? "";
+      return {
+        track_number: trackNumber,
+        title,
+        sort_order: sortRaw === "" ? null : Number(sortRaw),
+      };
+    });
+  }
+
+  function applyTracksToRow(legacyId, apiTracks) {
+    const current = byId.get(legacyId);
+    if (!current || !Array.isArray(apiTracks)) return;
+    const byNumber = new Map(apiTracks.map((t) => [Number(t.track_number), t]));
+    current.tracks = (current.tracks ?? []).map((t) => {
+      const updated = byNumber.get(t.number);
+      if (!updated) return t;
+      return {
+        number: t.number,
+        title: updated.title ?? t.title,
+        sort_order: updated.sort_order !== undefined ? updated.sort_order : t.sort_order,
+      };
+    });
+    renderTracksEditor(current.tracks);
+  }
+
+  function selectRelease(id) {
+    const row = byId.get(id);
+    if (!row || !form) return;
+    selectedId = id;
+    for (const btn of items) btn.classList.toggle("is-selected", btn.dataset.id === id);
+    hint.hidden = true;
+    form.hidden = false;
+    form.elements.legacy_id.value = row.legacy_id ?? "";
+    form.elements.title.value = row.title ?? "";
+    form.elements.artist.value = row.artist ?? "";
+    form.elements.release_date.value = row.release_date ?? "";
+    form.elements.year.value = row.year ?? "";
+    form.elements.catalog_number.value = row.catalog_number ?? "";
+    form.elements.label.value = row.label ?? "";
+    form.elements.description.value = row.description ?? "";
+    form.elements.cover_image_url.value = row.cover_image_url ?? "";
+    form.elements.purchase_url.value = row.purchase_url ?? "";
+    form.elements.streaming_url.value = row.streaming_url ?? "";
+    form.elements.sort_order.value = row.sort_order ?? "";
+    form.elements.published.checked = row.published !== false;
+    renderTracksEditor(row.tracks);
+    updateSaveControls();
+  }
+
+  async function saveSelectedRelease() {
+    if (savingDisc || !selectedId) return;
+    const legacyId = form.elements.legacy_id.value.trim();
+    if (!legacyId || legacyId !== selectedId) {
+      setDiscSaveStatus("Error: invalid selection");
+      return;
+    }
+
+    const token = findAccessToken();
+    if (!token) {
+      setDiscSaveStatus("Login required");
+      return;
+    }
+
+    const yearRaw = form.elements.year.value.trim();
+    const sortOrderRaw = form.elements.sort_order.value.trim();
+    const updates = {
+      title: form.elements.title.value,
+      artist: form.elements.artist.value,
+      release_date: form.elements.release_date.value,
+      year: yearRaw === "" ? null : Number(yearRaw),
+      label: form.elements.label.value,
+      catalog_number: form.elements.catalog_number.value,
+      description: form.elements.description.value,
+      purchase_url: form.elements.purchase_url.value,
+      streaming_url: form.elements.streaming_url.value,
+      published: form.elements.published.checked,
+      sort_order: sortOrderRaw === "" ? null : Number(sortOrderRaw),
+    };
+
+    if (!window.confirm("このDiscography 1件だけを保存します。よろしいですか？")) {
+      return;
+    }
+
+    savingDisc = true;
+    updateSaveControls();
+
+    try {
+      const res = await fetch(UPDATE_API, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ legacy_id: legacyId, updates }),
+      });
+
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok || !data.ok) {
+        if (typeof data.message === "string") {
+          setDiscSaveStatus(`Error: ${data.message}`);
+        } else {
+          const errMsg = typeof data.error === "string" ? data.error : `HTTP ${res.status}`;
+          setDiscSaveStatus(`Error: ${errMsg}`);
+        }
+        return;
+      }
+
+      const record = data.record ?? updates;
+      const current = byId.get(legacyId);
+      if (current) {
+        current.title = record.title ?? updates.title;
+        current.artist = record.artist ?? updates.artist;
+        current.release_date = record.release_date ?? updates.release_date;
+        current.year = record.year !== undefined ? record.year : updates.year;
+        current.label = record.label ?? updates.label;
+        current.catalog_number = record.catalog_number ?? updates.catalog_number;
+        current.description = record.description ?? updates.description;
+        current.purchase_url = record.purchase_url ?? updates.purchase_url;
+        current.streaming_url = record.streaming_url ?? updates.streaming_url;
+        current.published =
+          typeof record.published === "boolean" ? record.published : updates.published;
+        current.sort_order =
+          record.sort_order !== undefined ? record.sort_order : updates.sort_order;
+        form.elements.title.value = current.title ?? "";
+        form.elements.artist.value = current.artist ?? "";
+        form.elements.release_date.value = current.release_date ?? "";
+        form.elements.year.value = current.year ?? "";
+        form.elements.catalog_number.value = current.catalog_number ?? "";
+        form.elements.label.value = current.label ?? "";
+        form.elements.description.value = current.description ?? "";
+        form.elements.purchase_url.value = current.purchase_url ?? "";
+        form.elements.streaming_url.value = current.streaming_url ?? "";
+        form.elements.sort_order.value = current.sort_order ?? "";
+        form.elements.published.checked = current.published !== false;
+        syncListItem(legacyId);
+      }
+
+      setDiscSaveStatus("Saved");
+    } catch (_err) {
+      setDiscSaveStatus("Error: save failed");
+    } finally {
+      savingDisc = false;
+      if (saveBtn) saveBtn.disabled = !findAccessToken() || !selectedId;
+      if (saveTracksBtn && !savingTracks) {
+        saveTracksBtn.disabled = !findAccessToken() || !selectedId;
+      }
+    }
+  }
+
+  async function saveSelectedTracks() {
+    if (savingTracks || !selectedId) return;
+    const legacyId = form.elements.legacy_id.value.trim();
+    if (!legacyId || legacyId !== selectedId) {
+      setTracksSaveStatus("Error: invalid selection");
+      return;
+    }
+
+    const token = findAccessToken();
+    if (!token) {
+      setTracksSaveStatus("Login required");
+      return;
+    }
+
+    const tracks = collectTracksFromEditor();
+    if (!tracks.length) {
+      setTracksSaveStatus("Error: no tracks");
+      return;
+    }
+
+    if (
+      !window.confirm(
+        "このDiscographyの既存Tracksだけを保存します。追加・削除は行いません。よろしいですか？",
+      )
+    ) {
+      return;
+    }
+
+    savingTracks = true;
+    updateSaveControls();
+
+    try {
+      const res = await fetch(TRACKS_UPDATE_API, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          discography_legacy_id: legacyId,
+          tracks,
+        }),
+      });
+
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok || !data.ok) {
+        if (typeof data.message === "string") {
+          setTracksSaveStatus(`Error: ${data.message}`);
+        } else {
+          const errMsg = typeof data.error === "string" ? data.error : `HTTP ${res.status}`;
+          setTracksSaveStatus(`Error: ${errMsg}`);
+        }
+        return;
+      }
+
+      applyTracksToRow(legacyId, data.tracks ?? tracks);
+      setTracksSaveStatus("Saved");
+    } catch (_err) {
+      setTracksSaveStatus("Error: save failed");
+    } finally {
+      savingTracks = false;
+      if (saveTracksBtn) saveTracksBtn.disabled = !findAccessToken() || !selectedId;
+      if (saveBtn && !savingDisc) {
+        saveBtn.disabled = !findAccessToken() || !selectedId;
+      }
+    }
+  }
+
+  if (saveBtn) {
+    saveBtn.addEventListener("click", () => {
+      saveSelectedRelease();
+    });
+  }
+
+  if (saveTracksBtn) {
+    saveTracksBtn.addEventListener("click", () => {
+      saveSelectedTracks();
+    });
+  }
+
+  for (const btn of items) {
+    btn.addEventListener("click", () => selectRelease(btn.dataset.id));
+  }
+
+  window.addEventListener("storage", updateSaveControls);
+
+  if (items.length) selectRelease(items[0].dataset.id);
+  updateSaveControls();
+</script>

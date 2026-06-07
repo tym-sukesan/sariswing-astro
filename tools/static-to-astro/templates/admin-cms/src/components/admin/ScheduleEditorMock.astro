@@ -1,0 +1,499 @@
+---
+import type { AdminReadMeta } from "../../lib/supabase-admin-read.ts";
+
+interface ScheduleRow {
+  legacy_id: string;
+  date: string | null;
+  month: string | null;
+  title: string | null;
+  venue: string | null;
+  open_time: string | null;
+  start_time: string | null;
+  price: string | null;
+  description: string | null;
+  show_on_home: boolean;
+  home_order: number | null;
+  image_url: string | null;
+  home_image_url: string | null;
+  published: boolean;
+}
+
+interface MonthOption {
+  month: string;
+  label: string;
+}
+
+interface Props {
+  schedules: ScheduleRow[];
+  months: MonthOption[];
+  readMeta?: AdminReadMeta;
+}
+
+const { schedules, months, readMeta } = Astro.props;
+const homeFeaturedCount = schedules.filter((s) => s.show_on_home).length;
+const HOME_FEATURED_LIMIT = 3;
+const sourceLabel =
+  readMeta?.dataSource === "supabase-direct-read"
+    ? `Supabase direct read (${readMeta.host ?? "staging"})`
+    : "Supabase unavailable — check env vars";
+---
+
+<section class="admin-notice" role="status">
+  <strong>Phase 3-P-E · single-row save + home featured limit</strong>
+  Data source: {sourceLabel}. Save applies to the <strong>selected schedule only</strong> (
+  <code>title</code>, <code>venue</code>, <code>open_time</code>, <code>start_time</code>,
+  <code>price</code>, <code>description</code>, <code>show_on_home</code>, <code>home_order</code>,
+  <code>published</code>). Requires Supabase login session in this browser. Keys and tokens are never
+  displayed.
+</section>
+
+<section class="admin-notice admin-notice--warn" role="note">
+  <strong>Home featured items（featured on home）</strong>
+  今回の対象は <code>schedules.show_on_home</code> です。将来は
+  <code>news.featured_on_home</code> などの Home featured module にも同様の上限チェックを適用できます。
+  掲載上限は <strong>{HOME_FEATURED_LIMIT} 件</strong> です。
+  <code>show_on_home</code> を有効にする場合は <code>published</code> も true が必要です。
+  <code>home_order</code> が空欄の場合は null として保存されます。
+</section>
+
+<div class="admin-stats">
+  <div class="admin-stat">
+    <span class="admin-stat__label">Schedules</span>
+    <span class="admin-stat__value">{schedules.length}</span>
+  </div>
+  <div class="admin-stat">
+    <span class="admin-stat__label">Home featured</span>
+    <span class="admin-stat__value" id="home-featured-count">
+      {homeFeaturedCount} / {HOME_FEATURED_LIMIT}
+    </span>
+  </div>
+  <div class="admin-stat">
+    <span class="admin-stat__label">Months</span>
+    <span class="admin-stat__value">{months.length}</span>
+  </div>
+</div>
+
+<div class="admin-grid-2">
+  <div>
+    <div class="admin-card">
+      <h2>一覧</h2>
+      <div class="admin-toolbar">
+        <label>
+          月別
+          <select id="filter-month" aria-label="月別フィルタ">
+            <option value="">すべて</option>
+            {months.map((m) => (
+              <option value={m.month}>{m.label}</option>
+            ))}
+          </select>
+        </label>
+        <label>
+          <input type="checkbox" id="filter-home" />
+          Home 掲載のみ
+        </label>
+        <label>
+          <input type="checkbox" id="filter-published" checked />
+          published のみ
+        </label>
+        <span class="admin-hint" id="filter-count">{schedules.length} 件表示</span>
+      </div>
+      <div class="admin-table-wrap">
+        <table class="admin-table" id="schedule-table">
+          <thead>
+            <tr>
+              <th>date</th>
+              <th>title</th>
+              <th>venue</th>
+              <th>home</th>
+              <th>pub</th>
+            </tr>
+          </thead>
+          <tbody>
+            {schedules.map((row) => (
+              <tr
+                data-id={row.legacy_id}
+                data-month={row.month ?? ""}
+                data-home={row.show_on_home ? "1" : "0"}
+                data-published={row.published ? "1" : "0"}
+              >
+                <td>{row.date ?? "—"}</td>
+                <td class="cell-title" title={row.title ?? ""}>{row.title ?? "—"}</td>
+                <td class="cell-venue" title={row.venue ?? ""}>{row.venue ?? "—"}</td>
+                <td class="cell-home">{row.show_on_home ? `✓ (${row.home_order ?? "—"})` : "—"}</td>
+                <td class="cell-published">{row.published ? "✓" : "—"}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <div class="admin-card">
+      <h2>編集フォーム</h2>
+      <p class="admin-hint" id="editor-hint">一覧の行をクリックして編集対象を選択してください。</p>
+      <p class="admin-save-scope" id="save-scope" hidden>
+        保存対象: <code id="save-scope-id"></code>（1件のみ）
+      </p>
+      <p class="admin-save-status" id="save-status" aria-live="polite">
+        Save status: <span id="save-status-text">Not connected</span>
+      </p>
+      <form class="admin-form" id="schedule-form" hidden>
+        <label>
+          legacy_id
+          <input type="text" name="legacy_id" disabled />
+        </label>
+        <div class="admin-form-row-2">
+          <label>
+            date
+            <input type="date" name="date" disabled />
+          </label>
+          <label>
+            month
+            <input type="text" name="month" disabled />
+          </label>
+        </div>
+        <label>
+          title
+          <input type="text" name="title" />
+        </label>
+        <label>
+          venue
+          <input type="text" name="venue" />
+        </label>
+        <div class="admin-form-row-2">
+          <label>
+            open_time
+            <input type="text" name="open_time" />
+          </label>
+          <label>
+            start_time
+            <input type="text" name="start_time" />
+          </label>
+        </div>
+        <label>
+          price
+          <input type="text" name="price" />
+        </label>
+        <label>
+          description
+          <textarea name="description" rows="3" />
+        </label>
+        <div class="admin-checkbox-row">
+          <label>
+            <input type="checkbox" name="show_on_home" />
+            show_on_home（featured on home）
+          </label>
+          <label>
+            <input type="checkbox" name="published" />
+            published
+          </label>
+        </div>
+        <p class="admin-hint admin-home-featured-hint" id="home-featured-hint" hidden>
+          Home featured は最大 {HOME_FEATURED_LIMIT} 件です。すでに上限に達している場合、Home
+          掲載でないレコードを featured にすると保存時に拒否されます。
+        </p>
+        <div class="admin-form-row-2">
+          <label>
+            home_order
+            <input type="number" name="home_order" />
+          </label>
+        </div>
+        <label>
+          image_url
+          <input type="url" name="image_url" disabled placeholder="フライヤー画像 URL" />
+        </label>
+        <label>
+          home_image_url
+          <input type="url" name="home_image_url" disabled placeholder="Home カード画像 URL" />
+        </label>
+        <div class="admin-actions">
+          <button type="button" class="admin-btn admin-btn--primary" id="save-schedule-btn" disabled>
+            保存（選択中1件）
+          </button>
+          <span class="admin-hint">POST /api/admin/schedules/update.json</span>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script define:vars={{ schedules, HOME_FEATURED_LIMIT }}>
+  const UPDATE_API = "/api/admin/schedules/update.json";
+  const form = document.getElementById("schedule-form");
+  const hint = document.getElementById("editor-hint");
+  const saveScope = document.getElementById("save-scope");
+  const saveScopeId = document.getElementById("save-scope-id");
+  const saveStatusText = document.getElementById("save-status-text");
+  const saveBtn = document.getElementById("save-schedule-btn");
+  const homeFeaturedCountEl = document.getElementById("home-featured-count");
+  const homeFeaturedHint = document.getElementById("home-featured-hint");
+  const monthSelect = document.getElementById("filter-month");
+  const homeCheck = document.getElementById("filter-home");
+  const publishedCheck = document.getElementById("filter-published");
+  const countEl = document.getElementById("filter-count");
+  const rows = [...document.querySelectorAll("#schedule-table tbody tr")];
+  const byId = new Map(schedules.map((s) => [s.legacy_id, { ...s }]));
+
+  let selectedId = null;
+  let saving = false;
+
+  function countHomeFeatured() {
+    let count = 0;
+    for (const row of byId.values()) {
+      if (row.show_on_home) count += 1;
+    }
+    return count;
+  }
+
+  function updateHomeFeaturedDisplay() {
+    const count = countHomeFeatured();
+    if (homeFeaturedCountEl) {
+      homeFeaturedCountEl.textContent = `${count} / ${HOME_FEATURED_LIMIT}`;
+    }
+    if (homeFeaturedHint && selectedId) {
+      const selected = byId.get(selectedId);
+      const atLimit = count >= HOME_FEATURED_LIMIT;
+      const wouldEnable = selected && !selected.show_on_home;
+      homeFeaturedHint.hidden = !(atLimit && wouldEnable);
+    }
+  }
+
+  function findAccessToken() {
+    try {
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (!key || !key.startsWith("sb-") || !key.endsWith("-auth-token")) continue;
+        const raw = localStorage.getItem(key);
+        if (!raw) continue;
+        const parsed = JSON.parse(raw);
+        if (parsed && parsed.access_token) return parsed.access_token;
+      }
+    } catch (_err) {
+      return null;
+    }
+    return null;
+  }
+
+  function setSaveStatus(text) {
+    if (saveStatusText) saveStatusText.textContent = text;
+  }
+
+  function updateSaveControls() {
+    const token = findAccessToken();
+    const hasSelection = Boolean(selectedId && byId.has(selectedId));
+
+    if (!hasSelection) {
+      setSaveStatus("Not connected");
+      if (saveBtn) saveBtn.disabled = true;
+      if (saveScope) saveScope.hidden = true;
+      return;
+    }
+
+    if (saveScope) {
+      saveScope.hidden = false;
+      if (saveScopeId) saveScopeId.textContent = selectedId;
+    }
+
+    if (saving) {
+      setSaveStatus("Saving...");
+      if (saveBtn) saveBtn.disabled = true;
+      return;
+    }
+
+    if (!token) {
+      setSaveStatus("Login required");
+      if (saveBtn) saveBtn.disabled = true;
+      return;
+    }
+
+    setSaveStatus("Ready");
+    if (saveBtn) saveBtn.disabled = false;
+  }
+
+  function applyFilters() {
+    const month = monthSelect.value;
+    const homeOnly = homeCheck.checked;
+    const publishedOnly = publishedCheck.checked;
+    let visible = 0;
+    for (const tr of rows) {
+      const matchMonth = !month || tr.dataset.month === month;
+      const matchHome = !homeOnly || tr.dataset.home === "1";
+      const matchPublished = !publishedOnly || tr.dataset.published === "1";
+      const show = matchMonth && matchHome && matchPublished;
+      tr.hidden = !show;
+      if (show) visible += 1;
+    }
+    countEl.textContent = `${visible} 件表示`;
+  }
+
+  monthSelect.addEventListener("change", applyFilters);
+  homeCheck.addEventListener("change", applyFilters);
+  publishedCheck.addEventListener("change", applyFilters);
+
+  function syncTableRow(id) {
+    const row = byId.get(id);
+    const tr = rows.find((el) => el.dataset.id === id);
+    if (!row || !tr) return;
+    const titleCell = tr.querySelector(".cell-title");
+    const venueCell = tr.querySelector(".cell-venue");
+    const homeCell = tr.querySelector(".cell-home");
+    const pubCell = tr.querySelector(".cell-published");
+    if (titleCell) {
+      titleCell.textContent = row.title ?? "—";
+      titleCell.title = row.title ?? "";
+    }
+    if (venueCell) {
+      venueCell.textContent = row.venue ?? "—";
+      venueCell.title = row.venue ?? "";
+    }
+    if (homeCell) {
+      homeCell.textContent = row.show_on_home ? `✓ (${row.home_order ?? "—"})` : "—";
+    }
+    if (pubCell) pubCell.textContent = row.published ? "✓" : "—";
+    tr.dataset.home = row.show_on_home ? "1" : "0";
+    tr.dataset.published = row.published ? "1" : "0";
+  }
+
+  function selectRow(id) {
+    const row = byId.get(id);
+    if (!row || !form) return;
+    selectedId = id;
+    for (const tr of rows) tr.classList.toggle("is-selected", tr.dataset.id === id);
+    hint.hidden = true;
+    form.hidden = false;
+    form.elements.legacy_id.value = row.legacy_id ?? "";
+    form.elements.date.value = row.date ?? "";
+    form.elements.month.value = row.month ?? "";
+    form.elements.title.value = row.title ?? "";
+    form.elements.venue.value = row.venue ?? "";
+    form.elements.open_time.value = row.open_time ?? "";
+    form.elements.start_time.value = row.start_time ?? "";
+    form.elements.price.value = row.price ?? "";
+    form.elements.description.value = row.description ?? "";
+    form.elements.show_on_home.checked = Boolean(row.show_on_home);
+    form.elements.published.checked = row.published !== false;
+    form.elements.home_order.value = row.home_order ?? "";
+    form.elements.image_url.value = row.image_url ?? "";
+    form.elements.home_image_url.value = row.home_image_url ?? "";
+    updateHomeFeaturedDisplay();
+    updateSaveControls();
+  }
+
+  async function saveSelectedSchedule() {
+    if (saving || !selectedId) return;
+    const legacyId = form.elements.legacy_id.value.trim();
+    if (!legacyId || legacyId !== selectedId) {
+      setSaveStatus("Error: invalid selection");
+      return;
+    }
+
+    const token = findAccessToken();
+    if (!token) {
+      setSaveStatus("Login required");
+      return;
+    }
+
+    const homeOrderRaw = form.elements.home_order.value.trim();
+    const updates = {
+      title: form.elements.title.value,
+      venue: form.elements.venue.value,
+      open_time: form.elements.open_time.value,
+      start_time: form.elements.start_time.value,
+      price: form.elements.price.value,
+      description: form.elements.description.value,
+      show_on_home: form.elements.show_on_home.checked,
+      home_order: homeOrderRaw === "" ? null : Number(homeOrderRaw),
+      published: form.elements.published.checked,
+    };
+
+    if (!window.confirm("このSchedule 1件だけを保存します。よろしいですか？")) {
+      return;
+    }
+
+    saving = true;
+    updateSaveControls();
+
+    try {
+      const res = await fetch(UPDATE_API, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ legacy_id: legacyId, updates }),
+      });
+
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok || !data.ok) {
+        if (data.error === "home_featured_limit_exceeded") {
+          const limit = data.limit ?? HOME_FEATURED_LIMIT;
+          const current = data.current ?? HOME_FEATURED_LIMIT;
+          setSaveStatus(`Error: Home featured limit exceeded (${current}/${limit})`);
+        } else if (typeof data.message === "string") {
+          setSaveStatus(`Error: ${data.message}`);
+        } else {
+          const errMsg =
+            typeof data.error === "string" ? data.error : `HTTP ${res.status}`;
+          setSaveStatus(`Error: ${errMsg}`);
+        }
+        if (saveBtn) saveBtn.disabled = !findAccessToken() || !selectedId;
+        return;
+      }
+
+      const record = data.record ?? updates;
+      const current = byId.get(legacyId);
+      if (current) {
+        current.title = record.title ?? updates.title;
+        current.venue = record.venue ?? updates.venue;
+        current.open_time = record.open_time ?? updates.open_time;
+        current.start_time = record.start_time ?? updates.start_time;
+        current.price = record.price ?? updates.price;
+        current.description = record.description ?? updates.description;
+        current.show_on_home =
+          typeof record.show_on_home === "boolean" ? record.show_on_home : updates.show_on_home;
+        current.home_order =
+          record.home_order !== undefined ? record.home_order : updates.home_order;
+        current.published =
+          typeof record.published === "boolean" ? record.published : updates.published;
+        form.elements.open_time.value = current.open_time ?? "";
+        form.elements.start_time.value = current.start_time ?? "";
+        form.elements.price.value = current.price ?? "";
+        form.elements.description.value = current.description ?? "";
+        form.elements.show_on_home.checked = Boolean(current.show_on_home);
+        form.elements.home_order.value = current.home_order ?? "";
+        form.elements.published.checked = current.published !== false;
+        syncTableRow(legacyId);
+        updateHomeFeaturedDisplay();
+      }
+
+      setSaveStatus("Saved");
+    } catch (_err) {
+      setSaveStatus("Error: save failed");
+    } finally {
+      saving = false;
+      if (saveBtn) {
+        saveBtn.disabled = !findAccessToken() || !selectedId;
+      }
+    }
+  }
+
+  if (saveBtn) {
+    saveBtn.addEventListener("click", () => {
+      saveSelectedSchedule();
+    });
+  }
+
+  for (const tr of rows) {
+    tr.addEventListener("click", () => selectRow(tr.dataset.id));
+  }
+
+  window.addEventListener("storage", updateSaveControls);
+
+  if (rows.length) selectRow(rows[0].dataset.id);
+  applyFilters();
+  updateHomeFeaturedDisplay();
+  updateSaveControls();
+</script>

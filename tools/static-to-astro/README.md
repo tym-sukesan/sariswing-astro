@@ -1151,6 +1151,46 @@ Phase 3-Q までで **CMS 最小ループは staging 上で成立** していま
 
 ---
 
+### Phase 3-S: Admin/API generator テンプレート化
+
+Phase 3-P〜Q で `output/generated-astro` に直接実装してきた Admin UI / API / save logic を **`templates/admin-cms/`** として固定し、`convert-static-to-astro` から再生成できるようにします。
+
+| 項目 | 内容 |
+| --- | --- |
+| テンプレート | `tools/static-to-astro/templates/admin-cms/` |
+| CLI オプション | `--with-admin-cms`（未指定時は従来どおり Admin/API なし） |
+| adapter | `@astrojs/node` + `@supabase/supabase-js` を generated-astro の `package.json` / `astro.config.mjs` に追加 |
+| データ JSON | テンプレートは空配列 stub → **`export-supabase-json.mjs` で上書き** |
+
+#### convert（Admin CMS あり）
+
+```bash
+node tools/static-to-astro/scripts/convert-static-to-astro.mjs \
+  tools/static-to-astro/fixtures/gosaki-static-site \
+  tools/static-to-astro/output/generated-astro \
+  --base-url https://www.gosaki-piano.com \
+  --verify-build \
+  --with-admin-cms
+```
+
+#### 生成される主なファイル
+
+- `src/pages/admin/*`, `src/pages/api/admin/*`
+- `src/lib/admin-*.ts`, `supabase-admin-read.ts`, `home-featured-limit.ts`
+- `src/components/admin/*`, `src/styles/admin.css`
+- データ駆動公開 CMS: `ScheduleList`, `HomeSchedule`, `DiscographyList` + 対応 page overrides
+- `.env.example`（secret 実値なし）
+
+#### static FTP hosting 注意
+
+- **ロリポップ等の静的 FTP では `/api/admin/*` は動きません**（Node server 不在）
+- 公開は `dist/client/` のみ FTP、Admin は **別ホスト** または **ローカル dev + export CLI** を検討（Phase 3-R / 3-T）
+- CMS 最小ループ検証: `verify-cms-minimal-loop.mjs`（export 後に実行）
+
+出力レポート: `output/generated-astro/CONVERSION_REPORT.md`（Admin CMS template セクション）、`output/admin-cms-template/gosaki/ADMIN_CMS_TEMPLATE_REPORT.md`
+
+---
+
 ## Phase 2-F: SEO 公開準備（site / robots / sitemap）
 
 `--base-url` **指定時のみ** 以下を生成します。未指定時は sitemap 連携・robots.txt は行いません（レポートに記録）。

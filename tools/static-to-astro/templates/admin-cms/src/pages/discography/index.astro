@@ -1,0 +1,20 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import DiscographyList from "../../components/DiscographyList.astro";
+---
+
+<BaseLayout
+  title="Discography | saki-goto"
+  canonical="https://www.gosaki-piano.com/discography/"
+  ogTitle="Discography | saki-goto"
+  ogType="website"
+  ogUrl="https://www.gosaki-piano.com/discography/"
+  twitterCard="summary_large_image"
+  lang="ja"
+>
+  <h1 class="page-heading">Discography</h1>
+  <section class="section-block">
+    <!-- CMS_TARGET: DISCOGRAPHY_LIST (data-driven Phase 3-D) -->
+    <DiscographyList />
+  </section>
+</BaseLayout>

@@ -1,0 +1,160 @@
+---
+import AdminLayout from "../../components/admin/AdminLayout.astro";
+import { fetchAdminCmsData } from "../../lib/supabase-admin-read.ts";
+
+const cms = await fetchAdminCmsData();
+const { meta, counts } = cms;
+const isLive = meta.dataSource === "supabase-direct-read";
+---
+
+<AdminLayout
+  title="Dashboard"
+  description="Admin prototype — Supabase read-only (Phase 3-L)"
+  currentNav="home"
+  readMeta={meta}
+>
+  <h1 class="admin-page-title">Admin Prototype</h1>
+  <p class="admin-lead">
+    Schedule / Discography 管理画面の read-only プロトタイプです。データは staging Supabase
+    から server-side で読み込みます（保存・更新・削除は未実装）。
+  </p>
+
+  {
+    meta.error ? (
+      <section class="admin-notice admin-notice--warn" role="alert">
+        <strong>Supabase read unavailable</strong>
+        {meta.error}
+        <p class="admin-hint" style="margin:0.5rem 0 0">
+          Set env vars before <code>npm run dev</code> / <code>npm run build</code> (see
+          tools/static-to-astro README Phase 3-L).
+        </p>
+      </section>
+    ) : (
+      <section class="admin-notice" role="status">
+        <strong>Read-only · staging Supabase</strong>
+        Admin pages fetch CMS data at build/dev time on the server. Service role key is never sent
+        to the browser. Save buttons remain disabled.
+      </section>
+    )
+  }
+
+  <div class="admin-stats">
+    <div class="admin-stat">
+      <span class="admin-stat__label">Data source</span>
+      <span class="admin-stat__value admin-stat__value--text">
+        {isLive ? "Supabase direct read" : "Unavailable"}
+      </span>
+    </div>
+    <div class="admin-stat">
+      <span class="admin-stat__label">Supabase host</span>
+      <span class="admin-stat__value admin-stat__value--text">{meta.host ?? "—"}</span>
+    </div>
+    <div class="admin-stat">
+      <span class="admin-stat__label">Schedules</span>
+      <span class="admin-stat__value">{counts.schedules}</span>
+    </div>
+    <div class="admin-stat">
+      <span class="admin-stat__label">Discography</span>
+      <span class="admin-stat__value">{counts.discography}</span>
+    </div>
+    <div class="admin-stat">
+      <span class="admin-stat__label">Tracks</span>
+      <span class="admin-stat__value">{counts.discography_tracks}</span>
+    </div>
+    <div class="admin-stat">
+      <span class="admin-stat__label">show_on_home</span>
+      <span class="admin-stat__value">{counts.show_on_home}</span>
+    </div>
+  </div>
+
+  {
+    meta.fetchedAt ? (
+      <p class="admin-hint">Last fetched (server): {meta.fetchedAt}</p>
+    ) : null
+  }
+
+  <ul class="admin-link-list">
+    <li>
+      <a href="/admin/schedules/">
+        Schedule 管理
+        <span>{counts.schedules} 件 · 月別 / Home / published フィルタ · 編集フォーム mock</span>
+      </a>
+    </li>
+    <li>
+      <a href="/admin/discography/">
+        Discography 管理
+        <span>{counts.discography} リリース · {counts.discography_tracks} tracks · 編集 mock</span>
+      </a>
+    </li>
+  </ul>
+
+  <section class="admin-notice" aria-labelledby="admin-api-status-title">
+    <h2 id="admin-api-status-title" style="margin: 0 0 0.5rem; font-size: 1rem">Admin API status (Phase 3-P-A)</h2>
+    <ul style="margin: 0; padding-left: 1.25rem">
+      <li><strong>Endpoint:</strong> <code>/api/admin/me.json</code></li>
+      <li><strong>Mode:</strong> <code>Authorization: Bearer &lt;access_token&gt;</code></li>
+      <li><strong>Save API:</strong> not implemented (read-only auth check)</li>
+      <li id="admin-api-session-line">
+        <strong>Browser session:</strong> checking…
+      </li>
+    </ul>
+    <p class="admin-hint" style="margin-top: 0.75rem">
+      API route ready. Tokens and keys are never displayed here.
+    </p>
+  </section>
+
+  <script is:inline>
+    (function () {
+      var line = document.getElementById("admin-api-session-line");
+      if (!line) return;
+
+      function setText(label, detail) {
+        line.innerHTML =
+          "<strong>Browser session:</strong> " +
+          label +
+          (detail ? " · " + detail : "");
+      }
+
+      function findAccessToken() {
+        try {
+          for (var i = 0; i < localStorage.length; i++) {
+            var key = localStorage.key(i);
+            if (!key || key.indexOf("sb-") !== 0 || key.indexOf("-auth-token") === -1) continue;
+            var raw = localStorage.getItem(key);
+            if (!raw) continue;
+            var parsed = JSON.parse(raw);
+            if (parsed && parsed.access_token) return parsed.access_token;
+          }
+        } catch (_err) {
+          return null;
+        }
+        return null;
+      }
+
+      var token = findAccessToken();
+      if (!token) {
+        setText("not checked", "no Supabase session in this browser");
+        return;
+      }
+
+      fetch("/api/admin/me.json", {
+        headers: { Authorization: "Bearer " + token },
+      })
+        .then(function (res) {
+          return res.json();
+        })
+        .then(function (data) {
+          setText(
+            "checked via API",
+            "authenticated=" +
+              Boolean(data.authenticated) +
+              ", admin=" +
+              Boolean(data.admin),
+          );
+        })
+        .catch(function () {
+          setText("check failed", "could not reach /api/admin/me.json");
+        });
+    })();
+  </script>
+</AdminLayout>

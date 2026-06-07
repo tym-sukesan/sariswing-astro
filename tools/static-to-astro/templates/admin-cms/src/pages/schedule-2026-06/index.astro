@@ -1,0 +1,24 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import ScheduleList from "../../components/ScheduleList.astro";
+import schedules from "../../data/schedules.json";
+
+const MONTH = "2026-06";
+const events = schedules.filter((s) => s.month === MONTH);
+---
+
+<BaseLayout
+  title="Schedule 202606 | saki-goto"
+  canonical="https://www.gosaki-piano.com/schedule-2026-06/"
+  ogTitle="Schedule 202606 | saki-goto"
+  ogType="website"
+  ogUrl="https://www.gosaki-piano.com/schedule-2026-06/"
+  twitterCard="summary_large_image"
+  lang="ja"
+>
+  <h1 class="page-heading">June , 2026</h1>
+  <section class="section-block">
+    <!-- CMS_TARGET: SCHEDULE_MONTH_LIST (data-driven Phase 3-B) -->
+    <ScheduleList events={events} />
+  </section>
+</BaseLayout>

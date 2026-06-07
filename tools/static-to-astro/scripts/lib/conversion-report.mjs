@@ -1,3 +1,5 @@
+import { formatAdminCmsTemplateSection } from "./admin-cms-template.mjs";
+
 /**
  * CONVERSION_REPORT.md generator (Phase 2-B / 2-C / 2-E).
  */
@@ -61,6 +63,7 @@ export function formatConversionReport({
   buildVerification = null,
   fixtureLabel = "gosaki-static-site",
   seoPublishReadiness = null,
+  adminCmsSummary = null,
 }) {
   const baseUrlApplied = Boolean(baseUrl);
   const pageCount = totalPageCount ?? pages.length;
@@ -413,6 +416,17 @@ export function formatConversionReport({
     "9. **canonical / og:url / og:image:** 本番ドメインと一致するか確認。",
     "",
   );
+
+  if (adminCmsSummary) {
+    lines.push(formatAdminCmsTemplateSection(adminCmsSummary));
+  } else {
+    lines.push(
+      "## Admin CMS template",
+      "",
+      "- **Applied:** no (`--with-admin-cms` not used)",
+      "",
+    );
+  }
 
   lines.push("## Manual review required", "");
   if (!manualReview.length) {

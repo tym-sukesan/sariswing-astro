@@ -13,6 +13,7 @@ function parseArgs(argv) {
   let dryRun = false;
   let baseUrl = null;
   let verifyBuild = false;
+  let withAdminCms = false;
 
   for (let i = 2; i < argv.length; i++) {
     const arg = argv[i];
@@ -25,6 +26,10 @@ function parseArgs(argv) {
     }
     if (arg === "--verify-build") {
       verifyBuild = true;
+      continue;
+    }
+    if (arg === "--with-admin-cms") {
+      withAdminCms = true;
       continue;
     }
     if (arg === "--base-url") {
@@ -44,6 +49,7 @@ function parseArgs(argv) {
     dryRun,
     baseUrl,
     verifyBuild,
+    withAdminCms,
     help: false,
   };
 }
@@ -57,6 +63,7 @@ Options:
   --base-url URL  Production site origin for canonical / og:url / og:image
                   Example: https://studio-sakura.example.com
   --verify-build  Run npm run build in output-dir and record result in CONVERSION_REPORT.md
+  --with-admin-cms Copy Admin UI / API templates (requires @astrojs/node adapter)
   --dry-run       Analyze only; do not write files
   --help, -h      Show this help
 `);
@@ -76,7 +83,7 @@ function main() {
     process.exit(0);
   }
 
-  const { inputDir, outputDir, dryRun, baseUrl, verifyBuild } = args;
+  const { inputDir, outputDir, dryRun, baseUrl, verifyBuild, withAdminCms } = args;
   if (!inputDir || !outputDir) {
     printHelp();
     process.exit(1);
@@ -91,7 +98,12 @@ function main() {
   }
 
   try {
-    const result = generateAstroProject(inputAbs, outputAbs, { dryRun, baseUrl, verifyBuild });
+    const result = generateAstroProject(inputAbs, outputAbs, {
+      dryRun,
+      baseUrl,
+      verifyBuild,
+      withAdminCms,
+    });
     if (dryRun) {
       console.log("static-to-astro convert (dry-run)");
       console.log(`  Would generate ${result.analysis.pages.length} pages at: ${outputAbs}`);

@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { analyzeStaticSite, layoutImportFromPagePath } from "./static-site-analyzer.mjs";
 import {
   applyBaseUrlToPages,
@@ -28,9 +29,16 @@ import {
   seoToLayoutProps,
 } from "./seo-extract.mjs";
 import { escapeAstroPropString, transformHtmlFragment } from "./path-transform.mjs";
+import {
+  applyAdminCmsTemplateBundle,
+  generateAstroConfigWithAdminCms,
+  generatePackageJsonWithAdminCms,
+  resolveAdminCmsTemplateRoot,
+} from "./admin-cms-template.mjs";
 
 const TRAILING_SLASH = "always";
 const GLOBAL_CSS_PATH = "src/styles/global.css";
+const TOOL_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 
 function ensureDir(dir) {
   fs.mkdirSync(dir, { recursive: true });
@@ -621,6 +629,7 @@ export function generateAstroProject(inputDir, outputDir, options = {}) {
   const siteDir = path.resolve(inputDir);
   const outDir = path.resolve(outputDir);
   const baseUrl = normalizeBaseUrl(options.baseUrl ?? null);
+  const withAdminCms = Boolean(options.withAdminCms);
 
   const analysis = analyzeStaticSite(siteDir);
   analysis.pages = applyBaseUrlToPages(analysis.pages, baseUrl);
@@ -703,6 +712,21 @@ export function generateAstroProject(inputDir, outputDir, options = {}) {
   writeFile(path.join(outDir, "tsconfig.json"), generateTsConfig());
   writeFile(path.join(outDir, ".gitignore"), generateGitignore());
 
+  let adminCmsSummary = { applied: false };
+
+  if (withAdminCms) {
+    adminCmsSummary = applyAdminCmsTemplateBundle(outDir, {
+      templateRoot: resolveAdminCmsTemplateRoot(TOOL_ROOT),
+      fixtureLabel: fixtureLabelFromPath(siteDir),
+      toolRoot: TOOL_ROOT,
+    });
+    writeFile(path.join(outDir, "package.json"), generatePackageJsonWithAdminCms(baseUrl));
+    writeFile(
+      path.join(outDir, "astro.config.mjs"),
+      generateAstroConfigWithAdminCms(baseUrl, TRAILING_SLASH),
+    );
+  }
+
   const robotsTxt = generateRobotsTxt(baseUrl);
   if (robotsTxt) {
     writeFile(path.join(outDir, "public/robots.txt"), robotsTxt);
@@ -782,6 +806,7 @@ export function generateAstroProject(inputDir, outputDir, options = {}) {
     domainReviewPages,
     mainWrapperApplied,
     seoPublishReadiness,
+    adminCmsSummary,
   });
 
   writeFile(path.join(outDir, "CONVERSION_REPORT.md"), conversionReport);
@@ -808,6 +833,7 @@ export function generateAstroProject(inputDir, outputDir, options = {}) {
     conversionReport,
     generatedAt,
     baseUrl,
+    adminCmsSummary,
   };
 }
 
@@ -836,6 +862,11 @@ export function printGenerationSummary(result) {
   }
   if (result.seoPublishReadiness?.sitemapIntegrationEnabled) {
     console.log(`  SEO:     site=${result.seoPublishReadiness.baseUrl} robots.txt + @astrojs/sitemap`);
+  }
+  if (result.adminCmsSummary?.applied) {
+    console.log(
+      `  Admin:   CMS template applied (${result.adminCmsSummary.copiedFilesCount} files, @astrojs/node)`,
+    );
   }
   if (result.buildVerification) {
     const sm = result.buildVerification.sitemapFiles?.length

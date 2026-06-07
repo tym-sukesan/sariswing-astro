@@ -1,4 +1,5 @@
 import { formatAdminCmsTemplateSection } from "./admin-cms-template.mjs";
+import { formatSiteProfileSection } from "./site-profile-loader.mjs";
 
 /**
  * CONVERSION_REPORT.md generator (Phase 2-B / 2-C / 2-E).
@@ -64,6 +65,7 @@ export function formatConversionReport({
   fixtureLabel = "gosaki-static-site",
   seoPublishReadiness = null,
   adminCmsSummary = null,
+  siteProfileSummary = null,
 }) {
   const baseUrlApplied = Boolean(baseUrl);
   const pageCount = totalPageCount ?? pages.length;
@@ -416,6 +418,10 @@ export function formatConversionReport({
     "9. **canonical / og:url / og:image:** 本番ドメインと一致するか確認。",
     "",
   );
+
+  if (siteProfileSummary?.active) {
+    lines.push(formatSiteProfileSection(siteProfileSummary));
+  }
 
   if (adminCmsSummary) {
     lines.push(formatAdminCmsTemplateSection(adminCmsSummary));

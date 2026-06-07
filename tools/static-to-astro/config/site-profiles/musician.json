@@ -1,0 +1,32 @@
+{
+  "id": "musician",
+  "label": "Musician / Performer",
+  "modules": {
+    "schedule": true,
+    "discography": true,
+    "discographyTracks": true,
+    "news": false,
+    "profile": true,
+    "externalLinks": true
+  },
+  "admin": {
+    "enabled": true,
+    "pages": ["dashboard", "schedules", "discography"]
+  },
+  "homeFeatured": {
+    "module": "schedules",
+    "field": "show_on_home",
+    "limit": 3
+  },
+  "storage": {
+    "fields": [
+      "schedules.image_url",
+      "schedules.home_image_url",
+      "discography.cover_image_url"
+    ]
+  },
+  "deploy": {
+    "staticPublicArtifact": true,
+    "adminSeparateHostRecommended": true
+  }
+}

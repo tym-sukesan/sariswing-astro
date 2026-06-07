@@ -1,0 +1,34 @@
+{
+  "id": "dance-school",
+  "label": "Dance School / Lesson Studio",
+  "modules": {
+    "schedule": true,
+    "classes": true,
+    "instructors": true,
+    "news": true,
+    "discography": false,
+    "discographyTracks": false,
+    "profile": true,
+    "externalLinks": true
+  },
+  "admin": {
+    "enabled": true,
+    "pages": ["dashboard", "classes", "news", "schedule"]
+  },
+  "homeFeatured": {
+    "module": "news",
+    "field": "featured_on_home",
+    "limit": 3
+  },
+  "storage": {
+    "fields": [
+      "news.image_url",
+      "classes.image_url",
+      "instructors.photo_url"
+    ]
+  },
+  "deploy": {
+    "staticPublicArtifact": true,
+    "adminSeparateHostRecommended": true
+  }
+}

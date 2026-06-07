@@ -189,6 +189,21 @@ export function formatAdminCmsTemplateSection(summary) {
     `- **@supabase/supabase-js added:** ${summary.supabaseClientAdded ? "yes" : "no"}`,
     `- **Output mode:** ${summary.outputMode}`,
     "",
+  ];
+
+  if (summary.siteProfile?.active || summary.siteProfile?.profileId) {
+    const sp = summary.siteProfile;
+    lines.push(
+      "### Site profile binding",
+      "",
+      `- **activeProfile:** \`${sp.profileId ?? "—"}\``,
+      `- **enabledModules:** ${(sp.enabledModules ?? []).join(", ") || "—"}`,
+      `- **adminPages:** ${(sp.adminPages ?? []).join(", ") || "—"}`,
+      "",
+    );
+  }
+
+  lines.push(
     "### Known hosting limitation",
     "",
     "- Static FTP hosting **cannot** run `/api/admin/*` (no Node server on shared FTP).",
@@ -197,7 +212,7 @@ export function formatAdminCmsTemplateSection(summary) {
     "",
     "### Copied paths (sample)",
     "",
-  ];
+  );
 
   for (const rel of summary.copiedFilesSample ?? []) {
     lines.push(`- \`${rel}\``);
@@ -211,9 +226,9 @@ export function formatAdminCmsTemplateSection(summary) {
 }
 
 /**
- * @param {{ fixtureLabel: string, summary: object, reportPath: string }} opts
+ * @param {{ fixtureLabel: string, summary: object, reportPath: string, siteProfileSummary?: object | null }} opts
  */
-export function writeAdminCmsTemplateReport({ fixtureLabel, summary, reportPath }) {
+export function writeAdminCmsTemplateReport({ fixtureLabel, summary, reportPath, siteProfileSummary = null }) {
   const lines = [
     "# Admin CMS Template Report (Phase 3-S)",
     "",
@@ -231,6 +246,47 @@ export function writeAdminCmsTemplateReport({ fixtureLabel, summary, reportPath 
     "",
   ];
 
+  if (siteProfileSummary?.active) {
+    lines.push(
+      "## Site profile (Admin CMS)",
+      "",
+      `- **activeProfile:** \`${siteProfileSummary.profileId}\``,
+      `- **label:** ${siteProfileSummary.label}`,
+      "",
+      "**enabledModules:**",
+    );
+    for (const mod of siteProfileSummary.enabledModules ?? []) {
+      lines.push(`- ${mod}`);
+    }
+    lines.push("", "**adminPages:**");
+    for (const page of siteProfileSummary.adminPages ?? []) {
+      lines.push(`- ${page}`);
+    }
+    const hf = siteProfileSummary.homeFeatured;
+    lines.push(
+      "",
+      "**homeFeatured:**",
+      `- module: ${hf?.module ?? "—"}`,
+      `- field: ${hf?.field ?? "—"}`,
+      `- limit: ${hf?.limit ?? "—"}`,
+      "",
+      "**storageFields:**",
+    );
+    for (const field of siteProfileSummary.storageFields ?? []) {
+      lines.push(`- ${field}`);
+    }
+    const deploy = siteProfileSummary.deployHints;
+    if (deploy) {
+      lines.push(
+        "",
+        "**deployHints:**",
+        `- staticPublicArtifact: ${deploy.staticPublicArtifact ? "yes" : "no"}`,
+        `- adminSeparateHostRecommended: ${deploy.adminSeparateHostRecommended ? "yes" : "no"}`,
+      );
+    }
+    lines.push("");
+  }
+
   if (summary.copiedFiles?.length) {
     lines.push("## Copied files", "");
     for (const rel of summary.copiedFiles) {
@@ -247,9 +303,9 @@ export function writeAdminCmsTemplateReport({ fixtureLabel, summary, reportPath 
 
 /**
  * @param {string} outDir
- * @param {{ templateRoot: string, fixtureLabel: string, toolRoot: string }} opts
+ * @param {{ templateRoot: string, fixtureLabel: string, toolRoot: string, siteProfile?: object | null, siteProfileSummary?: object | null }} opts
  */
-export function applyAdminCmsTemplateBundle(outDir, { templateRoot, fixtureLabel, toolRoot }) {
+export function applyAdminCmsTemplateBundle(outDir, { templateRoot, fixtureLabel, toolRoot, siteProfile = null, siteProfileSummary = null }) {
   if (!fs.existsSync(templateRoot)) {
     throw new Error(`Admin CMS template not found: ${templateRoot}`);
   }
@@ -264,6 +320,7 @@ export function applyAdminCmsTemplateBundle(outDir, { templateRoot, fixtureLabel
     nodeAdapterAdded: true,
     supabaseClientAdded: true,
     outputMode: "hybrid (prerendered pages + server API routes via @astrojs/node)",
+    siteProfile: siteProfileSummary ?? (siteProfile ? { activeProfile: siteProfile.id } : null),
   };
 
   const reportPath = path.join(
@@ -277,6 +334,7 @@ export function applyAdminCmsTemplateBundle(outDir, { templateRoot, fixtureLabel
     fixtureLabel,
     summary,
     reportPath: path.relative(toolRoot, reportPath),
+    siteProfileSummary,
   });
 
   return summary;

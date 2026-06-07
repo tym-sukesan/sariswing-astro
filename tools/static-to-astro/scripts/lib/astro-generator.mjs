@@ -35,6 +35,10 @@ import {
   generatePackageJsonWithAdminCms,
   resolveAdminCmsTemplateRoot,
 } from "./admin-cms-template.mjs";
+import {
+  buildSiteProfileSummary,
+  resolveSiteProfile,
+} from "./site-profile-loader.mjs";
 
 const TRAILING_SLASH = "always";
 const GLOBAL_CSS_PATH = "src/styles/global.css";
@@ -630,6 +634,14 @@ export function generateAstroProject(inputDir, outputDir, options = {}) {
   const outDir = path.resolve(outputDir);
   const baseUrl = normalizeBaseUrl(options.baseUrl ?? null);
   const withAdminCms = Boolean(options.withAdminCms);
+  const siteProfileResolved = resolveSiteProfile({
+    siteProfileId: options.siteProfile ?? null,
+    withAdminCms,
+    toolRoot: TOOL_ROOT,
+  });
+  const siteProfileSummary = buildSiteProfileSummary(siteProfileResolved.profile, {
+    source: siteProfileResolved.source,
+  });
 
   const analysis = analyzeStaticSite(siteDir);
   analysis.pages = applyBaseUrlToPages(analysis.pages, baseUrl);
@@ -719,6 +731,8 @@ export function generateAstroProject(inputDir, outputDir, options = {}) {
       templateRoot: resolveAdminCmsTemplateRoot(TOOL_ROOT),
       fixtureLabel: fixtureLabelFromPath(siteDir),
       toolRoot: TOOL_ROOT,
+      siteProfile: siteProfileResolved.profile,
+      siteProfileSummary,
     });
     writeFile(path.join(outDir, "package.json"), generatePackageJsonWithAdminCms(baseUrl));
     writeFile(
@@ -807,6 +821,7 @@ export function generateAstroProject(inputDir, outputDir, options = {}) {
     mainWrapperApplied,
     seoPublishReadiness,
     adminCmsSummary,
+    siteProfileSummary,
   });
 
   writeFile(path.join(outDir, "CONVERSION_REPORT.md"), conversionReport);
@@ -834,6 +849,7 @@ export function generateAstroProject(inputDir, outputDir, options = {}) {
     generatedAt,
     baseUrl,
     adminCmsSummary,
+    siteProfileSummary,
   };
 }
 
@@ -866,6 +882,11 @@ export function printGenerationSummary(result) {
   if (result.adminCmsSummary?.applied) {
     console.log(
       `  Admin:   CMS template applied (${result.adminCmsSummary.copiedFilesCount} files, @astrojs/node)`,
+    );
+  }
+  if (result.siteProfileSummary?.active) {
+    console.log(
+      `  Profile: ${result.siteProfileSummary.profileId} (${result.siteProfileSummary.label})`,
     );
   }
   if (result.buildVerification) {

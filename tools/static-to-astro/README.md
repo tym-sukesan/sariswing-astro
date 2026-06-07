@@ -1278,6 +1278,52 @@ node tools/static-to-astro/scripts/plan-storage-assets.mjs \
 
 ---
 
+### Phase 3-W: Site profile system（設計・dry-run 検証）
+
+複数サイト種別（musician / dance-school / generic 等）向けに **CMS module・Admin pages・Home featured・Storage fields** を profile JSON で宣言し、convert CLI から参照できる土台を追加します。**dance-school / generic の CMS 本実装は未着手**です。
+
+| 項目 | 内容 |
+| --- | --- |
+| 設計 doc | [docs/site-profile-system.md](docs/site-profile-system.md) |
+| Profile 設定 | `config/site-profiles/*.json` |
+| Loader | `scripts/lib/site-profile-loader.mjs` |
+| Verifier | `verify-site-profiles.mjs` |
+
+#### Profile 一覧（Phase 3-W）
+
+| ID | 状態 | 概要 |
+| --- | --- | --- |
+| `musician` | **実装済み（gosaki 互換）** | schedule + discography + tracks |
+| `dance-school` | 設計のみ | classes + news + instructors（将来） |
+| `generic` | 設計のみ | news + profile（将来） |
+
+#### Convert（profile 指定）
+
+```bash
+node tools/static-to-astro/scripts/convert-static-to-astro.mjs \
+  tools/static-to-astro/fixtures/gosaki-static-site \
+  tools/static-to-astro/output/generated-astro \
+  --base-url https://www.gosaki-piano.com \
+  --verify-build \
+  --with-admin-cms \
+  --site-profile musician
+```
+
+**デフォルト:** `--with-admin-cms` 使用時、profile 未指定 → `musician`。Admin CMS なし convert は従来どおり（profile 未適用）。
+
+`CONVERSION_REPORT.md` に **Site profile** セクション（enabled modules / admin pages / home featured / storage fields）を追記します。
+
+#### 検証
+
+```bash
+node tools/static-to-astro/scripts/verify-site-profiles.mjs \
+  --report tools/static-to-astro/output/site-profiles/SITE_PROFILE_VERIFY_REPORT.md
+```
+
+**未実装（Phase 3-W）:** profile による CMS template 分岐、dance-school/generic Admin 本実装、Storage upload、deploy 実行
+
+---
+
 ## Phase 2-F: SEO 公開準備（site / robots / sitemap）
 
 `--base-url` **指定時のみ** 以下を生成します。未指定時は sitemap 連携・robots.txt は行いません（レポートに記録）。

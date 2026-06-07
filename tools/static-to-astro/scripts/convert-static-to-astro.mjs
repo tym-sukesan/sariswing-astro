@@ -14,6 +14,7 @@ function parseArgs(argv) {
   let baseUrl = null;
   let verifyBuild = false;
   let withAdminCms = false;
+  let siteProfile = null;
 
   for (let i = 2; i < argv.length; i++) {
     const arg = argv[i];
@@ -30,6 +31,11 @@ function parseArgs(argv) {
     }
     if (arg === "--with-admin-cms") {
       withAdminCms = true;
+      continue;
+    }
+    if (arg === "--site-profile") {
+      siteProfile = argv[++i];
+      if (!siteProfile) throw new Error("--site-profile requires a profile ID");
       continue;
     }
     if (arg === "--base-url") {
@@ -50,6 +56,7 @@ function parseArgs(argv) {
     baseUrl,
     verifyBuild,
     withAdminCms,
+    siteProfile,
     help: false,
   };
 }
@@ -64,6 +71,8 @@ Options:
                   Example: https://studio-sakura.example.com
   --verify-build  Run npm run build in output-dir and record result in CONVERSION_REPORT.md
   --with-admin-cms Copy Admin UI / API templates (requires @astrojs/node adapter)
+  --site-profile ID  Site profile ID (musician, dance-school, generic)
+                     Default with --with-admin-cms: musician
   --dry-run       Analyze only; do not write files
   --help, -h      Show this help
 `);
@@ -83,7 +92,7 @@ function main() {
     process.exit(0);
   }
 
-  const { inputDir, outputDir, dryRun, baseUrl, verifyBuild, withAdminCms } = args;
+  const { inputDir, outputDir, dryRun, baseUrl, verifyBuild, withAdminCms, siteProfile } = args;
   if (!inputDir || !outputDir) {
     printHelp();
     process.exit(1);
@@ -103,6 +112,7 @@ function main() {
       baseUrl,
       verifyBuild,
       withAdminCms,
+      siteProfile,
     });
     if (dryRun) {
       console.log("static-to-astro convert (dry-run)");

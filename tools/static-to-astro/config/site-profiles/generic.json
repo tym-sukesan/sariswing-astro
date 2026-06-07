@@ -1,0 +1,31 @@
+{
+  "id": "generic",
+  "label": "Generic Small Business",
+  "modules": {
+    "schedule": false,
+    "discography": false,
+    "discographyTracks": false,
+    "news": true,
+    "profile": true,
+    "externalLinks": true
+  },
+  "admin": {
+    "enabled": true,
+    "pages": ["dashboard", "news", "profile"]
+  },
+  "homeFeatured": {
+    "module": "news",
+    "field": "featured_on_home",
+    "limit": 3
+  },
+  "storage": {
+    "fields": [
+      "news.image_url",
+      "profile.main_image_url"
+    ]
+  },
+  "deploy": {
+    "staticPublicArtifact": true,
+    "adminSeparateHostRecommended": true
+  }
+}

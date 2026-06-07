@@ -35,7 +35,7 @@
 	<wp:base_site_url>https://sariswing.com</wp:base_site_url>
 	<wp:base_blog_url>https://sariswing.com</wp:base_blog_url>
 
-		<wp:author><wp:author_id>2</wp:author_id><wp:author_login><![CDATA[biku_sari]]></wp:author_login><wp:author_email><![CDATA[bikusari@gmail.com]]></wp:author_email><wp:author_display_name><![CDATA[biku_sari]]></wp:author_display_name><wp:author_first_name><![CDATA[]]></wp:author_first_name><wp:author_last_name><![CDATA[]]></wp:author_last_name></wp:author>
+		<wp:author><wp:author_id>2</wp:author_id><wp:author_login><![CDATA[biku_sari]]></wp:author_login><wp:author_email><![CDATA[example.com]]></wp:author_email><wp:author_display_name><![CDATA[biku_sari]]></wp:author_display_name><wp:author_first_name><![CDATA[]]></wp:author_first_name><wp:author_last_name><![CDATA[]]></wp:author_last_name></wp:author>
 
 		<wp:category>
 		<wp:term_id>13</wp:term_id>

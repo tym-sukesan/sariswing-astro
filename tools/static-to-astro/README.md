@@ -1250,6 +1250,34 @@ node tools/static-to-astro/scripts/verify-public-dist-deploy-workflow.mjs \
 
 ---
 
+### Phase 3-U: Storage upload / image pipeline（dry-run plan）
+
+CMS 画像（Schedule flyer / home image / Discography cover）の **Supabase Storage 載せ替え計画** を dry-run で生成します。**実アップロード・bucket 作成・RLS 適用は行いません。**
+
+| 項目 | 内容 |
+| --- | --- |
+| 設計 doc | [docs/storage-image-pipeline.md](docs/storage-image-pipeline.md) |
+| Plan CLI | `plan-storage-assets.mjs` |
+| Upload stub | `upload-storage-assets.mjs`（`--apply` 未実装・拒否） |
+| 対象フィールド | `schedules.image_url`, `schedules.home_image_url`, `discography.cover_image_url` |
+| Bucket 案 | `site-assets` / `{siteSlug}/schedule|discography/...` |
+
+#### Plan 実行
+
+```bash
+node tools/static-to-astro/scripts/plan-storage-assets.mjs \
+  --seed-dir tools/static-to-astro/output/supabase-seed/gosaki \
+  --site-slug gosaki \
+  --report tools/static-to-astro/output/storage/gosaki/STORAGE_ASSET_PLAN_REPORT.md \
+  --manifest tools/static-to-astro/output/storage/gosaki/storage-asset-plan.json
+```
+
+**action 分類:** `supabase` → keep / `wix|external` → **review-required** / `local` → download-and-upload 候補（dry-run）/ `empty` → skip
+
+**禁止（Phase 3-U）:** Wix/external の自動再ホスト、本番 Storage 接続、Storage policy 適用
+
+---
+
 ## Phase 2-F: SEO 公開準備（site / robots / sitemap）
 
 `--base-url` **指定時のみ** 以下を生成します。未指定時は sitemap 連携・robots.txt は行いません（レポートに記録）。

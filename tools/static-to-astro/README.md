@@ -1086,6 +1086,49 @@ Playwright で tracks 1〜2件を一時更新 → **cleanup で元 tracks に復
 
 ---
 
+### Phase 3-Q: CMS最小ループ統合確認
+
+Phase 3-P まで個別に検証してきた CMS 機能を、**実運用に近い一連の流れ**として統合確認します。
+
+| ステップ | 内容 |
+| --- | --- |
+| 1 | staging Supabase の既存データを Admin API で一時編集 |
+| 2 | Supabase → JSON export（`export-supabase-json.mjs` 相当） |
+| 3 | generated-astro を `npm run build` |
+| 4 | build 後の公開 HTML に一時編集内容（`[CMS LOOP TEST]`）が反映されることを確認 |
+| 5 | cleanup で Supabase の値を baseline に復元 |
+| 6 | 再度 export / rebuild |
+| 7 | HTML から `[CMS LOOP TEST]` が消え、件数・レコードが baseline と一致することを確認 |
+| 8 | `dist/` key leak scan |
+
+#### 検証対象（update は各 1 件のみ）
+
+| 種別 | legacy_id / track | 一時変更 |
+| --- | --- | --- |
+| Schedule | `schedule-2026-03-011` | title / venue / description |
+| Discography 本体 | `discography-001` | title / artist / description |
+| Discography track | `discography-001` track 1 | title |
+
+#### 検証 CLI
+
+```bash
+node tools/static-to-astro/scripts/verify-cms-minimal-loop.mjs \
+  --astro-dir tools/static-to-astro/output/generated-astro \
+  --report tools/static-to-astro/output/rls/gosaki/CMS_MINIMAL_LOOP_VERIFY_REPORT.md
+```
+
+オプション: `--schedule-legacy-id`, `--discography-legacy-id`, `--track-number`, `--skip-build`, `--help`
+
+- **update 方式:** 既存 Admin API route 経由（`POST /api/admin/schedules/update.json` 等）
+- **禁止:** insert / delete / upsert / 一括 update / track 追加・削除 / Storage upload
+- **必須:** cleanup で必ず baseline に復元（失敗時はエラー）
+- **本番では実行しない**（staging Supabase / generated-astro のみ）
+- **未実装:** Storage upload / deploy 自動化
+
+出力: `output/rls/gosaki/CMS_MINIMAL_LOOP_VERIFY_REPORT.md`
+
+---
+
 ## Phase 2-F: SEO 公開準備（site / robots / sitemap）
 
 `--base-url` **指定時のみ** 以下を生成します。未指定時は sitemap 連携・robots.txt は行いません（レポートに記録）。

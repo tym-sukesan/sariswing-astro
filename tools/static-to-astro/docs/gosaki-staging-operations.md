@@ -169,6 +169,19 @@ GOSAKI_PROD_FTP_SERVER_DIR
 
 ## G. 本番化前のゲート
 
+### Readiness verifier（Phase 3-Y）
+
+G-2b（staging FTP apply）前に必須:
+
+```bash
+node tools/static-to-astro/scripts/verify-gosaki-readiness.mjs \
+  --report tools/static-to-astro/output/readiness/gosaki/GOSAKI_READINESS_REPORT.md
+```
+
+`READY_FOR_STAGING_FTP_APPLY: yes` であること。詳細: [gosaki-readiness-verifier.md](./gosaki-readiness-verifier.md)
+
+### チェックリスト
+
 production FTP / 本番 Supabase へ進む前に、以下を **すべて PASS** すること。
 
 ### 自動検証

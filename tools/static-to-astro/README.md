@@ -1415,7 +1415,28 @@ gosaki の **Admin 利用方法を確定**しました。Node host 実 deploy・
 
 **重要:** Admin 保存だけでは公開サイトに反映されない。`export → build → public-dist → deploy` が必要。
 
-**次フェーズ:** G-2b（staging FTP apply）/ G-4（Storage）/ Node host Admin 設計
+**次フェーズ:** Phase 3-Y readiness verifier → **完了** / 次は **G-2b staging FTP apply**（3-Y PASS 後）
+
+---
+
+### Phase 3-Y: gosaki readiness verifier
+
+G-2b（staging FTP apply）前に、gosaki CMS Kit パイプライン全体を **一括 readiness 判定**する verifier を追加。**FTP 接続・本番 deploy は行いません。**
+
+```bash
+node tools/static-to-astro/scripts/verify-gosaki-readiness.mjs \
+  --report tools/static-to-astro/output/readiness/gosaki/GOSAKI_READINESS_REPORT.md
+```
+
+| 項目 | 内容 |
+| --- | --- |
+| CLI | `verify-gosaki-readiness.mjs` |
+| Doc | [docs/gosaki-readiness-verifier.md](docs/gosaki-readiness-verifier.md) |
+| ゲート | `READY_FOR_STAGING_FTP_APPLY: yes/no` |
+
+**チェック:** site profile / convert / export / build / static-public / deploy dry-run / CMS loop / storage plan / secret scan
+
+**次フェーズ:** G-2b（staging FTP `--apply`、readiness PASS 後）
 
 ---
 

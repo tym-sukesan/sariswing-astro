@@ -1436,7 +1436,32 @@ node tools/static-to-astro/scripts/verify-gosaki-readiness.mjs \
 
 **チェック:** site profile / convert / export / build / static-public / deploy dry-run / CMS loop / storage plan / secret scan
 
-**次フェーズ:** G-2b（staging FTP `--apply`、readiness PASS 後）
+**次フェーズ:** Phase G-2b-prep（staging FTP safety verifier）→ G-2b apply
+
+---
+
+### Phase G-2b-prep: staging FTP safety verifier
+
+G-2b（staging FTP `--apply`）の前に、`GOSAKI_STAGING_FTP_*` 接続先が staging 専用であることを **静的に** 確認する。**FTP 接続しない。`--apply` しない。**
+
+```bash
+node tools/static-to-astro/scripts/verify-staging-ftp-safety.mjs \
+  --report tools/static-to-astro/output/deploy/gosaki/STAGING_FTP_SAFETY_REPORT.md
+```
+
+| 項目 | 内容 |
+| --- | --- |
+| CLI | `verify-staging-ftp-safety.mjs` |
+| Doc | [docs/gosaki-staging-ftp-safety-check.md](docs/gosaki-staging-ftp-safety-check.md) |
+| ゲート | `STAGING_FTP_SAFE_TO_APPLY: yes/no` |
+
+**チェック:** 必須 staging env / prod FTP env 混入禁止 / server dir 危険語 / staging キーワード / secret leak scan
+
+**G-2b 条件:** `READY_FOR_STAGING_FTP_APPLY: yes` **かつ** `STAGING_FTP_SAFE_TO_APPLY: yes` **かつ** 人間チェックリスト PASS
+
+**secrets 未設定時:** `STAGING_FTP_SAFE_TO_APPLY: no` は正常（安全側の判定）
+
+**次フェーズ:** G-2b（staging FTP `--apply`、両 verifier PASS 後）
 
 ---
 

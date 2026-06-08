@@ -279,13 +279,47 @@ node tools/static-to-astro/scripts/verify-gosaki-readiness.mjs \
 
 ---
 
+## N-2. staging FTP safety verifier（G-2b 前必須）
+
+**Phase G-2b-prep:** staging FTP `--apply` の前に、接続先 env が staging 専用であることを **静的に** 確認する。FTP 接続しない。
+
+```bash
+node tools/static-to-astro/scripts/verify-staging-ftp-safety.mjs \
+  --report tools/static-to-astro/output/deploy/gosaki/STAGING_FTP_SAFETY_REPORT.md
+```
+
+**確認:** `STAGING_FTP_SAFE_TO_APPLY: yes`、`FTP connected: false`、`apply performed: false`
+
+**secrets 未設定時:** `STAGING_FTP_SAFE_TO_APPLY: no`（`missing staging FTP env`）は **正常な安全判定**。
+
+詳細: [gosaki-staging-ftp-safety-check.md](./gosaki-staging-ftp-safety-check.md)
+
+### G-2b へ進む条件（両方 yes）
+
+```bash
+# 1. Readiness
+node tools/static-to-astro/scripts/verify-gosaki-readiness.mjs \
+  --report tools/static-to-astro/output/readiness/gosaki/GOSAKI_READINESS_REPORT.md
+
+# 2. Staging FTP safety
+node tools/static-to-astro/scripts/verify-staging-ftp-safety.mjs \
+  --report tools/static-to-astro/output/deploy/gosaki/STAGING_FTP_SAFETY_REPORT.md
+```
+
+`READY_FOR_STAGING_FTP_APPLY: yes` **かつ** `STAGING_FTP_SAFE_TO_APPLY: yes`、および人間チェックリスト PASS の場合のみ `--apply` へ進む。
+
+---
+
 ## O. staging FTP 反映（apply）
 
 **Phase G-2 では実行しない。** Phase G-2b または別フェーズで:
 
-1. staging FTP を tarball 退避
-2. `GOSAKI_STAGING_FTP_*` を `.env.local` に設定
-3. `--apply --env staging` で lftp mirror
+1. readiness verifier PASS（`READY_FOR_STAGING_FTP_APPLY: yes`）
+2. staging FTP safety verifier PASS（`STAGING_FTP_SAFE_TO_APPLY: yes`）
+3. 人間チェックリスト確認（[gosaki-staging-ftp-safety-check.md](./gosaki-staging-ftp-safety-check.md) §E）
+4. staging FTP を tarball 退避
+5. `GOSAKI_STAGING_FTP_*` を `.env.local` に設定
+6. `--apply --env staging` で lftp mirror
 
 gosaki **本番 FTP** への接続は本番化ゲート PASS 後の別フェーズ。
 

@@ -180,6 +180,22 @@ node tools/static-to-astro/scripts/verify-gosaki-readiness.mjs \
 
 `READY_FOR_STAGING_FTP_APPLY: yes` であること。詳細: [gosaki-readiness-verifier.md](./gosaki-readiness-verifier.md)
 
+### Staging FTP safety gate（Phase G-2b-prep）
+
+staging FTP `--apply` の前に、接続先 env の静的 safety チェックを実行する。**FTP 接続しない。**
+
+```bash
+node tools/static-to-astro/scripts/verify-staging-ftp-safety.mjs \
+  --report tools/static-to-astro/output/deploy/gosaki/STAGING_FTP_SAFETY_REPORT.md
+```
+
+| 判定 | 意味 |
+| --- | --- |
+| `STAGING_FTP_SAFE_TO_APPLY: yes` | staging 専用 env・安全な server dir・prod FTP env なし |
+| `STAGING_FTP_SAFE_TO_APPLY: no` | secrets 未設定または危険語検出 — apply 禁止 |
+
+**G-2b 条件:** readiness **と** safety の両方が `yes`、人間チェックリスト PASS。詳細: [gosaki-staging-ftp-safety-check.md](./gosaki-staging-ftp-safety-check.md)
+
 ### チェックリスト
 
 production FTP / 本番 Supabase へ進む前に、以下を **すべて PASS** すること。

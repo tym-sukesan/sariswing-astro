@@ -111,7 +111,7 @@ export function checkGitStatus(repoRoot) {
 export function scanGitTrackedForPersonalEmail(repoRoot) {
   const result = spawnSync(
     "git",
-    ["grep", "-n", "-i", "-E", "ysktoyamax|bikusari"],
+    ["grep", "-n", "-i", "-E", "PERSONAL_EMAIL_PATTERN"],
     { cwd: repoRoot, encoding: "utf8" },
   );
   const output = `${result.stdout ?? ""}${result.stderr ?? ""}`.trim();

@@ -64,9 +64,11 @@ gosaki **staging** は、CMS Kit の実用化検証用環境です。以下を *
 4. npm run build
 5. verify-static-public-artifact（public-dist 生成 + 安全確認）
 6. public-dist を目視 / レポート確認
-7. staging FTP へ反映 — **Phase G-2 dry-run 済み / apply は別フェーズ**
+7. deploy-public-dist-ftp dry-run → G-2b で staging FTP apply
 8. 問題なければ production 適用を別フェーズで検討
 ```
+
+**Phase G-3 確定:** 短期 Admin 運用 = **Local Admin**（[gosaki-admin-operations.md](./gosaki-admin-operations.md)）
 
 ### Phase G-1 の境界
 
@@ -92,13 +94,13 @@ gosaki **staging** は、CMS Kit の実用化検証用環境です。以下を *
 
 ### 比較
 
-| 方式 | 概要 | メリット | デメリット | gosaki 短期 |
+| 方式 | 概要 | メリット | デメリット | gosaki |
 | --- | --- | --- | --- | --- |
-| **Local Admin 運用** | 担当者 PC で `npm run dev` → 編集 → export → build | コスト低・Sariswing 本番に触れない | 非エンジニアには難しい | **推奨（Phase G-1〜G-3）** |
-| **Node host Admin 運用** | Admin/API を Vercel / Railway 等に常時配置 | Web から編集可能 | 月額・secrets 管理 | Phase G-3 以降検討 |
-| **Separate Admin app 将来案** | Admin 専用 repo / サブドメイン | 公開と完全分離 | 構築コスト高 | 商品化 Phase G-7 方向 |
+| **Local Admin（短期正式）** | 担当者 PC で `npm run dev` → 編集 → export → build | コスト低・secrets 限定 | 非エンジニアには難しい | **Phase G-3 採用** |
+| **Node host Admin（中期）** | Admin/API を Render / Railway 等に常時配置 | ブラウザ編集可能 | 月額・secrets 管理 | G-4 以降検討 |
+| **Separate Admin app（長期）** | Admin 専用 repo / マルチサイト | 商品化・profile 切替 | 構築コスト高 | G-7 方向 |
 
-詳細: [admin-hosting-strategy.md](./admin-hosting-strategy.md)
+詳細: [gosaki-admin-operations.md](./gosaki-admin-operations.md) / [admin-hosting-strategy.md](./admin-hosting-strategy.md)
 
 ---
 
@@ -199,7 +201,7 @@ production FTP / 本番 Supabase へ進む前に、以下を **すべて PASS** 
 | --- | --- |
 | **G-2** | public-dist deploy dry-run + plan verifier（**完了**） |
 | **G-2b** | staging FTP `--apply` 実接続検証（未実施） |
-| **G-3** | Admin 運用フロー確定（Local vs Node host） |
+| **G-3** | Admin 運用フロー確定（**完了** — Local Admin 短期正式） |
 | **3-Y** | readiness verifier 自動化（任意） |
 
 ---

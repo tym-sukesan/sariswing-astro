@@ -7,7 +7,7 @@
 
 **Phase G-1 境界:** staging Supabase への export/build/verifier は doc 上の手順。**staging FTP 反映・本番 FTP・本番 Supabase には接続しない。**
 
-関連: [gosaki-staging-operations.md](./gosaki-staging-operations.md) / [gosaki-staging-secrets-checklist.md](./gosaki-staging-secrets-checklist.md)
+関連: [gosaki-staging-operations.md](./gosaki-staging-operations.md) / [gosaki-staging-secrets-checklist.md](./gosaki-staging-secrets-checklist.md) / [gosaki-admin-operations.md](./gosaki-admin-operations.md)
 
 ---
 
@@ -57,17 +57,36 @@ node tools/static-to-astro/scripts/convert-static-to-astro.mjs \
 
 ---
 
-## D. Local Admin で編集（任意）
+## D. Local Admin 起動（短期正式運用）
 
-Admin save を行う場合:
+**Phase G-3:** Pattern A（Local Admin）を gosaki の短期正式運用とする。  
+**前提:** `tools/static-to-astro/.env.local` に **staging** Supabase の URL / keys が設定済み。
+
+プロジェクト root から:
 
 ```bash
-cd tools/static-to-astro/output/generated-astro
+cd tools/static-to-astro
+set -a && source .env.local && set +a
+cd output/generated-astro
 npm run dev
 ```
 
-ブラウザで `/admin/` を開き、Schedule / Discography を編集。  
-**注意:** API は Node dev サーバー上でのみ動作。FTP 上では動かない。
+ターミナルに表示された URL を開く（例: `http://localhost:4321/`）。
+
+### Admin URL
+
+```text
+http://localhost:4321/admin/
+http://localhost:4321/admin/schedules/
+http://localhost:4321/admin/discography/
+```
+
+### 注意
+
+- 保存には Supabase session / admin login が必要
+- 現行 Mock Editor は **localStorage** にトークンを保持する検証用実装
+- 本格的なログイン UI は未実装（別フェーズ）
+- **FTP 上の Admin は動かない** — 必ず local dev または将来の Node host
 
 作業後、プロジェクト root に戻る:
 
@@ -75,7 +94,22 @@ npm run dev
 cd ../../..
 ```
 
-（`generated-astro` から見て `tools/static-to-astro/output` → repo root は 3 段上）
+---
+
+## D-2. Admin 保存後の公開反映手順
+
+**Admin で保存しただけでは公開サイトは更新されない。** 以下を順に実行する。
+
+```text
+1. Admin 保存（セクション D）
+2. export-supabase-json（セクション E）
+3. npm run build（セクション F）
+4. verify-static-public-artifact（セクション G）
+5. deploy-public-dist-ftp dry-run（セクション M）
+6. （将来 G-2b）staging FTP --apply
+```
+
+詳細: [gosaki-admin-operations.md](./gosaki-admin-operations.md) / [gosaki-admin-handoff-checklist.md](./gosaki-admin-handoff-checklist.md)
 
 ---
 

@@ -1357,7 +1357,7 @@ CMS Kit 実用化プロトタイプとして **gosaki staging** の役割・secr
 
 **secrets:** staging / prod は `GOSAKI_STAGING_*` / `GOSAKI_PROD_*` で分離
 
-**次フェーズ:** Phase G-2（public-dist deploy dry-run）→ **完了** / 次は **G-2b staging FTP `--apply`**
+**次フェーズ:** G-2b（staging FTP apply）/ G-4（Storage）— **G-3 Admin 運用確定済み**
 
 ---
 
@@ -1394,7 +1394,28 @@ node tools/static-to-astro/scripts/verify-staging-ftp-deploy-plan.mjs \
 
 **rollback:** deploy manifest + `public-dist` tarball 退避 → 前世代 manifest を `.previous.json` に保存
 
-**次フェーズ:** G-2b（staging FTP `--apply` 実接続）または G-3（Admin 運用フロー）
+**次フェーズ:** G-2b（staging FTP `--apply`）または G-4（Storage / Node host Admin）
+
+---
+
+### Phase G-3: Admin 運用フロー確定
+
+gosaki の **Admin 利用方法を確定**しました。Node host 実 deploy・FTP apply・本番接続は行いません。
+
+| 期間 | 採用 | 内容 |
+| --- | --- | --- |
+| **短期（正式）** | Local Admin | `npm run dev` + staging Supabase + export/build/public-dist |
+| **中期** | Node host Admin/API | Render / Railway 等 + public-dist FTP |
+| **長期** | Separate Admin app | マルチサイト + site profile |
+
+| ドキュメント | 内容 |
+| --- | --- |
+| [docs/gosaki-admin-operations.md](docs/gosaki-admin-operations.md) | 3 パターン比較・gosaki 採用方針 |
+| [docs/gosaki-admin-handoff-checklist.md](docs/gosaki-admin-handoff-checklist.md) | 編集項目・公開手順・引き渡しチェック |
+
+**重要:** Admin 保存だけでは公開サイトに反映されない。`export → build → public-dist → deploy` が必要。
+
+**次フェーズ:** G-2b（staging FTP apply）/ G-4（Storage）/ Node host Admin 設計
 
 ---
 

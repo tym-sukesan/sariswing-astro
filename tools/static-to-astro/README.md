@@ -1266,11 +1266,13 @@ CMS 画像（Schedule flyer / home image / Discography cover）の **Supabase St
 
 ```bash
 node tools/static-to-astro/scripts/plan-storage-assets.mjs \
-  --seed-dir tools/static-to-astro/output/supabase-seed/gosaki \
+  --data-dir tools/static-to-astro/output/generated-astro/src/data \
   --site-slug gosaki \
   --report tools/static-to-astro/output/storage/gosaki/STORAGE_ASSET_PLAN_REPORT.md \
   --manifest tools/static-to-astro/output/storage/gosaki/storage-asset-plan.json
 ```
+
+`--seed-dir`（`seed-*.json`）と `--data-dir`（`schedules.json` / `discography.json`）は併用可。readiness は export 済み `src/data` を使用。
 
 **action 分類:** `supabase` → keep / `wix|external` → **review-required** / `local` → download-and-upload 候補（dry-run）/ `empty` → skip
 

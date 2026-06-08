@@ -87,27 +87,129 @@ function readJsonArray(filePath) {
 }
 
 /**
- * @param {{ seedDir: string, dataDir?: string | null }} opts
+ * @param {string | null | undefined} dir
+ * @param {string} seedFile
+ * @param {string} dataFile
  */
-export function loadImageSourceRows({ seedDir, dataDir = null }) {
-  const seedAbs = path.resolve(seedDir);
-  const schedules =
-    readJsonArray(path.join(seedAbs, "seed-schedules.json")) ??
-    (dataDir ? readJsonArray(path.join(path.resolve(dataDir), "schedules.json")) : null) ??
-    [];
-  const discography =
-    readJsonArray(path.join(seedAbs, "seed-discography.json")) ??
-    (dataDir ? readJsonArray(path.join(path.resolve(dataDir), "discography.json")) : null) ??
-    [];
-
-  return { schedules, discography, seedAbs };
+function loadTableRowsFromDir(dir, seedFile, dataFile) {
+  if (!dir) return { rows: null, usedSeedFile: false, usedDataFile: false };
+  const abs = path.resolve(dir);
+  const seedRows = readJsonArray(path.join(abs, seedFile));
+  if (seedRows) return { rows: seedRows, usedSeedFile: true, usedDataFile: false };
+  const dataRows = readJsonArray(path.join(abs, dataFile));
+  if (dataRows) return { rows: dataRows, usedSeedFile: false, usedDataFile: true };
+  return { rows: null, usedSeedFile: false, usedDataFile: false };
 }
 
 /**
- * @param {{ siteSlug: string, bucket: string, seedDir: string, dataDir?: string | null }} opts
+ * @param {{ seedDir?: string | null, dataDir?: string | null }} opts
  */
-export function buildStorageAssetPlan({ siteSlug, bucket, seedDir, dataDir = null }) {
-  const { schedules, discography } = loadImageSourceRows({ seedDir, dataDir });
+export function loadImageSourceRows({ seedDir = null, dataDir = null }) {
+  const searchDirs = [];
+  if (seedDir) searchDirs.push(path.resolve(seedDir));
+  if (dataDir) {
+    const absData = path.resolve(dataDir);
+    if (!searchDirs.includes(absData)) searchDirs.push(absData);
+  }
+
+  let schedules = null;
+  let discography = null;
+  let usedSeedSchedules = false;
+  let usedDataSchedules = false;
+  let usedSeedDiscography = false;
+  let usedDataDiscography = false;
+
+  for (const dir of searchDirs) {
+    if (!schedules) {
+      const loaded = loadTableRowsFromDir(dir, "seed-schedules.json", "schedules.json");
+      schedules = loaded.rows;
+      usedSeedSchedules = loaded.usedSeedFile;
+      usedDataSchedules = loaded.usedDataFile;
+    }
+    if (!discography) {
+      const loaded = loadTableRowsFromDir(dir, "seed-discography.json", "discography.json");
+      discography = loaded.rows;
+      usedSeedDiscography = loaded.usedSeedFile;
+      usedDataDiscography = loaded.usedDataFile;
+    }
+  }
+
+  /** @type {Array<"seed" | "data">} */
+  const formats = [];
+  if (usedSeedSchedules || usedSeedDiscography) formats.push("seed");
+  if (usedDataSchedules || usedDataDiscography) formats.push("data");
+  const inputFormat =
+    formats.includes("seed") && formats.includes("data")
+      ? "both"
+      : formats[0] ?? "none";
+
+  const meta = {
+    seedDir: seedDir ? path.resolve(seedDir) : null,
+    dataDir: dataDir ? path.resolve(dataDir) : null,
+    seedDirSpecified: Boolean(seedDir),
+    dataDirSpecified: Boolean(dataDir),
+    seedDirExists: seedDir ? fs.existsSync(seedDir) : false,
+    dataDirExists: dataDir ? fs.existsSync(dataDir) : false,
+    schedulesFileFound: usedSeedSchedules || usedDataSchedules,
+    discographyFileFound: usedSeedDiscography || usedDataDiscography,
+    schedulesCount: schedules?.length ?? 0,
+    discographyCount: discography?.length ?? 0,
+    inputFormat,
+  };
+
+  return {
+    schedules: schedules ?? [],
+    discography: discography ?? [],
+    meta,
+  };
+}
+
+/**
+ * @param {ReturnType<typeof buildStorageAssetPlan>} plan
+ */
+export function validateStorageAssetPlan(plan) {
+  /** @type {string[]} */
+  const errors = [];
+  /** @type {string[]} */
+  const warnings = [];
+  const meta = plan.inputMeta;
+
+  if (!meta.seedDirExists && !meta.dataDirExists) {
+    errors.push("no input directory exists (seed-dir and data-dir both missing on disk)");
+  }
+
+  if (!meta.schedulesFileFound && !meta.discographyFileFound) {
+    if (meta.seedDirExists || meta.dataDirExists) {
+      errors.push(
+        "input directories exist but schedules/discography JSON not found (expected seed-*.json or *.json)",
+      );
+    } else {
+      errors.push("no schedules or discography JSON loaded");
+    }
+  } else if (meta.schedulesCount === 0 && meta.discographyCount === 0) {
+    errors.push("input JSON files found but zero schedule/discography rows");
+  } else if (plan.summary.total === 0) {
+    errors.push(
+      "rows loaded but total asset fields is zero (check legacy_id / target field mapping)",
+    );
+  }
+
+  if (plan.summary.total === 0 && (meta.schedulesCount > 0 || meta.discographyCount > 0)) {
+    errors.push("unexpected zero asset rows despite non-empty input tables");
+  }
+
+  if (plan.summary.total > 0 && plan.summary.total < meta.schedulesCount + meta.discographyCount) {
+    warnings.push("total asset rows lower than table row count (some rows may lack legacy_id)");
+  }
+
+  return { ok: errors.length === 0, errors, warnings };
+}
+
+/**
+ * @param {{ siteSlug: string, bucket: string, seedDir?: string | null, dataDir?: string | null }} opts
+ */
+export function buildStorageAssetPlan({ siteSlug, bucket, seedDir = null, dataDir = null }) {
+  const { schedules, discography, meta } = loadImageSourceRows({ seedDir, dataDir });
   /** @type {Array<object>} */
   const assets = [];
 
@@ -178,27 +280,48 @@ export function buildStorageAssetPlan({ siteSlug, bucket, seedDir, dataDir = nul
     mode: "dry-run",
     siteSlug,
     bucket,
+    inputMeta: meta,
     targetFields: TARGET_FIELDS.map((f) => `${f.sourceTable}.${f.sourceField}`),
     assets,
     summary,
     uploadsPerformed: false,
+    secretLeak: "none",
   };
 }
 
 /**
  * @param {ReturnType<typeof buildStorageAssetPlan>} plan
  */
-export function formatStorageAssetPlanReport(plan, { reportPath, manifestPath, seedDir, dataDir }) {
+export function formatStorageAssetPlanReport(
+  plan,
+  { reportPath, manifestPath, seedDir = null, dataDir = null, validation = null },
+) {
+  const meta = plan.inputMeta;
   const lines = [
     "# Storage Asset Plan Report (Phase 3-U)",
     "",
     `- **Mode:** ${plan.mode}`,
     `- **Site slug:** \`${plan.siteSlug}\``,
     `- **Bucket:** \`${plan.bucket}\``,
-    `- **Seed dir:** \`${seedDir}\``,
+    `- **Seed dir:** ${seedDir ? `\`${seedDir}\`` : "(not specified)"}`,
+    `- **Data dir:** ${dataDir ? `\`${dataDir}\`` : "(not specified)"}`,
+    `- **Input format:** ${meta.inputFormat}`,
+    `- **Schedules rows read:** ${meta.schedulesCount}`,
+    `- **Discography rows read:** ${meta.discographyCount}`,
+    `- **Uploads performed:** no`,
+    `- **Secret leak:** ${plan.secretLeak}`,
   ];
 
-  if (dataDir) lines.push(`- **Data dir:** \`${dataDir}\``);
+  if (validation) {
+    lines.push(`- **Plan validation:** ${validation.ok ? "PASS" : "FAIL"}`);
+    if (validation.errors.length) {
+      for (const err of validation.errors) lines.push(`  - error: ${err}`);
+    }
+    if (validation.warnings.length) {
+      for (const warn of validation.warnings) lines.push(`  - warning: ${warn}`);
+    }
+  }
+
   lines.push(
     "",
     "> **Dry-run only — no files uploaded to Supabase Storage.**",
@@ -312,8 +435,10 @@ export function buildManifestJson(plan) {
     mode: plan.mode,
     siteSlug: plan.siteSlug,
     bucket: plan.bucket,
+    inputMeta: plan.inputMeta,
     assets: plan.assets,
     summary: plan.summary,
     uploadsPerformed: false,
+    secretLeak: plan.secretLeak,
   };
 }

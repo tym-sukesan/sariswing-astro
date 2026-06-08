@@ -180,13 +180,15 @@ node tools/static-to-astro/scripts/verify-cms-minimal-loop.mjs \
 
 ```bash
 node tools/static-to-astro/scripts/plan-storage-assets.mjs \
-  --seed-dir tools/static-to-astro/output/supabase-seed/gosaki \
+  --data-dir tools/static-to-astro/output/generated-astro/src/data \
   --site-slug gosaki \
   --report tools/static-to-astro/output/storage/gosaki/STORAGE_ASSET_PLAN_REPORT.md \
   --manifest tools/static-to-astro/output/storage/gosaki/storage-asset-plan.json
 ```
 
-**確認:** `uploads performed: no`。Wix/external は review-required のまま（自動再ホストなし）。
+`output/supabase-seed/gosaki` がある場合は `--seed-dir` を併用可。readiness verifier は **export 済み `src/data`** を優先。
+
+**確認:** `total rows` が 0 でないこと、`uploads performed: no`、`secret leak: none`。Wix/external は review-required のまま（自動再ホストなし）。
 
 ---
 

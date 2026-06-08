@@ -38,7 +38,10 @@ export const PATHS = {
   storagePlanReport: "tools/static-to-astro/output/storage/gosaki/STORAGE_ASSET_PLAN_REPORT.md",
   storagePlanManifest: "tools/static-to-astro/output/storage/gosaki/storage-asset-plan.json",
   seedDir: "tools/static-to-astro/output/supabase-seed/gosaki",
+  exportDataDir: "tools/static-to-astro/output/generated-astro/src/data",
 };
+
+const STORAGE_PLAN_SCRIPT = "tools/static-to-astro/scripts/plan-storage-assets.mjs";
 
 
 const SECRET_VALUE_PATTERN =
@@ -373,6 +376,35 @@ export function readDeployManifest(repoRoot) {
 /**
  * @param {string} repoRoot
  */
+export function buildStoragePlanCliArgs(repoRoot) {
+  /** @type {string[]} */
+  const args = [
+    "--site-slug",
+    SITE_SLUG,
+    "--report",
+    PATHS.storagePlanReport,
+    "--manifest",
+    PATHS.storagePlanManifest,
+    "--data-dir",
+    PATHS.exportDataDir,
+  ];
+
+  const seedAbs = path.join(repoRoot, PATHS.seedDir);
+  if (fs.existsSync(seedAbs)) {
+    args.push("--seed-dir", PATHS.seedDir);
+  }
+
+  return {
+    args,
+    command: `node ${STORAGE_PLAN_SCRIPT} ${args.join(" ")}`,
+    seedDirUsed: fs.existsSync(seedAbs),
+    dataDirUsed: fs.existsSync(path.join(repoRoot, PATHS.exportDataDir)),
+  };
+}
+
+/**
+ * @param {string} repoRoot
+ */
 export function readStorageManifest(repoRoot) {
   const abs = path.join(repoRoot, PATHS.storagePlanManifest);
   if (!fs.existsSync(abs)) return null;
@@ -521,20 +553,23 @@ export function runGosakiReadinessVerification(opts) {
     warnings.push("CMS minimal loop skipped (--skip-cms-loop)");
   }
 
-  let storagePlanCli = { ok: false, skipped: true, stdout: "", stderr: "" };
+  let storagePlanCli = {
+    ok: false,
+    skipped: true,
+    stdout: "",
+    stderr: "",
+    command: null,
+    seedDirUsed: false,
+    dataDirUsed: false,
+  };
   if (!skipStoragePlan) {
+    const storagePlanInvoke = buildStoragePlanCliArgs(repoRoot);
     storagePlanCli = {
-      ...runNodeCli(repoRoot, "tools/static-to-astro/scripts/plan-storage-assets.mjs", [
-        "--seed-dir",
-        PATHS.seedDir,
-        "--site-slug",
-        SITE_SLUG,
-        "--report",
-        PATHS.storagePlanReport,
-        "--manifest",
-        PATHS.storagePlanManifest,
-      ]),
+      ...runNodeCli(repoRoot, STORAGE_PLAN_SCRIPT, storagePlanInvoke.args),
       skipped: false,
+      command: storagePlanInvoke.command,
+      seedDirUsed: storagePlanInvoke.seedDirUsed,
+      dataDirUsed: storagePlanInvoke.dataDirUsed,
     };
   } else {
     warnings.push("Storage asset plan skipped (--skip-storage-plan)");
@@ -618,10 +653,20 @@ export function runGosakiReadinessVerification(opts) {
         skipStoragePlan ||
         (storagePlanCli.ok &&
           storageManifest?.uploadsPerformed === false &&
-          storageManifest?.mode === "dry-run"),
+          storageManifest?.mode === "dry-run" &&
+          (storageManifest?.summary?.total ?? 0) > 0 &&
+          storageManifest?.secretLeak === "none"),
       skipped: skipStoragePlan,
       cliPass: storagePlanCli.ok,
+      command: storagePlanCli.command,
+      seedDirUsed: storagePlanCli.seedDirUsed,
+      dataDirUsed: storagePlanCli.dataDirUsed,
+      inputFormat: storageManifest?.inputMeta?.inputFormat ?? null,
+      schedulesCount: storageManifest?.inputMeta?.schedulesCount ?? null,
+      discographyCount: storageManifest?.inputMeta?.discographyCount ?? null,
+      totalRows: storageManifest?.summary?.total ?? null,
       uploadsPerformed: storageManifest?.uploadsPerformed ?? null,
+      secretLeak: storageManifest?.secretLeak ?? null,
     },
     productionSafety: {
       pass:
@@ -735,6 +780,19 @@ export function writeReadinessReport(result, reportPath, repoRoot) {
     `- applied: ${c.deployDryRun.applied ?? "—"}`,
     `- env: staging`,
     `- safeForStaticFtp: ${c.staticPublic.safeForStaticFtp ? "true" : "false"}`,
+    "",
+    "## Storage asset plan",
+    "",
+    `- status: ${c.storagePlan.skipped ? "SKIP" : c.storagePlan.pass ? "PASS" : "FAIL"}`,
+    `- command: \`${c.storagePlan.command ?? "(skipped)"}\``,
+    `- seedDir: ${c.storagePlan.seedDirUsed ? "specified (exists)" : "not used"}`,
+    `- dataDir: ${c.storagePlan.dataDirUsed ? "specified (exists)" : "missing"}`,
+    `- input format: ${c.storagePlan.inputFormat ?? "—"}`,
+    `- schedules read: ${c.storagePlan.schedulesCount ?? "—"}`,
+    `- discography read: ${c.storagePlan.discographyCount ?? "—"}`,
+    `- total rows: ${c.storagePlan.totalRows ?? "—"}`,
+    `- uploads performed: ${c.storagePlan.uploadsPerformed === false ? "no" : c.storagePlan.uploadsPerformed ?? "—"}`,
+    `- secret leak: ${c.storagePlan.secretLeak ?? "—"}`,
     "",
     "## CMS minimal loop",
     "",

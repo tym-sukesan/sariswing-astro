@@ -4,7 +4,7 @@
  *
  * Usage:
  *   node tools/static-to-astro/scripts/plan-storage-assets.mjs \
- *     --seed-dir tools/static-to-astro/output/supabase-seed/gosaki \
+ *     --data-dir tools/static-to-astro/output/generated-astro/src/data \
  *     --site-slug gosaki \
  *     --report tools/static-to-astro/output/storage/gosaki/STORAGE_ASSET_PLAN_REPORT.md \
  *     --manifest tools/static-to-astro/output/storage/gosaki/storage-asset-plan.json
@@ -18,6 +18,7 @@ import {
   buildStorageAssetPlan,
   DEFAULT_BUCKET,
   formatStorageAssetPlanReport,
+  validateStorageAssetPlan,
 } from "./lib/storage-asset-planner.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -30,8 +31,8 @@ function printHelp() {
 Generate Storage migration plan from seed/data JSON (dry-run, no upload).
 
 Options:
-  --seed-dir PATH     Supabase seed directory (required)
-  --data-dir PATH     Astro src/data fallback (optional)
+  --seed-dir PATH     Supabase seed directory (optional if --data-dir set)
+  --data-dir PATH     Exported Astro src/data (schedules.json / discography.json)
   --site-slug SLUG    Site slug for target paths (required)
   --bucket NAME       Storage bucket (default: site-assets)
   --report PATH       STORAGE_ASSET_PLAN_REPORT.md output (required)
@@ -87,12 +88,15 @@ function parseArgs(argv) {
   return opts;
 }
 
-function printSummary(plan) {
+function printSummary(plan, validation) {
   console.log("");
   console.log("=== Storage Asset Plan Summary ===");
   console.log(`mode: ${plan.mode}`);
   console.log(`siteSlug: ${plan.siteSlug}`);
   console.log(`bucket: ${plan.bucket}`);
+  console.log(`input format: ${plan.inputMeta.inputFormat}`);
+  console.log(`schedules read: ${plan.inputMeta.schedulesCount}`);
+  console.log(`discography read: ${plan.inputMeta.discographyCount}`);
   console.log(`total rows: ${plan.summary.total}`);
   console.log(`supabase (keep): ${plan.summary.supabase}`);
   console.log(`wix (review-required): ${plan.summary.wix}`);
@@ -104,6 +108,10 @@ function printSummary(plan) {
   console.log(`download-and-upload: ${plan.summary.downloadAndUpload}`);
   console.log(`uploads performed: no`);
   console.log(`secret leak: none (URLs only, no credentials in manifest)`);
+  console.log(`validation: ${validation.ok ? "PASS" : "FAIL"}`);
+  if (!validation.ok) {
+    for (const err of validation.errors) console.error(`  ERROR: ${err}`);
+  }
 }
 
 function main() {
@@ -114,32 +122,38 @@ function main() {
     process.exit(0);
   }
 
-  if (!opts.seedDir || !opts.siteSlug || !opts.report || !opts.manifest) {
+  if ((!opts.seedDir && !opts.dataDir) || !opts.siteSlug || !opts.report || !opts.manifest) {
     printHelp();
     process.exit(1);
   }
 
-  const seedDir = path.resolve(REPO_ROOT, opts.seedDir);
+  const seedDir = opts.seedDir ? path.resolve(REPO_ROOT, opts.seedDir) : null;
   const dataDir = opts.dataDir ? path.resolve(REPO_ROOT, opts.dataDir) : null;
   const reportPath = path.resolve(REPO_ROOT, opts.report);
   const manifestPath = path.resolve(REPO_ROOT, opts.manifest);
 
-  if (!fs.existsSync(seedDir)) {
-    console.error(`seed-dir not found: ${seedDir}`);
+  const seedExists = seedDir ? fs.existsSync(seedDir) : false;
+  const dataExists = dataDir ? fs.existsSync(dataDir) : false;
+  if (!seedExists && !dataExists) {
+    console.error("At least one of --seed-dir or --data-dir must exist on disk");
+    if (opts.seedDir) console.error(`  seed-dir not found: ${seedDir}`);
+    if (opts.dataDir) console.error(`  data-dir not found: ${dataDir}`);
     process.exit(1);
   }
 
   console.log("Storage asset plan (Phase 3-U dry-run)");
-  console.log(`Seed: ${opts.seedDir}`);
+  console.log(`Seed: ${opts.seedDir ?? "(not specified)"}`);
+  console.log(`Data: ${opts.dataDir ?? "(not specified)"}`);
   console.log(`Site: ${opts.siteSlug}`);
   console.log("");
 
   const plan = buildStorageAssetPlan({
     siteSlug: opts.siteSlug,
     bucket: opts.bucket,
-    seedDir,
-    dataDir,
+    seedDir: seedExists ? seedDir : null,
+    dataDir: dataExists ? dataDir : null,
   });
+  const validation = validateStorageAssetPlan(plan);
 
   fs.mkdirSync(path.dirname(reportPath), { recursive: true });
   fs.mkdirSync(path.dirname(manifestPath), { recursive: true });
@@ -152,14 +166,19 @@ function main() {
       manifestPath: opts.manifest,
       seedDir: opts.seedDir,
       dataDir: opts.dataDir,
+      validation,
     }),
     "utf8",
   );
 
-  printSummary(plan);
+  printSummary(plan, validation);
   console.log("");
   console.log(`Report: ${opts.report}`);
   console.log(`Manifest: ${opts.manifest}`);
+
+  if (!validation.ok) {
+    process.exit(1);
+  }
 }
 
 main();

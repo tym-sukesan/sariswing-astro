@@ -43,7 +43,7 @@ gosaki **staging** は、CMS Kit の実用化検証用環境です。以下を *
 | **staging Supabase** | CMS データ保存・Auth・RLS 検証 | 開発担当（service role は最小人数） | `SUPABASE_URL`, keys, admin credentials | staging データのみ。seed 再投入で復旧可能 | 本番 Supabase とは別プロジェクト |
 | **generated-astro** | `output/generated-astro` — 生成 Astro プロジェクト | 開発担当 | 同上（export/build 時） | output 削除・再 convert で復旧 | 本番 deploy 先ではない |
 | **public-dist** | `output/static-public/gosaki/public-dist/` — FTP 用静的 artifact | 開発担当 | 通常不要（静的 HTML のみ） | 再 build + verifier で再生成 | Admin / api パス除外済み |
-| **staging FTP 候補** | 将来の staging 公開先（Phase G-2） | 開発担当 | `GOSAKI_STAGING_FTP_*` | staging サイトのみ | gosaki 本番 FTP とは別 |
+| **staging FTP 候補** | 将来の staging 公開先（Phase G-2 dry-run 済み） | 開発担当 | `GOSAKI_STAGING_FTP_*` | staging サイトのみ | gosaki 本番 FTP とは別 |
 | **production FTP 候補** | gosaki 本番公開先（**Phase G-1 では未使用**） | 公開責任者のみ | `GOSAKI_PROD_FTP_*` | **本番サイト影響** | 公開前ゲート必須 |
 
 ### 補足
@@ -64,7 +64,7 @@ gosaki **staging** は、CMS Kit の実用化検証用環境です。以下を *
 4. npm run build
 5. verify-static-public-artifact（public-dist 生成 + 安全確認）
 6. public-dist を目視 / レポート確認
-7. staging FTP へ反映 — Phase G-2 以降（Phase G-1 では未実行）
+7. staging FTP へ反映 — **Phase G-2 dry-run 済み / apply は別フェーズ**
 8. 問題なければ production 適用を別フェーズで検討
 ```
 
@@ -197,7 +197,8 @@ production FTP / 本番 Supabase へ進む前に、以下を **すべて PASS** 
 
 | Phase | 内容 |
 | --- | --- |
-| **G-2** | public-dist deploy を **staging FTP のみ** で検証 |
+| **G-2** | public-dist deploy dry-run + plan verifier（**完了**） |
+| **G-2b** | staging FTP `--apply` 実接続検証（未実施） |
 | **G-3** | Admin 運用フロー確定（Local vs Node host） |
 | **3-Y** | readiness verifier 自動化（任意） |
 

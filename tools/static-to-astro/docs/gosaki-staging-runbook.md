@@ -30,7 +30,7 @@
 
 ```bash
 git status
-git grep -n -i -E "ysktoyamax|bikusari" || true
+git grep -n -i -E "PERSONAL_EMAIL_PATTERN" || true
 ```
 
 確認:
@@ -195,21 +195,46 @@ rm -rf output
 
 ---
 
-## M. staging FTP 反映
+## M. staging FTP deploy（dry-run）
 
-**Phase G-1 では実行しない。**
+**Phase G-2:** dry-run のみ。FTP 接続・本番反映は行わない。
 
-将来 Phase G-2 で:
+前提: セクション G で `public-dist/` が生成済みであること。
 
-1. staging FTP 先（`GOSAKI_STAGING_FTP_*`）を用意
-2. `public-dist/` のみ mirror
-3. 反映前後で manifest + rollback tarball を保存
+```bash
+node tools/static-to-astro/scripts/deploy-public-dist-ftp.mjs \
+  --public-dir tools/static-to-astro/output/static-public/gosaki/public-dist \
+  --site-slug gosaki \
+  --env staging \
+  --report tools/static-to-astro/output/deploy/gosaki/STAGING_FTP_DEPLOY_REPORT.md \
+  --manifest tools/static-to-astro/output/deploy/gosaki/staging-ftp-deploy-manifest.json
+```
+
+deploy plan 検証:
+
+```bash
+node tools/static-to-astro/scripts/verify-staging-ftp-deploy-plan.mjs \
+  --public-dir tools/static-to-astro/output/static-public/gosaki/public-dist \
+  --report tools/static-to-astro/output/deploy/gosaki/STAGING_FTP_DEPLOY_PLAN_VERIFY_REPORT.md
+```
+
+**確認:** `applied: false`, `FTP connected: false`, `production` env は CLI が拒否。
+
+---
+
+## N. staging FTP 反映（apply）
+
+**Phase G-2 では実行しない。** Phase G-2b または別フェーズで:
+
+1. staging FTP を tarball 退避
+2. `GOSAKI_STAGING_FTP_*` を `.env.local` に設定
+3. `--apply --env staging` で lftp mirror
 
 gosaki **本番 FTP** への接続は本番化ゲート PASS 後の別フェーズ。
 
 ---
 
-## 推奨実行順（フル検証）
+## O. output 削除（任意）
 
 ```text
 B 事前確認
@@ -217,6 +242,7 @@ B 事前確認
 → H CMS minimal loop（または D 手動 Admin → E export）
 → F build
 → G static-public
+→ M staging FTP deploy dry-run
 → I storage plan
 → J deploy template
 → L output 削除（任意）

@@ -1357,7 +1357,44 @@ CMS Kit 実用化プロトタイプとして **gosaki staging** の役割・secr
 
 **secrets:** staging / prod は `GOSAKI_STAGING_*` / `GOSAKI_PROD_*` で分離
 
-**次フェーズ:** Phase G-2（public-dist deploy を **staging FTP のみ** で検証）
+**次フェーズ:** Phase G-2（public-dist deploy dry-run）→ **完了** / 次は **G-2b staging FTP `--apply`**
+
+---
+
+### Phase G-2: public-dist staging FTP deploy（dry-run）
+
+`public-dist/` のみを **staging FTP** へ deploy するための CLI と plan verifier を追加。**Phase G-2 検証は dry-run のみ（FTP 未接続）。**
+
+| 項目 | 内容 |
+| --- | --- |
+| Deploy CLI | `deploy-public-dist-ftp.mjs` |
+| Plan verifier | `verify-staging-ftp-deploy-plan.mjs` |
+| Doc | [docs/gosaki-staging-ftp-deploy.md](docs/gosaki-staging-ftp-deploy.md) |
+
+#### Deploy dry-run
+
+```bash
+node tools/static-to-astro/scripts/deploy-public-dist-ftp.mjs \
+  --public-dir tools/static-to-astro/output/static-public/gosaki/public-dist \
+  --site-slug gosaki \
+  --env staging \
+  --report tools/static-to-astro/output/deploy/gosaki/STAGING_FTP_DEPLOY_REPORT.md \
+  --manifest tools/static-to-astro/output/deploy/gosaki/staging-ftp-deploy-manifest.json
+```
+
+#### Plan 検証
+
+```bash
+node tools/static-to-astro/scripts/verify-staging-ftp-deploy-plan.mjs \
+  --public-dir tools/static-to-astro/output/static-public/gosaki/public-dist \
+  --report tools/static-to-astro/output/deploy/gosaki/STAGING_FTP_DEPLOY_PLAN_VERIFY_REPORT.md
+```
+
+**安全制約:** `--env staging` のみ / `--apply` なしでは FTP 接続しない / `production`・`prod` は拒否 / 本番 FTP 未実行
+
+**rollback:** deploy manifest + `public-dist` tarball 退避 → 前世代 manifest を `.previous.json` に保存
+
+**次フェーズ:** G-2b（staging FTP `--apply` 実接続）または G-3（Admin 運用フロー）
 
 ---
 

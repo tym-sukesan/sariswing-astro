@@ -6,10 +6,12 @@
 import fs from "node:fs";
 import path from "node:path";
 import {
+  killProcessesOnPort,
   runAstroBuild,
   scanDirForSecrets,
   signInAdminUser,
   startAstroDev,
+  stopDevServer,
   waitForDevServer,
 } from "./admin-api-auth-verifier.mjs";
 import {
@@ -178,14 +180,6 @@ export async function runSupabaseJsonExport({ toolRoot, astroDir }) {
 }
 
 /**
- * @param {import('node:child_process').ChildProcess | null} child
- */
-function stopDevServer(child) {
-  if (!child || child.killed) return;
-  child.kill("SIGTERM");
-}
-
-/**
  * Run a short-lived Astro dev server session for Admin API calls.
  * @param {{ astroDir: string, env: object, email: string, port: number }} sessionOpts
  * @param {(ctx: { baseUrl: string, accessToken: string, refreshToken: string }) => Promise<void>} fn
@@ -207,8 +201,14 @@ async function runAdminApiSession({ astroDir, env, email, port }, fn) {
     });
     await fn({ baseUrl, accessToken, refreshToken });
     return { accessToken, refreshToken };
+  } catch (err) {
+    if (err.outputTail) {
+      err.message = `${err.message}\n--- astro dev output tail ---\n${err.outputTail}`;
+    }
+    throw err;
   } finally {
     stopDevServer(devChild);
+    killProcessesOnPort(port);
   }
 }
 
@@ -243,6 +243,7 @@ export async function runCmsMinimalLoopVerification({
   const result = {
     mode: "CMS minimal loop integration",
     host: env.host,
+    port,
     scheduleLegacyId,
     discographyLegacyId,
     trackNumber,
@@ -496,9 +497,13 @@ export async function runCmsMinimalLoopVerification({
     if (!result.cleanupRestore) {
       result.cleanupRestore = { ok: false, error: err.message };
     }
+    if (err.outputTail) {
+      result.devServerOutputTail = err.outputTail;
+    }
     if (!result.errors.includes(err.message)) {
       result.errors.push(err.message);
     }
+    killProcessesOnPort(port);
     return result;
   }
 
@@ -613,6 +618,7 @@ export function formatCmsMinimalLoopReport(result, { reportPath, elapsedMs }) {
     "",
     `- **Mode:** ${result.mode}`,
     `- **Host:** \`${result.host}\``,
+    `- **Dev port:** ${result.port ?? "—"}`,
     `- **Schedule legacy_id:** \`${result.scheduleLegacyId}\``,
     `- **Discography legacy_id:** \`${result.discographyLegacyId}\``,
     `- **Track number:** ${result.trackNumber}`,
@@ -751,6 +757,17 @@ export function formatCmsMinimalLoopReport(result, { reportPath, elapsedMs }) {
     "- Production deploy review after full CMS loop verified",
     "",
   );
+
+  if (result.devServerOutputTail) {
+    lines.push(
+      "## Dev server output tail",
+      "",
+      "```text",
+      result.devServerOutputTail,
+      "```",
+      "",
+    );
+  }
 
   if (result.errors.length > 0) {
     lines.push("## Errors", "", ...result.errors.map((err) => `- ${err}`), "");

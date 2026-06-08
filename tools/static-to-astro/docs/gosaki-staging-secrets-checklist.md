@@ -130,7 +130,7 @@ apply 前に `verify-staging-ftp-safety.mjs` で env 命名・server dir を静�
 作業前・commit 前:
 
 ```bash
-git grep -n -i -E "SUPABASE_SERVICE_ROLE_KEY|FTP_PASSWORD|PERSONAL_EMAIL_PATTERN" || true
+git grep -n -i -E "SUPABASE_SERVICE_ROLE_KEY|FTP_PASSWORD|EMAIL_PATTERN_PLACEHOLDER" || true
 git status --short
 ```
 

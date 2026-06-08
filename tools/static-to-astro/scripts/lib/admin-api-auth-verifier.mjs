@@ -157,6 +157,100 @@ function buildAstroProcessEnv(env) {
   };
 }
 
+const DEFAULT_DEV_PORT_START = 4322;
+const DEV_PORT_SCAN_ATTEMPTS = 30;
+
+/**
+ * @param {string | null | undefined} text
+ * @param {number} [maxLines]
+ */
+export function tailOutput(text, maxLines = 40) {
+  const lines = (text ?? "").split("\n").filter((line) => line.trim());
+  if (lines.length <= maxLines) return lines.join("\n");
+  return lines.slice(-maxLines).join("\n");
+}
+
+/**
+ * @param {number} port
+ */
+export function isPortInUse(port) {
+  const result = spawnSync("lsof", ["-nP", `-iTCP:${port}`, "-sTCP:LISTEN", "-t"], {
+    encoding: "utf8",
+  });
+  return Boolean(result.stdout?.trim());
+}
+
+/**
+ * @param {number} [startPort]
+ * @param {number} [maxAttempts]
+ */
+export function findAvailableDevPort(startPort = DEFAULT_DEV_PORT_START, maxAttempts = DEV_PORT_SCAN_ATTEMPTS) {
+  for (let offset = 0; offset < maxAttempts; offset++) {
+    const port = startPort + offset;
+    if (!isPortInUse(port)) return port;
+  }
+  return startPort;
+}
+
+/**
+ * @param {number} port
+ */
+export function killProcessesOnPort(port) {
+  const result = spawnSync("lsof", ["-nP", `-iTCP:${port}`, "-sTCP:LISTEN", "-t"], {
+    encoding: "utf8",
+  });
+  const pids = (result.stdout ?? "")
+    .trim()
+    .split("\n")
+    .filter(Boolean)
+    .map((pid) => Number(pid))
+    .filter((pid) => Number.isFinite(pid) && pid > 0);
+
+  for (const pid of pids) {
+    try {
+      process.kill(pid, "SIGTERM");
+    } catch {
+      // ignore
+    }
+  }
+
+  if (pids.length > 0) {
+    spawnSync("sleep", ["0.3"]);
+    for (const pid of pids) {
+      try {
+        process.kill(pid, "SIGKILL");
+      } catch {
+        // ignore
+      }
+    }
+  }
+
+  return pids.length;
+}
+
+/**
+ * @param {import('node:child_process').ChildProcess | null | undefined} child
+ */
+export function stopDevServer(child) {
+  if (!child || child.killed || !child.pid) return;
+
+  const pid = child.pid;
+  spawnSync("pkill", ["-TERM", "-P", String(pid)], { stdio: "ignore" });
+  try {
+    child.kill("SIGTERM");
+  } catch {
+    // ignore
+  }
+
+  spawnSync("sleep", ["0.3"]);
+  spawnSync("pkill", ["-KILL", "-P", String(pid)], { stdio: "ignore" });
+  try {
+    if (!child.killed) child.kill("SIGKILL");
+  } catch {
+    // ignore
+  }
+}
+
 /**
  * @param {string} astroDir
  * @param {{ supabaseUrl: string, serviceRoleKey: string, anonKey: string | null }} env
@@ -167,6 +261,7 @@ export function startAstroDev(astroDir, env, port) {
     cwd: astroDir,
     env: buildAstroProcessEnv(env),
     stdio: ["ignore", "pipe", "pipe"],
+    detached: process.platform !== "win32",
   });
 
   return child;
@@ -181,6 +276,12 @@ export function waitForDevServer(child, timeoutMs = 60000) {
     const started = Date.now();
     let buffer = "";
 
+    const rejectWithOutput = (message) => {
+      const err = new Error(message);
+      err.outputTail = tailOutput(buffer);
+      reject(err);
+    };
+
     const onData = (chunk) => {
       buffer += chunk.toString();
       if (/Local\s+https?:\/\//i.test(buffer) || /ready in \d+/i.test(buffer)) {
@@ -191,18 +292,19 @@ export function waitForDevServer(child, timeoutMs = 60000) {
 
     const onError = (err) => {
       cleanup();
+      err.outputTail = tailOutput(buffer);
       reject(err);
     };
 
     const onExit = (code) => {
       cleanup();
-      reject(new Error(`astro dev exited early (code ${code})`));
+      rejectWithOutput(`astro dev exited early (code ${code})`);
     };
 
     const timer = setInterval(() => {
       if (Date.now() - started > timeoutMs) {
         cleanup();
-        reject(new Error("Timed out waiting for astro dev"));
+        rejectWithOutput("Timed out waiting for astro dev");
       }
     }, 500);
 

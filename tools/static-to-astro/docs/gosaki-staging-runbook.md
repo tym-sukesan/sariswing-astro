@@ -30,7 +30,7 @@
 
 ```bash
 git status
-git grep -n -i -E "PERSONAL_EMAIL_PATTERN" || true
+git grep -n -i -E "EMAIL_PATTERN_PLACEHOLDER" || true
 ```
 
 確認:

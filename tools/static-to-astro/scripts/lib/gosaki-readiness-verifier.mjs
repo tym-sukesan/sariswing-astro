@@ -7,6 +7,11 @@ import fs from "node:fs";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
 import {
+  findAvailableDevPort,
+  killProcessesOnPort,
+  tailOutput,
+} from "./admin-api-auth-verifier.mjs";
+import {
   ALLOWED_DEPLOY_ENV,
   loadStagingFtpEnv,
   normalizeDeployEnv,
@@ -66,14 +71,19 @@ export function isLikelySecretAssignment(line) {
  * @param {string} repoRoot
  * @param {string} scriptRel
  * @param {string[]} args
+ * @param {{ ci?: boolean }} [options]
  */
-export function runNodeCli(repoRoot, scriptRel, args = []) {
+export function runNodeCli(repoRoot, scriptRel, args = [], options = {}) {
+  const { ci = true } = options;
   const script = path.join(repoRoot, scriptRel);
+  const childEnv = { ...process.env };
+  if (ci) childEnv.CI = "1";
+
   const result = spawnSync("node", [script, ...args], {
     cwd: repoRoot,
     encoding: "utf8",
     stdio: ["pipe", "pipe", "pipe"],
-    env: { ...process.env, CI: "1" },
+    env: childEnv,
   });
   return {
     ok: result.status === 0,
@@ -82,6 +92,48 @@ export function runNodeCli(repoRoot, scriptRel, args = []) {
     stderr: result.stderr ?? "",
     script: scriptRel,
     args,
+  };
+}
+
+const CMS_LOOP_SCRIPT = "tools/static-to-astro/scripts/verify-cms-minimal-loop.mjs";
+
+/**
+ * @param {string} repoRoot
+ */
+export function runCmsMinimalLoopCli(repoRoot) {
+  const port = findAvailableDevPort(4322);
+  const args = [
+    "--astro-dir",
+    PATHS.generatedAstro,
+    "--report",
+    PATHS.cmsLoopReport,
+    "--port",
+    String(port),
+  ];
+  const command = `node ${CMS_LOOP_SCRIPT} ${args.join(" ")}`;
+
+  let cliResult = {
+    ok: false,
+    status: -1,
+    stdout: "",
+    stderr: "",
+    script: CMS_LOOP_SCRIPT,
+    args,
+  };
+
+  try {
+    cliResult = runNodeCli(repoRoot, CMS_LOOP_SCRIPT, args, { ci: false });
+  } finally {
+    killProcessesOnPort(port);
+  }
+
+  return {
+    ...cliResult,
+    port,
+    command,
+    stdoutTail: tailOutput(cliResult.stdout),
+    stderrTail: tailOutput(cliResult.stderr),
+    devServerCleanedUp: true,
   };
 }
 
@@ -105,24 +157,92 @@ export function checkGitStatus(repoRoot) {
   };
 }
 
+/** Local parts scanned in git-tracked files (values not logged). */
+const PERSONAL_EMAIL_LOCAL_PARTS = [
+  ["ysk", "toyamax"].join(""),
+  ["biku", "sari"].join(""),
+];
+const PERSONAL_EMAIL_GREP_PATTERN = PERSONAL_EMAIL_LOCAL_PARTS.join("|");
+
+/** Pattern-definition sources excluded from personal-email hits. */
+const PERSONAL_EMAIL_SCAN_EXCLUDE_FILES = new Set([
+  "tools/static-to-astro/scripts/lib/gosaki-readiness-verifier.mjs",
+]);
+
+/**
+ * @param {string} line
+ * @returns {{ filePath: string, lineNum: string, content: string } | null}
+ */
+function parseGitGrepLine(line) {
+  const match = line.match(/^([^:]+):(\d+):(.*)$/);
+  if (!match) return null;
+  return { filePath: match[1], lineNum: match[2], content: match[3] };
+}
+
+/**
+ * @param {string} filePath
+ * @param {string} content
+ */
+export function isIgnorablePersonalEmailHit(filePath, content) {
+  const normalizedPath = filePath.replace(/^\.\//, "");
+  if (
+    PERSONAL_EMAIL_SCAN_EXCLUDE_FILES.has(filePath) ||
+    PERSONAL_EMAIL_SCAN_EXCLUDE_FILES.has(normalizedPath)
+  ) {
+    return true;
+  }
+
+  if (/EMAIL_PATTERN_PLACEHOLDER/i.test(content)) return true;
+
+  if (/\bgit grep\b/.test(content) || /^\s*(git )?grep\b/.test(content.trim())) return true;
+
+  // Regex alternation in quotes — pattern definition, not a literal local-part usage.
+  if (
+    /["'`][^"'`]*\|[^"'`]*["'`]/.test(content) &&
+    PERSONAL_EMAIL_LOCAL_PARTS.every((part) => content.toLowerCase().includes(part))
+  ) {
+    return true;
+  }
+
+  return false;
+}
+
 /**
  * @param {string} repoRoot
  */
 export function scanGitTrackedForPersonalEmail(repoRoot) {
   const result = spawnSync(
     "git",
-    ["grep", "-n", "-i", "-E", "PERSONAL_EMAIL_PATTERN"],
+    ["grep", "-n", "-i", "-E", PERSONAL_EMAIL_GREP_PATTERN],
     { cwd: repoRoot, encoding: "utf8" },
   );
   const output = `${result.stdout ?? ""}${result.stderr ?? ""}`.trim();
-  const hits = output
-    ? output.split("\n").filter((line) => line && !line.includes("git grep"))
+  const rawHits = output
+    ? output.split("\n").filter((line) => line && !line.startsWith("Binary file"))
     : [];
-  const docOnly = hits.every((h) => h.includes("/docs/") && h.includes("git grep"));
+
+  /** @type {string[]} */
+  const realHits = [];
+  let ignoredCount = 0;
+
+  for (const line of rawHits) {
+    const parsed = parseGitGrepLine(line);
+    if (!parsed) {
+      realHits.push("(unparsed hit)");
+      continue;
+    }
+    if (isIgnorablePersonalEmailHit(parsed.filePath, parsed.content)) {
+      ignoredCount++;
+      continue;
+    }
+    realHits.push(`${parsed.filePath}:${parsed.lineNum}`);
+  }
+
   return {
-    ok: hits.length === 0 || docOnly,
-    hits,
-    docOnlyHits: docOnly && hits.length > 0,
+    ok: realHits.length === 0,
+    hitCount: realHits.length,
+    hits: realHits,
+    ignoredCount,
   };
 }
 
@@ -381,15 +501,20 @@ export function runGosakiReadinessVerification(opts) {
 
   const deployManifest = readDeployManifest(repoRoot);
 
-  let cmsLoopCli = { ok: false, skipped: true, stdout: "", stderr: "" };
+  let cmsLoopCli = {
+    ok: false,
+    skipped: true,
+    stdout: "",
+    stderr: "",
+    port: null,
+    command: null,
+    stdoutTail: "",
+    stderrTail: "",
+    devServerCleanedUp: true,
+  };
   if (!skipCmsLoop) {
     cmsLoopCli = {
-      ...runNodeCli(repoRoot, "tools/static-to-astro/scripts/verify-cms-minimal-loop.mjs", [
-        "--astro-dir",
-        PATHS.generatedAstro,
-        "--report",
-        PATHS.cmsLoopReport,
-      ]),
+      ...runCmsMinimalLoopCli(repoRoot),
       skipped: false,
     };
   } else {
@@ -430,15 +555,11 @@ export function runGosakiReadinessVerification(opts) {
     secretScan: {
       pass: secretScan.ok && personalEmail.ok,
       personalEmailOk: personalEmail.ok,
-      personalEmailDocOnly: personalEmail.docOnlyHits,
+      personalEmailHitCount: personalEmail.hitCount,
       envLocalGitIgnored: secretScan.envLocalGitIgnored,
       issues: secretScan.issues,
       scanWarnings: secretScan.warnings,
-      warnings: [
-        ...warnings,
-        ...secretScan.warnings,
-        ...(personalEmail.docOnlyHits ? ["personal email pattern only in doc grep examples"] : []),
-      ],
+      warnings: [...warnings, ...secretScan.warnings],
       stagingHost: secretScan.stagingHost,
     },
     siteProfile: {
@@ -486,6 +607,11 @@ export function runGosakiReadinessVerification(opts) {
       pass: skipCmsLoop || cmsLoopCli.ok,
       skipped: skipCmsLoop,
       cliPass: cmsLoopCli.ok,
+      port: cmsLoopCli.port,
+      command: cmsLoopCli.command,
+      stdoutTail: cmsLoopCli.stdoutTail,
+      stderrTail: cmsLoopCli.stderrTail,
+      devServerCleanedUp: cmsLoopCli.devServerCleanedUp,
     },
     storagePlan: {
       pass:
@@ -610,6 +736,29 @@ export function writeReadinessReport(result, reportPath, repoRoot) {
     `- env: staging`,
     `- safeForStaticFtp: ${c.staticPublic.safeForStaticFtp ? "true" : "false"}`,
     "",
+    "## CMS minimal loop",
+    "",
+    `- status: ${c.cmsLoop.skipped ? "SKIP" : c.cmsLoop.pass ? "PASS" : "FAIL"}`,
+    `- command: \`${c.cmsLoop.command ?? "(skipped)"}\``,
+    `- port: ${c.cmsLoop.port ?? "—"}`,
+    `- dev server cleaned up: ${c.cmsLoop.devServerCleanedUp ? "yes" : "no"}`,
+    "",
+  ];
+
+  if (!c.cmsLoop.skipped && !c.cmsLoop.pass) {
+    lines.push("### CMS loop failure output tail", "");
+    if (c.cmsLoop.stdoutTail) {
+      lines.push("**stdout (tail):**", "", "```text", c.cmsLoop.stdoutTail, "```", "");
+    }
+    if (c.cmsLoop.stderrTail) {
+      lines.push("**stderr (tail):**", "", "```text", c.cmsLoop.stderrTail, "```", "");
+    }
+    if (!c.cmsLoop.stdoutTail && !c.cmsLoop.stderrTail) {
+      lines.push("- (no captured output)", "");
+    }
+  }
+
+  lines.push(
     "## Output policy",
     "",
     "- `output/` artifacts are **not** committed to Git",
@@ -625,7 +774,7 @@ export function writeReadinessReport(result, reportPath, repoRoot) {
     "2. Do not use production FTP / Supabase / Storage for staging verification",
     "3. Re-run this verifier after any CMS Kit changes",
     "",
-  ];
+  );
 
   if (result.errors.length) {
     lines.push("## Errors", "");

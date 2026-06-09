@@ -100,10 +100,22 @@ Props and navigation are defined in example JSON files:
 
 | Phase | Focus |
 | --- | --- |
-| **G-5q** | Customer admin manual |
+| **G-5q（完了）** | [Customer admin manual](./customer-admin-manual-musician-basic.md) — 顧客向け運用説明 |
 | **G-5r** | Prototype preview harness |
 | **G-5s** | Site-config driven admin scaffold generator |
+| **G-5t** | Runtime integration plan |
 | **Later** | Runtime integration with explicit approval |
+
+---
+
+## 8. Customer manual（G-5q）
+
+G-5p prototype は **開発者向け** の scaffold 統合見本です。G-5q で **顧客・運用者向け** の説明を追加しました。
+
+| Doc | 対象 |
+| --- | --- |
+| [customer-admin-manual-musician-basic.md](./customer-admin-manual-musician-basic.md) | 顧客向け Admin Manual（本マニュアル） |
+| [customer-admin-quick-checklist-musician-basic.md](./customer-admin-quick-checklist-musician-basic.md) | 1ページ Quick Checklist |
 
 ---
 

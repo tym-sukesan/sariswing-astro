@@ -144,10 +144,12 @@ node tools/static-to-astro/scripts/inspect-admin-ui-components.mjs --category me
 
 **G-5o（完了）:** [admin-publish-workflow-abstraction.md](./admin-publish-workflow-abstraction.md) — Publish workflow UI + staging/production separation
 
-**G-5p（完了）:** [musician-basic-admin-prototype.md](./musician-basic-admin-prototype.md) — musician-basic admin prototype。scaffold 統合。Runtime 未接続。
+**G-5p（完了）:** [musician-basic-admin-prototype.md](./musician-basic-admin-prototype.md) — 開発者向け prototype
 
-**G-5q:** customer admin manual
+**G-5q（完了）:** [customer-admin-manual-musician-basic.md](./customer-admin-manual-musician-basic.md) — 顧客向け Media / 権利確認 / Staging 説明 + [Quick Checklist](./customer-admin-quick-checklist-musician-basic.md)
+
+**G-5r:** prototype preview harness
 
 ---
 
-*G-5n: Media UI scaffold. G-5o: Publish workflow scaffold. G-5p: musician-basic prototype. Sariswing untouched.*
+*G-5n: Media UI scaffold. G-5o: Publish workflow scaffold. G-5p: developer prototype. G-5q: customer manual. Sariswing untouched.*

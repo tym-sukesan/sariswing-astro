@@ -88,12 +88,12 @@ GOSAKI_STAGING_FTP_SERVER_DIR=/cms-kit-staging/gosaki/
 
 ```bash
 git status --short
-git grep -n -i -E "ysktoyamax|bikusari" || true
 git check-ignore -v tools/static-to-astro/.env.local
 ```
 
 - `.env.local` が `git status` に出ないこと
-- 個人メール文字列が tracked ファイルにないこと
+- 個人メール local-part や個人識別文字列を **docs に直接書かない**（検索語は verifier またはローカルメモで管理）
+- tracked ファイルへの personal data 混入は `verify-gosaki-readiness.mjs` の personal email scan で確認
 - production FTP env が `.env.local` にないこと
 
 ### 1-3. ツール
@@ -279,7 +279,6 @@ grep -E 'gosaki-piano|example\.supabase' \
 
 ```bash
 git status --short
-git grep -n -i -E "ysktoyamax|bikusari" || true
 
 rm -rf output
 rm -rf tools/static-to-astro/output
@@ -287,6 +286,8 @@ git restore tools/static-to-astro/output/.gitkeep
 
 git status --short
 ```
+
+commit 前の personal data 確認: `verify-gosaki-readiness.mjs` の secret scan / personal email scan を参照（docs に検索語を書かない）。
 
 commit 対象の例: `tools/static-to-astro/docs/`、`tools/static-to-astro/scripts/`、`tools/static-to-astro/templates/`  
 commit 対象外: `tools/static-to-astro/output/**`（`.gitkeep` のみ tracked）

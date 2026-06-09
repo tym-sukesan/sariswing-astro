@@ -165,10 +165,11 @@ readiness では export 済み JSON（`generated-astro/src/data`）を `--data-d
 作業前・commit 前:
 
 ```bash
-git grep -n -i -E "ysktoyamax|bikusari" || true
 git grep -n -i -E "SUPABASE_SERVICE_ROLE_KEY|FTP_PASSWORD" || true
 git status --short
 ```
+
+個人メール local-part の確認: docs に検索語を書かず、`verify-gosaki-readiness.mjs` の personal email scan（verifier 内パターン）を使う。
 
 secret **実値** パターン（doc に書かないことの確認）:
 

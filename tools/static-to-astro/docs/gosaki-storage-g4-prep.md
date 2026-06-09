@@ -382,13 +382,15 @@ node tools/static-to-astro/scripts/deploy-public-dist-ftp.mjs \
 | **G-4b-prep** | review manifest → upload allowlist（**完了**） |
 | **G-4b** | allowlist approved のみ staging Storage upload（**完了**） |
 | **G-4c** | staging DB `cover_image_url` 更新 + export → build → FTP QA（**完了**） |
-| **G-4d** | schedule 画像 human review table / decision template（**完了** — 下記 CLI） |
-| **G-4e** | human decision 後 — allowlist promote → upload + DB |
+| **G-4d** | schedule 画像 human review table / decision template（**完了**） |
+| **G-4e** | Golden PODs home のみ allowlist promote（**完了** — 下記 CLI） |
+| **G-4f** | schedule home 1件 Storage upload |
+| **G-4g** | `schedules.home_image_url` DB update + export → FTP |
 | **本番導入** | 別ゲート — production Supabase / FTP |
 
 ---
 
-## 13. G-4d — schedule 画像 human review（read-only）
+## 14. G-4d — schedule 画像 human review（read-only）
 
 `needsHumanReview` の schedule 候補について、人間が判断するための review table / decision template を生成。**自動承認しない。** upload / DB update / FTP は行わない。
 
@@ -426,15 +428,41 @@ node tools/static-to-astro/scripts/review-schedule-storage-assets.mjs \
 1. `schedule-image-human-decision-template.json` を開く
 2. 各行の `humanDecision` を `approve_home_only` / `approve_flyer_only` / `approve_both` / `reject` / `defer` に設定
 3. `decisionReason` を記入（特に alt-date-conflict）
-4. G-4e で allowlist へ promote → upload → DB update
-
-### G-4e gate
-
-- [ ] 全候補の `humanDecision` ≠ `pending`
-- [ ] `20260327.png` の日付不一致を理由付きで解決
-- [ ] copyright / staging-only 確認
-- [ ] 承認行のみ allowlist `approvedForStagingUpload` へ移動
+4. G-4e で allowlist へ promote（Golden PODs home のみ）→ G-4f upload → G-4g DB
 
 ---
 
-Phase G-4 discography cover path: **完了**。Schedule 画像は G-4d review 完了 → **G-4e** で human decision 後に upload/DB。
+## 15. G-4e — schedule allowlist promote（Golden PODs home のみ）
+
+human decision template から **`approve_home_only` + `schedule_home` + `home_image_url`** のみ `schedule-upload-allowlist.json` へ promote。upload / DB update は行わない。
+
+### コマンド
+
+```bash
+node tools/static-to-astro/scripts/promote-schedule-storage-allowlist.mjs \
+  --decision-template tools/static-to-astro/output/storage/gosaki/schedule-image-human-decision-template.json \
+  --site-slug gosaki \
+  --report tools/static-to-astro/output/storage/gosaki/SCHEDULE_UPLOAD_ALLOWLIST_REPORT.md \
+  --allowlist tools/static-to-astro/output/storage/gosaki/schedule-upload-allowlist.json \
+  --apply-gosaki-g4e
+```
+
+`--apply-gosaki-g4e`: Golden PODs (`schedule-2026-03-012` home) を `approve_home_only` に設定し、他候補を `defer`。template を output に書き戻す。
+
+### gosaki G-4e 結果（参考）
+
+| 項目 | 結果 |
+| --- | --- |
+| approved | **1** — `schedule-2026-03-012` / `home_image_url` only |
+| deferred | **3** — 011 alt-date-conflict ×2 + 012 flyer |
+| `20260327.png` | **defer**（promote しない） |
+| `image_url` / flyer | **未承認** |
+
+### G-4f / G-4g gate
+
+- **G-4f:** `schedule-upload-allowlist.json` の approved 1件のみ Storage upload
+- **G-4g:** `schedules.home_image_url` のみ DB update（`image_url` は未承認のまま）
+
+---
+
+Phase G-4 discography cover: **完了**。Schedule: G-4e promote 完了 → **G-4f** upload → **G-4g** DB。

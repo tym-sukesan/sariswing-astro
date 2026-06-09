@@ -1375,7 +1375,7 @@ Apply 後: `export-supabase-json` → build → `verify-static-public-artifact` 
 | 項目 | 内容 |
 | --- | --- |
 | CLI | `review-schedule-storage-assets.mjs` |
-| 設計 doc | [docs/gosaki-storage-g4-prep.md](docs/gosaki-storage-g4-prep.md) §13 |
+| 設計 doc | [docs/gosaki-storage-g4-prep.md](docs/gosaki-storage-g4-prep.md) §14 |
 
 ```bash
 node tools/static-to-astro/scripts/review-schedule-storage-assets.mjs \
@@ -1387,7 +1387,27 @@ node tools/static-to-astro/scripts/review-schedule-storage-assets.mjs \
   --manifest tools/static-to-astro/output/storage/gosaki/schedule-image-human-review.json
 ```
 
-`schedule-image-human-decision-template.json` が同ディレクトリに生成される。`humanDecision: pending` のまま — G-4e 前に人間が編集。
+`schedule-image-human-decision-template.json` が同ディレクトリに生成される。
+
+#### G-4e: Schedule allowlist promote（Golden PODs home のみ）
+
+`approve_home_only` + `schedule_home` + `home_image_url` のみ `schedule-upload-allowlist.json` へ promote。flyer / `image_url` / alt-date-conflict は defer。
+
+| 項目 | 内容 |
+| --- | --- |
+| CLI | `promote-schedule-storage-allowlist.mjs` |
+| 設計 doc | [docs/gosaki-storage-g4-prep.md](docs/gosaki-storage-g4-prep.md) §15 |
+
+```bash
+node tools/static-to-astro/scripts/promote-schedule-storage-allowlist.mjs \
+  --decision-template tools/static-to-astro/output/storage/gosaki/schedule-image-human-decision-template.json \
+  --site-slug gosaki \
+  --report tools/static-to-astro/output/storage/gosaki/SCHEDULE_UPLOAD_ALLOWLIST_REPORT.md \
+  --allowlist tools/static-to-astro/output/storage/gosaki/schedule-upload-allowlist.json \
+  --apply-gosaki-g4e
+```
+
+**G-4f:** approved 1件のみ Storage upload / **G-4g:** `home_image_url` DB update（`image_url` は未承認のまま）
 
 ---
 

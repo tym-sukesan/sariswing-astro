@@ -258,16 +258,74 @@ node tools/static-to-astro/scripts/prepare-storage-upload-allowlist.mjs \
 
 ---
 
-## 11. 次フェーズの切り分け
+## 11. G-4b — staging Storage upload（discography cover 4件）
+
+allowlist の `approvedForStagingUpload` のみ staging bucket `site-assets` へ upload。**DB update は行わない**（G-4c で実施）。
+
+### 事前確認
+
+| 項目 | 確認 |
+| --- | --- |
+| `SUPABASE_URL` | staging project（`prod` / `production` を含まない） |
+| `SUPABASE_SERVICE_ROLE_KEY` | `.env.local` にあり（ログに出さない） |
+| Bucket `site-assets` | staging に存在 + public read |
+| Bucket 未作成時 | `docs/sql/staging-site-assets-bucket.sql` または `--create-bucket --apply` |
+
+### コマンド
+
+```bash
+# Dry-run（接続・bucket・source URL 到達性のみ）
+node tools/static-to-astro/scripts/upload-storage-assets.mjs \
+  --allowlist tools/static-to-astro/output/storage/gosaki/storage-upload-allowlist.json \
+  --site-slug gosaki \
+  --bucket site-assets \
+  --report tools/static-to-astro/output/storage/gosaki/STORAGE_UPLOAD_REPORT.md \
+  --manifest tools/static-to-astro/output/storage/gosaki/storage-upload-result.json \
+  --db-update-plan tools/static-to-astro/output/storage/gosaki/storage-db-update-plan.json
+
+# Staging apply（approved 4件のみ）
+node tools/static-to-astro/scripts/upload-storage-assets.mjs \
+  ...同上... \
+  --apply
+
+# Bucket 未作成時（staging のみ）
+node tools/static-to-astro/scripts/upload-storage-assets.mjs \
+  ...同上... \
+  --apply --create-bucket
+```
+
+### 成果物（`output/` — Git 管理外）
+
+| ファイル | パス |
+| --- | --- |
+| Upload report | `STORAGE_UPLOAD_REPORT.md` |
+| Upload result | `storage-upload-result.json` |
+| DB update plan（G-4c用） | `storage-db-update-plan.json` |
+
+### gosaki G-4b 結果（参考）
+
+| 項目 | 結果 |
+| --- | --- |
+| Uploaded | 4 / 4 discography cover |
+| Failed | 0 |
+| DB update | **未実施** |
+| Schedule 画像 | **未処理**（needsHumanReview のまま） |
+| resolvedStoragePath | 元形式維持（`.png` / `.jpg` — allowlist の `.webp` は実体に合わせて解決） |
+
+**注意:** `approvalScope: staging-only` / production 使用許諾は未確定。
+
+---
+
+## 12. 次フェーズの切り分け
 
 | フェーズ | 内容 |
 | --- | --- |
 | **G-4a** | fixture → legacy_id review manifest（**完了**） |
-| **G-4b-prep** | review manifest → upload allowlist（**完了** — 上記 CLI） |
-| **G-4b** | allowlist 承認済みのみ staging Storage upload + DB URL 更新 |
-| **G-4c** | export → build → staging FTP → 目視 QA（実画像表示） |
+| **G-4b-prep** | review manifest → upload allowlist（**完了**） |
+| **G-4b** | allowlist approved のみ staging Storage upload（**完了** — discography 4件） |
+| **G-4c** | `storage-db-update-plan.json` に基づき staging DB `cover_image_url` 更新 → export → build → FTP QA |
 | **本番導入** | 別ゲート — production Supabase / FTP / `--deploy-base` なし build |
 
 ---
 
-Phase G-4 prep + G-4a review + G-4b-prep allowlist: dry-run 完了。実アップロードは **allowlist gate + copyright review 完了後** に staging のみで実施する。
+Phase G-4 prep + G-4a + G-4b-prep + G-4b upload: staging discography covers uploaded。DB update は **G-4c** で staging のみ実施する。

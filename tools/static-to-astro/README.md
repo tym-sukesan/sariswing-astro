@@ -1321,6 +1321,29 @@ node tools/static-to-astro/scripts/prepare-storage-upload-allowlist.mjs \
 
 **禁止（G-4b-prep）:** Supabase Storage upload、DB update。`uploadAllowed: false` / `dbUpdateAllowed: false`。
 
+#### G-4b: Staging Storage upload（approved のみ、DB update なし）
+
+allowlist の `approvedForStagingUpload`（gosaki: discography cover 4件）のみ staging bucket へ upload。DB update は G-4c。
+
+| 項目 | 内容 |
+| --- | --- |
+| CLI | `upload-storage-assets.mjs` |
+| Bucket SQL | [docs/sql/staging-site-assets-bucket.sql](docs/sql/staging-site-assets-bucket.sql) |
+| 設計 doc | [docs/gosaki-storage-g4-prep.md](docs/gosaki-storage-g4-prep.md) §11 |
+
+```bash
+node tools/static-to-astro/scripts/upload-storage-assets.mjs \
+  --allowlist tools/static-to-astro/output/storage/gosaki/storage-upload-allowlist.json \
+  --site-slug gosaki \
+  --bucket site-assets \
+  --report tools/static-to-astro/output/storage/gosaki/STORAGE_UPLOAD_REPORT.md \
+  --manifest tools/static-to-astro/output/storage/gosaki/storage-upload-result.json \
+  --db-update-plan tools/static-to-astro/output/storage/gosaki/storage-db-update-plan.json \
+  --apply
+```
+
+**デフォルト:** dry-run。**`--apply`** で staging upload（`approvedForStagingUpload` のみ）。**DB update は常に未実施。** `--overwrite` で既存 object 上書き（省略時は skip）。
+
 ---
 
 ### Phase 3-W: Site profile system（設計・dry-run 検証）

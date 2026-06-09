@@ -1258,7 +1258,7 @@ CMS 画像（Schedule flyer / home image / Discography cover）の **Supabase St
 | --- | --- |
 | 設計 doc | [docs/storage-image-pipeline.md](docs/storage-image-pipeline.md) |
 | Plan CLI | `plan-storage-assets.mjs` |
-| Upload stub | `upload-storage-assets.mjs`（`--apply` 未実装・拒否） |
+| Upload CLI | `upload-storage-assets.mjs`（G-4b: `--apply` で staging upload、DB update なし） |
 | 対象フィールド | `schedules.image_url`, `schedules.home_image_url`, `discography.cover_image_url` |
 | Bucket 案 | `site-assets` / `{siteSlug}/schedule|discography/...` |
 

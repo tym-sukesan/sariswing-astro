@@ -382,9 +382,59 @@ node tools/static-to-astro/scripts/deploy-public-dist-ftp.mjs \
 | **G-4b-prep** | review manifest → upload allowlist（**完了**） |
 | **G-4b** | allowlist approved のみ staging Storage upload（**完了**） |
 | **G-4c** | staging DB `cover_image_url` 更新 + export → build → FTP QA（**完了**） |
-| **G-4d** | schedule 画像 human review → allowlist promote → upload + DB（未着手） |
+| **G-4d** | schedule 画像 human review table / decision template（**完了** — 下記 CLI） |
+| **G-4e** | human decision 後 — allowlist promote → upload + DB |
 | **本番導入** | 別ゲート — production Supabase / FTP |
 
 ---
 
-Phase G-4 discography cover path: staging Storage + DB + public site QA **完了**。Schedule 画像は G-4d で継続。
+## 13. G-4d — schedule 画像 human review（read-only）
+
+`needsHumanReview` の schedule 候補について、人間が判断するための review table / decision template を生成。**自動承認しない。** upload / DB update / FTP は行わない。
+
+### コマンド
+
+```bash
+node tools/static-to-astro/scripts/review-schedule-storage-assets.mjs \
+  --allowlist tools/static-to-astro/output/storage/gosaki/storage-upload-allowlist.json \
+  --review-manifest tools/static-to-astro/output/storage/gosaki/storage-asset-review-manifest.json \
+  --data-dir tools/static-to-astro/output/generated-astro/src/data \
+  --site-slug gosaki \
+  --report tools/static-to-astro/output/storage/gosaki/SCHEDULE_IMAGE_HUMAN_REVIEW_REPORT.md \
+  --manifest tools/static-to-astro/output/storage/gosaki/schedule-image-human-review.json
+```
+
+### 成果物（`output/` — Git 管理外）
+
+| ファイル | パス |
+| --- | --- |
+| Human review report | `SCHEDULE_IMAGE_HUMAN_REVIEW_REPORT.md` |
+| Review manifest | `schedule-image-human-review.json` |
+| Decision template | `schedule-image-human-decision-template.json` |
+
+### gosaki 候補（参考）
+
+| 項目 | 件数 |
+| --- | ---: |
+| schedule_home | 2 |
+| schedule_flyer | 2 |
+| alt-date-conflict (`20260327.png`) | 2 rows（同一 legacy_id） |
+| excluded NO PHOTO | 1（`schedule-2026-03-013`） |
+
+### Decision template の使い方
+
+1. `schedule-image-human-decision-template.json` を開く
+2. 各行の `humanDecision` を `approve_home_only` / `approve_flyer_only` / `approve_both` / `reject` / `defer` に設定
+3. `decisionReason` を記入（特に alt-date-conflict）
+4. G-4e で allowlist へ promote → upload → DB update
+
+### G-4e gate
+
+- [ ] 全候補の `humanDecision` ≠ `pending`
+- [ ] `20260327.png` の日付不一致を理由付きで解決
+- [ ] copyright / staging-only 確認
+- [ ] 承認行のみ allowlist `approvedForStagingUpload` へ移動
+
+---
+
+Phase G-4 discography cover path: **完了**。Schedule 画像は G-4d review 完了 → **G-4e** で human decision 後に upload/DB。

@@ -1368,6 +1368,27 @@ Apply 後: `export-supabase-json` → build → `verify-static-public-artifact` 
 
 **禁止（G-4c）:** Storage upload、`schedules` テーブル更新、production Supabase。
 
+#### G-4d: Schedule 画像 human review（read-only、自動承認なし）
+
+`needsHumanReview` の schedule 候補を review table / decision template に整理。upload / DB update は行わない。
+
+| 項目 | 内容 |
+| --- | --- |
+| CLI | `review-schedule-storage-assets.mjs` |
+| 設計 doc | [docs/gosaki-storage-g4-prep.md](docs/gosaki-storage-g4-prep.md) §13 |
+
+```bash
+node tools/static-to-astro/scripts/review-schedule-storage-assets.mjs \
+  --allowlist tools/static-to-astro/output/storage/gosaki/storage-upload-allowlist.json \
+  --review-manifest tools/static-to-astro/output/storage/gosaki/storage-asset-review-manifest.json \
+  --data-dir tools/static-to-astro/output/generated-astro/src/data \
+  --site-slug gosaki \
+  --report tools/static-to-astro/output/storage/gosaki/SCHEDULE_IMAGE_HUMAN_REVIEW_REPORT.md \
+  --manifest tools/static-to-astro/output/storage/gosaki/schedule-image-human-review.json
+```
+
+`schedule-image-human-decision-template.json` が同ディレクトリに生成される。`humanDecision: pending` のまま — G-4e 前に人間が編集。
+
 ---
 
 ### Phase 3-W: Site profile system（設計・dry-run 検証）

@@ -134,7 +134,7 @@ gosaki site config では plan に以下の site notes が含まれます:
 | Phase | 内容 |
 | --- | --- |
 | **G-5g** | plan から dry-run generation package（**完了** — [site-generation-dry-run.md](./site-generation-dry-run.md)） |
-| **G-5h** | onboarding runbook / 顧客チェックリスト |
+| **G-5h** | onboarding runbook（**完了** — [cms-kit-onboarding-runbook.md](./cms-kit-onboarding-runbook.md)） |
 | **G-5i** | Admin CMS template extraction |
 | Later | write CLI の site-config 対応 |
 

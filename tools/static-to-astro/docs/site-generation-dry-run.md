@@ -118,7 +118,7 @@ node tools/static-to-astro/scripts/generate-site-dry-run.mjs \
 
 | Phase | 内容 |
 | --- | --- |
-| **G-5h** | Product onboarding runbook |
+| **G-5h** | Product onboarding runbook（**完了** — [cms-kit-onboarding-runbook.md](./cms-kit-onboarding-runbook.md)） |
 | **G-5i** | Admin CMS template extraction |
 | Later | Optional Astro scaffold from `planned-files.json`（明示 opt-in） |
 

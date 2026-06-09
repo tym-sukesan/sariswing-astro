@@ -1,0 +1,32 @@
+---
+/**
+ * CMS Kit Admin duplicate button scaffold (G-5m-a).
+ * No duplicate action — button UI only.
+ */
+
+interface Props {
+  label?: string;
+  disabled?: boolean;
+  confirmMessage?: string;
+  itemLabel?: string;
+}
+
+const {
+  label = "Duplicate",
+  disabled = true,
+  confirmMessage = "Duplicate this item?",
+  itemLabel = "",
+} = Astro.props;
+---
+
+<button
+  class="admin-button admin-button--secondary"
+  type="button"
+  disabled={disabled}
+  data-action="duplicate"
+  data-confirm={confirmMessage}
+  data-item={itemLabel}
+  title="Scaffold only — no duplicate action"
+>
+  {label}
+</button>

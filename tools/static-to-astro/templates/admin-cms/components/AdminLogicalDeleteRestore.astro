@@ -1,0 +1,54 @@
+---
+/**
+ * CMS Kit Admin logical delete / restore scaffold (G-5m-a).
+ * No delete or restore action — button UI only.
+ */
+
+interface Props {
+  deleted?: boolean;
+  deleteLabel?: string;
+  restoreLabel?: string;
+  disabled?: boolean;
+  itemLabel?: string;
+}
+
+const {
+  deleted = false,
+  deleteLabel = "Delete",
+  restoreLabel = "Restore",
+  disabled = true,
+  itemLabel = "",
+} = Astro.props;
+---
+
+<div
+  class={`admin-logical-delete ${deleted ? "admin-logical-delete--deleted" : ""}`}
+  data-scaffold="true"
+  data-deleted={deleted ? "true" : "false"}
+>
+  {
+    deleted ? (
+      <button
+        class="admin-button admin-button--secondary"
+        type="button"
+        disabled={disabled}
+        data-action="restore"
+        data-item={itemLabel}
+        title="Scaffold only — no restore action"
+      >
+        {restoreLabel}
+      </button>
+    ) : (
+      <button
+        class="admin-button admin-button--destructive"
+        type="button"
+        disabled={disabled}
+        data-action="logical-delete"
+        data-item={itemLabel}
+        title="Scaffold only — no delete action"
+      >
+        {deleteLabel}
+      </button>
+    )
+  }
+</div>

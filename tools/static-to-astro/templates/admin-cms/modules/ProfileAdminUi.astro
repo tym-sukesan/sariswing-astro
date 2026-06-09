@@ -1,0 +1,101 @@
+---
+/**
+ * CMS Kit Profile / About admin module UI scaffold (G-5m-a).
+ * Static profile only — no Supabase query or save.
+ */
+import AdminPageHeader from "../components/AdminPageHeader.astro";
+import AdminCard from "../components/AdminCard.astro";
+import AdminEditForm from "../components/AdminEditForm.astro";
+import AdminFormField from "../components/AdminFormField.astro";
+import AdminPublishToggle from "../components/AdminPublishToggle.astro";
+import AdminStatusMessage from "../components/AdminStatusMessage.astro";
+
+export interface ProfileAdminData {
+  name?: string;
+  bio?: string;
+  image_url?: string;
+  published?: boolean;
+  imageStatus?: "none" | "attached" | "pending-review";
+}
+
+interface Props {
+  profile?: ProfileAdminData;
+  siteName?: string;
+  readonly?: boolean;
+}
+
+const {
+  profile = {},
+  siteName = "CMS Kit",
+  readonly = true,
+} = Astro.props;
+
+const imageStatus = profile.imageStatus ?? (profile.image_url ? "attached" : "none");
+---
+
+<section class="admin-module admin-module--profile" data-module="profile" data-scaffold="true">
+  <AdminPageHeader
+    title="Profile / About"
+    description={`Manage profile content for ${siteName}. Expected table: site_page / profile.`}
+  />
+
+  {readonly ? (
+    <p class="admin-readonly-notice" role="note">
+      Read-only scaffold. No Supabase query or save.
+    </p>
+  ) : null}
+
+  <AdminCard title="Current profile" description="Revision history in future phase.">
+    <dl class="admin-profile-summary">
+      <div>
+        <dt>Name</dt>
+        <dd>{profile.name ?? "—"}</dd>
+      </div>
+      <div>
+        <dt>Bio</dt>
+        <dd>{profile.bio ?? "—"}</dd>
+      </div>
+      <div>
+        <dt>Image</dt>
+        <dd>
+          <span class={`admin-badge admin-badge--${imageStatus === "attached" ? "success" : "muted"}`}>
+            {imageStatus}
+          </span>
+        </dd>
+      </div>
+      <div>
+        <dt>Status</dt>
+        <dd>
+          <AdminPublishToggle published={profile.published ?? false} disabled={true} />
+        </dd>
+      </div>
+    </dl>
+
+    {
+      imageStatus === "pending-review" ? (
+        <AdminStatusMessage
+          type="warning"
+          title="Image review"
+          message="Profile image may require human review before production publish."
+        />
+      ) : null
+    }
+  </AdminCard>
+
+  <AdminCard title="Edit profile">
+    <AdminEditForm title="Edit profile" mode="edit" disabled={true}>
+      <AdminFormField label="Name">
+        <input type="text" value={profile.name ?? ""} placeholder="Artist / site name" disabled />
+      </AdminFormField>
+      <AdminFormField label="Bio" help="About text or introduction.">
+        <textarea rows="5" placeholder="Bio…" disabled>
+          {profile.bio ?? ""}
+        </textarea>
+      </AdminFormField>
+      <AdminFormField label="Image URL" help="Storage upload in G-5n.">
+        <input type="text" value={profile.image_url ?? ""} placeholder="No image" disabled />
+      </AdminFormField>
+      <AdminPublishToggle published={profile.published ?? false} disabled={true} />
+    </AdminEditForm>
+  </AdminCard>
+</section>

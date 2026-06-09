@@ -11,6 +11,7 @@
 - [admin-cms-code-inventory.md](./admin-cms-code-inventory.md) — G-5j inventory
 - [admin-ui-components-registry.md](./admin-ui-components-registry.md) — **G-5k** Admin UI components registry
 - [admin-ui-shell-scaffold.md](./admin-ui-shell-scaffold.md) — **G-5l** Admin UI shell scaffold
+- [admin-crud-ui-scaffold.md](./admin-crud-ui-scaffold.md) — **G-5m-a** CRUD UI scaffold
 - [sariswing-vs-cms-kit-gap-analysis.md](./sariswing-vs-cms-kit-gap-analysis.md)
 - [cms-template-registry.md](./cms-template-registry.md)
 - [cms-schema-adapters.md](./cms-schema-adapters.md)
@@ -322,7 +323,8 @@ node tools/static-to-astro/scripts/generate-site-dry-run.mjs --site-config ...
 | **G-5j** | Sariswing admin **code inventory**（read-only 棚卸し） | なし |
 | **G-5k** | Admin UI components **registry / plan**（**完了**） | doc + registry JSON のみ |
 | **G-5l** | Low-risk UI shell components scaffold（**完了**） | CMS Kit `templates/admin-cms/components/` のみ |
-| **G-5m** | Form/table CRUD primitives + module UIs + Auth | write-local |
+| **G-5m-a** | CRUD primitives + module UI scaffold（**完了**） | `components/` + `modules/` のみ |
+| **G-5m-b** | Auth abstraction plan or scaffold | write-local |
 | **G-5n** | Media upload abstraction | staging upload（承認後） |
 | **G-5o** | Publish workflow abstraction | staging dispatch（承認後） |
 | **G-5p** | musician-basic admin prototype | staging only |
@@ -350,18 +352,16 @@ node tools/static-to-astro/scripts/generate-site-dry-run.mjs --site-config ...
 
 ---
 
-## 12. Immediate next step — G-5l / G-5m
+## 12. Immediate next step — G-5m-a / G-5m-b
 
-**G-5j（完了）:** [admin-cms-code-inventory.md](./admin-cms-code-inventory.md) — Sariswing admin read-only inventory。
+**G-5l（完了）:** [admin-ui-shell-scaffold.md](./admin-ui-shell-scaffold.md) — 10 low-risk shell components。
 
-**G-5k（完了）:** [admin-ui-components-registry.md](./admin-ui-components-registry.md) — 28 UI components registry。
+**G-5m-a（完了）:** [admin-crud-ui-scaffold.md](./admin-crud-ui-scaffold.md) — 5 CRUD primitives + 4 module UIs。Supabase / Auth / Storage / Publish 未接続。Sariswing 未変更。
 
-**G-5l（完了）:** [admin-ui-shell-scaffold.md](./admin-ui-shell-scaffold.md) — 10 low-risk shell components in `templates/admin-cms/components/`。`productionReady: false` / `connectedToRuntime: false`。Sariswing 未変更。
-
-**G-5m（次）:** CRUD primitives + module UIs + Auth abstraction。
+**G-5m-b / G-5n（次）:** Auth abstraction（G-5m-b）または Media upload（G-5n）。
 
 **禁止（継続）:** Sariswing 本番 touch、DB update、Storage upload、FTP、GHA dispatch
 
 ---
 
-*G-5i: extraction plan. G-5j: inventory. G-5k: registry. G-5l: shell scaffold. G-5m+: CRUD / Auth / Media / Publish.*
+*G-5i: plan. G-5j: inventory. G-5k: registry. G-5l: shell. G-5m-a: CRUD UI. G-5m-b+: Auth / Media / Publish.*

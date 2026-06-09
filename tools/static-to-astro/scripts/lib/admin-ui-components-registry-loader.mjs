@@ -162,7 +162,10 @@ export function inspectAdminUiComponents(opts = {}) {
     components = components.filter((c) => c.risk === risk);
   }
   if (opts.suggestedPhase) {
-    components = components.filter((c) => c.suggestedPhase === opts.suggestedPhase);
+    const phase = opts.suggestedPhase;
+    components = components.filter(
+      (c) => c.suggestedPhase === phase || c.implementedInPhase === phase,
+    );
   }
   if (opts.extractableOnly) {
     components = components.filter((c) => !c.doNotExtractYet);

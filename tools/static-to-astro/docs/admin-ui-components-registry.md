@@ -7,6 +7,7 @@
 
 - [admin-cms-code-inventory.md](./admin-cms-code-inventory.md) — G-5j Sariswing admin inventory
 - [admin-ui-shell-scaffold.md](./admin-ui-shell-scaffold.md) — **G-5l** UI shell scaffold
+- [admin-crud-ui-scaffold.md](./admin-crud-ui-scaffold.md) — **G-5m-a** CRUD UI scaffold
 - [admin-cms-template-extraction-plan.md](./admin-cms-template-extraction-plan.md) — G-5i extraction plan
 - Registry JSON: [`config/admin/admin-ui-components-registry.json`](../config/admin/admin-ui-components-registry.json)
 - Inspect CLI: [`scripts/inspect-admin-ui-components.mjs`](../scripts/inspect-admin-ui-components.mjs)
@@ -225,16 +226,33 @@ G-5q: customer admin manual（doc）
 - Sariswing admin **未変更**
 - Auth / Storage / Publish **未接続**
 
-## 11. Next phase — G-5m
+## 11. G-5m-a scaffold（完了）
 
-**CRUD primitives + module UIs + Auth abstraction**
+**CRUD primitives + module UI** — [admin-crud-ui-scaffold.md](./admin-crud-ui-scaffold.md)
 
-- `admin-edit-form`, publish toggle, logical delete, News / Schedule / Profile module UI
-- Auth guard は G-5m で設計後に接続
+| componentId | scaffoldPath |
+| --- | --- |
+| admin-edit-form | `templates/admin-cms/components/AdminEditForm.astro` |
+| admin-publish-toggle | `templates/admin-cms/components/AdminPublishToggle.astro` |
+| admin-sort-order-control | `templates/admin-cms/components/AdminSortOrderControl.astro` |
+| admin-duplicate-button | `templates/admin-cms/components/AdminDuplicateButton.astro` |
+| admin-logical-delete-restore | `templates/admin-cms/components/AdminLogicalDeleteRestore.astro` |
+| news-admin-ui | `templates/admin-cms/modules/NewsAdminUi.astro` |
+| schedule-admin-ui | `templates/admin-cms/modules/ScheduleAdminUi.astro` |
+| profile-admin-ui | `templates/admin-cms/modules/ProfileAdminUi.astro` |
+| links-admin-ui | `templates/admin-cms/modules/LinksAdminUi.astro` |
+
+- `implementedInPhase: G-5m-a`, `productionReady: false`, `connectedToRuntime: false`
+- No Supabase query / DB update / Auth / Storage / Publish
+
+## 12. Next phase — G-5m-b / G-5n
+
+- **G-5m-b:** Auth abstraction plan or scaffold
+- **G-5n:** Media upload abstraction
 
 ---
 
-## Registry summary（G-5k / G-5l）
+## Registry summary（G-5k / G-5l / G-5m-a）
 
 | Metric | Count |
 | --- | --- |
@@ -245,10 +263,11 @@ G-5q: customer admin manual（doc）
 | Medium risk | **8** |
 | High risk | **9** |
 | G-5l scaffolded | **10** |
-| G-5m phase | **13** |
+| G-5m-a scaffolded | **9** |
+| G-5m phase (remaining) | **4** |
 | G-5n phase | **2** |
 | G-5o phase | **3** |
 
 ---
 
-*G-5k: registry. G-5l: shell scaffold. Sariswing admin untouched. `productionReady: false`.*
+*G-5k: registry. G-5l: shell. G-5m-a: CRUD UI. Sariswing admin untouched. `productionReady: false`.*

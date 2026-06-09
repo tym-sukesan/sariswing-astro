@@ -1,0 +1,107 @@
+---
+/**
+ * CMS Kit News admin module UI scaffold (G-5m-a).
+ * Static items only — no Supabase query or save.
+ */
+import AdminPageHeader from "../components/AdminPageHeader.astro";
+import AdminCard from "../components/AdminCard.astro";
+import AdminDataTable from "../components/AdminDataTable.astro";
+import AdminEditForm from "../components/AdminEditForm.astro";
+import AdminFormField from "../components/AdminFormField.astro";
+import AdminPublishToggle from "../components/AdminPublishToggle.astro";
+import AdminLogicalDeleteRestore from "../components/AdminLogicalDeleteRestore.astro";
+import AdminEmptyState from "../components/AdminEmptyState.astro";
+
+export interface NewsAdminItem {
+  id: string;
+  title: string;
+  published_at?: string;
+  published: boolean;
+  deleted?: boolean;
+}
+
+interface Props {
+  items?: NewsAdminItem[];
+  siteName?: string;
+  readonly?: boolean;
+}
+
+const { items = [], siteName = "CMS Kit", readonly = true } = Astro.props;
+
+const columns = [
+  { key: "title", label: "Title" },
+  { key: "published_at", label: "Published at" },
+  { key: "status", label: "Status" },
+];
+
+const rows = items.map((item) => ({
+  title: item.deleted ? `${item.title} (deleted)` : item.title,
+  published_at: item.published_at ?? "—",
+  status: item.published ? "Published" : "Draft",
+}));
+---
+
+<section class="admin-module admin-module--news" data-module="news" data-scaffold="true">
+  <AdminPageHeader
+    title="News"
+    description={`Manage news items for ${siteName}. Scaffold only — no DB connection.`}
+  >
+    <button slot="actions" class="admin-button" type="button" disabled={readonly}>
+      Add news
+    </button>
+  </AdminPageHeader>
+
+  {readonly ? (
+    <p class="admin-readonly-notice" role="note">
+      Read-only scaffold. No Supabase query or save.
+    </p>
+  ) : null}
+
+  <AdminCard title="News list" description="Expected table: news">
+    {
+      items.length === 0 ? (
+        <AdminEmptyState title="No news yet" message="Create your first news item.">
+          <button slot="action" class="admin-button" type="button" disabled>
+            Add news
+          </button>
+        </AdminEmptyState>
+      ) : (
+        <AdminDataTable
+          columns={columns}
+          rows={rows}
+          caption="News items (static example)"
+          showActionsColumn={true}
+        >
+          <div class="admin-table-actions">
+            <AdminPublishToggle published={items[0]?.published ?? false} disabled={true} />
+            <AdminLogicalDeleteRestore
+              deleted={items[0]?.deleted ?? false}
+              itemLabel={items[0]?.title ?? ""}
+              disabled={true}
+            />
+          </div>
+        </AdminDataTable>
+      )
+    }
+  </AdminCard>
+
+  <AdminCard title="Create / edit form" description="AdminEditForm with field slots.">
+    <AdminEditForm
+      title="Edit news item"
+      mode="edit"
+      disabled={true}
+      dangerZone={true}
+    >
+      <AdminFormField label="Title" help="News headline.">
+        <input type="text" placeholder="Announcement title" disabled />
+      </AdminFormField>
+      <AdminFormField label="Body" help="Rich text or markdown (future).">
+        <textarea rows="4" placeholder="News body…" disabled></textarea>
+      </AdminFormField>
+      <AdminPublishToggle published={false} disabled={true} />
+      <div slot="danger">
+        <AdminLogicalDeleteRestore deleted={false} itemLabel="example" disabled={true} />
+      </div>
+    </AdminEditForm>
+  </AdminCard>
+</section>

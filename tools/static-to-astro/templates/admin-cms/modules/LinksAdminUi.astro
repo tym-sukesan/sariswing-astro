@@ -1,0 +1,105 @@
+---
+/**
+ * CMS Kit Links admin module UI scaffold (G-5m-a).
+ * Static items only — no Supabase query or save.
+ */
+import AdminPageHeader from "../components/AdminPageHeader.astro";
+import AdminCard from "../components/AdminCard.astro";
+import AdminDataTable from "../components/AdminDataTable.astro";
+import AdminEditForm from "../components/AdminEditForm.astro";
+import AdminFormField from "../components/AdminFormField.astro";
+import AdminPublishToggle from "../components/AdminPublishToggle.astro";
+import AdminSortOrderControl from "../components/AdminSortOrderControl.astro";
+import AdminLogicalDeleteRestore from "../components/AdminLogicalDeleteRestore.astro";
+import AdminEmptyState from "../components/AdminEmptyState.astro";
+
+export interface LinksAdminItem {
+  id: string;
+  label: string;
+  url: string;
+  sort_order?: number;
+  published: boolean;
+  deleted?: boolean;
+}
+
+interface Props {
+  items?: LinksAdminItem[];
+  siteName?: string;
+  readonly?: boolean;
+}
+
+const { items = [], siteName = "CMS Kit", readonly = true } = Astro.props;
+
+const columns = [
+  { key: "label", label: "Label" },
+  { key: "url", label: "URL" },
+  { key: "sort_order", label: "Order" },
+  { key: "status", label: "Status" },
+];
+
+const rows = items.map((item) => ({
+  label: item.deleted ? `${item.label} (deleted)` : item.label,
+  url: item.url,
+  sort_order: String(item.sort_order ?? 0),
+  status: item.published ? "Published" : "Draft",
+}));
+---
+
+<section class="admin-module admin-module--links" data-module="links" data-scaffold="true">
+  <AdminPageHeader
+    title="Links"
+    description={`Manage external links for ${siteName}. Expected table: links.`}
+  >
+    <button slot="actions" class="admin-button" type="button" disabled={readonly}>
+      Add link
+    </button>
+  </AdminPageHeader>
+
+  {readonly ? (
+    <p class="admin-readonly-notice" role="note">
+      Read-only scaffold. No Supabase query or save.
+    </p>
+  ) : null}
+
+  <AdminCard title="Links list">
+    {
+      items.length === 0 ? (
+        <AdminEmptyState title="No links yet" message="Add social or external links.">
+          <button slot="action" class="admin-button" type="button" disabled>
+            Add link
+          </button>
+        </AdminEmptyState>
+      ) : (
+        <AdminDataTable
+          columns={columns}
+          rows={rows}
+          caption="Links (static example)"
+          showActionsColumn={true}
+        >
+          <div class="admin-table-actions">
+            <AdminSortOrderControl value={items[0]?.sort_order ?? 0} disabled={true} />
+            <AdminPublishToggle published={items[0]?.published ?? false} disabled={true} />
+            <AdminLogicalDeleteRestore
+              deleted={items[0]?.deleted ?? false}
+              itemLabel={items[0]?.label ?? ""}
+              disabled={true}
+            />
+          </div>
+        </AdminDataTable>
+      )
+    }
+  </AdminCard>
+
+  <AdminCard title="Create / edit form">
+    <AdminEditForm title="Edit link" mode="edit" disabled={true}>
+      <AdminFormField label="Label">
+        <input type="text" placeholder="Instagram" disabled />
+      </AdminFormField>
+      <AdminFormField label="URL" help="Full URL including https://">
+        <input type="url" placeholder="https://example.com" disabled />
+      </AdminFormField>
+      <AdminSortOrderControl value={0} disabled={true} />
+      <AdminPublishToggle published={false} disabled={true} />
+    </AdminEditForm>
+  </AdminCard>
+</section>

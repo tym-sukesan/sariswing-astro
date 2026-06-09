@@ -1,0 +1,39 @@
+---
+/**
+ * CMS Kit Admin sort order control scaffold (G-5m-a).
+ * No persist — number input UI only.
+ */
+
+interface Props {
+  value?: number;
+  min?: number;
+  max?: number;
+  step?: number;
+  disabled?: boolean;
+  name?: string;
+}
+
+const {
+  value = 0,
+  min = 0,
+  max = 999,
+  step = 1,
+  disabled = true,
+  name = "sort_order",
+} = Astro.props;
+---
+
+<div class="admin-sort-order" data-action="update-sort-order" data-scaffold="true">
+  <label class="admin-sort-order__label" for={`sort-${name}`}>Sort order</label>
+  <input
+    class="admin-sort-order__input"
+    id={`sort-${name}`}
+    type="number"
+    name={name}
+    value={value}
+    min={min}
+    max={max}
+    step={step}
+    disabled={disabled}
+  />
+</div>

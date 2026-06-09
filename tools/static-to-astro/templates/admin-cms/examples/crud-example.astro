@@ -1,0 +1,113 @@
+---
+/**
+ * CMS Kit Admin CRUD UI — composition example (G-5m-a).
+ *
+ * This is a scaffold example only.
+ * - Not connected to runtime routes
+ * - No DB update
+ * - No Supabase query
+ * - No Storage upload
+ * - No publish dispatch
+ * - No Auth
+ */
+import AdminLayout from "../components/AdminLayout.astro";
+import AdminNav from "../components/AdminNav.astro";
+import AdminStatusMessage from "../components/AdminStatusMessage.astro";
+import NewsAdminUi from "../modules/NewsAdminUi.astro";
+import ScheduleAdminUi from "../modules/ScheduleAdminUi.astro";
+import ProfileAdminUi from "../modules/ProfileAdminUi.astro";
+import LinksAdminUi from "../modules/LinksAdminUi.astro";
+
+const navItems = [
+  { id: "dashboard", label: "Dashboard", href: "#dashboard" },
+  { id: "news", label: "News", href: "#news" },
+  { id: "schedule", label: "Schedule", href: "#schedule" },
+  { id: "profile", label: "Profile", href: "#profile" },
+  { id: "links", label: "Links", href: "#links" },
+];
+
+const newsItems = [
+  {
+    id: "1",
+    title: "Spring concert announcement",
+    published_at: "2026-06-01",
+    published: true,
+    deleted: false,
+  },
+  {
+    id: "2",
+    title: "New album release",
+    published_at: "",
+    published: false,
+    deleted: false,
+  },
+];
+
+const scheduleItems = [
+  {
+    id: "1",
+    date: "2026-07-15",
+    title: "Jazz night",
+    venue: "Blue Note",
+    published: true,
+    image_url: "/images/schedule/1.webp",
+    sort_order: 1,
+    dateConflict: false,
+  },
+  {
+    id: "2",
+    date: "2026-07-15",
+    title: "Afternoon session",
+    venue: "City Hall",
+    published: false,
+    sort_order: 2,
+    dateConflict: true,
+  },
+];
+
+const profile = {
+  name: "Sample Artist",
+  bio: "Jazz vocalist based in Tokyo.",
+  image_url: "",
+  published: true,
+  imageStatus: "none" as const,
+};
+
+const linkItems = [
+  {
+    id: "1",
+    label: "Official site",
+    url: "https://example.com",
+    sort_order: 1,
+    published: true,
+  },
+  {
+    id: "2",
+    label: "Instagram",
+    url: "https://instagram.com/example",
+    sort_order: 2,
+    published: true,
+  },
+];
+---
+
+<AdminLayout
+  title="CRUD modules"
+  siteName="CMS Kit Admin"
+  currentSection="dashboard"
+  stagingLabel="CRUD scaffold example"
+>
+  <AdminNav slot="nav" items={navItems} currentSection="dashboard" />
+
+  <AdminStatusMessage
+    slot="status"
+    type="info"
+    title="Scaffold example only"
+    message="CRUD primitives + module UIs. No Supabase query, DB update, Storage, or Publish."
+  />
+
+  <NewsAdminUi items={newsItems} siteName="CMS Kit Admin" readonly={true} />
+  <ScheduleAdminUi items={scheduleItems} siteName="CMS Kit Admin" readonly={true} />
+  <ProfileAdminUi profile={profile} siteName="CMS Kit Admin" readonly={true} />
+  <LinksAdminUi items={linkItems} siteName="CMS Kit Admin" readonly={true} />
+</AdminLayout>

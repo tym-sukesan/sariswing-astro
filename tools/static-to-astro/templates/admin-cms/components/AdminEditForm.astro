@@ -1,0 +1,59 @@
+---
+/**
+ * CMS Kit Admin edit form scaffold (G-5m-a).
+ * No submit handler, fetch, or Supabase.
+ */
+
+interface Props {
+  title?: string;
+  description?: string;
+  mode?: "create" | "edit";
+  submitLabel?: string;
+  cancelHref?: string;
+  disabled?: boolean;
+  dangerZone?: boolean;
+}
+
+const {
+  title = "",
+  description = "",
+  mode = "create",
+  submitLabel = mode === "create" ? "Create" : "Save changes",
+  cancelHref = "#",
+  disabled = true,
+  dangerZone = false,
+} = Astro.props;
+---
+
+<form
+  class="admin-edit-form"
+  method="dialog"
+  action="#"
+  data-scaffold="true"
+  data-mode={mode}
+  onsubmit="return false;"
+>
+  {title ? <h3 class="admin-edit-form__title">{title}</h3> : null}
+  {description ? <p class="admin-edit-form__description">{description}</p> : null}
+
+  <div class="admin-edit-form__fields">
+    <slot />
+  </div>
+
+  <div class="admin-edit-form__actions">
+    <slot name="actions">
+      <a class="admin-button admin-button--secondary" href={cancelHref}>Cancel</a>
+      <button class="admin-button" type="button" disabled={disabled} title="Scaffold only — no save">
+        {submitLabel}
+      </button>
+    </slot>
+  </div>
+
+  {
+    dangerZone ? (
+      <div class="admin-edit-form__danger">
+        <slot name="danger" />
+      </div>
+    ) : null
+  }
+</form>

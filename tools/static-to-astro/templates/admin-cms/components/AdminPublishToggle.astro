@@ -1,0 +1,40 @@
+---
+/**
+ * CMS Kit Admin publish toggle scaffold (G-5m-a).
+ * No DB update — display and checkbox UI only.
+ */
+
+interface Props {
+  published?: boolean;
+  label?: string;
+  description?: string;
+  disabled?: boolean;
+  name?: string;
+}
+
+const {
+  published = false,
+  label = "Published",
+  description = "",
+  disabled = true,
+  name = "published",
+} = Astro.props;
+---
+
+<div class="admin-publish-toggle" data-action="toggle-publish" data-scaffold="true">
+  <label class="admin-publish-toggle__label">
+    <input
+      class="admin-publish-toggle__input"
+      type="checkbox"
+      name={name}
+      checked={published}
+      disabled={disabled}
+      data-published={published ? "true" : "false"}
+    />
+    <span class="admin-publish-toggle__text">{label}</span>
+  </label>
+  {description ? <p class="admin-publish-toggle__description">{description}</p> : null}
+  <span class={`admin-badge admin-badge--${published ? "success" : "muted"}`}>
+    {published ? "Published" : "Draft"}
+  </span>
+</div>

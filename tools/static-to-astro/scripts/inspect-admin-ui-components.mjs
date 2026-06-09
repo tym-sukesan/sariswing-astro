@@ -81,6 +81,21 @@ function printComponent(c) {
   console.log(`  suggestedPhase: ${c.suggestedPhase}`);
   console.log(`  doNotExtractYet: ${c.doNotExtractYet}`);
   console.log(`  dependencies: ${c.dependencies.length ? c.dependencies.join(", ") : "(none)"}`);
+  if (c.scaffoldStatus) {
+    console.log(`  scaffoldStatus: ${c.scaffoldStatus}`);
+  }
+  if (c.scaffoldPath) {
+    console.log(`  scaffoldPath: ${c.scaffoldPath}`);
+  }
+  if (c.implementedInPhase) {
+    console.log(`  implementedInPhase: ${c.implementedInPhase}`);
+  }
+  if (typeof c.productionReady === "boolean") {
+    console.log(`  productionReady: ${c.productionReady}`);
+  }
+  if (typeof c.connectedToRuntime === "boolean") {
+    console.log(`  connectedToRuntime: ${c.connectedToRuntime}`);
+  }
   console.log("");
 }
 
@@ -92,7 +107,7 @@ function main() {
     process.exit(0);
   }
 
-  console.log("Admin UI components registry inspection (G-5k read-only)");
+  console.log("Admin UI components registry inspection (G-5k/G-5l read-only)");
   console.log("");
 
   const result = inspectAdminUiComponents({
@@ -103,7 +118,7 @@ function main() {
     extractableOnly: opts.extractableOnly,
   });
 
-  console.log("=== Admin UI Components Registry (G-5k) ===");
+  console.log("=== Admin UI Components Registry ===");
   console.log(`mode: ${result.mode}`);
   console.log(`registry: ${result.registryPath}`);
   console.log(`version: ${result.registryVersion} (${result.registryStatus})`);

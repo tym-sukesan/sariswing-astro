@@ -1,0 +1,22 @@
+---
+/**
+ * CMS Kit Admin page header scaffold (G-5l).
+ */
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = "" } = Astro.props;
+---
+
+<header class="admin-page-header">
+  <div>
+    <h1 class="admin-page-header__title">{title}</h1>
+    {description ? <p class="admin-page-header__description">{description}</p> : null}
+  </div>
+  <div class="admin-page-header__actions">
+    <slot name="actions" />
+  </div>
+</header>

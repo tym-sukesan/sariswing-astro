@@ -1,0 +1,18 @@
+---
+/**
+ * CMS Kit Admin card scaffold (G-5l).
+ */
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const { title = "", description = "" } = Astro.props;
+---
+
+<section class="admin-card">
+  {title ? <h2 class="admin-card__title">{title}</h2> : null}
+  {description ? <p class="admin-card__description">{description}</p> : null}
+  <slot />
+</section>

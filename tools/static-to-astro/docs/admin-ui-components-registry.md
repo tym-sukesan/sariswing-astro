@@ -1,11 +1,12 @@
 # Admin UI Components Registry
 
-**Phase:** G-5k — extraction registry / plan (documentation only)  
-**Status:** no code extraction, no Sariswing moves, no production operations
+**Phase:** G-5k registry + **G-5l shell scaffold**  
+**Status:** 10 low-risk components scaffolded — not connected to runtime
 
 関連:
 
 - [admin-cms-code-inventory.md](./admin-cms-code-inventory.md) — G-5j Sariswing admin inventory
+- [admin-ui-shell-scaffold.md](./admin-ui-shell-scaffold.md) — **G-5l** UI shell scaffold
 - [admin-cms-template-extraction-plan.md](./admin-cms-template-extraction-plan.md) — G-5i extraction plan
 - Registry JSON: [`config/admin/admin-ui-components-registry.json`](../config/admin/admin-ui-components-registry.json)
 - Inspect CLI: [`scripts/inspect-admin-ui-components.mjs`](../scripts/inspect-admin-ui-components.mjs)
@@ -203,18 +204,37 @@ G-5q: customer admin manual（doc）
 
 ---
 
-## 10. Next phase — G-5l
+## 10. G-5l scaffold（完了）
 
-**Low-risk UI shell components scaffold**
+**Low-risk UI shell components** — [admin-ui-shell-scaffold.md](./admin-ui-shell-scaffold.md)
 
-- 実 Sariswing コードを**移動せず**、CMS Kit `templates/admin-cms/` に新規 scaffold として作成
-- 開始候補: `AdminLayout`, `AdminNav`, `PageHeader`, `Card`, `StatusMessage`, `FormField`, `DataTable`
-- **まだ触らない:** Auth guard、Storage upload、Publish workflow、Edge Function client
-- `inspect-admin-ui-components.mjs --extractable-only --phase G-5l` で対象一覧を確認
+| componentId | scaffoldPath |
+| --- | --- |
+| admin-layout | `templates/admin-cms/components/AdminLayout.astro` |
+| admin-nav | `templates/admin-cms/components/AdminNav.astro` |
+| admin-page-header | `templates/admin-cms/components/AdminPageHeader.astro` |
+| admin-card | `templates/admin-cms/components/AdminCard.astro` |
+| admin-status-message | `templates/admin-cms/components/AdminStatusMessage.astro` |
+| admin-confirm-dialog | `templates/admin-cms/components/AdminConfirmDialog.astro` |
+| admin-empty-state | `templates/admin-cms/components/AdminEmptyState.astro` |
+| admin-loading-state | `templates/admin-cms/components/AdminLoadingState.astro` |
+| admin-form-field | `templates/admin-cms/components/AdminFormField.astro` |
+| admin-data-table | `templates/admin-cms/components/AdminDataTable.astro` |
+
+- `scaffoldStatus: created`, `productionReady: false`, `connectedToRuntime: false`
+- Sariswing admin **未変更**
+- Auth / Storage / Publish **未接続**
+
+## 11. Next phase — G-5m
+
+**CRUD primitives + module UIs + Auth abstraction**
+
+- `admin-edit-form`, publish toggle, logical delete, News / Schedule / Profile module UI
+- Auth guard は G-5m で設計後に接続
 
 ---
 
-## Registry summary（G-5k）
+## Registry summary（G-5k / G-5l）
 
 | Metric | Count |
 | --- | --- |
@@ -224,11 +244,11 @@ G-5q: customer admin manual（doc）
 | Low risk | **11** |
 | Medium risk | **8** |
 | High risk | **9** |
-| G-5l phase | **10** |
+| G-5l scaffolded | **10** |
 | G-5m phase | **13** |
 | G-5n phase | **2** |
 | G-5o phase | **3** |
 
 ---
 
-*G-5k: registry / plan only. No Sariswing code extraction. Detail inventory in `output/` (not committed).*
+*G-5k: registry. G-5l: shell scaffold. Sariswing admin untouched. `productionReady: false`.*

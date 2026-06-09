@@ -1,0 +1,38 @@
+---
+/**
+ * CMS Kit Admin navigation scaffold (G-5l).
+ * Config-driven nav items; no siteType wiring yet.
+ */
+
+export interface AdminNavItem {
+  id: string;
+  label: string;
+  href: string;
+}
+
+interface Props {
+  items: AdminNavItem[];
+  currentSection?: string;
+  ariaLabel?: string;
+}
+
+const { items, currentSection = "", ariaLabel = "Admin navigation" } = Astro.props;
+---
+
+<nav aria-label={ariaLabel}>
+  <ul class="admin-nav">
+    {
+      items.map((item) => (
+        <li>
+          <a
+            class="admin-nav__link"
+            href={item.href}
+            aria-current={currentSection === item.id ? "page" : undefined}
+          >
+            {item.label}
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</nav>

@@ -1,0 +1,35 @@
+---
+/**
+ * CMS Kit Admin confirm dialog scaffold (G-5l).
+ * No destructive actions — confirm button is disabled.
+ */
+
+interface Props {
+  id: string;
+  title: string;
+  message: string;
+  confirmLabel?: string;
+  cancelLabel?: string;
+}
+
+const {
+  id,
+  title,
+  message,
+  confirmLabel = "Confirm",
+  cancelLabel = "Cancel",
+} = Astro.props;
+---
+
+<dialog class="admin-confirm-dialog" id={id} aria-labelledby={`${id}-title`}>
+  <h2 class="admin-confirm-dialog__title" id={`${id}-title`}>{title}</h2>
+  <p class="admin-confirm-dialog__message">{message}</p>
+  <div class="admin-confirm-dialog__actions">
+    <button class="admin-button admin-button--secondary" type="submit" formmethod="dialog">
+      {cancelLabel}
+    </button>
+    <button class="admin-button admin-button--destructive" type="button" disabled title="Scaffold only — no action">
+      {confirmLabel}
+    </button>
+  </div>
+</dialog>

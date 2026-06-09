@@ -10,6 +10,7 @@
 - [cms-kit-onboarding-runbook.md](./cms-kit-onboarding-runbook.md)
 - [admin-cms-code-inventory.md](./admin-cms-code-inventory.md) — G-5j inventory
 - [admin-ui-components-registry.md](./admin-ui-components-registry.md) — **G-5k** Admin UI components registry
+- [admin-ui-shell-scaffold.md](./admin-ui-shell-scaffold.md) — **G-5l** Admin UI shell scaffold
 - [sariswing-vs-cms-kit-gap-analysis.md](./sariswing-vs-cms-kit-gap-analysis.md)
 - [cms-template-registry.md](./cms-template-registry.md)
 - [cms-schema-adapters.md](./cms-schema-adapters.md)
@@ -320,7 +321,7 @@ node tools/static-to-astro/scripts/generate-site-dry-run.mjs --site-config ...
 | **G-5i** | Admin CMS extraction plan / runbook（**本書・完了**） | なし |
 | **G-5j** | Sariswing admin **code inventory**（read-only 棚卸し） | なし |
 | **G-5k** | Admin UI components **registry / plan**（**完了**） | doc + registry JSON のみ |
-| **G-5l** | Low-risk UI shell components scaffold | write-local（CMS Kit のみ） |
+| **G-5l** | Low-risk UI shell components scaffold（**完了**） | CMS Kit `templates/admin-cms/components/` のみ |
 | **G-5m** | Form/table CRUD primitives + module UIs + Auth | write-local |
 | **G-5n** | Media upload abstraction | staging upload（承認後） |
 | **G-5o** | Publish workflow abstraction | staging dispatch（承認後） |
@@ -349,16 +350,18 @@ node tools/static-to-astro/scripts/generate-site-dry-run.mjs --site-config ...
 
 ---
 
-## 12. Immediate next step — G-5k / G-5l
+## 12. Immediate next step — G-5l / G-5m
 
-**G-5j（完了）:** [admin-cms-code-inventory.md](./admin-cms-code-inventory.md) — Sariswing admin read-only inventory（55 files、reusable 33 / site-specific 10 / risky 12）。CLI: `inventory-admin-cms.mjs`。
+**G-5j（完了）:** [admin-cms-code-inventory.md](./admin-cms-code-inventory.md) — Sariswing admin read-only inventory。
 
-**G-5k（完了）:** [admin-ui-components-registry.md](./admin-ui-components-registry.md) — 28 UI components registry。Auth / Storage / Publish は `doNotExtractYet: true`。CLI: `inspect-admin-ui-components.mjs`。コード抽出なし。
+**G-5k（完了）:** [admin-ui-components-registry.md](./admin-ui-components-registry.md) — 28 UI components registry。
 
-**G-5l（次）:** Low-risk UI shell components scaffold — AdminLayout / AdminNav / PageHeader / Card / StatusMessage / FormField / DataTable。Sariswing 移動なし、CMS Kit 新規 scaffold のみ。
+**G-5l（完了）:** [admin-ui-shell-scaffold.md](./admin-ui-shell-scaffold.md) — 10 low-risk shell components in `templates/admin-cms/components/`。`productionReady: false` / `connectedToRuntime: false`。Sariswing 未変更。
+
+**G-5m（次）:** CRUD primitives + module UIs + Auth abstraction。
 
 **禁止（継続）:** Sariswing 本番 touch、DB update、Storage upload、FTP、GHA dispatch
 
 ---
 
-*G-5i: extraction plan. G-5j: inventory. G-5k: registry. G-5l+: implementation phases.*
+*G-5i: extraction plan. G-5j: inventory. G-5k: registry. G-5l: shell scaffold. G-5m+: CRUD / Auth / Media / Publish.*

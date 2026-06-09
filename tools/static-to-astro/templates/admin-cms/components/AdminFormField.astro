@@ -1,0 +1,25 @@
+---
+/**
+ * CMS Kit Admin form field scaffold (G-5l).
+ * Input control is provided via default slot.
+ */
+
+interface Props {
+  label: string;
+  help?: string;
+  error?: string;
+  htmlFor?: string;
+}
+
+const { label, help = "", error = "", htmlFor = "" } = Astro.props;
+const fieldId = htmlFor || `field-${label.replace(/\s+/g, "-").toLowerCase()}`;
+---
+
+<div class="admin-form-field">
+  <label class="admin-form-field__label" for={fieldId}>{label}</label>
+  <div class="admin-form-field__control">
+    <slot />
+  </div>
+  {help ? <p class="admin-form-field__help">{help}</p> : null}
+  {error ? <p class="admin-form-field__error" role="alert">{error}</p> : null}
+</div>

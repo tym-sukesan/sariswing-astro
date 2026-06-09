@@ -1260,7 +1260,7 @@ gosaki / Sariswing で実証した移行フローを、**別サイト向け CMS 
 | Site config draft | [config/sites/gosaki.site-config.example.json](config/sites/gosaki.site-config.example.json) |
 | 方針 | **site-config driven migration**（G-5c 以降）、**template registry**、**schema adapter** |
 | Workflow | **staging-first** — G-4 成功フローは後方互換維持 |
-| 実装フェーズ | G-5a〜**G-5k admin UI registry** → G-5l〜q |
+| 実装フェーズ | G-5a〜**G-5l admin UI shell** → G-5m〜q |
 | **G-5c usage** | [docs/site-config-cli-usage.md](docs/site-config-cli-usage.md) |
 | **G-5d registry** | [docs/cms-template-registry.md](docs/cms-template-registry.md) |
 | **G-5e adapters** | [docs/cms-schema-adapters.md](docs/cms-schema-adapters.md) |
@@ -1270,6 +1270,7 @@ gosaki / Sariswing で実証した移行フローを、**別サイト向け CMS 
 | **G-5i Admin CMS** | [docs/admin-cms-template-extraction-plan.md](docs/admin-cms-template-extraction-plan.md) |
 | **G-5j inventory** | [docs/admin-cms-code-inventory.md](docs/admin-cms-code-inventory.md) |
 | **G-5k UI registry** | [docs/admin-ui-components-registry.md](docs/admin-ui-components-registry.md) |
+| **G-5l UI shell** | [docs/admin-ui-shell-scaffold.md](docs/admin-ui-shell-scaffold.md) |
 
 **G-5c（完了）:** read-only CLI が `--site-config` を受け取り、path を補完。明示引数優先。
 
@@ -1287,7 +1288,9 @@ gosaki / Sariswing で実証した移行フローを、**別サイト向け CMS 
 
 **G-5j（完了）:** [Sariswing admin code inventory](docs/admin-cms-code-inventory.md) — read-only scan（55 files）。**no code extraction**。
 
-**G-5k（完了）:** [Admin UI components registry](docs/admin-ui-components-registry.md) — 28 components registry。**no code extraction**。Auth / Storage / Publish は `doNotExtractYet`。次: **G-5l** low-risk UI shell scaffold。
+**G-5k（完了）:** [Admin UI components registry](docs/admin-ui-components-registry.md) — 28 components registry。
+
+**G-5l（完了）:** [Admin UI shell scaffold](docs/admin-ui-shell-scaffold.md) — 10 low-risk components in `templates/admin-cms/components/`。Sariswing 未変更、`productionReady: false`。次: **G-5m** CRUD primitives + module UIs。
 
 ```bash
 node tools/static-to-astro/scripts/inventory-admin-cms.mjs --root .
@@ -1605,6 +1608,7 @@ CMS Kit 実用化プロトタイプとして **gosaki staging** の役割・secr
 | [docs/admin-cms-template-extraction-plan.md](docs/admin-cms-template-extraction-plan.md) | **G-5i:** Admin CMS template extraction plan（Sariswing → CMS Kit reusable admin） |
 | [docs/admin-cms-code-inventory.md](docs/admin-cms-code-inventory.md) | **G-5j:** Sariswing admin CMS code inventory（read-only classification） |
 | [docs/admin-ui-components-registry.md](docs/admin-ui-components-registry.md) | **G-5k:** Admin UI components extraction registry（28 candidates） |
+| [docs/admin-ui-shell-scaffold.md](docs/admin-ui-shell-scaffold.md) | **G-5l:** Admin UI shell scaffold（10 low-risk components） |
 
 **短期運用:** Local Admin（`npm run dev`）→ staging Supabase 保存 → export → build → `verify-static-public-artifact` → public-dist 確認
 

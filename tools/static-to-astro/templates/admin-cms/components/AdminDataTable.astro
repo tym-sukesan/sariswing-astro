@@ -1,0 +1,67 @@
+---
+/**
+ * CMS Kit Admin data table scaffold (G-5l).
+ * No pagination, DB fetch, or destructive actions.
+ */
+
+export interface AdminTableColumn {
+  key: string;
+  label: string;
+}
+
+export interface AdminTableRow {
+  [key: string]: string;
+}
+
+interface Props {
+  columns: AdminTableColumn[];
+  rows: AdminTableRow[];
+  caption?: string;
+  emptyMessage?: string;
+  showActionsColumn?: boolean;
+}
+
+const {
+  columns,
+  rows,
+  caption = "",
+  emptyMessage = "No rows to display.",
+  showActionsColumn = false,
+} = Astro.props;
+
+const colSpan = columns.length + (showActionsColumn ? 1 : 0);
+---
+
+<div class="admin-table-wrap">
+  <table class="admin-table">
+    {caption ? <caption>{caption}</caption> : null}
+    <thead>
+      <tr>
+        {columns.map((col) => <th scope="col">{col.label}</th>)}
+        {showActionsColumn ? <th scope="col">Actions</th> : null}
+      </tr>
+    </thead>
+    <tbody>
+      {
+        rows.length === 0 ? (
+          <tr>
+            <td colspan={colSpan}>{emptyMessage}</td>
+          </tr>
+        ) : (
+          rows.map((row) => (
+            <tr>
+              {columns.map((col) => (
+                <td>{row[col.key] ?? ""}</td>
+              ))}
+              {showActionsColumn ? (
+                <td>
+                  <slot />
+                </td>
+              ) : null}
+            </tr>
+          ))
+        )
+      }
+    </tbody>
+  </table>
+</div>

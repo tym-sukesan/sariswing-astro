@@ -1,0 +1,18 @@
+---
+/**
+ * CMS Kit Admin empty state scaffold (G-5l).
+ */
+
+interface Props {
+  title: string;
+  message?: string;
+}
+
+const { title, message = "" } = Astro.props;
+---
+
+<div class="admin-empty">
+  <p class="admin-empty__title">{title}</p>
+  {message ? <p class="admin-empty__message">{message}</p> : null}
+  <slot name="action" />
+</div>

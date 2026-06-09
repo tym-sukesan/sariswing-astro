@@ -1,0 +1,20 @@
+---
+/**
+ * CMS Kit Admin status message scaffold (G-5l).
+ */
+
+type StatusType = "success" | "error" | "warning" | "info";
+
+interface Props {
+  type?: StatusType;
+  title?: string;
+  message: string;
+}
+
+const { type = "info", title = "", message } = Astro.props;
+---
+
+<div class={`admin-status admin-status--${type}`} role="status" aria-live="polite">
+  {title ? <p class="admin-status__title">{title}</p> : null}
+  <p class="admin-status__message">{message}</p>
+</div>

@@ -1,0 +1,116 @@
+---
+/**
+ * CMS Kit Admin UI shell — dashboard example (G-5l).
+ *
+ * This is a scaffold example only.
+ * - Not connected to runtime routes
+ * - No DB update
+ * - No Storage upload
+ * - No publish dispatch
+ * - No Auth / Supabase
+ */
+import AdminLayout from "../components/AdminLayout.astro";
+import AdminNav from "../components/AdminNav.astro";
+import AdminPageHeader from "../components/AdminPageHeader.astro";
+import AdminCard from "../components/AdminCard.astro";
+import AdminStatusMessage from "../components/AdminStatusMessage.astro";
+import AdminConfirmDialog from "../components/AdminConfirmDialog.astro";
+import AdminEmptyState from "../components/AdminEmptyState.astro";
+import AdminLoadingState from "../components/AdminLoadingState.astro";
+import AdminFormField from "../components/AdminFormField.astro";
+import AdminDataTable from "../components/AdminDataTable.astro";
+
+const navItems = [
+  { id: "dashboard", label: "Dashboard", href: "#dashboard" },
+  { id: "news", label: "News", href: "#news" },
+  { id: "schedule", label: "Schedule", href: "#schedule" },
+];
+
+const tableColumns = [
+  { key: "title", label: "Title" },
+  { key: "status", label: "Status" },
+  { key: "updated", label: "Updated" },
+];
+
+const tableRows = [
+  { title: "Spring concert announcement", status: "Draft", updated: "2026-06-01" },
+  { title: "Summer tour dates", status: "Published", updated: "2026-05-28" },
+];
+
+const showLoading = false;
+const showEmpty = false;
+---
+
+<AdminLayout
+  title="Dashboard"
+  siteName="CMS Kit Admin"
+  currentSection="dashboard"
+  stagingLabel="Scaffold example"
+>
+  <AdminNav slot="nav" items={navItems} currentSection="dashboard" />
+
+  <AdminStatusMessage
+    slot="status"
+    type="info"
+    title="Scaffold only"
+    message="This example demonstrates low-risk Admin UI shell components. No Auth, DB, Storage, or Publish."
+  />
+
+  <AdminPageHeader
+    title="Dashboard"
+    description="Example composition of G-5l shell components."
+  >
+    <button slot="actions" class="admin-button admin-button--secondary" type="button" disabled>
+      Logout (not wired)
+    </button>
+  </AdminPageHeader>
+
+  <AdminCard title="Quick form" description="AdminFormField with slot-based control.">
+    <AdminFormField label="Site title" help="Displayed in public site header.">
+      <input id="site-title" type="text" placeholder="My Artist Site" />
+    </AdminFormField>
+    <AdminFormField label="Tagline" help="Optional short description.">
+      <input id="site-tagline" type="text" placeholder="Jazz vocalist" />
+    </AdminFormField>
+  </AdminCard>
+
+  <AdminCard title="Content preview" description="AdminDataTable with static rows.">
+    <AdminDataTable
+      columns={tableColumns}
+      rows={tableRows}
+      caption="Recent news items (static example)"
+      showActionsColumn={true}
+    >
+      <button class="admin-button admin-button--secondary" type="button" disabled>Edit</button>
+    </AdminDataTable>
+  </AdminCard>
+
+  <AdminCard title="States" description="Empty and loading placeholders.">
+    {showLoading ? (
+      <AdminLoadingState message="Loading news items…" />
+    ) : showEmpty ? (
+      <AdminEmptyState title="No news yet" message="Create your first news item to get started.">
+        <button slot="action" class="admin-button" type="button" disabled>Add news</button>
+      </AdminEmptyState>
+    ) : (
+      <AdminStatusMessage type="success" title="Ready" message="Shell components render correctly." />
+    )}
+  </AdminCard>
+
+  <AdminCard title="Confirm dialog" description="Destructive confirm is disabled in scaffold.">
+    <button
+      class="admin-button admin-button--destructive"
+      type="button"
+      onclick="document.getElementById('demo-confirm')?.showModal()"
+    >
+      Open confirm dialog (demo)
+    </button>
+    <AdminConfirmDialog
+      id="demo-confirm"
+      title="Delete item?"
+      message="This is a scaffold dialog. No delete action is wired."
+      confirmLabel="Delete"
+      cancelLabel="Cancel"
+    />
+  </AdminCard>
+</AdminLayout>

@@ -1,0 +1,16 @@
+---
+/**
+ * CMS Kit Admin loading state scaffold (G-5l).
+ */
+
+interface Props {
+  message?: string;
+}
+
+const { message = "Loading…" } = Astro.props;
+---
+
+<div class="admin-loading" role="status" aria-live="polite" aria-busy="true">
+  <span class="admin-loading__spinner" aria-hidden="true"></span>
+  <span>{message}</span>
+</div>

@@ -1260,13 +1260,14 @@ gosaki / Sariswing で実証した移行フローを、**別サイト向け CMS 
 | Site config draft | [config/sites/gosaki.site-config.example.json](config/sites/gosaki.site-config.example.json) |
 | 方針 | **site-config driven migration**（G-5c 以降）、**template registry**、**schema adapter** |
 | Workflow | **staging-first** — G-4 成功フローは後方互換維持 |
-| 実装フェーズ | G-5a〜**G-5h onboarding runbook** → G-5i〜m |
+| 実装フェーズ | G-5a〜**G-5i Admin extraction plan** → G-5j〜p |
 | **G-5c usage** | [docs/site-config-cli-usage.md](docs/site-config-cli-usage.md) |
 | **G-5d registry** | [docs/cms-template-registry.md](docs/cms-template-registry.md) |
 | **G-5e adapters** | [docs/cms-schema-adapters.md](docs/cms-schema-adapters.md) |
 | **G-5f staging plan** | [docs/staging-generation-plan.md](docs/staging-generation-plan.md) |
 | **G-5g dry-run** | [docs/site-generation-dry-run.md](docs/site-generation-dry-run.md) |
 | **G-5h onboarding** | [docs/cms-kit-onboarding-runbook.md](docs/cms-kit-onboarding-runbook.md) |
+| **G-5i Admin CMS** | [docs/admin-cms-template-extraction-plan.md](docs/admin-cms-template-extraction-plan.md) |
 
 **G-5c（完了）:** read-only CLI が `--site-config` を受け取り、path を補完。明示引数優先。
 
@@ -1278,7 +1279,9 @@ gosaki / Sariswing で実証した移行フローを、**別サイト向け CMS 
 
 **G-5g（完了）:** `generate-site-dry-run.mjs` — plan から dry-run generation package。実 Astro / DB / Storage / FTP は未実施。
 
-**G-5h（完了）:** [CMS Kit onboarding runbook](docs/cms-kit-onboarding-runbook.md) — 新規顧客サイト導入（discovery → staging → QA → production readiness → maintenance）。**production requires explicit approval**。次: G-5i Admin CMS template extraction。
+**G-5h（完了）:** [CMS Kit onboarding runbook](docs/cms-kit-onboarding-runbook.md) — 新規顧客サイト導入。**production requires explicit approval**。
+
+**G-5i（完了）:** [Admin CMS template extraction plan](docs/admin-cms-template-extraction-plan.md) — Sariswing admin → CMS Kit reusable admin（Auth / CMS modules / Media / Publish workflow）。**no code extraction yet**。次: G-5j Sariswing admin code inventory。
 
 ```bash
 node tools/static-to-astro/scripts/inspect-cms-template.mjs \
@@ -1583,6 +1586,7 @@ CMS Kit 実用化プロトタイプとして **gosaki staging** の役割・secr
 | [docs/staging-generation-plan.md](docs/staging-generation-plan.md) | **G-5f:** Staging generation plan（read-only workflow planner） |
 | [docs/site-generation-dry-run.md](docs/site-generation-dry-run.md) | **G-5g:** Dry-run generation package（planned files / schema skeleton） |
 | [docs/cms-kit-onboarding-runbook.md](docs/cms-kit-onboarding-runbook.md) | **G-5h:** CMS Kit onboarding runbook（new client / site onboarding） |
+| [docs/admin-cms-template-extraction-plan.md](docs/admin-cms-template-extraction-plan.md) | **G-5i:** Admin CMS template extraction plan（Sariswing → CMS Kit reusable admin） |
 
 **短期運用:** Local Admin（`npm run dev`）→ staging Supabase 保存 → export → build → `verify-static-public-artifact` → public-dist 確認
 

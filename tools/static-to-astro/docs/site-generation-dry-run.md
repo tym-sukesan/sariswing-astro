@@ -119,8 +119,11 @@ node tools/static-to-astro/scripts/generate-site-dry-run.mjs \
 | Phase | 内容 |
 | --- | --- |
 | **G-5h** | Product onboarding runbook（**完了** — [cms-kit-onboarding-runbook.md](./cms-kit-onboarding-runbook.md)） |
-| **G-5i** | Admin CMS template extraction |
+| **G-5i** | Admin CMS extraction plan（**完了** — [admin-cms-template-extraction-plan.md](./admin-cms-template-extraction-plan.md)） |
+| **G-5j** | Sariswing admin code inventory |
 | Later | Optional Astro scaffold from `planned-files.json`（明示 opt-in） |
+
+`planned-files.json` の admin エントリは `future-planned` — G-5k 以降の Admin 実装対象。
 
 ---
 

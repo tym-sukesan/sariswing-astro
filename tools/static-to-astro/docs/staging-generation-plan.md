@@ -135,7 +135,8 @@ gosaki site config では plan に以下の site notes が含まれます:
 | --- | --- |
 | **G-5g** | plan から dry-run generation package（**完了** — [site-generation-dry-run.md](./site-generation-dry-run.md)） |
 | **G-5h** | onboarding runbook（**完了** — [cms-kit-onboarding-runbook.md](./cms-kit-onboarding-runbook.md)） |
-| **G-5i** | Admin CMS template extraction |
+| **G-5i** | Admin CMS extraction plan（**完了** — [admin-cms-template-extraction-plan.md](./admin-cms-template-extraction-plan.md)） |
+| **G-5j** | Sariswing admin code inventory |
 | Later | write CLI の site-config 対応 |
 
 ```bash

@@ -1351,7 +1351,7 @@ CMS Kit 実用化プロトタイプとして **gosaki staging** の役割・secr
 | --- | --- |
 | [docs/gosaki-staging-operations.md](docs/gosaki-staging-operations.md) | 環境役割・運用フロー・Admin 比較・分離・rollback・本番化ゲート |
 | [docs/gosaki-staging-runbook.md](docs/gosaki-staging-runbook.md) | **G-3:** staging deploy 運用手順（safety → readiness → apply → QA） |
-| [docs/gosaki-staging-secrets-checklist.md](docs/gosaki-staging-secrets-checklist.md) | `.env.local` / GitHub Secrets 命名・混同防止・監査 |
+| [docs/gosaki-storage-g4-prep.md](docs/gosaki-storage-g4-prep.md) | **G-4:** Storage 画像移行準備（plan dry-run・TODO） |
 
 **短期運用:** Local Admin（`npm run dev`）→ staging Supabase 保存 → export → build → `verify-static-public-artifact` → public-dist 確認
 
@@ -1485,7 +1485,7 @@ G-2b で成功した staging FTP deploy / QA / noindex / deploy-base / hamburger
 
 **安全:** production / Sariswing 本番 FTP・Supabase には接続しない。`output/` は commit しない。
 
-**次フェーズ:** G-4（Storage 画像移行）または本番導入テンプレ化（`--deploy-base` なし + production URL）
+**次フェーズ:** G-4（Storage 画像移行）— [docs/gosaki-storage-g4-prep.md](docs/gosaki-storage-g4-prep.md)（dry-run 済み・upload 未実施）
 
 ---
 

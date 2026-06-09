@@ -159,8 +159,26 @@ node tools/static-to-astro/scripts/inspect-cms-template.mjs \
 - `musician-basic` — gosaki 実績（proven-with-gosaki）
 - `music-school` / `dance-school` / `small-business` — draft
 
-Registry は **metadata のみ**。Astro 生成・schema adapter には G-5d では接続しません。詳細: [cms-template-registry.md](./cms-template-registry.md)
+Registry は **metadata のみ**。詳細: [cms-template-registry.md](./cms-template-registry.md)
 
 ---
 
-*G-5e 以降: schema adapter。write 系 CLI への site-config 対応は別フェーズ。*
+## Schema adapter (G-5e)
+
+Site config の `schemaAdapterId` は [cms-schema-adapters.json](../config/schema-adapters/cms-schema-adapters.json) と照合できます。
+
+```bash
+node tools/static-to-astro/scripts/inspect-schema-adapter.mjs \
+  --site-config tools/static-to-astro/config/sites/gosaki.site-config.example.json
+```
+
+gosaki 例: `templateId: musician-basic` + `schemaAdapterId: musician-basic-supabase-v1`
+
+- template registry ↔ schema adapter の整合性を warnings で報告
+- **read-only** — upload / DB update / FTP は行わない
+
+詳細: [cms-schema-adapters.md](./cms-schema-adapters.md)
+
+---
+
+*G-5f 以降: config からの staging dry-run 生成。write 系 CLI への site-config 対応は別フェーズ。*

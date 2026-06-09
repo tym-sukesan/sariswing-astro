@@ -310,6 +310,8 @@ export function inspectTemplateRegistry(opts = {}) {
     siteSlug: siteConfig?.siteSlug ?? null,
     siteType: siteConfig?.siteType ?? opts.siteType ?? template?.siteTypes?.[0] ?? null,
     templateId: template?.templateId ?? opts.templateId ?? siteConfig?.templateId ?? null,
+    schemaAdapterId:
+      typeof siteConfig?.schemaAdapterId === "string" ? siteConfig.schemaAdapterId.trim() : null,
     templateStatus: template?.status ?? null,
     templateDescription: template?.description ?? null,
     contentModels: template?.contentModels ?? [],

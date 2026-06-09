@@ -4,6 +4,7 @@
   "siteName": "Saki Goto",
   "siteType": "musician",
   "templateId": "musician-basic",
+  "schemaAdapterId": "musician-basic-supabase-v1",
   "siteProfile": "musician",
   "source": {
     "type": "static-html",

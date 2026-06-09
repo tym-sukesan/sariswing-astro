@@ -1,0 +1,671 @@
+{
+  "version": "0.1.0",
+  "generatedPhase": "G-5e",
+  "description": "CMS Kit schema adapters — Supabase table/column/storage mappings. Read-only metadata; no DB or upload operations.",
+  "adapters": [
+    {
+      "adapterId": "musician-basic-supabase-v1",
+      "templateId": "musician-basic",
+      "provider": "supabase",
+      "status": "proven-with-gosaki",
+      "description": "Supabase schema mapping for musician-basic template, proven with gosaki staging migration.",
+      "tables": [
+        {
+          "table": "schedule_months",
+          "model": "schedule_months",
+          "required": true,
+          "legacyId": {
+            "strategy": "year-month",
+            "pattern": "schedule-YYYY-MM",
+            "example": "schedule-2026-03"
+          },
+          "columns": [
+            { "name": "id", "type": "uuid", "required": true },
+            { "name": "legacy_id", "type": "text", "required": true, "unique": true },
+            { "name": "year", "type": "integer", "required": true },
+            { "name": "month", "type": "text", "required": true },
+            { "name": "label", "type": "text", "required": false },
+            { "name": "sort_order", "type": "integer", "required": false }
+          ]
+        },
+        {
+          "table": "schedules",
+          "model": "schedules",
+          "required": true,
+          "legacyId": {
+            "strategy": "date-sequence",
+            "pattern": "schedule-YYYY-MM-NNN",
+            "example": "schedule-2026-03-012"
+          },
+          "columns": [
+            { "name": "id", "type": "uuid", "required": true },
+            { "name": "legacy_id", "type": "text", "required": true, "unique": true },
+            { "name": "date", "type": "date", "required": true },
+            { "name": "title", "type": "text", "required": false },
+            { "name": "venue", "type": "text", "required": false },
+            { "name": "description", "type": "text", "required": false },
+            { "name": "home_image_url", "type": "text", "required": false },
+            { "name": "image_url", "type": "text", "required": false },
+            { "name": "show_on_home", "type": "boolean", "required": false },
+            { "name": "home_order", "type": "integer", "required": false },
+            { "name": "published", "type": "boolean", "required": false },
+            { "name": "sort_order", "type": "integer", "required": false }
+          ]
+        },
+        {
+          "table": "discography",
+          "model": "discography",
+          "required": false,
+          "legacyId": {
+            "strategy": "sequence",
+            "pattern": "discography-NNN",
+            "example": "discography-001"
+          },
+          "columns": [
+            { "name": "id", "type": "uuid", "required": true },
+            { "name": "legacy_id", "type": "text", "required": true, "unique": true },
+            { "name": "title", "type": "text", "required": true },
+            { "name": "artist", "type": "text", "required": false },
+            { "name": "release_date", "type": "date", "required": false },
+            { "name": "cover_image_url", "type": "text", "required": false },
+            { "name": "description", "type": "text", "required": false },
+            { "name": "sort_order", "type": "integer", "required": false },
+            { "name": "published", "type": "boolean", "required": false }
+          ]
+        },
+        {
+          "table": "discography_tracks",
+          "model": "discography_tracks",
+          "required": false,
+          "legacyId": {
+            "strategy": "parent-sequence",
+            "pattern": "discography-NNN-track-NN",
+            "example": "discography-001-track-01"
+          },
+          "columns": [
+            { "name": "id", "type": "uuid", "required": true },
+            { "name": "legacy_id", "type": "text", "required": true, "unique": true },
+            { "name": "discography_legacy_id", "type": "text", "required": true },
+            { "name": "track_number", "type": "integer", "required": false },
+            { "name": "title", "type": "text", "required": true },
+            { "name": "sort_order", "type": "integer", "required": false }
+          ]
+        },
+        {
+          "table": "profile",
+          "model": "profile",
+          "required": false,
+          "legacyId": {
+            "strategy": "singleton",
+            "example": "profile-main"
+          },
+          "columns": [
+            { "name": "id", "type": "uuid", "required": true },
+            { "name": "legacy_id", "type": "text", "required": false, "unique": true },
+            { "name": "name", "type": "text", "required": false },
+            { "name": "bio", "type": "text", "required": false },
+            { "name": "image_url", "type": "text", "required": false }
+          ]
+        },
+        {
+          "table": "links",
+          "model": "links",
+          "required": false,
+          "legacyId": {
+            "strategy": "slug-or-sequence",
+            "example": "link-youtube"
+          },
+          "columns": [
+            { "name": "id", "type": "uuid", "required": true },
+            { "name": "legacy_id", "type": "text", "required": false, "unique": true },
+            { "name": "label", "type": "text", "required": true },
+            { "name": "url", "type": "text", "required": true },
+            { "name": "sort_order", "type": "integer", "required": false },
+            { "name": "published", "type": "boolean", "required": false }
+          ]
+        },
+        {
+          "table": "news",
+          "model": "news",
+          "required": false,
+          "legacyId": {
+            "strategy": "date-or-slug",
+            "example": "news-2026-03-01"
+          },
+          "columns": [
+            { "name": "id", "type": "uuid", "required": true },
+            { "name": "legacy_id", "type": "text", "required": false, "unique": true },
+            { "name": "title", "type": "text", "required": true },
+            { "name": "body", "type": "text", "required": false },
+            { "name": "published_at", "type": "timestamp", "required": false },
+            { "name": "published", "type": "boolean", "required": false }
+          ]
+        }
+      ],
+      "storageMappings": [
+        {
+          "assetType": "discography_cover",
+          "model": "discography",
+          "targetTable": "discography",
+          "targetColumn": "cover_image_url",
+          "legacyIdPattern": "discography-NNN",
+          "pathPattern": "{siteSlug}/discography/{legacyId}/cover.{ext}",
+          "humanReviewRequired": false,
+          "provenWith": ["gosaki"]
+        },
+        {
+          "assetType": "schedule_home",
+          "model": "schedules",
+          "targetTable": "schedules",
+          "targetColumn": "home_image_url",
+          "legacyIdPattern": "schedule-YYYY-MM-NNN",
+          "pathPattern": "{siteSlug}/schedule/{legacyId}/home.{ext}",
+          "humanReviewRequired": true,
+          "provenWith": ["gosaki"]
+        },
+        {
+          "assetType": "schedule_flyer",
+          "model": "schedules",
+          "targetTable": "schedules",
+          "targetColumn": "image_url",
+          "legacyIdPattern": "schedule-YYYY-MM-NNN",
+          "pathPattern": "{siteSlug}/schedule/{legacyId}/flyer.{ext}",
+          "humanReviewRequired": true,
+          "provenWith": []
+        }
+      ],
+      "humanReviewRules": [
+        {
+          "ruleId": "schedule-date-conflict",
+          "appliesTo": ["schedule_home", "schedule_flyer"],
+          "condition": "image filename date does not match schedule.date or surrounding text",
+          "defaultAction": "defer",
+          "reasonRequired": true
+        },
+        {
+          "ruleId": "cross-page-inferred-schedule-image",
+          "appliesTo": ["schedule_flyer"],
+          "condition": "image candidate is inferred from a different page or month",
+          "defaultAction": "defer",
+          "reasonRequired": true
+        },
+        {
+          "ruleId": "no-photo-placeholder",
+          "appliesTo": ["schedule_home", "schedule_flyer"],
+          "condition": "source image is NO PHOTO / empty / placeholder",
+          "defaultAction": "reject",
+          "reasonRequired": false
+        }
+      ]
+    },
+    {
+      "adapterId": "music-school-supabase-v1",
+      "templateId": "music-school",
+      "provider": "supabase",
+      "status": "draft",
+      "description": "Draft Supabase mapping for music-school template — piano/lesson studio sites.",
+      "tables": [
+        {
+          "table": "profile",
+          "model": "profile",
+          "required": true,
+          "legacyId": { "strategy": "singleton", "example": "profile-main" },
+          "columns": [
+            { "name": "id", "type": "uuid", "required": true },
+            { "name": "legacy_id", "type": "text", "required": false, "unique": true },
+            { "name": "name", "type": "text", "required": false },
+            { "name": "bio", "type": "text", "required": false },
+            { "name": "venue_image_url", "type": "text", "required": false }
+          ]
+        },
+        {
+          "table": "courses",
+          "model": "courses",
+          "required": true,
+          "legacyId": { "strategy": "slug-or-sequence", "example": "course-piano-beginner" },
+          "columns": [
+            { "name": "id", "type": "uuid", "required": true },
+            { "name": "legacy_id", "type": "text", "required": true, "unique": true },
+            { "name": "title", "type": "text", "required": true },
+            { "name": "description", "type": "text", "required": false },
+            { "name": "image_url", "type": "text", "required": false },
+            { "name": "sort_order", "type": "integer", "required": false }
+          ]
+        },
+        {
+          "table": "instructors",
+          "model": "instructors",
+          "required": false,
+          "legacyId": { "strategy": "slug-or-sequence", "example": "instructor-001" },
+          "columns": [
+            { "name": "id", "type": "uuid", "required": true },
+            { "name": "legacy_id", "type": "text", "required": true, "unique": true },
+            { "name": "name", "type": "text", "required": true },
+            { "name": "bio", "type": "text", "required": false },
+            { "name": "photo_url", "type": "text", "required": false }
+          ]
+        },
+        {
+          "table": "pricing",
+          "model": "pricing",
+          "required": false,
+          "legacyId": { "strategy": "slug-or-sequence", "example": "pricing-monthly" },
+          "columns": [
+            { "name": "id", "type": "uuid", "required": true },
+            { "name": "legacy_id", "type": "text", "required": true, "unique": true },
+            { "name": "label", "type": "text", "required": true },
+            { "name": "amount", "type": "text", "required": false },
+            { "name": "description", "type": "text", "required": false }
+          ]
+        },
+        {
+          "table": "schedule",
+          "model": "schedule",
+          "required": false,
+          "legacyId": { "strategy": "date-sequence", "pattern": "lesson-YYYY-MM-NNN", "example": "lesson-2026-03-001" },
+          "columns": [
+            { "name": "id", "type": "uuid", "required": true },
+            { "name": "legacy_id", "type": "text", "required": true, "unique": true },
+            { "name": "date", "type": "date", "required": false },
+            { "name": "title", "type": "text", "required": false },
+            { "name": "image_url", "type": "text", "required": false }
+          ]
+        },
+        {
+          "table": "faq",
+          "model": "faq",
+          "required": false,
+          "legacyId": { "strategy": "sequence", "pattern": "faq-NNN", "example": "faq-001" },
+          "columns": [
+            { "name": "id", "type": "uuid", "required": true },
+            { "name": "legacy_id", "type": "text", "required": true, "unique": true },
+            { "name": "question", "type": "text", "required": true },
+            { "name": "answer", "type": "text", "required": false }
+          ]
+        },
+        {
+          "table": "testimonials",
+          "model": "testimonials",
+          "required": false,
+          "legacyId": { "strategy": "sequence", "pattern": "testimonial-NNN", "example": "testimonial-001" },
+          "columns": [
+            { "name": "id", "type": "uuid", "required": true },
+            { "name": "legacy_id", "type": "text", "required": true, "unique": true },
+            { "name": "author", "type": "text", "required": false },
+            { "name": "body", "type": "text", "required": false },
+            { "name": "image_url", "type": "text", "required": false }
+          ]
+        },
+        {
+          "table": "contact_blocks",
+          "model": "contact",
+          "required": true,
+          "legacyId": { "strategy": "singleton", "example": "contact-main" },
+          "columns": [
+            { "name": "id", "type": "uuid", "required": true },
+            { "name": "legacy_id", "type": "text", "required": false, "unique": true },
+            { "name": "email", "type": "text", "required": false },
+            { "name": "phone", "type": "text", "required": false },
+            { "name": "address", "type": "text", "required": false }
+          ]
+        }
+      ],
+      "storageMappings": [
+        {
+          "assetType": "instructor_photo",
+          "model": "instructors",
+          "targetTable": "instructors",
+          "targetColumn": "photo_url",
+          "legacyIdPattern": "instructor-NNN",
+          "pathPattern": "{siteSlug}/instructors/{legacyId}/photo.{ext}",
+          "humanReviewRequired": true,
+          "provenWith": []
+        },
+        {
+          "assetType": "lesson_image",
+          "model": "courses",
+          "targetTable": "courses",
+          "targetColumn": "image_url",
+          "legacyIdPattern": "course-*",
+          "pathPattern": "{siteSlug}/courses/{legacyId}/cover.{ext}",
+          "humanReviewRequired": true,
+          "provenWith": []
+        },
+        {
+          "assetType": "venue_image",
+          "model": "profile",
+          "targetTable": "profile",
+          "targetColumn": "venue_image_url",
+          "legacyIdPattern": "profile-main",
+          "pathPattern": "{siteSlug}/profile/venue.{ext}",
+          "humanReviewRequired": true,
+          "provenWith": []
+        },
+        {
+          "assetType": "gallery_image",
+          "model": "testimonials",
+          "targetTable": "gallery",
+          "targetColumn": "image_url",
+          "legacyIdPattern": "gallery-NNN",
+          "pathPattern": "{siteSlug}/gallery/{legacyId}.{ext}",
+          "humanReviewRequired": true,
+          "provenWith": []
+        }
+      ],
+      "humanReviewRules": [
+        {
+          "ruleId": "portrait-rights",
+          "appliesTo": ["instructor_photo", "gallery_image"],
+          "condition": "instructor or student portrait without rights confirmation",
+          "defaultAction": "defer",
+          "reasonRequired": true
+        }
+      ]
+    },
+    {
+      "adapterId": "dance-school-supabase-v1",
+      "templateId": "dance-school",
+      "provider": "supabase",
+      "status": "draft",
+      "description": "Draft Supabase mapping for dance-school template — classes, events, instructors.",
+      "tables": [
+        {
+          "table": "classes",
+          "model": "classes",
+          "required": true,
+          "legacyId": { "strategy": "slug-or-sequence", "example": "class-ballet-kids" },
+          "columns": [
+            { "name": "id", "type": "uuid", "required": true },
+            { "name": "legacy_id", "type": "text", "required": true, "unique": true },
+            { "name": "title", "type": "text", "required": true },
+            { "name": "description", "type": "text", "required": false },
+            { "name": "image_url", "type": "text", "required": false }
+          ]
+        },
+        {
+          "table": "instructors",
+          "model": "instructors",
+          "required": false,
+          "legacyId": { "strategy": "slug-or-sequence", "example": "instructor-001" },
+          "columns": [
+            { "name": "id", "type": "uuid", "required": true },
+            { "name": "legacy_id", "type": "text", "required": true, "unique": true },
+            { "name": "name", "type": "text", "required": true },
+            { "name": "photo_url", "type": "text", "required": false }
+          ]
+        },
+        {
+          "table": "schedule",
+          "model": "schedule",
+          "required": true,
+          "legacyId": { "strategy": "date-sequence", "pattern": "class-session-YYYY-MM-NNN", "example": "class-session-2026-03-001" },
+          "columns": [
+            { "name": "id", "type": "uuid", "required": true },
+            { "name": "legacy_id", "type": "text", "required": true, "unique": true },
+            { "name": "date", "type": "date", "required": false },
+            { "name": "title", "type": "text", "required": false }
+          ]
+        },
+        {
+          "table": "pricing",
+          "model": "pricing",
+          "required": false,
+          "legacyId": { "strategy": "slug-or-sequence", "example": "pricing-monthly" },
+          "columns": [
+            { "name": "id", "type": "uuid", "required": true },
+            { "name": "legacy_id", "type": "text", "required": true, "unique": true },
+            { "name": "label", "type": "text", "required": true },
+            { "name": "amount", "type": "text", "required": false }
+          ]
+        },
+        {
+          "table": "events",
+          "model": "events",
+          "required": false,
+          "legacyId": { "strategy": "date-sequence", "pattern": "event-YYYY-MM-NNN", "example": "event-2026-04-001" },
+          "columns": [
+            { "name": "id", "type": "uuid", "required": true },
+            { "name": "legacy_id", "type": "text", "required": true, "unique": true },
+            { "name": "title", "type": "text", "required": true },
+            { "name": "image_url", "type": "text", "required": false },
+            { "name": "event_date", "type": "date", "required": false }
+          ]
+        },
+        {
+          "table": "news",
+          "model": "news",
+          "required": false,
+          "legacyId": { "strategy": "date-or-slug", "example": "news-2026-03-01" },
+          "columns": [
+            { "name": "id", "type": "uuid", "required": true },
+            { "name": "legacy_id", "type": "text", "required": false, "unique": true },
+            { "name": "title", "type": "text", "required": true },
+            { "name": "body", "type": "text", "required": false }
+          ]
+        },
+        {
+          "table": "faq",
+          "model": "faq",
+          "required": false,
+          "legacyId": { "strategy": "sequence", "pattern": "faq-NNN", "example": "faq-001" },
+          "columns": [
+            { "name": "id", "type": "uuid", "required": true },
+            { "name": "legacy_id", "type": "text", "required": true, "unique": true },
+            { "name": "question", "type": "text", "required": true },
+            { "name": "answer", "type": "text", "required": false }
+          ]
+        },
+        {
+          "table": "contact_blocks",
+          "model": "contact",
+          "required": true,
+          "legacyId": { "strategy": "singleton", "example": "contact-main" },
+          "columns": [
+            { "name": "id", "type": "uuid", "required": true },
+            { "name": "legacy_id", "type": "text", "required": false, "unique": true },
+            { "name": "email", "type": "text", "required": false },
+            { "name": "address", "type": "text", "required": false }
+          ]
+        }
+      ],
+      "storageMappings": [
+        {
+          "assetType": "class_image",
+          "model": "classes",
+          "targetTable": "classes",
+          "targetColumn": "image_url",
+          "legacyIdPattern": "class-*",
+          "pathPattern": "{siteSlug}/classes/{legacyId}/cover.{ext}",
+          "humanReviewRequired": true,
+          "provenWith": []
+        },
+        {
+          "assetType": "instructor_photo",
+          "model": "instructors",
+          "targetTable": "instructors",
+          "targetColumn": "photo_url",
+          "legacyIdPattern": "instructor-NNN",
+          "pathPattern": "{siteSlug}/instructors/{legacyId}/photo.{ext}",
+          "humanReviewRequired": true,
+          "provenWith": []
+        },
+        {
+          "assetType": "event_flyer",
+          "model": "events",
+          "targetTable": "events",
+          "targetColumn": "image_url",
+          "legacyIdPattern": "event-YYYY-MM-NNN",
+          "pathPattern": "{siteSlug}/events/{legacyId}/flyer.{ext}",
+          "humanReviewRequired": true,
+          "provenWith": []
+        },
+        {
+          "assetType": "gallery_image",
+          "model": "gallery",
+          "targetTable": "gallery",
+          "targetColumn": "image_url",
+          "legacyIdPattern": "gallery-NNN",
+          "pathPattern": "{siteSlug}/gallery/{legacyId}.{ext}",
+          "humanReviewRequired": true,
+          "provenWith": []
+        }
+      ],
+      "humanReviewRules": [
+        {
+          "ruleId": "event-date-conflict",
+          "appliesTo": ["event_flyer"],
+          "condition": "flyer filename date does not match event.event_date",
+          "defaultAction": "defer",
+          "reasonRequired": true
+        }
+      ]
+    },
+    {
+      "adapterId": "small-business-supabase-v1",
+      "templateId": "small-business",
+      "provider": "supabase",
+      "status": "draft",
+      "description": "Draft Supabase mapping for small-business / corporate brochure sites.",
+      "tables": [
+        {
+          "table": "services",
+          "model": "services",
+          "required": true,
+          "legacyId": { "strategy": "slug-or-sequence", "example": "service-consulting" },
+          "columns": [
+            { "name": "id", "type": "uuid", "required": true },
+            { "name": "legacy_id", "type": "text", "required": true, "unique": true },
+            { "name": "title", "type": "text", "required": true },
+            { "name": "description", "type": "text", "required": false },
+            { "name": "image_url", "type": "text", "required": false }
+          ]
+        },
+        {
+          "table": "works",
+          "model": "works",
+          "required": false,
+          "legacyId": { "strategy": "slug-or-sequence", "example": "work-001" },
+          "columns": [
+            { "name": "id", "type": "uuid", "required": true },
+            { "name": "legacy_id", "type": "text", "required": true, "unique": true },
+            { "name": "title", "type": "text", "required": true },
+            { "name": "thumbnail_url", "type": "text", "required": false }
+          ]
+        },
+        {
+          "table": "staff",
+          "model": "staff",
+          "required": false,
+          "legacyId": { "strategy": "slug-or-sequence", "example": "staff-001" },
+          "columns": [
+            { "name": "id", "type": "uuid", "required": true },
+            { "name": "legacy_id", "type": "text", "required": true, "unique": true },
+            { "name": "name", "type": "text", "required": true },
+            { "name": "role", "type": "text", "required": false },
+            { "name": "photo_url", "type": "text", "required": false }
+          ]
+        },
+        {
+          "table": "news",
+          "model": "news",
+          "required": false,
+          "legacyId": { "strategy": "date-or-slug", "example": "news-2026-03-01" },
+          "columns": [
+            { "name": "id", "type": "uuid", "required": true },
+            { "name": "legacy_id", "type": "text", "required": false, "unique": true },
+            { "name": "title", "type": "text", "required": true },
+            { "name": "body", "type": "text", "required": false }
+          ]
+        },
+        {
+          "table": "faq",
+          "model": "faq",
+          "required": false,
+          "legacyId": { "strategy": "sequence", "pattern": "faq-NNN", "example": "faq-001" },
+          "columns": [
+            { "name": "id", "type": "uuid", "required": true },
+            { "name": "legacy_id", "type": "text", "required": true, "unique": true },
+            { "name": "question", "type": "text", "required": true },
+            { "name": "answer", "type": "text", "required": false }
+          ]
+        },
+        {
+          "table": "company_profile",
+          "model": "company",
+          "required": true,
+          "legacyId": { "strategy": "singleton", "example": "company-main" },
+          "columns": [
+            { "name": "id", "type": "uuid", "required": true },
+            { "name": "legacy_id", "type": "text", "required": false, "unique": true },
+            { "name": "name", "type": "text", "required": true },
+            { "name": "description", "type": "text", "required": false },
+            { "name": "og_image_url", "type": "text", "required": false }
+          ]
+        },
+        {
+          "table": "contact_blocks",
+          "model": "contact",
+          "required": true,
+          "legacyId": { "strategy": "singleton", "example": "contact-main" },
+          "columns": [
+            { "name": "id", "type": "uuid", "required": true },
+            { "name": "legacy_id", "type": "text", "required": false, "unique": true },
+            { "name": "email", "type": "text", "required": false },
+            { "name": "phone", "type": "text", "required": false }
+          ]
+        }
+      ],
+      "storageMappings": [
+        {
+          "assetType": "service_image",
+          "model": "services",
+          "targetTable": "services",
+          "targetColumn": "image_url",
+          "legacyIdPattern": "service-*",
+          "pathPattern": "{siteSlug}/services/{legacyId}/cover.{ext}",
+          "humanReviewRequired": false,
+          "provenWith": []
+        },
+        {
+          "assetType": "work_thumbnail",
+          "model": "works",
+          "targetTable": "works",
+          "targetColumn": "thumbnail_url",
+          "legacyIdPattern": "work-NNN",
+          "pathPattern": "{siteSlug}/works/{legacyId}/thumb.{ext}",
+          "humanReviewRequired": false,
+          "provenWith": []
+        },
+        {
+          "assetType": "staff_photo",
+          "model": "staff",
+          "targetTable": "staff",
+          "targetColumn": "photo_url",
+          "legacyIdPattern": "staff-NNN",
+          "pathPattern": "{siteSlug}/staff/{legacyId}/photo.{ext}",
+          "humanReviewRequired": true,
+          "provenWith": []
+        },
+        {
+          "assetType": "og_image",
+          "model": "company",
+          "targetTable": "company_profile",
+          "targetColumn": "og_image_url",
+          "legacyIdPattern": "company-main",
+          "pathPattern": "{siteSlug}/company/og.{ext}",
+          "humanReviewRequired": false,
+          "provenWith": []
+        }
+      ],
+      "humanReviewRules": [
+        {
+          "ruleId": "staff-portrait-rights",
+          "appliesTo": ["staff_photo"],
+          "condition": "staff portrait without rights confirmation",
+          "defaultAction": "defer",
+          "reasonRequired": true
+        }
+      ]
+    }
+  ]
+}

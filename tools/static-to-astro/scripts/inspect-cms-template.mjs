@@ -106,6 +106,7 @@ function formatInspectionReport(result) {
     `| siteSlug | ${result.siteSlug ?? "(n/a)"} |`,
     `| siteType | ${result.siteType ?? "(n/a)"} |`,
     `| templateId | ${result.templateId ?? "(n/a)"} |`,
+    `| schemaAdapterId | ${result.schemaAdapterId ?? "(n/a)"} |`,
     `| template status | ${result.templateStatus ?? "(n/a)"} |`,
     `| validation OK | ${result.validationOk ? "yes" : "no"} |`,
     `| upload performed | **false** |`,
@@ -206,6 +207,9 @@ function printSummary(result) {
   console.log(`siteSlug: ${result.siteSlug ?? "(n/a)"}`);
   console.log(`siteType: ${result.siteType ?? "(n/a)"}`);
   console.log(`templateId: ${result.templateId ?? "(n/a)"}`);
+  if (result.schemaAdapterId) {
+    console.log(`schemaAdapterId: ${result.schemaAdapterId}`);
+  }
   console.log(`template status: ${result.templateStatus ?? "(n/a)"}`);
   console.log(`content models: ${result.contentModels.length}`);
   console.log(`pages: ${result.pages.length}`);

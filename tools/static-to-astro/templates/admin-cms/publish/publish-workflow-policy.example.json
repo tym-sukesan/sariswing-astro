@@ -1,0 +1,33 @@
+{
+  "mode": "scaffold-only",
+  "connectedToRuntime": false,
+  "productionReady": false,
+  "provider": "github-actions-and-ftp",
+  "dispatchPerformed": false,
+  "ftpDeployPerformed": false,
+  "edgeFunctionCalled": false,
+  "environments": {
+    "staging": {
+      "enabledByDefault": true,
+      "requiredRole": "admin",
+      "requiresExplicitApproval": true,
+      "requiresNoindex": true
+    },
+    "production": {
+      "enabledByDefault": false,
+      "requiredRole": "admin",
+      "requiresExplicitApproval": true,
+      "requiresCustomerApproval": true,
+      "requiresRightsConfirmation": true,
+      "requiresRollbackPlan": true
+    }
+  },
+  "safety": {
+    "noProductionWithoutApproval": true,
+    "separateStagingAndProduction": true,
+    "secretsNeverInBrowser": true,
+    "githubTokenNeverInClient": true,
+    "ftpPasswordNeverInClient": true
+  },
+  "doNotUseInProductionYet": true
+}

@@ -1,0 +1,28 @@
+---
+/**
+ * CMS Kit Admin publish environment badge scaffold (G-5o).
+ */
+
+type PublishEnvironment = "staging" | "production";
+
+interface Props {
+  environment?: PublishEnvironment;
+  enabled?: boolean;
+  label?: string;
+}
+
+const {
+  environment = "staging",
+  enabled = environment === "staging",
+  label = environment === "staging" ? "Staging" : "Production",
+} = Astro.props;
+---
+
+<span
+  class={`admin-publish-env-badge admin-publish-env-badge--${environment} ${enabled ? "admin-publish-env-badge--enabled" : "admin-publish-env-badge--disabled"}`}
+  data-scaffold="true"
+  data-environment={environment}
+  data-enabled={enabled ? "true" : "false"}
+>
+  {label}{enabled ? "" : " (disabled)"}
+</span>

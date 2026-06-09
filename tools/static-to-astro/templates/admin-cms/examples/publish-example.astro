@@ -1,0 +1,150 @@
+---
+/**
+ * CMS Kit Admin Publish workflow — composition example (G-5o).
+ *
+ * Scaffold only.
+ * - No GitHub dispatch
+ * - No Edge Function call
+ * - No FTP deploy
+ * - No production publish
+ */
+import AdminLayout from "../components/AdminLayout.astro";
+import AdminPageHeader from "../components/AdminPageHeader.astro";
+import AdminCard from "../components/AdminCard.astro";
+import AdminStatusMessage from "../components/AdminStatusMessage.astro";
+import AdminPermissionBadge from "../components/AdminPermissionBadge.astro";
+import AdminPublishButton from "../components/AdminPublishButton.astro";
+import AdminDeployStatus from "../components/AdminDeployStatus.astro";
+import AdminPublishApprovalGate from "../components/AdminPublishApprovalGate.astro";
+import AdminPublishHistory from "../components/AdminPublishHistory.astro";
+import AdminPublishEnvironmentBadge from "../components/AdminPublishEnvironmentBadge.astro";
+
+const stagingChecks = [
+  "Admin role confirmed",
+  "Staging noindex verified",
+  "Content QA checklist complete",
+];
+
+const productionChecks = [
+  "Customer explicit approval",
+  "Media rights confirmation",
+  "Rollback plan documented",
+  "Production workflow enabled",
+];
+
+const productionBlocking = [
+  "Production publish disabled by default",
+  "GitHub dispatch not connected",
+  "FTP deploy not connected",
+];
+
+const historyItems = [
+  {
+    id: "deploy-001",
+    environment: "staging" as const,
+    status: "success" as const,
+    triggeredBy: "admin@example.com",
+    createdAt: "2026-06-01T12:00:00Z",
+  },
+  {
+    id: "deploy-002",
+    environment: "staging" as const,
+    status: "failed" as const,
+    triggeredBy: "admin@example.com",
+    createdAt: "2026-05-28T09:30:00Z",
+  },
+];
+---
+
+<AdminLayout
+  title="Publish"
+  siteName="CMS Kit Admin"
+  stagingLabel="Publish scaffold example"
+>
+  <AdminStatusMessage
+    slot="status"
+    type="info"
+    title="Scaffold only"
+    message="Publish workflow UI. No GitHub dispatch, Edge Function, FTP deploy, or production publish."
+  />
+
+  <AdminPageHeader
+    title="Publish workflow"
+    description="Staging and production are always separated. Inspired by Sariswing AdminDeployBar — abstracted safely for CMS Kit."
+  >
+    <AdminPermissionBadge slot="actions" variant="admin" label="Admin" />
+  </AdminPageHeader>
+
+  <AdminCard title="Environments">
+    <div class="admin-permission-badge-row">
+      <AdminPublishEnvironmentBadge environment="staging" enabled={true} />
+      <AdminPublishEnvironmentBadge environment="production" enabled={false} />
+    </div>
+  </AdminCard>
+
+  <div class="admin-publish-example-grid">
+    <AdminCard title="Staging publish">
+      <AdminPublishButton
+        environment="staging"
+        disabled={true}
+        requiresApproval={true}
+        requiredRole="admin"
+        danger={false}
+      />
+      <AdminPublishApprovalGate
+        environment="staging"
+        approved={false}
+        requiredChecks={stagingChecks}
+        requiredRole="admin"
+      />
+      <AdminDeployStatus
+        status="idle"
+        message="Ready to publish staging when connected (not now)."
+      />
+    </AdminCard>
+
+    <AdminCard title="Production publish" description="Default disabled — explicit approval required.">
+      <AdminPublishButton
+        environment="production"
+        disabled={true}
+        requiresApproval={true}
+        requiredRole="admin"
+        danger={true}
+        status="disabled"
+      />
+      <AdminPublishApprovalGate
+        environment="production"
+        approved={false}
+        requiredChecks={productionChecks}
+        blockingItems={productionBlocking}
+        requiredRole="admin"
+      />
+      <AdminDeployStatus
+        status="unknown"
+        message="Production workflow not connected."
+      />
+    </AdminCard>
+  </div>
+
+  <AdminCard title="Deploy status examples">
+    <div class="admin-deploy-status-row">
+      <AdminDeployStatus status="queued" startedAt="2026-06-01T12:00:00Z" />
+      <AdminDeployStatus
+        status="running"
+        message="Building site…"
+        startedAt="2026-06-01T12:01:00Z"
+        workflowUrl="https://github.com/example/repo/actions/runs/12345"
+      />
+      <AdminDeployStatus
+        status="success"
+        finishedAt="2026-06-01T12:05:00Z"
+        logUrl="https://github.com/example/repo/actions/runs/12345/logs"
+      />
+      <AdminDeployStatus status="failed" message="FTP deploy failed (example only)." />
+    </div>
+  </AdminCard>
+
+  <AdminCard title="Publish history">
+    <AdminPublishHistory items={historyItems} readonly={true} />
+  </AdminCard>
+</AdminLayout>

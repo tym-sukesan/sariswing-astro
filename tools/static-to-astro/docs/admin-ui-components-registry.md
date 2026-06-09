@@ -10,6 +10,7 @@
 - [admin-crud-ui-scaffold.md](./admin-crud-ui-scaffold.md) — **G-5m-a** CRUD UI scaffold
 - [admin-auth-abstraction-scaffold.md](./admin-auth-abstraction-scaffold.md) — **G-5m-b** Auth abstraction
 - [admin-media-upload-abstraction.md](./admin-media-upload-abstraction.md) — **G-5n** Media upload abstraction
+- [admin-publish-workflow-abstraction.md](./admin-publish-workflow-abstraction.md) — **G-5o** Publish workflow abstraction
 - [admin-cms-template-extraction-plan.md](./admin-cms-template-extraction-plan.md) — G-5i extraction plan
 - Registry JSON: [`config/admin/admin-ui-components-registry.json`](../config/admin/admin-ui-components-registry.json)
 - Inspect CLI: [`scripts/inspect-admin-ui-components.mjs`](../scripts/inspect-admin-ui-components.mjs)
@@ -275,17 +276,31 @@ G-5q: customer admin manual（doc）
 - Aligns with schema adapter `storageMappings`
 - Supabase Storage upload **not implemented**
 
-## 14. Next phase — G-5o
+## 14. G-5o scaffold（完了）
 
-**Publish workflow abstraction**
+**Publish workflow UI + policy** — [admin-publish-workflow-abstraction.md](./admin-publish-workflow-abstraction.md)
+
+| componentId | scaffoldStatus |
+| --- | --- |
+| admin-publish-button | created |
+| admin-deploy-status | created |
+| admin-publish-approval-gate | created |
+| admin-publish-history | created |
+| admin-publish-environment-badge | created |
+| admin-github-dispatch-client | **planned** |
+| admin-edge-function-client | **planned** |
+
+## 15. Next phase — G-5p
+
+**musician-basic admin prototype** — staging only
 
 ---
 
-## Registry summary（G-5k〜G-5n）
+## Registry summary（G-5k〜G-5o）
 
 | Metric | Count |
 | --- | --- |
-| Total components | **34** |
+| Total components | **37** |
 | Extractable now (`doNotExtractYet=false`) | **19** |
 | Deferred (`doNotExtractYet=true`) | **9** |
 | Low risk | **11** |
@@ -295,6 +310,7 @@ G-5q: customer admin manual（doc）
 | G-5m-a scaffolded | **9** |
 | G-5m-b scaffolded | **5** |
 | G-5n scaffolded | **5** |
+| G-5o scaffolded | **5** |
 | G-5m-b planned (auth-guard) | **1** |
 | G-5m phase (remaining) | **4** |
 | G-5n phase | **2** |
@@ -302,4 +318,4 @@ G-5q: customer admin manual（doc）
 
 ---
 
-*G-5k: registry. G-5l: shell. G-5m-a: CRUD. G-5m-b: Auth. G-5n: Media. Sariswing untouched.*
+*G-5k: registry. G-5l: shell. G-5m-a: CRUD. G-5m-b: Auth. G-5n: Media. G-5o: Publish. Sariswing untouched.*

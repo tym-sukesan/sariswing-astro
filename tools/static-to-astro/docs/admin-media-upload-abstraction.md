@@ -142,8 +142,10 @@ node tools/static-to-astro/scripts/inspect-admin-ui-components.mjs --category me
 
 ## 10. Next phase
 
-**G-5o: Publish workflow abstraction** — `admin-publish-button`, GitHub dispatch, staging/production 分離
+**G-5o（完了）:** [admin-publish-workflow-abstraction.md](./admin-publish-workflow-abstraction.md) — Publish workflow UI + staging/production separation
+
+**G-5p:** musician-basic admin prototype（staging only）
 
 ---
 
-*G-5n: Media UI scaffold + policy draft. No Storage upload.*
+*G-5n: Media UI scaffold. G-5o: Publish workflow scaffold. Sariswing untouched.*

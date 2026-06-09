@@ -1,5 +1,5 @@
 {
-  "version": "0.5.0",
+  "version": "0.6.0",
   "status": "draft",
   "source": {
     "provenSite": "sariswing",
@@ -934,7 +934,7 @@
       "componentId": "admin-publish-button",
       "name": "Admin Site Publish Button",
       "category": "publish",
-      "status": "candidate",
+      "status": "scaffolded",
       "reusablePotential": "high",
       "extractionDifficulty": "high",
       "risk": "high",
@@ -963,16 +963,18 @@
         "No staging/production workflow split yet"
       ],
       "doNotExtractYet": true,
-      "notes": "Never extract before staging/production workflow separation is designed.",
-      "scaffoldStatus": "deferred",
+      "notes": "UI scaffold only. GitHub dispatch / Edge Function / FTP deploy is not implemented.",
+      "scaffoldStatus": "created",
       "productionReady": false,
-      "connectedToRuntime": false
+      "connectedToRuntime": false,
+      "scaffoldPath": "tools/static-to-astro/templates/admin-cms/components/AdminPublishButton.astro",
+      "implementedInPhase": "G-5o"
     },
     {
       "componentId": "admin-deploy-status",
       "name": "Admin Deploy Status",
       "category": "publish",
-      "status": "candidate",
+      "status": "scaffolded",
       "reusablePotential": "high",
       "extractionDifficulty": "high",
       "risk": "high",
@@ -999,10 +1001,12 @@
         "Polling interval and GitHub API rate limits"
       ],
       "doNotExtractYet": true,
-      "notes": "Pair with publish button in G-5o only.",
-      "scaffoldStatus": "deferred",
+      "notes": "Display scaffold only. No polling or GitHub API.",
+      "scaffoldStatus": "created",
       "productionReady": false,
-      "connectedToRuntime": false
+      "connectedToRuntime": false,
+      "scaffoldPath": "tools/static-to-astro/templates/admin-cms/components/AdminDeployStatus.astro",
+      "implementedInPhase": "G-5o"
     },
     {
       "componentId": "admin-github-dispatch-client",
@@ -1037,10 +1041,11 @@
         "Mis-dispatch triggers production FTP deploy"
       ],
       "doNotExtractYet": true,
-      "notes": "Highest production risk — explicit approval gate required.",
-      "scaffoldStatus": "deferred",
+      "notes": "Requires secure server-side dispatch design. Not implemented in G-5o.",
+      "scaffoldStatus": "planned",
       "productionReady": false,
-      "connectedToRuntime": false
+      "connectedToRuntime": false,
+      "implementedInPhase": null
     },
     {
       "componentId": "admin-edge-function-client",
@@ -1077,10 +1082,11 @@
         "Function names are Sariswing-specific today"
       ],
       "doNotExtractYet": true,
-      "notes": "Abstract after auth guard; required for CRUD modules in G-5m.",
-      "scaffoldStatus": "deferred",
+      "notes": "Edge Function client requires auth guard. Not implemented in G-5o.",
+      "scaffoldStatus": "planned",
       "productionReady": false,
-      "connectedToRuntime": false
+      "connectedToRuntime": false,
+      "implementedInPhase": null
     },
     {
       "componentId": "admin-auth-status",
@@ -1277,6 +1283,104 @@
       "scaffoldStatus": "created",
       "scaffoldPath": "tools/static-to-astro/templates/admin-cms/components/AdminStorageMappingBadge.astro",
       "implementedInPhase": "G-5n",
+      "productionReady": false,
+      "connectedToRuntime": false
+    },
+    {
+      "componentId": "admin-publish-approval-gate",
+      "name": "Admin Publish Approval Gate",
+      "category": "publish",
+      "status": "scaffolded",
+      "reusablePotential": "high",
+      "extractionDifficulty": "medium",
+      "risk": "high",
+      "suggestedPhase": "G-5o",
+      "targetSiteTypes": [
+        "musician",
+        "music-school",
+        "dance-school",
+        "small-business"
+      ],
+      "sourceHints": [
+        "Production approval gates in onboarding runbook"
+      ],
+      "responsibilities": [
+        "Show required checks and blocking items",
+        "Production safety UI"
+      ],
+      "dependencies": [
+        "admin-publish-button"
+      ],
+      "siteSpecificConcerns": [
+        "Customer approval before production"
+      ],
+      "doNotExtractYet": true,
+      "notes": "Approval gate scaffold. No enforcement.",
+      "scaffoldStatus": "created",
+      "scaffoldPath": "tools/static-to-astro/templates/admin-cms/components/AdminPublishApprovalGate.astro",
+      "implementedInPhase": "G-5o",
+      "productionReady": false,
+      "connectedToRuntime": false
+    },
+    {
+      "componentId": "admin-publish-history",
+      "name": "Admin Publish History",
+      "category": "publish",
+      "status": "scaffolded",
+      "reusablePotential": "medium",
+      "extractionDifficulty": "medium",
+      "risk": "medium",
+      "suggestedPhase": "G-5o",
+      "targetSiteTypes": [
+        "musician",
+        "music-school",
+        "dance-school",
+        "small-business"
+      ],
+      "sourceHints": [
+        "deployLastRun on AdminDeployBar"
+      ],
+      "responsibilities": [
+        "Publish audit log display"
+      ],
+      "dependencies": [],
+      "siteSpecificConcerns": [],
+      "doNotExtractYet": true,
+      "notes": "Static history scaffold.",
+      "scaffoldStatus": "created",
+      "scaffoldPath": "tools/static-to-astro/templates/admin-cms/components/AdminPublishHistory.astro",
+      "implementedInPhase": "G-5o",
+      "productionReady": false,
+      "connectedToRuntime": false
+    },
+    {
+      "componentId": "admin-publish-environment-badge",
+      "name": "Admin Publish Environment Badge",
+      "category": "publish",
+      "status": "scaffolded",
+      "reusablePotential": "high",
+      "extractionDifficulty": "low",
+      "risk": "low",
+      "suggestedPhase": "G-5o",
+      "targetSiteTypes": [
+        "musician",
+        "music-school",
+        "dance-school",
+        "small-business"
+      ],
+      "sourceHints": [
+        "Staging vs production separation"
+      ],
+      "responsibilities": [
+        "staging / production / disabled badge"
+      ],
+      "dependencies": [],
+      "siteSpecificConcerns": [],
+      "doNotExtractYet": true,
+      "notes": "Environment badge scaffold.",
+      "scaffoldStatus": "created",
+      "scaffoldPath": "tools/static-to-astro/templates/admin-cms/components/AdminPublishEnvironmentBadge.astro",
+      "implementedInPhase": "G-5o",
       "productionReady": false,
       "connectedToRuntime": false
     }

@@ -1,0 +1,74 @@
+---
+/**
+ * CMS Kit Admin deploy status scaffold (G-5o).
+ * Display only — no polling or fetch.
+ */
+
+type DeployStatus = "idle" | "queued" | "running" | "success" | "failed" | "unknown";
+
+interface Props {
+  status?: DeployStatus;
+  message?: string;
+  startedAt?: string;
+  finishedAt?: string;
+  workflowUrl?: string;
+  logUrl?: string;
+}
+
+const {
+  status = "idle",
+  message = "",
+  startedAt = "",
+  finishedAt = "",
+  workflowUrl = "",
+  logUrl = "",
+} = Astro.props;
+
+const statusLabels: Record<DeployStatus, string> = {
+  idle: "Idle",
+  queued: "Queued",
+  running: "Running",
+  success: "Success",
+  failed: "Failed",
+  unknown: "Unknown",
+};
+
+const defaultMessages: Record<DeployStatus, string> = {
+  idle: "No deploy in progress.",
+  queued: "Deploy queued (scaffold example).",
+  running: "Deploy running (scaffold example).",
+  success: "Last deploy succeeded (scaffold example).",
+  failed: "Last deploy failed (scaffold example).",
+  unknown: "Deploy status unknown.",
+};
+
+const displayMessage = message || defaultMessages[status];
+---
+
+<div
+  class={`admin-deploy-status admin-deploy-status--${status}`}
+  role="status"
+  aria-live="polite"
+  data-scaffold="true"
+  data-deploy-status={status}
+>
+  <p class="admin-deploy-status__label">Deploy status</p>
+  <p class="admin-deploy-status__value">{statusLabels[status]}</p>
+  <p class="admin-deploy-status__message">{displayMessage}</p>
+  {startedAt ? <p class="admin-deploy-status__time">Started: {startedAt}</p> : null}
+  {finishedAt ? <p class="admin-deploy-status__time">Finished: {finishedAt}</p> : null}
+  {
+    workflowUrl ? (
+      <p class="admin-deploy-status__link">
+        Workflow: <span class="admin-deploy-status__url">{workflowUrl}</span> (display only)
+      </p>
+    ) : null
+  }
+  {
+    logUrl ? (
+      <p class="admin-deploy-status__link">
+        Log: <span class="admin-deploy-status__url">{logUrl}</span> (display only)
+      </p>
+    ) : null
+  }
+</div>

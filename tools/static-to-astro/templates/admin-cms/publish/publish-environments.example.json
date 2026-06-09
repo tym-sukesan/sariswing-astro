@@ -1,0 +1,24 @@
+{
+  "mode": "scaffold-only",
+  "connectedToRuntime": false,
+  "productionReady": false,
+  "environments": [
+    {
+      "environment": "staging",
+      "label": "Staging",
+      "enabled": true,
+      "baseUrlExample": "https://example.com/cms-kit-staging/site-slug/",
+      "noindexRequired": true,
+      "robotsDisallowRequired": true
+    },
+    {
+      "environment": "production",
+      "label": "Production",
+      "enabled": false,
+      "baseUrlExample": "https://example.com/",
+      "noindexRequired": false,
+      "robotsDisallowRequired": false,
+      "requiresExplicitApproval": true
+    }
+  ]
+}

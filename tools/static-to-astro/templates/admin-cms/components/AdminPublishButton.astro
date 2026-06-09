@@ -1,0 +1,68 @@
+---
+/**
+ * CMS Kit Admin publish button scaffold (G-5o).
+ * No GitHub dispatch, Edge Function, FTP deploy, or production publish.
+ */
+
+type PublishEnvironment = "staging" | "production";
+type PublishStatus = "idle" | "blocked" | "ready" | "disabled";
+
+interface Props {
+  environment?: PublishEnvironment;
+  label?: string;
+  description?: string;
+  disabled?: boolean;
+  requiresApproval?: boolean;
+  requiredRole?: string;
+  danger?: boolean;
+  status?: PublishStatus;
+}
+
+const {
+  environment = "staging",
+  label = environment === "staging" ? "Publish to staging" : "Publish to production",
+  description =
+    environment === "staging"
+      ? "Rebuild and deploy the staging site. Scaffold only — no dispatch."
+      : "Production publish is disabled by default. Requires explicit approval.",
+  disabled = true,
+  requiresApproval = true,
+  requiredRole = "admin",
+  danger = environment === "production",
+  status = environment === "production" ? "disabled" : "idle",
+} = Astro.props;
+---
+
+<div
+  class={`admin-publish-button admin-publish-button--${environment} ${danger ? "admin-publish-button--danger" : ""}`}
+  data-scaffold="true"
+  data-environment={environment}
+  data-status={status}
+>
+  <p class="admin-publish-button__label">{label}</p>
+  {description ? <p class="admin-publish-button__description">{description}</p> : null}
+
+  <p class="admin-publish-button__meta">
+    Required role: <strong>{requiredRole}</strong>
+    {requiresApproval ? " · Approval required" : null}
+  </p>
+
+  {
+    environment === "production" ? (
+      <p class="admin-staging-notice admin-publish-button__warning" role="alert">
+        Production publish disabled in scaffold. Explicit customer approval required.
+      </p>
+    ) : null
+  }
+
+  <button
+    class={`admin-button ${danger ? "admin-button--destructive" : ""}`}
+    type="button"
+    disabled={disabled}
+    data-action="publish"
+    data-environment={environment}
+    title="Scaffold only — no GitHub dispatch / FTP deploy"
+  >
+    {label} (disabled)
+  </button>
+</div>

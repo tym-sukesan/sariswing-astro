@@ -14,6 +14,7 @@
 - [admin-crud-ui-scaffold.md](./admin-crud-ui-scaffold.md) — **G-5m-a** CRUD UI scaffold
 - [admin-auth-abstraction-scaffold.md](./admin-auth-abstraction-scaffold.md) — **G-5m-b** Auth abstraction
 - [admin-media-upload-abstraction.md](./admin-media-upload-abstraction.md) — **G-5n** Media upload abstraction
+- [admin-publish-workflow-abstraction.md](./admin-publish-workflow-abstraction.md) — **G-5o** Publish workflow abstraction
 - [sariswing-vs-cms-kit-gap-analysis.md](./sariswing-vs-cms-kit-gap-analysis.md)
 - [cms-template-registry.md](./cms-template-registry.md)
 - [cms-schema-adapters.md](./cms-schema-adapters.md)
@@ -328,7 +329,7 @@ node tools/static-to-astro/scripts/generate-site-dry-run.mjs --site-config ...
 | **G-5m-a** | CRUD primitives + module UI scaffold（**完了**） | `components/` + `modules/` のみ |
 | **G-5m-b** | Auth abstraction scaffold（**完了**） | `components/` + `auth/` のみ |
 | **G-5n** | Media upload abstraction scaffold（**完了**） | `components/` + `media/` のみ |
-| **G-5o** | Publish workflow abstraction | staging dispatch（承認後） |
+| **G-5o** | Publish workflow abstraction scaffold（**完了**） | `components/` + `publish/` のみ |
 | **G-5p** | musician-basic admin prototype | staging only |
 | **G-5q** | Customer admin manual（非エンジニア向け） | doc |
 
@@ -354,16 +355,16 @@ node tools/static-to-astro/scripts/generate-site-dry-run.mjs --site-config ...
 
 ---
 
-## 12. Immediate next step — G-5n / G-5o
+## 12. Immediate next step — G-5o / G-5p
 
-**G-5m-b（完了）:** [admin-auth-abstraction-scaffold.md](./admin-auth-abstraction-scaffold.md) — Auth UI + permissions draft。
+**G-5n（完了）:** [admin-media-upload-abstraction.md](./admin-media-upload-abstraction.md) — Media upload UI + storageMappings policy。
 
-**G-5n（完了）:** [admin-media-upload-abstraction.md](./admin-media-upload-abstraction.md) — Media upload UI + storageMappings-aligned policy。Supabase Storage 未接続。
+**G-5o（完了）:** [admin-publish-workflow-abstraction.md](./admin-publish-workflow-abstraction.md) — Publish workflow UI + staging/production separation。GitHub / Edge / FTP 未接続。
 
-**G-5o（次）:** Publish workflow abstraction。
+**G-5p（次）:** musician-basic admin prototype（staging only）。
 
 **禁止（継続）:** Sariswing 本番 touch、DB update、Storage upload、FTP、GHA dispatch
 
 ---
 
-*G-5l: shell. G-5m-a: CRUD. G-5m-b: Auth. G-5n: Media. G-5o+: Publish / prototype.*
+*G-5l: shell. G-5m: CRUD/Auth. G-5n: Media. G-5o: Publish. G-5p: prototype.*

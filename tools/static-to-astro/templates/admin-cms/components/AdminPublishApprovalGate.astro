@@ -1,0 +1,68 @@
+---
+/**
+ * CMS Kit Admin publish approval gate scaffold (G-5o).
+ * Shows blocking checks — no enforcement.
+ */
+
+type PublishEnvironment = "staging" | "production";
+
+interface Props {
+  environment?: PublishEnvironment;
+  approved?: boolean;
+  requiredChecks?: string[];
+  blockingItems?: string[];
+  requiredRole?: string;
+}
+
+const {
+  environment = "staging",
+  approved = false,
+  requiredChecks = [],
+  blockingItems = [],
+  requiredRole = "admin",
+} = Astro.props;
+---
+
+<section
+  class={`admin-publish-approval admin-publish-approval--${approved ? "approved" : "blocked"}`}
+  data-scaffold="true"
+  data-environment={environment}
+  data-approved={approved ? "true" : "false"}
+>
+  <h3 class="admin-publish-approval__title">
+    {environment === "production" ? "Production publish gate" : "Staging publish gate"}
+  </h3>
+  <p class="admin-publish-approval__role">Required role: {requiredRole}</p>
+
+  {
+    requiredChecks.length > 0 ? (
+      <>
+        <p class="admin-publish-approval__subtitle">Required checks</p>
+        <ul class="admin-publish-approval__list">
+          {requiredChecks.map((check) => (
+            <li>{check}</li>
+          ))}
+        </ul>
+      </>
+    ) : null
+  }
+
+  {
+    blockingItems.length > 0 ? (
+      <>
+        <p class="admin-publish-approval__subtitle admin-publish-approval__subtitle--blocking">
+          Blocking items
+        </p>
+        <ul class="admin-publish-approval__list admin-publish-approval__list--blocking">
+          {blockingItems.map((item) => (
+            <li>{item}</li>
+          ))}
+        </ul>
+      </>
+    ) : null
+  }
+
+  <p class="admin-publish-approval__status">
+    {approved ? "All checks passed (scaffold example)." : "Publish blocked until checks pass."}
+  </p>
+</section>

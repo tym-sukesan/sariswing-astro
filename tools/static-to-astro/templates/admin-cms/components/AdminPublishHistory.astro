@@ -1,0 +1,70 @@
+---
+/**
+ * CMS Kit Admin publish history scaffold (G-5o).
+ * Static items only — no audit log API.
+ */
+
+export interface PublishHistoryItem {
+  id: string;
+  environment: "staging" | "production";
+  status: "queued" | "running" | "success" | "failed";
+  triggeredBy?: string;
+  createdAt?: string;
+}
+
+interface Props {
+  items?: PublishHistoryItem[];
+  readonly?: boolean;
+}
+
+const { items = [], readonly = true } = Astro.props;
+---
+
+<section class="admin-publish-history" data-scaffold="true">
+  <h3 class="admin-publish-history__title">Publish history</h3>
+
+  {readonly ? (
+    <p class="admin-readonly-notice" role="note">
+      Read-only scaffold. No audit log API or dispatch history fetch.
+    </p>
+  ) : null}
+
+  {
+    items.length === 0 ? (
+      <p class="admin-empty__message">No publish history yet.</p>
+    ) : (
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Environment</th>
+            <th scope="col">Status</th>
+            <th scope="col">Triggered by</th>
+            <th scope="col">Created</th>
+          </tr>
+        </thead>
+        <tbody>
+          {
+            items.map((item) => (
+              <tr>
+                <td>{item.id}</td>
+                <td>
+                  <span class={`admin-publish-env admin-publish-env--${item.environment}`}>
+                    {item.environment}
+                  </span>
+                </td>
+                <td>
+                  <span class={`admin-deploy-status-badge admin-deploy-status-badge--${item.status}`}>
+                    {item.status}
+                  </span>
+                </td>
+                <td>{item.triggeredBy ?? "—"}</td>
+                <td>{item.createdAt ?? "—"}</td>
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+    )
+  }
+</section>

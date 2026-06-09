@@ -957,6 +957,220 @@
   gap: 0.75rem;
 }
 
+/* G-5o — Publish workflow scaffold */
+
+.admin-publish-button {
+  padding: 0.85rem;
+  border: 1px solid var(--admin-color-border);
+  border-radius: var(--admin-radius);
+  margin-bottom: 0.75rem;
+  background: var(--admin-color-surface);
+}
+
+.admin-publish-button--production,
+.admin-publish-button--danger {
+  border-color: #fecaca;
+  background: #fef2f2;
+}
+
+.admin-publish-button__label {
+  margin: 0 0 0.35rem;
+  font-weight: 600;
+  font-size: 1.05rem;
+}
+
+.admin-publish-button__description {
+  margin: 0 0 0.5rem;
+  color: var(--admin-color-muted);
+  font-size: 0.9rem;
+}
+
+.admin-publish-button__meta {
+  margin: 0 0 0.65rem;
+  font-size: 0.82rem;
+  color: var(--admin-color-muted);
+}
+
+.admin-publish-button__warning {
+  margin-bottom: 0.65rem;
+}
+
+.admin-deploy-status {
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--admin-color-border);
+  border-radius: var(--admin-radius);
+  margin-bottom: 0.75rem;
+  background: #f8fafc;
+  font-size: 0.88rem;
+}
+
+.admin-deploy-status__label {
+  margin: 0 0 0.2rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--admin-color-muted);
+  text-transform: uppercase;
+}
+
+.admin-deploy-status__value {
+  margin: 0 0 0.25rem;
+  font-weight: 600;
+}
+
+.admin-deploy-status__message,
+.admin-deploy-status__time,
+.admin-deploy-status__link {
+  margin: 0.15rem 0 0;
+  color: var(--admin-color-muted);
+}
+
+.admin-deploy-status__url {
+  font-family: ui-monospace, monospace;
+  font-size: 0.78rem;
+  word-break: break-all;
+}
+
+.admin-deploy-status--running {
+  border-color: #bae6fd;
+  background: #f0f9ff;
+}
+
+.admin-deploy-status--success {
+  border-color: #bbf7d0;
+  background: #f0fdf4;
+}
+
+.admin-deploy-status--failed {
+  border-color: #fecaca;
+  background: #fef2f2;
+}
+
+.admin-deploy-status--queued {
+  border-color: #fde68a;
+  background: #fffbeb;
+}
+
+.admin-publish-approval {
+  padding: 0.85rem;
+  border-radius: var(--admin-radius);
+  margin: 0.75rem 0;
+  font-size: 0.88rem;
+}
+
+.admin-publish-approval--blocked {
+  border: 1px solid #fde68a;
+  background: #fffbeb;
+}
+
+.admin-publish-approval--approved {
+  border: 1px solid #bbf7d0;
+  background: #f0fdf4;
+}
+
+.admin-publish-approval__title {
+  margin: 0 0 0.35rem;
+  font-size: 1rem;
+}
+
+.admin-publish-approval__role {
+  margin: 0 0 0.5rem;
+  color: var(--admin-color-muted);
+}
+
+.admin-publish-approval__subtitle {
+  margin: 0.5rem 0 0.25rem;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.admin-publish-approval__subtitle--blocking {
+  color: var(--admin-color-error);
+}
+
+.admin-publish-approval__list {
+  margin: 0 0 0.5rem;
+  padding-left: 1.25rem;
+}
+
+.admin-publish-approval__list--blocking {
+  color: var(--admin-color-error);
+}
+
+.admin-publish-approval__status {
+  margin: 0.5rem 0 0;
+  font-weight: 600;
+}
+
+.admin-publish-history__title {
+  margin: 0 0 0.5rem;
+  font-size: 1.05rem;
+}
+
+.admin-publish-env,
+.admin-publish-env-badge {
+  display: inline-block;
+  padding: 0.15rem 0.45rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.admin-publish-env--staging,
+.admin-publish-env-badge--staging {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.admin-publish-env--production,
+.admin-publish-env-badge--production {
+  background: #fee2e2;
+  color: var(--admin-color-error);
+}
+
+.admin-publish-env-badge--disabled {
+  opacity: 0.65;
+  text-decoration: line-through;
+}
+
+.admin-deploy-status-badge {
+  padding: 0.1rem 0.4rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+
+.admin-deploy-status-badge--success {
+  background: #dcfce7;
+  color: var(--admin-color-success);
+}
+
+.admin-deploy-status-badge--failed {
+  background: #fee2e2;
+  color: var(--admin-color-error);
+}
+
+.admin-deploy-status-badge--running,
+.admin-deploy-status-badge--queued {
+  background: #fef3c7;
+  color: var(--admin-color-warning);
+}
+
+.admin-publish-example-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.admin-deploy-status-row {
+  display: grid;
+  gap: 0.75rem;
+}
+
+@media (min-width: 768px) {
+  .admin-publish-example-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
 @media (max-width: 640px) {
   .admin-main {
     padding: 1rem;

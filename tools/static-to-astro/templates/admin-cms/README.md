@@ -13,8 +13,9 @@ components/          # G-5l shell + G-5m-a CRUD + G-5m-b Auth + G-5n Media UI
 modules/             # G-5m-a News / Schedule / Profile / Links UI
 auth/                # G-5m-b auth-model + permissions examples
 media/               # G-5n media-upload-policy + asset-types examples
-styles/admin.css     # Shared shell + CRUD + Auth + Media styles
-examples/            # dashboard, crud, auth, media examples
+publish/             # G-5o publish-workflow-policy + environments examples
+styles/admin.css     # Shared shell + CRUD + Auth + Media + Publish styles
+examples/            # dashboard, crud, auth, media, publish examples
 ```
 
 - **No Auth**, Supabase, Storage, or Publish workflow
@@ -22,7 +23,7 @@ examples/            # dashboard, crud, auth, media examples
 - **Does not** import from Sariswing `src/`
 - `productionReady: false`, `connectedToRuntime: false`
 
-See [admin-ui-shell-scaffold.md](../../docs/admin-ui-shell-scaffold.md), [admin-crud-ui-scaffold.md](../../docs/admin-crud-ui-scaffold.md), [admin-auth-abstraction-scaffold.md](../../docs/admin-auth-abstraction-scaffold.md), and [admin-media-upload-abstraction.md](../../docs/admin-media-upload-abstraction.md).
+See [admin-ui-shell-scaffold.md](../../docs/admin-ui-shell-scaffold.md), [admin-crud-ui-scaffold.md](../../docs/admin-crud-ui-scaffold.md), [admin-auth-abstraction-scaffold.md](../../docs/admin-auth-abstraction-scaffold.md), [admin-media-upload-abstraction.md](../../docs/admin-media-upload-abstraction.md), and [admin-publish-workflow-abstraction.md](../../docs/admin-publish-workflow-abstraction.md).
 
 ## Phase 3-S — Runtime prototype (`src/`)
 

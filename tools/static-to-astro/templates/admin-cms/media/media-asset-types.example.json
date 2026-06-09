@@ -1,0 +1,28 @@
+{
+  "mode": "scaffold-only",
+  "connectedToRuntime": false,
+  "productionReady": false,
+  "assetTypes": [
+    {
+      "assetType": "discography_cover",
+      "targetTable": "discography",
+      "targetColumn": "cover_image_url",
+      "pathPattern": "{siteSlug}/discography/{legacyId}/cover.{ext}",
+      "humanReviewRequired": false
+    },
+    {
+      "assetType": "schedule_home",
+      "targetTable": "schedules",
+      "targetColumn": "home_image_url",
+      "pathPattern": "{siteSlug}/schedule/{legacyId}/home.{ext}",
+      "humanReviewRequired": true
+    },
+    {
+      "assetType": "schedule_flyer",
+      "targetTable": "schedules",
+      "targetColumn": "image_url",
+      "pathPattern": "{siteSlug}/schedule/{legacyId}/flyer.{ext}",
+      "humanReviewRequired": true
+    }
+  ]
+}

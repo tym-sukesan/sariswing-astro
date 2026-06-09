@@ -1,0 +1,110 @@
+---
+/**
+ * CMS Kit Admin image uploader scaffold (G-5n).
+ * No Supabase Storage upload, resize, fetch, or DB update.
+ */
+import AdminStorageMappingBadge from "./AdminStorageMappingBadge.astro";
+import AdminMediaRightsNotice from "./AdminMediaRightsNotice.astro";
+
+interface Props {
+  assetType?: string;
+  label?: string;
+  description?: string;
+  targetTable?: string;
+  targetColumn?: string;
+  pathPattern?: string;
+  accept?: string;
+  maxSizeMb?: number;
+  disabled?: boolean;
+  requiresHumanReview?: boolean;
+  requiresRightsConfirmation?: boolean;
+  stagingOnly?: boolean;
+}
+
+const {
+  assetType = "generic_image",
+  label = "Upload image",
+  description = "Select an image file. Upload is disabled in scaffold mode.",
+  targetTable = "",
+  targetColumn = "",
+  pathPattern = "",
+  accept = "image/jpeg,image/png,image/webp",
+  maxSizeMb = 10,
+  disabled = true,
+  requiresHumanReview = false,
+  requiresRightsConfirmation = true,
+  stagingOnly = true,
+} = Astro.props;
+
+const inputId = `admin-upload-${assetType.replace(/\W+/g, "-")}`;
+---
+
+<div
+  class="admin-image-uploader"
+  data-scaffold="true"
+  data-asset-type={assetType}
+  data-staging-only={stagingOnly ? "true" : "false"}
+>
+  <h3 class="admin-image-uploader__label">{label}</h3>
+  {description ? <p class="admin-image-uploader__description">{description}</p> : null}
+
+  {
+    targetTable && targetColumn ? (
+      <AdminStorageMappingBadge
+        assetType={assetType}
+        targetTable={targetTable}
+        targetColumn={targetColumn}
+        pathPattern={pathPattern}
+        humanReviewRequired={requiresHumanReview}
+      />
+    ) : null
+  }
+
+  {
+    stagingOnly ? (
+      <p class="admin-staging-notice" role="note">
+        Staging only — no production Storage upload.
+      </p>
+    ) : null
+  }
+
+  {
+    requiresHumanReview ? (
+      <p class="admin-human-review-notice" role="note">
+        Human review required before production publish.
+      </p>
+    ) : null
+  }
+
+  {
+    requiresRightsConfirmation ? (
+      <AdminMediaRightsNotice rightsStatus="staging-only" />
+    ) : null
+  }
+
+  <div class="admin-image-uploader__dropzone">
+    <label class="admin-image-uploader__file-label" for={inputId}>
+      Choose file
+    </label>
+    <input
+      id={inputId}
+      class="admin-image-uploader__input"
+      type="file"
+      accept={accept}
+      disabled={disabled}
+      data-max-size-mb={maxSizeMb}
+    />
+    <p class="admin-image-uploader__hint">
+      Accepted: JPEG, PNG, WebP — max {maxSizeMb} MB (scaffold — no upload)
+    </p>
+  </div>
+
+  <button
+    class="admin-button"
+    type="button"
+    disabled={disabled}
+    title="Scaffold only — no Storage upload"
+  >
+    Upload (disabled)
+  </button>
+</div>

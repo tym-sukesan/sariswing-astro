@@ -1,0 +1,36 @@
+---
+/**
+ * CMS Kit Admin media rights notice scaffold (G-5n).
+ */
+
+type RightsStatus = "unknown" | "staging-only" | "owner-confirmed" | "blocked";
+
+interface Props {
+  rightsStatus?: RightsStatus;
+  message?: string;
+}
+
+const {
+  rightsStatus = "staging-only",
+  message = "",
+} = Astro.props;
+
+const defaultMessages: Record<RightsStatus, string> = {
+  unknown: "Image rights not confirmed. Do not use in production.",
+  "staging-only": "Staging only. Owner confirmation required before production publish.",
+  "owner-confirmed": "Owner has confirmed usage rights for this asset.",
+  blocked: "This asset is blocked from upload or publish.",
+};
+
+const displayMessage = message || defaultMessages[rightsStatus];
+---
+
+<div
+  class={`admin-media-rights admin-media-rights--${rightsStatus}`}
+  role="note"
+  data-scaffold="true"
+  data-rights-status={rightsStatus}
+>
+  <p class="admin-media-rights__title">Rights confirmation</p>
+  <p class="admin-media-rights__message">{displayMessage}</p>
+</div>

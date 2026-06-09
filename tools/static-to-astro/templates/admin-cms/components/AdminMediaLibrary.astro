@@ -1,0 +1,84 @@
+---
+/**
+ * CMS Kit Admin media library scaffold (G-5n).
+ * Static items only — no Storage list API or delete/replace actions.
+ */
+import AdminMediaPreview from "./AdminMediaPreview.astro";
+import AdminStorageMappingBadge from "./AdminStorageMappingBadge.astro";
+
+export interface MediaLibraryItem {
+  id: string;
+  assetType: string;
+  publicUrl?: string;
+  status?: "ready" | "pending" | "placeholder" | "missing" | "review-required";
+  targetTable?: string;
+  targetColumn?: string;
+  pathPattern?: string;
+  alt?: string;
+}
+
+interface Props {
+  items?: MediaLibraryItem[];
+  title?: string;
+  description?: string;
+  readonly?: boolean;
+}
+
+const {
+  items = [],
+  title = "Media library",
+  description = "Browse uploaded assets. Scaffold only — no Storage API.",
+  readonly = true,
+} = Astro.props;
+---
+
+<section class="admin-media-library" data-scaffold="true">
+  <h3 class="admin-media-library__title">{title}</h3>
+  {description ? <p class="admin-media-library__description">{description}</p> : null}
+
+  {readonly ? (
+    <p class="admin-readonly-notice" role="note">
+      Read-only scaffold. No Storage list, delete, or replace.
+    </p>
+  ) : null}
+
+  {
+    items.length === 0 ? (
+      <p class="admin-empty__message">No media items in library.</p>
+    ) : (
+      <ul class="admin-media-grid">
+        {
+          items.map((item) => (
+            <li class="admin-media-grid__item">
+              <AdminMediaPreview
+                src={item.publicUrl ?? ""}
+                alt={item.alt ?? item.id}
+                status={item.status ?? "pending"}
+                assetType={item.assetType}
+              />
+              {
+                item.targetTable && item.targetColumn ? (
+                  <AdminStorageMappingBadge
+                    assetType={item.assetType}
+                    targetTable={item.targetTable}
+                    targetColumn={item.targetColumn}
+                    pathPattern={item.pathPattern ?? ""}
+                    humanReviewRequired={item.status === "review-required"}
+                  />
+                ) : null
+              }
+              <div class="admin-media-grid__actions">
+                <button class="admin-button admin-button--secondary" type="button" disabled title="Scaffold only">
+                  Replace
+                </button>
+                <button class="admin-button admin-button--destructive" type="button" disabled title="Scaffold only">
+                  Remove
+                </button>
+              </div>
+            </li>
+          ))
+        }
+      </ul>
+    )
+  }
+</section>

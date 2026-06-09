@@ -1,0 +1,52 @@
+---
+/**
+ * CMS Kit Admin media preview scaffold (G-5n).
+ * No Storage fetch — static preview / placeholder only.
+ */
+
+type PreviewStatus = "ready" | "pending" | "placeholder" | "missing" | "review-required";
+
+interface Props {
+  src?: string;
+  alt?: string;
+  status?: PreviewStatus;
+  assetType?: string;
+}
+
+const {
+  src = "",
+  alt = "",
+  status = "placeholder",
+  assetType = "",
+} = Astro.props;
+
+const statusLabels: Record<PreviewStatus, string> = {
+  ready: "Ready",
+  pending: "Pending",
+  placeholder: "Placeholder",
+  missing: "Missing",
+  "review-required": "Review required",
+};
+---
+
+<figure
+  class={`admin-media-preview admin-media-preview--${status}`}
+  data-scaffold="true"
+  data-status={status}
+  data-asset-type={assetType}
+>
+  {
+    src && status === "ready" ? (
+      <img class="admin-media-preview__img" src={src} alt={alt} loading="lazy" />
+    ) : (
+      <div class="admin-media-preview__placeholder" aria-hidden="true">
+        {status === "missing" ? "No image" : status === "placeholder" ? "NO PHOTO" : "Preview"}
+      </div>
+    )
+  }
+  <figcaption class="admin-media-preview__caption">
+    <span class={`admin-media-status admin-media-status--${status}`}>{statusLabels[status]}</span>
+    {assetType ? <span class="admin-media-preview__type">{assetType}</span> : null}
+    {alt ? <span class="admin-media-preview__alt">{alt}</span> : null}
+  </figcaption>
+</figure>

@@ -1,0 +1,18 @@
+{
+  "mode": "scaffold-only",
+  "connectedToRuntime": false,
+  "productionReady": false,
+  "provider": "supabase-storage",
+  "defaultBucket": "site-assets",
+  "uploadPerformed": false,
+  "resizePerformed": false,
+  "dbUpdatePerformed": false,
+  "rules": {
+    "maxLongSidePx": 1600,
+    "acceptedTypes": ["image/jpeg", "image/png", "image/webp"],
+    "maxSizeMb": 10,
+    "defaultRightsStatus": "staging-only",
+    "requiresOwnerConfirmationBeforeProduction": true
+  },
+  "doNotUseInProductionYet": true
+}

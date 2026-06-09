@@ -1,5 +1,5 @@
 {
-  "version": "0.4.0",
+  "version": "0.5.0",
   "status": "draft",
   "source": {
     "provenSite": "sariswing",
@@ -857,7 +857,7 @@
       "componentId": "admin-image-uploader",
       "name": "Admin Image Uploader",
       "category": "media",
-      "status": "candidate",
+      "status": "scaffolded",
       "reusablePotential": "high",
       "extractionDifficulty": "high",
       "risk": "high",
@@ -885,16 +885,18 @@
         "Human review rules from schema adapter"
       ],
       "doNotExtractYet": true,
-      "notes": "Connect to schema adapter storageMappings before generic extraction.",
-      "scaffoldStatus": "deferred",
+      "notes": "UI scaffold only. Supabase Storage upload is not implemented.",
+      "scaffoldStatus": "created",
       "productionReady": false,
-      "connectedToRuntime": false
+      "connectedToRuntime": false,
+      "scaffoldPath": "tools/static-to-astro/templates/admin-cms/components/AdminImageUploader.astro",
+      "implementedInPhase": "G-5n"
     },
     {
       "componentId": "admin-media-library",
       "name": "Admin Media Library",
       "category": "media",
-      "status": "candidate",
+      "status": "scaffolded",
       "reusablePotential": "medium",
       "extractionDifficulty": "high",
       "risk": "high",
@@ -921,10 +923,12 @@
         "Greenfield — Sariswing uploads inline per form"
       ],
       "doNotExtractYet": true,
-      "notes": "Optional enhancement after image uploader abstraction.",
-      "scaffoldStatus": "deferred",
+      "notes": "UI scaffold only. No Storage list API.",
+      "scaffoldStatus": "created",
       "productionReady": false,
-      "connectedToRuntime": false
+      "connectedToRuntime": false,
+      "scaffoldPath": "tools/static-to-astro/templates/admin-cms/components/AdminMediaLibrary.astro",
+      "implementedInPhase": "G-5n"
     },
     {
       "componentId": "admin-publish-button",
@@ -1175,6 +1179,104 @@
       "scaffoldStatus": "created",
       "scaffoldPath": "tools/static-to-astro/templates/admin-cms/components/AdminAccessDenied.astro",
       "implementedInPhase": "G-5m-b",
+      "productionReady": false,
+      "connectedToRuntime": false
+    },
+    {
+      "componentId": "admin-media-preview",
+      "name": "Admin Media Preview",
+      "category": "media",
+      "status": "scaffolded",
+      "reusablePotential": "high",
+      "extractionDifficulty": "low",
+      "risk": "medium",
+      "suggestedPhase": "G-5n",
+      "targetSiteTypes": [
+        "musician",
+        "music-school",
+        "dance-school",
+        "small-business"
+      ],
+      "sourceHints": [
+        "Image preview in admin forms"
+      ],
+      "responsibilities": [
+        "Show ready/pending/placeholder/missing/review-required states"
+      ],
+      "dependencies": [],
+      "siteSpecificConcerns": [
+        "NO PHOTO placeholder pattern"
+      ],
+      "doNotExtractYet": true,
+      "notes": "Preview scaffold. No Storage fetch.",
+      "scaffoldStatus": "created",
+      "scaffoldPath": "tools/static-to-astro/templates/admin-cms/components/AdminMediaPreview.astro",
+      "implementedInPhase": "G-5n",
+      "productionReady": false,
+      "connectedToRuntime": false
+    },
+    {
+      "componentId": "admin-media-rights-notice",
+      "name": "Admin Media Rights Notice",
+      "category": "media",
+      "status": "scaffolded",
+      "reusablePotential": "high",
+      "extractionDifficulty": "low",
+      "risk": "medium",
+      "suggestedPhase": "G-5n",
+      "targetSiteTypes": [
+        "musician",
+        "music-school",
+        "dance-school",
+        "small-business"
+      ],
+      "sourceHints": [
+        "humanReviewRules in schema adapter"
+      ],
+      "responsibilities": [
+        "Rights confirmation display",
+        "staging-only warning"
+      ],
+      "dependencies": [],
+      "siteSpecificConcerns": [
+        "Owner confirmation before production"
+      ],
+      "doNotExtractYet": true,
+      "notes": "Rights notice scaffold. No enforcement yet.",
+      "scaffoldStatus": "created",
+      "scaffoldPath": "tools/static-to-astro/templates/admin-cms/components/AdminMediaRightsNotice.astro",
+      "implementedInPhase": "G-5n",
+      "productionReady": false,
+      "connectedToRuntime": false
+    },
+    {
+      "componentId": "admin-storage-mapping-badge",
+      "name": "Admin Storage Mapping Badge",
+      "category": "media",
+      "status": "scaffolded",
+      "reusablePotential": "high",
+      "extractionDifficulty": "low",
+      "risk": "low",
+      "suggestedPhase": "G-5n",
+      "targetSiteTypes": [
+        "musician",
+        "music-school",
+        "dance-school",
+        "small-business"
+      ],
+      "sourceHints": [
+        "cms-schema-adapters.json storageMappings"
+      ],
+      "responsibilities": [
+        "Display assetType, targetTable, targetColumn, pathPattern"
+      ],
+      "dependencies": [],
+      "siteSpecificConcerns": [],
+      "doNotExtractYet": true,
+      "notes": "Maps to schema adapter storageMappings.",
+      "scaffoldStatus": "created",
+      "scaffoldPath": "tools/static-to-astro/templates/admin-cms/components/AdminStorageMappingBadge.astro",
+      "implementedInPhase": "G-5n",
       "productionReady": false,
       "connectedToRuntime": false
     }

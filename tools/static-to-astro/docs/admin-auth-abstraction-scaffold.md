@@ -149,7 +149,8 @@ node tools/static-to-astro/scripts/inspect-admin-ui-components.mjs --category au
 
 | Phase | 内容 |
 | --- | --- |
-| **G-5n** | Media upload abstraction |
+| **G-5n（完了）** | [admin-media-upload-abstraction.md](./admin-media-upload-abstraction.md) |
+| **G-5o** | Publish workflow abstraction |
 | **G-5o** | Publish workflow abstraction |
 | **G-5p** | musician-basic admin prototype（staging only） |
 

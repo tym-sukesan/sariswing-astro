@@ -1,0 +1,46 @@
+---
+/**
+ * CMS Kit Admin storage mapping badge scaffold (G-5n).
+ * Displays schema adapter storageMappings metadata — no Storage access.
+ */
+
+interface Props {
+  assetType?: string;
+  targetTable?: string;
+  targetColumn?: string;
+  pathPattern?: string;
+  humanReviewRequired?: boolean;
+}
+
+const {
+  assetType = "",
+  targetTable = "",
+  targetColumn = "",
+  pathPattern = "",
+  humanReviewRequired = false,
+} = Astro.props;
+---
+
+<div class="admin-storage-mapping" data-scaffold="true" data-asset-type={assetType}>
+  <span class="admin-storage-mapping__badge">{assetType || "asset"}</span>
+  <dl class="admin-storage-mapping__details">
+    <div>
+      <dt>Table</dt>
+      <dd>{targetTable || "—"}</dd>
+    </div>
+    <div>
+      <dt>Column</dt>
+      <dd>{targetColumn || "—"}</dd>
+    </div>
+    {pathPattern ? (
+      <div>
+        <dt>Path</dt>
+        <dd><code>{pathPattern}</code></dd>
+      </div>
+    ) : null}
+    <div>
+      <dt>Human review</dt>
+      <dd>{humanReviewRequired ? "Required" : "No"}</dd>
+    </div>
+  </dl>
+</div>

@@ -1,0 +1,127 @@
+---
+/**
+ * CMS Kit Admin Media UI — composition example (G-5n).
+ *
+ * Scaffold only.
+ * - No Storage upload
+ * - No resize
+ * - No DB update
+ * - No production media operation
+ */
+import AdminLayout from "../components/AdminLayout.astro";
+import AdminPageHeader from "../components/AdminPageHeader.astro";
+import AdminCard from "../components/AdminCard.astro";
+import AdminStatusMessage from "../components/AdminStatusMessage.astro";
+import AdminImageUploader from "../components/AdminImageUploader.astro";
+import AdminMediaLibrary from "../components/AdminMediaLibrary.astro";
+import AdminMediaPreview from "../components/AdminMediaPreview.astro";
+import AdminMediaRightsNotice from "../components/AdminMediaRightsNotice.astro";
+import AdminStorageMappingBadge from "../components/AdminStorageMappingBadge.astro";
+
+const libraryItems = [
+  {
+    id: "discography-001-cover",
+    assetType: "discography_cover",
+    publicUrl: "",
+    status: "pending" as const,
+    targetTable: "discography",
+    targetColumn: "cover_image_url",
+    pathPattern: "{siteSlug}/discography/{legacyId}/cover.{ext}",
+    alt: "Album cover placeholder",
+  },
+  {
+    id: "schedule-042-flyer",
+    assetType: "schedule_flyer",
+    publicUrl: "",
+    status: "review-required" as const,
+    targetTable: "schedules",
+    targetColumn: "image_url",
+    pathPattern: "{siteSlug}/schedule/{legacyId}/flyer.{ext}",
+    alt: "Event flyer — human review required",
+  },
+  {
+    id: "schedule-042-home",
+    assetType: "schedule_home",
+    publicUrl: "",
+    status: "placeholder" as const,
+    targetTable: "schedules",
+    targetColumn: "home_image_url",
+    pathPattern: "{siteSlug}/schedule/{legacyId}/home.{ext}",
+    alt: "NO PHOTO placeholder",
+  },
+];
+---
+
+<AdminLayout
+  title="Media"
+  siteName="CMS Kit Admin"
+  stagingLabel="Media scaffold example"
+>
+  <AdminStatusMessage
+    slot="status"
+    type="info"
+    title="Scaffold only"
+    message="Media upload UI. No Supabase Storage upload, resize, DB update, or production media operation."
+  />
+
+  <AdminPageHeader
+    title="Media upload"
+    description="Schema adapter storageMappings-aligned scaffold — staging only."
+  />
+
+  <AdminCard title="Image uploader" description="Per assetType upload UI with mapping badge.">
+    <AdminImageUploader
+      assetType="schedule_flyer"
+      label="Schedule flyer"
+      description="Upload event flyer image. Human review required."
+      targetTable="schedules"
+      targetColumn="image_url"
+      pathPattern="{siteSlug}/schedule/{legacyId}/flyer.{ext}"
+      requiresHumanReview={true}
+      requiresRightsConfirmation={true}
+      stagingOnly={true}
+      disabled={true}
+    />
+    <hr class="admin-auth-divider" />
+    <AdminImageUploader
+      assetType="discography_cover"
+      label="Discography cover"
+      targetTable="discography"
+      targetColumn="cover_image_url"
+      pathPattern="{siteSlug}/discography/{legacyId}/cover.{ext}"
+      requiresHumanReview={false}
+      stagingOnly={true}
+      disabled={true}
+    />
+  </AdminCard>
+
+  <AdminCard title="Preview states">
+    <div class="admin-media-preview-row">
+      <AdminMediaPreview status="ready" assetType="discography_cover" alt="Ready example" />
+      <AdminMediaPreview status="pending" assetType="schedule_home" alt="Pending upload" />
+      <AdminMediaPreview status="placeholder" assetType="schedule_home" alt="NO PHOTO" />
+      <AdminMediaPreview status="review-required" assetType="schedule_flyer" alt="Needs review" />
+      <AdminMediaPreview status="missing" assetType="news_image" alt="Missing asset" />
+    </div>
+  </AdminCard>
+
+  <AdminCard title="Rights notices">
+    <AdminMediaRightsNotice rightsStatus="staging-only" />
+    <AdminMediaRightsNotice rightsStatus="owner-confirmed" />
+    <AdminMediaRightsNotice rightsStatus="blocked" message="Cross-page inferred asset — blocked until owner confirms." />
+  </AdminCard>
+
+  <AdminCard title="Storage mapping">
+    <AdminStorageMappingBadge
+      assetType="schedule_flyer"
+      targetTable="schedules"
+      targetColumn="image_url"
+      pathPattern="{siteSlug}/schedule/{legacyId}/flyer.{ext}"
+      humanReviewRequired={true}
+    />
+  </AdminCard>
+
+  <AdminCard title="Media library">
+    <AdminMediaLibrary items={libraryItems} readonly={true} />
+  </AdminCard>
+</AdminLayout>

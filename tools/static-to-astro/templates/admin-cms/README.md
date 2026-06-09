@@ -12,6 +12,7 @@ Low-risk reusable Admin UI components for future CMS Kit sites:
 components/          # G-5l shell + G-5m-a CRUD + G-5m-b Auth + G-5n Media UI
 modules/             # G-5m-a News / Schedule / Profile / Links + G-5p Discography UI
 prototypes/          # G-5p musician-basic admin prototype
+preview/             # G-5r preview manifest + safety checklist
 auth/                # G-5m-b auth-model + permissions examples
 media/               # G-5n media-upload-policy + asset-types examples
 publish/             # G-5o publish-workflow-policy + environments examples
@@ -24,7 +25,7 @@ examples/            # dashboard, crud, auth, media, publish examples
 - **Does not** import from Sariswing `src/`
 - `productionReady: false`, `connectedToRuntime: false`
 
-See [admin-ui-shell-scaffold.md](../../docs/admin-ui-shell-scaffold.md), [admin-crud-ui-scaffold.md](../../docs/admin-crud-ui-scaffold.md), [admin-auth-abstraction-scaffold.md](../../docs/admin-auth-abstraction-scaffold.md), [admin-media-upload-abstraction.md](../../docs/admin-media-upload-abstraction.md), [admin-publish-workflow-abstraction.md](../../docs/admin-publish-workflow-abstraction.md), and [musician-basic-admin-prototype.md](../../docs/musician-basic-admin-prototype.md).
+See [admin-ui-shell-scaffold.md](../../docs/admin-ui-shell-scaffold.md), [admin-crud-ui-scaffold.md](../../docs/admin-crud-ui-scaffold.md), [admin-auth-abstraction-scaffold.md](../../docs/admin-auth-abstraction-scaffold.md), [admin-media-upload-abstraction.md](../../docs/admin-media-upload-abstraction.md), [admin-publish-workflow-abstraction.md](../../docs/admin-publish-workflow-abstraction.md), [musician-basic-admin-prototype.md](../../docs/musician-basic-admin-prototype.md), and [admin-prototype-preview-harness.md](../../docs/admin-prototype-preview-harness.md).
 
 ## Phase 3-S — Runtime prototype (`src/`)
 

@@ -38,4 +38,4 @@
 
 ---
 
-> **開発者向け:** このチェックリストは G-5q docs のみ。runtime / Auth / DB / Storage / Publish は未接続（`productionReady: false` / `connectedToRuntime: false`）。
+> **開発者向け:** このチェックリストは G-5q docs のみ。runtime / Auth / DB / Storage / Publish は未接続（`productionReady: false` / `connectedToRuntime: false`）。顧客デモ前は [preview-safety-checklist.md](../templates/admin-cms/preview/preview-safety-checklist.md)（G-5r）も確認してください。`customerDemoReady: false`。

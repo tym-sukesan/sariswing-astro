@@ -1,0 +1,37 @@
+{
+  "version": "0.1.0",
+  "status": "draft",
+  "mode": "preview-harness-only",
+  "connectedToRuntime": false,
+  "productionReady": false,
+  "previewBuildPerformed": false,
+  "deployPerformed": false,
+  "prototypes": [
+    {
+      "prototypeId": "musician-basic-admin-prototype",
+      "templateId": "musician-basic",
+      "siteType": "musician",
+      "label": "Musician Basic Admin Prototype",
+      "description": "Static Admin prototype for musician-basic CMS Kit.",
+      "prototypePath": "tools/static-to-astro/templates/admin-cms/prototypes/musician-basic-admin-prototype.astro",
+      "propsExamplePath": "tools/static-to-astro/templates/admin-cms/prototypes/musician-basic-props.example.json",
+      "sectionsExamplePath": "tools/static-to-astro/templates/admin-cms/prototypes/musician-basic-admin-sections.example.json",
+      "manualPath": "tools/static-to-astro/docs/customer-admin-manual-musician-basic.md",
+      "quickChecklistPath": "tools/static-to-astro/docs/customer-admin-quick-checklist-musician-basic.md",
+      "previewStatus": "scaffold-ready",
+      "customerDemoReady": false,
+      "requiresLocalHarness": true,
+      "safety": {
+        "runtimeConnected": false,
+        "supabaseAuthConnected": false,
+        "supabaseQueryPerformed": false,
+        "dbUpdatePerformed": false,
+        "storageUploadPerformed": false,
+        "githubDispatchPerformed": false,
+        "ftpDeployPerformed": false,
+        "productionTouched": false
+      },
+      "recommendedNextStep": "Create a local-only Astro preview harness with explicit approval."
+    }
+  ]
+}

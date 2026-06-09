@@ -12,6 +12,7 @@ function parseArgs(argv) {
   const positional = [];
   let dryRun = false;
   let baseUrl = null;
+  let deployBase = null;
   let verifyBuild = false;
   let withAdminCms = false;
   let siteProfile = null;
@@ -43,6 +44,11 @@ function parseArgs(argv) {
       if (!baseUrl) throw new Error("--base-url requires a URL");
       continue;
     }
+    if (arg === "--deploy-base") {
+      deployBase = argv[++i];
+      if (!deployBase) throw new Error("--deploy-base requires a path");
+      continue;
+    }
     if (arg.startsWith("-")) {
       throw new Error(`Unknown option: ${arg}`);
     }
@@ -54,6 +60,7 @@ function parseArgs(argv) {
     outputDir: positional[1] ?? null,
     dryRun,
     baseUrl,
+    deployBase,
     verifyBuild,
     withAdminCms,
     siteProfile,
@@ -67,8 +74,9 @@ function printHelp() {
 Generates a minimal Astro project under output-dir from a static HTML site.
 
 Options:
-  --base-url URL  Production site origin for canonical / og:url / og:image
-                  Example: https://studio-sakura.example.com
+  --base-url URL     Site origin for canonical / og:url / sitemap (production or staging host)
+  --deploy-base PATH Astro base path for subdirectory deploy (default: /)
+                     Example: /cms-kit-staging/gosaki/
   --verify-build  Run npm run build in output-dir and record result in CONVERSION_REPORT.md
   --with-admin-cms Copy Admin UI / API templates (requires @astrojs/node adapter)
   --site-profile ID  Site profile ID (musician, dance-school, generic)
@@ -92,7 +100,7 @@ function main() {
     process.exit(0);
   }
 
-  const { inputDir, outputDir, dryRun, baseUrl, verifyBuild, withAdminCms, siteProfile } = args;
+  const { inputDir, outputDir, dryRun, baseUrl, deployBase, verifyBuild, withAdminCms, siteProfile } = args;
   if (!inputDir || !outputDir) {
     printHelp();
     process.exit(1);
@@ -110,6 +118,7 @@ function main() {
     const result = generateAstroProject(inputAbs, outputAbs, {
       dryRun,
       baseUrl,
+      deployBase,
       verifyBuild,
       withAdminCms,
       siteProfile,
@@ -118,6 +127,7 @@ function main() {
       console.log("static-to-astro convert (dry-run)");
       console.log(`  Would generate ${result.analysis.pages.length} pages at: ${outputAbs}`);
       if (baseUrl) console.log(`  baseUrl: ${baseUrl}`);
+      if (deployBase) console.log(`  deployBase: ${deployBase}`);
       process.exit(0);
     }
     printGenerationSummary(result);

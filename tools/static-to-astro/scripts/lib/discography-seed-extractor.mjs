@@ -225,6 +225,7 @@ const DISCOGRAPHY_LIST_ASTRO = `---
 /**
  * Discography releases from JSON seed (Phase 3-D).
  */
+import { resolvePublicImageUrl } from "../lib/resolve-public-image.ts";
 import discography from "../data/discography.json";
 
 interface Track {
@@ -258,12 +259,14 @@ const releases = (discography as Release[]).sort(
 
 <ul class="discography-list">
   {
-    releases.map((r) => (
+    releases.map((r) => {
+      const coverSrc = resolvePublicImageUrl(r.cover_image);
+      return (
       <li class="discography-item">
         <div class="discography-item__cover">
-          {r.cover_image ? (
+          {coverSrc ? (
             <img
-              src={r.cover_image}
+              src={coverSrc}
               alt={r.cover_alt ?? r.title ?? "Release cover"}
               width="260"
               height="260"
@@ -312,7 +315,8 @@ const releases = (discography as Release[]).sort(
           )}
         </div>
       </li>
-    ))
+      );
+    })
   }
 </ul>
 `;

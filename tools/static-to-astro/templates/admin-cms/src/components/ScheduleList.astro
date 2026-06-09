@@ -3,6 +3,8 @@
  * Renders schedule cards from JSON seed (Phase 3-B).
  * @see src/data/schedules.json
  */
+import { resolvePublicImageUrl } from "../lib/resolve-public-image.ts";
+
 interface ScheduleEvent {
   id: string;
   date: string | null;
@@ -43,6 +45,7 @@ function descriptionLines(text: string | null | undefined) {
       events.map((ev) => {
         const timeLine = formatTimeLine(ev);
         const extraLines = descriptionLines(ev.description);
+        const flyerSrc = resolvePublicImageUrl(ev.image);
         return (
           <li class="schedule-card">
             <div class="schedule-card__body">
@@ -61,8 +64,8 @@ function descriptionLines(text: string | null | undefined) {
               })}
             </div>
             <div class="schedule-card__flyer">
-              {ev.image ? (
-                <img src={ev.image} alt="" width="200" height="200" loading="lazy" />
+              {flyerSrc ? (
+                <img src={flyerSrc} alt="" width="200" height="200" loading="lazy" />
               ) : (
                 <div class="flyer-placeholder" role="img" aria-label="Flyer pending">
                   Flyer / Image pending

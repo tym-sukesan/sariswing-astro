@@ -241,6 +241,8 @@ const HOME_SCHEDULE_ASTRO = `---
 /**
  * Home featured / weekly schedule from schedules.json (Phase 3-C).
  */
+import { withBase } from "../lib/with-base.ts";
+import { resolvePublicImageUrl } from "../lib/resolve-public-image.ts";
 import schedules from "../data/schedules.json";
 
 interface ScheduleEvent {
@@ -277,11 +279,13 @@ const monthRoute = \`/schedule-\${latestMonth}/\`;
   <!-- CMS_TARGET: HOME_LIVE_SCHEDULE (data-driven Phase 3-C) -->
   <div class="surface-block">
     {
-      homeEvents.map((ev) => (
+      homeEvents.map((ev) => {
+        const flyerSrc = resolvePublicImageUrl(ev.home_image);
+        return (
         <article class="schedule-card">
           <div class="schedule-card__body">
             <p class="schedule-card__date">
-              <a href={ev.source_route}>{ev.home_date_display ?? ev.date_display ?? ev.date}</a>
+              <a href={withBase(ev.source_route ?? "/")}>{ev.home_date_display ?? ev.date_display ?? ev.date}</a>
             </p>
             {ev.venue && <p class="schedule-card__venue">{ev.venue}</p>}
             {(ev.open_time || ev.start_time) && (
@@ -297,8 +301,8 @@ const monthRoute = \`/schedule-\${latestMonth}/\`;
             {ev.home_phone && <p class="schedule-card__meta">☎︎{ev.home_phone}</p>}
           </div>
           <div class="schedule-card__flyer">
-            {ev.home_image ? (
-              <img src={ev.home_image} alt="" width="259" height="259" loading="lazy" />
+            {flyerSrc ? (
+              <img src={flyerSrc} alt="" width="259" height="259" loading="lazy" />
             ) : (
               <div class="flyer-placeholder" role="img" aria-label="Flyer pending">
                 Flyer / Image pending
@@ -306,14 +310,15 @@ const monthRoute = \`/schedule-\${latestMonth}/\`;
             )}
           </div>
         </article>
-      ))
+        );
+      })
     }
   </div>
   <p class="prototype-note">
     Phase 3-C: featured events from <code>schedules.json</code> (<code>show_on_home</code>).
-    <a href="/schedule/">Schedule index</a>
+    <a href={withBase("/schedule/")}>Schedule index</a>
     {" · "}
-    <a href={monthRoute}>月別スケジュール（{latestMonth.replace("-", ".")} ほか）</a>
+    <a href={withBase(monthRoute)}>月別スケジュール（{latestMonth.replace("-", ".")} ほか）</a>
   </p>
 </section>
 `;

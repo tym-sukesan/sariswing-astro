@@ -6,6 +6,12 @@
 import fs from "node:fs";
 import path from "node:path";
 import { scanDirForSecrets } from "./admin-api-auth-verifier.mjs";
+import {
+  isStagingSubdirBuild,
+  readAstroDeployBaseFromConfig,
+  verifyAssetPathsIncludeBase,
+  verifyPublicDistSeoFlags,
+} from "./deploy-base.mjs";
 import { loadExportEnv } from "./supabase-json-exporter.mjs";
 
 export const EXPECTED_PUBLIC_HTML = [
@@ -317,6 +323,10 @@ export function runStaticPublicArtifactVerification({
 
   result.staticPublicCopy = copyStaticPublicArtifact(publicDir, publicDistDir);
 
+  const deployBase = readAstroDeployBaseFromConfig(astroAbs);
+  result.deployBaseCheck = verifyAssetPathsIncludeBase(publicDistDir, deployBase);
+  result.seoFlags = verifyPublicDistSeoFlags(publicDistDir, deployBase);
+
   const copyContamination = scanAdminApiContamination(publicDistDir);
   const copyKeyLeak = scanPublicDirForSecrets(publicDistDir, secretValues);
   const copySupabaseScan = scanSupabaseKeyExposure(publicDistDir);
@@ -331,11 +341,22 @@ export function runStaticPublicArtifactVerification({
     copiedFiles: result.staticPublicCopy.copiedCount,
     excluded: result.staticPublicCopy.excluded,
     excludedPathsSample: result.staticPublicCopy.excludedPaths.slice(0, 8),
+    deployBase,
+    stagingSubdirBuild: isStagingSubdirBuild(deployBase),
+    assetPathsIncludeBase: result.deployBaseCheck.assetPathsIncludeBase,
+    deployBaseCheckOk: result.deployBaseCheck.ok,
+    stagingNoindex: result.seoFlags.stagingNoindex,
+    robotsDisallowAll: result.seoFlags.robotsDisallowAll,
+    productionIndexable: result.seoFlags.productionIndexable,
+    canonicalMode: result.seoFlags.canonicalMode,
+    seoFlagsOk: result.seoFlags.ok,
     safeForStaticFtp:
       result.publicHtml.allPresent &&
       !copyContamination.contaminated &&
       copyKeyLeak.ok &&
-      copySupabaseScan.publicStaticDoesNotNeedSupabaseKeys,
+      copySupabaseScan.publicStaticDoesNotNeedSupabaseKeys &&
+      result.deployBaseCheck.ok &&
+      result.seoFlags.ok,
     rawClientHasAdminHtml: result.rawClientContamination.adminDirExists,
     directClientUploadRecommended: !result.rawClientContamination.contaminated,
     note: result.rawClientContamination.adminDirExists
@@ -363,6 +384,19 @@ export function runStaticPublicArtifactVerification({
   if (!copySupabaseScan.publicStaticDoesNotNeedSupabaseKeys) {
     result.errors.push("supabase keys or client code found in static-public copy");
   }
+  if (!result.deployBaseCheck.ok) {
+    result.errors.push(
+      result.deployBaseCheck.reason ??
+        `deploy base paths missing in public-dist (deployBase=${deployBase})`,
+    );
+  }
+  if (!result.seoFlags.ok) {
+    result.errors.push(
+      result.seoFlags.stagingBuild
+        ? "staging SEO flags incomplete (expected noindex meta + robots Disallow: /)"
+        : "production SEO flags incomplete (expected no noindex meta + robots Allow: /)",
+    );
+  }
 
   result.passed =
     result.publicDirExists &&
@@ -388,6 +422,13 @@ export function formatStaticPublicArtifactReport(result, { reportPath, elapsedMs
     `- **Astro dir:** \`${result.astroDir}\``,
     `- **Public dir detected:** \`${result.publicDir ?? "—"}\` (${result.publicDirKind ?? "—"})`,
     `- **safeForStaticFtp (after exclude copy):** ${result.safeForStaticFtp ? "true" : "false"}`,
+    `- **deployBase:** \`${result.manifest?.deployBase ?? "—"}\``,
+    `- **stagingSubdirBuild:** ${result.manifest?.stagingSubdirBuild ? "yes" : "no"}`,
+    `- **asset paths include base:** ${result.manifest?.assetPathsIncludeBase ? "yes" : "no"}`,
+    `- **stagingNoindex:** ${result.manifest?.stagingNoindex ? "yes" : "no"}`,
+    `- **robotsDisallowAll:** ${result.manifest?.robotsDisallowAll ? "yes" : "no"}`,
+    `- **productionIndexable:** ${result.manifest?.productionIndexable ? "yes" : "no"}`,
+    `- **canonicalMode:** ${result.manifest?.canonicalMode ?? "—"}`,
     `- **Direct dist/client FTP upload recommended:** ${result.directClientUploadRecommended ? "yes" : "no"}`,
     "",
     "## Build output layout",

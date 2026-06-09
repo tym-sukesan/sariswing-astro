@@ -426,6 +426,8 @@ const SCHEDULE_LIST_ASTRO = `---
  * Renders schedule cards from JSON seed (Phase 3-B).
  * @see src/data/schedules.json
  */
+import { resolvePublicImageUrl } from "../lib/resolve-public-image.ts";
+
 interface ScheduleEvent {
   id: string;
   date: string | null;
@@ -466,6 +468,7 @@ function descriptionLines(text: string | null | undefined) {
       events.map((ev) => {
         const timeLine = formatTimeLine(ev);
         const extraLines = descriptionLines(ev.description);
+        const flyerSrc = resolvePublicImageUrl(ev.image);
         return (
           <li class="schedule-card">
             <div class="schedule-card__body">
@@ -484,8 +487,8 @@ function descriptionLines(text: string | null | undefined) {
               })}
             </div>
             <div class="schedule-card__flyer">
-              {ev.image ? (
-                <img src={ev.image} alt="" width="200" height="200" loading="lazy" />
+              {flyerSrc ? (
+                <img src={flyerSrc} alt="" width="200" height="200" loading="lazy" />
               ) : (
                 <div class="flyer-placeholder" role="img" aria-label="Flyer pending">
                   Flyer / Image pending
@@ -499,6 +502,20 @@ function descriptionLines(text: string | null | undefined) {
   </ul>
 </div>
 `;
+
+/**
+ * @param {ReturnType<import("./schedule-pages.mjs").detectScheduleMonthPages>} detectedMonths
+ */
+export function scheduleMonthsFromDetected(detectedMonths) {
+  return detectedMonths.map((m, index) => ({
+    month: `${m.year}-${m.month}`,
+    label: m.label,
+    route: m.route.endsWith("/") ? m.route : `${m.route}/`,
+    count: 0,
+    sort_order: index + 1,
+    published: true,
+  }));
+}
 
 function monthPageAstro(monthMeta, siteBase = "https://www.gosaki-piano.com") {
   const slug = monthMeta.month;
@@ -533,6 +550,7 @@ const events = schedules.filter((s) => s.month === MONTH);
 
 const SCHEDULE_INDEX_ASTRO = `---
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import { withBase } from "../../lib/with-base.ts";
 import scheduleMonths from "../../data/schedule-months.json";
 ---
 
@@ -552,7 +570,7 @@ import scheduleMonths from "../../data/schedule-months.json";
       {scheduleMonths.map((m) => (
         <li>
           <h3>
-            <a href={m.route}>{m.label}</a>
+            <a href={withBase(m.route)}>{m.label}</a>
           </h3>
           <p class="prototype-note">{m.count} event(s)</p>
         </li>

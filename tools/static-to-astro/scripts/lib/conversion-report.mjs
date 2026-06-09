@@ -124,6 +124,13 @@ export function formatConversionReport({
       `- **robots.txt generated:** ${seoPublishReadiness.robotsTxtGenerated ? "yes — `public/robots.txt`" : "no"}`,
       `- **robots.txt policy:** ${seoPublishReadiness.robotsTxtPolicy}`,
       `- **robots.txt Sitemap URL:** ${seoPublishReadiness.robotsTxtSitemapUrl ? `\`${seoPublishReadiness.robotsTxtSitemapUrl}\`` : "—"}`,
+      `- **stagingNoindex:** ${seoPublishReadiness.stagingNoindex ? "yes" : "no"}`,
+      `- **robotsDisallowAll:** ${seoPublishReadiness.robotsDisallowAll ? "yes" : "no"}`,
+      `- **productionIndexable:** ${seoPublishReadiness.productionIndexable ? "yes" : "no"}`,
+      `- **canonicalMode:** ${seoPublishReadiness.canonicalMode ?? "—"}`,
+      seoPublishReadiness.sitemapStagingNote
+        ? `- **sitemap (staging note):** ${seoPublishReadiness.sitemapStagingNote}`
+        : "",
       `- **@astrojs/sitemap integration:** ${seoPublishReadiness.sitemapIntegrationEnabled ? "yes" : "no"}`,
       `- **sitemap built on \`npm run build\`:** ${seoPublishReadiness.sitemapBuilt ? "yes" : buildRan ? "no" : "_not verified_"}`,
       seoPublishReadiness.sitemapBuildFiles?.length

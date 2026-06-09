@@ -25,6 +25,7 @@ import {
   transformSchedules,
   writeAstroDataJson,
 } from "./lib/supabase-json-exporter.mjs";
+import { refreshPublicCmsViewsAfterExport } from "./lib/refresh-public-cms-views.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const TOOL_ROOT = path.resolve(__dirname, "..");
@@ -173,6 +174,15 @@ async function main() {
 
   const integrity = analyzeExportIntegrity(raw, exported);
   const outputFiles = writeAstroDataJson(exported, outAstroDir);
+
+  const cmsViews = refreshPublicCmsViewsAfterExport(outAstroDir, {
+    scheduleMonths: exported.scheduleMonths,
+  });
+  console.log("Refreshed CMS views:");
+  console.log(`  schedule months: ${cmsViews.monthsCount}`);
+  console.log(`  data-driven pages: ${cmsViews.scheduleViews.dataDrivenPages?.length ?? 0}`);
+  console.log(`  resolve-public-image: ${cmsViews.imageHelper.copied ? "yes" : "no"}`);
+  console.log("");
 
   console.log("Exported JSON:");
   console.log(`  ${outputFiles.scheduleMonths}`);

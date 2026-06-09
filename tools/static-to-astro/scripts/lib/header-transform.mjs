@@ -138,10 +138,24 @@ ${stripped}
     const activeExpr = isSchedule
       ? "scheduleNavActive()"
       : `navActive('${safeRoute}')`;
-    return `        <li><a href="${safeRoute}" class:list={{ 'is-current': ${activeExpr} }}>${safeText}</a></li>`;
+    return `        <li><a href={withBase('${safeRoute}')} class:list={{ 'is-current': ${activeExpr} }}>${safeText}</a></li>`;
   });
 
-  const navBlock = `  <nav${navClass}${navAria}>
+  const navBlock = `  <button
+    type="button"
+    class="nav-toggle"
+    aria-expanded="false"
+    aria-controls="global-nav-panel"
+    aria-label="Open menu"
+  >
+    <span class="nav-toggle__icon" aria-hidden="true">
+      <span class="nav-toggle__bar"></span>
+      <span class="nav-toggle__bar"></span>
+      <span class="nav-toggle__bar"></span>
+    </span>
+    <span class="nav-toggle__label">MENU</span>
+  </button>
+  <nav id="global-nav-panel" class="global-nav"${navAria}>
     <ul>
 ${navLines.join("\n")}
     </ul>
@@ -149,30 +163,61 @@ ${navLines.join("\n")}
 
   shell = shell.replace("<!-- STATIC_TO_ASTRO_NAV -->", navBlock);
 
+  shell = shell.replace(/<a href="\/">/g, '<a href={withBase("/")}>');
+
   const scheduleHelper = scheduleHub
     ? `
 function scheduleNavActive() {
   const path = currentPath.endsWith("/") ? currentPath : \`\${currentPath}/\`;
-  if (path === "/schedule/") return true;
-  return /^\\/schedule-\\d{4}-\\d{2}\\//i.test(path);
+  if (path === withBase("/schedule/")) return true;
+  const prefix = import.meta.env.BASE_URL.replace(/\\/$/, "");
+  return new RegExp(\`^\${prefix}/schedule-\\\\d{4}-\\\\d{2}/\`, "i").test(path);
 }
 `
     : "";
 
   return {
     content: `---
+import { withBase } from "../lib/with-base.ts";
+
 const currentPath = Astro.url.pathname;
 
 function navActive(href) {
-  const path = currentPath;
-  const normalized = href.endsWith("/") ? href : \`\${href}/\`;
-  if (normalized === "/" || normalized === "") {
-    return path === "/" || path === "";
+  const normalized = withBase(href.endsWith("/") ? href : \`\${href}/\`);
+  const path = currentPath.endsWith("/") ? currentPath : \`\${currentPath}/\`;
+  if (normalized === withBase("/")) {
+    return path === withBase("/");
   }
   return path === normalized || path.startsWith(normalized);
 }
 ${scheduleHelper}---
 ${shell}
+<script is:inline>
+(function () {
+  var header = document.querySelector(".site-header");
+  var toggle = document.querySelector(".nav-toggle");
+  var panel = document.getElementById("global-nav-panel");
+  if (!header || !toggle || !panel) return;
+
+  function setOpen(open) {
+    header.classList.toggle("is-nav-open", open);
+    toggle.setAttribute("aria-expanded", open ? "true" : "false");
+    toggle.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+  }
+
+  toggle.addEventListener("click", function () {
+    setOpen(!header.classList.contains("is-nav-open"));
+  });
+
+  panel.addEventListener("click", function (event) {
+    if (event.target.closest("a")) setOpen(false);
+  });
+
+  window.addEventListener("resize", function () {
+    if (window.matchMedia("(min-width: 768px)").matches) setOpen(false);
+  });
+})();
+</script>
 `,
     monthlyLinksExcluded,
     scheduleHubApplied: scheduleHub,

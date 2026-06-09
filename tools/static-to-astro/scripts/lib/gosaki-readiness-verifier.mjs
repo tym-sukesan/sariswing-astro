@@ -23,6 +23,10 @@ import { loadExportEnv, supabaseHostFromUrl } from "./supabase-json-exporter.mjs
 export const SITE_SLUG = "gosaki";
 export const PROFILE_ID = "musician";
 export const BASE_URL = "https://www.gosaki-piano.com";
+/** Staging preview host (subdirectory FTP on yskcreate.weblike.jp). */
+export const STAGING_SITE_URL = "https://yskcreate.weblike.jp";
+/** Astro base + FTP server dir for staging subdirectory deploy. */
+export const STAGING_DEPLOY_BASE = "/cms-kit-staging/gosaki/";
 
 export const PATHS = {
   fixture: "tools/static-to-astro/fixtures/gosaki-static-site",
@@ -477,7 +481,9 @@ export function runGosakiReadinessVerification(opts) {
     PATHS.fixture,
     PATHS.generatedAstro,
     "--base-url",
-    BASE_URL,
+    STAGING_SITE_URL,
+    "--deploy-base",
+    STAGING_DEPLOY_BASE,
     "--verify-build",
     "--with-admin-cms",
     "--site-profile",

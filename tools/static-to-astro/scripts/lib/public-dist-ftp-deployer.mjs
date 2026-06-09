@@ -6,6 +6,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
+import { isStagingSubdirBuild, normalizeDeployBase } from "./deploy-base.mjs";
 import {
   listPublicFiles,
   loadOptionalSecretsForScan,
@@ -255,22 +256,45 @@ export function validatePublicDirForDeploy(publicDir, toolRoot) {
 }
 
 /**
+ * Build lftp script that mirrors public-dist *contents* into serverDir (not public-dist/ itself).
+ * @param {{ serverDir: string, publicDir: string, includeLegacyCleanup?: boolean }} opts
+ */
+export function buildLftpMirrorScript({ serverDir, publicDir, includeLegacyCleanup = true }) {
+  const local = path.resolve(publicDir);
+  const remote = serverDir.trim().replace(/\/$/, "") || serverDir;
+
+  const parts = [
+    "set ftp:ssl-allow true",
+    `cd ${remote}`,
+    `lcd ${local}`,
+    "mirror -R --delete --verbose -X .env* . .",
+  ];
+
+  if (includeLegacyCleanup) {
+    // Remove mistaken prior deploy that created public-dist/ under serverDir.
+    parts.push("rm -r -f public-dist");
+  }
+
+  parts.push("bye");
+  return parts.join("; ");
+}
+
+/**
  * @param {{ server: string, username: string, serverDir: string, publicDir: string }} opts
  */
 export function buildLftpMirrorPreview({ server, username, serverDir, publicDir }) {
-  const local = path.resolve(publicDir);
-  return (
-    `lftp -u "${username}","***" "${server}" ` +
-    `-e "mirror -R --delete --verbose ${local} ${serverDir}; bye"`
-  );
+  const script = buildLftpMirrorScript({ serverDir, publicDir });
+  return `lftp -u "${username}","***" "${server}" -e "${script}"`;
 }
 
 /**
  * @param {{ server: string, username: string, password: string, serverDir: string, publicDir: string }} opts
  */
 export function runLftpMirrorApply(opts) {
-  const local = path.resolve(opts.publicDir);
-  const script = `set ftp:ssl-allow true; mirror -R --delete --verbose -X .env* ${local} ${opts.serverDir}; bye`;
+  const script = buildLftpMirrorScript({
+    serverDir: opts.serverDir,
+    publicDir: opts.publicDir,
+  });
   const result = spawnSync(
     "lftp",
     ["-u", `${opts.username},${opts.password}`, opts.server, "-e", script],
@@ -286,6 +310,8 @@ export function runLftpMirrorApply(opts) {
     stdout,
     stderr,
     ftpConnected: true,
+    mirrorMode: "contents-only",
+    legacyPublicDistCleanup: true,
   };
 }
 
@@ -325,7 +351,7 @@ export function runPublicDistFtpDeploy(opts) {
   let lftpPreview = null;
   let lftpResult = null;
 
-  const canAttemptApply =
+  let canAttemptApply =
     mode === "apply" &&
     envResult.ok &&
     publicValidation.ok &&
@@ -335,6 +361,46 @@ export function runPublicDistFtpDeploy(opts) {
 
   if (mode === "apply" && !ftpEnv.complete) {
     errors.push(`missing staging FTP env: ${ftpEnv.missing.join(", ")}`);
+  }
+
+  const staticManifest = publicValidation.manifest;
+  const deployBase =
+    staticManifest?.deployBase ?? normalizeDeployBase(ftpEnv.serverDir);
+  const stagingSubdirBuild =
+    staticManifest?.stagingSubdirBuild ?? isStagingSubdirBuild(deployBase);
+  const assetPathsIncludeBase = staticManifest?.assetPathsIncludeBase ?? false;
+  const stagingNoindex = staticManifest?.stagingNoindex ?? stagingSubdirBuild;
+  const robotsDisallowAll = staticManifest?.robotsDisallowAll ?? stagingSubdirBuild;
+  const productionIndexable = staticManifest?.productionIndexable ?? !stagingSubdirBuild;
+  const canonicalMode = staticManifest?.canonicalMode ?? (stagingSubdirBuild ? "staging-url" : "production");
+
+  if (
+    canAttemptApply &&
+    stagingSubdirBuild &&
+    !assetPathsIncludeBase
+  ) {
+    errors.push(
+      "public-dist missing staging deploy base in asset/nav paths — rebuild with --deploy-base before --apply",
+    );
+    canAttemptApply = false;
+  }
+
+  if (canAttemptApply && stagingSubdirBuild && (!stagingNoindex || !robotsDisallowAll)) {
+    errors.push(
+      "public-dist missing staging noindex / robots Disallow — rebuild with --deploy-base before --apply",
+    );
+    canAttemptApply = false;
+  }
+
+  if (
+    canAttemptApply &&
+    stagingSubdirBuild &&
+    staticManifest?.canonicalMode === "production-leak"
+  ) {
+    errors.push(
+      "public-dist still contains production canonical / og:url — rebuild with --deploy-base before --apply",
+    );
+    canAttemptApply = false;
   }
 
   if (canAttemptApply) {
@@ -406,6 +472,17 @@ export function runPublicDistFtpDeploy(opts) {
       productionRequiresBackup: true,
     },
     lftpPreview: lftpPreview ?? null,
+    mirrorMode: "contents-only",
+    uploadedContentsOfPublicDist: true,
+    remoteRootReceivesIndexHtml: publicValidation.indexHtmlExists,
+    legacyPublicDistDirRemoved: mode === "apply" && canAttemptApply && lftpResult?.legacyPublicDistCleanup === true,
+    deployBase,
+    stagingSubdirBuild,
+    assetPathsIncludeBase,
+    stagingNoindex,
+    robotsDisallowAll,
+    productionIndexable,
+    canonicalMode,
   };
 
   const dryRunPass = envResult.ok && publicValidation.ok && !dirRisk.blocked && !ftpEnv.usedProdPrefix;
@@ -488,6 +565,20 @@ export function writeDeployReport(result, reportPath, repoRoot) {
     `- safeForStaticFtp: ${result.publicValidation.safeForStaticFtp ? "true" : "false"}`,
     `- secret leak scan: ${result.publicValidation.secretLeakOk ? "OK" : "FAIL"}`,
     "",
+    "## Mirror layout",
+    "",
+    `- deployBase: \`${result.manifest.deployBase ?? "—"}\``,
+    `- stagingSubdirBuild: ${result.manifest.stagingSubdirBuild ? "yes" : "no"}`,
+    `- asset paths include base: ${result.manifest.assetPathsIncludeBase ? "yes" : "no"}`,
+    `- stagingNoindex: ${result.manifest.stagingNoindex ? "yes" : "no"}`,
+    `- robotsDisallowAll: ${result.manifest.robotsDisallowAll ? "yes" : "no"}`,
+    `- productionIndexable: ${result.manifest.productionIndexable ? "yes" : "no"}`,
+    `- canonicalMode: ${result.manifest.canonicalMode ?? "—"}`,
+    `- mirror mode: ${result.manifest.mirrorMode ?? "contents-only"}`,
+    `- uploaded contents of public-dist: ${result.manifest.uploadedContentsOfPublicDist ? "yes" : "no"}`,
+    `- remote root receives index.html: ${result.manifest.remoteRootReceivesIndexHtml ? "yes" : "no"}`,
+    `- legacy public-dist/ cleanup attempted: ${result.manifest.legacyPublicDistDirRemoved ? "yes" : "no (dry-run or not applied)"}`,
+    "",
     "## Staging FTP target (no passwords)",
     "",
     `- server: ${result.ftpEnv.server ?? "(not configured)"}`,
@@ -551,6 +642,15 @@ export function formatDeploySummary(result) {
     `public-dir safe: ${result.publicValidation.ok ? "yes" : "no"}`,
     `admin/api/server excluded: ${result.publicValidation.adminExcluded && result.publicValidation.apiExcluded && result.publicValidation.serverExcluded ? "yes" : "no"}`,
     `safeForStaticFtp: ${result.publicValidation.safeForStaticFtp}`,
+    `deployBase: ${result.manifest.deployBase ?? "—"}`,
+    `stagingSubdirBuild: ${result.manifest.stagingSubdirBuild ? "yes" : "no"}`,
+    `asset paths include base: ${result.manifest.assetPathsIncludeBase ? "yes" : "no"}`,
+    `stagingNoindex: ${result.manifest.stagingNoindex ? "yes" : "no"}`,
+    `robotsDisallowAll: ${result.manifest.robotsDisallowAll ? "yes" : "no"}`,
+    `productionIndexable: ${result.manifest.productionIndexable ? "yes" : "no"}`,
+    `mirror mode: ${result.manifest.mirrorMode ?? "contents-only"}`,
+    `uploaded contents of public-dist: ${result.manifest.uploadedContentsOfPublicDist ? "yes" : "no"}`,
+    `remote root receives index.html: ${result.manifest.remoteRootReceivesIndexHtml ? "yes" : "no"}`,
     `secret leak: ${result.publicValidation.secretLeakOk ? "none" : "FAIL"}`,
     `overall: ${result.ok ? "PASS" : "FAIL"}`,
   ].join("\n");

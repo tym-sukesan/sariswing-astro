@@ -63,6 +63,22 @@ export async function fetchSupabaseCmsData(env) {
   return { scheduleMonths, schedules, discography, discographyTracks };
 }
 
+const PLACEHOLDER_IMAGE_HOSTS = new Set(["example.supabase.co"]);
+
+/**
+ * @param {string | null | undefined} url
+ */
+export function sanitizePublicImageUrl(url) {
+  if (!url) return null;
+  if (String(url).includes("example.supabase.co")) return null;
+  try {
+    if (PLACEHOLDER_IMAGE_HOSTS.has(new URL(url).hostname)) return null;
+  } catch {
+    // keep non-URL strings (relative paths)
+  }
+  return url;
+}
+
 /**
  * @param {string | null | undefined} isoDate
  */
@@ -121,10 +137,10 @@ export function transformSchedules(rows) {
       start_time: row.start_time ?? null,
       price: row.price ?? null,
       description: row.description ?? null,
-      image: row.image_url ?? null,
-      image_url: row.image_url ?? null,
-      home_image: row.home_image_url ?? null,
-      home_image_url: row.home_image_url ?? null,
+      image: sanitizePublicImageUrl(row.image_url),
+      image_url: sanitizePublicImageUrl(row.image_url),
+      home_image: sanitizePublicImageUrl(row.home_image_url),
+      home_image_url: sanitizePublicImageUrl(row.home_image_url),
       show_on_home: Boolean(row.show_on_home),
       home_order: row.home_order ?? null,
       published: row.published !== false,
@@ -177,8 +193,8 @@ export function transformDiscography(discographyRows, trackRows) {
         catalog_number: row.catalog_number ?? null,
         release_display: null,
         description: row.description ?? null,
-        cover_image: row.cover_image_url ?? null,
-        cover_image_url: row.cover_image_url ?? null,
+        cover_image: sanitizePublicImageUrl(row.cover_image_url),
+        cover_image_url: sanitizePublicImageUrl(row.cover_image_url),
         cover_alt: title ? `「${title}」ジャケット` : null,
         tracks: tracksByAlbum.get(row.legacy_id) ?? [],
         streaming_url: row.streaming_url ?? null,

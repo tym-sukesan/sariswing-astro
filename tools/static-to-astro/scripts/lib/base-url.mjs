@@ -2,6 +2,8 @@
  * baseUrl normalization for canonical / og:url / og:image (Phase 2-D).
  */
 
+import { buildDeployOrigin, normalizeDeployBase } from "./deploy-base.mjs";
+
 /**
  * @param {string} baseUrl
  */
@@ -47,10 +49,11 @@ export function toAbsoluteAssetUrl(baseUrl, assetPath) {
  * @param {object} seo extracted SEO
  * @param {string} route Astro route
  * @param {string | null} baseUrl
+ * @param {string | null | undefined} [deployBase]
  */
-export function applyBaseUrlToSeo(seo, route, baseUrl) {
-  const normalized = normalizeBaseUrl(baseUrl);
-  if (!normalized) {
+export function applyBaseUrlToSeo(seo, route, baseUrl, deployBase = "/") {
+  const origin = buildDeployOrigin(baseUrl, deployBase) ?? normalizeBaseUrl(baseUrl);
+  if (!origin) {
     return {
       ...seo,
       baseUrlApplied: false,
@@ -61,12 +64,14 @@ export function applyBaseUrlToSeo(seo, route, baseUrl) {
   const ogUrlOriginal = seo.ogUrl || "";
   const ogImageOriginal = seo.ogImage || "";
 
-  const canonical = routeToAbsoluteUrl(normalized, route);
+  const canonical = routeToAbsoluteUrl(origin, route);
   const ogUrl = canonical;
   let ogImage = seo.ogImage || "";
   if (ogImage && !/^https?:\/\//i.test(ogImage) && !ogImage.startsWith("data:")) {
-    ogImage = toAbsoluteAssetUrl(normalized, ogImage);
+    ogImage = toAbsoluteAssetUrl(origin, ogImage);
   }
+
+  const stagingBuild = normalizeDeployBase(deployBase) !== "/";
 
   return {
     ...seo,
@@ -77,19 +82,21 @@ export function applyBaseUrlToSeo(seo, route, baseUrl) {
     ogUrlOriginal,
     ogImageOriginal,
     baseUrlApplied: true,
-    baseUrl: normalized,
+    baseUrl: origin,
+    canonicalMode: stagingBuild ? "staging-url" : "production",
   };
 }
 
 /**
  * @param {Array<{ seo: object, route: string, sourcePath: string }>} pages
  * @param {string | null} baseUrl
+ * @param {string | null | undefined} [deployBase]
  */
-export function applyBaseUrlToPages(pages, baseUrl) {
-  if (!normalizeBaseUrl(baseUrl)) return pages;
+export function applyBaseUrlToPages(pages, baseUrl, deployBase = "/") {
+  if (!buildDeployOrigin(baseUrl, deployBase) && !normalizeBaseUrl(baseUrl)) return pages;
   return pages.map((page) => ({
     ...page,
-    seo: applyBaseUrlToSeo(page.seo, page.route, baseUrl),
+    seo: applyBaseUrlToSeo(page.seo, page.route, baseUrl, deployBase),
   }));
 }
 

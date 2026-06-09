@@ -181,4 +181,30 @@ gosaki 例: `templateId: musician-basic` + `schemaAdapterId: musician-basic-supa
 
 ---
 
-*G-5f 以降: config からの staging dry-run 生成。write 系 CLI への site-config 対応は別フェーズ。*
+---
+
+## Staging generation plan (G-5f)
+
+site config + template registry + schema adapter から read-only plan を生成します。
+
+```bash
+node tools/static-to-astro/scripts/plan-staging-generation.mjs \
+  --site-config tools/static-to-astro/config/sites/gosaki.site-config.example.json
+```
+
+出力（デフォルト）:
+
+```txt
+tools/static-to-astro/output/plans/{siteSlug}/STAGING_GENERATION_PLAN.md
+tools/static-to-astro/output/plans/{siteSlug}/staging-generation-plan.json
+```
+
+- `recommendedWorkflow` — CLI 実行順序と safety gate
+- `productionReadiness.ready` — 常に false（gosaki 含む）
+- safety flags すべて false（upload / DB / FTP / Astro 未実施）
+
+詳細: [staging-generation-plan.md](./staging-generation-plan.md)
+
+---
+
+*G-5g 以降: plan から dry-run site generation。write 系 CLI への site-config 対応は別フェーズ。*

@@ -115,4 +115,15 @@ G-5e では metadata / validation のみ。DB 作成・upload / DB update には
 
 ---
 
-*G-5d: template registry. G-5e: schema adapter draft. Generation wiring starts in G-5f.*
+## Staging generation plan（G-5f）
+
+3層統合 plan は [staging-generation-plan.md](./staging-generation-plan.md) を参照。
+
+```bash
+node tools/static-to-astro/scripts/plan-staging-generation.mjs \
+  --site-config tools/static-to-astro/config/sites/gosaki.site-config.example.json
+```
+
+---
+
+*G-5d: template registry. G-5e: schema adapter. G-5f: staging plan. Generation wiring starts in G-5g.*

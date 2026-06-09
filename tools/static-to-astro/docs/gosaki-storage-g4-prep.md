@@ -316,16 +316,75 @@ node tools/static-to-astro/scripts/upload-storage-assets.mjs \
 
 ---
 
-## 12. 次フェーズの切り分け
+## 12. G-4c — staging DB update（discography.cover_image_url 4件）
+
+G-4b upload 後の public URL を staging DB `discography.cover_image_url` に反映。Storage upload は行わない。`schedules` は触らない。
+
+### コマンド
+
+```bash
+# Dry-run
+node tools/static-to-astro/scripts/apply-storage-db-updates.mjs \
+  --plan tools/static-to-astro/output/storage/gosaki/storage-db-update-plan.json \
+  --site-slug gosaki \
+  --table discography \
+  --report tools/static-to-astro/output/storage/gosaki/STORAGE_DB_UPDATE_REPORT.md \
+  --manifest tools/static-to-astro/output/storage/gosaki/storage-db-update-result.json \
+  --backup tools/static-to-astro/output/storage/gosaki/storage-db-update-backup.json
+
+# Apply（更新前 backup 必須）
+node tools/static-to-astro/scripts/apply-storage-db-updates.mjs \
+  ...同上... \
+  --apply
+```
+
+### 成果物（`output/` — Git 管理外）
+
+| ファイル | パス |
+| --- | --- |
+| DB update report | `STORAGE_DB_UPDATE_REPORT.md` |
+| DB update result | `storage-db-update-result.json` |
+| Pre-update backup | `storage-db-update-backup.json` |
+
+### Apply 後パイプライン
+
+```bash
+node tools/static-to-astro/scripts/export-supabase-json.mjs \
+  --out-astro-dir tools/static-to-astro/output/generated-astro \
+  --report tools/static-to-astro/output/supabase-export/gosaki/SUPABASE_EXPORT_REPORT.md
+
+cd tools/static-to-astro/output/generated-astro && npm install && npm run build && cd ../../..
+
+node tools/static-to-astro/scripts/verify-static-public-artifact.mjs \
+  --astro-dir tools/static-to-astro/output/generated-astro \
+  --report tools/static-to-astro/output/static-public/gosaki/STATIC_PUBLIC_ARTIFACT_REPORT.md
+
+node tools/static-to-astro/scripts/deploy-public-dist-ftp.mjs \
+  --public-dir tools/static-to-astro/output/static-public/gosaki/public-dist \
+  --site-slug gosaki --env staging --apply \
+  --report tools/static-to-astro/output/deploy/gosaki/STAGING_FTP_DEPLOY_APPLY_REPORT.md \
+  --manifest tools/static-to-astro/output/deploy/gosaki/staging-ftp-deploy-manifest.json
+```
+
+### 目視 QA
+
+- https://yskcreate.weblike.jp/cms-kit-staging/gosaki/discography/
+- 4件 cover 画像表示 / `example.supabase.co` なし / noindex 維持
+- schedule 画像は pending のままで OK
+
+---
+
+## 13. 次フェーズの切り分け
 
 | フェーズ | 内容 |
 | --- | --- |
 | **G-4a** | fixture → legacy_id review manifest（**完了**） |
 | **G-4b-prep** | review manifest → upload allowlist（**完了**） |
-| **G-4b** | allowlist approved のみ staging Storage upload（**完了** — discography 4件） |
-| **G-4c** | `storage-db-update-plan.json` に基づき staging DB `cover_image_url` 更新 → export → build → FTP QA |
-| **本番導入** | 別ゲート — production Supabase / FTP / `--deploy-base` なし build |
+| **G-4b** | allowlist approved のみ staging Storage upload（**完了**） |
+| **G-4c** | staging DB `cover_image_url` 更新 + export → build → FTP QA（**完了**） |
+| **G-4d** | schedule 画像 human review → allowlist promote → upload + DB（未着手） |
+| **本番導入** | 別ゲート — production Supabase / FTP |
 
 ---
 
-Phase G-4 prep + G-4a + G-4b-prep + G-4b upload: staging discography covers uploaded。DB update は **G-4c** で staging のみ実施する。
+Phase G-4 discography cover path: staging Storage + DB + public site QA **完了**。Schedule 画像は G-4d で継続。

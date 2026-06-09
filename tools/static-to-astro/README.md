@@ -1344,6 +1344,30 @@ node tools/static-to-astro/scripts/upload-storage-assets.mjs \
 
 **デフォルト:** dry-run。**`--apply`** で staging upload（`approvedForStagingUpload` のみ）。**DB update は常に未実施。** `--overwrite` で既存 object 上書き（省略時は skip）。
 
+#### G-4c: Staging DB update（discography.cover_image_url、Storage upload なし）
+
+`storage-db-update-plan.json` から staging DB の `discography.cover_image_url` 4件のみ更新。`--apply` 時は事前 backup 必須。
+
+| 項目 | 内容 |
+| --- | --- |
+| CLI | `apply-storage-db-updates.mjs` |
+| 設計 doc | [docs/gosaki-storage-g4-prep.md](docs/gosaki-storage-g4-prep.md) §12 |
+
+```bash
+node tools/static-to-astro/scripts/apply-storage-db-updates.mjs \
+  --plan tools/static-to-astro/output/storage/gosaki/storage-db-update-plan.json \
+  --site-slug gosaki \
+  --table discography \
+  --report tools/static-to-astro/output/storage/gosaki/STORAGE_DB_UPDATE_REPORT.md \
+  --manifest tools/static-to-astro/output/storage/gosaki/storage-db-update-result.json \
+  --backup tools/static-to-astro/output/storage/gosaki/storage-db-update-backup.json \
+  --apply
+```
+
+Apply 後: `export-supabase-json` → build → `verify-static-public-artifact` → staging FTP `--apply`（[gosaki-staging-runbook.md](docs/gosaki-staging-runbook.md)）。
+
+**禁止（G-4c）:** Storage upload、`schedules` テーブル更新、production Supabase。
+
 ---
 
 ### Phase 3-W: Site profile system（設計・dry-run 検証）

@@ -207,4 +207,21 @@ tools/static-to-astro/output/plans/{siteSlug}/staging-generation-plan.json
 
 ---
 
-*G-5g 以降: plan から dry-run site generation。write 系 CLI への site-config 対応は別フェーズ。*
+---
+
+## Dry-run generation package (G-5g)
+
+plan または site config から generation package を出力します。
+
+```bash
+node tools/static-to-astro/scripts/generate-site-dry-run.mjs \
+  --site-config tools/static-to-astro/config/sites/gosaki.site-config.example.json
+```
+
+出力: `output/generation-packages/{siteSlug}/`（gitignore）
+
+詳細: [site-generation-dry-run.md](./site-generation-dry-run.md)
+
+---
+
+*G-5h 以降: onboarding runbook。write 系 CLI への site-config 対応は別フェーズ。*

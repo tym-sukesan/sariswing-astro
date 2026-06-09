@@ -133,10 +133,16 @@ gosaki site config では plan に以下の site notes が含まれます:
 
 | Phase | 内容 |
 | --- | --- |
-| **G-5g** | plan から dry-run site generation へ接続 |
+| **G-5g** | plan から dry-run generation package（**完了** — [site-generation-dry-run.md](./site-generation-dry-run.md)） |
 | **G-5h** | onboarding runbook / 顧客チェックリスト |
+| **G-5i** | Admin CMS template extraction |
 | Later | write CLI の site-config 対応 |
+
+```bash
+node tools/static-to-astro/scripts/generate-site-dry-run.mjs \
+  --plan tools/static-to-astro/output/plans/gosaki/staging-generation-plan.json
+```
 
 ---
 
-*G-5f: read-only plan only. No Astro / DB / Storage / FTP operations.*
+*G-5f: read-only plan only. G-5g: dry-run package from plan. No Astro / DB / Storage / FTP operations.*

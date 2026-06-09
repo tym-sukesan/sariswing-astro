@@ -126,4 +126,10 @@ node tools/static-to-astro/scripts/plan-staging-generation.mjs \
 
 ---
 
-*G-5d: template registry. G-5e: schema adapter. G-5f: staging plan. Generation wiring starts in G-5g.*
+## Dry-run generation package（G-5g）
+
+[site-generation-dry-run.md](./site-generation-dry-run.md) — plan から `planned-files.json` 等を出力。
+
+---
+
+*G-5d: template registry. G-5e: schema adapter. G-5f: staging plan. G-5g: dry-run package.*

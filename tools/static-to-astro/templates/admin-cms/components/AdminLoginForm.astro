@@ -1,0 +1,78 @@
+---
+/**
+ * CMS Kit Admin login form scaffold (G-5m-b).
+ * No Supabase Auth, fetch, or submit handler.
+ */
+import AdminFormField from "./AdminFormField.astro";
+
+interface Props {
+  title?: string;
+  description?: string;
+  emailLabel?: string;
+  passwordLabel?: string;
+  submitLabel?: string;
+  forgotPasswordHref?: string;
+  disabled?: boolean;
+  readonlyNotice?: string;
+}
+
+const {
+  title = "Admin login",
+  description = "Sign in to manage site content.",
+  emailLabel = "Email",
+  passwordLabel = "Password",
+  submitLabel = "Sign in",
+  forgotPasswordHref = "#forgot-password",
+  disabled = true,
+  readonlyNotice = "Scaffold only — no Supabase Auth connection.",
+} = Astro.props;
+---
+
+<form
+  class="admin-login-form"
+  method="dialog"
+  action="#"
+  data-scaffold="true"
+  data-auth="login"
+  onsubmit="return false;"
+>
+  <h2 class="admin-login-form__title">{title}</h2>
+  {description ? <p class="admin-login-form__description">{description}</p> : null}
+
+  {readonlyNotice ? (
+    <p class="admin-readonly-notice admin-login-form__notice" role="note">
+      {readonlyNotice}
+    </p>
+  ) : null}
+
+  <AdminFormField label={emailLabel} htmlFor="admin-login-email">
+    <input
+      id="admin-login-email"
+      type="email"
+      name="email"
+      autocomplete="username"
+      placeholder="admin@example.com"
+      disabled={disabled}
+    />
+  </AdminFormField>
+
+  <AdminFormField label={passwordLabel} htmlFor="admin-login-password">
+    <input
+      id="admin-login-password"
+      type="password"
+      name="password"
+      autocomplete="current-password"
+      placeholder="••••••••"
+      disabled={disabled}
+    />
+  </AdminFormField>
+
+  <div class="admin-login-form__actions">
+    <button class="admin-button" type="button" disabled={disabled} title="Scaffold only — no login">
+      {submitLabel}
+    </button>
+    <a class="admin-login-form__forgot" href={forgotPasswordHref}>
+      Forgot password?
+    </a>
+  </div>
+</form>

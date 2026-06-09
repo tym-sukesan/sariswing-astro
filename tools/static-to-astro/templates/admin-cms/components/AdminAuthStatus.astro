@@ -1,0 +1,43 @@
+---
+/**
+ * CMS Kit Admin auth status display scaffold (G-5m-b).
+ */
+
+type AuthStatus = "unknown" | "signed-out" | "signed-in" | "admin" | "denied";
+
+interface Props {
+  status?: AuthStatus;
+  email?: string;
+  role?: string;
+  message?: string;
+}
+
+const {
+  status = "unknown",
+  email = "",
+  role = "",
+  message = "",
+} = Astro.props;
+
+const statusLabels: Record<AuthStatus, string> = {
+  unknown: "Unknown",
+  "signed-out": "Signed out",
+  "signed-in": "Signed in",
+  admin: "Admin",
+  denied: "Access denied",
+};
+---
+
+<div
+  class={`admin-auth-status admin-auth-status--${status}`}
+  role="status"
+  aria-live="polite"
+  data-scaffold="true"
+  data-auth-status={status}
+>
+  <p class="admin-auth-status__label">Auth status</p>
+  <p class="admin-auth-status__value">{statusLabels[status]}</p>
+  {email ? <p class="admin-auth-status__email">{email}</p> : null}
+  {role ? <p class="admin-auth-status__role">Role: {role}</p> : null}
+  {message ? <p class="admin-auth-status__message">{message}</p> : null}
+</div>

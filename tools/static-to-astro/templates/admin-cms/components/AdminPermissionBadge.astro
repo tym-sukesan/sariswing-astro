@@ -1,0 +1,24 @@
+---
+/**
+ * CMS Kit Admin permission / role badge scaffold (G-5m-b).
+ */
+
+type PermissionVariant = "admin" | "editor" | "viewer" | "denied";
+
+interface Props {
+  role?: string;
+  label?: string;
+  variant?: PermissionVariant;
+}
+
+const { role = "", label = "", variant = "viewer" } = Astro.props;
+const displayLabel = label || role || variant;
+---
+
+<span
+  class={`admin-permission-badge admin-permission-badge--${variant}`}
+  data-scaffold="true"
+  data-role={role || variant}
+>
+  {displayLabel}
+</span>

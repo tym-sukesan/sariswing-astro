@@ -12,6 +12,7 @@
 - [admin-ui-components-registry.md](./admin-ui-components-registry.md) — **G-5k** Admin UI components registry
 - [admin-ui-shell-scaffold.md](./admin-ui-shell-scaffold.md) — **G-5l** Admin UI shell scaffold
 - [admin-crud-ui-scaffold.md](./admin-crud-ui-scaffold.md) — **G-5m-a** CRUD UI scaffold
+- [admin-auth-abstraction-scaffold.md](./admin-auth-abstraction-scaffold.md) — **G-5m-b** Auth abstraction
 - [sariswing-vs-cms-kit-gap-analysis.md](./sariswing-vs-cms-kit-gap-analysis.md)
 - [cms-template-registry.md](./cms-template-registry.md)
 - [cms-schema-adapters.md](./cms-schema-adapters.md)
@@ -324,7 +325,7 @@ node tools/static-to-astro/scripts/generate-site-dry-run.mjs --site-config ...
 | **G-5k** | Admin UI components **registry / plan**（**完了**） | doc + registry JSON のみ |
 | **G-5l** | Low-risk UI shell components scaffold（**完了**） | CMS Kit `templates/admin-cms/components/` のみ |
 | **G-5m-a** | CRUD primitives + module UI scaffold（**完了**） | `components/` + `modules/` のみ |
-| **G-5m-b** | Auth abstraction plan or scaffold | write-local |
+| **G-5m-b** | Auth abstraction scaffold（**完了**） | `components/` + `auth/` のみ |
 | **G-5n** | Media upload abstraction | staging upload（承認後） |
 | **G-5o** | Publish workflow abstraction | staging dispatch（承認後） |
 | **G-5p** | musician-basic admin prototype | staging only |
@@ -352,16 +353,16 @@ node tools/static-to-astro/scripts/generate-site-dry-run.mjs --site-config ...
 
 ---
 
-## 12. Immediate next step — G-5m-a / G-5m-b
+## 12. Immediate next step — G-5m-b / G-5n
 
-**G-5l（完了）:** [admin-ui-shell-scaffold.md](./admin-ui-shell-scaffold.md) — 10 low-risk shell components。
+**G-5m-a（完了）:** [admin-crud-ui-scaffold.md](./admin-crud-ui-scaffold.md) — CRUD primitives + module UIs。
 
-**G-5m-a（完了）:** [admin-crud-ui-scaffold.md](./admin-crud-ui-scaffold.md) — 5 CRUD primitives + 4 module UIs。Supabase / Auth / Storage / Publish 未接続。Sariswing 未変更。
+**G-5m-b（完了）:** [admin-auth-abstraction-scaffold.md](./admin-auth-abstraction-scaffold.md) — Auth UI scaffold + permissions draft。Supabase Auth 未接続、`admin-auth-guard` は planned。
 
-**G-5m-b / G-5n（次）:** Auth abstraction（G-5m-b）または Media upload（G-5n）。
+**G-5n（次）:** Media upload abstraction。
 
 **禁止（継続）:** Sariswing 本番 touch、DB update、Storage upload、FTP、GHA dispatch
 
 ---
 
-*G-5i: plan. G-5j: inventory. G-5k: registry. G-5l: shell. G-5m-a: CRUD UI. G-5m-b+: Auth / Media / Publish.*
+*G-5l: shell. G-5m-a: CRUD. G-5m-b: Auth UI. G-5n+: Media / Publish / prototype.*

@@ -1,0 +1,26 @@
+---
+/**
+ * CMS Kit Admin access denied panel scaffold (G-5m-b).
+ */
+
+interface Props {
+  title?: string;
+  message?: string;
+  supportMessage?: string;
+  backHref?: string;
+}
+
+const {
+  title = "Access denied",
+  message = "You do not have permission to view this page.",
+  supportMessage = "Contact your site administrator if you believe this is an error.",
+  backHref = "#",
+} = Astro.props;
+---
+
+<section class="admin-access-denied" data-scaffold="true" aria-labelledby="access-denied-title">
+  <h2 class="admin-access-denied__title" id="access-denied-title">{title}</h2>
+  <p class="admin-access-denied__message">{message}</p>
+  {supportMessage ? <p class="admin-access-denied__support">{supportMessage}</p> : null}
+  <a class="admin-button admin-button--secondary" href={backHref}>Back</a>
+</section>

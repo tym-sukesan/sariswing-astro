@@ -1,0 +1,26 @@
+{
+  "mode": "scaffold-only",
+  "provider": "supabase-auth",
+  "connectedToRuntime": false,
+  "productionReady": false,
+  "recommendedInitialStrategy": "single-site-supabase-project",
+  "roles": [
+    {
+      "role": "admin",
+      "description": "Can manage all CMS modules and trigger staging publish."
+    },
+    {
+      "role": "editor",
+      "description": "Can edit CMS content but cannot manage settings or production publish."
+    },
+    {
+      "role": "viewer",
+      "description": "Can view admin data but cannot save changes."
+    }
+  ],
+  "identitySources": [
+    "supabase.auth.user.email",
+    "admin_users table or config allowlist"
+  ],
+  "doNotUseInProductionYet": true
+}

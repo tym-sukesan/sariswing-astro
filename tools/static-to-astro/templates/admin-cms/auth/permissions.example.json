@@ -1,0 +1,52 @@
+{
+  "mode": "scaffold-only",
+  "connectedToRuntime": false,
+  "productionReady": false,
+  "modules": [
+    {
+      "module": "dashboard",
+      "permissions": {
+        "viewer": ["read"],
+        "editor": ["read"],
+        "admin": ["read"]
+      }
+    },
+    {
+      "module": "news",
+      "permissions": {
+        "viewer": ["read"],
+        "editor": ["read", "create", "update"],
+        "admin": ["read", "create", "update", "delete", "restore"]
+      }
+    },
+    {
+      "module": "schedule",
+      "permissions": {
+        "viewer": ["read"],
+        "editor": ["read", "create", "update"],
+        "admin": ["read", "create", "update", "delete", "restore", "duplicate"]
+      }
+    },
+    {
+      "module": "media",
+      "permissions": {
+        "viewer": ["read"],
+        "editor": ["read"],
+        "admin": ["read", "upload", "replace", "remove"]
+      }
+    },
+    {
+      "module": "publish",
+      "permissions": {
+        "viewer": [],
+        "editor": ["request-staging-publish"],
+        "admin": ["trigger-staging-publish"]
+      }
+    }
+  ],
+  "productionPublish": {
+    "enabledByDefault": false,
+    "requiredRole": "admin",
+    "requiresExplicitApproval": true
+  }
+}

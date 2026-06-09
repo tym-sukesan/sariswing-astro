@@ -1,0 +1,76 @@
+---
+/**
+ * CMS Kit Admin Auth UI — composition example (G-5m-b).
+ *
+ * Scaffold only.
+ * - No Supabase Auth
+ * - No RLS changes
+ * - No DB update
+ * - No production auth
+ */
+import AdminLayout from "../components/AdminLayout.astro";
+import AdminPageHeader from "../components/AdminPageHeader.astro";
+import AdminCard from "../components/AdminCard.astro";
+import AdminStatusMessage from "../components/AdminStatusMessage.astro";
+import AdminLoginForm from "../components/AdminLoginForm.astro";
+import AdminPasswordResetForm from "../components/AdminPasswordResetForm.astro";
+import AdminAuthStatus from "../components/AdminAuthStatus.astro";
+import AdminPermissionBadge from "../components/AdminPermissionBadge.astro";
+import AdminAccessDenied from "../components/AdminAccessDenied.astro";
+---
+
+<AdminLayout
+  title="Auth"
+  siteName="CMS Kit Admin"
+  stagingLabel="Auth scaffold example"
+>
+  <AdminStatusMessage
+    slot="status"
+    type="info"
+    title="Scaffold only"
+    message="Auth UI and permissions model draft. No Supabase Auth, RLS changes, or DB update."
+  />
+
+  <AdminPageHeader
+    title="Authentication"
+    description="Auth abstraction plan — UI scaffold without runtime connection."
+  />
+
+  <div class="admin-auth-example-grid">
+    <AdminCard title="Login" description="AdminLoginForm scaffold.">
+      <AdminLoginForm disabled={true} />
+    </AdminCard>
+
+    <AdminCard title="Password reset" description="Request and reset modes.">
+      <AdminPasswordResetForm mode="request" disabled={true} />
+      <hr class="admin-auth-divider" />
+      <AdminPasswordResetForm mode="reset" disabled={true} />
+    </AdminCard>
+
+    <AdminCard title="Auth status" description="Signed-in / denied states.">
+      <AdminAuthStatus
+        status="admin"
+        email="admin@example.com"
+        role="admin"
+        message="Example signed-in admin state."
+      />
+      <AdminAuthStatus
+        status="denied"
+        message="Example denied state — insufficient permissions."
+      />
+    </AdminCard>
+
+    <AdminCard title="Roles" description="Permission badges by variant.">
+      <div class="admin-permission-badge-row">
+        <AdminPermissionBadge variant="admin" label="Admin" />
+        <AdminPermissionBadge variant="editor" label="Editor" />
+        <AdminPermissionBadge variant="viewer" label="Viewer" />
+        <AdminPermissionBadge variant="denied" label="Denied" />
+      </div>
+    </AdminCard>
+
+    <AdminCard title="Access denied" description="Insufficient permissions panel.">
+      <AdminAccessDenied backHref="#login" />
+    </AdminCard>
+  </div>
+</AdminLayout>

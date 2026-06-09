@@ -528,6 +528,174 @@
   margin: 0;
 }
 
+/* G-5m-b — Auth UI scaffold */
+
+.admin-login-form,
+.admin-password-reset-form {
+  max-width: 24rem;
+}
+
+.admin-login-form__title,
+.admin-password-reset-form__title {
+  margin: 0 0 0.35rem;
+  font-size: 1.15rem;
+}
+
+.admin-login-form__description,
+.admin-password-reset-form__description {
+  margin: 0 0 0.85rem;
+  color: var(--admin-color-muted);
+  font-size: 0.9rem;
+}
+
+.admin-login-form__notice {
+  margin-bottom: 0.85rem;
+}
+
+.admin-login-form__actions,
+.admin-password-reset-form__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.admin-login-form__forgot {
+  font-size: 0.88rem;
+  color: var(--admin-color-primary);
+  text-decoration: none;
+}
+
+.admin-login-form__forgot:hover {
+  text-decoration: underline;
+}
+
+.admin-login-form input:disabled,
+.admin-password-reset-form input:disabled {
+  background: #f8fafc;
+  cursor: not-allowed;
+}
+
+.admin-auth-status {
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--admin-color-border);
+  border-radius: var(--admin-radius);
+  margin-bottom: 0.75rem;
+  background: var(--admin-color-surface);
+}
+
+.admin-auth-status__label {
+  margin: 0 0 0.2rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--admin-color-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.admin-auth-status__value {
+  margin: 0 0 0.25rem;
+  font-weight: 600;
+}
+
+.admin-auth-status__email,
+.admin-auth-status__role,
+.admin-auth-status__message {
+  margin: 0.15rem 0 0;
+  font-size: 0.88rem;
+  color: var(--admin-color-muted);
+}
+
+.admin-auth-status--admin {
+  border-color: #bbf7d0;
+  background: #f0fdf4;
+}
+
+.admin-auth-status--denied {
+  border-color: #fecaca;
+  background: #fef2f2;
+}
+
+.admin-auth-status--signed-out {
+  border-color: var(--admin-color-border);
+}
+
+.admin-permission-badge {
+  display: inline-block;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.admin-permission-badge--admin {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.admin-permission-badge--editor {
+  background: #e0e7ff;
+  color: #4338ca;
+}
+
+.admin-permission-badge--viewer {
+  background: #e2e8f0;
+  color: var(--admin-color-muted);
+}
+
+.admin-permission-badge--denied {
+  background: #fee2e2;
+  color: var(--admin-color-error);
+}
+
+.admin-permission-badge-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.admin-access-denied {
+  padding: 1.25rem;
+  border: 1px solid #fecaca;
+  border-radius: var(--admin-radius);
+  background: #fef2f2;
+  text-align: center;
+}
+
+.admin-access-denied__title {
+  margin: 0 0 0.5rem;
+  font-size: 1.1rem;
+  color: var(--admin-color-error);
+}
+
+.admin-access-denied__message {
+  margin: 0 0 0.35rem;
+}
+
+.admin-access-denied__support {
+  margin: 0 0 1rem;
+  font-size: 0.88rem;
+  color: var(--admin-color-muted);
+}
+
+.admin-auth-example-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.admin-auth-divider {
+  border: none;
+  border-top: 1px solid var(--admin-color-border);
+  margin: 1.25rem 0;
+}
+
+@media (min-width: 768px) {
+  .admin-auth-example-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
 @media (max-width: 640px) {
   .admin-main {
     padding: 1rem;

@@ -131,7 +131,7 @@ templates/admin-cms/
 
 | Phase | 内容 |
 | --- | --- |
-| **G-5m-b** | Auth abstraction plan or scaffold |
+| **G-5m-b（完了）** | [admin-auth-abstraction-scaffold.md](./admin-auth-abstraction-scaffold.md) |
 | **G-5n** | Media upload abstraction |
 | **G-5o** | Publish workflow abstraction |
 | **G-5p** | musician-basic admin prototype（staging only） |

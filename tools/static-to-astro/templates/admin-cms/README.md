@@ -9,10 +9,11 @@ This directory contains two related but separate Admin CMS assets.
 Low-risk reusable Admin UI components for future CMS Kit sites:
 
 ```txt
-components/          # G-5l shell (10) + G-5m-a CRUD primitives (5)
+components/          # G-5l shell + G-5m-a CRUD + G-5m-b Auth UI
 modules/             # G-5m-a News / Schedule / Profile / Links UI
-styles/admin.css     # Shared shell + CRUD styles
-examples/            # dashboard-example.astro, crud-example.astro
+auth/                # G-5m-b auth-model + permissions examples (draft)
+styles/admin.css     # Shared shell + CRUD + Auth styles
+examples/            # dashboard, crud, auth examples
 ```
 
 - **No Auth**, Supabase, Storage, or Publish workflow
@@ -20,7 +21,7 @@ examples/            # dashboard-example.astro, crud-example.astro
 - **Does not** import from Sariswing `src/`
 - `productionReady: false`, `connectedToRuntime: false`
 
-See [docs/admin-ui-shell-scaffold.md](../../docs/admin-ui-shell-scaffold.md) and [docs/admin-crud-ui-scaffold.md](../../docs/admin-crud-ui-scaffold.md).
+See [admin-ui-shell-scaffold.md](../../docs/admin-ui-shell-scaffold.md), [admin-crud-ui-scaffold.md](../../docs/admin-crud-ui-scaffold.md), and [admin-auth-abstraction-scaffold.md](../../docs/admin-auth-abstraction-scaffold.md).
 
 ## Phase 3-S — Runtime prototype (`src/`)
 

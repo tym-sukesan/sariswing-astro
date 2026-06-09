@@ -1,5 +1,5 @@
 {
-  "version": "0.3.0",
+  "version": "0.4.0",
   "status": "draft",
   "source": {
     "provenSite": "sariswing",
@@ -767,16 +767,17 @@
         "ADMIN_EMAILS env must not leak to client"
       ],
       "doNotExtractYet": true,
-      "notes": "Do not extract until G-5l shell is stable. Auth abstraction runs with G-5m CRUD wiring.",
-      "scaffoldStatus": "deferred",
+      "notes": "Auth guard requires Supabase Auth and RLS design. Not implemented in G-5m-b.",
+      "scaffoldStatus": "planned",
       "productionReady": false,
-      "connectedToRuntime": false
+      "connectedToRuntime": false,
+      "implementedInPhase": null
     },
     {
       "componentId": "admin-login-form",
       "name": "Admin Login Form",
       "category": "auth",
-      "status": "candidate",
+      "status": "scaffolded",
       "reusablePotential": "high",
       "extractionDifficulty": "medium",
       "risk": "high",
@@ -805,16 +806,18 @@
         "Supabase anon key exposure is expected; service role must never appear"
       ],
       "doNotExtractYet": true,
-      "notes": "Requires auth guard design before extraction.",
-      "scaffoldStatus": "deferred",
+      "notes": "UI scaffold only. Supabase Auth connection is not implemented.",
+      "scaffoldStatus": "created",
       "productionReady": false,
-      "connectedToRuntime": false
+      "connectedToRuntime": false,
+      "scaffoldPath": "tools/static-to-astro/templates/admin-cms/components/AdminLoginForm.astro",
+      "implementedInPhase": "G-5m-b"
     },
     {
       "componentId": "admin-password-reset",
       "name": "Admin Password Reset",
       "category": "auth",
-      "status": "candidate",
+      "status": "scaffolded",
       "reusablePotential": "high",
       "extractionDifficulty": "medium",
       "risk": "high",
@@ -843,10 +846,12 @@
         "Redirect URLs must match staging vs production hosts"
       ],
       "doNotExtractYet": true,
-      "notes": "Test on staging Supabase only — never point at Sariswing production.",
-      "scaffoldStatus": "deferred",
+      "notes": "UI scaffold only. Supabase Auth reset is not implemented.",
+      "scaffoldStatus": "created",
       "productionReady": false,
-      "connectedToRuntime": false
+      "connectedToRuntime": false,
+      "scaffoldPath": "tools/static-to-astro/templates/admin-cms/components/AdminPasswordResetForm.astro",
+      "implementedInPhase": "G-5m-b"
     },
     {
       "componentId": "admin-image-uploader",
@@ -1070,6 +1075,106 @@
       "doNotExtractYet": true,
       "notes": "Abstract after auth guard; required for CRUD modules in G-5m.",
       "scaffoldStatus": "deferred",
+      "productionReady": false,
+      "connectedToRuntime": false
+    },
+    {
+      "componentId": "admin-auth-status",
+      "name": "Admin Auth Status",
+      "category": "auth",
+      "status": "scaffolded",
+      "reusablePotential": "high",
+      "extractionDifficulty": "low",
+      "risk": "medium",
+      "suggestedPhase": "G-5m-b",
+      "targetSiteTypes": [
+        "musician",
+        "music-school",
+        "dance-school",
+        "small-business"
+      ],
+      "sourceHints": [
+        "Auth session display in admin header"
+      ],
+      "responsibilities": [
+        "Show signed-in / signed-out / denied state",
+        "Display role and email"
+      ],
+      "dependencies": [
+        "admin-auth-guard"
+      ],
+      "siteSpecificConcerns": [
+        "Must not leak service role or secrets"
+      ],
+      "doNotExtractYet": true,
+      "notes": "Display scaffold only. Wired after Supabase Auth adapter.",
+      "scaffoldStatus": "created",
+      "scaffoldPath": "tools/static-to-astro/templates/admin-cms/components/AdminAuthStatus.astro",
+      "implementedInPhase": "G-5m-b",
+      "productionReady": false,
+      "connectedToRuntime": false
+    },
+    {
+      "componentId": "admin-permission-badge",
+      "name": "Admin Permission Badge",
+      "category": "auth",
+      "status": "scaffolded",
+      "reusablePotential": "high",
+      "extractionDifficulty": "low",
+      "risk": "low",
+      "suggestedPhase": "G-5m-b",
+      "targetSiteTypes": [
+        "musician",
+        "music-school",
+        "dance-school",
+        "small-business"
+      ],
+      "sourceHints": [
+        "Role label in admin header"
+      ],
+      "responsibilities": [
+        "Visual role indicator",
+        "admin / editor / viewer / denied variants"
+      ],
+      "dependencies": [],
+      "siteSpecificConcerns": [],
+      "doNotExtractYet": true,
+      "notes": "Badge scaffold. Permissions from permissions.example.json.",
+      "scaffoldStatus": "created",
+      "scaffoldPath": "tools/static-to-astro/templates/admin-cms/components/AdminPermissionBadge.astro",
+      "implementedInPhase": "G-5m-b",
+      "productionReady": false,
+      "connectedToRuntime": false
+    },
+    {
+      "componentId": "admin-access-denied",
+      "name": "Admin Access Denied",
+      "category": "auth",
+      "status": "scaffolded",
+      "reusablePotential": "high",
+      "extractionDifficulty": "low",
+      "risk": "low",
+      "suggestedPhase": "G-5m-b",
+      "targetSiteTypes": [
+        "musician",
+        "music-school",
+        "dance-school",
+        "small-business"
+      ],
+      "sourceHints": [
+        "403 / insufficient permissions page"
+      ],
+      "responsibilities": [
+        "Access denied message",
+        "Back link"
+      ],
+      "dependencies": [],
+      "siteSpecificConcerns": [],
+      "doNotExtractYet": true,
+      "notes": "Panel scaffold. Shown when module permission check fails.",
+      "scaffoldStatus": "created",
+      "scaffoldPath": "tools/static-to-astro/templates/admin-cms/components/AdminAccessDenied.astro",
+      "implementedInPhase": "G-5m-b",
       "productionReady": false,
       "connectedToRuntime": false
     }

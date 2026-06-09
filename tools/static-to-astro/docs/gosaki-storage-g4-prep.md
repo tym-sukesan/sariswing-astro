@@ -3,6 +3,8 @@
 **目的:** HomeSchedule / Discography の placeholder を解消するため、Supabase Storage 移行の **設計・分類・TODO** を固定する。  
 **境界:** **実アップロード・DB update・本番 Supabase には触らない。** staging Supabase のみが将来の apply 対象。
 
+> **正式 runbook（G-4h）:** 手順の再現用は [gosaki-storage-image-migration-runbook.md](./gosaki-storage-image-migration-runbook.md) を参照。G-4a〜G-4g 完了後の現状・QA・CLI 一覧はそちらに集約。
+
 関連: [storage-image-pipeline.md](./storage-image-pipeline.md) / [gosaki-staging-runbook.md](./gosaki-staging-runbook.md)
 
 ---
@@ -384,8 +386,9 @@ node tools/static-to-astro/scripts/deploy-public-dist-ftp.mjs \
 | **G-4c** | staging DB `cover_image_url` 更新 + export → build → FTP QA（**完了**） |
 | **G-4d** | schedule 画像 human review table / decision template（**完了**） |
 | **G-4e** | Golden PODs home のみ allowlist promote（**完了** — 下記 CLI） |
-| **G-4f** | schedule home 1件 Storage upload |
-| **G-4g** | `schedules.home_image_url` DB update + export → FTP |
+| **G-4f** | schedule home 1件 Storage upload（**完了**） |
+| **G-4g** | `schedules.home_image_url` DB update + export → FTP（**完了**） |
+| **G-4h** | runbook 固定 — [gosaki-storage-image-migration-runbook.md](./gosaki-storage-image-migration-runbook.md) |
 | **本番導入** | 別ゲート — production Supabase / FTP |
 
 ---
@@ -465,4 +468,4 @@ node tools/static-to-astro/scripts/promote-schedule-storage-allowlist.mjs \
 
 ---
 
-Phase G-4 discography cover: **完了**。Schedule: G-4e promote 完了 → **G-4f** upload → **G-4g** DB。
+Phase G-4 discography cover: **完了**。Schedule home（Golden PODs）: G-4f upload + G-4g DB **完了**。手順は [gosaki-storage-image-migration-runbook.md](./gosaki-storage-image-migration-runbook.md)。

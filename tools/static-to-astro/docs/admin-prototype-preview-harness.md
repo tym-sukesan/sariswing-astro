@@ -121,7 +121,7 @@ Before setting `customerDemoReady: true` (future phase, with explicit approval):
 
 | Phase | Focus |
 | --- | --- |
-| **G-5s** | Site-config driven admin scaffold generator |
+| **G-5s（完了）** | [Site-config driven admin scaffold generator](./site-config-driven-admin-scaffold-generator.md) — dry-run package |
 | **G-5t** | Runtime integration plan |
 | **G-5u** | Local-only preview route |
 | **G-5v** | Customer demo package |

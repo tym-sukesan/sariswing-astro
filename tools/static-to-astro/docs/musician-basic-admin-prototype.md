@@ -102,8 +102,9 @@ Props and navigation are defined in example JSON files:
 | --- | --- |
 | **G-5q（完了）** | [Customer admin manual](./customer-admin-manual-musician-basic.md) — 顧客向け運用説明 |
 | **G-5r（完了）** | [Admin prototype preview harness](./admin-prototype-preview-harness.md) — manifest + safety checklist |
-| **G-5s** | Site-config driven admin scaffold generator |
+| **G-5s（完了）** | [Site-config driven admin scaffold generator](./site-config-driven-admin-scaffold-generator.md) — dry-run package |
 | **G-5t** | Runtime integration plan |
+| **G-5u** | Local-only preview route |
 | **G-5u** | Local-only preview route |
 | **Later** | Runtime integration with explicit approval |
 
@@ -136,6 +137,20 @@ node tools/static-to-astro/scripts/inspect-admin-preview-harness.mjs --prototype
 ```
 
 See [admin-prototype-preview-harness.md](./admin-prototype-preview-harness.md) and [preview-safety-checklist.md](../templates/admin-cms/preview/preview-safety-checklist.md).
+
+---
+
+## 10. Admin scaffold dry-run（G-5s）
+
+Generate required Admin configuration from site config:
+
+```bash
+node tools/static-to-astro/scripts/generate-admin-scaffold-dry-run.mjs \
+  --site-config tools/static-to-astro/config/sites/gosaki.site-config.example.json \
+  --out-dir tools/static-to-astro/output/admin-scaffold-packages/gosaki
+```
+
+Output: sections, required components, permissions, storage mappings, publish policy, preview plan. **`output/` not committed.**
 
 ---
 

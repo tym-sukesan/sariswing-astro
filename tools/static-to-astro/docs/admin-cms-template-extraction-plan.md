@@ -333,6 +333,7 @@ node tools/static-to-astro/scripts/generate-site-dry-run.mjs --site-config ...
 | **G-5p** | musician-basic admin prototype（**完了**） | `prototypes/` + `DiscographyAdminUi` |
 | **G-5q** | Customer admin manual（**完了**） | doc |
 | **G-5r** | Prototype preview harness（**完了**） | `preview/` + inspect CLI |
+| **G-5s** | Site-config driven admin scaffold generator（**完了**） | dry-run CLI + `output/admin-scaffold-packages/` |
 
 **Admin CMS は G-5i 時点では未実装・未抽出。** production publish は各フェーズで **explicit approval** 必須。
 
@@ -368,10 +369,12 @@ node tools/static-to-astro/scripts/generate-site-dry-run.mjs --site-config ...
 
 **G-5r（完了）:** [admin-prototype-preview-harness.md](./admin-prototype-preview-harness.md) — preview manifest + safety checklist。`musician-basic-admin-prototype` 登録済み。`customerDemoReady: false`。
 
-**G-5s（次）:** site-config driven admin scaffold generator
+**G-5s（完了）:** [site-config-driven-admin-scaffold-generator.md](./site-config-driven-admin-scaffold-generator.md) — dry-run admin scaffold package。`output/` は commit しない。
+
+**G-5t（次）:** runtime integration plan
 
 **禁止（継続）:** Sariswing 本番 touch、DB update、Storage upload、FTP、GHA dispatch
 
 ---
 
-*G-5l: shell. G-5m: CRUD/Auth. G-5n: Media. G-5o: Publish. G-5p: prototype. G-5q: manual. G-5r: preview harness. G-5s: generator.*
+*G-5l: shell. G-5m: CRUD/Auth. G-5n: Media. G-5o: Publish. G-5p: prototype. G-5q: manual. G-5r: preview harness. G-5s: generator. G-5t: runtime plan.*

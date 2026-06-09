@@ -175,15 +175,53 @@ manifest 各 row の `targetPath` / `targetField` に同内容が記録される
 
 ---
 
-## 9. 次フェーズの切り分け
+## 9. G-4a — fixture 画像 review manifest（read-only）
+
+fixture HTML から実画像候補を抽出し、`legacy_id` へマッピングした **人間 review 用 manifest / report** を生成する。Supabase upload / DB update は行わない。
+
+### コマンド
+
+```bash
+node tools/static-to-astro/scripts/review-storage-assets.mjs \
+  --site-slug gosaki \
+  --fixture-dir tools/static-to-astro/fixtures/gosaki-static-site \
+  --data-dir tools/static-to-astro/output/generated-astro/src/data \
+  --report tools/static-to-astro/output/storage/gosaki/STORAGE_ASSET_REVIEW_REPORT.md \
+  --manifest tools/static-to-astro/output/storage/gosaki/storage-asset-review-manifest.json
+```
+
+`--data-dir` は `schedules.json` / `discography.json` から `legacy_id` マッピングに使用（export 済み `src/data` 推奨）。
+
+### 成果物（`output/` — Git 管理外）
+
+| ファイル | パス |
+| --- | --- |
+| Review report | `tools/static-to-astro/output/storage/gosaki/STORAGE_ASSET_REVIEW_REPORT.md` |
+| Review manifest | `tools/static-to-astro/output/storage/gosaki/storage-asset-review-manifest.json` |
+
+### gosaki fixture スキャン結果（参考）
+
+| チェック | 結果 |
+| --- | --- |
+| Discography cover（Wix） | 4 / 4 — `discography-001`〜`004` |
+| Home schedule image（Wix） | 2 — `schedule-2026-03-011`, `012` |
+| Home schedule empty | 1 — `schedule-2026-03-013`（NO PHOTO） |
+| Schedule flyer（cross-page 候補） | 2 — 月別ページは placeholder |
+| 全 entry | `reviewRequired: true` |
+
+**注意:** `20260327.png` は alt-date-conflict（rendered 2026-03-25 vs filename）。著作権 review 完了まで自動 upload 不可。
+
+---
+
+## 10. 次フェーズの切り分け
 
 | フェーズ | 内容 |
 | --- | --- |
-| **G-4a（次）** | マッピング + copyright review + staging bucket 作成 |
-| **G-4b** | staging Storage upload + DB URL 更新（apply 実装） |
+| **G-4a** | fixture → legacy_id review manifest（**完了** — 上記 CLI） |
+| **G-4b** | copyright review 後 — staging Storage upload + DB URL 更新 |
 | **G-4c** | export → build → staging FTP → 目視 QA（実画像表示） |
 | **本番導入** | 別ゲート — production Supabase / FTP / `--deploy-base` なし build |
 
 ---
 
-Phase G-4 prep: dry-run 完了。実アップロードは **TODO 完了後** に staging のみで実施する。
+Phase G-4 prep + G-4a review manifest: dry-run 完了。実アップロードは **copyright review + TODO 完了後** に staging のみで実施する。

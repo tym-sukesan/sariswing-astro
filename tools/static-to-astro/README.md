@@ -1278,6 +1278,27 @@ node tools/static-to-astro/scripts/plan-storage-assets.mjs \
 
 **禁止（Phase 3-U）:** Wix/external の自動再ホスト、本番 Storage 接続、Storage policy 適用
 
+#### G-4a: Review manifest（fixture → legacy_id、read-only）
+
+staging export では `example.supabase.co` が sanitize され plan 入力がすべて empty になるため、**fixture HTML から実画像候補を抽出**する review manifest を別途生成します。
+
+| 項目 | 内容 |
+| --- | --- |
+| CLI | `review-storage-assets.mjs` |
+| 設計 doc | [docs/gosaki-storage-g4-prep.md](docs/gosaki-storage-g4-prep.md) §9 |
+| 出力 | `storage-asset-review-manifest.json` / `STORAGE_ASSET_REVIEW_REPORT.md` |
+
+```bash
+node tools/static-to-astro/scripts/review-storage-assets.mjs \
+  --site-slug gosaki \
+  --fixture-dir tools/static-to-astro/fixtures/gosaki-static-site \
+  --data-dir tools/static-to-astro/output/generated-astro/src/data \
+  --report tools/static-to-astro/output/storage/gosaki/STORAGE_ASSET_REVIEW_REPORT.md \
+  --manifest tools/static-to-astro/output/storage/gosaki/storage-asset-review-manifest.json
+```
+
+**禁止（G-4a）:** Supabase Storage upload、DB update、FTP deploy。全 entry は `reviewRequired: true`。
+
 ---
 
 ### Phase 3-W: Site profile system（設計・dry-run 検証）

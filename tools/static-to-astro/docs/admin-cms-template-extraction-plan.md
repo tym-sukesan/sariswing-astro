@@ -8,6 +8,8 @@
 
 - [cms-kit-generalization-roadmap.md](./cms-kit-generalization-roadmap.md)
 - [cms-kit-onboarding-runbook.md](./cms-kit-onboarding-runbook.md)
+- [admin-cms-code-inventory.md](./admin-cms-code-inventory.md) — G-5j inventory
+- [admin-ui-components-registry.md](./admin-ui-components-registry.md) — **G-5k** Admin UI components registry
 - [sariswing-vs-cms-kit-gap-analysis.md](./sariswing-vs-cms-kit-gap-analysis.md)
 - [cms-template-registry.md](./cms-template-registry.md)
 - [cms-schema-adapters.md](./cms-schema-adapters.md)
@@ -317,12 +319,13 @@ node tools/static-to-astro/scripts/generate-site-dry-run.mjs --site-config ...
 | --- | --- | --- |
 | **G-5i** | Admin CMS extraction plan / runbook（**本書・完了**） | なし |
 | **G-5j** | Sariswing admin **code inventory**（read-only 棚卸し） | なし |
-| **G-5k** | Reusable admin UI components 抽出 | write-local（CMS Kit のみ） |
-| **G-5l** | Auth / permissions abstraction | write-local |
-| **G-5m** | Media upload abstraction | staging upload（承認後） |
-| **G-5n** | Publish workflow abstraction | staging dispatch（承認後） |
-| **G-5o** | musician-basic admin prototype | staging only |
-| **G-5p** | Customer admin manual（非エンジニア向け） | doc |
+| **G-5k** | Admin UI components **registry / plan**（**完了**） | doc + registry JSON のみ |
+| **G-5l** | Low-risk UI shell components scaffold | write-local（CMS Kit のみ） |
+| **G-5m** | Form/table CRUD primitives + module UIs + Auth | write-local |
+| **G-5n** | Media upload abstraction | staging upload（承認後） |
+| **G-5o** | Publish workflow abstraction | staging dispatch（承認後） |
+| **G-5p** | musician-basic admin prototype | staging only |
+| **G-5q** | Customer admin manual（非エンジニア向け） | doc |
 
 **Admin CMS は G-5i 時点では未実装・未抽出。** production publish は各フェーズで **explicit approval** 必須。
 
@@ -346,14 +349,16 @@ node tools/static-to-astro/scripts/generate-site-dry-run.mjs --site-config ...
 
 ---
 
-## 12. Immediate next step — G-5j / G-5k
+## 12. Immediate next step — G-5k / G-5l
 
-**G-5j（完了）:** [admin-cms-code-inventory.md](./admin-cms-code-inventory.md) — Sariswing admin read-only inventory（55 files、reusable 31 / site-specific 10 / risky 12）。CLI: `inventory-admin-cms.mjs`。詳細 report は `output/admin-inventory/sariswing/`（未 commit）。
+**G-5j（完了）:** [admin-cms-code-inventory.md](./admin-cms-code-inventory.md) — Sariswing admin read-only inventory（55 files、reusable 33 / site-specific 10 / risky 12）。CLI: `inventory-admin-cms.mjs`。
 
-**G-5k（次）:** Reusable admin UI components 抽出 — inventory の reusable 候補を CMS Kit 側に実装（Sariswing ファイル移動なし）。
+**G-5k（完了）:** [admin-ui-components-registry.md](./admin-ui-components-registry.md) — 28 UI components registry。Auth / Storage / Publish は `doNotExtractYet: true`。CLI: `inspect-admin-ui-components.mjs`。コード抽出なし。
+
+**G-5l（次）:** Low-risk UI shell components scaffold — AdminLayout / AdminNav / PageHeader / Card / StatusMessage / FormField / DataTable。Sariswing 移動なし、CMS Kit 新規 scaffold のみ。
 
 **禁止（継続）:** Sariswing 本番 touch、DB update、Storage upload、FTP、GHA dispatch
 
 ---
 
-*G-5i: extraction plan. G-5j: code inventory. G-5k+: implementation phases.*
+*G-5i: extraction plan. G-5j: inventory. G-5k: registry. G-5l+: implementation phases.*

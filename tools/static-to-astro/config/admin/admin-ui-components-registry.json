@@ -1,0 +1,772 @@
+{
+  "version": "0.1.0",
+  "status": "draft",
+  "source": {
+    "provenSite": "sariswing",
+    "sourcePhase": "G-5j",
+    "mode": "inventory-based"
+  },
+  "components": [
+    {
+      "componentId": "admin-layout",
+      "name": "Admin Layout",
+      "category": "layout",
+      "status": "candidate",
+      "reusablePotential": "high",
+      "extractionDifficulty": "low",
+      "risk": "low",
+      "suggestedPhase": "G-5l",
+      "targetSiteTypes": ["musician", "music-school", "dance-school", "small-business"],
+      "sourceHints": [
+        "src/layouts/BaseLayout.astro (admin prop)",
+        "src/pages/admin/*/index.astro admin-page shell",
+        "templates/admin-cms/src/components/admin/AdminLayout.astro"
+      ],
+      "responsibilities": [
+        "Admin page shell",
+        "Common spacing and max-width",
+        "Slot for header, nav, and main content",
+        "noindex meta for admin routes"
+      ],
+      "dependencies": [],
+      "siteSpecificConcerns": [
+        "Japanese labels may need config-driven text",
+        "Sariswing uses BaseLayout wrapper; CMS Kit may use dedicated AdminLayout"
+      ],
+      "doNotExtractYet": false,
+      "notes": "Good first extraction candidate. Copy-based or greenfield scaffold in CMS Kit templates/admin-cms/."
+    },
+    {
+      "componentId": "admin-nav",
+      "name": "Admin Navigation",
+      "category": "navigation",
+      "status": "candidate",
+      "reusablePotential": "high",
+      "extractionDifficulty": "low",
+      "risk": "low",
+      "suggestedPhase": "G-5l",
+      "targetSiteTypes": ["musician", "music-school", "dance-school", "small-business"],
+      "sourceHints": [
+        "src/pages/admin/index.astro ul.admin-nav",
+        "templates/admin-cms/src/components/admin/AdminLayout.astro header nav"
+      ],
+      "responsibilities": [
+        "Dashboard menu links",
+        "Current route highlight",
+        "Module list driven by template registry"
+      ],
+      "dependencies": ["admin-layout"],
+      "siteSpecificConcerns": [
+        "Sariswing includes Instagram route — not in musician-basic template",
+        "Nav items should come from cms-template-registry adminModules"
+      ],
+      "doNotExtractYet": false,
+      "notes": "Template-driven nav avoids hardcoded Sariswing routes."
+    },
+    {
+      "componentId": "admin-page-header",
+      "name": "Admin Page Header",
+      "category": "layout",
+      "status": "candidate",
+      "reusablePotential": "high",
+      "extractionDifficulty": "low",
+      "risk": "low",
+      "suggestedPhase": "G-5l",
+      "targetSiteTypes": ["musician", "music-school", "dance-school", "small-business"],
+      "sourceHints": [
+        "src/pages/admin/*/index.astro div.admin-page-header",
+        "admin-back-link pattern on module pages"
+      ],
+      "responsibilities": [
+        "Page title and back link",
+        "Optional action slot (logout, add button)",
+        "Consistent header spacing"
+      ],
+      "dependencies": ["admin-layout"],
+      "siteSpecificConcerns": [
+        "Logout button placement varies per page in Sariswing"
+      ],
+      "doNotExtractYet": false,
+      "notes": "Extract as presentational component with slots."
+    },
+    {
+      "componentId": "admin-card",
+      "name": "Admin Card",
+      "category": "layout",
+      "status": "candidate",
+      "reusablePotential": "high",
+      "extractionDifficulty": "low",
+      "risk": "low",
+      "suggestedPhase": "G-5l",
+      "targetSiteTypes": ["musician", "music-school", "dance-school", "small-business"],
+      "sourceHints": [
+        "section.admin-card across admin pages",
+        "admin styles in site CSS"
+      ],
+      "responsibilities": [
+        "Grouped content panel",
+        "Section title slot",
+        "Visual separation for forms and lists"
+      ],
+      "dependencies": [],
+      "siteSpecificConcerns": [],
+      "doNotExtractYet": false,
+      "notes": "Pure CSS/markup pattern — low coupling."
+    },
+    {
+      "componentId": "admin-status-message",
+      "name": "Admin Status Message",
+      "category": "feedback",
+      "status": "candidate",
+      "reusablePotential": "high",
+      "extractionDifficulty": "low",
+      "risk": "low",
+      "suggestedPhase": "G-5l",
+      "targetSiteTypes": ["musician", "music-school", "dance-school", "small-business"],
+      "sourceHints": [
+        "p.admin-message on news/schedule pages",
+        "p#deployMessage on AdminDeployBar",
+        "aria-live polite regions"
+      ],
+      "responsibilities": [
+        "Success and error feedback",
+        "aria-live for screen readers",
+        "Transient vs persistent message modes"
+      ],
+      "dependencies": [],
+      "siteSpecificConcerns": [
+        "Japanese copy in Sariswing — externalize to i18n or site config"
+      ],
+      "doNotExtractYet": false,
+      "notes": "Reusable without Supabase coupling."
+    },
+    {
+      "componentId": "admin-confirm-dialog",
+      "name": "Admin Confirm Dialog",
+      "category": "feedback",
+      "status": "candidate",
+      "reusablePotential": "high",
+      "extractionDifficulty": "low",
+      "risk": "low",
+      "suggestedPhase": "G-5l",
+      "targetSiteTypes": ["musician", "music-school", "dance-school", "small-business"],
+      "sourceHints": [
+        "window.confirm usage in src/scripts/admin/*.ts",
+        "delete / restore / duplicate confirmations"
+      ],
+      "responsibilities": [
+        "Destructive action confirmation",
+        "Customizable title and body",
+        "Accessible focus trap (upgrade from native confirm)"
+      ],
+      "dependencies": [],
+      "siteSpecificConcerns": [
+        "Sariswing uses native confirm — CMS Kit may prefer modal component"
+      ],
+      "doNotExtractYet": false,
+      "notes": "Start with wrapper; optional modal upgrade in G-5l."
+    },
+    {
+      "componentId": "admin-empty-state",
+      "name": "Admin Empty State",
+      "category": "feedback",
+      "status": "candidate",
+      "reusablePotential": "high",
+      "extractionDifficulty": "low",
+      "risk": "low",
+      "suggestedPhase": "G-5l",
+      "targetSiteTypes": ["musician", "music-school", "dance-school", "small-business"],
+      "sourceHints": [
+        "p.schedule-admin-empty on schedule page",
+        "upcomingListEmpty / upcomingSearchEmpty patterns"
+      ],
+      "responsibilities": [
+        "No data placeholder",
+        "Search-no-results placeholder",
+        "Optional call-to-action slot"
+      ],
+      "dependencies": [],
+      "siteSpecificConcerns": [],
+      "doNotExtractYet": false,
+      "notes": "Used heavily in schedule list UX."
+    },
+    {
+      "componentId": "admin-loading-state",
+      "name": "Admin Loading State",
+      "category": "feedback",
+      "status": "candidate",
+      "reusablePotential": "high",
+      "extractionDifficulty": "low",
+      "risk": "low",
+      "suggestedPhase": "G-5l",
+      "targetSiteTypes": ["musician", "music-school", "dance-school", "small-business"],
+      "sourceHints": [
+        "p#scheduleListLoading schedule-admin-empty",
+        "list fetch in-progress copy"
+      ],
+      "responsibilities": [
+        "Loading indicator copy or spinner",
+        "aria-busy region",
+        "Hide when data arrives"
+      ],
+      "dependencies": [],
+      "siteSpecificConcerns": [],
+      "doNotExtractYet": false,
+      "notes": "Pair with data-table and module list components."
+    },
+    {
+      "componentId": "admin-form-field",
+      "name": "Admin Form Field",
+      "category": "form",
+      "status": "candidate",
+      "reusablePotential": "high",
+      "extractionDifficulty": "low",
+      "risk": "low",
+      "suggestedPhase": "G-5l",
+      "targetSiteTypes": ["musician", "music-school", "dance-school", "small-business"],
+      "sourceHints": [
+        "label.admin-form__field across schedule/news/about forms",
+        "admin-form__label / admin-form__hint / admin-form__checkbox"
+      ],
+      "responsibilities": [
+        "Label + input + hint layout",
+        "Checkbox and select variants",
+        "Error state slot"
+      ],
+      "dependencies": [],
+      "siteSpecificConcerns": [
+        "Schedule venue field is Sariswing-specific (venues table)"
+      ],
+      "doNotExtractYet": false,
+      "notes": "Schema-driven field rendering comes in G-5m."
+    },
+    {
+      "componentId": "admin-data-table",
+      "name": "Admin Data Table / List",
+      "category": "table",
+      "status": "candidate",
+      "reusablePotential": "high",
+      "extractionDifficulty": "low",
+      "risk": "low",
+      "suggestedPhase": "G-5l",
+      "targetSiteTypes": ["musician", "music-school", "dance-school", "small-business"],
+      "sourceHints": [
+        "ul.admin-list.schedule-admin-list",
+        "paginated-list helper in src/lib/admin/",
+        "data-page-size attribute pattern"
+      ],
+      "responsibilities": [
+        "Row/list rendering container",
+        "Pagination load-more",
+        "Search filter hook"
+      ],
+      "dependencies": ["admin-empty-state", "admin-loading-state"],
+      "siteSpecificConcerns": [
+        "Schedule uses custom list items not generic table rows"
+      ],
+      "doNotExtractYet": false,
+      "notes": "List-first pattern matches Sariswing; table variant optional."
+    },
+    {
+      "componentId": "admin-edit-form",
+      "name": "Admin Edit Form",
+      "category": "form",
+      "status": "candidate",
+      "reusablePotential": "high",
+      "extractionDifficulty": "medium",
+      "risk": "medium",
+      "suggestedPhase": "G-5m",
+      "targetSiteTypes": ["musician", "music-school", "dance-school", "small-business"],
+      "sourceHints": [
+        "form.admin-form on schedule/news/about pages",
+        "inline edit panels in NewsAdminItem / ScheduleAdminItem"
+      ],
+      "responsibilities": [
+        "Create and edit record forms",
+        "Submit / cancel actions",
+        "Field validation hooks"
+      ],
+      "dependencies": ["admin-form-field", "admin-status-message"],
+      "siteSpecificConcerns": [
+        "Per-module field sets differ (schedule venues vs news body)"
+      ],
+      "doNotExtractYet": false,
+      "notes": "Wire to schema adapter field metadata in G-5m."
+    },
+    {
+      "componentId": "admin-publish-toggle",
+      "name": "Admin Publish Toggle",
+      "category": "crud",
+      "status": "candidate",
+      "reusablePotential": "high",
+      "extractionDifficulty": "medium",
+      "risk": "medium",
+      "suggestedPhase": "G-5m",
+      "targetSiteTypes": ["musician", "music-school", "dance-school", "small-business"],
+      "sourceHints": [
+        "news publish-toggle feature in G-5j inventory",
+        "is_published field on news records"
+      ],
+      "responsibilities": [
+        "Published / draft toggle UI",
+        "Optimistic or confirmed state change",
+        "Edge function invoke for persist"
+      ],
+      "dependencies": ["admin-edge-function-client", "admin-status-message"],
+      "siteSpecificConcerns": [
+        "Not all modules have publish flag (schedule uses visibility dates)"
+      ],
+      "doNotExtractYet": false,
+      "notes": "Content publish only — not site deploy publish."
+    },
+    {
+      "componentId": "admin-sort-order-control",
+      "name": "Admin Sort Order Control",
+      "category": "crud",
+      "status": "candidate",
+      "reusablePotential": "high",
+      "extractionDifficulty": "medium",
+      "risk": "medium",
+      "suggestedPhase": "G-5m",
+      "targetSiteTypes": ["musician", "music-school", "dance-school", "small-business"],
+      "sourceHints": [
+        "sort_order in admin-schedule edge function",
+        "schedule list reorder patterns"
+      ],
+      "responsibilities": [
+        "Reorder items (up/down or drag)",
+        "Persist sort_order via Edge API",
+        "Disabled state during save"
+      ],
+      "dependencies": ["admin-edge-function-client"],
+      "siteSpecificConcerns": [
+        "Schedule sort semantics may differ from musician-basic adapter"
+      ],
+      "doNotExtractYet": false,
+      "notes": "Extract after schema adapter documents sort_order columns."
+    },
+    {
+      "componentId": "admin-duplicate-button",
+      "name": "Admin Duplicate Button",
+      "category": "crud",
+      "status": "candidate",
+      "reusablePotential": "high",
+      "extractionDifficulty": "medium",
+      "risk": "medium",
+      "suggestedPhase": "G-5m",
+      "targetSiteTypes": ["musician", "music-school", "dance-school", "small-business"],
+      "sourceHints": [
+        "duplicate action in admin-schedule edge",
+        "schedule.ts duplicate button handlers"
+      ],
+      "responsibilities": [
+        "Clone record with new id",
+        "Confirmation before duplicate",
+        "Refresh list after success"
+      ],
+      "dependencies": ["admin-confirm-dialog", "admin-edge-function-client"],
+      "siteSpecificConcerns": [
+        "Duplicate logic is module-specific (schedule fields vs news)"
+      ],
+      "doNotExtractYet": false,
+      "notes": "Pattern reusable; payload mapping is module-specific."
+    },
+    {
+      "componentId": "admin-logical-delete-restore",
+      "name": "Admin Logical Delete / Restore",
+      "category": "crud",
+      "status": "candidate",
+      "reusablePotential": "high",
+      "extractionDifficulty": "medium",
+      "risk": "medium",
+      "suggestedPhase": "G-5m",
+      "targetSiteTypes": ["musician", "music-school", "dance-school", "small-business"],
+      "sourceHints": [
+        "deleted_at / is_deleted patterns in admin-news and admin-schedule",
+        "restore buttons in NewsAdminItem / ScheduleAdminItem"
+      ],
+      "responsibilities": [
+        "Soft delete UI",
+        "Deleted items section",
+        "Restore action with confirmation"
+      ],
+      "dependencies": ["admin-confirm-dialog", "admin-edge-function-client"],
+      "siteSpecificConcerns": [
+        "Column names may differ per schema adapter"
+      ],
+      "doNotExtractYet": false,
+      "notes": "Proven pattern across news and schedule — high reuse value."
+    },
+    {
+      "componentId": "news-admin-ui",
+      "name": "News Admin Module UI",
+      "category": "module",
+      "status": "candidate",
+      "reusablePotential": "high",
+      "extractionDifficulty": "medium",
+      "risk": "medium",
+      "suggestedPhase": "G-5m",
+      "targetSiteTypes": ["musician", "music-school", "dance-school", "small-business"],
+      "sourceHints": [
+        "src/pages/admin/news/index.astro",
+        "src/components/admin/NewsAdminItem.astro",
+        "src/lib/admin/news-api.ts",
+        "supabase/functions/admin-news/"
+      ],
+      "responsibilities": [
+        "News list and edit UI",
+        "CRUD via admin-news Edge Function",
+        "Publish toggle and logical delete"
+      ],
+      "dependencies": [
+        "admin-edit-form",
+        "admin-data-table",
+        "admin-publish-toggle",
+        "admin-logical-delete-restore"
+      ],
+      "siteSpecificConcerns": [
+        "News body HTML stripping rules",
+        "Image attachment optional per site"
+      ],
+      "doNotExtractYet": false,
+      "notes": "Core musician-basic module — prioritize in G-5m."
+    },
+    {
+      "componentId": "schedule-admin-ui",
+      "name": "Schedule Admin Module UI",
+      "category": "module",
+      "status": "candidate",
+      "reusablePotential": "high",
+      "extractionDifficulty": "high",
+      "risk": "medium",
+      "suggestedPhase": "G-5m",
+      "targetSiteTypes": ["musician", "music-school", "dance-school", "small-business"],
+      "sourceHints": [
+        "src/pages/admin/schedule/index.astro",
+        "src/components/admin/ScheduleAdminItem.astro",
+        "src/lib/admin/schedule-api.ts",
+        "supabase/functions/admin-schedule/"
+      ],
+      "responsibilities": [
+        "Schedule list with upcoming/past split",
+        "Venue and time_type fields",
+        "Duplicate, sort, image_urls"
+      ],
+      "dependencies": [
+        "admin-edit-form",
+        "admin-data-table",
+        "admin-sort-order-control",
+        "admin-duplicate-button",
+        "admin-logical-delete-restore"
+      ],
+      "siteSpecificConcerns": [
+        "Sariswing venues table and time_type are site-specific",
+        "musician-basic adapter may simplify fields",
+        "image_urls[] couples to storage (G-5n)"
+      ],
+      "doNotExtractYet": false,
+      "notes": "Highest module complexity — defer image wiring to G-5n."
+    },
+    {
+      "componentId": "links-admin-ui",
+      "name": "Links Admin Module UI",
+      "category": "module",
+      "status": "candidate",
+      "reusablePotential": "medium",
+      "extractionDifficulty": "medium",
+      "risk": "low",
+      "suggestedPhase": "G-5m",
+      "targetSiteTypes": ["music-school", "dance-school", "small-business"],
+      "sourceHints": [
+        "CMS Kit template registry links module (draft)",
+        "No dedicated Sariswing /admin/links route in G-5j inventory"
+      ],
+      "responsibilities": [
+        "External links CRUD",
+        "Sort order and visibility",
+        "Icon or label per link"
+      ],
+      "dependencies": ["admin-edit-form", "admin-data-table"],
+      "siteSpecificConcerns": [
+        "Not proven in Sariswing — design from template registry only"
+      ],
+      "doNotExtractYet": false,
+      "notes": "Greenfield module for non-musician site types."
+    },
+    {
+      "componentId": "profile-admin-ui",
+      "name": "Profile / About Admin Module UI",
+      "category": "module",
+      "status": "candidate",
+      "reusablePotential": "high",
+      "extractionDifficulty": "medium",
+      "risk": "medium",
+      "suggestedPhase": "G-5m",
+      "targetSiteTypes": ["musician", "music-school", "dance-school", "small-business"],
+      "sourceHints": [
+        "src/pages/admin/about/index.astro",
+        "supabase/functions/admin-site-page/",
+        "revision restore_revision pattern"
+      ],
+      "responsibilities": [
+        "About / profile page editor",
+        "Revision history and restore",
+        "Rich text or markdown body"
+      ],
+      "dependencies": ["admin-edit-form", "admin-logical-delete-restore"],
+      "siteSpecificConcerns": [
+        "Revision model may differ per schema adapter",
+        "Sariswing about content is artist-specific"
+      ],
+      "doNotExtractYet": false,
+      "notes": "Maps to CMS Kit Profile / About module."
+    },
+    {
+      "componentId": "admin-auth-guard",
+      "name": "Admin Auth Guard",
+      "category": "auth",
+      "status": "candidate",
+      "reusablePotential": "high",
+      "extractionDifficulty": "medium",
+      "risk": "high",
+      "suggestedPhase": "G-5m",
+      "targetSiteTypes": ["musician", "music-school", "dance-school", "small-business"],
+      "sourceHints": [
+        "src/lib/admin/require-admin-session.ts",
+        "supabase/functions/_shared/admin-auth.ts"
+      ],
+      "responsibilities": [
+        "Client session check and redirect",
+        "Edge ADMIN_EMAILS + app_metadata.role gate",
+        "Protected route enforcement"
+      ],
+      "dependencies": [],
+      "siteSpecificConcerns": [
+        "Misconfiguration blocks all admin access",
+        "ADMIN_EMAILS env must not leak to client"
+      ],
+      "doNotExtractYet": true,
+      "notes": "Do not extract until G-5l shell is stable. Auth abstraction runs with G-5m CRUD wiring."
+    },
+    {
+      "componentId": "admin-login-form",
+      "name": "Admin Login Form",
+      "category": "auth",
+      "status": "candidate",
+      "reusablePotential": "high",
+      "extractionDifficulty": "medium",
+      "risk": "high",
+      "suggestedPhase": "G-5m",
+      "targetSiteTypes": ["musician", "music-school", "dance-school", "small-business"],
+      "sourceHints": [
+        "src/pages/admin/login/index.astro",
+        "src/scripts/admin/login.ts",
+        "src/lib/supabase-admin.ts"
+      ],
+      "responsibilities": [
+        "Email/password login",
+        "Error display",
+        "Redirect to dashboard on success"
+      ],
+      "dependencies": ["admin-form-field", "admin-status-message"],
+      "siteSpecificConcerns": [
+        "Supabase anon key exposure is expected; service role must never appear"
+      ],
+      "doNotExtractYet": true,
+      "notes": "Requires auth guard design before extraction."
+    },
+    {
+      "componentId": "admin-password-reset",
+      "name": "Admin Password Reset",
+      "category": "auth",
+      "status": "candidate",
+      "reusablePotential": "high",
+      "extractionDifficulty": "medium",
+      "risk": "high",
+      "suggestedPhase": "G-5m",
+      "targetSiteTypes": ["musician", "music-school", "dance-school", "small-business"],
+      "sourceHints": [
+        "src/pages/admin/forgot-password/index.astro",
+        "src/pages/admin/reset-password/index.astro",
+        "Supabase Auth reset email flow"
+      ],
+      "responsibilities": [
+        "Forgot password request",
+        "Reset password with token",
+        "Redirect to login"
+      ],
+      "dependencies": ["admin-form-field", "admin-status-message"],
+      "siteSpecificConcerns": [
+        "Redirect URLs must match staging vs production hosts"
+      ],
+      "doNotExtractYet": true,
+      "notes": "Test on staging Supabase only — never point at Sariswing production."
+    },
+    {
+      "componentId": "admin-image-uploader",
+      "name": "Admin Image Uploader",
+      "category": "media",
+      "status": "candidate",
+      "reusablePotential": "high",
+      "extractionDifficulty": "high",
+      "risk": "high",
+      "suggestedPhase": "G-5n",
+      "targetSiteTypes": ["musician", "music-school", "dance-school", "small-business"],
+      "sourceHints": [
+        "src/lib/admin/image-upload.ts",
+        "1600px resize, WebP/JPEG/PNG",
+        "bucket images prefixes news/schedule/discography"
+      ],
+      "responsibilities": [
+        "Client-side resize before upload",
+        "Supabase Storage upload",
+        "Path prefix per asset type"
+      ],
+      "dependencies": [],
+      "siteSpecificConcerns": [
+        "Storage path conventions are site-specific",
+        "RLS policies must allow authenticated upload",
+        "Human review rules from schema adapter"
+      ],
+      "doNotExtractYet": true,
+      "notes": "Connect to schema adapter storageMappings before generic extraction."
+    },
+    {
+      "componentId": "admin-media-library",
+      "name": "Admin Media Library",
+      "category": "media",
+      "status": "candidate",
+      "reusablePotential": "medium",
+      "extractionDifficulty": "high",
+      "risk": "high",
+      "suggestedPhase": "G-5n",
+      "targetSiteTypes": ["musician", "music-school", "dance-school", "small-business"],
+      "sourceHints": [
+        "No dedicated media library in Sariswing G-5j inventory",
+        "image_urls[] on schedule records"
+      ],
+      "responsibilities": [
+        "Browse uploaded assets",
+        "Reuse existing upload",
+        "Attach to record fields"
+      ],
+      "dependencies": ["admin-image-uploader"],
+      "siteSpecificConcerns": [
+        "Greenfield — Sariswing uploads inline per form"
+      ],
+      "doNotExtractYet": true,
+      "notes": "Optional enhancement after image uploader abstraction."
+    },
+    {
+      "componentId": "admin-publish-button",
+      "name": "Admin Site Publish Button",
+      "category": "publish",
+      "status": "candidate",
+      "reusablePotential": "high",
+      "extractionDifficulty": "high",
+      "risk": "high",
+      "suggestedPhase": "G-5o",
+      "targetSiteTypes": ["musician", "music-school", "dance-school", "small-business"],
+      "sourceHints": [
+        "src/components/admin/AdminDeployBar.astro",
+        "button#triggerDeploy"
+      ],
+      "responsibilities": [
+        "Trigger site rebuild and deploy",
+        "User-facing publish copy",
+        "Production safety gate UI"
+      ],
+      "dependencies": ["admin-github-dispatch-client", "admin-deploy-status"],
+      "siteSpecificConcerns": [
+        "Sariswing dispatches production workflow immediately",
+        "No staging/production workflow split yet"
+      ],
+      "doNotExtractYet": true,
+      "notes": "Never extract before staging/production workflow separation is designed."
+    },
+    {
+      "componentId": "admin-deploy-status",
+      "name": "Admin Deploy Status",
+      "category": "publish",
+      "status": "candidate",
+      "reusablePotential": "high",
+      "extractionDifficulty": "high",
+      "risk": "high",
+      "suggestedPhase": "G-5o",
+      "targetSiteTypes": ["musician", "music-school", "dance-school", "small-business"],
+      "sourceHints": [
+        "p#deployStatus / deployHint / deployLastRun on AdminDeployBar",
+        "src/scripts/admin/deploy-trigger.ts polling"
+      ],
+      "responsibilities": [
+        "Deploy in-progress status",
+        "Last run timestamp",
+        "Error and retry hints"
+      ],
+      "dependencies": ["admin-github-dispatch-client"],
+      "siteSpecificConcerns": [
+        "Polling interval and GitHub API rate limits"
+      ],
+      "doNotExtractYet": true,
+      "notes": "Pair with publish button in G-5o only."
+    },
+    {
+      "componentId": "admin-github-dispatch-client",
+      "name": "Admin GitHub Dispatch Client",
+      "category": "publish",
+      "status": "candidate",
+      "reusablePotential": "high",
+      "extractionDifficulty": "high",
+      "risk": "high",
+      "suggestedPhase": "G-5o",
+      "targetSiteTypes": ["musician", "music-school", "dance-school", "small-business"],
+      "sourceHints": [
+        "src/scripts/admin/deploy-trigger.ts",
+        "supabase/functions/trigger-deploy/",
+        ".github/workflows/deploy.yml workflow_dispatch"
+      ],
+      "responsibilities": [
+        "Invoke trigger-deploy Edge Function",
+        "Never expose GitHub token to browser",
+        "workflow_dispatch payload"
+      ],
+      "dependencies": ["admin-edge-function-client"],
+      "siteSpecificConcerns": [
+        "GitHub token stored in Edge secrets only",
+        "Mis-dispatch triggers production FTP deploy"
+      ],
+      "doNotExtractYet": true,
+      "notes": "Highest production risk — explicit approval gate required."
+    },
+    {
+      "componentId": "admin-edge-function-client",
+      "name": "Admin Edge Function Client",
+      "category": "utility",
+      "status": "candidate",
+      "reusablePotential": "high",
+      "extractionDifficulty": "high",
+      "risk": "high",
+      "suggestedPhase": "G-5m",
+      "targetSiteTypes": ["musician", "music-school", "dance-school", "small-business"],
+      "sourceHints": [
+        "src/lib/admin/news-api.ts",
+        "src/lib/admin/schedule-api.ts",
+        "src/lib/admin/instagram-api.ts",
+        "src/lib/admin/site-page-api.ts",
+        "functions.invoke patterns"
+      ],
+      "responsibilities": [
+        "Authenticated Edge Function invoke wrapper",
+        "Error normalization",
+        "Module-specific action routing"
+      ],
+      "dependencies": ["admin-auth-guard"],
+      "siteSpecificConcerns": [
+        "Service role stays server-side only",
+        "Function names are Sariswing-specific today"
+      ],
+      "doNotExtractYet": true,
+      "notes": "Abstract after auth guard; required for CRUD modules in G-5m."
+    }
+  ]
+}

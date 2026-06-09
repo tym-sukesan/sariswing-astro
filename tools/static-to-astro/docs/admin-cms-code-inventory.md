@@ -7,6 +7,7 @@
 関連:
 
 - [admin-cms-template-extraction-plan.md](./admin-cms-template-extraction-plan.md) — G-5i extraction plan
+- [admin-ui-components-registry.md](./admin-ui-components-registry.md) — **G-5k** Admin UI components registry
 - [sariswing-vs-cms-kit-gap-analysis.md](./sariswing-vs-cms-kit-gap-analysis.md)
 - Scanner: [`scripts/lib/admin-cms-inventory-scanner.mjs`](../scripts/lib/admin-cms-inventory-scanner.mjs)
 - CLI: [`scripts/inventory-admin-cms.mjs`](../scripts/inventory-admin-cms.mjs)
@@ -126,15 +127,16 @@ Safety: `codeModified: false`, `githubDispatchPerformed: false`, `productionTouc
 
 | Module | Reusable potential | Extraction difficulty | Risk | Suggested phase |
 | --- | --- | --- | --- | --- |
-| Auth | high | medium | high | G-5l |
-| Dashboard | high | low | low | G-5k |
-| News CRUD | high | medium | medium | G-5k |
-| Schedule CRUD | high | high | medium | G-5k / G-5o |
-| About / Site page | high | medium | medium | G-5k |
+| UI shell (layout/nav/card) | high | low | low | G-5l |
+| Auth | high | medium | high | G-5m |
+| Dashboard | high | low | low | G-5l |
+| News CRUD | high | medium | medium | G-5m |
+| Schedule CRUD | high | high | medium | G-5m |
+| About / Site page | high | medium | medium | G-5m |
 | Instagram | low | medium | low | Later |
-| Image upload | high | high | high | G-5m |
-| Publish workflow | high | high | high | G-5n |
-| musician-basic prototype | high | high | medium | G-5o |
+| Image upload | high | high | high | G-5n |
+| Publish workflow | high | high | high | G-5o |
+| musician-basic prototype | high | high | medium | G-5p |
 
 ---
 
@@ -150,22 +152,23 @@ Safety: `codeModified: false`, `githubDispatchPerformed: false`, `productionTouc
 
 ## Recommendations
 
-1. **G-5k:** `paginated-list`, `strip-html`, list item builders, `AdminDeployBar` パターンを CMS Kit 側に**新規作成**（Sariswing からコピーしない設計も可）
-2. **G-5l:** `admin-auth.ts` + session guard の抽象化
-3. **G-5m:** `image-upload.ts` を schema adapter `storageMappings` に接続してから汎用化
-4. **G-5n:** staging / production workflow 分離を先に設計
-5. **G-5o:** musician-basic prototype — News + Schedule + About + Publish（staging only）、Instagram 除外
+1. **G-5k（完了）:** reusable UI 候補を [admin-ui-components-registry.md](./admin-ui-components-registry.md) に registry 化（28 components）
+2. **G-5l:** low-risk UI shell — AdminLayout / AdminNav / PageHeader / Card / StatusMessage / FormField / DataTable
+3. **G-5m:** CRUD primitives + News / Schedule / Profile module UI + Auth abstraction
+4. **G-5n:** `image-upload.ts` を schema adapter `storageMappings` に接続してから汎用化
+5. **G-5o:** staging / production workflow 分離 + publish abstraction
+6. **G-5p:** musician-basic prototype — News + Schedule + About + Publish（staging only）、Instagram 除外
 
 ---
 
-## Next phase — G-5k
+## Next phase — G-5l
 
-**Reusable admin UI components 抽出**
+**Low-risk UI shell components scaffold**
 
-- Sariswing ファイルを移動せず、inventory の **reusable** 候補を設計入力にする
-- CMS Kit `templates/admin-cms/` との diff を明示
-- write-local は CMS Kit ツール側のみ
+- G-5k registry の `doNotExtractYet=false` + `suggestedPhase=G-5l` 候補（10 件）から開始
+- Sariswing ファイルを移動せず、CMS Kit `templates/admin-cms/` に新規 scaffold
+- Auth / Storage / Publish は触らない
 
 ---
 
-*G-5j: read-only inventory. No code extraction. Detail manifest in `output/` (not committed).*
+*G-5j: read-only inventory. G-5k: registry / plan. Detail manifest in `output/` (not committed).*

@@ -151,9 +151,10 @@ node tools/static-to-astro/scripts/inspect-admin-ui-components.mjs --category au
 | --- | --- |
 | **G-5n（完了）** | [admin-media-upload-abstraction.md](./admin-media-upload-abstraction.md) |
 | **G-5o（完了）** | [admin-publish-workflow-abstraction.md](./admin-publish-workflow-abstraction.md) |
-| **G-5p** | musician-basic admin prototype（staging only） |
+| **G-5p（完了）** | [musician-basic-admin-prototype.md](./musician-basic-admin-prototype.md) |
+| **G-5q** | customer admin manual |
 
-Auth guard 実装は G-5p prototype 前の staging 接続フェーズで行う想定です。
+Auth guard 実装は runtime 接続フェーズ（G-5p 以降の明示承認後）で行う想定です。
 
 ---
 

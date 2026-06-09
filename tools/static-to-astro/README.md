@@ -1260,7 +1260,7 @@ gosaki / Sariswing で実証した移行フローを、**別サイト向け CMS 
 | Site config draft | [config/sites/gosaki.site-config.example.json](config/sites/gosaki.site-config.example.json) |
 | 方針 | **site-config driven migration**（G-5c 以降）、**template registry**、**schema adapter** |
 | Workflow | **staging-first** — G-4 成功フローは後方互換維持 |
-| 実装フェーズ | G-5a〜**G-5o admin Publish** → G-5p〜q |
+| 実装フェーズ | G-5a〜**G-5p musician-basic prototype** → G-5q〜 |
 | **G-5c usage** | [docs/site-config-cli-usage.md](docs/site-config-cli-usage.md) |
 | **G-5d registry** | [docs/cms-template-registry.md](docs/cms-template-registry.md) |
 | **G-5e adapters** | [docs/cms-schema-adapters.md](docs/cms-schema-adapters.md) |
@@ -1275,6 +1275,7 @@ gosaki / Sariswing で実証した移行フローを、**別サイト向け CMS 
 | **G-5m-b Auth** | [docs/admin-auth-abstraction-scaffold.md](docs/admin-auth-abstraction-scaffold.md) |
 | **G-5n Media** | [docs/admin-media-upload-abstraction.md](docs/admin-media-upload-abstraction.md) |
 | **G-5o Publish** | [docs/admin-publish-workflow-abstraction.md](docs/admin-publish-workflow-abstraction.md) |
+| **G-5p Prototype** | [docs/musician-basic-admin-prototype.md](docs/musician-basic-admin-prototype.md) |
 
 **G-5c（完了）:** read-only CLI が `--site-config` を受け取り、path を補完。明示引数優先。
 
@@ -1298,7 +1299,9 @@ gosaki / Sariswing で実証した移行フローを、**別サイト向け CMS 
 
 **G-5m-a（完了）:** [Admin CRUD UI scaffold](docs/admin-crud-ui-scaffold.md) — CRUD primitives + module UIs。
 
-**G-5o（完了）:** [Admin Publish workflow abstraction](docs/admin-publish-workflow-abstraction.md) — staging/production separation。GitHub / FTP 未接続。次: **G-5p** musician-basic prototype。
+**G-5o（完了）:** [Admin Publish workflow abstraction](docs/admin-publish-workflow-abstraction.md) — staging/production separation。GitHub / FTP 未接続。
+
+**G-5p（完了）:** [Musician Basic Admin prototype](docs/musician-basic-admin-prototype.md) — G-5l〜G-5o scaffold 統合。Runtime / Auth / DB / Storage / Publish 未接続。次: **G-5q** customer admin manual。
 
 ```bash
 node tools/static-to-astro/scripts/inventory-admin-cms.mjs --root .
@@ -1310,6 +1313,8 @@ node tools/static-to-astro/scripts/inspect-admin-ui-components.mjs --phase G-5m-
 node tools/static-to-astro/scripts/inspect-admin-ui-components.mjs --phase G-5m-b
 node tools/static-to-astro/scripts/inspect-admin-ui-components.mjs --phase G-5n
 node tools/static-to-astro/scripts/inspect-admin-ui-components.mjs --phase G-5o
+node tools/static-to-astro/scripts/inspect-admin-ui-components.mjs --phase G-5p
+node tools/static-to-astro/scripts/inspect-admin-ui-components.mjs --category prototype
 node tools/static-to-astro/scripts/inspect-admin-ui-components.mjs --category publish
 ```
 
@@ -1624,6 +1629,7 @@ CMS Kit 実用化プロトタイプとして **gosaki staging** の役割・secr
 | [docs/admin-auth-abstraction-scaffold.md](docs/admin-auth-abstraction-scaffold.md) | **G-5m-b:** Admin Auth abstraction scaffold（UI + permissions draft） |
 | [docs/admin-media-upload-abstraction.md](docs/admin-media-upload-abstraction.md) | **G-5n:** Admin Media upload abstraction scaffold（UI + policy） |
 | [docs/admin-publish-workflow-abstraction.md](docs/admin-publish-workflow-abstraction.md) | **G-5o:** Admin Publish workflow abstraction scaffold（UI + policy） |
+| [docs/musician-basic-admin-prototype.md](docs/musician-basic-admin-prototype.md) | **G-5p:** Musician Basic Admin prototype（scaffold integration） |
 
 **短期運用:** Local Admin（`npm run dev`）→ staging Supabase 保存 → export → build → `verify-static-public-artifact` → public-dist 確認
 

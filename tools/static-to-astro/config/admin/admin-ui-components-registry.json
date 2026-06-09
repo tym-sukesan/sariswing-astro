@@ -1,5 +1,5 @@
 {
-  "version": "0.6.0",
+  "version": "0.7.0",
   "status": "draft",
   "source": {
     "provenSite": "sariswing",
@@ -1381,6 +1381,86 @@
       "scaffoldStatus": "created",
       "scaffoldPath": "tools/static-to-astro/templates/admin-cms/components/AdminPublishEnvironmentBadge.astro",
       "implementedInPhase": "G-5o",
+      "productionReady": false,
+      "connectedToRuntime": false
+    },
+    {
+      "componentId": "discography-admin-ui",
+      "name": "Discography Admin Module UI",
+      "category": "module",
+      "status": "scaffolded",
+      "reusablePotential": "high",
+      "extractionDifficulty": "medium",
+      "risk": "low",
+      "suggestedPhase": "G-5p",
+      "targetSiteTypes": [
+        "musician"
+      ],
+      "sourceHints": [
+        "CMS Kit template registry discography module",
+        "musician-basic schema adapter discography table"
+      ],
+      "responsibilities": [
+        "Discography CRUD",
+        "Cover image status (cover_image_url)",
+        "Sort order and publish toggle"
+      ],
+      "dependencies": [
+        "admin-edit-form",
+        "admin-data-table",
+        "admin-media-preview"
+      ],
+      "siteSpecificConcerns": [
+        "cover_image_url storage mapping"
+      ],
+      "doNotExtractYet": false,
+      "notes": "musician-basic module scaffold. No DB connection.",
+      "scaffoldStatus": "created",
+      "scaffoldPath": "tools/static-to-astro/templates/admin-cms/modules/DiscographyAdminUi.astro",
+      "implementedInPhase": "G-5p",
+      "productionReady": false,
+      "connectedToRuntime": false
+    },
+    {
+      "componentId": "musician-basic-admin-prototype",
+      "name": "Musician Basic Admin Prototype",
+      "category": "prototype",
+      "status": "prototype",
+      "reusablePotential": "high",
+      "extractionDifficulty": "medium",
+      "risk": "medium",
+      "suggestedPhase": "G-5p",
+      "targetSiteTypes": [
+        "musician"
+      ],
+      "sourceHints": [
+        "G-5l〜G-5o scaffold integration",
+        "musician-basic template registry"
+      ],
+      "responsibilities": [
+        "Combine Admin scaffold components for musician-basic",
+        "Demonstrate Dashboard/Profile/Schedule/Discography/Links/News/Media/Publish admin flow"
+      ],
+      "dependencies": [
+        "admin-layout",
+        "admin-nav",
+        "news-admin-ui",
+        "schedule-admin-ui",
+        "profile-admin-ui",
+        "links-admin-ui",
+        "discography-admin-ui",
+        "admin-image-uploader",
+        "admin-publish-button"
+      ],
+      "siteSpecificConcerns": [
+        "Prototype data is static",
+        "Runtime connection not implemented"
+      ],
+      "doNotExtractYet": true,
+      "notes": "Static prototype combining G-5l〜G-5o scaffolds. Not connected to runtime.",
+      "scaffoldStatus": "created",
+      "scaffoldPath": "tools/static-to-astro/templates/admin-cms/prototypes/musician-basic-admin-prototype.astro",
+      "implementedInPhase": "G-5p",
       "productionReady": false,
       "connectedToRuntime": false
     }

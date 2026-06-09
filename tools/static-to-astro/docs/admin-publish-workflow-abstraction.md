@@ -139,8 +139,10 @@ node tools/static-to-astro/scripts/inspect-admin-ui-components.mjs --category pu
 
 ## 10. Next phase
 
-**G-5p: musician-basic admin prototype** — staging only、scaffold 統合
+**G-5q: customer admin manual** — operator documentation for staging admin
+
+**G-5p（完了）:** [musician-basic-admin-prototype.md](./musician-basic-admin-prototype.md) — scaffold integration prototype。Runtime / Auth / DB / Storage / Publish 未接続。
 
 ---
 
-*G-5o: Publish UI scaffold + policy draft. No dispatch or deploy.*
+*G-5o: Publish UI scaffold + policy draft. G-5p: musician-basic prototype. No dispatch or deploy.*

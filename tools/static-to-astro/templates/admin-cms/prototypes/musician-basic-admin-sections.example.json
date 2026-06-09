@@ -1,0 +1,62 @@
+{
+  "mode": "prototype-only",
+  "templateId": "musician-basic",
+  "sections": [
+    {
+      "id": "dashboard",
+      "label": "Dashboard",
+      "href": "#dashboard",
+      "module": "dashboard",
+      "requiredRole": "viewer"
+    },
+    {
+      "id": "profile",
+      "label": "Profile",
+      "href": "#profile",
+      "module": "profile",
+      "requiredRole": "editor"
+    },
+    {
+      "id": "schedule",
+      "label": "Schedule",
+      "href": "#schedule",
+      "module": "schedules",
+      "requiredRole": "editor"
+    },
+    {
+      "id": "discography",
+      "label": "Discography",
+      "href": "#discography",
+      "module": "discography",
+      "requiredRole": "editor"
+    },
+    {
+      "id": "links",
+      "label": "Links",
+      "href": "#links",
+      "module": "links",
+      "requiredRole": "editor"
+    },
+    {
+      "id": "news",
+      "label": "News",
+      "href": "#news",
+      "module": "news",
+      "requiredRole": "editor"
+    },
+    {
+      "id": "media",
+      "label": "Media",
+      "href": "#media",
+      "module": "media",
+      "requiredRole": "admin"
+    },
+    {
+      "id": "publish",
+      "label": "Publish",
+      "href": "#publish",
+      "module": "publish",
+      "requiredRole": "admin"
+    }
+  ]
+}

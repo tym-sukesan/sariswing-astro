@@ -330,7 +330,7 @@ node tools/static-to-astro/scripts/generate-site-dry-run.mjs --site-config ...
 | **G-5m-b** | Auth abstraction scaffold（**完了**） | `components/` + `auth/` のみ |
 | **G-5n** | Media upload abstraction scaffold（**完了**） | `components/` + `media/` のみ |
 | **G-5o** | Publish workflow abstraction scaffold（**完了**） | `components/` + `publish/` のみ |
-| **G-5p** | musician-basic admin prototype | staging only |
+| **G-5p** | musician-basic admin prototype（**完了**） | `prototypes/` + `DiscographyAdminUi` |
 | **G-5q** | Customer admin manual（非エンジニア向け） | doc |
 
 **Admin CMS は G-5i 時点では未実装・未抽出。** production publish は各フェーズで **explicit approval** 必須。
@@ -361,10 +361,12 @@ node tools/static-to-astro/scripts/generate-site-dry-run.mjs --site-config ...
 
 **G-5o（完了）:** [admin-publish-workflow-abstraction.md](./admin-publish-workflow-abstraction.md) — Publish workflow UI + staging/production separation。GitHub / Edge / FTP 未接続。
 
-**G-5p（次）:** musician-basic admin prototype（staging only）。
+**G-5p（完了）:** [musician-basic-admin-prototype.md](./musician-basic-admin-prototype.md) — musician-basic admin prototype。G-5l〜G-5o scaffold 統合。Runtime / Auth / DB / Storage / Publish 未接続。
+
+**G-5q（次）:** customer admin manual。
 
 **禁止（継続）:** Sariswing 本番 touch、DB update、Storage upload、FTP、GHA dispatch
 
 ---
 
-*G-5l: shell. G-5m: CRUD/Auth. G-5n: Media. G-5o: Publish. G-5p: prototype.*
+*G-5l: shell. G-5m: CRUD/Auth. G-5n: Media. G-5o: Publish. G-5p: prototype. G-5q: manual.*

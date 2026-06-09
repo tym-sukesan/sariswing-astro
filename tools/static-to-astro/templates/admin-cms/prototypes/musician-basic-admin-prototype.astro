@@ -1,0 +1,408 @@
+---
+/**
+ * CMS Kit musician-basic Admin prototype (G-5p).
+ *
+ * Scaffold only — combines G-5l〜G-5o admin CMS scaffolds.
+ * - Not placed under src/pages/admin/
+ * - Not connected to runtime
+ * - No Supabase Auth
+ * - No Supabase query
+ * - No DB update
+ * - No Storage upload
+ * - No GitHub dispatch
+ * - No FTP deploy
+ * - production disabled
+ */
+import AdminLayout from "../components/AdminLayout.astro";
+import AdminNav from "../components/AdminNav.astro";
+import AdminPageHeader from "../components/AdminPageHeader.astro";
+import AdminCard from "../components/AdminCard.astro";
+import AdminStatusMessage from "../components/AdminStatusMessage.astro";
+import AdminAuthStatus from "../components/AdminAuthStatus.astro";
+import AdminPermissionBadge from "../components/AdminPermissionBadge.astro";
+import AdminAccessDenied from "../components/AdminAccessDenied.astro";
+import AdminImageUploader from "../components/AdminImageUploader.astro";
+import AdminMediaLibrary from "../components/AdminMediaLibrary.astro";
+import AdminMediaPreview from "../components/AdminMediaPreview.astro";
+import AdminMediaRightsNotice from "../components/AdminMediaRightsNotice.astro";
+import AdminStorageMappingBadge from "../components/AdminStorageMappingBadge.astro";
+import AdminPublishButton from "../components/AdminPublishButton.astro";
+import AdminDeployStatus from "../components/AdminDeployStatus.astro";
+import AdminPublishApprovalGate from "../components/AdminPublishApprovalGate.astro";
+import AdminPublishHistory from "../components/AdminPublishHistory.astro";
+import AdminPublishEnvironmentBadge from "../components/AdminPublishEnvironmentBadge.astro";
+import ProfileAdminUi from "../modules/ProfileAdminUi.astro";
+import ScheduleAdminUi from "../modules/ScheduleAdminUi.astro";
+import DiscographyAdminUi from "../modules/DiscographyAdminUi.astro";
+import LinksAdminUi from "../modules/LinksAdminUi.astro";
+import NewsAdminUi from "../modules/NewsAdminUi.astro";
+
+const siteName = "Example Musician";
+const templateId = "musician-basic";
+
+const navItems = [
+  { id: "dashboard", label: "Dashboard", href: "#dashboard" },
+  { id: "profile", label: "Profile", href: "#profile" },
+  { id: "schedule", label: "Schedule", href: "#schedule" },
+  { id: "discography", label: "Discography", href: "#discography" },
+  { id: "links", label: "Links", href: "#links" },
+  { id: "news", label: "News", href: "#news" },
+  { id: "media", label: "Media", href: "#media" },
+  { id: "publish", label: "Publish", href: "#publish" },
+];
+
+const profile = {
+  name: "Example Musician",
+  bio: "Jazz vocalist and composer based in Tokyo.",
+  image_url: "",
+  published: true,
+  imageStatus: "none" as const,
+};
+
+const scheduleItems = [
+  {
+    id: "1",
+    date: "2026-07-15",
+    title: "Summer jazz night",
+    venue: "Blue Note Tokyo",
+    published: true,
+    image_url: "",
+    sort_order: 1,
+    dateConflict: false,
+  },
+  {
+    id: "2",
+    date: "2026-08-20",
+    title: "Album release live",
+    venue: "Billboard Live",
+    published: false,
+    sort_order: 2,
+    dateConflict: false,
+  },
+];
+
+const discographyItems = [
+  {
+    id: "1",
+    title: "Midnight Sessions",
+    artist: "Example Musician",
+    published: true,
+    sort_order: 1,
+    cover_image_url: "",
+    coverStatus: "placeholder" as const,
+  },
+  {
+    id: "2",
+    title: "Live at Blue Note",
+    artist: "Example Musician",
+    published: false,
+    sort_order: 2,
+    coverStatus: "missing" as const,
+  },
+];
+
+const linkItems = [
+  {
+    id: "1",
+    label: "Official site",
+    url: "https://example.com",
+    sort_order: 1,
+    published: true,
+  },
+  {
+    id: "2",
+    label: "Spotify",
+    url: "https://open.spotify.com/artist/example",
+    sort_order: 2,
+    published: true,
+  },
+];
+
+const newsItems = [
+  {
+    id: "1",
+    title: "Summer tour dates announced",
+    published_at: "2026-06-01",
+    published: true,
+    deleted: false,
+  },
+  {
+    id: "2",
+    title: "New single coming soon",
+    published_at: "",
+    published: false,
+    deleted: false,
+  },
+];
+
+const libraryItems = [
+  {
+    id: "discography-001-cover",
+    assetType: "discography_cover",
+    publicUrl: "",
+    status: "pending" as const,
+    targetTable: "discography",
+    targetColumn: "cover_image_url",
+    pathPattern: "{siteSlug}/discography/{legacyId}/cover.{ext}",
+    alt: "Album cover placeholder",
+  },
+  {
+    id: "schedule-042-flyer",
+    assetType: "schedule_flyer",
+    publicUrl: "",
+    status: "review-required" as const,
+    targetTable: "schedules",
+    targetColumn: "image_url",
+    pathPattern: "{siteSlug}/schedule/{legacyId}/flyer.{ext}",
+    alt: "Event flyer — human review required",
+  },
+];
+
+const stagingChecks = [
+  "Admin role confirmed",
+  "Staging noindex verified",
+  "Content QA checklist complete",
+];
+
+const productionChecks = [
+  "Customer explicit approval",
+  "Media rights confirmation",
+  "Rollback plan documented",
+  "Production workflow enabled",
+];
+
+const productionBlocking = [
+  "Production publish disabled by default",
+  "GitHub dispatch not connected",
+  "FTP deploy not connected",
+];
+
+const historyItems = [
+  {
+    id: "deploy-001",
+    environment: "staging" as const,
+    status: "success" as const,
+    triggeredBy: "admin@example.com",
+    createdAt: "2026-06-01T12:00:00Z",
+  },
+];
+
+const moduleSummary = [
+  { id: "profile", label: "Profile", count: "1 entry", status: "Published" },
+  { id: "schedule", label: "Schedule", count: "2 events", status: "1 draft" },
+  { id: "discography", label: "Discography", count: "2 releases", status: "1 draft" },
+  { id: "links", label: "Links", count: "2 links", status: "All live" },
+  { id: "news", label: "News", count: "2 posts", status: "1 draft" },
+  { id: "media", label: "Media", count: "2 assets", status: "Review pending" },
+];
+---
+
+<AdminLayout
+  title="Admin"
+  siteName={siteName}
+  currentSection="dashboard"
+  stagingLabel={`${templateId} admin prototype (G-5p)`}
+>
+  <AdminNav slot="nav" items={navItems} currentSection="dashboard" />
+
+  <AdminStatusMessage
+    slot="status"
+    type="warning"
+    title="Scaffold prototype only"
+    message="musician-basic admin prototype. Not connected to runtime. No Supabase Auth, query, DB update, Storage upload, GitHub dispatch, or FTP deploy. Production disabled."
+  />
+
+  <div class="admin-prototype">
+    <section id="dashboard" class="admin-prototype-section" data-section="dashboard">
+      <AdminPageHeader
+        title="Dashboard"
+        description={`Overview for ${siteName} (${templateId}). Static mock data only.`}
+      >
+        <AdminPermissionBadge slot="actions" variant="admin" label="Admin" />
+      </AdminPageHeader>
+
+      <div class="admin-dashboard-grid">
+        {
+          moduleSummary.map((mod) => (
+            <AdminCard title={mod.label} description={mod.count}>
+              <p class="admin-module-summary-status">{mod.status}</p>
+            </AdminCard>
+          ))
+        }
+      </div>
+
+      <AdminCard title="Prototype metadata" description="From musician-basic-props.example.json">
+        <dl class="admin-prototype-meta">
+          <div><dt>Template</dt><dd>{templateId}</dd></div>
+          <div><dt>connectedToRuntime</dt><dd>false</dd></div>
+          <div><dt>productionReady</dt><dd>false</dd></div>
+          <div><dt>Schema adapter</dt><dd>musician-basic-supabase-v1</dd></div>
+        </dl>
+      </AdminCard>
+    </section>
+
+    <section id="auth" class="admin-prototype-section" data-section="auth">
+      <AdminPageHeader
+        title="Auth / permissions"
+        description="Auth UI scaffold — no Supabase Auth connection."
+      />
+      <div class="admin-prototype-auth-grid">
+        <AdminCard title="Session status">
+          <AdminAuthStatus
+            authenticated={true}
+            email="admin@example.com"
+            role="admin"
+            readonly={true}
+          />
+        </AdminCard>
+        <AdminCard title="Permission badges">
+          <div class="admin-permission-badge-row">
+            <AdminPermissionBadge variant="viewer" label="Viewer" />
+            <AdminPermissionBadge variant="editor" label="Editor" />
+            <AdminPermissionBadge variant="admin" label="Admin" />
+          </div>
+        </AdminCard>
+        <AdminCard title="Access denied example">
+          <AdminAccessDenied
+            requiredRole="admin"
+            currentRole="editor"
+            message="Production publish requires admin role."
+          />
+        </AdminCard>
+      </div>
+    </section>
+
+    <section id="profile" class="admin-prototype-section" data-section="profile">
+      <ProfileAdminUi profile={profile} siteName={siteName} readonly={true} />
+    </section>
+
+    <section id="schedule" class="admin-prototype-section" data-section="schedule">
+      <ScheduleAdminUi items={scheduleItems} siteName={siteName} readonly={true} />
+    </section>
+
+    <section id="discography" class="admin-prototype-section" data-section="discography">
+      <DiscographyAdminUi items={discographyItems} siteName={siteName} readonly={true} />
+    </section>
+
+    <section id="links" class="admin-prototype-section" data-section="links">
+      <LinksAdminUi items={linkItems} siteName={siteName} readonly={true} />
+    </section>
+
+    <section id="news" class="admin-prototype-section" data-section="news">
+      <NewsAdminUi items={newsItems} siteName={siteName} readonly={true} />
+    </section>
+
+    <section id="media" class="admin-prototype-section" data-section="media">
+      <AdminPageHeader
+        title="Media"
+        description="Media upload UI scaffold — no Storage upload."
+      />
+      <AdminMediaRightsNotice />
+      <div class="admin-prototype-media-grid">
+        <AdminCard title="Image uploader">
+          <AdminImageUploader
+            assetType="schedule_flyer"
+            label="Schedule flyer"
+            description="Upload event flyer. Human review required."
+            targetTable="schedules"
+            targetColumn="image_url"
+            pathPattern="{siteSlug}/schedule/{legacyId}/flyer.{ext}"
+            requiresHumanReview={true}
+            disabled={true}
+          />
+          <AdminStorageMappingBadge
+            targetTable="schedules"
+            targetColumn="image_url"
+            pathPattern="{siteSlug}/schedule/{legacyId}/flyer.{ext}"
+          />
+        </AdminCard>
+        <AdminCard title="Media library">
+          <AdminMediaLibrary items={libraryItems} readonly={true} />
+        </AdminCard>
+      </div>
+      <AdminCard title="Preview">
+        <AdminMediaPreview
+          status="review-required"
+          assetType="schedule_flyer"
+          alt="Event flyer — human review required"
+        />
+      </AdminCard>
+    </section>
+
+    <section id="publish" class="admin-prototype-section" data-section="publish">
+      <AdminPageHeader
+        title="Publish"
+        description="Publish workflow UI — no GitHub dispatch, Edge Function, or FTP deploy."
+      />
+      <AdminCard title="Environments">
+        <div class="admin-permission-badge-row">
+          <AdminPublishEnvironmentBadge environment="staging" enabled={true} />
+          <AdminPublishEnvironmentBadge environment="production" enabled={false} />
+        </div>
+      </AdminCard>
+      <div class="admin-publish-example-grid">
+        <AdminCard title="Staging publish">
+          <AdminPublishButton
+            environment="staging"
+            disabled={true}
+            requiresApproval={true}
+            requiredRole="admin"
+            danger={false}
+          />
+          <AdminPublishApprovalGate
+            environment="staging"
+            approved={false}
+            requiredChecks={stagingChecks}
+            requiredRole="admin"
+          />
+          <AdminDeployStatus
+            status="idle"
+            message="Ready when connected (not now)."
+          />
+        </AdminCard>
+        <AdminCard title="Production publish" description="Default disabled.">
+          <AdminPublishButton
+            environment="production"
+            disabled={true}
+            requiresApproval={true}
+            requiredRole="admin"
+            danger={true}
+            status="disabled"
+          />
+          <AdminPublishApprovalGate
+            environment="production"
+            approved={false}
+            requiredChecks={productionChecks}
+            blockingItems={productionBlocking}
+            requiredRole="admin"
+          />
+          <AdminDeployStatus status="unknown" message="Production workflow not connected." />
+        </AdminCard>
+      </div>
+      <AdminCard title="Publish history">
+        <AdminPublishHistory items={historyItems} readonly={true} />
+      </AdminCard>
+    </section>
+
+    <section id="readiness" class="admin-prototype-section admin-readiness-panel" data-section="readiness">
+      <AdminStatusMessage
+        type="error"
+        title="Production readiness: not ready"
+        message="This prototype is scaffold-only. connectedToRuntime: false, productionReady: false. Existing Sariswing admin was not modified. Runtime integration requires explicit approval in a later phase."
+      />
+      <ul class="admin-readiness-checklist">
+        <li>Supabase Auth — not connected</li>
+        <li>Supabase query — not performed</li>
+        <li>DB update — not performed</li>
+        <li>Storage upload — not performed</li>
+        <li>GitHub dispatch — not performed</li>
+        <li>FTP deploy — not performed</li>
+        <li>Production — disabled</li>
+      </ul>
+    </section>
+  </div>
+</AdminLayout>
+
+<style is:global>
+  @import "../styles/admin.css";
+</style>

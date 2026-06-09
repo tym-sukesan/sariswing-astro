@@ -24,6 +24,7 @@ const VALID_CATEGORIES = new Set([
   "publish",
   "module",
   "utility",
+  "prototype",
 ]);
 
 const VALID_LEVELS = new Set(["low", "medium", "high"]);

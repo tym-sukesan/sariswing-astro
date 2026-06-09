@@ -11,6 +11,7 @@
 - [admin-auth-abstraction-scaffold.md](./admin-auth-abstraction-scaffold.md) — **G-5m-b** Auth abstraction
 - [admin-media-upload-abstraction.md](./admin-media-upload-abstraction.md) — **G-5n** Media upload abstraction
 - [admin-publish-workflow-abstraction.md](./admin-publish-workflow-abstraction.md) — **G-5o** Publish workflow abstraction
+- [musician-basic-admin-prototype.md](./musician-basic-admin-prototype.md) — **G-5p** musician-basic admin prototype
 - [admin-cms-template-extraction-plan.md](./admin-cms-template-extraction-plan.md) — G-5i extraction plan
 - Registry JSON: [`config/admin/admin-ui-components-registry.json`](../config/admin/admin-ui-components-registry.json)
 - Inspect CLI: [`scripts/inspect-admin-ui-components.mjs`](../scripts/inspect-admin-ui-components.mjs)
@@ -179,7 +180,8 @@ G-5l: low-risk UI shell components scaffold
 G-5m: form/table CRUD primitives + module UIs + auth abstraction
 G-5n: media upload abstraction
 G-5o: publish workflow abstraction
-G-5p: musician-basic admin prototype（staging only）
+G-5p: musician-basic admin prototype（**完了**）
+G-5q: customer admin manual
 G-5q: customer admin manual（doc）
 ```
 
@@ -190,7 +192,8 @@ G-5q: customer admin manual（doc）
 | G-5m | Edit form、CRUD controls、News / Schedule / Profile module UI、Auth | write-local |
 | G-5n | Image uploader + schema adapter storageMappings | staging（承認後） |
 | G-5o | Publish button + deploy status + workflow 分離 | staging dispatch（承認後） |
-| G-5p | musician-basic prototype | staging only |
+| G-5p | musician-basic prototype（**完了**） | scaffold only |
+| G-5q | customer admin manual | doc |
 
 ---
 
@@ -290,32 +293,47 @@ G-5q: customer admin manual（doc）
 | admin-github-dispatch-client | **planned** |
 | admin-edge-function-client | **planned** |
 
-## 15. Next phase — G-5p
+## 15. G-5p scaffold（完了）
 
-**musician-basic admin prototype** — staging only
+**musician-basic admin prototype** — [musician-basic-admin-prototype.md](./musician-basic-admin-prototype.md)
+
+| componentId | scaffoldStatus | category |
+| --- | --- | --- |
+| discography-admin-ui | created | module |
+| musician-basic-admin-prototype | created | prototype |
+
+- Combines G-5l〜G-5o scaffolds
+- `productionReady: false` / `connectedToRuntime: false`
+- Not placed under `src/pages/admin/`
+
+## 16. Next phase — G-5q
+
+**customer admin manual** — operator documentation
 
 ---
 
-## Registry summary（G-5k〜G-5o）
+## Registry summary（G-5k〜G-5p）
 
 | Metric | Count |
 | --- | --- |
-| Total components | **37** |
-| Extractable now (`doNotExtractYet=false`) | **19** |
-| Deferred (`doNotExtractYet=true`) | **9** |
-| Low risk | **11** |
-| Medium risk | **8** |
-| High risk | **9** |
+| Total components | **39** |
+| Extractable now (`doNotExtractYet=false`) | **20** |
+| Deferred (`doNotExtractYet=true`) | **19** |
+| Low risk | **16** |
+| Medium risk | **13** |
+| High risk | **10** |
 | G-5l scaffolded | **10** |
 | G-5m-a scaffolded | **9** |
 | G-5m-b scaffolded | **5** |
 | G-5n scaffolded | **5** |
 | G-5o scaffolded | **5** |
+| G-5p scaffolded | **2** |
 | G-5m-b planned (auth-guard) | **1** |
 | G-5m phase (remaining) | **4** |
 | G-5n phase | **2** |
 | G-5o phase | **3** |
+| G-5p phase | **2** |
 
 ---
 
-*G-5k: registry. G-5l: shell. G-5m-a: CRUD. G-5m-b: Auth. G-5n: Media. G-5o: Publish. Sariswing untouched.*
+*G-5k: registry. G-5l: shell. G-5m-a: CRUD. G-5m-b: Auth. G-5n: Media. G-5o: Publish. G-5p: prototype. Sariswing untouched.*

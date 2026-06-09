@@ -1,0 +1,110 @@
+---
+/**
+ * CMS Kit Discography admin module UI scaffold (G-5p).
+ * Static items only — no Supabase query or save.
+ */
+import AdminPageHeader from "../components/AdminPageHeader.astro";
+import AdminCard from "../components/AdminCard.astro";
+import AdminDataTable from "../components/AdminDataTable.astro";
+import AdminEditForm from "../components/AdminEditForm.astro";
+import AdminFormField from "../components/AdminFormField.astro";
+import AdminPublishToggle from "../components/AdminPublishToggle.astro";
+import AdminSortOrderControl from "../components/AdminSortOrderControl.astro";
+import AdminMediaPreview from "../components/AdminMediaPreview.astro";
+import AdminEmptyState from "../components/AdminEmptyState.astro";
+
+export interface DiscographyAdminItem {
+  id: string;
+  title: string;
+  artist?: string;
+  published: boolean;
+  sort_order?: number;
+  cover_image_url?: string;
+  coverStatus?: "ready" | "pending" | "placeholder" | "missing" | "review-required";
+}
+
+interface Props {
+  items?: DiscographyAdminItem[];
+  siteName?: string;
+  readonly?: boolean;
+}
+
+const { items = [], siteName = "CMS Kit", readonly = true } = Astro.props;
+
+const columns = [
+  { key: "title", label: "Title" },
+  { key: "artist", label: "Artist" },
+  { key: "cover", label: "Cover" },
+  { key: "order", label: "Order" },
+  { key: "status", label: "Status" },
+];
+
+const rows = items.map((item) => ({
+  title: item.title,
+  artist: item.artist ?? "—",
+  cover: item.cover_image_url || item.coverStatus === "placeholder" ? "Attached" : "None",
+  order: String(item.sort_order ?? 0),
+  status: item.published ? "Published" : "Draft",
+}));
+---
+
+<section class="admin-module admin-module--discography" data-module="discography" data-scaffold="true">
+  <AdminPageHeader
+    title="Discography"
+    description={`Manage releases for ${siteName}. Expected table: discography.`}
+  >
+    <button slot="actions" class="admin-button" type="button" disabled={readonly}>
+      Add release
+    </button>
+  </AdminPageHeader>
+
+  {readonly ? (
+    <p class="admin-readonly-notice" role="note">
+      Read-only scaffold. No Supabase query or save.
+    </p>
+  ) : null}
+
+  <AdminCard title="Releases">
+    {
+      items.length === 0 ? (
+        <AdminEmptyState title="No releases yet" message="Add your first discography entry." />
+      ) : (
+        <>
+          <AdminDataTable
+            columns={columns}
+            rows={rows}
+            caption="Discography (static example)"
+            showActionsColumn={true}
+          >
+            <AdminPublishToggle published={items[0]?.published ?? false} disabled={true} />
+          </AdminDataTable>
+          {
+            items[0] ? (
+              <AdminMediaPreview
+                status={items[0].coverStatus ?? "placeholder"}
+                assetType="discography_cover"
+                alt={items[0].title}
+              />
+            ) : null
+          }
+        </>
+      )
+    }
+  </AdminCard>
+
+  <AdminCard title="Create / edit release">
+    <AdminEditForm title="Edit release" mode="edit" disabled={true}>
+      <AdminFormField label="Title">
+        <input type="text" placeholder="Album title" disabled />
+      </AdminFormField>
+      <AdminFormField label="Artist">
+        <input type="text" placeholder="Artist name" disabled />
+      </AdminFormField>
+      <AdminFormField label="Cover image" help="Storage: cover_image_url (G-5n).">
+        <input type="text" placeholder="No cover attached" disabled />
+      </AdminFormField>
+      <AdminSortOrderControl value={0} disabled={true} />
+      <AdminPublishToggle published={false} disabled={true} />
+    </AdminEditForm>
+  </AdminCard>
+</section>

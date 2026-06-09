@@ -133,10 +133,10 @@ templates/admin-cms/
 | --- | --- |
 | **G-5m-b（完了）** | [admin-auth-abstraction-scaffold.md](./admin-auth-abstraction-scaffold.md) |
 | **G-5n（完了）** | [admin-media-upload-abstraction.md](./admin-media-upload-abstraction.md) |
-| **G-5o** | Publish workflow abstraction |
-| **G-5o** | Publish workflow abstraction |
-| **G-5p** | musician-basic admin prototype（staging only） |
+| **G-5o（完了）** | [admin-publish-workflow-abstraction.md](./admin-publish-workflow-abstraction.md) |
+| **G-5p（完了）** | [musician-basic-admin-prototype.md](./musician-basic-admin-prototype.md) — includes `DiscographyAdminUi` |
+| **G-5q** | customer admin manual |
 
 ---
 
-*G-5m-a: CRUD UI scaffold only. Sariswing admin untouched.*
+*G-5m-a: CRUD UI scaffold. G-5p: musician-basic prototype. Sariswing admin untouched.*

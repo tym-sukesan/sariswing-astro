@@ -1,0 +1,57 @@
+{
+  "mode": "prototype-only",
+  "siteSlug": "example-musician",
+  "siteName": "Example Musician",
+  "siteType": "musician",
+  "templateId": "musician-basic",
+  "schemaAdapterId": "musician-basic-supabase-v1",
+  "connectedToRuntime": false,
+  "productionReady": false,
+  "safety": {
+    "supabaseAuthConnected": false,
+    "supabaseQueryPerformed": false,
+    "dbUpdatePerformed": false,
+    "storageUploadPerformed": false,
+    "githubDispatchPerformed": false,
+    "ftpDeployPerformed": false,
+    "productionTouched": false
+  },
+  "admin": {
+    "role": "admin",
+    "permissions": ["read", "create", "update"],
+    "productionPublishEnabled": false
+  },
+  "modules": {
+    "profile": {
+      "enabled": true,
+      "table": "profile"
+    },
+    "schedules": {
+      "enabled": true,
+      "table": "schedules",
+      "storageTargets": ["home_image_url", "image_url"],
+      "humanReviewRequired": true
+    },
+    "discography": {
+      "enabled": true,
+      "table": "discography",
+      "storageTargets": ["cover_image_url"]
+    },
+    "links": {
+      "enabled": true,
+      "table": "links"
+    },
+    "news": {
+      "enabled": true,
+      "table": "news"
+    },
+    "media": {
+      "enabled": true,
+      "bucket": "site-assets"
+    },
+    "publish": {
+      "stagingEnabled": true,
+      "productionEnabled": false
+    }
+  }
+}

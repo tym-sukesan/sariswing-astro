@@ -18,7 +18,7 @@ Inspect Admin UI components registry (read-only). No upload / DB / FTP / dispatc
 
 Options:
   --registry PATH       Override registry JSON (default: config/admin/admin-ui-components-registry.json)
-  --category CATEGORY   Filter by category (layout, navigation, feedback, form, table, crud, media, auth, publish, module, utility)
+  --category CATEGORY   Filter by category (layout, navigation, feedback, form, table, crud, media, auth, publish, module, utility, prototype)
   --risk LEVEL          Filter by risk (low, medium, high)
   --phase PHASE         Filter by suggestedPhase or implementedInPhase (e.g. G-5l, G-5m-a)
   --extractable-only    Show only components with doNotExtractYet=false

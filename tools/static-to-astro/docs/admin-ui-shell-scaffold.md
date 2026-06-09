@@ -132,12 +132,12 @@ tools/static-to-astro/templates/admin-cms/
 
 | Phase | 内容 |
 | --- | --- |
-| **G-5m-a（完了）** | [admin-crud-ui-scaffold.md](./admin-crud-ui-scaffold.md) — CRUD primitives + module UI |
-| **G-5m-b** | Auth abstraction plan or scaffold |
-| **G-5n** | Media upload abstraction |
-| **G-5o** | Publish workflow abstraction |
-| **G-5p** | musician-basic admin prototype（staging only） |
+| **G-5m-b（完了）** | [admin-auth-abstraction-scaffold.md](./admin-auth-abstraction-scaffold.md) |
+| **G-5n（完了）** | [admin-media-upload-abstraction.md](./admin-media-upload-abstraction.md) |
+| **G-5o（完了）** | [admin-publish-workflow-abstraction.md](./admin-publish-workflow-abstraction.md) |
+| **G-5p（完了）** | [musician-basic-admin-prototype.md](./musician-basic-admin-prototype.md) |
+| **G-5q** | customer admin manual |
 
 ---
 
-*G-5l: shell scaffold. G-5m-a: CRUD UI scaffold. Sariswing admin untouched.*
+*G-5l: shell scaffold. G-5p: musician-basic prototype. Sariswing admin untouched.*

@@ -122,8 +122,10 @@ function parseArgs(argv) {
 }
 
 function printSummary(result) {
+  const phase = result.uploadProfile === "schedule" ? "G-4f" : "G-4b";
   console.log("");
-  console.log("=== Storage Upload Summary (G-4b) ===");
+  console.log(`=== Storage Upload Summary (${phase}) ===`);
+  console.log(`profile: ${result.uploadProfile ?? "discography"}`);
   console.log(`mode: ${result.mode}`);
   console.log(`siteSlug: ${result.siteSlug}`);
   console.log(`bucket: ${result.bucket}`);

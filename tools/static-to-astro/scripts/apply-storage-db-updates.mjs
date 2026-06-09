@@ -30,13 +30,13 @@ const REPO_ROOT = path.resolve(TOOL_ROOT, "../..");
 function printHelp() {
   console.log(`Usage: node scripts/apply-storage-db-updates.mjs [options]
 
-Apply discography.cover_image_url updates from G-4c plan (staging only).
+Apply staging DB updates from storage-db-update-plan.json (G-4c / G-4g).
 Default is dry-run. Storage upload is never performed.
 
 Options:
-  --plan PATH       storage-db-update-plan.json (required)
+  --plan PATH       storage-db-update-plan.json or schedule-db-update-plan.json (required)
   --site-slug SLUG  Site slug (required)
-  --table NAME      Table filter (default: discography)
+  --table NAME      discography (G-4c) or schedules (G-4g home_image_url only)
   --report PATH     STORAGE_DB_UPDATE_REPORT.md output (required)
   --manifest PATH   storage-db-update-result.json output (required)
   --backup PATH     Pre-update backup JSON (required for --apply)
@@ -104,9 +104,11 @@ function parseArgs(argv) {
 }
 
 function printSummary(result) {
+  const phase = result.phase ?? (result.table === "schedules" ? "G-4g" : "G-4c");
   console.log("");
-  console.log("=== Storage DB Update Summary (G-4c) ===");
+  console.log(`=== Storage DB Update Summary (${phase}) ===`);
   console.log(`mode: ${result.mode}`);
+  console.log(`table: ${result.table ?? "discography"}`);
   console.log(`stagingHost: ${result.stagingHost ?? "(unknown)"}`);
   console.log(`planned: ${result.summary.planned}`);
   console.log(`updated: ${result.summary.updated}`);
@@ -114,7 +116,8 @@ function printSummary(result) {
   console.log(`failed: ${result.summary.failed}`);
   console.log(`db update performed: ${result.dbUpdatePerformed ? "yes" : "no"}`);
   console.log(`storage upload performed: no`);
-  console.log(`schedules table touched: no`);
+  console.log(`schedules table touched: ${result.schedulesTableTouched ? "yes" : "no"}`);
+  console.log(`image_url column touched: ${result.imageUrlColumnTouched ? "yes" : "no"}`);
   console.log(`secret leak: none`);
 }
 
@@ -136,8 +139,8 @@ async function main() {
     process.exit(1);
   }
 
-  if (opts.table !== "discography") {
-    console.error("Only --table discography is supported in G-4c");
+  if (opts.table !== "discography" && opts.table !== "schedules") {
+    console.error("Supported --table values: discography (G-4c), schedules (G-4g)");
     process.exit(1);
   }
 
@@ -152,7 +155,8 @@ async function main() {
     process.exit(1);
   }
 
-  console.log("Storage DB update (G-4c)");
+  const phase = opts.table === "schedules" ? "G-4g" : "G-4c";
+  console.log(`Storage DB update (${phase})`);
   console.log(`Plan: ${opts.plan}`);
   console.log(`Site: ${opts.siteSlug}`);
   console.log(`Table: ${opts.table}`);

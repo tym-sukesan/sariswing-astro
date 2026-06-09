@@ -10,16 +10,49 @@ import { assertSupabaseJsAvailable } from "./supabase-seed-inserter.mjs";
 import { assertStagingHost, loadStagingSupabaseEnv } from "./storage-upload-executor.mjs";
 
 export const EXPECTED_STAGING_HOST = "kmjqppxjdnwwrtaeqjta.supabase.co";
-export const ALLOWED_LEGACY_IDS = [
+export const DISCOGRAPHY_LEGACY_IDS = [
   "discography-001",
   "discography-002",
   "discography-003",
   "discography-004",
 ];
+export const SCHEDULE_HOME_LEGACY_IDS = ["schedule-2026-03-012"];
 
-const ALLOWED_TABLE = "discography";
-const ALLOWED_COLUMN = "cover_image_url";
+/** @deprecated use DISCOGRAPHY_LEGACY_IDS */
+export const ALLOWED_LEGACY_IDS = DISCOGRAPHY_LEGACY_IDS;
+
 const STAGING_PUBLIC_PREFIX = `https://${EXPECTED_STAGING_HOST}/storage/v1/object/public/site-assets/`;
+
+/** @type {Record<string, { table: string, column: string, legacyIds: string[], expectedCount: number, phase: string, forbiddenColumns?: string[], forbiddenLegacyIds?: string[] }>} */
+export const DB_UPDATE_PROFILES = {
+  discography: {
+    table: "discography",
+    column: "cover_image_url",
+    legacyIds: DISCOGRAPHY_LEGACY_IDS,
+    expectedCount: 4,
+    phase: "G-4c",
+  },
+  schedules: {
+    table: "schedules",
+    column: "home_image_url",
+    legacyIds: SCHEDULE_HOME_LEGACY_IDS,
+    expectedCount: 1,
+    phase: "G-4g",
+    forbiddenColumns: ["image_url"],
+    forbiddenLegacyIds: ["schedule-2026-03-011"],
+  },
+};
+
+/**
+ * @param {string} table
+ */
+export function resolveDbUpdateProfile(table) {
+  const profile = DB_UPDATE_PROFILES[table];
+  if (!profile) {
+    throw new Error(`Unsupported --table ${table}. Use discography or schedules.`);
+  }
+  return profile;
+}
 
 /**
  * @param {string} planPath
@@ -38,9 +71,9 @@ export function loadDbUpdatePlan(planPath) {
  * @param {{ siteSlug?: string, table?: string }} opts
  */
 export function filterPlanEntries(plan, opts = {}) {
-  const table = opts.table ?? ALLOWED_TABLE;
-  let entries = plan.entries.filter(
-    (e) => e.targetTable === table && e.targetColumn === ALLOWED_COLUMN,
+  const profile = resolveDbUpdateProfile(opts.table ?? "discography");
+  const entries = plan.entries.filter(
+    (e) => e.targetTable === profile.table && e.targetColumn === profile.column,
   );
   if (opts.siteSlug && plan.siteSlug && plan.siteSlug !== opts.siteSlug) {
     throw new Error(`Plan siteSlug=${plan.siteSlug} does not match --site-slug=${opts.siteSlug}`);
@@ -52,7 +85,8 @@ export function filterPlanEntries(plan, opts = {}) {
  * @param {object[]} entries
  * @param {string} stagingHost
  */
-export async function preflightDbUpdatePlan(entries, stagingHost) {
+export async function preflightDbUpdatePlan(entries, stagingHost, profileKey = "discography") {
+  const profile = resolveDbUpdateProfile(profileKey);
   /** @type {string[]} */
   const errors = [];
   /** @type {string[]} */
@@ -66,33 +100,41 @@ export async function preflightDbUpdatePlan(entries, stagingHost) {
 
   assertStagingHost(stagingHost);
 
-  if (entries.length !== 4) {
-    errors.push(`Expected 4 plan entries, got ${entries.length}`);
+  if (entries.length !== profile.expectedCount) {
+    errors.push(`Expected ${profile.expectedCount} plan entries, got ${entries.length}`);
   }
 
   const legacyIds = entries.map((e) => e.legacyId);
-  for (const id of ALLOWED_LEGACY_IDS) {
+  for (const id of profile.legacyIds) {
     if (!legacyIds.includes(id)) {
       errors.push(`Missing legacy_id in plan: ${id}`);
     }
   }
 
+  for (const forbiddenId of profile.forbiddenLegacyIds ?? []) {
+    if (legacyIds.includes(forbiddenId)) {
+      errors.push(`${forbiddenId}: must not be in plan`);
+    }
+  }
+
   for (const entry of entries) {
-    if (entry.targetTable !== ALLOWED_TABLE) {
-      errors.push(`${entry.legacyId}: targetTable must be discography`);
+    if (entry.targetTable !== profile.table) {
+      errors.push(`${entry.legacyId}: targetTable must be ${profile.table}`);
     }
-    if (entry.targetColumn !== ALLOWED_COLUMN) {
-      errors.push(`${entry.legacyId}: targetColumn must be cover_image_url`);
+    if (entry.targetColumn !== profile.column) {
+      errors.push(`${entry.legacyId}: targetColumn must be ${profile.column}`);
     }
-    if (entry.targetTable === "schedules") {
-      errors.push(`${entry.legacyId}: schedules table must not be in plan`);
+    for (const forbiddenColumn of profile.forbiddenColumns ?? []) {
+      if (entry.targetColumn === forbiddenColumn) {
+        errors.push(`${entry.legacyId}: targetColumn ${forbiddenColumn} must not be in plan`);
+      }
     }
     if (!entry.newValue || !String(entry.newValue).startsWith(STAGING_PUBLIC_PREFIX)) {
       errors.push(
         `${entry.legacyId}: newValue must start with ${STAGING_PUBLIC_PREFIX}`,
       );
     }
-    if (!entry.legacyId || !ALLOWED_LEGACY_IDS.includes(entry.legacyId)) {
+    if (!entry.legacyId || !profile.legacyIds.includes(entry.legacyId)) {
       errors.push(`${entry.legacyId}: legacy_id not in allowed list`);
     }
 
@@ -142,8 +184,39 @@ export async function fetchDiscographyBackup(supabase, legacyIds) {
   }
 
   return {
-    table: ALLOWED_TABLE,
-    column: ALLOWED_COLUMN,
+    table: "discography",
+    column: "cover_image_url",
+    capturedAt: new Date().toISOString(),
+    rows,
+  };
+}
+
+/**
+ * @param {import('@supabase/supabase-js').SupabaseClient} supabase
+ * @param {string[]} legacyIds
+ */
+export async function fetchSchedulesBackup(supabase, legacyIds) {
+  const { data, error } = await supabase
+    .from("schedules")
+    .select("legacy_id,title,home_image_url,image_url,updated_at")
+    .in("legacy_id", legacyIds)
+    .order("legacy_id");
+
+  if (error) {
+    throw new Error(`Failed to read schedules backup: ${error.message}`);
+  }
+
+  const rows = data ?? [];
+  const found = new Set(rows.map((r) => r.legacy_id));
+  for (const id of legacyIds) {
+    if (!found.has(id)) {
+      throw new Error(`Backup read missing legacy_id: ${id}`);
+    }
+  }
+
+  return {
+    table: "schedules",
+    column: "home_image_url",
     capturedAt: new Date().toISOString(),
     rows,
   };
@@ -159,6 +232,24 @@ async function updateDiscographyCoverUrl(supabase, entry) {
     .update({ cover_image_url: entry.newValue })
     .eq("legacy_id", entry.legacyId)
     .select("legacy_id,cover_image_url")
+    .single();
+
+  if (error) {
+    throw new Error(error.message);
+  }
+  return data;
+}
+
+/**
+ * @param {import('@supabase/supabase-js').SupabaseClient} supabase
+ * @param {object} entry
+ */
+async function updateScheduleHomeImageUrl(supabase, entry) {
+  const { data, error } = await supabase
+    .from("schedules")
+    .update({ home_image_url: entry.newValue })
+    .eq("legacy_id", entry.legacyId)
+    .select("legacy_id,home_image_url,image_url")
     .single();
 
   if (error) {
@@ -187,17 +278,22 @@ export function valuesMatch(actual, expected) {
  */
 export async function runStorageDbUpdate(opts) {
   const apply = Boolean(opts.apply);
-  const table = opts.table ?? ALLOWED_TABLE;
+  const table = opts.table ?? "discography";
+  const profile = resolveDbUpdateProfile(table);
   const { plan } = loadDbUpdatePlan(opts.planPath);
   const entries = filterPlanEntries(plan, { siteSlug: opts.siteSlug, table });
+  const isSchedule = table === "schedules";
 
   /** @type {object} */
   const result = {
     siteSlug: opts.siteSlug,
     mode: apply ? "apply" : "dry-run",
+    table,
+    phase: profile.phase,
     dbUpdatePerformed: false,
     storageUploadPerformed: false,
-    schedulesTableTouched: false,
+    schedulesTableTouched: isSchedule,
+    imageUrlColumnTouched: false,
     stagingHost: null,
     planPath: path.resolve(opts.planPath),
     backupPath: opts.backupPath ? path.resolve(opts.backupPath) : null,
@@ -217,7 +313,7 @@ export async function runStorageDbUpdate(opts) {
 
   const env = loadStagingSupabaseEnv(opts.envFile ?? null);
   result.stagingHost = env.host;
-  result.preflight = await preflightDbUpdatePlan(entries, result.stagingHost);
+  result.preflight = await preflightDbUpdatePlan(entries, result.stagingHost, table);
 
   if (!result.preflight.ok) {
     throw new Error(
@@ -236,7 +332,7 @@ export async function runStorageDbUpdate(opts) {
         status: "planned",
       });
     }
-    result.message = `Dry-run: ${entries.length} discography.cover_image_url updates planned`;
+    result.message = `Dry-run: ${entries.length} ${profile.table}.${profile.column} updates planned`;
     return result;
   }
 
@@ -247,7 +343,9 @@ export async function runStorageDbUpdate(opts) {
   });
 
   const legacyIds = entries.map((e) => e.legacyId);
-  const backup = await fetchDiscographyBackup(supabase, legacyIds);
+  const backup = isSchedule
+    ? await fetchSchedulesBackup(supabase, legacyIds)
+    : await fetchDiscographyBackup(supabase, legacyIds);
   result.backup = backup;
 
   if (opts.backupPath) {
@@ -262,41 +360,73 @@ export async function runStorageDbUpdate(opts) {
   for (const entry of entries) {
     try {
       const before = backup.rows.find((r) => r.legacy_id === entry.legacyId);
-      await updateDiscographyCoverUrl(supabase, entry);
+      if (isSchedule) {
+        await updateScheduleHomeImageUrl(supabase, entry);
 
-      const { data: afterRows, error: readError } = await supabase
-        .from("discography")
-        .select("legacy_id,cover_image_url")
-        .eq("legacy_id", entry.legacyId)
-        .single();
+        const { data: afterRows, error: readError } = await supabase
+          .from("schedules")
+          .select("legacy_id,home_image_url,image_url")
+          .eq("legacy_id", entry.legacyId)
+          .single();
 
-      if (readError) {
-        throw new Error(`Post-update read failed: ${readError.message}`);
+        if (readError) {
+          throw new Error(`Post-update read failed: ${readError.message}`);
+        }
+
+        const verified = valuesMatch(afterRows.home_image_url, entry.newValue);
+        if (!verified) {
+          throw new Error(
+            `Verification failed: expected ${entry.newValue}, got ${afterRows.home_image_url}`,
+          );
+        }
+
+        result.updated.push({
+          legacyId: entry.legacyId,
+          targetTable: profile.table,
+          targetColumn: profile.column,
+          oldValue: before?.home_image_url ?? entry.currentValue ?? null,
+          newValue: entry.newValue,
+          imageUrlUnchanged: before?.image_url ?? null,
+          verified: true,
+          approvalScope: entry.approvalScope ?? "staging-only",
+        });
+      } else {
+        await updateDiscographyCoverUrl(supabase, entry);
+
+        const { data: afterRows, error: readError } = await supabase
+          .from("discography")
+          .select("legacy_id,cover_image_url")
+          .eq("legacy_id", entry.legacyId)
+          .single();
+
+        if (readError) {
+          throw new Error(`Post-update read failed: ${readError.message}`);
+        }
+
+        const verified = valuesMatch(afterRows.cover_image_url, entry.newValue);
+        if (!verified) {
+          throw new Error(
+            `Verification failed: expected ${entry.newValue}, got ${afterRows.cover_image_url}`,
+          );
+        }
+
+        result.updated.push({
+          legacyId: entry.legacyId,
+          targetTable: profile.table,
+          targetColumn: profile.column,
+          oldValue: before?.cover_image_url ?? entry.currentValue ?? null,
+          newValue: entry.newValue,
+          verified: true,
+          approvalScope: entry.approvalScope ?? "staging-only",
+        });
       }
-
-      const verified = valuesMatch(afterRows.cover_image_url, entry.newValue);
-      if (!verified) {
-        throw new Error(
-          `Verification failed: expected ${entry.newValue}, got ${afterRows.cover_image_url}`,
-        );
-      }
-
-      result.updated.push({
-        legacyId: entry.legacyId,
-        targetTable: ALLOWED_TABLE,
-        targetColumn: ALLOWED_COLUMN,
-        oldValue: before?.cover_image_url ?? entry.currentValue ?? null,
-        newValue: entry.newValue,
-        verified: true,
-        approvalScope: entry.approvalScope ?? "staging-only",
-      });
       result.summary.updated += 1;
       result.summary.verified += 1;
     } catch (err) {
       result.failed.push({
         legacyId: entry.legacyId,
-        targetTable: ALLOWED_TABLE,
-        targetColumn: ALLOWED_COLUMN,
+        targetTable: profile.table,
+        targetColumn: profile.column,
         oldValue: entry.currentValue ?? null,
         newValue: entry.newValue,
         error: err.message,
@@ -320,17 +450,26 @@ export async function runStorageDbUpdate(opts) {
  * @param {{ reportPath?: string, manifestPath?: string, backupPath?: string }} [opts]
  */
 export function formatStorageDbUpdateReport(result, opts = {}) {
+  const isSchedule = result.table === "schedules";
+  const title = isSchedule ? "Schedule DB Update Report (G-4g)" : "Storage DB Update Report (G-4c)";
+  const phase = result.phase ?? (isSchedule ? "G-4g" : "G-4c");
+  const tableName = isSchedule ? "schedules" : "discography";
+  const columnName = isSchedule ? "home_image_url" : "cover_image_url";
+
   const lines = [
-    "# Storage DB Update Report (G-4c)",
+    `# ${title}`,
     "",
     `**Mode:** ${result.mode}`,
+    `**Phase:** ${phase}`,
     `**Staging host:** ${result.stagingHost ?? "(unknown)"}`,
-    `**Table:** discography`,
-    `**Column:** cover_image_url`,
+    `**Table:** ${tableName}`,
+    `**Column:** ${columnName}`,
     `**Generated:** ${result.generatedAt}`,
     "",
-    "> **Storage upload not performed** in G-4c.",
-    "> **Schedule table not touched.**",
+    `> **Storage upload not performed** in ${phase}.`,
+    isSchedule
+      ? "> **schedules.image_url not touched.** schedule-2026-03-011 not touched."
+      : "> **Schedule table not touched.**",
     "> Production / Sariswing production: **not touched**.",
     "",
     "## Summary",
@@ -384,28 +523,54 @@ export function formatStorageDbUpdateReport(result, opts = {}) {
     lines.push("", "### Restore", "", "Use backup JSON to restore `cover_image_url` values if needed.", "");
   }
 
-  lines.push(
-    "## G-4d QA checklist",
-    "",
-    "1. `export-supabase-json` → `discography.json` has Storage public URLs",
-    "2. `npm run build` with `--deploy-base /cms-kit-staging/gosaki/`",
-    "3. `verify-static-public-artifact` → PASS",
-    "4. `deploy-public-dist-ftp.mjs --apply --env staging` → `applied: true`",
-    "5. Open https://yskcreate.weblike.jp/cms-kit-staging/gosaki/discography/",
-    "6. Confirm 4 cover images visible; no `example.supabase.co` in HTML",
-    "7. Schedule images may still be pending (expected)",
-    "",
-    "## Safety",
-    "",
-    "- Storage upload: **not performed**",
-    "- Schedules table: **not touched**",
-    "- Secrets: **not included** in this report",
-    "",
-    "---",
-    "",
-    result.message ?? "",
-    "",
-  );
+  if (isSchedule) {
+    lines.push(
+      "## G-4g QA checklist",
+      "",
+      "1. `export-supabase-json` → `schedules.json` has `schedule-2026-03-012.home_image_url` Storage URL",
+      "2. `npm run build` with `--deploy-base /cms-kit-staging/gosaki/`",
+      "3. `verify-static-public-artifact` → PASS",
+      "4. `deploy-public-dist-ftp.mjs --apply --env staging` → `applied: true`",
+      "5. Open https://yskcreate.weblike.jp/cms-kit-staging/gosaki/",
+      "6. Confirm Golden PODs home image visible",
+      "7. `schedule-2026-03-012.image_url` unchanged; `schedule-2026-03-011` unchanged",
+      "",
+      "## Safety",
+      "",
+      "- Storage upload: **not performed** in G-4g",
+      "- `schedules.image_url`: **not touched**",
+      "- `schedule-2026-03-011`: **not touched**",
+      "- Secrets: **not included** in this report",
+      "",
+      "---",
+      "",
+      result.message ?? "",
+      "",
+    );
+  } else {
+    lines.push(
+      "## G-4d QA checklist",
+      "",
+      "1. `export-supabase-json` → `discography.json` has Storage public URLs",
+      "2. `npm run build` with `--deploy-base /cms-kit-staging/gosaki/`",
+      "3. `verify-static-public-artifact` → PASS",
+      "4. `deploy-public-dist-ftp.mjs --apply --env staging` → `applied: true`",
+      "5. Open https://yskcreate.weblike.jp/cms-kit-staging/gosaki/discography/",
+      "6. Confirm 4 cover images visible; no `example.supabase.co` in HTML",
+      "7. Schedule images may still be pending (expected)",
+      "",
+      "## Safety",
+      "",
+      "- Storage upload: **not performed**",
+      "- Schedules table: **not touched**",
+      "- Secrets: **not included** in this report",
+      "",
+      "---",
+      "",
+      result.message ?? "",
+      "",
+    );
+  }
 
   return `${lines.join("\n")}\n`;
 }
@@ -417,9 +582,12 @@ export function buildDbUpdateResultManifest(result) {
   return {
     siteSlug: result.siteSlug,
     mode: result.mode,
+    phase: result.phase,
+    table: result.table,
     dbUpdatePerformed: result.dbUpdatePerformed,
     storageUploadPerformed: false,
-    schedulesTableTouched: false,
+    schedulesTableTouched: result.schedulesTableTouched ?? false,
+    imageUrlColumnTouched: result.imageUrlColumnTouched ?? false,
     stagingHost: result.stagingHost,
     generatedAt: result.generatedAt,
     backupPath: result.backupPath,

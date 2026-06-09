@@ -212,6 +212,57 @@ async function createSupabaseClient(supabaseUrl, serviceRoleKey) {
 
 /**
  * @param {object} item Allowlist entry
+ * @returns {"discography" | "schedule"}
+ */
+export function validateApprovedUploadEntry(item) {
+  if (!item.sourceUrl || !item.targetStoragePath || !item.legacyId) {
+    throw new Error("Approved entry missing sourceUrl/targetStoragePath/legacyId");
+  }
+  if (/example\.supabase\.co/i.test(item.sourceUrl)) {
+    throw new Error(`Approved entry ${item.legacyId} has placeholder sourceUrl`);
+  }
+
+  if (item.assetType === "discography_cover") {
+    if (item.targetTable !== "discography" || item.targetColumn !== "cover_image_url") {
+      throw new Error(`Discography entry ${item.legacyId} has invalid target table/column`);
+    }
+    return "discography";
+  }
+
+  if (item.assetType === "schedule_home") {
+    if (item.targetTable !== "schedules" || item.targetColumn !== "home_image_url") {
+      throw new Error(
+        `Schedule entry ${item.legacyId} must target schedules.home_image_url only`,
+      );
+    }
+    if (item.legacyId !== "schedule-2026-03-012") {
+      throw new Error(
+        `Schedule upload limited to schedule-2026-03-012 in G-4f (got ${item.legacyId})`,
+      );
+    }
+    return "schedule";
+  }
+
+  throw new Error(
+    `Approved entry ${item.legacyId} has unsupported assetType=${item.assetType}`,
+  );
+}
+
+/**
+ * @param {object[]} approved
+ * @returns {"discography" | "schedule"}
+ */
+export function detectUploadProfile(approved) {
+  if (!approved.length) return "discography";
+  const profiles = new Set(approved.map((item) => validateApprovedUploadEntry(item)));
+  if (profiles.size > 1) {
+    throw new Error("Allowlist mixes discography and schedule profiles — split uploads");
+  }
+  return /** @type {"discography" | "schedule"} */ ([...profiles][0]);
+}
+
+/**
+ * @param {object} item Allowlist entry
  * @param {string} bucket
  */
 export function planUploadEntry(item, bucket) {
@@ -295,15 +346,11 @@ export async function runApprovedStorageUpload(opts) {
     return result;
   }
 
+  const uploadProfile = detectUploadProfile(approved);
+  result.uploadProfile = uploadProfile;
+
   for (const item of approved) {
-    if (item.assetType !== "discography_cover") {
-      throw new Error(
-        `Approved entry ${item.legacyId} has assetType=${item.assetType} — only discography_cover allowed in G-4b`,
-      );
-    }
-    if (!item.sourceUrl || !item.targetStoragePath || !item.legacyId) {
-      throw new Error(`Approved entry missing sourceUrl/targetStoragePath/legacyId`);
-    }
+    validateApprovedUploadEntry(item);
   }
 
   let env = null;
@@ -444,7 +491,7 @@ export async function runApprovedStorageUpload(opts) {
     }
   }
 
-  if (apply && result.summary.uploaded > 0) {
+  if (apply && (result.summary.uploaded > 0 || result.summary.skippedExisting > 0)) {
     result.uploadPerformed = true;
   }
 
@@ -461,15 +508,27 @@ export async function runApprovedStorageUpload(opts) {
  * @param {import('@supabase/supabase-js').SupabaseClient | null} supabase
  */
 export async function buildStorageDbUpdatePlan(uploadResult, supabase = null) {
+  const profile = uploadResult.uploadProfile ?? detectUploadProfile([
+    ...uploadResult.uploaded,
+    ...uploadResult.skippedExisting,
+  ]);
+  const successEntries = [...uploadResult.uploaded, ...uploadResult.skippedExisting];
   /** @type {Record<string, string | null>} */
   const currentByLegacy = {};
 
-  if (supabase) {
-    const legacyIds = [
-      ...uploadResult.uploaded,
-      ...uploadResult.skippedExisting,
-    ].map((e) => e.legacyId);
-    if (legacyIds.length) {
+  if (supabase && successEntries.length) {
+    const legacyIds = successEntries.map((e) => e.legacyId);
+    if (profile === "schedule") {
+      const { data, error } = await supabase
+        .from("schedules")
+        .select("legacy_id,home_image_url,image_url")
+        .in("legacy_id", legacyIds);
+      if (!error && data) {
+        for (const row of data) {
+          currentByLegacy[row.legacy_id] = row.home_image_url ?? null;
+        }
+      }
+    } else {
       const { data, error } = await supabase
         .from("discography")
         .select("legacy_id,cover_image_url")
@@ -482,7 +541,35 @@ export async function buildStorageDbUpdatePlan(uploadResult, supabase = null) {
     }
   }
 
-  const successEntries = [...uploadResult.uploaded, ...uploadResult.skippedExisting];
+  if (profile === "schedule") {
+    return {
+      siteSlug: uploadResult.siteSlug,
+      phase: "G-4g",
+      updateAllowed: false,
+      dbUpdatePerformed: false,
+      targetTable: "schedules",
+      targetColumn: "home_image_url",
+      generatedAt: new Date().toISOString(),
+      notes:
+        "DB update not performed in G-4f. Apply home_image_url only in G-4g (staging only). schedules.image_url not included.",
+      entries: successEntries.map((entry) => ({
+        legacyId: entry.legacyId,
+        targetTable: "schedules",
+        targetColumn: "home_image_url",
+        currentValue: currentByLegacy[entry.legacyId] ?? null,
+        newValue: entry.publicUrl ?? null,
+        storagePath: entry.storagePath ?? null,
+        updateAllowed: false,
+        phase: "G-4g",
+        approvalScope: APPROVAL_SCOPE,
+      })),
+      pendingFailed: uploadResult.failed.map((f) => ({
+        legacyId: f.legacyId,
+        reason: f.error,
+        updateAllowed: false,
+      })),
+    };
+  }
 
   return {
     siteSlug: uploadResult.siteSlug,
@@ -518,15 +605,23 @@ export async function buildStorageDbUpdatePlan(uploadResult, supabase = null) {
  * @param {{ reportPath?: string, manifestPath?: string, dbUpdatePlanPath?: string }} [opts]
  */
 export function formatStorageUploadReport(result, opts = {}) {
+  const profile = result.uploadProfile ?? "discography";
+  const isSchedule = profile === "schedule";
+  const title = isSchedule ? "Schedule Storage Upload Report (G-4f)" : "Storage Upload Report (G-4b)";
+  const dbNote = isSchedule
+    ? "> **DB update not performed.** `dbUpdatePerformed: false` — G-4g will update `schedules.home_image_url` for approved legacy_id only."
+    : "> **DB update not performed.** `dbUpdatePerformed: false` — G-4c will update `discography.cover_image_url`.";
+
   const lines = [
-    "# Storage Upload Report (G-4b)",
+    `# ${title}`,
     "",
     `**Mode:** ${result.mode}`,
+    `**Profile:** ${profile}`,
     `**Bucket:** ${result.bucket}`,
     `**Staging host:** ${result.stagingHost ?? "(not connected)"}`,
     `**Generated:** ${result.generatedAt}`,
     "",
-    "> **DB update not performed.** `dbUpdatePerformed: false` — G-4c will update `discography.cover_image_url`.",
+    dbNote,
     "> Production use permission is **not confirmed**. All uploads are `staging-only` candidates.",
     "",
     "## Summary",
@@ -587,18 +682,41 @@ export function formatStorageUploadReport(result, opts = {}) {
     lines.push("");
   }
 
+  if (isSchedule) {
+    lines.push(
+      "## G-4g DB update scope (not performed)",
+      "",
+      "- Table: `schedules`",
+      "- Column: `home_image_url` only",
+      "- legacy_id: `schedule-2026-03-012` (Golden PODs)",
+      "- `schedules.image_url` — **not included**",
+      "- `schedule-2026-03-011` — **not included**",
+      "- Plan file: `" + (opts.dbUpdatePlanPath ?? "schedule-db-update-plan.json") + "`",
+      "",
+      "## Not processed in G-4f",
+      "",
+      "- Deferred / rejected schedule entries — **not uploaded**",
+      "- `schedule_flyer` / `image_url` — **not uploaded**",
+      "",
+    );
+  } else {
+    lines.push(
+      "## G-4c DB update scope (not performed)",
+      "",
+      "- Table: `discography`",
+      "- Column: `cover_image_url`",
+      "- legacy_id: `discography-001` … `discography-004`",
+      "- Plan file: `" + (opts.dbUpdatePlanPath ?? "storage-db-update-plan.json") + "`",
+      "",
+      "## Not processed in G-4b",
+      "",
+      "- Schedule home / flyer images (`needsHumanReview`) — **not uploaded**",
+      "- `rejectedOrDeferred` entries — **not uploaded**",
+      "",
+    );
+  }
+
   lines.push(
-    "## G-4c DB update scope (not performed)",
-    "",
-    "- Table: `discography`",
-    "- Column: `cover_image_url`",
-    "- legacy_id: `discography-001` … `discography-004`",
-    "- Plan file: `" + (opts.dbUpdatePlanPath ?? "storage-db-update-plan.json") + "`",
-    "",
-    "## Not processed in G-4b",
-    "",
-    "- Schedule home / flyer images (`needsHumanReview`) — **not uploaded**",
-    "- `rejectedOrDeferred` entries — **not uploaded**",
     "",
     "## Safety",
     "",

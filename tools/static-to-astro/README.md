@@ -1299,6 +1299,28 @@ node tools/static-to-astro/scripts/review-storage-assets.mjs \
 
 **禁止（G-4a）:** Supabase Storage upload、DB update、FTP deploy。全 entry は `reviewRequired: true`。
 
+#### G-4b-prep: Upload allowlist（review manifest → staging gate、read-only）
+
+G-4a manifest から **staging upload 候補のみ**を allowlist 化します。本番使用許諾は未確定です。
+
+| 項目 | 内容 |
+| --- | --- |
+| CLI | `prepare-storage-upload-allowlist.mjs` |
+| 設計 doc | [docs/gosaki-storage-g4-prep.md](docs/gosaki-storage-g4-prep.md) §10 |
+| 出力 | `storage-upload-allowlist.json` / `STORAGE_UPLOAD_ALLOWLIST_REPORT.md` |
+
+```bash
+node tools/static-to-astro/scripts/prepare-storage-upload-allowlist.mjs \
+  --review-manifest tools/static-to-astro/output/storage/gosaki/storage-asset-review-manifest.json \
+  --site-slug gosaki \
+  --report tools/static-to-astro/output/storage/gosaki/STORAGE_UPLOAD_ALLOWLIST_REPORT.md \
+  --allowlist tools/static-to-astro/output/storage/gosaki/storage-upload-allowlist.json
+```
+
+**判定:** discography cover（high confidence）→ `approvedForStagingUpload` / schedule 系 → `needsHumanReview` / empty・unknown・G-4 対象外 → `rejectedOrDeferred`
+
+**禁止（G-4b-prep）:** Supabase Storage upload、DB update。`uploadAllowed: false` / `dbUpdateAllowed: false`。
+
 ---
 
 ### Phase 3-W: Site profile system（設計・dry-run 検証）

@@ -213,15 +213,61 @@ node tools/static-to-astro/scripts/review-storage-assets.mjs \
 
 ---
 
-## 10. 次フェーズの切り分け
+## 10. G-4b-prep — staging upload allowlist（read-only）
+
+G-4a review manifest から、**G-4b で Supabase Storage に upload してよい候補だけ**を allowlist 化する。upload / DB update は行わない。
+
+### コマンド
+
+```bash
+node tools/static-to-astro/scripts/prepare-storage-upload-allowlist.mjs \
+  --review-manifest tools/static-to-astro/output/storage/gosaki/storage-asset-review-manifest.json \
+  --site-slug gosaki \
+  --report tools/static-to-astro/output/storage/gosaki/STORAGE_UPLOAD_ALLOWLIST_REPORT.md \
+  --allowlist tools/static-to-astro/output/storage/gosaki/storage-upload-allowlist.json
+```
+
+### 成果物（`output/` — Git 管理外）
+
+| ファイル | パス |
+| --- | --- |
+| Allowlist report | `tools/static-to-astro/output/storage/gosaki/STORAGE_UPLOAD_ALLOWLIST_REPORT.md` |
+| Allowlist JSON | `tools/static-to-astro/output/storage/gosaki/storage-upload-allowlist.json` |
+
+### 判定方針
+
+| バケット | 条件 | gosaki 期待件数 |
+| --- | --- | ---: |
+| **approvedForStagingUpload** | `discography_cover` + `confidence: high` + `legacyId` + `wix_image\|external_image` + 非 empty | 4 |
+| **needsHumanReview** | `schedule_home` / `schedule_flyer`、medium/low confidence、alt-date-conflict、cross-page 候補 | 4 |
+| **rejectedOrDeferred** | `empty` / `unknown` / hero・about・contact 等 G-4 対象外、NO PHOTO | 8 |
+
+**重要:**
+
+- `uploadAllowed: false` / `dbUpdateAllowed: false`（G-4b-prep 時点）
+- 全 entry `approvalScope: staging-only`
+- `copyrightStatus: needs-owner-confirmation-before-production` — **本番使用許諾は未確定**
+
+### G-4b gate（upload apply 前）
+
+1. staging Supabase のみ（本番 URL / key 不使用）
+2. bucket `site-assets` + public read policy 作成済み
+3. 初回 upload バッチは `approvedForStagingUpload` のみ
+4. schedule 画像は human review 後に allowlist へ promote
+5. DB update 前に staging 行バックアップ
+
+---
+
+## 11. 次フェーズの切り分け
 
 | フェーズ | 内容 |
 | --- | --- |
-| **G-4a** | fixture → legacy_id review manifest（**完了** — 上記 CLI） |
-| **G-4b** | copyright review 後 — staging Storage upload + DB URL 更新 |
+| **G-4a** | fixture → legacy_id review manifest（**完了**） |
+| **G-4b-prep** | review manifest → upload allowlist（**完了** — 上記 CLI） |
+| **G-4b** | allowlist 承認済みのみ staging Storage upload + DB URL 更新 |
 | **G-4c** | export → build → staging FTP → 目視 QA（実画像表示） |
 | **本番導入** | 別ゲート — production Supabase / FTP / `--deploy-base` なし build |
 
 ---
 
-Phase G-4 prep + G-4a review manifest: dry-run 完了。実アップロードは **copyright review + TODO 完了後** に staging のみで実施する。
+Phase G-4 prep + G-4a review + G-4b-prep allowlist: dry-run 完了。実アップロードは **allowlist gate + copyright review 完了後** に staging のみで実施する。

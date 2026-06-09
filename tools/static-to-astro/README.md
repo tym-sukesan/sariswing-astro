@@ -1350,7 +1350,7 @@ CMS Kit 実用化プロトタイプとして **gosaki staging** の役割・secr
 | ドキュメント | 内容 |
 | --- | --- |
 | [docs/gosaki-staging-operations.md](docs/gosaki-staging-operations.md) | 環境役割・運用フロー・Admin 比較・分離・rollback・本番化ゲート |
-| [docs/gosaki-staging-runbook.md](docs/gosaki-staging-runbook.md) | コマンドベース操作手順 |
+| [docs/gosaki-staging-runbook.md](docs/gosaki-staging-runbook.md) | **G-3:** staging deploy 運用手順（safety → readiness → apply → QA） |
 | [docs/gosaki-staging-secrets-checklist.md](docs/gosaki-staging-secrets-checklist.md) | `.env.local` / GitHub Secrets 命名・混同防止・監査 |
 
 **短期運用:** Local Admin（`npm run dev`）→ staging Supabase 保存 → export → build → `verify-static-public-artifact` → public-dist 確認
@@ -1359,7 +1359,7 @@ CMS Kit 実用化プロトタイプとして **gosaki staging** の役割・secr
 
 **secrets:** staging / prod は `GOSAKI_STAGING_*` / `GOSAKI_PROD_*` で分離
 
-**次フェーズ:** G-2b（staging FTP apply）/ G-4（Storage）— **G-3 Admin 運用確定済み**
+**次フェーズ:** G-2b（staging FTP apply）**完了** / **G-3（staging 運用 runbook）** / 次は **G-4（Storage 画像移行）** または **本番導入テンプレ化**
 
 ---
 
@@ -1400,9 +1400,10 @@ node tools/static-to-astro/scripts/verify-staging-ftp-deploy-plan.mjs \
 
 ---
 
-### Phase G-3: Admin 運用フロー確定
+### Admin 運用フロー確定（Local Admin — G-3 前期）
 
-gosaki の **Admin 利用方法を確定**しました。Node host 実 deploy・FTP apply・本番接続は行いません。
+gosaki の **Admin 利用方法を確定**しました。Node host 実 deploy・本番接続は行いません。  
+**staging FTP apply 手順は** [docs/gosaki-staging-runbook.md](docs/gosaki-staging-runbook.md) **を参照。**
 
 | 期間 | 採用 | 内容 |
 | --- | --- | --- |
@@ -1417,7 +1418,7 @@ gosaki の **Admin 利用方法を確定**しました。Node host 実 deploy・
 
 **重要:** Admin 保存だけでは公開サイトに反映されない。`export → build → public-dist → deploy` が必要。
 
-**次フェーズ:** Phase 3-Y readiness verifier → **完了** / 次は **G-2b staging FTP apply**（3-Y PASS 後）
+**次フェーズ:** Phase 3-Y readiness verifier → **完了** / G-2b apply → **完了** / **G-3 staging runbook** → 次は **G-4 Storage**
 
 ---
 
@@ -1463,7 +1464,28 @@ node tools/static-to-astro/scripts/verify-staging-ftp-safety.mjs \
 
 **secrets 未設定時:** `STAGING_FTP_SAFE_TO_APPLY: no` は正常（安全側の判定）
 
-**次フェーズ:** G-2b（staging FTP `--apply`、両 verifier PASS 後）
+**次フェーズ:** G-2b（staging FTP `--apply`、両 verifier PASS 後）— **G-2b 完了**
+
+---
+
+### Phase G-3: gosaki staging 運用 runbook 固定
+
+G-2b で成功した staging FTP deploy / QA / noindex / deploy-base / hamburger / canonical staging-url 対応を、**再現可能な運用手順**として doc 化しました。
+
+| 項目 | 内容 |
+| --- | --- |
+| **Runbook** | [docs/gosaki-staging-runbook.md](docs/gosaki-staging-runbook.md) |
+| Staging URL | `https://yskcreate.weblike.jp/cms-kit-staging/gosaki/` |
+| deployBase | `/cms-kit-staging/gosaki/` |
+| mirror | contents-only（`public-dist/` 中身のみ） |
+
+**手順（1 本化）:** 前提確認 → `verify-staging-ftp-safety` → `verify-gosaki-readiness` → build / static-public → `deploy-public-dist-ftp --apply` → 目視 QA → Git 整理
+
+**apply 期待:** `applied: true`, `FTP connected: true`, `overall: PASS`, `stagingNoindex: yes`, `canonicalMode: staging-url`
+
+**安全:** production / Sariswing 本番 FTP・Supabase には接続しない。`output/` は commit しない。
+
+**次フェーズ:** G-4（Storage 画像移行）または本番導入テンプレ化（`--deploy-base` なし + production URL）
 
 ---
 

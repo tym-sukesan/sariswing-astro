@@ -19,6 +19,13 @@ import {
   buildStorageAssetReview,
   formatStorageAssetReviewReport,
 } from "./lib/storage-asset-review-generator.mjs";
+import {
+  applySiteConfigToCli,
+  attachSiteConfigMeta,
+  formatSiteConfigReportFooter,
+} from "./lib/site-config-loader.mjs";
+
+const CLI_NAME = "review-storage-assets";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const TOOL_ROOT = path.resolve(__dirname, "..");
@@ -30,17 +37,19 @@ function printHelp() {
 Extract image candidates from fixture HTML/CSS and map to legacy_id (read-only).
 
 Options:
-  --site-slug SLUG       Site slug (required)
-  --fixture-dir PATH     Static fixture directory (required)
+  --site-config PATH     Site config JSON (G-5c — resolves slug/paths; explicit args win)
+  --site-slug SLUG       Site slug (required without --site-config)
+  --fixture-dir PATH     Static fixture directory (required without --site-config)
   --data-dir PATH        schedules.json / discography.json for legacy_id mapping
-  --report PATH          STORAGE_ASSET_REVIEW_REPORT.md output (required)
-  --manifest PATH        storage-asset-review-manifest.json output (required)
+  --report PATH          STORAGE_ASSET_REVIEW_REPORT.md output (required without --site-config)
+  --manifest PATH        storage-asset-review-manifest.json output (required without --site-config)
   --help, -h
 `);
 }
 
 function parseArgs(argv) {
   const opts = {
+    siteConfig: null,
     siteSlug: null,
     fixtureDir: null,
     dataDir: null,
@@ -53,6 +62,10 @@ function parseArgs(argv) {
     const arg = argv[i];
     if (arg === "--help" || arg === "-h") {
       opts.help = true;
+      continue;
+    }
+    if (arg === "--site-config") {
+      opts.siteConfig = argv[++i];
       continue;
     }
     if (arg === "--site-slug") {
@@ -81,11 +94,15 @@ function parseArgs(argv) {
   return opts;
 }
 
-function printSummary(review) {
+function printSummary(review, configMeta = null) {
   const s = review.summary;
   console.log("");
   console.log("=== Storage Asset Review Summary (G-4a) ===");
   console.log(`mode: ${review.mode}`);
+  if (configMeta?.configDriven) {
+    console.log(`site config: ${configMeta.siteConfigPath}`);
+    console.log(`config driven: yes`);
+  }
   console.log(`siteSlug: ${review.siteSlug}`);
   console.log(`fixtureDir: ${review.fixtureDir}`);
   console.log(`dataDir: ${review.dataDir ?? "(not specified)"}`);
@@ -101,12 +118,18 @@ function printSummary(review) {
 }
 
 function main() {
-  const opts = parseArgs(process.argv);
+  let opts = parseArgs(process.argv);
 
   if (opts.help) {
     printHelp();
     process.exit(0);
   }
+
+  const { opts: resolved, meta: configMeta } = applySiteConfigToCli(CLI_NAME, opts, {
+    toolRoot: TOOL_ROOT,
+    repoRoot: REPO_ROOT,
+  });
+  opts = /** @type {ReturnType<typeof parseArgs>} */ (resolved);
 
   if (!opts.siteSlug || !opts.fixtureDir || !opts.report || !opts.manifest) {
     printHelp();
@@ -142,17 +165,18 @@ function main() {
   fs.mkdirSync(path.dirname(reportPath), { recursive: true });
   fs.mkdirSync(path.dirname(manifestPath), { recursive: true });
 
-  fs.writeFileSync(manifestPath, `${JSON.stringify(buildReviewManifestJson(review), null, 2)}\n`, "utf8");
+  const manifestJson = attachSiteConfigMeta(buildReviewManifestJson(review), configMeta);
+  fs.writeFileSync(manifestPath, `${JSON.stringify(manifestJson, null, 2)}\n`, "utf8");
   fs.writeFileSync(
     reportPath,
     formatStorageAssetReviewReport(review, {
       reportPath: opts.report,
       manifestPath: opts.manifest,
-    }),
+    }) + formatSiteConfigReportFooter(configMeta),
     "utf8",
   );
 
-  printSummary(review);
+  printSummary(review, configMeta);
   console.log("");
   console.log(`Report: ${opts.report}`);
   console.log(`Manifest: ${opts.manifest}`);

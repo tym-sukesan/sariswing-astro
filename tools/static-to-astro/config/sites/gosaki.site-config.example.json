@@ -1,5 +1,5 @@
 {
-  "$comment": "G-5b draft — not loaded by CLIs yet. Use --site-slug / explicit paths until G-5c.",
+  "$comment": "G-5c — paths relative to tools/static-to-astro unless absolute. Secrets must not be stored here.",
   "siteSlug": "gosaki",
   "siteName": "Saki Goto",
   "siteType": "musician",
@@ -39,8 +39,11 @@
     "productionBaseUrl": "https://www.gosaki-piano.com"
   },
   "output": {
+    "baseDir": "output",
     "root": "output",
+    "storageDir": "output/storage/gosaki",
     "generatedAstro": "output/generated-astro",
+    "generatedAstroDir": "output/generated-astro",
     "reports": {
       "storage": "output/storage/gosaki",
       "export": "output/supabase-export/gosaki",

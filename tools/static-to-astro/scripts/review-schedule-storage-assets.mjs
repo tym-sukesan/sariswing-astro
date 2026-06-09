@@ -21,6 +21,13 @@ import {
   buildScheduleHumanReviewManifest,
   formatScheduleHumanReviewReport,
 } from "./lib/storage-schedule-human-review-generator.mjs";
+import {
+  applySiteConfigToCli,
+  attachSiteConfigMeta,
+  formatSiteConfigReportFooter,
+} from "./lib/site-config-loader.mjs";
+
+const CLI_NAME = "review-schedule-storage-assets";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const TOOL_ROOT = path.resolve(__dirname, "..");
@@ -32,12 +39,13 @@ function printHelp() {
 Build schedule image human review table from allowlist + review manifest (read-only).
 
 Options:
-  --allowlist PATH         storage-upload-allowlist.json (required)
-  --review-manifest PATH   storage-asset-review-manifest.json (required)
+  --site-config PATH       Site config JSON (G-5c — resolves slug/paths; explicit args win)
+  --allowlist PATH         storage-upload-allowlist.json (required without --site-config)
+  --review-manifest PATH   storage-asset-review-manifest.json (required without --site-config)
   --data-dir PATH          schedules.json for legacy_id enrichment
-  --site-slug SLUG         Site slug (required)
-  --report PATH            SCHEDULE_IMAGE_HUMAN_REVIEW_REPORT.md (required)
-  --manifest PATH          schedule-image-human-review.json (required)
+  --site-slug SLUG         Site slug (required without --site-config)
+  --report PATH            SCHEDULE_IMAGE_HUMAN_REVIEW_REPORT.md (required without --site-config)
+  --manifest PATH          schedule-image-human-review.json (required without --site-config)
   --decision-template PATH schedule-image-human-decision-template.json (optional)
   --fixture-dir PATH       Fixture HTML for alt/surrounding text (optional)
   --help, -h
@@ -46,6 +54,7 @@ Options:
 
 function parseArgs(argv) {
   const opts = {
+    siteConfig: null,
     allowlist: null,
     reviewManifest: null,
     dataDir: null,
@@ -61,6 +70,10 @@ function parseArgs(argv) {
     const arg = argv[i];
     if (arg === "--help" || arg === "-h") {
       opts.help = true;
+      continue;
+    }
+    if (arg === "--site-config") {
+      opts.siteConfig = argv[++i];
       continue;
     }
     if (arg === "--allowlist") {
@@ -101,11 +114,15 @@ function parseArgs(argv) {
   return opts;
 }
 
-function printSummary(review) {
+function printSummary(review, configMeta = null) {
   const s = review.summary;
   console.log("");
   console.log("=== Schedule Image Human Review Summary (G-4d) ===");
   console.log(`mode: ${review.mode}`);
+  if (configMeta?.configDriven) {
+    console.log(`site config: ${configMeta.siteConfigPath}`);
+    console.log(`config driven: yes`);
+  }
   console.log(`siteSlug: ${review.siteSlug}`);
   console.log(`candidates: ${s.totalCandidates}`);
   console.log(`schedule_home: ${s.byAssetType.schedule_home ?? 0}`);
@@ -119,12 +136,18 @@ function printSummary(review) {
 }
 
 function main() {
-  const opts = parseArgs(process.argv);
+  let opts = parseArgs(process.argv);
 
   if (opts.help) {
     printHelp();
     process.exit(0);
   }
+
+  const { opts: resolved, meta: configMeta } = applySiteConfigToCli(CLI_NAME, opts, {
+    toolRoot: TOOL_ROOT,
+    repoRoot: REPO_ROOT,
+  });
+  opts = /** @type {ReturnType<typeof parseArgs>} */ (resolved);
 
   if (!opts.allowlist || !opts.reviewManifest || !opts.siteSlug || !opts.report || !opts.manifest) {
     printHelp();
@@ -169,11 +192,8 @@ function main() {
   fs.mkdirSync(path.dirname(reportPath), { recursive: true });
   fs.mkdirSync(path.dirname(manifestPath), { recursive: true });
 
-  fs.writeFileSync(
-    manifestPath,
-    `${JSON.stringify(buildScheduleHumanReviewManifest(review), null, 2)}\n`,
-    "utf8",
-  );
+  const manifestJson = attachSiteConfigMeta(buildScheduleHumanReviewManifest(review), configMeta);
+  fs.writeFileSync(manifestPath, `${JSON.stringify(manifestJson, null, 2)}\n`, "utf8");
   fs.writeFileSync(
     reportPath,
     formatScheduleHumanReviewReport(review, {
@@ -182,7 +202,7 @@ function main() {
       decisionTemplatePath: path.relative(REPO_ROOT, decisionTemplatePath),
       allowlistPath: opts.allowlist,
       reviewManifestPath: opts.reviewManifest,
-    }),
+    }) + formatSiteConfigReportFooter(configMeta),
     "utf8",
   );
   fs.writeFileSync(
@@ -191,7 +211,7 @@ function main() {
     "utf8",
   );
 
-  printSummary(review);
+  printSummary(review, configMeta);
   console.log("");
   console.log(`Report: ${opts.report}`);
   console.log(`Manifest: ${opts.manifest}`);

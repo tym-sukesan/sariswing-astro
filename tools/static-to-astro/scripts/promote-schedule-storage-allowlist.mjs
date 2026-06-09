@@ -20,6 +20,13 @@ import {
   formatScheduleUploadAllowlistReport,
   loadDecisionTemplate,
 } from "./lib/storage-schedule-allowlist-promoter.mjs";
+import {
+  applySiteConfigToCli,
+  attachSiteConfigMeta,
+  formatSiteConfigReportFooter,
+} from "./lib/site-config-loader.mjs";
+
+const CLI_NAME = "promote-schedule-storage-allowlist";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const TOOL_ROOT = path.resolve(__dirname, "..");
@@ -31,10 +38,11 @@ function printHelp() {
 Promote human-approved schedule_home entries to schedule upload allowlist (read-only).
 
 Options:
-  --decision-template PATH  schedule-image-human-decision-template.json (required)
-  --site-slug SLUG          Site slug (required)
-  --report PATH             SCHEDULE_UPLOAD_ALLOWLIST_REPORT.md (required)
-  --allowlist PATH          schedule-upload-allowlist.json (required)
+  --site-config PATH        Site config JSON (G-5c — resolves slug/paths; explicit args win)
+  --decision-template PATH  schedule-image-human-decision-template.json (required without --site-config)
+  --site-slug SLUG          Site slug (required without --site-config)
+  --report PATH             SCHEDULE_UPLOAD_ALLOWLIST_REPORT.md (required without --site-config)
+  --allowlist PATH          schedule-upload-allowlist.json (required without --site-config)
   --apply-gosaki-g4e        Apply Golden PODs approve + defer others (G-4e default)
   --write-template          Save updated decisions back to template file
   --help, -h
@@ -43,6 +51,7 @@ Options:
 
 function parseArgs(argv) {
   const opts = {
+    siteConfig: null,
     decisionTemplate: null,
     siteSlug: null,
     report: null,
@@ -56,6 +65,10 @@ function parseArgs(argv) {
     const arg = argv[i];
     if (arg === "--help" || arg === "-h") {
       opts.help = true;
+      continue;
+    }
+    if (arg === "--site-config") {
+      opts.siteConfig = argv[++i];
       continue;
     }
     if (arg === "--decision-template") {
@@ -88,11 +101,15 @@ function parseArgs(argv) {
   return opts;
 }
 
-function printSummary(allowlist) {
+function printSummary(allowlist, configMeta = null) {
   const s = allowlist.summary;
   console.log("");
   console.log("=== Schedule Upload Allowlist Promotion (G-4e) ===");
   console.log(`mode: ${allowlist.mode}`);
+  if (configMeta?.configDriven) {
+    console.log(`site config: ${configMeta.siteConfigPath}`);
+    console.log(`config driven: yes`);
+  }
   console.log(`siteSlug: ${allowlist.siteSlug}`);
   console.log(`approvedForStagingUpload: ${s.approvedForStagingUpload}`);
   console.log(`deferred: ${s.deferred}`);
@@ -105,12 +122,18 @@ function printSummary(allowlist) {
 }
 
 function main() {
-  const opts = parseArgs(process.argv);
+  let opts = parseArgs(process.argv);
 
   if (opts.help) {
     printHelp();
     process.exit(0);
   }
+
+  const { opts: resolved, meta: configMeta } = applySiteConfigToCli(CLI_NAME, opts, {
+    toolRoot: TOOL_ROOT,
+    repoRoot: REPO_ROOT,
+  });
+  opts = /** @type {ReturnType<typeof parseArgs>} */ (resolved);
 
   if (!opts.decisionTemplate || !opts.siteSlug || !opts.report || !opts.allowlist) {
     printHelp();
@@ -151,18 +174,19 @@ function main() {
   fs.mkdirSync(path.dirname(reportPath), { recursive: true });
   fs.mkdirSync(path.dirname(allowlistPath), { recursive: true });
 
-  fs.writeFileSync(allowlistPath, `${JSON.stringify(allowlist, null, 2)}\n`, "utf8");
+  const allowlistOut = attachSiteConfigMeta(allowlist, configMeta);
+  fs.writeFileSync(allowlistPath, `${JSON.stringify(allowlistOut, null, 2)}\n`, "utf8");
   fs.writeFileSync(
     reportPath,
     formatScheduleUploadAllowlistReport(allowlist, {
       reportPath: opts.report,
       allowlistPath: opts.allowlist,
       decisionTemplatePath: opts.decisionTemplate,
-    }),
+    }) + formatSiteConfigReportFooter(configMeta),
     "utf8",
   );
 
-  printSummary(allowlist);
+  printSummary(allowlist, configMeta);
   console.log("");
   console.log(`Report: ${opts.report}`);
   console.log(`Allowlist: ${opts.allowlist}`);

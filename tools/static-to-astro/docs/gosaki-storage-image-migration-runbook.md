@@ -337,7 +337,7 @@ Artifact 確認: `static-public-manifest.json` で `safeForStaticFtp: true`, `st
 | --- | --- |
 | **G-4i** | remaining schedule flyer human review（`image_url` 候補の判断） |
 | **G-4j** | approved schedule flyer upload + `schedules.image_url` DB update |
-| **G-5** | CMS Kit template generalization（別サイトへの profile / runbook 再利用） |
+| **G-5** | [cms-kit-generalization-roadmap.md](./cms-kit-generalization-roadmap.md) — template / site config 一般化 |
 | **Production migration** | owner confirmation / rights confirmation 後の別ゲート |
 
 ---

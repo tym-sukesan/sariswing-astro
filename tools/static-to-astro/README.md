@@ -1250,6 +1250,22 @@ node tools/static-to-astro/scripts/verify-public-dist-deploy-workflow.mjs \
 
 ---
 
+### CMS Kit generalization roadmap（G-5）
+
+gosaki / Sariswing で実証した移行フローを、**別サイト向け CMS Kit template** として一般化する設計・ロードマップです。今回は doc 固定のみ（upload / DB / FTP 未実施）。
+
+| 項目 | 内容 |
+| --- | --- |
+| **Roadmap** | [docs/cms-kit-generalization-roadmap.md](docs/cms-kit-generalization-roadmap.md) |
+| Site config draft | [config/sites/gosaki.site-config.example.json](config/sites/gosaki.site-config.example.json) |
+| 方針 | **site-config driven migration**（G-5c 以降）、**template registry**、**schema adapter** |
+| Workflow | **staging-first** — G-4 成功フローは後方互換維持 |
+| 実装フェーズ | G-5a inventory → G-5b config → G-5c CLI → G-5d〜h template / onboarding |
+
+関連: [site-profile-system.md](docs/site-profile-system.md)（既存 module 宣言）/ [gosaki-storage-image-migration-runbook.md](docs/gosaki-storage-image-migration-runbook.md)
+
+---
+
 ### Gosaki storage image migration runbook（G-4h）
 
 G-4a〜G-4g で確立した **gosaki staging 画像移行**の正式手順です。
@@ -1517,6 +1533,7 @@ CMS Kit 実用化プロトタイプとして **gosaki staging** の役割・secr
 | [docs/gosaki-staging-runbook.md](docs/gosaki-staging-runbook.md) | **G-3:** staging deploy 運用手順（safety → readiness → apply → QA） |
 | [docs/gosaki-storage-g4-prep.md](docs/gosaki-storage-g4-prep.md) | **G-4:** Storage 画像移行準備（設計・分類メモ） |
 | [docs/gosaki-storage-image-migration-runbook.md](docs/gosaki-storage-image-migration-runbook.md) | **G-4h:** Storage 画像移行正式 runbook（G-4a〜G-4g 手順・QA） |
+| [docs/cms-kit-generalization-roadmap.md](docs/cms-kit-generalization-roadmap.md) | **G-5:** CMS Kit template 一般化ロードマップ（site config / schema adapter） |
 
 **短期運用:** Local Admin（`npm run dev`）→ staging Supabase 保存 → export → build → `verify-static-public-artifact` → public-dist 確認
 

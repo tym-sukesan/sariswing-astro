@@ -1,0 +1,51 @@
+{
+  "$comment": "G-5b draft — not loaded by CLIs yet. Use --site-slug / explicit paths until G-5c.",
+  "siteSlug": "gosaki",
+  "siteName": "Saki Goto",
+  "siteType": "musician",
+  "siteProfile": "musician",
+  "source": {
+    "type": "static-html",
+    "fixtureDir": "fixtures/gosaki-static-site"
+  },
+  "cms": {
+    "provider": "supabase",
+    "stagingHost": "kmjqppxjdnwwrtaeqjta.supabase.co",
+    "tables": ["schedule_months", "schedules", "discography", "discography_tracks"]
+  },
+  "storage": {
+    "bucket": "site-assets",
+    "pathPrefix": "gosaki",
+    "imageFields": [
+      "schedules.image_url",
+      "schedules.home_image_url",
+      "discography.cover_image_url"
+    ]
+  },
+  "deploy": {
+    "staging": {
+      "base": "/cms-kit-staging/gosaki/",
+      "publicUrl": "https://yskcreate.weblike.jp/cms-kit-staging/gosaki/",
+      "ftpEnvPrefix": "GOSAKI_STAGING_FTP"
+    },
+    "production": {
+      "enabled": false,
+      "baseUrl": "https://www.gosaki-piano.com"
+    }
+  },
+  "seo": {
+    "stagingNoindex": true,
+    "robotsDisallowAll": true,
+    "productionBaseUrl": "https://www.gosaki-piano.com"
+  },
+  "output": {
+    "root": "output",
+    "generatedAstro": "output/generated-astro",
+    "reports": {
+      "storage": "output/storage/gosaki",
+      "export": "output/supabase-export/gosaki",
+      "staticPublic": "output/static-public/gosaki",
+      "deploy": "output/deploy/gosaki"
+    }
+  }
+}

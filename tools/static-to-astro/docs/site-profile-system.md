@@ -106,3 +106,5 @@ node tools/static-to-astro/scripts/convert-static-to-astro.mjs \
 ---
 
 Phase 3-W: 設計・設定・dry-run 検証のみ。CMS 本実装・Storage upload・deploy 実行は行いません。
+
+**G-5 以降:** profile は schema adapter / template registry の一部として [cms-kit-generalization-roadmap.md](./cms-kit-generalization-roadmap.md) で拡張予定。案件単位の slug / deploy / FTP は **site config**（`config/sites/*.example.json`）へ。

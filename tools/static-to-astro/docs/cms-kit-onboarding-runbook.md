@@ -436,7 +436,7 @@ node tools/static-to-astro/scripts/generate-site-dry-run.mjs \
 | Phase | 内容 |
 | --- | --- |
 | **G-5i** | Admin CMS extraction plan（**完了** — [admin-cms-template-extraction-plan.md](./admin-cms-template-extraction-plan.md)） |
-| **G-5j** | Sariswing admin code inventory（read-only 棚卸し） |
+| **G-5j** | Sariswing admin code inventory（**完了** — [admin-cms-code-inventory.md](./admin-cms-code-inventory.md)） |
 | **G-5k〜G-5p** | Admin UI / Auth / Media / Publish 抽出 → musician-basic prototype → customer admin manual |
 | **Later** | customer-facing onboarding checklist、pricing model、production migration runbook、first external pilot |
 

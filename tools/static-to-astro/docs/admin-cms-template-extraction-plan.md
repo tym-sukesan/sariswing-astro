@@ -346,18 +346,14 @@ node tools/static-to-astro/scripts/generate-site-dry-run.mjs --site-config ...
 
 ---
 
-## 12. Immediate next step — G-5j
+## 12. Immediate next step — G-5j / G-5k
 
-**Sariswing admin code inventory**（read-only）
+**G-5j（完了）:** [admin-cms-code-inventory.md](./admin-cms-code-inventory.md) — Sariswing admin read-only inventory（55 files、reusable 31 / site-specific 10 / risky 12）。CLI: `inventory-admin-cms.mjs`。詳細 report は `output/admin-inventory/sariswing/`（未 commit）。
 
-1. Sariswing リポジトリの admin 領域を**移動せず**棚卸し
-2. 分類: `admin pages` / `components` / `lib` / Supabase calls / Storage calls / publish calls
-3. タグ付け: `reusable` / `site-specific` / `risky` / `deprecated`
-4. 成果物: inventory report（markdown + optional JSON）
-5. CMS Kit `templates/admin-cms/` との diff マトリクス
+**G-5k（次）:** Reusable admin UI components 抽出 — inventory の reusable 候補を CMS Kit 側に実装（Sariswing ファイル移動なし）。
 
-**禁止:** Sariswing 本番 touch、DB update、Storage upload、FTP、GHA dispatch
+**禁止（継続）:** Sariswing 本番 touch、DB update、Storage upload、FTP、GHA dispatch
 
 ---
 
-*G-5i: documentation only. No code extraction, no production publish, no Sariswing modifications.*
+*G-5i: extraction plan. G-5j: code inventory. G-5k+: implementation phases.*

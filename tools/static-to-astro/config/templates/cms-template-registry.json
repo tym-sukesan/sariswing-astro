@@ -1,0 +1,343 @@
+{
+  "version": "0.1.0",
+  "generatedPhase": "G-5d",
+  "description": "CMS Kit template registry — metadata only. Does not drive Astro generation yet.",
+  "templates": [
+    {
+      "templateId": "musician-basic",
+      "siteTypes": ["musician"],
+      "status": "proven-with-gosaki",
+      "description": "Basic musician website with profile, live schedule, discography, links, news-ready structure, and storage image migration support.",
+      "contentModels": [
+        {
+          "model": "profile",
+          "required": true,
+          "source": "static-html",
+          "storageAssets": []
+        },
+        {
+          "model": "schedules",
+          "required": true,
+          "source": "static-html-or-supabase",
+          "storageAssets": ["schedule_home", "schedule_flyer"],
+          "humanReviewRequired": true
+        },
+        {
+          "model": "discography",
+          "required": false,
+          "source": "static-html-or-supabase",
+          "storageAssets": ["discography_cover"],
+          "humanReviewRequired": false
+        },
+        {
+          "model": "links",
+          "required": false,
+          "source": "static-html",
+          "storageAssets": []
+        },
+        {
+          "model": "news",
+          "required": false,
+          "source": "cms-ready",
+          "storageAssets": []
+        }
+      ],
+      "pages": [
+        "home",
+        "about",
+        "schedule",
+        "schedule-month",
+        "discography",
+        "contact",
+        "links"
+      ],
+      "storageAssetTypes": [
+        {
+          "assetType": "discography_cover",
+          "targetTable": "discography",
+          "targetColumn": "cover_image_url",
+          "humanReviewRequired": false
+        },
+        {
+          "assetType": "schedule_home",
+          "targetTable": "schedules",
+          "targetColumn": "home_image_url",
+          "humanReviewRequired": true
+        },
+        {
+          "assetType": "schedule_flyer",
+          "targetTable": "schedules",
+          "targetColumn": "image_url",
+          "humanReviewRequired": true
+        }
+      ],
+      "seoFeatures": [
+        "title",
+        "description",
+        "canonical",
+        "og",
+        "sitemap",
+        "robots",
+        "staging-noindex"
+      ],
+      "deployFeatures": [
+        "deploy-base",
+        "static-public-artifact",
+        "staging-ftp"
+      ],
+      "knownSiteExamples": ["gosaki"],
+      "notes": [
+        "Gosaki proved discography cover migration and schedule home image migration.",
+        "Schedule flyer images require human review because date and event matching can be ambiguous."
+      ]
+    },
+    {
+      "templateId": "music-school",
+      "siteTypes": ["music-school"],
+      "status": "draft",
+      "description": "Music lesson studio site — piano school, individual lessons, fermata-style sites. Draft for future gosaki-piano reuse.",
+      "contentModels": [
+        { "model": "profile", "required": true, "source": "static-html", "storageAssets": [] },
+        {
+          "model": "courses",
+          "required": true,
+          "source": "static-html-or-cms",
+          "storageAssets": ["lesson_image"],
+          "humanReviewRequired": true
+        },
+        {
+          "model": "instructors",
+          "required": false,
+          "source": "static-html-or-cms",
+          "storageAssets": ["instructor_photo"],
+          "humanReviewRequired": true
+        },
+        {
+          "model": "pricing",
+          "required": false,
+          "source": "static-html",
+          "storageAssets": []
+        },
+        {
+          "model": "schedule",
+          "required": false,
+          "source": "static-html-or-cms",
+          "storageAssets": ["venue_image"],
+          "humanReviewRequired": true
+        },
+        { "model": "news", "required": false, "source": "cms-ready", "storageAssets": [] },
+        { "model": "faq", "required": false, "source": "static-html", "storageAssets": [] },
+        { "model": "contact", "required": true, "source": "static-html", "storageAssets": [] },
+        {
+          "model": "testimonials",
+          "required": false,
+          "source": "static-html",
+          "storageAssets": ["gallery_image"],
+          "humanReviewRequired": true
+        }
+      ],
+      "pages": [
+        "home",
+        "about",
+        "lesson",
+        "pricing",
+        "instructor",
+        "access",
+        "contact",
+        "faq"
+      ],
+      "storageAssetTypes": [
+        {
+          "assetType": "instructor_photo",
+          "targetTable": "instructors",
+          "targetColumn": "photo_url",
+          "humanReviewRequired": true
+        },
+        {
+          "assetType": "lesson_image",
+          "targetTable": "courses",
+          "targetColumn": "image_url",
+          "humanReviewRequired": true
+        },
+        {
+          "assetType": "venue_image",
+          "targetTable": "schedule",
+          "targetColumn": "image_url",
+          "humanReviewRequired": true
+        },
+        {
+          "assetType": "gallery_image",
+          "targetTable": "testimonials",
+          "targetColumn": "image_url",
+          "humanReviewRequired": true
+        }
+      ],
+      "seoFeatures": ["title", "description", "canonical", "og", "sitemap", "robots", "staging-noindex"],
+      "deployFeatures": ["deploy-base", "static-public-artifact", "staging-ftp"],
+      "knownSiteExamples": [],
+      "notes": [
+        "Draft — schema adapter and Admin CMS not implemented.",
+        "May reuse patterns from gosaki-piano / fermata-style lesson sites."
+      ]
+    },
+    {
+      "templateId": "dance-school",
+      "siteTypes": ["dance-school"],
+      "status": "draft",
+      "description": "Dance school / lesson studio site — TLHA-style class schedule, instructors, events.",
+      "contentModels": [
+        {
+          "model": "classes",
+          "required": true,
+          "source": "static-html-or-cms",
+          "storageAssets": ["class_image"],
+          "humanReviewRequired": true
+        },
+        {
+          "model": "instructors",
+          "required": false,
+          "source": "static-html-or-cms",
+          "storageAssets": ["instructor_photo"],
+          "humanReviewRequired": true
+        },
+        {
+          "model": "schedule",
+          "required": true,
+          "source": "static-html-or-cms",
+          "storageAssets": ["event_flyer"],
+          "humanReviewRequired": true
+        },
+        { "model": "pricing", "required": false, "source": "static-html", "storageAssets": [] },
+        {
+          "model": "events",
+          "required": false,
+          "source": "static-html-or-cms",
+          "storageAssets": ["event_flyer"],
+          "humanReviewRequired": true
+        },
+        { "model": "news", "required": false, "source": "cms-ready", "storageAssets": [] },
+        { "model": "faq", "required": false, "source": "static-html", "storageAssets": [] },
+        { "model": "contact", "required": true, "source": "static-html", "storageAssets": [] }
+      ],
+      "pages": [
+        "home",
+        "about",
+        "classes",
+        "schedule",
+        "pricing",
+        "instructors",
+        "events",
+        "access",
+        "contact"
+      ],
+      "storageAssetTypes": [
+        {
+          "assetType": "class_image",
+          "targetTable": "classes",
+          "targetColumn": "image_url",
+          "humanReviewRequired": true
+        },
+        {
+          "assetType": "instructor_photo",
+          "targetTable": "instructors",
+          "targetColumn": "photo_url",
+          "humanReviewRequired": true
+        },
+        {
+          "assetType": "event_flyer",
+          "targetTable": "events",
+          "targetColumn": "image_url",
+          "humanReviewRequired": true
+        },
+        {
+          "assetType": "gallery_image",
+          "targetTable": "gallery",
+          "targetColumn": "image_url",
+          "humanReviewRequired": true
+        }
+      ],
+      "seoFeatures": ["title", "description", "canonical", "og", "sitemap", "robots", "staging-noindex"],
+      "deployFeatures": ["deploy-base", "static-public-artifact", "staging-ftp"],
+      "knownSiteExamples": [],
+      "notes": [
+        "Draft — aligns with site-profile dance-school.json modules.",
+        "Sariswing-style NEWS/Instagram patterns may inform future modules."
+      ]
+    },
+    {
+      "templateId": "small-business",
+      "siteTypes": ["small-business", "generic"],
+      "status": "draft",
+      "description": "Small business / corporate brochure site — services, works portfolio, staff, company info.",
+      "contentModels": [
+        {
+          "model": "services",
+          "required": true,
+          "source": "static-html",
+          "storageAssets": ["service_image"],
+          "humanReviewRequired": false
+        },
+        {
+          "model": "works",
+          "required": false,
+          "source": "static-html-or-cms",
+          "storageAssets": ["work_thumbnail"],
+          "humanReviewRequired": false
+        },
+        {
+          "model": "staff",
+          "required": false,
+          "source": "static-html",
+          "storageAssets": ["staff_photo"],
+          "humanReviewRequired": true
+        },
+        { "model": "news", "required": false, "source": "cms-ready", "storageAssets": [] },
+        { "model": "faq", "required": false, "source": "static-html", "storageAssets": [] },
+        { "model": "company", "required": true, "source": "static-html", "storageAssets": [] },
+        { "model": "contact", "required": true, "source": "static-html", "storageAssets": [] }
+      ],
+      "pages": [
+        "home",
+        "service",
+        "works",
+        "company",
+        "contact",
+        "privacy",
+        "legal"
+      ],
+      "storageAssetTypes": [
+        {
+          "assetType": "service_image",
+          "targetTable": "services",
+          "targetColumn": "image_url",
+          "humanReviewRequired": false
+        },
+        {
+          "assetType": "work_thumbnail",
+          "targetTable": "works",
+          "targetColumn": "thumbnail_url",
+          "humanReviewRequired": false
+        },
+        {
+          "assetType": "staff_photo",
+          "targetTable": "staff",
+          "targetColumn": "photo_url",
+          "humanReviewRequired": true
+        },
+        {
+          "assetType": "og_image",
+          "targetTable": "site_meta",
+          "targetColumn": "og_image_url",
+          "humanReviewRequired": false
+        }
+      ],
+      "seoFeatures": ["title", "description", "canonical", "og", "sitemap", "robots", "staging-noindex"],
+      "deployFeatures": ["deploy-base", "static-public-artifact", "staging-ftp"],
+      "knownSiteExamples": [],
+      "notes": [
+        "Draft — generic site-profile may map siteType generic to this template.",
+        "Liberta-style corporate sites are the reference use case."
+      ]
+    }
+  ]
+}

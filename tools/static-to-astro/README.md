@@ -1260,10 +1260,18 @@ gosaki / Sariswing で実証した移行フローを、**別サイト向け CMS 
 | Site config draft | [config/sites/gosaki.site-config.example.json](config/sites/gosaki.site-config.example.json) |
 | 方針 | **site-config driven migration**（G-5c 以降）、**template registry**、**schema adapter** |
 | Workflow | **staging-first** — G-4 成功フローは後方互換維持 |
-| 実装フェーズ | G-5a inventory → G-5b config → **G-5c read-only CLI** → G-5d〜h |
+| 実装フェーズ | G-5a〜**G-5d registry** → G-5e schema adapter → G-5f〜h |
 | **G-5c usage** | [docs/site-config-cli-usage.md](docs/site-config-cli-usage.md) |
+| **G-5d registry** | [docs/cms-template-registry.md](docs/cms-template-registry.md) |
 
-**G-5c（完了）:** read-only CLI が `--site-config` を受け取り、`siteSlug` / report / manifest パスを補完。明示引数は後方互換で優先。upload / DB / FTP CLI は未対応。
+**G-5c（完了）:** read-only CLI が `--site-config` を受け取り、path を補完。明示引数優先。
+
+**G-5d（完了）:** CMS template registry — `musician-basic`（gosaki 実績）+ 3 draft templates。`inspect-cms-template.mjs` で read-only 検証。実生成・upload / DB / FTP は未接続。
+
+```bash
+node tools/static-to-astro/scripts/inspect-cms-template.mjs \
+  --site-config tools/static-to-astro/config/sites/gosaki.site-config.example.json
+```
 
 ```bash
 node tools/static-to-astro/scripts/review-storage-assets.mjs \
@@ -1543,6 +1551,7 @@ CMS Kit 実用化プロトタイプとして **gosaki staging** の役割・secr
 | [docs/gosaki-storage-g4-prep.md](docs/gosaki-storage-g4-prep.md) | **G-4:** Storage 画像移行準備（設計・分類メモ） |
 | [docs/gosaki-storage-image-migration-runbook.md](docs/gosaki-storage-image-migration-runbook.md) | **G-4h:** Storage 画像移行正式 runbook（G-4a〜G-4g 手順・QA） |
 | [docs/cms-kit-generalization-roadmap.md](docs/cms-kit-generalization-roadmap.md) | **G-5:** CMS Kit template 一般化ロードマップ（site config / schema adapter） |
+| [docs/cms-template-registry.md](docs/cms-template-registry.md) | **G-5d:** CMS template registry（musician-basic + drafts） |
 
 **短期運用:** Local Admin（`npm run dev`）→ staging Supabase 保存 → export → build → `verify-static-public-artifact` → public-dist 確認
 

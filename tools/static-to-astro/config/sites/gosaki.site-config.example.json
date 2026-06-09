@@ -3,6 +3,7 @@
   "siteSlug": "gosaki",
   "siteName": "Saki Goto",
   "siteType": "musician",
+  "templateId": "musician-basic",
   "siteProfile": "musician",
   "source": {
     "type": "static-html",

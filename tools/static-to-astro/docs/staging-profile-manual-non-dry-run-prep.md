@@ -26,7 +26,11 @@ dryRunPassed: true
 readyForManualNonDryRunDecision: true
 readyForG6DNonDryRun: false
 nonDryRunExecuted: false
+nonDryRunAborted: true
+readyForManualNonDryRunExecution: false
 ```
+
+**G-6-d-auth-session-display-investigation（完了）:** [staging-auth-session-display-investigation.md](./staging-auth-session-display-investigation.md) — manual non-dry-run aborted because real auth email was not visible; mock preview shown; write actions disabled; `PUBLIC_ADMIN_WRITE_DRY_RUN` restored to `true`; non-dry-run remains blocked.
 
 ## 3. Scope of first non-dry-run update
 
@@ -120,13 +124,14 @@ Do not add or change admin_users in this phase.
 
 ### Staging shell session display
 
-On `/__admin-staging-shell/musician-basic/`, the Auth section shows:
+On `/__admin-staging-shell/musician-basic/`, use:
 
-- `staging-auth-session-status` — signed-in / denied / etc.
-- `staging-auth-user-email` — email from Supabase Auth session
-- `staging-auth-role` — resolved role display
+- **Auth adapter status** — `staging-auth-user-email`, `staging-auth-user-id`, `staging-auth-session-status`
+- **Auth Session / Write Gate Debug Panel** — provider, disabled reasons, write gate (G-6-d-auth-session-display-investigation)
 
-Compare `staging-auth-user-email` with the `email` column in `admin_users`. The signed-in user's `user_id` in `admin_users` must match `auth.uid()` for the UPDATE RLS policy to allow the write. If session shows signed-in but role is denied or email is missing from `admin_users`, stop.
+If the UI shows `mock preview` or `mock-admin@example.com`, real Supabase Auth is not enabled. Set repo-root env gates (see [staging-auth-session-display-investigation.md](./staging-auth-session-display-investigation.md) §6) and sign in via the staging login form.
+
+Compare displayed email with `admin_users.email`. The signed-in user's `user_id` in `admin_users` must match `auth.uid()` for the UPDATE RLS policy. Role UI currently uses mock allowlist only — confirm role in Supabase SQL Editor until `admin_users` resolver is added.
 
 ## 8. Proposed minimal update payload
 

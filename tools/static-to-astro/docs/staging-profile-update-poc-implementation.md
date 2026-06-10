@@ -108,7 +108,9 @@ Also required when enabling write:
 
 **G-6-d-dry-run-retry-after-schema-apply（完了）:** [staging-profile-schema-apply-verification-and-dry-run-qa.md](./staging-profile-schema-apply-verification-and-dry-run-qa.md) — `dryRunPassed: true`; `readyForManualNonDryRunDecision: true`.
 
-**G-6-d-manual-non-dry-run-prep（完了）:** [staging-profile-manual-non-dry-run-prep.md](./staging-profile-manual-non-dry-run-prep.md) — one manual non-dry-run prep; bio-only; Cursor does not execute update; `readyForG6E: false`.
+**G-6-d-manual-non-dry-run-prep（完了）:** [staging-profile-manual-non-dry-run-prep.md](./staging-profile-manual-non-dry-run-prep.md) — manual non-dry-run aborted before execution.
+
+**G-6-d-auth-session-display-investigation（完了）:** [staging-auth-session-display-investigation.md](./staging-auth-session-display-investigation.md) — auth session / write gate debug panel; non-dry-run remains blocked.
 
 ### Manual non-dry-run example (staging only)
 

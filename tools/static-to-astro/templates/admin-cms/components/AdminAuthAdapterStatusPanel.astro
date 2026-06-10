@@ -65,12 +65,16 @@ const connectedToRuntime = stagingAuthEnabled;
     <div>
       <dt>User email</dt>
       <dd id="staging-auth-user-email">
-        {stagingAuthEnabled ? "—" : "mock-admin@example.com"}
+        {stagingAuthEnabled ? "— (load session)" : "— (mock preview — not signed in)"}
       </dd>
     </div>
     <div>
+      <dt>User id</dt>
+      <dd id="staging-auth-user-id">—</dd>
+    </div>
+    <div>
       <dt>Role</dt>
-      <dd id="staging-auth-role">{stagingAuthEnabled ? "viewer (default)" : "admin (mock preview)"}</dd>
+      <dd id="staging-auth-role">{stagingAuthEnabled ? "— (load session)" : "mock preview only"}</dd>
     </div>
     <div>
       <dt>Connected to runtime</dt>

@@ -340,7 +340,9 @@ G-6-d-verify completion state: `readyForManualNonDryRunDecision: true`, `nonDryR
 
 **G-6-d-dry-run-retry-after-schema-apply（完了）:** [staging-profile-schema-apply-verification-and-dry-run-qa.md](./staging-profile-schema-apply-verification-and-dry-run-qa.md) — dry-run passed after GRANT; `readyForManualNonDryRunDecision: true`; `readyForG6DNonDryRun: false`.
 
-**G-6-d-manual-non-dry-run-prep（完了）:** [staging-profile-manual-non-dry-run-prep.md](./staging-profile-manual-non-dry-run-prep.md) — first update staging-only; bio-only recommended; Cursor must not execute; `PUBLIC_ADMIN_WRITE_DRY_RUN=false` manual/temporary only; `readyForG6E: false`.
+**G-6-d-manual-non-dry-run-prep（完了）:** [staging-profile-manual-non-dry-run-prep.md](./staging-profile-manual-non-dry-run-prep.md) — first update staging-only; bio-only recommended; manual non-dry-run aborted.
+
+**G-6-d-auth-session-display-investigation（完了）:** [staging-auth-session-display-investigation.md](./staging-auth-session-display-investigation.md) — real auth email not visible; mock preview; write disabled; `PUBLIC_ADMIN_WRITE_DRY_RUN=true`; non-dry-run blocked; `readyForG6E: false`.
 
 ## 14. G-6-d-verify completion criteria
 

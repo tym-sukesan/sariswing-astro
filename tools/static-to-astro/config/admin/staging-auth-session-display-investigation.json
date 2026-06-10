@@ -1,0 +1,23 @@
+{
+  "phase": "G-6-d-auth-session-display-investigation",
+  "type": "staging-auth-session-display-investigation",
+  "incident": "real auth user email was not visible in staging shell before non-dry-run",
+  "nonDryRunAborted": true,
+  "nonDryRunExecuted": false,
+  "cursorSetsDryRunFalse": false,
+  "dbWritePerformedByCursor": false,
+  "authSessionVisibleRequired": true,
+  "realUserEmailVisible": false,
+  "mockUserVisible": true,
+  "mockPreviewLabelFixed": true,
+  "writeActionsDisabled": true,
+  "writeGateDiagnosticsVisible": true,
+  "adminUsersRoleResolverImplemented": false,
+  "roleResolverSource": "mock-allowlist",
+  "envMustBeRepoRoot": true,
+  "readyForManualNonDryRunExecution": false,
+  "readyForG6DResultReport": false,
+  "readyForG6E": false,
+  "adminRouteConnected": false,
+  "productionDataTouched": false
+}

@@ -6,21 +6,36 @@ import type { AdminSession } from "../../../../tools/static-to-astro/templates/a
 import { getStagingSupabaseClient } from "./supabase-staging-auth-client";
 import { resolveMockAdminRole } from "./staging-role-resolver";
 
+export interface StagingAuthSessionDetails {
+  session: AdminSession;
+  userId?: string;
+  rawEmail?: string;
+  roleSource: "mock-allowlist";
+  adminUsersQueried: false;
+}
+
 function mapSupabaseSession(
   email: string | undefined,
   status: AdminSession["status"],
-): AdminSession {
+  userId?: string,
+): StagingAuthSessionDetails {
   const resolution = resolveMockAdminRole(email);
   const sessionStatus =
     resolution.status === "mock-denied" && status === "signed-in" ? "denied" : status;
 
   return {
-    status: sessionStatus,
-    email: resolution.email ?? email,
-    role: resolution.role,
-    provider: "supabase",
-    connectedToRuntime: true,
-    productionReady: false,
+    session: {
+      status: sessionStatus,
+      email: email ?? resolution.email,
+      role: resolution.role,
+      provider: "supabase",
+      connectedToRuntime: true,
+      productionReady: false,
+    },
+    userId,
+    rawEmail: email,
+    roleSource: "mock-allowlist",
+    adminUsersQueried: false,
   };
 }
 
@@ -39,26 +54,33 @@ export async function getStagingAuthSession(
   url: string,
   anonKey: string,
 ): Promise<AdminSession> {
+  const details = await getStagingAuthSessionDetails(url, anonKey);
+  return details.session;
+}
+
+export async function getStagingAuthSessionDetails(
+  url: string,
+  anonKey: string,
+): Promise<StagingAuthSessionDetails> {
+  const signedOut: StagingAuthSessionDetails = {
+    session: {
+      status: "signed-out",
+      provider: "supabase",
+      connectedToRuntime: true,
+      productionReady: false,
+    },
+    roleSource: "mock-allowlist",
+    adminUsersQueried: false,
+  };
+
   const client = getStagingSupabaseClient(url, anonKey);
   const { data, error } = await client.auth.getSession();
-  if (error) {
-    return {
-      status: "signed-out",
-      provider: "supabase",
-      connectedToRuntime: true,
-      productionReady: false,
-    };
-  }
+  if (error) return signedOut;
+
   const user = data.session?.user;
-  if (!user?.email) {
-    return {
-      status: "signed-out",
-      provider: "supabase",
-      connectedToRuntime: true,
-      productionReady: false,
-    };
-  }
-  return mapSupabaseSession(user.email, "signed-in");
+  if (!user?.email) return signedOut;
+
+  return mapSupabaseSession(user.email, "signed-in", user.id);
 }
 
 export async function signInStagingAuth(
@@ -76,7 +98,7 @@ export async function signInStagingAuth(
     throw new Error(formatStagingAuthError(error.message));
   }
   const userEmail = data.user?.email ?? email;
-  return mapSupabaseSession(userEmail, "signed-in");
+  return mapSupabaseSession(userEmail, "signed-in", data.user?.id).session;
 }
 
 export async function signOutStagingAuth(

@@ -22,8 +22,9 @@
 - **G-6-d-schema-apply-prep（完了）:** [profile-schema-apply-prep.md](../profile-schema-apply-prep.md) — manual SQL package; Cursor does not execute SQL
 - **G-6-d-schema-apply（ユーザー手動・完了）:** `public.profile` on staging; seed row; RLS policies
 - **G-6-d-dry-run-retry-after-schema-apply（完了）:** [staging-profile-schema-apply-verification-and-dry-run-qa.md](../staging-profile-schema-apply-verification-and-dry-run-qa.md) — `dryRunPassed: true`
-- **G-6-d-manual-non-dry-run-prep（完了）:** [staging-profile-manual-non-dry-run-prep.md](../staging-profile-manual-non-dry-run-prep.md) — bio-only first update; Cursor must not execute; `PUBLIC_ADMIN_WRITE_DRY_RUN=false` manual/temporary only
-- 次: ユーザー手動で1回 non-dry-run → G-6-d-result-report
+- **G-6-d-manual-non-dry-run-prep（完了）:** [staging-profile-manual-non-dry-run-prep.md](../staging-profile-manual-non-dry-run-prep.md) — prep done; execution aborted
+- **G-6-d-auth-session-display-investigation（完了）:** [staging-auth-session-display-investigation.md](../staging-auth-session-display-investigation.md) — auth display fix; non-dry-run still blocked
+- 次: repo-root env + real auth visible → retry non-dry-run prep
 
 ## Option B: customer-specific schema mapping
 
@@ -61,7 +62,8 @@ G-6-d-blocker: profile schema alignment plan (public.profile missing)
 G-6-d-schema-apply-prep: manual SQL package (no is_active in RLS)
 G-6-d-schema-apply: user applies SQL to staging (manual) — done
 G-6-d-dry-run-retry-after-schema-apply: dry-run passed
-G-6-d-manual-non-dry-run-prep: manual non-dry-run prep (bio-only)
+G-6-d-manual-non-dry-run-prep: manual non-dry-run prep (aborted)
+G-6-d-auth-session-display-investigation: auth session display fix
 G-6-e: staging create operation (blocked until profile aligned)
 ```
 

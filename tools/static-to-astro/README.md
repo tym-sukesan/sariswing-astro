@@ -1378,7 +1378,9 @@ gosaki / Sariswing で実証した移行フローを、**別サイト向け CMS 
 
 **G-6-d-dry-run-retry-after-schema-apply（完了）:** [Staging profile schema apply verification and dry-run QA](docs/staging-profile-schema-apply-verification-and-dry-run-qa.md) — `dryRunPassed: true` after GRANT; `readyForManualNonDryRunDecision: true`; `readyForG6DNonDryRun: false`.
 
-**G-6-d-manual-non-dry-run-prep（完了）:** [Staging profile manual non-dry-run prep](docs/staging-profile-manual-non-dry-run-prep.md) — one staging-only update prep; bio-only recommended; Cursor does not execute; `PUBLIC_ADMIN_WRITE_DRY_RUN=false` manual/temporary only; `readyForG6E: false`. No production data is touched.
+**G-6-d-manual-non-dry-run-prep（完了）:** [Staging profile manual non-dry-run prep](docs/staging-profile-manual-non-dry-run-prep.md) — one staging-only update prep; bio-only recommended; manual non-dry-run **aborted** (real auth email not visible).
+
+**G-6-d-auth-session-display-investigation（完了）:** [Staging auth session display investigation](docs/staging-auth-session-display-investigation.md) — mock preview vs real Supabase Auth; debug panel added; `PUBLIC_ADMIN_WRITE_DRY_RUN=true` restored; non-dry-run blocked; `readyForG6E: false`.
 
 ```bash
 node tools/static-to-astro/scripts/report-disabled-write-action-scaffold.mjs \
@@ -1418,6 +1420,11 @@ node tools/static-to-astro/scripts/report-staging-profile-schema-apply-verificat
 ```bash
 node tools/static-to-astro/scripts/report-staging-profile-manual-non-dry-run-prep.mjs \
   --out-dir tools/static-to-astro/output/staging-profile-manual-non-dry-run-prep/gosaki
+```
+
+```bash
+node tools/static-to-astro/scripts/report-staging-auth-session-display-investigation.mjs \
+  --out-dir tools/static-to-astro/output/staging-auth-session-display-investigation/gosaki
 ```
 
 ```bash

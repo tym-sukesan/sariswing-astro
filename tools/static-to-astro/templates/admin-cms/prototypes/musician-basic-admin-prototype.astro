@@ -21,6 +21,7 @@ import AdminStatusMessage from "../components/AdminStatusMessage.astro";
 import AdminAuthStatus from "../components/AdminAuthStatus.astro";
 import AdminAuthAdapterStatusPanel from "../components/AdminAuthAdapterStatusPanel.astro";
 import AdminStagingLoginUiSection from "../auth/components/AdminStagingLoginUiSection.astro";
+import AdminStagingAuthWriteDebugPanel from "../auth/components/AdminStagingAuthWriteDebugPanel.astro";
 import AdminStagingReadOnlyDataSection from "../data/components/AdminStagingReadOnlyDataSection.astro";
 import AdminStagingDisabledWriteActionsSection from "../data/components/AdminStagingDisabledWriteActionsSection.astro";
 import AdminStagingProfileUpdatePocSection from "../data/components/AdminStagingProfileUpdatePocSection.astro";
@@ -273,6 +274,17 @@ const moduleSummary = [
           data-section="auth-login-shell"
         >
           <AdminStagingLoginUiSection routePath={stagingShellRoutePath} phase="G-5y-e-a" />
+        </section>
+      ) : null
+    }
+    {
+      stagingShellMode ? (
+        <section
+          id="auth-write-debug-shell"
+          class="admin-prototype-section admin-staging-auth-write-debug-section"
+          data-section="auth-write-debug-shell"
+        >
+          <AdminStagingAuthWriteDebugPanel />
         </section>
       ) : null
     }

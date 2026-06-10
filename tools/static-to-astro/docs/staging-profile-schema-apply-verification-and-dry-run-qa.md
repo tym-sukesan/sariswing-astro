@@ -89,7 +89,9 @@ readyForG6DNonDryRun: false
 
 After dry-run retry (see §8.1): `dryRunRetried: true`, `dryRunPassed: true`, `readyForManualNonDryRunDecision: true`.
 
-**G-6-d-manual-non-dry-run-prep（完了）:** [staging-profile-manual-non-dry-run-prep.md](./staging-profile-manual-non-dry-run-prep.md) — one manual staging update prep; bio-only recommended; Cursor does not execute update; `readyForG6E: false`.
+**G-6-d-manual-non-dry-run-prep（完了）:** [staging-profile-manual-non-dry-run-prep.md](./staging-profile-manual-non-dry-run-prep.md) — manual non-dry-run aborted.
+
+**G-6-d-auth-session-display-investigation（完了）:** [staging-auth-session-display-investigation.md](./staging-auth-session-display-investigation.md) — mock auth display investigated; debug panel added; non-dry-run blocked.
 
 ## 8. Dry-run QA command / procedure
 

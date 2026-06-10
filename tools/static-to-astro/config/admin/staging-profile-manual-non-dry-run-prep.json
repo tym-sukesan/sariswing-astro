@@ -18,8 +18,10 @@
   "publishForbidden": true,
   "adminRouteConnected": false,
   "productionDataTouched": false,
+  "nonDryRunAborted": true,
   "nonDryRunExecuted": false,
   "readyForManualNonDryRunExecution": false,
+  "authSessionInvestigationRequired": true,
   "readyForG6DResultReport": false,
   "readyForG6E": false
 }

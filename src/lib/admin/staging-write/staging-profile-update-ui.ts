@@ -2,6 +2,7 @@
  * G-6-d — Browser UI for staging profile update PoC (staging shell only).
  */
 
+import { refreshAuthWriteDebugPanel } from "../staging-auth/staging-auth-write-debug-ui";
 import { executeProfileUpdatePoc } from "./profile-update-poc-adapter";
 import { getStagingWriteConfig } from "./staging-write-config";
 
@@ -71,6 +72,7 @@ function refreshProfileUpdatePocPanel(): void {
   ) as HTMLTextAreaElement | null;
   if (nameInput) nameInput.disabled = !config.canWrite;
   if (bioInput) bioInput.disabled = !config.canWrite;
+  void refreshAuthWriteDebugPanel();
 }
 
 async function handleProfileUpdatePocSave(): Promise<void> {

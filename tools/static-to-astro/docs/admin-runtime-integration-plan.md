@@ -222,7 +222,8 @@ Never skip: local preview and customer demo before runtime shell; read-only befo
 | **G-6-d-schema-apply-prep（完了）** | [Profile schema apply prep](./profile-schema-apply-prep.md) | Manual SQL package; no `is_active`; `readyForManualSchemaApply: true` |
 | **G-6-d-schema-apply（ユーザー手動・完了）** | User SQL Editor apply | `public.profile` exists; seed row; RLS policies; Cursor did not execute SQL |
 | **G-6-d-dry-run-retry-after-schema-apply（完了）** | [Schema apply verification and dry-run QA](./staging-profile-schema-apply-verification-and-dry-run-qa.md) | `dryRunPassed: true`; `readyForManualNonDryRunDecision: true` |
-| **G-6-d-manual-non-dry-run-prep（完了）** | [Manual non-dry-run prep](./staging-profile-manual-non-dry-run-prep.md) | Bio-only first update; Cursor does not execute; `readyForG6E: false` |
+| **G-6-d-manual-non-dry-run-prep（完了）** | [Manual non-dry-run prep](./staging-profile-manual-non-dry-run-prep.md) | Prep complete; execution aborted |
+| **G-6-d-auth-session-display-investigation（完了）** | [Auth session display investigation](./staging-auth-session-display-investigation.md) | Debug panel; mock vs supabase auth; non-dry-run blocked |
 | **G-6-e** | Staging create operation | Blocked until profile schema aligned |
 | **G-5y-e** | Role check / allowlist | Staging Auth |
 

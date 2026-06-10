@@ -4,12 +4,14 @@
 
 import { getStagingAuthConfig } from "./staging-auth-config";
 import {
-  getStagingAuthSession,
+  getStagingAuthSessionDetails,
   signInStagingAuth,
   signOutStagingAuth,
 } from "./staging-auth-session";
+import { collectAuthGateBlockers, formatGateBlockers } from "./staging-auth-gate-diagnostics";
 import { resolveMockAdminRole } from "./staging-role-resolver";
 import { refreshRoleAllowlistPanel } from "./staging-role-allowlist-ui";
+import { refreshAuthWriteDebugPanel } from "./staging-auth-write-debug-ui";
 
 function setText(id: string, value: string): void {
   const el = document.getElementById(id);
@@ -40,26 +42,43 @@ async function refreshAuthStatusPanel(): Promise<void> {
   if (config.configMissing) {
     setText("staging-auth-session-status", "config-missing");
     setText("staging-auth-user-email", "—");
+    setText("staging-auth-user-id", "—");
     setText("staging-auth-role", "—");
     setError(
       "Supabase Auth config missing. Set PUBLIC_SUPABASE_URL and PUBLIC_SUPABASE_ANON_KEY locally.",
     );
+    await refreshAuthWriteDebugPanel();
     return;
   }
 
   if (!config.stagingAuthEnabled || !config.supabaseConfigured) {
-    setText("staging-auth-session-status", "mock");
-    setText("staging-auth-user-email", "mock-admin@example.com");
-    setText("staging-auth-role", "admin (mock allowlist)");
+    const blockers = collectAuthGateBlockers(config);
+    setText("staging-auth-session-status", "mock-preview");
+    setText(
+      "staging-auth-user-email",
+      "— (mock preview — not signed in)",
+    );
+    setText("staging-auth-role", "mock preview only");
+    setText(
+      "staging-auth-user-id",
+      "—",
+    );
+    setError(
+      blockers.length > 0
+        ? `Real Supabase Auth disabled: ${formatGateBlockers(blockers)}`
+        : "",
+    );
     await refreshRoleAllowlistPanel();
+    await refreshAuthWriteDebugPanel();
     return;
   }
 
   try {
-    const session = await getStagingAuthSession(
+    const details = await getStagingAuthSessionDetails(
       config.supabaseUrl,
       config.supabaseAnonKey,
     );
+    const session = details.session;
     setText(
       "staging-auth-session-status",
       session.status === "signed-in"
@@ -68,20 +87,30 @@ async function refreshAuthStatusPanel(): Promise<void> {
           ? "denied"
           : "signed-out",
     );
-    setText("staging-auth-user-email", session.email ?? "—");
-    const resolution = resolveMockAdminRole(session.email);
+    setText("staging-auth-user-email", details.rawEmail ?? session.email ?? "—");
+    setText(
+      "staging-auth-user-id",
+      details.userId
+        ? `${details.userId.slice(0, 8)}…${details.userId.slice(-4)}`
+        : "—",
+    );
+    const resolution = resolveMockAdminRole(details.rawEmail);
     setText(
       "staging-auth-role",
-      resolution.displayRole === "denied" ? "denied (not in mock allowlist)" : (session.role ?? "—"),
+      resolution.displayRole === "denied"
+        ? "denied (mock allowlist only — admin_users not queried)"
+        : (session.role ?? "—"),
     );
     const signOutBtn = document.getElementById("staging-sign-out-btn");
     if (signOutBtn) {
       signOutBtn.hidden = session.status !== "signed-in" && session.status !== "denied";
     }
     await refreshRoleAllowlistPanel();
+    await refreshAuthWriteDebugPanel();
   } catch {
     setText("staging-auth-session-status", "unknown");
     setError("Could not read Auth session.");
+    await refreshAuthWriteDebugPanel();
   }
 }
 

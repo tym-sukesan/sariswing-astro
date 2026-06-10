@@ -1,14 +1,15 @@
 ---
 /**
- * G-5z-b — Staging shell read-only data section.
+ * G-5z-c — Staging shell read-only data section.
  */
 import AdminReadOnlyDataStatusPanel from "./AdminReadOnlyDataStatusPanel.astro";
+import { G5Z_C_PHASE } from "../../../../../../src/lib/admin/staging-data/read-only-data-config";
 
 interface Props {
   phase?: string;
 }
 
-const { phase = "G-5z-b" } = Astro.props;
+const { phase = G5Z_C_PHASE } = Astro.props;
 ---
 
 <div

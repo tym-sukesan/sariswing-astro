@@ -1,31 +1,34 @@
 ---
 /**
- * G-5z-b — Read-only data adapter status + mock preview (staging shell only).
+ * G-5z-c — Read-only data adapter status + mock/Supabase preview (staging shell only).
  */
-import { getReadOnlyDataConfig } from "../../../../../../src/lib/admin/staging-data/read-only-data-config";
-import { createMockReadOnlyDataAdapter } from "../../../../../../src/lib/admin/staging-data/mock-read-only-data-adapter";
+import {
+  getReadOnlyDataConfig,
+  G5Z_C_APPROVAL_ID,
+  G5Z_C_PHASE,
+} from "../../../../../../src/lib/admin/staging-data/read-only-data-config";
 import { getReadOnlyDataStatus } from "../../../../../../src/lib/admin/staging-data/read-only-data-status";
+import { loadStagingReadOnlyPreview } from "../../../../../../src/lib/admin/staging-data/staging-read-only-data-loader";
 
 interface Props {
   phase?: string;
 }
 
-const { phase = "G-5z-b" } = Astro.props;
+const { phase = G5Z_C_PHASE } = Astro.props;
 
 const dataConfig = getReadOnlyDataConfig();
 const status = getReadOnlyDataStatus(dataConfig);
-const adapter = createMockReadOnlyDataAdapter();
+const preview = await loadStagingReadOnlyPreview(dataConfig);
 
-const profile = await adapter.getProfile();
-const schedules = await adapter.listSchedules();
-const discography = await adapter.listDiscography();
-const links = await adapter.listLinks();
-const news = await adapter.listNews();
+const { profile, schedules, discography, links, news } = preview;
 
-const publishedSchedules = schedules.filter((s) => s.published);
-const publishedDiscography = discography.filter((d) => d.published);
-const publishedLinks = links.filter((l) => l.published);
-const publishedNews = news.filter((n) => n.published);
+function moduleStatusClass(moduleStatus: string): string {
+  if (moduleStatus === "ok") return "is-ok";
+  if (moduleStatus === "empty") return "is-empty";
+  if (moduleStatus === "rls-denied") return "is-rls-denied";
+  if (moduleStatus === "error") return "is-error";
+  return "";
+}
 ---
 
 <section
@@ -35,7 +38,8 @@ const publishedNews = news.filter((n) => n.published);
   aria-live="polite"
   data-scaffold="true"
   data-phase={phase}
-  data-provider="mock"
+  data-approval-id={G5Z_C_APPROVAL_ID}
+  data-provider={status.dataProvider}
   data-ui-state={status.uiState}
 >
   <h2 class="admin-readonly-data-panel__title">
@@ -46,8 +50,16 @@ const publishedNews = news.filter((n) => n.published);
 
   <dl class="admin-readonly-data-panel__meta">
     <div>
+      <dt>Approval ID</dt>
+      <dd id="staging-data-approval-id">{G5Z_C_APPROVAL_ID}</dd>
+    </div>
+    <div>
       <dt>Provider</dt>
       <dd id="staging-data-provider">{status.dataProvider}</dd>
+    </div>
+    <div>
+      <dt>Staging data read enabled</dt>
+      <dd>{status.stagingDataReadEnabled ? "true" : "false"}</dd>
     </div>
     <div>
       <dt>Target modules</dt>
@@ -71,11 +83,17 @@ const publishedNews = news.filter((n) => n.published);
     </div>
     <div>
       <dt>Supabase DB query</dt>
-      <dd>not implemented</dd>
+      <dd>
+        {
+          status.supabaseDbQueryImplemented
+            ? "enabled only in staging read mode"
+            : "disabled (mock fallback)"
+        }
+      </dd>
     </div>
     <div>
       <dt>RLS</dt>
-      <dd>not configured</dd>
+      <dd>reviewed externally / not modified by this kit</dd>
     </div>
     <div>
       <dt>Storage</dt>
@@ -95,53 +113,73 @@ const publishedNews = news.filter((n) => n.published);
     </div>
   </dl>
 
-  <div class="admin-readonly-data-panel__states" aria-label="UI state scaffold">
-    <h3 class="admin-readonly-data-panel__subtitle">UI state scaffold (G-5z-b)</h3>
-    <ul class="admin-readonly-data-panel__state-list">
-      <li class={status.uiState === "mock-data" ? "is-active" : ""}>mock data</li>
-      <li>empty state (placeholder)</li>
-      <li>error state (placeholder)</li>
-      <li>loading state (placeholder)</li>
-      <li class={status.uiState === "provider-disabled" ? "is-active" : ""}>
-        provider disabled
-      </li>
-      <li>RLS denied (placeholder — G-5z-c+)</li>
-    </ul>
-  </div>
+  {
+    dataConfig.configMissing ? (
+      <p class="admin-readonly-data-panel__config-missing" role="alert">
+        Supabase data config missing. Mock fallback active. No write operation was attempted.
+      </p>
+    ) : null
+  }
 
   <div class="admin-readonly-data-panel__previews">
-    <h3 class="admin-readonly-data-panel__subtitle">Mock data preview</h3>
+    <h3 class="admin-readonly-data-panel__subtitle">
+      {status.dataProvider === "supabase" ? "Supabase read-only preview" : "Mock data preview"}
+    </h3>
     <p class="admin-readonly-data-panel__preview-note">
-      Fictional fixtures only. No Supabase query. Save / delete / publish remain disabled.
+      {
+        status.dataProvider === "supabase"
+          ? "Approved fields only. No select *. Save / delete / publish remain disabled."
+          : "Fictional fixtures only. No Supabase query. Save / delete / publish remain disabled."
+      }
     </p>
 
     <article class="admin-readonly-data-panel__preview-block">
-      <h4>Profile preview</h4>
+      <h4>
+        Profile preview
+        <span class={`admin-readonly-data-panel__module-status ${moduleStatusClass(profile.status)}`}>
+          {profile.status}
+        </span>
+      </h4>
       {
-        profile ? (
+        profile.message ? (
+          <p class="admin-readonly-data-panel__module-error">{profile.message}</p>
+        ) : null
+      }
+      {
+        profile.data ? (
           <dl>
             <div>
               <dt>Name</dt>
-              <dd>{profile.displayName}</dd>
+              <dd>{profile.data.displayName}</dd>
             </div>
             <div>
               <dt>Bio</dt>
-              <dd>{profile.bio ?? "—"}</dd>
+              <dd>{profile.data.bio ?? "—"}</dd>
             </div>
           </dl>
-        ) : (
+        ) : profile.status === "empty" ? (
           <p class="admin-readonly-data-panel__empty">Empty state — no profile row</p>
-        )
+        ) : null
       }
     </article>
 
     <article class="admin-readonly-data-panel__preview-block">
-      <h4>Upcoming schedules preview ({publishedSchedules.length} published)</h4>
+      <h4>
+        Schedule preview ({schedules.data.length})
+        <span class={`admin-readonly-data-panel__module-status ${moduleStatusClass(schedules.status)}`}>
+          {schedules.status}
+        </span>
+      </h4>
       {
-        publishedSchedules.length > 0 ? (
+        schedules.message ? (
+          <p class="admin-readonly-data-panel__module-error">{schedules.message}</p>
+        ) : null
+      }
+      {
+        schedules.data.length > 0 ? (
           <ul>
             {
-              publishedSchedules.map((row) => (
+              schedules.data.map((row) => (
                 <li>
                   <strong>{row.title}</strong> — {row.date ?? "—"}
                   {row.venueName ? ` @ ${row.venueName}` : ""}
@@ -149,19 +187,31 @@ const publishedNews = news.filter((n) => n.published);
               ))
             }
           </ul>
-        ) : (
+        ) : schedules.status === "empty" ? (
           <p class="admin-readonly-data-panel__empty">Empty state — no published schedules</p>
-        )
+        ) : null
       }
     </article>
 
     <article class="admin-readonly-data-panel__preview-block">
-      <h4>Discography preview ({publishedDiscography.length} published)</h4>
+      <h4>
+        Discography preview ({discography.data.length})
+        <span
+          class={`admin-readonly-data-panel__module-status ${moduleStatusClass(discography.status)}`}
+        >
+          {discography.status}
+        </span>
+      </h4>
       {
-        publishedDiscography.length > 0 ? (
+        discography.message ? (
+          <p class="admin-readonly-data-panel__module-error">{discography.message}</p>
+        ) : null
+      }
+      {
+        discography.data.length > 0 ? (
           <ul>
             {
-              publishedDiscography.map((row) => (
+              discography.data.map((row) => (
                 <li>
                   <strong>{row.title}</strong>
                   {row.releaseDate ? ` (${row.releaseDate})` : ""}
@@ -169,38 +219,58 @@ const publishedNews = news.filter((n) => n.published);
               ))
             }
           </ul>
-        ) : (
+        ) : discography.status === "empty" ? (
           <p class="admin-readonly-data-panel__empty">Empty state — no published discography</p>
-        )
+        ) : null
       }
     </article>
 
     <article class="admin-readonly-data-panel__preview-block">
-      <h4>Links preview ({publishedLinks.length} published)</h4>
+      <h4>
+        Links preview ({links.data.length})
+        <span class={`admin-readonly-data-panel__module-status ${moduleStatusClass(links.status)}`}>
+          {links.status}
+        </span>
+      </h4>
       {
-        publishedLinks.length > 0 ? (
+        links.message ? (
+          <p class="admin-readonly-data-panel__module-error">{links.message}</p>
+        ) : null
+      }
+      {
+        links.data.length > 0 ? (
           <ul>
             {
-              publishedLinks.map((row) => (
+              links.data.map((row) => (
                 <li>
                   {row.label} — <code>{row.url}</code>
                 </li>
               ))
             }
           </ul>
-        ) : (
+        ) : links.status === "empty" ? (
           <p class="admin-readonly-data-panel__empty">Empty state — no published links</p>
-        )
+        ) : null
       }
     </article>
 
     <article class="admin-readonly-data-panel__preview-block">
-      <h4>News preview ({publishedNews.length} published)</h4>
+      <h4>
+        News preview ({news.data.length})
+        <span class={`admin-readonly-data-panel__module-status ${moduleStatusClass(news.status)}`}>
+          {news.status}
+        </span>
+      </h4>
       {
-        publishedNews.length > 0 ? (
+        news.message ? (
+          <p class="admin-readonly-data-panel__module-error">{news.message}</p>
+        ) : null
+      }
+      {
+        news.data.length > 0 ? (
           <ul>
             {
-              publishedNews.map((row) => (
+              news.data.map((row) => (
                 <li>
                   <strong>{row.title}</strong>
                   {row.publishedAt ? ` — ${row.publishedAt}` : ""}
@@ -208,9 +278,9 @@ const publishedNews = news.filter((n) => n.published);
               ))
             }
           </ul>
-        ) : (
+        ) : news.status === "empty" ? (
           <p class="admin-readonly-data-panel__empty">Empty state — no published news</p>
-        )
+        ) : null
       }
     </article>
   </div>
@@ -235,6 +305,15 @@ const publishedNews = news.filter((n) => n.published);
     font-size: 0.875rem;
     color: #475569;
   }
+  .admin-readonly-data-panel__config-missing {
+    margin: 0 0 0.75rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    background: #fff7ed;
+    border: 1px solid #fed7aa;
+    color: #9a3412;
+    font-size: 0.8125rem;
+  }
   .admin-readonly-data-panel__meta {
     margin: 0 0 1rem;
     display: grid;
@@ -255,23 +334,6 @@ const publishedNews = news.filter((n) => n.published);
     font-size: 0.9rem;
     font-weight: 600;
   }
-  .admin-readonly-data-panel__states {
-    margin-bottom: 1rem;
-    padding: 0.75rem;
-    border-radius: 6px;
-    background: #f1f5f9;
-    border: 1px solid #e2e8f0;
-  }
-  .admin-readonly-data-panel__state-list {
-    margin: 0;
-    padding-left: 1.25rem;
-    font-size: 0.8125rem;
-    color: #475569;
-  }
-  .admin-readonly-data-panel__state-list .is-active {
-    font-weight: 600;
-    color: #0f172a;
-  }
   .admin-readonly-data-panel__previews {
     display: grid;
     gap: 0.75rem;
@@ -291,6 +353,37 @@ const publishedNews = news.filter((n) => n.published);
     margin: 0 0 0.5rem;
     font-size: 0.85rem;
     font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+  .admin-readonly-data-panel__module-status {
+    font-size: 0.7rem;
+    font-weight: 500;
+    padding: 0.1rem 0.35rem;
+    border-radius: 4px;
+    background: #f1f5f9;
+    color: #64748b;
+    text-transform: lowercase;
+  }
+  .admin-readonly-data-panel__module-status.is-ok {
+    background: #dcfce7;
+    color: #166534;
+  }
+  .admin-readonly-data-panel__module-status.is-empty {
+    background: #f1f5f9;
+    color: #64748b;
+  }
+  .admin-readonly-data-panel__module-status.is-error,
+  .admin-readonly-data-panel__module-status.is-rls-denied {
+    background: #fee2e2;
+    color: #991b1b;
+  }
+  .admin-readonly-data-panel__module-error {
+    margin: 0 0 0.5rem;
+    font-size: 0.8125rem;
+    color: #b45309;
   }
   .admin-readonly-data-panel__preview-block dl {
     margin: 0;

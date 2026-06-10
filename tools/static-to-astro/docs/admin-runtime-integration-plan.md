@@ -200,7 +200,7 @@ Never skip: local preview and customer demo before runtime shell; read-only befo
 | --- | --- | --- |
 | **G-5y-a（完了）** | Auth integration plan | None |
 | **G-5y-b（完了）** | Auth adapter scaffold / dry-run | None |
-| **G-5y-c** | Login UI shell (disabled auth) | None |
+| **G-5y-c（完了）** | [Login UI shell](./staging-login-ui-shell.md) — disabled real auth | None |
 | **G-5y-d** | Staging Auth connection | Staging project only |
 | **G-5y-e** | Role check / allowlist | Staging Auth |
 
@@ -516,6 +516,7 @@ Generated per site (G-5s): `admin-safety-checklist.generated.md` in dry-run pack
 | **G-5x（完了）** | [Staging runtime shell](./staging-runtime-shell-integration.md) — `/__admin-staging-shell/musician-basic/` |
 | **G-5y-a（完了）** | [Supabase Auth staging plan](./supabase-auth-staging-integration-plan.md) — plan only |
 | **G-5y-b（完了）** | [Auth adapter scaffold](./admin-auth-adapter-scaffold.md) |
+| **G-5y-c（完了）** | [Staging login UI shell](./staging-login-ui-shell.md) |
 | **G-5z** | Read-only data integration |
 | **G-6a** | CRUD write (staging) |
 | **G-6b** | Media upload (staging) |

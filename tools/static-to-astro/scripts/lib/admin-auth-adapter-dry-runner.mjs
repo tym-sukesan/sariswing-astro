@@ -22,6 +22,17 @@ const SCAFFOLD_FILES = [
   "templates/admin-cms/auth/adapters/role-checker.ts",
   "templates/admin-cms/auth/adapters/session-checker.ts",
   "templates/admin-cms/components/AdminAuthAdapterStatusPanel.astro",
+  "templates/admin-cms/auth/components/AdminLoginShell.astro",
+  "templates/admin-cms/auth/components/AdminPasswordResetShell.astro",
+  "templates/admin-cms/auth/components/AdminAuthGuardPlannedNotice.astro",
+  "templates/admin-cms/auth/components/AdminStagingLoginUiSection.astro",
+];
+
+const LOGIN_UI_SHELL_FILES = [
+  "templates/admin-cms/auth/components/AdminLoginShell.astro",
+  "templates/admin-cms/auth/components/AdminPasswordResetShell.astro",
+  "templates/admin-cms/auth/components/AdminAuthGuardPlannedNotice.astro",
+  "templates/admin-cms/auth/components/AdminStagingLoginUiSection.astro",
 ];
 
 const FORBIDDEN_PATTERNS = [
@@ -128,14 +139,29 @@ export function runAdminAuthAdapterDryRun(opts = {}) {
   const missingScaffold = scaffoldFileChecks.filter((f) => !f.exists);
   const forbiddenHits = scanScaffoldForForbiddenImports(toolRoot);
 
+  const loginUiChecks = LOGIN_UI_SHELL_FILES.map((rel) => ({
+    path: rel,
+    exists: fs.existsSync(path.join(toolRoot, rel)),
+  }));
+  const loginUiShellPresent = loginUiChecks.every((f) => f.exists);
+  const passwordResetUiShellPresent = loginUiChecks
+    .filter((f) => f.path.includes("PasswordReset"))
+    .every((f) => f.exists);
+
   const matrixSummary = summarizePermissionMatrix(permissions);
 
   const report = {
     mode: "dry-run",
-    phase: "G-5y-b",
+    phase: "G-5y-c",
     siteId,
     generatedAt: new Date().toISOString(),
     provider: "mock",
+    loginUiShellPresent,
+    passwordResetUiShellPresent,
+    realAuthDisabled: true,
+    credentialsSubmitted: false,
+    sessionCreated: false,
+    passwordResetEmailSent: false,
     supabaseAuthConnected: false,
     supabaseClientImported: forbiddenHits.length > 0,
     adminUsersTableCreated: false,
@@ -170,7 +196,12 @@ export function runAdminAuthAdapterDryRun(opts = {}) {
     },
     permissionMatrixSummary: matrixSummary,
     stagingShellRoute: plan.routes?.stagingShell ?? "/__admin-staging-shell/musician-basic/",
-    readyForG5yC: missingScaffold.length === 0 && forbiddenHits.length === 0,
+    loginUiShellFiles: loginUiChecks,
+    readyForG5yD:
+      missingScaffold.length === 0 &&
+      forbiddenHits.length === 0 &&
+      loginUiShellPresent &&
+      passwordResetUiShellPresent,
   };
 
   // supabaseClientImported should be false when clean
@@ -201,6 +232,17 @@ export function formatAdminAuthAdapterDryRunMarkdown(report) {
     `| connectedToRuntime | ${report.connectedToRuntime} |`,
     `| productionReady | ${report.productionReady} |`,
     `| productionAuthTouched | ${report.productionAuthTouched} |`,
+    "",
+    "## Login UI shell (G-5y-c)",
+    "",
+    "| Flag | Value |",
+    "| --- | --- |",
+    `| loginUiShellPresent | ${report.loginUiShellPresent} |`,
+    `| passwordResetUiShellPresent | ${report.passwordResetUiShellPresent} |`,
+    `| realAuthDisabled | ${report.realAuthDisabled} |`,
+    `| credentialsSubmitted | ${report.credentialsSubmitted} |`,
+    `| sessionCreated | ${report.sessionCreated} |`,
+    `| passwordResetEmailSent | ${report.passwordResetEmailSent} |`,
     "",
     "## Mock session",
     "",
@@ -241,9 +283,9 @@ export function formatAdminAuthAdapterDryRunMarkdown(report) {
     `- productionPublish.enabledByDefault: ${report.integrationPlan.productionPublish?.enabledByDefault}`,
     `- Staging shell route: \`${report.stagingShellRoute}\``,
     "",
-    `**readyForG5yC:** ${report.readyForG5yC}`,
+    `**readyForG5yD:** ${report.readyForG5yD}`,
     "",
-    "*G-5y-b dry-run only. No Supabase Auth connection.*",
+    "*G-5y-c dry-run only. No Supabase Auth connection. Login UI shell — real auth disabled.*",
   );
 
   return lines.join("\n");

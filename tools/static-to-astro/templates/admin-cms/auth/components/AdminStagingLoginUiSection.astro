@@ -1,0 +1,31 @@
+---
+/**
+ * G-5y-c — Combined staging login UI section for musician-basic staging shell.
+ * Login shell + password reset shell + route guard planned notice.
+ */
+import AdminLoginShell from "./AdminLoginShell.astro";
+import AdminPasswordResetShell from "./AdminPasswordResetShell.astro";
+import AdminAuthGuardPlannedNotice from "./AdminAuthGuardPlannedNotice.astro";
+
+interface Props {
+  routePath?: string;
+  phase?: string;
+}
+
+const {
+  routePath = "/__admin-staging-shell/musician-basic/",
+  phase = "G-5y-c",
+} = Astro.props;
+---
+
+<div class="admin-staging-login-ui" data-scaffold="true" data-phase={phase}>
+  <AdminLoginShell phase={phase} />
+  <AdminPasswordResetShell phase={phase} />
+  <AdminAuthGuardPlannedNotice currentRoute={routePath} phase={phase} />
+</div>
+
+<style>
+  .admin-staging-login-ui {
+    margin: 0 0 1.5rem;
+  }
+</style>

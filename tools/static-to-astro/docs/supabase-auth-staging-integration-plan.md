@@ -413,7 +413,7 @@ G-5y-a adds only `ENABLE_ADMIN_STAGING_AUTH=false` to [`.env.example`](../../../
 | --- | --- | --- |
 | **G-5y-a（完了）** | Supabase Auth staging integration **plan** (this doc) | **None** |
 | **G-5y-b（完了）** | [Auth adapter scaffold / dry-run](./admin-auth-adapter-scaffold.md) | **None** |
-| **G-5y-c** | Staging login UI shell; disabled real auth | **None** |
+| **G-5y-c（完了）** | [Staging login UI shell](./staging-login-ui-shell.md) — disabled real auth | None |
 | **G-5y-d** | Staging Supabase Auth connection (explicit approval) | Staging Auth only |
 | **G-5y-e** | Staging role check / allowlist enforcement | Staging Auth + allowlist |
 | **G-5z** | Read-only data integration (SELECT + RLS) | Staging DB read |
@@ -492,15 +492,24 @@ Proceed to **G-5y-c (staging login UI shell)** when:
 
 ---
 
-## 18b. Acceptance criteria for G-5y-c (next)
+## 18b. Acceptance criteria for G-5y-c
 
-Proceed to **G-5y-d** only after G-5y-c login UI shell is on staging route with real auth still disabled.
+**G-5y-c（完了）:** [staging-login-ui-shell.md](./staging-login-ui-shell.md)
+
+Proceed to **G-5y-d (staging Supabase Auth connection)** when:
+
+- [x] Login UI shell on staging route
+- [x] Login / reset buttons disabled; no credentials submitted
+- [x] Route guard planned notice visible
+- [ ] G-5y-d: Supabase project + redirect URL + env approval
 
 ---
 
+## 18c. Acceptance criteria for G-5y-d (next)
+
 ## 19. Final safety statement
 
-**G-5y-a is a planning phase only. G-5y-b is scaffold / dry-run only.**
+**G-5y-a is a planning phase only. G-5y-b is scaffold / dry-run only. G-5y-c is login UI shell only.**
 
 - No Supabase Auth is connected.
 - No Supabase client is added.

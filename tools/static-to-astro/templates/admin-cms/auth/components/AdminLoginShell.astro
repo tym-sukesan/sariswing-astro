@@ -1,0 +1,177 @@
+---
+/**
+ * G-5y-c — Staging login UI shell. Real auth disabled. Mock only.
+ * No Supabase. No fetch. No session persistence.
+ */
+import AdminLoginForm from "../../components/AdminLoginForm.astro";
+import AdminPermissionBadge from "../../components/AdminPermissionBadge.astro";
+
+interface Props {
+  phase?: string;
+  mockEmail?: string;
+  mockRole?: string;
+}
+
+const {
+  phase = "G-5y-c",
+  mockEmail = "mock-admin@example.com",
+  mockRole = "admin",
+} = Astro.props;
+
+const readonlyNotice =
+  "This login UI is a staging shell only. Real Supabase Auth is disabled in G-5y-c. No credentials are submitted. No session is created. Production Auth is not touched.";
+const readonlyNoticeJa =
+  "このログイン画面はステージング確認用のUIです。この段階では実ログインは行われません。入力内容は送信されず、セッションも作成されません。";
+---
+
+<section
+  class="admin-login-shell"
+  id="login-ui-shell"
+  data-scaffold="true"
+  data-phase={phase}
+  data-auth-mode="mock-only"
+>
+  <header class="admin-login-shell__header">
+    <h2 class="admin-login-shell__title">Login UI shell ({phase})</h2>
+    <p class="admin-login-shell__subtitle">
+      Real auth disabled · Mock auth only · Supabase Auth not connected
+    </p>
+  </header>
+
+  <div class="admin-login-shell__grid">
+    <div class="admin-login-shell__form-col">
+      <AdminLoginForm
+        title="Admin login (staging shell)"
+        description="Preview login form layout before G-5y-d Supabase Auth connection."
+        submitLabel="Sign in (disabled)"
+        forgotPasswordHref="#password-reset-shell"
+        disabled={true}
+        readonlyNotice={readonlyNotice}
+      />
+      <p class="admin-login-shell__ja" lang="ja">{readonlyNoticeJa}</p>
+    </div>
+
+    <aside class="admin-login-shell__aside">
+      <section class="admin-login-shell__mock-panel" aria-labelledby="mock-login-title">
+        <h3 id="mock-login-title" class="admin-login-shell__mock-title">Mock login preview</h3>
+        <dl class="admin-login-shell__mock-list">
+          <div>
+            <dt>email</dt>
+            <dd>{mockEmail}</dd>
+          </div>
+          <div>
+            <dt>role</dt>
+            <dd>{mockRole}</dd>
+          </div>
+          <div>
+            <dt>status</dt>
+            <dd>mock</dd>
+          </div>
+          <div>
+            <dt>connectedToRuntime</dt>
+            <dd>false</dd>
+          </div>
+          <div>
+            <dt>productionReady</dt>
+            <dd>false</dd>
+          </div>
+        </dl>
+        <p class="admin-login-shell__mock-note">
+          No credentials submitted. No session created. ENABLE_ADMIN_STAGING_AUTH=false.
+        </p>
+      </section>
+
+      <div class="admin-login-shell__badge-row">
+        <span class="admin-login-shell__badge-label">Role badge preview</span>
+        <AdminPermissionBadge variant="admin" label="Admin" />
+        <AdminPermissionBadge variant="editor" label="Editor" />
+        <AdminPermissionBadge variant="viewer" label="Viewer" />
+      </div>
+    </aside>
+  </div>
+</section>
+
+<style>
+  .admin-login-shell {
+    margin: 0 0 1.25rem;
+    padding: 1.25rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    background: #fafafa;
+  }
+  .admin-login-shell__header {
+    margin-bottom: 1rem;
+  }
+  .admin-login-shell__title {
+    margin: 0 0 0.35rem;
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: #0f172a;
+  }
+  .admin-login-shell__subtitle {
+    margin: 0;
+    font-size: 0.875rem;
+    color: #64748b;
+  }
+  .admin-login-shell__grid {
+    display: grid;
+    gap: 1.25rem;
+    grid-template-columns: 1fr 1fr;
+  }
+  @media (max-width: 768px) {
+    .admin-login-shell__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  .admin-login-shell__ja {
+    margin: 0.75rem 0 0;
+    font-size: 0.8125rem;
+    color: #475569;
+    line-height: 1.5;
+  }
+  .admin-login-shell__mock-panel {
+    padding: 1rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    background: #f8fafc;
+  }
+  .admin-login-shell__mock-title {
+    margin: 0 0 0.75rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+  .admin-login-shell__mock-list {
+    margin: 0;
+    display: grid;
+    gap: 0.3rem 0.75rem;
+    grid-template-columns: max-content 1fr;
+    font-size: 0.875rem;
+  }
+  .admin-login-shell__mock-list dt {
+    font-weight: 600;
+    color: #475569;
+  }
+  .admin-login-shell__mock-list dd {
+    margin: 0;
+    font-family: ui-monospace, monospace;
+    font-size: 0.8125rem;
+  }
+  .admin-login-shell__mock-note {
+    margin: 0.75rem 0 0;
+    font-size: 0.75rem;
+    color: #64748b;
+  }
+  .admin-login-shell__badge-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+  }
+  .admin-login-shell__badge-label {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: #475569;
+    width: 100%;
+  }
+</style>

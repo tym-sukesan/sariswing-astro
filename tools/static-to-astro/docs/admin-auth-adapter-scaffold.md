@@ -145,7 +145,7 @@ Expected flags:
 - `supabaseClientImported: false`
 - `connectedToRuntime: false`
 - `productionReady: false`
-- `readyForG5yC: true` (when scaffold complete)
+- `readyForG5yD: true` (when scaffold + login UI shell complete)
 
 ---
 
@@ -173,7 +173,7 @@ Expected flags:
 
 | Phase | Focus |
 | --- | --- |
-| **G-5y-c** | Staging login UI shell with disabled real auth |
+| **G-5y-c（完了）** | [Staging login UI shell](./staging-login-ui-shell.md) — disabled real auth |
 | **G-5y-d** | Staging Supabase Auth connection (explicit approval) |
 | **G-5y-e** | Staging role check / allowlist |
 

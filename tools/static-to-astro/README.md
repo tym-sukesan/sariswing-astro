@@ -1332,7 +1332,9 @@ gosaki / Sariswing で実証した移行フローを、**別サイト向け CMS 
 
 **G-5y-a（完了）:** [Supabase Auth staging integration plan](docs/supabase-auth-staging-integration-plan.md) — plan only。
 
-**G-5y-b（完了）:** [Admin Auth adapter scaffold](docs/admin-auth-adapter-scaffold.md) — mock provider, session/role/permission checkers, dry-run CLI。Supabase 実接続なし。staging shell に Auth mock status。次: **G-5y-c** staging login UI shell。
+**G-5y-b（完了）:** [Admin Auth adapter scaffold](docs/admin-auth-adapter-scaffold.md) — mock provider, dry-run CLI。
+
+**G-5y-c（完了）:** [Staging login UI shell](docs/staging-login-ui-shell.md) — login UI on staging shell, real auth disabled。次: **G-5y-d**。
 
 ```bash
 node tools/static-to-astro/scripts/inspect-admin-auth-adapter.mjs \

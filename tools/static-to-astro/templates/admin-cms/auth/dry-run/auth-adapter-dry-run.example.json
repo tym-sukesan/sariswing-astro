@@ -1,7 +1,13 @@
 {
   "mode": "dry-run",
-  "phase": "G-5y-b",
+  "phase": "G-5y-c",
   "provider": "mock",
+  "loginUiShellPresent": true,
+  "passwordResetUiShellPresent": true,
+  "realAuthDisabled": true,
+  "credentialsSubmitted": false,
+  "sessionCreated": false,
+  "passwordResetEmailSent": false,
   "supabaseAuthConnected": false,
   "supabaseClientImported": false,
   "adminUsersTableCreated": false,
@@ -14,6 +20,7 @@
   "productionAuthTouched": false,
   "connectedToRuntime": false,
   "productionReady": false,
+  "readyForG5yD": true,
   "mockSession": {
     "status": "mock",
     "email": "mock-admin@example.com",
@@ -27,6 +34,10 @@
     "templates/admin-cms/auth/adapters/mock-auth-adapter.ts",
     "templates/admin-cms/auth/adapters/permission-checker.ts",
     "templates/admin-cms/auth/adapters/role-checker.ts",
-    "templates/admin-cms/auth/adapters/session-checker.ts"
+    "templates/admin-cms/auth/adapters/session-checker.ts",
+    "templates/admin-cms/auth/components/AdminLoginShell.astro",
+    "templates/admin-cms/auth/components/AdminPasswordResetShell.astro",
+    "templates/admin-cms/auth/components/AdminAuthGuardPlannedNotice.astro",
+    "templates/admin-cms/auth/components/AdminStagingLoginUiSection.astro"
   ]
 }

@@ -78,14 +78,19 @@ function main() {
 
   const report = runAdminAuthAdapterDryRun({ toolRoot, siteId });
 
-  console.log("static-to-astro inspect-admin-auth-adapter (G-5y-b dry-run)");
+  console.log("static-to-astro inspect-admin-auth-adapter (G-5y-c dry-run)");
   console.log(`  phase: ${report.phase}`);
   console.log(`  provider: ${report.provider}`);
+  console.log(`  loginUiShellPresent: ${report.loginUiShellPresent}`);
+  console.log(`  passwordResetUiShellPresent: ${report.passwordResetUiShellPresent}`);
+  console.log(`  realAuthDisabled: ${report.realAuthDisabled}`);
+  console.log(`  credentialsSubmitted: ${report.credentialsSubmitted}`);
+  console.log(`  sessionCreated: ${report.sessionCreated}`);
   console.log(`  supabaseAuthConnected: ${report.supabaseAuthConnected}`);
   console.log(`  supabaseClientImported: ${report.supabaseClientImported}`);
   console.log(`  connectedToRuntime: ${report.connectedToRuntime}`);
   console.log(`  productionReady: ${report.productionReady}`);
-  console.log(`  readyForG5yC: ${report.readyForG5yC}`);
+  console.log(`  readyForG5yD: ${report.readyForG5yD}`);
   console.log(`  mockSession: ${report.mockSession.email} (${report.mockSession.role})`);
 
   if (report.missingScaffoldFiles.length > 0) {

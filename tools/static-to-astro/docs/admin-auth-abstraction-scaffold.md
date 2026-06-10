@@ -156,7 +156,8 @@ node tools/static-to-astro/scripts/inspect-admin-ui-components.mjs --category au
 | **G-5x（完了）** | [staging-runtime-shell-integration.md](./staging-runtime-shell-integration.md) |
 | **G-5y-a（完了）** | [supabase-auth-staging-integration-plan.md](./supabase-auth-staging-integration-plan.md) — Auth plan only; no Supabase connection |
 | **G-5y-b（完了）** | [admin-auth-adapter-scaffold.md](./admin-auth-adapter-scaffold.md) — mock provider, dry-run CLI |
-| **G-5y-c** | Staging login UI shell with disabled real auth |
+| **G-5y-c（完了）** | [staging-login-ui-shell.md](./staging-login-ui-shell.md) — login UI shell, real auth disabled |
+| **G-5y-d** | Staging Supabase Auth connection (explicit approval) |
 
 ---
 

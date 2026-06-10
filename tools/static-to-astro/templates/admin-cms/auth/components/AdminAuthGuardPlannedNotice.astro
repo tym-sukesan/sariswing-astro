@@ -1,0 +1,95 @@
+---
+/**
+ * G-5y-c — Route guard planned notice (not enabled).
+ * No Supabase. No allowlist. No admin_users. No RLS.
+ */
+interface Props {
+  currentRoute?: string;
+  phase?: string;
+}
+
+const {
+  currentRoute = "/__admin-staging-shell/musician-basic/",
+  phase = "G-5y-c",
+} = Astro.props;
+---
+
+<section
+  class="admin-auth-guard-planned"
+  role="status"
+  aria-live="polite"
+  data-scaffold="true"
+  data-phase={phase}
+>
+  <h3 class="admin-auth-guard-planned__title">Route guard status: planned ({phase})</h3>
+  <dl class="admin-auth-guard-planned__list">
+    <div>
+      <dt>Current route</dt>
+      <dd><code>{currentRoute}</code></dd>
+    </div>
+    <div>
+      <dt>Protected /admin route</dt>
+      <dd>not connected</dd>
+    </div>
+    <div>
+      <dt>Role check</dt>
+      <dd>mock only</dd>
+    </div>
+    <div>
+      <dt>Allowlist</dt>
+      <dd>not connected</dd>
+    </div>
+    <div>
+      <dt>admin_users table</dt>
+      <dd>not created</dd>
+    </div>
+    <div>
+      <dt>RLS</dt>
+      <dd>not configured</dd>
+    </div>
+  </dl>
+  <p class="admin-auth-guard-planned__note">
+    Route guard is not active in {phase}. Future G-5y-d+ will add session checks on staging shell only.
+  </p>
+</section>
+
+<style>
+  .admin-auth-guard-planned {
+    padding: 1rem 1.25rem;
+    border: 1px dashed #94a3b8;
+    border-radius: 8px;
+    background: #fff;
+  }
+  .admin-auth-guard-planned__title {
+    margin: 0 0 0.75rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #334155;
+  }
+  .admin-auth-guard-planned__list {
+    margin: 0;
+    display: grid;
+    gap: 0.35rem 1rem;
+    grid-template-columns: max-content 1fr;
+    font-size: 0.875rem;
+  }
+  .admin-auth-guard-planned__list dt {
+    font-weight: 600;
+    color: #475569;
+  }
+  .admin-auth-guard-planned__list dd {
+    margin: 0;
+    color: #1e293b;
+  }
+  .admin-auth-guard-planned__list code {
+    font-size: 0.8rem;
+    background: #e2e8f0;
+    padding: 0.1rem 0.35rem;
+    border-radius: 4px;
+  }
+  .admin-auth-guard-planned__note {
+    margin: 0.75rem 0 0;
+    font-size: 0.8125rem;
+    color: #64748b;
+  }
+</style>

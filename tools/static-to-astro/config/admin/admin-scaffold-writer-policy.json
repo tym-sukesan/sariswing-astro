@@ -1,0 +1,149 @@
+{
+  "version": "0.1.0",
+  "status": "draft",
+  "phase": "G-5w-a",
+  "mode": "planning-only",
+  "writerImplemented": false,
+  "runtimeFilesWritten": false,
+  "productionReady": false,
+  "connectedToRuntime": false,
+  "allowedModes": [
+    "plan-only",
+    "dry-run",
+    "apply-to-sandbox",
+    "apply-to-staging-project"
+  ],
+  "defaultMode": "dry-run",
+  "requiredFlags": {
+    "targetDir": "--target-dir",
+    "packageDir": "--package-dir",
+    "apply": "--apply",
+    "approvalId": "--approval-id"
+  },
+  "applyRequires": [
+    "--apply",
+    "--target-dir",
+    "--package-dir",
+    "--approval-id",
+    "--mode"
+  ],
+  "requiredManifests": [
+    "generated-files-manifest.json",
+    "rollback-manifest.json"
+  ],
+  "allowedTargets": [
+    "tools/static-to-astro/output/admin-writer-sandbox/{siteSlug}/",
+    "sandbox/generated-admin/{siteSlug}/"
+  ],
+  "futureAllowedTargets": [
+    "src/pages/__admin-preview-generated/",
+    "src/components/generated-admin/",
+    "src/lib/generated-admin/"
+  ],
+  "disallowedTargets": [
+    "src/pages/admin/",
+    "src/pages/admin",
+    "existing-sariswing-admin-files",
+    "production-project-admin-route",
+    "project-root",
+    "public-dist",
+    "dist",
+    "server-deploy-directory",
+    "ftp-target"
+  ],
+  "sariswingAdminExclusion": {
+    "enabled": true,
+    "rule": "Sariswing existing admin must never be overwritten by the generic writer.",
+    "blockedPathPrefixes": [
+      "src/pages/admin"
+    ]
+  },
+  "overwritePolicy": {
+    "allowOverwriteByDefault": false,
+    "forceFlagPlanned": false,
+    "overwrittenFilesMustBeEmptyInEarlyPhases": true
+  },
+  "forbiddenOperations": [
+    "production-publish",
+    "production-db-write",
+    "production-storage-overwrite",
+    "github-actions-dispatch",
+    "ftp-deploy",
+    "edge-function-call",
+    "supabase-auth-mutation",
+    "rls-policy-mutation",
+    "dns-domain-change",
+    "overwrite-existing-admin-files",
+    "write-to-src-pages-admin",
+    "delete-existing-files",
+    "disable-staging-noindex",
+    "expose-secrets"
+  ],
+  "phaseMap": {
+    "G-5w-a": {
+      "label": "Writer safety plan",
+      "writerImplemented": false,
+      "fileWrites": false
+    },
+    "G-5w-b": {
+      "label": "Writer dry-run CLI",
+      "writerImplemented": false,
+      "fileWrites": false,
+      "allowedModes": ["plan-only", "dry-run"]
+    },
+    "G-5w-c": {
+      "label": "Apply to sandbox output directory only",
+      "writerImplemented": false,
+      "fileWrites": true,
+      "allowedModes": ["apply-to-sandbox"],
+      "allowedTargetPattern": "tools/static-to-astro/output/admin-writer-sandbox/{siteSlug}/"
+    },
+    "G-5w-d": {
+      "label": "Generated scaffold review + staging project apply",
+      "writerImplemented": false,
+      "fileWrites": true,
+      "allowedModes": ["apply-to-staging-project"]
+    },
+    "G-5x": {
+      "label": "Staging runtime shell integration",
+      "writerImplemented": false,
+      "note": "Separate from writer; runtime routes on staging only"
+    }
+  },
+  "approvalGates": [
+    {
+      "gateId": "G-5w-a-plan",
+      "phase": "G-5w-a",
+      "requiredReviewer": "maintainer",
+      "requiresApplyFlag": false
+    },
+    {
+      "gateId": "G-5w-b-dry-run-cli",
+      "phase": "G-5w-b",
+      "requiredReviewer": "maintainer",
+      "requiresApplyFlag": false
+    },
+    {
+      "gateId": "G-5w-c-sandbox-apply",
+      "phase": "G-5w-c",
+      "requiredReviewer": "maintainer",
+      "requiresApplyFlag": true,
+      "allowedTargetPattern": "tools/static-to-astro/output/admin-writer-sandbox/{siteSlug}/"
+    },
+    {
+      "gateId": "G-5w-d-staging-apply",
+      "phase": "G-5w-d",
+      "requiredReviewer": "maintainer",
+      "requiresApplyFlag": true
+    }
+  ],
+  "safety": {
+    "supabaseAuthConnected": false,
+    "supabaseQueryPerformed": false,
+    "dbUpdatePerformed": false,
+    "storageUploadPerformed": false,
+    "githubDispatchPerformed": false,
+    "ftpDeployPerformed": false,
+    "productionTouched": false
+  }
+}

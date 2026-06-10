@@ -128,13 +128,16 @@ node tools/static-to-astro/scripts/generate-admin-scaffold-dry-run.mjs \
 | --- | --- |
 | **G-5t（完了）** | [Runtime integration plan](./admin-runtime-integration-plan.md) — phase map + approval gates |
 | **G-5u（完了）** | [Local-only preview route](./local-only-admin-preview-route.md) |
-| **G-5v** | Customer demo package |
-| **G-5w** | Explicit opt-in admin scaffold writer |
+| **G-5v（完了）** | [Customer demo package](./customer-demo-package-musician-basic/README.md) |
+| **G-5w-a（完了）** | [Admin scaffold writer plan](./admin-scaffold-writer-plan.md) — dry-run default, `--apply` required; writer not implemented |
+| **G-5w-b** | Writer dry-run CLI |
+| **G-5w-c** | Apply to sandbox output directory only |
 
 ---
 
 ## Related docs
 
+- [admin-scaffold-writer-plan.md](./admin-scaffold-writer-plan.md) — **G-5w-a** explicit opt-in writer plan (consumes G-5s package)
 - [admin-runtime-integration-plan.md](./admin-runtime-integration-plan.md) — **G-5t** runtime integration plan (planning only)
 - [admin-prototype-preview-harness.md](./admin-prototype-preview-harness.md) — G-5r preview manifest
 - [musician-basic-admin-prototype.md](./musician-basic-admin-prototype.md) — G-5p prototype

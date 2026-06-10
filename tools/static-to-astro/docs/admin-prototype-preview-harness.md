@@ -124,7 +124,10 @@ Before setting `customerDemoReady: true` (future phase, with explicit approval):
 | **G-5s（完了）** | [Site-config driven admin scaffold generator](./site-config-driven-admin-scaffold-generator.md) — dry-run package |
 | **G-5t（完了）** | [Runtime integration plan](./admin-runtime-integration-plan.md) — planning only |
 | **G-5u（完了）** | [Local-only preview route](./local-only-admin-preview-route.md) — `/__admin-preview/musician-basic/` |
-| **G-5v** | Customer demo package |
+| **G-5v（完了）** | [Customer demo package](./customer-demo-package-musician-basic/README.md) |
+| **G-5w-a（完了）** | [Admin scaffold writer plan](./admin-scaffold-writer-plan.md) — explicit opt-in writer; not implemented |
+| **G-5w-b** | Writer dry-run CLI |
+| **G-5x** | Staging runtime shell integration |
 
 ---
 

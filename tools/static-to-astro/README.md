@@ -1318,7 +1318,9 @@ gosaki / Sariswing で実証した移行フローを、**別サイト向け CMS 
 
 **G-5u（完了）:** [Local-only Admin preview route](docs/local-only-admin-preview-route.md) — `/__admin-preview/musician-basic/`。`ENABLE_ADMIN_PREVIEW=true` + dev only。
 
-**G-5v（完了）:** [Musician Basic Customer Demo Package](docs/customer-demo-package-musician-basic/README.md) — 顧客デモ用資料一式。G-5u preview route と組み合わせて使用。mock / scaffold のみ。次: **G-5w** explicit opt-in admin scaffold writer。
+**G-5v（完了）:** [Musician Basic Customer Demo Package](docs/customer-demo-package-musician-basic/README.md) — 顧客デモ用資料一式。G-5u preview route と組み合わせて使用。mock / scaffold のみ。
+
+**G-5w-a（完了）:** [Admin scaffold writer plan](docs/admin-scaffold-writer-plan.md) — explicit opt-in writer 設計。dry-run default / `--apply` required。Sariswing existing admin excluded。writer CLI 未実装。Policy: [`config/admin/admin-scaffold-writer-policy.json`](config/admin/admin-scaffold-writer-policy.json)。次: **G-5w-b** writer dry-run CLI。
 
 ```bash
 node tools/static-to-astro/scripts/inventory-admin-cms.mjs --root .

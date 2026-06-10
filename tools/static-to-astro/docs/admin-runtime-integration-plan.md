@@ -146,7 +146,16 @@ Never skip: local preview and customer demo before runtime shell; read-only befo
 
 ### G-5w: explicit opt-in admin scaffold writer
 
+**G-5w-a（完了）:** [admin-scaffold-writer-plan.md](./admin-scaffold-writer-plan.md) + [admin-scaffold-writer-policy.json](../config/admin/admin-scaffold-writer-policy.json)
+
 **Purpose:** Design writer that copies/generates admin scaffold from dry-run package **only with approval**.
+
+| Sub-phase | Focus |
+| --- | --- |
+| **G-5w-a（完了）** | Writer safety plan — dry-run default, `--apply` required, manifests, Sariswing exclusion |
+| **G-5w-b** | Writer dry-run CLI (not implemented) |
+| **G-5w-c** | Apply to sandbox `output/admin-writer-sandbox/` only |
+| **G-5w-d** | Generated scaffold review + staging project apply |
 
 | Allowed | Forbidden |
 | --- | --- |
@@ -155,7 +164,9 @@ Never skip: local preview and customer demo before runtime shell; read-only befo
 | generated-files manifest | secrets generation in repo |
 | backup of target before write | silent overwrite |
 
-**Exit criteria:** Writer spec documented; `--apply` gate defined; manifest format agreed.
+**Writer CLI:** Not implemented in G-5w-a. No files generated.
+
+**Exit criteria (G-5w-a):** Writer spec documented; `--apply` gate defined; manifest format agreed.
 
 ---
 
@@ -480,7 +491,9 @@ Generated per site (G-5s): `admin-safety-checklist.generated.md` in dry-run pack
 | **G-5t（完了）** | Runtime integration plan (this doc) |
 | **G-5u（完了）** | [Local-only preview route](./local-only-admin-preview-route.md) — `/__admin-preview/musician-basic/` |
 | **G-5v（完了）** | [Customer demo package](./customer-demo-package-musician-basic/README.md) |
-| **G-5w** | Explicit opt-in admin scaffold writer |
+| **G-5w-a（完了）** | [Admin scaffold writer plan](./admin-scaffold-writer-plan.md) — planning only |
+| **G-5w-b** | Writer dry-run CLI |
+| **G-5w-c** | Apply to sandbox output directory only |
 | **G-5x** | Staging runtime shell integration |
 | **G-5y** | Supabase Auth staging integration |
 | **G-5z** | Read-only data integration |

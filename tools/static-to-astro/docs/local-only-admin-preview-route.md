@@ -112,7 +112,9 @@ Customer demos must clearly state: **scaffold only**, **mock data only**, **no s
 | Phase | Focus |
 | --- | --- |
 | **G-5v（完了）** | [Customer demo package](./customer-demo-package-musician-basic/README.md) |
-| **G-5w** | Explicit opt-in admin scaffold writer |
+| **G-5w-a（完了）** | [Admin scaffold writer plan](./admin-scaffold-writer-plan.md) — writer not implemented; separate from preview route |
+| **G-5w-b** | Writer dry-run CLI |
+| **G-5w-c** | Apply to sandbox output directory only |
 | **G-5x** | Staging runtime shell integration |
 | **G-5y** | Supabase Auth staging integration |
 

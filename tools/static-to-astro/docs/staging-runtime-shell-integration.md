@@ -138,9 +138,12 @@ Buttons use `disabled={true}` and do not perform runtime operations.
 
 | Phase | Focus |
 | --- | --- |
-| **G-5y** | Supabase Auth staging integration |
+| **G-5y-a（完了）** | [Supabase Auth staging integration plan](./supabase-auth-staging-integration-plan.md) — plan only, no Auth connection |
+| **G-5y-b** | Auth adapter scaffold / dry-run only |
+| **G-5y-c** | Staging login UI shell (disabled real auth) |
+| **G-5y-d** | Staging Supabase Auth connection (explicit approval) |
 | Prerequisite | Complete shell QA on this route first |
-| Still | staging-only, no production admin |
+| Still | staging-only, no production admin, no `/admin/` |
 
 ---
 
@@ -149,6 +152,7 @@ Buttons use `disabled={true}` and do not perform runtime operations.
 - [generated-admin-scaffold-review.md](./generated-admin-scaffold-review.md) — G-5w-d review gate
 - [local-only-admin-preview-route.md](./local-only-admin-preview-route.md) — G-5u preview (different route)
 - [admin-runtime-integration-plan.md](./admin-runtime-integration-plan.md) — G-5x / G-5y phase map
+- [supabase-auth-staging-integration-plan.md](./supabase-auth-staging-integration-plan.md) — G-5y-a Auth plan (no connection yet)
 
 ---
 

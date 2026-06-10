@@ -1328,7 +1328,9 @@ gosaki / Sariswing で実証した移行フローを、**別サイト向け CMS 
 
 **G-5w-d（完了）:** [Generated scaffold review](docs/generated-admin-scaffold-review.md) — `readyForG5x` 判定。
 
-**G-5x（完了）:** [Staging runtime shell integration](docs/staging-runtime-shell-integration.md) — `/__admin-staging-shell/musician-basic/`。`ENABLE_ADMIN_STAGING_SHELL=true` + dev only。次: **G-5y** Supabase Auth staging integration。
+**G-5x（完了）:** [Staging runtime shell integration](docs/staging-runtime-shell-integration.md) — `/__admin-staging-shell/musician-basic/`。`ENABLE_ADMIN_STAGING_SHELL=true` + dev only。
+
+**G-5y-a（完了）:** [Supabase Auth staging integration plan](docs/supabase-auth-staging-integration-plan.md) — plan only。`ENABLE_ADMIN_STAGING_AUTH=false` default。Auth 実接続なし。次: **G-5y-b** Auth adapter scaffold / dry-run only。
 
 ```bash
 ENABLE_ADMIN_STAGING_SHELL=true npm run dev

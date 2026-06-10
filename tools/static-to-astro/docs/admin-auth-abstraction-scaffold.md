@@ -8,6 +8,7 @@
 
 - [admin-crud-ui-scaffold.md](./admin-crud-ui-scaffold.md) — G-5m-a CRUD UI
 - [admin-ui-shell-scaffold.md](./admin-ui-shell-scaffold.md) — G-5l shell
+- [supabase-auth-staging-integration-plan.md](./supabase-auth-staging-integration-plan.md) — G-5y-a Auth staging plan
 - Registry: [`config/admin/admin-ui-components-registry.json`](../config/admin/admin-ui-components-registry.json)
 
 ---
@@ -152,9 +153,11 @@ node tools/static-to-astro/scripts/inspect-admin-ui-components.mjs --category au
 | **G-5n（完了）** | [admin-media-upload-abstraction.md](./admin-media-upload-abstraction.md) |
 | **G-5o（完了）** | [admin-publish-workflow-abstraction.md](./admin-publish-workflow-abstraction.md) |
 | **G-5p（完了）** | [musician-basic-admin-prototype.md](./musician-basic-admin-prototype.md) |
-| **G-5q** | customer admin manual |
+| **G-5x（完了）** | [staging-runtime-shell-integration.md](./staging-runtime-shell-integration.md) |
+| **G-5y-a（完了）** | [supabase-auth-staging-integration-plan.md](./supabase-auth-staging-integration-plan.md) — Auth plan only; no Supabase connection |
+| **G-5y-b** | Auth adapter scaffold / dry-run only |
 
-Auth guard 実装は runtime 接続フェーズ（G-5p 以降の明示承認後）で行う想定です。
+Auth guard 実装は G-5y-b 以降の明示承認後。G-5y-a では Supabase client 追加・login 本実装・admin_users table・RLS 変更は行わない。
 
 ---
 

@@ -129,6 +129,8 @@ Before setting `customerDemoReady: true` (future phase, with explicit approval):
 | **G-5w-b** | Writer dry-run CLI |
 | **G-5w-d（完了）** | [Generated scaffold review](./generated-admin-scaffold-review.md) |
 | **G-5x（完了）** | [Staging runtime shell](./staging-runtime-shell-integration.md) |
+| **G-5y-a（完了）** | [Supabase Auth staging plan](./supabase-auth-staging-integration-plan.md) — plan only, no Auth connection |
+| **G-5y-b** | Auth adapter scaffold / dry-run only |
 
 ---
 

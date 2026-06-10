@@ -118,7 +118,9 @@ Customer demos must clearly state: **scaffold only**, **mock data only**, **no s
 | **G-5w-b** | Writer dry-run CLI |
 | **G-5w-c** | Apply to sandbox output directory only |
 | **G-5x（完了）** | [Staging runtime shell](./staging-runtime-shell-integration.md) — `/__admin-staging-shell/musician-basic/` |
-| **G-5y** | Supabase Auth staging integration |
+| **G-5y-a（完了）** | [Supabase Auth staging plan](./supabase-auth-staging-integration-plan.md) — plan only, no Auth connection |
+| **G-5y-b** | Auth adapter scaffold / dry-run only |
+| **G-5y** | Supabase Auth staging integration (sub-phases G-5y-b–e) |
 
 ---
 
@@ -127,6 +129,7 @@ Customer demos must clearly state: **scaffold only**, **mock data only**, **no s
 - [customer-demo-package-musician-basic/](./customer-demo-package-musician-basic/README.md) — G-5v demo package
 - [admin-prototype-preview-harness.md](./admin-prototype-preview-harness.md) — preview manifest
 - [admin-runtime-integration-plan.md](./admin-runtime-integration-plan.md) — G-5u / G-5v phase detail
+- [supabase-auth-staging-integration-plan.md](./supabase-auth-staging-integration-plan.md) — G-5y-a Auth plan (no connection)
 - [musician-basic-admin-prototype.md](./musician-basic-admin-prototype.md) — G-5p prototype
 
 ---

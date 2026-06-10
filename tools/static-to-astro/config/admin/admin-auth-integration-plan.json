@@ -1,0 +1,138 @@
+{
+  "version": "0.1.0",
+  "status": "draft",
+  "mode": "planning-only",
+  "phase": "G-5y-a",
+  "productionReady": false,
+  "connectedToRuntime": false,
+  "supabaseAuthConnected": false,
+  "rlsConfigured": false,
+  "adminUsersTableCreated": false,
+  "safety": {
+    "supabaseAuthConnected": false,
+    "supabaseQueryPerformed": false,
+    "dbUpdatePerformed": false,
+    "storageUploadPerformed": false,
+    "githubDispatchPerformed": false,
+    "ftpDeployPerformed": false,
+    "productionAuthTouched": false,
+    "serviceRoleInBrowser": false
+  },
+  "integrationPrinciples": [
+    "staging-first",
+    "production-auth-disabled-by-default",
+    "no-service-role-in-browser",
+    "anon-key-only-in-browser",
+    "rls-required-before-data-access",
+    "no-db-write-before-auth-and-rls-review",
+    "one-auth-feature-per-phase",
+    "explicit-approval-before-connecting-real-project",
+    "no-sariswing-production-auth-changes"
+  ],
+  "roles": [
+    {
+      "role": "admin",
+      "description": "Full CMS access when write phases enabled; staging publish trigger; production publish requires separate approval.",
+      "productionPublishDefault": false
+    },
+    {
+      "role": "editor",
+      "description": "Content edit for Profile, Schedule, Discography, Links, News; no media upload or publish.",
+      "productionPublishDefault": false
+    },
+    {
+      "role": "viewer",
+      "description": "Read-only module access.",
+      "productionPublishDefault": false
+    }
+  ],
+  "identitySourceOptions": {
+    "recommendedInitial": "email-allowlist",
+    "allowlist": {
+      "envVar": "ADMIN_ALLOWED_EMAILS",
+      "pros": ["no table required", "fast staging intro", "simple ops"],
+      "cons": ["weak role granularity", "weak audit", "not production-grade alone"]
+    },
+    "adminUsersTable": {
+      "pros": ["role management", "audit trail", "production-ready"],
+      "cons": ["requires table and RLS", "higher initial cost"],
+      "createdInG5yA": false
+    },
+    "migrationNote": "Start allowlist in G-5y-b through G-5y-e; evaluate admin_users table before production."
+  },
+  "permissionMatrixRef": "templates/admin-cms/auth/permissions.example.json",
+  "productionPublish": {
+    "enabledByDefault": false,
+    "requiredRole": "admin",
+    "requiresExplicitApproval": true
+  },
+  "futurePhaseMap": {
+    "G-5y-a": "Supabase Auth staging integration plan (this config)",
+    "G-5y-b": "Auth adapter scaffold / dry-run only",
+    "G-5y-c": "Staging login UI shell with disabled real auth",
+    "G-5y-d": "Staging Supabase Auth connection with explicit approval",
+    "G-5y-e": "Staging role check / allowlist",
+    "G-5z": "Read-only data integration"
+  },
+  "envPlan": {
+    "ENABLE_ADMIN_STAGING_AUTH": {
+      "default": false,
+      "browserSafe": true,
+      "addedInG5yA": true
+    },
+    "PUBLIC_SUPABASE_URL": {
+      "default": "",
+      "browserSafe": true,
+      "addedInG5yA": false,
+      "stagingOnly": true
+    },
+    "PUBLIC_SUPABASE_ANON_KEY": {
+      "default": "",
+      "browserSafe": true,
+      "addedInG5yA": false,
+      "stagingOnly": true
+    },
+    "ADMIN_ALLOWED_EMAILS": {
+      "default": "",
+      "browserSafe": false,
+      "addedInG5yA": false,
+      "preferServerSide": true
+    },
+    "ADMIN_AUTH_ENV": {
+      "default": "staging",
+      "allowedValues": ["staging"],
+      "addedInG5yA": false
+    },
+    "forbiddenInBrowser": [
+      "SUPABASE_SERVICE_ROLE_KEY",
+      "GITHUB_TOKEN",
+      "FTP_PASSWORD"
+    ]
+  },
+  "futureClientHelpers": [
+    "src/lib/admin/auth/client.ts",
+    "src/lib/admin/auth/session.ts",
+    "src/lib/admin/auth/roles.ts",
+    "src/lib/admin/auth/permissions.ts"
+  ],
+  "forbiddenOperations": [
+    "production-auth-changes",
+    "service-role-in-browser",
+    "db-write-before-rls-review",
+    "rls-policy-mutation-without-approval",
+    "admin-users-table-creation-without-approval",
+    "connecting-admin-before-staging-shell-auth-approved",
+    "enabling-production-publish-through-auth-role",
+    "github-dispatch",
+    "ftp-deploy",
+    "modify-existing-sariswing-admin-auth"
+  ],
+  "routes": {
+    "stagingShell": "/__admin-staging-shell/musician-basic/",
+    "productionAdmin": "/admin/",
+    "protectProductionAdminInG5y": false,
+    "stagingShellGate": "ENABLE_ADMIN_STAGING_SHELL=true && import.meta.env.DEV",
+    "stagingAuthGate": "ENABLE_ADMIN_STAGING_AUTH=true"
+  },
+  "docRef": "tools/static-to-astro/docs/supabase-auth-staging-integration-plan.md"
+}

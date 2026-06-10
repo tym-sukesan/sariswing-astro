@@ -192,16 +192,29 @@ Never skip: local preview and customer demo before runtime shell; read-only befo
 
 ### G-5y: Supabase Auth staging integration
 
-**Purpose:** Staging admin login only.
+**G-5y-a（完了）:** [supabase-auth-staging-integration-plan.md](./supabase-auth-staging-integration-plan.md) — plan only. Config: [`admin-auth-integration-plan.json`](../config/admin/admin-auth-integration-plan.json). No Auth connection, no DB/RLS changes, production Auth untouched.
 
-| Allowed | Forbidden |
+**Sub-phases:**
+
+| Sub-phase | Focus | Connection |
+| --- | --- | --- |
+| **G-5y-a（完了）** | Auth integration plan | None |
+| **G-5y-b** | Auth adapter scaffold / dry-run | None |
+| **G-5y-c** | Login UI shell (disabled auth) | None |
+| **G-5y-d** | Staging Auth connection | Staging project only |
+| **G-5y-e** | Role check / allowlist | Staging Auth |
+
+**Purpose (overall):** Staging admin login only — after shell QA on `/__admin-staging-shell/musician-basic/`.
+
+| Allowed (future sub-phases) | Forbidden |
 | --- | --- |
-| Supabase Auth on **staging project** | service role in browser |
-| anon key + RLS | production auth policy change |
+| Supabase Auth on **staging project** (G-5y-d+) | service role in browser |
+| anon key + RLS (before data, G-5z) | production auth policy change |
 | admin_users / allowlist design | shared prod/staging credentials |
 | password reset flow (staging) | bypass RLS in client |
+| `ENABLE_ADMIN_STAGING_AUTH` gate | connecting `/admin/` before staging approved |
 
-**Exit criteria:** Login works on staging; roles enforced server-side; session check on admin routes.
+**Exit criteria (G-5y overall):** Login works on staging shell; roles enforced; session check on staging routes — not `/admin/` until later phases.
 
 ---
 
@@ -501,7 +514,8 @@ Generated per site (G-5s): `admin-safety-checklist.generated.md` in dry-run pack
 | **G-5w-c（完了）** | [Sandbox apply](./admin-scaffold-writer-sandbox-apply.md) — `--approval-id` required |
 | **G-5w-d（完了）** | [Generated scaffold review](./generated-admin-scaffold-review.md) — readyForG5x gate |
 | **G-5x（完了）** | [Staging runtime shell](./staging-runtime-shell-integration.md) — `/__admin-staging-shell/musician-basic/` |
-| **G-5y** | Supabase Auth staging integration |
+| **G-5y-a（完了）** | [Supabase Auth staging plan](./supabase-auth-staging-integration-plan.md) — plan only |
+| **G-5y-b** | Auth adapter scaffold / dry-run |
 | **G-5z** | Read-only data integration |
 | **G-6a** | CRUD write (staging) |
 | **G-6b** | Media upload (staging) |

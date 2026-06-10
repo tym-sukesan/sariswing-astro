@@ -56,6 +56,16 @@ Use this checklist **before** showing an Admin CMS prototype to a customer, stak
 
 ---
 
+## Local preview enabled (G-5u)
+
+If using [local-only preview route](../../../docs/local-only-admin-preview-route.md):
+
+- [ ] `ENABLE_ADMIN_PREVIEW=true` only on local dev machine
+- [ ] `import.meta.env.DEV` is true (not production build)
+- [ ] URL is `/__admin-preview/musician-basic/` — **not** `/admin/`
+- [ ] Sticky scaffold-only banner visible
+- [ ] Presenter explains mock data and disabled buttons
+
 ## Before enabling local preview (G-5u+)
 
 - [ ] Explicit approval recorded for local-only Astro preview route

@@ -1,0 +1,15 @@
+---
+/**
+ * G-5u local preview wrapper — passes localPreviewMode to prototype.
+ * Scaffold / mock data only. Not runtime admin.
+ */
+import MusicianBasicAdminPrototype from "../prototypes/musician-basic-admin-prototype.astro";
+
+interface Props {
+  routePath?: string;
+}
+
+const { routePath = "/__admin-preview/musician-basic/" } = Astro.props;
+---
+
+<MusicianBasicAdminPrototype localPreviewMode={true} previewRoutePath={routePath} />

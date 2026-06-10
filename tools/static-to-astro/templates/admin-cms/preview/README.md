@@ -69,10 +69,10 @@ Complete [preview-safety-checklist.md](./preview-safety-checklist.md).
 | --- | --- |
 | **G-5s** | Site-config driven admin scaffold generator（**完了**） |
 | **G-5t** | Runtime integration plan（**完了**） |
-| **G-5u** | Local-only preview route |
+| **G-5u** | Local-only preview route（**完了**） |
 | **G-5v** | Customer demo package |
 
-See [admin-prototype-preview-harness.md](../../../docs/admin-prototype-preview-harness.md) and [admin-runtime-integration-plan.md](../../../docs/admin-runtime-integration-plan.md).
+See [admin-prototype-preview-harness.md](../../../docs/admin-prototype-preview-harness.md), [local-only-admin-preview-route.md](../../../docs/local-only-admin-preview-route.md), and [admin-runtime-integration-plan.md](../../../docs/admin-runtime-integration-plan.md).
 
 ---
 

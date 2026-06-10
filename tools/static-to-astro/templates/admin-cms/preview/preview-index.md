@@ -24,6 +24,8 @@ This directory lists Admin CMS **prototype scaffolds** that can be reviewed safe
 | --- | --- | --- | --- | --- |
 | [musician-basic-admin-prototype](../prototypes/musician-basic-admin-prototype.astro) | `musician-basic` | musician | scaffold-ready | **false** |
 
+**Local preview (G-5u):** `/__admin-preview/musician-basic/` — requires `ENABLE_ADMIN_PREVIEW=true` and dev mode.
+
 Source of truth: [preview-manifest.json](./preview-manifest.json)
 
 ---
@@ -40,6 +42,17 @@ Source of truth: [preview-manifest.json](./preview-manifest.json)
 | **previewStatus** | `scaffold-ready` |
 | **customerDemoReady** | **false** |
 | **requiresLocalHarness** | **true** |
+
+## Local-only preview route (G-5u)
+
+| Item | Value |
+| --- | --- |
+| Route | `/__admin-preview/musician-basic/` |
+| Gate | `ENABLE_ADMIN_PREVIEW=true` **and** `import.meta.env.DEV` |
+| Status | `localPreviewStatus: created` |
+| Doc | [local-only-admin-preview-route.md](../../../docs/local-only-admin-preview-route.md) |
+
+**Not** `/admin/`. Default `ENABLE_ADMIN_PREVIEW=false`. Do not use on production.
 
 Inspect:
 

@@ -335,6 +335,7 @@ node tools/static-to-astro/scripts/generate-site-dry-run.mjs --site-config ...
 | **G-5r** | Prototype preview harness（**完了**） | `preview/` + inspect CLI |
 | **G-5s** | Site-config driven admin scaffold generator（**完了**） | dry-run CLI + `output/admin-scaffold-packages/` |
 | **G-5t** | Runtime integration plan（**完了**） | doc + gates JSON |
+| **G-5u** | Local-only preview route（**完了**） | `src/pages/__admin-preview/` |
 
 **Admin CMS は G-5i 時点では未実装・未抽出。** production publish は各フェーズで **explicit approval** 必須。
 
@@ -374,7 +375,9 @@ node tools/static-to-astro/scripts/generate-site-dry-run.mjs --site-config ...
 
 **G-5t（完了）:** [admin-runtime-integration-plan.md](./admin-runtime-integration-plan.md) — runtime integration plan（計画のみ、実接続なし）。gates: [admin-runtime-integration-gates.json](../config/admin/admin-runtime-integration-gates.json)
 
-**G-5u（次）:** local-only preview route
+**G-5u（完了）:** [local-only-admin-preview-route.md](./local-only-admin-preview-route.md) — `/__admin-preview/musician-basic/`。`ENABLE_ADMIN_PREVIEW` default false。
+
+**G-5v（次）:** customer demo package
 
 **禁止（継続）:** Sariswing 本番 touch、DB update、Storage upload、FTP、GHA dispatch
 

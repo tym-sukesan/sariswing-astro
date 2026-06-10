@@ -1,0 +1,82 @@
+---
+/**
+ * G-5u — Local-only Admin preview route (NOT runtime admin).
+ *
+ * Route: /__admin-preview/musician-basic/
+ * Requires: import.meta.env.DEV && ENABLE_ADMIN_PREVIEW === "true"
+ *
+ * NOT /admin/. NOT connected to Supabase, DB, Storage, or Publish.
+ */
+const isDev = import.meta.env.DEV;
+const previewFlag = import.meta.env.ENABLE_ADMIN_PREVIEW === "true";
+const enabled = isDev && previewFlag;
+
+const routePath = "/__admin-preview/musician-basic/";
+const disableReason = !isDev
+  ? "Admin preview is disabled outside development mode (import.meta.env.DEV is false)."
+  : "Admin preview is disabled. Set ENABLE_ADMIN_PREVIEW=true in your environment for local dev only.";
+
+let LocalPreviewWrapper = null;
+if (enabled) {
+  const mod = await import(
+    "../../../../tools/static-to-astro/templates/admin-cms/preview/local-preview-wrapper.astro"
+  );
+  LocalPreviewWrapper = mod.default;
+}
+---
+
+{
+  enabled && LocalPreviewWrapper ? (
+    <LocalPreviewWrapper routePath={routePath} />
+  ) : (
+    <!doctype html>
+    <html lang="ja">
+      <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="robots" content="noindex,nofollow,noarchive" />
+        <title>Admin preview disabled</title>
+        <style>
+          body {
+            font-family: system-ui, sans-serif;
+            margin: 2rem;
+            line-height: 1.5;
+            color: #1e293b;
+          }
+          .box {
+            max-width: 40rem;
+            padding: 1.25rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            background: #f8fafc;
+          }
+          h1 {
+            font-size: 1.25rem;
+            margin: 0 0 0.75rem;
+          }
+          p {
+            margin: 0 0 0.5rem;
+          }
+          code {
+            background: #e2e8f0;
+            padding: 0.1rem 0.35rem;
+            border-radius: 4px;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="box" role="alert">
+          <h1>Admin preview disabled</h1>
+          <p>{disableReason}</p>
+          <p>
+            This route is <strong>local-only</strong> and <strong>not</strong> the production admin at
+            <code>/admin/</code>.
+          </p>
+          <p>
+            CMS Kit scaffold preview (G-5u). No Supabase Auth, DB, Storage upload, or publish dispatch.
+          </p>
+        </div>
+      </body>
+    </html>
+  )
+}

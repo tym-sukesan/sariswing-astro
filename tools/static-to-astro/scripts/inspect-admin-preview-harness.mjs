@@ -63,6 +63,9 @@ function printPrototype(p, harnessConnectedToRuntime, harnessProductionReady) {
   console.log(`  previewStatus: ${p.previewStatus}`);
   console.log(`  customerDemoReady: ${p.customerDemoReady}`);
   console.log(`  requiresLocalHarness: ${p.requiresLocalHarness}`);
+  if (p.localPreviewRoute) console.log(`  localPreviewRoute: ${p.localPreviewRoute}`);
+  if (p.localPreviewGate) console.log(`  localPreviewGate: ${p.localPreviewGate}`);
+  if (p.localPreviewStatus) console.log(`  localPreviewStatus: ${p.localPreviewStatus}`);
   console.log(`  prototypePath: ${p.prototypePath}`);
   console.log(`  connectedToRuntime: ${harnessConnectedToRuntime}`);
   console.log(`  productionReady: ${harnessProductionReady}`);

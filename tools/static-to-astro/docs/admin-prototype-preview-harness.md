@@ -108,9 +108,9 @@ Before setting `customerDemoReady: true` (future phase, with explicit approval):
 
 | Requirement | Status (G-5r) |
 | --- | --- |
-| Local-only preview route | Not implemented (G-5u) |
-| Mock data clearly labeled | Manual + checklist only |
-| Scaffold-only banner | In prototype Astro; demo route pending |
+| Local-only preview route | **Created (G-5u)** — [local-only-admin-preview-route.md](./local-only-admin-preview-route.md) |
+| Mock data clearly labeled | Manual + checklist + route banner |
+| Scaffold-only banner | Prototype + G-5u local preview gate |
 | Production disabled | Documented; no runtime |
 | No-save / no-deploy explained | Manual + checklist |
 | Design QA | Pending local preview |
@@ -123,7 +123,7 @@ Before setting `customerDemoReady: true` (future phase, with explicit approval):
 | --- | --- |
 | **G-5s（完了）** | [Site-config driven admin scaffold generator](./site-config-driven-admin-scaffold-generator.md) — dry-run package |
 | **G-5t（完了）** | [Runtime integration plan](./admin-runtime-integration-plan.md) — planning only |
-| **G-5u** | Local-only preview route |
+| **G-5u（完了）** | [Local-only preview route](./local-only-admin-preview-route.md) — `/__admin-preview/musician-basic/` |
 | **G-5v** | Customer demo package |
 
 ---

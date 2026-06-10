@@ -37,6 +37,16 @@ import DiscographyAdminUi from "../modules/DiscographyAdminUi.astro";
 import LinksAdminUi from "../modules/LinksAdminUi.astro";
 import NewsAdminUi from "../modules/NewsAdminUi.astro";
 
+interface Props {
+  localPreviewMode?: boolean;
+  previewRoutePath?: string;
+}
+
+const {
+  localPreviewMode = false,
+  previewRoutePath = "/__admin-preview/musician-basic/",
+} = Astro.props;
+
 const siteName = "Example Musician";
 const templateId = "musician-basic";
 
@@ -201,9 +211,24 @@ const moduleSummary = [
   title="Admin"
   siteName={siteName}
   currentSection="dashboard"
-  stagingLabel={`${templateId} admin prototype (G-5p)`}
+  stagingLabel={
+    localPreviewMode
+      ? `${templateId} LOCAL PREVIEW (G-5u) — scaffold only`
+      : `${templateId} admin prototype (G-5p)`
+  }
 >
   <AdminNav slot="nav" items={navItems} currentSection="dashboard" />
+
+  {
+    localPreviewMode ? (
+      <AdminStatusMessage
+        slot="status"
+        type="error"
+        title="Local preview only — Scaffold only — Mock data only"
+        message={`Route ${previewRoutePath} is for local developer preview only. Not connected to runtime. No Supabase Auth. No DB query or update. No Storage upload. No GitHub dispatch. No FTP deploy. Production disabled. Not /admin/.`}
+      />
+    ) : null
+  }
 
   <AdminStatusMessage
     slot="status"

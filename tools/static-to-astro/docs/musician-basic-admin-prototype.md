@@ -104,7 +104,7 @@ Props and navigation are defined in example JSON files:
 | **G-5r（完了）** | [Admin prototype preview harness](./admin-prototype-preview-harness.md) — manifest + safety checklist |
 | **G-5s（完了）** | [Site-config driven admin scaffold generator](./site-config-driven-admin-scaffold-generator.md) — dry-run package |
 | **G-5t（完了）** | [Runtime integration plan](./admin-runtime-integration-plan.md) — planning only |
-| **G-5u** | Local-only preview route |
+| **G-5u（完了）** | [Local-only preview route](./local-only-admin-preview-route.md) |
 | **Later** | Runtime integration with explicit approval |
 
 ---
@@ -153,7 +153,19 @@ Output: sections, required components, permissions, storage mappings, publish po
 
 ---
 
-See [admin-runtime-integration-plan.md](./admin-runtime-integration-plan.md) for when runtime connection is allowed (G-5u+).
+## 11. Local preview route（G-5u）
+
+```bash
+ENABLE_ADMIN_PREVIEW=true npm run dev
+```
+
+Open: `http://localhost:4321/__admin-preview/musician-basic/`
+
+See [local-only-admin-preview-route.md](./local-only-admin-preview-route.md). **Not** `/admin/`. Default `ENABLE_ADMIN_PREVIEW=false`.
+
+---
+
+See [admin-runtime-integration-plan.md](./admin-runtime-integration-plan.md) for when runtime connection is allowed (G-5x+).
 
 ---
 

@@ -109,19 +109,17 @@ Never skip: local preview and customer demo before runtime shell; read-only befo
 
 ## 5. Phase details
 
-### G-5u: local-only preview route
+### G-5u: local-only preview route（**完了**）
 
-**Purpose:** View prototype locally; still no DB / Auth / Storage / Publish.
+**Implemented:** [local-only-admin-preview-route.md](../../docs/local-only-admin-preview-route.md)
 
-| Allowed | Forbidden |
+| Item | Value |
 | --- | --- |
-| localhost / dev-only route | deploy |
-| mock data | DB query |
-| scaffold-only banner | Auth |
-| noindex meta | Storage upload |
-| disabled buttons / no save | Publish |
+| Route | `/__admin-preview/musician-basic/` |
+| Gate | `ENABLE_ADMIN_PREVIEW=true` + `import.meta.env.DEV` |
+| Default | `ENABLE_ADMIN_PREVIEW=false` |
 
-**Exit criteria:** Prototype renders; banner visible; `customerDemoReady` may move toward true only after checklist.
+**Exit criteria:** Prototype renders locally; banner visible; not `/admin/`.
 
 ---
 
@@ -474,7 +472,7 @@ Generated per site (G-5s): `admin-safety-checklist.generated.md` in dry-run pack
 | Phase | Focus |
 | --- | --- |
 | **G-5t（完了）** | Runtime integration plan (this doc) |
-| **G-5u** | Local-only preview route |
+| **G-5u（完了）** | [Local-only preview route](./local-only-admin-preview-route.md) — `/__admin-preview/musician-basic/` |
 | **G-5v** | Customer demo package |
 | **G-5w** | Explicit opt-in admin scaffold writer |
 | **G-5x** | Staging runtime shell integration |

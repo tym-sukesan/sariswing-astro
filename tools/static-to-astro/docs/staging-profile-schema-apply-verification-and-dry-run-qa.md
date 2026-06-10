@@ -87,7 +87,9 @@ readyForG6DDryRunRetry: false
 readyForG6DNonDryRun: false
 ```
 
-After dry-run retry (see §8.1): `dryRunRetried: true`, `dryRunPassed: false`, `readyForManualNonDryRunDecision: false`.
+After dry-run retry (see §8.1): `dryRunRetried: true`, `dryRunPassed: true`, `readyForManualNonDryRunDecision: true`.
+
+**G-6-d-manual-non-dry-run-prep（完了）:** [staging-profile-manual-non-dry-run-prep.md](./staging-profile-manual-non-dry-run-prep.md) — one manual staging update prep; bio-only recommended; Cursor does not execute update; `readyForG6E: false`.
 
 ## 8. Dry-run QA command / procedure
 
@@ -97,18 +99,30 @@ G-6-d dry-run QA uses the staging shell only (`/__admin-staging-shell/musician-b
 
 Cursor reran automated dry-run QA via `tools/static-to-astro/scripts/lib/run-g6d-dry-run-qa.mjs` (SELECT only; no `.update()` call; `PUBLIC_ADMIN_WRITE_DRY_RUN=true` semantics).
 
+Initial automated retry (before GRANT):
+
 ```txt
-dryRunRetried: true
 dryRunPassed: false
 failure: permission denied for table profile (anon Supabase client)
-interpretation: RLS SELECT policy exists, but table-level GRANT for anon/authenticated may be missing on new public.profile
-remediation: user runs in Supabase SQL Editor (staging only):
-  GRANT SELECT ON public.profile TO anon, authenticated;
-  GRANT UPDATE ON public.profile TO authenticated;
-then retry G-6-d dry-run QA
 ```
 
-Until anon can read `public.profile`, the staging shell profile read and G-6-d dry-run before-snapshot will fail the same way.
+User applied GRANT on staging (manual, not by Cursor):
+
+```txt
+GRANT SELECT ON public.profile TO anon, authenticated;
+GRANT UPDATE ON public.profile TO authenticated;
+```
+
+After GRANT — dry-run QA passed:
+
+```txt
+dryRunRetried: true
+dryRunPassed: true
+- staging shell dry-run path confirmed
+- payload targets public.profile / name / bio
+- no DB update on Save in dry-run mode
+- seed row unchanged after dry-run
+```
 
 ### 8.2 Local dev server procedure (manual UI check)
 
@@ -161,13 +175,13 @@ When GRANT + gates are satisfied:
 ## 10. Dry-run QA checklist
 
 ```txt
-[ ] staging shell opened locally (blocked: anon cannot read profile until GRANT)
-[ ] environment is development/staging only
+[x] staging shell opened locally
+[x] environment is development/staging only
 [x] PUBLIC_ADMIN_WRITE_DRY_RUN=true (enforced in procedure and automated script)
 [x] approval ID is G-6-d-staging-profile-update-poc
 [x] target table shown as profile (adapter constant)
 [x] target fields are name / bio (display_name → name mapping)
-[ ] dry-run result panel appears (blocked: before-snapshot read failed)
+[x] dry-run result panel appears
 [x] no DB update executed (dry-run path returns before .update(); automated script never calls .update())
 [x] no schema change executed by Cursor
 [x] no RLS change executed by Cursor
@@ -195,8 +209,6 @@ Demo Artist row should remain unchanged after dry-run.
 ## 12. Remaining blockers before non-dry-run
 
 ```txt
-- GRANT SELECT (and UPDATE for authenticated) on public.profile for anon/authenticated roles
-- Retry G-6-d dry-run QA after GRANT fix
 - Confirm logged-in user has role admin or editor in admin_users
 - Confirm auth.uid() matches admin_users.user_id
 - Confirm dry-run payload is correct
@@ -223,18 +235,18 @@ This phase maintains:
 ```txt
 readyForG6DNonDryRun: false
 nonDryRunExecuted: false
-readyForManualNonDryRunDecision: false
+readyForManualNonDryRunDecision: true
 ```
-
-(dry-run QA did not pass — anon read blocked.)
 
 ## 14. Next phase recommendation
 
-**G-6-d-result-report:** Apply staging GRANT on `public.profile`, document fix, rerun dry-run QA until `dryRunPassed: true`.
+**G-6-d-manual-non-dry-run-prep（完了）:** [staging-profile-manual-non-dry-run-prep.md](./staging-profile-manual-non-dry-run-prep.md) — prep package for one manual non-dry-run update; bio-only recommended; Cursor does not execute.
 
-Then:
+Then (user manual only):
 
-**G-6-d-manual-non-dry-run-prep:** Prepare one manual staging profile update with `PUBLIC_ADMIN_WRITE_DRY_RUN=false` (user-only; not in this phase).
+**G-6-d first manual non-dry-run execution** — set `PUBLIC_ADMIN_WRITE_DRY_RUN=false` temporarily; one Save; revert to `true`.
+
+**G-6-d-result-report** — after verification and rollback decision.
 
 ## 15. Final safety statement
 

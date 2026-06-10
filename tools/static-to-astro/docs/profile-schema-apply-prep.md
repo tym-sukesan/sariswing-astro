@@ -350,19 +350,20 @@ G-6-d-schema-apply-prep completion: `readyForManualSchemaApply: true`, `readyFor
 
 **G-6-d-schema-apply（ユーザー手動・完了）:** User applied `sql/staging/profile-schema-apply.sql` in Supabase SQL Editor on `static-to-astro-cms-staging`. Cursor did not execute SQL. `public.profile` exists; seed row exists; RLS policies exist (read: anon/authenticated SELECT; update: authenticated via `admin_users` role admin/editor; **no `is_active`**).
 
-**G-6-d-dry-run-retry-after-schema-apply（完了）:** [staging-profile-schema-apply-verification-and-dry-run-qa.md](./staging-profile-schema-apply-verification-and-dry-run-qa.md) — `schemaApplied: true`; dry-run retried; `dryRunPassed: false` (anon `permission denied for table profile` — GRANT on `public.profile` likely missing); `readyForManualNonDryRunDecision: false`; `readyForG6DNonDryRun: false`.
+**G-6-d-dry-run-retry-after-schema-apply（完了）:** [staging-profile-schema-apply-verification-and-dry-run-qa.md](./staging-profile-schema-apply-verification-and-dry-run-qa.md) — `dryRunPassed: true` after user GRANT; `readyForManualNonDryRunDecision: true`; `readyForG6DNonDryRun: false`.
+
+**G-6-d-manual-non-dry-run-prep（完了）:** [staging-profile-manual-non-dry-run-prep.md](./staging-profile-manual-non-dry-run-prep.md) — one manual staging update prep; bio-only; Cursor does not execute; `PUBLIC_ADMIN_WRITE_DRY_RUN=false` manual/temporary only.
 
 ## 17. Next phase recommendation
 
 ```txt
-G-6-d-result-report: apply GRANT on public.profile (staging), rerun dry-run QA
+G-6-d first manual non-dry-run execution (user only; one Save; revert DRY_RUN=true)
 ```
 
 Then:
 
 ```txt
-G-6-d-manual-non-dry-run-prep
-G-6-d first non-dry-run staging profile update (user manual only)
+G-6-d-result-report
 ```
 
 **Do not proceed to G-6-e create operation** until profile write PoC path is complete and separately approved.

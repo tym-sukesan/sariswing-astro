@@ -1376,7 +1376,9 @@ gosaki / Sariswing で実証した移行フローを、**別サイト向け CMS 
 
 **G-6-d-schema-apply（ユーザー手動・完了）:** User applied profile schema SQL on `static-to-astro-cms-staging`. `public.profile` exists; seed row exists; RLS policies exist (read: anon/authenticated SELECT; update: authenticated admin/editor via `admin_users`; no `is_active`). Cursor did not execute SQL.
 
-**G-6-d-dry-run-retry-after-schema-apply（完了）:** [Staging profile schema apply verification and dry-run QA](docs/staging-profile-schema-apply-verification-and-dry-run-qa.md) — `schemaApplied: true`; dry-run retried; `dryRunPassed: false` (anon `permission denied for table profile` — GRANT likely missing); `readyForManualNonDryRunDecision: false`; `readyForG6DNonDryRun: false`. No non-dry-run executed. No production data is touched.
+**G-6-d-dry-run-retry-after-schema-apply（完了）:** [Staging profile schema apply verification and dry-run QA](docs/staging-profile-schema-apply-verification-and-dry-run-qa.md) — `dryRunPassed: true` after GRANT; `readyForManualNonDryRunDecision: true`; `readyForG6DNonDryRun: false`.
+
+**G-6-d-manual-non-dry-run-prep（完了）:** [Staging profile manual non-dry-run prep](docs/staging-profile-manual-non-dry-run-prep.md) — one staging-only update prep; bio-only recommended; Cursor does not execute; `PUBLIC_ADMIN_WRITE_DRY_RUN=false` manual/temporary only; `readyForG6E: false`. No production data is touched.
 
 ```bash
 node tools/static-to-astro/scripts/report-disabled-write-action-scaffold.mjs \
@@ -1411,6 +1413,11 @@ node tools/static-to-astro/scripts/report-profile-schema-apply-prep.mjs \
 ```bash
 node tools/static-to-astro/scripts/report-staging-profile-schema-apply-verification-and-dry-run-qa.mjs \
   --out-dir tools/static-to-astro/output/staging-profile-schema-apply-verification-and-dry-run-qa/gosaki
+```
+
+```bash
+node tools/static-to-astro/scripts/report-staging-profile-manual-non-dry-run-prep.mjs \
+  --out-dir tools/static-to-astro/output/staging-profile-manual-non-dry-run-prep/gosaki
 ```
 
 ```bash

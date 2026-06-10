@@ -220,7 +220,8 @@ Never skip: local preview and customer demo before runtime shell; read-only befo
 | **G-6-d-verify（完了）** | [Verification checklist](./staging-profile-update-poc-verification-checklist.md) | Manual non-dry-run prep; `nonDryRunExecuted: false` |
 | **G-6-d-blocker（完了）** | [Profile schema alignment plan](./profile-schema-alignment-plan.md) | `public.profile` missing; DRAFT SQL only; `readyForG6DNonDryRun: false` |
 | **G-6-d-schema-apply-prep（完了）** | [Profile schema apply prep](./profile-schema-apply-prep.md) | Manual SQL package; no `is_active`; `readyForManualSchemaApply: true` |
-| **G-6-d-schema-apply** | User applies SQL to staging | Not started; manual Supabase SQL Editor only |
+| **G-6-d-schema-apply（ユーザー手動・完了）** | User SQL Editor apply | `public.profile` exists; seed row; RLS policies; Cursor did not execute SQL |
+| **G-6-d-dry-run-retry-after-schema-apply（完了）** | [Schema apply verification and dry-run QA](./staging-profile-schema-apply-verification-and-dry-run-qa.md) | `dryRunRetried: true`; `dryRunPassed: false` (anon GRANT); `readyForG6DNonDryRun: false` |
 | **G-6-e** | Staging create operation | Blocked until profile schema aligned |
 | **G-5y-e** | Role check / allowlist | Staging Auth |
 

@@ -20,7 +20,9 @@
 - **G-6-d-verify（完了）:** [staging-profile-update-poc-verification-checklist.md](../staging-profile-update-poc-verification-checklist.md)
 - **G-6-d-blocker（完了）:** [profile-schema-alignment-plan.md](../profile-schema-alignment-plan.md) — `public.profile` missing; schema alignment before non-dry-run
 - **G-6-d-schema-apply-prep（完了）:** [profile-schema-apply-prep.md](../profile-schema-apply-prep.md) — manual SQL package; Cursor does not execute SQL
-- 次: G-6-d-schema-apply — user applies SQL in Supabase SQL Editor（staging only）
+- **G-6-d-schema-apply（ユーザー手動・完了）:** `public.profile` on staging; seed row; RLS policies
+- **G-6-d-dry-run-retry-after-schema-apply（完了）:** [staging-profile-schema-apply-verification-and-dry-run-qa.md](../staging-profile-schema-apply-verification-and-dry-run-qa.md) — dry-run retried; `dryRunPassed: false` (GRANT); non-dry-run still blocked
+- 次: G-6-d-result-report — GRANT fix + dry-run retry
 
 ## Option B: customer-specific schema mapping
 
@@ -56,7 +58,8 @@ G-6-d: staging profile update PoC implementation (gated; default disabled)
 G-6-d-verify: verification checklist (non-dry-run not executed)
 G-6-d-blocker: profile schema alignment plan (public.profile missing)
 G-6-d-schema-apply-prep: manual SQL package (no is_active in RLS)
-G-6-d-schema-apply: user applies SQL to staging (manual)
+G-6-d-schema-apply: user applies SQL to staging (manual) — done
+G-6-d-dry-run-retry-after-schema-apply: schema verified; dry-run retried (GRANT blocker)
 G-6-e: staging create operation (blocked until profile aligned)
 ```
 

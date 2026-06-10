@@ -361,12 +361,14 @@ recommendedTableName: profile
 recommendedColumnsDefined: true
 draftSqlCreated: true
 draftSqlExecuted: false
-schemaApplied: false
+schemaApplied: true
 rlsPolicyChanged: false
 dbWritePerformed: false
 readyForSchemaApplyApproval: true
 readyForG6DNonDryRun: false
 ```
+
+**G-6-d-dry-run-retry-after-schema-apply（完了）:** [staging-profile-schema-apply-verification-and-dry-run-qa.md](./staging-profile-schema-apply-verification-and-dry-run-qa.md) — user manually applied schema; Cursor did not execute SQL; `profileTableExists: true`; `seedRowExists: true`; `rlsPolicyApplied: true`; dry-run retried; `dryRunPassed: false` (anon GRANT blocker); non-dry-run still blocked.
 
 ```bash
 node tools/static-to-astro/scripts/report-profile-schema-alignment-plan.mjs \
@@ -377,10 +379,14 @@ node tools/static-to-astro/scripts/report-profile-schema-alignment-plan.mjs \
 
 **G-6-d-schema-apply-prep（完了）:** [profile-schema-apply-prep.md](./profile-schema-apply-prep.md) — manual SQL package; `admin_users` without `is_active`; `sql/staging/profile-schema-apply.sql`; `readyForManualSchemaApply: true`.
 
+**G-6-d-schema-apply（ユーザー手動・完了）:** `public.profile` on staging; seed row; RLS policies applied.
+
+**G-6-d-dry-run-retry-after-schema-apply（完了）:** dry-run retried; `dryRunPassed: false` until `GRANT` on `public.profile`; `readyForG6DNonDryRun: false`.
+
 **Next:**
 
 ```txt
-G-6-d-schema-apply: user manually applies profile schema SQL to staging
+G-6-d-result-report: GRANT fix + dry-run QA retry
 ```
 
 **Do not proceed to G-6-d non-dry-run write** until:

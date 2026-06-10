@@ -1,0 +1,47 @@
+{
+  "phase": "G-6-d-dry-run-retry-after-schema-apply",
+  "type": "staging-profile-schema-apply-verification-and-dry-run-qa",
+  "schemaApplied": true,
+  "appliedByUserManually": true,
+  "cursorExecutedSql": false,
+  "intendedProject": "static-to-astro-cms-staging",
+  "profileTableExists": true,
+  "verifiedProfileColumns": [
+    "id",
+    "name",
+    "bio",
+    "catchphrase",
+    "website_url",
+    "social_links",
+    "created_at",
+    "updated_at",
+    "updated_by"
+  ],
+  "seedRowExists": true,
+  "seedRowContainsPrivateData": false,
+  "rlsPolicyApplied": true,
+  "readPolicy": {
+    "name": "Public can read profile",
+    "cmd": "SELECT",
+    "roles": ["anon", "authenticated"]
+  },
+  "updatePolicy": {
+    "name": "Admins and editors can update profile",
+    "cmd": "UPDATE",
+    "roles": ["authenticated"],
+    "usesAdminUsersUserId": true,
+    "usesRoleInAdminEditor": true,
+    "usesIsActive": false
+  },
+  "dryRunRequired": true,
+  "dryRunRetried": true,
+  "dryRunPassed": false,
+  "dryRunFailureReason": "permission denied for table profile (anon GRANT missing on public.profile)",
+  "nonDryRunExecuted": false,
+  "readyForG6DDryRunRetry": false,
+  "readyForManualNonDryRunDecision": false,
+  "readyForG6DNonDryRun": false,
+  "dbWritePerformedByCursor": false,
+  "adminRouteConnected": false,
+  "productionDataTouched": false
+}

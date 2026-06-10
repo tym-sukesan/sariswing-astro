@@ -26,13 +26,13 @@
   "readPolicyOption": "B-anon-and-authenticated",
   "sqlApplyFile": "sql/staging/profile-schema-apply.sql",
   "sqlRollbackFile": "sql/staging/profile-schema-rollback.sql",
-  "schemaApplied": false,
-  "rlsPolicyApplied": false,
+  "schemaApplied": true,
+  "rlsPolicyApplied": true,
   "dbWritePerformedByCursor": false,
-  "readyForManualSchemaApply": true,
+  "readyForManualSchemaApply": false,
   "readyForG6DDryRunRetry": false,
   "readyForG6DNonDryRun": false,
   "adminRouteConnected": false,
   "productionDataTouched": false,
-  "recommendedNextPhase": "G-6-d-schema-apply: user manually applies profile schema SQL to staging"
+  "recommendedNextPhase": "G-6-d-result-report: GRANT on public.profile + dry-run QA retry"
 }

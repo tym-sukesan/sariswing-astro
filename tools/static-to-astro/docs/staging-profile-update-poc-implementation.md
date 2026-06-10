@@ -104,6 +104,10 @@ Also required when enabling write:
 
 **G-6-d-schema-apply-prep（完了）:** [profile-schema-apply-prep.md](./profile-schema-apply-prep.md) — `sql/staging/profile-schema-apply.sql`; RLS without `is_active`; manual apply only; `readyForManualSchemaApply: true`.
 
+**G-6-d-schema-apply（ユーザー手動・完了）:** `public.profile` on staging; seed row; RLS policies applied. Cursor did not execute SQL.
+
+**G-6-d-dry-run-retry-after-schema-apply（完了）:** [staging-profile-schema-apply-verification-and-dry-run-qa.md](./staging-profile-schema-apply-verification-and-dry-run-qa.md) — dry-run retried; `dryRunPassed: false` (anon GRANT on `profile`); `readyForG6DNonDryRun: false`. No non-dry-run profile update executed.
+
 ### Manual non-dry-run example (staging only)
 
 ```bash

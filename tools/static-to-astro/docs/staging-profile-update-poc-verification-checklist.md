@@ -336,6 +336,10 @@ G-6-d-verify completion state: `readyForManualNonDryRunDecision: true`, `nonDryR
 
 **G-6-d-schema-apply-prep（完了）:** [profile-schema-apply-prep.md](./profile-schema-apply-prep.md) — manual SQL package ready; `admin_users` confirmed without `is_active`; Cursor must not execute SQL; `readyForManualSchemaApply: true`.
 
+**G-6-d-schema-apply（ユーザー手動・完了）:** `public.profile` exists on staging; seed row; RLS policies (read: anon/authenticated; update: admin/editor via `admin_users`; no `is_active`).
+
+**G-6-d-dry-run-retry-after-schema-apply（完了）:** [staging-profile-schema-apply-verification-and-dry-run-qa.md](./staging-profile-schema-apply-verification-and-dry-run-qa.md) — dry-run retried; `dryRunPassed: false` (anon cannot read `profile` until GRANT); `readyForManualNonDryRunDecision: false`; `readyForG6DNonDryRun: false`; No non-dry-run executed. No production data is touched.
+
 ## 14. G-6-d-verify completion criteria
 
 ```txt

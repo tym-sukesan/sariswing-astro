@@ -379,7 +379,11 @@ node tools/static-to-astro/scripts/report-rls-write-policy-review-plan.mjs \
 
 **G-6-d-schema-apply-prep（完了）:** [profile-schema-apply-prep.md](./profile-schema-apply-prep.md) — update policy uses `admin_users.user_id` + `role in ('admin','editor')`; **no `is_active`**.
 
-**Proceed to:** G-6-d-schema-apply (manual SQL on staging) → dry-run retry → non-dry-run. G-6-e blocked until profile path unblocked.
+**G-6-d-schema-apply（ユーザー手動・完了）:** `public.profile` on staging; RLS policies applied. Cursor did not execute SQL.
+
+**G-6-d-dry-run-retry-after-schema-apply（完了）:** [staging-profile-schema-apply-verification-and-dry-run-qa.md](./staging-profile-schema-apply-verification-and-dry-run-qa.md) — dry-run retried; `dryRunPassed: false` (anon GRANT on `profile`); `readyForG6DNonDryRun: false`.
+
+**Proceed to:** G-6-d-result-report (GRANT fix + dry-run retry) → non-dry-run prep. G-6-e blocked until profile path unblocked.
 
 ## 17. Final safety statement
 

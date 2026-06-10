@@ -1374,6 +1374,10 @@ gosaki / Sariswing で実証した移行フローを、**別サイト向け CMS 
 
 **G-6-d-schema-apply-prep（完了）:** [Profile schema apply prep](docs/profile-schema-apply-prep.md) — manual SQL package `sql/staging/profile-schema-apply.sql`; `admin_users` without `is_active`; Cursor does not execute SQL; `readyForManualSchemaApply: true`。
 
+**G-6-d-schema-apply（ユーザー手動・完了）:** User applied profile schema SQL on `static-to-astro-cms-staging`. `public.profile` exists; seed row exists; RLS policies exist (read: anon/authenticated SELECT; update: authenticated admin/editor via `admin_users`; no `is_active`). Cursor did not execute SQL.
+
+**G-6-d-dry-run-retry-after-schema-apply（完了）:** [Staging profile schema apply verification and dry-run QA](docs/staging-profile-schema-apply-verification-and-dry-run-qa.md) — `schemaApplied: true`; dry-run retried; `dryRunPassed: false` (anon `permission denied for table profile` — GRANT likely missing); `readyForManualNonDryRunDecision: false`; `readyForG6DNonDryRun: false`. No non-dry-run executed. No production data is touched.
+
 ```bash
 node tools/static-to-astro/scripts/report-disabled-write-action-scaffold.mjs \
   --out-dir tools/static-to-astro/output/disabled-write-action-scaffold/gosaki
@@ -1402,6 +1406,11 @@ node tools/static-to-astro/scripts/report-profile-schema-alignment-plan.mjs \
 ```bash
 node tools/static-to-astro/scripts/report-profile-schema-apply-prep.mjs \
   --out-dir tools/static-to-astro/output/profile-schema-apply-prep/gosaki
+```
+
+```bash
+node tools/static-to-astro/scripts/report-staging-profile-schema-apply-verification-and-dry-run-qa.mjs \
+  --out-dir tools/static-to-astro/output/staging-profile-schema-apply-verification-and-dry-run-qa/gosaki
 ```
 
 ```bash

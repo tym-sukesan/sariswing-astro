@@ -414,6 +414,7 @@ G-5y-a adds only `ENABLE_ADMIN_STAGING_AUTH=false` to [`.env.example`](../../../
 | **G-5y-a（完了）** | Supabase Auth staging integration **plan** (this doc) | **None** |
 | **G-5y-b（完了）** | [Auth adapter scaffold / dry-run](./admin-auth-adapter-scaffold.md) | **None** |
 | **G-5y-c（完了）** | [Staging login UI shell](./staging-login-ui-shell.md) — disabled real auth | None |
+| **G-5y-d-prep（完了）** | [Connection checklist](./supabase-auth-staging-connection-checklist.md) — preflight | None |
 | **G-5y-d** | Staging Supabase Auth connection (explicit approval) | Staging Auth only |
 | **G-5y-e** | Staging role check / allowlist enforcement | Staging Auth + allowlist |
 | **G-5z** | Read-only data integration (SELECT + RLS) | Staging DB read |
@@ -507,9 +508,18 @@ Proceed to **G-5y-d (staging Supabase Auth connection)** when:
 
 ## 18c. Acceptance criteria for G-5y-d (next)
 
-## 19. Final safety statement
+**G-5y-d-prep（完了）:** [supabase-auth-staging-connection-checklist.md](./supabase-auth-staging-connection-checklist.md)
 
-**G-5y-a is a planning phase only. G-5y-b is scaffold / dry-run only. G-5y-c is login UI shell only.**
+Proceed to **G-5y-d implementation** when:
+
+- [x] Connection checklist documented
+- [x] Project selection / redirect / env / allowlist / rollback defined
+- [ ] Preflight Section 12 completed
+- [ ] Approval ID `G-5y-d-staging-auth-connect` recorded
+
+---
+
+**G-5y-a is a planning phase only. G-5y-b is scaffold / dry-run only. G-5y-c is login UI shell only. G-5y-d-prep is checklist / approval only.**
 
 - No Supabase Auth is connected.
 - No Supabase client is added.
@@ -527,7 +537,7 @@ Proceed to **G-5y-d (staging Supabase Auth connection)** when:
 ## Related
 
 - [staging-runtime-shell-integration.md](./staging-runtime-shell-integration.md) — G-5x staging shell route
-- [admin-auth-adapter-scaffold.md](./admin-auth-adapter-scaffold.md) — G-5y-b Auth adapter scaffold
+- [supabase-auth-staging-connection-checklist.md](./supabase-auth-staging-connection-checklist.md) — G-5y-d-prep preflight
 - [admin-runtime-integration-plan.md](./admin-runtime-integration-plan.md) — full runtime phase map
 - [local-only-admin-preview-route.md](./local-only-admin-preview-route.md) — G-5u preview (no Auth)
 

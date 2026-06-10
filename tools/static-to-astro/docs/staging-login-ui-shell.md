@@ -3,7 +3,7 @@
 **Phase:** G-5y-c — staging login UI shell with disabled real auth  
 **Status:** UI only · real auth disabled · no Supabase connection
 
-Related: [admin-auth-adapter-scaffold.md](./admin-auth-adapter-scaffold.md) · [staging-runtime-shell-integration.md](./staging-runtime-shell-integration.md)
+Related: [admin-auth-adapter-scaffold.md](./admin-auth-adapter-scaffold.md) · [staging-runtime-shell-integration.md](./staging-runtime-shell-integration.md) · [supabase-auth-staging-connection-checklist.md](./supabase-auth-staging-connection-checklist.md)
 
 ---
 
@@ -158,11 +158,11 @@ Expected flags:
 | --- | --- |
 | **G-5y-d** | Staging Supabase Auth connection (explicit approval) |
 
-Before G-5y-d, confirm:
+Before G-5y-d, complete [supabase-auth-staging-connection-checklist.md](./supabase-auth-staging-connection-checklist.md) (G-5y-d-prep).
 
-- Staging Supabase project selected
+- Staging Supabase project selected (not production)
 - Redirect / callback URLs documented
-- Env setup approved (`PUBLIC_SUPABASE_URL`, anon key — staging only)
+- Env setup approved (local only — not committed)
 - Allowed emails / allowlist plan agreed
 
 ---

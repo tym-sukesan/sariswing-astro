@@ -174,6 +174,7 @@ Expected flags:
 | Phase | Focus |
 | --- | --- |
 | **G-5y-c（完了）** | [Staging login UI shell](./staging-login-ui-shell.md) — disabled real auth |
+| **G-5y-d-prep（完了）** | [Connection checklist](./supabase-auth-staging-connection-checklist.md) — preflight only |
 | **G-5y-d** | Staging Supabase Auth connection (explicit approval) |
 | **G-5y-e** | Staging role check / allowlist |
 

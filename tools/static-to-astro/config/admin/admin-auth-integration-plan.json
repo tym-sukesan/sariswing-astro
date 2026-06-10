@@ -2,7 +2,7 @@
   "version": "0.1.0",
   "status": "draft",
   "mode": "planning-only",
-  "phase": "G-5y-c",
+  "phase": "G-5y-d-prep",
   "productionReady": false,
   "connectedToRuntime": false,
   "supabaseAuthConnected": false,
@@ -71,12 +71,15 @@
     "dryRunExample": "templates/admin-cms/auth/dry-run/auth-adapter-dry-run.example.json",
     "dryRunCli": "scripts/inspect-admin-auth-adapter.mjs",
     "stagingShellAuthPanel": "templates/admin-cms/components/AdminAuthAdapterStatusPanel.astro",
-    "loginUiShell": "templates/admin-cms/auth/components/AdminStagingLoginUiSection.astro"
+    "loginUiShell": "templates/admin-cms/auth/components/AdminStagingLoginUiSection.astro",
+    "connectionChecklist": "config/admin/supabase-auth-staging-connection-checklist.json",
+    "connectionChecklistDoc": "docs/supabase-auth-staging-connection-checklist.md"
   },
   "futurePhaseMap": {
     "G-5y-a": "Supabase Auth staging integration plan",
     "G-5y-b": "Auth adapter scaffold / dry-run only",
-    "G-5y-c": "Staging login UI shell with disabled real auth (implemented)",
+    "G-5y-c": "Staging login UI shell with disabled real auth",
+    "G-5y-d-prep": "Supabase Auth staging connection checklist (implemented)",
     "G-5y-d": "Staging Supabase Auth connection with explicit approval",
     "G-5y-e": "Staging role check / allowlist",
     "G-5z": "Read-only data integration"

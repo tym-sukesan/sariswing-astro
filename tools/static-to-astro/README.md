@@ -1334,7 +1334,9 @@ gosaki / Sariswing で実証した移行フローを、**別サイト向け CMS 
 
 **G-5y-b（完了）:** [Admin Auth adapter scaffold](docs/admin-auth-adapter-scaffold.md) — mock provider, dry-run CLI。
 
-**G-5y-c（完了）:** [Staging login UI shell](docs/staging-login-ui-shell.md) — login UI on staging shell, real auth disabled。次: **G-5y-d**。
+**G-5y-c（完了）:** [Staging login UI shell](docs/staging-login-ui-shell.md) — login UI on staging shell, real auth disabled。
+
+**G-5y-d-prep（完了）:** [Supabase Auth staging connection checklist](docs/supabase-auth-staging-connection-checklist.md) — project / redirect / env / allowlist / rollback preflight。Auth 実接続なし。次: **G-5y-d**（approval ID: `G-5y-d-staging-auth-connect`）。
 
 ```bash
 node tools/static-to-astro/scripts/inspect-admin-auth-adapter.mjs \

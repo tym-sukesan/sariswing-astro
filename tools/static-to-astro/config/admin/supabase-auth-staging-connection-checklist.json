@@ -1,0 +1,72 @@
+{
+  "version": "0.1.0",
+  "phase": "G-5y-d-prep",
+  "type": "preflight-checklist",
+  "mode": "planning-only",
+  "docRef": "tools/static-to-astro/docs/supabase-auth-staging-connection-checklist.md",
+  "productionReady": false,
+  "connectedToRuntime": false,
+  "supabaseAuthConnected": false,
+  "supabaseClientImported": false,
+  "signInImplemented": false,
+  "passwordResetImplemented": false,
+  "sessionPersisted": false,
+  "adminUsersTableCreated": false,
+  "rlsPolicyChanged": false,
+  "dbQueryPerformed": false,
+  "dbUpdatePerformed": false,
+  "storageUploadPerformed": false,
+  "githubDispatchPerformed": false,
+  "ftpDeployPerformed": false,
+  "productionAuthTouched": false,
+  "approvalRequiredForG5yD": true,
+  "approvalIdExample": "G-5y-d-staging-auth-connect",
+  "readyForG5yDFromG5yC": true,
+  "stagingShellRoute": "/__admin-staging-shell/musician-basic/",
+  "productionAdminRoute": "/admin/",
+  "connectProductionAdminInG5yD": false,
+  "envPlan": {
+    "ENABLE_ADMIN_STAGING_AUTH": { "default": false, "requiredForG5yD": true },
+    "PUBLIC_ADMIN_AUTH_PROVIDER": { "default": "mock", "g5yDValue": "supabase" },
+    "PUBLIC_SUPABASE_URL": { "default": "", "commitRealValues": false },
+    "PUBLIC_SUPABASE_ANON_KEY": { "default": "", "commitRealValues": false },
+    "ADMIN_ALLOWED_EMAILS": { "default": "", "preferPrivate": true, "commitRealEmails": false },
+    "ADMIN_AUTH_ENV": { "default": "staging", "allowedValues": ["staging"] },
+    "forbiddenInBrowser": ["SUPABASE_SERVICE_ROLE_KEY"]
+  },
+  "redirectUrls": {
+    "local": "http://localhost:4321/__admin-staging-shell/musician-basic/",
+    "stagingPreview": "https://<staging-domain>/__admin-staging-shell/musician-basic/",
+    "passwordResetLocal": "http://localhost:4321/__admin-staging-shell/musician-basic/?auth=reset",
+    "passwordResetStaging": "https://<staging-domain>/__admin-staging-shell/musician-basic/?auth=reset",
+    "forbiddenInG5yD": ["/admin/", "production-domain"]
+  },
+  "rollback": {
+    "steps": [
+      "ENABLE_ADMIN_STAGING_AUTH=false",
+      "PUBLIC_ADMIN_AUTH_PROVIDER=mock",
+      "clear local PUBLIC_SUPABASE_URL and PUBLIC_SUPABASE_ANON_KEY",
+      "staging shell remains in mock mode"
+    ],
+    "dbRollbackRequired": false,
+    "rlsRollbackRequired": false,
+    "productionRollbackRequired": false
+  },
+  "g5yDAllowed": [
+    "staging-only-supabase-auth-client",
+    "getSession",
+    "signInWithPassword",
+    "signOut",
+    "auth-status-display",
+    "local-env-only-initially"
+  ],
+  "g5yDForbidden": [
+    "db-read-write",
+    "admin-users-table",
+    "rls-changes",
+    "storage-upload",
+    "publish-dispatch",
+    "admin-route",
+    "production-auth"
+  ]
+}

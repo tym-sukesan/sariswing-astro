@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Inspect read-only data adapter scaffold (G-5z-b dry-run).
+ * Inspect read-only data adapter (G-5z-c dry-run).
  *
  * Usage:
  *   node tools/static-to-astro/scripts/inspect-read-only-data-adapter.mjs
@@ -21,8 +21,8 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 function printHelp() {
   console.log(`Usage: node scripts/inspect-read-only-data-adapter.mjs [options]
 
-Dry-run read-only data adapter scaffold (G-5z-b).
-No Supabase connection. No DB / Storage / FTP / dispatch.
+Dry-run read-only data adapter inspection (G-5z-c).
+No live Supabase connection. No DB write / Storage / FTP / dispatch.
 
 Options:
   --out-dir PATH    Write report JSON + markdown (optional)
@@ -71,19 +71,23 @@ function main() {
 
   const report = runReadOnlyDataAdapterInspection({ toolRoot, siteId });
 
-  console.log("static-to-astro inspect-read-only-data-adapter (G-5z-b dry-run)");
+  console.log("static-to-astro inspect-read-only-data-adapter (G-5z-c dry-run)");
   console.log(`  phase: ${report.phase}`);
+  console.log(`  approvalId: ${report.approvalId}`);
   console.log(`  provider: ${report.provider}`);
   console.log(`  readOnlyOnly: ${report.readOnlyOnly}`);
   console.log(`  canWrite: ${report.canWrite}`);
-  console.log(`  supabaseDbQueryImplemented: ${report.supabaseDbQueryImplemented}`);
-  console.log(`  fromSelectAdded: ${report.fromSelectAdded}`);
-  console.log(`  dbQueryPerformed: ${report.dbQueryPerformed}`);
+  console.log(`  envGated: ${report.envGated}`);
+  console.log(`  mockFallbackAvailable: ${report.mockFallbackAvailable}`);
+  console.log(`  supabaseReadOnlyAdapterImplemented: ${report.supabaseReadOnlyAdapterImplemented}`);
+  console.log(`  selectStarUsed: ${report.selectStarUsed}`);
+  console.log(`  writeMethodsImplemented: ${report.writeMethodsImplemented}`);
+  console.log(`  dbUpdatePerformed: ${report.dbUpdatePerformed}`);
   console.log(`  rlsPolicyChanged: ${report.rlsPolicyChanged}`);
-  console.log(`  storageReadImplemented: ${report.storageReadImplemented}`);
+  console.log(`  storageUploadPerformed: ${report.storageUploadPerformed}`);
   console.log(`  productionDataTouched: ${report.productionDataTouched}`);
   console.log(`  adminRouteConnected: ${report.adminRouteConnected}`);
-  console.log(`  readyForG5zC: ${report.readyForG5zC}`);
+  console.log(`  readyForG5zD: ${report.readyForG5zD}`);
 
   if (report.missingStagingDataFiles.length > 0) {
     console.error("Missing staging data files:", report.missingStagingDataFiles.join(", "));
@@ -109,7 +113,7 @@ function main() {
     console.log(`  wrote: ${mdPath}`);
   }
 
-  console.log("OK — read-only data adapter scaffold dry-run complete.");
+  console.log("OK — read-only data adapter inspection complete.");
 }
 
 main();

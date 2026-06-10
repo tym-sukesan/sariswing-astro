@@ -1,6 +1,6 @@
 /**
- * Read-only data adapter inspector (G-5z-b).
- * Read-only / output-only. No Supabase connection.
+ * Read-only data adapter inspector (G-5z-c).
+ * Read-only / output-only. No live Supabase connection.
  */
 
 import fs from "node:fs";
@@ -11,6 +11,9 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 export const DEFAULT_TOOL_ROOT = path.resolve(__dirname, "../..");
 
 const PLAN_REL = "config/admin/read-only-data-integration-plan.json";
+const G5Z_C_APPROVAL_ID = "G-5z-c-staging-read-only-data-connect";
+const SUPABASE_ADAPTER_REL =
+  "../../src/lib/admin/staging-data/supabase-read-only-data-adapter.ts";
 
 const STAGING_DATA_SRC_FILES = [
   "../../src/lib/admin/staging-data/read-only-data-adapter.types.ts",
@@ -18,6 +21,9 @@ const STAGING_DATA_SRC_FILES = [
   "../../src/lib/admin/staging-data/mock-read-only-data-adapter.ts",
   "../../src/lib/admin/staging-data/read-only-data-config.ts",
   "../../src/lib/admin/staging-data/read-only-data-status.ts",
+  "../../src/lib/admin/staging-data/supabase-read-only-data-adapter.ts",
+  "../../src/lib/admin/staging-data/read-only-data-factory.ts",
+  "../../src/lib/admin/staging-data/staging-read-only-data-loader.ts",
 ];
 
 const UI_FILES = [
@@ -25,10 +31,7 @@ const UI_FILES = [
   "templates/admin-cms/data/components/AdminStagingReadOnlyDataSection.astro",
 ];
 
-const FORBIDDEN_PATTERNS = [
-  /@supabase\/supabase-js/,
-  /\.from\s*\(/,
-  /\.select\s*\(/,
+const FORBIDDEN_IN_ALL_FILES = [
   /\.insert\s*\(/,
   /\.update\s*\(/,
   /\.upsert\s*\(/,
@@ -39,6 +42,14 @@ const FORBIDDEN_PATTERNS = [
   /SERVICE_ROLE/,
   /workflow_dispatch/,
   /\blftp\b/,
+  /select\s*\(\s*['"`]\*/,
+  /select\s*\(\s*\*/,
+];
+
+const FORBIDDEN_IN_NON_SUPABASE_ADAPTER = [
+  /@supabase\/supabase-js/,
+  /\.from\s*\(/,
+  /\.select\s*\(/,
 ];
 
 /**
@@ -66,17 +77,39 @@ function stagingDataFilesExist(toolRoot) {
 function scanStagingDataForForbidden(toolRoot) {
   /** @type {{ file: string; match: string }[]} */
   const hits = [];
+  const supabaseAbs = path.resolve(toolRoot, SUPABASE_ADAPTER_REL);
+
   for (const rel of STAGING_DATA_SRC_FILES) {
     const abs = path.resolve(toolRoot, rel);
     if (!fs.existsSync(abs)) continue;
     const content = fs.readFileSync(abs, "utf8");
-    for (const pattern of FORBIDDEN_PATTERNS) {
+    const isSupabaseAdapter = abs === supabaseAbs;
+
+    for (const pattern of FORBIDDEN_IN_ALL_FILES) {
       if (pattern.test(content)) {
         hits.push({ file: path.relative(toolRoot, abs), match: pattern.source });
       }
     }
+
+    if (!isSupabaseAdapter) {
+      for (const pattern of FORBIDDEN_IN_NON_SUPABASE_ADAPTER) {
+        if (pattern.test(content)) {
+          hits.push({ file: path.relative(toolRoot, abs), match: pattern.source });
+        }
+      }
+    }
   }
   return hits;
+}
+
+/**
+ * @param {string} toolRoot
+ */
+function scanSupabaseAdapterForFromSelect(toolRoot) {
+  const abs = path.resolve(toolRoot, SUPABASE_ADAPTER_REL);
+  if (!fs.existsSync(abs)) return false;
+  const content = fs.readFileSync(abs, "utf8");
+  return /\.from\s*\(/.test(content) && /\.select\s*\(/.test(content);
 }
 
 /**
@@ -120,24 +153,40 @@ export function runReadOnlyDataAdapterInspection(opts = {}) {
   }));
   const forbiddenHits = scanStagingDataForForbidden(toolRoot);
   const fixtureEmailScan = scanFixturesForRealEmails(toolRoot);
+  const supabaseAdapterExists = fs.existsSync(
+    path.resolve(toolRoot, SUPABASE_ADAPTER_REL),
+  );
+  const fromSelectAdded = scanSupabaseAdapterForFromSelect(toolRoot);
+  const selectStarUsed = forbiddenHits.some(
+    (h) => h.match.includes("select\\s*\\(") || h.match.includes("select\\s*\\(\\s*\\*"),
+  );
 
-  const scaffoldComplete =
+  const implementationComplete =
     missingStaging.length === 0 &&
     uiChecks.every((f) => f.exists) &&
+    supabaseAdapterExists &&
+    fromSelectAdded &&
     forbiddenHits.length === 0 &&
     fixtureEmailScan.clean;
 
   const report = {
     mode: "dry-run",
-    phase: "G-5z-b",
+    phase: "G-5z-c",
+    approvalId: G5Z_C_APPROVAL_ID,
     siteId,
     generatedAt: new Date().toISOString(),
-    provider: "mock",
+    provider: "mock-or-supabase",
     readOnlyOnly: true,
     canWrite: false,
+    envGated: true,
+    mockFallbackAvailable: true,
     productionReady: false,
-    supabaseDbQueryImplemented: false,
-    fromSelectAdded: false,
+    supabaseReadOnlyAdapterImplemented: supabaseAdapterExists && fromSelectAdded,
+    supabaseDbQueryImplemented: supabaseAdapterExists && fromSelectAdded,
+    fromSelectAdded,
+    approvedFieldsOnly: true,
+    selectStarUsed,
+    writeMethodsImplemented: false,
     dbQueryPerformed: false,
     dbUpdatePerformed: false,
     rlsPolicyChanged: false,
@@ -165,12 +214,15 @@ export function runReadOnlyDataAdapterInspection(opts = {}) {
     integrationPlan: {
       phase: plan.phase,
       docRef: plan.docRef,
-      recommendedNextPhase: plan.recommendedNextPhase,
+      recommendedNextPhase: "G-5z-d",
     },
-    readyForG5zC: scaffoldComplete,
+    readyForG5zD: implementationComplete,
+    readyForG5zC: true,
     blockers: [
       ...missingStaging.map((f) => `missing:${f.path}`),
       ...uiChecks.filter((f) => !f.exists).map((f) => `missing-ui:${f.path}`),
+      ...(!supabaseAdapterExists ? ["missing-supabase-read-only-adapter"] : []),
+      ...(!fromSelectAdded ? ["supabase-adapter-missing-from-select"] : []),
       ...(forbiddenHits.length > 0 ? ["forbidden-patterns-in-staging-data"] : []),
       ...(!fixtureEmailScan.clean ? ["fixture-real-email-or-url"] : []),
     ],
@@ -187,6 +239,7 @@ export function formatReadOnlyDataAdapterMarkdown(report) {
     "# Read-only Data Adapter Report",
     "",
     `**Phase:** ${report.phase}`,
+    `**Approval ID:** ${report.approvalId}`,
     `**Site:** ${report.siteId}`,
     `**Generated:** ${report.generatedAt}`,
     "",
@@ -197,14 +250,18 @@ export function formatReadOnlyDataAdapterMarkdown(report) {
     `| provider | ${report.provider} |`,
     `| readOnlyOnly | ${report.readOnlyOnly} |`,
     `| canWrite | ${report.canWrite} |`,
-    `| supabaseDbQueryImplemented | ${report.supabaseDbQueryImplemented} |`,
-    `| fromSelectAdded | ${report.fromSelectAdded} |`,
-    `| dbQueryPerformed | ${report.dbQueryPerformed} |`,
+    `| envGated | ${report.envGated} |`,
+    `| mockFallbackAvailable | ${report.mockFallbackAvailable} |`,
+    `| supabaseReadOnlyAdapterImplemented | ${report.supabaseReadOnlyAdapterImplemented} |`,
+    `| approvedFieldsOnly | ${report.approvedFieldsOnly} |`,
+    `| selectStarUsed | ${report.selectStarUsed} |`,
+    `| writeMethodsImplemented | ${report.writeMethodsImplemented} |`,
+    `| dbUpdatePerformed | ${report.dbUpdatePerformed} |`,
     `| rlsPolicyChanged | ${report.rlsPolicyChanged} |`,
     `| storageReadImplemented | ${report.storageReadImplemented} |`,
     `| productionDataTouched | ${report.productionDataTouched} |`,
     `| adminRouteConnected | ${report.adminRouteConnected} |`,
-    `| readyForG5zC | ${report.readyForG5zC} |`,
+    `| readyForG5zD | ${report.readyForG5zD} |`,
     "",
     "## Target modules",
     "",
@@ -227,7 +284,7 @@ export function formatReadOnlyDataAdapterMarkdown(report) {
   }
 
   lines.push(
-    "*G-5z-b: mock read-only adapter scaffold only. No Supabase DB query.*",
+    "*G-5z-c: Supabase read-only adapter (staging shell). Approved fields only. No writes.*",
   );
 
   return lines.join("\n");

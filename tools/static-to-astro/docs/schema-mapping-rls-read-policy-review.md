@@ -503,4 +503,16 @@ No /admin route is connected.
 No production data is touched.
 ```
 
+---
+
+## 21. G-5z-c implementation (complete)
+
+**G-5z-c（完了）:** [supabase-read-only-data-adapter.md](./supabase-read-only-data-adapter.md)
+
+- Approval ID: `G-5z-c-staging-read-only-data-connect`
+- Staging shell only; env-gated `from().select()` on approved fields
+- `canWrite: false`; mock fallback preserved
+- RLS not modified by CMS Kit
+- Next: **G-5z-d** staging shell read-only module display QA
+
 Config reference: [schema-mapping-rls-read-policy-review.json](../config/admin/schema-mapping-rls-read-policy-review.json).

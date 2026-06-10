@@ -132,7 +132,8 @@ In mock mode:
 - **G-5z-a（完了）:** [Read-only data integration plan](./read-only-data-integration-plan.md) — no DB query in G-5z-a
 - **G-5z-b（完了）:** [Read-only data adapter scaffold](./read-only-data-adapter-scaffold.md)
 - **G-5z-c-prep（完了）:** [Schema mapping / RLS review](./schema-mapping-rls-read-policy-review.md)
-- **G-5z-c:** Supabase read-only adapter (`G-5z-c-staging-read-only-data-connect`)
+- **G-5z-c（完了）:** [Supabase read-only data adapter](./supabase-read-only-data-adapter.md) (`G-5z-c-staging-read-only-data-connect`)
+- **G-5z-d:** staging shell read-only module display QA
 
 ## 11. Files
 

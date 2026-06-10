@@ -202,7 +202,8 @@ Never skip: local preview and customer demo before runtime shell; read-only befo
 | **G-5y-b（完了）** | Auth adapter scaffold / dry-run | None |
 | **G-5y-c（完了）** | [Login UI shell](./staging-login-ui-shell.md) — disabled real auth | None |
 | **G-5y-d-prep（完了）** | [Connection checklist](./supabase-auth-staging-connection-checklist.md) — preflight | None |
-| **G-5y-d** | Staging Auth connection (explicit approval) | Staging project only |
+| **G-5y-d（完了）** | [Staging Supabase Auth connection](./staging-supabase-auth-connection.md) | Staging shell only; env-gated |
+| **G-5y-e** | Staging role check / allowlist | Staging project only |
 | **G-5y-e** | Role check / allowlist | Staging Auth |
 
 **Purpose (overall):** Staging admin login only — after shell QA on `/__admin-staging-shell/musician-basic/`.

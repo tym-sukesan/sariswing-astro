@@ -21,6 +21,7 @@ import AdminStatusMessage from "../components/AdminStatusMessage.astro";
 import AdminAuthStatus from "../components/AdminAuthStatus.astro";
 import AdminAuthAdapterStatusPanel from "../components/AdminAuthAdapterStatusPanel.astro";
 import AdminStagingLoginUiSection from "../auth/components/AdminStagingLoginUiSection.astro";
+import { getStagingAuthConfig } from "../../../../../src/lib/admin/staging-auth/staging-auth-config";
 import AdminPermissionBadge from "../components/AdminPermissionBadge.astro";
 import AdminAccessDenied from "../components/AdminAccessDenied.astro";
 import AdminImageUploader from "../components/AdminImageUploader.astro";
@@ -52,6 +53,8 @@ const {
   previewRoutePath = "/__admin-preview/musician-basic/",
   stagingShellRoutePath = "/__admin-staging-shell/musician-basic/",
 } = Astro.props;
+
+const stagingAuthConfig = stagingShellMode ? getStagingAuthConfig() : null;
 
 const siteName = "Example Musician";
 const templateId = "musician-basic";
@@ -233,9 +236,9 @@ const moduleSummary = [
         <AdminStatusMessage
           type="error"
           title="Staging runtime shell — Shell-only — Mock/static data only — Actions disabled"
-          message={`Route ${stagingShellRoutePath} is a staging runtime shell candidate (G-5x). Not connected to /admin/. Not connected to runtime data. No Supabase Auth. No DB query or update. No Storage upload. No GitHub dispatch. No FTP deploy. Production disabled. All actions disabled in G-5x.`}
+          message={`Route ${stagingShellRoutePath} is a staging runtime shell candidate (G-5x). Not connected to /admin/. Not connected to runtime data. Supabase Auth is env-gated (G-5y-d) on this shell only. No DB query or update. No Storage upload. No GitHub dispatch. No FTP deploy. Production disabled.`}
         />
-        <AdminAuthAdapterStatusPanel phase="G-5y-c" />
+        <AdminAuthAdapterStatusPanel phase="G-5y-d" authConfig={stagingAuthConfig} />
       </div>
     ) : localPreviewMode ? (
       <AdminStatusMessage
@@ -266,7 +269,7 @@ const moduleSummary = [
           class="admin-prototype-section admin-staging-login-section"
           data-section="auth-login-shell"
         >
-          <AdminStagingLoginUiSection routePath={stagingShellRoutePath} phase="G-5y-c" />
+          <AdminStagingLoginUiSection routePath={stagingShellRoutePath} phase="G-5y-d" />
         </section>
       ) : null
     }

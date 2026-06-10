@@ -13,6 +13,9 @@ interface Props {
   submitLabel?: string;
   forgotPasswordHref?: string;
   disabled?: boolean;
+  interactive?: boolean;
+  formId?: string;
+  submitId?: string;
   readonlyNotice?: string;
 }
 
@@ -24,16 +27,24 @@ const {
   submitLabel = "Sign in",
   forgotPasswordHref = "#forgot-password",
   disabled = true,
+  interactive = false,
+  formId = "staging-admin-login-form",
+  submitId = "staging-login-submit",
   readonlyNotice = "Scaffold only — no Supabase Auth connection.",
 } = Astro.props;
+
+const fieldsDisabled = disabled && !interactive;
+const buttonDisabled = disabled && !interactive;
 ---
 
 <form
   class="admin-login-form"
+  id={formId}
   method="dialog"
   action="#"
   data-scaffold="true"
   data-auth="login"
+  data-interactive={interactive ? "true" : "false"}
   onsubmit="return false;"
 >
   <h2 class="admin-login-form__title">{title}</h2>
@@ -52,7 +63,7 @@ const {
       name="email"
       autocomplete="username"
       placeholder="admin@example.com"
-      disabled={disabled}
+      disabled={fieldsDisabled}
     />
   </AdminFormField>
 
@@ -63,12 +74,18 @@ const {
       name="password"
       autocomplete="current-password"
       placeholder="••••••••"
-      disabled={disabled}
+      disabled={fieldsDisabled}
     />
   </AdminFormField>
 
   <div class="admin-login-form__actions">
-    <button class="admin-button" type="button" disabled={disabled} title="Scaffold only — no login">
+    <button
+      class="admin-button"
+      id={submitId}
+      type="button"
+      disabled={buttonDisabled}
+      title={interactive ? "Staging Supabase Auth sign in" : "Scaffold only — no login"}
+    >
       {submitLabel}
     </button>
     <a class="admin-login-form__forgot" href={forgotPasswordHref}>

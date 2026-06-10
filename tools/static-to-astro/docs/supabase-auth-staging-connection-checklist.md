@@ -393,6 +393,8 @@ G-5y-d-prep is complete when:
 
 Proceed to **G-5y-d** only after preflight (Section 12) + approval ID.
 
+**G-5y-d（完了）:** [staging-supabase-auth-connection.md](./staging-supabase-auth-connection.md) — staging shell Supabase Auth (`getSession`, `signInWithPassword`, `signOut`). Env-gated. Mock fallback available. Next: **G-5y-e** role check / allowlist.
+
 ---
 
 ## 17. Final safety statement

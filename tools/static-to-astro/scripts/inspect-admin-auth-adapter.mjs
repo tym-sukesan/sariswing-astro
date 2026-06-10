@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
- * Inspect Admin Auth adapter scaffold (G-5y-b dry-run).
- * Read-only / output-only. No Supabase connection.
+ * Inspect Admin Auth adapter scaffold (G-5y-b / G-5y-d dry-run).
+ * Read-only / output-only. No live Supabase connection.
  *
  * Usage:
  *   node tools/static-to-astro/scripts/inspect-admin-auth-adapter.mjs
@@ -22,8 +22,8 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 function printHelp() {
   console.log(`Usage: node scripts/inspect-admin-auth-adapter.mjs [options]
 
-Dry-run Admin Auth adapter scaffold (G-5y-b).
-No Supabase connection. No DB / Storage / FTP / dispatch.
+Dry-run Admin Auth adapter scaffold (G-5y-d).
+No live Supabase connection. No DB / Storage / FTP / dispatch.
 
 Options:
   --out-dir PATH    Write report JSON + markdown (optional)
@@ -78,28 +78,37 @@ function main() {
 
   const report = runAdminAuthAdapterDryRun({ toolRoot, siteId });
 
-  console.log("static-to-astro inspect-admin-auth-adapter (G-5y-c dry-run)");
+  console.log("static-to-astro inspect-admin-auth-adapter (G-5y-d dry-run)");
   console.log(`  phase: ${report.phase}`);
-  console.log(`  provider: ${report.provider}`);
+  console.log(`  approvalId: ${report.approvalId}`);
+  console.log(`  supabaseAuthConnectionImplemented: ${report.supabaseAuthConnectionImplemented}`);
+  console.log(`  envGated: ${report.envGated}`);
+  console.log(`  mockFallbackAvailable: ${report.mockFallbackAvailable}`);
+  console.log(`  serviceRoleUsed: ${report.serviceRoleUsed}`);
+  console.log(`  dbQueryPerformed: ${report.dbQueryPerformed}`);
+  console.log(`  rlsPolicyChanged: ${report.rlsPolicyChanged}`);
+  console.log(`  productionAuthTouched: ${report.productionAuthTouched}`);
+  console.log(`  adminRouteConnected: ${report.adminRouteConnected}`);
+  console.log(`  readyForG5yE: ${report.readyForG5yE}`);
   console.log(`  loginUiShellPresent: ${report.loginUiShellPresent}`);
-  console.log(`  passwordResetUiShellPresent: ${report.passwordResetUiShellPresent}`);
-  console.log(`  realAuthDisabled: ${report.realAuthDisabled}`);
-  console.log(`  credentialsSubmitted: ${report.credentialsSubmitted}`);
-  console.log(`  sessionCreated: ${report.sessionCreated}`);
-  console.log(`  supabaseAuthConnected: ${report.supabaseAuthConnected}`);
-  console.log(`  supabaseClientImported: ${report.supabaseClientImported}`);
-  console.log(`  connectedToRuntime: ${report.connectedToRuntime}`);
-  console.log(`  productionReady: ${report.productionReady}`);
-  console.log(`  readyForG5yD: ${report.readyForG5yD}`);
-  console.log(`  mockSession: ${report.mockSession.email} (${report.mockSession.role})`);
 
   if (report.missingScaffoldFiles.length > 0) {
     console.error("Missing scaffold files:", report.missingScaffoldFiles.join(", "));
     process.exit(1);
   }
 
+  if (report.missingStagingAuthFiles.length > 0) {
+    console.error("Missing staging Auth src files:", report.missingStagingAuthFiles.join(", "));
+    process.exit(1);
+  }
+
   if (!report.forbiddenImportScan.clean) {
     console.error("Forbidden import scan failed:", report.forbiddenImportScan.hits);
+    process.exit(1);
+  }
+
+  if (!report.stagingAuthForbiddenScan.clean) {
+    console.error("Staging Auth forbidden scan failed:", report.stagingAuthForbiddenScan.hits);
     process.exit(1);
   }
 

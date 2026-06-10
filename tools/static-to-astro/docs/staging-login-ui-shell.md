@@ -152,26 +152,36 @@ Expected flags:
 
 ---
 
-## 9. Next phase
+## 9. G-5y-d connection (完了)
+
+**G-5y-d（完了）:** [staging-supabase-auth-connection.md](./staging-supabase-auth-connection.md) — env-gated Supabase Auth on this shell only. Approval ID: `G-5y-d-staging-auth-connect`.
+
+When env gate passes, the login form in this section becomes interactive (`signInWithPassword` / `signOut`). Mock fallback:
+
+```env
+ENABLE_ADMIN_STAGING_AUTH=false
+# or
+PUBLIC_ADMIN_AUTH_PROVIDER=mock
+```
+
+Still forbidden in G-5y-d: DB, RLS, Storage, Publish, `/admin/`, password reset email.
+
+---
+
+## 10. Next phase
 
 | Phase | Focus |
 | --- | --- |
-| **G-5y-d** | Staging Supabase Auth connection (explicit approval) |
-
-Before G-5y-d, complete [supabase-auth-staging-connection-checklist.md](./supabase-auth-staging-connection-checklist.md) (G-5y-d-prep).
-
-- Staging Supabase project selected (not production)
-- Redirect / callback URLs documented
-- Env setup approved (local only — not committed)
-- Allowed emails / allowlist plan agreed
+| **G-5y-e** | Staging role check / allowlist |
 
 ---
 
 ## Related
 
+- [staging-supabase-auth-connection.md](./staging-supabase-auth-connection.md) — G-5y-d Auth connection
 - [supabase-auth-staging-integration-plan.md](./supabase-auth-staging-integration-plan.md) — G-5y-a plan
 - [admin-auth-adapter-scaffold.md](./admin-auth-adapter-scaffold.md) — G-5y-b adapter scaffold
 
 ---
 
-*G-5y-c: staging login UI shell only. Real auth disabled.*
+*G-5y-c: login UI shell. G-5y-d: real Auth when env-gated on staging shell only.*

@@ -144,9 +144,10 @@ Buttons use `disabled={true}` and do not perform runtime operations.
 | --- | --- |
 | **G-5y-a（完了）** | [Supabase Auth staging integration plan](./supabase-auth-staging-integration-plan.md) — plan only, no Auth connection |
 | **G-5y-b（完了）** | [Auth adapter scaffold](./admin-auth-adapter-scaffold.md) — mock provider, dry-run CLI |
-| **G-5y-c（完了）** | [Staging login UI shell](./staging-login-ui-shell.md) — disabled real auth |
+| **G-5y-c（完了）** | [Staging login UI shell](./staging-login-ui-shell.md) |
 | **G-5y-d-prep（完了）** | [Connection checklist](./supabase-auth-staging-connection-checklist.md) |
-| **G-5y-d** | Staging Supabase Auth connection (explicit approval) |
+| **G-5y-d（完了）** | [Staging Supabase Auth connection](./staging-supabase-auth-connection.md) |
+| **G-5y-e** | Staging role check / allowlist |
 | Prerequisite | Complete shell QA on this route first |
 | Still | staging-only, no production admin, no `/admin/` |
 
@@ -160,6 +161,7 @@ Buttons use `disabled={true}` and do not perform runtime operations.
 - [supabase-auth-staging-integration-plan.md](./supabase-auth-staging-integration-plan.md) — G-5y-a Auth plan (no connection yet)
 - [admin-auth-adapter-scaffold.md](./admin-auth-adapter-scaffold.md) — G-5y-b Auth adapter mock status on this route
 - [staging-login-ui-shell.md](./staging-login-ui-shell.md) — G-5y-c login UI shell on this route
+- [staging-supabase-auth-connection.md](./staging-supabase-auth-connection.md) — G-5y-d env-gated Auth
 - [supabase-auth-staging-connection-checklist.md](./supabase-auth-staging-connection-checklist.md) — G-5y-d-prep preflight
 
 ---

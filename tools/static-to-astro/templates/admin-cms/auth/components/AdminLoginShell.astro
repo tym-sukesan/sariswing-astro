@@ -1,27 +1,39 @@
 ---
 /**
- * G-5y-c — Staging login UI shell. Real auth disabled. Mock only.
- * No Supabase. No fetch. No session persistence.
+ * G-5y-c / G-5y-d — Staging login UI shell.
+ * G-5y-d: real Supabase Auth when env gate passes.
  */
 import AdminLoginForm from "../../components/AdminLoginForm.astro";
 import AdminPermissionBadge from "../../components/AdminPermissionBadge.astro";
+import type { StagingAuthConfig } from "../../../../../../src/lib/admin/staging-auth/staging-auth-config";
 
 interface Props {
   phase?: string;
-  mockEmail?: string;
-  mockRole?: string;
+  authConfig?: StagingAuthConfig | null;
 }
 
-const {
-  phase = "G-5y-c",
-  mockEmail = "mock-admin@example.com",
-  mockRole = "admin",
-} = Astro.props;
+const { phase = "G-5y-d", authConfig = null } = Astro.props;
 
-const readonlyNotice =
-  "This login UI is a staging shell only. Real Supabase Auth is disabled in G-5y-c. No credentials are submitted. No session is created. Production Auth is not touched.";
-const readonlyNoticeJa =
-  "このログイン画面はステージング確認用のUIです。この段階では実ログインは行われません。入力内容は送信されず、セッションも作成されません。";
+const interactive =
+  Boolean(authConfig?.stagingAuthEnabled && authConfig?.supabaseConfigured);
+const configMissing = authConfig?.configMissing ?? false;
+const authMode = authConfig?.authMode ?? "mock";
+
+const readonlyNotice = interactive
+  ? `Staging Supabase Auth enabled (${authConfig?.approvalId}). Auth only — no DB, Storage, or Publish. Production Auth not touched.`
+  : configMissing
+    ? "Supabase Auth config missing. Login remains disabled. Set PUBLIC_SUPABASE_URL and PUBLIC_SUPABASE_ANON_KEY locally."
+    : "This login UI is staging shell only. Real Supabase Auth is disabled. Set ENABLE_ADMIN_STAGING_AUTH=true and PUBLIC_ADMIN_AUTH_PROVIDER=supabase to enable (G-5y-d).";
+
+const readonlyNoticeJa = interactive
+  ? "ステージング用 Supabase Auth が有効です。DB・Storage・Publish には接続しません。"
+  : "このログイン画面はステージング確認用です。実Authが無効な場合、入力内容は送信されません。";
+
+const subtitle = interactive
+  ? "Supabase staging Auth · G-5y-d · shell-only route"
+  : configMissing
+    ? "Config missing · Auth disabled"
+    : "Real auth disabled · Mock auth only · Supabase Auth not connected";
 ---
 
 <section
@@ -29,47 +41,66 @@ const readonlyNoticeJa =
   id="login-ui-shell"
   data-scaffold="true"
   data-phase={phase}
-  data-auth-mode="mock-only"
+  data-auth-mode={authMode}
 >
   <header class="admin-login-shell__header">
     <h2 class="admin-login-shell__title">Login UI shell ({phase})</h2>
-    <p class="admin-login-shell__subtitle">
-      Real auth disabled · Mock auth only · Supabase Auth not connected
-    </p>
+    <p class="admin-login-shell__subtitle">{subtitle}</p>
   </header>
 
   <div class="admin-login-shell__grid">
     <div class="admin-login-shell__form-col">
       <AdminLoginForm
         title="Admin login (staging shell)"
-        description="Preview login form layout before G-5y-d Supabase Auth connection."
-        submitLabel="Sign in (disabled)"
+        description={
+          interactive
+            ? "Sign in with staging Supabase project credentials."
+            : "Preview login form layout. Enable G-5y-d env gate for real Auth."
+        }
+        submitLabel={interactive ? "Sign in" : "Sign in (disabled)"}
         forgotPasswordHref="#password-reset-shell"
-        disabled={true}
+        disabled={!interactive}
+        interactive={interactive}
         readonlyNotice={readonlyNotice}
       />
       <p class="admin-login-shell__ja" lang="ja">{readonlyNoticeJa}</p>
+      {
+        interactive ? (
+          <div class="admin-login-shell__signout-row">
+            <button
+              class="admin-button admin-button--secondary"
+              id="staging-sign-out-btn"
+              type="button"
+              hidden
+            >
+              Sign out
+            </button>
+          </div>
+        ) : null
+      }
     </div>
 
     <aside class="admin-login-shell__aside">
       <section class="admin-login-shell__mock-panel" aria-labelledby="mock-login-title">
-        <h3 id="mock-login-title" class="admin-login-shell__mock-title">Mock login preview</h3>
+        <h3 id="mock-login-title" class="admin-login-shell__mock-title">
+          {interactive ? "Session preview" : "Mock login preview"}
+        </h3>
         <dl class="admin-login-shell__mock-list">
           <div>
             <dt>email</dt>
-            <dd>{mockEmail}</dd>
+            <dd>{interactive ? "(signed-in user)" : "mock-admin@example.com"}</dd>
           </div>
           <div>
             <dt>role</dt>
-            <dd>{mockRole}</dd>
+            <dd>{interactive ? "viewer (default)" : "admin"}</dd>
           </div>
           <div>
             <dt>status</dt>
-            <dd>mock</dd>
+            <dd>{interactive ? "supabase-staging" : "mock"}</dd>
           </div>
           <div>
             <dt>connectedToRuntime</dt>
-            <dd>false</dd>
+            <dd>{interactive ? "true" : "false"}</dd>
           </div>
           <div>
             <dt>productionReady</dt>
@@ -77,15 +108,19 @@ const readonlyNoticeJa =
           </div>
         </dl>
         <p class="admin-login-shell__mock-note">
-          No credentials submitted. No session created. ENABLE_ADMIN_STAGING_AUTH=false.
+          {
+            interactive
+              ? "Role enforcement deferred to G-5y-e. No admin_users table in G-5y-d."
+              : "No credentials submitted. ENABLE_ADMIN_STAGING_AUTH=false or PUBLIC_ADMIN_AUTH_PROVIDER=mock."
+          }
         </p>
       </section>
 
       <div class="admin-login-shell__badge-row">
         <span class="admin-login-shell__badge-label">Role badge preview</span>
-        <AdminPermissionBadge variant="admin" label="Admin" />
+        <AdminPermissionBadge variant="viewer" label="Viewer (G-5y-d default)" />
         <AdminPermissionBadge variant="editor" label="Editor" />
-        <AdminPermissionBadge variant="viewer" label="Viewer" />
+        <AdminPermissionBadge variant="admin" label="Admin" />
       </div>
     </aside>
   </div>
@@ -128,6 +163,9 @@ const readonlyNoticeJa =
     font-size: 0.8125rem;
     color: #475569;
     line-height: 1.5;
+  }
+  .admin-login-shell__signout-row {
+    margin-top: 0.75rem;
   }
   .admin-login-shell__mock-panel {
     padding: 1rem;

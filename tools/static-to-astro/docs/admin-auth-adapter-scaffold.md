@@ -110,17 +110,17 @@ Matrix aligned with [supabase-auth-staging-integration-plan.md](./supabase-auth-
 
 ## 6. Staging shell display
 
-When `ENABLE_ADMIN_STAGING_SHELL=true` and dev mode, `/__admin-staging-shell/musician-basic/` shows:
+When `ENABLE_ADMIN_STAGING_SHELL=true` and dev mode, `/__admin-staging-shell/musician-basic/` shows `AdminAuthAdapterStatusPanel` (G-5y-d):
 
-- Auth adapter: **mock only**
-- Supabase Auth: **not connected**
-- Session: mock-admin@example.com / admin role
-- Runtime connected: **false**
-- Production ready: **false**
-- Route guard: **not enabled**
-- RLS: **not configured**
+| Mode | When |
+| --- | --- |
+| **mock** | `ENABLE_ADMIN_STAGING_AUTH=false` or `PUBLIC_ADMIN_AUTH_PROVIDER=mock` |
+| **supabase-staging** | G-5y-d env gate + `PUBLIC_SUPABASE_URL` / `PUBLIC_SUPABASE_ANON_KEY` |
+| **disabled** | Auth flag on but Supabase config missing |
 
-Rendered via `AdminAuthAdapterStatusPanel` in `musician-basic-admin-prototype.astro` (`stagingShellMode`).
+Always: `productionReady: false`, DB/RLS/Storage/Publish disabled, `/admin/` not connected. Approval ID: `G-5y-d-staging-auth-connect`.
+
+See [staging-supabase-auth-connection.md](./staging-supabase-auth-connection.md).
 
 ---
 
@@ -139,13 +139,16 @@ tools/static-to-astro/output/admin-auth-dry-runs/gosaki/
   admin-auth-adapter-dry-run.json
 ```
 
-Expected flags:
+Expected flags (G-5y-d):
 
-- `supabaseAuthConnected: false`
-- `supabaseClientImported: false`
-- `connectedToRuntime: false`
-- `productionReady: false`
-- `readyForG5yD: true` (when scaffold + login UI shell complete)
+- `phase: G-5y-d`
+- `approvalId: G-5y-d-staging-auth-connect`
+- `supabaseAuthConnectionImplemented: true`
+- `envGated: true`
+- `mockFallbackAvailable: true`
+- `serviceRoleUsed: false`
+- `adminRouteConnected: false`
+- `readyForG5yE: true`
 
 ---
 
@@ -173,9 +176,9 @@ Expected flags:
 
 | Phase | Focus |
 | --- | --- |
-| **G-5y-c（完了）** | [Staging login UI shell](./staging-login-ui-shell.md) — disabled real auth |
-| **G-5y-d-prep（完了）** | [Connection checklist](./supabase-auth-staging-connection-checklist.md) — preflight only |
-| **G-5y-d** | Staging Supabase Auth connection (explicit approval) |
+| **G-5y-c（完了）** | [Staging login UI shell](./staging-login-ui-shell.md) |
+| **G-5y-d-prep（完了）** | [Connection checklist](./supabase-auth-staging-connection-checklist.md) |
+| **G-5y-d（完了）** | [Staging Supabase Auth connection](./staging-supabase-auth-connection.md) |
 | **G-5y-e** | Staging role check / allowlist |
 
 ---

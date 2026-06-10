@@ -18,6 +18,7 @@ const EXAMPLE_DRY_RUN_REL =
 const SCAFFOLD_FILES = [
   "templates/admin-cms/auth/adapters/auth-adapter.types.ts",
   "templates/admin-cms/auth/adapters/mock-auth-adapter.ts",
+  "templates/admin-cms/auth/adapters/supabase-auth-adapter.ts",
   "templates/admin-cms/auth/adapters/permission-checker.ts",
   "templates/admin-cms/auth/adapters/role-checker.ts",
   "templates/admin-cms/auth/adapters/session-checker.ts",
@@ -26,6 +27,28 @@ const SCAFFOLD_FILES = [
   "templates/admin-cms/auth/components/AdminPasswordResetShell.astro",
   "templates/admin-cms/auth/components/AdminAuthGuardPlannedNotice.astro",
   "templates/admin-cms/auth/components/AdminStagingLoginUiSection.astro",
+];
+
+const STAGING_AUTH_SRC_FILES = [
+  "../../src/lib/admin/staging-auth/staging-auth-config.ts",
+  "../../src/lib/admin/staging-auth/supabase-staging-auth-client.ts",
+  "../../src/lib/admin/staging-auth/staging-auth-session.ts",
+  "../../src/lib/admin/staging-auth/staging-auth-ui.ts",
+];
+
+const G5Y_D_APPROVAL_ID = "G-5y-d-staging-auth-connect";
+
+const STAGING_AUTH_FORBIDDEN_PATTERNS = [
+  /service_role/i,
+  /SERVICE_ROLE/,
+  /resetPasswordForEmail/,
+  /\.from\s*\(/,
+  /\.insert\s*\(/,
+  /\.update\s*\(/,
+  /\.delete\s*\(/,
+  /storage\./,
+  /workflow_dispatch/,
+  /\blftp\b/,
 ];
 
 const LOGIN_UI_SHELL_FILES = [
@@ -86,6 +109,35 @@ function scanScaffoldForForbiddenImports(toolRoot) {
 }
 
 /**
+ * @param {string} toolRoot
+ */
+function scanStagingAuthSrcForForbidden(toolRoot) {
+  /** @type {{ file: string; match: string }[]} */
+  const hits = [];
+  for (const rel of STAGING_AUTH_SRC_FILES) {
+    const abs = path.resolve(toolRoot, rel);
+    if (!fs.existsSync(abs)) continue;
+    const content = fs.readFileSync(abs, "utf8");
+    for (const pattern of STAGING_AUTH_FORBIDDEN_PATTERNS) {
+      if (pattern.test(content)) {
+        hits.push({ file: path.relative(toolRoot, abs), match: pattern.source });
+      }
+    }
+  }
+  return hits;
+}
+
+/**
+ * @param {string} toolRoot
+ */
+function stagingAuthSrcFilesExist(toolRoot) {
+  return STAGING_AUTH_SRC_FILES.map((rel) => {
+    const abs = path.resolve(toolRoot, rel);
+    return { path: rel, exists: fs.existsSync(abs) };
+  });
+}
+
+/**
  * @param {string} dir
  * @param {(file: string) => void} onFile
  */
@@ -138,6 +190,9 @@ export function runAdminAuthAdapterDryRun(opts = {}) {
 
   const missingScaffold = scaffoldFileChecks.filter((f) => !f.exists);
   const forbiddenHits = scanScaffoldForForbiddenImports(toolRoot);
+  const stagingAuthFileChecks = stagingAuthSrcFilesExist(toolRoot);
+  const missingStagingAuth = stagingAuthFileChecks.filter((f) => !f.exists);
+  const stagingAuthForbiddenHits = scanStagingAuthSrcForForbidden(toolRoot);
 
   const loginUiChecks = LOGIN_UI_SHELL_FILES.map((rel) => ({
     path: rel,
@@ -150,20 +205,30 @@ export function runAdminAuthAdapterDryRun(opts = {}) {
 
   const matrixSummary = summarizePermissionMatrix(permissions);
 
+  const supabaseAuthConnectionImplemented =
+    missingScaffold.length === 0 &&
+    missingStagingAuth.length === 0 &&
+    stagingAuthForbiddenHits.length === 0;
+
   const report = {
     mode: "dry-run",
-    phase: "G-5y-c",
+    phase: "G-5y-d",
+    approvalId: G5Y_D_APPROVAL_ID,
     siteId,
     generatedAt: new Date().toISOString(),
-    provider: "mock",
+    provider: "mock-or-supabase-staging",
     loginUiShellPresent,
     passwordResetUiShellPresent,
-    realAuthDisabled: true,
+    supabaseAuthConnectionImplemented,
+    envGated: true,
+    mockFallbackAvailable: true,
+    serviceRoleUsed: false,
+    realAuthDisabled: false,
     credentialsSubmitted: false,
     sessionCreated: false,
     passwordResetEmailSent: false,
-    supabaseAuthConnected: false,
-    supabaseClientImported: forbiddenHits.length > 0,
+    supabaseAuthConnected: supabaseAuthConnectionImplemented,
+    supabaseClientImported: supabaseAuthConnectionImplemented,
     adminUsersTableCreated: false,
     rlsPolicyChanged: false,
     dbQueryPerformed: false,
@@ -172,6 +237,7 @@ export function runAdminAuthAdapterDryRun(opts = {}) {
     githubDispatchPerformed: false,
     ftpDeployPerformed: false,
     productionAuthTouched: false,
+    adminRouteConnected: false,
     connectedToRuntime: false,
     productionReady: false,
     mockSession: example.mockSession ?? {
@@ -190,22 +256,26 @@ export function runAdminAuthAdapterDryRun(opts = {}) {
     },
     scaffoldFiles: scaffoldFileChecks,
     missingScaffoldFiles: missingScaffold.map((f) => f.path),
+    stagingAuthSrcFiles: stagingAuthFileChecks,
+    missingStagingAuthFiles: missingStagingAuth.map((f) => f.path),
     forbiddenImportScan: {
       clean: forbiddenHits.length === 0,
       hits: forbiddenHits,
     },
+    stagingAuthForbiddenScan: {
+      clean: stagingAuthForbiddenHits.length === 0,
+      hits: stagingAuthForbiddenHits,
+    },
     permissionMatrixSummary: matrixSummary,
     stagingShellRoute: plan.routes?.stagingShell ?? "/__admin-staging-shell/musician-basic/",
     loginUiShellFiles: loginUiChecks,
-    readyForG5yD:
-      missingScaffold.length === 0 &&
+    readyForG5yE:
+      supabaseAuthConnectionImplemented &&
       forbiddenHits.length === 0 &&
       loginUiShellPresent &&
       passwordResetUiShellPresent,
+    readyForG5yD: true,
   };
-
-  // supabaseClientImported should be false when clean
-  report.supabaseClientImported = !report.forbiddenImportScan.clean;
 
   return report;
 }
@@ -218,8 +288,19 @@ export function formatAdminAuthAdapterDryRunMarkdown(report) {
     "# Admin Auth Adapter Dry-Run Report",
     "",
     `**Phase:** ${report.phase}`,
+    `**Approval ID:** ${report.approvalId}`,
     `**Site:** ${report.siteId}`,
     `**Generated:** ${report.generatedAt}`,
+    "",
+    "## G-5y-d staging Auth connection",
+    "",
+    "| Flag | Value |",
+    "| --- | --- |",
+    `| supabaseAuthConnectionImplemented | ${report.supabaseAuthConnectionImplemented} |`,
+    `| envGated | ${report.envGated} |`,
+    `| mockFallbackAvailable | ${report.mockFallbackAvailable} |`,
+    `| adminRouteConnected | ${report.adminRouteConnected} |`,
+    `| readyForG5yE | ${report.readyForG5yE} |`,
     "",
     "## Safety flags",
     "",
@@ -227,13 +308,17 @@ export function formatAdminAuthAdapterDryRunMarkdown(report) {
     "| --- | --- |",
     `| supabaseAuthConnected | ${report.supabaseAuthConnected} |`,
     `| supabaseClientImported | ${report.supabaseClientImported} |`,
+    `| serviceRoleUsed | ${report.serviceRoleUsed} |`,
     `| adminUsersTableCreated | ${report.adminUsersTableCreated} |`,
     `| rlsPolicyChanged | ${report.rlsPolicyChanged} |`,
+    `| dbQueryPerformed | ${report.dbQueryPerformed} |`,
+    `| dbUpdatePerformed | ${report.dbUpdatePerformed} |`,
+    `| storageUploadPerformed | ${report.storageUploadPerformed} |`,
     `| connectedToRuntime | ${report.connectedToRuntime} |`,
     `| productionReady | ${report.productionReady} |`,
     `| productionAuthTouched | ${report.productionAuthTouched} |`,
     "",
-    "## Login UI shell (G-5y-c)",
+    "## Login UI shell (G-5y-c / G-5y-d)",
     "",
     "| Flag | Value |",
     "| --- | --- |",
@@ -254,18 +339,36 @@ export function formatAdminAuthAdapterDryRunMarkdown(report) {
     "",
     ...report.scaffoldFiles.map((f) => `- [${f.exists ? "x" : " "}] \`${f.path}\``),
     "",
+    "## Staging Auth src files (G-5y-d)",
+    "",
+    ...report.stagingAuthSrcFiles.map((f) => `- [${f.exists ? "x" : " "}] \`${f.path}\``),
+    "",
   ];
 
   if (report.missingScaffoldFiles.length > 0) {
-    lines.push("**Missing:**", ...report.missingScaffoldFiles.map((p) => `- ${p}`), "");
+    lines.push("**Missing scaffold:**", ...report.missingScaffoldFiles.map((p) => `- ${p}`), "");
+  }
+
+  if (report.missingStagingAuthFiles.length > 0) {
+    lines.push(
+      "**Missing staging Auth src:**",
+      ...report.missingStagingAuthFiles.map((p) => `- ${p}`),
+      "",
+    );
   }
 
   lines.push(
-    "## Forbidden import scan",
+    "## Forbidden import scan (auth templates)",
     "",
     report.forbiddenImportScan.clean
-      ? "Clean — no Supabase client / service role / workflow / ftp patterns in auth scaffold."
+      ? "Clean — no Supabase client / service role / workflow / ftp patterns in auth scaffold templates."
       : `**Hits:** ${JSON.stringify(report.forbiddenImportScan.hits, null, 2)}`,
+    "",
+    "## Staging Auth forbidden scan (src)",
+    "",
+    report.stagingAuthForbiddenScan.clean
+      ? "Clean — no service role / resetPasswordForEmail / DB / Storage / workflow / ftp in staging Auth src."
+      : `**Hits:** ${JSON.stringify(report.stagingAuthForbiddenScan.hits, null, 2)}`,
     "",
     "## Permission matrix summary",
     "",
@@ -283,9 +386,9 @@ export function formatAdminAuthAdapterDryRunMarkdown(report) {
     `- productionPublish.enabledByDefault: ${report.integrationPlan.productionPublish?.enabledByDefault}`,
     `- Staging shell route: \`${report.stagingShellRoute}\``,
     "",
-    `**readyForG5yD:** ${report.readyForG5yD}`,
+    `**readyForG5yE:** ${report.readyForG5yE}`,
     "",
-    "*G-5y-c dry-run only. No Supabase Auth connection. Login UI shell — real auth disabled.*",
+    "*G-5y-d dry-run. Staging shell Supabase Auth is env-gated. No /admin/ connection. No DB/RLS/Storage/Publish.*",
   );
 
   return lines.join("\n");

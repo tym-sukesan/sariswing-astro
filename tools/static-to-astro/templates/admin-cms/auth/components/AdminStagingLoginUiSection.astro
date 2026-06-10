@@ -1,8 +1,9 @@
 ---
 /**
- * G-5y-c — Combined staging login UI section for musician-basic staging shell.
- * Login shell + password reset shell + route guard planned notice.
+ * G-5y-c / G-5y-d — Combined staging login UI section for musician-basic staging shell.
+ * G-5y-d: real Supabase Auth when env gate passes.
  */
+import { getStagingAuthConfig } from "../../../../../../src/lib/admin/staging-auth/staging-auth-config";
 import AdminLoginShell from "./AdminLoginShell.astro";
 import AdminPasswordResetShell from "./AdminPasswordResetShell.astro";
 import AdminAuthGuardPlannedNotice from "./AdminAuthGuardPlannedNotice.astro";
@@ -14,15 +15,28 @@ interface Props {
 
 const {
   routePath = "/__admin-staging-shell/musician-basic/",
-  phase = "G-5y-c",
+  phase = "G-5y-d",
 } = Astro.props;
+
+const authConfig = getStagingAuthConfig();
 ---
 
-<div class="admin-staging-login-ui" data-scaffold="true" data-phase={phase}>
-  <AdminLoginShell phase={phase} />
+<div
+  id="admin-staging-auth-root"
+  class="admin-staging-login-ui"
+  data-scaffold="true"
+  data-phase={phase}
+  data-approval-id={authConfig.approvalId}
+  data-auth-mode={authConfig.authMode}
+>
+  <AdminLoginShell phase={phase} authConfig={authConfig} />
   <AdminPasswordResetShell phase={phase} />
   <AdminAuthGuardPlannedNotice currentRoute={routePath} phase={phase} />
 </div>
+
+<script>
+  import "../../../../../../src/lib/admin/staging-auth/staging-auth-ui.ts";
+</script>
 
 <style>
   .admin-staging-login-ui {

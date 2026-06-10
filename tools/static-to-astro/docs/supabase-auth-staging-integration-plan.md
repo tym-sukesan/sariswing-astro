@@ -415,7 +415,8 @@ G-5y-a adds only `ENABLE_ADMIN_STAGING_AUTH=false` to [`.env.example`](../../../
 | **G-5y-b（完了）** | [Auth adapter scaffold / dry-run](./admin-auth-adapter-scaffold.md) | **None** |
 | **G-5y-c（完了）** | [Staging login UI shell](./staging-login-ui-shell.md) — disabled real auth | None |
 | **G-5y-d-prep（完了）** | [Connection checklist](./supabase-auth-staging-connection-checklist.md) — preflight | None |
-| **G-5y-d** | Staging Supabase Auth connection (explicit approval) | Staging Auth only |
+| **G-5y-d（完了）** | [Staging Supabase Auth connection](./staging-supabase-auth-connection.md) | Staging shell Auth only |
+| **G-5y-e** | Staging role check / allowlist | Allowlist enforcement |
 | **G-5y-e** | Staging role check / allowlist enforcement | Staging Auth + allowlist |
 | **G-5z** | Read-only data integration (SELECT + RLS) | Staging DB read |
 | **G-6a+** | CRUD write, media, publish (separate phases) | Staging write paths |

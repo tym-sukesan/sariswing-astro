@@ -1,61 +1,113 @@
 ---
 /**
- * G-5y-b — Auth adapter mock status panel for staging shell.
- * Static display only. No Supabase. No runtime connection.
+ * G-5y-d — Auth adapter status panel (mock / supabase-staging / disabled).
+ * Staging shell only. Not /admin/.
  */
+import type { StagingAuthConfig } from "../../../../../src/lib/admin/staging-auth/staging-auth-config";
+
 interface Props {
   phase?: string;
+  authConfig?: StagingAuthConfig | null;
 }
 
-const { phase = "G-5y-b" } = Astro.props;
+const { phase = "G-5y-d", authConfig = null } = Astro.props;
 
-const mockEmail = "mock-admin@example.com";
-const mockRole = "admin";
+const approvalId = authConfig?.approvalId ?? "G-5y-d-staging-auth-connect";
+const authMode = authConfig?.authMode ?? "mock";
+const stagingAuthEnabled =
+  authConfig?.stagingAuthEnabled && authConfig?.supabaseConfigured ? true : false;
+const provider = authConfig?.provider ?? "mock";
+const configMissing = authConfig?.configMissing ?? false;
+const connectedToRuntime = stagingAuthEnabled;
 ---
 
 <section
   class="admin-auth-adapter-panel"
+  id="staging-auth-status-panel"
   role="status"
   aria-live="polite"
   data-scaffold="true"
   data-phase={phase}
+  data-approval-id={approvalId}
 >
   <h2 class="admin-auth-adapter-panel__title">Auth adapter status ({phase})</h2>
+
+  {
+    configMissing ? (
+      <p class="admin-auth-adapter-panel__alert" role="alert">
+        Supabase Auth config missing. Set PUBLIC_SUPABASE_URL and PUBLIC_SUPABASE_ANON_KEY
+        locally. Falling back to disabled/mock mode.
+      </p>
+    ) : null
+  }
+
+  <p id="staging-auth-error" class="admin-auth-adapter-panel__error" hidden="" />
+
   <dl class="admin-auth-adapter-panel__list">
     <div>
-      <dt>Auth adapter</dt>
-      <dd>mock only</dd>
+      <dt>Auth mode</dt>
+      <dd id="staging-auth-mode">{authMode}</dd>
     </div>
     <div>
-      <dt>Supabase Auth</dt>
-      <dd>not connected</dd>
+      <dt>Staging Auth enabled</dt>
+      <dd id="staging-auth-enabled">{stagingAuthEnabled ? "true" : "false"}</dd>
     </div>
     <div>
-      <dt>Session</dt>
-      <dd>
-        {mockEmail} / {mockRole} role
+      <dt>Provider</dt>
+      <dd id="staging-auth-provider">{provider}</dd>
+    </div>
+    <div>
+      <dt>Session status</dt>
+      <dd id="staging-auth-session-status">
+        {stagingAuthEnabled ? "unknown" : authMode === "mock" ? "mock" : "signed-out"}
       </dd>
     </div>
     <div>
-      <dt>Runtime connected</dt>
-      <dd>false</dd>
+      <dt>User email</dt>
+      <dd id="staging-auth-user-email">
+        {stagingAuthEnabled ? "—" : "mock-admin@example.com"}
+      </dd>
+    </div>
+    <div>
+      <dt>Role</dt>
+      <dd id="staging-auth-role">{stagingAuthEnabled ? "viewer (default)" : "admin (mock preview)"}</dd>
+    </div>
+    <div>
+      <dt>Connected to runtime</dt>
+      <dd id="staging-auth-connected">{connectedToRuntime ? "true" : "false"}</dd>
     </div>
     <div>
       <dt>Production ready</dt>
-      <dd>false</dd>
+      <dd id="staging-auth-production-ready">false</dd>
     </div>
     <div>
-      <dt>Route guard</dt>
-      <dd>not enabled</dd>
+      <dt>DB access</dt>
+      <dd>disabled</dd>
     </div>
     <div>
       <dt>RLS</dt>
       <dd>not configured</dd>
     </div>
+    <div>
+      <dt>Storage</dt>
+      <dd>disabled</dd>
+    </div>
+    <div>
+      <dt>Publish</dt>
+      <dd>disabled</dd>
+    </div>
+    <div>
+      <dt>/admin route</dt>
+      <dd>not connected</dd>
+    </div>
+    <div>
+      <dt>Approval ID</dt>
+      <dd><code>{approvalId}</code></dd>
+    </div>
   </dl>
   <p class="admin-auth-adapter-panel__note">
-    Auth adapter scaffold only. Supabase client not imported. Actions remain disabled.
-    Not connected to /admin/.
+    G-5y-d staging shell Auth only. No DB query. No Storage. No Publish. Not connected to /admin/.
+    Set ENABLE_ADMIN_STAGING_AUTH=false or PUBLIC_ADMIN_AUTH_PROVIDER=mock to revert.
   </p>
 </section>
 
@@ -73,6 +125,24 @@ const mockRole = "admin";
     font-weight: 600;
     color: #0f172a;
   }
+  .admin-auth-adapter-panel__alert {
+    margin: 0 0 0.75rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    background: #fff7ed;
+    border: 1px solid #fdba74;
+    color: #9a3412;
+    font-size: 0.875rem;
+  }
+  .admin-auth-adapter-panel__error {
+    margin: 0 0 0.75rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #991b1b;
+    font-size: 0.875rem;
+  }
   .admin-auth-adapter-panel__list {
     margin: 0;
     display: grid;
@@ -86,6 +156,12 @@ const mockRole = "admin";
   .admin-auth-adapter-panel__list dd {
     margin: 0;
     color: #1e293b;
+  }
+  .admin-auth-adapter-panel__list code {
+    font-size: 0.8125rem;
+    background: #e2e8f0;
+    padding: 0.1rem 0.35rem;
+    border-radius: 4px;
   }
   .admin-auth-adapter-panel__note {
     margin: 0.75rem 0 0;

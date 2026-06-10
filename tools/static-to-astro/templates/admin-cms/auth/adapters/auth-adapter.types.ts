@@ -43,13 +43,13 @@ export interface AdminSession {
   email?: string;
   role?: AdminRole;
   provider: AdminAuthProvider;
-  connectedToRuntime: false;
+  connectedToRuntime: boolean;
   productionReady: false;
 }
 
 export interface AdminAuthAdapter {
   provider: AdminAuthProvider;
-  connectedToRuntime: false;
+  connectedToRuntime: boolean;
   productionReady: false;
   getSession(): Promise<AdminSession>;
   signIn?(email: string, password: string): Promise<AdminSession>;

@@ -1,0 +1,46 @@
+{
+  "phase": "G-6-d-blocker",
+  "type": "profile-schema-alignment-plan",
+  "planningOnly": true,
+  "blocker": "public.profile table missing in staging DB",
+  "stagingProjectRef": "static-to-astro-cms-staging",
+  "actualStagingTables": [
+    "admin_users",
+    "discography",
+    "discography_tracks",
+    "schedule_months",
+    "schedules"
+  ],
+  "expectedTable": "profile",
+  "recommendedTable": "profile",
+  "recommendedColumns": [
+    "id",
+    "name",
+    "bio",
+    "catchphrase",
+    "website_url",
+    "social_links",
+    "created_at",
+    "updated_at",
+    "updated_by"
+  ],
+  "minimalColumnsForG6D": ["id", "name", "bio", "updated_at", "updated_by"],
+  "logicalFieldMapping": {
+    "display_name": "name",
+    "bio": "bio"
+  },
+  "draftSqlCreated": true,
+  "draftSqlExecuted": false,
+  "schemaApplied": false,
+  "rlsPolicyChanged": false,
+  "dbWritePerformed": false,
+  "nonDryRunExecuted": false,
+  "readyForSchemaApplyApproval": true,
+  "readyForG6DNonDryRun": false,
+  "readyForManualNonDryRunDecision": false,
+  "productionDataTouched": false,
+  "adminRouteConnected": false,
+  "storageConnected": false,
+  "publishConnected": false,
+  "recommendedNextPhase": "G-6-d-schema-apply-prep: review and approve applying public.profile schema to staging"
+}

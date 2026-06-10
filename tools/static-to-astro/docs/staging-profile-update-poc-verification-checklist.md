@@ -185,6 +185,8 @@ node tools/static-to-astro/scripts/report-staging-profile-update-poc-verificatio
 
 Decision: proceed only if state is `readyForManualNonDryRun` (see §13).
 
+**Blocked until schema alignment:** If `public.profile` does not exist on staging, remain in `notReadyForNonDryRun`. See [profile-schema-alignment-plan.md](./profile-schema-alignment-plan.md).
+
 ## 8. Non-dry-run command template
 
 **Manual execution only.** User runs after §7 checklist complete.
@@ -329,6 +331,8 @@ nonDryRunExecuted:
 ```
 
 G-6-d-verify completion state: `readyForManualNonDryRunDecision: true`, `nonDryRunExecuted: false`.
+
+**G-6-d-blocker（完了）:** [profile-schema-alignment-plan.md](./profile-schema-alignment-plan.md) — `public.profile` missing on `static-to-astro-cms-staging`; non-dry-run **blocked**; `readyForG6DNonDryRun: false`; `readyForSchemaApplyApproval: true`.
 
 ## 14. G-6-d-verify completion criteria
 

@@ -100,6 +100,8 @@ Also required when enabling write:
 
 **G-6-d-verify（完了）:** [staging-profile-update-poc-verification-checklist.md](./staging-profile-update-poc-verification-checklist.md) — verification / execution planning only; `nonDryRunExecuted: false`; `readyForManualNonDryRunDecision: true`; column mapping confirmation required; Cursor must not execute non-dry-run automatically.
 
+**G-6-d-blocker（完了）:** [profile-schema-alignment-plan.md](./profile-schema-alignment-plan.md) — `public.profile` missing on staging; actual tables documented; recommended `public.profile`; DRAFT ONLY SQL; `readyForSchemaApplyApproval: true`; `readyForG6DNonDryRun: false`; non-dry-run stopped.
+
 ### Manual non-dry-run example (staging only)
 
 ```bash

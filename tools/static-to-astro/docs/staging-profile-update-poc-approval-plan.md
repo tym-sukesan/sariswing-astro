@@ -419,6 +419,8 @@ Approval plan satisfied — implementation doc and `src/lib/admin/staging-write/
 
 **G-6-d-verify（完了）:** [staging-profile-update-poc-verification-checklist.md](./staging-profile-update-poc-verification-checklist.md) — first non-dry-run not executed; manual execution checklist ready.
 
+**G-6-d-blocker（完了）:** [profile-schema-alignment-plan.md](./profile-schema-alignment-plan.md) — schema alignment required before non-dry-run; `public.profile` missing on staging.
+
 ## 18. Final safety statement
 
 **G-6-d-prep is a planning and approval phase only.**

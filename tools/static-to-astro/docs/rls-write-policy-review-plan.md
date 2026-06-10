@@ -375,7 +375,9 @@ node tools/static-to-astro/scripts/report-rls-write-policy-review-plan.mjs \
 
 **G-6-d（完了）:** [staging-profile-update-poc-implementation.md](./staging-profile-update-poc-implementation.md) — gated profile update via anon + RLS; no RLS changes from kit; dry-run default.
 
-**Proceed to:** G-6-e+ with separate approval gates. No automatic expansion.
+**G-6-d-blocker（完了）:** [profile-schema-alignment-plan.md](./profile-schema-alignment-plan.md) — `public.profile` missing; RLS draft for profile table in alignment plan (DRAFT ONLY); apply after schema creation approval.
+
+**Proceed to:** G-6-d-schema-apply-prep → schema apply (staging only) → re-verify before non-dry-run. G-6-e blocked until profile path unblocked.
 
 ## 17. Final safety statement
 

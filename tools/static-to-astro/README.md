@@ -1370,6 +1370,8 @@ gosaki / Sariswing で実証した移行フローを、**別サイト向け CMS 
 
 **G-6-d-verify（完了）:** [Staging profile update PoC verification checklist](docs/staging-profile-update-poc-verification-checklist.md) — verification only; `nonDryRunExecuted: false`; `readyForManualNonDryRunDecision: true`; Cursor must not execute non-dry-run automatically。
 
+**G-6-d-blocker（完了）:** [Profile schema alignment plan](docs/profile-schema-alignment-plan.md) — `public.profile` missing on `static-to-astro-cms-staging`; recommended `public.profile`; DRAFT ONLY SQL; `readyForSchemaApplyApproval: true`; `readyForG6DNonDryRun: false`; non-dry-run stopped。
+
 ```bash
 node tools/static-to-astro/scripts/report-disabled-write-action-scaffold.mjs \
   --out-dir tools/static-to-astro/output/disabled-write-action-scaffold/gosaki
@@ -1388,6 +1390,11 @@ node tools/static-to-astro/scripts/report-staging-profile-update-poc-implementat
 ```bash
 node tools/static-to-astro/scripts/report-staging-profile-update-poc-verification.mjs \
   --out-dir tools/static-to-astro/output/staging-profile-update-poc-verification/gosaki
+```
+
+```bash
+node tools/static-to-astro/scripts/report-profile-schema-alignment-plan.mjs \
+  --out-dir tools/static-to-astro/output/profile-schema-alignment-plan/gosaki
 ```
 
 ```bash

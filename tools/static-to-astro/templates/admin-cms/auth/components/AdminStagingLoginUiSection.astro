@@ -1,12 +1,12 @@
 ---
 /**
- * G-5y-c / G-5y-d — Combined staging login UI section for musician-basic staging shell.
- * G-5y-d: real Supabase Auth when env gate passes.
+ * G-5y-c / G-5y-d / G-5y-e-a — Staging login + role/allowlist section.
  */
 import { getStagingAuthConfig } from "../../../../../../src/lib/admin/staging-auth/staging-auth-config";
 import AdminLoginShell from "./AdminLoginShell.astro";
 import AdminPasswordResetShell from "./AdminPasswordResetShell.astro";
 import AdminAuthGuardPlannedNotice from "./AdminAuthGuardPlannedNotice.astro";
+import AdminRoleAllowlistStatusPanel from "./AdminRoleAllowlistStatusPanel.astro";
 
 interface Props {
   routePath?: string;
@@ -15,7 +15,7 @@ interface Props {
 
 const {
   routePath = "/__admin-staging-shell/musician-basic/",
-  phase = "G-5y-d",
+  phase = "G-5y-e-a",
 } = Astro.props;
 
 const authConfig = getStagingAuthConfig();
@@ -29,6 +29,7 @@ const authConfig = getStagingAuthConfig();
   data-approval-id={authConfig.approvalId}
   data-auth-mode={authConfig.authMode}
 >
+  <AdminRoleAllowlistStatusPanel phase={phase} />
   <AdminLoginShell phase={phase} authConfig={authConfig} />
   <AdminPasswordResetShell phase={phase} />
   <AdminAuthGuardPlannedNotice currentRoute={routePath} phase={phase} />

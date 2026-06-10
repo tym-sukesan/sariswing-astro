@@ -1338,7 +1338,9 @@ gosaki / Sariswing で実証した移行フローを、**別サイト向け CMS 
 
 **G-5y-d-prep（完了）:** [Supabase Auth staging connection checklist](docs/supabase-auth-staging-connection-checklist.md) — preflight checklist。
 
-**G-5y-d（完了）:** [Staging Supabase Auth connection](docs/staging-supabase-auth-connection.md) — staging shell only。env gate + mock fallback。approval ID: `G-5y-d-staging-auth-connect`。DB/RLS/Storage/Publish/`/admin/` は未接続。次: **G-5y-e** role check / allowlist。
+**G-5y-d（完了）:** [Staging Supabase Auth connection](docs/staging-supabase-auth-connection.md) — staging shell only。env gate + mock fallback。
+
+**G-5y-e-a（完了）:** [Staging role / allowlist mock](docs/staging-role-allowlist-mock.md) — mock allowlist (`example.com` only)。`admin_users`/DB/RLS 未使用。`productionPublish` disabled。次: **G-5y-e-b** private/server-side allowlist or **G-5z** read-only data。
 
 ```bash
 node tools/static-to-astro/scripts/inspect-admin-auth-adapter.mjs \

@@ -8,6 +8,8 @@ import {
   signInStagingAuth,
   signOutStagingAuth,
 } from "./staging-auth-session";
+import { resolveMockAdminRole } from "./staging-role-resolver";
+import { refreshRoleAllowlistPanel } from "./staging-role-allowlist-ui";
 
 function setText(id: string, value: string): void {
   const el = document.getElementById(id);
@@ -48,7 +50,8 @@ async function refreshAuthStatusPanel(): Promise<void> {
   if (!config.stagingAuthEnabled || !config.supabaseConfigured) {
     setText("staging-auth-session-status", "mock");
     setText("staging-auth-user-email", "mock-admin@example.com");
-    setText("staging-auth-role", "admin (mock preview)");
+    setText("staging-auth-role", "admin (mock allowlist)");
+    await refreshRoleAllowlistPanel();
     return;
   }
 
@@ -59,14 +62,23 @@ async function refreshAuthStatusPanel(): Promise<void> {
     );
     setText(
       "staging-auth-session-status",
-      session.status === "signed-in" ? "signed-in" : "signed-out",
+      session.status === "signed-in"
+        ? "signed-in"
+        : session.status === "denied"
+          ? "denied"
+          : "signed-out",
     );
     setText("staging-auth-user-email", session.email ?? "—");
-    setText("staging-auth-role", session.role ?? "viewer");
+    const resolution = resolveMockAdminRole(session.email);
+    setText(
+      "staging-auth-role",
+      resolution.displayRole === "denied" ? "denied (not in mock allowlist)" : (session.role ?? "—"),
+    );
     const signOutBtn = document.getElementById("staging-sign-out-btn");
     if (signOutBtn) {
-      signOutBtn.hidden = session.status !== "signed-in";
+      signOutBtn.hidden = session.status !== "signed-in" && session.status !== "denied";
     }
+    await refreshRoleAllowlistPanel();
   } catch {
     setText("staging-auth-session-status", "unknown");
     setError("Could not read Auth session.");
@@ -101,6 +113,7 @@ function wireLoginForm(): void {
         passwordInput.value,
       );
       await refreshAuthStatusPanel();
+      await refreshRoleAllowlistPanel();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Login failed.");
     } finally {
@@ -116,6 +129,7 @@ function wireLoginForm(): void {
     try {
       await signOutStagingAuth(config.supabaseUrl, config.supabaseAnonKey);
       await refreshAuthStatusPanel();
+      await refreshRoleAllowlistPanel();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Sign out failed.");
     } finally {
@@ -130,6 +144,7 @@ export function initStagingAuthUi(): void {
 
   wireLoginForm();
   void refreshAuthStatusPanel();
+  void refreshRoleAllowlistPanel();
 }
 
 if (typeof document !== "undefined") {

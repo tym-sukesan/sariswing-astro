@@ -1,0 +1,224 @@
+---
+/**
+ * G-5y-e-a — Role / allowlist status panel (mock-only, staging shell).
+ */
+import { getStagingAuthConfig } from "../../../../../../src/lib/admin/staging-auth/staging-auth-config";
+import {
+  resolveMockAdminRole,
+  resolveMockPreviewRole,
+} from "../../../../../../src/lib/admin/staging-auth/staging-role-resolver";
+import {
+  formatPermissionFlags,
+  getStagingPermissionStatus,
+} from "../../../../../../src/lib/admin/staging-auth/staging-permission-status";
+import { MOCK_ALLOWLIST_DEFAULT_EMAIL } from "../../../../../../src/lib/admin/staging-auth/mock-allowlist";
+
+interface Props {
+  phase?: string;
+}
+
+const { phase = "G-5y-e-a" } = Astro.props;
+
+const authConfig = getStagingAuthConfig();
+const useMockPreview =
+  !authConfig.stagingAuthEnabled ||
+  !authConfig.supabaseConfigured ||
+  authConfig.authMode === "mock";
+
+const resolution = useMockPreview
+  ? resolveMockPreviewRole()
+  : resolveMockAdminRole(undefined);
+
+const permissionRows = getStagingPermissionStatus(resolution.role);
+const denied = resolution.status === "mock-denied";
+const displayEmail = resolution.email ?? (useMockPreview ? MOCK_ALLOWLIST_DEFAULT_EMAIL : "—");
+const displayRole = resolution.displayRole;
+---
+
+<section
+  class="admin-role-allowlist-panel"
+  id="staging-role-allowlist-panel"
+  role="status"
+  aria-live="polite"
+  data-scaffold="true"
+  data-phase={phase}
+  data-mode="mock-only"
+>
+  <h2 class="admin-role-allowlist-panel__title">Role / allowlist status ({phase})</h2>
+
+  <div
+    class="admin-role-allowlist-panel__denied"
+    id="staging-allowlist-denied-notice"
+    hidden={!denied}
+    role={denied ? "alert" : undefined}
+  >
+    <p>
+      This signed-in email is not included in the mock allowlist. Access would be denied in a real
+      admin route. This staging shell remains visible for testing only.
+    </p>
+    <p lang="ja">
+      このメールアドレスは mock allowlist に含まれていません。実運用の管理画面ではアクセス不可として扱う想定です。この
+      staging shell は検証用のため表示されています。
+    </p>
+  </div>
+
+  <dl class="admin-role-allowlist-panel__meta">
+    <div>
+      <dt>Mode</dt>
+      <dd id="staging-role-mode">mock-only</dd>
+    </div>
+    <div>
+      <dt>Email</dt>
+      <dd id="staging-role-email">{displayEmail}</dd>
+    </div>
+    <div>
+      <dt>Role</dt>
+      <dd id="staging-role-value">{displayRole}</dd>
+    </div>
+    <div>
+      <dt>Allowlist source</dt>
+      <dd id="staging-allowlist-source">mock allowlist</dd>
+    </div>
+    <div>
+      <dt>Can access admin shell</dt>
+      <dd id="staging-can-access-shell">{resolution.canAccessAdminShell ? "true" : "false"}</dd>
+    </div>
+    <div>
+      <dt>admin_users table</dt>
+      <dd>not used</dd>
+    </div>
+    <div>
+      <dt>DB query</dt>
+      <dd>not performed</dd>
+    </div>
+    <div>
+      <dt>RLS</dt>
+      <dd>not configured</dd>
+    </div>
+    <div>
+      <dt>Production publish</dt>
+      <dd id="staging-production-publish">disabled</dd>
+    </div>
+    <div>
+      <dt>/admin route</dt>
+      <dd>not connected</dd>
+    </div>
+  </dl>
+
+  <h3 class="admin-role-allowlist-panel__matrix-title">Permission matrix preview</h3>
+  <p class="admin-role-allowlist-panel__matrix-note">
+    Aligned with G-5y-b <code>permission-checker.ts</code>. <code>productionPublish</code> is
+    always false.
+  </p>
+
+  <div class="admin-role-allowlist-panel__table-wrap">
+    <table class="admin-role-allowlist-panel__table" id="staging-permission-matrix">
+      <thead>
+        <tr>
+          <th scope="col">Module</th>
+          <th scope="col">Permissions</th>
+        </tr>
+      </thead>
+      <tbody id="staging-permission-matrix-body">
+        {
+          permissionRows.map((row) => (
+            <tr data-module={row.module}>
+              <th scope="row">{row.module}</th>
+              <td class="admin-role-allowlist-panel__perm-cell">
+                {formatPermissionFlags(row.permissions)}
+              </td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <p class="admin-role-allowlist-panel__mock-emails">
+    Mock allowlist: mock-admin@example.com (admin), mock-editor@example.com (editor),
+    mock-viewer@example.com (viewer). Real customer emails are not committed.
+  </p>
+</section>
+
+<style>
+  .admin-role-allowlist-panel {
+    margin: 0 0 1.25rem;
+    padding: 1rem 1.25rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    background: #f8fafc;
+  }
+  .admin-role-allowlist-panel__title {
+    margin: 0 0 0.75rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #0f172a;
+  }
+  .admin-role-allowlist-panel__denied {
+    margin: 0 0 0.75rem;
+    padding: 0.75rem;
+    border-radius: 6px;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #991b1b;
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+  .admin-role-allowlist-panel__denied p {
+    margin: 0 0 0.35rem;
+  }
+  .admin-role-allowlist-panel__denied p:last-child {
+    margin-bottom: 0;
+  }
+  .admin-role-allowlist-panel__meta {
+    margin: 0 0 1rem;
+    display: grid;
+    gap: 0.35rem 1rem;
+    grid-template-columns: max-content 1fr;
+    font-size: 0.875rem;
+  }
+  .admin-role-allowlist-panel__meta dt {
+    font-weight: 600;
+    color: #334155;
+  }
+  .admin-role-allowlist-panel__meta dd {
+    margin: 0;
+    color: #1e293b;
+  }
+  .admin-role-allowlist-panel__matrix-title {
+    margin: 0 0 0.35rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+  .admin-role-allowlist-panel__matrix-note {
+    margin: 0 0 0.5rem;
+    font-size: 0.8125rem;
+    color: #64748b;
+  }
+  .admin-role-allowlist-panel__table-wrap {
+    overflow-x: auto;
+  }
+  .admin-role-allowlist-panel__table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.8125rem;
+  }
+  .admin-role-allowlist-panel__table th,
+  .admin-role-allowlist-panel__table td {
+    border: 1px solid #e2e8f0;
+    padding: 0.35rem 0.5rem;
+    text-align: left;
+  }
+  .admin-role-allowlist-panel__table thead th {
+    background: #f1f5f9;
+  }
+  .admin-role-allowlist-panel__perm-cell {
+    font-family: ui-monospace, monospace;
+    font-size: 0.75rem;
+  }
+  .admin-role-allowlist-panel__mock-emails {
+    margin: 0.75rem 0 0;
+    font-size: 0.75rem;
+    color: #64748b;
+  }
+</style>

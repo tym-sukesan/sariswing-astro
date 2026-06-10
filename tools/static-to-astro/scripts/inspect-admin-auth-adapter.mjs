@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Inspect Admin Auth adapter scaffold (G-5y-b / G-5y-d dry-run).
+ * Inspect Admin Auth adapter scaffold (G-5y-b / G-5y-d / G-5y-e-a dry-run).
  * Read-only / output-only. No live Supabase connection.
  *
  * Usage:
@@ -22,7 +22,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 function printHelp() {
   console.log(`Usage: node scripts/inspect-admin-auth-adapter.mjs [options]
 
-Dry-run Admin Auth adapter scaffold (G-5y-d).
+Dry-run Admin Auth adapter scaffold (G-5y-e-a).
 No live Supabase connection. No DB / Storage / FTP / dispatch.
 
 Options:
@@ -78,18 +78,18 @@ function main() {
 
   const report = runAdminAuthAdapterDryRun({ toolRoot, siteId });
 
-  console.log("static-to-astro inspect-admin-auth-adapter (G-5y-d dry-run)");
+  console.log("static-to-astro inspect-admin-auth-adapter (G-5y-e-a dry-run)");
   console.log(`  phase: ${report.phase}`);
-  console.log(`  approvalId: ${report.approvalId}`);
-  console.log(`  supabaseAuthConnectionImplemented: ${report.supabaseAuthConnectionImplemented}`);
-  console.log(`  envGated: ${report.envGated}`);
-  console.log(`  mockFallbackAvailable: ${report.mockFallbackAvailable}`);
-  console.log(`  serviceRoleUsed: ${report.serviceRoleUsed}`);
+  console.log(`  roleAllowlistMode: ${report.roleAllowlistMode}`);
+  console.log(`  mockAllowlistImplemented: ${report.mockAllowlistImplemented}`);
+  console.log(`  realEmailsCommitted: ${report.realEmailsCommitted}`);
+  console.log(`  adminUsersTableUsed: ${report.adminUsersTableUsed}`);
   console.log(`  dbQueryPerformed: ${report.dbQueryPerformed}`);
   console.log(`  rlsPolicyChanged: ${report.rlsPolicyChanged}`);
-  console.log(`  productionAuthTouched: ${report.productionAuthTouched}`);
+  console.log(`  productionPublishEnabled: ${report.productionPublishEnabled}`);
   console.log(`  adminRouteConnected: ${report.adminRouteConnected}`);
-  console.log(`  readyForG5yE: ${report.readyForG5yE}`);
+  console.log(`  readyForG5yEB: ${report.readyForG5yEB}`);
+  console.log(`  supabaseAuthConnectionImplemented: ${report.supabaseAuthConnectionImplemented}`);
   console.log(`  loginUiShellPresent: ${report.loginUiShellPresent}`);
 
   if (report.missingScaffoldFiles.length > 0) {
@@ -99,6 +99,11 @@ function main() {
 
   if (report.missingStagingAuthFiles.length > 0) {
     console.error("Missing staging Auth src files:", report.missingStagingAuthFiles.join(", "));
+    process.exit(1);
+  }
+
+  if (!report.mockAllowlistEmailScan.clean) {
+    console.error("Mock allowlist email scan failed:", report.mockAllowlistEmailScan.hits);
     process.exit(1);
   }
 

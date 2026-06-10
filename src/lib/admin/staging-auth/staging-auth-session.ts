@@ -2,19 +2,22 @@
  * G-5y-d — Staging Auth session helpers. Auth only — no DB/RLS.
  */
 
-import type { AdminRole, AdminSession } from "../../../../tools/static-to-astro/templates/admin-cms/auth/adapters/auth-adapter.types";
+import type { AdminSession } from "../../../../tools/static-to-astro/templates/admin-cms/auth/adapters/auth-adapter.types";
 import { getStagingSupabaseClient } from "./supabase-staging-auth-client";
-
-const DEFAULT_STAGING_ROLE: AdminRole = "viewer";
+import { resolveMockAdminRole } from "./staging-role-resolver";
 
 function mapSupabaseSession(
   email: string | undefined,
   status: AdminSession["status"],
 ): AdminSession {
+  const resolution = resolveMockAdminRole(email);
+  const sessionStatus =
+    resolution.status === "mock-denied" && status === "signed-in" ? "denied" : status;
+
   return {
-    status,
-    email,
-    role: DEFAULT_STAGING_ROLE,
+    status: sessionStatus,
+    email: resolution.email ?? email,
+    role: resolution.role,
     provider: "supabase",
     connectedToRuntime: true,
     productionReady: false,

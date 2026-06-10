@@ -1,0 +1,26 @@
+{
+  "phase": "G-5y-e-a",
+  "mode": "mock-only",
+  "realEmailsAllowed": false,
+  "adminUsersTableUsed": false,
+  "dbQueryPerformed": false,
+  "rlsPolicyChanged": false,
+  "productionReady": false,
+  "entries": [
+    {
+      "email": "mock-admin@example.com",
+      "role": "admin",
+      "active": true
+    },
+    {
+      "email": "mock-editor@example.com",
+      "role": "editor",
+      "active": true
+    },
+    {
+      "email": "mock-viewer@example.com",
+      "role": "viewer",
+      "active": true
+    }
+  ]
+}

@@ -236,9 +236,9 @@ const moduleSummary = [
         <AdminStatusMessage
           type="error"
           title="Staging runtime shell — Shell-only — Mock/static data only — Actions disabled"
-          message={`Route ${stagingShellRoutePath} is a staging runtime shell candidate (G-5x). Not connected to /admin/. Not connected to runtime data. Supabase Auth is env-gated (G-5y-d) on this shell only. No DB query or update. No Storage upload. No GitHub dispatch. No FTP deploy. Production disabled.`}
+          message={`Route ${stagingShellRoutePath} is a staging runtime shell candidate (G-5x). Not connected to /admin/. Not connected to runtime data. Supabase Auth env-gated (G-5y-d). Role/allowlist mock-only (G-5y-e-a). No DB query or update. No Storage upload. No GitHub dispatch. No FTP deploy. Production disabled.`}
         />
-        <AdminAuthAdapterStatusPanel phase="G-5y-d" authConfig={stagingAuthConfig} />
+        <AdminAuthAdapterStatusPanel phase="G-5y-e-a" authConfig={stagingAuthConfig} />
       </div>
     ) : localPreviewMode ? (
       <AdminStatusMessage
@@ -269,7 +269,7 @@ const moduleSummary = [
           class="admin-prototype-section admin-staging-login-section"
           data-section="auth-login-shell"
         >
-          <AdminStagingLoginUiSection routePath={stagingShellRoutePath} phase="G-5y-d" />
+          <AdminStagingLoginUiSection routePath={stagingShellRoutePath} phase="G-5y-e-a" />
         </section>
       ) : null
     }

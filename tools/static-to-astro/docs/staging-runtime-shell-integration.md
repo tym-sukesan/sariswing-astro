@@ -147,7 +147,8 @@ Buttons use `disabled={true}` and do not perform runtime operations.
 | **G-5y-c（完了）** | [Staging login UI shell](./staging-login-ui-shell.md) |
 | **G-5y-d-prep（完了）** | [Connection checklist](./supabase-auth-staging-connection-checklist.md) |
 | **G-5y-d（完了）** | [Staging Supabase Auth connection](./staging-supabase-auth-connection.md) |
-| **G-5y-e** | Staging role check / allowlist |
+| **G-5y-e-a（完了）** | [Staging role / allowlist mock](./staging-role-allowlist-mock.md) |
+| **G-5y-e-b** | Private/server-side allowlist |
 | Prerequisite | Complete shell QA on this route first |
 | Still | staging-only, no production admin, no `/admin/` |
 
@@ -162,6 +163,7 @@ Buttons use `disabled={true}` and do not perform runtime operations.
 - [admin-auth-adapter-scaffold.md](./admin-auth-adapter-scaffold.md) — G-5y-b Auth adapter mock status on this route
 - [staging-login-ui-shell.md](./staging-login-ui-shell.md) — G-5y-c login UI shell on this route
 - [staging-supabase-auth-connection.md](./staging-supabase-auth-connection.md) — G-5y-d env-gated Auth
+- [staging-role-allowlist-mock.md](./staging-role-allowlist-mock.md) — G-5y-e-a mock allowlist
 - [supabase-auth-staging-connection-checklist.md](./supabase-auth-staging-connection-checklist.md) — G-5y-d-prep preflight
 
 ---

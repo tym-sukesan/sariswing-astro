@@ -139,16 +139,16 @@ tools/static-to-astro/output/admin-auth-dry-runs/gosaki/
   admin-auth-adapter-dry-run.json
 ```
 
-Expected flags (G-5y-d):
+Expected flags (G-5y-e-a):
 
-- `phase: G-5y-d`
-- `approvalId: G-5y-d-staging-auth-connect`
-- `supabaseAuthConnectionImplemented: true`
-- `envGated: true`
-- `mockFallbackAvailable: true`
-- `serviceRoleUsed: false`
+- `phase: G-5y-e-a`
+- `roleAllowlistMode: mock-only`
+- `mockAllowlistImplemented: true`
+- `realEmailsCommitted: false`
+- `adminUsersTableUsed: false`
+- `productionPublishEnabled: false`
 - `adminRouteConnected: false`
-- `readyForG5yE: true`
+- `readyForG5yEB: true`
 
 ---
 
@@ -179,7 +179,8 @@ Expected flags (G-5y-d):
 | **G-5y-c（完了）** | [Staging login UI shell](./staging-login-ui-shell.md) |
 | **G-5y-d-prep（完了）** | [Connection checklist](./supabase-auth-staging-connection-checklist.md) |
 | **G-5y-d（完了）** | [Staging Supabase Auth connection](./staging-supabase-auth-connection.md) |
-| **G-5y-e** | Staging role check / allowlist |
+| **G-5y-e-a（完了）** | [Staging role / allowlist mock](./staging-role-allowlist-mock.md) |
+| **G-5y-e-b** | Private/server-side allowlist |
 
 ---
 

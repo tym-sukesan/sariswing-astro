@@ -27,6 +27,8 @@ const SCAFFOLD_FILES = [
   "templates/admin-cms/auth/components/AdminPasswordResetShell.astro",
   "templates/admin-cms/auth/components/AdminAuthGuardPlannedNotice.astro",
   "templates/admin-cms/auth/components/AdminStagingLoginUiSection.astro",
+  "templates/admin-cms/auth/components/AdminRoleAllowlistStatusPanel.astro",
+  "templates/admin-cms/auth/allowlist/mock-admin-allowlist.example.json",
 ];
 
 const STAGING_AUTH_SRC_FILES = [
@@ -34,7 +36,13 @@ const STAGING_AUTH_SRC_FILES = [
   "../../src/lib/admin/staging-auth/supabase-staging-auth-client.ts",
   "../../src/lib/admin/staging-auth/staging-auth-session.ts",
   "../../src/lib/admin/staging-auth/staging-auth-ui.ts",
+  "../../src/lib/admin/staging-auth/mock-allowlist.ts",
+  "../../src/lib/admin/staging-auth/staging-role-resolver.ts",
+  "../../src/lib/admin/staging-auth/staging-permission-status.ts",
+  "../../src/lib/admin/staging-auth/staging-role-allowlist-ui.ts",
 ];
+
+const MOCK_ALLOWLIST_REL = "templates/admin-cms/auth/allowlist/mock-admin-allowlist.example.json";
 
 const G5Y_D_APPROVAL_ID = "G-5y-d-staging-auth-connect";
 
@@ -138,6 +146,34 @@ function stagingAuthSrcFilesExist(toolRoot) {
 }
 
 /**
+ * @param {string} toolRoot
+ */
+function scanMockAllowlistForRealEmails(toolRoot) {
+  /** @type {string[]} */
+  const hits = [];
+  const paths = [
+    path.join(toolRoot, MOCK_ALLOWLIST_REL),
+    path.resolve(toolRoot, "../../src/lib/admin/staging-auth/mock-allowlist.ts"),
+  ];
+
+  for (const abs of paths) {
+    if (!fs.existsSync(abs)) {
+      hits.push(`missing:${path.basename(abs)}`);
+      continue;
+    }
+    const content = fs.readFileSync(abs, "utf8");
+    const emails = content.match(/[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/g) ?? [];
+    for (const email of emails) {
+      if (!email.endsWith("@example.com")) {
+        hits.push(email);
+      }
+    }
+  }
+
+  return { clean: hits.length === 0, hits: [...new Set(hits)] };
+}
+
+/**
  * @param {string} dir
  * @param {(file: string) => void} onFile
  */
@@ -210,10 +246,20 @@ export function runAdminAuthAdapterDryRun(opts = {}) {
     missingStagingAuth.length === 0 &&
     stagingAuthForbiddenHits.length === 0;
 
+  const mockAllowlistEmailScan = scanMockAllowlistForRealEmails(toolRoot);
+  const mockAllowlistImplemented =
+    fs.existsSync(path.join(toolRoot, MOCK_ALLOWLIST_REL)) &&
+    missingStagingAuth.length === 0 &&
+    scaffoldFileChecks.find((f) => f.path.includes("AdminRoleAllowlistStatusPanel"))?.exists ===
+      true;
+
   const report = {
     mode: "dry-run",
-    phase: "G-5y-d",
+    phase: "G-5y-e-a",
     approvalId: G5Y_D_APPROVAL_ID,
+    roleAllowlistMode: "mock-only",
+    mockAllowlistImplemented,
+    realEmailsCommitted: !mockAllowlistEmailScan.clean,
     siteId,
     generatedAt: new Date().toISOString(),
     provider: "mock-or-supabase-staging",
@@ -238,6 +284,8 @@ export function runAdminAuthAdapterDryRun(opts = {}) {
     ftpDeployPerformed: false,
     productionAuthTouched: false,
     adminRouteConnected: false,
+    productionPublishEnabled: false,
+    adminUsersTableUsed: false,
     connectedToRuntime: false,
     productionReady: false,
     mockSession: example.mockSession ?? {
@@ -266,14 +314,18 @@ export function runAdminAuthAdapterDryRun(opts = {}) {
       clean: stagingAuthForbiddenHits.length === 0,
       hits: stagingAuthForbiddenHits,
     },
+    mockAllowlistEmailScan,
     permissionMatrixSummary: matrixSummary,
     stagingShellRoute: plan.routes?.stagingShell ?? "/__admin-staging-shell/musician-basic/",
     loginUiShellFiles: loginUiChecks,
-    readyForG5yE:
+    readyForG5yEB:
+      mockAllowlistImplemented &&
+      mockAllowlistEmailScan.clean &&
       supabaseAuthConnectionImplemented &&
       forbiddenHits.length === 0 &&
-      loginUiShellPresent &&
-      passwordResetUiShellPresent,
+      stagingAuthForbiddenHits.length === 0 &&
+      loginUiShellPresent,
+    readyForG5yE: true,
     readyForG5yD: true,
   };
 
@@ -292,6 +344,17 @@ export function formatAdminAuthAdapterDryRunMarkdown(report) {
     `**Site:** ${report.siteId}`,
     `**Generated:** ${report.generatedAt}`,
     "",
+    "## G-5y-e-a role / allowlist mock",
+    "",
+    "| Flag | Value |",
+    "| --- | --- |",
+    `| roleAllowlistMode | ${report.roleAllowlistMode} |`,
+    `| mockAllowlistImplemented | ${report.mockAllowlistImplemented} |`,
+    `| realEmailsCommitted | ${report.realEmailsCommitted} |`,
+    `| productionPublishEnabled | ${report.productionPublishEnabled} |`,
+    `| adminUsersTableUsed | ${report.adminUsersTableUsed} |`,
+    `| readyForG5yEB | ${report.readyForG5yEB} |`,
+    "",
     "## G-5y-d staging Auth connection",
     "",
     "| Flag | Value |",
@@ -300,7 +363,6 @@ export function formatAdminAuthAdapterDryRunMarkdown(report) {
     `| envGated | ${report.envGated} |`,
     `| mockFallbackAvailable | ${report.mockFallbackAvailable} |`,
     `| adminRouteConnected | ${report.adminRouteConnected} |`,
-    `| readyForG5yE | ${report.readyForG5yE} |`,
     "",
     "## Safety flags",
     "",
@@ -386,9 +448,9 @@ export function formatAdminAuthAdapterDryRunMarkdown(report) {
     `- productionPublish.enabledByDefault: ${report.integrationPlan.productionPublish?.enabledByDefault}`,
     `- Staging shell route: \`${report.stagingShellRoute}\``,
     "",
-    `**readyForG5yE:** ${report.readyForG5yE}`,
+    `**readyForG5yEB:** ${report.readyForG5yEB}`,
     "",
-    "*G-5y-d dry-run. Staging shell Supabase Auth is env-gated. No /admin/ connection. No DB/RLS/Storage/Publish.*",
+    "*G-5y-e-a dry-run. Mock allowlist only. No /admin/ connection. No DB/RLS/Storage/Publish. productionPublish disabled.*",
   );
 
   return lines.join("\n");

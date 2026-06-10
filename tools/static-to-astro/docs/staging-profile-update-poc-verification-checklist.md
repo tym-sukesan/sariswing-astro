@@ -334,6 +334,8 @@ G-6-d-verify completion state: `readyForManualNonDryRunDecision: true`, `nonDryR
 
 **G-6-d-blocker（完了）:** [profile-schema-alignment-plan.md](./profile-schema-alignment-plan.md) — `public.profile` missing on `static-to-astro-cms-staging`; non-dry-run **blocked**; `readyForG6DNonDryRun: false`; `readyForSchemaApplyApproval: true`.
 
+**G-6-d-schema-apply-prep（完了）:** [profile-schema-apply-prep.md](./profile-schema-apply-prep.md) — manual SQL package ready; `admin_users` confirmed without `is_active`; Cursor must not execute SQL; `readyForManualSchemaApply: true`.
+
 ## 14. G-6-d-verify completion criteria
 
 ```txt

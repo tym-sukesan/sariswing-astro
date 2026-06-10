@@ -375,16 +375,12 @@ node tools/static-to-astro/scripts/report-profile-schema-alignment-plan.mjs \
 
 ## 16. Next phase recommendation
 
-**Recommended:**
+**G-6-d-schema-apply-prep（完了）:** [profile-schema-apply-prep.md](./profile-schema-apply-prep.md) — manual SQL package; `admin_users` without `is_active`; `sql/staging/profile-schema-apply.sql`; `readyForManualSchemaApply: true`.
+
+**Next:**
 
 ```txt
-G-6-d-schema-apply-prep: review and approve applying public.profile schema to staging
-```
-
-Then (with explicit approval):
-
-```txt
-G-6-d-schema-apply: apply profile schema to staging with explicit approval
+G-6-d-schema-apply: user manually applies profile schema SQL to staging
 ```
 
 **Do not proceed to G-6-d non-dry-run write** until:

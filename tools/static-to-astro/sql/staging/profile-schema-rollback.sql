@@ -1,0 +1,14 @@
+-- =============================================================================
+-- MANUAL STAGING SQL ONLY.
+-- DO NOT RUN FROM CURSOR.
+-- Intended project: static-to-astro-cms-staging
+-- Never run on production.
+-- MANUAL STAGING SQL. DO NOT RUN UNLESS YOU INTEND TO REMOVE THE STAGING PROFILE TABLE.
+-- =============================================================================
+-- G-6-d-schema-apply-prep — Rollback / cleanup (staging only, after explicit approval).
+-- Backup before values if any non-demo data exists.
+-- =============================================================================
+
+-- drop trigger if exists set_profile_updated_at on public.profile;
+-- drop function if exists public.set_profile_updated_at();
+-- drop table if exists public.profile;

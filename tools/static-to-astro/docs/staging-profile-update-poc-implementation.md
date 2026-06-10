@@ -102,6 +102,8 @@ Also required when enabling write:
 
 **G-6-d-blocker（完了）:** [profile-schema-alignment-plan.md](./profile-schema-alignment-plan.md) — `public.profile` missing on staging; actual tables documented; recommended `public.profile`; DRAFT ONLY SQL; `readyForSchemaApplyApproval: true`; `readyForG6DNonDryRun: false`; non-dry-run stopped.
 
+**G-6-d-schema-apply-prep（完了）:** [profile-schema-apply-prep.md](./profile-schema-apply-prep.md) — `sql/staging/profile-schema-apply.sql`; RLS without `is_active`; manual apply only; `readyForManualSchemaApply: true`.
+
 ### Manual non-dry-run example (staging only)
 
 ```bash

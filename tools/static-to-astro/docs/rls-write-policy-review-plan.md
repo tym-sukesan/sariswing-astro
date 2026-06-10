@@ -377,7 +377,9 @@ node tools/static-to-astro/scripts/report-rls-write-policy-review-plan.mjs \
 
 **G-6-d-blocker（完了）:** [profile-schema-alignment-plan.md](./profile-schema-alignment-plan.md) — `public.profile` missing; RLS draft for profile table in alignment plan (DRAFT ONLY); apply after schema creation approval.
 
-**Proceed to:** G-6-d-schema-apply-prep → schema apply (staging only) → re-verify before non-dry-run. G-6-e blocked until profile path unblocked.
+**G-6-d-schema-apply-prep（完了）:** [profile-schema-apply-prep.md](./profile-schema-apply-prep.md) — update policy uses `admin_users.user_id` + `role in ('admin','editor')`; **no `is_active`**.
+
+**Proceed to:** G-6-d-schema-apply (manual SQL on staging) → dry-run retry → non-dry-run. G-6-e blocked until profile path unblocked.
 
 ## 17. Final safety statement
 

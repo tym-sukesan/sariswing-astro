@@ -107,8 +107,9 @@ The staging shell **remains visible** for testing. No real `/admin` guard is con
 
 ## 9. Next phase
 
-- **G-5y-e-b:** private/server-side allowlist plan or implementation
-- **G-5z:** read-only data integration (only after Auth/RLS review)
+- **G-5y-e-b（完了）:** [Private / server-side allowlist plan](./private-server-side-allowlist-plan.md) — planning only; browser allowlist is not a security boundary; real emails must not be committed
+- **G-5y-e-c:** server-side allowlist dry-run scaffold (candidate)
+- **G-5z-a:** read-only data integration plan (candidate)
 
 ## 10. Files
 

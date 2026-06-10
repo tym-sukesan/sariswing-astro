@@ -395,7 +395,9 @@ Proceed to **G-5y-d** only after preflight (Section 12) + approval ID.
 
 **G-5y-d（完了）:** [staging-supabase-auth-connection.md](./staging-supabase-auth-connection.md) — staging shell Supabase Auth.
 
-**G-5y-e-a（完了）:** [staging-role-allowlist-mock.md](./staging-role-allowlist-mock.md) — mock allowlist / role resolver. No `admin_users`. Next: **G-5y-e-b** or **G-5z**.
+**G-5y-e-a（完了）:** [staging-role-allowlist-mock.md](./staging-role-allowlist-mock.md) — mock allowlist / role resolver.
+
+**G-5y-e-b（完了）:** [private-server-side-allowlist-plan.md](./private-server-side-allowlist-plan.md) — private/server-side allowlist planning; browser allowlist not a security boundary. Next: **G-5y-e-c** or **G-5z-a**.
 
 ---
 

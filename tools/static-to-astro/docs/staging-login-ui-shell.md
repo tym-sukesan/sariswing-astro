@@ -173,7 +173,8 @@ Still forbidden in G-5y-d: DB, RLS, Storage, Publish, `/admin/`, password reset 
 | Phase | Focus |
 | --- | --- |
 | **G-5y-e-a（完了）** | [Staging role / allowlist mock](./staging-role-allowlist-mock.md) |
-| **G-5y-e-b** | Private/server-side allowlist |
+| **G-5y-e-b（完了）** | [Private / server-side allowlist plan](./private-server-side-allowlist-plan.md) |
+| **G-5y-e-c / G-5z-a** | Server-side allowlist dry-run or read-only data plan |
 
 ---
 

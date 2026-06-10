@@ -148,7 +148,8 @@ Buttons use `disabled={true}` and do not perform runtime operations.
 | **G-5y-d-prep（完了）** | [Connection checklist](./supabase-auth-staging-connection-checklist.md) |
 | **G-5y-d（完了）** | [Staging Supabase Auth connection](./staging-supabase-auth-connection.md) |
 | **G-5y-e-a（完了）** | [Staging role / allowlist mock](./staging-role-allowlist-mock.md) |
-| **G-5y-e-b** | Private/server-side allowlist |
+| **G-5y-e-b（完了）** | [Private / server-side allowlist plan](./private-server-side-allowlist-plan.md) |
+| **G-5y-e-c / G-5z-a** | Server-side allowlist dry-run or read-only data plan |
 | Prerequisite | Complete shell QA on this route first |
 | Still | staging-only, no production admin, no `/admin/` |
 
@@ -164,6 +165,7 @@ Buttons use `disabled={true}` and do not perform runtime operations.
 - [staging-login-ui-shell.md](./staging-login-ui-shell.md) — G-5y-c login UI shell on this route
 - [staging-supabase-auth-connection.md](./staging-supabase-auth-connection.md) — G-5y-d env-gated Auth
 - [staging-role-allowlist-mock.md](./staging-role-allowlist-mock.md) — G-5y-e-a mock allowlist
+- [private-server-side-allowlist-plan.md](./private-server-side-allowlist-plan.md) — G-5y-e-b allowlist plan
 - [supabase-auth-staging-connection-checklist.md](./supabase-auth-staging-connection-checklist.md) — G-5y-d-prep preflight
 
 ---

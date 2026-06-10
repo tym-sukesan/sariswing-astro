@@ -127,8 +127,8 @@ In mock mode:
 ## 10. Next phase
 
 - **G-5y-e-a（完了）:** [Staging role / allowlist mock](./staging-role-allowlist-mock.md) — mock allowlist only, no `admin_users`
-- **G-5y-e-b:** private/server-side allowlist plan or implementation
-- **G-5z:** read-only data integration after Auth/RLS review
+- **G-5y-e-b（完了）:** [Private / server-side allowlist plan](./private-server-side-allowlist-plan.md) — planning only; no Edge/DB/RLS
+- **G-5y-e-c / G-5z-a:** server-side allowlist dry-run scaffold or read-only data integration plan
 
 ## 11. Files
 

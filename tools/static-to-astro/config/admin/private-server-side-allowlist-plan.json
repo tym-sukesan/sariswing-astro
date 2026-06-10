@@ -1,0 +1,36 @@
+{
+  "phase": "G-5y-e-b",
+  "type": "private-server-side-allowlist-plan",
+  "docRef": "docs/private-server-side-allowlist-plan.md",
+  "planningPhaseOnly": true,
+  "realAllowlistCommitted": false,
+  "realEmailsCommitted": false,
+  "browserAllowlistTrusted": false,
+  "serviceRoleInBrowser": false,
+  "edgeFunctionImplemented": false,
+  "adminUsersTableCreated": false,
+  "rlsPolicyChanged": false,
+  "dbQueryPerformed": false,
+  "dbUpdatePerformed": false,
+  "storageUploadPerformed": false,
+  "githubDispatchPerformed": false,
+  "ftpDeployPerformed": false,
+  "adminRouteConnected": false,
+  "productionAuthTouched": false,
+  "productionPublishEnabled": false,
+  "recommendedNextPhases": [
+    "G-5y-e-c",
+    "G-5z-a"
+  ],
+  "recommendedNextPhase": "G-5y-e-c or G-5z-a",
+  "optionsCompared": [
+    "local-private-env-allowlist",
+    "server-side-edge-function-allowlist",
+    "admin_users-table-plus-rls"
+  ],
+  "recommendedPath": {
+    "immediate": "do not create admin_users or change RLS",
+    "nextPlanOrScaffold": "G-5y-e-c server-side allowlist dry-run scaffold or G-5z-a read-only data integration plan",
+    "beforeWrites": "G-6 admin_users table + RLS review"
+  }
+}

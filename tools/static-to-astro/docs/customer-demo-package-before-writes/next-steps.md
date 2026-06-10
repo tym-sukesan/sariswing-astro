@@ -17,7 +17,8 @@
 - **G-6-c（完了）:** [disabled-write-action-scaffold.md](../disabled-write-action-scaffold.md) — UI scaffold only; all write actions disabled
 - **G-6-d-prep（完了）:** [staging-profile-update-poc-approval-plan.md](../staging-profile-update-poc-approval-plan.md)
 - **G-6-d（完了）:** [staging-profile-update-poc-implementation.md](../staging-profile-update-poc-implementation.md) — profile update PoC; default disabled; dry-run default
-- 次: G-6-e staging create（別 approval）
+- **G-6-d-verify（完了）:** [staging-profile-update-poc-verification-checklist.md](../staging-profile-update-poc-verification-checklist.md) — verification only; non-dry-run not executed
+- 次: manual first staging profile write（user approval 後のみ）
 
 ## Option B: customer-specific schema mapping
 
@@ -50,7 +51,8 @@ G-6-b: RLS write policy review plan
 G-6-c: disabled write action scaffold (UI only)
 G-6-d-prep: staging profile update PoC approval plan
 G-6-d: staging profile update PoC implementation (gated; default disabled)
-G-6-e: staging create operation (separate approval)
+G-6-d-verify: verification checklist (non-dry-run not executed)
+G-6-e: staging create operation (separate approval; not automatic)
 ```
 
 **G-6 でもいきなり write 実装しない。** まず G-6-a。

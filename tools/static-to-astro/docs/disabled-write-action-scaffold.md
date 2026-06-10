@@ -122,6 +122,8 @@ G-6-c components use `type="button"` and `disabled` only. No `onclick`, no `on:c
 
 Other write actions in this scaffold remain disabled. Only profile text update PoC may enable when gates pass.
 
+**G-6-d-verify（完了）:** [staging-profile-update-poc-verification-checklist.md](./staging-profile-update-poc-verification-checklist.md) — verification only; `nonDryRunExecuted: false`; manual first write after user approval.
+
 ## 9. Final safety statement
 
 **G-6-c is a UI scaffold phase only.**

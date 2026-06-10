@@ -417,6 +417,8 @@ The user must explicitly approve G-6-d-staging-profile-update-poc.
 
 Approval plan satisfied — implementation doc and `src/lib/admin/staging-write/` added.
 
+**G-6-d-verify（完了）:** [staging-profile-update-poc-verification-checklist.md](./staging-profile-update-poc-verification-checklist.md) — first non-dry-run not executed; manual execution checklist ready.
+
 ## 18. Final safety statement
 
 **G-6-d-prep is a planning and approval phase only.**

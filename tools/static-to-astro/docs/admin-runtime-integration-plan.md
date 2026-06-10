@@ -217,6 +217,7 @@ Never skip: local preview and customer demo before runtime shell; read-only befo
 | **G-6-c（完了）** | [Disabled write action scaffold](./disabled-write-action-scaffold.md) | UI only; all actions disabled; `readyForG6DPlanning: true` |
 | **G-6-d-prep（完了）** | [Staging profile update PoC approval plan](./staging-profile-update-poc-approval-plan.md) | Planning / approval only |
 | **G-6-d（完了）** | [Staging profile update PoC implementation](./staging-profile-update-poc-implementation.md) | Gated profile update; default disabled; dry-run default |
+| **G-6-d-verify（完了）** | [Verification checklist](./staging-profile-update-poc-verification-checklist.md) | Manual non-dry-run prep; `nonDryRunExecuted: false` |
 | **G-6-e** | Staging create operation | Not started; separate approval required |
 | **G-5y-e** | Role check / allowlist | Staging Auth |
 

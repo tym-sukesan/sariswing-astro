@@ -1,0 +1,28 @@
+{
+  "phase": "G-6-d-verify",
+  "type": "staging-profile-update-poc-verification-checklist",
+  "verificationOnly": true,
+  "approvalId": "G-6-d-staging-profile-update-poc",
+  "targetModule": "profile",
+  "targetTable": "profile",
+  "targetOperation": "update",
+  "targetScope": "single-existing-row",
+  "targetFields": ["name", "bio"],
+  "logicalFieldMapping": {
+    "display_name": "name",
+    "bio": "bio"
+  },
+  "columnMappingRequiresConfirmation": true,
+  "cursorWillNotExecuteNonDryRun": true,
+  "nonDryRunExecuted": false,
+  "readyForManualNonDryRunDecision": true,
+  "dryRunDefault": true,
+  "enabledByDefault": false,
+  "productionDataTouched": false,
+  "adminRouteConnected": false,
+  "storageConnected": false,
+  "publishConnected": false,
+  "rlsPolicyChanged": false,
+  "sqlExecuted": false,
+  "recommendedNextPhase": "Manual first non-dry-run staging profile update (user approval required)"
+}

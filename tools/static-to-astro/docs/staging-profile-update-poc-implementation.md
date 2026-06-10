@@ -98,6 +98,8 @@ Also required when enabling write:
 
 **Do not run non-dry-run against production.** Cursor/automation must not execute non-dry-run without explicit user confirmation.
 
+**G-6-d-verify（完了）:** [staging-profile-update-poc-verification-checklist.md](./staging-profile-update-poc-verification-checklist.md) — verification / execution planning only; `nonDryRunExecuted: false`; `readyForManualNonDryRunDecision: true`; column mapping confirmation required; Cursor must not execute non-dry-run automatically.
+
 ### Manual non-dry-run example (staging only)
 
 ```bash

@@ -1368,6 +1368,8 @@ gosaki / Sariswing で実証した移行フローを、**別サイト向け CMS 
 
 **G-6-d（完了）:** [Staging profile update PoC implementation](docs/staging-profile-update-poc-implementation.md) — gated profile update; default disabled; dry-run default; approval ID `G-6-d-staging-profile-update-poc`; `/admin` disconnected; production forbidden。
 
+**G-6-d-verify（完了）:** [Staging profile update PoC verification checklist](docs/staging-profile-update-poc-verification-checklist.md) — verification only; `nonDryRunExecuted: false`; `readyForManualNonDryRunDecision: true`; Cursor must not execute non-dry-run automatically。
+
 ```bash
 node tools/static-to-astro/scripts/report-disabled-write-action-scaffold.mjs \
   --out-dir tools/static-to-astro/output/disabled-write-action-scaffold/gosaki
@@ -1381,6 +1383,11 @@ node tools/static-to-astro/scripts/report-staging-profile-update-poc-approval-pl
 ```bash
 node tools/static-to-astro/scripts/report-staging-profile-update-poc-implementation.mjs \
   --out-dir tools/static-to-astro/output/staging-profile-update-poc-implementation/gosaki
+```
+
+```bash
+node tools/static-to-astro/scripts/report-staging-profile-update-poc-verification.mjs \
+  --out-dir tools/static-to-astro/output/staging-profile-update-poc-verification/gosaki
 ```
 
 ```bash

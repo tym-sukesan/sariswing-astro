@@ -67,12 +67,12 @@ Complete [preview-safety-checklist.md](./preview-safety-checklist.md).
 
 | Phase | Focus |
 | --- | --- |
-| **G-5s** | Site-config driven admin scaffold generator |
-| **G-5t** | Runtime integration plan |
+| **G-5s** | Site-config driven admin scaffold generator（**完了**） |
+| **G-5t** | Runtime integration plan（**完了**） |
 | **G-5u** | Local-only preview route |
 | **G-5v** | Customer demo package |
 
-See [admin-prototype-preview-harness.md](../../../docs/admin-prototype-preview-harness.md).
+See [admin-prototype-preview-harness.md](../../../docs/admin-prototype-preview-harness.md) and [admin-runtime-integration-plan.md](../../../docs/admin-runtime-integration-plan.md).
 
 ---
 

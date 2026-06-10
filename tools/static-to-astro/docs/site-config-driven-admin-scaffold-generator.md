@@ -126,15 +126,16 @@ node tools/static-to-astro/scripts/generate-admin-scaffold-dry-run.mjs \
 
 | Phase | Focus |
 | --- | --- |
-| **G-5t** | Runtime integration plan |
+| **G-5t（完了）** | [Runtime integration plan](./admin-runtime-integration-plan.md) — phase map + approval gates |
 | **G-5u** | Local-only preview route |
 | **G-5v** | Customer demo package |
-| **Later** | Explicit opt-in admin scaffold writer |
+| **G-5w** | Explicit opt-in admin scaffold writer |
 
 ---
 
 ## Related docs
 
+- [admin-runtime-integration-plan.md](./admin-runtime-integration-plan.md) — **G-5t** runtime integration plan (planning only)
 - [admin-prototype-preview-harness.md](./admin-prototype-preview-harness.md) — G-5r preview manifest
 - [musician-basic-admin-prototype.md](./musician-basic-admin-prototype.md) — G-5p prototype
 - [customer-admin-manual-musician-basic.md](./customer-admin-manual-musician-basic.md) — G-5q manual

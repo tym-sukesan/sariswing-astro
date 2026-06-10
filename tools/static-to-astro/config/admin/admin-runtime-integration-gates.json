@@ -1,0 +1,169 @@
+{
+  "version": "0.1.0",
+  "status": "draft",
+  "mode": "planning-only",
+  "phase": "G-5t",
+  "connectedToRuntime": false,
+  "productionReady": false,
+  "runtimeFilesWritten": false,
+  "safety": {
+    "supabaseAuthConnected": false,
+    "supabaseQueryPerformed": false,
+    "dbUpdatePerformed": false,
+    "storageUploadPerformed": false,
+    "githubDispatchPerformed": false,
+    "ftpDeployPerformed": false,
+    "productionTouched": false
+  },
+  "integrationPrinciples": [
+    "staging-first",
+    "production-disabled-by-default",
+    "explicit-opt-in-only",
+    "one-operation-per-phase",
+    "no-hidden-writes",
+    "no-secrets-in-browser",
+    "service-role-never-in-client",
+    "backup-before-db-update",
+    "rollback-plan-before-publish",
+    "customer-approval-before-production",
+    "rights-confirmation-before-production-media"
+  ],
+  "recommendedPhaseOrder": [
+    "G-5u",
+    "G-5v",
+    "G-5w",
+    "G-5x",
+    "G-5y",
+    "G-5z",
+    "G-6a",
+    "G-6b",
+    "G-6c",
+    "G-6d",
+    "G-6e"
+  ],
+  "approvalGates": [
+    {
+      "gateId": "scaffold-generation",
+      "label": "Scaffold generation approval",
+      "phase": "G-5w",
+      "requiredReviewer": "maintainer",
+      "requiredEvidence": ["dry-run package reviewed", "missingComponents resolved"],
+      "rollbackRequired": false,
+      "requiresApplyFlag": true,
+      "disallowedWithoutApproval": ["overwrite existing admin", "write to src/pages/admin without manifest"]
+    },
+    {
+      "gateId": "runtime-route-creation",
+      "label": "Runtime route creation approval",
+      "phase": "G-5x",
+      "requiredReviewer": "maintainer",
+      "requiredEvidence": ["staging URL documented", "noindex verified", "scaffold-only banner present"],
+      "rollbackRequired": true,
+      "requiresApplyFlag": true,
+      "disallowedWithoutApproval": ["production route", "public deploy"]
+    },
+    {
+      "gateId": "auth-integration",
+      "label": "Auth integration approval",
+      "phase": "G-5y",
+      "requiredReviewer": "maintainer + security review",
+      "requiredEvidence": ["RLS design reviewed", "anon key only in client", "staging project only"],
+      "rollbackRequired": true,
+      "requiresApplyFlag": true,
+      "disallowedWithoutApproval": ["service role in browser", "production auth policy change"]
+    },
+    {
+      "gateId": "db-read",
+      "label": "DB read approval",
+      "phase": "G-5z",
+      "requiredReviewer": "maintainer",
+      "requiredEvidence": ["staging DB only", "SELECT-only queries", "readonly banner in UI"],
+      "rollbackRequired": false,
+      "requiresApplyFlag": true,
+      "disallowedWithoutApproval": ["production DB read without approval", "service role in browser"]
+    },
+    {
+      "gateId": "db-write",
+      "label": "DB write approval",
+      "phase": "G-6a",
+      "requiredReviewer": "maintainer",
+      "requiredEvidence": ["module scoped", "backup taken", "audit log design", "soft delete first"],
+      "rollbackRequired": true,
+      "requiresApplyFlag": true,
+      "disallowedWithoutApproval": ["production DB write", "bulk destructive operations"]
+    },
+    {
+      "gateId": "storage-upload",
+      "label": "Storage upload approval",
+      "phase": "G-6b",
+      "requiredReviewer": "maintainer",
+      "requiredEvidence": ["assetType mapping verified", "human review rules", "staging bucket only"],
+      "rollbackRequired": true,
+      "requiresApplyFlag": true,
+      "disallowedWithoutApproval": ["production storage overwrite", "rights-unknown production use"]
+    },
+    {
+      "gateId": "staging-publish",
+      "label": "Staging publish approval",
+      "phase": "G-6c",
+      "requiredReviewer": "admin",
+      "requiredEvidence": ["noindex enforced", "server-side dispatch only", "explicit approval recorded"],
+      "rollbackRequired": true,
+      "requiresApplyFlag": true,
+      "disallowedWithoutApproval": ["production publish", "token in browser"]
+    },
+    {
+      "gateId": "production-readiness",
+      "label": "Production readiness approval",
+      "phase": "G-6d",
+      "requiredReviewer": "maintainer + customer",
+      "requiredEvidence": ["customer approval", "rights confirmation", "rollback plan", "SEO/canonical check", "backup"],
+      "rollbackRequired": true,
+      "requiresApplyFlag": false,
+      "disallowedWithoutApproval": ["skipping checklist", "missing rollback plan"]
+    },
+    {
+      "gateId": "production-publish",
+      "label": "Production publish approval",
+      "phase": "G-6e",
+      "requiredReviewer": "admin + customer written approval",
+      "requiredEvidence": ["written customer approval", "rollback plan", "environment separation verified", "audit log enabled"],
+      "rollbackRequired": true,
+      "requiresApplyFlag": true,
+      "disallowedWithoutApproval": ["automatic production publish", "FTP without approval", "disable production gate"]
+    }
+  ],
+  "forbiddenAutomation": [
+    "production-publish",
+    "production-db-write",
+    "production-storage-overwrite",
+    "github-actions-dispatch-without-approval",
+    "ftp-deploy-without-approval",
+    "domain-dns-change",
+    "delete-production-data",
+    "expose-secrets-to-browser",
+    "overwrite-existing-sariswing-admin",
+    "disable-staging-noindex",
+    "set-production-canonical-on-staging"
+  ],
+  "environmentSeparation": {
+    "staging": {
+      "allowedByDefault": true,
+      "noindex": true,
+      "robotsDisallow": true,
+      "productionPublishEnabled": false,
+      "customerApprovalRequired": false,
+      "rightsConfirmationRequiredForMedia": true,
+      "rollbackPlanRequired": false
+    },
+    "production": {
+      "allowedByDefault": false,
+      "noindex": false,
+      "robotsDisallow": false,
+      "productionPublishEnabled": false,
+      "customerApprovalRequired": true,
+      "rightsConfirmationRequiredForMedia": true,
+      "rollbackPlanRequired": true
+    }
+  }
+}

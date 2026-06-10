@@ -1260,7 +1260,7 @@ gosaki / Sariswing で実証した移行フローを、**別サイト向け CMS 
 | Site config draft | [config/sites/gosaki.site-config.example.json](config/sites/gosaki.site-config.example.json) |
 | 方針 | **site-config driven migration**（G-5c 以降）、**template registry**、**schema adapter** |
 | Workflow | **staging-first** — G-4 成功フローは後方互換維持 |
-| 実装フェーズ | G-5a〜**G-5s admin scaffold generator** → G-5t〜 |
+| 実装フェーズ | G-5a〜**G-5t runtime integration plan** → G-5u〜 |
 | **G-5c usage** | [docs/site-config-cli-usage.md](docs/site-config-cli-usage.md) |
 | **G-5d registry** | [docs/cms-template-registry.md](docs/cms-template-registry.md) |
 | **G-5e adapters** | [docs/cms-schema-adapters.md](docs/cms-schema-adapters.md) |
@@ -1279,6 +1279,7 @@ gosaki / Sariswing で実証した移行フローを、**別サイト向け CMS 
 | **G-5q Manual** | [docs/customer-admin-manual-musician-basic.md](docs/customer-admin-manual-musician-basic.md) |
 | **G-5r Preview** | [docs/admin-prototype-preview-harness.md](docs/admin-prototype-preview-harness.md) |
 | **G-5s Generator** | [docs/site-config-driven-admin-scaffold-generator.md](docs/site-config-driven-admin-scaffold-generator.md) |
+| **G-5t Plan** | [docs/admin-runtime-integration-plan.md](docs/admin-runtime-integration-plan.md) |
 
 **G-5c（完了）:** read-only CLI が `--site-config` を受け取り、path を補完。明示引数優先。
 
@@ -1310,7 +1311,9 @@ gosaki / Sariswing で実証した移行フローを、**別サイト向け CMS 
 
 **G-5r（完了）:** [Admin prototype preview harness](docs/admin-prototype-preview-harness.md) — manifest + safety checklist。`customerDemoReady: false`。
 
-**G-5s（完了）:** [Site-config driven Admin scaffold generator](docs/site-config-driven-admin-scaffold-generator.md) — dry-run package。`output/` not committed。次: **G-5t** runtime integration plan。
+**G-5s（完了）:** [Site-config driven Admin scaffold generator](docs/site-config-driven-admin-scaffold-generator.md) — dry-run package。`output/` not committed。
+
+**G-5t（完了）:** [Admin runtime integration plan](docs/admin-runtime-integration-plan.md) — 計画のみ、実接続なし。gates: [admin-runtime-integration-gates.json](config/admin/admin-runtime-integration-gates.json)。次: **G-5u** local-only preview route。
 
 ```bash
 node tools/static-to-astro/scripts/inventory-admin-cms.mjs --root .
@@ -1646,6 +1649,7 @@ CMS Kit 実用化プロトタイプとして **gosaki staging** の役割・secr
 | [docs/customer-admin-quick-checklist-musician-basic.md](docs/customer-admin-quick-checklist-musician-basic.md) | **G-5q:** Musician Basic Admin Quick Checklist |
 | [docs/admin-prototype-preview-harness.md](docs/admin-prototype-preview-harness.md) | **G-5r:** Admin prototype preview harness（manifest + safety checklist） |
 | [docs/site-config-driven-admin-scaffold-generator.md](docs/site-config-driven-admin-scaffold-generator.md) | **G-5s:** Site-config driven Admin scaffold dry-run generator |
+| [docs/admin-runtime-integration-plan.md](docs/admin-runtime-integration-plan.md) | **G-5t:** Admin runtime integration plan（planning only） |
 
 **短期運用:** Local Admin（`npm run dev`）→ staging Supabase 保存 → export → build → `verify-static-public-artifact` → public-dist 確認
 

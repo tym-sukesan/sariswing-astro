@@ -103,8 +103,7 @@ Props and navigation are defined in example JSON files:
 | **G-5q（完了）** | [Customer admin manual](./customer-admin-manual-musician-basic.md) — 顧客向け運用説明 |
 | **G-5r（完了）** | [Admin prototype preview harness](./admin-prototype-preview-harness.md) — manifest + safety checklist |
 | **G-5s（完了）** | [Site-config driven admin scaffold generator](./site-config-driven-admin-scaffold-generator.md) — dry-run package |
-| **G-5t** | Runtime integration plan |
-| **G-5u** | Local-only preview route |
+| **G-5t（完了）** | [Runtime integration plan](./admin-runtime-integration-plan.md) — planning only |
 | **G-5u** | Local-only preview route |
 | **Later** | Runtime integration with explicit approval |
 
@@ -151,6 +150,10 @@ node tools/static-to-astro/scripts/generate-admin-scaffold-dry-run.mjs \
 ```
 
 Output: sections, required components, permissions, storage mappings, publish policy, preview plan. **`output/` not committed.**
+
+---
+
+See [admin-runtime-integration-plan.md](./admin-runtime-integration-plan.md) for when runtime connection is allowed (G-5u+).
 
 ---
 

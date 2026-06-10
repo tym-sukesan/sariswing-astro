@@ -22,6 +22,8 @@ This is **not** the production admin at `/admin/`. It is scaffold-only with mock
 | Wrapper | `tools/static-to-astro/templates/admin-cms/preview/local-preview-wrapper.astro` |
 | Prototype | `tools/static-to-astro/templates/admin-cms/prototypes/musician-basic-admin-prototype.astro` |
 
+The page file uses a leading-underscore directory (`__admin-preview/`). Astro excludes those from file-based routing; the public URL is registered in `astro.config.mjs` via `injectRoute` (`cmsKitAdminShellRoutesIntegration`).
+
 **Not used:** `/admin/`, `/admin/news/`, `/admin/schedule/`, or any existing Sariswing admin route.
 
 ---
@@ -115,7 +117,7 @@ Customer demos must clearly state: **scaffold only**, **mock data only**, **no s
 | **G-5w-a（完了）** | [Admin scaffold writer plan](./admin-scaffold-writer-plan.md) — writer not implemented; separate from preview route |
 | **G-5w-b** | Writer dry-run CLI |
 | **G-5w-c** | Apply to sandbox output directory only |
-| **G-5x** | Staging runtime shell integration |
+| **G-5x（完了）** | [Staging runtime shell](./staging-runtime-shell-integration.md) — `/__admin-staging-shell/musician-basic/` |
 | **G-5y** | Supabase Auth staging integration |
 
 ---

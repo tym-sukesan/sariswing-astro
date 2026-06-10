@@ -25,6 +25,35 @@ function sitemapLastmodFormatIntegration() {
   };
 }
 
+/**
+ * CMS Kit admin preview/shell routes live under src/pages/__admin-* which Astro
+ * excludes from file-based routing (leading underscore). injectRoute registers
+ * the public URLs without moving co-located page files.
+ */
+function cmsKitAdminShellRoutesIntegration() {
+  return {
+    name: "cms-kit-admin-shell-routes",
+    hooks: {
+      "astro:config:setup": ({ injectRoute }) => {
+        injectRoute({
+          pattern: "/__admin-preview/musician-basic",
+          entrypoint: new URL(
+            "./src/pages/__admin-preview/musician-basic/index.astro",
+            import.meta.url,
+          ),
+        });
+        injectRoute({
+          pattern: "/__admin-staging-shell/musician-basic",
+          entrypoint: new URL(
+            "./src/pages/__admin-staging-shell/musician-basic/index.astro",
+            import.meta.url,
+          ),
+        });
+      },
+    },
+  };
+}
+
 // https://astro.build/config
 export default defineConfig({
   site,
@@ -34,11 +63,14 @@ export default defineConfig({
   integrations: [
     sitemap({
       filter: (page) =>
-        !page.includes("/admin") && !page.includes("__admin-preview"),
+        !page.includes("/admin") &&
+        !page.includes("__admin-preview") &&
+        !page.includes("__admin-staging-shell"),
       serialize(item) {
         return serializeSitemapItem(item, lastmodLookup, generatedAt);
       },
     }),
     sitemapLastmodFormatIntegration(),
+    cmsKitAdminShellRoutesIntegration(),
   ],
 });

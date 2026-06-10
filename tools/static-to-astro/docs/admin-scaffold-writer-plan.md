@@ -457,7 +457,7 @@ This list extends [admin-runtime-integration-gates.json](../config/admin/admin-r
 | **G-5w-b（完了）** | [Writer dry-run CLI](./admin-scaffold-writer-dry-run-cli.md) — plan/manifest to `output/admin-writer-dry-runs/` | **None** to target-dir |
 | **G-5w-c（完了）** | [Sandbox apply](./admin-scaffold-writer-sandbox-apply.md) | Sandbox under `output/admin-writer-sandbox/` only |
 | **G-5w-d（完了）** | [Generated scaffold review](./generated-admin-scaffold-review.md) | Review only |
-| **G-5x** | Staging runtime shell integration | After `readyForG5x: true` |
+| **G-5x（完了）** | [Staging runtime shell](./staging-runtime-shell-integration.md) | After `readyForG5x: true` |
 
 **Dependency chain:** G-5s dry-run package → G-5w-b dry-run CLI → G-5w-c sandbox apply → G-5w-d review → G-5x runtime shell.
 
@@ -527,7 +527,7 @@ No production environment is touched.
 ## Related
 
 - [admin-scaffold-writer-dry-run-cli.md](./admin-scaffold-writer-dry-run-cli.md) — G-5w-b dry-run CLI
-- [generated-admin-scaffold-review.md](./generated-admin-scaffold-review.md) — G-5w-d review CLI
+- [staging-runtime-shell-integration.md](./staging-runtime-shell-integration.md) — G-5x staging shell route
 - [site-config-driven-admin-scaffold-generator.md](./site-config-driven-admin-scaffold-generator.md) — G-5s dry-run package
 - [admin-runtime-integration-plan.md](./admin-runtime-integration-plan.md) — G-5t phase map
 - [local-only-admin-preview-route.md](./local-only-admin-preview-route.md) — G-5u preview (separate from writer output)

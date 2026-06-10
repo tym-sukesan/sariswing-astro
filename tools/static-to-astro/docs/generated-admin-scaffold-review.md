@@ -168,8 +168,8 @@ Review reports are separate under `output/admin-scaffold-reviews/` and can be de
 
 | Phase | Condition |
 | --- | --- |
-| **G-5x** | Staging runtime shell integration — **only after review pass** |
-| Shell-only | No DB write, no Storage upload, no Publish dispatch in G-5x initial scope |
+| **G-5x（完了）** | [Staging runtime shell](./staging-runtime-shell-integration.md) — `/__admin-staging-shell/musician-basic/` |
+| **G-5y** | Supabase Auth staging integration (after shell QA) |
 
 ---
 

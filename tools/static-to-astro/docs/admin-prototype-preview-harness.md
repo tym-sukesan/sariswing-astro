@@ -127,7 +127,8 @@ Before setting `customerDemoReady: true` (future phase, with explicit approval):
 | **G-5v（完了）** | [Customer demo package](./customer-demo-package-musician-basic/README.md) |
 | **G-5w-a（完了）** | [Admin scaffold writer plan](./admin-scaffold-writer-plan.md) — explicit opt-in writer; not implemented |
 | **G-5w-b** | Writer dry-run CLI |
-| **G-5x** | Staging runtime shell integration |
+| **G-5w-d（完了）** | [Generated scaffold review](./generated-admin-scaffold-review.md) |
+| **G-5x（完了）** | [Staging runtime shell](./staging-runtime-shell-integration.md) |
 
 ---
 

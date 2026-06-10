@@ -1,0 +1,15 @@
+---
+/**
+ * G-5x staging runtime shell wrapper — passes stagingShellMode to prototype.
+ * Shell-only / mock static data / disabled actions. Not /admin/. Not runtime data.
+ */
+import MusicianBasicAdminPrototype from "../prototypes/musician-basic-admin-prototype.astro";
+
+interface Props {
+  routePath?: string;
+}
+
+const { routePath = "/__admin-staging-shell/musician-basic/" } = Astro.props;
+---
+
+<MusicianBasicAdminPrototype stagingShellMode={true} stagingShellRoutePath={routePath} />

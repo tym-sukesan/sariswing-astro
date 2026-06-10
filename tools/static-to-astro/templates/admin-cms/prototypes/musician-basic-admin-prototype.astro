@@ -39,12 +39,16 @@ import NewsAdminUi from "../modules/NewsAdminUi.astro";
 
 interface Props {
   localPreviewMode?: boolean;
+  stagingShellMode?: boolean;
   previewRoutePath?: string;
+  stagingShellRoutePath?: string;
 }
 
 const {
   localPreviewMode = false,
+  stagingShellMode = false,
   previewRoutePath = "/__admin-preview/musician-basic/",
+  stagingShellRoutePath = "/__admin-staging-shell/musician-basic/",
 } = Astro.props;
 
 const siteName = "Example Musician";
@@ -212,15 +216,24 @@ const moduleSummary = [
   siteName={siteName}
   currentSection="dashboard"
   stagingLabel={
-    localPreviewMode
-      ? `${templateId} LOCAL PREVIEW (G-5u) — scaffold only`
-      : `${templateId} admin prototype (G-5p)`
+    stagingShellMode
+      ? `${templateId} STAGING RUNTIME SHELL (G-5x) — shell-only`
+      : localPreviewMode
+        ? `${templateId} LOCAL PREVIEW (G-5u) — scaffold only`
+        : `${templateId} admin prototype (G-5p)`
   }
 >
   <AdminNav slot="nav" items={navItems} currentSection="dashboard" />
 
   {
-    localPreviewMode ? (
+    stagingShellMode ? (
+      <AdminStatusMessage
+        slot="status"
+        type="error"
+        title="Staging runtime shell — Shell-only — Mock/static data only — Actions disabled"
+        message={`Route ${stagingShellRoutePath} is a staging runtime shell candidate (G-5x). Not connected to /admin/. Not connected to runtime data. No Supabase Auth. No DB query or update. No Storage upload. No GitHub dispatch. No FTP deploy. Production disabled. All actions disabled in G-5x.`}
+      />
+    ) : localPreviewMode ? (
       <AdminStatusMessage
         slot="status"
         type="error"
@@ -230,12 +243,16 @@ const moduleSummary = [
     ) : null
   }
 
-  <AdminStatusMessage
-    slot="status"
-    type="warning"
-    title="Scaffold prototype only"
-    message="musician-basic admin prototype. Not connected to runtime. No Supabase Auth, query, DB update, Storage upload, GitHub dispatch, or FTP deploy. Production disabled."
-  />
+  {
+    !stagingShellMode && !localPreviewMode ? (
+      <AdminStatusMessage
+        slot="status"
+        type="warning"
+        title="Scaffold prototype only"
+        message="musician-basic admin prototype. Not connected to runtime. No Supabase Auth, query, DB update, Storage upload, GitHub dispatch, or FTP deploy. Production disabled."
+      />
+    ) : null
+  }
 
   <div class="admin-prototype">
     <section id="dashboard" class="admin-prototype-section" data-section="dashboard">

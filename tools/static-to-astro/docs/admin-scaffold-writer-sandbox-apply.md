@@ -152,7 +152,7 @@ node tools/static-to-astro/scripts/review-generated-admin-scaffold.mjs \
   --out-dir tools/static-to-astro/output/admin-scaffold-reviews/gosaki
 ```
 
-Proceed to G-5x only when `readyForG5x: true`.
+Proceed to [G-5x staging runtime shell](./staging-runtime-shell-integration.md) only when `readyForG5x: true`.
 
 ---
 
@@ -161,7 +161,8 @@ Proceed to G-5x only when `readyForG5x: true`.
 | Phase | Focus |
 | --- | --- |
 | **G-5w-d（完了）** | [Generated scaffold review](./generated-admin-scaffold-review.md) |
-| **G-5x** | Staging runtime shell integration (after review pass) |
+| **G-5x（完了）** | [Staging runtime shell](./staging-runtime-shell-integration.md) — `/__admin-staging-shell/musician-basic/` |
+| **G-5y** | Supabase Auth staging integration |
 
 ---
 

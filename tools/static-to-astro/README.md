@@ -1326,12 +1326,13 @@ gosaki / Sariswing で実証した移行フローを、**別サイト向け CMS 
 
 **G-5w-c（完了）:** [Sandbox apply](docs/admin-scaffold-writer-sandbox-apply.md) — `--apply` + `--approval-id`。`output/admin-writer-sandbox/` のみ。
 
-**G-5w-d（完了）:** [Generated scaffold review](docs/generated-admin-scaffold-review.md) — `review-generated-admin-scaffold.mjs`。`readyForG5x` 判定。次: **G-5x** staging runtime shell integration（review pass 後）。
+**G-5w-d（完了）:** [Generated scaffold review](docs/generated-admin-scaffold-review.md) — `readyForG5x` 判定。
+
+**G-5x（完了）:** [Staging runtime shell integration](docs/staging-runtime-shell-integration.md) — `/__admin-staging-shell/musician-basic/`。`ENABLE_ADMIN_STAGING_SHELL=true` + dev only。次: **G-5y** Supabase Auth staging integration。
 
 ```bash
-node tools/static-to-astro/scripts/review-generated-admin-scaffold.mjs \
-  --target-dir tools/static-to-astro/output/admin-writer-sandbox/gosaki \
-  --out-dir tools/static-to-astro/output/admin-scaffold-reviews/gosaki
+ENABLE_ADMIN_STAGING_SHELL=true npm run dev
+# http://localhost:4321/__admin-staging-shell/musician-basic/
 ```
 
 ```bash

@@ -170,18 +170,23 @@ Never skip: local preview and customer demo before runtime shell; read-only befo
 
 ---
 
-### G-5x: staging runtime shell integration
+### G-5x: staging runtime shell integration（**完了**）
 
-**Purpose:** Mount UI shell on **staging-only** admin route; no data layer yet.
+**Implemented:** [staging-runtime-shell-integration.md](./staging-runtime-shell-integration.md)
+
+**Purpose:** Mount UI shell on **staging-only** dedicated route; no data layer yet.
 
 | Allowed | Forbidden |
 | --- | --- |
-| `src/pages/admin/` on **new** CMS Kit project only (not Sariswing prod) | DB write |
+| `src/pages/__admin-staging-shell/` on Sariswing dev (G-5x) | DB write |
 | noindex / robots disallow | Storage upload |
-| scaffold-only banner | publish dispatch |
-| disabled actions | production route |
+| scaffold-only / shell-only banner | publish dispatch |
+| disabled actions | `/admin/` on Sariswing prod |
+| `ENABLE_ADMIN_STAGING_SHELL` + dev gate | production route |
 
-**When `src/pages/admin/` is OK:** After G-5w approval, on **target customer staging project**, never on Sariswing production without separate plan.
+**Route:** `/__admin-staging-shell/musician-basic/` — **not** `/admin/`.
+
+**Exit criteria:** Shell renders locally; banner visible; actions disabled; not `/admin/`.
 
 ---
 
@@ -495,7 +500,7 @@ Generated per site (G-5s): `admin-safety-checklist.generated.md` in dry-run pack
 | **G-5w-b（完了）** | [Writer dry-run CLI](./admin-scaffold-writer-dry-run-cli.md) — `--apply` not implemented |
 | **G-5w-c（完了）** | [Sandbox apply](./admin-scaffold-writer-sandbox-apply.md) — `--approval-id` required |
 | **G-5w-d（完了）** | [Generated scaffold review](./generated-admin-scaffold-review.md) — readyForG5x gate |
-| **G-5x** | Staging runtime shell integration (after review pass) |
+| **G-5x（完了）** | [Staging runtime shell](./staging-runtime-shell-integration.md) — `/__admin-staging-shell/musician-basic/` |
 | **G-5y** | Supabase Auth staging integration |
 | **G-5z** | Read-only data integration |
 | **G-6a** | CRUD write (staging) |

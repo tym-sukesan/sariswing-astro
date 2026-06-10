@@ -213,10 +213,10 @@ Do **not** jump directly to G-6 write implementation. Next step is **G-6 plannin
 Recommended sequence:
 
 ```txt
-G-6-a: write operation safety plan
+G-6-a（完了）: write operation safety plan
 G-6-b: RLS write policy review plan
-G-6-c: write adapter scaffold / disabled actions
-G-6-d: staging write operation with explicit approval
+G-6-c: disabled write action scaffold
+G-6-d: staging update-only proof of concept
 ```
 
 Alternative (productization):
@@ -227,7 +227,9 @@ G-5z-f（完了）: Customer demo / QA package before write operations
 
 See: [customer-demo-package-before-writes/README.md](./customer-demo-package-before-writes/README.md)
 
-**Important:** G-6 must start with a **write operation safety plan**, not live writes.
+**G-6-a（完了）:** [write-operation-safety-plan.md](./write-operation-safety-plan.md) — planning only; `readyForG6B: true`.
+
+**Important:** Proceed to **G-6-b** before any write implementation.
 
 ## 13. Final safety statement
 

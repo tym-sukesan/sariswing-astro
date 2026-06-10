@@ -1,0 +1,56 @@
+{
+  "phase": "G-6-a",
+  "type": "write-operation-safety-plan",
+  "docRef": "docs/write-operation-safety-plan.md",
+  "planningOnly": true,
+  "canWrite": false,
+  "writeOperationsEnabled": false,
+  "writeAdapterImplemented": false,
+  "dbWriteImplemented": false,
+  "rlsPolicyChanged": false,
+  "storageConnected": false,
+  "publishConnected": false,
+  "adminRouteConnected": false,
+  "productionDataTouched": false,
+  "readOnlyPhaseComplete": true,
+  "readyForG6B": true,
+  "readyForG6Implementation": false,
+  "recommendedNextPhase": "G-6-b RLS write policy review plan",
+  "modules": ["profile", "schedule", "discography", "links", "news"],
+  "operations": [
+    "create",
+    "update",
+    "logicalDelete",
+    "restore",
+    "duplicate",
+    "reorder",
+    "publishToggle",
+    "draftToggle"
+  ],
+  "forbiddenOperations": [
+    "productionWrite",
+    "physicalDelete",
+    "serviceRoleInBrowser",
+    "adminRouteConnection",
+    "writeWithoutRlsReview",
+    "writeWithoutRollbackPlan",
+    "browserOnlyRoleEnforcement"
+  ],
+  "approvalGates": [
+    "G-6-b-rls-write-policy-review",
+    "G-6-c-disabled-write-actions-scaffold",
+    "G-6-d-staging-profile-update-poc",
+    "G-6-e-staging-create-operation",
+    "G-6-f-staging-logical-delete-restore",
+    "G-6-g-staging-reorder-duplicate",
+    "G-6-h-staging-media-write-plan",
+    "G-6-i-staging-publish-plan",
+    "G-6-j-production-readiness-gate"
+  ],
+  "firstWritePocRecommendation": {
+    "phase": "G-6-d",
+    "scope": "staging-only profile update-only single-row",
+    "publish": false,
+    "delete": false
+  }
+}

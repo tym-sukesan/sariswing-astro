@@ -8,11 +8,12 @@
 
 ---
 
-## Option A: G-6-a write operation safety plan（技術・推奨）
+## Option A: G-6-a write operation safety plan（技術・完了）
 
-- 書き込みを **いきなり実装せず**、安全計画から開始
-- 対象: どの操作を・誰が・どの approval で有効化するか
-- 続き: G-6-b RLS write policy → G-6-c scaffold → G-6-d staging write with approval
+**G-6-a（完了）:** [write-operation-safety-plan.md](../write-operation-safety-plan.md)
+
+- 書き込みを **いきなり実装せず**、安全計画から開始 — 計画書作成済み
+- 次: **G-6-b** RLS write policy review plan → G-6-c scaffold → G-6-d staging update-only PoC
 
 ## Option B: customer-specific schema mapping
 

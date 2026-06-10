@@ -1,0 +1,27 @@
+---
+/**
+ * G-5z-b — Staging shell read-only data section.
+ */
+import AdminReadOnlyDataStatusPanel from "./AdminReadOnlyDataStatusPanel.astro";
+
+interface Props {
+  phase?: string;
+}
+
+const { phase = "G-5z-b" } = Astro.props;
+---
+
+<div
+  id="admin-staging-readonly-data-root"
+  class="admin-staging-readonly-data"
+  data-scaffold="true"
+  data-phase={phase}
+>
+  <AdminReadOnlyDataStatusPanel phase={phase} />
+</div>
+
+<style>
+  .admin-staging-readonly-data {
+    margin: 0 0 1.5rem;
+  }
+</style>

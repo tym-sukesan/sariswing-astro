@@ -436,8 +436,8 @@ Sequence for G-5z-c:
 
 | Phase | Focus |
 | --- | --- |
-| **G-5z-a** | Read-only data integration plan — **this phase** |
-| **G-5z-b** | Read-only staging data adapter scaffold — mock only |
+| **G-5z-a（完了）** | Read-only data integration plan |
+| **G-5z-b（完了）** | [Read-only data adapter scaffold](./read-only-data-adapter-scaffold.md) — mock only |
 | **G-5z-c** | Supabase read-only adapter — explicit approval + RLS reviewed |
 | **G-5z-d** | Staging shell read-only module display wiring |
 | **G-5z-e** | Read-only QA / RLS review report |
@@ -531,6 +531,8 @@ Proceed to **G-5z-b** when:
 ```
 
 G-5z-b deliverables: types + mock adapter + dry-run CLI report — **no Supabase query**.
+
+**G-5z-b（完了）:** [read-only-data-adapter-scaffold.md](./read-only-data-adapter-scaffold.md). Next: **G-5z-c** Supabase read-only adapter with explicit approval.
 
 ---
 

@@ -21,6 +21,7 @@ import AdminStatusMessage from "../components/AdminStatusMessage.astro";
 import AdminAuthStatus from "../components/AdminAuthStatus.astro";
 import AdminAuthAdapterStatusPanel from "../components/AdminAuthAdapterStatusPanel.astro";
 import AdminStagingLoginUiSection from "../auth/components/AdminStagingLoginUiSection.astro";
+import AdminStagingReadOnlyDataSection from "../data/components/AdminStagingReadOnlyDataSection.astro";
 import { getStagingAuthConfig } from "../../../../../src/lib/admin/staging-auth/staging-auth-config";
 import AdminPermissionBadge from "../components/AdminPermissionBadge.astro";
 import AdminAccessDenied from "../components/AdminAccessDenied.astro";
@@ -236,7 +237,7 @@ const moduleSummary = [
         <AdminStatusMessage
           type="error"
           title="Staging runtime shell — Shell-only — Mock/static data only — Actions disabled"
-          message={`Route ${stagingShellRoutePath} is a staging runtime shell candidate (G-5x). Not connected to /admin/. Not connected to runtime data. Supabase Auth env-gated (G-5y-d). Role/allowlist mock-only (G-5y-e-a). No DB query or update. No Storage upload. No GitHub dispatch. No FTP deploy. Production disabled.`}
+          message={`Route ${stagingShellRoutePath} is a staging runtime shell candidate (G-5x). Not connected to /admin/. Read-only data adapter mock-only (G-5z-b). Supabase Auth env-gated (G-5y-d). Role/allowlist mock-only (G-5y-e-a). No DB query or update. No Storage upload. No GitHub dispatch. No FTP deploy. Production disabled.`}
         />
         <AdminAuthAdapterStatusPanel phase="G-5y-e-a" authConfig={stagingAuthConfig} />
       </div>
@@ -270,6 +271,17 @@ const moduleSummary = [
           data-section="auth-login-shell"
         >
           <AdminStagingLoginUiSection routePath={stagingShellRoutePath} phase="G-5y-e-a" />
+        </section>
+      ) : null
+    }
+    {
+      stagingShellMode ? (
+        <section
+          id="readonly-data-shell"
+          class="admin-prototype-section admin-staging-readonly-data-section"
+          data-section="readonly-data-shell"
+        >
+          <AdminStagingReadOnlyDataSection phase="G-5z-b" />
         </section>
       ) : null
     }

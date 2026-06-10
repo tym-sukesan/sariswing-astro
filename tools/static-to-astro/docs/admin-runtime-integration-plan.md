@@ -206,7 +206,8 @@ Never skip: local preview and customer demo before runtime shell; read-only befo
 | **G-5y-e-a（完了）** | [Staging role / allowlist mock](./staging-role-allowlist-mock.md) | Mock only, no DB |
 | **G-5y-e-b（完了）** | [Private / server-side allowlist plan](./private-server-side-allowlist-plan.md) | Planning only |
 | **G-5z-a（完了）** | [Read-only data integration plan](./read-only-data-integration-plan.md) | Planning only |
-| **G-5z-b** | Read-only staging data adapter scaffold | Mock only |
+| **G-5z-b（完了）** | [Read-only data adapter scaffold](./read-only-data-adapter-scaffold.md) | Mock only |
+| **G-5z-c** | Supabase read-only adapter | Explicit approval |
 | **G-5y-e** | Role check / allowlist | Staging Auth |
 
 **Purpose (overall):** Staging admin login only — after shell QA on `/__admin-staging-shell/musician-basic/`.

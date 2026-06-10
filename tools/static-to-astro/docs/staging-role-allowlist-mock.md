@@ -110,7 +110,8 @@ The staging shell **remains visible** for testing. No real `/admin` guard is con
 - **G-5y-e-b（完了）:** [Private / server-side allowlist plan](./private-server-side-allowlist-plan.md) — planning only; browser allowlist is not a security boundary; real emails must not be committed
 - **G-5y-e-c:** server-side allowlist dry-run scaffold (candidate)
 - **G-5z-a（完了）:** [Read-only data integration plan](./read-only-data-integration-plan.md) — planning only; no DB query
-- **G-5z-b:** read-only staging data adapter scaffold (mock only)
+- **G-5z-b（完了）:** [Read-only data adapter scaffold](./read-only-data-adapter-scaffold.md) — mock only
+- **G-5z-c:** Supabase read-only adapter (explicit approval)
 
 ## 10. Files
 

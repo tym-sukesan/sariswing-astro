@@ -1344,7 +1344,9 @@ gosaki / Sariswing で実証した移行フローを、**別サイト向け CMS 
 
 **G-5y-e-b（完了）:** [Private / server-side allowlist plan](docs/private-server-side-allowlist-plan.md) — planning only。
 
-**G-5z-a（完了）:** [Read-only data integration plan](docs/read-only-data-integration-plan.md) — staging shell read-only CMS data plan。DB query 実装なし。write/RLS/Storage/Publish/`/admin`/production data 禁止。次: **G-5z-b** mock adapter scaffold。
+**G-5z-a（完了）:** [Read-only data integration plan](docs/read-only-data-integration-plan.md) — staging shell read-only CMS data plan。
+
+**G-5z-b（完了）:** [Read-only data adapter scaffold](docs/read-only-data-adapter-scaffold.md) — mock adapter + fixtures + status panel。`canWrite: false`。Supabase query なし。次: **G-5z-c** Supabase read-only adapter（explicit approval）。
 
 ```bash
 node tools/static-to-astro/scripts/inspect-admin-auth-adapter.mjs \

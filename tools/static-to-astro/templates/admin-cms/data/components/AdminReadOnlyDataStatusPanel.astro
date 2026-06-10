@@ -1,0 +1,319 @@
+---
+/**
+ * G-5z-b — Read-only data adapter status + mock preview (staging shell only).
+ */
+import { getReadOnlyDataConfig } from "../../../../../../src/lib/admin/staging-data/read-only-data-config";
+import { createMockReadOnlyDataAdapter } from "../../../../../../src/lib/admin/staging-data/mock-read-only-data-adapter";
+import { getReadOnlyDataStatus } from "../../../../../../src/lib/admin/staging-data/read-only-data-status";
+
+interface Props {
+  phase?: string;
+}
+
+const { phase = "G-5z-b" } = Astro.props;
+
+const dataConfig = getReadOnlyDataConfig();
+const status = getReadOnlyDataStatus(dataConfig);
+const adapter = createMockReadOnlyDataAdapter();
+
+const profile = await adapter.getProfile();
+const schedules = await adapter.listSchedules();
+const discography = await adapter.listDiscography();
+const links = await adapter.listLinks();
+const news = await adapter.listNews();
+
+const publishedSchedules = schedules.filter((s) => s.published);
+const publishedDiscography = discography.filter((d) => d.published);
+const publishedLinks = links.filter((l) => l.published);
+const publishedNews = news.filter((n) => n.published);
+---
+
+<section
+  class="admin-readonly-data-panel"
+  id="staging-readonly-data-panel"
+  role="status"
+  aria-live="polite"
+  data-scaffold="true"
+  data-phase={phase}
+  data-provider="mock"
+  data-ui-state={status.uiState}
+>
+  <h2 class="admin-readonly-data-panel__title">
+    Read-only data adapter status ({phase})
+  </h2>
+
+  <p class="admin-readonly-data-panel__note">{status.uiStateNote}</p>
+
+  <dl class="admin-readonly-data-panel__meta">
+    <div>
+      <dt>Provider</dt>
+      <dd id="staging-data-provider">{status.dataProvider}</dd>
+    </div>
+    <div>
+      <dt>Target modules</dt>
+      <dd>{status.targetModules.join(" / ")}</dd>
+    </div>
+    <div>
+      <dt>Read-only mode</dt>
+      <dd>{status.readOnlyMode ? "true" : "false"}</dd>
+    </div>
+    <div>
+      <dt>canWrite</dt>
+      <dd id="staging-data-can-write">false</dd>
+    </div>
+    <div>
+      <dt>Runtime connected</dt>
+      <dd>{status.connectedToRuntime ? "true" : "false"}</dd>
+    </div>
+    <div>
+      <dt>Production ready</dt>
+      <dd>false</dd>
+    </div>
+    <div>
+      <dt>Supabase DB query</dt>
+      <dd>not implemented</dd>
+    </div>
+    <div>
+      <dt>RLS</dt>
+      <dd>not configured</dd>
+    </div>
+    <div>
+      <dt>Storage</dt>
+      <dd>not connected</dd>
+    </div>
+    <div>
+      <dt>Publish</dt>
+      <dd>disabled</dd>
+    </div>
+    <div>
+      <dt>/admin route</dt>
+      <dd>not connected</dd>
+    </div>
+    <div>
+      <dt>UI state</dt>
+      <dd id="staging-data-ui-state">{status.uiState}</dd>
+    </div>
+  </dl>
+
+  <div class="admin-readonly-data-panel__states" aria-label="UI state scaffold">
+    <h3 class="admin-readonly-data-panel__subtitle">UI state scaffold (G-5z-b)</h3>
+    <ul class="admin-readonly-data-panel__state-list">
+      <li class={status.uiState === "mock-data" ? "is-active" : ""}>mock data</li>
+      <li>empty state (placeholder)</li>
+      <li>error state (placeholder)</li>
+      <li>loading state (placeholder)</li>
+      <li class={status.uiState === "provider-disabled" ? "is-active" : ""}>
+        provider disabled
+      </li>
+      <li>RLS denied (placeholder — G-5z-c+)</li>
+    </ul>
+  </div>
+
+  <div class="admin-readonly-data-panel__previews">
+    <h3 class="admin-readonly-data-panel__subtitle">Mock data preview</h3>
+    <p class="admin-readonly-data-panel__preview-note">
+      Fictional fixtures only. No Supabase query. Save / delete / publish remain disabled.
+    </p>
+
+    <article class="admin-readonly-data-panel__preview-block">
+      <h4>Profile preview</h4>
+      {
+        profile ? (
+          <dl>
+            <div>
+              <dt>Name</dt>
+              <dd>{profile.displayName}</dd>
+            </div>
+            <div>
+              <dt>Bio</dt>
+              <dd>{profile.bio ?? "—"}</dd>
+            </div>
+          </dl>
+        ) : (
+          <p class="admin-readonly-data-panel__empty">Empty state — no profile row</p>
+        )
+      }
+    </article>
+
+    <article class="admin-readonly-data-panel__preview-block">
+      <h4>Upcoming schedules preview ({publishedSchedules.length} published)</h4>
+      {
+        publishedSchedules.length > 0 ? (
+          <ul>
+            {
+              publishedSchedules.map((row) => (
+                <li>
+                  <strong>{row.title}</strong> — {row.date ?? "—"}
+                  {row.venueName ? ` @ ${row.venueName}` : ""}
+                </li>
+              ))
+            }
+          </ul>
+        ) : (
+          <p class="admin-readonly-data-panel__empty">Empty state — no published schedules</p>
+        )
+      }
+    </article>
+
+    <article class="admin-readonly-data-panel__preview-block">
+      <h4>Discography preview ({publishedDiscography.length} published)</h4>
+      {
+        publishedDiscography.length > 0 ? (
+          <ul>
+            {
+              publishedDiscography.map((row) => (
+                <li>
+                  <strong>{row.title}</strong>
+                  {row.releaseDate ? ` (${row.releaseDate})` : ""}
+                </li>
+              ))
+            }
+          </ul>
+        ) : (
+          <p class="admin-readonly-data-panel__empty">Empty state — no published discography</p>
+        )
+      }
+    </article>
+
+    <article class="admin-readonly-data-panel__preview-block">
+      <h4>Links preview ({publishedLinks.length} published)</h4>
+      {
+        publishedLinks.length > 0 ? (
+          <ul>
+            {
+              publishedLinks.map((row) => (
+                <li>
+                  {row.label} — <code>{row.url}</code>
+                </li>
+              ))
+            }
+          </ul>
+        ) : (
+          <p class="admin-readonly-data-panel__empty">Empty state — no published links</p>
+        )
+      }
+    </article>
+
+    <article class="admin-readonly-data-panel__preview-block">
+      <h4>News preview ({publishedNews.length} published)</h4>
+      {
+        publishedNews.length > 0 ? (
+          <ul>
+            {
+              publishedNews.map((row) => (
+                <li>
+                  <strong>{row.title}</strong>
+                  {row.publishedAt ? ` — ${row.publishedAt}` : ""}
+                </li>
+              ))
+            }
+          </ul>
+        ) : (
+          <p class="admin-readonly-data-panel__empty">Empty state — no published news</p>
+        )
+      }
+    </article>
+  </div>
+</section>
+
+<style>
+  .admin-readonly-data-panel {
+    margin: 0 0 1.25rem;
+    padding: 1rem 1.25rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    background: #f8fafc;
+  }
+  .admin-readonly-data-panel__title {
+    margin: 0 0 0.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #0f172a;
+  }
+  .admin-readonly-data-panel__note {
+    margin: 0 0 0.75rem;
+    font-size: 0.875rem;
+    color: #475569;
+  }
+  .admin-readonly-data-panel__meta {
+    margin: 0 0 1rem;
+    display: grid;
+    gap: 0.35rem 1rem;
+    grid-template-columns: max-content 1fr;
+    font-size: 0.875rem;
+  }
+  .admin-readonly-data-panel__meta dt {
+    font-weight: 600;
+    color: #334155;
+  }
+  .admin-readonly-data-panel__meta dd {
+    margin: 0;
+    color: #1e293b;
+  }
+  .admin-readonly-data-panel__subtitle {
+    margin: 0 0 0.5rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+  .admin-readonly-data-panel__states {
+    margin-bottom: 1rem;
+    padding: 0.75rem;
+    border-radius: 6px;
+    background: #f1f5f9;
+    border: 1px solid #e2e8f0;
+  }
+  .admin-readonly-data-panel__state-list {
+    margin: 0;
+    padding-left: 1.25rem;
+    font-size: 0.8125rem;
+    color: #475569;
+  }
+  .admin-readonly-data-panel__state-list .is-active {
+    font-weight: 600;
+    color: #0f172a;
+  }
+  .admin-readonly-data-panel__previews {
+    display: grid;
+    gap: 0.75rem;
+  }
+  .admin-readonly-data-panel__preview-note {
+    margin: 0 0 0.5rem;
+    font-size: 0.8125rem;
+    color: #64748b;
+  }
+  .admin-readonly-data-panel__preview-block {
+    padding: 0.75rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    background: #fff;
+  }
+  .admin-readonly-data-panel__preview-block h4 {
+    margin: 0 0 0.5rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+  .admin-readonly-data-panel__preview-block dl {
+    margin: 0;
+    display: grid;
+    gap: 0.25rem 0.75rem;
+    grid-template-columns: max-content 1fr;
+    font-size: 0.8125rem;
+  }
+  .admin-readonly-data-panel__preview-block ul {
+    margin: 0;
+    padding-left: 1.1rem;
+    font-size: 0.8125rem;
+  }
+  .admin-readonly-data-panel__preview-block code {
+    font-size: 0.75rem;
+    background: #f1f5f9;
+    padding: 0.1rem 0.25rem;
+    border-radius: 3px;
+  }
+  .admin-readonly-data-panel__empty {
+    margin: 0;
+    font-size: 0.8125rem;
+    color: #94a3b8;
+    font-style: italic;
+  }
+</style>

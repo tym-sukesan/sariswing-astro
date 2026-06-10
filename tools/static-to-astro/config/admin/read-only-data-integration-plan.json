@@ -29,7 +29,7 @@
     "ENABLE_ADMIN_STAGING_DATA_READ": false,
     "PUBLIC_ADMIN_DATA_PROVIDER": "mock"
   },
-  "recommendedNextPhase": "G-5z-b",
+  "recommendedNextPhase": "G-5z-c",
   "phaseBreakdown": [
     "G-5z-a",
     "G-5z-b",

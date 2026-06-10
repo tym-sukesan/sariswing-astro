@@ -1330,7 +1330,14 @@ gosaki / Sariswing で実証した移行フローを、**別サイト向け CMS 
 
 **G-5x（完了）:** [Staging runtime shell integration](docs/staging-runtime-shell-integration.md) — `/__admin-staging-shell/musician-basic/`。`ENABLE_ADMIN_STAGING_SHELL=true` + dev only。
 
-**G-5y-a（完了）:** [Supabase Auth staging integration plan](docs/supabase-auth-staging-integration-plan.md) — plan only。`ENABLE_ADMIN_STAGING_AUTH=false` default。Auth 実接続なし。次: **G-5y-b** Auth adapter scaffold / dry-run only。
+**G-5y-a（完了）:** [Supabase Auth staging integration plan](docs/supabase-auth-staging-integration-plan.md) — plan only。
+
+**G-5y-b（完了）:** [Admin Auth adapter scaffold](docs/admin-auth-adapter-scaffold.md) — mock provider, session/role/permission checkers, dry-run CLI。Supabase 実接続なし。staging shell に Auth mock status。次: **G-5y-c** staging login UI shell。
+
+```bash
+node tools/static-to-astro/scripts/inspect-admin-auth-adapter.mjs \
+  --out-dir tools/static-to-astro/output/admin-auth-dry-runs/gosaki
+```
 
 ```bash
 ENABLE_ADMIN_STAGING_SHELL=true npm run dev

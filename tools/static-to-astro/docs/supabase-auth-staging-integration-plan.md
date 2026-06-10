@@ -412,7 +412,7 @@ G-5y-a adds only `ENABLE_ADMIN_STAGING_AUTH=false` to [`.env.example`](../../../
 | Phase | Focus | Runtime connection |
 | --- | --- | --- |
 | **G-5y-a（完了）** | Supabase Auth staging integration **plan** (this doc) | **None** |
-| **G-5y-b** | Auth adapter scaffold / dry-run CLI only | **None** |
+| **G-5y-b（完了）** | [Auth adapter scaffold / dry-run](./admin-auth-adapter-scaffold.md) | **None** |
 | **G-5y-c** | Staging login UI shell; disabled real auth | **None** |
 | **G-5y-d** | Staging Supabase Auth connection (explicit approval) | Staging Auth only |
 | **G-5y-e** | Staging role check / allowlist enforcement | Staging Auth + allowlist |
@@ -479,23 +479,28 @@ The following are **forbidden** in G-5y-a and remain forbidden until their expli
 
 ## 18. Acceptance criteria for G-5y-b
 
-Proceed to **G-5y-b (Auth adapter scaffold / dry-run only)** when:
+**G-5y-b（完了）:** [admin-auth-adapter-scaffold.md](./admin-auth-adapter-scaffold.md)
 
-- [ ] This plan reviewed and linked from roadmap / README
-- [ ] Env names agreed (`ENABLE_ADMIN_STAGING_AUTH`, future `PUBLIC_*` staging vars)
-- [ ] Allowlist-first direction chosen for initial staging (with `admin_users` migration noted)
-- [ ] Staging-only route confirmed (`/__admin-staging-shell/musician-basic/`, not `/admin/`)
-- [ ] No production Auth changes planned in G-5y-b
-- [ ] No DB / RLS mutation in G-5y-b scope
-- [ ] Rollback plan understood: set `ENABLE_ADMIN_STAGING_AUTH=false`; remove staging env
-- [ ] Permission matrix and role model aligned with `permissions.example.json`
-- [ ] Service role / anon key separation acknowledged by reviewer
+Proceed to **G-5y-c (staging login UI shell)** when:
+
+- [x] G-5y-a plan reviewed
+- [x] Auth adapter types + mock provider added
+- [x] Session / role / permission checkers added
+- [x] Dry-run CLI produces report with `supabaseAuthConnected: false`
+- [x] Staging shell shows Auth mock status panel
+- [ ] G-5y-c login UI shell reviewed (next phase)
+
+---
+
+## 18b. Acceptance criteria for G-5y-c (next)
+
+Proceed to **G-5y-d** only after G-5y-c login UI shell is on staging route with real auth still disabled.
 
 ---
 
 ## 19. Final safety statement
 
-**G-5y-a is a planning phase only.**
+**G-5y-a is a planning phase only. G-5y-b is scaffold / dry-run only.**
 
 - No Supabase Auth is connected.
 - No Supabase client is added.
@@ -513,7 +518,7 @@ Proceed to **G-5y-b (Auth adapter scaffold / dry-run only)** when:
 ## Related
 
 - [staging-runtime-shell-integration.md](./staging-runtime-shell-integration.md) — G-5x staging shell route
-- [admin-auth-abstraction-scaffold.md](./admin-auth-abstraction-scaffold.md) — G-5m-b Auth UI scaffold
+- [admin-auth-adapter-scaffold.md](./admin-auth-adapter-scaffold.md) — G-5y-b Auth adapter scaffold
 - [admin-runtime-integration-plan.md](./admin-runtime-integration-plan.md) — full runtime phase map
 - [local-only-admin-preview-route.md](./local-only-admin-preview-route.md) — G-5u preview (no Auth)
 

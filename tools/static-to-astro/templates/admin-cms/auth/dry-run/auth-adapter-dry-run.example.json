@@ -1,0 +1,32 @@
+{
+  "mode": "dry-run",
+  "phase": "G-5y-b",
+  "provider": "mock",
+  "supabaseAuthConnected": false,
+  "supabaseClientImported": false,
+  "adminUsersTableCreated": false,
+  "rlsPolicyChanged": false,
+  "dbQueryPerformed": false,
+  "dbUpdatePerformed": false,
+  "storageUploadPerformed": false,
+  "githubDispatchPerformed": false,
+  "ftpDeployPerformed": false,
+  "productionAuthTouched": false,
+  "connectedToRuntime": false,
+  "productionReady": false,
+  "mockSession": {
+    "status": "mock",
+    "email": "mock-admin@example.com",
+    "role": "admin",
+    "provider": "mock",
+    "connectedToRuntime": false,
+    "productionReady": false
+  },
+  "scaffoldFiles": [
+    "templates/admin-cms/auth/adapters/auth-adapter.types.ts",
+    "templates/admin-cms/auth/adapters/mock-auth-adapter.ts",
+    "templates/admin-cms/auth/adapters/permission-checker.ts",
+    "templates/admin-cms/auth/adapters/role-checker.ts",
+    "templates/admin-cms/auth/adapters/session-checker.ts"
+  ]
+}

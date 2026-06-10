@@ -132,6 +132,8 @@ All interactive admin actions remain scaffold-only:
 
 Buttons use `disabled={true}` and do not perform runtime operations.
 
+**G-5y-b:** Staging shell also shows `AdminAuthAdapterStatusPanel` — Auth adapter mock only, Supabase Auth not connected.
+
 ---
 
 ## 9. Next phase
@@ -139,7 +141,7 @@ Buttons use `disabled={true}` and do not perform runtime operations.
 | Phase | Focus |
 | --- | --- |
 | **G-5y-a（完了）** | [Supabase Auth staging integration plan](./supabase-auth-staging-integration-plan.md) — plan only, no Auth connection |
-| **G-5y-b** | Auth adapter scaffold / dry-run only |
+| **G-5y-b（完了）** | [Auth adapter scaffold](./admin-auth-adapter-scaffold.md) — mock provider, dry-run CLI |
 | **G-5y-c** | Staging login UI shell (disabled real auth) |
 | **G-5y-d** | Staging Supabase Auth connection (explicit approval) |
 | Prerequisite | Complete shell QA on this route first |
@@ -153,6 +155,7 @@ Buttons use `disabled={true}` and do not perform runtime operations.
 - [local-only-admin-preview-route.md](./local-only-admin-preview-route.md) — G-5u preview (different route)
 - [admin-runtime-integration-plan.md](./admin-runtime-integration-plan.md) — G-5x / G-5y phase map
 - [supabase-auth-staging-integration-plan.md](./supabase-auth-staging-integration-plan.md) — G-5y-a Auth plan (no connection yet)
+- [admin-auth-adapter-scaffold.md](./admin-auth-adapter-scaffold.md) — G-5y-b Auth adapter mock status on this route
 
 ---
 

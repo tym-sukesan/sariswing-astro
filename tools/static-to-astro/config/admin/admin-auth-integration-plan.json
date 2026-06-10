@@ -2,7 +2,7 @@
   "version": "0.1.0",
   "status": "draft",
   "mode": "planning-only",
-  "phase": "G-5y-a",
+  "phase": "G-5y-b",
   "productionReady": false,
   "connectedToRuntime": false,
   "supabaseAuthConnected": false,
@@ -66,9 +66,15 @@
     "requiredRole": "admin",
     "requiresExplicitApproval": true
   },
+  "scaffoldPaths": {
+    "adaptersDir": "templates/admin-cms/auth/adapters",
+    "dryRunExample": "templates/admin-cms/auth/dry-run/auth-adapter-dry-run.example.json",
+    "dryRunCli": "scripts/inspect-admin-auth-adapter.mjs",
+    "stagingShellAuthPanel": "templates/admin-cms/components/AdminAuthAdapterStatusPanel.astro"
+  },
   "futurePhaseMap": {
-    "G-5y-a": "Supabase Auth staging integration plan (this config)",
-    "G-5y-b": "Auth adapter scaffold / dry-run only",
+    "G-5y-a": "Supabase Auth staging integration plan",
+    "G-5y-b": "Auth adapter scaffold / dry-run only (implemented)",
     "G-5y-c": "Staging login UI shell with disabled real auth",
     "G-5y-d": "Staging Supabase Auth connection with explicit approval",
     "G-5y-e": "Staging role check / allowlist",

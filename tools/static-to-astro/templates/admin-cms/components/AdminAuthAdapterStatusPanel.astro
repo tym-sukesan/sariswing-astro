@@ -1,0 +1,95 @@
+---
+/**
+ * G-5y-b — Auth adapter mock status panel for staging shell.
+ * Static display only. No Supabase. No runtime connection.
+ */
+interface Props {
+  phase?: string;
+}
+
+const { phase = "G-5y-b" } = Astro.props;
+
+const mockEmail = "mock-admin@example.com";
+const mockRole = "admin";
+---
+
+<section
+  class="admin-auth-adapter-panel"
+  role="status"
+  aria-live="polite"
+  data-scaffold="true"
+  data-phase={phase}
+>
+  <h2 class="admin-auth-adapter-panel__title">Auth adapter status ({phase})</h2>
+  <dl class="admin-auth-adapter-panel__list">
+    <div>
+      <dt>Auth adapter</dt>
+      <dd>mock only</dd>
+    </div>
+    <div>
+      <dt>Supabase Auth</dt>
+      <dd>not connected</dd>
+    </div>
+    <div>
+      <dt>Session</dt>
+      <dd>
+        {mockEmail} / {mockRole} role
+      </dd>
+    </div>
+    <div>
+      <dt>Runtime connected</dt>
+      <dd>false</dd>
+    </div>
+    <div>
+      <dt>Production ready</dt>
+      <dd>false</dd>
+    </div>
+    <div>
+      <dt>Route guard</dt>
+      <dd>not enabled</dd>
+    </div>
+    <div>
+      <dt>RLS</dt>
+      <dd>not configured</dd>
+    </div>
+  </dl>
+  <p class="admin-auth-adapter-panel__note">
+    Auth adapter scaffold only. Supabase client not imported. Actions remain disabled.
+    Not connected to /admin/.
+  </p>
+</section>
+
+<style>
+  .admin-auth-adapter-panel {
+    margin: 0 0 1.25rem;
+    padding: 1rem 1.25rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    background: #f1f5f9;
+  }
+  .admin-auth-adapter-panel__title {
+    margin: 0 0 0.75rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #0f172a;
+  }
+  .admin-auth-adapter-panel__list {
+    margin: 0;
+    display: grid;
+    gap: 0.35rem 1rem;
+    grid-template-columns: max-content 1fr;
+  }
+  .admin-auth-adapter-panel__list dt {
+    font-weight: 600;
+    color: #334155;
+  }
+  .admin-auth-adapter-panel__list dd {
+    margin: 0;
+    color: #1e293b;
+  }
+  .admin-auth-adapter-panel__note {
+    margin: 0.75rem 0 0;
+    font-size: 0.875rem;
+    color: #475569;
+  }
+</style>

@@ -19,6 +19,7 @@ import AdminPageHeader from "../components/AdminPageHeader.astro";
 import AdminCard from "../components/AdminCard.astro";
 import AdminStatusMessage from "../components/AdminStatusMessage.astro";
 import AdminAuthStatus from "../components/AdminAuthStatus.astro";
+import AdminAuthAdapterStatusPanel from "../components/AdminAuthAdapterStatusPanel.astro";
 import AdminPermissionBadge from "../components/AdminPermissionBadge.astro";
 import AdminAccessDenied from "../components/AdminAccessDenied.astro";
 import AdminImageUploader from "../components/AdminImageUploader.astro";
@@ -227,12 +228,14 @@ const moduleSummary = [
 
   {
     stagingShellMode ? (
-      <AdminStatusMessage
-        slot="status"
-        type="error"
-        title="Staging runtime shell — Shell-only — Mock/static data only — Actions disabled"
-        message={`Route ${stagingShellRoutePath} is a staging runtime shell candidate (G-5x). Not connected to /admin/. Not connected to runtime data. No Supabase Auth. No DB query or update. No Storage upload. No GitHub dispatch. No FTP deploy. Production disabled. All actions disabled in G-5x.`}
-      />
+      <div class="admin-staging-status-group" slot="status">
+        <AdminStatusMessage
+          type="error"
+          title="Staging runtime shell — Shell-only — Mock/static data only — Actions disabled"
+          message={`Route ${stagingShellRoutePath} is a staging runtime shell candidate (G-5x). Not connected to /admin/. Not connected to runtime data. No Supabase Auth. No DB query or update. No Storage upload. No GitHub dispatch. No FTP deploy. Production disabled. All actions disabled in G-5x.`}
+        />
+        <AdminAuthAdapterStatusPanel phase="G-5y-b" />
+      </div>
     ) : localPreviewMode ? (
       <AdminStatusMessage
         slot="status"

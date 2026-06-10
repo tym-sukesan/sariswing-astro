@@ -1320,7 +1320,16 @@ gosaki / Sariswing で実証した移行フローを、**別サイト向け CMS 
 
 **G-5v（完了）:** [Musician Basic Customer Demo Package](docs/customer-demo-package-musician-basic/README.md) — 顧客デモ用資料一式。G-5u preview route と組み合わせて使用。mock / scaffold のみ。
 
-**G-5w-a（完了）:** [Admin scaffold writer plan](docs/admin-scaffold-writer-plan.md) — explicit opt-in writer 設計。dry-run default / `--apply` required。Sariswing existing admin excluded。writer CLI 未実装。Policy: [`config/admin/admin-scaffold-writer-policy.json`](config/admin/admin-scaffold-writer-policy.json)。次: **G-5w-b** writer dry-run CLI。
+**G-5w-a（完了）:** [Admin scaffold writer plan](docs/admin-scaffold-writer-plan.md) — explicit opt-in writer 設計。Policy: [`config/admin/admin-scaffold-writer-policy.json`](config/admin/admin-scaffold-writer-policy.json)。
+
+**G-5w-b（完了）:** [Writer dry-run CLI](docs/admin-scaffold-writer-dry-run-cli.md) — `write-admin-scaffold.mjs`。`--apply` 未実装、target-dir への実書き込みなし。次: **G-5w-c** apply to sandbox only。
+
+```bash
+node tools/static-to-astro/scripts/write-admin-scaffold.mjs \
+  --package-dir tools/static-to-astro/output/admin-scaffold-packages/gosaki \
+  --target-dir tools/static-to-astro/output/admin-writer-sandbox/gosaki \
+  --mode dry-run
+```
 
 ```bash
 node tools/static-to-astro/scripts/inventory-admin-cms.mjs --root .

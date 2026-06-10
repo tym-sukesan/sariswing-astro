@@ -153,8 +153,8 @@ Never skip: local preview and customer demo before runtime shell; read-only befo
 | Sub-phase | Focus |
 | --- | --- |
 | **G-5w-a（完了）** | Writer safety plan — dry-run default, `--apply` required, manifests, Sariswing exclusion |
-| **G-5w-b** | Writer dry-run CLI (not implemented) |
-| **G-5w-c** | Apply to sandbox `output/admin-writer-sandbox/` only |
+| **G-5w-b（完了）** | [Writer dry-run CLI](./admin-scaffold-writer-dry-run-cli.md) — reports only, no target writes |
+| **G-5w-c** | Apply to sandbox `output/admin-writer-sandbox/` only (`--apply`) |
 | **G-5w-d** | Generated scaffold review + staging project apply |
 
 | Allowed | Forbidden |
@@ -492,7 +492,7 @@ Generated per site (G-5s): `admin-safety-checklist.generated.md` in dry-run pack
 | **G-5u（完了）** | [Local-only preview route](./local-only-admin-preview-route.md) — `/__admin-preview/musician-basic/` |
 | **G-5v（完了）** | [Customer demo package](./customer-demo-package-musician-basic/README.md) |
 | **G-5w-a（完了）** | [Admin scaffold writer plan](./admin-scaffold-writer-plan.md) — planning only |
-| **G-5w-b** | Writer dry-run CLI |
+| **G-5w-b（完了）** | [Writer dry-run CLI](./admin-scaffold-writer-dry-run-cli.md) — `--apply` not implemented |
 | **G-5w-c** | Apply to sandbox output directory only |
 | **G-5x** | Staging runtime shell integration |
 | **G-5y** | Supabase Auth staging integration |

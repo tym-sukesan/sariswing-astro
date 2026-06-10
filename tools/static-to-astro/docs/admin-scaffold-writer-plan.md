@@ -1,7 +1,7 @@
 # Explicit Opt-in Admin Scaffold Writer Plan
 
-**Phase:** G-5w-a — writer safety plan (planning only)  
-**Status:** writer not implemented · no files generated · no runtime connection
+**Phase:** G-5w-a (plan) · G-5w-b (dry-run CLI)  
+**Status:** dry-run CLI implemented · `--apply` not implemented · no target-dir writes
 
 ---
 
@@ -12,8 +12,9 @@ G-5w-a defines the **explicit opt-in admin scaffold writer** — a future tool t
 | Item | G-5w-a status |
 | --- | --- |
 | Writer design | **This document** |
-| Writer CLI implementation | **Not started** |
-| File writes | **None** |
+| Writer dry-run CLI (G-5w-b) | **[Implemented](./admin-scaffold-writer-dry-run-cli.md)** — reports only |
+| Writer `--apply` (G-5w-c) | **Not started** |
+| File writes to target-dir | **None** |
 | `runtimeFilesWritten` | **false** |
 | `productionReady` | **false** |
 | `connectedToRuntime` | **false** |
@@ -135,9 +136,10 @@ The writer should maintain a **denylist** (see [admin-scaffold-writer-policy.jso
 
 ## 6. Proposed writer CLI design
 
-**Script (not implemented):** `tools/static-to-astro/scripts/write-admin-scaffold.mjs`
+**Script:** `tools/static-to-astro/scripts/write-admin-scaffold.mjs`  
+**G-5w-b:** dry-run mode implemented. See [admin-scaffold-writer-dry-run-cli.md](./admin-scaffold-writer-dry-run-cli.md).
 
-### Dry-run (default)
+### Dry-run (default — G-5w-b)
 
 ```bash
 node tools/static-to-astro/scripts/write-admin-scaffold.mjs \
@@ -451,7 +453,7 @@ This list extends [admin-runtime-integration-gates.json](../config/admin/admin-r
 | Phase | Focus | File writes |
 | --- | --- | --- |
 | **G-5w-a（完了）** | Writer safety plan (this doc) + policy JSON | **None** |
-| **G-5w-b** | Writer dry-run CLI — plan/manifest only | **None** (manifest to `output/` only) |
+| **G-5w-b（完了）** | [Writer dry-run CLI](./admin-scaffold-writer-dry-run-cli.md) — plan/manifest to `output/admin-writer-dry-runs/` | **None** to target-dir |
 | **G-5w-c** | Apply to sandbox output directory only | Sandbox under `output/admin-writer-sandbox/` |
 | **G-5w-d** | Generated scaffold review + staging project apply | New staging project only (gated) |
 | **G-5x** | Staging runtime shell integration | Runtime routes on staging; no DB write yet |
@@ -523,6 +525,7 @@ No production environment is touched.
 
 ## Related
 
+- [admin-scaffold-writer-dry-run-cli.md](./admin-scaffold-writer-dry-run-cli.md) — G-5w-b dry-run CLI
 - [site-config-driven-admin-scaffold-generator.md](./site-config-driven-admin-scaffold-generator.md) — G-5s dry-run package
 - [admin-runtime-integration-plan.md](./admin-runtime-integration-plan.md) — G-5t phase map
 - [local-only-admin-preview-route.md](./local-only-admin-preview-route.md) — G-5u preview (separate from writer output)

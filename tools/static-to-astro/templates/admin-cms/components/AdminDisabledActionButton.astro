@@ -1,0 +1,75 @@
+---
+/**
+ * G-6-c — Disabled write action button (no handlers, no fetch, no submit).
+ */
+interface Props {
+  label: string;
+  action: string;
+  module?: string;
+  gate?: string;
+  reason?: string;
+  risk?: "low" | "medium" | "high";
+}
+
+const {
+  label,
+  action,
+  module = "",
+  gate = "",
+  reason = "RLSとrollback確認後にstaging限定で有効化します。",
+  risk = "medium",
+} = Astro.props;
+---
+
+<div
+  class="admin-disabled-action-button"
+  data-scaffold="true"
+  data-action={action}
+  data-module={module}
+  data-gate={gate}
+  data-risk={risk}
+  data-enabled="false"
+>
+  <button class="admin-disabled-action-button__btn" type="button" disabled>
+    {label}
+  </button>
+  <p class="admin-disabled-action-button__status">{label}はまだ無効です</p>
+  {gate ? <p class="admin-disabled-action-button__gate">Gate: {gate}</p> : null}
+  <p class="admin-disabled-action-button__reason">Reason: {reason}</p>
+</div>
+
+<style>
+  .admin-disabled-action-button {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #e2e8f0;
+  }
+  .admin-disabled-action-button:last-child {
+    border-bottom: none;
+  }
+  .admin-disabled-action-button__btn {
+    display: inline-block;
+    padding: 0.35rem 0.75rem;
+    font-size: 0.8125rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    background: #f1f5f9;
+    color: #94a3b8;
+    cursor: not-allowed;
+  }
+  .admin-disabled-action-button__status {
+    margin: 0.35rem 0 0;
+    font-size: 0.75rem;
+    color: #64748b;
+  }
+  .admin-disabled-action-button__gate {
+    margin: 0.15rem 0 0;
+    font-size: 0.7rem;
+    color: #475569;
+    font-family: ui-monospace, monospace;
+  }
+  .admin-disabled-action-button__reason {
+    margin: 0.15rem 0 0;
+    font-size: 0.7rem;
+    color: #94a3b8;
+  }
+</style>

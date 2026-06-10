@@ -369,11 +369,13 @@ node tools/static-to-astro/scripts/report-rls-write-policy-review-plan.mjs \
 
 ## 16. Next phase recommendation
 
-**Proceed to:** **G-6-c: disabled write action scaffold**
+**G-6-c（完了）:** [disabled-write-action-scaffold.md](./disabled-write-action-scaffold.md) — UI scaffold only; all write actions disabled; `readyForG6DPlanning: true`.
 
-G-6-c still does **not** perform real DB writes. It adds UI for Save / Create / Delete / Publish etc. in **disabled** state with messages explaining which approval gate enables each action.
+**Proceed to:** **G-6-d staging profile update PoC planning / approval**
 
-**Do not yet:** G-6-d staging profile update PoC.
+G-6-d still requires approval ID and first-write PoC plan before any staging write.
+
+**Do not yet:** G-6-d implementation without approval.
 
 ## 17. Final safety statement
 

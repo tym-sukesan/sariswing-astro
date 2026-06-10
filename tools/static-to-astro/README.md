@@ -1360,7 +1360,14 @@ gosaki / Sariswing で実証した移行フローを、**別サイト向け CMS 
 
 **G-6-a（完了）:** [Write operation safety plan](docs/write-operation-safety-plan.md) — planning only。
 
-**G-6-b（完了）:** [RLS write policy review plan](docs/rls-write-policy-review-plan.md) — review/planning only。`sqlExecuted: false`、`rlsPolicyChanged: false`、`readyForG6C: true`。次: **G-6-c** disabled write action scaffold。
+**G-6-b（完了）:** [RLS write policy review plan](docs/rls-write-policy-review-plan.md) — review/planning only。`sqlExecuted: false`、`rlsPolicyChanged: false`、`readyForG6C: true`。
+
+**G-6-c（完了）:** [Disabled write action scaffold](docs/disabled-write-action-scaffold.md) — UI scaffold only。all write actions disabled。`canWrite: false`、`writeOperationsEnabled: false`、`readyForG6D: false`、`readyForG6DPlanning: true`。次: **G-6-d** staging profile update PoC planning / approval。
+
+```bash
+node tools/static-to-astro/scripts/report-disabled-write-action-scaffold.mjs \
+  --out-dir tools/static-to-astro/output/disabled-write-action-scaffold/gosaki
+```
 
 ```bash
 node tools/static-to-astro/scripts/inspect-admin-auth-adapter.mjs \

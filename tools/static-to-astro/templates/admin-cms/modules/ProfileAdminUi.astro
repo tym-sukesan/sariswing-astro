@@ -9,6 +9,7 @@ import AdminEditForm from "../components/AdminEditForm.astro";
 import AdminFormField from "../components/AdminFormField.astro";
 import AdminPublishToggle from "../components/AdminPublishToggle.astro";
 import AdminStatusMessage from "../components/AdminStatusMessage.astro";
+import ModuleDisabledWriteActionsSection from "../components/ModuleDisabledWriteActionsSection.astro";
 
 export interface ProfileAdminData {
   name?: string;
@@ -98,4 +99,6 @@ const imageStatus = profile.imageStatus ?? (profile.image_url ? "attached" : "no
       <AdminPublishToggle published={profile.published ?? false} disabled={true} />
     </AdminEditForm>
   </AdminCard>
+
+  <ModuleDisabledWriteActionsSection module="profile" />
 </section>

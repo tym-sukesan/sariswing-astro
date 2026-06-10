@@ -1,0 +1,86 @@
+---
+/**
+ * G-6-c — Module / operation matrix (all disabled).
+ */
+import scaffoldConfig from "../../../config/admin/disabled-write-action-scaffold.json";
+import AdminDisabledActionButton from "./AdminDisabledActionButton.astro";
+
+interface Props {
+  moduleFilter?: string;
+  compact?: boolean;
+}
+
+const { moduleFilter, compact = false } = Astro.props;
+
+const actions = scaffoldConfig.actions.filter(
+  (a) => !moduleFilter || a.module === moduleFilter,
+);
+
+const modules = [...new Set(scaffoldConfig.actions.map((a) => a.module))];
+---
+
+<div
+  class="admin-write-action-matrix"
+  data-scaffold="true"
+  data-phase={scaffoldConfig.phase}
+  data-ui-only="true"
+>
+  {!compact ? (
+    <p class="admin-write-action-matrix__intro">
+      All write actions are disabled. Approval gate required before enablement.
+    </p>
+  ) : null}
+
+  {
+    moduleFilter ? (
+      <div class="admin-write-action-matrix__module">
+        {actions.map((item) => (
+          <AdminDisabledActionButton
+            label={item.label}
+            action={item.action}
+            module={item.module}
+            gate={item.gate}
+            reason={item.reason}
+            risk={item.risk as "low" | "medium" | "high"}
+          />
+        ))}
+      </div>
+    ) : (
+      modules.map((mod) => (
+        <section class="admin-write-action-matrix__module" data-module={mod}>
+          <h4 class="admin-write-action-matrix__module-title">{mod}</h4>
+          {scaffoldConfig.actions
+            .filter((a) => a.module === mod)
+            .map((item) => (
+              <AdminDisabledActionButton
+                label={item.label}
+                action={item.action}
+                module={item.module}
+                gate={item.gate}
+                reason={item.reason}
+                risk={item.risk as "low" | "medium" | "high"}
+              />
+            ))}
+        </section>
+      ))
+    )
+  }
+</div>
+
+<style>
+  .admin-write-action-matrix__intro {
+    margin: 0 0 0.75rem;
+    font-size: 0.8125rem;
+    color: #64748b;
+  }
+  .admin-write-action-matrix__module {
+    margin-bottom: 1rem;
+  }
+  .admin-write-action-matrix__module-title {
+    margin: 0 0 0.5rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: capitalize;
+    color: #334155;
+  }
+</style>

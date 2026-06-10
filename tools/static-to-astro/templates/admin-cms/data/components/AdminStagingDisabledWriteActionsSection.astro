@@ -1,0 +1,113 @@
+---
+/**
+ * G-6-c — Staging shell disabled write actions overview.
+ */
+import scaffoldConfig from "../../../../config/admin/disabled-write-action-scaffold.json";
+import AdminDisabledActionNotice from "../../components/AdminDisabledActionNotice.astro";
+import AdminWriteGateBadge from "../../components/AdminWriteGateBadge.astro";
+import AdminWriteActionMatrix from "../../components/AdminWriteActionMatrix.astro";
+import AdminWritePreflightChecklist from "../../components/AdminWritePreflightChecklist.astro";
+
+interface Props {
+  phase?: string;
+}
+
+const { phase = scaffoldConfig.phase } = Astro.props;
+---
+
+<section
+  id="disabled-write-actions-shell"
+  class="admin-staging-disabled-write-actions"
+  data-scaffold="true"
+  data-phase={phase}
+  data-approval-id={scaffoldConfig.approvalId}
+  role="region"
+  aria-label="Disabled write actions overview"
+>
+  <h2 class="admin-staging-disabled-write-actions__title">
+    Write actions are disabled ({phase})
+  </h2>
+
+  <AdminDisabledActionNotice phase={phase} />
+
+  <dl class="admin-staging-disabled-write-actions__meta">
+    <div>
+      <dt>canWrite</dt>
+      <dd>false</dd>
+    </div>
+    <div>
+      <dt>writeOperationsEnabled</dt>
+      <dd>false</dd>
+    </div>
+    <div>
+      <dt>writeAdapterImplemented</dt>
+      <dd>false</dd>
+    </div>
+    <div>
+      <dt>dbWriteImplemented</dt>
+      <dd>false</dd>
+    </div>
+    <div>
+      <dt>Current phase</dt>
+      <dd>{scaffoldConfig.approvalId}</dd>
+    </div>
+    <div>
+      <dt>Next gate</dt>
+      <dd>{scaffoldConfig.nextGate}</dd>
+    </div>
+  </dl>
+
+  <AdminWriteGateBadge
+    currentGate={scaffoldConfig.currentGate}
+    nextGate={scaffoldConfig.nextGate}
+    status="disabled"
+  />
+
+  <div class="admin-staging-disabled-write-actions__matrix">
+    <h3 class="admin-staging-disabled-write-actions__subtitle">Action matrix</h3>
+    <AdminWriteActionMatrix />
+  </div>
+
+  <AdminWritePreflightChecklist />
+</section>
+
+<style>
+  .admin-staging-disabled-write-actions {
+    margin: 0 0 1.5rem;
+    padding: 1rem 1.25rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    background: #f8fafc;
+  }
+  .admin-staging-disabled-write-actions__title {
+    margin: 0 0 0.75rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #0f172a;
+  }
+  .admin-staging-disabled-write-actions__meta {
+    margin: 0.75rem 0;
+    display: grid;
+    gap: 0.35rem 1rem;
+    grid-template-columns: max-content 1fr;
+    font-size: 0.8125rem;
+  }
+  .admin-staging-disabled-write-actions__meta dt {
+    font-weight: 600;
+    color: #334155;
+  }
+  .admin-staging-disabled-write-actions__meta dd {
+    margin: 0;
+    font-family: ui-monospace, monospace;
+    color: #1e293b;
+    word-break: break-all;
+  }
+  .admin-staging-disabled-write-actions__subtitle {
+    margin: 1rem 0 0.5rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+  .admin-staging-disabled-write-actions__matrix {
+    margin-top: 0.75rem;
+  }
+</style>

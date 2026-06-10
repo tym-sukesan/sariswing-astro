@@ -14,7 +14,8 @@
 
 - 書き込みを **いきなり実装せず**、安全計画から開始 — 計画書作成済み
 - **G-6-b（完了）:** [rls-write-policy-review-plan.md](../rls-write-policy-review-plan.md)
-- 次: **G-6-c** disabled write scaffold → G-6-d staging update-only PoC（approval 後）
+- **G-6-c（完了）:** [disabled-write-action-scaffold.md](../disabled-write-action-scaffold.md) — UI scaffold only; all write actions disabled
+- 次: **G-6-d** staging profile update PoC planning / approval（approval 後）
 
 ## Option B: customer-specific schema mapping
 
@@ -44,7 +45,8 @@
 ```txt
 G-6-a: write operation safety plan
 G-6-b: RLS write policy review plan
-G-6-c: write adapter scaffold / disabled actions
+G-6-c: disabled write action scaffold (UI only)
+G-6-d: staging profile update PoC (approval required)
 G-6-d: staging write operation with explicit approval
 ```
 

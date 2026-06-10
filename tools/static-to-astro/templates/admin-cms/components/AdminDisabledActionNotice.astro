@@ -1,0 +1,67 @@
+---
+/**
+ * G-6-c — Notice that write operations are disabled on this screen.
+ */
+interface Props {
+  phase?: string;
+}
+
+const { phase = "G-6-c" } = Astro.props;
+---
+
+<aside
+  class="admin-disabled-action-notice"
+  role="note"
+  data-scaffold="true"
+  data-phase={phase}
+  data-can-write="false"
+  data-write-enabled="false"
+>
+  <p class="admin-disabled-action-notice__title">この操作はまだ無効です</p>
+  <p>現在は staging shell での安全確認段階です（{phase}）。</p>
+  <p>実際の保存・削除・公開は行われません。</p>
+  <dl class="admin-disabled-action-notice__flags">
+    <div>
+      <dt>canWrite</dt>
+      <dd>false</dd>
+    </div>
+    <div>
+      <dt>writeOperationsEnabled</dt>
+      <dd>false</dd>
+    </div>
+  </dl>
+</aside>
+
+<style>
+  .admin-disabled-action-notice {
+    margin: 0 0 1rem;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    background: #fff7ed;
+    border: 1px solid #fed7aa;
+    font-size: 0.8125rem;
+    color: #9a3412;
+    line-height: 1.45;
+  }
+  .admin-disabled-action-notice__title {
+    margin: 0 0 0.35rem;
+    font-weight: 600;
+  }
+  .admin-disabled-action-notice p {
+    margin: 0 0 0.25rem;
+  }
+  .admin-disabled-action-notice__flags {
+    margin: 0.5rem 0 0;
+    display: grid;
+    gap: 0.2rem 0.75rem;
+    grid-template-columns: max-content 1fr;
+    font-size: 0.75rem;
+  }
+  .admin-disabled-action-notice__flags dt {
+    font-weight: 600;
+  }
+  .admin-disabled-action-notice__flags dd {
+    margin: 0;
+    font-family: ui-monospace, monospace;
+  }
+</style>

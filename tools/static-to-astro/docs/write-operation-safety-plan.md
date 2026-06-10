@@ -356,9 +356,11 @@ node tools/static-to-astro/scripts/report-write-operation-safety-plan.mjs \
 
 **G-6-b（完了）:** [rls-write-policy-review-plan.md](./rls-write-policy-review-plan.md) — review/planning only; `readyForG6C: true`.
 
-**Proceed to:** **G-6-c: disabled write action scaffold**
+**G-6-c（完了）:** [disabled-write-action-scaffold.md](./disabled-write-action-scaffold.md) — UI scaffold only; all write actions disabled; `canWrite: false`, `writeOperationsEnabled: false`, `readyForG6D: false`, `readyForG6DPlanning: true`.
 
-**Do not yet:** G-6-d staging profile update PoC.
+**Proceed to:** **G-6-d staging profile update PoC planning / approval**
+
+**Do not yet:** G-6-d implementation without approval ID.
 
 Sequence: G-6-c (disabled scaffold) → G-6-d (staging update-only PoC after approval).
 

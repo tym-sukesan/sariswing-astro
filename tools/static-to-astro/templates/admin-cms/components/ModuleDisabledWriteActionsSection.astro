@@ -1,0 +1,28 @@
+---
+/**
+ * G-6-c — Per-module disabled write actions section.
+ */
+import AdminCard from "./AdminCard.astro";
+import AdminDisabledActionNotice from "./AdminDisabledActionNotice.astro";
+import AdminWriteActionMatrix from "./AdminWriteActionMatrix.astro";
+
+interface Props {
+  module: string;
+  phase?: string;
+}
+
+const { module, phase = "G-6-c" } = Astro.props;
+---
+
+<aside
+  class="admin-module-disabled-write"
+  data-scaffold="true"
+  data-module={module}
+  data-phase={phase}
+  aria-label={`${module} write actions disabled`}
+>
+  <AdminCard title="Write actions — disabled" description="UI scaffold only. No DB write.">
+    <AdminDisabledActionNotice phase={phase} />
+    <AdminWriteActionMatrix moduleFilter={module} compact={true} />
+  </AdminCard>
+</aside>

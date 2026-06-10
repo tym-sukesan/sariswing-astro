@@ -1,0 +1,66 @@
+---
+/**
+ * G-6-c — Approval gate badge for disabled write actions.
+ */
+interface Props {
+  currentGate?: string;
+  nextGate?: string;
+  status?: string;
+}
+
+const {
+  currentGate = "G-6-c-disabled-write-actions-scaffold",
+  nextGate = "G-6-d-staging-profile-update-poc",
+  status = "disabled",
+} = Astro.props;
+---
+
+<div class="admin-write-gate-badge" data-scaffold="true" data-status={status}>
+  <span class="admin-write-gate-badge__label">Write gate</span>
+  <dl>
+    <div>
+      <dt>Current</dt>
+      <dd>{currentGate}</dd>
+    </div>
+    <div>
+      <dt>Next</dt>
+      <dd>{nextGate}</dd>
+    </div>
+    <div>
+      <dt>Status</dt>
+      <dd>{status}</dd>
+    </div>
+  </dl>
+</div>
+
+<style>
+  .admin-write-gate-badge {
+    display: inline-block;
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    background: #f1f5f9;
+    border: 1px solid #e2e8f0;
+    font-size: 0.75rem;
+  }
+  .admin-write-gate-badge__label {
+    font-weight: 600;
+    color: #334155;
+    display: block;
+    margin-bottom: 0.35rem;
+  }
+  .admin-write-gate-badge dl {
+    margin: 0;
+    display: grid;
+    gap: 0.2rem 0.5rem;
+    grid-template-columns: max-content 1fr;
+  }
+  .admin-write-gate-badge dt {
+    color: #64748b;
+  }
+  .admin-write-gate-badge dd {
+    margin: 0;
+    font-family: ui-monospace, monospace;
+    color: #0f172a;
+    word-break: break-all;
+  }
+</style>

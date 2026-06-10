@@ -1,0 +1,75 @@
+---
+/**
+ * G-6-c — Preflight checklist before first write (all unchecked / not ready).
+ */
+const items = [
+  "staging Supabase project confirmed",
+  "production project excluded",
+  "target table confirmed",
+  "RLS write policy reviewed",
+  "role enforcement confirmed",
+  "rollback procedure written",
+  "approval ID issued",
+];
+---
+
+<div
+  class="admin-write-preflight"
+  data-scaffold="true"
+  data-ready="false"
+  aria-label="Write preflight checklist"
+>
+  <h4 class="admin-write-preflight__title">Preflight before first write</h4>
+  <p class="admin-write-preflight__note">All items not ready in G-6-c.</p>
+  <ul class="admin-write-preflight__list">
+    {
+      items.map((item) => (
+        <li>
+          <label>
+            <input type="checkbox" disabled checked={false} />
+            <span>{item}</span>
+          </label>
+        </li>
+      ))
+    }
+  </ul>
+</div>
+
+<style>
+  .admin-write-preflight {
+    padding: 0.75rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    background: #f8fafc;
+  }
+  .admin-write-preflight__title {
+    margin: 0 0 0.35rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+  .admin-write-preflight__note {
+    margin: 0 0 0.5rem;
+    font-size: 0.75rem;
+    color: #64748b;
+  }
+  .admin-write-preflight__list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .admin-write-preflight__list li {
+    margin-bottom: 0.35rem;
+    font-size: 0.8125rem;
+  }
+  .admin-write-preflight__list label {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    color: #475569;
+    cursor: not-allowed;
+  }
+  .admin-write-preflight__list input {
+    margin-top: 0.15rem;
+    cursor: not-allowed;
+  }
+</style>

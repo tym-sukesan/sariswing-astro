@@ -12,6 +12,7 @@ import AdminPublishToggle from "../components/AdminPublishToggle.astro";
 import AdminSortOrderControl from "../components/AdminSortOrderControl.astro";
 import AdminMediaPreview from "../components/AdminMediaPreview.astro";
 import AdminEmptyState from "../components/AdminEmptyState.astro";
+import ModuleDisabledWriteActionsSection from "../components/ModuleDisabledWriteActionsSection.astro";
 
 export interface DiscographyAdminItem {
   id: string;
@@ -107,4 +108,6 @@ const rows = items.map((item) => ({
       <AdminPublishToggle published={false} disabled={true} />
     </AdminEditForm>
   </AdminCard>
+
+  <ModuleDisabledWriteActionsSection module="discography" />
 </section>

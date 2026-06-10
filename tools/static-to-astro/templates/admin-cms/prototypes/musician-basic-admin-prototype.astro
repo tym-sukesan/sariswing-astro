@@ -22,6 +22,7 @@ import AdminAuthStatus from "../components/AdminAuthStatus.astro";
 import AdminAuthAdapterStatusPanel from "../components/AdminAuthAdapterStatusPanel.astro";
 import AdminStagingLoginUiSection from "../auth/components/AdminStagingLoginUiSection.astro";
 import AdminStagingReadOnlyDataSection from "../data/components/AdminStagingReadOnlyDataSection.astro";
+import AdminStagingDisabledWriteActionsSection from "../data/components/AdminStagingDisabledWriteActionsSection.astro";
 import { getStagingAuthConfig } from "../../../../../src/lib/admin/staging-auth/staging-auth-config";
 import AdminPermissionBadge from "../components/AdminPermissionBadge.astro";
 import AdminAccessDenied from "../components/AdminAccessDenied.astro";
@@ -282,6 +283,17 @@ const moduleSummary = [
           data-section="readonly-data-shell"
         >
           <AdminStagingReadOnlyDataSection phase="G-5z-d" />
+        </section>
+      ) : null
+    }
+    {
+      stagingShellMode ? (
+        <section
+          id="disabled-write-actions-shell-section"
+          class="admin-prototype-section admin-staging-disabled-write-section"
+          data-section="disabled-write-actions-shell"
+        >
+          <AdminStagingDisabledWriteActionsSection phase="G-6-c" />
         </section>
       ) : null
     }

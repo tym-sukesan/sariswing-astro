@@ -14,6 +14,7 @@ import AdminDuplicateButton from "../components/AdminDuplicateButton.astro";
 import AdminLogicalDeleteRestore from "../components/AdminLogicalDeleteRestore.astro";
 import AdminEmptyState from "../components/AdminEmptyState.astro";
 import AdminStatusMessage from "../components/AdminStatusMessage.astro";
+import ModuleDisabledWriteActionsSection from "../components/ModuleDisabledWriteActionsSection.astro";
 
 export interface ScheduleAdminItem {
   id: string;
@@ -128,4 +129,6 @@ const rows = items.map((item) => ({
       <AdminSortOrderControl value={0} disabled={true} />
     </AdminEditForm>
   </AdminCard>
+
+  <ModuleDisabledWriteActionsSection module="schedule" />
 </section>

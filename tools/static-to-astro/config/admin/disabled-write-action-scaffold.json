@@ -1,0 +1,204 @@
+{
+  "phase": "G-6-c",
+  "approvalId": "G-6-c-disabled-write-actions-scaffold",
+  "type": "disabled-write-action-scaffold",
+  "uiOnly": true,
+  "canWrite": false,
+  "writeOperationsEnabled": false,
+  "writeAdapterImplemented": false,
+  "dbWriteImplemented": false,
+  "sqlExecuted": false,
+  "rlsPolicyChanged": false,
+  "storageConnected": false,
+  "publishConnected": false,
+  "adminRouteConnected": false,
+  "productionDataTouched": false,
+  "readyForG6D": false,
+  "readyForG6DPlanning": true,
+  "readyForG6Implementation": false,
+  "recommendedNextPhase": "G-6-d staging profile update PoC planning / approval",
+  "currentGate": "G-6-c-disabled-write-actions-scaffold",
+  "nextGate": "G-6-d-staging-profile-update-poc",
+  "actions": [
+    {
+      "module": "profile",
+      "action": "save",
+      "label": "Save changes",
+      "enabled": false,
+      "gate": "G-6-d-staging-profile-update-poc",
+      "risk": "low",
+      "reason": "RLSとrollback確認後にstaging限定で有効化します。"
+    },
+    {
+      "module": "profile",
+      "action": "update",
+      "label": "Update profile fields",
+      "enabled": false,
+      "gate": "G-6-d-staging-profile-update-poc",
+      "risk": "low",
+      "reason": "First write PoC候補（update-only）。"
+    },
+    {
+      "module": "links",
+      "action": "save",
+      "label": "Save changes",
+      "enabled": false,
+      "gate": "G-6-g-staging-reorder-duplicate",
+      "risk": "low",
+      "reason": "Reorder後に有効化予定。"
+    },
+    {
+      "module": "links",
+      "action": "create",
+      "label": "Create link",
+      "enabled": false,
+      "gate": "G-6-e-staging-create-operation",
+      "risk": "medium",
+      "reason": "URL validation後にstaging create。"
+    },
+    {
+      "module": "links",
+      "action": "reorder",
+      "label": "Reorder links",
+      "enabled": false,
+      "gate": "G-6-g-staging-reorder-duplicate",
+      "risk": "low",
+      "reason": "sort_order更新はG-6-g。"
+    },
+    {
+      "module": "links",
+      "action": "delete",
+      "label": "Delete link",
+      "enabled": false,
+      "gate": "G-6-f-staging-logical-delete-restore",
+      "risk": "high",
+      "reason": "論理削除のみ。physical delete禁止。"
+    },
+    {
+      "module": "schedule",
+      "action": "create",
+      "label": "Create schedule",
+      "enabled": false,
+      "gate": "G-6-e-staging-create-operation",
+      "risk": "medium",
+      "reason": "日付・会場validation後。"
+    },
+    {
+      "module": "schedule",
+      "action": "duplicate",
+      "label": "Duplicate schedule",
+      "enabled": false,
+      "gate": "G-6-g-staging-reorder-duplicate",
+      "risk": "medium",
+      "reason": "複製はG-6-g。"
+    },
+    {
+      "module": "schedule",
+      "action": "delete",
+      "label": "Delete schedule",
+      "enabled": false,
+      "gate": "G-6-f-staging-logical-delete-restore",
+      "risk": "high",
+      "reason": "論理削除のみ。"
+    },
+    {
+      "module": "schedule",
+      "action": "restore",
+      "label": "Restore schedule",
+      "enabled": false,
+      "gate": "G-6-f-staging-logical-delete-restore",
+      "risk": "high",
+      "reason": "復元はG-6-f。"
+    },
+    {
+      "module": "schedule",
+      "action": "publishToggle",
+      "label": "Publish toggle",
+      "enabled": false,
+      "gate": "G-6-i-staging-publish-plan",
+      "risk": "high",
+      "reason": "公開切替は別approval。"
+    },
+    {
+      "module": "discography",
+      "action": "save",
+      "label": "Save changes",
+      "enabled": false,
+      "gate": "G-6-d-staging-profile-update-poc",
+      "risk": "medium",
+      "reason": "text-only updateから。"
+    },
+    {
+      "module": "discography",
+      "action": "reorder",
+      "label": "Reorder items",
+      "enabled": false,
+      "gate": "G-6-g-staging-reorder-duplicate",
+      "risk": "low",
+      "reason": "sort_order更新。"
+    },
+    {
+      "module": "discography",
+      "action": "uploadImage",
+      "label": "Cover image assignment",
+      "enabled": false,
+      "gate": "G-6-h-staging-media-write-plan",
+      "risk": "high",
+      "reason": "StorageはG-6-h。"
+    },
+    {
+      "module": "news",
+      "action": "create",
+      "label": "Create news draft",
+      "enabled": false,
+      "gate": "G-6-e-staging-create-operation",
+      "risk": "medium",
+      "reason": "draft-onlyから。"
+    },
+    {
+      "module": "news",
+      "action": "save",
+      "label": "Save draft",
+      "enabled": false,
+      "gate": "G-6-e-staging-create-operation",
+      "risk": "medium",
+      "reason": "table mapping確認後。"
+    },
+    {
+      "module": "news",
+      "action": "publishToggle",
+      "label": "Publish toggle",
+      "enabled": false,
+      "gate": "G-6-i-staging-publish-plan",
+      "risk": "high",
+      "reason": "公開可視性が高い。"
+    },
+    {
+      "module": "news",
+      "action": "delete",
+      "label": "Delete news",
+      "enabled": false,
+      "gate": "G-6-f-staging-logical-delete-restore",
+      "risk": "high",
+      "reason": "論理削除のみ。"
+    },
+    {
+      "module": "media",
+      "action": "uploadImage",
+      "label": "Upload image",
+      "enabled": false,
+      "gate": "G-6-h-staging-media-write-plan",
+      "risk": "high",
+      "reason": "Storage未接続。"
+    },
+    {
+      "module": "publish",
+      "action": "updatePublicSite",
+      "label": "Update public site",
+      "enabled": false,
+      "gate": "G-6-i-staging-publish-plan",
+      "risk": "high",
+      "reason": "Publish dispatch未接続。"
+    }
+  ]
+}

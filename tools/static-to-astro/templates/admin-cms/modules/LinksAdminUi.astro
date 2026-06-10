@@ -12,6 +12,7 @@ import AdminPublishToggle from "../components/AdminPublishToggle.astro";
 import AdminSortOrderControl from "../components/AdminSortOrderControl.astro";
 import AdminLogicalDeleteRestore from "../components/AdminLogicalDeleteRestore.astro";
 import AdminEmptyState from "../components/AdminEmptyState.astro";
+import ModuleDisabledWriteActionsSection from "../components/ModuleDisabledWriteActionsSection.astro";
 
 export interface LinksAdminItem {
   id: string;
@@ -102,4 +103,6 @@ const rows = items.map((item) => ({
       <AdminPublishToggle published={false} disabled={true} />
     </AdminEditForm>
   </AdminCard>
+
+  <ModuleDisabledWriteActionsSection module="links" />
 </section>

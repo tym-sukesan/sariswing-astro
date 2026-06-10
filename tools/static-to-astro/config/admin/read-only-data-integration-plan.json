@@ -30,6 +30,9 @@
     "PUBLIC_ADMIN_DATA_PROVIDER": "mock"
   },
   "recommendedNextPhase": "G-5z-c",
+  "reviewDocRef": "docs/schema-mapping-rls-read-policy-review.md",
+  "g5zCPrepComplete": true,
+  "g5zCApprovalId": "G-5z-c-staging-read-only-data-connect",
   "phaseBreakdown": [
     "G-5z-a",
     "G-5z-b",

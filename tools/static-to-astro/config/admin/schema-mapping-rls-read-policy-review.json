@@ -1,0 +1,43 @@
+{
+  "phase": "G-5z-c-prep",
+  "type": "schema-mapping-rls-read-policy-review",
+  "docRef": "docs/schema-mapping-rls-read-policy-review.md",
+  "reviewPhaseOnly": true,
+  "supabaseDbQueryImplemented": false,
+  "fromSelectAdded": false,
+  "dbQueryPerformed": false,
+  "dbUpdatePerformed": false,
+  "rlsPolicyChanged": false,
+  "storageReadImplemented": false,
+  "storageUploadPerformed": false,
+  "githubDispatchPerformed": false,
+  "ftpDeployPerformed": false,
+  "adminRouteConnected": false,
+  "productionDataTouched": false,
+  "approvalRequiredForG5zC": true,
+  "approvalId": "G-5z-c-staging-read-only-data-connect",
+  "approvalIdExample": "G-5z-c-staging-read-only-data-connect",
+  "schemaAdapterId": "musician-basic-supabase-v1",
+  "targetModules": [
+    "profile",
+    "schedule",
+    "discography",
+    "links",
+    "news"
+  ],
+  "tableMapping": {
+    "profile": { "table": "profile", "confidence": "confirmed" },
+    "schedule": { "table": "schedules", "confidence": "confirmed" },
+    "discography": { "table": "discography", "confidence": "confirmed" },
+    "links": { "table": "links", "confidence": "confirmed" },
+    "news": { "table": "news", "confidence": "likely" }
+  },
+  "recommendedNextPhase": "G-5z-c",
+  "prerequisites": [
+    "G-5z-b readyForG5zC",
+    "staging project confirmed",
+    "RLS read policies reviewed on staging",
+    "preflight checklist completed",
+    "approval id recorded"
+  ]
+}

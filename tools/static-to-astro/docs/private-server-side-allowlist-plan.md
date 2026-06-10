@@ -396,6 +396,8 @@ Purpose: freeze the contract (`resolveRoleFromSession`) before real Edge or DB w
 
 **G-5z-b（完了）:** [read-only-data-adapter-scaffold.md](./read-only-data-adapter-scaffold.md) — mock ReadOnlyDataAdapter on staging shell.
 
+**G-5z-c-prep（完了）:** [schema-mapping-rls-read-policy-review.md](./schema-mapping-rls-read-policy-review.md) — table/field mapping + RLS read policy review (no DB query).
+
 Proceed to **G-5z-c** (Supabase read-only adapter) only when:
 
 ```txt

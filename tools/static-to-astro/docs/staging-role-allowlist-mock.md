@@ -111,7 +111,8 @@ The staging shell **remains visible** for testing. No real `/admin` guard is con
 - **G-5y-e-c:** server-side allowlist dry-run scaffold (candidate)
 - **G-5z-a（完了）:** [Read-only data integration plan](./read-only-data-integration-plan.md) — planning only; no DB query
 - **G-5z-b（完了）:** [Read-only data adapter scaffold](./read-only-data-adapter-scaffold.md) — mock only
-- **G-5z-c:** Supabase read-only adapter (explicit approval)
+- **G-5z-c-prep（完了）:** [Schema mapping / RLS review](./schema-mapping-rls-read-policy-review.md)
+- **G-5z-c:** Supabase read-only adapter (`G-5z-c-staging-read-only-data-connect`)
 
 ## 10. Files
 

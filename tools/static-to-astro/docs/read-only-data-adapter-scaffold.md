@@ -113,8 +113,8 @@ tools/static-to-astro/output/read-only-data-adapter-dry-runs/gosaki/
 
 ## 9. Next phase
 
-- **G-5z-c:** Supabase read-only adapter (explicit approval + RLS read policy review)
-- Before G-5z-c: confirm schema mapping from `musician-basic-supabase-v1` and RLS drafts
+- **G-5z-c-prep（完了）:** [Schema mapping / RLS read policy review](./schema-mapping-rls-read-policy-review.md) — review only; no `from()`/`select()`
+- **G-5z-c:** Supabase read-only adapter — approval ID: `G-5z-c-staging-read-only-data-connect`
 
 ## 10. Local preview
 

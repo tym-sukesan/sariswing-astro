@@ -23,6 +23,7 @@ import AdminAuthAdapterStatusPanel from "../components/AdminAuthAdapterStatusPan
 import AdminStagingLoginUiSection from "../auth/components/AdminStagingLoginUiSection.astro";
 import AdminStagingReadOnlyDataSection from "../data/components/AdminStagingReadOnlyDataSection.astro";
 import AdminStagingDisabledWriteActionsSection from "../data/components/AdminStagingDisabledWriteActionsSection.astro";
+import AdminStagingProfileUpdatePocSection from "../data/components/AdminStagingProfileUpdatePocSection.astro";
 import { getStagingAuthConfig } from "../../../../../src/lib/admin/staging-auth/staging-auth-config";
 import AdminPermissionBadge from "../components/AdminPermissionBadge.astro";
 import AdminAccessDenied from "../components/AdminAccessDenied.astro";
@@ -297,6 +298,17 @@ const moduleSummary = [
         </section>
       ) : null
     }
+    {
+      stagingShellMode ? (
+        <section
+          id="profile-update-poc-shell-section"
+          class="admin-prototype-section admin-staging-profile-update-poc-section"
+          data-section="profile-update-poc-shell"
+        >
+          <AdminStagingProfileUpdatePocSection phase="G-6-d" />
+        </section>
+      ) : null
+    }
     <section id="dashboard" class="admin-prototype-section" data-section="dashboard">
       <AdminPageHeader
         title="Dashboard"
@@ -357,7 +369,12 @@ const moduleSummary = [
     </section>
 
     <section id="profile" class="admin-prototype-section" data-section="profile">
-      <ProfileAdminUi profile={profile} siteName={siteName} readonly={true} />
+      <ProfileAdminUi
+        profile={profile}
+        siteName={siteName}
+        readonly={true}
+        stagingWritePoc={stagingShellMode}
+      />
     </section>
 
     <section id="schedule" class="admin-prototype-section" data-section="schedule">

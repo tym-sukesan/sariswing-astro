@@ -215,8 +215,9 @@ Never skip: local preview and customer demo before runtime shell; read-only befo
 | **G-6-a（完了）** | [Write operation safety plan](./write-operation-safety-plan.md) | Planning only; writes disabled |
 | **G-6-b（完了）** | [RLS write policy review plan](./rls-write-policy-review-plan.md) | Review/planning only |
 | **G-6-c（完了）** | [Disabled write action scaffold](./disabled-write-action-scaffold.md) | UI only; all actions disabled; `readyForG6DPlanning: true` |
-| **G-6-d-prep（完了）** | [Staging profile update PoC approval plan](./staging-profile-update-poc-approval-plan.md) | Planning / approval only; `readyForG6DApproval: true` |
-| **G-6-d** | Staging profile update PoC implementation | Not started; explicit approval `G-6-d-staging-profile-update-poc` required |
+| **G-6-d-prep（完了）** | [Staging profile update PoC approval plan](./staging-profile-update-poc-approval-plan.md) | Planning / approval only |
+| **G-6-d（完了）** | [Staging profile update PoC implementation](./staging-profile-update-poc-implementation.md) | Gated profile update; default disabled; dry-run default |
+| **G-6-e** | Staging create operation | Not started; separate approval required |
 | **G-5y-e** | Role check / allowlist | Staging Auth |
 
 **Purpose (overall):** Staging admin login only — after shell QA on `/__admin-staging-shell/musician-basic/`.

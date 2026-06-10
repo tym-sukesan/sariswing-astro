@@ -371,13 +371,11 @@ node tools/static-to-astro/scripts/report-rls-write-policy-review-plan.mjs \
 
 **G-6-c（完了）:** [disabled-write-action-scaffold.md](./disabled-write-action-scaffold.md) — UI scaffold only; all write actions disabled; `readyForG6DPlanning: true`.
 
-**G-6-d-prep（完了）:** [staging-profile-update-poc-approval-plan.md](./staging-profile-update-poc-approval-plan.md) — planning / approval only; approval ID `G-6-d-staging-profile-update-poc` defined but not activated; `canWrite: false`; Save button remains disabled; `readyForG6DApproval: true`; `readyForG6DImplementation: false`.
+**G-6-d-prep（完了）:** [staging-profile-update-poc-approval-plan.md](./staging-profile-update-poc-approval-plan.md)
 
-**Proceed to:** **G-6-d staging profile update PoC with explicit approval**
+**G-6-d（完了）:** [staging-profile-update-poc-implementation.md](./staging-profile-update-poc-implementation.md) — gated profile update via anon + RLS; no RLS changes from kit; dry-run default.
 
-G-6-d still requires user approval of `G-6-d-staging-profile-update-poc` before any staging write.
-
-**Do not yet:** G-6-d implementation without explicit user approval.
+**Proceed to:** G-6-e+ with separate approval gates. No automatic expansion.
 
 ## 17. Final safety statement
 

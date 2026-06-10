@@ -10,6 +10,7 @@ import AdminFormField from "../components/AdminFormField.astro";
 import AdminPublishToggle from "../components/AdminPublishToggle.astro";
 import AdminStatusMessage from "../components/AdminStatusMessage.astro";
 import ModuleDisabledWriteActionsSection from "../components/ModuleDisabledWriteActionsSection.astro";
+import { getStagingWriteConfig } from "../../../../../src/lib/admin/staging-write/staging-write-config";
 
 export interface ProfileAdminData {
   name?: string;
@@ -23,13 +24,18 @@ interface Props {
   profile?: ProfileAdminData;
   siteName?: string;
   readonly?: boolean;
+  stagingWritePoc?: boolean;
 }
 
 const {
   profile = {},
   siteName = "CMS Kit",
   readonly = true,
+  stagingWritePoc = false,
 } = Astro.props;
+
+const writeConfig = stagingWritePoc ? getStagingWriteConfig() : null;
+const pocSaveDisabled = !writeConfig?.canWrite;
 
 const imageStatus = profile.imageStatus ?? (profile.image_url ? "attached" : "none");
 ---
@@ -100,5 +106,170 @@ const imageStatus = profile.imageStatus ?? (profile.image_url ? "attached" : "no
     </AdminEditForm>
   </AdminCard>
 
+  {
+    stagingWritePoc && writeConfig ? (
+      <aside
+        id="profile-update-poc-root"
+        class="admin-profile-update-poc"
+        data-scaffold="true"
+        data-phase={writeConfig.phase}
+        data-approval-id={writeConfig.approvalId}
+        aria-label="Staging profile update PoC"
+      >
+        <AdminCard
+          title="Staging profile update PoC"
+          description="G-6-d — profile text fields only. Single row. Update-only. Disabled unless env gates pass."
+        >
+          <dl class="admin-profile-update-poc__meta">
+            <div>
+              <dt>Current phase</dt>
+              <dd id="profile-poc-phase">{writeConfig.phase}</dd>
+            </div>
+            <div>
+              <dt>Approval ID</dt>
+              <dd id="profile-poc-approval-id">{writeConfig.approvalId}</dd>
+            </div>
+            <div>
+              <dt>canWrite</dt>
+              <dd id="profile-poc-can-write">{writeConfig.canWrite ? "true" : "false"}</dd>
+            </div>
+            <div>
+              <dt>dry-run</dt>
+              <dd id="profile-poc-dry-run">{writeConfig.dryRun ? "true" : "false"}</dd>
+            </div>
+            <div>
+              <dt>writeOperationsEnabled</dt>
+              <dd id="profile-poc-write-enabled">
+                {writeConfig.writeOperationsEnabled ? "true" : "false"}
+              </dd>
+            </div>
+          </dl>
+
+          <p
+            id="profile-poc-disabled-reason"
+            class="admin-profile-update-poc__disabled-reason"
+            role="note"
+            hidden={!writeConfig.disabledReason}
+          >
+            {writeConfig.disabledReason ?? ""}
+          </p>
+
+          <div class="admin-profile-update-poc__fields">
+            <AdminFormField label="Display name" help="Maps to profile.name on staging.">
+              <input
+                id="profile-poc-display-name"
+                type="text"
+                value={profile.name ?? ""}
+                placeholder="Display name"
+                disabled={pocSaveDisabled}
+              />
+            </AdminFormField>
+            <AdminFormField label="Bio" help="Text-only field.">
+              <textarea
+                id="profile-poc-bio"
+                rows="4"
+                placeholder="Bio…"
+                disabled={pocSaveDisabled}
+              >
+                {profile.bio ?? ""}
+              </textarea>
+            </AdminFormField>
+          </div>
+
+          <div class="admin-profile-update-poc__actions">
+            <button
+              id="profile-update-poc-save-btn"
+              class="admin-button"
+              type="button"
+              disabled={pocSaveDisabled}
+              title={
+                writeConfig.canWrite
+                  ? writeConfig.dryRun
+                    ? "Dry-run — no Supabase update"
+                    : "Staging profile text update"
+                  : (writeConfig.disabledReason ?? "Write PoC disabled")
+              }
+            >
+              Save profile text fields
+            </button>
+          </div>
+
+          <div
+            id="profile-update-poc-result"
+            class="admin-profile-update-poc__result"
+            aria-live="polite"
+          />
+        </AdminCard>
+      </aside>
+    ) : null
+  }
+
   <ModuleDisabledWriteActionsSection module="profile" />
 </section>
+
+{
+  stagingWritePoc ? (
+    <script>
+      import "../../../../../src/lib/admin/staging-write/staging-profile-update-ui.ts";
+    </script>
+  ) : null
+}
+
+<style>
+  .admin-profile-update-poc {
+    margin-top: 1rem;
+  }
+  .admin-profile-update-poc__meta {
+    margin: 0 0 0.75rem;
+    display: grid;
+    gap: 0.3rem 0.75rem;
+    grid-template-columns: max-content 1fr;
+    font-size: 0.8125rem;
+  }
+  .admin-profile-update-poc__meta dt {
+    font-weight: 600;
+    color: #334155;
+  }
+  .admin-profile-update-poc__meta dd {
+    margin: 0;
+    font-family: ui-monospace, monospace;
+  }
+  .admin-profile-update-poc__disabled-reason {
+    margin: 0 0 0.75rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    background: #fff7ed;
+    border: 1px solid #fed7aa;
+    color: #9a3412;
+    font-size: 0.8125rem;
+  }
+  .admin-profile-update-poc__fields {
+    margin-bottom: 0.75rem;
+  }
+  .admin-profile-update-poc__actions {
+    margin-bottom: 0.75rem;
+  }
+  .admin-profile-update-poc__result {
+    font-size: 0.8125rem;
+    color: #334155;
+  }
+  .admin-profile-update-poc__result :global(.profile-poc-success) {
+    color: #166534;
+  }
+  .admin-profile-update-poc__result :global(.profile-poc-error) {
+    color: #991b1b;
+  }
+  .admin-profile-update-poc__result :global(.profile-poc-warn) {
+    color: #b45309;
+  }
+  .admin-profile-update-poc__result :global(.profile-poc-snapshot),
+  .admin-profile-update-poc__result :global(.profile-poc-rollback) {
+    margin: 0.35rem 0;
+    padding: 0.5rem;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    overflow-x: auto;
+  }
+</style>

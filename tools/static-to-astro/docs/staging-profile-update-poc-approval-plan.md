@@ -408,14 +408,14 @@ node tools/static-to-astro/scripts/report-staging-profile-update-poc-approval-pl
 
 ## 17. Next phase recommendation
 
-```txt
-G-6-d: staging profile update PoC with explicit approval ID
-```
+**G-6-d（完了）:** [staging-profile-update-poc-implementation.md](./staging-profile-update-poc-implementation.md) — gated staging profile update PoC; default disabled; dry-run default true; profile update only.
 
 ```txt
 G-6-d must not start automatically.
 The user must explicitly approve G-6-d-staging-profile-update-poc.
 ```
+
+Approval plan satisfied — implementation doc and `src/lib/admin/staging-write/` added.
 
 ## 18. Final safety statement
 

@@ -358,13 +358,13 @@ node tools/static-to-astro/scripts/report-write-operation-safety-plan.mjs \
 
 **G-6-c（完了）:** [disabled-write-action-scaffold.md](./disabled-write-action-scaffold.md) — UI scaffold only; all write actions disabled; `canWrite: false`, `writeOperationsEnabled: false`, `readyForG6D: false`, `readyForG6DPlanning: true`.
 
-**G-6-d-prep（完了）:** [staging-profile-update-poc-approval-plan.md](./staging-profile-update-poc-approval-plan.md) — planning / approval only; approval ID `G-6-d-staging-profile-update-poc`; `canWrite: false`; Save button remains disabled; `readyForG6DApproval: true`; `readyForG6DImplementation: false`.
+**G-6-d-prep（完了）:** [staging-profile-update-poc-approval-plan.md](./staging-profile-update-poc-approval-plan.md)
 
-**Proceed to:** **G-6-d staging profile update PoC with explicit approval**
+**G-6-d（完了）:** [staging-profile-update-poc-implementation.md](./staging-profile-update-poc-implementation.md) — first gated staging write PoC; profile / update-only / text-only; default `canWrite: false`; dry-run default true; expansion not ready.
 
-**Do not yet:** G-6-d implementation without user approval of `G-6-d-staging-profile-update-poc`.
+**Proceed to:** G-6-e staging create operation planning (not automatic).
 
-Sequence: G-6-c (disabled scaffold) → G-6-d-prep (approval plan) → G-6-d (staging profile update-only PoC after explicit approval).
+Sequence: G-6-c → G-6-d-prep → G-6-d (profile update PoC) → G-6-e+ (separate approval each).
 
 ## 16. Final safety statement
 

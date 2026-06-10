@@ -1,0 +1,133 @@
+---
+/**
+ * G-6-d — Staging shell profile update PoC overview.
+ */
+import implConfig from "../../../../config/admin/staging-profile-update-poc-implementation.json";
+import { getStagingWriteConfig } from "../../../../../../src/lib/admin/staging-write/staging-write-config";
+
+interface Props {
+  phase?: string;
+}
+
+const { phase = implConfig.phase } = Astro.props;
+const writeConfig = getStagingWriteConfig();
+---
+
+<section
+  id="staging-profile-update-poc-overview"
+  class="admin-staging-profile-update-poc-overview"
+  data-scaffold="true"
+  data-phase={phase}
+  data-approval-id={implConfig.approvalId}
+  role="region"
+  aria-label="G-6-d staging profile update PoC overview"
+>
+  <h2 class="admin-staging-profile-update-poc-overview__title">
+    G-6-d staging profile update PoC
+  </h2>
+
+  <p class="admin-staging-profile-update-poc-overview__note">
+    First limited write PoC — profile / single row / update-only / text-only.
+    Disabled by default. Requires explicit approval ID and env gates.
+  </p>
+
+  <dl class="admin-staging-profile-update-poc-overview__meta">
+    <div>
+      <dt>Approval ID</dt>
+      <dd>{implConfig.approvalId}</dd>
+    </div>
+    <div>
+      <dt>Target</dt>
+      <dd>profile / single row / update-only / text-only</dd>
+    </div>
+    <div>
+      <dt>Default</dt>
+      <dd>disabled</dd>
+    </div>
+    <div>
+      <dt>Dry-run default</dt>
+      <dd>{implConfig.dryRunDefault ? "true" : "false"}</dd>
+    </div>
+    <div>
+      <dt>canWrite (runtime)</dt>
+      <dd>{writeConfig.canWrite ? "true" : "false"}</dd>
+    </div>
+    <div>
+      <dt>writeOperationsEnabled</dt>
+      <dd>{writeConfig.writeOperationsEnabled ? "true" : "false"}</dd>
+    </div>
+    <div>
+      <dt>dryRun (runtime)</dt>
+      <dd>{writeConfig.dryRun ? "true" : "false"}</dd>
+    </div>
+    <div>
+      <dt>Production</dt>
+      <dd>forbidden</dd>
+    </div>
+    <div>
+      <dt>/admin</dt>
+      <dd>disconnected</dd>
+    </div>
+    <div>
+      <dt>Storage / Publish</dt>
+      <dd>not connected</dd>
+    </div>
+  </dl>
+
+  {
+    writeConfig.disabledReason ? (
+      <p class="admin-staging-profile-update-poc-overview__disabled" role="note">
+        Disabled reason: {writeConfig.disabledReason}
+      </p>
+    ) : null
+  }
+</section>
+
+<style>
+  .admin-staging-profile-update-poc-overview {
+    margin: 0 0 1.5rem;
+    padding: 1rem 1.25rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    background: #f0fdf4;
+    border-color: #bbf7d0;
+  }
+  .admin-staging-profile-update-poc-overview__title {
+    margin: 0 0 0.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #14532d;
+  }
+  .admin-staging-profile-update-poc-overview__note {
+    margin: 0 0 0.75rem;
+    font-size: 0.8125rem;
+    color: #166534;
+    line-height: 1.45;
+  }
+  .admin-staging-profile-update-poc-overview__meta {
+    margin: 0;
+    display: grid;
+    gap: 0.35rem 1rem;
+    grid-template-columns: max-content 1fr;
+    font-size: 0.8125rem;
+  }
+  .admin-staging-profile-update-poc-overview__meta dt {
+    font-weight: 600;
+    color: #15803d;
+  }
+  .admin-staging-profile-update-poc-overview__meta dd {
+    margin: 0;
+    font-family: ui-monospace, monospace;
+    color: #14532d;
+    word-break: break-all;
+  }
+  .admin-staging-profile-update-poc-overview__disabled {
+    margin: 0.75rem 0 0;
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    background: #fff7ed;
+    border: 1px solid #fed7aa;
+    color: #9a3412;
+    font-size: 0.8125rem;
+  }
+</style>

@@ -142,12 +142,26 @@ node tools/static-to-astro/scripts/write-admin-scaffold.mjs \
 
 ---
 
-## 8. Future phases
+## 8. Review before G-5x
+
+After sandbox apply, run [generated scaffold review](./generated-admin-scaffold-review.md) (G-5w-d):
+
+```bash
+node tools/static-to-astro/scripts/review-generated-admin-scaffold.mjs \
+  --target-dir tools/static-to-astro/output/admin-writer-sandbox/gosaki \
+  --out-dir tools/static-to-astro/output/admin-scaffold-reviews/gosaki
+```
+
+Proceed to G-5x only when `readyForG5x: true`.
+
+---
+
+## 9. Future phases
 
 | Phase | Focus |
 | --- | --- |
-| **G-5w-d** | Generated scaffold review |
-| **G-5x** | Staging runtime shell integration |
+| **G-5w-d（完了）** | [Generated scaffold review](./generated-admin-scaffold-review.md) |
+| **G-5x** | Staging runtime shell integration (after review pass) |
 
 ---
 

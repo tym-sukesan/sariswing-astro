@@ -179,8 +179,8 @@ All entries have `willWrite: false`, `willOverwrite: false`, `reason: "dry-run o
 | Phase | Focus |
 | --- | --- |
 | **G-5w-c（完了）** | [Sandbox apply](./admin-scaffold-writer-sandbox-apply.md) |
-| **G-5w-d** | Generated scaffold review |
-| **G-5x** | Staging runtime shell integration |
+| **G-5w-d（完了）** | [Generated scaffold review](./generated-admin-scaffold-review.md) |
+| **G-5x** | Staging runtime shell integration (after review pass) |
 
 ---
 

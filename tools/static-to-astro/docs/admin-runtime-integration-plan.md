@@ -155,7 +155,7 @@ Never skip: local preview and customer demo before runtime shell; read-only befo
 | **G-5w-a（完了）** | Writer safety plan — dry-run default, `--apply` required, manifests, Sariswing exclusion |
 | **G-5w-b（完了）** | [Writer dry-run CLI](./admin-scaffold-writer-dry-run-cli.md) — reports only, no target writes |
 | **G-5w-c（完了）** | [Sandbox apply](./admin-scaffold-writer-sandbox-apply.md) — `output/admin-writer-sandbox/` only |
-| **G-5w-d** | Generated scaffold review + staging project apply |
+| **G-5w-d（完了）** | [Generated scaffold review](./generated-admin-scaffold-review.md) — readyForG5x gate |
 
 | Allowed | Forbidden |
 | --- | --- |
@@ -494,7 +494,8 @@ Generated per site (G-5s): `admin-safety-checklist.generated.md` in dry-run pack
 | **G-5w-a（完了）** | [Admin scaffold writer plan](./admin-scaffold-writer-plan.md) — planning only |
 | **G-5w-b（完了）** | [Writer dry-run CLI](./admin-scaffold-writer-dry-run-cli.md) — `--apply` not implemented |
 | **G-5w-c（完了）** | [Sandbox apply](./admin-scaffold-writer-sandbox-apply.md) — `--approval-id` required |
-| **G-5x** | Staging runtime shell integration |
+| **G-5w-d（完了）** | [Generated scaffold review](./generated-admin-scaffold-review.md) — readyForG5x gate |
+| **G-5x** | Staging runtime shell integration (after review pass) |
 | **G-5y** | Supabase Auth staging integration |
 | **G-5z** | Read-only data integration |
 | **G-6a** | CRUD write (staging) |

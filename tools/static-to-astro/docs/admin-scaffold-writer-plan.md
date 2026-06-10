@@ -1,7 +1,7 @@
 # Explicit Opt-in Admin Scaffold Writer Plan
 
-**Phase:** G-5w-a (plan) · G-5w-b (dry-run CLI) · G-5w-c (sandbox apply)  
-**Status:** dry-run + sandbox `--apply` implemented · runtime admin not written
+**Phase:** G-5w-a (plan) · G-5w-b (dry-run CLI) · G-5w-c (sandbox apply) · G-5w-d (review)  
+**Status:** dry-run + sandbox apply + review CLI · runtime admin not written
 
 ---
 
@@ -13,7 +13,8 @@ G-5w-a defines the **explicit opt-in admin scaffold writer** — a future tool t
 | --- | --- |
 | Writer design | **This document** |
 | Writer dry-run CLI (G-5w-b) | **[Implemented](./admin-scaffold-writer-dry-run-cli.md)** — reports only |
-| Sandbox apply (G-5w-c) | **[Implemented](./admin-scaffold-writer-sandbox-apply.md)** — `output/admin-writer-sandbox/` only |
+| Sandbox apply (G-5w-c) | **[Implemented](./admin-scaffold-writer-sandbox-apply.md)** |
+| Generated scaffold review (G-5w-d) | **[Implemented](./generated-admin-scaffold-review.md)** |
 | File writes to `src/pages/admin` | **None** |
 | `runtimeFilesWritten` | **false** |
 | `productionReady` | **false** |
@@ -455,8 +456,8 @@ This list extends [admin-runtime-integration-gates.json](../config/admin/admin-r
 | **G-5w-a（完了）** | Writer safety plan (this doc) + policy JSON | **None** |
 | **G-5w-b（完了）** | [Writer dry-run CLI](./admin-scaffold-writer-dry-run-cli.md) — plan/manifest to `output/admin-writer-dry-runs/` | **None** to target-dir |
 | **G-5w-c（完了）** | [Sandbox apply](./admin-scaffold-writer-sandbox-apply.md) | Sandbox under `output/admin-writer-sandbox/` only |
-| **G-5w-d** | Generated scaffold review + staging project apply | New staging project only (gated) |
-| **G-5x** | Staging runtime shell integration | Runtime routes on staging; no DB write yet |
+| **G-5w-d（完了）** | [Generated scaffold review](./generated-admin-scaffold-review.md) | Review only |
+| **G-5x** | Staging runtime shell integration | After `readyForG5x: true` |
 
 **Dependency chain:** G-5s dry-run package → G-5w-b dry-run CLI → G-5w-c sandbox apply → G-5w-d review → G-5x runtime shell.
 
@@ -526,7 +527,7 @@ No production environment is touched.
 ## Related
 
 - [admin-scaffold-writer-dry-run-cli.md](./admin-scaffold-writer-dry-run-cli.md) — G-5w-b dry-run CLI
-- [admin-scaffold-writer-sandbox-apply.md](./admin-scaffold-writer-sandbox-apply.md) — G-5w-c sandbox apply
+- [generated-admin-scaffold-review.md](./generated-admin-scaffold-review.md) — G-5w-d review CLI
 - [site-config-driven-admin-scaffold-generator.md](./site-config-driven-admin-scaffold-generator.md) — G-5s dry-run package
 - [admin-runtime-integration-plan.md](./admin-runtime-integration-plan.md) — G-5t phase map
 - [local-only-admin-preview-route.md](./local-only-admin-preview-route.md) — G-5u preview (separate from writer output)

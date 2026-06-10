@@ -1324,14 +1324,14 @@ gosaki / Sariswing で実証した移行フローを、**別サイト向け CMS 
 
 **G-5w-b（完了）:** [Writer dry-run CLI](docs/admin-scaffold-writer-dry-run-cli.md) — planned manifest / report only。
 
-**G-5w-c（完了）:** [Sandbox apply](docs/admin-scaffold-writer-sandbox-apply.md) — `--apply` + `--approval-id`。`output/admin-writer-sandbox/` のみ。次: **G-5w-d** generated scaffold review。
+**G-5w-c（完了）:** [Sandbox apply](docs/admin-scaffold-writer-sandbox-apply.md) — `--apply` + `--approval-id`。`output/admin-writer-sandbox/` のみ。
+
+**G-5w-d（完了）:** [Generated scaffold review](docs/generated-admin-scaffold-review.md) — `review-generated-admin-scaffold.mjs`。`readyForG5x` 判定。次: **G-5x** staging runtime shell integration（review pass 後）。
 
 ```bash
-node tools/static-to-astro/scripts/write-admin-scaffold.mjs \
-  --package-dir tools/static-to-astro/output/admin-scaffold-packages/gosaki \
+node tools/static-to-astro/scripts/review-generated-admin-scaffold.mjs \
   --target-dir tools/static-to-astro/output/admin-writer-sandbox/gosaki \
-  --apply \
-  --approval-id G-5w-c-sandbox-apply
+  --out-dir tools/static-to-astro/output/admin-scaffold-reviews/gosaki
 ```
 
 ```bash

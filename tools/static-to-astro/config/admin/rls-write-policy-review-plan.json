@@ -1,0 +1,43 @@
+{
+  "phase": "G-6-b",
+  "type": "rls-write-policy-review-plan",
+  "approvalId": "G-6-b-rls-write-policy-review",
+  "docRef": "docs/rls-write-policy-review-plan.md",
+  "planningOnly": true,
+  "sqlExecuted": false,
+  "rlsPolicyChanged": false,
+  "canWrite": false,
+  "writeOperationsEnabled": false,
+  "writeAdapterImplemented": false,
+  "dbWriteImplemented": false,
+  "storageConnected": false,
+  "publishConnected": false,
+  "adminRouteConnected": false,
+  "productionDataTouched": false,
+  "readyForG6C": true,
+  "readyForG6D": false,
+  "readyForG6Implementation": false,
+  "recommendedNextPhase": "G-6-c disabled write action scaffold",
+  "tables": ["profile", "links", "schedules", "discography", "news"],
+  "roles": ["admin", "editor", "viewer"],
+  "recommendedRoleModel": "admin_users table + RLS",
+  "interimRoleGate": "private env allowlist (staging experiments only)",
+  "firstWritePocTarget": {
+    "phase": "G-6-d",
+    "approvalId": "G-6-d-staging-profile-update-poc",
+    "table": "profile",
+    "operation": "update-only"
+  },
+  "forbiddenOperations": [
+    "runDraftSql",
+    "createRlsPolicy",
+    "changeRlsPolicy",
+    "databaseWrite",
+    "writeAdapterImplementation",
+    "serviceRoleInBrowser",
+    "browserOnlyRoleEnforcement",
+    "productionWrite",
+    "physicalDelete",
+    "adminRouteConnection"
+  ]
+}

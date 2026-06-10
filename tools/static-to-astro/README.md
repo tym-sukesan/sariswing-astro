@@ -1358,7 +1358,9 @@ gosaki / Sariswing で実証した移行フローを、**別サイト向け CMS 
 
 **G-5z-f（完了）:** [Customer demo / QA package before writes](docs/customer-demo-package-before-writes/README.md) — 顧客デモ・QA・商品化検討用。
 
-**G-6-a（完了）:** [Write operation safety plan](docs/write-operation-safety-plan.md) — planning only。`canWrite: false`、`readyForG6B: true`、`readyForG6Implementation: false`。次: **G-6-b** RLS write policy review plan。
+**G-6-a（完了）:** [Write operation safety plan](docs/write-operation-safety-plan.md) — planning only。
+
+**G-6-b（完了）:** [RLS write policy review plan](docs/rls-write-policy-review-plan.md) — review/planning only。`sqlExecuted: false`、`rlsPolicyChanged: false`、`readyForG6C: true`。次: **G-6-c** disabled write action scaffold。
 
 ```bash
 node tools/static-to-astro/scripts/inspect-admin-auth-adapter.mjs \

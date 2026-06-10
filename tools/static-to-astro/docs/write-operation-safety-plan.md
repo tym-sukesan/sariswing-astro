@@ -354,14 +354,13 @@ node tools/static-to-astro/scripts/report-write-operation-safety-plan.mjs \
 
 ## 15. Next phase recommendation
 
-**Proceed to:** **G-6-b: RLS write policy review plan**
+**G-6-b（完了）:** [rls-write-policy-review-plan.md](./rls-write-policy-review-plan.md) — review/planning only; `readyForG6C: true`.
 
-**Do not yet:**
+**Proceed to:** **G-6-c: disabled write action scaffold**
 
-- G-6-d staging write PoC
-- Any `insert` / `update` / `delete` in `src/lib/admin/staging-data`
+**Do not yet:** G-6-d staging profile update PoC.
 
-Sequence: G-6-b (RLS + role enforcement) → G-6-c (disabled scaffold) → G-6-d (staging update-only PoC).
+Sequence: G-6-c (disabled scaffold) → G-6-d (staging update-only PoC after approval).
 
 ## 16. Final safety statement
 

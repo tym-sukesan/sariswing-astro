@@ -13,7 +13,8 @@
 **G-6-a（完了）:** [write-operation-safety-plan.md](../write-operation-safety-plan.md)
 
 - 書き込みを **いきなり実装せず**、安全計画から開始 — 計画書作成済み
-- 次: **G-6-b** RLS write policy review plan → G-6-c scaffold → G-6-d staging update-only PoC
+- **G-6-b（完了）:** [rls-write-policy-review-plan.md](../rls-write-policy-review-plan.md)
+- 次: **G-6-c** disabled write scaffold → G-6-d staging update-only PoC（approval 後）
 
 ## Option B: customer-specific schema mapping
 

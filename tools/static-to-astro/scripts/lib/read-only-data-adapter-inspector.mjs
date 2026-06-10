@@ -7,6 +7,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { runStagingReadOnlyDisplayQa } from "./staging-read-only-display-qa-runner.mjs";
+import { runReadOnlyPhaseCompletionReport } from "./read-only-phase-completion-reporter.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 export const DEFAULT_TOOL_ROOT = path.resolve(__dirname, "../..");
@@ -171,10 +172,15 @@ export function runReadOnlyDataAdapterInspection(opts = {}) {
     fixtureEmailScan.clean;
 
   const displayQa = runStagingReadOnlyDisplayQa({ toolRoot, siteId });
+  const phaseCompletion = runReadOnlyPhaseCompletionReport({ toolRoot, siteId });
 
   const report = {
     mode: "dry-run",
-    phase: displayQa.readyForG5zE ? "G-5z-d" : "G-5z-c",
+    phase: phaseCompletion.readOnlyPhaseComplete
+      ? "G-5z-e"
+      : displayQa.readyForG5zE
+        ? "G-5z-d"
+        : "G-5z-c",
     approvalId: G5Z_C_APPROVAL_ID,
     siteId,
     generatedAt: new Date().toISOString(),
@@ -217,8 +223,16 @@ export function runReadOnlyDataAdapterInspection(opts = {}) {
     integrationPlan: {
       phase: plan.phase,
       docRef: plan.docRef,
-      recommendedNextPhase: displayQa.readyForG5zE ? "G-5z-e" : "G-5z-d",
+      recommendedNextPhase: phaseCompletion.readOnlyPhaseComplete
+        ? "G-6-a"
+        : displayQa.readyForG5zE
+          ? "G-5z-e"
+          : "G-5z-d",
     },
+    readOnlyPhaseComplete: phaseCompletion.readOnlyPhaseComplete,
+    readyForG6Planning: phaseCompletion.readyForG6Planning,
+    readyForG6Implementation: phaseCompletion.readyForG6Implementation,
+    readOnlyQaRlsReviewDocRef: phaseCompletion.docRef,
     displayQaAdded: displayQa.displayQaAdded,
     displayQaDocRef: displayQa.docRef,
     moduleStateQaDocumented: displayQa.moduleStateQaDocumented,
@@ -228,6 +242,7 @@ export function runReadOnlyDataAdapterInspection(opts = {}) {
     readyForG5zD: g5zCComplete,
     readyForG5zE: displayQa.readyForG5zE && g5zCComplete,
     readyForG5zC: true,
+    g5zEComplete: phaseCompletion.readOnlyPhaseComplete,
     blockers: [
       ...missingStaging.map((f) => `missing:${f.path}`),
       ...uiChecks.filter((f) => !f.exists).map((f) => `missing-ui:${f.path}`),
@@ -236,6 +251,7 @@ export function runReadOnlyDataAdapterInspection(opts = {}) {
       ...(forbiddenHits.length > 0 ? ["forbidden-patterns-in-staging-data"] : []),
       ...(!fixtureEmailScan.clean ? ["fixture-real-email-or-url"] : []),
       ...displayQa.blockers.map((b) => `display-qa:${b}`),
+      ...phaseCompletion.blockers.map((b) => `g5z-e:${b}`),
     ],
   };
 
@@ -279,6 +295,9 @@ export function formatReadOnlyDataAdapterMarkdown(report) {
     `| noWriteQaDocumented | ${report.noWriteQaDocumented} |`,
     `| readyForG5zD | ${report.readyForG5zD} |`,
     `| readyForG5zE | ${report.readyForG5zE} |`,
+    `| readOnlyPhaseComplete | ${report.readOnlyPhaseComplete} |`,
+    `| readyForG6Planning | ${report.readyForG6Planning} |`,
+    `| readyForG6Implementation | ${report.readyForG6Implementation} |`,
     "",
     "## Target modules",
     "",
@@ -301,7 +320,7 @@ export function formatReadOnlyDataAdapterMarkdown(report) {
   }
 
   lines.push(
-    "*G-5z-d: read-only adapter + display QA (staging shell). Approved fields only. No writes.*",
+    "*G-5z-e: read-only phase completion report. Approved fields only. No writes.*",
   );
 
   return lines.join("\n");

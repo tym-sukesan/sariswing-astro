@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Inspect read-only data adapter (G-5z-d dry-run).
+ * Inspect read-only data adapter (G-5z-e dry-run).
  *
  * Usage:
  *   node tools/static-to-astro/scripts/inspect-read-only-data-adapter.mjs
@@ -21,7 +21,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 function printHelp() {
   console.log(`Usage: node scripts/inspect-read-only-data-adapter.mjs [options]
 
-Dry-run read-only data adapter inspection (G-5z-d).
+Dry-run read-only data adapter inspection (G-5z-e).
 No live Supabase connection. No DB write / Storage / FTP / dispatch.
 
 Options:
@@ -71,7 +71,7 @@ function main() {
 
   const report = runReadOnlyDataAdapterInspection({ toolRoot, siteId });
 
-  console.log("static-to-astro inspect-read-only-data-adapter (G-5z-d dry-run)");
+  console.log("static-to-astro inspect-read-only-data-adapter (G-5z-e dry-run)");
   console.log(`  phase: ${report.phase}`);
   console.log(`  approvalId: ${report.approvalId}`);
   console.log(`  provider: ${report.provider}`);
@@ -94,6 +94,9 @@ function main() {
   console.log(`  noWriteQaDocumented: ${report.noWriteQaDocumented}`);
   console.log(`  readyForG5zD: ${report.readyForG5zD}`);
   console.log(`  readyForG5zE: ${report.readyForG5zE}`);
+  console.log(`  readOnlyPhaseComplete: ${report.readOnlyPhaseComplete}`);
+  console.log(`  readyForG6Planning: ${report.readyForG6Planning}`);
+  console.log(`  readyForG6Implementation: ${report.readyForG6Implementation}`);
 
   if (report.missingStagingDataFiles.length > 0) {
     console.error("Missing staging data files:", report.missingStagingDataFiles.join(", "));

@@ -195,6 +195,10 @@ export function runStagingReadOnlyDisplayQa(opts = {}) {
     forbiddenScan,
     targetModules: QA_MODULES,
     readyForG5zE: displayQaComplete,
+    readOnlyQaRlsReviewDocRef: "docs/read-only-qa-rls-review-report.md",
+    readOnlyQaRlsReviewDocExists: fs.existsSync(
+      path.join(toolRoot, "docs/read-only-qa-rls-review-report.md"),
+    ),
     blockers,
   };
 }

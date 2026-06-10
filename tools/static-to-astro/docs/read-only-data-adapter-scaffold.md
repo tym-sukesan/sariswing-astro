@@ -116,7 +116,8 @@ tools/static-to-astro/output/read-only-data-adapter-dry-runs/gosaki/
 - **G-5z-c-prep（完了）:** [Schema mapping / RLS read policy review](./schema-mapping-rls-read-policy-review.md) — review only
 - **G-5z-c（完了）:** [Supabase read-only data adapter](./supabase-read-only-data-adapter.md) — approval ID: `G-5z-c-staging-read-only-data-connect`
 - **G-5z-d（完了）:** [Staging read-only module display QA](./staging-read-only-module-display-qa.md)
-- **G-5z-e:** read-only QA / RLS review report
+- **G-5z-e（完了）:** [Read-only QA / RLS review report](./read-only-qa-rls-review-report.md)
+- **G-6-a:** write operation safety plan
 
 ## 10. Local preview
 

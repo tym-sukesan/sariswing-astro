@@ -514,6 +514,7 @@ No production data is touched.
 - `canWrite: false`; mock fallback preserved
 - RLS not modified by CMS Kit
 - **G-5z-d（完了）:** [staging-read-only-module-display-qa.md](./staging-read-only-module-display-qa.md)
-- Next: **G-5z-e** read-only QA / RLS review report
+- **G-5z-e（完了）:** [read-only-qa-rls-review-report.md](./read-only-qa-rls-review-report.md)
+- Next: **G-6-a** write operation safety plan
 
 Config reference: [schema-mapping-rls-read-policy-review.json](../config/admin/schema-mapping-rls-read-policy-review.json).

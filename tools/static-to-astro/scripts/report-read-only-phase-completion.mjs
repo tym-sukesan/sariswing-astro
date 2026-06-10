@@ -1,28 +1,28 @@
 #!/usr/bin/env node
 /**
- * G-5z-d — Staging read-only module display QA (docs/UI scan).
+ * G-5z-e — Read-only phase completion report.
  *
  * Usage:
- *   node tools/static-to-astro/scripts/qa-staging-read-only-display.mjs
- *   node tools/static-to-astro/scripts/qa-staging-read-only-display.mjs \
- *     --out-dir tools/static-to-astro/output/staging-read-only-display-qa/gosaki
+ *   node tools/static-to-astro/scripts/report-read-only-phase-completion.mjs
+ *   node tools/static-to-astro/scripts/report-read-only-phase-completion.mjs \
+ *     --out-dir tools/static-to-astro/output/read-only-phase-completion/gosaki
  */
 
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import {
   DEFAULT_TOOL_ROOT,
-  runStagingReadOnlyDisplayQa,
-  writeStagingReadOnlyDisplayQaOutput,
-} from "./lib/staging-read-only-display-qa-runner.mjs";
+  runReadOnlyPhaseCompletionReport,
+  writeReadOnlyPhaseCompletionOutput,
+} from "./lib/read-only-phase-completion-reporter.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 function printHelp() {
-  console.log(`Usage: node scripts/qa-staging-read-only-display.mjs [options]
+  console.log(`Usage: node scripts/report-read-only-phase-completion.mjs [options]
 
-Staging read-only module display QA (G-5z-d).
-Docs/UI scan only. No live Supabase connection.
+Read-only phase completion report (G-5z-e).
+Docs/scan only. No live Supabase connection.
 
 Options:
   --out-dir PATH    Write report JSON + markdown (optional)
@@ -69,25 +69,23 @@ function main() {
   }
   if (!siteId) siteId = "default";
 
-  const report = runStagingReadOnlyDisplayQa({ toolRoot, siteId });
+  const report = runReadOnlyPhaseCompletionReport({ toolRoot, siteId });
 
-  console.log("static-to-astro qa-staging-read-only-display (G-5z-d)");
+  console.log("static-to-astro report-read-only-phase-completion (G-5z-e)");
   console.log(`  phase: ${report.phase}`);
-  console.log(`  readOnlyOnly: ${report.readOnlyOnly}`);
+  console.log(`  readOnlyPhaseComplete: ${report.readOnlyPhaseComplete}`);
+  console.log(`  readyForG6Planning: ${report.readyForG6Planning}`);
+  console.log(`  readyForG6Implementation: ${report.readyForG6Implementation}`);
   console.log(`  canWrite: ${report.canWrite}`);
-  console.log(`  displayQaAdded: ${report.displayQaAdded}`);
-  console.log(`  mockModeDocumented: ${report.mockModeDocumented}`);
-  console.log(`  supabaseModeDocumented: ${report.supabaseModeDocumented}`);
-  console.log(`  moduleStateQaDocumented: ${report.moduleStateQaDocumented}`);
-  console.log(`  noWriteQaDocumented: ${report.noWriteQaDocumented}`);
+  console.log(`  dbWriteImplemented: ${report.dbWriteImplemented}`);
+  console.log(`  rlsPolicyChanged: ${report.rlsPolicyChanged}`);
   console.log(`  storageConnected: ${report.storageConnected}`);
   console.log(`  publishConnected: ${report.publishConnected}`);
   console.log(`  adminRouteConnected: ${report.adminRouteConnected}`);
   console.log(`  productionDataTouched: ${report.productionDataTouched}`);
-  console.log(`  readyForG5zE: ${report.readyForG5zE}`);
-  console.log(`  readOnlyQaRlsReviewDocExists: ${report.readOnlyQaRlsReviewDocExists}`);
+  console.log(`  recommendation: ${report.recommendation}`);
 
-  if (!report.readyForG5zE) {
+  if (!report.readOnlyPhaseComplete) {
     console.error("Blockers:", report.blockers.join(", "));
     process.exit(1);
   }
@@ -96,12 +94,12 @@ function main() {
     const absOut = path.isAbsolute(opts.outDir)
       ? opts.outDir
       : path.resolve(process.cwd(), opts.outDir);
-    const { jsonPath, mdPath } = writeStagingReadOnlyDisplayQaOutput(absOut, report);
+    const { jsonPath, mdPath } = writeReadOnlyPhaseCompletionOutput(absOut, report);
     console.log(`  wrote: ${jsonPath}`);
     console.log(`  wrote: ${mdPath}`);
   }
 
-  console.log("OK — staging read-only display QA complete.");
+  console.log("OK — read-only phase completion report complete.");
 }
 
 main();

@@ -441,7 +441,8 @@ Sequence for G-5z-c:
 | **G-5z-c-prep（完了）** | [Schema mapping / RLS read policy review](./schema-mapping-rls-read-policy-review.md) |
 | **G-5z-c（完了）** | [Supabase read-only adapter](./supabase-read-only-data-adapter.md) — approval `G-5z-c-staging-read-only-data-connect` |
 | **G-5z-d（完了）** | [Staging read-only module display QA](./staging-read-only-module-display-qa.md) |
-| **G-5z-e** | Read-only QA / RLS review report |
+| **G-5z-e（完了）** | [Read-only QA / RLS review report](./read-only-qa-rls-review-report.md) |
+| **G-6-a** | Write operation safety plan |
 | **G-5z-d** | Staging shell read-only module display wiring |
 | **G-5z-e** | Read-only QA / RLS review report |
 
@@ -541,7 +542,9 @@ G-5z-b deliverables: types + mock adapter + dry-run CLI report — **no Supabase
 
 **G-5z-c（完了）:** [supabase-read-only-data-adapter.md](./supabase-read-only-data-adapter.md).
 
-**G-5z-d（完了）:** [staging-read-only-module-display-qa.md](./staging-read-only-module-display-qa.md). Next: **G-5z-e**.
+**G-5z-d（完了）:** [staging-read-only-module-display-qa.md](./staging-read-only-module-display-qa.md).
+
+**G-5z-e（完了）:** [read-only-qa-rls-review-report.md](./read-only-qa-rls-review-report.md). `readOnlyPhaseComplete: true`. Next: **G-6-a**.
 
 ---
 

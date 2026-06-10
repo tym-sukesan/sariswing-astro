@@ -123,7 +123,9 @@ Never skip: local preview and customer demo before runtime shell; read-only befo
 
 ---
 
-### G-5v: customer demo package
+### G-5v: customer demo package（**完了**）
+
+**Implemented:** [customer-demo-package-musician-basic/](./customer-demo-package-musician-basic/README.md)
 
 **Purpose:** Package for showing admin UI to customers (not production).
 
@@ -133,6 +135,10 @@ Never skip: local preview and customer demo before runtime shell; read-only befo
 | manual + quick checklist | real customer PII without approval |
 | local preview instructions | live production URL as demo |
 | mock data clearly labeled | save / upload in demo |
+
+**Contents:** demo-script, demo-checklist, customer-explanation, customer-feedback-form, screenshot-guide, demo-safety-notes, post-demo-next-steps.
+
+**Use with:** G-5u local preview route (`/__admin-preview/musician-basic/`).
 
 **Exit criteria:** Presenter can explain scaffold-only; preview-safety-checklist completed.
 
@@ -473,7 +479,7 @@ Generated per site (G-5s): `admin-safety-checklist.generated.md` in dry-run pack
 | --- | --- |
 | **G-5t（完了）** | Runtime integration plan (this doc) |
 | **G-5u（完了）** | [Local-only preview route](./local-only-admin-preview-route.md) — `/__admin-preview/musician-basic/` |
-| **G-5v** | Customer demo package |
+| **G-5v（完了）** | [Customer demo package](./customer-demo-package-musician-basic/README.md) |
 | **G-5w** | Explicit opt-in admin scaffold writer |
 | **G-5x** | Staging runtime shell integration |
 | **G-5y** | Supabase Auth staging integration |

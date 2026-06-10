@@ -92,22 +92,39 @@ http://localhost:4321/__admin-preview/musician-basic/
 
 ---
 
-## 7. Future phases
+## 7. Customer demo (G-5v)
+
+Use this route together with the [Musician Basic Customer Demo Package](./customer-demo-package-musician-basic/README.md):
+
+| Item | Detail |
+| --- | --- |
+| Demo script | [demo-script.md](./customer-demo-package-musician-basic/demo-script.md) |
+| Demo checklist | [demo-checklist.md](./customer-demo-package-musician-basic/demo-checklist.md) |
+| Customer explanation | [customer-explanation.md](./customer-demo-package-musician-basic/customer-explanation.md) |
+| Safety notes | [demo-safety-notes.md](./customer-demo-package-musician-basic/demo-safety-notes.md) |
+
+Customer demos must clearly state: **scaffold only**, **mock data only**, **no save / upload / publish**.
+
+---
+
+## 8. Future phases
 
 | Phase | Focus |
 | --- | --- |
-| **G-5v** | Customer demo package |
+| **G-5v（完了）** | [Customer demo package](./customer-demo-package-musician-basic/README.md) |
 | **G-5w** | Explicit opt-in admin scaffold writer |
 | **G-5x** | Staging runtime shell integration |
+| **G-5y** | Supabase Auth staging integration |
 
 ---
 
 ## Related
 
+- [customer-demo-package-musician-basic/](./customer-demo-package-musician-basic/README.md) — G-5v demo package
 - [admin-prototype-preview-harness.md](./admin-prototype-preview-harness.md) — preview manifest
-- [admin-runtime-integration-plan.md](./admin-runtime-integration-plan.md) — G-5u phase detail
+- [admin-runtime-integration-plan.md](./admin-runtime-integration-plan.md) — G-5u / G-5v phase detail
 - [musician-basic-admin-prototype.md](./musician-basic-admin-prototype.md) — G-5p prototype
 
 ---
 
-*G-5u: local preview route only. Sariswing `/admin/` untouched.*
+*G-5u: local preview route. G-5v: customer demo package. Sariswing `/admin/` untouched.*

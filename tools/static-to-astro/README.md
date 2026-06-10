@@ -1316,7 +1316,9 @@ gosaki / Sariswing で実証した移行フローを、**別サイト向け CMS 
 
 **G-5t（完了）:** [Admin runtime integration plan](docs/admin-runtime-integration-plan.md) — 計画のみ、実接続なし。
 
-**G-5u（完了）:** [Local-only Admin preview route](docs/local-only-admin-preview-route.md) — `/__admin-preview/musician-basic/`。`ENABLE_ADMIN_PREVIEW=true` + dev only。次: **G-5v** customer demo package。
+**G-5u（完了）:** [Local-only Admin preview route](docs/local-only-admin-preview-route.md) — `/__admin-preview/musician-basic/`。`ENABLE_ADMIN_PREVIEW=true` + dev only。
+
+**G-5v（完了）:** [Musician Basic Customer Demo Package](docs/customer-demo-package-musician-basic/README.md) — 顧客デモ用資料一式。G-5u preview route と組み合わせて使用。mock / scaffold のみ。次: **G-5w** explicit opt-in admin scaffold writer。
 
 ```bash
 node tools/static-to-astro/scripts/inventory-admin-cms.mjs --root .

@@ -5,6 +5,8 @@
 
 詳しい説明は [Customer Admin Manual — Musician Basic](./customer-admin-manual-musician-basic.md) を参照してください。
 
+**顧客デモ時（G-5v）:** デモ前後のチェックは [customer-demo-package-musician-basic/demo-checklist.md](./customer-demo-package-musician-basic/demo-checklist.md) を使い、local preview route（`/__admin-preview/musician-basic/`）と組み合わせてください。デモは mock / scaffold です。
+
 ---
 
 ## 更新前

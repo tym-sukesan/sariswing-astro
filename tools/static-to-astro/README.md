@@ -1350,7 +1350,9 @@ gosaki / Sariswing で実証した移行フローを、**別サイト向け CMS 
 
 **G-5z-c-prep（完了）:** [Schema mapping / RLS read policy review](docs/schema-mapping-rls-read-policy-review.md) — review only。approval: `G-5z-c-staging-read-only-data-connect`。
 
-**G-5z-c（完了）:** [Supabase read-only data adapter](docs/supabase-read-only-data-adapter.md) — staging shell only。env-gated `from().select()`（approved fields only）。`canWrite: false`。mock fallback。approval: `G-5z-c-staging-read-only-data-connect`。次: **G-5z-d** staging shell read-only module display QA。
+**G-5z-c（完了）:** [Supabase read-only data adapter](docs/supabase-read-only-data-adapter.md) — staging shell only。env-gated `from().select()`（approved fields only）。approval: `G-5z-c-staging-read-only-data-connect`。
+
+**G-5z-d（完了）:** [Staging read-only module display QA](docs/staging-read-only-module-display-qa.md) — mock / Supabase mode QA、module-level fallback QA、no-write QA。次: **G-5z-e** read-only QA / RLS review report。
 
 ```bash
 node tools/static-to-astro/scripts/inspect-admin-auth-adapter.mjs \

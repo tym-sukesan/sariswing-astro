@@ -209,7 +209,8 @@ Never skip: local preview and customer demo before runtime shell; read-only befo
 | **G-5z-b（完了）** | [Read-only data adapter scaffold](./read-only-data-adapter-scaffold.md) | Mock only |
 | **G-5z-c-prep（完了）** | [Schema mapping / RLS review](./schema-mapping-rls-read-policy-review.md) | Review only |
 | **G-5z-c（完了）** | [Supabase read-only adapter](./supabase-read-only-data-adapter.md) | `G-5z-c-staging-read-only-data-connect` |
-| **G-5z-d** | Staging shell read-only module display QA | — |
+| **G-5z-d（完了）** | [Staging read-only module display QA](./staging-read-only-module-display-qa.md) | Display QA only |
+| **G-5z-e** | Read-only QA / RLS review report | — |
 | **G-5y-e** | Role check / allowlist | Staging Auth |
 
 **Purpose (overall):** Staging admin login only — after shell QA on `/__admin-staging-shell/musician-basic/`.

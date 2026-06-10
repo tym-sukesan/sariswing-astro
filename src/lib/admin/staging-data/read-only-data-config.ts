@@ -4,6 +4,7 @@
 
 export const G5Z_C_APPROVAL_ID = "G-5z-c-staging-read-only-data-connect";
 export const G5Z_C_PHASE = "G-5z-c";
+export const G5Z_D_PHASE = "G-5z-d";
 
 export type ReadOnlyDataMode = "mock" | "supabase-read-only" | "disabled";
 

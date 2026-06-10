@@ -133,7 +133,8 @@ In mock mode:
 - **G-5z-b（完了）:** [Read-only data adapter scaffold](./read-only-data-adapter-scaffold.md)
 - **G-5z-c-prep（完了）:** [Schema mapping / RLS review](./schema-mapping-rls-read-policy-review.md)
 - **G-5z-c（完了）:** [Supabase read-only data adapter](./supabase-read-only-data-adapter.md) (`G-5z-c-staging-read-only-data-connect`)
-- **G-5z-d:** staging shell read-only module display QA
+- **G-5z-d（完了）:** [Staging read-only module display QA](./staging-read-only-module-display-qa.md)
+- **G-5z-e:** read-only QA / RLS review report
 
 ## 11. Files
 

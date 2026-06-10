@@ -513,6 +513,7 @@ No production data is touched.
 - Staging shell only; env-gated `from().select()` on approved fields
 - `canWrite: false`; mock fallback preserved
 - RLS not modified by CMS Kit
-- Next: **G-5z-d** staging shell read-only module display QA
+- **G-5z-d（完了）:** [staging-read-only-module-display-qa.md](./staging-read-only-module-display-qa.md)
+- Next: **G-5z-e** read-only QA / RLS review report
 
 Config reference: [schema-mapping-rls-read-policy-review.json](../config/admin/schema-mapping-rls-read-policy-review.json).

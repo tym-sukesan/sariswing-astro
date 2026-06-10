@@ -122,6 +122,6 @@ The staging shell does not crash on module errors. SQL details and secrets are n
 
 ## 10. Next phase
 
-- **G-5z-d:** staging shell read-only module display QA
+- **G-5z-d（完了）:** [staging-read-only-module-display-qa.md](./staging-read-only-module-display-qa.md) — display QA checklist + CLI
 - **G-5z-e:** read-only QA / RLS review report
 - writes remain forbidden until **G-6**

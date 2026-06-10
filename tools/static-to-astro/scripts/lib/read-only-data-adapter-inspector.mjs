@@ -1,11 +1,12 @@
 /**
- * Read-only data adapter inspector (G-5z-c).
+ * Read-only data adapter inspector (G-5z-d).
  * Read-only / output-only. No live Supabase connection.
  */
 
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { runStagingReadOnlyDisplayQa } from "./staging-read-only-display-qa-runner.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 export const DEFAULT_TOOL_ROOT = path.resolve(__dirname, "../..");
@@ -161,7 +162,7 @@ export function runReadOnlyDataAdapterInspection(opts = {}) {
     (h) => h.match.includes("select\\s*\\(") || h.match.includes("select\\s*\\(\\s*\\*"),
   );
 
-  const implementationComplete =
+  const g5zCComplete =
     missingStaging.length === 0 &&
     uiChecks.every((f) => f.exists) &&
     supabaseAdapterExists &&
@@ -169,9 +170,11 @@ export function runReadOnlyDataAdapterInspection(opts = {}) {
     forbiddenHits.length === 0 &&
     fixtureEmailScan.clean;
 
+  const displayQa = runStagingReadOnlyDisplayQa({ toolRoot, siteId });
+
   const report = {
     mode: "dry-run",
-    phase: "G-5z-c",
+    phase: displayQa.readyForG5zE ? "G-5z-d" : "G-5z-c",
     approvalId: G5Z_C_APPROVAL_ID,
     siteId,
     generatedAt: new Date().toISOString(),
@@ -214,9 +217,16 @@ export function runReadOnlyDataAdapterInspection(opts = {}) {
     integrationPlan: {
       phase: plan.phase,
       docRef: plan.docRef,
-      recommendedNextPhase: "G-5z-d",
+      recommendedNextPhase: displayQa.readyForG5zE ? "G-5z-e" : "G-5z-d",
     },
-    readyForG5zD: implementationComplete,
+    displayQaAdded: displayQa.displayQaAdded,
+    displayQaDocRef: displayQa.docRef,
+    moduleStateQaDocumented: displayQa.moduleStateQaDocumented,
+    mockModeQaDocumented: displayQa.mockModeDocumented,
+    supabaseModeQaDocumented: displayQa.supabaseModeDocumented,
+    noWriteQaDocumented: displayQa.noWriteQaDocumented,
+    readyForG5zD: g5zCComplete,
+    readyForG5zE: displayQa.readyForG5zE && g5zCComplete,
     readyForG5zC: true,
     blockers: [
       ...missingStaging.map((f) => `missing:${f.path}`),
@@ -225,6 +235,7 @@ export function runReadOnlyDataAdapterInspection(opts = {}) {
       ...(!fromSelectAdded ? ["supabase-adapter-missing-from-select"] : []),
       ...(forbiddenHits.length > 0 ? ["forbidden-patterns-in-staging-data"] : []),
       ...(!fixtureEmailScan.clean ? ["fixture-real-email-or-url"] : []),
+      ...displayQa.blockers.map((b) => `display-qa:${b}`),
     ],
   };
 
@@ -261,7 +272,13 @@ export function formatReadOnlyDataAdapterMarkdown(report) {
     `| storageReadImplemented | ${report.storageReadImplemented} |`,
     `| productionDataTouched | ${report.productionDataTouched} |`,
     `| adminRouteConnected | ${report.adminRouteConnected} |`,
+    `| displayQaAdded | ${report.displayQaAdded} |`,
+    `| moduleStateQaDocumented | ${report.moduleStateQaDocumented} |`,
+    `| mockModeQaDocumented | ${report.mockModeQaDocumented} |`,
+    `| supabaseModeQaDocumented | ${report.supabaseModeQaDocumented} |`,
+    `| noWriteQaDocumented | ${report.noWriteQaDocumented} |`,
     `| readyForG5zD | ${report.readyForG5zD} |`,
+    `| readyForG5zE | ${report.readyForG5zE} |`,
     "",
     "## Target modules",
     "",
@@ -284,7 +301,7 @@ export function formatReadOnlyDataAdapterMarkdown(report) {
   }
 
   lines.push(
-    "*G-5z-c: Supabase read-only adapter (staging shell). Approved fields only. No writes.*",
+    "*G-5z-d: read-only adapter + display QA (staging shell). Approved fields only. No writes.*",
   );
 
   return lines.join("\n");

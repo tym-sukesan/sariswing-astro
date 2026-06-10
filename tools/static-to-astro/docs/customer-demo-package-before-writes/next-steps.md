@@ -15,7 +15,8 @@
 - 書き込みを **いきなり実装せず**、安全計画から開始 — 計画書作成済み
 - **G-6-b（完了）:** [rls-write-policy-review-plan.md](../rls-write-policy-review-plan.md)
 - **G-6-c（完了）:** [disabled-write-action-scaffold.md](../disabled-write-action-scaffold.md) — UI scaffold only; all write actions disabled
-- 次: **G-6-d** staging profile update PoC planning / approval（approval 後）
+- **G-6-d-prep（完了）:** [staging-profile-update-poc-approval-plan.md](../staging-profile-update-poc-approval-plan.md) — planning / approval only; approval ID `G-6-d-staging-profile-update-poc`; Save button remains disabled
+- 次: **G-6-d** staging profile update PoC（explicit approval 後のみ）
 
 ## Option B: customer-specific schema mapping
 
@@ -46,8 +47,8 @@
 G-6-a: write operation safety plan
 G-6-b: RLS write policy review plan
 G-6-c: disabled write action scaffold (UI only)
-G-6-d: staging profile update PoC (approval required)
-G-6-d: staging write operation with explicit approval
+G-6-d-prep: staging profile update PoC approval plan
+G-6-d: staging profile update PoC (explicit approval required)
 ```
 
 **G-6 でもいきなり write 実装しない。** まず G-6-a。

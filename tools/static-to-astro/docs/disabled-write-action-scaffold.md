@@ -116,15 +116,17 @@ G-6-c components use `type="button"` and `disabled` only. No `onclick`, no `on:c
 
 ## 8. Next phase
 
+**G-6-d-prep（完了）:** [staging-profile-update-poc-approval-plan.md](./staging-profile-update-poc-approval-plan.md) — planning / approval only; approval ID `G-6-d-staging-profile-update-poc` defined but not activated; `canWrite: false`; Save button remains disabled; `readyForG6DApproval: true`; `readyForG6DImplementation: false`.
+
 **G-6-d should not begin automatically.**
 
-Before G-6-d:
+Before G-6-d implementation:
 
-- approval ID issued (`G-6-d-staging-profile-update-poc`)
-- first write PoC plan reviewed (profile update-only on staging)
-- RLS write policy implementation plan approved (not executed in G-6-c)
+- user explicitly approves `G-6-d-staging-profile-update-poc`
+- env gates and RLS preflight complete
+- rollback plan confirmed on staging
 
-**Recommended next:** G-6-d staging profile update PoC planning / approval.
+**Recommended next:** G-6-d staging profile update PoC with explicit approval only.
 
 ## 9. Final safety statement
 

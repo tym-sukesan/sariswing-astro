@@ -1,0 +1,50 @@
+{
+  "phase": "G-6-d-prep",
+  "type": "staging-profile-update-poc-approval-plan",
+  "planningOnly": true,
+  "approvalId": "G-6-d-staging-profile-update-poc",
+  "approvalActivated": false,
+  "targetModule": "profile",
+  "targetTable": "profile",
+  "targetOperation": "update",
+  "targetScope": "single-existing-row",
+  "targetFields": "text-only",
+  "stagingOnly": true,
+  "canWrite": false,
+  "writeOperationsEnabled": false,
+  "writeAdapterImplemented": false,
+  "dbWriteImplemented": false,
+  "saveButtonEnabled": false,
+  "sqlExecuted": false,
+  "rlsPolicyChanged": false,
+  "storageConnected": false,
+  "publishConnected": false,
+  "adminRouteConnected": false,
+  "productionDataTouched": false,
+  "readyForG6DApproval": true,
+  "readyForG6DImplementation": false,
+  "readyForG6Implementation": false,
+  "recommendedNextPhase": "G-6-d staging profile update PoC with explicit approval",
+  "allowedFutureFields": [
+    "display_name",
+    "catchphrase",
+    "bio",
+    "website_url"
+  ],
+  "forbiddenFutureOperations": [
+    "create",
+    "delete",
+    "restore",
+    "duplicate",
+    "reorder",
+    "publishToggle",
+    "uploadImage",
+    "updatePublicSite"
+  ],
+  "envGatePlan": {
+    "ENABLE_ADMIN_STAGING_WRITE": false,
+    "PUBLIC_ADMIN_WRITE_PROVIDER": "disabled",
+    "PUBLIC_ADMIN_WRITE_MODULE": "profile",
+    "PUBLIC_ADMIN_WRITE_APPROVAL_ID": ""
+  }
+}

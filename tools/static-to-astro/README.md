@@ -1322,13 +1322,16 @@ gosaki / Sariswing で実証した移行フローを、**別サイト向け CMS 
 
 **G-5w-a（完了）:** [Admin scaffold writer plan](docs/admin-scaffold-writer-plan.md) — explicit opt-in writer 設計。Policy: [`config/admin/admin-scaffold-writer-policy.json`](config/admin/admin-scaffold-writer-policy.json)。
 
-**G-5w-b（完了）:** [Writer dry-run CLI](docs/admin-scaffold-writer-dry-run-cli.md) — `write-admin-scaffold.mjs`。`--apply` 未実装、target-dir への実書き込みなし。次: **G-5w-c** apply to sandbox only。
+**G-5w-b（完了）:** [Writer dry-run CLI](docs/admin-scaffold-writer-dry-run-cli.md) — planned manifest / report only。
+
+**G-5w-c（完了）:** [Sandbox apply](docs/admin-scaffold-writer-sandbox-apply.md) — `--apply` + `--approval-id`。`output/admin-writer-sandbox/` のみ。次: **G-5w-d** generated scaffold review。
 
 ```bash
 node tools/static-to-astro/scripts/write-admin-scaffold.mjs \
   --package-dir tools/static-to-astro/output/admin-scaffold-packages/gosaki \
   --target-dir tools/static-to-astro/output/admin-writer-sandbox/gosaki \
-  --mode dry-run
+  --apply \
+  --approval-id G-5w-c-sandbox-apply
 ```
 
 ```bash

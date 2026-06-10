@@ -1,39 +1,43 @@
 #!/usr/bin/env node
 /**
- * Admin scaffold writer CLI (G-5w-b dry-run only).
- * Plans future writer output — no runtime file writes, no --apply.
+ * Admin scaffold writer CLI (G-5w-b dry-run · G-5w-c sandbox apply).
  *
- * Usage:
+ * Dry-run:
  *   node tools/static-to-astro/scripts/write-admin-scaffold.mjs \
- *     --package-dir tools/static-to-astro/output/admin-scaffold-packages/gosaki \
- *     --target-dir tools/static-to-astro/output/admin-writer-sandbox/gosaki \
- *     --mode dry-run
+ *     --package-dir ... --target-dir ... --mode dry-run
+ *
+ * Sandbox apply (G-5w-c):
+ *   node tools/static-to-astro/scripts/write-admin-scaffold.mjs \
+ *     --package-dir ... --target-dir tools/static-to-astro/output/admin-writer-sandbox/gosaki \
+ *     --apply --approval-id G-5w-c-sandbox-apply
  */
 
 import {
-  APPLY_NOT_IMPLEMENTED_MSG,
   runAdminScaffoldWriterDryRun,
   writeAdminScaffoldWriterDryRunReports,
 } from "./lib/admin-scaffold-writer-dry-runner.mjs";
+import {
+  APPROVAL_ID_REQUIRED_MSG,
+  runAdminScaffoldWriterApply,
+} from "./lib/admin-scaffold-writer-applier.mjs";
 
 function printHelp() {
   console.log(`Usage: node scripts/write-admin-scaffold.mjs [options]
 
-Admin scaffold writer dry-run (G-5w-b).
-Plans files and writes reports to report-dir only.
-Does NOT write runtime admin scaffold files. Does NOT support --apply.
+Admin scaffold writer — dry-run (G-5w-b) or sandbox apply (G-5w-c).
 
 Options:
   --package-dir PATH    G-5s admin scaffold package directory (required)
-  --target-dir PATH     Planned writer target directory (required)
-  --mode MODE           dry-run | plan-only (default: dry-run)
-  --policy PATH         Writer policy JSON (default: config/admin/admin-scaffold-writer-policy.json)
+  --target-dir PATH     Writer target directory (required)
+  --mode MODE           dry-run | plan-only (default: dry-run; ignored with --apply)
+  --apply               Apply to sandbox output directory only (G-5w-c)
+  --approval-id ID      Required with --apply
+  --policy PATH         Writer policy JSON
   --site-slug SLUG      Override site slug from package
-  --report-dir PATH     Report output (default: output/admin-writer-dry-runs/{siteSlug})
+  --report-dir PATH     Dry-run report output (default: output/admin-writer-dry-runs/{siteSlug})
   --help, -h
 
-Rejected flags (G-5w-b):
-  --apply               Not implemented — exits with error
+Rejected flags:
   --force               Not supported
   --overwrite           Not supported
 `);
@@ -47,6 +51,7 @@ function parseArgs(argv) {
     policyPath: null,
     siteSlug: null,
     reportDir: null,
+    approvalId: null,
     applyRequested: false,
     help: false,
   };
@@ -62,7 +67,7 @@ function parseArgs(argv) {
       continue;
     }
     if (arg === "--force" || arg === "--overwrite") {
-      throw new Error(`Flag ${arg} is not supported in G-5w-b.`);
+      throw new Error(`Flag ${arg} is not supported.`);
     }
     if (arg === "--package-dir") {
       opts.packageDir = argv[++i];
@@ -88,6 +93,10 @@ function parseArgs(argv) {
       opts.reportDir = argv[++i];
       continue;
     }
+    if (arg === "--approval-id") {
+      opts.approvalId = argv[++i];
+      continue;
+    }
     throw new Error(`Unknown argument: ${arg}`);
   }
 
@@ -97,7 +106,7 @@ function parseArgs(argv) {
 /**
  * @param {ReturnType<typeof runAdminScaffoldWriterDryRun>} result
  */
-function printSummary(result) {
+function printDryRunSummary(result) {
   console.log("");
   console.log("=== Admin Scaffold Writer Dry-run (G-5w-b) ===");
   console.log(`mode: ${result.mode}`);
@@ -121,52 +130,48 @@ function printSummary(result) {
   console.log("");
 }
 
-function main() {
-  let opts;
-  try {
-    opts = parseArgs(process.argv);
-  } catch (err) {
-    console.error(`Error: ${err instanceof Error ? err.message : String(err)}`);
-    process.exit(1);
+/**
+ * @param {ReturnType<typeof runAdminScaffoldWriterApply>} result
+ */
+function printApplySummary(result) {
+  console.log("");
+  console.log("=== Admin Scaffold Writer Sandbox Apply (G-5w-c) ===");
+  console.log(`mode: apply-to-sandbox`);
+  console.log(`siteSlug: ${result.siteSlug}`);
+  console.log(`approvalId: ${result.approvalId}`);
+  console.log(`package: ${result.packageRelative}`);
+  console.log(`target: ${result.targetRelative}`);
+  console.log(`targetAllowed: ${result.targetValidation?.ok ?? false}`);
+  console.log(`filesCreated: ${result.filesCreated.length}`);
+  console.log(`filesSkipped: ${result.filesSkipped.length}`);
+  console.log(`overwrittenFiles: ${result.overwrittenFiles.length}`);
+  console.log(`runtimeFilesWritten: false`);
+  console.log(`connectedToRuntime: false`);
+  console.log(`productionTouched: false`);
+  console.log(`srcPagesAdminTouched: false`);
+  console.log(`sariswingAdminTouched: false`);
+  if (result.warnings?.length) {
+    console.log(`warnings: ${result.warnings.length}`);
   }
+  console.log("");
+}
 
-  if (opts.help) {
-    printHelp();
-    process.exit(0);
-  }
-
-  if (opts.applyRequested) {
-    console.error(`Error: ${APPLY_NOT_IMPLEMENTED_MSG}`);
-    process.exit(1);
-  }
-
-  if (!opts.packageDir || !opts.targetDir) {
-    console.error("Error: --package-dir and --target-dir are required");
-    printHelp();
-    process.exit(1);
-  }
-
+function runDryRunPath(opts) {
   console.log("Admin scaffold writer dry-run (G-5w-b)");
-  console.log("No runtime files written. No --apply. No Supabase / DB / Storage / FTP.");
+  console.log("No runtime files written. No target-dir writes. No Supabase / DB / Storage / FTP.");
 
-  let result;
-  try {
-    result = runAdminScaffoldWriterDryRun({
-      packageDir: opts.packageDir,
-      targetDir: opts.targetDir,
-      mode: opts.mode,
-      policyPath: opts.policyPath ?? "config/admin/admin-scaffold-writer-policy.json",
-      siteSlug: opts.siteSlug,
-      reportDir: opts.reportDir,
-      applyRequested: opts.applyRequested,
-    });
-  } catch (err) {
-    console.error(`Error: ${err instanceof Error ? err.message : String(err)}`);
-    process.exit(1);
-  }
+  const result = runAdminScaffoldWriterDryRun({
+    packageDir: opts.packageDir,
+    targetDir: opts.targetDir,
+    mode: opts.mode,
+    policyPath: opts.policyPath ?? "config/admin/admin-scaffold-writer-policy.json",
+    siteSlug: opts.siteSlug,
+    reportDir: opts.reportDir,
+    applyRequested: false,
+  });
 
   const reportAbs = writeAdminScaffoldWriterDryRunReports(result);
-  printSummary(result);
+  printDryRunSummary(result);
   console.log(`Wrote dry-run reports to: ${reportAbs}`);
 
   if (!result.targetValidation.ok) {
@@ -187,6 +192,81 @@ function main() {
   }
 
   process.exit(0);
+}
+
+function runApplyPath(opts) {
+  if (!opts.approvalId || String(opts.approvalId).trim() === "") {
+    console.error(`Error: ${APPROVAL_ID_REQUIRED_MSG}`);
+    process.exit(1);
+  }
+
+  console.log("Admin scaffold writer sandbox apply (G-5w-c)");
+  console.log("Sandbox output only. No src/pages/admin. No Supabase / DB / Storage / FTP.");
+
+  let result;
+  try {
+    result = runAdminScaffoldWriterApply({
+      packageDir: opts.packageDir,
+      targetDir: opts.targetDir,
+      approvalId: opts.approvalId,
+      policyPath: opts.policyPath ?? "config/admin/admin-scaffold-writer-policy.json",
+      siteSlug: opts.siteSlug,
+    });
+  } catch (err) {
+    console.error(`Error: ${err instanceof Error ? err.message : String(err)}`);
+    process.exit(1);
+  }
+
+  printApplySummary(result);
+
+  if (result.wroteFiles) {
+    console.log(`Wrote sandbox scaffold to: ${result.targetAbs}`);
+  }
+
+  if (!result.ok) {
+    if (result.error) {
+      console.error(`Error: ${result.error}`);
+    } else if (result.targetValidation && !result.targetValidation.ok) {
+      const issue =
+        result.targetValidation.applyIssues?.[0] ??
+        result.targetValidation.issues.find((i) => i.severity === "error");
+      console.error(`Error: ${issue?.message ?? "apply failed safety checks"}`);
+    } else if (result.missingPackageFiles?.length) {
+      console.error(`Error: missing package files: ${result.missingPackageFiles.join(", ")}`);
+    } else {
+      console.error("Error: sandbox apply failed");
+    }
+    process.exit(1);
+  }
+
+  process.exit(0);
+}
+
+function main() {
+  let opts;
+  try {
+    opts = parseArgs(process.argv);
+  } catch (err) {
+    console.error(`Error: ${err instanceof Error ? err.message : String(err)}`);
+    process.exit(1);
+  }
+
+  if (opts.help) {
+    printHelp();
+    process.exit(0);
+  }
+
+  if (!opts.packageDir || !opts.targetDir) {
+    console.error("Error: --package-dir and --target-dir are required");
+    printHelp();
+    process.exit(1);
+  }
+
+  if (opts.applyRequested) {
+    runApplyPath(opts);
+  } else {
+    runDryRunPath(opts);
+  }
 }
 
 main();

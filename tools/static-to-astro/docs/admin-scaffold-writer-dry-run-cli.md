@@ -1,7 +1,7 @@
 # Admin Scaffold Writer Dry-run CLI
 
 **Phase:** G-5w-b — writer dry-run CLI  
-**Status:** dry-run only · `--apply` not implemented · no runtime file writes
+**Status:** dry-run only (no target-dir writes) · sandbox `--apply` is [G-5w-c](./admin-scaffold-writer-sandbox-apply.md)
 
 ---
 
@@ -34,12 +34,12 @@ Related plan: [admin-scaffold-writer-plan.md](./admin-scaffold-writer-plan.md) (
 | dry-run report | `ADMIN_SCAFFOLD_WRITER_DRY_RUN_REPORT.md` |
 | recommended commands | `recommended-next-commands.md` |
 
-### Out of scope (G-5w-b)
+### Out of scope (G-5w-b dry-run mode)
 
 | Item | Status |
 | --- | --- |
-| `--apply` | **Rejected** — not implemented |
-| Actual file writes to target-dir | **No** |
+| `--apply` | Use [sandbox apply](./admin-scaffold-writer-sandbox-apply.md) (G-5w-c) instead |
+| Actual file writes to target-dir (dry-run) | **No** |
 | Runtime integration | **No** |
 | Supabase Auth | not connected |
 | DB query / update | not performed |
@@ -124,19 +124,12 @@ If target fails checks, reports are still written when possible, then CLI exits 
 
 ## 6. `--apply` behavior
 
-`--apply` is **not implemented** in G-5w-b.
+`--apply` is **not part of dry-run mode**. It is implemented in [G-5w-c sandbox apply](./admin-scaffold-writer-sandbox-apply.md).
 
-```bash
-node tools/static-to-astro/scripts/write-admin-scaffold.mjs ... --apply
-```
+- Dry-run (this doc): no `--apply`, no target-dir writes
+- Sandbox apply: `--apply` + `--approval-id` required; sandbox prefix only
 
-Result:
-
-- Exit code **1**
-- Message: `--apply is not implemented in G-5w-b. This CLI is dry-run only.`
-- **No files written** to target-dir
-
-`--force` and `--overwrite` are also rejected.
+`--force` and `--overwrite` are rejected in all modes.
 
 ---
 
@@ -185,7 +178,7 @@ All entries have `willWrite: false`, `willOverwrite: false`, `reason: "dry-run o
 
 | Phase | Focus |
 | --- | --- |
-| **G-5w-c** | Apply to sandbox output directory only (`--apply` + approval) |
+| **G-5w-c（完了）** | [Sandbox apply](./admin-scaffold-writer-sandbox-apply.md) |
 | **G-5w-d** | Generated scaffold review |
 | **G-5x** | Staging runtime shell integration |
 

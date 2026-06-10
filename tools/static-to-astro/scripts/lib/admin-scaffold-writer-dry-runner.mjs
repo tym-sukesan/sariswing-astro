@@ -59,6 +59,16 @@ export const BASE_PLANNED_FILES = [
     source: "admin-publish-policy.generated.json",
   },
   {
+    path: "admin/config/admin-components.required.json",
+    type: "config",
+    source: "admin-components.required.json",
+  },
+  {
+    path: "admin/config/admin-preview-plan.generated.json",
+    type: "config",
+    source: "admin-preview-plan.generated.json",
+  },
+  {
     path: "admin/manifests/generated-files-manifest.json",
     type: "manifest",
     source: "writer-template",
@@ -715,31 +725,30 @@ cat ${p.reportRelative}/planned-files-manifest.json
 cat ${p.reportRelative}/rollback-manifest.draft.json
 \`\`\`
 
-## Future apply (G-5w-c — NOT available in G-5w-b)
+## Sandbox apply (G-5w-c)
 
 \`\`\`bash
-# NOT IMPLEMENTED — for planning only
+rm -rf tools/static-to-astro/output/admin-writer-sandbox/${p.siteSlug}
+
 node tools/static-to-astro/scripts/write-admin-scaffold.mjs \\
   --package-dir ${p.packageRelative} \\
   --target-dir ${p.targetRel} \\
-  --mode apply-to-sandbox \\
   --apply \\
-  --approval-id G-5w-c-local-sandbox
+  --approval-id G-5w-c-sandbox-apply
 \`\`\`
 
 **Important:**
 
-- \`--apply\` is **not implemented** in G-5w-b
-- Apply is planned for **G-5w-c** onward
-- Sandbox output directory only: \`tools/static-to-astro/output/admin-writer-sandbox/${p.siteSlug}/\`
-- Explicit approval required before any future apply
+- \`--apply\` writes **only** under \`tools/static-to-astro/output/admin-writer-sandbox/${p.siteSlug}/\`
+- \`--approval-id\` is required
+- No overwrite of existing files
 - Sariswing \`src/pages/admin/\` must never be targeted
 
 ## Next phases
 
 | Phase | Focus |
 | --- | --- |
-| **G-5w-c** | Apply to sandbox output directory only |
+| **G-5w-c（完了）** | Sandbox apply |
 | **G-5w-d** | Generated scaffold review |
 | **G-5x** | Staging runtime shell integration |
 `;

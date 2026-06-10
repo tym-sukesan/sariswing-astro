@@ -1,0 +1,40 @@
+{
+  "phase": "G-5z-a",
+  "type": "read-only-data-integration-plan",
+  "docRef": "docs/read-only-data-integration-plan.md",
+  "planningPhaseOnly": true,
+  "readOnlyOnly": true,
+  "canWrite": false,
+  "supabaseDbQueryImplemented": false,
+  "fromSelectAdded": false,
+  "dbQueryPerformed": false,
+  "dbUpdatePerformed": false,
+  "rlsPolicyChanged": false,
+  "storageReadImplemented": false,
+  "storageUploadPerformed": false,
+  "githubDispatchPerformed": false,
+  "ftpDeployPerformed": false,
+  "adminRouteConnected": false,
+  "productionDataTouched": false,
+  "productionPublishEnabled": false,
+  "targetModules": [
+    "profile",
+    "schedule",
+    "discography",
+    "links",
+    "news"
+  ],
+  "schemaAdapterRef": "musician-basic-supabase-v1",
+  "envGates": {
+    "ENABLE_ADMIN_STAGING_DATA_READ": false,
+    "PUBLIC_ADMIN_DATA_PROVIDER": "mock"
+  },
+  "recommendedNextPhase": "G-5z-b",
+  "phaseBreakdown": [
+    "G-5z-a",
+    "G-5z-b",
+    "G-5z-c",
+    "G-5z-d",
+    "G-5z-e"
+  ]
+}

@@ -397,7 +397,9 @@ Proceed to **G-5y-d** only after preflight (Section 12) + approval ID.
 
 **G-5y-e-a（完了）:** [staging-role-allowlist-mock.md](./staging-role-allowlist-mock.md) — mock allowlist / role resolver.
 
-**G-5y-e-b（完了）:** [private-server-side-allowlist-plan.md](./private-server-side-allowlist-plan.md) — private/server-side allowlist planning; browser allowlist not a security boundary. Next: **G-5y-e-c** or **G-5z-a**.
+**G-5y-e-b（完了）:** [private-server-side-allowlist-plan.md](./private-server-side-allowlist-plan.md) — private/server-side allowlist planning.
+
+**G-5z-a（完了）:** [read-only-data-integration-plan.md](./read-only-data-integration-plan.md) — read-only CMS data plan; no DB query; RLS before G-5z-c. Next: **G-5z-b**.
 
 ---
 

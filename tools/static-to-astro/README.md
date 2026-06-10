@@ -1342,7 +1342,9 @@ gosaki / Sariswing で実証した移行フローを、**別サイト向け CMS 
 
 **G-5y-e-a（完了）:** [Staging role / allowlist mock](docs/staging-role-allowlist-mock.md) — mock allowlist (`example.com` only)。
 
-**G-5y-e-b（完了）:** [Private / server-side allowlist plan](docs/private-server-side-allowlist-plan.md) — planning only。browser allowlist は security boundary ではない。実メール commit 禁止。`admin_users`/DB/RLS 未使用。次: **G-5y-e-c** server-side allowlist dry-run or **G-5z-a** read-only data plan。
+**G-5y-e-b（完了）:** [Private / server-side allowlist plan](docs/private-server-side-allowlist-plan.md) — planning only。
+
+**G-5z-a（完了）:** [Read-only data integration plan](docs/read-only-data-integration-plan.md) — staging shell read-only CMS data plan。DB query 実装なし。write/RLS/Storage/Publish/`/admin`/production data 禁止。次: **G-5z-b** mock adapter scaffold。
 
 ```bash
 node tools/static-to-astro/scripts/inspect-admin-auth-adapter.mjs \

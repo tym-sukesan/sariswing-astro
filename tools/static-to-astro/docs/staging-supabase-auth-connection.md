@@ -128,7 +128,9 @@ In mock mode:
 
 - **G-5y-e-a（完了）:** [Staging role / allowlist mock](./staging-role-allowlist-mock.md) — mock allowlist only, no `admin_users`
 - **G-5y-e-b（完了）:** [Private / server-side allowlist plan](./private-server-side-allowlist-plan.md) — planning only; no Edge/DB/RLS
-- **G-5y-e-c / G-5z-a:** server-side allowlist dry-run scaffold or read-only data integration plan
+- **G-5y-e-c:** server-side allowlist dry-run scaffold (candidate)
+- **G-5z-a（完了）:** [Read-only data integration plan](./read-only-data-integration-plan.md) — no DB query in G-5z-a
+- **G-5z-b:** read-only staging data adapter scaffold (mock only)
 
 ## 11. Files
 

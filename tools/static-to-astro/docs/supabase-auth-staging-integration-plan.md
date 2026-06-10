@@ -418,7 +418,8 @@ G-5y-a adds only `ENABLE_ADMIN_STAGING_AUTH=false` to [`.env.example`](../../../
 | **G-5y-d（完了）** | [Staging Supabase Auth connection](./staging-supabase-auth-connection.md) | Staging shell Auth only |
 | **G-5y-e-a（完了）** | [Staging role / allowlist mock](./staging-role-allowlist-mock.md) | Mock allowlist only |
 | **G-5y-e-b（完了）** | [Private / server-side allowlist plan](./private-server-side-allowlist-plan.md) | Planning only |
-| **G-5y-e-c / G-5z-a** | Server-side allowlist dry-run or read-only data plan | Scaffold / plan |
+| **G-5z-a（完了）** | [Read-only data integration plan](./read-only-data-integration-plan.md) | Planning only |
+| **G-5z-b** | Read-only staging data adapter scaffold | Mock only |
 | **G-5y-e** | Staging role check / allowlist enforcement | Staging Auth + allowlist |
 | **G-5z** | Read-only data integration (SELECT + RLS) | Staging DB read |
 | **G-6a+** | CRUD write, media, publish (separate phases) | Staging write paths |

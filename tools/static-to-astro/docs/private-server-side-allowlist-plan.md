@@ -253,8 +253,8 @@ create table admin_users (
 G-5y-e-a: mock allowlist only — completed
 G-5y-e-b: private/server-side allowlist plan — this phase (planning only)
 G-5y-e-c: server-side allowlist dry-run scaffold (interface + mock server response, no deploy)
-G-5z-a: read-only data integration plan
-G-5z-b: read-only staging data adapter scaffold
+G-5z-a: read-only data integration plan — completed
+G-5z-b: read-only staging data adapter scaffold (mock only)
 G-6: admin_users table + RLS review before any write operations
 ```
 
@@ -392,7 +392,9 @@ Purpose: freeze the contract (`resolveRoleFromSession`) before real Edge or DB w
 
 ## 15. G-5z readiness
 
-Proceed to **G-5z** (read-only data integration) planning/implementation only when:
+**G-5z-a（完了）:** [read-only-data-integration-plan.md](./read-only-data-integration-plan.md) — read-only module/table mapping; no DB query; RLS review required before G-5z-c.
+
+Proceed to **G-5z-b** (read-only adapter scaffold) only when:
 
 ```txt
 - Auth mode can be displayed (G-5y-d)

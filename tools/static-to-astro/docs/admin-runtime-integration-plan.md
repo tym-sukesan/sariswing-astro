@@ -211,6 +211,7 @@ Never skip: local preview and customer demo before runtime shell; read-only befo
 | **G-5z-c（完了）** | [Supabase read-only adapter](./supabase-read-only-data-adapter.md) | `G-5z-c-staging-read-only-data-connect` |
 | **G-5z-d（完了）** | [Staging read-only module display QA](./staging-read-only-module-display-qa.md) | Display QA only |
 | **G-5z-e（完了）** | [Read-only QA / RLS review report](./read-only-qa-rls-review-report.md) | Phase completion |
+| **G-5z-f（完了）** | [Customer demo package before writes](./customer-demo-package-before-writes/README.md) | Demo / QA package |
 | **G-6-a** | Write operation safety plan | Planning only |
 | **G-5y-e** | Role check / allowlist | Staging Auth |
 

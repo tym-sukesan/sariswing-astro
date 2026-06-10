@@ -1,0 +1,36 @@
+{
+  "phase": "G-5z-f",
+  "type": "customer-demo-package-before-writes",
+  "docRef": "docs/customer-demo-package-before-writes/README.md",
+  "demoRoute": "/__admin-staging-shell/musician-basic/",
+  "productionReady": false,
+  "writeOperationsEnabled": false,
+  "canWrite": false,
+  "adminRouteConnected": false,
+  "storageConnected": false,
+  "publishConnected": false,
+  "ftpDeployEnabled": false,
+  "productionDataTouched": false,
+  "readOnlyPhaseComplete": true,
+  "readyForCustomerDemo": true,
+  "readyForG6Planning": true,
+  "readyForG6Implementation": false,
+  "recommendedNextPhases": [
+    "G-6-a",
+    "customer-onboarding",
+    "pricing-subscription"
+  ],
+  "packageFiles": [
+    "docs/customer-demo-package-before-writes/README.md",
+    "docs/customer-demo-package-before-writes/demo-script.md",
+    "docs/customer-demo-package-before-writes/demo-checklist.md",
+    "docs/customer-demo-package-before-writes/customer-explanation.md",
+    "docs/customer-demo-package-before-writes/current-capabilities.md",
+    "docs/customer-demo-package-before-writes/not-yet-capabilities.md",
+    "docs/customer-demo-package-before-writes/qa-checklist.md",
+    "docs/customer-demo-package-before-writes/safety-notes.md",
+    "docs/customer-demo-package-before-writes/feedback-form.md",
+    "docs/customer-demo-package-before-writes/next-steps.md",
+    "docs/customer-demo-package-before-writes/screenshot-guide.md"
+  ]
+}

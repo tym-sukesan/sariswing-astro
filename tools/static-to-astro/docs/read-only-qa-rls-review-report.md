@@ -222,8 +222,10 @@ G-6-d: staging write operation with explicit approval
 Alternative (productization):
 
 ```txt
-Customer demo / QA package before write operations
+G-5z-f（完了）: Customer demo / QA package before write operations
 ```
+
+See: [customer-demo-package-before-writes/README.md](./customer-demo-package-before-writes/README.md)
 
 **Important:** G-6 must start with a **write operation safety plan**, not live writes.
 
@@ -251,3 +253,12 @@ node tools/static-to-astro/scripts/report-read-only-phase-completion.mjs \
 ```
 
 Output (not committed): `read-only-phase-completion.json`, `READ_ONLY_PHASE_COMPLETION_REPORT.md`
+
+## 15. Customer demo package (G-5z-f)
+
+**G-5z-f（完了）:** [customer-demo-package-before-writes/README.md](./customer-demo-package-before-writes/README.md)
+
+```bash
+node tools/static-to-astro/scripts/report-customer-demo-readiness.mjs \
+  --out-dir tools/static-to-astro/output/customer-demo-readiness/gosaki
+```

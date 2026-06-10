@@ -219,6 +219,7 @@ Blockers for G-5z-e:
 
 ## 12. Next phase
 
-- **G-5z-e（完了）:** [read-only-qa-rls-review-report.md](./read-only-qa-rls-review-report.md) — integrated read-only phase report
+- **G-5z-e（完了）:** [read-only-qa-rls-review-report.md](./read-only-qa-rls-review-report.md)
+- **G-5z-f（完了）:** [customer-demo-package-before-writes/README.md](./customer-demo-package-before-writes/README.md) — customer demo before writes
 - **G-6-a:** write operation safety plan (not direct write implementation)
 - writes remain forbidden until explicit G-6 approval

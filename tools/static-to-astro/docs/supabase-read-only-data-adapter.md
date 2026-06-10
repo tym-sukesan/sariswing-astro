@@ -123,5 +123,6 @@ The staging shell does not crash on module errors. SQL details and secrets are n
 ## 10. Next phase
 
 - **G-5z-d（完了）:** [staging-read-only-module-display-qa.md](./staging-read-only-module-display-qa.md)
-- **G-5z-e（完了）:** [read-only-qa-rls-review-report.md](./read-only-qa-rls-review-report.md) — `readOnlyPhaseComplete: true`
+- **G-5z-e（完了）:** [read-only-qa-rls-review-report.md](./read-only-qa-rls-review-report.md)
+- **G-5z-f（完了）:** [customer-demo-package-before-writes/README.md](./customer-demo-package-before-writes/README.md)
 - **G-6-a:** write operation safety plan (writes still forbidden)

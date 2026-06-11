@@ -1,0 +1,27 @@
+{
+  "phase": "G-6-rls-audit",
+  "type": "staging-rls-audit",
+  "stagingOnly": true,
+  "readOnly": true,
+  "dbWritesAllowed": false,
+  "policyChangesAllowed": false,
+  "grantChangesAllowed": false,
+  "targetTables": [
+    "profile",
+    "admin_users",
+    "schedules",
+    "schedule_months",
+    "discography",
+    "discography_tracks"
+  ],
+  "primaryTables": ["profile", "admin_users"],
+  "auditStatus": "not_run",
+  "readyForG6EPlanning": true,
+  "readyForG6EImplementation": false,
+  "productionDataTouched": false,
+  "adminRouteConnected": false,
+  "storageTouched": false,
+  "publishTriggered": false,
+  "ftpDeployTriggered": false,
+  "githubDispatchTriggered": false
+}

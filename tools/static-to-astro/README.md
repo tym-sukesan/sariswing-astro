@@ -1392,6 +1392,13 @@ gosaki / Sariswing で実証した移行フローを、**別サイト向け CMS 
 
 **G-6-d-hardening（完了）:** [Staging profile write hardening](docs/staging-profile-write-hardening.md) — `updated_by` NULL documented; UI role mock-only vs DB RLS; dry-run restore checklist; admin_users policy audit recommended; `readyForG6EPlanning: true`; `readyForG6EImplementation: false`; no additional DB writes.
 
+**G-6-rls-audit（完了）:** [Staging RLS audit](docs/staging-rls-audit.md) — read-only audit plan and SQL checklist for `profile` / `admin_users`; Cursor does not execute SQL; `auditStatus: not_run`; `readyForG6EImplementation: false`; no policy or grant changes.
+
+```bash
+node tools/static-to-astro/scripts/report-staging-rls-audit.mjs \
+  --out-dir tools/static-to-astro/output/staging-rls-audit/gosaki
+```
+
 ```bash
 node tools/static-to-astro/scripts/report-staging-profile-write-hardening.mjs \
   --out-dir tools/static-to-astro/output/staging-profile-write-hardening/gosaki

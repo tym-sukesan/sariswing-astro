@@ -1392,7 +1392,14 @@ gosaki / Sariswing で実証した移行フローを、**別サイト向け CMS 
 
 **G-6-d-hardening（完了）:** [Staging profile write hardening](docs/staging-profile-write-hardening.md) — `updated_by` NULL documented; UI role mock-only vs DB RLS; dry-run restore checklist; admin_users policy audit recommended; `readyForG6EPlanning: true`; `readyForG6EImplementation: false`; no additional DB writes.
 
-**G-6-rls-audit（完了）:** [Staging RLS audit](docs/staging-rls-audit.md) — read-only audit plan and SQL checklist for `profile` / `admin_users`; Cursor does not execute SQL; `auditStatus: not_run`; `readyForG6EImplementation: false`; no policy or grant changes.
+**G-6-rls-audit（完了）:** [Staging RLS audit](docs/staging-rls-audit.md) — read-only audit plan and SQL checklist for `profile` / `admin_users`.
+
+**G-6-rls-audit-result（完了）:** [Staging RLS audit result](docs/staging-rls-audit-result.md) — manual SQL collected; profile mostly OK; broad TRUNCATE/TRIGGER/REFERENCES grants on anon/authenticated; **G-6-rls-grant-cleanup-plan** recommended; `readyForG6EImplementation: false`; no policy/grant changes in this phase.
+
+```bash
+node tools/static-to-astro/scripts/report-staging-rls-audit-result.mjs \
+  --out-dir tools/static-to-astro/output/staging-rls-audit-result/gosaki
+```
 
 ```bash
 node tools/static-to-astro/scripts/report-staging-rls-audit.mjs \

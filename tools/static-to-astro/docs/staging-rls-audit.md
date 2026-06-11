@@ -299,20 +299,34 @@ Use when recording manual SQL results:
 | `safe_for_limited_implementation` | Narrow next write may proceed after separate approval |
 | `blocked` | Policy/grant issues must be fixed before any G-6-e implementation |
 
-**Initial state (this phase):**
+**Initial state (plan phase):**
 
 ```txt
 auditStatus: not_run
 ```
 
+**After manual SQL (G-6-rls-audit-result):**
+
+```txt
+auditStatus: manual_sql_collected
+reviewStatus: review_required
+profileStatus: mostly_ok
+adminUsersPolicyStatus: structurally_ok_but_review_required
+grantStatus: too_broad_cleanup_recommended
+safeForPlanning: true
+safeForLimitedImplementation: false
+```
+
+See [staging-rls-audit-result.md](./staging-rls-audit-result.md).
+
 ## 10. Recommended next step
 
 ```txt
-1. Run manual read-only audit SQL in Supabase SQL Editor (staging project only)
-2. Paste sanitized results back into ChatGPT/Cursor for review
-3. Update auditStatus in config or a follow-up result doc when reviewed
-4. Do not run policy or GRANT changes yet
-5. Proceed to G-6-e-planning only after review_required is cleared
+1. ~~Run manual read-only audit SQL~~ — done (see staging-rls-audit-result.md)
+2. ~~Paste sanitized results for review~~ — done
+3. Next: G-6-rls-grant-cleanup-plan (TRUNCATE / TRIGGER / REFERENCES on anon/authenticated)
+4. Do not run policy or GRANT changes until cleanup plan is reviewed
+5. G-6-e-planning only after grant cleanup plan; G-6-e implementation remains blocked
 ```
 
 ## 11. Final safety statement

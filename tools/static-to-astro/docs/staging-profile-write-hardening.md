@@ -224,7 +224,9 @@ additionalProfileUpdateExecuted: false
 
 **Recommended next:** RLS audit before G-6-e implementation.
 
-**G-6-rls-audit（完了）:** [staging-rls-audit.md](./staging-rls-audit.md) — read-only audit plan and SQL checklist; `auditStatus: not_run`; admin_users policy review required before G-6-e implementation; no policy/grant changes by Cursor; `readyForG6EImplementation: false`.
+**G-6-rls-audit（完了）:** [staging-rls-audit.md](./staging-rls-audit.md) — read-only audit plan and SQL checklist.
+
+**G-6-rls-audit-result（完了）:** [staging-rls-audit-result.md](./staging-rls-audit-result.md) — manual SQL collected; profile mostly OK; broad TRUNCATE/TRIGGER/REFERENCES grants; next: G-6-rls-grant-cleanup-plan; `readyForG6EImplementation: false`.
 
 Optional follow-up implementation phases (not this phase):
 

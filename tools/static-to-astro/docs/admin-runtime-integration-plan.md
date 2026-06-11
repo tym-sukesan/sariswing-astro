@@ -234,8 +234,9 @@ Never skip: local preview and customer demo before runtime shell; read-only befo
 | **G-6-rls-grant-cleanup-plan（完了）** | [Grant cleanup plan](./staging-rls-grant-cleanup-plan.md) | REVOKE draft; not executed; `readyForManualCleanupDecision: true` |
 | **G-6-rls-grant-cleanup-manual-apply-prep（完了）** | [Manual apply prep](./staging-rls-grant-cleanup-manual-apply-prep.md) | Final REVOKE SQL; user applied manually |
 | **G-6-rls-grant-cleanup-result（完了）** | [Cleanup result](./staging-rls-grant-cleanup-result.md) | REVOKE succeeded; broad grants removed; smoke test pass; `readyForG6EImplementation: false` |
-| **G-6-e-planning-schedule-cms（完了）** | [Schedule CMS planning](./schedule-cms-planning.md) | Sariswing schedule generalized; planning only; next: G-6-e1 schema audit |
-| **G-6-e** | Schedule write (staging) | Blocked — G-6-e1+ implementation sequence + separate approval |
+| **G-6-e-planning-schedule-cms（完了）** | [Schedule CMS planning](./schedule-cms-planning.md) | Sariswing schedule generalized; planning only |
+| **G-6-e1-schedule-schema-read-audit（完了）** | [Schedule schema read audit](./schedule-schema-read-audit.md) | Read-only audit plan; manual SQL; `auditStatus: not_run` |
+| **G-6-e** | Schedule write (staging) | Blocked — audit result + G-6-e2+ + separate approval |
 | **G-5y-e** | Role check / allowlist | Staging Auth |
 
 **Purpose (overall):** Staging admin login only — after shell QA on `/__admin-staging-shell/musician-basic/`.

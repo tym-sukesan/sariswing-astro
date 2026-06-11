@@ -1402,7 +1402,14 @@ gosaki / Sariswing で実証した移行フローを、**別サイト向け CMS 
 
 **G-6-rls-grant-cleanup-result（完了）:** [Staging RLS grant cleanup result](docs/staging-rls-grant-cleanup-result.md) — manual REVOKE succeeded; broad TRUNCATE/TRIGGER/REFERENCES removed; preserved permissions pass; dry-run smoke test pass; `rollbackExecuted: false`; `readyForG6EPlanning: true`; `readyForG6EImplementation: false`.
 
-**G-6-e-planning-schedule-cms（完了）:** [Schedule CMS planning](docs/schedule-cms-planning.md) — highest-priority musician CMS module; Sariswing schedule pattern generalized; MVP fields, UI, RLS, dry-run, and migration plans; **planning only**; `readyForG6EImplementation: false`; next: G-6-e1-schedule-schema-read-audit.
+**G-6-e-planning-schedule-cms（完了）:** [Schedule CMS planning](docs/schedule-cms-planning.md) — highest-priority musician CMS module; Sariswing schedule pattern generalized; MVP fields, UI, RLS, dry-run safety, and migration plans; **planning only**; `readyForG6EImplementation: false`.
+
+**G-6-e1-schedule-schema-read-audit（完了）:** [Schedule schema read audit](docs/schedule-schema-read-audit.md) — read-only audit plan for `schedules` / `schedule_months` before implementation; manual SQL checklist; field mapping template; `auditStatus: not_run`; next: G-6-e1-schedule-schema-read-audit-result.
+
+```bash
+node tools/static-to-astro/scripts/report-schedule-schema-read-audit.mjs \
+  --out-dir tools/static-to-astro/output/schedule-schema-read-audit/gosaki
+```
 
 ```bash
 node tools/static-to-astro/scripts/report-schedule-cms-planning.mjs \

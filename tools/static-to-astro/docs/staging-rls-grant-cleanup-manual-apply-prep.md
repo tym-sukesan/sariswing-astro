@@ -315,30 +315,27 @@ notes:
 
 ## 14. Gate state
 
-**This prep phase (no execution by Cursor):**
+**Prep phase (completed):**
 
 ```txt
 manualApplyPrepCreated: true
-cleanupExecuted: false
+cleanupExecuted: true (user manual — see staging-rls-grant-cleanup-result.md)
 rollbackExecuted: false
-readyForManualCleanupApply: true
+readyForManualCleanupApply: true (was true at prep time)
 readyForG6EPlanning: true
 readyForG6EImplementation: false
-grantChangesPerformed: false
-policyChangesPerformed: false
-dbWritesPerformed: false
-productionDataTouched: false
-adminRouteConnected: false
 ```
+
+**G-6-rls-grant-cleanup-result（完了）:** [staging-rls-grant-cleanup-result.md](./staging-rls-grant-cleanup-result.md) — manual REVOKE succeeded; `broadGrantsRemoved: true`; smoke test pass; `readyForG6EImplementation: false`.
 
 ## 15. Recommended next step
 
 ```txt
-User manually runs before verification SQL, REVOKE SQL, after verification SQL, and smoke test in Supabase SQL Editor for static-to-astro-cms-staging.
-Then record results in G-6-rls-grant-cleanup-result.
+~~User manually runs before verification SQL, REVOKE SQL, after verification SQL, and smoke test~~ — DONE (see staging-rls-grant-cleanup-result.md)
+Recommended next: G-6-e-planning (planning only; implementation blocked)
 ```
 
-Do **not** proceed to G-6-e implementation until cleanup result is reviewed.
+Do **not** proceed to G-6-e implementation until G-6-e-planning is completed and separately approved.
 
 ## 16. Final safety statement
 

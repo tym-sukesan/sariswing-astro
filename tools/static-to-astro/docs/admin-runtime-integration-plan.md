@@ -232,8 +232,9 @@ Never skip: local preview and customer demo before runtime shell; read-only befo
 | **G-6-rls-audit（完了）** | [Staging RLS audit](./staging-rls-audit.md) | Read-only audit plan |
 | **G-6-rls-audit-result（完了）** | [RLS audit result](./staging-rls-audit-result.md) | Manual SQL collected; grant cleanup needed |
 | **G-6-rls-grant-cleanup-plan（完了）** | [Grant cleanup plan](./staging-rls-grant-cleanup-plan.md) | REVOKE draft; not executed; `readyForManualCleanupDecision: true` |
-| **G-6-rls-grant-cleanup-manual-apply-prep（完了）** | [Manual apply prep](./staging-rls-grant-cleanup-manual-apply-prep.md) | Final REVOKE SQL; `readyForManualCleanupApply: true`; Cursor does not execute SQL |
-| **G-6-e** | Staging create operation | Blocked — manual cleanup + G-6-e-planning + separate approval |
+| **G-6-rls-grant-cleanup-manual-apply-prep（完了）** | [Manual apply prep](./staging-rls-grant-cleanup-manual-apply-prep.md) | Final REVOKE SQL; user applied manually |
+| **G-6-rls-grant-cleanup-result（完了）** | [Cleanup result](./staging-rls-grant-cleanup-result.md) | REVOKE succeeded; broad grants removed; smoke test pass; `readyForG6EImplementation: false` |
+| **G-6-e** | Staging create operation | Blocked — G-6-e-planning + separate approval |
 | **G-5y-e** | Role check / allowlist | Staging Auth |
 
 **Purpose (overall):** Staging admin login only — after shell QA on `/__admin-staging-shell/musician-basic/`.

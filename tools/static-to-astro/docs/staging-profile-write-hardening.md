@@ -230,7 +230,9 @@ additionalProfileUpdateExecuted: false
 
 **G-6-rls-grant-cleanup-plan（完了）:** [staging-rls-grant-cleanup-plan.md](./staging-rls-grant-cleanup-plan.md) — REVOKE/rollback draft; cleanup not executed; `readyForManualCleanupDecision: true`; `readyForG6EImplementation: false`.
 
-**G-6-rls-grant-cleanup-manual-apply-prep（完了）:** [staging-rls-grant-cleanup-manual-apply-prep.md](./staging-rls-grant-cleanup-manual-apply-prep.md) — final manual REVOKE SQL; `readyForManualCleanupApply: true`; user must apply in Supabase SQL Editor.
+**G-6-rls-grant-cleanup-manual-apply-prep（完了）:** [staging-rls-grant-cleanup-manual-apply-prep.md](./staging-rls-grant-cleanup-manual-apply-prep.md) — final manual REVOKE SQL; user applied in Supabase SQL Editor.
+
+**G-6-rls-grant-cleanup-result（完了）:** [staging-rls-grant-cleanup-result.md](./staging-rls-grant-cleanup-result.md) — broad grants removed; preserved permissions pass; dry-run smoke test pass; `readyForG6EPlanning: true`; `readyForG6EImplementation: false`; next: G-6-e-planning.
 
 Optional follow-up implementation phases (not this phase):
 

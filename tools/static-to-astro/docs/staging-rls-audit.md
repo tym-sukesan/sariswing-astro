@@ -326,13 +326,15 @@ See [staging-rls-audit-result.md](./staging-rls-audit-result.md).
 2. ~~Paste sanitized results for review~~ — done
 3. ~~G-6-rls-grant-cleanup-plan~~ — DONE (see staging-rls-grant-cleanup-plan.md)
 4. ~~G-6-rls-grant-cleanup-manual-apply-prep~~ — DONE (see staging-rls-grant-cleanup-manual-apply-prep.md)
-5. User manual REVOKE in Supabase SQL Editor → G-6-rls-grant-cleanup-result
-6. G-6-e-planning after cleanup verified; G-6-e implementation remains blocked
+5. ~~G-6-rls-grant-cleanup-result~~ — DONE (see staging-rls-grant-cleanup-result.md)
+6. G-6-e-planning (next); G-6-e implementation remains blocked
 ```
 
-**G-6-rls-grant-cleanup-plan（完了）:** [staging-rls-grant-cleanup-plan.md](./staging-rls-grant-cleanup-plan.md) — plan targets TRUNCATE/TRIGGER/REFERENCES on anon/authenticated; cleanup not executed; `readyForManualCleanupDecision: true`.
+**G-6-rls-grant-cleanup-plan（完了）:** [staging-rls-grant-cleanup-plan.md](./staging-rls-grant-cleanup-plan.md) — plan targets TRUNCATE/TRIGGER/REFERENCES on anon/authenticated.
 
-**G-6-rls-grant-cleanup-manual-apply-prep（完了）:** [staging-rls-grant-cleanup-manual-apply-prep.md](./staging-rls-grant-cleanup-manual-apply-prep.md) — `manualApplyPrepCreated: true`; `readyForManualCleanupApply: true`; `readyForG6EImplementation: false`; Cursor does not execute SQL.
+**G-6-rls-grant-cleanup-manual-apply-prep（完了）:** [staging-rls-grant-cleanup-manual-apply-prep.md](./staging-rls-grant-cleanup-manual-apply-prep.md) — final manual REVOKE SQL; user applied.
+
+**G-6-rls-grant-cleanup-result（完了）:** [staging-rls-grant-cleanup-result.md](./staging-rls-grant-cleanup-result.md) — REVOKE succeeded; `broadGrantsRemoved: true`; `readyForG6EPlanning: true`; `readyForG6EImplementation: false`.
 
 ## 11. Final safety statement
 

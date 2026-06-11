@@ -338,19 +338,14 @@ readyForG6EImplementation: still false until G-6-e-planning + approval
 Recommended next: G-6-rls-grant-cleanup-manual-apply-prep — DONE (see staging-rls-grant-cleanup-manual-apply-prep.md)
 ```
 
-**G-6-rls-grant-cleanup-manual-apply-prep（完了）:** [staging-rls-grant-cleanup-manual-apply-prep.md](./staging-rls-grant-cleanup-manual-apply-prep.md) — final manual REVOKE SQL; `manualApplyPrepCreated: true`; `cleanupExecuted: false`; `readyForManualCleanupApply: true`; Cursor does not execute SQL; user must manually apply in Supabase SQL Editor.
+**G-6-rls-grant-cleanup-manual-apply-prep（完了）:** [staging-rls-grant-cleanup-manual-apply-prep.md](./staging-rls-grant-cleanup-manual-apply-prep.md) — final manual REVOKE SQL; user applied in Supabase SQL Editor.
 
-Then, with user approval:
-
-```txt
-manual staging GRANT cleanup (user runs REVOKE in SQL Editor per manual-apply-prep doc)
-```
+**G-6-rls-grant-cleanup-result（完了）:** [staging-rls-grant-cleanup-result.md](./staging-rls-grant-cleanup-result.md) — manual REVOKE succeeded; broad TRUNCATE/TRIGGER/REFERENCES removed; preserved permissions pass; dry-run smoke test pass; `rollbackExecuted: false`; `readyForG6EPlanning: true`; `readyForG6EImplementation: false`.
 
 Do **not** proceed to G-6-e implementation until:
 
 ```txt
-- cleanup applied and verified (§9–§11)
-- audit result grantStatus updated or superseded by cleanup result doc
+- ~~cleanup applied and verified~~ — DONE (see staging-rls-grant-cleanup-result.md)
 - G-6-e-planning completed
 - separate approval ID for any new write scope
 ```

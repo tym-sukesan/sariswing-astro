@@ -25,8 +25,9 @@
 - **G-6-d-manual-non-dry-run-prep（完了）:** [staging-profile-manual-non-dry-run-prep.md](../staging-profile-manual-non-dry-run-prep.md) — prep done; execution aborted
 - **G-6-d-staging-env-gate-client-fix（完了）:** [staging-env-gate-client-fix.md](../staging-env-gate-client-fix.md) — ENABLE_* server injection for client diagnostics
 - **G-6-d-staging-password-reset-callback（完了）:** [staging-password-reset-callback.md](../staging-password-reset-callback.md) — staging password reset callback; `updateUser({ password })` staging-only; no profile update; no non-dry-run yet
-- **G-6-d-auth-status-denied-fix（完了）:** [staging-auth-status-denied-fix.md](../staging-auth-status-denied-fix.md) — Auth status denied fixed; valid session → authenticated; no profile update; no non-dry-run yet
-- 次: clean URL login retry and Debug Panel auth check → retry non-dry-run prep
+- **G-6-d-auth-status-denied-fix（完了）:** [staging-auth-status-denied-fix.md](../staging-auth-status-denied-fix.md) — Auth status denied fixed; valid session → authenticated
+- **G-6-d-result-report（完了）:** [staging-profile-non-dry-run-result-report.md](../staging-profile-non-dry-run-result-report.md) — first manual staging non-dry-run profile update succeeded; production not touched; `/admin` unconnected; `readyForG6E: false`
+- 次: G-6-d-hardening / RLS audit / G-6-e-planning（実装なし）
 
 ## Option B: customer-specific schema mapping
 
@@ -68,7 +69,9 @@ G-6-d-manual-non-dry-run-prep: manual non-dry-run prep (aborted)
 G-6-d-staging-env-gate-client-fix: ENABLE_* server injection for client diagnostics
 G-6-d-staging-password-reset-callback: staging password reset callback (updateUser staging-only)
 G-6-d-auth-status-denied-fix: valid session → authenticated; mock allowlist no longer overrides auth status
-G-6-e: staging create operation (blocked until profile aligned)
+G-6-d-result-report: first staging profile non-dry-run update succeeded (bio only)
+G-6-d-hardening / G-6-e-planning: next (no broader write without approval)
+G-6-e: staging create operation (blocked — new planning phase required)
 ```
 
 **G-6 でもいきなり write 実装しない。** まず G-6-a。

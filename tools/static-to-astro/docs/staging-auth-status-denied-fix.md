@@ -120,6 +120,10 @@ readyForManualNonDryRunExecution: false
 readyForG6E: false
 ```
 
+## 9. Follow-up result
+
+**G-6-d-result-report（完了）:** [staging-profile-non-dry-run-result-report.md](./staging-profile-non-dry-run-result-report.md) — after this fix, user signed in and completed first manual staging non-dry-run profile update; `public.profile` bio updated; production not touched; `/admin` unconnected; `readyForG6E: false`.
+
 ## Report
 
 ```bash

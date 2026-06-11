@@ -250,7 +250,7 @@ Then (user manual only):
 
 **G-6-d first manual non-dry-run execution** — set `PUBLIC_ADMIN_WRITE_DRY_RUN=false` temporarily; one Save; revert to `true`.
 
-**G-6-d-result-report** — after verification and rollback decision.
+**G-6-d-result-report（完了）:** [staging-profile-non-dry-run-result-report.md](./staging-profile-non-dry-run-result-report.md) — first manual staging non-dry-run update succeeded; bio field updated; production not touched; `/admin` unconnected; `readyForG6E: false`.
 
 ## 15. Final safety statement
 

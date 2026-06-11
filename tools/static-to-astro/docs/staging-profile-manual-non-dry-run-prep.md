@@ -36,7 +36,9 @@ readyForManualNonDryRunExecution: false
 
 **G-6-d-staging-password-reset-callback（完了）:** [staging-password-reset-callback.md](./staging-password-reset-callback.md) — staging-only recovery callback; `updateUser({ password })` via anon client; no profile update executed; no non-dry-run profile update yet; `readyForAuthLoginRetry: true`. Next: recovery email再送 → 新パスワード設定 → 通常ログイン → Debug Panel確認.
 
-**G-6-d-auth-status-denied-fix（完了）:** [staging-auth-status-denied-fix.md](./staging-auth-status-denied-fix.md) — Auth status denied issue fixed; valid session prioritized; authenticated when session.user.email available; no profile update; no non-dry-run yet. Next: clean URL login retry and Debug Panel auth check.
+**G-6-d-auth-status-denied-fix（完了）:** [staging-auth-status-denied-fix.md](./staging-auth-status-denied-fix.md) — Auth status denied issue fixed; valid session prioritized; authenticated when session.user.email available.
+
+**G-6-d-result-report（完了）:** [staging-profile-non-dry-run-result-report.md](./staging-profile-non-dry-run-result-report.md) — first manual staging non-dry-run update **succeeded**; `public.profile` bio updated; production not touched; `/admin` unconnected; `readyForG6E: false`; return to `PUBLIC_ADMIN_WRITE_DRY_RUN=true` after test.
 
 ## 3. Scope of first non-dry-run update
 
@@ -358,16 +360,16 @@ readyForG6E:
 - false until result report confirms stable write path
 ```
 
-This prep phase:
+This prep phase (historical — execution completed):
 
 ```txt
-readyForManualNonDryRunExecution: false
-nonDryRunExecuted: false
-readyForG6DResultReport: false
+readyForManualNonDryRunExecution: true (user completed preflight)
+nonDryRunExecuted: true
+readyForG6DResultReport: true
 readyForG6E: false
 ```
 
-(`readyForManualNonDryRunExecution` becomes true only after user confirms all preflight checks in §4–§7 and §9.)
+See [staging-profile-non-dry-run-result-report.md](./staging-profile-non-dry-run-result-report.md) for before/after snapshots and issues resolved.
 
 ## 16. Final safety statement
 

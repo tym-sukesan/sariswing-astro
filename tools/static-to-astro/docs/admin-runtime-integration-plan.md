@@ -227,7 +227,8 @@ Never skip: local preview and customer demo before runtime shell; read-only befo
 | **G-6-d-staging-env-gate-client-fix（完了）** | [Env gate client fix](./staging-env-gate-client-fix.md) | Server injects ENABLE_* gates; accurate diagnostics |
 | **G-6-d-staging-password-reset-callback（完了）** | [Password reset callback](./staging-password-reset-callback.md) | Staging-only recovery callback; `updateUser({ password })`; no profile update; `readyForAuthLoginRetry: true` |
 | **G-6-d-auth-status-denied-fix（完了）** | [Auth status denied fix](./staging-auth-status-denied-fix.md) | Valid session → authenticated; mock allowlist no longer overrides auth status |
-| **G-6-e** | Staging create operation | Blocked until profile schema aligned |
+| **G-6-d-result-report（完了）** | [Non-dry-run result report](./staging-profile-non-dry-run-result-report.md) | First staging profile update succeeded; `readyForG6E: false` |
+| **G-6-e** | Staging create operation | Blocked — requires new approved planning phase |
 | **G-5y-e** | Role check / allowlist | Staging Auth |
 
 **Purpose (overall):** Staging admin login only — after shell QA on `/__admin-staging-shell/musician-basic/`.

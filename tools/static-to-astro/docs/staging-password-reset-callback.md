@@ -99,7 +99,9 @@ readyForManualNonDryRunExecution: false
 readyForG6E: false
 ```
 
-**G-6-d-auth-status-denied-fix（完了）:** [staging-auth-status-denied-fix.md](./staging-auth-status-denied-fix.md) — Auth status denied issue fixed; valid session now takes precedence over stale recovery error; status shows authenticated when session.user.email is available; no profile update executed; no non-dry-run profile update yet. Next: clean URL login retry and Debug Panel auth check.
+**G-6-d-auth-status-denied-fix（完了）:** [staging-auth-status-denied-fix.md](./staging-auth-status-denied-fix.md) — Auth status denied issue fixed; valid session now takes precedence over stale recovery error.
+
+**G-6-d-result-report（完了）:** [staging-profile-non-dry-run-result-report.md](./staging-profile-non-dry-run-result-report.md) — password reset + auth fixes enabled first manual non-dry-run profile update; production not touched.
 
 ## Report
 

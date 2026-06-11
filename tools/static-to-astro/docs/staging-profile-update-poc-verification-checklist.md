@@ -346,6 +346,8 @@ G-6-d-verify completion state: `readyForManualNonDryRunDecision: true`, `nonDryR
 
 **G-6-d-staging-env-gate-client-fix（完了）:** [staging-env-gate-client-fix.md](./staging-env-gate-client-fix.md) — server injects ENABLE_* gates; Debug Panel accurate; non-dry-run blocked.
 
+**G-6-d-staging-password-reset-callback（完了）:** [staging-password-reset-callback.md](./staging-password-reset-callback.md) — staging password reset callback implemented; `updateUser({ password })` is staging-only; no profile update executed; no non-dry-run profile update yet; `readyForAuthLoginRetry: true`. Next: recovery email再送 → 新パスワード設定 → 通常ログイン → Debug Panel確認.
+
 ## 14. G-6-d-verify completion criteria
 
 ```txt

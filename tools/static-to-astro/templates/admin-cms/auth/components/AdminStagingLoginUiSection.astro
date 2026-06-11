@@ -4,7 +4,7 @@
  */
 import { getStagingAuthConfig } from "../../../../../../src/lib/admin/staging-auth/staging-auth-config";
 import AdminLoginShell from "./AdminLoginShell.astro";
-import AdminPasswordResetShell from "./AdminPasswordResetShell.astro";
+import AdminStagingPasswordResetCallback from "./AdminStagingPasswordResetCallback.astro";
 import AdminAuthGuardPlannedNotice from "./AdminAuthGuardPlannedNotice.astro";
 import AdminRoleAllowlistStatusPanel from "./AdminRoleAllowlistStatusPanel.astro";
 
@@ -31,7 +31,7 @@ const authConfig = getStagingAuthConfig();
 >
   <AdminRoleAllowlistStatusPanel phase={phase} />
   <AdminLoginShell phase={phase} authConfig={authConfig} />
-  <AdminPasswordResetShell phase={phase} />
+  <AdminStagingPasswordResetCallback phase="G-6-d-staging-password-reset-callback" />
   <AdminAuthGuardPlannedNotice currentRoute={routePath} phase={phase} />
 </div>
 

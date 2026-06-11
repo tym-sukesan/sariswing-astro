@@ -126,6 +126,8 @@ No database write is performed by Cursor.
 No /admin route is connected.
 No production data is touched.
 
+**G-6-d-staging-password-reset-callback（完了）:** [staging-password-reset-callback.md](./staging-password-reset-callback.md) — staging password reset callback implemented; `updateUser({ password })` is staging-only; no profile update executed; no non-dry-run profile update yet. Next: recovery email再送 → 新パスワード設定 → 通常ログイン → Debug Panel確認.
+
 ## Report
 
 ```bash

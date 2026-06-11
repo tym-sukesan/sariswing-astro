@@ -24,7 +24,8 @@
 - **G-6-d-dry-run-retry-after-schema-apply（完了）:** [staging-profile-schema-apply-verification-and-dry-run-qa.md](../staging-profile-schema-apply-verification-and-dry-run-qa.md) — `dryRunPassed: true`
 - **G-6-d-manual-non-dry-run-prep（完了）:** [staging-profile-manual-non-dry-run-prep.md](../staging-profile-manual-non-dry-run-prep.md) — prep done; execution aborted
 - **G-6-d-staging-env-gate-client-fix（完了）:** [staging-env-gate-client-fix.md](../staging-env-gate-client-fix.md) — ENABLE_* server injection for client diagnostics
-- 次: repo-root env + real auth visible → retry non-dry-run prep
+- **G-6-d-staging-password-reset-callback（完了）:** [staging-password-reset-callback.md](../staging-password-reset-callback.md) — staging password reset callback; `updateUser({ password })` staging-only; no profile update; no non-dry-run yet
+- 次: recovery email再送 → 新パスワード設定 → 通常ログイン → Debug Panel確認 → retry non-dry-run prep
 
 ## Option B: customer-specific schema mapping
 
@@ -64,6 +65,7 @@ G-6-d-schema-apply: user applies SQL to staging (manual) — done
 G-6-d-dry-run-retry-after-schema-apply: dry-run passed
 G-6-d-manual-non-dry-run-prep: manual non-dry-run prep (aborted)
 G-6-d-staging-env-gate-client-fix: ENABLE_* server injection for client diagnostics
+G-6-d-staging-password-reset-callback: staging password reset callback (updateUser staging-only)
 G-6-e: staging create operation (blocked until profile aligned)
 ```
 

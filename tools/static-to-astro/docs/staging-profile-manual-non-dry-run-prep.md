@@ -34,6 +34,8 @@ readyForManualNonDryRunExecution: false
 
 **G-6-d-staging-env-gate-client-fix（完了）:** [staging-env-gate-client-fix.md](./staging-env-gate-client-fix.md) — server injects `ENABLE_*` gates to client; Debug Panel accurate; non-dry-run still blocked.
 
+**G-6-d-staging-password-reset-callback（完了）:** [staging-password-reset-callback.md](./staging-password-reset-callback.md) — staging-only recovery callback; `updateUser({ password })` via anon client; no profile update executed; no non-dry-run profile update yet; `readyForAuthLoginRetry: true`. Next: recovery email再送 → 新パスワード設定 → 通常ログイン → Debug Panel確認.
+
 ## 3. Scope of first non-dry-run update
 
 ```txt

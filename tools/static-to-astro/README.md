@@ -1384,6 +1384,13 @@ gosaki / Sariswing で実証した移行フローを、**別サイト向け CMS 
 
 **G-6-d-staging-env-gate-client-fix（完了）:** [Staging env gate client fix](docs/staging-env-gate-client-fix.md) — server injects `ENABLE_*` to client diagnostics; non-dry-run remains blocked.
 
+**G-6-d-staging-password-reset-callback（完了）:** [Staging password reset callback](docs/staging-password-reset-callback.md) — staging-only recovery callback; `updateUser({ password })` via anon client; no profile update executed; no non-dry-run profile update yet; `readyForAuthLoginRetry: true`. Next: recovery email再送 → 新パスワード設定 → 通常ログイン → Debug Panel確認.
+
+```bash
+node tools/static-to-astro/scripts/report-staging-password-reset-callback.mjs \
+  --out-dir tools/static-to-astro/output/staging-password-reset-callback/gosaki
+```
+
 ```bash
 node tools/static-to-astro/scripts/report-disabled-write-action-scaffold.mjs \
   --out-dir tools/static-to-astro/output/disabled-write-action-scaffold/gosaki

@@ -25,7 +25,7 @@ function setError(message: string): void {
   el.hidden = !message;
 }
 
-async function refreshAuthStatusPanel(): Promise<void> {
+export async function refreshAuthStatusPanel(): Promise<void> {
   const config = getStagingAuthConfig();
   setText("staging-auth-mode", config.authMode);
   setText(

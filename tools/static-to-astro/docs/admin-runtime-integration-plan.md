@@ -225,6 +225,7 @@ Never skip: local preview and customer demo before runtime shell; read-only befo
 | **G-6-d-manual-non-dry-run-prep（完了）** | [Manual non-dry-run prep](./staging-profile-manual-non-dry-run-prep.md) | Prep complete; execution aborted |
 | **G-6-d-auth-session-display-investigation（完了）** | [Auth session display investigation](./staging-auth-session-display-investigation.md) | Debug panel; mock vs supabase auth; non-dry-run blocked |
 | **G-6-d-staging-env-gate-client-fix（完了）** | [Env gate client fix](./staging-env-gate-client-fix.md) | Server injects ENABLE_* gates; accurate diagnostics |
+| **G-6-d-staging-password-reset-callback（完了）** | [Password reset callback](./staging-password-reset-callback.md) | Staging-only recovery callback; `updateUser({ password })`; no profile update; `readyForAuthLoginRetry: true` |
 | **G-6-e** | Staging create operation | Blocked until profile schema aligned |
 | **G-5y-e** | Role check / allowlist | Staging Auth |
 

@@ -230,6 +230,8 @@ No production data is touched.
 
 **G-6-d-staging-env-gate-client-fix（完了）:** [staging-env-gate-client-fix.md](./staging-env-gate-client-fix.md) — root cause was client-side reads of non-PUBLIC `ENABLE_*` env. Astro server now injects gate booleans into the staging shell page. Debug Panel should show **Auth enabled: true** when inline env is correct. Non-dry-run remains blocked.
 
+**G-6-d-staging-password-reset-callback（完了）:** [staging-password-reset-callback.md](./staging-password-reset-callback.md) — staging-only recovery callback; `updateUser({ password })` via anon client only; no profile update executed; no non-dry-run profile update yet; `readyForAuthLoginRetry: true`. Next: recovery email再送 → 新パスワード設定 → 通常ログイン → Debug Panel確認.
+
 ## Report
 
 ```bash

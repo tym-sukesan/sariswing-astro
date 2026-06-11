@@ -7,9 +7,10 @@ import { refreshAuthWriteDebugPanel } from "./staging-auth-write-debug-ui";
 import { refreshAuthStatusPanel } from "./staging-auth-ui";
 import {
   ensureStagingRecoverySession,
-  getStagingPasswordResetGateState,
+  getStagingPasswordResetGateStateAsync,
   signOutStagingAfterPasswordReset,
   updateStagingAuthPassword,
+  clearStagingAuthHashFromUrl,
 } from "./staging-password-reset-callback";
 
 const MIN_PASSWORD_LENGTH = 8;
@@ -45,7 +46,19 @@ function scrollToResetPanel(): void {
 }
 
 async function refreshPasswordResetPanel(): Promise<void> {
-  const gate = getStagingPasswordResetGateState();
+  const config = getStagingAuthConfig();
+  const gate = config.stagingAuthEnabled && config.supabaseConfigured
+    ? await getStagingPasswordResetGateStateAsync(
+        config.supabaseUrl,
+        config.supabaseAnonKey,
+      )
+    : {
+        enabled: false,
+        status: "disabled" as const,
+        recoveryDetected: false,
+        disabledReason:
+          "Staging Supabase Auth is disabled. Set ENABLE_ADMIN_STAGING_AUTH=true and PUBLIC_ADMIN_AUTH_PROVIDER=supabase.",
+      };
 
   setText("staging-password-reset-enabled", gate.enabled ? "true" : "false");
   setText("staging-password-reset-status", gate.status);
@@ -184,6 +197,8 @@ async function handlePasswordUpdate(): Promise<void> {
     config.supabaseAnonKey,
   );
 
+  clearStagingAuthHashFromUrl();
+
   setText("staging-password-reset-status", "success");
   setSuccess(
     "Password updated for staging Supabase Auth. You can now sign in with the new password.",
@@ -232,7 +247,15 @@ export async function initStagingPasswordResetUi(): Promise<void> {
 
   wirePasswordResetUi();
 
-  const gate = getStagingPasswordResetGateState();
+  const config = getStagingAuthConfig();
+  const gate =
+    config.stagingAuthEnabled && config.supabaseConfigured
+      ? await getStagingPasswordResetGateStateAsync(
+          config.supabaseUrl,
+          config.supabaseAnonKey,
+        )
+      : { status: "disabled" as const, hashError: undefined };
+
   if (gate.hashError || gate.status === "waiting") {
     scrollToResetPanel();
   }

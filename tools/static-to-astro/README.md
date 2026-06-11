@@ -1386,6 +1386,13 @@ gosaki / Sariswing で実証した移行フローを、**別サイト向け CMS 
 
 **G-6-d-staging-password-reset-callback（完了）:** [Staging password reset callback](docs/staging-password-reset-callback.md) — staging-only recovery callback; `updateUser({ password })` via anon client; no profile update executed; no non-dry-run profile update yet; `readyForAuthLoginRetry: true`. Next: recovery email再送 → 新パスワード設定 → 通常ログイン → Debug Panel確認.
 
+**G-6-d-auth-status-denied-fix（完了）:** [Staging auth status denied fix](docs/staging-auth-status-denied-fix.md) — Auth status denied issue fixed; valid session prioritized over mock allowlist / stale recovery error; authenticated when session.user.email available; no profile update; no non-dry-run yet. Next: clean URL login retry and Debug Panel auth check.
+
+```bash
+node tools/static-to-astro/scripts/report-staging-auth-status-denied-fix.mjs \
+  --out-dir tools/static-to-astro/output/staging-auth-status-denied-fix/gosaki
+```
+
 ```bash
 node tools/static-to-astro/scripts/report-staging-password-reset-callback.mjs \
   --out-dir tools/static-to-astro/output/staging-password-reset-callback/gosaki

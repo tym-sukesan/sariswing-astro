@@ -86,6 +86,31 @@ export function clearStagingAuthHashFromUrl(): void {
   window.history.replaceState(null, "", path);
 }
 
+export async function getStagingPasswordResetGateStateAsync(
+  url: string,
+  anonKey: string,
+): Promise<StagingPasswordResetCallbackState> {
+  const syncState = getStagingPasswordResetGateState();
+  if (!syncState.enabled || syncState.status !== "hash-error") {
+    return syncState;
+  }
+
+  const client = getStagingSupabaseClient(url, anonKey);
+  const {
+    data: { session },
+  } = await client.auth.getSession();
+  if (session?.user?.email) {
+    clearStagingAuthHashFromUrl();
+    return {
+      enabled: true,
+      status: "no-recovery-session",
+      recoveryDetected: false,
+    };
+  }
+
+  return syncState;
+}
+
 export function getStagingPasswordResetGateState(): StagingPasswordResetCallbackState {
   const config = getStagingAuthConfig();
   const hashError = parseStagingAuthHashError();

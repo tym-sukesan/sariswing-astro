@@ -1,13 +1,13 @@
 ---
 /**
- * G-6-d-auth-session-display-investigation — Auth / write gate debug panel.
+ * G-6-d-auth-status-denied-fix — Auth / write gate debug panel.
  * Staging shell only. Not /admin/.
  */
 interface Props {
   phase?: string;
 }
 
-const { phase = "G-6-d-auth-session-display-investigation" } = Astro.props;
+const { phase = "G-6-d-auth-status-denied-fix" } = Astro.props;
 ---
 
 <section
@@ -46,6 +46,22 @@ const { phase = "G-6-d-auth-session-display-investigation" } = Astro.props;
     <div>
       <dt>Auth status</dt>
       <dd id="debug-auth-status">loading</dd>
+    </div>
+    <div>
+      <dt>Auth detail</dt>
+      <dd id="debug-auth-detail">—</dd>
+    </div>
+    <div>
+      <dt>Recovery hash present</dt>
+      <dd id="debug-recovery-hash-present">—</dd>
+    </div>
+    <div>
+      <dt>Recovery error code</dt>
+      <dd id="debug-recovery-error-code">—</dd>
+    </div>
+    <div>
+      <dt>Session present</dt>
+      <dd id="debug-session-present">—</dd>
     </div>
     <div>
       <dt>User email</dt>

@@ -1,0 +1,20 @@
+{
+  "phase": "G-6-d-auth-status-denied-fix",
+  "type": "staging-auth-status-denied-fix",
+  "stagingOnly": true,
+  "authStatusDeniedFixImplemented": true,
+  "validSessionPrioritized": true,
+  "staleRecoveryErrorDoesNotOverrideSession": true,
+  "usesSupabaseAnonClient": true,
+  "usesServiceRole": false,
+  "profileUpdateExecuted": false,
+  "nonDryRunExecuted": false,
+  "cursorSetsDryRunFalse": false,
+  "dbWritePerformedByCursor": false,
+  "adminRouteConnected": false,
+  "productionAuthTouched": false,
+  "productionDataTouched": false,
+  "readyForAuthLoginRetry": true,
+  "readyForManualNonDryRunExecution": false,
+  "readyForG6E": false
+}

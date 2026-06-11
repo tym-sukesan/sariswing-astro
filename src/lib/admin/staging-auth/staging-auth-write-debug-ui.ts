@@ -1,17 +1,18 @@
 /**
- * G-6-d-staging-env-gate-client-fix — Auth / write gate debug panel (staging shell only).
+ * G-6-d-auth-status-denied-fix — Auth / write gate debug panel (staging shell only).
  */
 
 import { getStagingAuthConfig } from "./staging-auth-config";
+import { resolveStagingAuthDisplayStatus } from "./staging-auth-display-status";
 import {
   collectAuthGateBlockers,
   collectWriteGateBlockers,
   formatGateBlockers,
 } from "./staging-auth-gate-diagnostics";
-import { getStagingAuthSessionDetails } from "./staging-auth-session";
 import { resolveMockAdminRole } from "./staging-role-resolver";
 import { getStagingWriteConfig } from "../staging-write/staging-write-config";
 import { hasStagingShellServerGateInjection } from "../staging-shell/staging-shell-client-gates";
+import { clearStagingAuthHashFromUrl } from "./staging-password-reset-callback";
 
 function setText(id: string, value: string): void {
   const el = document.getElementById(id);
@@ -22,20 +23,6 @@ function shortenUserId(id: string | undefined): string {
   if (!id) return "—";
   if (id.length <= 12) return id;
   return `${id.slice(0, 8)}…${id.slice(-4)}`;
-}
-
-function mapAuthStatus(
-  status: string,
-  authEnabled: boolean,
-): string {
-  if (!authEnabled) {
-    return status === "mock" ? "mock-preview" : "disabled";
-  }
-  if (status === "signed-in") return "authenticated";
-  if (status === "signed-out") return "unauthenticated";
-  if (status === "denied") return "denied";
-  if (status === "config-missing") return "error";
-  return status;
 }
 
 export async function refreshAuthWriteDebugPanel(): Promise<void> {
@@ -57,49 +44,55 @@ export async function refreshAuthWriteDebugPanel(): Promise<void> {
   setText("debug-auth-mode", authEnabled ? "enabled" : "disabled");
   setText("debug-auth-enabled", authEnabled ? "true" : "false");
 
-  let authStatus = mapAuthStatus(authConfig.authMode, authEnabled);
-  let userEmail = "—";
-  let userId = "—";
   let adminRole = "—";
   let roleSource = "unavailable";
+  let userEmail = "—";
+  let userId = "—";
+
+  const display = await resolveStagingAuthDisplayStatus();
+
+  if (display.status === "authenticated" && display.recoveryHashPresent) {
+    clearStagingAuthHashFromUrl();
+  }
+
+  setText("debug-auth-status", display.status);
+  setText("debug-auth-detail", display.detail);
+  setText(
+    "debug-recovery-hash-present",
+    display.recoveryHashPresent ? "true" : "false",
+  );
+  setText("debug-recovery-error-code", display.recoveryErrorCode ?? "—");
+  setText("debug-session-present", display.sessionPresent ? "true" : "false");
+  setText("debug-user-email", display.userEmail ?? "—");
+  setText("debug-user-id", shortenUserId(display.userId));
 
   if (authEnabled) {
     roleSource = "mock-allowlist (admin_users not queried)";
-    try {
-      const details = await getStagingAuthSessionDetails(
-        authConfig.supabaseUrl,
-        authConfig.supabaseAnonKey,
+    const resolution = resolveMockAdminRole(display.userEmail);
+    adminRole =
+      resolution.displayRole === "denied"
+        ? "denied (not in mock allowlist — confirm admin_users in Supabase)"
+        : (resolution.displayRole ?? "—");
+    if (
+      display.status === "authenticated" &&
+      resolution.status === "mock-denied"
+    ) {
+      authBlockers.push(
+        "signed-in email is not in mock allowlist — role is mock-only; confirm admin_users in Supabase SQL Editor",
       );
-      authStatus = mapAuthStatus(details.session.status, true);
-      userEmail = details.rawEmail ?? details.session.email ?? "—";
-      userId = shortenUserId(details.userId);
-      const resolution = resolveMockAdminRole(details.rawEmail);
-      adminRole =
-        resolution.displayRole === "denied"
-          ? "denied (not in mock allowlist)"
-          : (resolution.displayRole ?? "—");
-      if (
-        details.session.status === "signed-in" &&
-        resolution.status === "mock-denied"
-      ) {
-        authBlockers.push(
-          "signed-in email is not in mock allowlist — confirm admin_users in Supabase SQL Editor",
-        );
-      }
-      if (details.session.status === "signed-out") {
-        authBlockers.push("no Supabase Auth session — sign in via staging login form");
-      }
-    } catch {
-      authStatus = "error";
-      authBlockers.push("could not read Supabase Auth session");
+    }
+    if (display.status === "unauthenticated") {
+      authBlockers.push("no Supabase Auth session — sign in via staging login form");
+    }
+    if (display.status === "recovery-error") {
+      authBlockers.push("recovery link error — request a new recovery email from Supabase Dashboard");
     }
   } else if (authConfig.authMode === "mock") {
-    authStatus = "mock-preview";
     userEmail = "— (mock preview — not signed in)";
     adminRole = "mock preview only";
     roleSource = "mock-allowlist";
+    setText("debug-user-email", userEmail);
   } else {
-    authStatus = authConfig.configMissing ? "error" : "disabled";
     roleSource = "unavailable";
   }
 
@@ -109,9 +102,6 @@ export async function refreshAuthWriteDebugPanel(): Promise<void> {
     );
   }
 
-  setText("debug-auth-status", authStatus);
-  setText("debug-user-email", userEmail);
-  setText("debug-user-id", userId);
   setText("debug-admin-role", adminRole);
   setText("debug-role-source", roleSource);
   setText("debug-dry-run", writeConfig.dryRun ? "true" : "false");

@@ -348,6 +348,8 @@ G-6-d-verify completion state: `readyForManualNonDryRunDecision: true`, `nonDryR
 
 **G-6-d-staging-password-reset-callback（完了）:** [staging-password-reset-callback.md](./staging-password-reset-callback.md) — staging password reset callback implemented; `updateUser({ password })` is staging-only; no profile update executed; no non-dry-run profile update yet; `readyForAuthLoginRetry: true`. Next: recovery email再送 → 新パスワード設定 → 通常ログイン → Debug Panel確認.
 
+**G-6-d-auth-status-denied-fix（完了）:** [staging-auth-status-denied-fix.md](./staging-auth-status-denied-fix.md) — Auth status denied issue fixed; valid session prioritized; authenticated when session.user.email available; no profile update; no non-dry-run yet. Next: clean URL login retry and Debug Panel auth check.
+
 ## 14. G-6-d-verify completion criteria
 
 ```txt

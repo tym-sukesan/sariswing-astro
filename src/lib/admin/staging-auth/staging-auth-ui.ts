@@ -8,10 +8,12 @@ import {
   signInStagingAuth,
   signOutStagingAuth,
 } from "./staging-auth-session";
+import { resolveStagingAuthDisplayStatus } from "./staging-auth-display-status";
 import { collectAuthGateBlockers, formatGateBlockers } from "./staging-auth-gate-diagnostics";
 import { resolveMockAdminRole } from "./staging-role-resolver";
 import { refreshRoleAllowlistPanel } from "./staging-role-allowlist-ui";
 import { refreshAuthWriteDebugPanel } from "./staging-auth-write-debug-ui";
+import { clearStagingAuthHashFromUrl } from "./staging-password-reset-callback";
 
 function setText(id: string, value: string): void {
   const el = document.getElementById(id);
@@ -74,20 +76,29 @@ export async function refreshAuthStatusPanel(): Promise<void> {
   }
 
   try {
+    const display = await resolveStagingAuthDisplayStatus();
     const details = await getStagingAuthSessionDetails(
       config.supabaseUrl,
       config.supabaseAnonKey,
     );
-    const session = details.session;
-    setText(
-      "staging-auth-session-status",
-      session.status === "signed-in"
-        ? "signed-in"
-        : session.status === "denied"
-          ? "denied"
-          : "signed-out",
-    );
-    setText("staging-auth-user-email", details.rawEmail ?? session.email ?? "—");
+
+    if (display.status === "authenticated" && display.recoveryHashPresent) {
+      clearStagingAuthHashFromUrl();
+    }
+
+    const sessionLabel =
+      display.status === "authenticated"
+        ? "authenticated"
+        : display.status === "recovery-error"
+          ? "recovery-error"
+          : display.status === "recovery-session"
+            ? "recovery-session"
+            : display.status === "unauthenticated"
+              ? "signed-out"
+              : display.status;
+
+    setText("staging-auth-session-status", sessionLabel);
+    setText("staging-auth-user-email", details.rawEmail ?? details.session.email ?? "—");
     setText(
       "staging-auth-user-id",
       details.userId
@@ -99,11 +110,16 @@ export async function refreshAuthStatusPanel(): Promise<void> {
       "staging-auth-role",
       resolution.displayRole === "denied"
         ? "denied (mock allowlist only — admin_users not queried)"
-        : (session.role ?? "—"),
+        : (details.session.role ?? "—"),
     );
     const signOutBtn = document.getElementById("staging-sign-out-btn");
     if (signOutBtn) {
-      signOutBtn.hidden = session.status !== "signed-in" && session.status !== "denied";
+      signOutBtn.hidden = display.status !== "authenticated";
+    }
+    if (display.status === "recovery-error") {
+      setError(display.detail);
+    } else if (display.status === "unauthenticated") {
+      setError("");
     }
     await refreshRoleAllowlistPanel();
     await refreshAuthWriteDebugPanel();

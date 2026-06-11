@@ -20,12 +20,10 @@ function mapSupabaseSession(
   userId?: string,
 ): StagingAuthSessionDetails {
   const resolution = resolveMockAdminRole(email);
-  const sessionStatus =
-    resolution.status === "mock-denied" && status === "signed-in" ? "denied" : status;
 
   return {
     session: {
-      status: sessionStatus,
+      status,
       email: email ?? resolution.email,
       role: resolution.role,
       provider: "supabase",

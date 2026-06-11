@@ -93,6 +93,8 @@ After dry-run retry (see §8.1): `dryRunRetried: true`, `dryRunPassed: true`, `r
 
 **G-6-d-auth-session-display-investigation（完了）:** [staging-auth-session-display-investigation.md](./staging-auth-session-display-investigation.md) — mock auth display investigated; debug panel added; non-dry-run blocked.
 
+**G-6-d-staging-env-gate-client-fix（完了）:** [staging-env-gate-client-fix.md](./staging-env-gate-client-fix.md) — ENABLE_* server injection; updated dry-run command; non-dry-run blocked.
+
 ## 8. Dry-run QA command / procedure
 
 G-6-d dry-run QA uses the staging shell only (`/__admin-staging-shell/musician-basic/`). Env gate uses `ENABLE_ADMIN_STAGING_WRITE` (not `ENABLE_ADMIN_STAGING_WRITE_POC`).

@@ -1,0 +1,17 @@
+{
+  "phase": "G-6-d-staging-env-gate-client-fix",
+  "type": "staging-env-gate-client-fix",
+  "incident": "non-PUBLIC staging gates appeared false in client-side debug panel",
+  "fixStrategy": "server-side-env-props-preferred",
+  "serverGateInjection": true,
+  "authEnabledDiagnosticAccurate": true,
+  "writeGateDiagnosticAccurate": true,
+  "cursorSetsDryRunFalse": false,
+  "nonDryRunExecuted": false,
+  "dbWritePerformedByCursor": false,
+  "adminRouteConnected": false,
+  "productionDataTouched": false,
+  "readyForManualNonDryRunExecution": false,
+  "readyForG6DResultReport": false,
+  "readyForG6E": false
+}

@@ -112,6 +112,8 @@ Also required when enabling write:
 
 **G-6-d-auth-session-display-investigation（完了）:** [staging-auth-session-display-investigation.md](./staging-auth-session-display-investigation.md) — auth session / write gate debug panel; non-dry-run remains blocked.
 
+**G-6-d-staging-env-gate-client-fix（完了）:** [staging-env-gate-client-fix.md](./staging-env-gate-client-fix.md) — client env gate diagnostics fixed via server injection.
+
 ### Manual non-dry-run example (staging only)
 
 ```bash

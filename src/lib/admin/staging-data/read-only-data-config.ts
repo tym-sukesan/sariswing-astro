@@ -2,6 +2,8 @@
  * G-5z-c — Staging shell read-only data env gate (not /admin/, not production).
  */
 
+import { mergeStagingShellEnv } from "../staging-shell/staging-shell-client-gates";
+
 export const G5Z_C_APPROVAL_ID = "G-5z-c-staging-read-only-data-connect";
 export const G5Z_C_PHASE = "G-5z-c";
 export const G5Z_D_PHASE = "G-5z-d";
@@ -26,12 +28,13 @@ export interface ReadOnlyDataConfig {
 export function getReadOnlyDataConfig(
   env: ImportMetaEnv = import.meta.env,
 ): ReadOnlyDataConfig {
-  const dev = env.DEV === true;
-  const stagingShellEnabled = env.ENABLE_ADMIN_STAGING_SHELL === "true";
-  const dataReadFlag = env.ENABLE_ADMIN_STAGING_DATA_READ === "true";
-  const provider = String(env.PUBLIC_ADMIN_DATA_PROVIDER ?? "mock").trim();
-  const supabaseUrl = String(env.PUBLIC_SUPABASE_URL ?? "").trim();
-  const supabaseAnonKey = String(env.PUBLIC_SUPABASE_ANON_KEY ?? "").trim();
+  const mergedEnv = mergeStagingShellEnv(env);
+  const dev = mergedEnv.DEV === true;
+  const stagingShellEnabled = mergedEnv.ENABLE_ADMIN_STAGING_SHELL === "true";
+  const dataReadFlag = mergedEnv.ENABLE_ADMIN_STAGING_DATA_READ === "true";
+  const provider = String(mergedEnv.PUBLIC_ADMIN_DATA_PROVIDER ?? "mock").trim();
+  const supabaseUrl = String(mergedEnv.PUBLIC_SUPABASE_URL ?? "").trim();
+  const supabaseAnonKey = String(mergedEnv.PUBLIC_SUPABASE_ANON_KEY ?? "").trim();
 
   const stagingDataReadEnabled =
     dev &&

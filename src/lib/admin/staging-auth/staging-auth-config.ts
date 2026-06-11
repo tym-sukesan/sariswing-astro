@@ -2,6 +2,8 @@
  * G-5y-d — Staging shell Auth env gate (not /admin/, not production).
  */
 
+import { mergeStagingShellEnv } from "../staging-shell/staging-shell-client-gates";
+
 export const G5Y_D_APPROVAL_ID = "G-5y-d-staging-auth-connect";
 
 export type StagingAuthMode = "mock" | "supabase-staging" | "disabled";
@@ -23,12 +25,13 @@ export interface StagingAuthConfig {
 export function getStagingAuthConfig(
   env: ImportMetaEnv = import.meta.env,
 ): StagingAuthConfig {
-  const dev = env.DEV === true;
-  const stagingShellEnabled = env.ENABLE_ADMIN_STAGING_SHELL === "true";
-  const stagingAuthFlag = env.ENABLE_ADMIN_STAGING_AUTH === "true";
-  const provider = String(env.PUBLIC_ADMIN_AUTH_PROVIDER ?? "mock").trim();
-  const supabaseUrl = String(env.PUBLIC_SUPABASE_URL ?? "").trim();
-  const supabaseAnonKey = String(env.PUBLIC_SUPABASE_ANON_KEY ?? "").trim();
+  const mergedEnv = mergeStagingShellEnv(env);
+  const dev = mergedEnv.DEV === true;
+  const stagingShellEnabled = mergedEnv.ENABLE_ADMIN_STAGING_SHELL === "true";
+  const stagingAuthFlag = mergedEnv.ENABLE_ADMIN_STAGING_AUTH === "true";
+  const provider = String(mergedEnv.PUBLIC_ADMIN_AUTH_PROVIDER ?? "mock").trim();
+  const supabaseUrl = String(mergedEnv.PUBLIC_SUPABASE_URL ?? "").trim();
+  const supabaseAnonKey = String(mergedEnv.PUBLIC_SUPABASE_ANON_KEY ?? "").trim();
 
   const stagingAuthEnabled =
     dev &&

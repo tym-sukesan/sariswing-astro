@@ -226,6 +226,10 @@ No database write is performed by Cursor.
 No /admin route is connected.
 No production data is touched.
 
+## 12. Follow-up fix
+
+**G-6-d-staging-env-gate-client-fix（完了）:** [staging-env-gate-client-fix.md](./staging-env-gate-client-fix.md) — root cause was client-side reads of non-PUBLIC `ENABLE_*` env. Astro server now injects gate booleans into the staging shell page. Debug Panel should show **Auth enabled: true** when inline env is correct. Non-dry-run remains blocked.
+
 ## Report
 
 ```bash

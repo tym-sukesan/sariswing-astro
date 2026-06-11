@@ -32,6 +32,8 @@ readyForManualNonDryRunExecution: false
 
 **G-6-d-auth-session-display-investigation（完了）:** [staging-auth-session-display-investigation.md](./staging-auth-session-display-investigation.md) — manual non-dry-run aborted because real auth email was not visible; mock preview shown; write actions disabled; `PUBLIC_ADMIN_WRITE_DRY_RUN` restored to `true`; non-dry-run remains blocked.
 
+**G-6-d-staging-env-gate-client-fix（完了）:** [staging-env-gate-client-fix.md](./staging-env-gate-client-fix.md) — server injects `ENABLE_*` gates to client; Debug Panel accurate; non-dry-run still blocked.
+
 ## 3. Scope of first non-dry-run update
 
 ```txt
@@ -129,7 +131,7 @@ On `/__admin-staging-shell/musician-basic/`, use:
 - **Auth adapter status** — `staging-auth-user-email`, `staging-auth-user-id`, `staging-auth-session-status`
 - **Auth Session / Write Gate Debug Panel** — provider, disabled reasons, write gate (G-6-d-auth-session-display-investigation)
 
-If the UI shows `mock preview` or `mock-admin@example.com`, real Supabase Auth is not enabled. Set repo-root env gates (see [staging-auth-session-display-investigation.md](./staging-auth-session-display-investigation.md) §6) and sign in via the staging login form.
+If the UI shows `mock preview` or `mock-admin@example.com`, real Supabase Auth is not enabled. Set repo-root env gates (see [staging-auth-session-display-investigation.md](./staging-auth-session-display-investigation.md) §6 and [staging-env-gate-client-fix.md](./staging-env-gate-client-fix.md)) and confirm **Server gate injection: true** in the Debug Panel before signing in.
 
 Compare displayed email with `admin_users.email`. The signed-in user's `user_id` in `admin_users` must match `auth.uid()` for the UPDATE RLS policy. Role UI currently uses mock allowlist only — confirm role in Supabase SQL Editor until `admin_users` resolver is added.
 

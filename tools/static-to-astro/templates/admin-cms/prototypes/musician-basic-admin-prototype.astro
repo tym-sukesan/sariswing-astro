@@ -26,6 +26,10 @@ import AdminStagingReadOnlyDataSection from "../data/components/AdminStagingRead
 import AdminStagingDisabledWriteActionsSection from "../data/components/AdminStagingDisabledWriteActionsSection.astro";
 import AdminStagingProfileUpdatePocSection from "../data/components/AdminStagingProfileUpdatePocSection.astro";
 import { getStagingAuthConfig } from "../../../../../src/lib/admin/staging-auth/staging-auth-config";
+import {
+  getStagingShellServerGateSnapshot,
+  STAGING_SHELL_SERVER_GATES_ELEMENT_ID,
+} from "../../../../../src/lib/admin/staging-shell/staging-shell-server-gates";
 import AdminPermissionBadge from "../components/AdminPermissionBadge.astro";
 import AdminAccessDenied from "../components/AdminAccessDenied.astro";
 import AdminImageUploader from "../components/AdminImageUploader.astro";
@@ -59,6 +63,12 @@ const {
 } = Astro.props;
 
 const stagingAuthConfig = stagingShellMode ? getStagingAuthConfig() : null;
+const stagingServerGates = stagingShellMode
+  ? getStagingShellServerGateSnapshot(import.meta.env)
+  : null;
+const stagingServerGatesJson = stagingServerGates
+  ? JSON.stringify(stagingServerGates)
+  : null;
 
 const siteName = "Example Musician";
 const templateId = "musician-basic";
@@ -219,6 +229,16 @@ const moduleSummary = [
   { id: "media", label: "Media", count: "2 assets", status: "Review pending" },
 ];
 ---
+
+{
+  stagingServerGatesJson ? (
+    <script
+      id={STAGING_SHELL_SERVER_GATES_ELEMENT_ID}
+      type="application/json"
+      set:html={stagingServerGatesJson}
+    />
+  ) : null
+}
 
 <AdminLayout
   title="Admin"

@@ -2,6 +2,8 @@
  * G-6-d — Staging shell write env gate (profile update PoC only; not /admin/).
  */
 
+import { mergeStagingShellEnv } from "../staging-shell/staging-shell-client-gates";
+
 export const G6D_APPROVAL_ID = "G-6-d-staging-profile-update-poc";
 export const G6D_PHASE = "G-6-d";
 
@@ -38,17 +40,19 @@ function looksLikeProductionBlocked(env: ImportMetaEnv): boolean {
 export function getStagingWriteConfig(
   env: ImportMetaEnv = import.meta.env,
 ): StagingWriteConfig {
-  const dev = env.DEV === true;
-  const stagingShellEnabled = env.ENABLE_ADMIN_STAGING_SHELL === "true";
-  const writeFlag = env.ENABLE_ADMIN_STAGING_WRITE === "true";
-  const providerRaw = String(env.PUBLIC_ADMIN_WRITE_PROVIDER ?? "disabled").trim();
-  const module = String(env.PUBLIC_ADMIN_WRITE_MODULE ?? "").trim();
-  const approvalIdEnv = String(env.PUBLIC_ADMIN_WRITE_APPROVAL_ID ?? "").trim();
-  const dryRun = String(env.PUBLIC_ADMIN_WRITE_DRY_RUN ?? "true").trim() !== "false";
-  const supabaseUrl = String(env.PUBLIC_SUPABASE_URL ?? "").trim();
-  const supabaseAnonKey = String(env.PUBLIC_SUPABASE_ANON_KEY ?? "").trim();
+  const mergedEnv = mergeStagingShellEnv(env);
+  const dev = mergedEnv.DEV === true;
+  const stagingShellEnabled = mergedEnv.ENABLE_ADMIN_STAGING_SHELL === "true";
+  const writeFlag = mergedEnv.ENABLE_ADMIN_STAGING_WRITE === "true";
+  const providerRaw = String(mergedEnv.PUBLIC_ADMIN_WRITE_PROVIDER ?? "disabled").trim();
+  const module = String(mergedEnv.PUBLIC_ADMIN_WRITE_MODULE ?? "").trim();
+  const approvalIdEnv = String(mergedEnv.PUBLIC_ADMIN_WRITE_APPROVAL_ID ?? "").trim();
+  const dryRun =
+    String(mergedEnv.PUBLIC_ADMIN_WRITE_DRY_RUN ?? "true").trim() !== "false";
+  const supabaseUrl = String(mergedEnv.PUBLIC_SUPABASE_URL ?? "").trim();
+  const supabaseAnonKey = String(mergedEnv.PUBLIC_SUPABASE_ANON_KEY ?? "").trim();
   const supabaseConfigured = Boolean(supabaseUrl && supabaseAnonKey);
-  const productionBlocked = looksLikeProductionBlocked(env);
+  const productionBlocked = looksLikeProductionBlocked(mergedEnv);
   const approvalIdMatch = approvalIdEnv === G6D_APPROVAL_ID;
 
   const base = {

@@ -1382,6 +1382,8 @@ gosaki / Sariswing で実証した移行フローを、**別サイト向け CMS 
 
 **G-6-d-auth-session-display-investigation（完了）:** [Staging auth session display investigation](docs/staging-auth-session-display-investigation.md) — mock preview vs real Supabase Auth; debug panel added; `PUBLIC_ADMIN_WRITE_DRY_RUN=true` restored; non-dry-run blocked; `readyForG6E: false`.
 
+**G-6-d-staging-env-gate-client-fix（完了）:** [Staging env gate client fix](docs/staging-env-gate-client-fix.md) — server injects `ENABLE_*` to client diagnostics; non-dry-run remains blocked.
+
 ```bash
 node tools/static-to-astro/scripts/report-disabled-write-action-scaffold.mjs \
   --out-dir tools/static-to-astro/output/disabled-write-action-scaffold/gosaki
@@ -1425,6 +1427,11 @@ node tools/static-to-astro/scripts/report-staging-profile-manual-non-dry-run-pre
 ```bash
 node tools/static-to-astro/scripts/report-staging-auth-session-display-investigation.mjs \
   --out-dir tools/static-to-astro/output/staging-auth-session-display-investigation/gosaki
+```
+
+```bash
+node tools/static-to-astro/scripts/report-staging-env-gate-client-fix.mjs \
+  --out-dir tools/static-to-astro/output/staging-env-gate-client-fix/gosaki
 ```
 
 ```bash

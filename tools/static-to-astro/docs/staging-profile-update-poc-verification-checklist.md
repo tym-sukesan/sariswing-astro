@@ -344,6 +344,8 @@ G-6-d-verify completion state: `readyForManualNonDryRunDecision: true`, `nonDryR
 
 **G-6-d-auth-session-display-investigation（完了）:** [staging-auth-session-display-investigation.md](./staging-auth-session-display-investigation.md) — real auth email not visible; mock preview; write disabled; `PUBLIC_ADMIN_WRITE_DRY_RUN=true`; non-dry-run blocked; `readyForG6E: false`.
 
+**G-6-d-staging-env-gate-client-fix（完了）:** [staging-env-gate-client-fix.md](./staging-env-gate-client-fix.md) — server injects ENABLE_* gates; Debug Panel accurate; non-dry-run blocked.
+
 ## 14. G-6-d-verify completion criteria
 
 ```txt

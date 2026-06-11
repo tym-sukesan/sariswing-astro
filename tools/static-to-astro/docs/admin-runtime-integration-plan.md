@@ -230,8 +230,9 @@ Never skip: local preview and customer demo before runtime shell; read-only befo
 | **G-6-d-result-report（完了）** | [Non-dry-run result report](./staging-profile-non-dry-run-result-report.md) | First staging profile update succeeded; `readyForG6E: false` |
 | **G-6-d-hardening（完了）** | [Profile write hardening](./staging-profile-write-hardening.md) | `updated_by` / role display gaps; `readyForG6EPlanning: true`; implementation blocked |
 | **G-6-rls-audit（完了）** | [Staging RLS audit](./staging-rls-audit.md) | Read-only audit plan |
-| **G-6-rls-audit-result（完了）** | [RLS audit result](./staging-rls-audit-result.md) | Manual SQL collected; grant cleanup needed; `readyForG6EImplementation: false` |
-| **G-6-e** | Staging create operation | Blocked — grant cleanup plan + G-6-e-planning + separate approval |
+| **G-6-rls-audit-result（完了）** | [RLS audit result](./staging-rls-audit-result.md) | Manual SQL collected; grant cleanup needed |
+| **G-6-rls-grant-cleanup-plan（完了）** | [Grant cleanup plan](./staging-rls-grant-cleanup-plan.md) | REVOKE draft; not executed; `readyForManualCleanupDecision: true` |
+| **G-6-e** | Staging create operation | Blocked — manual cleanup + G-6-e-planning + separate approval |
 | **G-5y-e** | Role check / allowlist | Staging Auth |
 
 **Purpose (overall):** Staging admin login only — after shell QA on `/__admin-staging-shell/musician-basic/`.

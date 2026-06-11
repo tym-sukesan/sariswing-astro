@@ -29,8 +29,9 @@
 - **G-6-d-result-report（完了）:** [staging-profile-non-dry-run-result-report.md](../staging-profile-non-dry-run-result-report.md) — first manual staging non-dry-run profile update succeeded; production not touched; `/admin` unconnected; `readyForG6E: false`
 - **G-6-d-hardening（完了）:** [staging-profile-write-hardening.md](../staging-profile-write-hardening.md) — gaps documented; `readyForG6EPlanning: true`; `readyForG6EImplementation: false`; broader writes blocked
 - **G-6-rls-audit（完了）:** [staging-rls-audit.md](../staging-rls-audit.md) — read-only RLS audit plan
-- **G-6-rls-audit-result（完了）:** [staging-rls-audit-result.md](../staging-rls-audit-result.md) — manual SQL collected; broad grants; G-6-rls-grant-cleanup-plan next
-- 次: G-6-rls-grant-cleanup-plan → G-6-e-planning（実装なし）
+- **G-6-rls-audit-result（完了）:** [staging-rls-audit-result.md](../staging-rls-audit-result.md) — manual SQL collected; broad grants
+- **G-6-rls-grant-cleanup-plan（完了）:** [staging-rls-grant-cleanup-plan.md](../staging-rls-grant-cleanup-plan.md) — REVOKE draft; cleanup not executed; `readyForManualCleanupDecision: true`
+- 次: manual GRANT cleanup apply prep → G-6-e-planning（実装なし）
 
 ## Option B: customer-specific schema mapping
 
@@ -76,8 +77,9 @@ G-6-d-result-report: first staging profile non-dry-run update succeeded (bio onl
 G-6-d-hardening: updated_by / role display / dry-run restore documented
 G-6-rls-audit: read-only RLS audit plan
 G-6-rls-audit-result: manual SQL collected; grant cleanup recommended
-G-6-rls-grant-cleanup-plan: next
-G-6-e-planning: after grant cleanup plan (no implementation without approval)
+G-6-rls-grant-cleanup-plan: REVOKE draft for TRUNCATE/TRIGGER/REFERENCES (not executed)
+G-6-rls-grant-cleanup-manual-apply-prep: next
+G-6-e-planning: after manual cleanup verified (no implementation without approval)
 G-6-e: staging create operation (blocked — readyForG6EImplementation false)
 ```
 

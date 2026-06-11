@@ -324,10 +324,12 @@ See [staging-rls-audit-result.md](./staging-rls-audit-result.md).
 ```txt
 1. ~~Run manual read-only audit SQL~~ — done (see staging-rls-audit-result.md)
 2. ~~Paste sanitized results for review~~ — done
-3. Next: G-6-rls-grant-cleanup-plan (TRUNCATE / TRIGGER / REFERENCES on anon/authenticated)
-4. Do not run policy or GRANT changes until cleanup plan is reviewed
-5. G-6-e-planning only after grant cleanup plan; G-6-e implementation remains blocked
+3. ~~G-6-rls-grant-cleanup-plan~~ — DONE (see staging-rls-grant-cleanup-plan.md)
+4. Next: G-6-rls-grant-cleanup-manual-apply-prep → user manual REVOKE (draft only until approved)
+5. G-6-e-planning after cleanup verified; G-6-e implementation remains blocked
 ```
+
+**G-6-rls-grant-cleanup-plan（完了）:** [staging-rls-grant-cleanup-plan.md](./staging-rls-grant-cleanup-plan.md) — plan targets TRUNCATE/TRIGGER/REFERENCES on anon/authenticated; cleanup not executed; `readyForManualCleanupDecision: true`.
 
 ## 11. Final safety statement
 

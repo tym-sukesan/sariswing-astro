@@ -1394,7 +1394,14 @@ gosaki / Sariswing で実証した移行フローを、**別サイト向け CMS 
 
 **G-6-rls-audit（完了）:** [Staging RLS audit](docs/staging-rls-audit.md) — read-only audit plan and SQL checklist for `profile` / `admin_users`.
 
-**G-6-rls-audit-result（完了）:** [Staging RLS audit result](docs/staging-rls-audit-result.md) — manual SQL collected; profile mostly OK; broad TRUNCATE/TRIGGER/REFERENCES grants on anon/authenticated; **G-6-rls-grant-cleanup-plan** recommended; `readyForG6EImplementation: false`; no policy/grant changes in this phase.
+**G-6-rls-audit-result（完了）:** [Staging RLS audit result](docs/staging-rls-audit-result.md) — manual SQL collected; profile mostly OK; broad TRUNCATE/TRIGGER/REFERENCES grants on anon/authenticated.
+
+**G-6-rls-grant-cleanup-plan（完了）:** [Staging RLS grant cleanup plan](docs/staging-rls-grant-cleanup-plan.md) — REVOKE/rollback SQL draft for TRUNCATE/TRIGGER/REFERENCES on key tables; **not executed**; `readyForManualCleanupDecision: true`; `readyForG6EImplementation: false`; no grant/policy changes by Cursor.
+
+```bash
+node tools/static-to-astro/scripts/report-staging-rls-grant-cleanup-plan.mjs \
+  --out-dir tools/static-to-astro/output/staging-rls-grant-cleanup-plan/gosaki
+```
 
 ```bash
 node tools/static-to-astro/scripts/report-staging-rls-audit-result.mjs \

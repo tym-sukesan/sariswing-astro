@@ -247,15 +247,17 @@ Evaluation: G-6-d non-dry-run result preserved; no additional writes.
 ## 11. Recommended next phase
 
 ```txt
-Recommended next: G-6-rls-grant-cleanup-plan
+Recommended next: G-6-rls-grant-cleanup-plan — DONE (see staging-rls-grant-cleanup-plan.md)
 ```
+
+**G-6-rls-grant-cleanup-plan（完了）:** [staging-rls-grant-cleanup-plan.md](./staging-rls-grant-cleanup-plan.md) — REVOKE/GRANT draft for TRUNCATE/TRIGGER/REFERENCES; not executed; `readyForManualCleanupDecision: true`; `readyForG6EImplementation: false`.
 
 **Suggested order:**
 
 ```txt
 1. G-6-rls-audit-result (this document)
-2. G-6-rls-grant-cleanup-plan
-3. Manual staging GRANT cleanup (user only, if approved)
+2. G-6-rls-grant-cleanup-plan — DONE
+3. G-6-rls-grant-cleanup-manual-apply-prep → manual staging GRANT cleanup (user only)
 4. G-6-e-planning
 5. G-6-e implementation only after separate approval
 ```

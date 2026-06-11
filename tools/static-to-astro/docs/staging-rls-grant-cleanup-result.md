@@ -314,8 +314,10 @@ adminRouteConnected: false
 ## 12. Recommended next phase
 
 ```txt
-Recommended next: G-6-e-planning
+Recommended next: G-6-e-planning — DONE (see schedule-cms-planning.md)
 ```
+
+**G-6-e-planning-schedule-cms（完了）:** [schedule-cms-planning.md](./schedule-cms-planning.md) — Schedule CMS module planned; Sariswing pattern generalized; planning only; `readyForG6EImplementation: false`; next: G-6-e1-schedule-schema-read-audit.
 
 **Important:**
 

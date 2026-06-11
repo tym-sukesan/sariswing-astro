@@ -1,0 +1,20 @@
+{
+  "phase": "G-6-e-planning-schedule-cms",
+  "type": "schedule-cms-planning",
+  "stagingOnly": true,
+  "planningOnly": true,
+  "targetModule": "schedule",
+  "derivedFrom": "sariswing-schedule-cms",
+  "dbWritesPerformed": false,
+  "schemaChangesPerformed": false,
+  "writeAdaptersImplemented": false,
+  "productionDataTouched": false,
+  "adminRouteConnected": false,
+  "storageTouched": false,
+  "publishTriggered": false,
+  "ftpDeployTriggered": false,
+  "githubDispatchTriggered": false,
+  "readyForG6EPlanning": true,
+  "readyForG6EImplementation": false,
+  "recommendedNextPhase": "G-6-e1-schedule-schema-read-audit"
+}

@@ -1400,7 +1400,14 @@ gosaki / Sariswing で実証した移行フローを、**別サイト向け CMS 
 
 **G-6-rls-grant-cleanup-manual-apply-prep（完了）:** [Staging RLS grant cleanup manual apply prep](docs/staging-rls-grant-cleanup-manual-apply-prep.md) — final manual REVOKE SQL for `static-to-astro-cms-staging`; user applied in Supabase SQL Editor.
 
-**G-6-rls-grant-cleanup-result（完了）:** [Staging RLS grant cleanup result](docs/staging-rls-grant-cleanup-result.md) — manual REVOKE succeeded; broad TRUNCATE/TRIGGER/REFERENCES removed; preserved permissions pass; dry-run smoke test pass; `rollbackExecuted: false`; `readyForG6EPlanning: true`; `readyForG6EImplementation: false`; next: G-6-e-planning.
+**G-6-rls-grant-cleanup-result（完了）:** [Staging RLS grant cleanup result](docs/staging-rls-grant-cleanup-result.md) — manual REVOKE succeeded; broad TRUNCATE/TRIGGER/REFERENCES removed; preserved permissions pass; dry-run smoke test pass; `rollbackExecuted: false`; `readyForG6EPlanning: true`; `readyForG6EImplementation: false`.
+
+**G-6-e-planning-schedule-cms（完了）:** [Schedule CMS planning](docs/schedule-cms-planning.md) — highest-priority musician CMS module; Sariswing schedule pattern generalized; MVP fields, UI, RLS, dry-run, and migration plans; **planning only**; `readyForG6EImplementation: false`; next: G-6-e1-schedule-schema-read-audit.
+
+```bash
+node tools/static-to-astro/scripts/report-schedule-cms-planning.mjs \
+  --out-dir tools/static-to-astro/output/schedule-cms-planning/gosaki
+```
 
 ```bash
 node tools/static-to-astro/scripts/report-staging-rls-grant-cleanup-result.mjs \

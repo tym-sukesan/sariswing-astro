@@ -33,7 +33,8 @@
 - **G-6-rls-grant-cleanup-plan（完了）:** [staging-rls-grant-cleanup-plan.md](../staging-rls-grant-cleanup-plan.md) — REVOKE draft; cleanup not executed; `readyForManualCleanupDecision: true`
 - **G-6-rls-grant-cleanup-manual-apply-prep（完了）:** [staging-rls-grant-cleanup-manual-apply-prep.md](../staging-rls-grant-cleanup-manual-apply-prep.md) — final manual REVOKE SQL; user applied in Supabase SQL Editor
 - **G-6-rls-grant-cleanup-result（完了）:** [staging-rls-grant-cleanup-result.md](../staging-rls-grant-cleanup-result.md) — REVOKE succeeded; broad grants removed; smoke test pass; `readyForG6EImplementation: false`
-- 次: G-6-e-planning（実装なし）
+- **G-6-e-planning-schedule-cms（完了）:** [schedule-cms-planning.md](../schedule-cms-planning.md) — Schedule CMS planned; Sariswing generalized; planning only
+- 次: G-6-e1-schedule-schema-read-audit（実装なし）
 
 ## Option B: customer-specific schema mapping
 
@@ -82,8 +83,9 @@ G-6-rls-audit-result: manual SQL collected; grant cleanup recommended
 G-6-rls-grant-cleanup-plan: REVOKE draft for TRUNCATE/TRIGGER/REFERENCES (not executed)
 G-6-rls-grant-cleanup-manual-apply-prep: final manual REVOKE SQL (user applied)
 G-6-rls-grant-cleanup-result: manual REVOKE succeeded; smoke test pass
-G-6-e-planning: next (no implementation without approval)
-G-6-e: staging create operation (blocked — readyForG6EImplementation false)
+G-6-e-planning-schedule-cms: Schedule CMS planning (done; no implementation)
+G-6-e1-schedule-schema-read-audit: next
+G-6-e: schedule write implementation (blocked — readyForG6EImplementation false)
 ```
 
 **G-6 でもいきなり write 実装しない。** まず G-6-a。

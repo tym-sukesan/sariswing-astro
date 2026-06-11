@@ -117,6 +117,10 @@ async function handleProfileUpdatePocSave(): Promise<void> {
       ? "Dry-run complete — no Supabase update was called"
       : "Staging write executed — profile row updated";
 
+    const hardeningNote = result.dryRun
+      ? `<p class="profile-poc-hardening">Dry-run only — no DB change. <code>updated_by</code> is not set by this adapter.</p>`
+      : `<p class="profile-poc-hardening"><strong>Note:</strong> <code>updated_by</code> is not written by the G-6-d adapter; it remains NULL until a future hardening phase. After this test, restart with <code>PUBLIC_ADMIN_WRITE_DRY_RUN=true</code>.</p>`;
+
     setResultHtml(
       [
         `<p class="profile-poc-success"><strong>${escapeHtml(modeLabel)}</strong></p>`,
@@ -124,6 +128,7 @@ async function handleProfileUpdatePocSave(): Promise<void> {
         `<p>Update payload: <code>${escapeHtml(JSON.stringify(result.updatePayload ?? {}))}</code></p>`,
         formatSnapshot("Before", result.before),
         result.after ? formatSnapshot("After", result.after) : "",
+        hardeningNote,
         result.rollbackInstruction
           ? `<p><strong>Rollback:</strong></p><pre class="profile-poc-rollback">${escapeHtml(result.rollbackInstruction)}</pre>`
           : "",

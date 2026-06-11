@@ -1,13 +1,13 @@
 ---
 /**
- * G-6-d-auth-status-denied-fix — Auth / write gate debug panel.
+ * G-6-d-hardening — Auth / write gate debug panel.
  * Staging shell only. Not /admin/.
  */
 interface Props {
   phase?: string;
 }
 
-const { phase = "G-6-d-auth-status-denied-fix" } = Astro.props;
+const { phase = "G-6-d-hardening" } = Astro.props;
 ---
 
 <section
@@ -23,7 +23,12 @@ const { phase = "G-6-d-auth-status-denied-fix" } = Astro.props;
   </h2>
   <p class="admin-auth-write-debug-panel__note">
     Staging shell only. Shows why mock preview or real Supabase Auth is active. No secrets.
-    Role is resolved from mock allowlist only — <code>admin_users</code> is not queried yet.
+    UI role is mock-only. DB write authorization is enforced by <code>public.admin_users</code> RLS
+    and profile update policy.
+  </p>
+  <p class="admin-auth-write-debug-panel__hardening" id="debug-hardening-note">
+    G-6-d first non-dry-run: SUCCESS (recorded). After any non-dry-run test, restart with
+    <code>PUBLIC_ADMIN_WRITE_DRY_RUN=true</code>.
   </p>
 
   <dl class="admin-auth-write-debug-panel__list">
@@ -95,6 +100,16 @@ const { phase = "G-6-d-auth-status-denied-fix" } = Astro.props;
       <dt>Save enabled</dt>
       <dd id="debug-save-enabled">—</dd>
     </div>
+    <div>
+      <dt>G-6-d write result</dt>
+      <dd id="debug-g6d-write-result">SUCCESS (recorded — bio updated)</dd>
+    </div>
+    <div>
+      <dt>updated_by note</dt>
+      <dd id="debug-updated-by-note">
+        Not written by G-6-d adapter; remains NULL until a future hardening phase.
+      </dd>
+    </div>
     <div class="admin-auth-write-debug-panel__reasons">
       <dt>Disabled reasons</dt>
       <dd id="debug-disabled-reasons">—</dd>
@@ -121,9 +136,15 @@ const { phase = "G-6-d-auth-status-denied-fix" } = Astro.props;
     color: #78350f;
   }
   .admin-auth-write-debug-panel__note {
-    margin: 0 0 0.75rem;
+    margin: 0 0 0.35rem;
     font-size: 0.875rem;
     color: #92400e;
+  }
+  .admin-auth-write-debug-panel__hardening {
+    margin: 0 0 0.75rem;
+    font-size: 0.8125rem;
+    color: #b45309;
+    line-height: 1.45;
   }
   .admin-auth-write-debug-panel__list {
     margin: 0;

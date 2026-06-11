@@ -27,7 +27,8 @@
 - **G-6-d-staging-password-reset-callback（完了）:** [staging-password-reset-callback.md](../staging-password-reset-callback.md) — staging password reset callback; `updateUser({ password })` staging-only; no profile update; no non-dry-run yet
 - **G-6-d-auth-status-denied-fix（完了）:** [staging-auth-status-denied-fix.md](../staging-auth-status-denied-fix.md) — Auth status denied fixed; valid session → authenticated
 - **G-6-d-result-report（完了）:** [staging-profile-non-dry-run-result-report.md](../staging-profile-non-dry-run-result-report.md) — first manual staging non-dry-run profile update succeeded; production not touched; `/admin` unconnected; `readyForG6E: false`
-- 次: G-6-d-hardening / RLS audit / G-6-e-planning（実装なし）
+- **G-6-d-hardening（完了）:** [staging-profile-write-hardening.md](../staging-profile-write-hardening.md) — gaps documented; `readyForG6EPlanning: true`; `readyForG6EImplementation: false`; broader writes blocked
+- 次: RLS audit / G-6-e-planning（実装なし）
 
 ## Option B: customer-specific schema mapping
 
@@ -70,8 +71,9 @@ G-6-d-staging-env-gate-client-fix: ENABLE_* server injection for client diagnost
 G-6-d-staging-password-reset-callback: staging password reset callback (updateUser staging-only)
 G-6-d-auth-status-denied-fix: valid session → authenticated; mock allowlist no longer overrides auth status
 G-6-d-result-report: first staging profile non-dry-run update succeeded (bio only)
-G-6-d-hardening / G-6-e-planning: next (no broader write without approval)
-G-6-e: staging create operation (blocked — new planning phase required)
+G-6-d-hardening: updated_by / role display / dry-run restore documented
+G-6-e-planning / RLS audit: next (no implementation without approval)
+G-6-e: staging create operation (blocked — readyForG6EImplementation false)
 ```
 
 **G-6 でもいきなり write 実装しない。** まず G-6-a。

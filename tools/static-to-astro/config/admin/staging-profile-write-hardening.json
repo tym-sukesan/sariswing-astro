@@ -1,0 +1,21 @@
+{
+  "phase": "G-6-d-hardening",
+  "type": "staging-profile-write-hardening",
+  "stagingOnly": true,
+  "previousProfileUpdateExecuted": true,
+  "additionalProfileUpdateExecuted": false,
+  "rollbackExecuted": false,
+  "updatedByRemainsNull": true,
+  "roleDisplayUsesMockAllowlist": true,
+  "dbRlsUsesAdminUsers": true,
+  "dryRunRestoreRequired": true,
+  "adminUsersPolicyAuditRecommended": true,
+  "readyForG6EPlanning": true,
+  "readyForG6EImplementation": false,
+  "productionDataTouched": false,
+  "adminRouteConnected": false,
+  "storageTouched": false,
+  "publishTriggered": false,
+  "ftpDeployTriggered": false,
+  "githubDispatchTriggered": false
+}

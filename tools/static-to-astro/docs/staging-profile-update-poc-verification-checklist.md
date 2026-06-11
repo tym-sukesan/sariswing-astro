@@ -352,6 +352,8 @@ G-6-d-verify completion state: `readyForManualNonDryRunDecision: true`, `nonDryR
 
 **G-6-d-result-report（完了）:** [staging-profile-non-dry-run-result-report.md](./staging-profile-non-dry-run-result-report.md) — first manual staging non-dry-run update succeeded; `public.profile` row updated; production not touched; `/admin` unconnected; `readyForG6E: false`; broader write expansion requires new approved planning phase.
 
+**G-6-d-hardening（完了）:** [staging-profile-write-hardening.md](./staging-profile-write-hardening.md) — gaps documented; dry-run restore checklist; `readyForG6EPlanning: true`; `readyForG6EImplementation: false`; broader writes remain blocked.
+
 ## 14. G-6-d-verify completion criteria
 
 ```txt

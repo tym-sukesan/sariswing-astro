@@ -176,6 +176,11 @@ const imageStatus = profile.imageStatus ?? (profile.image_url ? "attached" : "no
             </AdminFormField>
           </div>
 
+          <p class="admin-profile-update-poc__hardening" role="note">
+            G-6-d hardening: <code>updated_by</code> is not written by this adapter (remains
+            NULL). After any non-dry-run test, use <code>PUBLIC_ADMIN_WRITE_DRY_RUN=true</code>.
+          </p>
+
           <div class="admin-profile-update-poc__actions">
             <button
               id="profile-update-poc-save-btn"
@@ -246,6 +251,12 @@ const imageStatus = profile.imageStatus ?? (profile.image_url ? "attached" : "no
   .admin-profile-update-poc__fields {
     margin-bottom: 0.75rem;
   }
+  .admin-profile-update-poc__hardening {
+    margin: 0 0 0.75rem;
+    font-size: 0.8125rem;
+    color: #b45309;
+    line-height: 1.45;
+  }
   .admin-profile-update-poc__actions {
     margin-bottom: 0.75rem;
   }
@@ -259,7 +270,8 @@ const imageStatus = profile.imageStatus ?? (profile.image_url ? "attached" : "no
   .admin-profile-update-poc__result :global(.profile-poc-error) {
     color: #991b1b;
   }
-  .admin-profile-update-poc__result :global(.profile-poc-warn) {
+  .admin-profile-update-poc__result :global(.profile-poc-warn),
+  .admin-profile-update-poc__result :global(.profile-poc-hardening) {
     color: #b45309;
   }
   .admin-profile-update-poc__result :global(.profile-poc-snapshot),

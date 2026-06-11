@@ -1,5 +1,5 @@
 /**
- * G-6-d-auth-status-denied-fix — Auth / write gate debug panel (staging shell only).
+ * G-6-d-hardening — Auth / write gate debug panel (staging shell only).
  */
 
 import { getStagingAuthConfig } from "./staging-auth-config";
@@ -78,7 +78,7 @@ export async function refreshAuthWriteDebugPanel(): Promise<void> {
       resolution.status === "mock-denied"
     ) {
       authBlockers.push(
-        "signed-in email is not in mock allowlist — role is mock-only; confirm admin_users in Supabase SQL Editor",
+        "UI role is mock-only (not in example.com allowlist) — DB write authorization uses public.admin_users RLS",
       );
     }
     if (display.status === "unauthenticated") {
@@ -121,11 +121,28 @@ export async function refreshAuthWriteDebugPanel(): Promise<void> {
       "Write gate open in dry-run mode (Save simulates payload; no DB update)",
     );
   }
+  if (writeConfig.canWrite && !writeConfig.dryRun) {
+    disabledReasons.push(
+      "NON-DRY-RUN: Save will update staging DB — after test, restart with PUBLIC_ADMIN_WRITE_DRY_RUN=true",
+    );
+  }
 
   setText(
     "debug-disabled-reasons",
     disabledReasons.length > 0 ? disabledReasons.join(" | ") : "—",
   );
+
+  const hardeningNote = document.getElementById("debug-hardening-note");
+  if (hardeningNote) {
+    hardeningNote.hidden = false;
+    if (!writeConfig.dryRun && writeConfig.canWrite) {
+      hardeningNote.textContent =
+        "NON-DRY-RUN active. After any non-dry-run test, restart dev server with PUBLIC_ADMIN_WRITE_DRY_RUN=true.";
+    } else {
+      hardeningNote.textContent =
+        "G-6-d first non-dry-run: SUCCESS (recorded). Keep PUBLIC_ADMIN_WRITE_DRY_RUN=true for day-to-day staging.";
+    }
+  }
 }
 
 export function initAuthWriteDebugPanel(): void {

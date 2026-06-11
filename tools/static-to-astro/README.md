@@ -1390,6 +1390,13 @@ gosaki / Sariswing で実証した移行フローを、**別サイト向け CMS 
 
 **G-6-d-result-report（完了）:** [Staging profile non-dry-run result report](docs/staging-profile-non-dry-run-result-report.md) — first manual staging profile non-dry-run update **succeeded**; `public.profile` bio updated on `static-to-astro-cms-staging`; production not touched; `/admin` unconnected; `readyForG6E: false`; return to `PUBLIC_ADMIN_WRITE_DRY_RUN=true` after test; broader write expansion requires new approved planning phase.
 
+**G-6-d-hardening（完了）:** [Staging profile write hardening](docs/staging-profile-write-hardening.md) — `updated_by` NULL documented; UI role mock-only vs DB RLS; dry-run restore checklist; admin_users policy audit recommended; `readyForG6EPlanning: true`; `readyForG6EImplementation: false`; no additional DB writes.
+
+```bash
+node tools/static-to-astro/scripts/report-staging-profile-write-hardening.mjs \
+  --out-dir tools/static-to-astro/output/staging-profile-write-hardening/gosaki
+```
+
 ```bash
 node tools/static-to-astro/scripts/report-staging-profile-non-dry-run-result.mjs \
   --out-dir tools/static-to-astro/output/staging-profile-non-dry-run-result/gosaki

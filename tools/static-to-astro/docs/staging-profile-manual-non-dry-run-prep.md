@@ -40,6 +40,8 @@ readyForManualNonDryRunExecution: false
 
 **G-6-d-result-report（完了）:** [staging-profile-non-dry-run-result-report.md](./staging-profile-non-dry-run-result-report.md) — first manual staging non-dry-run update **succeeded**; `public.profile` bio updated; production not touched; `/admin` unconnected; `readyForG6E: false`; return to `PUBLIC_ADMIN_WRITE_DRY_RUN=true` after test.
 
+**G-6-d-hardening（完了）:** [staging-profile-write-hardening.md](./staging-profile-write-hardening.md) — hardening recorded; `updated_by` remains NULL; UI role mock-only; admin_users policy audit recommended; `readyForG6EPlanning: true`; `readyForG6EImplementation: false`.
+
 ## 3. Scope of first non-dry-run update
 
 ```txt

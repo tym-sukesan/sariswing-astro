@@ -28,7 +28,13 @@ const writeConfig = getStagingWriteConfig();
 
   <p class="admin-staging-profile-update-poc-overview__note">
     First limited write PoC — profile / single row / update-only / text-only.
-    Disabled by default. Requires explicit approval ID and env gates.
+    G-6-d first manual non-dry-run update succeeded (bio field). Hardening phase: no
+    additional writes by default. <code>updated_by</code> is not set by the adapter and
+    remains NULL until a future phase.
+  </p>
+  <p class="admin-staging-profile-update-poc-overview__hardening" role="note">
+    After any non-dry-run test, restart with <code>PUBLIC_ADMIN_WRITE_DRY_RUN=true</code>.
+    UI role is mock-only; DB authorization uses <code>public.admin_users</code> RLS.
   </p>
 
   <dl class="admin-staging-profile-update-poc-overview__meta">
@@ -72,6 +78,18 @@ const writeConfig = getStagingWriteConfig();
       <dt>Storage / Publish</dt>
       <dd>not connected</dd>
     </div>
+    <div>
+      <dt>G-6-d result</dt>
+      <dd>SUCCESS — 1 row bio update (recorded)</dd>
+    </div>
+    <div>
+      <dt>updated_by</dt>
+      <dd>NULL (not written by adapter)</dd>
+    </div>
+    <div>
+      <dt>readyForG6E</dt>
+      <dd>false — planning only</dd>
+    </div>
   </dl>
 
   {
@@ -99,9 +117,15 @@ const writeConfig = getStagingWriteConfig();
     color: #14532d;
   }
   .admin-staging-profile-update-poc-overview__note {
-    margin: 0 0 0.75rem;
+    margin: 0 0 0.35rem;
     font-size: 0.8125rem;
     color: #166534;
+    line-height: 1.45;
+  }
+  .admin-staging-profile-update-poc-overview__hardening {
+    margin: 0 0 0.75rem;
+    font-size: 0.8125rem;
+    color: #b45309;
     line-height: 1.45;
   }
   .admin-staging-profile-update-poc-overview__meta {

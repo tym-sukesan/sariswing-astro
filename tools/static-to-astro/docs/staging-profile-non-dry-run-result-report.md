@@ -229,6 +229,8 @@ Preferred order:
 G-6-d-hardening / RLS audit before G-6-e implementation
 ```
 
+**G-6-d-hardening（完了）:** [staging-profile-write-hardening.md](./staging-profile-write-hardening.md) — `updated_by` NULL documented; UI role mock-only vs DB RLS clarified; dry-run restore checklist; `readyForG6EPlanning: true`; `readyForG6EImplementation: false`; broader writes blocked.
+
 ## 14. Final safety statement
 
 ```txt

@@ -124,6 +124,8 @@ readyForG6E: false
 
 **G-6-d-result-report（完了）:** [staging-profile-non-dry-run-result-report.md](./staging-profile-non-dry-run-result-report.md) — after this fix, user signed in and completed first manual staging non-dry-run profile update; `public.profile` bio updated; production not touched; `/admin` unconnected; `readyForG6E: false`.
 
+**G-6-d-hardening（完了）:** [staging-profile-write-hardening.md](./staging-profile-write-hardening.md) — UI role mock-only vs DB RLS documented; Debug Panel copy improved; `readyForG6EImplementation: false`.
+
 ## Report
 
 ```bash

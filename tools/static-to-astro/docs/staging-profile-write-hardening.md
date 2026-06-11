@@ -230,6 +230,8 @@ additionalProfileUpdateExecuted: false
 
 **G-6-rls-grant-cleanup-plan（完了）:** [staging-rls-grant-cleanup-plan.md](./staging-rls-grant-cleanup-plan.md) — REVOKE/rollback draft; cleanup not executed; `readyForManualCleanupDecision: true`; `readyForG6EImplementation: false`.
 
+**G-6-rls-grant-cleanup-manual-apply-prep（完了）:** [staging-rls-grant-cleanup-manual-apply-prep.md](./staging-rls-grant-cleanup-manual-apply-prep.md) — final manual REVOKE SQL; `readyForManualCleanupApply: true`; user must apply in Supabase SQL Editor.
+
 Optional follow-up implementation phases (not this phase):
 
 ```txt

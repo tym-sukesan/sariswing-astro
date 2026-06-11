@@ -1398,6 +1398,13 @@ gosaki / Sariswing で実証した移行フローを、**別サイト向け CMS 
 
 **G-6-rls-grant-cleanup-plan（完了）:** [Staging RLS grant cleanup plan](docs/staging-rls-grant-cleanup-plan.md) — REVOKE/rollback SQL draft for TRUNCATE/TRIGGER/REFERENCES on key tables; **not executed**; `readyForManualCleanupDecision: true`; `readyForG6EImplementation: false`; no grant/policy changes by Cursor.
 
+**G-6-rls-grant-cleanup-manual-apply-prep（完了）:** [Staging RLS grant cleanup manual apply prep](docs/staging-rls-grant-cleanup-manual-apply-prep.md) — final manual REVOKE SQL for `static-to-astro-cms-staging`; `manualApplyPrepCreated: true`; `cleanupExecuted: false`; `readyForManualCleanupApply: true`; Cursor does not execute SQL; user must apply in Supabase SQL Editor.
+
+```bash
+node tools/static-to-astro/scripts/report-staging-rls-grant-cleanup-manual-apply-prep.mjs \
+  --out-dir tools/static-to-astro/output/staging-rls-grant-cleanup-manual-apply-prep/gosaki
+```
+
 ```bash
 node tools/static-to-astro/scripts/report-staging-rls-grant-cleanup-plan.mjs \
   --out-dir tools/static-to-astro/output/staging-rls-grant-cleanup-plan/gosaki

@@ -335,13 +335,15 @@ readyForG6EImplementation: still false until G-6-e-planning + approval
 ## 14. Recommended next phase
 
 ```txt
-Recommended next: G-6-rls-grant-cleanup-manual-apply-prep
+Recommended next: G-6-rls-grant-cleanup-manual-apply-prep — DONE (see staging-rls-grant-cleanup-manual-apply-prep.md)
 ```
+
+**G-6-rls-grant-cleanup-manual-apply-prep（完了）:** [staging-rls-grant-cleanup-manual-apply-prep.md](./staging-rls-grant-cleanup-manual-apply-prep.md) — final manual REVOKE SQL; `manualApplyPrepCreated: true`; `cleanupExecuted: false`; `readyForManualCleanupApply: true`; Cursor does not execute SQL; user must manually apply in Supabase SQL Editor.
 
 Then, with user approval:
 
 ```txt
-manual staging GRANT cleanup (user runs §7 draft in SQL Editor)
+manual staging GRANT cleanup (user runs REVOKE in SQL Editor per manual-apply-prep doc)
 ```
 
 Do **not** proceed to G-6-e implementation until:

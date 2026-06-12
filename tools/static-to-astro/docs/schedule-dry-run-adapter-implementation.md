@@ -114,7 +114,7 @@ Manual: open `/__admin-staging-shell/musician-basic/` with `ENABLE_ADMIN_STAGING
 
 ## 11. Recommended next phase
 
-**G-6-e3-schedule-dry-run-adapter-verification** — manual browser re-check + danger grep sign-off.
+**G-6-e3-schedule-dry-run-adapter-verification（完了）:** [schedule-dry-run-adapter-verification.md](./schedule-dry-run-adapter-verification.md) — static safety checks pass; manual browser checklist prepared; next: G-6-e3-schedule-dry-run-adapter-verification-result.
 
 Write implementation remains blocked (`readyForG6EWriteImplementation: false`).
 

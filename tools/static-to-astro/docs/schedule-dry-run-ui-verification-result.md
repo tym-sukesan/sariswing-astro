@@ -142,7 +142,9 @@ Purpose: Improve the dry-run UI and verification before write adapter planning.
 
 **G-6-e3-schedule-dry-run-adapter-planning（完了）:** Dry-run adapter boundary planned as pure functions with no DB client.
 
-**G-6-e3-schedule-dry-run-adapter-implementation（完了）:** [schedule-dry-run-adapter-implementation.md](./schedule-dry-run-adapter-implementation.md) — adapter implemented; UI routed through adapter; next: G-6-e3-schedule-dry-run-adapter-verification.
+**G-6-e3-schedule-dry-run-adapter-implementation（完了）:** [schedule-dry-run-adapter-implementation.md](./schedule-dry-run-adapter-implementation.md) — adapter implemented; UI routed through adapter.
+
+**G-6-e3-schedule-dry-run-adapter-verification（完了）:** [schedule-dry-run-adapter-verification.md](./schedule-dry-run-adapter-verification.md) — static safety checks pass; manual browser checklist prepared; next: G-6-e3-schedule-dry-run-adapter-verification-result.
 
 **Reason:** The UI scaffold is now visually verified. The next safe step is to define a dry-run adapter boundary so future write behavior remains isolated and gated.
 

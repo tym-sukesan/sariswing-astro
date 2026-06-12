@@ -409,10 +409,13 @@ Adapter implementation (next phase) remains **dry-run only** — no real writes.
 ```txt
 Recommended next:
 G-6-e3-schedule-dry-run-adapter-implementation — DONE (see schedule-dry-run-adapter-implementation.md)
-Next: G-6-e3-schedule-dry-run-adapter-verification
+G-6-e3-schedule-dry-run-adapter-verification — DONE (see schedule-dry-run-adapter-verification.md)
+Next: G-6-e3-schedule-dry-run-adapter-verification-result
 ```
 
-**G-6-e3-schedule-dry-run-adapter-implementation（完了）:** [schedule-dry-run-adapter-implementation.md](./schedule-dry-run-adapter-implementation.md) — pure dry-run adapter implemented; UI routed through adapter; `actualWrite: false` hard-coded; no DB client; write implementation remains blocked.
+**G-6-e3-schedule-dry-run-adapter-implementation（完了）:** [schedule-dry-run-adapter-implementation.md](./schedule-dry-run-adapter-implementation.md) — pure dry-run adapter implemented; UI routed through adapter; `actualWrite: false` hard-coded; no DB client.
+
+**G-6-e3-schedule-dry-run-adapter-verification（完了）:** [schedule-dry-run-adapter-verification.md](./schedule-dry-run-adapter-verification.md) — static checks pass; manual verification pending; write implementation remains blocked.
 
 ## 21. Final safety statement
 

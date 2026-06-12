@@ -1416,7 +1416,14 @@ gosaki / Sariswing で実証した移行フローを、**別サイト向け CMS 
 
 **G-6-e3-schedule-dry-run-adapter-planning（完了）:** [Schedule dry-run adapter planning](docs/schedule-dry-run-adapter-planning.md) — dry-run adapter boundary as pure functions with no DB client; `actualWrite: false` hard-coded; no generic mode flag with real write adapter.
 
-**G-6-e3-schedule-dry-run-adapter-implementation（完了）:** [Schedule dry-run adapter implementation](docs/schedule-dry-run-adapter-implementation.md) — pure dry-run adapter implemented; UI routed through adapter; no DB client; no real write adapter; next: G-6-e3-schedule-dry-run-adapter-verification; write implementation remains blocked.
+**G-6-e3-schedule-dry-run-adapter-implementation（完了）:** [Schedule dry-run adapter implementation](docs/schedule-dry-run-adapter-implementation.md) — pure dry-run adapter implemented; UI routed through adapter; no DB client; no real write adapter.
+
+**G-6-e3-schedule-dry-run-adapter-verification（完了）:** [Schedule dry-run adapter verification](docs/schedule-dry-run-adapter-verification.md) — static safety checks pass; manual browser checklist prepared; adapter-routed dry-run UI requires manual sign-off; next: G-6-e3-schedule-dry-run-adapter-verification-result; write implementation remains blocked.
+
+```bash
+node tools/static-to-astro/scripts/report-schedule-dry-run-adapter-verification.mjs \
+  --out-dir tools/static-to-astro/output/schedule-dry-run-adapter-verification/gosaki
+```
 
 ```bash
 node tools/static-to-astro/scripts/report-schedule-dry-run-adapter-implementation.mjs \

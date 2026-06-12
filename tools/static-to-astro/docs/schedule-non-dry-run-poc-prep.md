@@ -449,10 +449,11 @@ Target row and beforeSnapshot must be manually selected/captured before actual P
 
 ```txt
 Recommended next:
-G-6-e5-schedule-non-dry-run-poc-target-selection
+G-6-e5-schedule-non-dry-run-poc-target-selection — DONE (see schedule-non-dry-run-poc-target-selection.md)
+Next: G-6-e5-schedule-non-dry-run-poc-execution-prep
 ```
 
-Manual target row selection and beforeSnapshot capture on staging, recorded in a follow-up result doc.
+**G-6-e5-schedule-non-dry-run-poc-target-selection（完了）:** [schedule-non-dry-run-poc-target-selection.md](./schedule-non-dry-run-poc-target-selection.md) — selected target row `schedule-2026-07-010`; beforeSnapshot captured; final payload description only; rollback SQL finalized; ready for execution prep; actual non-dry-run execution remains blocked.
 
 ## 18. Final safety statement
 

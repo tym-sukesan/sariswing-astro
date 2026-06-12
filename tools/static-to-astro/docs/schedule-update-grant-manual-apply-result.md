@@ -177,6 +177,8 @@ This grant enables future admin-only update PoC, but does not by itself execute 
 
 **G-6-e5-schedule-non-dry-run-poc-prep（完了）:** [schedule-non-dry-run-poc-prep.md](./schedule-non-dry-run-poc-prep.md) — first non-dry-run PoC will target one existing schedule row only; planned field change: description only; target row still not selected; beforeSnapshot still not captured; rollback SQL prepared as template; actual non-dry-run execution remains blocked.
 
+**G-6-e5-schedule-non-dry-run-poc-target-selection（完了）:** [schedule-non-dry-run-poc-target-selection.md](./schedule-non-dry-run-poc-target-selection.md) — selected target row `schedule-2026-07-010`; beforeSnapshot captured; final payload description only; rollback SQL finalized; ready for execution prep; actual non-dry-run execution remains blocked.
+
 ## 12. Gate decision
 
 ```txt
@@ -204,7 +206,8 @@ Recommended next:
 G-6-e4-schedule-write-adapter-implementation — DONE (see schedule-write-adapter-implementation.md)
 G-6-e4-schedule-write-adapter-verification — DONE (see schedule-write-adapter-verification.md)
 G-6-e5-schedule-non-dry-run-poc-prep — DONE (see schedule-non-dry-run-poc-prep.md)
-Next: G-6-e5-schedule-non-dry-run-poc-target-selection
+G-6-e5-schedule-non-dry-run-poc-target-selection — DONE (see schedule-non-dry-run-poc-target-selection.md)
+Next: G-6-e5-schedule-non-dry-run-poc-execution-prep
 ```
 
 **G-6-e4-schedule-write-adapter-implementation（完了）:** Guarded update-only write adapter code added; not invoked; no UI connection; no schedule DB write in this phase.
@@ -212,6 +215,8 @@ Next: G-6-e5-schedule-non-dry-run-poc-target-selection
 **G-6-e4-schedule-write-adapter-verification（完了）:** Static isolation checks pass; write adapter verified; no schedule DB write; non-dry-run PoC remains blocked.
 
 **G-6-e5-schedule-non-dry-run-poc-prep（完了）:** PoC prep documented; description-only payload plan; target row and beforeSnapshot pending manual selection.
+
+**G-6-e5-schedule-non-dry-run-poc-target-selection（完了）:** Target row `schedule-2026-07-010` selected; beforeSnapshot and rollback SQL finalized.
 
 ## 14. Final safety statement
 

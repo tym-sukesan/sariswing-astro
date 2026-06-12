@@ -544,8 +544,8 @@ Do not merge guard modules with a shared `dryRun` boolean.
 
 ```txt
 readyForG6E4ScheduleWriteAdapterPlanning: true (this document)
-readyForG6E4ScheduleWriteAdapterImplementationPlanning: false until this doc is reviewed
-readyForG6E4ScheduleUpdateGrantPrep: false until implementation planning completes
+readyForG6E4ScheduleWriteAdapterImplementationPlanning: true (see schedule-write-adapter-implementation-planning.md)
+readyForG6E4ScheduleUpdateGrantPrep: true
 readyForG6EWriteImplementation: false
 readyForNonDryRunSchedulePoC: false
 writeAdaptersImplemented: false
@@ -560,21 +560,13 @@ Write adapter **implementation** and any **GRANT/RLS change** remain blocked aft
 
 ```txt
 Recommended next:
-G-6-e4-schedule-write-adapter-implementation-planning
+G-6-e4-schedule-write-adapter-implementation-planning — DONE (see schedule-write-adapter-implementation-planning.md)
+Next: G-6-e4-schedule-update-grant-prep
 ```
 
-**Scope of next phase (still planning / design — no DB writes):**
+**G-6-e4-schedule-write-adapter-implementation-planning（完了）:** [schedule-write-adapter-implementation-planning.md](./schedule-write-adapter-implementation-planning.md) — update-only write adapter types/guards/signatures finalized; beforeSnapshot and rollback required; UPDATE grant review required; recommended next: grant prep; write implementation remains blocked.
 
-```txt
-- finalize write adapter function signatures and guard tests
-- define static verification checklist for write adapter scaffold
-- confirm grant prep SQL and manual apply checklist
-- confirm pre-seeded row selection process (local only, not committed)
-- still no ScheduleWriteAdapter DB calls
-- still no GRANT/RLS execution
-```
-
-**Later sequence (after implementation planning):**
+**Later sequence:**
 
 ```txt
 G-6-e4-schedule-update-grant-prep — manual GRANT review/apply (user in SQL Editor)

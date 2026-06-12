@@ -245,7 +245,8 @@ Never skip: local preview and customer demo before runtime shell; read-only befo
 | **G-6-e3-schedule-dry-run-adapter-verification（完了）** | [Adapter verification](./schedule-dry-run-adapter-verification.md) | Static checks pass |
 | **G-6-e3-schedule-dry-run-adapter-verification-result（完了）** | [Verification result](./schedule-dry-run-adapter-verification-result.md) | Manual pass; dry-run adapter verified |
 | **G-6-e4-schedule-write-adapter-planning（完了）** | [Write adapter planning](./schedule-write-adapter-planning.md) | Real write adapter boundary; update-only first PoC; planning only |
-| **G-6-e** | Schedule write (staging) | Blocked — grant prep + write adapter implementation + PoC approval |
+| **G-6-e4-schedule-write-adapter-implementation-planning（完了）** | [Implementation planning](./schedule-write-adapter-implementation-planning.md) | Types/guards/signatures; grant prep next; write blocked |
+| **G-6-e** | Schedule write (staging) | Blocked — grant prep, then write adapter implementation, then PoC |
 | **G-5y-e** | Role check / allowlist | Staging Auth |
 
 **Purpose (overall):** Staging admin login only — after shell QA on `/__admin-staging-shell/musician-basic/`.

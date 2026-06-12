@@ -1,0 +1,370 @@
+---
+/**
+ * G-6-e2 — Staging shell schedule dry-run PoC (dry-run only; no DB writes).
+ */
+import implConfig from "../../../../config/admin/schedule-dry-run-ui-scaffold.json";
+import AdminCard from "../../components/AdminCard.astro";
+import AdminFormField from "../../components/AdminFormField.astro";
+import { getStagingScheduleDryRunConfig } from "../../../../../../src/lib/admin/staging-write/staging-schedule-dry-run-config";
+
+interface Props {
+  phase?: string;
+}
+
+const { phase = implConfig.phase } = Astro.props;
+const dryRunConfig = getStagingScheduleDryRunConfig();
+const uiDisabled = !dryRunConfig.enabled;
+---
+
+<section
+  id="schedule-dry-run-poc-root"
+  class="admin-staging-schedule-dry-run-poc"
+  data-scaffold="true"
+  data-phase={phase}
+  data-approval-id={implConfig.approvalId ?? dryRunConfig.approvalId}
+  role="region"
+  aria-label="G-6-e2 staging schedule dry-run PoC"
+>
+  <h2 class="admin-staging-schedule-dry-run-poc__title">
+    Schedule dry-run PoC
+  </h2>
+
+  <p class="admin-staging-schedule-dry-run-poc__note">
+    G-6-e2 — update dry-run + duplicate dry-run only. SELECT read or mock fallback.
+    No INSERT, UPDATE, DELETE, or <code>schedule_months</code> write. Not connected to
+    <code>/admin/</code>.
+  </p>
+
+  {
+    dryRunConfig.disabledReason ? (
+      <p class="admin-staging-schedule-dry-run-poc__disabled" role="note">
+        Disabled: {dryRunConfig.disabledReason}
+      </p>
+    ) : null
+  }
+
+  <dl class="admin-staging-schedule-dry-run-poc__meta">
+    <div>
+      <dt>Phase</dt>
+      <dd>{phase}</dd>
+    </div>
+    <div>
+      <dt>Approval ID</dt>
+      <dd>{dryRunConfig.approvalId}</dd>
+    </div>
+    <div>
+      <dt>Data source</dt>
+      <dd id="schedule-dry-run-data-source">—</dd>
+    </div>
+    <div>
+      <dt>Selected schedule</dt>
+      <dd id="schedule-dry-run-selected-id">—</dd>
+    </div>
+  </dl>
+
+  <p id="schedule-dry-run-read-notice" class="admin-staging-schedule-dry-run-poc__read-notice" hidden />
+
+  <div class="admin-staging-schedule-dry-run-poc__grid">
+    <AdminCard title="Upcoming schedules">
+      <p class="schedule-dry-run-list__count">Count: <span id="schedule-dry-run-upcoming-count">0</span></p>
+      <ul id="schedule-dry-run-upcoming-list" class="schedule-dry-run-list" aria-label="Upcoming schedules" />
+    </AdminCard>
+
+    <AdminCard title="Past schedules">
+      <p class="schedule-dry-run-list__count">Count: <span id="schedule-dry-run-past-count">0</span></p>
+      <ul id="schedule-dry-run-past-list" class="schedule-dry-run-list" aria-label="Past schedules" />
+    </AdminCard>
+  </div>
+
+  <AdminCard title="Edit selected schedule" description="Dry-run form — changes are not persisted.">
+    <div class="schedule-dry-run-form">
+      <div class="schedule-dry-run-form__editable">
+        <AdminFormField label="Date" help="Required. YYYY-MM-DD.">
+          <input id="schedule-dry-run-date" type="date" disabled={uiDisabled} />
+        </AdminFormField>
+        <AdminFormField label="Title">
+          <input id="schedule-dry-run-title" type="text" disabled={uiDisabled} />
+        </AdminFormField>
+        <AdminFormField label="Venue">
+          <input id="schedule-dry-run-venue" type="text" disabled={uiDisabled} />
+        </AdminFormField>
+        <AdminFormField label="Open time">
+          <input id="schedule-dry-run-open-time" type="text" disabled={uiDisabled} />
+        </AdminFormField>
+        <AdminFormField label="Start time">
+          <input id="schedule-dry-run-start-time" type="text" disabled={uiDisabled} />
+        </AdminFormField>
+        <AdminFormField label="Price">
+          <input id="schedule-dry-run-price" type="text" disabled={uiDisabled} />
+        </AdminFormField>
+        <AdminFormField label="Description">
+          <textarea id="schedule-dry-run-description" rows="3" disabled={uiDisabled} />
+        </AdminFormField>
+        <label class="schedule-dry-run-form__checkbox">
+          <input id="schedule-dry-run-published" type="checkbox" disabled={uiDisabled} />
+          Published
+        </label>
+        <label class="schedule-dry-run-form__checkbox">
+          <input id="schedule-dry-run-show-on-home" type="checkbox" disabled={uiDisabled} />
+          Show on home
+        </label>
+        <AdminFormField label="Home order" help="Integer or empty.">
+          <input id="schedule-dry-run-home-order" type="text" disabled={uiDisabled} />
+        </AdminFormField>
+        <AdminFormField label="Sort order" help="Integer or empty.">
+          <input id="schedule-dry-run-sort-order" type="text" disabled={uiDisabled} />
+        </AdminFormField>
+      </div>
+
+      <dl class="schedule-dry-run-form__readonly">
+        <div><dt>id</dt><dd id="schedule-dry-run-readonly-id">—</dd></div>
+        <div><dt>legacy_id</dt><dd id="schedule-dry-run-readonly-legacy-id">—</dd></div>
+        <div><dt>year</dt><dd id="schedule-dry-run-readonly-year">—</dd></div>
+        <div><dt>month</dt><dd id="schedule-dry-run-readonly-month">—</dd></div>
+        <div><dt>source_file</dt><dd id="schedule-dry-run-readonly-source-file">—</dd></div>
+        <div><dt>source_route</dt><dd id="schedule-dry-run-readonly-source-route">—</dd></div>
+        <div><dt>created_at</dt><dd id="schedule-dry-run-readonly-created-at">—</dd></div>
+        <div><dt>updated_at</dt><dd id="schedule-dry-run-readonly-updated-at">—</dd></div>
+      </dl>
+    </div>
+
+    <div class="schedule-dry-run-form__actions">
+      <button
+        id="schedule-dry-run-update-btn"
+        class="admin-button"
+        type="button"
+        disabled={uiDisabled}
+        title="Dry-run — no Supabase schedule update"
+      >
+        Update dry-run
+      </button>
+      <button
+        id="schedule-dry-run-duplicate-form-btn"
+        class="admin-button admin-button--secondary"
+        type="button"
+        disabled={uiDisabled}
+        title="Dry-run — no Supabase schedule insert"
+      >
+        Duplicate dry-run
+      </button>
+    </div>
+  </AdminCard>
+
+  <AdminCard title="Dry-run result" description="Payload preview and validation — no DB write.">
+    <div id="schedule-dry-run-result" class="schedule-dry-run-result" aria-live="polite" />
+  </AdminCard>
+
+  <AdminCard title="Schedule safety flags">
+    <dl class="admin-staging-schedule-dry-run-poc__safety">
+      <div><dt>Schedule dry-run only</dt><dd id="schedule-dry-run-safety-dry-run-only">true</dd></div>
+      <div><dt>Schedule write adapter implemented</dt><dd id="schedule-dry-run-safety-write-adapter">false</dd></div>
+      <div><dt>Schedule DB writes performed</dt><dd id="schedule-dry-run-safety-db-writes">false</dd></div>
+      <div><dt>Schedule months mode</dt><dd id="schedule-dry-run-safety-months-mode">read_only_derived_model</dd></div>
+      <div><dt>Delete enabled</dt><dd id="schedule-dry-run-safety-delete">false</dd></div>
+      <div><dt>Non-dry-run enabled</dt><dd id="schedule-dry-run-safety-non-dry-run">false</dd></div>
+    </dl>
+  </AdminCard>
+</section>
+
+<script>
+  import "../../../../../../src/lib/admin/staging-write/staging-schedule-dry-run-ui.ts";
+</script>
+
+<style>
+  .admin-staging-schedule-dry-run-poc {
+    margin: 0 0 1.5rem;
+    padding: 1rem 1.25rem;
+    border: 1px solid #bae6fd;
+    border-radius: 8px;
+    background: #f0f9ff;
+  }
+  .admin-staging-schedule-dry-run-poc__title {
+    margin: 0 0 0.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #0c4a6e;
+  }
+  .admin-staging-schedule-dry-run-poc__note {
+    margin: 0 0 0.75rem;
+    font-size: 0.8125rem;
+    color: #0369a1;
+    line-height: 1.45;
+  }
+  .admin-staging-schedule-dry-run-poc__disabled {
+    margin: 0 0 0.75rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    background: #fff7ed;
+    border: 1px solid #fed7aa;
+    color: #9a3412;
+    font-size: 0.8125rem;
+  }
+  .admin-staging-schedule-dry-run-poc__read-notice {
+    margin: 0 0 0.75rem;
+    font-size: 0.8125rem;
+    color: #b45309;
+  }
+  .admin-staging-schedule-dry-run-poc__meta,
+  .admin-staging-schedule-dry-run-poc__safety {
+    margin: 0 0 1rem;
+    display: grid;
+    gap: 0.35rem 1rem;
+    grid-template-columns: max-content 1fr;
+    font-size: 0.8125rem;
+  }
+  .admin-staging-schedule-dry-run-poc__meta dt,
+  .admin-staging-schedule-dry-run-poc__safety dt {
+    font-weight: 600;
+    color: #0369a1;
+  }
+  .admin-staging-schedule-dry-run-poc__meta dd,
+  .admin-staging-schedule-dry-run-poc__safety dd {
+    margin: 0;
+    font-family: ui-monospace, monospace;
+    color: #0c4a6e;
+    word-break: break-all;
+  }
+  .admin-staging-schedule-dry-run-poc__grid {
+    display: grid;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+  @media (min-width: 768px) {
+    .admin-staging-schedule-dry-run-poc__grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  .schedule-dry-run-list__count {
+    margin: 0 0 0.5rem;
+    font-size: 0.8125rem;
+    color: #64748b;
+  }
+  .schedule-dry-run-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .schedule-dry-run-list__item {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #e2e8f0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+  .schedule-dry-run-list__item.is-selected {
+    background: #e0f2fe;
+    border-radius: 4px;
+    padding: 0.5rem;
+  }
+  .schedule-dry-run-list__main {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem 0.75rem;
+    align-items: center;
+    font-size: 0.8125rem;
+  }
+  .schedule-dry-run-list__date {
+    font-family: ui-monospace, monospace;
+    color: #475569;
+  }
+  .schedule-dry-run-list__actions {
+    display: flex;
+    gap: 0.35rem;
+    flex-shrink: 0;
+  }
+  .schedule-dry-run-badge {
+    display: inline-block;
+    padding: 0.1rem 0.35rem;
+    border-radius: 4px;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+  .schedule-dry-run-badge--published {
+    background: #dcfce7;
+    color: #166534;
+  }
+  .schedule-dry-run-badge--draft {
+    background: #f1f5f9;
+    color: #64748b;
+  }
+  .schedule-dry-run-badge--home {
+    background: #fef3c7;
+    color: #92400e;
+  }
+  .schedule-dry-run-list__empty {
+    font-size: 0.8125rem;
+    color: #64748b;
+    padding: 0.5rem 0;
+  }
+  .schedule-dry-run-form__editable {
+    margin-bottom: 1rem;
+  }
+  .schedule-dry-run-form__checkbox {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin: 0.35rem 0;
+    font-size: 0.875rem;
+  }
+  .schedule-dry-run-form__readonly {
+    margin: 0;
+    display: grid;
+    gap: 0.25rem 0.75rem;
+    grid-template-columns: max-content 1fr;
+    font-size: 0.75rem;
+    padding: 0.75rem;
+    background: #f8fafc;
+    border-radius: 6px;
+  }
+  .schedule-dry-run-form__readonly dt {
+    font-weight: 600;
+    color: #64748b;
+  }
+  .schedule-dry-run-form__readonly dd {
+    margin: 0;
+    font-family: ui-monospace, monospace;
+    word-break: break-all;
+  }
+  .schedule-dry-run-form__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+  }
+  .schedule-dry-run-result {
+    font-size: 0.8125rem;
+    color: #334155;
+  }
+  .schedule-dry-run-result__valid {
+    color: #166534;
+  }
+  .schedule-dry-run-result__invalid {
+    color: #b45309;
+  }
+  .schedule-dry-run-result__meta {
+    margin: 0.5rem 0;
+    display: grid;
+    gap: 0.25rem 0.75rem;
+    grid-template-columns: max-content 1fr;
+  }
+  .schedule-dry-run-result__meta dt {
+    font-weight: 600;
+  }
+  .schedule-dry-run-result__meta dd {
+    margin: 0;
+    font-family: ui-monospace, monospace;
+  }
+  .schedule-dry-run-result__payload {
+    margin: 0.75rem 0 0;
+    padding: 0.75rem;
+    background: #1e293b;
+    color: #e2e8f0;
+    border-radius: 6px;
+    overflow-x: auto;
+    font-size: 0.75rem;
+    max-height: 20rem;
+  }
+</style>

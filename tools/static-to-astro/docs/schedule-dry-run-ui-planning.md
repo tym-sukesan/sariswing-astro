@@ -473,23 +473,18 @@ readyForG6EImplementation: false
 ## 18. Recommended next phase
 
 ```txt
-Recommended next: G-6-e2-schedule-dry-run-ui-scaffold
+Recommended next: G-6-e2-schedule-dry-run-ui-scaffold — DONE (see schedule-dry-run-ui-scaffold.md)
+Next: G-6-e2-schedule-dry-run-ui-verification
 ```
 
-**Important:**
-
-```txt
-This next phase should implement UI scaffold and dry-run-only behavior.
-It must not perform database writes.
-Default PUBLIC_ADMIN_WRITE_DRY_RUN=true must remain.
-```
+**G-6-e2-schedule-dry-run-ui-scaffold（完了）:** [schedule-dry-run-ui-scaffold.md](./schedule-dry-run-ui-scaffold.md) — Schedule dry-run UI scaffold in staging shell; update + duplicate dry-run only; no delete; no `schedule_months` write; no schema migration; no DB write; write implementation remains blocked.
 
 ## 19. Final safety statement
 
 ```txt
-This phase is planning only.
-No Schedule UI is implemented.
-No schedule records are written.
+This phase was planning only.
+UI scaffold is implemented in a separate phase (G-6-e2-schedule-dry-run-ui-scaffold).
+No schedule records are written by the scaffold.
 No schema is changed.
 No production data is touched.
 No /admin route is connected.

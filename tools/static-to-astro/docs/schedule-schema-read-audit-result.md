@@ -355,15 +355,11 @@ Not for first MVP dry-run implementation.
 Recommended next: G-6-e2-schedule-dry-run-ui-planning — DONE (see schedule-dry-run-ui-planning.md)
 ```
 
-**G-6-e2-schedule-dry-run-ui-planning（完了）:** [schedule-dry-run-ui-planning.md](./schedule-dry-run-ui-planning.md) — update + duplicate dry-run first; delete excluded; `schedule_months` read-only; SELECT-only grants sufficient; next: G-6-e2-schedule-dry-run-ui-scaffold.
+**G-6-e2-schedule-dry-run-ui-planning（完了）:** [schedule-dry-run-ui-planning.md](./schedule-dry-run-ui-planning.md) — update + duplicate dry-run first; delete excluded; `schedule_months` read-only; SELECT-only grants sufficient.
 
-Alternative before scaffold:
+**G-6-e2-schedule-dry-run-ui-scaffold（完了）:** [schedule-dry-run-ui-scaffold.md](./schedule-dry-run-ui-scaffold.md) — Schedule dry-run UI in staging shell; update + duplicate dry-run only; no DB write; next: G-6-e2-schedule-dry-run-ui-verification.
 
-```txt
-G-6-e2-schedule-dry-run-ui-scaffold-planning
-```
-
-G-6-e write implementation remains blocked until dry-run scaffold and separate approval.
+G-6-e write implementation remains blocked until dry-run verification and separate approval.
 
 ## 13. Final safety statement
 

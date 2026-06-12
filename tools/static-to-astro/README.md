@@ -1408,7 +1408,14 @@ gosaki / Sariswing で実証した移行フローを、**別サイト向け CMS 
 
 **G-6-e1-schedule-schema-read-audit-result（完了）:** [Schedule schema read audit result](docs/schedule-schema-read-audit-result.md) — manual SQL collected; `schemaStatus: schema_compatible_for_mvp`; `schedule_months` derived/read model; future/past grouping via `date`; no schema migration before dry-run UI.
 
-**G-6-e2-schedule-dry-run-ui-planning（完了）:** [Schedule dry-run UI planning](docs/schedule-dry-run-ui-planning.md) — update + duplicate dry-run first; delete and `schedule_months` write excluded; SELECT-only grants sufficient; **planning only**; next: G-6-e2-schedule-dry-run-ui-scaffold.
+**G-6-e2-schedule-dry-run-ui-planning（完了）:** [Schedule dry-run UI planning](docs/schedule-dry-run-ui-planning.md) — update + duplicate dry-run first; delete and `schedule_months` write excluded; SELECT-only grants sufficient; **planning only**.
+
+**G-6-e2-schedule-dry-run-ui-scaffold（完了）:** [Schedule dry-run UI scaffold](docs/schedule-dry-run-ui-scaffold.md) — staging shell UI; update + duplicate dry-run only; no delete; no `schedule_months` write; no schema migration; no DB write; next: G-6-e2-schedule-dry-run-ui-verification; write implementation remains blocked.
+
+```bash
+node tools/static-to-astro/scripts/report-schedule-dry-run-ui-scaffold.mjs \
+  --out-dir tools/static-to-astro/output/schedule-dry-run-ui-scaffold/gosaki
+```
 
 ```bash
 node tools/static-to-astro/scripts/report-schedule-dry-run-ui-planning.mjs \

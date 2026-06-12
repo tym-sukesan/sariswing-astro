@@ -37,7 +37,8 @@
 - **G-6-e1-schedule-schema-read-audit（完了）:** [schedule-schema-read-audit.md](../schedule-schema-read-audit.md) — read-only schema audit plan; manual SQL required
 - **G-6-e1-schedule-schema-read-audit-result（完了）:** [schedule-schema-read-audit-result.md](../schedule-schema-read-audit-result.md) — MVP compatible; no schema migration before dry-run UI
 - **G-6-e2-schedule-dry-run-ui-planning（完了）:** [schedule-dry-run-ui-planning.md](../schedule-dry-run-ui-planning.md) — update + duplicate dry-run; write blocked
-- 次: G-6-e2-schedule-dry-run-ui-scaffold（dry-run only; 実装）
+- **G-6-e2-schedule-dry-run-ui-scaffold（完了）:** [schedule-dry-run-ui-scaffold.md](../schedule-dry-run-ui-scaffold.md) — staging shell dry-run UI; no DB write; write blocked
+- 次: G-6-e2-schedule-dry-run-ui-verification
 
 ## Option B: customer-specific schema mapping
 
@@ -90,7 +91,8 @@ G-6-e-planning-schedule-cms: Schedule CMS planning (done; no implementation)
 G-6-e1-schedule-schema-read-audit: read-only schema audit plan (done)
 G-6-e1-schedule-schema-read-audit-result: manual SQL collected; MVP compatible (done)
 G-6-e2-schedule-dry-run-ui-planning: dry-run UI planning (done)
-G-6-e2-schedule-dry-run-ui-scaffold: next (dry-run UI only)
+G-6-e2-schedule-dry-run-ui-scaffold: dry-run UI scaffold in staging shell (done)
+G-6-e2-schedule-dry-run-ui-verification: next
 G-6-e: schedule write implementation (blocked — readyForG6EImplementation false)
 ```
 

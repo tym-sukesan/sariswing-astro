@@ -25,6 +25,7 @@ import AdminStagingAuthWriteDebugPanel from "../auth/components/AdminStagingAuth
 import AdminStagingReadOnlyDataSection from "../data/components/AdminStagingReadOnlyDataSection.astro";
 import AdminStagingDisabledWriteActionsSection from "../data/components/AdminStagingDisabledWriteActionsSection.astro";
 import AdminStagingProfileUpdatePocSection from "../data/components/AdminStagingProfileUpdatePocSection.astro";
+import AdminStagingScheduleDryRunPocSection from "../data/components/AdminStagingScheduleDryRunPocSection.astro";
 import { getStagingAuthConfig } from "../../../../../src/lib/admin/staging-auth/staging-auth-config";
 import {
   getStagingShellServerGateSnapshot,
@@ -338,6 +339,17 @@ const moduleSummary = [
           data-section="profile-update-poc-shell"
         >
           <AdminStagingProfileUpdatePocSection phase="G-6-d" />
+        </section>
+      ) : null
+    }
+    {
+      stagingShellMode ? (
+        <section
+          id="schedule-dry-run-poc-shell-section"
+          class="admin-prototype-section admin-staging-schedule-dry-run-poc-section"
+          data-section="schedule-dry-run-poc-shell"
+        >
+          <AdminStagingScheduleDryRunPocSection phase="G-6-e2-schedule-dry-run-ui-scaffold" />
         </section>
       ) : null
     }

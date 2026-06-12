@@ -238,8 +238,9 @@ Never skip: local preview and customer demo before runtime shell; read-only befo
 | **G-6-e1-schedule-schema-read-audit（完了）** | [Schedule schema read audit](./schedule-schema-read-audit.md) | Read-only audit plan; manual SQL |
 | **G-6-e1-schedule-schema-read-audit-result（完了）** | [Schema audit result](./schedule-schema-read-audit-result.md) | MVP compatible; derived `schedule_months` |
 | **G-6-e2-schedule-dry-run-ui-planning（完了）** | [Dry-run UI planning](./schedule-dry-run-ui-planning.md) | Update + duplicate dry-run |
-| **G-6-e2-schedule-dry-run-ui-scaffold（完了）** | [Dry-run UI scaffold](./schedule-dry-run-ui-scaffold.md) | Staging shell UI; dry-run only; next: verification |
-| **G-6-e** | Schedule write (staging) | Blocked — verification + write phases + approval |
+| **G-6-e2-schedule-dry-run-ui-scaffold（完了）** | [Dry-run UI scaffold](./schedule-dry-run-ui-scaffold.md) | Staging shell UI; dry-run only |
+| **G-6-e2-schedule-dry-run-ui-verification-result（完了）** | [Verification result](./schedule-dry-run-ui-verification-result.md) | Manual browser check passed; next: adapter planning |
+| **G-6-e** | Schedule write (staging) | Blocked — adapter planning + write phases + approval |
 | **G-5y-e** | Role check / allowlist | Staging Auth |
 
 **Purpose (overall):** Staging admin login only — after shell QA on `/__admin-staging-shell/musician-basic/`.

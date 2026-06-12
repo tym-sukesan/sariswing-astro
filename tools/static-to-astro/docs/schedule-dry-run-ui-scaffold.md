@@ -126,7 +126,9 @@ node tools/static-to-astro/scripts/report-schedule-dry-run-ui-scaffold.mjs \
 
 ## 10. Recommended next phase
 
-**G-6-e2-schedule-dry-run-ui-verification** — manual browser verification, danger grep, and gate sign-off before any write implementation planning.
+**G-6-e2-schedule-dry-run-ui-verification** — DONE (see [schedule-dry-run-ui-verification-result.md](./schedule-dry-run-ui-verification-result.md)).
+
+**G-6-e2-schedule-dry-run-ui-verification-result（完了）:** Manual browser verification passed; verified local URL used port `4322`; update + duplicate dry-run visually verified; delete and non-dry-run remain excluded; no DB write; no schema change; next: **G-6-e3-schedule-dry-run-adapter-planning**.
 
 Write implementation remains blocked (`readyForG6EWriteImplementation: false`).
 

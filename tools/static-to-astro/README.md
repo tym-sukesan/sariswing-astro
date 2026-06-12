@@ -1410,7 +1410,14 @@ gosaki / Sariswing で実証した移行フローを、**別サイト向け CMS 
 
 **G-6-e2-schedule-dry-run-ui-planning（完了）:** [Schedule dry-run UI planning](docs/schedule-dry-run-ui-planning.md) — update + duplicate dry-run first; delete and `schedule_months` write excluded; SELECT-only grants sufficient; **planning only**.
 
-**G-6-e2-schedule-dry-run-ui-scaffold（完了）:** [Schedule dry-run UI scaffold](docs/schedule-dry-run-ui-scaffold.md) — staging shell UI; update + duplicate dry-run only; no delete; no `schedule_months` write; no schema migration; no DB write; next: G-6-e2-schedule-dry-run-ui-verification; write implementation remains blocked.
+**G-6-e2-schedule-dry-run-ui-scaffold（完了）:** [Schedule dry-run UI scaffold](docs/schedule-dry-run-ui-scaffold.md) — staging shell UI; update + duplicate dry-run only; no delete; no `schedule_months` write; no schema migration; no DB write.
+
+**G-6-e2-schedule-dry-run-ui-verification-result（完了）:** [Schedule dry-run UI verification result](docs/schedule-dry-run-ui-verification-result.md) — manual browser verification passed; verified local URL used port `4322`; update + duplicate dry-run verified; delete and non-dry-run remain excluded; no DB write; no schema change; next: G-6-e3-schedule-dry-run-adapter-planning; write implementation remains blocked.
+
+```bash
+node tools/static-to-astro/scripts/report-schedule-dry-run-ui-verification-result.mjs \
+  --out-dir tools/static-to-astro/output/schedule-dry-run-ui-verification-result/gosaki
+```
 
 ```bash
 node tools/static-to-astro/scripts/report-schedule-dry-run-ui-scaffold.mjs \

@@ -357,9 +357,11 @@ Recommended next: G-6-e2-schedule-dry-run-ui-planning — DONE (see schedule-dry
 
 **G-6-e2-schedule-dry-run-ui-planning（完了）:** [schedule-dry-run-ui-planning.md](./schedule-dry-run-ui-planning.md) — update + duplicate dry-run first; delete excluded; `schedule_months` read-only; SELECT-only grants sufficient.
 
-**G-6-e2-schedule-dry-run-ui-scaffold（完了）:** [schedule-dry-run-ui-scaffold.md](./schedule-dry-run-ui-scaffold.md) — Schedule dry-run UI in staging shell; update + duplicate dry-run only; no DB write; next: G-6-e2-schedule-dry-run-ui-verification.
+**G-6-e2-schedule-dry-run-ui-scaffold（完了）:** [schedule-dry-run-ui-scaffold.md](./schedule-dry-run-ui-scaffold.md) — Schedule dry-run UI in staging shell; update + duplicate dry-run only; no DB write.
 
-G-6-e write implementation remains blocked until dry-run verification and separate approval.
+**G-6-e2-schedule-dry-run-ui-verification-result（完了）:** [schedule-dry-run-ui-verification-result.md](./schedule-dry-run-ui-verification-result.md) — Manual browser verification passed; port `4322`; next: G-6-e3-schedule-dry-run-adapter-planning.
+
+G-6-e write implementation remains blocked until adapter planning and separate approval.
 
 ## 13. Final safety statement
 

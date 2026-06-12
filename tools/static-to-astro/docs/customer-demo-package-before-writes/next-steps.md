@@ -38,7 +38,8 @@
 - **G-6-e1-schedule-schema-read-audit-result（完了）:** [schedule-schema-read-audit-result.md](../schedule-schema-read-audit-result.md) — MVP compatible; no schema migration before dry-run UI
 - **G-6-e2-schedule-dry-run-ui-planning（完了）:** [schedule-dry-run-ui-planning.md](../schedule-dry-run-ui-planning.md) — update + duplicate dry-run; write blocked
 - **G-6-e2-schedule-dry-run-ui-scaffold（完了）:** [schedule-dry-run-ui-scaffold.md](../schedule-dry-run-ui-scaffold.md) — staging shell dry-run UI; no DB write; write blocked
-- 次: G-6-e2-schedule-dry-run-ui-verification
+- **G-6-e2-schedule-dry-run-ui-verification-result（完了）:** [schedule-dry-run-ui-verification-result.md](../schedule-dry-run-ui-verification-result.md) — manual browser verification passed; port 4322; write blocked
+- 次: G-6-e3-schedule-dry-run-adapter-planning
 
 ## Option B: customer-specific schema mapping
 
@@ -92,7 +93,8 @@ G-6-e1-schedule-schema-read-audit: read-only schema audit plan (done)
 G-6-e1-schedule-schema-read-audit-result: manual SQL collected; MVP compatible (done)
 G-6-e2-schedule-dry-run-ui-planning: dry-run UI planning (done)
 G-6-e2-schedule-dry-run-ui-scaffold: dry-run UI scaffold in staging shell (done)
-G-6-e2-schedule-dry-run-ui-verification: next
+G-6-e2-schedule-dry-run-ui-verification-result: manual browser verification (done)
+G-6-e3-schedule-dry-run-adapter-planning: next
 G-6-e: schedule write implementation (blocked — readyForG6EImplementation false)
 ```
 

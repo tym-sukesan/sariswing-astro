@@ -161,10 +161,11 @@ Write implementation is **not** approved by this phase. The next step is **plann
 
 ```txt
 Recommended next:
-G-6-e4-schedule-write-adapter-planning
+G-6-e4-schedule-write-adapter-planning — DONE (see schedule-write-adapter-planning.md)
+Next: G-6-e4-schedule-write-adapter-implementation-planning
 ```
 
-**Purpose:** Plan the real schedule write adapter separately from the dry-run adapter. This phase should still be planning only and must include RLS/GRANT review, rollback plan, non-dry-run approval ID, and staging-only PoC boundaries.
+**G-6-e4-schedule-write-adapter-planning（完了）:** [schedule-write-adapter-planning.md](./schedule-write-adapter-planning.md) — real write adapter boundary planned; update-only first PoC; dry-run separation; RLS/GRANT review recorded; rollback and approval IDs defined; planning only — no write adapter implemented.
 
 ## 12. Final safety statement
 

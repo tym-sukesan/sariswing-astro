@@ -411,12 +411,15 @@ Recommended next:
 G-6-e3-schedule-dry-run-adapter-implementation — DONE (see schedule-dry-run-adapter-implementation.md)
 G-6-e3-schedule-dry-run-adapter-verification — DONE (see schedule-dry-run-adapter-verification.md)
 G-6-e3-schedule-dry-run-adapter-verification-result — DONE (see schedule-dry-run-adapter-verification-result.md)
-Next: G-6-e4-schedule-write-adapter-planning
+Next: G-6-e4-schedule-write-adapter-planning — DONE (see schedule-write-adapter-planning.md)
+Next after write planning: G-6-e4-schedule-write-adapter-implementation-planning
 ```
 
 **G-6-e3-schedule-dry-run-adapter-implementation（完了）:** [schedule-dry-run-adapter-implementation.md](./schedule-dry-run-adapter-implementation.md) — pure dry-run adapter implemented; UI routed through adapter; `actualWrite: false` hard-coded; no DB client.
 
 **G-6-e3-schedule-dry-run-adapter-verification-result（完了）:** [schedule-dry-run-adapter-verification-result.md](./schedule-dry-run-adapter-verification-result.md) — adapter-routed dry-run UI verified; duplicate payload safety values confirmed; write implementation remains blocked.
+
+**G-6-e4-schedule-write-adapter-planning（完了）:** [schedule-write-adapter-planning.md](./schedule-write-adapter-planning.md) — real write adapter boundary planned; separate from dry-run adapter; update-only first PoC; planning only.
 
 ## 21. Final safety statement
 

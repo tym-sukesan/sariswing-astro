@@ -42,7 +42,8 @@
 - **G-6-e3-schedule-dry-run-adapter-planning（完了）:** [schedule-dry-run-adapter-planning.md](../schedule-dry-run-adapter-planning.md) — dry-run adapter boundary; pure functions; no DB client; write blocked
 - **G-6-e3-schedule-dry-run-adapter-implementation（完了）:** [schedule-dry-run-adapter-implementation.md](../schedule-dry-run-adapter-implementation.md) — pure dry-run adapter; UI routed; write blocked
 - **G-6-e3-schedule-dry-run-adapter-verification-result（完了）:** [schedule-dry-run-adapter-verification-result.md](../schedule-dry-run-adapter-verification-result.md) — manual browser pass; duplicate payload safety confirmed; write blocked
-- 次: G-6-e4-schedule-write-adapter-planning
+- **G-6-e4-schedule-write-adapter-planning（完了）:** [schedule-write-adapter-planning.md](../schedule-write-adapter-planning.md) — real write adapter planned; update-only first PoC; write blocked
+- 次: G-6-e4-schedule-write-adapter-implementation-planning
 
 ## Option B: customer-specific schema mapping
 
@@ -101,7 +102,8 @@ G-6-e3-schedule-dry-run-adapter-planning: dry-run adapter boundary (done)
 G-6-e3-schedule-dry-run-adapter-implementation: pure dry-run adapter (done)
 G-6-e3-schedule-dry-run-adapter-verification: static + manual checklist (done)
 G-6-e3-schedule-dry-run-adapter-verification-result: manual browser pass (done)
-G-6-e4-schedule-write-adapter-planning: next
+G-6-e4-schedule-write-adapter-planning: write adapter boundary planning (done)
+G-6-e4-schedule-write-adapter-implementation-planning: next
 G-6-e: schedule write implementation (blocked — readyForG6EImplementation false)
 ```
 

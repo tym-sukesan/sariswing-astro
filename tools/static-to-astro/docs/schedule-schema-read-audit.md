@@ -430,11 +430,13 @@ readyForG6E2DryRunUi: false until audit result confirms schema_compatible or mig
 ## 12. Recommended next step
 
 ```txt
-User runs manual read-only SQL in Supabase SQL Editor on static-to-astro-cms-staging.
-Then create G-6-e1-schedule-schema-read-audit-result with sanitized results.
+~~User runs manual read-only SQL~~ — DONE (see schedule-schema-read-audit-result.md)
+Recommended next: G-6-e2-schedule-dry-run-ui-planning
 ```
 
-**Recommended next phase:** `G-6-e1-schedule-schema-read-audit-result`
+**G-6-e1-schedule-schema-read-audit-result（完了）:** [schedule-schema-read-audit-result.md](./schedule-schema-read-audit-result.md) — `schemaStatus: schema_compatible_for_mvp`; `scheduleMonthsDecision: derived_read_model_for_mvp`; no schema migration before dry-run UI; `readyForG6E2ScheduleDryRunUiPlanning: true`.
+
+**Recommended next phase:** ~~G-6-e1-schedule-schema-read-audit-result~~ — DONE
 
 ## 13. Final safety statement
 

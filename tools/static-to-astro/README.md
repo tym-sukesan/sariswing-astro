@@ -1404,7 +1404,14 @@ gosaki / Sariswing で実証した移行フローを、**別サイト向け CMS 
 
 **G-6-e-planning-schedule-cms（完了）:** [Schedule CMS planning](docs/schedule-cms-planning.md) — highest-priority musician CMS module; Sariswing schedule pattern generalized; MVP fields, UI, RLS, dry-run safety, and migration plans; **planning only**; `readyForG6EImplementation: false`.
 
-**G-6-e1-schedule-schema-read-audit（完了）:** [Schedule schema read audit](docs/schedule-schema-read-audit.md) — read-only audit plan for `schedules` / `schedule_months` before implementation; manual SQL checklist; field mapping template; `auditStatus: not_run`; next: G-6-e1-schedule-schema-read-audit-result.
+**G-6-e1-schedule-schema-read-audit（完了）:** [Schedule schema read audit](docs/schedule-schema-read-audit.md) — read-only audit plan for `schedules` / `schedule_months` before implementation; manual SQL checklist; `auditStatus: not_run` at plan time.
+
+**G-6-e1-schedule-schema-read-audit-result（完了）:** [Schedule schema read audit result](docs/schedule-schema-read-audit-result.md) — manual SQL collected; `schemaStatus: schema_compatible_for_mvp`; `schedule_months` derived/read model; future/past grouping via `date`; no schema migration before dry-run UI; `readyForG6E2ScheduleDryRunUiPlanning: true`; next: G-6-e2-schedule-dry-run-ui-planning.
+
+```bash
+node tools/static-to-astro/scripts/report-schedule-schema-read-audit-result.mjs \
+  --out-dir tools/static-to-astro/output/schedule-schema-read-audit-result/gosaki
+```
 
 ```bash
 node tools/static-to-astro/scripts/report-schedule-schema-read-audit.mjs \

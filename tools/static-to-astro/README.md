@@ -1434,7 +1434,14 @@ gosaki / Sariswing で実証した移行フローを、**別サイト向け CMS 
 
 **G-6-e4-schedule-write-adapter-implementation（完了）:** [Schedule write adapter implementation](docs/schedule-write-adapter-implementation.md) — guarded `updateScheduleWrite` (update-only, approval ID, beforeSnapshot); separate from dry-run adapter; `.update()` only in write adapter; not invoked; no UI connection; no schedule DB write; non-dry-run PoC remains blocked.
 
-**G-6-e4-schedule-write-adapter-verification（完了）:** [Schedule write adapter verification](docs/schedule-write-adapter-verification.md) — guarded ScheduleWriteAdapter verified as isolated; `.update()` location verified; write adapter not invoked; UI not connected; no DB write; no schedule record update; `readyForG6E5ScheduleNonDryRunPocPrep: true`; actual non-dry-run PoC remains blocked; next: G-6-e5-schedule-non-dry-run-poc-prep.
+**G-6-e4-schedule-write-adapter-verification（完了）:** [Schedule write adapter verification](docs/schedule-write-adapter-verification.md) — guarded ScheduleWriteAdapter verified as isolated; `.update()` location verified; write adapter not invoked; UI not connected; no DB write; no schedule record update; `readyForG6E5ScheduleNonDryRunPocPrep: true`; actual non-dry-run PoC remains blocked.
+
+**G-6-e5-schedule-non-dry-run-poc-prep（完了）:** [Schedule non-dry-run PoC prep](docs/schedule-non-dry-run-poc-prep.md) — first non-dry-run PoC will target one existing schedule row only; planned field change: description only; target row still not selected; beforeSnapshot still not captured; rollback SQL prepared as template; actual non-dry-run execution remains blocked; next: G-6-e5-schedule-non-dry-run-poc-target-selection.
+
+```bash
+node tools/static-to-astro/scripts/report-schedule-non-dry-run-poc-prep.mjs \
+  --out-dir tools/static-to-astro/output/schedule-non-dry-run-poc-prep/gosaki
+```
 
 ```bash
 node tools/static-to-astro/scripts/report-schedule-write-adapter-verification.mjs \

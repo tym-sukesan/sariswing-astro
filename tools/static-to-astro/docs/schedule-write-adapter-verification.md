@@ -201,14 +201,11 @@ readyForNonDryRunSchedulePoC: false
 
 ```txt
 Recommended next:
-G-6-e5-schedule-non-dry-run-poc-prep
+G-6-e5-schedule-non-dry-run-poc-prep — DONE (see schedule-non-dry-run-poc-prep.md)
+Next: G-6-e5-schedule-non-dry-run-poc-target-selection
 ```
 
-**Purpose:**
-
-```txt
-Select one target schedule row, capture beforeSnapshot, prepare rollback SQL, define expected payload, and prepare approval-gated one-time PoC.
-```
+**G-6-e5-schedule-non-dry-run-poc-prep（完了）:** [schedule-non-dry-run-poc-prep.md](./schedule-non-dry-run-poc-prep.md) — first non-dry-run PoC will target one existing schedule row only; planned field change: description only; target row still not selected; beforeSnapshot still not captured; rollback SQL prepared as template; actual non-dry-run execution remains blocked.
 
 ## 15. Final safety statement
 

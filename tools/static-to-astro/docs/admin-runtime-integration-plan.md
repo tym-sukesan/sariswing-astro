@@ -251,7 +251,8 @@ Never skip: local preview and customer demo before runtime shell; read-only befo
 | **G-6-e4-schedule-update-grant-manual-apply-result（完了）** | [Manual apply result](./schedule-update-grant-manual-apply-result.md) | UPDATE grant applied; dry-run smoke pass |
 | **G-6-e4-schedule-write-adapter-implementation（完了）** | [Write adapter](./schedule-write-adapter-implementation.md) | Guarded `updateScheduleWrite`; not invoked |
 | **G-6-e4-schedule-write-adapter-verification（完了）** | [Write adapter verification](./schedule-write-adapter-verification.md) | Isolation verified; `.update()` location confirmed; no UI; no DB write; `readyForG6E5ScheduleNonDryRunPocPrep: true` |
-| **G-6-e** | Schedule write (staging) | Non-dry-run PoC prep next; actual non-dry-run PoC blocked |
+| **G-6-e5-schedule-non-dry-run-poc-prep（完了）** | [Non-dry-run PoC prep](./schedule-non-dry-run-poc-prep.md) | One-row description-only PoC planned; target row not selected; rollback template; execution blocked |
+| **G-6-e** | Schedule write (staging) | Target row selection next; actual non-dry-run PoC blocked |
 | **G-5y-e** | Role check / allowlist | Staging Auth |
 
 **Purpose (overall):** Staging admin login only — after shell QA on `/__admin-staging-shell/musician-basic/`.

@@ -49,7 +49,8 @@
 - **G-6-e4-schedule-update-grant-manual-apply-result（完了）:** [schedule-update-grant-manual-apply-result.md](../schedule-update-grant-manual-apply-result.md) — UPDATE grant applied in staging; dry-run smoke pass; write adapter next
 - **G-6-e4-schedule-write-adapter-implementation（完了）:** [schedule-write-adapter-implementation.md](../schedule-write-adapter-implementation.md) — guarded update-only adapter; not invoked; no DB write
 - **G-6-e4-schedule-write-adapter-verification（完了）:** [schedule-write-adapter-verification.md](../schedule-write-adapter-verification.md) — guarded ScheduleWriteAdapter verified as isolated; `.update()` location verified; write adapter not invoked; UI not connected; no DB write; `readyForG6E5ScheduleNonDryRunPocPrep: true`; actual non-dry-run PoC remains blocked
-- 次: G-6-e5-schedule-non-dry-run-poc-prep
+- **G-6-e5-schedule-non-dry-run-poc-prep（完了）:** [schedule-non-dry-run-poc-prep.md](../schedule-non-dry-run-poc-prep.md) — first non-dry-run PoC will target one existing schedule row only; planned field change: description only; target row still not selected; beforeSnapshot still not captured; rollback SQL prepared as template; actual non-dry-run execution remains blocked
+- 次: G-6-e5-schedule-non-dry-run-poc-target-selection
 
 ## Option B: customer-specific schema mapping
 
@@ -115,7 +116,8 @@ G-6-e4-schedule-update-grant-manual-apply-prep: final manual apply procedure (do
 G-6-e4-schedule-update-grant-manual-apply-result: UPDATE grant applied in staging (done)
 G-6-e4-schedule-write-adapter-implementation: guarded write adapter (done)
 G-6-e4-schedule-write-adapter-verification: isolation verified (done)
-G-6-e5-schedule-non-dry-run-poc-prep: next
+G-6-e5-schedule-non-dry-run-poc-prep: PoC prep documented (done)
+G-6-e5-schedule-non-dry-run-poc-target-selection: next
 G-6-e: schedule write implementation (blocked — readyForG6EImplementation false)
 ```
 

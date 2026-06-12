@@ -100,10 +100,11 @@ readyForNonDryRunSchedulePoC: false
 ## 10. Recommended next phase
 
 ```txt
-G-6-e4-schedule-write-adapter-verification
+G-6-e4-schedule-write-adapter-verification — DONE (see schedule-write-adapter-verification.md)
+Next: G-6-e5-schedule-non-dry-run-poc-prep
 ```
 
-Static safety checks and manual checklist before any G-6-e5 non-dry-run PoC.
+**G-6-e4-schedule-write-adapter-verification（完了）:** [schedule-write-adapter-verification.md](./schedule-write-adapter-verification.md) — guarded ScheduleWriteAdapter verified as isolated; `.update()` location verified; write adapter not invoked; UI not connected; no DB write; no schedule record update; `readyForG6E5ScheduleNonDryRunPocPrep: true`; actual non-dry-run PoC remains blocked.
 
 ## 11. Final safety statement
 

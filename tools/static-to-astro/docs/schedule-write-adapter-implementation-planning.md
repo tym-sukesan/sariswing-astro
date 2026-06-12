@@ -543,8 +543,11 @@ G-6-e4-schedule-update-grant-prep — DONE (see schedule-update-grant-prep.md)
 G-6-e4-schedule-update-grant-manual-apply-prep — DONE (see schedule-update-grant-manual-apply-prep.md)
 G-6-e4-schedule-update-grant-manual-apply-result — DONE (see schedule-update-grant-manual-apply-result.md)
 G-6-e4-schedule-write-adapter-implementation — DONE (see schedule-write-adapter-implementation.md)
-Next: G-6-e4-schedule-write-adapter-verification
+G-6-e4-schedule-write-adapter-verification — DONE (see schedule-write-adapter-verification.md)
+Next: G-6-e5-schedule-non-dry-run-poc-prep
 ```
+
+**G-6-e4-schedule-write-adapter-verification（完了）:** [schedule-write-adapter-verification.md](./schedule-write-adapter-verification.md) — guarded ScheduleWriteAdapter verified as isolated; write adapter not invoked; UI not connected; no DB write; `readyForG6E5ScheduleNonDryRunPocPrep: true`; actual non-dry-run PoC remains blocked.
 
 **G-6-e4-schedule-update-grant-prep（完了）:** [schedule-update-grant-prep.md](./schedule-update-grant-prep.md) — authenticated UPDATE grant on `public.schedules` prepared; pre-check/after-verify/rollback SQL; is_admin() review required; INSERT/DELETE/TRUNCATE/TRIGGER/REFERENCES excluded.
 

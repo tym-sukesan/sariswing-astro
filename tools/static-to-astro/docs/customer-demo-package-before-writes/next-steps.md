@@ -48,7 +48,8 @@
 - **G-6-e4-schedule-update-grant-manual-apply-prep（完了）:** [schedule-update-grant-manual-apply-prep.md](../schedule-update-grant-manual-apply-prep.md) — final manual apply steps; GRANT not executed; write blocked
 - **G-6-e4-schedule-update-grant-manual-apply-result（完了）:** [schedule-update-grant-manual-apply-result.md](../schedule-update-grant-manual-apply-result.md) — UPDATE grant applied in staging; dry-run smoke pass; write adapter next
 - **G-6-e4-schedule-write-adapter-implementation（完了）:** [schedule-write-adapter-implementation.md](../schedule-write-adapter-implementation.md) — guarded update-only adapter; not invoked; no DB write
-- 次: G-6-e4-schedule-write-adapter-verification
+- **G-6-e4-schedule-write-adapter-verification（完了）:** [schedule-write-adapter-verification.md](../schedule-write-adapter-verification.md) — guarded ScheduleWriteAdapter verified as isolated; `.update()` location verified; write adapter not invoked; UI not connected; no DB write; `readyForG6E5ScheduleNonDryRunPocPrep: true`; actual non-dry-run PoC remains blocked
+- 次: G-6-e5-schedule-non-dry-run-poc-prep
 
 ## Option B: customer-specific schema mapping
 
@@ -113,7 +114,8 @@ G-6-e4-schedule-update-grant-prep: UPDATE grant manual SQL prep (done)
 G-6-e4-schedule-update-grant-manual-apply-prep: final manual apply procedure (done)
 G-6-e4-schedule-update-grant-manual-apply-result: UPDATE grant applied in staging (done)
 G-6-e4-schedule-write-adapter-implementation: guarded write adapter (done)
-G-6-e4-schedule-write-adapter-verification: next
+G-6-e4-schedule-write-adapter-verification: isolation verified (done)
+G-6-e5-schedule-non-dry-run-poc-prep: next
 G-6-e: schedule write implementation (blocked — readyForG6EImplementation false)
 ```
 

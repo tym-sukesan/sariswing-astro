@@ -565,8 +565,11 @@ G-6-e4-schedule-update-grant-prep — DONE (see schedule-update-grant-prep.md)
 G-6-e4-schedule-update-grant-manual-apply-prep — DONE (see schedule-update-grant-manual-apply-prep.md)
 G-6-e4-schedule-update-grant-manual-apply-result — DONE (see schedule-update-grant-manual-apply-result.md)
 G-6-e4-schedule-write-adapter-implementation — DONE (see schedule-write-adapter-implementation.md)
-Next: G-6-e4-schedule-write-adapter-verification
+G-6-e4-schedule-write-adapter-verification — DONE (see schedule-write-adapter-verification.md)
+Next: G-6-e5-schedule-non-dry-run-poc-prep
 ```
+
+**G-6-e4-schedule-write-adapter-verification（完了）:** [schedule-write-adapter-verification.md](./schedule-write-adapter-verification.md) — guarded ScheduleWriteAdapter verified as isolated; `.update()` location verified; write adapter not invoked; UI not connected; no DB write; `readyForG6E5ScheduleNonDryRunPocPrep: true`; actual non-dry-run PoC remains blocked.
 
 **G-6-e4-schedule-write-adapter-implementation-planning（完了）:** [schedule-write-adapter-implementation-planning.md](./schedule-write-adapter-implementation-planning.md) — update-only write adapter types/guards/signatures finalized; beforeSnapshot and rollback required.
 
@@ -578,8 +581,9 @@ Next: G-6-e4-schedule-write-adapter-verification
 
 ```txt
 G-6-e4-schedule-write-adapter-implementation — DONE (guarded adapter; not invoked)
-G-6-e4-schedule-write-adapter-verification — static safety checks next
-G-6-e5-schedule-non-dry-run-poc — first manual staging update of one pre-seeded row
+G-6-e4-schedule-write-adapter-verification — DONE (isolation verified)
+G-6-e5-schedule-non-dry-run-poc-prep — next (target row, beforeSnapshot, rollback SQL)
+G-6-e5-schedule-non-dry-run-poc — first manual staging update of one pre-seeded row (blocked until prep + approval)
 ```
 
 ## 22. Final safety statement

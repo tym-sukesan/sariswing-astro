@@ -173,6 +173,8 @@ This grant enables future admin-only update PoC, but does not by itself execute 
 
 **G-6-e4-schedule-write-adapter-implementation（完了）:** [schedule-write-adapter-implementation.md](./schedule-write-adapter-implementation.md) — guarded `updateScheduleWrite` implemented; not invoked; no schedule DB write in implementation phase.
 
+**G-6-e4-schedule-write-adapter-verification（完了）:** [schedule-write-adapter-verification.md](./schedule-write-adapter-verification.md) — guarded ScheduleWriteAdapter verified as isolated; `.update()` location verified; write adapter not invoked; UI not connected; no DB write; `readyForG6E5ScheduleNonDryRunPocPrep: true`; actual non-dry-run PoC remains blocked.
+
 ## 12. Gate decision
 
 ```txt
@@ -198,10 +200,13 @@ readyForNonDryRunSchedulePoC: false
 ```txt
 Recommended next:
 G-6-e4-schedule-write-adapter-implementation — DONE (see schedule-write-adapter-implementation.md)
-Next: G-6-e4-schedule-write-adapter-verification
+G-6-e4-schedule-write-adapter-verification — DONE (see schedule-write-adapter-verification.md)
+Next: G-6-e5-schedule-non-dry-run-poc-prep
 ```
 
 **G-6-e4-schedule-write-adapter-implementation（完了）:** Guarded update-only write adapter code added; not invoked; no UI connection; no schedule DB write in this phase.
+
+**G-6-e4-schedule-write-adapter-verification（完了）:** Static isolation checks pass; write adapter verified; no schedule DB write; non-dry-run PoC remains blocked.
 
 ## 14. Final safety statement
 

@@ -358,10 +358,13 @@ readyForNonDryRunSchedulePoC: false
 ```txt
 Recommended next:
 G-6-e5-schedule-non-dry-run-poc-execution-path-implementation — DONE (see schedule-non-dry-run-poc-execution-path-implementation.md)
-Next: G-6-e5-schedule-non-dry-run-poc-execution-path-verification
+G-6-e5-schedule-non-dry-run-poc-execution-path-verification — DONE (see schedule-non-dry-run-poc-execution-path-verification.md)
+Next: G-6-e5-schedule-non-dry-run-poc-execution-path-verification-result
 ```
 
-**G-6-e5-schedule-non-dry-run-poc-execution-path-implementation（完了）:** [schedule-non-dry-run-poc-execution-path-implementation.md](./schedule-non-dry-run-poc-execution-path-implementation.md) — hidden staging browser trigger implemented; default hidden; trigger was not invoked; no DB write; next: execution path verification.
+**G-6-e5-schedule-non-dry-run-poc-execution-path-implementation（完了）:** [schedule-non-dry-run-poc-execution-path-implementation.md](./schedule-non-dry-run-poc-execution-path-implementation.md) — hidden staging browser trigger implemented; default hidden; trigger was not invoked; no DB write.
+
+**G-6-e5-schedule-non-dry-run-poc-execution-path-verification（完了）:** [schedule-non-dry-run-poc-execution-path-verification.md](./schedule-non-dry-run-poc-execution-path-verification.md) — normal dev hidden verified; env-gated/manual confirm pending user; trigger not clicked.
 
 **Conditions:**
 

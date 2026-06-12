@@ -102,10 +102,11 @@ readyForNonDryRunSchedulePoC: false
 ## 9. Recommended next phase
 
 ```txt
-G-6-e5-schedule-non-dry-run-poc-execution-path-verification
+G-6-e5-schedule-non-dry-run-poc-execution-path-verification — DONE (see schedule-non-dry-run-poc-execution-path-verification.md)
+Next: G-6-e5-schedule-non-dry-run-poc-execution-path-verification-result
 ```
 
-Static checks and gated visibility verification (still no trigger click / no DB write).
+**G-6-e5-schedule-non-dry-run-poc-execution-path-verification（完了）:** [schedule-non-dry-run-poc-execution-path-verification.md](./schedule-non-dry-run-poc-execution-path-verification.md) — verification plan for hidden trigger documented; normal dev hidden check pass; env-gated display/manual confirm verification pending; trigger not clicked; DB write still blocked.
 
 ## 10. Final safety statement
 

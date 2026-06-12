@@ -1442,7 +1442,14 @@ gosaki / Sariswing で実証した移行フローを、**別サイト向け CMS 
 
 **G-6-e5-schedule-non-dry-run-poc-execution-prep（完了）:** [Schedule non-dry-run PoC execution prep](docs/schedule-non-dry-run-poc-execution-prep.md) — execution path planning prepared; one-off execution path required; service_role prohibited; authenticated admin user required; no execution script invoked; actual non-dry-run execution remains blocked.
 
-**G-6-e5-schedule-non-dry-run-poc-execution-path-implementation（完了）:** [Schedule non-dry-run PoC execution path](docs/schedule-non-dry-run-poc-execution-path-implementation.md) — hidden staging browser trigger implemented; default hidden; env-gated; manual confirm required; trigger was not invoked; no DB write occurred; next: G-6-e5-schedule-non-dry-run-poc-execution-path-verification.
+**G-6-e5-schedule-non-dry-run-poc-execution-path-implementation（完了）:** [Schedule non-dry-run PoC execution path](docs/schedule-non-dry-run-poc-execution-path-implementation.md) — hidden staging browser trigger implemented; default hidden; env-gated; manual confirm required; trigger was not invoked; no DB write occurred.
+
+**G-6-e5-schedule-non-dry-run-poc-execution-path-verification（完了）:** [Schedule non-dry-run PoC execution path verification](docs/schedule-non-dry-run-poc-execution-path-verification.md) — verification plan for hidden trigger documented; normal dev hidden check pass; env-gated display/manual confirm verification pending; trigger not clicked; DB write still blocked; next: G-6-e5-schedule-non-dry-run-poc-execution-path-verification-result.
+
+```bash
+node tools/static-to-astro/scripts/report-schedule-non-dry-run-poc-execution-path-verification.mjs \
+  --out-dir tools/static-to-astro/output/schedule-non-dry-run-poc-execution-path-verification/gosaki
+```
 
 ```bash
 node tools/static-to-astro/scripts/report-schedule-non-dry-run-poc-execution-path-implementation.mjs \

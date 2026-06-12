@@ -171,7 +171,7 @@ public.schedules:
 This grant enables future admin-only update PoC, but does not by itself execute any update.
 ```
 
-ScheduleWriteAdapter remains **unimplemented**. No schedule record UPDATE has been performed.
+**G-6-e4-schedule-write-adapter-implementation（完了）:** [schedule-write-adapter-implementation.md](./schedule-write-adapter-implementation.md) — guarded `updateScheduleWrite` implemented; not invoked; no schedule DB write in implementation phase.
 
 ## 12. Gate decision
 
@@ -197,14 +197,11 @@ readyForNonDryRunSchedulePoC: false
 
 ```txt
 Recommended next:
-G-6-e4-schedule-write-adapter-implementation
+G-6-e4-schedule-write-adapter-implementation — DONE (see schedule-write-adapter-implementation.md)
+Next: G-6-e4-schedule-write-adapter-verification
 ```
 
-**Conditions for the next phase:**
-
-```txt
-The next phase may implement a guarded ScheduleWriteAdapter, but must not expose non-dry-run UI and must not execute a non-dry-run write.
-```
+**G-6-e4-schedule-write-adapter-implementation（完了）:** Guarded update-only write adapter code added; not invoked; no UI connection; no schedule DB write in this phase.
 
 ## 14. Final safety statement
 

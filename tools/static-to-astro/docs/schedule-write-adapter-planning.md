@@ -564,7 +564,8 @@ G-6-e4-schedule-write-adapter-implementation-planning — DONE (see schedule-wri
 G-6-e4-schedule-update-grant-prep — DONE (see schedule-update-grant-prep.md)
 G-6-e4-schedule-update-grant-manual-apply-prep — DONE (see schedule-update-grant-manual-apply-prep.md)
 G-6-e4-schedule-update-grant-manual-apply-result — DONE (see schedule-update-grant-manual-apply-result.md)
-Next: G-6-e4-schedule-write-adapter-implementation
+G-6-e4-schedule-write-adapter-implementation — DONE (see schedule-write-adapter-implementation.md)
+Next: G-6-e4-schedule-write-adapter-verification
 ```
 
 **G-6-e4-schedule-write-adapter-implementation-planning（完了）:** [schedule-write-adapter-implementation-planning.md](./schedule-write-adapter-implementation-planning.md) — update-only write adapter types/guards/signatures finalized; beforeSnapshot and rollback required.
@@ -576,7 +577,8 @@ Next: G-6-e4-schedule-write-adapter-implementation
 **Later sequence:**
 
 ```txt
-G-6-e4-schedule-write-adapter-implementation — write adapter code (staging guards, no UI non-dry-run yet)
+G-6-e4-schedule-write-adapter-implementation — DONE (guarded adapter; not invoked)
+G-6-e4-schedule-write-adapter-verification — static safety checks next
 G-6-e5-schedule-non-dry-run-poc — first manual staging update of one pre-seeded row
 ```
 

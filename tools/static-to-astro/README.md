@@ -1430,7 +1430,14 @@ gosaki / Sariswing で実証した移行フローを、**別サイト向け CMS 
 
 **G-6-e4-schedule-update-grant-manual-apply-prep（完了）:** [Schedule UPDATE grant manual apply prep](docs/schedule-update-grant-manual-apply-prep.md) — final manual SQL procedure for staging `authenticated UPDATE` on `public.schedules`; abort conditions; smoke test; result template.
 
-**G-6-e4-schedule-update-grant-manual-apply-result（完了）:** [Schedule UPDATE grant manual apply result](docs/schedule-update-grant-manual-apply-result.md) — `authenticated UPDATE` on `public.schedules` applied in `static-to-astro-cms-staging`; after verification pass; broad grants absent; dry-run smoke test pass (`actualWrite: false`); no schedule DB write; guarded write adapter implementation is next; non-dry-run PoC remains blocked.
+**G-6-e4-schedule-update-grant-manual-apply-result（完了）:** [Schedule UPDATE grant manual apply result](docs/schedule-update-grant-manual-apply-result.md) — `authenticated UPDATE` on `public.schedules` applied in `static-to-astro-cms-staging`; after verification pass; broad grants absent; dry-run smoke test pass (`actualWrite: false`).
+
+**G-6-e4-schedule-write-adapter-implementation（完了）:** [Schedule write adapter implementation](docs/schedule-write-adapter-implementation.md) — guarded `updateScheduleWrite` (update-only, approval ID, beforeSnapshot); separate from dry-run adapter; `.update()` only in write adapter; not invoked; no UI connection; no schedule DB write; next: G-6-e4-schedule-write-adapter-verification; non-dry-run PoC remains blocked.
+
+```bash
+node tools/static-to-astro/scripts/report-schedule-write-adapter-implementation.mjs \
+  --out-dir tools/static-to-astro/output/schedule-write-adapter-implementation/gosaki
+```
 
 ```bash
 node tools/static-to-astro/scripts/report-schedule-update-grant-manual-apply-result.mjs \

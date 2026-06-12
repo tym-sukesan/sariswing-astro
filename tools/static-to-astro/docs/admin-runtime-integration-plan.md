@@ -246,8 +246,9 @@ Never skip: local preview and customer demo before runtime shell; read-only befo
 | **G-6-e3-schedule-dry-run-adapter-verification-result（完了）** | [Verification result](./schedule-dry-run-adapter-verification-result.md) | Manual pass; dry-run adapter verified |
 | **G-6-e4-schedule-write-adapter-planning（完了）** | [Write adapter planning](./schedule-write-adapter-planning.md) | Real write adapter boundary; update-only first PoC; planning only |
 | **G-6-e4-schedule-write-adapter-implementation-planning（完了）** | [Implementation planning](./schedule-write-adapter-implementation-planning.md) | Types/guards/signatures; grant prep next; write blocked |
-| **G-6-e4-schedule-update-grant-prep（完了）** | [UPDATE grant prep](./schedule-update-grant-prep.md) | Manual GRANT SQL prepared; not executed; manual apply prep next |
-| **G-6-e** | Schedule write (staging) | Blocked — grant manual apply, write adapter, then PoC |
+| **G-6-e4-schedule-update-grant-prep（完了）** | [UPDATE grant prep](./schedule-update-grant-prep.md) | Manual GRANT SQL prepared; not executed |
+| **G-6-e4-schedule-update-grant-manual-apply-prep（完了）** | [Manual apply prep](./schedule-update-grant-manual-apply-prep.md) | Final SQL procedure; user manual apply next |
+| **G-6-e** | Schedule write (staging) | Blocked — grant apply result, write adapter, then PoC |
 | **G-5y-e** | Role check / allowlist | Staging Auth |
 
 **Purpose (overall):** Staging admin login only — after shell QA on `/__admin-staging-shell/musician-basic/`.

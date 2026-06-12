@@ -539,15 +539,18 @@ Grant prep SQL is prepared; GRANT not executed. Write adapter **code** remains b
 ```txt
 Recommended next:
 G-6-e4-schedule-update-grant-prep — DONE (see schedule-update-grant-prep.md)
-Next: G-6-e4-schedule-update-grant-manual-apply-prep
+G-6-e4-schedule-update-grant-manual-apply-prep — DONE (see schedule-update-grant-manual-apply-prep.md)
+Next: manual SQL execution + G-6-e4-schedule-update-grant-manual-apply-result
 ```
 
 **G-6-e4-schedule-update-grant-prep（完了）:** [schedule-update-grant-prep.md](./schedule-update-grant-prep.md) — authenticated UPDATE grant on `public.schedules` prepared; pre-check/after-verify/rollback SQL; is_admin() review required; GRANT not executed; INSERT/DELETE/TRUNCATE/TRIGGER/REFERENCES excluded.
 
-**Purpose of manual apply prep:**
+**G-6-e4-schedule-update-grant-manual-apply-prep（完了）:** [schedule-update-grant-manual-apply-prep.md](./schedule-update-grant-manual-apply-prep.md) — final manual apply steps; abort conditions; result template; GRANT not executed by Cursor.
+
+**Purpose of manual apply:**
 
 ```txt
-User manually applies GRANT in Supabase SQL Editor on staging after pre-checks; separately recorded.
+User applies GRANT in Supabase SQL Editor on staging after pre-checks; record in manual-apply-result phase.
 ```
 
 ## 21. Final safety statement

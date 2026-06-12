@@ -369,8 +369,11 @@ depending on review outcome.
 **Recommended next:**
 
 ```txt
-G-6-e4-schedule-update-grant-manual-apply-prep
+G-6-e4-schedule-update-grant-manual-apply-prep — DONE (see schedule-update-grant-manual-apply-prep.md)
+Next: manual SQL execution by user, then G-6-e4-schedule-update-grant-manual-apply-result
 ```
+
+**G-6-e4-schedule-update-grant-manual-apply-prep（完了）:** [schedule-update-grant-manual-apply-prep.md](./schedule-update-grant-manual-apply-prep.md) — final manual apply procedure; pre-check/grant/after-verify/rollback/smoke test; GRANT not executed by Cursor.
 
 **Reason:**
 
@@ -381,7 +384,9 @@ Keep the permission change manual, explicit, and separately recorded.
 ## 13. Gate decision
 
 ```txt
-readyForG6E4ScheduleUpdateGrantManualApplyPrep: true
+readyForG6E4ScheduleUpdateGrantManualApplyPrep: true (see schedule-update-grant-manual-apply-prep.md)
+readyForManualGrantApply: true
+readyForG6E4ScheduleUpdateGrantManualApplyResult: false
 readyForG6E4ScheduleWriteAdapterImplementation: false
 readyForG6EWriteImplementation: false
 readyForNonDryRunSchedulePoC: false

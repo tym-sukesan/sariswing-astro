@@ -1426,7 +1426,14 @@ gosaki / Sariswing で実証した移行フローを、**別サイト向け CMS 
 
 **G-6-e4-schedule-write-adapter-implementation-planning（完了）:** [Schedule write adapter implementation planning](docs/schedule-write-adapter-implementation-planning.md) — update-only `updateScheduleWrite` design; types/guards/env gates/beforeSnapshot/rollback finalized; UPDATE grant review required before real write; write implementation remains blocked.
 
-**G-6-e4-schedule-update-grant-prep（完了）:** [Schedule UPDATE grant prep](docs/schedule-update-grant-prep.md) — minimal `authenticated UPDATE` on `public.schedules` for future staging PoC; pre-check/after-verify/rollback SQL prepared; is_admin() + RLS review required; GRANT not executed; INSERT/DELETE/TRUNCATE/TRIGGER/REFERENCES excluded; next: G-6-e4-schedule-update-grant-manual-apply-prep.
+**G-6-e4-schedule-update-grant-prep（完了）:** [Schedule UPDATE grant prep](docs/schedule-update-grant-prep.md) — minimal `authenticated UPDATE` on `public.schedules` for future staging PoC; pre-check/after-verify/rollback SQL prepared; is_admin() + RLS review required; GRANT not executed; INSERT/DELETE/TRUNCATE/TRIGGER/REFERENCES excluded.
+
+**G-6-e4-schedule-update-grant-manual-apply-prep（完了）:** [Schedule UPDATE grant manual apply prep](docs/schedule-update-grant-manual-apply-prep.md) — final manual SQL procedure for staging `authenticated UPDATE` on `public.schedules`; abort conditions; smoke test; result template; GRANT not executed by Cursor; next: user manual SQL + G-6-e4-schedule-update-grant-manual-apply-result; write implementation remains blocked.
+
+```bash
+node tools/static-to-astro/scripts/report-schedule-update-grant-manual-apply-prep.mjs \
+  --out-dir tools/static-to-astro/output/schedule-update-grant-manual-apply-prep/gosaki
+```
 
 ```bash
 node tools/static-to-astro/scripts/report-schedule-update-grant-prep.mjs \

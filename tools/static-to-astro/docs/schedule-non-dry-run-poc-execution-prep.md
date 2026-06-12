@@ -357,8 +357,11 @@ readyForNonDryRunSchedulePoC: false
 
 ```txt
 Recommended next:
-G-6-e5-schedule-non-dry-run-poc-execution-path-implementation
+G-6-e5-schedule-non-dry-run-poc-execution-path-implementation — DONE (see schedule-non-dry-run-poc-execution-path-implementation.md)
+Next: G-6-e5-schedule-non-dry-run-poc-execution-path-verification
 ```
+
+**G-6-e5-schedule-non-dry-run-poc-execution-path-implementation（完了）:** [schedule-non-dry-run-poc-execution-path-implementation.md](./schedule-non-dry-run-poc-execution-path-implementation.md) — hidden staging browser trigger implemented; default hidden; trigger was not invoked; no DB write; next: execution path verification.
 
 **Conditions:**
 

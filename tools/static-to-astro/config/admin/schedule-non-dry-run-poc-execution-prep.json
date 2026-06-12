@@ -43,5 +43,6 @@
   "readyForG6E5ScheduleNonDryRunPocExecutionPathImplementation": true,
   "readyForG6E5ScheduleNonDryRunPoc": false,
   "readyForNonDryRunSchedulePoC": false,
-  "recommendedNextPhase": "G-6-e5-schedule-non-dry-run-poc-execution-path-implementation"
+  "recommendedNextPhase": "G-6-e5-schedule-non-dry-run-poc-execution-path-implementation",
+  "followOnPhase": "G-6-e5-schedule-non-dry-run-poc-execution-path-verification"
 }

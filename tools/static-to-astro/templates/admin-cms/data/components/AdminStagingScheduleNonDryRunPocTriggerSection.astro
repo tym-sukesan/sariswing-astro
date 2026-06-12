@@ -1,0 +1,192 @@
+---
+/**
+ * G-6-e5 — Hidden schedule non-dry-run PoC trigger (env-gated; staging shell only).
+ * Default hidden. Not /admin/. No service_role.
+ */
+import implConfig from "../../../../config/admin/schedule-non-dry-run-poc-execution-path-implementation.json";
+import { getScheduleNonDryRunPocConfig } from "../../../../../../src/lib/admin/staging-write/schedule-non-dry-run-poc-config";
+import {
+  SCHEDULE_NON_DRY_RUN_POC_BEFORE_DESCRIPTION,
+  SCHEDULE_NON_DRY_RUN_POC_FIXED_PAYLOAD,
+  SCHEDULE_NON_DRY_RUN_POC_LEGACY_ID,
+} from "../../../../../../src/lib/admin/staging-write/schedule-non-dry-run-poc-trigger";
+import { SCHEDULE_WRITE_APPROVAL_ID } from "../../../../../../src/lib/admin/staging-write/schedule-write-types";
+
+interface Props {
+  phase?: string;
+}
+
+const { phase = implConfig.phase } = Astro.props;
+const pocConfig = getScheduleNonDryRunPocConfig();
+---
+
+<section
+  id="schedule-non-dry-run-poc-trigger-root"
+  class="admin-staging-schedule-non-dry-run-poc-trigger"
+  data-phase={phase}
+  data-visible={pocConfig.visible ? "true" : "false"}
+  hidden={!pocConfig.visible}
+  role="region"
+  aria-label="Schedule non-dry-run PoC danger zone"
+>
+  <h2 class="admin-staging-schedule-non-dry-run-poc-trigger__title">
+    Danger Zone — Schedule non-dry-run PoC
+  </h2>
+
+  <p class="admin-staging-schedule-non-dry-run-poc-trigger__warning" role="alert">
+    This is a one-off staging PoC trigger. Do not use in production.
+  </p>
+
+  <dl class="admin-staging-schedule-non-dry-run-poc-trigger__meta">
+    <div>
+      <dt>Target</dt>
+      <dd id="schedule-non-dry-run-poc-target-legacy">{SCHEDULE_NON_DRY_RUN_POC_LEGACY_ID}</dd>
+    </div>
+    <div>
+      <dt>Target ID</dt>
+      <dd id="schedule-non-dry-run-poc-target-id">{pocConfig.targetId}</dd>
+    </div>
+    <div>
+      <dt>Field</dt>
+      <dd>description only</dd>
+    </div>
+    <div>
+      <dt>Before</dt>
+      <dd id="schedule-non-dry-run-poc-before-desc">{SCHEDULE_NON_DRY_RUN_POC_BEFORE_DESCRIPTION}</dd>
+    </div>
+    <div>
+      <dt>After</dt>
+      <dd id="schedule-non-dry-run-poc-after-desc">{SCHEDULE_NON_DRY_RUN_POC_FIXED_PAYLOAD.description}</dd>
+    </div>
+    <div>
+      <dt>Approval ID</dt>
+      <dd id="schedule-non-dry-run-poc-approval-id">{SCHEDULE_WRITE_APPROVAL_ID}</dd>
+    </div>
+    <div>
+      <dt>Gate status</dt>
+      <dd id="schedule-non-dry-run-poc-gate-status">{pocConfig.visible ? "armed" : "hidden"}</dd>
+    </div>
+  </dl>
+
+  <label class="admin-staging-schedule-non-dry-run-poc-trigger__confirm">
+  Type exactly:
+  <code>{SCHEDULE_WRITE_APPROVAL_ID}</code>
+    <input
+      id="schedule-non-dry-run-poc-confirm-input"
+      type="text"
+      autocomplete="off"
+      spellcheck="false"
+      disabled={!pocConfig.enabled}
+      placeholder={SCHEDULE_WRITE_APPROVAL_ID}
+    />
+  </label>
+
+  <p class="admin-staging-schedule-non-dry-run-poc-trigger__target-note">
+    Target ID: <code>{pocConfig.targetId}</code>
+  </p>
+
+  <button
+    type="button"
+    id="schedule-non-dry-run-poc-run-btn"
+    class="admin-button admin-button--danger"
+    disabled
+  >
+    Run one-off staging schedule update
+  </button>
+
+  <div
+    id="schedule-non-dry-run-poc-result"
+    class="schedule-non-dry-run-poc-result"
+    aria-live="polite"
+  />
+</section>
+
+<script>
+  import "../../../../../../src/lib/admin/staging-write/staging-schedule-non-dry-run-poc-ui.ts";
+</script>
+
+<style>
+  .admin-staging-schedule-non-dry-run-poc-trigger {
+    margin-top: 1.5rem;
+    padding: 1rem 1.25rem;
+    border: 2px solid #b91c1c;
+    border-radius: 8px;
+    background: #fef2f2;
+  }
+  .admin-staging-schedule-non-dry-run-poc-trigger__title {
+    margin: 0 0 0.5rem;
+    color: #991b1b;
+    font-size: 1.1rem;
+  }
+  .admin-staging-schedule-non-dry-run-poc-trigger__warning {
+    margin: 0 0 1rem;
+    color: #7f1d1d;
+    font-weight: 600;
+  }
+  .admin-staging-schedule-non-dry-run-poc-trigger__meta {
+    display: grid;
+    gap: 0.35rem 1rem;
+    grid-template-columns: auto 1fr;
+    margin: 0 0 1rem;
+    font-size: 0.9rem;
+  }
+  .admin-staging-schedule-non-dry-run-poc-trigger__meta dt {
+    font-weight: 600;
+    color: #450a0a;
+  }
+  .admin-staging-schedule-non-dry-run-poc-trigger__meta dd {
+    margin: 0;
+  }
+  .admin-staging-schedule-non-dry-run-poc-trigger__confirm {
+    display: block;
+    margin-bottom: 0.75rem;
+    font-size: 0.9rem;
+  }
+  .admin-staging-schedule-non-dry-run-poc-trigger__confirm input {
+    display: block;
+    width: 100%;
+    max-width: 28rem;
+    margin-top: 0.35rem;
+    padding: 0.4rem 0.5rem;
+    border: 1px solid #fca5a5;
+    border-radius: 4px;
+  }
+  .admin-staging-schedule-non-dry-run-poc-trigger__target-note {
+    margin: 0 0 0.75rem;
+    font-size: 0.85rem;
+  }
+  .admin-button--danger {
+    background: #b91c1c;
+    color: #fff;
+    border-color: #991b1b;
+  }
+  .admin-button--danger:disabled {
+    opacity: 0.55;
+  }
+  .schedule-non-dry-run-poc-result {
+    margin-top: 1rem;
+    font-size: 0.85rem;
+  }
+  .schedule-non-dry-run-poc-result__status {
+    font-weight: 600;
+    margin: 0 0 0.5rem;
+  }
+  .schedule-non-dry-run-poc-result__error {
+    color: #991b1b;
+    font-weight: 600;
+  }
+  .schedule-non-dry-run-poc-result__warnings {
+    margin: 0 0 0.75rem;
+    padding-left: 1.25rem;
+    color: #92400e;
+  }
+  .schedule-non-dry-run-poc-result__json {
+    margin-top: 0.75rem;
+    padding: 0.75rem;
+    background: #fff;
+    border: 1px solid #fecaca;
+    border-radius: 4px;
+    overflow-x: auto;
+    font-size: 0.75rem;
+  }
+</style>

@@ -204,7 +204,8 @@ Recommended next:
 G-6-e5-schedule-non-dry-run-poc-prep — DONE (see schedule-non-dry-run-poc-prep.md)
 G-6-e5-schedule-non-dry-run-poc-target-selection — DONE (see schedule-non-dry-run-poc-target-selection.md)
 G-6-e5-schedule-non-dry-run-poc-execution-prep — DONE (see schedule-non-dry-run-poc-execution-prep.md)
-Next: G-6-e5-schedule-non-dry-run-poc-execution-path-implementation
+G-6-e5-schedule-non-dry-run-poc-execution-path-implementation — DONE (see schedule-non-dry-run-poc-execution-path-implementation.md)
+Next: G-6-e5-schedule-non-dry-run-poc-execution-path-verification
 ```
 
 **G-6-e5-schedule-non-dry-run-poc-prep（完了）:** [schedule-non-dry-run-poc-prep.md](./schedule-non-dry-run-poc-prep.md) — first non-dry-run PoC will target one existing schedule row only; planned field change: description only; target row still not selected; beforeSnapshot still not captured; rollback SQL prepared as template; actual non-dry-run execution remains blocked.
@@ -212,6 +213,8 @@ Next: G-6-e5-schedule-non-dry-run-poc-execution-path-implementation
 **G-6-e5-schedule-non-dry-run-poc-target-selection（完了）:** [schedule-non-dry-run-poc-target-selection.md](./schedule-non-dry-run-poc-target-selection.md) — selected target row `schedule-2026-07-010`; beforeSnapshot captured; final payload description only; rollback SQL finalized; ready for execution prep; actual non-dry-run execution remains blocked.
 
 **G-6-e5-schedule-non-dry-run-poc-execution-prep（完了）:** [schedule-non-dry-run-poc-execution-prep.md](./schedule-non-dry-run-poc-execution-prep.md) — execution path planning prepared; one-off execution path required; service_role prohibited; authenticated admin user required; no execution script invoked; actual non-dry-run execution remains blocked.
+
+**G-6-e5-schedule-non-dry-run-poc-execution-path-implementation（完了）:** [schedule-non-dry-run-poc-execution-path-implementation.md](./schedule-non-dry-run-poc-execution-path-implementation.md) — hidden staging browser trigger implemented; default hidden; trigger was not invoked; no DB write occurred.
 
 ## 15. Final safety statement
 

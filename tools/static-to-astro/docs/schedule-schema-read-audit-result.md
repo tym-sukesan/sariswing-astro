@@ -359,9 +359,11 @@ Recommended next: G-6-e2-schedule-dry-run-ui-planning — DONE (see schedule-dry
 
 **G-6-e2-schedule-dry-run-ui-scaffold（完了）:** [schedule-dry-run-ui-scaffold.md](./schedule-dry-run-ui-scaffold.md) — Schedule dry-run UI in staging shell; update + duplicate dry-run only; no DB write.
 
-**G-6-e2-schedule-dry-run-ui-verification-result（完了）:** [schedule-dry-run-ui-verification-result.md](./schedule-dry-run-ui-verification-result.md) — Manual browser verification passed; port `4322`; next: G-6-e3-schedule-dry-run-adapter-planning.
+**G-6-e2-schedule-dry-run-ui-verification-result（完了）:** [schedule-dry-run-ui-verification-result.md](./schedule-dry-run-ui-verification-result.md) — Manual browser verification passed; port `4322`.
 
-G-6-e write implementation remains blocked until adapter planning and separate approval.
+**G-6-e3-schedule-dry-run-adapter-planning（完了）:** [schedule-dry-run-adapter-planning.md](./schedule-dry-run-adapter-planning.md) — Dry-run adapter boundary; pure functions; next: G-6-e3-schedule-dry-run-adapter-implementation.
+
+G-6-e write implementation remains blocked until adapter implementation and separate approval.
 
 ## 13. Final safety statement
 

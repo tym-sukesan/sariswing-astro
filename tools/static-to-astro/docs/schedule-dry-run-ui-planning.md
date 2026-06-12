@@ -475,12 +475,15 @@ readyForG6EImplementation: false
 ```txt
 Recommended next: G-6-e2-schedule-dry-run-ui-scaffold — DONE (see schedule-dry-run-ui-scaffold.md)
 G-6-e2-schedule-dry-run-ui-verification-result — DONE (see schedule-dry-run-ui-verification-result.md)
-Next: G-6-e3-schedule-dry-run-adapter-planning
+G-6-e3-schedule-dry-run-adapter-planning — DONE (see schedule-dry-run-adapter-planning.md)
+Next: G-6-e3-schedule-dry-run-adapter-implementation
 ```
 
 **G-6-e2-schedule-dry-run-ui-scaffold（完了）:** [schedule-dry-run-ui-scaffold.md](./schedule-dry-run-ui-scaffold.md) — Schedule dry-run UI scaffold in staging shell; update + duplicate dry-run only; no delete; no `schedule_months` write; no schema migration; no DB write.
 
-**G-6-e2-schedule-dry-run-ui-verification-result（完了）:** [schedule-dry-run-ui-verification-result.md](./schedule-dry-run-ui-verification-result.md) — Manual browser verification passed; port `4322` accepted; update + duplicate dry-run verified; no DB write; next: G-6-e3-schedule-dry-run-adapter-planning; write implementation remains blocked.
+**G-6-e2-schedule-dry-run-ui-verification-result（完了）:** [schedule-dry-run-ui-verification-result.md](./schedule-dry-run-ui-verification-result.md) — Manual browser verification passed; port `4322` accepted; update + duplicate dry-run verified; no DB write.
+
+**G-6-e3-schedule-dry-run-adapter-planning（完了）:** [schedule-dry-run-adapter-planning.md](./schedule-dry-run-adapter-planning.md) — Dry-run adapter boundary; pure functions; no DB client; `actualWrite: false` hard-coded; next: G-6-e3-schedule-dry-run-adapter-implementation; write implementation remains blocked.
 
 ## 19. Final safety statement
 

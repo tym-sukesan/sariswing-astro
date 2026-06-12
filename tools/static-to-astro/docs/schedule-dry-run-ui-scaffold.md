@@ -128,7 +128,9 @@ node tools/static-to-astro/scripts/report-schedule-dry-run-ui-scaffold.mjs \
 
 **G-6-e2-schedule-dry-run-ui-verification** — DONE (see [schedule-dry-run-ui-verification-result.md](./schedule-dry-run-ui-verification-result.md)).
 
-**G-6-e2-schedule-dry-run-ui-verification-result（完了）:** Manual browser verification passed; verified local URL used port `4322`; update + duplicate dry-run visually verified; delete and non-dry-run remain excluded; no DB write; no schema change; next: **G-6-e3-schedule-dry-run-adapter-planning**.
+**G-6-e2-schedule-dry-run-ui-verification-result（完了）:** Manual browser verification passed; verified local URL used port `4322`; update + duplicate dry-run visually verified.
+
+**G-6-e3-schedule-dry-run-adapter-planning（完了）:** [schedule-dry-run-adapter-planning.md](./schedule-dry-run-adapter-planning.md) — dry-run adapter boundary as pure functions; no DB client; `actualWrite: false` hard-coded; next: G-6-e3-schedule-dry-run-adapter-implementation.
 
 Write implementation remains blocked (`readyForG6EWriteImplementation: false`).
 

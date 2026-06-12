@@ -175,13 +175,13 @@ ENABLE_ADMIN_STAGING_SHELL=true npm run dev
 Automated static checks have been run (see §5). Manual browser verification is deferred to the result phase.
 
 ```txt
-manualBrowserVerification: pending
+manualBrowserVerification: pass
 staticSafetyVerification: pass
 buildVerification: pass
 reportCliVerification: pass
 ```
 
-Manual browser confirmation will be recorded in **G-6-e3-schedule-dry-run-adapter-verification-result** after user testing.
+Manual browser confirmation recorded in [schedule-dry-run-adapter-verification-result.md](./schedule-dry-run-adapter-verification-result.md).
 
 ## 8. Gate decision
 
@@ -196,7 +196,8 @@ readyForNonDryRunSchedulePoC: false
 
 ```txt
 Recommended next:
-G-6-e3-schedule-dry-run-adapter-verification-result
+G-6-e3-schedule-dry-run-adapter-verification-result — DONE (see schedule-dry-run-adapter-verification-result.md)
+Next: G-6-e4-schedule-write-adapter-planning
 ```
 
 **Purpose:** Record the manual browser verification result after testing the adapter-routed dry-run UI.

@@ -242,8 +242,9 @@ Never skip: local preview and customer demo before runtime shell; read-only befo
 | **G-6-e2-schedule-dry-run-ui-verification-result（完了）** | [Verification result](./schedule-dry-run-ui-verification-result.md) | Manual browser check passed |
 | **G-6-e3-schedule-dry-run-adapter-planning（完了）** | [Dry-run adapter planning](./schedule-dry-run-adapter-planning.md) | Pure-function boundary; no DB client |
 | **G-6-e3-schedule-dry-run-adapter-implementation（完了）** | [Dry-run adapter implementation](./schedule-dry-run-adapter-implementation.md) | Adapter + UI routing |
-| **G-6-e3-schedule-dry-run-adapter-verification（完了）** | [Adapter verification](./schedule-dry-run-adapter-verification.md) | Static checks pass; manual pending; next: verification-result |
-| **G-6-e** | Schedule write (staging) | Blocked — manual verification-result + write phases + approval |
+| **G-6-e3-schedule-dry-run-adapter-verification（完了）** | [Adapter verification](./schedule-dry-run-adapter-verification.md) | Static checks pass |
+| **G-6-e3-schedule-dry-run-adapter-verification-result（完了）** | [Verification result](./schedule-dry-run-adapter-verification-result.md) | Manual pass; next: write adapter planning |
+| **G-6-e** | Schedule write (staging) | Blocked — write adapter planning + approval |
 | **G-5y-e** | Role check / allowlist | Staging Auth |
 
 **Purpose (overall):** Staging admin login only — after shell QA on `/__admin-staging-shell/musician-basic/`.

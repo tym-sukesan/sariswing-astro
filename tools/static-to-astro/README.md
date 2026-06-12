@@ -1418,7 +1418,14 @@ gosaki / Sariswing で実証した移行フローを、**別サイト向け CMS 
 
 **G-6-e3-schedule-dry-run-adapter-implementation（完了）:** [Schedule dry-run adapter implementation](docs/schedule-dry-run-adapter-implementation.md) — pure dry-run adapter implemented; UI routed through adapter; no DB client; no real write adapter.
 
-**G-6-e3-schedule-dry-run-adapter-verification（完了）:** [Schedule dry-run adapter verification](docs/schedule-dry-run-adapter-verification.md) — static safety checks pass; manual browser checklist prepared; adapter-routed dry-run UI requires manual sign-off; next: G-6-e3-schedule-dry-run-adapter-verification-result; write implementation remains blocked.
+**G-6-e3-schedule-dry-run-adapter-verification（完了）:** [Schedule dry-run adapter verification](docs/schedule-dry-run-adapter-verification.md) — static safety checks pass; manual browser checklist prepared.
+
+**G-6-e3-schedule-dry-run-adapter-verification-result（完了）:** [Schedule dry-run adapter verification result](docs/schedule-dry-run-adapter-verification-result.md) — manual browser verification passed; adapter-routed dry-run UI verified; `actualWrite: false` confirmed; duplicate payload safety values confirmed; no DB write; no schema change; no real write adapter; next: G-6-e4-schedule-write-adapter-planning; write implementation remains blocked.
+
+```bash
+node tools/static-to-astro/scripts/report-schedule-dry-run-adapter-verification-result.mjs \
+  --out-dir tools/static-to-astro/output/schedule-dry-run-adapter-verification-result/gosaki
+```
 
 ```bash
 node tools/static-to-astro/scripts/report-schedule-dry-run-adapter-verification.mjs \

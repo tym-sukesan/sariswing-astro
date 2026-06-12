@@ -347,6 +347,8 @@ Not for first MVP dry-run implementation.
 - authenticated INSERT/UPDATE grants not present yet (needed only for future non-dry-run)
 ```
 
+**G-6-e4-schedule-update-grant-prep（完了）:** [schedule-update-grant-prep.md](./schedule-update-grant-prep.md) — `authenticated UPDATE` on `public.schedules` may be required for future real update; manual GRANT/rollback SQL prepared; GRANT not executed; is_admin() review required before apply.
+
 **These gaps do not block MVP dry-run UI.**
 
 ## 12. Recommended next phase

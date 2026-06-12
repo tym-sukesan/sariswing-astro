@@ -1424,7 +1424,14 @@ gosaki / Sariswing で実証した移行フローを、**別サイト向け CMS 
 
 **G-6-e4-schedule-write-adapter-planning（完了）:** [Schedule write adapter planning](docs/schedule-write-adapter-planning.md) — real write adapter boundary planned separately from dry-run adapter; update-only first PoC on one pre-seeded staging row; RLS/GRANT/rollback/approval IDs recorded; planning only — no write adapter code, no GRANT/RLS change, no DB write.
 
-**G-6-e4-schedule-write-adapter-implementation-planning（完了）:** [Schedule write adapter implementation planning](docs/schedule-write-adapter-implementation-planning.md) — update-only `updateScheduleWrite` design; types/guards/env gates/beforeSnapshot/rollback finalized; UPDATE grant review required before real write; recommended next: G-6-e4-schedule-update-grant-prep; write implementation remains blocked.
+**G-6-e4-schedule-write-adapter-implementation-planning（完了）:** [Schedule write adapter implementation planning](docs/schedule-write-adapter-implementation-planning.md) — update-only `updateScheduleWrite` design; types/guards/env gates/beforeSnapshot/rollback finalized; UPDATE grant review required before real write; write implementation remains blocked.
+
+**G-6-e4-schedule-update-grant-prep（完了）:** [Schedule UPDATE grant prep](docs/schedule-update-grant-prep.md) — minimal `authenticated UPDATE` on `public.schedules` for future staging PoC; pre-check/after-verify/rollback SQL prepared; is_admin() + RLS review required; GRANT not executed; INSERT/DELETE/TRUNCATE/TRIGGER/REFERENCES excluded; next: G-6-e4-schedule-update-grant-manual-apply-prep.
+
+```bash
+node tools/static-to-astro/scripts/report-schedule-update-grant-prep.mjs \
+  --out-dir tools/static-to-astro/output/schedule-update-grant-prep/gosaki
+```
 
 ```bash
 node tools/static-to-astro/scripts/report-schedule-write-adapter-implementation-planning.mjs \

@@ -163,7 +163,8 @@ Write implementation is **not** approved by this phase. The next step is **plann
 Recommended next:
 G-6-e4-schedule-write-adapter-planning — DONE (see schedule-write-adapter-planning.md)
 G-6-e4-schedule-write-adapter-implementation-planning — DONE (see schedule-write-adapter-implementation-planning.md)
-Next: G-6-e4-schedule-update-grant-prep
+G-6-e4-schedule-update-grant-prep — DONE (see schedule-update-grant-prep.md)
+Next: G-6-e4-schedule-update-grant-manual-apply-prep
 ```
 
 **G-6-e4-schedule-write-adapter-planning（完了）:** [schedule-write-adapter-planning.md](./schedule-write-adapter-planning.md) — real write adapter boundary planned; update-only first PoC; dry-run separation; RLS/GRANT review recorded; rollback and approval IDs defined; planning only — no write adapter implemented.

@@ -561,15 +561,18 @@ Write adapter **implementation** and any **GRANT/RLS change** remain blocked aft
 ```txt
 Recommended next:
 G-6-e4-schedule-write-adapter-implementation-planning — DONE (see schedule-write-adapter-implementation-planning.md)
-Next: G-6-e4-schedule-update-grant-prep
+G-6-e4-schedule-update-grant-prep — DONE (see schedule-update-grant-prep.md)
+Next: G-6-e4-schedule-update-grant-manual-apply-prep
 ```
 
-**G-6-e4-schedule-write-adapter-implementation-planning（完了）:** [schedule-write-adapter-implementation-planning.md](./schedule-write-adapter-implementation-planning.md) — update-only write adapter types/guards/signatures finalized; beforeSnapshot and rollback required; UPDATE grant review required; recommended next: grant prep; write implementation remains blocked.
+**G-6-e4-schedule-write-adapter-implementation-planning（完了）:** [schedule-write-adapter-implementation-planning.md](./schedule-write-adapter-implementation-planning.md) — update-only write adapter types/guards/signatures finalized; beforeSnapshot and rollback required; UPDATE grant review required; write implementation remains blocked.
+
+**G-6-e4-schedule-update-grant-prep（完了）:** [schedule-update-grant-prep.md](./schedule-update-grant-prep.md) — minimal `authenticated UPDATE` on `public.schedules` prepared; GRANT not executed; is_admin() + RLS review required before apply.
 
 **Later sequence:**
 
 ```txt
-G-6-e4-schedule-update-grant-prep — manual GRANT review/apply (user in SQL Editor)
+G-6-e4-schedule-update-grant-manual-apply-prep — user applies GRANT in SQL Editor (staging only)
 G-6-e4-schedule-write-adapter-implementation — write adapter code (staging guards, no UI non-dry-run yet)
 G-6-e5-schedule-non-dry-run-poc — first manual staging update of one pre-seeded row
 ```

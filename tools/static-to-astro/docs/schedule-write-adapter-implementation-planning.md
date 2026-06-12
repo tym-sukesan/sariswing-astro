@@ -521,7 +521,8 @@ When `G-6-e4-schedule-write-adapter-implementation` runs (future):
 ## 19. Gate decision
 
 ```txt
-readyForG6E4ScheduleUpdateGrantPrep: true
+readyForG6E4ScheduleUpdateGrantPrep: true (see schedule-update-grant-prep.md)
+readyForG6E4ScheduleUpdateGrantManualApplyPrep: true
 readyForG6E4ScheduleWriteAdapterImplementation: false
 readyForG6EWriteImplementation: false
 readyForNonDryRunSchedulePoC: false
@@ -531,19 +532,22 @@ grantChangesPerformed: false
 policyChangesPerformed: false
 ```
 
-Grant prep is the next approved planning/prep step. Write adapter **code** remains blocked until after grant prep review.
+Grant prep SQL is prepared; GRANT not executed. Write adapter **code** remains blocked.
 
 ## 20. Recommended next phase
 
 ```txt
 Recommended next:
-G-6-e4-schedule-update-grant-prep
+G-6-e4-schedule-update-grant-prep — DONE (see schedule-update-grant-prep.md)
+Next: G-6-e4-schedule-update-grant-manual-apply-prep
 ```
 
-**Purpose:**
+**G-6-e4-schedule-update-grant-prep（完了）:** [schedule-update-grant-prep.md](./schedule-update-grant-prep.md) — authenticated UPDATE grant on `public.schedules` prepared; pre-check/after-verify/rollback SQL; is_admin() review required; GRANT not executed; INSERT/DELETE/TRUNCATE/TRIGGER/REFERENCES excluded.
+
+**Purpose of manual apply prep:**
 
 ```txt
-Prepare the minimal authenticated UPDATE grant review and manual SQL plan before any non-dry-run schedule update.
+User manually applies GRANT in Supabase SQL Editor on staging after pre-checks; separately recorded.
 ```
 
 ## 21. Final safety statement

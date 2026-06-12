@@ -1,9 +1,8 @@
 {
-  "phase": "G-6-e5-schedule-non-dry-run-poc-execution-path-verification",
-  "type": "schedule-non-dry-run-poc-execution-path-verification",
+  "phase": "G-6-e5-schedule-non-dry-run-poc-execution-path-verification-result",
+  "type": "schedule-non-dry-run-poc-execution-path-verification-result",
   "stagingOnly": true,
-  "implementationCommit": "11d6561",
-  "verificationResultCommit": "pending",
+  "verificationCommit": "ee756cc",
   "targetModule": "schedule",
   "targetTable": "schedules",
   "targetId": "aa440e29-5be8-402e-9190-0d81c48434c0",
@@ -20,6 +19,8 @@
   "writeAdapterInvoked": false,
   "dbWritesPerformed": false,
   "scheduleRecordsUpdated": false,
+  "descriptionUnchanged": true,
+  "updatedAtUnchanged": true,
   "serviceRoleAllowed": false,
   "defaultVisible": false,
   "manualConfirmRequired": true,
@@ -35,14 +36,8 @@
   "publishTriggered": false,
   "ftpDeployTriggered": false,
   "githubDispatchTriggered": false,
-  "staticSafetyVerification": "pass",
-  "buildVerification": "pass",
-  "manualEnvGatedBrowserVerification": "pass",
-  "readyForManualEnvGatedBrowserVerification": false,
-  "readyForG6E5ScheduleNonDryRunPocExecutionPathVerificationResult": true,
   "readyForG6E5ScheduleNonDryRunPocFinalPreflight": true,
   "readyForG6E5ScheduleNonDryRunPoc": false,
   "readyForNonDryRunSchedulePoC": false,
-  "recommendedNextPhase": "G-6-e5-schedule-non-dry-run-poc-final-preflight",
-  "followOnPhase": "G-6-e5-schedule-non-dry-run-poc-execution-path-verification-result"
+  "recommendedNextPhase": "G-6-e5-schedule-non-dry-run-poc-final-preflight"
 }

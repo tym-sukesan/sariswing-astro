@@ -31,20 +31,20 @@ No schedule records have been updated.
 
 ```txt
 [x] Normal dev: Danger Zone hidden
-[ ] Env-gated dev: Danger Zone visible
-[ ] Target ID displayed correctly
-[ ] Legacy ID displayed correctly
-[ ] Before description displayed correctly
-[ ] After description displayed correctly
-[ ] Approval ID displayed correctly
-[ ] Manual confirm input exists
-[ ] Run button disabled before confirm
-[ ] Run button enabled after exact confirm
+[x] Env-gated dev: Danger Zone visible
+[x] Target ID displayed correctly
+[x] Legacy ID displayed correctly
+[x] Before description displayed correctly
+[x] After description displayed correctly
+[x] Approval ID displayed correctly
+[x] Manual confirm input exists
+[x] Run button disabled before confirm
+[x] Run button enabled after exact confirm
 [x] Button not clicked
 [x] No DB write occurred
 ```
 
-Env-gated display and manual confirm items remain pending user manual browser verification.
+Manual env-gated browser verification completed. See [schedule-non-dry-run-poc-execution-path-verification-result.md](./schedule-non-dry-run-poc-execution-path-verification-result.md).
 
 ## 4. Normal dev verification
 
@@ -116,8 +116,8 @@ Do not execute the PoC in this phase.
 **Env-gated display verification result:**
 
 ```txt
-- pass/fail: pending
-- notes: awaiting manual browser verification with env-gated dev command above
+- pass
+- notes: user manual verification PASS — Danger Zone visible; targetId, legacy_id, before/after description, approval ID correct; gate status armed; result panel not executed
 ```
 
 ## 7. Manual confirm verification
@@ -138,9 +138,9 @@ Do not execute the PoC in this phase.
 **Manual confirm verification result:**
 
 ```txt
-- pass/fail: pending
+- pass
 - button clicked: no
-- notes: Cursor did not click; user manual verification required
+- notes: confirm empty/incorrect keeps Run disabled; exact approval ID enables Run; button not clicked
 ```
 
 ## 8. DB unchanged verification
@@ -167,9 +167,10 @@ updated_at: 2026-06-05 17:39:44.140168+00
 **DB unchanged verification result:**
 
 ```txt
-- pass/fail: pending (no trigger click in this phase; prior snapshot still expected)
-- description unchanged: yes (expected; not re-verified by Cursor)
-- updated_at unchanged: yes (expected; not re-verified by Cursor)
+- pass
+- description unchanged: yes
+- updated_at unchanged: yes
+- notes: staging SQL Editor read-only check; description 出演：; updated_at 2026-06-05 17:39:44.140168+00
 ```
 
 ## 9. Static verification
@@ -213,27 +214,29 @@ not used (PASS)
 ```txt
 executionPathVerified: true
 normalDevHiddenVerified: true
-envGatedVisibleVerified: false
-manualConfirmVerified: false
+envGatedVisibleVerified: true
+manualConfirmVerified: true
+dbUnchangedVerified: true
 triggerClicked: false
 executionPathInvoked: false
 writeAdapterInvoked: false
 dbWritesPerformed: false
 scheduleRecordsUpdated: false
-readyForManualEnvGatedBrowserVerification: true
-readyForG6E5ScheduleNonDryRunPocExecutionPathVerificationResult: false
+readyForManualEnvGatedBrowserVerification: false
+readyForG6E5ScheduleNonDryRunPocExecutionPathVerificationResult: true
+readyForG6E5ScheduleNonDryRunPocFinalPreflight: true
 readyForG6E5ScheduleNonDryRunPoc: false
 readyForNonDryRunSchedulePoC: false
 ```
 
-`envGatedVisibleVerified` and `manualConfirmVerified` remain **false** until user completes manual env-gated browser verification without clicking run.
+Manual env-gated verification recorded in [schedule-non-dry-run-poc-execution-path-verification-result.md](./schedule-non-dry-run-poc-execution-path-verification-result.md).
 
 ## 11. Recommended next phase
 
 ```txt
 Recommended next:
-Manual env-gated browser verification by user, followed by
-G-6-e5-schedule-non-dry-run-poc-execution-path-verification-result
+G-6-e5-schedule-non-dry-run-poc-execution-path-verification-result — DONE (see schedule-non-dry-run-poc-execution-path-verification-result.md)
+Next: G-6-e5-schedule-non-dry-run-poc-final-preflight
 ```
 
 ## 12. Final safety statement

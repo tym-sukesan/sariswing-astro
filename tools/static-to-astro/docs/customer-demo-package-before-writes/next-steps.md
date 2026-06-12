@@ -53,8 +53,8 @@
 - **G-6-e5-schedule-non-dry-run-poc-target-selection（完了）:** [schedule-non-dry-run-poc-target-selection.md](../schedule-non-dry-run-poc-target-selection.md) — selected target row `schedule-2026-07-010`; beforeSnapshot captured; final payload description only; rollback SQL finalized; ready for execution prep; actual non-dry-run execution remains blocked
 - **G-6-e5-schedule-non-dry-run-poc-execution-prep（完了）:** [schedule-non-dry-run-poc-execution-prep.md](../schedule-non-dry-run-poc-execution-prep.md) — execution path planning prepared; one-off execution path required; service_role prohibited; authenticated admin user required; no execution script invoked; actual non-dry-run execution remains blocked
 - **G-6-e5-schedule-non-dry-run-poc-execution-path-implementation（完了）:** [schedule-non-dry-run-poc-execution-path-implementation.md](../schedule-non-dry-run-poc-execution-path-implementation.md) — hidden staging browser trigger implemented; default hidden; trigger was not invoked; no DB write occurred
-- **G-6-e5-schedule-non-dry-run-poc-execution-path-verification（完了）:** [schedule-non-dry-run-poc-execution-path-verification.md](../schedule-non-dry-run-poc-execution-path-verification.md) — normal dev hidden verified; env-gated/manual confirm pending; trigger not clicked; DB write still blocked
-- 次: G-6-e5-schedule-non-dry-run-poc-execution-path-verification-result
+- **G-6-e5-schedule-non-dry-run-poc-execution-path-verification-result（完了）:** [schedule-non-dry-run-poc-execution-path-verification-result.md](../schedule-non-dry-run-poc-execution-path-verification-result.md) — env-gated Danger Zone display verified; manual confirm gate verified; Run button not clicked; DB unchanged verified; ready for final preflight
+- 次: G-6-e5-schedule-non-dry-run-poc-final-preflight
 
 ## Option B: customer-specific schema mapping
 
@@ -125,7 +125,8 @@ G-6-e5-schedule-non-dry-run-poc-target-selection: target row selected (done)
 G-6-e5-schedule-non-dry-run-poc-execution-prep: execution path planned (done)
 G-6-e5-schedule-non-dry-run-poc-execution-path-implementation: hidden trigger implemented (done)
 G-6-e5-schedule-non-dry-run-poc-execution-path-verification: normal dev hidden verified (done)
-G-6-e5-schedule-non-dry-run-poc-execution-path-verification-result: next
+G-6-e5-schedule-non-dry-run-poc-execution-path-verification-result: manual browser verification recorded (done)
+G-6-e5-schedule-non-dry-run-poc-final-preflight: next
 G-6-e: schedule write implementation (blocked — readyForG6EImplementation false)
 ```
 

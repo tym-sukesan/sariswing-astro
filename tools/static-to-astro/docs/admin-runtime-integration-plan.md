@@ -255,8 +255,9 @@ Never skip: local preview and customer demo before runtime shell; read-only befo
 | **G-6-e5-schedule-non-dry-run-poc-target-selection（完了）** | [Target selection](./schedule-non-dry-run-poc-target-selection.md) | Row `schedule-2026-07-010` selected; beforeSnapshot captured; rollback finalized |
 | **G-6-e5-schedule-non-dry-run-poc-execution-prep（完了）** | [Execution prep](./schedule-non-dry-run-poc-execution-prep.md) | One-off path planned; service_role prohibited; admin auth required |
 | **G-6-e5-schedule-non-dry-run-poc-execution-path-implementation（完了）** | [Execution path](./schedule-non-dry-run-poc-execution-path-implementation.md) | Hidden browser trigger; env-gated; not invoked; no DB write |
-| **G-6-e5-schedule-non-dry-run-poc-execution-path-verification（完了）** | [Execution path verification](./schedule-non-dry-run-poc-execution-path-verification.md) | Normal dev hidden pass; env-gated/manual confirm pending; no click |
-| **G-6-e** | Schedule write (staging) | Manual env-gated browser verification next; PoC blocked |
+| **G-6-e5-schedule-non-dry-run-poc-execution-path-verification（完了）** | [Execution path verification](./schedule-non-dry-run-poc-execution-path-verification.md) | Normal dev hidden pass; env-gated/manual confirm verified; no click |
+| **G-6-e5-schedule-non-dry-run-poc-execution-path-verification-result（完了）** | [Verification result](./schedule-non-dry-run-poc-execution-path-verification-result.md) | Manual browser verification recorded; DB unchanged; ready for final preflight |
+| **G-6-e** | Schedule write (staging) | Final preflight next; actual non-dry-run PoC blocked |
 | **G-5y-e** | Role check / allowlist | Staging Auth |
 
 **Purpose (overall):** Staging admin login only — after shell QA on `/__admin-staging-shell/musician-basic/`.

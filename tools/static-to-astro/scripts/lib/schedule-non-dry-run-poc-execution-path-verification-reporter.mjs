@@ -92,14 +92,14 @@ export function runScheduleNonDryRunPocExecutionPathVerificationReport({
   }
   if (!doc.includes("Do not click the run button")) blockers.push("no-click-warning-missing");
   if (!doc.includes("normalDevHiddenVerified: true")) blockers.push("gate-normal-dev-missing");
-  if (!doc.includes("envGatedVisibleVerified: false")) {
-    blockers.push("gate-env-gated-pending");
+  if (!doc.includes("envGatedVisibleVerified: true")) {
+    blockers.push("gate-env-gated-missing");
   }
-  if (!doc.includes("manualConfirmVerified: false")) {
-    blockers.push("gate-manual-confirm-pending");
+  if (!doc.includes("manualConfirmVerified: true")) {
+    blockers.push("gate-manual-confirm-missing");
   }
   if (!doc.includes("G-6-e5-schedule-non-dry-run-poc-execution-path-verification-result")) {
-    blockers.push("next-phase-missing");
+    blockers.push("result-phase-ref-missing");
   }
   if (!doc.includes("button clicked: no")) blockers.push("button-not-clicked-note-missing");
 
@@ -135,20 +135,20 @@ export function runScheduleNonDryRunPocExecutionPathVerificationReport({
   if (config.normalDevHiddenVerified !== true) {
     blockers.push("config-normalDevHiddenVerified");
   }
-  if (config.envGatedVisibleVerified !== false) {
+  if (config.envGatedVisibleVerified !== true) {
     blockers.push("config-envGatedVisibleVerified");
   }
-  if (config.manualConfirmVerified !== false) {
+  if (config.manualConfirmVerified !== true) {
     blockers.push("config-manualConfirmVerified");
   }
   if (config.triggerClicked !== false) blockers.push("config-triggerClicked");
   if (config.executionPathInvoked !== false) blockers.push("config-executionPathInvoked");
   if (config.writeAdapterInvoked !== false) blockers.push("config-writeAdapterInvoked");
   if (config.dbWritesPerformed !== false) blockers.push("config-dbWritesPerformed");
-  if (config.readyForManualEnvGatedBrowserVerification !== true) {
+  if (config.readyForManualEnvGatedBrowserVerification !== false) {
     blockers.push("config-readyForManualEnvGatedBrowserVerification");
   }
-  if (config.readyForG6E5ScheduleNonDryRunPocExecutionPathVerificationResult !== false) {
+  if (config.readyForG6E5ScheduleNonDryRunPocExecutionPathVerificationResult !== true) {
     blockers.push("config-readyForVerificationResult");
   }
   if (config.readyForNonDryRunSchedulePoC !== false) {
@@ -164,16 +164,18 @@ export function runScheduleNonDryRunPocExecutionPathVerificationReport({
     executionPathImplemented: true,
     executionPathVerified: complete && config.executionPathVerified === true,
     normalDevHiddenVerified: true,
-    envGatedVisibleVerified: false,
-    manualConfirmVerified: false,
+    envGatedVisibleVerified: true,
+    manualConfirmVerified: true,
+    dbUnchangedVerified: config.dbUnchangedVerified === true,
     triggerClicked: false,
     executionPathInvoked: false,
     writeAdapterInvoked: false,
     dbWritesPerformed: false,
     scheduleRecordsUpdated: false,
-    readyForManualEnvGatedBrowserVerification:
-      complete && config.readyForManualEnvGatedBrowserVerification === true,
-    readyForG6E5ScheduleNonDryRunPocExecutionPathVerificationResult: false,
+    readyForManualEnvGatedBrowserVerification: false,
+    readyForG6E5ScheduleNonDryRunPocExecutionPathVerificationResult: true,
+    readyForG6E5ScheduleNonDryRunPocFinalPreflight:
+      config.readyForG6E5ScheduleNonDryRunPocFinalPreflight === true,
     readyForG6E5ScheduleNonDryRunPoc: false,
     readyForNonDryRunSchedulePoC: false,
     recommendedNextPhase: config.recommendedNextPhase,
@@ -202,6 +204,7 @@ export function writeScheduleNonDryRunPocExecutionPathVerificationOutput(
     normalDevHiddenVerified: report.normalDevHiddenVerified,
     envGatedVisibleVerified: report.envGatedVisibleVerified,
     manualConfirmVerified: report.manualConfirmVerified,
+    dbUnchangedVerified: report.dbUnchangedVerified,
     triggerClicked: report.triggerClicked,
     executionPathInvoked: report.executionPathInvoked,
     writeAdapterInvoked: report.writeAdapterInvoked,
@@ -209,6 +212,10 @@ export function writeScheduleNonDryRunPocExecutionPathVerificationOutput(
     scheduleRecordsUpdated: report.scheduleRecordsUpdated,
     readyForManualEnvGatedBrowserVerification:
       report.readyForManualEnvGatedBrowserVerification,
+    readyForG6E5ScheduleNonDryRunPocExecutionPathVerificationResult:
+      report.readyForG6E5ScheduleNonDryRunPocExecutionPathVerificationResult,
+    readyForG6E5ScheduleNonDryRunPocFinalPreflight:
+      report.readyForG6E5ScheduleNonDryRunPocFinalPreflight,
     readyForNonDryRunSchedulePoC: report.readyForNonDryRunSchedulePoC,
     recommendedNextPhase: report.recommendedNextPhase,
   };

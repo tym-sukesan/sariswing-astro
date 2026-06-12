@@ -1438,7 +1438,14 @@ gosaki / Sariswing で実証した移行フローを、**別サイト向け CMS 
 
 **G-6-e5-schedule-non-dry-run-poc-prep（完了）:** [Schedule non-dry-run PoC prep](docs/schedule-non-dry-run-poc-prep.md) — first non-dry-run PoC will target one existing schedule row only; planned field change: description only; rollback SQL prepared as template; actual non-dry-run execution remains blocked.
 
-**G-6-e5-schedule-non-dry-run-poc-target-selection（完了）:** [Schedule non-dry-run PoC target selection](docs/schedule-non-dry-run-poc-target-selection.md) — selected target row `schedule-2026-07-010`; beforeSnapshot captured; final payload description only; rollback SQL finalized; ready for execution prep; actual non-dry-run execution remains blocked; next: G-6-e5-schedule-non-dry-run-poc-execution-prep.
+**G-6-e5-schedule-non-dry-run-poc-target-selection（完了）:** [Schedule non-dry-run PoC target selection](docs/schedule-non-dry-run-poc-target-selection.md) — selected target row `schedule-2026-07-010`; beforeSnapshot captured; final payload description only; rollback SQL finalized; ready for execution prep; actual non-dry-run execution remains blocked.
+
+**G-6-e5-schedule-non-dry-run-poc-execution-prep（完了）:** [Schedule non-dry-run PoC execution prep](docs/schedule-non-dry-run-poc-execution-prep.md) — execution path planning prepared; one-off execution path required; service_role prohibited; authenticated admin user required; no execution script invoked; actual non-dry-run execution remains blocked; next: G-6-e5-schedule-non-dry-run-poc-execution-path-implementation.
+
+```bash
+node tools/static-to-astro/scripts/report-schedule-non-dry-run-poc-execution-prep.mjs \
+  --out-dir tools/static-to-astro/output/schedule-non-dry-run-poc-execution-prep/gosaki
+```
 
 ```bash
 node tools/static-to-astro/scripts/report-schedule-non-dry-run-poc-target-selection.mjs \

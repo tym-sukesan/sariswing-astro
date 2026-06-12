@@ -228,14 +228,11 @@ readyForNonDryRunSchedulePoC: false
 
 ```txt
 Recommended next:
-G-6-e5-schedule-non-dry-run-poc-execution-prep
+G-6-e5-schedule-non-dry-run-poc-execution-prep — DONE (see schedule-non-dry-run-poc-execution-prep.md)
+Next: G-6-e5-schedule-non-dry-run-poc-execution-path-implementation
 ```
 
-**Purpose:**
-
-```txt
-Prepare the one-off execution path for updateScheduleWrite, with explicit env gates and no UI exposure.
-```
+**G-6-e5-schedule-non-dry-run-poc-execution-prep（完了）:** [schedule-non-dry-run-poc-execution-prep.md](./schedule-non-dry-run-poc-execution-prep.md) — execution path planning prepared; one-off execution path required; service_role prohibited; authenticated admin user required; no execution script invoked; actual non-dry-run execution remains blocked.
 
 ## 15. Final safety statement
 

@@ -3,10 +3,12 @@
  */
 
 import {
-  buildDuplicateDryRunResult,
-  buildUpdateDryRunResult,
-  recordToFormState,
-} from "./schedule-dry-run-payload";
+  buildScheduleDryRunSelectionError,
+  buildScheduleDuplicateDryRunResult,
+  buildScheduleUpdateDryRunResult,
+} from "./schedule-dry-run-adapter";
+import { recordToFormState } from "./schedule-dry-run-payload";
+import { formStateToDryRunInput } from "./schedule-dry-run-validation";
 import type { ScheduleDryRunResult, ScheduleRecord } from "./schedule-dry-run-types";
 import { getStagingScheduleDryRunConfig } from "./staging-schedule-dry-run-config";
 import {
@@ -145,11 +147,12 @@ function renderDryRunResult(result: ScheduleDryRunResult): void {
   const el = document.getElementById("schedule-dry-run-result");
   if (!el) return;
 
-  const validationClass = result.validation.valid
+  const validationClass = result.validation.ok
     ? "schedule-dry-run-result__valid"
     : "schedule-dry-run-result__invalid";
 
   const metaParts = [
+    `<div><dt>module</dt><dd>${escapeHtml(result.module)}</dd></div>`,
     `<div><dt>operation</dt><dd>${escapeHtml(result.operation)}</dd></div>`,
     `<div><dt>targetTable</dt><dd>${escapeHtml(result.targetTable)}</dd></div>`,
     result.targetId
@@ -159,14 +162,28 @@ function renderDryRunResult(result: ScheduleDryRunResult): void {
       ? `<div><dt>sourceId</dt><dd><code>${escapeHtml(result.sourceId)}</code></dd></div>`
       : "",
     `<div><dt>dryRun</dt><dd>true</dd></div>`,
-    `<div><dt>wouldWrite</dt><dd>true</dd></div>`,
+    `<div><dt>wouldWrite</dt><dd>${result.wouldWrite ? "true" : "false"}</dd></div>`,
     `<div><dt>actualWrite</dt><dd>false</dd></div>`,
-    `<div><dt>validation</dt><dd>${result.validation.valid ? "pass" : `fail: ${escapeHtml(result.validation.errors.join("; "))}`}</dd></div>`,
+    `<div><dt>validation</dt><dd>${result.validation.ok ? "pass" : `fail: ${escapeHtml(result.validation.errors.join("; "))}`}</dd></div>`,
   ];
 
-  if (result.recalculatedYear != null || result.recalculatedMonth) {
+  const preview = result.derivedPreview;
+  if (
+    preview &&
+    (preview.recalculatedYear != null ||
+      preview.recalculatedMonth ||
+      preview.scheduleGroup)
+  ) {
     metaParts.push(
-      `<div><dt>recalculatedYear/Month (preview)</dt><dd>${escapeHtml(String(result.recalculatedYear ?? "—"))} / ${escapeHtml(result.recalculatedMonth ?? "—")}</dd></div>`,
+      `<div><dt>derivedPreview</dt><dd>${escapeHtml(
+        [
+          preview.recalculatedYear != null ? `year: ${preview.recalculatedYear}` : "",
+          preview.recalculatedMonth ? `month: ${preview.recalculatedMonth}` : "",
+          preview.scheduleGroup ? `group: ${preview.scheduleGroup}` : "",
+        ]
+          .filter(Boolean)
+          .join(" / "),
+      )}</dd></div>`,
     );
   }
 
@@ -192,21 +209,21 @@ function handleUpdateDryRun(): void {
   if (!config.enabled) return;
   const record = getSelectedRecord();
   if (!record) {
-    renderDryRunResult({
-      operation: "update",
-      targetTable: "schedules",
-      dryRun: true,
-      wouldWrite: true,
-      actualWrite: false,
-      approvalId: config.approvalId,
-      validation: { valid: false, errors: ["No schedule selected"] },
-      payload: {},
-      rollbackHint: "",
-      message: "Select a schedule first.",
-    });
+    renderDryRunResult(
+      buildScheduleDryRunSelectionError({
+        operation: "update",
+        message: "Select a schedule first.",
+        errors: ["No schedule selected"],
+        approvalId: config.approvalId,
+      }),
+    );
     return;
   }
-  const result = buildUpdateDryRunResult(record.id, readFormFromDom());
+  const result = buildScheduleUpdateDryRunResult({
+    source: record,
+    form: formStateToDryRunInput(readFormFromDom()),
+    approvalId: config.approvalId,
+  });
   renderDryRunResult(result);
 }
 
@@ -216,24 +233,24 @@ function handleDuplicateDryRun(sourceId?: string): void {
   const id = sourceId ?? selectedId;
   const record = id ? schedules.find((s) => s.id === id) : null;
   if (!record) {
-    renderDryRunResult({
-      operation: "duplicate",
-      targetTable: "schedules",
-      dryRun: true,
-      wouldWrite: true,
-      actualWrite: false,
-      approvalId: config.approvalId,
-      validation: { valid: false, errors: ["No source schedule"] },
-      payload: {},
-      rollbackHint: "",
-      message: "Select a schedule to duplicate.",
-    });
+    renderDryRunResult(
+      buildScheduleDryRunSelectionError({
+        operation: "duplicate",
+        message: "Select a schedule to duplicate.",
+        errors: ["No source schedule"],
+        approvalId: config.approvalId,
+      }),
+    );
     return;
   }
   if (sourceId && sourceId !== selectedId) {
     selectSchedule(sourceId);
   }
-  const result = buildDuplicateDryRunResult(record, readFormFromDom());
+  const result = buildScheduleDuplicateDryRunResult({
+    source: record,
+    overrides: formStateToDryRunInput(readFormFromDom()),
+    approvalId: config.approvalId,
+  });
   renderDryRunResult(result);
 }
 

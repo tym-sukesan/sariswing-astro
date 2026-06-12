@@ -40,7 +40,8 @@
 - **G-6-e2-schedule-dry-run-ui-scaffold（完了）:** [schedule-dry-run-ui-scaffold.md](../schedule-dry-run-ui-scaffold.md) — staging shell dry-run UI; no DB write; write blocked
 - **G-6-e2-schedule-dry-run-ui-verification-result（完了）:** [schedule-dry-run-ui-verification-result.md](../schedule-dry-run-ui-verification-result.md) — manual browser verification passed; port 4322; write blocked
 - **G-6-e3-schedule-dry-run-adapter-planning（完了）:** [schedule-dry-run-adapter-planning.md](../schedule-dry-run-adapter-planning.md) — dry-run adapter boundary; pure functions; no DB client; write blocked
-- 次: G-6-e3-schedule-dry-run-adapter-implementation
+- **G-6-e3-schedule-dry-run-adapter-implementation（完了）:** [schedule-dry-run-adapter-implementation.md](../schedule-dry-run-adapter-implementation.md) — pure dry-run adapter; UI routed; write blocked
+- 次: G-6-e3-schedule-dry-run-adapter-verification
 
 ## Option B: customer-specific schema mapping
 
@@ -96,7 +97,8 @@ G-6-e2-schedule-dry-run-ui-planning: dry-run UI planning (done)
 G-6-e2-schedule-dry-run-ui-scaffold: dry-run UI scaffold in staging shell (done)
 G-6-e2-schedule-dry-run-ui-verification-result: manual browser verification (done)
 G-6-e3-schedule-dry-run-adapter-planning: dry-run adapter boundary (done)
-G-6-e3-schedule-dry-run-adapter-implementation: next
+G-6-e3-schedule-dry-run-adapter-implementation: pure dry-run adapter (done)
+G-6-e3-schedule-dry-run-adapter-verification: next
 G-6-e: schedule write implementation (blocked — readyForG6EImplementation false)
 ```
 

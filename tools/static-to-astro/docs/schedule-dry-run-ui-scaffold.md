@@ -130,7 +130,9 @@ node tools/static-to-astro/scripts/report-schedule-dry-run-ui-scaffold.mjs \
 
 **G-6-e2-schedule-dry-run-ui-verification-result（完了）:** Manual browser verification passed; verified local URL used port `4322`; update + duplicate dry-run visually verified.
 
-**G-6-e3-schedule-dry-run-adapter-planning（完了）:** [schedule-dry-run-adapter-planning.md](./schedule-dry-run-adapter-planning.md) — dry-run adapter boundary as pure functions; no DB client; `actualWrite: false` hard-coded; next: G-6-e3-schedule-dry-run-adapter-implementation.
+**G-6-e3-schedule-dry-run-adapter-planning（完了）:** [schedule-dry-run-adapter-planning.md](./schedule-dry-run-adapter-planning.md) — dry-run adapter boundary as pure functions.
+
+**G-6-e3-schedule-dry-run-adapter-implementation（完了）:** [schedule-dry-run-adapter-implementation.md](./schedule-dry-run-adapter-implementation.md) — UI dry-run results routed through adapter; next: G-6-e3-schedule-dry-run-adapter-verification.
 
 Write implementation remains blocked (`readyForG6EWriteImplementation: false`).
 

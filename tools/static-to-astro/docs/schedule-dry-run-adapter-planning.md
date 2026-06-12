@@ -408,22 +408,16 @@ Adapter implementation (next phase) remains **dry-run only** — no real writes.
 
 ```txt
 Recommended next:
-G-6-e3-schedule-dry-run-adapter-implementation
+G-6-e3-schedule-dry-run-adapter-implementation — DONE (see schedule-dry-run-adapter-implementation.md)
+Next: G-6-e3-schedule-dry-run-adapter-verification
 ```
 
-**Scope:**
-
-```txt
-Implement pure dry-run adapter functions only.
-Do not implement real writes.
-Do not change UI behavior beyond routing dry-run result creation through the adapter.
-```
+**G-6-e3-schedule-dry-run-adapter-implementation（完了）:** [schedule-dry-run-adapter-implementation.md](./schedule-dry-run-adapter-implementation.md) — pure dry-run adapter implemented; UI routed through adapter; `actualWrite: false` hard-coded; no DB client; write implementation remains blocked.
 
 ## 21. Final safety statement
 
-This phase is planning only.
+This phase was planning only. Adapter implementation is recorded in a separate phase.
 
-No adapter code is implemented.  
 No schedule records are written.  
 No schema is changed.  
 No production data is touched.  

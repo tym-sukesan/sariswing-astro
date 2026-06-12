@@ -352,8 +352,10 @@ Not for first MVP dry-run implementation.
 ## 12. Recommended next phase
 
 ```txt
-Recommended next: G-6-e2-schedule-dry-run-ui-planning
+Recommended next: G-6-e2-schedule-dry-run-ui-planning — DONE (see schedule-dry-run-ui-planning.md)
 ```
+
+**G-6-e2-schedule-dry-run-ui-planning（完了）:** [schedule-dry-run-ui-planning.md](./schedule-dry-run-ui-planning.md) — update + duplicate dry-run first; delete excluded; `schedule_months` read-only; SELECT-only grants sufficient; next: G-6-e2-schedule-dry-run-ui-scaffold.
 
 Alternative before scaffold:
 
@@ -361,7 +363,7 @@ Alternative before scaffold:
 G-6-e2-schedule-dry-run-ui-scaffold-planning
 ```
 
-G-6-e implementation (write adapters, non-dry-run) remains blocked until dry-run UI phases complete and are separately approved.
+G-6-e write implementation remains blocked until dry-run scaffold and separate approval.
 
 ## 13. Final safety statement
 

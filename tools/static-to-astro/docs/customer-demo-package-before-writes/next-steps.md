@@ -36,7 +36,8 @@
 - **G-6-e-planning-schedule-cms（完了）:** [schedule-cms-planning.md](../schedule-cms-planning.md) — Schedule CMS planned; Sariswing generalized; planning only
 - **G-6-e1-schedule-schema-read-audit（完了）:** [schedule-schema-read-audit.md](../schedule-schema-read-audit.md) — read-only schema audit plan; manual SQL required
 - **G-6-e1-schedule-schema-read-audit-result（完了）:** [schedule-schema-read-audit-result.md](../schedule-schema-read-audit-result.md) — MVP compatible; no schema migration before dry-run UI
-- 次: G-6-e2-schedule-dry-run-ui-planning（実装なし）
+- **G-6-e2-schedule-dry-run-ui-planning（完了）:** [schedule-dry-run-ui-planning.md](../schedule-dry-run-ui-planning.md) — update + duplicate dry-run; write blocked
+- 次: G-6-e2-schedule-dry-run-ui-scaffold（dry-run only; 実装）
 
 ## Option B: customer-specific schema mapping
 
@@ -88,7 +89,8 @@ G-6-rls-grant-cleanup-result: manual REVOKE succeeded; smoke test pass
 G-6-e-planning-schedule-cms: Schedule CMS planning (done; no implementation)
 G-6-e1-schedule-schema-read-audit: read-only schema audit plan (done)
 G-6-e1-schedule-schema-read-audit-result: manual SQL collected; MVP compatible (done)
-G-6-e2-schedule-dry-run-ui-planning: next
+G-6-e2-schedule-dry-run-ui-planning: dry-run UI planning (done)
+G-6-e2-schedule-dry-run-ui-scaffold: next (dry-run UI only)
 G-6-e: schedule write implementation (blocked — readyForG6EImplementation false)
 ```
 

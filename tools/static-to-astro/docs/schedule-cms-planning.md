@@ -454,7 +454,9 @@ G-6-e6-manual-schedule-non-dry-run-poc: Manual staging non-dry-run schedule PoC
 
 **G-6-e1-schedule-schema-read-audit（完了）:** read-only audit plan; manual SQL for `schedules` / `schedule_months`.
 
-**G-6-e1-schedule-schema-read-audit-result（完了）:** [schedule-schema-read-audit-result.md](./schedule-schema-read-audit-result.md) — schema compatible for MVP; `schedule_months` derived/read model; `readyForG6E2ScheduleDryRunUiPlanning: true`; next: G-6-e2-schedule-dry-run-ui-planning.
+**G-6-e1-schedule-schema-read-audit-result（完了）:** [schedule-schema-read-audit-result.md](./schedule-schema-read-audit-result.md) — schema compatible for MVP; `schedule_months` derived/read model; `readyForG6E2ScheduleDryRunUiPlanning: true`.
+
+**G-6-e2-schedule-dry-run-ui-planning（完了）:** [schedule-dry-run-ui-planning.md](./schedule-dry-run-ui-planning.md) — update + duplicate dry-run UI planned; delete excluded; next: G-6-e2-schedule-dry-run-ui-scaffold.
 
 **After G-6-e6 (if successful):** evaluate duplicate dry-run non-dry-run, then optional schema extension for new fields, then `/admin` connection remains separate gate.
 

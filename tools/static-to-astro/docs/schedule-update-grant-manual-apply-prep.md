@@ -407,26 +407,26 @@ Final:
 ## 16. Gate decision
 
 ```txt
-readyForManualGrantApply: true
-grantExecuted: false
-grantChangesPerformed: false
-readyForG6E4ScheduleUpdateGrantManualApplyResult: false
-readyForG6E4ScheduleWriteAdapterImplementation: false
+readyForManualGrantApply: true (was true at prep time)
+grantExecuted: true (user manual — see schedule-update-grant-manual-apply-result.md)
+grantChangesPerformed: true
+readyForG6E4ScheduleUpdateGrantManualApplyResult: true (recorded)
+readyForG6E4ScheduleWriteAdapterImplementation: true
 readyForG6EWriteImplementation: false
 readyForNonDryRunSchedulePoC: false
 writeAdapterImplemented: false
 dbWritesPerformed: false
 ```
 
+**G-6-e4-schedule-update-grant-manual-apply-result（完了）:** [schedule-update-grant-manual-apply-result.md](./schedule-update-grant-manual-apply-result.md) — `authenticated UPDATE` on `public.schedules` applied in staging; after verification pass; dry-run smoke test pass; no schedule DB write.
+
 ## 17. Recommended next phase
 
 ```txt
 Recommended next:
-Manual SQL execution by user in Supabase SQL Editor, followed by:
-G-6-e4-schedule-update-grant-manual-apply-result
+G-6-e4-schedule-update-grant-manual-apply-result — DONE (see schedule-update-grant-manual-apply-result.md)
+Next: G-6-e4-schedule-write-adapter-implementation
 ```
-
-User applies Steps 1–8 manually on `static-to-astro-cms-staging`, then records outcome in the result phase doc.
 
 ## 18. Final safety statement
 

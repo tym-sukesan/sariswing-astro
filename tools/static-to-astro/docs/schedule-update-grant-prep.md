@@ -370,10 +370,13 @@ depending on review outcome.
 
 ```txt
 G-6-e4-schedule-update-grant-manual-apply-prep — DONE (see schedule-update-grant-manual-apply-prep.md)
-Next: manual SQL execution by user, then G-6-e4-schedule-update-grant-manual-apply-result
+G-6-e4-schedule-update-grant-manual-apply-result — DONE (see schedule-update-grant-manual-apply-result.md)
+Next: G-6-e4-schedule-write-adapter-implementation
 ```
 
-**G-6-e4-schedule-update-grant-manual-apply-prep（完了）:** [schedule-update-grant-manual-apply-prep.md](./schedule-update-grant-manual-apply-prep.md) — final manual apply procedure; pre-check/grant/after-verify/rollback/smoke test; GRANT not executed by Cursor.
+**G-6-e4-schedule-update-grant-manual-apply-prep（完了）:** [schedule-update-grant-manual-apply-prep.md](./schedule-update-grant-manual-apply-prep.md) — final manual apply procedure; pre-check/grant/after-verify/rollback/smoke test.
+
+**G-6-e4-schedule-update-grant-manual-apply-result（完了）:** [schedule-update-grant-manual-apply-result.md](./schedule-update-grant-manual-apply-result.md) — `authenticated UPDATE` applied in staging; grantManualApplyStatus: pass; no schedule DB write.
 
 **Reason:**
 
@@ -386,12 +389,12 @@ Keep the permission change manual, explicit, and separately recorded.
 ```txt
 readyForG6E4ScheduleUpdateGrantManualApplyPrep: true (see schedule-update-grant-manual-apply-prep.md)
 readyForManualGrantApply: true
-readyForG6E4ScheduleUpdateGrantManualApplyResult: false
-readyForG6E4ScheduleWriteAdapterImplementation: false
+readyForG6E4ScheduleUpdateGrantManualApplyResult: true (see schedule-update-grant-manual-apply-result.md)
+readyForG6E4ScheduleWriteAdapterImplementation: true
 readyForG6EWriteImplementation: false
 readyForNonDryRunSchedulePoC: false
-grantExecuted: false
-grantChangesPerformed: false
+grantExecuted: true (user manual on staging)
+grantChangesPerformed: true
 writeAdapterImplemented: false
 dbWritesPerformed: false
 ```

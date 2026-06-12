@@ -563,19 +563,19 @@ Recommended next:
 G-6-e4-schedule-write-adapter-implementation-planning — DONE (see schedule-write-adapter-implementation-planning.md)
 G-6-e4-schedule-update-grant-prep — DONE (see schedule-update-grant-prep.md)
 G-6-e4-schedule-update-grant-manual-apply-prep — DONE (see schedule-update-grant-manual-apply-prep.md)
-Next: manual SQL execution + G-6-e4-schedule-update-grant-manual-apply-result
+G-6-e4-schedule-update-grant-manual-apply-result — DONE (see schedule-update-grant-manual-apply-result.md)
+Next: G-6-e4-schedule-write-adapter-implementation
 ```
 
-**G-6-e4-schedule-write-adapter-implementation-planning（完了）:** [schedule-write-adapter-implementation-planning.md](./schedule-write-adapter-implementation-planning.md) — update-only write adapter types/guards/signatures finalized; beforeSnapshot and rollback required; UPDATE grant review required; write implementation remains blocked.
+**G-6-e4-schedule-write-adapter-implementation-planning（完了）:** [schedule-write-adapter-implementation-planning.md](./schedule-write-adapter-implementation-planning.md) — update-only write adapter types/guards/signatures finalized; beforeSnapshot and rollback required.
 
-**G-6-e4-schedule-update-grant-prep（完了）:** [schedule-update-grant-prep.md](./schedule-update-grant-prep.md) — minimal `authenticated UPDATE` on `public.schedules` prepared; GRANT not executed; is_admin() + RLS review required before apply.
+**G-6-e4-schedule-update-grant-prep（完了）:** [schedule-update-grant-prep.md](./schedule-update-grant-prep.md) — minimal `authenticated UPDATE` on `public.schedules` prepared.
 
-**G-6-e4-schedule-update-grant-manual-apply-prep（完了）:** [schedule-update-grant-manual-apply-prep.md](./schedule-update-grant-manual-apply-prep.md) — final manual apply procedure prepared; GRANT not executed by Cursor.
+**G-6-e4-schedule-update-grant-manual-apply-result（完了）:** [schedule-update-grant-manual-apply-result.md](./schedule-update-grant-manual-apply-result.md) — `authenticated UPDATE` applied in staging; dry-run smoke test pass; guarded write adapter implementation is next.
 
 **Later sequence:**
 
 ```txt
-G-6-e4-schedule-update-grant-manual-apply-result — user records manual GRANT outcome
 G-6-e4-schedule-write-adapter-implementation — write adapter code (staging guards, no UI non-dry-run yet)
 G-6-e5-schedule-non-dry-run-poc — first manual staging update of one pre-seeded row
 ```

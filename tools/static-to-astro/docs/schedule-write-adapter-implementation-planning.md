@@ -523,7 +523,7 @@ When `G-6-e4-schedule-write-adapter-implementation` runs (future):
 ```txt
 readyForG6E4ScheduleUpdateGrantPrep: true (see schedule-update-grant-prep.md)
 readyForG6E4ScheduleUpdateGrantManualApplyPrep: true
-readyForG6E4ScheduleWriteAdapterImplementation: false
+readyForG6E4ScheduleWriteAdapterImplementation: true (see schedule-update-grant-manual-apply-result.md)
 readyForG6EWriteImplementation: false
 readyForNonDryRunSchedulePoC: false
 writeAdapterImplemented: false
@@ -540,18 +540,15 @@ Grant prep SQL is prepared; GRANT not executed. Write adapter **code** remains b
 Recommended next:
 G-6-e4-schedule-update-grant-prep — DONE (see schedule-update-grant-prep.md)
 G-6-e4-schedule-update-grant-manual-apply-prep — DONE (see schedule-update-grant-manual-apply-prep.md)
-Next: manual SQL execution + G-6-e4-schedule-update-grant-manual-apply-result
+G-6-e4-schedule-update-grant-manual-apply-result — DONE (see schedule-update-grant-manual-apply-result.md)
+Next: G-6-e4-schedule-write-adapter-implementation
 ```
 
-**G-6-e4-schedule-update-grant-prep（完了）:** [schedule-update-grant-prep.md](./schedule-update-grant-prep.md) — authenticated UPDATE grant on `public.schedules` prepared; pre-check/after-verify/rollback SQL; is_admin() review required; GRANT not executed; INSERT/DELETE/TRUNCATE/TRIGGER/REFERENCES excluded.
+**G-6-e4-schedule-update-grant-prep（完了）:** [schedule-update-grant-prep.md](./schedule-update-grant-prep.md) — authenticated UPDATE grant on `public.schedules` prepared; pre-check/after-verify/rollback SQL; is_admin() review required; INSERT/DELETE/TRUNCATE/TRIGGER/REFERENCES excluded.
 
-**G-6-e4-schedule-update-grant-manual-apply-prep（完了）:** [schedule-update-grant-manual-apply-prep.md](./schedule-update-grant-manual-apply-prep.md) — final manual apply steps; abort conditions; result template; GRANT not executed by Cursor.
+**G-6-e4-schedule-update-grant-manual-apply-prep（完了）:** [schedule-update-grant-manual-apply-prep.md](./schedule-update-grant-manual-apply-prep.md) — final manual apply steps; abort conditions; result template.
 
-**Purpose of manual apply:**
-
-```txt
-User applies GRANT in Supabase SQL Editor on staging after pre-checks; record in manual-apply-result phase.
-```
+**G-6-e4-schedule-update-grant-manual-apply-result（完了）:** [schedule-update-grant-manual-apply-result.md](./schedule-update-grant-manual-apply-result.md) — `authenticated UPDATE` applied in staging; dry-run smoke test pass; readyForG6E4ScheduleWriteAdapterImplementation: true; non-dry-run PoC remains blocked.
 
 ## 21. Final safety statement
 

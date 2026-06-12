@@ -46,7 +46,8 @@
 - **G-6-e4-schedule-write-adapter-implementation-planning（完了）:** [schedule-write-adapter-implementation-planning.md](../schedule-write-adapter-implementation-planning.md) — update-only write adapter design; beforeSnapshot/rollback required; UPDATE grant review required; write blocked
 - **G-6-e4-schedule-update-grant-prep（完了）:** [schedule-update-grant-prep.md](../schedule-update-grant-prep.md) — UPDATE grant SQL prepared; not executed; write blocked
 - **G-6-e4-schedule-update-grant-manual-apply-prep（完了）:** [schedule-update-grant-manual-apply-prep.md](../schedule-update-grant-manual-apply-prep.md) — final manual apply steps; GRANT not executed; write blocked
-- 次: user manual SQL + G-6-e4-schedule-update-grant-manual-apply-result
+- **G-6-e4-schedule-update-grant-manual-apply-result（完了）:** [schedule-update-grant-manual-apply-result.md](../schedule-update-grant-manual-apply-result.md) — UPDATE grant applied in staging; dry-run smoke pass; write adapter next
+- 次: G-6-e4-schedule-write-adapter-implementation
 
 ## Option B: customer-specific schema mapping
 
@@ -109,7 +110,8 @@ G-6-e4-schedule-write-adapter-planning: write adapter boundary planning (done)
 G-6-e4-schedule-write-adapter-implementation-planning: write adapter implementation design (done)
 G-6-e4-schedule-update-grant-prep: UPDATE grant manual SQL prep (done)
 G-6-e4-schedule-update-grant-manual-apply-prep: final manual apply procedure (done)
-G-6-e4-schedule-update-grant-manual-apply-result: next (after user manual SQL)
+G-6-e4-schedule-update-grant-manual-apply-result: UPDATE grant applied in staging (done)
+G-6-e4-schedule-write-adapter-implementation: next
 G-6-e: schedule write implementation (blocked — readyForG6EImplementation false)
 ```
 

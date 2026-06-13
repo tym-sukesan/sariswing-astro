@@ -173,7 +173,8 @@ readyForNonDryRunSchedulePoC: false
 ```txt
 Recommended next:
 G-6-e5-schedule-non-dry-run-poc-final-preflight — DONE (see schedule-non-dry-run-poc-final-preflight.md)
-Next: G-6-e5-schedule-non-dry-run-poc-final-preflight-result
+G-6-e5-schedule-non-dry-run-poc-final-preflight-result — DONE (see schedule-non-dry-run-poc-final-preflight-result.md)
+Next: G-6-e5-schedule-non-dry-run-poc-execution
 ```
 
 ## 12. Final safety statement
@@ -189,7 +190,7 @@ The database remains unchanged.
 
 Actual non-dry-run execution remains blocked until final preflight result is recorded.
 
-**G-6-e5-schedule-non-dry-run-poc-final-preflight（完了）:** [schedule-non-dry-run-poc-final-preflight.md](./schedule-non-dry-run-poc-final-preflight.md) — final beforeSnapshot check required; staging project confirmation required; rollback SQL and after verification SQL available; execution result template prepared; Run button still not clicked.
+**G-6-e5-schedule-non-dry-run-poc-final-preflight-result（完了）:** [schedule-non-dry-run-poc-final-preflight-result.md](./schedule-non-dry-run-poc-final-preflight-result.md) — final staging project confirmed; final beforeSnapshot confirmed; ready for explicit one-off execution phase; Run button still not clicked.
 
 ## Report
 

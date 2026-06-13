@@ -258,7 +258,8 @@ Never skip: local preview and customer demo before runtime shell; read-only befo
 | **G-6-e5-schedule-non-dry-run-poc-execution-path-verification（完了）** | [Execution path verification](./schedule-non-dry-run-poc-execution-path-verification.md) | Normal dev hidden pass; env-gated/manual confirm verified; no click |
 | **G-6-e5-schedule-non-dry-run-poc-execution-path-verification-result（完了）** | [Verification result](./schedule-non-dry-run-poc-execution-path-verification-result.md) | Manual browser verification recorded; DB unchanged; ready for final preflight |
 | **G-6-e5-schedule-non-dry-run-poc-final-preflight（完了）** | [Final preflight](./schedule-non-dry-run-poc-final-preflight.md) | beforeSnapshot SQL, rollback/after SQL, result template; Run not clicked |
-| **G-6-e** | Schedule write (staging) | Final beforeSnapshot check next; actual non-dry-run PoC blocked |
+| **G-6-e5-schedule-non-dry-run-poc-final-preflight-result（完了）** | [Final preflight result](./schedule-non-dry-run-poc-final-preflight-result.md) | Staging + beforeSnapshot confirmed; ready for execution; Run not clicked |
+| **G-6-e** | Schedule write (staging) | Explicit one-off execution next; PoC execution phase |
 | **G-5y-e** | Role check / allowlist | Staging Auth |
 
 **Purpose (overall):** Staging admin login only — after shell QA on `/__admin-staging-shell/musician-basic/`.

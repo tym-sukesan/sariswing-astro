@@ -361,7 +361,8 @@ G-6-e5-schedule-non-dry-run-poc-execution-path-implementation — DONE (see sche
 G-6-e5-schedule-non-dry-run-poc-execution-path-verification — DONE (see schedule-non-dry-run-poc-execution-path-verification.md)
 G-6-e5-schedule-non-dry-run-poc-execution-path-verification-result — DONE (see schedule-non-dry-run-poc-execution-path-verification-result.md)
 G-6-e5-schedule-non-dry-run-poc-final-preflight — DONE (see schedule-non-dry-run-poc-final-preflight.md)
-Next: G-6-e5-schedule-non-dry-run-poc-final-preflight-result
+G-6-e5-schedule-non-dry-run-poc-final-preflight-result — DONE (see schedule-non-dry-run-poc-final-preflight-result.md)
+Next: G-6-e5-schedule-non-dry-run-poc-execution
 ```
 
 **G-6-e5-schedule-non-dry-run-poc-execution-path-implementation（完了）:** [schedule-non-dry-run-poc-execution-path-implementation.md](./schedule-non-dry-run-poc-execution-path-implementation.md) — hidden staging browser trigger implemented; default hidden; trigger was not invoked; no DB write.
@@ -370,7 +371,7 @@ Next: G-6-e5-schedule-non-dry-run-poc-final-preflight-result
 
 **G-6-e5-schedule-non-dry-run-poc-execution-path-verification-result（完了）:** [schedule-non-dry-run-poc-execution-path-verification-result.md](./schedule-non-dry-run-poc-execution-path-verification-result.md) — env-gated Danger Zone display verified; manual confirm gate verified; Run button not clicked; DB unchanged.
 
-**G-6-e5-schedule-non-dry-run-poc-final-preflight（完了）:** [schedule-non-dry-run-poc-final-preflight.md](./schedule-non-dry-run-poc-final-preflight.md) — final beforeSnapshot check required; staging project confirmation required; rollback and after verification SQL available; execution result template prepared; Run button still not clicked.
+**G-6-e5-schedule-non-dry-run-poc-final-preflight-result（完了）:** [schedule-non-dry-run-poc-final-preflight-result.md](./schedule-non-dry-run-poc-final-preflight-result.md) — final staging project confirmed; final beforeSnapshot confirmed; rollback SQL available; after verification SQL available; ready for explicit one-off execution phase; Run button still not clicked.
 
 **Conditions:**
 

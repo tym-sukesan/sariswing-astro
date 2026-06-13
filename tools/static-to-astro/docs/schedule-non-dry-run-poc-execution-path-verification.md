@@ -236,7 +236,7 @@ Manual env-gated verification recorded in [schedule-non-dry-run-poc-execution-pa
 ```txt
 Recommended next:
 G-6-e5-schedule-non-dry-run-poc-final-preflight — DONE (see schedule-non-dry-run-poc-final-preflight.md)
-Next: G-6-e5-schedule-non-dry-run-poc-final-preflight-result
+Next: G-6-e5-schedule-non-dry-run-poc-execution
 ```
 
 ## 12. Final safety statement

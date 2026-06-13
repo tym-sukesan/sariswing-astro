@@ -42,10 +42,12 @@ Before execution, user must confirm:
 **Final staging confirmation:**
 
 ```txt
-- project confirmed: pending
-- route confirmed: pending
-- production avoided: pending
+- project confirmed: pass (static-to-astro-cms-staging)
+- route confirmed: pass (/__admin-staging-shell/musician-basic/)
+- production avoided: pass
 ```
+
+Manual confirmation recorded in [schedule-non-dry-run-poc-final-preflight-result.md](./schedule-non-dry-run-poc-final-preflight-result.md).
 
 ## 4. Final beforeSnapshot SQL
 
@@ -107,10 +109,10 @@ updated_at: 2026-06-05 17:39:44.140168+00
 **Final beforeSnapshot check:**
 
 ```txt
-- result: pending
-- row count: pending
-- description unchanged: pending
-- updated_at unchanged: pending
+- result: pass
+- row count: 1
+- description unchanged: yes (出演：)
+- updated_at unchanged: yes (2026-06-05 17:39:44.140168+00)
 ```
 
 ## 5. Final payload confirmation
@@ -296,8 +298,8 @@ Final:
 
 ```txt
 finalPreflightPrepared: true
-finalBeforeSnapshotConfirmed: false
-finalStagingProjectConfirmed: false
+finalBeforeSnapshotConfirmed: true
+finalStagingProjectConfirmed: true
 rollbackSqlAvailable: true
 afterVerificationSqlAvailable: true
 executionResultTemplatePrepared: true
@@ -306,26 +308,20 @@ executionPathInvoked: false
 writeAdapterInvoked: false
 dbWritesPerformed: false
 scheduleRecordsUpdated: false
-readyForManualFinalBeforeSnapshotCheck: true
-readyForG6E5ScheduleNonDryRunPocExecution: false
+readyForManualFinalBeforeSnapshotCheck: false
+readyForG6E5ScheduleNonDryRunPocExecution: true
 readyForG6E5ScheduleNonDryRunPoc: false
 readyForNonDryRunSchedulePoC: false
 ```
 
-`readyForG6E5ScheduleNonDryRunPocExecution` remains **false** until user completes manual final beforeSnapshot check.
+Manual final beforeSnapshot check recorded in [schedule-non-dry-run-poc-final-preflight-result.md](./schedule-non-dry-run-poc-final-preflight-result.md).
 
 ## 13. Recommended next phase
 
 ```txt
 Recommended next:
-Manual final beforeSnapshot check by user, followed by
-G-6-e5-schedule-non-dry-run-poc-final-preflight-result
-```
-
-**Purpose:**
-
-```txt
-Confirm the final DB state immediately before pressing the one-off Run button.
+G-6-e5-schedule-non-dry-run-poc-final-preflight-result — DONE (see schedule-non-dry-run-poc-final-preflight-result.md)
+Next: G-6-e5-schedule-non-dry-run-poc-execution
 ```
 
 ## 14. Final safety statement

@@ -53,8 +53,8 @@
 - **G-6-e5-schedule-non-dry-run-poc-target-selection（完了）:** [schedule-non-dry-run-poc-target-selection.md](../schedule-non-dry-run-poc-target-selection.md) — selected target row `schedule-2026-07-010`; beforeSnapshot captured; final payload description only; rollback SQL finalized; ready for execution prep; actual non-dry-run execution remains blocked
 - **G-6-e5-schedule-non-dry-run-poc-execution-prep（完了）:** [schedule-non-dry-run-poc-execution-prep.md](../schedule-non-dry-run-poc-execution-prep.md) — execution path planning prepared; one-off execution path required; service_role prohibited; authenticated admin user required; no execution script invoked; actual non-dry-run execution remains blocked
 - **G-6-e5-schedule-non-dry-run-poc-execution-path-implementation（完了）:** [schedule-non-dry-run-poc-execution-path-implementation.md](../schedule-non-dry-run-poc-execution-path-implementation.md) — hidden staging browser trigger implemented; default hidden; trigger was not invoked; no DB write occurred
-- **G-6-e5-schedule-non-dry-run-poc-final-preflight（完了）:** [schedule-non-dry-run-poc-final-preflight.md](../schedule-non-dry-run-poc-final-preflight.md) — final beforeSnapshot check required; rollback SQL and after verification SQL available; execution result template prepared; Run button still not clicked; actual non-dry-run execution remains blocked
-- 次: G-6-e5-schedule-non-dry-run-poc-final-preflight-result
+- **G-6-e5-schedule-non-dry-run-poc-final-preflight-result（完了）:** [schedule-non-dry-run-poc-final-preflight-result.md](../schedule-non-dry-run-poc-final-preflight-result.md) — final staging project confirmed; final beforeSnapshot confirmed; rollback SQL available; after verification SQL available; ready for explicit one-off execution phase; Run button still not clicked
+- 次: G-6-e5-schedule-non-dry-run-poc-execution
 
 ## Option B: customer-specific schema mapping
 
@@ -127,7 +127,8 @@ G-6-e5-schedule-non-dry-run-poc-execution-path-implementation: hidden trigger im
 G-6-e5-schedule-non-dry-run-poc-execution-path-verification: normal dev hidden verified (done)
 G-6-e5-schedule-non-dry-run-poc-execution-path-verification-result: manual browser verification recorded (done)
 G-6-e5-schedule-non-dry-run-poc-final-preflight: final preflight prepared (done)
-G-6-e5-schedule-non-dry-run-poc-final-preflight-result: next
+G-6-e5-schedule-non-dry-run-poc-final-preflight-result: final beforeSnapshot confirmed (done)
+G-6-e5-schedule-non-dry-run-poc-execution: next
 G-6-e: schedule write implementation (blocked — readyForG6EImplementation false)
 ```
 

@@ -233,7 +233,8 @@ G-6-e5-schedule-non-dry-run-poc-execution-path-implementation — DONE (see sche
 G-6-e5-schedule-non-dry-run-poc-execution-path-verification — DONE (see schedule-non-dry-run-poc-execution-path-verification.md)
 G-6-e5-schedule-non-dry-run-poc-execution-path-verification-result — DONE (see schedule-non-dry-run-poc-execution-path-verification-result.md)
 G-6-e5-schedule-non-dry-run-poc-final-preflight — DONE (see schedule-non-dry-run-poc-final-preflight.md)
-Next: G-6-e5-schedule-non-dry-run-poc-final-preflight-result
+G-6-e5-schedule-non-dry-run-poc-final-preflight-result — DONE (see schedule-non-dry-run-poc-final-preflight-result.md)
+Next: G-6-e5-schedule-non-dry-run-poc-execution
 ```
 
 **G-6-e5-schedule-non-dry-run-poc-execution-prep（完了）:** [schedule-non-dry-run-poc-execution-prep.md](./schedule-non-dry-run-poc-execution-prep.md) — execution path planning prepared; one-off execution path required; service_role prohibited; authenticated admin user required; no execution script invoked; actual non-dry-run execution remains blocked.
@@ -244,7 +245,7 @@ Next: G-6-e5-schedule-non-dry-run-poc-final-preflight-result
 
 **G-6-e5-schedule-non-dry-run-poc-execution-path-verification-result（完了）:** [schedule-non-dry-run-poc-execution-path-verification-result.md](./schedule-non-dry-run-poc-execution-path-verification-result.md) — env-gated display verified; manual confirm verified; Run button not clicked; DB unchanged verified.
 
-**G-6-e5-schedule-non-dry-run-poc-final-preflight（完了）:** [schedule-non-dry-run-poc-final-preflight.md](./schedule-non-dry-run-poc-final-preflight.md) — final beforeSnapshot SQL prepared; rollback SQL available; after verification SQL available; execution result template prepared; Run button still not clicked.
+**G-6-e5-schedule-non-dry-run-poc-final-preflight-result（完了）:** [schedule-non-dry-run-poc-final-preflight-result.md](./schedule-non-dry-run-poc-final-preflight-result.md) — final staging project confirmed; final beforeSnapshot confirmed; rollback SQL available; after verification SQL available; ready for explicit one-off execution phase; Run button still not clicked.
 
 ## 15. Final safety statement
 

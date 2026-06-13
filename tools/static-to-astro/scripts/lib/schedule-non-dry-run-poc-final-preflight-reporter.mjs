@@ -83,14 +83,14 @@ export function runScheduleNonDryRunPocFinalPreflightReport({
   if (!doc.includes("finalPreflightPrepared: true")) {
     blockers.push("gate-preflight-prepared-missing");
   }
-  if (!doc.includes("finalBeforeSnapshotConfirmed: false")) {
-    blockers.push("gate-before-snapshot-pending");
+  if (!doc.includes("finalBeforeSnapshotConfirmed: true")) {
+    blockers.push("gate-before-snapshot-confirmed");
   }
-  if (!doc.includes("readyForG6E5ScheduleNonDryRunPocExecution: false")) {
-    blockers.push("gate-execution-blocked-missing");
+  if (!doc.includes("readyForG6E5ScheduleNonDryRunPocExecution: true")) {
+    blockers.push("gate-execution-ready-missing");
   }
   if (!doc.includes("G-6-e5-schedule-non-dry-run-poc-final-preflight-result")) {
-    blockers.push("next-phase-missing");
+    blockers.push("preflight-result-ref-missing");
   }
 
   const priorReport = runScheduleNonDryRunPocExecutionPathVerificationResultReport({
@@ -113,8 +113,11 @@ export function runScheduleNonDryRunPocFinalPreflightReport({
   if (config.executionResultTemplatePrepared !== true) {
     blockers.push("config-executionResultTemplatePrepared");
   }
-  if (config.finalBeforeSnapshotConfirmed !== false) {
+  if (config.finalBeforeSnapshotConfirmed !== true) {
     blockers.push("config-finalBeforeSnapshotConfirmed");
+  }
+  if (config.finalStagingProjectConfirmed !== true) {
+    blockers.push("config-finalStagingProjectConfirmed");
   }
   if (config.triggerClicked !== false) blockers.push("config-triggerClicked");
   if (config.executionPathInvoked !== false) blockers.push("config-executionPathInvoked");
@@ -123,10 +126,10 @@ export function runScheduleNonDryRunPocFinalPreflightReport({
   if (config.scheduleRecordsUpdated !== false) {
     blockers.push("config-scheduleRecordsUpdated");
   }
-  if (config.readyForManualFinalBeforeSnapshotCheck !== true) {
+  if (config.readyForManualFinalBeforeSnapshotCheck !== false) {
     blockers.push("config-readyForManualFinalBeforeSnapshotCheck");
   }
-  if (config.readyForG6E5ScheduleNonDryRunPocExecution !== false) {
+  if (config.readyForG6E5ScheduleNonDryRunPocExecution !== true) {
     blockers.push("config-readyForExecution");
   }
   if (config.readyForG6E5ScheduleNonDryRunPoc !== false) {
@@ -154,15 +157,16 @@ export function runScheduleNonDryRunPocFinalPreflightReport({
     rollbackSqlAvailable: true,
     afterVerificationSqlAvailable: true,
     executionResultTemplatePrepared: true,
-    finalBeforeSnapshotConfirmed: false,
+    finalBeforeSnapshotConfirmed: true,
+    finalStagingProjectConfirmed: config.finalStagingProjectConfirmed === true,
     triggerClicked: false,
     executionPathInvoked: false,
     writeAdapterInvoked: false,
     dbWritesPerformed: false,
     scheduleRecordsUpdated: false,
-    readyForManualFinalBeforeSnapshotCheck:
-      complete && config.readyForManualFinalBeforeSnapshotCheck === true,
-    readyForG6E5ScheduleNonDryRunPocExecution: false,
+    readyForManualFinalBeforeSnapshotCheck: false,
+    readyForG6E5ScheduleNonDryRunPocExecution:
+      complete && config.readyForG6E5ScheduleNonDryRunPocExecution === true,
     readyForG6E5ScheduleNonDryRunPoc: false,
     readyForNonDryRunSchedulePoC: false,
     recommendedNextPhase: config.recommendedNextPhase,

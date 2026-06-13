@@ -105,14 +105,15 @@ readyForNonDryRunSchedulePoC: false
 G-6-e5-schedule-non-dry-run-poc-execution-path-verification — DONE (see schedule-non-dry-run-poc-execution-path-verification.md)
 G-6-e5-schedule-non-dry-run-poc-execution-path-verification-result — DONE (see schedule-non-dry-run-poc-execution-path-verification-result.md)
 G-6-e5-schedule-non-dry-run-poc-final-preflight — DONE (see schedule-non-dry-run-poc-final-preflight.md)
-Next: G-6-e5-schedule-non-dry-run-poc-final-preflight-result
+G-6-e5-schedule-non-dry-run-poc-final-preflight-result — DONE (see schedule-non-dry-run-poc-final-preflight-result.md)
+Next: G-6-e5-schedule-non-dry-run-poc-execution
 ```
 
 **G-6-e5-schedule-non-dry-run-poc-execution-path-verification（完了）:** [schedule-non-dry-run-poc-execution-path-verification.md](./schedule-non-dry-run-poc-execution-path-verification.md) — normal dev hidden verified; env-gated/manual confirm verified; trigger not clicked; DB unchanged.
 
 **G-6-e5-schedule-non-dry-run-poc-execution-path-verification-result（完了）:** [schedule-non-dry-run-poc-execution-path-verification-result.md](./schedule-non-dry-run-poc-execution-path-verification-result.md) — manual env-gated browser verification recorded; Run button not clicked; DB unchanged.
 
-**G-6-e5-schedule-non-dry-run-poc-final-preflight（完了）:** [schedule-non-dry-run-poc-final-preflight.md](./schedule-non-dry-run-poc-final-preflight.md) — final beforeSnapshot SQL prepared; rollback SQL available; after verification SQL available; execution result template prepared; Run button still not clicked.
+**G-6-e5-schedule-non-dry-run-poc-final-preflight-result（完了）:** [schedule-non-dry-run-poc-final-preflight-result.md](./schedule-non-dry-run-poc-final-preflight-result.md) — final staging project confirmed; final beforeSnapshot confirmed; ready for explicit one-off execution phase; Run button still not clicked.
 
 ## 10. Final safety statement
 

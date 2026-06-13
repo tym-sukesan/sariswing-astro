@@ -1,0 +1,41 @@
+Project role
+You are working on the Static-to-Astro CMS / Musician CMS Kit project.
+The goal is to generalize the Sariswing Astro + Supabase CMS into a reusable CMS Kit.
+Treat the repository as the source of truth. Do not rely on chat history alone.
+
+Source of truth files
+Before starting work, read these files if they exist:
+tools/static-to-astro/docs/ai/00-current-state.md
+tools/static-to-astro/docs/ai/03-next-actions.md
+tools/static-to-astro/docs/ai/handoff-to-chatgpt.md
+
+After every meaningful task, update these files with the latest status.
+
+Absolute safety rules
+- Do not touch production / Sariswing production.
+- Do not touch production Supabase project.
+- Do not use service_role.
+- Do not commit .env / .env.local / secrets / keys.
+- Do not modify src/pages/admin unless explicitly instructed.
+- Use /__admin-staging-shell/musician-basic/ only for testing.
+- Do not use Playwright / Chromium to auto-click write buttons.
+
+Schedule CMS safety rules
+- public.schedules is the authoring/write table. public.schedule_months is read-only.
+- Initial non-dry-run PoC may only update one existing row's description. No INSERT/DELETE.
+
+Write execution rules
+- Confirm staging project, beforeSnapshot, rollback SQL first.
+- User must manually approve and perform any browser click exactly once. Never retry automatically.
+
+Environment rules
+- Use inline env variables for staging work. Do not write into .env.
+
+Commit rules
+- Run git status, git diff, npm run build before commit. No secrets/output committed.
+
+STOP conditions
+- Stop and ask the user if production is involved, service_role seems necessary, or write scope expands.
+
+Preferred working style
+- Plan → Implement → Verify → Record → Update AI state → Commit

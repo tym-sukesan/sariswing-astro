@@ -29,7 +29,7 @@ hidden staging trigger 経由で、ユーザー手動 Run 1 回により `public
 直近完了フェーズ:
 G-6-e5-schedule-non-dry-run-poc-explicit-retry-result
 直近commit:
-Record schedule PoC explicit retry success（commit hash は git log 参照）
+e9e3861 — Record schedule PoC explicit retry success
 
 明示的 retry 結果:
 - beforeSnapshot: PASS（description = 出演：）

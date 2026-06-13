@@ -50,16 +50,16 @@ For every meaningful task:
 
 ## Schedule non-dry-run PoC status
 
-The current Schedule PoC target is:
+The first Schedule non-dry-run write PoC **succeeded** (phase `G-6-e5-schedule-non-dry-run-poc-explicit-retry-result`).
 
 - table: `public.schedules`
 - id: `aa440e29-5be8-402e-9190-0d81c48434c0`
 - legacy_id: `schedule-2026-07-010`
-- current expected description: `出演：`
-- planned description after retry: `出演： [G-6-e5 non-dry-run PoC]`
+- current description: `出演： [G-6-e5 non-dry-run PoC]`
 - approval ID: `G-6-e5-schedule-non-dry-run-poc`
+- rollback needed: **no** (rollback SQL available in result doc if staging restore is desired later)
 
-The next risky action is an explicit retry, but it must only happen in the explicit retry phase and only by one manual user click.
+Do not re-click the hidden PoC Run button without explicit new approval.
 
 ## STOP conditions
 

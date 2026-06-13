@@ -14,26 +14,27 @@ Paste this file at the start of a new ChatGPT thread. Cursor should update it af
 ## 2. Current phase
 
 ```txt
-Current phase: AI workflow foundation refinement
-Latest completed phase: AI workflow foundation refinement
-Latest commit: 6b7350c — Fix AI handoff commit hash after amend
-Current recommended next phase: G-6-e5-schedule-non-dry-run-poc-explicit-retry
+Current phase: G-6-e5-schedule-non-dry-run-poc-explicit-retry-result (completed)
+Latest completed phase: G-6-e5-schedule-non-dry-run-poc-explicit-retry-result
+Latest commit: Record schedule PoC explicit retry success
+Current recommended next phase: restore dry-run default; plan Schedule CMS generalization
 ```
 
 Prior milestone commits:
 
 ```txt
-2b51bd5 — Add AI development workflow context files
+6b7350c — Fix AI handoff commit hash after amend
 a42a904 — Record schedule PoC fix verification result
+2b51bd5 — Add AI development workflow context files
 ```
 
 ---
 
 ## 3. Current state summary
 
-Schedule CMS first non-dry-run PoC: hidden staging trigger implemented on `/__admin-staging-shell/musician-basic/`. First manual Run click did not update DB. Diagnosis identified mock allowlist hard admin gate as likely cause. Fix implementation and fix verification completed. `readyForExplicitRetry: true`. DB still unchanged (`description: 出演：`). Rollback not needed.
+Schedule CMS first non-dry-run write PoC **succeeded** on `static-to-astro-cms-staging` via hidden staging trigger at `/__admin-staging-shell/musician-basic/`. User manually clicked Run once after beforeSnapshot PASS. Result panel: executed / actualWrite true. After-verification SQL: `description_match: true`. Only `description` changed. `schedule_months` not touched. `service_role` not used. Rollback not needed.
 
-AI workflow foundation setup added `.cursor/rules` and `tools/static-to-astro/docs/ai/*`. This refinement adds `AGENTS.md`, populates this handoff with current values, and documents AI workflow files in README.
+First attempt failed (mock allowlist hard gate). Fix implementation and verification completed before explicit retry.
 
 ---
 
@@ -48,22 +49,26 @@ AI workflow foundation setup added `.cursor/rules` and `tools/static-to-astro/do
 - Treat `public.schedule_months` as read-only / derived.
 - No INSERT / DELETE / UPSERT unless explicitly approved.
 - No Storage / Publish / FTP / GitHub dispatch.
-- Any Schedule write retry: user manual click exactly once only. No Playwright auto-click.
+- Do not re-click hidden PoC Run button without explicit new approval.
 
 ---
 
-## 5. Schedule PoC target row
+## 5. Schedule PoC target row (after success)
 
 ```txt
 table: public.schedules
 id: aa440e29-5be8-402e-9190-0d81c48434c0
 legacy_id: schedule-2026-07-010
-currentDescriptionExpected: 出演：
-expectedAfterDescription: 出演： [G-6-e5 non-dry-run PoC]
+currentDescription: 出演： [G-6-e5 non-dry-run PoC]
+description_match: true
 approvalId: G-6-e5-schedule-non-dry-run-poc
-payload: { "description": "出演： [G-6-e5 non-dry-run PoC]" }
 staging project: static-to-astro-cms-staging
 expected Supabase host: kmjqppxjdnwwrtaeqjta.supabase.co
+changedFields: ["description"]
+published: true (unchanged)
+show_on_home: false (unchanged)
+sort_order: 10 (unchanged)
+updated_at: 2026-06-05 17:39:44.140168+00
 ```
 
 Rollback SQL (staging only; not executed):
@@ -81,31 +86,30 @@ where id = 'aa440e29-5be8-402e-9190-0d81c48434c0';
 ```txt
 aiWorkflowFoundationSetup: true
 aiWorkflowFoundationRefinement: true
-readyForExplicitRetry: true
+scheduleNonDryRunPocCompleted: true
+explicitRetrySucceeded: true
+readyForExplicitRetry: false
 readyForNonDryRunSchedulePoC: false
+rollbackNeeded: false
 
 targetId: aa440e29-5be8-402e-9190-0d81c48434c0
 targetLegacyId: schedule-2026-07-010
-currentDescriptionExpected: 出演：
-expectedAfterDescription: 出演： [G-6-e5 non-dry-run PoC]
+beforeDescription: 出演：
+afterDescription: 出演： [G-6-e5 non-dry-run PoC]
 
 fixVerificationResultRecorded: true
 fixVerified: true
 mockRoleHardGateRemovedOrRelaxed: true
-signedInSessionStillRequired: true
-rlsAdminUsersSourceOfTruth: true
-activeSupabaseHostDisplayed: true
-errorPanelImproved: true
-unexpectedExceptionCaptured: true
-scrollIntoViewAdded: true
-doubleClickGuardVerified: true
-normalDevHiddenVerified: true
-envGatedVisibleVerified: true
-manualConfirmVerified: true
-
-triggerClickedInLatestPhase: false
-dbWritesPerformedInLatestPhase: false
-rollbackNeeded: false
+beforeSnapshotConfirmed: true
+explicitRetryPhaseStarted: true
+triggerClickedInLatestPhase: true (user manual once)
+dbWritesPerformedInLatestPhase: true
+scheduleMonthsTouched: false
+serviceRoleUsed: false
+cursorClickedRun: false
+playwrightAutoClick: false
+automaticReclick: false
+rollbackExecuted: false
 ```
 
 ---
@@ -113,9 +117,8 @@ rollbackNeeded: false
 ## 7. Recently completed work
 
 ```txt
-- G-6-e5-schedule-non-dry-run-poc-execution-attempt-diagnosis (mock gate identified)
-- G-6-e5-schedule-non-dry-run-poc-execution-attempt-fix-implementation (c5324aa)
-- G-6-e5-schedule-non-dry-run-poc-execution-attempt-fix-verification (d99dc75)
+- G-6-e5-schedule-non-dry-run-poc-explicit-retry (user manual Run once)
+- G-6-e5-schedule-non-dry-run-poc-explicit-retry-result (success recorded)
 - G-6-e5-schedule-non-dry-run-poc-execution-attempt-fix-verification-result (a42a904)
 - AI workflow foundation setup (2b51bd5): .cursor/rules, docs/ai/*
 - AI workflow foundation refinement: AGENTS.md, handoff populated, README updated
@@ -126,30 +129,27 @@ rollbackNeeded: false
 ## 8. What must not be done next
 
 ```txt
-- Do not click Run button until explicit retry phase begins
+- Do not re-click hidden PoC Run button without new explicit approval
 - Do not use Playwright / Chromium auto-click
 - Do not run updateScheduleWrite from scripts
-- Do not UPDATE/INSERT/DELETE schedules outside approved one-click retry
+- Do not perform additional schedule writes without approval
 - Do not touch schedule_months
 - Do not use /admin route for PoC
 - Do not use service_role
 - Do not touch production
 - Do not commit secrets or output/
+- Do not execute rollback SQL unless explicitly approved
 ```
 
 ---
 
 ## 9. Next requested help from ChatGPT
 
-Please read this handoff and provide the next Cursor prompt for:
-**G-6-e5-schedule-non-dry-run-poc-explicit-retry**.
+Schedule non-dry-run PoC succeeded. Suggest next Cursor prompt for post-PoC work:
 
-The retry must begin with a final beforeSnapshot check.
-It must use only the staging shell route.
-It must not use `/admin`.
-It must not use `service_role`.
-It must not use Playwright / Chromium auto-click.
-The Run button must be clicked manually by the user exactly once.
+1. Restore dev server to `PUBLIC_ADMIN_WRITE_DRY_RUN=true` safe default.
+2. Plan Schedule CMS generalization (write UI, documentation, optional rollback decision).
+3. Do not trigger additional writes without explicit approval.
 
 ---
 
@@ -161,5 +161,5 @@ AGENTS.md
 tools/static-to-astro/docs/ai/00-current-state.md
 tools/static-to-astro/docs/ai/03-next-actions.md
 tools/static-to-astro/docs/ai/handoff-to-chatgpt.md
-tools/static-to-astro/docs/schedule-non-dry-run-poc-execution-attempt-fix-verification-result.md
+tools/static-to-astro/docs/schedule-non-dry-run-poc-explicit-retry-result.md
 ```

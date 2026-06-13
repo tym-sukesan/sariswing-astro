@@ -3,49 +3,41 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 1. Immediate priority
 
-AI workflow foundation refinement is complete. The repository now has `AGENTS.md`, populated handoff, and README notes for AI context files.
+**Latest completed phase:** `G-6-e5-schedule-non-dry-run-poc-explicit-retry-result`
 
-**Immediate next phase after this refinement:**
+Schedule CMS first non-dry-run write PoC **succeeded**. User manually clicked Run once. `description` updated on staging `public.schedules` target row. `description_match: true`. Rollback not needed.
 
-```txt
-G-6-e5-schedule-non-dry-run-poc-explicit-retry
-```
+**Result doc:** `tools/static-to-astro/docs/schedule-non-dry-run-poc-explicit-retry-result.md`
 
-## 2. Before explicit retry
-
-Confirm all of the following before the user clicks Run once:
+## 2. Post-success actions (recommended)
 
 ```txt
-- final beforeSnapshot SQL (description must be exactly 出演：)
-- Supabase project is static-to-astro-cms-staging
-- route is /__admin-staging-shell/musician-basic/
-- active Supabase host matches kmjqppxjdnwwrtaeqjta.supabase.co
-- target row id: aa440e29-5be8-402e-9190-0d81c48434c0
-- payload: { "description": "出演： [G-6-e5 non-dry-run PoC]" }
-- approval ID: G-6-e5-schedule-non-dry-run-poc
-- user is signed in via staging Supabase Auth
-- dev server started with inline env gates only (not root .env production values)
-- user manually clicks Run button exactly once
+1. Stop / restart dev server with PUBLIC_ADMIN_WRITE_DRY_RUN=true (default safe mode).
+2. Do not re-click the hidden PoC Run button.
+3. Do not run additional schedule writes without explicit approval.
+4. Optional rollback only if restoring staging row description is desired (SQL in result doc).
+5. Plan next Schedule CMS generalization work.
 ```
 
-## 3. Explicit retry rules
+## 3. Completed explicit retry record
 
 ```txt
-- No Playwright / Chromium auto-click
-- No service_role
-- No /admin route
-- No schedule_months writes
-- No automatic re-click on failure
-- Capture result panel and run after-verification SQL
+Phase: G-6-e5-schedule-non-dry-run-poc-explicit-retry-result
+beforeSnapshot: PASS (description = 出演：)
+route: /__admin-staging-shell/musician-basic/
+Supabase project: static-to-astro-cms-staging
+host: kmjqppxjdnwwrtaeqjta.supabase.co
+Run button: user manual once only
+Cursor/Playwright click: no
+result panel: executed, actualWrite true, changedFields ["description"]
+after-verification: description_match true
+schedule_months touched: false
+service_role used: false
+rollbackNeeded: false
+rollback executed: false
 ```
 
-## 4. After retry
-
-If success → `G-6-e5-schedule-non-dry-run-poc-explicit-retry-result`
-
-If failure → do not re-click; save logs and open diagnosis phase.
-
-Rollback SQL (staging only; use only if needed):
+## 4. Rollback SQL (staging only; not executed)
 
 ```sql
 update public.schedules

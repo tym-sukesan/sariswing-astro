@@ -27,50 +27,98 @@ export interface ScheduleAdminItem {
   sort_order?: number;
   deleted?: boolean;
   dateConflict?: boolean;
+  legacy_id?: string | null;
+  descriptionPreview?: string | null;
 }
 
 interface Props {
   items?: ScheduleAdminItem[];
   siteName?: string;
   readonly?: boolean;
+  readSource?: "static" | "supabase" | "mock";
+  readMessage?: string;
+  dataReadEnabled?: boolean;
+  supabaseHost?: string;
+  expectedProject?: string;
+  expectedHost?: string;
+  recordCount?: number;
 }
 
-const { items = [], siteName = "CMS Kit", readonly = true } = Astro.props;
+const {
+  items = [],
+  siteName = "CMS Kit",
+  readonly = true,
+  readSource = "static",
+  readMessage,
+  dataReadEnabled = false,
+  supabaseHost,
+  expectedProject = "static-to-astro-cms-staging",
+  expectedHost,
+  recordCount = items.length,
+} = Astro.props;
 
-const hasConflict = items.some((item) => item.dateConflict);
+const isLiveRead = readSource === "supabase";
+const headerDescription = isLiveRead
+  ? `Manage events for ${siteName}. Read-only — live data from public.schedules (SELECT only).`
+  : `Manage events for ${siteName}. Read-only scaffold — ${readSource} fixtures.`;
 
 const columns = [
   { key: "date", label: "Date" },
   { key: "title", label: "Title" },
   { key: "venue", label: "Venue" },
-  { key: "image", label: "Image" },
+  { key: "description", label: "Description" },
   { key: "status", label: "Status" },
 ];
 
 const rows = items.map((item) => ({
   date: item.date,
   title: item.deleted ? `${item.title} (deleted)` : item.title,
-  venue: item.venue ?? "—",
-  image: item.image_url || item.home_image_url ? "Attached" : "None",
+  venue: item.venue?.trim() ? item.venue : "—",
+  description: item.descriptionPreview?.trim() ? item.descriptionPreview : "—",
   status: item.published ? "Published" : "Draft",
 }));
+
+const hasConflict = items.some((item) => item.dateConflict);
+const tableCaption =
+  readSource === "supabase"
+    ? "Schedule items from public.schedules (read-only SELECT)"
+    : `Schedule items (${readSource} fixtures)`;
 ---
 
-<section class="admin-module admin-module--schedule" data-module="schedule" data-scaffold="true">
-  <AdminPageHeader
-    title="Schedule"
-    description={`Manage events for ${siteName}. Scaffold only — no DB connection.`}
-  >
+<section
+  class="admin-module admin-module--schedule"
+  data-module="schedule"
+  data-scaffold={readSource === "static" ? "true" : "false"}
+  data-read-source={readSource}
+  data-select-only="true"
+>
+  <AdminPageHeader title="Schedule" description={headerDescription}>
     <button slot="actions" class="admin-button" type="button" disabled={readonly}>
       Add event
     </button>
   </AdminPageHeader>
 
-  {readonly ? (
-    <p class="admin-readonly-notice" role="note">
-      Read-only scaffold. No Supabase query or save.
-    </p>
-  ) : null}
+  <p class="admin-readonly-notice" role="note">
+    Read-only module — SELECT only. No Save, no Run, no DB writes.
+    Source: <strong>{readSource}</strong> ({recordCount} row{recordCount === 1 ? "" : "s"}).
+    {dataReadEnabled ? " Data read gate: enabled." : " Data read gate: off — static/mock."}
+  </p>
+
+  {
+    readMessage ? (
+      <AdminStatusMessage type="info" title="Schedule read binding" message={readMessage} />
+    ) : null
+  }
+
+  {
+    supabaseHost ? (
+      <p class="admin-schedule-read-meta" role="note">
+        Active host: <code>{supabaseHost}</code>
+        {expectedHost ? ` — expected: ${expectedHost}` : ""}
+        {expectedProject ? ` — project: ${expectedProject}` : ""}
+      </p>
+    ) : null
+  }
 
   {
     hasConflict ? (
@@ -94,7 +142,7 @@ const rows = items.map((item) => ({
         <AdminDataTable
           columns={columns}
           rows={rows}
-          caption="Schedule items (static example)"
+          caption={tableCaption}
           showActionsColumn={true}
         >
           <div class="admin-table-actions">

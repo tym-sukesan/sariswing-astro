@@ -3,13 +3,13 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 1. Immediate priority
 
-**Latest completed phase:** `G-6-f1-schedule-poc-isolation-dry-run-default`
+**Latest completed phase:** `G-6-f2-schedule-read-ui-binding-audit`
 
-G-6-e5 hidden PoC trigger disarmed by default. Additional gate `PUBLIC_ADMIN_NON_DRY_RUN_POC_EXPLICIT_RERUN=true` required to show Danger Zone. Completed notice UI added. Dry-run default documented.
+ScheduleAdminUi connected to staging SSR read binding (`loadSchedulesForDryRunUi`, SELECT only). Read source badge, description column, audit doc.
 
-**Doc:** `tools/static-to-astro/docs/schedule-poc-isolation-dry-run-default.md`
+**Doc:** `tools/static-to-astro/docs/schedule-read-ui-binding-audit.md`
 
-**Recommended next phase:** `G-6-f2-schedule-read-ui-binding-audit`
+**Recommended next phase:** `G-6-f3-schedule-description-edit-dry-run-prototype`
 
 ## 2. Dry-run default (day-to-day dev)
 
@@ -23,6 +23,8 @@ PUBLIC_SUPABASE_URL="https://kmjqppxjdnwwrtaeqjta.supabase.co" \
 PUBLIC_SUPABASE_ANON_KEY="<staging anon key>" \
 npm run dev
 ```
+
+Open schedule module: `http://localhost:4321/__admin-staging-shell/musician-basic/#schedule`
 
 Do **not** set `PUBLIC_ADMIN_WRITE_DRY_RUN=false` unless in an approved explicit non-dry-run phase.
 
@@ -42,8 +44,8 @@ Do **not** re-arm hidden PoC without `PUBLIC_ADMIN_NON_DRY_RUN_POC_EXPLICIT_RERU
 | Phase | Status |
 | --- | --- |
 | G-6-f1 PoC isolation | **DONE** |
-| G-6-f2 Read UI binding audit | **Next** |
-| G-6-f3 Description edit dry-run | Planned |
+| G-6-f2 Read UI binding audit | **DONE** |
+| G-6-f3 Description edit dry-run | **Next** |
 | G-6-f4 Safe fields dry-run | Planned |
 | G-6-f5 Safe fields non-dry-run | Planned |
 

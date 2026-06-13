@@ -47,6 +47,7 @@ import AdminPublishHistory from "../components/AdminPublishHistory.astro";
 import AdminPublishEnvironmentBadge from "../components/AdminPublishEnvironmentBadge.astro";
 import ProfileAdminUi from "../modules/ProfileAdminUi.astro";
 import ScheduleAdminUi from "../modules/ScheduleAdminUi.astro";
+import { resolveScheduleAdminUiBinding } from "../../../../../src/lib/admin/staging-write/schedule-admin-ui-binding";
 import DiscographyAdminUi from "../modules/DiscographyAdminUi.astro";
 import LinksAdminUi from "../modules/LinksAdminUi.astro";
 import NewsAdminUi from "../modules/NewsAdminUi.astro";
@@ -116,6 +117,18 @@ const scheduleItems = [
     dateConflict: false,
   },
 ];
+
+const scheduleUiBinding = stagingShellMode
+  ? await resolveScheduleAdminUiBinding(scheduleItems)
+  : {
+      items: scheduleItems,
+      source: "static" as const,
+      recordCount: scheduleItems.length,
+      dataReadEnabled: false,
+      expectedProject: "static-to-astro-cms-staging",
+      expectedHost: "kmjqppxjdnwwrtaeqjta.supabase.co",
+      selectOnly: true as const,
+    };
 
 const discographyItems = [
   {
@@ -426,7 +439,18 @@ const moduleSummary = [
     </section>
 
     <section id="schedule" class="admin-prototype-section" data-section="schedule">
-      <ScheduleAdminUi items={scheduleItems} siteName={siteName} readonly={true} />
+      <ScheduleAdminUi
+        items={scheduleUiBinding.items}
+        siteName={siteName}
+        readonly={true}
+        readSource={scheduleUiBinding.source}
+        readMessage={scheduleUiBinding.message}
+        dataReadEnabled={scheduleUiBinding.dataReadEnabled}
+        supabaseHost={scheduleUiBinding.supabaseHost}
+        expectedProject={scheduleUiBinding.expectedProject}
+        expectedHost={scheduleUiBinding.expectedHost}
+        recordCount={scheduleUiBinding.recordCount}
+      />
     </section>
 
     <section id="discography" class="admin-prototype-section" data-section="discography">

@@ -14,10 +14,10 @@ Paste this file at the start of a new ChatGPT thread. Cursor should update it af
 ## 2. Current phase
 
 ```txt
-Current phase: G-6-f1-schedule-poc-isolation-dry-run-default (completed)
-Latest completed phase: G-6-f1-schedule-poc-isolation-dry-run-default
-Latest commit: 638b60a — Isolate G-6-e5 schedule PoC trigger and document dry-run default
-Recommended next phase: G-6-f2-schedule-read-ui-binding-audit
+Current phase: G-6-f2-schedule-read-ui-binding-audit (completed)
+Latest completed phase: G-6-f2-schedule-read-ui-binding-audit
+Latest commit: (G-6-f2 commit — update after push)
+Recommended next phase: G-6-f3-schedule-description-edit-dry-run-prototype
 ```
 
 Prior milestone commits:
@@ -31,7 +31,7 @@ e9e3861 — Record schedule PoC explicit retry success
 
 ## 3. Current state summary
 
-G-6-e5 Schedule non-dry-run PoC succeeded. G-6-f1 disarmed hidden PoC by default (`PUBLIC_ADMIN_NON_DRY_RUN_POC_EXPLICIT_RERUN` required). Completed notice on staging shell. Dry-run default documented. G-6-e5 approval ID reserved for one-off PoC only.
+G-6-f2 connected ScheduleAdminUi to SSR read binding via `loadSchedulesForDryRunUi` (SELECT only). Read source badge and description column on staging shell. G-6-e5 PoC state unchanged. Hidden PoC still disarmed by default.
 
 ---
 
@@ -73,12 +73,14 @@ hiddenPocTriggerDisarmedByDefault: true
 explicitRerunGateRequired: true
 dryRunDefaultDocumented: true
 g6e5ApprovalIdReuseProhibited: true
-readyForScheduleReadUiBinding: true
+scheduleReadUiBindingComplete: true
+readyForScheduleDescriptionEditDryRun: true
 readyForScheduleGeneralUi: false
 rollbackNeeded: false
 
 triggerClickedInLatestPhase: false
 dbWritesPerformedInLatestPhase: false
+supabaseSelectInLatestPhase: true (SSR read binding when env gates set; build-time may fallback)
 ```
 
 ---
@@ -86,6 +88,7 @@ dbWritesPerformedInLatestPhase: false
 ## 7. Recently completed work
 
 ```txt
+- G-6-f2-schedule-read-ui-binding-audit
 - G-6-f1-schedule-poc-isolation-dry-run-default
 - G-6-f-schedule-cms-generalization-planning (e656083)
 - G-6-e5-schedule-non-dry-run-poc-explicit-retry-result (e9e3861)
@@ -108,7 +111,7 @@ dbWritesPerformedInLatestPhase: false
 
 ## 9. Next requested help from ChatGPT
 
-Suggest Cursor prompt for **G-6-f2-schedule-read-ui-binding-audit**: wire ScheduleAdminUi to staging read loader; SELECT only; no writes.
+Suggest Cursor prompt for **G-6-f3-schedule-description-edit-dry-run-prototype**: description field dry-run edit scaffold; keep DRY_RUN default; no non-dry-run.
 
 ---
 
@@ -116,6 +119,7 @@ Suggest Cursor prompt for **G-6-f2-schedule-read-ui-binding-audit**: wire Schedu
 
 ```txt
 AGENTS.md
+tools/static-to-astro/docs/schedule-read-ui-binding-audit.md
 tools/static-to-astro/docs/schedule-poc-isolation-dry-run-default.md
 tools/static-to-astro/docs/schedule-cms-generalization-planning.md
 tools/static-to-astro/docs/ai/00-current-state.md

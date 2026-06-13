@@ -1,6 +1,9 @@
 /**
- * G-6-e5 — Hidden schedule non-dry-run PoC trigger env gates (staging shell only).
+ * G-6-e5 / G-6-f1 — Hidden schedule non-dry-run PoC trigger env gates (staging shell only).
  * Default hidden unless every gate matches exactly.
+ *
+ * G-6-f1: After successful G-6-e5 explicit retry, trigger stays hidden unless
+ * PUBLIC_ADMIN_NON_DRY_RUN_POC_EXPLICIT_RERUN=true (documented rerun phase only).
  */
 
 import { mergeStagingShellEnv } from "../staging-shell/staging-shell-client-gates";
@@ -8,6 +11,10 @@ import { SCHEDULE_WRITE_APPROVAL_ID } from "./schedule-write-types";
 
 export const G6E5_SCHEDULE_NON_DRY_RUN_POC_PHASE =
   "G-6-e5-schedule-non-dry-run-poc-execution-path-implementation";
+
+/** G-6-f1 — additional gate; PoC succeeded; do not arm without explicit rerun phase. */
+export const SCHEDULE_NON_DRY_RUN_POC_EXPLICIT_RERUN_ENV =
+  "PUBLIC_ADMIN_NON_DRY_RUN_POC_EXPLICIT_RERUN";
 
 export const SCHEDULE_NON_DRY_RUN_POC_TARGET_ID =
   "aa440e29-5be8-402e-9190-0d81c48434c0";
@@ -51,6 +58,7 @@ export interface ScheduleNonDryRunPocConfig {
   dryRunFlagMatch: boolean;
   triggerFlagMatch: boolean;
   targetIdMatch: boolean;
+  explicitRerunArmed: boolean;
   supabaseConfigured: boolean;
   productionBlocked: boolean;
 }
@@ -83,6 +91,9 @@ export function getScheduleNonDryRunPocConfig(
   const targetIdEnv = String(
     mergedEnv.PUBLIC_ADMIN_NON_DRY_RUN_POC_TARGET_ID ?? "",
   ).trim();
+  const explicitRerunArmed =
+    String(mergedEnv[SCHEDULE_NON_DRY_RUN_POC_EXPLICIT_RERUN_ENV] ?? "").trim() ===
+    "true";
   const supabaseUrl = String(mergedEnv.PUBLIC_SUPABASE_URL ?? "").trim();
   const supabaseAnonKey = String(mergedEnv.PUBLIC_SUPABASE_ANON_KEY ?? "").trim();
   const supabaseConfigured = Boolean(supabaseUrl && supabaseAnonKey);
@@ -113,6 +124,7 @@ export function getScheduleNonDryRunPocConfig(
     dryRunFlagMatch,
     triggerFlagMatch,
     targetIdMatch,
+    explicitRerunArmed,
     supabaseConfigured,
     productionBlocked,
   };
@@ -134,6 +146,11 @@ export function getScheduleNonDryRunPocConfig(
   if (!targetIdMatch) {
     gateFailures.push(
       `PUBLIC_ADMIN_NON_DRY_RUN_POC_TARGET_ID=${SCHEDULE_NON_DRY_RUN_POC_TARGET_ID}`,
+    );
+  }
+  if (!explicitRerunArmed) {
+    gateFailures.push(
+      `${SCHEDULE_NON_DRY_RUN_POC_EXPLICIT_RERUN_ENV}=true (G-6-e5 completed — explicit rerun phase only)`,
     );
   }
   if (!supabaseConfigured) gateFailures.push("Supabase URL/anon key");

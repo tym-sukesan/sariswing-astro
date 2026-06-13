@@ -35,6 +35,11 @@ const pocConfig = getScheduleNonDryRunPocConfig();
 
   <p class="admin-staging-schedule-non-dry-run-poc-trigger__warning" role="alert">
     This is a one-off staging PoC trigger. Do not use in production.
+    {
+      pocConfig.visible
+        ? " EXPLICIT RERUN ARMED — manual Run only once; Cursor / Playwright must not click."
+        : ""
+    }
   </p>
 
   <dl class="admin-staging-schedule-non-dry-run-poc-trigger__meta">

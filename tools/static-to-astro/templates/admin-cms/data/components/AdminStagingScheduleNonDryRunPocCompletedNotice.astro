@@ -1,0 +1,66 @@
+---
+/**
+ * G-6-f1 — G-6-e5 schedule non-dry-run PoC completed notice (staging shell only).
+ * Always visible in staging shell. Not the Danger Zone trigger. No Run button.
+ */
+import { SCHEDULE_NON_DRY_RUN_POC_EXPLICIT_RERUN_ENV } from "../../../../../../src/lib/admin/staging-write/schedule-non-dry-run-poc-config";
+import { SCHEDULE_WRITE_APPROVAL_ID } from "../../../../../../src/lib/admin/staging-write/schedule-write-types";
+---
+
+<section
+  id="schedule-non-dry-run-poc-completed-notice"
+  class="admin-staging-schedule-non-dry-run-poc-completed"
+  data-phase="G-6-f1-schedule-poc-isolation-dry-run-default"
+  data-poc-completed="true"
+  role="status"
+  aria-live="polite"
+>
+  <h2 class="admin-staging-schedule-non-dry-run-poc-completed__title">
+    G-6-e5 Schedule non-dry-run PoC — completed
+  </h2>
+
+  <p class="admin-staging-schedule-non-dry-run-poc-completed__summary">
+    The one-off hidden trigger succeeded. Do <strong>not</strong> click Run again.
+    General Schedule UI must use a <strong>new approval ID</strong> (not
+    <code>{SCHEDULE_WRITE_APPROVAL_ID}</code>).
+  </p>
+
+  <ul class="admin-staging-schedule-non-dry-run-poc-completed__list">
+    <li>Default dev: <code>PUBLIC_ADMIN_WRITE_DRY_RUN=true</code></li>
+    <li>Hidden Danger Zone is disarmed unless <code>{SCHEDULE_NON_DRY_RUN_POC_EXPLICIT_RERUN_ENV}=true</code></li>
+    <li>Staging <code>description</code> may still show PoC marker text until optional rollback phase</li>
+    <li><code>schedule_months</code> remains read-only / derived</li>
+  </ul>
+</section>
+
+<style>
+  .admin-staging-schedule-non-dry-run-poc-completed {
+    margin-top: 1.5rem;
+    padding: 1rem 1.25rem;
+    border: 1px solid #fcd34d;
+    border-radius: 8px;
+    background: #fffbeb;
+  }
+  .admin-staging-schedule-non-dry-run-poc-completed__title {
+    margin: 0 0 0.5rem;
+    color: #92400e;
+    font-size: 1rem;
+  }
+  .admin-staging-schedule-non-dry-run-poc-completed__summary {
+    margin: 0 0 0.75rem;
+    color: #78350f;
+    font-size: 0.9rem;
+  }
+  .admin-staging-schedule-non-dry-run-poc-completed__list {
+    margin: 0;
+    padding-left: 1.25rem;
+    color: #78350f;
+    font-size: 0.85rem;
+  }
+  .admin-staging-schedule-non-dry-run-poc-completed__list code {
+    font-size: 0.8rem;
+    background: #fef3c7;
+    padding: 0.05rem 0.3rem;
+    border-radius: 3px;
+  }
+</style>

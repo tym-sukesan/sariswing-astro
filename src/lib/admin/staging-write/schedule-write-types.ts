@@ -1,11 +1,15 @@
 /**
  * G-6-e4 — Schedule write adapter types (staging only; separate from dry-run adapter).
+ *
+ * SCHEDULE_WRITE_APPROVAL_ID is the one-off G-6-e5 hidden PoC approval only.
+ * General Schedule edit UI must use new approval IDs (G-6-f5+). Do not reuse.
  */
 
 import type { ScheduleDryRunSource } from "./schedule-dry-run-types";
 
 export type ScheduleWriteOperation = "update";
 
+/** One-off G-6-e5 hidden PoC — not for general Schedule CMS UI. */
 export type ScheduleWriteApprovalId = "G-6-e5-schedule-non-dry-run-poc";
 
 export const SCHEDULE_WRITE_APPROVAL_ID: ScheduleWriteApprovalId =

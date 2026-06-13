@@ -3,44 +3,49 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 1. Immediate priority
 
-**Latest completed phase:** `G-6-f-schedule-cms-generalization-planning`
+**Latest completed phase:** `G-6-f1-schedule-poc-isolation-dry-run-default`
 
-Schedule CMS generalization planning complete. Transition plan from G-6-e5 hidden PoC to visible staging shell Schedule edit UI documented.
+G-6-e5 hidden PoC trigger disarmed by default. Additional gate `PUBLIC_ADMIN_NON_DRY_RUN_POC_EXPLICIT_RERUN=true` required to show Danger Zone. Completed notice UI added. Dry-run default documented.
 
-**Planning doc:** `tools/static-to-astro/docs/schedule-cms-generalization-planning.md`
+**Doc:** `tools/static-to-astro/docs/schedule-poc-isolation-dry-run-default.md`
 
-**Recommended next phase:** `G-6-f1-schedule-poc-isolation-dry-run-default`
+**Recommended next phase:** `G-6-f2-schedule-read-ui-binding-audit`
 
-## 2. Post-G-6-e5 maintenance (still valid)
+## 2. Dry-run default (day-to-day dev)
 
-```txt
-1. Dev server default: PUBLIC_ADMIN_WRITE_DRY_RUN=true
-2. Do not re-click hidden G-6-e5 PoC Run button
-3. rollbackNeeded: false (optional description rollback SQL in result doc only)
+```bash
+ENABLE_ADMIN_STAGING_SHELL=true \
+ENABLE_ADMIN_STAGING_AUTH=true \
+ENABLE_ADMIN_STAGING_DATA_READ=true \
+PUBLIC_ADMIN_AUTH_PROVIDER=supabase \
+PUBLIC_ADMIN_DATA_PROVIDER=supabase \
+PUBLIC_SUPABASE_URL="https://kmjqppxjdnwwrtaeqjta.supabase.co" \
+PUBLIC_SUPABASE_ANON_KEY="<staging anon key>" \
+npm run dev
 ```
 
-## 3. G-6-f planning outcomes
+Do **not** set `PUBLIC_ADMIN_WRITE_DRY_RUN=false` unless in an approved explicit non-dry-run phase.
+
+Do **not** re-arm hidden PoC without `PUBLIC_ADMIN_NON_DRY_RUN_POC_EXPLICIT_RERUN=true` and a documented rerun phase.
+
+## 3. G-6-e5 maintenance
 
 ```txt
-- PoC trigger vs general UI separation defined
-- phased plan G-6-f1 … G-6-f6 + G-6-g create planning
-- INSERT / DELETE / schedule_months writes deferred
-- /admin and src/pages/admin remain untouched
-- service_role prohibited
-- Profile PoC pattern as reference for visible dry-run-first UI
+- Do not re-click hidden PoC Run button
+- G-6-e5 approval ID not for general Schedule UI
+- rollbackNeeded: false
+- staging description may retain PoC marker until optional rollback phase
 ```
 
-## 4. Phased next steps (summary)
+## 4. Phased next steps
 
-| Phase | Focus |
+| Phase | Status |
 | --- | --- |
-| G-6-f1 | PoC isolation + dry-run default policy |
-| G-6-f2 | Schedule list read binding audit |
-| G-6-f3 | Description edit dry-run prototype |
-| G-6-f4 | Safe text fields dry-run |
-| G-6-f5 | Safe fields non-dry-run (new approval ID) |
-| G-6-f6 | Write UI hardening (updated_at, mobile QA) |
-| G-6-g | Create flow planning (INSERT) |
+| G-6-f1 PoC isolation | **DONE** |
+| G-6-f2 Read UI binding audit | **Next** |
+| G-6-f3 Description edit dry-run | Planned |
+| G-6-f4 Safe fields dry-run | Planned |
+| G-6-f5 Safe fields non-dry-run | Planned |
 
 ## 5. AI workflow maintenance rule
 

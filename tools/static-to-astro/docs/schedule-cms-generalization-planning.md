@@ -376,7 +376,7 @@ Kit vs Sariswing: all new code in tools/static-to-astro templates + src/lib/admi
 | Phase | Name | Scope | Writes |
 | --- | --- | --- | --- |
 | **G-6-f** | `schedule-cms-generalization-planning` | This document | None |
-| **G-6-f1** | `schedule-poc-isolation-dry-run-default` | Document + env: hide G-6-e5 trigger by default; `DRY_RUN=true` docs; PoC retirement policy | None |
+| **G-6-f1** | `schedule-poc-isolation-dry-run-default` | **DONE** — explicit rerun gate; completed notice; dry-run default docs | None |
 | **G-6-f2** | `schedule-read-ui-binding-audit` | Wire `ScheduleAdminUi` to `loadSchedulesForDryRunUi`; list/detail read-only on staging shell | SELECT only |
 | **G-6-f3** | `schedule-description-edit-dry-run-prototype` | Visible description edit form; dry-run adapter; result panel | None (dry-run) |
 | **G-6-f4** | `schedule-safe-fields-dry-run` | Add title, venue, times, price to dry-run form + validation | None (dry-run) |
@@ -386,7 +386,7 @@ Kit vs Sariswing: all new code in tools/static-to-astro templates + src/lib/admi
 | Later | `schedule-date-edit` | `date` change + month derivation impact analysis | After G-6-g |
 | Later | `G-6-f-staging-logical-delete-restore` | Soft delete / restore (cross-module) | Separate approval |
 
-**Recommended immediate next phase:** `G-6-f1-schedule-poc-isolation-dry-run-default` then `G-6-f2-schedule-read-ui-binding-audit`.
+**Recommended immediate next phase:** `G-6-f2-schedule-read-ui-binding-audit` (G-6-f1 complete).
 
 ## 7. Open questions
 

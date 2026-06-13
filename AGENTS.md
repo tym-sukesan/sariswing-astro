@@ -65,9 +65,13 @@ Do not re-click the hidden PoC Run button without explicit new approval.
 
 Planning phase `G-6-f-schedule-cms-generalization-planning` is complete.
 
+PoC isolation phase `G-6-f1-schedule-poc-isolation-dry-run-default` is complete.
+
 - See `tools/static-to-astro/docs/schedule-cms-generalization-planning.md`
-- Recommended next: `G-6-f1-schedule-poc-isolation-dry-run-default`
+- See `tools/static-to-astro/docs/schedule-poc-isolation-dry-run-default.md`
+- Recommended next: `G-6-f2-schedule-read-ui-binding-audit`
 - General Schedule edit UI: staging shell only; do not modify `/admin` until an explicit future phase
+- Default dev: `PUBLIC_ADMIN_WRITE_DRY_RUN=true`; hidden PoC requires `PUBLIC_ADMIN_NON_DRY_RUN_POC_EXPLICIT_RERUN=true` to arm
 
 ## STOP conditions
 

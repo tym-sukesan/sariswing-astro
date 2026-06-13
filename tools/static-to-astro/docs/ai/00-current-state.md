@@ -21,21 +21,22 @@ Staging Shell
 将来的な顧客オンボーディング・課金・デプロイ自動化
 
 2. Current phase
-現在フェーズ: G-6-f-schedule-cms-generalization-planning（完了）
+現在フェーズ: G-6-f1-schedule-poc-isolation-dry-run-default（完了）
 
-Schedule CMS 一般化の設計整理を完了。hidden PoC trigger から安全な Schedule edit UI / write flow への段階移行計画を文書化。
+G-6-e5 hidden PoC trigger を隔離。`PUBLIC_ADMIN_NON_DRY_RUN_POC_EXPLICIT_RERUN=true` なしでは Danger Zone 非表示。completed notice UI 追加。dry-run 既定運用を文書化。
 
 直近完了フェーズ:
+G-6-f1-schedule-poc-isolation-dry-run-default
+前フェーズ:
 G-6-f-schedule-cms-generalization-planning
-前フェーズ完了:
 G-6-e5-schedule-non-dry-run-poc-explicit-retry-result（SUCCESS）
 直近commit:
-e656083 — Add Schedule CMS generalization planning (G-6-f)
+（本コミットで記録予定）
 
 G-6-e5 成功状態（維持）:
 - description: 出演： [G-6-e5 non-dry-run PoC]
 - rollbackNeeded: false
-- hidden PoC Run button: 再クリック禁止
+- hidden PoC Run button: 再クリック禁止（EXPLICIT_RERUN なしでは UI 非武装）
 
 3. Important completed milestones
 
@@ -201,15 +202,25 @@ where id = 'aa440e29-5be8-402e-9190-0d81c48434c0';
 6.11 Schedule CMS generalization planning
 完了済み。フェーズ: G-6-f-schedule-cms-generalization-planning
 planning doc: schedule-cms-generalization-planning.md
-推奨次フェーズ: G-6-f1-schedule-poc-isolation-dry-run-default
+
+6.12 Schedule PoC isolation
+完了済み。フェーズ: G-6-f1-schedule-poc-isolation-dry-run-default
+- explicit rerun gate: PUBLIC_ADMIN_NON_DRY_RUN_POC_EXPLICIT_RERUN=true 必須
+- completed notice UI 追加
+- doc: schedule-poc-isolation-dry-run-default.md
+- DB write / Run click: なし
 
 7. Current gates
 scheduleNonDryRunPocCompleted: true
 explicitRetrySucceeded: true
 scheduleCmsGeneralizationPlanningComplete: true
+hiddenPocTriggerDisarmedByDefault: true
+explicitRerunGateRequired: true
+dryRunDefaultDocumented: true
+g6e5ApprovalIdReuseProhibited: true
 readyForScheduleGeneralUi: false
+readyForScheduleReadUiBinding: true
 readyForExplicitRetry: false
-readyForNonDryRunSchedulePoC: false
 rollbackNeeded: false
 
 8. Absolute safety invariants
@@ -225,10 +236,9 @@ rollbackNeeded: false
 明示的 retry で dev server を起動する場合は inline env のみ使用する。
 
 10. Recommended next phase
-次フェーズ推奨: G-6-f1-schedule-poc-isolation-dry-run-default
-その後: G-6-f2-schedule-read-ui-binding-audit → G-6-f3-schedule-description-edit-dry-run-prototype
+次フェーズ推奨: G-6-f2-schedule-read-ui-binding-audit
 
-詳細: tools/static-to-astro/docs/schedule-cms-generalization-planning.md
+詳細: tools/static-to-astro/docs/schedule-poc-isolation-dry-run-default.md
 
 11. AI workflow transition
 チャット履歴への依存を減らすため、リポジトリ側に AI開発文脈管理ファイルを作成。

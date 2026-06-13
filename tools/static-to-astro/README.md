@@ -1450,6 +1450,13 @@ gosaki / Sariswing で実証した移行フローを、**別サイト向け CMS 
 
 **G-6-e5-schedule-non-dry-run-poc-execution-attempt-fix-implementation（完了）:** [Schedule non-dry-run PoC execution attempt fix](docs/schedule-non-dry-run-poc-execution-attempt-fix-implementation.md) — mock allowlist hard admin gate relaxed; signed-in Supabase session still required; RLS/admin_users remains source of truth; active Supabase host displayed; error visibility improved; retry still blocked until fix verification; next: G-6-e5-schedule-non-dry-run-poc-execution-attempt-fix-verification.
 
+**G-6-e5-schedule-non-dry-run-poc-execution-attempt-fix-verification（完了）:** [Schedule non-dry-run PoC execution attempt fix verification](docs/schedule-non-dry-run-poc-execution-attempt-fix-verification.md) — fix verification phase added; mock role hard gate removal verified; error panel / catch / scroll verified; normal dev hidden and env-gated visible verified; Run button not clicked; retry remains blocked until explicit retry phase; next: G-6-e5-schedule-non-dry-run-poc-execution-attempt-fix-verification-result.
+
+```bash
+node tools/static-to-astro/scripts/report-schedule-non-dry-run-poc-execution-attempt-fix-verification.mjs \
+  --out-dir tools/static-to-astro/output/schedule-non-dry-run-poc-execution-attempt-fix-verification/gosaki
+```
+
 ```bash
 node tools/static-to-astro/scripts/report-schedule-non-dry-run-poc-final-preflight-result.mjs \
   --out-dir tools/static-to-astro/output/schedule-non-dry-run-poc-final-preflight-result/gosaki

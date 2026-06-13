@@ -196,6 +196,8 @@ Actual non-dry-run execution remains blocked until final preflight result is rec
 
 **G-6-e5-schedule-non-dry-run-poc-execution-attempt-fix-implementation（完了）:** [schedule-non-dry-run-poc-execution-attempt-fix-implementation.md](./schedule-non-dry-run-poc-execution-attempt-fix-implementation.md) — mock allowlist hard admin gate relaxed; signed-in Supabase session still required; RLS/admin_users remains source of truth; active Supabase host displayed; error visibility improved; retry still blocked until fix verification.
 
+**G-6-e5-schedule-non-dry-run-poc-execution-attempt-fix-verification（完了）:** [schedule-non-dry-run-poc-execution-attempt-fix-verification.md](./schedule-non-dry-run-poc-execution-attempt-fix-verification.md) — fix verification phase added; mock role hard gate removal verified; error panel / catch / scroll verified; retry remains blocked until explicit retry phase.
+
 ## Report
 
 ```bash

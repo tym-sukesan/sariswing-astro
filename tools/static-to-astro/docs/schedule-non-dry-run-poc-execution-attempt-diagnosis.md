@@ -287,3 +287,8 @@ readyForRetry: false
 triggerClickedInFixPhase: false
 ```
 
+## 16. Fix verification follow-up
+
+**G-6-e5-schedule-non-dry-run-poc-execution-attempt-fix-verification（完了）:** [schedule-non-dry-run-poc-execution-attempt-fix-verification.md](./schedule-non-dry-run-poc-execution-attempt-fix-verification.md) — fix verification phase added; mock role hard gate removal verified; signed-in session remains required; active Supabase host display verified; error panel / catch / scroll behavior verified; retry remains blocked until explicit retry phase.
+
+

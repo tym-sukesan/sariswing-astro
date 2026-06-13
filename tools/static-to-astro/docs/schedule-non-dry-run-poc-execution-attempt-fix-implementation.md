@@ -190,3 +190,8 @@ First manual click produced no DB change. Rollback is not needed.
 Fix implementation completed without re-execution, without DB writes, and without Playwright auto-click.
 
 Retry remains blocked until fix verification passes.
+
+## 10. Fix verification follow-up
+
+**G-6-e5-schedule-non-dry-run-poc-execution-attempt-fix-verification（完了）:** [schedule-non-dry-run-poc-execution-attempt-fix-verification.md](./schedule-non-dry-run-poc-execution-attempt-fix-verification.md) — mock role hard gate removal verified; signed-in session requirement verified; active Supabase host display verified; error panel / catch / scroll behavior verified; normal dev hidden and env-gated visible verified; Run button not clicked; retry still blocked.
+

@@ -1,5 +1,25 @@
 # SARI WEBSITE (Astro)
 
+## AI development workflow
+
+This repository uses AI-assisted development. The repository files are the source of truth for project context, not chat history.
+
+Before starting any AI-assisted task, read:
+
+- `AGENTS.md`
+- `.cursor/rules`
+- `tools/static-to-astro/docs/ai/00-current-state.md`
+- `tools/static-to-astro/docs/ai/03-next-actions.md`
+- `tools/static-to-astro/docs/ai/handoff-to-chatgpt.md`
+
+After every meaningful task, update the AI context files:
+
+- `tools/static-to-astro/docs/ai/00-current-state.md`
+- `tools/static-to-astro/docs/ai/03-next-actions.md`
+- `tools/static-to-astro/docs/ai/handoff-to-chatgpt.md`
+
+Do not rely on chat history alone. Keep safety gates, latest commits, current phase, and next actions in the repository.
+
 ## セットアップ
 
 ```sh

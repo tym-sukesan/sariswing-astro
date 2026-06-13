@@ -209,3 +209,16 @@ readyForNonDryRunSchedulePoC: false
 11. AI workflow transition
 チャット履歴への依存を減らすため、リポジトリ側に AI開発文脈管理ファイルを作成。
 今後は、Cursorが作業後にこれらを更新し、Git管理された文脈ファイルを source of truth とする。
+
+AI workflow foundation setup completed:
+- `.cursor/rules` added
+- `tools/static-to-astro/docs/ai/00-current-state.md` added
+- `tools/static-to-astro/docs/ai/03-next-actions.md` added
+- `tools/static-to-astro/docs/ai/handoff-to-chatgpt.md` added
+- commit `2b51bd5` — Add AI development workflow context files
+
+AI workflow foundation refinement completed:
+- `AGENTS.md` added at repository root
+- `handoff-to-chatgpt.md` populated with current values
+- root `README.md` updated with AI workflow files section
+- latest commit: 118ec84 — Refine AI development workflow handoff

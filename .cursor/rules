@@ -5,6 +5,7 @@ Treat the repository as the source of truth. Do not rely on chat history alone.
 
 Source of truth files
 Before starting work, read these files if they exist:
+AGENTS.md
 tools/static-to-astro/docs/ai/00-current-state.md
 tools/static-to-astro/docs/ai/03-next-actions.md
 tools/static-to-astro/docs/ai/handoff-to-chatgpt.md

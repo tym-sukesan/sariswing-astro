@@ -291,4 +291,7 @@ triggerClickedInFixPhase: false
 
 **G-6-e5-schedule-non-dry-run-poc-execution-attempt-fix-verification（完了）:** [schedule-non-dry-run-poc-execution-attempt-fix-verification.md](./schedule-non-dry-run-poc-execution-attempt-fix-verification.md) — fix verification phase added; mock role hard gate removal verified; signed-in session remains required; active Supabase host display verified; error panel / catch / scroll behavior verified; retry remains blocked until explicit retry phase.
 
+## 17. Fix verification result follow-up
+
+**G-6-e5-schedule-non-dry-run-poc-execution-attempt-fix-verification-result（完了）:** [schedule-non-dry-run-poc-execution-attempt-fix-verification-result.md](./schedule-non-dry-run-poc-execution-attempt-fix-verification-result.md) — fix verification result recorded; fix verification passed; env-gated display verified; manual confirm verified; Run button not clicked; DB unchanged; rollback not needed; `readyForExplicitRetry: true`.
 

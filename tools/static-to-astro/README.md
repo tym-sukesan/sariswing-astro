@@ -1452,6 +1452,13 @@ gosaki / Sariswing で実証した移行フローを、**別サイト向け CMS 
 
 **G-6-e5-schedule-non-dry-run-poc-execution-attempt-fix-verification（完了）:** [Schedule non-dry-run PoC execution attempt fix verification](docs/schedule-non-dry-run-poc-execution-attempt-fix-verification.md) — fix verification phase added; mock role hard gate removal verified; error panel / catch / scroll verified; normal dev hidden and env-gated visible verified; Run button not clicked; retry remains blocked until explicit retry phase; next: G-6-e5-schedule-non-dry-run-poc-execution-attempt-fix-verification-result.
 
+**G-6-e5-schedule-non-dry-run-poc-execution-attempt-fix-verification-result（完了）:** [Schedule non-dry-run PoC fix verification result](docs/schedule-non-dry-run-poc-execution-attempt-fix-verification-result.md) — fix verification result recorded; fix verification passed; env-gated display verified; manual confirm verified; Run button not clicked; DB unchanged; rollback not needed; `readyForExplicitRetry: true`; next: G-6-e5-schedule-non-dry-run-poc-explicit-retry.
+
+```bash
+node tools/static-to-astro/scripts/report-schedule-non-dry-run-poc-execution-attempt-fix-verification-result.mjs \
+  --out-dir tools/static-to-astro/output/schedule-non-dry-run-poc-execution-attempt-fix-verification-result/gosaki
+```
+
 ```bash
 node tools/static-to-astro/scripts/report-schedule-non-dry-run-poc-execution-attempt-fix-verification.mjs \
   --out-dir tools/static-to-astro/output/schedule-non-dry-run-poc-execution-attempt-fix-verification/gosaki

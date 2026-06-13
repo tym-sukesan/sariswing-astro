@@ -57,7 +57,8 @@
 - **G-6-e5-schedule-non-dry-run-poc-execution-attempt-diagnosis（完了）:** [schedule-non-dry-run-poc-execution-attempt-diagnosis.md](../schedule-non-dry-run-poc-execution-attempt-diagnosis.md) — first execution attempt clicked the one-off button once; DB remained unchanged; rollback not needed; retry blocked; diagnosis phase added before any retry
 - **G-6-e5-schedule-non-dry-run-poc-execution-attempt-fix-implementation（完了）:** [schedule-non-dry-run-poc-execution-attempt-fix-implementation.md](../schedule-non-dry-run-poc-execution-attempt-fix-implementation.md) — mock allowlist hard admin gate relaxed; signed-in session still required; RLS/admin_users source of truth; active Supabase host displayed; error visibility improved; retry blocked until fix verification
 - **G-6-e5-schedule-non-dry-run-poc-execution-attempt-fix-verification（完了）:** [schedule-non-dry-run-poc-execution-attempt-fix-verification.md](../schedule-non-dry-run-poc-execution-attempt-fix-verification.md) — fix verification phase added; mock role hard gate removal verified; error panel / catch / scroll verified; retry remains blocked until explicit retry phase
-- 次: G-6-e5-schedule-non-dry-run-poc-execution-attempt-fix-verification-result
+- **G-6-e5-schedule-non-dry-run-poc-execution-attempt-fix-verification-result（完了）:** [schedule-non-dry-run-poc-execution-attempt-fix-verification-result.md](../schedule-non-dry-run-poc-execution-attempt-fix-verification-result.md) — fix verification result recorded; fix verification passed; env-gated display verified; manual confirm verified; Run button not clicked; DB unchanged; rollback not needed; ready for explicit retry
+- 次: G-6-e5-schedule-non-dry-run-poc-explicit-retry
 
 ## Option B: customer-specific schema mapping
 
@@ -135,7 +136,8 @@ G-6-e5-schedule-non-dry-run-poc-execution: first manual click; DB unchanged (don
 G-6-e5-schedule-non-dry-run-poc-execution-attempt-diagnosis: static diagnosis; retry blocked (done)
 G-6-e5-schedule-non-dry-run-poc-execution-attempt-fix-implementation: mock gate relaxed; error UI improved (done)
 G-6-e5-schedule-non-dry-run-poc-execution-attempt-fix-verification: static + browser display verified (done)
-G-6-e5-schedule-non-dry-run-poc-execution-attempt-fix-verification-result: next
+G-6-e5-schedule-non-dry-run-poc-execution-attempt-fix-verification-result: fix verification PASS recorded (done)
+G-6-e5-schedule-non-dry-run-poc-explicit-retry: next
 G-6-e: schedule write implementation (blocked — readyForG6EImplementation false)
 ```
 

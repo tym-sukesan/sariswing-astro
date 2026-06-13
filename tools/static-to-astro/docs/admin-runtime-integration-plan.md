@@ -262,7 +262,8 @@ Never skip: local preview and customer demo before runtime shell; read-only befo
 | **G-6-e5-schedule-non-dry-run-poc-execution-attempt-diagnosis（完了）** | [Execution attempt diagnosis](./schedule-non-dry-run-poc-execution-attempt-diagnosis.md) | First manual click; DB unchanged; rollback not needed; retry blocked; static diagnosis before fix/retry |
 | **G-6-e5-schedule-non-dry-run-poc-execution-attempt-fix-implementation（完了）** | [Execution attempt fix](./schedule-non-dry-run-poc-execution-attempt-fix-implementation.md) | Mock allowlist hard gate relaxed; auth session + RLS; host display; error panel; no retry in phase |
 | **G-6-e5-schedule-non-dry-run-poc-execution-attempt-fix-verification（完了）** | [Fix verification](./schedule-non-dry-run-poc-execution-attempt-fix-verification.md) | Static + browser display verified; Run not clicked; retry blocked |
-| **G-6-e** | Schedule write (staging) | Fix verification result then explicit one-off retry; PoC execution result phase |
+| **G-6-e5-schedule-non-dry-run-poc-execution-attempt-fix-verification-result（完了）** | [Fix verification result](./schedule-non-dry-run-poc-execution-attempt-fix-verification-result.md) | Fix verification PASS recorded; ready for explicit retry |
+| **G-6-e** | Schedule write (staging) | Explicit one-off retry; PoC execution result phase |
 | **G-5y-e** | Role check / allowlist | Staging Auth |
 
 **Purpose (overall):** Staging admin login only — after shell QA on `/__admin-staging-shell/musician-basic/`.

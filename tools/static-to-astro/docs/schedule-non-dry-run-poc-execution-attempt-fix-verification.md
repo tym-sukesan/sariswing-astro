@@ -300,6 +300,8 @@ Rollback is **not** needed.
 
 Explicit retry remains blocked until the fix verification result phase approves it.
 
+**G-6-e5-schedule-non-dry-run-poc-execution-attempt-fix-verification-result（完了）:** [schedule-non-dry-run-poc-execution-attempt-fix-verification-result.md](./schedule-non-dry-run-poc-execution-attempt-fix-verification-result.md) — fix verification result recorded; fix verification passed; env-gated display verified; manual confirm verified; Run button not clicked; DB unchanged; rollback not needed; `readyForExplicitRetry: true`.
+
 ## Report
 
 ```bash

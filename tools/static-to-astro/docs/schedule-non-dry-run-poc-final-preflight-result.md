@@ -288,7 +288,7 @@ readyForFixImplementation: true
 
 **G-6-e5-schedule-non-dry-run-poc-execution-attempt-fix-implementation（完了）:** [schedule-non-dry-run-poc-execution-attempt-fix-implementation.md](./schedule-non-dry-run-poc-execution-attempt-fix-implementation.md) — mock allowlist hard admin gate relaxed; signed-in session still required; RLS/admin_users source of truth; active Supabase host displayed; error panel improved; retry blocked until fix verification.
 
-**G-6-e5-schedule-non-dry-run-poc-execution-attempt-fix-verification（完了）:** [schedule-non-dry-run-poc-execution-attempt-fix-verification.md](./schedule-non-dry-run-poc-execution-attempt-fix-verification.md) — fix verification phase added; mock role hard gate removal verified; error panel / catch / scroll verified; normal dev hidden and env-gated visible verified; Run button not clicked; retry still blocked.
+**G-6-e5-schedule-non-dry-run-poc-execution-attempt-fix-verification-result（完了）:** [schedule-non-dry-run-poc-execution-attempt-fix-verification-result.md](./schedule-non-dry-run-poc-execution-attempt-fix-verification-result.md) — fix verification result recorded; fix verification passed; env-gated display verified; manual confirm verified; Run button not clicked; DB unchanged; rollback not needed; ready for explicit retry.
 
 ## Report
 

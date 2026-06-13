@@ -31,7 +31,7 @@ G-6-f1-schedule-poc-isolation-dry-run-default
 G-6-f-schedule-cms-generalization-planning
 G-6-e5-schedule-non-dry-run-poc-explicit-retry-result（SUCCESS）
 直近commit:
-（本コミットで記録予定）
+638b60a — Isolate G-6-e5 schedule PoC trigger and document dry-run default
 
 G-6-e5 成功状態（維持）:
 - description: 出演： [G-6-e5 non-dry-run PoC]

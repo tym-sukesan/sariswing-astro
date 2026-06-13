@@ -16,14 +16,14 @@ Paste this file at the start of a new ChatGPT thread. Cursor should update it af
 ```txt
 Current phase: G-6-f1-schedule-poc-isolation-dry-run-default (completed)
 Latest completed phase: G-6-f1-schedule-poc-isolation-dry-run-default
-Latest commit: e656083 — Add Schedule CMS generalization planning (G-6-f)
+Latest commit: 638b60a — Isolate G-6-e5 schedule PoC trigger and document dry-run default
 Recommended next phase: G-6-f2-schedule-read-ui-binding-audit
 ```
 
 Prior milestone commits:
 
 ```txt
-e656083 — Add Schedule CMS generalization planning (G-6-f)
+638b60a — Isolate G-6-e5 schedule PoC trigger and document dry-run default
 e9e3861 — Record schedule PoC explicit retry success
 ```
 

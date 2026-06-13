@@ -172,13 +172,8 @@ readyForNonDryRunSchedulePoC: false
 
 ```txt
 Recommended next:
-G-6-e5-schedule-non-dry-run-poc-final-preflight
-```
-
-**Purpose:**
-
-```txt
-Perform final preflight immediately before the first one-off non-dry-run update: confirm staging project, confirm DB beforeSnapshot, confirm rollback SQL, confirm exact button action, and prepare result capture.
+G-6-e5-schedule-non-dry-run-poc-final-preflight — DONE (see schedule-non-dry-run-poc-final-preflight.md)
+Next: G-6-e5-schedule-non-dry-run-poc-final-preflight-result
 ```
 
 ## 12. Final safety statement
@@ -192,7 +187,9 @@ No schedule record was updated.
 
 The database remains unchanged.
 
-Actual non-dry-run execution remains blocked until final preflight.
+Actual non-dry-run execution remains blocked until final preflight result is recorded.
+
+**G-6-e5-schedule-non-dry-run-poc-final-preflight（完了）:** [schedule-non-dry-run-poc-final-preflight.md](./schedule-non-dry-run-poc-final-preflight.md) — final beforeSnapshot check required; staging project confirmation required; rollback SQL and after verification SQL available; execution result template prepared; Run button still not clicked.
 
 ## Report
 

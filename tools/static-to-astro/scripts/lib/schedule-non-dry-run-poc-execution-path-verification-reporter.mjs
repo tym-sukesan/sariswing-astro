@@ -98,8 +98,8 @@ export function runScheduleNonDryRunPocExecutionPathVerificationReport({
   if (!doc.includes("manualConfirmVerified: true")) {
     blockers.push("gate-manual-confirm-missing");
   }
-  if (!doc.includes("G-6-e5-schedule-non-dry-run-poc-execution-path-verification-result")) {
-    blockers.push("result-phase-ref-missing");
+  if (!doc.includes("G-6-e5-schedule-non-dry-run-poc-final-preflight")) {
+    blockers.push("final-preflight-ref-missing");
   }
   if (!doc.includes("button clicked: no")) blockers.push("button-not-clicked-note-missing");
 

@@ -72,7 +72,7 @@ export function runScheduleNonDryRunPocExecutionPathVerificationResultReport({
   if (!doc.includes("readyForG6E5ScheduleNonDryRunPocFinalPreflight: true")) {
     blockers.push("gate-final-preflight-missing");
   }
-  if (!doc.includes("G-6-e5-schedule-non-dry-run-poc-final-preflight")) {
+  if (!doc.includes("G-6-e5-schedule-non-dry-run-poc-final-preflight-result")) {
     blockers.push("next-phase-missing");
   }
   if (!doc.includes("Although the Run button became enabled")) {

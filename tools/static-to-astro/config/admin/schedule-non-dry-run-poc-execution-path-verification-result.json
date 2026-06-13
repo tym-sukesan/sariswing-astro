@@ -39,5 +39,6 @@
   "readyForG6E5ScheduleNonDryRunPocFinalPreflight": true,
   "readyForG6E5ScheduleNonDryRunPoc": false,
   "readyForNonDryRunSchedulePoC": false,
-  "recommendedNextPhase": "G-6-e5-schedule-non-dry-run-poc-final-preflight"
+  "recommendedNextPhase": "G-6-e5-schedule-non-dry-run-poc-final-preflight",
+  "followOnPhase": "G-6-e5-schedule-non-dry-run-poc-final-preflight-result"
 }

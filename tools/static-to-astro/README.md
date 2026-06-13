@@ -1444,7 +1444,12 @@ gosaki / Sariswing で実証した移行フローを、**別サイト向け CMS 
 
 **G-6-e5-schedule-non-dry-run-poc-execution-path-implementation（完了）:** [Schedule non-dry-run PoC execution path](docs/schedule-non-dry-run-poc-execution-path-implementation.md) — hidden staging browser trigger implemented; default hidden; env-gated; manual confirm required; trigger was not invoked; no DB write occurred.
 
-**G-6-e5-schedule-non-dry-run-poc-execution-path-verification-result（完了）:** [Schedule non-dry-run PoC execution path verification result](docs/schedule-non-dry-run-poc-execution-path-verification-result.md) — env-gated Danger Zone display verified; manual confirm disabled/enabled verified; Run button not clicked; DB unchanged verified; ready for final preflight; actual non-dry-run execution remains blocked; next: G-6-e5-schedule-non-dry-run-poc-final-preflight.
+**G-6-e5-schedule-non-dry-run-poc-final-preflight（完了）:** [Schedule non-dry-run PoC final preflight](docs/schedule-non-dry-run-poc-final-preflight.md) — final beforeSnapshot check required; staging project confirmation required; rollback SQL and after verification SQL available; execution result template prepared; Run button still not clicked; actual non-dry-run execution remains blocked; next: G-6-e5-schedule-non-dry-run-poc-final-preflight-result.
+
+```bash
+node tools/static-to-astro/scripts/report-schedule-non-dry-run-poc-final-preflight.mjs \
+  --out-dir tools/static-to-astro/output/schedule-non-dry-run-poc-final-preflight/gosaki
+```
 
 ```bash
 node tools/static-to-astro/scripts/report-schedule-non-dry-run-poc-execution-path-verification-result.mjs \

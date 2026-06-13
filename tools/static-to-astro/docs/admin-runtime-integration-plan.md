@@ -260,7 +260,8 @@ Never skip: local preview and customer demo before runtime shell; read-only befo
 | **G-6-e5-schedule-non-dry-run-poc-final-preflight（完了）** | [Final preflight](./schedule-non-dry-run-poc-final-preflight.md) | beforeSnapshot SQL, rollback/after SQL, result template; Run not clicked |
 | **G-6-e5-schedule-non-dry-run-poc-final-preflight-result（完了）** | [Final preflight result](./schedule-non-dry-run-poc-final-preflight-result.md) | Staging + beforeSnapshot confirmed; ready for execution; Run not clicked |
 | **G-6-e5-schedule-non-dry-run-poc-execution-attempt-diagnosis（完了）** | [Execution attempt diagnosis](./schedule-non-dry-run-poc-execution-attempt-diagnosis.md) | First manual click; DB unchanged; rollback not needed; retry blocked; static diagnosis before fix/retry |
-| **G-6-e** | Schedule write (staging) | Fix implementation then explicit one-off retry; PoC execution result phase |
+| **G-6-e5-schedule-non-dry-run-poc-execution-attempt-fix-implementation（完了）** | [Execution attempt fix](./schedule-non-dry-run-poc-execution-attempt-fix-implementation.md) | Mock allowlist hard gate relaxed; auth session + RLS; host display; error panel; no retry in phase |
+| **G-6-e** | Schedule write (staging) | Fix verification then explicit one-off retry; PoC execution result phase |
 | **G-5y-e** | Role check / allowlist | Staging Auth |
 
 **Purpose (overall):** Staging admin login only — after shell QA on `/__admin-staging-shell/musician-basic/`.

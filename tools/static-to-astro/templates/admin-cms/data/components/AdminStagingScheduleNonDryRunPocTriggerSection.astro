@@ -4,7 +4,7 @@
  * Default hidden. Not /admin/. No service_role.
  */
 import implConfig from "../../../../config/admin/schedule-non-dry-run-poc-execution-path-implementation.json";
-import { getScheduleNonDryRunPocConfig } from "../../../../../../src/lib/admin/staging-write/schedule-non-dry-run-poc-config";
+import { getScheduleNonDryRunPocConfig, SCHEDULE_NON_DRY_RUN_POC_EXPECTED_PROJECT } from "../../../../../../src/lib/admin/staging-write/schedule-non-dry-run-poc-config";
 import {
   SCHEDULE_NON_DRY_RUN_POC_BEFORE_DESCRIPTION,
   SCHEDULE_NON_DRY_RUN_POC_FIXED_PAYLOAD,
@@ -66,7 +66,22 @@ const pocConfig = getScheduleNonDryRunPocConfig();
       <dt>Gate status</dt>
       <dd id="schedule-non-dry-run-poc-gate-status">{pocConfig.visible ? "armed" : "hidden"}</dd>
     </div>
+    <div>
+      <dt>Supabase host</dt>
+      <dd id="schedule-non-dry-run-poc-supabase-host">—</dd>
+    </div>
+    <div>
+      <dt>Expected project</dt>
+      <dd id="schedule-non-dry-run-poc-expected-project">{SCHEDULE_NON_DRY_RUN_POC_EXPECTED_PROJECT}</dd>
+    </div>
   </dl>
+
+  <p
+    id="schedule-non-dry-run-poc-host-note"
+    class="admin-staging-schedule-non-dry-run-poc-trigger__host-note"
+  >
+    Confirm active Supabase host before running.
+  </p>
 
   <label class="admin-staging-schedule-non-dry-run-poc-trigger__confirm">
   Type exactly:
@@ -154,6 +169,11 @@ const pocConfig = getScheduleNonDryRunPocConfig();
   .admin-staging-schedule-non-dry-run-poc-trigger__target-note {
     margin: 0 0 0.75rem;
     font-size: 0.85rem;
+  }
+  .admin-staging-schedule-non-dry-run-poc-trigger__host-note {
+    margin: 0 0 1rem;
+    font-size: 0.85rem;
+    color: #7f1d1d;
   }
   .admin-button--danger {
     background: #b91c1c;

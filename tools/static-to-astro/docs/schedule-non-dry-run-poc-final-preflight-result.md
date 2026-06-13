@@ -284,6 +284,10 @@ readyForRetry: false
 readyForFixImplementation: true
 ```
 
+## 16. Fix implementation follow-up
+
+**G-6-e5-schedule-non-dry-run-poc-execution-attempt-fix-implementation（完了）:** [schedule-non-dry-run-poc-execution-attempt-fix-implementation.md](./schedule-non-dry-run-poc-execution-attempt-fix-implementation.md) — mock allowlist hard admin gate relaxed; signed-in session still required; RLS/admin_users source of truth; active Supabase host displayed; error panel improved; retry blocked until fix verification.
+
 ## Report
 
 ```bash

@@ -5,11 +5,17 @@
 
 import { getStagingAuthSessionDetails } from "../staging-auth/staging-auth-session";
 import { getStagingSupabaseClient } from "../staging-auth/supabase-staging-auth-client";
+import {
+  collectScheduleNonDryRunPocAuthWarnings,
+  formatMockRoleDisplay,
+  isSignedInStagingAuth,
+} from "./schedule-non-dry-run-poc-auth";
 import type { ScheduleDryRunSource } from "./schedule-dry-run-types";
 import {
   getScheduleNonDryRunPocConfig,
   SCHEDULE_NON_DRY_RUN_POC_TARGET_ID,
 } from "./schedule-non-dry-run-poc-config";
+import { SCHEDULE_NON_DRY_RUN_POC_ERROR_CODES } from "./schedule-non-dry-run-poc-error";
 import { updateScheduleWrite } from "./schedule-write-adapter";
 import {
   SCHEDULE_WRITE_APPROVAL_ID,
@@ -125,6 +131,9 @@ export function validateScheduleNonDryRunPocBeforeSnapshot(
 export type ScheduleNonDryRunPocExecutionOutcome = {
   preCheck: BeforeSnapshotCheckResult;
   authEmail?: string;
+  authStatus?: string;
+  mockRole?: string;
+  errorCode?: string;
   result?: ScheduleWriteAdapterResult;
   errorMessage?: string;
 };
@@ -141,29 +150,30 @@ export async function executeScheduleNonDryRunPoc(options: {
         abortReason: config.disabledReason ?? "PoC trigger gates not satisfied.",
         warnings: [],
       },
+      errorCode: SCHEDULE_NON_DRY_RUN_POC_ERROR_CODES.TRIGGER_DISABLED,
       errorMessage: config.disabledReason ?? "PoC trigger disabled.",
     };
   }
 
   const auth = await getStagingAuthSessionDetails(options.url, options.anonKey);
-  if (auth.session.status !== "signed-in" || !auth.rawEmail) {
-    return {
-      preCheck: { ok: false, abortReason: "Authenticated admin session required.", warnings: [] },
-      errorMessage: "Sign in as staging admin before running the PoC.",
-    };
-  }
+  const mockRole = formatMockRoleDisplay(auth);
+  const authStatus = auth.session.status;
 
-  if (auth.session.role !== "admin") {
+  if (!isSignedInStagingAuth(auth)) {
     return {
       preCheck: {
         ok: false,
-        abortReason: `User ${auth.rawEmail} is not an admin.`,
+        abortReason: "Authenticated admin session required.",
         warnings: [],
       },
-      errorMessage: "Admin role required.",
-      authEmail: auth.rawEmail,
+      errorCode: SCHEDULE_NON_DRY_RUN_POC_ERROR_CODES.AUTH_SESSION_MISSING,
+      errorMessage: "Sign in as staging admin before running the PoC.",
+      authStatus,
+      mockRole,
     };
   }
+
+  const authWarnings = collectScheduleNonDryRunPocAuthWarnings(auth);
 
   const client = getStagingSupabaseClient(options.url, options.anonKey);
   const { data, error } = await client
@@ -177,20 +187,28 @@ export async function executeScheduleNonDryRunPoc(options: {
       preCheck: {
         ok: false,
         abortReason: error?.message ?? "Target row not found.",
-        warnings: [],
+        warnings: authWarnings,
       },
+      errorCode: SCHEDULE_NON_DRY_RUN_POC_ERROR_CODES.TARGET_ROW_NOT_FOUND,
       errorMessage: error?.message ?? "Target row not found.",
       authEmail: auth.rawEmail,
+      authStatus,
+      mockRole,
     };
   }
 
   const row = mapRow(data as Record<string, unknown>);
   const preCheck = validateScheduleNonDryRunPocBeforeSnapshot(row);
+  const mergedWarnings = [...authWarnings, ...preCheck.warnings];
+
   if (!preCheck.ok) {
     return {
-      preCheck,
+      preCheck: { ...preCheck, warnings: mergedWarnings },
+      errorCode: SCHEDULE_NON_DRY_RUN_POC_ERROR_CODES.BEFORE_SNAPSHOT_MISMATCH,
       errorMessage: preCheck.abortReason,
       authEmail: auth.rawEmail,
+      authStatus,
+      mockRole,
     };
   }
 
@@ -204,8 +222,10 @@ export async function executeScheduleNonDryRunPoc(options: {
   });
 
   return {
-    preCheck,
+    preCheck: { ...preCheck, warnings: mergedWarnings },
     authEmail: auth.rawEmail,
+    authStatus,
+    mockRole,
     result,
   };
 }

@@ -194,6 +194,8 @@ Actual non-dry-run execution remains blocked until final preflight result is rec
 
 **G-6-e5-schedule-non-dry-run-poc-execution-attempt-diagnosis（完了）:** [schedule-non-dry-run-poc-execution-attempt-diagnosis.md](./schedule-non-dry-run-poc-execution-attempt-diagnosis.md) — first execution attempt clicked the one-off button once; DB remained unchanged; rollback not needed; retry blocked; diagnosis phase added before any retry; Playwright auto-click prohibited.
 
+**G-6-e5-schedule-non-dry-run-poc-execution-attempt-fix-implementation（完了）:** [schedule-non-dry-run-poc-execution-attempt-fix-implementation.md](./schedule-non-dry-run-poc-execution-attempt-fix-implementation.md) — mock allowlist hard admin gate relaxed; signed-in Supabase session still required; RLS/admin_users remains source of truth; active Supabase host displayed; error visibility improved; retry still blocked until fix verification.
+
 ## Report
 
 ```bash

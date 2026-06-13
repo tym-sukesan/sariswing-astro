@@ -12,6 +12,23 @@ export const G6E5_SCHEDULE_NON_DRY_RUN_POC_PHASE =
 export const SCHEDULE_NON_DRY_RUN_POC_TARGET_ID =
   "aa440e29-5be8-402e-9190-0d81c48434c0";
 
+/** Staging CMS project — for Danger Zone host verification only. */
+export const SCHEDULE_NON_DRY_RUN_POC_EXPECTED_PROJECT =
+  "static-to-astro-cms-staging";
+
+export const SCHEDULE_NON_DRY_RUN_POC_EXPECTED_SUPABASE_HOST =
+  "kmjqppxjdnwwrtaeqjta.supabase.co";
+
+export function extractSupabaseHost(url: string): string {
+  const trimmed = String(url ?? "").trim();
+  if (!trimmed) return "—";
+  try {
+    return new URL(trimmed).host;
+  } catch {
+    return trimmed.replace(/^https?:\/\//i, "").split("/")[0] || "—";
+  }
+}
+
 export interface ScheduleNonDryRunPocConfig {
   phase: typeof G6E5_SCHEDULE_NON_DRY_RUN_POC_PHASE;
   approvalId: typeof SCHEDULE_WRITE_APPROVAL_ID;

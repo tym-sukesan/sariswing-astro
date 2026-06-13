@@ -1448,6 +1448,8 @@ gosaki / Sariswing で実証した移行フローを、**別サイト向け CMS 
 
 **G-6-e5-schedule-non-dry-run-poc-execution-attempt-diagnosis（完了）:** [Schedule non-dry-run PoC execution attempt diagnosis](docs/schedule-non-dry-run-poc-execution-attempt-diagnosis.md) — first execution attempt clicked the one-off button once; DB remained unchanged; rollback not needed; retry blocked; diagnosis phase added before any retry; Playwright auto-click prohibited; likely mock-allowlist admin role gate; `readyForFixImplementation: true`.
 
+**G-6-e5-schedule-non-dry-run-poc-execution-attempt-fix-implementation（完了）:** [Schedule non-dry-run PoC execution attempt fix](docs/schedule-non-dry-run-poc-execution-attempt-fix-implementation.md) — mock allowlist hard admin gate relaxed; signed-in Supabase session still required; RLS/admin_users remains source of truth; active Supabase host displayed; error visibility improved; retry still blocked until fix verification; next: G-6-e5-schedule-non-dry-run-poc-execution-attempt-fix-verification.
+
 ```bash
 node tools/static-to-astro/scripts/report-schedule-non-dry-run-poc-final-preflight-result.mjs \
   --out-dir tools/static-to-astro/output/schedule-non-dry-run-poc-final-preflight-result/gosaki

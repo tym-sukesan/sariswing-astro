@@ -273,3 +273,17 @@ The staging database **remained unchanged**. Rollback is **not** needed.
 This diagnosis phase performed **no retry**, **no DB write**, **no rollback SQL**, and **no Playwright auto-click**.
 
 Actual non-dry-run schedule PoC remains blocked until fix implementation and an explicit retry phase.
+
+## 15. Fix implementation follow-up
+
+**G-6-e5-schedule-non-dry-run-poc-execution-attempt-fix-implementation（完了）:** [schedule-non-dry-run-poc-execution-attempt-fix-implementation.md](./schedule-non-dry-run-poc-execution-attempt-fix-implementation.md)
+
+Mock allowlist hard admin gate relaxed/removed. Signed-in Supabase session still required. RLS / `admin_users` remains source of truth via `updateScheduleWrite`. Active Supabase host displayed. Error visibility, `catch`, `scrollIntoView`, and double-click guard improved. Retry still blocked until fix verification.
+
+```txt
+mockRoleHardGateRemovedOrRelaxed: true
+readyForFixVerification: true
+readyForRetry: false
+triggerClickedInFixPhase: false
+```
+

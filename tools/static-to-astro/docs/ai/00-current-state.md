@@ -30,7 +30,7 @@ G-6-f-schedule-cms-generalization-planning
 前フェーズ完了:
 G-6-e5-schedule-non-dry-run-poc-explicit-retry-result（SUCCESS）
 直近commit:
-db07f8a — Update AI handoff commit hash after explicit retry result record
+e656083 — Add Schedule CMS generalization planning (G-6-f)
 
 G-6-e5 成功状態（維持）:
 - description: 出演： [G-6-e5 non-dry-run PoC]

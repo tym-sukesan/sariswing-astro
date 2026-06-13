@@ -16,14 +16,14 @@ Paste this file at the start of a new ChatGPT thread. Cursor should update it af
 ```txt
 Current phase: G-6-f-schedule-cms-generalization-planning (completed)
 Latest completed phase: G-6-f-schedule-cms-generalization-planning
-Latest commit: db07f8a — Update AI handoff commit hash after explicit retry result record
+Latest commit: e656083 — Add Schedule CMS generalization planning (G-6-f)
 Recommended next phase: G-6-f1-schedule-poc-isolation-dry-run-default
 ```
 
 Prior milestone commits:
 
 ```txt
-e9e3861 — Record schedule PoC explicit retry success
+e656083 — Add Schedule CMS generalization planning (G-6-f)
 a42a904 — Record schedule PoC fix verification result
 2b51bd5 — Add AI development workflow context files
 ```

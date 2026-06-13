@@ -335,6 +335,12 @@ No schedule record was updated.
 
 Actual non-dry-run execution remains blocked until the final beforeSnapshot result is recorded.
 
+## 15. First execution attempt follow-up (diagnosis phase)
+
+**G-6-e5-schedule-non-dry-run-poc-execution-attempt-diagnosis（完了）:** [schedule-non-dry-run-poc-execution-attempt-diagnosis.md](./schedule-non-dry-run-poc-execution-attempt-diagnosis.md)
+
+The first manual Run click occurred after this preflight. DB remained unchanged; rollback not needed; retry blocked pending diagnosis and fixes. See diagnosis doc for static analysis (button type, auth session, error visibility, `updateScheduleWrite` reachability).
+
 ## Report
 
 ```bash

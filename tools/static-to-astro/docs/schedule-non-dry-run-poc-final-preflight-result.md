@@ -269,6 +269,21 @@ No schedule record was updated.
 
 Actual non-dry-run execution remains blocked until the next explicit execution phase.
 
+## 15. First execution attempt follow-up (diagnosis phase)
+
+**G-6-e5-schedule-non-dry-run-poc-execution-attempt-diagnosis（完了）:** [schedule-non-dry-run-poc-execution-attempt-diagnosis.md](./schedule-non-dry-run-poc-execution-attempt-diagnosis.md)
+
+After the explicit execution phase, the one-off Run button was clicked **once** manually. The staging database **remained unchanged** (`description` still `出演：`; `updated_at` unchanged). Rollback is **not** needed. Retry is **blocked** until fix implementation. Playwright/Chromium auto-click is **prohibited**. Static diagnosis recorded likely blockers (mock allowlist admin role gate, auth session, result panel visibility).
+
+```txt
+triggerClicked: true (execution attempt)
+dbUnchangedVerified: true
+rollbackNeeded: false
+retryAllowed: false
+readyForRetry: false
+readyForFixImplementation: true
+```
+
 ## Report
 
 ```bash

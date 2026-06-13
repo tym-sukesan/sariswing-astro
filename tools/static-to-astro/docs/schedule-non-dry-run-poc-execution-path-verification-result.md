@@ -192,6 +192,8 @@ Actual non-dry-run execution remains blocked until final preflight result is rec
 
 **G-6-e5-schedule-non-dry-run-poc-final-preflight-result（完了）:** [schedule-non-dry-run-poc-final-preflight-result.md](./schedule-non-dry-run-poc-final-preflight-result.md) — final staging project confirmed; final beforeSnapshot confirmed; ready for explicit one-off execution phase; Run button still not clicked.
 
+**G-6-e5-schedule-non-dry-run-poc-execution-attempt-diagnosis（完了）:** [schedule-non-dry-run-poc-execution-attempt-diagnosis.md](./schedule-non-dry-run-poc-execution-attempt-diagnosis.md) — first execution attempt clicked the one-off button once; DB remained unchanged; rollback not needed; retry blocked; diagnosis phase added before any retry; Playwright auto-click prohibited.
+
 ## Report
 
 ```bash

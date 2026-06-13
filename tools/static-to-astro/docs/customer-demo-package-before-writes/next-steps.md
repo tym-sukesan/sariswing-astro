@@ -54,7 +54,8 @@
 - **G-6-e5-schedule-non-dry-run-poc-execution-prep（完了）:** [schedule-non-dry-run-poc-execution-prep.md](../schedule-non-dry-run-poc-execution-prep.md) — execution path planning prepared; one-off execution path required; service_role prohibited; authenticated admin user required; no execution script invoked; actual non-dry-run execution remains blocked
 - **G-6-e5-schedule-non-dry-run-poc-execution-path-implementation（完了）:** [schedule-non-dry-run-poc-execution-path-implementation.md](../schedule-non-dry-run-poc-execution-path-implementation.md) — hidden staging browser trigger implemented; default hidden; trigger was not invoked; no DB write occurred
 - **G-6-e5-schedule-non-dry-run-poc-final-preflight-result（完了）:** [schedule-non-dry-run-poc-final-preflight-result.md](../schedule-non-dry-run-poc-final-preflight-result.md) — final staging project confirmed; final beforeSnapshot confirmed; rollback SQL available; after verification SQL available; ready for explicit one-off execution phase; Run button still not clicked
-- 次: G-6-e5-schedule-non-dry-run-poc-execution
+- **G-6-e5-schedule-non-dry-run-poc-execution-attempt-diagnosis（完了）:** [schedule-non-dry-run-poc-execution-attempt-diagnosis.md](../schedule-non-dry-run-poc-execution-attempt-diagnosis.md) — first execution attempt clicked the one-off button once; DB remained unchanged; rollback not needed; retry blocked; diagnosis phase added before any retry
+- 次: fix implementation, then G-6-e5-schedule-non-dry-run-poc-execution retry
 
 ## Option B: customer-specific schema mapping
 
@@ -128,7 +129,9 @@ G-6-e5-schedule-non-dry-run-poc-execution-path-verification: normal dev hidden v
 G-6-e5-schedule-non-dry-run-poc-execution-path-verification-result: manual browser verification recorded (done)
 G-6-e5-schedule-non-dry-run-poc-final-preflight: final preflight prepared (done)
 G-6-e5-schedule-non-dry-run-poc-final-preflight-result: final beforeSnapshot confirmed (done)
-G-6-e5-schedule-non-dry-run-poc-execution: next
+G-6-e5-schedule-non-dry-run-poc-execution: first manual click; DB unchanged (done — no write)
+G-6-e5-schedule-non-dry-run-poc-execution-attempt-diagnosis: static diagnosis; retry blocked (done)
+G-6-e5-schedule-non-dry-run-poc-execution-fix: next (before retry)
 G-6-e: schedule write implementation (blocked — readyForG6EImplementation false)
 ```
 

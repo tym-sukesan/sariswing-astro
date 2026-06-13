@@ -1446,6 +1446,8 @@ gosaki / Sariswing で実証した移行フローを、**別サイト向け CMS 
 
 **G-6-e5-schedule-non-dry-run-poc-final-preflight-result（完了）:** [Schedule non-dry-run PoC final preflight result](docs/schedule-non-dry-run-poc-final-preflight-result.md) — final staging project confirmed; final beforeSnapshot confirmed; rollback SQL and after verification SQL available; ready for explicit one-off execution phase; Run button still not clicked; actual non-dry-run execution remains blocked until next phase; next: G-6-e5-schedule-non-dry-run-poc-execution.
 
+**G-6-e5-schedule-non-dry-run-poc-execution-attempt-diagnosis（完了）:** [Schedule non-dry-run PoC execution attempt diagnosis](docs/schedule-non-dry-run-poc-execution-attempt-diagnosis.md) — first execution attempt clicked the one-off button once; DB remained unchanged; rollback not needed; retry blocked; diagnosis phase added before any retry; Playwright auto-click prohibited; likely mock-allowlist admin role gate; `readyForFixImplementation: true`.
+
 ```bash
 node tools/static-to-astro/scripts/report-schedule-non-dry-run-poc-final-preflight-result.mjs \
   --out-dir tools/static-to-astro/output/schedule-non-dry-run-poc-final-preflight-result/gosaki

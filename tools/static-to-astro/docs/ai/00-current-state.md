@@ -32,7 +32,7 @@ G-6-f1-schedule-poc-isolation-dry-run-default
 G-6-f-schedule-cms-generalization-planning
 G-6-e5-schedule-non-dry-run-poc-explicit-retry-result（SUCCESS）
 直近commit:
-（G-6-f2 commit 後に更新）
+cd69843 — Connect ScheduleAdminUi to staging SSR read binding (G-6-f2)
 
 G-6-e5 成功状態（維持）:
 - description: 出演： [G-6-e5 non-dry-run PoC]

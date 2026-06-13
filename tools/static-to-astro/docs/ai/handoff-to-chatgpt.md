@@ -16,7 +16,7 @@ Paste this file at the start of a new ChatGPT thread. Cursor should update it af
 ```txt
 Current phase: G-6-f2-schedule-read-ui-binding-audit (completed)
 Latest completed phase: G-6-f2-schedule-read-ui-binding-audit
-Latest commit: (G-6-f2 commit — update after push)
+Latest commit: cd69843 — Connect ScheduleAdminUi to staging SSR read binding (G-6-f2)
 Recommended next phase: G-6-f3-schedule-description-edit-dry-run-prototype
 ```
 

@@ -21,26 +21,21 @@ Staging Shell
 将来的な顧客オンボーディング・課金・デプロイ自動化
 
 2. Current phase
-現在フェーズ: G-6-e5-schedule-non-dry-run-poc-explicit-retry-result（完了）
+現在フェーズ: G-6-f-schedule-cms-generalization-planning（完了）
 
-Schedule CMS 初回 non-dry-run write PoC の明示的 retry が成功。
-hidden staging trigger 経由で、ユーザー手動 Run 1 回により `public.schedules` の対象行 `description` のみ更新された。
+Schedule CMS 一般化の設計整理を完了。hidden PoC trigger から安全な Schedule edit UI / write flow への段階移行計画を文書化。
 
 直近完了フェーズ:
-G-6-e5-schedule-non-dry-run-poc-explicit-retry-result
+G-6-f-schedule-cms-generalization-planning
+前フェーズ完了:
+G-6-e5-schedule-non-dry-run-poc-explicit-retry-result（SUCCESS）
 直近commit:
-e9e3861 — Record schedule PoC explicit retry success
+db07f8a — Update AI handoff commit hash after explicit retry result record
 
-明示的 retry 結果:
-- beforeSnapshot: PASS（description = 出演：）
-- Run button: ユーザー手動 1 回のみ（Cursor / Playwright 未使用）
-- result panel: executed / actualWrite: true / changedFields: ["description"]
-- after-verification: description_match = true
-- DB write: 発生（description のみ）
-- schedule_months: 未タッチ
-- service_role: 未使用
+G-6-e5 成功状態（維持）:
+- description: 出演： [G-6-e5 non-dry-run PoC]
 - rollbackNeeded: false
-- rollback SQL: 用意済み、未実行
+- hidden PoC Run button: 再クリック禁止
 
 3. Important completed milestones
 
@@ -203,9 +198,16 @@ where id = 'aa440e29-5be8-402e-9190-0d81c48434c0';
 完了済み。フェーズ: G-6-e5-schedule-non-dry-run-poc-explicit-retry-result
 ユーザー手動 Run 1 回で description 更新成功。result doc: schedule-non-dry-run-poc-explicit-retry-result.md
 
+6.11 Schedule CMS generalization planning
+完了済み。フェーズ: G-6-f-schedule-cms-generalization-planning
+planning doc: schedule-cms-generalization-planning.md
+推奨次フェーズ: G-6-f1-schedule-poc-isolation-dry-run-default
+
 7. Current gates
 scheduleNonDryRunPocCompleted: true
 explicitRetrySucceeded: true
+scheduleCmsGeneralizationPlanningComplete: true
+readyForScheduleGeneralUi: false
 readyForExplicitRetry: false
 readyForNonDryRunSchedulePoC: false
 rollbackNeeded: false
@@ -223,10 +225,10 @@ rollbackNeeded: false
 明示的 retry で dev server を起動する場合は inline env のみ使用する。
 
 10. Recommended next phase
-次フェーズ候補:
-- dev server を PUBLIC_ADMIN_WRITE_DRY_RUN=true に戻す（安全な既定運用）
-- 必要時のみ rollback SQL で staging 行を復元
-- Schedule CMS 一般化（write UI、schedule_months 導出レビュー等）の計画
+次フェーズ推奨: G-6-f1-schedule-poc-isolation-dry-run-default
+その後: G-6-f2-schedule-read-ui-binding-audit → G-6-f3-schedule-description-edit-dry-run-prototype
+
+詳細: tools/static-to-astro/docs/schedule-cms-generalization-planning.md
 
 11. AI workflow transition
 チャット履歴への依存を減らすため、リポジトリ側に AI開発文脈管理ファイルを作成。

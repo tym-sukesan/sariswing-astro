@@ -3,47 +3,44 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 1. Immediate priority
 
-**Latest completed phase:** `G-6-e5-schedule-non-dry-run-poc-explicit-retry-result`
+**Latest completed phase:** `G-6-f-schedule-cms-generalization-planning`
 
-Schedule CMS first non-dry-run write PoC **succeeded**. User manually clicked Run once. `description` updated on staging `public.schedules` target row. `description_match: true`. Rollback not needed.
+Schedule CMS generalization planning complete. Transition plan from G-6-e5 hidden PoC to visible staging shell Schedule edit UI documented.
 
-**Result doc:** `tools/static-to-astro/docs/schedule-non-dry-run-poc-explicit-retry-result.md`
+**Planning doc:** `tools/static-to-astro/docs/schedule-cms-generalization-planning.md`
 
-## 2. Post-success actions (recommended)
+**Recommended next phase:** `G-6-f1-schedule-poc-isolation-dry-run-default`
 
-```txt
-1. Stop / restart dev server with PUBLIC_ADMIN_WRITE_DRY_RUN=true (default safe mode).
-2. Do not re-click the hidden PoC Run button.
-3. Do not run additional schedule writes without explicit approval.
-4. Optional rollback only if restoring staging row description is desired (SQL in result doc).
-5. Plan next Schedule CMS generalization work.
-```
-
-## 3. Completed explicit retry record
+## 2. Post-G-6-e5 maintenance (still valid)
 
 ```txt
-Phase: G-6-e5-schedule-non-dry-run-poc-explicit-retry-result
-beforeSnapshot: PASS (description = 出演：)
-route: /__admin-staging-shell/musician-basic/
-Supabase project: static-to-astro-cms-staging
-host: kmjqppxjdnwwrtaeqjta.supabase.co
-Run button: user manual once only
-Cursor/Playwright click: no
-result panel: executed, actualWrite true, changedFields ["description"]
-after-verification: description_match true
-schedule_months touched: false
-service_role used: false
-rollbackNeeded: false
-rollback executed: false
+1. Dev server default: PUBLIC_ADMIN_WRITE_DRY_RUN=true
+2. Do not re-click hidden G-6-e5 PoC Run button
+3. rollbackNeeded: false (optional description rollback SQL in result doc only)
 ```
 
-## 4. Rollback SQL (staging only; not executed)
+## 3. G-6-f planning outcomes
 
-```sql
-update public.schedules
-set description = '出演：'
-where id = 'aa440e29-5be8-402e-9190-0d81c48434c0';
+```txt
+- PoC trigger vs general UI separation defined
+- phased plan G-6-f1 … G-6-f6 + G-6-g create planning
+- INSERT / DELETE / schedule_months writes deferred
+- /admin and src/pages/admin remain untouched
+- service_role prohibited
+- Profile PoC pattern as reference for visible dry-run-first UI
 ```
+
+## 4. Phased next steps (summary)
+
+| Phase | Focus |
+| --- | --- |
+| G-6-f1 | PoC isolation + dry-run default policy |
+| G-6-f2 | Schedule list read binding audit |
+| G-6-f3 | Description edit dry-run prototype |
+| G-6-f4 | Safe text fields dry-run |
+| G-6-f5 | Safe fields non-dry-run (new approval ID) |
+| G-6-f6 | Write UI hardening (updated_at, mobile QA) |
+| G-6-g | Create flow planning (INSERT) |
 
 ## 5. AI workflow maintenance rule
 

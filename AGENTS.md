@@ -61,6 +61,14 @@ The first Schedule non-dry-run write PoC **succeeded** (phase `G-6-e5-schedule-n
 
 Do not re-click the hidden PoC Run button without explicit new approval.
 
+## Schedule CMS generalization
+
+Planning phase `G-6-f-schedule-cms-generalization-planning` is complete.
+
+- See `tools/static-to-astro/docs/schedule-cms-generalization-planning.md`
+- Recommended next: `G-6-f1-schedule-poc-isolation-dry-run-default`
+- General Schedule edit UI: staging shell only; do not modify `/admin` until an explicit future phase
+
 ## STOP conditions
 
 Stop and ask the user if:

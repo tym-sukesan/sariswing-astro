@@ -221,4 +221,4 @@ AI workflow foundation refinement completed:
 - `AGENTS.md` added at repository root
 - `handoff-to-chatgpt.md` populated with current values
 - root `README.md` updated with AI workflow files section
-- latest commit: 118ec84 — Refine AI development workflow handoff
+- latest commit: f3bf4dc — Refine AI development workflow handoff

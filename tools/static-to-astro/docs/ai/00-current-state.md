@@ -30,7 +30,7 @@ G-6-f8-schedule-updated-at-staging-migration-preflight
 前フェーズ:
 G-6-f7-schedule-write-hardening-and-updated-at-planning
 直近commit:
-(pending) — Document schedule updated_at staging migration preflight (G-6-f8)
+1397f86 — Document schedule updated_at staging migration preflight (G-6-f8)
 
 G-6-f6 成功後の staging row 状態:
 - venue: [CMS Kit staging] G-6-f6 venue PoC

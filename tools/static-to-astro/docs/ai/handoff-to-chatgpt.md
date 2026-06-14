@@ -15,7 +15,7 @@ Paste this file at the start of a new ChatGPT thread. Cursor should update it af
 ```txt
 Current phase: G-6-f8-schedule-updated-at-staging-migration-preflight (completed)
 Latest completed phase: G-6-f8-schedule-updated-at-staging-migration-preflight
-Latest commit: (pending) — Document schedule updated_at staging migration preflight (G-6-f8)
+Latest commit: 1397f86 — Document schedule updated_at staging migration preflight (G-6-f8)
 Recommended next phase: G-6-f8-schedule-updated-at-staging-migration-execution
 ```
 

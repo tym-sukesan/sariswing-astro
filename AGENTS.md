@@ -187,6 +187,16 @@ Implementation complete: `tools/static-to-astro/docs/schedule-time-fields-non-dr
 - Next: `G-6-g2-schedule-time-fields-non-dry-run-slice-final-preflight`
 - DB write / Save / Preview: none in implementation phase
 
+## Schedule time fields non-dry-run slice final preflight (G-6-g2)
+
+Final preflight complete: `tools/static-to-astro/docs/schedule-time-fields-non-dry-run-slice-final-preflight.md`
+
+- beforeSnapshot / afterVerification / rollback SQL; G-6-g2 dev arm (G-6-g1 arm off)
+- UI procedure: Preview → gates → Save once in execution only
+- single-arm: G-6-g1 disabled when G-6-g2 armed
+- Next: `G-6-g2-schedule-time-fields-non-dry-run-slice-execution`
+- DB write / Preview / Save: none in final-preflight phase
+
 ## Schedule CMS generalization
 
 Planning phase `G-6-f-schedule-cms-generalization-planning` is complete.

@@ -12,29 +12,28 @@ Paste this file at the start of a new ChatGPT thread. Cursor should update it af
 ## 2. Current phase
 
 ```txt
-Current phase: G-6-g2-schedule-time-fields-non-dry-run-slice-implementation (completed — implementation only)
-Latest completed phase: G-6-g2-schedule-time-fields-non-dry-run-slice-implementation
-Latest commit: e5fa9ba — Prepare G-6-g2 schedule time-fields non-dry-run preflight.
-Recommended next phase: G-6-g2-schedule-time-fields-non-dry-run-slice-final-preflight
+Current phase: G-6-g2-schedule-time-fields-non-dry-run-slice-final-preflight (completed — final-preflight only)
+Latest completed phase: G-6-g2-schedule-time-fields-non-dry-run-slice-final-preflight
+Latest commit: e461155 — Implement G-6-g2 schedule time-fields non-dry-run slice.
+Recommended next phase: G-6-g2-schedule-time-fields-non-dry-run-slice-execution
 ```
 
 ---
 
 ## 3. Current state summary
 
-G-6-g2 time fields slice implemented on staging shell. `assertG6G2TimeFieldsPayloadOnly`, approval ID, env arm, dry-run, trigger, and UI extension complete. G-6-g1 and G-6-g2 mutually exclusive when armed. Save/Preview not executed. G-6-g1 execution success preserved.
+G-6-g2 final preflight documents beforeSnapshot / afterVerification / rollback SQL, G-6-g2 dev arm command (G-6-g1 arm off), UI procedure, and Save enable checklist. Single-arm rule enforced. Preview/Save not executed. Ready for user manual execution.
 
 ---
 
-## 4. G-6-g2 implementation highlights
+## 4. G-6-g2 execution prep highlights
 
 ```txt
-Fields: open_time, start_time
+Payload: open_time + start_time marker values
 Approval ID: G-6-g2-schedule-time-fields-non-dry-run-slice
-Env arm: PUBLIC_ADMIN_SCHEDULE_G6G2_TIME_FIELDS_NON_DRY_RUN_ARMED=true
-Trigger: executeG6G2TimeFieldsNonDryRunSave → executeScheduleGeneralUpdateWrite
-UI: AdminStagingScheduleGeneralEditSection extended (G-6-g2 field group)
-Verify: verify-schedule-g6g2-time-fields-guard.mjs
+Env: PUBLIC_ADMIN_SCHEDULE_G6G2_TIME_FIELDS_NON_DRY_RUN_ARMED=true (G-6-g1 arm OFF)
+Lock baseline: updated_at from beforeSnapshot SQL (expect 2026-06-14T15:03:08.762993+00)
+changedFields target: ["open_time", "start_time"]
 ```
 
 ---
@@ -42,12 +41,12 @@ Verify: verify-schedule-g6g2-time-fields-guard.mjs
 ## 5. Gate state
 
 ```txt
-scheduleTimeFieldsNonDryRunSliceImplementationComplete: true
-readyForG6G2ScheduleTimeFieldsNonDryRunSliceFinalPreflight: true
+scheduleTimeFieldsNonDryRunSliceFinalPreflightComplete: true
+readyForG6G2ScheduleTimeFieldsNonDryRunSliceExecution: true
 scheduleTitleNonDryRunSliceExecutionSucceeded: true
 rollbackNeeded: false
 dbWriteInLatestPhase: false
-nonDryRunSaveExecuted: true (G-6-g1 only)
+G-6-g2 nonDryRunSaveExecuted: false
 ```
 
 ---
@@ -55,9 +54,9 @@ nonDryRunSaveExecuted: true (G-6-g1 only)
 ## 6. Files to read first
 
 ```txt
+tools/static-to-astro/docs/schedule-time-fields-non-dry-run-slice-final-preflight.md
 tools/static-to-astro/docs/schedule-time-fields-non-dry-run-slice-implementation.md
-tools/static-to-astro/docs/schedule-time-fields-non-dry-run-slice-preflight.md
-src/lib/admin/staging-write/schedule-g6g2-time-fields-non-dry-run-trigger.ts
+tools/static-to-astro/docs/schedule-title-non-dry-run-slice-execution-result.md
 src/lib/admin/staging-write/staging-schedule-general-edit-ui.ts
 tools/static-to-astro/docs/ai/00-current-state.md
 ```

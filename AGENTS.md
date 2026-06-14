@@ -85,9 +85,12 @@ Planning complete: `tools/static-to-astro/docs/schedule-write-hardening-and-upda
 
 Preflight complete: `tools/static-to-astro/docs/schedule-updated-at-staging-migration-preflight.md`
 
-- Trigger not applied yet — execution phase next
-- SQL via `scripts/supabase/` pattern; no `supabase/migrations/` in repo
-- Do not execute SQL until G-6-f8 execution phase
+Execution **succeeded** on staging: `tools/static-to-astro/docs/schedule-updated-at-staging-migration-execution-result.md`
+
+- Trigger `schedules_set_updated_at` active on `public.schedules` (staging only)
+- Script: `scripts/supabase/schedules-updated-at-trigger.sql`
+- `expectedBeforeUpdatedAt` can be enabled in next phase (G-6-f9)
+- Do not re-apply trigger without documented rollback + re-apply phase
 
 ## Schedule CMS generalization
 

@@ -21,24 +21,22 @@ Staging Shell
 将来的な顧客オンボーディング・課金・デプロイ自動化
 
 2. Current phase
-現在フェーズ: G-6-f8-schedule-updated-at-staging-migration-preflight（完了）
+現在フェーズ: G-6-f8-schedule-updated-at-staging-migration-execution（完了）
 
-schedules.updated_at 用 DB trigger の staging migration 前 preflight。SQL 案・影響範囲・rollback・検証 SQL。SQL 実行なし。
+staging `public.schedules` に updated_at trigger 適用成功。operator 手動 SQL。Cursor SQL 実行なし。
 
 直近完了フェーズ:
-G-6-f8-schedule-updated-at-staging-migration-preflight
+G-6-f8-schedule-updated-at-staging-migration-execution
 前フェーズ:
-G-6-f7-schedule-write-hardening-and-updated-at-planning
+G-6-f8-schedule-updated-at-staging-migration-preflight
 直近commit:
-1397f86 — Document schedule updated_at staging migration preflight (G-6-f8)
+(pending) — Record G-6-f8 schedule updated_at staging migration execution result
 
-G-6-f6 成功後の staging row 状態:
-- venue: [CMS Kit staging] G-6-f6 venue PoC
-- description: 出演： [G-6-e5 non-dry-run PoC] [G-6-f6 safe-fields staging test]
-- changedFields: venue, description のみ
-- rollbackNeeded: false
-- G-6-f6 Run button: 再クリック禁止
-- hidden G-6-e5 PoC Run button: 再クリック禁止（EXPLICIT_RERUN なしでは UI 非武装）
+G-6-f6 target row（trigger 検証後）:
+- venue / description: G-6-f6 後のまま（semantic unchanged）
+- created_at: 2026-06-05 17:39:44.140168+00（不変）
+- updated_at: 2026-06-14 06:49:42.240919+00（no-op UPDATE で進行確認）
+- trigger: schedules_set_updated_at active on staging
 
 3. Important completed milestones
 
@@ -269,17 +267,26 @@ planning doc: schedule-cms-generalization-planning.md
 6.21 Schedule updated_at staging migration preflight
 完了済み。フェーズ: G-6-f8-schedule-updated-at-staging-migration-preflight
 - doc: schedule-updated-at-staging-migration-preflight.md
-- function: tg_schedules_set_updated_at(); trigger: schedules_set_updated_at
-- migration 管理: scripts/supabase/ 手動 SQL Editor（supabase/migrations なし）
-- SQL 実行 / migration 適用: なし
+
+6.22 Schedule updated_at staging migration execution
+完了済み。フェーズ: G-6-f8-schedule-updated-at-staging-migration-execution
+- doc: schedule-updated-at-staging-migration-execution-result.md
+- script: scripts/supabase/schedules-updated-at-trigger.sql
+- trigger active on staging schedules
+- updated_at 検証: 2026-06-05 → 2026-06-14（no-op UPDATE）
+- operator 手動 SQL; Cursor SQL 実行なし
+- rollbackNeeded: false
 
 7. Current gates
 scheduleWriteHardeningPlanningComplete: true
 scheduleUpdatedAtStagingMigrationPreflightComplete: true
-readyForScheduleUpdatedAtStagingMigrationExecution: true
+scheduleUpdatedAtStagingMigrationSucceeded: true
+scheduleUpdatedAtTriggerActiveOnStaging: true
+readyForOptimisticLockEnablement: true
 scheduleSafeFieldsNonDryRunExecutionSucceeded: true
 hiddenPocTriggerDisarmedByDefault: true
 dryRunDefaultDocumented: true
+readyForScheduleUpdatedAtStagingMigrationExecution: false
 rollbackNeeded: false
 
 8. Absolute safety invariants
@@ -295,9 +302,9 @@ rollbackNeeded: false
 明示的 retry で dev server を起動する場合は inline env のみ使用する。
 
 10. Recommended next phase
-次フェーズ推奨: G-6-f8-schedule-updated-at-staging-migration-execution
+次フェーズ推奨: G-6-f9-schedule-optimistic-lock-enablement-planning
 
-詳細: tools/static-to-astro/docs/schedule-updated-at-staging-migration-preflight.md
+詳細: tools/static-to-astro/docs/schedule-updated-at-staging-migration-execution-result.md
 
 11. AI workflow transition
 チャット履歴への依存を減らすため、リポジトリ側に AI開発文脈管理ファイルを作成。

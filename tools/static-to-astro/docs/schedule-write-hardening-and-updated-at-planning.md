@@ -352,9 +352,10 @@ After G-6-f6 (`venue + description`):
 
 | Order | Phase | Scope |
 | --- | --- | --- |
-| **1** | `G-6-f8-schedule-updated-at-staging-migration-preflight` | **DONE** — see schedule-updated-at-staging-migration-preflight.md |
-| **2** | `G-6-f8-schedule-updated-at-staging-migration-execution` | Apply trigger SQL on staging; verify with controlled UPDATE |
-| **3** | `G-6-g-schedule-general-edit-ui-planning` | Visible list/edit UI design; wire dry-run; Profile pattern |
+| **1** | `G-6-f8-schedule-updated-at-staging-migration-preflight` | **DONE** |
+| **2** | `G-6-f8-schedule-updated-at-staging-migration-execution` | **DONE** — trigger active on staging |
+| **3** | `G-6-f9-schedule-optimistic-lock-enablement-planning` | Wire `expectedBeforeUpdatedAt` |
+| **4** | `G-6-g-schedule-general-edit-ui-planning` | Visible list/edit UI design; wire dry-run; Profile pattern |
 | **4** | `G-6-g-schedule-title-non-dry-run-slice` | title only; new approval ID |
 | **5** | `G-6-g-schedule-time-fields-non-dry-run-slice` | open_time + start_time |
 | **6** | `G-6-h-schedule-write-audit-log-planning` | Optional audit table — if customer SLA needs it |

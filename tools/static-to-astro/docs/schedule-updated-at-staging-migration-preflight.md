@@ -9,7 +9,7 @@ Type: **preflight / planning only** — no Supabase SQL execution, no migration 
 Prepare a safe staging-only migration to add a `BEFORE UPDATE` trigger on `public.schedules` so `updated_at` advances on every UPDATE. Enable future optimistic locking via `expectedBeforeUpdatedAt` in the write adapter.
 
 **This phase performed:** docs, SQL templates, impact analysis, rollback plan, verification plan.  
-**This phase did not:** execute SQL, apply migration, UPDATE/INSERT/DELETE, non-dry-run PoC re-run, Run click, rollback execution, `/admin` changes, `service_role`.
+**Execution:** succeeded — see [schedule-updated-at-staging-migration-execution-result.md](./schedule-updated-at-staging-migration-execution-result.md). Script: `scripts/supabase/schedules-updated-at-trigger.sql`.
 
 ## Prerequisites (completed)
 
@@ -395,7 +395,7 @@ schedule_months: read-only; no migration
 
 | Order | Phase | Scope |
 | --- | --- | --- |
-| **1** | `G-6-f8-schedule-updated-at-staging-migration-execution` | Run §5 pre-checks → apply §3.2 SQL → run §6 verification (controlled UPDATE) → result doc |
+| **1** | `G-6-f8-schedule-updated-at-staging-migration-execution` | **DONE** — see schedule-updated-at-staging-migration-execution-result.md |
 | **2** | `G-6-f9-schedule-optimistic-lock-enablement-planning` | Wire `expectedBeforeUpdatedAt` in general UI / next write slice |
 | **3** | `G-6-g-schedule-general-edit-ui-planning` | Visible edit UI (can parallel planning after execution success) |
 

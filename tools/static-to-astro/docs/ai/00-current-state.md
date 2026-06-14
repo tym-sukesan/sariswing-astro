@@ -31,7 +31,7 @@ G-6-f4-schedule-safe-fields-dry-run-prototype
 G-6-f3-schedule-description-edit-dry-run-prototype
 G-6-f2-schedule-read-ui-binding-audit
 直近commit:
-（G-6-f4 commit 後に更新）
+c448bac — Extend schedule dry-run to safe fields prototype (G-6-f4)
 
 G-6-e5 成功状態（維持）:
 - description: 出演： [G-6-e5 non-dry-run PoC]

@@ -201,10 +201,7 @@ rollbackNeeded: false
 2. Do not re-click G-6-f6 Run button.
 3. Do not re-arm G-6-e5 hidden PoC (EXPLICIT_RERUN not used).
 4. Optional: rollback SQL only if restoring staging row is desired.
-5. Plan next Schedule CMS work:
-   - title / open_time / start_time / price non-dry-run slices (separate approvals)
-   - schedule write UI hardening (updated_at policy)
-   - schedule_months derivation review
+5. See schedule-write-hardening-and-updated-at-planning.md for updated_at / general UI roadmap.
 ```
 
 ## 12. Final safety statement

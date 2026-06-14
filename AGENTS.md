@@ -72,6 +72,15 @@ The G-6-f6 safe-fields non-dry-run PoC **succeeded** (phase `G-6-f6-schedule-saf
 
 Do not re-click the G-6-f6 Run button. Restart dev with `PUBLIC_ADMIN_WRITE_DRY_RUN=true` for routine work.
 
+## Schedule write hardening (G-6-f7)
+
+Planning complete: `tools/static-to-astro/docs/schedule-write-hardening-and-updated-at-planning.md`
+
+- `updated_at`: recommend DB trigger on staging first (G-6-f8)
+- Optimistic lock: after trigger migration
+- Next: general edit UI planning + per-field slices with new approval IDs
+- PoC triggers (G-6-e5, G-6-f6): keep code, disarmed, do not re-click
+
 ## Schedule CMS generalization
 
 Planning phase `G-6-f-schedule-cms-generalization-planning` is complete.

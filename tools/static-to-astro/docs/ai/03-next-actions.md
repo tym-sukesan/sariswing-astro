@@ -3,15 +3,25 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 1. Immediate priority
 
-**Latest completed phase:** `G-6-f6-schedule-safe-fields-non-dry-run-execution`
+**Latest completed phase:** `G-6-f7-schedule-write-hardening-and-updated-at-planning`
 
-G-6-f6 safe-fields non-dry-run succeeded: `venue` + `description` UPDATE on staging row. User manual Run once. No Cursor/Playwright click.
+Hardening design: write flow summary, `updated_at` (recommend DB trigger on staging first), optimistic lock, rollback/recovery, approval slices, field priority, PoC vs general UI boundaries. No DB writes.
 
-**Doc:** `tools/static-to-astro/docs/schedule-safe-fields-non-dry-run-execution-result.md`
+**Doc:** `tools/static-to-astro/docs/schedule-write-hardening-and-updated-at-planning.md`
 
-**Recommended next:** Plan remaining safe fields (`title`, `open_time`, `start_time`, `price`) as separate approval slices, or Schedule general UI / `updated_at` hardening.
+**Recommended next phase:** `G-6-f8-schedule-updated-at-staging-migration-preflight`
 
-## 2. Dry-run default (restore after execution)
+## 2. Key planning decisions
+
+| Topic | Recommendation |
+| --- | --- |
+| `updated_at` | Option A — DB `BEFORE UPDATE` trigger on staging first |
+| Optimistic lock | Enable `expectedBeforeUpdatedAt` after trigger verified |
+| Next fields | title → open_time/start_time → price → visibility → date |
+| PoC triggers | Keep code; disarmed; do not re-click |
+| General UI | New section + new `G-6-g-*` approval IDs |
+
+## 3. Dry-run default (routine dev)
 
 ```bash
 ENABLE_ADMIN_STAGING_SHELL=true \
@@ -23,30 +33,19 @@ PUBLIC_SUPABASE_ANON_KEY="<staging anon key>" \
 npm run dev
 ```
 
-Do **not** keep `PUBLIC_ADMIN_WRITE_DRY_RUN=false` or G-6-f6 arm gates for routine dev.
-
-## 3. Staging row state (post G-6-f6)
-
-```txt
-id: aa440e29-5be8-402e-9190-0d81c48434c0
-venue: [CMS Kit staging] G-6-f6 venue PoC
-description: 出演： [G-6-e5 non-dry-run PoC] [G-6-f6 safe-fields staging test]
-rollbackNeeded: false
-```
-
 ## 4. Do not re-click
 
 - G-6-f6 Run button
-- G-6-e5 hidden PoC Run (without EXPLICIT_RERUN)
+- G-6-e5 hidden PoC Run
 
 ## 5. Phased next steps
 
 | Phase | Status |
 | --- | --- |
-| G-6-f6 Execution | **DONE** |
-| title / time / price non-dry-run slices | Planned (separate approvals) |
-| Schedule general UI | Ready for planning |
-| updated_at hardening | Optional |
+| G-6-f7 Hardening planning | **DONE** |
+| G-6-f8 updated_at staging migration preflight | **Next** |
+| G-6-g general edit UI planning | Planned |
+| Per-field non-dry-run slices | After updated_at hardening |
 
 ## 6. AI workflow maintenance rule
 

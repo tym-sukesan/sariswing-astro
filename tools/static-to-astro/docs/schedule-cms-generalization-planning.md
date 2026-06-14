@@ -3,6 +3,8 @@
 **Phase:** `G-6-f-schedule-cms-generalization-planning`  
 **Prerequisites:** [schedule-non-dry-run-poc-explicit-retry-result.md](./schedule-non-dry-run-poc-explicit-retry-result.md) (commit `e9e3861`)
 
+**Follow-up hardening (G-6-f7):** [schedule-write-hardening-and-updated-at-planning.md](./schedule-write-hardening-and-updated-at-planning.md) — `updated_at`, optimistic lock, field slices after G-6-f6 success.
+
 ## 1. Purpose
 
 This document plans the transition from the G-6-e5 hidden non-dry-run PoC trigger to a safe, productizable Schedule edit UI / write flow for the Musician CMS Kit.

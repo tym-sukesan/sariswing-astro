@@ -21,16 +21,16 @@ Staging Shell
 将来的な顧客オンボーディング・課金・デプロイ自動化
 
 2. Current phase
-現在フェーズ: G-6-f6-schedule-safe-fields-non-dry-run-execution（完了）
+現在フェーズ: G-6-f7-schedule-write-hardening-and-updated-at-planning（完了）
 
-G-6-f6 safe-fields non-dry-run 実行成功。venue + description のみ UPDATE。ユーザー手動 Run 1 回。Cursor / Playwright クリックなし。
+Schedule write hardening / updated_at / optimistic lock / rollback / approval slice / UI 境界の planning doc。DB write なし。
 
 直近完了フェーズ:
-G-6-f6-schedule-safe-fields-non-dry-run-execution
+G-6-f7-schedule-write-hardening-and-updated-at-planning
 前フェーズ:
-G-6-f6-schedule-safe-fields-non-dry-run-final-preflight
+G-6-f6-schedule-safe-fields-non-dry-run-execution
 直近commit:
-a022f3f — Record G-6-f6 schedule safe-fields non-dry-run execution success
+(pending) — Document schedule write hardening and updated_at planning (G-6-f7)
 
 G-6-f6 成功後の staging row 状態:
 - venue: [CMS Kit staging] G-6-f6 venue PoC
@@ -258,35 +258,33 @@ planning doc: schedule-cms-generalization-planning.md
 6.19 Schedule safe-fields non-dry-run execution
 完了済み。フェーズ: G-6-f6-schedule-safe-fields-non-dry-run-execution
 - doc: schedule-safe-fields-non-dry-run-execution-result.md
-- venue + description UPDATE 成功（changedFields: venue, description）
-- approval ID: G-6-f6-schedule-safe-fields-non-dry-run-poc
-- Run: ユーザー手動 1 回のみ
-- Cursor / Playwright クリック: なし
-- service_role: 未使用
-- schedule_months: 未タッチ
+- venue + description UPDATE 成功
 - rollbackNeeded: false
-- updated_at: 変更なし（2026-06-05 17:39:44.140168+00）
+
+6.20 Schedule write hardening and updated_at planning
+完了済み。フェーズ: G-6-f7-schedule-write-hardening-and-updated-at-planning
+- doc: schedule-write-hardening-and-updated-at-planning.md
+- updated_at 推奨: staging 先行 DB trigger (Option A)
+- optimistic lock: trigger 後に expectedBeforeUpdatedAt
+- 次フィールド優先: title → time fields → price → visibility → date
+- DB write / SQL 実行: なし
 
 7. Current gates
 scheduleNonDryRunPocCompleted: true
 explicitRetrySucceeded: true
 scheduleSafeFieldsNonDryRunExecutionSucceeded: true
-firstScheduleSafeFieldsNonDryRunWriteSucceeded: true
+scheduleWriteHardeningPlanningComplete: true
 scheduleCmsGeneralizationPlanningComplete: true
 hiddenPocTriggerDisarmedByDefault: true
-explicitRerunGateRequired: true
 dryRunDefaultDocumented: true
 g6e5ApprovalIdReuseProhibited: true
 scheduleReadUiBindingComplete: true
 scheduleDescriptionDryRunPrototypeComplete: true
 scheduleSafeFieldsDryRunPrototypeComplete: true
-scheduleSafeFieldsNonDryRunPreflightComplete: true
-scheduleSafeFieldsNonDryRunPocImplementationComplete: true
-scheduleSafeFieldsNonDryRunFinalPreflightComplete: true
 scheduleSafeFieldsNonDryRunExecutionComplete: true
-readyForScheduleGeneralUi: true
+readyForScheduleUpdatedAtStagingMigrationPreflight: true
+readyForScheduleGeneralEditUiPlanning: true
 readyForScheduleSafeFieldsNonDryRunExecution: false
-readyForExplicitRetry: false
 rollbackNeeded: false
 
 8. Absolute safety invariants
@@ -302,9 +300,9 @@ rollbackNeeded: false
 明示的 retry で dev server を起動する場合は inline env のみ使用する。
 
 10. Recommended next phase
-次フェーズ推奨: Schedule CMS 一般化 UI / 残 safe fields（title, open_time, start_time, price）の個別 non-dry-run slice 計画、または write UI hardening（updated_at 方針）
+次フェーズ推奨: G-6-f8-schedule-updated-at-staging-migration-preflight
 
-詳細: tools/static-to-astro/docs/schedule-safe-fields-non-dry-run-execution-result.md
+詳細: tools/static-to-astro/docs/schedule-write-hardening-and-updated-at-planning.md
 
 11. AI workflow transition
 チャット履歴への依存を減らすため、リポジトリ側に AI開発文脈管理ファイルを作成。

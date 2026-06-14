@@ -110,6 +110,18 @@ Planning complete: `tools/static-to-astro/docs/schedule-general-edit-ui-planning
 - G-6-g1 first slice: `title` with approval ID `G-6-g1-schedule-title-non-dry-run-slice`
 - Dry-run preview required before Save; stale blocks non-dry-run
 
+## Schedule title non-dry-run slice preflight (G-6-g1)
+
+Preflight complete: `tools/static-to-astro/docs/schedule-title-non-dry-run-slice-preflight.md`
+
+- Target row: `aa440e29-5be8-402e-9190-0d81c48434c0` (`title: <>`, venue/description from G-6-f6 unchanged)
+- Payload: title only — `[CMS Kit staging] G-6-g1 title PoC`
+- Approval ID: `G-6-g1-schedule-title-non-dry-run-slice` (register in implementation phase)
+- Env arm: `PUBLIC_ADMIN_SCHEDULE_G6G1_TITLE_NON_DRY_RUN_ARMED=true`
+- Do not reuse G-6-e5 / G-6-f6 approval IDs or PoC env gates
+- Rollback SQL documented (staging only — not executed)
+- Next: `G-6-g1-schedule-title-non-dry-run-slice-implementation` (no Save execution)
+
 ## Schedule CMS generalization
 
 Planning phase `G-6-f-schedule-cms-generalization-planning` is complete.

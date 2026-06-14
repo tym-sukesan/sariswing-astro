@@ -21,16 +21,16 @@ Staging Shell
 将来的な顧客オンボーディング・課金・デプロイ自動化
 
 2. Current phase
-現在フェーズ: G-6-g-schedule-general-edit-ui-planning（完了）
+現在フェーズ: G-6-g1-schedule-title-non-dry-run-slice-preflight（完了）
 
-general Schedule edit UI の設計完了。dry-run-first、approval ID、env gate、optimistic lock UX を文書化。実装 / DB write / Save なし。
+G-6-g1 title slice の preflight 完了。target row / payload / approval ID / env gate / rollback / after verification を文書化。実装 / DB write / Save なし。
 
 直近完了フェーズ:
-G-6-g-schedule-general-edit-ui-planning
+G-6-g1-schedule-title-non-dry-run-slice-preflight
 前フェーズ:
-G-6-f10-schedule-optimistic-lock-enablement-implementation
+G-6-g-schedule-general-edit-ui-planning
 直近commit:
-af0dd8b — Enable schedule optimistic lock product path.
+801bb8b — Plan schedule general edit UI.
 
 G-6-f6 target row（trigger 検証後）:
 - venue / description: G-6-f6 後のまま（semantic unchanged）
@@ -297,6 +297,18 @@ planning doc: schedule-cms-generalization-planning.md
 - readyForScheduleGeneralEditUiImplementation: true
 - DB write / Save / Run click: なし
 
+6.26 Schedule title non-dry-run slice preflight
+完了済み。フェーズ: G-6-g1-schedule-title-non-dry-run-slice-preflight
+- doc: schedule-title-non-dry-run-slice-preflight.md
+- target row: aa440e29-5be8-402e-9190-0d81c48434c0（title: <>、G-6-f6 venue/description 保持）
+- payload: title のみ `[CMS Kit staging] G-6-g1 title PoC`
+- approval ID: G-6-g1-schedule-title-non-dry-run-slice（実装時に types/guards へ登録）
+- env arm: PUBLIC_ADMIN_SCHEDULE_G6G1_TITLE_NON_DRY_RUN_ARMED=true
+- guard 方針: assertG6G1TitlePayloadOnly（新規、G-6-f6 パターン踏襲）
+- rollback SQL: title を `<>` に戻す（staging only、未実行）
+- readyForG6G1ScheduleTitleNonDryRunSliceImplementation: true
+- DB write / Save / Run click: なし
+
 7. Current gates
 scheduleWriteHardeningPlanningComplete: true
 scheduleUpdatedAtStagingMigrationPreflightComplete: true
@@ -305,8 +317,10 @@ scheduleUpdatedAtTriggerActiveOnStaging: true
 scheduleOptimisticLockPlanningComplete: true
 scheduleOptimisticLockImplementationComplete: true
 scheduleGeneralEditUiPlanningComplete: true
+scheduleTitleNonDryRunSlicePreflightComplete: true
 readyForScheduleGeneralEditUiImplementation: true
-readyForG6G1ScheduleTitleNonDryRunSlicePreflight: true
+readyForG6G1ScheduleTitleNonDryRunSliceImplementation: true
+readyForG6G1ScheduleTitleNonDryRunSliceExecution: false
 optimisticLockWiredInProductPath: true
 nonDryRunSaveUiExposed: false
 scheduleSafeFieldsNonDryRunExecutionSucceeded: true
@@ -328,11 +342,11 @@ rollbackNeeded: false
 明示的 retry で dev server を起動する場合は inline env のみ使用する。
 
 10. Recommended next phase
-次フェーズ推奨: G-6-g1-schedule-title-non-dry-run-slice-preflight
+次フェーズ推奨: G-6-g1-schedule-title-non-dry-run-slice-implementation
 
-その次: G-6-g1-schedule-title-non-dry-run-slice-implementation → execution
+その次: G-6-g1-schedule-title-non-dry-run-slice-final-preflight → execution
 
-詳細: tools/static-to-astro/docs/schedule-general-edit-ui-planning.md
+詳細: tools/static-to-astro/docs/schedule-title-non-dry-run-slice-preflight.md
 
 11. AI workflow transition
 チャット履歴への依存を減らすため、リポジトリ側に AI開発文脈管理ファイルを作成。

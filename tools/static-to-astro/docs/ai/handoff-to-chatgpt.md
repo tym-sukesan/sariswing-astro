@@ -12,29 +12,30 @@ Paste this file at the start of a new ChatGPT thread. Cursor should update it af
 ## 2. Current phase
 
 ```txt
-Current phase: G-6-g-schedule-general-edit-ui-planning (completed — planning only)
-Latest completed phase: G-6-g-schedule-general-edit-ui-planning
-Latest commit: af0dd8b — Enable schedule optimistic lock product path.
-Recommended next phase: G-6-g1-schedule-title-non-dry-run-slice-preflight
+Current phase: G-6-g1-schedule-title-non-dry-run-slice-preflight (completed — preflight only)
+Latest completed phase: G-6-g1-schedule-title-non-dry-run-slice-preflight
+Latest commit: 801bb8b — Plan schedule general edit UI.
+Recommended next phase: G-6-g1-schedule-title-non-dry-run-slice-implementation
 ```
 
 ---
 
 ## 3. Current state summary
 
-G-6-g planning defines general edit UI in `#schedule` staging shell, dry-run-first UX, G-6-g* approval IDs, env gates, and G-6-g1 title as first non-dry-run slice. Product write path (`executeScheduleGeneralUpdateWrite`) ready from G-6-f10. PoCs frozen. No DB write in G-6-g.
+G-6-g1 preflight defines first product-path non-dry-run slice: `title` only on proven staging row `aa440e29-5be8-402e-9190-0d81c48434c0`. New approval ID `G-6-g1-schedule-title-non-dry-run-slice`, env arm `PUBLIC_ADMIN_SCHEDULE_G6G1_TITLE_NON_DRY_RUN_ARMED`, optimistic lock via `executeScheduleGeneralUpdateWrite`. PoCs (G-6-e5/f6) frozen. No DB write in G-6-g1 preflight.
 
 ---
 
-## 4. General edit UI planning highlights
+## 4. G-6-g1 preflight highlights
 
 ```txt
-New section (impl): AdminStagingScheduleGeneralEditSection below ScheduleAdminUi
-PoC boundary: G-6-e5 / G-6-f6 unchanged; separate approval IDs
-G-6-g1 approval: G-6-g1-schedule-title-non-dry-run-slice
-G-6-g1 target row: aa440e29-5be8-402e-9190-0d81c48434c0 (recommended first)
+Target row: aa440e29-5be8-402e-9190-0d81c48434c0 (title: <>, show_on_home: false)
+Payload: { "title": "[CMS Kit staging] G-6-g1 title PoC" } — title only
+Approval ID: G-6-g1-schedule-title-non-dry-run-slice (not yet in SCHEDULE_WRITE_APPROVAL_IDS)
+Env arm: PUBLIC_ADMIN_SCHEDULE_G6G1_TITLE_NON_DRY_RUN_ARMED=true
+Guard: assertG6G1TitlePayloadOnly (planned — mirror G-6-f6 pattern)
 Dry-run preview: required before Save
-Stale: blocks non-dry-run; reload required
+Rollback: set title back to <> (staging only, not executed)
 ```
 
 ---
@@ -42,9 +43,9 @@ Stale: blocks non-dry-run; reload required
 ## 5. Gate state
 
 ```txt
-scheduleGeneralEditUiPlanningComplete: true
-readyForScheduleGeneralEditUiImplementation: true
-readyForG6G1ScheduleTitleNonDryRunSlicePreflight: true
+scheduleTitleNonDryRunSlicePreflightComplete: true
+readyForG6G1ScheduleTitleNonDryRunSliceImplementation: true
+readyForG6G1ScheduleTitleNonDryRunSliceExecution: false
 optimisticLockWiredInProductPath: true
 nonDryRunSaveUiExposed: false
 rollbackNeeded: false
@@ -56,9 +57,10 @@ dbWriteInLatestPhase: false
 ## 6. Files to read first
 
 ```txt
+tools/static-to-astro/docs/schedule-title-non-dry-run-slice-preflight.md
 tools/static-to-astro/docs/schedule-general-edit-ui-planning.md
 tools/static-to-astro/docs/schedule-optimistic-lock-enablement-implementation.md
 src/lib/admin/staging-write/schedule-general-update-trigger.ts
-tools/static-to-astro/templates/admin-cms/prototypes/musician-basic-admin-prototype.astro
+src/lib/admin/staging-write/schedule-write-guards.ts
 tools/static-to-astro/docs/ai/00-current-state.md
 ```

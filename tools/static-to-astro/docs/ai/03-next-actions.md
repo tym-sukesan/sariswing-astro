@@ -3,21 +3,19 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 1. Immediate priority
 
-**Latest completed phase:** `G-6-f4-schedule-safe-fields-dry-run-prototype`
+**Latest completed phase:** `G-6-f5-schedule-safe-fields-non-dry-run-preflight`
 
-Safe fields dry-run prototype (title, venue, open_time, start_time, price, description). Plan A client-side only. No write adapter. No DB writes.
+Preflight doc for safe-fields non-dry-run: target row, payload, rollback SQL, beforeSnapshot, approval ID, updated_at policy. No DB writes.
 
-**Doc:** `tools/static-to-astro/docs/schedule-safe-fields-dry-run-prototype.md`
+**Doc:** `tools/static-to-astro/docs/schedule-safe-fields-non-dry-run-preflight.md`
 
-**Recommended next phase:** `G-6-f5-schedule-safe-fields-non-dry-run-prototype`
+**Recommended next phase:** `G-6-f6-schedule-safe-fields-non-dry-run-poc-implementation`
 
 ## 2. Dry-run default (day-to-day dev)
 
 ```bash
 ENABLE_ADMIN_STAGING_SHELL=true \
-ENABLE_ADMIN_STAGING_AUTH=true \
 ENABLE_ADMIN_STAGING_DATA_READ=true \
-PUBLIC_ADMIN_AUTH_PROVIDER=supabase \
 PUBLIC_ADMIN_DATA_PROVIDER=supabase \
 PUBLIC_ADMIN_WRITE_DRY_RUN=true \
 PUBLIC_SUPABASE_URL="https://kmjqppxjdnwwrtaeqjta.supabase.co" \
@@ -25,28 +23,25 @@ PUBLIC_SUPABASE_ANON_KEY="<staging anon key>" \
 npm run dev
 ```
 
-Open schedule module: `http://localhost:4321/__admin-staging-shell/musician-basic/#schedule`
+Do **not** set `PUBLIC_ADMIN_WRITE_DRY_RUN=false` or `PUBLIC_ADMIN_NON_DRY_RUN_POC_EXPLICIT_RERUN=true` without a documented phase.
 
-Do **not** set `PUBLIC_ADMIN_WRITE_DRY_RUN=false` unless in an approved explicit non-dry-run phase.
+## 3. G-6-f6 non-dry-run preflight summary
 
-Do **not** re-arm hidden PoC without `PUBLIC_ADMIN_NON_DRY_RUN_POC_EXPLICIT_RERUN=true` and a documented rerun phase.
-
-## 3. G-6-e5 maintenance
-
-```txt
-- Do not re-click hidden PoC Run button
-- G-6-e5 approval ID not for general Schedule UI
-- rollbackNeeded: false
-```
+- **Target row:** `aa440e29-5be8-402e-9190-0d81c48434c0` (reuse G-6-e5 row)
+- **First payload (recommended):** `venue` + `description` append (not all 6 fields)
+- **Approval ID:** `G-6-f6-schedule-safe-fields-non-dry-run-poc` (not G-6-e5)
+- **updated_at:** record in beforeSnapshot; do not include in payload; no optimistic lock on first run
 
 ## 4. Phased next steps
 
 | Phase | Status |
 | --- | --- |
-| G-6-f3 Description edit dry-run | **DONE** (extended by G-6-f4) |
 | G-6-f4 Safe fields dry-run | **DONE** |
-| G-6-f5 Safe fields non-dry-run | **Next** |
+| G-6-f5 Non-dry-run preflight | **DONE** |
+| G-6-f6 Implementation | **Next** |
+| G-6-f6 Final preflight | Planned |
+| G-6-f6 Execution (manual) | Planned |
 
 ## 5. AI workflow maintenance rule
 
-After every meaningful Cursor task, update AI context files in `tools/static-to-astro/docs/ai/`.
+Update `tools/static-to-astro/docs/ai/*` after every meaningful Cursor task.

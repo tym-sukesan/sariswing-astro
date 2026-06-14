@@ -150,7 +150,11 @@ Do **not** set `PUBLIC_ADMIN_WRITE_DRY_RUN=false` or `PUBLIC_ADMIN_NON_DRY_RUN_P
 
 ## Next phase proposal
 
-**G-6-f5-schedule-safe-fields-non-dry-run-prototype** — approved non-dry-run for safe fields only, still excluding date/published/sort_order; dry-run default remains for routine dev.
+**G-6-f5** — [schedule-safe-fields-non-dry-run-preflight.md](./schedule-safe-fields-non-dry-run-preflight.md) (preflight; no writes).
+
+**G-6-f6** — safe-fields non-dry-run implementation → final preflight → manual execution (venue + optional description first; not all 6 fields).
+
+Defer full non-dry-run to G-6-f6 series; do not use G-6-e5 hidden PoC trigger.
 
 ## Risks / open questions
 

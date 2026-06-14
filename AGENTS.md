@@ -165,6 +165,18 @@ Planning complete: `tools/static-to-astro/docs/schedule-general-edit-next-slice-
 - Next: `G-6-g2-schedule-time-fields-non-dry-run-slice-preflight`
 - DB write / Save / Run: none in planning phase
 
+## Schedule time fields non-dry-run slice preflight (G-6-g2)
+
+Preflight complete: `tools/static-to-astro/docs/schedule-time-fields-non-dry-run-slice-preflight.md`
+
+- Fields: `open_time` + `start_time` only on row `aa440e29-5be8-402e-9190-0d81c48434c0`
+- Payload (Option A): `[CMS Kit staging] G-6-g2 open PoC` / `start PoC`
+- Approval ID: `G-6-g2-schedule-time-fields-non-dry-run-slice`; env: `PUBLIC_ADMIN_SCHEDULE_G6G2_TIME_FIELDS_NON_DRY_RUN_ARMED`
+- Guard: `assertG6G2TimeFieldsPayloadOnly`; trigger: `executeG6G2TimeFieldsNonDryRunSave` (implementation)
+- Lock baseline: G-6-g1 `updated_at` `2026-06-14T15:03:08.762993+00`
+- Next: `G-6-g2-schedule-time-fields-non-dry-run-slice-implementation`
+- DB write / Save / Run: none in preflight phase
+
 ## Schedule CMS generalization
 
 Planning phase `G-6-f-schedule-cms-generalization-planning` is complete.

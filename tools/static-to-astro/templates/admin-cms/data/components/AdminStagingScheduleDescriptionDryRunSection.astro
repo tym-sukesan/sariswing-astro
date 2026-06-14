@@ -1,0 +1,282 @@
+---
+/**
+ * G-6-f3 — Schedule description dry-run edit prototype (client-side only; no DB writes).
+ */
+import implConfig from "../../../../config/admin/schedule-description-edit-dry-run-prototype.json";
+import AdminCard from "../../components/AdminCard.astro";
+import AdminFormField from "../../components/AdminFormField.astro";
+import {
+  getStagingScheduleDescriptionDryRunConfig,
+} from "../../../../../../src/lib/admin/staging-write/schedule-description-dry-run-config";
+
+interface Props {
+  phase?: string;
+}
+
+const { phase = implConfig.phase } = Astro.props;
+const config = getStagingScheduleDescriptionDryRunConfig();
+const uiDisabled = !config.enabled;
+---
+
+<section
+  id="schedule-desc-dry-run-root"
+  class="admin-staging-schedule-desc-dry-run"
+  data-scaffold="true"
+  data-phase={phase}
+  data-approval-id={implConfig.approvalId ?? config.approvalId}
+  data-dry-run-only="true"
+  data-write-adapter="false"
+  role="region"
+  aria-label="G-6-f3 schedule description dry-run prototype"
+>
+  <h3 class="admin-staging-schedule-desc-dry-run__title">
+    Description edit — dry-run prototype (G-6-f3)
+  </h3>
+
+  <p class="admin-staging-schedule-desc-dry-run__banner" role="note">
+    <strong>Dry-run only / no database writes.</strong>
+    Client-side preview only — write adapter not called. Non-dry-run disabled.
+    G-6-e5 approval ID not used. Hidden PoC trigger not armed.
+  </p>
+
+  {
+    config.disabledReason ? (
+      <p class="admin-staging-schedule-desc-dry-run__disabled" role="note">
+        Disabled: {config.disabledReason}
+      </p>
+    ) : null
+  }
+
+  <dl class="admin-staging-schedule-desc-dry-run__meta">
+    <div>
+      <dt>Phase</dt>
+      <dd>{phase}</dd>
+    </div>
+    <div>
+      <dt>Approval ID</dt>
+      <dd>{config.approvalId}</dd>
+    </div>
+    <div>
+      <dt>Target field</dt>
+      <dd>description</dd>
+    </div>
+    <div>
+      <dt>readSource</dt>
+      <dd id="schedule-desc-dry-run-read-source">—</dd>
+    </div>
+    <div>
+      <dt>Data read gate</dt>
+      <dd id="schedule-desc-dry-run-data-read">—</dd>
+    </div>
+    <div>
+      <dt>Selected schedule</dt>
+      <dd id="schedule-desc-dry-run-selected-id">—</dd>
+    </div>
+  </dl>
+
+  <p id="schedule-desc-dry-run-read-notice" class="admin-staging-schedule-desc-dry-run__notice" hidden />
+
+  <AdminCard title="Select schedule (from read binding)" description="SELECT only — same loader as Schedule list.">
+    <ul id="schedule-desc-dry-run-picker-list" class="schedule-desc-dry-run-picker" aria-label="Schedule picker" />
+  </AdminCard>
+
+  <AdminCard title="Edit description (dry-run)" description="Only description is editable in this prototype.">
+    <dl class="schedule-desc-dry-run-target__meta">
+      <div><dt>id</dt><dd id="schedule-desc-dry-run-target-id">—</dd></div>
+      <div><dt>legacy_id</dt><dd id="schedule-desc-dry-run-legacy-id">—</dd></div>
+      <div><dt>date</dt><dd id="schedule-desc-dry-run-row-date">—</dd></div>
+      <div><dt>title</dt><dd id="schedule-desc-dry-run-row-title">—</dd></div>
+    </dl>
+
+    <AdminFormField label="Current description" help="Read from loaded schedule row — not persisted.">
+      <pre id="schedule-desc-dry-run-current-description" class="schedule-desc-dry-run-current">—</pre>
+    </AdminFormField>
+
+    <AdminFormField label="New description" help="Edit here, then preview dry-run. No save.">
+      <textarea
+        id="schedule-desc-dry-run-new-description"
+        rows="4"
+        disabled={uiDisabled}
+        placeholder="Enter new description for dry-run preview"
+      />
+    </AdminFormField>
+
+    <div class="schedule-desc-dry-run-actions">
+      <button
+        id="schedule-desc-dry-run-preview-btn"
+        class="admin-button"
+        type="button"
+        disabled={uiDisabled}
+        title="Client-side dry-run preview — no Supabase update"
+      >
+        Preview description dry-run
+      </button>
+    </div>
+  </AdminCard>
+
+  <AdminCard title="Dry-run result" description="beforeSnapshot / payload / afterPreview — no DB write.">
+    <div id="schedule-desc-dry-run-result" class="schedule-desc-dry-run-result" aria-live="polite" />
+  </AdminCard>
+
+  <AdminCard title="Safety flags">
+    <dl class="admin-staging-schedule-desc-dry-run__safety">
+      <div><dt>dryRunOnly</dt><dd>true</dd></div>
+      <div><dt>writeAdapterUsed</dt><dd>false</dd></div>
+      <div><dt>supabaseWriteCalled</dt><dd>false</dd></div>
+      <div><dt>nonDryRunEnabled</dt><dd>false</dd></div>
+      <div><dt>schedule_months</dt><dd>read_only_derived (not touched)</dd></div>
+      <div><dt>G-6-e5 approval reused</dt><dd>false</dd></div>
+    </dl>
+  </AdminCard>
+</section>
+
+<script>
+  import "../../../../../../src/lib/admin/staging-write/staging-schedule-description-dry-run-ui.ts";
+</script>
+
+<style>
+  .admin-staging-schedule-desc-dry-run {
+    margin: 1rem 0 0;
+    padding: 1rem 1.25rem;
+    border: 1px solid #c4b5fd;
+    border-radius: 8px;
+    background: #f5f3ff;
+  }
+  .admin-staging-schedule-desc-dry-run__title {
+    margin: 0 0 0.5rem;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: #5b21b6;
+  }
+  .admin-staging-schedule-desc-dry-run__banner {
+    margin: 0 0 0.75rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    background: #ede9fe;
+    border: 1px solid #c4b5fd;
+    color: #5b21b6;
+    font-size: 0.8125rem;
+    line-height: 1.45;
+  }
+  .admin-staging-schedule-desc-dry-run__disabled,
+  .admin-staging-schedule-desc-dry-run__notice {
+    margin: 0 0 0.75rem;
+    font-size: 0.8125rem;
+    color: #b45309;
+  }
+  .admin-staging-schedule-desc-dry-run__disabled {
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    background: #fff7ed;
+    border: 1px solid #fed7aa;
+    color: #9a3412;
+  }
+  .admin-staging-schedule-desc-dry-run__meta,
+  .admin-staging-schedule-desc-dry-run__safety,
+  .schedule-desc-dry-run-target__meta {
+    margin: 0 0 1rem;
+    display: grid;
+    gap: 0.35rem 1rem;
+    grid-template-columns: max-content 1fr;
+    font-size: 0.8125rem;
+  }
+  .admin-staging-schedule-desc-dry-run__meta dt,
+  .admin-staging-schedule-desc-dry-run__safety dt,
+  .schedule-desc-dry-run-target__meta dt {
+    font-weight: 600;
+    color: #6d28d9;
+  }
+  .admin-staging-schedule-desc-dry-run__meta dd,
+  .admin-staging-schedule-desc-dry-run__safety dd,
+  .schedule-desc-dry-run-target__meta dd {
+    margin: 0;
+    font-family: ui-monospace, monospace;
+    color: #4c1d95;
+    word-break: break-all;
+  }
+  .schedule-desc-dry-run-picker {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .schedule-desc-dry-run-picker__item {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #e9d5ff;
+  }
+  .schedule-desc-dry-run-picker__item.is-selected {
+    background: #ede9fe;
+    border-radius: 4px;
+    padding: 0.5rem;
+  }
+  .schedule-desc-dry-run-picker__main {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem 0.75rem;
+    align-items: center;
+    font-size: 0.8125rem;
+  }
+  .schedule-desc-dry-run-picker__date {
+    font-family: ui-monospace, monospace;
+    color: #64748b;
+  }
+  .schedule-desc-dry-run-picker__desc {
+    color: #64748b;
+    font-size: 0.75rem;
+  }
+  .schedule-desc-dry-run-picker__empty {
+    font-size: 0.8125rem;
+    color: #64748b;
+    padding: 0.5rem 0;
+  }
+  .schedule-desc-dry-run-current {
+    margin: 0;
+    padding: 0.5rem 0.75rem;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    font-size: 0.8125rem;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  .schedule-desc-dry-run-actions {
+    margin-top: 0.75rem;
+  }
+  .schedule-desc-dry-run-result {
+    font-size: 0.8125rem;
+    color: #334155;
+  }
+  .schedule-desc-dry-run-result__changed {
+    color: #166534;
+  }
+  .schedule-desc-dry-run-result__unchanged {
+    color: #64748b;
+  }
+  .schedule-desc-dry-run-result__meta {
+    margin: 0.5rem 0;
+    display: grid;
+    gap: 0.25rem 0.75rem;
+    grid-template-columns: max-content 1fr;
+  }
+  .schedule-desc-dry-run-result__meta dt {
+    font-weight: 600;
+  }
+  .schedule-desc-dry-run-result__meta dd {
+    margin: 0;
+    font-family: ui-monospace, monospace;
+  }
+  .schedule-desc-dry-run-result__block {
+    margin: 0.35rem 0 0.75rem;
+    padding: 0.75rem;
+    background: #1e293b;
+    color: #e2e8f0;
+    border-radius: 6px;
+    overflow-x: auto;
+    font-size: 0.75rem;
+    max-height: 12rem;
+  }
+</style>

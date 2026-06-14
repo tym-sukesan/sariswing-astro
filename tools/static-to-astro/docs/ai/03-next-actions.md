@@ -3,13 +3,13 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 1. Immediate priority
 
-**Latest completed phase:** `G-6-f2-schedule-read-ui-binding-audit`
+**Latest completed phase:** `G-6-f3-schedule-description-edit-dry-run-prototype`
 
-ScheduleAdminUi connected to staging SSR read binding (`loadSchedulesForDryRunUi`, SELECT only). Read source badge, description column, audit doc.
+Schedule `description` dry-run edit prototype (Plan A: client-only). Write adapter not used. No DB writes.
 
-**Doc:** `tools/static-to-astro/docs/schedule-read-ui-binding-audit.md`
+**Doc:** `tools/static-to-astro/docs/schedule-description-edit-dry-run-prototype.md`
 
-**Recommended next phase:** `G-6-f3-schedule-description-edit-dry-run-prototype`
+**Recommended next phase:** `G-6-f4-schedule-safe-fields-dry-run-prototype`
 
 ## 2. Dry-run default (day-to-day dev)
 
@@ -19,6 +19,7 @@ ENABLE_ADMIN_STAGING_AUTH=true \
 ENABLE_ADMIN_STAGING_DATA_READ=true \
 PUBLIC_ADMIN_AUTH_PROVIDER=supabase \
 PUBLIC_ADMIN_DATA_PROVIDER=supabase \
+PUBLIC_ADMIN_WRITE_DRY_RUN=true \
 PUBLIC_SUPABASE_URL="https://kmjqppxjdnwwrtaeqjta.supabase.co" \
 PUBLIC_SUPABASE_ANON_KEY="<staging anon key>" \
 npm run dev
@@ -43,10 +44,9 @@ Do **not** re-arm hidden PoC without `PUBLIC_ADMIN_NON_DRY_RUN_POC_EXPLICIT_RERU
 
 | Phase | Status |
 | --- | --- |
-| G-6-f1 PoC isolation | **DONE** |
 | G-6-f2 Read UI binding audit | **DONE** |
-| G-6-f3 Description edit dry-run | **Next** |
-| G-6-f4 Safe fields dry-run | Planned |
+| G-6-f3 Description edit dry-run | **DONE** |
+| G-6-f4 Safe fields dry-run | **Next** |
 | G-6-f5 Safe fields non-dry-run | Planned |
 
 ## 5. AI workflow maintenance rule

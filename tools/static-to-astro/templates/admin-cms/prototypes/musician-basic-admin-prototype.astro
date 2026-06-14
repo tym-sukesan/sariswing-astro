@@ -26,6 +26,7 @@ import AdminStagingReadOnlyDataSection from "../data/components/AdminStagingRead
 import AdminStagingDisabledWriteActionsSection from "../data/components/AdminStagingDisabledWriteActionsSection.astro";
 import AdminStagingProfileUpdatePocSection from "../data/components/AdminStagingProfileUpdatePocSection.astro";
 import AdminStagingScheduleDryRunPocSection from "../data/components/AdminStagingScheduleDryRunPocSection.astro";
+import AdminStagingScheduleDescriptionDryRunSection from "../data/components/AdminStagingScheduleDescriptionDryRunSection.astro";
 import AdminStagingScheduleNonDryRunPocCompletedNotice from "../data/components/AdminStagingScheduleNonDryRunPocCompletedNotice.astro";
 import AdminStagingScheduleNonDryRunPocTriggerSection from "../data/components/AdminStagingScheduleNonDryRunPocTriggerSection.astro";
 import { getStagingAuthConfig } from "../../../../../src/lib/admin/staging-auth/staging-auth-config";
@@ -451,6 +452,11 @@ const moduleSummary = [
         expectedHost={scheduleUiBinding.expectedHost}
         recordCount={scheduleUiBinding.recordCount}
       />
+      {
+        stagingShellMode ? (
+          <AdminStagingScheduleDescriptionDryRunSection phase="G-6-f3-schedule-description-edit-dry-run-prototype" />
+        ) : null
+      }
     </section>
 
     <section id="discography" class="admin-prototype-section" data-section="discography">

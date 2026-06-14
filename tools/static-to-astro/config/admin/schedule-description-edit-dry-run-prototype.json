@@ -1,0 +1,7 @@
+{
+  "phase": "G-6-f3-schedule-description-edit-dry-run-prototype",
+  "approvalId": "G-6-f3-schedule-description-edit-dry-run-prototype",
+  "targetField": "description",
+  "dryRunOnly": true,
+  "writeAdapterUsed": false
+}

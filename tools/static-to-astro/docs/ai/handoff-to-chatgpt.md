@@ -14,10 +14,10 @@ Paste this file at the start of a new ChatGPT thread. Cursor should update it af
 ## 2. Current phase
 
 ```txt
-Current phase: G-6-f2-schedule-read-ui-binding-audit (completed)
-Latest completed phase: G-6-f2-schedule-read-ui-binding-audit
-Latest commit: cd69843 — Connect ScheduleAdminUi to staging SSR read binding (G-6-f2)
-Recommended next phase: G-6-f3-schedule-description-edit-dry-run-prototype
+Current phase: G-6-f3-schedule-description-edit-dry-run-prototype (completed)
+Latest completed phase: G-6-f3-schedule-description-edit-dry-run-prototype
+Latest commit: (G-6-f3 commit — update after push)
+Recommended next phase: G-6-f4-schedule-safe-fields-dry-run-prototype
 ```
 
 Prior milestone commits:
@@ -31,7 +31,7 @@ e9e3861 — Record schedule PoC explicit retry success
 
 ## 3. Current state summary
 
-G-6-f2 connected ScheduleAdminUi to SSR read binding via `loadSchedulesForDryRunUi` (SELECT only). Read source badge and description column on staging shell. G-6-e5 PoC state unchanged. Hidden PoC still disarmed by default.
+G-6-f3 added description-only dry-run edit prototype (Plan A: client-side only). Write adapter not called. No DB writes. G-6-e5 approval ID not reused. Hidden PoC still disarmed.
 
 ---
 
@@ -74,13 +74,17 @@ explicitRerunGateRequired: true
 dryRunDefaultDocumented: true
 g6e5ApprovalIdReuseProhibited: true
 scheduleReadUiBindingComplete: true
-readyForScheduleDescriptionEditDryRun: true
+scheduleDescriptionDryRunPrototypeComplete: true
+readyForScheduleSafeFieldsDryRun: true
 readyForScheduleGeneralUi: false
 rollbackNeeded: false
 
 triggerClickedInLatestPhase: false
 dbWritesPerformedInLatestPhase: false
-supabaseSelectInLatestPhase: true (SSR read binding when env gates set; build-time may fallback)
+nonDryRunUsedInLatestPhase: false
+g6e5ApprovalIdUsedInLatestPhase: false
+writeAdapterUsedInLatestPhase: false
+supabaseSelectInLatestPhase: true (client SELECT via loadSchedulesForDryRunUi)
 ```
 
 ---
@@ -88,6 +92,7 @@ supabaseSelectInLatestPhase: true (SSR read binding when env gates set; build-ti
 ## 7. Recently completed work
 
 ```txt
+- G-6-f3-schedule-description-edit-dry-run-prototype
 - G-6-f2-schedule-read-ui-binding-audit
 - G-6-f1-schedule-poc-isolation-dry-run-default
 - G-6-f-schedule-cms-generalization-planning (e656083)
@@ -111,7 +116,7 @@ supabaseSelectInLatestPhase: true (SSR read binding when env gates set; build-ti
 
 ## 9. Next requested help from ChatGPT
 
-Suggest Cursor prompt for **G-6-f3-schedule-description-edit-dry-run-prototype**: description field dry-run edit scaffold; keep DRY_RUN default; no non-dry-run.
+Suggest Cursor prompt for **G-6-f4-schedule-safe-fields-dry-run-prototype**: extend dry-run to title/venue etc.; still dry-run only.
 
 ---
 
@@ -119,6 +124,7 @@ Suggest Cursor prompt for **G-6-f3-schedule-description-edit-dry-run-prototype**
 
 ```txt
 AGENTS.md
+tools/static-to-astro/docs/schedule-description-edit-dry-run-prototype.md
 tools/static-to-astro/docs/schedule-read-ui-binding-audit.md
 tools/static-to-astro/docs/schedule-poc-isolation-dry-run-default.md
 tools/static-to-astro/docs/schedule-cms-generalization-planning.md

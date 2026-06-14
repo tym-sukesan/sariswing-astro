@@ -21,18 +21,17 @@ Staging Shell
 将来的な顧客オンボーディング・課金・デプロイ自動化
 
 2. Current phase
-現在フェーズ: G-6-f2-schedule-read-ui-binding-audit（完了）
+現在フェーズ: G-6-f3-schedule-description-edit-dry-run-prototype（完了）
 
-ScheduleAdminUi を staging shell SSR で `loadSchedulesForDryRunUi`（SELECT only）に接続。read source 表示・description 列追加。audit doc 作成。
+Schedule `description` 編集の dry-run prototype（Plan A: クライアント内のみ）。write adapter 未使用。DB write なし。
 
 直近完了フェーズ:
-G-6-f2-schedule-read-ui-binding-audit
+G-6-f3-schedule-description-edit-dry-run-prototype
 前フェーズ:
+G-6-f2-schedule-read-ui-binding-audit
 G-6-f1-schedule-poc-isolation-dry-run-default
-G-6-f-schedule-cms-generalization-planning
-G-6-e5-schedule-non-dry-run-poc-explicit-retry-result（SUCCESS）
 直近commit:
-cd69843 — Connect ScheduleAdminUi to staging SSR read binding (G-6-f2)
+（G-6-f3 commit 後に更新）
 
 G-6-e5 成功状態（維持）:
 - description: 出演： [G-6-e5 non-dry-run PoC]
@@ -220,6 +219,14 @@ planning doc: schedule-cms-generalization-planning.md
 - DB write / Run click / PoC re-arm: なし
 - `schedule_months`: 未読
 
+6.14 Schedule description dry-run prototype
+完了済み。フェーズ: G-6-f3-schedule-description-edit-dry-run-prototype
+- Plan A: クライアント内 dry-run（write adapter 未使用）
+- `AdminStagingScheduleDescriptionDryRunSection` — description only
+- beforeSnapshot / payload / afterPreview / changedFields
+- doc: schedule-description-edit-dry-run-prototype.md
+- DB write / non-dry-run / PoC re-arm / G-6-e5 approval: なし
+
 7. Current gates
 scheduleNonDryRunPocCompleted: true
 explicitRetrySucceeded: true
@@ -229,7 +236,8 @@ explicitRerunGateRequired: true
 dryRunDefaultDocumented: true
 g6e5ApprovalIdReuseProhibited: true
 scheduleReadUiBindingComplete: true
-readyForScheduleDescriptionEditDryRun: true
+scheduleDescriptionDryRunPrototypeComplete: true
+readyForScheduleSafeFieldsDryRun: true
 readyForScheduleGeneralUi: false
 readyForExplicitRetry: false
 rollbackNeeded: false
@@ -247,9 +255,9 @@ rollbackNeeded: false
 明示的 retry で dev server を起動する場合は inline env のみ使用する。
 
 10. Recommended next phase
-次フェーズ推奨: G-6-f3-schedule-description-edit-dry-run-prototype
+次フェーズ推奨: G-6-f4-schedule-safe-fields-dry-run-prototype
 
-詳細: tools/static-to-astro/docs/schedule-read-ui-binding-audit.md
+詳細: tools/static-to-astro/docs/schedule-description-edit-dry-run-prototype.md
 
 11. AI workflow transition
 チャット履歴への依存を減らすため、リポジトリ側に AI開発文脈管理ファイルを作成。

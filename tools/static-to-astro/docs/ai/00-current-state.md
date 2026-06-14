@@ -30,7 +30,7 @@ G-6-f7-schedule-write-hardening-and-updated-at-planning
 前フェーズ:
 G-6-f6-schedule-safe-fields-non-dry-run-execution
 直近commit:
-(pending) — Document schedule write hardening and updated_at planning (G-6-f7)
+f63aa46 — Document schedule write hardening and updated_at planning (G-6-f7)
 
 G-6-f6 成功後の staging row 状態:
 - venue: [CMS Kit staging] G-6-f6 venue PoC

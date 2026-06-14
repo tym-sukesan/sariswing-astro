@@ -21,21 +21,24 @@ Staging Shell
 将来的な顧客オンボーディング・課金・デプロイ自動化
 
 2. Current phase
-現在フェーズ: G-6-f6-schedule-safe-fields-non-dry-run-final-preflight（完了）
+現在フェーズ: G-6-f6-schedule-safe-fields-non-dry-run-execution（完了）
 
-G-6-f6 safe-fields non-dry-run 実行直前の final-preflight doc。beforeSnapshot SQL / dev command / UI checklist / abort 条件。DB write なし、Run クリックなし。
+G-6-f6 safe-fields non-dry-run 実行成功。venue + description のみ UPDATE。ユーザー手動 Run 1 回。Cursor / Playwright クリックなし。
 
 直近完了フェーズ:
-G-6-f6-schedule-safe-fields-non-dry-run-final-preflight
+G-6-f6-schedule-safe-fields-non-dry-run-execution
 前フェーズ:
-G-6-f6-schedule-safe-fields-non-dry-run-poc-implementation
+G-6-f6-schedule-safe-fields-non-dry-run-final-preflight
 直近commit:
-6f479a8 — Document G-6-f6 schedule safe-fields non-dry-run final preflight
+(pending) — Record G-6-f6 schedule safe-fields non-dry-run execution result
 
-G-6-e5 成功状態（維持）:
-- description: 出演： [G-6-e5 non-dry-run PoC]
+G-6-f6 成功後の staging row 状態:
+- venue: [CMS Kit staging] G-6-f6 venue PoC
+- description: 出演： [G-6-e5 non-dry-run PoC] [G-6-f6 safe-fields staging test]
+- changedFields: venue, description のみ
 - rollbackNeeded: false
-- hidden PoC Run button: 再クリック禁止（EXPLICIT_RERUN なしでは UI 非武装）
+- G-6-f6 Run button: 再クリック禁止
+- hidden G-6-e5 PoC Run button: 再クリック禁止（EXPLICIT_RERUN なしでは UI 非武装）
 
 3. Important completed milestones
 
@@ -252,9 +255,23 @@ planning doc: schedule-cms-generalization-planning.md
 - beforeSnapshot SQL / dev command / UI checklist / afterVerification / rollback 再提示
 - DB write / Run click / non-dry-run execution: なし
 
+6.19 Schedule safe-fields non-dry-run execution
+完了済み。フェーズ: G-6-f6-schedule-safe-fields-non-dry-run-execution
+- doc: schedule-safe-fields-non-dry-run-execution-result.md
+- venue + description UPDATE 成功（changedFields: venue, description）
+- approval ID: G-6-f6-schedule-safe-fields-non-dry-run-poc
+- Run: ユーザー手動 1 回のみ
+- Cursor / Playwright クリック: なし
+- service_role: 未使用
+- schedule_months: 未タッチ
+- rollbackNeeded: false
+- updated_at: 変更なし（2026-06-05 17:39:44.140168+00）
+
 7. Current gates
 scheduleNonDryRunPocCompleted: true
 explicitRetrySucceeded: true
+scheduleSafeFieldsNonDryRunExecutionSucceeded: true
+firstScheduleSafeFieldsNonDryRunWriteSucceeded: true
 scheduleCmsGeneralizationPlanningComplete: true
 hiddenPocTriggerDisarmedByDefault: true
 explicitRerunGateRequired: true
@@ -266,8 +283,9 @@ scheduleSafeFieldsDryRunPrototypeComplete: true
 scheduleSafeFieldsNonDryRunPreflightComplete: true
 scheduleSafeFieldsNonDryRunPocImplementationComplete: true
 scheduleSafeFieldsNonDryRunFinalPreflightComplete: true
-readyForScheduleSafeFieldsNonDryRunExecution: true
-readyForScheduleGeneralUi: false
+scheduleSafeFieldsNonDryRunExecutionComplete: true
+readyForScheduleGeneralUi: true
+readyForScheduleSafeFieldsNonDryRunExecution: false
 readyForExplicitRetry: false
 rollbackNeeded: false
 
@@ -284,9 +302,9 @@ rollbackNeeded: false
 明示的 retry で dev server を起動する場合は inline env のみ使用する。
 
 10. Recommended next phase
-次フェーズ推奨: G-6-f6-schedule-safe-fields-non-dry-run-execution
+次フェーズ推奨: Schedule CMS 一般化 UI / 残 safe fields（title, open_time, start_time, price）の個別 non-dry-run slice 計画、または write UI hardening（updated_at 方針）
 
-詳細: tools/static-to-astro/docs/schedule-safe-fields-non-dry-run-final-preflight.md
+詳細: tools/static-to-astro/docs/schedule-safe-fields-non-dry-run-execution-result.md
 
 11. AI workflow transition
 チャット履歴への依存を減らすため、リポジトリ側に AI開発文脈管理ファイルを作成。

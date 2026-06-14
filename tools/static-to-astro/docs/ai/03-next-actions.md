@@ -3,25 +3,15 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 1. Immediate priority
 
-**Latest completed phase:** `G-6-f6-schedule-safe-fields-non-dry-run-final-preflight`
+**Latest completed phase:** `G-6-f6-schedule-safe-fields-non-dry-run-execution`
 
-Final preflight doc: beforeSnapshot SQL, dev server command, UI checklist, abort conditions, afterVerification / rollback SQL. No DB writes, no Run click.
+G-6-f6 safe-fields non-dry-run succeeded: `venue` + `description` UPDATE on staging row. User manual Run once. No Cursor/Playwright click.
 
-**Doc:** `tools/static-to-astro/docs/schedule-safe-fields-non-dry-run-final-preflight.md`
+**Doc:** `tools/static-to-astro/docs/schedule-safe-fields-non-dry-run-execution-result.md`
 
-**Recommended next phase:** `G-6-f6-schedule-safe-fields-non-dry-run-execution` (user manual Run click exactly once)
+**Recommended next:** Plan remaining safe fields (`title`, `open_time`, `start_time`, `price`) as separate approval slices, or Schedule general UI / `updated_at` hardening.
 
-## 2. Operator steps before execution
-
-1. Confirm Supabase project is `static-to-astro-cms-staging`
-2. Run beforeSnapshot SQL from final-preflight doc — abort if mismatch
-3. Start dev server with G-6-f6 arm env (see doc §3)
-4. Open `/__admin-staging-shell/musician-basic/#schedule`
-5. Sign in as staging admin
-6. Complete UI checklist — confirm Run enables after typing approval ID
-7. **Do not click Run until execution phase**
-
-## 3. Dry-run default (day-to-day dev)
+## 2. Dry-run default (restore after execution)
 
 ```bash
 ENABLE_ADMIN_STAGING_SHELL=true \
@@ -33,34 +23,30 @@ PUBLIC_SUPABASE_ANON_KEY="<staging anon key>" \
 npm run dev
 ```
 
-## 4. G-6-f6 execution arm env (execution phase only)
+Do **not** keep `PUBLIC_ADMIN_WRITE_DRY_RUN=false` or G-6-f6 arm gates for routine dev.
 
-```bash
-ENABLE_ADMIN_STAGING_SHELL=true \
-ENABLE_ADMIN_STAGING_AUTH=true \
-ENABLE_ADMIN_STAGING_DATA_READ=true \
-ENABLE_ADMIN_STAGING_WRITE=true \
-PUBLIC_ADMIN_AUTH_PROVIDER=supabase \
-PUBLIC_ADMIN_DATA_PROVIDER=supabase \
-PUBLIC_ADMIN_WRITE_PROVIDER=supabase \
-PUBLIC_ADMIN_WRITE_MODULE=schedule \
-PUBLIC_ADMIN_WRITE_APPROVAL_ID=G-6-f6-schedule-safe-fields-non-dry-run-poc \
-PUBLIC_ADMIN_WRITE_DRY_RUN=false \
-PUBLIC_ADMIN_SAFE_FIELDS_NON_DRY_RUN_POC_ARMED=true \
-PUBLIC_SUPABASE_URL="https://kmjqppxjdnwwrtaeqjta.supabase.co" \
-PUBLIC_SUPABASE_ANON_KEY="<staging anon key>" \
-npm run dev
+## 3. Staging row state (post G-6-f6)
+
+```txt
+id: aa440e29-5be8-402e-9190-0d81c48434c0
+venue: [CMS Kit staging] G-6-f6 venue PoC
+description: 出演： [G-6-e5 non-dry-run PoC] [G-6-f6 safe-fields staging test]
+rollbackNeeded: false
 ```
 
-Do **not** use `PUBLIC_ADMIN_NON_DRY_RUN_POC_EXPLICIT_RERUN` for G-6-f6.
+## 4. Do not re-click
+
+- G-6-f6 Run button
+- G-6-e5 hidden PoC Run (without EXPLICIT_RERUN)
 
 ## 5. Phased next steps
 
 | Phase | Status |
 | --- | --- |
-| G-6-f6 Implementation | **DONE** |
-| G-6-f6 Final preflight | **DONE** |
-| G-6-f6 Execution (manual 1 click) | **Next** |
+| G-6-f6 Execution | **DONE** |
+| title / time / price non-dry-run slices | Planned (separate approvals) |
+| Schedule general UI | Ready for planning |
+| updated_at hardening | Optional |
 
 ## 6. AI workflow maintenance rule
 

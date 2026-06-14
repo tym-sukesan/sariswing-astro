@@ -9,7 +9,7 @@ Type: **implementation only** — no DB write, no non-dry-run execution, no Run 
 Wire G-6-f5 preflight decisions into staging shell UI, config, write flow, and docs. Prepare for final preflight and manual execution in later phases.
 
 **This phase performed:** implementation scaffold, Astro section, client UI, trigger, guards, config JSON, SQL templates in docs.  
-**This phase did not:** UPDATE / INSERT / DELETE, non-dry-run execution, Run button click, rollback SQL execution, G-6-e5 hidden trigger re-arm, `service_role`, `/admin` changes.
+**Execution:** succeeded — see [schedule-safe-fields-non-dry-run-execution-result.md](./schedule-safe-fields-non-dry-run-execution-result.md).
 
 ## Prerequisites (completed)
 
@@ -267,5 +267,5 @@ PUBLIC_ADMIN_NON_DRY_RUN_POC_EXPLICIT_RERUN: not used
 
 ## Related docs
 
+- [schedule-safe-fields-non-dry-run-execution-result.md](./schedule-safe-fields-non-dry-run-execution-result.md)
 - [schedule-safe-fields-non-dry-run-final-preflight.md](./schedule-safe-fields-non-dry-run-final-preflight.md)
-- [schedule-safe-fields-non-dry-run-preflight.md](./schedule-safe-fields-non-dry-run-preflight.md)

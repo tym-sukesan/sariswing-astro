@@ -50,16 +50,27 @@ For every meaningful task:
 
 ## Schedule non-dry-run PoC status
 
+### G-6-e5 (description-only — one-off hidden PoC)
+
 The first Schedule non-dry-run write PoC **succeeded** (phase `G-6-e5-schedule-non-dry-run-poc-explicit-retry-result`).
+
+- approval ID: `G-6-e5-schedule-non-dry-run-poc` (one-off — do not reuse)
+- Do not re-click the hidden PoC Run button without `PUBLIC_ADMIN_NON_DRY_RUN_POC_EXPLICIT_RERUN=true`
+
+### G-6-f6 (safe-fields venue + description)
+
+The G-6-f6 safe-fields non-dry-run PoC **succeeded** (phase `G-6-f6-schedule-safe-fields-non-dry-run-execution`).
 
 - table: `public.schedules`
 - id: `aa440e29-5be8-402e-9190-0d81c48434c0`
 - legacy_id: `schedule-2026-07-010`
-- current description: `出演： [G-6-e5 non-dry-run PoC]`
-- approval ID: `G-6-e5-schedule-non-dry-run-poc`
-- rollback needed: **no** (rollback SQL available in result doc if staging restore is desired later)
+- current venue: `[CMS Kit staging] G-6-f6 venue PoC`
+- current description: `出演： [G-6-e5 non-dry-run PoC] [G-6-f6 safe-fields staging test]`
+- approval ID: `G-6-f6-schedule-safe-fields-non-dry-run-poc`
+- changedFields: `venue`, `description` only
+- rollback needed: **no** (rollback SQL in `schedule-safe-fields-non-dry-run-execution-result.md`)
 
-Do not re-click the hidden PoC Run button without explicit new approval.
+Do not re-click the G-6-f6 Run button. Restart dev with `PUBLIC_ADMIN_WRITE_DRY_RUN=true` for routine work.
 
 ## Schedule CMS generalization
 

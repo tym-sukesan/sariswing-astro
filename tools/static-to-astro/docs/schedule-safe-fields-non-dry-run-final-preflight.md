@@ -360,11 +360,8 @@ readyForG6F6ScheduleSafeFieldsNonDryRunExecution: true (after operator confirms 
 ## 14. Recommended next phase
 
 ```txt
-G-6-f6-schedule-safe-fields-non-dry-run-execution
-- User manual Run click exactly once
-- Record result doc
-- Run afterVerification SQL
-- Do not execute rollback unless needed
+G-6-f6-schedule-safe-fields-non-dry-run-execution — DONE (see schedule-safe-fields-non-dry-run-execution-result.md)
+Next: Schedule general UI planning, or per-field non-dry-run slices (title, open_time, start_time, price)
 ```
 
 ## 15. Final safety statement

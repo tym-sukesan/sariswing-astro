@@ -12,28 +12,29 @@ Paste this file at the start of a new ChatGPT thread. Cursor should update it af
 ## 2. Current phase
 
 ```txt
-Current phase: G-6-f10-schedule-optimistic-lock-enablement-implementation (completed)
-Latest completed phase: G-6-f10-schedule-optimistic-lock-enablement-implementation
-Recommended next phase: G-6-g-schedule-general-edit-ui-planning
+Current phase: G-6-g-schedule-general-edit-ui-planning (completed — planning only)
+Latest completed phase: G-6-g-schedule-general-edit-ui-planning
+Latest commit: af0dd8b — Enable schedule optimistic lock product path.
+Recommended next phase: G-6-g1-schedule-title-non-dry-run-slice-preflight
 ```
 
 ---
 
 ## 3. Current state summary
 
-G-6-f10 wired optimistic lock into general write path via `buildScheduleLockedWriteRequest` / `executeScheduleGeneralUpdateWrite`. Dry-run sections (G-6-f3/f4) perform SELECT-only stale checks on preview. PoC triggers unchanged. No DB write in G-6-f10.
+G-6-g planning defines general edit UI in `#schedule` staging shell, dry-run-first UX, G-6-g* approval IDs, env gates, and G-6-g1 title as first non-dry-run slice. Product write path (`executeScheduleGeneralUpdateWrite`) ready from G-6-f10. PoCs frozen. No DB write in G-6-g.
 
 ---
 
-## 4. Optimistic lock state
+## 4. General edit UI planning highlights
 
 ```txt
-adapter expectedBeforeUpdatedAt: implemented + normalized compare
-product path wiring: buildScheduleLockedWriteRequest (G-6-f10)
-dry-run stale check: SELECT only on preview
-G-6-e5 / G-6-f6 PoC: frozen (no lock)
-nonDryRunSaveUiExposed: false
-optimisticLockWiredInProductPath: true
+New section (impl): AdminStagingScheduleGeneralEditSection below ScheduleAdminUi
+PoC boundary: G-6-e5 / G-6-f6 unchanged; separate approval IDs
+G-6-g1 approval: G-6-g1-schedule-title-non-dry-run-slice
+G-6-g1 target row: aa440e29-5be8-402e-9190-0d81c48434c0 (recommended first)
+Dry-run preview: required before Save
+Stale: blocks non-dry-run; reload required
 ```
 
 ---
@@ -41,11 +42,13 @@ optimisticLockWiredInProductPath: true
 ## 5. Gate state
 
 ```txt
-scheduleOptimisticLockImplementationComplete: true
-scheduleOptimisticLockPlanningComplete: true
+scheduleGeneralEditUiPlanningComplete: true
+readyForScheduleGeneralEditUiImplementation: true
+readyForG6G1ScheduleTitleNonDryRunSlicePreflight: true
+optimisticLockWiredInProductPath: true
+nonDryRunSaveUiExposed: false
 rollbackNeeded: false
 dbWriteInLatestPhase: false
-runButtonClickedInLatestPhase: false
 ```
 
 ---
@@ -53,9 +56,9 @@ runButtonClickedInLatestPhase: false
 ## 6. Files to read first
 
 ```txt
+tools/static-to-astro/docs/schedule-general-edit-ui-planning.md
 tools/static-to-astro/docs/schedule-optimistic-lock-enablement-implementation.md
-tools/static-to-astro/docs/schedule-optimistic-lock-enablement-planning.md
 src/lib/admin/staging-write/schedule-general-update-trigger.ts
-src/lib/admin/staging-write/schedule-write-utils.ts
+tools/static-to-astro/templates/admin-cms/prototypes/musician-basic-admin-prototype.astro
 tools/static-to-astro/docs/ai/00-current-state.md
 ```

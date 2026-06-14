@@ -98,9 +98,17 @@ Planning: `tools/static-to-astro/docs/schedule-optimistic-lock-enablement-planni
 Implementation **complete** (G-6-f10): `tools/static-to-astro/docs/schedule-optimistic-lock-enablement-implementation.md`
 
 - `buildScheduleLockedWriteRequest` / `executeScheduleGeneralUpdateWrite` pass `expectedBeforeUpdatedAt`
-- Dry-run UI: SELECT-only stale check on preview (G-6-f3 / G-6-f4 sections)
+- Dry-run UI: SELECT-only stale check on preview
 - PoC triggers (G-6-e5, G-6-f6): frozen — do not modify or re-click
-- Non-dry-run Save UI: not exposed until G-6-g approval IDs
+- Non-dry-run Save UI: not exposed until G-6-g1 slice
+
+## Schedule general edit UI (G-6-g)
+
+Planning complete: `tools/static-to-astro/docs/schedule-general-edit-ui-planning.md`
+
+- New section: `AdminStagingScheduleGeneralEditSection` in `#schedule` (implementation phase)
+- G-6-g1 first slice: `title` with approval ID `G-6-g1-schedule-title-non-dry-run-slice`
+- Dry-run preview required before Save; stale blocks non-dry-run
 
 ## Schedule CMS generalization
 

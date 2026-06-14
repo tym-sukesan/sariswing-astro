@@ -3,13 +3,13 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 1. Immediate priority
 
-**Latest completed phase:** `G-6-f10-schedule-optimistic-lock-enablement-implementation`
+**Latest completed phase:** `G-6-g-schedule-general-edit-ui-planning`
 
-Optimistic lock wired in product path (`buildScheduleLockedWriteRequest`). Dry-run stale check on G-6-f3/f4 sections. No DB write / Run click.
+General Schedule edit UI design complete. Dry-run-first UX, approval IDs, env gates, optimistic lock UX documented. No implementation / DB write in this phase.
 
-**Doc:** `tools/static-to-astro/docs/schedule-optimistic-lock-enablement-implementation.md`
+**Doc:** `tools/static-to-astro/docs/schedule-general-edit-ui-planning.md`
 
-**Recommended next phase:** `G-6-g-schedule-general-edit-ui-planning`
+**Recommended next phase:** `G-6-g1-schedule-title-non-dry-run-slice-preflight`
 
 ## 2. Staging DB state
 
@@ -17,6 +17,7 @@ Optimistic lock wired in product path (`buildScheduleLockedWriteRequest`). Dry-r
 Trigger: schedules_set_updated_at on public.schedules (active)
 optimisticLockWiredInProductPath: true
 nonDryRunSaveUiExposed: false
+readyForScheduleGeneralEditUiImplementation: true
 rollbackNeeded: false
 ```
 
@@ -24,7 +25,7 @@ rollbackNeeded: false
 
 ```bash
 PUBLIC_ADMIN_WRITE_DRY_RUN=true
-PUBLIC_ADMIN_SCHEDULE_OPTIMISTIC_LOCK=true   # default; set false to disable lock token
+PUBLIC_ADMIN_SCHEDULE_OPTIMISTIC_LOCK=true
 ```
 
 Do not re-click G-6-e5 / G-6-f6 PoC Run buttons.
@@ -33,9 +34,10 @@ Do not re-click G-6-e5 / G-6-f6 PoC Run buttons.
 
 | Phase | Status |
 | --- | --- |
-| G-6-f10 optimistic lock implementation | **DONE** |
-| G-6-g general edit UI planning | **Next** |
-| G-6-g1 title non-dry-run slice | After g planning |
+| G-6-g general edit UI planning | **DONE** |
+| G-6-g1 title slice preflight | **Next** |
+| G-6-g1 title slice implementation | Planned |
+| G-6-g1 title slice execution | After preflight + user approval |
 
 ## 5. AI workflow maintenance rule
 

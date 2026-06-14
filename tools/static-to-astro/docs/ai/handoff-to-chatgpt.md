@@ -12,33 +12,32 @@ Paste this file at the start of a new ChatGPT thread. Cursor should update it af
 ## 2. Current phase
 
 ```txt
-Current phase: G-6-g1-schedule-title-non-dry-run-slice-execution (completed — user manual Save once)
-Latest completed phase: G-6-g1-schedule-title-non-dry-run-slice-execution
-Latest commit: cf24c09 — Fix schedule general edit client data read gates.
-Recommended next phase: G-6-g2-schedule-general-edit-next-slice-planning
+Current phase: G-6-g2-schedule-general-edit-next-slice-planning (completed — planning only)
+Latest completed phase: G-6-g2-schedule-general-edit-next-slice-planning
+Latest commit: cce3f97 — Record G-6-g1 schedule title non-dry-run execution success.
+Recommended next phase: G-6-g2-schedule-time-fields-non-dry-run-slice-preflight
 ```
 
 ---
 
 ## 3. Current state summary
 
-G-6-g1 product-path title non-dry-run **succeeded** on staging row `aa440e29-5be8-402e-9190-0d81c48434c0`. Title `<>` → `[CMS Kit staging] G-6-g1 title PoC`. Optimistic lock matched baseline `2026-06-14T06:49:42.240919+00:00`. User manual Save once; Cursor did not click Save/Run/SQL. Client data read fix (cf24c09) required before execution. Rollback not needed.
+G-6-g1 title slice succeeded on staging (`cce3f97`). G-6-g2 planning selects **open_time + start_time** as the next product-path slice on the same target row. Approval ID `G-6-g2-schedule-time-fields-non-dry-run-slice` and env `PUBLIC_ADMIN_SCHEDULE_G6G2_TIME_FIELDS_NON_DRY_RUN_ARMED` designed but not implemented. G-6-g1 / G-6-e5 / G-6-f6 frozen.
 
 ---
 
-## 4. G-6-g1 execution highlights
+## 4. G-6-g2 planning highlights
 
 ```txt
-Approval ID: G-6-g1-schedule-title-non-dry-run-slice
-changedFields: ["title"]
-rowsAffected: 1
-beforeSnapshot.updated_at: 2026-06-14T06:49:42.240919+00:00
-afterSnapshot.updated_at: 2026-06-14T15:03:08.762993+00:00
-venue / description / date / published / show_on_home / sort_order: unchanged
-created_at: unchanged
-serviceRoleUsed: false
-schedule_months: untouched
-rollbackNeeded: false
+Recommended slice: G-6-g2-schedule-time-fields-non-dry-run-slice
+Fields: open_time, start_time
+Target row: aa440e29-5be8-402e-9190-0d81c48434c0 (reuse)
+Lock baseline updated_at: 2026-06-14T15:03:08.762993+00
+Approval ID: G-6-g2-schedule-time-fields-non-dry-run-slice
+Env arm: PUBLIC_ADMIN_SCHEDULE_G6G2_TIME_FIELDS_NON_DRY_RUN_ARMED=true
+Guard: assertG6G2TimeFieldsPayloadOnly
+UI: extend AdminStagingScheduleGeneralEditSection (time field group)
+Deferred: price (G-6-g3), venue/description (G-6-g4)
 ```
 
 ---
@@ -47,13 +46,13 @@ rollbackNeeded: false
 
 ```txt
 scheduleTitleNonDryRunSliceExecutionSucceeded: true
+scheduleGeneralEditNextSlicePlanningComplete: true
+readyForG6G2ScheduleTimeFieldsNonDryRunSlicePreflight: true
 nonDryRunSaveExecuted: true
 rollbackNeeded: false
 optimisticLockWiredInProductPath: true
-nonDryRunSaveUiExposed: true
 readyForG6G1ScheduleTitleNonDryRunSliceExecution: false
-dbWriteInLatestPhase: true (user manual Save once only)
-cursorClickedSave: false
+dbWriteInLatestPhase: false
 ```
 
 ---
@@ -61,8 +60,10 @@ cursorClickedSave: false
 ## 6. Files to read first
 
 ```txt
+tools/static-to-astro/docs/schedule-general-edit-next-slice-planning.md
 tools/static-to-astro/docs/schedule-title-non-dry-run-slice-execution-result.md
 tools/static-to-astro/docs/schedule-general-edit-ui-planning.md
+src/lib/admin/staging-write/schedule-general-edit-config.ts
 src/lib/admin/staging-write/staging-schedule-general-edit-ui.ts
 tools/static-to-astro/docs/ai/00-current-state.md
 ```

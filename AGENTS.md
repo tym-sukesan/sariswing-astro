@@ -153,6 +153,18 @@ Execution **succeeded**: `tools/static-to-astro/docs/schedule-title-non-dry-run-
 - Client fix `cf24c09` required for `readSource: supabase` before execution
 - Restart routine dev with `PUBLIC_ADMIN_WRITE_DRY_RUN=true`; do not re-click G-6-g1 Save
 
+## Schedule general edit next slice planning (G-6-g2)
+
+Planning complete: `tools/static-to-astro/docs/schedule-general-edit-next-slice-planning.md`
+
+- Recommended next slice: `open_time` + `start_time` (`G-6-g2-schedule-time-fields-non-dry-run-slice`)
+- Approval ID: `G-6-g2-schedule-time-fields-non-dry-run-slice`; env: `PUBLIC_ADMIN_SCHEDULE_G6G2_TIME_FIELDS_NON_DRY_RUN_ARMED`
+- Target row reuse: `aa440e29-5be8-402e-9190-0d81c48434c0`; lock baseline `updated_at` from G-6-g1
+- Guard: `assertG6G2TimeFieldsPayloadOnly` (implementation phase)
+- price → G-6-g3; venue/description general UI → G-6-g4
+- Next: `G-6-g2-schedule-time-fields-non-dry-run-slice-preflight`
+- DB write / Save / Run: none in planning phase
+
 ## Schedule CMS generalization
 
 Planning phase `G-6-f-schedule-cms-generalization-planning` is complete.

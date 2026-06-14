@@ -30,7 +30,7 @@ G-6-f5-schedule-safe-fields-non-dry-run-preflight
 前フェーズ:
 G-6-f4-schedule-safe-fields-dry-run-prototype
 直近commit:
-（G-6-f5 commit 後に更新）
+3cdcc2a — Document schedule safe-fields non-dry-run preflight (G-6-f5)
 
 G-6-e5 成功状態（維持）:
 - description: 出演： [G-6-e5 non-dry-run PoC]

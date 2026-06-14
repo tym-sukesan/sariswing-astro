@@ -97,6 +97,24 @@ export function assertG6G1TitlePayloadOnly(
   }
 }
 
+export function assertG6G2TimeFieldsPayloadOnly(
+  payload: ScheduleUpdateWritePayload,
+): void {
+  const allowedKeys = new Set(["open_time", "start_time"]);
+  const keys = Object.keys(payload);
+  if (keys.length === 0) {
+    throw new Error("G-6-g2 payload must include open_time and start_time.");
+  }
+  for (const key of keys) {
+    if (!allowedKeys.has(key)) {
+      throw new Error(`G-6-g2 payload field not allowed: ${key}`);
+    }
+  }
+  if (!keys.includes("open_time") || !keys.includes("start_time")) {
+    throw new Error("G-6-g2 payload must include both open_time and start_time.");
+  }
+}
+
 export function assertScheduleWriteTargetId(targetId: string): void {
   if (typeof targetId !== "string" || targetId.trim() === "") {
     throw new Error("targetId must be a non-empty string.");

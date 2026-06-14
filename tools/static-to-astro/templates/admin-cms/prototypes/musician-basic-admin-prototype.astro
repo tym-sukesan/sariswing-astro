@@ -456,7 +456,10 @@ const moduleSummary = [
       />
       {
         stagingShellMode ? (
-          <AdminStagingScheduleGeneralEditSection phase="G-6-g1-schedule-title-non-dry-run-slice-implementation" />
+          <AdminStagingScheduleGeneralEditSection
+            phase="G-6-g1-schedule-title-non-dry-run-slice-implementation"
+            g6g2Phase="G-6-g2-schedule-time-fields-non-dry-run-slice-implementation"
+          />
           <AdminStagingScheduleSafeFieldsDryRunSection phase="G-6-f4-schedule-safe-fields-dry-run-prototype" />
           <AdminStagingScheduleSafeFieldsNonDryRunPocSection phase="G-6-f6-schedule-safe-fields-non-dry-run-poc-implementation" />
         ) : null

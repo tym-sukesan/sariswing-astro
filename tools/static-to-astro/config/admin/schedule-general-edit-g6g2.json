@@ -1,0 +1,7 @@
+{
+  "phase": "G-6-g2-schedule-time-fields-non-dry-run-slice-implementation",
+  "approvalId": "G-6-g2-schedule-time-fields-non-dry-run-slice",
+  "dryRunPreviewApprovalId": "G-6-g2-schedule-time-fields-dry-run-preview",
+  "targetFields": ["open_time", "start_time"],
+  "productPath": true
+}

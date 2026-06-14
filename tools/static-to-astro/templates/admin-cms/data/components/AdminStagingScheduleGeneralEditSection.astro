@@ -1,9 +1,10 @@
 ---
 /**
- * G-6-g1 — Schedule general edit section (title slice; staging shell only).
+ * G-6-g1 / G-6-g2 — Schedule general edit section (staging shell only).
  * Product path — separate from G-6-e5 / G-6-f6 PoC sections.
  */
 import implConfig from "../../../../config/admin/schedule-general-edit-g6g1.json";
+import g6g2Config from "../../../../config/admin/schedule-general-edit-g6g2.json";
 import AdminCard from "../../components/AdminCard.astro";
 import AdminFormField from "../../components/AdminFormField.astro";
 import {
@@ -13,19 +14,30 @@ import {
   G6G1_SCHEDULE_TITLE_SLICE_LEGACY_ID,
   G6G1_SCHEDULE_TITLE_SLICE_TARGET_ID,
   getScheduleGeneralEditConfig,
+  getScheduleG6G2TimeFieldsEditConfig,
+  G6G2_SCHEDULE_TIME_FIELDS_SLICE_DEFAULT_OPEN_TIME,
+  G6G2_SCHEDULE_TIME_FIELDS_SLICE_DEFAULT_START_TIME,
+  G6G2_SCHEDULE_TIME_FIELDS_SLICE_EXPECTED_TITLE,
   SCHEDULE_G6G1_TITLE_NON_DRY_RUN_ARMED_ENV,
+  SCHEDULE_G6G2_TIME_FIELDS_NON_DRY_RUN_ARMED_ENV,
   SCHEDULE_SLICE_TARGET_ID_ENV,
 } from "../../../../../../src/lib/admin/staging-write/schedule-general-edit-config";
-import { G6G1_SCHEDULE_TITLE_NON_DRY_RUN_SLICE_APPROVAL_ID } from "../../../../../../src/lib/admin/staging-write/schedule-write-types";
+import {
+  G6G1_SCHEDULE_TITLE_NON_DRY_RUN_SLICE_APPROVAL_ID,
+  G6G2_SCHEDULE_TIME_FIELDS_NON_DRY_RUN_SLICE_APPROVAL_ID,
+} from "../../../../../../src/lib/admin/staging-write/schedule-write-types";
 
 interface Props {
   phase?: string;
+  g6g2Phase?: string;
 }
 
-const { phase = implConfig.phase } = Astro.props;
+const { phase = implConfig.phase, g6g2Phase = g6g2Config.phase } = Astro.props;
 const editConfig = getScheduleGeneralEditConfig();
+const g6g2EditConfig = getScheduleG6G2TimeFieldsEditConfig();
 const uiDisabled = !editConfig.previewEnabled;
 const saveVisible = editConfig.sectionVisible;
+const g6g2TitleReadOnly = g6g2EditConfig.armed;
 ---
 
 {
@@ -38,10 +50,10 @@ const saveVisible = editConfig.sectionVisible;
       data-armed={editConfig.armed ? "true" : "false"}
       data-product-path="true"
       role="region"
-      aria-label="G-6-g1 schedule general edit title slice"
+      aria-label="Schedule general edit — G-6-g1 title and G-6-g2 time fields"
     >
       <h3 class="admin-staging-schedule-general-edit__title">
-        Schedule general edit — title slice (G-6-g1)
+        Schedule general edit — title (G-6-g1) + time fields (G-6-g2)
       </h3>
 
       <p class="admin-staging-schedule-general-edit__banner" role="note">
@@ -128,6 +140,8 @@ const saveVisible = editConfig.sectionVisible;
           <div><dt>legacy_id</dt><dd id="schedule-general-edit-legacy-id">—</dd></div>
           <div><dt>date</dt><dd id="schedule-general-edit-row-date">—</dd></div>
           <div><dt>title</dt><dd id="schedule-general-edit-current-title">—</dd></div>
+          <div><dt>open_time</dt><dd id="schedule-general-edit-current-open-time">—</dd></div>
+          <div><dt>start_time</dt><dd id="schedule-general-edit-current-start-time">—</dd></div>
           <div><dt>venue</dt><dd id="schedule-general-edit-current-venue">—</dd></div>
           <div><dt>description</dt><dd id="schedule-general-edit-current-description">—</dd></div>
         </dl>
@@ -139,22 +153,29 @@ const saveVisible = editConfig.sectionVisible;
         </p>
       </AdminCard>
 
-      <AdminCard title="Edit title" description="G-6-g1 slice — title field only.">
+      <AdminCard title="Edit title (G-6-g1)" description="Title slice — disabled when G-6-g2 armed.">
         <AdminFormField label="Title">
           <input
             id="schedule-general-edit-title"
             type="text"
-            disabled={uiDisabled}
+            disabled={uiDisabled || g6g2TitleReadOnly}
             value={G6G1_SCHEDULE_TITLE_SLICE_DEFAULT_TITLE}
           />
         </AdminFormField>
+        {
+          g6g2TitleReadOnly ? (
+            <p class="schedule-general-edit-current__hint">
+              G-6-g2 armed — title input read-only. Expected: {G6G2_SCHEDULE_TIME_FIELDS_SLICE_EXPECTED_TITLE}
+            </p>
+          ) : null
+        }
 
         <div class="schedule-general-edit-actions">
           <button
             id="schedule-general-edit-preview-btn"
             class="admin-button"
             type="button"
-            disabled={uiDisabled}
+            disabled={uiDisabled || g6g2TitleReadOnly}
             title="Dry-run title preview — no Supabase write"
           >
             Preview title dry-run
@@ -171,8 +192,55 @@ const saveVisible = editConfig.sectionVisible;
         </div>
       </AdminCard>
 
-      <AdminCard title="Dry-run preview result" description="Required before Save. changedFields must be [title].">
+      <AdminCard title="Dry-run preview result (G-6-g1)" description="Required before G-6-g1 Save. changedFields must be [title].">
         <div id="schedule-general-edit-dry-run-result" class="schedule-general-edit-dry-run-result" aria-live="polite" />
+      </AdminCard>
+
+      <AdminCard title="Edit time fields (G-6-g2)" description="open_time + start_time only.">
+        <dl class="admin-staging-schedule-general-edit__meta">
+          <div><dt>G-6-g2 phase</dt><dd>{g6g2Phase}</dd></div>
+          <div><dt>G-6-g2 approval ID</dt><dd>{G6G2_SCHEDULE_TIME_FIELDS_NON_DRY_RUN_SLICE_APPROVAL_ID}</dd></div>
+          <div><dt>G-6-g2 gate</dt><dd id="schedule-general-edit-g6g2-gate-status">{g6g2EditConfig.armed ? "armed" : "not armed"}</dd></div>
+          <div><dt>G-6-g2 arm env</dt><dd>{SCHEDULE_G6G2_TIME_FIELDS_NON_DRY_RUN_ARMED_ENV}=true</dd></div>
+        </dl>
+        {
+          g6g2EditConfig.armFailureReason && !g6g2EditConfig.armed ? (
+            <p class="admin-staging-schedule-general-edit__arm-note" role="note">
+              G-6-g2 Save not armed: {g6g2EditConfig.armFailureReason}
+            </p>
+          ) : null
+        }
+        <AdminFormField label="open_time">
+          <input
+            id="schedule-general-edit-g6g2-open-time"
+            type="text"
+            disabled={uiDisabled}
+            value={G6G2_SCHEDULE_TIME_FIELDS_SLICE_DEFAULT_OPEN_TIME}
+          />
+        </AdminFormField>
+        <AdminFormField label="start_time">
+          <input
+            id="schedule-general-edit-g6g2-start-time"
+            type="text"
+            disabled={uiDisabled}
+            value={G6G2_SCHEDULE_TIME_FIELDS_SLICE_DEFAULT_START_TIME}
+          />
+        </AdminFormField>
+        <div class="schedule-general-edit-actions">
+          <button
+            id="schedule-general-edit-g6g2-preview-btn"
+            class="admin-button"
+            type="button"
+            disabled={uiDisabled}
+            title="Dry-run time fields preview — no Supabase write"
+          >
+            Preview time fields dry-run
+          </button>
+        </div>
+      </AdminCard>
+
+      <AdminCard title="Dry-run preview result (G-6-g2)" description="Required before G-6-g2 Save. changedFields must be [open_time, start_time].">
+        <div id="schedule-general-edit-g6g2-dry-run-result" class="schedule-general-edit-dry-run-result" aria-live="polite" />
       </AdminCard>
 
       {
@@ -216,16 +284,63 @@ const saveVisible = editConfig.sectionVisible;
         ) : null
       }
 
-      <AdminCard title="Save result" description="Populated after manual Save — empty until execution phase.">
+      <AdminCard title="Save result (G-6-g1)" description="Populated after manual G-6-g1 Save — empty until execution phase.">
         <div id="schedule-general-edit-save-result" class="schedule-general-edit-save-result" aria-live="polite" />
+      </AdminCard>
+
+      {
+        saveVisible ? (
+          <AdminCard
+            title="Non-dry-run Save (G-6-g2)"
+            description="Armed only when G-6-g2 env gates match. G-6-g1 arm must be off."
+          >
+            <AdminFormField
+              label="Type G-6-g2 approval ID to confirm"
+              help={`Exact: ${G6G2_SCHEDULE_TIME_FIELDS_NON_DRY_RUN_SLICE_APPROVAL_ID}`}
+            >
+              <input
+                id="schedule-general-edit-g6g2-confirm-input"
+                type="text"
+                disabled={!editConfig.previewEnabled}
+                autocomplete="off"
+                spellcheck="false"
+              />
+            </AdminFormField>
+            <p id="schedule-general-edit-g6g2-save-disabled-reason" class="schedule-general-edit-save-reason">
+              G-6-g2 Save disabled until preview + gates satisfied
+            </p>
+            <button
+              id="schedule-general-edit-g6g2-save-btn"
+              class="admin-button admin-button--danger"
+              type="button"
+              disabled
+              title="G-6-g2 non-dry-run Save — requires armed env + preview + confirm"
+            >
+              Save time fields (non-dry-run)
+            </button>
+            <p class="schedule-general-edit-save-env-hint">
+              Arm stack: ENABLE_ADMIN_STAGING_WRITE, PUBLIC_ADMIN_WRITE_PROVIDER=supabase,
+              PUBLIC_ADMIN_WRITE_MODULE=schedule,
+              PUBLIC_ADMIN_WRITE_APPROVAL_ID={G6G2_SCHEDULE_TIME_FIELDS_NON_DRY_RUN_SLICE_APPROVAL_ID},
+              PUBLIC_ADMIN_WRITE_DRY_RUN=false, {SCHEDULE_G6G2_TIME_FIELDS_NON_DRY_RUN_ARMED_ENV}=true
+              (optional: {SCHEDULE_SLICE_TARGET_ID_ENV}={G6G1_SCHEDULE_TITLE_SLICE_TARGET_ID})
+            </p>
+          </AdminCard>
+        ) : null
+      }
+
+      <AdminCard title="Save result (G-6-g2)" description="Populated after manual G-6-g2 Save — empty until execution phase.">
+        <div id="schedule-general-edit-g6g2-save-result" class="schedule-general-edit-save-result" aria-live="polite" />
       </AdminCard>
 
       <AdminCard title="Safety flags">
         <dl class="admin-staging-schedule-general-edit__safety">
           <div><dt>productPath</dt><dd>true</dd></div>
-          <div><dt>titleOnlyPayload</dt><dd>true</dd></div>
+          <div><dt>G-6-g1 titleOnlyPayload</dt><dd>true</dd></div>
+          <div><dt>G-6-g2 timeFieldsOnlyPayload</dt><dd>true</dd></div>
           <div><dt>optimisticLock</dt><dd>expectedBeforeUpdatedAt wired</dd></div>
-          <div><dt>dryRunFirst</dt><dd>required</dd></div>
+          <div><dt>dryRunFirst</dt><dd>required (per slice)</dd></div>
+          <div><dt>singleSliceArm</dt><dd>G-6-g1 and G-6-g2 cannot both be armed</dd></div>
           <div><dt>serviceRoleUsed</dt><dd>false</dd></div>
           <div><dt>schedule_months</dt><dd>read_only_derived (not touched)</dd></div>
           <div><dt>G-6-e5 / G-6-f6 PoC reused</dt><dd>false</dd></div>

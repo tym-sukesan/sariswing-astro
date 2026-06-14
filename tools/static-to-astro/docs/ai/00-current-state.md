@@ -30,7 +30,7 @@ G-6-f6-schedule-safe-fields-non-dry-run-final-preflight
 前フェーズ:
 G-6-f6-schedule-safe-fields-non-dry-run-poc-implementation
 直近commit:
-(pending) — Document G-6-f6 schedule safe-fields non-dry-run final preflight
+6f479a8 — Document G-6-f6 schedule safe-fields non-dry-run final preflight
 
 G-6-e5 成功状態（維持）:
 - description: 出演： [G-6-e5 non-dry-run PoC]

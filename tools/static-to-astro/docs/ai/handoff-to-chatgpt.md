@@ -16,7 +16,7 @@ Paste this file at the start of a new ChatGPT thread. Cursor should update it af
 ```txt
 Current phase: G-6-f6-schedule-safe-fields-non-dry-run-final-preflight (completed)
 Latest completed phase: G-6-f6-schedule-safe-fields-non-dry-run-final-preflight
-Latest commit: (pending) — Document G-6-f6 schedule safe-fields non-dry-run final preflight
+Latest commit: 6f479a8 — Document G-6-f6 schedule safe-fields non-dry-run final preflight
 Recommended next phase: G-6-f6-schedule-safe-fields-non-dry-run-execution
 ```
 

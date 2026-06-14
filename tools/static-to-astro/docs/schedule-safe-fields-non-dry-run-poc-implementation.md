@@ -267,6 +267,5 @@ PUBLIC_ADMIN_NON_DRY_RUN_POC_EXPLICIT_RERUN: not used
 
 ## Related docs
 
-- `tools/static-to-astro/docs/schedule-safe-fields-non-dry-run-preflight.md`
-- `tools/static-to-astro/docs/schedule-poc-isolation-dry-run-default.md`
-- `tools/static-to-astro/docs/schedule-non-dry-run-poc-explicit-retry-result.md`
+- [schedule-safe-fields-non-dry-run-final-preflight.md](./schedule-safe-fields-non-dry-run-final-preflight.md)
+- [schedule-safe-fields-non-dry-run-preflight.md](./schedule-safe-fields-non-dry-run-preflight.md)

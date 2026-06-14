@@ -14,25 +14,25 @@ Paste this file at the start of a new ChatGPT thread. Cursor should update it af
 ## 2. Current phase
 
 ```txt
-Current phase: G-6-f6-schedule-safe-fields-non-dry-run-poc-implementation (completed)
-Latest completed phase: G-6-f6-schedule-safe-fields-non-dry-run-poc-implementation
-Latest commit: e0dfb76 — Implement G-6-f6 schedule safe-fields non-dry-run PoC scaffold
-Recommended next phase: G-6-f6-schedule-safe-fields-non-dry-run-final-preflight
+Current phase: G-6-f6-schedule-safe-fields-non-dry-run-final-preflight (completed)
+Latest completed phase: G-6-f6-schedule-safe-fields-non-dry-run-final-preflight
+Latest commit: (pending) — Document G-6-f6 schedule safe-fields non-dry-run final preflight
+Recommended next phase: G-6-f6-schedule-safe-fields-non-dry-run-execution
 ```
 
 Prior milestone commits:
 
 ```txt
+fd57937 — Update AI handoff commit hash after G-6-f6 implementation record
+e0dfb76 — Implement G-6-f6 schedule safe-fields non-dry-run PoC scaffold
 3cdcc2a — Document schedule safe-fields non-dry-run preflight (G-6-f5)
-638b60a — Isolate G-6-e5 schedule PoC trigger and document dry-run default
-e9e3861 — Record schedule PoC explicit retry success
 ```
 
 ---
 
 ## 3. Current state summary
 
-G-6-f6 implementation scaffold added: separate G-6-f6 section (not G-6-e5 Danger Zone), approval ID `G-6-f6-schedule-safe-fields-non-dry-run-poc`, arm gate `PUBLIC_ADMIN_SAFE_FIELDS_NON_DRY_RUN_POC_ARMED`, fixed venue+description payload, beforeSnapshot/afterVerification SQL in docs. No writes, no Run click in implementation phase.
+G-6-f6 final preflight doc prepared: beforeSnapshot SQL, dev command with G-6-f6 arm gates, UI checklist, abort conditions, afterVerification / rollback SQL. Operator must run beforeSnapshot manually before execution. No writes, no Run click in final-preflight phase.
 
 ---
 
@@ -51,17 +51,17 @@ G-6-f6 implementation scaffold added: separate G-6-f6 section (not G-6-e5 Danger
 
 ---
 
-## 5. Hidden PoC trigger state (G-6-f1)
+## 5. G-6-f6 execution parameters
 
 ```txt
-g6e5PocCompleted: true
-hiddenPocTriggerDisarmedByDefault: true
-explicitRerunEnv: PUBLIC_ADMIN_NON_DRY_RUN_POC_EXPLICIT_RERUN=true (G-6-e5 only — not for G-6-f6)
-g6e5ApprovalId: G-6-e5-schedule-non-dry-run-poc (one-off — do not reuse)
-g6f6ApprovalId: G-6-f6-schedule-safe-fields-non-dry-run-poc
-g6f6ArmEnv: PUBLIC_ADMIN_SAFE_FIELDS_NON_DRY_RUN_POC_ARMED=true
-dryRunDefault: PUBLIC_ADMIN_WRITE_DRY_RUN=true (unset defaults to dry-run in PoC config)
-rollbackNeeded: false
+approvalId: G-6-f6-schedule-safe-fields-non-dry-run-poc
+armEnv: PUBLIC_ADMIN_SAFE_FIELDS_NON_DRY_RUN_POC_ARMED=true
+targetId: aa440e29-5be8-402e-9190-0d81c48434c0
+targetFields: venue, description
+payloadVenue: [CMS Kit staging] G-6-f6 venue PoC
+payloadDescription: 出演： [G-6-e5 non-dry-run PoC] [G-6-f6 safe-fields staging test]
+beforeDescription: 出演： [G-6-e5 non-dry-run PoC]
+route: /__admin-staging-shell/musician-basic/
 ```
 
 ---
@@ -69,28 +69,15 @@ rollbackNeeded: false
 ## 6. Current gate state
 
 ```txt
-scheduleNonDryRunPocCompleted: true
-explicitRetrySucceeded: true
-scheduleCmsGeneralizationPlanningComplete: true
-hiddenPocTriggerDisarmedByDefault: true
-explicitRerunGateRequired: true
-dryRunDefaultDocumented: true
-g6e5ApprovalIdReuseProhibited: true
-scheduleReadUiBindingComplete: true
-scheduleDescriptionDryRunPrototypeComplete: true
-scheduleSafeFieldsDryRunPrototypeComplete: true
-scheduleSafeFieldsNonDryRunPreflightComplete: true
-scheduleSafeFieldsNonDryRunPocImplementationComplete: true
-readyForScheduleSafeFieldsNonDryRunFinalPreflight: true
-readyForScheduleGeneralUi: false
+scheduleSafeFieldsNonDryRunFinalPreflightComplete: true
+readyForScheduleSafeFieldsNonDryRunExecution: true
 rollbackNeeded: false
+g6e5TriggerReArmed: false
 
 triggerClickedInLatestPhase: false
 dbWritesPerformedInLatestPhase: false
 nonDryRunUsedInLatestPhase: false
-g6e5ApprovalIdUsedInLatestPhase: false
-g6f6ApprovalIdUsedInLatestPhase: false (implementation only — not executed)
-supabaseSelectInLatestPhase: false
+supabaseSelectInLatestPhase: false (SQL presented to operator; Cursor did not run)
 ```
 
 ---
@@ -98,33 +85,28 @@ supabaseSelectInLatestPhase: false
 ## 7. Recently completed work
 
 ```txt
+- G-6-f6-schedule-safe-fields-non-dry-run-final-preflight
 - G-6-f6-schedule-safe-fields-non-dry-run-poc-implementation
 - G-6-f5-schedule-safe-fields-non-dry-run-preflight
-- G-6-f4-schedule-safe-fields-dry-run-prototype
-- G-6-f3-schedule-description-edit-dry-run-prototype
-- G-6-f2-schedule-read-ui-binding-audit
-- G-6-f1-schedule-poc-isolation-dry-run-default
 ```
 
 ---
 
-## 8. What must not be done next
+## 8. What must not be done until execution phase
 
 ```txt
-- Do not click G-6-f6 Run until final preflight phase
-- Do not re-click hidden G-6-e5 PoC Run without EXPLICIT_RERUN + documented rerun phase
-- Do not reuse G-6-e5 approval ID
-- Do not set DRY_RUN=false for routine dev
+- Do not click G-6-f6 Run until execution phase (after beforeSnapshot PASS + UI checklist)
+- Do not re-click hidden G-6-e5 PoC Run
+- Do not use PUBLIC_ADMIN_NON_DRY_RUN_POC_EXPLICIT_RERUN for G-6-f6
 - Do not use Playwright auto-click
 - Do not touch /admin
-- Do not use service_role
 ```
 
 ---
 
 ## 9. Next requested help from ChatGPT
 
-Suggest Cursor prompt for **G-6-f6-schedule-safe-fields-non-dry-run-final-preflight**: run beforeSnapshot SQL, confirm auth session, verify gates; still no Run click unless execution phase.
+Suggest Cursor prompt for **G-6-f6-schedule-safe-fields-non-dry-run-execution**: user manual Run click once, result doc, afterVerification SQL.
 
 ---
 
@@ -132,11 +114,8 @@ Suggest Cursor prompt for **G-6-f6-schedule-safe-fields-non-dry-run-final-prefli
 
 ```txt
 AGENTS.md
+tools/static-to-astro/docs/schedule-safe-fields-non-dry-run-final-preflight.md
 tools/static-to-astro/docs/schedule-safe-fields-non-dry-run-poc-implementation.md
-tools/static-to-astro/docs/schedule-safe-fields-non-dry-run-preflight.md
-tools/static-to-astro/docs/schedule-safe-fields-dry-run-prototype.md
-tools/static-to-astro/docs/schedule-poc-isolation-dry-run-default.md
 tools/static-to-astro/docs/ai/00-current-state.md
 tools/static-to-astro/docs/ai/03-next-actions.md
-tools/static-to-astro/docs/ai/handoff-to-chatgpt.md
 ```

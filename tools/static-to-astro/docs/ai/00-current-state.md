@@ -21,16 +21,16 @@ Staging Shell
 将来的な顧客オンボーディング・課金・デプロイ自動化
 
 2. Current phase
-現在フェーズ: G-6-f5-schedule-safe-fields-non-dry-run-preflight（完了）
+現在フェーズ: G-6-f6-schedule-safe-fields-non-dry-run-poc-implementation（完了）
 
-Safe fields non-dry-run 前の preflight doc。対象行・payload・rollback・beforeSnapshot SQL・approval ID・updated_at 方針を整理。DB write なし。
+Safe fields non-dry-run PoC の実装 scaffold。G-6-f5 preflight に基づく config / UI / write flow / docs。DB write なし、Run クリックなし。
 
 直近完了フェーズ:
-G-6-f5-schedule-safe-fields-non-dry-run-preflight
+G-6-f6-schedule-safe-fields-non-dry-run-poc-implementation
 前フェーズ:
-G-6-f4-schedule-safe-fields-dry-run-prototype
+G-6-f5-schedule-safe-fields-non-dry-run-preflight
 直近commit:
-3cdcc2a — Document schedule safe-fields non-dry-run preflight (G-6-f5)
+(pending) — Implement G-6-f6 schedule safe-fields non-dry-run PoC scaffold
 
 G-6-e5 成功状態（維持）:
 - description: 出演： [G-6-e5 non-dry-run PoC]
@@ -237,6 +237,15 @@ planning doc: schedule-cms-generalization-planning.md
 - approval ID 案: G-6-f6-schedule-safe-fields-non-dry-run-poc
 - DB write / execution: なし
 
+6.17 Schedule safe-fields non-dry-run PoC implementation
+完了済み。フェーズ: G-6-f6-schedule-safe-fields-non-dry-run-poc-implementation
+- `AdminStagingScheduleSafeFieldsNonDryRunPocSection` — G-6-e5 から分離した G-6-f6 専用 section
+- arm gate: `PUBLIC_ADMIN_SAFE_FIELDS_NON_DRY_RUN_POC_ARMED=true`（G-6-e5 EXPLICIT_RERUN は不使用）
+- approval ID: G-6-f6-schedule-safe-fields-non-dry-run-poc
+- payload: venue + description 固定（assertG6F6SafeFieldsPayloadOnly）
+- doc: schedule-safe-fields-non-dry-run-poc-implementation.md
+- DB write / Run click / non-dry-run execution: なし
+
 7. Current gates
 scheduleNonDryRunPocCompleted: true
 explicitRetrySucceeded: true
@@ -249,7 +258,8 @@ scheduleReadUiBindingComplete: true
 scheduleDescriptionDryRunPrototypeComplete: true
 scheduleSafeFieldsDryRunPrototypeComplete: true
 scheduleSafeFieldsNonDryRunPreflightComplete: true
-readyForScheduleSafeFieldsNonDryRunImplementation: true
+scheduleSafeFieldsNonDryRunPocImplementationComplete: true
+readyForScheduleSafeFieldsNonDryRunFinalPreflight: true
 readyForScheduleGeneralUi: false
 readyForExplicitRetry: false
 rollbackNeeded: false
@@ -267,9 +277,9 @@ rollbackNeeded: false
 明示的 retry で dev server を起動する場合は inline env のみ使用する。
 
 10. Recommended next phase
-次フェーズ推奨: G-6-f6-schedule-safe-fields-non-dry-run-poc-implementation
+次フェーズ推奨: G-6-f6-schedule-safe-fields-non-dry-run-final-preflight
 
-詳細: tools/static-to-astro/docs/schedule-safe-fields-non-dry-run-preflight.md
+詳細: tools/static-to-astro/docs/schedule-safe-fields-non-dry-run-poc-implementation.md
 
 11. AI workflow transition
 チャット履歴への依存を減らすため、リポジトリ側に AI開発文脈管理ファイルを作成。

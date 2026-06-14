@@ -14,15 +14,16 @@ Paste this file at the start of a new ChatGPT thread. Cursor should update it af
 ## 2. Current phase
 
 ```txt
-Current phase: G-6-f5-schedule-safe-fields-non-dry-run-preflight (completed)
-Latest completed phase: G-6-f5-schedule-safe-fields-non-dry-run-preflight
-Latest commit: 3cdcc2a — Document schedule safe-fields non-dry-run preflight (G-6-f5)
-Recommended next phase: G-6-f6-schedule-safe-fields-non-dry-run-poc-implementation
+Current phase: G-6-f6-schedule-safe-fields-non-dry-run-poc-implementation (completed)
+Latest completed phase: G-6-f6-schedule-safe-fields-non-dry-run-poc-implementation
+Latest commit: (pending) — Implement G-6-f6 schedule safe-fields non-dry-run PoC scaffold
+Recommended next phase: G-6-f6-schedule-safe-fields-non-dry-run-final-preflight
 ```
 
 Prior milestone commits:
 
 ```txt
+3cdcc2a — Document schedule safe-fields non-dry-run preflight (G-6-f5)
 638b60a — Isolate G-6-e5 schedule PoC trigger and document dry-run default
 e9e3861 — Record schedule PoC explicit retry success
 ```
@@ -31,7 +32,7 @@ e9e3861 — Record schedule PoC explicit retry success
 
 ## 3. Current state summary
 
-G-6-f5 preflight documented safe-fields non-dry-run plan: reuse G-6-e5 row, first payload venue+description, approval ID G-6-f6-schedule-safe-fields-non-dry-run-poc. No writes in preflight.
+G-6-f6 implementation scaffold added: separate G-6-f6 section (not G-6-e5 Danger Zone), approval ID `G-6-f6-schedule-safe-fields-non-dry-run-poc`, arm gate `PUBLIC_ADMIN_SAFE_FIELDS_NON_DRY_RUN_POC_ARMED`, fixed venue+description payload, beforeSnapshot/afterVerification SQL in docs. No writes, no Run click in implementation phase.
 
 ---
 
@@ -46,7 +47,7 @@ G-6-f5 preflight documented safe-fields non-dry-run plan: reuse G-6-e5 row, firs
 - `schedule_months` read-only.
 - No INSERT / DELETE / UPSERT without approval.
 - No Storage / Publish / FTP / GitHub dispatch.
-- Do not re-click hidden PoC Run without explicit rerun phase + EXPLICIT_RERUN gate.
+- Do not re-click hidden G-6-e5 PoC Run without explicit rerun phase + EXPLICIT_RERUN gate.
 
 ---
 
@@ -55,8 +56,10 @@ G-6-f5 preflight documented safe-fields non-dry-run plan: reuse G-6-e5 row, firs
 ```txt
 g6e5PocCompleted: true
 hiddenPocTriggerDisarmedByDefault: true
-explicitRerunEnv: PUBLIC_ADMIN_NON_DRY_RUN_POC_EXPLICIT_RERUN=true (required to arm)
-g6e5ApprovalId: G-6-e5-schedule-non-dry-run-poc (one-off — do not reuse in general UI)
+explicitRerunEnv: PUBLIC_ADMIN_NON_DRY_RUN_POC_EXPLICIT_RERUN=true (G-6-e5 only — not for G-6-f6)
+g6e5ApprovalId: G-6-e5-schedule-non-dry-run-poc (one-off — do not reuse)
+g6f6ApprovalId: G-6-f6-schedule-safe-fields-non-dry-run-poc
+g6f6ArmEnv: PUBLIC_ADMIN_SAFE_FIELDS_NON_DRY_RUN_POC_ARMED=true
 dryRunDefault: PUBLIC_ADMIN_WRITE_DRY_RUN=true (unset defaults to dry-run in PoC config)
 rollbackNeeded: false
 ```
@@ -77,7 +80,8 @@ scheduleReadUiBindingComplete: true
 scheduleDescriptionDryRunPrototypeComplete: true
 scheduleSafeFieldsDryRunPrototypeComplete: true
 scheduleSafeFieldsNonDryRunPreflightComplete: true
-readyForScheduleSafeFieldsNonDryRunImplementation: true
+scheduleSafeFieldsNonDryRunPocImplementationComplete: true
+readyForScheduleSafeFieldsNonDryRunFinalPreflight: true
 readyForScheduleGeneralUi: false
 rollbackNeeded: false
 
@@ -85,7 +89,8 @@ triggerClickedInLatestPhase: false
 dbWritesPerformedInLatestPhase: false
 nonDryRunUsedInLatestPhase: false
 g6e5ApprovalIdUsedInLatestPhase: false
-supabaseSelectInLatestPhase: false (SQL templates only; not executed by Cursor)
+g6f6ApprovalIdUsedInLatestPhase: false (implementation only — not executed)
+supabaseSelectInLatestPhase: false
 ```
 
 ---
@@ -93,13 +98,12 @@ supabaseSelectInLatestPhase: false (SQL templates only; not executed by Cursor)
 ## 7. Recently completed work
 
 ```txt
+- G-6-f6-schedule-safe-fields-non-dry-run-poc-implementation
 - G-6-f5-schedule-safe-fields-non-dry-run-preflight
 - G-6-f4-schedule-safe-fields-dry-run-prototype
 - G-6-f3-schedule-description-edit-dry-run-prototype
 - G-6-f2-schedule-read-ui-binding-audit
 - G-6-f1-schedule-poc-isolation-dry-run-default
-- G-6-f-schedule-cms-generalization-planning (e656083)
-- G-6-e5-schedule-non-dry-run-poc-explicit-retry-result (e9e3861)
 ```
 
 ---
@@ -107,8 +111,9 @@ supabaseSelectInLatestPhase: false (SQL templates only; not executed by Cursor)
 ## 8. What must not be done next
 
 ```txt
-- Do not re-click hidden PoC Run without EXPLICIT_RERUN + documented rerun phase
-- Do not reuse G-6-e5 approval ID in general Schedule UI
+- Do not click G-6-f6 Run until final preflight phase
+- Do not re-click hidden G-6-e5 PoC Run without EXPLICIT_RERUN + documented rerun phase
+- Do not reuse G-6-e5 approval ID
 - Do not set DRY_RUN=false for routine dev
 - Do not use Playwright auto-click
 - Do not touch /admin
@@ -119,7 +124,7 @@ supabaseSelectInLatestPhase: false (SQL templates only; not executed by Cursor)
 
 ## 9. Next requested help from ChatGPT
 
-Suggest Cursor prompt for **G-6-f6-schedule-safe-fields-non-dry-run-poc-implementation**: new approval ID, wire updateScheduleWrite to safe-fields UI; no execution.
+Suggest Cursor prompt for **G-6-f6-schedule-safe-fields-non-dry-run-final-preflight**: run beforeSnapshot SQL, confirm auth session, verify gates; still no Run click unless execution phase.
 
 ---
 
@@ -127,13 +132,10 @@ Suggest Cursor prompt for **G-6-f6-schedule-safe-fields-non-dry-run-poc-implemen
 
 ```txt
 AGENTS.md
+tools/static-to-astro/docs/schedule-safe-fields-non-dry-run-poc-implementation.md
 tools/static-to-astro/docs/schedule-safe-fields-non-dry-run-preflight.md
 tools/static-to-astro/docs/schedule-safe-fields-dry-run-prototype.md
-tools/static-to-astro/docs/schedule-safe-fields-dry-run-prototype.md
-tools/static-to-astro/docs/schedule-description-edit-dry-run-prototype.md
-tools/static-to-astro/docs/schedule-read-ui-binding-audit.md
 tools/static-to-astro/docs/schedule-poc-isolation-dry-run-default.md
-tools/static-to-astro/docs/schedule-cms-generalization-planning.md
 tools/static-to-astro/docs/ai/00-current-state.md
 tools/static-to-astro/docs/ai/03-next-actions.md
 tools/static-to-astro/docs/ai/handoff-to-chatgpt.md

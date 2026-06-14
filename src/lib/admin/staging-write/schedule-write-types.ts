@@ -2,7 +2,8 @@
  * G-6-e4 — Schedule write adapter types (staging only; separate from dry-run adapter).
  *
  * SCHEDULE_WRITE_APPROVAL_ID is the one-off G-6-e5 hidden PoC approval only.
- * General Schedule edit UI must use new approval IDs (G-6-f5+). Do not reuse.
+ * G6F6_SCHEDULE_SAFE_FIELDS_NON_DRY_RUN_POC_APPROVAL_ID is for G-6-f6 safe-fields PoC.
+ * General Schedule edit UI must use new approval IDs. Do not reuse G-6-e5.
  */
 
 import type { ScheduleDryRunSource } from "./schedule-dry-run-types";
@@ -14,6 +15,23 @@ export type ScheduleWriteApprovalId = "G-6-e5-schedule-non-dry-run-poc";
 
 export const SCHEDULE_WRITE_APPROVAL_ID: ScheduleWriteApprovalId =
   "G-6-e5-schedule-non-dry-run-poc";
+
+/** G-6-f6 safe-fields non-dry-run PoC — venue + description only. */
+export type ScheduleSafeFieldsNonDryRunPocApprovalId =
+  "G-6-f6-schedule-safe-fields-non-dry-run-poc";
+
+export const G6F6_SCHEDULE_SAFE_FIELDS_NON_DRY_RUN_POC_APPROVAL_ID:
+  ScheduleSafeFieldsNonDryRunPocApprovalId =
+  "G-6-f6-schedule-safe-fields-non-dry-run-poc";
+
+export type ScheduleWriteApprovalIdUnion =
+  | ScheduleWriteApprovalId
+  | ScheduleSafeFieldsNonDryRunPocApprovalId;
+
+export const SCHEDULE_WRITE_APPROVAL_IDS: readonly ScheduleWriteApprovalIdUnion[] = [
+  SCHEDULE_WRITE_APPROVAL_ID,
+  G6F6_SCHEDULE_SAFE_FIELDS_NON_DRY_RUN_POC_APPROVAL_ID,
+];
 
 export type ScheduleUpdateWritePayload = {
   date?: string;
@@ -31,7 +49,7 @@ export type ScheduleUpdateWritePayload = {
 };
 
 export type ScheduleUpdateWriteInput = {
-  approvalId: ScheduleWriteApprovalId;
+  approvalId: ScheduleWriteApprovalIdUnion;
   targetId: string;
   beforeSnapshot: ScheduleDryRunSource;
   payload: ScheduleUpdateWritePayload;
@@ -54,7 +72,7 @@ export type ScheduleWriteResult = {
   targetId: string;
   dryRun: false;
   actualWrite: true;
-  approvalId: ScheduleWriteApprovalId;
+  approvalId: ScheduleWriteApprovalIdUnion;
   rowsAffected?: number;
   beforeSnapshot: ScheduleDryRunSource;
   payload: ScheduleUpdateWritePayload;

@@ -27,6 +27,7 @@ import AdminStagingDisabledWriteActionsSection from "../data/components/AdminSta
 import AdminStagingProfileUpdatePocSection from "../data/components/AdminStagingProfileUpdatePocSection.astro";
 import AdminStagingScheduleDryRunPocSection from "../data/components/AdminStagingScheduleDryRunPocSection.astro";
 import AdminStagingScheduleSafeFieldsDryRunSection from "../data/components/AdminStagingScheduleSafeFieldsDryRunSection.astro";
+import AdminStagingScheduleSafeFieldsNonDryRunPocSection from "../data/components/AdminStagingScheduleSafeFieldsNonDryRunPocSection.astro";
 import AdminStagingScheduleNonDryRunPocCompletedNotice from "../data/components/AdminStagingScheduleNonDryRunPocCompletedNotice.astro";
 import AdminStagingScheduleNonDryRunPocTriggerSection from "../data/components/AdminStagingScheduleNonDryRunPocTriggerSection.astro";
 import { getStagingAuthConfig } from "../../../../../src/lib/admin/staging-auth/staging-auth-config";
@@ -455,6 +456,7 @@ const moduleSummary = [
       {
         stagingShellMode ? (
           <AdminStagingScheduleSafeFieldsDryRunSection phase="G-6-f4-schedule-safe-fields-dry-run-prototype" />
+          <AdminStagingScheduleSafeFieldsNonDryRunPocSection phase="G-6-f6-schedule-safe-fields-non-dry-run-poc-implementation" />
         ) : null
       }
     </section>

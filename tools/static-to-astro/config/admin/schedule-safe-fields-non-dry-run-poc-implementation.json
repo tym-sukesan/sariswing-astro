@@ -1,0 +1,10 @@
+{
+  "phase": "G-6-f6-schedule-safe-fields-non-dry-run-poc-implementation",
+  "approvalId": "G-6-f6-schedule-safe-fields-non-dry-run-poc",
+  "targetId": "aa440e29-5be8-402e-9190-0d81c48434c0",
+  "targetLegacyId": "schedule-2026-07-010",
+  "targetFields": ["venue", "description"],
+  "executionPerformed": false,
+  "dbWritesPerformed": false,
+  "serviceRoleAllowed": false
+}

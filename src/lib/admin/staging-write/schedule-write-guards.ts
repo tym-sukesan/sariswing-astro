@@ -4,7 +4,10 @@
 
 import type { ScheduleDryRunSource } from "./schedule-dry-run-types";
 import {
+  G6F6_SCHEDULE_SAFE_FIELDS_NON_DRY_RUN_POC_APPROVAL_ID,
   SCHEDULE_WRITE_APPROVAL_ID,
+  SCHEDULE_WRITE_APPROVAL_IDS,
+  type ScheduleWriteApprovalIdUnion,
   type ScheduleUpdateWritePayload,
   type ScheduleWriteSafety,
 } from "./schedule-write-types";
@@ -50,11 +53,29 @@ export function getScheduleWriteSafety(): ScheduleWriteSafety {
 
 export function assertScheduleWriteApprovalId(
   approvalId: string,
-): asserts approvalId is typeof SCHEDULE_WRITE_APPROVAL_ID {
-  if (approvalId !== SCHEDULE_WRITE_APPROVAL_ID) {
+): asserts approvalId is ScheduleWriteApprovalIdUnion {
+  if (!SCHEDULE_WRITE_APPROVAL_IDS.includes(approvalId as ScheduleWriteApprovalIdUnion)) {
     throw new Error(
-      `Approval ID mismatch. Expected ${SCHEDULE_WRITE_APPROVAL_ID}, got ${approvalId || "(empty)"}.`,
+      `Approval ID mismatch. Expected one of ${SCHEDULE_WRITE_APPROVAL_IDS.join(", ")}, got ${approvalId || "(empty)"}.`,
     );
+  }
+}
+
+export function assertG6F6SafeFieldsPayloadOnly(
+  payload: ScheduleUpdateWritePayload,
+): void {
+  const allowedKeys = new Set(["venue", "description"]);
+  const keys = Object.keys(payload);
+  if (keys.length === 0) {
+    throw new Error("G-6-f6 payload must include venue and description.");
+  }
+  for (const key of keys) {
+    if (!allowedKeys.has(key)) {
+      throw new Error(`G-6-f6 payload field not allowed: ${key}`);
+    }
+  }
+  if (!keys.includes("venue") || !keys.includes("description")) {
+    throw new Error("G-6-f6 payload must include both venue and description.");
   }
 }
 

@@ -339,7 +339,7 @@ Do **not** jump from this preflight directly to a single hidden Run click.
 
 | Order | Phase | Scope |
 | --- | --- | --- |
-| 1 | **G-6-f6-schedule-safe-fields-non-dry-run-poc-implementation** | New approval ID, wire `updateScheduleWrite` to safe-fields UI; dry-run default; no auto-execution |
+| 1 | **G-6-f6-schedule-safe-fields-non-dry-run-poc-implementation** | **DONE** — scaffold in repo; see schedule-safe-fields-non-dry-run-poc-implementation.md |
 | 2 | **G-6-f6-schedule-safe-fields-non-dry-run-final-preflight** | Run beforeSnapshot SQL; confirm payload + rollback; auth session check |
 | 3 | **G-6-f6-schedule-safe-fields-non-dry-run-execution** | User manual single Save/Run; Option A or C payload; result doc |
 | 4 | **G-6-f6-schedule-safe-fields-write-ui-hardening** (optional) | `updated_at` policy, optimistic lock, error panel parity |

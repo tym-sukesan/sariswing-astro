@@ -1,0 +1,276 @@
+---
+/**
+ * G-6-f6 — Safe-fields non-dry-run PoC section (staging shell only).
+ * Separate from G-6-e5 hidden trigger. Implementation only — execution in later phase.
+ */
+import implConfig from "../../../../config/admin/schedule-safe-fields-non-dry-run-poc-implementation.json";
+import {
+  getScheduleSafeFieldsNonDryRunPocConfig,
+  SCHEDULE_SAFE_FIELDS_NON_DRY_RUN_POC_ARMED_ENV,
+} from "../../../../../../src/lib/admin/staging-write/schedule-safe-fields-non-dry-run-poc-config";
+import {
+  G6F6_SCHEDULE_SAFE_FIELDS_NON_DRY_RUN_POC_BEFORE_DESCRIPTION,
+  G6F6_SCHEDULE_SAFE_FIELDS_NON_DRY_RUN_POC_FIXED_PAYLOAD,
+  G6F6_SCHEDULE_SAFE_FIELDS_NON_DRY_RUN_POC_LEGACY_ID,
+} from "../../../../../../src/lib/admin/staging-write/schedule-safe-fields-non-dry-run-poc-trigger";
+import { G6F6_SCHEDULE_SAFE_FIELDS_NON_DRY_RUN_POC_APPROVAL_ID } from "../../../../../../src/lib/admin/staging-write/schedule-write-types";
+
+interface Props {
+  phase?: string;
+}
+
+const { phase = implConfig.phase } = Astro.props;
+const pocConfig = getScheduleSafeFieldsNonDryRunPocConfig();
+---
+
+{
+  pocConfig.sectionVisible ? (
+    <section
+      id="schedule-safe-fields-non-dry-run-poc-root"
+      class="admin-staging-schedule-safe-fields-non-dry-run-poc"
+      data-phase={phase}
+      data-approval-id={G6F6_SCHEDULE_SAFE_FIELDS_NON_DRY_RUN_POC_APPROVAL_ID}
+      data-armed={pocConfig.armed ? "true" : "false"}
+      role="region"
+      aria-label="G-6-f6 schedule safe-fields non-dry-run PoC"
+    >
+      <h3 class="admin-staging-schedule-safe-fields-non-dry-run-poc__title">
+        G-6-f6 safe-fields non-dry-run PoC (implementation scaffold)
+      </h3>
+
+      <p class="admin-staging-schedule-safe-fields-non-dry-run-poc__banner" role="note">
+        <strong>Not G-6-e5.</strong> Separate approval ID and gates. Default: not armed.
+        Execution is for a later final-preflight / execution phase — do not click Run during
+        implementation. <code>service_role</code> not used. <code>schedule_months</code> not
+        touched.
+      </p>
+
+      <dl class="admin-staging-schedule-safe-fields-non-dry-run-poc__meta">
+        <div>
+          <dt>Phase</dt>
+          <dd>{phase}</dd>
+        </div>
+        <div>
+          <dt>Approval ID</dt>
+          <dd>{G6F6_SCHEDULE_SAFE_FIELDS_NON_DRY_RUN_POC_APPROVAL_ID}</dd>
+        </div>
+        <div>
+          <dt>Target fields</dt>
+          <dd>venue, description</dd>
+        </div>
+        <div>
+          <dt>Target legacy_id</dt>
+          <dd id="schedule-safe-fields-non-dry-run-poc-target-legacy">
+            {G6F6_SCHEDULE_SAFE_FIELDS_NON_DRY_RUN_POC_LEGACY_ID}
+          </dd>
+        </div>
+        <div>
+          <dt>Target ID</dt>
+          <dd id="schedule-safe-fields-non-dry-run-poc-target-id">{pocConfig.targetId}</dd>
+        </div>
+        <div>
+          <dt>Gate status</dt>
+          <dd id="schedule-safe-fields-non-dry-run-poc-gate-status">
+            {pocConfig.armed ? "armed" : "not armed"}
+          </dd>
+        </div>
+        <div>
+          <dt>Arm failures</dt>
+          <dd id="schedule-safe-fields-non-dry-run-poc-arm-failures">
+            {pocConfig.armFailureReason ?? "—"}
+          </dd>
+        </div>
+        <div>
+          <dt>Supabase host</dt>
+          <dd id="schedule-safe-fields-non-dry-run-poc-supabase-host">—</dd>
+        </div>
+        <div>
+          <dt>Expected project</dt>
+          <dd id="schedule-safe-fields-non-dry-run-poc-expected-project">
+            {pocConfig.expectedProject}
+          </dd>
+        </div>
+        <div>
+          <dt>nonDryRun</dt>
+          <dd>{pocConfig.armed ? "armed (manual confirm still required)" : "disabled"}</dd>
+        </div>
+      </dl>
+
+      <p
+        id="schedule-safe-fields-non-dry-run-poc-host-note"
+        class="admin-staging-schedule-safe-fields-non-dry-run-poc__host-note"
+      />
+
+      <dl class="admin-staging-schedule-safe-fields-non-dry-run-poc__payload">
+        <div>
+          <dt>Before description</dt>
+          <dd id="schedule-safe-fields-non-dry-run-poc-before-desc">
+            {G6F6_SCHEDULE_SAFE_FIELDS_NON_DRY_RUN_POC_BEFORE_DESCRIPTION}
+          </dd>
+        </div>
+        <div>
+          <dt>After venue</dt>
+          <dd id="schedule-safe-fields-non-dry-run-poc-after-venue">
+            {G6F6_SCHEDULE_SAFE_FIELDS_NON_DRY_RUN_POC_FIXED_PAYLOAD.venue}
+          </dd>
+        </div>
+        <div>
+          <dt>After description</dt>
+          <dd id="schedule-safe-fields-non-dry-run-poc-after-desc">
+            {G6F6_SCHEDULE_SAFE_FIELDS_NON_DRY_RUN_POC_FIXED_PAYLOAD.description}
+          </dd>
+        </div>
+      </dl>
+
+      <p class="admin-staging-schedule-safe-fields-non-dry-run-poc__arm-hint">
+        To arm (execution phase only): set{" "}
+        <code>{SCHEDULE_SAFE_FIELDS_NON_DRY_RUN_POC_ARMED_ENV}=true</code> plus full write gate
+        env (see implementation doc). Not armed in default dev.
+      </p>
+
+      <label class="admin-staging-schedule-safe-fields-non-dry-run-poc__confirm">
+        Type exactly:
+        <code>{G6F6_SCHEDULE_SAFE_FIELDS_NON_DRY_RUN_POC_APPROVAL_ID}</code>
+        <input
+          id="schedule-safe-fields-non-dry-run-poc-confirm-input"
+          type="text"
+          autocomplete="off"
+          spellcheck="false"
+          disabled={!pocConfig.armed}
+          placeholder={G6F6_SCHEDULE_SAFE_FIELDS_NON_DRY_RUN_POC_APPROVAL_ID}
+        />
+      </label>
+
+      <div
+        id="schedule-safe-fields-non-dry-run-poc-run-wrap"
+        hidden={!pocConfig.armed}
+      >
+        <button
+          type="button"
+          id="schedule-safe-fields-non-dry-run-poc-run-btn"
+          class="admin-button admin-button--danger"
+          disabled
+        >
+          Execute G-6-f6 safe-fields non-dry-run (manual)
+        </button>
+      </div>
+
+      <div
+        id="schedule-safe-fields-non-dry-run-poc-result"
+        class="schedule-safe-fields-non-dry-run-poc-result"
+        aria-live="polite"
+      />
+
+      <dl class="admin-staging-schedule-safe-fields-non-dry-run-poc__safety">
+        <div><dt>service_role</dt><dd>false</dd></div>
+        <div><dt>schedule_months</dt><dd>read_only_derived (not touched)</dd></div>
+        <div><dt>G-6-e5 approval reused</dt><dd>false</dd></div>
+        <div><dt>G-6-e5 trigger re-armed</dt><dd>false</dd></div>
+        <div><dt>updated_at in payload</dt><dd>false</dd></div>
+        <div><dt>optimistic lock</dt><dd>false</dd></div>
+      </dl>
+    </section>
+  ) : null
+}
+
+<script>
+  import "../../../../../../src/lib/admin/staging-write/staging-schedule-safe-fields-non-dry-run-poc-ui.ts";
+</script>
+
+<style>
+  .admin-staging-schedule-safe-fields-non-dry-run-poc {
+    margin: 1rem 0 0;
+    padding: 1rem 1.25rem;
+    border: 2px solid #c2410c;
+    border-radius: 8px;
+    background: #fff7ed;
+  }
+  .admin-staging-schedule-safe-fields-non-dry-run-poc__title {
+    margin: 0 0 0.5rem;
+    color: #9a3412;
+    font-size: 0.9375rem;
+    font-weight: 600;
+  }
+  .admin-staging-schedule-safe-fields-non-dry-run-poc__banner {
+    margin: 0 0 0.75rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    background: #ffedd5;
+    border: 1px solid #fdba74;
+    color: #9a3412;
+    font-size: 0.8125rem;
+    line-height: 1.45;
+  }
+  .admin-staging-schedule-safe-fields-non-dry-run-poc__meta,
+  .admin-staging-schedule-safe-fields-non-dry-run-poc__payload,
+  .admin-staging-schedule-safe-fields-non-dry-run-poc__safety {
+    margin: 0 0 1rem;
+    display: grid;
+    gap: 0.35rem 1rem;
+    grid-template-columns: max-content 1fr;
+    font-size: 0.8125rem;
+  }
+  .admin-staging-schedule-safe-fields-non-dry-run-poc__meta dt,
+  .admin-staging-schedule-safe-fields-non-dry-run-poc__payload dt,
+  .admin-staging-schedule-safe-fields-non-dry-run-poc__safety dt {
+    font-weight: 600;
+    color: #9a3412;
+  }
+  .admin-staging-schedule-safe-fields-non-dry-run-poc__meta dd,
+  .admin-staging-schedule-safe-fields-non-dry-run-poc__payload dd,
+  .admin-staging-schedule-safe-fields-non-dry-run-poc__safety dd {
+    margin: 0;
+    font-family: ui-monospace, monospace;
+    word-break: break-all;
+  }
+  .admin-staging-schedule-safe-fields-non-dry-run-poc__host-note,
+  .admin-staging-schedule-safe-fields-non-dry-run-poc__arm-hint {
+    margin: 0 0 0.75rem;
+    font-size: 0.8125rem;
+    color: #7c2d12;
+  }
+  .admin-staging-schedule-safe-fields-non-dry-run-poc__confirm {
+    display: block;
+    margin-bottom: 0.75rem;
+    font-size: 0.8125rem;
+  }
+  .admin-staging-schedule-safe-fields-non-dry-run-poc__confirm input {
+    display: block;
+    width: 100%;
+    max-width: 32rem;
+    margin-top: 0.35rem;
+    padding: 0.4rem 0.5rem;
+    border: 1px solid #fdba74;
+    border-radius: 4px;
+  }
+  .admin-button--danger {
+    background: #c2410c;
+    color: #fff;
+    border-color: #9a3412;
+  }
+  .admin-button--danger:disabled {
+    opacity: 0.55;
+  }
+  .schedule-safe-fields-non-dry-run-poc-result {
+    margin-top: 1rem;
+    font-size: 0.8125rem;
+  }
+  .schedule-safe-fields-non-dry-run-poc-result__warnings {
+    margin: 0 0 0.75rem;
+    padding-left: 1.25rem;
+    color: #92400e;
+  }
+  .schedule-safe-fields-non-dry-run-poc-result__status {
+    font-weight: 600;
+    margin: 0 0 0.5rem;
+  }
+  .schedule-safe-fields-non-dry-run-poc-result__json {
+    margin-top: 0.75rem;
+    padding: 0.75rem;
+    background: #fff;
+    border: 1px solid #fed7aa;
+    border-radius: 4px;
+    overflow-x: auto;
+    font-size: 0.75rem;
+  }
+</style>

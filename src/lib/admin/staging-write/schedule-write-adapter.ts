@@ -18,8 +18,8 @@ import type {
   ScheduleWriteFailureResult,
   ScheduleWriteResult,
   ScheduleWriteVerificationRequiredResult,
+  ScheduleWriteApprovalIdUnion,
 } from "./schedule-write-types";
-import { SCHEDULE_WRITE_APPROVAL_ID } from "./schedule-write-types";
 
 const SUCCESS_ROLLBACK_HINT =
   "Manual rollback required if needed. Restore beforeSnapshot fields on public.schedules by id.";
@@ -70,7 +70,7 @@ function toScheduleSource(row: Record<string, unknown>): ScheduleDryRunSource {
 
 export async function updateScheduleWrite(input: {
   client: ScheduleWriteClient;
-  approvalId: typeof SCHEDULE_WRITE_APPROVAL_ID;
+  approvalId: ScheduleWriteApprovalIdUnion;
   targetId: string;
   beforeSnapshot: ScheduleDryRunSource;
   payload: ScheduleUpdateWritePayload;

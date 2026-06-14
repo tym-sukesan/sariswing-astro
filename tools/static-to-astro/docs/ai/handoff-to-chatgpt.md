@@ -16,7 +16,7 @@ Paste this file at the start of a new ChatGPT thread. Cursor should update it af
 ```txt
 Current phase: G-6-f3-schedule-description-edit-dry-run-prototype (completed)
 Latest completed phase: G-6-f3-schedule-description-edit-dry-run-prototype
-Latest commit: (G-6-f3 commit — update after push)
+Latest commit: 98f7895 — Add schedule description dry-run edit prototype (G-6-f3)
 Recommended next phase: G-6-f4-schedule-safe-fields-dry-run-prototype
 ```
 

@@ -31,7 +31,7 @@ G-6-f3-schedule-description-edit-dry-run-prototype
 G-6-f2-schedule-read-ui-binding-audit
 G-6-f1-schedule-poc-isolation-dry-run-default
 直近commit:
-（G-6-f3 commit 後に更新）
+98f7895 — Add schedule description dry-run edit prototype (G-6-f3)
 
 G-6-e5 成功状態（維持）:
 - description: 出演： [G-6-e5 non-dry-run PoC]

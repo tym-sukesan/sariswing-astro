@@ -352,8 +352,8 @@ After G-6-f6 (`venue + description`):
 
 | Order | Phase | Scope |
 | --- | --- | --- |
-| **1** | `G-6-f8-schedule-updated-at-staging-migration-preflight` | Document trigger SQL; verify RLS; staging-only; no apply until approved |
-| **2** | `G-6-f8-schedule-updated-at-staging-migration-execution` | Apply trigger on staging; verify with SELECT after controlled test UPDATE |
+| **1** | `G-6-f8-schedule-updated-at-staging-migration-preflight` | **DONE** — see schedule-updated-at-staging-migration-preflight.md |
+| **2** | `G-6-f8-schedule-updated-at-staging-migration-execution` | Apply trigger SQL on staging; verify with controlled UPDATE |
 | **3** | `G-6-g-schedule-general-edit-ui-planning` | Visible list/edit UI design; wire dry-run; Profile pattern |
 | **4** | `G-6-g-schedule-title-non-dry-run-slice` | title only; new approval ID |
 | **5** | `G-6-g-schedule-time-fields-non-dry-run-slice` | open_time + start_time |

@@ -3,49 +3,45 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 1. Immediate priority
 
-**Latest completed phase:** `G-6-f7-schedule-write-hardening-and-updated-at-planning`
+**Latest completed phase:** `G-6-f8-schedule-updated-at-staging-migration-preflight`
 
-Hardening design: write flow summary, `updated_at` (recommend DB trigger on staging first), optimistic lock, rollback/recovery, approval slices, field priority, PoC vs general UI boundaries. No DB writes.
+Preflight for `public.schedules` updated_at trigger: SQL templates, pre/post checks, rollback, impact analysis. No SQL execution.
 
-**Doc:** `tools/static-to-astro/docs/schedule-write-hardening-and-updated-at-planning.md`
+**Doc:** `tools/static-to-astro/docs/schedule-updated-at-staging-migration-preflight.md`
 
-**Recommended next phase:** `G-6-f8-schedule-updated-at-staging-migration-preflight`
+**Recommended next phase:** `G-6-f8-schedule-updated-at-staging-migration-execution`
 
-## 2. Key planning decisions
+## 2. Migration management
 
-| Topic | Recommendation |
-| --- | --- |
-| `updated_at` | Option A — DB `BEFORE UPDATE` trigger on staging first |
-| Optimistic lock | Enable `expectedBeforeUpdatedAt` after trigger verified |
-| Next fields | title → open_time/start_time → price → visibility → date |
-| PoC triggers | Keep code; disarmed; do not re-click |
-| General UI | New section + new `G-6-g-*` approval IDs |
-
-## 3. Dry-run default (routine dev)
-
-```bash
-ENABLE_ADMIN_STAGING_SHELL=true \
-ENABLE_ADMIN_STAGING_DATA_READ=true \
-PUBLIC_ADMIN_DATA_PROVIDER=supabase \
-PUBLIC_ADMIN_WRITE_DRY_RUN=true \
-PUBLIC_SUPABASE_URL="https://kmjqppxjdnwwrtaeqjta.supabase.co" \
-PUBLIC_SUPABASE_ANON_KEY="<staging anon key>" \
-npm run dev
+```txt
+supabase/migrations/: does not exist
+Pattern: scripts/supabase/*.sql + manual SQL Editor on staging
+Execution phase: add scripts/supabase/schedules-updated-at-trigger.sql (optional)
 ```
 
-## 4. Do not re-click
+## 3. Trigger proposal (not applied yet)
 
-- G-6-f6 Run button
-- G-6-e5 hidden PoC Run
+```txt
+Function: public.tg_schedules_set_updated_at()
+Trigger: schedules_set_updated_at BEFORE UPDATE ON public.schedules
+schedule_months: not affected
+```
+
+## 4. Dry-run default
+
+```bash
+PUBLIC_ADMIN_WRITE_DRY_RUN=true
+```
+
+Do not re-click G-6-e5 / G-6-f6 PoC Run buttons.
 
 ## 5. Phased next steps
 
 | Phase | Status |
 | --- | --- |
-| G-6-f7 Hardening planning | **DONE** |
-| G-6-f8 updated_at staging migration preflight | **Next** |
-| G-6-g general edit UI planning | Planned |
-| Per-field non-dry-run slices | After updated_at hardening |
+| G-6-f8 preflight | **DONE** |
+| G-6-f8 migration execution | **Next** |
+| G-6-f9 optimistic lock enablement | Planned |
 
 ## 6. AI workflow maintenance rule
 

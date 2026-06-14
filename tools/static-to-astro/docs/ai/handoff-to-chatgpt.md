@@ -6,7 +6,6 @@ Paste this file at the start of a new ChatGPT thread. Cursor should update it af
 
 - **Project name:** Static-to-Astro CMS / Musician CMS Kit
 - **Repository:** sariswing-astro
-- **Main working area:** `tools/static-to-astro`, `src/pages/__admin-staging-shell`
 - **Goal:** Generalize Sariswing Astro + Supabase CMS into a reusable CMS Kit.
 
 ---
@@ -14,72 +13,46 @@ Paste this file at the start of a new ChatGPT thread. Cursor should update it af
 ## 2. Current phase
 
 ```txt
-Current phase: G-6-f7-schedule-write-hardening-and-updated-at-planning (completed)
-Latest completed phase: G-6-f7-schedule-write-hardening-and-updated-at-planning
-Latest commit: f63aa46 — Document schedule write hardening and updated_at planning (G-6-f7)
-Recommended next phase: G-6-f8-schedule-updated-at-staging-migration-preflight
-```
-
-Prior milestone commits:
-
-```txt
-88613ed — Update AI handoff commit hash after G-6-f6 execution record
-a022f3f — Record G-6-f6 schedule safe-fields non-dry-run execution success
+Current phase: G-6-f8-schedule-updated-at-staging-migration-preflight (completed)
+Latest completed phase: G-6-f8-schedule-updated-at-staging-migration-preflight
+Latest commit: (pending) — Document schedule updated_at staging migration preflight (G-6-f8)
+Recommended next phase: G-6-f8-schedule-updated-at-staging-migration-execution
 ```
 
 ---
 
 ## 3. Current state summary
 
-G-6-e5/f6 write path proven. G-6-f7 planning: recommend DB trigger for `updated_at` on staging first; then optimistic lock; field slices with new approval IDs; retire PoC triggers from ops. No writes in planning phase.
+G-6-f8 preflight doc prepared for schedules updated_at trigger on staging only. Function `tg_schedules_set_updated_at`, trigger `schedules_set_updated_at`. Pre/post SQL templates and rollback documented. No SQL executed in preflight.
 
 ---
 
-## 4. Planning decisions (G-6-f7)
+## 4. Migration pattern
 
 ```txt
-updated_at: Option A (DB trigger, staging first) — recommended
-optimistic lock: after trigger; use expectedBeforeUpdatedAt in adapter
-rollback: beforeSnapshot + documented SQL; optional audit table later
-next fields: title → times → price → visibility → date → create/delete
-PoC: G-6-e5/f6 keep code, disarmed, no re-click
-general UI: new G-6-g-* approval IDs; staging shell only
+Repo: scripts/supabase/*.sql (manual SQL Editor)
+No supabase/migrations/ folder
+Staging project: static-to-astro-cms-staging only
 ```
 
 ---
 
-## 5. Staging row state (post G-6-f6)
+## 5. Gate state
 
 ```txt
-venue: [CMS Kit staging] G-6-f6 venue PoC
-description: 出演： [G-6-e5 non-dry-run PoC] [G-6-f6 safe-fields staging test]
-updated_at: 2026-06-05 17:39:44.140168+00 (static until trigger migration)
-rollbackNeeded: false
-```
-
----
-
-## 6. Current gate state
-
-```txt
-scheduleWriteHardeningPlanningComplete: true
-readyForScheduleUpdatedAtStagingMigrationPreflight: true
-readyForScheduleGeneralEditUiPlanning: true
-scheduleSafeFieldsNonDryRunExecutionSucceeded: true
-
-dbWritesPerformedInLatestPhase: false
+scheduleUpdatedAtStagingMigrationPreflightComplete: true
+readyForScheduleUpdatedAtStagingMigrationExecution: true
+sqlExecutedInLatestPhase: false
+dbWritesInLatestPhase: false
 runButtonClickedInLatestPhase: false
-supabaseSqlExecutedInLatestPhase: false
 ```
 
 ---
 
-## 7. Files to read first
+## 6. Files to read first
 
 ```txt
-AGENTS.md
+tools/static-to-astro/docs/schedule-updated-at-staging-migration-preflight.md
 tools/static-to-astro/docs/schedule-write-hardening-and-updated-at-planning.md
-tools/static-to-astro/docs/schedule-safe-fields-non-dry-run-execution-result.md
-tools/static-to-astro/docs/schedule-cms-generalization-planning.md
 tools/static-to-astro/docs/ai/00-current-state.md
 ```

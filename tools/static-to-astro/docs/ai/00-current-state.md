@@ -21,16 +21,16 @@ Staging Shell
 将来的な顧客オンボーディング・課金・デプロイ自動化
 
 2. Current phase
-現在フェーズ: G-6-f7-schedule-write-hardening-and-updated-at-planning（完了）
+現在フェーズ: G-6-f8-schedule-updated-at-staging-migration-preflight（完了）
 
-Schedule write hardening / updated_at / optimistic lock / rollback / approval slice / UI 境界の planning doc。DB write なし。
+schedules.updated_at 用 DB trigger の staging migration 前 preflight。SQL 案・影響範囲・rollback・検証 SQL。SQL 実行なし。
 
 直近完了フェーズ:
-G-6-f7-schedule-write-hardening-and-updated-at-planning
+G-6-f8-schedule-updated-at-staging-migration-preflight
 前フェーズ:
-G-6-f6-schedule-safe-fields-non-dry-run-execution
+G-6-f7-schedule-write-hardening-and-updated-at-planning
 直近commit:
-f63aa46 — Document schedule write hardening and updated_at planning (G-6-f7)
+(pending) — Document schedule updated_at staging migration preflight (G-6-f8)
 
 G-6-f6 成功後の staging row 状態:
 - venue: [CMS Kit staging] G-6-f6 venue PoC
@@ -265,26 +265,21 @@ planning doc: schedule-cms-generalization-planning.md
 完了済み。フェーズ: G-6-f7-schedule-write-hardening-and-updated-at-planning
 - doc: schedule-write-hardening-and-updated-at-planning.md
 - updated_at 推奨: staging 先行 DB trigger (Option A)
-- optimistic lock: trigger 後に expectedBeforeUpdatedAt
-- 次フィールド優先: title → time fields → price → visibility → date
-- DB write / SQL 実行: なし
+
+6.21 Schedule updated_at staging migration preflight
+完了済み。フェーズ: G-6-f8-schedule-updated-at-staging-migration-preflight
+- doc: schedule-updated-at-staging-migration-preflight.md
+- function: tg_schedules_set_updated_at(); trigger: schedules_set_updated_at
+- migration 管理: scripts/supabase/ 手動 SQL Editor（supabase/migrations なし）
+- SQL 実行 / migration 適用: なし
 
 7. Current gates
-scheduleNonDryRunPocCompleted: true
-explicitRetrySucceeded: true
-scheduleSafeFieldsNonDryRunExecutionSucceeded: true
 scheduleWriteHardeningPlanningComplete: true
-scheduleCmsGeneralizationPlanningComplete: true
+scheduleUpdatedAtStagingMigrationPreflightComplete: true
+readyForScheduleUpdatedAtStagingMigrationExecution: true
+scheduleSafeFieldsNonDryRunExecutionSucceeded: true
 hiddenPocTriggerDisarmedByDefault: true
 dryRunDefaultDocumented: true
-g6e5ApprovalIdReuseProhibited: true
-scheduleReadUiBindingComplete: true
-scheduleDescriptionDryRunPrototypeComplete: true
-scheduleSafeFieldsDryRunPrototypeComplete: true
-scheduleSafeFieldsNonDryRunExecutionComplete: true
-readyForScheduleUpdatedAtStagingMigrationPreflight: true
-readyForScheduleGeneralEditUiPlanning: true
-readyForScheduleSafeFieldsNonDryRunExecution: false
 rollbackNeeded: false
 
 8. Absolute safety invariants
@@ -300,9 +295,9 @@ rollbackNeeded: false
 明示的 retry で dev server を起動する場合は inline env のみ使用する。
 
 10. Recommended next phase
-次フェーズ推奨: G-6-f8-schedule-updated-at-staging-migration-preflight
+次フェーズ推奨: G-6-f8-schedule-updated-at-staging-migration-execution
 
-詳細: tools/static-to-astro/docs/schedule-write-hardening-and-updated-at-planning.md
+詳細: tools/static-to-astro/docs/schedule-updated-at-staging-migration-preflight.md
 
 11. AI workflow transition
 チャット履歴への依存を減らすため、リポジトリ側に AI開発文脈管理ファイルを作成。

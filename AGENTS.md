@@ -81,6 +81,14 @@ Planning complete: `tools/static-to-astro/docs/schedule-write-hardening-and-upda
 - Next: general edit UI planning + per-field slices with new approval IDs
 - PoC triggers (G-6-e5, G-6-f6): keep code, disarmed, do not re-click
 
+## Schedule updated_at migration preflight (G-6-f8)
+
+Preflight complete: `tools/static-to-astro/docs/schedule-updated-at-staging-migration-preflight.md`
+
+- Trigger not applied yet — execution phase next
+- SQL via `scripts/supabase/` pattern; no `supabase/migrations/` in repo
+- Do not execute SQL until G-6-f8 execution phase
+
 ## Schedule CMS generalization
 
 Planning phase `G-6-f-schedule-cms-generalization-planning` is complete.

@@ -30,7 +30,7 @@ G-6-f8-schedule-updated-at-staging-migration-execution
 前フェーズ:
 G-6-f8-schedule-updated-at-staging-migration-preflight
 直近commit:
-(pending) — Record G-6-f8 schedule updated_at staging migration execution result
+e778aa8 — Record G-6-f8 schedule updated_at staging migration execution success
 
 G-6-f6 target row（trigger 検証後）:
 - venue / description: G-6-f6 後のまま（semantic unchanged）

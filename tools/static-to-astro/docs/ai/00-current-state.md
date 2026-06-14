@@ -30,7 +30,7 @@ G-6-f6-schedule-safe-fields-non-dry-run-execution
 前フェーズ:
 G-6-f6-schedule-safe-fields-non-dry-run-final-preflight
 直近commit:
-(pending) — Record G-6-f6 schedule safe-fields non-dry-run execution result
+a022f3f — Record G-6-f6 schedule safe-fields non-dry-run execution success
 
 G-6-f6 成功後の staging row 状態:
 - venue: [CMS Kit staging] G-6-f6 venue PoC

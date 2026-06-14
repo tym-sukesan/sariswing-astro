@@ -12,31 +12,32 @@ Paste this file at the start of a new ChatGPT thread. Cursor should update it af
 ## 2. Current phase
 
 ```txt
-Current phase: G-6-g1-schedule-title-non-dry-run-slice-implementation (completed — implementation only)
-Latest completed phase: G-6-g1-schedule-title-non-dry-run-slice-implementation
-Latest commit: ddfc8cf — Prepare schedule title non-dry-run slice.
-Recommended next phase: G-6-g1-schedule-title-non-dry-run-slice-final-preflight
+Current phase: G-6-g1-schedule-title-non-dry-run-slice-final-preflight (completed — final-preflight only)
+Latest completed phase: G-6-g1-schedule-title-non-dry-run-slice-final-preflight
+Latest commit: 9ee5d76 — Implement schedule title edit slice.
+Recommended next phase: G-6-g1-schedule-title-non-dry-run-slice-execution
 ```
 
 ---
 
 ## 3. Current state summary
 
-G-6-g1 implementation adds `AdminStagingScheduleGeneralEditSection` in `#schedule` staging shell with title-only dry-run preview and gated non-dry-run Save via `executeG6G1TitleNonDryRunSave` → `executeScheduleGeneralUpdateWrite`. Approval ID `G-6-g1-schedule-title-non-dry-run-slice` registered. PoCs frozen. No DB write / Save click in implementation phase.
+G-6-g1 final preflight documents beforeSnapshot / afterVerification / rollback SQL, dev arm command, UI procedure (Preview → Save gates), and execution success criteria. Save UI exposed but not executed. PoCs frozen. Ready for user manual Save once in execution phase.
 
 ---
 
-## 4. G-6-g1 implementation highlights
+## 4. G-6-g1 execution prep highlights
 
 ```txt
-Section: AdminStagingScheduleGeneralEditSection (#schedule, below ScheduleAdminUi)
-Guard: assertG6G1TitlePayloadOnly
-Approval ID: G-6-g1-schedule-title-non-dry-run-slice (in SCHEDULE_WRITE_APPROVAL_IDS)
+Target row: aa440e29-5be8-402e-9190-0d81c48434c0
+Payload: { "title": "[CMS Kit staging] G-6-g1 title PoC" }
+Approval ID: G-6-g1-schedule-title-non-dry-run-slice
 Env arm: PUBLIC_ADMIN_SCHEDULE_G6G1_TITLE_NON_DRY_RUN_ARMED=true
-Save path: executeG6G1TitleNonDryRunSave → executeScheduleGeneralUpdateWrite
-Dry-run first: Preview required; stale blocks Save
-nonDryRunSaveUiExposed: true (gated off by default)
-nonDryRunSaveExecuted: false
+Route: /__admin-staging-shell/musician-basic/#schedule
+Section: AdminStagingScheduleGeneralEditSection
+Before: title <>; venue/description from G-6-f6 unchanged
+After: title updated; updated_at advanced (trigger)
+Rollback: set title back to <> (staging only, separate approval)
 ```
 
 ---
@@ -44,9 +45,8 @@ nonDryRunSaveExecuted: false
 ## 5. Gate state
 
 ```txt
-scheduleTitleNonDryRunSliceImplementationComplete: true
-readyForG6G1ScheduleTitleNonDryRunSliceFinalPreflight: true
-readyForG6G1ScheduleTitleNonDryRunSliceExecution: false
+scheduleTitleNonDryRunSliceFinalPreflightComplete: true
+readyForG6G1ScheduleTitleNonDryRunSliceExecution: true
 nonDryRunSaveUiExposed: true
 nonDryRunSaveExecuted: false
 optimisticLockWiredInProductPath: true
@@ -59,10 +59,9 @@ dbWriteInLatestPhase: false
 ## 6. Files to read first
 
 ```txt
+tools/static-to-astro/docs/schedule-title-non-dry-run-slice-final-preflight.md
 tools/static-to-astro/docs/schedule-title-non-dry-run-slice-implementation.md
-tools/static-to-astro/docs/schedule-title-non-dry-run-slice-preflight.md
 src/lib/admin/staging-write/staging-schedule-general-edit-ui.ts
-src/lib/admin/staging-write/schedule-g6g1-title-non-dry-run-trigger.ts
 src/lib/admin/staging-write/schedule-general-edit-config.ts
 tools/static-to-astro/docs/ai/00-current-state.md
 ```

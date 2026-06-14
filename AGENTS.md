@@ -132,6 +132,16 @@ Implementation complete: `tools/static-to-astro/docs/schedule-title-non-dry-run-
 - Save UI exposed but gated off by default; **not executed** in implementation phase
 - Next: `G-6-g1-schedule-title-non-dry-run-slice-final-preflight` → execution (user manual Save once)
 
+## Schedule title non-dry-run slice final preflight (G-6-g1)
+
+Final preflight complete: `tools/static-to-astro/docs/schedule-title-non-dry-run-slice-final-preflight.md`
+
+- beforeSnapshot / afterVerification / rollback SQL documented (staging only — not executed by Cursor)
+- Dev arm command with G-6-g1 env stack (inline env; no PoC env)
+- UI procedure: Preview → gates → Save once in execution phase only
+- `readyForG6G1ScheduleTitleNonDryRunSliceExecution: true`
+- Do not click Save in final-preflight; do not re-arm G-6-e5 / G-6-f6 PoCs
+
 ## Schedule CMS generalization
 
 Planning phase `G-6-f-schedule-cms-generalization-planning` is complete.

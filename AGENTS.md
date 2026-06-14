@@ -139,8 +139,19 @@ Final preflight complete: `tools/static-to-astro/docs/schedule-title-non-dry-run
 - beforeSnapshot / afterVerification / rollback SQL documented (staging only — not executed by Cursor)
 - Dev arm command with G-6-g1 env stack (inline env; no PoC env)
 - UI procedure: Preview → gates → Save once in execution phase only
-- `readyForG6G1ScheduleTitleNonDryRunSliceExecution: true`
 - Do not click Save in final-preflight; do not re-arm G-6-e5 / G-6-f6 PoCs
+
+## Schedule title non-dry-run slice execution (G-6-g1)
+
+Execution **succeeded**: `tools/static-to-astro/docs/schedule-title-non-dry-run-slice-execution-result.md`
+
+- User manual Save once; Cursor did not click Save / Run / SQL
+- title: `<>` → `[CMS Kit staging] G-6-g1 title PoC`; changedFields: title only
+- optimistic lock: `expectedBeforeUpdatedAt` matched `2026-06-14T06:49:42.240919+00:00`
+- `updated_at`: `2026-06-14T15:03:08.762993+00:00` after Save
+- venue / description unchanged; `rollbackNeeded: false`
+- Client fix `cf24c09` required for `readSource: supabase` before execution
+- Restart routine dev with `PUBLIC_ADMIN_WRITE_DRY_RUN=true`; do not re-click G-6-g1 Save
 
 ## Schedule CMS generalization
 

@@ -4,6 +4,10 @@
  */
 
 import { refreshAuthWriteDebugPanel } from "../staging-auth/staging-auth-write-debug-ui";
+import {
+  hasStagingShellServerGateInjection,
+  mergeStagingShellEnv,
+} from "../staging-shell/staging-shell-client-gates";
 import { executeG6G1TitleNonDryRunSave } from "./schedule-g6g1-title-non-dry-run-trigger";
 import type { ScheduleAdminReadSource } from "./schedule-admin-ui-binding";
 import type { ScheduleRecord } from "./schedule-dry-run-types";
@@ -30,7 +34,8 @@ import {
 import { G6G1_SCHEDULE_TITLE_NON_DRY_RUN_SLICE_APPROVAL_ID } from "./schedule-write-types";
 import type { G6G1TitleNonDryRunSaveOutcome } from "./schedule-g6g1-title-non-dry-run-trigger";
 import type { ScheduleWriteAdapterResult } from "./schedule-write-types";
-import { loadSchedulesForDryRunUi } from "./staging-schedule-read";
+import { loadSchedulesForDryRunUi, type ScheduleReadResult } from "./staging-schedule-read";
+import type { ScheduleGeneralEditConfig } from "./schedule-general-edit-config";
 
 const MANUAL_CONFIRM_TEXT = G6G1_SCHEDULE_TITLE_NON_DRY_RUN_SLICE_APPROVAL_ID;
 
@@ -73,9 +78,42 @@ function getSelectedRecord(): ScheduleRecord | null {
 }
 
 function getSupabaseEnv(): { url: string; anonKey: string } {
-  const url = String(import.meta.env.PUBLIC_SUPABASE_URL ?? "").trim();
-  const anonKey = String(import.meta.env.PUBLIC_SUPABASE_ANON_KEY ?? "").trim();
+  const env = mergeStagingShellEnv();
+  const url = String(env.PUBLIC_SUPABASE_URL ?? "").trim();
+  const anonKey = String(env.PUBLIC_SUPABASE_ANON_KEY ?? "").trim();
   return { url, anonKey };
+}
+
+function describeMockReadFallback(
+  config: ScheduleGeneralEditConfig,
+  result: ScheduleReadResult,
+  useSupabase: boolean,
+): string {
+  if (result.error) {
+    return result.error;
+  }
+  if (useSupabase) {
+    return "Live Supabase read was attempted but fell back to mock schedules.";
+  }
+
+  const merged = mergeStagingShellEnv();
+  const parts: string[] = [
+    "Live Supabase read not enabled — using mock schedules.",
+  ];
+  if (!hasStagingShellServerGateInjection()) {
+    parts.push(
+      "Server gate injection missing (#staging-shell-server-gates). Restart dev with ENABLE_ADMIN_STAGING_DATA_READ=true.",
+    );
+  }
+  if (!config.dataReadEnabled) {
+    parts.push(
+      `dataReadEnabled=false (merged ENABLE_ADMIN_STAGING_DATA_READ=${String(merged.ENABLE_ADMIN_STAGING_DATA_READ ?? "undefined")}, PUBLIC_ADMIN_DATA_PROVIDER=${String(merged.PUBLIC_ADMIN_DATA_PROVIDER ?? "undefined")}).`,
+    );
+  }
+  if (!config.canUseSupabaseRead) {
+    parts.push("PUBLIC_SUPABASE_URL or PUBLIC_SUPABASE_ANON_KEY missing on client.");
+  }
+  return parts.join(" ");
 }
 
 function isManualConfirmValid(): boolean {
@@ -453,9 +491,8 @@ async function loadSchedules(): Promise<void> {
   }
 
   const { url, anonKey } = getSupabaseEnv();
-  const provider = String(import.meta.env.PUBLIC_ADMIN_DATA_PROVIDER ?? "mock").trim();
-  const dataReadFlag = import.meta.env.ENABLE_ADMIN_STAGING_DATA_READ === "true";
-  const useSupabase = config.canUseSupabaseRead && dataReadFlag && provider === "supabase";
+  // Use merged server-injected ENABLE_* gates (G-6-d client fix) — not raw import.meta.env.
+  const useSupabase = config.dataReadEnabled;
 
   const result = await loadSchedulesForDryRunUi({ url, anonKey, useSupabase });
   schedules = result.records;
@@ -474,8 +511,7 @@ async function loadSchedules(): Promise<void> {
   const notice = document.getElementById("schedule-general-edit-read-notice");
   if (notice) {
     if (readSource !== "supabase") {
-      notice.textContent =
-        "Read source is not live Supabase — stale check and Save require supabase read.";
+      notice.textContent = describeMockReadFallback(config, result, useSupabase);
       notice.hidden = false;
     } else if (result.error) {
       notice.textContent = result.error;

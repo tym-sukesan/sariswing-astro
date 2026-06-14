@@ -3,21 +3,21 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 1. Immediate priority
 
-**Latest completed phase:** `G-6-f8-schedule-updated-at-staging-migration-execution`
+**Latest completed phase:** `G-6-f9-schedule-optimistic-lock-enablement-planning`
 
-Staging `public.schedules` updated_at trigger applied and verified. Operator manual SQL. Cursor did not execute SQL.
+Optimistic lock enablement design complete. Adapter already supports `expectedBeforeUpdatedAt`; wiring deferred to G-6-f10. No DB write / SQL / Run click in this phase.
 
-**Doc:** `tools/static-to-astro/docs/schedule-updated-at-staging-migration-execution-result.md`  
-**Script:** `scripts/supabase/schedules-updated-at-trigger.sql`
+**Doc:** `tools/static-to-astro/docs/schedule-optimistic-lock-enablement-planning.md`
 
-**Recommended next phase:** `G-6-f9-schedule-optimistic-lock-enablement-planning`
+**Recommended next phase:** `G-6-f10-schedule-optimistic-lock-enablement-implementation`
 
 ## 2. Staging DB state
 
 ```txt
 Trigger: schedules_set_updated_at on public.schedules (active)
 Function: public.tg_schedules_set_updated_at()
-Target row updated_at: 2026-06-14 06:49:42.240919+00 (after no-op verification UPDATE)
+Target row updated_at: 2026-06-14 06:49:42.240919+00
+optimisticLockWiredInProductPath: false (adapter ready; no caller passes expectedBeforeUpdatedAt)
 rollbackNeeded: false
 ```
 
@@ -34,8 +34,10 @@ Do not re-click G-6-e5 / G-6-f6 PoC Run buttons.
 | Phase | Status |
 | --- | --- |
 | G-6-f8 migration execution | **DONE** |
-| G-6-f9 optimistic lock enablement | **Next** |
+| G-6-f9 optimistic lock planning | **DONE** |
+| G-6-f10 optimistic lock implementation | **Next** |
 | G-6-g general edit UI planning | Planned |
+| G-6-g1 title non-dry-run slice | After f10 + g planning |
 
 ## 5. AI workflow maintenance rule
 

@@ -81,16 +81,24 @@ Planning complete: `tools/static-to-astro/docs/schedule-write-hardening-and-upda
 - Next: general edit UI planning + per-field slices with new approval IDs
 - PoC triggers (G-6-e5, G-6-f6): keep code, disarmed, do not re-click
 
-## Schedule updated_at migration preflight (G-6-f8)
+## Schedule updated_at migration (G-6-f8)
 
-Preflight complete: `tools/static-to-astro/docs/schedule-updated-at-staging-migration-preflight.md`
+Preflight: `tools/static-to-astro/docs/schedule-updated-at-staging-migration-preflight.md`
 
 Execution **succeeded** on staging: `tools/static-to-astro/docs/schedule-updated-at-staging-migration-execution-result.md`
 
 - Trigger `schedules_set_updated_at` active on `public.schedules` (staging only)
 - Script: `scripts/supabase/schedules-updated-at-trigger.sql`
-- `expectedBeforeUpdatedAt` can be enabled in next phase (G-6-f9)
 - Do not re-apply trigger without documented rollback + re-apply phase
+
+## Schedule optimistic lock enablement (G-6-f9)
+
+Planning complete: `tools/static-to-astro/docs/schedule-optimistic-lock-enablement-planning.md`
+
+- Adapter `updateScheduleWrite` already implements `expectedBeforeUpdatedAt`; no caller passes it yet
+- PoC triggers (G-6-e5, G-6-f6): frozen — do not add lock retroactively; do not re-click
+- Next code phase: `G-6-f10-schedule-optimistic-lock-enablement-implementation` (shared general write trigger + conflict UI)
+- General UI / new field slices: must pass `beforeSnapshot.updated_at` as lock token
 
 ## Schedule CMS generalization
 

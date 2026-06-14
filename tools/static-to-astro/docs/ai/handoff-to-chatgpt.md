@@ -12,28 +12,29 @@ Paste this file at the start of a new ChatGPT thread. Cursor should update it af
 ## 2. Current phase
 
 ```txt
-Current phase: G-6-f8-schedule-updated-at-staging-migration-execution (completed — SUCCESS)
-Latest completed phase: G-6-f8-schedule-updated-at-staging-migration-execution
-Latest commit: e778aa8 — Record G-6-f8 schedule updated_at staging migration execution success
-Recommended next phase: G-6-f9-schedule-optimistic-lock-enablement-planning
+Current phase: G-6-f9-schedule-optimistic-lock-enablement-planning (completed — planning only)
+Latest completed phase: G-6-f9-schedule-optimistic-lock-enablement-planning
+Recommended next phase: G-6-f10-schedule-optimistic-lock-enablement-implementation
 ```
 
 ---
 
 ## 3. Current state summary
 
-G-6-f8 execution succeeded on static-to-astro-cms-staging. Trigger `schedules_set_updated_at` + function `tg_schedules_set_updated_at` active. No-op UPDATE advanced updated_at; semantic fields unchanged. rollbackNeeded: false.
+G-6-f8 trigger active on staging. G-6-f9 planning documents how to wire `expectedBeforeUpdatedAt` into general write path and new field slices. Adapter lock logic exists in `schedule-write-adapter.ts`; PoC triggers do not use it (frozen). No DB write in G-6-f9.
 
 ---
 
-## 4. Staging trigger state
+## 4. Optimistic lock state
 
 ```txt
-project: static-to-astro-cms-staging
-function: public.tg_schedules_set_updated_at()
-trigger: schedules_set_updated_at (BEFORE UPDATE on public.schedules)
-schedule_months: no trigger added
-script: scripts/supabase/schedules-updated-at-trigger.sql
+adapter expectedBeforeUpdatedAt: implemented (schedule-write-adapter.ts)
+types expectedBeforeUpdatedAt: implemented (schedule-write-types.ts)
+guards: no lock (adapter-only by design)
+G-6-e5 / G-6-f6 PoC: lock disabled (frozen)
+general UI / new slices: not wired
+readyForOptimisticLockEnablement: true
+optimisticLockWiredInProductPath: false
 ```
 
 ---
@@ -43,10 +44,11 @@ script: scripts/supabase/schedules-updated-at-trigger.sql
 ```txt
 scheduleUpdatedAtStagingMigrationSucceeded: true
 scheduleUpdatedAtTriggerActiveOnStaging: true
-readyForOptimisticLockEnablement: true
+scheduleOptimisticLockPlanningComplete: true
 rollbackNeeded: false
 cursorExecutedSqlInLatestPhase: false
-operatorExecutedSqlInLatestPhase: true
+dbWriteInLatestPhase: false
+runButtonClickedInLatestPhase: false
 ```
 
 ---
@@ -54,7 +56,9 @@ operatorExecutedSqlInLatestPhase: true
 ## 6. Files to read first
 
 ```txt
+tools/static-to-astro/docs/schedule-optimistic-lock-enablement-planning.md
 tools/static-to-astro/docs/schedule-updated-at-staging-migration-execution-result.md
 tools/static-to-astro/docs/schedule-write-hardening-and-updated-at-planning.md
 tools/static-to-astro/docs/ai/00-current-state.md
+src/lib/admin/staging-write/schedule-write-adapter.ts
 ```

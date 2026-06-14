@@ -164,9 +164,10 @@ rollbackNeeded: false
 ## 13. Recommended next phases
 
 ```txt
-1. G-6-f9-schedule-optimistic-lock-enablement-planning
-2. G-6-g-schedule-general-edit-ui-planning
-3. Per-field non-dry-run slices (title, times, price) with new G-6-g approval IDs
+1. G-6-f9-schedule-optimistic-lock-enablement-planning — DONE (see schedule-optimistic-lock-enablement-planning.md)
+2. G-6-f10-schedule-optimistic-lock-enablement-implementation
+3. G-6-g-schedule-general-edit-ui-planning
+4. Per-field non-dry-run slices (title, times, price) with new G-6-g approval IDs
 ```
 
 ## 14. Final safety statement

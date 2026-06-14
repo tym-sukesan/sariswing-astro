@@ -21,16 +21,16 @@ Staging Shell
 将来的な顧客オンボーディング・課金・デプロイ自動化
 
 2. Current phase
-現在フェーズ: G-6-f8-schedule-updated-at-staging-migration-execution（完了）
+現在フェーズ: G-6-f9-schedule-optimistic-lock-enablement-planning（完了）
 
-staging `public.schedules` に updated_at trigger 適用成功。operator 手動 SQL。Cursor SQL 実行なし。
+optimistic lock 有効化の設計完了。adapter は `expectedBeforeUpdatedAt` 実装済みだが、一般 UI / 新 slice からは未配線。DB write / SQL / Run click なし。
 
 直近完了フェーズ:
-G-6-f8-schedule-updated-at-staging-migration-execution
+G-6-f9-schedule-optimistic-lock-enablement-planning
 前フェーズ:
-G-6-f8-schedule-updated-at-staging-migration-preflight
+G-6-f8-schedule-updated-at-staging-migration-execution
 直近commit:
-e778aa8 — Record G-6-f8 schedule updated_at staging migration execution success
+（G-6-f9 記録後に更新）
 
 G-6-f6 target row（trigger 検証後）:
 - venue / description: G-6-f6 後のまま（semantic unchanged）
@@ -277,12 +277,25 @@ planning doc: schedule-cms-generalization-planning.md
 - operator 手動 SQL; Cursor SQL 実行なし
 - rollbackNeeded: false
 
+6.23 Schedule optimistic lock enablement planning
+完了済み。フェーズ: G-6-f9-schedule-optimistic-lock-enablement-planning
+- doc: schedule-optimistic-lock-enablement-planning.md
+- adapter `updateScheduleWrite`: `expectedBeforeUpdatedAt` 実装済み（pre-UPDATE SELECT + compare）
+- types: `ScheduleUpdateWriteInput.expectedBeforeUpdatedAt` あり
+- guards: lock なし（adapter のみ — 設計どおり）
+- G-6-e5 / G-6-f6 PoC: lock 未使用（凍結；変更しない）
+- general UI / dry-run stale preview / conflict UX: 未実装
+- optimisticLockWiredInProductPath: false
+- DB write / SQL / Run click: なし
+
 7. Current gates
 scheduleWriteHardeningPlanningComplete: true
 scheduleUpdatedAtStagingMigrationPreflightComplete: true
 scheduleUpdatedAtStagingMigrationSucceeded: true
 scheduleUpdatedAtTriggerActiveOnStaging: true
+scheduleOptimisticLockPlanningComplete: true
 readyForOptimisticLockEnablement: true
+optimisticLockWiredInProductPath: false
 scheduleSafeFieldsNonDryRunExecutionSucceeded: true
 hiddenPocTriggerDisarmedByDefault: true
 dryRunDefaultDocumented: true
@@ -302,9 +315,11 @@ rollbackNeeded: false
 明示的 retry で dev server を起動する場合は inline env のみ使用する。
 
 10. Recommended next phase
-次フェーズ推奨: G-6-f9-schedule-optimistic-lock-enablement-planning
+次フェーズ推奨: G-6-f10-schedule-optimistic-lock-enablement-implementation
 
-詳細: tools/static-to-astro/docs/schedule-updated-at-staging-migration-execution-result.md
+その次: G-6-g-schedule-general-edit-ui-planning → G-6-g1-schedule-title-non-dry-run-slice
+
+詳細: tools/static-to-astro/docs/schedule-optimistic-lock-enablement-planning.md
 
 11. AI workflow transition
 チャット履歴への依存を減らすため、リポジトリ側に AI開発文脈管理ファイルを作成。

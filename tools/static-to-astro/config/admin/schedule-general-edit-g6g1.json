@@ -1,0 +1,8 @@
+{
+  "phase": "G-6-g1-schedule-title-non-dry-run-slice-implementation",
+  "approvalId": "G-6-g1-schedule-title-non-dry-run-slice",
+  "dryRunPreviewApprovalId": "G-6-g1-schedule-title-dry-run-preview",
+  "targetFields": ["title"],
+  "firstSlice": "title",
+  "productPath": true
+}

@@ -122,6 +122,16 @@ Preflight complete: `tools/static-to-astro/docs/schedule-title-non-dry-run-slice
 - Rollback SQL documented (staging only — not executed)
 - Next: `G-6-g1-schedule-title-non-dry-run-slice-implementation` (no Save execution)
 
+## Schedule title non-dry-run slice implementation (G-6-g1)
+
+Implementation complete: `tools/static-to-astro/docs/schedule-title-non-dry-run-slice-implementation.md`
+
+- Section: `AdminStagingScheduleGeneralEditSection` in `#schedule` (below `ScheduleAdminUi`)
+- Guard: `assertG6G1TitlePayloadOnly`; approval ID registered in `SCHEDULE_WRITE_APPROVAL_IDS`
+- Save path: `executeG6G1TitleNonDryRunSave` → `executeScheduleGeneralUpdateWrite` (optimistic lock)
+- Save UI exposed but gated off by default; **not executed** in implementation phase
+- Next: `G-6-g1-schedule-title-non-dry-run-slice-final-preflight` → execution (user manual Save once)
+
 ## Schedule CMS generalization
 
 Planning phase `G-6-f-schedule-cms-generalization-planning` is complete.

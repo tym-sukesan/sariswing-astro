@@ -1,0 +1,396 @@
+---
+/**
+ * G-6-g1 — Schedule general edit section (title slice; staging shell only).
+ * Product path — separate from G-6-e5 / G-6-f6 PoC sections.
+ */
+import implConfig from "../../../../config/admin/schedule-general-edit-g6g1.json";
+import AdminCard from "../../components/AdminCard.astro";
+import AdminFormField from "../../components/AdminFormField.astro";
+import {
+  G6G1_SCHEDULE_TITLE_SLICE_DEFAULT_TITLE,
+  G6G1_SCHEDULE_TITLE_SLICE_EXPECTED_DESCRIPTION,
+  G6G1_SCHEDULE_TITLE_SLICE_EXPECTED_VENUE,
+  G6G1_SCHEDULE_TITLE_SLICE_LEGACY_ID,
+  G6G1_SCHEDULE_TITLE_SLICE_TARGET_ID,
+  getScheduleGeneralEditConfig,
+  SCHEDULE_G6G1_TITLE_NON_DRY_RUN_ARMED_ENV,
+  SCHEDULE_SLICE_TARGET_ID_ENV,
+} from "../../../../../../src/lib/admin/staging-write/schedule-general-edit-config";
+import { G6G1_SCHEDULE_TITLE_NON_DRY_RUN_SLICE_APPROVAL_ID } from "../../../../../../src/lib/admin/staging-write/schedule-write-types";
+
+interface Props {
+  phase?: string;
+}
+
+const { phase = implConfig.phase } = Astro.props;
+const editConfig = getScheduleGeneralEditConfig();
+const uiDisabled = !editConfig.previewEnabled;
+const saveVisible = editConfig.sectionVisible;
+---
+
+{
+  editConfig.sectionVisible ? (
+    <section
+      id="schedule-general-edit-root"
+      class="admin-staging-schedule-general-edit"
+      data-phase={phase}
+      data-approval-id={G6G1_SCHEDULE_TITLE_NON_DRY_RUN_SLICE_APPROVAL_ID}
+      data-armed={editConfig.armed ? "true" : "false"}
+      data-product-path="true"
+      role="region"
+      aria-label="G-6-g1 schedule general edit title slice"
+    >
+      <h3 class="admin-staging-schedule-general-edit__title">
+        Schedule general edit — title slice (G-6-g1)
+      </h3>
+
+      <p class="admin-staging-schedule-general-edit__banner" role="note">
+        <strong>Product path — not G-6-e5 / G-6-f6 PoC.</strong> Dry-run preview required before
+        Save. Optimistic lock via <code>executeScheduleGeneralUpdateWrite</code>. Default: Save not
+        armed. <code>service_role</code> not used. <code>schedule_months</code> not touched.
+      </p>
+
+      {
+        editConfig.armFailureReason && !editConfig.armed ? (
+          <p class="admin-staging-schedule-general-edit__arm-note" role="note">
+            Save not armed: {editConfig.armFailureReason}
+          </p>
+        ) : null
+      }
+
+      <dl class="admin-staging-schedule-general-edit__meta">
+        <div>
+          <dt>Phase</dt>
+          <dd>{phase}</dd>
+        </div>
+        <div>
+          <dt>Approval ID</dt>
+          <dd>{G6G1_SCHEDULE_TITLE_NON_DRY_RUN_SLICE_APPROVAL_ID}</dd>
+        </div>
+        <div>
+          <dt>Target fields</dt>
+          <dd>title only</dd>
+        </div>
+        <div>
+          <dt>Target row</dt>
+          <dd>
+            <code>{G6G1_SCHEDULE_TITLE_SLICE_TARGET_ID}</code> ({G6G1_SCHEDULE_TITLE_SLICE_LEGACY_ID})
+          </dd>
+        </div>
+        <div>
+          <dt>Gate status</dt>
+          <dd id="schedule-general-edit-gate-status">
+            {editConfig.armed ? "armed" : "not armed"}
+          </dd>
+        </div>
+        <div>
+          <dt>Arm env</dt>
+          <dd>{SCHEDULE_G6G1_TITLE_NON_DRY_RUN_ARMED_ENV}=true</dd>
+        </div>
+        <div>
+          <dt>readSource</dt>
+          <dd id="schedule-general-edit-read-source">—</dd>
+        </div>
+        <div>
+          <dt>Data read gate</dt>
+          <dd id="schedule-general-edit-data-read">—</dd>
+        </div>
+        <div>
+          <dt>Supabase host</dt>
+          <dd id="schedule-general-edit-supabase-host">—</dd>
+        </div>
+        <div>
+          <dt>baseline updated_at</dt>
+          <dd id="schedule-general-edit-baseline-updated-at">—</dd>
+        </div>
+        <div>
+          <dt>Selected schedule</dt>
+          <dd id="schedule-general-edit-selected-id">—</dd>
+        </div>
+      </dl>
+
+      <p
+        id="schedule-general-edit-stale-banner"
+        class="admin-staging-schedule-general-edit__stale-banner"
+        role="alert"
+        hidden
+      />
+
+      <p id="schedule-general-edit-read-notice" class="admin-staging-schedule-general-edit__notice" hidden />
+
+      <AdminCard title="Select schedule" description="G-6-g1 target row auto-selected when present.">
+        <ul id="schedule-general-edit-picker-list" class="schedule-general-edit-picker" aria-label="Schedule picker" />
+      </AdminCard>
+
+      <AdminCard title="Current row (read-only)" description="venue / description must remain unchanged in G-6-g1.">
+        <dl class="schedule-general-edit-current__meta">
+          <div><dt>id</dt><dd id="schedule-general-edit-target-id">—</dd></div>
+          <div><dt>legacy_id</dt><dd id="schedule-general-edit-legacy-id">—</dd></div>
+          <div><dt>date</dt><dd id="schedule-general-edit-row-date">—</dd></div>
+          <div><dt>title</dt><dd id="schedule-general-edit-current-title">—</dd></div>
+          <div><dt>venue</dt><dd id="schedule-general-edit-current-venue">—</dd></div>
+          <div><dt>description</dt><dd id="schedule-general-edit-current-description">—</dd></div>
+        </dl>
+        <p class="schedule-general-edit-current__hint">
+          Expected venue: {G6G1_SCHEDULE_TITLE_SLICE_EXPECTED_VENUE}
+        </p>
+        <p class="schedule-general-edit-current__hint">
+          Expected description: {G6G1_SCHEDULE_TITLE_SLICE_EXPECTED_DESCRIPTION}
+        </p>
+      </AdminCard>
+
+      <AdminCard title="Edit title" description="G-6-g1 slice — title field only.">
+        <AdminFormField label="Title">
+          <input
+            id="schedule-general-edit-title"
+            type="text"
+            disabled={uiDisabled}
+            value={G6G1_SCHEDULE_TITLE_SLICE_DEFAULT_TITLE}
+          />
+        </AdminFormField>
+
+        <div class="schedule-general-edit-actions">
+          <button
+            id="schedule-general-edit-preview-btn"
+            class="admin-button"
+            type="button"
+            disabled={uiDisabled}
+            title="Dry-run title preview — no Supabase write"
+          >
+            Preview title dry-run
+          </button>
+          <button
+            id="schedule-general-edit-reload-btn"
+            class="admin-button admin-button--secondary"
+            type="button"
+            disabled={uiDisabled}
+            title="Reload schedule rows (SELECT only)"
+          >
+            Reload rows
+          </button>
+        </div>
+      </AdminCard>
+
+      <AdminCard title="Dry-run preview result" description="Required before Save. changedFields must be [title].">
+        <div id="schedule-general-edit-dry-run-result" class="schedule-general-edit-dry-run-result" aria-live="polite" />
+      </AdminCard>
+
+      {
+        saveVisible ? (
+          <AdminCard
+            title="Non-dry-run Save (G-6-g1)"
+            description="Armed only when env gates match. Manual operator action — not auto-clicked."
+          >
+            <AdminFormField
+              label="Type approval ID to confirm"
+              help={`Exact: ${G6G1_SCHEDULE_TITLE_NON_DRY_RUN_SLICE_APPROVAL_ID}`}
+            >
+              <input
+                id="schedule-general-edit-confirm-input"
+                type="text"
+                disabled={!editConfig.previewEnabled}
+                autocomplete="off"
+                spellcheck="false"
+              />
+            </AdminFormField>
+            <p id="schedule-general-edit-save-disabled-reason" class="schedule-general-edit-save-reason">
+              Save disabled until preview + gates satisfied
+            </p>
+            <button
+              id="schedule-general-edit-save-btn"
+              class="admin-button admin-button--danger"
+              type="button"
+              disabled
+              title="Non-dry-run Save — requires armed env + preview + confirm"
+            >
+              Save title (non-dry-run)
+            </button>
+            <p class="schedule-general-edit-save-env-hint">
+              Arm stack: ENABLE_ADMIN_STAGING_WRITE, PUBLIC_ADMIN_WRITE_PROVIDER=supabase,
+              PUBLIC_ADMIN_WRITE_MODULE=schedule,
+              PUBLIC_ADMIN_WRITE_APPROVAL_ID={G6G1_SCHEDULE_TITLE_NON_DRY_RUN_SLICE_APPROVAL_ID},
+              PUBLIC_ADMIN_WRITE_DRY_RUN=false, {SCHEDULE_G6G1_TITLE_NON_DRY_RUN_ARMED_ENV}=true
+              (optional: {SCHEDULE_SLICE_TARGET_ID_ENV}={G6G1_SCHEDULE_TITLE_SLICE_TARGET_ID})
+            </p>
+          </AdminCard>
+        ) : null
+      }
+
+      <AdminCard title="Save result" description="Populated after manual Save — empty until execution phase.">
+        <div id="schedule-general-edit-save-result" class="schedule-general-edit-save-result" aria-live="polite" />
+      </AdminCard>
+
+      <AdminCard title="Safety flags">
+        <dl class="admin-staging-schedule-general-edit__safety">
+          <div><dt>productPath</dt><dd>true</dd></div>
+          <div><dt>titleOnlyPayload</dt><dd>true</dd></div>
+          <div><dt>optimisticLock</dt><dd>expectedBeforeUpdatedAt wired</dd></div>
+          <div><dt>dryRunFirst</dt><dd>required</dd></div>
+          <div><dt>serviceRoleUsed</dt><dd>false</dd></div>
+          <div><dt>schedule_months</dt><dd>read_only_derived (not touched)</dd></div>
+          <div><dt>G-6-e5 / G-6-f6 PoC reused</dt><dd>false</dd></div>
+          <div><dt>nonDryRunExecutedInImpl</dt><dd>false</dd></div>
+        </dl>
+      </AdminCard>
+    </section>
+  ) : null
+}
+
+<script>
+  import "../../../../../../src/lib/admin/staging-write/staging-schedule-general-edit-ui.ts";
+</script>
+
+<style>
+  .admin-staging-schedule-general-edit {
+    margin: 1rem 0 0;
+    padding: 1rem 1.25rem;
+    border: 1px solid #93c5fd;
+    border-radius: 8px;
+    background: #eff6ff;
+  }
+  .admin-staging-schedule-general-edit__title {
+    margin: 0 0 0.5rem;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: #1e40af;
+  }
+  .admin-staging-schedule-general-edit__banner {
+    margin: 0 0 0.75rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    background: #dbeafe;
+    border: 1px solid #93c5fd;
+    color: #1e3a8a;
+    font-size: 0.8125rem;
+    line-height: 1.45;
+  }
+  .admin-staging-schedule-general-edit__arm-note,
+  .admin-staging-schedule-general-edit__notice {
+    margin: 0 0 0.75rem;
+    font-size: 0.8125rem;
+    color: #b45309;
+  }
+  .admin-staging-schedule-general-edit__arm-note {
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    background: #fff7ed;
+    border: 1px solid #fed7aa;
+    color: #9a3412;
+  }
+  .admin-staging-schedule-general-edit__stale-banner {
+    margin: 0 0 0.75rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    background: #fef3c7;
+    border: 1px solid #f59e0b;
+    color: #92400e;
+    font-size: 0.875rem;
+  }
+  .admin-staging-schedule-general-edit__meta,
+  .admin-staging-schedule-general-edit__safety,
+  .schedule-general-edit-current__meta {
+    margin: 0 0 1rem;
+    display: grid;
+    gap: 0.35rem 1rem;
+    grid-template-columns: max-content 1fr;
+    font-size: 0.8125rem;
+  }
+  .admin-staging-schedule-general-edit__meta dt,
+  .admin-staging-schedule-general-edit__safety dt,
+  .schedule-general-edit-current__meta dt {
+    font-weight: 600;
+    color: #1d4ed8;
+  }
+  .admin-staging-schedule-general-edit__meta dd,
+  .admin-staging-schedule-general-edit__safety dd,
+  .schedule-general-edit-current__meta dd {
+    margin: 0;
+    font-family: ui-monospace, monospace;
+    color: #1e3a8a;
+    word-break: break-all;
+  }
+  .schedule-general-edit-current__hint {
+    margin: 0.25rem 0;
+    font-size: 0.75rem;
+    color: #64748b;
+  }
+  .schedule-general-edit-picker {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .schedule-general-edit-picker__item {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #bfdbfe;
+  }
+  .schedule-general-edit-picker__item.is-selected {
+    background: #dbeafe;
+    border-radius: 4px;
+    padding: 0.5rem;
+  }
+  .schedule-general-edit-picker__main {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem 0.75rem;
+    align-items: center;
+    font-size: 0.8125rem;
+  }
+  .schedule-general-edit-picker__date {
+    font-family: ui-monospace, monospace;
+    color: #64748b;
+  }
+  .schedule-general-edit-picker__empty {
+    font-size: 0.8125rem;
+    color: #64748b;
+    padding: 0.5rem 0;
+  }
+  .schedule-general-edit-actions {
+    margin-top: 0.75rem;
+  }
+  .schedule-general-edit-dry-run-result,
+  .schedule-general-edit-save-result {
+    font-size: 0.8125rem;
+    color: #334155;
+  }
+  .schedule-general-edit-dry-run-result__changed {
+    color: #1e40af;
+  }
+  .schedule-general-edit-dry-run-result__unchanged {
+    color: #64748b;
+  }
+  .schedule-general-edit-dry-run-result__meta {
+    margin: 0.5rem 0;
+    display: grid;
+    gap: 0.25rem 0.75rem;
+    grid-template-columns: max-content 1fr;
+  }
+  .schedule-general-edit-dry-run-result__meta dt {
+    font-weight: 600;
+  }
+  .schedule-general-edit-dry-run-result__meta dd {
+    margin: 0;
+    font-family: ui-monospace, monospace;
+  }
+  .schedule-general-edit-dry-run-result__block,
+  .schedule-general-edit-save-result__json {
+    margin: 0.35rem 0 0.75rem;
+    padding: 0.75rem;
+    background: #1e293b;
+    color: #e2e8f0;
+    border-radius: 6px;
+    overflow-x: auto;
+    font-size: 0.75rem;
+    max-height: 14rem;
+  }
+  .schedule-general-edit-save-reason,
+  .schedule-general-edit-save-env-hint {
+    margin: 0.5rem 0;
+    font-size: 0.75rem;
+    color: #64748b;
+  }
+</style>

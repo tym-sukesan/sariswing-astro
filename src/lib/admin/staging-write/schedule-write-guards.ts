@@ -79,6 +79,24 @@ export function assertG6F6SafeFieldsPayloadOnly(
   }
 }
 
+export function assertG6G1TitlePayloadOnly(
+  payload: ScheduleUpdateWritePayload,
+): void {
+  const allowedKeys = new Set(["title"]);
+  const keys = Object.keys(payload);
+  if (keys.length === 0) {
+    throw new Error("G-6-g1 payload must include title.");
+  }
+  for (const key of keys) {
+    if (!allowedKeys.has(key)) {
+      throw new Error(`G-6-g1 payload field not allowed: ${key}`);
+    }
+  }
+  if (!keys.includes("title")) {
+    throw new Error("G-6-g1 payload must include title.");
+  }
+}
+
 export function assertScheduleWriteTargetId(targetId: string): void {
   if (typeof targetId !== "string" || targetId.trim() === "") {
     throw new Error("targetId must be a non-empty string.");

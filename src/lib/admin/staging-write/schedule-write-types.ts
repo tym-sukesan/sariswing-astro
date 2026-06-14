@@ -24,13 +24,23 @@ export const G6F6_SCHEDULE_SAFE_FIELDS_NON_DRY_RUN_POC_APPROVAL_ID:
   ScheduleSafeFieldsNonDryRunPocApprovalId =
   "G-6-f6-schedule-safe-fields-non-dry-run-poc";
 
+/** G-6-g1 title non-dry-run slice — product path; title only. */
+export type ScheduleG6G1TitleNonDryRunSliceApprovalId =
+  "G-6-g1-schedule-title-non-dry-run-slice";
+
+export const G6G1_SCHEDULE_TITLE_NON_DRY_RUN_SLICE_APPROVAL_ID:
+  ScheduleG6G1TitleNonDryRunSliceApprovalId =
+  "G-6-g1-schedule-title-non-dry-run-slice";
+
 export type ScheduleWriteApprovalIdUnion =
   | ScheduleWriteApprovalId
-  | ScheduleSafeFieldsNonDryRunPocApprovalId;
+  | ScheduleSafeFieldsNonDryRunPocApprovalId
+  | ScheduleG6G1TitleNonDryRunSliceApprovalId;
 
 export const SCHEDULE_WRITE_APPROVAL_IDS: readonly ScheduleWriteApprovalIdUnion[] = [
   SCHEDULE_WRITE_APPROVAL_ID,
   G6F6_SCHEDULE_SAFE_FIELDS_NON_DRY_RUN_POC_APPROVAL_ID,
+  G6G1_SCHEDULE_TITLE_NON_DRY_RUN_SLICE_APPROVAL_ID,
 ];
 
 export type ScheduleUpdateWritePayload = {

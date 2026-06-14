@@ -73,10 +73,21 @@ const targetFieldsLabel = implConfig.targetFields?.join(", ") ?? "title, venue, 
       <dd id="schedule-safe-fields-dry-run-selected-id">—</dd>
     </div>
     <div>
+      <dt>baseline updated_at</dt>
+      <dd id="schedule-safe-fields-dry-run-baseline-updated-at">—</dd>
+    </div>
+    <div>
       <dt>nonDryRun</dt>
       <dd>disabled / unavailable</dd>
     </div>
   </dl>
+
+  <p
+    id="schedule-safe-fields-dry-run-stale-banner"
+    class="admin-staging-schedule-safe-fields-dry-run__stale-banner"
+    role="alert"
+    hidden
+  />
 
   <p id="schedule-safe-fields-dry-run-read-notice" class="admin-staging-schedule-safe-fields-dry-run__notice" hidden />
 
@@ -128,6 +139,15 @@ const targetFieldsLabel = implConfig.targetFields?.join(", ") ?? "title, venue, 
       >
         Preview safe-fields dry-run
       </button>
+      <button
+        id="schedule-safe-fields-dry-run-reload-btn"
+        class="admin-button admin-button--secondary"
+        type="button"
+        disabled={uiDisabled}
+        title="Reload schedule rows from read binding (SELECT only)"
+      >
+        Reload rows
+      </button>
     </div>
   </AdminCard>
 
@@ -142,6 +162,7 @@ const targetFieldsLabel = implConfig.targetFields?.join(", ") ?? "title, venue, 
       <div><dt>writeAdapterUsed</dt><dd>false</dd></div>
       <div><dt>supabaseWriteCalled</dt><dd>false</dd></div>
       <div><dt>nonDryRunEnabled</dt><dd>false</dd></div>
+      <div><dt>optimisticLock (dry-run stale check)</dt><dd>SELECT only — G-6-f10</dd></div>
       <div><dt>schedule_months</dt><dd>read_only_derived (not touched)</dd></div>
       <div><dt>G-6-e5 approval reused</dt><dd>false</dd></div>
     </dl>
@@ -181,6 +202,15 @@ const targetFieldsLabel = implConfig.targetFields?.join(", ") ?? "title, venue, 
     margin: 0 0 0.75rem;
     font-size: 0.8125rem;
     color: #b45309;
+  }
+  .admin-staging-schedule-safe-fields-dry-run__stale-banner {
+    margin: 0 0 0.75rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    background: #fef3c7;
+    border: 1px solid #f59e0b;
+    color: #92400e;
+    font-size: 0.875rem;
   }
   .admin-staging-schedule-safe-fields-dry-run__disabled {
     padding: 0.5rem 0.75rem;

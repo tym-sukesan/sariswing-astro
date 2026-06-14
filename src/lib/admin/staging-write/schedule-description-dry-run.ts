@@ -3,6 +3,7 @@
  */
 
 import type { ScheduleAdminReadSource } from "./schedule-admin-ui-binding";
+import type { ScheduleOptimisticLockDryRunState } from "./schedule-optimistic-lock-types";
 import type { ScheduleRecord } from "./schedule-dry-run-types";
 
 export type ScheduleDescriptionDryRunSafety = {
@@ -42,6 +43,7 @@ export type ScheduleDescriptionDryRunResult = {
     description: string;
   };
   changedFields: string[];
+  optimisticLock?: ScheduleOptimisticLockDryRunState;
   message: string;
   rollbackHint: string;
   safety: ScheduleDescriptionDryRunSafety;
@@ -55,6 +57,7 @@ export function buildScheduleDescriptionDryRunResult(input: {
   newDescription: string;
   approvalId: string;
   readSource: ScheduleAdminReadSource;
+  optimisticLock?: ScheduleOptimisticLockDryRunState;
 }): ScheduleDescriptionDryRunResult {
   const beforeDescription = input.source.description ?? null;
   const afterDescription = input.newDescription;
@@ -62,6 +65,9 @@ export function buildScheduleDescriptionDryRunResult(input: {
     beforeDescription !== afterDescription ? (["description"] as string[]) : [];
 
   const wouldWrite = changedFields.length > 0;
+  const staleMessage = input.optimisticLock?.staleDetected
+    ? input.optimisticLock.message
+    : null;
 
   return {
     module: "schedule",
@@ -93,9 +99,12 @@ export function buildScheduleDescriptionDryRunResult(input: {
       description: afterDescription,
     },
     changedFields,
-    message: wouldWrite
-      ? "Description dry-run complete — client-side preview only. No database write."
-      : "No changes detected — description unchanged. No database write.",
+    optimisticLock: input.optimisticLock,
+    message: staleMessage
+      ? `${staleMessage} Description dry-run preview only — no database write.`
+      : wouldWrite
+        ? "Description dry-run complete — client-side preview only. No database write."
+        : "No changes detected — description unchanged. No database write.",
     rollbackHint: ROLLBACK_HINT,
     safety: {
       supabaseWriteCalled: false,

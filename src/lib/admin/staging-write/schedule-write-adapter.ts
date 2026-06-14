@@ -11,6 +11,7 @@ import {
   assertScheduleWriteTargetId,
   getScheduleWriteSafety,
 } from "./schedule-write-guards";
+import { scheduleUpdatedAtEquals } from "./schedule-write-utils";
 import type {
   ScheduleUpdateWritePayload,
   ScheduleWriteAdapterResult,
@@ -120,8 +121,9 @@ export async function updateScheduleWrite(input: {
       });
     }
 
-    const currentUpdatedAt = currentRow?.updated_at ?? null;
-    if (currentUpdatedAt !== expectedBeforeUpdatedAt) {
+    const currentUpdatedAt =
+      currentRow?.updated_at != null ? String(currentRow.updated_at) : null;
+    if (!scheduleUpdatedAtEquals(currentUpdatedAt, expectedBeforeUpdatedAt)) {
       return buildFailure({
         approvalId,
         targetId: beforeSnapshot.id,

@@ -5,6 +5,11 @@
 
 import type { ScheduleAdminReadSource } from "./schedule-admin-ui-binding";
 import {
+  createEditSessionBaseline,
+  renderOptimisticLockDryRunHtml,
+  runDryRunStaleCheck,
+} from "./schedule-optimistic-lock-dry-run";
+import {
   buildScheduleSafeFieldsDryRunResult,
   buildScheduleSafeFieldsSelectionError,
   formatSafeFieldDisplay,
@@ -19,6 +24,7 @@ import { loadSchedulesForDryRunUi } from "./staging-schedule-read";
 let schedules: ScheduleRecord[] = [];
 let selectedId: string | null = null;
 let readSource: ScheduleAdminReadSource = "static";
+let baselineUpdatedAt: string | null = null;
 
 const FIELD_INPUT_IDS: Record<keyof ScheduleSafeFieldsFormInput, string> = {
   title: "schedule-safe-fields-dry-run-title",
@@ -120,6 +126,7 @@ function renderDryRunResult(result: ScheduleSafeFieldsDryRunResult): void {
     `<div><dt>supabaseWriteCalled</dt><dd>false</dd></div>`,
     `<div><dt>nonDryRunEnabled</dt><dd>false</dd></div>`,
     `</dl>`,
+    renderOptimisticLockDryRunHtml(result.optimisticLock, escapeHtml),
     `<p><strong>Before snapshot:</strong></p>`,
     `<pre class="schedule-safe-fields-dry-run-result__block">${escapeHtml(
       JSON.stringify(result.beforeSnapshot, null, 2),
@@ -166,11 +173,18 @@ function renderPickerList(): void {
 
 function populateSelectedPanel(record: ScheduleRecord): void {
   const safe = snapshotSafeFieldsFromRecord(record);
+  const baseline = createEditSessionBaseline(record);
+  baselineUpdatedAt = baseline.baselineUpdatedAt;
 
   setText("schedule-safe-fields-dry-run-target-id", record.id);
   setText("schedule-safe-fields-dry-run-legacy-id", record.legacy_id ?? "—");
   setText("schedule-safe-fields-dry-run-row-date", record.date);
   setText("schedule-safe-fields-dry-run-selected-id", record.id);
+  setText(
+    "schedule-safe-fields-dry-run-baseline-updated-at",
+    baseline.baselineUpdatedAt ?? "—",
+  );
+  hideStaleBanner();
 
   for (const field of Object.keys(FIELD_CURRENT_IDS) as Array<keyof ScheduleSafeFieldsFormInput>) {
     setText(FIELD_CURRENT_IDS[field], formatSafeFieldDisplay(safe[field]));
@@ -186,7 +200,23 @@ function selectSchedule(id: string): void {
   renderPickerList();
 }
 
+function hideStaleBanner(): void {
+  const banner = document.getElementById("schedule-safe-fields-dry-run-stale-banner");
+  if (banner) banner.hidden = true;
+}
+
+function showStaleBanner(message: string): void {
+  const banner = document.getElementById("schedule-safe-fields-dry-run-stale-banner");
+  if (!banner) return;
+  banner.textContent = message;
+  banner.hidden = false;
+}
+
 function handlePreviewDryRun(): void {
+  void handlePreviewDryRunAsync();
+}
+
+async function handlePreviewDryRunAsync(): Promise<void> {
   const config = getStagingScheduleSafeFieldsDryRunConfig();
   if (!config.enabled) return;
 
@@ -202,11 +232,28 @@ function handlePreviewDryRun(): void {
     return;
   }
 
+  const url = String(import.meta.env.PUBLIC_SUPABASE_URL ?? "").trim();
+  const anonKey = String(import.meta.env.PUBLIC_SUPABASE_ANON_KEY ?? "").trim();
+  const optimisticLock = await runDryRunStaleCheck({
+    url,
+    anonKey,
+    scheduleId: record.id,
+    baselineUpdatedAt,
+    liveSupabaseRead: readSource === "supabase",
+  });
+
+  if (optimisticLock.staleDetected && optimisticLock.message) {
+    showStaleBanner(optimisticLock.message);
+  } else {
+    hideStaleBanner();
+  }
+
   const result = buildScheduleSafeFieldsDryRunResult({
     source: record,
     form: readFormFromDom(),
     approvalId: config.approvalId,
     readSource,
+    optimisticLock,
   });
   renderDryRunResult(result);
 }
@@ -264,6 +311,13 @@ async function loadSchedules(): Promise<void> {
 
   if (!selectedId && schedules.length > 0) {
     selectSchedule(schedules[0].id);
+  } else if (selectedId) {
+    const refreshed = schedules.find((s) => s.id === selectedId);
+    if (refreshed) {
+      populateSelectedPanel(refreshed);
+    }
+    renderPickerList();
+    hideStaleBanner();
   } else {
     renderPickerList();
   }
@@ -287,6 +341,12 @@ function bindScheduleSafeFieldsDryRunUi(): void {
   document
     .getElementById("schedule-safe-fields-dry-run-preview-btn")
     ?.addEventListener("click", () => handlePreviewDryRun());
+
+  document
+    .getElementById("schedule-safe-fields-dry-run-reload-btn")
+    ?.addEventListener("click", () => {
+      void loadSchedules();
+    });
 }
 
 if (typeof document !== "undefined") {

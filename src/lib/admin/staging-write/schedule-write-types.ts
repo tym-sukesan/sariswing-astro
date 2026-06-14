@@ -133,3 +133,6 @@ export type ScheduleWriteTableBuilder = {
 export type ScheduleWriteClient = {
   from: (table: "schedules") => ScheduleWriteTableBuilder;
 };
+
+/** Re-export optimistic lock wiring for general / next-slice path (G-6-f10). */
+export type { ScheduleOptimisticLockDryRunState } from "./schedule-optimistic-lock-types";

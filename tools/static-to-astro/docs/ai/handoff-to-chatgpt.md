@@ -12,29 +12,28 @@ Paste this file at the start of a new ChatGPT thread. Cursor should update it af
 ## 2. Current phase
 
 ```txt
-Current phase: G-6-f9-schedule-optimistic-lock-enablement-planning (completed — planning only)
-Latest completed phase: G-6-f9-schedule-optimistic-lock-enablement-planning
-Recommended next phase: G-6-f10-schedule-optimistic-lock-enablement-implementation
+Current phase: G-6-f10-schedule-optimistic-lock-enablement-implementation (completed)
+Latest completed phase: G-6-f10-schedule-optimistic-lock-enablement-implementation
+Recommended next phase: G-6-g-schedule-general-edit-ui-planning
 ```
 
 ---
 
 ## 3. Current state summary
 
-G-6-f8 trigger active on staging. G-6-f9 planning documents how to wire `expectedBeforeUpdatedAt` into general write path and new field slices. Adapter lock logic exists in `schedule-write-adapter.ts`; PoC triggers do not use it (frozen). No DB write in G-6-f9.
+G-6-f10 wired optimistic lock into general write path via `buildScheduleLockedWriteRequest` / `executeScheduleGeneralUpdateWrite`. Dry-run sections (G-6-f3/f4) perform SELECT-only stale checks on preview. PoC triggers unchanged. No DB write in G-6-f10.
 
 ---
 
 ## 4. Optimistic lock state
 
 ```txt
-adapter expectedBeforeUpdatedAt: implemented (schedule-write-adapter.ts)
-types expectedBeforeUpdatedAt: implemented (schedule-write-types.ts)
-guards: no lock (adapter-only by design)
-G-6-e5 / G-6-f6 PoC: lock disabled (frozen)
-general UI / new slices: not wired
-readyForOptimisticLockEnablement: true
-optimisticLockWiredInProductPath: false
+adapter expectedBeforeUpdatedAt: implemented + normalized compare
+product path wiring: buildScheduleLockedWriteRequest (G-6-f10)
+dry-run stale check: SELECT only on preview
+G-6-e5 / G-6-f6 PoC: frozen (no lock)
+nonDryRunSaveUiExposed: false
+optimisticLockWiredInProductPath: true
 ```
 
 ---
@@ -42,11 +41,9 @@ optimisticLockWiredInProductPath: false
 ## 5. Gate state
 
 ```txt
-scheduleUpdatedAtStagingMigrationSucceeded: true
-scheduleUpdatedAtTriggerActiveOnStaging: true
+scheduleOptimisticLockImplementationComplete: true
 scheduleOptimisticLockPlanningComplete: true
 rollbackNeeded: false
-cursorExecutedSqlInLatestPhase: false
 dbWriteInLatestPhase: false
 runButtonClickedInLatestPhase: false
 ```
@@ -56,9 +53,9 @@ runButtonClickedInLatestPhase: false
 ## 6. Files to read first
 
 ```txt
+tools/static-to-astro/docs/schedule-optimistic-lock-enablement-implementation.md
 tools/static-to-astro/docs/schedule-optimistic-lock-enablement-planning.md
-tools/static-to-astro/docs/schedule-updated-at-staging-migration-execution-result.md
-tools/static-to-astro/docs/schedule-write-hardening-and-updated-at-planning.md
+src/lib/admin/staging-write/schedule-general-update-trigger.ts
+src/lib/admin/staging-write/schedule-write-utils.ts
 tools/static-to-astro/docs/ai/00-current-state.md
-src/lib/admin/staging-write/schedule-write-adapter.ts
 ```

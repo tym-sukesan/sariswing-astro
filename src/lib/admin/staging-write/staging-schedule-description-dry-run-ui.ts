@@ -10,12 +10,18 @@ import {
   type ScheduleDescriptionDryRunResult,
 } from "./schedule-description-dry-run";
 import { getStagingScheduleDescriptionDryRunConfig } from "./schedule-description-dry-run-config";
+import {
+  createEditSessionBaseline,
+  renderOptimisticLockDryRunHtml,
+  runDryRunStaleCheck,
+} from "./schedule-optimistic-lock-dry-run";
 import type { ScheduleRecord } from "./schedule-dry-run-types";
 import { loadSchedulesForDryRunUi } from "./staging-schedule-read";
 
 let schedules: ScheduleRecord[] = [];
 let selectedId: string | null = null;
 let readSource: ScheduleAdminReadSource = "static";
+let baselineUpdatedAt: string | null = null;
 
 function escapeHtml(value: string): string {
   return value
@@ -82,6 +88,7 @@ function renderDryRunResult(result: ScheduleDescriptionDryRunResult): void {
     `<div><dt>writeAdapterUsed</dt><dd>false</dd></div>`,
     `<div><dt>supabaseWriteCalled</dt><dd>false</dd></div>`,
     `</dl>`,
+    renderOptimisticLockDryRunHtml(result.optimisticLock, escapeHtml),
     `<p><strong>Before snapshot (description):</strong></p>`,
     `<pre class="schedule-desc-dry-run-result__block">${escapeHtml(
       JSON.stringify(result.beforeSnapshot, null, 2),
@@ -127,6 +134,9 @@ function renderPickerList(): void {
 }
 
 function populateSelectedPanel(record: ScheduleRecord): void {
+  const baseline = createEditSessionBaseline(record);
+  baselineUpdatedAt = baseline.baselineUpdatedAt;
+
   setText("schedule-desc-dry-run-target-id", record.id);
   setText("schedule-desc-dry-run-legacy-id", record.legacy_id ?? "—");
   setText("schedule-desc-dry-run-row-date", record.date);
@@ -137,6 +147,11 @@ function populateSelectedPanel(record: ScheduleRecord): void {
   );
   setTextareaValue("schedule-desc-dry-run-new-description", record.description ?? "");
   setText("schedule-desc-dry-run-selected-id", record.id);
+  setText(
+    "schedule-desc-dry-run-baseline-updated-at",
+    baseline.baselineUpdatedAt ?? "—",
+  );
+  hideStaleBanner();
 }
 
 function selectSchedule(id: string): void {
@@ -147,7 +162,23 @@ function selectSchedule(id: string): void {
   renderPickerList();
 }
 
+function hideStaleBanner(): void {
+  const banner = document.getElementById("schedule-desc-dry-run-stale-banner");
+  if (banner) banner.hidden = true;
+}
+
+function showStaleBanner(message: string): void {
+  const banner = document.getElementById("schedule-desc-dry-run-stale-banner");
+  if (!banner) return;
+  banner.textContent = message;
+  banner.hidden = false;
+}
+
 function handlePreviewDryRun(): void {
+  void handlePreviewDryRunAsync();
+}
+
+async function handlePreviewDryRunAsync(): Promise<void> {
   const config = getStagingScheduleDescriptionDryRunConfig();
   if (!config.enabled) return;
 
@@ -163,11 +194,28 @@ function handlePreviewDryRun(): void {
     return;
   }
 
+  const url = String(import.meta.env.PUBLIC_SUPABASE_URL ?? "").trim();
+  const anonKey = String(import.meta.env.PUBLIC_SUPABASE_ANON_KEY ?? "").trim();
+  const optimisticLock = await runDryRunStaleCheck({
+    url,
+    anonKey,
+    scheduleId: record.id,
+    baselineUpdatedAt,
+    liveSupabaseRead: readSource === "supabase",
+  });
+
+  if (optimisticLock.staleDetected && optimisticLock.message) {
+    showStaleBanner(optimisticLock.message);
+  } else {
+    hideStaleBanner();
+  }
+
   const result = buildScheduleDescriptionDryRunResult({
     source: record,
     newDescription: getTextareaValue("schedule-desc-dry-run-new-description"),
     approvalId: config.approvalId,
     readSource,
+    optimisticLock,
   });
   renderDryRunResult(result);
 }
@@ -225,6 +273,13 @@ async function loadSchedules(): Promise<void> {
 
   if (!selectedId && schedules.length > 0) {
     selectSchedule(schedules[0].id);
+  } else if (selectedId) {
+    const refreshed = schedules.find((s) => s.id === selectedId);
+    if (refreshed) {
+      populateSelectedPanel(refreshed);
+    }
+    renderPickerList();
+    hideStaleBanner();
   } else {
     renderPickerList();
   }
@@ -248,6 +303,12 @@ function bindScheduleDescriptionDryRunUi(): void {
   document
     .getElementById("schedule-desc-dry-run-preview-btn")
     ?.addEventListener("click", () => handlePreviewDryRun());
+
+  document
+    .getElementById("schedule-desc-dry-run-reload-btn")
+    ?.addEventListener("click", () => {
+      void loadSchedules();
+    });
 }
 
 if (typeof document !== "undefined") {

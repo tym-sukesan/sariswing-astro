@@ -3,6 +3,7 @@
  */
 
 import type { ScheduleAdminReadSource } from "./schedule-admin-ui-binding";
+import type { ScheduleOptimisticLockDryRunState } from "./schedule-optimistic-lock-types";
 import {
   SCHEDULE_SAFE_DRY_RUN_FIELDS,
   type ScheduleSafeDryRunField,
@@ -56,6 +57,7 @@ export type ScheduleSafeFieldsDryRunResult = {
   };
   changedFields: string[];
   validation: ScheduleSafeFieldsDryRunValidation;
+  optimisticLock?: ScheduleOptimisticLockDryRunState;
   message: string;
   rollbackHint: string;
   safety: ScheduleSafeFieldsDryRunSafety;
@@ -118,11 +120,15 @@ export function buildScheduleSafeFieldsDryRunResult(input: {
   form: ScheduleSafeFieldsFormInput;
   approvalId: string;
   readSource: ScheduleAdminReadSource;
+  optimisticLock?: ScheduleOptimisticLockDryRunState;
 }): ScheduleSafeFieldsDryRunResult {
   const beforeSafe = snapshotSafeFieldsFromRecord(input.source);
   const changedFields = detectChangedSafeFields(beforeSafe, input.form);
   const validation = buildSafeFieldsValidationWarnings(input.form);
   const wouldWrite = changedFields.length > 0;
+  const staleMessage = input.optimisticLock?.staleDetected
+    ? input.optimisticLock.message
+    : null;
 
   return {
     module: "schedule",
@@ -156,9 +162,12 @@ export function buildScheduleSafeFieldsDryRunResult(input: {
     },
     changedFields,
     validation,
-    message: wouldWrite
-      ? "Safe-fields dry-run complete — client-side preview only. No database write."
-      : "No changes detected — safe fields unchanged (no-op preview). No database write.",
+    optimisticLock: input.optimisticLock,
+    message: staleMessage
+      ? `${staleMessage} Safe-fields dry-run preview only — no database write.`
+      : wouldWrite
+        ? "Safe-fields dry-run complete — client-side preview only. No database write."
+        : "No changes detected — safe fields unchanged (no-op preview). No database write.",
     rollbackHint: ROLLBACK_HINT,
     safety: {
       supabaseWriteCalled: false,

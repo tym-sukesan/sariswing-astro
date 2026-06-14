@@ -91,14 +91,16 @@ Execution **succeeded** on staging: `tools/static-to-astro/docs/schedule-updated
 - Script: `scripts/supabase/schedules-updated-at-trigger.sql`
 - Do not re-apply trigger without documented rollback + re-apply phase
 
-## Schedule optimistic lock enablement (G-6-f9)
+## Schedule optimistic lock enablement (G-6-f9 / G-6-f10)
 
-Planning complete: `tools/static-to-astro/docs/schedule-optimistic-lock-enablement-planning.md`
+Planning: `tools/static-to-astro/docs/schedule-optimistic-lock-enablement-planning.md`
 
-- Adapter `updateScheduleWrite` already implements `expectedBeforeUpdatedAt`; no caller passes it yet
-- PoC triggers (G-6-e5, G-6-f6): frozen — do not add lock retroactively; do not re-click
-- Next code phase: `G-6-f10-schedule-optimistic-lock-enablement-implementation` (shared general write trigger + conflict UI)
-- General UI / new field slices: must pass `beforeSnapshot.updated_at` as lock token
+Implementation **complete** (G-6-f10): `tools/static-to-astro/docs/schedule-optimistic-lock-enablement-implementation.md`
+
+- `buildScheduleLockedWriteRequest` / `executeScheduleGeneralUpdateWrite` pass `expectedBeforeUpdatedAt`
+- Dry-run UI: SELECT-only stale check on preview (G-6-f3 / G-6-f4 sections)
+- PoC triggers (G-6-e5, G-6-f6): frozen — do not modify or re-click
+- Non-dry-run Save UI: not exposed until G-6-g approval IDs
 
 ## Schedule CMS generalization
 

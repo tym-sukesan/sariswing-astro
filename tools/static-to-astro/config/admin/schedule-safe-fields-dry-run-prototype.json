@@ -1,0 +1,7 @@
+{
+  "phase": "G-6-f4-schedule-safe-fields-dry-run-prototype",
+  "approvalId": "G-6-f4-schedule-safe-fields-dry-run-prototype",
+  "targetFields": ["title", "venue", "open_time", "start_time", "price", "description"],
+  "dryRunOnly": true,
+  "writeAdapterUsed": false
+}

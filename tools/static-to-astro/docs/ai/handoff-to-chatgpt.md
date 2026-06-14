@@ -14,10 +14,10 @@ Paste this file at the start of a new ChatGPT thread. Cursor should update it af
 ## 2. Current phase
 
 ```txt
-Current phase: G-6-f3-schedule-description-edit-dry-run-prototype (completed)
-Latest completed phase: G-6-f3-schedule-description-edit-dry-run-prototype
-Latest commit: 98f7895 — Add schedule description dry-run edit prototype (G-6-f3)
-Recommended next phase: G-6-f4-schedule-safe-fields-dry-run-prototype
+Current phase: G-6-f4-schedule-safe-fields-dry-run-prototype (completed)
+Latest completed phase: G-6-f4-schedule-safe-fields-dry-run-prototype
+Latest commit: (G-6-f4 commit — update after push)
+Recommended next phase: G-6-f5-schedule-safe-fields-non-dry-run-prototype
 ```
 
 Prior milestone commits:
@@ -31,7 +31,7 @@ e9e3861 — Record schedule PoC explicit retry success
 
 ## 3. Current state summary
 
-G-6-f3 added description-only dry-run edit prototype (Plan A: client-side only). Write adapter not called. No DB writes. G-6-e5 approval ID not reused. Hidden PoC still disarmed.
+G-6-f4 extended dry-run to safe fields (title, venue, times, price, description) via client-side Plan A. G-6-f3 UI replaced by safe-fields section. No DB writes. Hidden PoC still disarmed.
 
 ---
 
@@ -75,7 +75,8 @@ dryRunDefaultDocumented: true
 g6e5ApprovalIdReuseProhibited: true
 scheduleReadUiBindingComplete: true
 scheduleDescriptionDryRunPrototypeComplete: true
-readyForScheduleSafeFieldsDryRun: true
+scheduleSafeFieldsDryRunPrototypeComplete: true
+readyForScheduleSafeFieldsNonDryRun: true
 readyForScheduleGeneralUi: false
 rollbackNeeded: false
 
@@ -92,6 +93,7 @@ supabaseSelectInLatestPhase: true (client SELECT via loadSchedulesForDryRunUi)
 ## 7. Recently completed work
 
 ```txt
+- G-6-f4-schedule-safe-fields-dry-run-prototype
 - G-6-f3-schedule-description-edit-dry-run-prototype
 - G-6-f2-schedule-read-ui-binding-audit
 - G-6-f1-schedule-poc-isolation-dry-run-default
@@ -116,7 +118,7 @@ supabaseSelectInLatestPhase: true (client SELECT via loadSchedulesForDryRunUi)
 
 ## 9. Next requested help from ChatGPT
 
-Suggest Cursor prompt for **G-6-f4-schedule-safe-fields-dry-run-prototype**: extend dry-run to title/venue etc.; still dry-run only.
+Suggest Cursor prompt for **G-6-f5-schedule-safe-fields-non-dry-run-prototype**: approved non-dry-run for safe fields only; exclude date/published/sort_order.
 
 ---
 
@@ -124,6 +126,7 @@ Suggest Cursor prompt for **G-6-f4-schedule-safe-fields-dry-run-prototype**: ext
 
 ```txt
 AGENTS.md
+tools/static-to-astro/docs/schedule-safe-fields-dry-run-prototype.md
 tools/static-to-astro/docs/schedule-description-edit-dry-run-prototype.md
 tools/static-to-astro/docs/schedule-read-ui-binding-audit.md
 tools/static-to-astro/docs/schedule-poc-isolation-dry-run-default.md

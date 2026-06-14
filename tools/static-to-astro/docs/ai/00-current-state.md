@@ -21,17 +21,17 @@ Staging Shell
 将来的な顧客オンボーディング・課金・デプロイ自動化
 
 2. Current phase
-現在フェーズ: G-6-f3-schedule-description-edit-dry-run-prototype（完了）
+現在フェーズ: G-6-f4-schedule-safe-fields-dry-run-prototype（完了）
 
-Schedule `description` 編集の dry-run prototype（Plan A: クライアント内のみ）。write adapter 未使用。DB write なし。
+Safe fields（title, venue, open_time, start_time, price, description）の dry-run prototype。Plan A クライアント内のみ。write adapter 未使用。
 
 直近完了フェーズ:
-G-6-f3-schedule-description-edit-dry-run-prototype
+G-6-f4-schedule-safe-fields-dry-run-prototype
 前フェーズ:
+G-6-f3-schedule-description-edit-dry-run-prototype
 G-6-f2-schedule-read-ui-binding-audit
-G-6-f1-schedule-poc-isolation-dry-run-default
 直近commit:
-98f7895 — Add schedule description dry-run edit prototype (G-6-f3)
+（G-6-f4 commit 後に更新）
 
 G-6-e5 成功状態（維持）:
 - description: 出演： [G-6-e5 non-dry-run PoC]
@@ -221,11 +221,15 @@ planning doc: schedule-cms-generalization-planning.md
 
 6.14 Schedule description dry-run prototype
 完了済み。フェーズ: G-6-f3-schedule-description-edit-dry-run-prototype
-- Plan A: クライアント内 dry-run（write adapter 未使用）
-- `AdminStagingScheduleDescriptionDryRunSection` — description only
-- beforeSnapshot / payload / afterPreview / changedFields
-- doc: schedule-description-edit-dry-run-prototype.md
-- DB write / non-dry-run / PoC re-arm / G-6-e5 approval: なし
+- Plan A: description-only（G-6-f4 で UI 拡張）
+
+6.15 Schedule safe-fields dry-run prototype
+完了済み。フェーズ: G-6-f4-schedule-safe-fields-dry-run-prototype
+- 対象: title, venue, open_time, start_time, price, description
+- `AdminStagingScheduleSafeFieldsDryRunSection`
+- operation: dry-run-update-preview
+- doc: schedule-safe-fields-dry-run-prototype.md
+- DB write / non-dry-run / PoC re-arm: なし
 
 7. Current gates
 scheduleNonDryRunPocCompleted: true
@@ -237,7 +241,8 @@ dryRunDefaultDocumented: true
 g6e5ApprovalIdReuseProhibited: true
 scheduleReadUiBindingComplete: true
 scheduleDescriptionDryRunPrototypeComplete: true
-readyForScheduleSafeFieldsDryRun: true
+scheduleSafeFieldsDryRunPrototypeComplete: true
+readyForScheduleSafeFieldsNonDryRun: true
 readyForScheduleGeneralUi: false
 readyForExplicitRetry: false
 rollbackNeeded: false
@@ -255,9 +260,9 @@ rollbackNeeded: false
 明示的 retry で dev server を起動する場合は inline env のみ使用する。
 
 10. Recommended next phase
-次フェーズ推奨: G-6-f4-schedule-safe-fields-dry-run-prototype
+次フェーズ推奨: G-6-f5-schedule-safe-fields-non-dry-run-prototype
 
-詳細: tools/static-to-astro/docs/schedule-description-edit-dry-run-prototype.md
+詳細: tools/static-to-astro/docs/schedule-safe-fields-dry-run-prototype.md
 
 11. AI workflow transition
 チャット履歴への依存を減らすため、リポジトリ側に AI開発文脈管理ファイルを作成。

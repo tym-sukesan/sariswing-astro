@@ -1,5 +1,7 @@
 # Schedule description edit dry-run prototype (G-6-f3)
 
+> **Superseded in UI by G-6-f4** (`schedule-safe-fields-dry-run-prototype.md`) which extends safe fields to title, venue, times, price, and description. G-6-f3 source files remain for history; staging shell uses `AdminStagingScheduleSafeFieldsDryRunSection`.
+
 Last updated: 2026-06-14  
 Phase: `G-6-f3-schedule-description-edit-dry-run-prototype`  
 Approval ID: `G-6-f3-schedule-description-edit-dry-run-prototype`

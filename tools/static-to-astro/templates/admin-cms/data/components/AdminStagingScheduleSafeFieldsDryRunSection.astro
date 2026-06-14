@@ -1,0 +1,290 @@
+---
+/**
+ * G-6-f4 — Schedule safe-fields dry-run edit prototype (client-side only; no DB writes).
+ */
+import implConfig from "../../../../config/admin/schedule-safe-fields-dry-run-prototype.json";
+import AdminCard from "../../components/AdminCard.astro";
+import AdminFormField from "../../components/AdminFormField.astro";
+import { getStagingScheduleSafeFieldsDryRunConfig } from "../../../../../../src/lib/admin/staging-write/schedule-safe-fields-dry-run-config";
+
+interface Props {
+  phase?: string;
+}
+
+const { phase = implConfig.phase } = Astro.props;
+const config = getStagingScheduleSafeFieldsDryRunConfig();
+const uiDisabled = !config.enabled;
+const targetFieldsLabel = implConfig.targetFields?.join(", ") ?? "title, venue, open_time, start_time, price, description";
+---
+
+<section
+  id="schedule-safe-fields-dry-run-root"
+  class="admin-staging-schedule-safe-fields-dry-run"
+  data-scaffold="true"
+  data-phase={phase}
+  data-approval-id={implConfig.approvalId ?? config.approvalId}
+  data-dry-run-only="true"
+  data-write-adapter="false"
+  data-safe-fields-only="true"
+  role="region"
+  aria-label="G-6-f4 schedule safe-fields dry-run prototype"
+>
+  <h3 class="admin-staging-schedule-safe-fields-dry-run__title">
+    Safe fields edit — dry-run prototype (G-6-f4)
+  </h3>
+
+  <p class="admin-staging-schedule-safe-fields-dry-run__banner" role="note">
+    <strong>Dry-run only / safe fields only / no database writes.</strong>
+    Client-side preview only — write adapter not called. Non-dry-run disabled and unavailable.
+    G-6-e5 approval ID not used. Hidden PoC trigger not armed.
+  </p>
+
+  {
+    config.disabledReason ? (
+      <p class="admin-staging-schedule-safe-fields-dry-run__disabled" role="note">
+        Disabled: {config.disabledReason}
+      </p>
+    ) : null
+  }
+
+  <dl class="admin-staging-schedule-safe-fields-dry-run__meta">
+    <div>
+      <dt>Phase</dt>
+      <dd>{phase}</dd>
+    </div>
+    <div>
+      <dt>Approval ID</dt>
+      <dd>{config.approvalId}</dd>
+    </div>
+    <div>
+      <dt>Target fields</dt>
+      <dd>{targetFieldsLabel}</dd>
+    </div>
+    <div>
+      <dt>readSource</dt>
+      <dd id="schedule-safe-fields-dry-run-read-source">—</dd>
+    </div>
+    <div>
+      <dt>Data read gate</dt>
+      <dd id="schedule-safe-fields-dry-run-data-read">—</dd>
+    </div>
+    <div>
+      <dt>Selected schedule</dt>
+      <dd id="schedule-safe-fields-dry-run-selected-id">—</dd>
+    </div>
+    <div>
+      <dt>nonDryRun</dt>
+      <dd>disabled / unavailable</dd>
+    </div>
+  </dl>
+
+  <p id="schedule-safe-fields-dry-run-read-notice" class="admin-staging-schedule-safe-fields-dry-run__notice" hidden />
+
+  <AdminCard title="Select schedule (from read binding)" description="SELECT only — same loader as Schedule list.">
+    <ul id="schedule-safe-fields-dry-run-picker-list" class="schedule-safe-fields-dry-run-picker" aria-label="Schedule picker" />
+  </AdminCard>
+
+  <AdminCard title="Current safe-field values" description="Read-only — null vs empty shown explicitly.">
+    <dl class="schedule-safe-fields-current__meta">
+      <div><dt>id</dt><dd id="schedule-safe-fields-dry-run-target-id">—</dd></div>
+      <div><dt>legacy_id</dt><dd id="schedule-safe-fields-dry-run-legacy-id">—</dd></div>
+      <div><dt>date</dt><dd id="schedule-safe-fields-dry-run-row-date">—</dd></div>
+      <div><dt>title</dt><dd id="schedule-safe-fields-current-title">—</dd></div>
+      <div><dt>venue</dt><dd id="schedule-safe-fields-current-venue">—</dd></div>
+      <div><dt>open_time</dt><dd id="schedule-safe-fields-current-open-time">—</dd></div>
+      <div><dt>start_time</dt><dd id="schedule-safe-fields-current-start-time">—</dd></div>
+      <div><dt>price</dt><dd id="schedule-safe-fields-current-price">—</dd></div>
+      <div><dt>description</dt><dd id="schedule-safe-fields-current-description">—</dd></div>
+    </dl>
+  </AdminCard>
+
+  <AdminCard title="Edit safe fields (dry-run)" description="date, published, sort_order, etc. are not editable here.">
+    <AdminFormField label="Title">
+      <input id="schedule-safe-fields-dry-run-title" type="text" disabled={uiDisabled} />
+    </AdminFormField>
+    <AdminFormField label="Venue">
+      <input id="schedule-safe-fields-dry-run-venue" type="text" disabled={uiDisabled} />
+    </AdminFormField>
+    <AdminFormField label="Open time" help="No strict time validation in this phase.">
+      <input id="schedule-safe-fields-dry-run-open-time" type="text" disabled={uiDisabled} />
+    </AdminFormField>
+    <AdminFormField label="Start time" help="No strict time validation in this phase.">
+      <input id="schedule-safe-fields-dry-run-start-time" type="text" disabled={uiDisabled} />
+    </AdminFormField>
+    <AdminFormField label="Price">
+      <input id="schedule-safe-fields-dry-run-price" type="text" disabled={uiDisabled} />
+    </AdminFormField>
+    <AdminFormField label="Description">
+      <textarea id="schedule-safe-fields-dry-run-description" rows="4" disabled={uiDisabled} />
+    </AdminFormField>
+
+    <div class="schedule-safe-fields-dry-run-actions">
+      <button
+        id="schedule-safe-fields-dry-run-preview-btn"
+        class="admin-button"
+        type="button"
+        disabled={uiDisabled}
+        title="Client-side safe-fields dry-run preview — no Supabase write"
+      >
+        Preview safe-fields dry-run
+      </button>
+    </div>
+  </AdminCard>
+
+  <AdminCard title="Dry-run result" description="beforeSnapshot / payload / afterPreview / changedFields — no DB write.">
+    <div id="schedule-safe-fields-dry-run-result" class="schedule-safe-fields-dry-run-result" aria-live="polite" />
+  </AdminCard>
+
+  <AdminCard title="Safety flags">
+    <dl class="admin-staging-schedule-safe-fields-dry-run__safety">
+      <div><dt>dryRunOnly</dt><dd>true</dd></div>
+      <div><dt>safeFieldsOnly</dt><dd>true</dd></div>
+      <div><dt>writeAdapterUsed</dt><dd>false</dd></div>
+      <div><dt>supabaseWriteCalled</dt><dd>false</dd></div>
+      <div><dt>nonDryRunEnabled</dt><dd>false</dd></div>
+      <div><dt>schedule_months</dt><dd>read_only_derived (not touched)</dd></div>
+      <div><dt>G-6-e5 approval reused</dt><dd>false</dd></div>
+    </dl>
+  </AdminCard>
+</section>
+
+<script>
+  import "../../../../../../src/lib/admin/staging-write/staging-schedule-safe-fields-dry-run-ui.ts";
+</script>
+
+<style>
+  .admin-staging-schedule-safe-fields-dry-run {
+    margin: 1rem 0 0;
+    padding: 1rem 1.25rem;
+    border: 1px solid #86efac;
+    border-radius: 8px;
+    background: #f0fdf4;
+  }
+  .admin-staging-schedule-safe-fields-dry-run__title {
+    margin: 0 0 0.5rem;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: #166534;
+  }
+  .admin-staging-schedule-safe-fields-dry-run__banner {
+    margin: 0 0 0.75rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    background: #dcfce7;
+    border: 1px solid #86efac;
+    color: #166534;
+    font-size: 0.8125rem;
+    line-height: 1.45;
+  }
+  .admin-staging-schedule-safe-fields-dry-run__disabled,
+  .admin-staging-schedule-safe-fields-dry-run__notice {
+    margin: 0 0 0.75rem;
+    font-size: 0.8125rem;
+    color: #b45309;
+  }
+  .admin-staging-schedule-safe-fields-dry-run__disabled {
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    background: #fff7ed;
+    border: 1px solid #fed7aa;
+    color: #9a3412;
+  }
+  .admin-staging-schedule-safe-fields-dry-run__meta,
+  .admin-staging-schedule-safe-fields-dry-run__safety,
+  .schedule-safe-fields-current__meta {
+    margin: 0 0 1rem;
+    display: grid;
+    gap: 0.35rem 1rem;
+    grid-template-columns: max-content 1fr;
+    font-size: 0.8125rem;
+  }
+  .admin-staging-schedule-safe-fields-dry-run__meta dt,
+  .admin-staging-schedule-safe-fields-dry-run__safety dt,
+  .schedule-safe-fields-current__meta dt {
+    font-weight: 600;
+    color: #15803d;
+  }
+  .admin-staging-schedule-safe-fields-dry-run__meta dd,
+  .admin-staging-schedule-safe-fields-dry-run__safety dd,
+  .schedule-safe-fields-current__meta dd {
+    margin: 0;
+    font-family: ui-monospace, monospace;
+    color: #14532d;
+    word-break: break-all;
+  }
+  .schedule-safe-fields-dry-run-picker {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .schedule-safe-fields-dry-run-picker__item {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #bbf7d0;
+  }
+  .schedule-safe-fields-dry-run-picker__item.is-selected {
+    background: #dcfce7;
+    border-radius: 4px;
+    padding: 0.5rem;
+  }
+  .schedule-safe-fields-dry-run-picker__main {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem 0.75rem;
+    align-items: center;
+    font-size: 0.8125rem;
+  }
+  .schedule-safe-fields-dry-run-picker__date {
+    font-family: ui-monospace, monospace;
+    color: #64748b;
+  }
+  .schedule-safe-fields-dry-run-picker__desc {
+    color: #64748b;
+    font-size: 0.75rem;
+  }
+  .schedule-safe-fields-dry-run-picker__empty {
+    font-size: 0.8125rem;
+    color: #64748b;
+    padding: 0.5rem 0;
+  }
+  .schedule-safe-fields-dry-run-actions {
+    margin-top: 0.75rem;
+  }
+  .schedule-safe-fields-dry-run-result {
+    font-size: 0.8125rem;
+    color: #334155;
+  }
+  .schedule-safe-fields-dry-run-result__changed {
+    color: #166534;
+  }
+  .schedule-safe-fields-dry-run-result__unchanged {
+    color: #64748b;
+  }
+  .schedule-safe-fields-dry-run-result__meta {
+    margin: 0.5rem 0;
+    display: grid;
+    gap: 0.25rem 0.75rem;
+    grid-template-columns: max-content 1fr;
+  }
+  .schedule-safe-fields-dry-run-result__meta dt {
+    font-weight: 600;
+  }
+  .schedule-safe-fields-dry-run-result__meta dd {
+    margin: 0;
+    font-family: ui-monospace, monospace;
+  }
+  .schedule-safe-fields-dry-run-result__block {
+    margin: 0.35rem 0 0.75rem;
+    padding: 0.75rem;
+    background: #1e293b;
+    color: #e2e8f0;
+    border-radius: 6px;
+    overflow-x: auto;
+    font-size: 0.75rem;
+    max-height: 14rem;
+  }
+</style>

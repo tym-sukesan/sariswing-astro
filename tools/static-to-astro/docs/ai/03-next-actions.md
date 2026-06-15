@@ -3,49 +3,44 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 1. Immediate priority
 
-**Latest completed phase:** `G-7d-gosaki-live-crawl-pilot`
+**Latest completed phase:** `G-7d1-gosaki-live-route-static-public-compatibility-fix`
 
-Live crawl of gosaki-piano.com (max 20 pages, 10 fetched). Convert/build PASS. prepare-public FAIL (Wix route shape vs verifier). No FTP.
+Static-public verifier accepts live crawl routes (`2026-XX/`) and manual fixture routes (`schedule-2026-XX/`). G-7d output re-verified: prepare-public PASS, `safeForStaticFtp: true`. No re-crawl.
 
-**Doc:** `tools/static-to-astro/docs/gosaki-live-crawl-pilot-result.md`
+**Doc:** `tools/static-to-astro/docs/gosaki-live-route-static-public-compatibility-fix.md`
 
 **Recommended next phase:** `G-7e-gosaki-staging-preview-preparation`
 
-## 2. G-7d live crawl
+## 2. G-7d1 verification (no re-crawl)
 
 ```bash
-# Executed once (G-7d)
-npm run crawl:site -- \
-  --url https://www.gosaki-piano.com/ \
-  --site-slug gosaki-piano \
-  --out fixtures/gosaki-piano \
-  --max-pages 20 \
-  --same-origin-only \
-  --respect-robots \
-  --concurrency 1
-```
+node scripts/verify-static-public-artifact.mjs \
+  --astro-dir tools/static-to-astro/output/gosaki-piano-astro \
+  --report tools/static-to-astro/output/static-public/gosaki-piano/STATIC_PUBLIC_ARTIFACT_REPORT.md
 
-Then pipeline (no `--run-crawl`):
-
-```bash
 npm run url:staging -- \
   --config config/sites/gosaki-piano.url-to-staging.json \
-  --no-dry-run --run-convert --run-build --prepare-public \
-  --pilot-phase G-7d-gosaki-live-crawl-pilot
+  --no-dry-run --prepare-public \
+  --pilot-phase G-7d1-gosaki-live-route-static-public-compatibility-fix
 ```
 
 ## 3. Gate state
 
 ```txt
 gosakiLiveCrawlPilotComplete: true
+gosakiLiveRouteStaticPublicCompatibilityFixComplete: true
 gosakiPianoCrawlExecuted: true
-readyForG7eGosakiStagingPreviewPreparation: false
+readyForG7eGosakiStagingPreviewPreparation: true
 ftpDeployExecutedInG7d: false
+ftpDeployExecutedInG7d1: false
 ```
 
-## 4. Known issue
+## 4. G-7e scope (next)
 
-Live Wix URLs: `/2026-07` not `schedule-2026-07`. static-public verifier expects manual fixture paths — fix in G-7e.
+- FTP dry-run (`deploy-public-dist-ftp.mjs --dry-run`)
+- Browser QA on staging URL (noindex, robots, nav)
+- Optional: canonical duplicate-path fix (`.../gosaki-piano/cms-kit-staging/gosaki-piano/`)
+- Operator approval before any FTP `--apply`
 
 ## 5. AI workflow maintenance rule
 

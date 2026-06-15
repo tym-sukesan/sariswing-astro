@@ -8,6 +8,7 @@ import path from "node:path";
 export const PIPELINE_PHASE = "G-7b-url-to-staging-pipeline-orchestrator";
 export const G7C_PILOT_PHASE = "G-7c-url-to-staging-dry-run-pilot";
 export const G7D_PILOT_PHASE = "G-7d-gosaki-live-crawl-pilot";
+export const G7D1_PILOT_PHASE = "G-7d1-gosaki-live-route-static-public-compatibility-fix";
 export const G7E_NEXT_PHASE = "G-7e-gosaki-staging-preview-preparation";
 
 /**

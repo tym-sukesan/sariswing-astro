@@ -262,7 +262,19 @@ Pilot complete: `tools/static-to-astro/docs/gosaki-live-crawl-pilot-result.md`
 - Convert + build: **PASS**; prepare-public: **FAIL** (Wix `/2026-XX` vs verifier `schedule-2026-XX`)
 - Assets crawled: 0 (Wix CDN cross-origin)
 - FTP / workflow_dispatch / DB: **not executed**
-- Gate: `readyForG7eGosakiStagingPreviewPreparation: false`
+- Gate: `readyForG7eGosakiStagingPreviewPreparation: false` (before G-7d1)
+
+## Gosaki live route static-public compatibility fix (G-7d1)
+
+Fix complete: `tools/static-to-astro/docs/gosaki-live-route-static-public-compatibility-fix.md`
+
+- static-public verifier accepts live crawl routes `2026-XX/` and manual fixture `schedule-2026-XX/`
+- Staging SEO check: head-only canonical/og:url (Wix body links ignored)
+- Deploy-base check: `_astro` prefix optional when no Astro assets in dist
+- G-7d output re-verified: prepare-public **PASS**, `safeForStaticFtp: true`
+- Re-crawl: **not executed**
+- FTP / workflow_dispatch / DB: **not executed**
+- Gate: `gosakiLiveRouteStaticPublicCompatibilityFixComplete: true`, `readyForG7eGosakiStagingPreviewPreparation: true`
 - Next: `G-7e-gosaki-staging-preview-preparation`
 
 ## Schedule CMS generalization

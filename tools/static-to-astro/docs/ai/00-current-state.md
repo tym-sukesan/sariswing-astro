@@ -21,22 +21,22 @@ Staging Shell
 将来的な顧客オンボーディング・課金・デプロイ自動化
 
 2. Current phase
-現在フェーズ: G-7d-gosaki-live-crawl-pilot（完了）
+現在フェーズ: G-7d1-gosaki-live-route-static-public-compatibility-fix（完了）
 
-gosaki-piano.com live crawl 小上限 pilot 完了（10 pages, max 20）。convert/build PASS、prepare-public FAIL（Wix URL 形状）。FTP なし。
+G-7d live crawl の route 形状（`2026-XX/`）で prepare-public PASS。manual fixture（`schedule-2026-XX/`）も互換維持。再 crawl なし。
 
 直近完了フェーズ:
-G-7d-gosaki-live-crawl-pilot
+G-7d1-gosaki-live-route-static-public-compatibility-fix
 前フェーズ:
-G-7c-url-to-staging-dry-run-pilot
+G-7d-gosaki-live-crawl-pilot
 
 G-7 URL → staging:
 - live crawl: gosaki-piano.com（G-7d, 1回, max-pages 20）
 - fixture: `fixtures/gosaki-piano/`（gitignored, 10 pages）
-- convert/build: PASS
-- prepare-public: FAIL（verifier route mismatch）
+- convert/build: PASS（G-7d）
+- prepare-public: **PASS**（G-7d1 fix, safeForStaticFtp: true）
 - 次: G-7e staging preview preparation
-- gosaki-piano.com 実 crawl: **実行済み（G-7d, 小上限1回）**
+- gosaki-piano.com 実 crawl: **実行済み（G-7d, 小上限1回）— 再 crawl 禁止**
 
 3. Important completed milestones
 

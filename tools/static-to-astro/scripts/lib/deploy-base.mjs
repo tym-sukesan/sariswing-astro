@@ -39,13 +39,64 @@ export const STAGING_CANONICAL_LEAK_PATTERN = /www\.gosaki-piano\.com/i;
 /**
  * @param {string} html
  */
+export function extractHeadHtml(html) {
+  const match = html.match(/<head[^>]*>[\s\S]*?<\/head>/i);
+  return match ? match[0] : html.slice(0, 8000);
+}
+
+/**
+ * SEO meta URLs only — Wix-derived body content may legitimately link to production domains.
+ * @param {string} html
+ */
+export function extractSeoMetaUrlsFromHtml(html) {
+  const head = extractHeadHtml(html);
+  const canonical = head.match(/<link rel="canonical" href="([^"]*)"/i)?.[1] ?? "";
+  const ogUrl = head.match(/property="og:url" content="([^"]*)"/i)?.[1] ?? "";
+  return { canonical, ogUrl, head };
+}
+
+/**
+ * @param {string} html
+ */
+export function stagingCanonicalLeakInSeoMeta(html) {
+  const { canonical, ogUrl } = extractSeoMetaUrlsFromHtml(html);
+  return STAGING_CANONICAL_LEAK_PATTERN.test(`${canonical}${ogUrl}`);
+}
+
+/**
+ * @param {string} html
+ */
 export function detectCanonicalModeFromHtml(html) {
-  const canonical = html.match(/<link rel="canonical" href="([^"]*)"/i)?.[1] ?? "";
-  const ogUrl = html.match(/property="og:url" content="([^"]*)"/i)?.[1] ?? "";
+  const { canonical, ogUrl } = extractSeoMetaUrlsFromHtml(html);
   if (!canonical && !ogUrl) return "omitted";
   if (STAGING_CANONICAL_LEAK_PATTERN.test(`${canonical}${ogUrl}`)) return "production-leak";
   if (/\/cms-kit-staging\//i.test(`${canonical}${ogUrl}`)) return "staging-url";
   return canonical ? "production" : "omitted";
+}
+
+/**
+ * @param {string} publicDir
+ */
+function publicDirReferencesAstroAssets(publicDir) {
+  const astroDir = path.join(publicDir, "_astro");
+  if (fs.existsSync(astroDir)) return true;
+
+  /** @param {string} dir */
+  function walk(dir) {
+    for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+      const abs = path.join(dir, entry.name);
+      if (entry.isDirectory()) {
+        if (walk(abs)) return true;
+        continue;
+      }
+      if (!/\.(html|css|js|mjs)$/i.test(entry.name)) continue;
+      const content = fs.readFileSync(abs, "utf8");
+      if (/_astro\//.test(content)) return true;
+    }
+    return false;
+  }
+
+  return walk(publicDir);
 }
 
 /**
@@ -74,14 +125,14 @@ export function verifyPublicDistSeoFlags(publicDir, deployBase) {
     canonicalMode = detectCanonicalModeFromHtml(html);
     if (stagingBuild) {
       stagingCanonicalOk =
-        !STAGING_CANONICAL_LEAK_PATTERN.test(html) &&
+        !stagingCanonicalLeakInSeoMeta(html) &&
         (canonicalMode === "staging-url" || canonicalMode === "omitted");
     }
   }
 
   if (stagingBuild && fs.existsSync(linkPath)) {
     const linkHtml = fs.readFileSync(linkPath, "utf8");
-    if (STAGING_CANONICAL_LEAK_PATTERN.test(linkHtml)) {
+    if (stagingCanonicalLeakInSeoMeta(linkHtml)) {
       stagingCanonicalOk = false;
     }
   }
@@ -176,15 +227,22 @@ export function verifyAssetPathsIncludeBase(publicDir, deployBase) {
   }
 
   const prefix = base.replace(/^\/|\/$/g, "");
-  const assetOk = new RegExp(`/${prefix}/_astro/`).test(html);
+  const needsAstroAssets = publicDirReferencesAstroAssets(publicDir);
+  const assetOk = needsAstroAssets ? new RegExp(`/${prefix}/_astro/`).test(html) : true;
   const navOk = new RegExp(`href="/${prefix}/discography/"`).test(html);
+  const pathsOk = navOk && assetOk;
   return {
-    ok: assetOk && navOk,
+    ok: pathsOk,
     deployBase: base,
     stagingSubdirBuild: true,
-    assetPathsIncludeBase: assetOk && navOk,
+    assetPathsIncludeBase: pathsOk,
+    needsAstroAssets,
     sampleCss: html.match(/href="([^"]*_astro[^"]*)"/)?.[1] ?? null,
     sampleNav: html.match(/href="([^"]*discography[^"]*)"/)?.[1] ?? null,
-    reason: !assetOk ? "missing base-prefixed _astro path" : !navOk ? "missing base-prefixed nav link" : null,
+    reason: !navOk
+      ? "missing base-prefixed nav link"
+      : needsAstroAssets && !assetOk
+        ? "missing base-prefixed _astro path"
+        : null,
   };
 }

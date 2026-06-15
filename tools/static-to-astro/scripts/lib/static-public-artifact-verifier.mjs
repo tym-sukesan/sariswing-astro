@@ -14,15 +14,82 @@ import {
 } from "./deploy-base.mjs";
 import { loadExportEnv } from "./supabase-json-exporter.mjs";
 
-export const EXPECTED_PUBLIC_HTML = [
-  "index.html",
-  "discography/index.html",
-  "schedule-2026-03/index.html",
-  "schedule-2026-04/index.html",
-  "schedule-2026-05/index.html",
-  "schedule-2026-06/index.html",
-  "schedule-2026-07/index.html",
+/** Always required in gosaki-style static public artifacts. */
+export const CORE_PUBLIC_HTML = ["index.html", "discography/index.html"];
+
+/** Manual fixture default month routes (schedule-prefixed). */
+export const DEFAULT_GOSAKI_SCHEDULE_MONTHS = [
+  "2026-03",
+  "2026-04",
+  "2026-05",
+  "2026-06",
+  "2026-07",
 ];
+
+export const YEAR_MONTH_DIR_RE = /^\d{4}-\d{2}$/;
+export const SCHEDULE_PREFIXED_DIR_RE = /^schedule-(\d{4}-\d{2})$/;
+export const MONTHLY_SCHEDULE_ROUTE_RE = /^(?:schedule-)?(\d{4}-\d{2})\/index\.html$/;
+
+/** @deprecated Prefer {@link verifyPublicHtmlExists} — includes live-crawl `YYYY-MM/` routes. */
+export const EXPECTED_PUBLIC_HTML = [
+  ...CORE_PUBLIC_HTML,
+  ...DEFAULT_GOSAKI_SCHEDULE_MONTHS.map((ym) => `schedule-${ym}/index.html`),
+];
+
+/**
+ * @param {string} dirName
+ * @returns {string | null}
+ */
+export function extractYearMonthFromScheduleDir(dirName) {
+  if (YEAR_MONTH_DIR_RE.test(dirName)) return dirName;
+  const prefixed = dirName.match(SCHEDULE_PREFIXED_DIR_RE);
+  return prefixed ? prefixed[1] : null;
+}
+
+/**
+ * Discover month keys (YYYY-MM) from either `schedule-YYYY-MM/` or `YYYY-MM/` dirs.
+ * @param {string} publicDir
+ * @returns {string[]}
+ */
+export function discoverMonthlyScheduleMonths(publicDir) {
+  if (!fs.existsSync(publicDir)) return [];
+  const months = new Set();
+  for (const entry of fs.readdirSync(publicDir, { withFileTypes: true })) {
+    if (!entry.isDirectory()) continue;
+    const ym = extractYearMonthFromScheduleDir(entry.name);
+    if (ym) months.add(ym);
+  }
+  return [...months].sort();
+}
+
+/**
+ * @param {string} publicDir
+ * @param {string} yearMonth
+ */
+export function resolveMonthlySchedulePath(publicDir, yearMonth) {
+  const livePath = `${yearMonth}/index.html`;
+  const prefixedPath = `schedule-${yearMonth}/index.html`;
+  if (fs.existsSync(path.join(publicDir, livePath))) {
+    return { path: livePath, exists: true, variant: "live-crawl", yearMonth };
+  }
+  if (fs.existsSync(path.join(publicDir, prefixedPath))) {
+    return { path: prefixedPath, exists: true, variant: "schedule-prefixed", yearMonth };
+  }
+  return {
+    path: prefixedPath,
+    alternative: livePath,
+    exists: false,
+    variant: "missing",
+    yearMonth,
+  };
+}
+
+/**
+ * @param {string} relPath
+ */
+export function isMonthlyScheduleRoute(relPath) {
+  return MONTHLY_SCHEDULE_ROUTE_RE.test(relPath.replace(/\\/g, "/"));
+}
 
 /** Top-level dirs excluded from static FTP public copy */
 export const STATIC_PUBLIC_EXCLUDE_DIRS = ["admin", "api"];
@@ -117,10 +184,34 @@ export function listPublicFiles(publicDir) {
  * @param {string} publicDir
  */
 export function verifyPublicHtmlExists(publicDir) {
-  return EXPECTED_PUBLIC_HTML.map((rel) => ({
-    path: rel,
-    exists: fs.existsSync(path.join(publicDir, rel)),
-  }));
+  /** @type {Array<{ path: string, exists: boolean, kind?: string, yearMonth?: string, variant?: string, alternative?: string | null, acceptedVariants?: string[] }>} */
+  const checks = [];
+
+  for (const rel of CORE_PUBLIC_HTML) {
+    checks.push({
+      path: rel,
+      exists: fs.existsSync(path.join(publicDir, rel)),
+      kind: "core",
+    });
+  }
+
+  const discovered = discoverMonthlyScheduleMonths(publicDir);
+  const months = discovered.length > 0 ? discovered : DEFAULT_GOSAKI_SCHEDULE_MONTHS;
+
+  for (const ym of months) {
+    const resolved = resolveMonthlySchedulePath(publicDir, ym);
+    checks.push({
+      path: resolved.path,
+      exists: resolved.exists,
+      kind: "monthly-schedule",
+      yearMonth: ym,
+      variant: resolved.variant,
+      alternative: resolved.alternative ?? null,
+      acceptedVariants: [`${ym}/index.html`, `schedule-${ym}/index.html`],
+    });
+  }
+
+  return checks;
 }
 
 /**

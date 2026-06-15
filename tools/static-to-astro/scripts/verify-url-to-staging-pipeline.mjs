@@ -19,6 +19,15 @@ import {
   PIPELINE_PHASE,
 } from "./lib/url-to-staging-pipeline-plan.mjs";
 import { runUrlToStagingPipeline } from "./lib/url-to-staging-pipeline.mjs";
+import {
+  discoverMonthlyScheduleMonths,
+  isMonthlyScheduleRoute,
+  verifyPublicHtmlExists,
+} from "./lib/static-public-artifact-verifier.mjs";
+import {
+  stagingCanonicalLeakInSeoMeta,
+  verifyAssetPathsIncludeBase,
+} from "./lib/deploy-base.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const TOOL_ROOT = path.resolve(__dirname, "..");
@@ -155,6 +164,63 @@ assert("convert command includes deploy-base", String(convertStep?.command).incl
 const manual = buildNextManualSteps(gosakiConfig, defaultGates, true);
 assert("manual steps include FTP note", manual.some((s) => s.includes("deploy-public-dist-ftp")));
 assert("manual steps include workflow_dispatch warning", manual.some((s) => s.includes("workflow_dispatch")));
+
+// --- G-7d1 route compatibility (no network) ---
+
+assert("isMonthlyScheduleRoute live crawl", isMonthlyScheduleRoute("2026-07/index.html"));
+assert("isMonthlyScheduleRoute manual fixture", isMonthlyScheduleRoute("schedule-2026-07/index.html"));
+assert("isMonthlyScheduleRoute rejects discography", !isMonthlyScheduleRoute("discography/index.html"));
+
+function writeMinimalPublicDir(root, monthVariant) {
+  fs.mkdirSync(path.join(root, "discography"), { recursive: true });
+  fs.writeFileSync(path.join(root, "index.html"), "<html></html>");
+  fs.writeFileSync(path.join(root, "discography/index.html"), "<html></html>");
+  for (const ym of ["2026-03", "2026-04", "2026-05", "2026-06", "2026-07"]) {
+    const dirName = monthVariant === "live" ? ym : `schedule-${ym}`;
+    fs.mkdirSync(path.join(root, dirName), { recursive: true });
+    fs.writeFileSync(path.join(root, dirName, "index.html"), "<html></html>");
+  }
+}
+
+const liveRouteDir = fs.mkdtempSync(path.join(os.tmpdir(), "g7d1-live-route-"));
+writeMinimalPublicDir(liveRouteDir, "live");
+assert(
+  "live crawl months discovered",
+  discoverMonthlyScheduleMonths(liveRouteDir).length === 5,
+);
+assert(
+  "live crawl verifyPublicHtmlExists allPresent",
+  verifyPublicHtmlExists(liveRouteDir).every((c) => c.exists),
+);
+
+const manualRouteDir = fs.mkdtempSync(path.join(os.tmpdir(), "g7d1-manual-route-"));
+writeMinimalPublicDir(manualRouteDir, "schedule");
+assert(
+  "manual fixture verifyPublicHtmlExists allPresent",
+  verifyPublicHtmlExists(manualRouteDir).every((c) => c.exists),
+);
+
+const wixSeoHtml =
+  '<html><head><link rel="canonical" href="https://example.com/cms-kit-staging/gosaki-piano/"></head>' +
+  '<body><a href="https://www.gosaki-piano.com/">legacy</a></body></html>';
+assert(
+  "staging SEO ignores Wix body production links",
+  !stagingCanonicalLeakInSeoMeta(wixSeoHtml),
+);
+
+const noAstroPublicDir = fs.mkdtempSync(path.join(os.tmpdir(), "g7d1-no-astro-"));
+fs.writeFileSync(
+  path.join(noAstroPublicDir, "index.html"),
+  '<html><a href="/cms-kit-staging/gosaki-piano/discography/">disc</a></html>',
+);
+assert(
+  "deploy base ok without _astro when none referenced",
+  verifyAssetPathsIncludeBase(noAstroPublicDir, "/cms-kit-staging/gosaki-piano/").ok,
+);
+
+for (const dir of [liveRouteDir, manualRouteDir, noAstroPublicDir]) {
+  fs.rmSync(dir, { recursive: true, force: true });
+}
 
 // --- cleanup temp manifest ---
 

@@ -15,6 +15,7 @@ import {
   buildUrlToStagingStepPlan,
   G7C_PILOT_PHASE,
   G7D_PILOT_PHASE,
+  G7D1_PILOT_PHASE,
   G7E_NEXT_PHASE,
 } from "./url-to-staging-pipeline-plan.mjs";
 
@@ -22,6 +23,7 @@ export {
   PIPELINE_PHASE,
   G7C_PILOT_PHASE,
   G7D_PILOT_PHASE,
+  G7D1_PILOT_PHASE,
   G7E_NEXT_PHASE,
   buildNextManualSteps,
   buildRunManifestPath,
@@ -229,13 +231,17 @@ export async function runUrlToStagingPipeline(opts) {
   const manifestPath = buildRunManifestPath(config.siteSlug, config.runsOut);
   const fixtureExistsAtEnd = fs.existsSync(config.fixtureOut);
 
-  const convertOk = steps.find((s) => s.id === "convert-static-to-astro")?.status === "executed";
   const distExists = fs.existsSync(path.join(config.projectOut, "dist"));
+  const convertOk =
+    convertStep?.status === "executed" ||
+    (distExists && !gates.runConvert && fixtureExistsAtEnd);
   const buildOk =
     steps.find((s) => s.id === "build-check")?.status === "executed" ||
     (convertOk && gates.runBuild && distExists) ||
     distExists;
   const publicOk = steps.find((s) => s.id === "prepare-staging-public")?.status === "executed";
+  const g7dFamilyPhase =
+    pilotPhase === G7D_PILOT_PHASE || pilotPhase === G7D1_PILOT_PHASE;
 
   /** @type {Record<string, unknown>} */
   const manifest = {
@@ -283,11 +289,9 @@ export async function runUrlToStagingPipeline(opts) {
       (dryRun ||
         (distExists && buildOk && publicOk && (convertOk || distExists))),
     readyForG7eGosakiStagingPreviewPreparation:
-      pilotPhase === G7D_PILOT_PHASE &&
-      convertOk &&
-      buildOk &&
-      publicOk &&
-      distExists,
+      g7dFamilyPhase && convertOk && buildOk && publicOk && distExists,
+    gosakiLiveRouteStaticPublicCompatibilityFixComplete:
+      pilotPhase === G7D1_PILOT_PHASE ? publicOk && distExists : undefined,
     g7dLiveCrawlPrerequisites: pilotPhase === G7C_PILOT_PHASE
       ? {
           dryRunPlanPass: true,
@@ -302,12 +306,14 @@ export async function runUrlToStagingPipeline(opts) {
         }
       : undefined,
     g7eStagingPreviewPrerequisites:
-      pilotPhase === G7D_PILOT_PHASE
+      g7dFamilyPhase
         ? {
             liveCrawlCompleted: true,
             convertPass: convertOk,
             buildPass: buildOk,
             preparePublicPass: publicOk,
+            routeCompatibilityFixComplete:
+              pilotPhase === G7D1_PILOT_PHASE ? publicOk && distExists : undefined,
             ftpDeployRequired: true,
             browserQaRequired: true,
             operatorApprovalRequired: true,

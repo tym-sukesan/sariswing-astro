@@ -12,8 +12,8 @@ Paste this file at the start of a new ChatGPT thread. Cursor should update it af
 ## 2. Current phase
 
 ```txt
-Current phase: G-7d-gosaki-live-crawl-pilot (completed)
-Latest completed phase: G-7d-gosaki-live-crawl-pilot
+Current phase: G-7d1-gosaki-live-route-static-public-compatibility-fix (completed)
+Latest completed phase: G-7d1-gosaki-live-route-static-public-compatibility-fix
 Recommended next phase: G-7e-gosaki-staging-preview-preparation
 ```
 
@@ -21,20 +21,22 @@ Recommended next phase: G-7e-gosaki-staging-preview-preparation
 
 ## 3. Current state summary
 
-G-7d executed one live crawl of gosaki-piano.com (10 pages, max 20, robots OK). Fixture at `fixtures/gosaki-piano/`. Convert + build PASS. prepare-public FAIL due to Wix URL routes vs verifier expectations. **No FTP / workflow_dispatch / DB.**
+G-7d live crawl (10 pages) + G-7d1 verifier fix complete. prepare-public PASS on existing G-7d output (`safeForStaticFtp: true`). Live crawl routes `2026-XX/` and manual fixture routes `schedule-2026-XX/` both accepted. **No re-crawl / FTP / workflow_dispatch / DB.**
 
-Next: G-7e — fix static-public verifier, re-run prepare-public, FTP dry-run, browser QA.
+Next: G-7e — FTP dry-run, browser QA, staging preview preparation.
 
 ---
 
-## 4. G-7d highlights
+## 4. G-7d1 highlights
 
 ```txt
-Crawl: 10 pages, 0 assets, 0 failed
-Fixture: fixtures/gosaki-piano/ (gitignored)
-Convert: 10 Astro pages, build success
-prepare-public: FAIL (schedule-2026-XX expected vs 2026-XX live routes)
-Result doc: gosaki-live-crawl-pilot-result.md
+Fix: static-public verifier route + SEO + optional _astro checks
+Live routes: 2026-03 … 2026-07/index.html — OK
+Manual routes: schedule-2026-XX/index.html — OK (regression)
+prepare-public: PASS
+safeForStaticFtp: true
+Result doc: gosaki-live-route-static-public-compatibility-fix.md
+Re-crawl: NOT executed
 ```
 
 ---
@@ -44,10 +46,12 @@ Result doc: gosaki-live-crawl-pilot-result.md
 ```txt
 urlToStagingDryRunPilotComplete: true
 gosakiLiveCrawlPilotComplete: true
+gosakiLiveRouteStaticPublicCompatibilityFixComplete: true
 gosakiPianoCrawlExecuted: true
 externalCrawlExecutedInG7d: true
-readyForG7eGosakiStagingPreviewPreparation: false
+readyForG7eGosakiStagingPreviewPreparation: true
 ftpDeployExecutedInG7d: false
+ftpDeployExecutedInG7d1: false
 ```
 
 ---
@@ -55,9 +59,10 @@ ftpDeployExecutedInG7d: false
 ## 6. Files to read first
 
 ```txt
+tools/static-to-astro/docs/gosaki-live-route-static-public-compatibility-fix.md
 tools/static-to-astro/docs/gosaki-live-crawl-pilot-result.md
-tools/static-to-astro/fixtures/gosaki-piano/manifest.json
-tools/static-to-astro/docs/url-to-staging-dry-run-pilot-result.md
+tools/static-to-astro/scripts/lib/static-public-artifact-verifier.mjs
+tools/static-to-astro/scripts/lib/deploy-base.mjs
 tools/static-to-astro/config/sites/gosaki-piano.url-to-staging.json
 tools/static-to-astro/docs/ai/00-current-state.md
 ```

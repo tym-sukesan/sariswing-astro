@@ -12,31 +12,29 @@ Paste this file at the start of a new ChatGPT thread. Cursor should update it af
 ## 2. Current phase
 
 ```txt
-Current phase: G-8d-gosaki-mobile-visual-parity-fix (complete)
+Current phase: G-8e-gosaki-mobile-ui-final-polish (complete)
 FTP auto-deploy: DISABLED
 Wix baseline: scripts/lib/wix-static-export-baseline-overrides.mjs
-Gosaki-specific CSS: scripts/lib/site-specific-overrides/gosaki-piano-overrides.mjs (G-8c + G-8d mobile parity)
+Gosaki-specific CSS: scripts/lib/site-specific-overrides/gosaki-piano-overrides.mjs (G-8c–G-8e)
+Header logo link: scripts/lib/header-transform.mjs
 ```
 
 ---
 
 ## 3. Current state summary
 
-G-8d added gosaki-only SP visual parity CSS (header logo/MENU, Discography image-first 1-column, About/Contact stack) on top of G-8c baseline. G-8c baseline unchanged. Manual upload package regenerated; CSS `_astro/index.BeQxkV9Y.css`. verify:url-staging 72 passed.
+G-8e polished gosaki SP UI: sticky compact header, square hamburger (no MENU text), logo → home link, Home schedule 1-column overflow fix, unified ~20px gutter, Contact form centered. Baseline adds overflow-wrap on mobile rich text. Manual package regenerated; CSS `_astro/index.DRpT1Pny.css`. verify:url-staging 81 passed.
 
-Docs: `gosaki-mobile-visual-parity-fix.md`, `wix-static-export-responsive-baseline-generalization.md`
+Docs: `gosaki-mobile-ui-final-polish.md`, `gosaki-mobile-visual-parity-fix.md`
 
 ---
 
-## 4. G-8d gates
+## 4. G-8e gates
 
 ```txt
-gosakiMobileVisualParityFixComplete: true
+gosakiMobileUiFinalPolishComplete: true
 readyForManualReuploadByOperator: true
 readyForGosakiClientPreview: true
-wixStaticExportResponsiveBaselineGeneralized: true
-gosakiSpecificExtensionsSeparated: true
-readyForNextWixPilot: true
 ftpAutoDeployStillDisabled: true
 readyForAnyFutureFtpApply: false
 ```
@@ -52,10 +50,12 @@ readyForAnyFutureFtpApply: false
 
 ---
 
-## 6. Next Wix pilot checklist
+## 6. Operator re-upload
 
-1. Live crawl fixture
-2. `convert-static-to-astro.mjs` with deploy-base / base-url
-3. Baseline CSS auto-appended when inline Wix head styles present
-4. Add `site-specific-overrides/<slug>-overrides.mjs` for brand/comp IDs
-5. Register slug in `buildWixSiteSpecificOverridesCss()`
+```bash
+cd tools/static-to-astro
+npm run manual-upload:package
+npm run verify:manual-upload
+```
+
+Upload `output/manual-upload/gosaki-piano/public-dist/` → `/cms-kit-staging/gosaki-piano/` (include `_astro/index.DRpT1Pny.css`).

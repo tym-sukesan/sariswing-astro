@@ -21,20 +21,20 @@ Staging Shell
 将来的な顧客オンボーディング・課金・デプロイ自動化
 
 2. Current phase
-現在フェーズ: G-8d-gosaki-mobile-visual-parity-fix（完了）
+現在フェーズ: G-8e-gosaki-mobile-ui-final-polish（完了）
 
-G-8c baseline を維持したまま、gosaki 専用 SP 視覚 parity CSS を追加。Discography / Header / About / Contact を優先修正。manual upload package 再生成済み。
+G-8d SP parity の上に、sticky コンパクト header・ロゴ home link・正方形 MENU・Home schedule overflow 修正・統一 gutter（~20px）・Contact form 中央寄せを追加。
 
 直近完了フェーズ:
-G-8d-gosaki-mobile-visual-parity-fix
+G-8e-gosaki-mobile-ui-final-polish
 前フェーズ:
-G-8c-wix-static-export-responsive-baseline-generalization
+G-8d-gosaki-mobile-visual-parity-fix
 
 G-7 staging:
 - staging URL: `https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/`
-- gosaki output: baseline + gosaki-specific 合成 CSS（`_astro/index.BeQxkV9Y.css`、gitignored）
-- Doc: `tools/static-to-astro/docs/gosaki-mobile-visual-parity-fix.md`
-- 次: operator 手動 re-upload → 実機 SP QA
+- gosaki output: baseline + gosaki-specific 合成 CSS（`_astro/index.DRpT1Pny.css`、gitignored）
+- Doc: `tools/static-to-astro/docs/gosaki-mobile-ui-final-polish.md`
+- 次: operator 手動 re-upload → 実機 SP QA → gosaki クライアント共有
 
 3. Important completed milestones
 

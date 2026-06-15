@@ -261,6 +261,8 @@ body.wix-static-export form {
     width: 100% !important;
     max-width: 100% !important;
     box-sizing: border-box;
+    overflow-wrap: anywhere;
+    word-break: break-word;
   }
 
   body.wix-static-export .wixui-image,

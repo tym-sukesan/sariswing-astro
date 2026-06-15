@@ -356,6 +356,16 @@ Doc: `tools/static-to-astro/docs/wix-static-export-responsive-baseline-generaliz
 - Band profiles / About injection remain gosaki-only (not in baseline)
 - Gate: `wixStaticExportResponsiveBaselineGeneralized: true`, `readyForNextWixPilot: true`
 
+## Gosaki mobile UI final polish (G-8e)
+
+Doc: `tools/static-to-astro/docs/gosaki-mobile-ui-final-polish.md`
+
+- G-8d fixed major SP layout; remaining: schedule overflow, uneven padding, tall header, MENU text, no logo link
+- Fix: G-8e in `gosaki-piano-overrides.mjs` (sticky compact header, square menu, schedule 1-col, unified 20px gutter) + `header-transform.mjs` logo link
+- Baseline: `overflow-wrap: anywhere` on mobile rich text only
+- CSS: `_astro/index.DRpT1Pny.css` — operator must re-upload full public-dist
+- Gate: `gosakiMobileUiFinalPolishComplete: true`, `readyForManualReuploadByOperator: true`
+
 ## Gosaki mobile visual parity (G-8d)
 
 Doc: `tools/static-to-astro/docs/gosaki-mobile-visual-parity-fix.md`

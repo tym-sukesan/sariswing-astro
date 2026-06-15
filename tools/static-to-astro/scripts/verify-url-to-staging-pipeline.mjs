@@ -36,6 +36,7 @@ import { productionAbsoluteUrlToRoute } from "./lib/path-transform.mjs";
 import { buildWixStagingVisualOverridesCss } from "./lib/wix-staging-visual-overrides.mjs";
 import { buildWixStaticExportBaselineOverridesCss } from "./lib/wix-static-export-baseline-overrides.mjs";
 import { buildGosakiPianoSiteOverridesCss } from "./lib/site-specific-overrides/gosaki-piano-overrides.mjs";
+import { generateHeaderAstro } from "./lib/header-transform.mjs";
 import {
   injectBandProfilesIntoAboutPage,
   loadGosakiBandProfilesConfig,
@@ -448,6 +449,56 @@ assert(
 assert(
   "wix baseline does not include G-8d gosaki discography comp ids",
   !wixBaseline.includes("#comp-jqy0szge") && !wixBaseline.includes("#comp-llexymel"),
+);
+
+// --- G-8e gosaki mobile UI final polish ---
+
+assert(
+  "gosaki G-8e mobile final polish block present",
+  gosakiOverrides.includes("G-8e gosaki mobile UI final polish"),
+);
+assert(
+  "gosaki G-8e home schedule mobile overflow rule",
+  gosakiOverrides.includes("#comp-m8y53dj5") &&
+    gosakiOverrides.includes("#comp-m8y5bex0") &&
+    gosakiOverrides.includes('[id^="comp-m8y53djd__"]'),
+);
+assert(
+  "gosaki G-8e contact form mobile centering rule",
+  gosakiOverrides.includes("#comp-jqbwo704") &&
+    gosakiOverrides.includes("margin-left: auto !important"),
+);
+assert(
+  "gosaki G-8e link page mobile padding rule",
+  gosakiOverrides.includes("#comp-lol1i5hv") && gosakiOverrides.includes("#comp-juctbpem"),
+);
+assert(
+  "gosaki G-8e mobile menu text hidden / square button",
+  gosakiOverrides.includes(".nav-toggle__label") &&
+    gosakiOverrides.includes("display: none !important") &&
+    gosakiOverrides.includes("width: 48px"),
+);
+assert(
+  "gosaki G-8e sticky header rule",
+  gosakiOverrides.includes("position: sticky") && gosakiOverrides.includes("top: 0"),
+);
+assert(
+  "composed wix overrides include G-8e polish rules",
+  wixOverrides.includes("G-8e gosaki mobile UI final polish"),
+);
+assert(
+  "wix baseline includes overflow-wrap for rich text on mobile",
+  wixBaseline.includes("overflow-wrap: anywhere"),
+);
+
+const sampleHeaderHtml =
+  '<div id="comp-mbdw9tzc"><h1 class="font_0">SAKI GOTO Website</h1></div><!--/$-->' +
+  '<div id="comp-mbdw7xid"><nav aria-label="Main"><a href="/">Home</a><a href="/about/">About</a></nav></div>';
+const headerAstro = generateHeaderAstro(sampleHeaderHtml, "Header");
+assert(
+  "header transform wraps logo with site-logo-link",
+  headerAstro.content.includes('class="site-logo-link"') &&
+    headerAstro.content.includes('href={withBase("/")}'),
 );
 
 // --- cleanup temp manifest ---

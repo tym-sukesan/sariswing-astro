@@ -18,6 +18,22 @@ function escapeHtml(text) {
     .replace(/"/g, "&quot;");
 }
 
+/** Wrap gosaki header logo h1 with a home link (G-8e). Regex-only — cheerio corrupts Astro nav attrs. */
+function wrapHeaderLogoWithHomeLink(html) {
+  if (!html?.includes('id="comp-mbdw9tzc"') || html.includes("site-logo-link")) return html;
+  const blockRe =
+    /(<div id="comp-mbdw9tzc"[^>]*>)([\s\S]*?)(<\/div><!--\/\$-->\s*<div id="comp-mbdw7xid")/;
+  const match = html.match(blockRe);
+  if (!match) return html;
+  const inner = match[2];
+  if (!inner.includes("<h1") || inner.includes("site-logo-link")) return html;
+  const wrappedInner = inner.replace(
+    /(<h1[\s\S]*?<\/h1>)/,
+    '<a href={withBase("/")} class="site-logo-link">$1</a>',
+  );
+  return html.replace(blockRe, `$1${wrappedInner}$3`);
+}
+
 /** Month-only nav labels like `2026.07`. */
 function isMonthOnlyNavLabel(text) {
   return /^\d{4}\.\d{1,2}$/.test(text.trim());
@@ -98,12 +114,16 @@ const currentPath = Astro.url.pathname;
   }
 
   if (!navLinks.length) {
-    const stripped = headerHtml
-      .replace(/\s+aria-current="[^"]*"/gi, "")
-      .replace(/\bis-current\b/g, "")
-      .replace(/\s+class="\s*"/gi, "");
+    const stripped = wrapHeaderLogoWithHomeLink(
+      headerHtml
+        .replace(/\s+aria-current="[^"]*"/gi, "")
+        .replace(/\bis-current\b/g, "")
+        .replace(/\s+class="\s*"/gi, ""),
+    );
     return {
       content: `---
+import { withBase } from "../lib/with-base.ts";
+
 const currentPath = Astro.url.pathname;
 ---
 ${stripped}
@@ -165,6 +185,8 @@ ${navLines.join("\n")}
   </nav>`;
 
   shell = shell.replace("<!-- STATIC_TO_ASTRO_NAV -->", navBlock);
+
+  shell = wrapHeaderLogoWithHomeLink(shell);
 
   shell = shell.replace(/<a href="\/">/g, '<a href={withBase("/")}>');
 

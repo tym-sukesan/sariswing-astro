@@ -3,21 +3,20 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 1. Immediate priority
 
-**Current phase:** `G-8d-gosaki-mobile-visual-parity-fix` (complete)
+**Current phase:** `G-8e-gosaki-mobile-ui-final-polish` (complete)
 
-**Doc:** `tools/static-to-astro/docs/gosaki-mobile-visual-parity-fix.md`
+**Doc:** `tools/static-to-astro/docs/gosaki-mobile-ui-final-polish.md`
 
 **FTP auto-deploy:** still disabled.
 
 ### Gates
 
 ```txt
-gosakiMobileVisualParityFixComplete: true
+gosakiMobileUiFinalPolishComplete: true
 readyForManualReuploadByOperator: true
 readyForGosakiClientPreview: true
+gosakiMobileVisualParityFixComplete: true
 wixStaticExportResponsiveBaselineGeneralized: true
-gosakiSpecificExtensionsSeparated: true
-readyForNextWixPilot: true
 ftpAutoDeployStillDisabled: true
 readyForAnyFutureFtpApply: false
 ```
@@ -26,14 +25,14 @@ readyForAnyFutureFtpApply: false
 
 - **Common:** `scripts/lib/wix-static-export-baseline-overrides.mjs`
 - **Composer:** `scripts/lib/wix-staging-visual-overrides.mjs`
-- **Gosaki-specific:** `scripts/lib/site-specific-overrides/gosaki-piano-overrides.mjs` (G-8c hero/nav + G-8d mobile parity)
+- **Gosaki-specific:** `scripts/lib/site-specific-overrides/gosaki-piano-overrides.mjs` (G-8c–G-8e)
+- **Header logo link:** `scripts/lib/header-transform.mjs`
 
 ## 3. Next steps
 
-1. **Operator:** re-upload `output/manual-upload/gosaki-piano/public-dist/` including `_astro/index.BeQxkV9Y.css`
-2. Real-device QA: Discography SP, Header MENU, About/Contact on 375px width
-3. Next Wix pilot: crawl → convert; baseline applies automatically; add site-specific override file if needed
-4. Do not copy gosaki band profiles to other sites without explicit request
+1. **Operator:** re-upload `output/manual-upload/gosaki-piano/public-dist/` including `_astro/index.DRpT1Pny.css`
+2. Real-device QA: sticky header, schedule width, contact form center, logo → home link
+3. Share staging with gosaki client if QA passes
 
 ## 4. AI workflow maintenance rule
 

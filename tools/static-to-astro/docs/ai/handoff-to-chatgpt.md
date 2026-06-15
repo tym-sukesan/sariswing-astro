@@ -12,25 +12,25 @@ Paste this file at the start of a new ChatGPT thread. Cursor should update it af
 ## 2. Current phase
 
 ```txt
-Current phase: G-7i2-gosaki-footer-layer-isolation-fix (complete — operator manual re-upload pending)
+Current phase: G-8a-gosaki-about-band-profiles-section (complete — operator manual re-upload pending)
+Staging URL: https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/
 FTP auto-deploy: DISABLED
-Manual package: output/manual-upload/gosaki-piano/ (gitignored, 14 files incl. _astro/index.BZ7Sffo0.css)
 ```
 
 ---
 
 ## 3. Current state summary
 
-G-7h fixed CSS loading. G-7i fixed hero KV overlay, page-bg tint, MENU JS (`#SITE_HEADER`), nav fallback CSS. G-7i2 fixed footer `#bgLayers_SITE_FOOTER` painting over KV: without `#masterPage`, Wix `.uZIV9d { position:absolute; inset:0 }` on footer bg leaked to viewport — added footer/header `position:relative` + main `z-index:1` isolation in `wix-staging-visual-overrides.mjs`. Operator must re-upload `public-dist/` + `_astro/` for browser QA.
+G-8a added **Bands / Projects** section to gosaki About page: 5 band profiles from `config/sites/gosaki-piano-band-profiles.json`, rendered via `BandProfilesSection.astro` injected at convert time. Image placeholders when JPGs missing under `public/images/bands/`. Manual upload package regenerated; operator must re-upload for staging.
 
-Doc: `tools/static-to-astro/docs/gosaki-footer-layer-isolation-fix.md`
+Doc: `tools/static-to-astro/docs/gosaki-about-band-profiles-section.md`
 
 ---
 
-## 4. G-7i2 gates
+## 4. G-8a gates
 
 ```txt
-gosakiFooterLayerIsolationFixComplete: true
+gosakiAboutBandProfilesSectionComplete: true
 readyForManualReuploadByOperator: true
 readyForGosakiClientPreview: true
 ftpAutoDeployStillDisabled: true

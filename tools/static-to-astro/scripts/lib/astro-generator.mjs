@@ -51,6 +51,10 @@ import {
   applyScheduleDataViews,
   scheduleMonthsFromDetected,
 } from "./schedule-seed-extractor.mjs";
+import {
+  applyGosakiAboutBandProfiles,
+  isGosakiPianoFixture,
+} from "./gosaki-about-band-profiles.mjs";
 
 const TRAILING_SLASH = "always";
 const GLOBAL_CSS_PATH = "src/styles/global.css";
@@ -801,6 +805,15 @@ export function generateAstroProject(inputDir, outputDir, options = {}) {
     scheduleIndexGenerated = true;
   }
 
+  let gosakiBandProfilesSummary = { applied: false };
+  if (isGosakiPianoFixture(siteDir)) {
+    gosakiBandProfilesSummary = applyGosakiAboutBandProfiles(outDir, TOOL_ROOT);
+    if (gosakiBandProfilesSummary.applied) {
+      writtenPages.push(path.join(outDir, gosakiBandProfilesSummary.componentPath));
+      writtenPages.push(path.join(outDir, gosakiBandProfilesSummary.dataPath));
+    }
+  }
+
   writeFile(path.join(outDir, "package.json"), generatePackageJson(baseUrl));
   writeFile(path.join(outDir, "astro.config.mjs"), generateAstroConfig(baseUrl, deployBase));
   writeFile(path.join(outDir, "tsconfig.json"), generateTsConfig());
@@ -948,6 +961,7 @@ export function generateAstroProject(inputDir, outputDir, options = {}) {
     baseUrl,
     adminCmsSummary,
     siteProfileSummary,
+    gosakiBandProfilesSummary,
   };
 }
 

@@ -90,7 +90,7 @@ export function validatePublicDistForManualUpload(publicDistDir) {
  */
 export function buildManualUploadManifest(meta) {
   return {
-    phase: "G-7i2-gosaki-footer-layer-isolation-fix",
+    phase: "G-8a-gosaki-about-band-profiles-section",
     siteSlug: meta.siteSlug,
     deployBase: normalizeDeployBase(meta.deployBase),
     stagingUrl: meta.stagingUrl.replace(/\/$/, "") + "/",

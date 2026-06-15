@@ -1,0 +1,172 @@
+---
+import profiles from "../data/gosaki-band-profiles.json";
+import { withBase } from "../lib/with-base.ts";
+import fs from "node:fs";
+import path from "node:path";
+
+const sectionTitle = profiles.sectionTitle ?? "Bands / Projects";
+
+const bands = profiles.bands.map((band) => {
+  const rel = band.image?.replace(/^\//, "") ?? "";
+  const publicPath = rel ? path.join(process.cwd(), "public", rel) : "";
+  const hasImage = Boolean(rel && fs.existsSync(publicPath));
+  return {
+    ...band,
+    imageSrc: band.image ? withBase(band.image) : "",
+    hasImage,
+  };
+});
+---
+
+<section class="band-profiles" aria-labelledby="band-profiles-heading">
+  <div class="band-profiles__inner">
+    <h2 id="band-profiles-heading" class="band-profiles__title">{sectionTitle}</h2>
+    <div class="band-profiles__list">
+      {
+        bands.map((band) => (
+          <article class="band-profile" id={`band-${band.id}`}>
+            <div class="band-profile__media">
+              {
+                band.hasImage ? (
+                  <img
+                    class="band-profile__image"
+                    src={band.imageSrc}
+                    alt={band.name}
+                    loading="lazy"
+                    decoding="async"
+                  />
+                ) : (
+                  <div class="band-profile__placeholder" aria-hidden="true">
+                    <span class="band-profile__placeholder-label">Photo</span>
+                  </div>
+                )
+              }
+            </div>
+            <div class="band-profile__body">
+              <h3 class="band-profile__name">{band.name}</h3>
+              <div class="band-profile__description">
+                {band.description.map((paragraph) => (
+                  <p>{paragraph}</p>
+                ))}
+              </div>
+            </div>
+          </article>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .band-profiles {
+    --band-text: #5b4d43;
+    --band-muted-bg: #ece4dc;
+    --band-border: #d8cfc4;
+    background: #fff8f1;
+    padding: 3rem 1.25rem 4rem;
+  }
+
+  .band-profiles__inner {
+    max-width: 960px;
+    margin: 0 auto;
+  }
+
+  .band-profiles__title {
+    margin: 0 0 2rem;
+    font-family: futura-lt-w01-book, sans-serif;
+    font-size: clamp(1.75rem, 4vw, 2.25rem);
+    font-weight: normal;
+    letter-spacing: 0.08em;
+    color: var(--band-text);
+    text-align: center;
+  }
+
+  .band-profiles__list {
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+  }
+
+  .band-profile {
+    display: grid;
+    grid-template-columns: minmax(180px, 260px) 1fr;
+    gap: 1.75rem;
+    align-items: start;
+    padding: 1.5rem;
+    background: rgba(255, 255, 255, 0.55);
+    border: 1px solid var(--band-border);
+    border-radius: 4px;
+  }
+
+  .band-profile__media {
+    width: 100%;
+  }
+
+  .band-profile__image {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 3 / 4;
+    object-fit: cover;
+    border-radius: 2px;
+    background: var(--band-muted-bg);
+  }
+
+  .band-profile__placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    background: linear-gradient(145deg, #f3ebe3 0%, var(--band-muted-bg) 100%);
+    border: 1px dashed var(--band-border);
+    border-radius: 2px;
+  }
+
+  .band-profile__placeholder-label {
+    font-family: futura-lt-w01-book, sans-serif;
+    font-size: 0.875rem;
+    letter-spacing: 0.12em;
+    color: #9a8b7f;
+    text-transform: uppercase;
+  }
+
+  .band-profile__name {
+    margin: 0 0 1rem;
+    font-family: futura-lt-w01-book, sans-serif;
+    font-size: 1.35rem;
+    font-weight: normal;
+    letter-spacing: 0.06em;
+    color: var(--band-text);
+  }
+
+  .band-profile__description p {
+    margin: 0 0 0.85rem;
+    font-family: avenir-lt-w01_35-light1475496, avenir-lt-w05_35-light, sans-serif;
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--band-text);
+  }
+
+  .band-profile__description p:last-child {
+    margin-bottom: 0;
+  }
+
+  @media (max-width: 767px) {
+    .band-profiles {
+      padding: 2.5rem 1rem 3rem;
+    }
+
+    .band-profile {
+      grid-template-columns: 1fr;
+      gap: 1.25rem;
+      padding: 1.25rem;
+    }
+
+    .band-profile__image,
+    .band-profile__placeholder {
+      max-width: 280px;
+      margin: 0 auto;
+    }
+  }
+</style>

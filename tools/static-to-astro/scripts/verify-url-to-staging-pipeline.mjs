@@ -34,6 +34,11 @@ import {
 } from "./lib/deploy-base.mjs";
 import { productionAbsoluteUrlToRoute } from "./lib/path-transform.mjs";
 import { buildWixStagingVisualOverridesCss } from "./lib/wix-staging-visual-overrides.mjs";
+import {
+  injectBandProfilesIntoAboutPage,
+  loadGosakiBandProfilesConfig,
+  verifyAboutBandProfilesHtml,
+} from "./lib/gosaki-about-band-profiles.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const TOOL_ROOT = path.resolve(__dirname, "..");
@@ -319,6 +324,33 @@ assert(
   wixOverrides.includes("body.wix-static-export main") &&
     wixOverrides.includes("z-index: 1"),
 );
+
+// --- G-8a gosaki About band profiles (no network) ---
+
+const bandProfilesLoaded = loadGosakiBandProfilesConfig(TOOL_ROOT);
+assert("gosaki band profiles config loads", bandProfilesLoaded.ok);
+assertEqual("gosaki band profiles count", bandProfilesLoaded.config?.bands?.length ?? 0, 5);
+
+const sampleAboutPage = `---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="About">
+<div>profile</div>
+</BaseLayout>`;
+const injectedAbout = injectBandProfilesIntoAboutPage(sampleAboutPage);
+assert("about page inject adds BandProfilesSection", injectedAbout.includes("<BandProfilesSection />"));
+assert(
+  "about page inject adds import",
+  injectedAbout.includes('import BandProfilesSection from "../../components/BandProfilesSection.astro"'),
+);
+
+const sampleBuiltAbout = `<section class="band-profiles"><h2>Bands / Projects</h2><article class="band-profile"><h3>ごさきりかこTrio</h3></article></section>`;
+const bandHtmlCheck = verifyAboutBandProfilesHtml(sampleBuiltAbout, {
+  sectionTitle: "Bands / Projects",
+  bandNames: ["ごさきりかこTrio"],
+});
+assert("about band profiles html verifier passes sample", bandHtmlCheck.ok);
 
 // --- cleanup temp manifest ---
 

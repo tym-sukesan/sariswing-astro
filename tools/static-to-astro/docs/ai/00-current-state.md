@@ -21,22 +21,21 @@ Staging Shell
 将来的な顧客オンボーディング・課金・デプロイ自動化
 
 2. Current phase
-現在フェーズ: G-7i2-gosaki-footer-layer-isolation-fix（完了 — operator 手動再アップロード待ち）
+現在フェーズ: G-8a-gosaki-about-band-profiles-section（完了 — operator 手動再アップロード待ち）
 
-G-7h で CSS 読み込み解決。G-7i で hero underlay / page-bg / nav fallback 修正。G-7i2 で `#SITE_FOOTER` / `#bgLayers_SITE_FOOTER` の viewport アンカー漏れを footer isolation CSS で修正。operator 再アップロード待ち。
+G-7 staging preview QA 完了後、About ページに **Bands / Projects** セクション（5バンド）をデータ駆動で追加。operator 手動再アップロード待ち。
 
 直近完了フェーズ:
-G-7i2-gosaki-footer-layer-isolation-fix
+G-8a-gosaki-about-band-profiles-section
 前フェーズ:
-G-7i-gosaki-staging-visual-polish-and-wix-css-behavior-fix
+G-7j-gosaki-staging-browser-qa-and-client-preview-readiness
 
 G-7 staging:
-- 手動パッケージ: `output/manual-upload/gosaki-piano/`（gitignored, 14 files, `_astro/index.BZ7Sffo0.css` 含む）
-- アップロード先: `/cms-kit-staging/gosaki-piano/`（public-dist の**中身**のみ、**`_astro/` 必須**）
 - staging URL: `https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/`
+- 手動パッケージ: `output/manual-upload/gosaki-piano/`（gitignored, 14 files — `about/index.html` 更新）
 - FTP 自動 deploy: **停止中** — `readyForAnyFutureFtpApply: false`
-- 次: 戸山が FileZilla で **再アップロード** → KV 半透明レイヤー解消 / nav ブラウザ QA → gosaki クライアント preview
-- Doc: `tools/static-to-astro/docs/gosaki-footer-layer-isolation-fix.md`
+- Doc: `tools/static-to-astro/docs/gosaki-about-band-profiles-section.md`
+- 次: operator 再アップロード → `/about/` で Bands / Projects 確認 → 任意で band 画像追加
 
 3. Important completed milestones
 

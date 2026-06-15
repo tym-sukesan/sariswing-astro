@@ -3,16 +3,18 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 1. Immediate priority
 
-**Current phase:** `G-7i2-gosaki-footer-layer-isolation-fix` (complete — **operator manual re-upload pending**)
+**Current phase:** `G-8a-gosaki-about-band-profiles-section` (complete — **operator manual re-upload pending**)
 
-**Doc:** `tools/static-to-astro/docs/gosaki-footer-layer-isolation-fix.md`
+**Doc:** `tools/static-to-astro/docs/gosaki-about-band-profiles-section.md`
 
-**FTP auto-deploy:** still disabled. Use regenerated manual upload package.
+**Staging URL:** `https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/`
+
+**FTP auto-deploy:** still disabled.
 
 ### Gates
 
 ```txt
-gosakiFooterLayerIsolationFixComplete: true
+gosakiAboutBandProfilesSectionComplete: true
 readyForManualReuploadByOperator: true
 readyForGosakiClientPreview: true
 ftpAutoDeployStillDisabled: true
@@ -28,15 +30,14 @@ npm run verify:manual-upload
 ```
 
 **Package (gitignored):** `output/manual-upload/gosaki-piano/`  
-**Upload target:** `/cms-kit-staging/gosaki-piano/` (contents of `public-dist/` only, **include `_astro/`** — CSS hash `index.BZ7Sffo0.css`)
+**Upload target:** `/cms-kit-staging/gosaki-piano/` (include updated `about/index.html` + `_astro/`)
 
 ## 3. Operator next steps
 
-1. Re-upload `public-dist/` contents (including `_astro/`) to `/cms-kit-staging/gosaki-piano/`
-2. Hard refresh; confirm new `_astro/index.BZ7Sffo0.css` loads (200)
-3. Browser QA: KV without footer/semi-transparent overlay; footer bg still at bottom; desktop nav; mobile MENU
-4. Share staging URL with gosaki client preview if visual QA passes
-5. No mirror/delete sync
+1. Re-upload `public-dist/` contents to `/cms-kit-staging/gosaki-piano/`
+2. Confirm `/about/` shows **Bands / Projects** with 5 band cards (placeholders until photos added)
+3. Optional: add JPGs to `public/images/bands/` in Astro project, rebuild, repackage
+4. Share updated About page with gosaki client if QA passes
 
 ## 4. AI workflow maintenance rule
 

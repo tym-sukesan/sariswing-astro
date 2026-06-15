@@ -347,6 +347,27 @@ Preparation complete: `tools/static-to-astro/docs/gosaki-staging-preview-prepara
 - Gate: `readyForG7fGosakiStagingUploadExecution: true`
 - Next: `G-7f-gosaki-staging-upload-execution` (operator approval)
 
+## Gosaki About band profiles (G-8a)
+
+Doc: `tools/static-to-astro/docs/gosaki-about-band-profiles-section.md`
+
+- About page: **Bands / Projects** section with 5 band cards (data: `config/sites/gosaki-piano-band-profiles.json`)
+- Convert hook injects `BandProfilesSection.astro` after existing Wix About content
+- Images: `public/images/bands/*.jpg` — placeholder if missing
+- Regenerate: convert + `npm run manual-upload:package` → operator re-upload (especially `about/index.html`)
+- Gate: `gosakiAboutBandProfilesSectionComplete: true`, `readyForManualReuploadByOperator: true`
+
+## Gosaki staging browser QA (G-7j)
+
+Doc: `tools/static-to-astro/docs/gosaki-staging-browser-qa-and-client-preview-readiness.md`
+
+- G-7i2 manual upload complete; staging live at `/cms-kit-staging/gosaki-piano/`
+- Browser QA: all primary routes HTTP 200; CSS/noindex/robots/canonical/og:url PASS
+- Operator visual: close to original Wix; Discography strong; KV/footer overlay fixed
+- Mobile MENU spot-check: optional pending
+- Gate: `gosakiStagingBrowserQaComplete: true`, `readyForGosakiClientPreview: true`
+- Next: share staging URL with gosaki client for preview feedback
+
 ## Gosaki footer layer isolation (G-7i2)
 
 Doc: `tools/static-to-astro/docs/gosaki-footer-layer-isolation-fix.md`

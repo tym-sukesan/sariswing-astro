@@ -229,7 +229,18 @@ Implementation complete: `tools/static-to-astro/docs/crawl-static-site-implement
 - Dry-run: no network, no writes; live crawl requires operator approval
 - Output: fixture-compatible HTML + `manifest.json` (flat `.html` for single-segment paths)
 - External / gosaki-piano.com crawl: **not executed in G-7a**
-- Next: `G-7b-url-to-staging-pipeline-orchestrator-implementation`
+
+## URL-to-staging pipeline orchestrator (G-7b)
+
+Implementation complete: `tools/static-to-astro/docs/url-to-staging-pipeline-orchestrator-implementation.md`
+
+- CLI: `url-to-staging-pipeline.mjs`; npm: `url:staging`
+- Config sample: `config/sites/gosaki-piano.url-to-staging.json` (no secrets)
+- Verify: `verify-url-to-staging-pipeline.mjs` (29 passed)
+- Default: `--dry-run`; gates `--run-crawl`, `--run-convert`, `--run-build`, `--prepare-public`, `--deploy-ftp` (all default false)
+- FTP / workflow_dispatch: **not executed in G-7b** (`--deploy-ftp` is plan-only)
+- External / gosaki-piano.com crawl: **not executed in G-7b**
+- Next: `G-7c-url-to-staging-dry-run-pilot`
 
 ## Schedule CMS generalization
 

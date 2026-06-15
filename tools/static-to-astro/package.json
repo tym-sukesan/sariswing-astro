@@ -5,9 +5,11 @@
   "description": "CLI tooling for static-to-astro (convert, analyze, visual-diff). Not the production Sariswing site.",
   "scripts": {
     "crawl:site": "node scripts/crawl-static-site.mjs",
+    "url:staging": "node scripts/url-to-staging-pipeline.mjs",
     "visual-diff": "node scripts/visual-diff.mjs",
     "analyze-visual-diff": "node scripts/analyze-visual-diff.mjs",
-    "verify:crawl": "node scripts/verify-crawl-static-site.mjs"
+    "verify:crawl": "node scripts/verify-crawl-static-site.mjs",
+    "verify:url-staging": "node scripts/verify-url-to-staging-pipeline.mjs"
   },
   "devDependencies": {
     "pixelmatch": "^7.1.0",

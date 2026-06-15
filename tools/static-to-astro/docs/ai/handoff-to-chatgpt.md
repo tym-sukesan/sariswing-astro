@@ -12,30 +12,31 @@ Paste this file at the start of a new ChatGPT thread. Cursor should update it af
 ## 2. Current phase
 
 ```txt
-Current phase: G-7a-crawl-static-site-implementation (completed)
-Latest completed phase: G-7a-crawl-static-site-implementation
-Latest commit: cb5d517 — Plan G-7 URL-to-staging automation sprint for gosaki.
-Recommended next phase: G-7b-url-to-staging-pipeline-orchestrator-implementation
+Current phase: G-7b-url-to-staging-pipeline-orchestrator-implementation (completed)
+Latest completed phase: G-7b-url-to-staging-pipeline-orchestrator-implementation
+Recommended next phase: G-7c-url-to-staging-dry-run-pilot
 ```
 
 ---
 
 ## 3. Current state summary
 
-G-7a crawl CLI ships `crawl-static-site.mjs` with dry-run (no network/writes), same-origin crawl, robots support, manifest output. Verified with mock fetch (30 tests). **No gosaki-piano.com or external crawl executed.**
+G-7b orchestrator connects crawl → analyze → convert → build → static-public with gated CLI (`url-to-staging-pipeline.mjs`). Default dry-run. Gosaki config sample at `config/sites/gosaki-piano.url-to-staging.json`. Verify: 29 passed. **No gosaki-piano.com or external crawl executed.**
 
-Next: G-7b orchestrator connecting crawl → convert → build.
+Next: G-7c E2E dry-run pilot with local `fixtures/gosaki-static-site`.
 
 ---
 
-## 4. G-7a highlights
+## 4. G-7b highlights
 
 ```txt
-CLI: tools/static-to-astro/scripts/crawl-static-site.mjs
-Verify: verify-crawl-static-site.mjs (30 passed)
-Default max-pages: 20
-Output: fixture root with index.html + manifest.json (gosaki-compatible flat .html paths)
-Dry-run: no network, no file writes
+CLI: tools/static-to-astro/scripts/url-to-staging-pipeline.mjs
+npm: npm run url:staging
+Config: config/sites/gosaki-piano.url-to-staging.json
+Verify: verify-url-to-staging-pipeline.mjs (29 passed)
+Gates: --run-crawl --run-convert --run-build --prepare-public --deploy-ftp (all default false)
+Dry-run: default; manifest in output/runs/ (gitignored)
+FTP / workflow_dispatch: never executed in G-7b
 ```
 
 ---
@@ -44,11 +45,14 @@ Dry-run: no network, no file writes
 
 ```txt
 crawlStaticSiteImplementationComplete: true
-readyForG7bUrlToStagingOrchestratorImplementation: true
+urlToStagingPipelineOrchestratorImplementationComplete: true
+readyForG7cUrlToStagingDryRunPilot: true
 urlToStagingAutomationSprintPlanningComplete: true
 g6g3PriceSliceDeferred: true
 externalCrawlExecutedInG7a: false
+externalCrawlExecutedInG7b: false
 gosakiPianoCrawlExecuted: false
+ftpDeployExecutedInG7b: false
 ```
 
 ---
@@ -56,9 +60,10 @@ gosakiPianoCrawlExecuted: false
 ## 6. Files to read first
 
 ```txt
+tools/static-to-astro/docs/url-to-staging-pipeline-orchestrator-implementation.md
 tools/static-to-astro/docs/crawl-static-site-implementation.md
 tools/static-to-astro/docs/url-to-staging-automation-sprint-planning.md
-tools/static-to-astro/scripts/crawl-static-site.mjs
-tools/static-to-astro/scripts/lib/static-site-crawler.mjs
+tools/static-to-astro/scripts/url-to-staging-pipeline.mjs
+tools/static-to-astro/config/sites/gosaki-piano.url-to-staging.json
 tools/static-to-astro/docs/ai/00-current-state.md
 ```

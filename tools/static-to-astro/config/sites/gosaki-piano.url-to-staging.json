@@ -1,0 +1,20 @@
+{
+  "$comment": "G-7b — URL-to-staging orchestrator config for gosaki-piano.com pilot. No secrets.",
+  "siteSlug": "gosaki-piano",
+  "startUrl": "https://www.gosaki-piano.com/",
+  "fixtureOut": "fixtures/gosaki-piano",
+  "projectOut": "output/gosaki-piano-astro",
+  "staticPublicOut": "output/static-public/gosaki-piano",
+  "deployBase": "/cms-kit-staging/gosaki-piano/",
+  "stagingBaseUrl": "https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano",
+  "productionBaseUrl": "https://www.gosaki-piano.com",
+  "siteProfile": "musician",
+  "maxPages": 80,
+  "sameOriginOnly": true,
+  "respectRobots": true,
+  "seo": {
+    "stagingNoindex": true,
+    "robotsDisallowAll": true,
+    "canonicalMode": "staging-url"
+  }
+}

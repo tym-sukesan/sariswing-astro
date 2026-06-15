@@ -207,7 +207,19 @@ Execution succeeded: `tools/static-to-astro/docs/schedule-time-fields-non-dry-ru
 - afterSnapshot.updated_at: `2026-06-15T01:02:22.949565+00:00`
 - rollbackNeeded: false; G-6-g1 Save not re-executed
 - Restart routine dev with `PUBLIC_ADMIN_WRITE_DRY_RUN=true`; do not re-click G-6-g2 Save
-- Next: `G-6-g3-schedule-price-non-dry-run-slice-preflight` (planning)
+- Next: `G-6-g3-schedule-price-non-dry-run-slice-preflight` (planning) — **deferred** (G-7 priority)
+
+## URL → staging automation sprint planning (G-7)
+
+Planning complete: `tools/static-to-astro/docs/url-to-staging-automation-sprint-planning.md`
+
+- Goal: URL input → crawl → Astro → build → staging on Lolipop (semi-auto, operator-driven)
+- First case: gosaki-piano.com (2nd Sariswing-style CMS Kit customer)
+- Exists: convert, build, static-public, FTP (gosaki proven at `/cms-kit-staging/gosaki/`)
+- Gap: crawl CLI + pipeline orchestrator (G-7a/b)
+- MVP: 2–3 days; CMS/Supabase deferred for staging preview
+- Next: `G-7a-crawl-static-site-implementation`
+- No FTP / crawl / production deploy in planning phase
 
 ## Schedule CMS generalization
 

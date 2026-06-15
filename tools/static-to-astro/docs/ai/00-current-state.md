@@ -21,26 +21,27 @@ Staging Shell
 将来的な顧客オンボーディング・課金・デプロイ自動化
 
 2. Current phase
-現在フェーズ: G-6-g2-schedule-time-fields-non-dry-run-slice-execution（完了）
+現在フェーズ: G-7-url-to-staging-automation-sprint-planning（完了）
 
-G-6-g2 time fields slice execution 成功。ユーザー手動 Preview + Save 1回。open_time + start_time のみ更新。optimistic lock OK。rollbackNeeded: false。
+URL → staging 半自動ツールの sprint planning 完了。gosaki-piano.com を第1実案件とした最短ルート・2〜3日MVP範囲・実装フェーズ分割を文書化。DB write / FTP / crawl 実行なし。
 
 直近完了フェーズ:
+G-7-url-to-staging-automation-sprint-planning
+前フェーズ（CMS — 一時停止）:
 G-6-g2-schedule-time-fields-non-dry-run-slice-execution
-前フェーズ:
-G-6-g2-schedule-time-fields-non-dry-run-slice-final-preflight
 直近commit:
-499aa37 — Document G-6-g2 schedule time-fields final preflight.
+1be0a27 — Record G-6-g2 schedule time-fields non-dry-run execution success.
 
-G-6-g1 / G-6-g2 target row（継続 fixture）:
-- title: [CMS Kit staging] G-6-g1 title PoC（G-6-g1 後）
-- venue / description: G-6-f6 後のまま（semantic unchanged）
-- open_time: [CMS Kit staging] G-6-g2 open PoC（G-6-g2 後）
-- start_time: [CMS Kit staging] G-6-g2 start PoC（G-6-g2 後）
-- price: null（G-6-g3 候補）
-- created_at: 2026-06-05 17:39:44.140168+00（不変）
-- updated_at: 2026-06-15 01:02:22.949565+00（G-6-g2 後）
-- trigger: schedules_set_updated_at active on staging
+G-6 Schedule CMS（一時停止 — G-6-g3 price deferred）:
+- G-6-g1 / G-6-g2 execution 成功済み
+- target row: aa440e29-5be8-402e-9190-0d81c48434c0
+- routine dev: PUBLIC_ADMIN_WRITE_DRY_RUN=true
+
+G-7 URL → staging（新優先）:
+- 第1実案件: gosaki-piano.com
+- 既存: convert / build / static-public / FTP（gosaki 実証済み）
+- 不足: crawl CLI + orchestrator（G-7a/b）
+- staging URL 実績: https://yskcreate.weblike.jp/cms-kit-staging/gosaki/
 
 3. Important completed milestones
 
@@ -376,18 +377,19 @@ planning doc: schedule-cms-generalization-planning.md
 6.34 Schedule time fields non-dry-run slice execution
 完了済み。フェーズ: G-6-g2-schedule-time-fields-non-dry-run-slice-execution
 - doc: schedule-time-fields-non-dry-run-slice-execution-result.md
-- approval ID: G-6-g2-schedule-time-fields-non-dry-run-slice
-- changedFields: ["open_time", "start_time"] only
-- open_time: null → [CMS Kit staging] G-6-g2 open PoC
-- start_time: null → [CMS Kit staging] G-6-g2 start PoC
-- title / venue / description / date / price / published / show_on_home / sort_order: unchanged
-- optimistic lock: enabled; expectedBeforeUpdatedAt matched baseline
-- beforeSnapshot.updated_at: 2026-06-14T15:03:08.762993+00:00
-- afterSnapshot.updated_at: 2026-06-15T01:02:22.949565+00:00
-- scheduleTimeFieldsNonDryRunSliceExecutionSucceeded: true
-- G-6-g2 nonDryRunSaveExecuted: true
-- rollbackNeeded: false
-- Cursor Save / Preview / SQL: なし（ユーザー手動のみ）
+- commit: 1be0a27
+- G-6-g3 price slice: deferred（G-7 優先）
+
+6.35 URL → staging automation sprint planning
+完了済み。フェーズ: G-7-url-to-staging-automation-sprint-planning
+- doc: url-to-staging-automation-sprint-planning.md
+- 第1実案件: gosaki-piano.com
+- MVP: G-7a crawl + G-7b orchestrator + G-7c site config bootstrap
+- 既存 proven: convert / build / static-public / FTP（gosaki）
+- 不足: URL crawl CLI（step 1 gap）
+- urlToStagingAutomationSprintPlanningComplete: true
+- readyForG7aCrawlStaticSiteImplementation: true
+- DB write / FTP / crawl 実行: なし
 
 7. Current gates
 scheduleWriteHardeningPlanningComplete: true
@@ -406,6 +408,9 @@ scheduleTimeFieldsNonDryRunSlicePreflightComplete: true
 scheduleTimeFieldsNonDryRunSliceImplementationComplete: true
 scheduleTimeFieldsNonDryRunSliceFinalPreflightComplete: true
 scheduleTimeFieldsNonDryRunSliceExecutionSucceeded: true
+urlToStagingAutomationSprintPlanningComplete: true
+readyForG7aCrawlStaticSiteImplementation: true
+g6g3PriceSliceDeferred: true
 readyForG6G2ScheduleTimeFieldsNonDryRunSliceImplementation: false
 readyForG6G2ScheduleTimeFieldsNonDryRunSliceFinalPreflight: false
 readyForG6G2ScheduleTimeFieldsNonDryRunSliceExecution: false
@@ -433,11 +438,11 @@ rollbackNeeded: false
 明示的 retry で dev server を起動する場合は inline env のみ使用する。
 
 10. Recommended next phase
-次フェーズ推奨: G-6-g3-schedule-price-non-dry-run-slice-preflight（planning）または routine dry-run default へ復帰
+次フェーズ推奨: G-7a-crawl-static-site-implementation
 
-G-6-g2 execution 成功。次 slice は price（G-6-g3）が planning 上の推奨。routine dev は PUBLIC_ADMIN_WRITE_DRY_RUN=true。
+G-7 planning 完了。URL → fixtures crawl CLI を最優先実装。gosaki-piano.com で検証。CMS（G-6-g3）は一時停止。
 
-詳細: tools/static-to-astro/docs/schedule-time-fields-non-dry-run-slice-execution-result.md
+詳細: tools/static-to-astro/docs/url-to-staging-automation-sprint-planning.md
 
 11. AI workflow transition
 チャット履歴への依存を減らすため、リポジトリ側に AI開発文脈管理ファイルを作成。

@@ -12,46 +12,48 @@ Paste this file at the start of a new ChatGPT thread. Cursor should update it af
 ## 2. Current phase
 
 ```txt
-Current phase: G-6-g2-schedule-time-fields-non-dry-run-slice-execution (completed — execution succeeded)
-Latest completed phase: G-6-g2-schedule-time-fields-non-dry-run-slice-execution
-Latest commit: 499aa37 — Document G-6-g2 schedule time-fields final preflight.
-Recommended next phase: G-6-g3-schedule-price-non-dry-run-slice-preflight (planning)
+Current phase: G-7-url-to-staging-automation-sprint-planning (completed — planning only)
+Latest completed phase: G-7-url-to-staging-automation-sprint-planning
+Latest commit: 1be0a27 — Record G-6-g2 schedule time-fields non-dry-run execution success.
+Recommended next phase: G-7a-crawl-static-site-implementation
 ```
 
 ---
 
 ## 3. Current state summary
 
-G-6-g2 time fields slice execution succeeded on staging. User manual Preview + Save once. `open_time` + `start_time` only changed. Title / venue / description preserved. Optimistic lock OK. `rollbackNeeded: false`. Cursor did not click Save / Preview / Run or execute SQL.
+Development focus shifted from G-6-g3 (price slice) to **URL → staging semi-automation**. Goal: operator enters URL → crawl → Astro → build → staging deploy on Lolipop. First real case: gosaki-piano.com. Not full SaaS.
+
+**Already proven (gosaki):** convert, build, static-public artifact, FTP to `yskcreate.weblike.jp/cms-kit-staging/gosaki/`.
+
+**Main gap:** no crawl CLI (workflow step 1 is manual).
+
+G-6 Schedule CMS work paused; G-6-g1/g2 execution succeeded.
 
 ---
 
-## 4. G-6-g2 execution outcome
+## 4. G-7 MVP scope (2–3 days)
 
-```txt
-Target: aa440e29-5be8-402e-9190-0d81c48434c0
-Approval ID: G-6-g2-schedule-time-fields-non-dry-run-slice
-changedFields: ["open_time", "start_time"]
-open_time: null → [CMS Kit staging] G-6-g2 open PoC
-start_time: null → [CMS Kit staging] G-6-g2 start PoC
-beforeSnapshot.updated_at: 2026-06-14T15:03:08.762993+00:00
-afterSnapshot.updated_at: 2026-06-15T01:02:22.949565+00:00
-rowsAffected: 1
-```
+| Day | Phase | Deliverable |
+| --- | --- | --- |
+| 1 | G-7a | `crawl-static-site.mjs` |
+| 2 | G-7b | `url-to-staging-run.mjs` orchestrator |
+| 3 | G-7c/d | site config bootstrap + gosaki pilot prep |
+
+**Deferred for MVP:** Supabase, seed, Storage, Admin CMS writes.
 
 ---
 
 ## 5. Gate state
 
 ```txt
+urlToStagingAutomationSprintPlanningComplete: true
+readyForG7aCrawlStaticSiteImplementation: true
+g6g3PriceSliceDeferred: true
 scheduleTimeFieldsNonDryRunSliceExecutionSucceeded: true
-scheduleTitleNonDryRunSliceExecutionSucceeded: true
-G-6-g2 nonDryRunSaveExecuted: true
 rollbackNeeded: false
-rollbackExecuted: false
-readyForG6G2ScheduleTimeFieldsNonDryRunSliceExecution: false
-dbWriteInLatestPhase: true (G-6-g2 user manual Save once)
-cursorClickedSave: false
+ftpDeployInPlanning: false
+productionTouched: false
 ```
 
 ---
@@ -59,9 +61,10 @@ cursorClickedSave: false
 ## 6. Files to read first
 
 ```txt
-tools/static-to-astro/docs/schedule-time-fields-non-dry-run-slice-execution-result.md
-tools/static-to-astro/docs/schedule-time-fields-non-dry-run-slice-final-preflight.md
-tools/static-to-astro/docs/schedule-title-non-dry-run-slice-execution-result.md
-tools/static-to-astro/docs/schedule-general-edit-next-slice-planning.md
+tools/static-to-astro/docs/url-to-staging-automation-sprint-planning.md
+tools/static-to-astro/docs/gosaki-staging-runbook.md
+tools/static-to-astro/docs/staging-generation-plan.md
+tools/static-to-astro/config/sites/gosaki.site-config.example.json
+tools/static-to-astro/README.md
 tools/static-to-astro/docs/ai/00-current-state.md
 ```

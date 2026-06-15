@@ -356,6 +356,16 @@ Doc: `tools/static-to-astro/docs/wix-static-export-responsive-baseline-generaliz
 - Band profiles / About injection remain gosaki-only (not in baseline)
 - Gate: `wixStaticExportResponsiveBaselineGeneralized: true`, `readyForNextWixPilot: true`
 
+## Gosaki mobile visual refinement (G-8f)
+
+Doc: `tools/static-to-astro/docs/gosaki-mobile-visual-refinement.md`
+
+- G-8e polish done; client-preview gaps: KV size, header align, footer center, disc spacing, contact success msg, link shadow
+- Fix: G-8f in `gosaki-piano-overrides.mjs` + `BandProfilesSection.astro` mobile centering
+- Contact `#comp-kei80gar` hidden; HubSpot replacement planned (future phase)
+- CSS: `_astro/index.Dl5S2qmQ.css` — operator must re-upload full public-dist
+- Gate: `gosakiMobileVisualRefinementComplete: true`, `readyForManualReuploadByOperator: true`
+
 ## Gosaki mobile UI final polish (G-8e)
 
 Doc: `tools/static-to-astro/docs/gosaki-mobile-ui-final-polish.md`

@@ -501,6 +501,42 @@ assert(
     headerAstro.content.includes('href={withBase("/")}'),
 );
 
+// --- G-8f gosaki mobile visual refinement ---
+
+assert(
+  "gosaki G-8f visual refinement block present",
+  gosakiOverrides.includes("G-8f gosaki mobile visual refinement"),
+);
+assert(
+  "gosaki G-8f home hero mobile sizing rule",
+  gosakiOverrides.includes("#comp-mbl1cpz3") &&
+    gosakiOverrides.includes("object-fit: cover"),
+);
+assert(
+  "gosaki G-8f logo/menu vertical centering rule",
+  gosakiOverrides.includes("align-self: center !important") &&
+    gosakiOverrides.includes("#SITE_HEADER .site-logo-link"),
+);
+assert(
+  "gosaki G-8f footer center alignment rule",
+  gosakiOverrides.includes("#SITE_FOOTER #LnkBr2") &&
+    gosakiOverrides.includes("justify-content: center"),
+);
+assert(
+  "gosaki G-8f contact success message hidden rule",
+  gosakiOverrides.includes("#comp-kei80gar") &&
+    gosakiOverrides.includes("display: none !important"),
+);
+assert(
+  "gosaki G-8f link page shadow/radius override",
+  gosakiOverrides.includes("#comp-juctbpem") &&
+    gosakiOverrides.includes("box-shadow: none !important"),
+);
+assert(
+  "composed wix overrides include G-8f refinement rules",
+  wixOverrides.includes("G-8f gosaki mobile visual refinement"),
+);
+
 // --- cleanup temp manifest ---
 
 try {

@@ -176,6 +176,8 @@ const bands = profiles.bands.map((band) => {
     .band-profile__media {
       width: 100%;
       max-width: 100%;
+      display: flex;
+      justify-content: center;
     }
 
     .band-profile__body {
@@ -184,9 +186,10 @@ const bands = profiles.bands.map((band) => {
 
     .band-profile__image,
     .band-profile__placeholder {
-      width: min(85vw, 320px);
-      max-width: 90%;
+      width: min(85vw, 280px);
+      max-width: 100%;
       margin: 0 auto;
+      flex-shrink: 0;
     }
 
     .band-profile__description p {

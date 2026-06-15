@@ -563,5 +563,146 @@ body.wix-static-export #SITE_HEADER .global-nav a.is-current {
     padding-inline: 0 !important;
   }
 }
+
+/* --- G-8f gosaki mobile visual refinement (site-specific) --- */
+
+/* Link page: flat modern panel (PC + SP) */
+body.wix-static-export #comp-juctbpem {
+  --rd: 0 !important;
+  --shd: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+body.wix-static-export #comp-juctbpem .LNYVZi,
+body.wix-static-export #comp-juctbpem [data-testid="colorUnderlay"] {
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+/* Contact: hide Wix form success message until HubSpot replacement */
+body.wix-static-export #comp-kei80gar {
+  display: none !important;
+}
+
+@media (max-width: 768px) {
+  /* Home KV: large cover hero, trim gap below */
+  body.wix-static-export #comp-lol1i5k0 {
+    padding-bottom: 0 !important;
+    margin-bottom: 0 !important;
+    overflow: hidden;
+  }
+
+  body.wix-static-export #comp-lol1i5k0 [data-mesh-id$="inlineContent-gridContainer"] {
+    padding: 0 !important;
+    margin: 0 !important;
+    gap: 0 !important;
+  }
+
+  body.wix-static-export #comp-mbl1cpz3 {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    margin-left: calc(50% - 50vw) !important;
+    margin-right: calc(50% - 50vw) !important;
+    left: auto !important;
+    height: clamp(220px, 55vw, 420px) !important;
+    overflow: hidden;
+  }
+
+  body.wix-static-export #comp-mbl1cpz3 .apPOZK,
+  body.wix-static-export #comp-mbl1cpz3 .wixui-image,
+  body.wix-static-export #comp-mbl1cpz3 img {
+    width: 100% !important;
+    height: 100% !important;
+    max-width: none !important;
+    object-fit: cover !important;
+    object-position: center center;
+    display: block;
+  }
+
+  body.wix-static-export [data-mesh-id="ContainermainPageinlineContent-gridContainer"] {
+    gap: 0 !important;
+  }
+
+  body.wix-static-export #comp-m8y3dzb6 {
+    margin-top: 0 !important;
+    padding-top: 1rem !important;
+  }
+
+  /* Header: vertical center logo + menu */
+  body.wix-static-export #SITE_HEADER [data-mesh-id="SITE_HEADERinlineContent-gridContainer"] {
+    align-items: center !important;
+  }
+
+  body.wix-static-export #SITE_HEADER #comp-mbdw9tzc,
+  body.wix-static-export #SITE_HEADER #comp-mbdw7xid {
+    align-self: center !important;
+  }
+
+  body.wix-static-export #SITE_HEADER .site-logo-link {
+    display: flex !important;
+    align-items: center !important;
+    align-self: center !important;
+  }
+
+  body.wix-static-export #SITE_HEADER .site-logo-link h1 {
+    margin: 0 !important;
+  }
+
+  /* Footer: center SNS + copyright */
+  body.wix-static-export #SITE_FOOTER [data-mesh-id="SITE_FOOTERinlineContent-gridContainer"] {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+    padding: 1.5rem 1.25rem !important;
+    gap: 0.75rem !important;
+  }
+
+  body.wix-static-export #SITE_FOOTER #LnkBr2,
+  body.wix-static-export #SITE_FOOTER #WRchTxtx {
+    width: 100% !important;
+    max-width: 100% !important;
+    left: auto !important;
+    margin: 0 auto !important;
+    text-align: center !important;
+  }
+
+  body.wix-static-export #SITE_FOOTER #LnkBr2 .tN_ggS {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+    gap: 0.75rem !important;
+    padding: 0 !important;
+  }
+
+  body.wix-static-export #SITE_FOOTER #WRchTxtx,
+  body.wix-static-export #SITE_FOOTER #WRchTxtx p {
+    text-align: center !important;
+  }
+
+  /* Discography: tighter vertical rhythm */
+  body.wix-static-export #comp-jqy0szge {
+    margin: 1.25rem 0 0.75rem !important;
+  }
+
+  body.wix-static-export #comp-llexymel {
+    padding-bottom: 1.5rem !important;
+  }
+
+  body.wix-static-export [id^="comp-llexymga__"]:not([id$="inlineContent"]):not([id$="gridContainer"]) {
+    margin-bottom: 1.5rem !important;
+    padding: 0.875rem 0.75rem !important;
+  }
+
+  body.wix-static-export [data-mesh-id^="comp-llexymga__"][data-mesh-id$="inlineContent-gridContainer"] {
+    gap: 0.625rem !important;
+    padding: 0.75rem !important;
+  }
+
+  body.wix-static-export [id^="comp-lley9r5x__"] {
+    padding-bottom: 0.125rem !important;
+  }
+}
 `;
 }

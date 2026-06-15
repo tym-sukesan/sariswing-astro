@@ -21,20 +21,21 @@ Staging Shell
 将来的な顧客オンボーディング・課金・デプロイ自動化
 
 2. Current phase
-現在フェーズ: G-8e-gosaki-mobile-ui-final-polish（完了）
+現在フェーズ: G-8f-gosaki-mobile-visual-refinement（完了）
 
-G-8d SP parity の上に、sticky コンパクト header・ロゴ home link・正方形 MENU・Home schedule overflow 修正・統一 gutter（~20px）・Contact form 中央寄せを追加。
+G-8e の上に、KV cover 拡大、header/footer 中央揃え、Discography 余白調整、Contact 成功メッセージ非表示、Link フラット化、About band 画像中央寄せを追加。
 
 直近完了フェーズ:
-G-8e-gosaki-mobile-ui-final-polish
+G-8f-gosaki-mobile-visual-refinement
 前フェーズ:
-G-8d-gosaki-mobile-visual-parity-fix
+G-8e-gosaki-mobile-ui-final-polish
 
 G-7 staging:
 - staging URL: `https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/`
-- gosaki output: baseline + gosaki-specific 合成 CSS（`_astro/index.DRpT1Pny.css`、gitignored）
-- Doc: `tools/static-to-astro/docs/gosaki-mobile-ui-final-polish.md`
-- 次: operator 手動 re-upload → 実機 SP QA → gosaki クライアント共有
+- gosaki output: baseline + gosaki-specific 合成 CSS（`_astro/index.Dl5S2qmQ.css`、gitignored）
+- Doc: `tools/static-to-astro/docs/gosaki-mobile-visual-refinement.md`
+- 次: operator 手動 re-upload → クライアント preview QA
+- 将来: Contact HubSpot 置換
 
 3. Important completed milestones
 

@@ -12,27 +12,26 @@ Paste this file at the start of a new ChatGPT thread. Cursor should update it af
 ## 2. Current phase
 
 ```txt
-Current phase: G-8e-gosaki-mobile-ui-final-polish (complete)
+Current phase: G-8f-gosaki-mobile-visual-refinement (complete)
 FTP auto-deploy: DISABLED
-Wix baseline: scripts/lib/wix-static-export-baseline-overrides.mjs
-Gosaki-specific CSS: scripts/lib/site-specific-overrides/gosaki-piano-overrides.mjs (G-8c–G-8e)
-Header logo link: scripts/lib/header-transform.mjs
+Gosaki-specific CSS: scripts/lib/site-specific-overrides/gosaki-piano-overrides.mjs (G-8c–G-8f)
+Latest commit: 1eee686 (G-8e) — G-8f pending commit
 ```
 
 ---
 
 ## 3. Current state summary
 
-G-8e polished gosaki SP UI: sticky compact header, square hamburger (no MENU text), logo → home link, Home schedule 1-column overflow fix, unified ~20px gutter, Contact form centered. Baseline adds overflow-wrap on mobile rich text. Manual package regenerated; CSS `_astro/index.DRpT1Pny.css`. verify:url-staging 81 passed.
+G-8f refined gosaki SP for client preview: large KV cover hero, header/footer vertical alignment, tighter discography spacing, hidden Wix contact success message, flat Link panel, About band card image centering. Manual package regenerated; CSS `_astro/index.Dl5S2qmQ.css`. verify:url-staging 88 passed.
 
-Docs: `gosaki-mobile-ui-final-polish.md`, `gosaki-mobile-visual-parity-fix.md`
+Docs: `gosaki-mobile-visual-refinement.md`, `gosaki-mobile-ui-final-polish.md`
 
 ---
 
-## 4. G-8e gates
+## 4. G-8f gates
 
 ```txt
-gosakiMobileUiFinalPolishComplete: true
+gosakiMobileVisualRefinementComplete: true
 readyForManualReuploadByOperator: true
 readyForGosakiClientPreview: true
 ftpAutoDeployStillDisabled: true
@@ -52,10 +51,10 @@ readyForAnyFutureFtpApply: false
 
 ## 6. Operator re-upload
 
-```bash
-cd tools/static-to-astro
-npm run manual-upload:package
-npm run verify:manual-upload
-```
+Upload `output/manual-upload/gosaki-piano/public-dist/` → `/cms-kit-staging/gosaki-piano/` (include `_astro/index.Dl5S2qmQ.css`).
 
-Upload `output/manual-upload/gosaki-piano/public-dist/` → `/cms-kit-staging/gosaki-piano/` (include `_astro/index.DRpT1Pny.css`).
+---
+
+## 7. Future: Contact HubSpot
+
+Wix form is placeholder; `#comp-kei80gar` success message hidden in G-8f. HubSpot embed planned in future phase.

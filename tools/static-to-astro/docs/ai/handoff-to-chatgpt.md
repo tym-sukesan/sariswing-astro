@@ -12,48 +12,43 @@ Paste this file at the start of a new ChatGPT thread. Cursor should update it af
 ## 2. Current phase
 
 ```txt
-Current phase: G-7-url-to-staging-automation-sprint-planning (completed — planning only)
-Latest completed phase: G-7-url-to-staging-automation-sprint-planning
-Latest commit: 1be0a27 — Record G-6-g2 schedule time-fields non-dry-run execution success.
-Recommended next phase: G-7a-crawl-static-site-implementation
+Current phase: G-7a-crawl-static-site-implementation (completed)
+Latest completed phase: G-7a-crawl-static-site-implementation
+Latest commit: cb5d517 — Plan G-7 URL-to-staging automation sprint for gosaki.
+Recommended next phase: G-7b-url-to-staging-pipeline-orchestrator-implementation
 ```
 
 ---
 
 ## 3. Current state summary
 
-Development focus shifted from G-6-g3 (price slice) to **URL → staging semi-automation**. Goal: operator enters URL → crawl → Astro → build → staging deploy on Lolipop. First real case: gosaki-piano.com. Not full SaaS.
+G-7a crawl CLI ships `crawl-static-site.mjs` with dry-run (no network/writes), same-origin crawl, robots support, manifest output. Verified with mock fetch (30 tests). **No gosaki-piano.com or external crawl executed.**
 
-**Already proven (gosaki):** convert, build, static-public artifact, FTP to `yskcreate.weblike.jp/cms-kit-staging/gosaki/`.
-
-**Main gap:** no crawl CLI (workflow step 1 is manual).
-
-G-6 Schedule CMS work paused; G-6-g1/g2 execution succeeded.
+Next: G-7b orchestrator connecting crawl → convert → build.
 
 ---
 
-## 4. G-7 MVP scope (2–3 days)
+## 4. G-7a highlights
 
-| Day | Phase | Deliverable |
-| --- | --- | --- |
-| 1 | G-7a | `crawl-static-site.mjs` |
-| 2 | G-7b | `url-to-staging-run.mjs` orchestrator |
-| 3 | G-7c/d | site config bootstrap + gosaki pilot prep |
-
-**Deferred for MVP:** Supabase, seed, Storage, Admin CMS writes.
+```txt
+CLI: tools/static-to-astro/scripts/crawl-static-site.mjs
+Verify: verify-crawl-static-site.mjs (30 passed)
+Default max-pages: 20
+Output: fixture root with index.html + manifest.json (gosaki-compatible flat .html paths)
+Dry-run: no network, no file writes
+```
 
 ---
 
 ## 5. Gate state
 
 ```txt
+crawlStaticSiteImplementationComplete: true
+readyForG7bUrlToStagingOrchestratorImplementation: true
 urlToStagingAutomationSprintPlanningComplete: true
-readyForG7aCrawlStaticSiteImplementation: true
 g6g3PriceSliceDeferred: true
-scheduleTimeFieldsNonDryRunSliceExecutionSucceeded: true
-rollbackNeeded: false
-ftpDeployInPlanning: false
-productionTouched: false
+externalCrawlExecutedInG7a: false
+gosakiPianoCrawlExecuted: false
 ```
 
 ---
@@ -61,10 +56,9 @@ productionTouched: false
 ## 6. Files to read first
 
 ```txt
+tools/static-to-astro/docs/crawl-static-site-implementation.md
 tools/static-to-astro/docs/url-to-staging-automation-sprint-planning.md
-tools/static-to-astro/docs/gosaki-staging-runbook.md
-tools/static-to-astro/docs/staging-generation-plan.md
-tools/static-to-astro/config/sites/gosaki.site-config.example.json
-tools/static-to-astro/README.md
+tools/static-to-astro/scripts/crawl-static-site.mjs
+tools/static-to-astro/scripts/lib/static-site-crawler.mjs
 tools/static-to-astro/docs/ai/00-current-state.md
 ```

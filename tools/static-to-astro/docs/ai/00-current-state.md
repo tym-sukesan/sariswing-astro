@@ -21,27 +21,22 @@ Staging Shell
 将来的な顧客オンボーディング・課金・デプロイ自動化
 
 2. Current phase
-現在フェーズ: G-7-url-to-staging-automation-sprint-planning（完了）
+現在フェーズ: G-7a-crawl-static-site-implementation（完了）
 
-URL → staging 半自動ツールの sprint planning 完了。gosaki-piano.com を第1実案件とした最短ルート・2〜3日MVP範囲・実装フェーズ分割を文書化。DB write / FTP / crawl 実行なし。
+crawl CLI 実装完了。`crawl-static-site.mjs` + lib + verify script。mock 検証 30 passed。外部サイト実 crawl なし。
 
 直近完了フェーズ:
+G-7a-crawl-static-site-implementation
+前フェーズ:
 G-7-url-to-staging-automation-sprint-planning
-前フェーズ（CMS — 一時停止）:
-G-6-g2-schedule-time-fields-non-dry-run-slice-execution
 直近commit:
-1be0a27 — Record G-6-g2 schedule time-fields non-dry-run execution success.
+cb5d517 — Plan G-7 URL-to-staging automation sprint for gosaki.
 
-G-6 Schedule CMS（一時停止 — G-6-g3 price deferred）:
-- G-6-g1 / G-6-g2 execution 成功済み
-- target row: aa440e29-5be8-402e-9190-0d81c48434c0
-- routine dev: PUBLIC_ADMIN_WRITE_DRY_RUN=true
-
-G-7 URL → staging（新優先）:
-- 第1実案件: gosaki-piano.com
-- 既存: convert / build / static-public / FTP（gosaki 実証済み）
-- 不足: crawl CLI + orchestrator（G-7a/b）
-- staging URL 実績: https://yskcreate.weblike.jp/cms-kit-staging/gosaki/
+G-7 URL → staging:
+- crawl CLI: `crawl-static-site.mjs`（dry-run デフォルト推奨）
+- verify: `verify-crawl-static-site.mjs`（30 passed）
+- 次: G-7b orchestrator
+- gosaki-piano.com 実 crawl: 未実行
 
 3. Important completed milestones
 
@@ -383,13 +378,16 @@ planning doc: schedule-cms-generalization-planning.md
 6.35 URL → staging automation sprint planning
 完了済み。フェーズ: G-7-url-to-staging-automation-sprint-planning
 - doc: url-to-staging-automation-sprint-planning.md
-- 第1実案件: gosaki-piano.com
-- MVP: G-7a crawl + G-7b orchestrator + G-7c site config bootstrap
-- 既存 proven: convert / build / static-public / FTP（gosaki）
-- 不足: URL crawl CLI（step 1 gap）
-- urlToStagingAutomationSprintPlanningComplete: true
-- readyForG7aCrawlStaticSiteImplementation: true
-- DB write / FTP / crawl 実行: なし
+- commit: cb5d517
+
+6.36 Crawl static site implementation
+完了済み。フェーズ: G-7a-crawl-static-site-implementation
+- doc: crawl-static-site-implementation.md
+- CLI: crawl-static-site.mjs; verify: verify-crawl-static-site.mjs (30 passed)
+- cheerio added to tools/static-to-astro/package.json
+- external crawl / gosaki-piano.com crawl: なし
+- crawlStaticSiteImplementationComplete: true
+- readyForG7bUrlToStagingOrchestratorImplementation: true
 
 7. Current gates
 scheduleWriteHardeningPlanningComplete: true
@@ -409,7 +407,9 @@ scheduleTimeFieldsNonDryRunSliceImplementationComplete: true
 scheduleTimeFieldsNonDryRunSliceFinalPreflightComplete: true
 scheduleTimeFieldsNonDryRunSliceExecutionSucceeded: true
 urlToStagingAutomationSprintPlanningComplete: true
-readyForG7aCrawlStaticSiteImplementation: true
+crawlStaticSiteImplementationComplete: true
+readyForG7aCrawlStaticSiteImplementation: false
+readyForG7bUrlToStagingOrchestratorImplementation: true
 g6g3PriceSliceDeferred: true
 readyForG6G2ScheduleTimeFieldsNonDryRunSliceImplementation: false
 readyForG6G2ScheduleTimeFieldsNonDryRunSliceFinalPreflight: false
@@ -438,11 +438,11 @@ rollbackNeeded: false
 明示的 retry で dev server を起動する場合は inline env のみ使用する。
 
 10. Recommended next phase
-次フェーズ推奨: G-7a-crawl-static-site-implementation
+次フェーズ推奨: G-7b-url-to-staging-pipeline-orchestrator-implementation
 
-G-7 planning 完了。URL → fixtures crawl CLI を最優先実装。gosaki-piano.com で検証。CMS（G-6-g3）は一時停止。
+G-7a crawl CLI 完了。次は crawl → convert → build をつなぐ orchestrator。
 
-詳細: tools/static-to-astro/docs/url-to-staging-automation-sprint-planning.md
+詳細: tools/static-to-astro/docs/crawl-static-site-implementation.md
 
 11. AI workflow transition
 チャット履歴への依存を減らすため、リポジトリ側に AI開発文脈管理ファイルを作成。

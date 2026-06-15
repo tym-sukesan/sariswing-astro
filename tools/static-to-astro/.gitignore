@@ -1,5 +1,6 @@
 # Local-only fixtures (optional manual copies from site-audit prototypes)
 fixtures/gosaki-static-site/
+fixtures/gosaki-piano/
 
 # Generated project artifacts (recreated by convert CLI)
 output/generated-astro/node_modules/

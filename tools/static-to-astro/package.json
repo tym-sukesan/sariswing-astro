@@ -4,8 +4,10 @@
   "type": "module",
   "description": "CLI tooling for static-to-astro (convert, analyze, visual-diff). Not the production Sariswing site.",
   "scripts": {
+    "crawl:site": "node scripts/crawl-static-site.mjs",
     "visual-diff": "node scripts/visual-diff.mjs",
-    "analyze-visual-diff": "node scripts/analyze-visual-diff.mjs"
+    "analyze-visual-diff": "node scripts/analyze-visual-diff.mjs",
+    "verify:crawl": "node scripts/verify-crawl-static-site.mjs"
   },
   "devDependencies": {
     "pixelmatch": "^7.1.0",
@@ -13,6 +15,7 @@
     "pngjs": "^7.0.0"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.107.0"
+    "@supabase/supabase-js": "^2.107.0",
+    "cheerio": "^1.2.0"
   }
 }

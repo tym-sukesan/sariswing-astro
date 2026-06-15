@@ -221,6 +221,16 @@ Planning complete: `tools/static-to-astro/docs/url-to-staging-automation-sprint-
 - Next: `G-7a-crawl-static-site-implementation`
 - No FTP / crawl / production deploy in planning phase
 
+## Crawl static site implementation (G-7a)
+
+Implementation complete: `tools/static-to-astro/docs/crawl-static-site-implementation.md`
+
+- CLI: `crawl-static-site.mjs`; verify: `verify-crawl-static-site.mjs` (30 passed)
+- Dry-run: no network, no writes; live crawl requires operator approval
+- Output: fixture-compatible HTML + `manifest.json` (flat `.html` for single-segment paths)
+- External / gosaki-piano.com crawl: **not executed in G-7a**
+- Next: `G-7b-url-to-staging-pipeline-orchestrator-implementation`
+
 ## Schedule CMS generalization
 
 Planning phase `G-6-f-schedule-cms-generalization-planning` is complete.

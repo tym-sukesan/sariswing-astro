@@ -347,6 +347,15 @@ Preparation complete: `tools/static-to-astro/docs/gosaki-staging-preview-prepara
 - Gate: `readyForG7fGosakiStagingUploadExecution: true`
 - Next: `G-7f-gosaki-staging-upload-execution` (operator approval)
 
+## Gosaki mobile responsive preview (G-8b)
+
+Doc: `tools/static-to-astro/docs/gosaki-mobile-responsive-preview-fix.md`
+
+- Mobile broken: Wix `min-width:980px` sections + desktop mesh grid without Thunderbolt mobile runtime
+- Fix: G-8b block in `wix-staging-visual-overrides.mjs` — overflow clip, mesh flex column @768px, About/Contact/header mobile rules
+- CSS: `_astro/index.DFhgPQ9c.css` — operator must re-upload full public-dist
+- Gate: `gosakiMobileResponsivePreviewFixComplete: true`, `readyForManualReuploadByOperator: true`
+
 ## Gosaki About band profiles (G-8a)
 
 Doc: `tools/static-to-astro/docs/gosaki-about-band-profiles-section.md`

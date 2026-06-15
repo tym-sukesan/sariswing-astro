@@ -68,7 +68,9 @@ const bands = profiles.bands.map((band) => {
 
   .band-profiles__inner {
     max-width: 960px;
+    width: 100%;
     margin: 0 auto;
+    box-sizing: border-box;
   }
 
   .band-profiles__title {
@@ -155,18 +157,50 @@ const bands = profiles.bands.map((band) => {
   @media (max-width: 767px) {
     .band-profiles {
       padding: 2.5rem 1rem 3rem;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .band-profiles__inner {
+      padding: 0 0.25rem;
     }
 
     .band-profile {
       grid-template-columns: 1fr;
       gap: 1.25rem;
       padding: 1.25rem;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .band-profile__media {
+      width: 100%;
+      max-width: 100%;
+    }
+
+    .band-profile__body {
+      width: 100%;
     }
 
     .band-profile__image,
     .band-profile__placeholder {
-      max-width: 280px;
+      width: min(85vw, 320px);
+      max-width: 90%;
       margin: 0 auto;
+    }
+
+    .band-profile__description p {
+      font-size: 15px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .band-profiles {
+      padding: 2rem 0.75rem 2.5rem;
+    }
+
+    .band-profile {
+      padding: 1rem;
     }
   }
 </style>

@@ -3,9 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 1. Immediate priority
 
-**Current phase:** `G-8a-gosaki-about-band-profiles-section` (complete — **operator manual re-upload pending**)
+**Current phase:** `G-8b-gosaki-mobile-responsive-preview-fix` (complete — **operator manual re-upload pending**)
 
-**Doc:** `tools/static-to-astro/docs/gosaki-about-band-profiles-section.md`
+**Doc:** `tools/static-to-astro/docs/gosaki-mobile-responsive-preview-fix.md`
 
 **Staging URL:** `https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/`
 
@@ -14,7 +14,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 ### Gates
 
 ```txt
-gosakiAboutBandProfilesSectionComplete: true
+gosakiMobileResponsivePreviewFixComplete: true
 readyForManualReuploadByOperator: true
 readyForGosakiClientPreview: true
 ftpAutoDeployStillDisabled: true
@@ -30,14 +30,14 @@ npm run verify:manual-upload
 ```
 
 **Package (gitignored):** `output/manual-upload/gosaki-piano/`  
-**Upload target:** `/cms-kit-staging/gosaki-piano/` (include updated `about/index.html` + `_astro/`)
+**Upload target:** `/cms-kit-staging/gosaki-piano/` — **include `_astro/index.DFhgPQ9c.css`** (G-8b new hash)
 
 ## 3. Operator next steps
 
-1. Re-upload `public-dist/` contents to `/cms-kit-staging/gosaki-piano/`
-2. Confirm `/about/` shows **Bands / Projects** with 5 band cards (placeholders until photos added)
-3. Optional: add JPGs to `public/images/bands/` in Astro project, rebuild, repackage
-4. Share updated About page with gosaki client if QA passes
+1. Re-upload full `public-dist/` contents to `/cms-kit-staging/gosaki-piano/`
+2. Phone / DevTools mobile QA at ~375px: no major horizontal scroll
+3. Check About (bio + photo stack), Bands 1-column, Contact form width, MENU toggle
+4. Share staging with gosaki client if mobile QA passes
 
 ## 4. AI workflow maintenance rule
 

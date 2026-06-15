@@ -352,6 +352,37 @@ const bandHtmlCheck = verifyAboutBandProfilesHtml(sampleBuiltAbout, {
 });
 assert("about band profiles html verifier passes sample", bandHtmlCheck.ok);
 
+// --- G-8b mobile responsive overrides (no network) ---
+
+assert(
+  "wix overrides include G-8b mobile block",
+  wixOverrides.includes("G-8b: mobile responsive preview overrides"),
+);
+assert(
+  "wix overrides reset mesh grid on mobile",
+  wixOverrides.includes("@media (max-width: 768px)") &&
+    wixOverrides.includes("inlineContent-gridContainer") &&
+    wixOverrides.includes("flex-direction: column"),
+);
+assert(
+  "wix overrides clamp section min-width on mobile",
+  wixOverrides.includes("min-width: 0 !important") &&
+    wixOverrides.includes(".Le88gL"),
+);
+
+const bandTemplatePath = path.join(
+  TOOL_ROOT,
+  "templates/site-extensions/gosaki-piano/BandProfilesSection.astro",
+);
+const bandTemplate = fs.existsSync(bandTemplatePath)
+  ? fs.readFileSync(bandTemplatePath, "utf8")
+  : "";
+assert(
+  "BandProfilesSection has mobile media query",
+  bandTemplate.includes("@media (max-width: 767px)") &&
+    bandTemplate.includes("grid-template-columns: 1fr"),
+);
+
 // --- cleanup temp manifest ---
 
 try {

@@ -80,7 +80,7 @@ function main() {
     process.exit(1);
   }
 
-  console.log("Manual upload package (G-8a — no FTP)");
+  console.log("Manual upload package (G-8b — no FTP)");
   console.log(`Site: ${opts.siteSlug}`);
   console.log(`Source: ${opts.publicDir}`);
   console.log(`Out: ${opts.out}`);

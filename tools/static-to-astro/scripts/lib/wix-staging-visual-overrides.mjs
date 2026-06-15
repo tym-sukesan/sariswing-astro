@@ -10,7 +10,7 @@ export function buildWixStagingVisualOverridesCss(options = {}) {
   const slug = options.siteSlug ?? "gosaki-piano";
   void slug;
 
-  return `/* --- Wix static export visual overrides (G-7i / G-7i2) --- */
+  return `/* --- Wix static export visual overrides (G-7i / G-7i2 / G-8b) --- */
 
 /* Without #masterPage.mesh-layout, header/footer bg wrappers anchor to the viewport */
 body.wix-static-export #SITE_HEADER,
@@ -193,6 +193,163 @@ body.wix-static-export #comp-lol1i5k0 {
 
   #SITE_HEADER .global-nav a {
     padding: 10px 16px;
+  }
+}
+
+/* --- G-8b: mobile responsive preview overrides (static export, no Thunderbolt) --- */
+
+html,
+body.wix-static-export {
+  overflow-x: clip;
+  max-width: 100%;
+}
+
+body.wix-static-export main,
+body.wix-static-export #SITE_PAGES,
+body.wix-static-export #SITE_PAGES > *,
+body.wix-static-export .i0StQr,
+body.wix-static-export .wH18kY,
+body.wix-static-export .Containerc46c,
+body.wix-static-export [id^="Container"] {
+  max-width: 100%;
+  min-width: 0;
+}
+
+body.wix-static-export img {
+  max-width: 100%;
+  height: auto;
+}
+
+body.wix-static-export input,
+body.wix-static-export textarea,
+body.wix-static-export select,
+body.wix-static-export form {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+  body.wix-static-export #SITE_HEADER .XKFSfx,
+  body.wix-static-export #SITE_HEADER [data-testid="inline-content"],
+  body.wix-static-export #SITE_HEADER [data-testid="mesh-container-content"] {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  body.wix-static-export #SITE_HEADER #comp-mbdw7xid {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  body.wix-static-export .Le88gL,
+  body.wix-static-export .Le88gL[id^="comp-"],
+  body.wix-static-export [id^="comp-"].wixui-section {
+    min-width: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  body.wix-static-export [data-mesh-id$="inlineContent"],
+  body.wix-static-export [data-mesh-id$="inlineContent-gridContainer"] {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    height: auto !important;
+  }
+
+  body.wix-static-export [data-mesh-id$="inlineContent-gridContainer"] {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 1rem;
+    grid-template-columns: 100% !important;
+    grid-template-rows: auto !important;
+  }
+
+  body.wix-static-export [data-mesh-id$="inlineContent-gridContainer"] > *,
+  body.wix-static-export [data-mesh-id$="inlineContent-gridContainer"] > interact-element > * {
+    position: relative !important;
+    left: auto !important;
+    right: auto !important;
+    top: auto !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    grid-area: auto !important;
+    justify-self: stretch !important;
+    align-self: stretch !important;
+  }
+
+  /* About: heading centered, bio readable, photo ~85% width */
+  body.wix-static-export #WRchTxt16,
+  body.wix-static-export #WRchTxt16 .wixui-rich-text__text {
+    width: 100% !important;
+    max-width: 100% !important;
+    text-align: center;
+  }
+
+  body.wix-static-export #comp-jrqh3smr {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0 1rem;
+    box-sizing: border-box;
+  }
+
+  body.wix-static-export #comp-jrqh3smr p,
+  body.wix-static-export #comp-jrqh3smr .wixui-rich-text__text {
+    font-size: 15px !important;
+    line-height: 1.75 !important;
+  }
+
+  body.wix-static-export #comp-jrtenw0n,
+  body.wix-static-export #comp-jrtenw0n .BprtEa,
+  body.wix-static-export #comp-jrtenw0n img {
+    width: min(85vw, 320px) !important;
+    max-width: 90% !important;
+    height: auto !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    display: block;
+  }
+
+  /* Contact: stack image + form, full-width inputs */
+  body.wix-static-export #comp-jsh29kfc,
+  body.wix-static-export #comp-j8pza50e,
+  body.wix-static-export [id^="comp-kei80"] {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  body.wix-static-export form[data-hook="form"] {
+    width: 100% !important;
+    padding: 0 0.75rem;
+    box-sizing: border-box;
+  }
+
+  body.wix-static-export .wixui-text-box input,
+  body.wix-static-export .wixui-text-box textarea,
+  body.wix-static-export [data-field-type] input,
+  body.wix-static-export [data-field-type] textarea {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}
+
+@media (max-width: 480px) {
+  body.wix-static-export #SITE_HEADER .global-nav a {
+    font-size: 15px;
+  }
+
+  body.wix-static-export #comp-jrqh3smr {
+    padding: 0 0.75rem;
+  }
+
+  body.wix-static-export #comp-jrtenw0n,
+  body.wix-static-export #comp-jrtenw0n img {
+    width: min(90vw, 300px) !important;
   }
 }
 `;

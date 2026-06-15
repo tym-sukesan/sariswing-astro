@@ -12,25 +12,26 @@ Paste this file at the start of a new ChatGPT thread. Cursor should update it af
 ## 2. Current phase
 
 ```txt
-Current phase: G-8a-gosaki-about-band-profiles-section (complete — operator manual re-upload pending)
+Current phase: G-8b-gosaki-mobile-responsive-preview-fix (complete — operator manual re-upload pending)
 Staging URL: https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/
 FTP auto-deploy: DISABLED
+CSS: _astro/index.DFhgPQ9c.css (G-8b mobile overrides)
 ```
 
 ---
 
 ## 3. Current state summary
 
-G-8a added **Bands / Projects** section to gosaki About page: 5 band profiles from `config/sites/gosaki-piano-band-profiles.json`, rendered via `BandProfilesSection.astro` injected at convert time. Image placeholders when JPGs missing under `public/images/bands/`. Manual upload package regenerated; operator must re-upload for staging.
+G-8b fixed gosaki staging mobile layout: Wix sections had `min-width:980px` + desktop mesh grid offsets without Thunderbolt mobile runtime. Added G-8b responsive overrides in `wix-staging-visual-overrides.mjs` (mesh → flex column, section min-width reset, About/Contact mobile rules) + BandProfiles mobile polish. Manual package regenerated; operator must re-upload including new CSS hash.
 
-Doc: `tools/static-to-astro/docs/gosaki-about-band-profiles-section.md`
+Doc: `tools/static-to-astro/docs/gosaki-mobile-responsive-preview-fix.md`
 
 ---
 
-## 4. G-8a gates
+## 4. G-8b gates
 
 ```txt
-gosakiAboutBandProfilesSectionComplete: true
+gosakiMobileResponsivePreviewFixComplete: true
 readyForManualReuploadByOperator: true
 readyForGosakiClientPreview: true
 ftpAutoDeployStillDisabled: true

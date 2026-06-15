@@ -21,21 +21,21 @@ Staging Shell
 将来的な顧客オンボーディング・課金・デプロイ自動化
 
 2. Current phase
-現在フェーズ: G-8a-gosaki-about-band-profiles-section（完了 — operator 手動再アップロード待ち）
+現在フェーズ: G-8b-gosaki-mobile-responsive-preview-fix（完了 — operator 手動再アップロード待ち）
 
-G-7 staging preview QA 完了後、About ページに **Bands / Projects** セクション（5バンド）をデータ駆動で追加。operator 手動再アップロード待ち。
+G-8a About band profiles 追加後、スマホ表示崩れ（980px min-width / Wix mesh desktop layout）を G-8b responsive override CSS で修正。operator 再アップロード待ち。
 
 直近完了フェーズ:
-G-8a-gosaki-about-band-profiles-section
+G-8b-gosaki-mobile-responsive-preview-fix
 前フェーズ:
-G-7j-gosaki-staging-browser-qa-and-client-preview-readiness
+G-8a-gosaki-about-band-profiles-section
 
 G-7 staging:
 - staging URL: `https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/`
-- 手動パッケージ: `output/manual-upload/gosaki-piano/`（gitignored, 14 files — `about/index.html` 更新）
+- 手動パッケージ: `output/manual-upload/gosaki-piano/`（gitignored, `_astro/index.DFhgPQ9c.css` 含む）
 - FTP 自動 deploy: **停止中** — `readyForAnyFutureFtpApply: false`
-- Doc: `tools/static-to-astro/docs/gosaki-about-band-profiles-section.md`
-- 次: operator 再アップロード → `/about/` で Bands / Projects 確認 → 任意で band 画像追加
+- Doc: `tools/static-to-astro/docs/gosaki-mobile-responsive-preview-fix.md`
+- 次: operator 再アップロード → スマホ幅 QA（375px / iPhone SE）
 
 3. Important completed milestones
 

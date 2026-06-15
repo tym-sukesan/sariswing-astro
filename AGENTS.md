@@ -347,6 +347,25 @@ Preparation complete: `tools/static-to-astro/docs/gosaki-staging-preview-prepara
 - Gate: `readyForG7fGosakiStagingUploadExecution: true`
 - Next: `G-7f-gosaki-staging-upload-execution` (operator approval)
 
+## Wix static export baseline (G-8c)
+
+Doc: `tools/static-to-astro/docs/wix-static-export-responsive-baseline-generalization.md`
+
+- Split G-7h–G-8b CSS into `wix-static-export-baseline-overrides.mjs` + `site-specific-overrides/gosaki-piano-overrides.mjs`
+- Composer: `wix-staging-visual-overrides.mjs` (baseline + site slug)
+- Band profiles / About injection remain gosaki-only (not in baseline)
+- Gate: `wixStaticExportResponsiveBaselineGeneralized: true`, `readyForNextWixPilot: true`
+
+## Gosaki mobile visual parity (G-8d)
+
+Doc: `tools/static-to-astro/docs/gosaki-mobile-visual-parity-fix.md`
+
+- G-8b/G-8c fixed overflow/min-width; SP still far from Wix production mobile layout
+- Fix: G-8d block in `site-specific-overrides/gosaki-piano-overrides.mjs` only — header logo/MENU, Discography image-first order, About/Contact SP stack
+- G-8c baseline unchanged
+- CSS: `_astro/index.BeQxkV9Y.css` — operator must re-upload full public-dist
+- Gate: `gosakiMobileVisualParityFixComplete: true`, `readyForManualReuploadByOperator: true`
+
 ## Gosaki mobile responsive preview (G-8b)
 
 Doc: `tools/static-to-astro/docs/gosaki-mobile-responsive-preview-fix.md`

@@ -90,7 +90,7 @@ export function validatePublicDistForManualUpload(publicDistDir) {
  */
 export function buildManualUploadManifest(meta) {
   return {
-    phase: "G-8b-gosaki-mobile-responsive-preview-fix",
+    phase: "G-8c-wix-static-export-responsive-baseline-generalization",
     siteSlug: meta.siteSlug,
     deployBase: normalizeDeployBase(meta.deployBase),
     stagingUrl: meta.stagingUrl.replace(/\/$/, "") + "/",

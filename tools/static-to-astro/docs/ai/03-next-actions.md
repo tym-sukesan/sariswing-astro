@@ -1,43 +1,39 @@
-Last updated: 2026-06-16
+Last updated: 2026-06-14
 Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 1. Immediate priority
 
-**Current phase:** `G-8b-gosaki-mobile-responsive-preview-fix` (complete — **operator manual re-upload pending**)
+**Current phase:** `G-8d-gosaki-mobile-visual-parity-fix` (complete)
 
-**Doc:** `tools/static-to-astro/docs/gosaki-mobile-responsive-preview-fix.md`
-
-**Staging URL:** `https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/`
+**Doc:** `tools/static-to-astro/docs/gosaki-mobile-visual-parity-fix.md`
 
 **FTP auto-deploy:** still disabled.
 
 ### Gates
 
 ```txt
-gosakiMobileResponsivePreviewFixComplete: true
+gosakiMobileVisualParityFixComplete: true
 readyForManualReuploadByOperator: true
 readyForGosakiClientPreview: true
+wixStaticExportResponsiveBaselineGeneralized: true
+gosakiSpecificExtensionsSeparated: true
+readyForNextWixPilot: true
 ftpAutoDeployStillDisabled: true
 readyForAnyFutureFtpApply: false
 ```
 
-## 2. Manual re-upload package
+## 2. Wix baseline modules
 
-```bash
-cd tools/static-to-astro
-npm run manual-upload:package
-npm run verify:manual-upload
-```
+- **Common:** `scripts/lib/wix-static-export-baseline-overrides.mjs`
+- **Composer:** `scripts/lib/wix-staging-visual-overrides.mjs`
+- **Gosaki-specific:** `scripts/lib/site-specific-overrides/gosaki-piano-overrides.mjs` (G-8c hero/nav + G-8d mobile parity)
 
-**Package (gitignored):** `output/manual-upload/gosaki-piano/`  
-**Upload target:** `/cms-kit-staging/gosaki-piano/` — **include `_astro/index.DFhgPQ9c.css`** (G-8b new hash)
+## 3. Next steps
 
-## 3. Operator next steps
-
-1. Re-upload full `public-dist/` contents to `/cms-kit-staging/gosaki-piano/`
-2. Phone / DevTools mobile QA at ~375px: no major horizontal scroll
-3. Check About (bio + photo stack), Bands 1-column, Contact form width, MENU toggle
-4. Share staging with gosaki client if mobile QA passes
+1. **Operator:** re-upload `output/manual-upload/gosaki-piano/public-dist/` including `_astro/index.BeQxkV9Y.css`
+2. Real-device QA: Discography SP, Header MENU, About/Contact on 375px width
+3. Next Wix pilot: crawl → convert; baseline applies automatically; add site-specific override file if needed
+4. Do not copy gosaki band profiles to other sites without explicit request
 
 ## 4. AI workflow maintenance rule
 

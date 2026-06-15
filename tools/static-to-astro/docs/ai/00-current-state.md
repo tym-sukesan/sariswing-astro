@@ -1,4 +1,4 @@
-Last updated: 2026-06-16
+Last updated: 2026-06-14
 Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
@@ -21,21 +21,20 @@ Staging Shell
 将来的な顧客オンボーディング・課金・デプロイ自動化
 
 2. Current phase
-現在フェーズ: G-8b-gosaki-mobile-responsive-preview-fix（完了 — operator 手動再アップロード待ち）
+現在フェーズ: G-8d-gosaki-mobile-visual-parity-fix（完了）
 
-G-8a About band profiles 追加後、スマホ表示崩れ（980px min-width / Wix mesh desktop layout）を G-8b responsive override CSS で修正。operator 再アップロード待ち。
+G-8c baseline を維持したまま、gosaki 専用 SP 視覚 parity CSS を追加。Discography / Header / About / Contact を優先修正。manual upload package 再生成済み。
 
 直近完了フェーズ:
-G-8b-gosaki-mobile-responsive-preview-fix
+G-8d-gosaki-mobile-visual-parity-fix
 前フェーズ:
-G-8a-gosaki-about-band-profiles-section
+G-8c-wix-static-export-responsive-baseline-generalization
 
 G-7 staging:
 - staging URL: `https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/`
-- 手動パッケージ: `output/manual-upload/gosaki-piano/`（gitignored, `_astro/index.DFhgPQ9c.css` 含む）
-- FTP 自動 deploy: **停止中** — `readyForAnyFutureFtpApply: false`
-- Doc: `tools/static-to-astro/docs/gosaki-mobile-responsive-preview-fix.md`
-- 次: operator 再アップロード → スマホ幅 QA（375px / iPhone SE）
+- gosaki output: baseline + gosaki-specific 合成 CSS（`_astro/index.BeQxkV9Y.css`、gitignored）
+- Doc: `tools/static-to-astro/docs/gosaki-mobile-visual-parity-fix.md`
+- 次: operator 手動 re-upload → 実機 SP QA
 
 3. Important completed milestones
 

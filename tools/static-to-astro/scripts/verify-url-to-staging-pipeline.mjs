@@ -34,6 +34,8 @@ import {
 } from "./lib/deploy-base.mjs";
 import { productionAbsoluteUrlToRoute } from "./lib/path-transform.mjs";
 import { buildWixStagingVisualOverridesCss } from "./lib/wix-staging-visual-overrides.mjs";
+import { buildWixStaticExportBaselineOverridesCss } from "./lib/wix-static-export-baseline-overrides.mjs";
+import { buildGosakiPianoSiteOverridesCss } from "./lib/site-specific-overrides/gosaki-piano-overrides.mjs";
 import {
   injectBandProfilesIntoAboutPage,
   loadGosakiBandProfilesConfig,
@@ -309,18 +311,53 @@ for (const dir of [cssOkDir, cssFailDir, cssDeployBaseDir]) {
   fs.rmSync(dir, { recursive: true, force: true });
 }
 
-// --- G-7i Wix visual overrides (no network) ---
+// --- G-7i / G-8c Wix visual overrides (no network) ---
 
+const wixBaseline = buildWixStaticExportBaselineOverridesCss();
+const gosakiOverrides = buildGosakiPianoSiteOverridesCss({ siteSlug: "gosaki-piano" });
 const wixOverrides = buildWixStagingVisualOverridesCss({ siteSlug: "gosaki-piano" });
-assert("wix overrides hide hero colorUnderlay", wixOverrides.includes("#comp-lol1i5k0 [data-testid=\"colorUnderlay\"]"));
-assert("wix overrides include nav fallback", wixOverrides.includes("#SITE_HEADER .global-nav"));
+
 assert(
-  "wix overrides isolate footer bg layers",
-  wixOverrides.includes("body.wix-static-export #SITE_FOOTER") &&
-    wixOverrides.includes("body.wix-static-export #SITE_FOOTER .uZIV9d"),
+  "wix baseline override module exists",
+  wixBaseline.includes("Wix static export baseline overrides (G-8c)"),
 );
 assert(
-  "wix overrides keep main above footer bg",
+  "wix baseline isolates footer bg layers",
+  wixBaseline.includes("body.wix-static-export #SITE_FOOTER") &&
+    wixBaseline.includes("body.wix-static-export #SITE_FOOTER .uZIV9d"),
+);
+assert(
+  "wix baseline mobile mesh flex fallback",
+  wixBaseline.includes("@media (max-width: 768px)") &&
+    wixBaseline.includes("inlineContent-gridContainer") &&
+    wixBaseline.includes("flex-direction: column"),
+);
+assert(
+  "wix baseline does not include gosaki hero comp id",
+  !wixBaseline.includes("#comp-lol1i5k0"),
+);
+assert(
+  "wix baseline does not include band profiles",
+  !wixBaseline.includes("band-profiles") && !wixBaseline.includes("BandProfilesSection"),
+);
+
+assert(
+  "gosaki site overrides include hero colorUnderlay fix",
+  gosakiOverrides.includes("#comp-lol1i5k0 [data-testid=\"colorUnderlay\"]"),
+);
+assert(
+  "gosaki site overrides include brand nav colors",
+  gosakiOverrides.includes("#9e3b1b") && gosakiOverrides.includes("futura-lt-w01-book"),
+);
+assert(
+  "gosaki site overrides do not include band profiles",
+  !gosakiOverrides.includes("band-profiles"),
+);
+
+assert("composed wix overrides hide hero colorUnderlay", wixOverrides.includes("#comp-lol1i5k0 [data-testid=\"colorUnderlay\"]"));
+assert("composed wix overrides include nav fallback", wixOverrides.includes("#SITE_HEADER .global-nav"));
+assert(
+  "composed wix overrides keep main above footer bg",
   wixOverrides.includes("body.wix-static-export main") &&
     wixOverrides.includes("z-index: 1"),
 );
@@ -352,20 +389,14 @@ const bandHtmlCheck = verifyAboutBandProfilesHtml(sampleBuiltAbout, {
 });
 assert("about band profiles html verifier passes sample", bandHtmlCheck.ok);
 
-// --- G-8b mobile responsive overrides (no network) ---
+// --- G-8b / G-8c mobile responsive (composed output) ---
 
 assert(
-  "wix overrides include G-8b mobile block",
-  wixOverrides.includes("G-8b: mobile responsive preview overrides"),
+  "composed wix overrides include mobile overflow clip",
+  wixOverrides.includes("overflow-x: clip"),
 );
 assert(
-  "wix overrides reset mesh grid on mobile",
-  wixOverrides.includes("@media (max-width: 768px)") &&
-    wixOverrides.includes("inlineContent-gridContainer") &&
-    wixOverrides.includes("flex-direction: column"),
-);
-assert(
-  "wix overrides clamp section min-width on mobile",
+  "composed wix overrides clamp section min-width on mobile",
   wixOverrides.includes("min-width: 0 !important") &&
     wixOverrides.includes(".Le88gL"),
 );
@@ -381,6 +412,42 @@ assert(
   "BandProfilesSection has mobile media query",
   bandTemplate.includes("@media (max-width: 767px)") &&
     bandTemplate.includes("grid-template-columns: 1fr"),
+);
+
+// --- G-8d gosaki mobile visual parity (site-specific overrides) ---
+
+assert(
+  "gosaki G-8d mobile visual parity block present",
+  gosakiOverrides.includes("G-8d gosaki mobile visual parity"),
+);
+assert(
+  "gosaki G-8d discography mobile override",
+  gosakiOverrides.includes("#comp-jqy0szge") &&
+    gosakiOverrides.includes("#comp-llexymel") &&
+    gosakiOverrides.includes('[id^="comp-jshobkm1__"]') &&
+    gosakiOverrides.includes("order: 1 !important"),
+);
+assert(
+  "gosaki G-8d header mobile override",
+  gosakiOverrides.includes("#SITE_HEADER #comp-mbdw9tzc") &&
+    gosakiOverrides.includes("#SITE_HEADER #comp-mbdw7xid"),
+);
+assert(
+  "gosaki G-8d about mobile override",
+  gosakiOverrides.includes("#WRchTxt16") && gosakiOverrides.includes("#comp-jrtenw0n"),
+);
+assert(
+  "gosaki G-8d contact mobile override",
+  gosakiOverrides.includes("#WRchTxt4") && gosakiOverrides.includes("#comp-jqbwo704"),
+);
+assert(
+  "composed wix overrides include G-8d discography rules",
+  wixOverrides.includes("G-8d gosaki mobile visual parity") &&
+    wixOverrides.includes("#comp-jqy0szge"),
+);
+assert(
+  "wix baseline does not include G-8d gosaki discography comp ids",
+  !wixBaseline.includes("#comp-jqy0szge") && !wixBaseline.includes("#comp-llexymel"),
 );
 
 // --- cleanup temp manifest ---

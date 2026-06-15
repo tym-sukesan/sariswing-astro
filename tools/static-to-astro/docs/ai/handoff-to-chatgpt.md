@@ -12,28 +12,31 @@ Paste this file at the start of a new ChatGPT thread. Cursor should update it af
 ## 2. Current phase
 
 ```txt
-Current phase: G-8b-gosaki-mobile-responsive-preview-fix (complete — operator manual re-upload pending)
-Staging URL: https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/
+Current phase: G-8d-gosaki-mobile-visual-parity-fix (complete)
 FTP auto-deploy: DISABLED
-CSS: _astro/index.DFhgPQ9c.css (G-8b mobile overrides)
+Wix baseline: scripts/lib/wix-static-export-baseline-overrides.mjs
+Gosaki-specific CSS: scripts/lib/site-specific-overrides/gosaki-piano-overrides.mjs (G-8c + G-8d mobile parity)
 ```
 
 ---
 
 ## 3. Current state summary
 
-G-8b fixed gosaki staging mobile layout: Wix sections had `min-width:980px` + desktop mesh grid offsets without Thunderbolt mobile runtime. Added G-8b responsive overrides in `wix-staging-visual-overrides.mjs` (mesh → flex column, section min-width reset, About/Contact mobile rules) + BandProfiles mobile polish. Manual package regenerated; operator must re-upload including new CSS hash.
+G-8d added gosaki-only SP visual parity CSS (header logo/MENU, Discography image-first 1-column, About/Contact stack) on top of G-8c baseline. G-8c baseline unchanged. Manual upload package regenerated; CSS `_astro/index.BeQxkV9Y.css`. verify:url-staging 72 passed.
 
-Doc: `tools/static-to-astro/docs/gosaki-mobile-responsive-preview-fix.md`
+Docs: `gosaki-mobile-visual-parity-fix.md`, `wix-static-export-responsive-baseline-generalization.md`
 
 ---
 
-## 4. G-8b gates
+## 4. G-8d gates
 
 ```txt
-gosakiMobileResponsivePreviewFixComplete: true
+gosakiMobileVisualParityFixComplete: true
 readyForManualReuploadByOperator: true
 readyForGosakiClientPreview: true
+wixStaticExportResponsiveBaselineGeneralized: true
+gosakiSpecificExtensionsSeparated: true
+readyForNextWixPilot: true
 ftpAutoDeployStillDisabled: true
 readyForAnyFutureFtpApply: false
 ```
@@ -49,10 +52,10 @@ readyForAnyFutureFtpApply: false
 
 ---
 
-## 6. Regenerate manual package
+## 6. Next Wix pilot checklist
 
-```bash
-cd tools/static-to-astro
-npm run manual-upload:package
-npm run verify:manual-upload
-```
+1. Live crawl fixture
+2. `convert-static-to-astro.mjs` with deploy-base / base-url
+3. Baseline CSS auto-appended when inline Wix head styles present
+4. Add `site-specific-overrides/<slug>-overrides.mjs` for brand/comp IDs
+5. Register slug in `buildWixSiteSpecificOverridesCss()`

@@ -21,20 +21,21 @@ Staging Shell
 将来的な顧客オンボーディング・課金・デプロイ自動化
 
 2. Current phase
-現在フェーズ: G-7f1-ftp-deploy-safety-hardening（完了 — FTP apply 全面停止中）
+現在フェーズ: G-7g-gosaki-manual-staging-upload-package（完了 — operator 手動アップロード待ち）
 
-G-7f で FTP root mirror delete 事故が発生（疑い強）。G-7f1 で deploy スクリプトを fail-safe 化。**FTP `--apply` は再開禁止**（operator 再承認まで）。
+G-7f FTP 事故後、FTP 自動 deploy は停止。gosaki-piano staging preview 用の**手動アップロードパッケージ**を生成済み。
 
 直近完了フェーズ:
-G-7f1-ftp-deploy-safety-hardening
+G-7g-gosaki-manual-staging-upload-package
 前フェーズ:
-G-7f-gosaki-staging-upload-execution（中断 / 事故）
+G-7f1-ftp-deploy-safety-hardening
 
-G-7 URL → staging:
-- G-7f FTP `--apply`: 1回試行 — root 破壊事故疑い（manifest applied: true）
-- G-7f1: fail-fast lftp, pwd 検証, --delete デフォルト off, safety verifier 必須化
-- **全 FTP apply 停止中** — `readyForAnyFutureFtpApply: false`
-- 事故記録: `docs/ftp-deploy-root-delete-incident-and-safety-hardening.md`
+G-7 staging:
+- 手動パッケージ: `output/manual-upload/gosaki-piano/`（gitignored, 13 files, zip 付き）
+- アップロード先: `/cms-kit-staging/gosaki-piano/`（public-dist の**中身**のみ）
+- staging URL: `https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/`
+- FTP 自動 deploy: **停止中** — `readyForAnyFutureFtpApply: false`
+- 次: 戸山が FileZilla で手動アップロード → browser QA
 
 3. Important completed milestones
 

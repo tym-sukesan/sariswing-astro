@@ -3,39 +3,40 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 1. Immediate priority
 
-**Current phase:** `G-7f1-ftp-deploy-safety-hardening` (complete — **no FTP apply**)
+**Current phase:** `G-7g-gosaki-manual-staging-upload-package` (complete — **operator manual upload pending**)
 
-**Incident doc:** `tools/static-to-astro/docs/ftp-deploy-root-delete-incident-and-safety-hardening.md`
+**Doc:** `tools/static-to-astro/docs/gosaki-manual-staging-upload-package.md`
 
-**All FTP `--apply` suspended** until operator re-approval after recovery + new preflight.
+**FTP auto-deploy:** still disabled. Use manual upload package instead.
 
 ### Gates
 
 ```txt
-ftpDeploySafetyHardeningComplete: true
-ftpDeployApplyBlockedUntilSafetyPatch: true
-deleteByDefaultDisabled: true
+gosakiManualUploadPackageCreated: true
+ftpAutoDeployStillDisabled: true
+readyForManualStagingUploadByOperator: true
 readyForAnyFutureFtpApply: false
-gosakiStagingUploadAttemptedInG7f: true
-ftpRootMirrorIncidentSuspected: true
 readyForG7gGosakiBrowserQaAndClientReview: false
 ```
 
-## 2. G-7f1 changes (local code only)
+## 2. Manual upload package
 
-- `ftp-remote-dir-safety.mjs` — remote dir blocklist + staging path rules
-- `public-dist-ftp-deployer.mjs` — fail-fast lftp, preflight pwd, no delete by default
-- `deploy-public-dist-ftp.mjs` — `--allow-delete`, `--legacy-cleanup`, safety verifier required for apply
-- `verify-public-dist-ftp-deployer-safety.mjs` — static tests (no FTP)
-- `AGENTS.md` — Destructive Operation Safety Rules
+```bash
+cd tools/static-to-astro
+npm run manual-upload:package
+npm run verify:manual-upload
+```
 
-## 3. Before any future FTP apply
+**Package (gitignored):** `output/manual-upload/gosaki-piano/`  
+**Zip:** `gosaki-piano-manual-upload.zip`  
+**Upload target:** `/cms-kit-staging/gosaki-piano/` (contents of `public-dist/` only)
 
-1. Operator recovery / evidence preserved
-2. `npm run verify:ftp-deployer-safety` PASS
-3. `verify-staging-ftp-safety.mjs` PASS → `--safety-report`
-4. Explicit approval phrase
-5. **Do not use `--allow-delete`** unless separately approved
+## 3. Operator next steps
+
+1. Open `output/manual-upload/gosaki-piano/README-UPLOAD.md`
+2. FileZilla → `/cms-kit-staging/gosaki-piano/` (not account root `/`)
+3. Upload `public-dist/` **contents** — no mirror/delete sync
+4. Browser QA per `CHECKLIST.md`
 
 ## 4. AI workflow maintenance rule
 

@@ -12,24 +12,34 @@ Paste this file at the start of a new ChatGPT thread. Cursor should update it af
 ## 2. Current phase
 
 ```txt
-Current phase: G-7f1-ftp-deploy-safety-hardening (complete)
-Previous incident: G-7f FTP root mirror delete (suspected)
-All FTP apply: SUSPENDED until operator re-approval
+Current phase: G-7g-gosaki-manual-staging-upload-package (complete — operator manual upload pending)
+FTP auto-deploy: DISABLED
+Manual package: output/manual-upload/gosaki-piano/ (gitignored)
 ```
 
 ---
 
 ## 3. Current state summary
 
-G-7f FTP accident: `deploy-public-dist-ftp.mjs --apply` likely ran `mirror --delete` at login root after `cd` failure. G-7f1 hardening: fail-fast lftp, pwd verification, delete off by default, safety verifier required for apply.
+G-7f FTP incident → G-7f1 hardening → **G-7g manual upload package** for gosaki-piano staging. No FTP automation. Operator uploads `public-dist/` contents to `/cms-kit-staging/gosaki-piano/` via FileZilla.
 
-Docs: `tools/static-to-astro/docs/ftp-deploy-root-delete-incident-and-safety-hardening.md`
-
-**Do not run FTP apply.** `readyForAnyFutureFtpApply: false`
+Doc: `tools/static-to-astro/docs/gosaki-manual-staging-upload-package.md`
 
 ---
 
-## 4. G-7f1 gates
+## 4. G-7g gates
+
+```txt
+gosakiManualUploadPackageCreated: true
+ftpAutoDeployStillDisabled: true
+readyForManualStagingUploadByOperator: true
+readyForAnyFutureFtpApply: false
+readyForG7gGosakiBrowserQaAndClientReview: false
+```
+
+---
+
+## 5. G-7f1 gates (unchanged)
 
 ```txt
 ftpDeploySafetyHardeningComplete: true

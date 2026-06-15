@@ -347,15 +347,23 @@ Preparation complete: `tools/static-to-astro/docs/gosaki-staging-preview-prepara
 - Gate: `readyForG7fGosakiStagingUploadExecution: true`
 - Next: `G-7f-gosaki-staging-upload-execution` (operator approval)
 
-## Gosaki staging FTP upload (G-7f)
+## Gosaki manual staging upload (G-7g)
+
+Package: `tools/static-to-astro/docs/gosaki-manual-staging-upload-package.md`
+
+- Manual upload package at `output/manual-upload/gosaki-piano/` (gitignored)
+- `npm run manual-upload:package` / `npm run verify:manual-upload`
+- Operator uploads `public-dist/` contents to `/cms-kit-staging/gosaki-piano/` — **no FTP auto-deploy**
+- Gate: `readyForManualStagingUploadByOperator: true`, `readyForAnyFutureFtpApply: false`
+
+## Gosaki staging FTP upload (G-7f — incident, apply suspended)
 
 Aborted / incident: `tools/static-to-astro/docs/gosaki-staging-upload-execution-result.md`  
 Hardening: `tools/static-to-astro/docs/ftp-deploy-root-delete-incident-and-safety-hardening.md`
 
 - G-7f FTP `--apply` attempted once — suspected root `mirror --delete` accident
-- **All FTP apply suspended** until operator re-approval after G-7f1 hardening
-- G-7f1: fail-fast lftp, pwd verification, no delete by default, safety verifier required for apply
-- Gate: `ftpDeploySafetyHardeningComplete: true` (after G-7f1), `readyForAnyFutureFtpApply: false`
+- **All FTP auto-apply suspended** — use G-7g manual package instead
+- Gate: `ftpDeploySafetyHardeningComplete: true`, `readyForAnyFutureFtpApply: false`
 
 ## Schedule CMS generalization
 

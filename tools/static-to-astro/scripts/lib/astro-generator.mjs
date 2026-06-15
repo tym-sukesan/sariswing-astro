@@ -17,6 +17,9 @@ import {
   buildSeoPublishReadiness,
   generateRobotsTxt,
 } from "./seo-publish.mjs";
+import {
+  appendWixStagingVisualOverrides,
+} from "./wix-staging-visual-overrides.mjs";
 import { normalizeDeployBase } from "./deploy-base.mjs";
 import {
   runBuildVerification,
@@ -287,7 +290,7 @@ dist/
 `;
 }
 
-function generateBaseLayout({ layoutScripts, externalCss }) {
+function generateBaseLayout({ layoutScripts, externalCss, wixStaticExport = false }) {
   const externalLinks = externalCss
     .filter((c) => !c.isPreconnect)
     .map((c) => `    <link rel="stylesheet" href="${c.href}" />`)
@@ -381,7 +384,7 @@ const resolvedOgUrl = seoResolved.ogUrl;
     {appleTouchIcon && <link rel="apple-touch-icon" href={appleTouchIcon} />}
 ${externalComment}
   </head>
-  <body>
+  <body${wixStaticExport ? ' class="wix-static-export device-desktop responsive"' : ""}>
     <Header />
     <main>
       <slot />
@@ -727,7 +730,11 @@ export function generateAstroProject(inputDir, outputDir, options = {}) {
 
   const cssRelPaths = collectCssFiles(siteDir, analysis);
   const inlineHeadStyles = collectInlineHeadStyles(analysis.rawPages);
-  const globalCss = buildGlobalCss(siteDir, cssRelPaths, inlineHeadStyles);
+  const wixStaticExport = inlineHeadStyles.length > 0;
+  const globalCss = appendWixStagingVisualOverrides(
+    buildGlobalCss(siteDir, cssRelPaths, inlineHeadStyles),
+    { inlineHeadStyleCount: inlineHeadStyles.length, siteSlug: fixtureLabelFromPath(siteDir) },
+  );
   const mainWrapperApplied = cssExpectsMainWrapper(globalCss);
   writeFile(path.join(outDir, "src/styles/global.css"), globalCss);
 
@@ -767,7 +774,7 @@ export function generateAstroProject(inputDir, outputDir, options = {}) {
   writeFile(path.join(outDir, "src/components/Footer.astro"), generateComponent(footerHtml, "Footer", linkTransformContext));
   writeFile(
     path.join(outDir, "src/layouts/BaseLayout.astro"),
-    generateBaseLayout({ layoutScripts, externalCss }),
+    generateBaseLayout({ layoutScripts, externalCss, wixStaticExport }),
   );
   copyPublicStagingLibs(outDir);
 

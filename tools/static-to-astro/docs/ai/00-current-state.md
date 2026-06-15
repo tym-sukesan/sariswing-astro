@@ -21,21 +21,21 @@ Staging Shell
 将来的な顧客オンボーディング・課金・デプロイ自動化
 
 2. Current phase
-現在フェーズ: G-7h-gosaki-staging-css-asset-fix（完了 — operator 手動再アップロード待ち）
+現在フェーズ: G-7i-gosaki-staging-visual-polish-and-wix-css-behavior-fix（完了 — operator 手動再アップロード待ち）
 
-G-7g 手動アップロード後、staging で HTML は表示されたが **CSS が効かない** 問題を修正。Wix クロールの `<head><style>` を `global.css` に取り込み、`_astro` CSS を含むパッケージを再生成済み。
+G-7h で CSS 読み込みは解決。G-7i で KV オーバーレイ・page-bg ティント・MENU JS/CSS を修正。クライアント preview 向けに operator 再アップロード待ち。
 
 直近完了フェーズ:
-G-7h-gosaki-staging-css-asset-fix
+G-7i-gosaki-staging-visual-polish-and-wix-css-behavior-fix
 前フェーズ:
-G-7g-gosaki-manual-staging-upload-package
+G-7h-gosaki-staging-css-asset-fix
 
 G-7 staging:
-- 手動パッケージ: `output/manual-upload/gosaki-piano/`（gitignored, **14 files**, `_astro/*.css` 含む, zip 付き）
+- 手動パッケージ: `output/manual-upload/gosaki-piano/`（gitignored, 14 files, `_astro/*.css` 含む）
 - アップロード先: `/cms-kit-staging/gosaki-piano/`（public-dist の**中身**のみ、**`_astro/` 必須**）
 - staging URL: `https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/`
 - FTP 自動 deploy: **停止中** — `readyForAnyFutureFtpApply: false`
-- 次: 戸山が FileZilla で **再アップロード**（`_astro/` 含む）→ browser QA
+- 次: 戸山が FileZilla で **再アップロード** → KV / nav ブラウザ QA → gosaki クライアント preview
 
 3. Important completed milestones
 

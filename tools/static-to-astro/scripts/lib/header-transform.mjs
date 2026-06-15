@@ -197,7 +197,7 @@ ${scheduleHelper}---
 ${shell}
 <script is:inline>
 (function () {
-  var header = document.querySelector(".site-header");
+  var header = document.getElementById("SITE_HEADER");
   var toggle = document.querySelector(".nav-toggle");
   var panel = document.getElementById("global-nav-panel");
   if (!header || !toggle || !panel) return;

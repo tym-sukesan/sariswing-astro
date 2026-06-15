@@ -347,6 +347,15 @@ Preparation complete: `tools/static-to-astro/docs/gosaki-staging-preview-prepara
 - Gate: `readyForG7fGosakiStagingUploadExecution: true`
 - Next: `G-7f-gosaki-staging-upload-execution` (operator approval)
 
+## Gosaki staging visual polish (G-7i)
+
+Doc: `tools/static-to-astro/docs/gosaki-staging-visual-polish-and-wix-css-behavior-fix.md`
+
+- G-7h CSS loads; staging still had KV overlay + awkward MENU
+- Fix: Wix static export override CSS + `#SITE_HEADER` nav script + body classes
+- Regenerate: `npm run manual-upload:package` → operator re-upload `public-dist/` + `_astro/`
+- Gate: `gosakiStagingVisualPolishComplete: true`, `readyForGosakiClientPreview: true`
+
 ## Gosaki staging CSS fix (G-7h)
 
 Doc: `tools/static-to-astro/docs/gosaki-staging-css-asset-fix.md`

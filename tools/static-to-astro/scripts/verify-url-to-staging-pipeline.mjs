@@ -33,6 +33,7 @@ import {
   resolveStagingPublicUrl,
 } from "./lib/deploy-base.mjs";
 import { productionAbsoluteUrlToRoute } from "./lib/path-transform.mjs";
+import { buildWixStagingVisualOverridesCss } from "./lib/wix-staging-visual-overrides.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const TOOL_ROOT = path.resolve(__dirname, "..");
@@ -302,6 +303,12 @@ assert(
 for (const dir of [cssOkDir, cssFailDir, cssDeployBaseDir]) {
   fs.rmSync(dir, { recursive: true, force: true });
 }
+
+// --- G-7i Wix visual overrides (no network) ---
+
+const wixOverrides = buildWixStagingVisualOverridesCss({ siteSlug: "gosaki-piano" });
+assert("wix overrides hide hero colorUnderlay", wixOverrides.includes("#comp-lol1i5k0 [data-testid=\"colorUnderlay\"]"));
+assert("wix overrides include nav fallback", wixOverrides.includes("#SITE_HEADER .global-nav"));
 
 // --- cleanup temp manifest ---
 

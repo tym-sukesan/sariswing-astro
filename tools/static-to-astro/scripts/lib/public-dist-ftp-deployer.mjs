@@ -8,6 +8,11 @@ import path from "node:path";
 import { spawnSync } from "node:child_process";
 import { isStagingSubdirBuild, normalizeDeployBase } from "./deploy-base.mjs";
 import {
+  assessServerDirPath,
+  normalizeRemoteDirForDeploy,
+  remotePwdMatchesExpected,
+} from "./ftp-remote-dir-safety.mjs";
+import {
   listPublicFiles,
   loadOptionalSecretsForScan,
   scanAdminApiContamination,
@@ -121,29 +126,16 @@ export function loadStagingFtpEnv(toolRoot) {
 
 /**
  * @param {string | null | undefined} serverDir
+ * @deprecated Use assessServerDirPath from ftp-remote-dir-safety.mjs
  */
 export function assessFtpServerDirRisk(serverDir) {
-  if (!serverDir?.trim()) {
-    return { ok: false, blocked: true, warnings: [], blocks: ["FTP server dir is empty"] };
-  }
-
-  const dir = serverDir.trim();
-  /** @type {string[]} */
-  const warnings = [];
-  /** @type {string[]} */
-  const blocks = [];
-
-  for (const { id, pattern, block } of SUSPICIOUS_PROD_FTP_DIR_PATTERNS) {
-    if (!pattern.test(dir)) continue;
-    if (block) blocks.push(`suspicious prod-like FTP dir (${id})`);
-    else warnings.push(`staging hint in path (${id})`);
-  }
-
-  if (blocks.length === 0 && !/staging|test|dev/i.test(dir)) {
-    warnings.push("FTP server dir has no staging/test/dev segment — verify this is not production");
-  }
-
-  return { ok: blocks.length === 0, blocked: blocks.length > 0, warnings, blocks };
+  const check = assessServerDirPath(serverDir);
+  return {
+    ok: check.ok,
+    blocked: !check.ok,
+    warnings: check.ok ? [] : [],
+    blocks: check.errors,
+  };
 }
 
 /**
@@ -256,45 +248,87 @@ export function validatePublicDirForDeploy(publicDir, toolRoot) {
 }
 
 /**
- * Build lftp script that mirrors public-dist *contents* into serverDir (not public-dist/ itself).
- * @param {{ serverDir: string, publicDir: string, includeLegacyCleanup?: boolean }} opts
+ * lftp script lines with fail-fast (G-7f1). Newline-separated — not semicolon-chained.
+ * @param {string[]} commands
  */
-export function buildLftpMirrorScript({ serverDir, publicDir, includeLegacyCleanup = true }) {
+export function buildLftpFailFastScript(commands) {
+  const header = ["set cmd:fail-exit true", "set ftp:ssl-allow true"];
+  return [...header, ...commands, "bye"].join("\n");
+}
+
+/**
+ * Preflight only: mkdir, cd, pwd — no mirror (G-7f1).
+ * @param {{ serverDir: string }} opts
+ */
+export function buildLftpPreflightScript({ serverDir }) {
+  const { withoutTrailing } = normalizeRemoteDirForDeploy(serverDir);
+  const check = assessServerDirPath(serverDir);
+  if (!check.ok) {
+    throw new Error(`invalid remote dir for preflight: ${check.errors.join("; ")}`);
+  }
+  return buildLftpFailFastScript([
+    `mkdir -f -p ${withoutTrailing}`,
+    `cd ${withoutTrailing}`,
+    "pwd",
+  ]);
+}
+
+/**
+ * Mirror only — caller must verify preflight pwd first (G-7f1).
+ * @param {{ serverDir: string, publicDir: string, deleteRemoteExtras?: boolean }} opts
+ */
+export function buildLftpMirrorScript({ serverDir, publicDir, deleteRemoteExtras = false }) {
   const local = path.resolve(publicDir);
-  const remote = serverDir.trim().replace(/\/$/, "") || serverDir;
-
-  const parts = [
-    "set ftp:ssl-allow true",
-    `cd ${remote}`,
-    `lcd ${local}`,
-    "mirror -R --delete --verbose -X .env* . .",
-  ];
-
-  if (includeLegacyCleanup) {
-    // Remove mistaken prior deploy that created public-dist/ under serverDir.
-    parts.push("rm -r -f public-dist");
+  const { withoutTrailing } = normalizeRemoteDirForDeploy(serverDir);
+  const check = assessServerDirPath(serverDir);
+  if (!check.ok) {
+    throw new Error(`invalid remote dir for mirror: ${check.errors.join("; ")}`);
   }
 
-  parts.push("bye");
-  return parts.join("; ");
+  const deleteFlag = deleteRemoteExtras ? " --delete" : "";
+  return buildLftpFailFastScript([
+    `cd ${withoutTrailing}`,
+    `lcd ${local}`,
+    `mirror -R${deleteFlag} --verbose -X .env* . .`,
+  ]);
 }
 
 /**
- * @param {{ server: string, username: string, serverDir: string, publicDir: string }} opts
+ * Legacy public-dist cleanup — only after pwd verified (G-7f1).
+ * @param {{ serverDir: string }} opts
  */
-export function buildLftpMirrorPreview({ server, username, serverDir, publicDir }) {
-  const script = buildLftpMirrorScript({ serverDir, publicDir });
-  return `lftp -u "${username}","***" "${server}" -e "${script}"`;
+export function buildLftpLegacyCleanupScript({ serverDir }) {
+  const { withoutTrailing } = normalizeRemoteDirForDeploy(serverDir);
+  const check = assessServerDirPath(serverDir);
+  if (!check.ok) {
+    throw new Error(`invalid remote dir for cleanup: ${check.errors.join("; ")}`);
+  }
+  return buildLftpFailFastScript([`cd ${withoutTrailing}`, "rm -r -f public-dist"]);
 }
 
 /**
- * @param {{ server: string, username: string, password: string, serverDir: string, publicDir: string }} opts
+ * @param {{ server: string, username: string, serverDir: string, publicDir: string, deleteRemoteExtras?: boolean, legacyCleanup?: boolean }} opts
  */
-export function runLftpMirrorApply(opts) {
-  const script = buildLftpMirrorScript({
+export function buildLftpDeployPreview(opts) {
+  const preflight = buildLftpPreflightScript({ serverDir: opts.serverDir });
+  const mirror = buildLftpMirrorScript({
     serverDir: opts.serverDir,
     publicDir: opts.publicDir,
+    deleteRemoteExtras: Boolean(opts.deleteRemoteExtras),
   });
+  const parts = [`# preflight\n${preflight}`, `# mirror\n${mirror}`];
+  if (opts.legacyCleanup) {
+    parts.push(`# legacy cleanup\n${buildLftpLegacyCleanupScript({ serverDir: opts.serverDir })}`);
+  }
+  const script = parts.join("\n\n");
+  return `lftp -u "${opts.username}","***" "${opts.server}" -e ${JSON.stringify(script)}`;
+}
+
+/**
+ * @param {{ server: string, username: string, password: string, serverDir: string }} opts
+ */
+export function runLftpPreflightApply(opts) {
+  const script = buildLftpPreflightScript({ serverDir: opts.serverDir });
   const result = spawnSync(
     "lftp",
     ["-u", `${opts.username},${opts.password}`, opts.server, "-e", script],
@@ -303,16 +337,72 @@ export function runLftpMirrorApply(opts) {
 
   const stderr = (result.stderr ?? "").replaceAll(opts.password, "***");
   const stdout = (result.stdout ?? "").replaceAll(opts.password, "***");
+  const pwdMatched = remotePwdMatchesExpected(stdout, opts.serverDir);
 
   return {
-    ok: result.status === 0,
+    ok: result.status === 0 && pwdMatched,
     status: result.status,
+    stdout,
+    stderr,
+    pwdMatched,
+    ftpConnected: true,
+    phase: "preflight",
+  };
+}
+
+/**
+ * @param {{ server: string, username: string, password: string, serverDir: string, publicDir: string, deleteRemoteExtras?: boolean, legacyCleanup?: boolean }} opts
+ */
+export function runLftpMirrorApply(opts) {
+  const mirrorScript = buildLftpMirrorScript({
+    serverDir: opts.serverDir,
+    publicDir: opts.publicDir,
+    deleteRemoteExtras: Boolean(opts.deleteRemoteExtras),
+  });
+  const mirrorResult = spawnSync(
+    "lftp",
+    ["-u", `${opts.username},${opts.password}`, opts.server, "-e", mirrorScript],
+    { encoding: "utf8", stdio: ["pipe", "pipe", "pipe"] },
+  );
+
+  const stderr = (mirrorResult.stderr ?? "").replaceAll(opts.password, "***");
+  const stdout = (mirrorResult.stdout ?? "").replaceAll(opts.password, "***");
+
+  let legacyResult = null;
+  if (opts.legacyCleanup && mirrorResult.status === 0) {
+    const cleanupScript = buildLftpLegacyCleanupScript({ serverDir: opts.serverDir });
+    legacyResult = spawnSync(
+      "lftp",
+      ["-u", `${opts.username},${opts.password}`, opts.server, "-e", cleanupScript],
+      { encoding: "utf8", stdio: ["pipe", "pipe", "pipe"] },
+    );
+  }
+
+  const legacyOk = !opts.legacyCleanup || legacyResult?.status === 0;
+
+  return {
+    ok: mirrorResult.status === 0 && legacyOk,
+    status: mirrorResult.status,
     stdout,
     stderr,
     ftpConnected: true,
     mirrorMode: "contents-only",
-    legacyPublicDistCleanup: true,
+    legacyPublicDistCleanup: Boolean(opts.legacyCleanup && legacyOk),
+    deleteRemoteExtras: Boolean(opts.deleteRemoteExtras),
+    phase: "mirror",
+    legacyResult: legacyResult
+      ? {
+          ok: legacyResult.status === 0,
+          status: legacyResult.status,
+          stderr: (legacyResult.stderr ?? "").replaceAll(opts.password, "***"),
+        }
+      : null,
   };
+}
+
+/** @deprecated Use buildLftpDeployPreview */
+export function buildLftpMirrorPreview({ server, username, serverDir, publicDir }) {
+  return buildLftpDeployPreview({ server, username, serverDir, publicDir, deleteRemoteExtras: false });
 }
 
 /**
@@ -329,12 +419,21 @@ export function runPublicDistFtpDeploy(opts) {
     reportPath = null,
     manifestOutPath = null,
     repoRoot = toolRoot,
+    safetyVerifierPassed = false,
+    allowDelete = false,
+    legacyCleanup = false,
   } = opts;
 
   const envResult = normalizeDeployEnv(env);
   const publicValidation = validatePublicDirForDeploy(publicDir, toolRoot);
   const ftpEnv = loadStagingFtpEnv(toolRoot);
-  const dirRisk = ftpEnv.serverDir ? assessFtpServerDirRisk(ftpEnv.serverDir) : { ok: true, blocked: false, warnings: [], blocks: [] };
+  const serverDirCheck = assessServerDirPath(ftpEnv.serverDir);
+  const dirRisk = {
+    ok: serverDirCheck.ok,
+    blocked: !serverDirCheck.ok,
+    warnings: [],
+    blocks: serverDirCheck.errors,
+  };
 
   const mode = apply && !dryRun ? "apply" : "dry-run";
   /** @type {string[]} */
@@ -346,10 +445,20 @@ export function runPublicDistFtpDeploy(opts) {
   if (ftpEnv.usedProdPrefix) errors.push("GOSAKI_PROD_* keys must not be used for staging deploy");
   if (!publicValidation.ok) errors.push(...publicValidation.errors);
   if (dirRisk.blocked) errors.push(...dirRisk.blocks.map((b) => `FTP dir blocked: ${b}`));
+  if (allowDelete && !serverDirCheck.ok) {
+    errors.push("--allow-delete requires passing remote dir safety checks");
+  }
+
+  if (mode === "apply" && !safetyVerifierPassed) {
+    errors.push(
+      "staging FTP safety verifier must pass before --apply (run verify-staging-ftp-safety.mjs)",
+    );
+  }
 
   let ftpConnected = false;
   let lftpPreview = null;
   let lftpResult = null;
+  let preflightResult = null;
 
   let canAttemptApply =
     mode === "apply" &&
@@ -357,7 +466,9 @@ export function runPublicDistFtpDeploy(opts) {
     publicValidation.ok &&
     !dirRisk.blocked &&
     ftpEnv.complete &&
-    !ftpEnv.usedProdPrefix;
+    !ftpEnv.usedProdPrefix &&
+    safetyVerifierPassed &&
+    serverDirCheck.ok;
 
   if (mode === "apply" && !ftpEnv.complete) {
     errors.push(`missing staging FTP env: ${ftpEnv.missing.join(", ")}`);
@@ -404,30 +515,56 @@ export function runPublicDistFtpDeploy(opts) {
   }
 
   if (canAttemptApply) {
-    lftpPreview = buildLftpMirrorPreview({
+    lftpPreview = buildLftpDeployPreview({
       server: ftpEnv.server,
       username: ftpEnv.username,
       serverDir: ftpEnv.serverDir,
       publicDir: publicValidation.publicDir,
+      deleteRemoteExtras: allowDelete,
+      legacyCleanup,
     });
-    lftpResult = runLftpMirrorApply({
+
+    preflightResult = runLftpPreflightApply({
       server: ftpEnv.server,
       username: ftpEnv.username,
       password: ftpEnv.password,
       serverDir: ftpEnv.serverDir,
-      publicDir: publicValidation.publicDir,
     });
-    ftpConnected = true;
-    if (!lftpResult.ok) {
-      errors.push(`lftp mirror failed (exit ${lftpResult.status})`);
+    ftpConnected = preflightResult.ftpConnected;
+
+    if (!preflightResult.ok) {
+      errors.push(
+        preflightResult.pwdMatched === false
+          ? "lftp preflight pwd did not match expected remote dir — mirror aborted"
+          : `lftp preflight failed (exit ${preflightResult.status})`,
+      );
+    } else {
+      lftpResult = runLftpMirrorApply({
+        server: ftpEnv.server,
+        username: ftpEnv.username,
+        password: ftpEnv.password,
+        serverDir: ftpEnv.serverDir,
+        publicDir: publicValidation.publicDir,
+        deleteRemoteExtras: allowDelete,
+        legacyCleanup,
+      });
+      if (!lftpResult.ok) {
+        errors.push(`lftp mirror failed (exit ${lftpResult.status})`);
+      }
     }
-  } else if (ftpEnv.server && ftpEnv.username && ftpEnv.serverDir) {
-    lftpPreview = buildLftpMirrorPreview({
-      server: ftpEnv.server,
-      username: ftpEnv.username,
-      serverDir: ftpEnv.serverDir,
-      publicDir: publicValidation.publicDir,
-    });
+  } else if (ftpEnv.server && ftpEnv.username && ftpEnv.serverDir && serverDirCheck.ok) {
+    try {
+      lftpPreview = buildLftpDeployPreview({
+        server: ftpEnv.server,
+        username: ftpEnv.username,
+        serverDir: ftpEnv.serverDir,
+        publicDir: publicValidation.publicDir,
+        deleteRemoteExtras: allowDelete,
+        legacyCleanup,
+      });
+    } catch (previewErr) {
+      errors.push(`lftp preview blocked: ${previewErr.message}`);
+    }
   }
 
   if (mode === "dry-run") {
@@ -454,12 +591,24 @@ export function runPublicDistFtpDeploy(opts) {
     envFilesExcluded: publicValidation.envFilesExcluded,
     secretLeakOk: publicValidation.secretLeakOk,
     mode,
-    applied: mode === "apply" && canAttemptApply && lftpResult?.ok === true,
+    applied: mode === "apply" && canAttemptApply && preflightResult?.ok === true && lftpResult?.ok === true,
     ftpConnected,
     ftpServer: ftpEnv.server ?? null,
     ftpServerDir: ftpEnv.serverDir ?? null,
     ftpUsername: ftpEnv.username ?? null,
     timestamp: new Date().toISOString(),
+    safety: {
+      safetyVerifierPassed,
+      remoteDirRisk: serverDirCheck.ok ? "pass" : "blocked",
+      deleteEnabled: allowDelete,
+      cleanupEnabled: legacyCleanup,
+      failFastEnabled: true,
+      remotePathVerified: preflightResult?.pwdMatched ?? false,
+      pwdVerified: preflightResult?.pwdMatched ?? false,
+      wouldRunMirrorDelete: allowDelete,
+      preflightAttempted: Boolean(preflightResult),
+      mirrorAttempted: Boolean(lftpResult),
+    },
     rollback: {
       strategy: "Save this manifest + tarball of public-dist before apply; re-mirror previous public-dist on failure",
       previousManifestPath: manifestOutPath
@@ -485,7 +634,12 @@ export function runPublicDistFtpDeploy(opts) {
     canonicalMode,
   };
 
-  const dryRunPass = envResult.ok && publicValidation.ok && !dirRisk.blocked && !ftpEnv.usedProdPrefix;
+  const dryRunPass =
+    envResult.ok &&
+    publicValidation.ok &&
+    !dirRisk.blocked &&
+    !ftpEnv.usedProdPrefix &&
+    serverDirCheck.ok;
   const result = {
     ok: mode === "dry-run" ? dryRunPass : errors.length === 0 && manifest.applied,
     errors,
@@ -506,7 +660,22 @@ export function runPublicDistFtpDeploy(opts) {
     dirRisk,
     manifest,
     lftpResult: lftpResult
-      ? { ok: lftpResult.ok, status: lftpResult.status, stdout: lftpResult.stdout, stderr: lftpResult.stderr }
+      ? {
+          ok: lftpResult.ok,
+          status: lftpResult.status,
+          stdout: lftpResult.stdout,
+          stderr: lftpResult.stderr,
+          deleteRemoteExtras: lftpResult.deleteRemoteExtras,
+        }
+      : null,
+    preflightResult: preflightResult
+      ? {
+          ok: preflightResult.ok,
+          status: preflightResult.status,
+          pwdMatched: preflightResult.pwdMatched,
+          stdout: preflightResult.stdout,
+          stderr: preflightResult.stderr,
+        }
       : null,
   };
 
@@ -579,6 +748,16 @@ export function writeDeployReport(result, reportPath, repoRoot) {
     `- remote root receives index.html: ${result.manifest.remoteRootReceivesIndexHtml ? "yes" : "no"}`,
     `- legacy public-dist/ cleanup attempted: ${result.manifest.legacyPublicDistDirRemoved ? "yes" : "no (dry-run or not applied)"}`,
     "",
+    "## FTP deploy safety (G-7f1)",
+    "",
+    `- safety verifier passed: ${result.manifest.safety?.safetyVerifierPassed ? "yes" : "no"}`,
+    `- remote dir risk: ${result.manifest.safety?.remoteDirRisk ?? "—"}`,
+    `- delete enabled: ${result.manifest.safety?.deleteEnabled ? "yes" : "no"}`,
+    `- cleanup enabled: ${result.manifest.safety?.cleanupEnabled ? "yes" : "no"}`,
+    `- fail-fast (cmd:fail-exit): ${result.manifest.safety?.failFastEnabled ? "yes" : "no"}`,
+    `- pwd verified: ${result.manifest.safety?.pwdVerified ? "yes" : "no"}`,
+    `- would run mirror --delete: ${result.manifest.safety?.wouldRunMirrorDelete ? "yes" : "no"}`,
+    "",
     "## Staging FTP target (no passwords)",
     "",
     `- server: ${result.ftpEnv.server ?? "(not configured)"}`,
@@ -648,6 +827,8 @@ export function formatDeploySummary(result) {
     `stagingNoindex: ${result.manifest.stagingNoindex ? "yes" : "no"}`,
     `robotsDisallowAll: ${result.manifest.robotsDisallowAll ? "yes" : "no"}`,
     `productionIndexable: ${result.manifest.productionIndexable ? "yes" : "no"}`,
+    `delete enabled: ${result.manifest.safety?.deleteEnabled ? "yes" : "no"}`,
+    `pwd verified: ${result.manifest.safety?.pwdVerified ? "yes" : "no"}`,
     `mirror mode: ${result.manifest.mirrorMode ?? "contents-only"}`,
     `uploaded contents of public-dist: ${result.manifest.uploadedContentsOfPublicDist ? "yes" : "no"}`,
     `remote root receives index.html: ${result.manifest.remoteRootReceivesIndexHtml ? "yes" : "no"}`,

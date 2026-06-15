@@ -12,22 +12,36 @@ Paste this file at the start of a new ChatGPT thread. Cursor should update it af
 ## 2. Current phase
 
 ```txt
-Current phase: G-7f-gosaki-staging-upload-execution (aborted — FTP hang, upload unconfirmed)
-Latest completed phase: G-7e-gosaki-staging-preview-preparation
-Next step: resolve FTP connectivity → re-preflight → new approval before retry
+Current phase: G-7f1-ftp-deploy-safety-hardening (complete)
+Previous incident: G-7f FTP root mirror delete (suspected)
+All FTP apply: SUSPENDED until operator re-approval
 ```
 
 ---
 
 ## 3. Current state summary
 
-G-7f **aborted**: operator approved `--apply` once; `lftp` hung ~30+ min; FileZilla also failed. Upload success unconfirmed; staging QA not done. **No additional retries.** `.ftpaccess` not deleted.
+G-7f FTP accident: `deploy-public-dist-ftp.mjs --apply` likely ran `mirror --delete` at login root after `cd` failure. G-7f1 hardening: fail-fast lftp, pwd verification, delete off by default, safety verifier required for apply.
 
-Doc: `tools/static-to-astro/docs/gosaki-staging-upload-execution-result.md`
+Docs: `tools/static-to-astro/docs/ftp-deploy-root-delete-incident-and-safety-hardening.md`
+
+**Do not run FTP apply.** `readyForAnyFutureFtpApply: false`
 
 ---
 
-## 4. G-7e highlights
+## 4. G-7f1 gates
+
+```txt
+ftpDeploySafetyHardeningComplete: true
+ftpDeployApplyBlockedUntilSafetyPatch: true
+deleteByDefaultDisabled: true
+readyForAnyFutureFtpApply: false
+ftpRootMirrorIncidentSuspected: true
+```
+
+---
+
+## 5. G-7e highlights (unchanged)
 
 ```txt
 Canonical: https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/ (no duplicate path)
@@ -46,13 +60,13 @@ FTP apply: NOT executed
 
 ```txt
 gosakiLiveCrawlPilotComplete: true
-gosakiLiveRouteStaticPublicCompatibilityFixComplete: true
 gosakiStagingPreviewPreparationComplete: true
-gosakiStagingUploadPreflightComplete: true
-ftpPathAlignedWithDeployBase: true
 gosakiStagingUploadAttemptedInG7f: true
-ftpDeployExecutedInG7f: false
-ftpDeployCompletedInG7f: false
+ftpRootMirrorIncidentSuspected: true
+ftpDeploySafetyHardeningComplete: true
+ftpDeployApplyBlockedUntilSafetyPatch: true
+deleteByDefaultDisabled: true
+readyForAnyFutureFtpApply: false
 readyForG7gGosakiBrowserQaAndClientReview: false
 ```
 

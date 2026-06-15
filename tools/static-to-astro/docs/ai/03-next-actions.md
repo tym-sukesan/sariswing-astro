@@ -3,62 +3,39 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 1. Immediate priority
 
-**Current phase:** `G-7f-gosaki-staging-upload-execution` (**aborted** — FTP upload attempted once; connection hang; success unconfirmed)
+**Current phase:** `G-7f1-ftp-deploy-safety-hardening` (complete — **no FTP apply**)
 
-**Doc:** `tools/static-to-astro/docs/gosaki-staging-upload-execution-result.md`
+**Incident doc:** `tools/static-to-astro/docs/ftp-deploy-root-delete-incident-and-safety-hardening.md`
 
-**Do not re-run FTP upload until connectivity is resolved.**
+**All FTP `--apply` suspended** until operator re-approval after recovery + new preflight.
 
-### Next action
-
-1. Resolve Lolipop FTP connectivity (FileZilla test from operator machine; server status / access restriction).
-2. Re-run G-7f preflight (`plan-staging-public-upload.mjs` + `deploy-public-dist-ftp.mjs --dry-run`).
-3. Obtain new operator approval before any upload retry.
-
-### G-7f abort summary
+### Gates
 
 ```txt
+ftpDeploySafetyHardeningComplete: true
+ftpDeployApplyBlockedUntilSafetyPatch: true
+deleteByDefaultDisabled: true
+readyForAnyFutureFtpApply: false
 gosakiStagingUploadAttemptedInG7f: true
-ftpDeployCompletedInG7f: false
-reason: FTP connection hang; FileZilla also unable to connect
-additional retries: none
-.ftpaccess: not deleted
+ftpRootMirrorIncidentSuspected: true
 readyForG7gGosakiBrowserQaAndClientReview: false
 ```
 
-## 2. G-7e verification (no re-crawl)
+## 2. G-7f1 changes (local code only)
 
-```bash
-node scripts/convert-static-to-astro.mjs \
-  fixtures/gosaki-piano output/gosaki-piano-astro \
-  --base-url https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano \
-  --deploy-base /cms-kit-staging/gosaki-piano/ \
-  --site-profile musician --verify-build
+- `ftp-remote-dir-safety.mjs` — remote dir blocklist + staging path rules
+- `public-dist-ftp-deployer.mjs` — fail-fast lftp, preflight pwd, no delete by default
+- `deploy-public-dist-ftp.mjs` — `--allow-delete`, `--legacy-cleanup`, safety verifier required for apply
+- `verify-public-dist-ftp-deployer-safety.mjs` — static tests (no FTP)
+- `AGENTS.md` — Destructive Operation Safety Rules
 
-npm run url:staging -- \
-  --config config/sites/gosaki-piano.url-to-staging.json \
-  --no-dry-run --prepare-public \
-  --pilot-phase G-7e-gosaki-staging-preview-preparation
+## 3. Before any future FTP apply
 
-node scripts/plan-staging-public-upload.mjs \
-  --public-dir tools/static-to-astro/output/static-public/gosaki-piano/public-dist \
-  --site-slug gosaki-piano \
-  --deploy-base /cms-kit-staging/gosaki-piano/ \
-  --out tools/static-to-astro/output/deploy/gosaki-piano/staging-upload-plan.json
-```
-
-## 3. Gate state
-
-```txt
-gosakiLiveRouteStaticPublicCompatibilityFixComplete: true
-gosakiStagingPreviewPreparationComplete: true
-gosakiStagingUploadPreflightComplete: true
-ftpPathAlignedWithDeployBase: true
-gosakiStagingUploadAttemptedInG7f: true
-ftpDeployExecutedInG7f: false
-ftpDeployCompletedInG7f: false
-readyForG7gGosakiBrowserQaAndClientReview: false
-```
+1. Operator recovery / evidence preserved
+2. `npm run verify:ftp-deployer-safety` PASS
+3. `verify-staging-ftp-safety.mjs` PASS → `--safety-report`
+4. Explicit approval phrase
+5. **Do not use `--allow-delete`** unless separately approved
 
 ## 4. AI workflow maintenance rule
 

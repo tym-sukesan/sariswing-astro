@@ -21,25 +21,20 @@ Staging Shell
 将来的な顧客オンボーディング・課金・デプロイ自動化
 
 2. Current phase
-現在フェーズ: G-7f-gosaki-staging-upload-execution（**中断** — FTP upload 1回試行、接続ハング、成功未確認）
+現在フェーズ: G-7f1-ftp-deploy-safety-hardening（完了 — FTP apply 全面停止中）
 
-G-7e 準備済み static-public。re-preflight PASS（path aligned）。operator 承認後 `--apply` を1回試行したが、`lftp` が長時間ハング。FileZilla も同時接続不可。operator 指示で中断。**追加リトライなし**。staging QA 未実施。
+G-7f で FTP root mirror delete 事故が発生（疑い強）。G-7f1 で deploy スクリプトを fail-safe 化。**FTP `--apply` は再開禁止**（operator 再承認まで）。
 
 直近完了フェーズ:
-G-7e-gosaki-staging-preview-preparation
+G-7f1-ftp-deploy-safety-hardening
 前フェーズ:
-G-7d1-gosaki-live-route-static-public-compatibility-fix
+G-7f-gosaki-staging-upload-execution（中断 / 事故）
 
 G-7 URL → staging:
-- live crawl: gosaki-piano.com（G-7d, 1回, max-pages 20）
-- fixture: `fixtures/gosaki-piano/`（gitignored, 10 pages）
-- convert/build: PASS（G-7e re-convert, no re-crawl）
-- prepare-public: **PASS**（stagingPreviewOk, safeForStaticFtp: true）
-- G-7f re-preflight: PASS — FTP `SERVER_DIR` = `/cms-kit-staging/gosaki-piano/`
-- G-7f FTP `--apply`: **試行1回 → 中断**（接続ハング、upload 成功未確認）
-- `.ftpaccess`: 削除していない
-- 次: FTP 接続問題解決 → G-7f preflight 再実行 → 新規承認後に upload 再試行
-- gosaki-piano.com 実 crawl: **実行済み（G-7d, 小上限1回）— 再 crawl 禁止**
+- G-7f FTP `--apply`: 1回試行 — root 破壊事故疑い（manifest applied: true）
+- G-7f1: fail-fast lftp, pwd 検証, --delete デフォルト off, safety verifier 必須化
+- **全 FTP apply 停止中** — `readyForAnyFutureFtpApply: false`
+- 事故記録: `docs/ftp-deploy-root-delete-incident-and-safety-hardening.md`
 
 3. Important completed milestones
 

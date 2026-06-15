@@ -48,6 +48,64 @@ For every meaningful task:
 - Do not change RLS policies, GRANT, or REVOKE.
 - Do not use Playwright / Chromium to auto-click write buttons.
 
+## Destructive Operation Safety Rules (G-7f1 — permanent)
+
+The following are **destructive operations** in this project:
+
+- FTP upload / FTP sync / `mirror` / `mirror --delete`
+- Remote cleanup / `rm` / delete on remote hosts
+- GitHub `workflow_dispatch`
+- Production deploy
+- DB write / Supabase SQL mutation
+- `service_role` usage
+- `.ftpaccess` edit or delete
+
+### Basic rules
+
+- Never run destructive operations without **explicit operator approval**.
+- Vague approval ("OK", "進めてください", "大丈夫そうです") is **not** sufficient.
+- Required approval form (or equivalent):
+
+```txt
+承認します。この操作を1回だけ実行してください。
+```
+
+### Preflight required before destructive operations
+
+Preflight must include:
+
+- exact command
+- local source path
+- remote target path
+- whether remote path exists (or will be created)
+- whether `cd` failure stops execution (must be yes)
+- whether `--delete` is enabled (default must be no)
+- whether cleanup is enabled
+- whether root `/`, `.`, `./`, empty remote path are blocked
+- whether production can be touched
+- rollback / cleanup plan
+- what will change
+- what will not be committed
+
+### Failure behavior
+
+If a destructive operation hangs, fails, or outcome is unclear:
+
+```txt
+stop immediately
+do not retry
+do not cleanup
+do not run alternative commands
+record incident
+ask human
+```
+
+### FTP deploy suspension (G-7f incident)
+
+- **All FTP `--apply` is suspended** until operator explicitly re-approves after G-7f1 hardening.
+- `readyForAnyFutureFtpApply: false` until new preflight + explicit approval.
+- See `tools/static-to-astro/docs/ftp-deploy-root-delete-incident-and-safety-hardening.md`.
+
 ## Schedule non-dry-run PoC status
 
 ### G-6-e5 (description-only — one-off hidden PoC)
@@ -291,14 +349,13 @@ Preparation complete: `tools/static-to-astro/docs/gosaki-staging-preview-prepara
 
 ## Gosaki staging FTP upload (G-7f)
 
-Aborted: `tools/static-to-astro/docs/gosaki-staging-upload-execution-result.md`
+Aborted / incident: `tools/static-to-astro/docs/gosaki-staging-upload-execution-result.md`  
+Hardening: `tools/static-to-astro/docs/ftp-deploy-root-delete-incident-and-safety-hardening.md`
 
-- Preflight PASS; path aligned to `/cms-kit-staging/gosaki-piano/`
-- FTP `--apply` attempted once — **connection hang**; FileZilla also failed; upload success unconfirmed
-- **No additional retries** until FTP connectivity resolved
-- `.ftpaccess` not deleted; production / DB / workflow_dispatch untouched
-- Gate: `gosakiStagingUploadAttemptedInG7f: true`, `ftpDeployCompletedInG7f: false`, `readyForG7gGosakiBrowserQaAndClientReview: false`
-- Next: resolve FTP → re-preflight → new operator approval
+- G-7f FTP `--apply` attempted once — suspected root `mirror --delete` accident
+- **All FTP apply suspended** until operator re-approval after G-7f1 hardening
+- G-7f1: fail-fast lftp, pwd verification, no delete by default, safety verifier required for apply
+- Gate: `ftpDeploySafetyHardeningComplete: true` (after G-7f1), `readyForAnyFutureFtpApply: false`
 
 ## Schedule CMS generalization
 

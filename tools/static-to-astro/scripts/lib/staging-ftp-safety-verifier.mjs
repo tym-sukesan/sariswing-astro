@@ -10,6 +10,13 @@ import {
   STAGING_FTP_ENV_KEYS,
   parseEnvFile,
 } from "./public-dist-ftp-deployer.mjs";
+import {
+  assessServerDirPath,
+  DANGEROUS_DIR_KEYWORDS,
+  REQUIRED_STAGING_DIR_KEYWORDS,
+} from "./ftp-remote-dir-safety.mjs";
+
+export { assessServerDirPath, DANGEROUS_DIR_KEYWORDS, REQUIRED_STAGING_DIR_KEYWORDS };
 
 export const PROD_FTP_ENV_KEYS = [
   "GOSAKI_PROD_FTP_SERVER",
@@ -18,29 +25,7 @@ export const PROD_FTP_ENV_KEYS = [
   "GOSAKI_PROD_FTP_SERVER_DIR",
 ];
 
-export const DANGEROUS_DIR_KEYWORDS = [
-  "public_html",
-  "www",
-  "htdocs",
-  "production",
-  "prod",
-  "live",
-  "sariswing",
-  "sariswing.com",
-  "gosaki-piano.com",
-];
-
-export const REQUIRED_STAGING_DIR_KEYWORDS = [
-  "staging",
-  "stage",
-  "test",
-  "preview",
-  "cms-kit",
-  "sandbox",
-];
-
 const JWT_LIKE = /eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}/;
-const MIN_SERVER_DIR_LENGTH = 8;
 
 /**
  * @param {string | null | undefined} envFilePath
@@ -97,44 +82,6 @@ export function maskHostPreview(host) {
     return `${hostname.slice(0, 3)}***.${parts.slice(-2).join(".")}`;
   }
   return `${hostname.slice(0, 3)}***`;
-}
-
-/**
- * @param {string | null | undefined} serverDir
- */
-export function assessServerDirPath(serverDir) {
-  /** @type {string[]} */
-  const errors = [];
-
-  const dir = (serverDir ?? "").trim();
-  if (!dir) {
-    return { ok: false, errors: ["GOSAKI_STAGING_FTP_SERVER_DIR is empty"], dir: "" };
-  }
-
-  const normalized = dir.replace(/\\/g, "/");
-  if (normalized === "/" || normalized === "." || normalized === "..") {
-    errors.push("server dir must not be root or relative only (/, ., ..)");
-  }
-
-  if (dir.length < MIN_SERVER_DIR_LENGTH) {
-    errors.push(`server dir too short (minimum ${MIN_SERVER_DIR_LENGTH} characters)`);
-  }
-
-  const lower = normalized.toLowerCase();
-  for (const keyword of DANGEROUS_DIR_KEYWORDS) {
-    if (lower.includes(keyword.toLowerCase())) {
-      errors.push(`dangerous keyword in server dir: ${keyword}`);
-    }
-  }
-
-  const hasStagingKeyword = REQUIRED_STAGING_DIR_KEYWORDS.some((kw) => lower.includes(kw.toLowerCase()));
-  if (!hasStagingKeyword) {
-    errors.push(
-      `server dir must include staging marker (${REQUIRED_STAGING_DIR_KEYWORDS.join(", ")})`,
-    );
-  }
-
-  return { ok: errors.length === 0, errors, dir: normalized, hasStagingKeyword };
 }
 
 /**
@@ -203,9 +150,10 @@ export function scanTextForSecretLeak(text) {
 
 /**
  * @param {object} opts
+ * @param {boolean} [opts.allowDelete]
  */
 export function runStagingFtpSafetyVerification(opts) {
-  const { toolRoot, reportPath, envFile = null, repoRoot = toolRoot } = opts;
+  const { toolRoot, reportPath, envFile = null, repoRoot = toolRoot, allowDelete = false } = opts;
 
   /** @type {string[]} */
   const errors = [];
@@ -236,6 +184,10 @@ export function runStagingFtpSafetyVerification(opts) {
 
   if (envState.requiredComplete && !serverHostCheck.ok) {
     errors.push(...serverHostCheck.errors);
+  }
+
+  if (allowDelete && !serverDirCheck.ok) {
+    errors.push("delete-remote-extras requires a passing server dir safety check");
   }
 
   if (envState.envFileExists && !gitIgnore.ignored && path.basename(envState.envFile) === ".env.local") {

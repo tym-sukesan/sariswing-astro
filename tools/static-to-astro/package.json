@@ -9,7 +9,8 @@
     "visual-diff": "node scripts/visual-diff.mjs",
     "analyze-visual-diff": "node scripts/analyze-visual-diff.mjs",
     "verify:crawl": "node scripts/verify-crawl-static-site.mjs",
-    "verify:url-staging": "node scripts/verify-url-to-staging-pipeline.mjs"
+    "verify:url-staging": "node scripts/verify-url-to-staging-pipeline.mjs",
+    "verify:ftp-deployer-safety": "node scripts/verify-public-dist-ftp-deployer-safety.mjs"
   },
   "devDependencies": {
     "pixelmatch": "^7.1.0",

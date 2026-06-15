@@ -2,7 +2,9 @@
 
 - **Phase:** `G-7f-gosaki-staging-upload-execution`
 - **Last updated:** 2026-06-15
-- **Status:** **aborted** — FTP upload attempted once; connection hang; upload success unconfirmed; staging QA not performed
+- **Status:** **incident** — suspected FTP root mirror delete; G-7f1 hardening applied; **all FTP apply suspended**
+
+See also: `tools/static-to-astro/docs/ftp-deploy-root-delete-incident-and-safety-hardening.md`
 
 ---
 
@@ -11,9 +13,9 @@
 | Item | Value |
 |------|-------|
 | **G-7f FTP upload attempted** | `true` |
-| **Upload completed** | `false` / `unknown` |
-| **Upload success confirmed** | no |
-| **Reason** | FTP connection hang; FileZilla also unable to connect at same time |
+| **Upload completed** | `true` (script reported PASS) — **destructive side effect suspected** |
+| **Upload success confirmed** | no (staging QA not done; root layout inconsistent with intent) |
+| **Reason** | Suspected root `mirror -R --delete` after `cd` failure (see incident doc) |
 | **Additional retries** | none (per operator instruction) |
 | **Staging URL QA** | not performed |
 | **readyForG7gGosakiBrowserQaAndClientReview** | `false` |

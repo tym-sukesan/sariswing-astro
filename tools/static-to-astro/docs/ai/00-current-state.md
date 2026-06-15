@@ -1,4 +1,4 @@
-Last updated: 2026-06-14
+Last updated: 2026-06-15
 Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
@@ -21,24 +21,25 @@ Staging Shell
 将来的な顧客オンボーディング・課金・デプロイ自動化
 
 2. Current phase
-現在フェーズ: G-6-g2-schedule-time-fields-non-dry-run-slice-final-preflight（完了）
+現在フェーズ: G-6-g2-schedule-time-fields-non-dry-run-slice-execution（完了）
 
-G-6-g2 time fields slice final preflight 完了。beforeSnapshot / afterVerification / rollback SQL、dev コマンド、UI 手順、Save checklist 文書化。DB write / Preview / Save なし。
+G-6-g2 time fields slice execution 成功。ユーザー手動 Preview + Save 1回。open_time + start_time のみ更新。optimistic lock OK。rollbackNeeded: false。
 
 直近完了フェーズ:
-G-6-g2-schedule-time-fields-non-dry-run-slice-final-preflight
+G-6-g2-schedule-time-fields-non-dry-run-slice-execution
 前フェーズ:
-G-6-g2-schedule-time-fields-non-dry-run-slice-implementation
+G-6-g2-schedule-time-fields-non-dry-run-slice-final-preflight
 直近commit:
-e461155 — Implement G-6-g2 schedule time-fields non-dry-run slice.
+499aa37 — Document G-6-g2 schedule time-fields final preflight.
 
-G-6-g1 target row（G-6-g2 でも再利用予定）:
-- title: [CMS Kit staging] G-6-g1 title PoC
+G-6-g1 / G-6-g2 target row（継続 fixture）:
+- title: [CMS Kit staging] G-6-g1 title PoC（G-6-g1 後）
 - venue / description: G-6-f6 後のまま（semantic unchanged）
-- open_time / start_time: null（G-6-g2 write 対象）
+- open_time: [CMS Kit staging] G-6-g2 open PoC（G-6-g2 後）
+- start_time: [CMS Kit staging] G-6-g2 start PoC（G-6-g2 後）
 - price: null（G-6-g3 候補）
 - created_at: 2026-06-05 17:39:44.140168+00（不変）
-- updated_at: 2026-06-14 15:03:08.762993+00（G-6-g2 optimistic lock baseline）
+- updated_at: 2026-06-15 01:02:22.949565+00（G-6-g2 後）
 - trigger: schedules_set_updated_at active on staging
 
 3. Important completed milestones
@@ -369,13 +370,24 @@ planning doc: schedule-cms-generalization-planning.md
 6.33 Schedule time fields non-dry-run slice final preflight
 完了済み。フェーズ: G-6-g2-schedule-time-fields-non-dry-run-slice-final-preflight
 - doc: schedule-time-fields-non-dry-run-slice-final-preflight.md
-- beforeSnapshot / afterVerification / rollback SQL 提示
-- dev 起動コマンド（G-6-g2 arm stack; G-6-g1 arm off）
-- UI 手順（Preview → Save gates; Save は execution のみ）
-- single-arm: G-6-g1 disabled when G-6-g2 armed
-- scheduleTimeFieldsNonDryRunSliceFinalPreflightComplete: true
-- readyForG6G2ScheduleTimeFieldsNonDryRunSliceExecution: true
+- commit: 499aa37
 - DB write / Preview / Save click: なし
+
+6.34 Schedule time fields non-dry-run slice execution
+完了済み。フェーズ: G-6-g2-schedule-time-fields-non-dry-run-slice-execution
+- doc: schedule-time-fields-non-dry-run-slice-execution-result.md
+- approval ID: G-6-g2-schedule-time-fields-non-dry-run-slice
+- changedFields: ["open_time", "start_time"] only
+- open_time: null → [CMS Kit staging] G-6-g2 open PoC
+- start_time: null → [CMS Kit staging] G-6-g2 start PoC
+- title / venue / description / date / price / published / show_on_home / sort_order: unchanged
+- optimistic lock: enabled; expectedBeforeUpdatedAt matched baseline
+- beforeSnapshot.updated_at: 2026-06-14T15:03:08.762993+00:00
+- afterSnapshot.updated_at: 2026-06-15T01:02:22.949565+00:00
+- scheduleTimeFieldsNonDryRunSliceExecutionSucceeded: true
+- G-6-g2 nonDryRunSaveExecuted: true
+- rollbackNeeded: false
+- Cursor Save / Preview / SQL: なし（ユーザー手動のみ）
 
 7. Current gates
 scheduleWriteHardeningPlanningComplete: true
@@ -393,9 +405,10 @@ scheduleGeneralEditNextSlicePlanningComplete: true
 scheduleTimeFieldsNonDryRunSlicePreflightComplete: true
 scheduleTimeFieldsNonDryRunSliceImplementationComplete: true
 scheduleTimeFieldsNonDryRunSliceFinalPreflightComplete: true
+scheduleTimeFieldsNonDryRunSliceExecutionSucceeded: true
 readyForG6G2ScheduleTimeFieldsNonDryRunSliceImplementation: false
 readyForG6G2ScheduleTimeFieldsNonDryRunSliceFinalPreflight: false
-readyForG6G2ScheduleTimeFieldsNonDryRunSliceExecution: true
+readyForG6G2ScheduleTimeFieldsNonDryRunSliceExecution: false
 readyForScheduleGeneralEditUiImplementation: true
 readyForG6G1ScheduleTitleNonDryRunSliceExecution: false
 optimisticLockWiredInProductPath: true
@@ -420,11 +433,11 @@ rollbackNeeded: false
 明示的 retry で dev server を起動する場合は inline env のみ使用する。
 
 10. Recommended next phase
-次フェーズ推奨: G-6-g2-schedule-time-fields-non-dry-run-slice-execution
+次フェーズ推奨: G-6-g3-schedule-price-non-dry-run-slice-preflight（planning）または routine dry-run default へ復帰
 
-G-6-g2 final preflight 完了。ユーザー手動 Preview → Save 1回 + afterVerification。事前に beforeSnapshot SQL 確認必須。
+G-6-g2 execution 成功。次 slice は price（G-6-g3）が planning 上の推奨。routine dev は PUBLIC_ADMIN_WRITE_DRY_RUN=true。
 
-詳細: tools/static-to-astro/docs/schedule-time-fields-non-dry-run-slice-final-preflight.md
+詳細: tools/static-to-astro/docs/schedule-time-fields-non-dry-run-slice-execution-result.md
 
 11. AI workflow transition
 チャット履歴への依存を減らすため、リポジトリ側に AI開発文脈管理ファイルを作成。

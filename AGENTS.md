@@ -194,8 +194,20 @@ Final preflight complete: `tools/static-to-astro/docs/schedule-time-fields-non-d
 - beforeSnapshot / afterVerification / rollback SQL; G-6-g2 dev arm (G-6-g1 arm off)
 - UI procedure: Preview → gates → Save once in execution only
 - single-arm: G-6-g1 disabled when G-6-g2 armed
-- Next: `G-6-g2-schedule-time-fields-non-dry-run-slice-execution`
+- commit: `499aa37`
 - DB write / Preview / Save: none in final-preflight phase
+
+## Schedule time fields non-dry-run slice execution (G-6-g2)
+
+Execution succeeded: `tools/static-to-astro/docs/schedule-time-fields-non-dry-run-slice-execution-result.md`
+
+- open_time / start_time only; changedFields: `["open_time", "start_time"]`
+- title / venue / description unchanged; optimistic lock OK
+- beforeSnapshot.updated_at: `2026-06-14T15:03:08.762993+00:00`
+- afterSnapshot.updated_at: `2026-06-15T01:02:22.949565+00:00`
+- rollbackNeeded: false; G-6-g1 Save not re-executed
+- Restart routine dev with `PUBLIC_ADMIN_WRITE_DRY_RUN=true`; do not re-click G-6-g2 Save
+- Next: `G-6-g3-schedule-price-non-dry-run-slice-preflight` (planning)
 
 ## Schedule CMS generalization
 

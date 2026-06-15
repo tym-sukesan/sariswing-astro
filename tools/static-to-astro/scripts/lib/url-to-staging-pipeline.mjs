@@ -14,11 +14,15 @@ import {
   buildSeoStagingPlan,
   buildUrlToStagingStepPlan,
   G7C_PILOT_PHASE,
+  G7D_PILOT_PHASE,
+  G7E_NEXT_PHASE,
 } from "./url-to-staging-pipeline-plan.mjs";
 
 export {
   PIPELINE_PHASE,
   G7C_PILOT_PHASE,
+  G7D_PILOT_PHASE,
+  G7E_NEXT_PHASE,
   buildNextManualSteps,
   buildRunManifestPath,
   buildSeoStagingPlan,
@@ -278,6 +282,12 @@ export async function runUrlToStagingPipeline(opts) {
       fixtureExistsAtEnd &&
       (dryRun ||
         (distExists && buildOk && publicOk && (convertOk || distExists))),
+    readyForG7eGosakiStagingPreviewPreparation:
+      pilotPhase === G7D_PILOT_PHASE &&
+      convertOk &&
+      buildOk &&
+      publicOk &&
+      distExists,
     g7dLiveCrawlPrerequisites: pilotPhase === G7C_PILOT_PHASE
       ? {
           dryRunPlanPass: true,
@@ -291,6 +301,18 @@ export async function runUrlToStagingPipeline(opts) {
           recommendedMaxPagesForFirstLiveCrawl: 20,
         }
       : undefined,
+    g7eStagingPreviewPrerequisites:
+      pilotPhase === G7D_PILOT_PHASE
+        ? {
+            liveCrawlCompleted: true,
+            convertPass: convertOk,
+            buildPass: buildOk,
+            preparePublicPass: publicOk,
+            ftpDeployRequired: true,
+            browserQaRequired: true,
+            operatorApprovalRequired: true,
+          }
+        : undefined,
   };
 
   if (writeManifest) {

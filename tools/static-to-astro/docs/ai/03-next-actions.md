@@ -3,57 +3,50 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 1. Immediate priority
 
-**Latest completed phase:** `G-7c-url-to-staging-dry-run-pilot`
+**Latest completed phase:** `G-7d-gosaki-live-crawl-pilot`
 
-Local fixture E2E: dry-run plan + convert/build/public PASS on `fixtures/gosaki-static-site`. No live crawl.
+Live crawl of gosaki-piano.com (max 20 pages, 10 fetched). Convert/build PASS. prepare-public FAIL (Wix route shape vs verifier). No FTP.
 
-**Doc:** `tools/static-to-astro/docs/url-to-staging-dry-run-pilot-result.md`
+**Doc:** `tools/static-to-astro/docs/gosaki-live-crawl-pilot-result.md`
 
-**Recommended next phase:** `G-7d-gosaki-live-crawl-pilot` (operator approval required)
+**Recommended next phase:** `G-7e-gosaki-staging-preview-preparation`
 
-## 2. G-7c pilot commands
+## 2. G-7d live crawl
 
 ```bash
-# Dry-run plan (pilot config)
-npm run url:staging -- \
-  --config config/sites/gosaki-piano.dry-run-pilot.json \
-  --dry-run --run-convert --run-build --prepare-public \
-  --pilot-phase G-7c-url-to-staging-dry-run-pilot
-
-# Verify
-npm run verify:url-staging
-npm run verify:crawl
+# Executed once (G-7d)
+npm run crawl:site -- \
+  --url https://www.gosaki-piano.com/ \
+  --site-slug gosaki-piano \
+  --out fixtures/gosaki-piano \
+  --max-pages 20 \
+  --same-origin-only \
+  --respect-robots \
+  --concurrency 1
 ```
 
-Live crawl / FTP require explicit gates + operator approval. gosaki-piano.com **not crawled in G-7c**.
+Then pipeline (no `--run-crawl`):
 
-## 3. Pipeline status
+```bash
+npm run url:staging -- \
+  --config config/sites/gosaki-piano.url-to-staging.json \
+  --no-dry-run --run-convert --run-build --prepare-public \
+  --pilot-phase G-7d-gosaki-live-crawl-pilot
+```
 
-| Step | Status |
-| --- | --- |
-| crawl CLI (G-7a) | DONE |
-| orchestrator (G-7b) | DONE |
-| dry-run pilot (G-7c) | **DONE** |
-| live crawl pilot (G-7d) | **Next** (operator approval) |
-| FTP deploy | Manual / gated (unchanged) |
-
-## 4. Fixture note
-
-- **Existing fixture:** `fixtures/gosaki-static-site` (local, gitignored)
-- **G-7b config target:** `fixtures/gosaki-piano` (empty — for future crawl)
-- **Pilot config:** `config/sites/gosaki-piano.dry-run-pilot.json`
-
-## 5. Gate state
+## 3. Gate state
 
 ```txt
-readyForG7dGosakiLiveCrawlPilot: true
-externalCrawlExecutedInG7c: false
+gosakiLiveCrawlPilotComplete: true
+gosakiPianoCrawlExecuted: true
+readyForG7eGosakiStagingPreviewPreparation: false
+ftpDeployExecutedInG7d: false
 ```
 
-## 6. G-6 Schedule CMS (paused)
+## 4. Known issue
 
-G-6-g3 price slice deferred.
+Live Wix URLs: `/2026-07` not `schedule-2026-07`. static-public verifier expects manual fixture paths — fix in G-7e.
 
-## 7. AI workflow maintenance rule
+## 5. AI workflow maintenance rule
 
 Update `tools/static-to-astro/docs/ai/*` after every meaningful Cursor task.

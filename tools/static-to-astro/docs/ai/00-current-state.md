@@ -21,22 +21,22 @@ Staging Shell
 将来的な顧客オンボーディング・課金・デプロイ自動化
 
 2. Current phase
-現在フェーズ: G-7c-url-to-staging-dry-run-pilot（完了）
+現在フェーズ: G-7d-gosaki-live-crawl-pilot（完了）
 
-既存 gosaki-static-site fixture で orchestrator dry-run + local convert/build/public pilot 完了。live crawl なし。
+gosaki-piano.com live crawl 小上限 pilot 完了（10 pages, max 20）。convert/build PASS、prepare-public FAIL（Wix URL 形状）。FTP なし。
 
 直近完了フェーズ:
-G-7c-url-to-staging-dry-run-pilot
+G-7d-gosaki-live-crawl-pilot
 前フェーズ:
-G-7b-url-to-staging-pipeline-orchestrator-implementation
+G-7c-url-to-staging-dry-run-pilot
 
 G-7 URL → staging:
-- crawl CLI: `crawl-static-site.mjs`（G-7a）
-- orchestrator: `url-to-staging-pipeline.mjs`（G-7b）
-- dry-run pilot: `gosaki-piano.dry-run-pilot.json`（G-7c）
-- pilot result: `url-to-staging-dry-run-pilot-result.md`
-- 次: G-7d gosaki-piano.com live crawl pilot（operator approval）
-- gosaki-piano.com 実 crawl: 未実行
+- live crawl: gosaki-piano.com（G-7d, 1回, max-pages 20）
+- fixture: `fixtures/gosaki-piano/`（gitignored, 10 pages）
+- convert/build: PASS
+- prepare-public: FAIL（verifier route mismatch）
+- 次: G-7e staging preview preparation
+- gosaki-piano.com 実 crawl: **実行済み（G-7d, 小上限1回）**
 
 3. Important completed milestones
 
@@ -438,11 +438,11 @@ rollbackNeeded: false
 明示的 retry で dev server を起動する場合は inline env のみ使用する。
 
 10. Recommended next phase
-次フェーズ推奨: G-7d-gosaki-live-crawl-pilot
+次フェーズ推奨: G-7e-gosaki-staging-preview-preparation
 
-G-7c dry-run pilot 完了。local fixture E2E PASS。次は operator 承認後の gosaki-piano.com live crawl（max-pages 小さめ）。
+G-7d live crawl 完了。prepare-public verifier 修正 → FTP dry-run → browser QA。
 
-詳細: tools/static-to-astro/docs/url-to-staging-dry-run-pilot-result.md
+詳細: tools/static-to-astro/docs/gosaki-live-crawl-pilot-result.md
 
 11. AI workflow transition
 チャット履歴への依存を減らすため、リポジトリ側に AI開発文脈管理ファイルを作成。

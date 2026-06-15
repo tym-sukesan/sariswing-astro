@@ -12,29 +12,29 @@ Paste this file at the start of a new ChatGPT thread. Cursor should update it af
 ## 2. Current phase
 
 ```txt
-Current phase: G-7c-url-to-staging-dry-run-pilot (completed)
-Latest completed phase: G-7c-url-to-staging-dry-run-pilot
-Recommended next phase: G-7d-gosaki-live-crawl-pilot
+Current phase: G-7d-gosaki-live-crawl-pilot (completed)
+Latest completed phase: G-7d-gosaki-live-crawl-pilot
+Recommended next phase: G-7e-gosaki-staging-preview-preparation
 ```
 
 ---
 
 ## 3. Current state summary
 
-G-7c validated orchestrator dry-run plan and local fixture E2E on `fixtures/gosaki-static-site` via `gosaki-piano.dry-run-pilot.json`. Convert, build, and static-public artifact PASS. **No gosaki-piano.com or external crawl executed.**
+G-7d executed one live crawl of gosaki-piano.com (10 pages, max 20, robots OK). Fixture at `fixtures/gosaki-piano/`. Convert + build PASS. prepare-public FAIL due to Wix URL routes vs verifier expectations. **No FTP / workflow_dispatch / DB.**
 
-Next: G-7d live crawl with operator approval (recommended max-pages: 20 first run).
+Next: G-7e — fix static-public verifier, re-run prepare-public, FTP dry-run, browser QA.
 
 ---
 
-## 4. G-7c highlights
+## 4. G-7d highlights
 
 ```txt
-Pilot config: config/sites/gosaki-piano.dry-run-pilot.json
-Fixture: fixtures/gosaki-static-site (existing local HTML)
-Result doc: url-to-staging-dry-run-pilot-result.md
-Local E2E: convert + build + static-public PASS
-Manifest: output/runs/<timestamp>-gosaki-piano.json (gitignored)
+Crawl: 10 pages, 0 assets, 0 failed
+Fixture: fixtures/gosaki-piano/ (gitignored)
+Convert: 10 Astro pages, build success
+prepare-public: FAIL (schedule-2026-XX expected vs 2026-XX live routes)
+Result doc: gosaki-live-crawl-pilot-result.md
 ```
 
 ---
@@ -42,14 +42,12 @@ Manifest: output/runs/<timestamp>-gosaki-piano.json (gitignored)
 ## 5. Gate state
 
 ```txt
-urlToStagingPipelineOrchestratorImplementationComplete: true
 urlToStagingDryRunPilotComplete: true
-readyForG7dGosakiLiveCrawlPilot: true
-externalCrawlExecutedInG7a: false
-externalCrawlExecutedInG7b: false
-externalCrawlExecutedInG7c: false
-gosakiPianoCrawlExecuted: false
-ftpDeployExecutedInG7c: false
+gosakiLiveCrawlPilotComplete: true
+gosakiPianoCrawlExecuted: true
+externalCrawlExecutedInG7d: true
+readyForG7eGosakiStagingPreviewPreparation: false
+ftpDeployExecutedInG7d: false
 ```
 
 ---
@@ -57,9 +55,9 @@ ftpDeployExecutedInG7c: false
 ## 6. Files to read first
 
 ```txt
+tools/static-to-astro/docs/gosaki-live-crawl-pilot-result.md
+tools/static-to-astro/fixtures/gosaki-piano/manifest.json
 tools/static-to-astro/docs/url-to-staging-dry-run-pilot-result.md
-tools/static-to-astro/docs/url-to-staging-pipeline-orchestrator-implementation.md
-tools/static-to-astro/config/sites/gosaki-piano.dry-run-pilot.json
-tools/static-to-astro/scripts/url-to-staging-pipeline.mjs
+tools/static-to-astro/config/sites/gosaki-piano.url-to-staging.json
 tools/static-to-astro/docs/ai/00-current-state.md
 ```

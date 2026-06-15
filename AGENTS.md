@@ -253,6 +253,18 @@ Pilot complete: `tools/static-to-astro/docs/url-to-staging-dry-run-pilot-result.
 - Gate: `readyForG7dGosakiLiveCrawlPilot: true`
 - Next: `G-7d-gosaki-live-crawl-pilot` (operator approval, max-pages ~20 first)
 
+## Gosaki live crawl pilot (G-7d)
+
+Pilot complete: `tools/static-to-astro/docs/gosaki-live-crawl-pilot-result.md`
+
+- Live crawl: gosaki-piano.com, **once**, max-pages 20, concurrency 1 → **10 pages**
+- Fixture: `fixtures/gosaki-piano/` (gitignored)
+- Convert + build: **PASS**; prepare-public: **FAIL** (Wix `/2026-XX` vs verifier `schedule-2026-XX`)
+- Assets crawled: 0 (Wix CDN cross-origin)
+- FTP / workflow_dispatch / DB: **not executed**
+- Gate: `readyForG7eGosakiStagingPreviewPreparation: false`
+- Next: `G-7e-gosaki-staging-preview-preparation`
+
 ## Schedule CMS generalization
 
 Planning phase `G-6-f-schedule-cms-generalization-planning` is complete.

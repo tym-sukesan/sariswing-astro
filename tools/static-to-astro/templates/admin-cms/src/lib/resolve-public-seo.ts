@@ -30,12 +30,15 @@ export function resolvePublicSeoUrls(input: {
   if (!path.endsWith("/")) path = `${path}/`;
 
   const base = deployBase.endsWith("/") ? deployBase : `${deployBase}/`;
-  if (base !== "/" && !path.startsWith(base)) {
-    path = `${base}${path.replace(/^\//, "")}`;
+  // pathname may already include deploy base (Astro subdirectory builds).
+  // site (SITE) already includes the staging deploy path — do not prepend base again.
+  if (base !== "/" && path.startsWith(base)) {
+    path = path.slice(base.length - 1);
     if (!path.startsWith("/")) path = `/${path}`;
+    if (!path.endsWith("/")) path = `${path}/`;
   }
 
-  const stagingUrl = `${siteRoot}${path}`;
+  const stagingUrl = path === "/" ? `${siteRoot}/` : `${siteRoot}${path}`;
   return {
     canonical: stagingUrl,
     ogUrl: stagingUrl,

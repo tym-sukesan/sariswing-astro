@@ -8,13 +8,39 @@ const TOOL_ROOT = path.resolve(__dirname, "../..");
 const require = createRequire(path.join(TOOL_ROOT, "package.json"));
 const cheerio = require("cheerio");
 
+/**
+ * Map same-origin production absolute URL to Astro route (Wix nav links).
+ * @param {string} href
+ * @param {string | null | undefined} productionOrigin
+ * @returns {string | null}
+ */
+export function productionAbsoluteUrlToRoute(href, productionOrigin) {
+  if (!productionOrigin?.trim()) return null;
+  const trimmed = href.trim();
+  if (!/^https?:\/\//i.test(trimmed)) return null;
+  const origin = productionOrigin.trim().replace(/\/+$/, "");
+  const withoutQuery = trimmed.split("?")[0].split("#")[0].replace(/\/+$/, "") || origin;
+  if (!withoutQuery.toLowerCase().startsWith(origin.toLowerCase())) return null;
+  let suffix = withoutQuery.slice(origin.length);
+  if (!suffix || suffix === "") return "/";
+  if (!suffix.startsWith("/")) suffix = `/${suffix}`;
+  if (/\.html?$/i.test(suffix)) {
+    const file = suffix.replace(/^\//, "");
+    return htmlFileToAstroRoute(file);
+  }
+  return suffix.endsWith("/") ? suffix : `${suffix}/`;
+}
+
 /** Map internal HTML paths to Astro routes. */
-export function htmlHrefToRoute(href, pageRelPath) {
+export function htmlHrefToRoute(href, pageRelPath, options = {}) {
   const trimmed = href.trim();
   if (!trimmed || trimmed.startsWith("#") || /^(mailto:|tel:|javascript:|data:)/i.test(trimmed)) {
     return trimmed;
   }
-  if (/^https?:\/\//i.test(trimmed)) return trimmed;
+  if (/^https?:\/\//i.test(trimmed)) {
+    const internal = productionAbsoluteUrlToRoute(trimmed, options.productionOrigin);
+    return internal ?? trimmed;
+  }
 
   const resolved = resolveRef(trimmed, pageRelPath);
   if (resolved.kind !== "internal") return trimmed;
@@ -57,7 +83,7 @@ export function transformHtmlFragment(htmlFragment, pageRelPath, context = {}) {
   root.find("a[href]").each((_, el) => {
     const href = $(el).attr("href");
     if (!href) return;
-    $(el).attr("href", htmlHrefToRoute(href, pageRelPath));
+    $(el).attr("href", htmlHrefToRoute(href, pageRelPath, context));
   });
 
   root.find("img[src]").each((_, el) => {

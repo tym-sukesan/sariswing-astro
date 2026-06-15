@@ -71,7 +71,7 @@ function copyPublicStagingLibs(outDir) {
 
 function rmDirRecursive(dir) {
   if (fs.existsSync(dir)) {
-    fs.rmSync(dir, { recursive: true, force: true });
+    fs.rmSync(dir, { recursive: true, force: true, maxRetries: 3, retryDelay: 100 });
   }
 }
 
@@ -401,14 +401,14 @@ function formatBaseLayoutOpen(props) {
   return `<BaseLayout\n${lines.join("\n")}\n>`;
 }
 
-function generateComponent(html, placeholder) {
+function generateComponent(html, placeholder, linkTransformContext = {}) {
   let body;
   if (html?.trim()) {
     const stripped = html
       .replace(/\s+aria-current="[^"]*"/gi, "")
       .replace(/\bis-current\b/g, "")
       .replace(/\s+class="\s*"/gi, "");
-    body = transformHtmlFragment(stripped, "index.html");
+    body = transformHtmlFragment(stripped, "index.html", linkTransformContext);
   } else {
     body = `<!-- ${placeholder} — not detected; replace manually -->`;
   }
@@ -478,9 +478,9 @@ ${content}
 `;
 }
 
-function generatePage(page, mainHtml, pageScripts = []) {
+function generatePage(page, mainHtml, pageScripts = [], linkTransformContext = {}) {
   const layoutImport = layoutImportFromPagePath(page.pagePath);
-  const content = transformHtmlFragment(mainHtml, page.sourcePath);
+  const content = transformHtmlFragment(mainHtml, page.sourcePath, linkTransformContext);
   const layoutProps = seoToLayoutProps(page.seo);
   if (page.seo.appleTouchIcon) {
     layoutProps.appleTouchIcon = page.seo.appleTouchIcon;
@@ -663,6 +663,23 @@ function fixtureLabelFromPath(siteDir) {
   return base;
 }
 
+function resolveProductionOrigin(siteDir, options) {
+  if (options.productionBaseUrl) {
+    return normalizeBaseUrl(options.productionBaseUrl);
+  }
+  const manifestPath = path.join(siteDir, "manifest.json");
+  if (fs.existsSync(manifestPath)) {
+    try {
+      const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8"));
+      if (manifest.origin) return String(manifest.origin).replace(/\/+$/, "");
+      if (manifest.startUrl) return normalizeBaseUrl(manifest.startUrl);
+    } catch {
+      /* ignore malformed manifest */
+    }
+  }
+  return null;
+}
+
 export function generateAstroProject(inputDir, outputDir, options = {}) {
   const siteDir = path.resolve(inputDir);
   const outDir = path.resolve(outputDir);
@@ -718,14 +735,21 @@ export function generateAstroProject(inputDir, outputDir, options = {}) {
   const seoAssetsCopied = copySeoAssets(siteDir, analysis, outDir);
   ensureDir(path.join(outDir, "public/assets"));
 
+  const productionOrigin = resolveProductionOrigin(siteDir, options);
+  /** @type {{ productionOrigin: string | null }} */
+  const linkTransformContext = { productionOrigin };
+
   const headerHtml = analysis.common.header.html;
   const footerHtml = analysis.common.footer.html;
   const scheduleMonthPages = detectScheduleMonthPages(analysis.pages);
   const scheduleHub = scheduleMonthPages.length > 0;
 
-  const headerResult = generateHeaderAstro(headerHtml, "Header", { scheduleHub });
+  const headerResult = generateHeaderAstro(headerHtml, "Header", {
+    scheduleHub,
+    productionOrigin,
+  });
   writeFile(path.join(outDir, "src/components/Header.astro"), headerResult.content);
-  writeFile(path.join(outDir, "src/components/Footer.astro"), generateComponent(footerHtml, "Footer"));
+  writeFile(path.join(outDir, "src/components/Footer.astro"), generateComponent(footerHtml, "Footer", linkTransformContext));
   writeFile(
     path.join(outDir, "src/layouts/BaseLayout.astro"),
     generateBaseLayout({ layoutScripts, externalCss }),
@@ -743,7 +767,7 @@ export function generateAstroProject(inputDir, outputDir, options = {}) {
   for (const page of analysis.pages) {
     const pageFile = path.join(outDir, "src/pages", page.pagePath);
     const pageScripts = pageScriptMap.get(page.sourcePath) ?? [];
-    writeFile(pageFile, generatePage(page, page.mainHtml, pageScripts));
+    writeFile(pageFile, generatePage(page, page.mainHtml, pageScripts, linkTransformContext));
     writtenPages.push(pageFile);
   }
 

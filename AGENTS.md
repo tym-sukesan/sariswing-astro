@@ -277,6 +277,18 @@ Fix complete: `tools/static-to-astro/docs/gosaki-live-route-static-public-compat
 - Gate: `gosakiLiveRouteStaticPublicCompatibilityFixComplete: true`, `readyForG7eGosakiStagingPreviewPreparation: true`
 - Next: `G-7e-gosaki-staging-preview-preparation`
 
+## Gosaki staging preview preparation (G-7e)
+
+Preparation complete: `tools/static-to-astro/docs/gosaki-staging-preview-preparation.md`
+
+- Fixed canonical duplicate deployBase (`buildDeployOrigin`, `resolve-public-seo.ts`)
+- Wix production nav URLs → internal routes (`productionAbsoluteUrlToRoute`)
+- static-public regenerated: prepare-public **PASS**, `stagingPreviewOk: true`, `safeForStaticFtp: true`
+- FTP upload plan created (dry-run only — no `--apply`)
+- Re-crawl: **not executed**
+- Gate: `readyForG7fGosakiStagingUploadExecution: true`
+- Next: `G-7f-gosaki-staging-upload-execution` (operator approval)
+
 ## Schedule CMS generalization
 
 Planning phase `G-6-f-schedule-cms-generalization-planning` is complete.

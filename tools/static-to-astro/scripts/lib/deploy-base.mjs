@@ -124,15 +124,23 @@ export function verifyPublicDistSeoFlags(publicDir, deployBase) {
     ).test(html);
     canonicalMode = detectCanonicalModeFromHtml(html);
     if (stagingBuild) {
+      const { canonical, ogUrl } = extractSeoMetaUrlsFromHtml(html);
       stagingCanonicalOk =
         !stagingCanonicalLeakInSeoMeta(html) &&
+        !canonicalHasDuplicateDeployBase(canonical, deployBase) &&
+        !canonicalHasDuplicateDeployBase(ogUrl, deployBase) &&
         (canonicalMode === "staging-url" || canonicalMode === "omitted");
     }
   }
 
   if (stagingBuild && fs.existsSync(linkPath)) {
     const linkHtml = fs.readFileSync(linkPath, "utf8");
-    if (stagingCanonicalLeakInSeoMeta(linkHtml)) {
+    const { canonical, ogUrl } = extractSeoMetaUrlsFromHtml(linkHtml);
+    if (
+      stagingCanonicalLeakInSeoMeta(linkHtml) ||
+      canonicalHasDuplicateDeployBase(canonical, deployBase) ||
+      canonicalHasDuplicateDeployBase(ogUrl, deployBase)
+    ) {
       stagingCanonicalOk = false;
     }
   }
@@ -176,15 +184,46 @@ export function verifyPublicDistSeoFlags(publicDir, deployBase) {
 }
 
 /**
- * @param {string | null | undefined} baseUrl
+ * @param {string} url
  * @param {string | null | undefined} deployBase
  */
+export function canonicalHasDuplicateDeployBase(url, deployBase) {
+  const segment = normalizeDeployBase(deployBase).replace(/^\/|\/$/g, "");
+  if (!segment || !url) return false;
+  const escaped = segment.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return new RegExp(`/${escaped}/${escaped}(?:/|$)`, "i").test(url);
+}
+
+/**
+ * Staging absolute URL from Astro site root + pathname (matches resolve-public-seo.ts).
+ * @param {string | null | undefined} siteRoot
+ * @param {string | null | undefined} deployBase
+ * @param {string} pathname
+ */
+export function resolveStagingPublicUrl(siteRoot, deployBase, pathname) {
+  const root = (siteRoot ?? "").trim().replace(/\/+$/, "");
+  if (!root) return "";
+  const base = normalizeDeployBase(deployBase);
+  let path = pathname.startsWith("/") ? pathname : `/${pathname}`;
+  if (!path.endsWith("/")) path = `${path}/`;
+  if (base !== "/" && path.startsWith(base)) {
+    path = path.slice(base.length - 1);
+    if (!path.startsWith("/")) path = `/${path}`;
+    if (!path.endsWith("/")) path = `${path}/`;
+  }
+  return path === "/" ? `${root}/` : `${root}${path}`;
+}
+
 export function buildDeployOrigin(baseUrl, deployBase = "/") {
   const site = (baseUrl ?? "").trim().replace(/\/+$/, "");
   if (!site) return null;
   const base = normalizeDeployBase(deployBase);
   if (base === "/") return site;
-  return `${site}${base.slice(0, -1)}`;
+  const basePath = base.slice(0, -1);
+  if (site.toLowerCase().endsWith(basePath.toLowerCase())) {
+    return site;
+  }
+  return `${site}${basePath}`;
 }
 
 /**
@@ -244,5 +283,82 @@ export function verifyAssetPathsIncludeBase(publicDir, deployBase) {
       : needsAstroAssets && !assetOk
         ? "missing base-prefixed _astro path"
         : null,
+  };
+}
+
+/**
+ * G-7e staging preview checks: canonical shape + nav internal link rewrite.
+ * @param {string} publicDir
+ * @param {string | null | undefined} deployBase
+ */
+export function verifyStagingPreviewHtml(publicDir, deployBase) {
+  const base = normalizeDeployBase(deployBase);
+  const prefix = base.replace(/^\/|\/$/g, "");
+  const indexPath = path.join(publicDir, "index.html");
+  if (!fs.existsSync(indexPath)) {
+    return {
+      ok: false,
+      reason: "index.html missing",
+      canonicalDoesNotContainProductionHost: false,
+      canonicalDoesNotDuplicateDeployBase: false,
+      ogUrlDoesNotContainProductionHost: false,
+      navHomeRewritten: false,
+      internalLinksRewritten: false,
+    };
+  }
+
+  const html = fs.readFileSync(indexPath, "utf8");
+  const { canonical, ogUrl } = extractSeoMetaUrlsFromHtml(html);
+  const navSection =
+    html.match(/<nav[^>]*global-nav[^>]*>[\s\S]*?<\/nav>/i)?.[0] ??
+    html.match(/<nav[^>]*>[\s\S]*?<\/nav>/i)?.[0] ??
+    html.slice(0, 6000);
+
+  const canonicalDoesNotContainProductionHost = !stagingCanonicalLeakInSeoMeta(
+    extractHeadHtml(html),
+  );
+  const ogUrlDoesNotContainProductionHost = !STAGING_CANONICAL_LEAK_PATTERN.test(ogUrl);
+  const canonicalDoesNotDuplicateDeployBase = !canonicalHasDuplicateDeployBase(canonical, deployBase);
+  const ogUrlDoesNotDuplicateDeployBase = !canonicalHasDuplicateDeployBase(ogUrl, deployBase);
+  const navHomeRewritten =
+    !STAGING_CANONICAL_LEAK_PATTERN.test(navSection) &&
+    !new RegExp(`/${prefix}/https?://`, "i").test(navSection) &&
+    (new RegExp(`href="/${prefix}/"`).test(navSection) ||
+      new RegExp(`href="/${prefix}"`).test(navSection));
+  const headerSlice = html.slice(0, 12000);
+  const internalLinksRewritten =
+    !new RegExp(`/${prefix}/https?://`, "i").test(headerSlice) &&
+    !/<nav[^>]*>[\s\S]*?href="https:\/\/www\.gosaki-piano\.com/i.test(html);
+
+  const ok =
+    canonicalDoesNotContainProductionHost &&
+    canonicalDoesNotDuplicateDeployBase &&
+    ogUrlDoesNotContainProductionHost &&
+    ogUrlDoesNotDuplicateDeployBase &&
+    navHomeRewritten &&
+    internalLinksRewritten;
+
+  return {
+    ok,
+    canonical,
+    ogUrl,
+    canonicalDoesNotContainProductionHost,
+    canonicalDoesNotDuplicateDeployBase,
+    ogUrlDoesNotContainProductionHost,
+    ogUrlDoesNotDuplicateDeployBase,
+    navHomeRewritten,
+    internalLinksRewritten,
+    reason: ok
+      ? null
+      : [
+          !canonicalDoesNotContainProductionHost && "production host in canonical",
+          !canonicalDoesNotDuplicateDeployBase && "duplicate deployBase in canonical",
+          !ogUrlDoesNotContainProductionHost && "production host in og:url",
+          !ogUrlDoesNotDuplicateDeployBase && "duplicate deployBase in og:url",
+          !navHomeRewritten && "nav Home not rewritten to deployBase",
+          !internalLinksRewritten && "internal nav still contains production URLs",
+        ]
+          .filter(Boolean)
+          .join("; "),
   };
 }

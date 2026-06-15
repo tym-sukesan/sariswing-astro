@@ -11,6 +11,7 @@ import {
   readAstroDeployBaseFromConfig,
   verifyAssetPathsIncludeBase,
   verifyPublicDistSeoFlags,
+  verifyStagingPreviewHtml,
 } from "./deploy-base.mjs";
 import { loadExportEnv } from "./supabase-json-exporter.mjs";
 
@@ -417,6 +418,7 @@ export function runStaticPublicArtifactVerification({
   const deployBase = readAstroDeployBaseFromConfig(astroAbs);
   result.deployBaseCheck = verifyAssetPathsIncludeBase(publicDistDir, deployBase);
   result.seoFlags = verifyPublicDistSeoFlags(publicDistDir, deployBase);
+  result.stagingPreview = verifyStagingPreviewHtml(publicDistDir, deployBase);
 
   const copyContamination = scanAdminApiContamination(publicDistDir);
   const copyKeyLeak = scanPublicDirForSecrets(publicDistDir, secretValues);
@@ -441,13 +443,21 @@ export function runStaticPublicArtifactVerification({
     productionIndexable: result.seoFlags.productionIndexable,
     canonicalMode: result.seoFlags.canonicalMode,
     seoFlagsOk: result.seoFlags.ok,
+    stagingPreviewOk: result.stagingPreview.ok,
+    canonicalDoesNotContainProductionHost:
+      result.stagingPreview.canonicalDoesNotContainProductionHost,
+    canonicalDoesNotDuplicateDeployBase: result.stagingPreview.canonicalDoesNotDuplicateDeployBase,
+    ogUrlDoesNotContainProductionHost: result.stagingPreview.ogUrlDoesNotContainProductionHost,
+    navHomeRewritten: result.stagingPreview.navHomeRewritten,
+    internalLinksRewritten: result.stagingPreview.internalLinksRewritten,
     safeForStaticFtp:
       result.publicHtml.allPresent &&
       !copyContamination.contaminated &&
       copyKeyLeak.ok &&
       copySupabaseScan.publicStaticDoesNotNeedSupabaseKeys &&
       result.deployBaseCheck.ok &&
-      result.seoFlags.ok,
+      result.seoFlags.ok &&
+      result.stagingPreview.ok,
     rawClientHasAdminHtml: result.rawClientContamination.adminDirExists,
     directClientUploadRecommended: !result.rawClientContamination.contaminated,
     note: result.rawClientContamination.adminDirExists
@@ -486,6 +496,11 @@ export function runStaticPublicArtifactVerification({
       result.seoFlags.stagingBuild
         ? "staging SEO flags incomplete (expected noindex meta + robots Disallow: /)"
         : "production SEO flags incomplete (expected no noindex meta + robots Allow: /)",
+    );
+  }
+  if (!result.stagingPreview.ok) {
+    result.errors.push(
+      result.stagingPreview.reason ?? "staging preview HTML checks failed (canonical / nav links)",
     );
   }
 

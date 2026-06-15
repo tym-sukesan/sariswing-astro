@@ -36,6 +36,7 @@ function isMonthOnlyNavLabel(text) {
  */
 export function generateHeaderAstro(headerHtml, placeholder = "Header", options = {}) {
   const scheduleHub = options.scheduleHub ?? false;
+  const productionOrigin = options.productionOrigin ?? null;
 
   if (!headerHtml?.trim()) {
     return {
@@ -55,7 +56,7 @@ const currentPath = Astro.url.pathname;
 
   nav.find("a[href]").each((_, el) => {
     const href = $(el).attr("href") ?? "";
-    const route = htmlHrefToRoute(href, "index.html");
+    const route = htmlHrefToRoute(href, "index.html", { productionOrigin });
     const text = $(el).text().replace(/\s+/g, " ").trim();
     if (!text) return;
     rawNavLinks.push({ route, text, href });
@@ -124,7 +125,9 @@ ${stripped}
     .replace(/\bis-current\b/g, "")
     .replace(/\s+class="\s*"/gi, "");
 
-  shell = shell.replace(/href="([^"]+\.html[^"]*)"/g, (_, href) => `href="${htmlHrefToRoute(href, "index.html")}"`);
+  shell = shell.replace(/href="([^"]+\.html[^"]*)"/g, (_, href) =>
+    `href="${htmlHrefToRoute(href, "index.html", { productionOrigin })}"`,
+  );
 
   shell = shell.replace(/\ssrc="([^"]+)"/g, (match, src) => {
     if (/^(https?:|\/|data:)/i.test(src)) return match;

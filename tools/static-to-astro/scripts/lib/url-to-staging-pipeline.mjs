@@ -16,6 +16,8 @@ import {
   G7C_PILOT_PHASE,
   G7D_PILOT_PHASE,
   G7D1_PILOT_PHASE,
+  G7E_PILOT_PHASE,
+  G7F_NEXT_PHASE,
   G7E_NEXT_PHASE,
 } from "./url-to-staging-pipeline-plan.mjs";
 
@@ -24,6 +26,8 @@ export {
   G7C_PILOT_PHASE,
   G7D_PILOT_PHASE,
   G7D1_PILOT_PHASE,
+  G7E_PILOT_PHASE,
+  G7F_NEXT_PHASE,
   G7E_NEXT_PHASE,
   buildNextManualSteps,
   buildRunManifestPath,
@@ -146,6 +150,7 @@ export async function runUrlToStagingPipeline(opts) {
         dryRun: false,
         baseUrl: config.stagingBaseUrl ?? null,
         deployBase: config.deployBase,
+        productionBaseUrl: config.productionBaseUrl ?? config.startUrl ?? null,
         siteProfile: config.siteProfile,
         verifyBuild: gates.runBuild,
       });
@@ -193,12 +198,14 @@ export async function runUrlToStagingPipeline(opts) {
   }
 
   const publicStep = steps.find((s) => s.id === "prepare-staging-public");
+  /** @type {import("./static-public-artifact-verifier.mjs").runStaticPublicArtifactVerification extends (...args: any) => infer R ? R : never | null} */
+  let pubResult = null;
   if (gates.preparePublic && !dryRun) {
     try {
       const { runStaticPublicArtifactVerification } = await import(
         "./static-public-artifact-verifier.mjs"
       );
-      const pubResult = runStaticPublicArtifactVerification({
+      pubResult = runStaticPublicArtifactVerification({
         astroDir: config.projectOut,
         toolRoot,
         publicDirCli: null,
@@ -207,10 +214,35 @@ export async function runUrlToStagingPipeline(opts) {
       artifacts.staticPublic = pubResult.staticPublicCopy?.dest ?? config.staticPublicOut;
       if (publicStep) {
         publicStep.status = pubResult.passed ? "executed" : "failed";
-        publicStep.details = { passed: pubResult.passed, errors: pubResult.errors };
+        publicStep.details = {
+          passed: pubResult.passed,
+          errors: pubResult.errors,
+          stagingPreviewOk: pubResult.stagingPreview?.ok,
+        };
       }
       if (!pubResult.passed) {
         warnings.push(`static-public verification failed: ${pubResult.errors.join("; ")}`);
+      }
+
+      if (pilotPhase === G7E_PILOT_PHASE && pubResult.passed) {
+        try {
+          const { buildStagingUploadPlan, writeStagingUploadPlanArtifacts } = await import(
+            "./staging-upload-plan.mjs"
+          );
+          const publicDistDir = path.join(config.staticPublicOut, "public-dist");
+          const plan = buildStagingUploadPlan({
+            publicDistDir,
+            siteSlug: config.siteSlug,
+            deployBase: config.deployBase,
+            stagingUrl: config.stagingBaseUrl ? `${config.stagingBaseUrl}/` : null,
+          });
+          const planOut = path.join(config.runsOut, `${config.siteSlug}-staging-upload-plan.json`);
+          const written = writeStagingUploadPlanArtifacts(plan, planOut);
+          artifacts.stagingUploadPlan = written.jsonPath;
+          artifacts.stagingUploadPlanDoc = written.mdPath;
+        } catch (err) {
+          warnings.push(`staging upload plan failed: ${err.message ?? err}`);
+        }
       }
     } catch (err) {
       if (publicStep) {
@@ -241,7 +273,9 @@ export async function runUrlToStagingPipeline(opts) {
     distExists;
   const publicOk = steps.find((s) => s.id === "prepare-staging-public")?.status === "executed";
   const g7dFamilyPhase =
-    pilotPhase === G7D_PILOT_PHASE || pilotPhase === G7D1_PILOT_PHASE;
+    pilotPhase === G7D_PILOT_PHASE ||
+    pilotPhase === G7D1_PILOT_PHASE ||
+    pilotPhase === G7E_PILOT_PHASE;
 
   /** @type {Record<string, unknown>} */
   const manifest = {
@@ -292,6 +326,17 @@ export async function runUrlToStagingPipeline(opts) {
       g7dFamilyPhase && convertOk && buildOk && publicOk && distExists,
     gosakiLiveRouteStaticPublicCompatibilityFixComplete:
       pilotPhase === G7D1_PILOT_PHASE ? publicOk && distExists : undefined,
+    gosakiStagingPreviewPreparationComplete:
+      pilotPhase === G7E_PILOT_PHASE
+        ? publicOk && distExists && Boolean(pubResult?.stagingPreview?.ok)
+        : undefined,
+    readyForG7fGosakiStagingUploadExecution:
+      pilotPhase === G7E_PILOT_PHASE &&
+      convertOk &&
+      buildOk &&
+      publicOk &&
+      distExists &&
+      Boolean(pubResult?.stagingPreview?.ok),
     g7dLiveCrawlPrerequisites: pilotPhase === G7C_PILOT_PHASE
       ? {
           dryRunPlanPass: true,

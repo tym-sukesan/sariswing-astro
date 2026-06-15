@@ -27,7 +27,11 @@ import {
 import {
   stagingCanonicalLeakInSeoMeta,
   verifyAssetPathsIncludeBase,
+  buildDeployOrigin,
+  canonicalHasDuplicateDeployBase,
+  resolveStagingPublicUrl,
 } from "./lib/deploy-base.mjs";
+import { productionAbsoluteUrlToRoute } from "./lib/path-transform.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const TOOL_ROOT = path.resolve(__dirname, "..");
@@ -221,6 +225,50 @@ assert(
 for (const dir of [liveRouteDir, manualRouteDir, noAstroPublicDir]) {
   fs.rmSync(dir, { recursive: true, force: true });
 }
+
+// --- G-7e canonical / link rewrite (no network) ---
+
+assert(
+  "buildDeployOrigin avoids duplicate deploy base",
+  buildDeployOrigin(
+    "https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano",
+    "/cms-kit-staging/gosaki-piano/",
+  ) === "https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano",
+);
+assert(
+  "resolveStagingPublicUrl index",
+  resolveStagingPublicUrl(
+    "https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano",
+    "/cms-kit-staging/gosaki-piano/",
+    "/cms-kit-staging/gosaki-piano/",
+  ) === "https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/",
+);
+assert(
+  "resolveStagingPublicUrl month page",
+  resolveStagingPublicUrl(
+    "https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano",
+    "/cms-kit-staging/gosaki-piano/",
+    "/cms-kit-staging/gosaki-piano/2026-07/",
+  ) === "https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/2026-07/",
+);
+assert(
+  "canonical duplicate detector",
+  canonicalHasDuplicateDeployBase(
+    "https://example.com/cms-kit-staging/gosaki-piano/cms-kit-staging/gosaki-piano/",
+    "/cms-kit-staging/gosaki-piano/",
+  ),
+);
+assert(
+  "production nav URL to home route",
+  productionAbsoluteUrlToRoute("https://www.gosaki-piano.com/", "https://www.gosaki-piano.com") === "/",
+);
+assert(
+  "production nav URL to month route",
+  productionAbsoluteUrlToRoute(
+    "https://www.gosaki-piano.com/2026-07",
+    "https://www.gosaki-piano.com",
+  ) === "/2026-07/",
+);
 
 // --- cleanup temp manifest ---
 

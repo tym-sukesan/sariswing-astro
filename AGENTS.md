@@ -356,6 +356,15 @@ Doc: `tools/static-to-astro/docs/wix-static-export-responsive-baseline-generaliz
 - Band profiles / About injection remain gosaki-only (not in baseline)
 - Gate: `wixStaticExportResponsiveBaselineGeneralized: true`, `readyForNextWixPilot: true`
 
+## Gosaki mobile header and footer social regression fix (G-8g1)
+
+Doc: `tools/static-to-astro/docs/gosaki-mobile-header-and-footer-social-regression-fix.md`
+
+- G-8g upload side effects: yellow SP header (`#fffccc`), nav-open 2-col layout, broken SNS mask icons, SNS/copyright overlap
+- Fix: G-8g1 in `gosaki-piano-overrides.mjs` — `#ead7bd` opaque header, absolute nav dropdown, footer SNS text links, footer flex column stack
+- SNS strategy: text fallback (CSS `::after`)
+- Gate: `gosakiMobileHeaderAndFooterSocialRegressionFixComplete: true`, `readyForManualReuploadByOperator: true`
+
 ## Gosaki header/footer mobile regression fix (G-8g)
 
 Doc: `tools/static-to-astro/docs/gosaki-header-footer-mobile-regression-fix.md`

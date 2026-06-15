@@ -12,26 +12,26 @@ Paste this file at the start of a new ChatGPT thread. Cursor should update it af
 ## 2. Current phase
 
 ```txt
-Current phase: G-8g-gosaki-header-footer-mobile-regression-fix (complete)
+Current phase: G-8g1-gosaki-mobile-header-and-footer-social-regression-fix (complete)
 FTP auto-deploy: DISABLED
-Gosaki-specific CSS: scripts/lib/site-specific-overrides/gosaki-piano-overrides.mjs (G-8c–G-8g)
-Latest commit: pending (G-8g local complete, not committed)
+Gosaki-specific CSS: scripts/lib/site-specific-overrides/gosaki-piano-overrides.mjs (G-8c–G-8g1)
+Latest commit: 8d9b18e (G-8g) — G-8g1 pending commit
 ```
 
 ---
 
 ## 3. Current state summary
 
-G-8g fixed G-8f side effects: PC horizontal nav restored, SP opaque sticky header, logo stable on menu open, footer SNS/copyright centered with modern SVG mask icons, tighter SP Discography spacing. Manual package regenerated; CSS `_astro/index.C9wUprmu.css`. verify:url-staging 98 passed.
+G-8g1 fixed post-G-8g regressions: SP header `#ead7bd` beige (not `#fffccc` yellow), MENU open absolute dropdown nav (row 2), footer SNS text links (Facebook / X / Instagram), footer/copyright vertical stack without overlap. PC nav retained. verify:url-staging 105 passed.
 
-Docs: `gosaki-header-footer-mobile-regression-fix.md`, `gosaki-mobile-visual-refinement.md`
+Docs: `gosaki-mobile-header-and-footer-social-regression-fix.md`, `gosaki-header-footer-mobile-regression-fix.md`
 
 ---
 
-## 4. G-8g gates
+## 4. G-8g1 gates
 
 ```txt
-gosakiHeaderFooterMobileRegressionFixComplete: true
+gosakiMobileHeaderAndFooterSocialRegressionFixComplete: true
 readyForManualReuploadByOperator: true
 readyForGosakiClientPreview: true
 ftpAutoDeployStillDisabled: true
@@ -51,7 +51,7 @@ readyForAnyFutureFtpApply: false
 
 ## 6. Operator re-upload
 
-Upload `output/manual-upload/gosaki-piano/public-dist/` → `/cms-kit-staging/gosaki-piano/` (include `_astro/index.C9wUprmu.css`).
+Upload `output/manual-upload/gosaki-piano/public-dist/` → `/cms-kit-staging/gosaki-piano/` (include new `_astro/index.*.css`).
 
 ---
 

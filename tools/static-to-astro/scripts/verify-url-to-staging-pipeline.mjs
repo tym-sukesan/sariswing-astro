@@ -590,6 +590,46 @@ assert(
   wixOverrides.includes("G-8g gosaki header/footer mobile regression fix"),
 );
 
+// --- G-8g1 gosaki mobile header and footer social regression fix ---
+
+assert(
+  "gosaki G-8g1 regression fix block present",
+  gosakiOverrides.includes("G-8g1 gosaki mobile header and footer social regression fix"),
+);
+assert(
+  "gosaki G-8g1 opaque beige header color",
+  gosakiOverrides.includes("#ead7bd") &&
+    gosakiOverrides.includes("rgb(234, 215, 189)") &&
+    gosakiOverrides.includes("G-8g1 gosaki mobile header and footer social regression fix"),
+);
+assert(
+  "gosaki G-8g1 SP nav open absolute dropdown rule",
+  gosakiOverrides.includes("is-nav-open .global-nav") &&
+    gosakiOverrides.includes("top: 100% !important") &&
+    gosakiOverrides.includes("flex-wrap: nowrap !important"),
+);
+assert(
+  "gosaki G-8g1 footer SNS text fallback rule",
+  gosakiOverrides.includes('content: "Facebook"') &&
+    gosakiOverrides.includes('content: "Instagram"') &&
+    gosakiOverrides.includes("mask: none !important"),
+);
+assert(
+  "gosaki G-8g1 footer stack layout rule",
+  gosakiOverrides.includes("#SITE_FOOTER [data-mesh-id=\"SITE_FOOTERinlineContent-gridContainer\"]") &&
+    gosakiOverrides.includes("flex-direction: column !important") &&
+    gosakiOverrides.includes("grid-area: auto !important"),
+);
+assert(
+  "gosaki G-8g1 keeps PC nav and SP hamburger rules from G-8g",
+  gosakiOverrides.includes("@media (min-width: 769px)") &&
+    gosakiOverrides.includes("display: inline-flex !important"),
+);
+assert(
+  "composed wix overrides include G-8g1 regression fix rules",
+  wixOverrides.includes("G-8g1 gosaki mobile header and footer social regression fix"),
+);
+
 // --- cleanup temp manifest ---
 
 try {

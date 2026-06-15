@@ -1,5 +1,5 @@
 /**
- * Gosaki-piano site-specific Wix static export CSS overrides (G-8c … G-8g).
+ * Gosaki-piano site-specific Wix static export CSS overrides (G-8c … G-8g1).
  * Brand colors, home hero comp, About / Discography / Contact mobile parity — not for other Wix pilots.
  */
 
@@ -984,6 +984,188 @@ body.wix-static-export #SITE_FOOTER #WRchTxtx p {
   body.wix-static-export [id^="comp-lley4qy2__"] {
     margin-top: 0.25rem !important;
     padding-top: 0 !important;
+  }
+}
+
+/* --- G-8g1 gosaki mobile header and footer social regression fix (site-specific) --- */
+/* Supersedes G-8g yellow (#fffccc) header, nav-open layout, and broken SNS mask icons. */
+
+/* Site header beige — Wix color_42 is rgb(224,190,154); use natural opaque beige */
+body.wix-static-export #SITE_HEADER {
+  --bg-overlay-color: rgb(234, 215, 189) !important;
+  background-color: #ead7bd !important;
+}
+
+body.wix-static-export #SITE_HEADER .uZIV9d,
+body.wix-static-export #SITE_HEADER .LNYVZi,
+body.wix-static-export #SITE_HEADER [data-testid="colorUnderlay"] {
+  opacity: 1 !important;
+  background-color: #ead7bd !important;
+}
+
+body.wix-static-export #SITE_HEADER .global-nav {
+  background: #fff !important;
+  border: 0 solid #9e3b1b;
+}
+
+/* Footer SNS: text links instead of broken CSS mask icons */
+body.wix-static-export #SITE_FOOTER #LnkBr2 a[aria-label="Facebook"]::before,
+body.wix-static-export #SITE_FOOTER #LnkBr2 a[aria-label^="X"]::before,
+body.wix-static-export #SITE_FOOTER #LnkBr2 a[aria-label="Instagram"]::before {
+  content: none !important;
+  display: none !important;
+  mask: none !important;
+  -webkit-mask: none !important;
+  mask-image: none !important;
+  -webkit-mask-image: none !important;
+}
+
+body.wix-static-export #SITE_FOOTER #LnkBr2 .twXk19 {
+  display: inline !important;
+  width: auto !important;
+  height: auto !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  position: static !important;
+  font-family: futura-lt-w01-book, sans-serif;
+  text-decoration: none;
+}
+
+body.wix-static-export #SITE_FOOTER #LnkBr2 .twXk19 img {
+  display: none !important;
+}
+
+body.wix-static-export #SITE_FOOTER #LnkBr2 a::after {
+  color: #6b5a50;
+  font-size: 0.95rem;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+}
+
+body.wix-static-export #SITE_FOOTER #LnkBr2 a[aria-label="Facebook"]::after {
+  content: "Facebook";
+}
+
+body.wix-static-export #SITE_FOOTER #LnkBr2 a[aria-label^="X"]::after {
+  content: "X";
+}
+
+body.wix-static-export #SITE_FOOTER #LnkBr2 a[aria-label="Instagram"]::after {
+  content: "Instagram";
+}
+
+body.wix-static-export #SITE_FOOTER #LnkBr2 a:hover::after {
+  opacity: 0.75;
+}
+
+body.wix-static-export #SITE_FOOTER #LnkBr2 .tN_ggS {
+  gap: 1.25rem !important;
+  margin-bottom: 0.25rem !important;
+}
+
+body.wix-static-export #SITE_FOOTER #LnkBr2 {
+  height: auto !important;
+  min-height: 0 !important;
+  margin-bottom: 0.25rem !important;
+}
+
+body.wix-static-export #SITE_FOOTER #WRchTxtx {
+  height: auto !important;
+  min-height: 0 !important;
+  margin-top: 0.5rem !important;
+  padding-top: 0.25rem !important;
+}
+
+body.wix-static-export #SITE_FOOTER [data-mesh-id="SITE_FOOTERinlineContent-gridContainer"] {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.75rem !important;
+  height: auto !important;
+  min-height: 0 !important;
+}
+
+body.wix-static-export #SITE_FOOTER #LnkBr2,
+body.wix-static-export #SITE_FOOTER #WRchTxtx {
+  position: relative !important;
+  left: auto !important;
+  top: auto !important;
+  grid-area: auto !important;
+  flex: 0 0 auto !important;
+}
+
+@media (max-width: 768px) {
+  /* SP header row 1: logo left / hamburger right; nav drops as row 2 overlay */
+  body.wix-static-export #SITE_HEADER [data-mesh-id="SITE_HEADERinlineContent-gridContainer"] {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    position: relative !important;
+    box-sizing: border-box;
+  }
+
+  body.wix-static-export #SITE_HEADER #comp-mbdw9tzc {
+    flex: 1 1 auto !important;
+    order: 1 !important;
+    align-self: center !important;
+    max-width: calc(100% - 5.5rem) !important;
+    width: auto !important;
+  }
+
+  body.wix-static-export #SITE_HEADER #comp-mbdw7xid {
+    flex: 0 0 auto !important;
+    width: auto !important;
+    max-width: none !important;
+    order: 2 !important;
+    align-self: center !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-end !important;
+  }
+
+  /* Override G-8d nav-open full-width nav comp shift */
+  body.wix-static-export #SITE_HEADER.is-nav-open #comp-mbdw7xid {
+    flex: 0 0 auto !important;
+    width: auto !important;
+    order: 2 !important;
+  }
+
+  body.wix-static-export #SITE_HEADER.is-nav-open [data-mesh-id="SITE_HEADERinlineContent-gridContainer"] {
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+  }
+
+  body.wix-static-export #SITE_HEADER.is-nav-open #comp-mbdw9tzc {
+    order: 1 !important;
+    flex: 1 1 auto !important;
+    align-self: center !important;
+    max-width: calc(100% - 5.5rem) !important;
+  }
+
+  body.wix-static-export #SITE_HEADER.is-nav-open .global-nav {
+    position: absolute !important;
+    top: 100% !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    flex: none !important;
+    order: unset !important;
+    margin-top: 0 !important;
+    padding: 0.35rem 0 0.75rem !important;
+    background: #fff !important;
+    box-sizing: border-box;
+    z-index: 2;
+    box-shadow: 0 2px 6px rgba(91, 77, 67, 0.08);
+  }
+
+  body.wix-static-export #SITE_FOOTER [data-mesh-id="SITE_FOOTERinlineContent-gridContainer"] {
+    padding: 1.25rem 1rem 1.5rem !important;
+    gap: 1rem !important;
   }
 }
 `;

@@ -21,9 +21,9 @@ Staging Shell
 将来的な顧客オンボーディング・課金・デプロイ自動化
 
 2. Current phase
-現在フェーズ: G-7e-gosaki-staging-preview-preparation（完了）
+現在フェーズ: G-7f-gosaki-staging-upload-execution（**中断** — FTP upload 1回試行、接続ハング、成功未確認）
 
-canonical 重複パス解消、Nav Home Wix URL 修正、static-public 再生成、FTP upload plan 作成（dry-run のみ）。再 crawl なし。
+G-7e 準備済み static-public。re-preflight PASS（path aligned）。operator 承認後 `--apply` を1回試行したが、`lftp` が長時間ハング。FileZilla も同時接続不可。operator 指示で中断。**追加リトライなし**。staging QA 未実施。
 
 直近完了フェーズ:
 G-7e-gosaki-staging-preview-preparation
@@ -35,8 +35,10 @@ G-7 URL → staging:
 - fixture: `fixtures/gosaki-piano/`（gitignored, 10 pages）
 - convert/build: PASS（G-7e re-convert, no re-crawl）
 - prepare-public: **PASS**（stagingPreviewOk, safeForStaticFtp: true）
-- FTP upload plan: 作成済み（`--apply` 未実行）
-- 次: G-7f staging upload execution（operator approval）
+- G-7f re-preflight: PASS — FTP `SERVER_DIR` = `/cms-kit-staging/gosaki-piano/`
+- G-7f FTP `--apply`: **試行1回 → 中断**（接続ハング、upload 成功未確認）
+- `.ftpaccess`: 削除していない
+- 次: FTP 接続問題解決 → G-7f preflight 再実行 → 新規承認後に upload 再試行
 - gosaki-piano.com 実 crawl: **実行済み（G-7d, 小上限1回）— 再 crawl 禁止**
 
 3. Important completed milestones

@@ -12,18 +12,18 @@ Paste this file at the start of a new ChatGPT thread. Cursor should update it af
 ## 2. Current phase
 
 ```txt
-Current phase: G-7e-gosaki-staging-preview-preparation (completed)
+Current phase: G-7f-gosaki-staging-upload-execution (aborted — FTP hang, upload unconfirmed)
 Latest completed phase: G-7e-gosaki-staging-preview-preparation
-Recommended next phase: G-7f-gosaki-staging-upload-execution
+Next step: resolve FTP connectivity → re-preflight → new approval before retry
 ```
 
 ---
 
 ## 3. Current state summary
 
-G-7e fixed canonical duplicate deployBase and Wix Nav Home production URLs on G-7d live crawl output. Re-convert/build/prepare-public without re-crawl. `safeForStaticFtp: true`, `stagingPreviewOk: true`. FTP upload plan created — **no FTP `--apply`**.
+G-7f **aborted**: operator approved `--apply` once; `lftp` hung ~30+ min; FileZilla also failed. Upload success unconfirmed; staging QA not done. **No additional retries.** `.ftpaccess` not deleted.
 
-Next: G-7f — operator-approved staging FTP upload + browser QA.
+Doc: `tools/static-to-astro/docs/gosaki-staging-upload-execution-result.md`
 
 ---
 
@@ -48,9 +48,12 @@ FTP apply: NOT executed
 gosakiLiveCrawlPilotComplete: true
 gosakiLiveRouteStaticPublicCompatibilityFixComplete: true
 gosakiStagingPreviewPreparationComplete: true
-readyForG7fGosakiStagingUploadExecution: true
-readyForG7eGosakiStagingPreviewPreparation: true
-ftpDeployExecutedInG7e: false
+gosakiStagingUploadPreflightComplete: true
+ftpPathAlignedWithDeployBase: true
+gosakiStagingUploadAttemptedInG7f: true
+ftpDeployExecutedInG7f: false
+ftpDeployCompletedInG7f: false
+readyForG7gGosakiBrowserQaAndClientReview: false
 ```
 
 ---

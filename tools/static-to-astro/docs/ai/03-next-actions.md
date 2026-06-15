@@ -3,13 +3,28 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 1. Immediate priority
 
-**Latest completed phase:** `G-7e-gosaki-staging-preview-preparation`
+**Current phase:** `G-7f-gosaki-staging-upload-execution` (**aborted** — FTP upload attempted once; connection hang; success unconfirmed)
 
-Canonical duplicate path fixed, Nav Home / internal production URLs rewritten, static-public regenerated, FTP upload plan created. No re-crawl, no FTP `--apply`.
+**Doc:** `tools/static-to-astro/docs/gosaki-staging-upload-execution-result.md`
 
-**Doc:** `tools/static-to-astro/docs/gosaki-staging-preview-preparation.md`
+**Do not re-run FTP upload until connectivity is resolved.**
 
-**Recommended next phase:** `G-7f-gosaki-staging-upload-execution` (operator approval required)
+### Next action
+
+1. Resolve Lolipop FTP connectivity (FileZilla test from operator machine; server status / access restriction).
+2. Re-run G-7f preflight (`plan-staging-public-upload.mjs` + `deploy-public-dist-ftp.mjs --dry-run`).
+3. Obtain new operator approval before any upload retry.
+
+### G-7f abort summary
+
+```txt
+gosakiStagingUploadAttemptedInG7f: true
+ftpDeployCompletedInG7f: false
+reason: FTP connection hang; FileZilla also unable to connect
+additional retries: none
+.ftpaccess: not deleted
+readyForG7gGosakiBrowserQaAndClientReview: false
+```
 
 ## 2. G-7e verification (no re-crawl)
 
@@ -37,17 +52,14 @@ node scripts/plan-staging-public-upload.mjs \
 ```txt
 gosakiLiveRouteStaticPublicCompatibilityFixComplete: true
 gosakiStagingPreviewPreparationComplete: true
-readyForG7fGosakiStagingUploadExecution: true
-ftpDeployExecutedInG7e: false
+gosakiStagingUploadPreflightComplete: true
+ftpPathAlignedWithDeployBase: true
+gosakiStagingUploadAttemptedInG7f: true
+ftpDeployExecutedInG7f: false
+ftpDeployCompletedInG7f: false
+readyForG7gGosakiBrowserQaAndClientReview: false
 ```
 
-## 4. G-7f scope (next)
-
-- Operator approval checklist (see upload plan)
-- `deploy-public-dist-ftp.mjs --dry-run` with local FTP env (optional pre-check)
-- `deploy-public-dist-ftp.mjs --apply --env staging` (G-7f only, explicit approval)
-- Browser QA on live staging URL
-
-## 5. AI workflow maintenance rule
+## 4. AI workflow maintenance rule
 
 Update `tools/static-to-astro/docs/ai/*` after every meaningful Cursor task.

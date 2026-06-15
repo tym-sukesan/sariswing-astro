@@ -289,6 +289,17 @@ Preparation complete: `tools/static-to-astro/docs/gosaki-staging-preview-prepara
 - Gate: `readyForG7fGosakiStagingUploadExecution: true`
 - Next: `G-7f-gosaki-staging-upload-execution` (operator approval)
 
+## Gosaki staging FTP upload (G-7f)
+
+Aborted: `tools/static-to-astro/docs/gosaki-staging-upload-execution-result.md`
+
+- Preflight PASS; path aligned to `/cms-kit-staging/gosaki-piano/`
+- FTP `--apply` attempted once — **connection hang**; FileZilla also failed; upload success unconfirmed
+- **No additional retries** until FTP connectivity resolved
+- `.ftpaccess` not deleted; production / DB / workflow_dispatch untouched
+- Gate: `gosakiStagingUploadAttemptedInG7f: true`, `ftpDeployCompletedInG7f: false`, `readyForG7gGosakiBrowserQaAndClientReview: false`
+- Next: resolve FTP → re-preflight → new operator approval
+
 ## Schedule CMS generalization
 
 Planning phase `G-6-f-schedule-cms-generalization-planning` is complete.

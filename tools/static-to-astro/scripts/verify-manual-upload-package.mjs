@@ -6,6 +6,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { verifyPublicDistCssPresence } from "./lib/deploy-base.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const TOOL_ROOT = path.resolve(__dirname, "..");
@@ -64,6 +65,16 @@ function main() {
       errors.push(`unexpected deployBase: ${manifest.deployBase}`);
     }
     if (manifest.fileCount < 1) errors.push("fileCount must be > 0");
+    if (manifest.cssPresenceOk !== true) errors.push("cssPresenceOk must be true");
+  }
+
+  const publicDist = path.join(pkg, "public-dist");
+  if (fs.existsSync(path.join(publicDist, "index.html"))) {
+    const css = verifyPublicDistCssPresence(
+      publicDist,
+      manifest?.deployBase ?? "/cms-kit-staging/gosaki-piano/",
+    );
+    if (!css.ok) errors.push(css.reason ?? "public-dist CSS check failed");
   }
 
   const readme = fs.existsSync(path.join(pkg, "README-UPLOAD.md"))

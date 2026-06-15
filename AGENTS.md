@@ -347,6 +347,16 @@ Preparation complete: `tools/static-to-astro/docs/gosaki-staging-preview-prepara
 - Gate: `readyForG7fGosakiStagingUploadExecution: true`
 - Next: `G-7f-gosaki-staging-upload-execution` (operator approval)
 
+## Gosaki staging CSS fix (G-7h)
+
+Doc: `tools/static-to-astro/docs/gosaki-staging-css-asset-fix.md`
+
+- G-7g manual upload showed HTML but **no layout CSS** on staging
+- Cause: Wix live crawl uses inline `<head><style data-url=parastorage>` — converter ignored them → empty `global.css`
+- Fix: `collectInlineHeadStyles()` → `global.css`; CSS presence verifier + `_astro/` in package (14 files)
+- Regenerate: `npm run manual-upload:package` then operator re-upload `public-dist/` **including `_astro/`**
+- Gate: `gosakiStagingCssAssetFixComplete: true`, `readyForManualReuploadByOperator: true`
+
 ## Gosaki manual staging upload (G-7g)
 
 Package: `tools/static-to-astro/docs/gosaki-manual-staging-upload-package.md`

@@ -362,3 +362,88 @@ export function verifyStagingPreviewHtml(publicDir, deployBase) {
           .join("; "),
   };
 }
+
+/** Minimum non-whitespace chars in a built `<style>` block to count as layout CSS. */
+export const MIN_PUBLIC_DIST_INLINE_STYLE_CHARS = 500;
+
+const PUBLIC_DIST_CSS_SAMPLE_PAGES = ["index.html", "about/index.html"];
+
+/**
+ * Map stylesheet href from built HTML to a file under public-dist (strips deployBase prefix).
+ * @param {string} publicDir
+ * @param {string} href
+ * @param {string | null | undefined} deployBase
+ */
+export function resolvePublicDistAssetPath(publicDir, href, deployBase) {
+  const trimmed = href.split("?")[0].split("#")[0];
+  const base = normalizeDeployBase(deployBase);
+  let rel = trimmed;
+  if (base !== "/" && rel.startsWith(base)) {
+    rel = rel.slice(base.length);
+  }
+  rel = rel.replace(/^\/+/, "");
+  return path.join(publicDir, rel);
+}
+
+/**
+ * Verify built public-dist HTML includes resolvable CSS (local file, external link, or substantial inline).
+ * @param {string} publicDir
+ * @param {string | null | undefined} [deployBase]
+ */
+export function verifyPublicDistCssPresence(publicDir, deployBase = null) {
+  /** @type {string[]} */
+  const checks = [];
+  /** @type {string[]} */
+  const errors = [];
+  let hasResolvableStylesheet = false;
+  let hasSubstantialInlineCss = false;
+  let maxInlineStyleChars = 0;
+
+  for (const rel of PUBLIC_DIST_CSS_SAMPLE_PAGES) {
+    const filePath = path.join(publicDir, rel);
+    if (!fs.existsSync(filePath)) continue;
+    const html = fs.readFileSync(filePath, "utf8");
+
+    for (const tag of html.matchAll(/<link[^>]+rel=["'][^"']*stylesheet[^"']*["'][^>]*>/gi)) {
+      const hrefMatch = tag[0].match(/href=["']([^"']+)["']/i);
+      if (!hrefMatch) continue;
+      const href = hrefMatch[1];
+      if (/^https?:\/\//i.test(href)) {
+        hasResolvableStylesheet = true;
+        checks.push(`${rel}: external stylesheet ${href.slice(0, 96)}`);
+        continue;
+      }
+      const localPath = resolvePublicDistAssetPath(publicDir, href, deployBase);
+      const exists = fs.existsSync(localPath);
+      checks.push(`${rel}: local stylesheet ${href} → ${exists ? "ok" : "missing"}`);
+      if (exists) hasResolvableStylesheet = true;
+      else errors.push(`${rel}: missing local CSS file for href=${href}`);
+    }
+
+    for (const block of html.matchAll(/<style[^>]*>([\s\S]*?)<\/style>/gi)) {
+      const len = block[1].trim().length;
+      maxInlineStyleChars = Math.max(maxInlineStyleChars, len);
+      if (len >= MIN_PUBLIC_DIST_INLINE_STYLE_CHARS) {
+        hasSubstantialInlineCss = true;
+        checks.push(`${rel}: inline style ${len} chars`);
+      }
+    }
+  }
+
+  const ok = hasResolvableStylesheet || hasSubstantialInlineCss;
+  if (!ok) {
+    errors.push(
+      `no substantial CSS in public-dist (max inline style ${maxInlineStyleChars} chars; need link or >= ${MIN_PUBLIC_DIST_INLINE_STYLE_CHARS})`,
+    );
+  }
+
+  return {
+    ok,
+    hasResolvableStylesheet,
+    hasSubstantialInlineCss,
+    maxInlineStyleChars,
+    checks,
+    errors,
+    reason: ok ? null : errors.join("; "),
+  };
+}

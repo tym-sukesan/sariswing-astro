@@ -288,6 +288,28 @@ function analyzePage(siteDir, relPath) {
   };
 }
 
+/**
+ * Collect deduplicated inline `<style>` blocks from page `<head>` (Wix live crawl inlines CSS here).
+ * @param {Array<{ relPath: string, $: import("cheerio").CheerioAPI }>} rawPages
+ */
+export function collectInlineHeadStyles(rawPages) {
+  /** @type {Map<string, { dataUrl: string, content: string, pages: string[] }>} */
+  const byKey = new Map();
+  for (const page of rawPages) {
+    page.$("head style").each((_, el) => {
+      const $el = page.$(el);
+      const dataUrl = ($el.attr("data-url") ?? "").trim();
+      const content = ($el.html() ?? "").trim();
+      if (!content) return;
+      const key = dataUrl || `inline:${content.length}:${content.slice(0, 80)}`;
+      const prev = byKey.get(key) ?? { dataUrl, content, pages: [] };
+      if (!prev.pages.includes(page.relPath)) prev.pages.push(page.relPath);
+      byKey.set(key, prev);
+    });
+  }
+  return [...byKey.values()];
+}
+
 export function pickBestSharedCandidate(pages, field) {
   const counts = new Map();
   for (const page of pages) {

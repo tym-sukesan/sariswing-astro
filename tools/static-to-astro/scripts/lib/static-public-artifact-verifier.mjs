@@ -10,6 +10,7 @@ import {
   isStagingSubdirBuild,
   readAstroDeployBaseFromConfig,
   verifyAssetPathsIncludeBase,
+  verifyPublicDistCssPresence,
   verifyPublicDistSeoFlags,
   verifyStagingPreviewHtml,
 } from "./deploy-base.mjs";
@@ -419,6 +420,7 @@ export function runStaticPublicArtifactVerification({
   result.deployBaseCheck = verifyAssetPathsIncludeBase(publicDistDir, deployBase);
   result.seoFlags = verifyPublicDistSeoFlags(publicDistDir, deployBase);
   result.stagingPreview = verifyStagingPreviewHtml(publicDistDir, deployBase);
+  result.cssPresence = verifyPublicDistCssPresence(publicDistDir, deployBase);
 
   const copyContamination = scanAdminApiContamination(publicDistDir);
   const copyKeyLeak = scanPublicDirForSecrets(publicDistDir, secretValues);
@@ -450,6 +452,10 @@ export function runStaticPublicArtifactVerification({
     ogUrlDoesNotContainProductionHost: result.stagingPreview.ogUrlDoesNotContainProductionHost,
     navHomeRewritten: result.stagingPreview.navHomeRewritten,
     internalLinksRewritten: result.stagingPreview.internalLinksRewritten,
+    cssPresenceOk: result.cssPresence.ok,
+    hasResolvableStylesheet: result.cssPresence.hasResolvableStylesheet,
+    hasSubstantialInlineCss: result.cssPresence.hasSubstantialInlineCss,
+    maxInlineStyleChars: result.cssPresence.maxInlineStyleChars,
     safeForStaticFtp:
       result.publicHtml.allPresent &&
       !copyContamination.contaminated &&
@@ -457,7 +463,8 @@ export function runStaticPublicArtifactVerification({
       copySupabaseScan.publicStaticDoesNotNeedSupabaseKeys &&
       result.deployBaseCheck.ok &&
       result.seoFlags.ok &&
-      result.stagingPreview.ok,
+      result.stagingPreview.ok &&
+      result.cssPresence.ok,
     rawClientHasAdminHtml: result.rawClientContamination.adminDirExists,
     directClientUploadRecommended: !result.rawClientContamination.contaminated,
     note: result.rawClientContamination.adminDirExists
@@ -503,6 +510,9 @@ export function runStaticPublicArtifactVerification({
       result.stagingPreview.reason ?? "staging preview HTML checks failed (canonical / nav links)",
     );
   }
+  if (!result.cssPresence.ok) {
+    result.errors.push(result.cssPresence.reason ?? "public-dist CSS presence check failed");
+  }
 
   result.passed =
     result.publicDirExists &&
@@ -535,6 +545,8 @@ export function formatStaticPublicArtifactReport(result, { reportPath, elapsedMs
     `- **robotsDisallowAll:** ${result.manifest?.robotsDisallowAll ? "yes" : "no"}`,
     `- **productionIndexable:** ${result.manifest?.productionIndexable ? "yes" : "no"}`,
     `- **canonicalMode:** ${result.manifest?.canonicalMode ?? "—"}`,
+    `- **cssPresenceOk:** ${result.manifest?.cssPresenceOk ? "yes" : "no"}`,
+    `- **maxInlineStyleChars (index):** ${result.manifest?.maxInlineStyleChars ?? "—"}`,
     `- **Direct dist/client FTP upload recommended:** ${result.directClientUploadRecommended ? "yes" : "no"}`,
     "",
     "## Build output layout",

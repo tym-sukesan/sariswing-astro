@@ -27,6 +27,7 @@ import {
 import {
   stagingCanonicalLeakInSeoMeta,
   verifyAssetPathsIncludeBase,
+  verifyPublicDistCssPresence,
   buildDeployOrigin,
   canonicalHasDuplicateDeployBase,
   resolveStagingPublicUrl,
@@ -269,6 +270,38 @@ assert(
     "https://www.gosaki-piano.com",
   ) === "/2026-07/",
 );
+
+// --- G-7h CSS presence verifier (no network) ---
+
+const cssOkDir = fs.mkdtempSync(path.join(os.tmpdir(), "g7h-css-ok-"));
+fs.writeFileSync(
+  path.join(cssOkDir, "index.html"),
+  `<html><head><style>${".x{color:red;}".repeat(80)}</style></head><body><p>x</p></body></html>`,
+);
+assert("css presence passes with substantial inline style", verifyPublicDistCssPresence(cssOkDir).ok);
+
+const cssFailDir = fs.mkdtempSync(path.join(os.tmpdir(), "g7h-css-fail-"));
+fs.writeFileSync(
+  path.join(cssFailDir, "index.html"),
+  "<html><head><style></style></head><body><p>x</p></body></html>",
+);
+assert("css presence fails when inline style empty", !verifyPublicDistCssPresence(cssFailDir).ok);
+
+const cssDeployBaseDir = fs.mkdtempSync(path.join(os.tmpdir(), "g7h-css-base-"));
+fs.mkdirSync(path.join(cssDeployBaseDir, "_astro"), { recursive: true });
+fs.writeFileSync(path.join(cssDeployBaseDir, "_astro", "index.css"), "body{color:blue}");
+fs.writeFileSync(
+  path.join(cssDeployBaseDir, "index.html"),
+  '<html><head><link rel="stylesheet" href="/cms-kit-staging/gosaki-piano/_astro/index.css"></head><body></body></html>',
+);
+assert(
+  "css presence resolves deployBase-prefixed _astro href",
+  verifyPublicDistCssPresence(cssDeployBaseDir, "/cms-kit-staging/gosaki-piano/").ok,
+);
+
+for (const dir of [cssOkDir, cssFailDir, cssDeployBaseDir]) {
+  fs.rmSync(dir, { recursive: true, force: true });
+}
 
 // --- cleanup temp manifest ---
 

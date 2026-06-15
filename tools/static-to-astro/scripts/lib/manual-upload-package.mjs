@@ -6,7 +6,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
-import { normalizeDeployBase } from "./deploy-base.mjs";
+import { normalizeDeployBase, verifyPublicDistCssPresence } from "./deploy-base.mjs";
 import {
   listPublicFiles,
 } from "./static-public-artifact-verifier.mjs";
@@ -58,6 +58,14 @@ export function validatePublicDistForManualUpload(publicDistDir) {
   if (fs.existsSync(path.join(abs, "admin"))) errors.push("admin/ must not exist in public-dist");
   if (fs.existsSync(path.join(abs, "api"))) errors.push("api/ must not exist in public-dist");
 
+  const cssPresence = verifyPublicDistCssPresence(
+    abs,
+    manifestState.manifest?.deployBase ?? "/cms-kit-staging/gosaki-piano/",
+  );
+  if (!cssPresence.ok) {
+    errors.push(cssPresence.reason ?? "public-dist CSS presence check failed");
+  }
+
   return {
     ok: errors.length === 0,
     errors,
@@ -65,6 +73,7 @@ export function validatePublicDistForManualUpload(publicDistDir) {
     files,
     manifest: manifestState.manifest,
     manifestPath: manifestState.manifestPath,
+    cssPresence,
   };
 }
 
@@ -76,11 +85,12 @@ export function validatePublicDistForManualUpload(publicDistDir) {
  *   sourcePublicDist: string,
  *   fileCount: number,
  *   safeForStaticFtp: boolean,
+ *   cssPresenceOk?: boolean,
  * }} meta
  */
 export function buildManualUploadManifest(meta) {
   return {
-    phase: "G-7g-gosaki-manual-staging-upload-package",
+    phase: "G-7h-gosaki-staging-css-asset-fix",
     siteSlug: meta.siteSlug,
     deployBase: normalizeDeployBase(meta.deployBase),
     stagingUrl: meta.stagingUrl.replace(/\/$/, "") + "/",
@@ -89,6 +99,7 @@ export function buildManualUploadManifest(meta) {
     generatedAt: new Date().toISOString(),
     ftpAutoDeployUsed: false,
     safeForStaticFtp: meta.safeForStaticFtp,
+    cssPresenceOk: meta.cssPresenceOk === true,
     uploadTarget: normalizeDeployBase(meta.deployBase),
     uploadContents: "public-dist/ contents only (not the public-dist folder itself)",
   };
@@ -288,6 +299,7 @@ export function createManualUploadPackage(opts) {
     sourcePublicDist: sourceRel,
     fileCount: validation.fileCount,
     safeForStaticFtp: Boolean(validation.manifest?.safeForStaticFtp),
+    cssPresenceOk: validation.cssPresence?.ok === true,
   });
 
   fs.writeFileSync(readmePath, formatReadmeUpload({ deployBase, stagingUrl, siteSlug }), "utf8");

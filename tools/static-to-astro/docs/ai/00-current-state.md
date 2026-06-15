@@ -21,21 +21,21 @@ Staging Shell
 将来的な顧客オンボーディング・課金・デプロイ自動化
 
 2. Current phase
-現在フェーズ: G-7g-gosaki-manual-staging-upload-package（完了 — operator 手動アップロード待ち）
+現在フェーズ: G-7h-gosaki-staging-css-asset-fix（完了 — operator 手動再アップロード待ち）
 
-G-7f FTP 事故後、FTP 自動 deploy は停止。gosaki-piano staging preview 用の**手動アップロードパッケージ**を生成済み。
+G-7g 手動アップロード後、staging で HTML は表示されたが **CSS が効かない** 問題を修正。Wix クロールの `<head><style>` を `global.css` に取り込み、`_astro` CSS を含むパッケージを再生成済み。
 
 直近完了フェーズ:
-G-7g-gosaki-manual-staging-upload-package
+G-7h-gosaki-staging-css-asset-fix
 前フェーズ:
-G-7f1-ftp-deploy-safety-hardening
+G-7g-gosaki-manual-staging-upload-package
 
 G-7 staging:
-- 手動パッケージ: `output/manual-upload/gosaki-piano/`（gitignored, 13 files, zip 付き）
-- アップロード先: `/cms-kit-staging/gosaki-piano/`（public-dist の**中身**のみ）
+- 手動パッケージ: `output/manual-upload/gosaki-piano/`（gitignored, **14 files**, `_astro/*.css` 含む, zip 付き）
+- アップロード先: `/cms-kit-staging/gosaki-piano/`（public-dist の**中身**のみ、**`_astro/` 必須**）
 - staging URL: `https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/`
 - FTP 自動 deploy: **停止中** — `readyForAnyFutureFtpApply: false`
-- 次: 戸山が FileZilla で手動アップロード → browser QA
+- 次: 戸山が FileZilla で **再アップロード**（`_astro/` 含む）→ browser QA
 
 3. Important completed milestones
 

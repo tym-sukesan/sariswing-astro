@@ -6,8 +6,8 @@ import { isScheduleMonthNavTarget, SCHEDULE_INDEX_ROUTE } from "./schedule-pages
 import { toPublicSeoPath } from "./seo-extract.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const REPO_ROOT = path.resolve(__dirname, "../../../..");
-const require = createRequire(path.join(REPO_ROOT, "package.json"));
+const TOOL_ROOT = path.resolve(__dirname, "../..");
+const require = createRequire(path.join(TOOL_ROOT, "package.json"));
 const cheerio = require("cheerio");
 
 function escapeHtml(text) {

@@ -242,6 +242,17 @@ Implementation complete: `tools/static-to-astro/docs/url-to-staging-pipeline-orc
 - External / gosaki-piano.com crawl: **not executed in G-7b**
 - Next: `G-7c-url-to-staging-dry-run-pilot`
 
+## URL-to-staging dry-run pilot (G-7c)
+
+Pilot complete: `tools/static-to-astro/docs/url-to-staging-dry-run-pilot-result.md`
+
+- Pilot config: `config/sites/gosaki-piano.dry-run-pilot.json` → `fixtures/gosaki-static-site`
+- Dry-run plan + local convert/build/static-public: **PASS**
+- G-7b config `fixtureOut=fixtures/gosaki-piano` is empty (future crawl target)
+- External / gosaki-piano.com crawl: **not executed in G-7c**
+- Gate: `readyForG7dGosakiLiveCrawlPilot: true`
+- Next: `G-7d-gosaki-live-crawl-pilot` (operator approval, max-pages ~20 first)
+
 ## Schedule CMS generalization
 
 Planning phase `G-6-f-schedule-cms-generalization-planning` is complete.

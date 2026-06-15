@@ -6,6 +6,7 @@ import fs from "node:fs";
 import path from "node:path";
 
 export const PIPELINE_PHASE = "G-7b-url-to-staging-pipeline-orchestrator";
+export const G7C_PILOT_PHASE = "G-7c-url-to-staging-dry-run-pilot";
 
 /**
  * @typedef {Object} PipelineGates
@@ -141,7 +142,7 @@ export function buildUrlToStagingStepPlan(config, gates, dryRun) {
     wouldRun: publicWouldRun,
     wouldWrite: publicWouldRun,
     wouldDeploy: false,
-    command: `node scripts/verify-static-public-artifact.mjs --astro-dir ${config.projectOutRel} --public-dir ${config.staticPublicOutRel}`,
+    command: `node scripts/verify-static-public-artifact.mjs --astro-dir ${config.projectOutRel} --report ${config.staticPublicOutRel}/STATIC_PUBLIC_ARTIFACT_REPORT.md`,
     details: {
       gate: "preparePublic",
       staticPublicOut: config.staticPublicOutRel,

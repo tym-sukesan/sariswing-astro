@@ -50,6 +50,7 @@ Options:
   --deploy-ftp           Plan FTP deploy only (NOT executed in G-7b)
 
   --no-manifest          Skip writing manifest to output/runs/
+  --pilot-phase ID       Override manifest phase (e.g. G-7c-url-to-staging-dry-run-pilot)
   --help, -h             Show help
 
 Examples:
@@ -88,6 +89,7 @@ function parseArgs(argv) {
     preparePublic: false,
     deployFtp: false,
     writeManifest: true,
+    pilotPhase: null,
     help: false,
   };
 
@@ -143,6 +145,7 @@ function parseArgs(argv) {
     else if (arg === "--staging-base-url") opts.stagingBaseUrl = nextVal();
     else if (arg === "--max-pages") opts.maxPages = Number(nextVal());
     else if (arg === "--site-profile") opts.siteProfile = nextVal();
+    else if (arg === "--pilot-phase") opts.pilotPhase = nextVal();
     else if (arg.startsWith("-")) throw new Error(`Unknown option: ${arg}`);
     else throw new Error(`Unexpected argument: ${arg}`);
   }
@@ -223,6 +226,7 @@ async function main() {
       toolRoot: TOOL_ROOT,
       writeManifest: Boolean(cli.writeManifest),
       printSummary: true,
+      pilotPhase: cli.pilotPhase ? String(cli.pilotPhase) : null,
     });
 
     const failed = manifest.steps.some((s) => s.status === "failed");

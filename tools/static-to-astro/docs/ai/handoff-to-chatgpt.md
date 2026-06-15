@@ -12,31 +12,29 @@ Paste this file at the start of a new ChatGPT thread. Cursor should update it af
 ## 2. Current phase
 
 ```txt
-Current phase: G-7b-url-to-staging-pipeline-orchestrator-implementation (completed)
-Latest completed phase: G-7b-url-to-staging-pipeline-orchestrator-implementation
-Recommended next phase: G-7c-url-to-staging-dry-run-pilot
+Current phase: G-7c-url-to-staging-dry-run-pilot (completed)
+Latest completed phase: G-7c-url-to-staging-dry-run-pilot
+Recommended next phase: G-7d-gosaki-live-crawl-pilot
 ```
 
 ---
 
 ## 3. Current state summary
 
-G-7b orchestrator connects crawl → analyze → convert → build → static-public with gated CLI (`url-to-staging-pipeline.mjs`). Default dry-run. Gosaki config sample at `config/sites/gosaki-piano.url-to-staging.json`. Verify: 29 passed. **No gosaki-piano.com or external crawl executed.**
+G-7c validated orchestrator dry-run plan and local fixture E2E on `fixtures/gosaki-static-site` via `gosaki-piano.dry-run-pilot.json`. Convert, build, and static-public artifact PASS. **No gosaki-piano.com or external crawl executed.**
 
-Next: G-7c E2E dry-run pilot with local `fixtures/gosaki-static-site`.
+Next: G-7d live crawl with operator approval (recommended max-pages: 20 first run).
 
 ---
 
-## 4. G-7b highlights
+## 4. G-7c highlights
 
 ```txt
-CLI: tools/static-to-astro/scripts/url-to-staging-pipeline.mjs
-npm: npm run url:staging
-Config: config/sites/gosaki-piano.url-to-staging.json
-Verify: verify-url-to-staging-pipeline.mjs (29 passed)
-Gates: --run-crawl --run-convert --run-build --prepare-public --deploy-ftp (all default false)
-Dry-run: default; manifest in output/runs/ (gitignored)
-FTP / workflow_dispatch: never executed in G-7b
+Pilot config: config/sites/gosaki-piano.dry-run-pilot.json
+Fixture: fixtures/gosaki-static-site (existing local HTML)
+Result doc: url-to-staging-dry-run-pilot-result.md
+Local E2E: convert + build + static-public PASS
+Manifest: output/runs/<timestamp>-gosaki-piano.json (gitignored)
 ```
 
 ---
@@ -44,15 +42,14 @@ FTP / workflow_dispatch: never executed in G-7b
 ## 5. Gate state
 
 ```txt
-crawlStaticSiteImplementationComplete: true
 urlToStagingPipelineOrchestratorImplementationComplete: true
-readyForG7cUrlToStagingDryRunPilot: true
-urlToStagingAutomationSprintPlanningComplete: true
-g6g3PriceSliceDeferred: true
+urlToStagingDryRunPilotComplete: true
+readyForG7dGosakiLiveCrawlPilot: true
 externalCrawlExecutedInG7a: false
 externalCrawlExecutedInG7b: false
+externalCrawlExecutedInG7c: false
 gosakiPianoCrawlExecuted: false
-ftpDeployExecutedInG7b: false
+ftpDeployExecutedInG7c: false
 ```
 
 ---
@@ -60,10 +57,9 @@ ftpDeployExecutedInG7b: false
 ## 6. Files to read first
 
 ```txt
+tools/static-to-astro/docs/url-to-staging-dry-run-pilot-result.md
 tools/static-to-astro/docs/url-to-staging-pipeline-orchestrator-implementation.md
-tools/static-to-astro/docs/crawl-static-site-implementation.md
-tools/static-to-astro/docs/url-to-staging-automation-sprint-planning.md
+tools/static-to-astro/config/sites/gosaki-piano.dry-run-pilot.json
 tools/static-to-astro/scripts/url-to-staging-pipeline.mjs
-tools/static-to-astro/config/sites/gosaki-piano.url-to-staging.json
 tools/static-to-astro/docs/ai/00-current-state.md
 ```

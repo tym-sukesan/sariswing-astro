@@ -1,0 +1,20 @@
+{
+  "$comment": "G-7c — dry-run pilot config. Uses existing local gosaki-static-site fixture (no live crawl). No secrets.",
+  "siteSlug": "gosaki-piano",
+  "startUrl": "https://www.gosaki-piano.com/",
+  "fixtureOut": "fixtures/gosaki-static-site",
+  "projectOut": "output/gosaki-piano-astro",
+  "staticPublicOut": "output/static-public/gosaki-piano",
+  "deployBase": "/cms-kit-staging/gosaki-piano/",
+  "stagingBaseUrl": "https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano",
+  "productionBaseUrl": "https://www.gosaki-piano.com",
+  "siteProfile": "musician",
+  "maxPages": 80,
+  "sameOriginOnly": true,
+  "respectRobots": true,
+  "seo": {
+    "stagingNoindex": true,
+    "robotsDisallowAll": true,
+    "canonicalMode": "staging-url"
+  }
+}

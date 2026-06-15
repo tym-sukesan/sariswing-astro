@@ -4,8 +4,8 @@ import { fileURLToPath } from "node:url";
 import { htmlFileToAstroRoute, resolveRef } from "./static-site-analyzer.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const REPO_ROOT = path.resolve(__dirname, "../../../..");
-const require = createRequire(path.join(REPO_ROOT, "package.json"));
+const TOOL_ROOT = path.resolve(__dirname, "../..");
+const require = createRequire(path.join(TOOL_ROOT, "package.json"));
 const cheerio = require("cheerio");
 
 /** Map internal HTML paths to Astro routes. */

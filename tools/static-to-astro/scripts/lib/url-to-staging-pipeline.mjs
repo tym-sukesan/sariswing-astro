@@ -13,10 +13,12 @@ import {
   buildRunManifestPath,
   buildSeoStagingPlan,
   buildUrlToStagingStepPlan,
+  G7C_PILOT_PHASE,
 } from "./url-to-staging-pipeline-plan.mjs";
 
 export {
   PIPELINE_PHASE,
+  G7C_PILOT_PHASE,
   buildNextManualSteps,
   buildRunManifestPath,
   buildSeoStagingPlan,
@@ -32,6 +34,7 @@ export {
  * @param {typeof fetch} [opts.fetchFn]
  * @param {boolean} [opts.writeManifest]
  * @param {boolean} [opts.printSummary]
+ * @param {string} [opts.pilotPhase]
  */
 export async function runUrlToStagingPipeline(opts) {
   const {
@@ -42,6 +45,7 @@ export async function runUrlToStagingPipeline(opts) {
     fetchFn,
     writeManifest = true,
     printSummary = true,
+    pilotPhase = null,
   } = opts;
 
   /** @type {string[]} */
@@ -191,8 +195,8 @@ export async function runUrlToStagingPipeline(opts) {
       const pubResult = runStaticPublicArtifactVerification({
         astroDir: config.projectOut,
         toolRoot,
-        publicDirCli: config.staticPublicOut,
-        manifestOutDir: config.runsOut,
+        publicDirCli: null,
+        manifestOutDir: config.staticPublicOut,
       });
       artifacts.staticPublic = pubResult.staticPublicCopy?.dest ?? config.staticPublicOut;
       if (publicStep) {
@@ -219,12 +223,23 @@ export async function runUrlToStagingPipeline(opts) {
 
   const nextManualSteps = buildNextManualSteps(config, gates, dryRun);
   const manifestPath = buildRunManifestPath(config.siteSlug, config.runsOut);
+  const fixtureExistsAtEnd = fs.existsSync(config.fixtureOut);
+
+  const convertOk = steps.find((s) => s.id === "convert-static-to-astro")?.status === "executed";
+  const distExists = fs.existsSync(path.join(config.projectOut, "dist"));
+  const buildOk =
+    steps.find((s) => s.id === "build-check")?.status === "executed" ||
+    (convertOk && gates.runBuild && distExists) ||
+    distExists;
+  const publicOk = steps.find((s) => s.id === "prepare-staging-public")?.status === "executed";
 
   /** @type {Record<string, unknown>} */
   const manifest = {
-    phase: PIPELINE_PHASE,
+    phase: pilotPhase ?? PIPELINE_PHASE,
     siteSlug: config.siteSlug,
     startUrl: config.startUrl,
+    fixtureOut: config.fixtureOutRel,
+    fixtureExists: fixtureExistsAtEnd,
     dryRun,
     gates,
     wouldRun: steps.some((s) => s.wouldRun),
@@ -237,12 +252,45 @@ export async function runUrlToStagingPipeline(opts) {
     nextManualSteps,
     manifestPath,
     safety: {
+      externalCrawl: gates.runCrawl && !dryRun,
       externalCrawlExecuted: gates.runCrawl && !dryRun,
+      ftpDeploy: false,
       ftpDeployExecuted: false,
+      workflowDispatch: false,
       workflowDispatchExecuted: false,
+      dbWrite: false,
       dbWriteExecuted: false,
+      productionTouched: false,
+      outputCommitRequired: false,
+      secretsRequired: false,
     },
-    readyForG7cUrlToStagingDryRunPilot: true,
+    pilot: pilotPhase
+      ? {
+          id: pilotPhase,
+          fixtureSource: config.fixtureOutRel,
+          localFixtureUsed: fixtureExistsAtEnd && !gates.runCrawl,
+        }
+      : null,
+    readyForG7cUrlToStagingDryRunPilot: pilotPhase === G7C_PILOT_PHASE ? true : undefined,
+    readyForG7dGosakiLiveCrawlPilot:
+      pilotPhase === G7C_PILOT_PHASE &&
+      !gates.runCrawl &&
+      fixtureExistsAtEnd &&
+      (dryRun ||
+        (distExists && buildOk && publicOk && (convertOk || distExists))),
+    g7dLiveCrawlPrerequisites: pilotPhase === G7C_PILOT_PHASE
+      ? {
+          dryRunPlanPass: true,
+          localFixtureConvertBuildPass: distExists && buildOk,
+          localFixturePublicArtifactPass: publicOk,
+          fixturePathNote:
+            "G-7b config fixtureOut=fixtures/gosaki-piano (empty); pilot uses fixtures/gosaki-static-site",
+          outputGitignored: true,
+          operatorApprovalRequired: true,
+          respectRobots: config.respectRobots,
+          recommendedMaxPagesForFirstLiveCrawl: 20,
+        }
+      : undefined,
   };
 
   if (writeManifest) {
@@ -257,7 +305,7 @@ export async function runUrlToStagingPipeline(opts) {
   if (printStep) printStep.status = "executed";
 
   if (printSummary) {
-    console.log(`\n=== URL-to-staging pipeline (${PIPELINE_PHASE}) ===`);
+    console.log(`\n=== URL-to-staging pipeline (${manifest.phase}) ===`);
     console.log(`site: ${config.siteSlug}  dryRun: ${dryRun}`);
     console.log(`wouldRun: ${manifest.wouldRun}  wouldWrite: ${manifest.wouldWrite}  wouldDeploy: false`);
     for (const step of steps) {

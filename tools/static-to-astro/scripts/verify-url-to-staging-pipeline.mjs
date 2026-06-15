@@ -130,7 +130,7 @@ const manifest = await runUrlToStagingPipeline({
 assertEqual("manifest phase", manifest.phase, PIPELINE_PHASE);
 assertEqual("manifest dryRun", manifest.dryRun, true);
 assertEqual("manifest wouldDeploy", manifest.wouldDeploy, false);
-assert("manifest readyForG7c", manifest.readyForG7cUrlToStagingDryRunPilot === true);
+assert("manifest readyForG7c unset without pilot phase", manifest.readyForG7cUrlToStagingDryRunPilot === undefined);
 assert("manifest steps array", Array.isArray(manifest.steps) && manifest.steps.length >= 8);
 assert("manifest safety no ftp", manifest.safety?.ftpDeployExecuted === false);
 assert("manifest file written", fs.existsSync(String(manifest.manifestPath)));

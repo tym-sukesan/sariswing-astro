@@ -58,6 +58,17 @@ function writeFile(filePath, content) {
   fs.writeFileSync(filePath, content, "utf8");
 }
 
+function copyPublicStagingLibs(outDir) {
+  const libNames = ["resolve-public-seo.ts", "with-base.ts"];
+  for (const name of libNames) {
+    const src = path.join(TOOL_ROOT, "templates/admin-cms/src/lib", name);
+    const dest = path.join(outDir, "src/lib", name);
+    if (!fs.existsSync(src)) continue;
+    ensureDir(path.dirname(dest));
+    fs.copyFileSync(src, dest);
+  }
+}
+
 function rmDirRecursive(dir) {
   if (fs.existsSync(dir)) {
     fs.rmSync(dir, { recursive: true, force: true });
@@ -719,6 +730,7 @@ export function generateAstroProject(inputDir, outputDir, options = {}) {
     path.join(outDir, "src/layouts/BaseLayout.astro"),
     generateBaseLayout({ layoutScripts, externalCss }),
   );
+  copyPublicStagingLibs(outDir);
 
   const pageScriptMap = new Map();
   for (const entry of jsAnalysis.pageSpecificScripts) {

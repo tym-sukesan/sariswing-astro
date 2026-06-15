@@ -1,5 +1,5 @@
 /**
- * Gosaki-piano site-specific Wix static export CSS overrides (G-8c / G-8d).
+ * Gosaki-piano site-specific Wix static export CSS overrides (G-8c … G-8g).
  * Brand colors, home hero comp, About / Discography / Contact mobile parity — not for other Wix pilots.
  */
 
@@ -11,6 +11,19 @@ export const GOSAKI_PIANO_SITE_SLUG = "gosaki-piano";
 export function buildGosakiPianoSiteOverridesCss(options = {}) {
   const slug = options.siteSlug ?? GOSAKI_PIANO_SITE_SLUG;
   if (slug !== GOSAKI_PIANO_SITE_SLUG) return "";
+
+  const svgMaskUri = (svg) => `url("data:image/svg+xml,${encodeURIComponent(svg)}")`;
+  const snsIconMask = {
+    facebook: svgMaskUri(
+      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="#000" d="M9.197 24V14.477H6.196V9.956h3.001V6.559c0-3.004 1.798-4.664 4.532-4.664 1.311 0 2.637.235 2.637.235v2.948h-2.487c-2.459 0-3.224 1.526-3.224 3.093v3.715h5.491l-.877 4.521H9.197V24z"/></svg>',
+    ),
+    x: svgMaskUri(
+      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="#000" d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>',
+    ),
+    instagram: svgMaskUri(
+      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="#000" d="M12 7.2a4.8 4.8 0 100 9.6 4.8 4.8 0 000-9.6zm0-2.4c3.2 0 3.6.012 4.85.07 1.7.078 2.57.372 3.17.786.602.414 1.076.888 1.49 1.49.414.6.708 1.47.786 3.17.058 1.25.07 1.65.07 4.85s-.012 3.6-.07 4.85c-.078 1.7-.372 2.57-.786 3.17a5.8 5.8 0 01-1.49 1.49c-.6.414-1.47.708-3.17.786-1.25.058-1.65.07-4.85.07s-3.6-.012-4.85-.07c-1.7-.078-2.57-.372-3.17-.786a5.8 5.8 0 01-1.49-1.49c-.414-.6-.708-1.47-.786-3.17C3.612 15.6 3.6 15.2 3.6 12s.012-3.6.07-4.85c.078-1.7.372-2.57.786-3.17.414-.602.888-1.076 1.49-1.49.6-.414 1.47-.708 3.17-.786C8.4 3.612 8.8 3.6 12 3.6zm0 1.44c-3.15 0-3.52.012-4.75.068-1.15.052-1.78.248-2.2.412-.55.214-.94.47-1.35.88-.41.41-.666.8-.88 1.35-.164.42-.36 1.05-.412 2.2-.056 1.23-.068 1.6-.068 4.75s.012 3.52.068 4.75c.052 1.15.248 1.78.412 2.2.214.55.47.94.88 1.35.41.41.8.666 1.35.88.42.164 1.05.36 2.2.412 1.23.056 1.6.068 4.75.068s3.52-.012 4.75-.068c1.15-.052 1.78-.248 2.2-.412a3.6 3.6 0 001.35-.88 3.6 3.6 0 00.88-1.35c.164-.42.36-1.05.412-2.2.056-1.23.068-1.6.068-4.75s-.012-3.52-.068-4.75c-.052-1.15-.248-1.78-.412-2.2a3.6 3.6 0 00-.88-1.35 3.6 3.6 0 00-1.35-.88c-.42-.164-1.05-.36-2.2-.412C15.52 5.052 15.15 5.04 12 5.04zm0 2.784a4.176 4.176 0 110 8.352 4.176 4.176 0 010-8.352zm6.624-1.584a.96.96 0 110 1.92.96.96 0 010-1.92z"/></svg>',
+    ),
+  };
 
   return `/* --- Gosaki-piano site-specific overrides (G-8c) --- */
 
@@ -702,6 +715,275 @@ body.wix-static-export #comp-kei80gar {
 
   body.wix-static-export [id^="comp-lley9r5x__"] {
     padding-bottom: 0.125rem !important;
+  }
+}
+
+/* --- G-8g gosaki header/footer mobile regression fix (site-specific) --- */
+
+/* Footer: reset desktop mesh offsets + modern SNS icons (all widths) */
+body.wix-static-export #SITE_FOOTER #LnkBr2,
+body.wix-static-export #SITE_FOOTER #WRchTxtx {
+  position: relative !important;
+  left: 0 !important;
+  right: auto !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  transform: none !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  text-align: center !important;
+}
+
+body.wix-static-export #SITE_FOOTER #LnkBr2 {
+  display: flex !important;
+  justify-content: center !important;
+  height: auto !important;
+}
+
+body.wix-static-export #SITE_FOOTER #LnkBr2 .tN_ggS {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  justify-content: center !important;
+  align-items: center !important;
+  gap: 0.75rem !important;
+  width: auto !important;
+  max-width: 100% !important;
+  margin: 0 auto !important;
+  padding: 0 !important;
+}
+
+body.wix-static-export #SITE_FOOTER #LnkBr2 .re13Ik {
+  margin: 0 !important;
+}
+
+body.wix-static-export #SITE_FOOTER #LnkBr2 .twXk19 {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 44px !important;
+  height: 44px !important;
+  position: relative !important;
+  border-radius: 50%;
+  transition: opacity 0.15s ease;
+}
+
+body.wix-static-export #SITE_FOOTER #LnkBr2 .twXk19:hover {
+  opacity: 0.75;
+}
+
+body.wix-static-export #SITE_FOOTER #LnkBr2 .twXk19 img {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+body.wix-static-export #SITE_FOOTER #LnkBr2 a[aria-label="Facebook"]::before,
+body.wix-static-export #SITE_FOOTER #LnkBr2 a[aria-label^="X"]::before,
+body.wix-static-export #SITE_FOOTER #LnkBr2 a[aria-label="Instagram"]::before {
+  content: "";
+  display: block;
+  width: 22px;
+  height: 22px;
+  background-color: #7a6f65;
+  -webkit-mask: center / contain no-repeat;
+  mask: center / contain no-repeat;
+}
+
+body.wix-static-export #SITE_FOOTER #LnkBr2 a[aria-label="Facebook"]::before {
+  -webkit-mask-image: ${snsIconMask.facebook};
+  mask-image: ${snsIconMask.facebook};
+}
+
+body.wix-static-export #SITE_FOOTER #LnkBr2 a[aria-label^="X"]::before {
+  -webkit-mask-image: ${snsIconMask.x};
+  mask-image: ${snsIconMask.x};
+}
+
+body.wix-static-export #SITE_FOOTER #LnkBr2 a[aria-label="Instagram"]::before {
+  -webkit-mask-image: ${snsIconMask.instagram};
+  mask-image: ${snsIconMask.instagram};
+}
+
+body.wix-static-export #SITE_FOOTER #WRchTxtx p {
+  text-align: center !important;
+}
+
+/* PC header: restore horizontal nav, hide hamburger */
+@media (min-width: 769px) {
+  body.wix-static-export #SITE_HEADER {
+    --bg-overlay-color: rgb(255, 252, 204) !important;
+    background-color: #fffccc !important;
+  }
+
+  body.wix-static-export #SITE_HEADER .LNYVZi,
+  body.wix-static-export #SITE_HEADER [data-testid="colorUnderlay"] {
+    opacity: 1 !important;
+    background-color: #fffccc !important;
+  }
+
+  body.wix-static-export #SITE_HEADER [data-mesh-id="SITE_HEADERinlineContent-gridContainer"] {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 1rem !important;
+    padding: 0.75rem calc((100% - 980px) * 0.5) !important;
+    min-height: 5.5rem;
+    box-sizing: border-box;
+  }
+
+  body.wix-static-export #SITE_HEADER #comp-mbdw9tzc,
+  body.wix-static-export #SITE_HEADER #comp-mbdw7xid {
+    position: relative !important;
+    left: auto !important;
+    right: auto !important;
+    top: auto !important;
+    margin: 0 !important;
+    width: auto !important;
+    max-width: none !important;
+    grid-area: auto !important;
+    justify-self: auto !important;
+    align-self: center !important;
+    flex: 0 0 auto;
+  }
+
+  body.wix-static-export #SITE_HEADER #comp-mbdw7xid,
+  body.wix-static-export #SITE_HEADER [id^="comp-"]:has(.global-nav) {
+    flex: 1 1 auto !important;
+    width: auto !important;
+    max-width: none !important;
+    justify-content: flex-end !important;
+  }
+
+  body.wix-static-export #SITE_HEADER .nav-toggle {
+    display: none !important;
+  }
+
+  body.wix-static-export #SITE_HEADER .global-nav {
+    display: block !important;
+    width: auto !important;
+    margin-top: 0 !important;
+    padding: 0 !important;
+  }
+
+  body.wix-static-export #SITE_HEADER .global-nav ul {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    justify-content: flex-end !important;
+    align-items: center !important;
+    gap: 0.25rem 0.5rem !important;
+  }
+
+  body.wix-static-export #SITE_FOOTER [data-mesh-id="SITE_FOOTERinlineContent-gridContainer"] {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+    padding: 1.5rem calc((100% - 980px) * 0.5) !important;
+    gap: 0.75rem !important;
+  }
+}
+
+@media (max-width: 768px) {
+  /* SP header: opaque sticky bar */
+  body.wix-static-export #SITE_HEADER {
+    --bg-overlay-color: rgb(255, 252, 204) !important;
+    background-color: #fffccc !important;
+  }
+
+  body.wix-static-export #SITE_HEADER .uZIV9d,
+  body.wix-static-export #SITE_HEADER .LNYVZi,
+  body.wix-static-export #SITE_HEADER [data-testid="colorUnderlay"] {
+    opacity: 1 !important;
+    background-color: #fffccc !important;
+  }
+
+  /* SP nav: hamburger visible, panel hidden until open */
+  body.wix-static-export #SITE_HEADER .nav-toggle {
+    display: inline-flex !important;
+  }
+
+  body.wix-static-export #SITE_HEADER .global-nav {
+    display: none !important;
+  }
+
+  body.wix-static-export #SITE_HEADER.is-nav-open .global-nav {
+    display: block !important;
+  }
+
+  /* SP nav open: keep logo + toggle vertically centered on row 1 */
+  body.wix-static-export #SITE_HEADER [data-mesh-id="SITE_HEADERinlineContent-gridContainer"] {
+    align-items: center !important;
+    flex-wrap: nowrap !important;
+  }
+
+  body.wix-static-export #SITE_HEADER #comp-mbdw7xid {
+    align-self: center !important;
+  }
+
+  body.wix-static-export #SITE_HEADER.is-nav-open [data-mesh-id="SITE_HEADERinlineContent-gridContainer"] {
+    flex-wrap: wrap !important;
+    align-items: center !important;
+  }
+
+  body.wix-static-export #SITE_HEADER.is-nav-open #comp-mbdw9tzc {
+    order: 1 !important;
+    flex: 1 1 auto !important;
+    width: auto !important;
+    max-width: calc(100% - 5.5rem) !important;
+    align-self: center !important;
+  }
+
+  body.wix-static-export #SITE_HEADER.is-nav-open #comp-mbdw7xid {
+    order: 2 !important;
+    flex: 0 0 auto !important;
+    width: auto !important;
+    align-self: center !important;
+  }
+
+  body.wix-static-export #SITE_HEADER.is-nav-open .global-nav {
+    order: 3 !important;
+    flex: 1 1 100% !important;
+    width: 100% !important;
+    margin-top: 0.5rem !important;
+  }
+
+  /* Discography: tighter vertical rhythm (supersedes G-8d/G-8f) */
+  body.wix-static-export #comp-jqy0szge {
+    margin: 0.75rem 0 0.375rem !important;
+  }
+
+  body.wix-static-export #comp-llexymel {
+    padding: 0 1rem 0.75rem !important;
+  }
+
+  body.wix-static-export [id^="comp-llexymga__"]:not([id$="inlineContent"]):not([id$="gridContainer"]) {
+    margin-bottom: 0.875rem !important;
+    padding: 0.5rem 0.75rem !important;
+  }
+
+  body.wix-static-export [data-mesh-id^="comp-llexymga__"][data-mesh-id$="inlineContent-gridContainer"] {
+    gap: 0.375rem !important;
+    padding: 0.5rem !important;
+  }
+
+  body.wix-static-export [id^="comp-jshobkm1__"] {
+    margin-bottom: 0.25rem !important;
+  }
+
+  body.wix-static-export [id^="comp-lley9r5x__"] {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    margin-bottom: 0.25rem !important;
+  }
+
+  body.wix-static-export [id^="comp-lley4qy2__"] {
+    margin-top: 0.25rem !important;
+    padding-top: 0 !important;
   }
 }
 `;

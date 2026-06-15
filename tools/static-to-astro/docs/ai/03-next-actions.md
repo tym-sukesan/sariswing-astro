@@ -3,19 +3,19 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 1. Immediate priority
 
-**Current phase:** `G-8f-gosaki-mobile-visual-refinement` (complete)
+**Current phase:** `G-8g-gosaki-header-footer-mobile-regression-fix` (complete)
 
-**Doc:** `tools/static-to-astro/docs/gosaki-mobile-visual-refinement.md`
+**Doc:** `tools/static-to-astro/docs/gosaki-header-footer-mobile-regression-fix.md`
 
 **FTP auto-deploy:** still disabled.
 
 ### Gates
 
 ```txt
-gosakiMobileVisualRefinementComplete: true
+gosakiHeaderFooterMobileRegressionFixComplete: true
 readyForManualReuploadByOperator: true
 readyForGosakiClientPreview: true
-gosakiMobileUiFinalPolishComplete: true
+gosakiMobileVisualRefinementComplete: true
 ftpAutoDeployStillDisabled: true
 readyForAnyFutureFtpApply: false
 ```
@@ -24,15 +24,15 @@ readyForAnyFutureFtpApply: false
 
 - **Common:** `scripts/lib/wix-static-export-baseline-overrides.mjs`
 - **Composer:** `scripts/lib/wix-staging-visual-overrides.mjs`
-- **Gosaki-specific:** `scripts/lib/site-specific-overrides/gosaki-piano-overrides.mjs` (G-8c–G-8f)
+- **Gosaki-specific:** `scripts/lib/site-specific-overrides/gosaki-piano-overrides.mjs` (G-8c–G-8g)
 - **Header logo link:** `scripts/lib/header-transform.mjs`
 
 ## 3. Next steps
 
-1. **Operator:** re-upload `output/manual-upload/gosaki-piano/public-dist/` including `_astro/index.Dl5S2qmQ.css`
-2. Real-device QA: KV cover hero, footer center, contact no success msg, Link flat panel
+1. **Operator:** re-upload `output/manual-upload/gosaki-piano/public-dist/` including `_astro/index.C9wUprmu.css`
+2. Real-device QA: PC horizontal nav, SP opaque header + stable logo on menu open, centered footer SNS, tighter Discography
 3. Share staging with gosaki client if QA passes
-4. **Future:** Contact HubSpot embed replacement (not G-8f)
+4. **Future:** Contact HubSpot embed replacement (not G-8g)
 
 ## 4. AI workflow maintenance rule
 

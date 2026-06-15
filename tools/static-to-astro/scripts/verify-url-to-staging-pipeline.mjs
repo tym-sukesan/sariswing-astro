@@ -537,6 +537,59 @@ assert(
   wixOverrides.includes("G-8f gosaki mobile visual refinement"),
 );
 
+// --- G-8g gosaki header/footer mobile regression fix ---
+
+assert(
+  "gosaki G-8g regression fix block present",
+  gosakiOverrides.includes("G-8g gosaki header/footer mobile regression fix"),
+);
+assert(
+  "gosaki G-8g PC nav restore rule",
+  gosakiOverrides.includes("@media (min-width: 769px)") &&
+    gosakiOverrides.includes("#SITE_HEADER .global-nav ul") &&
+    gosakiOverrides.includes("flex-direction: row"),
+);
+assert(
+  "gosaki G-8g PC hamburger hidden rule",
+  gosakiOverrides.includes("#SITE_HEADER .nav-toggle") &&
+    gosakiOverrides.includes("display: none !important"),
+);
+assert(
+  "gosaki G-8g SP hamburger visible rule",
+  gosakiOverrides.includes("display: inline-flex !important") &&
+    gosakiOverrides.includes("@media (max-width: 768px)"),
+);
+assert(
+  "gosaki G-8g SP header opaque background rule",
+  gosakiOverrides.includes("--bg-overlay-color: rgb(255, 252, 204)") &&
+    gosakiOverrides.includes("background-color: #fffccc"),
+);
+assert(
+  "gosaki G-8g nav open logo stability rule",
+  gosakiOverrides.includes("is-nav-open #comp-mbdw9tzc") &&
+    gosakiOverrides.includes("align-self: center !important"),
+);
+assert(
+  "gosaki G-8g footer social centered rule",
+  gosakiOverrides.includes("#SITE_FOOTER #LnkBr2") &&
+    gosakiOverrides.includes("justify-content: center !important"),
+);
+assert(
+  "gosaki G-8g discography compact spacing rule",
+  gosakiOverrides.includes("margin: 0.75rem 0 0.375rem !important") &&
+    gosakiOverrides.includes("gap: 0.375rem !important"),
+);
+assert(
+  "gosaki G-8g SNS mask icon replacement rule",
+  gosakiOverrides.includes('a[aria-label="Facebook"]::before') &&
+    gosakiOverrides.includes("mask-image:") &&
+    gosakiOverrides.includes("data:image/svg+xml"),
+);
+assert(
+  "composed wix overrides include G-8g regression fix rules",
+  wixOverrides.includes("G-8g gosaki header/footer mobile regression fix"),
+);
+
 // --- cleanup temp manifest ---
 
 try {

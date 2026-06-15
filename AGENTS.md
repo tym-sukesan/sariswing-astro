@@ -356,6 +356,15 @@ Doc: `tools/static-to-astro/docs/wix-static-export-responsive-baseline-generaliz
 - Band profiles / About injection remain gosaki-only (not in baseline)
 - Gate: `wixStaticExportResponsiveBaselineGeneralized: true`, `readyForNextWixPilot: true`
 
+## Gosaki header/footer mobile regression fix (G-8g)
+
+Doc: `tools/static-to-astro/docs/gosaki-header-footer-mobile-regression-fix.md`
+
+- G-8f upload side effects: PC nav gone, SP header transparent, logo shift on menu open, footer SNS offset, dated Wix icons, wide Discography gaps
+- Fix: G-8g in `gosaki-piano-overrides.mjs` — PC flex nav restore, SP opaque header + nav-open logo stability, footer center + SVG mask SNS icons, tighter Discography
+- CSS: `_astro/index.C9wUprmu.css` — operator must re-upload full public-dist
+- Gate: `gosakiHeaderFooterMobileRegressionFixComplete: true`, `readyForManualReuploadByOperator: true`
+
 ## Gosaki mobile visual refinement (G-8f)
 
 Doc: `tools/static-to-astro/docs/gosaki-mobile-visual-refinement.md`

@@ -21,19 +21,19 @@ Staging Shell
 将来的な顧客オンボーディング・課金・デプロイ自動化
 
 2. Current phase
-現在フェーズ: G-8f-gosaki-mobile-visual-refinement（完了）
+現在フェーズ: G-8g-gosaki-header-footer-mobile-regression-fix（完了）
 
-G-8e の上に、KV cover 拡大、header/footer 中央揃え、Discography 余白調整、Contact 成功メッセージ非表示、Link フラット化、About band 画像中央寄せを追加。
+G-8f 手動アップロード後の副作用（PC nav 消失、SP header 半透明、footer SNS ズレ、Discography 余白、Wix SNS アイコン）を G-8g で修正。
 
 直近完了フェーズ:
-G-8f-gosaki-mobile-visual-refinement
+G-8g-gosaki-header-footer-mobile-regression-fix
 前フェーズ:
-G-8e-gosaki-mobile-ui-final-polish
+G-8f-gosaki-mobile-visual-refinement
 
 G-7 staging:
 - staging URL: `https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/`
-- gosaki output: baseline + gosaki-specific 合成 CSS（`_astro/index.Dl5S2qmQ.css`、gitignored）
-- Doc: `tools/static-to-astro/docs/gosaki-mobile-visual-refinement.md`
+- gosaki output: baseline + gosaki-specific 合成 CSS（`_astro/index.C9wUprmu.css`、gitignored）
+- Doc: `tools/static-to-astro/docs/gosaki-header-footer-mobile-regression-fix.md`
 - 次: operator 手動 re-upload → クライアント preview QA
 - 将来: Contact HubSpot 置換
 

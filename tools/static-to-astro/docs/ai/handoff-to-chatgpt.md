@@ -12,26 +12,26 @@ Paste this file at the start of a new ChatGPT thread. Cursor should update it af
 ## 2. Current phase
 
 ```txt
-Current phase: G-8f-gosaki-mobile-visual-refinement (complete)
+Current phase: G-8g-gosaki-header-footer-mobile-regression-fix (complete)
 FTP auto-deploy: DISABLED
-Gosaki-specific CSS: scripts/lib/site-specific-overrides/gosaki-piano-overrides.mjs (G-8c–G-8f)
-Latest commit: 1eee686 (G-8e) — G-8f pending commit
+Gosaki-specific CSS: scripts/lib/site-specific-overrides/gosaki-piano-overrides.mjs (G-8c–G-8g)
+Latest commit: pending (G-8g local complete, not committed)
 ```
 
 ---
 
 ## 3. Current state summary
 
-G-8f refined gosaki SP for client preview: large KV cover hero, header/footer vertical alignment, tighter discography spacing, hidden Wix contact success message, flat Link panel, About band card image centering. Manual package regenerated; CSS `_astro/index.Dl5S2qmQ.css`. verify:url-staging 88 passed.
+G-8g fixed G-8f side effects: PC horizontal nav restored, SP opaque sticky header, logo stable on menu open, footer SNS/copyright centered with modern SVG mask icons, tighter SP Discography spacing. Manual package regenerated; CSS `_astro/index.C9wUprmu.css`. verify:url-staging 98 passed.
 
-Docs: `gosaki-mobile-visual-refinement.md`, `gosaki-mobile-ui-final-polish.md`
+Docs: `gosaki-header-footer-mobile-regression-fix.md`, `gosaki-mobile-visual-refinement.md`
 
 ---
 
-## 4. G-8f gates
+## 4. G-8g gates
 
 ```txt
-gosakiMobileVisualRefinementComplete: true
+gosakiHeaderFooterMobileRegressionFixComplete: true
 readyForManualReuploadByOperator: true
 readyForGosakiClientPreview: true
 ftpAutoDeployStillDisabled: true
@@ -51,7 +51,7 @@ readyForAnyFutureFtpApply: false
 
 ## 6. Operator re-upload
 
-Upload `output/manual-upload/gosaki-piano/public-dist/` → `/cms-kit-staging/gosaki-piano/` (include `_astro/index.Dl5S2qmQ.css`).
+Upload `output/manual-upload/gosaki-piano/public-dist/` → `/cms-kit-staging/gosaki-piano/` (include `_astro/index.C9wUprmu.css`).
 
 ---
 

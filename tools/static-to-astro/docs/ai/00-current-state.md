@@ -1,4 +1,4 @@
-Last updated: 2026-06-15
+Last updated: 2026-06-16
 Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
@@ -21,21 +21,22 @@ Staging Shell
 将来的な顧客オンボーディング・課金・デプロイ自動化
 
 2. Current phase
-現在フェーズ: G-7i-gosaki-staging-visual-polish-and-wix-css-behavior-fix（完了 — operator 手動再アップロード待ち）
+現在フェーズ: G-7i2-gosaki-footer-layer-isolation-fix（完了 — operator 手動再アップロード待ち）
 
-G-7h で CSS 読み込みは解決。G-7i で KV オーバーレイ・page-bg ティント・MENU JS/CSS を修正。クライアント preview 向けに operator 再アップロード待ち。
+G-7h で CSS 読み込み解決。G-7i で hero underlay / page-bg / nav fallback 修正。G-7i2 で `#SITE_FOOTER` / `#bgLayers_SITE_FOOTER` の viewport アンカー漏れを footer isolation CSS で修正。operator 再アップロード待ち。
 
 直近完了フェーズ:
-G-7i-gosaki-staging-visual-polish-and-wix-css-behavior-fix
+G-7i2-gosaki-footer-layer-isolation-fix
 前フェーズ:
-G-7h-gosaki-staging-css-asset-fix
+G-7i-gosaki-staging-visual-polish-and-wix-css-behavior-fix
 
 G-7 staging:
-- 手動パッケージ: `output/manual-upload/gosaki-piano/`（gitignored, 14 files, `_astro/*.css` 含む）
+- 手動パッケージ: `output/manual-upload/gosaki-piano/`（gitignored, 14 files, `_astro/index.BZ7Sffo0.css` 含む）
 - アップロード先: `/cms-kit-staging/gosaki-piano/`（public-dist の**中身**のみ、**`_astro/` 必須**）
 - staging URL: `https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/`
 - FTP 自動 deploy: **停止中** — `readyForAnyFutureFtpApply: false`
-- 次: 戸山が FileZilla で **再アップロード** → KV / nav ブラウザ QA → gosaki クライアント preview
+- 次: 戸山が FileZilla で **再アップロード** → KV 半透明レイヤー解消 / nav ブラウザ QA → gosaki クライアント preview
+- Doc: `tools/static-to-astro/docs/gosaki-footer-layer-isolation-fix.md`
 
 3. Important completed milestones
 

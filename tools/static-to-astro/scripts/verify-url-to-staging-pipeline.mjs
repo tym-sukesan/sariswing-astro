@@ -309,6 +309,16 @@ for (const dir of [cssOkDir, cssFailDir, cssDeployBaseDir]) {
 const wixOverrides = buildWixStagingVisualOverridesCss({ siteSlug: "gosaki-piano" });
 assert("wix overrides hide hero colorUnderlay", wixOverrides.includes("#comp-lol1i5k0 [data-testid=\"colorUnderlay\"]"));
 assert("wix overrides include nav fallback", wixOverrides.includes("#SITE_HEADER .global-nav"));
+assert(
+  "wix overrides isolate footer bg layers",
+  wixOverrides.includes("body.wix-static-export #SITE_FOOTER") &&
+    wixOverrides.includes("body.wix-static-export #SITE_FOOTER .uZIV9d"),
+);
+assert(
+  "wix overrides keep main above footer bg",
+  wixOverrides.includes("body.wix-static-export main") &&
+    wixOverrides.includes("z-index: 1"),
+);
 
 // --- cleanup temp manifest ---
 

@@ -10,7 +10,50 @@ export function buildWixStagingVisualOverridesCss(options = {}) {
   const slug = options.siteSlug ?? "gosaki-piano";
   void slug;
 
-  return `/* --- Wix static export visual overrides (G-7i) --- */
+  return `/* --- Wix static export visual overrides (G-7i / G-7i2) --- */
+
+/* Without #masterPage.mesh-layout, header/footer bg wrappers anchor to the viewport */
+body.wix-static-export #SITE_HEADER,
+body.wix-static-export #SITE_FOOTER {
+  position: relative;
+  z-index: auto;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+body.wix-static-export #SITE_HEADER .uZIV9d,
+body.wix-static-export #SITE_FOOTER .uZIV9d {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-height: 100%;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+body.wix-static-export #SITE_FOOTER [id^="bgLayers_"],
+body.wix-static-export #SITE_HEADER [id^="bgLayers_"] {
+  pointer-events: none;
+}
+
+body.wix-static-export #SITE_FOOTER [data-testid="colorUnderlay"],
+body.wix-static-export #SITE_HEADER [data-testid="colorUnderlay"] {
+  pointer-events: none;
+}
+
+body.wix-static-export #SITE_FOOTER .XKFSfx,
+body.wix-static-export #SITE_HEADER .XKFSfx {
+  position: relative;
+  z-index: 1;
+}
+
+body.wix-static-export main,
+body.wix-static-export #SITE_PAGES,
+body.wix-static-export #comp-lol1i5k0 {
+  position: relative;
+  z-index: 1;
+}
 
 /* Section content above Wix absolute bg fill layers */
 .Le88gL > [data-testid="inline-content"],

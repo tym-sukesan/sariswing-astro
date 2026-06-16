@@ -5,32 +5,29 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-9d-gosaki-astro-supabase-schedule-read-with-static-fallback (implementation complete — uncommitted)
-Latest commit: 2bd5b90 (G-9c2c result)
+Current phase: G-9d1-gosaki-supabase-schedule-read-verification-preview-package (verification complete — uncommitted)
+Latest commit: 6103250 (G-9d)
 ```
 
 ## Summary
 
-G-9d: Gosaki Astro convert now reads `public.schedules` from staging Supabase (anon key) when env is set; otherwise static-fallback from fixture extractor. Data-driven `/schedule/` hub and `/schedule/YYYY-MM/` month pages. Legacy `/YYYY-MM/` stubs unchanged.
+G-9d1 verified Gosaki schedule Supabase read + static fallback:
 
-**Modules:**
-- `scripts/lib/supabase-schedule-read.mjs`
-- `scripts/lib/gosaki-schedule-data-pages.mjs`
+- **Static-fallback** convert/build: PASS (`scheduleDataSource=static-fallback`, 60 events)
+- **Supabase read** (read-only, anon): PASS (60 rows, canonical `source_route`)
+- **Manual-upload package** generated at `output/manual-upload/gosaki-piano/` — not uploaded
+- **Legacy stubs** + **sitemap canonical-only**: PASS
 
-**No DB writes, no service_role, no FTP.**
-
-**Doc:** `tools/static-to-astro/docs/gosaki-astro-supabase-schedule-read-with-static-fallback.md`
+**Doc:** `tools/static-to-astro/docs/gosaki-supabase-schedule-read-verification-preview-package.md`
 
 ## Gates
 
 ```txt
-gosakiAstroSupabaseScheduleReadPlanningOrImplementationComplete: true
-gosakiScheduleReadUsesSiteSlug: true
-gosakiScheduleReadUsesCanonicalSourceRoute: true
-gosakiScheduleStaticFallbackReady: true
-gosakiScheduleLegacyStubsStillGenerated: true
-gosakiScheduleSitemapCanonicalOnly: true
-readyForG9dVerificationAndCommit: true
+gosakiSupabaseScheduleReadVerificationPreviewPackageComplete: true
+gosakiScheduleStaticFallbackVerified: true
+gosakiScheduleSupabaseReadVerified: true
+gosakiManualUploadPackageGenerated: true
+readyForG9d2ManualPreviewUpload: true
 readyForAnyDbWrite: false
 readyForAnyFtpApply: false
 ftpAutoDeployStillDisabled: true
@@ -38,11 +35,10 @@ ftpAutoDeployStillDisabled: true
 
 ## Safety
 
-- Staging only — not production
-- No Cursor/CI SQL execution
-- Anon key only for schedule read
+- No DB writes, no FTP, no manual upload in G-9d1
+- `service_role` not used
 
 ## Next
 
-- Operator commit/push G-9d
-- Optional: convert with Supabase env + manual re-upload
+- Commit G-9d1
+- G-9d2 operator manual preview upload (separate approval)

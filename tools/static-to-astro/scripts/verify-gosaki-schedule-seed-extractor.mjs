@@ -218,9 +218,16 @@ assert(
 const supabaseReadPath = path.join(TOOL_ROOT, "scripts/lib/supabase-schedule-read.mjs");
 assert("gosaki_supabase_schedule_read_module_exists", fs.existsSync(supabaseReadPath));
 
+const NO_SUPABASE_ENV = {
+  PUBLIC_SUPABASE_URL: "",
+  PUBLIC_SUPABASE_ANON_KEY: "",
+  SUPABASE_URL: "",
+  SUPABASE_ANON_KEY: "",
+};
+
 const fallbackBundle = await loadGosakiScheduleDataForBuild({
   inputDir: GOSAKI_FIXTURE,
-  env: {},
+  env: NO_SUPABASE_ENV,
 });
 assert(
   "gosaki_static_fallback_has_schedules",
@@ -234,6 +241,31 @@ assertEqual(
   fallbackMonths.find((m) => m.month === "2026-03")?.count ?? 0,
   13,
 );
+
+// --- G-9d1 Supabase read (when operator .env.local present) ---
+const supabaseBundle = await loadGosakiScheduleDataForBuild({
+  inputDir: GOSAKI_FIXTURE,
+});
+if (supabaseBundle.scheduleDataSource === "supabase") {
+  assertEqual("gosaki_supabase_read_row_count", supabaseBundle.rowCount, 60);
+  const supabaseMonths = deriveScheduleMonthsFromSchedules(supabaseBundle.schedules);
+  assertEqual("gosaki_supabase_read_month_count", supabaseMonths.length, 5);
+  assertEqual(
+    "gosaki_supabase_read_2026-07_count",
+    supabaseMonths.find((m) => m.month === "2026-07")?.count ?? 0,
+    14,
+  );
+  assert(
+    "gosaki_supabase_read_canonical_source_route",
+    supabaseBundle.schedules.every((s) =>
+      String(s.source_route ?? "").startsWith("/schedule/"),
+    ),
+  );
+} else {
+  console.log(
+    "SKIP gosaki_supabase_read_* (Supabase env not configured — deferred)",
+  );
+}
 
 console.log("");
 console.log(`verify-gosaki-schedule-seed-extractor: ${passed} passed, ${failed} failed`);

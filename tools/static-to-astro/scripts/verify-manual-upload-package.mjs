@@ -86,31 +86,72 @@ function main() {
   if (!readme.includes("public-dist")) errors.push("README missing public-dist guidance");
 
   for (const ym of ["2026-06", "2026-07"]) {
-    const monthPath = path.join(publicDist, ym, "index.html");
-    if (!fs.existsSync(monthPath)) {
-      errors.push(`missing month page: public-dist/${ym}/index.html`);
+    const canonicalMonthPath = path.join(publicDist, "schedule", ym, "index.html");
+    if (!fs.existsSync(canonicalMonthPath)) {
+      errors.push(`missing canonical month page: public-dist/schedule/${ym}/index.html`);
       continue;
     }
-    const monthHtml = fs.readFileSync(monthPath, "utf8");
+    const monthHtml = fs.readFileSync(canonicalMonthPath, "utf8");
     if (!monthHtml.includes("gosaki-schedule-month")) {
-      errors.push(`${ym} missing gosaki-schedule-month class`);
+      errors.push(`schedule/${ym} missing gosaki-schedule-month class`);
     }
     if (!monthHtml.includes("会場")) {
-      errors.push(`${ym} missing schedule body text (会場)`);
+      errors.push(`schedule/${ym} missing schedule body text (会場)`);
     }
     if (monthHtml.includes('style="visibility:hidden"')) {
-      errors.push(`${ym} still has visibility:hidden repeater`);
+      errors.push(`schedule/${ym} still has visibility:hidden repeater`);
+    }
+    if (
+      !monthHtml.includes(`scheduleDataSource=static-fallback`) &&
+      !monthHtml.includes(`scheduleDataSource=supabase`)
+    ) {
+      errors.push(`schedule/${ym} missing scheduleDataSource marker`);
+    }
+
+    const legacyMonthPath = path.join(publicDist, ym, "index.html");
+    if (!fs.existsSync(legacyMonthPath)) {
+      errors.push(`missing legacy stub: public-dist/${ym}/index.html`);
+      continue;
+    }
+    const legacyHtml = fs.readFileSync(legacyMonthPath, "utf8");
+    if (!legacyHtml.includes("gosaki-schedule-legacy-stub")) {
+      errors.push(`${ym} legacy stub missing gosaki-schedule-legacy-stub class`);
+    }
+    if (!legacyHtml.includes(`/schedule/${ym}/`)) {
+      errors.push(`${ym} legacy stub missing canonical link to /schedule/${ym}/`);
+    }
+    if (!legacyHtml.includes("noindex")) {
+      errors.push(`${ym} legacy stub missing noindex`);
+    }
+    if (legacyHtml.includes("gosaki-schedule-event-card")) {
+      errors.push(`${ym} legacy stub should not include full schedule cards`);
     }
   }
 
   const scheduleHub = path.join(publicDist, "schedule/index.html");
   if (fs.existsSync(scheduleHub)) {
     const hubHtml = fs.readFileSync(scheduleHub, "utf8");
-    if (!hubHtml.includes("/cms-kit-staging/gosaki-piano/2026-")) {
-      errors.push("schedule hub missing deployBase month links");
+    if (!hubHtml.includes("/cms-kit-staging/gosaki-piano/schedule/2026-")) {
+      errors.push("schedule hub missing deployBase canonical month links");
+    }
+    if (!hubHtml.includes("gosaki-schedule-hub")) {
+      errors.push("schedule hub missing gosaki-schedule-hub class");
     }
   } else {
     errors.push("missing schedule/index.html");
+  }
+
+  const sitemapPath = path.join(publicDist, "sitemap-0.xml");
+  if (fs.existsSync(sitemapPath)) {
+    const sitemap = fs.readFileSync(sitemapPath, "utf8");
+    if (!sitemap.includes("/schedule/2026-07/")) {
+      errors.push("sitemap missing canonical /schedule/2026-07/");
+    }
+    if (sitemap.includes("/gosaki-piano/2026-07/")) {
+      errors.push("sitemap must not include legacy /2026-07/ URL");
+    }
+  } else {
+    errors.push("missing sitemap-0.xml");
   }
 
   const discographyPath = path.join(publicDist, "discography/index.html");

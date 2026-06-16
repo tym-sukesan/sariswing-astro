@@ -1,41 +1,34 @@
-Last updated: 2026-06-16
+Last updated: 2026-06-17
 Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 1. Immediate priority
 
-**Current phase:** `G-9d-gosaki-astro-supabase-schedule-read-with-static-fallback` (implementation complete — uncommitted)
+**Current phase:** `G-9d1-gosaki-supabase-schedule-read-verification-preview-package` (verification complete — uncommitted)
 
 **Docs:**
-- `tools/static-to-astro/docs/gosaki-astro-supabase-schedule-read-with-static-fallback.md` (**new**)
-- `tools/static-to-astro/docs/gosaki-existing-schedule-rows-manual-sql-execution-result.md` (G-9c2c)
+- `tools/static-to-astro/docs/gosaki-supabase-schedule-read-verification-preview-package.md` (**new**)
+- `tools/static-to-astro/docs/gosaki-astro-supabase-schedule-read-with-static-fallback.md`
 
-**Awaiting:** operator commit/push approval (`Add Gosaki Supabase schedule read fallback`)
+**Awaiting:** operator commit/push approval (`Verify Gosaki Supabase schedule read preview package`)
 
-### G-9d implementation summary
+### G-9d1 verification summary
 
-- `scripts/lib/supabase-schedule-read.mjs` — anon read, normalize, `loadGosakiScheduleDataForBuild()`
-- `scripts/lib/gosaki-schedule-data-pages.mjs` — data-driven hub + month pages
-- `astro-generator.mjs` / convert / pipeline — prefetch bundle, skip Wix HTML months when data path active
-- `scheduleDataSource`: `supabase` | `static-fallback` | `wix-html` (logged + HTML comment)
-
-### Staging DB state (G-9c2c — unchanged)
-
-```txt
-site_slug=gosaki-piano: 60 rows
-month counts: 13/10/12/11/14
-source_route: canonical /schedule/YYYY-MM/ only
-```
+- Static-fallback pipeline: PASS (60 rows, 5 months, `scheduleDataSource=static-fallback`)
+- Supabase read: PASS (60 rows, month counts 13/10/12/11/14, read-only)
+- Manual-upload package: generated, `verify:manual-upload` PASS
+- Legacy stubs + sitemap canonical-only: PASS
 
 ### Gates
 
 ```txt
-gosakiAstroSupabaseScheduleReadPlanningOrImplementationComplete: true
-gosakiScheduleReadUsesSiteSlug: true
-gosakiScheduleReadUsesCanonicalSourceRoute: true
-gosakiScheduleStaticFallbackReady: true
-gosakiScheduleLegacyStubsStillGenerated: true
-gosakiScheduleSitemapCanonicalOnly: true
-readyForG9dVerificationAndCommit: true
+gosakiSupabaseScheduleReadVerificationPreviewPackageComplete: true
+gosakiScheduleStaticFallbackVerified: true
+gosakiScheduleSupabaseReadVerified: true
+gosakiManualUploadPackageGenerated: true
+gosakiScheduleRoutesVerified: true
+gosakiLegacyStubsVerified: true
+gosakiScheduleSitemapCanonicalOnlyVerified: true
+readyForG9d2ManualPreviewUpload: true
 readyForAnyDbWrite: false
 readyForAnyFtpApply: false
 ftpAutoDeployStillDisabled: true
@@ -43,17 +36,16 @@ ftpAutoDeployStillDisabled: true
 
 ## 2. Next steps
 
-1. **Commit G-9d** (operator approval)
-2. **Optional:** convert with staging Supabase env → verify `scheduleDataSource=supabase` → manual re-upload
-3. **Future:** staging shell schedule read binding; Top YouTube embed CMS (G-9a item 2)
+1. **Commit G-9d1** (operator approval)
+2. **G-9d2:** Operator manual preview upload from `output/manual-upload/gosaki-piano/public-dist/` (separate approval — no FTP auto-apply)
 
 ## 3. Do not
 
 - Execute SQL from Cursor/CI
-- Touch production / FTP / `/admin`
+- FTP upload without explicit G-9d2 approval
 - Use `service_role`
 
 ## 4. Baseline
 
-- Latest commit: `2bd5b90` (G-9c2c result)
-- G-9d: implementation complete, pending commit
+- Latest commit: `6103250` (G-9d)
+- G-9d1: verification complete, pending commit

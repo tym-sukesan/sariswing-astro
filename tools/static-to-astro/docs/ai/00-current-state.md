@@ -21,9 +21,11 @@ Staging Shell
 将来的な顧客オンボーディング・課金・デプロイ自動化
 
 2. Current phase
-現在フェーズ: G-9d-gosaki-astro-supabase-schedule-read-with-static-fallback（実装完了 — uncommitted）
+現在フェーズ: G-9d1-gosaki-supabase-schedule-read-verification-preview-package（検証完了 — uncommitted）
 
-G-9d: Gosaki convert/build に Supabase anon read + static fallback を追加。`supabase-schedule-read.mjs` + `gosaki-schedule-data-pages.mjs`。hub `/schedule/` と canonical month pages `/schedule/YYYY-MM/` を data-driven 生成。legacy stubs `/YYYY-MM/` 維持。DB write / service_role / FTP なし。
+G-9d1: static-fallback convert/build + Supabase read（read-only）+ manual-upload package 生成・spot-check 完了。FTP / 手動アップロードなし。
+
+G-9d: Gosaki convert/build に Supabase anon read + static fallback を追加（commit `6103250`）。
 
 G-9c2c: operator が staging で既存60行 UPDATE migration を手動実行完了（commit `2bd5b90`）。site_slug backfill、source_route 正規化、schedule-2026-07-010 PoC 復元、show_on_home/home_order 3件補正。rollback 未実行。Cursor/AI は SQL 未実行。
 
@@ -63,7 +65,9 @@ Gosaki staging:
   - `tools/static-to-astro/docs/gosaki-schedule-route-canonical-planning.md`
   - `tools/static-to-astro/docs/gosaki-schedule-canonical-route-implementation.md`
   - `tools/static-to-astro/docs/gosaki-schedule-legacy-month-route-stub.md`
+- G-9d1 doc: `tools/static-to-astro/docs/gosaki-supabase-schedule-read-verification-preview-package.md`
 - G-9d doc: `tools/static-to-astro/docs/gosaki-astro-supabase-schedule-read-with-static-fallback.md`
+- Preview package: `output/manual-upload/gosaki-piano/`（gitignored、operator upload 待ち）
 - Result doc: `tools/static-to-astro/docs/gosaki-existing-schedule-rows-manual-sql-execution-result.md`
 - Staging DB: 60 rows `site_slug=gosaki-piano`, canonical `source_route`, PoC row restored
 - Schedule read: anon key only; env なし時は static-fallback（fixture extractor）
@@ -468,23 +472,23 @@ rollbackNeeded: false
 明示的 retry で dev server を起動する場合は inline env のみ使用する。
 
 10. Recommended next phase
-次フェーズ推奨: G-9d commit → operator staging convert with Supabase env（optional re-upload）
+次フェーズ推奨: G-9d2 operator manual preview upload（別途承認）
 
-G-9d 実装完了（uncommitted）。staging `public.schedules` 60行を read 可能。env なしでも static-fallback で build 継続。
+G-9d1 検証完了。manual-upload package 生成済み（`safeForStaticFtp: true`）。FTP 未実行。
 
 詳細:
-- `tools/static-to-astro/docs/gosaki-astro-supabase-schedule-read-with-static-fallback.md`
-- `tools/static-to-astro/docs/gosaki-existing-schedule-rows-manual-sql-execution-result.md`
+- `tools/static-to-astro/docs/gosaki-supabase-schedule-read-verification-preview-package.md`
 
-G-9d gates:
+G-9d1 gates:
 ```txt
-gosakiAstroSupabaseScheduleReadPlanningOrImplementationComplete: true
-gosakiScheduleReadUsesSiteSlug: true
-gosakiScheduleReadUsesCanonicalSourceRoute: true
-gosakiScheduleStaticFallbackReady: true
-gosakiScheduleLegacyStubsStillGenerated: true
-gosakiScheduleSitemapCanonicalOnly: true
-readyForG9dVerificationAndCommit: true
+gosakiSupabaseScheduleReadVerificationPreviewPackageComplete: true
+gosakiScheduleStaticFallbackVerified: true
+gosakiScheduleSupabaseReadVerified: true
+gosakiManualUploadPackageGenerated: true
+gosakiScheduleRoutesVerified: true
+gosakiLegacyStubsVerified: true
+gosakiScheduleSitemapCanonicalOnlyVerified: true
+readyForG9d2ManualPreviewUpload: true
 readyForAnyDbWrite: false
 readyForAnyFtpApply: false
 ftpAutoDeployStillDisabled: true

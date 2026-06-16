@@ -62,6 +62,7 @@ import {
   applyGosakiAboutBandProfiles,
   isGosakiPianoFixture,
 } from "./gosaki-about-band-profiles.mjs";
+import { applyGosakiScheduleDataPages } from "./gosaki-schedule-data-pages.mjs";
 import { generateGosakiFooterAstro } from "./gosaki-footer-social.mjs";
 
 const TRAILING_SLASH = "always";
@@ -876,6 +877,18 @@ export function generateAstroProject(inputDir, outputDir, options = {}) {
   const scheduleMonthPages = detectScheduleMonthPages(analysis.pages);
   const scheduleHub = scheduleMonthPages.length > 0;
 
+  const gosakiScheduleBundle = options.gosakiScheduleBundle ?? null;
+  const useGosakiScheduleData =
+    isGosakiPianoFixture(siteDir) &&
+    gosakiScheduleBundle &&
+    (gosakiScheduleBundle.scheduleDataSource === "supabase" ||
+      gosakiScheduleBundle.scheduleDataSource === "static-fallback") &&
+    gosakiScheduleBundle.schedules.length > 0;
+
+  const gosakiDataMonthRoutes = useGosakiScheduleData
+    ? new Set(gosakiScheduleBundle.months.map((m) => m.route))
+    : null;
+
   const headerResult = generateHeaderAstro(headerHtml, "Header", {
     scheduleHub,
     productionOrigin,
@@ -902,6 +915,9 @@ export function generateAstroProject(inputDir, outputDir, options = {}) {
 
   const writtenPages = [];
   for (const page of analysis.pages) {
+    if (useGosakiScheduleData && gosakiDataMonthRoutes?.has(page.route)) {
+      continue;
+    }
     const pageFile = path.join(outDir, "src/pages", page.pagePath);
     const pageScripts = pageScriptMap.get(page.sourcePath) ?? [];
     writeFile(pageFile, generatePage(page, page.mainHtml, pageScripts, linkTransformContext));
@@ -910,11 +926,22 @@ export function generateAstroProject(inputDir, outputDir, options = {}) {
 
   let scheduleIndexGenerated = false;
   let legacyMonthStubsGenerated = 0;
+  /** @type {{ scheduleDataSource?: string, eventCount?: number, fallbackReason?: string | null } | null} */
+  let gosakiScheduleDataSummary = null;
   if (scheduleHub) {
-    const scheduleIndexPath = path.join(outDir, "src/pages/schedule/index.astro");
-    writeFile(scheduleIndexPath, generateScheduleIndexPage(scheduleMonthPages, baseUrl, deployBase));
-    writtenPages.push(scheduleIndexPath);
-    scheduleIndexGenerated = true;
+    if (useGosakiScheduleData) {
+      gosakiScheduleDataSummary = applyGosakiScheduleDataPages(outDir, gosakiScheduleBundle, {
+        baseUrl,
+        deployBase,
+      });
+      writtenPages.push(gosakiScheduleDataSummary.hubPath, ...gosakiScheduleDataSummary.monthPaths);
+      scheduleIndexGenerated = true;
+    } else {
+      const scheduleIndexPath = path.join(outDir, "src/pages/schedule/index.astro");
+      writeFile(scheduleIndexPath, generateScheduleIndexPage(scheduleMonthPages, baseUrl, deployBase));
+      writtenPages.push(scheduleIndexPath);
+      scheduleIndexGenerated = true;
+    }
 
     if (isGosakiPianoFixture(siteDir)) {
       for (const monthEntry of scheduleMonthPages) {
@@ -995,6 +1022,7 @@ export function generateAstroProject(inputDir, outputDir, options = {}) {
     seoMissingFields,
     baseUrl,
     scheduleIndexGenerated,
+    gosakiScheduleDataSummary,
   });
 
   const totalPageCount =
@@ -1096,6 +1124,8 @@ export function generateAstroProject(inputDir, outputDir, options = {}) {
     adminCmsSummary,
     siteProfileSummary,
     gosakiBandProfilesSummary,
+    gosakiScheduleDataSummary,
+    gosakiScheduleBundle,
   };
 }
 
@@ -1121,6 +1151,15 @@ export function printGenerationSummary(result) {
   console.log(`  Pages:  ${pageCount}${result.scheduleIndexGenerated ? " (includes /schedule/ index)" : ""}`);
   if (result.scheduleMonthPages?.length) {
     console.log(`  Schedule: ${result.scheduleMonthPages.length} month page(s) → hub at /schedule/`);
+  }
+  if (result.gosakiScheduleDataSummary?.scheduleDataSource) {
+    console.log(
+      `  Schedule data: scheduleDataSource=${result.gosakiScheduleDataSummary.scheduleDataSource} (${result.gosakiScheduleDataSummary.eventCount ?? 0} events)`,
+    );
+  } else if (result.gosakiScheduleBundle?.scheduleDataSource === "wix-html") {
+    console.log(
+      `  Schedule data: scheduleDataSource=wix-html (Wix HTML month pages; ${result.gosakiScheduleBundle.fallbackReason ?? "no extractor data"})`,
+    );
   }
   if (result.seoPublishReadiness?.sitemapIntegrationEnabled) {
     console.log(`  SEO:     site=${result.seoPublishReadiness.baseUrl} robots.txt + @astrojs/sitemap`);

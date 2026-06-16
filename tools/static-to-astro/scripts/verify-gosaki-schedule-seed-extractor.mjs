@@ -17,6 +17,10 @@ import {
   GOSAKI_SEED_LEGACY_ID_COLLISIONS,
   GOSAKI_CANONICAL_SOURCE_ROUTE_PREFIX,
 } from "./lib/gosaki-schedules-seed-sql.mjs";
+import {
+  deriveScheduleMonthsFromSchedules,
+  loadGosakiScheduleDataForBuild,
+} from "./lib/supabase-schedule-read.mjs";
 import { extractSchedulesFromHtmlFile } from "./lib/schedule-seed-extractor.mjs";
 import fs from "node:fs";
 
@@ -208,6 +212,27 @@ assert(
 assert(
   "gosaki_seed_legacy_collision_registered",
   GOSAKI_SEED_LEGACY_ID_COLLISIONS.some((c) => c.legacy_id === "schedule-2026-07-010"),
+);
+
+// --- G-9d static fallback (no Supabase env) ---
+const supabaseReadPath = path.join(TOOL_ROOT, "scripts/lib/supabase-schedule-read.mjs");
+assert("gosaki_supabase_schedule_read_module_exists", fs.existsSync(supabaseReadPath));
+
+const fallbackBundle = await loadGosakiScheduleDataForBuild({
+  inputDir: GOSAKI_FIXTURE,
+  env: {},
+});
+assert(
+  "gosaki_static_fallback_has_schedules",
+  fallbackBundle.scheduleDataSource === "static-fallback" &&
+    fallbackBundle.schedules.length === 60,
+);
+const fallbackMonths = deriveScheduleMonthsFromSchedules(fallbackBundle.schedules);
+assertEqual("gosaki_static_fallback_month_count", fallbackMonths.length, 5);
+assertEqual(
+  "gosaki_static_fallback_2026-03_count",
+  fallbackMonths.find((m) => m.month === "2026-03")?.count ?? 0,
+  13,
 );
 
 console.log("");

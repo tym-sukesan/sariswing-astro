@@ -21,9 +21,11 @@ Staging Shell
 将来的な顧客オンボーディング・課金・デプロイ自動化
 
 2. Current phase
-現在フェーズ: G-9c2c-gosaki-existing-schedule-rows-operator-manual-sql-execution（完了 — uncommitted）
+現在フェーズ: G-9d-gosaki-astro-supabase-schedule-read-with-static-fallback（実装完了 — uncommitted）
 
-G-9c2c: operator が staging で既存60行 UPDATE migration を手動実行完了。site_slug backfill、source_route 正規化、schedule-2026-07-010 PoC 復元、show_on_home/home_order 3件補正。rollback 未実行。Cursor/AI は SQL 未実行。
+G-9d: Gosaki convert/build に Supabase anon read + static fallback を追加。`supabase-schedule-read.mjs` + `gosaki-schedule-data-pages.mjs`。hub `/schedule/` と canonical month pages `/schedule/YYYY-MM/` を data-driven 生成。legacy stubs `/YYYY-MM/` 維持。DB write / service_role / FTP なし。
+
+G-9c2c: operator が staging で既存60行 UPDATE migration を手動実行完了（commit `2bd5b90`）。site_slug backfill、source_route 正規化、schedule-2026-07-010 PoC 復元、show_on_home/home_order 3件補正。rollback 未実行。Cursor/AI は SQL 未実行。
 
 G-9c2b: 既存60行 UPDATE checklist（commit `479347a`）。
 
@@ -61,9 +63,10 @@ Gosaki staging:
   - `tools/static-to-astro/docs/gosaki-schedule-route-canonical-planning.md`
   - `tools/static-to-astro/docs/gosaki-schedule-canonical-route-implementation.md`
   - `tools/static-to-astro/docs/gosaki-schedule-legacy-month-route-stub.md`
-- 次: G-9d Astro Supabase read + static fallback for schedule pages
+- G-9d doc: `tools/static-to-astro/docs/gosaki-astro-supabase-schedule-read-with-static-fallback.md`
 - Result doc: `tools/static-to-astro/docs/gosaki-existing-schedule-rows-manual-sql-execution-result.md`
 - Staging DB: 60 rows `site_slug=gosaki-piano`, canonical `source_route`, PoC row restored
+- Schedule read: anon key only; env なし時は static-fallback（fixture extractor）
 
 3. Important completed milestones
 
@@ -465,23 +468,23 @@ rollbackNeeded: false
 明示的 retry で dev server を起動する場合は inline env のみ使用する。
 
 10. Recommended next phase
-次フェーズ推奨: G-9d Astro Supabase schedule read + static fallback
+次フェーズ推奨: G-9d commit → operator staging convert with Supabase env（optional re-upload）
 
-G-9c2c 完了。staging `public.schedules` に Gosaki 60行が `site_slug=gosaki-piano` + canonical `source_route` で登録済み。
+G-9d 実装完了（uncommitted）。staging `public.schedules` 60行を read 可能。env なしでも static-fallback で build 継続。
 
 詳細:
+- `tools/static-to-astro/docs/gosaki-astro-supabase-schedule-read-with-static-fallback.md`
 - `tools/static-to-astro/docs/gosaki-existing-schedule-rows-manual-sql-execution-result.md`
-- Checklist: `tools/static-to-astro/docs/gosaki-existing-schedule-rows-manual-sql-execution-checklist.md`
 
-G-9c2c gates:
+G-9d gates:
 ```txt
-gosakiExistingRowsOperatorManualSqlExecutionComplete: true
-gosakiScheduleRowsSiteSlugBackfilled: true
-gosakiScheduleRowsSourceRouteCanonicalized: true
-gosakiSchedulePocRowRestored: true
-gosakiScheduleHomeFlagsNormalized: true
-gosakiScheduleSeedRowsVerified: true
-readyForG9dAstroSupabaseScheduleRead: true
+gosakiAstroSupabaseScheduleReadPlanningOrImplementationComplete: true
+gosakiScheduleReadUsesSiteSlug: true
+gosakiScheduleReadUsesCanonicalSourceRoute: true
+gosakiScheduleStaticFallbackReady: true
+gosakiScheduleLegacyStubsStillGenerated: true
+gosakiScheduleSitemapCanonicalOnly: true
+readyForG9dVerificationAndCommit: true
 readyForAnyDbWrite: false
 readyForAnyFtpApply: false
 ftpAutoDeployStillDisabled: true

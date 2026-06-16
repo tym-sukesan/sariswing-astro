@@ -926,6 +926,40 @@ assert(
   ) === false,
 );
 
+const supabaseScheduleReadPath = path.join(TOOL_ROOT, "scripts/lib/supabase-schedule-read.mjs");
+const gosakiScheduleDataPagesPath = path.join(
+  TOOL_ROOT,
+  "scripts/lib/gosaki-schedule-data-pages.mjs",
+);
+assert("G-9d supabase schedule read module exists", fs.existsSync(supabaseScheduleReadPath));
+assert("G-9d gosaki schedule data pages module exists", fs.existsSync(gosakiScheduleDataPagesPath));
+
+const supabaseScheduleReadSrc = fs.readFileSync(supabaseScheduleReadPath, "utf8");
+assert(
+  "G-9d read uses site_slug and published filters",
+  supabaseScheduleReadSrc.includes(".eq(\"site_slug\", siteSlug)") &&
+    supabaseScheduleReadSrc.includes(".eq(\"published\", true)"),
+);
+assert(
+  "G-9d read does not use service_role",
+  !supabaseScheduleReadSrc.includes("SERVICE_ROLE_KEY") &&
+    !supabaseScheduleReadSrc.includes("serviceRoleKey"),
+);
+assert(
+  "G-9d static fallback via extractor",
+  supabaseScheduleReadSrc.includes("extractAllGosakiScheduleSeeds") &&
+    supabaseScheduleReadSrc.includes("scheduleDataSource"),
+);
+assert(
+  "G-9d astro generator wires data pages",
+  astroGeneratorSrc.includes("applyGosakiScheduleDataPages") &&
+    astroGeneratorSrc.includes("gosakiScheduleBundle"),
+);
+assert(
+  "G-9d data pages include scheduleDataSource marker",
+  fs.readFileSync(gosakiScheduleDataPagesPath, "utf8").includes("scheduleDataSource="),
+);
+
 const gosakiPublicDist = path.join(TOOL_ROOT, "output/static-public/gosaki-piano/public-dist");
 for (const ym of ["2026-06", "2026-07"]) {
   const canonicalMonthPath = path.join(gosakiPublicDist, "schedule", ym, "index.html");

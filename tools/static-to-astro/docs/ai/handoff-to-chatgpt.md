@@ -5,30 +5,32 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-9c2c-gosaki-existing-schedule-rows-operator-manual-sql-execution (complete — uncommitted)
-Latest commit: 479347a (G-9c2b checklist)
+Current phase: G-9d-gosaki-astro-supabase-schedule-read-with-static-fallback (implementation complete — uncommitted)
+Latest commit: 2bd5b90 (G-9c2c result)
 ```
 
 ## Summary
 
-G-9c2c: Operator manually executed existing 60 rows UPDATE migration on `static-to-astro-cms-staging`.
+G-9d: Gosaki Astro convert now reads `public.schedules` from staging Supabase (anon key) when env is set; otherwise static-fallback from fixture extractor. Data-driven `/schedule/` hub and `/schedule/YYYY-MM/` month pages. Legacy `/YYYY-MM/` stubs unchanged.
 
-- **60 rows** `site_slug=gosaki-piano`
-- **Canonical** `source_route` `/schedule/YYYY-MM/`
-- **PoC row** `schedule-2026-07-010` restored (no rename)
-- **3 rows** `show_on_home`/`home_order` corrected (2026-03-011/012/013)
-- **Rollback:** not executed
+**Modules:**
+- `scripts/lib/supabase-schedule-read.mjs`
+- `scripts/lib/gosaki-schedule-data-pages.mjs`
 
-**Cursor/AI:** did NOT execute SQL.
+**No DB writes, no service_role, no FTP.**
 
-**Result doc:** `tools/static-to-astro/docs/gosaki-existing-schedule-rows-manual-sql-execution-result.md`
+**Doc:** `tools/static-to-astro/docs/gosaki-astro-supabase-schedule-read-with-static-fallback.md`
 
 ## Gates
 
 ```txt
-gosakiExistingRowsOperatorManualSqlExecutionComplete: true
-gosakiScheduleSeedRowsVerified: true
-readyForG9dAstroSupabaseScheduleRead: true
+gosakiAstroSupabaseScheduleReadPlanningOrImplementationComplete: true
+gosakiScheduleReadUsesSiteSlug: true
+gosakiScheduleReadUsesCanonicalSourceRoute: true
+gosakiScheduleStaticFallbackReady: true
+gosakiScheduleLegacyStubsStillGenerated: true
+gosakiScheduleSitemapCanonicalOnly: true
+readyForG9dVerificationAndCommit: true
 readyForAnyDbWrite: false
 readyForAnyFtpApply: false
 ftpAutoDeployStillDisabled: true
@@ -38,7 +40,9 @@ ftpAutoDeployStillDisabled: true
 
 - Staging only — not production
 - No Cursor/CI SQL execution
+- Anon key only for schedule read
 
 ## Next
 
-G-9d — Astro Supabase schedule read + static fallback
+- Operator commit/push G-9d
+- Optional: convert with Supabase env + manual re-upload

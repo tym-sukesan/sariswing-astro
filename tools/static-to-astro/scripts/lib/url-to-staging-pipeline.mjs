@@ -146,6 +146,14 @@ export async function runUrlToStagingPipeline(opts) {
         throw new Error(`Fixture not found: ${config.fixtureOut}`);
       }
       const { generateAstroProject } = await import("./astro-generator.mjs");
+      const { isGosakiPianoFixture } = await import("./gosaki-about-band-profiles.mjs");
+      const { loadGosakiScheduleDataForBuild } = await import("./supabase-schedule-read.mjs");
+      let gosakiScheduleBundle = null;
+      if (isGosakiPianoFixture(config.fixtureOut)) {
+        gosakiScheduleBundle = await loadGosakiScheduleDataForBuild({
+          inputDir: config.fixtureOut,
+        });
+      }
       const result = generateAstroProject(config.fixtureOut, config.projectOut, {
         dryRun: false,
         baseUrl: config.stagingBaseUrl ?? null,
@@ -153,6 +161,7 @@ export async function runUrlToStagingPipeline(opts) {
         productionBaseUrl: config.productionBaseUrl ?? config.startUrl ?? null,
         siteProfile: config.siteProfile,
         verifyBuild: gates.runBuild,
+        gosakiScheduleBundle,
       });
       artifacts.astroProject = config.projectOut;
       artifacts.conversionReport = path.join(config.projectOut, "CONVERSION_REPORT.md");

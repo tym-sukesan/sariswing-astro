@@ -7,6 +7,8 @@
 import fs from "node:fs";
 import path from "node:path";
 import { generateAstroProject, printGenerationSummary } from "./lib/astro-generator.mjs";
+import { isGosakiPianoFixture } from "./lib/gosaki-about-band-profiles.mjs";
+import { loadGosakiScheduleDataForBuild } from "./lib/supabase-schedule-read.mjs";
 
 function parseArgs(argv) {
   const positional = [];
@@ -86,7 +88,7 @@ Options:
 `);
 }
 
-function main() {
+async function main() {
   let args;
   try {
     args = parseArgs(process.argv);
@@ -115,6 +117,11 @@ function main() {
   }
 
   try {
+    let gosakiScheduleBundle = null;
+    if (!dryRun && isGosakiPianoFixture(inputAbs)) {
+      gosakiScheduleBundle = await loadGosakiScheduleDataForBuild({ inputDir: inputAbs });
+    }
+
     const result = generateAstroProject(inputAbs, outputAbs, {
       dryRun,
       baseUrl,
@@ -122,6 +129,7 @@ function main() {
       verifyBuild,
       withAdminCms,
       siteProfile,
+      gosakiScheduleBundle,
     });
     if (dryRun) {
       console.log("static-to-astro convert (dry-run)");

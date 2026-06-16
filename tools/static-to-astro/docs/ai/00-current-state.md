@@ -21,9 +21,13 @@ Staging Shell
 将来的な顧客オンボーディング・課金・デプロイ自動化
 
 2. Current phase
-現在フェーズ: G-9c1-gosaki-schedule-seed-operator-manual-sql-execution-preflight（完了）
+現在フェーズ: G-9c2a-gosaki-existing-schedule-rows-migration-replanning（完了 — planning only, uncommitted）
 
-G-9c1: Gosaki schedule seed の operator 手動 SQL 実行 preflight 文書化。8ステップ実行順序、PoC legacy_id rename、rollback、承認文言。SQL実行なし。
+G-9c2a: staging に既存 `schedule-2026-*` 60行が存在することを operator が確認。60 INSERT 方針を中止し、既存行採用 + UPDATE correction 方式へ再計画。Option A 推奨。SQL template 作成、SQL実行なし。
+
+G-9c2: 60 INSERT checklist 作成済み（`b969418`）— operator 実行中に中止。deprecated。
+
+G-9c1: Gosaki schedule seed operator 手動 SQL preflight（`6c0cb68`）。INSERT 方式は G-9c2a で superseded。
 
 G-9c0c: seed SQL template canonical route 対応（commit `d19149c`）
 
@@ -57,7 +61,9 @@ Gosaki staging:
   - `tools/static-to-astro/docs/gosaki-schedule-route-canonical-planning.md`
   - `tools/static-to-astro/docs/gosaki-schedule-canonical-route-implementation.md`
   - `tools/static-to-astro/docs/gosaki-schedule-legacy-month-route-stub.md`
-- 次: G-9c2 operator manual SQL execution（明示承認後）
+- 次: G-9c2b existing-rows manual SQL execution checklist（明示承認後）
+- DB state (operator confirmed): 60 `schedule-2026-*` rows exist; `site_slug` column absent; legacy `source_route` `/schedule-2026-XX/`
+- Replan doc: `tools/static-to-astro/docs/gosaki-existing-schedule-rows-migration-replanning.md`
 
 3. Important completed milestones
 
@@ -459,22 +465,23 @@ rollbackNeeded: false
 明示的 retry で dev server を起動する場合は inline env のみ使用する。
 
 10. Recommended next phase
-次フェーズ推奨: G-9c2 operator manual SQL execution
+次フェーズ推奨: G-9c2b existing-rows manual SQL execution checklist
 
-G-9c1 preflight 完了。operator が `static-to-astro-cms-staging` で手動 SQL 実行（G-9c2 承認後）。
+G-9c2a replanning 完了。既存60行採用 + site_slug backfill + source_route canonicalize + schedule-2026-07-010 PoC復元（rename しない）。
 
 詳細:
-- `tools/static-to-astro/docs/gosaki-schedule-seed-operator-manual-sql-execution-preflight.md`
+- `tools/static-to-astro/docs/gosaki-existing-schedule-rows-migration-replanning.md`
+- SQL templates: `gosaki-existing-schedules-*.template.sql`, `gosaki-schedule-2026-07-010-restore.template.sql`
 
-G-9c1 gates:
+G-9c2a gates:
 ```txt
-gosakiScheduleSeedOperatorSqlExecutionPreflightComplete: true
-gosakiScheduleSeedExecutionSequenceDocumented: true
-gosakiSiteSlugMigrationExecutionPlanReady: true
-gosakiSeedLegacyIdCollisionResolutionPlanReady: true
-gosakiScheduleSeedInsertExecutionPlanReady: true
-gosakiScheduleSeedRollbackPlanReady: true
-readyForG9c2OperatorManualSqlExecution: true
+gosakiExistingScheduleRowsMigrationReplanningComplete: true
+gosakiScheduleInsertPlanDeprecated: true
+gosakiExisting60RowsAdoptionRecommended: true
+gosakiSiteSlugBackfillPlanReady: true
+gosakiSourceRouteCanonicalUpdatePlanReady: true
+gosakiPocRowRestorePlanReady: true
+readyForG9c2bExistingRowsManualSqlExecutionChecklist: true
 readyForAnyDbWrite: false
 readyForAnyFtpApply: false
 ftpAutoDeployStillDisabled: true

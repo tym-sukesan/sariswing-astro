@@ -3,17 +3,17 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 1. Immediate priority
 
-**Current phase:** `G-9b2-gosaki-inline-font-family-safety-fix` (complete)
+**Current phase:** `G-9b3-gosaki-avenir-next-typography-regression-fix` (complete)
 
-**Doc:** `tools/static-to-astro/docs/gosaki-inline-font-family-safety-fix.md`
+**Doc:** `tools/static-to-astro/docs/gosaki-avenir-next-typography-regression-fix.md`
 
 ### Gates
 
 ```txt
-gosakiInlineFontFamilySafetyFixComplete: true
-futuraLtW01BookRemovedFromGeneratedHtml: true
-manualUploadPublicDistFontSafe: true
-readyToCommitInlineFontSafetyFix: true
+gosakiAvenirNextTypographyRegressionFixComplete: true
+discographyHeadingWrapFixed: true
+wixFontSafetyStillPassed: true
+wixClassCleanupDeferred: true
 readyForG9cGosakiScheduleSeedSqlPlanning: true
 readyForAnyDbWrite: false
 readyForAnyFtpApply: false
@@ -22,11 +22,11 @@ ftpAutoDeployStillDisabled: true
 
 ## 2. Next steps
 
-1. **Commit** G-9b2 inline font safety fix (operator approval)
-2. **G-9c:** `gosaki-schedule-seed-sql-planning` — INSERT SQL from extractor JSON; operator manual staging seed
-3. **Operator:** Manual re-upload `output/manual-upload/gosaki-piano/public-dist/` after commit
-4. **G-9d:** Astro Supabase read + static fallback for schedule pages
-5. **Do not:** DB write, FTP auto-apply, `/admin` changes, workflow_dispatch
+1. **Commit** G-9b3 typography fix (operator approval)
+2. **G-9c:** `gosaki-schedule-seed-sql-planning`
+3. **Operator:** Manual re-upload after G-9b3 commit
+4. **Deferred:** `/` home PC horizontal scroll — pre-existing; future gosaki responsive cleanup (see `gosaki-avenir-next-typography-regression-fix.md`)
+5. **Do not:** DB write, FTP auto-apply, `/admin` changes
 
 ## 3. Gosaki staging preview (baseline)
 

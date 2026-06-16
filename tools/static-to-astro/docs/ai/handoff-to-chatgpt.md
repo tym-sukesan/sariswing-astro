@@ -5,27 +5,16 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-9b2-gosaki-inline-font-family-safety-fix (complete)
-Latest commit: (G-9b2 uncommitted — await operator commit)
-Prior: G-9b1 font safety, G-9b schedule seed extractor
+Current phase: G-9b3-gosaki-avenir-next-typography-regression-fix (complete)
+Latest commit: c8d0df5 (G-9b3 uncommitted — await operator commit)
+Prior: G-9b2 inline font safety, G-9b1 font audit
 ```
 
 ## Summary
 
-G-9b2: Removed Wix font **names** from generated HTML inline styles (especially `Header.astro` logo/nav). `sanitizeWixFontHtml()` + header-transform wiring. `public-dist` grep: 0 blocked patterns.
+G-9b3: Fixed PC page-title wrap after Avenir Next swap (Wix fixed-width boxes e.g. `#comp-jqy0szge` 199px). Font safety unchanged. Wix class cleanup deferred.
 
-G-9b1: `@font-face` / woff URL stripping in `global.css`.
-
-**Doc:** `tools/static-to-astro/docs/gosaki-inline-font-family-safety-fix.md`
-
-## Font safety (G-9b2)
-
-```txt
-Module: scripts/lib/wix-font-safety.mjs (sanitizeWixFontHtml, rewriteFntAndFontShorthand)
-Header: scripts/lib/header-transform.mjs (sanitize before Astro withBase injection)
-Verify: npm run verify:gosaki-font-safety (37 passed)
-Stacks: Avenir Next / Helvetica Neue / Arial (display); Helvetica + Hiragino/Meiryo (body)
-```
+**Doc:** `tools/static-to-astro/docs/gosaki-avenir-next-typography-regression-fix.md`
 
 ## CMS MVP priority
 

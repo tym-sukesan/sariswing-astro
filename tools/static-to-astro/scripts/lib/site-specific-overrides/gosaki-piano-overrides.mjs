@@ -1715,5 +1715,89 @@ body.wix-static-export #comp-llexymel [id^="comp-lley693e__"] > p:first-of-type 
     font-size: calc(14px + 2px) !important;
   }
 }
+
+/* --- G-9b3 gosaki avenir-next typography regression fix (site-specific) --- */
+/*
+ * G-9b2 Avenir Next is wider than the original Wix display face inside fixed-width
+ * title boxes (e.g. #comp-jqy0szge { width: 199px }). Relax PC title width + nowrap
+ * on page titles only. Wix class cleanup (wixui-rich-text__text etc.) is deferred.
+ */
+
+@media (min-width: 769px) {
+  body.wix-static-export #comp-jqy0szge,
+  body.wix-static-export #WRchTxt16,
+  body.wix-static-export #WRchTxt4 {
+    width: auto !important;
+    max-width: none !important;
+    min-width: 0 !important;
+    text-align: center !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    left: auto !important;
+    right: auto !important;
+    justify-self: center !important;
+  }
+
+  body.wix-static-export #comp-jqy0szge h4,
+  body.wix-static-export #comp-jqy0szge .font_4,
+  body.wix-static-export #comp-jqy0szge > .wixui-rich-text__text,
+  body.wix-static-export #comp-jqy0szge h4 .wixui-rich-text__text,
+  body.wix-static-export #WRchTxt16 h4,
+  body.wix-static-export #WRchTxt16 .font_4,
+  body.wix-static-export #WRchTxt16 > .wixui-rich-text__text,
+  body.wix-static-export #WRchTxt16 h4 .wixui-rich-text__text,
+  body.wix-static-export #WRchTxt4 h4,
+  body.wix-static-export #WRchTxt4 .font_4,
+  body.wix-static-export #WRchTxt4 > .wixui-rich-text__text,
+  body.wix-static-export #WRchTxt4 h4 .wixui-rich-text__text {
+    white-space: nowrap !important;
+    overflow-wrap: normal !important;
+    word-break: normal !important;
+  }
+
+  body.wix-static-export #SITE_HEADER #comp-mbdw9tzc h1,
+  body.wix-static-export #SITE_HEADER #comp-mbdw9tzc h1 .wixui-rich-text__text,
+  body.wix-static-export #SITE_HEADER #comp-mbdw9tzc .site-logo-link {
+    white-space: nowrap !important;
+    overflow-wrap: normal !important;
+    word-break: normal !important;
+  }
+
+  body.wix-static-export #SITE_HEADER .global-nav a {
+    white-space: nowrap !important;
+  }
+
+  body.wix-static-export .gosaki-schedule-hub__title,
+  body.wix-static-export .gosaki-schedule-month h2.font_2,
+  body.wix-static-export .gosaki-schedule-month .gosaki-schedule-event-date {
+    white-space: nowrap !important;
+    overflow-wrap: normal !important;
+    word-break: normal !important;
+  }
+
+  body.wix-static-export #comp-llexymel [id^="comp-lley4qy2__"] > p:first-of-type .wixui-rich-text__text,
+  body.wix-static-export #comp-llexymel [id^="comp-lley693e__"] > p:first-of-type .wixui-rich-text__text {
+    white-space: nowrap !important;
+    overflow-wrap: normal !important;
+    word-break: normal !important;
+  }
+}
+
+@media (max-width: 768px) {
+  body.wix-static-export #comp-jqy0szge .wixui-rich-text__text,
+  body.wix-static-export #WRchTxt16 .wixui-rich-text__text,
+  body.wix-static-export #WRchTxt4 .wixui-rich-text__text,
+  body.wix-static-export .gosaki-schedule-hub__title,
+  body.wix-static-export .gosaki-schedule-month h2.font_2 {
+    overflow-wrap: normal !important;
+    word-break: normal !important;
+  }
+
+  body.wix-static-export #SITE_HEADER #comp-mbdw9tzc h1,
+  body.wix-static-export #SITE_HEADER #comp-mbdw9tzc h1 .wixui-rich-text__text {
+    overflow-wrap: normal !important;
+    word-break: normal !important;
+  }
+}
 `;
 }

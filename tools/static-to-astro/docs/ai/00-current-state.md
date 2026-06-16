@@ -21,9 +21,11 @@ Staging Shell
 将来的な顧客オンボーディング・課金・デプロイ自動化
 
 2. Current phase
-現在フェーズ: G-9b2-gosaki-inline-font-family-safety-fix（完了）
+現在フェーズ: G-9b3-gosaki-avenir-next-typography-regression-fix（完了）
 
-G-9b2: HTML inline `style` / `Header.astro` 内の Wix font 名（`futura-lt-w01-book` 等）を `sanitizeWixFontHtml()` + header-transform 接続で除去。`public-dist` 0件確認。DB・FTP なし。
+G-9b3: Avenir Next 置換後の PC 見出し折り返し修正（`#comp-jqy0szge` 等の固定幅 + nowrap）。font safety 維持。DB・FTP なし。
+
+G-9b2: HTML inline style / Header 内 Wix font 名除去。DB・FTP なし。
 
 G-9b1: Wix proprietary font 監査 + `wix-font-safety.mjs` sanitizer。`@font-face` / futura / avenir Wix face を static export から除外・置換。DB・FTP なし。
 

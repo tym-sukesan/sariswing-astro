@@ -943,6 +943,22 @@ assert("G-9b1 sanitize removes @font-face from sample", auditFontSafety(sanitize
 assert("G-9b1 sanitize removes futura from sample", !/futura/i.test(sanitizedSample));
 assert("G-9b1 composed overrides font-safe", isFontSafeForStaticExport(wixOverrides));
 
+// --- G-9b3 avenir-next typography regression fix ---
+
+assert(
+  "G-9b3 typography regression block present",
+  gosakiOverrides.includes("G-9b3 gosaki avenir-next typography regression fix"),
+);
+assert(
+  "G-9b3 discography title nowrap on PC",
+  gosakiOverrides.includes("#comp-jqy0szge h4") &&
+    gosakiOverrides.includes("white-space: nowrap !important"),
+);
+assert(
+  "G-9b3 still uses safe display stack not futura",
+  gosakiOverrides.includes('"Avenir Next"') && !gosakiOverrides.includes("futura-lt-w01-book"),
+);
+
 // --- cleanup temp manifest ---
 
 try {

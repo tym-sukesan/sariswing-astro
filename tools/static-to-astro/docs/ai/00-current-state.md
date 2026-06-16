@@ -21,7 +21,9 @@ Staging Shell
 将来的な顧客オンボーディング・課金・デプロイ自動化
 
 2. Current phase
-現在フェーズ: G-9b-gosaki-schedule-data-seed-planning（完了 — planning + dry-run extractor）
+現在フェーズ: G-9b1-gosaki-font-and-wix-asset-license-safety-audit（完了）
+
+G-9b1: Wix  proprietary font 監査 + `wix-font-safety.mjs` sanitizer。`@font-face` / futura / avenir Wix face を static export から除外・置換。DB・FTP なし。
 
 G-9b: Gosaki Wix repeater schedule seed 設計 + dry-run extractor（60 events, site_slug=gosaki-piano）。DB・SQL・FTP なし。
 
@@ -36,8 +38,9 @@ Gosaki staging:
 - staging URL: `https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/`
 - client preview ready (`readyForGosakiClientPreview: true`)
 - deploy: manual upload only; FTP auto deploy disabled
-- Doc: `tools/static-to-astro/docs/gosaki-schedule-data-seed-planning.md`
-- Extractor: `gosaki-wix-schedule-extractor.mjs` — 60 events dry-run verified
+- Doc: `tools/static-to-astro/docs/gosaki-font-and-wix-asset-license-safety-audit.md`
+- Font sanitizer: `wix-font-safety.mjs` — verify:gosaki-font-safety 21 passed
+- Schedule extractor: `gosaki-wix-schedule-extractor.mjs` — 60 events dry-run verified
 - 次: `G-9c-gosaki-schedule-seed-sql-planning`
 
 3. Important completed milestones

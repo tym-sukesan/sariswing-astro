@@ -35,6 +35,12 @@ import {
 import { productionAbsoluteUrlToRoute } from "./lib/path-transform.mjs";
 import { buildWixStagingVisualOverridesCss } from "./lib/wix-staging-visual-overrides.mjs";
 import { buildWixStaticExportBaselineOverridesCss } from "./lib/wix-static-export-baseline-overrides.mjs";
+import {
+  GOSAKI_SAFE_DISPLAY_FONT_STACK,
+  auditFontSafety,
+  isFontSafeForStaticExport,
+  sanitizeWixFontCss,
+} from "./lib/wix-font-safety.mjs";
 import { buildGosakiPianoSiteOverridesCss } from "./lib/site-specific-overrides/gosaki-piano-overrides.mjs";
 import {
   extractGosakiFooterSocialLinks,
@@ -353,7 +359,12 @@ assert(
 );
 assert(
   "gosaki site overrides include brand nav colors",
-  gosakiOverrides.includes("#9e3b1b") && gosakiOverrides.includes("futura-lt-w01-book"),
+  gosakiOverrides.includes("#9e3b1b") &&
+    gosakiOverrides.includes(GOSAKI_SAFE_DISPLAY_FONT_STACK),
+);
+assert(
+  "gosaki site overrides do not reference futura-lt-w01-book",
+  !gosakiOverrides.includes("futura-lt-w01-book"),
 );
 assert(
   "gosaki site overrides do not include band profiles",
@@ -923,6 +934,14 @@ if (fs.existsSync(gosakiBuiltIndex)) {
       indexHtml.includes("instagram.com/gosaakiii"),
   );
 }
+
+// --- G-9b1 font safety (no network) ---
+
+const sampleWixFontCss = `@font-face{font-family:'futura-lt-w01-book';src:url(https://static.parastorage.com/x.woff2)} .x{font-family:futura-lt-w01-book,sans-serif}`;
+const sanitizedSample = sanitizeWixFontCss(sampleWixFontCss);
+assert("G-9b1 sanitize removes @font-face from sample", auditFontSafety(sanitizedSample).fontFaceCount === 0);
+assert("G-9b1 sanitize removes futura from sample", !/futura/i.test(sanitizedSample));
+assert("G-9b1 composed overrides font-safe", isFontSafeForStaticExport(wixOverrides));
 
 // --- cleanup temp manifest ---
 

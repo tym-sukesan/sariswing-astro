@@ -5,26 +5,24 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-9b-gosaki-schedule-data-seed-planning (complete — planning + dry-run extractor)
-Latest commit: 77b57b8 (G-9b changes uncommitted)
-Prior: G-9a gosaki CMS scope planning; G-8g gosaki staging preview fixes
+Current phase: G-9b1-gosaki-font-and-wix-asset-license-safety-audit (complete)
+Latest commit: e97a047 (G-9b1 changes uncommitted)
+Prior: G-9b gosaki schedule seed extractor
 ```
 
 ## Summary
 
-G-9b: Gosaki Wix repeater schedule seed planning + dry-run extractor. `gosaki-wix-schedule-extractor.mjs` parses `fixtures/gosaki-piano/2026-XX.html` → 60 events, `site_slug = gosaki-piano`. `site_slug` migration + seed SQL are **templates only** — not executed.
+G-9b1: Wix proprietary font audit + `wix-font-safety.mjs` sanitizer. `@font-face` / `futura-lt-w01-book` / `avenir-lt-w01_*` stripped or rewritten to system stacks in convert pipeline. Images still on wixstatic CDN (separate phase).
 
-**Doc:** `tools/static-to-astro/docs/gosaki-schedule-data-seed-planning.md`
+**Doc:** `tools/static-to-astro/docs/gosaki-font-and-wix-asset-license-safety-audit.md`
 
-## Extractor (G-9b)
+## Font safety (G-9b1)
 
 ```txt
-Module: scripts/lib/gosaki-wix-schedule-extractor.mjs
-CLI: npm run extract:gosaki-schedule-seed (dry-run default)
-Verify: npm run verify:gosaki-schedule-seed (36 passed)
-Events: 60 across 5 months (matches manual fixture counts)
-Routes: /2026-03/ … /2026-07/ (not /schedule/2026-XX/)
-legacy_id: schedule-YYYY-MM-NNN
+Module: scripts/lib/wix-font-safety.mjs
+Verify: npm run verify:gosaki-font-safety (21 passed)
+Stacks: Avenir Next / Helvetica Neue / Arial (display); Helvetica + Hiragino/Meiryo (body)
+No Google Fonts added
 ```
 
 ## CMS MVP priority
@@ -38,10 +36,11 @@ legacy_id: schedule-YYYY-MM-NNN
 ## Gates
 
 ```txt
-gosakiScheduleDataSeedPlanningComplete: true
+gosakiFontAndWixAssetLicenseSafetyAuditComplete: true
+futuraLtW01BookRemovedOrRewritten: true
+wixFontFaceOutputBlocked: true
 gosakiScheduleSeedExtractorDryRunComplete: true
 readyForG9cGosakiScheduleSeedSqlPlanning: true
-readyForGosakiClientPreview: true
 readyForAnyDbWrite: false
 readyForAnyFtpApply: false
 ftpAutoDeployStillDisabled: true
@@ -52,6 +51,8 @@ ftpAutoDeployStillDisabled: true
 ```txt
 G-9c-gosaki-schedule-seed-sql-planning
 ```
+
+Operator: regenerate manual-upload package after G-9b1 merge for font-safe staging CSS.
 
 ## Safety (always)
 

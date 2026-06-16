@@ -20,6 +20,10 @@ import {
 import {
   appendWixStagingVisualOverrides,
 } from "./wix-staging-visual-overrides.mjs";
+import {
+  isBlockedExternalStylesheetHref,
+  sanitizeWixFontCss,
+} from "./wix-font-safety.mjs";
 import { normalizeDeployBase } from "./deploy-base.mjs";
 import {
   runBuildVerification,
@@ -175,7 +179,7 @@ function buildGlobalCss(siteDir, cssRelPaths, inlineHeadStyles = []) {
       const label = style.dataUrl
         ? `/* source: ${style.dataUrl} */`
         : "/* source: inline head style */";
-      parts.push(label, style.content, "");
+      parts.push(label, sanitizeWixFontCss(style.content), "");
     }
   }
 
@@ -722,7 +726,9 @@ export function generateAstroProject(inputDir, outputDir, options = {}) {
   analysis.pages = applyBaseUrlToPages(analysis.pages, baseUrl, deployBase);
   const domainReviewPages = baseUrl ? [] : pagesNeedingDomainReview(analysis.pages);
   const jsAnalysis = analyzeJavaScript(analysis.rawPages);
-  const externalCss = collectExternalStylesheets(analysis.rawPages);
+  const externalCss = collectExternalStylesheets(analysis.rawPages).filter(
+    (entry) => !isBlockedExternalStylesheetHref(entry.href),
+  );
   const forms = collectForms(analysis.rawPages);
   const iframes = collectIframes(analysis.rawPages);
   const missingAssets = analysis.missingAssets;
@@ -737,9 +743,11 @@ export function generateAstroProject(inputDir, outputDir, options = {}) {
   const cssRelPaths = collectCssFiles(siteDir, analysis);
   const inlineHeadStyles = collectInlineHeadStyles(analysis.rawPages);
   const wixStaticExport = inlineHeadStyles.length > 0;
-  const globalCss = appendWixStagingVisualOverrides(
-    buildGlobalCss(siteDir, cssRelPaths, inlineHeadStyles),
-    { inlineHeadStyleCount: inlineHeadStyles.length, siteSlug: fixtureLabelFromPath(siteDir) },
+  const globalCss = sanitizeWixFontCss(
+    appendWixStagingVisualOverrides(
+      buildGlobalCss(siteDir, cssRelPaths, inlineHeadStyles),
+      { inlineHeadStyleCount: inlineHeadStyles.length, siteSlug: fixtureLabelFromPath(siteDir) },
+    ),
   );
   const mainWrapperApplied = cssExpectsMainWrapper(globalCss);
   writeFile(path.join(outDir, "src/styles/global.css"), globalCss);

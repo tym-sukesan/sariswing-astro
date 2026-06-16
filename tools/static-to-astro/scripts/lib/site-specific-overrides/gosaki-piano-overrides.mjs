@@ -42,7 +42,7 @@ body.wix-static-export #comp-lol1i5k0 [data-testid="colorUnderlay"] {
 body.wix-static-export #SITE_HEADER .nav-toggle {
   border-color: #9e3b1b;
   color: #5b4d43;
-  font-family: futura-lt-w01-book, sans-serif;
+  font-family: "Avenir Next", "Helvetica Neue", Arial, sans-serif;
 }
 
 body.wix-static-export #SITE_HEADER .nav-toggle__bar {
@@ -54,7 +54,7 @@ body.wix-static-export #SITE_HEADER .global-nav {
 }
 
 body.wix-static-export #SITE_HEADER .global-nav a {
-  font-family: futura-lt-w01-book, sans-serif;
+  font-family: "Avenir Next", "Helvetica Neue", Arial, sans-serif;
   color: #5b4d43;
 }
 
@@ -1029,7 +1029,7 @@ body.wix-static-export #SITE_FOOTER #LnkBr2 .twXk19 {
   padding: 0 !important;
   border-radius: 0 !important;
   position: static !important;
-  font-family: futura-lt-w01-book, sans-serif;
+  font-family: "Avenir Next", "Helvetica Neue", Arial, sans-serif;
   text-decoration: none;
 }
 
@@ -1235,7 +1235,7 @@ body.wix-static-export .gosaki-schedule-hub {
 }
 
 body.wix-static-export .gosaki-schedule-hub__title {
-  font-family: futura-lt-w01-book, sans-serif;
+  font-family: "Avenir Next", "Helvetica Neue", Arial, sans-serif;
   font-size: clamp(28px, 7vw, 45px);
   font-weight: normal;
   color: #5b4d43;
@@ -1258,7 +1258,7 @@ body.wix-static-export .gosaki-schedule-month-link {
   display: block;
   width: 100%;
   padding: 0.875rem 1.5rem;
-  font-family: futura-lt-w01-book, sans-serif;
+  font-family: "Avenir Next", "Helvetica Neue", Arial, sans-serif;
   font-size: 1.125rem;
   letter-spacing: 0.08em;
   color: #5b4d43;
@@ -1340,7 +1340,7 @@ body.wix-static-export .gosaki-schedule-event-card [data-mesh-id] > * {
 
 body.wix-static-export .gosaki-schedule-event-date,
 body.wix-static-export .gosaki-schedule-event-card .gosaki-schedule-event-date {
-  font-family: futura-lt-w01-book, sans-serif !important;
+  font-family: "Avenir Next", "Helvetica Neue", Arial, sans-serif !important;
   font-size: clamp(1.125rem, 4vw, 1.625rem) !important;
   font-weight: normal !important;
   color: #993500 !important;
@@ -1368,7 +1368,7 @@ body.wix-static-export .gosaki-schedule-event-body a {
 
 body.wix-static-export .gosaki-schedule-month .wixui-rich-text h2,
 body.wix-static-export .gosaki-schedule-month h2.font_2 {
-  font-family: futura-lt-w01-book, sans-serif;
+  font-family: "Avenir Next", "Helvetica Neue", Arial, sans-serif;
   font-size: clamp(28px, 7vw, 45px);
   font-weight: normal;
   color: #5b4d43;
@@ -1558,7 +1558,7 @@ body.wix-static-export #SITE_FOOTER .gosaki-footer-social-links {
 body.wix-static-export #SITE_FOOTER .gosaki-footer-social-links a {
   color: #6b5a50 !important;
   text-decoration: none !important;
-  font-family: futura-lt-w01-book, sans-serif;
+  font-family: "Avenir Next", "Helvetica Neue", Arial, sans-serif;
   font-size: 0.95rem !important;
   letter-spacing: 0.04em;
   white-space: nowrap !important;

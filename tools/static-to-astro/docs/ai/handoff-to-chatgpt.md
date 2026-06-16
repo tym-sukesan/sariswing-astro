@@ -5,32 +5,30 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-9c2b-gosaki-existing-schedule-rows-manual-sql-execution-checklist (complete — uncommitted)
-Latest commit: d24376e (G-9c2a replanning)
+Current phase: G-9c2c-gosaki-existing-schedule-rows-operator-manual-sql-execution (complete — uncommitted)
+Latest commit: 479347a (G-9c2b checklist)
 ```
 
 ## Summary
 
-G-9c2b: Operator execution checklist for **existing 60 rows UPDATE migration** (not 60 INSERT).
+G-9c2c: Operator manually executed existing 60 rows UPDATE migration on `static-to-astro-cms-staging`.
 
-**Sequence:** site_slug DDL → backfill → source_route canonicalize → schedule-2026-07-010 PoC restore → verify
+- **60 rows** `site_slug=gosaki-piano`
+- **Canonical** `source_route` `/schedule/YYYY-MM/`
+- **PoC row** `schedule-2026-07-010` restored (no rename)
+- **3 rows** `show_on_home`/`home_order` corrected (2026-03-011/012/013)
+- **Rollback:** not executed
 
-**Active doc:** `tools/static-to-astro/docs/gosaki-existing-schedule-rows-manual-sql-execution-checklist.md`
+**Cursor/AI:** did NOT execute SQL.
 
-**Deprecated:** `gosaki-schedule-seed-operator-manual-sql-execution-checklist.md` (INSERT path — banner added)
-
-## G-9c2b approval text
-
-```txt
-承認します。static-to-astro-cms-staging に対して、G-9c2b の既存60行 migration SQL をこの順番で1回だけ手動実行します。
-```
+**Result doc:** `tools/static-to-astro/docs/gosaki-existing-schedule-rows-manual-sql-execution-result.md`
 
 ## Gates
 
 ```txt
-gosakiExistingRowsManualSqlExecutionChecklistComplete: true
-gosakiDeprecatedInsertChecklistBannerAdded: true
-readyForG9c2cExistingRowsOperatorManualSqlExecution: true
+gosakiExistingRowsOperatorManualSqlExecutionComplete: true
+gosakiScheduleSeedRowsVerified: true
+readyForG9dAstroSupabaseScheduleRead: true
 readyForAnyDbWrite: false
 readyForAnyFtpApply: false
 ftpAutoDeployStillDisabled: true
@@ -38,10 +36,9 @@ ftpAutoDeployStillDisabled: true
 
 ## Safety
 
-- No SQL execution from Cursor/CI
-- PoC row: restore in place — no legacy_id rename
-- Step 1 snapshot mandatory for rollback C
+- Staging only — not production
+- No Cursor/CI SQL execution
 
 ## Next
 
-G-9c2c — operator manual SQL execution (staging only)
+G-9d — Astro Supabase schedule read + static fallback

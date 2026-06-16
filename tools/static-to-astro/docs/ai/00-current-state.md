@@ -21,15 +21,13 @@ Staging Shell
 将来的な顧客オンボーディング・課金・デプロイ自動化
 
 2. Current phase
-現在フェーズ: G-9c2b-gosaki-existing-schedule-rows-manual-sql-execution-checklist（完了 — uncommitted）
+現在フェーズ: G-9c2c-gosaki-existing-schedule-rows-operator-manual-sql-execution（完了 — uncommitted）
 
-G-9c2b: 既存60行 UPDATE 方式の operator 実行 checklist 作成。旧 INSERT checklist に deprecated banner 追加。SQL実行なし。
+G-9c2c: operator が staging で既存60行 UPDATE migration を手動実行完了。site_slug backfill、source_route 正規化、schedule-2026-07-010 PoC 復元、show_on_home/home_order 3件補正。rollback 未実行。Cursor/AI は SQL 未実行。
 
-G-9c2a: 既存60行採用 + UPDATE correction 再計画（commit `d24376e`）。Option A 推奨。
+G-9c2b: 既存60行 UPDATE checklist（commit `479347a`）。
 
-G-9c2: 60 INSERT checklist 作成済み（`b969418`）— operator 実行中に中止。deprecated。
-
-G-9c1: Gosaki schedule seed operator 手動 SQL preflight（`6c0cb68`）。INSERT 方式は G-9c2a で superseded。
+G-9c2a: 既存60行採用再計画（commit `d24376e`）。
 
 G-9c0c: seed SQL template canonical route 対応（commit `d19149c`）
 
@@ -63,10 +61,9 @@ Gosaki staging:
   - `tools/static-to-astro/docs/gosaki-schedule-route-canonical-planning.md`
   - `tools/static-to-astro/docs/gosaki-schedule-canonical-route-implementation.md`
   - `tools/static-to-astro/docs/gosaki-schedule-legacy-month-route-stub.md`
-- 次: G-9c2c operator manual SQL execution（UPDATE path、明示承認後）
-- Active checklist: `tools/static-to-astro/docs/gosaki-existing-schedule-rows-manual-sql-execution-checklist.md`
-- Deprecated: `gosaki-schedule-seed-operator-manual-sql-execution-checklist.md` (60 INSERT)
-- DB state: 60 `schedule-2026-*` rows; `site_slug` column absent; legacy `source_route`
+- 次: G-9d Astro Supabase read + static fallback for schedule pages
+- Result doc: `tools/static-to-astro/docs/gosaki-existing-schedule-rows-manual-sql-execution-result.md`
+- Staging DB: 60 rows `site_slug=gosaki-piano`, canonical `source_route`, PoC row restored
 
 3. Important completed milestones
 
@@ -468,21 +465,23 @@ rollbackNeeded: false
 明示的 retry で dev server を起動する場合は inline env のみ使用する。
 
 10. Recommended next phase
-次フェーズ推奨: G-9c2c existing-rows operator manual SQL execution
+次フェーズ推奨: G-9d Astro Supabase schedule read + static fallback
 
-G-9c2b checklist 完了。operator が UPDATE migration を staging で手動実行（G-9c2b 承認後）。
+G-9c2c 完了。staging `public.schedules` に Gosaki 60行が `site_slug=gosaki-piano` + canonical `source_route` で登録済み。
 
 詳細:
-- `tools/static-to-astro/docs/gosaki-existing-schedule-rows-manual-sql-execution-checklist.md`
-- Replan: `tools/static-to-astro/docs/gosaki-existing-schedule-rows-migration-replanning.md`
+- `tools/static-to-astro/docs/gosaki-existing-schedule-rows-manual-sql-execution-result.md`
+- Checklist: `tools/static-to-astro/docs/gosaki-existing-schedule-rows-manual-sql-execution-checklist.md`
 
-G-9c2b gates:
+G-9c2c gates:
 ```txt
-gosakiExistingRowsManualSqlExecutionChecklistComplete: true
-gosakiDeprecatedInsertChecklistBannerAdded: true
-gosakiExistingRowsMigrationSequenceDocumented: true
-gosakiExistingRowsRollbackPlanDocumented: true
-readyForG9c2cExistingRowsOperatorManualSqlExecution: true
+gosakiExistingRowsOperatorManualSqlExecutionComplete: true
+gosakiScheduleRowsSiteSlugBackfilled: true
+gosakiScheduleRowsSourceRouteCanonicalized: true
+gosakiSchedulePocRowRestored: true
+gosakiScheduleHomeFlagsNormalized: true
+gosakiScheduleSeedRowsVerified: true
+readyForG9dAstroSupabaseScheduleRead: true
 readyForAnyDbWrite: false
 readyForAnyFtpApply: false
 ftpAutoDeployStillDisabled: true

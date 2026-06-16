@@ -21,7 +21,9 @@ Staging Shell
 将来的な顧客オンボーディング・課金・デプロイ自動化
 
 2. Current phase
-現在フェーズ: G-9a-gosaki-cms-scope-and-schedule-youtube-planning（完了 — planning only）
+現在フェーズ: G-9b-gosaki-schedule-data-seed-planning（完了 — planning + dry-run extractor）
+
+G-9b: Gosaki Wix repeater schedule seed 設計 + dry-run extractor（60 events, site_slug=gosaki-piano）。DB・SQL・FTP なし。
 
 G-9a: Gosaki CMS MVP スコープ整理（Schedule / Top YouTube embed / Bands 優先度）。実装・DB・FTP なし。
 
@@ -34,8 +36,9 @@ Gosaki staging:
 - staging URL: `https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/`
 - client preview ready (`readyForGosakiClientPreview: true`)
 - deploy: manual upload only; FTP auto deploy disabled
-- Doc: `tools/static-to-astro/docs/gosaki-cms-scope-and-schedule-youtube-planning.md`
-- 次: `G-9b-gosaki-schedule-data-seed-planning`
+- Doc: `tools/static-to-astro/docs/gosaki-schedule-data-seed-planning.md`
+- Extractor: `gosaki-wix-schedule-extractor.mjs` — 60 events dry-run verified
+- 次: `G-9c-gosaki-schedule-seed-sql-planning`
 
 3. Important completed milestones
 
@@ -437,11 +440,11 @@ rollbackNeeded: false
 明示的 retry で dev server を起動する場合は inline env のみ使用する。
 
 10. Recommended next phase
-次フェーズ推奨: G-9b-gosaki-schedule-data-seed-planning
+次フェーズ推奨: G-9c-gosaki-schedule-seed-sql-planning
 
-G-9a で Gosaki CMS MVP スコープ確定。Schedule seed（Wix repeater extractor + site_slug migration 計画）から着手。
+G-9b で Wix repeater extractor + site_slug migration テンプレート完了。次は seed SQL 生成と operator 手動 staging INSERT。
 
-詳細: tools/static-to-astro/docs/gosaki-cms-scope-and-schedule-youtube-planning.md
+詳細: tools/static-to-astro/docs/gosaki-schedule-data-seed-planning.md
 
 11. AI workflow transition
 チャット履歴への依存を減らすため、リポジトリ側に AI開発文脈管理ファイルを作成。

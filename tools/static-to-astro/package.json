@@ -10,6 +10,8 @@
     "analyze-visual-diff": "node scripts/analyze-visual-diff.mjs",
     "verify:crawl": "node scripts/verify-crawl-static-site.mjs",
     "verify:url-staging": "node scripts/verify-url-to-staging-pipeline.mjs",
+    "verify:gosaki-schedule-seed": "node scripts/verify-gosaki-schedule-seed-extractor.mjs",
+    "extract:gosaki-schedule-seed": "node scripts/extract-gosaki-schedule-seed.mjs",
     "verify:ftp-deployer-safety": "node scripts/verify-public-dist-ftp-deployer-safety.mjs",
     "manual-upload:package": "node scripts/create-manual-upload-package.mjs --public-dir output/static-public/gosaki-piano/public-dist --out output/manual-upload/gosaki-piano",
     "verify:manual-upload": "node scripts/verify-manual-upload-package.mjs"

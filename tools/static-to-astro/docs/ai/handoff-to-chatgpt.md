@@ -5,42 +5,42 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-9a-gosaki-cms-scope-and-schedule-youtube-planning (complete — planning only)
-Latest commit: 77b57b8
-Prior: G-8g2〜G-8g8 gosaki staging preview fixes (committed)
+Current phase: G-9b-gosaki-schedule-data-seed-planning (complete — planning + dry-run extractor)
+Latest commit: 77b57b8 (G-9b changes uncommitted)
+Prior: G-9a gosaki CMS scope planning; G-8g gosaki staging preview fixes
 ```
 
 ## Summary
 
-G-9a: Gosaki CMS MVP scope planning — Schedule CMS, Top YouTube embed CMS, About Bands/Projects priority. Staging preview is client-ready (static Wix HTML + manual upload). Next implementation track starts with schedule data seed (Wix repeater extractor + `site_slug` migration plan).
+G-9b: Gosaki Wix repeater schedule seed planning + dry-run extractor. `gosaki-wix-schedule-extractor.mjs` parses `fixtures/gosaki-piano/2026-XX.html` → 60 events, `site_slug = gosaki-piano`. `site_slug` migration + seed SQL are **templates only** — not executed.
 
-**Doc:** `tools/static-to-astro/docs/gosaki-cms-scope-and-schedule-youtube-planning.md`
+**Doc:** `tools/static-to-astro/docs/gosaki-schedule-data-seed-planning.md`
+
+## Extractor (G-9b)
+
+```txt
+Module: scripts/lib/gosaki-wix-schedule-extractor.mjs
+CLI: npm run extract:gosaki-schedule-seed (dry-run default)
+Verify: npm run verify:gosaki-schedule-seed (36 passed)
+Events: 60 across 5 months (matches manual fixture counts)
+Routes: /2026-03/ … /2026-07/ (not /schedule/2026-XX/)
+legacy_id: schedule-YYYY-MM-NNN
+```
 
 ## CMS MVP priority
 
 ```txt
-1. Schedule CMS — read Supabase → write staging shell (routes: /schedule/ hub, /YYYY-MM/ months)
-2. Top YouTube embed — site_embeds table, URL normalize to youtube-nocookie embed
-3. Bands/Projects — keep static JSON for now (Phase 3)
-```
-
-## Key technical decisions (G-9a)
-
-```txt
-- Reuse public.schedules schema on static-to-astro-cms-staging (G-6-e1 compatible)
-- Add site_slug = gosaki-piano (migration in G-9b — not executed yet)
-- Wix repeater parser needed (schedule-seed-extractor currently .schedule-card only)
-- YouTube: site_embeds table (not instagram_posts); Kit write without service_role
-- Admin: /__admin-staging-shell/musician-basic/ only — not /admin
-- schedule_months: read-only derived — never CMS write
+1. Schedule CMS — seed SQL next (G-9c)
+2. Top YouTube embed — site_embeds (G-9f+)
+3. Bands/Projects — static JSON (defer)
 ```
 
 ## Gates
 
 ```txt
-gosakiCmsScopeAndScheduleYoutubePlanningComplete: true
-readyForG9bGosakiScheduleDataSeedPlanning: true
-readyForG9bGosakiYoutubeEmbedCmsPlanning: true
+gosakiScheduleDataSeedPlanningComplete: true
+gosakiScheduleSeedExtractorDryRunComplete: true
+readyForG9cGosakiScheduleSeedSqlPlanning: true
 readyForGosakiClientPreview: true
 readyForAnyDbWrite: false
 readyForAnyFtpApply: false
@@ -50,7 +50,7 @@ ftpAutoDeployStillDisabled: true
 ## Recommended next phase
 
 ```txt
-G-9b-gosaki-schedule-data-seed-planning
+G-9c-gosaki-schedule-seed-sql-planning
 ```
 
 ## Safety (always)

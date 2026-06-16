@@ -21,14 +21,18 @@ export function parseScheduleDateText(dateText) {
 }
 
 /**
- * @param {string} timeLine e.g. "開場 18:00 / 開演 19:30"
+ * @param {string} timeLine e.g. "開場 18:00 / 開演 19:30", "OPEN 18:00 / START 19:30"
  */
 export function parseScheduleTimeLine(timeLine) {
   const raw = (timeLine ?? "").replace(/^時間：/, "").trim();
   if (!raw) return { open_time: null, start_time: null, time_note: null };
 
-  const open = raw.match(/開場\s*([0-9]{1,2}:[0-9]{2})/);
-  const start = raw.match(/開演\s*([0-9]{1,2}:[0-9]{2})/);
+  const openJa = raw.match(/開場\s*([0-9]{1,2}:[0-9]{2})/);
+  const startJa = raw.match(/開演\s*([0-9]{1,2}:[0-9]{2})/);
+  const openEn = raw.match(/\bOPEN\s*([0-9]{1,2}:[0-9]{2})/i);
+  const startEn = raw.match(/\bSTART\s*([0-9]{1,2}:[0-9]{2})/i);
+  const open = openJa ?? openEn;
+  const start = startJa ?? startEn;
   if (open || start) {
     return {
       open_time: open?.[1] ?? null,

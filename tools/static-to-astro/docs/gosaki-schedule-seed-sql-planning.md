@@ -12,7 +12,7 @@
 Produce operator-ready SQL templates to seed **60 Gosaki schedule events** into `static-to-astro-cms-staging` with `site_slug = 'gosaki-piano'`.
 
 **This phase:** generate + document only.  
-**Next phase (G-9c-execution):** operator runs preflight SELECT → migration (if needed) → INSERT → verification in Supabase SQL Editor after explicit approval.
+**Next phase (G-9c2):** operator runs SQL manually per `gosaki-schedule-seed-operator-manual-sql-execution-preflight.md` after explicit approval.
 
 ---
 

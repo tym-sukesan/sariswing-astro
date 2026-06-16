@@ -3,26 +3,24 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 1. Immediate priority
 
-**Current phase:** `G-9c0c-gosaki-route-aware-schedule-seed-sql-regeneration` (complete)
+**Current phase:** `G-9c1-gosaki-schedule-seed-operator-manual-sql-execution-preflight` (complete)
 
 **Docs:**
+- `tools/static-to-astro/docs/gosaki-schedule-seed-operator-manual-sql-execution-preflight.md`
 - `tools/static-to-astro/docs/gosaki-schedule-seed-sql-planning.md`
-- `tools/static-to-astro/docs/gosaki-schedule-legacy-month-route-stub.md`
 
-**G-9c SQL templates:** regenerated with canonical `source_route` — **ready for commit** (operator review)
+**G-9c2 next:** operator manual SQL on staging (explicit approval required)
 
 ### Gates
 
 ```txt
-gosakiRouteAwareSeedSqlRegenerationComplete: true
-gosakiScheduleSeedSqlTemplateUsesCanonicalSourceRoute: true
-gosakiScheduleSeedSqlTemplateInsertCount: 60
-gosakiScheduleSeedSqlTemplatePlainInsertOnly: true
-gosakiScheduleSeedSqlTemplateNoOnConflict: true
-gosakiSeedLegacyIdCollisionWarningPresent: true
-gosakiSiteSlugMigrationTemplateReady: true
-readyForG9cRouteAwareSeedSqlCommit: true
-readyForG9c1OperatorManualSqlExecutionPreflight: true
+gosakiScheduleSeedOperatorSqlExecutionPreflightComplete: true
+gosakiScheduleSeedExecutionSequenceDocumented: true
+gosakiSiteSlugMigrationExecutionPlanReady: true
+gosakiSeedLegacyIdCollisionResolutionPlanReady: true
+gosakiScheduleSeedInsertExecutionPlanReady: true
+gosakiScheduleSeedRollbackPlanReady: true
+readyForG9c2OperatorManualSqlExecution: true
 readyForAnyDbWrite: false
 readyForAnyFtpApply: false
 ftpAutoDeployStillDisabled: true
@@ -30,20 +28,18 @@ ftpAutoDeployStillDisabled: true
 
 ## 2. Next steps
 
-1. **G-9c commit:** Commit route-aware SQL templates (operator approval)
-2. **G-9c-execution:** Operator preflight → resolve `schedule-2026-07-010` collision → manual INSERT
-3. **G-9d:** Astro Supabase read + static fallback for schedule pages
-4. **Operator re-upload:** `manual-upload:package` if needed after CMS wiring
+1. **G-9c2:** Operator manual SQL execution on `static-to-astro-cms-staging`
+2. **G-9d:** Astro Supabase read + static fallback for schedule pages
+3. **Operator re-upload:** if needed after CMS wiring
 
 ## 3. Do not
 
 - Execute SQL from Cursor/CI
-- DB write, FTP auto-apply, `/admin` changes
-- Touch production gosaki-piano.com or Supabase production
+- DB write without operator explicit approval
+- Touch production / FTP / `/admin`
 
-## 4. Gosaki staging preview (baseline)
+## 4. Baseline
 
-- Latest commit: `36e8c54` (G-9c0b legacy stubs; G-9c0c uncommitted)
-- Canonical routes: `/schedule/2026-03/` … `/schedule/2026-07/`
-- Legacy stubs: `/2026-03/` … `/2026-07/` (noindex + canonical)
-- Seed `source_route`: `/schedule/YYYY-MM/` (not legacy `/YYYY-MM/`)
+- Latest commit: `d19149c` (G-9c0c seed SQL)
+- Seed: 60 INSERT, `source_route: /schedule/YYYY-MM/`
+- Collision: PoC `schedule-2026-07-010` → rename to `schedule-2026-07-010-poc` before INSERT

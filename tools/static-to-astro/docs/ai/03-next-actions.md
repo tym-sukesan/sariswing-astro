@@ -3,37 +3,23 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 1. Immediate priority
 
-**Current phase:** `G-8g1-gosaki-mobile-header-and-footer-social-regression-fix` (complete)
+**Current phase:** `G-8g8-gosaki-discography-subheading-style-fix` (complete — **commit deferred**)
 
-**Doc:** `tools/static-to-astro/docs/gosaki-mobile-header-and-footer-social-regression-fix.md`
-
-**FTP auto-deploy:** still disabled.
+**Doc:** `tools/static-to-astro/docs/gosaki-discography-subheading-style-fix.md`
 
 ### Gates
 
 ```txt
-gosakiMobileHeaderAndFooterSocialRegressionFixComplete: true
+gosakiDiscographySubheadingStyleFixComplete: true
 readyForManualReuploadByOperator: true
 readyForGosakiClientPreview: true
-gosakiHeaderFooterMobileRegressionFixComplete: true
 ftpAutoDeployStillDisabled: true
 readyForAnyFutureFtpApply: false
+commitDeferredForVisualBatch: true
 ```
 
-## 2. Wix baseline modules
+## 2. Next steps
 
-- **Common:** `scripts/lib/wix-static-export-baseline-overrides.mjs`
-- **Composer:** `scripts/lib/wix-staging-visual-overrides.mjs`
-- **Gosaki-specific:** `scripts/lib/site-specific-overrides/gosaki-piano-overrides.mjs` (G-8c–G-8g1)
-- **Header logo link:** `scripts/lib/header-transform.mjs`
-
-## 3. Next steps
-
-1. **Operator:** re-upload `output/manual-upload/gosaki-piano/public-dist/` including new `_astro/index.*.css`
-2. Real-device QA: SP beige header (not yellow), MENU open 2-row nav, footer text SNS + copyright stacked
-3. Share staging with gosaki client if QA passes
-4. **Future:** Contact HubSpot embed replacement (not G-8g1)
-
-## 4. AI workflow maintenance rule
-
-Update `tools/static-to-astro/docs/ai/*` after every meaningful Cursor task.
+1. **Operator:** re-upload `output/manual-upload/gosaki-piano/public-dist/` including `_astro/index.D9h1trWb.css`
+2. QA: `/discography/` Track List / Personnel — no underline, bold, +2px
+3. After visual OK: **commit/push G-8g2〜G-8g8 batch**

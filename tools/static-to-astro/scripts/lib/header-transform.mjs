@@ -190,16 +190,18 @@ ${navLines.join("\n")}
 
   shell = shell.replace(/<a href="\/">/g, '<a href={withBase("/")}>');
 
-  const scheduleHelper = scheduleHub
-    ? `
+  const scheduleHelper =
+    scheduleLinkAdded || navLinks.some((link) => link.text === "Schedule")
+      ? `
 function scheduleNavActive() {
   const path = currentPath.endsWith("/") ? currentPath : \`\${currentPath}/\`;
   if (path === withBase("/schedule/")) return true;
   const prefix = import.meta.env.BASE_URL.replace(/\\/$/, "");
-  return new RegExp(\`^\${prefix}/schedule-\\\\d{4}-\\\\d{2}/\`, "i").test(path);
+  if (new RegExp(\`^\${prefix}/schedule-\\\\d{4}-\\\\d{2}/\`, "i").test(path)) return true;
+  return new RegExp(\`^\${prefix}/\\\\d{4}-\\\\d{2}/\`, "i").test(path);
 }
 `
-    : "";
+      : "";
 
   return {
     content: `---
@@ -220,17 +222,24 @@ ${shell}
 <script is:inline>
 (function () {
   var header = document.getElementById("SITE_HEADER");
-  var toggle = document.querySelector(".nav-toggle");
-  var panel = document.getElementById("global-nav-panel");
-  if (!header || !toggle || !panel) return;
+  if (!header) return;
+  var toggle = header.querySelector(".nav-toggle");
+  var panel = header.querySelector("#global-nav-panel");
+  if (!toggle || !panel) return;
 
   function setOpen(open) {
-    header.classList.toggle("is-nav-open", open);
+    if (open) {
+      header.classList.add("is-nav-open");
+    } else {
+      header.classList.remove("is-nav-open");
+    }
     toggle.setAttribute("aria-expanded", open ? "true" : "false");
     toggle.setAttribute("aria-label", open ? "Close menu" : "Open menu");
   }
 
-  toggle.addEventListener("click", function () {
+  toggle.addEventListener("click", function (event) {
+    event.preventDefault();
+    event.stopPropagation();
     setOpen(!header.classList.contains("is-nav-open"));
   });
 
@@ -239,7 +248,7 @@ ${shell}
   });
 
   window.addEventListener("resize", function () {
-    if (window.matchMedia("(min-width: 768px)").matches) setOpen(false);
+    if (window.matchMedia("(min-width: 769px)").matches) setOpen(false);
   });
 })();
 </script>

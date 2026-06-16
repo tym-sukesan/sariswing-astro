@@ -21,21 +21,22 @@ Staging Shell
 将来的な顧客オンボーディング・課金・デプロイ自動化
 
 2. Current phase
-現在フェーズ: G-8g1-gosaki-mobile-header-and-footer-social-regression-fix（完了）
+現在フェーズ: G-8g8-gosaki-discography-subheading-style-fix（完了・commit 保留）
 
-G-8g 手動アップロード後の副作用（SP 黄色ヘッダー、MENU open レイアウト崩れ、Footer SNS mask 崩れ、copyright 重なり）を G-8g1 で修正。
+G-8g8: Discography の Track List / Personnel 下線除去・小見出し化。G-8g2〜G-8g8 は local only、commit/push は戸山の目視確認後にまとめて実施。
 
 直近完了フェーズ:
-G-8g1-gosaki-mobile-header-and-footer-social-regression-fix
+G-8g8-gosaki-discography-subheading-style-fix（local only）
 前フェーズ:
-G-8g-gosaki-header-footer-mobile-regression-fix
+G-8g7-gosaki-footer-grid-container-alignment-fix (local only)
+G-8g6〜G-8g2 (local only)
+G-8g1 (commit `a78a8d8`)
 
 G-7 staging:
 - staging URL: `https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/`
-- gosaki output: baseline + gosaki-specific 合成 CSS（gitignored — 再生成後 `_astro/index.*.css`）
-- Doc: `tools/static-to-astro/docs/gosaki-mobile-header-and-footer-social-regression-fix.md`
-- 次: operator 手動 re-upload → クライアント preview QA
-- 将来: Contact HubSpot 置換
+- gosaki output: `_astro/index.D9h1trWb.css` (gitignored)
+- Doc: `tools/static-to-astro/docs/gosaki-discography-subheading-style-fix.md`
+- 次: operator 手動 re-upload → 目視 QA → G-8g2以降 commit/push batch
 
 3. Important completed milestones
 

@@ -1,60 +1,28 @@
-Paste this file at the start of a new ChatGPT thread. Cursor should update it after every meaningful task.
+Paste this file at the start of a new ChatGPT thread.
 
 ---
 
-## 1. Project summary
-
-- **Project name:** Static-to-Astro CMS / Musician CMS Kit
-- **Repository:** sariswing-astro
-
----
-
-## 2. Current phase
+## Current phase
 
 ```txt
-Current phase: G-8g1-gosaki-mobile-header-and-footer-social-regression-fix (complete)
-FTP auto-deploy: DISABLED
-Gosaki-specific CSS: scripts/lib/site-specific-overrides/gosaki-piano-overrides.mjs (G-8c–G-8g1)
-Latest commit: 8d9b18e (G-8g) — G-8g1 pending commit
+Current phase: G-8g8-gosaki-discography-subheading-style-fix (complete — commit NOT pushed)
+G-8g2〜G-8g8: local only — commitDeferredForVisualBatch: true
+Latest commit on remote: a78a8d8 (G-8g1)
 ```
 
----
+## Summary
 
-## 3. Current state summary
+G-8g8: Discography Track List / Personnel — remove Wix underline, bold, +2px font. Scoped to `#comp-llexymel` first paragraph in `comp-lley4qy2` / `comp-lley693e`. verify:url-staging 152 passed. CSS `_astro/index.D9h1trWb.css`.
 
-G-8g1 fixed post-G-8g regressions: SP header `#ead7bd` beige (not `#fffccc` yellow), MENU open absolute dropdown nav (row 2), footer SNS text links (Facebook / X / Instagram), footer/copyright vertical stack without overlap. PC nav retained. verify:url-staging 105 passed.
-
-Docs: `gosaki-mobile-header-and-footer-social-regression-fix.md`, `gosaki-header-footer-mobile-regression-fix.md`
-
----
-
-## 4. G-8g1 gates
+## Gates
 
 ```txt
-gosakiMobileHeaderAndFooterSocialRegressionFixComplete: true
+gosakiDiscographySubheadingStyleFixComplete: true
 readyForManualReuploadByOperator: true
 readyForGosakiClientPreview: true
-ftpAutoDeployStillDisabled: true
-readyForAnyFutureFtpApply: false
+commitDeferredForVisualBatch: true
 ```
 
----
+## Operator re-upload
 
-## 5. Do not
-
-- FTP connect / upload / mirror / delete from automation
-- `workflow_dispatch`
-- Touch production or production Supabase
-- Commit `output/` or secrets
-
----
-
-## 6. Operator re-upload
-
-Upload `output/manual-upload/gosaki-piano/public-dist/` → `/cms-kit-staging/gosaki-piano/` (include new `_astro/index.*.css`).
-
----
-
-## 7. Future: Contact HubSpot
-
-Wix form is placeholder; `#comp-kei80gar` success message hidden in G-8f. HubSpot embed planned in future phase.
+`output/manual-upload/gosaki-piano/public-dist/` → `/cms-kit-staging/gosaki-piano/` (include `_astro/index.D9h1trWb.css`).

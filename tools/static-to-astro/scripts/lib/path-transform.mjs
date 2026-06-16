@@ -1,6 +1,7 @@
 import { createRequire } from "node:module";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { isScheduleMonthSourcePath } from "./schedule-pages.mjs";
 import { htmlFileToAstroRoute, resolveRef } from "./static-site-analyzer.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -69,6 +70,29 @@ export function imageSrcToPublic(src, pageRelPath) {
 }
 
 /**
+ * Expose Wix schedule repeater SSR markup and add gosaki month-page hooks (G-8g4).
+ * @param {import("cheerio").CheerioAPI} $
+ * @param {import("cheerio").Cheerio<import("domhandler").Element>} root
+ */
+function transformScheduleMonthFragment($, root) {
+  root.find("fluid-columns-repeater").each((_, el) => {
+    const $el = $(el);
+    const style = $el.attr("style") || "";
+    const cleaned = style.replace(/visibility\s*:\s*hidden\s*;?/gi, "").trim();
+    if (cleaned) $el.attr("style", cleaned);
+    else $el.removeAttr("style");
+    $el.addClass("gosaki-schedule-month-repeater");
+  });
+
+  root.find(".wixui-repeater__item").each((_, el) => {
+    const $item = $(el);
+    $item.addClass("gosaki-schedule-event-card");
+    $item.find("h1").first().addClass("gosaki-schedule-event-date");
+    $item.find(".wixui-rich-text").not(".gosaki-schedule-event-date").addClass("gosaki-schedule-event-body");
+  });
+}
+
+/**
  * Rewrite HTML fragment paths for Astro output.
  * @param {string} htmlFragment
  * @param {string} pageRelPath
@@ -94,6 +118,11 @@ export function transformHtmlFragment(htmlFragment, pageRelPath, context = {}) {
 
   root.find('link[rel*="stylesheet"]').remove();
   root.find("script").remove();
+
+  if (isScheduleMonthSourcePath(pageRelPath)) {
+    transformScheduleMonthFragment($, root);
+    return `<div class="gosaki-schedule-month">${root.html() ?? ""}</div>`;
+  }
 
   return root.html() ?? "";
 }

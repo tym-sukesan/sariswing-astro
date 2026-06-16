@@ -1,5 +1,5 @@
 /**
- * Gosaki-piano site-specific Wix static export CSS overrides (G-8c … G-8g1).
+ * Gosaki-piano site-specific Wix static export CSS overrides (G-8c … G-8g8).
  * Brand colors, home hero comp, About / Discography / Contact mobile parity — not for other Wix pilots.
  */
 
@@ -1166,6 +1166,553 @@ body.wix-static-export #SITE_FOOTER #WRchTxtx {
   body.wix-static-export #SITE_FOOTER [data-mesh-id="SITE_FOOTERinlineContent-gridContainer"] {
     padding: 1.25rem 1rem 1.5rem !important;
     gap: 1rem !important;
+  }
+}
+
+/* --- G-8g2 gosaki header nav functionality fix (site-specific) --- */
+/* SP nav toggle: ensure is-nav-open reveals panel; header overflow visible for dropdown. */
+
+body.wix-static-export #SITE_HEADER {
+  overflow: visible !important;
+}
+
+body.wix-static-export #SITE_HEADER .XKFSfx,
+body.wix-static-export #SITE_HEADER [data-mesh-id="SITE_HEADERinlineContent"],
+body.wix-static-export #SITE_HEADER [data-mesh-id="SITE_HEADERinlineContent-gridContainer"] {
+  overflow: visible !important;
+}
+
+body.wix-static-export #SITE_HEADER .nav-toggle {
+  position: relative;
+  z-index: 5;
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+@media (max-width: 768px) {
+  body.wix-static-export #SITE_HEADER .global-nav {
+    display: none !important;
+  }
+
+  body.wix-static-export #SITE_HEADER.is-nav-open .global-nav {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    position: absolute !important;
+    top: 100% !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0.35rem 0 0.75rem !important;
+    background: #fff !important;
+    box-sizing: border-box;
+    z-index: 4;
+    box-shadow: 0 2px 6px rgba(91, 77, 67, 0.08);
+  }
+
+  body.wix-static-export #SITE_HEADER.is-nav-open .global-nav ul {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    width: 100% !important;
+  }
+
+  body.wix-static-export #SITE_HEADER.is-nav-open #comp-mbdw7xid {
+    position: static !important;
+  }
+}
+
+/* --- G-8g3 gosaki schedule hub design and link fix (site-specific) --- */
+
+body.wix-static-export .gosaki-schedule-hub {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 2.5rem 1.25rem 3rem;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+body.wix-static-export .gosaki-schedule-hub__title {
+  font-family: futura-lt-w01-book, sans-serif;
+  font-size: clamp(28px, 7vw, 45px);
+  font-weight: normal;
+  color: #5b4d43;
+  letter-spacing: 0.05em;
+  margin: 0 0 2rem;
+  line-height: 1.25;
+}
+
+body.wix-static-export .gosaki-schedule-months {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.875rem;
+  width: 100%;
+  max-width: 420px;
+  margin: 0 auto;
+}
+
+body.wix-static-export .gosaki-schedule-month-link {
+  display: block;
+  width: 100%;
+  padding: 0.875rem 1.5rem;
+  font-family: futura-lt-w01-book, sans-serif;
+  font-size: 1.125rem;
+  letter-spacing: 0.08em;
+  color: #5b4d43;
+  text-decoration: none;
+  background: #fff;
+  border: 1px solid #e0be9a;
+  border-radius: 4px;
+  box-sizing: border-box;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+body.wix-static-export .gosaki-schedule-month-link:hover {
+  background: #ead7bd;
+  color: #993500;
+}
+
+@media (max-width: 768px) {
+  body.wix-static-export .gosaki-schedule-hub {
+    padding: 1.75rem 1.25rem 2.5rem;
+  }
+
+  body.wix-static-export .gosaki-schedule-months {
+    max-width: 100%;
+  }
+}
+
+/* --- G-8g4 gosaki schedule month content fix (site-specific) --- */
+
+body.wix-static-export .gosaki-schedule-month {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 1.5rem 1.25rem 3rem;
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
+
+/* Wix fluid-columns-repeater SSR: visibility:hidden until Thunderbolt JS — show in static export */
+body.wix-static-export fluid-columns-repeater,
+body.wix-static-export .gosaki-schedule-month-repeater {
+  visibility: visible !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  gap: 1.5rem !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 auto !important;
+  pointer-events: auto !important;
+}
+
+body.wix-static-export .gosaki-schedule-event-card {
+  display: block !important;
+  position: relative !important;
+  width: 100% !important;
+  max-width: 720px !important;
+  margin: 0 auto !important;
+  padding: 1.25rem 1.5rem !important;
+  background: #fff;
+  border: 1px solid #e0be9a;
+  border-radius: 6px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+body.wix-static-export .gosaki-schedule-event-card [data-mesh-id],
+body.wix-static-export .gosaki-schedule-event-card [data-mesh-id] > * {
+  position: static !important;
+  left: auto !important;
+  right: auto !important;
+  top: auto !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  width: auto !important;
+  max-width: 100% !important;
+  grid-area: auto !important;
+  justify-self: stretch !important;
+  align-self: stretch !important;
+}
+
+body.wix-static-export .gosaki-schedule-event-date,
+body.wix-static-export .gosaki-schedule-event-card .gosaki-schedule-event-date {
+  font-family: futura-lt-w01-book, sans-serif !important;
+  font-size: clamp(1.125rem, 4vw, 1.625rem) !important;
+  font-weight: normal !important;
+  color: #993500 !important;
+  letter-spacing: 0.04em;
+  margin: 0 0 0.625rem !important;
+  line-height: 1.3 !important;
+}
+
+body.wix-static-export .gosaki-schedule-event-body,
+body.wix-static-export .gosaki-schedule-event-card .gosaki-schedule-event-body {
+  font-family: "ｍｓ ゴシック", "ms gothic", "ヒラギノ角ゴ pro w3", "hiragino kaku gothic pro",
+    osaka, sans-serif !important;
+  font-size: 0.95rem !important;
+  line-height: 1.65 !important;
+  color: #5b4d43 !important;
+  margin: 0 0 0.35rem !important;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+body.wix-static-export .gosaki-schedule-event-body a {
+  color: #993500;
+  text-decoration: underline;
+}
+
+body.wix-static-export .gosaki-schedule-month .wixui-rich-text h2,
+body.wix-static-export .gosaki-schedule-month h2.font_2 {
+  font-family: futura-lt-w01-book, sans-serif;
+  font-size: clamp(28px, 7vw, 45px);
+  font-weight: normal;
+  color: #5b4d43;
+  text-align: center;
+  letter-spacing: 0.05em;
+  margin: 0 0 2rem;
+  line-height: 1.25;
+}
+
+@media (max-width: 768px) {
+  body.wix-static-export .gosaki-schedule-month {
+    padding: 1.25rem 1rem 2.5rem;
+  }
+
+  body.wix-static-export .gosaki-schedule-event-card {
+    padding: 1rem 1.125rem !important;
+    max-width: 100% !important;
+  }
+}
+
+/* --- G-8g5 gosaki discography spacing and footer social alignment fix (site-specific) --- */
+
+/* Footer SNS text links: true center + even gap (supersedes G-8g/G-8g1 width constraints) */
+body.wix-static-export #SITE_FOOTER #LnkBr2 {
+  width: fit-content !important;
+  max-width: 100% !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  left: 0 !important;
+  right: auto !important;
+  height: auto !important;
+  min-height: 0 !important;
+  --item-margin-inline: 0 !important;
+  --item-display: flex !important;
+}
+
+body.wix-static-export #SITE_FOOTER #LnkBr2 .tN_ggS,
+body.wix-static-export #SITE_FOOTER #LnkBr2 .gosaki-footer-social-text {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  justify-content: center !important;
+  align-items: center !important;
+  gap: 1.4rem !important;
+  width: fit-content !important;
+  max-width: 100% !important;
+  margin-inline: auto !important;
+  padding: 0 !important;
+  list-style: none !important;
+  text-align: center !important;
+}
+
+body.wix-static-export #SITE_FOOTER #LnkBr2 .re13Ik {
+  margin: 0 !important;
+  padding: 0 !important;
+  flex: 0 0 auto !important;
+  display: flex !important;
+  justify-content: center !important;
+}
+
+body.wix-static-export #SITE_FOOTER #LnkBr2 .twXk19 {
+  margin: 0 !important;
+  padding: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  white-space: nowrap !important;
+}
+
+body.wix-static-export #SITE_FOOTER #WRchTxtx {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  left: 0 !important;
+  text-align: center !important;
+}
+
+@media (max-width: 768px) {
+  /* Discography SP: collapse Wix desktop grid margins / fixed image height */
+  body.wix-static-export #comp-llexymel [id^="comp-llexymga__"]:not([id$="inlineContent"]):not(
+      [id$="gridContainer"]
+    ) {
+    min-height: auto !important;
+    height: auto !important;
+  }
+
+  body.wix-static-export
+    #comp-llexymel
+    [data-mesh-id^="comp-llexymga__"][data-mesh-id$="inlineContent-gridContainer"] {
+    display: flex !important;
+    flex-direction: column !important;
+    grid-template-rows: none !important;
+    min-height: auto !important;
+    height: auto !important;
+    gap: 0.5rem !important;
+    align-items: stretch !important;
+  }
+
+  body.wix-static-export #comp-llexymel [id^="comp-jshobkm1__"] {
+    order: 1 !important;
+    margin: 0 auto 0.5rem !important;
+    padding: 0 !important;
+    left: auto !important;
+    top: auto !important;
+    --height: auto !important;
+    --width: auto !important;
+    min-height: 0 !important;
+    height: auto !important;
+    max-height: none !important;
+    align-self: center !important;
+  }
+
+  body.wix-static-export #comp-llexymel [id^="comp-jshobkm1__"] .wixui-image,
+  body.wix-static-export #comp-llexymel [id^="comp-jshobkm1__"] img {
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    margin-bottom: 0 !important;
+  }
+
+  body.wix-static-export #comp-llexymel [id^="comp-lley9r5x__"] {
+    order: 2 !important;
+    margin: 0.375rem 0 0.5rem !important;
+    padding: 0 !important;
+    left: auto !important;
+    top: auto !important;
+    align-self: center !important;
+    text-align: center !important;
+  }
+
+  body.wix-static-export #comp-llexymel [id^="comp-lley4qy2__"] {
+    order: 3 !important;
+    margin: 0.25rem 0 !important;
+    left: auto !important;
+  }
+
+  body.wix-static-export #comp-llexymel [id^="comp-lley693e__"] {
+    order: 4 !important;
+    margin: 0.25rem 0 !important;
+    left: auto !important;
+  }
+
+  body.wix-static-export #comp-llexymel [id^="comp-llez4vdq__"] {
+    order: 5 !important;
+    margin: 0.25rem 0 !important;
+    left: auto !important;
+  }
+
+  body.wix-static-export #comp-llexymel [data-mesh-id^="comp-llexymga__"] > * {
+    position: relative !important;
+    grid-area: auto !important;
+    justify-self: stretch !important;
+    align-self: stretch !important;
+  }
+}
+
+/* --- G-8g6 gosaki footer social final alignment fix (site-specific) --- */
+/* Injected .gosaki-footer-social-links in Footer.astro; hide legacy Wix #LnkBr2 bar. */
+
+body.wix-static-export #SITE_FOOTER #LnkBr2 {
+  display: none !important;
+  visibility: hidden !important;
+  height: 0 !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  pointer-events: none !important;
+}
+
+body.wix-static-export #SITE_FOOTER .gosaki-footer-social-links {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  gap: 1.5rem !important;
+  flex-wrap: wrap !important;
+  width: fit-content !important;
+  max-width: calc(100% - 2rem) !important;
+  margin: 0.5rem auto 1rem !important;
+  padding: 0 !important;
+  text-align: center !important;
+  position: relative !important;
+  left: auto !important;
+  grid-area: auto !important;
+}
+
+body.wix-static-export #SITE_FOOTER .gosaki-footer-social-links a {
+  color: #6b5a50 !important;
+  text-decoration: none !important;
+  font-family: futura-lt-w01-book, sans-serif;
+  font-size: 0.95rem !important;
+  letter-spacing: 0.04em;
+  white-space: nowrap !important;
+  line-height: 1.4 !important;
+}
+
+body.wix-static-export #SITE_FOOTER .gosaki-footer-social-links a:hover {
+  opacity: 0.75;
+}
+
+body.wix-static-export #SITE_FOOTER [data-mesh-id="SITE_FOOTERinlineContent-gridContainer"] {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.5rem !important;
+  height: auto !important;
+  min-height: 0 !important;
+}
+
+body.wix-static-export #SITE_FOOTER #WRchTxtx {
+  position: relative !important;
+  left: auto !important;
+  top: auto !important;
+  grid-area: auto !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 auto !important;
+  padding: 0.25rem 1rem 0.75rem !important;
+  text-align: center !important;
+  height: auto !important;
+  min-height: 0 !important;
+}
+
+body.wix-static-export #SITE_FOOTER #WRchTxtx p {
+  text-align: inherit !important;
+  margin: 0 !important;
+}
+
+@media (min-width: 769px) {
+  body.wix-static-export #SITE_FOOTER #WRchTxtx {
+    text-align: right !important;
+    max-width: 980px !important;
+    padding-right: 1.5rem !important;
+  }
+}
+
+/* --- G-8g7 gosaki footer grid container alignment fix (site-specific) --- */
+/* Reset Wix mesh left:415px / left:766px on footer children; center SNS + copyright (PC/SP). */
+
+body.wix-static-export #SITE_FOOTER {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 auto !important;
+  left: auto !important;
+  right: auto !important;
+  overflow: visible !important;
+}
+
+body.wix-static-export #SITE_FOOTER .XKFSfx,
+body.wix-static-export #SITE_FOOTER [data-mesh-id="SITE_FOOTERinlineContent"],
+body.wix-static-export #SITE_FOOTER [data-mesh-id="SITE_FOOTERinlineContent-gridContainer"] {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 auto !important;
+  left: auto !important;
+  right: auto !important;
+  transform: none !important;
+  position: relative !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+  box-sizing: border-box !important;
+  grid-template-columns: none !important;
+  grid-template-rows: none !important;
+  padding-left: 1rem !important;
+  padding-right: 1rem !important;
+}
+
+body.wix-static-export #SITE_FOOTER [data-mesh-id="SITE_FOOTERinlineContent-gridContainer"] {
+  gap: 0.75rem !important;
+  height: auto !important;
+  min-height: 0 !important;
+  padding-top: 1rem !important;
+  padding-bottom: 1rem !important;
+}
+
+body.wix-static-export #SITE_FOOTER [data-mesh-id="SITE_FOOTERinlineContent-gridContainer"] > *,
+body.wix-static-export #SITE_FOOTER [data-mesh-id="SITE_FOOTERinlineContent-gridContainer"] > interact-element > * {
+  position: relative !important;
+  left: auto !important;
+  right: auto !important;
+  top: auto !important;
+  margin: 0 auto !important;
+  grid-area: auto !important;
+  justify-self: center !important;
+  align-self: center !important;
+  transform: none !important;
+}
+
+body.wix-static-export #SITE_FOOTER .gosaki-footer-social-links {
+  margin: 0 auto 0.75rem !important;
+}
+
+body.wix-static-export #SITE_FOOTER #WRchTxtx {
+  width: 100% !important;
+  max-width: 100% !important;
+  left: auto !important;
+  right: auto !important;
+  margin: 0 auto !important;
+  padding: 0.25rem 1rem 0.75rem !important;
+  text-align: center !important;
+}
+
+body.wix-static-export #SITE_FOOTER #WRchTxtx p {
+  text-align: center !important;
+  margin: 0 !important;
+}
+
+@media (min-width: 769px) {
+  body.wix-static-export #SITE_FOOTER [data-mesh-id="SITE_FOOTERinlineContent-gridContainer"] {
+    padding-left: 1.5rem !important;
+    padding-right: 1.5rem !important;
+  }
+
+  body.wix-static-export #SITE_FOOTER #WRchTxtx {
+    text-align: center !important;
+    max-width: 100% !important;
+    padding-right: 1rem !important;
+  }
+}
+
+/* --- G-8g8 gosaki discography subheading style fix (site-specific) --- */
+/* Track List / Personnel: Wix inline text-decoration:underline on first paragraph only. */
+
+body.wix-static-export #comp-llexymel [id^="comp-lley4qy2__"] > p:first-of-type,
+body.wix-static-export #comp-llexymel [id^="comp-lley693e__"] > p:first-of-type {
+  margin-bottom: 0.375rem !important;
+}
+
+body.wix-static-export #comp-llexymel [id^="comp-lley4qy2__"] > p:first-of-type .wixui-rich-text__text,
+body.wix-static-export #comp-llexymel [id^="comp-lley693e__"] > p:first-of-type .wixui-rich-text__text {
+  text-decoration: none !important;
+  font-weight: 700 !important;
+  font-size: 16px !important;
+  line-height: 1.45 !important;
+}
+
+@media (max-width: 768px) {
+  body.wix-static-export #comp-llexymel [id^="comp-lley4qy2__"] > p:first-of-type .wixui-rich-text__text,
+  body.wix-static-export #comp-llexymel [id^="comp-lley693e__"] > p:first-of-type .wixui-rich-text__text {
+    font-size: calc(14px + 2px) !important;
   }
 }
 `;

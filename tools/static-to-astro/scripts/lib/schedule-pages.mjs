@@ -4,14 +4,18 @@ import { htmlFileToAstroRoute } from "./static-site-analyzer.mjs";
 /** Matches `schedule-2026-03.html` (basename only). */
 export const SCHEDULE_MONTH_FILENAME = /^schedule-(\d{4})-(\d{2})\.html$/i;
 
+/** Matches live-crawl month pages like `2026-03.html` (basename only). */
+export const LIVE_CRAWL_MONTH_FILENAME = /^(\d{4})-(\d{2})\.html$/i;
+
 export const SCHEDULE_INDEX_ROUTE = "/schedule/";
 
 /**
- * @param {string} relPath e.g. `schedule-2026-07.html`
+ * @param {string} relPath e.g. `schedule-2026-07.html` or `2026-07.html`
  */
 export function parseScheduleMonthSourcePath(relPath) {
   const base = path.posix.basename(relPath.replace(/\\/g, "/"));
-  const match = base.match(SCHEDULE_MONTH_FILENAME);
+  let match = base.match(SCHEDULE_MONTH_FILENAME);
+  if (!match) match = base.match(LIVE_CRAWL_MONTH_FILENAME);
   if (!match) return null;
   return { year: match[1], month: match[2], basename: base };
 }
@@ -30,8 +34,11 @@ export function isScheduleMonthSourcePath(relPath) {
 export function isScheduleMonthNavTarget(href, route = "") {
   const hrefBase = path.posix.basename((href ?? "").split("?")[0].split("#")[0]);
   if (SCHEDULE_MONTH_FILENAME.test(hrefBase)) return true;
+  if (LIVE_CRAWL_MONTH_FILENAME.test(hrefBase)) return true;
+  if (/^\d{4}-\d{2}$/i.test(hrefBase)) return true;
   const routeMatch = (route || "").match(/^\/schedule-(\d{4})-(\d{2})\/?$/i);
-  return Boolean(routeMatch);
+  if (routeMatch) return true;
+  return Boolean((route || "").match(/^\/(\d{4})-(\d{2})\/?$/i));
 }
 
 /**
@@ -78,5 +85,6 @@ export function detectScheduleMonthPages(pages) {
 export function isScheduleSectionPath(pathname) {
   const path = pathname.endsWith("/") ? pathname : `${pathname}/`;
   if (path === SCHEDULE_INDEX_ROUTE) return true;
-  return /^\/schedule-\d{4}-\d{2}\//i.test(path);
+  if (/^\/schedule-\d{4}-\d{2}\//i.test(path)) return true;
+  return /^\/\d{4}-\d{2}\//i.test(path);
 }

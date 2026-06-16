@@ -85,6 +85,73 @@ function main() {
   }
   if (!readme.includes("public-dist")) errors.push("README missing public-dist guidance");
 
+  for (const ym of ["2026-06", "2026-07"]) {
+    const monthPath = path.join(publicDist, ym, "index.html");
+    if (!fs.existsSync(monthPath)) {
+      errors.push(`missing month page: public-dist/${ym}/index.html`);
+      continue;
+    }
+    const monthHtml = fs.readFileSync(monthPath, "utf8");
+    if (!monthHtml.includes("gosaki-schedule-month")) {
+      errors.push(`${ym} missing gosaki-schedule-month class`);
+    }
+    if (!monthHtml.includes("会場")) {
+      errors.push(`${ym} missing schedule body text (会場)`);
+    }
+    if (monthHtml.includes('style="visibility:hidden"')) {
+      errors.push(`${ym} still has visibility:hidden repeater`);
+    }
+  }
+
+  const scheduleHub = path.join(publicDist, "schedule/index.html");
+  if (fs.existsSync(scheduleHub)) {
+    const hubHtml = fs.readFileSync(scheduleHub, "utf8");
+    if (!hubHtml.includes("/cms-kit-staging/gosaki-piano/2026-")) {
+      errors.push("schedule hub missing deployBase month links");
+    }
+  } else {
+    errors.push("missing schedule/index.html");
+  }
+
+  const discographyPath = path.join(publicDist, "discography/index.html");
+  if (fs.existsSync(discographyPath)) {
+    const discHtml = fs.readFileSync(discographyPath, "utf8");
+    if (!discHtml.includes("comp-llexymel") || !discHtml.includes("comp-jshobkm1")) {
+      errors.push("discography page missing album structure");
+    }
+    if (!discHtml.includes("Track List") || !discHtml.includes("Personnel")) {
+      errors.push("discography missing Track List or Personnel text");
+    }
+  }
+
+  const indexPath = path.join(publicDist, "index.html");
+  if (fs.existsSync(indexPath)) {
+    const indexHtml = fs.readFileSync(indexPath, "utf8");
+    if (!indexHtml.includes("nav-toggle") || !indexHtml.includes(">Schedule</a>")) {
+      errors.push("index missing nav toggle or Schedule link");
+    }
+    if (!indexHtml.includes("gosaki-footer-social-links")) {
+      errors.push("index missing gosaki-footer-social-links block");
+    }
+    if (
+      !indexHtml.includes(">Facebook</a>") ||
+      !indexHtml.includes(">X</a>") ||
+      !indexHtml.includes(">Instagram</a>")
+    ) {
+      errors.push("index footer social missing Facebook/X/Instagram text links");
+    }
+    if (
+      !indexHtml.includes("facebook.com/goto.saki.3") ||
+      !indexHtml.includes("twitter.com/goto_saki_pf") ||
+      !indexHtml.includes("instagram.com/gosaakiii")
+    ) {
+      errors.push("index footer social hrefs incomplete");
+    }
+    if (!indexHtml.includes("SITE_FOOTERinlineContent-gridContainer")) {
+      errors.push("index missing footer grid container");
+    }
+  }
+
   const ok = errors.length === 0;
   console.log(`\n=== verify:manual-upload: ${ok ? "PASS" : "FAIL"} ===`);
   if (errors.length) {

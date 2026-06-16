@@ -55,6 +55,7 @@ import {
   applyGosakiAboutBandProfiles,
   isGosakiPianoFixture,
 } from "./gosaki-about-band-profiles.mjs";
+import { generateGosakiFooterAstro } from "./gosaki-footer-social.mjs";
 
 const TRAILING_SLASH = "always";
 const GLOBAL_CSS_PATH = "src/styles/global.css";
@@ -477,20 +478,21 @@ function generateScheduleIndexPage(scheduleMonths, baseUrl, deployBase) {
   const listItems = scheduleMonths
     .map(
       (m) =>
-        `        <li>\n          <h3><a href="${escapeHtmlText(m.route)}">${escapeHtmlText(m.label)}</a></h3>\n        </li>`,
+        `      <a href={withBase('${escapeHtmlText(m.route)}')} class="gosaki-schedule-month-link">${escapeHtmlText(m.label)}</a>`,
     )
     .join("\n");
 
-  const content = `    <h1 class="page-heading">Schedule</h1>
-    <section class="section-block">
+  const content = `  <section class="gosaki-schedule-hub">
+    <h1 class="gosaki-schedule-hub__title">Schedule</h1>
+    <div class="gosaki-schedule-months">
       <!-- CMS_TARGET: SCHEDULE_INDEX -->
-      <ul class="link-list">
 ${listItems}
-      </ul>
-    </section>`;
+    </div>
+  </section>`;
 
   return `---
 import BaseLayout from "${layoutImport}";
+import { withBase } from "../../lib/with-base.ts";
 ---
 
 ${layoutOpen}
@@ -775,7 +777,12 @@ export function generateAstroProject(inputDir, outputDir, options = {}) {
     productionOrigin,
   });
   writeFile(path.join(outDir, "src/components/Header.astro"), headerResult.content);
-  writeFile(path.join(outDir, "src/components/Footer.astro"), generateComponent(footerHtml, "Footer", linkTransformContext));
+  writeFile(
+    path.join(outDir, "src/components/Footer.astro"),
+    isGosakiPianoFixture(siteDir)
+      ? generateGosakiFooterAstro(footerHtml, linkTransformContext)
+      : generateComponent(footerHtml, "Footer", linkTransformContext),
+  );
   writeFile(
     path.join(outDir, "src/layouts/BaseLayout.astro"),
     generateBaseLayout({ layoutScripts, externalCss, wixStaticExport }),

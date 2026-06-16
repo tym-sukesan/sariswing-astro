@@ -36,7 +36,12 @@ import { productionAbsoluteUrlToRoute } from "./lib/path-transform.mjs";
 import { buildWixStagingVisualOverridesCss } from "./lib/wix-staging-visual-overrides.mjs";
 import { buildWixStaticExportBaselineOverridesCss } from "./lib/wix-static-export-baseline-overrides.mjs";
 import { buildGosakiPianoSiteOverridesCss } from "./lib/site-specific-overrides/gosaki-piano-overrides.mjs";
+import {
+  extractGosakiFooterSocialLinks,
+  injectGosakiFooterSocialBlock,
+} from "./lib/gosaki-footer-social.mjs";
 import { generateHeaderAstro } from "./lib/header-transform.mjs";
+import { parseScheduleMonthSourcePath } from "./lib/schedule-pages.mjs";
 import {
   injectBandProfilesIntoAboutPage,
   loadGosakiBandProfilesConfig,
@@ -501,6 +506,35 @@ assert(
     headerAstro.content.includes('href={withBase("/")}'),
 );
 
+const gosakiNavHeaderHtml =
+  '<div id="comp-mbdw9tzc"><h1 class="font_0">SAKI GOTO Website</h1></div><!--/$-->' +
+  '<div id="comp-mbdw7xid"><nav aria-label="Main"><a href="/">Home</a><a href="/about/">About</a>' +
+  '<a href="2026-07">2026.07</a><a href="/discography/">Discography</a>' +
+  '<a href="/contact/">Contact</a><a href="/link/">Link</a></nav></div>';
+const gosakiNavHeader = generateHeaderAstro(gosakiNavHeaderHtml, "Header", { scheduleHub: true });
+assert(
+  "header transform includes Schedule when scheduleHub",
+  gosakiNavHeader.content.includes(">Schedule</a>") &&
+    gosakiNavHeader.content.includes("withBase('/schedule/')"),
+);
+assert(
+  "header transform excludes month-only nav labels",
+  !gosakiNavHeader.content.includes("2026.07"),
+);
+assert(
+  "header nav toggle script scoped to SITE_HEADER",
+  gosakiNavHeader.content.includes('header.querySelector(".nav-toggle")'),
+);
+assert(
+  "header nav toggle aria-expanded initial false",
+  gosakiNavHeader.content.includes('aria-expanded="false"'),
+);
+assert(
+  "live crawl month fixture filename detected",
+  parseScheduleMonthSourcePath("2026-07.html")?.year === "2026" &&
+    parseScheduleMonthSourcePath("2026-07.html")?.month === "07",
+);
+
 // --- G-8f gosaki mobile visual refinement ---
 
 assert(
@@ -629,6 +663,266 @@ assert(
   "composed wix overrides include G-8g1 regression fix rules",
   wixOverrides.includes("G-8g1 gosaki mobile header and footer social regression fix"),
 );
+
+// --- G-8g2 gosaki header nav functionality fix ---
+
+assert(
+  "gosaki G-8g2 nav functionality fix block present",
+  gosakiOverrides.includes("G-8g2 gosaki header nav functionality fix"),
+);
+assert(
+  "gosaki G-8g2 SP nav open display rule",
+  gosakiOverrides.includes("is-nav-open .global-nav") &&
+    gosakiOverrides.includes("display: block !important") &&
+    gosakiOverrides.includes("G-8g2 gosaki header nav functionality fix"),
+);
+assert(
+  "gosaki G-8g2 header overflow visible for dropdown",
+  gosakiOverrides.includes("#SITE_HEADER") &&
+    gosakiOverrides.includes("overflow: visible !important"),
+);
+assert(
+  "gosaki G-8g2 nav toggle pointer-events rule",
+  gosakiOverrides.includes(".nav-toggle") &&
+    gosakiOverrides.includes("pointer-events: auto"),
+);
+assert(
+  "composed wix overrides include G-8g2 nav functionality rules",
+  wixOverrides.includes("G-8g2 gosaki header nav functionality fix"),
+);
+
+// --- G-8g3 gosaki schedule hub design and link fix ---
+
+const astroGeneratorSrc = fs.readFileSync(
+  path.join(TOOL_ROOT, "scripts/lib/astro-generator.mjs"),
+  "utf8",
+);
+assert(
+  "gosaki G-8g3 schedule hub design block present",
+  gosakiOverrides.includes("G-8g3 gosaki schedule hub design and link fix") &&
+    gosakiOverrides.includes(".gosaki-schedule-hub") &&
+    gosakiOverrides.includes(".gosaki-schedule-month-link"),
+);
+assert(
+  "schedule index generator uses withBase for month links",
+  astroGeneratorSrc.includes("gosaki-schedule-hub") &&
+    astroGeneratorSrc.includes("withBase('${escapeHtmlText(m.route)}')") &&
+    !astroGeneratorSrc.includes('href="${escapeHtmlText(m.route)}"'),
+);
+assert(
+  "schedule index generator avoids root-only month href pattern",
+  !astroGeneratorSrc.includes('<a href="/2026-'),
+);
+assert(
+  "composed wix overrides include G-8g3 schedule hub rules",
+  wixOverrides.includes("G-8g3 gosaki schedule hub design and link fix"),
+);
+
+// --- G-8g4 gosaki schedule month content fix ---
+
+const pathTransformSrc = fs.readFileSync(path.join(TOOL_ROOT, "scripts/lib/path-transform.mjs"), "utf8");
+
+assert(
+  "gosaki G-8g4 schedule month content block present",
+  gosakiOverrides.includes("G-8g4 gosaki schedule month content fix") &&
+    gosakiOverrides.includes(".gosaki-schedule-month") &&
+    gosakiOverrides.includes(".gosaki-schedule-event-card") &&
+    gosakiOverrides.includes("fluid-columns-repeater"),
+);
+assert(
+  "path transform exposes schedule month repeater markup",
+  pathTransformSrc.includes("transformScheduleMonthFragment") &&
+    pathTransformSrc.includes("gosaki-schedule-month") &&
+    pathTransformSrc.includes("visibility\\s*:\\s*hidden"),
+);
+assert(
+  "composed wix overrides include G-8g4 schedule month rules",
+  wixOverrides.includes("G-8g4 gosaki schedule month content fix"),
+);
+
+// --- G-8g5 gosaki discography spacing and footer social alignment fix ---
+
+assert(
+  "gosaki G-8g5 discography and footer alignment block present",
+  gosakiOverrides.includes("G-8g5 gosaki discography spacing and footer social alignment fix") &&
+    gosakiOverrides.includes("#comp-llexymel [id^=\"comp-jshobkm1__\"]") &&
+    gosakiOverrides.includes("width: fit-content !important"),
+);
+assert(
+  "gosaki G-8g5 discography SP image/title gap rule",
+  gosakiOverrides.includes("#comp-llexymel [id^=\"comp-lley9r5x__\"]") &&
+    gosakiOverrides.includes("margin: 0.375rem 0 0.5rem !important"),
+);
+assert(
+  "gosaki G-8g5 footer social centered flex gap",
+  gosakiOverrides.includes("#SITE_FOOTER #LnkBr2 .tN_ggS") &&
+    gosakiOverrides.includes("gap: 1.4rem !important") &&
+    gosakiOverrides.includes("margin-inline: auto !important"),
+);
+assert(
+  "gosaki G-8g5 footer copyright centered",
+  gosakiOverrides.includes("#SITE_FOOTER #WRchTxtx") &&
+    gosakiOverrides.includes("text-align: center !important"),
+);
+assert(
+  "composed wix overrides include G-8g5 alignment rules",
+  wixOverrides.includes("G-8g5 gosaki discography spacing and footer social alignment fix"),
+);
+
+// --- G-8g6 gosaki footer social final alignment fix ---
+
+const footerSocialSrc = fs.readFileSync(
+  path.join(TOOL_ROOT, "scripts/lib/gosaki-footer-social.mjs"),
+  "utf8",
+);
+const sampleFooterHtml =
+  '<div id="LnkBr2"><ul><li><a href="https://www.facebook.com/goto.saki.3" aria-label="Facebook"></a></li>' +
+  '<li><a href="https://twitter.com/goto_saki_pf" aria-label="X  "></a></li>' +
+  '<li><a href="https://www.instagram.com/gosaakiii/?hl=ja" aria-label="Instagram"></a></li></ul></div>' +
+  '<div id="WRchTxtx"><p>© 2025</p></div>';
+const extractedSocial = extractGosakiFooterSocialLinks(sampleFooterHtml);
+assert(
+  "gosaki footer social extractor finds three links",
+  extractedSocial.length === 3 &&
+    extractedSocial[0].label === "Facebook" &&
+    extractedSocial[1].label === "X" &&
+    extractedSocial[2].label === "Instagram",
+);
+const injectedFooter = injectGosakiFooterSocialBlock(sampleFooterHtml);
+assert(
+  "gosaki footer social injector adds nav block",
+  injectedFooter.includes('class="gosaki-footer-social-links"') &&
+    injectedFooter.includes(">Facebook</a>") &&
+    injectedFooter.includes(">X</a>") &&
+    injectedFooter.includes(">Instagram</a>"),
+);
+assert(
+  "gosaki G-8g6 footer social block present",
+  gosakiOverrides.includes("G-8g6 gosaki footer social final alignment fix") &&
+    gosakiOverrides.includes(".gosaki-footer-social-links") &&
+    gosakiOverrides.includes("#SITE_FOOTER #LnkBr2") &&
+    gosakiOverrides.includes("display: none !important"),
+);
+assert(
+  "gosaki G-8g6 hides legacy Wix SNS bar",
+  footerSocialSrc.includes("injectGosakiFooterSocialBlock") &&
+    gosakiOverrides.includes("pointer-events: none !important"),
+);
+assert(
+  "gosaki G-8g6 footer social centered flex gap",
+  gosakiOverrides.includes("gap: 1.5rem !important") &&
+    gosakiOverrides.includes("justify-content: center !important"),
+);
+assert(
+  "composed wix overrides include G-8g6 footer social rules",
+  wixOverrides.includes("G-8g6 gosaki footer social final alignment fix"),
+);
+
+// --- G-8g7 gosaki footer grid container alignment fix ---
+
+assert(
+  "gosaki G-8g7 footer grid container block present",
+  gosakiOverrides.includes("G-8g7 gosaki footer grid container alignment fix") &&
+    gosakiOverrides.includes('[data-mesh-id="SITE_FOOTERinlineContent-gridContainer"] > *') &&
+    gosakiOverrides.includes("left: auto !important"),
+);
+assert(
+  "gosaki G-8g7 resets footer mesh container width and center",
+  gosakiOverrides.includes('[data-mesh-id="SITE_FOOTERinlineContent-gridContainer"]') &&
+    gosakiOverrides.includes("width: 100% !important") &&
+    gosakiOverrides.includes("align-items: center !important"),
+);
+assert(
+  "gosaki G-8g7 copyright centered on all breakpoints",
+  gosakiOverrides.includes("#SITE_FOOTER #WRchTxtx p") &&
+    gosakiOverrides.includes("text-align: center !important") &&
+    !gosakiOverrides.includes("G-8g7") === false,
+);
+assert(
+  "gosaki G-8g7 PC copyright stays centered not right",
+  (() => {
+    const g7 = gosakiOverrides.split("G-8g7 gosaki footer grid container alignment fix")[1] || "";
+    return g7.includes("@media (min-width: 769px)") && g7.includes("text-align: center !important");
+  })(),
+);
+assert(
+  "composed wix overrides include G-8g7 footer grid rules",
+  wixOverrides.includes("G-8g7 gosaki footer grid container alignment fix"),
+);
+
+// --- G-8g8 gosaki discography subheading style fix ---
+
+assert(
+  "gosaki G-8g8 discography subheading block present",
+  gosakiOverrides.includes("G-8g8 gosaki discography subheading style fix") &&
+    gosakiOverrides.includes("#comp-llexymel [id^=\"comp-lley4qy2__\"] > p:first-of-type") &&
+    gosakiOverrides.includes("#comp-llexymel [id^=\"comp-lley693e__\"] > p:first-of-type"),
+);
+assert(
+  "gosaki G-8g8 removes Track List Personnel underline",
+  gosakiOverrides.includes("text-decoration: none !important") &&
+    gosakiOverrides.includes("G-8g8 gosaki discography subheading style fix"),
+);
+assert(
+  "gosaki G-8g8 subheading bold and larger font",
+  gosakiOverrides.includes("font-weight: 700 !important") &&
+    gosakiOverrides.includes("font-size: 16px !important"),
+);
+assert(
+  "composed wix overrides include G-8g8 discography subheading rules",
+  wixOverrides.includes("G-8g8 gosaki discography subheading style fix"),
+);
+
+const gosakiPublicDist = path.join(TOOL_ROOT, "output/static-public/gosaki-piano/public-dist");
+for (const ym of ["2026-06", "2026-07"]) {
+  const monthHtmlPath = path.join(gosakiPublicDist, ym, "index.html");
+  if (fs.existsSync(monthHtmlPath)) {
+    const monthHtml = fs.readFileSync(monthHtmlPath, "utf8");
+    assert(
+      `${ym} month page has schedule body (会場)`,
+      monthHtml.includes("会場") && !monthHtml.includes('style="visibility:hidden"'),
+    );
+    assert(
+      `${ym} month page has gosaki schedule month design class`,
+      monthHtml.includes("gosaki-schedule-month") &&
+        monthHtml.includes("gosaki-schedule-event-card"),
+    );
+  }
+}
+
+const gosakiScheduleHubHtml = path.join(gosakiPublicDist, "schedule/index.html");
+if (fs.existsSync(gosakiScheduleHubHtml)) {
+  const hubHtml = fs.readFileSync(gosakiScheduleHubHtml, "utf8");
+  assert(
+    "schedule hub month links use deployBase",
+    hubHtml.includes("/cms-kit-staging/gosaki-piano/2026-") &&
+      !hubHtml.includes('href="/2026-'),
+  );
+  assert("schedule hub includes Schedule title", hubHtml.includes("gosaki-schedule-hub"));
+}
+
+const gosakiBuiltIndex = path.join(gosakiPublicDist, "index.html");
+if (fs.existsSync(gosakiBuiltIndex)) {
+  const indexHtml = fs.readFileSync(gosakiBuiltIndex, "utf8");
+  assert("PC nav contains Schedule link", indexHtml.includes(">Schedule</a>"));
+  assert(
+    "SP nav toggle remains in built HTML",
+    indexHtml.includes("nav-toggle") && indexHtml.includes("global-nav"),
+  );
+  assert(
+    "footer social injected block has Facebook X Instagram",
+    indexHtml.includes("gosaki-footer-social-links") &&
+      indexHtml.includes(">Facebook</a>") &&
+      indexHtml.includes(">X</a>") &&
+      indexHtml.includes(">Instagram</a>"),
+  );
+  assert(
+    "footer social links use real hrefs",
+    indexHtml.includes("facebook.com/goto.saki.3") &&
+      indexHtml.includes("twitter.com/goto_saki_pf") &&
+      indexHtml.includes("instagram.com/gosaakiii"),
+  );
+}
 
 // --- cleanup temp manifest ---
 

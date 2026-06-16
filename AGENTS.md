@@ -356,6 +356,71 @@ Doc: `tools/static-to-astro/docs/wix-static-export-responsive-baseline-generaliz
 - Band profiles / About injection remain gosaki-only (not in baseline)
 - Gate: `wixStaticExportResponsiveBaselineGeneralized: true`, `readyForNextWixPilot: true`
 
+## Gosaki discography subheading style fix (G-8g8)
+
+Doc: `tools/static-to-astro/docs/gosaki-discography-subheading-style-fix.md`
+
+- Track List / Personnel underlined due to Wix inline `text-decoration:underline` on first `<p>` in `comp-lley4qy2` / `comp-lley693e`
+- Fix: G-8g8 CSS on `#comp-llexymel` first paragraph only — no underline, bold, 16px
+- **Commit deferred** (`commitDeferredForVisualBatch: true`)
+- Gate: `gosakiDiscographySubheadingStyleFixComplete: true`
+
+## Gosaki footer grid container alignment fix (G-8g7)
+
+Doc: `tools/static-to-astro/docs/gosaki-footer-grid-container-alignment-fix.md`
+
+- G-8g6 upload side effect: injected SNS still right-shifted — Wix mesh children `left:415px`/`left:766px` on `SITE_FOOTERinlineContent-gridContainer`
+- Fix: G-8g7 resets footer mesh containers + children; copyright always center (PC/SP); overrides G-8f asymmetric padding
+- **Commit deferred** (`commitDeferredForVisualBatch: true`)
+- Gate: `gosakiFooterGridContainerAlignmentFixComplete: true`, `readyForManualReuploadByOperator: true`
+
+## Gosaki footer social final alignment fix (G-8g6)
+
+Doc: `tools/static-to-astro/docs/gosaki-footer-social-final-alignment-fix.md`
+
+- G-8g5 upload side effect: Footer SNS right-shifted; only Facebook visible (X/Instagram clipped by Wix `#LnkBr2{width:150px}` + `::after` fallback)
+- Fix: inject `.gosaki-footer-social-links` via `gosaki-footer-social.mjs`; hide `#LnkBr2`; G-8g6 CSS centering
+- SNS URLs from fixture: Facebook, X (twitter.com/goto_saki_pf), Instagram — all found
+- **Commit deferred** (`commitDeferredForVisualBatch: true`)
+- Gate: `gosakiFooterSocialFinalAlignmentFixComplete: true`, `readyForManualReuploadByOperator: true`
+
+## Gosaki discography spacing and footer social alignment fix (G-8g5)
+
+Doc: `tools/static-to-astro/docs/gosaki-discography-spacing-and-footer-social-alignment-fix.md`
+
+- G-8g4 upload side effects: Discography SP large gap under album image; footer SNS text slightly right-shifted with uneven X–Instagram spacing
+- Fix: G-8g5 SP-scoped `#comp-llexymel` mesh margin/height reset; `#LnkBr2` fit-content + flex `gap: 1.4rem` centering
+- **Commit deferred** (`commitDeferredForVisualBatch: true`)
+- Gate: `gosakiDiscographySpacingAndFooterSocialAlignmentFixComplete: true`, `readyForManualReuploadByOperator: true`
+
+## Gosaki schedule month content fix (G-8g4)
+
+Doc: `tools/static-to-astro/docs/gosaki-schedule-month-content-fix.md`
+
+- G-8g2/G-8g3 upload side effect: month pages (`/2026-07/` etc.) showed title only — Wix repeater `visibility:hidden` without Thunderbolt JS
+- Fix: `path-transform.mjs` strips hidden repeater style + adds `.gosaki-schedule-month` / event card classes; G-8g4 CSS in overrides
+- **Commit deferred** (`commitDeferredForVisualBatch: true`)
+- Gate: `gosakiScheduleMonthContentFixComplete: true`, `readyForManualReuploadByOperator: true`
+
+## Gosaki schedule hub design and link fix (G-8g3)
+
+Doc: `tools/static-to-astro/docs/gosaki-schedule-hub-design-and-link-fix.md`
+
+- G-8g2 upload side effects: `/schedule/` plain HTML, month links `href="/2026-XX/"` (root, not deployBase)
+- Fix: `generateScheduleIndexPage()` uses `withBase()` + `.gosaki-schedule-hub` markup; G-8g3 CSS in overrides
+- **Commit deferred** (`commitDeferredForVisualBatch: true`)
+- Gate: `gosakiScheduleHubDesignAndLinkFixComplete: true`, `readyForManualReuploadByOperator: true`
+
+## Gosaki header nav functionality fix (G-8g2)
+
+Doc: `tools/static-to-astro/docs/gosaki-header-nav-functionality-fix.md`
+
+- G-8g1 upload side effects: Schedule missing from nav, SP hamburger does not open
+- Fix: `schedule-pages.mjs` live-crawl month detection → `/schedule/` hub; `header-transform.mjs` scoped toggle JS; G-8g2 CSS overflow/display rules
+- Schedule link: `/schedule/` (hub listing month pages)
+- **Commit deferred** (`commitDeferredForVisualBatch: true`) pending operator visual QA
+- Gate: `gosakiHeaderNavFunctionalityFixComplete: true`, `readyForManualReuploadByOperator: true`
+
 ## Gosaki mobile header and footer social regression fix (G-8g1)
 
 Doc: `tools/static-to-astro/docs/gosaki-mobile-header-and-footer-social-regression-fix.md`

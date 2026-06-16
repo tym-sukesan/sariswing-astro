@@ -21,13 +21,15 @@ Staging Shell
 将来的な顧客オンボーディング・課金・デプロイ自動化
 
 2. Current phase
-現在フェーズ: G-9c0b-gosaki-schedule-legacy-month-route-stub（完了）
+現在フェーズ: G-9c0c-gosaki-route-aware-schedule-seed-sql-regeneration（完了）
 
-G-9c0b: Gosaki legacy `/YYYY-MM/` compatibility stub pages。`noindex,follow` + `rel=canonical` → `/schedule/YYYY-MM/`。sitemap から legacy 除外。強制リダイレクトなし。
+G-9c0c: Gosaki schedule seed SQL template を canonical `source_route: /schedule/YYYY-MM/` で再生成。60 plain INSERT、collision warning、preflight/migration template 更新。DB実行なし。
 
-G-9c0a: Gosaki schedule month canonical route 実装（commit `c385a7f`）。month canonical は `/schedule/YYYY-MM/`。
+G-9c0b: legacy `/YYYY-MM/` stub（commit `36e8c54`）
 
-G-9c0 planning doc committed (`acc834c`). G-9c seed SQL template **未 commit — on hold** until G-9c0c route-aware regeneration。
+G-9c0a: canonical `/schedule/YYYY-MM/`（commit `c385a7f`）
+
+G-9c SQL templates: **未 commit** — ready for G-9c commit after operator review
 
 G-9b3: Avenir Next 置換後の PC 見出し折り返し修正。DB・FTP なし。
 
@@ -55,7 +57,7 @@ Gosaki staging:
   - `tools/static-to-astro/docs/gosaki-schedule-route-canonical-planning.md`
   - `tools/static-to-astro/docs/gosaki-schedule-canonical-route-implementation.md`
   - `tools/static-to-astro/docs/gosaki-schedule-legacy-month-route-stub.md`
-- 次: `G-9c0c-route-aware-seed-sql-regeneration`
+- 次: G-9c commit（operator review）→ G-9c-execution（operator manual SQL）
 
 3. Important completed milestones
 
@@ -457,24 +459,25 @@ rollbackNeeded: false
 明示的 retry で dev server を起動する場合は inline env のみ使用する。
 
 10. Recommended next phase
-次フェーズ推奨: `G-9c0c-route-aware-seed-sql-regeneration`
+次フェーズ推奨: G-9c commit（route-aware seed SQL templates）
 
-G-9c0b で legacy `/YYYY-MM/` stub を実装済み。次は G-9c0c で seed SQL template を route-aware 再生成し、G-9c commit → G-9c-execution（operator manual SQL）。
+G-9c0c で canonical `source_route` 対応の SQL template 再生成済み。次は operator review 後に G-9c commit → G-9c-execution（manual SQL on staging）。
 
 詳細:
-- `tools/static-to-astro/docs/gosaki-schedule-legacy-month-route-stub.md`
 - `tools/static-to-astro/docs/gosaki-schedule-seed-sql-planning.md`
+- `tools/static-to-astro/docs/gosaki-schedule-legacy-month-route-stub.md`
 
-G-9c0b gates:
+G-9c0c gates:
 ```txt
-gosakiScheduleLegacyMonthRouteStubComplete: true
-gosakiLegacyMonthRoutesGenerated: true
-gosakiLegacyMonthRoutesNoindex: true
-gosakiLegacyMonthRoutesCanonicalToSchedule: true
-gosakiLegacyMonthRoutesExcludedFromSitemap: true
-gosakiScheduleCanonicalMonthRouteStill: /schedule/YYYY-MM/
-readyForG9c0cRouteAwareSeedSqlRegeneration: true
-readyForG9cCommit: false
+gosakiRouteAwareSeedSqlRegenerationComplete: true
+gosakiScheduleSeedSqlTemplateUsesCanonicalSourceRoute: true
+gosakiScheduleSeedSqlTemplateInsertCount: 60
+gosakiScheduleSeedSqlTemplatePlainInsertOnly: true
+gosakiScheduleSeedSqlTemplateNoOnConflict: true
+gosakiSeedLegacyIdCollisionWarningPresent: true
+gosakiSiteSlugMigrationTemplateReady: true
+readyForG9cRouteAwareSeedSqlCommit: true
+readyForG9c1OperatorManualSqlExecutionPreflight: true
 readyForAnyDbWrite: false
 readyForAnyFtpApply: false
 ftpAutoDeployStillDisabled: true

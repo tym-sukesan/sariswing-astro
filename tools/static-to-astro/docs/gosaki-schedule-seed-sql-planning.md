@@ -1,9 +1,9 @@
-# Gosaki schedule seed SQL planning (G-9c)
+# Gosaki schedule seed SQL planning (G-9c / G-9c0c)
 
-**Phase:** `G-9c-gosaki-schedule-seed-sql-planning`  
+**Phase:** `G-9c0c-gosaki-route-aware-schedule-seed-sql-regeneration`  
 **Date:** 2026-06-16  
-**Prior:** G-9b extractor (`e97a047`), G-9b1–G-9b3 font/typography (`d0d0a6a`)  
-**Status:** planning + SQL templates — **no DB write, no SQL execution**
+**Prior:** G-9c0a canonical routes (`c385a7f`), G-9c0b legacy stubs (`36e8c54`), G-9b extractor (`e97a047`)  
+**Status:** route-aware SQL templates regenerated — **no DB write, no SQL execution**
 
 ---
 
@@ -16,12 +16,13 @@ Produce operator-ready SQL templates to seed **60 Gosaki schedule events** into 
 
 ---
 
-## 2. Dry-run reconfirmation (G-9c)
+## 2. Dry-run reconfirmation (G-9c0c)
 
 ```bash
 cd tools/static-to-astro
 npm run verify:gosaki-schedule-seed
 npm run extract:gosaki-schedule-seed
+npm run generate:gosaki-schedule-seed-sql
 ```
 
 | Check | Result |
@@ -29,7 +30,9 @@ npm run extract:gosaki-schedule-seed
 | Events | **60** |
 | Months | **5** (`2026-03` … `2026-07`) |
 | `site_slug` | `gosaki-piano` on all rows |
-| Routes | `/schedule/2026-03/` … `/schedule/2026-07/` |
+| `source_route` | `/schedule/2026-03/` … `/schedule/2026-07/` (**canonical**) |
+| Legacy `/YYYY-MM/` in `source_route` | **0** (legacy stubs are site routes only) |
+| `source_file` | `2026-XX.html` (Wix provenance) |
 | `legacy_id` pattern | `schedule-YYYY-MM-NNN` |
 | Date parse failures | **0** |
 | Warnings | **0** |
@@ -221,7 +224,7 @@ Other July IDs (`001`–`009`, `011`–`014`) do **not** collide with known PoC 
 
 1. **Rename PoC `legacy_id` first** (recommended if PoC row must remain):
    ```sql
-   -- Separate approval — NOT part of G-9c planning execution
+   -- Separate approval — NOT part of G-9c0c
    update public.schedules
    set legacy_id = 'schedule-2026-07-010-poc'
    where legacy_id = 'schedule-2026-07-010'
@@ -252,11 +255,15 @@ The seed template includes a **COLLISION WARNING** comment above the `schedule-2
 ## 10. Gates
 
 ```txt
-gosakiScheduleSeedSqlPlanningComplete: true
-gosakiScheduleSeedSqlTemplateReady: true
+gosakiRouteAwareSeedSqlRegenerationComplete: true
+gosakiScheduleSeedSqlTemplateUsesCanonicalSourceRoute: true
+gosakiScheduleSeedSqlTemplateInsertCount: 60
+gosakiScheduleSeedSqlTemplatePlainInsertOnly: true
+gosakiScheduleSeedSqlTemplateNoOnConflict: true
+gosakiSeedLegacyIdCollisionWarningPresent: true
 gosakiSiteSlugMigrationTemplateReady: true
-gosakiSeedLegacyIdCollisionDocumented: true
-readyForG9cOperatorManualSqlExecutionPreflight: true
+readyForG9cRouteAwareSeedSqlCommit: true
+readyForG9c1OperatorManualSqlExecutionPreflight: true
 readyForAnyDbWrite: false
 readyForAnyFtpApply: false
 ftpAutoDeployStillDisabled: true
@@ -264,7 +271,7 @@ ftpAutoDeployStillDisabled: true
 
 ---
 
-## 11. Out of scope (G-9c)
+## 11. Out of scope (G-9c0c)
 
 - SQL execution / DB writes
 - RLS / GRANT / REVOKE changes

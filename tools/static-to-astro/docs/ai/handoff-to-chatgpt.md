@@ -5,62 +5,47 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-9c0b-gosaki-schedule-legacy-month-route-stub (complete)
-G-9c: uncommitted — ON HOLD until G-9c0c route-aware seed SQL regeneration
-Latest commit: acc834c (G-9c0 planning doc)
-Prior commits: c385a7f G-9c0a canonical routes, d0d0a6a G-9b3 typography
-G-9c0b: uncommitted
+Current phase: G-9c0c-gosaki-route-aware-schedule-seed-sql-regeneration (complete)
+G-9c SQL templates: regenerated — ready for commit (uncommitted)
+Latest commit: 36e8c54 (G-9c0b legacy stubs)
+G-9c0c: uncommitted
 ```
 
 ## Summary
 
-G-9c0b: Legacy `/YYYY-MM/` compatibility stub pages for Gosaki.
+G-9c0c: Regenerated Gosaki schedule seed SQL templates with canonical routes.
 
-- **Legacy stubs:** `/2026-03/` … `/2026-07/` — thin “page moved” content
-- **noindex:** `noindex,follow` on legacy stubs
-- **canonical:** legacy stubs point to `/schedule/YYYY-MM/`
-- **sitemap:** legacy routes excluded; canonical month URLs only
-- **No redirect:** no meta refresh / JS redirect
-- **source_route:** unchanged `/schedule/YYYY-MM/` (G-9c0a)
+- **source_route:** `/schedule/YYYY-MM/` (60 rows)
+- **Legacy `/YYYY-MM/`:** not used in seed data (site stubs only)
+- **INSERT:** 60 plain INSERTs, begin/commit, no ON CONFLICT
+- **Collision:** `schedule-2026-07-010` — COLLISION WARNING in template; resolve at execution
 
-**Docs:**
-- `tools/static-to-astro/docs/gosaki-schedule-legacy-month-route-stub.md`
-- `tools/static-to-astro/docs/gosaki-schedule-canonical-route-implementation.md`
-
-## G-9c seed SQL (uncommitted, on hold)
-
+**Artifacts:**
 ```txt
 scripts/supabase/gosaki-site-slug-migration.template.sql
-scripts/supabase/gosaki-schedules-seed.template.sql (stale until G-9c0c regenerate)
+scripts/supabase/gosaki-schedules-seed.template.sql
 scripts/supabase/gosaki-schedules-seed-preflight.template.sql
 scripts/lib/gosaki-schedules-seed-sql.mjs
 scripts/generate-gosaki-schedules-seed-sql.mjs
-package.json (generate:gosaki-schedule-seed-sql script)
+npm run generate:gosaki-schedule-seed-sql
 ```
-
-**Collision:** `schedule-2026-07-010` vs G-6 PoC — resolve at G-9c-execution.
 
 ## CMS MVP priority
 
 ```txt
-1. G-9c0c route-aware seed SQL regeneration
-2. G-9c commit (operator approval)
-3. G-9c-execution — operator manual SQL on staging
-4. G-9d — Supabase read + static fallback
-5. Operator re-upload after G-9c0b commit
+1. G-9c commit (operator approval)
+2. G-9c-execution — operator manual SQL on staging
+3. G-9d — Supabase read + static fallback
 ```
 
 ## Gates
 
 ```txt
-gosakiScheduleLegacyMonthRouteStubComplete: true
-gosakiLegacyMonthRoutesGenerated: true
-gosakiLegacyMonthRoutesNoindex: true
-gosakiLegacyMonthRoutesCanonicalToSchedule: true
-gosakiLegacyMonthRoutesExcludedFromSitemap: true
-gosakiScheduleCanonicalMonthRouteStill: /schedule/YYYY-MM/
-readyForG9c0cRouteAwareSeedSqlRegeneration: true
-readyForG9cCommit: false
+gosakiRouteAwareSeedSqlRegenerationComplete: true
+gosakiScheduleSeedSqlTemplateUsesCanonicalSourceRoute: true
+gosakiScheduleSeedSqlTemplateInsertCount: 60
+readyForG9cRouteAwareSeedSqlCommit: true
+readyForG9c1OperatorManualSqlExecutionPreflight: true
 readyForAnyDbWrite: false
 readyForAnyFtpApply: false
 ftpAutoDeployStillDisabled: true
@@ -79,7 +64,6 @@ source_file:  2026-07.html
 source_route: /schedule/2026-07/
 ```
 
-## Deferred
+## Collision resolution (execution phase only)
 
-- `/` home PC horizontal scroll — gosaki responsive cleanup (G-9b3 doc)
-- Wix production URL redirect plan — go-live phase
+Rename PoC `legacy_id` to `schedule-2026-07-010-poc` before INSERT (operator approval).

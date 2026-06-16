@@ -12,7 +12,13 @@ import {
   extractGosakiWixSchedulesFromHtmlFile,
   GOSAKI_SITE_SLUG,
 } from "./lib/gosaki-wix-schedule-extractor.mjs";
+import {
+  generateGosakiSchedulesSeedSql,
+  GOSAKI_SEED_LEGACY_ID_COLLISIONS,
+  GOSAKI_CANONICAL_SOURCE_ROUTE_PREFIX,
+} from "./lib/gosaki-schedules-seed-sql.mjs";
 import { extractSchedulesFromHtmlFile } from "./lib/schedule-seed-extractor.mjs";
+import fs from "node:fs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const TOOL_ROOT = path.resolve(__dirname, "..");
@@ -132,6 +138,77 @@ assert(
 
 // --- no missing dates in current fixtures ---
 assertEqual("missing_date_count", extracted.extractionStats.missingDate, 0);
+
+// --- all source_route use canonical /schedule/YYYY-MM/ ---
+assert(
+  "all_source_routes_canonical",
+  extracted.schedules.every(
+    (s) =>
+      s.source_route?.startsWith(GOSAKI_CANONICAL_SOURCE_ROUTE_PREFIX) &&
+      !/^\/\d{4}-\d{2}\/$/.test(s.source_route),
+  ),
+);
+
+// --- G-9c0c SQL template artifacts ---
+const seedSqlPath = path.join(TOOL_ROOT, "scripts/supabase/gosaki-schedules-seed.template.sql");
+const migrationPath = path.join(TOOL_ROOT, "scripts/supabase/gosaki-site-slug-migration.template.sql");
+const preflightPath = path.join(TOOL_ROOT, "scripts/supabase/gosaki-schedules-seed-preflight.template.sql");
+
+assert("gosaki_seed_sql_template_exists", fs.existsSync(seedSqlPath));
+assert("gosaki_site_slug_migration_template_exists", fs.existsSync(migrationPath));
+assert("gosaki_seed_preflight_template_exists", fs.existsSync(preflightPath));
+
+if (fs.existsSync(seedSqlPath)) {
+  const seedSql = fs.readFileSync(seedSqlPath, "utf8");
+  const insertCount = (seedSql.match(/^insert into public\.schedules /gm) ?? []).length;
+  assertEqual("gosaki_seed_sql_insert_count", insertCount, 60);
+  assert("gosaki_seed_sql_has_site_slug", seedSql.includes("'gosaki-piano'"));
+  assert(
+    "gosaki_seed_sql_uses_canonical_source_route",
+    seedSql.includes("'/schedule/2026-03/'") && seedSql.includes("'/schedule/2026-07/'"),
+  );
+  assert(
+    "gosaki_seed_sql_no_legacy_source_route",
+    !seedSql.includes("'/2026-03/'") && !seedSql.includes("'/2026-07/'"),
+  );
+  assert("gosaki_seed_sql_plain_insert_only", /^insert into public\.schedules /m.test(seedSql));
+  assert("gosaki_seed_sql_no_on_conflict", !/on conflict/i.test(seedSql));
+  assert(
+    "gosaki_seed_sql_collision_warning",
+    seedSql.includes("COLLISION WARNING") &&
+      seedSql.includes("schedule-2026-07-010") &&
+      seedSql.includes("schedule-2026-07-010-poc"),
+  );
+}
+
+if (fs.existsSync(preflightPath)) {
+  const preflightSql = fs.readFileSync(preflightPath, "utf8");
+  assert("gosaki_preflight_has_poc_row_check", preflightSql.includes("schedule-2026-07-010"));
+  assert(
+    "gosaki_preflight_has_canonical_source_route_check",
+    preflightSql.includes("/schedule/YYYY-MM/") || preflightSql.includes("source_route"),
+  );
+  assert(
+    "gosaki_preflight_has_rollback_approval_note",
+    preflightSql.includes("承認します。この操作を1回だけ実行してください。"),
+  );
+}
+
+const generated = generateGosakiSchedulesSeedSql(GOSAKI_FIXTURE);
+assertEqual(
+  "gosaki_seed_sql_generator_matches_extractor",
+  generated.result.schedules.length,
+  extracted.schedules.length,
+);
+assert(
+  "gosaki_seed_generator_all_canonical_routes",
+  generated.result.schedules.every((s) => s.source_route?.startsWith(GOSAKI_CANONICAL_SOURCE_ROUTE_PREFIX)),
+);
+
+assert(
+  "gosaki_seed_legacy_collision_registered",
+  GOSAKI_SEED_LEGACY_ID_COLLISIONS.some((c) => c.legacy_id === "schedule-2026-07-010"),
+);
 
 console.log("");
 console.log(`verify-gosaki-schedule-seed-extractor: ${passed} passed, ${failed} failed`);

@@ -13,6 +13,7 @@
     "verify:gosaki-schedule-seed": "node scripts/verify-gosaki-schedule-seed-extractor.mjs",
     "verify:gosaki-font-safety": "node scripts/verify-gosaki-font-safety.mjs",
     "extract:gosaki-schedule-seed": "node scripts/extract-gosaki-schedule-seed.mjs",
+    "generate:gosaki-schedule-seed-sql": "node scripts/generate-gosaki-schedules-seed-sql.mjs --out scripts/supabase/gosaki-schedules-seed.template.sql",
     "verify:ftp-deployer-safety": "node scripts/verify-public-dist-ftp-deployer-safety.mjs",
     "manual-upload:package": "node scripts/create-manual-upload-package.mjs --public-dir output/static-public/gosaki-piano/public-dist --out output/manual-upload/gosaki-piano",
     "verify:manual-upload": "node scripts/verify-manual-upload-package.mjs"

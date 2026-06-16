@@ -558,6 +558,21 @@ PoC isolation phase `G-6-f1-schedule-poc-isolation-dry-run-default` is complete.
 - General Schedule edit UI: staging shell only; do not modify `/admin` until an explicit future phase
 - Default dev: `PUBLIC_ADMIN_WRITE_DRY_RUN=true`; hidden PoC requires `PUBLIC_ADMIN_NON_DRY_RUN_POC_EXPLICIT_RERUN=true` to arm
 
+## Gosaki CMS scope planning (G-9a)
+
+Doc: `tools/static-to-astro/docs/gosaki-cms-scope-and-schedule-youtube-planning.md`
+
+- G-8g staging preview complete (commit `77b57b8`); client preview ready
+- CMS MVP priority: (1) Schedule CMS (2) Top YouTube embed (3) Bands/Projects defer
+- Reuse `public.schedules` on `static-to-astro-cms-staging`; add `site_slug = gosaki-piano` in G-9b migration plan
+- Gosaki routes: hub `/schedule/`, months `/YYYY-MM/` (not Sariswing `/schedule/YYYY-MM/`)
+- YouTube: `site_embeds` table + URL normalize to `youtube-nocookie.com/embed/{id}`; Kit write without service_role
+- Bands: keep static JSON (`gosaki-piano-band-profiles.json`) until Phase 3
+- Admin: `/__admin-staging-shell/musician-basic/` only — not `/admin`
+- Gate: `gosakiCmsScopeAndScheduleYoutubePlanningComplete: true`
+- Next: `G-9b-gosaki-schedule-data-seed-planning`
+- No DB write / FTP / workflow_dispatch in G-9a
+
 ## STOP conditions
 
 Stop and ask the user if:

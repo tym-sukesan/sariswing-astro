@@ -1,4 +1,4 @@
-Last updated: 2026-06-14
+Last updated: 2026-06-16
 Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
@@ -21,22 +21,21 @@ Staging Shell
 将来的な顧客オンボーディング・課金・デプロイ自動化
 
 2. Current phase
-現在フェーズ: G-8g8-gosaki-discography-subheading-style-fix（完了・commit 保留）
+現在フェーズ: G-9a-gosaki-cms-scope-and-schedule-youtube-planning（完了 — planning only）
 
-G-8g8: Discography の Track List / Personnel 下線除去・小見出し化。G-8g2〜G-8g8 は local only、commit/push は戸山の目視確認後にまとめて実施。
+G-9a: Gosaki CMS MVP スコープ整理（Schedule / Top YouTube embed / Bands 優先度）。実装・DB・FTP なし。
 
 直近完了フェーズ:
-G-8g8-gosaki-discography-subheading-style-fix（local only）
-前フェーズ:
-G-8g7-gosaki-footer-grid-container-alignment-fix (local only)
-G-8g6〜G-8g2 (local only)
+G-9a-gosaki-cms-scope-and-schedule-youtube-planning (planning)
+G-8g2〜G-8g8 gosaki staging preview fixes (commit `77b57b8`)
 G-8g1 (commit `a78a8d8`)
 
-G-7 staging:
+Gosaki staging:
 - staging URL: `https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/`
-- gosaki output: `_astro/index.D9h1trWb.css` (gitignored)
-- Doc: `tools/static-to-astro/docs/gosaki-discography-subheading-style-fix.md`
-- 次: operator 手動 re-upload → 目視 QA → G-8g2以降 commit/push batch
+- client preview ready (`readyForGosakiClientPreview: true`)
+- deploy: manual upload only; FTP auto deploy disabled
+- Doc: `tools/static-to-astro/docs/gosaki-cms-scope-and-schedule-youtube-planning.md`
+- 次: `G-9b-gosaki-schedule-data-seed-planning`
 
 3. Important completed milestones
 
@@ -438,11 +437,11 @@ rollbackNeeded: false
 明示的 retry で dev server を起動する場合は inline env のみ使用する。
 
 10. Recommended next phase
-次フェーズ推奨: G-7e-gosaki-staging-preview-preparation
+次フェーズ推奨: G-9b-gosaki-schedule-data-seed-planning
 
-G-7d live crawl 完了。prepare-public verifier 修正 → FTP dry-run → browser QA。
+G-9a で Gosaki CMS MVP スコープ確定。Schedule seed（Wix repeater extractor + site_slug migration 計画）から着手。
 
-詳細: tools/static-to-astro/docs/gosaki-live-crawl-pilot-result.md
+詳細: tools/static-to-astro/docs/gosaki-cms-scope-and-schedule-youtube-planning.md
 
 11. AI workflow transition
 チャット履歴への依存を減らすため、リポジトリ側に AI開発文脈管理ファイルを作成。

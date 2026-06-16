@@ -4,6 +4,7 @@ import { fileURLToPath } from "node:url";
 import { htmlHrefToRoute } from "./path-transform.mjs";
 import { isScheduleMonthNavTarget, SCHEDULE_INDEX_ROUTE } from "./schedule-pages.mjs";
 import { toPublicSeoPath } from "./seo-extract.mjs";
+import { sanitizeWixFontHtml } from "./wix-font-safety.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const TOOL_ROOT = path.resolve(__dirname, "../..");
@@ -115,10 +116,12 @@ const currentPath = Astro.url.pathname;
 
   if (!navLinks.length) {
     const stripped = wrapHeaderLogoWithHomeLink(
-      headerHtml
-        .replace(/\s+aria-current="[^"]*"/gi, "")
-        .replace(/\bis-current\b/g, "")
-        .replace(/\s+class="\s*"/gi, ""),
+      sanitizeWixFontHtml(
+        headerHtml
+          .replace(/\s+aria-current="[^"]*"/gi, "")
+          .replace(/\bis-current\b/g, "")
+          .replace(/\s+class="\s*"/gi, ""),
+      ),
     );
     return {
       content: `---
@@ -153,6 +156,8 @@ ${stripped}
     if (/^(https?:|\/|data:)/i.test(src)) return match;
     return ` src="${toPublicSeoPath(`/${src.replace(/^\//, "")}`)}"`;
   });
+
+  shell = sanitizeWixFontHtml(shell);
 
   const navLines = navLinks.map(({ route, text }) => {
     const safeRoute = escapeHtml(route);

@@ -5,24 +5,26 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-9b1-gosaki-font-and-wix-asset-license-safety-audit (complete)
-Latest commit: e97a047 (G-9b1 changes uncommitted)
-Prior: G-9b gosaki schedule seed extractor
+Current phase: G-9b2-gosaki-inline-font-family-safety-fix (complete)
+Latest commit: (G-9b2 uncommitted — await operator commit)
+Prior: G-9b1 font safety, G-9b schedule seed extractor
 ```
 
 ## Summary
 
-G-9b1: Wix proprietary font audit + `wix-font-safety.mjs` sanitizer. `@font-face` / `futura-lt-w01-book` / `avenir-lt-w01_*` stripped or rewritten to system stacks in convert pipeline. Images still on wixstatic CDN (separate phase).
+G-9b2: Removed Wix font **names** from generated HTML inline styles (especially `Header.astro` logo/nav). `sanitizeWixFontHtml()` + header-transform wiring. `public-dist` grep: 0 blocked patterns.
 
-**Doc:** `tools/static-to-astro/docs/gosaki-font-and-wix-asset-license-safety-audit.md`
+G-9b1: `@font-face` / woff URL stripping in `global.css`.
 
-## Font safety (G-9b1)
+**Doc:** `tools/static-to-astro/docs/gosaki-inline-font-family-safety-fix.md`
+
+## Font safety (G-9b2)
 
 ```txt
-Module: scripts/lib/wix-font-safety.mjs
-Verify: npm run verify:gosaki-font-safety (21 passed)
+Module: scripts/lib/wix-font-safety.mjs (sanitizeWixFontHtml, rewriteFntAndFontShorthand)
+Header: scripts/lib/header-transform.mjs (sanitize before Astro withBase injection)
+Verify: npm run verify:gosaki-font-safety (37 passed)
 Stacks: Avenir Next / Helvetica Neue / Arial (display); Helvetica + Hiragino/Meiryo (body)
-No Google Fonts added
 ```
 
 ## CMS MVP priority

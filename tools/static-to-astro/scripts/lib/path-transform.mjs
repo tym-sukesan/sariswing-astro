@@ -2,7 +2,7 @@ import { createRequire } from "node:module";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { isScheduleMonthSourcePath } from "./schedule-pages.mjs";
-import { sanitizeWixInlineFontStyles } from "./wix-font-safety.mjs";
+import { sanitizeWixFontHtml } from "./wix-font-safety.mjs";
 import { htmlFileToAstroRoute, resolveRef } from "./static-site-analyzer.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -122,12 +122,12 @@ export function transformHtmlFragment(htmlFragment, pageRelPath, context = {}) {
 
   if (isScheduleMonthSourcePath(pageRelPath)) {
     transformScheduleMonthFragment($, root);
-    return sanitizeWixInlineFontStyles(
+    return sanitizeWixFontHtml(
       `<div class="gosaki-schedule-month">${root.html() ?? ""}</div>`,
     );
   }
 
-  return sanitizeWixInlineFontStyles(root.html() ?? "");
+  return sanitizeWixFontHtml(root.html() ?? "");
 }
 
 export function escapeAstroPropString(value) {

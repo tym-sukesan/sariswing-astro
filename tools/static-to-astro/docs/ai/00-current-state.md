@@ -21,9 +21,11 @@ Staging Shell
 将来的な顧客オンボーディング・課金・デプロイ自動化
 
 2. Current phase
-現在フェーズ: G-9b1-gosaki-font-and-wix-asset-license-safety-audit（完了）
+現在フェーズ: G-9b2-gosaki-inline-font-family-safety-fix（完了）
 
-G-9b1: Wix  proprietary font 監査 + `wix-font-safety.mjs` sanitizer。`@font-face` / futura / avenir Wix face を static export から除外・置換。DB・FTP なし。
+G-9b2: HTML inline `style` / `Header.astro` 内の Wix font 名（`futura-lt-w01-book` 等）を `sanitizeWixFontHtml()` + header-transform 接続で除去。`public-dist` 0件確認。DB・FTP なし。
+
+G-9b1: Wix proprietary font 監査 + `wix-font-safety.mjs` sanitizer。`@font-face` / futura / avenir Wix face を static export から除外・置換。DB・FTP なし。
 
 G-9b: Gosaki Wix repeater schedule seed 設計 + dry-run extractor（60 events, site_slug=gosaki-piano）。DB・SQL・FTP なし。
 

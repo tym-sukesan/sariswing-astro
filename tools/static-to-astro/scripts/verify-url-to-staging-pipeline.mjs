@@ -269,8 +269,8 @@ assert(
   resolveStagingPublicUrl(
     "https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano",
     "/cms-kit-staging/gosaki-piano/",
-    "/cms-kit-staging/gosaki-piano/2026-07/",
-  ) === "https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/2026-07/",
+    "/cms-kit-staging/gosaki-piano/schedule/2026-07/",
+  ) === "https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/schedule/2026-07/",
 );
 assert(
   "canonical duplicate detector",
@@ -288,7 +288,7 @@ assert(
   productionAbsoluteUrlToRoute(
     "https://www.gosaki-piano.com/2026-07",
     "https://www.gosaki-piano.com",
-  ) === "/2026-07/",
+  ) === "/schedule/2026-07/",
 );
 
 // --- G-7h CSS presence verifier (no network) ---
@@ -906,7 +906,7 @@ if (fs.existsSync(gosakiScheduleHubHtml)) {
   const hubHtml = fs.readFileSync(gosakiScheduleHubHtml, "utf8");
   assert(
     "schedule hub month links use deployBase",
-    hubHtml.includes("/cms-kit-staging/gosaki-piano/2026-") &&
+    hubHtml.includes("/cms-kit-staging/gosaki-piano/schedule/2026-") &&
       !hubHtml.includes('href="/2026-'),
   );
   assert("schedule hub includes Schedule title", hubHtml.includes("gosaki-schedule-hub"));

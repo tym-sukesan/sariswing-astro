@@ -5,53 +5,79 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-9b3-gosaki-avenir-next-typography-regression-fix (complete)
-Latest commit: c8d0df5 (G-9b3 uncommitted — await operator commit)
-Prior: G-9b2 inline font safety, G-9b1 font audit
+Current phase: G-9c0a-gosaki-schedule-canonical-route-implementation (complete)
+G-9c: uncommitted — ON HOLD until route-aware source_route regeneration (G-9c0c)
+Latest commit: d0d0a6a (G-9c/G-9c0a local changes uncommitted)
+Prior: G-9b3 typography, G-9b2 font safety, G-9b extractor
 ```
 
 ## Summary
 
-G-9b3: Fixed PC page-title wrap after Avenir Next swap (Wix fixed-width boxes e.g. `#comp-jqy0szge` 199px). Font safety unchanged. Wix class cleanup deferred.
+G-9c0a: Canonical route implementation for Gosaki schedule months.
 
-**Doc:** `tools/static-to-astro/docs/gosaki-avenir-next-typography-regression-fix.md`
+- **Canonical implemented:** `/schedule/YYYY-MM/` (hub links + month pages + canonical/og/sitemap)
+- **Legacy deferred:** `/YYYY-MM/` stubs are not implemented yet (G-9c0b)
+- **Extractor updated:** `source_route` now `/schedule/YYYY-MM/` (source_file unchanged)
+- **G-9c commit blocked** until seed SQL template regeneration in G-9c0c
+
+**Docs:**
+- `tools/static-to-astro/docs/gosaki-schedule-route-canonical-planning.md`
+- `tools/static-to-astro/docs/gosaki-schedule-canonical-route-implementation.md`
+
+## G-9c seed SQL (uncommitted, on hold)
+
+```txt
+scripts/supabase/gosaki-site-slug-migration.template.sql
+scripts/supabase/gosaki-schedules-seed.template.sql (60 INSERT — still old route until G-9c0c regenerate)
+scripts/supabase/gosaki-schedules-seed-preflight.template.sql
+npm run generate:gosaki-schedule-seed-sql
+```
+
+**Collision:** `schedule-2026-07-010` vs G-6 PoC — resolve at G-9c-execution.
 
 ## CMS MVP priority
 
 ```txt
-1. Schedule CMS — seed SQL next (G-9c)
-2. Top YouTube embed — site_embeds (G-9f+)
-3. Bands/Projects — static JSON (defer)
+1. G-9c0b legacy month route stubs
+2. G-9c0c route-aware seed SQL regeneration
+3. G-9c commit (operator approval)
+4. G-9c-execution — operator manual SQL on staging
+5. G-9d — Supabase read + static fallback
 ```
 
 ## Gates
 
 ```txt
-gosakiFontAndWixAssetLicenseSafetyAuditComplete: true
-futuraLtW01BookRemovedOrRewritten: true
-wixFontFaceOutputBlocked: true
-gosakiScheduleSeedExtractorDryRunComplete: true
-readyForG9cGosakiScheduleSeedSqlPlanning: true
+gosakiScheduleRouteCanonicalPlanningComplete: true
+gosakiScheduleCanonicalRouteImplementationComplete: true
+gosakiScheduleCanonicalMonthRoute: /schedule/YYYY-MM/
+gosakiScheduleHubLinksUseCanonicalRoute: true
+gosakiScheduleMonthPagesGeneratedUnderSchedule: true
+gosakiLegacyMonthRouteStubDeferredToG9c0b: true
+readyForG9cRouteAwareSeedSqlPlanning: true
+readyForG9c0bGosakiScheduleLegacyMonthRouteStub: true
+readyForG9c0cRouteAwareSeedSqlRegeneration: true
+readyForG9cCommit: false
+gosakiScheduleSeedSqlPlanningComplete: true
 readyForAnyDbWrite: false
 readyForAnyFtpApply: false
 ftpAutoDeployStillDisabled: true
 ```
 
-## Recommended next phase
+## Safety
+
+- Staging only: `static-to-astro-cms-staging`
+- No SQL execution / service_role / FTP / workflow_dispatch / `/admin`
+- G-6 PoC row: `aa440e29-5be8-402e-9190-0d81c48434c0` / `schedule-2026-07-010`
+
+## source_route recommendation
 
 ```txt
-G-9c-gosaki-schedule-seed-sql-planning
+source_file:  2026-07.html        (Wix provenance — unchanged)
+source_route: /schedule/2026-07/   (canonical CMS page — implemented)
 ```
 
-Operator: regenerate manual-upload package after G-9b1 merge for font-safe staging CSS.
+## Deferred
 
-## Safety (always)
-
-```txt
-No production touch
-No Supabase production project
-No service_role in Kit staging write
-No FTP / workflow_dispatch
-No /admin changes
-PUBLIC_ADMIN_WRITE_DRY_RUN=true default for routine dev
-```
+- `/` home PC horizontal scroll — gosaki responsive cleanup (G-9b3 doc)
+- Wix production URL redirect plan — go-live phase

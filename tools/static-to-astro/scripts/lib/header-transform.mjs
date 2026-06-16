@@ -202,6 +202,7 @@ function scheduleNavActive() {
   const path = currentPath.endsWith("/") ? currentPath : \`\${currentPath}/\`;
   if (path === withBase("/schedule/")) return true;
   const prefix = import.meta.env.BASE_URL.replace(/\\/$/, "");
+  if (new RegExp(\`^\${prefix}/schedule/\\\\d{4}-\\\\d{2}/\`, "i").test(path)) return true;
   if (new RegExp(\`^\${prefix}/schedule-\\\\d{4}-\\\\d{2}/\`, "i").test(path)) return true;
   return new RegExp(\`^\${prefix}/\\\\d{4}-\\\\d{2}/\`, "i").test(path);
 }

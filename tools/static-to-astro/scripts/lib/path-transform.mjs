@@ -1,7 +1,11 @@
 import { createRequire } from "node:module";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { isScheduleMonthSourcePath } from "./schedule-pages.mjs";
+import {
+  cmsKitScheduleMonthRoute,
+  parseScheduleMonthSourcePath,
+  isScheduleMonthSourcePath,
+} from "./schedule-pages.mjs";
 import { sanitizeWixFontHtml } from "./wix-font-safety.mjs";
 import { htmlFileToAstroRoute, resolveRef } from "./static-site-analyzer.mjs";
 
@@ -26,8 +30,16 @@ export function productionAbsoluteUrlToRoute(href, productionOrigin) {
   let suffix = withoutQuery.slice(origin.length);
   if (!suffix || suffix === "") return "/";
   if (!suffix.startsWith("/")) suffix = `/${suffix}`;
+  const monthMatch = suffix.match(/^\/(\d{4})-(\d{2})\/?$/);
+  if (monthMatch) {
+    return cmsKitScheduleMonthRoute(monthMatch[1], monthMatch[2]);
+  }
   if (/\.html?$/i.test(suffix)) {
     const file = suffix.replace(/^\//, "");
+    const parsed = parseScheduleMonthSourcePath(file);
+    if (parsed) {
+      return cmsKitScheduleMonthRoute(parsed.year, parsed.month);
+    }
     return htmlFileToAstroRoute(file);
   }
   return suffix.endsWith("/") ? suffix : `${suffix}/`;
@@ -46,6 +58,10 @@ export function htmlHrefToRoute(href, pageRelPath, options = {}) {
 
   const resolved = resolveRef(trimmed, pageRelPath);
   if (resolved.kind !== "internal") return trimmed;
+  const monthMatch = resolved.href.match(/^\/(\d{4})-(\d{2})\/?$/);
+  if (monthMatch) {
+    return cmsKitScheduleMonthRoute(monthMatch[1], monthMatch[2]);
+  }
 
   const withoutSlash = resolved.href.replace(/^\//, "");
   if (/\.html?$/i.test(withoutSlash)) {

@@ -21,9 +21,13 @@ Staging Shell
 将来的な顧客オンボーディング・課金・デプロイ自動化
 
 2. Current phase
-現在フェーズ: G-9b3-gosaki-avenir-next-typography-regression-fix（完了）
+現在フェーズ: G-9c0a-gosaki-schedule-canonical-route-implementation（完了）
 
-G-9b3: Avenir Next 置換後の PC 見出し折り返し修正（`#comp-jqy0szge` 等の固定幅 + nowrap）。font safety 維持。DB・FTP なし。
+G-9c0a: Gosaki schedule month canonical route 実装。month canonical は `/schedule/YYYY-MM/` に統一（hub links / month page generation / canonical / og:url / sitemap）。legacy `/YYYY-MM/` stub は G-9c0b に分離。
+
+G-9c: Gosaki 60件 schedule seed の SQL template / preflight / migration 計画（**未 commit — on hold**）。template 再生成は G-9c0c で実施（`source_route: /schedule/YYYY-MM/`）。G-6 PoC `schedule-2026-07-010` 衝突を文書化。DB実行なし。
+
+G-9b3: Avenir Next 置換後の PC 見出し折り返し修正。DB・FTP なし。
 
 G-9b2: HTML inline style / Header 内 Wix font 名除去。DB・FTP なし。
 
@@ -45,7 +49,10 @@ Gosaki staging:
 - Doc: `tools/static-to-astro/docs/gosaki-font-and-wix-asset-license-safety-audit.md`
 - Font sanitizer: `wix-font-safety.mjs` — verify:gosaki-font-safety 21 passed
 - Schedule extractor: `gosaki-wix-schedule-extractor.mjs` — 60 events dry-run verified
-- 次: `G-9c-gosaki-schedule-seed-sql-planning`
+- Route docs:
+  - `tools/static-to-astro/docs/gosaki-schedule-route-canonical-planning.md`
+  - `tools/static-to-astro/docs/gosaki-schedule-canonical-route-implementation.md`
+- 次: `G-9c0b-gosaki-schedule-legacy-month-route-stub` → `G-9c0c-route-aware-seed-sql-regeneration`
 
 3. Important completed milestones
 
@@ -447,11 +454,30 @@ rollbackNeeded: false
 明示的 retry で dev server を起動する場合は inline env のみ使用する。
 
 10. Recommended next phase
-次フェーズ推奨: G-9c-gosaki-schedule-seed-sql-planning
+次フェーズ推奨: `G-9c0b-gosaki-schedule-legacy-month-route-stub`
 
-G-9b で Wix repeater extractor + site_slug migration テンプレート完了。次は seed SQL 生成と operator 手動 staging INSERT。
+G-9c0a で canonical `/schedule/YYYY-MM/` を実装済み。次は legacy `/YYYY-MM/` compatibility stub（G-9c0b）を追加し、G-9c0c で seed SQL template を route-aware 再生成する。operator 手動 staging INSERT は G-9c-execution（route + collision 解決後）。
 
-詳細: tools/static-to-astro/docs/gosaki-schedule-data-seed-planning.md
+詳細:
+- `tools/static-to-astro/docs/gosaki-schedule-route-canonical-planning.md`
+- `tools/static-to-astro/docs/gosaki-schedule-seed-sql-planning.md`
+
+G-9c0a gates:
+```txt
+gosakiScheduleRouteCanonicalPlanningComplete: true
+gosakiScheduleCanonicalRouteImplementationComplete: true
+gosakiScheduleCanonicalMonthRoute: /schedule/YYYY-MM/
+gosakiScheduleHubLinksUseCanonicalRoute: true
+gosakiScheduleMonthPagesGeneratedUnderSchedule: true
+gosakiLegacyMonthRouteStubDeferredToG9c0b: true
+readyForG9cRouteAwareSeedSqlPlanning: true
+readyForG9cCommit: false
+readyForG9c0bGosakiScheduleLegacyMonthRouteStub: true
+readyForG9c0cRouteAwareSeedSqlRegeneration: true
+readyForAnyDbWrite: false
+readyForAnyFtpApply: false
+ftpAutoDeployStillDisabled: true
+```
 
 11. AI workflow transition
 チャット履歴への依存を減らすため、リポジトリ側に AI開発文脈管理ファイルを作成。

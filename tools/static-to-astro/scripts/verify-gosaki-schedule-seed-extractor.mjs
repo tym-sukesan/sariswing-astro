@@ -84,10 +84,10 @@ for (const [month, count] of Object.entries(EXPECTED_COUNTS)) {
   assertEqual(`wix_vs_manual_${month}`, wix?.count, manual?.count);
 }
 
-// --- route convention: /YYYY-MM/ not /schedule-YYYY-MM/ ---
+// --- route convention: canonical /schedule/YYYY-MM/ ---
 {
   const july = extracted.schedules.find((s) => s.legacy_id === "schedule-2026-07-001");
-  assertEqual("gosaki_source_route", july?.source_route, "/2026-07/");
+  assertEqual("gosaki_source_route", july?.source_route, "/schedule/2026-07/");
   assertEqual("gosaki_source_file", july?.source_file, "2026-07.html");
 }
 

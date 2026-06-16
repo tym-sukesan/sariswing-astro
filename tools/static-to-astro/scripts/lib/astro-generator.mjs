@@ -31,6 +31,8 @@ import {
 } from "./site-verification.mjs";
 import { generateHeaderAstro } from "./header-transform.mjs";
 import {
+  cmsKitScheduleMonthRoute,
+  parseScheduleMonthSourcePath,
   detectScheduleMonthPages,
   SCHEDULE_INDEX_ROUTE,
 } from "./schedule-pages.mjs";
@@ -690,6 +692,19 @@ function fixtureLabelFromPath(siteDir) {
   return base;
 }
 
+function toCanonicalScheduleMonthPage(page, baseUrl, deployBase) {
+  const parsed = parseScheduleMonthSourcePath(page.sourcePath);
+  if (!parsed) return page;
+  const route = cmsKitScheduleMonthRoute(parsed.year, parsed.month);
+  return {
+    ...page,
+    route,
+    astroRoute: route,
+    pagePath: `schedule/${parsed.year}-${parsed.month}/index.astro`,
+    seo: applyBaseUrlToSeo(page.seo, route, baseUrl, deployBase),
+  };
+}
+
 function resolveProductionOrigin(siteDir, options) {
   if (options.productionBaseUrl) {
     return normalizeBaseUrl(options.productionBaseUrl);
@@ -724,6 +739,9 @@ export function generateAstroProject(inputDir, outputDir, options = {}) {
 
   const analysis = analyzeStaticSite(siteDir);
   analysis.pages = applyBaseUrlToPages(analysis.pages, baseUrl, deployBase);
+  if (isGosakiPianoFixture(siteDir)) {
+    analysis.pages = analysis.pages.map((page) => toCanonicalScheduleMonthPage(page, baseUrl, deployBase));
+  }
   const domainReviewPages = baseUrl ? [] : pagesNeedingDomainReview(analysis.pages);
   const jsAnalysis = analyzeJavaScript(analysis.rawPages);
   const externalCss = collectExternalStylesheets(analysis.rawPages).filter(

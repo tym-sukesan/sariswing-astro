@@ -2,8 +2,8 @@ import { createRequire } from "node:module";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { htmlFileToAstroRoute, walkHtmlFiles } from "./static-site-analyzer.mjs";
-import { LIVE_CRAWL_MONTH_FILENAME } from "./schedule-pages.mjs";
+import { walkHtmlFiles } from "./static-site-analyzer.mjs";
+import { cmsKitScheduleMonthRoute, LIVE_CRAWL_MONTH_FILENAME } from "./schedule-pages.mjs";
 import {
   parseScheduleDateText,
   parseScheduleTimeLine,
@@ -196,7 +196,7 @@ export function extractGosakiWixSchedulesFromHtmlFile(filePath) {
   const year = Number(match[1]);
   const monthNum = match[2];
   const month = `${match[1]}-${monthNum}`;
-  const sourceRoute = htmlFileToAstroRoute(fileName);
+  const sourceRoute = cmsKitScheduleMonthRoute(match[1], monthNum);
   const html = fs.readFileSync(filePath, "utf8");
   const $ = cheerio.load(html);
 

@@ -10,6 +10,15 @@ export const LIVE_CRAWL_MONTH_FILENAME = /^(\d{4})-(\d{2})\.html$/i;
 export const SCHEDULE_INDEX_ROUTE = "/schedule/";
 
 /**
+ * Canonical CMS Kit month route.
+ * @param {string} year
+ * @param {string} month two-digit
+ */
+export function cmsKitScheduleMonthRoute(year, month) {
+  return `${SCHEDULE_INDEX_ROUTE}${year}-${month}/`;
+}
+
+/**
  * @param {string} relPath e.g. `schedule-2026-07.html` or `2026-07.html`
  */
 export function parseScheduleMonthSourcePath(relPath) {
@@ -38,6 +47,7 @@ export function isScheduleMonthNavTarget(href, route = "") {
   if (/^\d{4}-\d{2}$/i.test(hrefBase)) return true;
   const routeMatch = (route || "").match(/^\/schedule-(\d{4})-(\d{2})\/?$/i);
   if (routeMatch) return true;
+  if (/^\/schedule\/(\d{4})-(\d{2})\/?$/i.test(route || "")) return true;
   return Boolean((route || "").match(/^\/(\d{4})-(\d{2})\/?$/i));
 }
 
@@ -55,7 +65,12 @@ export function scheduleMonthDisplayLabel(year, month) {
 export function scheduleMonthFromPage(page) {
   const parsed = parseScheduleMonthSourcePath(page.sourcePath);
   if (!parsed) return null;
-  const route = page.route ?? page.astroRoute ?? htmlFileToAstroRoute(page.sourcePath);
+  const route =
+    page.route ??
+    page.astroRoute ??
+    (LIVE_CRAWL_MONTH_FILENAME.test(parsed.basename)
+      ? cmsKitScheduleMonthRoute(parsed.year, parsed.month)
+      : htmlFileToAstroRoute(page.sourcePath));
   return {
     sourcePath: page.sourcePath,
     route,
@@ -85,6 +100,7 @@ export function detectScheduleMonthPages(pages) {
 export function isScheduleSectionPath(pathname) {
   const path = pathname.endsWith("/") ? pathname : `${pathname}/`;
   if (path === SCHEDULE_INDEX_ROUTE) return true;
+  if (/^\/schedule\/\d{4}-\d{2}\//i.test(path)) return true;
   if (/^\/schedule-\d{4}-\d{2}\//i.test(path)) return true;
   return /^\/\d{4}-\d{2}\//i.test(path);
 }

@@ -30,7 +30,7 @@ export const DEFAULT_GOSAKI_SCHEDULE_MONTHS = [
 
 export const YEAR_MONTH_DIR_RE = /^\d{4}-\d{2}$/;
 export const SCHEDULE_PREFIXED_DIR_RE = /^schedule-(\d{4}-\d{2})$/;
-export const MONTHLY_SCHEDULE_ROUTE_RE = /^(?:schedule-)?(\d{4}-\d{2})\/index\.html$/;
+export const MONTHLY_SCHEDULE_ROUTE_RE = /^(?:schedule\/)?(?:schedule-)?(\d{4}-\d{2})\/index\.html$/;
 
 /** @deprecated Prefer {@link verifyPublicHtmlExists} — includes live-crawl `YYYY-MM/` routes. */
 export const EXPECTED_PUBLIC_HTML = [
@@ -56,10 +56,17 @@ export function extractYearMonthFromScheduleDir(dirName) {
 export function discoverMonthlyScheduleMonths(publicDir) {
   if (!fs.existsSync(publicDir)) return [];
   const months = new Set();
+  const nestedScheduleDir = path.join(publicDir, "schedule");
   for (const entry of fs.readdirSync(publicDir, { withFileTypes: true })) {
     if (!entry.isDirectory()) continue;
     const ym = extractYearMonthFromScheduleDir(entry.name);
     if (ym) months.add(ym);
+  }
+  if (fs.existsSync(nestedScheduleDir) && fs.statSync(nestedScheduleDir).isDirectory()) {
+    for (const entry of fs.readdirSync(nestedScheduleDir, { withFileTypes: true })) {
+      if (!entry.isDirectory()) continue;
+      if (YEAR_MONTH_DIR_RE.test(entry.name)) months.add(entry.name);
+    }
   }
   return [...months].sort();
 }
@@ -69,8 +76,12 @@ export function discoverMonthlyScheduleMonths(publicDir) {
  * @param {string} yearMonth
  */
 export function resolveMonthlySchedulePath(publicDir, yearMonth) {
+  const canonicalPath = `schedule/${yearMonth}/index.html`;
   const livePath = `${yearMonth}/index.html`;
   const prefixedPath = `schedule-${yearMonth}/index.html`;
+  if (fs.existsSync(path.join(publicDir, canonicalPath))) {
+    return { path: canonicalPath, exists: true, variant: "canonical", yearMonth };
+  }
   if (fs.existsSync(path.join(publicDir, livePath))) {
     return { path: livePath, exists: true, variant: "live-crawl", yearMonth };
   }
@@ -78,7 +89,7 @@ export function resolveMonthlySchedulePath(publicDir, yearMonth) {
     return { path: prefixedPath, exists: true, variant: "schedule-prefixed", yearMonth };
   }
   return {
-    path: prefixedPath,
+    path: canonicalPath,
     alternative: livePath,
     exists: false,
     variant: "missing",
@@ -209,7 +220,7 @@ export function verifyPublicHtmlExists(publicDir) {
       yearMonth: ym,
       variant: resolved.variant,
       alternative: resolved.alternative ?? null,
-      acceptedVariants: [`${ym}/index.html`, `schedule-${ym}/index.html`],
+      acceptedVariants: [`schedule/${ym}/index.html`, `${ym}/index.html`, `schedule-${ym}/index.html`],
     });
   }
 

@@ -1799,5 +1799,27 @@ body.wix-static-export #comp-llexymel [id^="comp-lley693e__"] > p:first-of-type 
     word-break: normal !important;
   }
 }
+
+/* G-9c0b gosaki schedule legacy month route stub */
+body.wix-static-export .gosaki-schedule-legacy-stub {
+  max-width: 40rem;
+  margin: 3rem auto;
+  padding: 0 1.25rem;
+  text-align: center;
+}
+
+body.wix-static-export .gosaki-schedule-legacy-stub__title {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+body.wix-static-export .gosaki-schedule-legacy-stub__message {
+  margin-bottom: 1.25rem;
+}
+
+body.wix-static-export .gosaki-schedule-legacy-stub__link {
+  font-weight: 600;
+  text-decoration: underline;
+}
 `;
 }

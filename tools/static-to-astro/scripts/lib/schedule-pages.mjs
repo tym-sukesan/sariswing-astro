@@ -9,6 +9,9 @@ export const LIVE_CRAWL_MONTH_FILENAME = /^(\d{4})-(\d{2})\.html$/i;
 
 export const SCHEDULE_INDEX_ROUTE = "/schedule/";
 
+/** Legacy Wix live-crawl month route at site root (compatibility only). */
+export const LEGACY_WIX_MONTH_PATH_RE = /^\/(\d{4}-\d{2})\/?$/i;
+
 /**
  * Canonical CMS Kit month route.
  * @param {string} year
@@ -16,6 +19,45 @@ export const SCHEDULE_INDEX_ROUTE = "/schedule/";
  */
 export function cmsKitScheduleMonthRoute(year, month) {
   return `${SCHEDULE_INDEX_ROUTE}${year}-${month}/`;
+}
+
+/**
+ * Legacy Wix month route at site root (G-9c0b compatibility stub target).
+ * @param {string} year
+ * @param {string} month two-digit
+ */
+export function legacyWixScheduleMonthRoute(year, month) {
+  return `/${year}-${month}/`;
+}
+
+/**
+ * @param {string} pathname site pathname (may include deploy base)
+ */
+export function isLegacyWixScheduleMonthPath(pathname) {
+  const path = (pathname.endsWith("/") ? pathname : `${pathname}/`).replace(/\/+$/, "/");
+  if (LEGACY_WIX_MONTH_PATH_RE.test(path)) return true;
+  return /\/\d{4}-\d{2}\/$/.test(path) && !/\/schedule\/\d{4}-\d{2}\/$/.test(path);
+}
+
+/**
+ * True when URL is a legacy Wix month route (not canonical /schedule/YYYY-MM/).
+ * @param {string} pageUrl absolute page URL
+ */
+export function isLegacyWixScheduleMonthUrl(pageUrl) {
+  try {
+    const pathname = new URL(pageUrl).pathname;
+    return isLegacyWixScheduleMonthPath(pathname);
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Exclude legacy root month URLs from sitemap (@astrojs/sitemap filter).
+ * @param {string} pageUrl absolute page URL
+ */
+export function shouldIncludePageInSitemap(pageUrl) {
+  return !isLegacyWixScheduleMonthUrl(pageUrl);
 }
 
 /**

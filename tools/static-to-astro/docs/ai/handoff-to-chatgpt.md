@@ -5,32 +5,37 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-9c0a-gosaki-schedule-canonical-route-implementation (complete)
-G-9c: uncommitted — ON HOLD until route-aware source_route regeneration (G-9c0c)
-Latest commit: d0d0a6a (G-9c/G-9c0a local changes uncommitted)
-Prior: G-9b3 typography, G-9b2 font safety, G-9b extractor
+Current phase: G-9c0b-gosaki-schedule-legacy-month-route-stub (complete)
+G-9c: uncommitted — ON HOLD until G-9c0c route-aware seed SQL regeneration
+Latest commit: acc834c (G-9c0 planning doc)
+Prior commits: c385a7f G-9c0a canonical routes, d0d0a6a G-9b3 typography
+G-9c0b: uncommitted
 ```
 
 ## Summary
 
-G-9c0a: Canonical route implementation for Gosaki schedule months.
+G-9c0b: Legacy `/YYYY-MM/` compatibility stub pages for Gosaki.
 
-- **Canonical implemented:** `/schedule/YYYY-MM/` (hub links + month pages + canonical/og/sitemap)
-- **Legacy deferred:** `/YYYY-MM/` stubs are not implemented yet (G-9c0b)
-- **Extractor updated:** `source_route` now `/schedule/YYYY-MM/` (source_file unchanged)
-- **G-9c commit blocked** until seed SQL template regeneration in G-9c0c
+- **Legacy stubs:** `/2026-03/` … `/2026-07/` — thin “page moved” content
+- **noindex:** `noindex,follow` on legacy stubs
+- **canonical:** legacy stubs point to `/schedule/YYYY-MM/`
+- **sitemap:** legacy routes excluded; canonical month URLs only
+- **No redirect:** no meta refresh / JS redirect
+- **source_route:** unchanged `/schedule/YYYY-MM/` (G-9c0a)
 
 **Docs:**
-- `tools/static-to-astro/docs/gosaki-schedule-route-canonical-planning.md`
+- `tools/static-to-astro/docs/gosaki-schedule-legacy-month-route-stub.md`
 - `tools/static-to-astro/docs/gosaki-schedule-canonical-route-implementation.md`
 
 ## G-9c seed SQL (uncommitted, on hold)
 
 ```txt
 scripts/supabase/gosaki-site-slug-migration.template.sql
-scripts/supabase/gosaki-schedules-seed.template.sql (60 INSERT — still old route until G-9c0c regenerate)
+scripts/supabase/gosaki-schedules-seed.template.sql (stale until G-9c0c regenerate)
 scripts/supabase/gosaki-schedules-seed-preflight.template.sql
-npm run generate:gosaki-schedule-seed-sql
+scripts/lib/gosaki-schedules-seed-sql.mjs
+scripts/generate-gosaki-schedules-seed-sql.mjs
+package.json (generate:gosaki-schedule-seed-sql script)
 ```
 
 **Collision:** `schedule-2026-07-010` vs G-6 PoC — resolve at G-9c-execution.
@@ -38,27 +43,24 @@ npm run generate:gosaki-schedule-seed-sql
 ## CMS MVP priority
 
 ```txt
-1. G-9c0b legacy month route stubs
-2. G-9c0c route-aware seed SQL regeneration
-3. G-9c commit (operator approval)
-4. G-9c-execution — operator manual SQL on staging
-5. G-9d — Supabase read + static fallback
+1. G-9c0c route-aware seed SQL regeneration
+2. G-9c commit (operator approval)
+3. G-9c-execution — operator manual SQL on staging
+4. G-9d — Supabase read + static fallback
+5. Operator re-upload after G-9c0b commit
 ```
 
 ## Gates
 
 ```txt
-gosakiScheduleRouteCanonicalPlanningComplete: true
-gosakiScheduleCanonicalRouteImplementationComplete: true
-gosakiScheduleCanonicalMonthRoute: /schedule/YYYY-MM/
-gosakiScheduleHubLinksUseCanonicalRoute: true
-gosakiScheduleMonthPagesGeneratedUnderSchedule: true
-gosakiLegacyMonthRouteStubDeferredToG9c0b: true
-readyForG9cRouteAwareSeedSqlPlanning: true
-readyForG9c0bGosakiScheduleLegacyMonthRouteStub: true
+gosakiScheduleLegacyMonthRouteStubComplete: true
+gosakiLegacyMonthRoutesGenerated: true
+gosakiLegacyMonthRoutesNoindex: true
+gosakiLegacyMonthRoutesCanonicalToSchedule: true
+gosakiLegacyMonthRoutesExcludedFromSitemap: true
+gosakiScheduleCanonicalMonthRouteStill: /schedule/YYYY-MM/
 readyForG9c0cRouteAwareSeedSqlRegeneration: true
 readyForG9cCommit: false
-gosakiScheduleSeedSqlPlanningComplete: true
 readyForAnyDbWrite: false
 readyForAnyFtpApply: false
 ftpAutoDeployStillDisabled: true
@@ -70,11 +72,11 @@ ftpAutoDeployStillDisabled: true
 - No SQL execution / service_role / FTP / workflow_dispatch / `/admin`
 - G-6 PoC row: `aa440e29-5be8-402e-9190-0d81c48434c0` / `schedule-2026-07-010`
 
-## source_route recommendation
+## source_route
 
 ```txt
-source_file:  2026-07.html        (Wix provenance — unchanged)
-source_route: /schedule/2026-07/   (canonical CMS page — implemented)
+source_file:  2026-07.html
+source_route: /schedule/2026-07/
 ```
 
 ## Deferred

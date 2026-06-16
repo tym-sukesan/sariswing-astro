@@ -47,7 +47,7 @@ import {
   injectGosakiFooterSocialBlock,
 } from "./lib/gosaki-footer-social.mjs";
 import { generateHeaderAstro } from "./lib/header-transform.mjs";
-import { parseScheduleMonthSourcePath } from "./lib/schedule-pages.mjs";
+import { parseScheduleMonthSourcePath, shouldIncludePageInSitemap } from "./lib/schedule-pages.mjs";
 import {
   injectBandProfilesIntoAboutPage,
   loadGosakiBandProfilesConfig,
@@ -884,19 +884,83 @@ assert(
   wixOverrides.includes("G-8g8 gosaki discography subheading style fix"),
 );
 
+// --- G-9c0b gosaki schedule legacy month route stub ---
+
+assert(
+  "gosaki G-9c0b legacy stub generator present",
+  astroGeneratorSrc.includes("generateScheduleLegacyMonthStubPage") &&
+    astroGeneratorSrc.includes("gosaki-schedule-legacy-stub"),
+);
+assert(
+  "gosaki G-9c0b legacy stub uses noindex robots",
+  astroGeneratorSrc.includes('robots: "noindex,follow"'),
+);
+assert(
+  "gosaki G-9c0b sitemap excludes legacy month routes",
+  astroGeneratorSrc.includes("excludeLegacyMonthRoutesFromSitemap") &&
+    astroGeneratorSrc.includes("filter: (page)"),
+);
+assert(
+  "gosaki G-9c0b legacy stub css present",
+  gosakiOverrides.includes("G-9c0b gosaki schedule legacy month route stub") &&
+    gosakiOverrides.includes(".gosaki-schedule-legacy-stub"),
+);
+assert(
+  "G-9c0b sitemap filter excludes legacy month URL",
+  shouldIncludePageInSitemap("https://example.com/2026-07/") === false,
+);
+assert(
+  "G-9c0b sitemap filter includes canonical month URL",
+  shouldIncludePageInSitemap("https://example.com/schedule/2026-07/") === true,
+);
+assert(
+  "G-9c0b sitemap filter includes staging canonical month URL",
+  shouldIncludePageInSitemap(
+    "https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/schedule/2026-07/",
+  ) === true,
+);
+assert(
+  "G-9c0b sitemap filter excludes staging legacy month URL",
+  shouldIncludePageInSitemap(
+    "https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/2026-07/",
+  ) === false,
+);
+
 const gosakiPublicDist = path.join(TOOL_ROOT, "output/static-public/gosaki-piano/public-dist");
 for (const ym of ["2026-06", "2026-07"]) {
-  const monthHtmlPath = path.join(gosakiPublicDist, ym, "index.html");
-  if (fs.existsSync(monthHtmlPath)) {
-    const monthHtml = fs.readFileSync(monthHtmlPath, "utf8");
+  const canonicalMonthPath = path.join(gosakiPublicDist, "schedule", ym, "index.html");
+  if (fs.existsSync(canonicalMonthPath)) {
+    const monthHtml = fs.readFileSync(canonicalMonthPath, "utf8");
     assert(
-      `${ym} month page has schedule body (会場)`,
+      `${ym} canonical month page has schedule body (会場)`,
       monthHtml.includes("会場") && !monthHtml.includes('style="visibility:hidden"'),
     );
     assert(
-      `${ym} month page has gosaki schedule month design class`,
+      `${ym} canonical month page has gosaki schedule month design class`,
       monthHtml.includes("gosaki-schedule-month") &&
         monthHtml.includes("gosaki-schedule-event-card"),
+    );
+  }
+
+  const legacyMonthPath = path.join(gosakiPublicDist, ym, "index.html");
+  if (fs.existsSync(legacyMonthPath)) {
+    const legacyHtml = fs.readFileSync(legacyMonthPath, "utf8");
+    assert(
+      `${ym} legacy stub has moved message`,
+      legacyHtml.includes("gosaki-schedule-legacy-stub") &&
+        legacyHtml.includes("Schedule page moved"),
+    );
+    assert(
+      `${ym} legacy stub canonical to schedule month`,
+      legacyHtml.includes(`/schedule/${ym}/`),
+    );
+    assert(
+      `${ym} legacy stub noindex`,
+      legacyHtml.includes("noindex,follow") || legacyHtml.includes("noindex"),
+    );
+    assert(
+      `${ym} legacy stub is thin (no full repeater body)`,
+      !legacyHtml.includes("gosaki-schedule-event-card"),
     );
   }
 }

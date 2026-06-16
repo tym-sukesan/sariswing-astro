@@ -35,6 +35,7 @@ import {
   parseScheduleMonthSourcePath,
   detectScheduleMonthPages,
   SCHEDULE_INDEX_ROUTE,
+  LIVE_CRAWL_MONTH_FILENAME,
 } from "./schedule-pages.mjs";
 import { analyzeJavaScript, jsPublicPath } from "./js-analysis.mjs";
 import {
@@ -345,6 +346,7 @@ interface Props {
   favicon?: string;
   appleTouchIcon?: string;
   lang?: string;
+  robots?: string;
 }
 
 const {
@@ -360,6 +362,7 @@ const {
   favicon = "",
   appleTouchIcon = "",
   lang = "ja",
+  robots = "",
 } = Astro.props;
 
 const seoResolved = resolvePublicSeoUrls({
@@ -376,8 +379,12 @@ const resolvedOgUrl = seoResolved.ogUrl;
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    {import.meta.env.BASE_URL !== "/" && (
-      <meta name="robots" content="noindex,nofollow,noarchive" />
+    {robots ? (
+      <meta name="robots" content={robots} />
+    ) : (
+      import.meta.env.BASE_URL !== "/" && (
+        <meta name="robots" content="noindex,nofollow,noarchive" />
+      )
     )}
     <title>{title}</title>
     {description && <meta name="description" content={description} />}
@@ -420,6 +427,7 @@ const LAYOUT_PROP_KEYS = [
   "favicon",
   "appleTouchIcon",
   "lang",
+  "robots",
 ];
 
 function formatBaseLayoutOpen(props) {
@@ -499,6 +507,61 @@ ${listItems}
   return `---
 import BaseLayout from "${layoutImport}";
 import { withBase } from "../../lib/with-base.ts";
+---
+
+${layoutOpen}
+${content}
+</BaseLayout>
+`;
+}
+
+/**
+ * Thin legacy compatibility page for Wix `/YYYY-MM/` URLs (G-9c0b).
+ * @param {{ route: string, year: string, month: string, label: string }} monthEntry
+ * @param {string | null} baseUrl
+ * @param {string} deployBase
+ */
+function generateScheduleLegacyMonthStubPage(monthEntry, baseUrl, deployBase) {
+  const { year, month, label, route: canonicalRoute } = monthEntry;
+  const legacyPagePath = `${year}-${month}/index.astro`;
+  const layoutImport = layoutImportFromPagePath(legacyPagePath);
+  const withBaseImportDepth = legacyPagePath.split("/").length;
+  const withBaseImport = `${"../".repeat(withBaseImportDepth)}lib/with-base.ts`;
+
+  const seo = applyBaseUrlToSeo(
+    {
+      title: `Schedule ${label} | saki-goto`,
+      description: `The schedule page for ${label} has moved.`,
+      canonical: "",
+      ogTitle: `Schedule ${label} | saki-goto`,
+      ogDescription: `The schedule page for ${label} has moved.`,
+      ogImage: "",
+      ogType: "website",
+      ogUrl: "",
+      twitterCard: "summary_large_image",
+      favicon: "",
+      appleTouchIcon: "",
+      lang: "ja",
+    },
+    canonicalRoute,
+    baseUrl,
+    deployBase,
+  );
+  const layoutProps = {
+    ...seoToLayoutProps(seo),
+    robots: "noindex,follow",
+  };
+  const layoutOpen = formatBaseLayoutOpen(layoutProps);
+
+  const content = `  <section class="gosaki-schedule-legacy-stub">
+    <h1 class="gosaki-schedule-legacy-stub__title">Schedule page moved</h1>
+    <p class="gosaki-schedule-legacy-stub__message">This schedule page has moved to a new location.</p>
+    <p><a href={withBase('${escapeHtmlText(canonicalRoute)}')} class="gosaki-schedule-legacy-stub__link">Go to ${escapeHtmlText(label)} schedule</a></p>
+  </section>`;
+
+  return `---
+import BaseLayout from "${layoutImport}";
+import { withBase } from "${withBaseImport}";
 ---
 
 ${layoutOpen}
@@ -590,11 +653,26 @@ function generatePackageJson(baseUrl) {
 /**
  * @param {string | null} baseUrl
  * @param {string | null | undefined} deployBase
+ * @param {{ excludeLegacyMonthRoutesFromSitemap?: boolean }} [options]
  */
-function generateAstroConfig(baseUrl, deployBase = "/") {
+function generateAstroConfig(baseUrl, deployBase = "/", options = {}) {
   const site = normalizeBaseUrl(baseUrl);
   const base = normalizeDeployBase(deployBase);
   const baseLine = base !== "/" ? `  base: "${base}",\n` : "";
+  const sitemapIntegration = options.excludeLegacyMonthRoutesFromSitemap
+    ? `  integrations: [sitemap({
+    filter: (page) => {
+      try {
+        const pathname = new URL(page).pathname;
+        const p = pathname.endsWith("/") ? pathname : \`\${pathname}/\`;
+        if (/^\\/\\d{4}-\\d{2}\\/$/.test(p)) return false;
+        return !(/\\/\\d{4}-\\d{2}\\/$/.test(p) && !/\\/schedule\\/\\d{4}-\\d{2}\\/$/.test(p));
+      } catch {
+        return true;
+      }
+    },
+  })],`
+    : `  integrations: [sitemap()],`;
 
   if (!site) {
     return `import { defineConfig } from "astro/config";
@@ -613,7 +691,7 @@ import sitemap from "@astrojs/sitemap";
 export default defineConfig({
   site: "${site}",
 ${baseLine}  trailingSlash: "${TRAILING_SLASH}",
-  integrations: [sitemap()],
+${sitemapIntegration}
 });
 `;
 }
@@ -831,11 +909,27 @@ export function generateAstroProject(inputDir, outputDir, options = {}) {
   }
 
   let scheduleIndexGenerated = false;
+  let legacyMonthStubsGenerated = 0;
   if (scheduleHub) {
     const scheduleIndexPath = path.join(outDir, "src/pages/schedule/index.astro");
     writeFile(scheduleIndexPath, generateScheduleIndexPage(scheduleMonthPages, baseUrl, deployBase));
     writtenPages.push(scheduleIndexPath);
     scheduleIndexGenerated = true;
+
+    if (isGosakiPianoFixture(siteDir)) {
+      for (const monthEntry of scheduleMonthPages) {
+        const parsed = parseScheduleMonthSourcePath(monthEntry.sourcePath);
+        if (!parsed || !LIVE_CRAWL_MONTH_FILENAME.test(parsed.basename)) continue;
+        const legacyPagePath = `${parsed.year}-${parsed.month}/index.astro`;
+        const legacyFile = path.join(outDir, "src/pages", legacyPagePath);
+        writeFile(
+          legacyFile,
+          generateScheduleLegacyMonthStubPage(monthEntry, baseUrl, deployBase),
+        );
+        writtenPages.push(legacyFile);
+        legacyMonthStubsGenerated += 1;
+      }
+    }
   }
 
   let gosakiBandProfilesSummary = { applied: false };
@@ -848,7 +942,12 @@ export function generateAstroProject(inputDir, outputDir, options = {}) {
   }
 
   writeFile(path.join(outDir, "package.json"), generatePackageJson(baseUrl));
-  writeFile(path.join(outDir, "astro.config.mjs"), generateAstroConfig(baseUrl, deployBase));
+  writeFile(
+    path.join(outDir, "astro.config.mjs"),
+    generateAstroConfig(baseUrl, deployBase, {
+      excludeLegacyMonthRoutesFromSitemap: legacyMonthStubsGenerated > 0,
+    }),
+  );
   writeFile(path.join(outDir, "tsconfig.json"), generateTsConfig());
   writeFile(path.join(outDir, ".gitignore"), generateGitignore());
 
@@ -898,7 +997,8 @@ export function generateAstroProject(inputDir, outputDir, options = {}) {
     scheduleIndexGenerated,
   });
 
-  const totalPageCount = analysis.pages.length + (scheduleIndexGenerated ? 1 : 0);
+  const totalPageCount =
+    analysis.pages.length + (scheduleIndexGenerated ? 1 : 0) + legacyMonthStubsGenerated;
   const sourceHtmlCount = analysis.rawPages?.length ?? analysis.pages.length;
 
   const structureVerification = verifyGeneratedStructure(outDir, {
@@ -983,6 +1083,7 @@ export function generateAstroProject(inputDir, outputDir, options = {}) {
     pageCount: totalPageCount,
     scheduleMonthPages,
     scheduleIndexGenerated,
+    legacyMonthStubsGenerated,
     structureVerification,
     buildVerification,
     seoPublishReadiness,

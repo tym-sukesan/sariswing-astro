@@ -26,6 +26,16 @@ export function resolvePublicSeoUrls(input: {
     return { canonical: "", ogUrl: "", canonicalMode: "omitted" };
   }
 
+  // Legacy stub pages pass absolute canonical for /schedule/YYYY-MM/ — preserve it.
+  if (input.canonical?.startsWith("http")) {
+    const ogUrl = input.ogUrl?.startsWith("http") ? input.ogUrl : input.canonical;
+    return {
+      canonical: input.canonical,
+      ogUrl,
+      canonicalMode: "staging-url",
+    };
+  }
+
   let path = input.pathname.startsWith("/") ? input.pathname : `/${input.pathname}`;
   if (!path.endsWith("/")) path = `${path}/`;
 

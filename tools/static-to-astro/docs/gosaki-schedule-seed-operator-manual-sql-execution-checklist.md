@@ -1,5 +1,17 @@
 # Gosaki schedule seed operator manual SQL execution checklist (G-9c2)
 
+> **DEPRECATED / SUPERSEDED**
+>
+> G-9c2 execution SELECT revealed that the 60 Gosaki schedule rows already exist in `public.schedules`.
+> **Do not execute the 60 INSERT flow in this checklist.**
+> Use [`gosaki-existing-schedule-rows-manual-sql-execution-checklist.md`](./gosaki-existing-schedule-rows-manual-sql-execution-checklist.md) instead.
+>
+> **非推奨 / 置き換え済み**
+>
+> G-9c2 実行前 SELECT で、Gosaki 相当の `schedule-2026-*` 60行が既に `public.schedules` に存在することが判明しました。
+> **この checklist の 60 INSERT 手順は実行しないでください。**
+> 代わりに [`gosaki-existing-schedule-rows-manual-sql-execution-checklist.md`](./gosaki-existing-schedule-rows-manual-sql-execution-checklist.md) を使用してください。
+
 **Phase:** `G-9c2-gosaki-schedule-seed-operator-manual-sql-execution`  
 **Date:** 2026-06-16  
 **Prior:** G-9c1 preflight (`6c0cb68`)  

@@ -5,40 +5,32 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-9c2a-gosaki-existing-schedule-rows-migration-replanning (complete — uncommitted)
-Latest commit: b969418 (G-9c2 INSERT checklist — deprecated for execution)
+Current phase: G-9c2b-gosaki-existing-schedule-rows-manual-sql-execution-checklist (complete — uncommitted)
+Latest commit: d24376e (G-9c2a replanning)
 ```
 
 ## Summary
 
-G-9c2 operator execution discovered existing 60 `schedule-2026-*` rows on staging. **60 INSERT aborted.**
+G-9c2b: Operator execution checklist for **existing 60 rows UPDATE migration** (not 60 INSERT).
 
-**New approach (Option A):** adopt existing rows via UPDATE:
-1. Add `site_slug` column
-2. Backfill `site_slug = 'gosaki-piano'` on 60 rows
-3. Canonicalize `source_route` → `/schedule/YYYY-MM/`
-4. Restore `schedule-2026-07-010` PoC fields (no legacy_id rename)
+**Sequence:** site_slug DDL → backfill → source_route canonicalize → schedule-2026-07-010 PoC restore → verify
 
-**Doc:** `tools/static-to-astro/docs/gosaki-existing-schedule-rows-migration-replanning.md`
+**Active doc:** `tools/static-to-astro/docs/gosaki-existing-schedule-rows-manual-sql-execution-checklist.md`
 
-## G-9c2b approval text (planned)
+**Deprecated:** `gosaki-schedule-seed-operator-manual-sql-execution-checklist.md` (INSERT path — banner added)
+
+## G-9c2b approval text
 
 ```txt
-承認します。static-to-astro-cms-staging に対して、G-9c2a の既存60行 migration SQLをこの順番で1回だけ手動実行します。
+承認します。static-to-astro-cms-staging に対して、G-9c2b の既存60行 migration SQL をこの順番で1回だけ手動実行します。
 ```
-
-## Deprecated
-
-- G-9c2 60 INSERT checklist / PoC rename path
-- `gosaki-schedules-seed.template.sql` execution (field reference only)
 
 ## Gates
 
 ```txt
-gosakiExistingScheduleRowsMigrationReplanningComplete: true
-gosakiScheduleInsertPlanDeprecated: true
-gosakiExisting60RowsAdoptionRecommended: true
-readyForG9c2bExistingRowsManualSqlExecutionChecklist: true
+gosakiExistingRowsManualSqlExecutionChecklistComplete: true
+gosakiDeprecatedInsertChecklistBannerAdded: true
+readyForG9c2cExistingRowsOperatorManualSqlExecution: true
 readyForAnyDbWrite: false
 readyForAnyFtpApply: false
 ftpAutoDeployStillDisabled: true
@@ -47,8 +39,9 @@ ftpAutoDeployStillDisabled: true
 ## Safety
 
 - No SQL execution from Cursor/CI
-- PoC row id: `aa440e29-5be8-402e-9190-0d81c48434c0` — restore, do not rename
+- PoC row: restore in place — no legacy_id rename
+- Step 1 snapshot mandatory for rollback C
 
 ## Next
 
-G-9c2b — operator checklist for existing-rows UPDATE migration (staging only)
+G-9c2c — operator manual SQL execution (staging only)

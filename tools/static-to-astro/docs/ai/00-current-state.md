@@ -21,9 +21,11 @@ Staging Shell
 将来的な顧客オンボーディング・課金・デプロイ自動化
 
 2. Current phase
-現在フェーズ: G-9c2a-gosaki-existing-schedule-rows-migration-replanning（完了 — planning only, uncommitted）
+現在フェーズ: G-9c2b-gosaki-existing-schedule-rows-manual-sql-execution-checklist（完了 — uncommitted）
 
-G-9c2a: staging に既存 `schedule-2026-*` 60行が存在することを operator が確認。60 INSERT 方針を中止し、既存行採用 + UPDATE correction 方式へ再計画。Option A 推奨。SQL template 作成、SQL実行なし。
+G-9c2b: 既存60行 UPDATE 方式の operator 実行 checklist 作成。旧 INSERT checklist に deprecated banner 追加。SQL実行なし。
+
+G-9c2a: 既存60行採用 + UPDATE correction 再計画（commit `d24376e`）。Option A 推奨。
 
 G-9c2: 60 INSERT checklist 作成済み（`b969418`）— operator 実行中に中止。deprecated。
 
@@ -61,9 +63,10 @@ Gosaki staging:
   - `tools/static-to-astro/docs/gosaki-schedule-route-canonical-planning.md`
   - `tools/static-to-astro/docs/gosaki-schedule-canonical-route-implementation.md`
   - `tools/static-to-astro/docs/gosaki-schedule-legacy-month-route-stub.md`
-- 次: G-9c2b existing-rows manual SQL execution checklist（明示承認後）
-- DB state (operator confirmed): 60 `schedule-2026-*` rows exist; `site_slug` column absent; legacy `source_route` `/schedule-2026-XX/`
-- Replan doc: `tools/static-to-astro/docs/gosaki-existing-schedule-rows-migration-replanning.md`
+- 次: G-9c2c operator manual SQL execution（UPDATE path、明示承認後）
+- Active checklist: `tools/static-to-astro/docs/gosaki-existing-schedule-rows-manual-sql-execution-checklist.md`
+- Deprecated: `gosaki-schedule-seed-operator-manual-sql-execution-checklist.md` (60 INSERT)
+- DB state: 60 `schedule-2026-*` rows; `site_slug` column absent; legacy `source_route`
 
 3. Important completed milestones
 
@@ -465,23 +468,21 @@ rollbackNeeded: false
 明示的 retry で dev server を起動する場合は inline env のみ使用する。
 
 10. Recommended next phase
-次フェーズ推奨: G-9c2b existing-rows manual SQL execution checklist
+次フェーズ推奨: G-9c2c existing-rows operator manual SQL execution
 
-G-9c2a replanning 完了。既存60行採用 + site_slug backfill + source_route canonicalize + schedule-2026-07-010 PoC復元（rename しない）。
+G-9c2b checklist 完了。operator が UPDATE migration を staging で手動実行（G-9c2b 承認後）。
 
 詳細:
-- `tools/static-to-astro/docs/gosaki-existing-schedule-rows-migration-replanning.md`
-- SQL templates: `gosaki-existing-schedules-*.template.sql`, `gosaki-schedule-2026-07-010-restore.template.sql`
+- `tools/static-to-astro/docs/gosaki-existing-schedule-rows-manual-sql-execution-checklist.md`
+- Replan: `tools/static-to-astro/docs/gosaki-existing-schedule-rows-migration-replanning.md`
 
-G-9c2a gates:
+G-9c2b gates:
 ```txt
-gosakiExistingScheduleRowsMigrationReplanningComplete: true
-gosakiScheduleInsertPlanDeprecated: true
-gosakiExisting60RowsAdoptionRecommended: true
-gosakiSiteSlugBackfillPlanReady: true
-gosakiSourceRouteCanonicalUpdatePlanReady: true
-gosakiPocRowRestorePlanReady: true
-readyForG9c2bExistingRowsManualSqlExecutionChecklist: true
+gosakiExistingRowsManualSqlExecutionChecklistComplete: true
+gosakiDeprecatedInsertChecklistBannerAdded: true
+gosakiExistingRowsMigrationSequenceDocumented: true
+gosakiExistingRowsRollbackPlanDocumented: true
+readyForG9c2cExistingRowsOperatorManualSqlExecution: true
 readyForAnyDbWrite: false
 readyForAnyFtpApply: false
 ftpAutoDeployStillDisabled: true

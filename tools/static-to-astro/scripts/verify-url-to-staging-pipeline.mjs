@@ -1527,6 +1527,10 @@ const g9g3cPlanningDocPath = path.join(
   TOOL_ROOT,
   "docs/staging-shell-schedule-site-slug-time-price-non-dry-run-poc-planning.md",
 );
+const g9g3cPreflightDocPath = path.join(
+  TOOL_ROOT,
+  "docs/staging-shell-schedule-site-slug-time-price-non-dry-run-poc-preflight.md",
+);
 const g9g3cSavePath = path.join(
   REPO_ROOT,
   "src/lib/admin/staging-write/staging-schedule-site-slug-time-price-poc-save.ts",
@@ -1538,11 +1542,13 @@ const g9g3cConfigPath = path.join(
 
 assert("G-9g3c implementation doc exists", fs.existsSync(g9g3cImplDocPath));
 assert("G-9g3c planning doc exists", fs.existsSync(g9g3cPlanningDocPath));
+assert("G-9g3c preflight doc exists", fs.existsSync(g9g3cPreflightDocPath));
 assert("G-9g3c save module exists", fs.existsSync(g9g3cSavePath));
 assert("G-9g3c config module exists", fs.existsSync(g9g3cConfigPath));
 
 const g9g3cImplSrc = fs.readFileSync(g9g3cImplDocPath, "utf8");
 const g9g3cPlanningSrc = fs.readFileSync(g9g3cPlanningDocPath, "utf8");
+const g9g3cPreflightSrc = fs.readFileSync(g9g3cPreflightDocPath, "utf8");
 const g9g3cSaveSrc = fs.readFileSync(g9g3cSavePath, "utf8");
 const g9g3cConfigSrc = fs.readFileSync(g9g3cConfigPath, "utf8");
 
@@ -1592,6 +1598,18 @@ assert(
 assert(
   "G-9g3c planning approval template",
   g9g3cPlanningSrc.includes("G-9g3c time+price non-dry-run PoC"),
+);
+assert(
+  "G-9g3c preflight operator approval",
+  g9g3cPreflightSrc.includes("G-9g3c time+price non-dry-run PoC"),
+);
+assert(
+  "G-9g3c preflight no save click",
+  g9g3cPreflightSrc.includes("no Save click"),
+);
+assert(
+  "G-9g3c preflight ready for execution gate",
+  g9g3cPreflightSrc.includes("readyForG9g3cExecution: true"),
 );
 assert(
   "G-9g3c implementation not executed",

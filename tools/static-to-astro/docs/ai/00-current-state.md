@@ -21,13 +21,15 @@ Staging Shell
 将来的な顧客オンボーディング・課金・デプロイ自動化
 
 2. Current phase
-現在フェーズ: G-9g3c-staging-shell-schedule-site-slug-time-price-non-dry-run-poc-implementation — **完了**
+現在フェーズ: G-9g3c-staging-shell-schedule-site-slug-time-price-non-dry-run-poc-preflight — **完了**
 
-次フェーズ: **G-9g3c-preflight**（beforeSnapshot / rollback SQL / dev arm — Save / DB write なし）
+次フェーズ: **G-9g3c-execution**（operator manual Save once — execution 前に live SELECT / dev arm / dry-run preview / approval 必須）
 
-Git: 最新 push 済み commit `26238e4`（G-9g3c planning）。G-9g3c implementation + AI context 更新は **uncommitted**。
+Git: 最新 push 済み commit `37ba023`（G-9g3c implementation）。G-9g3c preflight doc + AI context 更新は **uncommitted**。
 
-G-9g3b execution 成功（commit `125d5d5`）。`changedFields=venue,description` のみ。`updated_at` → `2026-06-17T14:36:04.711395+00:00`。`rollbackNeeded: false`。
+G-9g3c implementation 完了（commit `37ba023`）。Save UI gated、default disabled。**G-9g3c Save 未実行。**
+
+G-9g3b execution 成功（commit `125d5d5`）。`changedFields=venue,description` のみ。`updated_at` → `2026-06-17T14:36:04.711395+00:00`。`rollbackNeeded: false`。**G-9g3b Save 再実行禁止。**
 
 G-9g3b implementation + preflight（commit `c2a6b0c`）。
 
@@ -83,6 +85,7 @@ Gosaki staging:
   - `tools/static-to-astro/docs/gosaki-schedule-legacy-month-route-stub.md`
 - G-9g3c planning doc: `tools/static-to-astro/docs/staging-shell-schedule-site-slug-time-price-non-dry-run-poc-planning.md`
 - G-9g3c implementation doc: `tools/static-to-astro/docs/staging-shell-schedule-site-slug-time-price-non-dry-run-poc-implementation.md`
+- G-9g3c preflight doc: `tools/static-to-astro/docs/staging-shell-schedule-site-slug-time-price-non-dry-run-poc-preflight.md`
 - G-9g3b execution result doc: `tools/static-to-astro/docs/staging-shell-schedule-site-slug-venue-description-non-dry-run-poc-execution-result.md`
 - G-9g3b impl doc: `tools/static-to-astro/docs/staging-shell-schedule-site-slug-venue-description-non-dry-run-poc-implementation.md`
 - G-9g3a smoke test doc: `tools/static-to-astro/docs/staging-shell-schedule-site-slug-safe-fields-dry-run-preview-smoke-test-result.md`
@@ -514,25 +517,28 @@ PUBLIC_SUPABASE_URL host: kmjqppxjdnwwrtaeqjta.supabase.co (staging)
 **Note:** `tools/static-to-astro/.env.local` に `SUPABASE_SERVICE_ROLE_KEY` が local only（gitignored）で存在する場合がある。G-9g3b execution では使用禁止・参照禁止。anon key + authenticated session のみ。
 
 10. Recommended next phase
-次フェーズ推奨: **G-9g3c-preflight**（beforeSnapshot / rollback SQL / dev arm procedure — Save / DB write なし）
+次フェーズ推奨: **G-9g3c-execution**（operator manual Save once — preflight 完了後）
 
-G-9g3c implementation: **完了**（uncommitted）。approval `G-9g3c-schedule-site-slug-time-price-non-dry-run-poc`、env `PUBLIC_ADMIN_SCHEDULE_G9G3C_TIME_PRICE_NON_DRY_RUN_ARMED`。Save UI gated、default disabled。**Save 未実行。**
+G-9g3c preflight: **完了**（uncommitted）。beforeSnapshot SELECT / rollback SQL / dev arm / dry-run checklist 文書化。**Save / DB write 未実行。**
+
+G-9g3c implementation: 完了（commit `37ba023`）。
 
 G-9g3b execution: 完了（`125d5d5`）。**G-9g3b / G-9g2 Save を再実行しない。**
 
-G-9g3c lock baseline: `updated_at` = `2026-06-17T14:36:04.711395+00:00`（preflight / Save 前に live 確認）
+G-9g3c lock baseline: `updated_at` = `2026-06-17T14:36:04.711395+00:00`（execution 前に live SELECT で再確認）
 
 Phase sequence:
 ```txt
 G-9g3c-planning       ← complete (26238e4)
-G-9g3c-implementation ← complete (uncommitted)
-G-9g3c-preflight      ← next
-G-9g3c-execution      ← operator manual Save once
+G-9g3c-implementation ← complete (37ba023)
+G-9g3c-preflight      ← complete (uncommitted)
+G-9g3c-execution      ← next (operator manual Save once)
 ```
 
 詳細:
 - `tools/static-to-astro/docs/staging-shell-schedule-site-slug-time-price-non-dry-run-poc-planning.md`
 - `tools/static-to-astro/docs/staging-shell-schedule-site-slug-time-price-non-dry-run-poc-implementation.md`
+- `tools/static-to-astro/docs/staging-shell-schedule-site-slug-time-price-non-dry-run-poc-preflight.md`
 - `tools/static-to-astro/docs/staging-shell-schedule-site-slug-venue-description-non-dry-run-poc-execution-result.md`
 - `tools/static-to-astro/docs/staging-shell-schedule-site-slug-safe-fields-edit-planning.md`
 
@@ -540,10 +546,10 @@ G-9g3c gates:
 ```txt
 stagingShellScheduleTimePricePocPlanningComplete: true
 stagingShellScheduleTimePricePocImplementationComplete: true
+stagingShellScheduleTimePricePocPreflightComplete: true
 stagingShellScheduleTimePricePocSaveUiGated: true
 stagingShellScheduleTimePricePocNotExecuted: true
-readyForG9g3cPreflight: true
-readyForG9g3cExecution: false
+readyForG9g3cExecution: true
 readyForG9g3bExecution: false
 readyForAnyDbWrite: false
 readyForAnyFtpApply: false

@@ -1113,6 +1113,100 @@ assert(
   !g9g1DryRunSrc.includes("SERVICE_ROLE_KEY"),
 );
 
+// --- G-9g2 staging shell site_slug title non-dry-run PoC implementation ---
+const g9g2ImplDocPath = path.join(
+  TOOL_ROOT,
+  "docs/staging-shell-schedule-site-slug-title-non-dry-run-poc-implementation.md",
+);
+const g9g2SavePath = path.join(
+  REPO_ROOT,
+  "src/lib/admin/staging-write/staging-schedule-site-slug-title-poc-save.ts",
+);
+const g9g2ConfigPath = path.join(
+  REPO_ROOT,
+  "src/lib/admin/staging-data/staging-schedule-site-slug-title-poc-config.ts",
+);
+const writeAdapterSrc = fs.readFileSync(
+  path.join(REPO_ROOT, "src/lib/admin/staging-write/schedule-write-adapter.ts"),
+  "utf8",
+);
+const writeGuardsSrc = fs.readFileSync(
+  path.join(REPO_ROOT, "src/lib/admin/staging-write/schedule-write-guards.ts"),
+  "utf8",
+);
+
+assert("G-9g2 implementation doc exists", fs.existsSync(g9g2ImplDocPath));
+assert("G-9g2 title poc save module exists", fs.existsSync(g9g2SavePath));
+assert("G-9g2 title poc config exists", fs.existsSync(g9g2ConfigPath));
+
+const g9g2SaveSrc = fs.readFileSync(g9g2SavePath, "utf8");
+const g9g2ConfigSrc = fs.readFileSync(g9g2ConfigPath, "utf8");
+const g9g2SiteSlugConfigSrc = fs.readFileSync(
+  path.join(REPO_ROOT, "src/lib/admin/staging-data/staging-schedule-site-slug-config.ts"),
+  "utf8",
+);
+
+assert(
+  "G-9g2 approval ID registered",
+  g9g2SiteSlugConfigSrc.includes("G-9g2-schedule-site-slug-title-non-dry-run-poc") &&
+    fs.readFileSync(
+      path.join(REPO_ROOT, "src/lib/admin/staging-write/schedule-write-types.ts"),
+      "utf8",
+    ).includes("G9G2_SCHEDULE_TITLE_NON_DRY_RUN_POC_APPROVAL_ID"),
+);
+assert(
+  "G-9g2 env arm constant",
+  g9g2SiteSlugConfigSrc.includes("PUBLIC_ADMIN_SCHEDULE_G9G2_TITLE_NON_DRY_RUN_ARMED"),
+);
+assert(
+  "G-9g2 Save title PoC button label",
+  g9g1SectionSrc.includes("Save title PoC"),
+);
+assert(
+  "G-9g2 save button default disabled",
+  g9g1SectionSrc.includes('id="site-slug-edit-g9g2-save-btn"') &&
+    g9g1SectionSrc.includes("disabled={true}"),
+);
+assert(
+  "G-9g2 UPDATE uses site_slug and updated_at",
+  writeAdapterSrc.includes("writeScope") &&
+    writeAdapterSrc.includes('.eq("site_slug", writeScope.siteSlug)') &&
+    writeAdapterSrc.includes('.eq("updated_at", expectedBeforeUpdatedAt)'),
+);
+assert(
+  "G-9g2 legacy_id guard",
+  writeGuardsSrc.includes("assertBeforeSnapshotSiteSlugScope") &&
+    g9g2SaveSrc.includes("assertBeforeSnapshotSiteSlugScope"),
+);
+assert(
+  "G-9g2 title only payload guard",
+  writeGuardsSrc.includes("assertG9G2TitlePayloadOnly") &&
+    g9g2SaveSrc.includes("assertG9G2TitlePayloadOnly"),
+);
+assert(
+  "G-9g2 execute save entry",
+  g9g2SaveSrc.includes("executeG9G2TitleNonDryRunSave"),
+);
+assert(
+  "G-9g2 dry-run preview actualWrite false",
+  g9g1DryRunSrc.includes("actualWrite: false") &&
+    g9g1SectionSrc.includes("actualWrite=false"),
+);
+assert(
+  "G-9g2 no restore save",
+  !g9g2SaveSrc.match(/restore/i) && !g9g1SectionSrc.match(/Restore\s+title/i),
+);
+assert(
+  "G-9g2 no service_role in save path",
+  !g9g2SaveSrc.includes("SERVICE_ROLE_KEY"),
+);
+assert(
+  "G-9g2 no generic Save all buttons",
+  !g9g1SectionSrc.match(/>\s*Delete\s*</) &&
+    !g9g1SectionSrc.includes("Save all") &&
+    !g9g1SectionSrc.includes("Publish"),
+);
+
 const gosakiPublicDist = path.join(TOOL_ROOT, "output/static-public/gosaki-piano/public-dist");
 for (const ym of ["2026-06", "2026-07"]) {
   const canonicalMonthPath = path.join(gosakiPublicDist, "schedule", ym, "index.html");

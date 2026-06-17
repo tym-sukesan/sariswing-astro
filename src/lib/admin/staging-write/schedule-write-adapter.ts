@@ -76,6 +76,7 @@ export async function updateScheduleWrite(input: {
   beforeSnapshot: ScheduleDryRunSource;
   payload: ScheduleUpdateWritePayload;
   expectedBeforeUpdatedAt?: string | null;
+  writeScope?: { siteSlug: string; legacyId: string };
 }): Promise<ScheduleWriteAdapterResult> {
   const {
     client,
@@ -84,6 +85,7 @@ export async function updateScheduleWrite(input: {
     beforeSnapshot,
     payload,
     expectedBeforeUpdatedAt,
+    writeScope,
   } = input;
 
   try {
@@ -133,12 +135,50 @@ export async function updateScheduleWrite(input: {
         errorMessage: `expectedBeforeUpdatedAt (${expectedBeforeUpdatedAt}) does not match current updated_at (${currentUpdatedAt ?? "null"}).`,
       });
     }
+
+    if (writeScope) {
+      const currentSiteSlug =
+        currentRow?.site_slug != null ? String(currentRow.site_slug) : null;
+      const currentLegacyId =
+        currentRow?.legacy_id != null ? String(currentRow.legacy_id) : null;
+      if (currentSiteSlug !== writeScope.siteSlug) {
+        return buildFailure({
+          approvalId,
+          targetId: beforeSnapshot.id,
+          beforeSnapshot,
+          payload,
+          errorCode: "site_slug_scope_failed",
+          errorMessage: `site_slug mismatch (expected ${writeScope.siteSlug}, got ${currentSiteSlug ?? "null"}).`,
+        });
+      }
+      if (currentLegacyId !== writeScope.legacyId) {
+        return buildFailure({
+          approvalId,
+          targetId: beforeSnapshot.id,
+          beforeSnapshot,
+          payload,
+          errorCode: "legacy_id_scope_failed",
+          errorMessage: `legacy_id mismatch (expected ${writeScope.legacyId}, got ${currentLegacyId ?? "null"}).`,
+        });
+      }
+    }
   }
 
-  const { data: updatedRow, error: updateError } = await client
+  let updateQuery = client
     .from("schedules")
     .update(payload)
-    .eq("id", beforeSnapshot.id)
+    .eq("id", beforeSnapshot.id);
+
+  if (writeScope) {
+    updateQuery = updateQuery
+      .eq("site_slug", writeScope.siteSlug)
+      .eq("legacy_id", writeScope.legacyId);
+    if (expectedBeforeUpdatedAt != null && expectedBeforeUpdatedAt !== "") {
+      updateQuery = updateQuery.eq("updated_at", expectedBeforeUpdatedAt);
+    }
+  }
+
+  const { data: updatedRow, error: updateError } = await updateQuery
     .select("*")
     .single();
 

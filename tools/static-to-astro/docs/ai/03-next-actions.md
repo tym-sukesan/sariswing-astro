@@ -3,40 +3,39 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 1. Immediate priority
 
-**Current phase:** `G-9g2-staging-shell-schedule-site-slug-title-non-dry-run-poc-planning` (planning complete — uncommitted)
+**Current phase:** `G-9g2-staging-shell-schedule-site-slug-title-non-dry-run-poc-implementation` (implementation complete — uncommitted)
 
 **Doc:**
-- `tools/static-to-astro/docs/staging-shell-schedule-site-slug-title-non-dry-run-poc-planning.md` (**new**)
+- `tools/static-to-astro/docs/staging-shell-schedule-site-slug-title-non-dry-run-poc-implementation.md` (**new**)
+
+**Awaiting:** operator commit approval (`Implement gated schedule title non-dry-run PoC`)
 
 ### G-9g2 summary
 
-- Title-only non-dry-run PoC planning for `site_slug=gosaki-piano`
-- Target: `schedule-2026-07-010` / approval `G-9g2-schedule-site-slug-title-non-dry-run-poc`
-- UPDATE: id + site_slug + optimistic lock; dry-run prerequisite
-- No implementation / Save UI / DB write in G-9g2 planning
+- Gated `Save title PoC` + `executeG9G2TitleNonDryRunSave`
+- UPDATE: id + site_slug + legacy_id + updated_at
+- Env arm: `PUBLIC_ADMIN_SCHEDULE_G9G2_TITLE_NON_DRY_RUN_ARMED=true`
+- Save **not** executed by Cursor
 
 ### Gates
 
 ```txt
-stagingShellScheduleSiteSlugTitleNonDryRunPocPlanningComplete: true
-readyForG9g2Implementation: true
+stagingShellScheduleTitleNonDryRunPocImplementationComplete: true
+readyForG9g2Preflight: true
 readyForAnyDbWrite: false
-readyForAnyFtpApply: false
-ftpAutoDeployStillDisabled: true
 ```
 
 ## 2. Next steps
 
-1. Optional: commit G-9g2 planning doc
-2. **G-9g2-implementation** — adapter + gated Save (default off)
+1. Commit G-9g2 implementation
+2. G-9g2-preflight + operator manual Save (separate phase)
 
 ## 3. Do not
 
-- DB writes until G-9g2-execution with operator approval
-- Modify `/admin` or G-9g1 dry-run path
-- Reuse G-6-g1 approval ID
+- Cursor click Save / DB writes until execution phase
+- Modify `/admin` or G-6 frozen paths
 
 ## 4. Baseline
 
-- Latest commit: `5ba2305` (G-9g1)
-- G-9g2: planning complete, pending commit
+- Latest commit: `91f8b50` (G-9g2 planning)
+- G-9g2 impl: complete, pending commit

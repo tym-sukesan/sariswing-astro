@@ -115,6 +115,45 @@ export function assertG6G2TimeFieldsPayloadOnly(
   }
 }
 
+export function assertG9G2TitlePayloadOnly(
+  payload: ScheduleUpdateWritePayload,
+): void {
+  const allowedKeys = new Set(["title"]);
+  const keys = Object.keys(payload);
+  if (keys.length === 0) {
+    throw new Error("G-9g2 payload must include title.");
+  }
+  for (const key of keys) {
+    if (!allowedKeys.has(key)) {
+      throw new Error(`G-9g2 payload field not allowed: ${key}`);
+    }
+  }
+  if (!keys.includes("title")) {
+    throw new Error("G-9g2 payload must include title.");
+  }
+}
+
+export function assertBeforeSnapshotSiteSlugScope(
+  beforeSnapshot: ScheduleDryRunSource,
+  options: { siteSlug: string; legacyId: string; targetId: string },
+): void {
+  if (beforeSnapshot.id !== options.targetId) {
+    throw new Error(
+      `beforeSnapshot id (${beforeSnapshot.id}) does not match target (${options.targetId}).`,
+    );
+  }
+  if (beforeSnapshot.legacy_id !== options.legacyId) {
+    throw new Error(
+      `beforeSnapshot legacy_id (${beforeSnapshot.legacy_id ?? "null"}) does not match ${options.legacyId}.`,
+    );
+  }
+  if (beforeSnapshot.site_slug !== options.siteSlug) {
+    throw new Error(
+      `beforeSnapshot site_slug (${beforeSnapshot.site_slug ?? "null"}) does not match ${options.siteSlug}.`,
+    );
+  }
+}
+
 export function assertScheduleWriteTargetId(targetId: string): void {
   if (typeof targetId !== "string" || targetId.trim() === "") {
     throw new Error("targetId must be a non-empty string.");

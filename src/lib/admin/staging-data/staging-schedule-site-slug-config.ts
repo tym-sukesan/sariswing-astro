@@ -9,6 +9,18 @@ export const G9G1_PHASE = "G-9g1-staging-shell-schedule-site-slug-edit-dry-run-p
 export const G9G1_DRY_RUN_APPROVAL_ID =
   "G-9g1-schedule-site-slug-edit-dry-run-preview";
 
+export const G9G2_PHASE =
+  "G-9g2-staging-shell-schedule-site-slug-title-non-dry-run-poc-implementation";
+
+export const G9G2_TITLE_NON_DRY_RUN_APPROVAL_ID =
+  "G-9g2-schedule-site-slug-title-non-dry-run-poc";
+
+export const SCHEDULE_G9G2_TITLE_NON_DRY_RUN_ARMED_ENV =
+  "PUBLIC_ADMIN_SCHEDULE_G9G2_TITLE_NON_DRY_RUN_ARMED";
+
+export const G9G2_TITLE_POC_DEFAULT_TITLE =
+  "[CMS Kit staging] G-9g2 title PoC";
+
 /** Pilot site for staging shell schedule read binding. */
 export const STAGING_SHELL_GOSAKI_SCHEDULE_SITE_SLUG = "gosaki-piano";
 

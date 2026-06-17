@@ -40,17 +40,27 @@ export const G6G2_SCHEDULE_TIME_FIELDS_NON_DRY_RUN_SLICE_APPROVAL_ID:
   ScheduleG6G2TimeFieldsNonDryRunSliceApprovalId =
   "G-6-g2-schedule-time-fields-non-dry-run-slice";
 
+/** G-9g2 Gosaki site_slug title non-dry-run PoC — title only; separate from G-6-g1. */
+export type ScheduleG9G2TitleNonDryRunPocApprovalId =
+  "G-9g2-schedule-site-slug-title-non-dry-run-poc";
+
+export const G9G2_SCHEDULE_TITLE_NON_DRY_RUN_POC_APPROVAL_ID:
+  ScheduleG9G2TitleNonDryRunPocApprovalId =
+  "G-9g2-schedule-site-slug-title-non-dry-run-poc";
+
 export type ScheduleWriteApprovalIdUnion =
   | ScheduleWriteApprovalId
   | ScheduleSafeFieldsNonDryRunPocApprovalId
   | ScheduleG6G1TitleNonDryRunSliceApprovalId
-  | ScheduleG6G2TimeFieldsNonDryRunSliceApprovalId;
+  | ScheduleG6G2TimeFieldsNonDryRunSliceApprovalId
+  | ScheduleG9G2TitleNonDryRunPocApprovalId;
 
 export const SCHEDULE_WRITE_APPROVAL_IDS: readonly ScheduleWriteApprovalIdUnion[] = [
   SCHEDULE_WRITE_APPROVAL_ID,
   G6F6_SCHEDULE_SAFE_FIELDS_NON_DRY_RUN_POC_APPROVAL_ID,
   G6G1_SCHEDULE_TITLE_NON_DRY_RUN_SLICE_APPROVAL_ID,
   G6G2_SCHEDULE_TIME_FIELDS_NON_DRY_RUN_SLICE_APPROVAL_ID,
+  G9G2_SCHEDULE_TITLE_NON_DRY_RUN_POC_APPROVAL_ID,
 ];
 
 export type ScheduleUpdateWritePayload = {

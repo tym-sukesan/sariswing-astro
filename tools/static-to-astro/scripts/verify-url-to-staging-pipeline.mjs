@@ -1207,6 +1207,34 @@ assert(
     !g9g1SectionSrc.includes("Publish"),
 );
 
+// --- G-9g2 preflight doc ---
+const g9g2PreflightDocPath = path.join(
+  TOOL_ROOT,
+  "docs/staging-shell-schedule-site-slug-title-non-dry-run-poc-preflight.md",
+);
+assert("G-9g2 preflight doc exists", fs.existsSync(g9g2PreflightDocPath));
+const g9g2PreflightSrc = fs.readFileSync(g9g2PreflightDocPath, "utf8");
+assert(
+  "G-9g2 preflight operator approval text",
+  g9g2PreflightSrc.includes("G-9g2 title non-dry-run PoC として"),
+);
+assert(
+  "G-9g2 preflight beforeSnapshot title <>",
+  g9g2PreflightSrc.includes("title` | `<>`"),
+);
+assert(
+  "G-9g2 preflight restore approval text",
+  g9g2PreflightSrc.includes("G-9g2 restore として"),
+);
+assert(
+  "G-9g2 preflight stale stop",
+  g9g2PreflightSrc.includes("optimisticLock.stale === true"),
+);
+assert(
+  "G-9g2 preflight not executed marker",
+  g9g2PreflightSrc.includes("no Save click"),
+);
+
 const gosakiPublicDist = path.join(TOOL_ROOT, "output/static-public/gosaki-piano/public-dist");
 for (const ym of ["2026-06", "2026-07"]) {
   const canonicalMonthPath = path.join(gosakiPublicDist, "schedule", ym, "index.html");

@@ -21,11 +21,11 @@ Staging Shell
 将来的な顧客オンボーディング・課金・デプロイ自動化
 
 2. Current phase
-現在フェーズ: G-9g2-staging-shell-schedule-site-slug-title-non-dry-run-poc-implementation（実装完了 — uncommitted）
+現在フェーズ: G-9g2-staging-shell-schedule-site-slug-title-non-dry-run-poc-preflight（preflight 完了 — uncommitted）
 
-G-9g2: site_slug scoped title Save UI + adapter。`executeG9G2TitleNonDryRunSave`、gated `Save title PoC`。default off。Save 未実行。
+G-9g2 preflight: beforeSnapshot / dry-run / Save / restore checklist。operator 手動 Save 手順。Save 未実行。
 
-G-9g2 planning（commit `91f8b50`）。G-9g1 dry-run（commit `5ba2305`）。
+G-9g2 implementation（commit `969822e`）。G-9g2 planning（commit `91f8b50`）。G-9g1 dry-run（commit `5ba2305`）。
 
 G-9f: site_slug read-only binding（commit `8be88e7`）。
 
@@ -69,6 +69,7 @@ Gosaki staging:
   - `tools/static-to-astro/docs/gosaki-schedule-route-canonical-planning.md`
   - `tools/static-to-astro/docs/gosaki-schedule-canonical-route-implementation.md`
   - `tools/static-to-astro/docs/gosaki-schedule-legacy-month-route-stub.md`
+- G-9g2 preflight doc: `tools/static-to-astro/docs/staging-shell-schedule-site-slug-title-non-dry-run-poc-preflight.md`
 - G-9g2 impl doc: `tools/static-to-astro/docs/staging-shell-schedule-site-slug-title-non-dry-run-poc-implementation.md`
 - G-9g2 planning doc: `tools/static-to-astro/docs/staging-shell-schedule-site-slug-title-non-dry-run-poc-planning.md`
 - G-9g1 doc: `tools/static-to-astro/docs/staging-shell-schedule-site-slug-edit-dry-run-preview.md`
@@ -480,26 +481,22 @@ rollbackNeeded: false
 明示的 retry で dev server を起動する場合は inline env のみ使用する。
 
 10. Recommended next phase
-次フェーズ推奨: G-9g2 commit → G-9g2-preflight（beforeSnapshot / operator Save 手順）
+次フェーズ推奨: G-9g2-preflight commit → G-9g2-execution（operator 承認 + 手動 Save 1回）
 
-G-9g2 実装完了（uncommitted）。gated Save title PoC + site_slug UPDATE adapter。Save 未実行。
+G-9g2 preflight 完了（uncommitted）。beforeSnapshot / dry-run / Save / restore checklist。
 
 詳細:
-- `tools/static-to-astro/docs/staging-shell-schedule-site-slug-title-non-dry-run-poc-implementation.md`
+- `tools/static-to-astro/docs/staging-shell-schedule-site-slug-title-non-dry-run-poc-preflight.md`
 
-G-9g2 gates:
+G-9g2 preflight gates:
 ```txt
-stagingShellScheduleTitleNonDryRunPocImplementationComplete: true
-stagingShellScheduleTitlePocSaveUiGated: true
-stagingShellScheduleTitlePocEnvArmRequired: true
-stagingShellScheduleTitlePocApprovalIdVisible: true
-stagingShellScheduleTitlePocUpdateScopedBySiteSlug: true
-stagingShellScheduleTitlePocOptimisticLockEnforced: true
-stagingShellScheduleTitlePocTitleOnly: true
+stagingShellScheduleTitlePocPreflightComplete: true
+stagingShellScheduleTitlePocBeforeSnapshotDefined: true
+stagingShellScheduleTitlePocDryRunChecklistReady: true
+stagingShellScheduleTitlePocOperatorApprovalReady: true
+stagingShellScheduleTitlePocRestorePlanReady: true
 stagingShellScheduleTitlePocNotExecuted: true
-stagingShellScheduleTitlePocRestoreDeferred: true
-stagingShellNoAdminRouteTouched: true
-readyForG9g2Preflight: true
+readyForOperatorG9g2TitlePocSave: true
 readyForAnyDbWrite: false
 readyForAnyFtpApply: false
 ftpAutoDeployStillDisabled: true

@@ -5,28 +5,28 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-9g1-staging-shell-schedule-site-slug-edit-dry-run-preview (implementation complete — uncommitted)
-Latest commit: d4e8f98 (G-9g planning)
+Current phase: G-9g2-staging-shell-schedule-site-slug-title-non-dry-run-poc-planning (planning complete — uncommitted)
+Latest commit: 5ba2305 (G-9g1)
 ```
 
 ## Summary
 
-G-9g1: Staging shell Gosaki schedule edit **dry-run Preview only**.
+G-9g2: Planning for title-only non-dry-run PoC on Gosaki site_slug path.
 
-- **Route:** `/__admin-staging-shell/musician-basic/#schedule`
-- **Section:** `AdminStagingScheduleSiteSlugEditSection` (after G-9f read)
-- **Target:** `schedule-2026-07-010` / `site_slug=gosaki-piano`
-- **UI:** title input + `Preview dry-run` — no Save
-- **`actualWrite`:** always false
+- **Target:** `aa440e29-…` / `schedule-2026-07-010` / `gosaki-piano`
+- **Payload:** `[CMS Kit staging] G-9g2 title PoC`
+- **Approval:** `G-9g2-schedule-site-slug-title-non-dry-run-poc`
+- **UPDATE:** id + site_slug + optimistic lock
+- **Restore:** `title = <>` (separate approval)
+- **No** implementation / Save / DB write in planning
 
-**Doc:** `tools/static-to-astro/docs/staging-shell-schedule-site-slug-edit-dry-run-preview.md`
+**Doc:** `tools/static-to-astro/docs/staging-shell-schedule-site-slug-title-non-dry-run-poc-planning.md`
 
 ## Gates
 
 ```txt
-stagingShellScheduleSiteSlugEditDryRunPreviewComplete: true
-stagingShellScheduleEditDryRunOnly: true
-readyForG9g1Commit: true
+stagingShellScheduleSiteSlugTitleNonDryRunPocPlanningComplete: true
+readyForG9g2Implementation: true
 readyForAnyDbWrite: false
 readyForAnyFtpApply: false
 ftpAutoDeployStillDisabled: true
@@ -34,5 +34,5 @@ ftpAutoDeployStillDisabled: true
 
 ## Next
 
-- Commit G-9g1
-- G-9g2 title non-dry-run slice
+- G-9g2-implementation (gated Save UI, default off)
+- Optional commit: `Plan staging shell schedule title non-dry-run PoC`

@@ -3,26 +3,23 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 1. Immediate priority
 
-**Current phase:** `G-9g1-staging-shell-schedule-site-slug-edit-dry-run-preview` (implementation complete — uncommitted)
+**Current phase:** `G-9g2-staging-shell-schedule-site-slug-title-non-dry-run-poc-planning` (planning complete — uncommitted)
 
 **Doc:**
-- `tools/static-to-astro/docs/staging-shell-schedule-site-slug-edit-dry-run-preview.md` (**new**)
+- `tools/static-to-astro/docs/staging-shell-schedule-site-slug-title-non-dry-run-poc-planning.md` (**new**)
 
-**Awaiting:** operator commit/push approval (`Add staging shell schedule site slug edit dry run`)
+### G-9g2 summary
 
-### G-9g1 summary
-
-- Dry-run Preview only for Gosaki `site_slug=gosaki-piano`
-- `AdminStagingScheduleSiteSlugEditSection` — title input + Preview dry-run
-- `actualWrite=false`; no Save UI
-- G-9f read section unchanged
+- Title-only non-dry-run PoC planning for `site_slug=gosaki-piano`
+- Target: `schedule-2026-07-010` / approval `G-9g2-schedule-site-slug-title-non-dry-run-poc`
+- UPDATE: id + site_slug + optimistic lock; dry-run prerequisite
+- No implementation / Save UI / DB write in G-9g2 planning
 
 ### Gates
 
 ```txt
-stagingShellScheduleSiteSlugEditDryRunPreviewComplete: true
-stagingShellScheduleEditDryRunOnly: true
-readyForG9g1Commit: true
+stagingShellScheduleSiteSlugTitleNonDryRunPocPlanningComplete: true
+readyForG9g2Implementation: true
 readyForAnyDbWrite: false
 readyForAnyFtpApply: false
 ftpAutoDeployStillDisabled: true
@@ -30,16 +27,16 @@ ftpAutoDeployStillDisabled: true
 
 ## 2. Next steps
 
-1. **Commit G-9g1**
-2. **G-9g2** — title non-dry-run PoC with site_slug UPDATE filter
+1. Optional: commit G-9g2 planning doc
+2. **G-9g2-implementation** — adapter + gated Save (default off)
 
 ## 3. Do not
 
-- DB writes / FTP / `service_role`
-- Add Save until G-9g2+
-- Modify `/admin` or G-9f read section
+- DB writes until G-9g2-execution with operator approval
+- Modify `/admin` or G-9g1 dry-run path
+- Reuse G-6-g1 approval ID
 
 ## 4. Baseline
 
-- Latest commit: `d4e8f98` (G-9g planning)
-- G-9g1: implementation complete, pending commit
+- Latest commit: `5ba2305` (G-9g1)
+- G-9g2: planning complete, pending commit

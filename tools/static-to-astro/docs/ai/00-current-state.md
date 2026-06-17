@@ -21,9 +21,11 @@ Staging Shell
 将来的な顧客オンボーディング・課金・デプロイ自動化
 
 2. Current phase
-現在フェーズ: G-9g1-staging-shell-schedule-site-slug-edit-dry-run-preview（実装完了 — uncommitted）
+現在フェーズ: G-9g2-staging-shell-schedule-site-slug-title-non-dry-run-poc-planning（planning 完了 — uncommitted）
 
-G-9g1: staging shell `#schedule` に Gosaki site_slug edit dry-run Preview section 追加。title 入力 + Preview dry-run のみ。`actualWrite=false`。Save なし。G-9f read section 維持。
+G-9g2: title 単一フィールド non-dry-run PoC planning。site_slug UPDATE 条件、optimistic lock、operator 承認文、restore 方針。実装・Save UI・DB write なし。
+
+G-9g1: site_slug edit dry-run Preview（commit `5ba2305`）。
 
 G-9g: edit planning（commit `d4e8f98`）。
 
@@ -69,6 +71,7 @@ Gosaki staging:
   - `tools/static-to-astro/docs/gosaki-schedule-route-canonical-planning.md`
   - `tools/static-to-astro/docs/gosaki-schedule-canonical-route-implementation.md`
   - `tools/static-to-astro/docs/gosaki-schedule-legacy-month-route-stub.md`
+- G-9g2 doc: `tools/static-to-astro/docs/staging-shell-schedule-site-slug-title-non-dry-run-poc-planning.md`
 - G-9g1 doc: `tools/static-to-astro/docs/staging-shell-schedule-site-slug-edit-dry-run-preview.md`
 - G-9g doc: `tools/static-to-astro/docs/staging-shell-schedule-site-slug-edit-planning.md`
 - G-9f doc: `tools/static-to-astro/docs/staging-shell-schedule-site-slug-read-binding.md`
@@ -478,24 +481,24 @@ rollbackNeeded: false
 明示的 retry で dev server を起動する場合は inline env のみ使用する。
 
 10. Recommended next phase
-次フェーズ推奨: G-9g1 commit → G-9g2 title non-dry-run slice planning/implementation
+次フェーズ推奨: G-9g2-implementation（site_slug UPDATE adapter + gated Save UI、default off）
 
-G-9g1 実装完了（uncommitted）。site_slug edit dry-run Preview only。title UI slice。Save なし。
+G-9g2 planning 完了（uncommitted）。title non-dry-run PoC 方針。approval `G-9g2-schedule-site-slug-title-non-dry-run-poc`。
 
 詳細:
-- `tools/static-to-astro/docs/staging-shell-schedule-site-slug-edit-dry-run-preview.md`
+- `tools/static-to-astro/docs/staging-shell-schedule-site-slug-title-non-dry-run-poc-planning.md`
 
-G-9g1 gates:
+G-9g2 gates:
 ```txt
-stagingShellScheduleSiteSlugEditDryRunPreviewComplete: true
-stagingShellScheduleEditDryRunOnly: true
-stagingShellScheduleEditActualWriteFalse: true
-stagingShellScheduleEditSafeFieldsPreviewReady: true
-stagingShellScheduleEditTargetScopedBySiteSlug: true
-stagingShellScheduleEditNoSaveUi: true
+stagingShellScheduleSiteSlugTitleNonDryRunPocPlanningComplete: true
+stagingShellScheduleTitlePocTargetDefined: true
+stagingShellScheduleTitlePocApprovalRequired: true
+stagingShellScheduleTitlePocDryRunPrerequisiteDefined: true
+stagingShellScheduleTitlePocOptimisticLockDefined: true
+stagingShellScheduleTitlePocRestorePlanDefined: true
+stagingShellNoWriteUiAdded: true
 stagingShellNoAdminRouteTouched: true
-readyForG9g1Commit: true
-readyForG9g2NonDryRunPlanning: true
+readyForG9g2Implementation: true
 readyForAnyDbWrite: false
 readyForAnyFtpApply: false
 ftpAutoDeployStillDisabled: true

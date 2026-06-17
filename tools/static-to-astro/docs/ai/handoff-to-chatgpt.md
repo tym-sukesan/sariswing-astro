@@ -5,29 +5,27 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-9d1-gosaki-supabase-schedule-read-verification-preview-package (verification complete — uncommitted)
-Latest commit: 6103250 (G-9d)
+Current phase: G-9d2-gosaki-manual-preview-upload-planning (planning complete — uncommitted)
+Latest commit: 821caa0 (G-9d1)
 ```
 
 ## Summary
 
-G-9d1 verified Gosaki schedule Supabase read + static fallback:
+G-9d2 planning: operator checklist for manual preview upload of G-9d1 package.
 
-- **Static-fallback** convert/build: PASS (`scheduleDataSource=static-fallback`, 60 events)
-- **Supabase read** (read-only, anon): PASS (60 rows, canonical `source_route`)
-- **Manual-upload package** generated at `output/manual-upload/gosaki-piano/` — not uploaded
-- **Legacy stubs** + **sitemap canonical-only**: PASS
+- **Source:** `output/manual-upload/gosaki-piano/public-dist/` (contents only)
+- **Destination:** `/cms-kit-staging/gosaki-piano/` (not production root)
+- **Approval ID:** `G-9d2-gosaki-manual-preview-upload`
+- **FTP / upload:** NOT executed in planning phase
 
-**Doc:** `tools/static-to-astro/docs/gosaki-supabase-schedule-read-verification-preview-package.md`
+**Doc:** `tools/static-to-astro/docs/gosaki-manual-preview-upload-planning.md`
 
 ## Gates
 
 ```txt
-gosakiSupabaseScheduleReadVerificationPreviewPackageComplete: true
-gosakiScheduleStaticFallbackVerified: true
-gosakiScheduleSupabaseReadVerified: true
-gosakiManualUploadPackageGenerated: true
-readyForG9d2ManualPreviewUpload: true
+gosakiManualPreviewUploadPlanningComplete: true
+gosakiManualPreviewUploadChecklistReady: true
+readyForOperatorManualPreviewUpload: true
 readyForAnyDbWrite: false
 readyForAnyFtpApply: false
 ftpAutoDeployStillDisabled: true
@@ -35,10 +33,10 @@ ftpAutoDeployStillDisabled: true
 
 ## Safety
 
-- No DB writes, no FTP, no manual upload in G-9d1
-- `service_role` not used
+- No FTP, no DB writes, no service_role
+- Mirror / sync-delete forbidden
 
 ## Next
 
-- Commit G-9d1
-- G-9d2 operator manual preview upload (separate approval)
+- Commit G-9d2 planning
+- Operator upload with explicit approval

@@ -3,32 +3,30 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 1. Immediate priority
 
-**Current phase:** `G-9d1-gosaki-supabase-schedule-read-verification-preview-package` (verification complete — uncommitted)
+**Current phase:** `G-9d2-gosaki-manual-preview-upload-planning` (planning complete — uncommitted)
 
 **Docs:**
-- `tools/static-to-astro/docs/gosaki-supabase-schedule-read-verification-preview-package.md` (**new**)
-- `tools/static-to-astro/docs/gosaki-astro-supabase-schedule-read-with-static-fallback.md`
+- `tools/static-to-astro/docs/gosaki-manual-preview-upload-planning.md` (**new**)
+- `tools/static-to-astro/docs/gosaki-supabase-schedule-read-verification-preview-package.md`
 
-**Awaiting:** operator commit/push approval (`Verify Gosaki Supabase schedule read preview package`)
+**Awaiting:** operator commit/push approval (`Plan Gosaki manual preview upload`)
 
-### G-9d1 verification summary
+### G-9d2 planning summary
 
-- Static-fallback pipeline: PASS (60 rows, 5 months, `scheduleDataSource=static-fallback`)
-- Supabase read: PASS (60 rows, month counts 13/10/12/11/14, read-only)
-- Manual-upload package: generated, `verify:manual-upload` PASS
-- Legacy stubs + sitemap canonical-only: PASS
+- Source: `output/manual-upload/gosaki-piano/public-dist/` (contents only)
+- Destination: `/cms-kit-staging/gosaki-piano/` on preview host
+- FTP safety rules, approval text, pre/post checklist, rollback policy documented
+- **No FTP connection or upload in planning phase**
 
 ### Gates
 
 ```txt
-gosakiSupabaseScheduleReadVerificationPreviewPackageComplete: true
-gosakiScheduleStaticFallbackVerified: true
-gosakiScheduleSupabaseReadVerified: true
-gosakiManualUploadPackageGenerated: true
-gosakiScheduleRoutesVerified: true
-gosakiLegacyStubsVerified: true
-gosakiScheduleSitemapCanonicalOnlyVerified: true
-readyForG9d2ManualPreviewUpload: true
+gosakiManualPreviewUploadPlanningComplete: true
+gosakiManualPreviewUploadChecklistReady: true
+gosakiManualPreviewUploadSourceVerified: true
+gosakiManualPreviewUploadDestinationScoped: true
+gosakiManualPreviewUploadDeleteForbidden: true
+readyForOperatorManualPreviewUpload: true
 readyForAnyDbWrite: false
 readyForAnyFtpApply: false
 ftpAutoDeployStillDisabled: true
@@ -36,16 +34,16 @@ ftpAutoDeployStillDisabled: true
 
 ## 2. Next steps
 
-1. **Commit G-9d1** (operator approval)
-2. **G-9d2:** Operator manual preview upload from `output/manual-upload/gosaki-piano/public-dist/` (separate approval — no FTP auto-apply)
+1. **Commit G-9d2 planning** (operator approval)
+2. **G-9d2 execution:** Operator manual upload with approval ID `G-9d2-gosaki-manual-preview-upload`
 
 ## 3. Do not
 
-- Execute SQL from Cursor/CI
-- FTP upload without explicit G-9d2 approval
-- Use `service_role`
+- FTP upload without explicit operator approval (section 6 of planning doc)
+- Mirror / sync-delete on remote
+- Use `service_role` / DB writes
 
 ## 4. Baseline
 
-- Latest commit: `6103250` (G-9d)
-- G-9d1: verification complete, pending commit
+- Latest commit: `821caa0` (G-9d1)
+- G-9d2: planning complete, pending commit

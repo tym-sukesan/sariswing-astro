@@ -1,4 +1,4 @@
-Last updated: 2026-06-16
+Last updated: 2026-06-17
 Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
@@ -21,11 +21,13 @@ Staging Shell
 将来的な顧客オンボーディング・課金・デプロイ自動化
 
 2. Current phase
-現在フェーズ: G-9g3b-staging-shell-schedule-site-slug-venue-description-non-dry-run-poc-preflight（implementation + preflight 完了 — uncommitted）
+現在フェーズ: G-9g3b-execution（**未着手** — operator 承認待ち）
 
-G-9g3b: venue + description gated Save 実装 + preflight。Save / DB write 未実行。
+Git: HEAD `c2a6b0c`、working tree clean、`origin/main` 同期済み。
 
-G-9g3a smoke test 成功（commit `54380a0` 後）。host gate + multi-field dry-run 確認済み。
+G-9g3b: venue + description gated Save 実装 + preflight — **committed / pushed**（commit `c2a6b0c`）。Save / DB write / SQL mutation **未実行**。
+
+G-9g3a smoke test 成功。host gate + multi-field dry-run 確認済み。
 
 G-9g3a implementation（commit `54380a0`）。
 
@@ -490,14 +492,33 @@ rollbackNeeded: false
 - Playwright / Chromium による自動クリック禁止
 
 9. Environment expectations
-明示的 retry で dev server を起動する場合は inline env のみ使用する。
+明示的 retry / G-9g3b execution で dev server を起動する場合は inline env のみ使用する（`.env` / `.env.local` へ書き込まない）。
+
+Routine dev safety（default）:
+```txt
+PUBLIC_ADMIN_SCHEDULE_G9G3B_VENUE_DESCRIPTION_NON_DRY_RUN_ARMED: off (unset)
+ENABLE_ADMIN_STAGING_WRITE: false
+PUBLIC_ADMIN_WRITE_DRY_RUN: true
+PUBLIC_SUPABASE_URL host: kmjqppxjdnwwrtaeqjta.supabase.co (staging)
+```
+
+**STOP immediately** if active host is Sariswing production: `vsbvndwuajjhnzpohghh.supabase.co`
+
+**Note:** `tools/static-to-astro/.env.local` に `SUPABASE_SERVICE_ROLE_KEY` が local only（gitignored）で存在する場合がある。G-9g3b execution では使用禁止・参照禁止。anon key + authenticated session のみ。
 
 10. Recommended next phase
-次フェーズ推奨: G-9g3b commit → G-9g3b-execution（operator manual Save once）
+次フェーズ推奨: **G-9g3b-execution**（operator manual Save once — **未実行**）
 
-G-9g3b implementation + preflight 完了（uncommitted）。venue + description gated Save。未実行。
+G-9g3b implementation + preflight: committed / pushed（`c2a6b0c`）。venue + description gated Save。Save / DB write / SQL mutation 未実行。
 
-G-9g3a smoke test 記録済み。host gate passed、changedFields=venue+description、actualWrite=false。
+G-9g3b-execution 手順（operator-driven）:
+1. Operator approval text（preflight doc §5）
+2. beforeSnapshot confirmation（operator SELECT、staging only）
+3. Inline env arm stack（preflight doc §6）
+4. Dev server 完全再起動
+5. Host gate 確認（`hostGatePassed=true`）
+6. Dry-run preview 確認（`actualWrite=false`, `changedFields=venue+description`）
+7. Operator manual Save 1回 — Cursor / AI / Playwright は Save を押さない
 
 詳細:
 - `tools/static-to-astro/docs/staging-shell-schedule-site-slug-venue-description-non-dry-run-poc-preflight.md`
@@ -517,7 +538,7 @@ readyForAnyFtpApply: false
 ftpAutoDeployStillDisabled: true
 ```
 
-G-9g2 title PoC 痕跡保持。restore 不要。routine dev: dry-run default / G-9g2 arm off。
+G-9g2 title PoC 痕跡保持。restore 不要。routine dev: dry-run default / G-9g2 arm off / G-9g3b arm off。
 
 11. AI workflow transition
 チャット履歴への依存を減らすため、リポジトリ側に AI開発文脈管理ファイルを作成。

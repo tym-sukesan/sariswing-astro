@@ -3,27 +3,26 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 1. Immediate priority
 
-**Current phase:** `G-9e-site-slug-schedule-read-generalization` (implementation complete — uncommitted)
+**Current phase:** `G-9f-staging-shell-schedule-site-slug-read-binding` (implementation complete — uncommitted)
 
 **Docs:**
-- `tools/static-to-astro/docs/site-slug-schedule-read-generalization.md` (**new**)
+- `tools/static-to-astro/docs/staging-shell-schedule-site-slug-read-binding.md` (**new**)
 
-**Awaiting:** operator commit/push approval (`Generalize schedule read by site slug`)
+**Awaiting:** operator commit/push approval (`Bind staging shell schedule read by site slug`)
 
-### G-9e summary
+### G-9f summary
 
-- `loadScheduleRowsFromSupabase` + `loadScheduleDataForBuild` (generic `site_slug`)
-- `loadGosakiScheduleDataForBuild` → thin wrapper + `GOSAKI_SCHEDULE_SITE_CONFIG`
-- Gosaki static-fallback unchanged (60 rows, 13/10/12/11/14)
+- Staging shell `#schedule`: read-only Gosaki `site_slug=gosaki-piano` binding
+- `loadSchedulesForSiteSlugRead` + month counts + row table
+- No Save/Update/Delete UI; `/admin` untouched
 
 ### Gates
 
 ```txt
-siteSlugScheduleReadGeneralizationComplete: true
-genericScheduleReadHelperReady: true
-gosakiScheduleReadUsesGenericSiteSlugLoader: true
-gosakiScheduleStaticFallbackStillWorks: true
-readyForG9eCommit: true
+stagingShellScheduleSiteSlugReadBindingComplete: true
+stagingShellScheduleReadOnly: true
+stagingShellScheduleUsesSiteSlug: true
+readyForG9fCommit: true
 readyForAnyDbWrite: false
 readyForAnyFtpApply: false
 ftpAutoDeployStillDisabled: true
@@ -31,14 +30,15 @@ ftpAutoDeployStillDisabled: true
 
 ## 2. Next steps
 
-1. **Commit G-9e**
-2. Staging shell schedule read binding (gosaki-piano) or client visual review
+1. **Commit G-9f**
+2. Operator dev check: `/__admin-staging-shell/musician-basic/#schedule` with Supabase env
 
 ## 3. Do not
 
-- DB writes / FTP auto-apply / `service_role`
+- DB writes / FTP / `service_role`
+- Modify `/admin` or G-6 write PoC sections without new phase
 
 ## 4. Baseline
 
-- Latest commit: `e5aa2ab` (G-9d3)
-- G-9e: implementation complete, pending commit
+- Latest commit: `15cf29b` (G-9e)
+- G-9f: implementation complete, pending commit

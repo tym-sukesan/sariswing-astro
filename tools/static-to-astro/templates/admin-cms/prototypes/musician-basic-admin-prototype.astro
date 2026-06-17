@@ -31,6 +31,7 @@ import AdminStagingScheduleGeneralEditSection from "../data/components/AdminStag
 import AdminStagingScheduleSafeFieldsNonDryRunPocSection from "../data/components/AdminStagingScheduleSafeFieldsNonDryRunPocSection.astro";
 import AdminStagingScheduleNonDryRunPocCompletedNotice from "../data/components/AdminStagingScheduleNonDryRunPocCompletedNotice.astro";
 import AdminStagingScheduleNonDryRunPocTriggerSection from "../data/components/AdminStagingScheduleNonDryRunPocTriggerSection.astro";
+import AdminStagingScheduleSiteSlugReadSection from "../data/components/AdminStagingScheduleSiteSlugReadSection.astro";
 import { getStagingAuthConfig } from "../../../../../src/lib/admin/staging-auth/staging-auth-config";
 import {
   getStagingShellServerGateSnapshot,
@@ -51,6 +52,7 @@ import AdminPublishEnvironmentBadge from "../components/AdminPublishEnvironmentB
 import ProfileAdminUi from "../modules/ProfileAdminUi.astro";
 import ScheduleAdminUi from "../modules/ScheduleAdminUi.astro";
 import { resolveScheduleAdminUiBinding } from "../../../../../src/lib/admin/staging-write/schedule-admin-ui-binding";
+import { resolveGosakiScheduleSiteSlugReadBinding } from "../../../../../src/lib/admin/staging-data/staging-schedule-site-slug-read-binding";
 import DiscographyAdminUi from "../modules/DiscographyAdminUi.astro";
 import LinksAdminUi from "../modules/LinksAdminUi.astro";
 import NewsAdminUi from "../modules/NewsAdminUi.astro";
@@ -132,6 +134,10 @@ const scheduleUiBinding = stagingShellMode
       expectedHost: "kmjqppxjdnwwrtaeqjta.supabase.co",
       selectOnly: true as const,
     };
+
+const gosakiScheduleSiteSlugBinding = stagingShellMode
+  ? await resolveGosakiScheduleSiteSlugReadBinding()
+  : null;
 
 const discographyItems = [
   {
@@ -454,6 +460,11 @@ const moduleSummary = [
         expectedHost={scheduleUiBinding.expectedHost}
         recordCount={scheduleUiBinding.recordCount}
       />
+      {
+        stagingShellMode && gosakiScheduleSiteSlugBinding ? (
+          <AdminStagingScheduleSiteSlugReadSection binding={gosakiScheduleSiteSlugBinding} />
+        ) : null
+      }
       {
         stagingShellMode ? (
           <AdminStagingScheduleGeneralEditSection

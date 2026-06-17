@@ -1,0 +1,236 @@
+---
+/**
+ * G-9f — Staging shell Gosaki site_slug schedule read (read-only; no writes).
+ */
+import AdminCard from "../../components/AdminCard.astro";
+import type { SiteSlugScheduleReadBinding } from "../../../../../../src/lib/admin/staging-data/staging-schedule-site-slug-read-binding";
+
+interface Props {
+  binding: SiteSlugScheduleReadBinding;
+}
+
+const { binding } = Astro.props;
+
+const isLive = binding.source === "supabase" && binding.rowCount > 0;
+const dataSourceLabel = isLive ? "Supabase read-only" : "Unavailable";
+---
+
+<section
+  id="admin-staging-schedule-site-slug-read"
+  class="admin-staging-schedule-site-slug-read"
+  data-phase={binding.phase}
+  data-site-slug={binding.siteSlug}
+  data-read-source={binding.source}
+  data-select-only="true"
+  data-read-only="true"
+  role="region"
+  aria-label="Gosaki site_slug schedule read binding"
+>
+  <h2 class="admin-staging-schedule-site-slug-read__title">
+    Gosaki schedule read (site_slug)
+  </h2>
+
+  <p class="admin-staging-schedule-site-slug-read__safety" role="note">
+    <strong>Read-only staging shell.</strong> No writes are performed. No Save, Update, or Delete.
+  </p>
+
+  <dl class="admin-staging-schedule-site-slug-read__summary">
+    <div>
+      <dt>Site slug</dt>
+      <dd><code>{binding.siteSlug}</code></dd>
+    </div>
+    <div>
+      <dt>Rows</dt>
+      <dd>{binding.rowCount}</dd>
+    </div>
+    <div>
+      <dt>Data source</dt>
+      <dd>{dataSourceLabel}</dd>
+    </div>
+    <div>
+      <dt>Phase</dt>
+      <dd>{binding.phase}</dd>
+    </div>
+  </dl>
+
+  {
+    binding.message ? (
+      <p class="admin-staging-schedule-site-slug-read__message" role="status">
+        {binding.message}
+      </p>
+    ) : null
+  }
+
+  {
+    binding.supabaseHost ? (
+      <p class="admin-staging-schedule-site-slug-read__host" role="note">
+        Host: <code>{binding.supabaseHost}</code> — project: {binding.expectedProject}
+      </p>
+    ) : null
+  }
+
+  <AdminCard title="Month counts" description="Published rows with canonical /schedule/YYYY-MM/ source_route">
+    {
+      binding.monthCounts.length === 0 ? (
+        <p class="admin-staging-schedule-site-slug-read__empty">No month data.</p>
+      ) : (
+        <ul class="admin-staging-schedule-site-slug-read__months">
+          {
+            binding.monthCounts.map((entry) => (
+              <li>
+                <code>{entry.month}</code>: {entry.count}
+              </li>
+            ))
+          }
+        </ul>
+      )
+    }
+  </AdminCard>
+
+  <AdminCard title="Schedule rows" description="Read-only list — SELECT from public.schedules">
+    {
+      binding.rows.length === 0 ? (
+        <p class="admin-staging-schedule-site-slug-read__empty">
+          No schedule rows loaded. Enable staging data read + Supabase env.
+        </p>
+      ) : (
+        <div class="admin-staging-schedule-site-slug-read__table-wrap">
+          <table class="admin-staging-schedule-site-slug-read__table">
+            <caption class="admin-staging-schedule-site-slug-read__caption">
+              site_slug={binding.siteSlug} — read-only
+            </caption>
+            <thead>
+              <tr>
+                <th scope="col">Date</th>
+                <th scope="col">Title</th>
+                <th scope="col">Venue</th>
+                <th scope="col">source_route</th>
+                <th scope="col">published</th>
+                <th scope="col">show_on_home</th>
+                <th scope="col">legacy_id</th>
+              </tr>
+            </thead>
+            <tbody>
+              {
+                binding.rows.map((row) => (
+                  <tr>
+                    <td>{row.date}</td>
+                    <td>{row.title ?? "—"}</td>
+                    <td>{row.venue?.trim() ? row.venue : "—"}</td>
+                    <td>
+                      <code>{row.source_route ?? "—"}</code>
+                    </td>
+                    <td>{row.published === true ? "true" : "false"}</td>
+                    <td>{row.show_on_home === true ? "true" : "false"}</td>
+                    <td>
+                      <code>{row.legacy_id ?? "—"}</code>
+                    </td>
+                  </tr>
+                ))
+              }
+            </tbody>
+          </table>
+        </div>
+      )
+    }
+  </AdminCard>
+</section>
+
+<style>
+  .admin-staging-schedule-site-slug-read {
+    margin: 1.5rem 0 0;
+    padding: 1rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    background: #f8fafc;
+  }
+
+  .admin-staging-schedule-site-slug-read__title {
+    margin: 0 0 0.75rem;
+    font-size: 1.1rem;
+  }
+
+  .admin-staging-schedule-site-slug-read__safety {
+    margin: 0 0 1rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    background: #ecfdf5;
+    border: 1px solid #a7f3d0;
+    color: #065f46;
+    font-size: 0.9rem;
+  }
+
+  .admin-staging-schedule-site-slug-read__summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
+    gap: 0.75rem 1rem;
+    margin: 0 0 1rem;
+    font-size: 0.9rem;
+  }
+
+  .admin-staging-schedule-site-slug-read__summary dt {
+    font-weight: 600;
+    color: #64748b;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+
+  .admin-staging-schedule-site-slug-read__summary dd {
+    margin: 0.15rem 0 0;
+  }
+
+  .admin-staging-schedule-site-slug-read__message,
+  .admin-staging-schedule-site-slug-read__host {
+    margin: 0 0 1rem;
+    font-size: 0.875rem;
+    color: #475569;
+  }
+
+  .admin-staging-schedule-site-slug-read__months {
+    margin: 0;
+    padding-left: 1.25rem;
+    font-size: 0.9rem;
+  }
+
+  .admin-staging-schedule-site-slug-read__empty {
+    margin: 0;
+    color: #64748b;
+    font-size: 0.9rem;
+  }
+
+  .admin-staging-schedule-site-slug-read__table-wrap {
+    overflow-x: auto;
+  }
+
+  .admin-staging-schedule-site-slug-read__table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.8rem;
+  }
+
+  .admin-staging-schedule-site-slug-read__caption {
+    text-align: left;
+    padding: 0 0 0.5rem;
+    font-size: 0.75rem;
+    color: #64748b;
+  }
+
+  .admin-staging-schedule-site-slug-read__table th,
+  .admin-staging-schedule-site-slug-read__table td {
+    border: 1px solid #e2e8f0;
+    padding: 0.35rem 0.5rem;
+    text-align: left;
+    vertical-align: top;
+  }
+
+  .admin-staging-schedule-site-slug-read__table th {
+    background: #f1f5f9;
+    font-weight: 600;
+  }
+
+  .admin-staging-schedule-site-slug-read__table code {
+    font-size: 0.75rem;
+    word-break: break-all;
+  }
+</style>

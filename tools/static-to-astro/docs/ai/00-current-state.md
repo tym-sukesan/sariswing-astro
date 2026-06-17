@@ -21,11 +21,11 @@ Staging Shell
 将来的な顧客オンボーディング・課金・デプロイ自動化
 
 2. Current phase
-現在フェーズ: G-9e-site-slug-schedule-read-generalization（実装完了 — uncommitted）
+現在フェーズ: G-9f-staging-shell-schedule-site-slug-read-binding（実装完了 — uncommitted）
 
-G-9e: `loadScheduleRowsFromSupabase` / `loadScheduleDataForBuild` 汎用化。Gosaki は `loadGosakiScheduleDataForBuild` 薄い wrapper + `GOSAKI_SCHEDULE_SITE_CONFIG`。fallback 維持。DB write / FTP なし。
+G-9f: staging shell `#schedule` に Gosaki `site_slug=gosaki-piano` read-only 表示追加。`loadSchedulesForSiteSlugRead` + `AdminStagingScheduleSiteSlugReadSection`。write UI なし。`/admin` 未変更。
 
-G-9d3: preview review / next implementation planning（commit `e5aa2ab`）。
+G-9e: site_slug schedule read 汎用化（commit `15cf29b`）。
 
 G-9c2c: operator が staging で既存60行 UPDATE migration を手動実行完了（commit `2bd5b90`）。site_slug backfill、source_route 正規化、schedule-2026-07-010 PoC 復元、show_on_home/home_order 3件補正。rollback 未実行。Cursor/AI は SQL 未実行。
 
@@ -65,8 +65,8 @@ Gosaki staging:
   - `tools/static-to-astro/docs/gosaki-schedule-route-canonical-planning.md`
   - `tools/static-to-astro/docs/gosaki-schedule-canonical-route-implementation.md`
   - `tools/static-to-astro/docs/gosaki-schedule-legacy-month-route-stub.md`
-- G-9e doc: `tools/static-to-astro/docs/site-slug-schedule-read-generalization.md`
-- G-9d3 doc: `tools/static-to-astro/docs/gosaki-preview-review-and-next-implementation-planning.md`
+- G-9f doc: `tools/static-to-astro/docs/staging-shell-schedule-site-slug-read-binding.md`
+- Staging shell route: `/__admin-staging-shell/musician-basic/#schedule`
 - staging URL live: `https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/`（G-9d2 operator upload 反映済み）
 - Result doc: `tools/static-to-astro/docs/gosaki-existing-schedule-rows-manual-sql-execution-result.md`
 - Staging DB: 60 rows `site_slug=gosaki-piano`, canonical `source_route`, PoC row restored
@@ -472,22 +472,22 @@ rollbackNeeded: false
 明示的 retry で dev server を起動する場合は inline env のみ使用する。
 
 10. Recommended next phase
-次フェーズ推奨: G-9e commit → staging shell schedule read binding または client preview review
+次フェーズ推奨: G-9f commit → operator staging shell visual check（Supabase env）
 
-G-9e 実装完了（uncommitted）。汎用 `site_slug` schedule read + Gosaki wrapper。static-fallback 維持。
+G-9f 実装完了（uncommitted）。staging shell Gosaki site_slug read-only binding。
 
 詳細:
-- `tools/static-to-astro/docs/site-slug-schedule-read-generalization.md`
+- `tools/static-to-astro/docs/staging-shell-schedule-site-slug-read-binding.md`
 
-G-9e gates:
+G-9f gates:
 ```txt
-siteSlugScheduleReadGeneralizationComplete: true
-genericScheduleReadHelperReady: true
-gosakiScheduleReadUsesGenericSiteSlugLoader: true
-gosakiScheduleStaticFallbackStillWorks: true
-gosakiScheduleSupabaseReadStillWorks: true
-gosakiScheduleCanonicalRoutesStillVerified: true
-readyForG9eCommit: true
+stagingShellScheduleSiteSlugReadBindingComplete: true
+stagingShellScheduleReadOnly: true
+stagingShellScheduleUsesSiteSlug: true
+stagingShellGosakiRowsVisible: true
+stagingShellNoWriteUiAdded: true
+stagingShellNoAdminRouteTouched: true
+readyForG9fCommit: true
 readyForAnyDbWrite: false
 readyForAnyFtpApply: false
 ftpAutoDeployStillDisabled: true

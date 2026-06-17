@@ -7,7 +7,7 @@ import { SCHEDULE_DRY_RUN_MOCK_RECORDS } from "./schedule-dry-run-mock-fixtures"
 import type { ScheduleRecord } from "./schedule-dry-run-types";
 
 const SCHEDULE_DRY_RUN_SELECT =
-  "id,legacy_id,date,year,month,title,venue,open_time,start_time,price,description,show_on_home,home_order,published,sort_order,source_file,source_route,created_at,updated_at" as const;
+  "id,legacy_id,site_slug,date,year,month,title,venue,open_time,start_time,price,description,show_on_home,home_order,published,sort_order,source_file,source_route,created_at,updated_at" as const;
 
 const READ_LIMIT = 100;
 
@@ -15,6 +15,7 @@ function mapRow(row: Record<string, unknown>): ScheduleRecord {
   return {
     id: String(row.id ?? ""),
     legacy_id: row.legacy_id != null ? String(row.legacy_id) : null,
+    site_slug: row.site_slug != null ? String(row.site_slug) : null,
     date: String(row.date ?? ""),
     year: typeof row.year === "number" ? row.year : null,
     month: row.month != null ? String(row.month) : null,
@@ -35,13 +36,119 @@ function mapRow(row: Record<string, unknown>): ScheduleRecord {
   };
 }
 
-export type ScheduleReadSource = "supabase" | "mock";
+export type ScheduleReadSource = "supabase" | "mock" | "unavailable";
 
 export type ScheduleReadResult = {
   records: ScheduleRecord[];
   source: ScheduleReadSource;
   error?: string;
 };
+
+export function isCanonicalScheduleSourceRoute(
+  route: string | null | undefined,
+  canonicalRoutePrefix = "/schedule/",
+): boolean {
+  const prefix = canonicalRoutePrefix.endsWith("/")
+    ? canonicalRoutePrefix
+    : `${canonicalRoutePrefix}/`;
+  const escaped = prefix.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return new RegExp(`^${escaped}\\d{4}-\\d{2}/$`).test(String(route ?? ""));
+}
+
+function compareScheduleRecords(a: ScheduleRecord, b: ScheduleRecord): number {
+  const dateCmp = a.date.localeCompare(b.date);
+  if (dateCmp !== 0) return dateCmp;
+  const sortDelta = (a.sort_order ?? 0) - (b.sort_order ?? 0);
+  if (sortDelta !== 0) return sortDelta;
+  return String(a.legacy_id ?? "").localeCompare(String(b.legacy_id ?? ""));
+}
+
+/**
+ * G-9f — read-only schedule loader filtered by site_slug (SELECT only).
+ */
+export async function loadSchedulesForSiteSlugRead(options: {
+  url: string;
+  anonKey: string;
+  siteSlug: string;
+  useSupabase: boolean;
+  canonicalRoutePrefix?: string;
+  months?: readonly string[] | null;
+}): Promise<ScheduleReadResult> {
+  const {
+    siteSlug,
+    useSupabase,
+    canonicalRoutePrefix = "/schedule/",
+    months = null,
+  } = options;
+
+  if (!siteSlug?.trim()) {
+    return {
+      records: [],
+      source: "unavailable",
+      error: "siteSlug is required.",
+    };
+  }
+
+  if (!useSupabase || !options.url || !options.anonKey) {
+    return {
+      records: [],
+      source: "unavailable",
+      error: options.useSupabase
+        ? "Supabase config missing — site_slug read unavailable."
+        : "Data read gate off — site_slug read unavailable.",
+    };
+  }
+
+  const monthSet = months?.length ? new Set(months) : null;
+
+  try {
+    const client = getStagingSupabaseClient(options.url, options.anonKey);
+    const { data, error } = await client
+      .from("schedules")
+      .select(SCHEDULE_DRY_RUN_SELECT)
+      .eq("site_slug", siteSlug)
+      .eq("published", true)
+      .order("date", { ascending: true })
+      .order("sort_order", { ascending: true })
+      .limit(READ_LIMIT);
+
+    if (error) {
+      return {
+        records: [],
+        source: "unavailable",
+        error: `Supabase read failed (${error.message}).`,
+      };
+    }
+
+    const records = ((data ?? []) as Record<string, unknown>[])
+      .map(mapRow)
+      .filter(
+        (r) =>
+          r.id &&
+          r.date &&
+          isCanonicalScheduleSourceRoute(r.source_route, canonicalRoutePrefix) &&
+          (!monthSet || monthSet.has(String(r.month ?? ""))),
+      )
+      .sort(compareScheduleRecords);
+
+    if (records.length === 0) {
+      return {
+        records: [],
+        source: "supabase",
+        error: "No schedule rows for site_slug — empty result.",
+      };
+    }
+
+    return { records, source: "supabase" };
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    return {
+      records: [],
+      source: "unavailable",
+      error: `Schedule site_slug read error (${message}).`,
+    };
+  }
+}
 
 export async function loadSchedulesForDryRunUi(options: {
   url: string;

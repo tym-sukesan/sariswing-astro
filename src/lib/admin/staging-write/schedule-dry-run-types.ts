@@ -7,6 +7,7 @@ export type ScheduleDryRunOperation = "update" | "duplicate";
 export type ScheduleDryRunSource = {
   id: string;
   legacy_id?: string | null;
+  site_slug?: string | null;
   date: string;
   year?: number | null;
   month?: string | null;

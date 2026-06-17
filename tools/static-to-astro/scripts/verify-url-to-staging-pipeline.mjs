@@ -56,6 +56,7 @@ import {
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const TOOL_ROOT = path.resolve(__dirname, "..");
+const REPO_ROOT = path.resolve(TOOL_ROOT, "../..");
 
 let passed = 0;
 let failed = 0;
@@ -982,6 +983,64 @@ assert(
   "G-9e stable sort includes legacy_id",
   supabaseScheduleReadSrc.includes("compareScheduleRecords") &&
     supabaseScheduleReadSrc.includes("legacy_id"),
+);
+
+// --- G-9f staging shell schedule site_slug read binding ---
+const g9fConfigPath = path.join(
+  REPO_ROOT,
+  "src/lib/admin/staging-data/staging-schedule-site-slug-config.ts",
+);
+const g9fBindingPath = path.join(
+  REPO_ROOT,
+  "src/lib/admin/staging-data/staging-schedule-site-slug-read-binding.ts",
+);
+const g9fSectionPath = path.join(
+  TOOL_ROOT,
+  "templates/admin-cms/data/components/AdminStagingScheduleSiteSlugReadSection.astro",
+);
+const stagingScheduleReadPath = path.join(
+  REPO_ROOT,
+  "src/lib/admin/staging-write/staging-schedule-read.ts",
+);
+const musicianPrototypePath = path.join(
+  TOOL_ROOT,
+  "templates/admin-cms/prototypes/musician-basic-admin-prototype.astro",
+);
+
+assert("G-9f site slug config exists", fs.existsSync(g9fConfigPath));
+assert("G-9f site slug read binding exists", fs.existsSync(g9fBindingPath));
+assert("G-9f staging shell section exists", fs.existsSync(g9fSectionPath));
+
+const stagingScheduleReadSrc = fs.readFileSync(stagingScheduleReadPath, "utf8");
+const g9fSectionSrc = fs.readFileSync(g9fSectionPath, "utf8");
+const musicianPrototypeSrc = fs.readFileSync(musicianPrototypePath, "utf8");
+
+assert(
+  "G-9f loadSchedulesForSiteSlugRead uses site_slug filter",
+  stagingScheduleReadSrc.includes("loadSchedulesForSiteSlugRead") &&
+    stagingScheduleReadSrc.includes('.eq("site_slug", siteSlug)'),
+);
+assert(
+  "G-9f site slug read is published filter only",
+  stagingScheduleReadSrc.includes('.eq("published", true)'),
+);
+assert(
+  "G-9f staging section read-only marker",
+  g9fSectionSrc.includes("Read-only staging shell") &&
+    g9fSectionSrc.includes("No writes are performed"),
+);
+assert(
+  "G-9f staging section no save button",
+  !g9fSectionSrc.includes('type="submit"') && !g9fSectionSrc.match(/>\s*Save\s*</),
+);
+assert(
+  "G-9f prototype wires site slug read section",
+  musicianPrototypeSrc.includes("AdminStagingScheduleSiteSlugReadSection") &&
+    musicianPrototypeSrc.includes("resolveGosakiScheduleSiteSlugReadBinding"),
+);
+assert(
+  "G-9f gosaki site slug constant",
+  fs.readFileSync(g9fConfigPath, "utf8").includes('gosaki-piano'),
 );
 
 const gosakiPublicDist = path.join(TOOL_ROOT, "output/static-public/gosaki-piano/public-dist");

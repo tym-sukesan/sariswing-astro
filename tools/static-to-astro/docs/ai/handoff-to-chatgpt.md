@@ -5,29 +5,27 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-9d2-gosaki-manual-preview-upload-execution-result (recorded — uncommitted)
-Latest commit: 25497a5 (G-9d2 planning)
+Current phase: G-9d3-gosaki-preview-review-and-next-implementation-planning (planning complete — uncommitted)
+Latest commit: 467f226 (G-9d2 execution result)
 ```
 
 ## Summary
 
-G-9d2 execution: Operator manually uploaded G-9d1 preview package to staging.
+G-9d3: Preview review synthesis + next implementation roadmap for Gosaki CMS Kit.
 
-- **Live URL:** `https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/`
-- **Schedule:** hub + canonical `/schedule/YYYY-MM/` live; legacy `/YYYY-MM/` stubs OK
-- **Sitemap:** canonical schedule routes only; bare legacy months excluded
-- **robots.txt:** `Disallow: /` (staging OK)
-- **Cursor/AI/CI:** did NOT perform FTP
+- **Live preview:** `https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/`
+- **Schedule stack:** G-9b→G-9d2 complete (DB seed, Supabase read+fallback, live upload)
+- **Recommended next:** G-9e `site_slug` read generalization after optional client visual review
+- **Defer:** Production cutover planning until preview + CMS path proven
 
-**Doc:** `tools/static-to-astro/docs/gosaki-manual-preview-upload-execution-result.md`
+**Doc:** `tools/static-to-astro/docs/gosaki-preview-review-and-next-implementation-planning.md`
 
 ## Gates
 
 ```txt
-gosakiManualPreviewUploadExecutionRecorded: true
-gosakiManualPreviewUploadSucceeded: true
-gosakiPreviewScheduleRoutesLiveVerified: true
-readyForG9d3PreviewReviewOrNextImplementation: true
+gosakiPreviewReviewPlanningComplete: true
+gosakiNextImplementationOptionsDocumented: true
+readyForG9eNextImplementation: true
 readyForAnyDbWrite: false
 readyForAnyFtpApply: false
 ftpAutoDeployStillDisabled: true
@@ -35,10 +33,9 @@ ftpAutoDeployStillDisabled: true
 
 ## Safety
 
-- Operator manual upload only
-- No FTP auto-deploy, no DB writes
+- Planning only — no FTP, no DB writes
 
 ## Next
 
-- Commit execution result doc
-- G-9d3 preview review or next CMS work
+- Commit G-9d3 planning
+- G-9e site_slug schedule read generalization

@@ -21,11 +21,11 @@ Staging Shell
 将来的な顧客オンボーディング・課金・デプロイ自動化
 
 2. Current phase
-現在フェーズ: G-9d2-gosaki-manual-preview-upload-execution-result（記録完了 — uncommitted）
+現在フェーズ: G-9d3-gosaki-preview-review-and-next-implementation-planning（計画完了 — uncommitted）
 
-G-9d2 execution: operator が manual preview upload を手動実行完了。live preview QA PASS（schedule hub/month pages、legacy stubs、robots、sitemap canonical-only）。Cursor/AI/CI は FTP 操作なし。rollback 未実行。
+G-9d3: live preview review 整理 + 次実装候補 A〜E 比較。推奨: 短期 client review → G-9e site_slug read 汎用化 → staging shell CMS。本番反映は最後。FTP / DB write なし。
 
-G-9d2 planning: checklist commit `25497a5`。
+G-9d2 execution: operator manual preview upload 完了（commit `467f226`）。live schedule routes + legacy stubs + sitemap canonical-only 確認済み。
 
 G-9c2c: operator が staging で既存60行 UPDATE migration を手動実行完了（commit `2bd5b90`）。site_slug backfill、source_route 正規化、schedule-2026-07-010 PoC 復元、show_on_home/home_order 3件補正。rollback 未実行。Cursor/AI は SQL 未実行。
 
@@ -65,8 +65,8 @@ Gosaki staging:
   - `tools/static-to-astro/docs/gosaki-schedule-route-canonical-planning.md`
   - `tools/static-to-astro/docs/gosaki-schedule-canonical-route-implementation.md`
   - `tools/static-to-astro/docs/gosaki-schedule-legacy-month-route-stub.md`
+- G-9d3 doc: `tools/static-to-astro/docs/gosaki-preview-review-and-next-implementation-planning.md`
 - G-9d2 result: `tools/static-to-astro/docs/gosaki-manual-preview-upload-execution-result.md`
-- G-9d2 planning: `tools/static-to-astro/docs/gosaki-manual-preview-upload-planning.md`
 - staging URL live: `https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/`（G-9d2 operator upload 反映済み）
 - Result doc: `tools/static-to-astro/docs/gosaki-existing-schedule-rows-manual-sql-execution-result.md`
 - Staging DB: 60 rows `site_slug=gosaki-piano`, canonical `source_route`, PoC row restored
@@ -472,22 +472,20 @@ rollbackNeeded: false
 明示的 retry で dev server を起動する場合は inline env のみ使用する。
 
 10. Recommended next phase
-次フェーズ推奨: G-9d3 preview review または次 CMS 実装（staging shell schedule binding / Top YouTube embed 等）
+次フェーズ推奨: G-9e site_slug schedule read 汎用化（候補 C）
 
-G-9d2 operator manual preview upload 成功。live schedule routes + legacy stubs + sitemap canonical-only 確認済み。
+G-9d3 planning 完了。live preview URL 記録済み。推奨順: client review (A) → site_slug 汎用化 (C) → staging shell CMS (B) → 本番計画 (D) は最後。
 
 詳細:
-- `tools/static-to-astro/docs/gosaki-manual-preview-upload-execution-result.md`
+- `tools/static-to-astro/docs/gosaki-preview-review-and-next-implementation-planning.md`
 
-G-9d2 execution gates:
+G-9d3 gates:
 ```txt
-gosakiManualPreviewUploadExecutionRecorded: true
-gosakiManualPreviewUploadSucceeded: true
-gosakiPreviewScheduleRoutesLiveVerified: true
-gosakiPreviewLegacyStubLiveVerified: true
-gosakiPreviewRobotsTxtVerified: true
-gosakiPreviewSitemapCanonicalOnlyVerified: true
-readyForG9d3PreviewReviewOrNextImplementation: true
+gosakiPreviewReviewPlanningComplete: true
+gosakiPreviewLiveUrlRecorded: true
+gosakiSchedulePreviewAccepted: true
+gosakiNextImplementationOptionsDocumented: true
+readyForG9eNextImplementation: true
 readyForAnyDbWrite: false
 readyForAnyFtpApply: false
 ftpAutoDeployStillDisabled: true

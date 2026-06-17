@@ -3,30 +3,31 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 1. Immediate priority
 
-**Current phase:** `G-9d2-gosaki-manual-preview-upload-planning` (planning complete — uncommitted)
+**Current phase:** `G-9d2-gosaki-manual-preview-upload-execution-result` (recorded — uncommitted)
 
 **Docs:**
-- `tools/static-to-astro/docs/gosaki-manual-preview-upload-planning.md` (**new**)
-- `tools/static-to-astro/docs/gosaki-supabase-schedule-read-verification-preview-package.md`
+- `tools/static-to-astro/docs/gosaki-manual-preview-upload-execution-result.md` (**new**)
+- `tools/static-to-astro/docs/gosaki-manual-preview-upload-planning.md`
 
-**Awaiting:** operator commit/push approval (`Plan Gosaki manual preview upload`)
+**Awaiting:** operator commit/push approval (`Record Gosaki manual preview upload result`)
 
-### G-9d2 planning summary
+### G-9d2 execution summary
 
-- Source: `output/manual-upload/gosaki-piano/public-dist/` (contents only)
-- Destination: `/cms-kit-staging/gosaki-piano/` on preview host
-- FTP safety rules, approval text, pre/post checklist, rollback policy documented
-- **No FTP connection or upload in planning phase**
+- Operator manually uploaded `public-dist/` contents → `/cms-kit-staging/gosaki-piano/` on `yskcreate.weblike.jp`
+- Live QA: schedule hub, canonical month pages, legacy stubs, robots, sitemap — PASS
+- Cursor/AI/CI: no FTP operations
+- Rollback: not executed
 
 ### Gates
 
 ```txt
-gosakiManualPreviewUploadPlanningComplete: true
-gosakiManualPreviewUploadChecklistReady: true
-gosakiManualPreviewUploadSourceVerified: true
-gosakiManualPreviewUploadDestinationScoped: true
-gosakiManualPreviewUploadDeleteForbidden: true
-readyForOperatorManualPreviewUpload: true
+gosakiManualPreviewUploadExecutionRecorded: true
+gosakiManualPreviewUploadSucceeded: true
+gosakiPreviewScheduleRoutesLiveVerified: true
+gosakiPreviewLegacyStubLiveVerified: true
+gosakiPreviewRobotsTxtVerified: true
+gosakiPreviewSitemapCanonicalOnlyVerified: true
+readyForG9d3PreviewReviewOrNextImplementation: true
 readyForAnyDbWrite: false
 readyForAnyFtpApply: false
 ftpAutoDeployStillDisabled: true
@@ -34,16 +35,16 @@ ftpAutoDeployStillDisabled: true
 
 ## 2. Next steps
 
-1. **Commit G-9d2 planning** (operator approval)
-2. **G-9d2 execution:** Operator manual upload with approval ID `G-9d2-gosaki-manual-preview-upload`
+1. **Commit G-9d2 execution result** (operator approval)
+2. **G-9d3:** Client preview review or next implementation phase
 
 ## 3. Do not
 
-- FTP upload without explicit operator approval (section 6 of planning doc)
-- Mirror / sync-delete on remote
-- Use `service_role` / DB writes
+- Cursor/CI FTP operations
+- DB writes / `service_role`
+- FTP auto-apply (`readyForAnyFtpApply: false`)
 
 ## 4. Baseline
 
-- Latest commit: `821caa0` (G-9d1)
-- G-9d2: planning complete, pending commit
+- Latest commit: `25497a5` (G-9d2 planning)
+- G-9d2 execution: recorded, pending commit

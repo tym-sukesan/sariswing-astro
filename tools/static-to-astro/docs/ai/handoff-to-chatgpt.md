@@ -5,27 +5,29 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-9d2-gosaki-manual-preview-upload-planning (planning complete — uncommitted)
-Latest commit: 821caa0 (G-9d1)
+Current phase: G-9d2-gosaki-manual-preview-upload-execution-result (recorded — uncommitted)
+Latest commit: 25497a5 (G-9d2 planning)
 ```
 
 ## Summary
 
-G-9d2 planning: operator checklist for manual preview upload of G-9d1 package.
+G-9d2 execution: Operator manually uploaded G-9d1 preview package to staging.
 
-- **Source:** `output/manual-upload/gosaki-piano/public-dist/` (contents only)
-- **Destination:** `/cms-kit-staging/gosaki-piano/` (not production root)
-- **Approval ID:** `G-9d2-gosaki-manual-preview-upload`
-- **FTP / upload:** NOT executed in planning phase
+- **Live URL:** `https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/`
+- **Schedule:** hub + canonical `/schedule/YYYY-MM/` live; legacy `/YYYY-MM/` stubs OK
+- **Sitemap:** canonical schedule routes only; bare legacy months excluded
+- **robots.txt:** `Disallow: /` (staging OK)
+- **Cursor/AI/CI:** did NOT perform FTP
 
-**Doc:** `tools/static-to-astro/docs/gosaki-manual-preview-upload-planning.md`
+**Doc:** `tools/static-to-astro/docs/gosaki-manual-preview-upload-execution-result.md`
 
 ## Gates
 
 ```txt
-gosakiManualPreviewUploadPlanningComplete: true
-gosakiManualPreviewUploadChecklistReady: true
-readyForOperatorManualPreviewUpload: true
+gosakiManualPreviewUploadExecutionRecorded: true
+gosakiManualPreviewUploadSucceeded: true
+gosakiPreviewScheduleRoutesLiveVerified: true
+readyForG9d3PreviewReviewOrNextImplementation: true
 readyForAnyDbWrite: false
 readyForAnyFtpApply: false
 ftpAutoDeployStillDisabled: true
@@ -33,10 +35,10 @@ ftpAutoDeployStillDisabled: true
 
 ## Safety
 
-- No FTP, no DB writes, no service_role
-- Mirror / sync-delete forbidden
+- Operator manual upload only
+- No FTP auto-deploy, no DB writes
 
 ## Next
 
-- Commit G-9d2 planning
-- Operator upload with explicit approval
+- Commit execution result doc
+- G-9d3 preview review or next CMS work

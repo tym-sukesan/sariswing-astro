@@ -21,11 +21,11 @@ Staging Shell
 将来的な顧客オンボーディング・課金・デプロイ自動化
 
 2. Current phase
-現在フェーズ: G-9d2-gosaki-manual-preview-upload-planning（計画完了 — uncommitted）
+現在フェーズ: G-9d2-gosaki-manual-preview-upload-execution-result（記録完了 — uncommitted）
 
-G-9d2: operator 向け manual preview upload checklist 作成。source `output/manual-upload/gosaki-piano/public-dist/` → destination `/cms-kit-staging/gosaki-piano/`。FTP / upload 未実行。
+G-9d2 execution: operator が manual preview upload を手動実行完了。live preview QA PASS（schedule hub/month pages、legacy stubs、robots、sitemap canonical-only）。Cursor/AI/CI は FTP 操作なし。rollback 未実行。
 
-G-9d1: static-fallback + Supabase read 検証 + manual-upload package 生成完了（commit `821caa0`）。
+G-9d2 planning: checklist commit `25497a5`。
 
 G-9c2c: operator が staging で既存60行 UPDATE migration を手動実行完了（commit `2bd5b90`）。site_slug backfill、source_route 正規化、schedule-2026-07-010 PoC 復元、show_on_home/home_order 3件補正。rollback 未実行。Cursor/AI は SQL 未実行。
 
@@ -65,9 +65,9 @@ Gosaki staging:
   - `tools/static-to-astro/docs/gosaki-schedule-route-canonical-planning.md`
   - `tools/static-to-astro/docs/gosaki-schedule-canonical-route-implementation.md`
   - `tools/static-to-astro/docs/gosaki-schedule-legacy-month-route-stub.md`
-- G-9d2 doc: `tools/static-to-astro/docs/gosaki-manual-preview-upload-planning.md`
-- G-9d1 doc: `tools/static-to-astro/docs/gosaki-supabase-schedule-read-verification-preview-package.md`
-- Preview package: `output/manual-upload/gosaki-piano/`（gitignored、operator upload 待ち — checklist 準備済み）
+- G-9d2 result: `tools/static-to-astro/docs/gosaki-manual-preview-upload-execution-result.md`
+- G-9d2 planning: `tools/static-to-astro/docs/gosaki-manual-preview-upload-planning.md`
+- staging URL live: `https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/`（G-9d2 operator upload 反映済み）
 - Result doc: `tools/static-to-astro/docs/gosaki-existing-schedule-rows-manual-sql-execution-result.md`
 - Staging DB: 60 rows `site_slug=gosaki-piano`, canonical `source_route`, PoC row restored
 - Schedule read: anon key only; env なし時は static-fallback（fixture extractor）
@@ -472,18 +472,22 @@ rollbackNeeded: false
 明示的 retry で dev server を起動する場合は inline env のみ使用する。
 
 10. Recommended next phase
-次フェーズ推奨: G-9d2 operator manual preview upload 実行（別途 operator 承認）
+次フェーズ推奨: G-9d3 preview review または次 CMS 実装（staging shell schedule binding / Top YouTube embed 等）
 
-G-9d2 planning 完了。checklist: `gosaki-manual-preview-upload-planning.md`。FTP / upload 未実行。
+G-9d2 operator manual preview upload 成功。live schedule routes + legacy stubs + sitemap canonical-only 確認済み。
 
-G-9d2 gates:
+詳細:
+- `tools/static-to-astro/docs/gosaki-manual-preview-upload-execution-result.md`
+
+G-9d2 execution gates:
 ```txt
-gosakiManualPreviewUploadPlanningComplete: true
-gosakiManualPreviewUploadChecklistReady: true
-gosakiManualPreviewUploadSourceVerified: true
-gosakiManualPreviewUploadDestinationScoped: true
-gosakiManualPreviewUploadDeleteForbidden: true
-readyForOperatorManualPreviewUpload: true
+gosakiManualPreviewUploadExecutionRecorded: true
+gosakiManualPreviewUploadSucceeded: true
+gosakiPreviewScheduleRoutesLiveVerified: true
+gosakiPreviewLegacyStubLiveVerified: true
+gosakiPreviewRobotsTxtVerified: true
+gosakiPreviewSitemapCanonicalOnlyVerified: true
+readyForG9d3PreviewReviewOrNextImplementation: true
 readyForAnyDbWrite: false
 readyForAnyFtpApply: false
 ftpAutoDeployStillDisabled: true

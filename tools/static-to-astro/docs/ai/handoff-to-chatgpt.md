@@ -5,26 +5,29 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-9g3b-execution (not started — awaiting operator approval)
-Latest commit: c2a6b0c (G-9g3b venue + description gated Save + preflight)
-Git: working tree clean; origin/main in sync
+Current phase: G-9g3c-staging-shell-schedule-site-slug-time-price-non-dry-run-poc-planning (recommended next)
+Latest commit: b12435e (AI context sync; G-9g3b execution result doc pending commit)
+Git: working tree has uncommitted G-9g3b execution result + AI context updates
 ```
 
 ## Summary
 
-G-9g3a smoke test passed (host gate, venue+description dry-run). G-9g3b implementation + preflight **committed and pushed** (`c2a6b0c`). Gated Save for venue + description only — **not executed**.
+G-9g3b execution **succeeded** — operator manual Save once; `actualWrite=true`; `changedFields=venue,description` only.
 
-- **Title:** `[CMS Kit staging] G-9g2 title PoC` — keep; no restore
-- **G-9g3b payload:** venue + description PoC values only
+- **Title:** `[CMS Kit staging] G-9g2 title PoC` — unchanged
+- **Venue:** `[CMS Kit staging] G-9g3b venue PoC`
+- **Description:** `出演： [G-9g3b venue+description PoC]`
+- **updated_at:** `2026-06-17T14:36:04.711395+00:00`
 - **Approval ID:** `G-9g3b-schedule-site-slug-venue-description-non-dry-run-poc`
-- **Not executed:** G-9g3b-execution / Save / DB write / SQL mutation
+- **rollbackNeeded:** false
+- Cursor / AI did **not** click Save
 
 **Docs:**
+- `staging-shell-schedule-site-slug-venue-description-non-dry-run-poc-execution-result.md` (**new**)
 - `staging-shell-schedule-site-slug-venue-description-non-dry-run-poc-preflight.md`
 - `staging-shell-schedule-site-slug-venue-description-non-dry-run-poc-implementation.md`
-- `staging-shell-schedule-site-slug-safe-fields-dry-run-preview-smoke-test-result.md`
 
-## Routine dev safety (default)
+## Routine dev safety (default — restored)
 
 ```txt
 PUBLIC_ADMIN_SCHEDULE_G9G3B_VENUE_DESCRIPTION_NON_DRY_RUN_ARMED: off (unset)
@@ -35,23 +38,21 @@ PUBLIC_SUPABASE_URL host: kmjqppxjdnwwrtaeqjta.supabase.co (staging)
 
 **STOP immediately** if active host is Sariswing production: `vsbvndwuajjhnzpohghh.supabase.co`
 
-**Note:** `tools/static-to-astro/.env.local` may contain a `SUPABASE_SERVICE_ROLE_KEY` entry (local only, gitignored). Do not use, reference, or load for G-9g3b execution. Execution uses anon key + authenticated session only.
+Do **not** re-arm G-9g3b or re-click G-9g3b Save.
 
 ## Gates
 
 ```txt
-stagingShellScheduleVenueDescriptionPocImplementationComplete: true
-stagingShellScheduleVenueDescriptionPocPreflightComplete: true
-stagingShellScheduleVenueDescriptionPocNotExecuted: true
-readyForG9g3bExecution: true
+stagingShellScheduleVenueDescriptionPocExecutionSucceeded: true
+stagingShellScheduleVenueDescriptionPocNotExecuted: false
+readyForG9g3bExecution: false
+readyForG9g3cPlanning: true
 readyForAnyDbWrite: false
+rollbackNeeded: false
 ```
 
-## Next (G-9g3b-execution — operator-driven)
+## Next
 
-1. Operator approval text (see preflight doc §5)
-2. beforeSnapshot confirmation (SELECT only — operator; staging project only)
-3. Inline env arm stack (preflight doc §6) — full dev server restart required
-4. Host gate: `hostGatePassed=true`; activeHost must be staging
-5. Dry-run preview: `actualWrite=false`, `changedFields=venue+description`, `optimisticLock.stale=false`
-6. Operator manual Save once — Cursor / AI / Playwright must **not** click Save
+**G-9g3c planning** — `open_time` + `start_time` + `price` non-dry-run slice (planning only; no Save / DB write).
+
+G-9g3c lock baseline: `updated_at` = `2026-06-17T14:36:04.711395+00:00` (verify live before next Save).

@@ -5,30 +5,33 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-9g3-staging-shell-schedule-site-slug-safe-fields-edit-planning (planning complete — uncommitted)
-Latest commit: d57dd5f (G-9g2 execution result)
+Current phase: G-9g3a-staging-shell-schedule-site-slug-safe-fields-dry-run-preview (implementation complete — uncommitted)
+Latest commit: 51051c2 (G-9g3 planning)
 ```
 
 ## Summary
 
-G-9g3 plans remaining Gosaki site_slug safe-field edits after successful G-9g2 title PoC.
+G-9g3a adds host hard gate + multi-field dry-run preview before G-9g3b–d non-dry-run slices.
 
 - **Title:** `[CMS Kit staging] G-9g2 title PoC` — keep; no restore
-- **New mandatory safety:** active Supabase host hard gate
-- **Slices:** G-9g3a host+dry-run → G-9g3b venue+description → G-9g3c time+price → G-9g3d general UI
-- **Planning only** — no Save / DB write
+- **Host gate:** `kmjqppxjdnwwrtaeqjta.supabase.co` required; `vsbvndwuajjhnzpohghh.supabase.co` → DANGER
+- **UI:** venue, open_time, start_time, price, description + title inputs; Preview dry-run only
+- **No Save / no DB write** in G-9g3a
 
-**Doc:** `tools/static-to-astro/docs/staging-shell-schedule-site-slug-safe-fields-edit-planning.md`
+**Doc:** `tools/static-to-astro/docs/staging-shell-schedule-site-slug-safe-fields-dry-run-preview-implementation.md`
 
 ## Gates
 
 ```txt
-stagingShellScheduleSiteSlugSafeFieldsEditPlanningComplete: true
-readyForG9g3aHostGateAndDryRunImplementation: true
+stagingShellScheduleSiteSlugSafeFieldsDryRunPreviewComplete: true
+stagingShellScheduleHostHardGateImplemented: true
+stagingShellScheduleMultiFieldDryRunPreviewImplemented: true
+stagingShellScheduleG9g3aNoSaveUi: true
+readyForG9g3bVenueDescriptionPoc: true
 readyForAnyDbWrite: false
 ```
 
 ## Next
 
-- Commit G-9g3 planning
-- G-9g3a implementation (host gate + multi-field dry-run)
+- Commit G-9g3a implementation
+- G-9g3b venue + description non-dry-run PoC

@@ -21,6 +21,7 @@ import {
   SCHEDULE_G9G2_TITLE_NON_DRY_RUN_ARMED_ENV,
   STAGING_SHELL_GOSAKI_SCHEDULE_SITE_SLUG,
 } from "./staging-schedule-site-slug-config";
+import { evaluateSupabaseHostGate } from "./staging-schedule-site-slug-host-gate";
 
 export interface G9G2TitlePocConfig {
   phase: typeof G9G2_PHASE;
@@ -39,6 +40,9 @@ export interface G9G2TitlePocConfig {
   productionBlocked: boolean;
   expectedProject: string;
   expectedSupabaseHost: string;
+  activeSupabaseHost: string;
+  hostGatePassed: boolean;
+  hostGateWarning?: string;
 }
 
 function looksLikeProductionBlocked(env: ImportMetaEnv): boolean {
@@ -73,6 +77,7 @@ export function getG9G2TitlePocConfig(
   const supabaseAnonKey = String(mergedEnv.PUBLIC_SUPABASE_ANON_KEY ?? "").trim();
   const supabaseConfigured = Boolean(supabaseUrl && supabaseAnonKey);
   const productionBlocked = looksLikeProductionBlocked(mergedEnv);
+  const hostGate = evaluateSupabaseHostGate(supabaseUrl);
 
   const base = {
     phase: G9G2_PHASE,
@@ -88,9 +93,15 @@ export function getG9G2TitlePocConfig(
     productionBlocked,
     expectedProject: SCHEDULE_NON_DRY_RUN_POC_EXPECTED_PROJECT,
     expectedSupabaseHost: SCHEDULE_NON_DRY_RUN_POC_EXPECTED_SUPABASE_HOST,
+    activeSupabaseHost: hostGate.activeHost,
+    hostGatePassed: hostGate.hostGatePassed,
+    hostGateWarning: hostGate.warningMessage ?? undefined,
   };
 
   const armFailures: string[] = [];
+  if (!hostGate.hostGatePassed) {
+    armFailures.push(hostGate.warningMessage ?? "Supabase host gate failed");
+  }
   if (!dev) armFailures.push("DEV only");
   if (!stagingShellEnabled) armFailures.push("ENABLE_ADMIN_STAGING_SHELL");
   if (!stagingWriteFlag) armFailures.push("ENABLE_ADMIN_STAGING_WRITE");

@@ -1,34 +1,35 @@
 /**
- * G-9g1 / G-9g2 — Browser UI for site_slug schedule edit (staging shell only).
- * Preview: actualWrite=false. Save: operator manual only — not auto-clicked.
+ * G-9g1 / G-9g2 / G-9g3a — Browser UI for site_slug schedule edit (staging shell only).
+ * G-9g3a: multi-field dry-run preview + host hard gate. Preview: actualWrite=false only.
  */
 
-import { refreshAuthWriteDebugPanel } from "../staging-auth/staging-auth-write-debug-ui";
 import { mergeStagingShellEnv } from "../staging-shell/staging-shell-client-gates";
 import {
   buildSiteSlugScheduleEditDryRunError,
   buildSiteSlugScheduleEditDryRunResult,
+  sanitizeSiteSlugEditSafeFieldPatch,
+  type SiteSlugEditSafeFieldPatch,
   type SiteSlugScheduleEditDryRunResult,
 } from "./staging-schedule-site-slug-edit-dry-run";
-import { getG9G2TitlePocConfig } from "./staging-schedule-site-slug-title-poc-config";
+import { evaluateSupabaseHostGate } from "./staging-schedule-site-slug-host-gate";
 import {
-  G9G1_PHASE,
   G9G1_TARGET_LEGACY_ID,
   G9G1_TARGET_ROW_ID,
-  G9G2_TITLE_NON_DRY_RUN_APPROVAL_ID,
-  G9G2_TITLE_POC_DEFAULT_TITLE,
+  G9G3A_PHASE,
+  SITE_SLUG_EDIT_SAFE_FIELDS,
   STAGING_SHELL_GOSAKI_SCHEDULE_SITE_SLUG,
 } from "./staging-schedule-site-slug-config";
-import { executeG9G2TitleNonDryRunSave } from "../staging-write/staging-schedule-site-slug-title-poc-save";
 import { runDryRunStaleCheck } from "../staging-write/schedule-optimistic-lock-dry-run";
 import type { ScheduleRecord } from "../staging-write/schedule-dry-run-types";
-import type { ScheduleWriteResult } from "../staging-write/schedule-write-types";
 
-let g9g2DryRunPreviewValid = false;
-let lastPreviewTitle: string | null = null;
-let lastPreviewChangedFields: string[] = [];
-let lastPreviewStale = false;
-let executionInFlight = false;
+const SAFE_FIELD_INPUT_IDS: Record<(typeof SITE_SLUG_EDIT_SAFE_FIELDS)[number], string> = {
+  title: "site-slug-edit-dry-run-title",
+  venue: "site-slug-edit-dry-run-venue",
+  open_time: "site-slug-edit-dry-run-open-time",
+  start_time: "site-slug-edit-dry-run-start-time",
+  price: "site-slug-edit-dry-run-price",
+  description: "site-slug-edit-dry-run-description",
+};
 
 function escapeHtml(value: string): string {
   return value
@@ -69,39 +70,60 @@ function canUseLiveSupabase(): boolean {
   return Boolean(url && anonKey);
 }
 
-function isG9G2Armed(): boolean {
+function isG9g3aSaveHidden(): boolean {
   const root = getRoot();
-  return root?.dataset.g9g2Armed === "true";
+  return root?.dataset.g9g3aSaveHidden === "true";
 }
 
-function getTitleInputValue(): string {
-  const el = document.getElementById(
-    "site-slug-edit-dry-run-title",
-  ) as HTMLInputElement | null;
-  return el?.value ?? "";
+function getFieldValue(field: (typeof SITE_SLUG_EDIT_SAFE_FIELDS)[number]): string {
+  const id = SAFE_FIELD_INPUT_IDS[field];
+  const el = document.getElementById(id);
+  if (!el) return "";
+  if (el instanceof HTMLTextAreaElement || el instanceof HTMLInputElement) {
+    return el.value;
+  }
+  return "";
 }
 
-function invalidateDryRunPreview(): void {
-  g9g2DryRunPreviewValid = false;
-  lastPreviewTitle = null;
-  lastPreviewChangedFields = [];
-  lastPreviewStale = false;
-  refreshG9G2SaveButtonState();
+function collectSafeFieldPatch(): SiteSlugEditSafeFieldPatch {
+  const patch: SiteSlugEditSafeFieldPatch = {};
+  for (const field of SITE_SLUG_EDIT_SAFE_FIELDS) {
+    patch[field] = getFieldValue(field);
+  }
+  return sanitizeSiteSlugEditSafeFieldPatch(patch);
+}
+
+function getClientHostGate() {
+  const { url } = getSupabaseEnv();
+  return evaluateSupabaseHostGate(url);
+}
+
+function updateHostGateSummary(hostGate: ReturnType<typeof evaluateSupabaseHostGate>): void {
+  const activeEl = document.getElementById("site-slug-edit-active-host");
+  const passedEl = document.getElementById("site-slug-edit-host-gate-passed");
+  const root = getRoot();
+  if (activeEl) activeEl.textContent = hostGate.activeHost;
+  if (passedEl) passedEl.textContent = hostGate.hostGatePassed ? "true" : "false";
+  if (root) {
+    root.dataset.hostGatePassed = hostGate.hostGatePassed ? "true" : "false";
+    root.dataset.activeHost = hostGate.activeHost;
+  }
 }
 
 function renderDryRunResult(result: SiteSlugScheduleEditDryRunResult): void {
   const el = document.getElementById("site-slug-edit-dry-run-result");
   if (!el) return;
 
-  const staleClass = result.optimisticLock.stale
-    ? "site-slug-edit-dry-run-result__stale"
-    : "site-slug-edit-dry-run-result__fresh";
+  const hostFailBanner = !result.hostGate.hostGatePassed
+    ? `<p class="site-slug-edit-dry-run-result__host-fail" role="alert"><strong>Host gate failed.</strong> ${escapeHtml(result.hostGate.warningMessage ?? "Save path blocked.")}</p>`
+    : "";
 
   const staleBanner = result.optimisticLock.stale
-    ? `<p class="${staleClass}" role="alert"><strong>Stale row detected. Preview only. Save remains unavailable.</strong></p>`
+    ? `<p class="site-slug-edit-dry-run-result__stale" role="alert"><strong>Stale row detected.</strong> Preview only — Save remains unavailable.</p>`
     : "";
 
   el.innerHTML = [
+    hostFailBanner,
     staleBanner,
     `<p class="site-slug-edit-dry-run-result__message">${escapeHtml(result.message)}</p>`,
     `<dl class="site-slug-edit-dry-run-result__meta">`,
@@ -114,6 +136,9 @@ function renderDryRunResult(result: SiteSlugScheduleEditDryRunResult): void {
     `<div><dt>optimisticLock.expectedBeforeUpdatedAt</dt><dd>${escapeHtml(result.optimisticLock.expectedBeforeUpdatedAt ?? "—")}</dd></div>`,
     `<div><dt>optimisticLock.currentUpdatedAt</dt><dd>${escapeHtml(result.optimisticLock.currentUpdatedAt ?? "—")}</dd></div>`,
     `<div><dt>optimisticLock.stale</dt><dd>${result.optimisticLock.stale ? "true" : "false"}</dd></div>`,
+    `<div><dt>activeHost</dt><dd><code>${escapeHtml(result.hostGate.activeHost)}</code></dd></div>`,
+    `<div><dt>expectedHost</dt><dd><code>${escapeHtml(result.hostGate.expectedHost)}</code></dd></div>`,
+    `<div><dt>hostGatePassed</dt><dd>${result.hostGate.hostGatePassed ? "true" : "false"}</dd></div>`,
     `</dl>`,
     `<h4 class="site-slug-edit-dry-run-result__subhead">before</h4>`,
     `<pre class="site-slug-edit-dry-run-result__block">${escapeHtml(JSON.stringify(result.before, null, 2))}</pre>`,
@@ -122,99 +147,28 @@ function renderDryRunResult(result: SiteSlugScheduleEditDryRunResult): void {
   ].join("");
 }
 
-function renderSaveResult(payload: {
-  actualWrite: boolean;
-  outcome: Awaited<ReturnType<typeof executeG9G2TitleNonDryRunSave>>;
-}): void {
-  const el = document.getElementById("site-slug-edit-g9g2-save-result");
-  if (!el) return;
-
-  const result = payload.outcome.result;
-  const success = result && "actualWrite" in result && result.actualWrite === true;
-
-  el.innerHTML = [
-    `<p class="site-slug-edit-save-result__message">${escapeHtml(
-      success
-        ? "G-9g2 Save completed — actualWrite=true."
-        : payload.outcome.errorMessage ?? "G-9g2 Save did not complete.",
-    )}</p>`,
-    `<dl class="site-slug-edit-save-result__meta">`,
-    `<div><dt>actualWrite</dt><dd>${payload.actualWrite ? "true" : "false"}</dd></div>`,
-    `<div><dt>approvalId</dt><dd><code>${escapeHtml(G9G2_TITLE_NON_DRY_RUN_APPROVAL_ID)}</code></dd></div>`,
-    `<div><dt>errorCode</dt><dd>${escapeHtml(payload.outcome.errorCode ?? "—")}</dd></div>`,
-    `<div><dt>expectedBeforeUpdatedAt</dt><dd>${escapeHtml(payload.outcome.expectedBeforeUpdatedAt ?? "—")}</dd></div>`,
-    `</dl>`,
-    result && "afterSnapshot" in result
-      ? `<h4 class="site-slug-edit-save-result__subhead">updatedRow</h4><pre class="site-slug-edit-save-result__block">${escapeHtml(JSON.stringify((result as ScheduleWriteResult).afterSnapshot, null, 2))}</pre>`
-      : "",
-    `<h4 class="site-slug-edit-save-result__subhead">full outcome</h4>`,
-    `<pre class="site-slug-edit-save-result__block">${escapeHtml(JSON.stringify(payload.outcome, null, 2))}</pre>`,
-  ].join("");
-
-  void refreshAuthWriteDebugPanel();
-}
-
-function canEnableG9G2Save(): { ok: boolean; reason: string } {
-  const config = getG9G2TitlePocConfig();
-  if (!config.saveEnabled) {
-    return {
-      ok: false,
-      reason: config.armFailureReason ?? "G-9g2 title PoC not armed",
-    };
-  }
-  if (executionInFlight) return { ok: false, reason: "Save in flight" };
-  if (!g9g2DryRunPreviewValid) {
-    return { ok: false, reason: "Dry-run preview required" };
-  }
-  if (lastPreviewStale) return { ok: false, reason: "Stale — re-run preview" };
-  if (
-    lastPreviewChangedFields.length !== 1 ||
-    !lastPreviewChangedFields.includes("title")
-  ) {
-    return { ok: false, reason: 'changedFields must be ["title"] only' };
-  }
-  const row = parseTargetRow();
-  if (!row || row.id !== G9G1_TARGET_ROW_ID) {
-    return { ok: false, reason: "Target row mismatch" };
-  }
-  if (row.legacy_id !== G9G1_TARGET_LEGACY_ID) {
-    return { ok: false, reason: "legacy_id mismatch" };
-  }
-  if (row.site_slug !== STAGING_SHELL_GOSAKI_SCHEDULE_SITE_SLUG) {
-    return { ok: false, reason: "site_slug mismatch" };
-  }
-  if (getTitleInputValue() !== lastPreviewTitle) {
-    return { ok: false, reason: "Title changed since preview" };
-  }
-  if (!canUseLiveSupabase()) {
-    return { ok: false, reason: "Supabase read source required" };
-  }
-  return { ok: true, reason: "Ready (manual Save only — not auto-clicked)" };
-}
-
-function refreshG9G2SaveButtonState(): void {
-  const btn = document.getElementById("site-slug-edit-g9g2-save-btn");
-  const hint = document.getElementById("site-slug-edit-g9g2-save-hint");
-  if (!btn) return;
-
-  const { ok, reason } = canEnableG9G2Save();
-  (btn as HTMLButtonElement).disabled = !ok;
-  if (hint) hint.textContent = ok ? reason : `Save title PoC disabled — ${reason}`;
-}
-
 async function onPreviewClick(): Promise<void> {
   const row = parseTargetRow();
-  const title = getTitleInputValue();
+  const hostGate = getClientHostGate();
+  updateHostGateSummary(hostGate);
+
+  const hostGatePreview = {
+    activeHost: hostGate.activeHost,
+    expectedHost: hostGate.expectedHost,
+    hostGatePassed: hostGate.hostGatePassed,
+    isKnownProductionHost: hostGate.isKnownProductionHost,
+    warningMessage: hostGate.warningMessage,
+  };
 
   if (!row) {
     renderDryRunResult(
       buildSiteSlugScheduleEditDryRunError({
-        phase: G9G1_PHASE,
+        phase: G9G3A_PHASE,
         siteSlug: STAGING_SHELL_GOSAKI_SCHEDULE_SITE_SLUG,
         message: "Target row not loaded — enable Supabase env and reload.",
+        hostGate: hostGatePreview,
       }),
     );
-    invalidateDryRunPreview();
     return;
   }
 
@@ -225,16 +179,17 @@ async function onPreviewClick(): Promise<void> {
   ) {
     renderDryRunResult(
       buildSiteSlugScheduleEditDryRunError({
-        phase: G9G1_PHASE,
+        phase: G9G3A_PHASE,
         siteSlug: STAGING_SHELL_GOSAKI_SCHEDULE_SITE_SLUG,
         message: "Target scope mismatch — preview blocked.",
+        hostGate: hostGatePreview,
       }),
     );
-    invalidateDryRunPreview();
     return;
   }
 
-  const live = canUseLiveSupabase();
+  const patch = collectSafeFieldPatch();
+  const live = canUseLiveSupabase() && hostGate.hostGatePassed;
   const { url, anonKey } = getSupabaseEnv();
 
   const optimisticLock = await runDryRunStaleCheck({
@@ -246,67 +201,15 @@ async function onPreviewClick(): Promise<void> {
   });
 
   const result = buildSiteSlugScheduleEditDryRunResult({
-    phase: G9G1_PHASE,
+    phase: G9G3A_PHASE,
     source: row,
     siteSlug: STAGING_SHELL_GOSAKI_SCHEDULE_SITE_SLUG,
-    patch: { title },
+    patch,
     optimisticLock,
+    hostGate: hostGatePreview,
   });
 
   renderDryRunResult(result);
-
-  g9g2DryRunPreviewValid = true;
-  lastPreviewTitle = title;
-  lastPreviewChangedFields = [...result.changedFields];
-  lastPreviewStale = result.optimisticLock.stale;
-  refreshG9G2SaveButtonState();
-}
-
-async function onSaveClick(): Promise<void> {
-  const gate = canEnableG9G2Save();
-  if (!gate.ok) {
-    refreshG9G2SaveButtonState();
-    return;
-  }
-
-  const row = parseTargetRow();
-  if (!row) return;
-
-  executionInFlight = true;
-  refreshG9G2SaveButtonState();
-
-  const { url, anonKey } = getSupabaseEnv();
-  const title = getTitleInputValue();
-
-  try {
-    const outcome = await executeG9G2TitleNonDryRunSave({
-      url,
-      anonKey,
-      beforeSnapshot: row,
-      payload: { title },
-    });
-
-    const actualWrite =
-      outcome.result != null &&
-      "actualWrite" in outcome.result &&
-      outcome.result.actualWrite === true;
-
-    renderSaveResult({ actualWrite, outcome });
-
-    if (actualWrite && outcome.result && "afterSnapshot" in outcome.result) {
-      const root = getRoot();
-      if (root) {
-        const updated = outcome.result.afterSnapshot as ScheduleRecord;
-        root.dataset.targetRow = JSON.stringify(updated);
-        const baseline = document.getElementById("site-slug-edit-baseline-updated-at");
-        if (baseline) baseline.textContent = updated.updated_at ?? "—";
-      }
-      invalidateDryRunPreview();
-    }
-  } finally {
-    executionInFlight = false;
-    refreshG9G2SaveButtonState();
-  }
 }
 
 function initSiteSlugEditUi(): void {
@@ -319,29 +222,22 @@ function initSiteSlugEditUi(): void {
       void onPreviewClick();
     });
 
-  document.getElementById("site-slug-edit-g9g2-save-btn")?.addEventListener("click", () => {
-    void onSaveClick();
-  });
-
-  document
-    .getElementById("site-slug-edit-dry-run-title")
-    ?.addEventListener("input", () => {
-      invalidateDryRunPreview();
+  for (const field of SITE_SLUG_EDIT_SAFE_FIELDS) {
+    document.getElementById(SAFE_FIELD_INPUT_IDS[field])?.addEventListener("input", () => {
+      const resultEl = document.getElementById("site-slug-edit-dry-run-result");
+      if (resultEl) {
+        resultEl.innerHTML =
+          '<p class="site-slug-edit-dry-run-result__placeholder">Fields changed — click Preview dry-run again.</p>';
+      }
     });
-
-  const row = parseTargetRow();
-  const titleInput = document.getElementById(
-    "site-slug-edit-dry-run-title",
-  ) as HTMLInputElement | null;
-  if (titleInput && row?.title != null && titleInput.value === "") {
-    titleInput.value = row.title;
   }
 
-  if (isG9G2Armed() && titleInput && titleInput.value === "<>") {
-    titleInput.value = G9G2_TITLE_POC_DEFAULT_TITLE;
-  }
+  const hostGate = getClientHostGate();
+  updateHostGateSummary(hostGate);
 
-  refreshG9G2SaveButtonState();
+  if (isG9g3aSaveHidden()) {
+    return;
+  }
 }
 
 if (document.readyState === "loading") {

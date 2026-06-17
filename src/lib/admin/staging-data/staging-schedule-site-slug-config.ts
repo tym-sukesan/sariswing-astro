@@ -21,6 +21,9 @@ export const SCHEDULE_G9G2_TITLE_NON_DRY_RUN_ARMED_ENV =
 export const G9G2_TITLE_POC_DEFAULT_TITLE =
   "[CMS Kit staging] G-9g2 title PoC";
 
+export const G9G3A_PHASE =
+  "G-9g3a-staging-shell-schedule-site-slug-safe-fields-dry-run-preview";
+
 /** Pilot site for staging shell schedule read binding. */
 export const STAGING_SHELL_GOSAKI_SCHEDULE_SITE_SLUG = "gosaki-piano";
 

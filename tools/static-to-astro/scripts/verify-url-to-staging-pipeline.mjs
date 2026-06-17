@@ -1089,7 +1089,8 @@ assert(
 assert(
   "G-9g1 dry-run only safety marker",
   g9g1SectionSrc.includes("Dry-run only") &&
-    g9g1SectionSrc.includes("Save is disabled in G-9g1"),
+    (g9g1SectionSrc.includes("Save is disabled in G-9g1") ||
+      g9g1SectionSrc.includes("Save is disabled in G-9g3a")),
 );
 assert(
   "G-9g1 preview button only no save",
@@ -1159,13 +1160,16 @@ assert(
   g9g2SiteSlugConfigSrc.includes("PUBLIC_ADMIN_SCHEDULE_G9G2_TITLE_NON_DRY_RUN_ARMED"),
 );
 assert(
-  "G-9g2 Save title PoC button label",
-  g9g1SectionSrc.includes("Save title PoC"),
+  "G-9g2 Save title PoC button label or G-9g3a save hidden",
+  g9g1SectionSrc.includes("Save title PoC") ||
+    g9g1SectionSrc.includes("g9g3aSaveUiHidden"),
 );
 assert(
-  "G-9g2 save button default disabled",
-  g9g1SectionSrc.includes('id="site-slug-edit-g9g2-save-btn"') &&
-    g9g1SectionSrc.includes("disabled={true}"),
+  "G-9g2 save button default disabled or G-9g3a no save button",
+  (g9g1SectionSrc.includes('id="site-slug-edit-g9g2-save-btn"') &&
+    g9g1SectionSrc.includes("disabled={true}")) ||
+    (g9g1SectionSrc.includes("g9g3aSaveUiHidden") &&
+      !g9g1SectionSrc.includes('id="site-slug-edit-g9g2-save-btn"')),
 );
 assert(
   "G-9g2 UPDATE uses site_slug and updated_at",
@@ -1299,6 +1303,107 @@ assert(
   "G-9g3 reuse writeScope",
   g9g3PlanningSrc.includes("writeScope") &&
     g9g3PlanningSrc.includes("site_slug"),
+);
+
+// --- G-9g3a host hard gate + multi-field dry-run preview ---
+const g9g3aHostGatePath = path.join(
+  REPO_ROOT,
+  "src/lib/admin/staging-data/staging-schedule-site-slug-host-gate.ts",
+);
+const g9g3aEditUiPath = path.join(
+  REPO_ROOT,
+  "src/lib/admin/staging-data/staging-schedule-site-slug-edit-ui.ts",
+);
+const g9g3aImplDocPath = path.join(
+  TOOL_ROOT,
+  "docs/staging-shell-schedule-site-slug-safe-fields-dry-run-preview-implementation.md",
+);
+
+assert("G-9g3a host gate module exists", fs.existsSync(g9g3aHostGatePath));
+assert("G-9g3a edit UI module exists", fs.existsSync(g9g3aEditUiPath));
+assert("G-9g3a implementation doc exists", fs.existsSync(g9g3aImplDocPath));
+
+const g9g3aHostGateSrc = fs.readFileSync(g9g3aHostGatePath, "utf8");
+const g9g3aEditUiSrc = fs.readFileSync(g9g3aEditUiPath, "utf8");
+const g9g3aBindingSrc = fs.readFileSync(g9g1EditBindingPath, "utf8");
+const g9g3aImplDocSrc = fs.readFileSync(g9g3aImplDocPath, "utf8");
+
+assert(
+  "G-9g3a phase constant",
+  g9g1ConfigSrc.includes("G9G3A_PHASE") &&
+    g9g1ConfigSrc.includes("G-9g3a-staging-shell-schedule-site-slug-safe-fields-dry-run-preview"),
+);
+assert(
+  "G-9g3a expected staging host",
+  g9g3aHostGateSrc.includes("SCHEDULE_NON_DRY_RUN_POC_EXPECTED_SUPABASE_HOST") &&
+    g9g3aHostGateSrc.includes("evaluateSupabaseHostGate") &&
+    fs.readFileSync(
+      path.join(REPO_ROOT, "src/lib/admin/staging-write/schedule-non-dry-run-poc-config.ts"),
+      "utf8",
+    ).includes("kmjqppxjdnwwrtaeqjta.supabase.co"),
+);
+assert(
+  "G-9g3a production host danger",
+  g9g3aHostGateSrc.includes("vsbvndwuajjhnzpohghh.supabase.co") &&
+    g9g3aHostGateSrc.includes("DANGER"),
+);
+assert(
+  "G-9g3a host gate in dry-run result",
+  g9g1DryRunSrc.includes("hostGate") &&
+    g9g1DryRunSrc.includes("hostGatePassed") &&
+    g9g1DryRunSrc.includes("sanitizeSiteSlugEditSafeFieldPatch"),
+);
+assert(
+  "G-9g3a binding save hidden",
+  g9g3aBindingSrc.includes("g9g3aSaveUiHidden: true") &&
+    g9g3aBindingSrc.includes("dryRunPreviewOnly: true"),
+);
+assert(
+  "G-9g3a G9G2 config host gate blocks arm",
+  g9g2ConfigSrc.includes("hostGatePassed") &&
+    g9g2ConfigSrc.includes("evaluateSupabaseHostGate"),
+);
+assert(
+  "G-9g3a multi-field inputs in section",
+  g9g1SectionSrc.includes("site-slug-edit-dry-run-venue") &&
+    g9g1SectionSrc.includes("site-slug-edit-dry-run-open-time") &&
+    g9g1SectionSrc.includes("site-slug-edit-dry-run-start-time") &&
+    g9g1SectionSrc.includes("site-slug-edit-dry-run-price") &&
+    g9g1SectionSrc.includes("site-slug-edit-dry-run-description"),
+);
+assert(
+  "G-9g3a section host gate display",
+  g9g1SectionSrc.includes("hostGatePassed") &&
+    g9g1SectionSrc.includes("expectedHost") &&
+    g9g1SectionSrc.includes("activeHost"),
+);
+assert(
+  "G-9g3a no save button in section",
+  !g9g1SectionSrc.includes('id="site-slug-edit-g9g2-save-btn"') &&
+    g9g1SectionSrc.includes("Preview dry-run") &&
+    !g9g1SectionSrc.match(/>\s*Save\s*</),
+);
+assert(
+  "G-9g3a edit UI renders host gate in result",
+  g9g3aEditUiSrc.includes("activeHost") &&
+    g9g3aEditUiSrc.includes("hostGatePassed") &&
+    g9g3aEditUiSrc.includes("G9G3A_PHASE"),
+);
+assert(
+  "G-9g3a live stale check gated by host",
+  g9g3aEditUiSrc.includes("hostGate.hostGatePassed") &&
+    g9g3aEditUiSrc.includes("liveSupabaseRead: live"),
+);
+assert(
+  "G-9g3a implementation no save no db write",
+  g9g3aImplDocSrc.includes("no Save") &&
+    g9g3aImplDocSrc.includes("no DB write") &&
+    g9g3aImplDocSrc.includes("stagingShellScheduleG9g3aNoSaveUi: true"),
+);
+assert(
+  "G-9g3a no service_role",
+  !g9g3aHostGateSrc.includes("SERVICE_ROLE_KEY") &&
+    !g9g3aEditUiSrc.includes("SERVICE_ROLE_KEY"),
 );
 
 const gosakiPublicDist = path.join(TOOL_ROOT, "output/static-public/gosaki-piano/public-dist");

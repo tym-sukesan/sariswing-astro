@@ -1,6 +1,6 @@
 ---
 /**
- * G-9g1 / G-9g2 — Staging shell Gosaki site_slug schedule edit (dry-run + gated Save).
+ * G-9g1 / G-9g2 / G-9g3a — Staging shell Gosaki site_slug schedule edit.
  */
 import AdminCard from "../../components/AdminCard.astro";
 import AdminFormField from "../../components/AdminFormField.astro";
@@ -15,58 +15,56 @@ const { binding } = Astro.props;
 const row = binding.targetRow;
 const uiDisabled = binding.source !== "supabase" || !row;
 const targetRowJson = row ? JSON.stringify(row) : "";
-const initialTitle = row?.title ?? binding.g9g2DefaultTitle;
-const saveSectionVisible = binding.g9g2Armed || Boolean(binding.g9g2ArmFailureReason);
+const saveSectionVisible =
+  !binding.g9g3aSaveUiHidden &&
+  (binding.g9g2Armed || Boolean(binding.g9g2ArmFailureReason));
+const hostAlertClass = binding.isKnownProductionHost
+  ? "admin-staging-schedule-site-slug-edit__host-danger"
+  : "admin-staging-schedule-site-slug-edit__host-warning";
 ---
 
 <section
   id="admin-staging-schedule-site-slug-edit"
   class="admin-staging-schedule-site-slug-edit"
   data-phase={binding.phase}
+  data-g9g3a-phase={binding.g9g3aPhase}
   data-g9g2-phase={binding.g9g2Phase}
   data-approval-id={binding.approvalId}
   data-g9g2-approval-id={binding.g9g2ApprovalId}
   data-site-slug={binding.siteSlug}
   data-source={binding.source}
-  data-dry-run-preview-only={binding.dryRunPreviewOnly ? "true" : "false"}
+  data-dry-run-preview-only="true"
   data-actual-write="false"
+  data-g9g3a-save-hidden={binding.g9g3aSaveUiHidden ? "true" : "false"}
   data-g9g2-armed={binding.g9g2Armed ? "true" : "false"}
-  data-g9g2-save-enabled={binding.g9g2SaveEnabled ? "true" : "false"}
-  data-g9g2-default-title={binding.g9g2DefaultTitle}
+  data-g9g2-save-enabled="false"
+  data-host-gate-passed={binding.hostGatePassed ? "true" : "false"}
+  data-active-host={binding.activeHost}
+  data-expected-host={binding.expectedHost}
   data-target-row={targetRowJson}
   role="region"
   aria-label="Gosaki site_slug schedule edit"
 >
   <h2 class="admin-staging-schedule-site-slug-edit__title">
-    Schedule site_slug edit preview — dry-run + gated Save (G-9g2)
+    Schedule site_slug edit — multi-field dry-run (G-9g3a)
   </h2>
 
   <p class="admin-staging-schedule-site-slug-edit__safety" role="note">
-    <strong>Dry-run only — preview path never writes.</strong> G-9g1 preview always{" "}
-    <code>actualWrite=false</code>. Save is disabled in G-9g1.
-    {
-      binding.g9g2SaveEnabled ? (
-          <>
-            {" "}
-            G-9g2 Save armed — operator manual Save only after successful preview.
-          </>
-        ) : (
-          <>
-            {" "}
-            Save is disabled until G-9g2 env arm is satisfied.
-          </>
-        )
-    }
+    <strong>Dry-run only — preview path never writes.</strong> G-9g3a always{" "}
+    <code>actualWrite=false</code>. Save is disabled in G-9g3a. G-9g2 title Save UI is hidden.
   </p>
 
   {
-    !binding.g9g2Armed ? (
-      <p class="admin-staging-schedule-site-slug-edit__arm-note" role="note">
-        <strong>G-9g2 title Save is not armed.</strong> Set{" "}
-        <code>{binding.g9g2ArmEnv}=true</code> to enable operator-only PoC.
-        {binding.g9g2ArmFailureReason ? ` (${binding.g9g2ArmFailureReason})` : ""}
+    !binding.hostGatePassed ? (
+      <p class={`admin-staging-schedule-site-slug-edit__host-alert ${hostAlertClass}`} role="alert">
+        <strong>Supabase host gate failed.</strong>{" "}
+        {binding.hostGateWarning ?? "Active host does not match expected staging host."}
       </p>
-    ) : null
+    ) : (
+      <p class="admin-staging-schedule-site-slug-edit__host-ok" role="status">
+        Host gate passed — active host matches expected staging project.
+      </p>
+    )
   }
 
   {
@@ -80,23 +78,27 @@ const saveSectionVisible = binding.g9g2Armed || Boolean(binding.g9g2ArmFailureRe
   <dl class="admin-staging-schedule-site-slug-edit__summary">
     <div>
       <dt>Phase</dt>
-      <dd>{binding.g9g2Phase}</dd>
+      <dd>{binding.g9g3aPhase}</dd>
     </div>
     <div>
       <dt>Dry-run approval ID</dt>
       <dd><code>{binding.approvalId}</code></dd>
     </div>
     <div>
-      <dt>G-9g2 approval ID</dt>
-      <dd><code>{binding.g9g2ApprovalId}</code></dd>
-    </div>
-    <div>
       <dt>Site slug</dt>
       <dd><code>{binding.siteSlug}</code></dd>
     </div>
     <div>
-      <dt>G-9g2 armed</dt>
-      <dd id="site-slug-edit-g9g2-armed-status">{binding.g9g2Armed ? "true" : "false"}</dd>
+      <dt>activeHost</dt>
+      <dd><code id="site-slug-edit-active-host">{binding.activeHost}</code></dd>
+    </div>
+    <div>
+      <dt>expectedHost</dt>
+      <dd><code>{binding.expectedHost}</code></dd>
+    </div>
+    <div>
+      <dt>hostGatePassed</dt>
+      <dd id="site-slug-edit-host-gate-passed">{binding.hostGatePassed ? "true" : "false"}</dd>
     </div>
     <div>
       <dt>Data source</dt>
@@ -130,17 +132,60 @@ const saveSectionVisible = binding.g9g2Armed || Boolean(binding.g9g2ArmFailureRe
   </AdminCard>
 
   <AdminCard
-    title="Edit (title slice)"
-    description="G-9g1 dry-run helper supports all safe fields; UI edits title only."
+    title="Edit (safe fields)"
+    description="G-9g3a — venue, open_time, start_time, price, description + title (G-9g2 PoC marker)."
   >
     <AdminFormField label="Title">
       <input
         id="site-slug-edit-dry-run-title"
         type="text"
-        value={initialTitle}
+        value={row?.title ?? ""}
         disabled={uiDisabled}
         autocomplete="off"
       />
+    </AdminFormField>
+    <AdminFormField label="Venue">
+      <input
+        id="site-slug-edit-dry-run-venue"
+        type="text"
+        value={row?.venue ?? ""}
+        disabled={uiDisabled}
+        autocomplete="off"
+      />
+    </AdminFormField>
+    <AdminFormField label="Open time">
+      <input
+        id="site-slug-edit-dry-run-open-time"
+        type="text"
+        value={row?.open_time ?? ""}
+        disabled={uiDisabled}
+        autocomplete="off"
+      />
+    </AdminFormField>
+    <AdminFormField label="Start time">
+      <input
+        id="site-slug-edit-dry-run-start-time"
+        type="text"
+        value={row?.start_time ?? ""}
+        disabled={uiDisabled}
+        autocomplete="off"
+      />
+    </AdminFormField>
+    <AdminFormField label="Price">
+      <input
+        id="site-slug-edit-dry-run-price"
+        type="text"
+        value={row?.price ?? ""}
+        disabled={uiDisabled}
+        autocomplete="off"
+      />
+    </AdminFormField>
+    <AdminFormField label="Description">
+      <textarea
+        id="site-slug-edit-dry-run-description"
+        rows={3}
+        disabled={uiDisabled}
+        autocomplete="off">{row?.description ?? ""}</textarea>
     </AdminFormField>
 
     <div class="admin-staging-schedule-site-slug-edit__actions">
@@ -153,26 +198,13 @@ const saveSectionVisible = binding.g9g2Armed || Boolean(binding.g9g2ArmFailureRe
       >
         Preview dry-run
       </button>
-      {
-        saveSectionVisible ? (
-          <button
-            id="site-slug-edit-g9g2-save-btn"
-            class="admin-button admin-button--danger"
-            type="button"
-            disabled={true}
-            title="G-9g2 title non-dry-run — requires preview + gates"
-          >
-            Save title PoC
-          </button>
-        ) : null
-      }
     </div>
-    <p id="site-slug-edit-g9g2-save-hint" class="admin-staging-schedule-site-slug-edit__hint" role="status">
-      Save title PoC disabled — preview required.
+    <p id="site-slug-edit-g9g3a-hint" class="admin-staging-schedule-site-slug-edit__hint" role="status">
+      G-9g3a — Preview dry-run only. No Save in this phase.
     </p>
   </AdminCard>
 
-  <AdminCard title="Dry-run result" description="G-9g1 preview — actualWrite=false always">
+  <AdminCard title="Dry-run result" description="G-9g3a preview — actualWrite=false always">
     <div
       id="site-slug-edit-dry-run-result"
       class="site-slug-edit-dry-run-result"
@@ -184,26 +216,12 @@ const saveSectionVisible = binding.g9g2Armed || Boolean(binding.g9g2ArmFailureRe
     </div>
   </AdminCard>
 
-  {
-    saveSectionVisible ? (
-      <AdminCard title="G-9g2 Save result" description="Non-dry-run — actualWrite=true only after operator Save">
-        <div
-          id="site-slug-edit-g9g2-save-result"
-          class="site-slug-edit-save-result"
-          aria-live="polite"
-        >
-          <p class="site-slug-edit-save-result__placeholder">
-            Save title PoC not executed — operator manual action only.
-          </p>
-        </div>
-      </AdminCard>
-    ) : null
-  }
-
   <AdminCard title="Safety flags">
     <dl class="admin-staging-schedule-site-slug-edit__flags">
       <div><dt>dryRunPreview actualWrite</dt><dd>false</dd></div>
-      <div><dt>g9g2SaveEnabled</dt><dd>{binding.g9g2SaveEnabled ? "true" : "false"}</dd></div>
+      <div><dt>g9g3aSaveUiHidden</dt><dd>true</dd></div>
+      <div><dt>hostGatePassed</dt><dd>{binding.hostGatePassed ? "true" : "false"}</dd></div>
+      <div><dt>g9g2SaveEnabled</dt><dd>false</dd></div>
       <div><dt>restoreSaveImplemented</dt><dd>false</dd></div>
       <div><dt>writeAdapterUsed (preview)</dt><dd>false</dd></div>
       <div><dt>supabaseWriteCalled (preview)</dt><dd>false</dd></div>
@@ -230,7 +248,8 @@ const saveSectionVisible = binding.g9g2Armed || Boolean(binding.g9g2ArmFailureRe
   }
 
   .admin-staging-schedule-site-slug-edit__safety,
-  .admin-staging-schedule-site-slug-edit__arm-note {
+  .admin-staging-schedule-site-slug-edit__host-alert,
+  .admin-staging-schedule-site-slug-edit__host-ok {
     margin: 0 0 1rem;
     padding: 0.5rem 0.75rem;
     border-radius: 6px;
@@ -243,10 +262,22 @@ const saveSectionVisible = binding.g9g2Armed || Boolean(binding.g9g2ArmFailureRe
     color: #1e3a8a;
   }
 
-  .admin-staging-schedule-site-slug-edit__arm-note {
+  .admin-staging-schedule-site-slug-edit__host-warning {
     background: #fef3c7;
     border: 1px solid #fcd34d;
     color: #92400e;
+  }
+
+  .admin-staging-schedule-site-slug-edit__host-danger {
+    background: #fee2e2;
+    border: 1px solid #fca5a5;
+    color: #991b1b;
+  }
+
+  .admin-staging-schedule-site-slug-edit__host-ok {
+    background: #d1fae5;
+    border: 1px solid #6ee7b7;
+    color: #065f46;
   }
 
   .admin-staging-schedule-site-slug-edit__summary,
@@ -289,21 +320,24 @@ const saveSectionVisible = binding.g9g2Armed || Boolean(binding.g9g2ArmFailureRe
     margin-top: 0.75rem;
   }
 
-  .site-slug-edit-dry-run-result__placeholder,
-  .site-slug-edit-save-result__placeholder {
+  .admin-staging-schedule-site-slug-edit textarea {
+    width: 100%;
+    min-height: 4rem;
+    font: inherit;
+  }
+
+  .site-slug-edit-dry-run-result__placeholder {
     margin: 0;
     color: #64748b;
     font-size: 0.875rem;
   }
 
-  .site-slug-edit-dry-run-result__message,
-  .site-slug-edit-save-result__message {
+  .site-slug-edit-dry-run-result__message {
     margin: 0 0 0.75rem;
     font-size: 0.9rem;
   }
 
-  .site-slug-edit-dry-run-result__meta,
-  .site-slug-edit-save-result__meta {
+  .site-slug-edit-dry-run-result__meta {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
     gap: 0.5rem 1rem;
@@ -311,28 +345,24 @@ const saveSectionVisible = binding.g9g2Armed || Boolean(binding.g9g2ArmFailureRe
     font-size: 0.85rem;
   }
 
-  .site-slug-edit-dry-run-result__meta dt,
-  .site-slug-edit-save-result__meta dt {
+  .site-slug-edit-dry-run-result__meta dt {
     font-weight: 600;
     color: #64748b;
     font-size: 0.7rem;
     text-transform: uppercase;
   }
 
-  .site-slug-edit-dry-run-result__meta dd,
-  .site-slug-edit-save-result__meta dd {
+  .site-slug-edit-dry-run-result__meta dd {
     margin: 0.1rem 0 0;
     word-break: break-all;
   }
 
-  .site-slug-edit-dry-run-result__subhead,
-  .site-slug-edit-save-result__subhead {
+  .site-slug-edit-dry-run-result__subhead {
     margin: 0.75rem 0 0.35rem;
     font-size: 0.85rem;
   }
 
-  .site-slug-edit-dry-run-result__block,
-  .site-slug-edit-save-result__block {
+  .site-slug-edit-dry-run-result__block {
     margin: 0;
     padding: 0.5rem 0.75rem;
     background: #f8fafc;
@@ -349,6 +379,16 @@ const saveSectionVisible = binding.g9g2Armed || Boolean(binding.g9g2ArmFailureRe
     background: #fef3c7;
     border: 1px solid #fcd34d;
     color: #92400e;
+    font-size: 0.875rem;
+  }
+
+  .site-slug-edit-dry-run-result__host-fail {
+    margin: 0 0 0.75rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    background: #fee2e2;
+    border: 1px solid #fca5a5;
+    color: #991b1b;
     font-size: 0.875rem;
   }
 

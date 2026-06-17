@@ -36,6 +36,14 @@ export type SiteSlugScheduleEditOptimisticLockPreview = {
   message?: string | null;
 };
 
+export type SiteSlugScheduleEditHostGatePreview = {
+  activeHost: string;
+  expectedHost: string;
+  hostGatePassed: boolean;
+  isKnownProductionHost: boolean;
+  warningMessage: string | null;
+};
+
 export type SiteSlugScheduleEditDryRunResult = {
   phase: string;
   module: "schedule";
@@ -55,6 +63,7 @@ export type SiteSlugScheduleEditDryRunResult = {
   after: SiteSlugEditSafeFieldsSnapshot;
   changedFields: string[];
   optimisticLock: SiteSlugScheduleEditOptimisticLockPreview;
+  hostGate: SiteSlugScheduleEditHostGatePreview;
   message: string;
   safety: SiteSlugScheduleEditDryRunSafety;
 };
@@ -75,13 +84,28 @@ function normalizeCompare(value: string | null | undefined): string {
   return value;
 }
 
+/** Strip non-safe keys from a patch object. */
+export function sanitizeSiteSlugEditSafeFieldPatch(
+  patch: SiteSlugEditSafeFieldPatch,
+): SiteSlugEditSafeFieldPatch {
+  const safe: SiteSlugEditSafeFieldPatch = {};
+  for (const field of SITE_SLUG_EDIT_SAFE_FIELDS) {
+    if (Object.prototype.hasOwnProperty.call(patch, field)) {
+      safe[field] = patch[field];
+    }
+  }
+  return safe;
+}
+
 export function buildSiteSlugScheduleEditDryRunResult(input: {
   phase: string;
   source: ScheduleRecord;
   siteSlug: string;
   patch: SiteSlugEditSafeFieldPatch;
   optimisticLock?: ScheduleOptimisticLockDryRunState;
+  hostGate: SiteSlugScheduleEditHostGatePreview;
 }): SiteSlugScheduleEditDryRunResult {
+  const patch = sanitizeSiteSlugEditSafeFieldPatch(input.patch);
   const before = snapshotSafeFields(input.source);
   const after: SiteSlugEditSafeFieldsSnapshot = { ...before };
 
@@ -111,6 +135,14 @@ export function buildSiteSlugScheduleEditDryRunResult(input: {
     ? "Stale row detected. Preview only. Save remains unavailable."
     : null;
 
+  const hostMessage = !input.hostGate.hostGatePassed
+    ? input.hostGate.warningMessage
+    : null;
+
+  const combinedMessage = [hostMessage, staleMessage]
+    .filter(Boolean)
+    .join(" ");
+
   return {
     phase: input.phase,
     module: "schedule",
@@ -133,8 +165,9 @@ export function buildSiteSlugScheduleEditDryRunResult(input: {
     after,
     changedFields: [...changedFields],
     optimisticLock,
-    message: staleMessage
-      ? staleMessage
+    hostGate: input.hostGate,
+    message: combinedMessage
+      ? combinedMessage
       : changedFields.length
         ? `Dry-run preview: ${changedFields.join(", ")} would change.`
         : "Dry-run preview: no safe-field changes detected.",
@@ -152,7 +185,15 @@ export function buildSiteSlugScheduleEditDryRunError(input: {
   phase: string;
   siteSlug: string;
   message: string;
+  hostGate?: SiteSlugScheduleEditHostGatePreview;
 }): SiteSlugScheduleEditDryRunResult {
+  const emptyHostGate: SiteSlugScheduleEditHostGatePreview = {
+    activeHost: "—",
+    expectedHost: "—",
+    hostGatePassed: false,
+    isKnownProductionHost: false,
+    warningMessage: null,
+  };
   const empty: SiteSlugEditSafeFieldsSnapshot = {
     title: null,
     venue: null,
@@ -187,6 +228,7 @@ export function buildSiteSlugScheduleEditDryRunError(input: {
       staleCheckPerformed: false,
       optimisticLockEnabled: false,
     },
+    hostGate: input.hostGate ?? emptyHostGate,
     message: input.message,
     safety: {
       supabaseWriteCalled: false,

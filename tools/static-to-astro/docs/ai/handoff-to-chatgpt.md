@@ -5,37 +5,35 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-9d3-gosaki-preview-review-and-next-implementation-planning (planning complete — uncommitted)
-Latest commit: 467f226 (G-9d2 execution result)
+Current phase: G-9e-site-slug-schedule-read-generalization (implementation complete — uncommitted)
+Latest commit: e5aa2ab (G-9d3)
 ```
 
 ## Summary
 
-G-9d3: Preview review synthesis + next implementation roadmap for Gosaki CMS Kit.
+G-9e generalized Gosaki schedule Supabase read to CMS Kit `site_slug` loaders:
 
-- **Live preview:** `https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/`
-- **Schedule stack:** G-9b→G-9d2 complete (DB seed, Supabase read+fallback, live upload)
-- **Recommended next:** G-9e `site_slug` read generalization after optional client visual review
-- **Defer:** Production cutover planning until preview + CMS path proven
+- `loadScheduleRowsFromSupabase({ siteSlug, months, canonicalRoutePrefix })`
+- `loadScheduleDataForBuild({ siteSlug, staticFallback, ... })`
+- `loadGosakiScheduleDataForBuild()` — thin Gosaki wrapper
 
-**Doc:** `tools/static-to-astro/docs/gosaki-preview-review-and-next-implementation-planning.md`
+Fallback unchanged: supabase → static-fallback → wix-html. No DB writes, no service_role.
+
+**Doc:** `tools/static-to-astro/docs/site-slug-schedule-read-generalization.md`
 
 ## Gates
 
 ```txt
-gosakiPreviewReviewPlanningComplete: true
-gosakiNextImplementationOptionsDocumented: true
-readyForG9eNextImplementation: true
+siteSlugScheduleReadGeneralizationComplete: true
+genericScheduleReadHelperReady: true
+gosakiScheduleReadUsesGenericSiteSlugLoader: true
+readyForG9eCommit: true
 readyForAnyDbWrite: false
 readyForAnyFtpApply: false
 ftpAutoDeployStillDisabled: true
 ```
 
-## Safety
-
-- Planning only — no FTP, no DB writes
-
 ## Next
 
-- Commit G-9d3 planning
-- G-9e site_slug schedule read generalization
+- Commit G-9e
+- Staging shell schedule binding or client review

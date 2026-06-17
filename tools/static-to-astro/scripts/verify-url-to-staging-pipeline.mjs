@@ -960,6 +960,30 @@ assert(
   fs.readFileSync(gosakiScheduleDataPagesPath, "utf8").includes("scheduleDataSource="),
 );
 
+// --- G-9e site_slug schedule read generalization ---
+assert(
+  "G-9e generic loadScheduleRowsFromSupabase exists",
+  supabaseScheduleReadSrc.includes("loadScheduleRowsFromSupabase"),
+);
+assert(
+  "G-9e generic loadScheduleDataForBuild exists",
+  supabaseScheduleReadSrc.includes("loadScheduleDataForBuild"),
+);
+assert(
+  "G-9e gosaki wrapper delegates to generic loader",
+  supabaseScheduleReadSrc.includes("GOSAKI_SCHEDULE_SITE_CONFIG") &&
+    supabaseScheduleReadSrc.includes("loadGosakiScheduleDataForBuild"),
+);
+assert(
+  "G-9e canonical source_route filter helper",
+  supabaseScheduleReadSrc.includes("isCanonicalScheduleSourceRoute"),
+);
+assert(
+  "G-9e stable sort includes legacy_id",
+  supabaseScheduleReadSrc.includes("compareScheduleRecords") &&
+    supabaseScheduleReadSrc.includes("legacy_id"),
+);
+
 const gosakiPublicDist = path.join(TOOL_ROOT, "output/static-public/gosaki-piano/public-dist");
 for (const ym of ["2026-06", "2026-07"]) {
   const canonicalMonthPath = path.join(gosakiPublicDist, "schedule", ym, "index.html");

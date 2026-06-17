@@ -19,7 +19,10 @@ import {
 } from "./lib/gosaki-schedules-seed-sql.mjs";
 import {
   deriveScheduleMonthsFromSchedules,
+  GOSAKI_SCHEDULE_SITE_CONFIG,
+  isCanonicalScheduleSourceRoute,
   loadGosakiScheduleDataForBuild,
+  loadScheduleDataForBuild,
 } from "./lib/supabase-schedule-read.mjs";
 import { extractSchedulesFromHtmlFile } from "./lib/schedule-seed-extractor.mjs";
 import fs from "node:fs";
@@ -266,6 +269,33 @@ if (supabaseBundle.scheduleDataSource === "supabase") {
     "SKIP gosaki_supabase_read_* (Supabase env not configured — deferred)",
   );
 }
+
+// --- G-9e site_slug schedule read generalization ---
+assert(
+  "g9e_gosaki_site_config_site_slug",
+  GOSAKI_SCHEDULE_SITE_CONFIG.siteSlug === GOSAKI_SITE_SLUG,
+);
+assertEqual("g9e_gosaki_expected_month_count", GOSAKI_SCHEDULE_SITE_CONFIG.expectedMonths.length, 5);
+assert(
+  "g9e_canonical_route_filter",
+  isCanonicalScheduleSourceRoute("/schedule/2026-07/") &&
+    !isCanonicalScheduleSourceRoute("/2026-07/"),
+);
+let g9eSiteSlugRequired = false;
+try {
+  await loadScheduleDataForBuild({
+    siteSlug: "",
+    inputDir: GOSAKI_FIXTURE,
+    staticFallback: async () => [],
+  });
+} catch (err) {
+  g9eSiteSlugRequired = String(err.message).includes("siteSlug is required");
+}
+assert("g9e_generic_loader_requires_site_slug", g9eSiteSlugRequired);
+assert(
+  "g9e_gosaki_wrapper_uses_generic_loader",
+  fs.readFileSync(supabaseReadPath, "utf8").includes("loadScheduleDataForBuild"),
+);
 
 console.log("");
 console.log(`verify-gosaki-schedule-seed-extractor: ${passed} passed, ${failed} failed`);

@@ -1,6 +1,6 @@
 /**
- * G-9d — read-only Gosaki schedule fetch for Astro convert/build (anon key only).
- * No DB writes. Falls back to static fixture extractor when env missing or read fails.
+ * G-9d / G-9e — read-only CMS Kit schedule fetch for Astro convert/build (anon key only).
+ * Generic site_slug loader + Gosaki thin wrapper. No DB writes.
  */
 
 import fs from "node:fs";
@@ -18,8 +18,20 @@ import {
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const DEFAULT_TOOL_ROOT = path.resolve(__dirname, "../..");
 
+/** @deprecated use SCHEDULE_SELECT */
 export const GOSAKI_SCHEDULE_SELECT =
   "legacy_id,site_slug,date,year,month,title,venue,open_time,start_time,price,description,image_url,source_file,source_route,show_on_home,home_order,published,sort_order";
+
+export const SCHEDULE_SELECT = GOSAKI_SCHEDULE_SELECT;
+
+export const DEFAULT_CANONICAL_ROUTE_PREFIX = "/schedule/";
+
+/** Gosaki pilot — site_slug read config (G-9e) */
+export const GOSAKI_SCHEDULE_SITE_CONFIG = {
+  siteSlug: GOSAKI_SITE_SLUG,
+  canonicalRoutePrefix: DEFAULT_CANONICAL_ROUTE_PREFIX,
+  expectedMonths: ["2026-03", "2026-04", "2026-05", "2026-06", "2026-07"],
+};
 
 /**
  * @param {string | null | undefined} iso YYYY-MM-DD
@@ -60,6 +72,42 @@ export function normalizeScheduleRecord(row) {
     sort_order: row.sort_order ?? 0,
     label: yearStr && monthNum ? scheduleMonthDisplayLabel(yearStr, monthNum) : month,
   };
+}
+
+/**
+ * @param {string} route
+ * @param {string} [canonicalRoutePrefix]
+ */
+export function isCanonicalScheduleSourceRoute(
+  route,
+  canonicalRoutePrefix = DEFAULT_CANONICAL_ROUTE_PREFIX,
+) {
+  const prefix = canonicalRoutePrefix.endsWith("/")
+    ? canonicalRoutePrefix
+    : `${canonicalRoutePrefix}/`;
+  const escaped = prefix.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return new RegExp(`^${escaped}\\d{4}-\\d{2}/$`).test(String(route ?? ""));
+}
+
+/**
+ * Stable sort: date → sort_order → legacy_id
+ * @param {ReturnType<typeof normalizeScheduleRecord>} a
+ * @param {ReturnType<typeof normalizeScheduleRecord>} b
+ */
+export function compareScheduleRecords(a, b) {
+  const da = a.date || "";
+  const db = b.date || "";
+  if (da !== db) return da.localeCompare(db);
+  const sortDelta = (a.sort_order ?? 0) - (b.sort_order ?? 0);
+  if (sortDelta !== 0) return sortDelta;
+  return String(a.legacy_id ?? "").localeCompare(String(b.legacy_id ?? ""));
+}
+
+/**
+ * @param {Array<ReturnType<typeof normalizeScheduleRecord>>} schedules
+ */
+export function sortScheduleRecords(schedules) {
+  return [...schedules].sort(compareScheduleRecords);
 }
 
 /**
@@ -140,10 +188,23 @@ export function resolveSupabaseAnonReadEnv(processEnv = process.env, toolRoot = 
 }
 
 /**
- * @param {{ supabaseUrl: string, anonKey: string }} env
- * @param {string} siteSlug
+ * @param {{
+ *   env: { supabaseUrl: string, anonKey: string },
+ *   siteSlug: string,
+ *   months?: string[] | null,
+ *   canonicalRoutePrefix?: string,
+ * }} opts
  */
-export async function fetchGosakiSchedulesFromSupabase(env, siteSlug = GOSAKI_SITE_SLUG) {
+export async function loadScheduleRowsFromSupabase({
+  env,
+  siteSlug,
+  months = null,
+  canonicalRoutePrefix = DEFAULT_CANONICAL_ROUTE_PREFIX,
+}) {
+  if (!siteSlug) {
+    throw new Error("siteSlug is required for loadScheduleRowsFromSupabase");
+  }
+
   const { createClient } = await import("@supabase/supabase-js");
   const supabase = createClient(env.supabaseUrl, env.anonKey, {
     auth: { persistSession: false, autoRefreshToken: false },
@@ -151,7 +212,7 @@ export async function fetchGosakiSchedulesFromSupabase(env, siteSlug = GOSAKI_SI
 
   const { data, error } = await supabase
     .from("schedules")
-    .select(GOSAKI_SCHEDULE_SELECT)
+    .select(SCHEDULE_SELECT)
     .eq("site_slug", siteSlug)
     .eq("published", true)
     .order("date", { ascending: true })
@@ -161,30 +222,74 @@ export async function fetchGosakiSchedulesFromSupabase(env, siteSlug = GOSAKI_SI
     throw new Error(`Supabase schedules read failed: ${error.message}`);
   }
 
+  const monthSet = months?.length ? new Set(months) : null;
+
   const rows = (data ?? []).filter((row) => {
-    const route = String(row.source_route ?? "");
-    return route.startsWith("/schedule/") && /^\/schedule\/\d{4}-\d{2}\/$/.test(route);
+    if (!isCanonicalScheduleSourceRoute(row.source_route, canonicalRoutePrefix)) {
+      return false;
+    }
+    if (monthSet && !monthSet.has(String(row.month ?? ""))) {
+      return false;
+    }
+    return true;
   });
 
-  return rows;
+  return sortScheduleRecords(rows.map((row) => normalizeScheduleRecord(row)));
 }
 
 /**
- * @param {{ inputDir: string, siteSlug?: string, env?: NodeJS.ProcessEnv, toolRoot?: string }} opts
+ * @deprecated use loadScheduleRowsFromSupabase
  */
-export async function loadGosakiScheduleDataForBuild({
+export async function fetchGosakiSchedulesFromSupabase(env, siteSlug = GOSAKI_SITE_SLUG) {
+  return loadScheduleRowsFromSupabase({
+    env,
+    siteSlug,
+    months: GOSAKI_SCHEDULE_SITE_CONFIG.expectedMonths,
+    canonicalRoutePrefix: GOSAKI_SCHEDULE_SITE_CONFIG.canonicalRoutePrefix,
+  });
+}
+
+/**
+ * @param {{
+ *   siteSlug: string,
+ *   inputDir: string,
+ *   staticFallback: (inputDir: string) => Promise<Array<ReturnType<typeof normalizeScheduleRecord>> | Array<ReturnType<typeof normalizeScheduleRecord>>>,
+ *   env?: NodeJS.ProcessEnv,
+ *   toolRoot?: string,
+ *   canonicalRoutePrefix?: string,
+ *   months?: string[] | null,
+ *   logPrefix?: string,
+ * }} opts
+ */
+export async function loadScheduleDataForBuild({
+  siteSlug,
   inputDir,
-  siteSlug = GOSAKI_SITE_SLUG,
+  staticFallback,
   env = process.env,
   toolRoot = DEFAULT_TOOL_ROOT,
+  canonicalRoutePrefix = DEFAULT_CANONICAL_ROUTE_PREFIX,
+  months = null,
+  logPrefix = "schedule-read",
 }) {
+  if (!siteSlug) {
+    throw new Error("siteSlug is required for loadScheduleDataForBuild");
+  }
+  if (typeof staticFallback !== "function") {
+    throw new Error("staticFallback function is required for loadScheduleDataForBuild");
+  }
+
   const readEnv = resolveSupabaseAnonReadEnv(env, toolRoot);
+  const inputAbs = path.resolve(inputDir);
 
   if (readEnv) {
     try {
-      const rows = await fetchGosakiSchedulesFromSupabase(readEnv, siteSlug);
-      if (rows.length > 0) {
-        const schedules = rows.map((row) => normalizeScheduleRecord(row));
+      const schedules = await loadScheduleRowsFromSupabase({
+        env: readEnv,
+        siteSlug,
+        months,
+        canonicalRoutePrefix,
+      });
+      if (schedules.length > 0) {
         return {
           scheduleDataSource: "supabase",
           fallbackReason: null,
@@ -195,22 +300,27 @@ export async function loadGosakiScheduleDataForBuild({
         };
       }
       console.warn(
-        "[gosaki-schedule] Supabase returned 0 canonical rows; using static-fallback",
+        `[${logPrefix}] Supabase returned 0 canonical rows; using static-fallback`,
       );
     } catch (err) {
       console.warn(
-        `[gosaki-schedule] Supabase read failed (${err.message}); using static-fallback`,
+        `[${logPrefix}] Supabase read failed (${err.message}); using static-fallback`,
       );
     }
   } else {
     console.log(
-      "[gosaki-schedule] scheduleDataSource=static-fallback (Supabase env not configured)",
+      `[${logPrefix}] scheduleDataSource=static-fallback (Supabase env not configured)`,
     );
   }
 
-  const extracted = extractAllGosakiScheduleSeeds(path.resolve(inputDir));
-  if (extracted.schedules.length > 0) {
-    const schedules = extracted.schedules.map((row) => normalizeScheduleRecord(row));
+  const fallbackRows = await staticFallback(inputAbs);
+  const schedules = sortScheduleRecords(
+    (fallbackRows ?? []).map((row) =>
+      row.month && row.date !== undefined ? row : normalizeScheduleRecord(row),
+    ),
+  );
+
+  if (schedules.length > 0) {
     return {
       scheduleDataSource: "static-fallback",
       fallbackReason: readEnv ? "supabase_empty_or_error" : "supabase_env_missing",
@@ -229,4 +339,29 @@ export async function loadGosakiScheduleDataForBuild({
     siteSlug,
     rowCount: 0,
   };
+}
+
+/**
+ * Gosaki pilot wrapper — uses generic loadScheduleDataForBuild (G-9e).
+ * @param {{ inputDir: string, siteSlug?: string, env?: NodeJS.ProcessEnv, toolRoot?: string }} opts
+ */
+export async function loadGosakiScheduleDataForBuild({
+  inputDir,
+  siteSlug = GOSAKI_SCHEDULE_SITE_CONFIG.siteSlug,
+  env = process.env,
+  toolRoot = DEFAULT_TOOL_ROOT,
+}) {
+  return loadScheduleDataForBuild({
+    siteSlug,
+    inputDir,
+    env,
+    toolRoot,
+    canonicalRoutePrefix: GOSAKI_SCHEDULE_SITE_CONFIG.canonicalRoutePrefix,
+    months: GOSAKI_SCHEDULE_SITE_CONFIG.expectedMonths,
+    logPrefix: "gosaki-schedule",
+    staticFallback: async (inputAbs) => {
+      const extracted = extractAllGosakiScheduleSeeds(inputAbs);
+      return extracted.schedules.map((row) => normalizeScheduleRecord(row));
+    },
+  });
 }

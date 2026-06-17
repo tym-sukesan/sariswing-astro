@@ -1265,6 +1265,42 @@ assert(
     g9g2ExecutionSrc.includes("rollbackNeeded: false"),
 );
 
+// --- G-9g3 safe-fields edit planning ---
+const g9g3PlanningDocPath = path.join(
+  TOOL_ROOT,
+  "docs/staging-shell-schedule-site-slug-safe-fields-edit-planning.md",
+);
+assert("G-9g3 safe-fields planning doc exists", fs.existsSync(g9g3PlanningDocPath));
+const g9g3PlanningSrc = fs.readFileSync(g9g3PlanningDocPath, "utf8");
+assert(
+  "G-9g3 host hard gate required",
+  g9g3PlanningSrc.includes("kmjqppxjdnwwrtaeqjta.supabase.co") &&
+    g9g3PlanningSrc.includes("armed=false"),
+);
+assert(
+  "G-9g3 slice map G-9g3a through G-9g3d",
+  g9g3PlanningSrc.includes("G-9g3a") &&
+    g9g3PlanningSrc.includes("G-9g3b") &&
+    g9g3PlanningSrc.includes("G-9g3c") &&
+    g9g3PlanningSrc.includes("G-9g3d"),
+);
+assert(
+  "G-9g3 safe fields listed",
+  g9g3PlanningSrc.includes("venue") &&
+    g9g3PlanningSrc.includes("open_time") &&
+    g9g3PlanningSrc.includes("description"),
+);
+assert(
+  "G-9g3 planning no DB write",
+  g9g3PlanningSrc.includes("planning only") &&
+    g9g3PlanningSrc.includes("No Save"),
+);
+assert(
+  "G-9g3 reuse writeScope",
+  g9g3PlanningSrc.includes("writeScope") &&
+    g9g3PlanningSrc.includes("site_slug"),
+);
+
 const gosakiPublicDist = path.join(TOOL_ROOT, "output/static-public/gosaki-piano/public-dist");
 for (const ym of ["2026-06", "2026-07"]) {
   const canonicalMonthPath = path.join(gosakiPublicDist, "schedule", ym, "index.html");

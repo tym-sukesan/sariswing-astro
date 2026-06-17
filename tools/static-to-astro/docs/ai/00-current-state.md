@@ -21,11 +21,11 @@ Staging Shell
 将来的な顧客オンボーディング・課金・デプロイ自動化
 
 2. Current phase
-現在フェーズ: G-9g2-staging-shell-schedule-site-slug-title-non-dry-run-poc-execution（実行完了 — uncommitted）
+現在フェーズ: G-9g3-staging-shell-schedule-site-slug-safe-fields-edit-planning（planning 完了 — uncommitted）
 
-G-9g2 execution: operator 手動 Save 1回成功。title のみ UPDATE。`actualWrite=true`。staging `kmjqppxjdnwwrtaeqjta.supabase.co`。Cursor/AI は Save / SQL 未実行。
+G-9g3: safe fields（venue/time/price/description）slice 計画。host hard gate 必須。G-9g3a→b→c→d。DB write なし。
 
-G-9g2 preflight（commit `29b8426`）。implementation（commit `969822e`）。
+G-9g2 execution（commit `d57dd5f`）。title PoC 成功。restore 不要（痕跡保持）。
 
 G-9f: site_slug read-only binding（commit `8be88e7`）。
 
@@ -69,6 +69,7 @@ Gosaki staging:
   - `tools/static-to-astro/docs/gosaki-schedule-route-canonical-planning.md`
   - `tools/static-to-astro/docs/gosaki-schedule-canonical-route-implementation.md`
   - `tools/static-to-astro/docs/gosaki-schedule-legacy-month-route-stub.md`
+- G-9g3 planning doc: `tools/static-to-astro/docs/staging-shell-schedule-site-slug-safe-fields-edit-planning.md`
 - G-9g2 execution result doc: `tools/static-to-astro/docs/staging-shell-schedule-site-slug-title-non-dry-run-poc-execution-result.md`
 - G-9g2 preflight doc: `tools/static-to-astro/docs/staging-shell-schedule-site-slug-title-non-dry-run-poc-preflight.md`
 - G-9g2 impl doc: `tools/static-to-astro/docs/staging-shell-schedule-site-slug-title-non-dry-run-poc-implementation.md`
@@ -482,28 +483,25 @@ rollbackNeeded: false
 明示的 retry で dev server を起動する場合は inline env のみ使用する。
 
 10. Recommended next phase
-次フェーズ推奨: G-9g2 execution result commit → optional G-9g2-restore または次 site_slug slice planning
+次フェーズ推奨: G-9g3 planning commit → G-9g3a（host hard gate + safe-fields dry-run preview）
 
-G-9g2 execution 完了（uncommitted）。operator 手動 Save 1回。title=`[CMS Kit staging] G-9g2 title PoC`。updated_at=`2026-06-17T06:12:13.105898+00:00`。
+G-9g3 planning 完了（uncommitted）。slice: G-9g3a dry-run+host gate → G-9g3b venue+description → G-9g3c time+price → G-9g3d general UI。
 
 詳細:
-- `tools/static-to-astro/docs/staging-shell-schedule-site-slug-title-non-dry-run-poc-execution-result.md`
+- `tools/static-to-astro/docs/staging-shell-schedule-site-slug-safe-fields-edit-planning.md`
 
-G-9g2 execution gates:
+G-9g3 gates:
 ```txt
-stagingShellScheduleTitlePocExecutionSucceeded: true
-stagingShellScheduleTitlePocNotExecuted: false
-operatorG9g2TitlePocSaveExecuted: true
-cursorClickedSave: false
-rollbackNeeded: false
-readyForG9g2Restore: true
-readyForG9g3OrNextSiteSlugSlice: true
+stagingShellScheduleSiteSlugSafeFieldsEditPlanningComplete: true
+stagingShellScheduleHostHardGateRequired: true
+stagingShellScheduleSafeFieldsSliceMapDefined: true
+readyForG9g3aHostGateAndDryRunImplementation: true
 readyForAnyDbWrite: false
 readyForAnyFtpApply: false
 ftpAutoDeployStillDisabled: true
 ```
 
-Routine dev: `PUBLIC_ADMIN_WRITE_DRY_RUN=true`; G-9g2 arm off。G-9g2 Save を再クリックしない。
+G-9g2 title PoC 痕跡保持。restore 不要。routine dev: dry-run default / G-9g2 arm off。
 
 11. AI workflow transition
 チャット履歴への依存を減らすため、リポジトリ側に AI開発文脈管理ファイルを作成。

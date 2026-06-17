@@ -5,23 +5,26 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-9g3c-staging-shell-schedule-site-slug-time-price-non-dry-run-poc-planning (complete)
-Latest commit: 125d5d5 (G-9g3b execution result recorded)
-Git: working tree has uncommitted G-9g3c planning + AI context updates
+Current phase: G-9g3c-staging-shell-schedule-site-slug-time-price-non-dry-run-poc-implementation (complete)
+Latest commit (pushed): 26238e4 (G-9g3c planning)
+Git: working tree has uncommitted G-9g3c implementation + AI context updates
 ```
 
 ## Summary
 
-G-9g3b execution **succeeded** (`125d5d5`). G-9g3c planning defines next slice: `open_time` + `start_time` + `price` only.
+G-9g3c implementation adds gated Save for `open_time` + `start_time` + `price` on the Gosaki pilot row. **Save not executed** — implementation phase only.
 
 - **Target row:** `aa440e29-5be8-402e-9190-0d81c48434c0` / `schedule-2026-07-010` / `gosaki-piano`
 - **Lock baseline:** `updated_at` = `2026-06-17T14:36:04.711395+00:00` (verify live before Save)
 - **Approval ID:** `G-9g3c-schedule-site-slug-time-price-non-dry-run-poc`
 - **Env arm:** `PUBLIC_ADMIN_SCHEDULE_G9G3C_TIME_PRICE_NON_DRY_RUN_ARMED`
-- **Not executed:** G-9g3c implementation / Save / DB write
+- **Save executor:** `executeG9G3cTimePriceNonDryRunSave`
+- **Guard:** `assertG9G3cTimePricePayloadOnly`
+- **G-9g3b execution:** succeeded (`125d5d5`) — do not re-run G-9g2 / G-9g3b Save
 
 **Docs:**
-- `staging-shell-schedule-site-slug-time-price-non-dry-run-poc-planning.md` (**new**)
+- `staging-shell-schedule-site-slug-time-price-non-dry-run-poc-planning.md`
+- `staging-shell-schedule-site-slug-time-price-non-dry-run-poc-implementation.md` (**new**)
 - `staging-shell-schedule-site-slug-venue-description-non-dry-run-poc-execution-result.md`
 
 ## Routine dev safety (default)
@@ -41,9 +44,10 @@ Do **not** re-run G-9g2 or G-9g3b Save.
 ## Gates
 
 ```txt
-stagingShellScheduleTimePricePocPlanningComplete: true
-stagingShellScheduleVenueDescriptionPocExecutionSucceeded: true
-readyForG9g3cImplementation: true
+stagingShellScheduleTimePricePocImplementationComplete: true
+stagingShellScheduleTimePricePocSaveUiGated: true
+stagingShellScheduleTimePricePocNotExecuted: true
+readyForG9g3cPreflight: true
 readyForG9g3cExecution: false
 readyForAnyDbWrite: false
 rollbackNeeded: false
@@ -51,6 +55,6 @@ rollbackNeeded: false
 
 ## Next
 
-**G-9g3c-implementation** — gated Save UI + adapter; no Save / DB write in implementation phase.
+**G-9g3c-preflight** — beforeSnapshot / rollback SQL / dev arm procedure; no Save / DB write.
 
-Then: preflight → operator manual Save once (execution).
+Then: G-9g3c-execution — operator manual Save once.

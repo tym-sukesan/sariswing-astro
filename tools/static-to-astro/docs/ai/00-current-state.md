@@ -21,11 +21,11 @@ Staging Shell
 将来的な顧客オンボーディング・課金・デプロイ自動化
 
 2. Current phase
-現在フェーズ: G-9g3c-staging-shell-schedule-site-slug-time-price-non-dry-run-poc-planning — **完了**
+現在フェーズ: G-9g3c-staging-shell-schedule-site-slug-time-price-non-dry-run-poc-implementation — **完了**
 
-次フェーズ: **G-9g3c-implementation**（gated Save UI + adapter — Save / DB write なし）
+次フェーズ: **G-9g3c-preflight**（beforeSnapshot / rollback SQL / dev arm — Save / DB write なし）
 
-Git: 最新 push 済み commit `125d5d5`。G-9g3c planning doc + AI context 更新は **uncommitted**。
+Git: 最新 push 済み commit `26238e4`（G-9g3c planning）。G-9g3c implementation + AI context 更新は **uncommitted**。
 
 G-9g3b execution 成功（commit `125d5d5`）。`changedFields=venue,description` のみ。`updated_at` → `2026-06-17T14:36:04.711395+00:00`。`rollbackNeeded: false`。
 
@@ -82,6 +82,7 @@ Gosaki staging:
   - `tools/static-to-astro/docs/gosaki-schedule-canonical-route-implementation.md`
   - `tools/static-to-astro/docs/gosaki-schedule-legacy-month-route-stub.md`
 - G-9g3c planning doc: `tools/static-to-astro/docs/staging-shell-schedule-site-slug-time-price-non-dry-run-poc-planning.md`
+- G-9g3c implementation doc: `tools/static-to-astro/docs/staging-shell-schedule-site-slug-time-price-non-dry-run-poc-implementation.md`
 - G-9g3b execution result doc: `tools/static-to-astro/docs/staging-shell-schedule-site-slug-venue-description-non-dry-run-poc-execution-result.md`
 - G-9g3b impl doc: `tools/static-to-astro/docs/staging-shell-schedule-site-slug-venue-description-non-dry-run-poc-implementation.md`
 - G-9g3a smoke test doc: `tools/static-to-astro/docs/staging-shell-schedule-site-slug-safe-fields-dry-run-preview-smoke-test-result.md`
@@ -501,6 +502,7 @@ rollbackNeeded: false
 
 Routine dev safety（default）:
 ```txt
+PUBLIC_ADMIN_SCHEDULE_G9G3C_TIME_PRICE_NON_DRY_RUN_ARMED: off (unset)
 PUBLIC_ADMIN_SCHEDULE_G9G3B_VENUE_DESCRIPTION_NON_DRY_RUN_ARMED: off (unset)
 ENABLE_ADMIN_STAGING_WRITE: false
 PUBLIC_ADMIN_WRITE_DRY_RUN: true
@@ -512,9 +514,9 @@ PUBLIC_SUPABASE_URL host: kmjqppxjdnwwrtaeqjta.supabase.co (staging)
 **Note:** `tools/static-to-astro/.env.local` に `SUPABASE_SERVICE_ROLE_KEY` が local only（gitignored）で存在する場合がある。G-9g3b execution では使用禁止・参照禁止。anon key + authenticated session のみ。
 
 10. Recommended next phase
-次フェーズ推奨: **G-9g3c-implementation**（`open_time` + `start_time` + `price` gated Save — implementation only、Save / DB write なし）
+次フェーズ推奨: **G-9g3c-preflight**（beforeSnapshot / rollback SQL / dev arm procedure — Save / DB write なし）
 
-G-9g3c planning: **完了**。approval `G-9g3c-schedule-site-slug-time-price-non-dry-run-poc`、env `PUBLIC_ADMIN_SCHEDULE_G9G3C_TIME_PRICE_NON_DRY_RUN_ARMED`。
+G-9g3c implementation: **完了**（uncommitted）。approval `G-9g3c-schedule-site-slug-time-price-non-dry-run-poc`、env `PUBLIC_ADMIN_SCHEDULE_G9G3C_TIME_PRICE_NON_DRY_RUN_ARMED`。Save UI gated、default disabled。**Save 未実行。**
 
 G-9g3b execution: 完了（`125d5d5`）。**G-9g3b / G-9g2 Save を再実行しない。**
 
@@ -522,23 +524,25 @@ G-9g3c lock baseline: `updated_at` = `2026-06-17T14:36:04.711395+00:00`（prefli
 
 Phase sequence:
 ```txt
-G-9g3c-planning       ← complete
-G-9g3c-implementation ← next
-G-9g3c-preflight
+G-9g3c-planning       ← complete (26238e4)
+G-9g3c-implementation ← complete (uncommitted)
+G-9g3c-preflight      ← next
 G-9g3c-execution      ← operator manual Save once
 ```
 
 詳細:
 - `tools/static-to-astro/docs/staging-shell-schedule-site-slug-time-price-non-dry-run-poc-planning.md`
+- `tools/static-to-astro/docs/staging-shell-schedule-site-slug-time-price-non-dry-run-poc-implementation.md`
 - `tools/static-to-astro/docs/staging-shell-schedule-site-slug-venue-description-non-dry-run-poc-execution-result.md`
 - `tools/static-to-astro/docs/staging-shell-schedule-site-slug-safe-fields-edit-planning.md`
 
 G-9g3c gates:
 ```txt
 stagingShellScheduleTimePricePocPlanningComplete: true
-stagingShellScheduleTimePricePocImplementationComplete: false
+stagingShellScheduleTimePricePocImplementationComplete: true
+stagingShellScheduleTimePricePocSaveUiGated: true
 stagingShellScheduleTimePricePocNotExecuted: true
-readyForG9g3cImplementation: true
+readyForG9g3cPreflight: true
 readyForG9g3cExecution: false
 readyForG9g3bExecution: false
 readyForAnyDbWrite: false

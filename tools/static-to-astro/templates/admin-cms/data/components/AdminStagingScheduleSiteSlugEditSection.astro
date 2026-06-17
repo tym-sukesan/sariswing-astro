@@ -1,6 +1,6 @@
 ---
 /**
- * G-9g1 / G-9g2 / G-9g3a / G-9g3b — Staging shell Gosaki site_slug schedule edit.
+ * G-9g1 / G-9g2 / G-9g3a / G-9g3b / G-9g3c — Staging shell Gosaki site_slug schedule edit.
  */
 import AdminCard from "../../components/AdminCard.astro";
 import AdminFormField from "../../components/AdminFormField.astro";
@@ -15,8 +15,10 @@ const { binding } = Astro.props;
 const row = binding.targetRow;
 const uiDisabled = binding.source !== "supabase" || !row;
 const targetRowJson = row ? JSON.stringify(row) : "";
-const saveSectionVisible =
+const g9g3bSaveSectionVisible =
   binding.g9g3bArmed || Boolean(binding.g9g3bArmFailureReason);
+const g9g3cSaveSectionVisible =
+  binding.g9g3cArmed || Boolean(binding.g9g3cArmFailureReason);
 const hostAlertClass = binding.isKnownProductionHost
   ? "admin-staging-schedule-site-slug-edit__host-danger"
   : "admin-staging-schedule-site-slug-edit__host-warning";
@@ -28,8 +30,10 @@ const hostAlertClass = binding.isKnownProductionHost
   data-phase={binding.phase}
   data-g9g3a-phase={binding.g9g3aPhase}
   data-g9g3b-phase={binding.g9g3bPhase}
+  data-g9g3c-phase={binding.g9g3cPhase}
   data-approval-id={binding.approvalId}
   data-g9g3b-approval-id={binding.g9g3bApprovalId}
+  data-g9g3c-approval-id={binding.g9g3cApprovalId}
   data-site-slug={binding.siteSlug}
   data-source={binding.source}
   data-dry-run-preview-only="true"
@@ -37,6 +41,8 @@ const hostAlertClass = binding.isKnownProductionHost
   data-g9g3a-save-hidden={binding.g9g3aSaveUiHidden ? "true" : "false"}
   data-g9g3b-armed={binding.g9g3bArmed ? "true" : "false"}
   data-g9g3b-save-enabled={binding.g9g3bSaveEnabled ? "true" : "false"}
+  data-g9g3c-armed={binding.g9g3cArmed ? "true" : "false"}
+  data-g9g3c-save-enabled={binding.g9g3cSaveEnabled ? "true" : "false"}
   data-host-gate-passed={binding.hostGatePassed ? "true" : "false"}
   data-active-host={binding.activeHost}
   data-expected-host={binding.expectedHost}
@@ -45,12 +51,12 @@ const hostAlertClass = binding.isKnownProductionHost
   aria-label="Gosaki site_slug schedule edit"
 >
   <h2 class="admin-staging-schedule-site-slug-edit__title">
-    Schedule site_slug edit — venue+description PoC (G-9g3b)
+    Schedule site_slug edit — time+price PoC (G-9g3c)
   </h2>
 
   <p class="admin-staging-schedule-site-slug-edit__safety" role="note">
     <strong>Preview path never writes.</strong> Dry-run always{" "}
-    <code>actualWrite=false</code>. G-9g3b Save is gated — operator manual only, not auto-clicked.
+    <code>actualWrite=false</code>. G-9g3c / G-9g3b Save gated — operator manual only, not auto-clicked.
   </p>
 
   {
@@ -77,7 +83,11 @@ const hostAlertClass = binding.isKnownProductionHost
   <dl class="admin-staging-schedule-site-slug-edit__summary">
     <div>
       <dt>Phase</dt>
-      <dd>{binding.g9g3bPhase}</dd>
+      <dd>{binding.g9g3cPhase}</dd>
+    </div>
+    <div>
+      <dt>G-9g3c approval ID</dt>
+      <dd><code>{binding.g9g3cApprovalId}</code></dd>
     </div>
     <div>
       <dt>G-9g3b approval ID</dt>
@@ -132,7 +142,7 @@ const hostAlertClass = binding.isKnownProductionHost
 
   <AdminCard
     title="Edit (safe fields)"
-    description="G-9g3b — venue + description PoC slice. Title retained from G-9g2."
+    description="G-9g3c — open_time + start_time + price PoC slice. Title/venue/description from G-9g2/G-9g3b retained."
   >
     <AdminFormField label="Title">
       <input
@@ -198,7 +208,20 @@ const hostAlertClass = binding.isKnownProductionHost
         Preview dry-run
       </button>
       {
-        saveSectionVisible ? (
+        g9g3cSaveSectionVisible ? (
+          <button
+            id="site-slug-edit-g9g3c-save-btn"
+            class="admin-button admin-button--primary"
+            type="button"
+            disabled={true}
+            title="G-9g3c time+price PoC — gated; operator manual only"
+          >
+            Save time+price PoC
+          </button>
+        ) : null
+      }
+      {
+        g9g3bSaveSectionVisible ? (
           <button
             id="site-slug-edit-g9g3b-save-btn"
             class="admin-button admin-button--primary"
@@ -212,7 +235,13 @@ const hostAlertClass = binding.isKnownProductionHost
       }
     </div>
     {
-      saveSectionVisible ? (
+      g9g3cSaveSectionVisible ? (
+        <p id="site-slug-edit-g9g3c-save-hint" class="admin-staging-schedule-site-slug-edit__hint" role="status">
+          {binding.g9g3cArmFailureReason
+            ? `Save time+price PoC disabled — ${binding.g9g3cArmFailureReason}`
+            : "G-9g3c — Preview dry-run required before Save."}
+        </p>
+      ) : g9g3bSaveSectionVisible ? (
         <p id="site-slug-edit-g9g3b-save-hint" class="admin-staging-schedule-site-slug-edit__hint" role="status">
           {binding.g9g3bArmFailureReason
             ? `Save venue+description PoC disabled — ${binding.g9g3bArmFailureReason}`
@@ -220,7 +249,7 @@ const hostAlertClass = binding.isKnownProductionHost
         </p>
       ) : (
         <p id="site-slug-edit-g9g3a-hint" class="admin-staging-schedule-site-slug-edit__hint" role="status">
-          G-9g3b not armed — Preview dry-run only. Set {binding.g9g3bArmEnv}=true to expose Save.
+          G-9g3c not armed — Preview dry-run only. Set {binding.g9g3cArmEnv}=true to expose Save.
         </p>
       )
     }
@@ -239,8 +268,24 @@ const hostAlertClass = binding.isKnownProductionHost
   </AdminCard>
 
   {
-    saveSectionVisible ? (
-      <AdminCard title="Save result" description="G-9g3b non-dry-run — operator manual only">
+    g9g3cSaveSectionVisible ? (
+      <AdminCard title="Save result (G-9g3c)" description="Non-dry-run — operator manual only">
+        <div
+          id="site-slug-edit-g9g3c-save-result"
+          class="site-slug-edit-save-result"
+          aria-live="polite"
+        >
+          <p class="site-slug-edit-save-result__placeholder">
+            Save not executed — operator clicks Save time+price PoC once in execution phase.
+          </p>
+        </div>
+      </AdminCard>
+    ) : null
+  }
+
+  {
+    g9g3bSaveSectionVisible ? (
+      <AdminCard title="Save result (G-9g3b)" description="Non-dry-run — operator manual only">
         <div
           id="site-slug-edit-g9g3b-save-result"
           class="site-slug-edit-save-result"
@@ -257,6 +302,8 @@ const hostAlertClass = binding.isKnownProductionHost
   <AdminCard title="Safety flags">
     <dl class="admin-staging-schedule-site-slug-edit__flags">
       <div><dt>dryRunPreview actualWrite</dt><dd>false</dd></div>
+      <div><dt>g9g3cArmed</dt><dd>{binding.g9g3cArmed ? "true" : "false"}</dd></div>
+      <div><dt>g9g3cSaveEnabled</dt><dd>{binding.g9g3cSaveEnabled ? "true" : "false"}</dd></div>
       <div><dt>g9g3bArmed</dt><dd>{binding.g9g3bArmed ? "true" : "false"}</dd></div>
       <div><dt>g9g3bSaveEnabled</dt><dd>{binding.g9g3bSaveEnabled ? "true" : "false"}</dd></div>
       <div><dt>hostGatePassed</dt><dd>{binding.hostGatePassed ? "true" : "false"}</dd></div>

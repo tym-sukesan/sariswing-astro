@@ -4,6 +4,7 @@
 
 import { getReadOnlyDataConfig } from "./read-only-data-config";
 import { getG9G3bVenueDescriptionPocConfig } from "./staging-schedule-site-slug-venue-description-poc-config";
+import { getG9G3cTimePricePocConfig } from "./staging-schedule-site-slug-time-price-poc-config";
 import { evaluateSupabaseHostGate } from "./staging-schedule-site-slug-host-gate";
 import {
   extractSupabaseHost,
@@ -21,7 +22,13 @@ import {
   G9G3B_PHASE,
   G9G3B_VENUE_DESCRIPTION_NON_DRY_RUN_APPROVAL_ID,
   G9G3B_VENUE_POC_DEFAULT,
+  G9G3C_OPEN_TIME_POC_DEFAULT,
+  G9G3C_PHASE,
+  G9G3C_PRICE_POC_DEFAULT,
+  G9G3C_START_TIME_POC_DEFAULT,
+  G9G3C_TIME_PRICE_NON_DRY_RUN_APPROVAL_ID,
   SCHEDULE_G9G3B_VENUE_DESCRIPTION_NON_DRY_RUN_ARMED_ENV,
+  SCHEDULE_G9G3C_TIME_PRICE_NON_DRY_RUN_ARMED_ENV,
   SITE_SLUG_EDIT_SAFE_FIELDS,
   STAGING_SHELL_GOSAKI_SCHEDULE_SITE_SLUG,
 } from "./staging-schedule-site-slug-config";
@@ -32,14 +39,23 @@ export interface SiteSlugScheduleEditBinding {
   phase: string;
   g9g3aPhase: string;
   g9g3bPhase: string;
+  g9g3cPhase: string;
   approvalId: string;
   g9g3bApprovalId: string;
+  g9g3cApprovalId: string;
   g9g3bDefaultVenue: string;
   g9g3bDefaultDescription: string;
+  g9g3cDefaultOpenTime: string;
+  g9g3cDefaultStartTime: string;
+  g9g3cDefaultPrice: string;
   g9g3bArmed: boolean;
   g9g3bSaveEnabled: boolean;
   g9g3bArmFailureReason?: string;
   g9g3bArmEnv: string;
+  g9g3cArmed: boolean;
+  g9g3cSaveEnabled: boolean;
+  g9g3cArmFailureReason?: string;
+  g9g3cArmEnv: string;
   g9g3aSaveUiHidden: boolean;
   siteSlug: string;
   targetId: string;
@@ -63,21 +79,31 @@ export interface SiteSlugScheduleEditBinding {
 export async function resolveGosakiScheduleSiteSlugEditBinding(): Promise<SiteSlugScheduleEditBinding> {
   const dataConfig = getReadOnlyDataConfig();
   const g9g3bConfig = getG9G3bVenueDescriptionPocConfig();
+  const g9g3cConfig = getG9G3cTimePricePocConfig();
   const siteSlug = STAGING_SHELL_GOSAKI_SCHEDULE_SITE_SLUG;
   const hostGate = evaluateSupabaseHostGate(dataConfig.supabaseUrl);
 
   const base = {
-    phase: G9G3B_PHASE,
+    phase: G9G3C_PHASE,
     g9g3aPhase: G9G3A_PHASE,
     g9g3bPhase: G9G3B_PHASE,
+    g9g3cPhase: G9G3C_PHASE,
     approvalId: G9G1_DRY_RUN_APPROVAL_ID,
     g9g3bApprovalId: G9G3B_VENUE_DESCRIPTION_NON_DRY_RUN_APPROVAL_ID,
+    g9g3cApprovalId: G9G3C_TIME_PRICE_NON_DRY_RUN_APPROVAL_ID,
     g9g3bDefaultVenue: G9G3B_VENUE_POC_DEFAULT,
     g9g3bDefaultDescription: G9G3B_DESCRIPTION_POC_DEFAULT,
+    g9g3cDefaultOpenTime: G9G3C_OPEN_TIME_POC_DEFAULT,
+    g9g3cDefaultStartTime: G9G3C_START_TIME_POC_DEFAULT,
+    g9g3cDefaultPrice: G9G3C_PRICE_POC_DEFAULT,
     g9g3bArmed: g9g3bConfig.armed,
     g9g3bSaveEnabled: g9g3bConfig.saveEnabled && hostGate.hostGatePassed,
     g9g3bArmFailureReason: g9g3bConfig.armFailureReason,
     g9g3bArmEnv: SCHEDULE_G9G3B_VENUE_DESCRIPTION_NON_DRY_RUN_ARMED_ENV,
+    g9g3cArmed: g9g3cConfig.armed,
+    g9g3cSaveEnabled: g9g3cConfig.saveEnabled && hostGate.hostGatePassed,
+    g9g3cArmFailureReason: g9g3cConfig.armFailureReason,
+    g9g3cArmEnv: SCHEDULE_G9G3C_TIME_PRICE_NON_DRY_RUN_ARMED_ENV,
     g9g3aSaveUiHidden: false,
     siteSlug,
     targetId: G9G1_TARGET_ROW_ID,
@@ -147,9 +173,11 @@ export async function resolveGosakiScheduleSiteSlugEditBinding(): Promise<SiteSl
     ? "host gate passed"
     : "host gate failed — Save blocked";
 
-  const armNote = g9g3bConfig.armed
-    ? "G-9g3b armed — Save gated"
-    : "G-9g3b not armed — dry-run preview only";
+  const armNote = g9g3cConfig.armed
+    ? "G-9g3c armed — Save gated"
+    : g9g3bConfig.armed
+      ? "G-9g3b armed — Save gated"
+      : "G-9g3c/G-9g3b not armed — dry-run preview only";
 
   return {
     ...base,

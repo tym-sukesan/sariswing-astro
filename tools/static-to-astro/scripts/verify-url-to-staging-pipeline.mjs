@@ -1518,6 +1518,90 @@ assert(
   !g9g3bSaveSrc.includes("SERVICE_ROLE_KEY"),
 );
 
+// --- G-9g3c open_time + start_time + price non-dry-run PoC ---
+const g9g3cImplDocPath = path.join(
+  TOOL_ROOT,
+  "docs/staging-shell-schedule-site-slug-time-price-non-dry-run-poc-implementation.md",
+);
+const g9g3cPlanningDocPath = path.join(
+  TOOL_ROOT,
+  "docs/staging-shell-schedule-site-slug-time-price-non-dry-run-poc-planning.md",
+);
+const g9g3cSavePath = path.join(
+  REPO_ROOT,
+  "src/lib/admin/staging-write/staging-schedule-site-slug-time-price-poc-save.ts",
+);
+const g9g3cConfigPath = path.join(
+  REPO_ROOT,
+  "src/lib/admin/staging-data/staging-schedule-site-slug-time-price-poc-config.ts",
+);
+
+assert("G-9g3c implementation doc exists", fs.existsSync(g9g3cImplDocPath));
+assert("G-9g3c planning doc exists", fs.existsSync(g9g3cPlanningDocPath));
+assert("G-9g3c save module exists", fs.existsSync(g9g3cSavePath));
+assert("G-9g3c config module exists", fs.existsSync(g9g3cConfigPath));
+
+const g9g3cImplSrc = fs.readFileSync(g9g3cImplDocPath, "utf8");
+const g9g3cPlanningSrc = fs.readFileSync(g9g3cPlanningDocPath, "utf8");
+const g9g3cSaveSrc = fs.readFileSync(g9g3cSavePath, "utf8");
+const g9g3cConfigSrc = fs.readFileSync(g9g3cConfigPath, "utf8");
+
+assert(
+  "G-9g3c approval ID registered",
+  g9g1ConfigSrc.includes("G-9g3c-schedule-site-slug-time-price-non-dry-run-poc") &&
+    writeGuardsSrc.includes("assertG9G3cTimePricePayloadOnly"),
+);
+assert(
+  "G-9g3c env arm constant",
+  g9g1ConfigSrc.includes("PUBLIC_ADMIN_SCHEDULE_G9G3C_TIME_PRICE_NON_DRY_RUN_ARMED"),
+);
+assert(
+  "G-9g3c time price payload guard",
+  writeGuardsSrc.includes("assertG9G3cTimePricePayloadOnly") &&
+    g9g3cSaveSrc.includes("assertG9G3cTimePricePayloadOnly"),
+);
+assert(
+  "G-9g3c execute save entry",
+  g9g3cSaveSrc.includes("executeG9G3cTimePriceNonDryRunSave"),
+);
+assert(
+  "G-9g3c config host gate blocks arm",
+  g9g3cConfigSrc.includes("hostGatePassed") &&
+    g9g3cConfigSrc.includes("evaluateSupabaseHostGate"),
+);
+assert(
+  "G-9g3c single-arm g9g3b off",
+  g9g3cConfigSrc.includes("SCHEDULE_G9G3B_VENUE_DESCRIPTION_NON_DRY_RUN_ARMED_ENV") &&
+    g9g3bConfigSrc.includes("SCHEDULE_G9G3C_TIME_PRICE_NON_DRY_RUN_ARMED_ENV"),
+);
+assert(
+  "G-9g3c Save button label",
+  g9g1SectionSrc.includes("Save time+price PoC"),
+);
+assert(
+  "G-9g3c save button default disabled",
+  g9g1SectionSrc.includes('id="site-slug-edit-g9g3c-save-btn"') &&
+    g9g1SectionSrc.includes("disabled={true}"),
+);
+assert(
+  "G-9g3c edit UI save gating",
+  g9g3aEditUiSrc.includes("canEnableG9G3cSave") &&
+    g9g3aEditUiSrc.includes("changedFieldsMatchTimePriceOnly") &&
+    g9g3aEditUiSrc.includes("hostGate.hostGatePassed"),
+);
+assert(
+  "G-9g3c planning approval template",
+  g9g3cPlanningSrc.includes("G-9g3c time+price non-dry-run PoC"),
+);
+assert(
+  "G-9g3c implementation not executed",
+  g9g3cImplSrc.includes("stagingShellScheduleTimePricePocNotExecuted: true"),
+);
+assert(
+  "G-9g3c no service_role in save path",
+  !g9g3cSaveSrc.includes("SERVICE_ROLE_KEY"),
+);
+
 const gosakiPublicDist = path.join(TOOL_ROOT, "output/static-public/gosaki-piano/public-dist");
 for (const ym of ["2026-06", "2026-07"]) {
   const canonicalMonthPath = path.join(gosakiPublicDist, "schedule", ym, "index.html");

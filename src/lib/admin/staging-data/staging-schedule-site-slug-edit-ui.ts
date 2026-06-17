@@ -1,6 +1,7 @@
 /**
- * G-9g1 / G-9g2 / G-9g3a / G-9g3b — Browser UI for site_slug schedule edit (staging shell only).
- * G-9g3b: gated Save venue+description PoC. Preview: actualWrite=false always.
+ * G-9g1 / G-9g2 / G-9g3a / G-9g3b / G-9g3c — Browser UI for site_slug schedule edit (staging shell only).
+ * G-9g3b: gated Save venue+description PoC. G-9g3c: gated Save time+price PoC.
+ * Preview: actualWrite=false always.
  */
 
 import { refreshAuthWriteDebugPanel } from "../staging-auth/staging-auth-write-debug-ui";
@@ -14,6 +15,7 @@ import {
 } from "./staging-schedule-site-slug-edit-dry-run";
 import { evaluateSupabaseHostGate } from "./staging-schedule-site-slug-host-gate";
 import { getG9G3bVenueDescriptionPocConfig } from "./staging-schedule-site-slug-venue-description-poc-config";
+import { getG9G3cTimePricePocConfig } from "./staging-schedule-site-slug-time-price-poc-config";
 import {
   G9G1_TARGET_LEGACY_ID,
   G9G1_TARGET_ROW_ID,
@@ -21,10 +23,16 @@ import {
   G9G3B_PHASE,
   G9G3B_VENUE_DESCRIPTION_NON_DRY_RUN_APPROVAL_ID,
   G9G3B_VENUE_POC_DEFAULT,
+  G9G3C_OPEN_TIME_POC_DEFAULT,
+  G9G3C_PHASE,
+  G9G3C_PRICE_POC_DEFAULT,
+  G9G3C_START_TIME_POC_DEFAULT,
+  G9G3C_TIME_PRICE_NON_DRY_RUN_APPROVAL_ID,
   SITE_SLUG_EDIT_SAFE_FIELDS,
   STAGING_SHELL_GOSAKI_SCHEDULE_SITE_SLUG,
 } from "./staging-schedule-site-slug-config";
 import { executeG9G3bVenueDescriptionNonDryRunSave } from "../staging-write/staging-schedule-site-slug-venue-description-poc-save";
+import { executeG9G3cTimePriceNonDryRunSave } from "../staging-write/staging-schedule-site-slug-time-price-poc-save";
 import { runDryRunStaleCheck } from "../staging-write/schedule-optimistic-lock-dry-run";
 import type { ScheduleRecord } from "../staging-write/schedule-dry-run-types";
 import type { ScheduleWriteResult } from "../staging-write/schedule-write-types";
@@ -39,12 +47,19 @@ const SAFE_FIELD_INPUT_IDS: Record<(typeof SITE_SLUG_EDIT_SAFE_FIELDS)[number], 
 };
 
 const G9G3B_CHANGED_FIELDS = ["venue", "description"] as const;
+const G9G3C_CHANGED_FIELDS = ["open_time", "start_time", "price"] as const;
 
 let g9g3bDryRunPreviewValid = false;
 let lastPreviewVenue: string | null = null;
 let lastPreviewDescription: string | null = null;
 let lastPreviewChangedFields: string[] = [];
 let lastPreviewStale = false;
+let g9g3cDryRunPreviewValid = false;
+let lastPreviewOpenTime: string | null = null;
+let lastPreviewStartTime: string | null = null;
+let lastPreviewPrice: string | null = null;
+let lastPreviewG9g3cChangedFields: string[] = [];
+let lastPreviewG9g3cStale = false;
 let executionInFlight = false;
 
 function escapeHtml(value: string): string {
@@ -91,6 +106,11 @@ function isG9g3bArmed(): boolean {
   return root?.dataset.g9g3bArmed === "true";
 }
 
+function isG9g3cArmed(): boolean {
+  const root = getRoot();
+  return root?.dataset.g9g3cArmed === "true";
+}
+
 function getFieldValue(field: (typeof SITE_SLUG_EDIT_SAFE_FIELDS)[number]): string {
   const id = SAFE_FIELD_INPUT_IDS[field];
   const el = document.getElementById(id);
@@ -133,13 +153,27 @@ function changedFieldsMatchVenueDescriptionOnly(fields: string[]): boolean {
   return sorted.every((field, index) => field === expected[index]);
 }
 
+function changedFieldsMatchTimePriceOnly(fields: string[]): boolean {
+  if (fields.length !== G9G3C_CHANGED_FIELDS.length) return false;
+  const sorted = [...fields].sort();
+  const expected = [...G9G3C_CHANGED_FIELDS].sort();
+  return sorted.every((field, index) => field === expected[index]);
+}
+
 function invalidateDryRunPreview(): void {
   g9g3bDryRunPreviewValid = false;
   lastPreviewVenue = null;
   lastPreviewDescription = null;
   lastPreviewChangedFields = [];
   lastPreviewStale = false;
+  g9g3cDryRunPreviewValid = false;
+  lastPreviewOpenTime = null;
+  lastPreviewStartTime = null;
+  lastPreviewPrice = null;
+  lastPreviewG9g3cChangedFields = [];
+  lastPreviewG9g3cStale = false;
   refreshG9G3bSaveButtonState();
+  refreshG9G3cSaveButtonState();
 }
 
 function renderDryRunResult(result: SiteSlugScheduleEditDryRunResult): void {
@@ -211,8 +245,18 @@ function renderSaveResult(payload: {
   void refreshAuthWriteDebugPanel();
 }
 
-function otherSafeFieldsUnchanged(row: ScheduleRecord): boolean {
+function otherSafeFieldsUnchangedForG9g3b(row: ScheduleRecord): boolean {
   const unchangedFields = ["title", "open_time", "start_time", "price"] as const;
+  for (const field of unchangedFields) {
+    const current = getFieldValue(field);
+    const baseline = row[field] ?? "";
+    if (current !== baseline) return false;
+  }
+  return true;
+}
+
+function otherSafeFieldsUnchangedForG9g3c(row: ScheduleRecord): boolean {
+  const unchangedFields = ["title", "venue", "description"] as const;
   for (const field of unchangedFields) {
     const current = getFieldValue(field);
     const baseline = row[field] ?? "";
@@ -262,7 +306,7 @@ function canEnableG9G3bSave(): { ok: boolean; reason: string } {
   if (getFieldValue("description") !== lastPreviewDescription) {
     return { ok: false, reason: "Description changed since preview" };
   }
-  if (!otherSafeFieldsUnchanged(row)) {
+  if (!otherSafeFieldsUnchangedForG9g3b(row)) {
     return { ok: false, reason: "Non-target safe fields changed since load" };
   }
   if (!canUseLiveSupabase()) {
@@ -285,6 +329,108 @@ function refreshG9G3bSaveButtonState(): void {
   }
 }
 
+function canEnableG9G3cSave(): { ok: boolean; reason: string } {
+  const config = getG9G3cTimePricePocConfig();
+  const hostGate = getClientHostGate();
+
+  if (!hostGate.hostGatePassed) {
+    return {
+      ok: false,
+      reason: hostGate.warningMessage ?? "Supabase host gate failed",
+    };
+  }
+  if (!config.saveEnabled) {
+    return {
+      ok: false,
+      reason: config.armFailureReason ?? "G-9g3c time+price PoC not armed",
+    };
+  }
+  if (executionInFlight) return { ok: false, reason: "Save in flight" };
+  if (!g9g3cDryRunPreviewValid) {
+    return { ok: false, reason: "Dry-run preview required" };
+  }
+  if (lastPreviewG9g3cStale) return { ok: false, reason: "Stale — re-run preview" };
+  if (!changedFieldsMatchTimePriceOnly(lastPreviewG9g3cChangedFields)) {
+    return {
+      ok: false,
+      reason: 'changedFields must be ["open_time", "start_time", "price"] only',
+    };
+  }
+
+  const row = parseTargetRow();
+  if (!row || row.id !== G9G1_TARGET_ROW_ID) {
+    return { ok: false, reason: "Target row mismatch" };
+  }
+  if (row.legacy_id !== G9G1_TARGET_LEGACY_ID) {
+    return { ok: false, reason: "legacy_id mismatch" };
+  }
+  if (row.site_slug !== STAGING_SHELL_GOSAKI_SCHEDULE_SITE_SLUG) {
+    return { ok: false, reason: "site_slug mismatch" };
+  }
+  if (getFieldValue("open_time") !== lastPreviewOpenTime) {
+    return { ok: false, reason: "open_time changed since preview" };
+  }
+  if (getFieldValue("start_time") !== lastPreviewStartTime) {
+    return { ok: false, reason: "start_time changed since preview" };
+  }
+  if (getFieldValue("price") !== lastPreviewPrice) {
+    return { ok: false, reason: "price changed since preview" };
+  }
+  if (!otherSafeFieldsUnchangedForG9g3c(row)) {
+    return { ok: false, reason: "Non-target safe fields changed since load" };
+  }
+  if (!canUseLiveSupabase()) {
+    return { ok: false, reason: "Supabase read source required" };
+  }
+  return { ok: true, reason: "Ready (manual Save only — not auto-clicked)" };
+}
+
+function refreshG9G3cSaveButtonState(): void {
+  const btn = document.getElementById("site-slug-edit-g9g3c-save-btn");
+  const hint = document.getElementById("site-slug-edit-g9g3c-save-hint");
+  if (!btn) return;
+
+  const { ok, reason } = canEnableG9G3cSave();
+  (btn as HTMLButtonElement).disabled = !ok;
+  if (hint) {
+    hint.textContent = ok
+      ? reason
+      : `Save time+price PoC disabled — ${reason}`;
+  }
+}
+
+function renderG9G3cSaveResult(payload: {
+  actualWrite: boolean;
+  outcome: Awaited<ReturnType<typeof executeG9G3cTimePriceNonDryRunSave>>;
+}): void {
+  const el = document.getElementById("site-slug-edit-g9g3c-save-result");
+  if (!el) return;
+
+  const result = payload.outcome.result;
+  const success = result && "actualWrite" in result && result.actualWrite === true;
+
+  el.innerHTML = [
+    `<p class="site-slug-edit-save-result__message">${escapeHtml(
+      success
+        ? "G-9g3c Save completed — actualWrite=true."
+        : payload.outcome.errorMessage ?? "G-9g3c Save did not complete.",
+    )}</p>`,
+    `<dl class="site-slug-edit-save-result__meta">`,
+    `<div><dt>actualWrite</dt><dd>${payload.actualWrite ? "true" : "false"}</dd></div>`,
+    `<div><dt>approvalId</dt><dd><code>${escapeHtml(G9G3C_TIME_PRICE_NON_DRY_RUN_APPROVAL_ID)}</code></dd></div>`,
+    `<div><dt>errorCode</dt><dd>${escapeHtml(payload.outcome.errorCode ?? "—")}</dd></div>`,
+    `<div><dt>expectedBeforeUpdatedAt</dt><dd>${escapeHtml(payload.outcome.expectedBeforeUpdatedAt ?? "—")}</dd></div>`,
+    `</dl>`,
+    result && "afterSnapshot" in result
+      ? `<h4 class="site-slug-edit-save-result__subhead">updatedRow</h4><pre class="site-slug-edit-save-result__block">${escapeHtml(JSON.stringify((result as ScheduleWriteResult).afterSnapshot, null, 2))}</pre>`
+      : "",
+    `<h4 class="site-slug-edit-save-result__subhead">full outcome</h4>`,
+    `<pre class="site-slug-edit-save-result__block">${escapeHtml(JSON.stringify(payload.outcome, null, 2))}</pre>`,
+  ].join("");
+
+  void refreshAuthWriteDebugPanel();
+}
+
 async function onPreviewClick(): Promise<void> {
   const row = parseTargetRow();
   const hostGate = getClientHostGate();
@@ -298,10 +444,12 @@ async function onPreviewClick(): Promise<void> {
     warningMessage: hostGate.warningMessage,
   };
 
+  const previewPhase = isG9g3cArmed() ? G9G3C_PHASE : G9G3B_PHASE;
+
   if (!row) {
     renderDryRunResult(
       buildSiteSlugScheduleEditDryRunError({
-        phase: G9G3B_PHASE,
+        phase: previewPhase,
         siteSlug: STAGING_SHELL_GOSAKI_SCHEDULE_SITE_SLUG,
         message: "Target row not loaded — enable Supabase env and reload.",
         hostGate: hostGatePreview,
@@ -318,7 +466,7 @@ async function onPreviewClick(): Promise<void> {
   ) {
     renderDryRunResult(
       buildSiteSlugScheduleEditDryRunError({
-        phase: G9G3B_PHASE,
+        phase: previewPhase,
         siteSlug: STAGING_SHELL_GOSAKI_SCHEDULE_SITE_SLUG,
         message: "Target scope mismatch — preview blocked.",
         hostGate: hostGatePreview,
@@ -341,7 +489,7 @@ async function onPreviewClick(): Promise<void> {
   });
 
   const result = buildSiteSlugScheduleEditDryRunResult({
-    phase: G9G3B_PHASE,
+    phase: previewPhase,
     source: row,
     siteSlug: STAGING_SHELL_GOSAKI_SCHEDULE_SITE_SLUG,
     patch,
@@ -356,10 +504,17 @@ async function onPreviewClick(): Promise<void> {
   lastPreviewDescription = getFieldValue("description");
   lastPreviewChangedFields = [...result.changedFields];
   lastPreviewStale = result.optimisticLock.stale;
+  g9g3cDryRunPreviewValid = true;
+  lastPreviewOpenTime = getFieldValue("open_time");
+  lastPreviewStartTime = getFieldValue("start_time");
+  lastPreviewPrice = getFieldValue("price");
+  lastPreviewG9g3cChangedFields = [...result.changedFields];
+  lastPreviewG9g3cStale = result.optimisticLock.stale;
   refreshG9G3bSaveButtonState();
+  refreshG9G3cSaveButtonState();
 }
 
-async function onSaveClick(): Promise<void> {
+async function onG9g3bSaveClick(): Promise<void> {
   const gate = canEnableG9G3bSave();
   if (!gate.ok) {
     refreshG9G3bSaveButtonState();
@@ -409,6 +564,57 @@ async function onSaveClick(): Promise<void> {
   }
 }
 
+async function onG9g3cSaveClick(): Promise<void> {
+  const gate = canEnableG9G3cSave();
+  if (!gate.ok) {
+    refreshG9G3cSaveButtonState();
+    return;
+  }
+
+  const row = parseTargetRow();
+  if (!row) return;
+
+  executionInFlight = true;
+  refreshG9G3cSaveButtonState();
+
+  const { url, anonKey } = getSupabaseEnv();
+  const payload = {
+    open_time: getFieldValue("open_time"),
+    start_time: getFieldValue("start_time"),
+    price: getFieldValue("price"),
+  };
+
+  try {
+    const outcome = await executeG9G3cTimePriceNonDryRunSave({
+      url,
+      anonKey,
+      beforeSnapshot: row,
+      payload,
+    });
+
+    const actualWrite =
+      outcome.result != null &&
+      "actualWrite" in outcome.result &&
+      outcome.result.actualWrite === true;
+
+    renderG9G3cSaveResult({ actualWrite, outcome });
+
+    if (actualWrite && outcome.result && "afterSnapshot" in outcome.result) {
+      const root = getRoot();
+      if (root) {
+        const updated = outcome.result.afterSnapshot as ScheduleRecord;
+        root.dataset.targetRow = JSON.stringify(updated);
+        const baseline = document.getElementById("site-slug-edit-baseline-updated-at");
+        if (baseline) baseline.textContent = updated.updated_at ?? "—";
+      }
+      invalidateDryRunPreview();
+    }
+  } finally {
+    executionInFlight = false;
+    refreshG9G3cSaveButtonState();
+  }
+}
+
 function applyG9G3bDefaultFieldValues(row: ScheduleRecord | null): void {
   if (!isG9g3bArmed() || !row) return;
 
@@ -430,6 +636,30 @@ function applyG9G3bDefaultFieldValues(row: ScheduleRecord | null): void {
   }
 }
 
+function applyG9G3cDefaultFieldValues(row: ScheduleRecord | null): void {
+  if (!isG9g3cArmed() || !row) return;
+
+  const openInput = document.getElementById(
+    "site-slug-edit-dry-run-open-time",
+  ) as HTMLInputElement | null;
+  const startInput = document.getElementById(
+    "site-slug-edit-dry-run-start-time",
+  ) as HTMLInputElement | null;
+  const priceInput = document.getElementById(
+    "site-slug-edit-dry-run-price",
+  ) as HTMLInputElement | null;
+
+  if (openInput && !openInput.value.trim()) {
+    openInput.value = G9G3C_OPEN_TIME_POC_DEFAULT;
+  }
+  if (startInput && !startInput.value.trim()) {
+    startInput.value = G9G3C_START_TIME_POC_DEFAULT;
+  }
+  if (priceInput && !priceInput.value.trim()) {
+    priceInput.value = G9G3C_PRICE_POC_DEFAULT;
+  }
+}
+
 function initSiteSlugEditUi(): void {
   const root = getRoot();
   if (!root) return;
@@ -441,7 +671,11 @@ function initSiteSlugEditUi(): void {
     });
 
   document.getElementById("site-slug-edit-g9g3b-save-btn")?.addEventListener("click", () => {
-    void onSaveClick();
+    void onG9g3bSaveClick();
+  });
+
+  document.getElementById("site-slug-edit-g9g3c-save-btn")?.addEventListener("click", () => {
+    void onG9g3cSaveClick();
   });
 
   for (const field of SITE_SLUG_EDIT_SAFE_FIELDS) {
@@ -460,7 +694,9 @@ function initSiteSlugEditUi(): void {
 
   const row = parseTargetRow();
   applyG9G3bDefaultFieldValues(row);
+  applyG9G3cDefaultFieldValues(row);
   refreshG9G3bSaveButtonState();
+  refreshG9G3cSaveButtonState();
 }
 
 if (document.readyState === "loading") {

@@ -151,6 +151,28 @@ export function assertG9G3bVenueDescriptionPayloadOnly(
   }
 }
 
+export function assertG9G3cTimePricePayloadOnly(
+  payload: ScheduleUpdateWritePayload,
+): void {
+  const allowedKeys = new Set(["open_time", "start_time", "price"]);
+  const keys = Object.keys(payload);
+  if (keys.length === 0) {
+    throw new Error("G-9g3c payload must include open_time, start_time, and price.");
+  }
+  for (const key of keys) {
+    if (!allowedKeys.has(key)) {
+      throw new Error(`G-9g3c payload field not allowed: ${key}`);
+    }
+  }
+  if (
+    !keys.includes("open_time") ||
+    !keys.includes("start_time") ||
+    !keys.includes("price")
+  ) {
+    throw new Error("G-9g3c payload must include open_time, start_time, and price.");
+  }
+}
+
 export function assertBeforeSnapshotSiteSlugScope(
   beforeSnapshot: ScheduleDryRunSource,
   options: { siteSlug: string; legacyId: string; targetId: string },

@@ -5,33 +5,34 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-9g3a-staging-shell-schedule-site-slug-safe-fields-dry-run-preview (implementation complete — uncommitted)
-Latest commit: 51051c2 (G-9g3 planning)
+Current phase: G-9g3b-staging-shell-schedule-site-slug-venue-description-non-dry-run-poc-preflight (implementation + preflight complete — uncommitted)
+Latest commit: 54380a0 (G-9g3a host gate + multi-field dry-run)
 ```
 
 ## Summary
 
-G-9g3a adds host hard gate + multi-field dry-run preview before G-9g3b–d non-dry-run slices.
+G-9g3a smoke test passed (host gate, venue+description dry-run). G-9g3b adds gated Save for venue + description only.
 
 - **Title:** `[CMS Kit staging] G-9g2 title PoC` — keep; no restore
-- **Host gate:** `kmjqppxjdnwwrtaeqjta.supabase.co` required; `vsbvndwuajjhnzpohghh.supabase.co` → DANGER
-- **UI:** venue, open_time, start_time, price, description + title inputs; Preview dry-run only
-- **No Save / no DB write** in G-9g3a
+- **G-9g3b payload:** venue + description PoC values only
+- **Approval ID:** `G-9g3b-schedule-site-slug-venue-description-non-dry-run-poc`
+- **Not executed:** Save / DB write in this phase
 
-**Doc:** `tools/static-to-astro/docs/staging-shell-schedule-site-slug-safe-fields-dry-run-preview-implementation.md`
+**Docs:**
+- `staging-shell-schedule-site-slug-venue-description-non-dry-run-poc-preflight.md`
+- `staging-shell-schedule-site-slug-venue-description-non-dry-run-poc-implementation.md`
+- `staging-shell-schedule-site-slug-safe-fields-dry-run-preview-smoke-test-result.md`
 
 ## Gates
 
 ```txt
-stagingShellScheduleSiteSlugSafeFieldsDryRunPreviewComplete: true
-stagingShellScheduleHostHardGateImplemented: true
-stagingShellScheduleMultiFieldDryRunPreviewImplemented: true
-stagingShellScheduleG9g3aNoSaveUi: true
-readyForG9g3bVenueDescriptionPoc: true
+stagingShellScheduleVenueDescriptionPocPreflightComplete: true
+stagingShellScheduleVenueDescriptionPocNotExecuted: true
+readyForG9g3bExecution: true
 readyForAnyDbWrite: false
 ```
 
 ## Next
 
-- Commit G-9g3a implementation
-- G-9g3b venue + description non-dry-run PoC
+- Commit G-9g3b
+- G-9g3b-execution (operator manual Save once)

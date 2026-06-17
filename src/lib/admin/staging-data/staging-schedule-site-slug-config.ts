@@ -24,6 +24,21 @@ export const G9G2_TITLE_POC_DEFAULT_TITLE =
 export const G9G3A_PHASE =
   "G-9g3a-staging-shell-schedule-site-slug-safe-fields-dry-run-preview";
 
+export const G9G3B_PHASE =
+  "G-9g3b-staging-shell-schedule-site-slug-venue-description-non-dry-run-poc-implementation";
+
+export const G9G3B_VENUE_DESCRIPTION_NON_DRY_RUN_APPROVAL_ID =
+  "G-9g3b-schedule-site-slug-venue-description-non-dry-run-poc";
+
+export const SCHEDULE_G9G3B_VENUE_DESCRIPTION_NON_DRY_RUN_ARMED_ENV =
+  "PUBLIC_ADMIN_SCHEDULE_G9G3B_VENUE_DESCRIPTION_NON_DRY_RUN_ARMED";
+
+export const G9G3B_VENUE_POC_DEFAULT =
+  "[CMS Kit staging] G-9g3b venue PoC";
+
+export const G9G3B_DESCRIPTION_POC_DEFAULT =
+  "出演： [G-9g3b venue+description PoC]";
+
 /** Pilot site for staging shell schedule read binding. */
 export const STAGING_SHELL_GOSAKI_SCHEDULE_SITE_SLUG = "gosaki-piano";
 

@@ -1,9 +1,9 @@
 /**
- * G-9g1 / G-9g2 / G-9g3a — Staging shell Gosaki site_slug schedule edit binding (SSR).
+ * G-9g1 / G-9g2 / G-9g3a / G-9g3b — Staging shell Gosaki site_slug schedule edit binding (SSR).
  */
 
 import { getReadOnlyDataConfig } from "./read-only-data-config";
-import { getG9G2TitlePocConfig } from "./staging-schedule-site-slug-title-poc-config";
+import { getG9G3bVenueDescriptionPocConfig } from "./staging-schedule-site-slug-venue-description-poc-config";
 import { evaluateSupabaseHostGate } from "./staging-schedule-site-slug-host-gate";
 import {
   extractSupabaseHost,
@@ -14,14 +14,14 @@ import { loadScheduleRowForSiteSlugRead } from "../staging-write/staging-schedul
 import type { ScheduleRecord } from "../staging-write/schedule-dry-run-types";
 import {
   G9G1_DRY_RUN_APPROVAL_ID,
-  G9G1_PHASE,
   G9G1_TARGET_LEGACY_ID,
   G9G1_TARGET_ROW_ID,
-  G9G2_PHASE,
-  G9G2_TITLE_NON_DRY_RUN_APPROVAL_ID,
-  G9G2_TITLE_POC_DEFAULT_TITLE,
   G9G3A_PHASE,
-  SCHEDULE_G9G2_TITLE_NON_DRY_RUN_ARMED_ENV,
+  G9G3B_DESCRIPTION_POC_DEFAULT,
+  G9G3B_PHASE,
+  G9G3B_VENUE_DESCRIPTION_NON_DRY_RUN_APPROVAL_ID,
+  G9G3B_VENUE_POC_DEFAULT,
+  SCHEDULE_G9G3B_VENUE_DESCRIPTION_NON_DRY_RUN_ARMED_ENV,
   SITE_SLUG_EDIT_SAFE_FIELDS,
   STAGING_SHELL_GOSAKI_SCHEDULE_SITE_SLUG,
 } from "./staging-schedule-site-slug-config";
@@ -31,14 +31,15 @@ export type SiteSlugScheduleEditBindingSource = "supabase" | "unavailable";
 export interface SiteSlugScheduleEditBinding {
   phase: string;
   g9g3aPhase: string;
+  g9g3bPhase: string;
   approvalId: string;
-  g9g2Phase: string;
-  g9g2ApprovalId: string;
-  g9g2DefaultTitle: string;
-  g9g2Armed: boolean;
-  g9g2SaveEnabled: boolean;
-  g9g2ArmFailureReason?: string;
-  g9g2ArmEnv: string;
+  g9g3bApprovalId: string;
+  g9g3bDefaultVenue: string;
+  g9g3bDefaultDescription: string;
+  g9g3bArmed: boolean;
+  g9g3bSaveEnabled: boolean;
+  g9g3bArmFailureReason?: string;
+  g9g3bArmEnv: string;
   g9g3aSaveUiHidden: boolean;
   siteSlug: string;
   targetId: string;
@@ -61,22 +62,23 @@ export interface SiteSlugScheduleEditBinding {
 
 export async function resolveGosakiScheduleSiteSlugEditBinding(): Promise<SiteSlugScheduleEditBinding> {
   const dataConfig = getReadOnlyDataConfig();
-  const g9g2Config = getG9G2TitlePocConfig();
+  const g9g3bConfig = getG9G3bVenueDescriptionPocConfig();
   const siteSlug = STAGING_SHELL_GOSAKI_SCHEDULE_SITE_SLUG;
   const hostGate = evaluateSupabaseHostGate(dataConfig.supabaseUrl);
 
   const base = {
-    phase: G9G3A_PHASE,
+    phase: G9G3B_PHASE,
     g9g3aPhase: G9G3A_PHASE,
+    g9g3bPhase: G9G3B_PHASE,
     approvalId: G9G1_DRY_RUN_APPROVAL_ID,
-    g9g2Phase: G9G2_PHASE,
-    g9g2ApprovalId: G9G2_TITLE_NON_DRY_RUN_APPROVAL_ID,
-    g9g2DefaultTitle: G9G2_TITLE_POC_DEFAULT_TITLE,
-    g9g2Armed: g9g2Config.armed,
-    g9g2SaveEnabled: false,
-    g9g2ArmFailureReason: g9g2Config.armFailureReason,
-    g9g2ArmEnv: SCHEDULE_G9G2_TITLE_NON_DRY_RUN_ARMED_ENV,
-    g9g3aSaveUiHidden: true,
+    g9g3bApprovalId: G9G3B_VENUE_DESCRIPTION_NON_DRY_RUN_APPROVAL_ID,
+    g9g3bDefaultVenue: G9G3B_VENUE_POC_DEFAULT,
+    g9g3bDefaultDescription: G9G3B_DESCRIPTION_POC_DEFAULT,
+    g9g3bArmed: g9g3bConfig.armed,
+    g9g3bSaveEnabled: g9g3bConfig.saveEnabled && hostGate.hostGatePassed,
+    g9g3bArmFailureReason: g9g3bConfig.armFailureReason,
+    g9g3bArmEnv: SCHEDULE_G9G3B_VENUE_DESCRIPTION_NON_DRY_RUN_ARMED_ENV,
+    g9g3aSaveUiHidden: false,
     siteSlug,
     targetId: G9G1_TARGET_ROW_ID,
     legacyId: G9G1_TARGET_LEGACY_ID,
@@ -145,10 +147,14 @@ export async function resolveGosakiScheduleSiteSlugEditBinding(): Promise<SiteSl
     ? "host gate passed"
     : "host gate failed — Save blocked";
 
+  const armNote = g9g3bConfig.armed
+    ? "G-9g3b armed — Save gated"
+    : "G-9g3b not armed — dry-run preview only";
+
   return {
     ...base,
     source: "supabase",
     targetRow: result.row,
-    message: `Target row loaded — G-9g3a multi-field dry-run only (${hostNote}).`,
+    message: `Target row loaded — ${armNote} (${hostNote}).`,
   };
 }

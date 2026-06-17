@@ -3,43 +3,45 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 1. Immediate priority
 
-**Current phase:** `G-9g3a-staging-shell-schedule-site-slug-safe-fields-dry-run-preview` (implementation complete — uncommitted)
+**Current phase:** `G-9g3b-staging-shell-schedule-site-slug-venue-description-non-dry-run-poc-preflight` (implementation + preflight complete — uncommitted)
 
-**Doc:**
-- `tools/static-to-astro/docs/staging-shell-schedule-site-slug-safe-fields-dry-run-preview-implementation.md` (**new**)
+**Docs:**
+- `tools/static-to-astro/docs/staging-shell-schedule-site-slug-venue-description-non-dry-run-poc-implementation.md` (**new**)
+- `tools/static-to-astro/docs/staging-shell-schedule-site-slug-venue-description-non-dry-run-poc-preflight.md` (**new**)
+- `tools/static-to-astro/docs/staging-shell-schedule-site-slug-safe-fields-dry-run-preview-smoke-test-result.md` (**new**)
 
 **Awaiting:** operator commit approval
 
-### G-9g3a summary
+### G-9g3b summary
 
-- Host hard gate: `kmjqppxjdnwwrtaeqjta.supabase.co` expected; Sariswing production host → DANGER
-- Multi-field dry-run: venue, open_time, start_time, price, description + title
-- Preview only — no Save UI, no DB write
+- Fields: `venue` + `description` only
+- Approval ID: `G-9g3b-schedule-site-slug-venue-description-non-dry-run-poc`
+- Host gate mandatory; Save gated; not executed
 
 ### Gates
 
 ```txt
-stagingShellScheduleSiteSlugSafeFieldsDryRunPreviewComplete: true
-stagingShellScheduleHostHardGateImplemented: true
-stagingShellScheduleMultiFieldDryRunPreviewImplemented: true
-stagingShellScheduleG9g3aNoSaveUi: true
-readyForG9g3bVenueDescriptionPoc: true
+stagingShellScheduleVenueDescriptionPocImplementationComplete: true
+stagingShellScheduleVenueDescriptionPocPreflightComplete: true
+stagingShellScheduleVenueDescriptionPocNotExecuted: true
+readyForG9g3bExecution: true
 readyForAnyDbWrite: false
 ```
 
 ## 2. Next steps
 
-1. Commit G-9g3a implementation
-2. G-9g3b — venue + description non-dry-run PoC (operator approval, one Save)
+1. Commit G-9g3b implementation + preflight + G-9g3a smoke test record
+2. G-9g3b-execution — operator manual Save once (after approval + env arm)
 
 ## 3. Do not
 
+- Click Save in implementation/preflight phase
 - Re-click G-9g2 Save
-- Click Save in G-9g3a (no Save UI)
 - Modify `/admin` or production
-- Skip host gate in G-9g3b+
+- Skip host gate
 
 ## 4. Baseline
 
-- Latest commit: `51051c2` (G-9g3 planning)
-- Target row title: `[CMS Kit staging] G-9g2 title PoC` (keep as PoC marker)
+- Latest commit: `54380a0` (G-9g3a)
+- Target row title: `[CMS Kit staging] G-9g2 title PoC` (keep)
+- Lock baseline `updated_at`: `2026-06-17T06:12:13.105898+00:00` (G-9g2 — verify live before Save)

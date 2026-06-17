@@ -133,6 +133,24 @@ export function assertG9G2TitlePayloadOnly(
   }
 }
 
+export function assertG9G3bVenueDescriptionPayloadOnly(
+  payload: ScheduleUpdateWritePayload,
+): void {
+  const allowedKeys = new Set(["venue", "description"]);
+  const keys = Object.keys(payload);
+  if (keys.length === 0) {
+    throw new Error("G-9g3b payload must include venue and description.");
+  }
+  for (const key of keys) {
+    if (!allowedKeys.has(key)) {
+      throw new Error(`G-9g3b payload field not allowed: ${key}`);
+    }
+  }
+  if (!keys.includes("venue") || !keys.includes("description")) {
+    throw new Error("G-9g3b payload must include both venue and description.");
+  }
+}
+
 export function assertBeforeSnapshotSiteSlugScope(
   beforeSnapshot: ScheduleDryRunSource,
   options: { siteSlug: string; legacyId: string; targetId: string },

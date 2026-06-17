@@ -1088,9 +1088,9 @@ assert(
 );
 assert(
   "G-9g1 dry-run only safety marker",
-  g9g1SectionSrc.includes("Dry-run only") &&
-    (g9g1SectionSrc.includes("Save is disabled in G-9g1") ||
-      g9g1SectionSrc.includes("Save is disabled in G-9g3a")),
+  g9g1SectionSrc.includes("Dry-run only") ||
+    (g9g1SectionSrc.includes("Preview path never writes") &&
+      g9g1SectionSrc.includes("actualWrite=false")),
 );
 assert(
   "G-9g1 preview button only no save",
@@ -1354,9 +1354,10 @@ assert(
     g9g1DryRunSrc.includes("sanitizeSiteSlugEditSafeFieldPatch"),
 );
 assert(
-  "G-9g3a binding save hidden",
-  g9g3aBindingSrc.includes("g9g3aSaveUiHidden: true") &&
-    g9g3aBindingSrc.includes("dryRunPreviewOnly: true"),
+  "G-9g3a binding save hidden or G-9g3b phase",
+  (g9g3aBindingSrc.includes("g9g3aSaveUiHidden: true") &&
+    g9g3aBindingSrc.includes("dryRunPreviewOnly: true")) ||
+    g9g3aBindingSrc.includes("G9G3B_PHASE"),
 );
 assert(
   "G-9g3a G9G2 config host gate blocks arm",
@@ -1378,16 +1379,18 @@ assert(
     g9g1SectionSrc.includes("activeHost"),
 );
 assert(
-  "G-9g3a no save button in section",
-  !g9g1SectionSrc.includes('id="site-slug-edit-g9g2-save-btn"') &&
+  "G-9g3a no save button or G-9g3b gated save",
+  (!g9g1SectionSrc.includes('id="site-slug-edit-g9g2-save-btn"') &&
     g9g1SectionSrc.includes("Preview dry-run") &&
-    !g9g1SectionSrc.match(/>\s*Save\s*</),
+    (g9g3aImplDocSrc.includes("stagingShellScheduleG9g3aNoSaveUi: true") ||
+      g9g1SectionSrc.includes('id="site-slug-edit-g9g3b-save-btn"'))) ||
+    g9g1SectionSrc.includes('id="site-slug-edit-g9g3b-save-btn"'),
 );
 assert(
   "G-9g3a edit UI renders host gate in result",
   g9g3aEditUiSrc.includes("activeHost") &&
     g9g3aEditUiSrc.includes("hostGatePassed") &&
-    g9g3aEditUiSrc.includes("G9G3A_PHASE"),
+    (g9g3aEditUiSrc.includes("G9G3A_PHASE") || g9g3aEditUiSrc.includes("G9G3B_PHASE")),
 );
 assert(
   "G-9g3a live stale check gated by host",
@@ -1404,6 +1407,115 @@ assert(
   "G-9g3a no service_role",
   !g9g3aHostGateSrc.includes("SERVICE_ROLE_KEY") &&
     !g9g3aEditUiSrc.includes("SERVICE_ROLE_KEY"),
+);
+
+// --- G-9g3a smoke test result ---
+const g9g3aSmokeDocPath = path.join(
+  TOOL_ROOT,
+  "docs/staging-shell-schedule-site-slug-safe-fields-dry-run-preview-smoke-test-result.md",
+);
+assert("G-9g3a smoke test doc exists", fs.existsSync(g9g3aSmokeDocPath));
+const g9g3aSmokeSrc = fs.readFileSync(g9g3aSmokeDocPath, "utf8");
+assert(
+  "G-9g3a smoke host gate passed",
+  g9g3aSmokeSrc.includes("hostGatePassed") &&
+    g9g3aSmokeSrc.includes("kmjqppxjdnwwrtaeqjta.supabase.co"),
+);
+assert(
+  "G-9g3a smoke changedFields venue description",
+  g9g3aSmokeSrc.includes("venue") && g9g3aSmokeSrc.includes("description"),
+);
+assert(
+  "G-9g3a smoke no db write",
+  g9g3aSmokeSrc.includes("DB write") && g9g3aSmokeSrc.includes("no"),
+);
+
+// --- G-9g3b venue + description non-dry-run PoC ---
+const g9g3bImplDocPath = path.join(
+  TOOL_ROOT,
+  "docs/staging-shell-schedule-site-slug-venue-description-non-dry-run-poc-implementation.md",
+);
+const g9g3bPreflightDocPath = path.join(
+  TOOL_ROOT,
+  "docs/staging-shell-schedule-site-slug-venue-description-non-dry-run-poc-preflight.md",
+);
+const g9g3bSavePath = path.join(
+  REPO_ROOT,
+  "src/lib/admin/staging-write/staging-schedule-site-slug-venue-description-poc-save.ts",
+);
+const g9g3bConfigPath = path.join(
+  REPO_ROOT,
+  "src/lib/admin/staging-data/staging-schedule-site-slug-venue-description-poc-config.ts",
+);
+
+assert("G-9g3b implementation doc exists", fs.existsSync(g9g3bImplDocPath));
+assert("G-9g3b preflight doc exists", fs.existsSync(g9g3bPreflightDocPath));
+assert("G-9g3b save module exists", fs.existsSync(g9g3bSavePath));
+assert("G-9g3b config module exists", fs.existsSync(g9g3bConfigPath));
+
+const g9g3bImplSrc = fs.readFileSync(g9g3bImplDocPath, "utf8");
+const g9g3bPreflightSrc = fs.readFileSync(g9g3bPreflightDocPath, "utf8");
+const g9g3bSaveSrc = fs.readFileSync(g9g3bSavePath, "utf8");
+const g9g3bConfigSrc = fs.readFileSync(g9g3bConfigPath, "utf8");
+
+assert(
+  "G-9g3b approval ID registered",
+  g9g1ConfigSrc.includes("G-9g3b-schedule-site-slug-venue-description-non-dry-run-poc") &&
+    writeGuardsSrc.includes("assertG9G3bVenueDescriptionPayloadOnly"),
+);
+assert(
+  "G-9g3b env arm constant",
+  g9g1ConfigSrc.includes("PUBLIC_ADMIN_SCHEDULE_G9G3B_VENUE_DESCRIPTION_NON_DRY_RUN_ARMED"),
+);
+assert(
+  "G-9g3b venue description payload guard",
+  writeGuardsSrc.includes("assertG9G3bVenueDescriptionPayloadOnly") &&
+    g9g3bSaveSrc.includes("assertG9G3bVenueDescriptionPayloadOnly"),
+);
+assert(
+  "G-9g3b execute save entry",
+  g9g3bSaveSrc.includes("executeG9G3bVenueDescriptionNonDryRunSave"),
+);
+assert(
+  "G-9g3b config host gate blocks arm",
+  g9g3bConfigSrc.includes("hostGatePassed") &&
+    g9g3bConfigSrc.includes("evaluateSupabaseHostGate"),
+);
+assert(
+  "G-9g3b single-arm g9g2 off",
+  g9g3bConfigSrc.includes("SCHEDULE_G9G2_TITLE_NON_DRY_RUN_ARMED_ENV") &&
+    g9g2ConfigSrc.includes("SCHEDULE_G9G3B_VENUE_DESCRIPTION_NON_DRY_RUN_ARMED_ENV"),
+);
+assert(
+  "G-9g3b Save button label",
+  g9g1SectionSrc.includes("Save venue+description PoC"),
+);
+assert(
+  "G-9g3b save button default disabled",
+  g9g1SectionSrc.includes('id="site-slug-edit-g9g3b-save-btn"') &&
+    g9g1SectionSrc.includes("disabled={true}"),
+);
+assert(
+  "G-9g3b edit UI save gating",
+  g9g3aEditUiSrc.includes("canEnableG9G3bSave") &&
+    g9g3aEditUiSrc.includes("changedFieldsMatchVenueDescriptionOnly") &&
+    g9g3aEditUiSrc.includes("hostGate.hostGatePassed"),
+);
+assert(
+  "G-9g3b preflight operator approval",
+  g9g3bPreflightSrc.includes("G-9g3b venue+description non-dry-run PoC"),
+);
+assert(
+  "G-9g3b preflight no save click",
+  g9g3bPreflightSrc.includes("no Save click"),
+);
+assert(
+  "G-9g3b implementation not executed",
+  g9g3bImplSrc.includes("stagingShellScheduleVenueDescriptionPocNotExecuted: true"),
+);
+assert(
+  "G-9g3b no service_role in save path",
+  !g9g3bSaveSrc.includes("SERVICE_ROLE_KEY"),
 );
 
 const gosakiPublicDist = path.join(TOOL_ROOT, "output/static-public/gosaki-piano/public-dist");

@@ -21,11 +21,15 @@ Staging Shell
 将来的な顧客オンボーディング・課金・デプロイ自動化
 
 2. Current phase
-現在フェーズ: G-9g3a-staging-shell-schedule-site-slug-safe-fields-dry-run-preview（implementation 完了 — uncommitted）
+現在フェーズ: G-9g3b-staging-shell-schedule-site-slug-venue-description-non-dry-run-poc-preflight（implementation + preflight 完了 — uncommitted）
 
-G-9g3a: host hard gate + multi-field dry-run preview。Save なし / DB write なし。
+G-9g3b: venue + description gated Save 実装 + preflight。Save / DB write 未実行。
 
-G-9g3 planning（commit `51051c2`）。slice: G-9g3a→b→c→d。
+G-9g3a smoke test 成功（commit `54380a0` 後）。host gate + multi-field dry-run 確認済み。
+
+G-9g3a implementation（commit `54380a0`）。
+
+G-9g3 planning（commit `51051c2`）。
 
 G-9g2 execution（commit `d57dd5f`）。title PoC 成功。restore 不要（痕跡保持）。
 
@@ -71,6 +75,9 @@ Gosaki staging:
   - `tools/static-to-astro/docs/gosaki-schedule-route-canonical-planning.md`
   - `tools/static-to-astro/docs/gosaki-schedule-canonical-route-implementation.md`
   - `tools/static-to-astro/docs/gosaki-schedule-legacy-month-route-stub.md`
+- G-9g3b preflight doc: `tools/static-to-astro/docs/staging-shell-schedule-site-slug-venue-description-non-dry-run-poc-preflight.md`
+- G-9g3b impl doc: `tools/static-to-astro/docs/staging-shell-schedule-site-slug-venue-description-non-dry-run-poc-implementation.md`
+- G-9g3a smoke test doc: `tools/static-to-astro/docs/staging-shell-schedule-site-slug-safe-fields-dry-run-preview-smoke-test-result.md`
 - G-9g3a impl doc: `tools/static-to-astro/docs/staging-shell-schedule-site-slug-safe-fields-dry-run-preview-implementation.md`
 - G-9g3 planning doc: `tools/static-to-astro/docs/staging-shell-schedule-site-slug-safe-fields-edit-planning.md`
 - G-9g2 execution result doc: `tools/static-to-astro/docs/staging-shell-schedule-site-slug-title-non-dry-run-poc-execution-result.md`
@@ -486,22 +493,25 @@ rollbackNeeded: false
 明示的 retry で dev server を起動する場合は inline env のみ使用する。
 
 10. Recommended next phase
-次フェーズ推奨: G-9g3a commit → G-9g3b（venue + description non-dry-run PoC）
+次フェーズ推奨: G-9g3b commit → G-9g3b-execution（operator manual Save once）
 
-G-9g3a implementation 完了（uncommitted）。host gate + multi-field dry-run preview。Save UI 非表示。
+G-9g3b implementation + preflight 完了（uncommitted）。venue + description gated Save。未実行。
+
+G-9g3a smoke test 記録済み。host gate passed、changedFields=venue+description、actualWrite=false。
 
 詳細:
-- `tools/static-to-astro/docs/staging-shell-schedule-site-slug-safe-fields-dry-run-preview-implementation.md`
-- `tools/static-to-astro/docs/staging-shell-schedule-site-slug-safe-fields-edit-planning.md`
+- `tools/static-to-astro/docs/staging-shell-schedule-site-slug-venue-description-non-dry-run-poc-preflight.md`
+- `tools/static-to-astro/docs/staging-shell-schedule-site-slug-venue-description-non-dry-run-poc-implementation.md`
+- `tools/static-to-astro/docs/staging-shell-schedule-site-slug-safe-fields-dry-run-preview-smoke-test-result.md`
 
-G-9g3a gates:
+G-9g3b gates:
 ```txt
-stagingShellScheduleSiteSlugSafeFieldsDryRunPreviewComplete: true
-stagingShellScheduleHostHardGateImplemented: true
-stagingShellScheduleMultiFieldDryRunPreviewImplemented: true
-stagingShellScheduleG9g3aNoSaveUi: true
-stagingShellScheduleG9g3aNotExecuted: true
-readyForG9g3bVenueDescriptionPoc: true
+stagingShellScheduleVenueDescriptionPocImplementationComplete: true
+stagingShellScheduleVenueDescriptionPocPreflightComplete: true
+stagingShellScheduleVenueDescriptionPocSaveUiGated: true
+stagingShellScheduleVenueDescriptionPocHostGateRequired: true
+stagingShellScheduleVenueDescriptionPocNotExecuted: true
+readyForG9g3bExecution: true
 readyForAnyDbWrite: false
 readyForAnyFtpApply: false
 ftpAutoDeployStillDisabled: true

@@ -3,38 +3,43 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 1. Immediate priority
 
-**Current phase:** `G-9g2-staging-shell-schedule-site-slug-title-non-dry-run-poc-preflight` (preflight complete — uncommitted)
+**Current phase:** `G-9g2-staging-shell-schedule-site-slug-title-non-dry-run-poc-execution` (execution complete — uncommitted)
 
 **Doc:**
-- `tools/static-to-astro/docs/staging-shell-schedule-site-slug-title-non-dry-run-poc-preflight.md` (**new**)
+- `tools/static-to-astro/docs/staging-shell-schedule-site-slug-title-non-dry-run-poc-execution-result.md` (**new**)
 
-**Awaiting:** operator commit approval (`Document schedule title PoC preflight`)
+**Awaiting:** operator commit approval for execution result doc
 
-### G-9g2 preflight summary
+### G-9g2 execution summary
 
-- beforeSnapshot / dry-run / Save / restore checklist
-- Operator approval text documented
-- Save **not** executed by Cursor
+- Operator manual Save once — **PASS**
+- `actualWrite=true`; title=`[CMS Kit staging] G-9g2 title PoC`
+- `updated_at=2026-06-17T06:12:13.105898+00:00`
+- Staging host: `kmjqppxjdnwwrtaeqjta.supabase.co`
+- Cursor did **not** click Save or run SQL
 
 ### Gates
 
 ```txt
-stagingShellScheduleTitlePocPreflightComplete: true
-readyForOperatorG9g2TitlePocSave: true
+stagingShellScheduleTitlePocExecutionSucceeded: true
+operatorG9g2TitlePocSaveExecuted: true
+readyForG9g2Restore: true
 readyForAnyDbWrite: false
 ```
 
 ## 2. Next steps
 
-1. Commit G-9g2 preflight docs
-2. G-9g2-execution — operator approval + manual Save once (separate phase)
+1. Commit G-9g2 execution result doc + AI context
+2. Optional G-9g2-restore (`title = <>`) with separate approval
+3. Or plan next site_slug edit slice (G-9g3+)
 
 ## 3. Do not
 
-- Cursor click Save / DB writes until execution phase
-- Modify `/admin` or G-6 frozen paths
+- Re-click G-9g2 Save
+- Arm G-9g2 non-dry-run in routine dev without new approval
+- Modify `/admin` or production
 
 ## 4. Baseline
 
-- Latest commit: `969822e` (G-9g2 implementation)
-- G-9g2 preflight: complete, pending commit
+- Latest commit: `29b8426` (G-9g2 preflight)
+- G-9g2 execution: operator complete; doc pending commit

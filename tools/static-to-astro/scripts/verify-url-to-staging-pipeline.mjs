@@ -1235,6 +1235,36 @@ assert(
   g9g2PreflightSrc.includes("no Save click"),
 );
 
+// --- G-9g2 execution result doc ---
+const g9g2ExecutionDocPath = path.join(
+  TOOL_ROOT,
+  "docs/staging-shell-schedule-site-slug-title-non-dry-run-poc-execution-result.md",
+);
+assert("G-9g2 execution result doc exists", fs.existsSync(g9g2ExecutionDocPath));
+const g9g2ExecutionSrc = fs.readFileSync(g9g2ExecutionDocPath, "utf8");
+assert(
+  "G-9g2 execution succeeded marker",
+  g9g2ExecutionSrc.includes("stagingShellScheduleTitlePocExecutionSucceeded: true"),
+);
+assert(
+  "G-9g2 execution operator manual Save",
+  g9g2ExecutionSrc.includes("operator manual, exactly once") &&
+    g9g2ExecutionSrc.includes("cursorClickedSave: false"),
+);
+assert(
+  "G-9g2 execution title payload",
+  g9g2ExecutionSrc.includes("[CMS Kit staging] G-9g2 title PoC"),
+);
+assert(
+  "G-9g2 execution site_slug scope",
+  g9g2ExecutionSrc.includes("site_slug: gosaki-piano"),
+);
+assert(
+  "G-9g2 execution restore SQL retained",
+  g9g2ExecutionSrc.includes("title = '<>'") &&
+    g9g2ExecutionSrc.includes("rollbackNeeded: false"),
+);
+
 const gosakiPublicDist = path.join(TOOL_ROOT, "output/static-public/gosaki-piano/public-dist");
 for (const ym of ["2026-06", "2026-07"]) {
   const canonicalMonthPath = path.join(gosakiPublicDist, "schedule", ym, "index.html");

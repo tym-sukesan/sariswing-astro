@@ -5,28 +5,28 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-9g-staging-shell-schedule-site-slug-edit-planning (planning complete — uncommitted)
-Latest commit: 8be88e7 (G-9f)
+Current phase: G-9g1-staging-shell-schedule-site-slug-edit-dry-run-preview (implementation complete — uncommitted)
+Latest commit: d4e8f98 (G-9g planning)
 ```
 
 ## Summary
 
-G-9g: Planning for staging shell Gosaki schedule **edit** path.
+G-9g1: Staging shell Gosaki schedule edit **dry-run Preview only**.
 
 - **Route:** `/__admin-staging-shell/musician-basic/#schedule`
-- **Read (G-9f):** done — 60 rows read-only
-- **Edit (G-9g):** planning only — dry-run first, site_slug UPDATE guard, optimistic lock
-- **Next impl:** G-9g1 dry-run Preview only (no Save)
-- **`/admin`:** not modified
+- **Section:** `AdminStagingScheduleSiteSlugEditSection` (after G-9f read)
+- **Target:** `schedule-2026-07-010` / `site_slug=gosaki-piano`
+- **UI:** title input + `Preview dry-run` — no Save
+- **`actualWrite`:** always false
 
-**Doc:** `tools/static-to-astro/docs/staging-shell-schedule-site-slug-edit-planning.md`
+**Doc:** `tools/static-to-astro/docs/staging-shell-schedule-site-slug-edit-dry-run-preview.md`
 
 ## Gates
 
 ```txt
-stagingShellScheduleSiteSlugEditPlanningComplete: true
-stagingShellScheduleEditDryRunFirst: true
-readyForG9g1DryRunImplementation: true
+stagingShellScheduleSiteSlugEditDryRunPreviewComplete: true
+stagingShellScheduleEditDryRunOnly: true
+readyForG9g1Commit: true
 readyForAnyDbWrite: false
 readyForAnyFtpApply: false
 ftpAutoDeployStillDisabled: true
@@ -34,5 +34,5 @@ ftpAutoDeployStillDisabled: true
 
 ## Next
 
-- G-9g1 dry-run implementation
-- Optional commit: `Plan staging shell schedule site slug edits`
+- Commit G-9g1
+- G-9g2 title non-dry-run slice

@@ -1043,6 +1043,76 @@ assert(
   fs.readFileSync(g9fConfigPath, "utf8").includes('gosaki-piano'),
 );
 
+// --- G-9g1 staging shell schedule site_slug edit dry-run preview ---
+const g9g1EditDryRunPath = path.join(
+  REPO_ROOT,
+  "src/lib/admin/staging-data/staging-schedule-site-slug-edit-dry-run.ts",
+);
+const g9g1EditBindingPath = path.join(
+  REPO_ROOT,
+  "src/lib/admin/staging-data/staging-schedule-site-slug-edit-binding.ts",
+);
+const g9g1EditSectionPath = path.join(
+  TOOL_ROOT,
+  "templates/admin-cms/data/components/AdminStagingScheduleSiteSlugEditSection.astro",
+);
+
+assert("G-9g1 edit dry-run helper exists", fs.existsSync(g9g1EditDryRunPath));
+assert("G-9g1 edit binding exists", fs.existsSync(g9g1EditBindingPath));
+assert("G-9g1 edit section exists", fs.existsSync(g9g1EditSectionPath));
+
+const g9g1ConfigSrc = fs.readFileSync(g9fConfigPath, "utf8");
+const g9g1DryRunSrc = fs.readFileSync(g9g1EditDryRunPath, "utf8");
+const g9g1SectionSrc = fs.readFileSync(g9g1EditSectionPath, "utf8");
+
+assert(
+  "G-9g1 site_slug gosaki-piano constant",
+  g9g1ConfigSrc.includes("gosaki-piano") &&
+    g9g1ConfigSrc.includes("G9G1_TARGET_LEGACY_ID"),
+);
+assert(
+  "G-9g1 target legacy_id schedule-2026-07-010",
+  g9g1ConfigSrc.includes("schedule-2026-07-010") &&
+    g9g1ConfigSrc.includes("aa440e29-5be8-402e-9190-0d81c48434c0"),
+);
+assert(
+  "G-9g1 safe fields defined",
+  g9g1ConfigSrc.includes("SITE_SLUG_EDIT_SAFE_FIELDS") &&
+    g9g1DryRunSrc.includes("title") &&
+    g9g1DryRunSrc.includes("description"),
+);
+assert(
+  "G-9g1 actualWrite false guaranteed",
+  g9g1DryRunSrc.includes("actualWrite: false") &&
+    g9g1SectionSrc.includes('data-actual-write="false"'),
+);
+assert(
+  "G-9g1 dry-run only safety marker",
+  g9g1SectionSrc.includes("Dry-run only") &&
+    g9g1SectionSrc.includes("Save is disabled in G-9g1"),
+);
+assert(
+  "G-9g1 preview button only no save",
+  g9g1SectionSrc.includes("Preview dry-run") &&
+    !g9g1SectionSrc.match(/>\s*Save\s*</) &&
+    !g9g1SectionSrc.match(/>\s*Update\s*</) &&
+    !g9g1SectionSrc.match(/>\s*Delete\s*</),
+);
+assert(
+  "G-9g1 row load uses site_slug filter",
+  stagingScheduleReadSrc.includes("loadScheduleRowForSiteSlugRead") &&
+    stagingScheduleReadSrc.includes('.eq("site_slug", siteSlug)'),
+);
+assert(
+  "G-9g1 prototype wires edit section",
+  musicianPrototypeSrc.includes("AdminStagingScheduleSiteSlugEditSection") &&
+    musicianPrototypeSrc.includes("resolveGosakiScheduleSiteSlugEditBinding"),
+);
+assert(
+  "G-9g1 no service_role in edit dry-run",
+  !g9g1DryRunSrc.includes("SERVICE_ROLE_KEY"),
+);
+
 const gosakiPublicDist = path.join(TOOL_ROOT, "output/static-public/gosaki-piano/public-dist");
 for (const ym of ["2026-06", "2026-07"]) {
   const canonicalMonthPath = path.join(gosakiPublicDist, "schedule", ym, "index.html");

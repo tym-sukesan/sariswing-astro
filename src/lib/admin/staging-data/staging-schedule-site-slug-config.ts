@@ -1,11 +1,33 @@
 /**
- * G-9f — Gosaki staging shell schedule site_slug read config (read-only).
+ * G-9f / G-9g — Gosaki staging shell schedule site_slug config.
  */
 
 export const G9F_PHASE = "G-9f-staging-shell-schedule-site-slug-read-binding";
 
+export const G9G1_PHASE = "G-9g1-staging-shell-schedule-site-slug-edit-dry-run-preview";
+
+export const G9G1_DRY_RUN_APPROVAL_ID =
+  "G-9g1-schedule-site-slug-edit-dry-run-preview";
+
 /** Pilot site for staging shell schedule read binding. */
 export const STAGING_SHELL_GOSAKI_SCHEDULE_SITE_SLUG = "gosaki-piano";
+
+/** G-9g1 fixed target row (G-9c2c restored Gosaki seed). */
+export const G9G1_TARGET_ROW_ID = "aa440e29-5be8-402e-9190-0d81c48434c0";
+
+export const G9G1_TARGET_LEGACY_ID = "schedule-2026-07-010";
+
+/** Safe fields for site_slug edit path (G-9g planning). */
+export const SITE_SLUG_EDIT_SAFE_FIELDS = [
+  "title",
+  "venue",
+  "open_time",
+  "start_time",
+  "price",
+  "description",
+] as const;
+
+export type SiteSlugEditSafeField = (typeof SITE_SLUG_EDIT_SAFE_FIELDS)[number];
 
 export const GOSAKI_STAGING_CANONICAL_ROUTE_PREFIX = "/schedule/";
 

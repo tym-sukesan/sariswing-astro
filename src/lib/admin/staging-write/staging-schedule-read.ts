@@ -150,6 +150,81 @@ export async function loadSchedulesForSiteSlugRead(options: {
   }
 }
 
+/**
+ * G-9g1 — SELECT single schedule row scoped by id + site_slug (read-only).
+ */
+export async function loadScheduleRowForSiteSlugRead(options: {
+  url: string;
+  anonKey: string;
+  siteSlug: string;
+  targetId: string;
+  legacyId?: string;
+  useSupabase: boolean;
+}): Promise<{
+  row?: ScheduleRecord;
+  source: ScheduleReadSource;
+  error?: string;
+}> {
+  const { siteSlug, targetId, legacyId, useSupabase } = options;
+
+  if (!siteSlug?.trim() || !targetId?.trim()) {
+    return {
+      source: "unavailable",
+      error: "siteSlug and targetId are required.",
+    };
+  }
+
+  if (!useSupabase || !options.url || !options.anonKey) {
+    return {
+      source: "unavailable",
+      error: options.useSupabase
+        ? "Supabase config missing — site_slug row read unavailable."
+        : "Data read gate off — site_slug row read unavailable.",
+    };
+  }
+
+  try {
+    const client = getStagingSupabaseClient(options.url, options.anonKey);
+    const { data, error } = await client
+      .from("schedules")
+      .select(SCHEDULE_DRY_RUN_SELECT)
+      .eq("id", targetId)
+      .eq("site_slug", siteSlug)
+      .single();
+
+    if (error || !data) {
+      return {
+        source: "unavailable",
+        error: error?.message ?? "Target row not found for site_slug.",
+      };
+    }
+
+    const row = mapRow(data as Record<string, unknown>);
+
+    if (legacyId && row.legacy_id !== legacyId) {
+      return {
+        source: "unavailable",
+        error: `legacy_id mismatch: expected ${legacyId}, got ${row.legacy_id ?? "(null)"}.`,
+      };
+    }
+
+    if (!row.id || row.site_slug !== siteSlug) {
+      return {
+        source: "unavailable",
+        error: "Row failed site_slug scope validation.",
+      };
+    }
+
+    return { row, source: "supabase" };
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    return {
+      source: "unavailable",
+      error: `Schedule site_slug row read error (${message}).`,
+    };
+  }
+}
+
 export async function loadSchedulesForDryRunUi(options: {
   url: string;
   anonKey: string;

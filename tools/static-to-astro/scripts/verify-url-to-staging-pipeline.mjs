@@ -1620,6 +1620,37 @@ assert(
   !g9g3cSaveSrc.includes("SERVICE_ROLE_KEY"),
 );
 
+// --- G-9g3c execution result doc ---
+const g9g3cExecutionDocPath = path.join(
+  TOOL_ROOT,
+  "docs/staging-shell-schedule-site-slug-time-price-non-dry-run-poc-execution-result.md",
+);
+assert("G-9g3c execution result doc exists", fs.existsSync(g9g3cExecutionDocPath));
+const g9g3cExecutionSrc = fs.readFileSync(g9g3cExecutionDocPath, "utf8");
+assert(
+  "G-9g3c execution succeeded marker",
+  g9g3cExecutionSrc.includes("stagingShellScheduleTimePricePocExecutionSucceeded: true"),
+);
+assert(
+  "G-9g3c execution operator manual Save",
+  g9g3cExecutionSrc.includes("operator manual, exactly once") &&
+    g9g3cExecutionSrc.includes("cursorClickedSave: false"),
+);
+assert(
+  "G-9g3c execution time price payload",
+  g9g3cExecutionSrc.includes("[CMS Kit staging] G-9g3c open PoC") &&
+    g9g3cExecutionSrc.includes("[CMS Kit staging] G-9g3c price PoC"),
+);
+assert(
+  "G-9g3c execution site_slug scope",
+  g9g3cExecutionSrc.includes("site_slug: gosaki-piano"),
+);
+assert(
+  "G-9g3c execution rollback retained",
+  g9g3cExecutionSrc.includes("open_time = null") &&
+    g9g3cExecutionSrc.includes("rollbackNeeded: false"),
+);
+
 const gosakiPublicDist = path.join(TOOL_ROOT, "output/static-public/gosaki-piano/public-dist");
 for (const ym of ["2026-06", "2026-07"]) {
   const canonicalMonthPath = path.join(gosakiPublicDist, "schedule", ym, "index.html");

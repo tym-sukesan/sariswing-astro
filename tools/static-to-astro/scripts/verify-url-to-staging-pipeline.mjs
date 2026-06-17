@@ -1305,6 +1305,41 @@ assert(
     g9g3PlanningSrc.includes("site_slug"),
 );
 
+// --- G-9g3d general edit consolidation planning ---
+const g9g3dPlanningDocPath = path.join(
+  TOOL_ROOT,
+  "docs/staging-shell-schedule-site-slug-general-edit-consolidation-planning.md",
+);
+assert("G-9g3d general edit planning doc exists", fs.existsSync(g9g3dPlanningDocPath));
+const g9g3dPlanningSrc = fs.readFileSync(g9g3dPlanningDocPath, "utf8");
+assert(
+  "G-9g3d planning approval ID proposed",
+  g9g3dPlanningSrc.includes("G-9g3d-schedule-site-slug-general-edit-non-dry-run-poc"),
+);
+assert(
+  "G-9g3d planning env arm proposed",
+  g9g3dPlanningSrc.includes("PUBLIC_ADMIN_SCHEDULE_G9G3D_GENERAL_EDIT_NON_DRY_RUN_ARMED"),
+);
+assert(
+  "G-9g3d changed fields only payload",
+  g9g3dPlanningSrc.includes("changed-fields-only") ||
+    g9g3dPlanningSrc.includes("changed fields only"),
+);
+assert(
+  "G-9g3d legacy PoC freeze policy",
+  g9g3dPlanningSrc.includes("do not re-run") ||
+    g9g3dPlanningSrc.includes("Do not re-run"),
+);
+assert(
+  "G-9g3d planning no Save",
+  g9g3dPlanningSrc.includes("planning only") &&
+    g9g3dPlanningSrc.includes("no Save"),
+);
+assert(
+  "G-9g3d ready for implementation gate",
+  g9g3dPlanningSrc.includes("readyForG9g3d1GeneralEditConsolidationImplementation: true"),
+);
+
 // --- G-9g3a host hard gate + multi-field dry-run preview ---
 const g9g3aHostGatePath = path.join(
   REPO_ROOT,

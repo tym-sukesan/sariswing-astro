@@ -21,17 +21,17 @@ Staging Shell
 将来的な顧客オンボーディング・課金・デプロイ自動化
 
 2. Current phase
-現在フェーズ: G-9g3c-staging-shell-schedule-site-slug-time-price-non-dry-run-poc-execution — **完了**
+現在フェーズ: G-9g3d-staging-shell-schedule-site-slug-general-edit-consolidation-planning — **完了**
 
-次フェーズ: **G-9g3d-staging-shell-schedule-site-slug-general-edit-consolidation-planning**（safe-field PoC slices 完了後の general edit UX 統合計画）
+次フェーズ: **G-9g3d1-general-edit-consolidation-implementation**（unified form UX + executor + legacy PoC freeze — Save / DB write なし）
 
-Git: 最新 push 済み commit `1cf5817`（G-9g3c preflight）。G-9g3c execution result doc + AI context 更新は **uncommitted**。
+Git: 最新 push 済み commit `d53d167`（G-9g3c execution result）。G-9g3d planning doc + AI context 更新は **uncommitted**。
 
-G-9g3c execution 成功（operator manual Save once）。`changedFields=open_time,start_time,price` のみ。`updated_at` → `2026-06-17T15:45:35.433566+00:00`。`rollbackNeeded: false`。**G-9g3c Save 再実行禁止。**
+G-9g3 safe-field PoC slices: **all complete** on pilot row (G-9g2 title, G-9g3b venue+description, G-9g3c time+price). **Do not re-run slice Saves.**
 
-G-9g3c implementation + preflight（commit `37ba023`, `1cf5817`）。
+G-9g3c execution 成功（commit `d53d167`）。`updated_at` → `2026-06-17T15:45:35.433566+00:00`。
 
-G-9g3b execution 成功（commit `125d5d5`）。**G-9g3b / G-9g2 Save 再実行禁止。**
+G-9g3b execution 成功（commit `125d5d5`）。G-9g2 execution 成功（commit `d57dd5f`）。
 
 G-9g3b implementation + preflight（commit `c2a6b0c`）。
 
@@ -520,42 +520,41 @@ PUBLIC_SUPABASE_URL host: kmjqppxjdnwwrtaeqjta.supabase.co (staging)
 **Note:** `tools/static-to-astro/.env.local` に `SUPABASE_SERVICE_ROLE_KEY` が local only（gitignored）で存在する場合がある。G-9g3b execution では使用禁止・参照禁止。anon key + authenticated session のみ。
 
 10. Recommended next phase
-次フェーズ推奨: **G-9g3d-staging-shell-schedule-site-slug-general-edit-consolidation-planning**（G-9g2 / G-9g3b / G-9g3c PoC slices 完了 — general edit UX 統合計画）
+次フェーズ推奨: **G-9g3d1-general-edit-consolidation-implementation**（unified safe-fields Save UX — implementation only、Save / DB write なし）
 
-G-9g3c execution: **完了**（uncommitted doc）。operator manual Save once。`actualWrite=true`。`changedFields=open_time,start_time,price` のみ。Cursor/AI は Save 未クリック。
+G-9g3d planning: **完了**（uncommitted）。general edit = single Save, changed-fields-only payload, legacy PoC Save freeze.
 
-G-9g3 safe-field PoC slices on pilot row: **all complete** (title, venue+description, time+price).
+G-9g3 safe-field PoC slices: **all complete**. PoC markers retained. `rollbackNeeded: false`.
 
 **Do not re-run G-9g2 / G-9g3b / G-9g3c Save.**
 
-Routine dev restored: G-9g3c arm off / write off / dry-run on / staging host only.
+Routine dev: G-9g3d arm off / slice arms off / write off / dry-run on / staging host only.
 
-Lock baseline for any future write: `updated_at` = `2026-06-17T15:45:35.433566+00:00`（live 確認必須）
+Lock baseline: `updated_at` = `2026-06-17T15:45:35.433566+00:00`（G-9g3d preflight 前に live 確認）
 
 Phase sequence:
 ```txt
-G-9g3c-planning       ← complete (26238e4)
-G-9g3c-implementation ← complete (37ba023)
-G-9g3c-preflight      ← complete (1cf5817)
-G-9g3c-execution      ← complete (uncommitted)
-G-9g3d-planning       ← next (general edit consolidation)
+G-9g3c-execution      ← complete (d53d167)
+G-9g3d-planning       ← complete (uncommitted)
+G-9g3d1-implementation ← next
+G-9g3d2-smoke / G-9g3d3-preflight / G-9g3d4-execution
 ```
 
 詳細:
-- `tools/static-to-astro/docs/staging-shell-schedule-site-slug-time-price-non-dry-run-poc-execution-result.md`
+- `tools/static-to-astro/docs/staging-shell-schedule-site-slug-general-edit-consolidation-planning.md`
 - `tools/static-to-astro/docs/staging-shell-schedule-site-slug-safe-fields-edit-planning.md`
 
-G-9g3c gates:
+G-9g3d gates:
 ```txt
-stagingShellScheduleTimePricePocExecutionSucceeded: true
-stagingShellScheduleTimePricePocNotExecuted: false
-readyForG9g3cExecution: false
-readyForG9g3dGeneralEditConsolidationPlanning: true
+stagingShellScheduleGeneralEditConsolidationPlanningComplete: true
+stagingShellScheduleLegacyPocSlicesComplete: true
+stagingShellScheduleGeneralEditNotImplemented: true
+readyForG9g3d1GeneralEditConsolidationImplementation: true
+readyForG9g3dExecution: false
 readyForG9g2Execution: false
 readyForG9g3bExecution: false
+readyForG9g3cExecution: false
 readyForAnyDbWrite: false
-readyForAnyFtpApply: false
-ftpAutoDeployStillDisabled: true
 rollbackNeeded: false
 ```
 

@@ -3,26 +3,25 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 1. Immediate priority
 
-**Current phase:** `G-9f-staging-shell-schedule-site-slug-read-binding` (implementation complete — uncommitted)
+**Current phase:** `G-9g-staging-shell-schedule-site-slug-edit-planning` (planning complete — uncommitted)
 
-**Docs:**
-- `tools/static-to-astro/docs/staging-shell-schedule-site-slug-read-binding.md` (**new**)
+**Doc:**
+- `tools/static-to-astro/docs/staging-shell-schedule-site-slug-edit-planning.md` (**new**)
 
-**Awaiting:** operator commit/push approval (`Bind staging shell schedule read by site slug`)
+### G-9g summary
 
-### G-9f summary
-
-- Staging shell `#schedule`: read-only Gosaki `site_slug=gosaki-piano` binding
-- `loadSchedulesForSiteSlugRead` + month counts + row table
-- No Save/Update/Delete UI; `/admin` untouched
+- Edit planning for Gosaki `site_slug=gosaki-piano` staging shell schedule CMS
+- Safe fields: title, venue, open_time, start_time, price, description
+- Dry-run first; non-dry-run deferred to G-9g2+
+- site_slug mandatory on UPDATE; optimistic lock reuse
+- No implementation / Save UI / DB write in G-9g
 
 ### Gates
 
 ```txt
-stagingShellScheduleSiteSlugReadBindingComplete: true
-stagingShellScheduleReadOnly: true
-stagingShellScheduleUsesSiteSlug: true
-readyForG9fCommit: true
+stagingShellScheduleSiteSlugEditPlanningComplete: true
+stagingShellScheduleEditDryRunFirst: true
+readyForG9g1DryRunImplementation: true
 readyForAnyDbWrite: false
 readyForAnyFtpApply: false
 ftpAutoDeployStillDisabled: true
@@ -30,15 +29,16 @@ ftpAutoDeployStillDisabled: true
 
 ## 2. Next steps
 
-1. **Commit G-9f**
-2. Operator dev check: `/__admin-staging-shell/musician-basic/#schedule` with Supabase env
+1. **G-9g1** — dry-run Preview only (`AdminStagingScheduleSiteSlugEditSection`)
+2. Optional: commit G-9g planning doc
 
 ## 3. Do not
 
 - DB writes / FTP / `service_role`
-- Modify `/admin` or G-6 write PoC sections without new phase
+- Modify `/admin` or G-9f read-only section
+- Add Save button until G-9g2+
 
 ## 4. Baseline
 
-- Latest commit: `15cf29b` (G-9e)
-- G-9f: implementation complete, pending commit
+- Latest commit: `8be88e7` (G-9f)
+- G-9g: planning complete, pending commit (optional)

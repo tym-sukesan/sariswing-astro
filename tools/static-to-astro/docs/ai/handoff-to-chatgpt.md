@@ -5,27 +5,28 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-9f-staging-shell-schedule-site-slug-read-binding (implementation complete — uncommitted)
-Latest commit: 15cf29b (G-9e)
+Current phase: G-9g-staging-shell-schedule-site-slug-edit-planning (planning complete — uncommitted)
+Latest commit: 8be88e7 (G-9f)
 ```
 
 ## Summary
 
-G-9f: Staging shell read-only Gosaki schedule binding.
+G-9g: Planning for staging shell Gosaki schedule **edit** path.
 
 - **Route:** `/__admin-staging-shell/musician-basic/#schedule`
-- **site_slug:** `gosaki-piano` (60 rows when env enabled)
-- **Read-only** — no write UI added
+- **Read (G-9f):** done — 60 rows read-only
+- **Edit (G-9g):** planning only — dry-run first, site_slug UPDATE guard, optimistic lock
+- **Next impl:** G-9g1 dry-run Preview only (no Save)
 - **`/admin`:** not modified
 
-**Doc:** `tools/static-to-astro/docs/staging-shell-schedule-site-slug-read-binding.md`
+**Doc:** `tools/static-to-astro/docs/staging-shell-schedule-site-slug-edit-planning.md`
 
 ## Gates
 
 ```txt
-stagingShellScheduleSiteSlugReadBindingComplete: true
-stagingShellScheduleReadOnly: true
-readyForG9fCommit: true
+stagingShellScheduleSiteSlugEditPlanningComplete: true
+stagingShellScheduleEditDryRunFirst: true
+readyForG9g1DryRunImplementation: true
 readyForAnyDbWrite: false
 readyForAnyFtpApply: false
 ftpAutoDeployStillDisabled: true
@@ -33,5 +34,5 @@ ftpAutoDeployStillDisabled: true
 
 ## Next
 
-- Commit G-9f
-- Operator visual check with staging Supabase env
+- G-9g1 dry-run implementation
+- Optional commit: `Plan staging shell schedule site slug edits`

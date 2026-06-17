@@ -21,9 +21,11 @@ Staging Shell
 将来的な顧客オンボーディング・課金・デプロイ自動化
 
 2. Current phase
-現在フェーズ: G-9f-staging-shell-schedule-site-slug-read-binding（実装完了 — uncommitted）
+現在フェーズ: G-9g-staging-shell-schedule-site-slug-edit-planning（planning 完了 — uncommitted）
 
-G-9f: staging shell `#schedule` に Gosaki `site_slug=gosaki-piano` read-only 表示追加。`loadSchedulesForSiteSlugRead` + `AdminStagingScheduleSiteSlugReadSection`。write UI なし。`/admin` 未変更。
+G-9g: staging shell Gosaki schedule edit 方針 planning。safe fields / dry-run first / site_slug UPDATE 条件 / optimistic lock / slice map（G-9g1 dry-run → G-9g2 title non-dry-run → G-9g3 safe fields）。実装・DB write・Save UI なし。
+
+G-9f: site_slug read-only binding（commit `8be88e7`）。
 
 G-9e: site_slug schedule read 汎用化（commit `15cf29b`）。
 
@@ -65,6 +67,7 @@ Gosaki staging:
   - `tools/static-to-astro/docs/gosaki-schedule-route-canonical-planning.md`
   - `tools/static-to-astro/docs/gosaki-schedule-canonical-route-implementation.md`
   - `tools/static-to-astro/docs/gosaki-schedule-legacy-month-route-stub.md`
+- G-9g doc: `tools/static-to-astro/docs/staging-shell-schedule-site-slug-edit-planning.md`
 - G-9f doc: `tools/static-to-astro/docs/staging-shell-schedule-site-slug-read-binding.md`
 - Staging shell route: `/__admin-staging-shell/musician-basic/#schedule`
 - staging URL live: `https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/`（G-9d2 operator upload 反映済み）
@@ -472,22 +475,23 @@ rollbackNeeded: false
 明示的 retry で dev server を起動する場合は inline env のみ使用する。
 
 10. Recommended next phase
-次フェーズ推奨: G-9f commit → operator staging shell visual check（Supabase env）
+次フェーズ推奨: G-9g1-staging-shell-schedule-site-slug-edit-dry-run（実装）
 
-G-9f 実装完了（uncommitted）。staging shell Gosaki site_slug read-only binding。
+G-9g planning 完了（uncommitted）。edit safe fields 定義、dry-run first、site_slug UPDATE 条件、optimistic lock、slice map。
 
 詳細:
-- `tools/static-to-astro/docs/staging-shell-schedule-site-slug-read-binding.md`
+- `tools/static-to-astro/docs/staging-shell-schedule-site-slug-edit-planning.md`
 
-G-9f gates:
+G-9g gates:
 ```txt
-stagingShellScheduleSiteSlugReadBindingComplete: true
-stagingShellScheduleReadOnly: true
-stagingShellScheduleUsesSiteSlug: true
-stagingShellGosakiRowsVisible: true
+stagingShellScheduleSiteSlugEditPlanningComplete: true
+stagingShellScheduleEditDryRunFirst: true
+stagingShellScheduleEditSafeFieldsDefined: true
+stagingShellScheduleEditUpdateScopeDefined: true
+stagingShellScheduleEditNonDryRunDeferred: true
 stagingShellNoWriteUiAdded: true
 stagingShellNoAdminRouteTouched: true
-readyForG9fCommit: true
+readyForG9g1DryRunImplementation: true
 readyForAnyDbWrite: false
 readyForAnyFtpApply: false
 ftpAutoDeployStillDisabled: true

@@ -5,31 +5,29 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-9g3c-staging-shell-schedule-site-slug-time-price-non-dry-run-poc-planning (recommended next)
-Latest commit: b12435e (AI context sync; G-9g3b execution result doc pending commit)
-Git: working tree has uncommitted G-9g3b execution result + AI context updates
+Current phase: G-9g3c-staging-shell-schedule-site-slug-time-price-non-dry-run-poc-planning (complete)
+Latest commit: 125d5d5 (G-9g3b execution result recorded)
+Git: working tree has uncommitted G-9g3c planning + AI context updates
 ```
 
 ## Summary
 
-G-9g3b execution **succeeded** — operator manual Save once; `actualWrite=true`; `changedFields=venue,description` only.
+G-9g3b execution **succeeded** (`125d5d5`). G-9g3c planning defines next slice: `open_time` + `start_time` + `price` only.
 
-- **Title:** `[CMS Kit staging] G-9g2 title PoC` — unchanged
-- **Venue:** `[CMS Kit staging] G-9g3b venue PoC`
-- **Description:** `出演： [G-9g3b venue+description PoC]`
-- **updated_at:** `2026-06-17T14:36:04.711395+00:00`
-- **Approval ID:** `G-9g3b-schedule-site-slug-venue-description-non-dry-run-poc`
-- **rollbackNeeded:** false
-- Cursor / AI did **not** click Save
+- **Target row:** `aa440e29-5be8-402e-9190-0d81c48434c0` / `schedule-2026-07-010` / `gosaki-piano`
+- **Lock baseline:** `updated_at` = `2026-06-17T14:36:04.711395+00:00` (verify live before Save)
+- **Approval ID:** `G-9g3c-schedule-site-slug-time-price-non-dry-run-poc`
+- **Env arm:** `PUBLIC_ADMIN_SCHEDULE_G9G3C_TIME_PRICE_NON_DRY_RUN_ARMED`
+- **Not executed:** G-9g3c implementation / Save / DB write
 
 **Docs:**
-- `staging-shell-schedule-site-slug-venue-description-non-dry-run-poc-execution-result.md` (**new**)
-- `staging-shell-schedule-site-slug-venue-description-non-dry-run-poc-preflight.md`
-- `staging-shell-schedule-site-slug-venue-description-non-dry-run-poc-implementation.md`
+- `staging-shell-schedule-site-slug-time-price-non-dry-run-poc-planning.md` (**new**)
+- `staging-shell-schedule-site-slug-venue-description-non-dry-run-poc-execution-result.md`
 
-## Routine dev safety (default — restored)
+## Routine dev safety (default)
 
 ```txt
+PUBLIC_ADMIN_SCHEDULE_G9G3C_TIME_PRICE_NON_DRY_RUN_ARMED: off (unset)
 PUBLIC_ADMIN_SCHEDULE_G9G3B_VENUE_DESCRIPTION_NON_DRY_RUN_ARMED: off (unset)
 ENABLE_ADMIN_STAGING_WRITE: false
 PUBLIC_ADMIN_WRITE_DRY_RUN: true
@@ -38,21 +36,21 @@ PUBLIC_SUPABASE_URL host: kmjqppxjdnwwrtaeqjta.supabase.co (staging)
 
 **STOP immediately** if active host is Sariswing production: `vsbvndwuajjhnzpohghh.supabase.co`
 
-Do **not** re-arm G-9g3b or re-click G-9g3b Save.
+Do **not** re-run G-9g2 or G-9g3b Save.
 
 ## Gates
 
 ```txt
+stagingShellScheduleTimePricePocPlanningComplete: true
 stagingShellScheduleVenueDescriptionPocExecutionSucceeded: true
-stagingShellScheduleVenueDescriptionPocNotExecuted: false
-readyForG9g3bExecution: false
-readyForG9g3cPlanning: true
+readyForG9g3cImplementation: true
+readyForG9g3cExecution: false
 readyForAnyDbWrite: false
 rollbackNeeded: false
 ```
 
 ## Next
 
-**G-9g3c planning** — `open_time` + `start_time` + `price` non-dry-run slice (planning only; no Save / DB write).
+**G-9g3c-implementation** — gated Save UI + adapter; no Save / DB write in implementation phase.
 
-G-9g3c lock baseline: `updated_at` = `2026-06-17T14:36:04.711395+00:00` (verify live before next Save).
+Then: preflight → operator manual Save once (execution).

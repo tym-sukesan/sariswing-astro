@@ -21,15 +21,15 @@ Staging Shell
 将来的な顧客オンボーディング・課金・デプロイ自動化
 
 2. Current phase
-現在フェーズ: G-9g3g-operational-general-edit-planning — **完了**
+現在フェーズ: G-9g3g1-operational-save-path-implementation — **完了**
 
-次フェーズ: **G-9g3g1-operational-save-path-implementation**
+次フェーズ: **G-9g3g2-operational-save-ui-gate-smoke-test**
 
-Git: 最新 push 済み commit `a1cfcba`（G-9g3f3d hardening smoke）。G-9g3g planning **uncommitted**。
+Git: 最新 push 済み commit `b10b09a`（G-9g3g planning）。G-9g3g1 implementation **uncommitted**。
 
-G-9g3f3d: hardening smoke **passed**（commit `a1cfcba`）。
+G-9g3g1: operational Save path **implementation completed** — executor, guards, config, UI skeleton。**Do not re-run G-9g2 / G-9g3b / G-9g3c / G-9g3d Save.** Save / DB write 未実行。
 
-G-9g3g: operational general edit **planning completed** — approval ID / env arm / Save gate / phase sequence documented。**Do not re-run G-9g2 / G-9g3b / G-9g3c / G-9g3d Save.** Save / DB write 未実行。
+G-9g3g: operational general edit **planning completed**（commit `b10b09a`）。
 
 G-9g3f3c: hardening **committed `f0fd3af`**.
 

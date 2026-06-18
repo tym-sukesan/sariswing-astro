@@ -3,35 +3,33 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 1. Immediate priority
 
-**Current phase:** `G-9g3g-operational-general-edit-planning` — **complete**
+**Current phase:** `G-9g3g1-operational-save-path-implementation` — **complete**
 
-**Next:** `G-9g3g1-operational-save-path-implementation`
+**Next:** `G-9g3g2-operational-save-ui-gate-smoke-test`
 
-**Git:** latest pushed commit `a1cfcba` (G-9g3f3d); G-9g3g planning **uncommitted**
+**Git:** latest pushed commit `b10b09a` (G-9g3g planning); G-9g3g1 implementation **uncommitted**
 
-### G-9g3g summary
+### G-9g3g1 summary
 
-| Item | Proposal |
+| Item | Value |
 | --- | --- |
 | Approval ID | `G-9g3g-schedule-site-slug-operational-general-edit-non-dry-run` |
 | Env arm | `PUBLIC_ADMIN_SCHEDULE_G9G3G_OPERATIONAL_GENERAL_EDIT_NON_DRY_RUN_ARMED` |
-| Safe fields | title, venue, open_time, start_time, price, description |
-| First execution row | `888c58f2-…` / `schedule-2026-03-001` (preflight in G-9g3g3) |
+| Save button | `#site-slug-edit-g9g3g-operational-save-btn` (disabled by default) |
 | Save / DB write | **not executed** |
 
 ### Gates
 
 ```txt
-stagingShellScheduleSiteSlugOperationalGeneralEditPlanningComplete: true
-readyForG9g3g1OperationalSavePathImplementation: true
+stagingShellScheduleSiteSlugOperationalGeneralEditImplementationComplete: true
+readyForG9g3g2OperationalSaveUiGateSmokeTest: true
 readyForAnyDbWrite: false
 ```
 
 ## 2. Next steps
 
-1. **G-9g3g1-operational-save-path-implementation** — executor, guards, config, single-arm
-2. **G-9g3g2** — Save UI + gate smoke (Save disabled)
-3. **G-9g3g3–g5** — preflight, execution, post-hardening
+1. **G-9g3g2-operational-save-ui-gate-smoke-test** — Save UI + gate smoke (Save disabled)
+2. **G-9g3g3–g5** — preflight, execution, post-hardening
 
 ## 3. Routine dev safety
 

@@ -2781,6 +2781,69 @@ assert(
   g9g3gPlanningDocSrc.includes("Do not re-run G-9g2"),
 );
 
+const g9g3g1ImplDocPath = path.join(
+  TOOL_ROOT,
+  "docs/staging-shell-schedule-site-slug-operational-general-edit-implementation.md",
+);
+assert("G-9g3g1 implementation doc exists", fs.existsSync(g9g3g1ImplDocPath));
+const g9g3g1ImplDocSrc = fs.readFileSync(g9g3g1ImplDocPath, "utf8");
+assert(
+  "G-9g3g1 implementation completed",
+  g9g3g1ImplDocSrc.includes("G-9g3g1 implementation completed"),
+);
+assert(
+  "G-9g3g approval ID in implementation doc",
+  g9g3g1ImplDocSrc.includes("G-9g3g-schedule-site-slug-operational-general-edit-non-dry-run"),
+);
+assert(
+  "G-9g3g env arm in implementation doc",
+  g9g3g1ImplDocSrc.includes("PUBLIC_ADMIN_SCHEDULE_G9G3G_OPERATIONAL_GENERAL_EDIT_NON_DRY_RUN_ARMED"),
+);
+assert(
+  "G-9g3g1 operational Save path doc",
+  g9g3g1ImplDocSrc.includes("staging-schedule-site-slug-operational-general-edit-save.ts"),
+);
+assert(
+  "G-9g3g1 Save button id doc",
+  g9g3g1ImplDocSrc.includes("site-slug-edit-g9g3g-operational-save-btn"),
+);
+assert(
+  "G-9g3g1 no Save in implementation",
+  g9g3g1ImplDocSrc.includes("Save not clicked") &&
+    (g9g3g1ImplDocSrc.includes("no DB write") ||
+      g9g3g1ImplDocSrc.includes("DB write not executed")),
+);
+assert(
+  "G-9g3g1 ready for g9g3g2",
+  g9g3g1ImplDocSrc.includes("readyForG9g3g2OperationalSaveUiGateSmokeTest: true"),
+);
+assert(
+  "G-9g3g1 next phase g9g3g2",
+  g9g3g1ImplDocSrc.includes("G-9g3g2-operational-save-ui-gate-smoke-test"),
+);
+
+const g9g3g1SaveSrc = fs.readFileSync(
+  path.join(REPO_ROOT, "src/lib/admin/staging-write/staging-schedule-site-slug-operational-general-edit-save.ts"),
+  "utf8",
+);
+assert(
+  "G-9g3g1 operational Save executor exists",
+  g9g3g1SaveSrc.includes("executeG9G3gOperationalGeneralEditSave"),
+);
+assert(
+  "G-9g3g1 service_role not in executor",
+  !g9g3g1SaveSrc.includes("service_role"),
+);
+
+const g9g3g1TypesSrc = fs.readFileSync(
+  path.join(REPO_ROOT, "src/lib/admin/staging-write/schedule-write-types.ts"),
+  "utf8",
+);
+assert(
+  "G-9g3g approval ID registered in types",
+  g9g3g1TypesSrc.includes("G-9g3g-schedule-site-slug-operational-general-edit-non-dry-run"),
+);
+
 const gosakiPublicDist = path.join(TOOL_ROOT, "output/static-public/gosaki-piano/public-dist");
 for (const ym of ["2026-06", "2026-07"]) {
   const canonicalMonthPath = path.join(gosakiPublicDist, "schedule", ym, "index.html");

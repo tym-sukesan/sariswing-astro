@@ -233,31 +233,108 @@ export function assertG9G3dGeneralEditPayloadOnly(
   payload: ScheduleUpdateWritePayload,
   expectedChangedFields: string[],
 ): void {
-  const safeSet = new Set<string>(G9G3D_GENERAL_EDIT_SAFE_FIELDS);
+  assertG9G3gOperationalGeneralEditPayloadOnly(payload, expectedChangedFields, "G-9g3d");
+}
+
+const G9G3G_OPERATIONAL_SAFE_FIELDS = G9G3D_GENERAL_EDIT_SAFE_FIELDS;
+
+export function assertG9G3gOperationalGeneralEditPayloadOnly(
+  payload: ScheduleUpdateWritePayload,
+  expectedChangedFields: string[],
+  label = "G-9g3g",
+): void {
+  const safeSet = new Set<string>(G9G3G_OPERATIONAL_SAFE_FIELDS);
   const keys = Object.keys(payload);
   if (keys.length === 0) {
-    throw new Error("G-9g3d payload must include at least one changed field.");
+    throw new Error(`${label} payload must include at least one changed field.`);
   }
   const expected = new Set(expectedChangedFields);
   if (keys.length !== expected.size) {
-    throw new Error("G-9g3d payload keys must match changedFields exactly.");
+    throw new Error(`${label} payload keys must match changedFields exactly.`);
   }
   for (const key of keys) {
     if (!safeSet.has(key)) {
-      throw new Error(`G-9g3d payload field not allowed: ${key}`);
+      throw new Error(`${label} payload field not allowed: ${key}`);
     }
     if (!expected.has(key)) {
-      throw new Error(`G-9g3d payload field ${key} not in changedFields`);
+      throw new Error(`${label} payload field ${key} not in changedFields`);
     }
   }
   for (const field of expectedChangedFields) {
     if (!keys.includes(field)) {
-      throw new Error(`G-9g3d payload missing ${field}`);
+      throw new Error(`${label} payload missing ${field}`);
     }
   }
   if (payload.title !== undefined && (payload.title === null || payload.title === "")) {
-    throw new Error("G-9g3d title cannot be empty");
+    throw new Error(`${label} title cannot be empty`);
   }
+}
+
+export function assertOperationalNotPocAuditRow(
+  row: ScheduleDryRunSource,
+  label = "G-9g3g",
+): void {
+  if (row.id === "aa440e29-5be8-402e-9190-0d81c48434c0") {
+    throw new Error(`${label} PoC audit row is not writable.`);
+  }
+  const fields = [
+    row.title,
+    row.venue,
+    row.open_time,
+    row.start_time,
+    row.price,
+    row.description,
+  ];
+  if (fields.some((value) => String(value ?? "").includes("[CMS Kit staging]"))) {
+    throw new Error(`${label} PoC audit marker row is not writable.`);
+  }
+}
+
+export function assertOperationalCandidatePreviewMatch(options: {
+  changedFields: string[];
+  candidateValues: Record<string, string>;
+  previewValues: Record<string, string>;
+  label?: string;
+}): void {
+  const label = options.label ?? "G-9g3g";
+  for (const field of options.changedFields) {
+    const candidate = options.candidateValues[field] ?? "";
+    const preview = options.previewValues[field] ?? "";
+    if (candidate !== preview) {
+      throw new Error(
+        `${label} candidate ${field} does not match latest G-9 preview value.`,
+      );
+    }
+  }
+}
+
+export function assertOperationalPreviewTargetIdentity(options: {
+  beforeSnapshot: ScheduleDryRunSource;
+  previewTargetId: string;
+  previewLegacyId: string | null;
+  previewSiteSlug: string;
+  label?: string;
+}): void {
+  const label = options.label ?? "G-9g3g";
+  if (options.beforeSnapshot.id !== options.previewTargetId) {
+    throw new Error(`${label} selected row id does not match preview target id.`);
+  }
+  if (
+    options.beforeSnapshot.legacy_id !== options.previewLegacyId &&
+    options.previewLegacyId != null
+  ) {
+    throw new Error(`${label} selected row legacy_id does not match preview target.`);
+  }
+  if (options.beforeSnapshot.site_slug !== options.previewSiteSlug) {
+    throw new Error(`${label} selected row site_slug does not match preview target.`);
+  }
+}
+
+export function buildG9G3gOperationalGeneralEditPayload(
+  changedFields: string[],
+  rawValues: Record<string, string>,
+): ScheduleUpdateWritePayload {
+  return buildG9G3dGeneralEditPayload(changedFields, rawValues);
 }
 
 export function assertBeforeSnapshotSiteSlugScope(

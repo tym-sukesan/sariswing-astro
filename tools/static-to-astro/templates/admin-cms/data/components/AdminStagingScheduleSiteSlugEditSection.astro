@@ -19,6 +19,7 @@ const g9g3dSaveSectionVisible =
   binding.g9g3dArmed ||
   binding.g9g3dPocExecuted ||
   Boolean(binding.g9g3dArmFailureReason);
+const operationalSaveSectionVisible = binding.pickerDrivenBinding;
 const legacyPoCSectionVisible = binding.legacyPoCUiVisible;
 const hostAlertClass = binding.isKnownProductionHost
   ? "admin-staging-schedule-site-slug-edit__host-danger"
@@ -33,10 +34,12 @@ const hostAlertClass = binding.isKnownProductionHost
   data-g9g3b-phase={binding.g9g3bPhase}
   data-g9g3c-phase={binding.g9g3cPhase}
   data-g9g3d-phase={binding.g9g3dPhase}
+  data-g9g3g-phase={binding.g9g3gPhase}
   data-approval-id={binding.approvalId}
   data-g9g3b-approval-id={binding.g9g3bApprovalId}
   data-g9g3c-approval-id={binding.g9g3cApprovalId}
   data-g9g3d-approval-id={binding.g9g3dApprovalId}
+  data-g9g3g-approval-id={binding.g9g3gApprovalId}
   data-site-slug={binding.siteSlug}
   data-source={binding.source}
   data-dry-run-preview-only="true"
@@ -50,6 +53,8 @@ const hostAlertClass = binding.isKnownProductionHost
   data-g9g3d-armed={binding.g9g3dArmed ? "true" : "false"}
   data-g9g3d-save-enabled={binding.g9g3dSaveEnabled ? "true" : "false"}
   data-g9g3d-poc-executed={binding.g9g3dPocExecuted ? "true" : "false"}
+  data-g9g3g-armed={binding.g9g3gArmed ? "true" : "false"}
+  data-g9g3g-save-enabled={binding.g9g3gSaveEnabled ? "true" : "false"}
   data-picker-driven-binding={binding.pickerDrivenBinding ? "true" : "false"}
   data-picker-row-bound="false"
   data-target-id={binding.targetId}
@@ -62,7 +67,7 @@ const hostAlertClass = binding.isKnownProductionHost
   aria-label="Gosaki site_slug schedule edit"
 >
   <h2 class="admin-staging-schedule-site-slug-edit__title">
-    Schedule site_slug general edit (G-9g3f3c)
+    Schedule site_slug operational general edit (G-9g3g1)
   </h2>
 
   <p class="admin-staging-schedule-site-slug-edit__staging-banner" role="note">
@@ -71,10 +76,10 @@ const hostAlertClass = binding.isKnownProductionHost
   </p>
 
   <p class="admin-staging-schedule-site-slug-edit__binding-phase" role="note">
-    <strong>Row picker → general edit binding hardening (G-9g3f3c)</strong> — dirty row-switch confirm,
-    preview stale invalidation, selected row identity strip. Use <strong>G-9 Preview</strong> only
+    <strong>Operational general edit (G-9g3g1)</strong> — picker-selected non-PoC rows; G-9 Preview required
+    before operational Save. Use <strong>G-9 Preview</strong> only
     (<code>#site-slug-edit-dry-run-preview-btn</code> → <code>#site-slug-edit-dry-run-result</code>).
-    Operational Save not implemented.
+    Operational Save path separate from frozen G-9g3d PoC Save.
   </p>
 
   <p
@@ -130,7 +135,7 @@ const hostAlertClass = binding.isKnownProductionHost
     hidden
   >
     Unsaved candidate changes — switching rows will discard candidates. Use Reset candidates or re-run
-    G-9 preview before Save (Save not operational).
+    G-9 preview before Save. Operational Save disabled by default until G-9g3g arm.
   </p>
 
   <p
@@ -157,8 +162,8 @@ const hostAlertClass = binding.isKnownProductionHost
   {
     binding.g9g3dPocExecuted ? (
       <p class="admin-staging-schedule-site-slug-edit__poc-frozen" role="alert">
-        <strong>G-9g3d PoC executed — audit only.</strong> General edit non-dry-run Save is frozen.
-        Operational writes deferred to G-9g3g+.
+        <strong>G-9g3d PoC executed — audit only.</strong> General edit non-dry-run PoC Save is frozen.
+        Use <code>#site-slug-edit-g9g3g-operational-save-btn</code> for operational path (G-9g3g).
       </p>
     ) : null
   }
@@ -204,10 +209,14 @@ const hostAlertClass = binding.isKnownProductionHost
   <dl class="admin-staging-schedule-site-slug-edit__summary">
     <div>
       <dt>Phase</dt>
-      <dd>{binding.g9g3dPhase}</dd>
+      <dd>{binding.g9g3gPhase}</dd>
     </div>
     <div>
-      <dt>G-9g3d approval ID</dt>
+      <dt>G-9g3g approval ID</dt>
+      <dd><code>{binding.g9g3gApprovalId}</code></dd>
+    </div>
+    <div>
+      <dt>G-9g3d approval ID (frozen PoC)</dt>
       <dd><code>{binding.g9g3dApprovalId}</code></dd>
     </div>
     <div>
@@ -370,6 +379,19 @@ const hostAlertClass = binding.isKnownProductionHost
           : "Preview G-9 site_slug general edit dry-run"}
       </button>
       {
+        operationalSaveSectionVisible ? (
+          <button
+            id="site-slug-edit-g9g3g-operational-save-btn"
+            class="admin-button admin-button--primary"
+            type="button"
+            disabled={true}
+            title="G-9g3g operational general edit — gated; operator manual only"
+          >
+            Save operational general edit
+          </button>
+        ) : null
+      }
+      {
         g9g3dSaveSectionVisible ? (
           <button
             id="site-slug-edit-g9g3d-save-btn"
@@ -395,6 +417,28 @@ const hostAlertClass = binding.isKnownProductionHost
       Save gate status loading…
     </p>
     {
+      operationalSaveSectionVisible ? (
+        <p
+          id="site-slug-edit-g9g3g-operational-save-hint"
+          class="admin-staging-schedule-site-slug-edit__hint"
+          role="status"
+        >
+          {binding.g9g3gArmFailureReason
+            ? `Save operational general edit disabled — ${binding.g9g3gArmFailureReason}`
+            : binding.g9g3gDefaultDisabledReason}
+        </p>
+      ) : null
+    }
+    {
+      operationalSaveSectionVisible ? (
+        <p class="admin-staging-schedule-site-slug-edit__hint" role="note">
+          Operational Save is disabled unless G-9g3g arm, approval ID, latest G-9 preview, host gate,
+          auth, and optimistic lock all pass. Do not use legacy G-6 dry-run or G-9g3d PoC Save for
+          operational editing.
+        </p>
+      ) : null
+    }
+    {
       g9g3dSaveSectionVisible ? (
         <p id="site-slug-edit-g9g3d-save-hint" class="admin-staging-schedule-site-slug-edit__hint" role="status">
           {binding.g9g3dPocExecuted
@@ -405,7 +449,7 @@ const hostAlertClass = binding.isKnownProductionHost
         </p>
       ) : (
         <p id="site-slug-edit-g9g3a-hint" class="admin-staging-schedule-site-slug-edit__hint" role="status">
-          G-9g3f3c — binding hardened. Save not available. Use G-9 Preview button above.
+          G-9g3g1 — operational Save path added; disabled by default. Use G-9 Preview button above.
         </p>
       )
     }
@@ -432,6 +476,25 @@ const hostAlertClass = binding.isKnownProductionHost
       </p>
     </div>
   </AdminCard>
+
+  {
+    operationalSaveSectionVisible ? (
+      <AdminCard
+        title="Save result (G-9g3g operational)"
+        description="Non-dry-run — operator manual only; separate from G-9g3d PoC Save"
+      >
+        <div
+          id="site-slug-edit-g9g3g-operational-save-result"
+          class="site-slug-edit-save-result"
+          aria-live="polite"
+        >
+          <p class="site-slug-edit-save-result__placeholder">
+            Save not executed — operator clicks Save operational general edit once in execution phase.
+          </p>
+        </div>
+      </AdminCard>
+    ) : null
+  }
 
   {
     g9g3dSaveSectionVisible ? (
@@ -516,6 +579,8 @@ const hostAlertClass = binding.isKnownProductionHost
   <AdminCard title="Safety flags">
     <dl class="admin-staging-schedule-site-slug-edit__flags">
       <div><dt>dryRunPreview actualWrite</dt><dd>false</dd></div>
+      <div><dt>g9g3gArmed</dt><dd>{binding.g9g3gArmed ? "true" : "false"}</dd></div>
+      <div><dt>g9g3gSaveEnabled</dt><dd>{binding.g9g3gSaveEnabled ? "true" : "false"}</dd></div>
       <div><dt>g9g3dArmed</dt><dd>{binding.g9g3dArmed ? "true" : "false"}</dd></div>
       <div><dt>g9g3dSaveEnabled</dt><dd>{binding.g9g3dSaveEnabled ? "true" : "false"}</dd></div>
       <div><dt>g9g3dPocExecuted</dt><dd>{binding.g9g3dPocExecuted ? "true" : "false"}</dd></div>

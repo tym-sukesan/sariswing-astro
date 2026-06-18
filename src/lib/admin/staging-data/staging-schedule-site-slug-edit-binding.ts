@@ -6,6 +6,7 @@ import { getReadOnlyDataConfig } from "./read-only-data-config";
 import { getG9G3bVenueDescriptionPocConfig } from "./staging-schedule-site-slug-venue-description-poc-config";
 import { getG9G3cTimePricePocConfig } from "./staging-schedule-site-slug-time-price-poc-config";
 import { getG9G3dGeneralEditPocConfig } from "./staging-schedule-site-slug-general-edit-poc-config";
+import { getG9G3gOperationalGeneralEditConfig } from "./staging-schedule-site-slug-operational-general-edit-config";
 import { evaluateSupabaseHostGate } from "./staging-schedule-site-slug-host-gate";
 import {
   extractSupabaseHost,
@@ -31,9 +32,13 @@ import {
   G9G3F3A_PHASE,
   G9G3F3B_PHASE,
   G9G3F3C_PHASE,
+  G9G3G1_PHASE,
+  G9G3G_OPERATIONAL_GENERAL_EDIT_NON_DRY_RUN_APPROVAL_ID,
+  G9G3G_OPERATIONAL_SAVE_DISABLED_DEFAULT_REASON,
   SCHEDULE_G9G3B_VENUE_DESCRIPTION_NON_DRY_RUN_ARMED_ENV,
   SCHEDULE_G9G3C_TIME_PRICE_NON_DRY_RUN_ARMED_ENV,
   SCHEDULE_G9G3D_GENERAL_EDIT_NON_DRY_RUN_ARMED_ENV,
+  SCHEDULE_G9G3G_OPERATIONAL_GENERAL_EDIT_NON_DRY_RUN_ARMED_ENV,
   SITE_SLUG_EDIT_SAFE_FIELDS,
   STAGING_SHELL_GOSAKI_SCHEDULE_SITE_SLUG,
 } from "./staging-schedule-site-slug-config";
@@ -46,10 +51,12 @@ export interface SiteSlugScheduleEditBinding {
   g9g3bPhase: string;
   g9g3cPhase: string;
   g9g3dPhase: string;
+  g9g3gPhase: string;
   approvalId: string;
   g9g3bApprovalId: string;
   g9g3cApprovalId: string;
   g9g3dApprovalId: string;
+  g9g3gApprovalId: string;
   g9g3bDefaultVenue: string;
   g9g3bDefaultDescription: string;
   g9g3cDefaultOpenTime: string;
@@ -68,6 +75,11 @@ export interface SiteSlugScheduleEditBinding {
   g9g3dArmFailureReason?: string;
   g9g3dArmEnv: string;
   g9g3dPocExecuted: boolean;
+  g9g3gArmed: boolean;
+  g9g3gSaveEnabled: boolean;
+  g9g3gArmFailureReason?: string;
+  g9g3gArmEnv: string;
+  g9g3gDefaultDisabledReason: string;
   legacyPoCUiVisible: boolean;
   g9g3aSaveUiHidden: boolean;
   pickerDrivenBinding: boolean;
@@ -95,19 +107,22 @@ export async function resolveGosakiScheduleSiteSlugEditBinding(): Promise<SiteSl
   const g9g3bConfig = getG9G3bVenueDescriptionPocConfig();
   const g9g3cConfig = getG9G3cTimePricePocConfig();
   const g9g3dConfig = getG9G3dGeneralEditPocConfig();
+  const g9g3gConfig = getG9G3gOperationalGeneralEditConfig();
   const siteSlug = STAGING_SHELL_GOSAKI_SCHEDULE_SITE_SLUG;
   const hostGate = evaluateSupabaseHostGate(dataConfig.supabaseUrl);
 
   const base = {
-    phase: G9G3F3C_PHASE,
+    phase: G9G3G1_PHASE,
     g9g3aPhase: G9G3A_PHASE,
     g9g3bPhase: G9G3B_PHASE,
     g9g3cPhase: G9G3C_PHASE,
     g9g3dPhase: G9G3D_PHASE,
+    g9g3gPhase: G9G3G1_PHASE,
     approvalId: G9G1_DRY_RUN_APPROVAL_ID,
     g9g3bApprovalId: G9G3B_VENUE_DESCRIPTION_NON_DRY_RUN_APPROVAL_ID,
     g9g3cApprovalId: G9G3C_TIME_PRICE_NON_DRY_RUN_APPROVAL_ID,
     g9g3dApprovalId: G9G3D_GENERAL_EDIT_NON_DRY_RUN_APPROVAL_ID,
+    g9g3gApprovalId: G9G3G_OPERATIONAL_GENERAL_EDIT_NON_DRY_RUN_APPROVAL_ID,
     g9g3bDefaultVenue: G9G3B_VENUE_POC_DEFAULT,
     g9g3bDefaultDescription: G9G3B_DESCRIPTION_POC_DEFAULT,
     g9g3cDefaultOpenTime: G9G3C_OPEN_TIME_POC_DEFAULT,
@@ -126,6 +141,11 @@ export async function resolveGosakiScheduleSiteSlugEditBinding(): Promise<SiteSl
     g9g3dArmFailureReason: g9g3dConfig.armFailureReason,
     g9g3dArmEnv: SCHEDULE_G9G3D_GENERAL_EDIT_NON_DRY_RUN_ARMED_ENV,
     g9g3dPocExecuted: G9G3D_GENERAL_EDIT_POC_EXECUTED,
+    g9g3gArmed: g9g3gConfig.armed,
+    g9g3gSaveEnabled: g9g3gConfig.saveEnabled && hostGate.hostGatePassed,
+    g9g3gArmFailureReason: g9g3gConfig.armFailureReason,
+    g9g3gArmEnv: SCHEDULE_G9G3G_OPERATIONAL_GENERAL_EDIT_NON_DRY_RUN_ARMED_ENV,
+    g9g3gDefaultDisabledReason: G9G3G_OPERATIONAL_SAVE_DISABLED_DEFAULT_REASON,
     legacyPoCUiVisible: g9g3dConfig.legacyPoCUiVisible,
     g9g3aSaveUiHidden: false,
     pickerDrivenBinding: true,
@@ -180,8 +200,8 @@ export async function resolveGosakiScheduleSiteSlugEditBinding(): Promise<SiteSl
     : "host gate failed — Save blocked";
 
   const armNote = g9g3dConfig.pocExecuted
-    ? "G-9g3d PoC executed — Save frozen"
-    : "Picker-driven binding — select a row; Preview dry-run on selected row (G-9g3f3c hardened); Save not implemented";
+    ? "G-9g3d PoC executed — operational Save path added (G-9g3g1); disabled by default until G-9g3g arm"
+    : "Picker-driven binding — select a non-PoC row; G-9 Preview; operational Save gated (G-9g3g1)";
 
   return {
     ...base,

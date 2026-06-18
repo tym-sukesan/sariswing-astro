@@ -86,6 +86,30 @@ export const G9G3F3C_PREVIEW_STALE_MSG =
 export const G9G3F3D_PHASE =
   "G-9g3f3d-row-picker-general-edit-binding-hardening-smoke-test";
 
+export const G9G3G1_PHASE =
+  "G-9g3g1-operational-save-path-implementation";
+
+export const G9G3G_OPERATIONAL_GENERAL_EDIT_NON_DRY_RUN_APPROVAL_ID =
+  "G-9g3g-schedule-site-slug-operational-general-edit-non-dry-run";
+
+export const SCHEDULE_G9G3G_OPERATIONAL_GENERAL_EDIT_NON_DRY_RUN_ARMED_ENV =
+  "PUBLIC_ADMIN_SCHEDULE_G9G3G_OPERATIONAL_GENERAL_EDIT_NON_DRY_RUN_ARMED";
+
+export const G9G3G_OPERATIONAL_SAVE_BTN_ID = "site-slug-edit-g9g3g-operational-save-btn";
+
+export const G9G3G_OPERATIONAL_SAVE_RESULT_PANEL_ID =
+  "site-slug-edit-g9g3g-operational-save-result";
+
+/** Routine dev default — operational Save stays disabled until explicit G-9g3g arm. */
+export const G9G3G_OPERATIONAL_SAVE_DISABLED_DEFAULT_REASON =
+  "Operational Save disabled — G-9g3g arm not configured (routine dev safety)";
+
+export const G9G3G_OPERATIONAL_SAVE_GATE_HINT =
+  "Operational Save is disabled unless G-9g3g arm, approval ID, latest G-9 preview, host gate, auth, and optimistic lock all pass.";
+
+export const G9G3G_OPERATIONAL_SAVE_LEGACY_WARNING =
+  "Do not use legacy G-6 dry-run or G-9g3d PoC Save for operational editing.";
+
 /** G-9g3f3d hardening smoke — price-only preview candidate on picker-selected row. */
 export const G9G3F3D_STALE_SMOKE_PRICE_CANDIDATE =
   "[CMS Kit staging] G-9g3f3d stale smoke price candidate";

@@ -18,6 +18,7 @@ import { evaluateSupabaseHostGate } from "./staging-schedule-site-slug-host-gate
 import { getG9G3bVenueDescriptionPocConfig } from "./staging-schedule-site-slug-venue-description-poc-config";
 import { getG9G3cTimePricePocConfig } from "./staging-schedule-site-slug-time-price-poc-config";
 import { getG9G3dGeneralEditPocConfig } from "./staging-schedule-site-slug-general-edit-poc-config";
+import { getG9G3gOperationalGeneralEditConfig } from "./staging-schedule-site-slug-operational-general-edit-config";
 import {
   G9G1_TARGET_LEGACY_ID,
   G9G1_TARGET_ROW_ID,
@@ -36,6 +37,8 @@ import {
   G9G3F3B_PHASE,
   G9G3F3C_PHASE,
   G9G3F3C_PREVIEW_STALE_MSG,
+  G9G3G_OPERATIONAL_GENERAL_EDIT_NON_DRY_RUN_APPROVAL_ID,
+  G9G3G_OPERATIONAL_SAVE_DISABLED_DEFAULT_REASON,
   G9G3_SLICE_POC_EXECUTED_ARM_FAILURE,
   SITE_SLUG_EDIT_SAFE_FIELDS,
   STAGING_SHELL_GOSAKI_SCHEDULE_SITE_SLUG,
@@ -43,11 +46,12 @@ import {
 import { executeG9G3bVenueDescriptionNonDryRunSave } from "../staging-write/staging-schedule-site-slug-venue-description-poc-save";
 import { executeG9G3cTimePriceNonDryRunSave } from "../staging-write/staging-schedule-site-slug-time-price-poc-save";
 import { executeG9G3dGeneralEditNonDryRunSave } from "../staging-write/staging-schedule-site-slug-general-edit-poc-save";
+import { executeG9G3gOperationalGeneralEditSave } from "../staging-write/staging-schedule-site-slug-operational-general-edit-save";
 import { runDryRunStaleCheck } from "../staging-write/schedule-optimistic-lock-dry-run";
 import {
   isSignedInStagingAuth,
 } from "../staging-write/schedule-non-dry-run-poc-auth";
-import { buildG9G3dGeneralEditPayload } from "../staging-write/schedule-write-guards";
+import { buildG9G3dGeneralEditPayload, buildG9G3gOperationalGeneralEditPayload } from "../staging-write/schedule-write-guards";
 import type { ScheduleRecord } from "../staging-write/schedule-dry-run-types";
 import type { ScheduleWriteResult } from "../staging-write/schedule-write-types";
 import {
@@ -83,6 +87,10 @@ let g9g3dDryRunPreviewValid = false;
 let lastPreviewG9g3dChangedFields: string[] = [];
 let lastPreviewG9g3dFieldValues: Record<string, string> = {};
 let lastPreviewG9g3dStale = false;
+let lastPreviewTargetId: string | null = null;
+let lastPreviewTargetLegacyId: string | null = null;
+let lastPreviewExpectedUpdatedAt: string | null = null;
+let lastPreviewHostGatePassed = false;
 let stagingAuthSignedIn: boolean | null = null;
 let executionInFlight = false;
 
@@ -142,6 +150,19 @@ function isG9g3cArmed(): boolean {
 function isG9g3dArmed(): boolean {
   const root = getRoot();
   return root?.dataset.g9g3dArmed === "true";
+}
+
+function isG9g3gOperationalArmed(): boolean {
+  const root = getRoot();
+  return root?.dataset.g9g3gArmed === "true";
+}
+
+function isG9PreviewResultStale(): boolean {
+  const resultEl = document.getElementById("site-slug-edit-dry-run-result");
+  return (
+    lastPreviewG9g3dStale ||
+    Boolean(resultEl?.classList.contains("site-slug-edit-dry-run-result--stale"))
+  );
 }
 
 function isLegacyPoCUiVisible(): boolean {
@@ -339,9 +360,14 @@ function invalidateDryRunPreview(): void {
   lastPreviewG9g3dChangedFields = [];
   lastPreviewG9g3dFieldValues = {};
   lastPreviewG9g3dStale = false;
+  lastPreviewTargetId = null;
+  lastPreviewTargetLegacyId = null;
+  lastPreviewExpectedUpdatedAt = null;
+  lastPreviewHostGatePassed = false;
   refreshG9G3bSaveButtonState();
   refreshG9G3cSaveButtonState();
   refreshG9G3dSaveButtonState();
+  refreshG9G3gOperationalSaveButtonState();
   updateStaleLockBanner(false);
   refreshSaveGatePanel();
 }
@@ -420,12 +446,33 @@ function refreshSaveGatePanel(): void {
 
   const hostGate = getClientHostGate();
   const g9g3dGate = canEnableG9G3dSave();
+  const g9g3gGate = canEnableG9G3gOperationalSave();
+  const operationalConfig = getG9G3gOperationalGeneralEditConfig();
   const lines: string[] = [];
 
-  if (G9G3D_GENERAL_EDIT_POC_EXECUTED) {
+  if (isPickerDrivenBinding()) {
+    lines.push(
+      g9g3gGate.ok
+        ? "G-9g3g operational Save: enabled — operator manual only"
+        : `G-9g3g operational Save: disabled — ${g9g3gGate.reason}`,
+    );
+    lines.push(`approvalId: ${G9G3G_OPERATIONAL_GENERAL_EDIT_NON_DRY_RUN_APPROVAL_ID}`);
+    lines.push(`env arm: ${isG9g3gOperationalArmed() ? "true" : "false"}`);
+    if (lastPreviewTargetId) {
+      lines.push(`preview target id: ${lastPreviewTargetId}`);
+    }
+    lines.push(
+      g9g3dDryRunPreviewValid
+        ? isG9PreviewResultStale()
+          ? `preview: ${G9G3F3C_PREVIEW_STALE_MSG}`
+          : "preview: valid"
+        : "preview: required",
+    );
+    if (lastPreviewG9g3dChangedFields.length > 0) {
+      lines.push(`changedFields: ${lastPreviewG9g3dChangedFields.join(", ")}`);
+    }
+  } else if (G9G3D_GENERAL_EDIT_POC_EXECUTED) {
     lines.push(`G-9g3d Save: frozen — ${G9G3D_POC_EXECUTED_ARM_FAILURE}`);
-  } else if (isPickerDrivenBinding()) {
-    lines.push("G-9g3f3a: General edit binding only — operational Save not implemented");
   } else if (document.getElementById("site-slug-edit-g9g3d-save-btn")) {
     lines.push(
       g9g3dGate.ok
@@ -434,6 +481,10 @@ function refreshSaveGatePanel(): void {
     );
   } else {
     lines.push("G-9g3d Save: hidden — arm not configured");
+  }
+
+  if (!operationalConfig.saveEnabled && isPickerDrivenBinding()) {
+    lines.push(operationalConfig.armFailureReason ?? G9G3G_OPERATIONAL_SAVE_DISABLED_DEFAULT_REASON);
   }
 
   if (!hostGate.hostGatePassed) {
@@ -798,6 +849,168 @@ function canEnableG9G3dSave(): { ok: boolean; reason: string } {
   return { ok: true, reason: "Ready (manual Save only — not auto-clicked)" };
 }
 
+function canEnableG9G3gOperationalSave(): { ok: boolean; reason: string } {
+  if (!isPickerDrivenBinding()) {
+    return { ok: false, reason: "Picker-driven binding required for operational Save" };
+  }
+
+  const config = getG9G3gOperationalGeneralEditConfig();
+  const hostGate = getClientHostGate();
+
+  if (!hostGate.hostGatePassed) {
+    return {
+      ok: false,
+      reason: hostGate.warningMessage ?? "Supabase host gate failed",
+    };
+  }
+  if (!config.saveEnabled) {
+    return {
+      ok: false,
+      reason: config.armFailureReason ?? G9G3G_OPERATIONAL_SAVE_DISABLED_DEFAULT_REASON,
+    };
+  }
+  if (executionInFlight) return { ok: false, reason: "Save in flight" };
+  if (!hasPickerBoundRow()) {
+    return { ok: false, reason: "Select a non-PoC row in the picker" };
+  }
+  if (!g9g3dDryRunPreviewValid) {
+    return { ok: false, reason: "Latest G-9 preview required" };
+  }
+  if (isG9PreviewResultStale()) {
+    return { ok: false, reason: G9G3F3C_PREVIEW_STALE_MSG };
+  }
+  if (!changedFieldsSubsetOfSafeFields(lastPreviewG9g3dChangedFields)) {
+    return { ok: false, reason: "changedFields must be safe-field subset" };
+  }
+  if (lastPreviewG9g3dChangedFields.length === 0) {
+    return { ok: false, reason: "No changed fields — edit a value before Save" };
+  }
+  if (stagingAuthSignedIn === false) {
+    return { ok: false, reason: "Sign in as staging admin before Save" };
+  }
+  if (stagingAuthSignedIn === null) {
+    return { ok: false, reason: "Checking auth session…" };
+  }
+
+  const row = parseTargetRow();
+  if (!row) {
+    return { ok: false, reason: "No selected row loaded" };
+  }
+  if (isPocAuditScheduleRow(row)) {
+    return { ok: false, reason: "PoC audit row cannot be saved" };
+  }
+  if (row.site_slug !== STAGING_SHELL_GOSAKI_SCHEDULE_SITE_SLUG) {
+    return { ok: false, reason: "site_slug mismatch" };
+  }
+  if (lastPreviewTargetId && row.id !== lastPreviewTargetId) {
+    return { ok: false, reason: "Selected row id does not match preview target" };
+  }
+  if (lastPreviewTargetLegacyId && row.legacy_id !== lastPreviewTargetLegacyId) {
+    return { ok: false, reason: "Selected row legacy_id does not match preview target" };
+  }
+  if (!lastPreviewHostGatePassed) {
+    return { ok: false, reason: "Preview hostGatePassed was false" };
+  }
+  if (lastPreviewG9g3dStale) {
+    return { ok: false, reason: "Optimistic lock stale at preview — re-run Preview" };
+  }
+  if (
+    lastPreviewExpectedUpdatedAt != null &&
+    row.updated_at !== lastPreviewExpectedUpdatedAt
+  ) {
+    return {
+      ok: false,
+      reason: "Row updated_at changed since preview — re-run Preview",
+    };
+  }
+
+  for (const field of lastPreviewG9g3dChangedFields) {
+    const current = getFieldValue(field as (typeof SITE_SLUG_EDIT_SAFE_FIELDS)[number]);
+    if (current !== (lastPreviewG9g3dFieldValues[field] ?? "")) {
+      return { ok: false, reason: `${field} changed since preview` };
+    }
+    if (field === "title" && current.trim() === "") {
+      return { ok: false, reason: "title cannot be empty" };
+    }
+  }
+
+  if (!nonChangedSafeFieldsUnchanged(row, lastPreviewG9g3dChangedFields)) {
+    return { ok: false, reason: "Non-changed safe fields modified since load" };
+  }
+  if (!canUseLiveSupabase()) {
+    return { ok: false, reason: "Supabase read source required" };
+  }
+  return { ok: true, reason: "Ready (manual Save only — not auto-clicked)" };
+}
+
+function refreshG9G3gOperationalSaveButtonState(): void {
+  const btn = document.getElementById("site-slug-edit-g9g3g-operational-save-btn");
+  const hint = document.getElementById("site-slug-edit-g9g3g-operational-save-hint");
+  if (!btn) return;
+
+  const { ok, reason } = canEnableG9G3gOperationalSave();
+  (btn as HTMLButtonElement).disabled = !ok;
+  if (hint) {
+    hint.textContent = ok
+      ? reason
+      : `Save operational general edit disabled — ${reason}`;
+  }
+  refreshSaveGatePanel();
+}
+
+function renderG9G3gOperationalSaveResult(payload: {
+  actualWrite: boolean;
+  outcome: Awaited<ReturnType<typeof executeG9G3gOperationalGeneralEditSave>>;
+  changedFields: string[];
+  beforeSnapshot: ScheduleRecord;
+  payloadWritten: Record<string, unknown>;
+}): void {
+  const el = document.getElementById("site-slug-edit-g9g3g-operational-save-result");
+  if (!el) return;
+
+  const result = payload.outcome.result;
+  const success = result && "actualWrite" in result && result.actualWrite === true;
+  const safety =
+    result && "safety" in result
+      ? (result as ScheduleWriteResult).safety
+      : {
+          stagingOnly: true,
+          productionBlocked: true,
+          serviceRoleUsed: false,
+          scheduleMonthsTouched: false,
+          deleteEnabled: false,
+          publishTriggered: false,
+        };
+
+  el.innerHTML = [
+    `<p class="site-slug-edit-save-result__message">${escapeHtml(
+      success
+        ? "G-9g3g operational Save completed — actualWrite=true."
+        : payload.outcome.errorMessage ?? "G-9g3g operational Save did not complete.",
+    )}</p>`,
+    `<dl class="site-slug-edit-save-result__meta">`,
+    `<div><dt>actualWrite</dt><dd>${payload.actualWrite ? "true" : "false"}</dd></div>`,
+    `<div><dt>approvalId</dt><dd><code>${escapeHtml(G9G3G_OPERATIONAL_GENERAL_EDIT_NON_DRY_RUN_APPROVAL_ID)}</code></dd></div>`,
+    `<div><dt>changedFields</dt><dd>${escapeHtml(payload.changedFields.join(", ") || "—")}</dd></div>`,
+    `<div><dt>rowsAffected</dt><dd>${result && "rowsAffected" in result ? String((result as ScheduleWriteResult).rowsAffected ?? "—") : "—"}</dd></div>`,
+    `<div><dt>errorCode</dt><dd>${escapeHtml(payload.outcome.errorCode ?? "—")}</dd></div>`,
+    `<div><dt>expectedBeforeUpdatedAt</dt><dd>${escapeHtml(payload.outcome.expectedBeforeUpdatedAt ?? "—")}</dd></div>`,
+    `<div><dt>serviceRoleUsed</dt><dd>${safety.serviceRoleUsed ? "true" : "false"}</dd></div>`,
+    `</dl>`,
+    `<h4 class="site-slug-edit-save-result__subhead">beforeSnapshot</h4>`,
+    `<pre class="site-slug-edit-save-result__block">${escapeHtml(JSON.stringify(payload.beforeSnapshot, null, 2))}</pre>`,
+    `<h4 class="site-slug-edit-save-result__subhead">payload</h4>`,
+    `<pre class="site-slug-edit-save-result__block">${escapeHtml(JSON.stringify(payload.payloadWritten, null, 2))}</pre>`,
+    result && "afterSnapshot" in result
+      ? `<h4 class="site-slug-edit-save-result__subhead">afterSnapshot</h4><pre class="site-slug-edit-save-result__block">${escapeHtml(JSON.stringify((result as ScheduleWriteResult).afterSnapshot, null, 2))}</pre>`
+      : "",
+    `<h4 class="site-slug-edit-save-result__subhead">full outcome</h4>`,
+    `<pre class="site-slug-edit-save-result__block">${escapeHtml(JSON.stringify(payload.outcome, null, 2))}</pre>`,
+  ].join("");
+
+  void refreshAuthWriteDebugPanel();
+}
+
 function refreshG9G3dSaveButtonState(): void {
   const btn = document.getElementById("site-slug-edit-g9g3d-save-btn");
   const hint = document.getElementById("site-slug-edit-g9g3d-save-hint");
@@ -965,9 +1178,14 @@ async function onPreviewClick(): Promise<void> {
     );
   }
   lastPreviewG9g3dStale = result.optimisticLock.stale;
+  lastPreviewTargetId = result.target.id;
+  lastPreviewTargetLegacyId = result.target.legacy_id ?? null;
+  lastPreviewExpectedUpdatedAt = result.optimisticLock.expectedBeforeUpdatedAt ?? null;
+  lastPreviewHostGatePassed = result.hostGate.hostGatePassed;
   refreshG9G3bSaveButtonState();
   refreshG9G3cSaveButtonState();
   refreshG9G3dSaveButtonState();
+  refreshG9G3gOperationalSaveButtonState();
   updateStaleLockBanner(false);
   refreshSaveGatePanel();
 }
@@ -1136,6 +1354,80 @@ async function onG9g3dSaveClick(): Promise<void> {
   }
 }
 
+async function onG9G3gOperationalSaveClick(): Promise<void> {
+  const gate = canEnableG9G3gOperationalSave();
+  if (!gate.ok) {
+    refreshG9G3gOperationalSaveButtonState();
+    return;
+  }
+
+  const row = parseTargetRow();
+  if (!row || isPocAuditScheduleRow(row)) return;
+
+  executionInFlight = true;
+  refreshG9G3gOperationalSaveButtonState();
+
+  const { url, anonKey } = getSupabaseEnv();
+  const changedFields = [...lastPreviewG9g3dChangedFields];
+  const rawValues: Record<string, string> = {};
+  const candidateValues: Record<string, string> = {};
+  for (const field of changedFields) {
+    const value = getFieldValue(field as (typeof SITE_SLUG_EDIT_SAFE_FIELDS)[number]);
+    rawValues[field] = value;
+    candidateValues[field] = value;
+  }
+  const payload = buildG9G3gOperationalGeneralEditPayload(changedFields, rawValues);
+
+  try {
+    const outcome = await executeG9G3gOperationalGeneralEditSave({
+      url,
+      anonKey,
+      beforeSnapshot: row,
+      payload,
+      changedFields,
+      candidateValues,
+      previewBinding: {
+        targetId: lastPreviewTargetId ?? row.id,
+        legacyId: lastPreviewTargetLegacyId ?? row.legacy_id ?? null,
+        siteSlug: STAGING_SHELL_GOSAKI_SCHEDULE_SITE_SLUG,
+        expectedBeforeUpdatedAt: lastPreviewExpectedUpdatedAt,
+        changedFields,
+        fieldValues: { ...lastPreviewG9g3dFieldValues },
+        hostGatePassed: lastPreviewHostGatePassed,
+        optimisticLockStale: lastPreviewG9g3dStale,
+      },
+    });
+
+    const actualWrite =
+      outcome.result != null &&
+      "actualWrite" in outcome.result &&
+      outcome.result.actualWrite === true;
+
+    renderG9G3gOperationalSaveResult({
+      actualWrite,
+      outcome,
+      changedFields,
+      beforeSnapshot: row,
+      payloadWritten: payload,
+    });
+
+    if (actualWrite && outcome.result && "afterSnapshot" in outcome.result) {
+      const root = getRoot();
+      if (root) {
+        const updated = outcome.result.afterSnapshot as ScheduleRecord;
+        root.dataset.targetRow = JSON.stringify(updated);
+        const baseline = document.getElementById("site-slug-edit-baseline-updated-at");
+        if (baseline) baseline.textContent = updated.updated_at ?? "—";
+        updateLoadedValueDisplays(updated);
+      }
+      invalidateDryRunPreview();
+    }
+  } finally {
+    executionInFlight = false;
+    refreshG9G3gOperationalSaveButtonState();
+  }
+}
+
 function updateLoadedValueDisplays(row: ScheduleRecord): void {
   const map: Record<(typeof SITE_SLUG_EDIT_SAFE_FIELDS)[number], string> = {
     title: "site-slug-edit-loaded-title",
@@ -1209,6 +1501,7 @@ function initSiteSlugEditUi(): void {
       refreshG9G3bSaveButtonState();
       refreshG9G3cSaveButtonState();
       refreshG9G3dSaveButtonState();
+      refreshG9G3gOperationalSaveButtonState();
     },
     refreshSaveGatePanel,
     refreshPreviewButtonState,
@@ -1239,6 +1532,12 @@ function initSiteSlugEditUi(): void {
     void onG9g3dSaveClick();
   });
 
+  document
+    .getElementById("site-slug-edit-g9g3g-operational-save-btn")
+    ?.addEventListener("click", () => {
+      void onG9G3gOperationalSaveClick();
+    });
+
   for (const field of SITE_SLUG_EDIT_SAFE_FIELDS) {
     document.getElementById(SAFE_FIELD_INPUT_IDS[field])?.addEventListener("input", () => {
       if (isPickerDrivenBinding()) {
@@ -1264,6 +1563,7 @@ function initSiteSlugEditUi(): void {
     refreshG9G3bSaveButtonState();
     refreshG9G3cSaveButtonState();
     refreshG9G3dSaveButtonState();
+    refreshG9G3gOperationalSaveButtonState();
     refreshPreviewButtonState();
     refreshSaveGatePanel();
   });

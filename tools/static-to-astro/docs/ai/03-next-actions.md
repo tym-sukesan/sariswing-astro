@@ -3,28 +3,31 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 1. Immediate priority
 
-**Current phase:** `G-9g3g5-post-execution-hardening-and-restore-decision` — **planning complete**
+**Current phase:** `G-9g3g5b-operational-restore-preflight` — **complete / restore execution pending**
 
-**Next:** `G-9g3g5b-operational-restore-preflight`
+**Next:** `G-9g3g5b1-operational-restore-approval-arm-implementation` (blocker — restore arm not wired)
 
-**Git:** latest pushed commit `a58f5f9` (G-9g3g4); G-9g3g5 planning **uncommitted**
+**Git:** latest pushed commit `d202797` (G-9g3g5); G-9g3g5b preflight **uncommitted**
 
-### G-9g3g5 summary
+### G-9g3g5b summary
 
 | Item | Value |
 | --- | --- |
-| Planning doc | `staging-shell-schedule-site-slug-operational-general-edit-post-execution-hardening-and-restore-decision.md` |
-| G-9g3g4 commit | `a58f5f9` — Save success, marker in staging DB |
-| Restore decision | **Option B** (UI operational restore) in G-9g3g5b/c — not executed |
-| Restore approval (planned) | `G-9g3g5-schedule-site-slug-operational-restore-non-dry-run` |
-| Restore env arm (planned) | `PUBLIC_ADMIN_SCHEDULE_G9G3G5_OPERATIONAL_RESTORE_NON_DRY_RUN_ARMED` |
-| Save / DB write (this phase) | **not executed** |
+| Preflight doc | `staging-shell-schedule-site-slug-operational-general-edit-restore-preflight.md` |
+| Target row | `888c58f2-…` / `schedule-2026-03-001` / `gosaki-piano` |
+| Marker in DB | yes — G-9g3g4 temporary marker remains |
+| Restore candidate | original description (no marker) |
+| Restore approval | `G-9g3g5-schedule-site-slug-operational-restore-non-dry-run` |
+| Restore env arm | `PUBLIC_ADMIN_SCHEDULE_G9G3G5_OPERATIONAL_RESTORE_NON_DRY_RUN_ARMED` |
+| Implementation gap | **not implemented** — cannot proceed to G-9g3g5c yet |
+| Save / restore / DB write | **not executed** |
 
 ### Gates
 
 ```txt
-stagingShellScheduleSiteSlugOperationalGeneralEditPostExecutionHardeningPlanningComplete: true
-readyForG9g3g5bOperationalRestorePreflight: true
+stagingShellScheduleSiteSlugOperationalRestorePreflightComplete: true
+readyForG9g3g5b1OperationalRestoreApprovalArmImplementation: true
+readyForG9g3g5cOperationalRestoreExecution: false
 markerRemainsInStagingDb: true
 restoreExecuted: false
 readyForAnyDbWrite: false
@@ -32,9 +35,9 @@ readyForAnyDbWrite: false
 
 ## 2. Next steps
 
-1. **G-9g3g5b-operational-restore-preflight** — restore payload, dedicated approval/env, operator checklist
-2. **G-9g3g5c-operational-restore-execution** — operator Preview → Save once (description → original)
-3. **G-9g3g5d-post-restore-hardening** — verify clean state
+1. **G-9g3g5b1-operational-restore-approval-arm-implementation** — types, guards, config, UI gate, save executor
+2. **G-9g3g5c-operational-restore-execution** — operator Preview → Save once (after b1)
+3. **G-9g3g5d-post-restore-hardening**
 
 ## 3. Routine dev safety
 
@@ -48,5 +51,6 @@ PUBLIC_ADMIN_WRITE_DRY_RUN: true
 ## 4. Do not
 
 - Re-click G-9g3g4 operational Save
-- Execute restore / rollback SQL until G-9g3g5b/c operator approval
+- Skip to G-9g3g5c before G-9g3g5b1
+- Execute SQL rollback / restore SQL
 - Re-run G-9g2 / G-9g3b / G-9g3c / G-9g3d Save

@@ -133,7 +133,16 @@ export const G9G3G5_PHASE =
 
 export const G9G3G5B_PHASE = "G-9g3g5b-operational-restore-preflight";
 
-/** Recommended restore path — implementation in G-9g3g5b/c. */
+export const G9G3G5B1_PHASE =
+  "G-9g3g5b1-operational-restore-approval-arm-implementation";
+
+export const G9G3G5C_PHASE = "G-9g3g5c-operational-restore-execution";
+
+/** Lock baseline for restore (post-G-9g3g4) — operator must reconfirm live before G-9g3g5c. */
+export const G9G3G5_RESTORE_LOCK_BASELINE_UPDATED_AT =
+  "2026-06-18T16:35:45.060011+00:00";
+
+/** Recommended restore path — implementation in G-9g3g5b1/c. */
 export const G9G3G5_OPERATIONAL_RESTORE_NON_DRY_RUN_APPROVAL_ID =
   "G-9g3g5-schedule-site-slug-operational-restore-non-dry-run";
 

@@ -5,23 +5,23 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-9g3g5-post-execution-hardening-and-restore-decision (planning complete)
-Latest commit (pushed): a58f5f9 (G-9g3g4 execution success)
-G-9g3g5 planning: uncommitted
+Current phase: G-9g3g5b-operational-restore-preflight (complete / restore execution pending)
+Latest commit (pushed): d202797 (G-9g3g5 planning)
+G-9g3g5b preflight: uncommitted
 ```
 
 ## Summary
 
-G-9g3g5 post-execution hardening and restore decision **complete** — planning only.
+G-9g3g5b operational restore preflight **complete** — gap audit shows restore arm **not implemented**.
 
-- **G-9g3g4:** success at `a58f5f9` — `description` marker remains in staging DB
-- **Restore decision:** Option B (UI operational restore) recommended — **not executed**
+- **Marker in staging DB:** G-9g3g4 temporary marker on row `888c58f2-…`
+- **Restore candidate:** original description (no marker)
 - **Restore approval (planned):** `G-9g3g5-schedule-site-slug-operational-restore-non-dry-run`
 - **Restore env arm (planned):** `PUBLIC_ADMIN_SCHEDULE_G9G3G5_OPERATIONAL_RESTORE_NON_DRY_RUN_ARMED`
-- **SQL rollback:** discouraged (Option C)
-- **Save / DB write (G-9g3g5):** not executed
+- **Blocker:** types / guards / config / UI / save path not wired for restore ID
+- **Restore / DB write:** not executed
 
-**Do not re-click G-9g3g4 operational Save.**
+**Do not re-click G-9g3g4 operational Save.** **Do not skip to G-9g3g5c.**
 
 ## Routine dev safety (default)
 
@@ -36,8 +36,9 @@ PUBLIC_SUPABASE_URL host: kmjqppxjdnwwrtaeqjta.supabase.co (staging)
 ## Gates
 
 ```txt
-stagingShellScheduleSiteSlugOperationalGeneralEditPostExecutionHardeningPlanningComplete: true
-readyForG9g3g5bOperationalRestorePreflight: true
+stagingShellScheduleSiteSlugOperationalRestorePreflightComplete: true
+readyForG9g3g5b1OperationalRestoreApprovalArmImplementation: true
+readyForG9g3g5cOperationalRestoreExecution: false
 markerRemainsInStagingDb: true
 restoreExecuted: false
 readyForAnyDbWrite: false
@@ -45,6 +46,8 @@ readyForAnyDbWrite: false
 
 ## Next
 
-**G-9g3g5b-operational-restore-preflight**
+**G-9g3g5b1-operational-restore-approval-arm-implementation**
+
+Then: **G-9g3g5c-operational-restore-execution**
 
 **Do not re-run G-9g2 / G-9g3b / G-9g3c / G-9g3d / G-9g3g4 operational Save.**

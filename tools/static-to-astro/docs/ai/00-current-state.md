@@ -21,17 +21,17 @@ Staging Shell
 将来的な顧客オンボーディング・課金・デプロイ自動化
 
 2. Current phase
-現在フェーズ: G-9g3g5-post-execution-hardening-and-restore-decision — **planning complete**
+現在フェーズ: G-9g3g5b-operational-restore-preflight — **complete / restore execution pending**
 
-次フェーズ: **G-9g3g5b-operational-restore-preflight**
+次フェーズ: **G-9g3g5b1-operational-restore-approval-arm-implementation**（restore arm 未実装のため）
 
-Git: 最新 push 済み commit `a58f5f9`（G-9g3g4 execution success）。G-9g3g5 planning **uncommitted**。
+Git: 最新 push 済み commit `d202797`（G-9g3g5）。G-9g3g5b restore preflight **uncommitted**。
 
-G-9g3g5: post-execution hardening + restore decision **complete**。marker は staging DB に残存。restore **未実行**。Save / DB write **本フェーズ未実行**。
+G-9g3g5b: operational restore preflight **complete**。implementation gap audit: restore専用 approval/env **未実装** → G-9g3g5c はブロック。marker は staging DB に残存。restore / DB write **未実行**。
 
-G-9g3g4: operational non-dry-run Save **success**（commit `a58f5f9`）。**Do not re-click G-9g3g operational Save.**
+G-9g3g5: post-execution hardening **complete**（commit `d202797`）。
 
-G-9g3g3: operational non-dry-run preflight **complete**（commit `43c7aa7`）。
+G-9g3g4: operational Save **success**（commit `a58f5f9`）。**Do not re-click G-9g3g4 operational Save.**
 
 G-9g3g1: operational Save path **implementation completed**（commit `025156f`）。**Do not re-run G-9g2 / G-9g3b / G-9g3c / G-9g3d PoC Save.**
 
@@ -538,31 +538,32 @@ PUBLIC_SUPABASE_URL host: kmjqppxjdnwwrtaeqjta.supabase.co (staging)
 **Note:** `tools/static-to-astro/.env.local` に `SUPABASE_SERVICE_ROLE_KEY` が local only（gitignored）で存在する場合がある。G-9g3b execution では使用禁止・参照禁止。anon key + authenticated session のみ。
 
 10. Recommended next phase
-次フェーズ推奨: **G-9g3g5b-operational-restore-preflight**
+次フェーズ推奨: **G-9g3g5b1-operational-restore-approval-arm-implementation**
 
-G-9g3g5 planning: **complete**（uncommitted）。
+G-9g3g5b restore preflight: **complete**（uncommitted）。
 
-G-9g3g4 execution: **committed `a58f5f9`**.
+G-9g3g5 planning: **committed `d202797`**.
 
 Phase sequence:
 ```txt
-G-9g3g4-operational-non-dry-run-execution ← complete (a58f5f9)
-G-9g3g5-post-execution-hardening-and-restore-decision ← complete (uncommitted)
-G-9g3g5b-operational-restore-preflight ← next
-G-9g3g5c-operational-restore-execution ← after preflight
-G-9g3g5d-post-restore-hardening ← after restore
+G-9g3g5-post-execution-hardening-and-restore-decision ← complete (d202797)
+G-9g3g5b-operational-restore-preflight ← complete (uncommitted)
+G-9g3g5b1-operational-restore-approval-arm-implementation ← next (blocker)
+G-9g3g5c-operational-restore-execution ← after b1
+G-9g3g5d-post-restore-hardening ← after c
 ```
 
 G-9g3g gates:
 ```txt
-stagingShellScheduleSiteSlugOperationalGeneralEditPostExecutionHardeningPlanningComplete: true
-readyForG9g3g5bOperationalRestorePreflight: true
+stagingShellScheduleSiteSlugOperationalRestorePreflightComplete: true
+readyForG9g3g5b1OperationalRestoreApprovalArmImplementation: true
+readyForG9g3g5cOperationalRestoreExecution: false
 markerRemainsInStagingDb: true
 restoreExecuted: false
 readyForAnyDbWrite: false
 ```
 
-Routine dev: dry-run on / operational arm off / G-9g3g5 restore arm off. Marker in staging DB until G-9g3g5c restore.
+Routine dev: dry-run on / G-9g3g arm off / G-9g3g5 restore arm off. Marker in DB until G-9g3g5c.
 
 11. AI workflow transition
 チャット履歴への依存を減らすため、リポジトリ側に AI開発文脈管理ファイルを作成。

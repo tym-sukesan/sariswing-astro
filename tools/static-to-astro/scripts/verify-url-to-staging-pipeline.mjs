@@ -2992,6 +2992,38 @@ assert(
   g9g3g5DocSrc.includes("G-9g3g5-schedule-site-slug-operational-restore-non-dry-run"),
 );
 
+const g9g3g5bPreflightPath = path.join(
+  TOOL_ROOT,
+  "docs/staging-shell-schedule-site-slug-operational-general-edit-restore-preflight.md",
+);
+assert("G-9g3g5b restore preflight doc exists", fs.existsSync(g9g3g5bPreflightPath));
+const g9g3g5bPreflightSrc = fs.readFileSync(g9g3g5bPreflightPath, "utf8");
+assert(
+  "G-9g3g5b preflight complete",
+  g9g3g5bPreflightSrc.includes("G-9g3g5b-operational-restore-preflight") &&
+    g9g3g5bPreflightSrc.includes("preflight complete / restore execution pending"),
+);
+assert(
+  "G-9g3g5b ready for b1 implementation",
+  g9g3g5bPreflightSrc.includes("readyForG9g3g5b1OperationalRestoreApprovalArmImplementation: true"),
+);
+assert(
+  "G-9g3g5c blocked until b1",
+  g9g3g5bPreflightSrc.includes("readyForG9g3g5cOperationalRestoreExecution: false"),
+);
+assert(
+  "G-9g3g5b implementation gap audit",
+  g9g3g5bPreflightSrc.includes("Implementation gap audit"),
+);
+assert(
+  "G-9g3g5b restore not executed",
+  g9g3g5bPreflightSrc.includes("restoreExecuted: false"),
+);
+assert(
+  "G-9g3g5b next phase b1",
+  g9g3g5bPreflightSrc.includes("G-9g3g5b1-operational-restore-approval-arm-implementation"),
+);
+
 const gosakiPublicDist = path.join(TOOL_ROOT, "output/static-public/gosaki-piano/public-dist");
 for (const ym of ["2026-06", "2026-07"]) {
   const canonicalMonthPath = path.join(gosakiPublicDist, "schedule", ym, "index.html");

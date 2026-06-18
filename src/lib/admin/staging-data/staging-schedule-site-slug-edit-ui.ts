@@ -47,6 +47,10 @@ import {
 import { buildG9G3dGeneralEditPayload } from "../staging-write/schedule-write-guards";
 import type { ScheduleRecord } from "../staging-write/schedule-dry-run-types";
 import type { ScheduleWriteResult } from "../staging-write/schedule-write-types";
+import {
+  initPickerEditBinding,
+  hasPickerBoundRow,
+} from "./staging-schedule-site-slug-edit-picker-binding";
 
 const SAFE_FIELD_INPUT_IDS: Record<(typeof SITE_SLUG_EDIT_SAFE_FIELDS)[number], string> = {
   title: "site-slug-edit-dry-run-title",
@@ -84,6 +88,10 @@ function escapeHtml(value: string): string {
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;");
+}
+
+function isPickerDrivenBinding(): boolean {
+  return getRoot()?.dataset.pickerDrivenBinding === "true";
 }
 
 function getRoot(): HTMLElement | null {
@@ -354,6 +362,8 @@ function refreshSaveGatePanel(): void {
 
   if (G9G3D_GENERAL_EDIT_POC_EXECUTED) {
     lines.push(`G-9g3d Save: frozen — ${G9G3D_POC_EXECUTED_ARM_FAILURE}`);
+  } else if (isPickerDrivenBinding()) {
+    lines.push("G-9g3f3a: General edit binding only — operational Save not implemented");
   } else if (document.getElementById("site-slug-edit-g9g3d-save-btn")) {
     lines.push(
       g9g3dGate.ok
@@ -376,6 +386,14 @@ function refreshSaveGatePanel(): void {
     lines.push("Auth: staging admin signed in");
   } else {
     lines.push("Auth: checking session…");
+  }
+
+  if (isPickerDrivenBinding() && !hasPickerBoundRow()) {
+    lines.push("Row picker: no row selected — edit disabled");
+  }
+
+  if (isPickerDrivenBinding()) {
+    lines.push("Preview: deferred to G-9g3f3b smoke");
   }
 
   if (lastPreviewG9g3dStale) {
@@ -438,6 +456,9 @@ function otherSafeFieldsUnchangedForG9g3c(row: ScheduleRecord): boolean {
 }
 
 function canEnableG9G3bSave(): { ok: boolean; reason: string } {
+  if (isPickerDrivenBinding()) {
+    return { ok: false, reason: "G-9g3f3a — Save not implemented" };
+  }
   const config = getG9G3bVenueDescriptionPocConfig();
   const hostGate = getClientHostGate();
 
@@ -510,6 +531,9 @@ function refreshG9G3bSaveButtonState(): void {
 }
 
 function canEnableG9G3cSave(): { ok: boolean; reason: string } {
+  if (isPickerDrivenBinding()) {
+    return { ok: false, reason: "G-9g3f3a — Save not implemented" };
+  }
   const config = getG9G3cTimePricePocConfig();
   const hostGate = getClientHostGate();
 
@@ -634,6 +658,9 @@ function nonChangedSafeFieldsUnchanged(
 }
 
 function canEnableG9G3dSave(): { ok: boolean; reason: string } {
+  if (isPickerDrivenBinding()) {
+    return { ok: false, reason: "G-9g3f3a — operational Save not implemented" };
+  }
   if (G9G3D_GENERAL_EDIT_POC_EXECUTED) {
     return { ok: false, reason: G9G3D_POC_EXECUTED_ARM_FAILURE };
   }
@@ -749,6 +776,17 @@ function renderG9G3dSaveResult(payload: {
 }
 
 async function onPreviewClick(): Promise<void> {
+  if (isPickerDrivenBinding()) {
+    const el = document.getElementById("site-slug-edit-dry-run-result");
+    if (el) {
+      el.innerHTML =
+        '<p class="site-slug-edit-dry-run-result__placeholder" role="status">Preview execution deferred to G-9g3f3b smoke. Row picker → edit hydrate is active; dry-run Preview on selected row is not run in G-9g3f3a.</p>';
+    }
+    invalidateDryRunPreview();
+    refreshSaveGatePanel();
+    return;
+  }
+
   const row = parseTargetRow();
   const hostGate = getClientHostGate();
   updateHostGateSummary(hostGate);
@@ -1072,6 +1110,22 @@ function applyG9G3cDefaultFieldValues(row: ScheduleRecord | null): void {
 function initSiteSlugEditUi(): void {
   const root = getRoot();
   if (!root) return;
+
+  initPickerEditBinding({
+    invalidateDryRunPreview,
+    refreshSaveButtonStates: () => {
+      refreshG9G3bSaveButtonState();
+      refreshG9G3cSaveButtonState();
+      refreshG9G3dSaveButtonState();
+    },
+    refreshSaveGatePanel,
+    clearDryRunResultPlaceholder: (message: string) => {
+      const el = document.getElementById("site-slug-edit-dry-run-result");
+      if (el) {
+        el.innerHTML = `<p class="site-slug-edit-dry-run-result__placeholder" role="status">${escapeHtml(message)}</p>`;
+      }
+    },
+  });
 
   document
     .getElementById("site-slug-edit-dry-run-preview-btn")

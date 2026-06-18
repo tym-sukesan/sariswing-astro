@@ -3,42 +3,38 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 1. Immediate priority
 
-**Current phase:** `G-9g3f3-row-picker-general-edit-binding-planning` — **complete**
+**Current phase:** `G-9g3f3a-row-picker-general-edit-binding-implementation` — **complete**
 
-**Next:** `G-9g3f3a-row-picker-general-edit-binding-implementation`
+**Next:** `G-9g3f3b-row-picker-general-edit-binding-smoke-test`
 
-**Git:** latest pushed commit `94d4e61` (G-9g3f2 smoke); G-9g3f3 planning doc + AI context updates **uncommitted**
+**Git:** latest pushed commit `bf27151` (G-9g3f3 planning); G-9g3f3a implementation **uncommitted**
 
 **Docs:**
-- `tools/static-to-astro/docs/staging-shell-schedule-site-slug-row-picker-general-edit-binding-planning.md` (**new**)
-- `tools/static-to-astro/docs/staging-shell-schedule-site-slug-row-picker-read-only-smoke-test-result.md`
+- `tools/static-to-astro/docs/staging-shell-schedule-site-slug-row-picker-general-edit-binding-implementation.md` (**new**)
+- `tools/static-to-astro/docs/staging-shell-schedule-site-slug-row-picker-general-edit-binding-planning.md`
 
-### G-9g3f3 planning summary
+### G-9g3f3a implementation summary
 
-- **Binding strategy:** client-side `CustomEvent` bridge (picker → edit form); no URL query param
-- **SSR:** edit form `targetRow` null until selection; pilot preload removed in G-9g3f3a
-- **Safety:** site_slug fixed; PoC audit rows blocked from edit hydrate; null selection → Save/Preview disabled
-- **Operational:** approval ID `G-9g3-schedule-site-slug-general-edit`; env `PUBLIC_ADMIN_SCHEDULE_SITE_SLUG_GENERAL_EDIT_ENABLED` — G-9g3g only
-- **Save / Preview / DB write / manual SQL:** not executed this phase
+- **CustomEvent bridge:** picker → edit form hydrate
+- **Pilot SSR preload:** removed (`targetRow: null`)
+- **PoC audit rows:** edit hydrate blocked
+- **Preview:** deferred to G-9g3f3b
+- **Save / operational arm / DB write:** not implemented
 
 ### Gates
 
 ```txt
-stagingShellScheduleSiteSlugRowPickerGeneralEditBindingPlanningComplete: true
-readyForG9g3f3aRowPickerGeneralEditBindingImplementation: true
+stagingShellScheduleSiteSlugRowPickerGeneralEditBindingImplementationComplete: true
+readyForG9g3f3bRowPickerGeneralEditBindingSmokeTest: true
 readyForAnyDbWrite: false
 rollbackNeeded: false
 ```
 
 ## 2. Next steps
 
-1. **G-9g3f3a-row-picker-general-edit-binding-implementation** — event bridge + edit hydrate; no Save / DB write
-2. **G-9g3f3b-row-picker-general-edit-binding-smoke-test** — dry-run Preview on selected row; no Save
-3. Optional: operator manual row select / clear / reload before G-9g3f3b
-
-### Deferred cleanup (G-9g3f3b)
-
-- `verify-g9g3d-general-edit-dry-run-smoke.mjs`: align `PILOT_ROW.price` + `UPDATED_AT_BASELINE` to post-G-9g3d4 values
+1. **G-9g3f3b-row-picker-general-edit-binding-smoke-test** — Preview dry-run on selected row; no Save
+2. Optional: operator manual row select / clear / reload UX check
+3. **G-9g3f3b:** align `verify-g9g3d-general-edit-dry-run-smoke.mjs` PILOT_ROW baseline
 
 ## 3. Routine dev safety
 
@@ -58,6 +54,6 @@ PUBLIC_SUPABASE_URL host: kmjqppxjdnwwrtaeqjta.supabase.co
 
 ## 5. Baseline
 
-- Latest commit (pushed): `94d4e61`
+- Latest commit (pushed): `bf27151`
 - Pilot row (audit only): `aa440e29-5be8-402e-9190-0d81c48434c0` / `gosaki-piano`
-- Row picker: read-only smoke passed (G-9g3f2); general edit binding deferred until G-9g3f3a
+- General edit: picker-driven hydrate (G-9g3f3a)

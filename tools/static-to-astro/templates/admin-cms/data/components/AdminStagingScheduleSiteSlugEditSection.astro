@@ -13,8 +13,8 @@ interface Props {
 const { binding } = Astro.props;
 
 const row = binding.targetRow;
-const uiDisabled = binding.source !== "supabase" || !row;
-const targetRowJson = row ? JSON.stringify(row) : "";
+const uiDisabled = binding.source !== "supabase";
+const candidateDisabled = uiDisabled || binding.pickerDrivenBinding;
 const g9g3dSaveSectionVisible =
   binding.g9g3dArmed ||
   binding.g9g3dPocExecuted ||
@@ -50,20 +50,73 @@ const hostAlertClass = binding.isKnownProductionHost
   data-g9g3d-armed={binding.g9g3dArmed ? "true" : "false"}
   data-g9g3d-save-enabled={binding.g9g3dSaveEnabled ? "true" : "false"}
   data-g9g3d-poc-executed={binding.g9g3dPocExecuted ? "true" : "false"}
+  data-picker-driven-binding={binding.pickerDrivenBinding ? "true" : "false"}
+  data-picker-row-bound="false"
+  data-target-id={binding.targetId}
+  data-legacy-id={binding.legacyId}
   data-host-gate-passed={binding.hostGatePassed ? "true" : "false"}
   data-active-host={binding.activeHost}
   data-expected-host={binding.expectedHost}
-  data-target-row={targetRowJson}
+  data-target-row=""
   role="region"
   aria-label="Gosaki site_slug schedule edit"
 >
   <h2 class="admin-staging-schedule-site-slug-edit__title">
-    Schedule site_slug general edit (G-9g3e1)
+    Schedule site_slug general edit (G-9g3f3a)
   </h2>
 
   <p class="admin-staging-schedule-site-slug-edit__staging-banner" role="note">
     <strong>Staging shell only</strong> — not production Sariswing <code>/admin</code>.
     Host: <code>{binding.expectedHost}</code>
+  </p>
+
+  <p class="admin-staging-schedule-site-slug-edit__binding-phase" role="note">
+    <strong>General edit binding only</strong> — row picker → edit hydrate (G-9g3f3a).
+    Operational Save deferred. Preview execution deferred to G-9g3f3b smoke.
+  </p>
+
+  <p
+    id="site-slug-edit-editing-badge"
+    class="admin-staging-schedule-site-slug-edit__editing-badge"
+    role="status"
+    hidden
+  >
+    <strong>Editing selected row</strong>
+  </p>
+
+  <p
+    id="site-slug-edit-picker-placeholder"
+    class="admin-staging-schedule-site-slug-edit__picker-placeholder"
+    role="status"
+  >
+    Select a row in the picker above to load Loaded DB / Candidate values here.
+  </p>
+
+  <p
+    id="site-slug-edit-poc-audit-blocked"
+    class="admin-staging-schedule-site-slug-edit__poc-audit-blocked"
+    role="alert"
+    hidden
+  >
+    STOP — PoC audit row cannot be bound to general edit.
+  </p>
+
+  <p
+    id="site-slug-edit-site-slug-stop"
+    class="admin-staging-schedule-site-slug-edit__site-slug-stop"
+    role="alert"
+    hidden
+  >
+    STOP — site_slug scope mismatch.
+  </p>
+
+  <p
+    id="site-slug-edit-dirty-candidate-warning"
+    class="admin-staging-schedule-site-slug-edit__dirty-warning"
+    role="note"
+    hidden
+  >
+    Unsaved candidate changes — use Reset candidates or re-run Preview in G-9g3f3b before Save.
   </p>
 
   <p
@@ -173,34 +226,22 @@ const hostAlertClass = binding.isKnownProductionHost
     </div>
   </dl>
 
-  <AdminCard title="Target row" description="Fixed — id + legacy_id + site_slug scoped">
-    <dl class="admin-staging-schedule-site-slug-edit__target">
-      <div>
-        <dt>id</dt>
-        <dd><code>{binding.targetId}</code></dd>
-      </div>
-      <div>
-        <dt>legacy_id</dt>
-        <dd><code>{binding.legacyId}</code></dd>
-      </div>
-      <div>
-        <dt>site_slug</dt>
-        <dd><code>{binding.siteSlug}</code></dd>
-      </div>
-      <div>
-        <dt>updated_at</dt>
-        <dd><code id="site-slug-edit-baseline-updated-at">{row?.updated_at ?? "—"}</code></dd>
-      </div>
-      <div>
-        <dt>date</dt>
-        <dd>{row?.date ?? "—"}</dd>
-      </div>
-    </dl>
+  <AdminCard title="Selected row (picker binding)" description="G-9g3f3a — id + legacy_id + site_slug + updated_at from picker selection">
+    <div id="site-slug-edit-selected-row-strip" class="admin-staging-schedule-site-slug-edit__selected-strip" />
+    <p id="site-slug-edit-reload-status" class="admin-staging-schedule-site-slug-edit__reload-status" role="status" />
+    <div class="admin-staging-schedule-site-slug-edit__picker-actions">
+      <button id="site-slug-edit-reset-candidates-btn" class="admin-button" type="button" disabled={candidateDisabled}>
+        Reset candidates
+      </button>
+      <button id="site-slug-edit-reload-from-db-btn" class="admin-button" type="button" disabled={candidateDisabled}>
+        Reload from DB
+      </button>
+    </div>
   </AdminCard>
 
   <AdminCard
     title="Edit (safe fields)"
-    description="G-9g3e1 — unified general edit. Loaded DB values (read-only) vs candidate edit inputs."
+    description="G-9g3f3a — picker-driven hydrate. Loaded DB values vs candidate inputs."
   >
     <AdminFormField label="Title">
       <p class="admin-staging-schedule-site-slug-edit__loaded-value admin-staging-schedule-site-slug-edit__loaded-col">
@@ -212,7 +253,7 @@ const hostAlertClass = binding.isKnownProductionHost
         id="site-slug-edit-dry-run-title"
         type="text"
         value={row?.title ?? ""}
-        disabled={uiDisabled}
+        disabled={candidateDisabled}
         autocomplete="off"
       />
     </AdminFormField>
@@ -226,7 +267,7 @@ const hostAlertClass = binding.isKnownProductionHost
         id="site-slug-edit-dry-run-venue"
         type="text"
         value={row?.venue ?? ""}
-        disabled={uiDisabled}
+        disabled={candidateDisabled}
         autocomplete="off"
       />
     </AdminFormField>
@@ -240,7 +281,7 @@ const hostAlertClass = binding.isKnownProductionHost
         id="site-slug-edit-dry-run-open-time"
         type="text"
         value={row?.open_time ?? ""}
-        disabled={uiDisabled}
+        disabled={candidateDisabled}
         autocomplete="off"
       />
     </AdminFormField>
@@ -254,7 +295,7 @@ const hostAlertClass = binding.isKnownProductionHost
         id="site-slug-edit-dry-run-start-time"
         type="text"
         value={row?.start_time ?? ""}
-        disabled={uiDisabled}
+        disabled={candidateDisabled}
         autocomplete="off"
       />
     </AdminFormField>
@@ -268,7 +309,7 @@ const hostAlertClass = binding.isKnownProductionHost
         id="site-slug-edit-dry-run-price"
         type="text"
         value={row?.price ?? ""}
-        disabled={uiDisabled}
+        disabled={candidateDisabled}
         autocomplete="off"
       />
     </AdminFormField>
@@ -281,7 +322,7 @@ const hostAlertClass = binding.isKnownProductionHost
       <textarea
         id="site-slug-edit-dry-run-description"
         rows={3}
-        disabled={uiDisabled}
+        disabled={candidateDisabled}
         autocomplete="off">{row?.description ?? ""}</textarea>
     </AdminFormField>
 
@@ -290,10 +331,10 @@ const hostAlertClass = binding.isKnownProductionHost
         id="site-slug-edit-dry-run-preview-btn"
         class="admin-button"
         type="button"
-        disabled={uiDisabled}
-        title="Client-side dry-run preview — actualWrite=false"
+        disabled={true}
+        title="Preview deferred to G-9g3f3b — not executed in G-9g3f3a"
       >
-        Preview dry-run
+        Preview dry-run (deferred)
       </button>
       {
         g9g3dSaveSectionVisible ? (
@@ -331,20 +372,20 @@ const hostAlertClass = binding.isKnownProductionHost
         </p>
       ) : (
         <p id="site-slug-edit-g9g3a-hint" class="admin-staging-schedule-site-slug-edit__hint" role="status">
-          G-9g3d not armed — Preview dry-run only. Set {binding.g9g3dArmEnv}=true to expose Save.
+          G-9g3f3a — binding only. Save not available. Preview deferred to G-9g3f3b.
         </p>
       )
     }
   </AdminCard>
 
-  <AdminCard title="Dry-run result" description="Preview — actualWrite=false always">
+  <AdminCard title="Dry-run result" description="Preview payload JSON — execution deferred to G-9g3f3b">
     <div
       id="site-slug-edit-dry-run-result"
       class="site-slug-edit-dry-run-result"
       aria-live="polite"
     >
       <p class="site-slug-edit-dry-run-result__placeholder">
-        Click Preview dry-run to generate a client-side preview.
+        Preview execution deferred to G-9g3f3b. Select a row in the picker to hydrate candidate fields.
       </p>
     </div>
   </AdminCard>
@@ -462,6 +503,74 @@ const hostAlertClass = binding.isKnownProductionHost
   .admin-staging-schedule-site-slug-edit__title {
     margin: 0 0 0.75rem;
     font-size: 1.1rem;
+  }
+
+  .admin-staging-schedule-site-slug-edit__binding-phase,
+  .admin-staging-schedule-site-slug-edit__editing-badge,
+  .admin-staging-schedule-site-slug-edit__picker-placeholder,
+  .admin-staging-schedule-site-slug-edit__poc-audit-blocked,
+  .admin-staging-schedule-site-slug-edit__site-slug-stop,
+  .admin-staging-schedule-site-slug-edit__dirty-warning {
+    margin: 0 0 1rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    font-size: 0.9rem;
+  }
+
+  .admin-staging-schedule-site-slug-edit__binding-phase {
+    background: #e0f2fe;
+    border: 1px solid #7dd3fc;
+    color: #0c4a6e;
+  }
+
+  .admin-staging-schedule-site-slug-edit__editing-badge {
+    background: #d1fae5;
+    border: 1px solid #6ee7b7;
+    color: #065f46;
+  }
+
+  .admin-staging-schedule-site-slug-edit__picker-placeholder {
+    background: #f8fafc;
+    border: 1px dashed #cbd5e1;
+    color: #475569;
+  }
+
+  .admin-staging-schedule-site-slug-edit__poc-audit-blocked,
+  .admin-staging-schedule-site-slug-edit__site-slug-stop {
+    background: #fee2e2;
+    border: 1px solid #fca5a5;
+    color: #991b1b;
+  }
+
+  .admin-staging-schedule-site-slug-edit__dirty-warning {
+    background: #fef3c7;
+    border: 1px solid #fcd34d;
+    color: #92400e;
+  }
+
+  .admin-staging-schedule-site-slug-edit__selected-strip {
+    margin: 0 0 0.75rem;
+  }
+
+  .admin-staging-schedule-site-slug-edit__selected-dl {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
+    gap: 0.5rem 1rem;
+    margin: 0;
+    font-size: 0.9rem;
+  }
+
+  .admin-staging-schedule-site-slug-edit__picker-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+  }
+
+  .admin-staging-schedule-site-slug-edit__reload-status {
+    margin: 0.5rem 0 0;
+    font-size: 0.85rem;
+    color: #475569;
   }
 
   .admin-staging-schedule-site-slug-edit__safety,

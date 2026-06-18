@@ -2252,8 +2252,8 @@ assert(
 );
 assert(
   "G-9g3f1 general edit binding deferred",
-  g9g3f1SectionSrc.includes("data-general-edit-binding-deferred=\"true\"") &&
-    g9g3f1ImplSrc.includes("deferred G-9g3f3"),
+  g9g3f1ImplSrc.includes("deferred G-9g3f3") ||
+    g9g3f1ImplSrc.includes("General edit binding **deferred**"),
 );
 assert(
   "G-9g3f1 implementation Save not clicked",
@@ -2404,6 +2404,89 @@ assert(
 assert(
   "G-9g3f3 planning operational Save not implemented",
   g9g3f3PlanningDocSrc.includes("generalEditOperationalSaveNotImplemented: true"),
+);
+
+// --- G-9g3f3a row picker → general edit binding implementation ---
+const g9g3f3aImplDocPath = path.join(
+  TOOL_ROOT,
+  "docs/staging-shell-schedule-site-slug-row-picker-general-edit-binding-implementation.md",
+);
+const g9g3f3aEventsSrc = fs.readFileSync(
+  path.join(REPO_ROOT, "src/lib/admin/staging-data/staging-schedule-site-slug-row-picker-events.ts"),
+  "utf8",
+);
+const g9g3f3aPickerBindingSrc = fs.readFileSync(
+  path.join(REPO_ROOT, "src/lib/admin/staging-data/staging-schedule-site-slug-edit-picker-binding.ts"),
+  "utf8",
+);
+const g9g3f3aEditBindingSrc = fs.readFileSync(
+  path.join(REPO_ROOT, "src/lib/admin/staging-data/staging-schedule-site-slug-edit-binding.ts"),
+  "utf8",
+);
+const g9g3f3aEditSectionSrc = fs.readFileSync(
+  path.join(
+    TOOL_ROOT,
+    "templates/admin-cms/data/components/AdminStagingScheduleSiteSlugEditSection.astro",
+  ),
+  "utf8",
+);
+
+assert("G-9g3f3a implementation doc exists", fs.existsSync(g9g3f3aImplDocPath));
+const g9g3f3aImplDocSrc = fs.readFileSync(g9g3f3aImplDocPath, "utf8");
+
+assert(
+  "G-9g3f3a CustomEvent bridge",
+  g9g3f3aEventsSrc.includes("staging-schedule-site-slug-row-selected") &&
+    g9g3f3aEventsSrc.includes("staging-schedule-site-slug-row-cleared") &&
+    g9g3f3aEventsSrc.includes("staging-schedule-site-slug-row-reloaded"),
+);
+assert(
+  "G-9g3f3a selected row hydrate",
+  g9g3f3aPickerBindingSrc.includes("hydrateFromRow") &&
+    g9g3f3aPickerBindingSrc.includes("initPickerEditBinding"),
+);
+assert(
+  "G-9g3f3a pilot SSR preload removed",
+  g9g3f3aEditBindingSrc.includes("targetRow: null") &&
+    !g9g3f3aEditBindingSrc.includes("loadScheduleRowForSiteSlugRead"),
+);
+assert(
+  "G-9g3f3a PoC audit row block",
+  g9g3f3aPickerBindingSrc.includes("isPocAuditScheduleRow") &&
+    g9g3f3aPickerBindingSrc.includes("site-slug-edit-poc-audit-blocked"),
+);
+assert(
+  "G-9g3f3a site_slug mismatch STOP",
+  g9g3f3aPickerBindingSrc.includes("site-slug-edit-site-slug-stop"),
+);
+assert(
+  "G-9g3f3a Save not implemented",
+  g9g3f3aImplDocSrc.includes("Save not implemented") &&
+    g9g3f3aEditSectionSrc.includes("Preview dry-run (deferred)"),
+);
+assert(
+  "G-9g3f3a operational arm not implemented",
+  g9g3f3aImplDocSrc.includes("operational arm not implemented"),
+);
+assert(
+  "G-9g3f3a no DB write",
+  g9g3f3aImplDocSrc.includes("DB write not implemented"),
+);
+assert(
+  "G-9g3f3a next phase G-9g3f3b",
+  g9g3f3aImplDocSrc.includes("G-9g3f3b-row-picker-general-edit-binding-smoke-test"),
+);
+assert(
+  "G-9g3f3a implementation gate",
+  g9g3f3aImplDocSrc.includes(
+    "stagingShellScheduleSiteSlugRowPickerGeneralEditBindingImplementationComplete: true",
+  ),
+);
+assert(
+  "G-9g3f3a picker binding connected",
+  g9g3f3aEditSectionSrc.includes("data-picker-driven-binding") &&
+    g9g3f3aEditSectionSrc.includes("pickerDrivenBinding") &&
+    g9g3f3aEditSectionSrc.includes("site-slug-edit-picker-placeholder"),
 );
 
 const gosakiPublicDist = path.join(TOOL_ROOT, "output/static-public/gosaki-piano/public-dist");

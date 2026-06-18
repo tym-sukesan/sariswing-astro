@@ -5,24 +5,25 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-9g3f3-row-picker-general-edit-binding-planning (complete)
-Latest commit (pushed): 94d4e61 (G-9g3f2 smoke)
-Git: working tree has uncommitted G-9g3f3 planning doc + AI context updates
+Current phase: G-9g3f3a-row-picker-general-edit-binding-implementation (complete)
+Latest commit (pushed): bf27151 (G-9g3f3 planning)
+Git: working tree has uncommitted G-9g3f3a implementation
 ```
 
 ## Summary
 
-G-9g3f3 plans how the read-only row picker connects to the general edit form.
+G-9g3f3a connects row picker selection to general edit form via CustomEvent bridge.
 
-- **Binding strategy:** client-side CustomEvent bridge; no URL row param; SSR edit `targetRow` null until G-9g3f3a
-- **Safety:** site_slug `gosaki-piano` fixed; PoC audit rows blocked; null selection disables edit
-- **Operational path:** new approval ID `G-9g3-schedule-site-slug-general-edit` + env `PUBLIC_ADMIN_SCHEDULE_SITE_SLUG_GENERAL_EDIT_ENABLED` — G-9g3g only (not G-9g3d PoC ID)
-- **Save / Preview / DB write / manual SQL:** not executed
+- **Bridge:** `staging-schedule-site-slug-row-selected` / `cleared` / `reloaded`
+- **Pilot SSR preload:** removed — edit `targetRow` null until picker selection
+- **Safety:** PoC audit rows blocked; site_slug fixed; Save/Preview not executed
+- **Preview:** deferred to G-9g3f3b smoke
+- **Save / operational arm / DB write:** not implemented
 - **All G-9 PoC Saves:** re-run prohibited
 
 **Docs:**
-- `staging-shell-schedule-site-slug-row-picker-general-edit-binding-planning.md` (**new**)
-- `staging-shell-schedule-site-slug-row-picker-read-only-smoke-test-result.md`
+- `staging-shell-schedule-site-slug-row-picker-general-edit-binding-implementation.md` (**new**)
+- `staging-shell-schedule-site-slug-row-picker-general-edit-binding-planning.md`
 
 ## Routine dev safety (default)
 
@@ -36,11 +37,11 @@ All G-9 PoC arms: off
 ## Gates
 
 ```txt
-stagingShellScheduleSiteSlugRowPickerGeneralEditBindingPlanningComplete: true
-readyForG9g3f3aRowPickerGeneralEditBindingImplementation: true
+stagingShellScheduleSiteSlugRowPickerGeneralEditBindingImplementationComplete: true
+readyForG9g3f3bRowPickerGeneralEditBindingSmokeTest: true
 readyForAnyDbWrite: false
 ```
 
 ## Next
 
-**G-9g3f3a-row-picker-general-edit-binding-implementation** — wire picker → edit form; no Save / DB write.
+**G-9g3f3b-row-picker-general-edit-binding-smoke-test** — Preview dry-run on selected row; no Save / DB write.

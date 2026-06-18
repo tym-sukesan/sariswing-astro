@@ -230,7 +230,7 @@ try {
 
 if (ssrHtml) {
   assert("SSR staging shell route", ssrHtml.includes("/__admin-staging-shell/musician-basic/"));
-  assert("SSR G-9g3e1 phase title", ssrHtml.includes("G-9g3e1"));
+  assert("SSR G-9g3e1 or G-9g3f3a phase title", ssrHtml.includes("G-9g3e1") || ssrHtml.includes("G-9g3f3a"));
   assert("SSR activeHost staging", ssrHtml.includes(STAGING_HOST));
   assert("SSR production host absent", !ssrHtml.includes(PRODUCTION_HOST));
   assert("SSR g9g3d poc executed banner", ssrHtml.includes("G-9g3d PoC executed"));

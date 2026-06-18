@@ -7,6 +7,12 @@ import { getStagingSupabaseClient } from "../staging-auth/supabase-staging-auth-
 import { evaluateSupabaseHostGate } from "./staging-schedule-site-slug-host-gate";
 import type { ScheduleRecord } from "../staging-write/schedule-dry-run-types";
 import { STAGING_SHELL_GOSAKI_SCHEDULE_SITE_SLUG } from "./staging-schedule-site-slug-config";
+import {
+  dispatchRowCleared,
+  dispatchRowReloaded,
+  dispatchRowSelected,
+} from "./staging-schedule-site-slug-row-picker-events";
+import { isPocAuditScheduleRow } from "./staging-schedule-site-slug-row-picker-utils";
 
 const SCHEDULE_ROW_PICKER_SELECT =
   "id,legacy_id,site_slug,date,year,month,title,venue,open_time,start_time,price,description,show_on_home,home_order,published,sort_order,source_file,source_route,created_at,updated_at";
@@ -174,19 +180,36 @@ function renderSelectedSummary(): void {
       <div><dt>published</dt><dd>${selectedRow.published === true ? "true" : "false"}</dd></div>
     </dl>
     ${staleHint}
-    <p class="site-slug-row-picker__binding-note" role="note"><strong>Read-only picker.</strong> General edit form below still uses the fixed pilot row until G-9g3f3 binding.</p>
+    <p class="site-slug-row-picker__binding-note" role="note"><strong>Read-only picker.</strong> Selection feeds the general edit form below (G-9g3f3a binding).</p>
   `;
 }
 
 function selectRowById(rowId: string): void {
   const row = selectableRows.find((r) => r.id === rowId);
   if (!row) return;
-  if (row.site_slug !== STAGING_SHELL_GOSAKI_SCHEDULE_SITE_SLUG) return;
+  if (row.site_slug !== STAGING_SHELL_GOSAKI_SCHEDULE_SITE_SLUG) {
+    dispatchRowCleared("site-slug-mismatch");
+    const status = document.getElementById("site-slug-row-picker-status");
+    if (status) status.textContent = "Selection blocked — site_slug scope mismatch.";
+    return;
+  }
+  if (isPocAuditScheduleRow(row)) {
+    dispatchRowCleared("poc-audit-blocked");
+    const status = document.getElementById("site-slug-row-picker-status");
+    if (status) {
+      status.textContent =
+        "PoC audit row — not selectable for edit. See PoC audit rows panel.";
+    }
+    return;
+  }
   selectedRow = row;
   selectedRowLoadedAt = new Date().toISOString();
   renderRowTable();
   renderSelectedSummary();
   renderDetailPreview();
+  dispatchRowSelected(row);
+  const status = document.getElementById("site-slug-row-picker-status");
+  if (status) status.textContent = `Selected row ${row.legacy_id ?? row.id} — bound to general edit.`;
 }
 
 function clearSelection(): void {
@@ -195,6 +218,7 @@ function clearSelection(): void {
   renderRowTable();
   renderSelectedSummary();
   renderDetailPreview();
+  dispatchRowCleared("clear");
   const status = document.getElementById("site-slug-row-picker-status");
   if (status) status.textContent = "Selection cleared.";
 }
@@ -264,6 +288,7 @@ async function reloadSelectedRow(): Promise<void> {
       return;
     }
 
+    const previousUpdatedAt = selectedRow.updated_at ?? null;
     selectedRow = row;
     selectedRowLoadedAt = new Date().toISOString();
     const idx = selectableRows.findIndex((r) => r.id === row.id);
@@ -272,6 +297,7 @@ async function reloadSelectedRow(): Promise<void> {
     renderRowTable();
     renderSelectedSummary();
     renderDetailPreview();
+    dispatchRowReloaded(row, previousUpdatedAt);
     if (status) {
       status.textContent = `Selected row reloaded. updated_at=${row.updated_at ?? "—"}`;
     }

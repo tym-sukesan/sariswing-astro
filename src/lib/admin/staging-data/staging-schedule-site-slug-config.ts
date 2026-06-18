@@ -66,6 +66,9 @@ export const G9G3E1_PHASE =
 export const G9G3F1_PHASE =
   "G-9g3f1-staging-shell-schedule-site-slug-row-picker-implementation";
 
+export const G9G3F3A_PHASE =
+  "G-9g3f3a-staging-shell-schedule-site-slug-row-picker-general-edit-binding-implementation";
+
 /** PoC audit marker prefix in staging row text fields — exclude from default picker selection. */
 export const POC_AUDIT_STAGING_MARKER = "[CMS Kit staging]";
 

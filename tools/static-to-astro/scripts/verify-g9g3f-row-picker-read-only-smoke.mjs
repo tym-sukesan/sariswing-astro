@@ -158,8 +158,24 @@ assert(
     pickerUtilsSrc.includes("POC_AUDIT_STAGING_MARKER"),
 );
 assert(
-  "general edit binding deferred marker",
-  pickerSectionSrc.includes('data-general-edit-binding-deferred="true"'),
+  "general edit binding connected",
+  pickerSectionSrc.includes('data-general-edit-binding-deferred="false"'),
+);
+assert(
+  "CustomEvent bridge markers",
+  readRepo("src/lib/admin/staging-data/staging-schedule-site-slug-row-picker-events.ts").includes(
+    "staging-schedule-site-slug-row-selected",
+  ) &&
+    pickerUiSrc.includes("dispatchRowSelected") &&
+    readRepo("src/lib/admin/staging-data/staging-schedule-site-slug-edit-picker-binding.ts").includes(
+      "ROW_SELECTED_EVENT",
+    ),
+);
+assert(
+  "edit picker-driven binding",
+  readRepo(
+    "tools/static-to-astro/templates/admin-cms/data/components/AdminStagingScheduleSiteSlugEditSection.astro",
+  ).includes('data-picker-driven-binding'),
 );
 assert(
   "row picker read-only marker",
@@ -226,7 +242,11 @@ if (ssrHtml) {
   assert("SSR staging shell route", ssrHtml.includes("/__admin-staging-shell/musician-basic/"));
   assert("SSR row picker section", ssrHtml.includes('id="admin-staging-schedule-site-slug-row-picker"'));
   assert("SSR G-9g3f1 title", ssrHtml.includes("G-9g3f1"));
-  assert('SSR data-general-edit-binding-deferred="true"', ssrHtml.includes('data-general-edit-binding-deferred="true"'));
+  assert('SSR data-general-edit-binding-deferred="false"', ssrHtml.includes('data-general-edit-binding-deferred="false"'));
+  assert('SSR data-picker-driven-binding on edit', ssrHtml.includes('data-picker-driven-binding="true"'));
+  assert("SSR G-9g3f3a edit title", ssrHtml.includes("G-9g3f3a"));
+  assert("SSR editing selected row badge", ssrHtml.includes("site-slug-edit-editing-badge"));
+  assert("SSR picker placeholder", ssrHtml.includes("site-slug-edit-picker-placeholder"));
   assert('SSR data-site-slug gosaki-piano', ssrHtml.includes(`data-site-slug="${SITE_SLUG}"`));
   assert("SSR read-only banner", ssrHtml.includes("Read-only row picker"));
   assert("SSR staging host", ssrHtml.includes(STAGING_HOST));

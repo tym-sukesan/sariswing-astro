@@ -12,12 +12,9 @@ import {
   SCHEDULE_NON_DRY_RUN_POC_EXPECTED_PROJECT,
   SCHEDULE_NON_DRY_RUN_POC_EXPECTED_SUPABASE_HOST,
 } from "../staging-write/schedule-non-dry-run-poc-config";
-import { loadScheduleRowForSiteSlugRead } from "../staging-write/staging-schedule-read";
 import type { ScheduleRecord } from "../staging-write/schedule-dry-run-types";
 import {
   G9G1_DRY_RUN_APPROVAL_ID,
-  G9G1_TARGET_LEGACY_ID,
-  G9G1_TARGET_ROW_ID,
   G9G3A_PHASE,
   G9G3B_DESCRIPTION_POC_DEFAULT,
   G9G3B_PHASE,
@@ -31,7 +28,7 @@ import {
   G9G3D_GENERAL_EDIT_NON_DRY_RUN_APPROVAL_ID,
   G9G3D_GENERAL_EDIT_POC_EXECUTED,
   G9G3D_PHASE,
-  G9G3E1_PHASE,
+  G9G3F3A_PHASE,
   SCHEDULE_G9G3B_VENUE_DESCRIPTION_NON_DRY_RUN_ARMED_ENV,
   SCHEDULE_G9G3C_TIME_PRICE_NON_DRY_RUN_ARMED_ENV,
   SCHEDULE_G9G3D_GENERAL_EDIT_NON_DRY_RUN_ARMED_ENV,
@@ -71,6 +68,7 @@ export interface SiteSlugScheduleEditBinding {
   g9g3dPocExecuted: boolean;
   legacyPoCUiVisible: boolean;
   g9g3aSaveUiHidden: boolean;
+  pickerDrivenBinding: boolean;
   siteSlug: string;
   targetId: string;
   legacyId: string;
@@ -99,7 +97,7 @@ export async function resolveGosakiScheduleSiteSlugEditBinding(): Promise<SiteSl
   const hostGate = evaluateSupabaseHostGate(dataConfig.supabaseUrl);
 
   const base = {
-    phase: G9G3E1_PHASE,
+    phase: G9G3F3A_PHASE,
     g9g3aPhase: G9G3A_PHASE,
     g9g3bPhase: G9G3B_PHASE,
     g9g3cPhase: G9G3C_PHASE,
@@ -128,9 +126,10 @@ export async function resolveGosakiScheduleSiteSlugEditBinding(): Promise<SiteSl
     g9g3dPocExecuted: G9G3D_GENERAL_EDIT_POC_EXECUTED,
     legacyPoCUiVisible: g9g3dConfig.legacyPoCUiVisible,
     g9g3aSaveUiHidden: false,
+    pickerDrivenBinding: true,
     siteSlug,
-    targetId: G9G1_TARGET_ROW_ID,
-    legacyId: G9G1_TARGET_LEGACY_ID,
+    targetId: "",
+    legacyId: "",
     safeFields: SITE_SLUG_EDIT_SAFE_FIELDS,
     initialUiSlice: "safe-fields" as const,
     dryRunPreviewOnly: true,
@@ -174,42 +173,18 @@ export async function resolveGosakiScheduleSiteSlugEditBinding(): Promise<SiteSl
     };
   }
 
-  const result = await loadScheduleRowForSiteSlugRead({
-    url: dataConfig.supabaseUrl,
-    anonKey: dataConfig.supabaseAnonKey,
-    siteSlug,
-    targetId: G9G1_TARGET_ROW_ID,
-    legacyId: G9G1_TARGET_LEGACY_ID,
-    useSupabase: true,
-  });
-
-  if (!result.row) {
-    return {
-      ...base,
-      source: "unavailable",
-      targetRow: null,
-      message: result.error ?? "Target row not loaded for site_slug scope.",
-    };
-  }
-
   const hostNote = hostGate.hostGatePassed
     ? "host gate passed"
     : "host gate failed — Save blocked";
 
   const armNote = g9g3dConfig.pocExecuted
     ? "G-9g3d PoC executed — Save frozen"
-    : g9g3dConfig.armed
-      ? "G-9g3d general edit armed — Save gated"
-      : g9g3cConfig.armed
-        ? "G-9g3c armed — Save gated"
-        : g9g3bConfig.armed
-          ? "G-9g3b armed — Save gated"
-          : "G-9g3d not armed — dry-run preview only";
+    : "Picker-driven binding — select a row; Preview deferred G-9g3f3b; Save not implemented";
 
   return {
     ...base,
     source: "supabase",
-    targetRow: result.row,
-    message: `Target row loaded — ${armNote} (${hostNote}).`,
+    targetRow: null,
+    message: `${armNote} (${hostNote}).`,
   };
 }

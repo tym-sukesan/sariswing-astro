@@ -120,6 +120,26 @@ export const G9G3G4_OPERATIONAL_LOCK_BASELINE_UPDATED_AT =
 export const G9G3G4_OPERATIONAL_DESCRIPTION_MARKER =
   "[CMS Kit staging] G-9g3g4 operational Save test — temporary marker";
 
+/** Post-G-9g3g4 lock baseline for restore preflight (G-9g3g5b). */
+export const G9G3G4_OPERATIONAL_AFTER_UPDATED_AT =
+  "2026-06-18T16:35:45.060011+00:00";
+
+/** Original Gosaki description before G-9g3g4 marker (restore candidate). */
+export const G9G3G4_OPERATIONAL_DESCRIPTION_ORIGINAL =
+  "出演：『ごちまきトリオ』俵千瑛子cl 田村麻紀子cl,vo\n会場website: https://subsaku.com/ginza/";
+
+export const G9G3G5_PHASE =
+  "G-9g3g5-post-execution-hardening-and-restore-decision";
+
+export const G9G3G5B_PHASE = "G-9g3g5b-operational-restore-preflight";
+
+/** Recommended restore path — implementation in G-9g3g5b/c. */
+export const G9G3G5_OPERATIONAL_RESTORE_NON_DRY_RUN_APPROVAL_ID =
+  "G-9g3g5-schedule-site-slug-operational-restore-non-dry-run";
+
+export const SCHEDULE_G9G3G5_OPERATIONAL_RESTORE_NON_DRY_RUN_ARMED_ENV =
+  "PUBLIC_ADMIN_SCHEDULE_G9G3G5_OPERATIONAL_RESTORE_NON_DRY_RUN_ARMED";
+
 export const G9G3G_OPERATIONAL_GENERAL_EDIT_NON_DRY_RUN_APPROVAL_ID =
   "G-9g3g-schedule-site-slug-operational-general-edit-non-dry-run";
 

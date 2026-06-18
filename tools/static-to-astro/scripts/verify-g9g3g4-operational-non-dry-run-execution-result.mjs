@@ -142,11 +142,11 @@ const currentStateSrc = readRepo("tools/static-to-astro/docs/ai/00-current-state
 assert("current state G-9g3g4 success", currentStateSrc.includes("G-9g3g4"));
 assert(
   "current state execution complete",
-  currentStateSrc.includes("execution complete") || currentStateSrc.includes("success"),
+  currentStateSrc.includes("execution complete") || currentStateSrc.includes("a58f5f9"),
 );
 
 const nextActionsSrc = readRepo("tools/static-to-astro/docs/ai/03-next-actions.md");
-assert("next actions G-9g3g5", nextActionsSrc.includes("G-9g3g5"));
+assert("next actions G-9g3g5 path", nextActionsSrc.includes("G-9g3g5"));
 
 const handoffSrc = readRepo("tools/static-to-astro/docs/ai/handoff-to-chatgpt.md");
 assert("handoff G-9g3g4 success", handoffSrc.includes("G-9g3g4"));

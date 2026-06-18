@@ -2960,6 +2960,38 @@ assert(
   g9g3g4ExecDocSrc.includes("G-9g3g5-post-execution-hardening-and-restore-decision"),
 );
 
+const g9g3g5DocPath = path.join(
+  TOOL_ROOT,
+  "docs/staging-shell-schedule-site-slug-operational-general-edit-post-execution-hardening-and-restore-decision.md",
+);
+assert("G-9g3g5 planning doc exists", fs.existsSync(g9g3g5DocPath));
+const g9g3g5DocSrc = fs.readFileSync(g9g3g5DocPath, "utf8");
+assert(
+  "G-9g3g5 planning complete",
+  g9g3g5DocSrc.includes("G-9g3g5-post-execution-hardening-and-restore-decision") &&
+    g9g3g5DocSrc.includes("decision / hardening planning complete"),
+);
+assert(
+  "G-9g3g5 ready for restore preflight",
+  g9g3g5DocSrc.includes("readyForG9g3g5bOperationalRestorePreflight: true"),
+);
+assert(
+  "G-9g3g5 marker remains",
+  g9g3g5DocSrc.includes("markerRemainsInStagingDb: true"),
+);
+assert(
+  "G-9g3g5 restore not executed",
+  g9g3g5DocSrc.includes("restoreExecuted: false"),
+);
+assert(
+  "G-9g3g5 next phase g9g3g5b",
+  g9g3g5DocSrc.includes("G-9g3g5b-operational-restore-preflight"),
+);
+assert(
+  "G-9g3g5 restore approval ID",
+  g9g3g5DocSrc.includes("G-9g3g5-schedule-site-slug-operational-restore-non-dry-run"),
+);
+
 const gosakiPublicDist = path.join(TOOL_ROOT, "output/static-public/gosaki-piano/public-dist");
 for (const ym of ["2026-06", "2026-07"]) {
   const canonicalMonthPath = path.join(gosakiPublicDist, "schedule", ym, "index.html");

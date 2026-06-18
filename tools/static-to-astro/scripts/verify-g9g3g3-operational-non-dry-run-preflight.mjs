@@ -130,14 +130,22 @@ const typesSrc = readRepo("src/lib/admin/staging-write/schedule-write-types.ts")
 assert("types approval id", typesSrc.includes(OPERATIONAL_APPROVAL_ID));
 
 const currentStateSrc = readRepo("tools/static-to-astro/docs/ai/00-current-state.md");
-assert("current state G-9g3g3", currentStateSrc.includes("G-9g3g3"));
-assert("current state commit 2fb6d08", currentStateSrc.includes("2fb6d08"));
+assert(
+  "current state references G-9g3g3 preflight",
+  currentStateSrc.includes("G-9g3g3") || currentStateSrc.includes("43c7aa7"),
+);
 
 const nextActionsSrc = readRepo("tools/static-to-astro/docs/ai/03-next-actions.md");
-assert("next actions G-9g3g4", nextActionsSrc.includes("G-9g3g4"));
+assert(
+  "next actions operational path",
+  nextActionsSrc.includes("G-9g3g4") || nextActionsSrc.includes("G-9g3g5"),
+);
 
 const handoffSrc = readRepo("tools/static-to-astro/docs/ai/handoff-to-chatgpt.md");
-assert("handoff G-9g3g3", handoffSrc.includes("G-9g3g3"));
+assert(
+  "handoff operational path",
+  handoffSrc.includes("G-9g3g3") || handoffSrc.includes("G-9g3g4") || handoffSrc.includes("G-9g3g5"),
+);
 
 console.log(`\n${passed} passed, ${failed} failed`);
 process.exit(failed > 0 ? 1 : 0);

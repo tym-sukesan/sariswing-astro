@@ -2915,6 +2915,36 @@ assert(
   g9g3g3PreflightDocSrc.includes("G-9g3g4-operational-non-dry-run-execution"),
 );
 
+const g9g3g4ExecDocPath = path.join(
+  TOOL_ROOT,
+  "docs/staging-shell-schedule-site-slug-operational-general-edit-non-dry-run-execution-result.md",
+);
+assert("G-9g3g4 execution result doc exists", fs.existsSync(g9g3g4ExecDocPath));
+const g9g3g4ExecDocSrc = fs.readFileSync(g9g3g4ExecDocPath, "utf8");
+assert(
+  "G-9g3g4 operator pending",
+  g9g3g4ExecDocSrc.includes("G-9g3g4-operational-non-dry-run-execution") &&
+    g9g3g4ExecDocSrc.includes("operator pending"),
+);
+assert(
+  "G-9g3g4 target row id",
+  g9g3g4ExecDocSrc.includes("888c58f2-f152-4563-a3cf-a20d7c2456c1"),
+);
+assert(
+  "G-9g3g4 Save not yet clicked",
+  g9g3g4ExecDocSrc.includes("Save clicked | **not yet**") ||
+    g9g3g4ExecDocSrc.includes("Save button clicked: not yet"),
+);
+assert(
+  "G-9g3g4 DB write not yet executed",
+  g9g3g4ExecDocSrc.includes("DB write executed | **not yet**") ||
+    g9g3g4ExecDocSrc.includes("DB write performed: not yet"),
+);
+assert(
+  "G-9g3g4 next phase g9g3g5",
+  g9g3g4ExecDocSrc.includes("G-9g3g5-post-execution-hardening-and-restore-decision"),
+);
+
 const gosakiPublicDist = path.join(TOOL_ROOT, "output/static-public/gosaki-piano/public-dist");
 for (const ym of ["2026-06", "2026-07"]) {
   const canonicalMonthPath = path.join(gosakiPublicDist, "schedule", ym, "index.html");

@@ -21,13 +21,15 @@ Staging Shell
 将来的な顧客オンボーディング・課金・デプロイ自動化
 
 2. Current phase
-現在フェーズ: G-9g3g3-operational-non-dry-run-preflight — **complete / execution pending**
+現在フェーズ: G-9g3g4-operational-non-dry-run-execution — **operator pending**
 
-次フェーズ: **G-9g3g4-operational-non-dry-run-execution**
+次フェーズ（execution 後）: **G-9g3g5-post-execution-hardening-and-restore-decision**
 
-Git: 最新 push 済み commit `2fb6d08`（G-9g3g2）。G-9g3g3 preflight **uncommitted**。
+Git: 最新 push 済み commit `43c7aa7`（G-9g3g3）。G-9g3g4 execution result **uncommitted**。
 
-G-9g3g3: operational non-dry-run preflight **complete**（doc + verifier）。Save / Preview / DB write / SQL **未実行**。rollback SQL template あり（未実行）。
+G-9g3g4: operational non-dry-run execution runbook + result doc **operator pending**。Save / Preview / DB write / SQL **未実行**。
+
+G-9g3g3: operational non-dry-run preflight **complete**（commit `43c7aa7`）。
 
 G-9g3g2: operational Save UI gate smoke **passed**（commit `2fb6d08`）。**Save / DB write 未実行。**
 
@@ -536,24 +538,25 @@ PUBLIC_SUPABASE_URL host: kmjqppxjdnwwrtaeqjta.supabase.co (staging)
 **Note:** `tools/static-to-astro/.env.local` に `SUPABASE_SERVICE_ROLE_KEY` が local only（gitignored）で存在する場合がある。G-9g3b execution では使用禁止・参照禁止。anon key + authenticated session のみ。
 
 10. Recommended next phase
-次フェーズ推奨: **G-9g3g4-operational-non-dry-run-execution**
+次フェーズ推奨: **G-9g3g4-operational-non-dry-run-execution**（operator pending）
 
-G-9g3g3 preflight: **complete**（uncommitted）。
+G-9g3g4 execution result doc: **operator pending**（uncommitted）。
 
-G-9g3g2 smoke: **committed `2fb6d08`**.
+G-9g3g3 preflight: **committed `43c7aa7`**.
 
 Phase sequence:
 ```txt
-G-9g3g1-operational-save-implementation ← complete (025156f)
 G-9g3g2-operational-save-ui-gate-smoke ← complete (2fb6d08)
-G-9g3g3-operational-non-dry-run-preflight ← complete (uncommitted)
-G-9g3g4-operational-non-dry-run-execution ← next
+G-9g3g3-operational-non-dry-run-preflight ← complete (43c7aa7)
+G-9g3g4-operational-non-dry-run-execution ← operator pending
+G-9g3g5-post-execution-hardening-and-restore-decision ← after execution
 ```
 
 G-9g3g gates:
 ```txt
 stagingShellScheduleSiteSlugOperationalGeneralEditNonDryRunPreflightComplete: true
 readyForG9g3g4OperationalNonDryRunExecution: true
+stagingShellScheduleSiteSlugOperationalGeneralEditNonDryRunExecutionComplete: false
 readyForAnyDbWrite: false
 ```
 

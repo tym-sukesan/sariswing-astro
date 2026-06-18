@@ -3085,6 +3085,30 @@ assert(
   g9g3g5b2SmokeSrc.includes("G-9g3g5c-operational-restore-execution"),
 );
 
+const g9g3g5cExecPath = path.join(
+  TOOL_ROOT,
+  "docs/staging-shell-schedule-site-slug-operational-general-edit-restore-execution-result.md",
+);
+assert("G-9g3g5c restore execution result doc exists", fs.existsSync(g9g3g5cExecPath));
+const g9g3g5cExecSrc = fs.readFileSync(g9g3g5cExecPath, "utf8");
+assert(
+  "G-9g3g5c phase marker",
+  g9g3g5cExecSrc.includes("G-9g3g5c-operational-restore-execution"),
+);
+assert(
+  "G-9g3g5c operator pending",
+  g9g3g5cExecSrc.includes("operator pending"),
+);
+assert(
+  "G-9g3g5c restore not yet executed",
+  g9g3g5cExecSrc.includes("restoreExecuted: false") ||
+    g9g3g5cExecSrc.includes("restore executed | **no**"),
+);
+assert(
+  "G-9g3g5c next phase G-9g3g5d",
+  g9g3g5cExecSrc.includes("G-9g3g5d-post-restore-hardening"),
+);
+
 const gosakiPublicDist = path.join(TOOL_ROOT, "output/static-public/gosaki-piano/public-dist");
 for (const ym of ["2026-06", "2026-07"]) {
   const canonicalMonthPath = path.join(gosakiPublicDist, "schedule", ym, "index.html");

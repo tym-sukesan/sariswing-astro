@@ -21,15 +21,17 @@ Staging Shell
 将来的な顧客オンボーディング・課金・デプロイ自動化
 
 2. Current phase
-現在フェーズ: G-9g3g5b2-operational-restore-approval-arm-ui-gate-smoke-test — **passed**
+現在フェーズ: G-9g3g5c-operational-restore-execution — **operator pending**
 
-次フェーズ: **G-9g3g5c-operational-restore-execution**
+次フェーズ（execution success 後）: **G-9g3g5d-post-restore-hardening**
 
-Git: 最新 push 済み commit `23b7b68`（G-9g3g5b1）。G-9g3g5b2 restore UI gate smoke **passed**（uncommitted）。
+Git: 最新 push 済み commit `3b113c5`（G-9g3g5b2）。G-9g3g5c restore execution runbook **uncommitted**。
 
-G-9g3g5b2: restore mode / approval ID / env arm / Preview dry-run / stale blocks Save **operator確認済み**。Save **未クリック**。marker は staging DB に残存。restore / DB write **未実行**。
+G-9g3g5c: operator manual restore Save runbook 準備済み。Preview → Save 1回（restore approval + arm）。Save / DB write **未実行**。marker は staging DB に残存。
 
-G-9g3g5b1: restore専用 approval ID / env arm / guards / save path / UI gate **implementation complete**（commit `23b7b68`）。
+G-9g3g5b2: restore UI gate smoke **passed**（commit `3b113c5`）。
+
+G-9g3g5b1: restore approval arm implementation **complete**（commit `23b7b68`）。
 
 G-9g3g5b: operational restore preflight **complete**（commit `95ff18c`）。
 

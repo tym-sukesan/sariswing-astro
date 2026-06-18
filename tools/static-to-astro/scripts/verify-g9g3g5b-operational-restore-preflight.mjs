@@ -116,7 +116,7 @@ assert("config G9G3G5B1 phase", configSrc.includes("G-9g3g5b1-operational-restor
 
 const currentStateSrc = readRepo("tools/static-to-astro/docs/ai/00-current-state.md");
 assert("current state G-9g3g5b2 passed", currentStateSrc.includes("G-9g3g5b2") && currentStateSrc.includes("passed"));
-assert("current state commit 23b7b68", currentStateSrc.includes("23b7b68"));
+assert("current state commit 3b113c5", currentStateSrc.includes("3b113c5"));
 
 const nextActionsSrc = readRepo("tools/static-to-astro/docs/ai/03-next-actions.md");
 assert("next actions G-9g3g5c", nextActionsSrc.includes("G-9g3g5c-operational-restore-execution"));

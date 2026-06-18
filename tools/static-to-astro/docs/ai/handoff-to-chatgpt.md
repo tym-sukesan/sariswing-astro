@@ -5,25 +5,28 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-9g3g5b2-operational-restore-approval-arm-ui-gate-smoke-test (passed)
-Latest commit (pushed): 23b7b68 (G-9g3g5b1 restore approval arm implementation)
-G-9g3g5b2 smoke result: uncommitted
+Current phase: G-9g3g5c-operational-restore-execution (operator pending)
+Latest commit (pushed): 3b113c5 (G-9g3g5b2 restore UI gate smoke passed)
+G-9g3g5c execution runbook: uncommitted
 ```
 
 ## Summary
 
-G-9g3g5b2 restore UI gate smoke **passed** (operator manual).
+G-9g3g5b2 restore UI gate smoke **passed** (commit `3b113c5`).
 
-- **Marker in staging DB:** G-9g3g4 temporary marker on row `888c58f2-…`
-- **Preview:** operator manual once — valid dry-run, `changedFields=description` only
-- **Restore gate:** restore mode, approval ID, env arm confirmed; Save **enabled but not clicked**
-- **Stale blocks Save:** confirmed
-- **Restore / DB write:** not executed
-- **Next:** G-9g3g5c restore execution
+G-9g3g5c restore execution **operator pending** — runbook + pending result doc prepared. Cursor/AI must not click Preview or Save.
 
-**Do not re-click G-9g3g4 operational Save.** **Do not re-run G-9g3g5b2 smoke.**
+- **Target:** `888c58f2-f152-4563-a3cf-a20d7c2456c1` / `schedule-2026-03-001` / `gosaki-piano`
+- **Restore approval:** `G-9g3g5-schedule-site-slug-operational-restore-non-dry-run`
+- **Restore env arm:** `PUBLIC_ADMIN_SCHEDULE_G9G3G5_OPERATIONAL_RESTORE_NON_DRY_RUN_ARMED=true`
+- **Lock baseline:** `2026-06-18T16:35:45.060011+00:00` (reconfirm live at Preview)
+- **Restore / DB write:** not yet executed
+- **Marker in DB:** yes — G-9g3g4 temporary marker remains
+- **Next after success:** G-9g3g5d post-restore hardening
 
-## Routine dev safety (default)
+**Do not re-click G-9g3g4 operational Save.** **Do not run G-9g3g5c until operator follows execution doc.**
+
+## Routine dev safety (default until G-9g3g5c arm)
 
 ```txt
 ENABLE_ADMIN_STAGING_WRITE: false
@@ -37,7 +40,9 @@ PUBLIC_SUPABASE_URL host: kmjqppxjdnwwrtaeqjta.supabase.co (staging)
 
 ```txt
 stagingShellScheduleSiteSlugOperationalRestoreApprovalArmUiGateSmokeTestPassed: true
-readyForG9g3g5cOperationalRestoreExecution: true
+stagingShellScheduleSiteSlugOperationalRestoreExecutionComplete: false
+readyForG9g3g5dPostRestoreHardening: false
+operatorPending: true
 markerRemainsInStagingDb: true
 restoreExecuted: false
 readyForAnyDbWrite: false
@@ -45,6 +50,8 @@ readyForAnyDbWrite: false
 
 ## Next
 
-**G-9g3g5c-operational-restore-execution** — operator Preview once → Save once (restore approval ID + arm)
+**Operator:** G-9g3g5c restore execution (Preview once → Save once)
+
+Then: **G-9g3g5d-post-restore-hardening**
 
 **Do not re-run G-9g2 / G-9g3b / G-9g3c / G-9g3d / G-9g3g4 operational Save.**

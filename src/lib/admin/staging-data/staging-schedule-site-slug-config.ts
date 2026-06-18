@@ -149,6 +149,28 @@ export const G9G3G5_OPERATIONAL_RESTORE_NON_DRY_RUN_APPROVAL_ID =
 export const SCHEDULE_G9G3G5_OPERATIONAL_RESTORE_NON_DRY_RUN_ARMED_ENV =
   "PUBLIC_ADMIN_SCHEDULE_G9G3G5_OPERATIONAL_RESTORE_NON_DRY_RUN_ARMED";
 
+export const G9G3G5B2_PHASE =
+  "G-9g3g5b2-operational-restore-approval-arm-ui-gate-smoke-test";
+
+/** Restore target — same row as G-9g3g4 operational Save. */
+export const G9G3G5_RESTORE_TARGET_ROW_ID = G9G3G4_OPERATIONAL_TARGET_ROW_ID;
+
+export const G9G3G5_RESTORE_TARGET_LEGACY_ID = G9G3G4_OPERATIONAL_TARGET_LEGACY_ID;
+
+export const G9G3G5_RESTORE_CHANGED_FIELDS = ["description"] as const;
+
+/** Current description in staging DB (includes G-9g3g4 marker). */
+export const G9G3G5_RESTORE_CURRENT_MARKER_DESCRIPTION = G9G3G4_OPERATIONAL_DESCRIPTION_MARKER;
+
+/** Routine dev default — restore Save stays disabled until explicit G-9g3g5 arm. */
+export const G9G3G5_OPERATIONAL_RESTORE_DISABLED_DEFAULT_REASON =
+  "Operational restore Save disabled — G-9g3g5 restore arm not configured (routine dev safety)";
+
+export const G9G3G5_OPERATIONAL_RESTORE_MODE_LABEL = "G-9g3g5 restore mode";
+
+export const G9G3G5_OPERATIONAL_RESTORE_SAVE_WARNING =
+  "Restore uses the same operational Save button but requires the restore approval ID and restore arm. Do not re-click G-9g3g4 Save.";
+
 export const G9G3G_OPERATIONAL_GENERAL_EDIT_NON_DRY_RUN_APPROVAL_ID =
   "G-9g3g-schedule-site-slug-operational-general-edit-non-dry-run";
 

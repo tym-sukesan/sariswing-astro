@@ -19,6 +19,7 @@ import { getG9G3bVenueDescriptionPocConfig } from "./staging-schedule-site-slug-
 import { getG9G3cTimePricePocConfig } from "./staging-schedule-site-slug-time-price-poc-config";
 import { getG9G3dGeneralEditPocConfig } from "./staging-schedule-site-slug-general-edit-poc-config";
 import { getG9G3gOperationalGeneralEditConfig } from "./staging-schedule-site-slug-operational-general-edit-config";
+import { getG9G3g5OperationalRestoreConfig } from "./staging-schedule-site-slug-operational-restore-config";
 import {
   G9G1_TARGET_LEGACY_ID,
   G9G1_TARGET_ROW_ID,
@@ -37,16 +38,30 @@ import {
   G9G3F3B_PHASE,
   G9G3F3C_PHASE,
   G9G3F3C_PREVIEW_STALE_MSG,
+  G9G3G4_OPERATIONAL_DESCRIPTION_MARKER,
+  G9G3G4_OPERATIONAL_DESCRIPTION_ORIGINAL,
+  G9G3G4_OPERATIONAL_TARGET_LEGACY_ID,
+  G9G3G4_OPERATIONAL_TARGET_ROW_ID,
+  G9G3G5_OPERATIONAL_RESTORE_DISABLED_DEFAULT_REASON,
+  G9G3G5_OPERATIONAL_RESTORE_MODE_LABEL,
+  G9G3G5_OPERATIONAL_RESTORE_NON_DRY_RUN_APPROVAL_ID,
+  G9G3G5_OPERATIONAL_RESTORE_SAVE_WARNING,
   G9G3G_OPERATIONAL_GENERAL_EDIT_NON_DRY_RUN_APPROVAL_ID,
   G9G3G_OPERATIONAL_SAVE_DISABLED_DEFAULT_REASON,
+  SCHEDULE_G9G3G5_OPERATIONAL_RESTORE_NON_DRY_RUN_ARMED_ENV,
   G9G3_SLICE_POC_EXECUTED_ARM_FAILURE,
   SITE_SLUG_EDIT_SAFE_FIELDS,
   STAGING_SHELL_GOSAKI_SCHEDULE_SITE_SLUG,
 } from "./staging-schedule-site-slug-config";
+import {
+  isG9G3g4OperationalRestoreTargetRow,
+  isPocAuditScheduleRow,
+} from "./staging-schedule-site-slug-row-picker-utils";
 import { executeG9G3bVenueDescriptionNonDryRunSave } from "../staging-write/staging-schedule-site-slug-venue-description-poc-save";
 import { executeG9G3cTimePriceNonDryRunSave } from "../staging-write/staging-schedule-site-slug-time-price-poc-save";
 import { executeG9G3dGeneralEditNonDryRunSave } from "../staging-write/staging-schedule-site-slug-general-edit-poc-save";
 import { executeG9G3gOperationalGeneralEditSave } from "../staging-write/staging-schedule-site-slug-operational-general-edit-save";
+import { executeG9G3g5OperationalRestoreSave } from "../staging-write/staging-schedule-site-slug-operational-restore-save";
 import { runDryRunStaleCheck } from "../staging-write/schedule-optimistic-lock-dry-run";
 import {
   isSignedInStagingAuth,
@@ -58,7 +73,6 @@ import {
   initPickerEditBinding,
   hasPickerBoundRow,
 } from "./staging-schedule-site-slug-edit-picker-binding";
-import { isPocAuditScheduleRow } from "./staging-schedule-site-slug-row-picker-utils";
 
 const SAFE_FIELD_INPUT_IDS: Record<(typeof SITE_SLUG_EDIT_SAFE_FIELDS)[number], string> = {
   title: "site-slug-edit-dry-run-title",
@@ -155,6 +169,50 @@ function isG9g3dArmed(): boolean {
 function isG9g3gOperationalArmed(): boolean {
   const root = getRoot();
   return root?.dataset.g9g3gArmed === "true";
+}
+
+function isG9g3g5RestoreArmed(): boolean {
+  const root = getRoot();
+  return root?.dataset.g9g3g5Armed === "true";
+}
+
+type OperationalSaveMode = "restore" | "general" | null;
+
+function getOperationalSaveMode(): OperationalSaveMode {
+  const g9g3g = isG9g3gOperationalArmed();
+  const g9g3g5 = isG9g3g5RestoreArmed();
+  if (g9g3g && g9g3g5) return null;
+  if (g9g3g5) return "restore";
+  if (g9g3g) return "general";
+  return null;
+}
+
+function canEnableOperationalSave(): {
+  ok: boolean;
+  reason: string;
+  mode: OperationalSaveMode;
+} {
+  const mode = getOperationalSaveMode();
+  if (mode === null) {
+    if (isG9g3gOperationalArmed() && isG9g3g5RestoreArmed()) {
+      return {
+        ok: false,
+        reason: "G-9g3g and G-9g3g5 restore arms cannot both be on",
+        mode: null,
+      };
+    }
+    return {
+      ok: false,
+      reason: G9G3G_OPERATIONAL_SAVE_DISABLED_DEFAULT_REASON,
+      mode: null,
+    };
+  }
+  if (mode === "restore") {
+    const gate = canEnableG9G3g5OperationalRestoreSave();
+    return { ...gate, mode };
+  }
+  const gate = canEnableG9G3gOperationalGeneralEditSave();
+  return { ...gate, mode };
 }
 
 function isG9PreviewResultStale(): boolean {
@@ -445,19 +503,31 @@ function refreshSaveGatePanel(): void {
   if (!el) return;
 
   const hostGate = getClientHostGate();
+  const operationalGate = canEnableOperationalSave();
   const g9g3dGate = canEnableG9G3dSave();
-  const g9g3gGate = canEnableG9G3gOperationalSave();
   const operationalConfig = getG9G3gOperationalGeneralEditConfig();
+  const restoreConfig = getG9G3g5OperationalRestoreConfig();
   const lines: string[] = [];
 
   if (isPickerDrivenBinding()) {
-    lines.push(
-      g9g3gGate.ok
-        ? "G-9g3g operational Save: enabled — operator manual only"
-        : `G-9g3g operational Save: disabled — ${g9g3gGate.reason}`,
-    );
-    lines.push(`approvalId: ${G9G3G_OPERATIONAL_GENERAL_EDIT_NON_DRY_RUN_APPROVAL_ID}`);
-    lines.push(`env arm: ${isG9g3gOperationalArmed() ? "true" : "false"}`);
+    if (isG9g3g5RestoreArmed()) {
+      lines.push(
+        operationalGate.ok
+          ? `${G9G3G5_OPERATIONAL_RESTORE_MODE_LABEL}: enabled — operator manual only`
+          : `${G9G3G5_OPERATIONAL_RESTORE_MODE_LABEL}: disabled — ${operationalGate.reason}`,
+      );
+      lines.push(`approvalId: ${G9G3G5_OPERATIONAL_RESTORE_NON_DRY_RUN_APPROVAL_ID}`);
+      lines.push(`env arm: ${SCHEDULE_G9G3G5_OPERATIONAL_RESTORE_NON_DRY_RUN_ARMED_ENV}=true`);
+      lines.push(G9G3G5_OPERATIONAL_RESTORE_SAVE_WARNING);
+    } else {
+      lines.push(
+        operationalGate.ok
+          ? "G-9g3g operational Save: enabled — operator manual only"
+          : `G-9g3g operational Save: disabled — ${operationalGate.reason}`,
+      );
+      lines.push(`approvalId: ${G9G3G_OPERATIONAL_GENERAL_EDIT_NON_DRY_RUN_APPROVAL_ID}`);
+      lines.push(`env arm: ${isG9g3gOperationalArmed() ? "true" : "false"}`);
+    }
     if (lastPreviewTargetId) {
       lines.push(`preview target id: ${lastPreviewTargetId}`);
     }
@@ -483,8 +553,11 @@ function refreshSaveGatePanel(): void {
     lines.push("G-9g3d Save: hidden — arm not configured");
   }
 
-  if (!operationalConfig.saveEnabled && isPickerDrivenBinding()) {
+  if (!operationalConfig.saveEnabled && isPickerDrivenBinding() && !isG9g3g5RestoreArmed()) {
     lines.push(operationalConfig.armFailureReason ?? G9G3G_OPERATIONAL_SAVE_DISABLED_DEFAULT_REASON);
+  }
+  if (!restoreConfig.saveEnabled && isPickerDrivenBinding() && isG9g3g5RestoreArmed()) {
+    lines.push(restoreConfig.armFailureReason ?? G9G3G5_OPERATIONAL_RESTORE_DISABLED_DEFAULT_REASON);
   }
 
   if (!hostGate.hostGatePassed) {
@@ -849,7 +922,13 @@ function canEnableG9G3dSave(): { ok: boolean; reason: string } {
   return { ok: true, reason: "Ready (manual Save only — not auto-clicked)" };
 }
 
-function canEnableG9G3gOperationalSave(): { ok: boolean; reason: string } {
+function canEnableG9G3gOperationalGeneralEditSave(): { ok: boolean; reason: string } {
+  if (isG9g3g5RestoreArmed()) {
+    return {
+      ok: false,
+      reason: "G-9g3g5 restore arm on — operational general edit Save blocked",
+    };
+  }
   if (!isPickerDrivenBinding()) {
     return { ok: false, reason: "Picker-driven binding required for operational Save" };
   }
@@ -943,27 +1022,152 @@ function canEnableG9G3gOperationalSave(): { ok: boolean; reason: string } {
   return { ok: true, reason: "Ready (manual Save only — not auto-clicked)" };
 }
 
+function canEnableG9G3g5OperationalRestoreSave(): { ok: boolean; reason: string } {
+  if (!isPickerDrivenBinding()) {
+    return { ok: false, reason: "Picker-driven binding required for restore Save" };
+  }
+  if (isG9g3gOperationalArmed()) {
+    return {
+      ok: false,
+      reason: "G-9g3g operational arm on — restore Save blocked",
+    };
+  }
+
+  const config = getG9G3g5OperationalRestoreConfig();
+  const hostGate = getClientHostGate();
+
+  if (!hostGate.hostGatePassed) {
+    return {
+      ok: false,
+      reason: hostGate.warningMessage ?? "Supabase host gate failed",
+    };
+  }
+  if (!config.saveEnabled) {
+    return {
+      ok: false,
+      reason: config.armFailureReason ?? G9G3G5_OPERATIONAL_RESTORE_DISABLED_DEFAULT_REASON,
+    };
+  }
+  if (executionInFlight) return { ok: false, reason: "Save in flight" };
+  if (!hasPickerBoundRow()) {
+    return { ok: false, reason: "Select G-9g3g4 restore target row in the picker" };
+  }
+  if (!g9g3dDryRunPreviewValid) {
+    return { ok: false, reason: "Latest G-9 preview required" };
+  }
+  if (isG9PreviewResultStale()) {
+    return { ok: false, reason: G9G3F3C_PREVIEW_STALE_MSG };
+  }
+  if (
+    lastPreviewG9g3dChangedFields.length !== 1 ||
+    lastPreviewG9g3dChangedFields[0] !== "description"
+  ) {
+    return { ok: false, reason: "changedFields must be description only for restore" };
+  }
+  if (stagingAuthSignedIn === false) {
+    return { ok: false, reason: "Sign in as staging admin before Save" };
+  }
+  if (stagingAuthSignedIn === null) {
+    return { ok: false, reason: "Checking auth session…" };
+  }
+
+  const row = parseTargetRow();
+  if (!row) {
+    return { ok: false, reason: "No selected row loaded" };
+  }
+  if (!isG9G3g4OperationalRestoreTargetRow(row)) {
+    return { ok: false, reason: "Restore target row id/legacy_id/marker mismatch" };
+  }
+  if (row.id !== G9G3G4_OPERATIONAL_TARGET_ROW_ID) {
+    return { ok: false, reason: "Restore target id mismatch" };
+  }
+  if (row.legacy_id !== G9G3G4_OPERATIONAL_TARGET_LEGACY_ID) {
+    return { ok: false, reason: "Restore target legacy_id mismatch" };
+  }
+  if (row.site_slug !== STAGING_SHELL_GOSAKI_SCHEDULE_SITE_SLUG) {
+    return { ok: false, reason: "site_slug mismatch" };
+  }
+  const beforeDescription = String(row.description ?? "");
+  if (!beforeDescription.includes(G9G3G4_OPERATIONAL_DESCRIPTION_MARKER)) {
+    return { ok: false, reason: "before.description must include G-9g3g4 temporary marker" };
+  }
+  const candidateDescription = getFieldValue("description");
+  if (candidateDescription !== G9G3G4_OPERATIONAL_DESCRIPTION_ORIGINAL) {
+    return { ok: false, reason: "after.description must equal original candidate" };
+  }
+  if (lastPreviewTargetId && row.id !== lastPreviewTargetId) {
+    return { ok: false, reason: "Selected row id does not match preview target" };
+  }
+  if (lastPreviewTargetLegacyId && row.legacy_id !== lastPreviewTargetLegacyId) {
+    return { ok: false, reason: "Selected row legacy_id does not match preview target" };
+  }
+  if (!lastPreviewHostGatePassed) {
+    return { ok: false, reason: "Preview hostGatePassed was false" };
+  }
+  if (lastPreviewG9g3dStale) {
+    return { ok: false, reason: "Optimistic lock stale at preview — re-run Preview" };
+  }
+  if (
+    lastPreviewExpectedUpdatedAt != null &&
+    row.updated_at !== lastPreviewExpectedUpdatedAt
+  ) {
+    return {
+      ok: false,
+      reason: "Row updated_at changed since preview — re-run Preview",
+    };
+  }
+  if ((lastPreviewG9g3dFieldValues.description ?? "") !== G9G3G4_OPERATIONAL_DESCRIPTION_ORIGINAL) {
+    return { ok: false, reason: "Preview description does not match restore candidate" };
+  }
+  if (getFieldValue("description") !== (lastPreviewG9g3dFieldValues.description ?? "")) {
+    return { ok: false, reason: "description changed since preview" };
+  }
+  if (!nonChangedSafeFieldsUnchanged(row, lastPreviewG9g3dChangedFields)) {
+    return { ok: false, reason: "Non-changed safe fields modified since load" };
+  }
+  if (!canUseLiveSupabase()) {
+    return { ok: false, reason: "Supabase read source required" };
+  }
+  return { ok: true, reason: "Ready for restore Save (manual only — not auto-clicked)" };
+}
+
+/** Back-compat alias — G-9g3g smoke verifiers; delegates to unified operational/restore gate. */
+function canEnableG9G3gOperationalSave(): { ok: boolean; reason: string } {
+  const gate = canEnableOperationalSave();
+  return { ok: gate.ok, reason: gate.reason };
+}
+
 function refreshG9G3gOperationalSaveButtonState(): void {
   const btn = document.getElementById("site-slug-edit-g9g3g-operational-save-btn");
   const hint = document.getElementById("site-slug-edit-g9g3g-operational-save-hint");
   if (!btn) return;
 
-  const { ok, reason } = canEnableG9G3gOperationalSave();
+  const { ok, reason, mode } = canEnableOperationalSave();
   (btn as HTMLButtonElement).disabled = !ok;
   if (hint) {
-    hint.textContent = ok
-      ? reason
-      : `Save operational general edit disabled — ${reason}`;
+    if (mode === "restore") {
+      hint.textContent = ok
+        ? reason
+        : `Save operational restore disabled — ${reason}`;
+    } else {
+      hint.textContent = ok
+        ? reason
+        : `Save operational general edit disabled — ${reason}`;
+    }
   }
   refreshSaveGatePanel();
 }
 
 function renderG9G3gOperationalSaveResult(payload: {
   actualWrite: boolean;
-  outcome: Awaited<ReturnType<typeof executeG9G3gOperationalGeneralEditSave>>;
+  outcome:
+    | Awaited<ReturnType<typeof executeG9G3gOperationalGeneralEditSave>>
+    | Awaited<ReturnType<typeof executeG9G3g5OperationalRestoreSave>>;
   changedFields: string[];
   beforeSnapshot: ScheduleRecord;
   payloadWritten: Record<string, unknown>;
+  mode: "restore" | "general";
+  approvalId: string;
 }): void {
   const el = document.getElementById("site-slug-edit-g9g3g-operational-save-result");
   if (!el) return;
@@ -982,15 +1186,18 @@ function renderG9G3gOperationalSaveResult(payload: {
           publishTriggered: false,
         };
 
+  const label =
+    payload.mode === "restore" ? "G-9g3g5 restore Save" : "G-9g3g operational Save";
+
   el.innerHTML = [
     `<p class="site-slug-edit-save-result__message">${escapeHtml(
       success
-        ? "G-9g3g operational Save completed — actualWrite=true."
-        : payload.outcome.errorMessage ?? "G-9g3g operational Save did not complete.",
+        ? `${label} completed — actualWrite=true.`
+        : payload.outcome.errorMessage ?? `${label} did not complete.`,
     )}</p>`,
     `<dl class="site-slug-edit-save-result__meta">`,
     `<div><dt>actualWrite</dt><dd>${payload.actualWrite ? "true" : "false"}</dd></div>`,
-    `<div><dt>approvalId</dt><dd><code>${escapeHtml(G9G3G_OPERATIONAL_GENERAL_EDIT_NON_DRY_RUN_APPROVAL_ID)}</code></dd></div>`,
+    `<div><dt>approvalId</dt><dd><code>${escapeHtml(payload.approvalId)}</code></dd></div>`,
     `<div><dt>changedFields</dt><dd>${escapeHtml(payload.changedFields.join(", ") || "—")}</dd></div>`,
     `<div><dt>rowsAffected</dt><dd>${result && "rowsAffected" in result ? String((result as ScheduleWriteResult).rowsAffected ?? "—") : "—"}</dd></div>`,
     `<div><dt>errorCode</dt><dd>${escapeHtml(payload.outcome.errorCode ?? "—")}</dd></div>`,
@@ -1355,14 +1562,19 @@ async function onG9g3dSaveClick(): Promise<void> {
 }
 
 async function onG9G3gOperationalSaveClick(): Promise<void> {
-  const gate = canEnableG9G3gOperationalSave();
-  if (!gate.ok) {
+  const gate = canEnableOperationalSave();
+  if (!gate.ok || !gate.mode) {
     refreshG9G3gOperationalSaveButtonState();
     return;
   }
 
   const row = parseTargetRow();
-  if (!row || isPocAuditScheduleRow(row)) return;
+  if (!row) return;
+  if (gate.mode === "restore") {
+    if (!isG9G3g4OperationalRestoreTargetRow(row)) return;
+  } else if (isPocAuditScheduleRow(row)) {
+    return;
+  }
 
   executionInFlight = true;
   refreshG9G3gOperationalSaveButtonState();
@@ -1377,26 +1589,43 @@ async function onG9G3gOperationalSaveClick(): Promise<void> {
     candidateValues[field] = value;
   }
   const payload = buildG9G3gOperationalGeneralEditPayload(changedFields, rawValues);
+  const previewBinding = {
+    targetId: lastPreviewTargetId ?? row.id,
+    legacyId: lastPreviewTargetLegacyId ?? row.legacy_id ?? null,
+    siteSlug: STAGING_SHELL_GOSAKI_SCHEDULE_SITE_SLUG,
+    expectedBeforeUpdatedAt: lastPreviewExpectedUpdatedAt,
+    changedFields,
+    fieldValues: { ...lastPreviewG9g3dFieldValues },
+    hostGatePassed: lastPreviewHostGatePassed,
+    optimisticLockStale: lastPreviewG9g3dStale,
+  };
 
   try {
-    const outcome = await executeG9G3gOperationalGeneralEditSave({
-      url,
-      anonKey,
-      beforeSnapshot: row,
-      payload,
-      changedFields,
-      candidateValues,
-      previewBinding: {
-        targetId: lastPreviewTargetId ?? row.id,
-        legacyId: lastPreviewTargetLegacyId ?? row.legacy_id ?? null,
-        siteSlug: STAGING_SHELL_GOSAKI_SCHEDULE_SITE_SLUG,
-        expectedBeforeUpdatedAt: lastPreviewExpectedUpdatedAt,
-        changedFields,
-        fieldValues: { ...lastPreviewG9g3dFieldValues },
-        hostGatePassed: lastPreviewHostGatePassed,
-        optimisticLockStale: lastPreviewG9g3dStale,
-      },
-    });
+    const approvalId =
+      gate.mode === "restore"
+        ? G9G3G5_OPERATIONAL_RESTORE_NON_DRY_RUN_APPROVAL_ID
+        : G9G3G_OPERATIONAL_GENERAL_EDIT_NON_DRY_RUN_APPROVAL_ID;
+
+    const outcome =
+      gate.mode === "restore"
+        ? await executeG9G3g5OperationalRestoreSave({
+            url,
+            anonKey,
+            beforeSnapshot: row,
+            payload,
+            changedFields,
+            candidateValues,
+            previewBinding,
+          })
+        : await executeG9G3gOperationalGeneralEditSave({
+            url,
+            anonKey,
+            beforeSnapshot: row,
+            payload,
+            changedFields,
+            candidateValues,
+            previewBinding,
+          });
 
     const actualWrite =
       outcome.result != null &&
@@ -1409,6 +1638,8 @@ async function onG9G3gOperationalSaveClick(): Promise<void> {
       changedFields,
       beforeSnapshot: row,
       payloadWritten: payload,
+      mode: gate.mode,
+      approvalId,
     });
 
     if (actualWrite && outcome.result && "afterSnapshot" in outcome.result) {

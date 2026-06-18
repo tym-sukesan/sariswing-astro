@@ -35,11 +35,13 @@ const hostAlertClass = binding.isKnownProductionHost
   data-g9g3c-phase={binding.g9g3cPhase}
   data-g9g3d-phase={binding.g9g3dPhase}
   data-g9g3g-phase={binding.g9g3gPhase}
+  data-g9g3g5-phase={binding.g9g3g5Phase}
   data-approval-id={binding.approvalId}
   data-g9g3b-approval-id={binding.g9g3bApprovalId}
   data-g9g3c-approval-id={binding.g9g3cApprovalId}
   data-g9g3d-approval-id={binding.g9g3dApprovalId}
   data-g9g3g-approval-id={binding.g9g3gApprovalId}
+  data-g9g3g5-approval-id={binding.g9g3g5ApprovalId}
   data-site-slug={binding.siteSlug}
   data-source={binding.source}
   data-dry-run-preview-only="true"
@@ -55,6 +57,8 @@ const hostAlertClass = binding.isKnownProductionHost
   data-g9g3d-poc-executed={binding.g9g3dPocExecuted ? "true" : "false"}
   data-g9g3g-armed={binding.g9g3gArmed ? "true" : "false"}
   data-g9g3g-save-enabled={binding.g9g3gSaveEnabled ? "true" : "false"}
+  data-g9g3g5-armed={binding.g9g3g5Armed ? "true" : "false"}
+  data-g9g3g5-save-enabled={binding.g9g3g5SaveEnabled ? "true" : "false"}
   data-picker-driven-binding={binding.pickerDrivenBinding ? "true" : "false"}
   data-picker-row-bound="false"
   data-target-id={binding.targetId}
@@ -417,20 +421,32 @@ const hostAlertClass = binding.isKnownProductionHost
       Save gate status loading…
     </p>
     {
-      operationalSaveSectionVisible ? (
+        operationalSaveSectionVisible ? (
         <p
           id="site-slug-edit-g9g3g-operational-save-hint"
           class="admin-staging-schedule-site-slug-edit__hint"
           role="status"
         >
-          {binding.g9g3gArmFailureReason
-            ? `Save operational general edit disabled — ${binding.g9g3gArmFailureReason}`
-            : binding.g9g3gDefaultDisabledReason}
+          {binding.g9g3g5Armed
+            ? binding.g9g3g5ArmFailureReason
+              ? `Save operational restore disabled — ${binding.g9g3g5ArmFailureReason}`
+              : binding.g9g3g5DefaultDisabledReason
+            : binding.g9g3gArmFailureReason
+              ? `Save operational general edit disabled — ${binding.g9g3gArmFailureReason}`
+              : binding.g9g3gDefaultDisabledReason}
         </p>
       ) : null
     }
     {
-      operationalSaveSectionVisible ? (
+      operationalSaveSectionVisible && binding.g9g3g5Armed ? (
+        <p class="admin-staging-schedule-site-slug-edit__hint admin-staging-schedule-site-slug-edit__hint--warning" role="note">
+          G-9g3g5 restore mode — uses the same operational Save button but requires the restore
+          approval ID and restore arm. Do not re-click G-9g3g4 Save.
+        </p>
+      ) : null
+    }
+    {
+      operationalSaveSectionVisible && !binding.g9g3g5Armed ? (
         <p class="admin-staging-schedule-site-slug-edit__hint" role="note">
           Operational Save is disabled unless G-9g3g arm, approval ID, latest G-9 preview, host gate,
           auth, and optimistic lock all pass. Do not use legacy G-6 dry-run or G-9g3d PoC Save for

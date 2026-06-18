@@ -21,13 +21,15 @@ Staging Shell
 将来的な顧客オンボーディング・課金・デプロイ自動化
 
 2. Current phase
-現在フェーズ: G-9g3g5b-operational-restore-preflight — **complete / restore execution pending**
+現在フェーズ: G-9g3g5b1-operational-restore-approval-arm-implementation — **complete / restore execution pending**
 
-次フェーズ: **G-9g3g5b1-operational-restore-approval-arm-implementation**（restore arm 未実装のため）
+次フェーズ: **G-9g3g5b2-operational-restore-approval-arm-ui-gate-smoke-test**（推奨 — 明示的 waiver なしで G-9g3g5c に飛ばない）
 
-Git: 最新 push 済み commit `d202797`（G-9g3g5）。G-9g3g5b restore preflight **uncommitted**。
+Git: 最新 push 済み commit `95ff18c`（G-9g3g5b）。G-9g3g5b1 restore approval arm implementation **uncommitted**。
 
-G-9g3g5b: operational restore preflight **complete**。implementation gap audit: restore専用 approval/env **未実装** → G-9g3g5c はブロック。marker は staging DB に残存。restore / DB write **未実行**。
+G-9g3g5b1: restore専用 approval ID / env arm / guards / save path / UI gate **implementation complete**。G-9g3g5b gap audit blocker **resolved**。marker は staging DB に残存。restore / DB write **未実行**。
+
+G-9g3g5b: operational restore preflight **complete**（commit `95ff18c`）。
 
 G-9g3g5: post-execution hardening **complete**（commit `d202797`）。
 

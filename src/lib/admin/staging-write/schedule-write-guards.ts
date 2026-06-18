@@ -4,6 +4,13 @@
 
 import type { ScheduleDryRunSource } from "./schedule-dry-run-types";
 import {
+  G9G3G4_OPERATIONAL_DESCRIPTION_MARKER,
+  G9G3G4_OPERATIONAL_DESCRIPTION_ORIGINAL,
+  G9G3G4_OPERATIONAL_TARGET_LEGACY_ID,
+  G9G3G4_OPERATIONAL_TARGET_ROW_ID,
+  STAGING_SHELL_GOSAKI_SCHEDULE_SITE_SLUG,
+} from "../staging-data/staging-schedule-site-slug-config";
+import {
   G6F6_SCHEDULE_SAFE_FIELDS_NON_DRY_RUN_POC_APPROVAL_ID,
   SCHEDULE_WRITE_APPROVAL_ID,
   SCHEDULE_WRITE_APPROVAL_IDS,
@@ -287,6 +294,42 @@ export function assertOperationalNotPocAuditRow(
   ];
   if (fields.some((value) => String(value ?? "").includes("[CMS Kit staging]"))) {
     throw new Error(`${label} PoC audit marker row is not writable.`);
+  }
+}
+
+/** G-9g3g5 restore — marker row writable only when id/legacy/site_slug match restore target. */
+export function assertG9G3g5RestoreWritableRow(row: ScheduleDryRunSource): void {
+  if (row.id !== G9G3G4_OPERATIONAL_TARGET_ROW_ID) {
+    throw new Error("G-9g3g5 restore target id mismatch.");
+  }
+  if (row.legacy_id !== G9G3G4_OPERATIONAL_TARGET_LEGACY_ID) {
+    throw new Error("G-9g3g5 restore legacy_id mismatch.");
+  }
+  if (row.site_slug !== STAGING_SHELL_GOSAKI_SCHEDULE_SITE_SLUG) {
+    throw new Error("G-9g3g5 restore site_slug mismatch.");
+  }
+  const description = String(row.description ?? "");
+  if (!description.includes(G9G3G4_OPERATIONAL_DESCRIPTION_MARKER)) {
+    throw new Error(
+      "G-9g3g5 restore before description must include G-9g3g4 temporary marker.",
+    );
+  }
+}
+
+export function assertG9G3g5RestorePayloadOnly(
+  payload: ScheduleUpdateWritePayload,
+  expectedChangedFields: string[],
+): void {
+  if (expectedChangedFields.length !== 1 || expectedChangedFields[0] !== "description") {
+    throw new Error("G-9g3g5 restore changedFields must be description only.");
+  }
+  assertG9G3gOperationalGeneralEditPayloadOnly(
+    payload,
+    expectedChangedFields,
+    "G-9g3g5",
+  );
+  if (payload.description !== G9G3G4_OPERATIONAL_DESCRIPTION_ORIGINAL) {
+    throw new Error("G-9g3g5 restore payload description must equal original candidate.");
   }
 }
 

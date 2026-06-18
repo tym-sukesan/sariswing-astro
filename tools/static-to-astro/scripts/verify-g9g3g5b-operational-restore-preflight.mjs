@@ -98,9 +98,16 @@ assert("lock baseline", preflightSrc.includes(LOCK_BASELINE));
 
 const typesSrc = readRepo("src/lib/admin/staging-write/schedule-write-types.ts");
 assert(
-  "restore approval not yet in types allowlist",
-  !typesSrc.includes(RESTORE_APPROVAL_ID),
+  "restore approval in types allowlist (G-9g3g5b1)",
+  typesSrc.includes(RESTORE_APPROVAL_ID) &&
+    typesSrc.includes("G9G3G5_SCHEDULE_OPERATIONAL_RESTORE_NON_DRY_RUN_APPROVAL_ID"),
 );
+
+const b1ImplPath = path.join(
+  TOOL_ROOT,
+  "docs/staging-shell-schedule-site-slug-operational-general-edit-restore-approval-arm-implementation.md",
+);
+assert("G-9g3g5b1 implementation doc exists", fs.existsSync(b1ImplPath));
 
 const configSrc = readRepo("src/lib/admin/staging-data/staging-schedule-site-slug-config.ts");
 assert("config restore approval ID", configSrc.includes(RESTORE_APPROVAL_ID));
@@ -108,14 +115,14 @@ assert("config G9G3G5B phase", configSrc.includes("G-9g3g5b-operational-restore-
 assert("config G9G3G5B1 phase", configSrc.includes("G-9g3g5b1-operational-restore-approval-arm-implementation"));
 
 const currentStateSrc = readRepo("tools/static-to-astro/docs/ai/00-current-state.md");
-assert("current state G-9g3g5b", currentStateSrc.includes("G-9g3g5b"));
-assert("current state commit d202797", currentStateSrc.includes("d202797"));
+assert("current state G-9g3g5b1", currentStateSrc.includes("G-9g3g5b1"));
+assert("current state commit 95ff18c", currentStateSrc.includes("95ff18c"));
 
 const nextActionsSrc = readRepo("tools/static-to-astro/docs/ai/03-next-actions.md");
-assert("next actions G-9g3g5b1", nextActionsSrc.includes("G-9g3g5b1"));
+assert("next actions G-9g3g5b2", nextActionsSrc.includes("G-9g3g5b2"));
 
 const handoffSrc = readRepo("tools/static-to-astro/docs/ai/handoff-to-chatgpt.md");
-assert("handoff G-9g3g5b", handoffSrc.includes("G-9g3g5b"));
+assert("handoff G-9g3g5b1", handoffSrc.includes("G-9g3g5b1"));
 
 console.log(`\n${passed} passed, ${failed} failed`);
 process.exit(failed > 0 ? 1 : 0);

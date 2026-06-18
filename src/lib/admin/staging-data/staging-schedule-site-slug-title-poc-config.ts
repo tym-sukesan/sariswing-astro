@@ -24,6 +24,7 @@ import {
   SCHEDULE_G9G3C_TIME_PRICE_NON_DRY_RUN_ARMED_ENV,
   SCHEDULE_G9G3D_GENERAL_EDIT_NON_DRY_RUN_ARMED_ENV,
   SCHEDULE_G9G3G_OPERATIONAL_GENERAL_EDIT_NON_DRY_RUN_ARMED_ENV,
+  SCHEDULE_G9G3G5_OPERATIONAL_RESTORE_NON_DRY_RUN_ARMED_ENV,
   STAGING_SHELL_GOSAKI_SCHEDULE_SITE_SLUG,
 } from "./staging-schedule-site-slug-config";
 import { evaluateSupabaseHostGate } from "./staging-schedule-site-slug-host-gate";
@@ -82,6 +83,9 @@ export function getG9G2TitlePocConfig(
     String(mergedEnv[SCHEDULE_G9G3D_GENERAL_EDIT_NON_DRY_RUN_ARMED_ENV] ?? "").trim() === "true";
   const g9g3gArmed =
     String(mergedEnv[SCHEDULE_G9G3G_OPERATIONAL_GENERAL_EDIT_NON_DRY_RUN_ARMED_ENV] ?? "").trim() ===
+    "true";
+  const g9g3g5RestoreArmed =
+    String(mergedEnv[SCHEDULE_G9G3G5_OPERATIONAL_RESTORE_NON_DRY_RUN_ARMED_ENV] ?? "").trim() ===
     "true";
   const providerRaw = String(mergedEnv.PUBLIC_ADMIN_WRITE_PROVIDER ?? "").trim();
   const module = String(mergedEnv.PUBLIC_ADMIN_WRITE_MODULE ?? "").trim();
@@ -149,6 +153,9 @@ export function getG9G2TitlePocConfig(
   }
   if (g9g3gArmed) {
     armFailures.push(`${SCHEDULE_G9G3G_OPERATIONAL_GENERAL_EDIT_NON_DRY_RUN_ARMED_ENV} must be off`);
+  }
+  if (g9g3g5RestoreArmed) {
+    armFailures.push(`${SCHEDULE_G9G3G5_OPERATIONAL_RESTORE_NON_DRY_RUN_ARMED_ENV} must be off`);
   }
   if (!supabaseConfigured) armFailures.push("Supabase URL/anon key");
 

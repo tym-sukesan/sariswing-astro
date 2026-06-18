@@ -1686,6 +1686,106 @@ assert(
     g9g3cExecutionSrc.includes("rollbackNeeded: false"),
 );
 
+// --- G-9g3d1 general edit consolidation implementation ---
+const g9g3dImplDocPath = path.join(
+  TOOL_ROOT,
+  "docs/staging-shell-schedule-site-slug-general-edit-consolidation-implementation.md",
+);
+const g9g3dSavePath = path.join(
+  REPO_ROOT,
+  "src/lib/admin/staging-write/staging-schedule-site-slug-general-edit-poc-save.ts",
+);
+const g9g3dConfigPath = path.join(
+  REPO_ROOT,
+  "src/lib/admin/staging-data/staging-schedule-site-slug-general-edit-poc-config.ts",
+);
+const writeTypesSrc = fs.readFileSync(
+  path.join(REPO_ROOT, "src/lib/admin/staging-write/schedule-write-types.ts"),
+  "utf8",
+);
+
+assert("G-9g3d1 implementation doc exists", fs.existsSync(g9g3dImplDocPath));
+assert("G-9g3d1 save module exists", fs.existsSync(g9g3dSavePath));
+assert("G-9g3d1 config module exists", fs.existsSync(g9g3dConfigPath));
+
+const g9g3dImplSrc = fs.readFileSync(g9g3dImplDocPath, "utf8");
+const g9g3dSaveSrc = fs.readFileSync(g9g3dSavePath, "utf8");
+const g9g3dConfigSrc = fs.readFileSync(g9g3dConfigPath, "utf8");
+
+assert(
+  "G-9g3d approval ID registered",
+  writeTypesSrc.includes("G-9g3d-schedule-site-slug-general-edit-non-dry-run-poc") &&
+    writeTypesSrc.includes("G9G3D_SCHEDULE_GENERAL_EDIT_NON_DRY_RUN_POC_APPROVAL_ID"),
+);
+assert(
+  "G-9g3d env arm constant",
+  g9g1ConfigSrc.includes("PUBLIC_ADMIN_SCHEDULE_G9G3D_GENERAL_EDIT_NON_DRY_RUN_ARMED"),
+);
+assert(
+  "G-9g3d legacy PoC UI env",
+  g9g1ConfigSrc.includes("PUBLIC_ADMIN_SCHEDULE_LEGACY_POC_UI_VISIBLE"),
+);
+assert(
+  "G-9g3d general edit payload guard",
+  writeGuardsSrc.includes("assertG9G3dGeneralEditPayloadOnly") &&
+    writeGuardsSrc.includes("buildG9G3dGeneralEditPayload") &&
+    g9g3dSaveSrc.includes("assertG9G3dGeneralEditPayloadOnly"),
+);
+assert(
+  "G-9g3d changed-fields-only payload",
+  g9g3dImplSrc.includes("changed-fields-only") &&
+    g9g3dSaveSrc.includes("changedFields") &&
+    g9g3aEditUiSrc.includes("buildG9G3dGeneralEditPayload"),
+);
+assert(
+  "G-9g3d execute save entry",
+  g9g3dSaveSrc.includes("executeG9G3dGeneralEditNonDryRunSave"),
+);
+assert(
+  "G-9g3d single-arm slice envs off",
+  g9g3dConfigSrc.includes("SCHEDULE_G9G2_TITLE_NON_DRY_RUN_ARMED_ENV") &&
+    g9g3dConfigSrc.includes("SCHEDULE_G9G3B_VENUE_DESCRIPTION_NON_DRY_RUN_ARMED_ENV") &&
+    g9g3dConfigSrc.includes("SCHEDULE_G9G3C_TIME_PRICE_NON_DRY_RUN_ARMED_ENV"),
+);
+assert(
+  "G-9g3d slice PoC re-run blocked",
+  g9g3bConfigSrc.includes("Slice PoC executed — do not re-run") &&
+    g9g3cConfigSrc.includes("Slice PoC executed — do not re-run"),
+);
+assert(
+  "G-9g3d legacy PoC UI freeze policy",
+  g9g3dImplSrc.includes("legacy PoC") &&
+    g9g1SectionSrc.includes("Legacy PoC (executed — do not re-run)") &&
+    g9g3aEditUiSrc.includes("isLegacyPoCUiVisible"),
+);
+assert(
+  "G-9g3d Save button label",
+  g9g1SectionSrc.includes("Save general edit"),
+);
+assert(
+  "G-9g3d save button default disabled",
+  g9g1SectionSrc.includes('id="site-slug-edit-g9g3d-save-btn"') &&
+    g9g1SectionSrc.includes("disabled={true}"),
+);
+assert(
+  "G-9g3d edit UI save gating",
+  g9g3aEditUiSrc.includes("canEnableG9G3dSave") &&
+    g9g3aEditUiSrc.includes("Sign in as staging admin before Save") &&
+    g9g3aEditUiSrc.includes("hostGate.hostGatePassed"),
+);
+assert(
+  "G-9g3d implementation not executed",
+  g9g3dImplSrc.includes("stagingShellScheduleGeneralEditPocNotExecuted: true"),
+);
+assert(
+  "G-9g3d no service_role in save path",
+  !g9g3dSaveSrc.includes("SERVICE_ROLE_KEY"),
+);
+assert(
+  "G-9g3d ready for smoke test gate",
+  g9g3dImplSrc.includes("readyForG9g3d2GeneralEditDryRunSmokeTest: true"),
+);
+
 const gosakiPublicDist = path.join(TOOL_ROOT, "output/static-public/gosaki-piano/public-dist");
 for (const ym of ["2026-06", "2026-07"]) {
   const canonicalMonthPath = path.join(gosakiPublicDist, "schedule", ym, "index.html");

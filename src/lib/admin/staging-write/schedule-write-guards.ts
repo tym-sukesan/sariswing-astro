@@ -173,6 +173,93 @@ export function assertG9G3cTimePricePayloadOnly(
   }
 }
 
+const G9G3D_GENERAL_EDIT_SAFE_FIELDS = [
+  "title",
+  "venue",
+  "open_time",
+  "start_time",
+  "price",
+  "description",
+] as const;
+
+export function normalizeG9G3dGeneralEditFieldValue(
+  field: string,
+  raw: string,
+): string | null {
+  const trimmed = raw.trim();
+  if (field === "title") {
+    if (trimmed === "") {
+      throw new Error("G-9g3d title cannot be empty");
+    }
+    return trimmed;
+  }
+  return trimmed === "" ? null : trimmed;
+}
+
+export function buildG9G3dGeneralEditPayload(
+  changedFields: string[],
+  rawValues: Record<string, string>,
+): ScheduleUpdateWritePayload {
+  const payload: ScheduleUpdateWritePayload = {};
+  for (const field of changedFields) {
+    const normalized = normalizeG9G3dGeneralEditFieldValue(field, rawValues[field] ?? "");
+    switch (field) {
+      case "title":
+        payload.title = normalized;
+        break;
+      case "venue":
+        payload.venue = normalized;
+        break;
+      case "open_time":
+        payload.open_time = normalized;
+        break;
+      case "start_time":
+        payload.start_time = normalized;
+        break;
+      case "price":
+        payload.price = normalized;
+        break;
+      case "description":
+        payload.description = normalized;
+        break;
+      default:
+        throw new Error(`G-9g3d changed field not allowed: ${field}`);
+    }
+  }
+  return payload;
+}
+
+export function assertG9G3dGeneralEditPayloadOnly(
+  payload: ScheduleUpdateWritePayload,
+  expectedChangedFields: string[],
+): void {
+  const safeSet = new Set<string>(G9G3D_GENERAL_EDIT_SAFE_FIELDS);
+  const keys = Object.keys(payload);
+  if (keys.length === 0) {
+    throw new Error("G-9g3d payload must include at least one changed field.");
+  }
+  const expected = new Set(expectedChangedFields);
+  if (keys.length !== expected.size) {
+    throw new Error("G-9g3d payload keys must match changedFields exactly.");
+  }
+  for (const key of keys) {
+    if (!safeSet.has(key)) {
+      throw new Error(`G-9g3d payload field not allowed: ${key}`);
+    }
+    if (!expected.has(key)) {
+      throw new Error(`G-9g3d payload field ${key} not in changedFields`);
+    }
+  }
+  for (const field of expectedChangedFields) {
+    if (!keys.includes(field)) {
+      throw new Error(`G-9g3d payload missing ${field}`);
+    }
+  }
+  if (payload.title !== undefined && (payload.title === null || payload.title === "")) {
+    throw new Error("G-9g3d title cannot be empty");
+  }
+}
+
 export function assertBeforeSnapshotSiteSlugScope(
   beforeSnapshot: ScheduleDryRunSource,
   options: { siteSlug: string; legacyId: string; targetId: string },

@@ -57,6 +57,18 @@ export const G9G3C_START_TIME_POC_DEFAULT =
 export const G9G3C_PRICE_POC_DEFAULT =
   "[CMS Kit staging] G-9g3c price PoC";
 
+export const G9G3D_PHASE =
+  "G-9g3d-staging-shell-schedule-site-slug-general-edit-consolidation-implementation";
+
+export const G9G3D_GENERAL_EDIT_NON_DRY_RUN_APPROVAL_ID =
+  "G-9g3d-schedule-site-slug-general-edit-non-dry-run-poc";
+
+export const SCHEDULE_G9G3D_GENERAL_EDIT_NON_DRY_RUN_ARMED_ENV =
+  "PUBLIC_ADMIN_SCHEDULE_G9G3D_GENERAL_EDIT_NON_DRY_RUN_ARMED";
+
+export const SCHEDULE_LEGACY_POC_UI_VISIBLE_ENV =
+  "PUBLIC_ADMIN_SCHEDULE_LEGACY_POC_UI_VISIBLE";
+
 /** Pilot site for staging shell schedule read binding. */
 export const STAGING_SHELL_GOSAKI_SCHEDULE_SITE_SLUG = "gosaki-piano";
 

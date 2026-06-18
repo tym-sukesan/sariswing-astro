@@ -1,10 +1,11 @@
 /**
- * G-9g1 / G-9g2 / G-9g3a / G-9g3b — Staging shell Gosaki site_slug schedule edit binding (SSR).
+ * G-9g1 / G-9g2 / G-9g3a / G-9g3b / G-9g3c / G-9g3d — Staging shell Gosaki site_slug schedule edit binding (SSR).
  */
 
 import { getReadOnlyDataConfig } from "./read-only-data-config";
 import { getG9G3bVenueDescriptionPocConfig } from "./staging-schedule-site-slug-venue-description-poc-config";
 import { getG9G3cTimePricePocConfig } from "./staging-schedule-site-slug-time-price-poc-config";
+import { getG9G3dGeneralEditPocConfig } from "./staging-schedule-site-slug-general-edit-poc-config";
 import { evaluateSupabaseHostGate } from "./staging-schedule-site-slug-host-gate";
 import {
   extractSupabaseHost,
@@ -27,8 +28,11 @@ import {
   G9G3C_PRICE_POC_DEFAULT,
   G9G3C_START_TIME_POC_DEFAULT,
   G9G3C_TIME_PRICE_NON_DRY_RUN_APPROVAL_ID,
+  G9G3D_GENERAL_EDIT_NON_DRY_RUN_APPROVAL_ID,
+  G9G3D_PHASE,
   SCHEDULE_G9G3B_VENUE_DESCRIPTION_NON_DRY_RUN_ARMED_ENV,
   SCHEDULE_G9G3C_TIME_PRICE_NON_DRY_RUN_ARMED_ENV,
+  SCHEDULE_G9G3D_GENERAL_EDIT_NON_DRY_RUN_ARMED_ENV,
   SITE_SLUG_EDIT_SAFE_FIELDS,
   STAGING_SHELL_GOSAKI_SCHEDULE_SITE_SLUG,
 } from "./staging-schedule-site-slug-config";
@@ -40,9 +44,11 @@ export interface SiteSlugScheduleEditBinding {
   g9g3aPhase: string;
   g9g3bPhase: string;
   g9g3cPhase: string;
+  g9g3dPhase: string;
   approvalId: string;
   g9g3bApprovalId: string;
   g9g3cApprovalId: string;
+  g9g3dApprovalId: string;
   g9g3bDefaultVenue: string;
   g9g3bDefaultDescription: string;
   g9g3cDefaultOpenTime: string;
@@ -56,6 +62,11 @@ export interface SiteSlugScheduleEditBinding {
   g9g3cSaveEnabled: boolean;
   g9g3cArmFailureReason?: string;
   g9g3cArmEnv: string;
+  g9g3dArmed: boolean;
+  g9g3dSaveEnabled: boolean;
+  g9g3dArmFailureReason?: string;
+  g9g3dArmEnv: string;
+  legacyPoCUiVisible: boolean;
   g9g3aSaveUiHidden: boolean;
   siteSlug: string;
   targetId: string;
@@ -80,17 +91,20 @@ export async function resolveGosakiScheduleSiteSlugEditBinding(): Promise<SiteSl
   const dataConfig = getReadOnlyDataConfig();
   const g9g3bConfig = getG9G3bVenueDescriptionPocConfig();
   const g9g3cConfig = getG9G3cTimePricePocConfig();
+  const g9g3dConfig = getG9G3dGeneralEditPocConfig();
   const siteSlug = STAGING_SHELL_GOSAKI_SCHEDULE_SITE_SLUG;
   const hostGate = evaluateSupabaseHostGate(dataConfig.supabaseUrl);
 
   const base = {
-    phase: G9G3C_PHASE,
+    phase: G9G3D_PHASE,
     g9g3aPhase: G9G3A_PHASE,
     g9g3bPhase: G9G3B_PHASE,
     g9g3cPhase: G9G3C_PHASE,
+    g9g3dPhase: G9G3D_PHASE,
     approvalId: G9G1_DRY_RUN_APPROVAL_ID,
     g9g3bApprovalId: G9G3B_VENUE_DESCRIPTION_NON_DRY_RUN_APPROVAL_ID,
     g9g3cApprovalId: G9G3C_TIME_PRICE_NON_DRY_RUN_APPROVAL_ID,
+    g9g3dApprovalId: G9G3D_GENERAL_EDIT_NON_DRY_RUN_APPROVAL_ID,
     g9g3bDefaultVenue: G9G3B_VENUE_POC_DEFAULT,
     g9g3bDefaultDescription: G9G3B_DESCRIPTION_POC_DEFAULT,
     g9g3cDefaultOpenTime: G9G3C_OPEN_TIME_POC_DEFAULT,
@@ -104,6 +118,11 @@ export async function resolveGosakiScheduleSiteSlugEditBinding(): Promise<SiteSl
     g9g3cSaveEnabled: g9g3cConfig.saveEnabled && hostGate.hostGatePassed,
     g9g3cArmFailureReason: g9g3cConfig.armFailureReason,
     g9g3cArmEnv: SCHEDULE_G9G3C_TIME_PRICE_NON_DRY_RUN_ARMED_ENV,
+    g9g3dArmed: g9g3dConfig.armed,
+    g9g3dSaveEnabled: g9g3dConfig.saveEnabled && hostGate.hostGatePassed,
+    g9g3dArmFailureReason: g9g3dConfig.armFailureReason,
+    g9g3dArmEnv: SCHEDULE_G9G3D_GENERAL_EDIT_NON_DRY_RUN_ARMED_ENV,
+    legacyPoCUiVisible: g9g3dConfig.legacyPoCUiVisible,
     g9g3aSaveUiHidden: false,
     siteSlug,
     targetId: G9G1_TARGET_ROW_ID,
@@ -173,11 +192,13 @@ export async function resolveGosakiScheduleSiteSlugEditBinding(): Promise<SiteSl
     ? "host gate passed"
     : "host gate failed — Save blocked";
 
-  const armNote = g9g3cConfig.armed
-    ? "G-9g3c armed — Save gated"
-    : g9g3bConfig.armed
-      ? "G-9g3b armed — Save gated"
-      : "G-9g3c/G-9g3b not armed — dry-run preview only";
+  const armNote = g9g3dConfig.armed
+    ? "G-9g3d general edit armed — Save gated"
+    : g9g3cConfig.armed
+      ? "G-9g3c armed — Save gated"
+      : g9g3bConfig.armed
+        ? "G-9g3b armed — Save gated"
+        : "G-9g3d not armed — dry-run preview only";
 
   return {
     ...base,

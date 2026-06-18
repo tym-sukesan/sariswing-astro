@@ -1,6 +1,6 @@
 ---
 /**
- * G-9g1 / G-9g2 / G-9g3a / G-9g3b / G-9g3c — Staging shell Gosaki site_slug schedule edit.
+ * G-9g1 / G-9g2 / G-9g3a / G-9g3b / G-9g3c / G-9g3d — Staging shell Gosaki site_slug schedule edit.
  */
 import AdminCard from "../../components/AdminCard.astro";
 import AdminFormField from "../../components/AdminFormField.astro";
@@ -15,10 +15,9 @@ const { binding } = Astro.props;
 const row = binding.targetRow;
 const uiDisabled = binding.source !== "supabase" || !row;
 const targetRowJson = row ? JSON.stringify(row) : "";
-const g9g3bSaveSectionVisible =
-  binding.g9g3bArmed || Boolean(binding.g9g3bArmFailureReason);
-const g9g3cSaveSectionVisible =
-  binding.g9g3cArmed || Boolean(binding.g9g3cArmFailureReason);
+const g9g3dSaveSectionVisible =
+  binding.g9g3dArmed || Boolean(binding.g9g3dArmFailureReason);
+const legacyPoCSectionVisible = binding.legacyPoCUiVisible;
 const hostAlertClass = binding.isKnownProductionHost
   ? "admin-staging-schedule-site-slug-edit__host-danger"
   : "admin-staging-schedule-site-slug-edit__host-warning";
@@ -31,18 +30,23 @@ const hostAlertClass = binding.isKnownProductionHost
   data-g9g3a-phase={binding.g9g3aPhase}
   data-g9g3b-phase={binding.g9g3bPhase}
   data-g9g3c-phase={binding.g9g3cPhase}
+  data-g9g3d-phase={binding.g9g3dPhase}
   data-approval-id={binding.approvalId}
   data-g9g3b-approval-id={binding.g9g3bApprovalId}
   data-g9g3c-approval-id={binding.g9g3cApprovalId}
+  data-g9g3d-approval-id={binding.g9g3dApprovalId}
   data-site-slug={binding.siteSlug}
   data-source={binding.source}
   data-dry-run-preview-only="true"
   data-actual-write="false"
   data-g9g3a-save-hidden={binding.g9g3aSaveUiHidden ? "true" : "false"}
+  data-legacy-poc-ui-visible={binding.legacyPoCUiVisible ? "true" : "false"}
   data-g9g3b-armed={binding.g9g3bArmed ? "true" : "false"}
   data-g9g3b-save-enabled={binding.g9g3bSaveEnabled ? "true" : "false"}
   data-g9g3c-armed={binding.g9g3cArmed ? "true" : "false"}
   data-g9g3c-save-enabled={binding.g9g3cSaveEnabled ? "true" : "false"}
+  data-g9g3d-armed={binding.g9g3dArmed ? "true" : "false"}
+  data-g9g3d-save-enabled={binding.g9g3dSaveEnabled ? "true" : "false"}
   data-host-gate-passed={binding.hostGatePassed ? "true" : "false"}
   data-active-host={binding.activeHost}
   data-expected-host={binding.expectedHost}
@@ -51,12 +55,21 @@ const hostAlertClass = binding.isKnownProductionHost
   aria-label="Gosaki site_slug schedule edit"
 >
   <h2 class="admin-staging-schedule-site-slug-edit__title">
-    Schedule site_slug edit — time+price PoC (G-9g3c)
+    Schedule site_slug general edit (G-9g3d)
   </h2>
 
   <p class="admin-staging-schedule-site-slug-edit__safety" role="note">
     <strong>Preview path never writes.</strong> Dry-run always{" "}
-    <code>actualWrite=false</code>. G-9g3c / G-9g3b Save gated — operator manual only, not auto-clicked.
+    <code>actualWrite=false</code>. G-9g3d general Save gated — operator manual only, not auto-clicked.
+    G-9g2 / G-9g3b / G-9g3c slice PoCs executed — do not re-run.
+  </p>
+
+  <p
+    id="site-slug-edit-auth-banner"
+    class="admin-staging-schedule-site-slug-edit__auth-checking"
+    role="status"
+  >
+    Checking auth session…
   </p>
 
   {
@@ -83,14 +96,18 @@ const hostAlertClass = binding.isKnownProductionHost
   <dl class="admin-staging-schedule-site-slug-edit__summary">
     <div>
       <dt>Phase</dt>
-      <dd>{binding.g9g3cPhase}</dd>
+      <dd>{binding.g9g3dPhase}</dd>
     </div>
     <div>
-      <dt>G-9g3c approval ID</dt>
+      <dt>G-9g3d approval ID</dt>
+      <dd><code>{binding.g9g3dApprovalId}</code></dd>
+    </div>
+    <div>
+      <dt>G-9g3c approval ID (legacy)</dt>
       <dd><code>{binding.g9g3cApprovalId}</code></dd>
     </div>
     <div>
-      <dt>G-9g3b approval ID</dt>
+      <dt>G-9g3b approval ID (legacy)</dt>
       <dd><code>{binding.g9g3bApprovalId}</code></dd>
     </div>
     <div>
@@ -142,9 +159,12 @@ const hostAlertClass = binding.isKnownProductionHost
 
   <AdminCard
     title="Edit (safe fields)"
-    description="G-9g3c — open_time + start_time + price PoC slice. Title/venue/description from G-9g2/G-9g3b retained."
+    description="G-9g3d — unified general edit. Loaded DB values shown read-only; edit inputs are candidate values."
   >
     <AdminFormField label="Title">
+      <p class="admin-staging-schedule-site-slug-edit__loaded-value">
+        Loaded: <code id="site-slug-edit-loaded-title">{row?.title ?? "—"}</code>
+      </p>
       <input
         id="site-slug-edit-dry-run-title"
         type="text"
@@ -154,6 +174,9 @@ const hostAlertClass = binding.isKnownProductionHost
       />
     </AdminFormField>
     <AdminFormField label="Venue">
+      <p class="admin-staging-schedule-site-slug-edit__loaded-value">
+        Loaded: <code id="site-slug-edit-loaded-venue">{row?.venue ?? "—"}</code>
+      </p>
       <input
         id="site-slug-edit-dry-run-venue"
         type="text"
@@ -163,6 +186,9 @@ const hostAlertClass = binding.isKnownProductionHost
       />
     </AdminFormField>
     <AdminFormField label="Open time">
+      <p class="admin-staging-schedule-site-slug-edit__loaded-value">
+        Loaded: <code id="site-slug-edit-loaded-open-time">{row?.open_time ?? "—"}</code>
+      </p>
       <input
         id="site-slug-edit-dry-run-open-time"
         type="text"
@@ -172,6 +198,9 @@ const hostAlertClass = binding.isKnownProductionHost
       />
     </AdminFormField>
     <AdminFormField label="Start time">
+      <p class="admin-staging-schedule-site-slug-edit__loaded-value">
+        Loaded: <code id="site-slug-edit-loaded-start-time">{row?.start_time ?? "—"}</code>
+      </p>
       <input
         id="site-slug-edit-dry-run-start-time"
         type="text"
@@ -181,6 +210,9 @@ const hostAlertClass = binding.isKnownProductionHost
       />
     </AdminFormField>
     <AdminFormField label="Price">
+      <p class="admin-staging-schedule-site-slug-edit__loaded-value">
+        Loaded: <code id="site-slug-edit-loaded-price">{row?.price ?? "—"}</code>
+      </p>
       <input
         id="site-slug-edit-dry-run-price"
         type="text"
@@ -190,6 +222,9 @@ const hostAlertClass = binding.isKnownProductionHost
       />
     </AdminFormField>
     <AdminFormField label="Description">
+      <p class="admin-staging-schedule-site-slug-edit__loaded-value">
+        Loaded: <code id="site-slug-edit-loaded-description">{row?.description ?? "—"}</code>
+      </p>
       <textarea
         id="site-slug-edit-dry-run-description"
         rows={3}
@@ -208,48 +243,29 @@ const hostAlertClass = binding.isKnownProductionHost
         Preview dry-run
       </button>
       {
-        g9g3cSaveSectionVisible ? (
+        g9g3dSaveSectionVisible ? (
           <button
-            id="site-slug-edit-g9g3c-save-btn"
+            id="site-slug-edit-g9g3d-save-btn"
             class="admin-button admin-button--primary"
             type="button"
             disabled={true}
-            title="G-9g3c time+price PoC — gated; operator manual only"
+            title="G-9g3d general edit — gated; operator manual only"
           >
-            Save time+price PoC
-          </button>
-        ) : null
-      }
-      {
-        g9g3bSaveSectionVisible ? (
-          <button
-            id="site-slug-edit-g9g3b-save-btn"
-            class="admin-button admin-button--primary"
-            type="button"
-            disabled={true}
-            title="G-9g3b venue+description PoC — gated; operator manual only"
-          >
-            Save venue+description PoC
+            Save general edit
           </button>
         ) : null
       }
     </div>
     {
-      g9g3cSaveSectionVisible ? (
-        <p id="site-slug-edit-g9g3c-save-hint" class="admin-staging-schedule-site-slug-edit__hint" role="status">
-          {binding.g9g3cArmFailureReason
-            ? `Save time+price PoC disabled — ${binding.g9g3cArmFailureReason}`
-            : "G-9g3c — Preview dry-run required before Save."}
-        </p>
-      ) : g9g3bSaveSectionVisible ? (
-        <p id="site-slug-edit-g9g3b-save-hint" class="admin-staging-schedule-site-slug-edit__hint" role="status">
-          {binding.g9g3bArmFailureReason
-            ? `Save venue+description PoC disabled — ${binding.g9g3bArmFailureReason}`
-            : "G-9g3b — Preview dry-run required before Save."}
+      g9g3dSaveSectionVisible ? (
+        <p id="site-slug-edit-g9g3d-save-hint" class="admin-staging-schedule-site-slug-edit__hint" role="status">
+          {binding.g9g3dArmFailureReason
+            ? `Save general edit disabled — ${binding.g9g3dArmFailureReason}`
+            : "G-9g3d — Preview dry-run required before Save."}
         </p>
       ) : (
         <p id="site-slug-edit-g9g3a-hint" class="admin-staging-schedule-site-slug-edit__hint" role="status">
-          G-9g3c not armed — Preview dry-run only. Set {binding.g9g3cArmEnv}=true to expose Save.
+          G-9g3d not armed — Preview dry-run only. Set {binding.g9g3dArmEnv}=true to expose Save.
         </p>
       )
     }
@@ -268,15 +284,15 @@ const hostAlertClass = binding.isKnownProductionHost
   </AdminCard>
 
   {
-    g9g3cSaveSectionVisible ? (
-      <AdminCard title="Save result (G-9g3c)" description="Non-dry-run — operator manual only">
+    g9g3dSaveSectionVisible ? (
+      <AdminCard title="Save result (G-9g3d)" description="Non-dry-run — operator manual only">
         <div
-          id="site-slug-edit-g9g3c-save-result"
+          id="site-slug-edit-g9g3d-save-result"
           class="site-slug-edit-save-result"
           aria-live="polite"
         >
           <p class="site-slug-edit-save-result__placeholder">
-            Save not executed — operator clicks Save time+price PoC once in execution phase.
+            Save not executed — operator clicks Save general edit once in execution phase.
           </p>
         </div>
       </AdminCard>
@@ -284,28 +300,64 @@ const hostAlertClass = binding.isKnownProductionHost
   }
 
   {
-    g9g3bSaveSectionVisible ? (
-      <AdminCard title="Save result (G-9g3b)" description="Non-dry-run — operator manual only">
+    legacyPoCSectionVisible ? (
+      <details class="admin-staging-schedule-site-slug-edit__legacy-poc">
+        <summary>Legacy PoC (executed — do not re-run)</summary>
+        <p class="admin-staging-schedule-site-slug-edit__legacy-banner" role="alert">
+          G-9g2 / G-9g3b / G-9g3c slice Saves executed — audit only. Use G-9g3d general edit.
+        </p>
+        <div class="admin-staging-schedule-site-slug-edit__actions">
+          <button
+            id="site-slug-edit-g9g3c-save-btn"
+            class="admin-button admin-button--primary"
+            type="button"
+            disabled={true}
+            title="G-9g3c time+price PoC — frozen"
+          >
+            Save time+price PoC (frozen)
+          </button>
+          <button
+            id="site-slug-edit-g9g3b-save-btn"
+            class="admin-button admin-button--primary"
+            type="button"
+            disabled={true}
+            title="G-9g3b venue+description PoC — frozen"
+          >
+            Save venue+description PoC (frozen)
+          </button>
+        </div>
+        <p id="site-slug-edit-g9g3c-save-hint" class="admin-staging-schedule-site-slug-edit__hint" role="status">
+          Slice PoC executed — do not re-run.
+        </p>
+        <p id="site-slug-edit-g9g3b-save-hint" class="admin-staging-schedule-site-slug-edit__hint" role="status">
+          Slice PoC executed — do not re-run.
+        </p>
+        <div
+          id="site-slug-edit-g9g3c-save-result"
+          class="site-slug-edit-save-result"
+          aria-live="polite"
+        >
+          <p class="site-slug-edit-save-result__placeholder">Legacy G-9g3c — not re-executed.</p>
+        </div>
         <div
           id="site-slug-edit-g9g3b-save-result"
           class="site-slug-edit-save-result"
           aria-live="polite"
         >
-          <p class="site-slug-edit-save-result__placeholder">
-            Save not executed — operator clicks Save venue+description PoC once in execution phase.
-          </p>
+          <p class="site-slug-edit-save-result__placeholder">Legacy G-9g3b — not re-executed.</p>
         </div>
-      </AdminCard>
+      </details>
     ) : null
   }
 
   <AdminCard title="Safety flags">
     <dl class="admin-staging-schedule-site-slug-edit__flags">
       <div><dt>dryRunPreview actualWrite</dt><dd>false</dd></div>
+      <div><dt>g9g3dArmed</dt><dd>{binding.g9g3dArmed ? "true" : "false"}</dd></div>
+      <div><dt>g9g3dSaveEnabled</dt><dd>{binding.g9g3dSaveEnabled ? "true" : "false"}</dd></div>
+      <div><dt>legacyPoCUiVisible</dt><dd>{binding.legacyPoCUiVisible ? "true" : "false"}</dd></div>
       <div><dt>g9g3cArmed</dt><dd>{binding.g9g3cArmed ? "true" : "false"}</dd></div>
-      <div><dt>g9g3cSaveEnabled</dt><dd>{binding.g9g3cSaveEnabled ? "true" : "false"}</dd></div>
       <div><dt>g9g3bArmed</dt><dd>{binding.g9g3bArmed ? "true" : "false"}</dd></div>
-      <div><dt>g9g3bSaveEnabled</dt><dd>{binding.g9g3bSaveEnabled ? "true" : "false"}</dd></div>
       <div><dt>hostGatePassed</dt><dd>{binding.hostGatePassed ? "true" : "false"}</dd></div>
       <div><dt>restoreSaveImplemented</dt><dd>false</dd></div>
       <div><dt>writeAdapterUsed (preview)</dt><dd>false</dd></div>
@@ -392,10 +444,63 @@ const hostAlertClass = binding.isKnownProductionHost
   }
 
   .admin-staging-schedule-site-slug-edit__message,
-  .admin-staging-schedule-site-slug-edit__hint {
+  .admin-staging-schedule-site-slug-edit__hint,
+  .admin-staging-schedule-site-slug-edit__loaded-value {
     margin: 0.5rem 0 0;
     font-size: 0.875rem;
     color: #475569;
+  }
+
+  .admin-staging-schedule-site-slug-edit__loaded-value code {
+    word-break: break-all;
+  }
+
+  .admin-staging-schedule-site-slug-edit__auth-checking {
+    margin: 0 0 1rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    background: #f1f5f9;
+    border: 1px solid #cbd5e1;
+    color: #475569;
+    font-size: 0.875rem;
+  }
+
+  .admin-staging-schedule-site-slug-edit__auth-ok {
+    margin: 0 0 1rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    background: #d1fae5;
+    border: 1px solid #6ee7b7;
+    color: #065f46;
+    font-size: 0.875rem;
+  }
+
+  .admin-staging-schedule-site-slug-edit__auth-warn {
+    margin: 0 0 1rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    background: #fef3c7;
+    border: 1px solid #fcd34d;
+    color: #92400e;
+    font-size: 0.875rem;
+  }
+
+  .admin-staging-schedule-site-slug-edit__legacy-poc {
+    margin-top: 1rem;
+    padding: 0.75rem;
+    border: 1px dashed #94a3b8;
+    border-radius: 6px;
+    background: #f8fafc;
+  }
+
+  .admin-staging-schedule-site-slug-edit__legacy-banner {
+    margin: 0.5rem 0;
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    background: #fee2e2;
+    border: 1px solid #fca5a5;
+    color: #991b1b;
+    font-size: 0.875rem;
   }
 
   .admin-staging-schedule-site-slug-edit__actions {

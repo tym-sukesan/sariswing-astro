@@ -1786,6 +1786,63 @@ assert(
   g9g3dImplSrc.includes("readyForG9g3d2GeneralEditDryRunSmokeTest: true"),
 );
 
+// --- G-9g3d2 general edit dry-run smoke test ---
+const g9g3d2SmokeDocPath = path.join(
+  TOOL_ROOT,
+  "docs/staging-shell-schedule-site-slug-general-edit-dry-run-smoke-test-result.md",
+);
+const g9g3d2SmokeScriptPath = path.join(
+  TOOL_ROOT,
+  "scripts/verify-g9g3d-general-edit-dry-run-smoke.mjs",
+);
+
+assert("G-9g3d2 smoke result doc exists", fs.existsSync(g9g3d2SmokeDocPath));
+assert("G-9g3d2 smoke script exists", fs.existsSync(g9g3d2SmokeScriptPath));
+
+const g9g3d2SmokeSrc = fs.readFileSync(g9g3d2SmokeDocPath, "utf8");
+
+assert(
+  "G-9g3d2 smoke completed marker",
+  g9g3d2SmokeSrc.includes("G-9g3d2 dry-run smoke completed") ||
+    g9g3d2SmokeSrc.includes("G-9g3d2-general-edit-dry-run-smoke-test"),
+);
+assert(
+  "G-9g3d2 smoke Save not clicked",
+  g9g3d2SmokeSrc.includes("cursorClickedSave: false") &&
+    g9g3d2SmokeSrc.includes("Save was not clicked"),
+);
+assert(
+  "G-9g3d2 smoke no DB write",
+  g9g3d2SmokeSrc.includes("DB write was not executed") ||
+    g9g3d2SmokeSrc.includes("DB write not executed"),
+);
+assert(
+  "G-9g3d2 smoke actualWrite false",
+  g9g3d2SmokeSrc.includes("actualWrite=false") ||
+    g9g3d2SmokeSrc.includes("actualWrite | `false`"),
+);
+assert(
+  "G-9g3d2 smoke changedFields price",
+  g9g3d2SmokeSrc.includes("changedFields") && g9g3d2SmokeSrc.includes("price"),
+);
+assert(
+  "G-9g3d2 smoke host gate passed",
+  g9g3d2SmokeSrc.includes("hostGatePassed") &&
+    g9g3d2SmokeSrc.includes("kmjqppxjdnwwrtaeqjta.supabase.co"),
+);
+assert(
+  "G-9g3d2 smoke legacy PoC default hidden",
+  /legacy\s+poc/i.test(g9g3d2SmokeSrc) && /hidden/i.test(g9g3d2SmokeSrc),
+);
+assert(
+  "G-9g3d2 smoke Save gated",
+  g9g3d2SmokeSrc.includes("Save gated") || g9g3d2SmokeSrc.includes("disabled"),
+);
+assert(
+  "G-9g3d2 ready for preflight gate",
+  g9g3d2SmokeSrc.includes("readyForG9g3d3GeneralEditNonDryRunPreflight: true"),
+);
+
 const gosakiPublicDist = path.join(TOOL_ROOT, "output/static-public/gosaki-piano/public-dist");
 for (const ym of ["2026-06", "2026-07"]) {
   const canonicalMonthPath = path.join(gosakiPublicDist, "schedule", ym, "index.html");

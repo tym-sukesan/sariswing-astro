@@ -5,25 +5,24 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-9g3e2-post-execution-hardening-smoke-test (complete)
-Latest commit (pushed): 0685a34 (G-9g3e1 implementation)
-Git: working tree has uncommitted G-9g3e2 smoke doc + verifier + AI context updates
+Current phase: G-9g3f-row-picker-planning (complete)
+Latest commit (pushed): d43cd32 (G-9g3e2 smoke)
+Git: working tree has uncommitted G-9g3f planning doc + AI context updates
 ```
 
 ## Summary
 
-G-9g3e2 confirms G-9g3e1 post-execution hardening via SSR + static/source smoke — no Save / Preview / DB write.
+G-9g3f plans read-only schedule row picker for staging shell — move from fixed pilot row to site_slug-scoped operator selection.
 
-- **G-9g3d freeze:** verified — config + executor + UI + SSR
-- **Legacy PoC UI:** default hidden; audit-only when visible
-- **Save gate panel / staging banner / production STOP:** confirmed in SSR
+- **Row picker:** read-only; multi-tenant safety via fixed `site_slug=gosaki-piano`
+- **Pilot row:** audit only — exclude from default selection; do not re-edit
 - **All G-9 PoC Saves:** re-run prohibited
-- **Save / Preview / DB write:** not executed in smoke
-- **Next:** G-9g3f row picker planning
+- **Save / Preview / DB write:** not executed in planning
+- **Next:** G-9g3f1 row picker implementation (read-only UI)
 
 **Docs:**
-- `staging-shell-schedule-site-slug-general-edit-post-execution-hardening-smoke-test-result.md` (**new**)
-- `staging-shell-schedule-site-slug-general-edit-post-execution-hardening-implementation.md`
+- `staging-shell-schedule-site-slug-row-picker-planning.md` (**new**)
+- `staging-shell-schedule-site-slug-general-edit-post-execution-hardening-smoke-test-result.md`
 
 ## Routine dev safety (default)
 
@@ -38,12 +37,12 @@ PUBLIC_SUPABASE_URL host: kmjqppxjdnwwrtaeqjta.supabase.co (staging)
 ## Gates
 
 ```txt
-stagingShellScheduleGeneralEditPostExecutionHardeningSmokeTestPassed: true
-readyForG9g3fRowPickerPlanning: true
+stagingShellScheduleSiteSlugRowPickerPlanningComplete: true
+readyForG9g3f1RowPickerImplementation: true
 readyForAnyDbWrite: false
 rollbackNeeded: false
 ```
 
 ## Next
 
-**G-9g3f-row-picker-planning** — planning only; no Save / DB write.
+**G-9g3f1-row-picker-implementation** — read-only picker UI; no Save / DB write.

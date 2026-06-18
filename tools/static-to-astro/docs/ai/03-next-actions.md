@@ -3,40 +3,43 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 1. Immediate priority
 
-**Current phase:** `G-9g3e2-post-execution-hardening-smoke-test` — **complete**
+**Current phase:** `G-9g3f-row-picker-planning` — **complete**
 
-**Next:** `G-9g3f-row-picker-planning`
+**Next:** `G-9g3f1-row-picker-implementation`
 
-**Git:** latest pushed commit `0685a34`; G-9g3e2 smoke doc + verifier + AI context updates **uncommitted**
+**Git:** latest pushed commit `d43cd32`; G-9g3f planning doc + AI context updates **uncommitted**
 
 **Docs:**
-- `tools/static-to-astro/docs/staging-shell-schedule-site-slug-general-edit-post-execution-hardening-smoke-test-result.md` (**new**)
-- `tools/static-to-astro/docs/staging-shell-schedule-site-slug-general-edit-post-execution-hardening-implementation.md`
-- `tools/static-to-astro/docs/staging-shell-schedule-site-slug-general-edit-post-execution-hardening-planning.md`
+- `tools/static-to-astro/docs/staging-shell-schedule-site-slug-row-picker-planning.md` (**new**)
+- `tools/static-to-astro/docs/staging-shell-schedule-site-slug-general-edit-post-execution-hardening-smoke-test-result.md`
 
-### G-9g3e2 smoke summary
+### G-9g3f planning summary
 
-- **SSR:** HTTP GET staging shell — G-9g3e1 markers, save gate, frozen Save, legacy PoC hidden
-- **Static:** `G9G3D_GENERAL_EDIT_POC_EXECUTED`, `poc_executed`, slice freeze, changed-fields-only payload
-- **Save / Preview / DB write:** not executed in smoke
+- **Row picker:** read-only; `site_slug = gosaki-piano` fixed scope
+- **UI:** list + filters + selected row summary; no Save in picker
+- **Edit binding:** deferred to G-9g3f3 planning; operational write to G-9g3g
+- **Pilot row:** audit only — exclude from default selection
+- **Save / Preview / DB write:** not executed in planning
 - **Do not re-run:** G-9g2 / G-9g3b / G-9g3c / G-9g3d Save
 
 ### Gates
 
 ```txt
-stagingShellScheduleGeneralEditPostExecutionHardeningSmokeTestPassed: true
-readyForG9g3fRowPickerPlanning: true
+stagingShellScheduleSiteSlugRowPickerPlanningComplete: true
+readyForG9g3f1RowPickerImplementation: true
 readyForAnyDbWrite: false
 rollbackNeeded: false
 ```
 
 ## 2. Next steps
 
-1. **G-9g3f-row-picker-planning** — planning only; no Save / DB write
+1. **G-9g3f1-row-picker-implementation** — read-only picker UI; no Save / no edit binding
+2. **G-9g3f2-row-picker-read-only-smoke-test**
+3. **G-9g3f3-row-picker-general-edit-binding-planning**
 
-### Deferred cleanup (G-9g3f+)
+### Deferred cleanup (G-9g3f1 / G-9g3f2)
 
-- `verify-g9g3d-general-edit-dry-run-smoke.mjs`: `PILOT_ROW.price` baseline still references G-9g3c price PoC string (pre-G-9g3d4). Not a G-9g3e2 blocker; align baseline with post-G-9g3d4 row state when refreshing legacy PoC smoke verifiers.
+- `verify-g9g3d-general-edit-dry-run-smoke.mjs`: align `PILOT_ROW` baseline with post-G-9g3d4 state or mark legacy PoC-only when refreshing smoke verifiers
 
 ## 3. Routine dev safety
 
@@ -56,6 +59,6 @@ PUBLIC_SUPABASE_URL host: kmjqppxjdnwwrtaeqjta.supabase.co
 
 ## 5. Baseline (post G-9g3d4)
 
-- Latest commit (pushed): `0685a34`
-- Pilot row: `aa440e29-5be8-402e-9190-0d81c48434c0` / `gosaki-piano`
+- Latest commit (pushed): `d43cd32`
+- Pilot row (audit only): `aa440e29-5be8-402e-9190-0d81c48434c0` / `gosaki-piano` / `schedule-2026-07-010`
 - Lock `updated_at`: `2026-06-18T01:04:51.312817+00:00`

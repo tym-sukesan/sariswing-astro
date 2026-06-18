@@ -83,6 +83,17 @@ export const G9G3F3C_ROW_SWITCH_UNSAVED_CONFIRM_MSG =
 export const G9G3F3C_PREVIEW_STALE_MSG =
   "Preview is stale — run G-9 preview again";
 
+export const G9G3F3D_PHASE =
+  "G-9g3f3d-row-picker-general-edit-binding-hardening-smoke-test";
+
+/** G-9g3f3d hardening smoke — price-only preview candidate on picker-selected row. */
+export const G9G3F3D_STALE_SMOKE_PRICE_CANDIDATE =
+  "[CMS Kit staging] G-9g3f3d stale smoke price candidate";
+
+/** G-9g3f3d hardening smoke — second price edit to trigger stale invalidation. */
+export const G9G3F3D_STALE_SMOKE_PRICE_CANDIDATE_CHANGED =
+  "[CMS Kit staging] G-9g3f3d stale smoke price candidate changed";
+
 /** G-9g3f3b smoke — price-only dry-run candidate on picker-selected row. */
 export const G9G3F3B_SMOKE_PRICE_CANDIDATE =
   "[CMS Kit staging] G-9g3f3b row-picker binding smoke price candidate";

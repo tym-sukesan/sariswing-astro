@@ -102,6 +102,6 @@ Later: `G-9g3g-operational-general-edit-planning`
 ## 8. Git
 
 ```txt
-G-9g3f3b committed at: 8d277d8
-G-9g3f3c hardening: implemented (uncommitted)
+G-9g3f3c committed at: f0fd3af
+G-9g3f3d smoke: passed (see hardening-smoke-test-result.md)
 ```

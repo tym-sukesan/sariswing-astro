@@ -2649,6 +2649,85 @@ assert(
     g9g3f3cHardeningDocSrc.includes("DB write not executed"),
 );
 
+const g9g3f3dSmokeDocPath = path.join(
+  TOOL_ROOT,
+  "docs/staging-shell-schedule-site-slug-row-picker-general-edit-binding-hardening-smoke-test-result.md",
+);
+
+assert("G-9g3f3d smoke result doc exists", fs.existsSync(g9g3f3dSmokeDocPath));
+const g9g3f3dSmokeDocSrc = fs.existsSync(g9g3f3dSmokeDocPath)
+  ? fs.readFileSync(g9g3f3dSmokeDocPath, "utf8")
+  : "";
+
+assert(
+  "G-9g3f3d smoke phase documented",
+  g9g3f3dSmokeDocSrc.includes("G-9g3f3d-row-picker-general-edit-binding-hardening-smoke-test"),
+);
+assert(
+  "G-9g3f3d smoke pending or passed",
+  g9g3f3dSmokeDocSrc.includes("G-9g3f3d hardening smoke passed") ||
+    g9g3f3dSmokeDocSrc.includes("pending operator manual smoke"),
+);
+assert(
+  "G-9g3f3d smoke passed",
+  g9g3f3dSmokeDocSrc.includes("G-9g3f3d hardening smoke passed"),
+);
+assert(
+  "G-9g3f3d smoke gate true",
+  g9g3f3dSmokeDocSrc.includes(
+    "stagingShellScheduleSiteSlugRowPickerGeneralEditBindingHardeningSmokeTestPassed: true",
+  ),
+);
+assert(
+  "G-9g3f3d stale invalidation confirmed",
+  g9g3f3dSmokeDocSrc.includes("stale invalidation confirmed"),
+);
+assert(
+  "G-9g3f3d dirty switch Cancel confirmed",
+  g9g3f3dSmokeDocSrc.includes("dirty row-switch Cancel confirmed"),
+);
+assert(
+  "G-9g3f3d dirty switch Continue confirmed",
+  g9g3f3dSmokeDocSrc.includes("dirty row-switch Continue confirmed"),
+);
+assert(
+  "G-9g3f3d ready for G-9g3g",
+  g9g3f3dSmokeDocSrc.includes("readyForG9g3gOperationalGeneralEditPlanning: true"),
+);
+assert(
+  "G-9g3f3d selected row identity documented",
+  g9g3f3dSmokeDocSrc.includes("#site-slug-edit-selected-row-strip"),
+);
+assert(
+  "G-9g3f3d stale invalidation documented",
+  g9g3f3dSmokeDocSrc.includes("stale invalidation") ||
+    g9g3f3dSmokeDocSrc.includes("Preview is stale"),
+);
+assert(
+  "G-9g3f3d dirty switch confirm documented",
+  g9g3f3dSmokeDocSrc.includes(
+    "You have unsaved candidate edits. Switching rows will discard the current candidate values. Continue?",
+  ),
+);
+assert(
+  "G-9g3f3d Save not executed in doc",
+  g9g3f3dSmokeDocSrc.includes("Save not clicked") &&
+    g9g3f3dSmokeDocSrc.includes("DB write not executed"),
+);
+assert(
+  "G-9g3f3d next phase G-9g3g",
+  g9g3f3dSmokeDocSrc.includes("G-9g3g-operational-general-edit-planning"),
+);
+assert(
+  "G9G3F3D_PHASE in config",
+  fs
+    .readFileSync(
+      path.join(REPO_ROOT, "src/lib/admin/staging-data/staging-schedule-site-slug-config.ts"),
+      "utf8",
+    )
+    .includes("G9G3F3D_PHASE"),
+);
+
 const gosakiPublicDist = path.join(TOOL_ROOT, "output/static-public/gosaki-piano/public-dist");
 for (const ym of ["2026-06", "2026-07"]) {
   const canonicalMonthPath = path.join(gosakiPublicDist, "schedule", ym, "index.html");

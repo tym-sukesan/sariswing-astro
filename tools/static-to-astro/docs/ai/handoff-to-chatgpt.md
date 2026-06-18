@@ -5,25 +5,24 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-9g3f3c-row-picker-general-edit-binding-hardening (complete)
-Latest commit (pushed): 8d277d8 (G-9g3f3b smoke)
-Git: working tree has uncommitted G-9g3f3c hardening work
+Current phase: G-9g3f3d-row-picker-general-edit-binding-hardening-smoke-test (complete / passed)
+Latest commit (pushed): f0fd3af (G-9g3f3c hardening)
+G-9g3f3d smoke: passed (uncommitted)
 ```
 
 ## Summary
 
-G-9g3f3c row picker → general edit binding **hardening implemented**.
+G-9g3f3d hardening smoke **passed** (operator manual).
 
-- **Dirty row-switch:** `confirmDiscardDirtyCandidateIfNeeded` before picker selection change
-- **Preview stale:** `markG9PreviewStale` on candidate field change / identity reload
-- **Selected row strip:** id, legacy_id, site_slug, updated_at, source_route, title
-- **G-9 Preview:** `#site-slug-edit-dry-run-preview-btn` → `#site-slug-edit-dry-run-result` (unchanged)
-- **Legacy G-6-e2:** not valid for G-9 smoke/hardening pass criteria
+- **Identity strip:** id, legacy_id, site_slug, updated_at, source_route, title — confirmed
+- **G-9 Preview:** `#site-slug-edit-dry-run-preview-btn` → `#site-slug-edit-dry-run-result`; `changedFields=price` only; `hostGatePassed=true`; `actualWrite=false`
+- **Stale invalidation:** `Preview is stale — run G-9 preview again` — confirmed
+- **Dirty row-switch:** Cancel keeps row/candidate; Continue hydrates new row — confirmed
+- **PoC audit row:** `CMS Kit staging` keyword → 0 selectable; pilot read-only
 - **Save / DB write:** not executed
 
 **Docs:**
-- `staging-shell-schedule-site-slug-row-picker-general-edit-binding-hardening.md`
-- `staging-shell-schedule-site-slug-row-picker-general-edit-binding-smoke-test-result.md` (G-9g3f3b passed)
+- `staging-shell-schedule-site-slug-row-picker-general-edit-binding-hardening-smoke-test-result.md`
 
 ## Routine dev safety (default)
 
@@ -37,13 +36,13 @@ All G-9 PoC arms: off
 ## Gates
 
 ```txt
-stagingShellScheduleSiteSlugRowPickerGeneralEditBindingHardeningComplete: true
-readyForG9g3f3dRowPickerGeneralEditBindingHardeningSmokeTest: true
+stagingShellScheduleSiteSlugRowPickerGeneralEditBindingHardeningSmokeTestPassed: true
+readyForG9g3gOperationalGeneralEditPlanning: true
 readyForAnyDbWrite: false
 ```
 
 ## Next
 
-**G-9g3f3d-row-picker-general-edit-binding-hardening-smoke-test**
+**G-9g3g-operational-general-edit-planning**
 
 **Do not re-run G-9g2 / G-9g3b / G-9g3c / G-9g3d Save.**

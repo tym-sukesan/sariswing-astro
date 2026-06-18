@@ -3,35 +3,36 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 1. Immediate priority
 
-**Current phase:** `G-9g3f3c-row-picker-general-edit-binding-hardening` — **complete**
+**Current phase:** `G-9g3f3d-row-picker-general-edit-binding-hardening-smoke-test` — **complete / passed**
 
-**Next:** `G-9g3f3d-row-picker-general-edit-binding-hardening-smoke-test`
+**Next:** `G-9g3g-operational-general-edit-planning`
 
-**Git:** latest pushed commit `8d277d8` (G-9g3f3b); G-9g3f3c hardening **uncommitted**
+**Git:** latest pushed commit `f0fd3af` (G-9g3f3c); G-9g3f3d smoke **uncommitted**
 
-### G-9g3f3c summary
+### G-9g3f3d summary
 
 | Check | Status |
 | --- | --- |
-| Dirty candidate row-switch confirm | **implemented** |
-| Preview stale invalidation | **implemented** |
-| Selected row identity strip | **implemented** |
-| G-9 / G-6 preview distinction | **maintained** |
-| PoC audit row excluded | **maintained** |
-| Save / DB write | **not executed** |
+| Selected row identity | **PASS** |
+| G-9 Preview (`#site-slug-edit-dry-run-preview-btn`) | **PASS** |
+| Stale invalidation | **PASS** |
+| Dirty row-switch Cancel | **PASS** |
+| Dirty row-switch Continue | **PASS** |
+| PoC audit row exclusion | **PASS** |
+| actualWrite=false / no DB write | **PASS** |
 
 ### Gates
 
 ```txt
-stagingShellScheduleSiteSlugRowPickerGeneralEditBindingHardeningComplete: true
-readyForG9g3f3dRowPickerGeneralEditBindingHardeningSmokeTest: true
+stagingShellScheduleSiteSlugRowPickerGeneralEditBindingHardeningSmokeTestPassed: true
+readyForG9g3gOperationalGeneralEditPlanning: true
 readyForAnyDbWrite: false
 ```
 
 ## 2. Next steps
 
-1. **G-9g3f3d-row-picker-general-edit-binding-hardening-smoke-test** — operator manual smoke
-2. Later: **G-9g3g-operational-general-edit-planning**
+1. **G-9g3g-operational-general-edit-planning** — operational Save path on operator-chosen non-PoC row
+2. Commit G-9g3f3d smoke when operator approves
 
 ## 3. Routine dev safety
 

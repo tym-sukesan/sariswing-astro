@@ -21,17 +21,17 @@ Staging Shell
 将来的な顧客オンボーディング・課金・デプロイ自動化
 
 2. Current phase
-現在フェーズ: G-9g3f3c-row-picker-general-edit-binding-hardening — **完了**
+現在フェーズ: G-9g3f3d-row-picker-general-edit-binding-hardening-smoke-test — **完了 / passed**
 
-次フェーズ: **G-9g3f3d-row-picker-general-edit-binding-hardening-smoke-test**
+次フェーズ: **G-9g3g-operational-general-edit-planning**
 
-Git: 最新 push 済み commit `8d277d8`（G-9g3f3b smoke）。G-9g3f3c hardening **uncommitted**。
+Git: 最新 push 済み commit `f0fd3af`（G-9g3f3c hardening）。G-9g3f3d smoke **uncommitted**。
 
-G-9g3f3b: row picker hydrate + G-9 changed-fields-only Preview **passed**（commit `8d277d8`）。
+G-9g3f3d: hardening smoke **passed**（operator manual）。identity / G-9 preview / stale / dirty Cancel+Continue / PoC exclusion 確認済み。**Do not re-run G-9g2 / G-9g3b / G-9g3c / G-9g3d Save.**
 
-G-9g3f3c: dirty row-switch confirm + preview stale invalidation + selected row identity strip **implemented**。**Do not re-run G-9g2 / G-9g3b / G-9g3c / G-9g3d Save.**
+G-9g3f3c: hardening **committed `f0fd3af`**.
 
-G-9g3f3a: **committed at `1ec29eb`**（binding implementation; superseded by `8d277d8` for smoke）。
+G-9g3f3b: binding smoke **passed**（commit `8d277d8`）。
 
 G-9g3f3: binding planning 完了（commit `bf27151`）。
 
@@ -530,24 +530,24 @@ PUBLIC_SUPABASE_URL host: kmjqppxjdnwwrtaeqjta.supabase.co (staging)
 **Note:** `tools/static-to-astro/.env.local` に `SUPABASE_SERVICE_ROLE_KEY` が local only（gitignored）で存在する場合がある。G-9g3b execution では使用禁止・参照禁止。anon key + authenticated session のみ。
 
 10. Recommended next phase
-次フェーズ推奨: **G-9g3f3d-row-picker-general-edit-binding-hardening-smoke-test**
+次フェーズ推奨: **G-9g3g-operational-general-edit-planning**
 
-G-9g3f3c hardening: **implemented**（uncommitted）。dirty switch / preview stale / identity strip。
+G-9g3f3d smoke: **passed**（uncommitted）。
 
-G-9g3f3b smoke: **passed**（commit `8d277d8`）。
+G-9g3f3c hardening: **committed `f0fd3af`**.
 
 Phase sequence:
 ```txt
-G-9g3f3a-binding-implementation ← complete (1ec29eb)
 G-9g3f3b-binding-smoke ← complete (8d277d8)
-G-9g3f3c-binding-hardening ← complete (uncommitted)
-G-9g3f3d-binding-hardening-smoke ← next
+G-9g3f3c-binding-hardening ← complete (f0fd3af)
+G-9g3f3d-binding-hardening-smoke ← complete (passed, uncommitted)
+G-9g3g-operational-planning ← next
 ```
 
-G-9g3f3c gates:
+G-9g3f3d gates:
 ```txt
-stagingShellScheduleSiteSlugRowPickerGeneralEditBindingHardeningComplete: true
-readyForG9g3f3dRowPickerGeneralEditBindingHardeningSmokeTest: true
+stagingShellScheduleSiteSlugRowPickerGeneralEditBindingHardeningSmokeTestPassed: true
+readyForG9g3gOperationalGeneralEditPlanning: true
 readyForAnyDbWrite: false
 ```
 

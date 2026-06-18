@@ -32,6 +32,7 @@ import AdminStagingScheduleSafeFieldsNonDryRunPocSection from "../data/component
 import AdminStagingScheduleNonDryRunPocCompletedNotice from "../data/components/AdminStagingScheduleNonDryRunPocCompletedNotice.astro";
 import AdminStagingScheduleNonDryRunPocTriggerSection from "../data/components/AdminStagingScheduleNonDryRunPocTriggerSection.astro";
 import AdminStagingScheduleSiteSlugReadSection from "../data/components/AdminStagingScheduleSiteSlugReadSection.astro";
+import AdminStagingScheduleSiteSlugRowPickerSection from "../data/components/AdminStagingScheduleSiteSlugRowPickerSection.astro";
 import AdminStagingScheduleSiteSlugEditSection from "../data/components/AdminStagingScheduleSiteSlugEditSection.astro";
 import { getStagingAuthConfig } from "../../../../../src/lib/admin/staging-auth/staging-auth-config";
 import {
@@ -54,6 +55,7 @@ import ProfileAdminUi from "../modules/ProfileAdminUi.astro";
 import ScheduleAdminUi from "../modules/ScheduleAdminUi.astro";
 import { resolveScheduleAdminUiBinding } from "../../../../../src/lib/admin/staging-write/schedule-admin-ui-binding";
 import { resolveGosakiScheduleSiteSlugReadBinding } from "../../../../../src/lib/admin/staging-data/staging-schedule-site-slug-read-binding";
+import { resolveGosakiScheduleSiteSlugRowPickerBinding } from "../../../../../src/lib/admin/staging-data/staging-schedule-site-slug-row-picker-binding";
 import { resolveGosakiScheduleSiteSlugEditBinding } from "../../../../../src/lib/admin/staging-data/staging-schedule-site-slug-edit-binding";
 import DiscographyAdminUi from "../modules/DiscographyAdminUi.astro";
 import LinksAdminUi from "../modules/LinksAdminUi.astro";
@@ -139,6 +141,10 @@ const scheduleUiBinding = stagingShellMode
 
 const gosakiScheduleSiteSlugBinding = stagingShellMode
   ? await resolveGosakiScheduleSiteSlugReadBinding()
+  : null;
+
+const gosakiScheduleSiteSlugRowPickerBinding = stagingShellMode
+  ? await resolveGosakiScheduleSiteSlugRowPickerBinding()
   : null;
 
 const gosakiScheduleSiteSlugEditBinding = stagingShellMode
@@ -469,6 +475,13 @@ const moduleSummary = [
       {
         stagingShellMode && gosakiScheduleSiteSlugBinding ? (
           <AdminStagingScheduleSiteSlugReadSection binding={gosakiScheduleSiteSlugBinding} />
+        ) : null
+      }
+      {
+        stagingShellMode && gosakiScheduleSiteSlugRowPickerBinding ? (
+          <AdminStagingScheduleSiteSlugRowPickerSection
+            binding={gosakiScheduleSiteSlugRowPickerBinding}
+          />
         ) : null
       }
       {

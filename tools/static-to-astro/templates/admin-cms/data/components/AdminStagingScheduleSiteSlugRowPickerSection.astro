@@ -1,0 +1,471 @@
+---
+/**
+ * G-9g3f1 — Staging shell Gosaki site_slug schedule row picker (read-only; no writes).
+ */
+import AdminCard from "../../components/AdminCard.astro";
+import type { SiteSlugScheduleRowPickerBinding } from "../../../../../../src/lib/admin/staging-data/staging-schedule-site-slug-row-picker-binding";
+
+interface Props {
+  binding: SiteSlugScheduleRowPickerBinding;
+}
+
+const { binding } = Astro.props;
+
+const isLive = binding.source === "supabase" && binding.rowCount > 0;
+const selectableRowsJson = JSON.stringify(binding.selectableRows);
+const auditRowsJson = JSON.stringify(binding.auditRows);
+---
+
+<section
+  id="admin-staging-schedule-site-slug-row-picker"
+  class="admin-staging-schedule-site-slug-row-picker"
+  data-phase={binding.phase}
+  data-site-slug={binding.siteSlug}
+  data-read-source={binding.source}
+  data-select-only="true"
+  data-read-only="true"
+  data-row-picker-read-only="true"
+  data-general-edit-binding-deferred="true"
+  data-host-gate-passed={binding.hostGatePassed ? "true" : "false"}
+  data-selectable-rows={selectableRowsJson}
+  data-audit-rows={auditRowsJson}
+  role="region"
+  aria-label="Gosaki site_slug schedule row picker"
+>
+  <h2 class="admin-staging-schedule-site-slug-row-picker__title">
+    Schedule row picker (site_slug) — G-9g3f1
+  </h2>
+
+  <p class="admin-staging-schedule-site-slug-row-picker__safety" role="note">
+    <strong>Read-only row picker.</strong> SELECT scope only — no Save, Preview, Update, or Delete.
+    site_slug is fixed to <code>{binding.siteSlug}</code> (not operator-editable).
+    General edit form below is <strong>not</strong> bound to picker selection until G-9g3f3.
+  </p>
+
+  {
+    !binding.hostGatePassed && binding.hostGateWarning ? (
+      <p
+        id="site-slug-row-picker-production-stop"
+        class="admin-staging-schedule-site-slug-row-picker__production-stop"
+        role="alert"
+      >
+        STOP — {binding.hostGateWarning}
+      </p>
+    ) : null
+  }
+
+  <dl class="admin-staging-schedule-site-slug-row-picker__summary">
+    <div>
+      <dt>Site slug</dt>
+      <dd><code>{binding.siteSlug}</code></dd>
+    </div>
+    <div>
+      <dt>Selectable rows</dt>
+      <dd>{binding.selectableCount}</dd>
+    </div>
+    <div>
+      <dt>PoC audit rows</dt>
+      <dd>{binding.auditCount}</dd>
+    </div>
+    <div>
+      <dt>Phase</dt>
+      <dd>{binding.phase}</dd>
+    </div>
+  </dl>
+
+  {
+    binding.message ? (
+      <p class="admin-staging-schedule-site-slug-row-picker__message" role="status">
+        {binding.message}
+      </p>
+    ) : null
+  }
+
+  {
+    binding.supabaseHost ? (
+      <p class="admin-staging-schedule-site-slug-row-picker__host" role="note">
+        Host: <code>{binding.supabaseHost}</code> — expected: <code>{binding.expectedHost}</code>
+      </p>
+    ) : null
+  }
+
+  <AdminCard title="Filters" description="Client-side filters on selectable rows (PoC audit rows excluded)">
+    <div class="site-slug-row-picker__filters">
+      <label>
+        Future / past
+        <select id="site-slug-row-picker-time-filter">
+          <option value="all" selected>All dates</option>
+          <option value="future">Future (date ≥ today)</option>
+          <option value="past">Past (date &lt; today)</option>
+        </select>
+      </label>
+      <label>
+        Month
+        <select id="site-slug-row-picker-month-filter">
+          <option value="all" selected>All months</option>
+          {
+            binding.monthOptions.map((month) => (
+              <option value={month}>{month}</option>
+            ))
+          }
+        </select>
+      </label>
+      <label>
+        Published
+        <select id="site-slug-row-picker-published-filter">
+          <option value="true" selected>true</option>
+          <option value="false">false</option>
+          <option value="all">all</option>
+        </select>
+      </label>
+      <label class="site-slug-row-picker__keyword-label">
+        Keyword
+        <input
+          id="site-slug-row-picker-keyword"
+          type="search"
+          placeholder="title, venue, legacy_id…"
+          autocomplete="off"
+        />
+      </label>
+    </div>
+    <p class="site-slug-row-picker__filter-count" role="status">
+      Showing <span id="site-slug-row-picker-filtered-count">{binding.selectableCount}</span> row(s)
+    </p>
+  </AdminCard>
+
+  <AdminCard title="Selectable schedule rows" description="PoC audit rows and [CMS Kit staging] markers excluded">
+    {
+      !isLive || binding.selectableRows.length === 0 ? (
+        <p class="admin-staging-schedule-site-slug-row-picker__empty">
+          No selectable rows loaded. Enable staging data read + Supabase env.
+        </p>
+      ) : (
+        <div class="site-slug-row-picker__table-wrap">
+          <table class="site-slug-row-picker__table">
+            <thead>
+              <tr>
+                <th scope="col">Date</th>
+                <th scope="col">Title</th>
+                <th scope="col">Venue</th>
+                <th scope="col">source_route</th>
+                <th scope="col">published</th>
+                <th scope="col">updated_at</th>
+                <th scope="col">legacy_id</th>
+                <th scope="col">Action</th>
+              </tr>
+            </thead>
+            <tbody id="site-slug-row-picker-table-body">
+              {
+                binding.selectableRows.map((row) => (
+                  <tr class="site-slug-row-picker__row" data-row-id={row.id}>
+                    <td>{row.date}</td>
+                    <td>{row.title ?? "—"}</td>
+                    <td>{row.venue?.trim() ? row.venue : "—"}</td>
+                    <td>
+                      <code>{row.source_route ?? "—"}</code>
+                    </td>
+                    <td>{row.published === true ? "true" : "false"}</td>
+                    <td>
+                      <code>{row.updated_at ?? "—"}</code>
+                    </td>
+                    <td>
+                      <code>{row.legacy_id ?? "—"}</code>
+                    </td>
+                    <td>
+                      <button
+                        type="button"
+                        class="site-slug-row-picker__select-btn"
+                        data-select-row-id={row.id}
+                      >
+                        Select
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              }
+            </tbody>
+          </table>
+        </div>
+      )
+    }
+  </AdminCard>
+
+  {
+    binding.auditRows.length > 0 ? (
+      <details class="site-slug-row-picker__audit-details">
+        <summary>PoC audit rows (read-only — not selectable)</summary>
+        <p class="site-slug-row-picker__audit-banner" role="alert">
+          Pilot row <code>{binding.pilotRowId}</code> and rows with{" "}
+          <code>{binding.pocAuditMarker}</code> are excluded from default selection. Do not re-run
+          G-9g2 / G-9g3b / G-9g3c / G-9g3d Save.
+        </p>
+        <div class="site-slug-row-picker__table-wrap">
+          <table class="site-slug-row-picker__table site-slug-row-picker__table--audit">
+            <thead>
+              <tr>
+                <th scope="col">Date</th>
+                <th scope="col">Title</th>
+                <th scope="col">legacy_id</th>
+                <th scope="col">updated_at</th>
+              </tr>
+            </thead>
+            <tbody>
+              {
+                binding.auditRows.map((row) => (
+                  <tr>
+                    <td>{row.date}</td>
+                    <td>{row.title ?? "—"}</td>
+                    <td>
+                      <code>{row.legacy_id ?? "—"}</code>
+                    </td>
+                    <td>
+                      <code>{row.updated_at ?? "—"}</code>
+                    </td>
+                  </tr>
+                ))
+              }
+            </tbody>
+          </table>
+        </div>
+      </details>
+    ) : null
+  }
+
+  <AdminCard title="Selected row summary" description="Read-only — id / legacy_id / site_slug / updated_at">
+    <div class="site-slug-row-picker__actions">
+      <button id="site-slug-row-picker-clear-btn" class="admin-button" type="button">
+        Clear selection
+      </button>
+      <button id="site-slug-row-picker-reload-row-btn" class="admin-button" type="button">
+        Reload selected row
+      </button>
+      <button id="site-slug-row-picker-reload-page-btn" class="admin-button" type="button">
+        Reload page
+      </button>
+    </div>
+    <p id="site-slug-row-picker-status" class="site-slug-row-picker__status" role="status" />
+    <div id="site-slug-row-picker-selected-summary" class="site-slug-row-picker__selected-summary">
+      <p class="site-slug-row-picker__summary-empty" role="status">
+        No row selected. Pick a row from the list above.
+      </p>
+    </div>
+  </AdminCard>
+
+  <AdminCard title="Row detail preview" description="JSON snapshot of selected row (read-only)">
+    <div id="site-slug-row-picker-detail-preview" class="site-slug-row-picker__detail-preview">
+      <p class="site-slug-row-picker__detail-empty">Select a row to preview details.</p>
+    </div>
+  </AdminCard>
+</section>
+
+<script>
+  import "../../../../../../src/lib/admin/staging-data/staging-schedule-site-slug-row-picker-ui.ts";
+</script>
+
+<style>
+  .admin-staging-schedule-site-slug-row-picker {
+    margin: 1.5rem 0 0;
+    padding: 1rem;
+    border: 1px solid #c4b5fd;
+    border-radius: 8px;
+    background: #f5f3ff;
+  }
+
+  .admin-staging-schedule-site-slug-row-picker__title {
+    margin: 0 0 0.75rem;
+    font-size: 1.1rem;
+  }
+
+  .admin-staging-schedule-site-slug-row-picker__safety {
+    margin: 0 0 1rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    background: #ede9fe;
+    border: 1px solid #c4b5fd;
+    color: #4c1d95;
+    font-size: 0.9rem;
+  }
+
+  .admin-staging-schedule-site-slug-row-picker__production-stop {
+    margin: 0 0 1rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    background: #fef2f2;
+    border: 1px solid #fca5a5;
+    color: #991b1b;
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+
+  .admin-staging-schedule-site-slug-row-picker__summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
+    gap: 0.75rem 1rem;
+    margin: 0 0 1rem;
+    font-size: 0.9rem;
+  }
+
+  .admin-staging-schedule-site-slug-row-picker__summary dt {
+    font-weight: 600;
+    color: #64748b;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+  }
+
+  .admin-staging-schedule-site-slug-row-picker__summary dd {
+    margin: 0.15rem 0 0;
+  }
+
+  .admin-staging-schedule-site-slug-row-picker__message,
+  .admin-staging-schedule-site-slug-row-picker__host {
+    margin: 0 0 1rem;
+    font-size: 0.875rem;
+    color: #475569;
+  }
+
+  .site-slug-row-picker__filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 1rem;
+    align-items: flex-end;
+    margin-bottom: 0.5rem;
+  }
+
+  .site-slug-row-picker__filters label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #475569;
+  }
+
+  .site-slug-row-picker__filters select,
+  .site-slug-row-picker__keyword-label input {
+    min-width: 10rem;
+    padding: 0.35rem 0.5rem;
+    font-size: 0.875rem;
+  }
+
+  .site-slug-row-picker__keyword-label input {
+    min-width: 14rem;
+  }
+
+  .site-slug-row-picker__filter-count {
+    margin: 0;
+    font-size: 0.85rem;
+    color: #64748b;
+  }
+
+  .site-slug-row-picker__table-wrap {
+    overflow-x: auto;
+  }
+
+  .site-slug-row-picker__table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.8rem;
+  }
+
+  .site-slug-row-picker__table th,
+  .site-slug-row-picker__table td {
+    border: 1px solid #e2e8f0;
+    padding: 0.35rem 0.5rem;
+    text-align: left;
+    vertical-align: top;
+  }
+
+  .site-slug-row-picker__table th {
+    background: #f1f5f9;
+    font-weight: 600;
+  }
+
+  .site-slug-row-picker__row--selected {
+    background: #ddd6fe;
+  }
+
+  .site-slug-row-picker__select-btn {
+    font-size: 0.75rem;
+    padding: 0.2rem 0.5rem;
+    cursor: pointer;
+  }
+
+  .site-slug-row-picker__empty-cell,
+  .admin-staging-schedule-site-slug-row-picker__empty {
+    margin: 0;
+    color: #64748b;
+    font-size: 0.9rem;
+  }
+
+  .site-slug-row-picker__audit-details {
+    margin: 1rem 0;
+    padding: 0.75rem;
+    border: 1px dashed #cbd5e1;
+    border-radius: 6px;
+    background: #fff;
+  }
+
+  .site-slug-row-picker__audit-banner {
+    margin: 0.5rem 0;
+    font-size: 0.85rem;
+    color: #7c2d12;
+  }
+
+  .site-slug-row-picker__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .site-slug-row-picker__status {
+    margin: 0 0 0.75rem;
+    font-size: 0.85rem;
+    color: #475569;
+    min-height: 1.25rem;
+  }
+
+  .site-slug-row-picker__summary-dl {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
+    gap: 0.5rem 1rem;
+    margin: 0;
+    font-size: 0.85rem;
+  }
+
+  .site-slug-row-picker__summary-dl dt {
+    font-weight: 600;
+    color: #64748b;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+  }
+
+  .site-slug-row-picker__summary-dl dd {
+    margin: 0.1rem 0 0;
+    word-break: break-all;
+  }
+
+  .site-slug-row-picker__summary-empty,
+  .site-slug-row-picker__detail-empty {
+    margin: 0;
+    color: #64748b;
+    font-size: 0.9rem;
+  }
+
+  .site-slug-row-picker__stale-hint,
+  .site-slug-row-picker__binding-note {
+    margin: 0.75rem 0 0;
+    font-size: 0.85rem;
+    color: #475569;
+  }
+
+  .site-slug-row-picker__detail-json {
+    margin: 0;
+    padding: 0.75rem;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    overflow-x: auto;
+  }
+</style>

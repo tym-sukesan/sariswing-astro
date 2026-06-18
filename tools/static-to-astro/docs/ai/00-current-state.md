@@ -21,17 +21,15 @@ Staging Shell
 将来的な顧客オンボーディング・課金・デプロイ自動化
 
 2. Current phase
-現在フェーズ: G-9g3f-row-picker-planning — **完了**
+現在フェーズ: G-9g3f1-row-picker-implementation — **完了**
 
-次フェーズ: **G-9g3f1-row-picker-implementation**
+次フェーズ: **G-9g3f2-row-picker-read-only-smoke-test**
 
-Git: 最新 push 済み commit `d43cd32`（G-9g3e2 smoke）。G-9g3f planning doc + AI context 更新は **uncommitted**。
+Git: 最新 push 済み commit `9333e2c`（G-9g3f planning）。G-9g3f1 implementation + AI context 更新は **uncommitted**。
 
-G-9g3f: row picker planning（read-only policy、site_slug scope、phase sequence）。**Save / Preview / DB write 未実行。** **Do not re-run G-9g2 / G-9g3b / G-9g3c / G-9g3d Save.**
+G-9g3f1: read-only row picker UI（filters、selected row summary、PoC audit exclusion）。**Save / Preview / DB write 未実行。** general edit binding は G-9g3f3 まで deferred。**Do not re-run G-9g2 / G-9g3b / G-9g3c / G-9g3d Save.**
 
-G-9g3e2: post-execution hardening smoke（commit `d43cd32`）。G-9g3d freeze + legacy audit-only 確認済み。
-
-G-9g3e1: G-9g3d PoC freeze（`G9G3D_GENERAL_EDIT_POC_EXECUTED`）、legacy PoC audit-only、UI/UX hardening（commit `0685a34`）。
+G-9g3f planning: commit `9333e2c`。
 
 G-9g3 safe-field PoC slices: **all complete** on pilot row (G-9g2 title, G-9g3b venue+description, G-9g3c time+price). **Do not re-run slice Saves.**
 
@@ -526,47 +524,34 @@ PUBLIC_SUPABASE_URL host: kmjqppxjdnwwrtaeqjta.supabase.co (staging)
 **Note:** `tools/static-to-astro/.env.local` に `SUPABASE_SERVICE_ROLE_KEY` が local only（gitignored）で存在する場合がある。G-9g3b execution では使用禁止・参照禁止。anon key + authenticated session のみ。
 
 10. Recommended next phase
-次フェーズ推奨: **G-9g3f1-row-picker-implementation**
+次フェーズ推奨: **G-9g3f2-row-picker-read-only-smoke-test**
 
-G-9g3f planning: **完了**（uncommitted）。row picker read-only policy + site_slug safety。**Save / Preview / DB write 未実行。**
+G-9g3f1 implementation: **完了**（uncommitted）。read-only row picker UI。**Save / Preview / DB write 未実行。** general edit binding deferred。
 
-G-9g3e2 smoke: **完了**（commit `d43cd32`）。
+G-9g3f planning: **完了**（commit `9333e2c`）。
 
 G-9g3 safe-field PoC slices + G-9g3d general edit: **all complete and frozen**。**Do not re-run G-9g2 / G-9g3b / G-9g3c / G-9g3d Save.**
 
 Routine dev: all G-9 arms off / write off / dry-run on / staging host only。
 
-Lock baseline: `updated_at` = `2026-06-18T01:04:51.312817+00:00`（pilot row audit only — not default edit target after G-9g3f1）
-
 Phase sequence:
 ```txt
-G-9g3e-planning      ← complete (8b5f78c)
-G-9g3e1-implementation ← complete (0685a34)
-G-9g3e2-smoke        ← complete (d43cd32)
-G-9g3f-planning      ← complete (uncommitted)
-G-9g3f1-implementation ← next
+G-9g3f-planning      ← complete (9333e2c)
+G-9g3f1-implementation ← complete (uncommitted)
+G-9g3f2-smoke        ← next
 ```
 
 詳細:
-- `tools/static-to-astro/docs/staging-shell-schedule-site-slug-row-picker-planning.md` (**new**)
-- `tools/static-to-astro/docs/staging-shell-schedule-site-slug-general-edit-post-execution-hardening-smoke-test-result.md`
-- `tools/static-to-astro/docs/staging-shell-schedule-site-slug-general-edit-post-execution-hardening-implementation.md`
+- `tools/static-to-astro/docs/staging-shell-schedule-site-slug-row-picker-implementation.md` (**new**)
+- `tools/static-to-astro/docs/staging-shell-schedule-site-slug-row-picker-planning.md`
 
-G-9g3f gates:
+G-9g3f1 gates:
 ```txt
-stagingShellScheduleSiteSlugRowPickerPlanningComplete: true
-readyForG9g3f1RowPickerImplementation: true
-readyForG9g3fRowPickerPlanning: false
-readyForG9g3gOperationalGeneralEditPreflight: false
+stagingShellScheduleSiteSlugRowPickerImplementationComplete: true
+readyForG9g3f2RowPickerReadOnlySmokeTest: true
+readyForG9g3f1RowPickerImplementation: false
 readyForAnyDbWrite: false
 rollbackNeeded: false
-```
-
-G-9g3e gates (retained):
-```txt
-stagingShellScheduleGeneralEditPostExecutionHardeningSmokeTestPassed: true
-readyForG9g3e2PostExecutionHardeningSmokeTest: false
-readyForG9g3dExecution: false
 ```
 
 G-9g2/G-9g3b PoC 痕跡保持。restore 不要。routine dev: dry-run default / G-9g2 arm off / G-9g3b arm off / G-9g3c arm off。

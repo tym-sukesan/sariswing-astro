@@ -63,6 +63,12 @@ export const G9G3D_PHASE =
 export const G9G3E1_PHASE =
   "G-9g3e1-staging-shell-schedule-site-slug-general-edit-post-execution-hardening-implementation";
 
+export const G9G3F1_PHASE =
+  "G-9g3f1-staging-shell-schedule-site-slug-row-picker-implementation";
+
+/** PoC audit marker prefix in staging row text fields — exclude from default picker selection. */
+export const POC_AUDIT_STAGING_MARKER = "[CMS Kit staging]";
+
 /** G-9g3d4 non-dry-run PoC executed — re-arm and Save prohibited (G-9g3e1). */
 export const G9G3D_GENERAL_EDIT_POC_EXECUTED = true;
 

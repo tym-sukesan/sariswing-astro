@@ -63,8 +63,11 @@ function compareScheduleRecords(a: ScheduleRecord, b: ScheduleRecord): number {
   return String(a.legacy_id ?? "").localeCompare(String(b.legacy_id ?? ""));
 }
 
+export type SiteSlugPublishedFilter = "true" | "false" | "all";
+
 /**
  * G-9f — read-only schedule loader filtered by site_slug (SELECT only).
+ * G-9g3f1: optional publishedFilter (default "true" for G-9f backward compatibility).
  */
 export async function loadSchedulesForSiteSlugRead(options: {
   url: string;
@@ -73,12 +76,14 @@ export async function loadSchedulesForSiteSlugRead(options: {
   useSupabase: boolean;
   canonicalRoutePrefix?: string;
   months?: readonly string[] | null;
+  publishedFilter?: SiteSlugPublishedFilter;
 }): Promise<ScheduleReadResult> {
   const {
     siteSlug,
     useSupabase,
     canonicalRoutePrefix = "/schedule/",
     months = null,
+    publishedFilter = "true",
   } = options;
 
   if (!siteSlug?.trim()) {
@@ -103,11 +108,18 @@ export async function loadSchedulesForSiteSlugRead(options: {
 
   try {
     const client = getStagingSupabaseClient(options.url, options.anonKey);
-    const { data, error } = await client
+    let query = client
       .from("schedules")
       .select(SCHEDULE_DRY_RUN_SELECT)
-      .eq("site_slug", siteSlug)
-      .eq("published", true)
+      .eq("site_slug", siteSlug);
+
+    if (publishedFilter === "true") {
+      query = query.eq("published", true);
+    } else if (publishedFilter === "false") {
+      query = query.eq("published", false);
+    }
+
+    const { data, error } = await query
       .order("date", { ascending: true })
       .order("sort_order", { ascending: true })
       .limit(READ_LIMIT);

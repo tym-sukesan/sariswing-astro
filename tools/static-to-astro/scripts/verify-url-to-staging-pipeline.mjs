@@ -2189,6 +2189,100 @@ assert(
   g9g3fPlanningSrc.includes("changed-fields-only"),
 );
 
+// --- G-9g3f1 row picker implementation ---
+const g9g3f1ImplDocPath = path.join(
+  TOOL_ROOT,
+  "docs/staging-shell-schedule-site-slug-row-picker-implementation.md",
+);
+const g9g3f1BindingPath = path.join(
+  REPO_ROOT,
+  "src/lib/admin/staging-data/staging-schedule-site-slug-row-picker-binding.ts",
+);
+const g9g3f1UiPath = path.join(
+  REPO_ROOT,
+  "src/lib/admin/staging-data/staging-schedule-site-slug-row-picker-ui.ts",
+);
+const g9g3f1SectionPath = path.join(
+  TOOL_ROOT,
+  "templates/admin-cms/data/components/AdminStagingScheduleSiteSlugRowPickerSection.astro",
+);
+const g9g3f1UtilsPath = path.join(
+  REPO_ROOT,
+  "src/lib/admin/staging-data/staging-schedule-site-slug-row-picker-utils.ts",
+);
+
+assert("G-9g3f1 implementation doc exists", fs.existsSync(g9g3f1ImplDocPath));
+assert("G-9g3f1 row picker binding exists", fs.existsSync(g9g3f1BindingPath));
+assert("G-9g3f1 row picker UI exists", fs.existsSync(g9g3f1UiPath));
+assert("G-9g3f1 row picker section exists", fs.existsSync(g9g3f1SectionPath));
+
+const g9g3f1ImplSrc = fs.readFileSync(g9g3f1ImplDocPath, "utf8");
+const g9g3f1BindingSrc = fs.readFileSync(g9g3f1BindingPath, "utf8");
+const g9g3f1SectionSrc = fs.readFileSync(g9g3f1SectionPath, "utf8");
+const g9g3f1UtilsSrc = fs.readFileSync(g9g3f1UtilsPath, "utf8");
+const g9g3f1PrototypeSrc = fs.readFileSync(musicianPrototypePath, "utf8");
+
+assert(
+  "G-9g3f1 implementation read-only row picker",
+  g9g3f1ImplSrc.includes("read-only") && g9g3f1ImplSrc.includes("Row picker read-only"),
+);
+assert(
+  "G-9g3f1 site_slug fixed scope",
+  g9g3f1BindingSrc.includes("STAGING_SHELL_GOSAKI_SCHEDULE_SITE_SLUG") &&
+    stagingScheduleReadSrc.includes('.eq("site_slug", siteSlug)'),
+);
+assert(
+  "G-9g3f1 publishedFilter loader extension",
+  stagingScheduleReadSrc.includes("publishedFilter"),
+);
+assert(
+  "G-9g3f1 pilot row audit-only utils",
+  g9g3f1UtilsSrc.includes("G9G1_TARGET_ROW_ID") &&
+    g9g3f1UtilsSrc.includes("POC_AUDIT_STAGING_MARKER"),
+);
+assert(
+  "G-9g3f1 section read-only markers",
+  g9g3f1SectionSrc.includes("data-row-picker-read-only=\"true\"") &&
+    g9g3f1SectionSrc.includes("Read-only row picker"),
+);
+assert(
+  "G-9g3f1 section no Save button",
+  !g9g3f1SectionSrc.match(/>\s*Save\s*</) &&
+    !g9g3f1SectionSrc.includes("site-slug-edit-dry-run-preview-btn"),
+);
+assert(
+  "G-9g3f1 general edit binding deferred",
+  g9g3f1SectionSrc.includes("data-general-edit-binding-deferred=\"true\"") &&
+    g9g3f1ImplSrc.includes("deferred G-9g3f3"),
+);
+assert(
+  "G-9g3f1 implementation Save not clicked",
+  g9g3f1ImplSrc.includes("Save was not clicked"),
+);
+assert(
+  "G-9g3f1 implementation no DB write",
+  g9g3f1ImplSrc.includes("DB write was not executed"),
+);
+assert(
+  "G-9g3f1 service_role not used",
+  g9g3f1ImplSrc.includes("service_role used | **no**"),
+);
+assert(
+  "G-9g3f1 prototype wires row picker",
+  g9g3f1PrototypeSrc.includes("AdminStagingScheduleSiteSlugRowPickerSection") &&
+    g9g3f1PrototypeSrc.includes("resolveGosakiScheduleSiteSlugRowPickerBinding"),
+);
+assert(
+  "G-9g3f1 next phase G-9g3f2",
+  g9g3f1ImplSrc.includes("G-9g3f2-row-picker-read-only-smoke-test"),
+);
+assert(
+  "G-9g3f1 implementation gate",
+  g9g3f1ImplSrc.includes(
+    "stagingShellScheduleSiteSlugRowPickerImplementationComplete: true",
+  ),
+);
+
 const gosakiPublicDist = path.join(TOOL_ROOT, "output/static-public/gosaki-piano/public-dist");
 for (const ym of ["2026-06", "2026-07"]) {
   const canonicalMonthPath = path.join(gosakiPublicDist, "schedule", ym, "index.html");

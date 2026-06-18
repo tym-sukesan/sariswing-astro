@@ -89,6 +89,17 @@ export const G9G3F3D_PHASE =
 export const G9G3G1_PHASE =
   "G-9g3g1-operational-save-path-implementation";
 
+export const G9G3G2_PHASE =
+  "G-9g3g2-operational-save-ui-gate-smoke-test";
+
+/** G-9g3g2 gate smoke — description-only candidate (no Save). */
+export const G9G3G2_GATE_SMOKE_DESCRIPTION_CANDIDATE =
+  "[CMS Kit staging] G-9g3g2 gate smoke candidate — no save";
+
+/** G-9g3g2 gate smoke — second description edit to trigger stale invalidation. */
+export const G9G3G2_GATE_SMOKE_DESCRIPTION_STALE_CHANGE =
+  "[CMS Kit staging] G-9g3g2 gate smoke stale change — no save";
+
 export const G9G3G_OPERATIONAL_GENERAL_EDIT_NON_DRY_RUN_APPROVAL_ID =
   "G-9g3g-schedule-site-slug-operational-general-edit-non-dry-run";
 

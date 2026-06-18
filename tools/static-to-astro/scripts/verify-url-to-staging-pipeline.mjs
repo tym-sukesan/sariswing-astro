@@ -2844,6 +2844,43 @@ assert(
   g9g3g1TypesSrc.includes("G-9g3g-schedule-site-slug-operational-general-edit-non-dry-run"),
 );
 
+const g9g3g2SmokeDocPath = path.join(
+  TOOL_ROOT,
+  "docs/staging-shell-schedule-site-slug-operational-general-edit-ui-gate-smoke-test-result.md",
+);
+assert("G-9g3g2 smoke doc exists", fs.existsSync(g9g3g2SmokeDocPath));
+const g9g3g2SmokeDocSrc = fs.readFileSync(g9g3g2SmokeDocPath, "utf8");
+assert(
+  "G-9g3g2 smoke passed",
+  g9g3g2SmokeDocSrc.includes("G-9g3g2 operational Save UI gate smoke passed"),
+);
+assert(
+  "G-9g3g2 smoke gate true",
+  g9g3g2SmokeDocSrc.includes(
+    "stagingShellScheduleSiteSlugOperationalGeneralEditUiGateSmokeTestPassed: true",
+  ),
+);
+assert(
+  "G-9g3g2 ready for g9g3g3",
+  g9g3g2SmokeDocSrc.includes("readyForG9g3g3OperationalNonDryRunPreflight: true"),
+);
+assert(
+  "G-9g3g2 Save button id in smoke doc",
+  g9g3g2SmokeDocSrc.includes("site-slug-edit-g9g3g-operational-save-btn"),
+);
+assert(
+  "G-9g3g2 stale blocks Save in smoke doc",
+  g9g3g2SmokeDocSrc.includes("Preview is stale"),
+);
+assert(
+  "G-9g3g2 Save not clicked marker",
+  g9g3g2SmokeDocSrc.includes("Save not clicked"),
+);
+assert(
+  "G-9g3g2 next phase g9g3g3",
+  g9g3g2SmokeDocSrc.includes("G-9g3g3-operational-non-dry-run-preflight"),
+);
+
 const gosakiPublicDist = path.join(TOOL_ROOT, "output/static-public/gosaki-piano/public-dist");
 for (const ym of ["2026-06", "2026-07"]) {
   const canonicalMonthPath = path.join(gosakiPublicDist, "schedule", ym, "index.html");

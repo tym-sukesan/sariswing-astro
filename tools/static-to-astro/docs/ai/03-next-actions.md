@@ -3,35 +3,36 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 1. Immediate priority
 
-**Current phase:** `G-9g3g2-operational-save-ui-gate-smoke-test` — **passed**
+**Current phase:** `G-9g3g3-operational-non-dry-run-preflight` — **complete / execution pending**
 
-**Next:** `G-9g3g3-operational-non-dry-run-preflight`
+**Next:** `G-9g3g4-operational-non-dry-run-execution`
 
-**Git:** latest pushed commit `025156f` (G-9g3g1); G-9g3g2 smoke result **uncommitted**
+**Git:** latest pushed commit `2fb6d08` (G-9g3g2); G-9g3g3 preflight **uncommitted**
 
-### G-9g3g2 summary
+### G-9g3g3 summary
 
 | Item | Value |
 | --- | --- |
-| Smoke doc | `staging-shell-schedule-site-slug-operational-general-edit-ui-gate-smoke-test-result.md` |
-| Test row | `888c58f2-…` / `schedule-2026-03-001` |
-| Preview | `changedFields=description` only; `actualWrite=false` |
-| Operational Save | **disabled** throughout routine dev (expected) |
-| Save / DB write | **not executed** |
+| Preflight doc | `staging-shell-schedule-site-slug-operational-general-edit-non-dry-run-preflight.md` |
+| Target row | `888c58f2-…` / `schedule-2026-03-001` / `gosaki-piano` |
+| Planned change | `description` append G-9g3g4 marker only |
+| Approval ID | `G-9g3g-schedule-site-slug-operational-general-edit-non-dry-run` |
+| Env arm | `PUBLIC_ADMIN_SCHEDULE_G9G3G_OPERATIONAL_GENERAL_EDIT_NON_DRY_RUN_ARMED` |
+| Lock baseline | `2026-06-16T16:03:41.551792+00:00` (reconfirm live before G-9g3g4) |
+| Save / DB write / rollback SQL | **not executed** |
 
 ### Gates
 
 ```txt
-stagingShellScheduleSiteSlugOperationalGeneralEditUiGateSmokeTestPassed: true
-readyForG9g3g3OperationalNonDryRunPreflight: true
+stagingShellScheduleSiteSlugOperationalGeneralEditNonDryRunPreflightComplete: true
+readyForG9g3g4OperationalNonDryRunExecution: true
 readyForAnyDbWrite: false
 ```
 
 ## 2. Next steps
 
-1. **G-9g3g3-operational-non-dry-run-preflight** — beforeSnapshot, rollback SQL template, env stack doc
-2. **G-9g3g4** — operational non-dry-run execution (operator Save once)
-3. **G-9g3g5** — post-execution hardening
+1. **G-9g3g4-operational-non-dry-run-execution** — operator Preview once → operational Save once (description only)
+2. **G-9g3g5-operational-post-execution-hardening** — rollback decision / restore test
 
 ## 3. Routine dev safety
 
@@ -46,4 +47,5 @@ PUBLIC_SUPABASE_URL host: kmjqppxjdnwwrtaeqjta.supabase.co
 
 - Re-click G-9g2 / G-9g3b / G-9g3c / G-9g3d Save
 - Use `service_role` key
-- Run operational non-dry-run Save until G-9g3g3 preflight + G-9g3g4 execution approval
+- Run operational Save until G-9g3g4 operator approval + armed env stack
+- Execute rollback SQL until operator approves (G-9g3g5 or restore phase)

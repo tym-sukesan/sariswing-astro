@@ -100,6 +100,26 @@ export const G9G3G2_GATE_SMOKE_DESCRIPTION_CANDIDATE =
 export const G9G3G2_GATE_SMOKE_DESCRIPTION_STALE_CHANGE =
   "[CMS Kit staging] G-9g3g2 gate smoke stale change — no save";
 
+export const G9G3G3_PHASE =
+  "G-9g3g3-operational-non-dry-run-preflight";
+
+export const G9G3G4_PHASE =
+  "G-9g3g4-operational-non-dry-run-execution";
+
+/** G-9g3g4 operational non-dry-run execution target row (non-PoC). */
+export const G9G3G4_OPERATIONAL_TARGET_ROW_ID =
+  "888c58f2-f152-4563-a3cf-a20d7c2456c1";
+
+export const G9G3G4_OPERATIONAL_TARGET_LEGACY_ID = "schedule-2026-03-001";
+
+/** Baseline updated_at from G-9g3g2 smoke — operator must reconfirm live before G-9g3g4. */
+export const G9G3G4_OPERATIONAL_LOCK_BASELINE_UPDATED_AT =
+  "2026-06-16T16:03:41.551792+00:00";
+
+/** G-9g3g4 planned description append marker (changedFields=description only). */
+export const G9G3G4_OPERATIONAL_DESCRIPTION_MARKER =
+  "[CMS Kit staging] G-9g3g4 operational Save test — temporary marker";
+
 export const G9G3G_OPERATIONAL_GENERAL_EDIT_NON_DRY_RUN_APPROVAL_ID =
   "G-9g3g-schedule-site-slug-operational-general-edit-non-dry-run";
 

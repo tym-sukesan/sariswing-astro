@@ -2881,6 +2881,40 @@ assert(
   g9g3g2SmokeDocSrc.includes("G-9g3g3-operational-non-dry-run-preflight"),
 );
 
+const g9g3g3PreflightDocPath = path.join(
+  TOOL_ROOT,
+  "docs/staging-shell-schedule-site-slug-operational-general-edit-non-dry-run-preflight.md",
+);
+assert("G-9g3g3 preflight doc exists", fs.existsSync(g9g3g3PreflightDocPath));
+const g9g3g3PreflightDocSrc = fs.readFileSync(g9g3g3PreflightDocPath, "utf8");
+assert(
+  "G-9g3g3 preflight complete",
+  g9g3g3PreflightDocSrc.includes("G-9g3g3-operational-non-dry-run-preflight") &&
+    g9g3g3PreflightDocSrc.includes("preflight complete / execution pending"),
+);
+assert(
+  "G-9g3g3 ready for g9g3g4",
+  g9g3g3PreflightDocSrc.includes("readyForG9g3g4OperationalNonDryRunExecution: true"),
+);
+assert(
+  "G-9g3g3 target row id",
+  g9g3g3PreflightDocSrc.includes("888c58f2-f152-4563-a3cf-a20d7c2456c1"),
+);
+assert(
+  "G-9g3g3 operational approval id",
+  g9g3g3PreflightDocSrc.includes(
+    "G-9g3g-schedule-site-slug-operational-general-edit-non-dry-run",
+  ),
+);
+assert(
+  "G-9g3g3 Save not clicked",
+  g9g3g3PreflightDocSrc.includes("Save clicked | **no**"),
+);
+assert(
+  "G-9g3g3 next phase g9g3g4",
+  g9g3g3PreflightDocSrc.includes("G-9g3g4-operational-non-dry-run-execution"),
+);
+
 const gosakiPublicDist = path.join(TOOL_ROOT, "output/static-public/gosaki-piano/public-dist");
 for (const ym of ["2026-06", "2026-07"]) {
   const canonicalMonthPath = path.join(gosakiPublicDist, "schedule", ym, "index.html");

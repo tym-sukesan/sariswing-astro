@@ -21,13 +21,15 @@ Staging Shell
 将来的な顧客オンボーディング・課金・デプロイ自動化
 
 2. Current phase
-現在フェーズ: G-9g3g2-operational-save-ui-gate-smoke-test — **passed**
+現在フェーズ: G-9g3g3-operational-non-dry-run-preflight — **complete / execution pending**
 
-次フェーズ: **G-9g3g3-operational-non-dry-run-preflight**
+次フェーズ: **G-9g3g4-operational-non-dry-run-execution**
 
-Git: 最新 push 済み commit `025156f`（G-9g3g1）。G-9g3g2 smoke result **uncommitted**。
+Git: 最新 push 済み commit `2fb6d08`（G-9g3g2）。G-9g3g3 preflight **uncommitted**。
 
-G-9g3g2: operational Save UI gate smoke **passed**（operator manual）。Save disabled throughout routine dev。**Save / DB write 未実行。**
+G-9g3g3: operational non-dry-run preflight **complete**（doc + verifier）。Save / Preview / DB write / SQL **未実行**。rollback SQL template あり（未実行）。
+
+G-9g3g2: operational Save UI gate smoke **passed**（commit `2fb6d08`）。**Save / DB write 未実行。**
 
 G-9g3g1: operational Save path **implementation completed**（commit `025156f`）。**Do not re-run G-9g2 / G-9g3b / G-9g3c / G-9g3d Save.**
 
@@ -534,25 +536,24 @@ PUBLIC_SUPABASE_URL host: kmjqppxjdnwwrtaeqjta.supabase.co (staging)
 **Note:** `tools/static-to-astro/.env.local` に `SUPABASE_SERVICE_ROLE_KEY` が local only（gitignored）で存在する場合がある。G-9g3b execution では使用禁止・参照禁止。anon key + authenticated session のみ。
 
 10. Recommended next phase
-次フェーズ推奨: **G-9g3g1-operational-save-path-implementation**
+次フェーズ推奨: **G-9g3g4-operational-non-dry-run-execution**
 
-G-9g3g planning: **completed**（uncommitted）。
+G-9g3g3 preflight: **complete**（uncommitted）。
 
-G-9g3f3d smoke: **committed `a1cfcba`**.
+G-9g3g2 smoke: **committed `2fb6d08`**.
 
 Phase sequence:
 ```txt
-G-9g3f3b-binding-smoke ← complete (8d277d8)
-G-9g3f3c-binding-hardening ← complete (f0fd3af)
-G-9g3f3d-binding-hardening-smoke ← complete (a1cfcba)
-G-9g3g-operational-planning ← complete (uncommitted)
-G-9g3g1-operational-save-implementation ← next
+G-9g3g1-operational-save-implementation ← complete (025156f)
+G-9g3g2-operational-save-ui-gate-smoke ← complete (2fb6d08)
+G-9g3g3-operational-non-dry-run-preflight ← complete (uncommitted)
+G-9g3g4-operational-non-dry-run-execution ← next
 ```
 
 G-9g3g gates:
 ```txt
-stagingShellScheduleSiteSlugOperationalGeneralEditPlanningComplete: true
-readyForG9g3g1OperationalSavePathImplementation: true
+stagingShellScheduleSiteSlugOperationalGeneralEditNonDryRunPreflightComplete: true
+readyForG9g3g4OperationalNonDryRunExecution: true
 readyForAnyDbWrite: false
 ```
 

@@ -2728,6 +2728,59 @@ assert(
     .includes("G9G3F3D_PHASE"),
 );
 
+const g9g3gPlanningDocPath = path.join(
+  TOOL_ROOT,
+  "docs/staging-shell-schedule-site-slug-operational-general-edit-planning.md",
+);
+
+assert("G-9g3g operational planning doc exists", fs.existsSync(g9g3gPlanningDocPath));
+const g9g3gPlanningDocSrc = fs.readFileSync(g9g3gPlanningDocPath, "utf8");
+
+assert(
+  "G-9g3g planning completed",
+  g9g3gPlanningDocSrc.includes("G-9g3g planning completed"),
+);
+assert(
+  "G-9g3g planning gate true",
+  g9g3gPlanningDocSrc.includes(
+    "stagingShellScheduleSiteSlugOperationalGeneralEditPlanningComplete: true",
+  ),
+);
+assert(
+  "G-9g3g approval ID proposal",
+  g9g3gPlanningDocSrc.includes(
+    "G-9g3g-schedule-site-slug-operational-general-edit-non-dry-run",
+  ),
+);
+assert(
+  "G-9g3g env arm proposal",
+  g9g3gPlanningDocSrc.includes(
+    "PUBLIC_ADMIN_SCHEDULE_G9G3G_OPERATIONAL_GENERAL_EDIT_NON_DRY_RUN_ARMED",
+  ),
+);
+assert(
+  "G-9g3g phase sequence",
+  g9g3gPlanningDocSrc.includes("G-9g3g1-operational-save-path-implementation"),
+);
+assert(
+  "G-9g3g Save gate design",
+  g9g3gPlanningDocSrc.includes("Save gate design"),
+);
+assert(
+  "G-9g3g no Save in planning",
+  g9g3gPlanningDocSrc.includes("Save clicked") &&
+    g9g3gPlanningDocSrc.includes("no") &&
+    g9g3gPlanningDocSrc.includes("DB write executed"),
+);
+assert(
+  "G-9g3g ready for g9g3g1",
+  g9g3gPlanningDocSrc.includes("readyForG9g3g1OperationalSavePathImplementation: true"),
+);
+assert(
+  "G-9g3g PoC Save re-run prohibited",
+  g9g3gPlanningDocSrc.includes("Do not re-run G-9g2"),
+);
+
 const gosakiPublicDist = path.join(TOOL_ROOT, "output/static-public/gosaki-piano/public-dist");
 for (const ym of ["2026-06", "2026-07"]) {
   const canonicalMonthPath = path.join(gosakiPublicDist, "schedule", ym, "index.html");

@@ -21,13 +21,15 @@ Staging Shell
 将来的な顧客オンボーディング・課金・デプロイ自動化
 
 2. Current phase
-現在フェーズ: G-9g3f3d-row-picker-general-edit-binding-hardening-smoke-test — **完了 / passed**
+現在フェーズ: G-9g3g-operational-general-edit-planning — **完了**
 
-次フェーズ: **G-9g3g-operational-general-edit-planning**
+次フェーズ: **G-9g3g1-operational-save-path-implementation**
 
-Git: 最新 push 済み commit `f0fd3af`（G-9g3f3c hardening）。G-9g3f3d smoke **uncommitted**。
+Git: 最新 push 済み commit `a1cfcba`（G-9g3f3d hardening smoke）。G-9g3g planning **uncommitted**。
 
-G-9g3f3d: hardening smoke **passed**（operator manual）。identity / G-9 preview / stale / dirty Cancel+Continue / PoC exclusion 確認済み。**Do not re-run G-9g2 / G-9g3b / G-9g3c / G-9g3d Save.**
+G-9g3f3d: hardening smoke **passed**（commit `a1cfcba`）。
+
+G-9g3g: operational general edit **planning completed** — approval ID / env arm / Save gate / phase sequence documented。**Do not re-run G-9g2 / G-9g3b / G-9g3c / G-9g3d Save.** Save / DB write 未実行。
 
 G-9g3f3c: hardening **committed `f0fd3af`**.
 
@@ -530,24 +532,25 @@ PUBLIC_SUPABASE_URL host: kmjqppxjdnwwrtaeqjta.supabase.co (staging)
 **Note:** `tools/static-to-astro/.env.local` に `SUPABASE_SERVICE_ROLE_KEY` が local only（gitignored）で存在する場合がある。G-9g3b execution では使用禁止・参照禁止。anon key + authenticated session のみ。
 
 10. Recommended next phase
-次フェーズ推奨: **G-9g3g-operational-general-edit-planning**
+次フェーズ推奨: **G-9g3g1-operational-save-path-implementation**
 
-G-9g3f3d smoke: **passed**（uncommitted）。
+G-9g3g planning: **completed**（uncommitted）。
 
-G-9g3f3c hardening: **committed `f0fd3af`**.
+G-9g3f3d smoke: **committed `a1cfcba`**.
 
 Phase sequence:
 ```txt
 G-9g3f3b-binding-smoke ← complete (8d277d8)
 G-9g3f3c-binding-hardening ← complete (f0fd3af)
-G-9g3f3d-binding-hardening-smoke ← complete (passed, uncommitted)
-G-9g3g-operational-planning ← next
+G-9g3f3d-binding-hardening-smoke ← complete (a1cfcba)
+G-9g3g-operational-planning ← complete (uncommitted)
+G-9g3g1-operational-save-implementation ← next
 ```
 
-G-9g3f3d gates:
+G-9g3g gates:
 ```txt
-stagingShellScheduleSiteSlugRowPickerGeneralEditBindingHardeningSmokeTestPassed: true
-readyForG9g3gOperationalGeneralEditPlanning: true
+stagingShellScheduleSiteSlugOperationalGeneralEditPlanningComplete: true
+readyForG9g3g1OperationalSavePathImplementation: true
 readyForAnyDbWrite: false
 ```
 

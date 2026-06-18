@@ -3096,13 +3096,23 @@ assert(
   g9g3g5cExecSrc.includes("G-9g3g5c-operational-restore-execution"),
 );
 assert(
-  "G-9g3g5c operator pending",
-  g9g3g5cExecSrc.includes("operator pending"),
+  "G-9g3g5c execution success",
+  g9g3g5cExecSrc.includes("success — restore execution complete") ||
+    g9g3g5cExecSrc.includes("Execution: PASS"),
 );
 assert(
-  "G-9g3g5c restore not yet executed",
-  g9g3g5cExecSrc.includes("restoreExecuted: false") ||
-    g9g3g5cExecSrc.includes("restore executed | **no**"),
+  "G-9g3g5c restore executed",
+  g9g3g5cExecSrc.includes("restoreExecuted: true") ||
+    g9g3g5cExecSrc.includes("restore executed | **yes**"),
+);
+assert(
+  "G-9g3g5c marker removed",
+  g9g3g5cExecSrc.includes("markerRemoved: true") ||
+    g9g3g5cExecSrc.includes("marker **removed**"),
+);
+assert(
+  "G-9g3g5c ready for G-9g3g5d",
+  g9g3g5cExecSrc.includes("readyForG9g3g5dPostRestoreHardening: true"),
 );
 assert(
   "G-9g3g5c next phase G-9g3g5d",

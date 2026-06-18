@@ -226,7 +226,12 @@ const handoffSrc = readRepo("tools/static-to-astro/docs/ai/handoff-to-chatgpt.md
 assert("current state G-9g3g5b2 passed", currentStateSrc.includes("G-9g3g5b2") && currentStateSrc.includes("passed"));
 assert("current state commit 3b113c5", currentStateSrc.includes("3b113c5"));
 assert("next actions G-9g3g5c", nextActionsSrc.includes(NEXT_PHASE));
-assert("handoff smoke passed", handoffSrc.includes("passed"));
+assert(
+  "handoff smoke passed or G-9g3g5c complete",
+  handoffSrc.includes("passed") ||
+    (handoffSrc.includes("G-9g3g5c") &&
+      (handoffSrc.includes("success") || handoffSrc.includes("succeeded"))),
+);
 
 console.log(`\nG-9g3g5b2 verifier: ${passed} passed, ${failed} failed`);
 process.exit(failed > 0 ? 1 : 0);

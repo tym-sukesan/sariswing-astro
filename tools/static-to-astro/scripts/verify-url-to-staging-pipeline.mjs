@@ -3047,6 +3047,44 @@ assert(
   g9g3g5b1ImplSrc.includes("G-9g3g5b2-operational-restore-approval-arm-ui-gate-smoke-test"),
 );
 
+const g9g3g5b2SmokePath = path.join(
+  TOOL_ROOT,
+  "docs/staging-shell-schedule-site-slug-operational-general-edit-restore-approval-arm-ui-gate-smoke-test-result.md",
+);
+assert("G-9g3g5b2 restore UI gate smoke doc exists", fs.existsSync(g9g3g5b2SmokePath));
+const g9g3g5b2SmokeSrc = fs.readFileSync(g9g3g5b2SmokePath, "utf8");
+assert(
+  "G-9g3g5b2 phase marker",
+  g9g3g5b2SmokeSrc.includes("G-9g3g5b2-operational-restore-approval-arm-ui-gate-smoke-test"),
+);
+assert(
+  "G-9g3g5b2 smoke passed",
+  g9g3g5b2SmokeSrc.includes("G-9g3g5b2 operational restore approval arm UI gate smoke passed"),
+);
+assert(
+  "G-9g3g5b2 gate passed",
+  g9g3g5b2SmokeSrc.includes(
+    "stagingShellScheduleSiteSlugOperationalRestoreApprovalArmUiGateSmokeTestPassed: true",
+  ),
+);
+assert(
+  "G-9g3g5b2 ready for G-9g3g5c",
+  g9g3g5b2SmokeSrc.includes("readyForG9g3g5cOperationalRestoreExecution: true"),
+);
+assert(
+  "G-9g3g5b2 Save not clicked",
+  g9g3g5b2SmokeSrc.includes("Save clicked") && g9g3g5b2SmokeSrc.includes("no"),
+);
+assert(
+  "G-9g3g5b2 restore not executed",
+  g9g3g5b2SmokeSrc.includes("restoreExecuted: false") ||
+    g9g3g5b2SmokeSrc.includes("restore executed | **no**"),
+);
+assert(
+  "G-9g3g5b2 next phase G-9g3g5c",
+  g9g3g5b2SmokeSrc.includes("G-9g3g5c-operational-restore-execution"),
+);
+
 const gosakiPublicDist = path.join(TOOL_ROOT, "output/static-public/gosaki-piano/public-dist");
 for (const ym of ["2026-06", "2026-07"]) {
   const canonicalMonthPath = path.join(gosakiPublicDist, "schedule", ym, "index.html");

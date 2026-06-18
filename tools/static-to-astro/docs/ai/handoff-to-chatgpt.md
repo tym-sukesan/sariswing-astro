@@ -5,22 +5,23 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-9g3g5b1-operational-restore-approval-arm-implementation (complete / restore execution pending)
-Latest commit (pushed): 95ff18c (G-9g3g5b restore preflight)
-G-9g3g5b1 implementation: uncommitted
+Current phase: G-9g3g5b2-operational-restore-approval-arm-ui-gate-smoke-test (passed)
+Latest commit (pushed): 23b7b68 (G-9g3g5b1 restore approval arm implementation)
+G-9g3g5b2 smoke result: uncommitted
 ```
 
 ## Summary
 
-G-9g3g5b1 operational restore approval arm **implementation complete** — G-9g3g5b gap audit blockers **resolved**.
+G-9g3g5b2 restore UI gate smoke **passed** (operator manual).
 
 - **Marker in staging DB:** G-9g3g4 temporary marker on row `888c58f2-…`
-- **Restore approval:** `G-9g3g5-schedule-site-slug-operational-restore-non-dry-run`
-- **Restore env arm:** `PUBLIC_ADMIN_SCHEDULE_G9G3G5_OPERATIONAL_RESTORE_NON_DRY_RUN_ARMED`
+- **Preview:** operator manual once — valid dry-run, `changedFields=description` only
+- **Restore gate:** restore mode, approval ID, env arm confirmed; Save **enabled but not clicked**
+- **Stale blocks Save:** confirmed
 - **Restore / DB write:** not executed
-- **Next:** G-9g3g5b2 UI gate smoke test (recommended before G-9g3g5c)
+- **Next:** G-9g3g5c restore execution
 
-**Do not re-click G-9g3g4 operational Save.** **Do not skip G-9g3g5b2 unless explicitly waived.**
+**Do not re-click G-9g3g4 operational Save.** **Do not re-run G-9g3g5b2 smoke.**
 
 ## Routine dev safety (default)
 
@@ -35,9 +36,8 @@ PUBLIC_SUPABASE_URL host: kmjqppxjdnwwrtaeqjta.supabase.co (staging)
 ## Gates
 
 ```txt
-stagingShellScheduleSiteSlugOperationalRestoreApprovalArmImplementationComplete: true
-readyForG9g3g5b2OperationalRestoreApprovalArmUiGateSmokeTest: true
-readyForG9g3g5cOperationalRestoreExecution: false
+stagingShellScheduleSiteSlugOperationalRestoreApprovalArmUiGateSmokeTestPassed: true
+readyForG9g3g5cOperationalRestoreExecution: true
 markerRemainsInStagingDb: true
 restoreExecuted: false
 readyForAnyDbWrite: false
@@ -45,8 +45,6 @@ readyForAnyDbWrite: false
 
 ## Next
 
-**G-9g3g5b2-operational-restore-approval-arm-ui-gate-smoke-test** (recommended)
-
-Then: **G-9g3g5c-operational-restore-execution** (only after b2 or explicit waiver)
+**G-9g3g5c-operational-restore-execution** — operator Preview once → Save once (restore approval ID + arm)
 
 **Do not re-run G-9g2 / G-9g3b / G-9g3c / G-9g3d / G-9g3g4 operational Save.**

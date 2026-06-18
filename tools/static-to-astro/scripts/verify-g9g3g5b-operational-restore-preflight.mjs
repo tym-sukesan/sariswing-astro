@@ -115,14 +115,14 @@ assert("config G9G3G5B phase", configSrc.includes("G-9g3g5b-operational-restore-
 assert("config G9G3G5B1 phase", configSrc.includes("G-9g3g5b1-operational-restore-approval-arm-implementation"));
 
 const currentStateSrc = readRepo("tools/static-to-astro/docs/ai/00-current-state.md");
-assert("current state G-9g3g5b1", currentStateSrc.includes("G-9g3g5b1"));
-assert("current state commit 95ff18c", currentStateSrc.includes("95ff18c"));
+assert("current state G-9g3g5b2 passed", currentStateSrc.includes("G-9g3g5b2") && currentStateSrc.includes("passed"));
+assert("current state commit 23b7b68", currentStateSrc.includes("23b7b68"));
 
 const nextActionsSrc = readRepo("tools/static-to-astro/docs/ai/03-next-actions.md");
-assert("next actions G-9g3g5b2", nextActionsSrc.includes("G-9g3g5b2"));
+assert("next actions G-9g3g5c", nextActionsSrc.includes("G-9g3g5c-operational-restore-execution"));
 
 const handoffSrc = readRepo("tools/static-to-astro/docs/ai/handoff-to-chatgpt.md");
-assert("handoff G-9g3g5b1", handoffSrc.includes("G-9g3g5b1"));
+assert("handoff G-9g3g5b2 passed", handoffSrc.includes("G-9g3g5b2") && handoffSrc.includes("passed"));
 
 console.log(`\n${passed} passed, ${failed} failed`);
 process.exit(failed > 0 ? 1 : 0);

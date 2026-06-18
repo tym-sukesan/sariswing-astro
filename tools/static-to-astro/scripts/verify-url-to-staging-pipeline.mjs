@@ -1950,9 +1950,54 @@ assert(
     g9g3d4ExecutionSrc.includes("ENABLE_ADMIN_STAGING_WRITE: false") &&
     g9g3d4ExecutionSrc.includes("PUBLIC_ADMIN_WRITE_DRY_RUN: true"),
 );
+// --- G-9g3e general edit post-execution hardening planning ---
+const g9g3ePlanningDocPath = path.join(
+  TOOL_ROOT,
+  "docs/staging-shell-schedule-site-slug-general-edit-post-execution-hardening-planning.md",
+);
+
+assert("G-9g3e planning doc exists", fs.existsSync(g9g3ePlanningDocPath));
+
+const g9g3ePlanningSrc = fs.readFileSync(g9g3ePlanningDocPath, "utf8");
+
 assert(
-  "G-9g3d4 next phase proposed",
-  g9g3d4ExecutionSrc.includes("G-9g3e-general-edit-post-execution-hardening-planning"),
+  "G-9g3e planning hardening policy",
+  g9g3ePlanningSrc.includes("Post-execution hardening policy") &&
+    g9g3ePlanningSrc.includes("permanent freeze"),
+);
+assert(
+  "G-9g3e planning legacy PoC strategy",
+  g9g3ePlanningSrc.includes("Legacy PoC UI") &&
+    (g9g3ePlanningSrc.includes("developer-only") ||
+      g9g3ePlanningSrc.includes("developer-only")),
+);
+assert(
+  "G-9g3e planning Save not clicked",
+  g9g3ePlanningSrc.includes("Save clicked") &&
+    g9g3ePlanningSrc.includes("no"),
+);
+assert(
+  "G-9g3e planning no DB write",
+  g9g3ePlanningSrc.includes("DB write") &&
+    (g9g3ePlanningSrc.includes("not executed") || g9g3ePlanningSrc.includes("no")),
+);
+assert(
+  "G-9g3e planning PoC re-run prohibited",
+  g9g3ePlanningSrc.includes("Do not re-run G-9g2 / G-9g3b / G-9g3c / G-9g3d Save"),
+);
+assert(
+  "G-9g3e planning next phase G-9g3e1",
+  g9g3ePlanningSrc.includes("G-9g3e1-post-execution-hardening-implementation"),
+);
+assert(
+  "G-9g3e planning hardening gate",
+  g9g3ePlanningSrc.includes(
+    "stagingShellScheduleGeneralEditPostExecutionHardeningPlanningComplete: true",
+  ),
+);
+assert(
+  "G-9g3e planning operational approval ID proposed",
+  g9g3ePlanningSrc.includes("G-9g3-schedule-site-slug-general-edit"),
 );
 
 const gosakiPublicDist = path.join(TOOL_ROOT, "output/static-public/gosaki-piano/public-dist");

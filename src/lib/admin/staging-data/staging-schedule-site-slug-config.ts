@@ -60,6 +60,18 @@ export const G9G3C_PRICE_POC_DEFAULT =
 export const G9G3D_PHASE =
   "G-9g3d-staging-shell-schedule-site-slug-general-edit-consolidation-implementation";
 
+export const G9G3E1_PHASE =
+  "G-9g3e1-staging-shell-schedule-site-slug-general-edit-post-execution-hardening-implementation";
+
+/** G-9g3d4 non-dry-run PoC executed — re-arm and Save prohibited (G-9g3e1). */
+export const G9G3D_GENERAL_EDIT_POC_EXECUTED = true;
+
+export const G9G3D_POC_EXECUTED_ARM_FAILURE =
+  "General edit PoC executed — do not re-run";
+
+export const G9G3_SLICE_POC_EXECUTED_ARM_FAILURE =
+  "Slice PoC executed — do not re-run; use G-9g3d general edit";
+
 export const G9G3D_GENERAL_EDIT_NON_DRY_RUN_APPROVAL_ID =
   "G-9g3d-schedule-site-slug-general-edit-non-dry-run-poc";
 

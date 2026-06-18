@@ -3,46 +3,38 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 1. Immediate priority
 
-**Current phase:** `G-9g3e-general-edit-post-execution-hardening-planning` — **complete**
+**Current phase:** `G-9g3e1-post-execution-hardening-implementation` — **complete**
 
-**Next:** `G-9g3e1-post-execution-hardening-implementation`
+**Next:** `G-9g3e2-post-execution-hardening-smoke-test`
 
-**Git:** latest pushed commit `e80b707`; G-9g3e planning doc + AI context updates **uncommitted**
+**Git:** latest pushed commit `8b5f78c`; G-9g3e1 implementation + AI context updates **uncommitted**
 
 **Docs:**
-- `tools/static-to-astro/docs/staging-shell-schedule-site-slug-general-edit-post-execution-hardening-planning.md` (**new**)
-- `tools/static-to-astro/docs/staging-shell-schedule-site-slug-general-edit-non-dry-run-execution-result.md`
+- `tools/static-to-astro/docs/staging-shell-schedule-site-slug-general-edit-post-execution-hardening-implementation.md` (**new**)
+- `tools/static-to-astro/docs/staging-shell-schedule-site-slug-general-edit-post-execution-hardening-planning.md`
 
-### G-9g3d4 execution (complete)
+### G-9g3e1 implementation summary
 
-- **actualWrite:** true (operator manual Save once)
-- **changedFields:** `price` only
-- **updated_at:** `2026-06-18T01:04:51.312817+00:00`
+- **G-9g3d PoC freeze:** `G9G3D_GENERAL_EDIT_POC_EXECUTED` — config + executor + UI
+- **Legacy PoC UI:** audit-only; all Save buttons disabled
+- **UI/UX:** staging banner, STOP alerts, save gate panel, auth badges, payload preview
+- **Save / Preview / DB write:** not executed in implementation
 - **Do not re-run:** G-9g2 / G-9g3b / G-9g3c / G-9g3d Save
-
-### G-9g3e planning summary
-
-- Freeze G-9g3d PoC re-run (G-9g3e1)
-- Legacy PoC UI: developer-only, retain
-- Operational approval ID: `G-9g3-schedule-site-slug-general-edit` (proposed, G-9g3g+)
-- Row picker before real-data edit (G-9g3f)
-- **Save / DB write not executed** in planning
 
 ### Gates
 
 ```txt
-stagingShellScheduleGeneralEditPostExecutionHardeningPlanningComplete: true
-stagingShellScheduleGeneralEditPocExecutionSucceeded: true
-readyForG9g3e1PostExecutionHardeningImplementation: true
+stagingShellScheduleGeneralEditPostExecutionHardeningImplementationComplete: true
+readyForG9g3e2PostExecutionHardeningSmokeTest: true
 readyForAnyDbWrite: false
 rollbackNeeded: false
 ```
 
 ## 2. Next steps
 
-1. Commit G-9g3e planning doc + AI context (when operator approves)
-2. **G-9g3e1-implementation** — freeze G-9g3d PoC re-run, UI hardening
-3. **G-9g3e2-smoke** — dry-run smoke; no Save
+1. Commit G-9g3e1 implementation (when operator approves)
+2. **G-9g3e2-smoke** — SSR / programmatic smoke; no Save
+3. **G-9g3f-row-picker-planning** (after G-9g3e2)
 
 ## 3. Routine dev safety
 
@@ -61,6 +53,6 @@ PUBLIC_SUPABASE_URL host: kmjqppxjdnwwrtaeqjta.supabase.co
 
 ## 5. Baseline (post G-9g3d)
 
-- Latest commit (pushed): `e80b707`
+- Latest commit (pushed): `8b5f78c`
 - Pilot row: `aa440e29-5be8-402e-9190-0d81c48434c0` / `gosaki-piano`
 - Lock `updated_at`: `2026-06-18T01:04:51.312817+00:00`

@@ -21,13 +21,13 @@ Staging Shell
 将来的な顧客オンボーディング・課金・デプロイ自動化
 
 2. Current phase
-現在フェーズ: G-9g3e-general-edit-post-execution-hardening-planning — **完了**
+現在フェーズ: G-9g3e1-post-execution-hardening-implementation — **完了**
 
-次フェーズ: **G-9g3e1-post-execution-hardening-implementation**
+次フェーズ: **G-9g3e2-post-execution-hardening-smoke-test**
 
-Git: 最新 push 済み commit `e80b707`（G-9g3d4 execution result）。G-9g3e planning doc + AI context 更新は **uncommitted**。
+Git: 最新 push 済み commit `8b5f78c`（G-9g3e planning）。G-9g3e1 implementation + AI context 更新は **uncommitted**。
 
-G-9g3d4 execution: **成功**（price only / actualWrite=true / operator manual Save once）。`updated_at` → `2026-06-18T01:04:51.312817+00:00`。**Do not re-run G-9g2 / G-9g3b / G-9g3c / G-9g3d Save.**
+G-9g3e1: G-9g3d PoC freeze（`G9G3D_GENERAL_EDIT_POC_EXECUTED`）、legacy PoC audit-only、UI/UX hardening。**Save / Preview / DB write 未実行。Do not re-run G-9g2 / G-9g3b / G-9g3c / G-9g3d Save.**
 
 G-9g3 safe-field PoC slices: **all complete** on pilot row (G-9g2 title, G-9g3b venue+description, G-9g3c time+price). **Do not re-run slice Saves.**
 
@@ -522,11 +522,11 @@ PUBLIC_SUPABASE_URL host: kmjqppxjdnwwrtaeqjta.supabase.co (staging)
 **Note:** `tools/static-to-astro/.env.local` に `SUPABASE_SERVICE_ROLE_KEY` が local only（gitignored）で存在する場合がある。G-9g3b execution では使用禁止・参照禁止。anon key + authenticated session のみ。
 
 10. Recommended next phase
-次フェーズ推奨: **G-9g3e1-post-execution-hardening-implementation**
+次フェーズ推奨: **G-9g3e2-post-execution-hardening-smoke-test**
 
-G-9g3e planning: **完了**（uncommitted）。G-9g3d PoC re-run freeze、legacy PoC developer-only 維持、operational approval ID 提案、row picker は G-9g3f に defer。
+G-9g3e1 implementation: **完了**（uncommitted）。G-9g3d PoC freeze + legacy audit-only + UI/UX hardening。**Save / Preview / DB write 未実行。**
 
-G-9g3 safe-field PoC slices + G-9g3d general edit: **all complete** on pilot row。**Do not re-run G-9g2 / G-9g3b / G-9g3c / G-9g3d Save.**
+G-9g3 safe-field PoC slices + G-9g3d general edit: **all complete and frozen**。**Do not re-run G-9g2 / G-9g3b / G-9g3c / G-9g3d Save.**
 
 Routine dev: all G-9 arms off / write off / dry-run on / staging host only。
 
@@ -534,23 +534,20 @@ Lock baseline: `updated_at` = `2026-06-18T01:04:51.312817+00:00`
 
 Phase sequence:
 ```txt
-G-9g3d4-execution  ← complete (e80b707)
-G-9g3e-planning     ← complete (uncommitted)
-G-9g3e1-implementation ← next
-G-9g3e2-smoke
-G-9g3f-row-picker-planning
-G-9g3g-real-ish-data-edit
+G-9g3e-planning      ← complete (8b5f78c)
+G-9g3e1-implementation ← complete (uncommitted)
+G-9g3e2-smoke        ← next
+G-9g3f-row-picker
 ```
 
 詳細:
+- `tools/static-to-astro/docs/staging-shell-schedule-site-slug-general-edit-post-execution-hardening-implementation.md`
 - `tools/static-to-astro/docs/staging-shell-schedule-site-slug-general-edit-post-execution-hardening-planning.md`
-- `tools/static-to-astro/docs/staging-shell-schedule-site-slug-general-edit-non-dry-run-execution-result.md`
 
 G-9g3e gates:
 ```txt
-stagingShellScheduleGeneralEditPostExecutionHardeningPlanningComplete: true
-stagingShellScheduleGeneralEditPocExecutionSucceeded: true
-readyForG9g3e1PostExecutionHardeningImplementation: true
+stagingShellScheduleGeneralEditPostExecutionHardeningImplementationComplete: true
+readyForG9g3e2PostExecutionHardeningSmokeTest: true
 readyForG9g3fRowPickerPlanning: false
 readyForG9g3dExecution: false
 readyForG9g2Execution: false

@@ -5,23 +5,23 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-9g3e-general-edit-post-execution-hardening-planning (complete)
-Latest commit (pushed): e80b707 (G-9g3d4 execution result)
-Git: working tree has uncommitted G-9g3e planning doc + AI context updates
+Current phase: G-9g3e1-post-execution-hardening-implementation (complete)
+Latest commit (pushed): 8b5f78c (G-9g3e planning)
+Git: working tree has uncommitted G-9g3e1 implementation + AI context updates
 ```
 
 ## Summary
 
-G-9g3d general edit non-dry-run PoC **succeeded** (price only). G-9g3e planning defines post-execution hardening before row picker / real-data edits.
+G-9g3e1 hardens post-G-9g3d4 general edit path — PoC Save re-run frozen, legacy UI audit-only, operator UX improved.
 
-- **G-9g3d4:** actualWrite=true, operator manual Save once, updated_at=`2026-06-18T01:04:51.312817+00:00`
-- **Do not re-run:** G-9g2 / G-9g3b / G-9g3c / G-9g3d Save
-- **G-9g3e1 next:** freeze G-9g3d PoC re-run, UI hardening, staging shell notice
-- **G-9g3f deferred:** row picker planning after G-9g3e2 smoke
+- **G-9g3d freeze:** `G9G3D_GENERAL_EDIT_POC_EXECUTED=true` — config + executor + UI
+- **All G-9 PoC Saves:** re-run prohibited
+- **Save / Preview / DB write:** not executed in implementation
+- **Next:** G-9g3e2 smoke test
 
 **Docs:**
-- `staging-shell-schedule-site-slug-general-edit-post-execution-hardening-planning.md` (**new**)
-- `staging-shell-schedule-site-slug-general-edit-non-dry-run-execution-result.md`
+- `staging-shell-schedule-site-slug-general-edit-post-execution-hardening-implementation.md` (**new**)
+- `staging-shell-schedule-site-slug-general-edit-post-execution-hardening-planning.md`
 
 ## Routine dev safety (default)
 
@@ -35,13 +35,12 @@ PUBLIC_SUPABASE_URL host: kmjqppxjdnwwrtaeqjta.supabase.co (staging)
 ## Gates
 
 ```txt
-stagingShellScheduleGeneralEditPostExecutionHardeningPlanningComplete: true
-stagingShellScheduleGeneralEditPocExecutionSucceeded: true
-readyForG9g3e1PostExecutionHardeningImplementation: true
+stagingShellScheduleGeneralEditPostExecutionHardeningImplementationComplete: true
+readyForG9g3e2PostExecutionHardeningSmokeTest: true
 readyForAnyDbWrite: false
 rollbackNeeded: false
 ```
 
 ## Next
 
-**G-9g3e1-post-execution-hardening-implementation** — no Save / DB write in implementation phase.
+**G-9g3e2-post-execution-hardening-smoke-test** — no Save / DB write.

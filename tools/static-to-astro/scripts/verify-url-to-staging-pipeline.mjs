@@ -1749,13 +1749,14 @@ assert(
 );
 assert(
   "G-9g3d slice PoC re-run blocked",
-  g9g3bConfigSrc.includes("Slice PoC executed — do not re-run") &&
-    g9g3cConfigSrc.includes("Slice PoC executed — do not re-run"),
+  g9g2ConfigSrc.includes("G9G3_SLICE_POC_EXECUTED_ARM_FAILURE") &&
+    g9g3bConfigSrc.includes("G9G3_SLICE_POC_EXECUTED_ARM_FAILURE") &&
+    g9g3cConfigSrc.includes("G9G3_SLICE_POC_EXECUTED_ARM_FAILURE"),
 );
 assert(
   "G-9g3d legacy PoC UI freeze policy",
   g9g3dImplSrc.includes("legacy PoC") &&
-    g9g1SectionSrc.includes("Legacy PoC (executed — do not re-run)") &&
+    g9g1SectionSrc.includes("Legacy PoC (executed — audit only)") &&
     g9g3aEditUiSrc.includes("isLegacyPoCUiVisible"),
 );
 assert(
@@ -1998,6 +1999,62 @@ assert(
 assert(
   "G-9g3e planning operational approval ID proposed",
   g9g3ePlanningSrc.includes("G-9g3-schedule-site-slug-general-edit"),
+);
+
+// --- G-9g3e1 general edit post-execution hardening implementation ---
+const g9g3e1ImplDocPath = path.join(
+  TOOL_ROOT,
+  "docs/staging-shell-schedule-site-slug-general-edit-post-execution-hardening-implementation.md",
+);
+
+assert("G-9g3e1 implementation doc exists", fs.existsSync(g9g3e1ImplDocPath));
+
+const g9g3e1ImplSrc = fs.readFileSync(g9g3e1ImplDocPath, "utf8");
+const siteSlugConfigPath = path.join(
+  REPO_ROOT,
+  "src/lib/admin/staging-data/staging-schedule-site-slug-config.ts",
+);
+const siteSlugConfigSrc = fs.readFileSync(siteSlugConfigPath, "utf8");
+
+assert(
+  "G-9g3e1 G9G3D PoC executed constant",
+  siteSlugConfigSrc.includes("G9G3D_GENERAL_EDIT_POC_EXECUTED = true"),
+);
+assert(
+  "G-9g3e1 G9G3d config poc executed freeze",
+  g9g3dConfigSrc.includes("G9G3D_GENERAL_EDIT_POC_EXECUTED") &&
+    g9g3dConfigSrc.includes("G9G3D_POC_EXECUTED_ARM_FAILURE"),
+);
+assert(
+  "G-9g3e1 G9G3d save poc_executed guard",
+  g9g3dSaveSrc.includes("G9G3D_GENERAL_EDIT_POC_EXECUTED") &&
+    g9g3dSaveSrc.includes("poc_executed"),
+);
+assert(
+  "G-9g3e1 legacy PoC audit-only UI",
+  g9g1SectionSrc.includes("audit only") &&
+    g9g1SectionSrc.includes("Legacy PoC (executed — audit only)"),
+);
+assert(
+  "G-9g3e1 all PoC Saves re-run prohibited",
+  g9g3e1ImplSrc.includes("Do not re-run") &&
+    g9g3e1ImplSrc.includes("G-9g2 / G-9g3b / G-9g3c / G-9g3d"),
+);
+assert(
+  "G-9g3e1 implementation Save not clicked",
+  g9g3e1ImplSrc.includes("Save was not clicked"),
+);
+assert(
+  "G-9g3e1 implementation no DB write",
+  g9g3e1ImplSrc.includes("DB write was not executed"),
+);
+assert(
+  "G-9g3e1 ready for smoke gate",
+  g9g3e1ImplSrc.includes("readyForG9g3e2PostExecutionHardeningSmokeTest: true"),
+);
+assert(
+  "G-9g3e1 edit UI save gate panel",
+  g9g3aEditUiSrc.includes("site-slug-edit-save-gate-panel"),
 );
 
 const gosakiPublicDist = path.join(TOOL_ROOT, "output/static-public/gosaki-piano/public-dist");

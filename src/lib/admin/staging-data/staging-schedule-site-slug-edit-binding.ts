@@ -29,7 +29,9 @@ import {
   G9G3C_START_TIME_POC_DEFAULT,
   G9G3C_TIME_PRICE_NON_DRY_RUN_APPROVAL_ID,
   G9G3D_GENERAL_EDIT_NON_DRY_RUN_APPROVAL_ID,
+  G9G3D_GENERAL_EDIT_POC_EXECUTED,
   G9G3D_PHASE,
+  G9G3E1_PHASE,
   SCHEDULE_G9G3B_VENUE_DESCRIPTION_NON_DRY_RUN_ARMED_ENV,
   SCHEDULE_G9G3C_TIME_PRICE_NON_DRY_RUN_ARMED_ENV,
   SCHEDULE_G9G3D_GENERAL_EDIT_NON_DRY_RUN_ARMED_ENV,
@@ -66,6 +68,7 @@ export interface SiteSlugScheduleEditBinding {
   g9g3dSaveEnabled: boolean;
   g9g3dArmFailureReason?: string;
   g9g3dArmEnv: string;
+  g9g3dPocExecuted: boolean;
   legacyPoCUiVisible: boolean;
   g9g3aSaveUiHidden: boolean;
   siteSlug: string;
@@ -96,7 +99,7 @@ export async function resolveGosakiScheduleSiteSlugEditBinding(): Promise<SiteSl
   const hostGate = evaluateSupabaseHostGate(dataConfig.supabaseUrl);
 
   const base = {
-    phase: G9G3D_PHASE,
+    phase: G9G3E1_PHASE,
     g9g3aPhase: G9G3A_PHASE,
     g9g3bPhase: G9G3B_PHASE,
     g9g3cPhase: G9G3C_PHASE,
@@ -122,6 +125,7 @@ export async function resolveGosakiScheduleSiteSlugEditBinding(): Promise<SiteSl
     g9g3dSaveEnabled: g9g3dConfig.saveEnabled && hostGate.hostGatePassed,
     g9g3dArmFailureReason: g9g3dConfig.armFailureReason,
     g9g3dArmEnv: SCHEDULE_G9G3D_GENERAL_EDIT_NON_DRY_RUN_ARMED_ENV,
+    g9g3dPocExecuted: G9G3D_GENERAL_EDIT_POC_EXECUTED,
     legacyPoCUiVisible: g9g3dConfig.legacyPoCUiVisible,
     g9g3aSaveUiHidden: false,
     siteSlug,
@@ -192,13 +196,15 @@ export async function resolveGosakiScheduleSiteSlugEditBinding(): Promise<SiteSl
     ? "host gate passed"
     : "host gate failed — Save blocked";
 
-  const armNote = g9g3dConfig.armed
-    ? "G-9g3d general edit armed — Save gated"
-    : g9g3cConfig.armed
-      ? "G-9g3c armed — Save gated"
-      : g9g3bConfig.armed
-        ? "G-9g3b armed — Save gated"
-        : "G-9g3d not armed — dry-run preview only";
+  const armNote = g9g3dConfig.pocExecuted
+    ? "G-9g3d PoC executed — Save frozen"
+    : g9g3dConfig.armed
+      ? "G-9g3d general edit armed — Save gated"
+      : g9g3cConfig.armed
+        ? "G-9g3c armed — Save gated"
+        : g9g3bConfig.armed
+          ? "G-9g3b armed — Save gated"
+          : "G-9g3d not armed — dry-run preview only";
 
   return {
     ...base,

@@ -7,6 +7,8 @@ import { getStagingSupabaseClient } from "../staging-auth/supabase-staging-auth-
 import {
   G9G1_TARGET_LEGACY_ID,
   G9G1_TARGET_ROW_ID,
+  G9G3D_GENERAL_EDIT_POC_EXECUTED,
+  G9G3D_POC_EXECUTED_ARM_FAILURE,
   STAGING_SHELL_GOSAKI_SCHEDULE_SITE_SLUG,
 } from "../staging-data/staging-schedule-site-slug-config";
 import { getG9G3dGeneralEditPocConfig } from "../staging-data/staging-schedule-site-slug-general-edit-poc-config";
@@ -86,6 +88,21 @@ export async function executeG9G3dGeneralEditNonDryRunSave(options: {
   const config = getG9G3dGeneralEditPocConfig();
   const lockConfig = getScheduleOptimisticLockConfig();
   const lockEnabled = lockConfig.enabled;
+
+  if (G9G3D_GENERAL_EDIT_POC_EXECUTED) {
+    return {
+      preCheck: {
+        ok: false,
+        abortReason: G9G3D_POC_EXECUTED_ARM_FAILURE,
+        warnings: [],
+      },
+      optimisticLockEnabled: lockEnabled,
+      expectedBeforeUpdatedAt: null,
+      warnings: [],
+      errorCode: "poc_executed",
+      errorMessage: G9G3D_POC_EXECUTED_ARM_FAILURE,
+    };
+  }
 
   if (!config.saveEnabled) {
     return {

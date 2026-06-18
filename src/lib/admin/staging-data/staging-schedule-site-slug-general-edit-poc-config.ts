@@ -15,6 +15,8 @@ import { G9G3D_SCHEDULE_GENERAL_EDIT_NON_DRY_RUN_POC_APPROVAL_ID } from "../stag
 import {
   G9G1_TARGET_LEGACY_ID,
   G9G1_TARGET_ROW_ID,
+  G9G3D_GENERAL_EDIT_POC_EXECUTED,
+  G9G3D_POC_EXECUTED_ARM_FAILURE,
   G9G3D_PHASE,
   SCHEDULE_G9G2_TITLE_NON_DRY_RUN_ARMED_ENV,
   SCHEDULE_G9G3B_VENUE_DESCRIPTION_NON_DRY_RUN_ARMED_ENV,
@@ -35,6 +37,7 @@ export interface G9G3dGeneralEditPocConfig {
   saveEnabled: boolean;
   armFailureReason?: string;
   legacyPoCUiVisible: boolean;
+  pocExecuted: boolean;
   dev: boolean;
   stagingShellEnabled: boolean;
   stagingWriteFlag: boolean;
@@ -99,6 +102,7 @@ export function getG9G3dGeneralEditPocConfig(
     targetId: G9G1_TARGET_ROW_ID,
     legacyId: G9G1_TARGET_LEGACY_ID,
     legacyPoCUiVisible,
+    pocExecuted: G9G3D_GENERAL_EDIT_POC_EXECUTED,
     dev,
     stagingShellEnabled,
     stagingWriteFlag,
@@ -131,6 +135,8 @@ export function getG9G3dGeneralEditPocConfig(
   if (dryRun) armFailures.push("PUBLIC_ADMIN_WRITE_DRY_RUN=false");
   if (!armedFlagMatch) {
     armFailures.push(`${SCHEDULE_G9G3D_GENERAL_EDIT_NON_DRY_RUN_ARMED_ENV}=true`);
+  } else if (G9G3D_GENERAL_EDIT_POC_EXECUTED) {
+    armFailures.push(G9G3D_POC_EXECUTED_ARM_FAILURE);
   }
   if (g6g1Armed) armFailures.push(`${SCHEDULE_G6G1_TITLE_NON_DRY_RUN_ARMED_ENV} must be off`);
   if (g6g2Armed) armFailures.push(`${SCHEDULE_G6G2_TIME_FIELDS_NON_DRY_RUN_ARMED_ENV} must be off`);

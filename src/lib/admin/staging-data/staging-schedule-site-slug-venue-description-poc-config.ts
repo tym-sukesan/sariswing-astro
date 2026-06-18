@@ -18,6 +18,7 @@ import {
   G9G3B_DESCRIPTION_POC_DEFAULT,
   G9G3B_PHASE,
   G9G3B_VENUE_POC_DEFAULT,
+  G9G3_SLICE_POC_EXECUTED_ARM_FAILURE,
   SCHEDULE_G9G2_TITLE_NON_DRY_RUN_ARMED_ENV,
   SCHEDULE_G9G3B_VENUE_DESCRIPTION_NON_DRY_RUN_ARMED_ENV,
   SCHEDULE_G9G3C_TIME_PRICE_NON_DRY_RUN_ARMED_ENV,
@@ -128,7 +129,7 @@ export function getG9G3bVenueDescriptionPocConfig(
   if (!armedFlagMatch) {
     armFailures.push(`${SCHEDULE_G9G3B_VENUE_DESCRIPTION_NON_DRY_RUN_ARMED_ENV}=true`);
   } else {
-    armFailures.push("Slice PoC executed — do not re-run; use G-9g3d general edit");
+    armFailures.push(G9G3_SLICE_POC_EXECUTED_ARM_FAILURE);
   }
   if (g6g1Armed) armFailures.push(`${SCHEDULE_G6G1_TITLE_NON_DRY_RUN_ARMED_ENV} must be off`);
   if (g6g2Armed) armFailures.push(`${SCHEDULE_G6G2_TIME_FIELDS_NON_DRY_RUN_ARMED_ENV} must be off`);

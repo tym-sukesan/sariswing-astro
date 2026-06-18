@@ -1898,6 +1898,63 @@ assert(
   g9g3d3PreflightSrc.includes("readyForG9g3d4GeneralEditNonDryRunExecution: true"),
 );
 
+// --- G-9g3d4 general edit non-dry-run execution result ---
+const g9g3d4ExecutionDocPath = path.join(
+  TOOL_ROOT,
+  "docs/staging-shell-schedule-site-slug-general-edit-non-dry-run-execution-result.md",
+);
+
+assert("G-9g3d4 execution result doc exists", fs.existsSync(g9g3d4ExecutionDocPath));
+
+const g9g3d4ExecutionSrc = fs.readFileSync(g9g3d4ExecutionDocPath, "utf8");
+
+assert(
+  "G-9g3d4 execution actualWrite true",
+  g9g3d4ExecutionSrc.includes("actualWrite: true"),
+);
+assert(
+  "G-9g3d4 execution changedFields price only",
+  g9g3d4ExecutionSrc.includes("changedFields") &&
+    g9g3d4ExecutionSrc.includes("price") &&
+    g9g3d4ExecutionSrc.includes("only"),
+);
+assert(
+  "G-9g3d4 execution payload price only",
+  g9g3d4ExecutionSrc.includes('"price": "[CMS Kit staging] G-9g3d general edit price PoC"'),
+);
+assert(
+  "G-9g3d4 execution updated_at after Save",
+  g9g3d4ExecutionSrc.includes("2026-06-18T01:04:51.312817+00:00"),
+);
+assert(
+  "G-9g3d4 execution operator manual Save",
+  g9g3d4ExecutionSrc.includes("operator manual") &&
+    g9g3d4ExecutionSrc.includes("exactly once"),
+);
+assert(
+  "G-9g3d4 execution cursor did not click Save",
+  g9g3d4ExecutionSrc.includes("cursorClickedSave: false") ||
+    g9g3d4ExecutionSrc.includes("Cursor did **not** click Save"),
+);
+assert(
+  "G-9g3d4 execution rollbackNeeded false",
+  g9g3d4ExecutionSrc.includes("rollbackNeeded: false"),
+);
+assert(
+  "G-9g3d4 execution succeeded gate",
+  g9g3d4ExecutionSrc.includes("stagingShellScheduleGeneralEditPocExecutionSucceeded: true"),
+);
+assert(
+  "G-9g3d4 routine dev safety restored",
+  g9g3d4ExecutionSrc.includes("Routine dev after execution") &&
+    g9g3d4ExecutionSrc.includes("ENABLE_ADMIN_STAGING_WRITE: false") &&
+    g9g3d4ExecutionSrc.includes("PUBLIC_ADMIN_WRITE_DRY_RUN: true"),
+);
+assert(
+  "G-9g3d4 next phase proposed",
+  g9g3d4ExecutionSrc.includes("G-9g3e-general-edit-post-execution-hardening-planning"),
+);
+
 const gosakiPublicDist = path.join(TOOL_ROOT, "output/static-public/gosaki-piano/public-dist");
 for (const ym of ["2026-06", "2026-07"]) {
   const canonicalMonthPath = path.join(gosakiPublicDist, "schedule", ym, "index.html");

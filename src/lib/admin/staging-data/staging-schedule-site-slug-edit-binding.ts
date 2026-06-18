@@ -30,6 +30,7 @@ import {
   G9G3D_PHASE,
   G9G3F3A_PHASE,
   G9G3F3B_PHASE,
+  G9G3F3C_PHASE,
   SCHEDULE_G9G3B_VENUE_DESCRIPTION_NON_DRY_RUN_ARMED_ENV,
   SCHEDULE_G9G3C_TIME_PRICE_NON_DRY_RUN_ARMED_ENV,
   SCHEDULE_G9G3D_GENERAL_EDIT_NON_DRY_RUN_ARMED_ENV,
@@ -98,7 +99,7 @@ export async function resolveGosakiScheduleSiteSlugEditBinding(): Promise<SiteSl
   const hostGate = evaluateSupabaseHostGate(dataConfig.supabaseUrl);
 
   const base = {
-    phase: G9G3F3B_PHASE,
+    phase: G9G3F3C_PHASE,
     g9g3aPhase: G9G3A_PHASE,
     g9g3bPhase: G9G3B_PHASE,
     g9g3cPhase: G9G3C_PHASE,
@@ -180,7 +181,7 @@ export async function resolveGosakiScheduleSiteSlugEditBinding(): Promise<SiteSl
 
   const armNote = g9g3dConfig.pocExecuted
     ? "G-9g3d PoC executed — Save frozen"
-    : "Picker-driven binding — select a row; Preview dry-run on selected row (G-9g3f3b); Save not implemented";
+    : "Picker-driven binding — select a row; Preview dry-run on selected row (G-9g3f3c hardened); Save not implemented";
 
   return {
     ...base,

@@ -21,15 +21,17 @@ Staging Shell
 将来的な顧客オンボーディング・課金・デプロイ自動化
 
 2. Current phase
-現在フェーズ: G-9g3f3b-row-picker-general-edit-binding-smoke-test — **完了 / passed**
+現在フェーズ: G-9g3f3c-row-picker-general-edit-binding-hardening — **完了**
 
-次フェーズ: **G-9g3f3c-row-picker-general-edit-binding-hardening**
+次フェーズ: **G-9g3f3d-row-picker-general-edit-binding-hardening-smoke-test**
 
-Git: 最新 push 済み commit `1ec29eb`（G-9g3f3a implementation）。G-9g3f3b smoke **uncommitted**。
+Git: 最新 push 済み commit `8d277d8`（G-9g3f3b smoke）。G-9g3f3c hardening **uncommitted**。
 
-G-9g3f3a: **committed at `1ec29eb`**。
+G-9g3f3b: row picker hydrate + G-9 changed-fields-only Preview **passed**（commit `8d277d8`）。
 
-G-9g3f3b: row picker hydrate + G-9 changed-fields-only Preview **passed**（manual re-smoke）。`changedFields=price` only、`optimisticLock.stale=false`、`hostGatePassed=true`、`actualWrite=false`。初回は legacy G-6-e2 誤パネル（false-path 記録）。**Do not re-run G-9g2 / G-9g3b / G-9g3c / G-9g3d Save.**
+G-9g3f3c: dirty row-switch confirm + preview stale invalidation + selected row identity strip **implemented**。**Do not re-run G-9g2 / G-9g3b / G-9g3c / G-9g3d Save.**
+
+G-9g3f3a: **committed at `1ec29eb`**（binding implementation; superseded by `8d277d8` for smoke）。
 
 G-9g3f3: binding planning 完了（commit `bf27151`）。
 
@@ -528,23 +530,24 @@ PUBLIC_SUPABASE_URL host: kmjqppxjdnwwrtaeqjta.supabase.co (staging)
 **Note:** `tools/static-to-astro/.env.local` に `SUPABASE_SERVICE_ROLE_KEY` が local only（gitignored）で存在する場合がある。G-9g3b execution では使用禁止・参照禁止。anon key + authenticated session のみ。
 
 10. Recommended next phase
-次フェーズ推奨: **G-9g3f3c-row-picker-general-edit-binding-hardening**
+次フェーズ推奨: **G-9g3f3d-row-picker-general-edit-binding-hardening-smoke-test**
 
-G-9g3f3b smoke: **passed**（uncommitted）。operator re-smoke: `#site-slug-edit-dry-run-preview-btn` → `#site-slug-edit-dry-run-result`。
+G-9g3f3c hardening: **implemented**（uncommitted）。dirty switch / preview stale / identity strip。
 
-G-9g3f3a implementation: **完了**（committed `1ec29eb`）。
+G-9g3f3b smoke: **passed**（commit `8d277d8`）。
 
 Phase sequence:
 ```txt
 G-9g3f3a-binding-implementation ← complete (1ec29eb)
-G-9g3f3b-binding-smoke ← complete (passed, uncommitted)
-G-9g3f3c-binding-hardening ← next
+G-9g3f3b-binding-smoke ← complete (8d277d8)
+G-9g3f3c-binding-hardening ← complete (uncommitted)
+G-9g3f3d-binding-hardening-smoke ← next
 ```
 
-G-9g3f3b gates:
+G-9g3f3c gates:
 ```txt
-stagingShellScheduleSiteSlugRowPickerGeneralEditBindingSmokeTestPassed: true
-readyForG9g3f3cRowPickerGeneralEditBindingHardening: true
+stagingShellScheduleSiteSlugRowPickerGeneralEditBindingHardeningComplete: true
+readyForG9g3f3dRowPickerGeneralEditBindingHardeningSmokeTest: true
 readyForAnyDbWrite: false
 ```
 

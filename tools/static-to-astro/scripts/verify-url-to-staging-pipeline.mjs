@@ -2594,6 +2594,61 @@ assert(
     !g9g3f3aEditSectionSrc.includes("execution deferred to G-9g3f3b"),
 );
 
+const g9g3f3cHardeningDocPath = path.join(
+  TOOL_ROOT,
+  "docs/staging-shell-schedule-site-slug-row-picker-general-edit-binding-hardening.md",
+);
+const g9g3f3cPickerBindingSrc = fs.readFileSync(
+  path.join(REPO_ROOT, "src/lib/admin/staging-data/staging-schedule-site-slug-edit-picker-binding.ts"),
+  "utf8",
+);
+const g9g3f3cEditUiSrc = fs.readFileSync(
+  path.join(REPO_ROOT, "src/lib/admin/staging-data/staging-schedule-site-slug-edit-ui.ts"),
+  "utf8",
+);
+const g9g3f3cRowPickerUiSrc = fs.readFileSync(
+  path.join(REPO_ROOT, "src/lib/admin/staging-data/staging-schedule-site-slug-row-picker-ui.ts"),
+  "utf8",
+);
+
+assert("G-9g3f3c hardening doc exists", fs.existsSync(g9g3f3cHardeningDocPath));
+const g9g3f3cHardeningDocSrc = fs.readFileSync(g9g3f3cHardeningDocPath, "utf8");
+
+assert(
+  "G-9g3f3c hardening completed",
+  g9g3f3cHardeningDocSrc.includes("G-9g3f3c hardening completed"),
+);
+assert(
+  "G-9g3f3c hardening gate true",
+  g9g3f3cHardeningDocSrc.includes(
+    "stagingShellScheduleSiteSlugRowPickerGeneralEditBindingHardeningComplete: true",
+  ),
+);
+assert(
+  "G-9g3f3c dirty row-switch protection",
+  g9g3f3cPickerBindingSrc.includes("confirmDiscardDirtyCandidateIfNeeded") &&
+    g9g3f3cRowPickerUiSrc.includes("confirmDiscardDirtyCandidateIfNeeded"),
+);
+assert(
+  "G-9g3f3c preview stale invalidation",
+  g9g3f3cEditUiSrc.includes("markG9PreviewStale") &&
+    g9g3f3cHardeningDocSrc.includes("Preview is stale — run G-9 preview again"),
+);
+assert(
+  "G-9g3f3c selected row identity",
+  g9g3f3cPickerBindingSrc.includes("site-slug-edit-bound-source-route") &&
+    g9g3f3aEditSectionSrc.includes("data-selected-row-identity-panel"),
+);
+assert(
+  "G-9g3f3c ready for G-9g3f3d",
+  g9g3f3cHardeningDocSrc.includes("readyForG9g3f3dRowPickerGeneralEditBindingHardeningSmokeTest: true"),
+);
+assert(
+  "G-9g3f3c Save not executed",
+  g9g3f3cHardeningDocSrc.includes("Save not clicked") &&
+    g9g3f3cHardeningDocSrc.includes("DB write not executed"),
+);
+
 const gosakiPublicDist = path.join(TOOL_ROOT, "output/static-public/gosaki-piano/public-dist");
 for (const ym of ["2026-06", "2026-07"]) {
   const canonicalMonthPath = path.join(gosakiPublicDist, "schedule", ym, "index.html");

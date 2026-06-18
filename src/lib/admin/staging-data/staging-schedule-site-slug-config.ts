@@ -72,6 +72,17 @@ export const G9G3F3A_PHASE =
 export const G9G3F3B_PHASE =
   "G-9g3f3b-staging-shell-schedule-site-slug-row-picker-general-edit-binding-smoke-test";
 
+export const G9G3F3C_PHASE =
+  "G-9g3f3c-staging-shell-schedule-site-slug-row-picker-general-edit-binding-hardening";
+
+/** Row switch confirm when general edit has unsaved candidate values (G-9g3f3c). */
+export const G9G3F3C_ROW_SWITCH_UNSAVED_CONFIRM_MSG =
+  "You have unsaved candidate edits. Switching rows will discard the current candidate values. Continue?";
+
+/** Preview result invalidated — operator must re-run G-9 preview (G-9g3f3c). */
+export const G9G3F3C_PREVIEW_STALE_MSG =
+  "Preview is stale — run G-9 preview again";
+
 /** G-9g3f3b smoke — price-only dry-run candidate on picker-selected row. */
 export const G9G3F3B_SMOKE_PRICE_CANDIDATE =
   "[CMS Kit staging] G-9g3f3b row-picker binding smoke price candidate";

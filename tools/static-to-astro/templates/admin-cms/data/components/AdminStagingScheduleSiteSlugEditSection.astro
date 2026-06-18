@@ -62,7 +62,7 @@ const hostAlertClass = binding.isKnownProductionHost
   aria-label="Gosaki site_slug schedule edit"
 >
   <h2 class="admin-staging-schedule-site-slug-edit__title">
-    Schedule site_slug general edit (G-9g3f3b)
+    Schedule site_slug general edit (G-9g3f3c)
   </h2>
 
   <p class="admin-staging-schedule-site-slug-edit__staging-banner" role="note">
@@ -71,8 +71,9 @@ const hostAlertClass = binding.isKnownProductionHost
   </p>
 
   <p class="admin-staging-schedule-site-slug-edit__binding-phase" role="note">
-    <strong>Row picker → general edit binding smoke (G-9g3f3b)</strong> — select a row in the picker;
-    then use the <strong>G-9 Preview</strong> button below (not legacy G-6 dry-run panels).
+    <strong>Row picker → general edit binding hardening (G-9g3f3c)</strong> — dirty row-switch confirm,
+    preview stale invalidation, selected row identity strip. Use <strong>G-9 Preview</strong> only
+    (<code>#site-slug-edit-dry-run-preview-btn</code> → <code>#site-slug-edit-dry-run-result</code>).
     Operational Save not implemented.
   </p>
 
@@ -128,7 +129,8 @@ const hostAlertClass = binding.isKnownProductionHost
     role="note"
     hidden
   >
-    Unsaved candidate changes — use Reset candidates or re-run Preview in G-9g3f3b before Save.
+    Unsaved candidate changes — switching rows will discard candidates. Use Reset candidates or re-run
+    G-9 preview before Save (Save not operational).
   </p>
 
   <p
@@ -238,8 +240,12 @@ const hostAlertClass = binding.isKnownProductionHost
     </div>
   </dl>
 
-  <AdminCard title="Selected row (picker binding)" description="G-9g3f3a — id + legacy_id + site_slug + updated_at from picker selection">
-    <div id="site-slug-edit-selected-row-strip" class="admin-staging-schedule-site-slug-edit__selected-strip" />
+  <AdminCard title="Selected row (picker binding)" description="G-9g3f3c — id, legacy_id, site_slug, updated_at, source_route, title">
+    <div
+      id="site-slug-edit-selected-row-strip"
+      class="admin-staging-schedule-site-slug-edit__selected-strip"
+      data-selected-row-identity-panel="true"
+    />
     <p id="site-slug-edit-reload-status" class="admin-staging-schedule-site-slug-edit__reload-status" role="status" />
     <div class="admin-staging-schedule-site-slug-edit__picker-actions">
       <button id="site-slug-edit-reset-candidates-btn" class="admin-button" type="button" disabled={candidateDisabled}>
@@ -399,7 +405,7 @@ const hostAlertClass = binding.isKnownProductionHost
         </p>
       ) : (
         <p id="site-slug-edit-g9g3a-hint" class="admin-staging-schedule-site-slug-edit__hint" role="status">
-          G-9g3f3b — binding smoke. Save not available. Use G-9 Preview button above.
+          G-9g3f3c — binding hardened. Save not available. Use G-9 Preview button above.
         </p>
       )
     }
@@ -847,6 +853,16 @@ const hostAlertClass = binding.isKnownProductionHost
     margin: 0;
     color: #64748b;
     font-size: 0.875rem;
+  }
+
+  .site-slug-edit-dry-run-result--stale .site-slug-edit-dry-run-result__meta,
+  .site-slug-edit-dry-run-result--stale .site-slug-edit-dry-run-result__block,
+  .site-slug-edit-dry-run-result--stale .site-slug-edit-dry-run-result__chips {
+    opacity: 0.55;
+  }
+
+  .site-slug-edit-dry-run-result__preview-stale {
+    margin: 0 0 0.75rem;
   }
 
   .site-slug-edit-dry-run-result__message {

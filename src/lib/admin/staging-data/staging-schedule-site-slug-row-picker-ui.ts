@@ -12,6 +12,9 @@ import {
   dispatchRowReloaded,
   dispatchRowSelected,
 } from "./staging-schedule-site-slug-row-picker-events";
+import {
+  confirmDiscardDirtyCandidateIfNeeded,
+} from "./staging-schedule-site-slug-edit-picker-binding";
 import { isPocAuditScheduleRow } from "./staging-schedule-site-slug-row-picker-utils";
 
 const SCHEDULE_ROW_PICKER_SELECT =
@@ -200,6 +203,9 @@ function selectRowById(rowId: string): void {
       status.textContent =
         "PoC audit row — not selectable for edit. See PoC audit rows panel.";
     }
+    return;
+  }
+  if (!confirmDiscardDirtyCandidateIfNeeded(rowId)) {
     return;
   }
   selectedRow = row;

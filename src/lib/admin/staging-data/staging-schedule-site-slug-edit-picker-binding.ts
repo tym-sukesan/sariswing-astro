@@ -17,6 +17,8 @@ import {
 } from "./staging-schedule-site-slug-row-picker-events";
 import { isPocAuditScheduleRow } from "./staging-schedule-site-slug-row-picker-utils";
 import {
+  G9G3F3C_PREVIEW_STALE_MSG,
+  G9G3F3C_ROW_SWITCH_UNSAVED_CONFIRM_MSG,
   SITE_SLUG_EDIT_SAFE_FIELDS,
   STAGING_SHELL_GOSAKI_SCHEDULE_SITE_SLUG,
 } from "./staging-schedule-site-slug-config";
@@ -45,6 +47,7 @@ const LOADED_VALUE_IDS: Record<(typeof SITE_SLUG_EDIT_SAFE_FIELDS)[number], stri
 
 export interface PickerEditBindingHooks {
   invalidateDryRunPreview: () => void;
+  markG9PreviewStale: (reason?: string) => void;
   refreshSaveButtonStates: () => void;
   refreshSaveGatePanel: () => void;
   refreshPreviewButtonState: () => void;
@@ -89,6 +92,19 @@ function isDirtyCandidate(): boolean {
   return false;
 }
 
+/** G-9g3f3c — row picker calls before changing selection when edit form may have dirty candidates. */
+export function confirmDiscardDirtyCandidateIfNeeded(nextRowId: string): boolean {
+  if (!isPickerDrivenBinding()) return true;
+  if (!loadedBaseline) return true;
+  if (loadedBaseline.id === nextRowId) return true;
+  if (!isDirtyCandidate()) return true;
+  return window.confirm(G9G3F3C_ROW_SWITCH_UNSAVED_CONFIRM_MSG);
+}
+
+export function hasUnsavedCandidateEdits(): boolean {
+  return isDirtyCandidate();
+}
+
 function setCandidateInputsEnabled(enabled: boolean): void {
   for (const field of SITE_SLUG_EDIT_SAFE_FIELDS) {
     const el = document.getElementById(SAFE_FIELD_INPUT_IDS[field]);
@@ -129,12 +145,12 @@ function updateSelectedRowStrip(row: ScheduleRecord | null): void {
   }
 
   strip.innerHTML = `
-    <dl class="admin-staging-schedule-site-slug-edit__selected-dl">
+    <dl class="admin-staging-schedule-site-slug-edit__selected-dl" data-selected-row-identity="true">
       <div><dt>id</dt><dd><code id="site-slug-edit-bound-id">${escapeHtml(row.id)}</code></dd></div>
       <div><dt>legacy_id</dt><dd><code id="site-slug-edit-bound-legacy-id">${escapeHtml(row.legacy_id ?? "—")}</code></dd></div>
       <div><dt>site_slug</dt><dd><code id="site-slug-edit-bound-site-slug">${escapeHtml(row.site_slug ?? "—")}</code></dd></div>
       <div><dt>updated_at</dt><dd><code id="site-slug-edit-baseline-updated-at">${escapeHtml(row.updated_at ?? "—")}</code></dd></div>
-      <div><dt>date</dt><dd id="site-slug-edit-bound-date">${escapeHtml(row.date)}</dd></div>
+      <div><dt>source_route</dt><dd><code id="site-slug-edit-bound-source-route">${escapeHtml(row.source_route ?? "—")}</code></dd></div>
       <div><dt>title</dt><dd id="site-slug-edit-bound-title">${escapeHtml(row.title ?? "—")}</dd></div>
     </dl>
   `;
@@ -189,7 +205,7 @@ function hydrateFromRow(row: ScheduleRecord): void {
 
   hooks?.invalidateDryRunPreview();
   hooks?.clearDryRunResultPlaceholder(
-    "Row bound from picker — change fields and run Preview dry-run (G-9g3f3b smoke).",
+    "Row bound from picker — change fields and run Preview G-9 site_slug general edit dry-run.",
   );
   hooks?.refreshPreviewButtonState();
   hooks?.refreshSaveButtonStates();
@@ -241,15 +257,6 @@ function onRowSelected(event: Event): void {
     return;
   }
 
-  if (
-    loadedBaseline &&
-    loadedBaseline.id !== row.id &&
-    isDirtyCandidate() &&
-    !window.confirm("Discard unsaved candidate changes and switch to the selected row?")
-  ) {
-    return;
-  }
-
   hydrateFromRow(row);
 }
 
@@ -283,12 +290,9 @@ function onRowReloaded(event: Event): void {
   hydrateFromRow(row);
 
   if (updatedAtChanged) {
-    hooks?.invalidateDryRunPreview();
     hooks?.clearDryRunResultPlaceholder(
-      "Row reloaded — updated_at changed. Preview session invalidated (stale). Re-run Preview in G-9g3f3b.",
+      `${G9G3F3C_PREVIEW_STALE_MSG} (updated_at changed on reload).`,
     );
-    const staleBanner = document.getElementById("site-slug-edit-stale-lock-banner");
-    if (staleBanner) staleBanner.hidden = false;
   }
 }
 
@@ -352,10 +356,11 @@ async function reloadFromDb(): Promise<void> {
     hydrateFromRow(row);
 
     if (updatedAtChanged) {
-      const staleBanner = document.getElementById("site-slug-edit-stale-lock-banner");
-      if (staleBanner) staleBanner.hidden = false;
+      hooks?.clearDryRunResultPlaceholder(
+        `${G9G3F3C_PREVIEW_STALE_MSG} (updated_at changed on DB reload).`,
+      );
       if (status) {
-        status.textContent = `Reloaded — updated_at changed (${previousUpdatedAt} → ${row.updated_at ?? "—"}). Preview invalidated.`;
+        status.textContent = `Reloaded — updated_at changed (${previousUpdatedAt} → ${row.updated_at ?? "—"}). ${G9G3F3C_PREVIEW_STALE_MSG}`;
       }
     } else if (status) {
       status.textContent = `Reloaded from DB. updated_at=${row.updated_at ?? "—"}`;
@@ -379,7 +384,7 @@ function bindPickerEditControls(): void {
     document.getElementById(SAFE_FIELD_INPUT_IDS[field])?.addEventListener("input", () => {
       if (!loadedBaseline) return;
       setDirtyWarning(isDirtyCandidate());
-      hooks?.invalidateDryRunPreview();
+      hooks?.markG9PreviewStale(G9G3F3C_PREVIEW_STALE_MSG);
     });
   }
 }

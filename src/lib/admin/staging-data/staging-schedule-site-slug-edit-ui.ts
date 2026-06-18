@@ -34,6 +34,8 @@ import {
   G9G3D_POC_EXECUTED_ARM_FAILURE,
   G9G3D_PHASE,
   G9G3F3B_PHASE,
+  G9G3F3C_PHASE,
+  G9G3F3C_PREVIEW_STALE_MSG,
   G9G3_SLICE_POC_EXECUTED_ARM_FAILURE,
   SITE_SLUG_EDIT_SAFE_FIELDS,
   STAGING_SHELL_GOSAKI_SCHEDULE_SITE_SLUG,
@@ -286,6 +288,41 @@ function buildPayloadPreview(
   return payload;
 }
 
+function clearG9PreviewStaleVisual(): void {
+  const el = document.getElementById("site-slug-edit-dry-run-result");
+  if (!el) return;
+  el.classList.remove("site-slug-edit-dry-run-result--stale");
+  el.querySelector(".site-slug-edit-dry-run-result__preview-stale")?.remove();
+}
+
+function markG9PreviewStale(reason?: string): void {
+  invalidateDryRunPreview();
+  const el = document.getElementById("site-slug-edit-dry-run-result");
+  if (!el) return;
+
+  const message = reason?.trim() ? reason : G9G3F3C_PREVIEW_STALE_MSG;
+  const hasResult = el.querySelector(".site-slug-edit-dry-run-result__meta");
+
+  if (hasResult) {
+    el.classList.add("site-slug-edit-dry-run-result--stale");
+    let banner = el.querySelector(
+      ".site-slug-edit-dry-run-result__preview-stale",
+    ) as HTMLElement | null;
+    if (!banner) {
+      banner = document.createElement("p");
+      banner.className =
+        "site-slug-edit-dry-run-result__preview-stale site-slug-edit-dry-run-result__stale";
+      banner.setAttribute("role", "alert");
+      el.prepend(banner);
+    }
+    banner.innerHTML = `<strong>${escapeHtml(G9G3F3C_PREVIEW_STALE_MSG)}</strong>${message !== G9G3F3C_PREVIEW_STALE_MSG ? ` — ${escapeHtml(message)}` : ""}`;
+  } else {
+    el.innerHTML = `<p class="site-slug-edit-dry-run-result__placeholder site-slug-edit-dry-run-result__stale" role="status">${escapeHtml(message)}</p>`;
+  }
+
+  refreshSaveGatePanel();
+}
+
 function invalidateDryRunPreview(): void {
   g9g3bDryRunPreviewValid = false;
   lastPreviewVenue = null;
@@ -312,6 +349,8 @@ function invalidateDryRunPreview(): void {
 function renderDryRunResult(result: SiteSlugScheduleEditDryRunResult): void {
   const el = document.getElementById("site-slug-edit-dry-run-result");
   if (!el) return;
+
+  clearG9PreviewStaleVisual();
 
   const hostFailBanner = !result.hostGate.hostGatePassed
     ? `<p class="site-slug-edit-dry-run-result__host-fail" role="alert"><strong>Host gate failed.</strong> ${escapeHtml(result.hostGate.warningMessage ?? "Save path blocked.")}</p>`
@@ -418,9 +457,13 @@ function refreshSaveGatePanel(): void {
   if (isPickerDrivenBinding()) {
     lines.push(
       hasPickerBoundRow()
-        ? "Preview: dry-run on selected row (G-9g3f3b smoke)"
+        ? "Preview: dry-run on selected row (G-9g3f3c hardened)"
         : "Preview: select a row first",
     );
+    const resultEl = document.getElementById("site-slug-edit-dry-run-result");
+    if (resultEl?.classList.contains("site-slug-edit-dry-run-result--stale")) {
+      lines.push(`Preview: ${G9G3F3C_PREVIEW_STALE_MSG}`);
+    }
   }
 
   if (lastPreviewG9g3dStale) {
@@ -817,7 +860,7 @@ async function onPreviewClick(): Promise<void> {
   };
 
   const previewPhase = pickerMode
-    ? G9G3F3B_PHASE
+    ? G9G3F3C_PHASE
     : isG9g3dArmed()
       ? G9G3D_PHASE
       : G9G3A_PHASE;
@@ -1161,6 +1204,7 @@ function initSiteSlugEditUi(): void {
 
   initPickerEditBinding({
     invalidateDryRunPreview,
+    markG9PreviewStale,
     refreshSaveButtonStates: () => {
       refreshG9G3bSaveButtonState();
       refreshG9G3cSaveButtonState();
@@ -1169,6 +1213,7 @@ function initSiteSlugEditUi(): void {
     refreshSaveGatePanel,
     refreshPreviewButtonState,
     clearDryRunResultPlaceholder: (message: string) => {
+      clearG9PreviewStaleVisual();
       const el = document.getElementById("site-slug-edit-dry-run-result");
       if (el) {
         el.innerHTML = `<p class="site-slug-edit-dry-run-result__placeholder" role="status">${escapeHtml(message)}</p>`;
@@ -1196,6 +1241,10 @@ function initSiteSlugEditUi(): void {
 
   for (const field of SITE_SLUG_EDIT_SAFE_FIELDS) {
     document.getElementById(SAFE_FIELD_INPUT_IDS[field])?.addEventListener("input", () => {
+      if (isPickerDrivenBinding()) {
+        markG9PreviewStale(G9G3F3C_PREVIEW_STALE_MSG);
+        return;
+      }
       const resultEl = document.getElementById("site-slug-edit-dry-run-result");
       if (resultEl) {
         resultEl.innerHTML =

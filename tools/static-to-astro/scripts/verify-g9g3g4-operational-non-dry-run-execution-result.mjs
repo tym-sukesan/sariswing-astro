@@ -1,5 +1,5 @@
 /**
- * G-9g3g4 — Operational non-dry-run execution result (operator pending; no Save, no DB write).
+ * G-9g3g4 — Operational non-dry-run execution result (success recorded; Cursor did not click Save).
  */
 
 import fs from "node:fs";
@@ -20,6 +20,7 @@ const OPERATIONAL_APPROVAL_ID =
 const OPERATIONAL_ARM = "PUBLIC_ADMIN_SCHEDULE_G9G3G_OPERATIONAL_GENERAL_EDIT_NON_DRY_RUN_ARMED";
 const DESCRIPTION_MARKER =
   "[CMS Kit staging] G-9g3g4 operational Save test — temporary marker";
+const AFTER_UPDATED_AT = "2026-06-18T16:35:45.060011+00:00";
 const PREVIEW_BTN_ID = "site-slug-edit-dry-run-preview-btn";
 const PREVIEW_RESULT_ID = "site-slug-edit-dry-run-result";
 const SAVE_BTN_ID = "site-slug-edit-g9g3g-operational-save-btn";
@@ -51,7 +52,10 @@ assert("execution result doc exists", fs.existsSync(execDocPath));
 const execDocSrc = fs.readFileSync(execDocPath, "utf8");
 
 assert("phase G-9g3g4", execDocSrc.includes("G-9g3g4-operational-non-dry-run-execution"));
-assert("status operator pending", execDocSrc.includes("operator pending"));
+assert(
+  "execution success status",
+  execDocSrc.includes("success — execution complete") || execDocSrc.includes("Execution: PASS"),
+);
 assert("target id exists", execDocSrc.includes(TARGET_ROW_ID));
 assert("target legacy_id exists", execDocSrc.includes(TARGET_LEGACY_ID));
 assert("target site_slug exists", execDocSrc.includes(SITE_SLUG));
@@ -70,36 +74,55 @@ assert("Preview result id exists", execDocSrc.includes(PREVIEW_RESULT_ID));
 assert("Save button id exists", execDocSrc.includes(SAVE_BTN_ID));
 assert("Save result id exists", execDocSrc.includes(SAVE_RESULT_ID));
 assert(
-  "actualWrite expectation exists",
-  execDocSrc.includes("actualWrite") && execDocSrc.includes("`true`"),
+  "actualWrite true recorded",
+  execDocSrc.includes("actualWrite: true") || execDocSrc.includes("actualWrite: `true`"),
 );
 assert(
-  "rowsAffected expectation exists",
-  execDocSrc.includes("rowsAffected") && execDocSrc.includes("`1`"),
+  "rowsAffected 1 recorded",
+  execDocSrc.includes("rowsAffected: 1") || execDocSrc.includes("rowsAffected: `1`"),
 );
 assert(
   "failure stop conditions exist",
   execDocSrc.includes("Failure stop conditions") || execDocSrc.includes("Stop immediately"),
 );
 assert(
-  "Save not yet clicked marker",
-  execDocSrc.includes("Save clicked | **not yet**") ||
-    execDocSrc.includes("Save button clicked: not yet"),
+  "operator Save once marker",
+  execDocSrc.includes("Save clicked | **yes**") ||
+    execDocSrc.includes("Save button clicked: yes"),
 );
 assert(
-  "DB write not yet executed marker",
-  execDocSrc.includes("DB write executed | **not yet**") ||
-    execDocSrc.includes("DB write performed: not yet"),
+  "DB write executed marker",
+  execDocSrc.includes("DB write executed | **yes**") ||
+    execDocSrc.includes("DB write performed: yes"),
 );
 assert(
   "rollback not executed marker",
   execDocSrc.includes("Rollback SQL executed | **no**") ||
     execDocSrc.includes("rollback executed: false"),
 );
+assert(
+  "cursor did not click Save",
+  execDocSrc.includes("cursorClickedSave: false"),
+);
+assert(
+  "execution complete gate",
+  execDocSrc.includes("stagingShellScheduleSiteSlugOperationalGeneralEditNonDryRunExecutionComplete: true"),
+);
+assert(
+  "ready for g9g3g5 gate",
+  execDocSrc.includes("readyForG9g3g5PostExecutionHardening: true"),
+);
+assert("after updated_at recorded", execDocSrc.includes(AFTER_UPDATED_AT));
+assert("serviceRoleUsed false", execDocSrc.includes("serviceRoleUsed: false"));
 assert("next phase G-9g3g5 marker", execDocSrc.includes(NEXT_PHASE));
 assert("staging host", execDocSrc.includes(STAGING_HOST));
 assert("production blocked", execDocSrc.includes(PRODUCTION_HOST));
-assert("changedFields description only", execDocSrc.includes("description` only") || execDocSrc.includes("description only"));
+assert(
+  "changedFields description only",
+  execDocSrc.includes("changedFields: description only") ||
+    execDocSrc.includes('changedFields: ["description"]'),
+);
+assert("do not re-click operational Save", execDocSrc.includes("Do not re-click G-9g3g operational Save"));
 assert("legacy G-6 do not press", execDocSrc.includes("schedule-dry-run-update-btn"));
 assert("G-9g3d PoC do not press", execDocSrc.includes("g9g3d-save-btn"));
 
@@ -116,14 +139,17 @@ assert("UI Preview button id", sectionSrc.includes(PREVIEW_BTN_ID));
 assert("UI Save button id", sectionSrc.includes(SAVE_BTN_ID));
 
 const currentStateSrc = readRepo("tools/static-to-astro/docs/ai/00-current-state.md");
-assert("current state G-9g3g4", currentStateSrc.includes("G-9g3g4"));
-assert("current state commit 43c7aa7", currentStateSrc.includes("43c7aa7"));
+assert("current state G-9g3g4 success", currentStateSrc.includes("G-9g3g4"));
+assert(
+  "current state execution complete",
+  currentStateSrc.includes("execution complete") || currentStateSrc.includes("success"),
+);
 
 const nextActionsSrc = readRepo("tools/static-to-astro/docs/ai/03-next-actions.md");
-assert("next actions operator pending", nextActionsSrc.includes("operator pending") || nextActionsSrc.includes("G-9g3g4"));
+assert("next actions G-9g3g5", nextActionsSrc.includes("G-9g3g5"));
 
 const handoffSrc = readRepo("tools/static-to-astro/docs/ai/handoff-to-chatgpt.md");
-assert("handoff G-9g3g4", handoffSrc.includes("G-9g3g4"));
+assert("handoff G-9g3g4 success", handoffSrc.includes("G-9g3g4"));
 
 console.log(`\n${passed} passed, ${failed} failed`);
 process.exit(failed > 0 ? 1 : 0);

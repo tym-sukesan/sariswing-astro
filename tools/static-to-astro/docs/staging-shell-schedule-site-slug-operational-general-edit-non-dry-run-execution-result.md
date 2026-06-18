@@ -1,47 +1,89 @@
 # Staging shell schedule site_slug operational general edit non-dry-run execution result (G-9g3g4)
 
-**Phase:** `G-9g3g4-operational-non-dry-run-execution`  
-**Status:** **operator pending**  
-**Date:** 2026-06-18  
-**Prior:** G-9g3g3 preflight — commit `43c7aa7`  
-**Type:** execution runbook + result doc (pending) — **Save / Preview by Cursor forbidden; DB write not yet executed**
+**Phase:** `G-9g3g4-operational-non-dry-run-execution`
+**Status:** **success — execution complete**
+**Date:** 2026-06-18
+**Prior:** G-9g3g4 runbook — commit `586a1de`
+**Type:** operator manual non-dry-run Save — **one UPDATE on staging `public.schedules`**
 
 | Check | Status |
 | --- | --- |
-| Save clicked | **not yet** |
+| Save clicked | **yes** (operator manual, exactly once) |
 | Preview clicked (Cursor/AI) | **no** |
-| DB write executed | **not yet** |
-| SQL mutation executed | **no** |
+| DB write executed | **yes** (one row, description only) |
+| SQL mutation executed (Cursor/AI) | **no** |
 | Rollback SQL executed | **no** |
 | service_role used | **no** |
 
-Cursor / AI / Playwright / Chromium must **not** click Save or Preview.  
-Operator performs all UI steps manually.
+Cursor did **not** click Save or Preview.
+Operator performed Preview + Save manually.
 
-Prior docs:
-
-- [staging-shell-schedule-site-slug-operational-general-edit-non-dry-run-preflight.md](./staging-shell-schedule-site-slug-operational-general-edit-non-dry-run-preflight.md)
-- [staging-shell-schedule-site-slug-operational-general-edit-implementation.md](./staging-shell-schedule-site-slug-operational-general-edit-implementation.md)
-- [staging-shell-schedule-site-slug-operational-general-edit-ui-gate-smoke-test-result.md](./staging-shell-schedule-site-slug-operational-general-edit-ui-gate-smoke-test-result.md)
-
-**Do not re-run G-9g2 / G-9g3b / G-9g3c / G-9g3d PoC Save.**
+**Do not re-click G-9g3g operational Save.** **Do not re-run G-9g2 / G-9g3b / G-9g3c / G-9g3d PoC Save.**
 
 ---
 
-## Gates (pending)
+## Gates
 
 ```txt
-stagingShellScheduleSiteSlugOperationalGeneralEditNonDryRunExecutionComplete: false
-readyForG9g3g5PostExecutionHardening: false
+stagingShellScheduleSiteSlugOperationalGeneralEditNonDryRunExecutionComplete: true
+readyForG9g3g5PostExecutionHardening: true
 readyForAnyDbWrite: false
 cursorClickedSave: false
 cursorClickedPreview: false
 rollbackSqlExecuted: false
+rollbackNeeded: false
 ```
 
 ---
 
-## 1. Execution context
+## 2. Summary (operator-confirmed)
+
+```txt
+Execution: PASS
+Supabase project: static-to-astro-cms-staging
+Active host: kmjqppxjdnwwrtaeqjta.supabase.co
+G-9g3g ARMED: true
+Preview dry-run: PASS (operator manual)
+Save button clicked: yes (operator manual, exactly once)
+DB write performed: yes (one UPDATE on public.schedules)
+site_slug scoped: gosaki-piano
+changedFields: ["description"] only
+optimistic lock: PASS (expectedBeforeUpdatedAt matched; stale=false at preview)
+description changed: yes (G-9g3g4 marker appended)
+title / venue / open_time / start_time / price unchanged: yes
+service_role used: false
+production touched: false
+/admin touched: false
+FTP / workflow_dispatch: not executed
+rollback needed: false
+rollback executed: false
+```
+
+### Auth context
+
+```txt
+authStatus: signed-in
+authEmail: ysktoyamax@gmail.com
+mockRole: denied
+note: local mock role denied, but Supabase Auth + RLS/admin_users verification proceeded
+```
+
+### Safety flags
+
+```json
+{
+  "stagingOnly": true,
+  "productionBlocked": true,
+  "serviceRoleUsed": false,
+  "scheduleMonthsTouched": false,
+  "deleteEnabled": false,
+  "publishTriggered": false
+}
+```
+
+---
+
+## 3. Execution context
 
 ```txt
 Route:     /__admin-staging-shell/musician-basic/#schedule
@@ -62,11 +104,16 @@ changedFields: description only
 id:         888c58f2-f152-4563-a3cf-a20d7c2456c1
 legacy_id:  schedule-2026-03-001
 site_slug:  gosaki-piano
+date:       2026-03-01
 title:      <ごちまきトリオ>
 venue:      銀座 N
 open_time:  13:30
 start_time: 14:00
 price:      3,500円
+source_route: /schedule/2026-03/
+published:  true
+show_on_home: false
+sort_order: 48
 ```
 
 ### Planned payload
@@ -94,17 +141,16 @@ price:      3,500円
 }
 ```
 
-### Reference lock baseline (G-9g3g2 smoke — reconfirm live)
+### Lock baseline (matched at execution)
 
 ```txt
-updated_at: 2026-06-16T16:03:41.551792+00:00
+expectedBeforeUpdatedAt: 2026-06-16T16:03:41.551792+00:00
+after updated_at:         2026-06-18T16:35:45.060011+00:00
 ```
-
-Operator must record **live** `currentUpdatedAt` from Preview — do not assume smoke value.
 
 ---
 
-## 2. Live baseline check (operator — before Save)
+## 4. Live baseline check (operator — before Save)
 
 **No SQL mutation.** Confirm via UI reload, row picker hydrate, and Preview result.
 
@@ -121,14 +167,14 @@ Operator must record **live** `currentUpdatedAt` from Preview — do not assume 
 | 9 | service_role | not used | |
 | 10 | PoC audit row | **not** `aa440e29-…` | |
 
-**Loaded from DB (read-only)** strip must show baseline description.  
+**Loaded from DB (read-only)** strip must show baseline description.
 Edit only **Description → YOUR EDIT (CANDIDATE)**.
 
 ---
 
-## 3. Required env stack (operator — Step 0)
+## 5. Required env stack (operator — Step 0)
 
-Stop any routine dev server (`PUBLIC_ADMIN_WRITE_DRY_RUN=true`, operational arm off).  
+Stop any routine dev server (`PUBLIC_ADMIN_WRITE_DRY_RUN=true`, operational arm off).
 Start with non-dry-run stack. **Do not commit** `.env` / `.env.local`. **Never use `service_role`.**
 
 ```bash
@@ -162,7 +208,7 @@ Single-arm: operational arm only.
 
 ---
 
-## 4. Operator execution steps
+## 6. Operator execution steps (runbook — completed)
 
 ### Step 0 — Arm dev server
 
@@ -294,7 +340,7 @@ Do **not** re-click operational Save.
 
 ---
 
-## 5. Wrong buttons / panels — do not press
+## 7. Wrong buttons / panels — do not press
 
 | Item | Reason |
 | --- | --- |
@@ -307,7 +353,7 @@ Do **not** re-click operational Save.
 
 ---
 
-## 6. Failure stop conditions (before Save)
+## 8. Failure stop conditions (before Save)
 
 **Stop immediately** if any occur:
 
@@ -328,61 +374,77 @@ Do **not** re-click operational Save.
 
 ---
 
-## 7. Result placeholders (fill after operator execution)
+## 9. Execution result (operator-confirmed)
 
-### Summary (pending)
-
-```txt
-Execution: PENDING
-Supabase project: static-to-astro-cms-staging
-Active host: (operator record)
-G-9g3g ARMED: (operator record)
-Preview dry-run: (operator record)
-Save button clicked: not yet
-DB write performed: not yet
-changedFields: (expected ["description"])
-optimistic lock: (operator record)
-service_role used: false
-production touched: false
-/admin touched: false
-FTP / workflow_dispatch: not executed
-rollback needed: (TBD after execution)
-rollback executed: false
-```
-
-### beforeSnapshot (operator — at Preview)
+### Save result
 
 ```txt
-(updated_at: operator record)
-(description: baseline §1)
+actualWrite: true
+rowsAffected: 1
+approvalId: G-9g3g-schedule-site-slug-operational-general-edit-non-dry-run
+changedFields: description only
+serviceRoleUsed: false
+expectedBeforeUpdatedAt: 2026-06-16T16:03:41.551792+00:00
 ```
 
-### Save result JSON (operator — paste from UI)
+### beforeSnapshot
+
+```txt
+description:
+出演：『ごちまきトリオ』俵千瑛子cl 田村麻紀子cl,vo
+会場website: https://subsaku.com/ginza/
+```
+
+### payload
 
 ```json
-(pending)
+{
+  "description": "出演：『ごちまきトリオ』俵千瑛子cl 田村麻紀子cl,vo\n会場website: https://subsaku.com/ginza/\n[CMS Kit staging] G-9g3g4 operational Save test — temporary marker"
+}
 ```
 
-### afterSnapshot (operator — from Save result)
+### afterSnapshot
 
 ```txt
-(pending)
+description:
+出演：『ごちまきトリオ』俵千瑛子cl 田村麻紀子cl,vo
+会場website: https://subsaku.com/ginza/
+[CMS Kit staging] G-9g3g4 operational Save test — temporary marker
+
+updated_at: 2026-06-18T16:35:45.060011+00:00
+```
+
+### Unchanged fields (expected)
+
+```txt
+id: 888c58f2-f152-4563-a3cf-a20d7c2456c1
+legacy_id: schedule-2026-03-001
+site_slug: gosaki-piano
+title: <ごちまきトリオ>
+venue: 銀座 N
+open_time: 13:30
+start_time: 14:00
+price: 3,500円
+source_route: /schedule/2026-03/
+published: true
+show_on_home: false
+sort_order: 48
 ```
 
 ---
 
-## 8. Rollback note
+## 10. Rollback note
 
 Rollback SQL template is in [preflight doc §8](./staging-shell-schedule-site-slug-operational-general-edit-non-dry-run-preflight.md).
 
-**G-9g3g4:** rollback **not executed**.  
+**G-9g3g4:** rollback **not executed**. `rollbackNeeded: false` for PoC verification.
 Rollback decision: **G-9g3g5-post-execution-hardening-and-restore-decision** or operator explicit judgment.
 
 Cursor / AI does **not** execute rollback SQL.
 
 ---
 
-## 9. Operator approval text (before Save)
+## 11. Operator approval text (used before Save)
 
 ```txt
 承認します。この操作を1回だけ実行してください。
@@ -391,17 +453,29 @@ G-9g3g4 operational general edit として、static-to-astro-cms-staging の pub
 
 ---
 
-## 10. Next phase
+## 12. Routine dev after execution
 
-After operator completes Save and fills §7:
+Restart routine dev with dry-run default:
+
+```txt
+PUBLIC_ADMIN_WRITE_DRY_RUN=true
+PUBLIC_ADMIN_SCHEDULE_G9G3G_OPERATIONAL_GENERAL_EDIT_NON_DRY_RUN_ARMED unset or false
+ENABLE_ADMIN_STAGING_WRITE=false (routine default)
+```
+
+Do **not** re-click G-9g3g operational Save.
+
+---
+
+## 13. Next phase
 
 **`G-9g3g5-post-execution-hardening-and-restore-decision`**
 
 ---
 
-## 11. Git
+## 14. Git
 
 ```txt
-G-9g3g3 committed at: 43c7aa7
-G-9g3g4 execution result: operator pending (uncommitted)
+G-9g3g4 runbook committed at: 586a1de
+G-9g3g4 execution result: success (uncommitted)
 ```

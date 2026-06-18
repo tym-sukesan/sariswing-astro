@@ -5,25 +5,30 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-9g3g4-operational-non-dry-run-execution (operator pending)
-Latest commit (pushed): 43c7aa7 (G-9g3g3 preflight)
+Current phase: G-9g3g4-operational-non-dry-run-execution (success)
+Latest commit (pushed): 586a1de (G-9g3g4 runbook)
 G-9g3g4 execution result: uncommitted
 ```
 
 ## Summary
 
-G-9g3g4 operational non-dry-run execution runbook + result doc prepared — **operator pending**.
+G-9g3g4 operational non-dry-run Save **succeeded** (operator manual once).
 
 - **Target row:** `888c58f2-f152-4563-a3cf-a20d7c2456c1` / `schedule-2026-03-001` / `gosaki-piano`
-- **Planned change:** `description` only — append `[CMS Kit staging] G-9g3g4 operational Save test — temporary marker`
-- **Approval ID:** `G-9g3g-schedule-site-slug-operational-general-edit-non-dry-run`
-- **Env arm:** `PUBLIC_ADMIN_SCHEDULE_G9G3G_OPERATIONAL_GENERAL_EDIT_NON_DRY_RUN_ARMED=true`
-- **Save / Preview / DB write:** not yet executed
+- **changedFields:** `description` only — G-9g3g4 marker appended
+- **actualWrite:** `true` / **rowsAffected:** `1`
+- **approvalId:** `G-9g3g-schedule-site-slug-operational-general-edit-non-dry-run`
+- **expectedBeforeUpdatedAt:** `2026-06-16T16:03:41.551792+00:00`
+- **after updated_at:** `2026-06-18T16:35:45.060011+00:00`
+- **serviceRoleUsed:** `false` / production untouched
+- **rollback:** not executed (`rollbackNeeded: false`)
+
+**Do not re-click G-9g3g operational Save.**
 
 Prior complete:
 
+- G-9g3g4 runbook (`586a1de`)
 - G-9g3g3 preflight (`43c7aa7`)
-- G-9g3g2 smoke (`2fb6d08`)
 - G-9g3d PoC Save frozen — do not re-run
 
 ## Routine dev safety (default)
@@ -39,20 +44,13 @@ All G-9 PoC arms: off
 ## Gates
 
 ```txt
-stagingShellScheduleSiteSlugOperationalGeneralEditNonDryRunPreflightComplete: true
-readyForG9g3g4OperationalNonDryRunExecution: true
-stagingShellScheduleSiteSlugOperationalGeneralEditNonDryRunExecutionComplete: false
+stagingShellScheduleSiteSlugOperationalGeneralEditNonDryRunExecutionComplete: true
+readyForG9g3g5PostExecutionHardening: true
 readyForAnyDbWrite: false
 ```
 
-## Operator execution (manual only)
-
-1. Arm non-dry-run env stack (execution result doc §3)
-2. Preview: `#site-slug-edit-dry-run-preview-btn`
-3. Save once: `#site-slug-edit-g9g3g-operational-save-btn`
-
-**Do not re-run G-9g2 / G-9g3b / G-9g3c / G-9g3d Save.**
-
-## Next after execution
+## Next
 
 **G-9g3g5-post-execution-hardening-and-restore-decision**
+
+**Do not re-run G-9g2 / G-9g3b / G-9g3c / G-9g3d / G-9g3g operational Save.**

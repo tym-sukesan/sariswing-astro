@@ -2922,23 +2922,38 @@ const g9g3g4ExecDocPath = path.join(
 assert("G-9g3g4 execution result doc exists", fs.existsSync(g9g3g4ExecDocPath));
 const g9g3g4ExecDocSrc = fs.readFileSync(g9g3g4ExecDocPath, "utf8");
 assert(
-  "G-9g3g4 operator pending",
+  "G-9g3g4 execution success",
   g9g3g4ExecDocSrc.includes("G-9g3g4-operational-non-dry-run-execution") &&
-    g9g3g4ExecDocSrc.includes("operator pending"),
+    (g9g3g4ExecDocSrc.includes("success — execution complete") ||
+      g9g3g4ExecDocSrc.includes("Execution: PASS")),
 );
 assert(
   "G-9g3g4 target row id",
   g9g3g4ExecDocSrc.includes("888c58f2-f152-4563-a3cf-a20d7c2456c1"),
 );
 assert(
-  "G-9g3g4 Save not yet clicked",
-  g9g3g4ExecDocSrc.includes("Save clicked | **not yet**") ||
-    g9g3g4ExecDocSrc.includes("Save button clicked: not yet"),
+  "G-9g3g4 operator Save once",
+  g9g3g4ExecDocSrc.includes("Save clicked | **yes**") ||
+    g9g3g4ExecDocSrc.includes("Save button clicked: yes"),
 );
 assert(
-  "G-9g3g4 DB write not yet executed",
-  g9g3g4ExecDocSrc.includes("DB write executed | **not yet**") ||
-    g9g3g4ExecDocSrc.includes("DB write performed: not yet"),
+  "G-9g3g4 DB write executed",
+  g9g3g4ExecDocSrc.includes("DB write executed | **yes**") ||
+    g9g3g4ExecDocSrc.includes("DB write performed: yes"),
+);
+assert(
+  "G-9g3g4 actualWrite true",
+  g9g3g4ExecDocSrc.includes("actualWrite: true"),
+);
+assert(
+  "G-9g3g4 execution complete gate",
+  g9g3g4ExecDocSrc.includes(
+    "stagingShellScheduleSiteSlugOperationalGeneralEditNonDryRunExecutionComplete: true",
+  ),
+);
+assert(
+  "G-9g3g4 rollback not executed",
+  g9g3g4ExecDocSrc.includes("rollback executed: false"),
 );
 assert(
   "G-9g3g4 next phase g9g3g5",

@@ -1,4 +1,4 @@
-Last updated: 2026-06-17
+Last updated: 2026-06-18
 Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
@@ -21,13 +21,15 @@ Staging Shell
 将来的な顧客オンボーディング・課金・デプロイ自動化
 
 2. Current phase
-現在フェーズ: G-9g3e1-post-execution-hardening-implementation — **完了**
+現在フェーズ: G-9g3e2-post-execution-hardening-smoke-test — **完了**
 
-次フェーズ: **G-9g3e2-post-execution-hardening-smoke-test**
+次フェーズ: **G-9g3f-row-picker-planning**
 
-Git: 最新 push 済み commit `8b5f78c`（G-9g3e planning）。G-9g3e1 implementation + AI context 更新は **uncommitted**。
+Git: 最新 push 済み commit `0685a34`（G-9g3e1 implementation）。G-9g3e2 smoke doc + verifier + AI context 更新は **uncommitted**。
 
-G-9g3e1: G-9g3d PoC freeze（`G9G3D_GENERAL_EDIT_POC_EXECUTED`）、legacy PoC audit-only、UI/UX hardening。**Save / Preview / DB write 未実行。Do not re-run G-9g2 / G-9g3b / G-9g3c / G-9g3d Save.**
+G-9g3e2: post-execution hardening smoke（SSR + static/source）。**Save / Preview / DB write 未実行。** G-9g3d freeze + legacy audit-only + save gate panel 確認済み。**Do not re-run G-9g2 / G-9g3b / G-9g3c / G-9g3d Save.**
+
+G-9g3e1: G-9g3d PoC freeze（`G9G3D_GENERAL_EDIT_POC_EXECUTED`）、legacy PoC audit-only、UI/UX hardening（commit `0685a34`）。
 
 G-9g3 safe-field PoC slices: **all complete** on pilot row (G-9g2 title, G-9g3b venue+description, G-9g3c time+price). **Do not re-run slice Saves.**
 
@@ -522,9 +524,11 @@ PUBLIC_SUPABASE_URL host: kmjqppxjdnwwrtaeqjta.supabase.co (staging)
 **Note:** `tools/static-to-astro/.env.local` に `SUPABASE_SERVICE_ROLE_KEY` が local only（gitignored）で存在する場合がある。G-9g3b execution では使用禁止・参照禁止。anon key + authenticated session のみ。
 
 10. Recommended next phase
-次フェーズ推奨: **G-9g3e2-post-execution-hardening-smoke-test**
+次フェーズ推奨: **G-9g3f-row-picker-planning**
 
-G-9g3e1 implementation: **完了**（uncommitted）。G-9g3d PoC freeze + legacy audit-only + UI/UX hardening。**Save / Preview / DB write 未実行。**
+G-9g3e2 smoke: **完了**（uncommitted）。SSR + static/source smoke。**Save / Preview / DB write 未実行。**
+
+G-9g3e1 implementation: **完了**（commit `0685a34`）。
 
 G-9g3 safe-field PoC slices + G-9g3d general edit: **all complete and frozen**。**Do not re-run G-9g2 / G-9g3b / G-9g3c / G-9g3d Save.**
 
@@ -535,20 +539,22 @@ Lock baseline: `updated_at` = `2026-06-18T01:04:51.312817+00:00`
 Phase sequence:
 ```txt
 G-9g3e-planning      ← complete (8b5f78c)
-G-9g3e1-implementation ← complete (uncommitted)
-G-9g3e2-smoke        ← next
-G-9g3f-row-picker
+G-9g3e1-implementation ← complete (0685a34)
+G-9g3e2-smoke        ← complete (uncommitted)
+G-9g3f-row-picker    ← next
 ```
 
 詳細:
+- `tools/static-to-astro/docs/staging-shell-schedule-site-slug-general-edit-post-execution-hardening-smoke-test-result.md` (**new**)
 - `tools/static-to-astro/docs/staging-shell-schedule-site-slug-general-edit-post-execution-hardening-implementation.md`
 - `tools/static-to-astro/docs/staging-shell-schedule-site-slug-general-edit-post-execution-hardening-planning.md`
 
 G-9g3e gates:
 ```txt
 stagingShellScheduleGeneralEditPostExecutionHardeningImplementationComplete: true
-readyForG9g3e2PostExecutionHardeningSmokeTest: true
-readyForG9g3fRowPickerPlanning: false
+stagingShellScheduleGeneralEditPostExecutionHardeningSmokeTestPassed: true
+readyForG9g3fRowPickerPlanning: true
+readyForG9g3e2PostExecutionHardeningSmokeTest: false
 readyForG9g3dExecution: false
 readyForG9g2Execution: false
 readyForG9g3bExecution: false

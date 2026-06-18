@@ -2057,6 +2057,78 @@ assert(
   g9g3aEditUiSrc.includes("site-slug-edit-save-gate-panel"),
 );
 
+// --- G-9g3e2 general edit post-execution hardening smoke ---
+const g9g3e2SmokeDocPath = path.join(
+  TOOL_ROOT,
+  "docs/staging-shell-schedule-site-slug-general-edit-post-execution-hardening-smoke-test-result.md",
+);
+const g9g3e2SmokeScriptPath = path.join(
+  TOOL_ROOT,
+  "scripts/verify-g9g3e-post-execution-hardening-smoke.mjs",
+);
+
+assert("G-9g3e2 smoke result doc exists", fs.existsSync(g9g3e2SmokeDocPath));
+assert("G-9g3e2 smoke script exists", fs.existsSync(g9g3e2SmokeScriptPath));
+
+const g9g3e2SmokeDocSrc = fs.readFileSync(g9g3e2SmokeDocPath, "utf8");
+const g9g3e2SmokeScriptSrc = fs.readFileSync(g9g3e2SmokeScriptPath, "utf8");
+
+assert(
+  "G-9g3e2 smoke Save not clicked",
+  g9g3e2SmokeDocSrc.includes("Save was not clicked") &&
+    g9g3e2SmokeDocSrc.includes("Preview was not clicked"),
+);
+assert(
+  "G-9g3e2 smoke no DB write",
+  g9g3e2SmokeDocSrc.includes("DB write was not executed") &&
+    g9g3e2SmokeDocSrc.includes("**DB write:** none"),
+);
+assert(
+  "G-9g3e2 smoke G-9g3d freeze confirmed",
+  g9g3e2SmokeDocSrc.includes("G-9g3d freeze") &&
+    g9g3e2SmokeDocSrc.includes("Do not re-run G-9g2 / G-9g3b / G-9g3c / G-9g3d Save"),
+);
+assert(
+  "G-9g3e2 smoke legacy audit-only",
+  g9g3e2SmokeDocSrc.includes("Legacy PoC") && g9g3e2SmokeDocSrc.includes("audit-only"),
+);
+assert(
+  "G-9g3e2 smoke save gate panel",
+  g9g3e2SmokeDocSrc.includes("site-slug-edit-save-gate-panel"),
+);
+assert(
+  "G-9g3e2 smoke staging shell banner",
+  g9g3e2SmokeDocSrc.includes("Staging shell banner"),
+);
+assert(
+  "G-9g3e2 smoke production STOP",
+  g9g3e2SmokeDocSrc.includes("Production STOP"),
+);
+assert(
+  "G-9g3e2 smoke gate passed",
+  g9g3e2SmokeDocSrc.includes(
+    "stagingShellScheduleGeneralEditPostExecutionHardeningSmokeTestPassed: true",
+  ),
+);
+assert(
+  "G-9g3e2 smoke next phase G-9g3f",
+  g9g3e2SmokeDocSrc.includes("G-9g3f-row-picker-planning"),
+);
+assert(
+  "G-9g3e2 smoke script poc_executed marker",
+  g9g3e2SmokeScriptSrc.includes("poc_executed") &&
+    g9g3e2SmokeScriptSrc.includes("G9G3D_GENERAL_EDIT_POC_EXECUTED"),
+);
+assert(
+  "G-9g3e2 smoke script no Save click policy",
+  g9g3e2SmokeScriptSrc.includes("smoke: Save not clicked") &&
+    g9g3e2SmokeScriptSrc.includes("smoke: Preview not clicked"),
+);
+assert(
+  "G-9g3e2 smoke script DB write not executed",
+  g9g3e2SmokeScriptSrc.includes("smoke: DB write not executed"),
+);
+
 const gosakiPublicDist = path.join(TOOL_ROOT, "output/static-public/gosaki-piano/public-dist");
 for (const ym of ["2026-06", "2026-07"]) {
   const canonicalMonthPath = path.join(gosakiPublicDist, "schedule", ym, "index.html");

@@ -21,15 +21,17 @@ Staging Shell
 将来的な顧客オンボーディング・課金・デプロイ自動化
 
 2. Current phase
-現在フェーズ: G-9g3f2-row-picker-read-only-smoke-test — **完了**
+現在フェーズ: G-9g3f3-row-picker-general-edit-binding-planning — **完了**
 
-次フェーズ: **G-9g3f3-row-picker-general-edit-binding-planning**
+次フェーズ: **G-9g3f3a-row-picker-general-edit-binding-implementation**
 
-Git: 最新 push 済み commit `c3d49ee`（G-9g3f1 implementation）。G-9g3f2 smoke doc + verifier + AI context 更新は **uncommitted**。
+Git: 最新 push 済み commit `94d4e61`（G-9g3f2 smoke）。G-9g3f3 planning doc + AI context 更新は **uncommitted**。
 
-G-9g3f2: row picker read-only smoke（SSR + static/source）。**Save / Preview / DB write / manual SQL 未実行。** pilot row audit-only + PoC marker exclusion 確認。**Do not re-run G-9g2 / G-9g3b / G-9g3c / G-9g3d Save.**
+G-9g3f3: row picker → general edit binding **planning only**。**Save / Preview / DB write / manual SQL 未実行。** CustomEvent bridge + selected row safety + operational approval ID 提案。**Do not re-run G-9g2 / G-9g3b / G-9g3c / G-9g3d Save.**
 
-G-9g3f1: read-only row picker UI（commit `c3d49ee`）。general edit binding は G-9g3f3 まで deferred。
+G-9g3f2: row picker read-only smoke 完了（commit `94d4e61`）。pilot audit-only + PoC marker exclusion 確認。
+
+G-9g3f1: read-only row picker UI（commit `c3d49ee`）。general edit binding は G-9g3f3a で implementation。
 
 G-9g3 safe-field PoC slices: **all complete** on pilot row (G-9g2 title, G-9g3b venue+description, G-9g3c time+price). **Do not re-run slice Saves.**
 
@@ -524,9 +526,11 @@ PUBLIC_SUPABASE_URL host: kmjqppxjdnwwrtaeqjta.supabase.co (staging)
 **Note:** `tools/static-to-astro/.env.local` に `SUPABASE_SERVICE_ROLE_KEY` が local only（gitignored）で存在する場合がある。G-9g3b execution では使用禁止・参照禁止。anon key + authenticated session のみ。
 
 10. Recommended next phase
-次フェーズ推奨: **G-9g3f3-row-picker-general-edit-binding-planning**
+次フェーズ推奨: **G-9g3f3a-row-picker-general-edit-binding-implementation**
 
-G-9g3f2 smoke: **完了**（uncommitted）。row picker read-only SSR smoke。**Save / Preview / DB write / manual SQL 未実行。**
+G-9g3f3 planning: **完了**（uncommitted）。row picker → general edit binding 設計。**Save / Preview / DB write / manual SQL 未実行。**
+
+G-9g3f2 smoke: **完了**（commit `94d4e61`）。
 
 G-9g3f1 implementation: **完了**（commit `c3d49ee`）。
 
@@ -538,19 +542,20 @@ Phase sequence:
 ```txt
 G-9g3f-planning      ← complete (9333e2c)
 G-9g3f1-implementation ← complete (c3d49ee)
-G-9g3f2-smoke        ← complete (uncommitted)
-G-9g3f3-binding-planning ← next
+G-9g3f2-smoke        ← complete (94d4e61)
+G-9g3f3-binding-planning ← complete (uncommitted)
+G-9g3f3a-binding-implementation ← next
 ```
 
 詳細:
-- `tools/static-to-astro/docs/staging-shell-schedule-site-slug-row-picker-read-only-smoke-test-result.md` (**new**)
-- `tools/static-to-astro/docs/staging-shell-schedule-site-slug-row-picker-implementation.md`
+- `tools/static-to-astro/docs/staging-shell-schedule-site-slug-row-picker-general-edit-binding-planning.md` (**new**)
+- `tools/static-to-astro/docs/staging-shell-schedule-site-slug-row-picker-read-only-smoke-test-result.md`
 
-G-9g3f2 gates:
+G-9g3f3 gates:
 ```txt
-stagingShellScheduleSiteSlugRowPickerReadOnlySmokeTestPassed: true
-readyForG9g3f3RowPickerGeneralEditBindingPlanning: true
-readyForG9g3f2RowPickerReadOnlySmokeTest: false
+stagingShellScheduleSiteSlugRowPickerGeneralEditBindingPlanningComplete: true
+readyForG9g3f3aRowPickerGeneralEditBindingImplementation: true
+readyForG9g3f3RowPickerGeneralEditBindingPlanning: false
 readyForAnyDbWrite: false
 rollbackNeeded: false
 ```

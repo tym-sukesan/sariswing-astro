@@ -2349,6 +2349,63 @@ assert(
   g9g3f2SmokeScriptSrc.includes("smoke: Save not clicked"),
 );
 
+// --- G-9g3f3 row picker → general edit binding planning ---
+const g9g3f3PlanningDocPath = path.join(
+  TOOL_ROOT,
+  "docs/staging-shell-schedule-site-slug-row-picker-general-edit-binding-planning.md",
+);
+assert("G-9g3f3 planning doc exists", fs.existsSync(g9g3f3PlanningDocPath));
+
+const g9g3f3PlanningDocSrc = fs.readFileSync(g9g3f3PlanningDocPath, "utf8");
+
+assert(
+  "G-9g3f3 planning binding strategy",
+  g9g3f3PlanningDocSrc.includes("CustomEvent") &&
+    g9g3f3PlanningDocSrc.includes("staging-schedule-site-slug-row-selected"),
+);
+assert(
+  "G-9g3f3 planning site_slug safety",
+  g9g3f3PlanningDocSrc.includes("site_slug") &&
+    g9g3f3PlanningDocSrc.includes("gosaki-piano"),
+);
+assert(
+  "G-9g3f3 planning PoC audit row edit block",
+  g9g3f3PlanningDocSrc.includes("isPocAuditScheduleRow") &&
+    g9g3f3PlanningDocSrc.includes("Blocked"),
+);
+assert(
+  "G-9g3f3 planning operational approval ID",
+  g9g3f3PlanningDocSrc.includes("G-9g3-schedule-site-slug-general-edit") &&
+    g9g3f3PlanningDocSrc.includes(
+      "PUBLIC_ADMIN_SCHEDULE_SITE_SLUG_GENERAL_EDIT_ENABLED",
+    ),
+);
+assert(
+  "G-9g3f3 planning Save not clicked",
+  g9g3f3PlanningDocSrc.includes("Save was not clicked") &&
+    g9g3f3PlanningDocSrc.includes("Preview was not clicked"),
+);
+assert(
+  "G-9g3f3 planning no DB write",
+  g9g3f3PlanningDocSrc.includes("DB write was not executed"),
+);
+assert(
+  "G-9g3f3 planning next phase G-9g3f3a",
+  g9g3f3PlanningDocSrc.includes(
+    "G-9g3f3a-row-picker-general-edit-binding-implementation",
+  ),
+);
+assert(
+  "G-9g3f3 planning gate passed",
+  g9g3f3PlanningDocSrc.includes(
+    "stagingShellScheduleSiteSlugRowPickerGeneralEditBindingPlanningComplete: true",
+  ),
+);
+assert(
+  "G-9g3f3 planning operational Save not implemented",
+  g9g3f3PlanningDocSrc.includes("generalEditOperationalSaveNotImplemented: true"),
+);
+
 const gosakiPublicDist = path.join(TOOL_ROOT, "output/static-public/gosaki-piano/public-dist");
 for (const ym of ["2026-06", "2026-07"]) {
   const canonicalMonthPath = path.join(gosakiPublicDist, "schedule", ym, "index.html");

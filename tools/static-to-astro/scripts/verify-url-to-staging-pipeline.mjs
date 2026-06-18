@@ -2283,6 +2283,72 @@ assert(
   ),
 );
 
+// --- G-9g3f2 row picker read-only smoke ---
+const g9g3f2SmokeDocPath = path.join(
+  TOOL_ROOT,
+  "docs/staging-shell-schedule-site-slug-row-picker-read-only-smoke-test-result.md",
+);
+const g9g3f2SmokeScriptPath = path.join(
+  TOOL_ROOT,
+  "scripts/verify-g9g3f-row-picker-read-only-smoke.mjs",
+);
+
+assert("G-9g3f2 smoke result doc exists", fs.existsSync(g9g3f2SmokeDocPath));
+assert("G-9g3f2 smoke script exists", fs.existsSync(g9g3f2SmokeScriptPath));
+
+const g9g3f2SmokeDocSrc = fs.readFileSync(g9g3f2SmokeDocPath, "utf8");
+const g9g3f2SmokeScriptSrc = fs.readFileSync(g9g3f2SmokeScriptPath, "utf8");
+
+assert(
+  "G-9g3f2 smoke read-only row picker",
+  g9g3f2SmokeDocSrc.includes("row picker is read-only") &&
+    g9g3f2SmokeDocSrc.includes("Read-only row picker"),
+);
+assert(
+  "G-9g3f2 smoke site_slug fixed",
+  g9g3f2SmokeDocSrc.includes("site_slug fixed to `gosaki-piano`"),
+);
+assert(
+  "G-9g3f2 smoke pilot audit-only",
+  g9g3f2SmokeDocSrc.includes("pilot row audit-only confirmed"),
+);
+assert(
+  "G-9g3f2 smoke Save not clicked",
+  g9g3f2SmokeDocSrc.includes("Save was not clicked") &&
+    g9g3f2SmokeDocSrc.includes("Preview was not clicked"),
+);
+assert(
+  "G-9g3f2 smoke no DB write",
+  g9g3f2SmokeDocSrc.includes("DB write was not executed"),
+);
+assert(
+  "G-9g3f2 smoke general edit deferred",
+  g9g3f2SmokeDocSrc.includes("general edit binding deferred"),
+);
+assert(
+  "G-9g3f2 smoke next phase G-9g3f3",
+  g9g3f2SmokeDocSrc.includes("G-9g3f3-row-picker-general-edit-binding-planning"),
+);
+assert(
+  "G-9g3f2 smoke gate passed",
+  g9g3f2SmokeDocSrc.includes(
+    "stagingShellScheduleSiteSlugRowPickerReadOnlySmokeTestPassed: true",
+  ),
+);
+assert(
+  "G-9g3f2 smoke script site_slug scope",
+  g9g3f2SmokeScriptSrc.includes('.eq("site_slug", siteSlug)'),
+);
+assert(
+  "G-9g3f2 smoke script pilot exclusion",
+  g9g3f2SmokeScriptSrc.includes("PILOT_ROW_ID") &&
+    g9g3f2SmokeScriptSrc.includes("pilot not in selectable"),
+);
+assert(
+  "G-9g3f2 smoke script no Save click",
+  g9g3f2SmokeScriptSrc.includes("smoke: Save not clicked"),
+);
+
 const gosakiPublicDist = path.join(TOOL_ROOT, "output/static-public/gosaki-piano/public-dist");
 for (const ym of ["2026-06", "2026-07"]) {
   const canonicalMonthPath = path.join(gosakiPublicDist, "schedule", ym, "index.html");

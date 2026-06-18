@@ -21,13 +21,15 @@ Staging Shell
 将来的な顧客オンボーディング・課金・デプロイ自動化
 
 2. Current phase
-現在フェーズ: G-9g3f3a-row-picker-general-edit-binding-implementation — **完了**
+現在フェーズ: G-9g3f3b-row-picker-general-edit-binding-smoke-test — **完了 / passed**
 
-次フェーズ: **G-9g3f3b-row-picker-general-edit-binding-smoke-test**
+次フェーズ: **G-9g3f3c-row-picker-general-edit-binding-hardening**
 
-Git: 最新 push 済み commit `bf27151`（G-9g3f3 planning）。G-9g3f3a implementation **uncommitted**。
+Git: 最新 push 済み commit `1ec29eb`（G-9g3f3a implementation）。G-9g3f3b smoke **uncommitted**。
 
-G-9g3f3a: row picker → general edit **CustomEvent hydrate**。**Pilot SSR preload 削除。** Preview execution **G-9g3f3b へ deferred。** Save / operational arm / DB write **未実装。** **Do not re-run G-9g2 / G-9g3b / G-9g3c / G-9g3d Save.**
+G-9g3f3a: **committed at `1ec29eb`**。
+
+G-9g3f3b: row picker hydrate + G-9 changed-fields-only Preview **passed**（manual re-smoke）。`changedFields=price` only、`optimisticLock.stale=false`、`hostGatePassed=true`、`actualWrite=false`。初回は legacy G-6-e2 誤パネル（false-path 記録）。**Do not re-run G-9g2 / G-9g3b / G-9g3c / G-9g3d Save.**
 
 G-9g3f3: binding planning 完了（commit `bf27151`）。
 
@@ -526,35 +528,24 @@ PUBLIC_SUPABASE_URL host: kmjqppxjdnwwrtaeqjta.supabase.co (staging)
 **Note:** `tools/static-to-astro/.env.local` に `SUPABASE_SERVICE_ROLE_KEY` が local only（gitignored）で存在する場合がある。G-9g3b execution では使用禁止・参照禁止。anon key + authenticated session のみ。
 
 10. Recommended next phase
-次フェーズ推奨: **G-9g3f3b-row-picker-general-edit-binding-smoke-test**
+次フェーズ推奨: **G-9g3f3c-row-picker-general-edit-binding-hardening**
 
-G-9g3f3a implementation: **完了**（uncommitted）。CustomEvent bridge + edit hydrate。**Save / Preview / DB write 未実行。**
+G-9g3f3b smoke: **passed**（uncommitted）。operator re-smoke: `#site-slug-edit-dry-run-preview-btn` → `#site-slug-edit-dry-run-result`。
 
-G-9g3f3 planning: **完了**（commit `bf27151`）。
-
-G-9g3f2 smoke: **完了**（commit `94d4e61`）。
-
-G-9g3 safe-field PoC slices + G-9g3d general edit: **all complete and frozen**。**Do not re-run G-9g2 / G-9g3b / G-9g3c / G-9g3d Save.**
-
-Routine dev: all G-9 arms off / write off / dry-run on / staging host only。
+G-9g3f3a implementation: **完了**（committed `1ec29eb`）。
 
 Phase sequence:
 ```txt
-G-9g3f3-binding-planning ← complete (bf27151)
-G-9g3f3a-binding-implementation ← complete (uncommitted)
-G-9g3f3b-binding-smoke ← next
+G-9g3f3a-binding-implementation ← complete (1ec29eb)
+G-9g3f3b-binding-smoke ← complete (passed, uncommitted)
+G-9g3f3c-binding-hardening ← next
 ```
 
-詳細:
-- `tools/static-to-astro/docs/staging-shell-schedule-site-slug-row-picker-general-edit-binding-implementation.md` (**new**)
-- `tools/static-to-astro/docs/staging-shell-schedule-site-slug-row-picker-general-edit-binding-planning.md`
-
-G-9g3f3a gates:
+G-9g3f3b gates:
 ```txt
-stagingShellScheduleSiteSlugRowPickerGeneralEditBindingImplementationComplete: true
-readyForG9g3f3bRowPickerGeneralEditBindingSmokeTest: true
+stagingShellScheduleSiteSlugRowPickerGeneralEditBindingSmokeTestPassed: true
+readyForG9g3f3cRowPickerGeneralEditBindingHardening: true
 readyForAnyDbWrite: false
-rollbackNeeded: false
 ```
 
 G-9g2/G-9g3b PoC 痕跡保持。restore 不要。routine dev: dry-run default / G-9g2 arm off / G-9g3b arm off / G-9g3c arm off。

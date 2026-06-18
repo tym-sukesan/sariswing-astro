@@ -2462,7 +2462,7 @@ assert(
 assert(
   "G-9g3f3a Save not implemented",
   g9g3f3aImplDocSrc.includes("Save not implemented") &&
-    g9g3f3aEditSectionSrc.includes("Preview dry-run (deferred)"),
+    g9g3f3aEditSectionSrc.includes("Save general edit (frozen)"),
 );
 assert(
   "G-9g3f3a operational arm not implemented",
@@ -2487,6 +2487,111 @@ assert(
   g9g3f3aEditSectionSrc.includes("data-picker-driven-binding") &&
     g9g3f3aEditSectionSrc.includes("pickerDrivenBinding") &&
     g9g3f3aEditSectionSrc.includes("site-slug-edit-picker-placeholder"),
+);
+
+const g9g3f3bSmokeDocPath = path.join(
+  TOOL_ROOT,
+  "docs/staging-shell-schedule-site-slug-row-picker-general-edit-binding-smoke-test-result.md",
+);
+const g9g3f3bEditUiSrc = fs.readFileSync(
+  path.join(REPO_ROOT, "src/lib/admin/staging-data/staging-schedule-site-slug-edit-ui.ts"),
+  "utf8",
+);
+
+assert("G-9g3f3b smoke result doc exists", fs.existsSync(g9g3f3bSmokeDocPath));
+const g9g3f3bSmokeDocSrc = fs.readFileSync(g9g3f3bSmokeDocPath, "utf8");
+
+assert(
+  "G-9g3f3b smoke passed",
+  g9g3f3bSmokeDocSrc.includes("G-9g3f3b smoke passed"),
+);
+assert(
+  "G-9g3f3b operator hydrate pass",
+  g9g3f3bSmokeDocSrc.includes("hydrate") &&
+    g9g3f3bSmokeDocSrc.includes("PASS"),
+);
+assert(
+  "G-9g3f3b selected row id recorded",
+  g9g3f3bSmokeDocSrc.includes("888c58f2-f152-4563-a3cf-a20d7c2456c1"),
+);
+assert(
+  "G-9g3f3b changedFields price only",
+  g9g3f3bSmokeDocSrc.includes("changedFields") &&
+    g9g3f3bSmokeDocSrc.includes("price"),
+);
+assert(
+  "G-9g3f3b legacy G-6 false-path not pass",
+  g9g3f3bSmokeDocSrc.includes("not accepted as pass"),
+);
+assert(
+  "G-9g3f3b smoke gate true",
+  g9g3f3bSmokeDocSrc.includes(
+    "stagingShellScheduleSiteSlugRowPickerGeneralEditBindingSmokeTestPassed: true",
+  ),
+);
+assert(
+  "G-9g3f3b ready for G-9g3f3c",
+  g9g3f3bSmokeDocSrc.includes("readyForG9g3f3cRowPickerGeneralEditBindingHardening: true"),
+);
+assert(
+  "G-9g3f3b optimisticLock stale false",
+  g9g3f3bSmokeDocSrc.includes("optimisticLock.stale") &&
+    g9g3f3bSmokeDocSrc.includes("`false`"),
+);
+assert(
+  "G-9g3f3b hostGatePassed true",
+  g9g3f3bSmokeDocSrc.includes("hostGatePassed") &&
+    g9g3f3bSmokeDocSrc.includes("`true`"),
+);
+assert(
+  "G-9g3f3b correct G-9 preview panel",
+  g9g3f3bSmokeDocSrc.includes("#site-slug-edit-dry-run-preview-btn") &&
+    g9g3f3bSmokeDocSrc.includes("#site-slug-edit-dry-run-result"),
+);
+assert(
+  "G-9g3f3b next phase G-9g3c",
+  g9g3f3bSmokeDocSrc.includes("G-9g3f3c-row-picker-general-edit-binding-hardening"),
+);
+assert(
+  "G-9g3f3b Preview dry-run enabled in source",
+  g9g3f3bEditUiSrc.includes("G9G3F3B_PHASE") &&
+    g9g3f3bEditUiSrc.includes("refreshPreviewButtonState"),
+);
+assert(
+  "G-9g3f3b actualWrite=false",
+  g9g3f3bSmokeDocSrc.includes("actualWrite=false") ||
+    g9g3f3bSmokeDocSrc.includes("| actualWrite | `false`"),
+);
+assert(
+  "G-9g3f3b Save not clicked",
+  g9g3f3bSmokeDocSrc.includes("Save not clicked"),
+);
+assert(
+  "G-9g3f3b no DB write",
+  g9g3f3bSmokeDocSrc.includes("DB write not executed"),
+);
+assert(
+  "G-9g3f3b G9G3F3A committed reference",
+  g9g3f3bSmokeDocSrc.includes("1ec29eb"),
+);
+assert(
+  "G-9g3f3b preview button label in section",
+  g9g3f3aEditSectionSrc.includes("Preview G-9 site_slug general edit dry-run"),
+);
+assert(
+  "G-9g3f3b result panel expectations",
+  g9g3f3aEditSectionSrc.includes("G-9 site_slug general edit preview result") &&
+    g9g3f3aEditSectionSrc.includes("hostGatePassed"),
+);
+assert(
+  "G-9g3f3b legacy G-6 warning in section",
+  g9g3f3aEditSectionSrc.includes("not valid") &&
+    g9g3f3aEditSectionSrc.includes("G-6-e2-schedule-dry-run-ui"),
+);
+assert(
+  "G-9g3f3b no deferred preview copy",
+  !g9g3f3aEditSectionSrc.includes("Preview deferred") &&
+    !g9g3f3aEditSectionSrc.includes("execution deferred to G-9g3f3b"),
 );
 
 const gosakiPublicDist = path.join(TOOL_ROOT, "output/static-public/gosaki-piano/public-dist");

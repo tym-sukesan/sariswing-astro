@@ -1,5 +1,6 @@
 /**
  * G-9g3d2 — Programmatic general edit dry-run smoke (no Save, no DB write).
+ * Legacy pilot-row baseline — PoC audit row; not used for operational picker binding.
  * Validates the same pure dry-run builder used by Preview button.
  */
 
@@ -12,8 +13,8 @@ const REPO_ROOT = path.resolve(__dirname, "../../..");
 
 const STAGING_HOST = "kmjqppxjdnwwrtaeqjta.supabase.co";
 const PRODUCTION_HOST = "vsbvndwuajjhnzpohghh.supabase.co";
-const UPDATED_AT_BASELINE = "2026-06-17T15:45:35.433566+00:00";
-const PRICE_BASELINE = "[CMS Kit staging] G-9g3c price PoC";
+const UPDATED_AT_BASELINE = "2026-06-18T01:04:51.312817+00:00";
+const PRICE_BASELINE = "[CMS Kit staging] G-9g3d general edit price PoC";
 const PRICE_CANDIDATE = "[CMS Kit staging] G-9g3d smoke price candidate";
 
 const PILOT_ROW = {

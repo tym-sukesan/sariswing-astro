@@ -164,7 +164,7 @@ function renderSelectedSummary(): void {
   }
 
   const staleHint = selectedRowLoadedAt
-    ? `<p class="site-slug-row-picker__stale-hint" role="note">Loaded at <code>${escapeHtml(selectedRowLoadedAt)}</code>. Use <strong>Reload selected row</strong> if <code>updated_at</code> may have changed elsewhere. General edit binding is deferred to G-9g3f3.</p>`
+    ? `<p class="site-slug-row-picker__stale-hint" role="note">Loaded at <code>${escapeHtml(selectedRowLoadedAt)}</code>. Use <strong>Reload selected row</strong> if <code>updated_at</code> may have changed elsewhere. Selection feeds the general edit form below.</p>`
     : "";
 
   panel.innerHTML = `

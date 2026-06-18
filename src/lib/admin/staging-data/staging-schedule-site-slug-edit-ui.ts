@@ -33,6 +33,7 @@ import {
   G9G3D_GENERAL_EDIT_POC_EXECUTED,
   G9G3D_POC_EXECUTED_ARM_FAILURE,
   G9G3D_PHASE,
+  G9G3F3B_PHASE,
   G9G3_SLICE_POC_EXECUTED_ARM_FAILURE,
   SITE_SLUG_EDIT_SAFE_FIELDS,
   STAGING_SHELL_GOSAKI_SCHEDULE_SITE_SLUG,
@@ -51,6 +52,7 @@ import {
   initPickerEditBinding,
   hasPickerBoundRow,
 } from "./staging-schedule-site-slug-edit-picker-binding";
+import { isPocAuditScheduleRow } from "./staging-schedule-site-slug-row-picker-utils";
 
 const SAFE_FIELD_INPUT_IDS: Record<(typeof SITE_SLUG_EDIT_SAFE_FIELDS)[number], string> = {
   title: "site-slug-edit-dry-run-title",
@@ -352,6 +354,27 @@ function renderDryRunResult(result: SiteSlugScheduleEditDryRunResult): void {
   refreshSaveGatePanel();
 }
 
+function refreshPreviewButtonState(): void {
+  const btn = document.getElementById("site-slug-edit-dry-run-preview-btn");
+  if (!(btn instanceof HTMLButtonElement)) return;
+
+  if (!isPickerDrivenBinding()) {
+    btn.disabled = false;
+    btn.textContent = "Preview G-9 site_slug general edit dry-run";
+    btn.title = "G-9 site_slug changed-fields-only preview — actualWrite=false";
+    return;
+  }
+
+  const rowBound = hasPickerBoundRow() && parseTargetRow() != null;
+  btn.disabled = !rowBound;
+  btn.textContent = rowBound
+    ? "Preview G-9 site_slug general edit dry-run"
+    : "Preview G-9 site_slug general edit dry-run (select row first)";
+  btn.title = rowBound
+    ? "G-9 site_slug changed-fields-only preview on selected row — actualWrite=false"
+    : "Select a row in the picker above first";
+}
+
 function refreshSaveGatePanel(): void {
   const el = document.getElementById("site-slug-edit-save-gate-panel");
   if (!el) return;
@@ -393,7 +416,11 @@ function refreshSaveGatePanel(): void {
   }
 
   if (isPickerDrivenBinding()) {
-    lines.push("Preview: deferred to G-9g3f3b smoke");
+    lines.push(
+      hasPickerBoundRow()
+        ? "Preview: dry-run on selected row (G-9g3f3b smoke)"
+        : "Preview: select a row first",
+    );
   }
 
   if (lastPreviewG9g3dStale) {
@@ -776,17 +803,7 @@ function renderG9G3dSaveResult(payload: {
 }
 
 async function onPreviewClick(): Promise<void> {
-  if (isPickerDrivenBinding()) {
-    const el = document.getElementById("site-slug-edit-dry-run-result");
-    if (el) {
-      el.innerHTML =
-        '<p class="site-slug-edit-dry-run-result__placeholder" role="status">Preview execution deferred to G-9g3f3b smoke. Row picker → edit hydrate is active; dry-run Preview on selected row is not run in G-9g3f3a.</p>';
-    }
-    invalidateDryRunPreview();
-    refreshSaveGatePanel();
-    return;
-  }
-
+  const pickerMode = isPickerDrivenBinding();
   const row = parseTargetRow();
   const hostGate = getClientHostGate();
   updateHostGateSummary(hostGate);
@@ -799,14 +816,20 @@ async function onPreviewClick(): Promise<void> {
     warningMessage: hostGate.warningMessage,
   };
 
-  const previewPhase = isG9g3dArmed() ? G9G3D_PHASE : G9G3A_PHASE;
+  const previewPhase = pickerMode
+    ? G9G3F3B_PHASE
+    : isG9g3dArmed()
+      ? G9G3D_PHASE
+      : G9G3A_PHASE;
 
   if (!row) {
     renderDryRunResult(
       buildSiteSlugScheduleEditDryRunError({
         phase: previewPhase,
         siteSlug: STAGING_SHELL_GOSAKI_SCHEDULE_SITE_SLUG,
-        message: "Target row not loaded — enable Supabase env and reload.",
+        message: pickerMode
+          ? "No row selected — select a row in the picker above."
+          : "Target row not loaded — enable Supabase env and reload.",
         hostGate: hostGatePreview,
       }),
     );
@@ -814,7 +837,32 @@ async function onPreviewClick(): Promise<void> {
     return;
   }
 
-  if (
+  if (pickerMode) {
+    if (row.site_slug !== STAGING_SHELL_GOSAKI_SCHEDULE_SITE_SLUG) {
+      renderDryRunResult(
+        buildSiteSlugScheduleEditDryRunError({
+          phase: previewPhase,
+          siteSlug: STAGING_SHELL_GOSAKI_SCHEDULE_SITE_SLUG,
+          message: "site_slug mismatch — preview blocked.",
+          hostGate: hostGatePreview,
+        }),
+      );
+      invalidateDryRunPreview();
+      return;
+    }
+    if (isPocAuditScheduleRow(row)) {
+      renderDryRunResult(
+        buildSiteSlugScheduleEditDryRunError({
+          phase: previewPhase,
+          siteSlug: STAGING_SHELL_GOSAKI_SCHEDULE_SITE_SLUG,
+          message: "PoC audit row — preview blocked.",
+          hostGate: hostGatePreview,
+        }),
+      );
+      invalidateDryRunPreview();
+      return;
+    }
+  } else if (
     row.id !== G9G1_TARGET_ROW_ID ||
     row.legacy_id !== G9G1_TARGET_LEGACY_ID ||
     row.site_slug !== STAGING_SHELL_GOSAKI_SCHEDULE_SITE_SLUG
@@ -1119,6 +1167,7 @@ function initSiteSlugEditUi(): void {
       refreshG9G3dSaveButtonState();
     },
     refreshSaveGatePanel,
+    refreshPreviewButtonState,
     clearDryRunResultPlaceholder: (message: string) => {
       const el = document.getElementById("site-slug-edit-dry-run-result");
       if (el) {
@@ -1166,6 +1215,7 @@ function initSiteSlugEditUi(): void {
     refreshG9G3bSaveButtonState();
     refreshG9G3cSaveButtonState();
     refreshG9G3dSaveButtonState();
+    refreshPreviewButtonState();
     refreshSaveGatePanel();
   });
 }

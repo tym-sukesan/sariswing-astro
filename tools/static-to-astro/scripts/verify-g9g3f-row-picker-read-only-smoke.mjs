@@ -244,7 +244,7 @@ if (ssrHtml) {
   assert("SSR G-9g3f1 title", ssrHtml.includes("G-9g3f1"));
   assert('SSR data-general-edit-binding-deferred="false"', ssrHtml.includes('data-general-edit-binding-deferred="false"'));
   assert('SSR data-picker-driven-binding on edit', ssrHtml.includes('data-picker-driven-binding="true"'));
-  assert("SSR G-9g3f3a edit title", ssrHtml.includes("G-9g3f3a"));
+  assert("SSR G-9g3f3a edit title", ssrHtml.includes("G-9g3f3a") || ssrHtml.includes("G-9g3f3b"));
   assert("SSR editing selected row badge", ssrHtml.includes("site-slug-edit-editing-badge"));
   assert("SSR picker placeholder", ssrHtml.includes("site-slug-edit-picker-placeholder"));
   assert('SSR data-site-slug gosaki-piano', ssrHtml.includes(`data-site-slug="${SITE_SLUG}"`));

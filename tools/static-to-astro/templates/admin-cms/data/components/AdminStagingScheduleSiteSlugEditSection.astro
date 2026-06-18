@@ -62,7 +62,7 @@ const hostAlertClass = binding.isKnownProductionHost
   aria-label="Gosaki site_slug schedule edit"
 >
   <h2 class="admin-staging-schedule-site-slug-edit__title">
-    Schedule site_slug general edit (G-9g3f3a)
+    Schedule site_slug general edit (G-9g3f3b)
   </h2>
 
   <p class="admin-staging-schedule-site-slug-edit__staging-banner" role="note">
@@ -71,8 +71,20 @@ const hostAlertClass = binding.isKnownProductionHost
   </p>
 
   <p class="admin-staging-schedule-site-slug-edit__binding-phase" role="note">
-    <strong>General edit binding only</strong> — row picker → edit hydrate (G-9g3f3a).
-    Operational Save deferred. Preview execution deferred to G-9g3f3b smoke.
+    <strong>Row picker → general edit binding smoke (G-9g3f3b)</strong> — select a row in the picker;
+    then use the <strong>G-9 Preview</strong> button below (not legacy G-6 dry-run panels).
+    Operational Save not implemented.
+  </p>
+
+  <p
+    class="admin-staging-schedule-site-slug-edit__legacy-g6-warning"
+    role="note"
+    data-legacy-g6-warning="true"
+  >
+    <strong>Do not use legacy G-6 dry-run for G-9g3f3b.</strong> Legacy G-6 dry-run result uses{" "}
+    <code>approvalId=G-6-e2-schedule-dry-run-ui</code> and is <strong>not valid</strong> for this smoke.
+    Use <code>#site-slug-edit-dry-run-preview-btn</code> and read{" "}
+    <code>#site-slug-edit-dry-run-result</code> only.
   </p>
 
   <p
@@ -327,14 +339,29 @@ const hostAlertClass = binding.isKnownProductionHost
     </AdminFormField>
 
     <div class="admin-staging-schedule-site-slug-edit__actions">
+      <p
+        class="admin-staging-schedule-site-slug-edit__preview-guide"
+        role="note"
+        data-g9-preview-guide="true"
+      >
+        Use this button for row picker → general edit smoke. Do not use the legacy G-6 dry-run panel.
+        Expected result panel: <code>#site-slug-edit-dry-run-result</code>
+      </p>
       <button
         id="site-slug-edit-dry-run-preview-btn"
-        class="admin-button"
+        class="admin-button admin-staging-schedule-site-slug-edit__g9-preview-btn"
         type="button"
-        disabled={true}
-        title="Preview deferred to G-9g3f3b — not executed in G-9g3f3a"
+        disabled={candidateDisabled}
+        data-g9-preview-path="site-slug-changed-fields-only"
+        title={
+          binding.pickerDrivenBinding
+            ? "G-9 site_slug changed-fields-only preview — select a row first; actualWrite=false"
+            : "G-9 site_slug changed-fields-only preview — actualWrite=false"
+        }
       >
-        Preview dry-run (deferred)
+        {binding.pickerDrivenBinding
+          ? "Preview G-9 site_slug general edit dry-run (select row first)"
+          : "Preview G-9 site_slug general edit dry-run"}
       </button>
       {
         g9g3dSaveSectionVisible ? (
@@ -372,20 +399,30 @@ const hostAlertClass = binding.isKnownProductionHost
         </p>
       ) : (
         <p id="site-slug-edit-g9g3a-hint" class="admin-staging-schedule-site-slug-edit__hint" role="status">
-          G-9g3f3a — binding only. Save not available. Preview deferred to G-9g3f3b.
+          G-9g3f3b — binding smoke. Save not available. Use G-9 Preview button above.
         </p>
       )
     }
   </AdminCard>
 
-  <AdminCard title="Dry-run result" description="Preview payload JSON — execution deferred to G-9g3f3b">
+  <AdminCard
+    title="G-9 site_slug general edit preview result"
+    description={`Changed-fields-only dry-run — panel #site-slug-edit-dry-run-result. Expected approvalId=${binding.approvalId}.`}
+  >
+    <p class="admin-staging-schedule-site-slug-edit__result-expectations" role="note">
+      Expected: <code>approvalId={binding.approvalId}</code>;{" "}
+      <code>changedFields</code>, <code>optimisticLock</code>, <code>hostGatePassed</code> in this panel.
+      Legacy <code>G-6-e2-schedule-dry-run-ui</code> results are not valid for G-9g3f3b.
+    </p>
     <div
       id="site-slug-edit-dry-run-result"
       class="site-slug-edit-dry-run-result"
+      data-g9-result-panel="true"
       aria-live="polite"
     >
       <p class="site-slug-edit-dry-run-result__placeholder">
-        Preview execution deferred to G-9g3f3b. Select a row in the picker to hydrate candidate fields.
+        Select a row in the picker, edit a candidate field, then click{" "}
+        <strong>Preview G-9 site_slug general edit dry-run</strong>.
       </p>
     </div>
   </AdminCard>
@@ -746,6 +783,33 @@ const hostAlertClass = binding.isKnownProductionHost
     border: 1px solid #fcd34d;
     color: #92400e;
     font-size: 0.875rem;
+  }
+
+  .admin-staging-schedule-site-slug-edit__legacy-g6-warning {
+    margin: 0 0 1rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    background: #fff7ed;
+    border: 1px solid #fdba74;
+    color: #9a3412;
+    font-size: 0.875rem;
+  }
+
+  .admin-staging-schedule-site-slug-edit__preview-guide {
+    flex: 1 1 100%;
+    margin: 0 0 0.5rem;
+    font-size: 0.85rem;
+    color: #334155;
+  }
+
+  .admin-staging-schedule-site-slug-edit__g9-preview-btn {
+    border-color: #0369a1;
+  }
+
+  .admin-staging-schedule-site-slug-edit__result-expectations {
+    margin: 0 0 0.75rem;
+    font-size: 0.85rem;
+    color: #475569;
   }
 
   .admin-staging-schedule-site-slug-edit__legacy-poc {

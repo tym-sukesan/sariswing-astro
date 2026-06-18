@@ -47,6 +47,7 @@ export interface PickerEditBindingHooks {
   invalidateDryRunPreview: () => void;
   refreshSaveButtonStates: () => void;
   refreshSaveGatePanel: () => void;
+  refreshPreviewButtonState: () => void;
   clearDryRunResultPlaceholder: (message: string) => void;
 }
 
@@ -188,8 +189,9 @@ function hydrateFromRow(row: ScheduleRecord): void {
 
   hooks?.invalidateDryRunPreview();
   hooks?.clearDryRunResultPlaceholder(
-    "Row bound from picker — Preview execution deferred to G-9g3f3b smoke.",
+    "Row bound from picker — change fields and run Preview dry-run (G-9g3f3b smoke).",
   );
+  hooks?.refreshPreviewButtonState();
   hooks?.refreshSaveButtonStates();
   hooks?.refreshSaveGatePanel();
 }
@@ -216,6 +218,7 @@ function clearToPlaceholder(reason: string): void {
   );
   hooks?.refreshSaveButtonStates();
   hooks?.refreshSaveGatePanel();
+  hooks?.refreshPreviewButtonState();
 }
 
 function onRowSelected(event: Event): void {

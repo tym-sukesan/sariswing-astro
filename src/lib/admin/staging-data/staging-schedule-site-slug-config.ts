@@ -69,6 +69,13 @@ export const G9G3F1_PHASE =
 export const G9G3F3A_PHASE =
   "G-9g3f3a-staging-shell-schedule-site-slug-row-picker-general-edit-binding-implementation";
 
+export const G9G3F3B_PHASE =
+  "G-9g3f3b-staging-shell-schedule-site-slug-row-picker-general-edit-binding-smoke-test";
+
+/** G-9g3f3b smoke — price-only dry-run candidate on picker-selected row. */
+export const G9G3F3B_SMOKE_PRICE_CANDIDATE =
+  "[CMS Kit staging] G-9g3f3b row-picker binding smoke price candidate";
+
 /** PoC audit marker prefix in staging row text fields — exclude from default picker selection. */
 export const POC_AUDIT_STAGING_MARKER = "[CMS Kit staging]";
 

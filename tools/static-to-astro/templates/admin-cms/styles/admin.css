@@ -1628,7 +1628,81 @@
 }
 
 .admin-gosaki-admin-pages {
-  max-width: 960px;
+  max-width: 1120px;
+}
+
+.admin-form--grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+@media (max-width: 720px) {
+  .admin-form--grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.gosaki-schedule-admin-form__row {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 720px) {
+  .gosaki-schedule-admin-form__row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.gosaki-schedule-admin-add-card {
+  margin-bottom: 1.25rem;
+}
+
+.gosaki-schedule-admin-workspace {
+  display: grid;
+  gap: 1.25rem;
+  align-items: start;
+}
+
+@media (min-width: 960px) {
+  .gosaki-schedule-admin-workspace {
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  }
+}
+
+.gosaki-schedule-admin-preview-link-wrap {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.gosaki-schedule-admin-preview-link-wrap a {
+  color: var(--admin-color-primary);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.gosaki-schedule-admin-edit-actions {
+  grid-column: 1 / -1;
+  margin-top: 0.25rem;
+}
+
+.admin-gosaki-schedule-edit__empty {
+  margin: 0;
+  color: #6b7280;
+  font-size: 0.9rem;
+}
+
+.admin-gosaki-schedule-edit-card {
+  position: sticky;
+  top: 1rem;
+}
+
+@media (max-width: 959px) {
+  .admin-gosaki-schedule-edit-card {
+    position: static;
+  }
 }
 
 .admin-gosaki-schedule-filters {

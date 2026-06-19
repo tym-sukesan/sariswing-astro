@@ -1,12 +1,12 @@
 Last updated: 2026-06-19
 Project: Static-to-Astro CMS / Musician CMS Kit
 
-## 0. Gosaki staging admin schedule UI — complete (UI only)
+## 0. Gosaki staging admin schedule UI — add/edit forms (UI only)
 
 | Item | Value |
 | --- | --- |
-| Routes | `/__admin-staging-shell/musician-basic/admin/`, `/admin/schedule/`, `/admin/youtube/`, `/admin/discography/` |
-| YouTube / Discography | G-9j static config + read-only admin (no DB); embed-code-only YouTube UI |
+| Routes | `/__admin-staging-shell/musician-basic/admin/schedule/` |
+| Schedule | Add + edit forms; save disabled; dev PoC in `<details>` |
 | Next | G-9h1 client preview feedback closure |
 
 ## 0b. Gosaki YouTube and Discography (G-9j)

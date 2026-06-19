@@ -1,6 +1,6 @@
 ---
 /**
- * Gosaki staging shell — operator-facing schedule list UI (read-only).
+ * Gosaki staging shell — operator-facing schedule add/edit UI (forms only; no save).
  */
 
 import type { SiteSlugScheduleRowPickerBinding } from "../../../../../../src/lib/admin/staging-data/staging-schedule-site-slug-row-picker-binding";
@@ -28,10 +28,11 @@ function displayValue(value: string | null | undefined): string {
 
 <section
   id="gosaki-schedule-operator"
-  class="admin-gosaki-schedule-operator admin-prototype-section"
+  class="admin-gosaki-schedule-operator admin-page admin-page--wide admin-prototype-section"
   data-section="admin-schedule"
   data-read-source={binding.source}
   data-selectable-rows={rowsJson}
+  data-preview-base={GOSAKI_STAGING_PREVIEW_URL}
   aria-label="Schedule管理"
 >
   <header class="admin-gosaki-page-header admin-gosaki-page-header--with-actions">
@@ -39,7 +40,7 @@ function displayValue(value: string | null | undefined): string {
       <a class="admin-gosaki-back-link" href={GOSAKI_STAGING_ADMIN_BASE}>← 管理画面トップへ</a>
       <h1 class="admin-gosaki-page-header__title">Schedule管理</h1>
       <p class="admin-gosaki-page-header__subtitle">
-        公演スケジュールを確認・編集する画面です。
+        公演スケジュールの追加・編集を行う画面です。
       </p>
     </div>
     <button
@@ -52,8 +53,12 @@ function displayValue(value: string | null | undefined): string {
     </button>
   </header>
 
+  <p class="admin-form__hint admin-static-notice">
+    公演の内容を入力し、一覧で選択して編集できます。公開サイトへ反映するには再ビルド・再アップロードが必要です。
+  </p>
+
   <p class="admin-gosaki-status-bar" role="status">
-    今は確認用です。保存はまだ開放していません。
+    保存は次フェーズで開放予定です。入力内容はこの画面では保存されません。
   </p>
 
   {
@@ -64,128 +69,311 @@ function displayValue(value: string | null | undefined): string {
     ) : null
   }
 
-  <section class="admin-card admin-gosaki-card admin-gosaki-schedule-list-card">
-    <h2 class="admin-gosaki-card__title">公演一覧</h2>
+  <section class="admin-card admin-gosaki-card gosaki-schedule-admin-add-card">
+    <h2 class="admin-gosaki-card__title">新規公演を追加</h2>
 
-    <div class="admin-gosaki-schedule-filters">
-      <label class="admin-gosaki-schedule-filters__field">
-        <span class="admin-gosaki-schedule-filters__label">月</span>
-        <select id="gosaki-schedule-operator-month-filter">
-          <option value="all" selected>すべて</option>
-          {
-            monthOptions.map((month) => (
-              <option value={month}>{month}</option>
-            ))
-          }
-        </select>
-      </label>
-      <label class="admin-gosaki-schedule-filters__field">
-        <span class="admin-gosaki-schedule-filters__label">公開状態</span>
-        <select id="gosaki-schedule-operator-published-filter">
-          <option value="published" selected>公開のみ</option>
-          <option value="all">すべて</option>
-          <option value="draft">非公開のみ</option>
-        </select>
-      </label>
-      <label class="admin-gosaki-schedule-filters__field admin-gosaki-schedule-filters__field--grow">
-        <span class="admin-gosaki-schedule-filters__label">キーワード</span>
-        <input
-          id="gosaki-schedule-operator-keyword"
-          type="search"
-          placeholder="タイトル・会場で検索"
-          autocomplete="off"
-        />
-      </label>
-    </div>
-
-    <p class="admin-gosaki-schedule-count" role="status">
-      <span id="gosaki-schedule-operator-filtered-count">{binding.selectableCount}</span> 件表示
-    </p>
-
-    {
-      !isLive ? (
-        <p class="admin-gosaki-schedule-operator__empty">
-          登録済みスケジュールがありません。
-        </p>
-      ) : (
-        <div class="admin-gosaki-schedule-table-wrap">
-          <table class="admin-gosaki-schedule-table">
-            <thead>
-              <tr>
-                <th scope="col">日付</th>
-                <th scope="col">タイトル</th>
-                <th scope="col">会場</th>
-                <th scope="col">開場</th>
-                <th scope="col">開演</th>
-                <th scope="col">料金</th>
-                <th scope="col">操作</th>
-              </tr>
-            </thead>
-            <tbody id="gosaki-schedule-operator-table-body">
-              {
-                binding.selectableRows.map((row: ScheduleRecord) => (
-                  <tr class="admin-gosaki-schedule-table__row" data-row-id={row.id}>
-                    <td>{row.date}</td>
-                    <td>{displayValue(row.title)}</td>
-                    <td>{displayValue(row.venue)}</td>
-                    <td>{displayValue(row.open_time)}</td>
-                    <td>{displayValue(row.start_time)}</td>
-                    <td>{displayValue(row.price)}</td>
-                    <td>
-                      <button
-                        type="button"
-                        class="admin-button admin-button--secondary admin-gosaki-schedule-select-btn"
-                        data-select-row-id={row.id}
-                      >
-                        確認する
-                      </button>
-                    </td>
-                  </tr>
-                ))
-              }
-            </tbody>
-          </table>
-        </div>
-      )
-    }
-  </section>
-
-  <section
-    id="gosaki-schedule-operator-detail"
-    class="admin-card admin-gosaki-card admin-gosaki-schedule-detail-card"
-    aria-live="polite"
-  >
-    <h2 class="admin-gosaki-card__title">選択中の公演</h2>
-    <p id="gosaki-schedule-operator-detail-empty" class="admin-gosaki-schedule-detail__empty">
-      一覧から「確認する」を押すと、ここに内容が表示されます。
-    </p>
-    <div id="gosaki-schedule-operator-detail-body" class="admin-gosaki-schedule-detail__body" hidden>
-      <dl class="admin-gosaki-schedule-detail__dl">
-        <div><dt>日付</dt><dd id="gosaki-detail-date">—</dd></div>
-        <div><dt>タイトル</dt><dd id="gosaki-detail-title">—</dd></div>
-        <div><dt>会場</dt><dd id="gosaki-detail-venue">—</dd></div>
-        <div><dt>開場</dt><dd id="gosaki-detail-open-time">—</dd></div>
-        <div><dt>開演</dt><dd id="gosaki-detail-start-time">—</dd></div>
-        <div><dt>料金</dt><dd id="gosaki-detail-price">—</dd></div>
-      </dl>
-      <div class="admin-gosaki-schedule-detail__description-wrap">
-        <h3 class="admin-gosaki-card__subtitle">出演・備考</h3>
-        <p id="gosaki-detail-description" class="admin-gosaki-schedule-detail__description">—</p>
+    <form id="gosaki-schedule-add-form" class="admin-form admin-form--grid gosaki-schedule-admin-form" novalidate>
+      <div class="gosaki-schedule-admin-form__row">
+        <label class="admin-form__field">
+          <span class="admin-form__label">日付</span>
+          <input id="gosaki-add-date" type="date" />
+        </label>
+        <label class="admin-form__field">
+          <span class="admin-form__label">月（表示用）</span>
+          <select id="gosaki-add-month">
+            <option value="">日付から自動</option>
+            {
+              monthOptions.map((month) => (
+                <option value={month}>{month}</option>
+              ))
+            }
+          </select>
+        </label>
       </div>
-      <p class="admin-gosaki-schedule-detail__save-note" role="note">
-        保存はまだ開放していません。修正が必要な場合はメモしてください。
-      </p>
-      <p class="admin-gosaki-schedule-detail__preview">
-        <a
-          href={`${GOSAKI_STAGING_PREVIEW_URL}schedule/`}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          公開前のスケジュールページを見る
-        </a>
-      </p>
+
+      <label class="admin-form__field admin-form__field--full">
+        <span class="admin-form__label">タイトル</span>
+        <input id="gosaki-add-title" type="text" placeholder="公演タイトル" />
+      </label>
+
+      <label class="admin-form__field admin-form__field--full">
+        <span class="admin-form__label">会場</span>
+        <input id="gosaki-add-venue" type="text" placeholder="会場名" />
+      </label>
+
+      <div class="gosaki-schedule-admin-form__row">
+        <label class="admin-form__field">
+          <span class="admin-form__label">開場</span>
+          <input id="gosaki-add-open-time" type="text" placeholder="例: 18:00" />
+        </label>
+        <label class="admin-form__field">
+          <span class="admin-form__label">開演</span>
+          <input id="gosaki-add-start-time" type="text" placeholder="例: 19:00" />
+        </label>
+      </div>
+
+      <div class="gosaki-schedule-admin-form__row">
+        <label class="admin-form__field">
+          <span class="admin-form__label">料金</span>
+          <input id="gosaki-add-price" type="text" placeholder="例: 3,500 (tax in)" />
+        </label>
+        <label class="admin-form__field">
+          <span class="admin-form__label">表示順</span>
+          <input id="gosaki-add-sort-order" type="number" value="10" step="1" />
+        </label>
+      </div>
+
+      <label class="admin-form__field admin-form__field--full">
+        <span class="admin-form__label">備考 / 説明</span>
+        <textarea id="gosaki-add-description" rows="4" placeholder="出演メンバー・備考など"></textarea>
+      </label>
+
+      <label class="admin-form__field admin-form__field--checkbox">
+        <input id="gosaki-add-published" type="checkbox" />
+        <span>公開する</span>
+      </label>
+
+      <div class="gosaki-schedule-admin-form__row gosaki-schedule-admin-form__row--duplicate">
+        <label class="admin-form__field">
+          <span class="admin-form__label">複製元（任意）</span>
+          <select id="gosaki-add-duplicate-source">
+            <option value="">既存の公演を選ぶ</option>
+            {
+              binding.selectableRows.map((row: ScheduleRecord) => (
+                <option value={row.id}>
+                  {row.date} — {displayValue(row.title)}
+                </option>
+              ))
+            }
+          </select>
+        </label>
+        <div class="admin-form__field">
+          <span class="admin-form__label">公開ページ</span>
+          <p class="gosaki-schedule-admin-preview-link-wrap">
+            <a
+              id="gosaki-add-preview-link"
+              href={`${GOSAKI_STAGING_PREVIEW_URL}schedule/`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              スケジュールページを見る
+            </a>
+          </p>
+        </div>
+      </div>
+    </form>
+
+    <div class="admin-actions">
+      <button
+        type="button"
+        class="admin-button"
+        id="gosaki-schedule-add-btn"
+        data-gosaki-schedule-action-disabled
+        disabled
+      >
+        追加
+      </button>
     </div>
+    <p class="admin-gosaki-save-note" role="note">追加の保存は次フェーズで開放予定です。</p>
   </section>
+
+  <div class="gosaki-schedule-admin-workspace">
+    <section class="admin-card admin-gosaki-card admin-gosaki-schedule-list-card">
+      <h2 class="admin-gosaki-card__title">公演一覧</h2>
+
+      <div class="admin-gosaki-schedule-filters">
+        <label class="admin-gosaki-schedule-filters__field">
+          <span class="admin-gosaki-schedule-filters__label">月</span>
+          <select id="gosaki-schedule-operator-month-filter">
+            <option value="all" selected>すべて</option>
+            {
+              monthOptions.map((month) => (
+                <option value={month}>{month}</option>
+              ))
+            }
+          </select>
+        </label>
+        <label class="admin-gosaki-schedule-filters__field">
+          <span class="admin-gosaki-schedule-filters__label">公開状態</span>
+          <select id="gosaki-schedule-operator-published-filter">
+            <option value="published" selected>公開のみ</option>
+            <option value="all">すべて</option>
+            <option value="draft">非公開のみ</option>
+          </select>
+        </label>
+        <label class="admin-gosaki-schedule-filters__field admin-gosaki-schedule-filters__field--grow">
+          <span class="admin-gosaki-schedule-filters__label">キーワード</span>
+          <input
+            id="gosaki-schedule-operator-keyword"
+            type="search"
+            placeholder="タイトル・会場で検索"
+            autocomplete="off"
+          />
+        </label>
+      </div>
+
+      <p class="admin-gosaki-schedule-count" role="status">
+        <span id="gosaki-schedule-operator-filtered-count">{binding.selectableCount}</span> 件表示
+      </p>
+
+      {
+        !isLive ? (
+          <p class="admin-gosaki-schedule-operator__empty">
+            登録済みスケジュールがありません。
+          </p>
+        ) : (
+          <div class="admin-gosaki-schedule-table-wrap">
+            <table class="admin-gosaki-schedule-table">
+              <thead>
+                <tr>
+                  <th scope="col">日付</th>
+                  <th scope="col">タイトル</th>
+                  <th scope="col">会場</th>
+                  <th scope="col">開場</th>
+                  <th scope="col">開演</th>
+                  <th scope="col">料金</th>
+                  <th scope="col">操作</th>
+                </tr>
+              </thead>
+              <tbody id="gosaki-schedule-operator-table-body">
+                {
+                  binding.selectableRows.map((row: ScheduleRecord) => (
+                    <tr class="admin-gosaki-schedule-table__row" data-row-id={row.id}>
+                      <td>{row.date}</td>
+                      <td>{displayValue(row.title)}</td>
+                      <td>{displayValue(row.venue)}</td>
+                      <td>{displayValue(row.open_time)}</td>
+                      <td>{displayValue(row.start_time)}</td>
+                      <td>{displayValue(row.price)}</td>
+                      <td>
+                        <button
+                          type="button"
+                          class="admin-button admin-button--secondary admin-gosaki-schedule-select-btn"
+                          data-select-row-id={row.id}
+                        >
+                          編集する
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                }
+              </tbody>
+            </table>
+          </div>
+        )
+      }
+    </section>
+
+    <section
+      id="gosaki-schedule-operator-edit"
+      class="admin-card admin-gosaki-card admin-gosaki-schedule-edit-card"
+      aria-live="polite"
+    >
+      <h2 class="admin-gosaki-card__title">公演を編集</h2>
+      <p id="gosaki-schedule-operator-edit-empty" class="admin-gosaki-schedule-edit__empty">
+        一覧から「編集する」を押すと、ここに編集フォームが表示されます。
+      </p>
+
+      <form
+        id="gosaki-schedule-edit-form"
+        class="admin-form admin-form--grid gosaki-schedule-admin-form"
+        hidden
+        novalidate
+      >
+        <div class="gosaki-schedule-admin-form__row">
+          <label class="admin-form__field">
+            <span class="admin-form__label">日付</span>
+            <input id="gosaki-edit-date" type="date" />
+          </label>
+          <label class="admin-form__field">
+            <span class="admin-form__label">月（表示用）</span>
+            <input id="gosaki-edit-month" type="text" readonly />
+          </label>
+        </div>
+
+        <label class="admin-form__field admin-form__field--full">
+          <span class="admin-form__label">タイトル</span>
+          <input id="gosaki-edit-title" type="text" />
+        </label>
+
+        <label class="admin-form__field admin-form__field--full">
+          <span class="admin-form__label">会場</span>
+          <input id="gosaki-edit-venue" type="text" />
+        </label>
+
+        <div class="gosaki-schedule-admin-form__row">
+          <label class="admin-form__field">
+            <span class="admin-form__label">開場</span>
+            <input id="gosaki-edit-open-time" type="text" placeholder="例: 18:00" />
+          </label>
+          <label class="admin-form__field">
+            <span class="admin-form__label">開演</span>
+            <input id="gosaki-edit-start-time" type="text" placeholder="例: 19:00" />
+          </label>
+        </div>
+
+        <label class="admin-form__field">
+          <span class="admin-form__label">料金</span>
+          <input id="gosaki-edit-price" type="text" />
+        </label>
+
+        <label class="admin-form__field admin-form__field--full">
+          <span class="admin-form__label">備考 / 説明</span>
+          <textarea id="gosaki-edit-description" rows="5"></textarea>
+        </label>
+
+        <label class="admin-form__field admin-form__field--checkbox">
+          <input id="gosaki-edit-published" type="checkbox" />
+          <span>公開する</span>
+        </label>
+
+        <p class="gosaki-schedule-admin-preview-link-wrap">
+          <span class="admin-form__label">公開ページ</span>
+          <a
+            id="gosaki-edit-preview-link"
+            href={`${GOSAKI_STAGING_PREVIEW_URL}schedule/`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            スケジュールページを見る
+          </a>
+        </p>
+
+        <div class="admin-actions gosaki-schedule-admin-edit-actions">
+          <button
+            type="button"
+            class="admin-button"
+            id="gosaki-schedule-update-btn"
+            data-gosaki-schedule-action-disabled
+            disabled
+          >
+            更新
+          </button>
+          <button
+            type="button"
+            class="admin-button admin-button-secondary"
+            id="gosaki-schedule-duplicate-btn"
+            data-gosaki-schedule-action-disabled
+            disabled
+          >
+            複製
+          </button>
+          <button
+            type="button"
+            class="admin-button admin-button-danger"
+            id="gosaki-schedule-delete-btn"
+            data-gosaki-schedule-action-disabled
+            disabled
+          >
+            削除
+          </button>
+        </div>
+        <p class="admin-gosaki-save-note" role="note">
+          更新・複製・削除の保存は次フェーズで開放予定です。
+        </p>
+      </form>
+    </section>
+  </div>
 </section>
 
 <script>

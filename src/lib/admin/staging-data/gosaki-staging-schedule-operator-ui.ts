@@ -1,5 +1,5 @@
 /**
- * Gosaki staging shell — operator schedule list (read-only; dispatches row selection to edit binding).
+ * Gosaki staging shell — operator schedule add/edit UI (no save).
  */
 
 import type { ScheduleRecord } from "../staging-write/schedule-dry-run-types";
@@ -12,6 +12,7 @@ type PublishedFilter = "published" | "all" | "draft";
 
 let selectableRows: ScheduleRecord[] = [];
 let selectedRowId: string | null = null;
+let previewBase = "https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/";
 
 function escapeHtml(value: string): string {
   return value
@@ -33,6 +34,7 @@ function getRoot(): HTMLElement | null {
 function parseRowsDataset(): ScheduleRecord[] {
   const root = getRoot();
   if (!root) return [];
+  previewBase = root.dataset.previewBase ?? previewBase;
   const raw = root.dataset.selectableRows;
   if (!raw) return [];
   try {
@@ -41,6 +43,31 @@ function parseRowsDataset(): ScheduleRecord[] {
   } catch {
     return [];
   }
+}
+
+function monthFromDate(date: string): string {
+  const trimmed = date.trim();
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) return "";
+  return trimmed.slice(0, 7);
+}
+
+function schedulePreviewUrl(month: string | null | undefined): string {
+  const normalized = String(month ?? "").trim();
+  if (normalized && /^\d{4}-\d{2}$/.test(normalized)) {
+    return `${previewBase}${normalized}/`;
+  }
+  return `${previewBase}schedule/`;
+}
+
+function setPreviewLink(linkId: string, month: string | null | undefined): void {
+  const link = document.getElementById(linkId) as HTMLAnchorElement | null;
+  if (!link) return;
+  const url = schedulePreviewUrl(month);
+  link.href = url;
+  link.textContent =
+    month && /^\d{4}-\d{2}$/.test(month)
+      ? `${month} のページを見る`
+      : "スケジュールページを見る";
 }
 
 function getMonthFilter(): string {
@@ -85,32 +112,61 @@ function rowMatchesFilters(row: ScheduleRecord): boolean {
   return true;
 }
 
-function renderDetailPanel(row: ScheduleRecord | null): void {
-  const emptyEl = document.getElementById("gosaki-schedule-operator-detail-empty");
-  const bodyEl = document.getElementById("gosaki-schedule-operator-detail-body");
-  if (!emptyEl || !bodyEl) return;
+function setFieldValue(id: string, value: string): void {
+  const el = document.getElementById(id) as HTMLInputElement | HTMLTextAreaElement | null;
+  if (el) el.value = value;
+}
+
+function setCheckbox(id: string, checked: boolean): void {
+  const el = document.getElementById(id) as HTMLInputElement | null;
+  if (el) el.checked = checked;
+}
+
+function populateAddFormFromRow(row: ScheduleRecord): void {
+  setFieldValue("gosaki-add-date", row.date ?? "");
+  const month = String(row.month ?? monthFromDate(row.date));
+  const monthSelect = document.getElementById("gosaki-add-month") as HTMLSelectElement | null;
+  if (monthSelect) monthSelect.value = month || "";
+  setFieldValue("gosaki-add-title", String(row.title ?? ""));
+  setFieldValue("gosaki-add-venue", String(row.venue ?? ""));
+  setFieldValue("gosaki-add-open-time", String(row.open_time ?? ""));
+  setFieldValue("gosaki-add-start-time", String(row.start_time ?? ""));
+  setFieldValue("gosaki-add-price", String(row.price ?? ""));
+  setFieldValue("gosaki-add-description", String(row.description ?? ""));
+  setFieldValue(
+    "gosaki-add-sort-order",
+    row.sort_order != null ? String(row.sort_order) : "10",
+  );
+  setCheckbox("gosaki-add-published", row.published === true);
+  setPreviewLink("gosaki-add-preview-link", month);
+}
+
+function renderEditForm(row: ScheduleRecord | null): void {
+  const emptyEl = document.getElementById("gosaki-schedule-operator-edit-empty");
+  const formEl = document.getElementById("gosaki-schedule-edit-form");
+  if (!emptyEl || !formEl) return;
 
   if (!row) {
     emptyEl.hidden = false;
-    bodyEl.hidden = true;
+    formEl.hidden = true;
     return;
   }
 
   emptyEl.hidden = true;
-  bodyEl.hidden = false;
+  formEl.hidden = false;
 
-  const set = (id: string, value: string) => {
-    const el = document.getElementById(id);
-    if (el) el.textContent = value;
-  };
+  const month = String(row.month ?? monthFromDate(row.date));
 
-  set("gosaki-detail-date", row.date);
-  set("gosaki-detail-title", displayValue(row.title));
-  set("gosaki-detail-venue", displayValue(row.venue));
-  set("gosaki-detail-open-time", displayValue(row.open_time));
-  set("gosaki-detail-start-time", displayValue(row.start_time));
-  set("gosaki-detail-price", displayValue(row.price));
-  set("gosaki-detail-description", displayValue(row.description));
+  setFieldValue("gosaki-edit-date", row.date ?? "");
+  setFieldValue("gosaki-edit-month", month);
+  setFieldValue("gosaki-edit-title", String(row.title ?? ""));
+  setFieldValue("gosaki-edit-venue", String(row.venue ?? ""));
+  setFieldValue("gosaki-edit-open-time", String(row.open_time ?? ""));
+  setFieldValue("gosaki-edit-start-time", String(row.start_time ?? ""));
+  setFieldValue("gosaki-edit-price", String(row.price ?? ""));
+  setFieldValue("gosaki-edit-description", String(row.description ?? ""));
+  setCheckbox("gosaki-edit-published", row.published === true);
+  setPreviewLink("gosaki-edit-preview-link", month);
 }
 
 function renderTable(): void {
@@ -137,7 +193,7 @@ function renderTable(): void {
         <td>${escapeHtml(displayValue(row.open_time))}</td>
         <td>${escapeHtml(displayValue(row.start_time))}</td>
         <td>${escapeHtml(displayValue(row.price))}</td>
-        <td><button type="button" class="admin-button admin-button--secondary admin-gosaki-schedule-select-btn" data-select-row-id="${escapeHtml(row.id)}">${selected ? "選択中" : "確認する"}</button></td>
+        <td><button type="button" class="admin-button admin-button--secondary admin-gosaki-schedule-select-btn" data-select-row-id="${escapeHtml(row.id)}">${selected ? "選択中" : "編集する"}</button></td>
       </tr>`;
     })
     .join("");
@@ -152,8 +208,11 @@ function selectRowById(rowId: string): void {
 
   selectedRowId = rowId;
   renderTable();
-  renderDetailPanel(row);
+  renderEditForm(row);
   dispatchRowSelected(row);
+
+  const editCard = document.getElementById("gosaki-schedule-operator-edit");
+  editCard?.scrollIntoView({ behavior: "smooth", block: "nearest" });
 }
 
 function wireFilters(): void {
@@ -177,6 +236,51 @@ function wireTableActions(): void {
   });
 }
 
+function wireAddForm(): void {
+  const dateInput = document.getElementById("gosaki-add-date") as HTMLInputElement | null;
+  const monthSelect = document.getElementById("gosaki-add-month") as HTMLSelectElement | null;
+  const duplicateSelect = document.getElementById(
+    "gosaki-add-duplicate-source",
+  ) as HTMLSelectElement | null;
+
+  dateInput?.addEventListener("change", () => {
+    const month = monthFromDate(dateInput.value);
+    if (monthSelect && monthSelect.value === "") {
+      setPreviewLink("gosaki-add-preview-link", month);
+    }
+  });
+
+  monthSelect?.addEventListener("change", () => {
+    const month = monthSelect.value || monthFromDate(dateInput?.value ?? "");
+    setPreviewLink("gosaki-add-preview-link", month);
+  });
+
+  duplicateSelect?.addEventListener("change", () => {
+    const rowId = duplicateSelect.value;
+    if (!rowId) return;
+    const row = selectableRows.find((r) => r.id === rowId);
+    if (row) populateAddFormFromRow(row);
+  });
+}
+
+function wireEditForm(): void {
+  const dateInput = document.getElementById("gosaki-edit-date") as HTMLInputElement | null;
+  dateInput?.addEventListener("change", () => {
+    const month = monthFromDate(dateInput.value);
+    setFieldValue("gosaki-edit-month", month);
+    setPreviewLink("gosaki-edit-preview-link", month);
+  });
+}
+
+function wireDisabledActions(): void {
+  document
+    .querySelectorAll<HTMLButtonElement>("[data-gosaki-schedule-action-disabled]")
+    .forEach((button) => {
+      button.disabled = true;
+      button.title = "保存は次フェーズで開放予定です";
+    });
+}
+
 export function initGosakiStagingScheduleOperatorUi(): void {
   const root = getRoot();
   if (!root) return;
@@ -184,8 +288,11 @@ export function initGosakiStagingScheduleOperatorUi(): void {
   selectableRows = parseRowsDataset();
   wireFilters();
   wireTableActions();
+  wireAddForm();
+  wireEditForm();
+  wireDisabledActions();
   renderTable();
-  renderDetailPanel(null);
+  renderEditForm(null);
 }
 
 if (typeof document !== "undefined") {

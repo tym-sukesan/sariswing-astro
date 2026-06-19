@@ -10,6 +10,7 @@ import {
   G9G3G4_OPERATIONAL_TARGET_ROW_ID,
   STAGING_SHELL_GOSAKI_SCHEDULE_SITE_SLUG,
 } from "../staging-data/staging-schedule-site-slug-config";
+import { isG9g3h1aSmokeMarkerRestoreTargetRow } from "../staging-data/staging-schedule-site-slug-row-picker-utils";
 import {
   G6F6_SCHEDULE_SAFE_FIELDS_NON_DRY_RUN_POC_APPROVAL_ID,
   SCHEDULE_WRITE_APPROVAL_ID,
@@ -281,6 +282,9 @@ export function assertOperationalNotPocAuditRow(
   row: ScheduleDryRunSource,
   label = "G-9g3g",
 ): void {
+  if (isG9g3h1aSmokeMarkerRestoreTargetRow(row)) {
+    return;
+  }
   if (row.id === "aa440e29-5be8-402e-9190-0d81c48434c0") {
     throw new Error(`${label} PoC audit row is not writable.`);
   }

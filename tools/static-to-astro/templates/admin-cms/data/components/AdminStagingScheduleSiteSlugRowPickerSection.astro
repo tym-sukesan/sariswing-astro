@@ -4,6 +4,11 @@
  */
 import AdminCard from "../../components/AdminCard.astro";
 import type { SiteSlugScheduleRowPickerBinding } from "../../../../../../src/lib/admin/staging-data/staging-schedule-site-slug-row-picker-binding";
+import {
+  G9G3H1A_RESTORE_SELECTABLE_HINT,
+  G9G3H1A_RESTORE_TARGET_UI_LABEL,
+} from "../../../../../../src/lib/admin/staging-data/staging-schedule-site-slug-config";
+import { isG9g3h1aSmokeMarkerRestoreTargetRow } from "../../../../../../src/lib/admin/staging-data/staging-schedule-site-slug-row-picker-utils";
 
 interface Props {
   binding: SiteSlugScheduleRowPickerBinding;
@@ -133,7 +138,7 @@ const auditRowsJson = JSON.stringify(binding.auditRows);
     </p>
   </AdminCard>
 
-  <AdminCard title="Selectable schedule rows" description="PoC audit rows and [CMS Kit staging] markers excluded">
+  <AdminCard title="Selectable schedule rows" description="PoC audit rows excluded — G-9g3h1a restore target may appear with restore-only label">
     {
       !isLive || binding.selectableRows.length === 0 ? (
         <p class="admin-staging-schedule-site-slug-row-picker__empty">
@@ -156,10 +161,28 @@ const auditRowsJson = JSON.stringify(binding.auditRows);
             </thead>
             <tbody id="site-slug-row-picker-table-body">
               {
-                binding.selectableRows.map((row) => (
-                  <tr class="site-slug-row-picker__row" data-row-id={row.id}>
+                binding.selectableRows.map((row) => {
+                  const restoreTarget = isG9g3h1aSmokeMarkerRestoreTargetRow(row);
+                  return (
+                  <tr
+                    class:list={[
+                      "site-slug-row-picker__row",
+                      restoreTarget && "site-slug-row-picker__row--g9g3h1a-restore",
+                    ]}
+                    data-row-id={row.id}
+                  >
                     <td>{row.date}</td>
-                    <td>{row.title ?? "—"}</td>
+                    <td>
+                      {row.title ?? "—"}
+                      {restoreTarget ? (
+                        <span
+                          class="site-slug-row-picker__restore-badge"
+                          title={G9G3H1A_RESTORE_SELECTABLE_HINT}
+                        >
+                          {G9G3H1A_RESTORE_TARGET_UI_LABEL} — restore only
+                        </span>
+                      ) : null}
+                    </td>
                     <td>{row.venue?.trim() ? row.venue : "—"}</td>
                     <td>
                       <code>{row.source_route ?? "—"}</code>
@@ -174,14 +197,18 @@ const auditRowsJson = JSON.stringify(binding.auditRows);
                     <td>
                       <button
                         type="button"
-                        class="site-slug-row-picker__select-btn"
+                        class:list={[
+                          "site-slug-row-picker__select-btn",
+                          restoreTarget && "site-slug-row-picker__select-btn--restore",
+                        ]}
                         data-select-row-id={row.id}
                       >
-                        Select
+                        {restoreTarget ? "Select (restore)" : "Select"}
                       </button>
                     </td>
                   </tr>
-                ))
+                  );
+                })
               }
             </tbody>
           </table>
@@ -196,8 +223,10 @@ const auditRowsJson = JSON.stringify(binding.auditRows);
         <summary>PoC audit rows (read-only — not selectable)</summary>
         <p class="site-slug-row-picker__audit-banner" role="alert">
           Pilot row <code>{binding.pilotRowId}</code> and rows with{" "}
-          <code>{binding.pocAuditMarker}</code> are excluded from default selection. Do not re-run
-          G-9g2 / G-9g3b / G-9g3c / G-9g3d Save.
+          <code>{binding.pocAuditMarker}</code> are excluded from default selection — except the
+          narrow <strong>{G9G3H1A_RESTORE_TARGET_UI_LABEL}</strong> when id, marker, and{" "}
+          <code>updated_at</code> match G-9g3h1b preflight. Do not re-run G-9g2 / G-9g3b / G-9g3c /
+          G-9g3d Save.
         </p>
         <div class="site-slug-row-picker__table-wrap">
           <table class="site-slug-row-picker__table site-slug-row-picker__table--audit">
@@ -395,6 +424,29 @@ const auditRowsJson = JSON.stringify(binding.auditRows);
     margin: 0;
     color: #64748b;
     font-size: 0.9rem;
+  }
+
+  .site-slug-row-picker__row--g9g3h1a-restore {
+    background: #fff7ed;
+  }
+
+  .site-slug-row-picker__restore-badge {
+    display: inline-block;
+    margin-left: 0.35rem;
+    padding: 0.1rem 0.35rem;
+    border-radius: 4px;
+    background: #ffedd5;
+    border: 1px solid #fdba74;
+    color: #9a3412;
+    font-size: 0.7rem;
+    font-weight: 600;
+    vertical-align: middle;
+  }
+
+  .site-slug-row-picker__select-btn--restore {
+    border-color: #ea580c;
+    color: #9a3412;
+    font-weight: 600;
   }
 
   .site-slug-row-picker__audit-details {

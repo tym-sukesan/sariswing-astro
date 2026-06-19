@@ -3265,6 +3265,38 @@ assert(
   "G-9g3h1c operator pending",
   g9g3h1cExecPendingSrc.includes("operator pending"),
 );
+assert(
+  "G-9g3h1c paused before Preview",
+  g9g3h1cExecPendingSrc.includes("paused before Preview") ||
+    g9g3h1cExecPendingSrc.includes("g9g3h1cExecutionPausedBeforePreviewSave"),
+);
+
+const g9g3h1b1ImplPath = path.join(
+  TOOL_ROOT,
+  "docs/staging-shell-schedule-site-slug-operational-save-reclick-smoke-marker-restore-row-picker-exception.md",
+);
+assert("G-9g3h1b1 implementation doc exists", fs.existsSync(g9g3h1b1ImplPath));
+const g9g3h1b1ImplSrc = fs.readFileSync(g9g3h1b1ImplPath, "utf8");
+assert(
+  "G-9g3h1b1 phase marker",
+  g9g3h1b1ImplSrc.includes("G-9g3h1b1-smoke-marker-restore-row-picker-exception"),
+);
+assert(
+  "G-9g3h1b1 implementation complete",
+  g9g3h1b1ImplSrc.includes("implementation complete"),
+);
+assert(
+  "G-9g3h1b1 row picker exception function",
+  g9g3h1b1ImplSrc.includes("isG9g3h1aSmokeMarkerRestoreTargetRow"),
+);
+assert(
+  "G-9g3h1b1 ready for G-9g3h1c",
+  g9g3h1b1ImplSrc.includes("readyForG9g3h1cSmokeMarkerRestoreExecution: true"),
+);
+assert(
+  "G-9g3h1b1 no DB write",
+  g9g3h1b1ImplSrc.includes("DB write executed (this phase) | **no**"),
+);
 
 const gosakiPublicDist = path.join(TOOL_ROOT, "output/static-public/gosaki-piano/public-dist");
 for (const ym of ["2026-06", "2026-07"]) {

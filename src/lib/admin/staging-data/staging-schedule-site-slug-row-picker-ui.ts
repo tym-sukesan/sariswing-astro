@@ -6,7 +6,11 @@ import { mergeStagingShellEnv } from "../staging-shell/staging-shell-client-gate
 import { getStagingSupabaseClient } from "../staging-auth/supabase-staging-auth-client";
 import { evaluateSupabaseHostGate } from "./staging-schedule-site-slug-host-gate";
 import type { ScheduleRecord } from "../staging-write/schedule-dry-run-types";
-import { STAGING_SHELL_GOSAKI_SCHEDULE_SITE_SLUG } from "./staging-schedule-site-slug-config";
+import {
+  G9G3H1A_RESTORE_SELECTABLE_HINT,
+  G9G3H1A_RESTORE_TARGET_UI_LABEL,
+  STAGING_SHELL_GOSAKI_SCHEDULE_SITE_SLUG,
+} from "./staging-schedule-site-slug-config";
 import {
   dispatchRowCleared,
   dispatchRowReloaded,
@@ -15,7 +19,10 @@ import {
 import {
   confirmDiscardDirtyCandidateIfNeeded,
 } from "./staging-schedule-site-slug-edit-picker-binding";
-import { isPocAuditScheduleRow } from "./staging-schedule-site-slug-row-picker-utils";
+import {
+  isG9g3h1aSmokeMarkerRestoreTargetRow,
+  isPocAuditScheduleRow,
+} from "./staging-schedule-site-slug-row-picker-utils";
 
 const SCHEDULE_ROW_PICKER_SELECT =
   "id,legacy_id,site_slug,date,year,month,title,venue,open_time,start_time,price,description,show_on_home,home_order,published,sort_order,source_file,source_route,created_at,updated_at";
@@ -142,15 +149,31 @@ function renderRowTable(): void {
   tbody.innerHTML = filtered
     .map((row) => {
       const selected = selectedRow?.id === row.id;
-      return `<tr class="site-slug-row-picker__row${selected ? " site-slug-row-picker__row--selected" : ""}" data-row-id="${escapeHtml(row.id)}" tabindex="0" role="button" aria-pressed="${selected ? "true" : "false"}">
+      const restoreTarget = isG9g3h1aSmokeMarkerRestoreTargetRow(row);
+      const rowClass = [
+        "site-slug-row-picker__row",
+        selected ? "site-slug-row-picker__row--selected" : "",
+        restoreTarget ? "site-slug-row-picker__row--g9g3h1a-restore" : "",
+      ]
+        .filter(Boolean)
+        .join(" ");
+      const restoreBadge = restoreTarget
+        ? `<span class="site-slug-row-picker__restore-badge" title="${escapeHtml(G9G3H1A_RESTORE_SELECTABLE_HINT)}">${escapeHtml(G9G3H1A_RESTORE_TARGET_UI_LABEL)} — restore only</span>`
+        : "";
+      const selectLabel = selected
+        ? "Selected"
+        : restoreTarget
+          ? "Select (restore)"
+          : "Select";
+      return `<tr class="${rowClass}" data-row-id="${escapeHtml(row.id)}" tabindex="0" role="button" aria-pressed="${selected ? "true" : "false"}">
         <td>${escapeHtml(row.date)}</td>
-        <td>${escapeHtml(row.title ?? "—")}</td>
+        <td>${escapeHtml(row.title ?? "—")}${restoreBadge}</td>
         <td>${escapeHtml(row.venue?.trim() ? row.venue : "—")}</td>
         <td><code>${escapeHtml(row.source_route ?? "—")}</code></td>
         <td>${row.published === true ? "true" : "false"}</td>
         <td><code>${escapeHtml(row.updated_at ?? "—")}</code></td>
         <td><code>${escapeHtml(row.legacy_id ?? "—")}</code></td>
-        <td><button type="button" class="site-slug-row-picker__select-btn" data-select-row-id="${escapeHtml(row.id)}">${selected ? "Selected" : "Select"}</button></td>
+        <td><button type="button" class="site-slug-row-picker__select-btn${restoreTarget ? " site-slug-row-picker__select-btn--restore" : ""}" data-select-row-id="${escapeHtml(row.id)}">${selectLabel}</button></td>
       </tr>`;
     })
     .join("");
@@ -215,7 +238,11 @@ function selectRowById(rowId: string): void {
   renderDetailPreview();
   dispatchRowSelected(row);
   const status = document.getElementById("site-slug-row-picker-status");
-  if (status) status.textContent = `Selected row ${row.legacy_id ?? row.id} — bound to general edit.`;
+  if (status) {
+    status.textContent = isG9g3h1aSmokeMarkerRestoreTargetRow(row)
+      ? `Selected ${G9G3H1A_RESTORE_TARGET_UI_LABEL} — ${row.legacy_id ?? row.id} (${G9G3H1A_RESTORE_SELECTABLE_HINT}).`
+      : `Selected row ${row.legacy_id ?? row.id} — bound to general edit.`;
+  }
 }
 
 function clearSelection(): void {

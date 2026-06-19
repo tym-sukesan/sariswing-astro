@@ -1,9 +1,9 @@
 # Staging shell schedule site_slug operational Save re-click smoke marker restore execution result (G-9g3h1c)
 
 **Phase:** `G-9g3h1c-smoke-marker-restore-execution`
-**Status:** **operator pending**
+**Status:** **operator pending — paused before Preview/Save (row picker blocked; G-9g3h1b1 fix required)**
 **Date:** 2026-06-19
-**Prior:** G-9g3h1b restore preflight — uncommitted
+**Prior:** G-9g3h1b restore preflight — commit `f868435`; G-9g3h1b1 row-picker exception — uncommitted
 **Type:** operator manual restore Save — **one UPDATE on staging `public.schedules` allowed in execution phase only**
 
 | Check | Status |
@@ -20,6 +20,7 @@
 Prior docs:
 
 - [staging-shell-schedule-site-slug-operational-save-reclick-smoke-marker-restore-preflight.md](./staging-shell-schedule-site-slug-operational-save-reclick-smoke-marker-restore-preflight.md)
+- [staging-shell-schedule-site-slug-operational-save-reclick-smoke-marker-restore-row-picker-exception.md](./staging-shell-schedule-site-slug-operational-save-reclick-smoke-marker-restore-row-picker-exception.md)
 - [staging-shell-schedule-site-slug-operational-save-success-reclick-prevention-smoke-test-result.md](./staging-shell-schedule-site-slug-operational-save-success-reclick-prevention-smoke-test-result.md)
 
 **Do not re-click G-9g3g4 operational Save.** **Do not re-click G-9g3g5c restore Save.** **Do not re-click G-9g3h1a smoke Save.** **Cursor / AI must not click Save or Preview.**
@@ -30,6 +31,9 @@ Prior docs:
 
 ```txt
 stagingShellScheduleSiteSlugOperationalSaveReclickSmokeMarkerRestoreExecutionComplete: false
+g9g3h1cExecutionPausedBeforePreviewSave: true
+g9g3h1cPauseReason: row_picker_poc_audit_not_selectable
+readyForG9g3h1b1RowPickerException: true
 markerRemainsInStagingDb: true
 markerRemoved: false
 restoreExecuted: false
@@ -45,6 +49,22 @@ readyForAnyDbWrite: false
 ```
 
 After successful restore Save: set `markerRemainsInStagingDb: false`, `markerRemoved: true`, `restoreExecuted: true`.
+
+---
+
+## 1a. G-9g3h1c pause (operator)
+
+Operator opened staging shell for restore but **stopped before Preview / Save** because target row appeared under **PoC audit rows (read-only — not selectable)**.
+
+| Observed | Value |
+| --- | --- |
+| Target id | `888c58f2-f152-4563-a3cf-a20d7c2456c1` |
+| updated_at | `2026-06-19T01:18:46.3938+00:00` |
+| Cause | G-9g3h1a smoke marker triggers `[CMS Kit staging]` audit exclusion |
+
+**Fix:** G-9g3h1b1 row-picker exception (uncommitted). Retry G-9g3h1c after deploy.
+
+**Row picker (after G-9g3h1b1):** Select via **Select (restore)** on row labeled **G-9g3h1a restore target**. **STOP** if still audit-only.
 
 ---
 

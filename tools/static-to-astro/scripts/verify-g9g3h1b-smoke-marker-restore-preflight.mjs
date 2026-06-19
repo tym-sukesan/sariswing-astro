@@ -141,6 +141,8 @@ assert("staging host only", preflightSrc.includes(STAGING_HOST));
 assert("production blocked", preflightSrc.includes(PRODUCTION_HOST));
 assert("prior commit 03cbbbe", preflightSrc.includes(PRIOR_COMMIT));
 assert("re-click prevention step I", preflightSrc.includes("Re-click prevention"));
+assert("preflight row picker G-9g3h1b1", preflightSrc.includes("G-9g3h1b1"));
+assert("preflight Select (restore)", preflightSrc.includes("Select (restore)"));
 
 assert("pending execution doc exists", execPendingSrc.length > 0);
 assert("pending execution operator pending", execPendingSrc.includes("operator pending"));

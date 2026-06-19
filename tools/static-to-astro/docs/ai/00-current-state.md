@@ -21,15 +21,19 @@ Staging Shell
 将来的な顧客オンボーディング・課金・デプロイ自動化
 
 2. Current phase
-現在フェーズ: **G-9g3h1c-smoke-marker-restore-execution**（operator pending）
+現在フェーズ: **G-9g3h1c-smoke-marker-restore-execution**（operator pending — G-9g3h1b1 row-picker exception 後に再開）
 
-G-9g3h1b: smoke marker restore preflight **complete**（uncommitted）。Option A — G-9g3g general operational path 推奨。G-9g3g5 restore mode は G-9g3h1a marker には流用しない。
+G-9g3h1c: restore execution **paused** before Preview/Save — target row was PoC audit / not selectable（G-9g3h1a smoke marker）。
 
-G-9g3h1a: re-click prevention smoke **success**（commit `03cbbbe`）。Preview 1回 + Save 1回 + re-click blocked。**Do not re-click G-9g3h1a smoke Save.**
+G-9g3h1b1: smoke marker restore **row-picker exception implemented**（uncommitted）。narrow exception only; generic `[CMS Kit staging]` audit protection preserved。
 
-G-9g3h1a smoke marker **remains** in staging DB on row `888c58f2-f152-4563-a3cf-a20d7c2456c1` — restore execution pending.
+G-9g3h1b: restore preflight **complete**（commit `f868435`）。
 
-Git: 最新 push 済み commit `03cbbbe`（G-9g3h1a smoke result）。G-9g3h1b preflight **uncommitted**。
+G-9g3h1a: re-click prevention smoke **success**（commit `03cbbbe`）。**Do not re-click G-9g3h1a smoke Save.**
+
+G-9g3h1a smoke marker **remains** in staging DB on row `888c58f2-f152-4563-a3cf-a20d7c2456c1`.
+
+Git: 最新 push 済み commit `f868435`（G-9g3h1b）。G-9g3h1b1 **uncommitted**。
 
 G-9g3h1: Save success re-click prevention **implemented**（commit `8780f84`）。
 
@@ -544,29 +548,25 @@ PUBLIC_SUPABASE_URL host: kmjqppxjdnwwrtaeqjta.supabase.co (staging)
 **Note:** `tools/static-to-astro/.env.local` に `SUPABASE_SERVICE_ROLE_KEY` が local only（gitignored）で存在する場合がある。G-9g3b execution では使用禁止・参照禁止。anon key + authenticated session のみ。
 
 10. Recommended next phase
-次フェーズ推奨: **G-9g3h1c-smoke-marker-restore-execution**（operator pending）
+次フェーズ推奨: **G-9g3h1c-smoke-marker-restore-execution**（operator retry after G-9g3h1b1）
 
-G-9g3h1 re-click prevention: **complete**（commit `8780f84`）。
+G-9g3h1b1 row-picker exception: **complete**（uncommitted）。
 
-G-9g3h1a smoke: **passed**（commit `03cbbbe`）。
-
-G-9g3h1b restore preflight: **complete**（uncommitted）。
+G-9g3h1b restore preflight: **complete**（commit `f868435`）。
 
 Phase sequence:
 ```txt
-G-9g3h1-save-success-reclick-prevention ← complete (8780f84)
 G-9g3h1a-save-success-reclick-prevention-smoke-test ← success (03cbbbe)
-G-9g3h1b-smoke-marker-restore-preflight ← complete (uncommitted)
-G-9g3h1c-smoke-marker-restore-execution ← next (operator pending)
+G-9g3h1b-smoke-marker-restore-preflight ← complete (f868435)
+G-9g3h1b1-smoke-marker-restore-row-picker-exception ← complete (uncommitted)
+G-9g3h1c-smoke-marker-restore-execution ← next (paused once; operator retry)
 ```
 
 G-9g3h gates:
 ```txt
-stagingShellScheduleSiteSlugOperationalSaveSuccessReclickPreventionComplete: true
-stagingShellScheduleSiteSlugOperationalSaveSuccessReclickPreventionSmokeTestPassed: true
-stagingShellScheduleSiteSlugOperationalSaveReclickSmokeMarkerRestorePreflightComplete: true
+stagingShellScheduleSiteSlugOperationalSaveReclickSmokeMarkerRestoreRowPickerExceptionComplete: true
 readyForG9g3h1cSmokeMarkerRestoreExecution: true
-operatorPending: false
+g9g3h1cExecutionPausedBeforePreviewSave: true
 markerRemainsInStagingDb: true
 readyForAnyDbWrite: false
 ```

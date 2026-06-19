@@ -197,6 +197,26 @@ export const G9G3H1_PHASE = "G-9g3h1-save-success-reclick-prevention";
 export const G9G3H1A_PHASE =
   "G-9g3h1a-save-success-reclick-prevention-smoke-test";
 
+export const G9G3H1B1_PHASE =
+  "G-9g3h1b1-smoke-marker-restore-row-picker-exception";
+
+/** G-9g3h1a smoke marker appended by operator Save — restore target baseline. */
+export const G9G3H1A_SMOKE_MARKER =
+  "[CMS Kit staging] G-9g3h1a re-click prevention smoke — temporary marker";
+
+export const G9G3H1A_RESTORE_TARGET_ROW_ID = G9G3G4_OPERATIONAL_TARGET_ROW_ID;
+
+export const G9G3H1A_RESTORE_TARGET_LEGACY_ID = G9G3G4_OPERATIONAL_TARGET_LEGACY_ID;
+
+/** Lock baseline after G-9g3h1a smoke Save — operator must reconfirm via Preview in G-9g3h1c. */
+export const G9G3H1A_RESTORE_LOCK_BASELINE_UPDATED_AT =
+  "2026-06-19T01:18:46.3938+00:00";
+
+export const G9G3H1A_RESTORE_TARGET_UI_LABEL = "G-9g3h1a restore target";
+
+export const G9G3H1A_RESTORE_SELECTABLE_HINT =
+  "temporary selectable for smoke marker restore — restore only — operator manual only";
+
 export const G9G3H1_SAVE_SUCCESS_BLOCKED_MSG =
   "Save completed. Re-click is blocked. Run a fresh Preview after changing the candidate or reloading the row.";
 

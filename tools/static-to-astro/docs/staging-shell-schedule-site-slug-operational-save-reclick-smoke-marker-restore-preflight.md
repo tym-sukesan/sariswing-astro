@@ -43,7 +43,23 @@ productionUntouched: true
 readyForAnyDbWrite: false
 ```
 
-**Next:** `G-9g3h1c-smoke-marker-restore-execution`
+**Next:** `G-9g3h1c-smoke-marker-restore-execution` (requires G-9g3h1b1 row-picker exception — see linked doc)
+
+---
+
+## 1a. Row picker exception (G-9g3h1b1 — prerequisite)
+
+G-9g3h1c was **paused** when the target row appeared under **PoC audit rows (read-only — not selectable)** because the G-9g3h1a smoke marker matches `[CMS Kit staging]`.
+
+Implementation: [staging-shell-schedule-site-slug-operational-save-reclick-smoke-marker-restore-row-picker-exception.md](./staging-shell-schedule-site-slug-operational-save-reclick-smoke-marker-restore-row-picker-exception.md)
+
+| Operator check | Action |
+| --- | --- |
+| Row only in audit panel, no **Select (restore)** | **STOP** — exception criteria not met (`updated_at` / marker mismatch) |
+| Row in selectable list with **G-9g3h1a restore target** badge | Proceed to Step D |
+| Row selectable but no restore badge | **STOP** — wrong row |
+
+Narrow exception requires **all**: target id / legacy_id / `gosaki-piano` / G-9g3h1a smoke marker / `updated_at` = `2026-06-19T01:18:46.3938+00:00`.
 
 ---
 
@@ -211,6 +227,10 @@ Stop existing dev server. Start with §3 env stack (G-9g3g operational). No secr
 
 Row picker → `888c58f2-f152-4563-a3cf-a20d7c2456c1` / `schedule-2026-03-001` / `<ごちまきトリオ>`.
 
+**G-9g3h1b1:** Row must appear in **selectable** list (not audit-only) with badge **G-9g3h1a restore target — restore only** and button **Select (restore)**.
+
+**STOP** if row remains under PoC audit rows with no restore select button.
+
 ### Step D — Loaded DB baseline — **pending**
 
 `Description` → `Loaded from DB (read-only)` must equal §2 current marker description.
@@ -307,6 +327,7 @@ After Step H success, **do not click Save again**.
 - Preview stale before first Save
 - Candidate / preview mismatch
 - Save enabled for unknown reason
+- Row not selectable (G-9g3h1b1 restore exception not active)
 - Operator uncertainty
 
 **G-9g3h1b:** Save not clicked. Preview not clicked.

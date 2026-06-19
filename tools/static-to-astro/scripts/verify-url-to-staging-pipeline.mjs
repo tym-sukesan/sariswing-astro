@@ -3836,6 +3836,47 @@ assert(
   g9g4a1dRestoreResultSrc.includes("Save clicked (Cursor/AI) | **no**"),
 );
 
+const g9g4a1eFinalizationPath = path.join(
+  TOOL_ROOT,
+  "docs/staging-shell-schedule-venue-only-operational-restore-result-finalization.md",
+);
+assert("G-9g4a1e finalization doc exists", fs.existsSync(g9g4a1eFinalizationPath));
+const g9g4a1eFinalizationSrc = fs.readFileSync(g9g4a1eFinalizationPath, "utf8");
+assert(
+  "G-9g4a1e phase marker",
+  g9g4a1eFinalizationSrc.includes("G-9g4a1e-venue-only-operational-restore-result-finalization"),
+);
+assert(
+  "G-9g4a1e status complete",
+  g9g4a1eFinalizationSrc.includes("**complete**"),
+);
+assert(
+  "G-9g4a1e round-trip complete",
+  g9g4a1eFinalizationSrc.includes("Round-trip complete") ||
+    g9g4a1eFinalizationSrc.includes("round-trip complete"),
+);
+assert(
+  "G-9g4a1e markerRemainsInStagingDb false",
+  g9g4a1eFinalizationSrc.includes("markerRemainsInStagingDb: false"),
+);
+assert(
+  "G-9g4a1e activeRestoreExceptionsCount 0",
+  g9g4a1eFinalizationSrc.includes("activeRestoreExceptionsCount: 0"),
+);
+assert(
+  "G-9g4a1e next phase G-9g4a2",
+  g9g4a1eFinalizationSrc.includes("G-9g4a2-text-fields-operational-expansion-planning"),
+);
+assert(
+  "G-9g4a1e routine dev stack",
+  g9g4a1eFinalizationSrc.includes("ENABLE_ADMIN_STAGING_WRITE=false") &&
+    g9g4a1eFinalizationSrc.includes("PUBLIC_ADMIN_WRITE_DRY_RUN=true"),
+);
+assert(
+  "G-9g4a1e no DB write this phase",
+  g9g4a1eFinalizationSrc.includes("DB write executed (this phase) | **no**"),
+);
+
 const gosakiPublicDist = path.join(TOOL_ROOT, "output/static-public/gosaki-piano/public-dist");
 for (const ym of ["2026-06", "2026-07"]) {
   const canonicalMonthPath = path.join(gosakiPublicDist, "schedule", ym, "index.html");

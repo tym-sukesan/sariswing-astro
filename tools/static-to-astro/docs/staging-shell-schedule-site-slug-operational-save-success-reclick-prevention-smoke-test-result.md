@@ -1,19 +1,26 @@
 # Staging shell schedule site_slug operational Save success re-click prevention smoke test result (G-9g3h1a)
 
-**Phase:** `G-9g3h1a-save-success-reclick-prevention-smoke-test`  
-**Status:** **operator pending**  
-**Date:** 2026-06-19  
-**Prior:** G-9g3h1 re-click prevention implementation — commit `8780f84`  
+**Phase:** `G-9g3h1a-save-success-reclick-prevention-smoke-test`
+**Status:** **success — G-9g3h1a re-click prevention smoke passed**
+**Date:** 2026-06-19
+**Prior:** G-9g3h1a smoke runbook — commit `78c51b8`
 **Type:** operator manual UI smoke — **one operational Save allowed in execution phase only**
 
 | Check | Status |
 | --- | --- |
-| Save clicked | **no** (not yet — operator execution pending) |
+| Save clicked | **yes** (operator manual, exactly once) |
 | Preview clicked (Cursor/AI) | **no** |
-| Preview clicked (operator) | **not yet** |
-| DB write executed | **no** |
-| SQL / rollback / restore executed | **no** |
+| Preview clicked (operator) | **yes** (once) |
+| Second Save clicked | **no** |
+| Second Preview clicked | **no** |
+| DB write executed | **yes** (one row, description only) |
+| SQL mutation executed (Cursor/AI) | **no** |
+| Rollback / restore executed | **no** |
 | service_role used | **no** |
+
+Cursor did **not** click Save or Preview.
+Operator performed Preview + Save manually (Steps F, H).
+Operator performed re-click prevention check (Step I) and candidate change check (Step J) without second Preview/Save.
 
 Prior docs:
 
@@ -21,46 +28,81 @@ Prior docs:
 - [staging-shell-schedule-site-slug-operational-general-edit-post-restore-hardening.md](./staging-shell-schedule-site-slug-operational-general-edit-post-restore-hardening.md)
 - [staging-shell-schedule-site-slug-operational-general-edit-restore-execution-result.md](./staging-shell-schedule-site-slug-operational-general-edit-restore-execution-result.md)
 
-**Do not re-click G-9g3g4 operational Save.** **Do not re-click G-9g3g5c restore Save.** **Cursor / AI must not click Save or Preview.**
+**Do not re-click G-9g3g4 operational Save.** **Do not re-click G-9g3g5c restore Save.** **Do not re-click G-9g3h1a smoke Save.** **Cursor / AI must not click Save or Preview.**
 
 ---
 
-## Gates (pending — fill after operator smoke)
+## Gates
 
 ```txt
-stagingShellScheduleSiteSlugOperationalSaveSuccessReclickPreventionSmokeTestPassed: false
-readyForG9g3h1bSmokeMarkerRestorePreflight: false
-operatorPending: true
+stagingShellScheduleSiteSlugOperationalSaveSuccessReclickPreventionSmokeTestPassed: true
+readyForG9g3h1bSmokeMarkerRestorePreflight: true
+operatorPending: false
 cursorClickedSave: false
 cursorClickedPreview: false
-dbWriteExecuted: false
+dbWriteExecuted: true
 restoreExecuted: false
 rollbackSqlExecuted: false
 serviceRoleUsed: false
 productionUntouched: true
-markerRemainsInStagingDb: false
+markerRemainsInStagingDb: true
+readyForAnyDbWrite: false
 ```
 
-After successful smoke (Save once + re-click blocked confirmed), set `stagingShellScheduleSiteSlugOperationalSaveSuccessReclickPreventionSmokeTestPassed: true`.
+**Next:** `G-9g3h1b-smoke-marker-restore-preflight`
 
-If smoke Save leaves G-9g3h1a marker in DB: `markerRemainsInStagingDb: true`, `readyForG9g3h1bSmokeMarkerRestorePreflight: true`.
+---
+
+## Summary (operator-confirmed)
+
+```txt
+Smoke: PASS
+Preview: executed once by operator (actualWrite=false, wouldWrite=true)
+Save: executed once by operator (actualWrite=true, rowsAffected=1)
+Second Save: not clicked
+Second Preview: not clicked
+Re-click blocked: confirmed (Save disabled, executed-state message)
+Candidate change: confirmed without Preview/Save (Preview stale, Save disabled)
+changedFields: description only
+optimistic lock: PASS (stale=false at preview; expectedBeforeUpdatedAt matched at Save)
+service_role used: false
+production touched: false
+/admin touched: false
+FTP / workflow_dispatch: not executed
+rollback needed: false
+rollback executed: false
+restore needed: yes (G-9g3h1a smoke marker remains in staging DB)
+```
+
+### Safety flags
+
+```json
+{
+  "stagingOnly": true,
+  "productionBlocked": true,
+  "serviceRoleUsed": false,
+  "scheduleMonthsTouched": false,
+  "deleteEnabled": false,
+  "publishTriggered": false
+}
+```
 
 ---
 
 ## 1. Smoke strategy
 
-Operator manually confirms G-9g3h1 re-click prevention on staging shell:
+Operator manually confirmed G-9g3h1 re-click prevention on staging shell:
 
-| # | Check |
-| --- | --- |
-| 1 | Preview succeeds (`actualWrite=false`, `wouldWrite=true`) |
-| 2 | Save succeeds **once** (`actualWrite=true`, `rowsAffected=1`) |
-| 3 | After success, Save button **disabled** |
-| 4 | Result panel shows **executed-state** / re-click blocked message |
-| 5 | Same preview / same candidate / same target **cannot** enable Save again |
-| 6 | Gate panel shows **consumed preview** / **fresh Preview required** |
-| 7 | Candidate change clears success state; **fresh Preview required**; Save disabled |
-| 8 | **No second DB write** (do not click Save a second time) |
+| # | Check | Result |
+| --- | --- | --- |
+| 1 | Preview succeeds (`actualWrite=false`, `wouldWrite=true`) | **PASS** |
+| 2 | Save succeeds **once** (`actualWrite=true`, `rowsAffected=1`) | **PASS** |
+| 3 | After success, Save button **disabled** | **PASS** |
+| 4 | Result panel shows **executed-state** / re-click blocked message | **PASS** |
+| 5 | Same preview / same candidate / same target **cannot** enable Save again | **PASS** |
+| 6 | Gate panel shows **consumed preview** / **fresh Preview required** | **PASS** |
+| 7 | Candidate change clears success state; **fresh Preview required**; Save disabled | **PASS** |
+| 8 | **No second DB write** (do not click Save a second time) | **PASS** |
 
 **Mode:** G-9g3g general operational (not restore mode).
 
@@ -76,16 +118,14 @@ Operator manually confirms G-9g3h1 re-click prevention on staging shell:
 | title | `<ごちまきトリオ>` |
 | source_route | `/schedule/2026-03/` |
 
-### Loaded description (baseline — must match at Step D)
+### Loaded description (baseline — Step D)
 
-Post-G-9g3g5c original — **no marker**:
+Post-G-9g3g5c original — **no marker** (confirmed):
 
 ```txt
 出演：『ごちまきトリオ』俵千瑛子cl 田村麻紀子cl,vo
 会場website: https://subsaku.com/ginza/
 ```
-
-**STOP** if G-9g3g4 or other `[CMS Kit staging]` marker remains in loaded description.
 
 ### Smoke candidate (description only — Step E)
 
@@ -164,100 +204,158 @@ service_role: forbidden
 
 ---
 
-## 5. Operator steps (runbook — pending)
+## 5. Operator steps — results
 
-### Step A — Arm dev server (G-9g3g operational stack) — **pending**
+### Step A — Arm dev server (G-9g3g operational stack) — **PASS**
 
-Stop routine / restore-arm dev server. Start with §3 env stack. No secrets in chat/logs.
+Operator started §3 env stack. No secrets in chat/logs.
 
-### Step B — Open staging shell — **pending**
+### Step B — Open staging shell — **PASS**
 
 `http://localhost:4321/__admin-staging-shell/musician-basic/#schedule`
 
-### Step C — Select target row — **pending**
+### Step C — Select target row — **PASS**
 
 Row picker → `888c58f2-f152-4563-a3cf-a20d7c2456c1` / `schedule-2026-03-001` / `<ごちまきトリオ>`.
 
-### Step D — Loaded DB baseline — **pending**
+### Step D — Loaded DB baseline — **PASS**
 
-`Description` → `Loaded from DB (read-only)` must equal §2 original (no marker). **STOP** if marker present.
+`Description` → `Loaded from DB (read-only)` matched §2 original (no marker).
 
-### Step E — Description candidate (smoke marker) — **pending**
+### Step E — Description candidate (smoke marker) — **PASS**
 
 Edit **YOUR EDIT (CANDIDATE)** only → §2 smoke candidate.
 
-### Step F — G-9 Preview (operator manual once) — **pending**
+### Step F — G-9 Preview (operator manual once) — **PASS**
 
-Click `#site-slug-edit-dry-run-preview-btn` once.
+Operator clicked `#site-slug-edit-dry-run-preview-btn` once.
 
-**Expected preview (`#site-slug-edit-dry-run-result`):**
+**Recorded preview (`#site-slug-edit-dry-run-result`):**
 
-| Field | Expected |
+| Field | Value |
 | --- | --- |
 | actualWrite | `false` |
 | wouldWrite | `true` |
 | changedFields | `description` only |
 | target.id | `888c58f2-f152-4563-a3cf-a20d7c2456c1` |
-| before.description | original (no marker) |
-| after.description | includes G-9g3h1a smoke marker |
+| target.legacy_id | `schedule-2026-03-001` |
+| target.site_slug | `gosaki-piano` |
+| optimisticLock.expectedBeforeUpdatedAt | `2026-06-18T18:07:44.737552+00:00` |
+| optimisticLock.currentUpdatedAt | `2026-06-18T18:07:44.737552+00:00` |
 | optimisticLock.stale | `false` |
+| activeHost | `kmjqppxjdnwwrtaeqjta.supabase.co` |
+| expectedHost | `kmjqppxjdnwwrtaeqjta.supabase.co` |
 | hostGatePassed | `true` |
 | payload | `description` only |
+| before.description | original (no marker) |
+| after.description | original + G-9g3h1a smoke marker |
 
-### Step G — Save gate (do not click yet) — **pending**
+### Step G — Save gate (before Save) — **PASS**
 
-| Check | Expected |
+```txt
+G-9g3g operational Save: enabled — operator manual only · approvalId: G-9g3g-schedule-site-slug-operational-general-edit-non-dry-run · env arm: true · preview target id: 888c58f2-f152-4563-a3cf-a20d7c2456c1 · preview: valid · changedFields: description · Host gate: passed (kmjqppxjdnwwrtaeqjta.supabase.co) · Auth: staging admin signed in · Preview: dry-run on selected row (G-9g3f3c hardened) · Routine dev should use dry-run with all non-dry-run arms off.
+```
+
+| Check | Result |
 | --- | --- |
 | Mode | G-9g3g general operational (restore arm **off**) |
 | approvalId | `G-9g3g-schedule-site-slug-operational-general-edit-non-dry-run` |
 | env arm | `PUBLIC_ADMIN_SCHEDULE_G9G3G_OPERATIONAL_GENERAL_EDIT_NON_DRY_RUN_ARMED=true` |
 | preview | valid |
 | changedFields | `description` only |
-| candidate/preview match | yes |
 | Save button | **enabled** |
 
-### Step H — Operator manual Save once — **pending (execution phase only)**
+### Step H — Operator manual Save once — **PASS**
 
-Click `#site-slug-edit-g9g3g-operational-save-btn` **exactly once**.
+Operator clicked `#site-slug-edit-g9g3g-operational-save-btn` **exactly once**.
 
-**Expected Save result:**
+**Recorded Save result (`#site-slug-edit-g9g3g-operational-save-result`):**
 
-| Field | Expected |
+| Field | Value |
 | --- | --- |
 | actualWrite | `true` |
 | rowsAffected | `1` |
 | changedFields | `description` only |
 | approvalId | `G-9g3g-schedule-site-slug-operational-general-edit-non-dry-run` |
-| beforeSnapshot.description | original |
-| afterSnapshot.description | includes G-9g3h1a smoke marker |
-| updated_at | changes from preview baseline |
+| expectedBeforeUpdatedAt | `2026-06-18T18:07:44.737552+00:00` |
+| updated_at after Save | `2026-06-19T01:18:46.3938+00:00` |
 | serviceRoleUsed | `false` |
-| production | untouched |
+| stagingOnly | `true` |
+| productionBlocked | `true` |
+| scheduleMonthsTouched | `false` |
+| deleteEnabled | `false` |
+| publishTriggered | `false` |
 
-### Step I — Re-click prevention (no second Save) — **pending**
+**beforeSnapshot.description:**
 
-After Step H success, **do not click Save again**.
+```txt
+出演：『ごちまきトリオ』俵千瑛子cl 田村麻紀子cl,vo
+会場website: https://subsaku.com/ginza/
+```
 
-| Check | Expected |
+**payload:**
+
+```json
+{
+  "description": "出演：『ごちまきトリオ』俵千瑛子cl 田村麻紀子cl,vo\n会場website: https://subsaku.com/ginza/\n[CMS Kit staging] G-9g3h1a re-click prevention smoke — temporary marker"
+}
+```
+
+**afterSnapshot.description:**
+
+```txt
+出演：『ごちまきトリオ』俵千瑛子cl 田村麻紀子cl,vo
+会場website: https://subsaku.com/ginza/
+[CMS Kit staging] G-9g3h1a re-click prevention smoke — temporary marker
+```
+
+**Executed-state message observed:**
+
+```txt
+Operator manual Save completed once. Do not re-click. Save completed. Re-click is blocked. Run a fresh Preview after changing the candidate or reloading the row.
+```
+
+### Step I — Re-click prevention (no second Save) — **PASS**
+
+After Step H success, operator **did not** click Save again.
+
+**Recorded gate panel:**
+
+```txt
+G-9g3g operational Save: disabled — Save completed. Re-click is blocked. Run a fresh Preview after changing the candidate or reloading the row. · approvalId: G-9g3g-schedule-site-slug-operational-general-edit-non-dry-run · env arm: true · preview: fresh Preview required · Operator manual Save completed once. Do not re-click. · executed-state: Save success recorded (general / rowsAffected=1) · Host gate: passed (kmjqppxjdnwwrtaeqjta.supabase.co) · Auth: staging admin signed in · Preview: dry-run on selected row (G-9g3f3c hardened) · Routine dev should use dry-run with all non-dry-run arms off.
+```
+
+| Check | Result |
 | --- | --- |
 | Save button | **disabled** |
 | Result panel | executed-state; re-click blocked message |
 | Gate panel | consumed preview / fresh Preview required |
 | Same preview identity | cannot re-enable Save |
+| Second Save clicked | **no** |
 
-**STOP** if Save remains enabled — report without clicking.
+### Step J — Candidate change behavior (no second Preview/Save) — **PASS**
 
-### Step J — Candidate change behavior (no second Preview/Save) — **pending**
+Operator changed description candidate only. **Did not** run Preview or Save.
 
-Change description candidate slightly (e.g. append space or edit marker text). **Do not** run Preview or Save.
+Candidate marker changed to:
 
-| Check | Expected |
+```txt
+[CMS Kit staging] G-9g3h1a re-click prevention smoke — temporary marker candidate-change-check
+```
+
+**Recorded gate panel after candidate change:**
+
+```txt
+G-9g3g operational Save: disabled — Latest G-9 preview required · approvalId: G-9g3g-schedule-site-slug-operational-general-edit-non-dry-run · env arm: true · preview: required · Host gate: passed (kmjqppxjdnwwrtaeqjta.supabase.co) · Auth: staging admin signed in · Preview: dry-run on selected row (G-9g3f3c hardened) · Preview: Preview is stale — run G-9 preview again · Routine dev should use dry-run with all non-dry-run arms off.
+```
+
+| Check | Result |
 | --- | --- |
-| Success state | cleared or no longer enables Save |
-| Gate panel | fresh Preview required |
+| Success state | cleared / no longer enables Save |
+| Gate panel | fresh Preview required; Preview is stale |
 | Save button | **disabled** until new Preview |
-
-Safe scope: candidate change → Save disabled confirmation only.
+| Second Preview clicked | **no** |
+| Second Save clicked | **no** |
 
 ---
 
@@ -268,19 +366,19 @@ Safe scope: candidate change → Save disabled confirmation only.
 - G-9g3d PoC Save (`#site-slug-edit-g9g3d-save-btn`)
 - G-9g2 / G-9g3b / G-9g3c PoC Save buttons
 - G-9g3g5 restore mode / restore approval / restore arm
-- G-9g3g4 / G-9g3g5c re-click
-- SQL rollback / restore SQL
+- G-9g3g4 / G-9g3g5c / G-9g3h1a re-click
+- SQL rollback / restore SQL (in this phase)
 - FTP / deploy / `workflow_dispatch`
 - Cursor / AI / Playwright Save or Preview
 
 ---
 
-## 7. Stop conditions (before Save)
+## 7. Stop conditions (reference — observed none during smoke)
 
 **STOP immediately** if any:
 
 - Wrong target row id / legacy_id / title
-- Loaded description is not original (marker still present)
+- Loaded description is not original (unexpected marker present)
 - `changedFields` includes anything other than `description`
 - Payload includes non-description fields
 - `hostGatePassed=false`
@@ -289,45 +387,49 @@ Safe scope: candidate change → Save disabled confirmation only.
 - Approval ID is not G-9g3g general operational ID
 - Restore arm is on
 - Any PoC arm is on
-- Preview stale
+- Preview stale before first Save
 - Candidate / preview mismatch
-- Save enabled for unknown reason
+- Save enabled for unknown reason after success
 - Operator uncertainty
+
+None triggered during G-9g3h1a smoke execution.
 
 ---
 
-## 8. Post-smoke restore plan (recommendation)
+## 8. Post-smoke restore plan
 
-If Step H succeeds, G-9g3h1a smoke marker **remains** in staging DB until removed.
+G-9g3h1a smoke marker **remains** in staging DB until removed in a dedicated restore phase.
 
-**Recommended (separate phases — do not combine with G-9g3h1a smoke):**
+**Recommended sequence:**
 
 ```txt
-G-9g3h1a-save-success-reclick-prevention-smoke-test     ← this phase (Save once + re-click check)
-G-9g3h1a-smoke-test-result-execution                    ← fill result doc after smoke
-G-9g3h1b-smoke-marker-restore-preflight                   ← restore original description
+G-9g3h1a-save-success-reclick-prevention-smoke-test     ← complete (this doc)
+G-9g3h1b-smoke-marker-restore-preflight                 ← next (restore original description)
 G-9g3h1c-smoke-marker-restore-execution                 ← dedicated restore Save once
 ```
 
-Rationale: mirrors G-9g3g4 → G-9g3g5c round-trip; keeps smoke scope to re-click prevention only; restore uses separate approval/env if needed (or reuse G-9g3g5 restore path with G-9g3h1a-specific candidate).
+Rationale: mirrors G-9g3g4 → G-9g3g5c round-trip; smoke scope limited to re-click prevention; restore uses separate approval/env if needed.
 
-**Do not** run restore in G-9g3h1a smoke preparation or execution without `G-9g3h1b` preflight.
+**Do not** run restore without `G-9g3h1b` preflight.
 
 ---
 
-## 9. Operator pass record (fill after execution)
+## 9. Operator pass record
 
 | Field | Value |
 | --- | --- |
-| Operator | |
-| Date | |
-| Preview clicked | |
-| Save clicked | |
-| actualWrite | |
-| rowsAffected | |
-| re-click blocked confirmed | |
-| candidate change behavior confirmed | |
-| Notes | |
+| Operator | manual (staging admin) |
+| Date | 2026-06-19 |
+| Preview clicked | yes (once) |
+| Save clicked | yes (once) |
+| Second Save clicked | no |
+| Second Preview clicked | no |
+| actualWrite | `true` |
+| rowsAffected | `1` |
+| re-click blocked confirmed | yes |
+| candidate change behavior confirmed | yes |
+| smoke marker remains in DB | yes |
+| Notes | G-9g3h1 re-click prevention smoke passed; restore required next |
 
 ---
 
@@ -335,5 +437,6 @@ Rationale: mirrors G-9g3g4 → G-9g3g5c round-trip; keeps smoke scope to re-clic
 
 ```txt
 G-9g3h1 implementation: 8780f84 (pushed)
-G-9g3h1a smoke runbook: operator pending (uncommitted)
+G-9g3h1a smoke runbook: 78c51b8 (pushed)
+G-9g3h1a smoke result: success (uncommitted)
 ```

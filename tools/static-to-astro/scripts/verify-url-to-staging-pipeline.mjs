@@ -3181,8 +3181,32 @@ assert(
   g9g3h1aSmokeSrc.includes("G-9g3h1a-save-success-reclick-prevention-smoke-test"),
 );
 assert(
-  "G-9g3h1a operator pending",
-  g9g3h1aSmokeSrc.includes("operator pending"),
+  "G-9g3h1a smoke passed",
+  g9g3h1aSmokeSrc.includes("G-9g3h1a re-click prevention smoke passed") ||
+    g9g3h1aSmokeSrc.includes("stagingShellScheduleSiteSlugOperationalSaveSuccessReclickPreventionSmokeTestPassed: true"),
+);
+assert(
+  "G-9g3h1a Preview executed once",
+  g9g3h1aSmokeSrc.includes("Preview clicked (operator) | **yes**") ||
+    g9g3h1aSmokeSrc.includes("Preview: executed once by operator"),
+);
+assert(
+  "G-9g3h1a Save executed once",
+  g9g3h1aSmokeSrc.includes("Save clicked | **yes**") &&
+    g9g3h1aSmokeSrc.includes("exactly once"),
+);
+assert(
+  "G-9g3h1a re-click blocked",
+  g9g3h1aSmokeSrc.includes("Re-click is blocked") ||
+    g9g3h1aSmokeSrc.includes("re-click blocked"),
+);
+assert(
+  "G-9g3h1a marker remains",
+  g9g3h1aSmokeSrc.includes("markerRemainsInStagingDb: true"),
+);
+assert(
+  "G-9g3h1a ready for restore preflight",
+  g9g3h1aSmokeSrc.includes("readyForG9g3h1bSmokeMarkerRestorePreflight: true"),
 );
 assert(
   "G-9g3h1a restore preflight recommendation",

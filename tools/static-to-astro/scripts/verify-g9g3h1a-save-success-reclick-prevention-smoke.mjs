@@ -1,5 +1,5 @@
 /**
- * G-9g3h1a — Save success re-click prevention smoke (operator pending; no Save/Preview by Cursor).
+ * G-9g3h1a — Save success re-click prevention smoke (result doc + AI context; no Save/Preview by Cursor).
  */
 
 import fs from "node:fs";
@@ -11,7 +11,8 @@ const REPO_ROOT = path.resolve(__dirname, "../../..");
 const TOOL_ROOT = path.resolve(__dirname, "..");
 
 const PHASE = "G-9g3h1a-save-success-reclick-prevention-smoke-test";
-const PRIOR_COMMIT = "8780f84";
+const RUNBOOK_COMMIT = "78c51b8";
+const IMPL_COMMIT = "8780f84";
 const STAGING_HOST = "kmjqppxjdnwwrtaeqjta.supabase.co";
 const PRODUCTION_HOST = "vsbvndwuajjhnzpohghh.supabase.co";
 const TARGET_ROW_ID = "888c58f2-f152-4563-a3cf-a20d7c2456c1";
@@ -32,6 +33,8 @@ const ORIGINAL_SNIPPET = "会場website: https://subsaku.com/ginza/";
 const NEXT_RESTORE_PREFLIGHT = "G-9g3h1b-smoke-marker-restore-preflight";
 const STAGING_SHELL_URL =
   "http://localhost:4321/__admin-staging-shell/musician-basic/#schedule";
+const UPDATED_AT_BEFORE = "2026-06-18T18:07:44.737552+00:00";
+const UPDATED_AT_AFTER = "2026-06-19T01:18:46.3938+00:00";
 
 let passed = 0;
 let failed = 0;
@@ -58,7 +61,11 @@ assert("smoke doc exists", fs.existsSync(smokeDocPath));
 const smokeDocSrc = fs.readFileSync(smokeDocPath, "utf8");
 
 assert("phase G-9g3h1a", smokeDocSrc.includes(PHASE));
-assert("status operator pending", smokeDocSrc.includes("operator pending"));
+assert(
+  "smoke status success",
+  smokeDocSrc.includes("**success**") ||
+    smokeDocSrc.includes("G-9g3h1a re-click prevention smoke passed"),
+);
 assert("target id exists", smokeDocSrc.includes(TARGET_ROW_ID));
 assert("target legacy_id exists", smokeDocSrc.includes(TARGET_LEGACY_ID));
 assert("target site_slug exists", smokeDocSrc.includes(SITE_SLUG));
@@ -83,61 +90,101 @@ assert(
 assert("exact Save result panel", smokeDocSrc.includes(`#${SAVE_RESULT_ID}`));
 assert("gate panel id", smokeDocSrc.includes(`#${GATE_PANEL_ID}`));
 assert(
-  "expected preview actualWrite false",
-  smokeDocSrc.includes("actualWrite") && smokeDocSrc.includes("`false`"),
+  "Preview executed once by operator",
+  smokeDocSrc.includes("Preview clicked (operator) | **yes**") ||
+    smokeDocSrc.includes("Preview: executed once by operator"),
 );
 assert(
-  "expected save success actualWrite true",
-  smokeDocSrc.includes("actualWrite") && smokeDocSrc.includes("`true`"),
+  "Save executed once by operator",
+  smokeDocSrc.includes("Save clicked | **yes**") &&
+    smokeDocSrc.includes("exactly once"),
 );
 assert(
-  "re-click blocked expectation",
-  smokeDocSrc.includes("re-click blocked") ||
-    smokeDocSrc.includes("Re-click is blocked") ||
-    smokeDocSrc.includes("re-click prevention"),
+  "preview actualWrite false recorded",
+  smokeDocSrc.includes("actualWrite | `false`"),
 );
 assert(
-  "consumed preview expectation",
-  smokeDocSrc.includes("consumed preview") ||
-    smokeDocSrc.includes("preview consumed"),
+  "save actualWrite true recorded",
+  smokeDocSrc.includes("actualWrite | `true`"),
 );
 assert(
-  "fresh Preview required",
+  "rowsAffected 1",
+  smokeDocSrc.includes("rowsAffected | `1`"),
+);
+assert(
+  "changedFields description only",
+  smokeDocSrc.includes("changedFields | `description` only") ||
+    (smokeDocSrc.includes("changedFields") && smokeDocSrc.includes("description only")),
+);
+assert(
+  "executed-state observed",
+  smokeDocSrc.includes("executed-state"),
+);
+assert(
+  "re-click blocked observed",
+  smokeDocSrc.includes("Re-click is blocked") ||
+    smokeDocSrc.includes("re-click blocked"),
+);
+assert(
+  "Save disabled after success",
+  smokeDocSrc.includes("Save button | **disabled**"),
+);
+assert(
+  "fresh Preview required after success",
   smokeDocSrc.includes("fresh Preview required"),
 );
 assert(
-  "candidate change behavior",
-  smokeDocSrc.includes("Candidate change") || smokeDocSrc.includes("Step J"),
+  "candidate change made Preview stale",
+  smokeDocSrc.includes("Preview is stale") ||
+    smokeDocSrc.includes("candidate-change-check"),
+);
+assert(
+  "no second Save clicked",
+  smokeDocSrc.includes("Second Save clicked | **no**"),
+);
+assert(
+  "no second Preview clicked",
+  smokeDocSrc.includes("Second Preview clicked | **no**"),
+);
+assert(
+  "smoke marker remains",
+  smokeDocSrc.includes("markerRemainsInStagingDb: true"),
+);
+assert(
+  "smoke test passed gate",
+  smokeDocSrc.includes(
+    "stagingShellScheduleSiteSlugOperationalSaveSuccessReclickPreventionSmokeTestPassed: true",
+  ),
+);
+assert(
+  "next restore-preflight recommendation",
+  smokeDocSrc.includes(NEXT_RESTORE_PREFLIGHT),
+);
+assert(
+  "updated_at before Save",
+  smokeDocSrc.includes(UPDATED_AT_BEFORE),
+);
+assert(
+  "updated_at after Save",
+  smokeDocSrc.includes(UPDATED_AT_AFTER),
 );
 assert(
   "stop conditions exist",
   smokeDocSrc.includes("Stop conditions") || smokeDocSrc.includes("STOP"),
 );
 assert(
-  "Save not yet clicked marker",
-  smokeDocSrc.includes("Save clicked | **no**") ||
-    smokeDocSrc.includes("not yet"),
-);
-assert(
-  "DB write not yet executed marker",
-  smokeDocSrc.includes("DB write executed | **no**"),
-);
-assert(
-  "next restore-preflight recommendation",
-  smokeDocSrc.includes(NEXT_RESTORE_PREFLIGHT),
+  "no second Save warning",
+  smokeDocSrc.includes("do not click Save again") ||
+    smokeDocSrc.includes("Do not click Save a second time") ||
+    smokeDocSrc.includes("Do not re-click G-9g3h1a smoke Save"),
 );
 assert("staging host only", smokeDocSrc.includes(STAGING_HOST));
 assert("production blocked", smokeDocSrc.includes(PRODUCTION_HOST));
 assert("staging shell URL", smokeDocSrc.includes(STAGING_SHELL_URL));
-assert("prior commit 8780f84", smokeDocSrc.includes(PRIOR_COMMIT));
+assert("runbook commit 78c51b8", smokeDocSrc.includes(RUNBOOK_COMMIT));
 assert(
   "wrong buttons documented",
   smokeDocSrc.includes("#schedule-dry-run-update-btn"),
-);
-assert(
-  "no second Save warning",
-  smokeDocSrc.includes("do not click Save again") ||
-    smokeDocSrc.includes("Do not click Save a second time"),
 );
 
 const implDocSrc = readRepo(
@@ -150,10 +197,20 @@ const editUiSrc = readRepo("src/lib/admin/staging-data/staging-schedule-site-slu
 
 assert("G-9g3h1 impl doc references smoke", implDocSrc.includes("G-9g3h1a"));
 assert("edit UI reclick prevention", editUiSrc.includes("operationalSaveSuccess"));
-assert("current state G-9g3h1a", currentStateSrc.includes("G-9g3h1a"));
-assert("current state 8780f84", currentStateSrc.includes("8780f84"));
-assert("next actions smoke or restore", nextActionsSrc.includes("G-9g3h1a"));
-assert("handoff operator pending or smoke", handoffSrc.includes("G-9g3h1a"));
+assert("current state G-9g3h1a success", currentStateSrc.includes("G-9g3h1a"));
+assert("current state runbook 78c51b8", currentStateSrc.includes(RUNBOOK_COMMIT));
+assert("current state impl 8780f84", currentStateSrc.includes(IMPL_COMMIT));
+assert(
+  "next actions restore preflight",
+  nextActionsSrc.includes("G-9g3h1b") || nextActionsSrc.includes(NEXT_RESTORE_PREFLIGHT),
+);
+assert(
+  "handoff smoke passed or restore",
+  handoffSrc.includes("G-9g3h1a") &&
+    (handoffSrc.includes("smoke passed") ||
+      handoffSrc.includes("G-9g3h1b") ||
+      handoffSrc.includes(NEXT_RESTORE_PREFLIGHT)),
+);
 
 console.log(`\nG-9g3h1a verifier: ${passed} passed, ${failed} failed`);
 process.exit(failed > 0 ? 1 : 0);

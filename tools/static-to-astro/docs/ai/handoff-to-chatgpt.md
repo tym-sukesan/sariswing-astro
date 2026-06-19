@@ -5,44 +5,44 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-9g4a2a1-open-time-only-operational-expansion-preflight (not started)
-Latest commit (pushed): 0d80d7d (G-9g4a2 text fields planning)
-G-9g4a2a open_time-only implementation: complete (uncommitted)
+Current phase: G-9g4a2a2-open-time-only-operational-expansion-manual-execution (not started)
+Latest commit (pushed): 8ae0d1e (G-9g4a2a open_time-only implementation)
+G-9g4a2a1 open_time-only preflight: complete (uncommitted)
 ```
 
 ## Summary
 
 **G-9g4a1 venue-only operational round-trip — closed** (commit `3b807c8`):
 
-- Write G-9g4a1b1 + restore G-9g4a1d via same G-9g4a1 path
-- Final venue: `学芸大学 珈琲美学`
+- Proven row: `eb1f1898-5107-4deb-a6d5-a792e0ec3f69` / `schedule-2026-03-003`
+- Final venue: `学芸大学 珈琲美学`; no marker remains
 - **markerRemainsInStagingDb:** false
-- **activeRestoreExceptionsCount:** 0
-- **restore required:** no
 
-**G-9g4a2 text fields planning — complete** (commit `0d80d7d`):
+**G-9g4a2a open_time-only implementation — complete** (commit `8ae0d1e`):
 
-- **Policy:** single-field-first (no multi-field simultaneous Save)
-- **Target fields:** `open_time`, `start_time`, `price`, `description` (description defer — already G-9g3g operational)
-- **First slice:** G-9g4a2a `open_time` only
+- Field: `open_time` only; approval `G-9g4a2a-schedule-site-slug-open-time-only-non-dry-run`
+- Env arm: `PUBLIC_ADMIN_SCHEDULE_G9G4A2A_OPEN_TIME_ONLY_NON_DRY_RUN_ARMED`
 
-**G-9g4a2a open_time-only operational expansion — implementation complete** (uncommitted):
+**G-9g4a2a1 open_time-only preflight — complete** (uncommitted):
 
-- **Field:** `open_time` only — payload exactly `{ open_time }`, changedFields exactly `["open_time"]`
-- **Approval ID:** `G-9g4a2a-schedule-site-slug-open-time-only-non-dry-run`
-- **Env arm:** `PUBLIC_ADMIN_SCHEDULE_G9G4A2A_OPEN_TIME_ONLY_NON_DRY_RUN_ARMED`
-- **Pattern:** G-9g4a1 venue-only clone — guards, config, UI gate, executor, optimistic lock, re-click prevention
-- **Mutual exclusion:** G-9g4a2a blocks G-9g4a1 / G-9g3g / G-9g3g5
-- **No Preview / Save / DB write / SQL** executed in G-9g4a2a implementation phase
+- **Target row:** `eb1f1898-5107-4deb-a6d5-a792e0ec3f69` / `schedule-2026-03-003` / `gosaki-piano`
+- **Current open_time:** `11:30`
+- **Smoke candidate:** `11:30 [G-9g4a2a open_time smoke]`
+- **Restore target:** `11:30`
+- **expectedBeforeUpdatedAt:** `2026-06-19T05:54:34.767498+00:00`
+- **Payload:** `{ "open_time": "11:30 [G-9g4a2a open_time smoke]" }`
+- **changedFields:** `["open_time"]`
+- **G-9g4a2a arm only on** at execution; G-9g4a1 / G-9g3g / G-9g3g5 off
+- **No Preview / Save / DB write / SQL** in preflight phase
+- **restore required:** yes after smoke marker use (same G-9g4a2a path)
 
 ## Gates
 
 ```txt
-stagingShellScheduleOpenTimeOnlyOperationalExpansionImplementationComplete: true
-readyForG9g4a2a1OpenTimeOnlyOperationalExpansionPreflight: true
-g9g4a1VenueOnlyRoundTripComplete: true
+stagingShellScheduleOpenTimeOnlyOperationalExpansionPreflightComplete: true
+readyForG9g4a2a2OpenTimeOnlyOperationalExpansionManualExecution: true
+targetRowId: eb1f1898-5107-4deb-a6d5-a792e0ec3f69
 markerRemainsInStagingDb: false
-activeRestoreExceptionsCount: 0
 restoreRequired: false
 readyForAnyDbWrite: false
 cursorClickedSave: false
@@ -64,4 +64,4 @@ Do not write arms to `.env` / `.env.local`.
 
 ## Next
 
-**G-9g4a2a1-open-time-only-operational-expansion-preflight** — target row selection, before.open_time, smoke candidate, rollback SQL document-only, env stack for execution window — **no operator Save in preflight phase**.
+**G-9g4a2a2-open-time-only-operational-expansion-manual-execution** — operator loads target row → edits open_time candidate → G-9g4a2a Preview → ChatGPT confirm → execution env stack → one manual Save → result doc. Restore chain after smoke via same G-9g4a2a path.

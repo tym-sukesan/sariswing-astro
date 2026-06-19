@@ -3972,6 +3972,57 @@ assert(
   g9g4a2aImplSrc.includes("Preview clicked (Cursor/AI) | **no**"),
 );
 
+const g9g4a2a1PreflightPath = path.join(
+  TOOL_ROOT,
+  "docs/staging-shell-schedule-open-time-only-operational-expansion-preflight.md",
+);
+assert("G-9g4a2a1 preflight doc exists", fs.existsSync(g9g4a2a1PreflightPath));
+const g9g4a2a1PreflightSrc = fs.readFileSync(g9g4a2a1PreflightPath, "utf8");
+assert(
+  "G-9g4a2a1 phase marker",
+  g9g4a2a1PreflightSrc.includes("G-9g4a2a1-open-time-only-operational-expansion-preflight"),
+);
+assert(
+  "G-9g4a2a1 status complete",
+  g9g4a2a1PreflightSrc.includes("**complete**"),
+);
+assert(
+  "G-9g4a2a1 target row id",
+  g9g4a2a1PreflightSrc.includes("eb1f1898-5107-4deb-a6d5-a792e0ec3f69"),
+);
+assert(
+  "G-9g4a2a1 legacy_id",
+  g9g4a2a1PreflightSrc.includes("schedule-2026-03-003"),
+);
+assert(
+  "G-9g4a2a1 smoke candidate",
+  g9g4a2a1PreflightSrc.includes("11:30 [G-9g4a2a open_time smoke]"),
+);
+assert(
+  "G-9g4a2a1 expectedBeforeUpdatedAt",
+  g9g4a2a1PreflightSrc.includes("2026-06-19T05:54:34.767498+00:00"),
+);
+assert(
+  "G-9g4a2a1 changedFields open_time",
+  g9g4a2a1PreflightSrc.includes('["open_time"]'),
+);
+assert(
+  "G-9g4a2a1 G-9g4a2a arm only",
+  g9g4a2a1PreflightSrc.includes("G-9g4a2a arm only"),
+);
+assert(
+  "G-9g4a2a1 rollback SQL do not run",
+  g9g4a2a1PreflightSrc.includes("DO NOT RUN"),
+);
+assert(
+  "G-9g4a2a1 next phase manual execution",
+  g9g4a2a1PreflightSrc.includes("G-9g4a2a2-open-time-only-operational-expansion-manual-execution"),
+);
+assert(
+  "G-9g4a2a1 no Save click",
+  g9g4a2a1PreflightSrc.includes("Save clicked (this phase) | **no**"),
+);
+
 const gosakiPublicDist = path.join(TOOL_ROOT, "output/static-public/gosaki-piano/public-dist");
 for (const ym of ["2026-06", "2026-07"]) {
   const canonicalMonthPath = path.join(gosakiPublicDist, "schedule", ym, "index.html");

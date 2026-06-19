@@ -49,6 +49,20 @@ function cmsKitAdminShellRoutesIntegration() {
             import.meta.url,
           ),
         });
+        injectRoute({
+          pattern: "/__admin-staging-shell/musician-basic/admin",
+          entrypoint: new URL(
+            "./src/pages/__admin-staging-shell/musician-basic/admin/index.astro",
+            import.meta.url,
+          ),
+        });
+        injectRoute({
+          pattern: "/__admin-staging-shell/musician-basic/admin/schedule",
+          entrypoint: new URL(
+            "./src/pages/__admin-staging-shell/musician-basic/admin/schedule/index.astro",
+            import.meta.url,
+          ),
+        });
       },
     },
   };

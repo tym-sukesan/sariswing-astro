@@ -1,9 +1,10 @@
+---
 /**
  * Gosaki staging shell — operator-facing schedule list UI (read-only).
  */
 
-import type { SiteSlugScheduleRowPickerBinding } from "../../../../../src/lib/admin/staging-data/staging-schedule-site-slug-row-picker-binding";
-import type { ScheduleRecord } from "../../../../../src/lib/admin/staging-write/schedule-dry-run-types";
+import type { SiteSlugScheduleRowPickerBinding } from "../../../../../../src/lib/admin/staging-data/staging-schedule-site-slug-row-picker-binding";
+import type { ScheduleRecord } from "../../../../../../src/lib/admin/staging-write/schedule-dry-run-types";
 import {
   GOSAKI_STAGING_ADMIN_BASE,
   GOSAKI_STAGING_PREVIEW_URL,
@@ -188,5 +189,5 @@ function displayValue(value: string | null | undefined): string {
 </section>
 
 <script>
-  import "../../../../../src/lib/admin/staging-data/gosaki-staging-schedule-operator-ui.ts";
+  import "../../../../../../src/lib/admin/staging-data/gosaki-staging-schedule-operator-ui.ts";
 </script>

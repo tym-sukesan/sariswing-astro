@@ -7,9 +7,9 @@ import AdminStagingScheduleSiteSlugEditSection from "../../data/components/Admin
 import AdminStagingScheduleGeneralEditSection from "../../data/components/AdminStagingScheduleGeneralEditSection.astro";
 import AdminStagingScheduleSafeFieldsDryRunSection from "../../data/components/AdminStagingScheduleSafeFieldsDryRunSection.astro";
 import AdminStagingScheduleSafeFieldsNonDryRunPocSection from "../../data/components/AdminStagingScheduleSafeFieldsNonDryRunPocSection.astro";
-import { resolveGosakiScheduleSiteSlugRowPickerBinding } from "../../../../../src/lib/admin/staging-data/staging-schedule-site-slug-row-picker-binding";
-import { resolveGosakiScheduleSiteSlugReadBinding } from "../../../../../src/lib/admin/staging-data/staging-schedule-site-slug-read-binding";
-import { resolveGosakiScheduleSiteSlugEditBinding } from "../../../../../src/lib/admin/staging-data/staging-schedule-site-slug-edit-binding";
+import { resolveGosakiScheduleSiteSlugRowPickerBinding } from "../../../../../../src/lib/admin/staging-data/staging-schedule-site-slug-row-picker-binding";
+import { resolveGosakiScheduleSiteSlugReadBinding } from "../../../../../../src/lib/admin/staging-data/staging-schedule-site-slug-read-binding";
+import { resolveGosakiScheduleSiteSlugEditBinding } from "../../../../../../src/lib/admin/staging-data/staging-schedule-site-slug-edit-binding";
 
 const rowPickerBinding = await resolveGosakiScheduleSiteSlugRowPickerBinding();
 const readBinding = await resolveGosakiScheduleSiteSlugReadBinding();
@@ -47,5 +47,5 @@ const editBinding = await resolveGosakiScheduleSiteSlugEditBinding();
 </AdminGosakiStagingShellLayout>
 
 <script>
-  import "../../../../../src/lib/admin/staging-auth/staging-auth-ui.ts";
+  import "../../../../../../src/lib/admin/staging-auth/staging-auth-ui.ts";
 </script>

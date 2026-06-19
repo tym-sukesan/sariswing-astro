@@ -3742,6 +3742,53 @@ assert(
   g9g4a1b1ResultSrc.includes("Save clicked (Cursor/AI) | **no**"),
 );
 
+const g9g4a1cRestorePreflightPath = path.join(
+  TOOL_ROOT,
+  "docs/staging-shell-schedule-venue-only-operational-restore-preflight.md",
+);
+assert("G-9g4a1c restore preflight doc exists", fs.existsSync(g9g4a1cRestorePreflightPath));
+const g9g4a1cRestorePreflightSrc = fs.readFileSync(g9g4a1cRestorePreflightPath, "utf8");
+assert(
+  "G-9g4a1c phase marker",
+  g9g4a1cRestorePreflightSrc.includes("G-9g4a1c-venue-only-operational-restore-preflight"),
+);
+assert(
+  "G-9g4a1c status complete",
+  g9g4a1cRestorePreflightSrc.includes("**complete**"),
+);
+assert(
+  "G-9g4a1c restore target row",
+  g9g4a1cRestorePreflightSrc.includes("eb1f1898-5107-4deb-a6d5-a792e0ec3f69"),
+);
+assert(
+  "G-9g4a1c restore venue",
+  g9g4a1cRestorePreflightSrc.includes("学芸大学 珈琲美学"),
+);
+assert(
+  "G-9g4a1c lock baseline",
+  g9g4a1cRestorePreflightSrc.includes("2026-06-19T05:12:41.853845+00:00"),
+);
+assert(
+  "G-9g4a1c G-9g4a1 arm only",
+  g9g4a1cRestorePreflightSrc.includes("G-9g4a1 arm only"),
+);
+assert(
+  "G-9g4a1c rollback SQL do not run",
+  g9g4a1cRestorePreflightSrc.includes("DO NOT RUN"),
+);
+assert(
+  "G-9g4a1c marker remains",
+  g9g4a1cRestorePreflightSrc.includes("markerRemainsInStagingDb: true"),
+);
+assert(
+  "G-9g4a1c next phase G-9g4a1d",
+  g9g4a1cRestorePreflightSrc.includes("G-9g4a1d-venue-only-operational-restore-manual-execution"),
+);
+assert(
+  "G-9g4a1c no Save click",
+  g9g4a1cRestorePreflightSrc.includes("Save clicked (this phase) | **no**"),
+);
+
 const gosakiPublicDist = path.join(TOOL_ROOT, "output/static-public/gosaki-piano/public-dist");
 for (const ym of ["2026-06", "2026-07"]) {
   const canonicalMonthPath = path.join(gosakiPublicDist, "schedule", ym, "index.html");

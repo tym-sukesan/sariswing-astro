@@ -3,44 +3,38 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 1. Immediate priority
 
-**Current phase:** `G-9g3h1c-smoke-marker-restore-execution` — **operator pending** (retry after G-9g3h1b1)
+**Current phase:** `G-9g3h1d-smoke-marker-restore-post-execution-hardening`
 
-**Git:** latest pushed commit `f868435` (G-9g3h1b restore preflight)
+**Git:** latest pushed commit `863fdff` (G-9g3h1b1 row-picker exception)
 
-### G-9g3h1c pause
-
-| Item | Value |
-| --- | --- |
-| Status | Paused **before** Preview / Save |
-| Cause | Target row under PoC audit panel (not selectable) |
-| Marker | G-9g3h1a smoke marker → `[CMS Kit staging]` exclusion |
-| Preview / Save / DB write | **not executed** |
-
-### G-9g3h1b1 summary
+### G-9g3h1c summary
 
 | Item | Value |
 | --- | --- |
-| Doc | `staging-shell-schedule-site-slug-operational-save-reclick-smoke-marker-restore-row-picker-exception.md` |
-| Status | **implementation complete** (uncommitted) |
-| Fix | Narrow `isG9g3h1aSmokeMarkerRestoreTargetRow` exception |
-| UI | **G-9g3h1a restore target** badge + **Select (restore)** |
-| Protections | Generic `[CMS Kit staging]` / G-6 pilot / PoC rows still excluded |
+| Execution doc | `staging-shell-schedule-site-slug-operational-save-reclick-smoke-marker-restore-execution-result.md` |
+| Status | **success** — operator manual restore complete |
+| Path | Option A — G-9g3g general operational |
+| Preview | operator once (`actualWrite=false`) |
+| Save | operator once (`actualWrite=true`, `rowsAffected=1`) |
+| Marker | **removed** — `markerRemainsInStagingDb: false` |
+| Re-click blocked | confirmed |
+| Rollback | not needed / not executed |
 
 ### Gates
 
 ```txt
-stagingShellScheduleSiteSlugOperationalSaveReclickSmokeMarkerRestoreRowPickerExceptionComplete: true
-readyForG9g3h1cSmokeMarkerRestoreExecution: true
-g9g3h1cExecutionPausedBeforePreviewSave: true
-markerRemainsInStagingDb: true
+stagingShellScheduleSiteSlugOperationalSaveReclickSmokeMarkerRestoreExecutionComplete: true
+readyForG9g3h1dSmokeMarkerRestorePostExecutionHardening: true
+markerRemainsInStagingDb: false
+markerRemoved: true
+restoreRoundTripComplete: true
 readyForAnyDbWrite: false
 ```
 
 ## 2. Next steps
 
-1. Commit / deploy G-9g3h1b1 when ready
-2. **Operator:** retry G-9g3h1c — confirm **Select (restore)** on G-9g3h1a restore target row
-3. If row still audit-only → **STOP**
+1. **G-9g3h1d-smoke-marker-restore-post-execution-hardening** — document round-trip complete, routine dev safety
+2. Commit G-9g3h1c restore execution result doc when ready
 
 ## 3. Routine dev safety
 
@@ -54,5 +48,5 @@ PUBLIC_ADMIN_WRITE_DRY_RUN: true
 ## 4. Do not
 
 - Cursor / AI click Save or Preview
-- Re-click G-9g3h1a smoke Save
-- Use G-9g3g5 restore mode for G-9g3h1a marker
+- Re-click G-9g3h1a smoke Save or G-9g3h1c restore Save
+- Re-arm non-dry-run stacks for routine dev

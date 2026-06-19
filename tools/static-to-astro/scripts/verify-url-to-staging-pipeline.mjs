@@ -3259,16 +3259,39 @@ const g9g3h1cExecPendingPath = path.join(
   TOOL_ROOT,
   "docs/staging-shell-schedule-site-slug-operational-save-reclick-smoke-marker-restore-execution-result.md",
 );
-assert("G-9g3h1c pending execution doc exists", fs.existsSync(g9g3h1cExecPendingPath));
+assert("G-9g3h1c execution result doc exists", fs.existsSync(g9g3h1cExecPendingPath));
 const g9g3h1cExecPendingSrc = fs.readFileSync(g9g3h1cExecPendingPath, "utf8");
 assert(
-  "G-9g3h1c operator pending",
-  g9g3h1cExecPendingSrc.includes("operator pending"),
+  "G-9g3h1c phase marker",
+  g9g3h1cExecPendingSrc.includes("G-9g3h1c-smoke-marker-restore-execution"),
 );
 assert(
-  "G-9g3h1c paused before Preview",
-  g9g3h1cExecPendingSrc.includes("paused before Preview") ||
-    g9g3h1cExecPendingSrc.includes("g9g3h1cExecutionPausedBeforePreviewSave"),
+  "G-9g3h1c restore success",
+  g9g3h1cExecPendingSrc.includes("restore execution complete") ||
+    g9g3h1cExecPendingSrc.includes("stagingShellScheduleSiteSlugOperationalSaveReclickSmokeMarkerRestoreExecutionComplete: true"),
+);
+assert(
+  "G-9g3h1c Preview executed once",
+  g9g3h1cExecPendingSrc.includes("Preview clicked (operator) | **yes**") ||
+    g9g3h1cExecPendingSrc.includes("Preview: executed once by operator"),
+);
+assert(
+  "G-9g3h1c Save executed once",
+  g9g3h1cExecPendingSrc.includes("Save clicked | **yes**") &&
+    g9g3h1cExecPendingSrc.includes("exactly once"),
+);
+assert(
+  "G-9g3h1c marker removed",
+  g9g3h1cExecPendingSrc.includes("markerRemainsInStagingDb: false") &&
+    g9g3h1cExecPendingSrc.includes("markerRemoved: true"),
+);
+assert(
+  "G-9g3h1c next phase hardening",
+  g9g3h1cExecPendingSrc.includes("G-9g3h1d-smoke-marker-restore-post-execution-hardening"),
+);
+assert(
+  "G-9g3h1c rollback not needed",
+  g9g3h1cExecPendingSrc.includes("rollbackNeeded: false"),
 );
 
 const g9g3h1b1ImplPath = path.join(

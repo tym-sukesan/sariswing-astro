@@ -117,12 +117,10 @@ assert(
 assert("preflight row picker section", preflightSrc.includes("G-9g3h1b1"));
 assert("preflight STOP if audit only", preflightSrc.includes("STOP") && preflightSrc.includes("audit"));
 assert(
-  "execution doc paused",
-  execPendingSrc.includes("paused before Preview/Save") ||
-    execPendingSrc.includes("g9g3h1cExecutionPausedBeforePreviewSave"),
+  "execution doc paused resolved or success",
+  execPendingSrc.includes("Prior pause (resolved)") ||
+    execPendingSrc.includes("restore execution complete"),
 );
-assert("execution doc no Preview yet", execPendingSrc.includes("Preview clicked (operator) | **not yet**") || execPendingSrc.includes("not yet"));
-assert("execution doc no Save yet", execPendingSrc.includes("Save clicked | **no**"));
 
 assert("no Preview executed marker", implDocSrc.includes("Preview clicked (operator) | **no**"));
 assert("no Save executed marker", implDocSrc.includes("Save clicked (this phase) | **no**"));
@@ -132,10 +130,29 @@ assert("next phase G-9g3h1c", implDocSrc.includes(NEXT_PHASE));
 assert("prior commit f868435", implDocSrc.includes(PRIOR_COMMIT));
 
 assert("current state G-9g3h1b1", currentStateSrc.includes("G-9g3h1b1"));
-assert("current state paused", currentStateSrc.includes("paused") || currentStateSrc.includes("Paused"));
-assert("next actions G-9g3h1c", nextActionsSrc.includes("G-9g3h1c"));
-assert("handoff G-9g3h1b1", handoffSrc.includes("G-9g3h1b1"));
-assert("marker remains", handoffSrc.includes("markerRemainsInStagingDb: true") || implDocSrc.includes("markerRemainsInStagingDb: true"));
+assert(
+  "current state paused or restore complete",
+  currentStateSrc.includes("paused") ||
+    currentStateSrc.includes("Paused") ||
+    currentStateSrc.includes("G-9g3h1c") ||
+    currentStateSrc.includes("marker removed"),
+);
+assert(
+  "next actions G-9g3h1c or post-execution",
+  nextActionsSrc.includes("G-9g3h1c") || nextActionsSrc.includes("G-9g3h1d"),
+);
+assert(
+  "handoff G-9g3h1b1 or restore success",
+  handoffSrc.includes("G-9g3h1b1") || handoffSrc.includes("G-9g3h1c"),
+);
+assert(
+  "marker remains or removed",
+  handoffSrc.includes("markerRemainsInStagingDb: true") ||
+    implDocSrc.includes("markerRemainsInStagingDb: true") ||
+    handoffSrc.includes("markerRemainsInStagingDb: false") ||
+    handoffSrc.includes("markerRemoved: true") ||
+    execPendingSrc.includes("markerRemainsInStagingDb: false"),
+);
 
 console.log(`\nG-9g3h1b1 verifier: ${passed} passed, ${failed} failed`);
 process.exit(failed > 0 ? 1 : 0);

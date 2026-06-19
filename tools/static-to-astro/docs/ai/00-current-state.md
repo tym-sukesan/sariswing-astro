@@ -21,19 +21,17 @@ Staging Shell
 将来的な顧客オンボーディング・課金・デプロイ自動化
 
 2. Current phase
-現在フェーズ: **G-9g3h1c-smoke-marker-restore-execution**（operator pending — G-9g3h1b1 row-picker exception 後に再開）
+現在フェーズ: **G-9g3h1d-smoke-marker-restore-post-execution-hardening**（G-9g3h1c restore success 後）
 
-G-9g3h1c: restore execution **paused** before Preview/Save — target row was PoC audit / not selectable（G-9g3h1a smoke marker）。
+G-9g3h1c: G-9g3h1a smoke marker restore **success**（operator manual）。Option A — G-9g3g general operational。Preview 1回 + Save 1回 + marker removed。**Do not re-click G-9g3h1c restore Save.**
 
-G-9g3h1b1: smoke marker restore **row-picker exception implemented**（uncommitted）。narrow exception only; generic `[CMS Kit staging]` audit protection preserved。
+G-9g3h1b1: row-picker exception **complete**（commit `863fdff`）。
 
-G-9g3h1b: restore preflight **complete**（commit `f868435`）。
+G-9g3h1a→G-9g3h1c round-trip: **complete**（smoke marker append → restore removal）。
 
-G-9g3h1a: re-click prevention smoke **success**（commit `03cbbbe`）。**Do not re-click G-9g3h1a smoke Save.**
+G-9g3h1a smoke marker **removed** from staging DB on row `888c58f2-f152-4563-a3cf-a20d7c2456c1`.
 
-G-9g3h1a smoke marker **remains** in staging DB on row `888c58f2-f152-4563-a3cf-a20d7c2456c1`.
-
-Git: 最新 push 済み commit `f868435`（G-9g3h1b）。G-9g3h1b1 **uncommitted**。
+Git: 最新 push 済み commit `863fdff`（G-9g3h1b1）。G-9g3h1c restore result **uncommitted**。
 
 G-9g3h1: Save success re-click prevention **implemented**（commit `8780f84`）。
 
@@ -548,30 +546,30 @@ PUBLIC_SUPABASE_URL host: kmjqppxjdnwwrtaeqjta.supabase.co (staging)
 **Note:** `tools/static-to-astro/.env.local` に `SUPABASE_SERVICE_ROLE_KEY` が local only（gitignored）で存在する場合がある。G-9g3b execution では使用禁止・参照禁止。anon key + authenticated session のみ。
 
 10. Recommended next phase
-次フェーズ推奨: **G-9g3h1c-smoke-marker-restore-execution**（operator retry after G-9g3h1b1）
+次フェーズ推奨: **G-9g3h1d-smoke-marker-restore-post-execution-hardening**
 
-G-9g3h1b1 row-picker exception: **complete**（uncommitted）。
-
-G-9g3h1b restore preflight: **complete**（commit `f868435`）。
+G-9g3h1c restore execution: **success**（operator manual; result doc uncommitted）。
 
 Phase sequence:
 ```txt
 G-9g3h1a-save-success-reclick-prevention-smoke-test ← success (03cbbbe)
 G-9g3h1b-smoke-marker-restore-preflight ← complete (f868435)
-G-9g3h1b1-smoke-marker-restore-row-picker-exception ← complete (uncommitted)
-G-9g3h1c-smoke-marker-restore-execution ← next (paused once; operator retry)
+G-9g3h1b1-smoke-marker-restore-row-picker-exception ← complete (863fdff)
+G-9g3h1c-smoke-marker-restore-execution ← success (operator)
+G-9g3h1d-smoke-marker-restore-post-execution-hardening ← next
 ```
 
 G-9g3h gates:
 ```txt
-stagingShellScheduleSiteSlugOperationalSaveReclickSmokeMarkerRestoreRowPickerExceptionComplete: true
-readyForG9g3h1cSmokeMarkerRestoreExecution: true
-g9g3h1cExecutionPausedBeforePreviewSave: true
-markerRemainsInStagingDb: true
+stagingShellScheduleSiteSlugOperationalSaveReclickSmokeMarkerRestoreExecutionComplete: true
+readyForG9g3h1dSmokeMarkerRestorePostExecutionHardening: true
+markerRemainsInStagingDb: false
+markerRemoved: true
+restoreRoundTripComplete: true
 readyForAnyDbWrite: false
 ```
 
-Routine dev: dry-run on / G-9g3g arm off / G-9g3g5 restore arm off. **Do not re-click G-9g3h1a smoke Save.**
+Routine dev: dry-run on / all non-dry-run arms off. **Do not re-click G-9g3h1a smoke Save or G-9g3h1c restore Save.**
 
 11. AI workflow transition
 チャット履歴への依存を減らすため、リポジトリ側に AI開発文脈管理ファイルを作成。

@@ -145,9 +145,16 @@ assert("preflight row picker G-9g3h1b1", preflightSrc.includes("G-9g3h1b1"));
 assert("preflight Select (restore)", preflightSrc.includes("Select (restore)"));
 
 assert("pending execution doc exists", execPendingSrc.length > 0);
-assert("pending execution operator pending", execPendingSrc.includes("operator pending"));
-assert("pending execution phase G-9g3h1c", execPendingSrc.includes(NEXT_PHASE));
-assert("pending execution no Save yet", execPendingSrc.includes("Save clicked | **no**"));
+assert(
+  "execution doc success or pending history",
+  execPendingSrc.includes("restore execution complete") ||
+    execPendingSrc.includes("Prior pause (resolved)"),
+);
+assert("execution phase G-9g3h1c", execPendingSrc.includes(NEXT_PHASE));
+assert(
+  "execution no Save in preflight phase",
+  preflightSrc.includes("DB write executed (this phase) | **no**"),
+);
 
 assert("G9G3G4 marker guard constant", guardsSrc.includes("G9G3G4_OPERATIONAL_DESCRIPTION_MARKER"));
 assert("assertG9G3g5RestorePayloadOnly in guards", guardsSrc.includes("assertG9G3g5RestorePayloadOnly"));

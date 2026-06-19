@@ -1337,46 +1337,203 @@
   color: #333;
 }
 
-.admin-gosaki-publish-bar {
+.admin-gosaki-global-status,
+.admin-gosaki-status-bar {
   margin: 0 0 1.25rem;
-  padding: 1rem 1.15rem;
-  border: 1px solid #e0e0e0;
+  padding: 0.55rem 0.85rem;
+  border: 1px solid #e5e7eb;
   border-radius: var(--admin-radius);
-  background: #fff;
-}
-
-.admin-gosaki-publish-bar__label {
-  margin: 0 0 0.35rem;
-  font-size: 1rem;
-  font-weight: 700;
-  color: #333;
-}
-
-.admin-gosaki-publish-bar__note {
-  margin: 0 0 0.75rem;
-  font-size: 0.9rem;
-  color: var(--admin-color-muted);
+  background: #f9fafb;
+  color: #4b5563;
+  font-size: 0.875rem;
   line-height: 1.5;
 }
 
-.admin-gosaki-notice {
-  margin: 0 0 1rem;
-  padding: 0.85rem 1rem;
+.admin-gosaki-status-bar__link {
+  margin-left: 0.5rem;
+  color: var(--admin-color-primary);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.admin-gosaki-menu-card--primary {
+  margin-bottom: 1rem;
+}
+
+.admin-gosaki-card__title--visually-quiet {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.admin-gosaki-menu--primary {
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  gap: 1rem;
+}
+
+.admin-button--menu-primary {
+  min-height: 3.5rem;
+  font-size: 1.25rem;
+  font-weight: 500;
+  border-color: #bbb;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.admin-button--menu-primary:hover {
+  border-color: #666;
+  background: #fafafa;
+}
+
+.admin-gosaki-secondary-menu {
+  margin: 0 0 1.25rem;
+}
+
+.admin-gosaki-secondary-menu__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+}
+
+.admin-gosaki-secondary-menu__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.65rem 0.85rem;
+  border: 1px solid #e5e7eb;
   border-radius: var(--admin-radius);
-  font-size: 0.92rem;
-  line-height: 1.55;
+  background: #fafafa;
+  color: #9ca3af;
+  font-size: 0.9rem;
 }
 
-.admin-gosaki-notice--info {
-  border: 1px solid #bfdbfe;
-  background: #eff6ff;
-  color: #1e3a5f;
+.admin-gosaki-secondary-menu__badge {
+  font-size: 0.75rem;
+  padding: 0.15rem 0.45rem;
+  border-radius: 999px;
+  background: #e5e7eb;
+  color: #6b7280;
 }
 
-.admin-gosaki-notice--warning {
-  border: 1px solid #fde68a;
-  background: #fffbeb;
-  color: #78350f;
+.admin-gosaki-home-supplement,
+.admin-gosaki-schedule-help {
+  margin: 1.25rem 0 0;
+  padding: 0.65rem 0.85rem;
+  border: 1px solid #e5e7eb;
+  border-radius: var(--admin-radius);
+  background: #fafafa;
+}
+
+.admin-gosaki-home-supplement > summary,
+.admin-gosaki-schedule-help > summary {
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #6b7280;
+}
+
+.admin-gosaki-operator-grid--compact {
+  margin-top: 0.75rem;
+  margin-bottom: 0;
+}
+
+.admin-gosaki-card--flat {
+  box-shadow: none;
+  margin-bottom: 0.75rem;
+  padding: 0.85rem 1rem;
+}
+
+.admin-gosaki-card__subtitle {
+  margin: 0 0 0.5rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #374151;
+}
+
+.admin-gosaki-list--compact {
+  font-size: 0.875rem;
+  color: #4b5563;
+}
+
+.admin-gosaki-login-section {
+  margin-top: 0.5rem;
+}
+
+.admin-gosaki-schedule-workspace {
+  display: grid;
+  gap: 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.admin-gosaki-schedule-workspace__step {
+  padding: 1rem 1.1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: var(--admin-radius);
+  background: #fff;
+  box-shadow: var(--admin-shadow);
+}
+
+.admin-gosaki-workspace-label {
+  margin: 0 0 0.85rem;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #333;
+  letter-spacing: 0.02em;
+}
+
+.admin-gosaki-schedule-help__body {
+  display: grid;
+  gap: 1rem;
+  margin-top: 0.75rem;
+}
+
+.admin-gosaki-steps--compact,
+.admin-gosaki-field-list {
+  margin: 0;
+  padding-left: 1.2rem;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: #4b5563;
+}
+
+.admin-gosaki-field-list {
+  list-style: none;
+  padding-left: 0;
+}
+
+.admin-gosaki-field-list li + li {
+  margin-top: 0.35rem;
+}
+
+.admin-gosaki-dev-tools--schedule {
+  margin-top: 1rem;
+}
+
+/* 運用者向け: 内部パネルの開発者向け見出し・説明を非表示（重要な警告は残す） */
+.admin-gosaki-operator-schedule .admin-staging-schedule-site-slug-row-picker__title,
+.admin-gosaki-operator-schedule .admin-staging-schedule-site-slug-row-picker__safety,
+.admin-gosaki-operator-schedule .admin-staging-schedule-site-slug-read__title,
+.admin-gosaki-operator-schedule .admin-staging-schedule-site-slug-read__safety,
+.admin-gosaki-operator-schedule .admin-staging-schedule-site-slug-read__summary,
+.admin-gosaki-operator-schedule .admin-staging-schedule-site-slug-edit__title,
+.admin-gosaki-operator-schedule .admin-staging-schedule-site-slug-edit__staging-banner,
+.admin-gosaki-operator-schedule .admin-staging-schedule-site-slug-edit__binding-phase,
+.admin-gosaki-operator-schedule .admin-staging-schedule-site-slug-edit__safety {
+  display: none;
+}
+
+.admin-gosaki-operator-schedule .admin-staging-schedule-site-slug-row-picker__summary,
+.admin-gosaki-operator-schedule .admin-staging-schedule-site-slug-edit__summary {
+  display: none;
 }
 
 .admin-gosaki-operator-grid {

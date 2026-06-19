@@ -62,6 +62,7 @@ import LinksAdminUi from "../modules/LinksAdminUi.astro";
 import NewsAdminUi from "../modules/NewsAdminUi.astro";
 import AdminGosakiStagingOperatorHome from "../gosaki/components/AdminGosakiStagingOperatorHome.astro";
 import AdminGosakiStagingScheduleOperatorIntro from "../gosaki/components/AdminGosakiStagingScheduleOperatorIntro.astro";
+import AdminGosakiStagingScheduleHelp from "../gosaki/components/AdminGosakiStagingScheduleHelp.astro";
 
 interface Props {
   localPreviewMode?: boolean;
@@ -287,24 +288,19 @@ const moduleSummary = [
   brandHref={stagingShellMode ? "#gosaki-home" : "#"}
   stagingLabel={
     stagingShellMode
-      ? `Gosaki staging shell — 検証用（本番 /admin ではありません）`
+      ? `Gosaki 管理画面（確認用）`
       : localPreviewMode
         ? `${templateId} LOCAL PREVIEW (G-5u) — scaffold only`
         : `${templateId} admin prototype (G-5p)`
   }
 >
-  <AdminNav slot="nav" items={navItems} currentSection="dashboard" />
+  {stagingShellMode ? null : <AdminNav slot="nav" items={navItems} currentSection="dashboard" />}
 
   {
     stagingShellMode ? (
-      <div class="admin-staging-status-group" slot="status">
-        <AdminStatusMessage
-          type="warning"
-          title="ステージング検証用シェル"
-          message={`${stagingShellRoutePath} は Gosaki Piano 向けのローカル検証用です。Sariswing 本番 /admin は変更していません。Save・本番反映・FTP は通常無効です。`}
-        />
-        <AdminAuthAdapterStatusPanel phase="G-5y-e-a" authConfig={stagingAuthConfig} />
-      </div>
+      <p class="admin-gosaki-global-status" slot="status" role="status">
+        現在は確認用です。保存・本番反映はまだ開放していません。
+      </p>
     ) : localPreviewMode ? (
       <AdminStatusMessage
         slot="status"
@@ -329,9 +325,14 @@ const moduleSummary = [
   <div class="admin-prototype">
     {
       stagingShellMode ? (
+        <AdminGosakiStagingOperatorHome previewUrl={gosakiPreviewUrl} />
+      ) : null
+    }
+    {
+      stagingShellMode ? (
         <section
           id="auth-login-shell"
-          class="admin-prototype-section admin-staging-login-section"
+          class="admin-prototype-section admin-staging-login-section admin-gosaki-login-section"
           data-section="auth-login-shell"
         >
           <AdminStagingLoginUiSection
@@ -344,16 +345,9 @@ const moduleSummary = [
     }
     {
       stagingShellMode ? (
-        <AdminGosakiStagingOperatorHome
-          routePath={stagingShellRoutePath}
-          previewUrl={gosakiPreviewUrl}
-        />
-      ) : null
-    }
-    {
-      stagingShellMode ? (
         <details class="admin-gosaki-dev-tools">
-          <summary>開発者向けパネル（PoC / デバッグ — 通常の運用確認では開かなくて構いません）</summary>
+          <summary>開発者向け詳細</summary>
+          <AdminAuthAdapterStatusPanel phase="G-5y-e-a" authConfig={stagingAuthConfig} />
           <section
             id="auth-write-debug-shell"
             class="admin-prototype-section admin-staging-auth-write-debug-section"
@@ -457,14 +451,54 @@ const moduleSummary = [
       )
     }
 
-    <section id="schedule" class="admin-prototype-section" data-section="schedule">
+    <section id="schedule" class="admin-prototype-section admin-gosaki-operator-schedule" data-section="schedule">
       {
         stagingShellMode ? (
           <AdminGosakiStagingScheduleOperatorIntro previewUrl={`${gosakiPreviewUrl}schedule/`} />
         ) : null
       }
       {
-        stagingShellMode ? null : (
+        stagingShellMode ? (
+          <div class="admin-gosaki-schedule-workspace">
+            <div class="admin-gosaki-schedule-workspace__step">
+              <p class="admin-gosaki-workspace-label">① 公演を選ぶ</p>
+              {
+                gosakiScheduleSiteSlugRowPickerBinding ? (
+                  <AdminStagingScheduleSiteSlugRowPickerSection
+                    binding={gosakiScheduleSiteSlugRowPickerBinding}
+                  />
+                ) : null
+              }
+            </div>
+            <div class="admin-gosaki-schedule-workspace__step">
+              <p class="admin-gosaki-workspace-label">② 内容を確認する</p>
+              {
+                gosakiScheduleSiteSlugBinding ? (
+                  <AdminStagingScheduleSiteSlugReadSection binding={gosakiScheduleSiteSlugBinding} />
+                ) : null
+              }
+              {
+                gosakiScheduleSiteSlugEditBinding ? (
+                  <AdminStagingScheduleSiteSlugEditSection binding={gosakiScheduleSiteSlugEditBinding} />
+                ) : null
+              }
+            </div>
+          </div>
+        ) : null
+      }
+      {stagingShellMode ? <AdminGosakiStagingScheduleHelp /> : null}
+      {
+        stagingShellMode ? (
+          <details class="admin-gosaki-dev-tools admin-gosaki-dev-tools--schedule">
+            <summary>開発者向け詳細（スケジュール）</summary>
+            <AdminStagingScheduleGeneralEditSection
+              phase="G-6-g1-schedule-title-non-dry-run-slice-implementation"
+              g6g2Phase="G-6-g2-schedule-time-fields-non-dry-run-slice-implementation"
+            />
+            <AdminStagingScheduleSafeFieldsDryRunSection phase="G-6-f4-schedule-safe-fields-dry-run-prototype" />
+            <AdminStagingScheduleSafeFieldsNonDryRunPocSection phase="G-6-f6-schedule-safe-fields-non-dry-run-poc-implementation" />
+          </details>
+        ) : (
           <ScheduleAdminUi
             items={scheduleUiBinding.items}
             siteName={siteName}
@@ -478,33 +512,6 @@ const moduleSummary = [
             recordCount={scheduleUiBinding.recordCount}
           />
         )
-      }
-      {
-        stagingShellMode && gosakiScheduleSiteSlugBinding ? (
-          <AdminStagingScheduleSiteSlugReadSection binding={gosakiScheduleSiteSlugBinding} />
-        ) : null
-      }
-      {
-        stagingShellMode && gosakiScheduleSiteSlugRowPickerBinding ? (
-          <AdminStagingScheduleSiteSlugRowPickerSection
-            binding={gosakiScheduleSiteSlugRowPickerBinding}
-          />
-        ) : null
-      }
-      {
-        stagingShellMode && gosakiScheduleSiteSlugEditBinding ? (
-          <AdminStagingScheduleSiteSlugEditSection binding={gosakiScheduleSiteSlugEditBinding} />
-        ) : null
-      }
-      {
-        stagingShellMode ? (
-          <AdminStagingScheduleGeneralEditSection
-            phase="G-6-g1-schedule-title-non-dry-run-slice-implementation"
-            g6g2Phase="G-6-g2-schedule-time-fields-non-dry-run-slice-implementation"
-          />
-          <AdminStagingScheduleSafeFieldsDryRunSection phase="G-6-f4-schedule-safe-fields-dry-run-prototype" />
-          <AdminStagingScheduleSafeFieldsNonDryRunPocSection phase="G-6-f6-schedule-safe-fields-non-dry-run-poc-implementation" />
-        ) : null
       }
     </section>
 

@@ -5,38 +5,36 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-9g4a1a-venue-only-operational-expansion-preflight
-Latest commit (pushed): 9a38c11 (G-9g4a text fields operational expansion planning)
-G-9g4a1 venue-only operational expansion: implementation complete (uncommitted)
+Current phase: G-9g4a1b-venue-only-operational-expansion-execution-runbook
+Latest commit (pushed): 49986c1 (G-9g4a1 venue-only implementation)
+G-9g4a1a venue-only operational expansion preflight: complete (uncommitted)
 ```
 
 ## Summary
 
-G-9g4a1 **implemented** venue-only operational path on staging shell:
+G-9g4a1a **preflight** for venue-only smoke execution:
 
+- **Target row:** Option A — operator picks new safe content row (gosaki-piano, no `[CMS Kit staging]`, not pilot/PoC); fallback `888c58f2-…` discouraged
+- **beforeSnapshot:** id, legacy_id, site_slug, venue, updated_at required; full template in preflight doc
+- **Smoke:** `<venue> [G-9g4a1 venue smoke]` — not `[CMS Kit staging]` alone; published row may show venue briefly
+- **Env:** G-9g4a1 arm only on during execution window; G-9g3g / G-9g3g5 off; no `.env` write in preflight
+- **Rollback SQL:** document-only placeholder — UI restore preferred (G-9g4a1c–e)
 - **Approval ID:** `G-9g4a1-schedule-site-slug-venue-only-non-dry-run`
-- **Env arm:** `PUBLIC_ADMIN_SCHEDULE_G9G4A1_VENUE_ONLY_NON_DRY_RUN_ARMED` (default off; not in `.env`)
-- **changedFields:** `["venue"]` only; payload `{ venue }` only
-- **UI:** dedicated G-9g4a1 Preview/Save buttons (separate from G-9g3g)
-- **Mutual exclusion:** G-9g4a1 arm blocks G-9g3g / G-9g3g5 and vice versa
-- **Re-click:** G-9g3h1 pattern with mode `venue-only`
-- **Smoke example (docs only):** `銀座 N` → `銀座 N [G-9g4a1 venue smoke]` → restore `銀座 N`
-- **Target row:** Option A at preflight (new content row); fallback `888c58f2-…` documented
 
+- `targetRowSelected: false` until operator execution
 - `markerRemainsInStagingDb: false`
-- `activeRestoreExceptionsCount: 0`
-- **No Save / Preview / DB write in implementation phase**
+- **No Save / Preview / DB write / SQL in preflight phase**
 
 **Cursor / AI must not click Save or Preview.**
 
 ## Gates
 
 ```txt
-stagingShellScheduleVenueOnlyOperationalExpansionImplementationComplete: true
-readyForG9g4a1aVenueOnlyOperationalExpansionPreflight: true
+stagingShellScheduleVenueOnlyOperationalExpansionPreflightComplete: true
+readyForG9g4a1bVenueOnlyOperationalExpansionExecutionRunbook: true
 readyForAnyDbWrite: false
 ```
 
 ## Next
 
-**G-9g4a1a** venue-only operational expansion preflight — row picker target, beforeSnapshot, env stack, rollback SQL (document only)
+**G-9g4a1b** execution runbook — operator row selection, G-9g4a1 Preview, checklist, one manual Save (optional smoke), result doc

@@ -3604,6 +3604,53 @@ assert(
   g9g4a1ImplSrc.includes("Save clicked (this phase) | **no**"),
 );
 
+const g9g4a1aPreflightPath = path.join(
+  TOOL_ROOT,
+  "docs/staging-shell-schedule-venue-only-operational-expansion-preflight.md",
+);
+assert("G-9g4a1a preflight doc exists", fs.existsSync(g9g4a1aPreflightPath));
+const g9g4a1aPreflightSrc = fs.readFileSync(g9g4a1aPreflightPath, "utf8");
+assert(
+  "G-9g4a1a phase marker",
+  g9g4a1aPreflightSrc.includes("G-9g4a1a-venue-only-operational-expansion-preflight"),
+);
+assert(
+  "G-9g4a1a status complete",
+  g9g4a1aPreflightSrc.includes("**complete**"),
+);
+assert(
+  "G-9g4a1a Option A",
+  g9g4a1aPreflightSrc.includes("Option A"),
+);
+assert(
+  "G-9g4a1a beforeSnapshot",
+  g9g4a1aPreflightSrc.includes("beforeSnapshot"),
+);
+assert(
+  "G-9g4a1a smoke candidate",
+  g9g4a1aPreflightSrc.includes("G-9g4a1 venue smoke"),
+);
+assert(
+  "G-9g4a1a env stack",
+  g9g4a1aPreflightSrc.includes("PUBLIC_ADMIN_SCHEDULE_G9G4A1_VENUE_ONLY_NON_DRY_RUN_ARMED"),
+);
+assert(
+  "G-9g4a1a rollback SQL do not run",
+  g9g4a1aPreflightSrc.includes("DO NOT RUN"),
+);
+assert(
+  "G-9g4a1a operator checklist",
+  g9g4a1aPreflightSrc.includes("Operator execution checklist"),
+);
+assert(
+  "G-9g4a1a next phase G-9g4a1b",
+  g9g4a1aPreflightSrc.includes("G-9g4a1b-venue-only-operational-expansion-execution-runbook"),
+);
+assert(
+  "G-9g4a1a no Save click",
+  g9g4a1aPreflightSrc.includes("Save clicked (this phase) | **no**"),
+);
+
 const gosakiPublicDist = path.join(TOOL_ROOT, "output/static-public/gosaki-piano/public-dist");
 for (const ym of ["2026-06", "2026-07"]) {
   const canonicalMonthPath = path.join(gosakiPublicDist, "schedule", ym, "index.html");

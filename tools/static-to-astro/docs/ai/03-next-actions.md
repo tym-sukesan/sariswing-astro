@@ -3,29 +3,28 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 1. Immediate priority
 
-**Current phase:** `G-9g4a1a-venue-only-operational-expansion-preflight`
+**Current phase:** `G-9g4a1b-venue-only-operational-expansion-execution-runbook`
 
-**Git:** latest pushed commit `9a38c11` (G-9g4a text fields operational expansion planning)
+**Git:** latest pushed commit `49986c1` (G-9g4a1 venue-only implementation)
 
-### G-9g4a1 summary
+### G-9g4a1a summary
 
 | Item | Value |
 | --- | --- |
-| Doc | `staging-shell-schedule-venue-only-operational-expansion-implementation.md` |
-| Status | **complete** — venue-only implementation (uncommitted) |
-| Approval ID | `G-9g4a1-schedule-site-slug-venue-only-non-dry-run` |
-| Env arm | `PUBLIC_ADMIN_SCHEDULE_G9G4A1_VENUE_ONLY_NON_DRY_RUN_ARMED` (default off) |
-| Preview btn | `#site-slug-edit-g9g4a1-venue-only-dry-run-preview-btn` |
-| Save btn | `#site-slug-edit-g9g4a1-venue-only-save-btn` |
-| Operator Save / Preview | **not executed** in implementation phase |
+| Doc | `staging-shell-schedule-venue-only-operational-expansion-preflight.md` |
+| Status | **complete** — preflight runbook (uncommitted) |
+| Target row | Option A — operator selects at execution (not fixed in preflight) |
+| Fallback | `888c58f2-…` / `schedule-2026-03-001` / venue `銀座 N` (discouraged) |
+| Smoke | `<venue> [G-9g4a1 venue smoke]` → restore original venue |
+| Rollback SQL | document-only — **not executed** |
+| Operator Save / Preview | **not executed** in preflight phase |
 
 ### Gates
 
 ```txt
-stagingShellScheduleVenueOnlyOperationalExpansionImplementationComplete: true
-readyForG9g4a1aVenueOnlyOperationalExpansionPreflight: true
-venueOnlyOperationalPathImplemented: true
-operationalProvenFields: description
+stagingShellScheduleVenueOnlyOperationalExpansionPreflightComplete: true
+readyForG9g4a1bVenueOnlyOperationalExpansionExecutionRunbook: true
+targetRowSelected: false
 activeRestoreExceptionsCount: 0
 markerRemainsInStagingDb: false
 readyForAnyDbWrite: false
@@ -33,21 +32,24 @@ readyForAnyDbWrite: false
 
 ## 2. Next steps
 
-1. **G-9g4a1a-venue-only-operational-expansion-preflight** — target row (Option A), beforeSnapshot, env stack, rollback SQL documented (not executed)
-2. Commit G-9g4a1 implementation when ready
+1. **G-9g4a1b-venue-only-operational-expansion-execution-runbook** — operator row pick → G-9g4a1 Preview → armed stack → one manual Save
+2. Commit G-9g4a1a preflight when ready
 
 ## 3. Routine dev safety
 
 ```txt
 ENABLE_ADMIN_STAGING_WRITE: false
 PUBLIC_ADMIN_WRITE_DRY_RUN: true
-All non-dry-run arms: off (including PUBLIC_ADMIN_SCHEDULE_G9G4A1_VENUE_ONLY_NON_DRY_RUN_ARMED)
+PUBLIC_ADMIN_SCHEDULE_G9G4A1_VENUE_ONLY_NON_DRY_RUN_ARMED: false or unset
+PUBLIC_ADMIN_SCHEDULE_G9G3G_OPERATIONAL_GENERAL_EDIT_NON_DRY_RUN_ARMED: false or unset
+PUBLIC_ADMIN_SCHEDULE_G9G3G5_OPERATIONAL_RESTORE_NON_DRY_RUN_ARMED: false or unset
 ```
 
 ## 4. Do not
 
 - Cursor / AI click Save or Preview
-- Write non-dry-run arms to `.env` / `.env.local` without operator approval
-- Reuse G-9g3g operational arm for venue Save
+- Write execution arms to `.env` / `.env.local` in preflight
+- Start dev server with G-9g4a1 arm on during preflight
+- Execute rollback SQL
 - Use service_role
 - Touch production or `/admin`

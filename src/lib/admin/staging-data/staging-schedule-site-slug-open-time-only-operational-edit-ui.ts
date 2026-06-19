@@ -1,5 +1,5 @@
 /**
- * G-9g4a1 — Venue-only operational edit UI (staging shell only).
+ * G-9g4a2a — open_time-only operational edit UI (staging shell only).
  * Separate from G-9g3g general operational Save path.
  */
 
@@ -14,7 +14,7 @@ import { evaluateSupabaseHostGate } from "./staging-schedule-site-slug-host-gate
 import {
   isPocAuditScheduleRow,
 } from "./staging-schedule-site-slug-row-picker-utils";
-import { getG9G4a1VenueOnlyOperationalConfig } from "./staging-schedule-site-slug-venue-only-operational-config";
+import { getG9G4a2aOpenTimeOnlyOperationalConfig } from "./staging-schedule-site-slug-open-time-only-operational-config";
 import {
   G9G3F3C_PREVIEW_STALE_MSG,
   G9G3H1_FRESH_PREVIEW_REQUIRED_MSG,
@@ -22,16 +22,16 @@ import {
   G9G3H1_PREVIEW_CONSUMED_MSG,
   G9G3H1_ROUTINE_DEV_SAFETY_HINT,
   G9G3H1_SAVE_SUCCESS_BLOCKED_MSG,
-  G9G4A1_PHASE,
-  G9G4A1_VENUE_ONLY_CHANGED_FIELDS,
-  G9G4A1_VENUE_ONLY_NON_DRY_RUN_APPROVAL_ID,
-  G9G4A1_VENUE_ONLY_PREVIEW_BTN_ID,
-  G9G4A1_VENUE_ONLY_PREVIEW_RESULT_ID,
-  G9G4A1_VENUE_ONLY_SAVE_BTN_ID,
-  G9G4A1_VENUE_ONLY_SAVE_GATE_PANEL_ID,
-  G9G4A1_VENUE_ONLY_SAVE_RESULT_ID,
-  G9G4A1_VENUE_ONLY_SAVE_DISABLED_DEFAULT_REASON,
-  SCHEDULE_G9G4A1_VENUE_ONLY_NON_DRY_RUN_ARMED_ENV,
+  G9G4A2A_PHASE,
+  G9G4A2A_OPEN_TIME_ONLY_CHANGED_FIELDS,
+  G9G4A2A_OPEN_TIME_ONLY_NON_DRY_RUN_APPROVAL_ID,
+  G9G4A2A_OPEN_TIME_ONLY_PREVIEW_BTN_ID,
+  G9G4A2A_OPEN_TIME_ONLY_PREVIEW_RESULT_ID,
+  G9G4A2A_OPEN_TIME_ONLY_SAVE_BTN_ID,
+  G9G4A2A_OPEN_TIME_ONLY_SAVE_GATE_PANEL_ID,
+  G9G4A2A_OPEN_TIME_ONLY_SAVE_RESULT_ID,
+  G9G4A2A_OPEN_TIME_ONLY_SAVE_DISABLED_DEFAULT_REASON,
+  SCHEDULE_G9G4A2A_OPEN_TIME_ONLY_NON_DRY_RUN_ARMED_ENV,
   SITE_SLUG_EDIT_SAFE_FIELDS,
   STAGING_SHELL_GOSAKI_SCHEDULE_SITE_SLUG,
 } from "./staging-schedule-site-slug-config";
@@ -44,23 +44,23 @@ import {
 import { runDryRunStaleCheck } from "../staging-write/schedule-optimistic-lock-dry-run";
 import { isSignedInStagingAuth } from "../staging-write/schedule-non-dry-run-poc-auth";
 import {
-  buildG9G4a1VenueOnlyPayload,
+  buildG9G4a2aOpenTimeOnlyPayload,
 } from "../staging-write/schedule-write-guards";
-import { executeG9G4a1VenueOnlyNonDryRunSave } from "../staging-write/staging-schedule-site-slug-venue-only-operational-save";
+import { executeG9G4a2aOpenTimeOnlyNonDryRunSave } from "../staging-write/staging-schedule-site-slug-open-time-only-operational-save";
 import type { ScheduleRecord } from "../staging-write/schedule-dry-run-types";
 import type { ScheduleWriteResult } from "../staging-write/schedule-write-types";
 
-let g9g4a1VenueOnlyPreviewValid = false;
-let lastG9g4a1VenueOnlyFieldValues: Record<string, string> = {};
-let lastG9g4a1PreviewTargetId: string | null = null;
-let lastG9g4a1PreviewTargetLegacyId: string | null = null;
-let lastG9g4a1PreviewExpectedUpdatedAt: string | null = null;
-let lastG9g4a1PreviewHostGatePassed = false;
-let lastG9g4a1PreviewStale = false;
-let lastG9g4a1PreviewIdentity: string | null = null;
-let g9g4a1VenueOnlySaveSuccess: OperationalSaveSuccessRecord | null = null;
-let g9g4a1ExecutionInFlight = false;
-let g9g4a1StagingAuthSignedIn: boolean | null = null;
+let g9g4a2aOpenTimeOnlyPreviewValid = false;
+let lastG9g4a2aOpenTimeOnlyFieldValues: Record<string, string> = {};
+let lastG9g4a2aPreviewTargetId: string | null = null;
+let lastG9g4a2aPreviewTargetLegacyId: string | null = null;
+let lastG9g4a2aPreviewExpectedUpdatedAt: string | null = null;
+let lastG9g4a2aPreviewHostGatePassed = false;
+let lastG9g4a2aPreviewStale = false;
+let lastG9g4a2aPreviewIdentity: string | null = null;
+let g9g4a2aOpenTimeOnlySaveSuccess: OperationalSaveSuccessRecord | null = null;
+let g9g4a2aExecutionInFlight = false;
+let g9g4a2aStagingAuthSignedIn: boolean | null = null;
 
 function escapeHtml(value: string): string {
   return value
@@ -74,8 +74,8 @@ function getRoot(): HTMLElement | null {
   return document.getElementById("admin-staging-schedule-site-slug-edit");
 }
 
-export function isG9g4a1VenueOnlyArmed(): boolean {
-  return getRoot()?.dataset.g9g4a1Armed === "true";
+export function isG9g4a2aOpenTimeOnlyArmed(): boolean {
+  return getRoot()?.dataset.g9g4a2aArmed === "true";
 }
 
 function isPickerDrivenBinding(): boolean {
@@ -94,16 +94,16 @@ function parseTargetRow(): ScheduleRecord | null {
   }
 }
 
-function getVenueCandidate(): string {
-  const el = document.getElementById("site-slug-edit-dry-run-venue");
+function getOpenTimeCandidate(): string {
+  const el = document.getElementById("site-slug-edit-dry-run-open-time");
   if (el instanceof HTMLInputElement) return el.value;
   return "";
 }
 
-function getNonVenueFieldValue(field: Exclude<(typeof SITE_SLUG_EDIT_SAFE_FIELDS)[number], "venue">): string {
+function getNonOpenTimeFieldValue(field: Exclude<(typeof SITE_SLUG_EDIT_SAFE_FIELDS)[number], "open_time">): string {
   const idMap: Record<string, string> = {
     title: "site-slug-edit-dry-run-title",
-    open_time: "site-slug-edit-dry-run-open-time",
+    venue: "site-slug-edit-dry-run-venue",
     start_time: "site-slug-edit-dry-run-start-time",
     price: "site-slug-edit-dry-run-price",
     description: "site-slug-edit-dry-run-description",
@@ -116,10 +116,10 @@ function getNonVenueFieldValue(field: Exclude<(typeof SITE_SLUG_EDIT_SAFE_FIELDS
   return "";
 }
 
-function nonVenueFieldsUnchanged(row: ScheduleRecord): boolean {
+function nonOpenTimeFieldsUnchanged(row: ScheduleRecord): boolean {
   for (const field of SITE_SLUG_EDIT_SAFE_FIELDS) {
-    if (field === "venue") continue;
-    const current = getNonVenueFieldValue(field);
+    if (field === "open_time") continue;
+    const current = getNonOpenTimeFieldValue(field);
     const baseline = row[field] ?? "";
     if (current !== baseline) return false;
   }
@@ -146,57 +146,57 @@ function getClientHostGate() {
   return evaluateSupabaseHostGate(url);
 }
 
-function isG9g4a1PreviewResultStale(): boolean {
-  const resultEl = document.getElementById(G9G4A1_VENUE_ONLY_PREVIEW_RESULT_ID);
+function isG9g4a2aPreviewResultStale(): boolean {
+  const resultEl = document.getElementById(G9G4A2A_OPEN_TIME_ONLY_PREVIEW_RESULT_ID);
   return (
-    lastG9g4a1PreviewStale ||
+    lastG9g4a2aPreviewStale ||
     Boolean(resultEl?.classList.contains("site-slug-edit-dry-run-result--stale"))
   );
 }
 
-function computeG9g4a1VenueOnlyPreviewIdentity(): string | null {
-  if (!lastG9g4a1PreviewTargetId) return null;
+function computeG9g4a2aOpenTimeOnlyPreviewIdentity(): string | null {
+  if (!lastG9g4a2aPreviewTargetId) return null;
   return buildOperationalPreviewIdentity({
-    mode: "venue-only",
-    approvalId: G9G4A1_VENUE_ONLY_NON_DRY_RUN_APPROVAL_ID,
-    targetId: lastG9g4a1PreviewTargetId,
-    legacyId: lastG9g4a1PreviewTargetLegacyId,
-    expectedBeforeUpdatedAt: lastG9g4a1PreviewExpectedUpdatedAt,
-    changedFields: [...G9G4A1_VENUE_ONLY_CHANGED_FIELDS],
-    fieldValues: { ...lastG9g4a1VenueOnlyFieldValues },
+    mode: "open-time-only",
+    approvalId: G9G4A2A_OPEN_TIME_ONLY_NON_DRY_RUN_APPROVAL_ID,
+    targetId: lastG9g4a2aPreviewTargetId,
+    legacyId: lastG9g4a2aPreviewTargetLegacyId,
+    expectedBeforeUpdatedAt: lastG9g4a2aPreviewExpectedUpdatedAt,
+    changedFields: [...G9G4A2A_OPEN_TIME_ONLY_CHANGED_FIELDS],
+    fieldValues: { ...lastG9g4a2aOpenTimeOnlyFieldValues },
   });
 }
 
-function checkG9g4a1VenueOnlySaveReclickGate(): { blocked: boolean; reason: string } {
-  if (!g9g4a1VenueOnlySaveSuccess) {
+function checkG9g4a2aOpenTimeOnlySaveReclickGate(): { blocked: boolean; reason: string } {
+  if (!g9g4a2aOpenTimeOnlySaveSuccess) {
     return { blocked: false, reason: "" };
   }
-  if (!g9g4a1VenueOnlyPreviewValid) {
+  if (!g9g4a2aOpenTimeOnlyPreviewValid) {
     return { blocked: true, reason: G9G3H1_SAVE_SUCCESS_BLOCKED_MSG };
   }
-  if (isOperationalSaveReclickBlocked(g9g4a1VenueOnlySaveSuccess, lastG9g4a1PreviewIdentity)) {
+  if (isOperationalSaveReclickBlocked(g9g4a2aOpenTimeOnlySaveSuccess, lastG9g4a2aPreviewIdentity)) {
     return { blocked: true, reason: G9G3H1_PREVIEW_CONSUMED_MSG };
   }
   return { blocked: false, reason: "" };
 }
 
-export function invalidateG9g4a1VenueOnlyPreview(): void {
-  g9g4a1VenueOnlyPreviewValid = false;
-  lastG9g4a1VenueOnlyFieldValues = {};
-  lastG9g4a1PreviewTargetId = null;
-  lastG9g4a1PreviewTargetLegacyId = null;
-  lastG9g4a1PreviewExpectedUpdatedAt = null;
-  lastG9g4a1PreviewHostGatePassed = false;
-  lastG9g4a1PreviewStale = false;
-  lastG9g4a1PreviewIdentity = null;
-  g9g4a1VenueOnlySaveSuccess = null;
-  refreshG9g4a1VenueOnlySaveButtonState();
-  refreshG9g4a1VenueOnlySaveGatePanel();
+export function invalidateG9g4a2aOpenTimeOnlyPreview(): void {
+  g9g4a2aOpenTimeOnlyPreviewValid = false;
+  lastG9g4a2aOpenTimeOnlyFieldValues = {};
+  lastG9g4a2aPreviewTargetId = null;
+  lastG9g4a2aPreviewTargetLegacyId = null;
+  lastG9g4a2aPreviewExpectedUpdatedAt = null;
+  lastG9g4a2aPreviewHostGatePassed = false;
+  lastG9g4a2aPreviewStale = false;
+  lastG9g4a2aPreviewIdentity = null;
+  g9g4a2aOpenTimeOnlySaveSuccess = null;
+  refreshG9g4a2aOpenTimeOnlySaveButtonState();
+  refreshG9g4a2aOpenTimeOnlySaveGatePanel();
 }
 
-export function markG9g4a1VenueOnlyPreviewStale(reason?: string): void {
-  invalidateG9g4a1VenueOnlyPreview();
-  const el = document.getElementById(G9G4A1_VENUE_ONLY_PREVIEW_RESULT_ID);
+export function markG9g4a2aOpenTimeOnlyPreviewStale(reason?: string): void {
+  invalidateG9g4a2aOpenTimeOnlyPreview();
+  const el = document.getElementById(G9G4A2A_OPEN_TIME_ONLY_PREVIEW_RESULT_ID);
   if (!el) return;
   const message = reason?.trim() ? reason : G9G3F3C_PREVIEW_STALE_MSG;
   const hasResult = el.querySelector(".site-slug-edit-dry-run-result__meta");
@@ -216,8 +216,8 @@ export function markG9g4a1VenueOnlyPreviewStale(reason?: string): void {
   } else {
     el.innerHTML = `<p class="site-slug-edit-dry-run-result__placeholder site-slug-edit-dry-run-result__stale" role="status">${escapeHtml(message)}</p>`;
   }
-  refreshG9g4a1VenueOnlySaveButtonState();
-  refreshG9g4a1VenueOnlySaveGatePanel();
+  refreshG9g4a2aOpenTimeOnlySaveButtonState();
+  refreshG9g4a2aOpenTimeOnlySaveGatePanel();
 }
 
 function renderChangedFieldChips(fields: string[]): string {
@@ -232,10 +232,10 @@ function renderChangedFieldChips(fields: string[]): string {
     .join("");
 }
 
-function renderG9g4a1VenueOnlyDryRunResult(
+function renderG9g4a2aOpenTimeOnlyDryRunResult(
   result: ReturnType<typeof buildSiteSlugScheduleEditDryRunResult>,
 ): void {
-  const el = document.getElementById(G9G4A1_VENUE_ONLY_PREVIEW_RESULT_ID);
+  const el = document.getElementById(G9G4A2A_OPEN_TIME_ONLY_PREVIEW_RESULT_ID);
   if (!el) return;
 
   el.classList.remove("site-slug-edit-dry-run-result--stale");
@@ -250,10 +250,10 @@ function renderG9g4a1VenueOnlyDryRunResult(
     : "";
 
   const payloadPreview =
-    result.changedFields.length > 0 ? { venue: result.after.venue } : {};
+    result.changedFields.length > 0 ? { open_time: result.after.open_time } : {};
 
   el.innerHTML = [
-    `<p class="site-slug-edit-dry-run-result__slice-label"><strong>G-9g4a1 venue-only</strong></p>`,
+    `<p class="site-slug-edit-dry-run-result__slice-label"><strong>G-9g4a2a open-time-only</strong></p>`,
     hostFailBanner,
     staleBanner,
     `<p class="site-slug-edit-dry-run-result__message">${escapeHtml(result.message)}</p>`,
@@ -261,14 +261,14 @@ function renderG9g4a1VenueOnlyDryRunResult(
     `<dl class="site-slug-edit-dry-run-result__meta">`,
     `<div><dt>actualWrite</dt><dd>false</dd></div>`,
     `<div><dt>wouldWrite</dt><dd>${result.wouldWrite ? "true" : "false"}</dd></div>`,
-    `<div><dt>changedFields</dt><dd>venue</dd></div>`,
-    `<div><dt>approvalId</dt><dd><code>${escapeHtml(G9G4A1_VENUE_ONLY_NON_DRY_RUN_APPROVAL_ID)}</code></dd></div>`,
+    `<div><dt>changedFields</dt><dd>open_time</dd></div>`,
+    `<div><dt>approvalId</dt><dd><code>${escapeHtml(G9G4A2A_OPEN_TIME_ONLY_NON_DRY_RUN_APPROVAL_ID)}</code></dd></div>`,
     `<div><dt>optimisticLock.stale</dt><dd>${result.optimisticLock.stale ? "true" : "false"}</dd></div>`,
     `<div><dt>hostGatePassed</dt><dd>${result.hostGate.hostGatePassed ? "true" : "false"}</dd></div>`,
     `<div><dt>serviceRoleUsed</dt><dd>false</dd></div>`,
     `<div><dt>productionBlocked</dt><dd>true</dd></div>`,
     `</dl>`,
-    `<h4 class="site-slug-edit-dry-run-result__subhead">payload to write (venue only)</h4>`,
+    `<h4 class="site-slug-edit-dry-run-result__subhead">payload to write (open_time only)</h4>`,
     `<pre class="site-slug-edit-dry-run-result__block site-slug-edit-dry-run-result__block--payload">${escapeHtml(JSON.stringify(payloadPreview, null, 2))}</pre>`,
     `<h4 class="site-slug-edit-dry-run-result__subhead">before</h4>`,
     `<pre class="site-slug-edit-dry-run-result__block">${escapeHtml(JSON.stringify(result.before, null, 2))}</pre>`,
@@ -277,24 +277,24 @@ function renderG9g4a1VenueOnlyDryRunResult(
   ].join("");
 }
 
-export function canEnableG9g4a1VenueOnlySave(): { ok: boolean; reason: string } {
+export function canEnableG9g4a2aOpenTimeOnlySave(): { ok: boolean; reason: string } {
   if (!isPickerDrivenBinding()) {
-    return { ok: false, reason: "Picker-driven binding required for G-9g4a1 venue-only Save" };
+    return { ok: false, reason: "Picker-driven binding required for G-9g4a2a open-time-only Save" };
   }
-  if (!isG9g4a1VenueOnlyArmed()) {
+  if (!isG9g4a2aOpenTimeOnlyArmed()) {
     return {
       ok: false,
-      reason: G9G4A1_VENUE_ONLY_SAVE_DISABLED_DEFAULT_REASON,
+      reason: G9G4A2A_OPEN_TIME_ONLY_SAVE_DISABLED_DEFAULT_REASON,
     };
   }
-  if (getRoot()?.dataset.g9g4a2aArmed === "true") {
+  if (getRoot()?.dataset.g9g4a1Armed === "true") {
     return {
       ok: false,
-      reason: "G-9g4a2a open_time-only arm on — G-9g4a1 venue-only Save blocked",
+      reason: "G-9g4a1 venue-only arm on — G-9g4a2a open_time-only Save blocked",
     };
   }
 
-  const config = getG9G4a1VenueOnlyOperationalConfig();
+  const config = getG9G4a2aOpenTimeOnlyOperationalConfig();
   const hostGate = getClientHostGate();
 
   if (!hostGate.hostGatePassed) {
@@ -306,27 +306,27 @@ export function canEnableG9g4a1VenueOnlySave(): { ok: boolean; reason: string } 
   if (!config.saveEnabled) {
     return {
       ok: false,
-      reason: config.armFailureReason ?? G9G4A1_VENUE_ONLY_SAVE_DISABLED_DEFAULT_REASON,
+      reason: config.armFailureReason ?? G9G4A2A_OPEN_TIME_ONLY_SAVE_DISABLED_DEFAULT_REASON,
     };
   }
-  if (g9g4a1ExecutionInFlight) return { ok: false, reason: "Save in flight" };
+  if (g9g4a2aExecutionInFlight) return { ok: false, reason: "Save in flight" };
 
-  const reclickGate = checkG9g4a1VenueOnlySaveReclickGate();
+  const reclickGate = checkG9g4a2aOpenTimeOnlySaveReclickGate();
   if (reclickGate.blocked) return { ok: false, reason: reclickGate.reason };
 
   if (!hasPickerBoundRow()) {
     return { ok: false, reason: "Select a non-PoC content row in the picker" };
   }
-  if (!g9g4a1VenueOnlyPreviewValid) {
-    return { ok: false, reason: "Latest G-9g4a1 venue-only Preview required" };
+  if (!g9g4a2aOpenTimeOnlyPreviewValid) {
+    return { ok: false, reason: "Latest G-9g4a2a open-time-only Preview required" };
   }
-  if (isG9g4a1PreviewResultStale()) {
+  if (isG9g4a2aPreviewResultStale()) {
     return { ok: false, reason: G9G3F3C_PREVIEW_STALE_MSG };
   }
-  if (g9g4a1StagingAuthSignedIn === false) {
+  if (g9g4a2aStagingAuthSignedIn === false) {
     return { ok: false, reason: "Sign in as staging admin before Save" };
   }
-  if (g9g4a1StagingAuthSignedIn === null) {
+  if (g9g4a2aStagingAuthSignedIn === null) {
     return { ok: false, reason: "Checking auth session…" };
   }
 
@@ -340,18 +340,18 @@ export function canEnableG9g4a1VenueOnlySave(): { ok: boolean; reason: string } 
   if (row.site_slug !== STAGING_SHELL_GOSAKI_SCHEDULE_SITE_SLUG) {
     return { ok: false, reason: "site_slug mismatch" };
   }
-  if (lastG9g4a1PreviewTargetId && row.id !== lastG9g4a1PreviewTargetId) {
+  if (lastG9g4a2aPreviewTargetId && row.id !== lastG9g4a2aPreviewTargetId) {
     return { ok: false, reason: "Selected row id does not match preview target" };
   }
-  if (!lastG9g4a1PreviewHostGatePassed) {
+  if (!lastG9g4a2aPreviewHostGatePassed) {
     return { ok: false, reason: "Preview hostGatePassed was false" };
   }
-  if (lastG9g4a1PreviewStale) {
+  if (lastG9g4a2aPreviewStale) {
     return { ok: false, reason: "Optimistic lock stale at preview — re-run Preview" };
   }
   if (
-    lastG9g4a1PreviewExpectedUpdatedAt != null &&
-    row.updated_at !== lastG9g4a1PreviewExpectedUpdatedAt
+    lastG9g4a2aPreviewExpectedUpdatedAt != null &&
+    row.updated_at !== lastG9g4a2aPreviewExpectedUpdatedAt
   ) {
     return {
       ok: false,
@@ -359,15 +359,15 @@ export function canEnableG9g4a1VenueOnlySave(): { ok: boolean; reason: string } 
     };
   }
 
-  const venueCandidate = getVenueCandidate();
-  if (venueCandidate.trim() === "") {
-    return { ok: false, reason: "venue cannot be empty" };
+  const open_timeCandidate = getOpenTimeCandidate();
+  if (open_timeCandidate.trim() === "") {
+    return { ok: false, reason: "open_time cannot be empty" };
   }
-  if (venueCandidate !== (lastG9g4a1VenueOnlyFieldValues.venue ?? "")) {
-    return { ok: false, reason: "venue changed since preview" };
+  if (open_timeCandidate !== (lastG9g4a2aOpenTimeOnlyFieldValues.open_time ?? "")) {
+    return { ok: false, reason: "open_time changed since preview" };
   }
-  if (!nonVenueFieldsUnchanged(row)) {
-    return { ok: false, reason: "Non-venue fields modified since load" };
+  if (!nonOpenTimeFieldsUnchanged(row)) {
+    return { ok: false, reason: "Non-open_time fields modified since load" };
   }
   if (!canUseLiveSupabase()) {
     return { ok: false, reason: "Supabase read source required" };
@@ -376,35 +376,35 @@ export function canEnableG9g4a1VenueOnlySave(): { ok: boolean; reason: string } 
   return { ok: true, reason: "Ready (operator manual only — not auto-clicked)" };
 }
 
-export function refreshG9g4a1VenueOnlySaveButtonState(): void {
-  const btn = document.getElementById(G9G4A1_VENUE_ONLY_SAVE_BTN_ID);
+export function refreshG9g4a2aOpenTimeOnlySaveButtonState(): void {
+  const btn = document.getElementById(G9G4A2A_OPEN_TIME_ONLY_SAVE_BTN_ID);
   if (!(btn instanceof HTMLButtonElement)) return;
-  const { ok, reason } = canEnableG9g4a1VenueOnlySave();
+  const { ok, reason } = canEnableG9g4a2aOpenTimeOnlySave();
   btn.disabled = !ok;
   btn.title = ok
-    ? "G-9g4a1 venue-only Save — operator manual only"
-    : `G-9g4a1 venue-only Save disabled — ${reason}`;
+    ? "G-9g4a2a open-time-only Save — operator manual only"
+    : `G-9g4a2a open-time-only Save disabled — ${reason}`;
 }
 
-export function refreshG9g4a1VenueOnlySaveGatePanel(): void {
-  const el = document.getElementById(G9G4A1_VENUE_ONLY_SAVE_GATE_PANEL_ID);
+export function refreshG9g4a2aOpenTimeOnlySaveGatePanel(): void {
+  const el = document.getElementById(G9G4A2A_OPEN_TIME_ONLY_SAVE_GATE_PANEL_ID);
   if (!el) return;
 
-  const config = getG9G4a1VenueOnlyOperationalConfig();
+  const config = getG9G4a2aOpenTimeOnlyOperationalConfig();
   const hostGate = getClientHostGate();
-  const saveGate = canEnableG9g4a1VenueOnlySave();
+  const saveGate = canEnableG9g4a2aOpenTimeOnlySave();
   const lines: string[] = [
-    "G-9g4a1 venue-only",
-    `changedFields: venue`,
-    `approvalId: ${G9G4A1_VENUE_ONLY_NON_DRY_RUN_APPROVAL_ID}`,
-    `env arm: ${SCHEDULE_G9G4A1_VENUE_ONLY_NON_DRY_RUN_ARMED_ENV}=${isG9g4a1VenueOnlyArmed() ? "true" : "false"}`,
+    "G-9g4a2a open-time-only",
+    `changedFields: open_time`,
+    `approvalId: ${G9G4A2A_OPEN_TIME_ONLY_NON_DRY_RUN_APPROVAL_ID}`,
+    `env arm: ${SCHEDULE_G9G4A2A_OPEN_TIME_ONLY_NON_DRY_RUN_ARMED_ENV}=${isG9g4a2aOpenTimeOnlyArmed() ? "true" : "false"}`,
     `hostGatePassed: ${hostGate.hostGatePassed ? "true" : "false"}`,
-    `optimisticLock.stale: ${lastG9g4a1PreviewStale ? "true" : "false"}`,
-    g9g4a1VenueOnlyPreviewValid
-      ? isG9g4a1PreviewResultStale()
+    `optimisticLock.stale: ${lastG9g4a2aPreviewStale ? "true" : "false"}`,
+    g9g4a2aOpenTimeOnlyPreviewValid
+      ? isG9g4a2aPreviewResultStale()
         ? `preview: ${G9G3F3C_PREVIEW_STALE_MSG}`
-        : g9g4a1VenueOnlySaveSuccess &&
-            isOperationalSaveReclickBlocked(g9g4a1VenueOnlySaveSuccess, lastG9g4a1PreviewIdentity)
+        : g9g4a2aOpenTimeOnlySaveSuccess &&
+            isOperationalSaveReclickBlocked(g9g4a2aOpenTimeOnlySaveSuccess, lastG9g4a2aPreviewIdentity)
           ? `preview: ${G9G3H1_PREVIEW_CONSUMED_MSG}`
           : "preview: valid"
       : `preview: ${G9G3H1_FRESH_PREVIEW_REQUIRED_MSG}`,
@@ -414,38 +414,38 @@ export function refreshG9g4a1VenueOnlySaveGatePanel(): void {
     G9G3H1_ROUTINE_DEV_SAFETY_HINT,
   ];
 
-  if (g9g4a1VenueOnlySaveSuccess) {
+  if (g9g4a2aOpenTimeOnlySaveSuccess) {
     lines.push(G9G3H1_OPERATOR_MANUAL_SAVE_COMPLETED_MSG);
     lines.push(
-      `re-click: blocked — Save completed once (rowsAffected=${g9g4a1VenueOnlySaveSuccess.rowsAffected})`,
+      `re-click: blocked — Save completed once (rowsAffected=${g9g4a2aOpenTimeOnlySaveSuccess.rowsAffected})`,
     );
   }
 
   if (!config.saveEnabled) {
-    lines.push(config.armFailureReason ?? G9G4A1_VENUE_ONLY_SAVE_DISABLED_DEFAULT_REASON);
+    lines.push(config.armFailureReason ?? G9G4A2A_OPEN_TIME_ONLY_SAVE_DISABLED_DEFAULT_REASON);
   }
 
   el.textContent = lines.join(" | ");
 }
 
-function refreshG9g4a1VenueOnlyPreviewButtonState(): void {
-  const btn = document.getElementById(G9G4A1_VENUE_ONLY_PREVIEW_BTN_ID);
+function refreshG9g4a2aOpenTimeOnlyPreviewButtonState(): void {
+  const btn = document.getElementById(G9G4A2A_OPEN_TIME_ONLY_PREVIEW_BTN_ID);
   if (!(btn instanceof HTMLButtonElement)) return;
   const rowBound = hasPickerBoundRow() && parseTargetRow() != null;
   btn.disabled = !rowBound;
   btn.title = rowBound
-    ? "G-9g4a1 venue-only dry-run Preview — changedFields=venue only; actualWrite=false"
+    ? "G-9g4a2a open-time-only dry-run Preview — changedFields=open_time only; actualWrite=false"
     : "Select a row in the picker above first";
 }
 
-function renderG9g4a1VenueOnlySaveResult(payload: {
+function renderG9g4a2aOpenTimeOnlySaveResult(payload: {
   actualWrite: boolean;
-  outcome: Awaited<ReturnType<typeof executeG9G4a1VenueOnlyNonDryRunSave>>;
+  outcome: Awaited<ReturnType<typeof executeG9G4a2aOpenTimeOnlyNonDryRunSave>>;
   changedFields: string[];
   beforeSnapshot: ScheduleRecord;
   payloadWritten: Record<string, unknown>;
 }): void {
-  const el = document.getElementById(G9G4A1_VENUE_ONLY_SAVE_RESULT_ID);
+  const el = document.getElementById(G9G4A2A_OPEN_TIME_ONLY_SAVE_RESULT_ID);
   if (!el) return;
 
   const result = payload.outcome.result;
@@ -453,19 +453,19 @@ function renderG9g4a1VenueOnlySaveResult(payload: {
   const safety = result && "safety" in result ? result.safety : null;
 
   el.innerHTML = [
-    `<p class="site-slug-edit-save-result__slice-label"><strong>G-9g4a1 venue-only</strong></p>`,
+    `<p class="site-slug-edit-save-result__slice-label"><strong>G-9g4a2a open-time-only</strong></p>`,
     `<p class="site-slug-edit-save-result__message">${escapeHtml(
       success
-        ? "G-9g4a1 venue-only Save completed — actualWrite=true."
-        : payload.outcome.errorMessage ?? "G-9g4a1 venue-only Save did not complete.",
+        ? "G-9g4a2a open-time-only Save completed — actualWrite=true."
+        : payload.outcome.errorMessage ?? "G-9g4a2a open-time-only Save did not complete.",
     )}</p>`,
     success
       ? `<p class="site-slug-edit-save-result__reclick" role="status"><strong>${escapeHtml(G9G3H1_SAVE_SUCCESS_BLOCKED_MSG)}</strong></p>`
       : "",
     `<dl class="site-slug-edit-save-result__meta">`,
     `<div><dt>actualWrite</dt><dd>${payload.actualWrite ? "true" : "false"}</dd></div>`,
-    `<div><dt>approvalId</dt><dd><code>${escapeHtml(G9G4A1_VENUE_ONLY_NON_DRY_RUN_APPROVAL_ID)}</code></dd></div>`,
-    `<div><dt>changedFields</dt><dd>venue</dd></div>`,
+    `<div><dt>approvalId</dt><dd><code>${escapeHtml(G9G4A2A_OPEN_TIME_ONLY_NON_DRY_RUN_APPROVAL_ID)}</code></dd></div>`,
+    `<div><dt>changedFields</dt><dd>open_time</dd></div>`,
     `<div><dt>serviceRoleUsed</dt><dd>${safety?.serviceRoleUsed === false ? "false" : "false"}</dd></div>`,
     `<div><dt>productionBlocked</dt><dd>true</dd></div>`,
     `</dl>`,
@@ -474,22 +474,22 @@ function renderG9g4a1VenueOnlySaveResult(payload: {
   ].join("");
 }
 
-async function refreshG9g4a1StagingAuthSignedIn(): Promise<boolean> {
+async function refreshG9g4a2aStagingAuthSignedIn(): Promise<boolean> {
   const { url, anonKey } = getSupabaseEnv();
   if (!url || !anonKey) {
-    g9g4a1StagingAuthSignedIn = false;
+    g9g4a2aStagingAuthSignedIn = false;
     return false;
   }
   try {
     const auth = await getStagingAuthSessionDetails(url, anonKey);
-    g9g4a1StagingAuthSignedIn = isSignedInStagingAuth(auth);
+    g9g4a2aStagingAuthSignedIn = isSignedInStagingAuth(auth);
   } catch {
-    g9g4a1StagingAuthSignedIn = false;
+    g9g4a2aStagingAuthSignedIn = false;
   }
-  return g9g4a1StagingAuthSignedIn ?? false;
+  return g9g4a2aStagingAuthSignedIn ?? false;
 }
 
-async function onG9g4a1VenueOnlyPreviewClick(): Promise<void> {
+async function onG9g4a2aOpenTimeOnlyPreviewClick(): Promise<void> {
   const row = parseTargetRow();
   const hostGate = getClientHostGate();
   const hostGatePreview = {
@@ -501,73 +501,73 @@ async function onG9g4a1VenueOnlyPreviewClick(): Promise<void> {
   };
 
   if (!row) {
-    renderG9g4a1VenueOnlyDryRunResult(
+    renderG9g4a2aOpenTimeOnlyDryRunResult(
       buildSiteSlugScheduleEditDryRunError({
-        phase: G9G4A1_PHASE,
+        phase: G9G4A2A_PHASE,
         siteSlug: STAGING_SHELL_GOSAKI_SCHEDULE_SITE_SLUG,
         message: "No row selected — select a row in the picker above.",
         hostGate: hostGatePreview,
       }),
     );
-    invalidateG9g4a1VenueOnlyPreview();
+    invalidateG9g4a2aOpenTimeOnlyPreview();
     return;
   }
 
   if (row.site_slug !== STAGING_SHELL_GOSAKI_SCHEDULE_SITE_SLUG) {
-    renderG9g4a1VenueOnlyDryRunResult(
+    renderG9g4a2aOpenTimeOnlyDryRunResult(
       buildSiteSlugScheduleEditDryRunError({
-        phase: G9G4A1_PHASE,
+        phase: G9G4A2A_PHASE,
         siteSlug: STAGING_SHELL_GOSAKI_SCHEDULE_SITE_SLUG,
-        message: "site_slug mismatch — G-9g4a1 venue-only preview blocked.",
+        message: "site_slug mismatch — G-9g4a2a open-time-only preview blocked.",
         hostGate: hostGatePreview,
       }),
     );
-    invalidateG9g4a1VenueOnlyPreview();
+    invalidateG9g4a2aOpenTimeOnlyPreview();
     return;
   }
 
   if (isPocAuditScheduleRow(row)) {
-    renderG9g4a1VenueOnlyDryRunResult(
+    renderG9g4a2aOpenTimeOnlyDryRunResult(
       buildSiteSlugScheduleEditDryRunError({
-        phase: G9G4A1_PHASE,
+        phase: G9G4A2A_PHASE,
         siteSlug: STAGING_SHELL_GOSAKI_SCHEDULE_SITE_SLUG,
-        message: "PoC audit row — G-9g4a1 venue-only preview blocked.",
+        message: "PoC audit row — G-9g4a2a open-time-only preview blocked.",
         hostGate: hostGatePreview,
       }),
     );
-    invalidateG9g4a1VenueOnlyPreview();
+    invalidateG9g4a2aOpenTimeOnlyPreview();
     return;
   }
 
-  if (!nonVenueFieldsUnchanged(row)) {
-    renderG9g4a1VenueOnlyDryRunResult(
+  if (!nonOpenTimeFieldsUnchanged(row)) {
+    renderG9g4a2aOpenTimeOnlyDryRunResult(
       buildSiteSlugScheduleEditDryRunError({
-        phase: G9G4A1_PHASE,
+        phase: G9G4A2A_PHASE,
         siteSlug: STAGING_SHELL_GOSAKI_SCHEDULE_SITE_SLUG,
         message:
-          "G-9g4a1 venue-only requires non-venue fields unchanged — revert other edits.",
+          "G-9g4a2a open-time-only requires non-open_time fields unchanged — revert other edits.",
         hostGate: hostGatePreview,
       }),
     );
-    invalidateG9g4a1VenueOnlyPreview();
+    invalidateG9g4a2aOpenTimeOnlyPreview();
     return;
   }
 
-  const venueCandidate = getVenueCandidate();
-  if (venueCandidate.trim() === "") {
-    renderG9g4a1VenueOnlyDryRunResult(
+  const open_timeCandidate = getOpenTimeCandidate();
+  if (open_timeCandidate.trim() === "") {
+    renderG9g4a2aOpenTimeOnlyDryRunResult(
       buildSiteSlugScheduleEditDryRunError({
-        phase: G9G4A1_PHASE,
+        phase: G9G4A2A_PHASE,
         siteSlug: STAGING_SHELL_GOSAKI_SCHEDULE_SITE_SLUG,
-        message: "venue cannot be empty for G-9g4a1 venue-only preview.",
+        message: "open_time cannot be empty for G-9g4a2a open-time-only preview.",
         hostGate: hostGatePreview,
       }),
     );
-    invalidateG9g4a1VenueOnlyPreview();
+    invalidateG9g4a2aOpenTimeOnlyPreview();
     return;
   }
 
-  const patch = sanitizeSiteSlugEditSafeFieldPatch({ venue: venueCandidate });
+  const patch = sanitizeSiteSlugEditSafeFieldPatch({ open_time: open_timeCandidate });
   const live = canUseLiveSupabase() && hostGate.hostGatePassed;
   const { url, anonKey } = getSupabaseEnv();
 
@@ -580,7 +580,7 @@ async function onG9g4a1VenueOnlyPreviewClick(): Promise<void> {
   });
 
   const result = buildSiteSlugScheduleEditDryRunResult({
-    phase: G9G4A1_PHASE,
+    phase: G9G4A2A_PHASE,
     source: row,
     siteSlug: STAGING_SHELL_GOSAKI_SCHEDULE_SITE_SLUG,
     patch,
@@ -590,62 +590,62 @@ async function onG9g4a1VenueOnlyPreviewClick(): Promise<void> {
 
   if (
     result.changedFields.length !== 1 ||
-    result.changedFields[0] !== "venue"
+    result.changedFields[0] !== "open_time"
   ) {
-    renderG9g4a1VenueOnlyDryRunResult(
+    renderG9g4a2aOpenTimeOnlyDryRunResult(
       buildSiteSlugScheduleEditDryRunError({
-        phase: G9G4A1_PHASE,
+        phase: G9G4A2A_PHASE,
         siteSlug: STAGING_SHELL_GOSAKI_SCHEDULE_SITE_SLUG,
-        message: `G-9g4a1 changedFields must be venue only — got: ${result.changedFields.join(", ") || "none"}.`,
+        message: `G-9g4a2a changedFields must be open_time only — got: ${result.changedFields.join(", ") || "none"}.`,
         hostGate: hostGatePreview,
       }),
     );
-    invalidateG9g4a1VenueOnlyPreview();
+    invalidateG9g4a2aOpenTimeOnlyPreview();
     return;
   }
 
-  renderG9g4a1VenueOnlyDryRunResult(result);
+  renderG9g4a2aOpenTimeOnlyDryRunResult(result);
 
-  g9g4a1VenueOnlyPreviewValid = true;
-  lastG9g4a1VenueOnlyFieldValues = { venue: venueCandidate };
-  lastG9g4a1PreviewTargetId = result.target.id;
-  lastG9g4a1PreviewTargetLegacyId = result.target.legacy_id ?? null;
-  lastG9g4a1PreviewExpectedUpdatedAt = result.optimisticLock.expectedBeforeUpdatedAt ?? null;
-  lastG9g4a1PreviewHostGatePassed = result.hostGate.hostGatePassed;
-  lastG9g4a1PreviewStale = result.optimisticLock.stale;
-  lastG9g4a1PreviewIdentity = computeG9g4a1VenueOnlyPreviewIdentity();
-  g9g4a1VenueOnlySaveSuccess = null;
+  g9g4a2aOpenTimeOnlyPreviewValid = true;
+  lastG9g4a2aOpenTimeOnlyFieldValues = { open_time: open_timeCandidate };
+  lastG9g4a2aPreviewTargetId = result.target.id;
+  lastG9g4a2aPreviewTargetLegacyId = result.target.legacy_id ?? null;
+  lastG9g4a2aPreviewExpectedUpdatedAt = result.optimisticLock.expectedBeforeUpdatedAt ?? null;
+  lastG9g4a2aPreviewHostGatePassed = result.hostGate.hostGatePassed;
+  lastG9g4a2aPreviewStale = result.optimisticLock.stale;
+  lastG9g4a2aPreviewIdentity = computeG9g4a2aOpenTimeOnlyPreviewIdentity();
+  g9g4a2aOpenTimeOnlySaveSuccess = null;
 
-  refreshG9g4a1VenueOnlySaveButtonState();
-  refreshG9g4a1VenueOnlySaveGatePanel();
+  refreshG9g4a2aOpenTimeOnlySaveButtonState();
+  refreshG9g4a2aOpenTimeOnlySaveGatePanel();
 }
 
-async function onG9g4a1VenueOnlySaveClick(): Promise<void> {
-  const gate = canEnableG9g4a1VenueOnlySave();
+async function onG9g4a2aOpenTimeOnlySaveClick(): Promise<void> {
+  const gate = canEnableG9g4a2aOpenTimeOnlySave();
   if (!gate.ok) {
-    refreshG9g4a1VenueOnlySaveButtonState();
+    refreshG9g4a2aOpenTimeOnlySaveButtonState();
     return;
   }
 
   const row = parseTargetRow();
   if (!row || isPocAuditScheduleRow(row)) return;
 
-  g9g4a1ExecutionInFlight = true;
-  refreshG9g4a1VenueOnlySaveButtonState();
+  g9g4a2aExecutionInFlight = true;
+  refreshG9g4a2aOpenTimeOnlySaveButtonState();
 
   const { url, anonKey } = getSupabaseEnv();
-  const changedFields = ["venue"];
-  const venueCandidate = getVenueCandidate();
-  const candidateValues = { venue: venueCandidate };
+  const changedFields = ["open_time"];
+  const open_timeCandidate = getOpenTimeCandidate();
+  const candidateValues = { open_time: open_timeCandidate };
   let payload;
   try {
-    payload = buildG9G4a1VenueOnlyPayload(venueCandidate);
+    payload = buildG9G4a2aOpenTimeOnlyPayload(open_timeCandidate);
   } catch (err) {
-    renderG9g4a1VenueOnlySaveResult({
+    renderG9g4a2aOpenTimeOnlySaveResult({
       actualWrite: false,
       outcome: {
         optimisticLockEnabled: true,
-        expectedBeforeUpdatedAt: lastG9g4a1PreviewExpectedUpdatedAt,
+        expectedBeforeUpdatedAt: lastG9g4a2aPreviewExpectedUpdatedAt,
         warnings: [],
         errorCode: "write_guard_failed",
         errorMessage: err instanceof Error ? err.message : String(err),
@@ -654,35 +654,35 @@ async function onG9g4a1VenueOnlySaveClick(): Promise<void> {
       beforeSnapshot: row,
       payloadWritten: {},
     });
-    g9g4a1ExecutionInFlight = false;
-    refreshG9g4a1VenueOnlySaveButtonState();
+    g9g4a2aExecutionInFlight = false;
+    refreshG9g4a2aOpenTimeOnlySaveButtonState();
     return;
   }
 
   const previewBinding = {
-    targetId: lastG9g4a1PreviewTargetId ?? row.id,
-    legacyId: lastG9g4a1PreviewTargetLegacyId ?? row.legacy_id ?? null,
+    targetId: lastG9g4a2aPreviewTargetId ?? row.id,
+    legacyId: lastG9g4a2aPreviewTargetLegacyId ?? row.legacy_id ?? null,
     siteSlug: STAGING_SHELL_GOSAKI_SCHEDULE_SITE_SLUG,
-    expectedBeforeUpdatedAt: lastG9g4a1PreviewExpectedUpdatedAt,
+    expectedBeforeUpdatedAt: lastG9g4a2aPreviewExpectedUpdatedAt,
     changedFields,
-    fieldValues: { ...lastG9g4a1VenueOnlyFieldValues },
-    hostGatePassed: lastG9g4a1PreviewHostGatePassed,
-    optimisticLockStale: lastG9g4a1PreviewStale,
+    fieldValues: { ...lastG9g4a2aOpenTimeOnlyFieldValues },
+    hostGatePassed: lastG9g4a2aPreviewHostGatePassed,
+    optimisticLockStale: lastG9g4a2aPreviewStale,
     previewIdentity:
-      lastG9g4a1PreviewIdentity ?? computeG9g4a1VenueOnlyPreviewIdentity() ?? "",
-    consumedPreviewIdentity: g9g4a1VenueOnlySaveSuccess?.previewIdentity ?? null,
+      lastG9g4a2aPreviewIdentity ?? computeG9g4a2aOpenTimeOnlyPreviewIdentity() ?? "",
+    consumedPreviewIdentity: g9g4a2aOpenTimeOnlySaveSuccess?.previewIdentity ?? null,
   };
 
-  const reclickGate = checkG9g4a1VenueOnlySaveReclickGate();
+  const reclickGate = checkG9g4a2aOpenTimeOnlySaveReclickGate();
   if (
     reclickGate.blocked ||
-    isOperationalSaveReclickBlocked(g9g4a1VenueOnlySaveSuccess, previewBinding.previewIdentity)
+    isOperationalSaveReclickBlocked(g9g4a2aOpenTimeOnlySaveSuccess, previewBinding.previewIdentity)
   ) {
-    renderG9g4a1VenueOnlySaveResult({
+    renderG9g4a2aOpenTimeOnlySaveResult({
       actualWrite: false,
       outcome: {
         optimisticLockEnabled: true,
-        expectedBeforeUpdatedAt: lastG9g4a1PreviewExpectedUpdatedAt,
+        expectedBeforeUpdatedAt: lastG9g4a2aPreviewExpectedUpdatedAt,
         warnings: [],
         errorCode: "preview_consumed",
         errorMessage: reclickGate.reason || G9G3H1_PREVIEW_CONSUMED_MSG,
@@ -691,13 +691,13 @@ async function onG9g4a1VenueOnlySaveClick(): Promise<void> {
       beforeSnapshot: row,
       payloadWritten: payload,
     });
-    g9g4a1ExecutionInFlight = false;
-    refreshG9g4a1VenueOnlySaveButtonState();
+    g9g4a2aExecutionInFlight = false;
+    refreshG9g4a2aOpenTimeOnlySaveButtonState();
     return;
   }
 
   try {
-    const outcome = await executeG9G4a1VenueOnlyNonDryRunSave({
+    const outcome = await executeG9G4a2aOpenTimeOnlyNonDryRunSave({
       url,
       anonKey,
       beforeSnapshot: row,
@@ -712,7 +712,7 @@ async function onG9g4a1VenueOnlySaveClick(): Promise<void> {
       "actualWrite" in outcome.result &&
       outcome.result.actualWrite === true;
 
-    renderG9g4a1VenueOnlySaveResult({
+    renderG9g4a2aOpenTimeOnlySaveResult({
       actualWrite,
       outcome,
       changedFields,
@@ -727,13 +727,13 @@ async function onG9g4a1VenueOnlySaveClick(): Promise<void> {
         root.dataset.targetRow = JSON.stringify(updated);
         const baseline = document.getElementById("site-slug-edit-baseline-updated-at");
         if (baseline) baseline.textContent = updated.updated_at ?? "—";
-        const loadedVenue = document.getElementById("site-slug-edit-loaded-venue");
-        if (loadedVenue) loadedVenue.textContent = updated.venue ?? "—";
+        const loadedOpenTime = document.getElementById("site-slug-edit-loaded-open-time");
+        if (loadedOpenTime) loadedOpenTime.textContent = updated.open_time ?? "—";
       }
-      g9g4a1VenueOnlySaveSuccess = {
+      g9g4a2aOpenTimeOnlySaveSuccess = {
         previewIdentity: previewBinding.previewIdentity,
-        mode: "venue-only",
-        approvalId: G9G4A1_VENUE_ONLY_NON_DRY_RUN_APPROVAL_ID,
+        mode: "open-time-only",
+        approvalId: G9G4A2A_OPEN_TIME_ONLY_NON_DRY_RUN_APPROVAL_ID,
         targetId: row.id,
         legacyId: row.legacy_id ?? null,
         changedFields: [...changedFields],
@@ -744,38 +744,38 @@ async function onG9g4a1VenueOnlySaveClick(): Promise<void> {
       };
     }
   } finally {
-    g9g4a1ExecutionInFlight = false;
-    refreshG9g4a1VenueOnlySaveButtonState();
-    refreshG9g4a1VenueOnlySaveGatePanel();
+    g9g4a2aExecutionInFlight = false;
+    refreshG9g4a2aOpenTimeOnlySaveButtonState();
+    refreshG9g4a2aOpenTimeOnlySaveGatePanel();
   }
 }
 
-export function initG9g4a1VenueOnlyOperationalEditUi(): void {
+export function initG9g4a2aOpenTimeOnlyOperationalEditUi(): void {
   document
-    .getElementById(G9G4A1_VENUE_ONLY_PREVIEW_BTN_ID)
+    .getElementById(G9G4A2A_OPEN_TIME_ONLY_PREVIEW_BTN_ID)
     ?.addEventListener("click", () => {
-      void onG9g4a1VenueOnlyPreviewClick();
+      void onG9g4a2aOpenTimeOnlyPreviewClick();
     });
 
-  document.getElementById(G9G4A1_VENUE_ONLY_SAVE_BTN_ID)?.addEventListener("click", () => {
-    void onG9g4a1VenueOnlySaveClick();
+  document.getElementById(G9G4A2A_OPEN_TIME_ONLY_SAVE_BTN_ID)?.addEventListener("click", () => {
+    void onG9g4a2aOpenTimeOnlySaveClick();
   });
 
-  document.getElementById("site-slug-edit-dry-run-venue")?.addEventListener("input", () => {
+  document.getElementById("site-slug-edit-dry-run-open-time")?.addEventListener("input", () => {
     if (isPickerDrivenBinding()) {
-      markG9g4a1VenueOnlyPreviewStale(G9G3F3C_PREVIEW_STALE_MSG);
+      markG9g4a2aOpenTimeOnlyPreviewStale(G9G3F3C_PREVIEW_STALE_MSG);
     }
   });
 
-  void refreshG9g4a1StagingAuthSignedIn().then(() => {
-    refreshG9g4a1VenueOnlyPreviewButtonState();
-    refreshG9g4a1VenueOnlySaveButtonState();
-    refreshG9g4a1VenueOnlySaveGatePanel();
+  void refreshG9g4a2aStagingAuthSignedIn().then(() => {
+    refreshG9g4a2aOpenTimeOnlyPreviewButtonState();
+    refreshG9g4a2aOpenTimeOnlySaveButtonState();
+    refreshG9g4a2aOpenTimeOnlySaveGatePanel();
   });
 }
 
-export function refreshG9g4a1VenueOnlyUiState(): void {
-  refreshG9g4a1VenueOnlyPreviewButtonState();
-  refreshG9g4a1VenueOnlySaveButtonState();
-  refreshG9g4a1VenueOnlySaveGatePanel();
+export function refreshG9g4a2aOpenTimeOnlyUiState(): void {
+  refreshG9g4a2aOpenTimeOnlyPreviewButtonState();
+  refreshG9g4a2aOpenTimeOnlySaveButtonState();
+  refreshG9g4a2aOpenTimeOnlySaveGatePanel();
 }

@@ -268,6 +268,35 @@ export const G9G4A1_VENUE_SMOKE_AFTER_EXAMPLE =
 
 export const G9G4A1_VENUE_SMOKE_RESTORE_EXAMPLE = "銀座 N";
 
+export const G9G4A2A_PHASE = "G-9g4a2a-open-time-only-operational-expansion-implementation";
+
+export const G9G4A2A_OPEN_TIME_ONLY_NON_DRY_RUN_APPROVAL_ID =
+  "G-9g4a2a-schedule-site-slug-open-time-only-non-dry-run";
+
+export const SCHEDULE_G9G4A2A_OPEN_TIME_ONLY_NON_DRY_RUN_ARMED_ENV =
+  "PUBLIC_ADMIN_SCHEDULE_G9G4A2A_OPEN_TIME_ONLY_NON_DRY_RUN_ARMED";
+
+export const G9G4A2A_OPEN_TIME_ONLY_CHANGED_FIELDS = ["open_time"] as const;
+
+export const G9G4A2A_OPEN_TIME_ONLY_PREVIEW_BTN_ID =
+  "site-slug-edit-g9g4a2a-open-time-only-dry-run-preview-btn";
+
+export const G9G4A2A_OPEN_TIME_ONLY_PREVIEW_RESULT_ID =
+  "site-slug-edit-g9g4a2a-open-time-only-dry-run-result";
+
+export const G9G4A2A_OPEN_TIME_ONLY_SAVE_GATE_PANEL_ID =
+  "site-slug-edit-g9g4a2a-open-time-only-save-gate-panel";
+
+export const G9G4A2A_OPEN_TIME_ONLY_SAVE_BTN_ID =
+  "site-slug-edit-g9g4a2a-open-time-only-save-btn";
+
+export const G9G4A2A_OPEN_TIME_ONLY_SAVE_RESULT_ID =
+  "site-slug-edit-g9g4a2a-open-time-only-save-result";
+
+/** Routine dev default — open_time-only Save stays disabled until explicit G-9g4a2a arm. */
+export const G9G4A2A_OPEN_TIME_ONLY_SAVE_DISABLED_DEFAULT_REASON =
+  "G-9g4a2a open_time-only Save disabled — arm not configured (routine dev safety)";
+
 export const G9G3H1_SAVE_RECLICK_GUARD_MSG =
   "Operational Save re-click blocked — preview consumed by prior successful Save.";
 

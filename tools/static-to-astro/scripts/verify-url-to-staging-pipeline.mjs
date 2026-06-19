@@ -3920,6 +3920,58 @@ assert(
   g9g4aPlanningSrc.includes("DB write executed (this phase) | **no**"),
 );
 
+const g9g4a2aImplPath = path.join(
+  TOOL_ROOT,
+  "docs/staging-shell-schedule-open-time-only-operational-expansion-implementation.md",
+);
+assert("G-9g4a2a implementation doc exists", fs.existsSync(g9g4a2aImplPath));
+const g9g4a2aImplSrc = fs.readFileSync(g9g4a2aImplPath, "utf8");
+assert(
+  "G-9g4a2a phase marker",
+  g9g4a2aImplSrc.includes("G-9g4a2a-open-time-only-operational-expansion-implementation"),
+);
+assert(
+  "G-9g4a2a status complete",
+  g9g4a2aImplSrc.includes("**complete**"),
+);
+assert(
+  "G-9g4a2a approval ID",
+  g9g4a2aImplSrc.includes("G-9g4a2a-schedule-site-slug-open-time-only-non-dry-run"),
+);
+assert(
+  "G-9g4a2a env arm",
+  g9g4a2aImplSrc.includes("PUBLIC_ADMIN_SCHEDULE_G9G4A2A_OPEN_TIME_ONLY_NON_DRY_RUN_ARMED"),
+);
+assert(
+  "G-9g4a2a open_time-only guards",
+  g9g4a2aImplSrc.includes("assertG9G4a2aOpenTimeOnlyPayloadOnly"),
+);
+assert(
+  "G-9g4a2a changedFields open_time",
+  g9g4a2aImplSrc.includes('["open_time"]'),
+);
+assert(
+  "G-9g4a2a UI button IDs",
+  g9g4a2aImplSrc.includes("site-slug-edit-g9g4a2a-open-time-only-save-btn"),
+);
+assert(
+  "G-9g4a2a mutual exclusion",
+  g9g4a2aImplSrc.includes("PUBLIC_ADMIN_SCHEDULE_G9G4A1_VENUE_ONLY_NON_DRY_RUN_ARMED") &&
+    g9g4a2aImplSrc.includes("PUBLIC_ADMIN_SCHEDULE_G9G3G_OPERATIONAL_GENERAL_EDIT_NON_DRY_RUN_ARMED"),
+);
+assert(
+  "G-9g4a2a next phase preflight",
+  g9g4a2aImplSrc.includes("G-9g4a2a1-open-time-only-operational-expansion-preflight"),
+);
+assert(
+  "G-9g4a2a no Save click",
+  g9g4a2aImplSrc.includes("Save clicked (this phase) | **no**"),
+);
+assert(
+  "G-9g4a2a no Preview click",
+  g9g4a2aImplSrc.includes("Preview clicked (Cursor/AI) | **no**"),
+);
+
 const gosakiPublicDist = path.join(TOOL_ROOT, "output/static-public/gosaki-piano/public-dist");
 for (const ym of ["2026-06", "2026-07"]) {
   const canonicalMonthPath = path.join(gosakiPublicDist, "schedule", ym, "index.html");

@@ -9,6 +9,7 @@ import { getG9G3dGeneralEditPocConfig } from "./staging-schedule-site-slug-gener
 import { getG9G3gOperationalGeneralEditConfig } from "./staging-schedule-site-slug-operational-general-edit-config";
 import { getG9G3g5OperationalRestoreConfig } from "./staging-schedule-site-slug-operational-restore-config";
 import { getG9G4a1VenueOnlyOperationalConfig } from "./staging-schedule-site-slug-venue-only-operational-config";
+import { getG9G4a2aOpenTimeOnlyOperationalConfig } from "./staging-schedule-site-slug-open-time-only-operational-config";
 import { evaluateSupabaseHostGate } from "./staging-schedule-site-slug-host-gate";
 import {
   extractSupabaseHost,
@@ -43,12 +44,16 @@ import {
   G9G4A1_PHASE,
   G9G4A1_VENUE_ONLY_NON_DRY_RUN_APPROVAL_ID,
   G9G4A1_VENUE_ONLY_SAVE_DISABLED_DEFAULT_REASON,
+  G9G4A2A_PHASE,
+  G9G4A2A_OPEN_TIME_ONLY_NON_DRY_RUN_APPROVAL_ID,
+  G9G4A2A_OPEN_TIME_ONLY_SAVE_DISABLED_DEFAULT_REASON,
   SCHEDULE_G9G3B_VENUE_DESCRIPTION_NON_DRY_RUN_ARMED_ENV,
   SCHEDULE_G9G3C_TIME_PRICE_NON_DRY_RUN_ARMED_ENV,
   SCHEDULE_G9G3D_GENERAL_EDIT_NON_DRY_RUN_ARMED_ENV,
   SCHEDULE_G9G3G5_OPERATIONAL_RESTORE_NON_DRY_RUN_ARMED_ENV,
   SCHEDULE_G9G3G_OPERATIONAL_GENERAL_EDIT_NON_DRY_RUN_ARMED_ENV,
   SCHEDULE_G9G4A1_VENUE_ONLY_NON_DRY_RUN_ARMED_ENV,
+  SCHEDULE_G9G4A2A_OPEN_TIME_ONLY_NON_DRY_RUN_ARMED_ENV,
   SITE_SLUG_EDIT_SAFE_FIELDS,
   STAGING_SHELL_GOSAKI_SCHEDULE_SITE_SLUG,
 } from "./staging-schedule-site-slug-config";
@@ -64,6 +69,7 @@ export interface SiteSlugScheduleEditBinding {
   g9g3gPhase: string;
   g9g3g5Phase: string;
   g9g4a1Phase: string;
+  g9g4a2aPhase: string;
   approvalId: string;
   g9g3bApprovalId: string;
   g9g3cApprovalId: string;
@@ -71,6 +77,7 @@ export interface SiteSlugScheduleEditBinding {
   g9g3gApprovalId: string;
   g9g3g5ApprovalId: string;
   g9g4a1ApprovalId: string;
+  g9g4a2aApprovalId: string;
   g9g3bDefaultVenue: string;
   g9g3bDefaultDescription: string;
   g9g3cDefaultOpenTime: string;
@@ -104,6 +111,11 @@ export interface SiteSlugScheduleEditBinding {
   g9g4a1ArmFailureReason?: string;
   g9g4a1ArmEnv: string;
   g9g4a1DefaultDisabledReason: string;
+  g9g4a2aArmed: boolean;
+  g9g4a2aSaveEnabled: boolean;
+  g9g4a2aArmFailureReason?: string;
+  g9g4a2aArmEnv: string;
+  g9g4a2aDefaultDisabledReason: string;
   legacyPoCUiVisible: boolean;
   g9g3aSaveUiHidden: boolean;
   pickerDrivenBinding: boolean;
@@ -134,6 +146,7 @@ export async function resolveGosakiScheduleSiteSlugEditBinding(): Promise<SiteSl
   const g9g3gConfig = getG9G3gOperationalGeneralEditConfig();
   const g9g3g5Config = getG9G3g5OperationalRestoreConfig();
   const g9g4a1Config = getG9G4a1VenueOnlyOperationalConfig();
+  const g9g4a2aConfig = getG9G4a2aOpenTimeOnlyOperationalConfig();
   const siteSlug = STAGING_SHELL_GOSAKI_SCHEDULE_SITE_SLUG;
   const hostGate = evaluateSupabaseHostGate(dataConfig.supabaseUrl);
 
@@ -146,6 +159,7 @@ export async function resolveGosakiScheduleSiteSlugEditBinding(): Promise<SiteSl
     g9g3gPhase: G9G3G1_PHASE,
     g9g3g5Phase: G9G3G5B1_PHASE,
     g9g4a1Phase: G9G4A1_PHASE,
+    g9g4a2aPhase: G9G4A2A_PHASE,
     approvalId: G9G1_DRY_RUN_APPROVAL_ID,
     g9g3bApprovalId: G9G3B_VENUE_DESCRIPTION_NON_DRY_RUN_APPROVAL_ID,
     g9g3cApprovalId: G9G3C_TIME_PRICE_NON_DRY_RUN_APPROVAL_ID,
@@ -153,6 +167,7 @@ export async function resolveGosakiScheduleSiteSlugEditBinding(): Promise<SiteSl
     g9g3gApprovalId: G9G3G_OPERATIONAL_GENERAL_EDIT_NON_DRY_RUN_APPROVAL_ID,
     g9g3g5ApprovalId: G9G3G5_OPERATIONAL_RESTORE_NON_DRY_RUN_APPROVAL_ID,
     g9g4a1ApprovalId: G9G4A1_VENUE_ONLY_NON_DRY_RUN_APPROVAL_ID,
+    g9g4a2aApprovalId: G9G4A2A_OPEN_TIME_ONLY_NON_DRY_RUN_APPROVAL_ID,
     g9g3bDefaultVenue: G9G3B_VENUE_POC_DEFAULT,
     g9g3bDefaultDescription: G9G3B_DESCRIPTION_POC_DEFAULT,
     g9g3cDefaultOpenTime: G9G3C_OPEN_TIME_POC_DEFAULT,
@@ -186,6 +201,11 @@ export async function resolveGosakiScheduleSiteSlugEditBinding(): Promise<SiteSl
     g9g4a1ArmFailureReason: g9g4a1Config.armFailureReason,
     g9g4a1ArmEnv: SCHEDULE_G9G4A1_VENUE_ONLY_NON_DRY_RUN_ARMED_ENV,
     g9g4a1DefaultDisabledReason: G9G4A1_VENUE_ONLY_SAVE_DISABLED_DEFAULT_REASON,
+    g9g4a2aArmed: g9g4a2aConfig.armed,
+    g9g4a2aSaveEnabled: g9g4a2aConfig.saveEnabled && hostGate.hostGatePassed,
+    g9g4a2aArmFailureReason: g9g4a2aConfig.armFailureReason,
+    g9g4a2aArmEnv: SCHEDULE_G9G4A2A_OPEN_TIME_ONLY_NON_DRY_RUN_ARMED_ENV,
+    g9g4a2aDefaultDisabledReason: G9G4A2A_OPEN_TIME_ONLY_SAVE_DISABLED_DEFAULT_REASON,
     legacyPoCUiVisible: g9g3dConfig.legacyPoCUiVisible,
     g9g3aSaveUiHidden: false,
     pickerDrivenBinding: true,

@@ -86,6 +86,13 @@ import {
   refreshG9g4a1VenueOnlyUiState,
 } from "./staging-schedule-site-slug-venue-only-operational-edit-ui";
 import {
+  initG9g4a2aOpenTimeOnlyOperationalEditUi,
+  invalidateG9g4a2aOpenTimeOnlyPreview,
+  isG9g4a2aOpenTimeOnlyArmed,
+  markG9g4a2aOpenTimeOnlyPreviewStale,
+  refreshG9g4a2aOpenTimeOnlyUiState,
+} from "./staging-schedule-site-slug-open-time-only-operational-edit-ui";
+import {
   buildOperationalPreviewIdentity,
   isOperationalSaveReclickBlocked,
   type OperationalSaveSuccessRecord,
@@ -494,6 +501,7 @@ function invalidateDryRunPreview(): void {
   clearPreviewState();
   clearOperationalSaveSuccess();
   invalidateG9g4a1VenueOnlyPreview();
+  invalidateG9g4a2aOpenTimeOnlyPreview();
 }
 
 function renderDryRunResult(result: SiteSlugScheduleEditDryRunResult): void {
@@ -1015,6 +1023,12 @@ function canEnableG9G3gOperationalGeneralEditSave(): { ok: boolean; reason: stri
       reason: "G-9g4a1 venue-only arm on — G-9g3g operational Save blocked",
     };
   }
+  if (isG9g4a2aOpenTimeOnlyArmed()) {
+    return {
+      ok: false,
+      reason: "G-9g4a2a open_time-only arm on — G-9g3g operational Save blocked",
+    };
+  }
   if (isG9g3g5RestoreArmed()) {
     return {
       ok: false,
@@ -1121,6 +1135,12 @@ function canEnableG9G3g5OperationalRestoreSave(): { ok: boolean; reason: string 
     return {
       ok: false,
       reason: "G-9g4a1 venue-only arm on — restore Save blocked",
+    };
+  }
+  if (isG9g4a2aOpenTimeOnlyArmed()) {
+    return {
+      ok: false,
+      reason: "G-9g4a2a open_time-only arm on — restore Save blocked",
     };
   }
   if (!isPickerDrivenBinding()) {
@@ -1891,6 +1911,7 @@ function initSiteSlugEditUi(): void {
       refreshG9G3dSaveButtonState();
       refreshG9G3gOperationalSaveButtonState();
       refreshG9g4a1VenueOnlyUiState();
+      refreshG9g4a2aOpenTimeOnlyUiState();
     },
     refreshSaveGatePanel,
     refreshPreviewButtonState,
@@ -1934,6 +1955,9 @@ function initSiteSlugEditUi(): void {
         if (field === "venue") {
           markG9g4a1VenueOnlyPreviewStale(G9G3F3C_PREVIEW_STALE_MSG);
         }
+        if (field === "open_time") {
+          markG9g4a2aOpenTimeOnlyPreviewStale(G9G3F3C_PREVIEW_STALE_MSG);
+        }
         return;
       }
       const resultEl = document.getElementById("site-slug-edit-dry-run-result");
@@ -1946,6 +1970,7 @@ function initSiteSlugEditUi(): void {
   }
 
   initG9g4a1VenueOnlyOperationalEditUi();
+  initG9g4a2aOpenTimeOnlyOperationalEditUi();
 
   const hostGate = getClientHostGate();
   updateHostGateSummary(hostGate);
@@ -1959,6 +1984,7 @@ function initSiteSlugEditUi(): void {
     refreshG9G3dSaveButtonState();
     refreshG9G3gOperationalSaveButtonState();
     refreshG9g4a1VenueOnlyUiState();
+    refreshG9g4a2aOpenTimeOnlyUiState();
     refreshPreviewButtonState();
     refreshSaveGatePanel();
   });

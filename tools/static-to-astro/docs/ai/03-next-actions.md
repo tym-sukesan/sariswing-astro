@@ -5,14 +5,15 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 **Current phase:** `G-9g4a2-framework-single-text-field-operational-commonization-implementation` (not started)
 
-**Git:** branch `main`; HEAD = origin/main = `849ac6f` (AI context sync — committed and pushed); G-9g4a2 framework planning **uncommitted**
+**Git:** branch `main`; HEAD = origin/main = `e267da3` (G-9g4a2 framework planning — committed and pushed); working tree **clean**
 
 ### G-9g4a2 framework planning — complete
 
 | Item | Value |
 | --- | --- |
 | Doc | `staging-shell-schedule-single-text-field-operational-commonization-planning.md` |
-| Status | **complete** (uncommitted) |
+| Status | **complete** — commit `e267da3` (committed and pushed) |
+| Verifier | 39 passed, 0 failed |
 | Target fields | `open_time`, `start_time`, `price` |
 | Next | `G-9g4a2-framework-single-text-field-operational-commonization-implementation` |
 
@@ -30,7 +31,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 - Do **not** repeat per-field manual round-trips for `start_time` / `price`
 - Manual non-dry-run round-trip reserved for **new common logic** only
 - Config-only field additions: static verifiers, guards, dry-run Preview, type checks
-- **Not** next: `start_time`-only manual execution slice
+- Next: common framework **implementation** — **not** `start_time`-only manual execution slice
 
 ### Gates
 

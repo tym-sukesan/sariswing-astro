@@ -7,20 +7,23 @@ Paste this file at the start of a new ChatGPT thread.
 ```txt
 Current phase: G-9g4a2-framework-single-text-field-operational-commonization-implementation (not started)
 branch: main
-HEAD = origin/main = 849ac6f
-Latest commit (pushed): 849ac6f (AI context sync to G-9g4a2a closure)
-G-9g4a2 framework planning: complete (uncommitted)
-working tree: planning docs uncommitted
+HEAD = origin/main = e267da3
+Latest commit (pushed): e267da3 (G-9g4a2 single-text-field operational commonization planning)
+working tree: clean
+G-9g4a2-framework-single-text-field-operational-commonization-planning: complete, committed, pushed
+Planning verifier: 39 passed, 0 failed
+readyForG9g4a2FrameworkSingleTextFieldOperationalCommonizationImplementation: true
 ```
 
 ## Summary
 
-**G-9g4a2 single-text-field operational commonization planning — complete** (uncommitted):
+**G-9g4a2 single-text-field operational commonization planning — complete** (commit `e267da3` — committed and pushed):
 
 - **Doc:** `staging-shell-schedule-single-text-field-operational-commonization-planning.md`
 - **Target fields:** `open_time`, `start_time`, `price` (config-driven registry)
 - **Excluded:** `description` (G-9g3g operational), `title` (SEO sensitivity), date/route/publication/image
 - **Venue:** proven G-9g4a1 — separate path (not in registry v1)
+- **Planning verifier:** 39 passed, 0 failed
 - **G-9g4a2a open_time round-trip:** complete — commit `105c6b1`
 - **markerRemainsInStagingDb:** false
 - **activeRestoreExceptionsCount:** 0

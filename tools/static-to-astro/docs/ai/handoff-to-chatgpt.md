@@ -6,13 +6,17 @@ Paste this file at the start of a new ChatGPT thread.
 
 ```txt
 Current phase: G-9g4a2-framework-single-text-field-operational-commonization-planning (not started)
-Latest commit (pushed): 54623a1 (G-9g4a2a2 open_time-only manual execution)
-G-9g4a2a open_time-only restore-and-closure: complete (uncommitted)
+branch: main
+HEAD = origin/main = 105c6b1
+Latest commit (pushed): 105c6b1 (G-9g4a2a open_time-only restore-and-closure)
+working tree: clean
+G-9g4a2a open_time-only restore-and-closure: complete, committed, pushed
+G-9g4a2a open_time-only round-trip: complete
 ```
 
 ## Summary
 
-**G-9g4a2a open_time-only smoke round-trip — closed** (uncommitted closure doc):
+**G-9g4a2a open_time-only smoke round-trip — closed** (commit `105c6b1` — committed and pushed):
 
 - **Target row:** `eb1f1898-5107-4deb-a6d5-a792e0ec3f69` / `schedule-2026-03-003` / `gosaki-piano`
 - **G-9g4a2a2 smoke:** `11:30` → `11:30 [G-9g4a2a open_time smoke]` (commit `54623a1`)

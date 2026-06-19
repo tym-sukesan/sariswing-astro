@@ -286,7 +286,9 @@ Restore path: **same G-9g4a2a open_time-only UI** — not G-9g3g5.
 
 ## 12. Recommended next phase
 
-**`G-9g4a2a3-open-time-only-operational-restore-preflight`**
+**`G-9g4a2a3-open-time-only-operational-restore-preflight`** *(historical — at time of this doc)*
+
+> **Subsequently completed:** restore and round-trip closure via **G-9g4a2a open_time-only operational restore and closure** — commit `105c6b1`. See [staging-shell-schedule-open-time-only-operational-restore-and-closure.md](./staging-shell-schedule-open-time-only-operational-restore-and-closure.md). Next phase: `G-9g4a2-framework-single-text-field-operational-commonization-planning`.
 
 Restore payload (planned):
 

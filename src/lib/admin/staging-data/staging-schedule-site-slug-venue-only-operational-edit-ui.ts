@@ -275,9 +275,6 @@ function renderG9g4a1VenueOnlyDryRunResult(
     `<h4 class="site-slug-edit-dry-run-result__subhead">after</h4>`,
     `<pre class="site-slug-edit-dry-run-result__block">${escapeHtml(JSON.stringify(result.after, null, 2))}</pre>`,
   ].join("");
-
-  refreshG9g4a1VenueOnlySaveButtonState();
-  refreshG9g4a1VenueOnlySaveGatePanel();
 }
 
 export function canEnableG9g4a1VenueOnlySave(): { ok: boolean; reason: string } {
@@ -403,16 +400,16 @@ export function refreshG9g4a1VenueOnlySaveGatePanel(): void {
         : g9g4a1VenueOnlySaveSuccess &&
             isOperationalSaveReclickBlocked(g9g4a1VenueOnlySaveSuccess, lastG9g4a1PreviewIdentity)
           ? `preview: ${G9G3H1_PREVIEW_CONSUMED_MSG}`
-          : "preview: valid — fresh Preview required after candidate change"
+          : "preview: valid"
       : `preview: ${G9G3H1_FRESH_PREVIEW_REQUIRED_MSG}`,
     saveGate.ok
       ? "Save: enabled — operator manual only"
       : `Save: disabled — ${saveGate.reason}`,
-    G9G3H1_OPERATOR_MANUAL_SAVE_COMPLETED_MSG,
     G9G3H1_ROUTINE_DEV_SAFETY_HINT,
   ];
 
   if (g9g4a1VenueOnlySaveSuccess) {
+    lines.push(G9G3H1_OPERATOR_MANUAL_SAVE_COMPLETED_MSG);
     lines.push(
       `re-click: blocked — Save completed once (rowsAffected=${g9g4a1VenueOnlySaveSuccess.rowsAffected})`,
     );
@@ -612,6 +609,9 @@ async function onG9g4a1VenueOnlyPreviewClick(): Promise<void> {
   lastG9g4a1PreviewStale = result.optimisticLock.stale;
   lastG9g4a1PreviewIdentity = computeG9g4a1VenueOnlyPreviewIdentity();
   g9g4a1VenueOnlySaveSuccess = null;
+
+  refreshG9g4a1VenueOnlySaveButtonState();
+  refreshG9g4a1VenueOnlySaveGatePanel();
 }
 
 async function onG9g4a1VenueOnlySaveClick(): Promise<void> {

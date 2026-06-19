@@ -21,17 +21,19 @@ Staging Shell
 将来的な顧客オンボーディング・課金・デプロイ自動化
 
 2. Current phase
-現在フェーズ: **G-9g4a1b1-venue-only-operational-expansion-manual-execution**（G-9g4a1b execution runbook 完了後）
+現在フェーズ: **G-9g4a1b1-venue-only-operational-expansion-manual-execution**（G-9g4a1 venue-only Save gate sync fix 後）
 
-G-9g4a1b: Schedule venue-only operational expansion **execution runbook complete**（uncommitted）。target row TBD by operator at manual execution.
+G-9g4a1b1: venue-only manual execution **in progress** — operator Preview valid（`schedule-2026-03-003` / venue smoke）; Save gate sync bug 発見・fix **uncommitted**; Save 未実行.
+
+G-9g4a1b: Schedule venue-only operational expansion **execution runbook complete**（commit `6564061`）。
 
 G-9g4a1a: Schedule venue-only operational expansion **preflight complete**（commit `01e64af`）。
 
-G-9g4a1: Schedule venue-only operational expansion **implementation complete**（commit `49986c1`）。
+G-9g4a1: Schedule venue-only operational expansion **implementation complete**（commit `49986c1`）；G-9g4a1b1 gate sync fix **uncommitted**.
 
 G-9g4a: Schedule text fields operational expansion planning **complete**（commit `9a38c11`）。
 
-Git: 最新 push 済み commit `01e64af`（G-9g4a1a）。G-9g4a1b execution runbook **uncommitted**。
+Git: 最新 push 済み commit `6564061`（G-9g4a1b）。G-9g4a1 venue-only Save gate sync fix **uncommitted**。
 
 G-9g3h1: Save success re-click prevention **implemented**（commit `8780f84`）。
 

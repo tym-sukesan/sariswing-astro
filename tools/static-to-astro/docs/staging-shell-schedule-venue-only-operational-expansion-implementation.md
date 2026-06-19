@@ -93,7 +93,9 @@ Forbidden in same Save: title, description, open_time, start_time, price, date, 
 | Venue-only Save | `#site-slug-edit-g9g4a1-venue-only-save-btn` |
 | Save result | `#site-slug-edit-g9g4a1-venue-only-save-result` |
 
-Gate panel copy includes: `G-9g4a1 venue-only`, `changedFields: venue`, approval ID, env arm status, host gate, optimistic lock, fresh Preview required, re-click blocked, operator manual only, routine dev safety.
+Gate panel copy includes: `G-9g4a1 venue-only`, `changedFields: venue`, approval ID, env arm status, host gate, optimistic lock, `preview: valid` when fresh Preview succeeded, re-click blocked only after Save success, operator manual only, routine dev safety.
+
+**G-9g4a1b1 gate sync fix:** valid Preview must refresh Save button/gate **after** preview state assignment — not inside `renderG9g4a1VenueOnlyDryRunResult` before `g9g4a1VenueOnlyPreviewValid = true`. Save-completed copy is shown only when `g9g4a1VenueOnlySaveSuccess` is set.
 
 ---
 
@@ -109,6 +111,7 @@ Gate panel copy includes: `G-9g4a1 venue-only`, `changedFields: venue`, approval
 | PoC audit row | blocked |
 | Optimistic lock stale | blocks Save enablement |
 | `hostGatePassed` | required for Save |
+| Save gate refresh | after `g9g4a1VenueOnlyPreviewValid = true` and preview identity assignment (G-9g4a1b1 gate sync fix — matches G-9g3g pattern) |
 
 ---
 

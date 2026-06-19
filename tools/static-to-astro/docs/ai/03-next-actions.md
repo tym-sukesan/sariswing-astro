@@ -5,35 +5,32 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 **Current phase:** `G-9g4a1b1-venue-only-operational-expansion-manual-execution`
 
-**Git:** latest pushed commit `01e64af` (G-9g4a1a venue-only preflight)
+**Git:** latest pushed commit `6564061` (G-9g4a1b execution runbook)
 
-### G-9g4a1b summary
+### G-9g4a1b1 status (manual execution — Preview step)
 
 | Item | Value |
 | --- | --- |
-| Doc | `staging-shell-schedule-venue-only-operational-expansion-execution-runbook.md` |
-| Status | **complete** — execution runbook (uncommitted) |
-| Target row | **unselected** — operator selects at G-9g4a1b1 |
-| UI path | G-9g4a1 venue-only buttons only (`#site-slug-edit-g9g4a1-venue-only-*`) |
-| Smoke | `<venue> [G-9g4a1 venue smoke]` |
-| Restore chain | G-9g4a1c → G-9g4a1d → G-9g4a1e (after smoke Save) |
-| Operator Save / Preview | **not executed** in runbook phase |
+| Target row | `schedule-2026-03-003` / title `<Live & Session>` / venue before `学芸大学 珈琲美学` |
+| Smoke candidate | `学芸大学 珈琲美学 [G-9g4a1 venue smoke]` |
+| Operator Preview | **valid** — actualWrite=false, changedFields=venue, lock/host OK |
+| Save | **not clicked** |
+| Gate sync bug | valid Preview but Save gate stayed disabled — **fix uncommitted** |
+| Root cause | Save gate refreshed before `g9g4a1VenueOnlyPreviewValid = true` |
 
 ### Gates
 
 ```txt
-stagingShellScheduleVenueOnlyOperationalExpansionExecutionRunbookComplete: true
-readyForG9g4a1b1VenueOnlyOperationalExpansionManualExecution: true
-targetRowSelected: false
-activeRestoreExceptionsCount: 0
-markerRemainsInStagingDb: false
+g9g4a1VenueOnlyPreviewValidAtOperatorPreview: true
+g9g4a1VenueOnlySaveExecuted: false
+readyForG9g4a1b1PreviewRetestAfterFix: true
 readyForAnyDbWrite: false
 ```
 
 ## 2. Next steps
 
-1. **G-9g4a1b1-venue-only-operational-expansion-manual-execution** — operator row pick → venue smoke → G-9g4a1 Preview → paste to ChatGPT → armed stack → one manual Save
-2. Commit G-9g4a1b execution runbook when ready
+1. Commit G-9g4a1 venue-only Save gate sync fix when ready
+2. Operator: browser reload → same row / same venue candidate → G-9g4a1 Preview **once** → confirm Save gate `enabled` → paste to ChatGPT → Save (separate step)
 
 ## 3. Routine dev safety
 
@@ -48,8 +45,7 @@ PUBLIC_ADMIN_SCHEDULE_G9G3G5_OPERATIONAL_RESTORE_NON_DRY_RUN_ARMED: false or uns
 ## 4. Do not
 
 - Cursor / AI click Save or Preview
-- Write execution arms to `.env` / `.env.local` in runbook phase
-- Start dev server with G-9g4a1 arm on during runbook phase
-- Execute rollback SQL or restore in runbook phase
+- Re-click Save without fresh Preview after fix verification
+- Execute rollback SQL or restore before smoke Save result doc
 - Use service_role
 - Touch production or `/admin`

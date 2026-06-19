@@ -141,6 +141,44 @@ assert(
 );
 assert("no service_role in executor", !saveSrc.includes("service_role"));
 
+const previewValidIdx = editUiSrc.indexOf("g9g4a1VenueOnlyPreviewValid = true");
+const saveClickIdx = editUiSrc.indexOf("async function onG9g4a1VenueOnlySaveClick");
+const previewSuccessSlice =
+  previewValidIdx >= 0 && saveClickIdx > previewValidIdx
+    ? editUiSrc.slice(previewValidIdx, saveClickIdx)
+    : "";
+assert(
+  "preview success refresh save button after previewValid",
+  previewSuccessSlice.includes("refreshG9g4a1VenueOnlySaveButtonState()"),
+);
+assert(
+  "preview success refresh save gate after previewValid",
+  previewSuccessSlice.includes("refreshG9g4a1VenueOnlySaveGatePanel()"),
+);
+assert(
+  "save completed msg conditional on g9g4a1VenueOnlySaveSuccess",
+  editUiSrc.includes("if (g9g4a1VenueOnlySaveSuccess)") &&
+    editUiSrc.includes("lines.push(G9G3H1_OPERATOR_MANUAL_SAVE_COMPLETED_MSG)"),
+);
+const gatePanelFnStart = editUiSrc.indexOf("export function refreshG9g4a1VenueOnlySaveGatePanel");
+const gatePanelFnEnd = editUiSrc.indexOf("function refreshG9g4a1VenueOnlyPreviewButtonState");
+const gatePanelSlice =
+  gatePanelFnStart >= 0 && gatePanelFnEnd > gatePanelFnStart
+    ? editUiSrc.slice(gatePanelFnStart, gatePanelFnEnd)
+    : "";
+assert(
+  "save completed msg not unconditional in gate panel",
+  !gatePanelSlice.includes("G9G3H1_OPERATOR_MANUAL_SAVE_COMPLETED_MSG,"),
+);
+assert(
+  "preview valid gate copy",
+  gatePanelSlice.includes('"preview: valid"'),
+);
+assert(
+  "preview gate sync fix documented",
+  docSrc.includes("gate sync") || docSrc.includes("refresh after preview"),
+);
+
 const currentStateSrc = readRepo("tools/static-to-astro/docs/ai/00-current-state.md");
 const nextActionsSrc = readRepo("tools/static-to-astro/docs/ai/03-next-actions.md");
 const handoffSrc = readRepo("tools/static-to-astro/docs/ai/handoff-to-chatgpt.md");
@@ -157,6 +195,10 @@ assert(
 assert(
   "handoff G-9g4a1",
   handoffSrc.includes("G-9g4a1"),
+);
+assert(
+  "current state gate sync fix",
+  currentStateSrc.includes("gate sync") || currentStateSrc.includes("Save gate sync"),
 );
 
 console.log(`\nG-9g4a1 verifier: ${passed} passed, ${failed} failed`);

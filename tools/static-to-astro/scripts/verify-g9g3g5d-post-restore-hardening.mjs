@@ -127,7 +127,7 @@ assert(
 );
 assert("current state G-9g3g5d", currentStateSrc.includes("G-9g3g5d"));
 assert("current state ca1f721", currentStateSrc.includes("ca1f721"));
-assert("next actions G-9g3h1", nextActionsSrc.includes("G-9g3h1"));
+assert("next actions G-9g3h1 or G-9g3h1a", nextActionsSrc.includes("G-9g3h1"));
 assert("handoff round-trip", handoffSrc.includes("restoreRoundTripComplete") || handoffSrc.includes("round-trip"));
 
 console.log(`\nG-9g3g5d verifier: ${passed} passed, ${failed} failed`);

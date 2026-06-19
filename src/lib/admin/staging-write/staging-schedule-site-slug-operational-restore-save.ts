@@ -5,7 +5,10 @@
 
 import { getStagingAuthSessionDetails } from "../staging-auth/staging-auth-session";
 import { getStagingSupabaseClient } from "../staging-auth/supabase-staging-auth-client";
-import { STAGING_SHELL_GOSAKI_SCHEDULE_SITE_SLUG } from "../staging-data/staging-schedule-site-slug-config";
+import {
+  G9G3H1_PREVIEW_CONSUMED_MSG,
+  STAGING_SHELL_GOSAKI_SCHEDULE_SITE_SLUG,
+} from "../staging-data/staging-schedule-site-slug-config";
 import { getG9G3g5OperationalRestoreConfig } from "../staging-data/staging-schedule-site-slug-operational-restore-config";
 import type { ScheduleDryRunSource } from "./schedule-dry-run-types";
 import {
@@ -21,6 +24,8 @@ import {
   assertG9G3g5RestorePayloadOnly,
   assertG9G3g5RestoreWritableRow,
   assertOperationalCandidatePreviewMatch,
+  assertOperationalPreviewIdentityPresent,
+  assertOperationalPreviewNotConsumed,
   assertOperationalPreviewTargetIdentity,
 } from "./schedule-write-guards";
 import {
@@ -86,7 +91,36 @@ export async function executeG9G3g5OperationalRestoreSave(options: {
     };
   }
 
+  if (!options.previewBinding.previewIdentity?.trim()) {
+    return {
+      optimisticLockEnabled: lockEnabled,
+      expectedBeforeUpdatedAt: options.previewBinding.expectedBeforeUpdatedAt,
+      warnings: [],
+      errorCode: "preview_identity_missing",
+      errorMessage: "previewIdentity required for restore Save.",
+    };
+  }
+
+  if (
+    options.previewBinding.consumedPreviewIdentity &&
+    options.previewBinding.consumedPreviewIdentity ===
+      options.previewBinding.previewIdentity
+  ) {
+    return {
+      optimisticLockEnabled: lockEnabled,
+      expectedBeforeUpdatedAt: options.previewBinding.expectedBeforeUpdatedAt,
+      warnings: [],
+      errorCode: "preview_consumed",
+      errorMessage: G9G3H1_PREVIEW_CONSUMED_MSG,
+    };
+  }
+
   try {
+    assertOperationalPreviewIdentityPresent(options.previewBinding.previewIdentity);
+    assertOperationalPreviewNotConsumed({
+      previewIdentity: options.previewBinding.previewIdentity,
+      consumedPreviewIdentity: options.previewBinding.consumedPreviewIdentity,
+    });
     assertG9G3g5RestoreWritableRow(options.beforeSnapshot);
     assertOperationalPreviewTargetIdentity({
       beforeSnapshot: options.beforeSnapshot,

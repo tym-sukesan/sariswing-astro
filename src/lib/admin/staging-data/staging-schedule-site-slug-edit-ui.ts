@@ -48,6 +48,11 @@ import {
   G9G3G5_OPERATIONAL_RESTORE_SAVE_WARNING,
   G9G3G_OPERATIONAL_GENERAL_EDIT_NON_DRY_RUN_APPROVAL_ID,
   G9G3G_OPERATIONAL_SAVE_DISABLED_DEFAULT_REASON,
+  G9G3H1_FRESH_PREVIEW_REQUIRED_MSG,
+  G9G3H1_OPERATOR_MANUAL_SAVE_COMPLETED_MSG,
+  G9G3H1_PREVIEW_CONSUMED_MSG,
+  G9G3H1_ROUTINE_DEV_SAFETY_HINT,
+  G9G3H1_SAVE_SUCCESS_BLOCKED_MSG,
   SCHEDULE_G9G3G5_OPERATIONAL_RESTORE_NON_DRY_RUN_ARMED_ENV,
   G9G3_SLICE_POC_EXECUTED_ARM_FAILURE,
   SITE_SLUG_EDIT_SAFE_FIELDS,
@@ -73,6 +78,11 @@ import {
   initPickerEditBinding,
   hasPickerBoundRow,
 } from "./staging-schedule-site-slug-edit-picker-binding";
+import {
+  buildOperationalPreviewIdentity,
+  isOperationalSaveReclickBlocked,
+  type OperationalSaveSuccessRecord,
+} from "./staging-schedule-site-slug-operational-save-reclick";
 
 const SAFE_FIELD_INPUT_IDS: Record<(typeof SITE_SLUG_EDIT_SAFE_FIELDS)[number], string> = {
   title: "site-slug-edit-dry-run-title",
@@ -105,6 +115,8 @@ let lastPreviewTargetId: string | null = null;
 let lastPreviewTargetLegacyId: string | null = null;
 let lastPreviewExpectedUpdatedAt: string | null = null;
 let lastPreviewHostGatePassed = false;
+let lastPreviewIdentity: string | null = null;
+let operationalSaveSuccess: OperationalSaveSuccessRecord | null = null;
 let stagingAuthSignedIn: boolean | null = null;
 let executionInFlight = false;
 
@@ -402,7 +414,47 @@ function markG9PreviewStale(reason?: string): void {
   refreshSaveGatePanel();
 }
 
-function invalidateDryRunPreview(): void {
+function clearOperationalSaveSuccess(): void {
+  operationalSaveSuccess = null;
+}
+
+function getOperationalPreviewApprovalId(mode: Exclude<OperationalSaveMode, null>): string {
+  return mode === "restore"
+    ? G9G3G5_OPERATIONAL_RESTORE_NON_DRY_RUN_APPROVAL_ID
+    : G9G3G_OPERATIONAL_GENERAL_EDIT_NON_DRY_RUN_APPROVAL_ID;
+}
+
+function computeOperationalPreviewIdentity(
+  mode: Exclude<OperationalSaveMode, null>,
+): string | null {
+  if (!lastPreviewTargetId || lastPreviewG9g3dChangedFields.length === 0) {
+    return null;
+  }
+  return buildOperationalPreviewIdentity({
+    mode,
+    approvalId: getOperationalPreviewApprovalId(mode),
+    targetId: lastPreviewTargetId,
+    legacyId: lastPreviewTargetLegacyId,
+    expectedBeforeUpdatedAt: lastPreviewExpectedUpdatedAt,
+    changedFields: [...lastPreviewG9g3dChangedFields],
+    fieldValues: { ...lastPreviewG9g3dFieldValues },
+  });
+}
+
+function checkOperationalSaveReclickGate(): { blocked: boolean; reason: string } {
+  if (!operationalSaveSuccess) {
+    return { blocked: false, reason: "" };
+  }
+  if (!g9g3dDryRunPreviewValid) {
+    return { blocked: true, reason: G9G3H1_SAVE_SUCCESS_BLOCKED_MSG };
+  }
+  if (isOperationalSaveReclickBlocked(operationalSaveSuccess, lastPreviewIdentity)) {
+    return { blocked: true, reason: G9G3H1_PREVIEW_CONSUMED_MSG };
+  }
+  return { blocked: false, reason: "" };
+}
+
+function clearPreviewState(): void {
   g9g3bDryRunPreviewValid = false;
   lastPreviewVenue = null;
   lastPreviewDescription = null;
@@ -422,12 +474,18 @@ function invalidateDryRunPreview(): void {
   lastPreviewTargetLegacyId = null;
   lastPreviewExpectedUpdatedAt = null;
   lastPreviewHostGatePassed = false;
+  lastPreviewIdentity = null;
   refreshG9G3bSaveButtonState();
   refreshG9G3cSaveButtonState();
   refreshG9G3dSaveButtonState();
   refreshG9G3gOperationalSaveButtonState();
   updateStaleLockBanner(false);
   refreshSaveGatePanel();
+}
+
+function invalidateDryRunPreview(): void {
+  clearPreviewState();
+  clearOperationalSaveSuccess();
 }
 
 function renderDryRunResult(result: SiteSlugScheduleEditDryRunResult): void {
@@ -535,9 +593,20 @@ function refreshSaveGatePanel(): void {
       g9g3dDryRunPreviewValid
         ? isG9PreviewResultStale()
           ? `preview: ${G9G3F3C_PREVIEW_STALE_MSG}`
-          : "preview: valid"
-        : "preview: required",
+          : operationalSaveSuccess &&
+              isOperationalSaveReclickBlocked(operationalSaveSuccess, lastPreviewIdentity)
+            ? `preview: ${G9G3H1_PREVIEW_CONSUMED_MSG}`
+            : "preview: valid"
+        : operationalSaveSuccess
+          ? `preview: ${G9G3H1_FRESH_PREVIEW_REQUIRED_MSG}`
+          : "preview: required",
     );
+    if (operationalSaveSuccess) {
+      lines.push(G9G3H1_OPERATOR_MANUAL_SAVE_COMPLETED_MSG);
+      lines.push(
+        `executed-state: Save success recorded (${operationalSaveSuccess.mode} / rowsAffected=${operationalSaveSuccess.rowsAffected})`,
+      );
+    }
     if (lastPreviewG9g3dChangedFields.length > 0) {
       lines.push(`changedFields: ${lastPreviewG9g3dChangedFields.join(", ")}`);
     }
@@ -592,6 +661,15 @@ function refreshSaveGatePanel(): void {
 
   if (lastPreviewG9g3dStale) {
     lines.push("Optimistic lock: STOP — stale; re-run Preview");
+  }
+
+  if (isPickerDrivenBinding()) {
+    lines.push(G9G3H1_ROUTINE_DEV_SAFETY_HINT);
+    if (isG9g3g5RestoreArmed()) {
+      lines.push(
+        "Restore mode uses the same Save button but requires restore approval and restore arm.",
+      );
+    }
   }
 
   el.textContent = lines.join(" · ");
@@ -949,6 +1027,8 @@ function canEnableG9G3gOperationalGeneralEditSave(): { ok: boolean; reason: stri
     };
   }
   if (executionInFlight) return { ok: false, reason: "Save in flight" };
+  const reclickGate = checkOperationalSaveReclickGate();
+  if (reclickGate.blocked) return { ok: false, reason: reclickGate.reason };
   if (!hasPickerBoundRow()) {
     return { ok: false, reason: "Select a non-PoC row in the picker" };
   }
@@ -1049,6 +1129,8 @@ function canEnableG9G3g5OperationalRestoreSave(): { ok: boolean; reason: string 
     };
   }
   if (executionInFlight) return { ok: false, reason: "Save in flight" };
+  const reclickGate = checkOperationalSaveReclickGate();
+  if (reclickGate.blocked) return { ok: false, reason: reclickGate.reason };
   if (!hasPickerBoundRow()) {
     return { ok: false, reason: "Select G-9g3g4 restore target row in the picker" };
   }
@@ -1189,12 +1271,18 @@ function renderG9G3gOperationalSaveResult(payload: {
   const label =
     payload.mode === "restore" ? "G-9g3g5 restore Save" : "G-9g3g operational Save";
 
+  const executedBanner =
+    success
+      ? `<p class="site-slug-edit-save-result__executed" role="status"><strong>executed-state:</strong> ${escapeHtml(G9G3H1_OPERATOR_MANUAL_SAVE_COMPLETED_MSG)} ${escapeHtml(G9G3H1_SAVE_SUCCESS_BLOCKED_MSG)}</p>`
+      : "";
+
   el.innerHTML = [
     `<p class="site-slug-edit-save-result__message">${escapeHtml(
       success
         ? `${label} completed — actualWrite=true.`
         : payload.outcome.errorMessage ?? `${label} did not complete.`,
     )}</p>`,
+    executedBanner,
     `<dl class="site-slug-edit-save-result__meta">`,
     `<div><dt>actualWrite</dt><dd>${payload.actualWrite ? "true" : "false"}</dd></div>`,
     `<div><dt>approvalId</dt><dd><code>${escapeHtml(payload.approvalId)}</code></dd></div>`,
@@ -1389,6 +1477,8 @@ async function onPreviewClick(): Promise<void> {
   lastPreviewTargetLegacyId = result.target.legacy_id ?? null;
   lastPreviewExpectedUpdatedAt = result.optimisticLock.expectedBeforeUpdatedAt ?? null;
   lastPreviewHostGatePassed = result.hostGate.hostGatePassed;
+  const previewMode = getOperationalSaveMode() ?? "general";
+  lastPreviewIdentity = computeOperationalPreviewIdentity(previewMode);
   refreshG9G3bSaveButtonState();
   refreshG9G3cSaveButtonState();
   refreshG9G3dSaveButtonState();
@@ -1598,7 +1688,42 @@ async function onG9G3gOperationalSaveClick(): Promise<void> {
     fieldValues: { ...lastPreviewG9g3dFieldValues },
     hostGatePassed: lastPreviewHostGatePassed,
     optimisticLockStale: lastPreviewG9g3dStale,
+    previewIdentity:
+      lastPreviewIdentity ??
+      computeOperationalPreviewIdentity(gate.mode) ??
+      "",
+    consumedPreviewIdentity: operationalSaveSuccess?.previewIdentity ?? null,
   };
+
+  const reclickGate = checkOperationalSaveReclickGate();
+  if (
+    reclickGate.blocked ||
+    isOperationalSaveReclickBlocked(
+      operationalSaveSuccess,
+      previewBinding.previewIdentity,
+    )
+  ) {
+    renderG9G3gOperationalSaveResult({
+      actualWrite: false,
+      outcome: {
+        optimisticLockEnabled: true,
+        expectedBeforeUpdatedAt: lastPreviewExpectedUpdatedAt,
+        warnings: [],
+        errorCode: "preview_consumed",
+        errorMessage: reclickGate.reason || G9G3H1_PREVIEW_CONSUMED_MSG,
+      },
+      changedFields,
+      beforeSnapshot: row,
+      payloadWritten: payload,
+      mode: gate.mode,
+      approvalId:
+        gate.mode === "restore"
+          ? G9G3G5_OPERATIONAL_RESTORE_NON_DRY_RUN_APPROVAL_ID
+          : G9G3G_OPERATIONAL_GENERAL_EDIT_NON_DRY_RUN_APPROVAL_ID,
+    });
+    refreshG9G3gOperationalSaveButtonState();
+    return;
+  }
 
   try {
     const approvalId =
@@ -1643,6 +1768,18 @@ async function onG9G3gOperationalSaveClick(): Promise<void> {
     });
 
     if (actualWrite && outcome.result && "afterSnapshot" in outcome.result) {
+      operationalSaveSuccess = {
+        previewIdentity: previewBinding.previewIdentity,
+        mode: gate.mode,
+        approvalId,
+        targetId: row.id,
+        legacyId: row.legacy_id ?? null,
+        changedFields,
+        rowsAffected:
+          outcome.result && "rowsAffected" in outcome.result
+            ? Number((outcome.result as ScheduleWriteResult).rowsAffected ?? 1)
+            : 1,
+      };
       const root = getRoot();
       if (root) {
         const updated = outcome.result.afterSnapshot as ScheduleRecord;
@@ -1651,7 +1788,7 @@ async function onG9G3gOperationalSaveClick(): Promise<void> {
         if (baseline) baseline.textContent = updated.updated_at ?? "—";
         updateLoadedValueDisplays(updated);
       }
-      invalidateDryRunPreview();
+      clearPreviewState();
     }
   } finally {
     executionInFlight = false;

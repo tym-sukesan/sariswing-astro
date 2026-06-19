@@ -333,6 +333,28 @@ export function assertG9G3g5RestorePayloadOnly(
   }
 }
 
+export function assertOperationalPreviewIdentityPresent(
+  previewIdentity: string | undefined,
+): void {
+  if (!String(previewIdentity ?? "").trim()) {
+    throw new Error("previewIdentity required for operational Save.");
+  }
+}
+
+export function assertOperationalPreviewNotConsumed(options: {
+  previewIdentity: string;
+  consumedPreviewIdentity?: string | null;
+}): void {
+  if (
+    options.consumedPreviewIdentity &&
+    options.consumedPreviewIdentity === options.previewIdentity
+  ) {
+    throw new Error(
+      "Operational Save re-click blocked — preview consumed by prior successful Save.",
+    );
+  }
+}
+
 export function assertOperationalCandidatePreviewMatch(options: {
   changedFields: string[];
   candidateValues: Record<string, string>;

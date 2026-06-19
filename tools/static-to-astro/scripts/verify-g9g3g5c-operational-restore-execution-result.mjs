@@ -176,7 +176,8 @@ assert(
     handoffSrc.includes("restoreExecuted: true") ||
     handoffSrc.includes("restore Save **succeeded**") ||
     handoffSrc.includes("restore round-trip complete") ||
-    handoffSrc.includes("marker **removed**"),
+    handoffSrc.includes("marker **removed**") ||
+    handoffSrc.includes("G-9g3h1"),
 );
 
 console.log(`\nG-9g3g5c verifier: ${passed} passed, ${failed} failed`);

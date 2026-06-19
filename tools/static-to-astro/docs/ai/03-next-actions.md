@@ -3,39 +3,34 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 1. Immediate priority
 
-**Current phase:** `G-9g3g5d-post-restore-hardening` — **complete**
+**Current phase:** `G-9g3h1-save-success-reclick-prevention` — **implementation complete**
 
-**Next:** `G-9g3h1-save-success-reclick-prevention`
+**Next:** `G-9g3h1a-save-success-reclick-prevention-smoke-test`
 
-**Git:** latest pushed commit `ca1f721` (G-9g3g5c); G-9g3g5d hardening doc **uncommitted**
+**Git:** latest pushed commit `972e640` (G-9g3g5d); G-9g3h1 implementation **uncommitted**
 
-### G-9g3g5d summary
+### G-9g3h1 summary
 
 | Item | Value |
 | --- | --- |
-| Doc | `staging-shell-schedule-site-slug-operational-general-edit-post-restore-hardening.md` |
-| Status | **complete** — planning / verification only |
-| Round-trip | G-9g3g4 marker add + G-9g3g5c restore **complete** |
-| Marker in DB | **removed** (`markerRemainsInStagingDb: false`) |
-| Row picker | target row back to **selectable** (no `[CMS Kit staging]` in description) |
-| Rollback SQL | **not executed** |
-| service_role | **not used** |
+| Doc | `staging-shell-schedule-site-slug-operational-save-success-reclick-prevention.md` |
+| Status | **implementation complete** — UI + client guard |
+| Save / DB write (this phase) | **not executed** |
+| Coverage | G-9g3g general + G-9g3g5 restore operational Save |
+| Hardening | consumed preview, Save disabled after success, executed-state UI |
 
 ### Gates
 
 ```txt
-stagingShellScheduleSiteSlugOperationalPostRestoreHardeningComplete: true
-restoreRoundTripComplete: true
-markerRemainsInStagingDb: false
-markerRemoved: true
-readyForG9g3h1SaveSuccessReclickPrevention: true
+stagingShellScheduleSiteSlugOperationalSaveSuccessReclickPreventionComplete: true
+readyForG9g3h1aSaveSuccessReclickPreventionSmokeTest: true
 readyForAnyDbWrite: false
 ```
 
 ## 2. Next steps
 
-1. **G-9g3h1-save-success-reclick-prevention** — Save success UI disable / executed-state marker
-2. Commit G-9g3g5d hardening doc + verifier
+1. **G-9g3h1a-save-success-reclick-prevention-smoke-test** — operator manual UI smoke
+2. Commit G-9g3h1 implementation + doc + verifier
 3. Routine dev safety (arms off, dry-run on)
 
 ## 3. Routine dev safety
@@ -52,5 +47,4 @@ PUBLIC_ADMIN_WRITE_DRY_RUN: true
 - Re-click G-9g3g4 operational Save
 - Re-click G-9g3g5c restore Save
 - Execute SQL rollback / restore SQL
-- Re-run G-9g2 / G-9g3b / G-9g3c / G-9g3d Save
-- Arm operational or restore env without new approval phase
+- Re-run G-9g2 / G-9g3b / G-9g3c / G-9g3d Save without new approval phase

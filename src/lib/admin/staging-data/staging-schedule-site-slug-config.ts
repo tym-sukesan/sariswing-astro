@@ -192,6 +192,28 @@ export const G9G3G_OPERATIONAL_SAVE_GATE_HINT =
 export const G9G3G_OPERATIONAL_SAVE_LEGACY_WARNING =
   "Do not use legacy G-6 dry-run or G-9g3d PoC Save for operational editing.";
 
+export const G9G3H1_PHASE = "G-9g3h1-save-success-reclick-prevention";
+
+export const G9G3H1A_PHASE =
+  "G-9g3h1a-save-success-reclick-prevention-smoke-test";
+
+export const G9G3H1_SAVE_SUCCESS_BLOCKED_MSG =
+  "Save completed. Re-click is blocked. Run a fresh Preview after changing the candidate or reloading the row.";
+
+export const G9G3H1_OPERATOR_MANUAL_SAVE_COMPLETED_MSG =
+  "Operator manual Save completed once. Do not re-click.";
+
+export const G9G3H1_PREVIEW_CONSUMED_MSG =
+  "This Preview has been consumed by a successful Save. Run a new Preview before any further write.";
+
+export const G9G3H1_FRESH_PREVIEW_REQUIRED_MSG = "fresh Preview required";
+
+export const G9G3H1_ROUTINE_DEV_SAFETY_HINT =
+  "Routine dev should use dry-run with all non-dry-run arms off.";
+
+export const G9G3H1_SAVE_RECLICK_GUARD_MSG =
+  "Operational Save re-click blocked — preview consumed by prior successful Save.";
+
 /** G-9g3f3d hardening smoke — price-only preview candidate on picker-selected row. */
 export const G9G3F3D_STALE_SMOKE_PRICE_CANDIDATE =
   "[CMS Kit staging] G-9g3f3d stale smoke price candidate";

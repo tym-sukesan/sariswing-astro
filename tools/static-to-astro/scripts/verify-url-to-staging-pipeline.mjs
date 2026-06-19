@@ -3146,6 +3146,30 @@ assert(
   g9g3g5dHardeningSrc.includes("G-9g3h1-save-success-reclick-prevention"),
 );
 
+const g9g3h1ImplPath = path.join(
+  TOOL_ROOT,
+  "docs/staging-shell-schedule-site-slug-operational-save-success-reclick-prevention.md",
+);
+assert("G-9g3h1 implementation doc exists", fs.existsSync(g9g3h1ImplPath));
+const g9g3h1ImplSrc = fs.readFileSync(g9g3h1ImplPath, "utf8");
+assert(
+  "G-9g3h1 phase marker",
+  g9g3h1ImplSrc.includes("G-9g3h1-save-success-reclick-prevention"),
+);
+assert(
+  "G-9g3h1 implementation complete",
+  g9g3h1ImplSrc.includes("implementation complete"),
+);
+assert(
+  "G-9g3h1 reclick prevention",
+  g9g3h1ImplSrc.includes("re-click prevention") ||
+    g9g3h1ImplSrc.includes("Re-click is blocked"),
+);
+assert(
+  "G-9g3h1 next phase smoke",
+  g9g3h1ImplSrc.includes("G-9g3h1a-save-success-reclick-prevention-smoke-test"),
+);
+
 const gosakiPublicDist = path.join(TOOL_ROOT, "output/static-public/gosaki-piano/public-dist");
 for (const ym of ["2026-06", "2026-07"]) {
   const canonicalMonthPath = path.join(gosakiPublicDist, "schedule", ym, "index.html");

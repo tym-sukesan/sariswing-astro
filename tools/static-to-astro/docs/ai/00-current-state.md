@@ -21,17 +21,17 @@ Staging Shell
 将来的な顧客オンボーディング・課金・デプロイ自動化
 
 2. Current phase
-現在フェーズ: G-9g3g5d-post-restore-hardening — **complete**
+現在フェーズ: G-9g3h1-save-success-reclick-prevention — **implementation complete**
 
-次フェーズ: **G-9g3h1-save-success-reclick-prevention**
+次フェーズ: **G-9g3h1a-save-success-reclick-prevention-smoke-test**
 
-Git: 最新 push 済み commit `ca1f721`（G-9g3g5c restore execution success）。G-9g3g5d post-restore hardening **uncommitted**。
+Git: 最新 push 済み commit `972e640`（G-9g3g5d）。G-9g3h1 implementation **uncommitted**。
 
-G-9g3g5d: restore round-trip verified。G-9g3g4 marker add + G-9g3g5c restore **complete**。marker **removed**。row picker target row **selectable** again。rollback SQL **未実行**。service_role **未使用**。
+G-9g3h1: operational / restore Save success後の再クリック防止（consumed preview + Save disabled + executed-state UI）。Save / Preview / DB write **未実行**。
 
-G-9g3g5c: operator manual restore Save **success**（commit `ca1f721`）。**Do not re-click G-9g3g5 restore Save.**
+G-9g3g5d: post-restore hardening **complete**（commit `972e640`）。round-trip complete、marker removed。
 
-G-9g3g5b2: restore UI gate smoke **passed**（commit `3b113c5`）。
+G-9g3g5c: restore execution **success**（commit `ca1f721`）。**Do not re-click G-9g3g5 restore Save.**
 
 G-9g3g5b: operational restore preflight **complete**（commit `95ff18c`）。
 
@@ -544,34 +544,30 @@ PUBLIC_SUPABASE_URL host: kmjqppxjdnwwrtaeqjta.supabase.co (staging)
 **Note:** `tools/static-to-astro/.env.local` に `SUPABASE_SERVICE_ROLE_KEY` が local only（gitignored）で存在する場合がある。G-9g3b execution では使用禁止・参照禁止。anon key + authenticated session のみ。
 
 10. Recommended next phase
-次フェーズ推奨: **G-9g3h1-save-success-reclick-prevention**
+次フェーズ推奨: **G-9g3h1a-save-success-reclick-prevention-smoke-test**
 
-G-9g3g5d post-restore hardening: **complete**（uncommitted）。
+G-9g3h1 Save success re-click prevention: **implementation complete**（uncommitted）。
 
-G-9g3g5c restore execution: **success**（commit `ca1f721`）。
+G-9g3g5d post-restore hardening: **complete**（commit `972e640`）。
 
 Phase sequence:
 ```txt
-G-9g3g5-post-execution-hardening-and-restore-decision ← complete (d202797)
-G-9g3g5b-operational-restore-preflight ← complete (95ff18c)
-G-9g3g5b1-operational-restore-approval-arm-implementation ← complete (23b7b68)
-G-9g3g5b2-operational-restore-approval-arm-ui-gate-smoke ← complete (3b113c5)
 G-9g3g5c-operational-restore-execution ← complete (ca1f721)
-G-9g3g5d-post-restore-hardening ← complete (uncommitted)
-G-9g3h1-save-success-reclick-prevention ← next
+G-9g3g5d-post-restore-hardening ← complete (972e640)
+G-9g3h1-save-success-reclick-prevention ← complete (uncommitted)
+G-9g3h1a-save-success-reclick-prevention-smoke-test ← next
 ```
 
 G-9g3g gates:
 ```txt
-stagingShellScheduleSiteSlugOperationalPostRestoreHardeningComplete: true
+stagingShellScheduleSiteSlugOperationalSaveSuccessReclickPreventionComplete: true
+readyForG9g3h1aSaveSuccessReclickPreventionSmokeTest: true
 restoreRoundTripComplete: true
 markerRemainsInStagingDb: false
-markerRemoved: true
-readyForG9g3h1SaveSuccessReclickPrevention: true
 readyForAnyDbWrite: false
 ```
 
-Routine dev: dry-run on / G-9g3g arm off / G-9g3g5 restore arm off. G-9g3g4 marker **removed** by G-9g3g5c restore. Target row **selectable** in row picker.
+Routine dev: dry-run on / G-9g3g arm off / G-9g3g5 restore arm off.
 
 11. AI workflow transition
 チャット履歴への依存を減らすため、リポジトリ側に AI開発文脈管理ファイルを作成。

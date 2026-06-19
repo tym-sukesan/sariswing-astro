@@ -2,6 +2,8 @@
  * Gosaki home YouTube embed — static config resolver (converted Astro project).
  */
 
+export const GOSAKI_YOUTUBE_DEFAULT_IFRAME_TITLE = "Gosaki Piano YouTube video";
+
 export interface GosakiYoutubeEmbedItem {
   id: string;
   published?: boolean;
@@ -127,15 +129,14 @@ export function resolveGosakiYoutubeItem(
     parseYoutubeVideoId(item.embedCode);
   if (!videoId) return null;
 
-  const title = String(item.title ?? "").trim() || "YouTube video";
-  const caption = String(item.caption ?? "").trim();
+  const iframeTitle = GOSAKI_YOUTUBE_DEFAULT_IFRAME_TITLE;
 
   return {
     id: item.id,
     videoId,
-    title,
-    caption,
-    iframeTitle: title,
+    title: iframeTitle,
+    caption: "",
+    iframeTitle,
     embedUrl: buildYoutubeNocookieEmbedUrl(videoId),
     watchUrl: buildYoutubeWatchUrl(videoId),
     sourceUrl: String(item.sourceUrl ?? "").trim() || buildYoutubeWatchUrl(videoId),
@@ -150,7 +151,7 @@ export function resolvePublishedGosakiYoutubeItems(
   return items
     .map((item) => resolveGosakiYoutubeItem(item))
     .filter((item): item is ResolvedGosakiYoutubeEmbed => item !== null)
-    .sort((a, b) => a.sortOrder - b.sortOrder || a.title.localeCompare(b.title, "ja"));
+    .sort((a, b) => a.sortOrder - b.sortOrder || a.id.localeCompare(b.id, "ja"));
 }
 
 /** @deprecated use resolvePublishedGosakiYoutubeItems */

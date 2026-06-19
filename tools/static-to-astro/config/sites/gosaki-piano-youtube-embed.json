@@ -1,5 +1,5 @@
 {
-  "$comment": "G-9j — Gosaki home YouTube embeds (static until site_embeds DB). Set item published:true + videoId/sourceUrl/embedCode to show on home.",
+  "$comment": "G-9j — Gosaki home YouTube embeds (embedCode only). Set published:true + valid embed iframe to show on home.",
   "siteSlug": "gosaki-piano",
   "sectionTitle": "YouTube",
   "items": [
@@ -7,10 +7,6 @@
       "id": "yt-placeholder-01",
       "published": false,
       "sortOrder": 10,
-      "title": "演奏動画",
-      "caption": "ライブや演奏の動画を掲載する予定です。",
-      "sourceUrl": "",
-      "videoId": "",
       "embedCode": ""
     }
   ]

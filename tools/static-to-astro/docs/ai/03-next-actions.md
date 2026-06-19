@@ -6,7 +6,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Item | Value |
 | --- | --- |
 | Routes | `/__admin-staging-shell/musician-basic/admin/`, `/admin/schedule/`, `/admin/youtube/`, `/admin/discography/` |
-| YouTube / Discography | G-9j static config + read-only admin (no DB) |
+| YouTube / Discography | G-9j static config + read-only admin (no DB); embed-code-only YouTube UI |
 | Next | G-9h1 client preview feedback closure |
 
 ## 0b. Gosaki YouTube and Discography (G-9j)

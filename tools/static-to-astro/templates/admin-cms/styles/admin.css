@@ -346,15 +346,24 @@
   text-decoration: none;
 }
 
-.admin-button--secondary {
+.admin-button--secondary,
+.admin-button-secondary {
   background: var(--admin-color-surface);
   color: var(--admin-color-text);
   border-color: var(--admin-color-border);
 }
 
-.admin-button--destructive {
+.admin-button--destructive,
+.admin-button-danger {
   background: var(--admin-color-error);
   border-color: var(--admin-color-error);
+  color: #fff;
+}
+
+.admin-button--small {
+  min-height: auto;
+  padding: 0.35rem 0.65rem;
+  font-size: 0.85rem;
 }
 
 .admin-button:disabled {
@@ -1836,6 +1845,154 @@
 .admin-gosaki-youtube-preview-note p {
   margin: 0 0 0.5rem;
   line-height: 1.6;
+}
+
+/* Shared admin form / list (Sariswing Instagram-style) */
+.admin-page--wide {
+  max-width: 1120px;
+}
+
+.admin-static-notice {
+  margin: 0 0 1rem;
+  padding: 0.75rem 1rem;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: #475569;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: var(--admin-radius);
+}
+
+.admin-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+}
+
+.admin-form__field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  min-width: 0;
+}
+
+.admin-form__label {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #334155;
+}
+
+.admin-form__hint {
+  margin: 0 0 0.75rem;
+  font-size: 0.88rem;
+  line-height: 1.55;
+  color: var(--admin-color-muted);
+}
+
+.admin-form input[type="date"],
+.admin-form input[type="number"],
+.admin-form input[type="text"],
+.admin-form input[type="url"],
+.admin-form input[type="time"],
+.admin-form select,
+.admin-form textarea {
+  width: 100%;
+  max-width: 100%;
+  padding: 0.6rem 0.75rem;
+  font: inherit;
+  font-size: 0.92rem;
+  line-height: 1.45;
+  color: var(--admin-color-text);
+  background: #fff;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+}
+
+.admin-form textarea {
+  min-height: 10rem;
+  resize: vertical;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.82rem;
+}
+
+.admin-form input:focus,
+.admin-form select:focus,
+.admin-form textarea:focus {
+  outline: none;
+  border-color: var(--admin-color-primary);
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.12);
+}
+
+.admin-form__field--full {
+  grid-column: 1 / -1;
+}
+
+.admin-form__field--checkbox {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.admin-form__field--checkbox input[type="checkbox"] {
+  width: 1.1rem;
+  height: 1.1rem;
+  margin: 0;
+}
+
+.admin-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.admin-list__item {
+  margin: 0;
+}
+
+.admin-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  margin-top: 1rem;
+}
+
+.admin-actions--compact {
+  margin-top: 0.5rem;
+}
+
+.gosaki-youtube-admin-add-card {
+  margin-bottom: 1.25rem;
+}
+
+.gosaki-youtube-admin-form__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 1rem 1.5rem;
+}
+
+.gosaki-youtube-admin-item__sort-field {
+  max-width: 8rem;
+}
+
+.gosaki-youtube-admin-embed-code {
+  min-height: 12rem;
+  width: 100%;
+}
+
+.gosaki-youtube-admin-preview {
+  width: 100%;
+}
+
+.gosaki-youtube-admin-preview--add {
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px dashed #e2e8f0;
 }
 
 /* Gosaki YouTube admin (Instagram-inspired) */

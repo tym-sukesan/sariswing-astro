@@ -16,7 +16,7 @@ G-9g4a2 framework: complete, committed, pushed (C1–C4 through d66bae7)
 - **Routes:** `/__admin-staging-shell/musician-basic/admin/`, `/admin/schedule/` (not production `/admin/`)
 - **Operator schedule:** month / published / keyword filters; columns 日付・タイトル・会場・開場・開演・料金・確認する; detail card; save not exposed
 - **Dev PoC:** bottom `<details>開発者向け詳細</details>` — row picker, read/edit, G-6 sections preserved
-- **No** DB write / Save / Preview auto / FTP / production admin changes
+- **YouTube / Discography:** embed-code-only admin UI; Discography `previewDiscographyUrl` fix; no Save/DB
 
 ## Summary
 

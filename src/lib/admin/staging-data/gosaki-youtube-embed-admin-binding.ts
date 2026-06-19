@@ -37,7 +37,7 @@ function sortItems(items: GosakiYoutubeEmbedItem[]): GosakiYoutubeEmbedItem[] {
   return [...items].sort(
     (a, b) =>
       (Number(a.sortOrder) || 0) - (Number(b.sortOrder) || 0) ||
-      String(a.title ?? "").localeCompare(String(b.title ?? ""), "ja"),
+      String(a.id ?? "").localeCompare(String(b.id ?? ""), "ja"),
   );
 }
 

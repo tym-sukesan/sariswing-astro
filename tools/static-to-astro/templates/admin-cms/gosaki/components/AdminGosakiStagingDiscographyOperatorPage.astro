@@ -10,6 +10,7 @@ interface Props {
 }
 
 const { binding } = Astro.props;
+const previewDiscographyUrl = `${GOSAKI_STAGING_PREVIEW_URL}${binding.config.previewPath ?? "discography/"}`;
 ---
 
 <section

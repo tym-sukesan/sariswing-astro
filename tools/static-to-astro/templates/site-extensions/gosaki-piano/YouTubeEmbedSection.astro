@@ -20,10 +20,6 @@ const items = resolvePublishedGosakiYoutubeItems(embedConfig);
           {
             items.map((item) => (
               <article class="gosaki-youtube-embed__item">
-                <h3 class="gosaki-youtube-embed__item-title">{item.title}</h3>
-                {item.caption ? (
-                  <p class="gosaki-youtube-embed__caption">{item.caption}</p>
-                ) : null}
                 <div class="gosaki-youtube-embed__media">
                   <iframe
                     class="gosaki-youtube-embed__iframe"

@@ -3,6 +3,8 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
+**Gosaki YouTube/Discography admin UI fix (2026-06-19):** Fixed `previewDiscographyUrl` ReferenceError; simplified YouTube admin to embed-code-only (Instagram-style); added admin-form/list CSS to staging shell. Commit: `Fix and simplify Gosaki YouTube and Discography admin UI` (check git HEAD). No DB write / Save.
+
 **Gosaki staging admin schedule UI refinement (2026-06-19):** Operator-facing `/__admin-staging-shell/musician-basic/admin/` + `/admin/schedule/` routes; Sariswing `/admin/` structure mirrored read-only. PoC UI in `<details>開発者向け詳細</details>`. No DB write / Save / production `/admin` changes. Commit message: `Refine Gosaki staging admin schedule UI`.
 
 1. Project overview

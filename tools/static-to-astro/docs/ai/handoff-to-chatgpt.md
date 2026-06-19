@@ -5,43 +5,41 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-9g4a2-framework-single-text-field-operational-commonization-planning (not started)
+Current phase: G-9g4a2-framework-single-text-field-operational-commonization-implementation (not started)
 branch: main
-HEAD = origin/main = 105c6b1
-Latest commit (pushed): 105c6b1 (G-9g4a2a open_time-only restore-and-closure)
-working tree: clean
-G-9g4a2a open_time-only restore-and-closure: complete, committed, pushed
-G-9g4a2a open_time-only round-trip: complete
+HEAD = origin/main = 849ac6f
+Latest commit (pushed): 849ac6f (AI context sync to G-9g4a2a closure)
+G-9g4a2 framework planning: complete (uncommitted)
+working tree: planning docs uncommitted
 ```
 
 ## Summary
 
-**G-9g4a2a open_time-only smoke round-trip — closed** (commit `105c6b1` — committed and pushed):
+**G-9g4a2 single-text-field operational commonization planning — complete** (uncommitted):
 
-- **Target row:** `eb1f1898-5107-4deb-a6d5-a792e0ec3f69` / `schedule-2026-03-003` / `gosaki-piano`
-- **G-9g4a2a2 smoke:** `11:30` → `11:30 [G-9g4a2a open_time smoke]` (commit `54623a1`)
-- **Restore:** `11:30 [G-9g4a2a open_time smoke]` → `11:30` (operator manual; same G-9g4a2a path)
-- **Final open_time:** `11:30`
-- **Final updated_at:** `2026-06-19T07:27:53.256604+00:00`
+- **Doc:** `staging-shell-schedule-single-text-field-operational-commonization-planning.md`
+- **Target fields:** `open_time`, `start_time`, `price` (config-driven registry)
+- **Excluded:** `description` (G-9g3g operational), `title` (SEO sensitivity), date/route/publication/image
+- **Venue:** proven G-9g4a1 — separate path (not in registry v1)
+- **G-9g4a2a open_time round-trip:** complete — commit `105c6b1`
 - **markerRemainsInStagingDb:** false
 - **activeRestoreExceptionsCount:** 0
-- **restore required:** no
-- **no further Save / restore needed:** yes
-- **Cursor/AI:** did not click row picker / Preview / Save for restore documentation
+- **no further Save / restore needed:** yes (proven row)
 
-## Policy change
+## Policy (manual round-trip reduction)
 
-- Do **not** repeat full manual round-trip per field (`start_time`, `price`)
+- Do **not** repeat per-field manual round-trips for `start_time` / `price`
 - Manual non-dry-run round-trip only when **new common logic** is introduced
-- `start_time` / `price` → **G-9g4a2 single-text-field operational common framework** (config-driven)
-- Verification: verifiers, guards, dry-run Preview, type checks — not per-field operator cycles
-- **Not** splitting G-9g4a2a3 / a4 / a5 per field
+- Config-only fields: static verifiers, guards, dry-run Preview, type checks
+- Do **not** over-abstract — minimal commonization for gosaki schedule CMS practical use
+- **Not** next: `start_time`-only manual execution slice
 
 ## Gates
 
 ```txt
+stagingShellScheduleSingleTextFieldOperationalCommonizationPlanningComplete: true
+readyForG9g4a2FrameworkSingleTextFieldOperationalCommonizationImplementation: true
 stagingShellScheduleOpenTimeOnlyOperationalRoundTripComplete: true
-readyForG9g4a2FrameworkSingleTextFieldOperationalCommonizationPlanning: true
 markerRemainsInStagingDb: false
 activeRestoreExceptionsCount: 0
 restoreRequired: false
@@ -64,4 +62,4 @@ PUBLIC_ADMIN_SCHEDULE_G9G3G5_OPERATIONAL_RESTORE_NON_DRY_RUN_ARMED=false or unse
 
 ## Next
 
-**G-9g4a2-framework-single-text-field-operational-commonization-planning** — planning only; extract shared operational framework from G-9g4a1 venue-only + G-9g4a2a open_time-only. **Not** `start_time`-only manual execution as next slice.
+**G-9g4a2-framework-single-text-field-operational-commonization-implementation** — registry, parameterized guards/config/Save/UI, G-9g4a2a delegate, static verifiers. **Not** `start_time`-only manual execution.

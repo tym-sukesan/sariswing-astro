@@ -3,37 +3,41 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 1. Immediate priority
 
-**Current phase:** `G-9g4a2-framework-single-text-field-operational-commonization-planning` (not started)
+**Current phase:** `G-9g4a2-framework-single-text-field-operational-commonization-implementation` (not started)
 
-**Git:** branch `main`; HEAD = origin/main = `105c6b1` (G-9g4a2a restore-and-closure — committed and pushed); working tree **clean**
+**Git:** branch `main`; HEAD = origin/main = `849ac6f` (AI context sync — committed and pushed); G-9g4a2 framework planning **uncommitted**
 
-### G-9g4a2a open_time-only round-trip — complete
+### G-9g4a2 framework planning — complete
+
+| Item | Value |
+| --- | --- |
+| Doc | `staging-shell-schedule-single-text-field-operational-commonization-planning.md` |
+| Status | **complete** (uncommitted) |
+| Target fields | `open_time`, `start_time`, `price` |
+| Next | `G-9g4a2-framework-single-text-field-operational-commonization-implementation` |
+
+### G-9g4a2a open_time-only round-trip — complete (historical)
 
 | Item | Value |
 | --- | --- |
 | Doc | `staging-shell-schedule-open-time-only-operational-restore-and-closure.md` |
-| Status | **complete** — operator restore Save once (commit `105c6b1` — committed and pushed) |
-| Target row id | `eb1f1898-5107-4deb-a6d5-a792e0ec3f69` |
-| Final open_time | `11:30` |
-| Final updated_at | `2026-06-19T07:27:53.256604+00:00` |
+| Status | **complete** — commit `105c6b1` (committed and pushed) |
 | markerRemainsInStagingDb | **false** |
-| activeRestoreExceptionsCount | **0** |
-| restore required | **no** |
 | No further Save / restore | **yes** |
 
-### Policy change
+### Policy (manual round-trip reduction)
 
 - Do **not** repeat per-field manual round-trips for `start_time` / `price`
 - Manual non-dry-run round-trip reserved for **new common logic** only
-- Next step: **config-driven single-text-field operational framework** planning (G-9g4a2)
-- Verification via verifiers / guards / dry-run Preview / type checks — not per-field operator cycles
+- Config-only field additions: static verifiers, guards, dry-run Preview, type checks
 - **Not** next: `start_time`-only manual execution slice
 
 ### Gates
 
 ```txt
+stagingShellScheduleSingleTextFieldOperationalCommonizationPlanningComplete: true
+readyForG9g4a2FrameworkSingleTextFieldOperationalCommonizationImplementation: true
 stagingShellScheduleOpenTimeOnlyOperationalRoundTripComplete: true
-readyForG9g4a2FrameworkSingleTextFieldOperationalCommonizationPlanning: true
 markerRemainsInStagingDb: false
 activeRestoreExceptionsCount: 0
 restoreRequired: false
@@ -45,7 +49,7 @@ cursorClickedPreview: false
 
 ## 2. Next steps
 
-1. **G-9g4a2-framework-single-text-field-operational-commonization-planning** — extract shared framework from G-9g4a1 + G-9g4a2a (planning only; not started)
+1. **G-9g4a2-framework-single-text-field-operational-commonization-implementation** — registry + shared modules + G-9g4a2a delegate (implementation only; not started)
 2. **Not** next: `start_time`-only manual execution slice
 
 ## 3. Routine dev safety
@@ -61,8 +65,8 @@ PUBLIC_ADMIN_SCHEDULE_G9G3G5_OPERATIONAL_RESTORE_NON_DRY_RUN_ARMED=false or unse
 
 ## 4. Do not
 
-- Start `start_time`-only manual round-trip without framework planning
-- Re-click G-9g4a2a open_time-only Save on this row
+- Start `start_time`-only manual round-trip (use framework implementation instead)
+- Re-click G-9g4a2a open_time-only Save on proven row
 - Cursor / AI click row picker / Preview / Save
 - Use service_role
 - Touch production or `/admin`

@@ -3703,6 +3703,45 @@ assert(
   g9g4a1bRunbookSrc.includes("Save clicked (this phase) | **no**"),
 );
 
+const g9g4a1b1ResultPath = path.join(
+  TOOL_ROOT,
+  "docs/staging-shell-schedule-venue-only-operational-expansion-manual-execution-result.md",
+);
+assert("G-9g4a1b1 execution result doc exists", fs.existsSync(g9g4a1b1ResultPath));
+const g9g4a1b1ResultSrc = fs.readFileSync(g9g4a1b1ResultPath, "utf8");
+assert(
+  "G-9g4a1b1 phase marker",
+  g9g4a1b1ResultSrc.includes("G-9g4a1b1-venue-only-operational-expansion-manual-execution"),
+);
+assert(
+  "G-9g4a1b1 status complete",
+  g9g4a1b1ResultSrc.includes("**complete**"),
+);
+assert(
+  "G-9g4a1b1 target row id",
+  g9g4a1b1ResultSrc.includes("eb1f1898-5107-4deb-a6d5-a792e0ec3f69"),
+);
+assert(
+  "G-9g4a1b1 actualWrite true",
+  g9g4a1b1ResultSrc.includes("actualWrite: true"),
+);
+assert(
+  "G-9g4a1b1 marker remains",
+  g9g4a1b1ResultSrc.includes("markerRemainsInStagingDb: true"),
+);
+assert(
+  "G-9g4a1b1 restore required",
+  g9g4a1b1ResultSrc.includes("restore required: yes"),
+);
+assert(
+  "G-9g4a1b1 next phase G-9g4a1c",
+  g9g4a1b1ResultSrc.includes("G-9g4a1c-venue-only-operational-restore-preflight"),
+);
+assert(
+  "G-9g4a1b1 cursor no Save",
+  g9g4a1b1ResultSrc.includes("Save clicked (Cursor/AI) | **no**"),
+);
+
 const gosakiPublicDist = path.join(TOOL_ROOT, "output/static-public/gosaki-piano/public-dist");
 for (const ym of ["2026-06", "2026-07"]) {
   const canonicalMonthPath = path.join(gosakiPublicDist, "schedule", ym, "index.html");

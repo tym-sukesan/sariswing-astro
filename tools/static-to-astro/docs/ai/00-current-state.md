@@ -21,19 +21,21 @@ Staging Shell
 将来的な顧客オンボーディング・課金・デプロイ自動化
 
 2. Current phase
-現在フェーズ: **G-9g4a1b1-venue-only-operational-expansion-manual-execution**（G-9g4a1 venue-only Save gate sync fix 後）
+現在フェーズ: **G-9g4a1c-venue-only-operational-restore-preflight**（G-9g4a1b1 manual execution 完了後）
 
-G-9g4a1b1: venue-only manual execution **in progress** — operator Preview valid（`schedule-2026-03-003` / venue smoke）; Save gate sync bug 発見・fix **uncommitted**; Save 未実行.
+G-9g4a1b1: venue-only manual execution **complete**（uncommitted）。target `eb1f1898-5107-4deb-a6d5-a792e0ec3f69` / `schedule-2026-03-003`; venue smoke marker **remains** — restore required.
+
+G-9g4a1 Save gate sync fix: **complete**（commit `78888f5`）。
 
 G-9g4a1b: Schedule venue-only operational expansion **execution runbook complete**（commit `6564061`）。
 
 G-9g4a1a: Schedule venue-only operational expansion **preflight complete**（commit `01e64af`）。
 
-G-9g4a1: Schedule venue-only operational expansion **implementation complete**（commit `49986c1`）；G-9g4a1b1 gate sync fix **uncommitted**.
+G-9g4a1: Schedule venue-only operational expansion **implementation complete**（commit `49986c1`）。
 
 G-9g4a: Schedule text fields operational expansion planning **complete**（commit `9a38c11`）。
 
-Git: 最新 push 済み commit `6564061`（G-9g4a1b）。G-9g4a1 venue-only Save gate sync fix **uncommitted**。
+Git: 最新 push 済み commit `78888f5`（G-9g4a1 Save gate sync fix）。G-9g4a1b1 execution result **uncommitted**。
 
 G-9g3h1: Save success re-click prevention **implemented**（commit `8780f84`）。
 
@@ -548,31 +550,32 @@ PUBLIC_SUPABASE_URL host: kmjqppxjdnwwrtaeqjta.supabase.co (staging)
 **Note:** `tools/static-to-astro/.env.local` に `SUPABASE_SERVICE_ROLE_KEY` が local only（gitignored）で存在する場合がある。G-9g3b execution では使用禁止・参照禁止。anon key + authenticated session のみ。
 
 10. Recommended next phase
-次フェーズ推奨: **G-9g4a1b1-venue-only-operational-expansion-manual-execution**
+次フェーズ推奨: **G-9g4a1c-venue-only-operational-restore-preflight**
 
-G-9g4a1b Schedule venue-only operational expansion execution runbook: **complete**（uncommitted）。
+G-9g4a1b1 Schedule venue-only manual execution: **complete**（uncommitted）。venue smoke marker remains on `eb1f1898-5107-4deb-a6d5-a792e0ec3f69`.
 
-G-9g4a1a Schedule venue-only operational expansion preflight: **complete**（commit `01e64af`）。
-
-G-9g4a1 Schedule venue-only operational expansion: **implementation complete**（commit `49986c1`）。
+G-9g4a1 Save gate sync fix: **complete**（commit `78888f5`）。
 
 Phase sequence:
 ```txt
 G-9g4a1-venue-only-operational-expansion-implementation ← complete (49986c1)
 G-9g4a1a-venue-only-operational-expansion-preflight ← complete (01e64af)
-G-9g4a1b-venue-only-operational-expansion-execution-runbook ← complete (uncommitted)
-G-9g4a1b1-venue-only-operational-expansion-manual-execution ← next
+G-9g4a1b-venue-only-operational-expansion-execution-runbook ← complete (6564061)
+G-9g4a1b1-venue-only-operational-expansion-manual-execution ← complete (uncommitted)
+G-9g4a1c-venue-only-operational-restore-preflight ← next
 ```
 
-G-9g4a1b gates:
+G-9g4a1b1 gates:
 ```txt
-stagingShellScheduleVenueOnlyOperationalExpansionExecutionRunbookComplete: true
-readyForG9g4a1b1VenueOnlyOperationalExpansionManualExecution: true
-targetRowSelected: false
-operationalProvenFields: description
-venueOnlyOperationalPathImplemented: true
-activeRestoreExceptionsCount: 0
-markerRemainsInStagingDb: false
+stagingShellScheduleVenueOnlyOperationalExpansionManualExecutionComplete: true
+readyForG9g4a1cVenueOnlyOperationalRestorePreflight: true
+targetRowSelected: true
+targetRowId: eb1f1898-5107-4deb-a6d5-a792e0ec3f69
+markerRemainsInStagingDb: true
+currentVenue: 学芸大学 珈琲美学 [G-9g4a1 venue smoke]
+restoreTargetVenue: 学芸大学 珈琲美学
+afterUpdatedAt: 2026-06-19T05:12:41.853845+00:00
+activeRestoreExceptionsCount: 1
 readyForAnyDbWrite: false
 cursorClickedSave: false
 cursorClickedPreview: false

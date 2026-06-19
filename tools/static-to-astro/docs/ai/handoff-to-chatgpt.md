@@ -5,34 +5,38 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-9g4a1b1-venue-only-operational-expansion-manual-execution
-Latest commit (pushed): 6564061 (G-9g4a1b execution runbook)
-G-9g4a1a venue-only preflight: complete at 01e64af
-G-9g4a1 venue-only Save gate sync fix: uncommitted
+Current phase: G-9g4a1c-venue-only-operational-restore-preflight
+Latest commit (pushed): 78888f5 (G-9g4a1 Save gate sync fix)
+G-9g4a1b1 venue-only manual execution: complete (uncommitted)
 ```
 
 ## Summary
 
-G-9g4a1b1 **manual execution** — operator Preview step:
+G-9g4a1b1 **manual execution** — operator Save success:
 
-- **Target row:** `schedule-2026-03-003` / `<Live & Session>` / venue `学芸大学 珈琲美学`
-- **Smoke:** `学芸大学 珈琲美学 [G-9g4a1 venue smoke]`
-- **Operator Preview:** valid (actualWrite=false, changedFields=venue, stale=false, hostGatePassed=true)
-- **Save:** not clicked; DB write / SQL / rollback / restore not executed
-- **Bug found:** Save gate stayed disabled despite valid Preview
-- **Root cause:** `refreshG9g4a1VenueOnlySaveButtonState` ran inside `renderG9g4a1VenueOnlyDryRunResult` before `g9g4a1VenueOnlyPreviewValid = true`
-- **Fix (uncommitted):** refresh Save button/gate after preview state assignment; gate copy only shows Save-completed message when `g9g4a1VenueOnlySaveSuccess` is set
+- **Target row:** `eb1f1898-5107-4deb-a6d5-a792e0ec3f69` / `schedule-2026-03-003` / `<Live & Session>`
+- **changedFields:** `["venue"]` only
+- **Before venue:** `学芸大学 珈琲美学`
+- **After venue:** `学芸大学 珈琲美学 [G-9g4a1 venue smoke]`
+- **after.updated_at:** `2026-06-19T05:12:41.853845+00:00`
+- **Save:** operator manual once; `actualWrite=true`, `rowsAffected=1`
+- **Safety:** `serviceRoleUsed=false`, `productionBlocked=true`, `scheduleMonthsTouched=false`
+- **Re-click:** blocked — Preview consumed
+- **Restore:** required — marker remains in staging DB; **not executed**
+- **Restore target venue:** `学芸大学 珈琲美学`
 
-**Cursor / AI must not click Save or Preview.**
+**Cursor / AI did not click Save or Preview.**
 
 ## Gates
 
 ```txt
-g9g4a1VenueOnlySaveGateSyncFixComplete: false (uncommitted)
-readyForG9g4a1b1PreviewRetestAfterFix: true
+stagingShellScheduleVenueOnlyOperationalExpansionManualExecutionComplete: true
+markerRemainsInStagingDb: true
+activeRestoreExceptionsCount: 1
+readyForG9g4a1cVenueOnlyOperationalRestorePreflight: true
 readyForAnyDbWrite: false
 ```
 
 ## Next
 
-After fix commit: operator browser reload → same row/candidate → G-9g4a1 Preview once → confirm Save gate enabled → ChatGPT gate → one manual Save
+**G-9g4a1c** restore preflight — lock baseline `2026-06-19T05:12:41.853845+00:00`, restore payload `{ venue: "学芸大学 珈琲美学" }`

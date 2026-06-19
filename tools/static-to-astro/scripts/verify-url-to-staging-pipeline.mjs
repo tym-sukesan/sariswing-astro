@@ -4023,6 +4023,53 @@ assert(
   g9g4a2a1PreflightSrc.includes("Save clicked (this phase) | **no**"),
 );
 
+const g9g4a2a2ResultPath = path.join(
+  TOOL_ROOT,
+  "docs/staging-shell-schedule-open-time-only-operational-expansion-manual-execution-result.md",
+);
+assert("G-9g4a2a2 execution result doc exists", fs.existsSync(g9g4a2a2ResultPath));
+const g9g4a2a2ResultSrc = fs.readFileSync(g9g4a2a2ResultPath, "utf8");
+assert(
+  "G-9g4a2a2 phase marker",
+  g9g4a2a2ResultSrc.includes("G-9g4a2a2-open-time-only-operational-expansion-manual-execution"),
+);
+assert(
+  "G-9g4a2a2 status complete",
+  g9g4a2a2ResultSrc.includes("**complete**"),
+);
+assert(
+  "G-9g4a2a2 target row id",
+  g9g4a2a2ResultSrc.includes("eb1f1898-5107-4deb-a6d5-a792e0ec3f69"),
+);
+assert(
+  "G-9g4a2a2 smoke open_time",
+  g9g4a2a2ResultSrc.includes("11:30 [G-9g4a2a open_time smoke]"),
+);
+assert(
+  "G-9g4a2a2 actualWrite true",
+  g9g4a2a2ResultSrc.includes("actualWrite: true"),
+);
+assert(
+  "G-9g4a2a2 marker remains",
+  g9g4a2a2ResultSrc.includes("markerRemainsInStagingDb: true"),
+);
+assert(
+  "G-9g4a2a2 restore required",
+  g9g4a2a2ResultSrc.includes("restore required: yes"),
+);
+assert(
+  "G-9g4a2a2 after updated_at",
+  g9g4a2a2ResultSrc.includes("2026-06-19T07:14:34.018855+00:00"),
+);
+assert(
+  "G-9g4a2a2 next phase restore preflight",
+  g9g4a2a2ResultSrc.includes("G-9g4a2a3-open-time-only-operational-restore-preflight"),
+);
+assert(
+  "G-9g4a2a2 cursor no Save",
+  g9g4a2a2ResultSrc.includes("Save clicked (Cursor/AI) | **no**"),
+);
+
 const gosakiPublicDist = path.join(TOOL_ROOT, "output/static-public/gosaki-piano/public-dist");
 for (const ym of ["2026-06", "2026-07"]) {
   const canonicalMonthPath = path.join(gosakiPublicDist, "schedule", ym, "index.html");

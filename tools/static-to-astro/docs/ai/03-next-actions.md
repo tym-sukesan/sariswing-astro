@@ -3,33 +3,34 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 1. Immediate priority
 
-**Current phase:** `G-9g4a2a2-open-time-only-operational-expansion-manual-execution` (not started)
+**Current phase:** `G-9g4a2a3-open-time-only-operational-restore-preflight` (not started)
 
-**Git:** latest pushed commit `8ae0d1e` (G-9g4a2a implementation); G-9g4a2a1 preflight **uncommitted**
+**Git:** latest pushed commit `8d57b1b` (G-9g4a2a1 preflight); G-9g4a2a2 manual execution result **uncommitted**
 
-### G-9g4a2a1 summary (open_time-only preflight — complete)
+### G-9g4a2a2 summary (open_time-only manual execution — complete)
 
 | Item | Value |
 | --- | --- |
-| Doc | `staging-shell-schedule-open-time-only-operational-expansion-preflight.md` |
-| Status | **complete** — preflight only (uncommitted) |
-| G-9g4a2a implementation | committed at `8ae0d1e` |
+| Doc | `staging-shell-schedule-open-time-only-operational-expansion-manual-execution-result.md` |
+| Status | **complete** — operator Save once (uncommitted) |
 | Target row id | `eb1f1898-5107-4deb-a6d5-a792e0ec3f69` |
-| legacy_id | `schedule-2026-03-003` |
-| Current open_time | `11:30` |
-| Smoke candidate | `11:30 [G-9g4a2a open_time smoke]` |
-| Restore target | `11:30` |
-| expectedBeforeUpdatedAt | `2026-06-19T05:54:34.767498+00:00` |
-| Preview / Save / DB | **not executed** in preflight phase |
+| before open_time | `11:30` |
+| after open_time (smoke) | `11:30 [G-9g4a2a open_time smoke]` |
+| after updated_at | `2026-06-19T07:14:34.018855+00:00` |
+| rowsAffected | 1 |
+| Cursor Preview / Save | **no** |
+| Re-click | blocked |
 
 ### Gates
 
 ```txt
-stagingShellScheduleOpenTimeOnlyOperationalExpansionPreflightComplete: true
-readyForG9g4a2a2OpenTimeOnlyOperationalExpansionManualExecution: true
-targetRowId: eb1f1898-5107-4deb-a6d5-a792e0ec3f69
-markerRemainsInStagingDb: false
-restoreRequired: false
+stagingShellScheduleOpenTimeOnlyOperationalExpansionManualExecutionComplete: true
+readyForG9g4a2a3OpenTimeOnlyOperationalRestorePreflight: true
+markerRemainsInStagingDb: true
+activeRestoreExceptionsCount: 1
+restoreRequired: yes
+restoreTargetOpenTime: 11:30
+restoreLockBaselineUpdatedAt: 2026-06-19T07:14:34.018855+00:00
 readyForAnyDbWrite: false
 cursorClickedSave: false
 cursorClickedPreview: false
@@ -37,9 +38,9 @@ cursorClickedPreview: false
 
 ## 2. Next steps
 
-1. **G-9g4a2a2-open-time-only-operational-expansion-manual-execution** — operator Preview → ChatGPT confirm → armed stack → one manual Save → result doc
-2. Commit G-9g4a2a1 preflight when ready
-3. After smoke Save: restore via same G-9g4a2a open_time-only path (restore required)
+1. **G-9g4a2a3-open-time-only-operational-restore-preflight** — restore target, lock baseline, rollback SQL document-only
+2. Commit G-9g4a2a2 execution result when ready
+3. Restore via same G-9g4a2a open_time-only path (not G-9g3g5)
 
 ## 3. Routine dev safety
 
@@ -52,16 +53,15 @@ PUBLIC_ADMIN_SCHEDULE_G9G3G_OPERATIONAL_GENERAL_EDIT_NON_DRY_RUN_ARMED=false or 
 PUBLIC_ADMIN_SCHEDULE_G9G3G5_OPERATIONAL_RESTORE_NON_DRY_RUN_ARMED=false or unset
 ```
 
+- **Do not re-click G-9g4a2a open_time-only Save** on this row
 - Do **not** write arms to `.env` / `.env.local`
-- Production and `/admin` remain out of scope
 - `service_role` prohibition continues
-- FTP / deploy prohibition continues
 
 ## 4. Do not
 
+- Re-click G-9g4a2a open_time-only Save without fresh Preview
 - Cursor / AI click row picker / Preview / Save
-- Execute rollback SQL
-- Use G-9g4a1 venue-only / G-9g3g / G-9g3g5 paths for this slice
-- Re-click G-9g4a1 venue-only Save
+- Use G-9g3g5 restore path for this row
+- Execute restore until G-9g4a2a3 preflight complete
 - Use service_role
 - Touch production or `/admin`

@@ -3170,6 +3170,25 @@ assert(
   g9g3h1ImplSrc.includes("G-9g3h1a-save-success-reclick-prevention-smoke-test"),
 );
 
+const g9g3h1aSmokePath = path.join(
+  TOOL_ROOT,
+  "docs/staging-shell-schedule-site-slug-operational-save-success-reclick-prevention-smoke-test-result.md",
+);
+assert("G-9g3h1a smoke doc exists", fs.existsSync(g9g3h1aSmokePath));
+const g9g3h1aSmokeSrc = fs.readFileSync(g9g3h1aSmokePath, "utf8");
+assert(
+  "G-9g3h1a phase marker",
+  g9g3h1aSmokeSrc.includes("G-9g3h1a-save-success-reclick-prevention-smoke-test"),
+);
+assert(
+  "G-9g3h1a operator pending",
+  g9g3h1aSmokeSrc.includes("operator pending"),
+);
+assert(
+  "G-9g3h1a restore preflight recommendation",
+  g9g3h1aSmokeSrc.includes("G-9g3h1b-smoke-marker-restore-preflight"),
+);
+
 const gosakiPublicDist = path.join(TOOL_ROOT, "output/static-public/gosaki-piano/public-dist");
 for (const ym of ["2026-06", "2026-07"]) {
   const canonicalMonthPath = path.join(gosakiPublicDist, "schedule", ym, "index.html");

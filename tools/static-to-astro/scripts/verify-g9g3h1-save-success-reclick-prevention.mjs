@@ -121,7 +121,7 @@ const nextActionsSrc = readRepo("tools/static-to-astro/docs/ai/03-next-actions.m
 const handoffSrc = readRepo("tools/static-to-astro/docs/ai/handoff-to-chatgpt.md");
 
 assert("current state G-9g3h1", currentStateSrc.includes("G-9g3h1"));
-assert("current state 972e640", currentStateSrc.includes("972e640"));
+assert("current state 8780f84", currentStateSrc.includes("8780f84"));
 assert("next actions G-9g3h1a", nextActionsSrc.includes("G-9g3h1a"));
 assert(
   "handoff reclick prevention",

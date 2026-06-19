@@ -21,17 +21,15 @@ Staging Shell
 将来的な顧客オンボーディング・課金・デプロイ自動化
 
 2. Current phase
-現在フェーズ: G-9g3h1-save-success-reclick-prevention — **implementation complete**
+現在フェーズ: G-9g3h1a-save-success-reclick-prevention-smoke-test — **operator pending**
 
-次フェーズ: **G-9g3h1a-save-success-reclick-prevention-smoke-test**
+次フェーズ（smoke success 後）: **G-9g3h1b-smoke-marker-restore-preflight**（marker が DB に残る場合）
 
-Git: 最新 push 済み commit `972e640`（G-9g3g5d）。G-9g3h1 implementation **uncommitted**。
+Git: 最新 push 済み commit `8780f84`（G-9g3h1）。G-9g3h1a smoke runbook **uncommitted**。
 
-G-9g3h1: operational / restore Save success後の再クリック防止（consumed preview + Save disabled + executed-state UI）。Save / Preview / DB write **未実行**。
+G-9g3h1a: operator manual smoke 準備済み。Preview → Save 1回 → re-click blocked 確認。Save / Preview / DB write **未実行**（準備フェーズ）。
 
-G-9g3g5d: post-restore hardening **complete**（commit `972e640`）。round-trip complete、marker removed。
-
-G-9g3g5c: restore execution **success**（commit `ca1f721`）。**Do not re-click G-9g3g5 restore Save.**
+G-9g3h1: Save success re-click prevention **implemented**（commit `8780f84`）。
 
 G-9g3g5b: operational restore preflight **complete**（commit `95ff18c`）。
 
@@ -544,30 +542,28 @@ PUBLIC_SUPABASE_URL host: kmjqppxjdnwwrtaeqjta.supabase.co (staging)
 **Note:** `tools/static-to-astro/.env.local` に `SUPABASE_SERVICE_ROLE_KEY` が local only（gitignored）で存在する場合がある。G-9g3b execution では使用禁止・参照禁止。anon key + authenticated session のみ。
 
 10. Recommended next phase
-次フェーズ推奨: **G-9g3h1a-save-success-reclick-prevention-smoke-test**
+次フェーズ推奨: **G-9g3h1a-save-success-reclick-prevention-smoke-test**（operator pending）
 
-G-9g3h1 Save success re-click prevention: **implementation complete**（uncommitted）。
-
-G-9g3g5d post-restore hardening: **complete**（commit `972e640`）。
+G-9g3h1 re-click prevention: **complete**（commit `8780f84`）。
 
 Phase sequence:
 ```txt
-G-9g3g5c-operational-restore-execution ← complete (ca1f721)
-G-9g3g5d-post-restore-hardening ← complete (972e640)
-G-9g3h1-save-success-reclick-prevention ← complete (uncommitted)
-G-9g3h1a-save-success-reclick-prevention-smoke-test ← next
+G-9g3h1-save-success-reclick-prevention ← complete (8780f84)
+G-9g3h1a-save-success-reclick-prevention-smoke-test ← operator pending
+G-9g3h1b-smoke-marker-restore-preflight ← after smoke (if marker in DB)
+G-9g3h1c-smoke-marker-restore-execution ← after b preflight
 ```
 
-G-9g3g gates:
+G-9g3h gates:
 ```txt
 stagingShellScheduleSiteSlugOperationalSaveSuccessReclickPreventionComplete: true
-readyForG9g3h1aSaveSuccessReclickPreventionSmokeTest: true
-restoreRoundTripComplete: true
-markerRemainsInStagingDb: false
+stagingShellScheduleSiteSlugOperationalSaveSuccessReclickPreventionSmokeTestPassed: false
+operatorPending: true
+readyForG9g3h1bSmokeMarkerRestorePreflight: false
 readyForAnyDbWrite: false
 ```
 
-Routine dev: dry-run on / G-9g3g arm off / G-9g3g5 restore arm off.
+Routine dev: dry-run on / G-9g3g arm off / G-9g3g5 restore arm off until G-9g3h1a smoke.
 
 11. AI workflow transition
 チャット履歴への依存を減らすため、リポジトリ側に AI開発文脈管理ファイルを作成。

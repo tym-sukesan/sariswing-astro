@@ -3,21 +3,21 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 1. Immediate priority
 
-**Current phase:** `G-9g4a2-framework-single-text-field-operational-commonization-implementation` — **complete after C4** (uncommitted until C4 commit)
+**Current phase:** `G-9g4a2-framework-single-text-field-operational-commonization-implementation` — **complete** (committed and pushed — commit `d66bae7`)
 
-**Git:** branch `main`; HEAD = origin/main = `1c1fb32` (C3 — committed and pushed); **C4 doc/verifier/AI context uncommitted**
+**Git:** branch `main`; HEAD = origin/main = `d66bae7` (G-9g4a2 framework implementation — committed and pushed); working tree **clean**
 
-### G-9g4a2 framework implementation — complete after C4
+### G-9g4a2 framework implementation — complete
 
 | Item | Value |
 | --- | --- |
 | Doc | `staging-shell-schedule-single-text-field-operational-commonization-implementation.md` |
-| Status | **complete after C4** — C1 `1e643e7`, C2 `9c3714c`, C3 `1c1fb32` pushed; C4 uncommitted |
+| Status | **complete, committed, pushed** — C1 `1e643e7`, C2 `9c3714c`, C3 `1c1fb32`, C4 `d66bae7` |
 | C1 | registry + types + parameterized guards + generic config |
 | C2 | generic Save executor + open_time-only save delegate |
 | C3 | generic edit UI + open_time edit-ui delegate + Astro/binding wiring |
 | Target fields | `open_time`, `start_time`, `price` |
-| Verifiers | C1 69 / C2 34 / C3 47 / G-9g4a2a 83 / planning 39 passed |
+| Verifiers | C1 69 / C2 34 / C3 47 / G-9g4a2a 83 / planning 39 / implementation 43 passed |
 
 ### G-9g4a2a open_time-only round-trip — complete (historical)
 
@@ -49,11 +49,10 @@ cursorClickedPreview: false
 
 ## 2. Next steps
 
-1. **Commit C4** — implementation doc + final verifier + AI context (when operator approves)
-2. **Local / static verification** — re-run all G-9g4a2 verifiers; no DB write
-3. **Optional operator dry-run Preview** — `start_time` / `price` panels on staging shell only if explicitly approved; **no Save**
-4. **Gosaki schedule CMS practicalization** — client preview feedback, Top YouTube embed (G-9a), schedule read UX
-5. **Not** next: `start_time`-only manual non-dry-run execution slice
+1. **Local / static verification** — re-run all G-9g4a2 verifiers; no DB write
+2. **Optional operator dry-run Preview** — `start_time` / `price` panels on staging shell only if explicitly approved; **no Save**
+3. **Gosaki schedule CMS practicalization** — client preview feedback, Top YouTube embed (G-9a), schedule read UX
+4. **Not** next: `start_time`-only manual non-dry-run execution slice
 
 ## 3. Routine dev safety
 

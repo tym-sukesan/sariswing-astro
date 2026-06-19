@@ -21,6 +21,7 @@ import {
   type ScheduleUpdateWritePayload,
   type ScheduleWriteSafety,
 } from "./schedule-write-types";
+import type { SingleTextFieldOperationalField } from "../staging-data/staging-schedule-single-text-field-operational-registry";
 
 const ALLOWED_PAYLOAD_KEYS = new Set([
   "date",
@@ -588,6 +589,119 @@ export function buildG9G4a2aOpenTimeOnlyPayload(
     throw new Error("G-9g4a2a open_time cannot be empty.");
   }
   return { open_time: trimmed };
+}
+
+const SINGLE_TEXT_FIELD_SAFE_TEXT_KEYS = [
+  "venue",
+  "title",
+  "description",
+  "open_time",
+  "start_time",
+  "price",
+] as const;
+
+const SINGLE_TEXT_FIELD_METADATA_FORBIDDEN_KEYS = new Set([
+  "date",
+  "year",
+  "month",
+  "source_route",
+  "source_file",
+  "published",
+  "show_on_home",
+  "home_order",
+  "sort_order",
+  "image_url",
+  "home_image_url",
+  "id",
+  "legacy_id",
+  "site_slug",
+  "created_at",
+  "updated_at",
+]);
+
+function getSingleTextFieldForbiddenMutationKeys(fieldName: string): Set<string> {
+  const forbidden = new Set(SINGLE_TEXT_FIELD_METADATA_FORBIDDEN_KEYS);
+  for (const key of SINGLE_TEXT_FIELD_SAFE_TEXT_KEYS) {
+    if (key !== fieldName) {
+      forbidden.add(key);
+    }
+  }
+  return forbidden;
+}
+
+export function assertSingleTextFieldChangedFieldsOnly(
+  fieldName: string,
+  changedFields: string[],
+  label = "G-9g4a2",
+): void {
+  if (changedFields.length !== 1 || changedFields[0] !== fieldName) {
+    throw new Error(`${label} changedFields must be exactly ["${fieldName}"].`);
+  }
+}
+
+export function assertSingleTextFieldNoRouteDatePublicationImageMutation(
+  fieldName: string,
+  payload: ScheduleUpdateWritePayload,
+  label = "G-9g4a2",
+): void {
+  const forbidden = getSingleTextFieldForbiddenMutationKeys(fieldName);
+  for (const key of Object.keys(payload)) {
+    if (forbidden.has(key)) {
+      throw new Error(`${label} forbidden payload field: ${key}`);
+    }
+    if (key !== fieldName) {
+      throw new Error(`${label} disallowed payload field: ${key}`);
+    }
+  }
+}
+
+export function assertSingleTextFieldPayloadOnly(
+  fieldName: string,
+  payload: ScheduleUpdateWritePayload,
+  expectedChangedFields: string[],
+  validate: (value: string) => boolean,
+  label = "G-9g4a2",
+): void {
+  assertSingleTextFieldChangedFieldsOnly(fieldName, expectedChangedFields, label);
+  assertSingleTextFieldNoRouteDatePublicationImageMutation(fieldName, payload, label);
+  const keys = Object.keys(payload);
+  if (keys.length !== 1 || !keys.includes(fieldName)) {
+    throw new Error(`${label} payload must be exactly { ${fieldName}: string }.`);
+  }
+  const value = payload[fieldName as keyof ScheduleUpdateWritePayload];
+  if (typeof value !== "string" || !validate(value)) {
+    throw new Error(`${label} ${fieldName} must be a non-empty string.`);
+  }
+}
+
+export function assertSingleTextFieldApproval(
+  entry: Pick<SingleTextFieldOperationalField, "fieldName" | "approvalId">,
+  approvalId: string,
+  label = "G-9g4a2",
+): void {
+  if (approvalId !== entry.approvalId) {
+    throw new Error(`${label} approval ID mismatch for ${entry.fieldName}.`);
+  }
+}
+
+export function assertSingleTextFieldWritableRow(
+  row: ScheduleDryRunSource,
+  label = "G-9g4a2",
+): void {
+  assertOperationalNotPocAuditRow(row, label);
+}
+
+export function buildSingleTextFieldPayload(
+  fieldName: string,
+  rawValue: string,
+  validate: (value: string) => boolean,
+  label = "G-9g4a2",
+): ScheduleUpdateWritePayload {
+  const trimmed = rawValue.trim();
+  if (!validate(trimmed)) {
+    throw new Error(`${label} ${fieldName} cannot be empty.`);
+  }
+  return { [fieldName]: trimmed };
 }
 
 export function assertBeforeSnapshotSiteSlugScope(

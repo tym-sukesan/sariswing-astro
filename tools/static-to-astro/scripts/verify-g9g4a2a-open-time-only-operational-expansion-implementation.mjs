@@ -15,6 +15,8 @@ const NEXT_PHASE = "G-9g4a2a1-open-time-only-operational-expansion-preflight";
 const PRIOR_COMMIT = "0d80d7d";
 const APPROVAL_ID = "G-9g4a2a-schedule-site-slug-open-time-only-non-dry-run";
 const ENV_ARM = "PUBLIC_ADMIN_SCHEDULE_G9G4A2A_OPEN_TIME_ONLY_NON_DRY_RUN_ARMED";
+const START_TIME_ENV_ARM = "PUBLIC_ADMIN_SCHEDULE_G9G4A2B_START_TIME_ONLY_NON_DRY_RUN_ARMED";
+const PRICE_ENV_ARM = "PUBLIC_ADMIN_SCHEDULE_G9G4A2C_PRICE_ONLY_NON_DRY_RUN_ARMED";
 const G9G4A1_ENV_ARM = "PUBLIC_ADMIN_SCHEDULE_G9G4A1_VENUE_ONLY_NON_DRY_RUN_ARMED";
 const G9G3G_ENV_ARM = "PUBLIC_ADMIN_SCHEDULE_G9G3G_OPERATIONAL_GENERAL_EDIT_NON_DRY_RUN_ARMED";
 const G9G3G5_ENV_ARM = "PUBLIC_ADMIN_SCHEDULE_G9G3G5_OPERATIONAL_RESTORE_NON_DRY_RUN_ARMED";
@@ -40,6 +42,35 @@ function assert(label, condition) {
 
 function readRepo(relPath) {
   return fs.readFileSync(path.join(REPO_ROOT, relPath), "utf8");
+}
+
+/** Mirror registry helper — verifies open_time arm blocks sibling operational configs. */
+function collectOtherRegistryEnvArmFailures(env, exceptFieldName) {
+  const entries = [
+    { fieldName: "open_time", envArm: ENV_ARM },
+    { fieldName: "start_time", envArm: START_TIME_ENV_ARM },
+    { fieldName: "price", envArm: PRICE_ENV_ARM },
+  ];
+  const failures = [];
+  for (const entry of entries) {
+    if (exceptFieldName && entry.fieldName === exceptFieldName) continue;
+    if (String(env[entry.envArm] ?? "").trim() === "true") {
+      failures.push(`${entry.envArm} must be off`);
+    }
+  }
+  return failures;
+}
+
+function assertConfigUsesRegistryMutualExclusion(configSrc, configLabel) {
+  assert(
+    `${configLabel} imports registry mutual exclusion helper`,
+    configSrc.includes("collectOtherRegistryEnvArmFailures") &&
+      configSrc.includes("staging-schedule-single-text-field-operational-registry"),
+  );
+  assert(
+    `${configLabel} applies registry mutual exclusion on mergedEnv`,
+    configSrc.includes("collectOtherRegistryEnvArmFailures(mergedEnv)"),
+  );
 }
 
 const docPath = path.join(TOOL_ROOT, `docs/${DOC_NAME}`);
@@ -68,6 +99,9 @@ const g9g3gConfigSrc = readRepo(
 );
 const g9g3g5ConfigSrc = readRepo(
   "src/lib/admin/staging-data/staging-schedule-site-slug-operational-restore-config.ts",
+);
+const registrySrc = readRepo(
+  "src/lib/admin/staging-data/staging-schedule-single-text-field-operational-registry.ts",
 );
 const reclickSrc = readRepo(
   "src/lib/admin/staging-data/staging-schedule-site-slug-operational-save-reclick.ts",
@@ -152,21 +186,46 @@ assert(
 );
 assert("buildG9G4a2aOpenTimeOnlyPayload", guardsSrc.includes("buildG9G4a2aOpenTimeOnlyPayload"));
 assert("env arm in config", configSrc.includes(ENV_ARM));
+assert("open_time approvalId unchanged in site-slug-config", configSrc.includes(APPROVAL_ID));
+assert("open_time preview btn id unchanged", configSrc.includes(PREVIEW_BTN_ID));
+assert("open_time uiIdPrefix unchanged in registry", registrySrc.includes("site-slug-edit-g9g4a2a-open-time-only"));
+
+assert("registry includes open_time env arm", registrySrc.includes("SCHEDULE_G9G4A2A_OPEN_TIME_ONLY_NON_DRY_RUN_ARMED_ENV"));
+assert("registry includes start_time env arm", registrySrc.includes("SCHEDULE_G9G4A2B_START_TIME_ONLY_NON_DRY_RUN_ARMED_ENV"));
+assert("registry includes price env arm", registrySrc.includes("SCHEDULE_G9G4A2C_PRICE_ONLY_NON_DRY_RUN_ARMED_ENV"));
+assert("registry open_time env arm constant resolves to expected value", configSrc.includes(ENV_ARM));
+assert("registry start_time env arm constant resolves to expected value", configSrc.includes(START_TIME_ENV_ARM));
+assert("registry price env arm constant resolves to expected value", configSrc.includes(PRICE_ENV_ARM));
 assert(
-  "g9g4a2a mutual exclusion in g9g3g config",
-  g9g3gConfigSrc.includes("SCHEDULE_G9G4A2A_OPEN_TIME_ONLY_NON_DRY_RUN_ARMED_ENV") &&
-    g9g3gConfigSrc.includes("must be off"),
+  "registry mutual exclusion helper emits must be off",
+  registrySrc.includes("collectOtherRegistryEnvArmFailures") && registrySrc.includes("must be off"),
 );
 assert(
-  "g9g4a2a mutual exclusion in g9g3g5 config",
-  g9g3g5ConfigSrc.includes("SCHEDULE_G9G4A2A_OPEN_TIME_ONLY_NON_DRY_RUN_ARMED_ENV") &&
-    g9g3g5ConfigSrc.includes("must be off"),
+  "registry detects multiple arms",
+  registrySrc.includes("detectMultipleRegistryEnvArms"),
+);
+
+assertConfigUsesRegistryMutualExclusion(g9g3gConfigSrc, "g9g3g");
+assertConfigUsesRegistryMutualExclusion(g9g3g5ConfigSrc, "g9g3g5");
+assertConfigUsesRegistryMutualExclusion(venueConfigSrc, "g9g4a1");
+
+const openTimeArmBlocksG9g3g = collectOtherRegistryEnvArmFailures({
+  [ENV_ARM]: "true",
+}).some((f) => f.includes(ENV_ARM));
+assert("open_time registry arm blocks g9g3g via helper contract", openTimeArmBlocksG9g3g);
+assert(
+  "start_time registry arm included in mutual exclusion helper",
+  collectOtherRegistryEnvArmFailures({ [START_TIME_ENV_ARM]: "true" }).some((f) =>
+    f.includes(START_TIME_ENV_ARM),
+  ),
 );
 assert(
-  "g9g4a2a mutual exclusion in g9g4a1 config",
-  venueConfigSrc.includes("SCHEDULE_G9G4A2A_OPEN_TIME_ONLY_NON_DRY_RUN_ARMED_ENV") &&
-    venueConfigSrc.includes("must be off"),
+  "price registry arm included in mutual exclusion helper",
+  collectOtherRegistryEnvArmFailures({ [PRICE_ENV_ARM]: "true" }).some((f) =>
+    f.includes(PRICE_ENV_ARM),
+  ),
 );
+
 assert(
   "g9g4a1 mutual exclusion in g9g4a2a config",
   operationalConfigSrc.includes("SCHEDULE_G9G4A1_VENUE_ONLY_NON_DRY_RUN_ARMED_ENV") &&

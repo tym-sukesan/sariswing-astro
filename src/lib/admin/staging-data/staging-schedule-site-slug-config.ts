@@ -297,6 +297,64 @@ export const G9G4A2A_OPEN_TIME_ONLY_SAVE_RESULT_ID =
 export const G9G4A2A_OPEN_TIME_ONLY_SAVE_DISABLED_DEFAULT_REASON =
   "G-9g4a2a open_time-only Save disabled — arm not configured (routine dev safety)";
 
+export const G9G4A2B_PHASE = "G-9g4a2b-start-time-only-operational-expansion-implementation";
+
+export const G9G4A2B_START_TIME_ONLY_NON_DRY_RUN_APPROVAL_ID =
+  "G-9g4a2b-schedule-site-slug-start-time-only-non-dry-run";
+
+export const SCHEDULE_G9G4A2B_START_TIME_ONLY_NON_DRY_RUN_ARMED_ENV =
+  "PUBLIC_ADMIN_SCHEDULE_G9G4A2B_START_TIME_ONLY_NON_DRY_RUN_ARMED";
+
+export const G9G4A2B_START_TIME_ONLY_CHANGED_FIELDS = ["start_time"] as const;
+
+export const G9G4A2B_START_TIME_ONLY_PREVIEW_BTN_ID =
+  "site-slug-edit-g9g4a2b-start-time-only-dry-run-preview-btn";
+
+export const G9G4A2B_START_TIME_ONLY_PREVIEW_RESULT_ID =
+  "site-slug-edit-g9g4a2b-start-time-only-dry-run-result";
+
+export const G9G4A2B_START_TIME_ONLY_SAVE_GATE_PANEL_ID =
+  "site-slug-edit-g9g4a2b-start-time-only-save-gate-panel";
+
+export const G9G4A2B_START_TIME_ONLY_SAVE_BTN_ID =
+  "site-slug-edit-g9g4a2b-start-time-only-save-btn";
+
+export const G9G4A2B_START_TIME_ONLY_SAVE_RESULT_ID =
+  "site-slug-edit-g9g4a2b-start-time-only-save-result";
+
+/** Routine dev default — start_time-only Save stays disabled until explicit G-9g4a2b arm. */
+export const G9G4A2B_START_TIME_ONLY_SAVE_DISABLED_DEFAULT_REASON =
+  "G-9g4a2b start_time-only Save disabled — arm not configured (routine dev safety)";
+
+export const G9G4A2C_PHASE = "G-9g4a2c-price-only-operational-expansion-implementation";
+
+export const G9G4A2C_PRICE_ONLY_NON_DRY_RUN_APPROVAL_ID =
+  "G-9g4a2c-schedule-site-slug-price-only-non-dry-run";
+
+export const SCHEDULE_G9G4A2C_PRICE_ONLY_NON_DRY_RUN_ARMED_ENV =
+  "PUBLIC_ADMIN_SCHEDULE_G9G4A2C_PRICE_ONLY_NON_DRY_RUN_ARMED";
+
+export const G9G4A2C_PRICE_ONLY_CHANGED_FIELDS = ["price"] as const;
+
+export const G9G4A2C_PRICE_ONLY_PREVIEW_BTN_ID =
+  "site-slug-edit-g9g4a2c-price-only-dry-run-preview-btn";
+
+export const G9G4A2C_PRICE_ONLY_PREVIEW_RESULT_ID =
+  "site-slug-edit-g9g4a2c-price-only-dry-run-result";
+
+export const G9G4A2C_PRICE_ONLY_SAVE_GATE_PANEL_ID =
+  "site-slug-edit-g9g4a2c-price-only-save-gate-panel";
+
+export const G9G4A2C_PRICE_ONLY_SAVE_BTN_ID =
+  "site-slug-edit-g9g4a2c-price-only-save-btn";
+
+export const G9G4A2C_PRICE_ONLY_SAVE_RESULT_ID =
+  "site-slug-edit-g9g4a2c-price-only-save-result";
+
+/** Routine dev default — price-only Save stays disabled until explicit G-9g4a2c arm. */
+export const G9G4A2C_PRICE_ONLY_SAVE_DISABLED_DEFAULT_REASON =
+  "G-9g4a2c price-only Save disabled — arm not configured (routine dev safety)";
+
 export const G9G3H1_SAVE_RECLICK_GUARD_MSG =
   "Operational Save re-click blocked — preview consumed by prior successful Save.";
 

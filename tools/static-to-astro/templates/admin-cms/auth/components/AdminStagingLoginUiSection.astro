@@ -11,11 +11,13 @@ import AdminRoleAllowlistStatusPanel from "./AdminRoleAllowlistStatusPanel.astro
 interface Props {
   routePath?: string;
   phase?: string;
+  operatorMode?: boolean;
 }
 
 const {
   routePath = "/__admin-staging-shell/musician-basic/",
   phase = "G-5y-e-a",
+  operatorMode = false,
 } = Astro.props;
 
 const authConfig = getStagingAuthConfig();
@@ -29,10 +31,16 @@ const authConfig = getStagingAuthConfig();
   data-approval-id={authConfig.approvalId}
   data-auth-mode={authConfig.authMode}
 >
-  <AdminRoleAllowlistStatusPanel phase={phase} />
-  <AdminLoginShell phase={phase} authConfig={authConfig} />
-  <AdminStagingPasswordResetCallback phase="G-6-d-staging-password-reset-callback" />
-  <AdminAuthGuardPlannedNotice currentRoute={routePath} phase={phase} />
+  {operatorMode ? null : <AdminRoleAllowlistStatusPanel phase={phase} />}
+  <AdminLoginShell phase={phase} authConfig={authConfig} operatorMode={operatorMode} />
+  {
+    operatorMode ? null : (
+      <>
+        <AdminStagingPasswordResetCallback phase="G-6-d-staging-password-reset-callback" />
+        <AdminAuthGuardPlannedNotice currentRoute={routePath} phase={phase} />
+      </>
+    )
+  }
 </div>
 
 <script>

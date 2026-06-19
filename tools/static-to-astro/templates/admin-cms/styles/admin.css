@@ -362,6 +362,35 @@
   cursor: not-allowed;
 }
 
+.admin-button--menu {
+  display: block;
+  width: 100%;
+  min-height: 3.25rem;
+  padding: 0.85rem 1rem;
+  font-size: 1.125rem;
+  font-weight: 500;
+  color: var(--admin-color-text);
+  background: var(--admin-color-surface);
+  border: 1px solid #ccc;
+  border-radius: var(--admin-radius);
+  text-align: center;
+  text-decoration: none;
+}
+
+.admin-button--menu:hover {
+  color: #444;
+  background: #fafafa;
+  border-color: #999;
+}
+
+.admin-button--menu.is-disabled {
+  color: #999;
+  background: #f8fafc;
+  border-color: #e2e8f0;
+  cursor: default;
+  pointer-events: none;
+}
+
 /* G-5m-a — CRUD primitives + module UI */
 
 .admin-edit-form__title {
@@ -1263,4 +1292,171 @@
     margin-left: 0;
     width: 100%;
   }
+}
+
+/* Gosaki staging shell operator UI (Sariswing /admin inspired) */
+
+.admin-gosaki-page-header {
+  margin: 0 0 1.5rem;
+  padding-top: 0.5rem;
+}
+
+.admin-gosaki-page-header--with-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem 1.5rem;
+}
+
+.admin-gosaki-page-header__title {
+  margin: 0;
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  font-weight: 500;
+  line-height: 1.35;
+  color: #333;
+  letter-spacing: 0.04em;
+}
+
+.admin-gosaki-page-header__subtitle {
+  margin: 0.5rem 0 0;
+  font-size: 0.95rem;
+  color: var(--admin-color-muted);
+  line-height: 1.6;
+}
+
+.admin-gosaki-back-link {
+  display: inline-block;
+  margin: 0 0 0.75rem;
+  font-size: 0.95rem;
+  color: #888;
+  text-decoration: none;
+}
+
+.admin-gosaki-back-link:hover {
+  color: #333;
+}
+
+.admin-gosaki-publish-bar {
+  margin: 0 0 1.25rem;
+  padding: 1rem 1.15rem;
+  border: 1px solid #e0e0e0;
+  border-radius: var(--admin-radius);
+  background: #fff;
+}
+
+.admin-gosaki-publish-bar__label {
+  margin: 0 0 0.35rem;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #333;
+}
+
+.admin-gosaki-publish-bar__note {
+  margin: 0 0 0.75rem;
+  font-size: 0.9rem;
+  color: var(--admin-color-muted);
+  line-height: 1.5;
+}
+
+.admin-gosaki-notice {
+  margin: 0 0 1rem;
+  padding: 0.85rem 1rem;
+  border-radius: var(--admin-radius);
+  font-size: 0.92rem;
+  line-height: 1.55;
+}
+
+.admin-gosaki-notice--info {
+  border: 1px solid #bfdbfe;
+  background: #eff6ff;
+  color: #1e3a5f;
+}
+
+.admin-gosaki-notice--warning {
+  border: 1px solid #fde68a;
+  background: #fffbeb;
+  color: #78350f;
+}
+
+.admin-gosaki-operator-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  margin-bottom: 1rem;
+}
+
+.admin-gosaki-card__title {
+  margin: 0 0 0.75rem;
+  padding-bottom: 0.65rem;
+  border-bottom: 1px solid #eee;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #333;
+}
+
+.admin-gosaki-list,
+.admin-gosaki-steps {
+  margin: 0;
+  padding-left: 1.25rem;
+  line-height: 1.6;
+}
+
+.admin-gosaki-menu {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.admin-gosaki-menu-hint {
+  margin: 1rem 0 0;
+  font-size: 0.85rem;
+  color: var(--admin-color-muted);
+  line-height: 1.5;
+}
+
+.admin-gosaki-form-hint,
+.admin-gosaki-static-notice {
+  margin: 0 0 1rem;
+  font-size: 0.92rem;
+  color: var(--admin-color-muted);
+  line-height: 1.6;
+}
+
+.admin-gosaki-dl {
+  margin: 0;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.admin-gosaki-dl dt {
+  font-weight: 700;
+  color: #333;
+}
+
+.admin-gosaki-dl dd {
+  margin: 0.2rem 0 0;
+  color: var(--admin-color-muted);
+  line-height: 1.5;
+}
+
+.admin-gosaki-dev-tools {
+  margin: 1rem 0 1.5rem;
+  padding: 0.75rem 1rem;
+  border: 1px dashed #cbd5e1;
+  border-radius: var(--admin-radius);
+  background: #f8fafc;
+}
+
+.admin-gosaki-dev-tools > summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: #475569;
+}
+
+.admin-login-shell__grid--operator {
+  grid-template-columns: 1fr;
+  max-width: 36rem;
 }

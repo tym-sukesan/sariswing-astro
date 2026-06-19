@@ -1,0 +1,117 @@
+---
+/**
+ * Gosaki staging shell operator home (Sariswing /admin/ inspired).
+ * Staging shell only — not production /admin/.
+ */
+interface Props {
+  routePath?: string;
+  previewUrl?: string;
+}
+
+const {
+  routePath = "/__admin-staging-shell/musician-basic/",
+  previewUrl = "https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/",
+} = Astro.props;
+---
+
+<section
+  id="gosaki-home"
+  class="admin-gosaki-operator-home admin-prototype-section"
+  data-section="gosaki-home"
+  aria-label="Gosaki Piano 管理画面トップ"
+>
+  <section class="admin-gosaki-publish-bar" aria-label="公開サイトの更新（未開放）">
+    <p class="admin-gosaki-publish-bar__label">公開サイトを更新</p>
+    <p class="admin-gosaki-publish-bar__note">
+      本番反映・自動デプロイは<strong>まだ開放していません</strong>。プレビュー確認と管理画面の動作確認が目的です。
+    </p>
+    <button type="button" class="admin-button admin-button-secondary" disabled>
+      公開サイトを更新（準備中）
+    </button>
+  </section>
+
+  <header class="admin-gosaki-page-header admin-gosaki-page-header--with-actions">
+    <div>
+      <h1 class="admin-gosaki-page-header__title">Gosaki Piano 管理画面</h1>
+      <p class="admin-gosaki-page-header__subtitle">
+        ステージング検証用 — ローカル開発環境のみ（本番 <code>/admin/</code> ではありません）
+      </p>
+    </div>
+    <button
+      type="button"
+      class="admin-button admin-button-secondary admin-gosaki-logout-btn"
+      data-staging-sign-out
+      hidden
+    >
+      ログアウト
+    </button>
+  </header>
+
+  <div class="admin-gosaki-notice admin-gosaki-notice--info" role="note">
+    <strong>これはステージング検証用です。</strong>
+    保存（Save）・本番公開・FTP アップロードは承認制のため、通常は無効です。まずは内容の確認とプレビュー URL の共有を行ってください。
+  </div>
+
+  <div class="admin-gosaki-operator-grid">
+    <section class="admin-card admin-gosaki-card">
+      <h2 class="admin-gosaki-card__title">いまできること</h2>
+      <ul class="admin-gosaki-list">
+        <li>ログイン（ステージング Supabase Auth が有効な場合）</li>
+        <li>スケジュールデータの<strong>読み取り</strong>（<code>site_slug=gosaki-piano</code>）</li>
+        <li>行の選択とフィールド内容の<strong>確認</strong></li>
+        <li>プレビューサイト URL の確認</li>
+      </ul>
+    </section>
+
+    <section class="admin-card admin-gosaki-card">
+      <h2 class="admin-gosaki-card__title">まだできないこと</h2>
+      <ul class="admin-gosaki-list">
+        <li>スケジュールの保存（Save）— 承認制・通常は無効</li>
+        <li>本番サイト（gosaki-piano.com）への反映</li>
+        <li>YouTube 埋め込みの CMS 更新</li>
+        <li>お問い合わせフォームの送信設定</li>
+      </ul>
+    </section>
+  </div>
+
+  <section class="admin-card admin-gosaki-card admin-gosaki-menu-card">
+    <h2 class="admin-gosaki-card__title">メニュー</h2>
+    <nav aria-label="Gosaki 管理メニュー">
+      <ul class="admin-gosaki-menu">
+        <li>
+          <a class="admin-button admin-button--menu" href="#schedule">
+            Schedule管理
+          </a>
+        </li>
+        <li>
+          <a
+            class="admin-button admin-button--menu"
+            href={previewUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Preview確認（別タブ）
+          </a>
+        </li>
+        <li>
+          <span class="admin-button admin-button--menu is-disabled" aria-disabled="true">
+            YouTube設定（次フェーズ）
+          </span>
+        </li>
+        <li>
+          <span class="admin-button admin-button--menu is-disabled" aria-disabled="true">
+            サイト情報確認（準備中）
+          </span>
+        </li>
+        <li>
+          <span class="admin-button admin-button--menu is-disabled" aria-disabled="true">
+            本番反映（未開放）
+          </span>
+        </li>
+      </ul>
+    </nav>
+    <p class="admin-gosaki-menu-hint">
+      管理画面 URL（開発時）: <code>{routePath}</code> — セクション <code>#schedule</code> でスケジュール管理へ
+    </p>
+  </section>
+</section>

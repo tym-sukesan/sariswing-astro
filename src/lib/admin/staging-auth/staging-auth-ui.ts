@@ -27,6 +27,12 @@ function setError(message: string): void {
   el.hidden = !message;
 }
 
+function setSignOutButtonsVisible(visible: boolean): void {
+  document.querySelectorAll<HTMLElement>("[data-staging-sign-out]").forEach((btn) => {
+    btn.hidden = !visible;
+  });
+}
+
 export async function refreshAuthStatusPanel(): Promise<void> {
   const config = getStagingAuthConfig();
   setText("staging-auth-mode", config.authMode);
@@ -47,8 +53,9 @@ export async function refreshAuthStatusPanel(): Promise<void> {
     setText("staging-auth-user-id", "—");
     setText("staging-auth-role", "—");
     setError(
-      "Supabase Auth config missing. Set PUBLIC_SUPABASE_URL and PUBLIC_SUPABASE_ANON_KEY locally.",
+      "Supabase Auth の設定が不足しています。PUBLIC_SUPABASE_URL と PUBLIC_SUPABASE_ANON_KEY をローカルに設定してください。",
     );
+    setSignOutButtonsVisible(false);
     await refreshAuthWriteDebugPanel();
     return;
   }
@@ -67,9 +74,10 @@ export async function refreshAuthStatusPanel(): Promise<void> {
     );
     setError(
       blockers.length > 0
-        ? `Real Supabase Auth disabled: ${formatGateBlockers(blockers)}`
+        ? `実ログインは無効です: ${formatGateBlockers(blockers)}`
         : "",
     );
+    setSignOutButtonsVisible(false);
     await refreshRoleAllowlistPanel();
     await refreshAuthWriteDebugPanel();
     return;
@@ -112,10 +120,10 @@ export async function refreshAuthStatusPanel(): Promise<void> {
         ? "denied (mock allowlist only — admin_users not queried)"
         : (details.session.role ?? "—"),
     );
-    const signOutBtn = document.getElementById("staging-sign-out-btn");
-    if (signOutBtn) {
-      signOutBtn.hidden = display.status !== "authenticated";
-    }
+    const signOutButtons = document.querySelectorAll<HTMLElement>("[data-staging-sign-out]");
+    signOutButtons.forEach((btn) => {
+      btn.hidden = display.status !== "authenticated";
+    });
     if (display.status === "recovery-error") {
       setError(display.detail);
     } else if (display.status === "unauthenticated") {
@@ -133,8 +141,24 @@ export async function refreshAuthStatusPanel(): Promise<void> {
 function wireLoginForm(): void {
   const form = document.getElementById("staging-admin-login-form");
   const loginBtn = document.getElementById("staging-login-submit");
-  const signOutBtn = document.getElementById("staging-sign-out-btn");
+  const signOutButtons = document.querySelectorAll<HTMLButtonElement>("[data-staging-sign-out]");
   if (!form || !loginBtn) return;
+
+  const handleSignOut = async (signOutBtn: HTMLButtonElement) => {
+    const config = getStagingAuthConfig();
+    if (!config.stagingAuthEnabled || !config.supabaseConfigured) return;
+    setError("");
+    signOutBtn.setAttribute("disabled", "true");
+    try {
+      await signOutStagingAuth(config.supabaseUrl, config.supabaseAnonKey);
+      await refreshAuthStatusPanel();
+      await refreshRoleAllowlistPanel();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Sign out failed.");
+    } finally {
+      signOutBtn.removeAttribute("disabled");
+    }
+  };
 
   loginBtn.addEventListener("click", async () => {
     const config = getStagingAuthConfig();
@@ -166,20 +190,10 @@ function wireLoginForm(): void {
     }
   });
 
-  signOutBtn?.addEventListener("click", async () => {
-    const config = getStagingAuthConfig();
-    if (!config.stagingAuthEnabled || !config.supabaseConfigured) return;
-    setError("");
-    signOutBtn.setAttribute("disabled", "true");
-    try {
-      await signOutStagingAuth(config.supabaseUrl, config.supabaseAnonKey);
-      await refreshAuthStatusPanel();
-      await refreshRoleAllowlistPanel();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Sign out failed.");
-    } finally {
-      signOutBtn.removeAttribute("disabled");
-    }
+  signOutButtons.forEach((signOutBtn) => {
+    signOutBtn.addEventListener("click", () => {
+      void handleSignOut(signOutBtn);
+    });
   });
 }
 

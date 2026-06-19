@@ -10,6 +10,7 @@ interface Props {
   siteName?: string;
   currentSection?: string;
   stagingLabel?: string;
+  brandHref?: string;
 }
 
 const {
@@ -17,6 +18,7 @@ const {
   siteName = "CMS Kit Admin",
   currentSection = "",
   stagingLabel = "Scaffold only",
+  brandHref = "#",
 } = Astro.props;
 
 const fullTitle = currentSection ? `${title} | ${siteName}` : `${siteName} | ${title}`;
@@ -33,7 +35,7 @@ const fullTitle = currentSection ? `${title} | ${siteName}` : `${siteName} | ${t
   <body class="admin-body">
     <div class="admin-shell">
       <header class="admin-header">
-        <a class="admin-header__brand" href="#">{siteName}</a>
+        <a class="admin-header__brand" href={brandHref}>{siteName}</a>
         <div class="admin-header__meta">
           <slot name="nav" />
           {stagingLabel ? <span class="admin-badge">{stagingLabel}</span> : null}

@@ -1,0 +1,82 @@
+---
+/**
+ * Gosaki Schedule 管理の運用者向け導入（Sariswing /admin/schedule/ 参考）。
+ */
+interface Props {
+  homeHref?: string;
+  previewUrl?: string;
+}
+
+const {
+  homeHref = "#gosaki-home",
+  previewUrl = "https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/schedule/",
+} = Astro.props;
+---
+
+<div class="admin-gosaki-schedule-intro" id="gosaki-schedule-intro">
+  <header class="admin-gosaki-page-header admin-gosaki-page-header--with-actions">
+    <div>
+      <a class="admin-gosaki-back-link" href={homeHref}>← 管理画面トップへ</a>
+      <h1 class="admin-gosaki-page-header__title">Schedule管理</h1>
+      <p class="admin-gosaki-page-header__subtitle">
+        Gosaki Piano（<code>site_slug=gosaki-piano</code>）のライブ情報を確認する画面です。
+      </p>
+    </div>
+    <button
+      type="button"
+      class="admin-button admin-button-secondary admin-gosaki-logout-btn"
+      data-staging-sign-out
+      hidden
+    >
+      ログアウト
+    </button>
+  </header>
+
+  <p class="admin-gosaki-form-hint admin-gosaki-static-notice">
+    公開プレビュー（
+    <a href={previewUrl} target="_blank" rel="noopener noreferrer">スケジュールページ</a>
+    ）は静的 HTML です。ここでの変更をサイトに反映するには、将来の承認済み Save と再ビルド・手動アップロードが必要です。
+    <strong>今は確認用です。保存はまだ承認制です。</strong>
+  </p>
+
+  <section class="admin-card admin-gosaki-card">
+    <h2 class="admin-gosaki-card__title">この画面の使い方</h2>
+    <ol class="admin-gosaki-steps">
+      <li>下の「行を選択」から確認したい公演を選びます。</li>
+      <li>
+        <strong>会場（venue）</strong>・<strong>開場（open_time）</strong>・<strong>開演（start_time）</strong>・<strong>料金（price）</strong>
+        の意味を確認します。
+      </li>
+      <li>Preview ボタンは<strong>承認がある場合のみ</strong>オペレータが手動で使います（AI 自動操作はしません）。</li>
+      <li>
+        Save は<strong>通常無効</strong>です（<code>PUBLIC_ADMIN_WRITE_DRY_RUN=true</code>）。非 dry-run の保存は別フェーズの明示承認が必要です。
+      </li>
+    </ol>
+  </section>
+
+  <section class="admin-card admin-gosaki-card admin-gosaki-field-legend">
+    <h2 class="admin-gosaki-card__title">フィールドの意味</h2>
+    <dl class="admin-gosaki-dl">
+      <div>
+        <dt>会場（venue）</dt>
+        <dd>公演会場名。Wix 由来の表記をそのまま保持している場合があります。</dd>
+      </div>
+      <div>
+        <dt>開場（open_time）</dt>
+        <dd>ドアオープン時刻（例: 18:00 / OPEN 18:00）。</dd>
+      </div>
+      <div>
+        <dt>開演（start_time）</dt>
+        <dd>演奏開始時刻（例: 19:30 / START 19:30）。</dd>
+      </div>
+      <div>
+        <dt>料金（price）</dt>
+        <dd>入場料・CHARGE 表記など。</dd>
+      </div>
+    </dl>
+  </section>
+
+  <div class="admin-gosaki-notice admin-gosaki-notice--warning" role="note">
+    <strong>開発者向け PoC パネル</strong>はこの下にあります。通常の運用確認では「行選択」「読み取り」「フィールド表示」までで十分です。
+  </div>
+</div>

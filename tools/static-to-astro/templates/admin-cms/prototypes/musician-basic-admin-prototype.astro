@@ -60,6 +60,8 @@ import { resolveGosakiScheduleSiteSlugEditBinding } from "../../../../../src/lib
 import DiscographyAdminUi from "../modules/DiscographyAdminUi.astro";
 import LinksAdminUi from "../modules/LinksAdminUi.astro";
 import NewsAdminUi from "../modules/NewsAdminUi.astro";
+import AdminGosakiStagingOperatorHome from "../gosaki/components/AdminGosakiStagingOperatorHome.astro";
+import AdminGosakiStagingScheduleOperatorIntro from "../gosaki/components/AdminGosakiStagingScheduleOperatorIntro.astro";
 
 interface Props {
   localPreviewMode?: boolean;
@@ -83,7 +85,8 @@ const stagingServerGatesJson = stagingServerGates
   ? JSON.stringify(stagingServerGates)
   : null;
 
-const siteName = "Example Musician";
+const siteName = stagingShellMode ? "Gosaki Piano" : "Example Musician";
+const gosakiPreviewUrl = "https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/";
 const templateId = "musician-basic";
 
 const navItems = [
@@ -281,9 +284,10 @@ const moduleSummary = [
   title="Admin"
   siteName={siteName}
   currentSection="dashboard"
+  brandHref={stagingShellMode ? "#gosaki-home" : "#"}
   stagingLabel={
     stagingShellMode
-      ? `${templateId} STAGING RUNTIME SHELL (G-5x) — shell-only`
+      ? `Gosaki staging shell — 検証用（本番 /admin ではありません）`
       : localPreviewMode
         ? `${templateId} LOCAL PREVIEW (G-5u) — scaffold only`
         : `${templateId} admin prototype (G-5p)`
@@ -295,9 +299,9 @@ const moduleSummary = [
     stagingShellMode ? (
       <div class="admin-staging-status-group" slot="status">
         <AdminStatusMessage
-          type="error"
-          title="Staging runtime shell — Shell-only — Mock/static data only — Actions disabled"
-          message={`Route ${stagingShellRoutePath} is a staging runtime shell candidate (G-5x). Not connected to /admin/. Read-only data adapter mock-only (G-5z-b). Supabase Auth env-gated (G-5y-d). Role/allowlist mock-only (G-5y-e-a). No DB query or update. No Storage upload. No GitHub dispatch. No FTP deploy. Production disabled.`}
+          type="warning"
+          title="ステージング検証用シェル"
+          message={`${stagingShellRoutePath} は Gosaki Piano 向けのローカル検証用です。Sariswing 本番 /admin は変更していません。Save・本番反映・FTP は通常無効です。`}
         />
         <AdminAuthAdapterStatusPanel phase="G-5y-e-a" authConfig={stagingAuthConfig} />
       </div>
@@ -330,67 +334,68 @@ const moduleSummary = [
           class="admin-prototype-section admin-staging-login-section"
           data-section="auth-login-shell"
         >
-          <AdminStagingLoginUiSection routePath={stagingShellRoutePath} phase="G-5y-e-a" />
+          <AdminStagingLoginUiSection
+            routePath={stagingShellRoutePath}
+            phase="gosaki-admin-ui-and-login-flow-practicalization"
+            operatorMode={true}
+          />
         </section>
       ) : null
     }
     {
       stagingShellMode ? (
-        <section
-          id="auth-write-debug-shell"
-          class="admin-prototype-section admin-staging-auth-write-debug-section"
-          data-section="auth-write-debug-shell"
-        >
-          <AdminStagingAuthWriteDebugPanel phase="G-6-d-hardening" />
-        </section>
+        <AdminGosakiStagingOperatorHome
+          routePath={stagingShellRoutePath}
+          previewUrl={gosakiPreviewUrl}
+        />
       ) : null
     }
     {
       stagingShellMode ? (
-        <section
-          id="readonly-data-shell"
-          class="admin-prototype-section admin-staging-readonly-data-section"
-          data-section="readonly-data-shell"
-        >
-          <AdminStagingReadOnlyDataSection phase="G-5z-d" />
-        </section>
+        <details class="admin-gosaki-dev-tools">
+          <summary>開発者向けパネル（PoC / デバッグ — 通常の運用確認では開かなくて構いません）</summary>
+          <section
+            id="auth-write-debug-shell"
+            class="admin-prototype-section admin-staging-auth-write-debug-section"
+            data-section="auth-write-debug-shell"
+          >
+            <AdminStagingAuthWriteDebugPanel phase="G-6-d-hardening" />
+          </section>
+          <section
+            id="readonly-data-shell"
+            class="admin-prototype-section admin-staging-readonly-data-section"
+            data-section="readonly-data-shell"
+          >
+            <AdminStagingReadOnlyDataSection phase="G-5z-d" />
+          </section>
+          <section
+            id="disabled-write-actions-shell-section"
+            class="admin-prototype-section admin-staging-disabled-write-section"
+            data-section="disabled-write-actions-shell"
+          >
+            <AdminStagingDisabledWriteActionsSection phase="G-6-c" />
+          </section>
+          <section
+            id="profile-update-poc-shell-section"
+            class="admin-prototype-section admin-staging-profile-update-poc-section"
+            data-section="profile-update-poc-shell"
+          >
+            <AdminStagingProfileUpdatePocSection phase="G-6-d" />
+          </section>
+          <section
+            id="schedule-dry-run-poc-shell-section"
+            class="admin-prototype-section admin-staging-schedule-dry-run-poc-section"
+            data-section="schedule-dry-run-poc-shell"
+          >
+            <AdminStagingScheduleDryRunPocSection phase="G-6-e2-schedule-dry-run-ui-scaffold" />
+            <AdminStagingScheduleNonDryRunPocCompletedNotice />
+            <AdminStagingScheduleNonDryRunPocTriggerSection />
+          </section>
+        </details>
       ) : null
     }
     {
-      stagingShellMode ? (
-        <section
-          id="disabled-write-actions-shell-section"
-          class="admin-prototype-section admin-staging-disabled-write-section"
-          data-section="disabled-write-actions-shell"
-        >
-          <AdminStagingDisabledWriteActionsSection phase="G-6-c" />
-        </section>
-      ) : null
-    }
-    {
-      stagingShellMode ? (
-        <section
-          id="profile-update-poc-shell-section"
-          class="admin-prototype-section admin-staging-profile-update-poc-section"
-          data-section="profile-update-poc-shell"
-        >
-          <AdminStagingProfileUpdatePocSection phase="G-6-d" />
-        </section>
-      ) : null
-    }
-    {
-      stagingShellMode ? (
-        <section
-          id="schedule-dry-run-poc-shell-section"
-          class="admin-prototype-section admin-staging-schedule-dry-run-poc-section"
-          data-section="schedule-dry-run-poc-shell"
-        >
-          <AdminStagingScheduleDryRunPocSection phase="G-6-e2-schedule-dry-run-ui-scaffold" />
-          <AdminStagingScheduleNonDryRunPocCompletedNotice />
-          <AdminStagingScheduleNonDryRunPocTriggerSection />
-        </section>
-      ) : null
-    }
+      stagingShellMode ? null : (
     <section id="dashboard" class="admin-prototype-section" data-section="dashboard">
       <AdminPageHeader
         title="Dashboard"
@@ -449,29 +454,31 @@ const moduleSummary = [
         </AdminCard>
       </div>
     </section>
-
-    <section id="profile" class="admin-prototype-section" data-section="profile">
-      <ProfileAdminUi
-        profile={profile}
-        siteName={siteName}
-        readonly={true}
-        stagingWritePoc={stagingShellMode}
-      />
-    </section>
+      )
+    }
 
     <section id="schedule" class="admin-prototype-section" data-section="schedule">
-      <ScheduleAdminUi
-        items={scheduleUiBinding.items}
-        siteName={siteName}
-        readonly={true}
-        readSource={scheduleUiBinding.source}
-        readMessage={scheduleUiBinding.message}
-        dataReadEnabled={scheduleUiBinding.dataReadEnabled}
-        supabaseHost={scheduleUiBinding.supabaseHost}
-        expectedProject={scheduleUiBinding.expectedProject}
-        expectedHost={scheduleUiBinding.expectedHost}
-        recordCount={scheduleUiBinding.recordCount}
-      />
+      {
+        stagingShellMode ? (
+          <AdminGosakiStagingScheduleOperatorIntro previewUrl={`${gosakiPreviewUrl}schedule/`} />
+        ) : null
+      }
+      {
+        stagingShellMode ? null : (
+          <ScheduleAdminUi
+            items={scheduleUiBinding.items}
+            siteName={siteName}
+            readonly={true}
+            readSource={scheduleUiBinding.source}
+            readMessage={scheduleUiBinding.message}
+            dataReadEnabled={scheduleUiBinding.dataReadEnabled}
+            supabaseHost={scheduleUiBinding.supabaseHost}
+            expectedProject={scheduleUiBinding.expectedProject}
+            expectedHost={scheduleUiBinding.expectedHost}
+            recordCount={scheduleUiBinding.recordCount}
+          />
+        )
+      }
       {
         stagingShellMode && gosakiScheduleSiteSlugBinding ? (
           <AdminStagingScheduleSiteSlugReadSection binding={gosakiScheduleSiteSlugBinding} />
@@ -501,126 +508,141 @@ const moduleSummary = [
       }
     </section>
 
-    <section id="discography" class="admin-prototype-section" data-section="discography">
-      <DiscographyAdminUi items={discographyItems} siteName={siteName} readonly={true} />
-    </section>
+    {
+      stagingShellMode ? null : (
+        <>
+          <section id="profile" class="admin-prototype-section" data-section="profile">
+            <ProfileAdminUi
+              profile={profile}
+              siteName={siteName}
+              readonly={true}
+              stagingWritePoc={false}
+            />
+          </section>
 
-    <section id="links" class="admin-prototype-section" data-section="links">
-      <LinksAdminUi items={linkItems} siteName={siteName} readonly={true} />
-    </section>
+          <section id="discography" class="admin-prototype-section" data-section="discography">
+            <DiscographyAdminUi items={discographyItems} siteName={siteName} readonly={true} />
+          </section>
 
-    <section id="news" class="admin-prototype-section" data-section="news">
-      <NewsAdminUi items={newsItems} siteName={siteName} readonly={true} />
-    </section>
+          <section id="links" class="admin-prototype-section" data-section="links">
+            <LinksAdminUi items={linkItems} siteName={siteName} readonly={true} />
+          </section>
 
-    <section id="media" class="admin-prototype-section" data-section="media">
-      <AdminPageHeader
-        title="Media"
-        description="Media upload UI scaffold — no Storage upload."
-      />
-      <AdminMediaRightsNotice />
-      <div class="admin-prototype-media-grid">
-        <AdminCard title="Image uploader">
-          <AdminImageUploader
-            assetType="schedule_flyer"
-            label="Schedule flyer"
-            description="Upload event flyer. Human review required."
-            targetTable="schedules"
-            targetColumn="image_url"
-            pathPattern="{siteSlug}/schedule/{legacyId}/flyer.{ext}"
-            requiresHumanReview={true}
-            disabled={true}
-          />
-          <AdminStorageMappingBadge
-            targetTable="schedules"
-            targetColumn="image_url"
-            pathPattern="{siteSlug}/schedule/{legacyId}/flyer.{ext}"
-          />
-        </AdminCard>
-        <AdminCard title="Media library">
-          <AdminMediaLibrary items={libraryItems} readonly={true} />
-        </AdminCard>
-      </div>
-      <AdminCard title="Preview">
-        <AdminMediaPreview
-          status="review-required"
-          assetType="schedule_flyer"
-          alt="Event flyer — human review required"
-        />
-      </AdminCard>
-    </section>
+          <section id="news" class="admin-prototype-section" data-section="news">
+            <NewsAdminUi items={newsItems} siteName={siteName} readonly={true} />
+          </section>
 
-    <section id="publish" class="admin-prototype-section" data-section="publish">
-      <AdminPageHeader
-        title="Publish"
-        description="Publish workflow UI — no GitHub dispatch, Edge Function, or FTP deploy."
-      />
-      <AdminCard title="Environments">
-        <div class="admin-permission-badge-row">
-          <AdminPublishEnvironmentBadge environment="staging" enabled={true} />
-          <AdminPublishEnvironmentBadge environment="production" enabled={false} />
-        </div>
-      </AdminCard>
-      <div class="admin-publish-example-grid">
-        <AdminCard title="Staging publish">
-          <AdminPublishButton
-            environment="staging"
-            disabled={true}
-            requiresApproval={true}
-            requiredRole="admin"
-            danger={false}
-          />
-          <AdminPublishApprovalGate
-            environment="staging"
-            approved={false}
-            requiredChecks={stagingChecks}
-            requiredRole="admin"
-          />
-          <AdminDeployStatus
-            status="idle"
-            message="Ready when connected (not now)."
-          />
-        </AdminCard>
-        <AdminCard title="Production publish" description="Default disabled.">
-          <AdminPublishButton
-            environment="production"
-            disabled={true}
-            requiresApproval={true}
-            requiredRole="admin"
-            danger={true}
-            status="disabled"
-          />
-          <AdminPublishApprovalGate
-            environment="production"
-            approved={false}
-            requiredChecks={productionChecks}
-            blockingItems={productionBlocking}
-            requiredRole="admin"
-          />
-          <AdminDeployStatus status="unknown" message="Production workflow not connected." />
-        </AdminCard>
-      </div>
-      <AdminCard title="Publish history">
-        <AdminPublishHistory items={historyItems} readonly={true} />
-      </AdminCard>
-    </section>
+          <section id="media" class="admin-prototype-section" data-section="media">
+            <AdminPageHeader
+              title="Media"
+              description="Media upload UI scaffold — no Storage upload."
+            />
+            <AdminMediaRightsNotice />
+            <div class="admin-prototype-media-grid">
+              <AdminCard title="Image uploader">
+                <AdminImageUploader
+                  assetType="schedule_flyer"
+                  label="Schedule flyer"
+                  description="Upload event flyer. Human review required."
+                  targetTable="schedules"
+                  targetColumn="image_url"
+                  pathPattern="{siteSlug}/schedule/{legacyId}/flyer.{ext}"
+                  requiresHumanReview={true}
+                  disabled={true}
+                />
+                <AdminStorageMappingBadge
+                  targetTable="schedules"
+                  targetColumn="image_url"
+                  pathPattern="{siteSlug}/schedule/{legacyId}/flyer.{ext}"
+                />
+              </AdminCard>
+              <AdminCard title="Media library">
+                <AdminMediaLibrary items={libraryItems} readonly={true} />
+              </AdminCard>
+            </div>
+            <AdminCard title="Preview">
+              <AdminMediaPreview
+                status="review-required"
+                assetType="schedule_flyer"
+                alt="Event flyer — human review required"
+              />
+            </AdminCard>
+          </section>
 
-    <section id="readiness" class="admin-prototype-section admin-readiness-panel" data-section="readiness">
-      <AdminStatusMessage
-        type="error"
-        title="Production readiness: not ready"
-        message="This prototype is scaffold-only. connectedToRuntime: false, productionReady: false. Existing Sariswing admin was not modified. Runtime integration requires explicit approval in a later phase."
-      />
-      <ul class="admin-readiness-checklist">
-        <li>Supabase Auth — not connected</li>
-        <li>Supabase query — not performed</li>
-        <li>DB update — not performed</li>
-        <li>Storage upload — not performed</li>
-        <li>GitHub dispatch — not performed</li>
-        <li>FTP deploy — not performed</li>
-        <li>Production — disabled</li>
-      </ul>
-    </section>
+          <section id="publish" class="admin-prototype-section" data-section="publish">
+            <AdminPageHeader
+              title="Publish"
+              description="Publish workflow UI — no GitHub dispatch, Edge Function, or FTP deploy."
+            />
+            <AdminCard title="Environments">
+              <div class="admin-permission-badge-row">
+                <AdminPublishEnvironmentBadge environment="staging" enabled={true} />
+                <AdminPublishEnvironmentBadge environment="production" enabled={false} />
+              </div>
+            </AdminCard>
+            <div class="admin-publish-example-grid">
+              <AdminCard title="Staging publish">
+                <AdminPublishButton
+                  environment="staging"
+                  disabled={true}
+                  requiresApproval={true}
+                  requiredRole="admin"
+                  danger={false}
+                />
+                <AdminPublishApprovalGate
+                  environment="staging"
+                  approved={false}
+                  requiredChecks={stagingChecks}
+                  requiredRole="admin"
+                />
+                <AdminDeployStatus
+                  status="idle"
+                  message="Ready when connected (not now)."
+                />
+              </AdminCard>
+              <AdminCard title="Production publish" description="Default disabled.">
+                <AdminPublishButton
+                  environment="production"
+                  disabled={true}
+                  requiresApproval={true}
+                  requiredRole="admin"
+                  danger={true}
+                  status="disabled"
+                />
+                <AdminPublishApprovalGate
+                  environment="production"
+                  approved={false}
+                  requiredChecks={productionChecks}
+                  blockingItems={productionBlocking}
+                  requiredRole="admin"
+                />
+                <AdminDeployStatus status="unknown" message="Production workflow not connected." />
+              </AdminCard>
+            </div>
+            <AdminCard title="Publish history">
+              <AdminPublishHistory items={historyItems} readonly={true} />
+            </AdminCard>
+          </section>
+
+          <section id="readiness" class="admin-prototype-section admin-readiness-panel" data-section="readiness">
+            <AdminStatusMessage
+              type="error"
+              title="Production readiness: not ready"
+              message="This prototype is scaffold-only. connectedToRuntime: false, productionReady: false. Existing Sariswing admin was not modified. Runtime integration requires explicit approval in a later phase."
+            />
+            <ul class="admin-readiness-checklist">
+              <li>Supabase Auth — not connected</li>
+              <li>Supabase query — not performed</li>
+              <li>DB update — not performed</li>
+              <li>Storage upload — not performed</li>
+              <li>GitHub dispatch — not performed</li>
+              <li>FTP deploy — not performed</li>
+              <li>Production — disabled</li>
+            </ul>
+          </section>
+        </>
+      )
+    }
   </div>
 </AdminLayout>
 

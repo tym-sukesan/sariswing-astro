@@ -10,9 +10,10 @@ import type { StagingAuthConfig } from "../../../../../../src/lib/admin/staging-
 interface Props {
   phase?: string;
   authConfig?: StagingAuthConfig | null;
+  operatorMode?: boolean;
 }
 
-const { phase = "G-5y-d", authConfig = null } = Astro.props;
+const { phase = "G-5y-d", authConfig = null, operatorMode = false } = Astro.props;
 
 const interactive =
   Boolean(authConfig?.stagingAuthEnabled && authConfig?.supabaseConfigured);
@@ -27,13 +28,38 @@ const readonlyNotice = interactive
 
 const readonlyNoticeJa = interactive
   ? "ステージング用 Supabase Auth が有効です。DB・Storage・Publish には接続しません。"
-  : "このログイン画面はステージング確認用です。実Authが無効な場合、入力内容は送信されません。";
+  : operatorMode
+    ? "ログインはステージング検証用です。環境変数で Auth が無効の場合、入力しても送信されません。オペレータが ENABLE_ADMIN_STAGING_AUTH を有効にした場合のみ実ログインできます。"
+    : "このログイン画面はステージング確認用です。実Authが無効な場合、入力内容は送信されません。";
 
-const subtitle = interactive
-  ? "Supabase staging Auth · G-5y-d · shell-only route"
-  : configMissing
-    ? "Config missing · Auth disabled"
-    : "Real auth disabled · Mock auth only · Supabase Auth not connected";
+const subtitle = operatorMode
+  ? interactive
+    ? "Gosaki Piano 管理画面 — ステージングログイン"
+    : configMissing
+      ? "設定不足 — ログイン無効"
+      : "ステージング検証用 — 実ログインは環境設定が必要です"
+  : interactive
+    ? "Supabase staging Auth · G-5y-d · shell-only route"
+    : configMissing
+      ? "Config missing · Auth disabled"
+      : "Real auth disabled · Mock auth only · Supabase Auth not connected";
+
+const shellTitle = operatorMode ? "管理ログイン" : `Login UI shell (${phase})`;
+const formTitle = operatorMode ? "Gosaki Piano 管理ログイン" : "Admin login (staging shell)";
+const formDescription = operatorMode
+  ? interactive
+    ? "ステージング用のメールアドレスとパスワードでログインしてください。"
+    : "ログインフォームの見た目確認用です。Auth が無効なときは送信されません。"
+  : interactive
+    ? "Sign in with staging Supabase project credentials."
+    : "Preview login form layout. Enable G-5y-d env gate for real Auth.";
+const submitLabel = operatorMode
+  ? interactive
+    ? "ログイン"
+    : "ログイン（無効）"
+  : interactive
+    ? "Sign in"
+    : "Sign in (disabled)";
 ---
 
 <section
@@ -44,43 +70,43 @@ const subtitle = interactive
   data-auth-mode={authMode}
 >
   <header class="admin-login-shell__header">
-    <h2 class="admin-login-shell__title">Login UI shell ({phase})</h2>
+    <h2 class="admin-login-shell__title">{shellTitle}</h2>
     <p class="admin-login-shell__subtitle">{subtitle}</p>
   </header>
 
-  <div class="admin-login-shell__grid">
+  <div class="admin-login-shell__grid" class:list={{ "admin-login-shell__grid--operator": operatorMode }}>
     <div class="admin-login-shell__form-col">
       <AdminLoginForm
-        title="Admin login (staging shell)"
-        description={
-          interactive
-            ? "Sign in with staging Supabase project credentials."
-            : "Preview login form layout. Enable G-5y-d env gate for real Auth."
-        }
-        submitLabel={interactive ? "Sign in" : "Sign in (disabled)"}
+        title={formTitle}
+        description={formDescription}
+        submitLabel={submitLabel}
         forgotPasswordHref="#password-reset-shell"
         disabled={!interactive}
         interactive={interactive}
         readonlyNotice={readonlyNotice}
       />
       <p class="admin-login-shell__ja" lang="ja">{readonlyNoticeJa}</p>
+      <p id="staging-auth-error" class="admin-message admin-message--error" hidden role="alert"></p>
       {
         interactive ? (
           <div class="admin-login-shell__signout-row">
             <button
               class="admin-button admin-button--secondary"
               id="staging-sign-out-btn"
+              data-staging-sign-out
               type="button"
               hidden
             >
-              Sign out
+              {operatorMode ? "ログアウト" : "Sign out"}
             </button>
           </div>
         ) : null
       }
     </div>
 
-    <aside class="admin-login-shell__aside">
+    {
+      operatorMode ? null : (
+        <aside class="admin-login-shell__aside">
       <section class="admin-login-shell__mock-panel" aria-labelledby="mock-login-title">
         <h3 id="mock-login-title" class="admin-login-shell__mock-title">
           {interactive ? "Session preview" : "Mock login preview"}
@@ -123,6 +149,8 @@ const subtitle = interactive
         <AdminPermissionBadge variant="admin" label="Admin" />
       </div>
     </aside>
+      )
+    }
   </div>
 </section>
 
@@ -152,6 +180,10 @@ const subtitle = interactive
     display: grid;
     gap: 1.25rem;
     grid-template-columns: 1fr 1fr;
+  }
+  .admin-login-shell__grid--operator {
+    grid-template-columns: 1fr;
+    max-width: 36rem;
   }
   @media (max-width: 768px) {
     .admin-login-shell__grid {

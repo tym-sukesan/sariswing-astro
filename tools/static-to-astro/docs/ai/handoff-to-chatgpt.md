@@ -5,37 +5,41 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-9g4a1d-venue-only-operational-restore-manual-execution
-Latest commit (pushed): 11368be (G-9g4a1b1 manual execution result)
-G-9g4a1c venue-only operational restore preflight: complete (uncommitted)
+Current phase: G-9g4a1e-venue-only-operational-restore-result-finalization
+Latest commit (pushed): 3b3e4e0 (G-9g4a1c restore preflight)
+G-9g4a1d venue-only restore manual execution: complete (uncommitted)
 ```
 
 ## Summary
 
-G-9g4a1c **restore preflight** for venue smoke marker removal:
+G-9g4a1d **restore manual execution** — operator Save success:
 
 - **Target row:** `eb1f1898-5107-4deb-a6d5-a792e0ec3f69` / `schedule-2026-03-003` / `<Live & Session>`
-- **markerRemainsInStagingDb:** true
-- **Current venue:** `学芸大学 珈琲美学 [G-9g4a1 venue smoke]`
-- **Restore venue:** `学芸大学 珈琲美学`
-- **expectedBeforeUpdatedAt:** `2026-06-19T05:12:41.853845+00:00`
-- **Payload:** `{ "venue": "学芸大学 珈琲美学" }` — changedFields `["venue"]` only
-- **Path:** G-9g4a1 venue-only UI — not G-9g3g5 restore
-- **Env:** G-9g4a1 arm only on during restore window; G-9g3g / G-9g3g5 off
-- **Rollback SQL:** document-only — not executed
-- **No Save / Preview / DB write / SQL in preflight phase**
+- **changedFields:** `["venue"]` only
+- **Before venue:** `学芸大学 珈琲美学 [G-9g4a1 venue smoke]`
+- **After venue:** `学芸大学 珈琲美学`
+- **after.updated_at:** `2026-06-19T05:54:34.767498+00:00`
+- **Save:** operator manual once; `actualWrite=true`, `rowsAffected=1`
+- **Safety:** `serviceRoleUsed=false`, `productionBlocked=true`, `scheduleMonthsTouched=false`
+- **Re-click:** blocked — Preview consumed
+- **markerRemoved:** yes
+- **markerRemainsInStagingDb:** false
+- **activeRestoreExceptionsCount:** 0
+- **restore required:** no — no further Save/restore needed for this row
 
-**Cursor / AI must not click Save or Preview.**
+**Cursor / AI did not click Save or Preview.**
 
 ## Gates
 
 ```txt
-stagingShellScheduleVenueOnlyOperationalRestorePreflightComplete: true
-readyForG9g4a1dVenueOnlyOperationalRestoreManualExecution: true
-markerRemainsInStagingDb: true
+stagingShellScheduleVenueOnlyOperationalRestoreManualExecutionComplete: true
+markerRemainsInStagingDb: false
+activeRestoreExceptionsCount: 0
+restoreRequired: false
+readyForG9g4a1eVenueOnlyOperationalRestoreResultFinalization: true
 readyForAnyDbWrite: false
 ```
 
 ## Next
 
-**G-9g4a1d** manual restore execution — operator load row → set venue to `学芸大学 珈琲美学` → G-9g4a1 Preview → ChatGPT gate → one manual Save → confirm marker removed
+**G-9g4a1e** restore result finalization — routine dev safety, round-trip closure documentation, verifier/AI context updates

@@ -1,0 +1,287 @@
+# Staging shell schedule venue-only operational restore manual execution result (G-9g4a1d)
+
+**Phase:** `G-9g4a1d-venue-only-operational-restore-manual-execution`  
+**Status:** **complete**  
+**Date:** 2026-06-19  
+**Prior:** G-9g4a1c restore preflight — commit `3b3e4e0`; G-9g4a1b1 smoke execution — commit `11368be`  
+**Type:** operator manual non-dry-run restore Save — **one UPDATE on staging `public.schedules` (venue only)**
+
+| Check | Status |
+| --- | --- |
+| Restore Preview clicked (operator) | **yes** (exactly once) |
+| Preview clicked (Cursor/AI) | **no** |
+| Restore Save clicked (operator) | **yes** (exactly once) |
+| Save clicked (Cursor/AI) | **no** |
+| DB write executed | **yes** (one row, venue only — marker removed) |
+| SQL mutation executed (Cursor/AI) | **no** |
+| Rollback SQL executed | **no** |
+| service_role used | **no** |
+| FTP / workflow_dispatch / deploy | **not executed** |
+
+Cursor did **not** click Save or Preview. Operator performed restore Preview + Save manually.
+
+**Do not re-click G-9g4a1 venue-only Save on this row without fresh Preview.** Smoke marker **removed** — no further restore needed for this row.
+
+---
+
+## Gates
+
+```txt
+stagingShellScheduleVenueOnlyOperationalRestoreManualExecutionComplete: true
+readyForG9g4a1eVenueOnlyOperationalRestoreResultFinalization: true
+markerRemoved: true
+markerRemainsInStagingDb: false
+activeRestoreExceptionsCount: 0
+restoreRequired: false
+readyForAnyDbWrite: false
+cursorClickedSave: false
+cursorClickedPreview: false
+rollbackSqlExecuted: false
+rollbackNeeded: false
+```
+
+**Recommended next:** `G-9g4a1e-venue-only-operational-restore-result-finalization`
+
+---
+
+## 1. Summary (operator-confirmed)
+
+```txt
+Restore execution: PASS
+Supabase project: static-to-astro-cms-staging
+Active host: kmjqppxjdnwwrtaeqjta.supabase.co
+G-9g4a1 ARMED: true
+Restore Preview dry-run: PASS (operator manual, G-9g4a1 venue-only path)
+ChatGPT Preview gate: confirmed
+Restore Save clicked: yes (operator manual, exactly once)
+DB write performed: yes (one UPDATE on public.schedules)
+site_slug scoped: gosaki-piano
+changedFields: ["venue"] only
+optimistic lock: PASS (expectedBeforeUpdatedAt matched; stale=false at preview)
+venue changed: yes (G-9g4a1 venue smoke marker removed)
+title / description / open_time / start_time / price / date / published / image unchanged: yes
+service_role used: false
+production touched: false
+/admin touched: false
+FTP / workflow_dispatch: not executed
+rollback needed: false
+rollback executed: false
+restore required: no (marker removed)
+```
+
+### Safety flags
+
+```json
+{
+  "actualWrite": true,
+  "rowsAffected": 1,
+  "approvalId": "G-9g4a1-schedule-site-slug-venue-only-non-dry-run",
+  "changedFields": ["venue"],
+  "serviceRoleUsed": false,
+  "productionBlocked": true,
+  "scheduleMonthsTouched": false,
+  "deleteEnabled": false,
+  "publishTriggered": false
+}
+```
+
+---
+
+## 2. Execution context
+
+```txt
+Route:     /__admin-staging-shell/musician-basic/#schedule
+URL:       http://localhost:4321/__admin-staging-shell/musician-basic/#schedule
+Section:   AdminStagingScheduleSiteSlugEditSection (G-9g4a1 venue-only path)
+site_slug: gosaki-piano
+staging host:     kmjqppxjdnwwrtaeqjta.supabase.co
+production host:  vsbvndwuajjhnzpohghh.supabase.co (blocked)
+Approval ID: G-9g4a1-schedule-site-slug-venue-only-non-dry-run
+Env arm:     PUBLIC_ADMIN_SCHEDULE_G9G4A1_VENUE_ONLY_NON_DRY_RUN_ARMED=true
+Write path:  executeG9G4a1VenueOnlyNonDryRunSave → executeScheduleGeneralUpdateWrite
+changedFields: venue only (restore — not G-9g3g5 path)
+```
+
+### UI targets used
+
+```txt
+#site-slug-edit-g9g4a1-venue-only-dry-run-preview-btn
+#site-slug-edit-g9g4a1-venue-only-dry-run-result
+#site-slug-edit-g9g4a1-venue-only-save-gate-panel
+#site-slug-edit-g9g4a1-venue-only-save-btn
+#site-slug-edit-g9g4a1-venue-only-save-result
+```
+
+---
+
+## 3. Target row
+
+```txt
+id:           eb1f1898-5107-4deb-a6d5-a792e0ec3f69
+legacy_id:    schedule-2026-03-003
+site_slug:    gosaki-piano
+title:        <Live & Session>
+date:         2026-03-08
+source_route: /schedule/2026-03/
+published:    true
+```
+
+---
+
+## 4. Restore Preview summary (operator manual)
+
+```txt
+actualWrite: false
+changedFields: ["venue"]
+payload: { "venue": "学芸大学 珈琲美学" }
+before.venue: 学芸大学 珈琲美学 [G-9g4a1 venue smoke]
+after.venue:  学芸大学 珈琲美学
+optimisticLock.expectedBeforeUpdatedAt: 2026-06-19T05:12:41.853845+00:00
+optimisticLock.stale: false
+hostGatePassed: true
+approvalId: G-9g4a1-schedule-site-slug-venue-only-non-dry-run
+serviceRoleUsed: false
+productionBlocked: true
+```
+
+ChatGPT confirmed restore Preview before Save.
+
+---
+
+## 5. Payload
+
+```json
+{
+  "venue": "学芸大学 珈琲美学"
+}
+```
+
+---
+
+## 6. beforeSnapshot (smoke state at restore Preview)
+
+```json
+{
+  "id": "eb1f1898-5107-4deb-a6d5-a792e0ec3f69",
+  "legacy_id": "schedule-2026-03-003",
+  "site_slug": "gosaki-piano",
+  "updated_at": "2026-06-19T05:12:41.853845+00:00",
+  "date": "2026-03-08",
+  "title": "<Live & Session>",
+  "venue": "学芸大学 珈琲美学 [G-9g4a1 venue smoke]",
+  "open_time": "11:30",
+  "start_time": "12:30",
+  "price": "3,850円(税込)",
+  "description": "出演：【第一部Live】MAREE ARAKY vo,pf 後藤沙紀pianica,pf 【第二部Session】ホスト 後藤沙紀pf\n会場website: https://www.coffeebigaku.com/",
+  "source_route": "/schedule/2026-03/",
+  "published": true,
+  "show_on_home": false,
+  "sort_order": 50
+}
+```
+
+---
+
+## 7. afterSnapshot
+
+```json
+{
+  "id": "eb1f1898-5107-4deb-a6d5-a792e0ec3f69",
+  "legacy_id": "schedule-2026-03-003",
+  "date": "2026-03-08",
+  "year": 2026,
+  "month": "2026-03",
+  "title": "<Live & Session>",
+  "venue": "学芸大学 珈琲美学",
+  "open_time": "11:30",
+  "start_time": "12:30",
+  "price": "3,850円(税込)",
+  "description": "出演：【第一部Live】MAREE ARAKY vo,pf 後藤沙紀pianica,pf 【第二部Session】ホスト 後藤沙紀pf\n会場website: https://www.coffeebigaku.com/",
+  "image_url": null,
+  "home_image_url": null,
+  "source_file": "schedule-2026-03.html",
+  "source_route": "/schedule/2026-03/",
+  "show_on_home": false,
+  "home_order": null,
+  "published": true,
+  "sort_order": 50,
+  "created_at": "2026-06-05T17:39:44.140168+00:00",
+  "updated_at": "2026-06-19T05:54:34.767498+00:00",
+  "site_slug": "gosaki-piano"
+}
+```
+
+### updated_at
+
+```txt
+before: 2026-06-19T05:12:41.853845+00:00
+after:  2026-06-19T05:54:34.767498+00:00
+```
+
+---
+
+## 8. Restore Save result
+
+```txt
+actualWrite: true
+approvalId: G-9g4a1-schedule-site-slug-venue-only-non-dry-run
+rowsAffected: 1
+changedFields: ["venue"]
+serviceRoleUsed: false
+productionBlocked: true
+scheduleMonthsTouched: false
+deleteEnabled: false
+publishTriggered: false
+```
+
+---
+
+## 9. Re-click prevention result
+
+Save gate after restore Save (operator-observed):
+
+```txt
+preview: This Preview has been consumed by a successful Save. Run a new Preview before any further write.
+Save: disabled — This Preview has been consumed by a successful Save. Run a new Preview before any further write.
+Operator manual Save completed once. Do not re-click.
+re-click: blocked — Save completed once (rowsAffected=1)
+```
+
+**Re-click blocked:** yes — expected G-9g3h1 / venue-only mode behavior.
+
+---
+
+## 10. Current DB state / marker status
+
+```txt
+markerRemoved: yes
+markerRemainsInStagingDb: false
+activeRestoreExceptionsCount: 0
+restore required: no
+final venue: 学芸大学 珈琲美学
+final updated_at: 2026-06-19T05:54:34.767498+00:00
+```
+
+G-9g4a1 venue smoke marker `[G-9g4a1 venue smoke]` **no longer present** in `venue` field.
+
+**No further Save or restore needed** for this row unless operator starts a new intentional change.
+
+---
+
+## 11. Forbidden operations avoided (documentation phase)
+
+| Operation | Status |
+| --- | --- |
+| Cursor/AI Preview click | **no** |
+| Cursor/AI Save click | **no** |
+| Cursor/AI SQL execution | **no** |
+| Rollback SQL execution | **no** |
+| FTP / deploy | **no** |
+
+---
+
+## 12. Recommended next phase
+
+**`G-9g4a1e-venue-only-operational-restore-result-finalization`**
+
+Post-restore hardening: routine dev safety restart, AI context finalization, verifier updates, round-trip closure documentation. **No further DB write** unless new approved slice.

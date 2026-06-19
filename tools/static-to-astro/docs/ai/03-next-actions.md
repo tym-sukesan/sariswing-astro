@@ -3,38 +3,40 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 1. Immediate priority
 
-**Current phase:** `G-9g4a1d-venue-only-operational-restore-manual-execution`
+**Current phase:** `G-9g4a1e-venue-only-operational-restore-result-finalization`
 
-**Git:** latest pushed commit `11368be` (G-9g4a1b1 manual execution result)
+**Git:** latest pushed commit `3b3e4e0` (G-9g4a1c restore preflight)
 
-### G-9g4a1c summary
+### G-9g4a1d summary (restore manual execution — complete)
 
 | Item | Value |
 | --- | --- |
-| Doc | `staging-shell-schedule-venue-only-operational-restore-preflight.md` |
-| Status | **complete** — restore preflight (uncommitted) |
+| Doc | `staging-shell-schedule-venue-only-operational-restore-manual-execution-result.md` |
+| Status | **complete** — operator restore Save once (uncommitted) |
 | Target row | `eb1f1898-5107-4deb-a6d5-a792e0ec3f69` / `schedule-2026-03-003` |
-| Current venue | `学芸大学 珈琲美学 [G-9g4a1 venue smoke]` |
-| Restore venue | `学芸大学 珈琲美学` |
-| expectedBeforeUpdatedAt | `2026-06-19T05:12:41.853845+00:00` |
-| Restore path | G-9g4a1 venue-only UI (not G-9g3g5) |
-| Operator Save / Preview | **not executed** in preflight phase |
+| Before venue | `学芸大学 珈琲美学 [G-9g4a1 venue smoke]` |
+| After venue | `学芸大学 珈琲美学` |
+| after.updated_at | `2026-06-19T05:54:34.767498+00:00` |
+| markerRemoved | **yes** |
+| Re-click | blocked after Save |
+| Further restore | **not required** |
 
 ### Gates
 
 ```txt
-stagingShellScheduleVenueOnlyOperationalRestorePreflightComplete: true
-readyForG9g4a1dVenueOnlyOperationalRestoreManualExecution: true
-markerRemainsInStagingDb: true
-activeRestoreExceptionsCount: 1
+stagingShellScheduleVenueOnlyOperationalRestoreManualExecutionComplete: true
+readyForG9g4a1eVenueOnlyOperationalRestoreResultFinalization: true
+markerRemainsInStagingDb: false
+activeRestoreExceptionsCount: 0
+restoreRequired: false
 readyForAnyDbWrite: false
 ```
 
 ## 2. Next steps
 
-1. **G-9g4a1d-venue-only-operational-restore-manual-execution** — load row → venue restore value → G-9g4a1 Preview → ChatGPT gate → one manual Save
-2. Commit G-9g4a1c restore preflight when ready
-3. **Do not execute rollback SQL** — UI restore preferred
+1. **G-9g4a1e-venue-only-operational-restore-result-finalization** — routine dev safety, round-trip closure, AI context finalization
+2. Commit G-9g4a1d restore execution result when ready
+3. Restart dev with routine stack (all non-dry-run arms off)
 
 ## 3. Routine dev safety
 
@@ -48,8 +50,8 @@ PUBLIC_ADMIN_SCHEDULE_G9G3G5_OPERATIONAL_RESTORE_NON_DRY_RUN_ARMED: false or uns
 
 ## 4. Do not
 
+- Re-click G-9g4a1 venue-only Save without fresh Preview
 - Cursor / AI click Save or Preview
-- Use G-9g3g5 restore path for this row
-- Execute rollback SQL in preflight
+- Further restore on this row (marker already removed)
 - Use service_role
 - Touch production or `/admin`

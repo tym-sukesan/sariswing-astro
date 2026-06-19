@@ -3789,6 +3789,53 @@ assert(
   g9g4a1cRestorePreflightSrc.includes("Save clicked (this phase) | **no**"),
 );
 
+const g9g4a1dRestoreResultPath = path.join(
+  TOOL_ROOT,
+  "docs/staging-shell-schedule-venue-only-operational-restore-manual-execution-result.md",
+);
+assert("G-9g4a1d restore execution result doc exists", fs.existsSync(g9g4a1dRestoreResultPath));
+const g9g4a1dRestoreResultSrc = fs.readFileSync(g9g4a1dRestoreResultPath, "utf8");
+assert(
+  "G-9g4a1d phase marker",
+  g9g4a1dRestoreResultSrc.includes("G-9g4a1d-venue-only-operational-restore-manual-execution"),
+);
+assert(
+  "G-9g4a1d status complete",
+  g9g4a1dRestoreResultSrc.includes("**complete**"),
+);
+assert(
+  "G-9g4a1d target row id",
+  g9g4a1dRestoreResultSrc.includes("eb1f1898-5107-4deb-a6d5-a792e0ec3f69"),
+);
+assert(
+  "G-9g4a1d actualWrite true",
+  g9g4a1dRestoreResultSrc.includes("actualWrite: true"),
+);
+assert(
+  "G-9g4a1d marker removed",
+  g9g4a1dRestoreResultSrc.includes("markerRemoved: yes"),
+);
+assert(
+  "G-9g4a1d markerRemainsInStagingDb false",
+  g9g4a1dRestoreResultSrc.includes("markerRemainsInStagingDb: false"),
+);
+assert(
+  "G-9g4a1d activeRestoreExceptionsCount 0",
+  g9g4a1dRestoreResultSrc.includes("activeRestoreExceptionsCount: 0"),
+);
+assert(
+  "G-9g4a1d restore required no",
+  g9g4a1dRestoreResultSrc.includes("restore required: no"),
+);
+assert(
+  "G-9g4a1d next phase G-9g4a1e",
+  g9g4a1dRestoreResultSrc.includes("G-9g4a1e-venue-only-operational-restore-result-finalization"),
+);
+assert(
+  "G-9g4a1d cursor no Save",
+  g9g4a1dRestoreResultSrc.includes("Save clicked (Cursor/AI) | **no**"),
+);
+
 const gosakiPublicDist = path.join(TOOL_ROOT, "output/static-public/gosaki-piano/public-dist");
 for (const ym of ["2026-06", "2026-07"]) {
   const canonicalMonthPath = path.join(gosakiPublicDist, "schedule", ym, "index.html");

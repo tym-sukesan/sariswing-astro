@@ -62,6 +62,7 @@ import {
   applyGosakiAboutBandProfiles,
   isGosakiPianoFixture,
 } from "./gosaki-about-band-profiles.mjs";
+import { applyGosakiHomeYouTubeEmbed } from "./gosaki-home-youtube-embed.mjs";
 import { applyGosakiScheduleDataPages } from "./gosaki-schedule-data-pages.mjs";
 import { generateGosakiFooterAstro } from "./gosaki-footer-social.mjs";
 
@@ -960,11 +961,18 @@ export function generateAstroProject(inputDir, outputDir, options = {}) {
   }
 
   let gosakiBandProfilesSummary = { applied: false };
+  let gosakiYoutubeEmbedSummary = { applied: false };
   if (isGosakiPianoFixture(siteDir)) {
     gosakiBandProfilesSummary = applyGosakiAboutBandProfiles(outDir, TOOL_ROOT);
     if (gosakiBandProfilesSummary.applied) {
       writtenPages.push(path.join(outDir, gosakiBandProfilesSummary.componentPath));
       writtenPages.push(path.join(outDir, gosakiBandProfilesSummary.dataPath));
+    }
+    gosakiYoutubeEmbedSummary = applyGosakiHomeYouTubeEmbed(outDir, TOOL_ROOT);
+    if (gosakiYoutubeEmbedSummary.applied) {
+      writtenPages.push(path.join(outDir, gosakiYoutubeEmbedSummary.componentPath));
+      writtenPages.push(path.join(outDir, gosakiYoutubeEmbedSummary.dataPath));
+      writtenPages.push(path.join(outDir, gosakiYoutubeEmbedSummary.libPath));
     }
   }
 

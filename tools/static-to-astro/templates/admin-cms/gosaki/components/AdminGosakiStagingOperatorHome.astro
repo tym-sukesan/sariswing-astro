@@ -4,7 +4,9 @@
  */
 import {
   GOSAKI_STAGING_ADMIN_BASE,
+  GOSAKI_STAGING_ADMIN_DISCOGRAPHY_PATH,
   GOSAKI_STAGING_ADMIN_SCHEDULE_PATH,
+  GOSAKI_STAGING_ADMIN_YOUTUBE_PATH,
   GOSAKI_STAGING_PREVIEW_URL,
 } from "../gosaki-staging-admin-paths";
 
@@ -67,16 +69,28 @@ const {
             公開前ページ確認
           </a>
         </li>
+        <li>
+          <a
+            class="admin-button admin-button--menu admin-button--menu-secondary"
+            href={GOSAKI_STAGING_ADMIN_YOUTUBE_PATH}
+          >
+            YouTube設定
+          </a>
+        </li>
+        <li>
+          <a
+            class="admin-button admin-button--menu admin-button--menu-secondary"
+            href={GOSAKI_STAGING_ADMIN_DISCOGRAPHY_PATH}
+          >
+            Discography確認
+          </a>
+        </li>
       </ul>
     </nav>
   </section>
 
   <section class="admin-gosaki-secondary-menu" aria-label="準備中の機能">
     <ul class="admin-gosaki-secondary-menu__list">
-      <li class="admin-gosaki-secondary-menu__item is-disabled">
-        <span class="admin-gosaki-secondary-menu__label">YouTube設定</span>
-        <span class="admin-gosaki-secondary-menu__badge">準備中</span>
-      </li>
       <li class="admin-gosaki-secondary-menu__item is-disabled">
         <span class="admin-gosaki-secondary-menu__label">サイト情報確認</span>
         <span class="admin-gosaki-secondary-menu__badge">準備中</span>
@@ -96,6 +110,8 @@ const {
         <ul class="admin-gosaki-list admin-gosaki-list--compact">
           <li>スケジュールの確認</li>
           <li>公演内容の確認</li>
+          <li>YouTube 設定の確認</li>
+          <li>Discography の確認</li>
           <li>公開前ページの表示確認</li>
         </ul>
       </section>

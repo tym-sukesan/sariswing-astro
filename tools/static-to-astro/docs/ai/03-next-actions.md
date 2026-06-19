@@ -5,12 +5,13 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 | Item | Value |
 | --- | --- |
-| Routes | `/__admin-staging-shell/musician-basic/admin/`, `/admin/schedule/` |
-| Pattern | Sariswing `/admin/` + `/admin/schedule/` mirrored in staging shell (read-only reference) |
-| Operator UI | Filters + Japanese table + detail card; PoC in `<details>開発者向け詳細</details>` |
-| Legacy shell | `/__admin-staging-shell/musician-basic/` redirects to `/admin/` |
-| DB / Save / Preview | **none** |
+| Routes | `/__admin-staging-shell/musician-basic/admin/`, `/admin/schedule/`, `/admin/youtube/`, `/admin/discography/` |
+| YouTube / Discography | G-9j static config + read-only admin (no DB) |
 | Next | G-9h1 client preview feedback closure |
+
+## 0b. Gosaki YouTube and Discography (G-9j)
+
+Static home YouTube embed hook + discography admin summary. Doc: `gosaki-youtube-and-discography-practicalization.md`. No DB / Save / deploy.
 
 ## 1. Immediate priority
 

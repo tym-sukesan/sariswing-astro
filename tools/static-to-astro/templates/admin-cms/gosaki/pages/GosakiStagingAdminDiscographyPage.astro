@@ -1,0 +1,17 @@
+---
+import AdminGosakiStagingShellLayout from "../components/AdminGosakiStagingShellLayout.astro";
+import AdminGosakiStagingDiscographyOperatorPage from "../components/AdminGosakiStagingDiscographyOperatorPage.astro";
+import { loadGosakiDiscographyAdminBinding } from "../../../../../../src/lib/admin/staging-data/gosaki-discography-admin-binding";
+
+const binding = loadGosakiDiscographyAdminBinding();
+---
+
+<AdminGosakiStagingShellLayout title="Discography確認">
+  <div class="admin-gosaki-admin-pages">
+    <AdminGosakiStagingDiscographyOperatorPage binding={binding} />
+  </div>
+</AdminGosakiStagingShellLayout>
+
+<script>
+  import "../../../../../../src/lib/admin/staging-auth/staging-auth-ui.ts";
+</script>

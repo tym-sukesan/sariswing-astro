@@ -1777,3 +1777,63 @@
 .admin-gosaki-dev-tools .admin-staging-schedule-site-slug-edit {
   margin-top: 1rem;
 }
+
+.admin-button--menu-secondary {
+  background: #fff;
+  color: #1e293b;
+  border: 1px solid #cbd5e1;
+}
+
+.admin-button--menu-secondary:hover {
+  background: #f8fafc;
+  border-color: #94a3b8;
+}
+
+.admin-gosaki-kv-list {
+  display: grid;
+  gap: 0.75rem 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  margin: 0;
+}
+
+.admin-gosaki-kv-list dt {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #6b7280;
+}
+
+.admin-gosaki-kv-list dd {
+  margin: 0.15rem 0 0;
+  font-size: 0.95rem;
+  color: #111827;
+  word-break: break-word;
+}
+
+.admin-gosaki-config-path {
+  margin: 1rem 0 0;
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+.admin-gosaki-config-path code {
+  font-size: 0.78rem;
+}
+
+.admin-gosaki-operator-alert,
+.admin-gosaki-operator-empty {
+  margin: 0 0 1rem;
+  color: #6b7280;
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.admin-gosaki-save-note {
+  margin: 1rem 0 0;
+  font-size: 0.85rem;
+  color: #6b7280;
+}
+
+.admin-gosaki-youtube-preview-note p {
+  margin: 0 0 0.5rem;
+  line-height: 1.6;
+}

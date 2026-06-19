@@ -1,0 +1,108 @@
+---
+import type { GosakiDiscographyAdminBinding } from "../../../../../../src/lib/admin/staging-data/gosaki-discography-admin-binding";
+import {
+  GOSAKI_STAGING_ADMIN_BASE,
+  GOSAKI_STAGING_PREVIEW_URL,
+} from "../gosaki-staging-admin-paths";
+
+interface Props {
+  binding: GosakiDiscographyAdminBinding;
+}
+
+const { binding } = Astro.props;
+const { config, releaseCount } = binding;
+const previewDiscographyUrl = `${GOSAKI_STAGING_PREVIEW_URL}${config.previewPath ?? "discography/"}`;
+---
+
+<section
+  id="gosaki-discography-operator"
+  class="admin-gosaki-discography-operator admin-prototype-section"
+  data-section="admin-discography"
+  aria-label="作品情報確認"
+>
+  <header class="admin-gosaki-page-header admin-gosaki-page-header--with-actions">
+    <div>
+      <a class="admin-gosaki-back-link" href={GOSAKI_STAGING_ADMIN_BASE}>← 管理画面トップへ</a>
+      <h1 class="admin-gosaki-page-header__title">Discography確認</h1>
+      <p class="admin-gosaki-page-header__subtitle">
+        公開サイトの作品情報（Discography）を確認する画面です。
+      </p>
+    </div>
+    <button
+      type="button"
+      class="admin-button admin-button-secondary admin-gosaki-logout-btn"
+      data-staging-sign-out
+      hidden
+    >
+      ログアウト
+    </button>
+  </header>
+
+  <p class="admin-gosaki-status-bar" role="status">
+    現在は確認用です。編集・保存はまだ開放していません。
+  </p>
+
+  {
+    binding.message ? (
+      <p class="admin-gosaki-operator-alert" role="alert">{binding.message}</p>
+    ) : null
+  }
+
+  <section class="admin-card admin-gosaki-card">
+    <h2 class="admin-gosaki-card__title">公開前ページ</h2>
+    <p>
+      <a
+        class="admin-button admin-button--menu admin-button--menu-primary"
+        href={previewDiscographyUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        Discographyページを見る
+      </a>
+    </p>
+    <p class="admin-gosaki-save-note" role="note">
+      公開ページの表示は Wix 由来の静的 HTML です。CMS 編集は次フェーズです。
+    </p>
+  </section>
+
+  <section class="admin-card admin-gosaki-card admin-gosaki-discography-list-card">
+    <h2 class="admin-gosaki-card__title">登録作品一覧（参考）</h2>
+    <p class="admin-gosaki-schedule-count" role="status">{releaseCount} 件</p>
+
+    {
+      releaseCount === 0 ? (
+        <p class="admin-gosaki-operator-empty">登録済みの作品情報がありません。</p>
+      ) : (
+        <div class="admin-gosaki-schedule-table-wrap">
+          <table class="admin-gosaki-schedule-table admin-gosaki-discography-table">
+            <thead>
+              <tr>
+                <th scope="col">タイトル</th>
+                <th scope="col">アーティスト</th>
+                <th scope="col">発売日</th>
+                <th scope="col">カタログ</th>
+                <th scope="col">価格</th>
+              </tr>
+            </thead>
+            <tbody>
+              {
+                config.releases.map((release) => (
+                  <tr>
+                    <td>{release.title}</td>
+                    <td>{release.artist}</td>
+                    <td>{release.releaseDate ?? "—"}</td>
+                    <td>{release.catalogNumber ?? "—"}</td>
+                    <td>{release.price ?? release.note ?? "—"}</td>
+                  </tr>
+                ))
+              }
+            </tbody>
+          </table>
+        </div>
+      )
+    }
+    <p class="admin-gosaki-config-path" role="note">
+      参考データ: <code>{binding.configPath}</code>
+    </p>
+  </section>
+</section>

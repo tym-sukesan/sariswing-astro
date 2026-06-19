@@ -1,0 +1,9 @@
+{
+  "$comment": "G-9j — Gosaki home YouTube embed (static until site_embeds DB). Set published:true and videoId or sourceUrl to show on home.",
+  "siteSlug": "gosaki-piano",
+  "published": false,
+  "title": "YouTube",
+  "caption": "ライブや演奏の動画を掲載する予定です。",
+  "sourceUrl": "",
+  "videoId": ""
+}

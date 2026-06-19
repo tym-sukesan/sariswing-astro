@@ -63,6 +63,20 @@ function cmsKitAdminShellRoutesIntegration() {
             import.meta.url,
           ),
         });
+        injectRoute({
+          pattern: "/__admin-staging-shell/musician-basic/admin/youtube",
+          entrypoint: new URL(
+            "./src/pages/__admin-staging-shell/musician-basic/admin/youtube/index.astro",
+            import.meta.url,
+          ),
+        });
+        injectRoute({
+          pattern: "/__admin-staging-shell/musician-basic/admin/discography",
+          entrypoint: new URL(
+            "./src/pages/__admin-staging-shell/musician-basic/admin/discography/index.astro",
+            import.meta.url,
+          ),
+        });
       },
     },
   };

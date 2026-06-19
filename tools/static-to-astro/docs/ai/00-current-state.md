@@ -21,15 +21,17 @@ Staging Shell
 将来的な顧客オンボーディング・課金・デプロイ自動化
 
 2. Current phase
-現在フェーズ: **G-9g4a1b-venue-only-operational-expansion-execution-runbook**（G-9g4a1a preflight 完了後）
+現在フェーズ: **G-9g4a1b1-venue-only-operational-expansion-manual-execution**（G-9g4a1b execution runbook 完了後）
 
-G-9g4a1a: Schedule venue-only operational expansion **preflight complete**（uncommitted）。target row TBD by operator (Option A); rollback SQL document-only.
+G-9g4a1b: Schedule venue-only operational expansion **execution runbook complete**（uncommitted）。target row TBD by operator at manual execution.
+
+G-9g4a1a: Schedule venue-only operational expansion **preflight complete**（commit `01e64af`）。
 
 G-9g4a1: Schedule venue-only operational expansion **implementation complete**（commit `49986c1`）。
 
 G-9g4a: Schedule text fields operational expansion planning **complete**（commit `9a38c11`）。
 
-Git: 最新 push 済み commit `49986c1`（G-9g4a1）。G-9g4a1a preflight **uncommitted**。
+Git: 最新 push 済み commit `01e64af`（G-9g4a1a）。G-9g4a1b execution runbook **uncommitted**。
 
 G-9g3h1: Save success re-click prevention **implemented**（commit `8780f84`）。
 
@@ -544,23 +546,26 @@ PUBLIC_SUPABASE_URL host: kmjqppxjdnwwrtaeqjta.supabase.co (staging)
 **Note:** `tools/static-to-astro/.env.local` に `SUPABASE_SERVICE_ROLE_KEY` が local only（gitignored）で存在する場合がある。G-9g3b execution では使用禁止・参照禁止。anon key + authenticated session のみ。
 
 10. Recommended next phase
-次フェーズ推奨: **G-9g4a1b-venue-only-operational-expansion-execution-runbook**
+次フェーズ推奨: **G-9g4a1b1-venue-only-operational-expansion-manual-execution**
 
-G-9g4a1a Schedule venue-only operational expansion preflight: **complete**（uncommitted）。
+G-9g4a1b Schedule venue-only operational expansion execution runbook: **complete**（uncommitted）。
+
+G-9g4a1a Schedule venue-only operational expansion preflight: **complete**（commit `01e64af`）。
 
 G-9g4a1 Schedule venue-only operational expansion: **implementation complete**（commit `49986c1`）。
 
 Phase sequence:
 ```txt
 G-9g4a1-venue-only-operational-expansion-implementation ← complete (49986c1)
-G-9g4a1a-venue-only-operational-expansion-preflight ← complete (uncommitted)
-G-9g4a1b-venue-only-operational-expansion-execution-runbook ← next
+G-9g4a1a-venue-only-operational-expansion-preflight ← complete (01e64af)
+G-9g4a1b-venue-only-operational-expansion-execution-runbook ← complete (uncommitted)
+G-9g4a1b1-venue-only-operational-expansion-manual-execution ← next
 ```
 
-G-9g4a1a gates:
+G-9g4a1b gates:
 ```txt
-stagingShellScheduleVenueOnlyOperationalExpansionPreflightComplete: true
-readyForG9g4a1bVenueOnlyOperationalExpansionExecutionRunbook: true
+stagingShellScheduleVenueOnlyOperationalExpansionExecutionRunbookComplete: true
+readyForG9g4a1b1VenueOnlyOperationalExpansionManualExecution: true
 targetRowSelected: false
 operationalProvenFields: description
 venueOnlyOperationalPathImplemented: true

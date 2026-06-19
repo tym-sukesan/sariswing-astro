@@ -3651,6 +3651,58 @@ assert(
   g9g4a1aPreflightSrc.includes("Save clicked (this phase) | **no**"),
 );
 
+const g9g4a1bRunbookPath = path.join(
+  TOOL_ROOT,
+  "docs/staging-shell-schedule-venue-only-operational-expansion-execution-runbook.md",
+);
+assert("G-9g4a1b execution runbook doc exists", fs.existsSync(g9g4a1bRunbookPath));
+const g9g4a1bRunbookSrc = fs.readFileSync(g9g4a1bRunbookPath, "utf8");
+assert(
+  "G-9g4a1b phase marker",
+  g9g4a1bRunbookSrc.includes("G-9g4a1b-venue-only-operational-expansion-execution-runbook"),
+);
+assert(
+  "G-9g4a1b status complete",
+  g9g4a1bRunbookSrc.includes("**complete**"),
+);
+assert(
+  "G-9g4a1b runbook only",
+  g9g4a1bRunbookSrc.includes("runbook only") ||
+    g9g4a1bRunbookSrc.includes("runbook documentation only"),
+);
+assert(
+  "G-9g4a1b execution stack",
+  g9g4a1bRunbookSrc.includes("PUBLIC_ADMIN_SCHEDULE_G9G4A1_VENUE_ONLY_NON_DRY_RUN_ARMED"),
+);
+assert(
+  "G-9g4a1b G-9g4a1 arm only",
+  g9g4a1bRunbookSrc.includes("G-9g4a1 arm only"),
+);
+assert(
+  "G-9g4a1b venue smoke",
+  g9g4a1bRunbookSrc.includes("G-9g4a1 venue smoke"),
+);
+assert(
+  "G-9g4a1b Preview STOP",
+  g9g4a1bRunbookSrc.includes("must not click Save until ChatGPT confirms"),
+);
+assert(
+  "G-9g4a1b Save exactly once",
+  g9g4a1bRunbookSrc.includes("exactly once"),
+);
+assert(
+  "G-9g4a1b target row unselected",
+  g9g4a1bRunbookSrc.includes("targetRowSelected: false"),
+);
+assert(
+  "G-9g4a1b next phase G-9g4a1b1",
+  g9g4a1bRunbookSrc.includes("G-9g4a1b1-venue-only-operational-expansion-manual-execution"),
+);
+assert(
+  "G-9g4a1b no Save click",
+  g9g4a1bRunbookSrc.includes("Save clicked (this phase) | **no**"),
+);
+
 const gosakiPublicDist = path.join(TOOL_ROOT, "output/static-public/gosaki-piano/public-dist");
 for (const ym of ["2026-06", "2026-07"]) {
   const canonicalMonthPath = path.join(gosakiPublicDist, "schedule", ym, "index.html");

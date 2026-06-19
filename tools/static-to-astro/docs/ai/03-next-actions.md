@@ -3,27 +3,27 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 1. Immediate priority
 
-**Current phase:** `G-9g4a1b-venue-only-operational-expansion-execution-runbook`
+**Current phase:** `G-9g4a1b1-venue-only-operational-expansion-manual-execution`
 
-**Git:** latest pushed commit `49986c1` (G-9g4a1 venue-only implementation)
+**Git:** latest pushed commit `01e64af` (G-9g4a1a venue-only preflight)
 
-### G-9g4a1a summary
+### G-9g4a1b summary
 
 | Item | Value |
 | --- | --- |
-| Doc | `staging-shell-schedule-venue-only-operational-expansion-preflight.md` |
-| Status | **complete** — preflight runbook (uncommitted) |
-| Target row | Option A — operator selects at execution (not fixed in preflight) |
-| Fallback | `888c58f2-…` / `schedule-2026-03-001` / venue `銀座 N` (discouraged) |
-| Smoke | `<venue> [G-9g4a1 venue smoke]` → restore original venue |
-| Rollback SQL | document-only — **not executed** |
-| Operator Save / Preview | **not executed** in preflight phase |
+| Doc | `staging-shell-schedule-venue-only-operational-expansion-execution-runbook.md` |
+| Status | **complete** — execution runbook (uncommitted) |
+| Target row | **unselected** — operator selects at G-9g4a1b1 |
+| UI path | G-9g4a1 venue-only buttons only (`#site-slug-edit-g9g4a1-venue-only-*`) |
+| Smoke | `<venue> [G-9g4a1 venue smoke]` |
+| Restore chain | G-9g4a1c → G-9g4a1d → G-9g4a1e (after smoke Save) |
+| Operator Save / Preview | **not executed** in runbook phase |
 
 ### Gates
 
 ```txt
-stagingShellScheduleVenueOnlyOperationalExpansionPreflightComplete: true
-readyForG9g4a1bVenueOnlyOperationalExpansionExecutionRunbook: true
+stagingShellScheduleVenueOnlyOperationalExpansionExecutionRunbookComplete: true
+readyForG9g4a1b1VenueOnlyOperationalExpansionManualExecution: true
 targetRowSelected: false
 activeRestoreExceptionsCount: 0
 markerRemainsInStagingDb: false
@@ -32,8 +32,8 @@ readyForAnyDbWrite: false
 
 ## 2. Next steps
 
-1. **G-9g4a1b-venue-only-operational-expansion-execution-runbook** — operator row pick → G-9g4a1 Preview → armed stack → one manual Save
-2. Commit G-9g4a1a preflight when ready
+1. **G-9g4a1b1-venue-only-operational-expansion-manual-execution** — operator row pick → venue smoke → G-9g4a1 Preview → paste to ChatGPT → armed stack → one manual Save
+2. Commit G-9g4a1b execution runbook when ready
 
 ## 3. Routine dev safety
 
@@ -48,8 +48,8 @@ PUBLIC_ADMIN_SCHEDULE_G9G3G5_OPERATIONAL_RESTORE_NON_DRY_RUN_ARMED: false or uns
 ## 4. Do not
 
 - Cursor / AI click Save or Preview
-- Write execution arms to `.env` / `.env.local` in preflight
-- Start dev server with G-9g4a1 arm on during preflight
-- Execute rollback SQL
+- Write execution arms to `.env` / `.env.local` in runbook phase
+- Start dev server with G-9g4a1 arm on during runbook phase
+- Execute rollback SQL or restore in runbook phase
 - Use service_role
 - Touch production or `/admin`

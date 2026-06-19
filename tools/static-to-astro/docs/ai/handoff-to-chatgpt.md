@@ -5,11 +5,18 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-9h-gosaki-schedule-cms-practicalization-planning — complete; latest commit should be checked with git HEAD.
+Current phase: G-9h-gosaki-schedule-cms-practicalization-planning — complete; Gosaki staging admin schedule UI refined (check git HEAD).
 branch: main
 HEAD = origin/main — check git HEAD for latest commit hash
 G-9g4a2 framework: complete, committed, pushed (C1–C4 through d66bae7)
 ```
+
+## Gosaki staging admin (latest UI work)
+
+- **Routes:** `/__admin-staging-shell/musician-basic/admin/`, `/admin/schedule/` (not production `/admin/`)
+- **Operator schedule:** month / published / keyword filters; columns 日付・タイトル・会場・開場・開演・料金・確認する; detail card; save not exposed
+- **Dev PoC:** bottom `<details>開発者向け詳細</details>` — row picker, read/edit, G-6 sections preserved
+- **No** DB write / Save / Preview auto / FTP / production admin changes
 
 ## Summary
 

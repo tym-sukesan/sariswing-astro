@@ -15,19 +15,26 @@ const routePath = "/__admin-staging-shell/musician-basic/";
 const disableReason = !isDev
   ? "Admin staging shell is disabled outside development mode (import.meta.env.DEV is false)."
   : "Admin staging shell is disabled. Set ENABLE_ADMIN_STAGING_SHELL=true in your environment for local dev only.";
-
-let StagingShellWrapper = null;
-if (enabled) {
-  const mod = await import(
-    "../../../../tools/static-to-astro/templates/admin-cms/preview/staging-shell-wrapper.astro"
-  );
-  StagingShellWrapper = mod.default;
-}
 ---
 
 {
-  enabled && StagingShellWrapper ? (
-    <StagingShellWrapper routePath={routePath} />
+  enabled ? (
+    <>
+      <html lang="ja">
+        <head>
+          <meta charset="UTF-8" />
+          <meta http-equiv="refresh" content="0;url=/__admin-staging-shell/musician-basic/admin/" />
+          <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+          <meta name="robots" content="noindex,nofollow,noarchive" />
+          <title>Gosaki 管理画面へ移動中…</title>
+        </head>
+        <body>
+          <p>
+            <a href="/__admin-staging-shell/musician-basic/admin/">Gosaki 管理画面へ</a>
+          </p>
+        </body>
+      </html>
+    </>
   ) : (
     <html lang="ja">
       <head>

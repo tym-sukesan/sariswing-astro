@@ -61,8 +61,6 @@ import DiscographyAdminUi from "../modules/DiscographyAdminUi.astro";
 import LinksAdminUi from "../modules/LinksAdminUi.astro";
 import NewsAdminUi from "../modules/NewsAdminUi.astro";
 import AdminGosakiStagingOperatorHome from "../gosaki/components/AdminGosakiStagingOperatorHome.astro";
-import AdminGosakiStagingScheduleOperatorIntro from "../gosaki/components/AdminGosakiStagingScheduleOperatorIntro.astro";
-import AdminGosakiStagingScheduleHelp from "../gosaki/components/AdminGosakiStagingScheduleHelp.astro";
 
 interface Props {
   localPreviewMode?: boolean;
@@ -325,7 +323,10 @@ const moduleSummary = [
   <div class="admin-prototype">
     {
       stagingShellMode ? (
-        <AdminGosakiStagingOperatorHome previewUrl={gosakiPreviewUrl} />
+        <AdminGosakiStagingOperatorHome
+          previewUrl={gosakiPreviewUrl}
+          schedulePath="/__admin-staging-shell/musician-basic/admin/schedule/"
+        />
       ) : null
     }
     {
@@ -451,53 +452,21 @@ const moduleSummary = [
       )
     }
 
-    <section id="schedule" class="admin-prototype-section admin-gosaki-operator-schedule" data-section="schedule">
+    <section id="schedule" class="admin-prototype-section" data-section="schedule">
       {
         stagingShellMode ? (
-          <AdminGosakiStagingScheduleOperatorIntro previewUrl={`${gosakiPreviewUrl}schedule/`} />
-        ) : null
-      }
-      {
-        stagingShellMode ? (
-          <div class="admin-gosaki-schedule-workspace">
-            <div class="admin-gosaki-schedule-workspace__step">
-              <p class="admin-gosaki-workspace-label">① 公演を選ぶ</p>
-              {
-                gosakiScheduleSiteSlugRowPickerBinding ? (
-                  <AdminStagingScheduleSiteSlugRowPickerSection
-                    binding={gosakiScheduleSiteSlugRowPickerBinding}
-                  />
-                ) : null
-              }
-            </div>
-            <div class="admin-gosaki-schedule-workspace__step">
-              <p class="admin-gosaki-workspace-label">② 内容を確認する</p>
-              {
-                gosakiScheduleSiteSlugBinding ? (
-                  <AdminStagingScheduleSiteSlugReadSection binding={gosakiScheduleSiteSlugBinding} />
-                ) : null
-              }
-              {
-                gosakiScheduleSiteSlugEditBinding ? (
-                  <AdminStagingScheduleSiteSlugEditSection binding={gosakiScheduleSiteSlugEditBinding} />
-                ) : null
-              }
-            </div>
-          </div>
-        ) : null
-      }
-      {stagingShellMode ? <AdminGosakiStagingScheduleHelp /> : null}
-      {
-        stagingShellMode ? (
-          <details class="admin-gosaki-dev-tools admin-gosaki-dev-tools--schedule">
-            <summary>開発者向け詳細（スケジュール）</summary>
-            <AdminStagingScheduleGeneralEditSection
-              phase="G-6-g1-schedule-title-non-dry-run-slice-implementation"
-              g6g2Phase="G-6-g2-schedule-time-fields-non-dry-run-slice-implementation"
-            />
-            <AdminStagingScheduleSafeFieldsDryRunSection phase="G-6-f4-schedule-safe-fields-dry-run-prototype" />
-            <AdminStagingScheduleSafeFieldsNonDryRunPocSection phase="G-6-f6-schedule-safe-fields-non-dry-run-poc-implementation" />
-          </details>
+          <section class="admin-card admin-gosaki-card">
+            <h2 class="admin-gosaki-card__title">Schedule管理</h2>
+            <p class="admin-gosaki-schedule-redirect-note">
+              運用者向けの Schedule 管理画面は専用ページに移動しました。
+            </p>
+            <a
+              class="admin-button admin-button--menu admin-button--menu-primary"
+              href="/__admin-staging-shell/musician-basic/admin/schedule/"
+            >
+              Schedule管理を開く
+            </a>
+          </section>
         ) : (
           <ScheduleAdminUi
             items={scheduleUiBinding.items}

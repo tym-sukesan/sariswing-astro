@@ -1617,3 +1617,163 @@
   grid-template-columns: 1fr;
   max-width: 36rem;
 }
+
+.admin-gosaki-admin-pages {
+  max-width: 960px;
+}
+
+.admin-gosaki-schedule-filters {
+  display: grid;
+  gap: 0.75rem 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+  margin-bottom: 0.75rem;
+}
+
+.admin-gosaki-schedule-filters__field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.admin-gosaki-schedule-filters__field--grow {
+  grid-column: 1 / -1;
+}
+
+@media (min-width: 640px) {
+  .admin-gosaki-schedule-filters__field--grow {
+    grid-column: span 2;
+  }
+}
+
+.admin-gosaki-schedule-filters__label {
+  font-weight: 600;
+  color: #374151;
+}
+
+.admin-gosaki-schedule-filters select,
+.admin-gosaki-schedule-filters input {
+  padding: 0.45rem 0.6rem;
+  border: 1px solid #d1d5db;
+  border-radius: var(--admin-radius);
+  font: inherit;
+}
+
+.admin-gosaki-schedule-count {
+  margin: 0 0 0.75rem;
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.admin-gosaki-schedule-table-wrap {
+  overflow-x: auto;
+}
+
+.admin-gosaki-schedule-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.admin-gosaki-schedule-table th,
+.admin-gosaki-schedule-table td {
+  padding: 0.65rem 0.5rem;
+  border-bottom: 1px solid #e5e7eb;
+  text-align: left;
+  vertical-align: top;
+}
+
+.admin-gosaki-schedule-table th {
+  font-weight: 700;
+  color: #374151;
+  background: #f9fafb;
+  white-space: nowrap;
+}
+
+.admin-gosaki-schedule-table__row.is-selected {
+  background: #f0f9ff;
+}
+
+.admin-gosaki-schedule-table__empty {
+  padding: 1rem 0.5rem;
+  color: #6b7280;
+  text-align: center;
+}
+
+.admin-gosaki-schedule-select-btn {
+  white-space: nowrap;
+  font-size: 0.85rem;
+  padding: 0.35rem 0.65rem;
+}
+
+.admin-gosaki-schedule-detail-card {
+  margin-top: 1rem;
+}
+
+.admin-gosaki-schedule-detail__empty {
+  margin: 0;
+  color: #6b7280;
+  font-size: 0.9rem;
+}
+
+.admin-gosaki-schedule-detail__dl {
+  display: grid;
+  gap: 0.65rem 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  margin: 0 0 1rem;
+}
+
+.admin-gosaki-schedule-detail__dl dt {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #6b7280;
+}
+
+.admin-gosaki-schedule-detail__dl dd {
+  margin: 0.15rem 0 0;
+  font-size: 1rem;
+  color: #111827;
+}
+
+.admin-gosaki-schedule-detail__description {
+  margin: 0;
+  white-space: pre-wrap;
+  line-height: 1.6;
+  color: #374151;
+}
+
+.admin-gosaki-schedule-detail__save-note {
+  margin: 1rem 0 0.5rem;
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.admin-gosaki-schedule-detail__preview a {
+  color: var(--admin-color-primary);
+}
+
+.admin-gosaki-schedule-operator__unavailable,
+.admin-gosaki-schedule-operator__empty {
+  margin: 0 0 1rem;
+  color: #6b7280;
+  font-size: 0.9rem;
+}
+
+.admin-gosaki-schedule-redirect-note {
+  margin: 0 0 1rem;
+  color: #4b5563;
+  line-height: 1.6;
+}
+
+.admin-gosaki-dev-tools__note {
+  margin: 0.5rem 0 1rem;
+  font-size: 0.85rem;
+  color: #6b7280;
+}
+
+.admin-gosaki-dev-tools .admin-staging-schedule-site-slug-row-picker,
+.admin-gosaki-dev-tools .admin-staging-schedule-site-slug-read,
+.admin-gosaki-dev-tools .admin-staging-schedule-site-slug-edit {
+  margin-top: 1rem;
+}

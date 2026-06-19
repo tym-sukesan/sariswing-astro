@@ -3,6 +3,8 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
+**Gosaki staging admin schedule UI refinement (2026-06-19):** Operator-facing `/__admin-staging-shell/musician-basic/admin/` + `/admin/schedule/` routes; Sariswing `/admin/` structure mirrored read-only. PoC UI in `<details>開発者向け詳細</details>`. No DB write / Save / production `/admin` changes. Commit message: `Refine Gosaki staging admin schedule UI`.
+
 1. Project overview
 このプロジェクトは、Sariswing.com で実装した Astro + Supabase + GitHub Actions + Lolipop FTP 構成を一般化し、ミュージシャン・音楽教室・小規模事業者向けの CMS Kit として商品化することを目的とする。
 現在の中心テーマは、tools/static-to-astro における Musician CMS Kit の一般化である。

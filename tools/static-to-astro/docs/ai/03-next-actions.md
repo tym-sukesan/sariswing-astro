@@ -1,6 +1,17 @@
 Last updated: 2026-06-19
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0. Gosaki staging admin schedule UI — complete (UI only)
+
+| Item | Value |
+| --- | --- |
+| Routes | `/__admin-staging-shell/musician-basic/admin/`, `/admin/schedule/` |
+| Pattern | Sariswing `/admin/` + `/admin/schedule/` mirrored in staging shell (read-only reference) |
+| Operator UI | Filters + Japanese table + detail card; PoC in `<details>開発者向け詳細</details>` |
+| Legacy shell | `/__admin-staging-shell/musician-basic/` redirects to `/admin/` |
+| DB / Save / Preview | **none** |
+| Next | G-9h1 client preview feedback closure |
+
 ## 1. Immediate priority
 
 **Current phase:** `G-9h-gosaki-schedule-cms-practicalization-planning` — **complete**（G-9h planning complete. 最新commitは git HEAD を確認すること。）

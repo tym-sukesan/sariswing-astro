@@ -2,19 +2,29 @@
 /**
  * Gosaki staging shell operator home (Sariswing /admin/ inspired).
  */
+import {
+  GOSAKI_STAGING_ADMIN_BASE,
+  GOSAKI_STAGING_ADMIN_SCHEDULE_PATH,
+  GOSAKI_STAGING_PREVIEW_URL,
+} from "../gosaki-staging-admin-paths";
+
 interface Props {
   previewUrl?: string;
+  schedulePath?: string;
+  adminBasePath?: string;
 }
 
 const {
-  previewUrl = "https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/",
+  previewUrl = GOSAKI_STAGING_PREVIEW_URL,
+  schedulePath = GOSAKI_STAGING_ADMIN_SCHEDULE_PATH,
+  adminBasePath = GOSAKI_STAGING_ADMIN_BASE,
 } = Astro.props;
 ---
 
 <section
   id="gosaki-home"
   class="admin-gosaki-operator-home admin-prototype-section"
-  data-section="gosaki-home"
+  data-section="admin-home"
   aria-label="Gosaki Piano 管理画面トップ"
 >
   <header class="admin-gosaki-page-header admin-gosaki-page-header--with-actions">
@@ -43,7 +53,7 @@ const {
     <nav aria-label="Gosaki 管理メニュー">
       <ul class="admin-gosaki-menu admin-gosaki-menu--primary">
         <li>
-          <a class="admin-button admin-button--menu admin-button--menu-primary" href="#schedule">
+          <a class="admin-button admin-button--menu admin-button--menu-primary" href={schedulePath}>
             Schedule管理
           </a>
         </li>
@@ -79,13 +89,13 @@ const {
   </section>
 
   <details class="admin-gosaki-home-supplement">
-    <summary>補足（できること・できないこと）</summary>
+    <summary>補足</summary>
     <div class="admin-gosaki-operator-grid admin-gosaki-operator-grid--compact">
       <section class="admin-card admin-gosaki-card admin-gosaki-card--flat">
         <h3 class="admin-gosaki-card__subtitle">いまできること</h3>
         <ul class="admin-gosaki-list admin-gosaki-list--compact">
-          <li>登録済みスケジュールの確認</li>
-          <li>公演の選択と内容の確認</li>
+          <li>スケジュールの確認</li>
+          <li>公演内容の確認</li>
           <li>公開前ページの表示確認</li>
         </ul>
       </section>
@@ -94,7 +104,6 @@ const {
         <ul class="admin-gosaki-list admin-gosaki-list--compact">
           <li>スケジュールの保存</li>
           <li>本番サイトへの反映</li>
-          <li>YouTube 埋め込みの更新</li>
         </ul>
       </section>
     </div>

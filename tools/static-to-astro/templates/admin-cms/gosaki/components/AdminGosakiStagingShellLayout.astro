@@ -1,0 +1,27 @@
+---
+import AdminLayout from "../../components/AdminLayout.astro";
+import { GOSAKI_STAGING_ADMIN_BASE } from "../gosaki-staging-admin-paths";
+
+interface Props {
+  title: string;
+  brandHref?: string;
+}
+
+const { title, brandHref = GOSAKI_STAGING_ADMIN_BASE } = Astro.props;
+---
+
+<AdminLayout
+  title={title}
+  siteName="Gosaki Piano"
+  brandHref={brandHref}
+  stagingLabel="Gosaki 管理画面（確認用）"
+>
+  <p class="admin-gosaki-global-status" slot="status" role="status">
+    現在は確認用です。保存・本番反映はまだ開放していません。
+  </p>
+  <slot />
+</AdminLayout>
+
+<style is:global>
+  @import "../../styles/admin.css";
+</style>

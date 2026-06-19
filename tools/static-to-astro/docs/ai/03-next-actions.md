@@ -3,19 +3,21 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 1. Immediate priority
 
-**Current phase:** `G-9g4a2-framework-single-text-field-operational-commonization-implementation` (not started)
+**Current phase:** `G-9g4a2-framework-single-text-field-operational-commonization-implementation` — **complete after C4** (uncommitted until C4 commit)
 
-**Git:** branch `main`; HEAD = origin/main = `e267da3` (G-9g4a2 framework planning — committed and pushed); working tree **clean**
+**Git:** branch `main`; HEAD = origin/main = `1c1fb32` (C3 — committed and pushed); **C4 doc/verifier/AI context uncommitted**
 
-### G-9g4a2 framework planning — complete
+### G-9g4a2 framework implementation — complete after C4
 
 | Item | Value |
 | --- | --- |
-| Doc | `staging-shell-schedule-single-text-field-operational-commonization-planning.md` |
-| Status | **complete** — commit `e267da3` (committed and pushed) |
-| Verifier | 39 passed, 0 failed |
+| Doc | `staging-shell-schedule-single-text-field-operational-commonization-implementation.md` |
+| Status | **complete after C4** — C1 `1e643e7`, C2 `9c3714c`, C3 `1c1fb32` pushed; C4 uncommitted |
+| C1 | registry + types + parameterized guards + generic config |
+| C2 | generic Save executor + open_time-only save delegate |
+| C3 | generic edit UI + open_time edit-ui delegate + Astro/binding wiring |
 | Target fields | `open_time`, `start_time`, `price` |
-| Next | `G-9g4a2-framework-single-text-field-operational-commonization-implementation` |
+| Verifiers | C1 69 / C2 34 / C3 47 / G-9g4a2a 83 / planning 39 passed |
 
 ### G-9g4a2a open_time-only round-trip — complete (historical)
 
@@ -29,20 +31,17 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 ### Policy (manual round-trip reduction)
 
 - Do **not** repeat per-field manual round-trips for `start_time` / `price`
-- Manual non-dry-run round-trip reserved for **new common logic** only
+- Manual non-dry-run round-trip reserved for **new common logic** only (max once with explicit approval)
 - Config-only field additions: static verifiers, guards, dry-run Preview, type checks
-- Next: common framework **implementation** — **not** `start_time`-only manual execution slice
+- **Not** next: `start_time`-only manual execution slice
 
 ### Gates
 
 ```txt
-stagingShellScheduleSingleTextFieldOperationalCommonizationPlanningComplete: true
-readyForG9g4a2FrameworkSingleTextFieldOperationalCommonizationImplementation: true
-stagingShellScheduleOpenTimeOnlyOperationalRoundTripComplete: true
-markerRemainsInStagingDb: false
-activeRestoreExceptionsCount: 0
-restoreRequired: false
-noFurtherSaveOrRestoreNeeded: true
+stagingShellScheduleSingleTextFieldOperationalCommonizationImplementationComplete: true
+readyForG9g4a2FrameworkLocalStaticVerification: true
+readyForG9g4a2FrameworkOptionalDryRunPreviewByOperator: true (explicit approval only)
+readyForG9g4a2FrameworkSmokeNonDryRunSave: false
 readyForAnyDbWrite: false
 cursorClickedSave: false
 cursorClickedPreview: false
@@ -50,8 +49,11 @@ cursorClickedPreview: false
 
 ## 2. Next steps
 
-1. **G-9g4a2-framework-single-text-field-operational-commonization-implementation** — registry + shared modules + G-9g4a2a delegate (implementation only; not started)
-2. **Not** next: `start_time`-only manual execution slice
+1. **Commit C4** — implementation doc + final verifier + AI context (when operator approves)
+2. **Local / static verification** — re-run all G-9g4a2 verifiers; no DB write
+3. **Optional operator dry-run Preview** — `start_time` / `price` panels on staging shell only if explicitly approved; **no Save**
+4. **Gosaki schedule CMS practicalization** — client preview feedback, Top YouTube embed (G-9a), schedule read UX
+5. **Not** next: `start_time`-only manual non-dry-run execution slice
 
 ## 3. Routine dev safety
 
@@ -59,6 +61,8 @@ cursorClickedPreview: false
 ENABLE_ADMIN_STAGING_WRITE=false
 PUBLIC_ADMIN_WRITE_DRY_RUN=true
 PUBLIC_ADMIN_SCHEDULE_G9G4A2A_OPEN_TIME_ONLY_NON_DRY_RUN_ARMED=false or unset
+PUBLIC_ADMIN_SCHEDULE_G9G4A2B_START_TIME_ONLY_NON_DRY_RUN_ARMED=false or unset
+PUBLIC_ADMIN_SCHEDULE_G9G4A2C_PRICE_ONLY_NON_DRY_RUN_ARMED=false or unset
 PUBLIC_ADMIN_SCHEDULE_G9G4A1_VENUE_ONLY_NON_DRY_RUN_ARMED=false or unset
 PUBLIC_ADMIN_SCHEDULE_G9G3G_OPERATIONAL_GENERAL_EDIT_NON_DRY_RUN_ARMED=false or unset
 PUBLIC_ADMIN_SCHEDULE_G9G3G5_OPERATIONAL_RESTORE_NON_DRY_RUN_ARMED=false or unset
@@ -66,8 +70,9 @@ PUBLIC_ADMIN_SCHEDULE_G9G3G5_OPERATIONAL_RESTORE_NON_DRY_RUN_ARMED=false or unse
 
 ## 4. Do not
 
-- Start `start_time`-only manual round-trip (use framework implementation instead)
+- Start `start_time`-only manual round-trip (framework implementation complete)
 - Re-click G-9g4a2a open_time-only Save on proven row
+- Run non-dry-run Save for `start_time` / `price` without new approval ID
 - Cursor / AI click row picker / Preview / Save
 - Use service_role
 - Touch production or `/admin`

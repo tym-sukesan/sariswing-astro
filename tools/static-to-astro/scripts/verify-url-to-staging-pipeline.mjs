@@ -4070,6 +4070,45 @@ assert(
   g9g4a2a2ResultSrc.includes("Save clicked (Cursor/AI) | **no**"),
 );
 
+const g9g4a2aClosurePath = path.join(
+  TOOL_ROOT,
+  "docs/staging-shell-schedule-open-time-only-operational-restore-and-closure.md",
+);
+assert("G-9g4a2a restore-and-closure doc exists", fs.existsSync(g9g4a2aClosurePath));
+const g9g4a2aClosureSrc = fs.readFileSync(g9g4a2aClosurePath, "utf8");
+assert(
+  "G-9g4a2a closure phase marker",
+  g9g4a2aClosureSrc.includes("G-9g4a2a-open-time-only-operational-restore-and-closure"),
+);
+assert(
+  "G-9g4a2a closure status complete",
+  g9g4a2aClosureSrc.includes("**complete**"),
+);
+assert(
+  "G-9g4a2a closure final open_time 11:30",
+  g9g4a2aClosureSrc.includes("open_time: 11:30"),
+);
+assert(
+  "G-9g4a2a closure marker removed",
+  g9g4a2aClosureSrc.includes("markerRemainsInStagingDb: false"),
+);
+assert(
+  "G-9g4a2a closure restore required no",
+  g9g4a2aClosureSrc.includes("restore required: no"),
+);
+assert(
+  "G-9g4a2a closure policy change",
+  g9g4a2aClosureSrc.includes("Do **not** repeat full manual round-trip"),
+);
+assert(
+  "G-9g4a2a closure next framework planning",
+  g9g4a2aClosureSrc.includes("G-9g4a2-framework-single-text-field-operational-commonization-planning"),
+);
+assert(
+  "G-9g4a2a closure cursor no Save",
+  g9g4a2aClosureSrc.includes("Save clicked (Cursor/AI) | **no**"),
+);
+
 const gosakiPublicDist = path.join(TOOL_ROOT, "output/static-public/gosaki-piano/public-dist");
 for (const ym of ["2026-06", "2026-07"]) {
   const canonicalMonthPath = path.join(gosakiPublicDist, "schedule", ym, "index.html");

@@ -118,7 +118,7 @@ assert(
   currentStateSrc.includes("markerRemainsInStagingDb: true") ||
     currentStateSrc.includes(AFTER_OPEN_TIME),
 );
-assert("next actions G-9g4a2a3", nextActionsSrc.includes("G-9g4a2a3"));
+assert("next actions G-9g4a2a3 or framework", nextActionsSrc.includes("G-9g4a2a3") || nextActionsSrc.includes("G-9g4a2-framework"));
 assert(
   "handoff G-9g4a2a2",
   handoffSrc.includes("G-9g4a2a2") && handoffSrc.includes("G-9g4a2a3"),

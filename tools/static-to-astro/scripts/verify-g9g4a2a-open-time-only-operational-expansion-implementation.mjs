@@ -247,7 +247,10 @@ assert(
   "current state implementation complete",
   currentStateSrc.includes("implementation complete") || currentStateSrc.includes("implementation **complete**"),
 );
-assert("next actions G-9g4a2a1", nextActionsSrc.includes("G-9g4a2a1"));
+assert(
+  "next actions G-9g4a2a1 or framework",
+  nextActionsSrc.includes("G-9g4a2a") || nextActionsSrc.includes("G-9g4a2-framework"),
+);
 assert("handoff G-9g4a2a", handoffSrc.includes("G-9g4a2a"));
 assert(
   "handoff no Preview/Save executed",

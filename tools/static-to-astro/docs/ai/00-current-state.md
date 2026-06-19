@@ -21,13 +21,15 @@ Staging Shell
 将来的な顧客オンボーディング・課金・デプロイ自動化
 
 2. Current phase
-現在フェーズ: **G-9g4a2a3-open-time-only-operational-restore-preflight**（G-9g4a2a2 manual Save 完了後 — restore preflight 未着手）
+現在フェーズ: **G-9g4a2-framework-single-text-field-operational-commonization-planning**（G-9g4a2a open_time-only round-trip 完了後 — framework planning 未着手）
 
-G-9g4a2a2: Schedule open_time-only operational expansion **manual execution complete**（uncommitted）。operator Save once; `open_time` smoke `11:30 [G-9g4a2a open_time smoke]` remains; restore target `11:30`; lock `2026-06-19T07:14:34.018855+00:00`. Cursor did not click Preview/Save.
+G-9g4a2a: Schedule open_time-only operational **restore and closure complete**（uncommitted）。smoke round-trip complete; final `open_time` `11:30`; marker removed. Operator restore Save once; Cursor did not click Preview/Save.
+
+G-9g4a2a2: Schedule open_time-only operational expansion **manual execution complete**（commit `54623a1`）。
 
 G-9g4a2a1: Schedule open_time-only operational expansion **preflight complete**（commit `8d57b1b`）。
 
-G-9g4a2a: Schedule open_time-only operational expansion **implementation complete**（commit `8ae0d1e`）。
+G-9g4a2a implementation: **complete**（commit `8ae0d1e`）。
 
 G-9g4a2: text fields operational expansion **planning complete**（commit `0d80d7d`）。single-field-first; first slice `open_time` only.
 
@@ -45,7 +47,7 @@ G-9g4a1: Schedule venue-only operational expansion **implementation complete**�
 
 G-9g4a: Schedule text fields operational expansion planning **complete**（commit `9a38c11` — superseded for next slice by G-9g4a2）.
 
-Git: 最新 push 済み commit `8d57b1b`（G-9g4a2a1 preflight）。G-9g4a2a2 manual execution result **uncommitted**。
+Git: 最新 push 済み commit `54623a1`（G-9g4a2a2 manual execution result）。G-9g4a2a restore-and-closure **uncommitted**。
 
 G-9g3h1: Save success re-click prevention **implemented**（commit `8780f84`）。
 
@@ -560,11 +562,11 @@ PUBLIC_SUPABASE_URL host: kmjqppxjdnwwrtaeqjta.supabase.co (staging)
 **Note:** `tools/static-to-astro/.env.local` に `SUPABASE_SERVICE_ROLE_KEY` が local only（gitignored）で存在する場合がある。G-9g3b execution では使用禁止・参照禁止。anon key + authenticated session のみ。
 
 10. Recommended next phase
-次フェーズ推奨: **G-9g4a2a3-open-time-only-operational-restore-preflight**
+次フェーズ推奨: **G-9g4a2-framework-single-text-field-operational-commonization-planning**
 
-G-9g4a2a2 Schedule open_time-only operational expansion **manual execution complete**（uncommitted）。target `eb1f1898-5107-4deb-a6d5-a792e0ec3f69`; smoke `11:30 [G-9g4a2a open_time smoke]`; restore `11:30`; after `updated_at` `2026-06-19T07:14:34.018855+00:00`. **Do not re-click G-9g4a2a open_time-only Save.**
+G-9g4a2a Schedule open_time-only operational **restore and closure complete**（uncommitted）。round-trip complete; final `open_time` `11:30`; `markerRemainsInStagingDb: false`; `activeRestoreExceptionsCount: 0`; **no further Save / restore needed**. Policy: do not repeat per-field manual round-trips for `start_time` / `price` — use common framework.
 
-G-9g4a2a1 Schedule open_time-only operational expansion **preflight complete**（commit `8d57b1b`）。
+G-9g4a2a2 manual execution: **complete**（commit `54623a1`）。
 
 G-9g4a2 Schedule text fields operational expansion planning: **complete**（commit `0d80d7d`）。single-field-first; `open_time` only first slice.
 
@@ -576,22 +578,36 @@ G-9g4a1b1 Schedule venue-only manual execution: **complete**（commit `11368be`�
 
 Phase sequence:
 ```txt
-G-9g4a2a1-open-time-only-operational-expansion-preflight ← complete (8d57b1b)
-G-9g4a2a2-open-time-only-operational-expansion-manual-execution ← complete (uncommitted)
-G-9g4a2a3-open-time-only-operational-restore-preflight ← next
+G-9g4a2a2-open-time-only-operational-expansion-manual-execution ← complete (54623a1)
+G-9g4a2a-open-time-only-operational-restore-and-closure ← complete (uncommitted)
+G-9g4a2-framework-single-text-field-operational-commonization-planning ← next
 ```
 
-G-9g4a2a2 gates:
+G-9g4a2a restore-and-closure gates:
+```txt
+stagingShellScheduleOpenTimeOnlyOperationalRoundTripComplete: true
+readyForG9g4a2FrameworkSingleTextFieldOperationalCommonizationPlanning: true
+finalOpenTime: 11:30
+finalUpdatedAt: 2026-06-19T07:27:53.256604+00:00
+markerRemainsInStagingDb: false
+activeRestoreExceptionsCount: 0
+restoreRequired: false
+noFurtherSaveOrRestoreNeeded: true
+readyForAnyDbWrite: false
+cursorClickedSave: false
+cursorClickedPreview: false
+perFieldManualRoundTripPolicy: do not repeat for start_time/price config-only slices
+```
+
+G-9g4a2a2 gates (historical — smoke write):
 ```txt
 stagingShellScheduleOpenTimeOnlyOperationalExpansionManualExecutionComplete: true
-readyForG9g4a2a3OpenTimeOnlyOperationalRestorePreflight: true
 targetRowId: eb1f1898-5107-4deb-a6d5-a792e0ec3f69
-currentOpenTimeSmoke: 11:30 [G-9g4a2a open_time smoke]
-restoreTargetOpenTime: 11:30
-restoreLockBaselineUpdatedAt: 2026-06-19T07:14:34.018855+00:00
-markerRemainsInStagingDb: true
-activeRestoreExceptionsCount: 1
-restoreRequired: yes
+smokeWriteComplete: true
+restoreComplete: true
+markerRemainsInStagingDb: false
+activeRestoreExceptionsCount: 0
+restoreRequired: false
 readyForAnyDbWrite: false
 cursorClickedSave: false
 cursorClickedPreview: false
@@ -643,7 +659,7 @@ cursorClickedSave: false
 cursorClickedPreview: false
 ```
 
-Routine dev: dry-run on / all non-dry-run arms off. **open_time smoke marker remains** — restore required via G-9g4a2a path. Do not re-click G-9g4a2a open_time-only Save.
+Routine dev: dry-run on / all non-dry-run arms off. G-9g4a2a open_time-only round-trip complete — **no further Save / restore needed**. Next: common framework planning (not start_time-only manual execution).
 
 11. AI workflow transition
 チャット履歴への依存を減らすため、リポジトリ側に AI開発文脈管理ファイルを作成。

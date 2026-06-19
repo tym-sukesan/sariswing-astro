@@ -5,39 +5,43 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-9g4a2a3-open-time-only-operational-restore-preflight (not started)
-Latest commit (pushed): 8d57b1b (G-9g4a2a1 open_time-only preflight)
-G-9g4a2a2 open_time-only manual execution: complete (uncommitted)
+Current phase: G-9g4a2-framework-single-text-field-operational-commonization-planning (not started)
+Latest commit (pushed): 54623a1 (G-9g4a2a2 open_time-only manual execution)
+G-9g4a2a open_time-only restore-and-closure: complete (uncommitted)
 ```
 
 ## Summary
 
-**G-9g4a2a2 open_time-only manual execution — complete** (uncommitted):
+**G-9g4a2a open_time-only smoke round-trip — closed** (uncommitted closure doc):
 
 - **Target row:** `eb1f1898-5107-4deb-a6d5-a792e0ec3f69` / `schedule-2026-03-003` / `gosaki-piano`
-- **Operator:** Preview once + ChatGPT confirm + Save exactly once
-- **Cursor/AI:** did not click row picker / Preview / Save
-- **before open_time:** `11:30` → **after:** `11:30 [G-9g4a2a open_time smoke]`
-- **before updated_at:** `2026-06-19T05:54:34.767498+00:00`
-- **after updated_at:** `2026-06-19T07:14:34.018855+00:00`
-- **changedFields:** `["open_time"]` only
-- **approvalId:** `G-9g4a2a-schedule-site-slug-open-time-only-non-dry-run`
-- **rowsAffected:** 1; **re-click:** blocked
-- **markerRemainsInStagingDb:** true
-- **activeRestoreExceptionsCount:** 1
-- **restore required:** yes
-- **restore target open_time:** `11:30`
-- **restore lock baseline:** `2026-06-19T07:14:34.018855+00:00`
-- Restore path: **same G-9g4a2a open_time-only UI** (not G-9g3g5)
+- **G-9g4a2a2 smoke:** `11:30` → `11:30 [G-9g4a2a open_time smoke]` (commit `54623a1`)
+- **Restore:** `11:30 [G-9g4a2a open_time smoke]` → `11:30` (operator manual; same G-9g4a2a path)
+- **Final open_time:** `11:30`
+- **Final updated_at:** `2026-06-19T07:27:53.256604+00:00`
+- **markerRemainsInStagingDb:** false
+- **activeRestoreExceptionsCount:** 0
+- **restore required:** no
+- **no further Save / restore needed:** yes
+- **Cursor/AI:** did not click row picker / Preview / Save for restore documentation
+
+## Policy change
+
+- Do **not** repeat full manual round-trip per field (`start_time`, `price`)
+- Manual non-dry-run round-trip only when **new common logic** is introduced
+- `start_time` / `price` → **G-9g4a2 single-text-field operational common framework** (config-driven)
+- Verification: verifiers, guards, dry-run Preview, type checks — not per-field operator cycles
+- **Not** splitting G-9g4a2a3 / a4 / a5 per field
 
 ## Gates
 
 ```txt
-stagingShellScheduleOpenTimeOnlyOperationalExpansionManualExecutionComplete: true
-readyForG9g4a2a3OpenTimeOnlyOperationalRestorePreflight: true
-markerRemainsInStagingDb: true
-activeRestoreExceptionsCount: 1
-restoreRequired: yes
+stagingShellScheduleOpenTimeOnlyOperationalRoundTripComplete: true
+readyForG9g4a2FrameworkSingleTextFieldOperationalCommonizationPlanning: true
+markerRemainsInStagingDb: false
+activeRestoreExceptionsCount: 0
+restoreRequired: false
+noFurtherSaveOrRestoreNeeded: true
 readyForAnyDbWrite: false
 cursorClickedSave: false
 cursorClickedPreview: false
@@ -54,8 +58,6 @@ PUBLIC_ADMIN_SCHEDULE_G9G3G_OPERATIONAL_GENERAL_EDIT_NON_DRY_RUN_ARMED=false or 
 PUBLIC_ADMIN_SCHEDULE_G9G3G5_OPERATIONAL_RESTORE_NON_DRY_RUN_ARMED=false or unset
 ```
 
-**Do not re-click G-9g4a2a open_time-only Save.** Do not write arms to `.env` / `.env.local`.
-
 ## Next
 
-**G-9g4a2a3-open-time-only-operational-restore-preflight** — restore target `11:30`, lock baseline `2026-06-19T07:14:34.018855+00:00`, rollback SQL document-only, operator restore checklist — **no operator Save in preflight phase**.
+**G-9g4a2-framework-single-text-field-operational-commonization-planning** — planning only; extract shared operational framework from G-9g4a1 venue-only + G-9g4a2a open_time-only. **Not** `start_time`-only manual execution as next slice.

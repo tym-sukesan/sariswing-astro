@@ -3,34 +3,39 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 1. Immediate priority
 
-**Current phase:** `G-9g4a2a3-open-time-only-operational-restore-preflight` (not started)
+**Current phase:** `G-9g4a2-framework-single-text-field-operational-commonization-planning` (not started)
 
-**Git:** latest pushed commit `8d57b1b` (G-9g4a2a1 preflight); G-9g4a2a2 manual execution result **uncommitted**
+**Git:** latest pushed commit `54623a1` (G-9g4a2a2 manual execution); G-9g4a2a restore-and-closure **uncommitted**
 
-### G-9g4a2a2 summary (open_time-only manual execution — complete)
+### G-9g4a2a open_time-only round-trip — complete
 
 | Item | Value |
 | --- | --- |
-| Doc | `staging-shell-schedule-open-time-only-operational-expansion-manual-execution-result.md` |
-| Status | **complete** — operator Save once (uncommitted) |
+| Doc | `staging-shell-schedule-open-time-only-operational-restore-and-closure.md` |
+| Status | **complete** — operator restore Save once (uncommitted) |
 | Target row id | `eb1f1898-5107-4deb-a6d5-a792e0ec3f69` |
-| before open_time | `11:30` |
-| after open_time (smoke) | `11:30 [G-9g4a2a open_time smoke]` |
-| after updated_at | `2026-06-19T07:14:34.018855+00:00` |
-| rowsAffected | 1 |
-| Cursor Preview / Save | **no** |
-| Re-click | blocked |
+| Final open_time | `11:30` |
+| Final updated_at | `2026-06-19T07:27:53.256604+00:00` |
+| markerRemainsInStagingDb | **false** |
+| activeRestoreExceptionsCount | **0** |
+| restore required | **no** |
+| No further Save / restore | **yes** |
+
+### Policy change
+
+- Do **not** repeat full manual round-trip for every text field (`start_time`, `price`)
+- Manual non-dry-run round-trip reserved for **new common logic** only
+- Next fields via **config-driven single-text-field framework** + verifiers/guards/dry-run
 
 ### Gates
 
 ```txt
-stagingShellScheduleOpenTimeOnlyOperationalExpansionManualExecutionComplete: true
-readyForG9g4a2a3OpenTimeOnlyOperationalRestorePreflight: true
-markerRemainsInStagingDb: true
-activeRestoreExceptionsCount: 1
-restoreRequired: yes
-restoreTargetOpenTime: 11:30
-restoreLockBaselineUpdatedAt: 2026-06-19T07:14:34.018855+00:00
+stagingShellScheduleOpenTimeOnlyOperationalRoundTripComplete: true
+readyForG9g4a2FrameworkSingleTextFieldOperationalCommonizationPlanning: true
+markerRemainsInStagingDb: false
+activeRestoreExceptionsCount: 0
+restoreRequired: false
+noFurtherSaveOrRestoreNeeded: true
 readyForAnyDbWrite: false
 cursorClickedSave: false
 cursorClickedPreview: false
@@ -38,9 +43,9 @@ cursorClickedPreview: false
 
 ## 2. Next steps
 
-1. **G-9g4a2a3-open-time-only-operational-restore-preflight** — restore target, lock baseline, rollback SQL document-only
-2. Commit G-9g4a2a2 execution result when ready
-3. Restore via same G-9g4a2a open_time-only path (not G-9g3g5)
+1. **G-9g4a2-framework-single-text-field-operational-commonization-planning** — extract shared framework from G-9g4a1 + G-9g4a2a (planning only)
+2. Commit G-9g4a2a restore-and-closure when ready
+3. **Not** next: `start_time`-only manual execution slice
 
 ## 3. Routine dev safety
 
@@ -53,15 +58,10 @@ PUBLIC_ADMIN_SCHEDULE_G9G3G_OPERATIONAL_GENERAL_EDIT_NON_DRY_RUN_ARMED=false or 
 PUBLIC_ADMIN_SCHEDULE_G9G3G5_OPERATIONAL_RESTORE_NON_DRY_RUN_ARMED=false or unset
 ```
 
-- **Do not re-click G-9g4a2a open_time-only Save** on this row
-- Do **not** write arms to `.env` / `.env.local`
-- `service_role` prohibition continues
-
 ## 4. Do not
 
-- Re-click G-9g4a2a open_time-only Save without fresh Preview
+- Start `start_time`-only manual round-trip without framework planning
+- Re-click G-9g4a2a open_time-only Save on this row
 - Cursor / AI click row picker / Preview / Save
-- Use G-9g3g5 restore path for this row
-- Execute restore until G-9g4a2a3 preflight complete
 - Use service_role
 - Touch production or `/admin`

@@ -1,23 +1,20 @@
 ---
 import type { GosakiYoutubeEmbedAdminBinding } from "../../../../../../src/lib/admin/staging-data/gosaki-youtube-embed-admin-binding";
-import {
-  GOSAKI_STAGING_ADMIN_BASE,
-  GOSAKI_STAGING_PREVIEW_URL,
-} from "../gosaki-staging-admin-paths";
+import { GOSAKI_STAGING_ADMIN_BASE } from "../gosaki-staging-admin-paths";
 
 interface Props {
   binding: GosakiYoutubeEmbedAdminBinding;
 }
 
 const { binding } = Astro.props;
-const { config, resolved, published, videoId } = binding;
-const previewHomeUrl = GOSAKI_STAGING_PREVIEW_URL;
+const itemsJson = JSON.stringify(binding.items.map((view) => view.item));
 ---
 
 <section
   id="gosaki-youtube-operator"
-  class="admin-gosaki-youtube-operator admin-prototype-section"
+  class="admin-gosaki-youtube-operator admin-page admin-page--wide admin-prototype-section"
   data-section="admin-youtube"
+  data-youtube-items={itemsJson}
   aria-label="YouTube設定"
 >
   <header class="admin-gosaki-page-header admin-gosaki-page-header--with-actions">
@@ -25,7 +22,7 @@ const previewHomeUrl = GOSAKI_STAGING_PREVIEW_URL;
       <a class="admin-gosaki-back-link" href={GOSAKI_STAGING_ADMIN_BASE}>← 管理画面トップへ</a>
       <h1 class="admin-gosaki-page-header__title">YouTube設定</h1>
       <p class="admin-gosaki-page-header__subtitle">
-        トップページに表示する YouTube 動画の設定を確認する画面です。
+        トップページに表示する YouTube 動画を管理します。
       </p>
     </div>
     <button
@@ -38,8 +35,12 @@ const previewHomeUrl = GOSAKI_STAGING_PREVIEW_URL;
     </button>
   </header>
 
+  <p class="admin-form__hint admin-static-notice">
+    公開サイトのトップページは静的 HTML のため、変更を反映するには再ビルド・再アップロードが必要です（次フェーズで Save 連携予定）。
+  </p>
+
   <p class="admin-gosaki-status-bar" role="status">
-    現在は確認用です。保存はまだ開放していません（設定は静的 JSON で管理）。
+    保存はまだ開放していません。一覧は静的 JSON（<code>{binding.configPath}</code>）から表示しています。
   </p>
 
   {
@@ -49,56 +50,200 @@ const previewHomeUrl = GOSAKI_STAGING_PREVIEW_URL;
   }
 
   <section class="admin-card admin-gosaki-card">
-    <h2 class="admin-gosaki-card__title">現在の設定</h2>
-    <dl class="admin-gosaki-kv-list">
-      <div>
-        <dt>公開状態</dt>
-        <dd>{published ? "公開（設定ON）" : "非表示（未公開または未設定）"}</dd>
-      </div>
-      <div>
-        <dt>見出し</dt>
-        <dd>{config.title?.trim() || "—"}</dd>
-      </div>
-      <div>
-        <dt>説明文</dt>
-        <dd>{config.caption?.trim() || "—"}</dd>
-      </div>
-      <div>
-        <dt>動画 ID</dt>
-        <dd>{videoId || "—"}</dd>
-      </div>
-      <div>
-        <dt>入力 URL</dt>
-        <dd>{config.sourceUrl?.trim() || "—"}</dd>
-      </div>
-    </dl>
-    <p class="admin-gosaki-config-path" role="note">
-      設定ファイル: <code>{binding.configPath}</code>
-    </p>
+    <h2 class="admin-gosaki-card__title">埋め込みコード追加</h2>
+    <div class="admin-form admin-form--grid">
+      <label class="admin-form__field admin-form__field--full">
+        <span class="admin-form__label">埋め込みコード</span>
+        <textarea
+          id="gosaki-yt-add-embed-code"
+          rows="5"
+          placeholder='<iframe width="560" height="315" src="https://www.youtube.com/embed/VIDEO_ID" ...></iframe>'
+        ></textarea>
+      </label>
+      <label class="admin-form__field">
+        <span class="admin-form__label">YouTube URL</span>
+        <input
+          id="gosaki-yt-add-source-url"
+          type="url"
+          placeholder="https://www.youtube.com/watch?v=..."
+        />
+      </label>
+      <label class="admin-form__field">
+        <span class="admin-form__label">動画 ID（任意）</span>
+        <input id="gosaki-yt-add-video-id" type="text" placeholder="11文字の動画ID" />
+      </label>
+      <label class="admin-form__field">
+        <span class="admin-form__label">タイトル</span>
+        <input id="gosaki-yt-add-title" type="text" placeholder="演奏動画" />
+      </label>
+      <label class="admin-form__field admin-form__field--full">
+        <span class="admin-form__label">説明文 / キャプション</span>
+        <input id="gosaki-yt-add-caption" type="text" placeholder="ライブ映像など" />
+      </label>
+      <label class="admin-form__field">
+        <span class="admin-form__label">表示順</span>
+        <input id="gosaki-yt-add-sort-order" type="number" value="10" step="1" />
+      </label>
+      <label class="admin-form__field admin-form__field--checkbox">
+        <input id="gosaki-yt-add-published" type="checkbox" />
+        <span>公開する</span>
+      </label>
+    </div>
+
+    <div class="admin-actions">
+      <button
+        type="button"
+        class="admin-button"
+        data-gosaki-yt-action-disabled
+        disabled
+      >
+        追加
+      </button>
+    </div>
+    <p class="admin-gosaki-save-note" role="note">追加の保存は次フェーズで開放予定です。</p>
+
+    <h3 class="admin-gosaki-card__subtitle">追加プレビュー</h3>
+    <div id="gosaki-yt-add-preview" class="gosaki-youtube-admin-preview admin-card admin-gosaki-card--flat">
+      <p class="admin-gosaki-operator-empty">
+        埋め込みコードまたは YouTube URL を入力するとプレビューが表示されます。
+      </p>
+    </div>
   </section>
 
   <section class="admin-card admin-gosaki-card">
-    <h2 class="admin-gosaki-card__title">トップページでの表示</h2>
+    <h2 class="admin-gosaki-card__title">現在の YouTube 埋め込み</h2>
+    <p class="admin-form__hint">
+      数字が小さいほど上に表示されます。↑ ↓ で並び替えの見た目を確認できます（保存は次フェーズ）。
+    </p>
+
+    <div class="admin-actions admin-actions--compact">
+      <button
+        type="button"
+        class="admin-button admin-button-secondary"
+        data-gosaki-yt-action-disabled
+        disabled
+      >
+        表示順を保存
+      </button>
+    </div>
+
     {
-      resolved ? (
-        <div class="admin-gosaki-youtube-preview-note">
-          <p>トップページに YouTube セクションが表示されます。</p>
-          <p>
-            <a href={previewHomeUrl} target="_blank" rel="noopener noreferrer">
-              公開前のトップページを見る
-            </a>
-          </p>
-        </div>
+      binding.items.length === 0 ? (
+        <p class="admin-gosaki-operator-empty">登録されている埋め込みはありません。</p>
       ) : (
-        <p class="admin-gosaki-operator-empty">
-          動画が未設定のため、トップページには YouTube セクションは表示されません。
-          <code>published: true</code> と有効な <code>videoId</code> または
-          <code>sourceUrl</code> を設定すると表示されます。
-        </p>
+        <ul id="gosaki-yt-item-list" class="admin-list gosaki-youtube-admin-list">
+          {
+            binding.items.map((view) => (
+              <li class="admin-list__item gosaki-youtube-admin-item" data-item-id={view.item.id}>
+                <div class="gosaki-youtube-admin-item__sort-bar">
+                  <button type="button" class="gosaki-sort-handle" disabled aria-label="並び替え">
+                    ☰ 並び替え
+                  </button>
+                  <div class="gosaki-youtube-admin-item__move-controls">
+                    <button
+                      type="button"
+                      class="admin-button admin-button--small"
+                      data-gosaki-yt-move="up"
+                      aria-label="上へ"
+                    >
+                      ↑
+                    </button>
+                    <button
+                      type="button"
+                      class="admin-button admin-button--small"
+                      data-gosaki-yt-move="down"
+                      aria-label="下へ"
+                    >
+                      ↓
+                    </button>
+                  </div>
+                </div>
+
+                <div class="gosaki-youtube-admin-item__preview">
+                  {
+                    view.resolved ? (
+                      <div class="gosaki-youtube-admin-preview">
+                        <div class="gosaki-youtube-admin-preview__media">
+                          <iframe
+                            src={view.resolved.embedUrl}
+                            title={view.resolved.iframeTitle}
+                            loading="lazy"
+                            allowfullscreen
+                          />
+                        </div>
+                        <p class="gosaki-youtube-admin-preview__watch">
+                          <a
+                            href={view.resolved.watchUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            YouTubeで見る
+                          </a>
+                        </p>
+                      </div>
+                    ) : (
+                      <p class="admin-gosaki-operator-empty">
+                        {view.item.published
+                          ? "動画 ID が未設定のためプレビューできません。"
+                          : "非公開のためトップには表示されません。"}
+                      </p>
+                    )
+                  }
+                </div>
+
+                <div class="gosaki-youtube-admin-item__editor">
+                  <div class="admin-form">
+                    <label class="admin-form__field gosaki-youtube-admin-item__sort-field">
+                      <span class="admin-form__label">表示順</span>
+                      <input type="number" value={view.item.sortOrder ?? 0} readonly />
+                    </label>
+                    <label class="admin-form__field">
+                      <span class="admin-form__label">タイトル</span>
+                      <input type="text" value={view.item.title ?? ""} readonly />
+                    </label>
+                    <label class="admin-form__field admin-form__field--full">
+                      <span class="admin-form__label">説明文</span>
+                      <input type="text" value={view.item.caption ?? ""} readonly />
+                    </label>
+                    <label class="admin-form__field admin-form__field--full">
+                      <span class="admin-form__label">埋め込みコード / URL</span>
+                      <textarea rows="4" readonly>
+                        {view.item.embedCode || view.item.sourceUrl || view.item.videoId || ""}
+                      </textarea>
+                    </label>
+                    <p class="admin-form__hint">
+                      公開: {view.item.published ? "はい" : "いいえ"}
+                      {view.videoId ? ` / 動画ID: ${view.videoId}` : ""}
+                    </p>
+                  </div>
+                  <div class="admin-actions">
+                    <button
+                      type="button"
+                      class="admin-button"
+                      data-gosaki-yt-action-disabled
+                      disabled
+                    >
+                      更新
+                    </button>
+                    <button
+                      type="button"
+                      class="admin-button admin-button-danger"
+                      data-gosaki-yt-action-disabled
+                      disabled
+                    >
+                      削除
+                    </button>
+                  </div>
+                </div>
+              </li>
+            ))
+          }
+        </ul>
       )
     }
-    <p class="admin-gosaki-save-note" role="note">
-      保存はまだ開放していません。変更は設定 JSON の更新とサイト再ビルドが必要です（次フェーズ）。
-    </p>
   </section>
 </section>
+
+<script>
+  import "../../../../../../src/lib/admin/staging-data/gosaki-staging-youtube-admin-ui.ts";
+</script>

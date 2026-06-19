@@ -10,22 +10,20 @@ interface Props {
 }
 
 const { binding } = Astro.props;
-const { config, releaseCount } = binding;
-const previewDiscographyUrl = `${GOSAKI_STAGING_PREVIEW_URL}${config.previewPath ?? "discography/"}`;
 ---
 
 <section
   id="gosaki-discography-operator"
-  class="admin-gosaki-discography-operator admin-prototype-section"
+  class="admin-gosaki-discography-operator admin-page admin-page--wide admin-prototype-section"
   data-section="admin-discography"
-  aria-label="作品情報確認"
+  aria-label="Discography管理"
 >
   <header class="admin-gosaki-page-header admin-gosaki-page-header--with-actions">
     <div>
       <a class="admin-gosaki-back-link" href={GOSAKI_STAGING_ADMIN_BASE}>← 管理画面トップへ</a>
-      <h1 class="admin-gosaki-page-header__title">Discography確認</h1>
+      <h1 class="admin-gosaki-page-header__title">Discography管理</h1>
       <p class="admin-gosaki-page-header__subtitle">
-        公開サイトの作品情報（Discography）を確認する画面です。
+        公開サイトの作品情報を確認・編集するための画面です。
       </p>
     </div>
     <button
@@ -38,8 +36,12 @@ const previewDiscographyUrl = `${GOSAKI_STAGING_PREVIEW_URL}${config.previewPath
     </button>
   </header>
 
+  <p class="admin-form__hint admin-static-notice">
+    公開中の <code>/discography/</code> は Wix 由来の静的 HTML です。JSON データとの全面置換は次フェーズです。
+  </p>
+
   <p class="admin-gosaki-status-bar" role="status">
-    現在は確認用です。編集・保存はまだ開放していません。
+    保存はまだ開放していません。一覧は静的 JSON（<code>{binding.configPath}</code>）から表示しています。
   </p>
 
   {
@@ -50,59 +52,210 @@ const previewDiscographyUrl = `${GOSAKI_STAGING_PREVIEW_URL}${config.previewPath
 
   <section class="admin-card admin-gosaki-card">
     <h2 class="admin-gosaki-card__title">公開前ページ</h2>
-    <p>
-      <a
-        class="admin-button admin-button--menu admin-button--menu-primary"
-        href={previewDiscographyUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        Discographyページを見る
-      </a>
-    </p>
-    <p class="admin-gosaki-save-note" role="note">
-      公開ページの表示は Wix 由来の静的 HTML です。CMS 編集は次フェーズです。
-    </p>
+    <a
+      class="admin-button admin-button--menu admin-button--menu-secondary"
+      href={previewDiscographyUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      Discographyページを見る
+    </a>
   </section>
 
-  <section class="admin-card admin-gosaki-card admin-gosaki-discography-list-card">
-    <h2 class="admin-gosaki-card__title">登録作品一覧（参考）</h2>
-    <p class="admin-gosaki-schedule-count" role="status">{releaseCount} 件</p>
+  <section class="admin-card admin-gosaki-card">
+    <h2 class="admin-gosaki-card__title">作品追加</h2>
+    <div class="admin-form admin-form--grid">
+      <label class="admin-form__field admin-form__field--full">
+        <span class="admin-form__label">ジャケット画像 URL</span>
+        <input type="url" placeholder="/images/discography/continuous.jpg" readonly />
+      </label>
+      <label class="admin-form__field">
+        <span class="admin-form__label">タイトル</span>
+        <input type="text" placeholder="Continuous" readonly />
+      </label>
+      <label class="admin-form__field">
+        <span class="admin-form__label">アーティスト名</span>
+        <input type="text" placeholder="ごさきりかこTrio" readonly />
+      </label>
+      <label class="admin-form__field admin-form__field--full">
+        <span class="admin-form__label">Track List（1行1曲）</span>
+        <textarea rows="5" placeholder="Nature Boy&#10;Waters Of March" readonly></textarea>
+      </label>
+      <label class="admin-form__field admin-form__field--full">
+        <span class="admin-form__label">Personnel（1行1項目）</span>
+        <textarea rows="4" placeholder="後藤沙紀 / piano" readonly></textarea>
+      </label>
+      <label class="admin-form__field">
+        <span class="admin-form__label">Release 情報</span>
+        <input type="text" placeholder="Release 2023.7.26" readonly />
+      </label>
+      <label class="admin-form__field">
+        <span class="admin-form__label">カタログ番号</span>
+        <input type="text" placeholder="GSRT-0002" readonly />
+      </label>
+      <label class="admin-form__field">
+        <span class="admin-form__label">価格</span>
+        <input type="text" placeholder="3,500 (tax in)" readonly />
+      </label>
+      <label class="admin-form__field admin-form__field--full">
+        <span class="admin-form__label">購入導線テキスト</span>
+        <input type="text" placeholder="オンラインショップからご購入いただけます" readonly />
+      </label>
+      <label class="admin-form__field admin-form__field--full">
+        <span class="admin-form__label">購入 URL</span>
+        <input type="url" placeholder="https://gosakirikako.base.shop/" readonly />
+      </label>
+      <label class="admin-form__field">
+        <span class="admin-form__label">表示順</span>
+        <input type="number" value="10" readonly />
+      </label>
+      <label class="admin-form__field admin-form__field--checkbox">
+        <input type="checkbox" checked disabled />
+        <span>公開する</span>
+      </label>
+    </div>
+    <div class="admin-actions">
+      <button type="button" class="admin-button" data-gosaki-disc-action-disabled disabled>
+        追加
+      </button>
+    </div>
+    <p class="admin-gosaki-save-note" role="note">作品の追加・保存は次フェーズで開放予定です。</p>
+  </section>
+
+  <section class="admin-card admin-gosaki-card">
+    <h2 class="admin-gosaki-card__title">登録作品一覧</h2>
+    <p class="admin-gosaki-schedule-count" role="status">{binding.releaseCount} 件</p>
 
     {
-      releaseCount === 0 ? (
+      binding.releaseCount === 0 ? (
         <p class="admin-gosaki-operator-empty">登録済みの作品情報がありません。</p>
       ) : (
-        <div class="admin-gosaki-schedule-table-wrap">
-          <table class="admin-gosaki-schedule-table admin-gosaki-discography-table">
-            <thead>
-              <tr>
-                <th scope="col">タイトル</th>
-                <th scope="col">アーティスト</th>
-                <th scope="col">発売日</th>
-                <th scope="col">カタログ</th>
-                <th scope="col">価格</th>
-              </tr>
-            </thead>
-            <tbody>
-              {
-                config.releases.map((release) => (
-                  <tr>
-                    <td>{release.title}</td>
-                    <td>{release.artist}</td>
-                    <td>{release.releaseDate ?? "—"}</td>
-                    <td>{release.catalogNumber ?? "—"}</td>
-                    <td>{release.price ?? release.note ?? "—"}</td>
-                  </tr>
-                ))
-              }
-            </tbody>
-          </table>
-        </div>
+        <ul id="gosaki-disc-item-list" class="admin-list gosaki-discography-admin-list">
+          {
+            binding.config.releases.map((release) => (
+              <li class="admin-list__item gosaki-discography-admin-item" data-release-id={release.id}>
+                <div class="gosaki-discography-admin-item__toolbar">
+                  <span class="gosaki-discography-admin-item__order">
+                    表示順: {release.order ?? "—"}
+                  </span>
+                  <div class="gosaki-discography-admin-item__move-controls">
+                    <button
+                      type="button"
+                      class="admin-button admin-button--small"
+                      data-gosaki-disc-move="up"
+                      aria-label="上へ"
+                    >
+                      ↑
+                    </button>
+                    <button
+                      type="button"
+                      class="admin-button admin-button--small"
+                      data-gosaki-disc-move="down"
+                      aria-label="下へ"
+                    >
+                      ↓
+                    </button>
+                    <button
+                      type="button"
+                      class="admin-button admin-button--small"
+                      data-gosaki-disc-action-disabled
+                      disabled
+                    >
+                      更新
+                    </button>
+                    <button
+                      type="button"
+                      class="admin-button admin-button--small admin-button-danger"
+                      data-gosaki-disc-action-disabled
+                      disabled
+                    >
+                      削除
+                    </button>
+                  </div>
+                </div>
+
+                <article class="gosaki-discography-admin-card">
+                  <div class="gosaki-discography-admin-card__media">
+                    {
+                      release.coverImage ? (
+                        <img src={release.coverImage} alt={release.title} loading="lazy" />
+                      ) : (
+                        <div class="gosaki-discography-admin-card__placeholder" aria-hidden="true">
+                          ジャケット画像なし
+                        </div>
+                      )
+                    }
+                  </div>
+                  <div class="gosaki-discography-admin-card__body">
+                    <h3 class="gosaki-discography-admin-card__title">
+                      「{release.title}」/ {release.artist}
+                    </h3>
+                    <p class="gosaki-discography-admin-card__meta">
+                      {release.releaseText ?? "—"}
+                      {release.catalogNumber ? ` / ${release.catalogNumber}` : ""}
+                      {release.price ? ` / ${release.price}` : ""}
+                    </p>
+                    {
+                      release.label ? (
+                        <p class="gosaki-discography-admin-card__label">{release.label}</p>
+                      ) : null
+                    }
+                    <div class="gosaki-discography-admin-card__columns">
+                      <div>
+                        <h4>Track List</h4>
+                        <ul>
+                          {(release.trackList ?? []).map((track) => <li>{track}</li>)}
+                        </ul>
+                      </div>
+                      <div>
+                        <h4>Personnel</h4>
+                        <ul>
+                          {(release.personnel ?? []).map((person) => <li>{person}</li>)}
+                        </ul>
+                      </div>
+                    </div>
+                    {
+                      release.purchaseText ? (
+                        <p class="gosaki-discography-admin-card__purchase-text">
+                          {release.purchaseText}
+                        </p>
+                      ) : null
+                    }
+                    {
+                      release.purchaseUrl ? (
+                        <p>
+                          <a href={release.purchaseUrl} target="_blank" rel="noopener noreferrer">
+                            購入ページを開く
+                          </a>
+                        </p>
+                      ) : null
+                    }
+                    {
+                      release.notes ? (
+                        <p class="gosaki-discography-admin-card__notes">{release.notes}</p>
+                      ) : null
+                    }
+                    {
+                      release.missingFields && release.missingFields.length > 0 ? (
+                        <p class="gosaki-discography-admin-card__missing" role="note">
+                          未設定: {release.missingFields.join(", ")}
+                        </p>
+                      ) : null
+                    }
+                    <p class="admin-form__hint">
+                      公開: {release.published === false ? "いいえ" : "はい"}
+                    </p>
+                  </div>
+                </article>
+              </li>
+            ))
+          }
+        </ul>
       )
     }
-    <p class="admin-gosaki-config-path" role="note">
-      参考データ: <code>{binding.configPath}</code>
-    </p>
   </section>
 </section>
+
+<script>
+  import "../../../../../../src/lib/admin/staging-data/gosaki-staging-discography-admin-ui.ts";
+</script>

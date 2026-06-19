@@ -1,0 +1,130 @@
+{
+  "$comment": "G-9j — Gosaki discography CMS-ready static data (public /discography/ remains Wix HTML until next phase).",
+  "siteSlug": "gosaki-piano",
+  "pageTitle": "Discography",
+  "previewPath": "discography/",
+  "releases": [
+    {
+      "id": "continuous",
+      "published": true,
+      "order": 10,
+      "title": "Continuous",
+      "artist": "ごさきりかこTrio Feat.石川周之介",
+      "coverImage": "",
+      "trackList": [
+        "Nature Boy",
+        "Waters Of March",
+        "With a Song In My Heart",
+        "Here Comes The Sun",
+        "Ain't She Sweet",
+        "Boplicity",
+        "Double Rainbow",
+        "Verrazano Moon",
+        "Continuous"
+      ],
+      "personnel": [
+        "後藤沙紀 / piano",
+        "鈴木梨花子 / drums, percussion",
+        "寺尾陽介 / bass",
+        "guest 石川周之介 / tenor saxophone on Track 1,7",
+        "guest 石川周之介 / flute on Track 2",
+        "guest 石川周之介 / soprano saxophone on Track 4,9"
+      ],
+      "releaseText": "Release 2023.7.26",
+      "catalogNumber": "GSRT-0002",
+      "price": "3,500 (tax in)",
+      "purchaseText": "オンラインショップからご購入いただけます",
+      "purchaseUrl": "https://gosakirikako.base.shop/",
+      "missingFields": ["coverImage"]
+    },
+    {
+      "id": "skylark",
+      "published": true,
+      "order": 20,
+      "title": "SKYLARK",
+      "artist": "後藤沙紀",
+      "coverImage": "",
+      "trackList": [
+        "On a Clear Day",
+        "My Blue Heaven",
+        "How Deep Is The Ocean",
+        "Skylark",
+        "Set Sail",
+        "What a Wonderful World",
+        "Like a Lover",
+        "The Water Is Wide"
+      ],
+      "personnel": ["後藤沙紀 / piano, pianica"],
+      "releaseText": "Release 2023.4.26",
+      "catalogNumber": "STU-001",
+      "price": "2,000 (tax in)",
+      "purchaseText": "オンラインショップからご購入いただけます",
+      "purchaseUrl": "",
+      "missingFields": ["coverImage", "purchaseUrl"]
+    },
+    {
+      "id": "about-us",
+      "published": true,
+      "order": 30,
+      "title": "About Us!!",
+      "artist": "ごさきりかこtrio",
+      "coverImage": "",
+      "trackList": [
+        "白玉Bluse",
+        "The Lady Is A Tramp",
+        "Honeysuckle Rose",
+        "Darn That Dream",
+        "The Old Country",
+        "The Sweetest Sounds",
+        "The Look Of Love",
+        "Samba De Cafe Terrasse",
+        "I'd Climb The Highest Mountain"
+      ],
+      "personnel": [
+        "後藤沙紀 / piano",
+        "鈴木梨花子 / drums",
+        "寺尾陽介 / bass"
+      ],
+      "releaseText": "Release 2019.01.11",
+      "catalogNumber": "GSRT-0001",
+      "price": "2,500 (tax in)",
+      "purchaseText": "Thank you SOLD OUT!",
+      "purchaseUrl": "",
+      "notes": "SOLD OUT — 購入URLなし",
+      "missingFields": ["coverImage", "purchaseUrl"]
+    },
+    {
+      "id": "ja-jaaaaan",
+      "published": true,
+      "order": 40,
+      "title": "Ja-Jaaaaan!",
+      "artist": "新谷健介オノマトペ",
+      "coverImage": "",
+      "trackList": [
+        "Mary Ann",
+        "Nearer My God To Thee",
+        "Shreveport Stomp",
+        "A Fool Such As I",
+        "Si Tu Vois Ma Mere",
+        "St. Phillip Street Break Down",
+        "Girl Of My Dream",
+        "Bourbon Street Parade"
+      ],
+      "personnel": [
+        "新谷健介 / clarinet",
+        "丸山朝光 / banjo, vocal",
+        "後藤沙紀 / piano",
+        "吹谷禎一郎 / bass",
+        "田中涼 / drums",
+        "guest (on Tracks 6~9) Tom Fischer / clarinet"
+      ],
+      "releaseText": "Release 2015.03.21",
+      "catalogNumber": "OMP-001",
+      "price": "2,000 (tax in)",
+      "purchaseText": "ライブ会場でご購入いただけます",
+      "purchaseUrl": "",
+      "label": "Mardi Gras JAPAN Records",
+      "missingFields": ["coverImage", "purchaseUrl"]
+    }
+  ]
+}

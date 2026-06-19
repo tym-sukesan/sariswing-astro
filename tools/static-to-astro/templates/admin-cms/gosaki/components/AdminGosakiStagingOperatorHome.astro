@@ -3,7 +3,6 @@
  * Gosaki staging shell operator home (Sariswing /admin/ inspired).
  */
 import {
-  GOSAKI_STAGING_ADMIN_BASE,
   GOSAKI_STAGING_ADMIN_DISCOGRAPHY_PATH,
   GOSAKI_STAGING_ADMIN_SCHEDULE_PATH,
   GOSAKI_STAGING_ADMIN_YOUTUBE_PATH,
@@ -13,13 +12,11 @@ import {
 interface Props {
   previewUrl?: string;
   schedulePath?: string;
-  adminBasePath?: string;
 }
 
 const {
   previewUrl = GOSAKI_STAGING_PREVIEW_URL,
   schedulePath = GOSAKI_STAGING_ADMIN_SCHEDULE_PATH,
-  adminBasePath = GOSAKI_STAGING_ADMIN_BASE,
 } = Astro.props;
 ---
 
@@ -62,16 +59,6 @@ const {
         <li>
           <a
             class="admin-button admin-button--menu admin-button--menu-primary"
-            href={previewUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            公開前ページ確認
-          </a>
-        </li>
-        <li>
-          <a
-            class="admin-button admin-button--menu admin-button--menu-secondary"
             href={GOSAKI_STAGING_ADMIN_YOUTUBE_PATH}
           >
             YouTube設定
@@ -79,10 +66,20 @@ const {
         </li>
         <li>
           <a
-            class="admin-button admin-button--menu admin-button--menu-secondary"
+            class="admin-button admin-button--menu admin-button--menu-primary"
             href={GOSAKI_STAGING_ADMIN_DISCOGRAPHY_PATH}
           >
-            Discography確認
+            Discography管理
+          </a>
+        </li>
+        <li>
+          <a
+            class="admin-button admin-button--menu admin-button--menu-primary"
+            href={previewUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            公開前ページ確認
           </a>
         </li>
       </ul>
@@ -91,10 +88,6 @@ const {
 
   <section class="admin-gosaki-secondary-menu" aria-label="準備中の機能">
     <ul class="admin-gosaki-secondary-menu__list">
-      <li class="admin-gosaki-secondary-menu__item is-disabled">
-        <span class="admin-gosaki-secondary-menu__label">サイト情報確認</span>
-        <span class="admin-gosaki-secondary-menu__badge">準備中</span>
-      </li>
       <li class="admin-gosaki-secondary-menu__item is-disabled">
         <span class="admin-gosaki-secondary-menu__label">本番反映</span>
         <span class="admin-gosaki-secondary-menu__badge">未開放</span>
@@ -109,7 +102,6 @@ const {
         <h3 class="admin-gosaki-card__subtitle">いまできること</h3>
         <ul class="admin-gosaki-list admin-gosaki-list--compact">
           <li>スケジュールの確認</li>
-          <li>公演内容の確認</li>
           <li>YouTube 設定の確認</li>
           <li>Discography の確認</li>
           <li>公開前ページの表示確認</li>
@@ -118,7 +110,7 @@ const {
       <section class="admin-card admin-gosaki-card admin-gosaki-card--flat">
         <h3 class="admin-gosaki-card__subtitle">まだできないこと</h3>
         <ul class="admin-gosaki-list admin-gosaki-list--compact">
-          <li>スケジュールの保存</li>
+          <li>各種コンテンツの保存</li>
           <li>本番サイトへの反映</li>
         </ul>
       </section>

@@ -11,7 +11,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0b. Gosaki YouTube and Discography (G-9j)
 
-Static home YouTube embed hook + discography admin summary. Doc: `gosaki-youtube-and-discography-practicalization.md`. No DB / Save / deploy.
+Static home YouTube embeds (multi-item JSON) + Discography CMS-ready admin UI. Doc: `gosaki-youtube-and-discography-practicalization.md`. No DB / Save / deploy.
 
 ## 1. Immediate priority
 

@@ -1,5 +1,5 @@
 /**
- * Gosaki home YouTube embed — URL parse + nocookie embed (static config; no DB).
+ * Gosaki YouTube embed — URL / embed-code parsing (Node tests + convert tooling).
  */
 
 /**
@@ -11,6 +11,12 @@ export function parseYoutubeVideoId(input) {
   if (!raw) return null;
 
   if (/^[a-zA-Z0-9_-]{11}$/.test(raw)) return raw;
+
+  const embedSrc = raw.match(/src=["']([^"']+)["']/i)?.[1];
+  if (embedSrc) {
+    const fromEmbed = parseYoutubeVideoId(embedSrc);
+    if (fromEmbed) return fromEmbed;
+  }
 
   try {
     const url = new URL(raw);
@@ -44,32 +50,19 @@ export function buildYoutubeNocookieEmbedUrl(videoId) {
 }
 
 /**
- * @param {string} videoId
+ * @param {{ published?: boolean; videoId?: string; sourceUrl?: string; embedCode?: string }} item
  */
-export function buildYoutubeWatchUrl(videoId) {
-  return `https://www.youtube.com/watch?v=${videoId}`;
-}
-
-/**
- * @param {{ published?: boolean; videoId?: string; sourceUrl?: string; title?: string; caption?: string }} config
- */
-export function resolveGosakiYoutubeEmbedFromConfig(config) {
-  if (!config || config.published !== true) return null;
+export function resolveGosakiYoutubeItem(item) {
+  if (!item || item.published !== true) return null;
 
   const videoId =
-    parseYoutubeVideoId(config.videoId) ?? parseYoutubeVideoId(config.sourceUrl);
+    parseYoutubeVideoId(item.videoId) ??
+    parseYoutubeVideoId(item.sourceUrl) ??
+    parseYoutubeVideoId(item.embedCode);
   if (!videoId) return null;
-
-  const title = String(config.title ?? "").trim() || "YouTube video";
-  const caption = String(config.caption ?? "").trim();
 
   return {
     videoId,
-    title,
-    caption,
-    iframeTitle: title,
     embedUrl: buildYoutubeNocookieEmbedUrl(videoId),
-    watchUrl: buildYoutubeWatchUrl(videoId),
-    sourceUrl: String(config.sourceUrl ?? "").trim() || buildYoutubeWatchUrl(videoId),
   };
 }

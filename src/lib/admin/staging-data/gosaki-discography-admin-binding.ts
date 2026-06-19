@@ -1,37 +1,52 @@
 /**
- * Gosaki staging admin — read-only discography summary (static JSON; no DB).
+ * Gosaki staging admin — discography CMS-ready static JSON (no DB).
  */
 
 import fs from "node:fs";
 import path from "node:path";
 
-export interface GosakiDiscographyReleaseSummary {
+export interface GosakiDiscographyRelease {
   id: string;
+  published?: boolean;
+  order?: number;
   title: string;
   artist: string;
-  releaseDate?: string;
+  coverImage?: string;
+  trackList?: string[];
+  personnel?: string[];
+  releaseText?: string;
   catalogNumber?: string;
   price?: string;
+  purchaseText?: string;
+  purchaseUrl?: string;
   label?: string;
-  note?: string;
+  notes?: string;
+  missingFields?: string[];
 }
 
-export interface GosakiDiscographySummaryConfig {
+export interface GosakiDiscographyConfig {
   siteSlug?: string;
   pageTitle?: string;
   previewPath?: string;
-  releases: GosakiDiscographyReleaseSummary[];
+  releases: GosakiDiscographyRelease[];
 }
 
 export interface GosakiDiscographyAdminBinding {
   configPath: string;
-  config: GosakiDiscographySummaryConfig;
+  config: GosakiDiscographyConfig;
   configFound: boolean;
   releaseCount: number;
+  publishedCount: number;
   message: string | null;
 }
 
-const CONFIG_REL = "tools/static-to-astro/config/sites/gosaki-piano-discography-summary.json";
+const CONFIG_REL = "tools/static-to-astro/config/sites/gosaki-piano-discography.json";
+
+function sortReleases(releases: GosakiDiscographyRelease[]): GosakiDiscographyRelease[] {
+  return [...releases].sort(
+    (a, b) => (Number(a.order) || 0) - (Number(b.order) || 0) || a.title.localeCompare(b.title, "ja"),
+  );
+}
 
 export function loadGosakiDiscographyAdminBinding(): GosakiDiscographyAdminBinding {
   const configPath = path.join(process.cwd(), CONFIG_REL);
@@ -42,19 +57,21 @@ export function loadGosakiDiscographyAdminBinding(): GosakiDiscographyAdminBindi
       config: { releases: [] },
       configFound: false,
       releaseCount: 0,
+      publishedCount: 0,
       message: "作品情報の設定ファイルが見つかりません。",
     };
   }
 
   try {
-    const config = JSON.parse(fs.readFileSync(configPath, "utf8")) as GosakiDiscographySummaryConfig;
-    const releases = Array.isArray(config.releases) ? config.releases : [];
+    const config = JSON.parse(fs.readFileSync(configPath, "utf8")) as GosakiDiscographyConfig;
+    const releases = sortReleases(Array.isArray(config.releases) ? config.releases : []);
 
     return {
       configPath: CONFIG_REL,
       config: { ...config, releases },
       configFound: true,
       releaseCount: releases.length,
+      publishedCount: releases.filter((r) => r.published !== false).length,
       message: null,
     };
   } catch {
@@ -63,6 +80,7 @@ export function loadGosakiDiscographyAdminBinding(): GosakiDiscographyAdminBindi
       config: { releases: [] },
       configFound: true,
       releaseCount: 0,
+      publishedCount: 0,
       message: "作品情報の読み込みに失敗しました。",
     };
   }

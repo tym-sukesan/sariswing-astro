@@ -1,35 +1,48 @@
 ---
 import embedConfig from "../data/gosaki-youtube-embed.json";
-import { resolveGosakiYoutubeEmbedFromConfig } from "../lib/gosaki-youtube-embed.ts";
+import {
+  normalizeGosakiYoutubeConfig,
+  resolvePublishedGosakiYoutubeItems,
+} from "../lib/gosaki-youtube-embed.ts";
 
-const embed = resolveGosakiYoutubeEmbedFromConfig(embedConfig);
+const { sectionTitle } = normalizeGosakiYoutubeConfig(embedConfig);
+const items = resolvePublishedGosakiYoutubeItems(embedConfig);
 ---
 
 {
-  embed ? (
+  items.length > 0 ? (
     <section class="gosaki-youtube-embed" aria-labelledby="gosaki-youtube-heading">
       <div class="gosaki-youtube-embed__inner">
         <h2 id="gosaki-youtube-heading" class="gosaki-youtube-embed__title">
-          {embed.title}
+          {sectionTitle}
         </h2>
-        {embed.caption ? (
-          <p class="gosaki-youtube-embed__caption">{embed.caption}</p>
-        ) : null}
-        <div class="gosaki-youtube-embed__media">
-          <iframe
-            class="gosaki-youtube-embed__iframe"
-            src={embed.embedUrl}
-            title={embed.iframeTitle}
-            loading="lazy"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            allowfullscreen
-          />
+        <div class="gosaki-youtube-embed__list">
+          {
+            items.map((item) => (
+              <article class="gosaki-youtube-embed__item">
+                <h3 class="gosaki-youtube-embed__item-title">{item.title}</h3>
+                {item.caption ? (
+                  <p class="gosaki-youtube-embed__caption">{item.caption}</p>
+                ) : null}
+                <div class="gosaki-youtube-embed__media">
+                  <iframe
+                    class="gosaki-youtube-embed__iframe"
+                    src={item.embedUrl}
+                    title={item.iframeTitle}
+                    loading="lazy"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowfullscreen
+                  />
+                </div>
+                <p class="gosaki-youtube-embed__watch">
+                  <a href={item.watchUrl} target="_blank" rel="noopener noreferrer">
+                    YouTubeで見る
+                  </a>
+                </p>
+              </article>
+            ))
+          }
         </div>
-        <p class="gosaki-youtube-embed__watch">
-          <a href={embed.watchUrl} target="_blank" rel="noopener noreferrer">
-            YouTubeで見る
-          </a>
-        </p>
       </div>
     </section>
   ) : null
@@ -37,9 +50,10 @@ const embed = resolveGosakiYoutubeEmbedFromConfig(embedConfig);
 
 <style>
   .gosaki-youtube-embed {
-    margin: 2.5rem auto;
+    margin: 2rem auto 2.5rem;
     max-width: 960px;
     padding: 0 1.25rem;
+    box-sizing: border-box;
   }
 
   .gosaki-youtube-embed__inner {
@@ -50,15 +64,29 @@ const embed = resolveGosakiYoutubeEmbedFromConfig(embedConfig);
   }
 
   .gosaki-youtube-embed__title {
-    margin: 0 0 0.5rem;
-    font-size: 1.35rem;
+    margin: 0 0 1rem;
+    font-size: clamp(22px, 5vw, 32px);
     font-weight: 700;
     text-align: center;
     color: #2c2416;
+    line-height: 1.25;
+  }
+
+  .gosaki-youtube-embed__list {
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  .gosaki-youtube-embed__item-title {
+    margin: 0 0 0.35rem;
+    font-size: 1.05rem;
+    font-weight: 600;
+    text-align: center;
+    color: #3d3428;
   }
 
   .gosaki-youtube-embed__caption {
-    margin: 0 0 1rem;
+    margin: 0 0 0.75rem;
     text-align: center;
     color: #5c5348;
     line-height: 1.6;
@@ -83,7 +111,7 @@ const embed = resolveGosakiYoutubeEmbedFromConfig(embedConfig);
   }
 
   .gosaki-youtube-embed__watch {
-    margin: 0.85rem 0 0;
+    margin: 0.75rem 0 0;
     text-align: center;
     font-size: 0.9rem;
   }
@@ -96,16 +124,12 @@ const embed = resolveGosakiYoutubeEmbedFromConfig(embedConfig);
 
   @media (max-width: 768px) {
     .gosaki-youtube-embed {
-      margin: 1.75rem auto;
+      margin: 1.5rem auto 2rem;
       padding: 0 1rem;
     }
 
     .gosaki-youtube-embed__inner {
       padding: 1.25rem 1rem 1rem;
-    }
-
-    .gosaki-youtube-embed__title {
-      font-size: 1.15rem;
     }
   }
 </style>

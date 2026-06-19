@@ -1,38 +1,32 @@
 # Gosaki YouTube and Discography practicalization (G-9j)
 
 **Phase:** `G-9j-gosaki-youtube-and-discography-practicalization`  
-**Status:** static config + read-only admin — no DB / migration / Save / deploy
+**Status:** static JSON + Instagram-style YouTube admin + Discography CMS-ready admin — no DB / Save / deploy
 
 ---
 
-## YouTube (home embed)
+## YouTube (home embed + admin)
 
 | Item | Path |
 | --- | --- |
-| Config | `config/sites/gosaki-piano-youtube-embed.json` |
+| Config (multi-item) | `config/sites/gosaki-piano-youtube-embed.json` |
 | Public component | `templates/site-extensions/gosaki-piano/YouTubeEmbedSection.astro` |
 | Resolver | `templates/site-extensions/gosaki-piano/gosaki-youtube-embed.ts` |
-| Convert hook | `scripts/lib/gosaki-home-youtube-embed.mjs` |
+| Convert hook | `scripts/lib/gosaki-home-youtube-embed.mjs` — injects after `#comp-m8y53dj5` (THIS WEEK'S LIVE SCHEDULE) |
+| Admin UI | `/__admin-staging-shell/musician-basic/admin/youtube/` — Instagram-inspired list + add form + iframe preview |
 
-- Injected into gosaki `index.astro` on convert (same pattern as BandProfiles on About).
-- `published: false` or missing `videoId` / `sourceUrl` → section hidden on public home.
-- Embed uses `youtube-nocookie.com`, `loading="lazy"`, responsive 16:9, `YouTubeで見る` link.
+- `items[]` with `sortOrder`, `published`, `embedCode` / `sourceUrl` / `videoId`
+- Save / add / delete disabled until next phase
 
 ## Discography
 
 | Item | Path |
 | --- | --- |
-| Public | Wix static HTML `/discography/` (unchanged) |
-| Admin summary JSON | `config/sites/gosaki-piano-discography-summary.json` |
-| Admin page | `/__admin-staging-shell/musician-basic/admin/discography/` |
-
-## Staging admin routes
-
-- `/admin/youtube/` — read-only YouTube config status
-- `/admin/discography/` — read-only release list + preview link
+| CMS-ready JSON | `config/sites/gosaki-piano-discography.json` |
+| Public | Wix static `/discography/` (unchanged) |
+| Admin | `/__admin-staging-shell/musician-basic/admin/discography/` — form + preview cards |
 
 ## Next (not this phase)
 
-- `site_embeds` Supabase table + read integration (G-9i)
-- Discography CMS write
-- Operator Save UI
+- `site_embeds` Supabase + Save UI
+- Public `/discography/` from JSON

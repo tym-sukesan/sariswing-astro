@@ -1,46 +1,42 @@
-Last updated: 2026-06-18
+Last updated: 2026-06-19
 Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 1. Immediate priority
 
-**Current phase:** `G-9g3g5c-operational-restore-execution` — **success / complete**
+**Current phase:** `G-9g3g5d-post-restore-hardening` — **complete**
 
-**Next:** `G-9g3g5d-post-restore-hardening`
+**Next:** `G-9g3h1-save-success-reclick-prevention`
 
-**Git:** latest pushed commit `d8b328c` (G-9g3g5c runbook); G-9g3g5c execution result **uncommitted**
+**Git:** latest pushed commit `ca1f721` (G-9g3g5c); G-9g3g5d hardening doc **uncommitted**
 
-### G-9g3g5c summary
+### G-9g3g5d summary
 
 | Item | Value |
 | --- | --- |
-| Execution doc | `staging-shell-schedule-site-slug-operational-general-edit-restore-execution-result.md` |
-| Status | **success** — operator manual restore Save once |
-| Target | `888c58f2-…` / `schedule-2026-03-001` / `gosaki-piano` |
-| Restore approval | `G-9g3g5-schedule-site-slug-operational-restore-non-dry-run` |
-| changedFields | `description` only |
-| actualWrite | `true` / rowsAffected `1` |
-| before | description included G-9g3g4 marker |
-| after | original description (marker **removed**) |
-| `updated_at` | `2026-06-18T16:35:45.060011+00:00` → `2026-06-18T18:07:44.737552+00:00` |
-| service_role | **not used** |
+| Doc | `staging-shell-schedule-site-slug-operational-general-edit-post-restore-hardening.md` |
+| Status | **complete** — planning / verification only |
+| Round-trip | G-9g3g4 marker add + G-9g3g5c restore **complete** |
+| Marker in DB | **removed** (`markerRemainsInStagingDb: false`) |
+| Row picker | target row back to **selectable** (no `[CMS Kit staging]` in description) |
 | Rollback SQL | **not executed** |
+| service_role | **not used** |
 
 ### Gates
 
 ```txt
-stagingShellScheduleSiteSlugOperationalRestoreExecutionComplete: true
-readyForG9g3g5dPostRestoreHardening: true
+stagingShellScheduleSiteSlugOperationalPostRestoreHardeningComplete: true
+restoreRoundTripComplete: true
 markerRemainsInStagingDb: false
 markerRemoved: true
-restoreExecuted: true
+readyForG9g3h1SaveSuccessReclickPrevention: true
 readyForAnyDbWrite: false
 ```
 
 ## 2. Next steps
 
-1. **G-9g3g5d-post-restore-hardening** — row picker / routine dev / operational editor follow-up
-2. Commit G-9g3g5c execution result doc
-3. Routine dev safety (restore arm off, dry-run on)
+1. **G-9g3h1-save-success-reclick-prevention** — Save success UI disable / executed-state marker
+2. Commit G-9g3g5d hardening doc + verifier
+3. Routine dev safety (arms off, dry-run on)
 
 ## 3. Routine dev safety
 
@@ -53,7 +49,8 @@ PUBLIC_ADMIN_WRITE_DRY_RUN: true
 
 ## 4. Do not
 
-- Re-click G-9g3g5c restore Save (executed once — do not re-run)
-- Re-arm G-9g3g4 operational Save
+- Re-click G-9g3g4 operational Save
+- Re-click G-9g3g5c restore Save
 - Execute SQL rollback / restore SQL
 - Re-run G-9g2 / G-9g3b / G-9g3c / G-9g3d Save
+- Arm operational or restore env without new approval phase

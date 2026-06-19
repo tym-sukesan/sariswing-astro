@@ -3119,6 +3119,33 @@ assert(
   g9g3g5cExecSrc.includes("G-9g3g5d-post-restore-hardening"),
 );
 
+const g9g3g5dHardeningPath = path.join(
+  TOOL_ROOT,
+  "docs/staging-shell-schedule-site-slug-operational-general-edit-post-restore-hardening.md",
+);
+assert("G-9g3g5d post-restore hardening doc exists", fs.existsSync(g9g3g5dHardeningPath));
+const g9g3g5dHardeningSrc = fs.readFileSync(g9g3g5dHardeningPath, "utf8");
+assert(
+  "G-9g3g5d phase marker",
+  g9g3g5dHardeningSrc.includes("G-9g3g5d-post-restore-hardening"),
+);
+assert(
+  "G-9g3g5d status complete",
+  g9g3g5dHardeningSrc.includes("**complete**"),
+);
+assert(
+  "G-9g3g5d round-trip complete",
+  g9g3g5dHardeningSrc.includes("restoreRoundTripComplete: true"),
+);
+assert(
+  "G-9g3g5d marker removed",
+  g9g3g5dHardeningSrc.includes("markerRemainsInStagingDb: false"),
+);
+assert(
+  "G-9g3g5d next phase G-9g3h1",
+  g9g3g5dHardeningSrc.includes("G-9g3h1-save-success-reclick-prevention"),
+);
+
 const gosakiPublicDist = path.join(TOOL_ROOT, "output/static-public/gosaki-piano/public-dist");
 for (const ym of ["2026-06", "2026-07"]) {
   const canonicalMonthPath = path.join(gosakiPublicDist, "schedule", ym, "index.html");

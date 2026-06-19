@@ -164,14 +164,19 @@ assert(
   currentStateSrc.includes("G-9g3g5c") &&
     (currentStateSrc.includes("success") || currentStateSrc.includes("complete")),
 );
-assert("current state commit d8b328c", currentStateSrc.includes("d8b328c"));
-assert("next actions G-9g3g5d", nextActionsSrc.includes(NEXT_PHASE));
+assert("current state commit ca1f721", currentStateSrc.includes("ca1f721"));
+assert(
+  "next actions G-9g3g5d or G-9g3h1",
+  nextActionsSrc.includes(NEXT_PHASE) || nextActionsSrc.includes("G-9g3h1"),
+);
 assert(
   "handoff restore complete",
   handoffSrc.includes("restore execution complete") ||
     handoffSrc.includes("restore executed") ||
     handoffSrc.includes("restoreExecuted: true") ||
-    handoffSrc.includes("restore Save **succeeded**"),
+    handoffSrc.includes("restore Save **succeeded**") ||
+    handoffSrc.includes("restore round-trip complete") ||
+    handoffSrc.includes("marker **removed**"),
 );
 
 console.log(`\nG-9g3g5c verifier: ${passed} passed, ${failed} failed`);

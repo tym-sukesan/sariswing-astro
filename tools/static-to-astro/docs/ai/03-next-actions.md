@@ -3,27 +3,28 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 1. Immediate priority
 
-**Current phase:** `G-9g4a-schedule-text-fields-operational-expansion-planning`
+**Current phase:** `G-9g4a1-venue-only-operational-expansion-implementation`
 
-**Git:** latest pushed commit `507f4b1` (G-9g3h3 CMS Kit generalization notes)
+**Git:** latest pushed commit `aebbf98` (G-9g4 field expansion planning)
 
-### G-9g4 summary
+### G-9g4a summary
 
 | Item | Value |
 | --- | --- |
-| Doc | `staging-shell-schedule-editor-usability-and-field-expansion-planning.md` |
-| Status | **complete** — field expansion planning (uncommitted) |
-| Operational proven field | `description` only |
-| PoC frozen fields | title, venue, time, price (pilot row) |
-| Expansion order | G-9g4a text → G-9g4b date/route → G-9g4c visibility → G-9g4d images → G-9g4e UX |
-| First slice (planned) | G-9g4a1 `venue` only |
+| Doc | `staging-shell-schedule-text-fields-operational-expansion-planning.md` |
+| Status | **complete** — text fields operational expansion planning (uncommitted) |
+| First slice | G-9g4a1 `venue` only |
+| Approval ID (planned) | `G-9g4a1-schedule-site-slug-venue-only-non-dry-run` |
+| Env arm (planned) | `PUBLIC_ADMIN_SCHEDULE_G9G4A1_VENUE_ONLY_NON_DRY_RUN_ARMED=true` |
+| Operational proven field | `description` only (G-9g3g4) |
+| Target row | Option A: new content row at preflight; Option B fallback: `888c58f2-…` |
 
 ### Gates
 
 ```txt
-stagingShellScheduleEditorUsabilityAndFieldExpansionPlanningComplete: true
-readyForG9g4aScheduleTextFieldsOperationalExpansionPlanning: true
-operationalProvenField: description
+stagingShellScheduleTextFieldsOperationalExpansionPlanningComplete: true
+readyForG9g4a1VenueOnlyOperationalExpansionImplementation: true
+operationalProvenFields: description
 activeRestoreExceptionsCount: 0
 markerRemainsInStagingDb: false
 readyForAnyDbWrite: false
@@ -31,8 +32,8 @@ readyForAnyDbWrite: false
 
 ## 2. Next steps
 
-1. **G-9g4a-schedule-text-fields-operational-expansion-planning** — plan operational text field slices on content rows
-2. Commit G-9g4 planning doc when ready
+1. **G-9g4a1-venue-only-operational-expansion-implementation** — guard, approval ID, env arm, Save routing (no operator Save in implementation phase)
+2. Commit G-9g4a planning doc when ready
 
 ## 3. Routine dev safety
 
@@ -46,6 +47,6 @@ All non-dry-run arms: off
 
 - Cursor / AI click Save or Preview
 - Re-run G-9g2 / G-9g3b / G-9g3c / G-9g3d PoC Save
-- Implement field expansion without G-9g4a planning
+- Reuse G-9g3g operational arm for venue Save without G-9g4a1 slice
 - Use service_role
 - Touch production or `/admin`

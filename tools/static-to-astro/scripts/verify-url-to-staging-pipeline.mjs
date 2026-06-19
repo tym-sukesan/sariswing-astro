@@ -3506,6 +3506,65 @@ assert(
   g9g4PlanningSrc.includes("DB write executed (this phase) | **no**"),
 );
 
+const g9g4aPlanningPath = path.join(
+  TOOL_ROOT,
+  "docs/staging-shell-schedule-text-fields-operational-expansion-planning.md",
+);
+assert("G-9g4a planning doc exists", fs.existsSync(g9g4aPlanningPath));
+const g9g4aPlanningSrc = fs.readFileSync(g9g4aPlanningPath, "utf8");
+assert(
+  "G-9g4a phase marker",
+  g9g4aPlanningSrc.includes("G-9g4a-schedule-text-fields-operational-expansion-planning"),
+);
+assert(
+  "G-9g4a status complete",
+  g9g4aPlanningSrc.includes("**complete**"),
+);
+assert(
+  "G-9g4a text field audit",
+  g9g4aPlanningSrc.includes("Current text field support audit"),
+);
+assert(
+  "G-9g4a venue-only rationale",
+  g9g4aPlanningSrc.includes("Venue-only first slice rationale"),
+);
+assert(
+  "G-9g4a1 venue-only plan",
+  g9g4aPlanningSrc.includes("G-9g4a1 venue-only implementation plan"),
+);
+assert(
+  "G-9g4a target row",
+  g9g4aPlanningSrc.includes("Target row recommendation"),
+);
+assert(
+  "G-9g4a venue smoke",
+  g9g4aPlanningSrc.includes("Venue smoke candidate"),
+);
+assert(
+  "G-9g4a approval env",
+  g9g4aPlanningSrc.includes("G-9g4a1-schedule-site-slug-venue-only-non-dry-run"),
+);
+assert(
+  "G-9g4a safety gates",
+  g9g4aPlanningSrc.includes("Safety gates"),
+);
+assert(
+  "G-9g4a restore strategy",
+  g9g4aPlanningSrc.includes("Restore strategy"),
+);
+assert(
+  "G-9g4a Kit impact",
+  g9g4aPlanningSrc.includes("CMS Kit generalization impact"),
+);
+assert(
+  "G-9g4a next phase G-9g4a1",
+  g9g4aPlanningSrc.includes("G-9g4a1-venue-only-operational-expansion-implementation"),
+);
+assert(
+  "G-9g4a no DB write",
+  g9g4aPlanningSrc.includes("DB write executed (this phase) | **no**"),
+);
+
 const gosakiPublicDist = path.join(TOOL_ROOT, "output/static-public/gosaki-piano/public-dist");
 for (const ym of ["2026-06", "2026-07"]) {
   const canonicalMonthPath = path.join(gosakiPublicDist, "schedule", ym, "index.html");

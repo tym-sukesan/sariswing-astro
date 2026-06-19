@@ -21,9 +21,11 @@ Staging Shell
 将来的な顧客オンボーディング・課金・デプロイ自動化
 
 2. Current phase
-現在フェーズ: **G-9g4a-schedule-text-fields-operational-expansion-planning**（G-9g4 field expansion planning 完了後）
+現在フェーズ: **G-9g4a1-venue-only-operational-expansion-implementation**（G-9g4a text fields operational expansion planning 完了後）
 
-G-9g4: Schedule editor usability and field expansion planning **complete**（uncommitted）。operational proven: `description`; expansion order: G-9g4a text → G-9g4b date/route → G-9g4c visibility → G-9g4d images → G-9g4e client UX.
+G-9g4a: Schedule text fields operational expansion planning **complete**（uncommitted）。first slice: G-9g4a1 `venue` only; new approval ID `G-9g4a1-schedule-site-slug-venue-only-non-dry-run`.
+
+G-9g4: Schedule editor usability and field expansion planning **complete**（commit `aebbf98`）。operational proven: `description`; expansion order: G-9g4a text → G-9g4b date/route → G-9g4c visibility → G-9g4d images → G-9g4e client UX.
 
 G-9g3h3: CMS Kit generalization notes **complete**（commit `507f4b1`）。
 
@@ -31,7 +33,7 @@ G-9g3h2b: registry lifecycle cleanup **complete**（commit `7a4dc0d`）。
 
 `markerRemainsInStagingDb: false`. `activeRestoreExceptionsCount: 0`.
 
-Git: 最新 push 済み commit `507f4b1`（G-9g3h3）。G-9g4 planning **uncommitted**。
+Git: 最新 push 済み commit `aebbf98`（G-9g4）。G-9g4a planning **uncommitted**。
 
 G-9g3h1: Save success re-click prevention **implemented**（commit `8780f84`）。
 
@@ -546,24 +548,25 @@ PUBLIC_SUPABASE_URL host: kmjqppxjdnwwrtaeqjta.supabase.co (staging)
 **Note:** `tools/static-to-astro/.env.local` に `SUPABASE_SERVICE_ROLE_KEY` が local only（gitignored）で存在する場合がある。G-9g3b execution では使用禁止・参照禁止。anon key + authenticated session のみ。
 
 10. Recommended next phase
-次フェーズ推奨: **G-9g4a-schedule-text-fields-operational-expansion-planning**
+次フェーズ推奨: **G-9g4a1-venue-only-operational-expansion-implementation**
 
-G-9g4 Schedule editor usability and field expansion planning: **complete**（uncommitted）。
+G-9g4a Schedule text fields operational expansion planning: **complete**（uncommitted）。
 
-G-9g3h3 CMS Kit generalization notes: **complete**（commit `507f4b1`）。
+G-9g4 Schedule editor usability and field expansion planning: **complete**（commit `aebbf98`）。
 
 Phase sequence:
 ```txt
-G-9g3h3-cms-kit-generalization-notes ← complete (507f4b1)
-G-9g4-schedule-editor-usability-and-field-expansion-planning ← complete (uncommitted)
-G-9g4a-schedule-text-fields-operational-expansion-planning ← next
+G-9g4-schedule-editor-usability-and-field-expansion-planning ← complete (aebbf98)
+G-9g4a-schedule-text-fields-operational-expansion-planning ← complete (uncommitted)
+G-9g4a1-venue-only-operational-expansion-implementation ← next
 ```
 
-G-9g4 gates:
+G-9g4a gates:
 ```txt
-stagingShellScheduleEditorUsabilityAndFieldExpansionPlanningComplete: true
-operationalProvenField: description
-readyForG9g4aScheduleTextFieldsOperationalExpansionPlanning: true
+stagingShellScheduleTextFieldsOperationalExpansionPlanningComplete: true
+readyForG9g4a1VenueOnlyOperationalExpansionImplementation: true
+firstSlice: G-9g4a1-venue-only
+operationalProvenFields: description
 activeRestoreExceptionsCount: 0
 markerRemainsInStagingDb: false
 readyForAnyDbWrite: false

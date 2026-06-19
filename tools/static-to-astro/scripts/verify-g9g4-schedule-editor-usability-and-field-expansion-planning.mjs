@@ -79,10 +79,10 @@ const nextActionsSrc = readRepo("tools/static-to-astro/docs/ai/03-next-actions.m
 const handoffSrc = readRepo("tools/static-to-astro/docs/ai/handoff-to-chatgpt.md");
 
 assert("current state G-9g4", currentStateSrc.includes("G-9g4"));
-assert("current state 507f4b1", currentStateSrc.includes("507f4b1"));
+assert("current state aebbf98", currentStateSrc.includes("aebbf98"));
 assert(
-  "next actions G-9g4a or G-9g4",
-  nextActionsSrc.includes("G-9g4a") || nextActionsSrc.includes("G-9g4"),
+  "next actions G-9g4a or G-9g4a1",
+  nextActionsSrc.includes("G-9g4a") || nextActionsSrc.includes("G-9g4a1"),
 );
 assert(
   "handoff G-9g4 or G-9g4a",

@@ -88,6 +88,9 @@ const venueConfigSrc = readRepo(
 const saveSrc = readRepo(
   "src/lib/admin/staging-write/staging-schedule-site-slug-open-time-only-operational-save.ts",
 );
+const genericSaveSrc = readRepo(
+  "src/lib/admin/staging-write/staging-schedule-single-text-field-operational-save.ts",
+);
 const editUiSrc = readRepo(
   "src/lib/admin/staging-data/staging-schedule-site-slug-open-time-only-operational-edit-ui.ts",
 );
@@ -169,6 +172,15 @@ assert(
 assert("approval ID registered in types", typesSrc.includes(APPROVAL_ID));
 assert("G9G4A2A executor", saveSrc.includes("executeG9G4a2aOpenTimeOnlyNonDryRunSave"));
 assert(
+  "G9G4A2A delegates to generic single-text-field Save executor",
+  saveSrc.includes("executeSingleTextFieldOperationalNonDryRunSave") &&
+    saveSrc.includes('"open_time"'),
+);
+assert(
+  "generic Save executor exists",
+  genericSaveSrc.includes("executeSingleTextFieldOperationalNonDryRunSave"),
+);
+assert(
   "assertG9G4a2aOpenTimeOnlyPayloadOnly",
   guardsSrc.includes("assertG9G4a2aOpenTimeOnlyPayloadOnly"),
 );
@@ -243,14 +255,17 @@ assert(
   "save button disabled by default",
   editSectionSrc.includes(`id="${SAVE_BTN_ID}"`) && editSectionSrc.includes("disabled={true}"),
 );
-assert("no service_role in executor", !saveSrc.includes("service_role"));
+assert("no service_role in executor", !saveSrc.includes("service_role") && !genericSaveSrc.includes("service_role"));
 assert(
-  "productionBlocked in save executor",
-  saveSrc.includes("productionBlocked") && saveSrc.includes("true"),
+  "productionBlocked in save path",
+  (saveSrc.includes("productionBlocked") || genericSaveSrc.includes("productionBlocked")) &&
+    genericSaveSrc.includes("production_blocked"),
 );
 assert(
-  "serviceRoleUsed false in save executor",
-  saveSrc.includes("serviceRoleUsed") && saveSrc.includes("false"),
+  "serviceRoleUsed false in save path",
+  saveSrc.includes("serviceRoleUsed") &&
+    saveSrc.includes("false") &&
+    genericSaveSrc.includes("serviceRoleUsed false"),
 );
 
 const previewValidIdx = editUiSrc.indexOf("g9g4a2aOpenTimeOnlyPreviewValid = true");

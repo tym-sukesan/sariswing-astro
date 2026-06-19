@@ -5,27 +5,27 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-9g3h1b-smoke-marker-restore-preflight
-Latest commit (pushed): 78c51b8 (G-9g3h1a smoke runbook)
-G-9g3h1a smoke result: success (uncommitted)
+Current phase: G-9g3h1c-smoke-marker-restore-execution (operator pending)
+Latest commit (pushed): 03cbbbe (G-9g3h1a smoke result)
+G-9g3h1b restore preflight: complete (uncommitted)
 ```
 
 ## Summary
 
-G-9g3h1 Save success re-click prevention **implemented** (`8780f84`).
+G-9g3h1a smoke **passed** (`03cbbbe`):
 
-G-9g3h1a operator manual smoke **passed**:
+- Preview once + Save once + re-click blocked confirmed
+- G-9g3h1a smoke marker **remains** in staging DB on `888c58f2-f152-4563-a3cf-a20d7c2456c1`
 
-- **URL:** `/__admin-staging-shell/musician-basic/#schedule`
-- **Target:** `888c58f2-f152-4563-a3cf-a20d7c2456c1` / `schedule-2026-03-001`
-- **Mode:** G-9g3g general operational (description-only smoke marker append)
-- **Preview:** operator once (`actualWrite=false`, `wouldWrite=true`)
-- **Save:** operator once (`actualWrite=true`, `rowsAffected=1`, `changedFields=description`)
-- **Re-click blocked:** Save disabled; executed-state message confirmed
-- **Candidate change:** Preview stale; Save disabled; no 2nd Preview/Save
-- **Marker remains in staging DB** — restore required
+G-9g3h1b restore preflight **complete** (uncommitted):
 
-**Next:** **G-9g3h1b-smoke-marker-restore-preflight**
+- **Chosen path:** Option A — G-9g3g general operational (set candidate description to original)
+- **Not used:** G-9g3g5 restore mode (hardcoded to G-9g3g4 marker in guards)
+- Lock baseline: `2026-06-19T01:18:46.3938+00:00`
+- Preview: `#site-slug-edit-dry-run-preview-btn`
+- Save: `#site-slug-edit-g9g3g-operational-save-btn` (once)
+
+**Next:** **G-9g3h1c-smoke-marker-restore-execution** (operator manual)
 
 **Do not re-click G-9g3g4 / G-9g3g5c / G-9g3h1a smoke Save.**
 
@@ -43,16 +43,15 @@ PUBLIC_ADMIN_SCHEDULE_G9G3G5_OPERATIONAL_RESTORE_NON_DRY_RUN_ARMED: false (or un
 ## Gates
 
 ```txt
-stagingShellScheduleSiteSlugOperationalSaveSuccessReclickPreventionComplete: true
 stagingShellScheduleSiteSlugOperationalSaveSuccessReclickPreventionSmokeTestPassed: true
-operatorPending: false
-readyForG9g3h1bSmokeMarkerRestorePreflight: true
+stagingShellScheduleSiteSlugOperationalSaveReclickSmokeMarkerRestorePreflightComplete: true
+readyForG9g3h1cSmokeMarkerRestoreExecution: true
 markerRemainsInStagingDb: true
 readyForAnyDbWrite: false
 ```
 
 ## Next
 
-**G-9g3h1b** smoke marker restore preflight → **G-9g3h1c** restore execution
+**G-9g3h1c** operator restore Save once → fill execution result doc
 
 **Do not re-click G-9g3g4 / G-9g3g5c / G-9g3h1a smoke Save.**

@@ -3,40 +3,44 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 1. Immediate priority
 
-**Current phase:** `G-9g3h1b-smoke-marker-restore-preflight`
+**Current phase:** `G-9g3h1c-smoke-marker-restore-execution` — **operator pending**
 
-**Git:** latest pushed commit `78c51b8` (G-9g3h1a smoke runbook)
+**Git:** latest pushed commit `03cbbbe` (G-9g3h1a smoke result)
 
-### G-9g3h1a summary
+### G-9g3h1b summary
 
 | Item | Value |
 | --- | --- |
-| Smoke doc | `staging-shell-schedule-site-slug-operational-save-success-reclick-prevention-smoke-test-result.md` |
-| Status | **success** — operator manual smoke passed |
-| Mode | G-9g3g general operational (restore arm off) |
-| Target | `888c58f2-…` / `schedule-2026-03-001` / `gosaki-piano` |
-| Field | `description` only |
-| Preview | operator once (`actualWrite=false`) |
-| Save | operator once (`actualWrite=true`, `rowsAffected=1`) |
-| Re-click blocked | confirmed |
-| Candidate change | Preview stale / Save disabled (no 2nd Preview/Save) |
-| Marker in DB | **yes** — restore required |
+| Preflight doc | `staging-shell-schedule-site-slug-operational-save-reclick-smoke-marker-restore-preflight.md` |
+| Status | **complete** — restore path + runbook fixed |
+| Chosen path | **Option A** — G-9g3g general operational (description → original) |
+| G-9g3g5 restore mode | **not used** for G-9g3h1a marker (G-9g3g4-specific guards) |
+| Lock baseline | `2026-06-19T01:18:46.3938+00:00` |
+| Save / DB write (preflight) | **not executed** |
+
+### G-9g3h1a context
+
+| Item | Value |
+| --- | --- |
+| Smoke result | committed `03cbbbe` |
+| Marker in DB | **yes** — G-9g3h1a smoke marker on target row |
+| Restore target | original description (no marker) |
 
 ### Gates
 
 ```txt
-stagingShellScheduleSiteSlugOperationalSaveSuccessReclickPreventionSmokeTestPassed: true
-readyForG9g3h1bSmokeMarkerRestorePreflight: true
-operatorPending: false
+stagingShellScheduleSiteSlugOperationalSaveReclickSmokeMarkerRestorePreflightComplete: true
+readyForG9g3h1cSmokeMarkerRestoreExecution: true
 markerRemainsInStagingDb: true
+operatorPending: false
 readyForAnyDbWrite: false
 ```
 
 ## 2. Next steps
 
-1. **G-9g3h1b-smoke-marker-restore-preflight** — plan restore of original description (remove G-9g3h1a smoke marker)
-2. After preflight: **G-9g3h1c-smoke-marker-restore-execution** (operator restore Save once)
-3. Commit G-9g3h1a smoke result doc when ready
+1. **Operator:** G-9g3h1c restore execution (Steps A–I in preflight doc + pending execution result doc)
+2. After restore Save: fill execution result doc; confirm `markerRemoved: true`
+3. Commit G-9g3h1b preflight + pending execution doc when ready
 
 ## 3. Routine dev safety
 
@@ -51,5 +55,5 @@ PUBLIC_ADMIN_WRITE_DRY_RUN: true
 
 - Cursor / AI click Save or Preview
 - Re-click G-9g3g4 / G-9g3g5c / G-9g3h1a smoke Save
-- Second Save click during any smoke observation
-- Restore / rollback SQL without G-9g3h1b preflight
+- Use G-9g3g5 restore arm for G-9g3h1a marker (wrong marker semantics)
+- Restore / rollback SQL without G-9g3h1c operator execution phase

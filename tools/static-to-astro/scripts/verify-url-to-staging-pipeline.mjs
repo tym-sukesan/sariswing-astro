@@ -3213,6 +3213,59 @@ assert(
   g9g3h1aSmokeSrc.includes("G-9g3h1b-smoke-marker-restore-preflight"),
 );
 
+const g9g3h1bPreflightPath = path.join(
+  TOOL_ROOT,
+  "docs/staging-shell-schedule-site-slug-operational-save-reclick-smoke-marker-restore-preflight.md",
+);
+assert("G-9g3h1b preflight doc exists", fs.existsSync(g9g3h1bPreflightPath));
+const g9g3h1bPreflightSrc = fs.readFileSync(g9g3h1bPreflightPath, "utf8");
+assert(
+  "G-9g3h1b phase marker",
+  g9g3h1bPreflightSrc.includes("G-9g3h1b-smoke-marker-restore-preflight"),
+);
+assert(
+  "G-9g3h1b preflight complete",
+  g9g3h1bPreflightSrc.includes("**complete**"),
+);
+assert(
+  "G-9g3h1b Option A chosen",
+  g9g3h1bPreflightSrc.includes("Option A") &&
+    g9g3h1bPreflightSrc.includes("G-9g3g general operational"),
+);
+assert(
+  "G-9g3h1b smoke marker baseline",
+  g9g3h1bPreflightSrc.includes(
+    "[CMS Kit staging] G-9g3h1a re-click prevention smoke — temporary marker",
+  ),
+);
+assert(
+  "G-9g3h1b lock baseline",
+  g9g3h1bPreflightSrc.includes("2026-06-19T01:18:46.3938+00:00"),
+);
+assert(
+  "G-9g3h1b ready for execution",
+  g9g3h1bPreflightSrc.includes("readyForG9g3h1cSmokeMarkerRestoreExecution: true"),
+);
+assert(
+  "G-9g3h1b next phase G-9g3h1c",
+  g9g3h1bPreflightSrc.includes("G-9g3h1c-smoke-marker-restore-execution"),
+);
+assert(
+  "G-9g3h1b no DB write",
+  g9g3h1bPreflightSrc.includes("DB write executed (this phase) | **no**"),
+);
+
+const g9g3h1cExecPendingPath = path.join(
+  TOOL_ROOT,
+  "docs/staging-shell-schedule-site-slug-operational-save-reclick-smoke-marker-restore-execution-result.md",
+);
+assert("G-9g3h1c pending execution doc exists", fs.existsSync(g9g3h1cExecPendingPath));
+const g9g3h1cExecPendingSrc = fs.readFileSync(g9g3h1cExecPendingPath, "utf8");
+assert(
+  "G-9g3h1c operator pending",
+  g9g3h1cExecPendingSrc.includes("operator pending"),
+);
+
 const gosakiPublicDist = path.join(TOOL_ROOT, "output/static-public/gosaki-piano/public-dist");
 for (const ym of ["2026-06", "2026-07"]) {
   const canonicalMonthPath = path.join(gosakiPublicDist, "schedule", ym, "index.html");

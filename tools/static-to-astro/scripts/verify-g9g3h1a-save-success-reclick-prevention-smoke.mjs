@@ -12,6 +12,7 @@ const TOOL_ROOT = path.resolve(__dirname, "..");
 
 const PHASE = "G-9g3h1a-save-success-reclick-prevention-smoke-test";
 const RUNBOOK_COMMIT = "78c51b8";
+const SMOKE_RESULT_COMMIT = "03cbbbe";
 const IMPL_COMMIT = "8780f84";
 const STAGING_HOST = "kmjqppxjdnwwrtaeqjta.supabase.co";
 const PRODUCTION_HOST = "vsbvndwuajjhnzpohghh.supabase.co";
@@ -198,7 +199,10 @@ const editUiSrc = readRepo("src/lib/admin/staging-data/staging-schedule-site-slu
 assert("G-9g3h1 impl doc references smoke", implDocSrc.includes("G-9g3h1a"));
 assert("edit UI reclick prevention", editUiSrc.includes("operationalSaveSuccess"));
 assert("current state G-9g3h1a success", currentStateSrc.includes("G-9g3h1a"));
-assert("current state runbook 78c51b8", currentStateSrc.includes(RUNBOOK_COMMIT));
+assert(
+  "current state latest commit",
+  currentStateSrc.includes(SMOKE_RESULT_COMMIT) || currentStateSrc.includes(RUNBOOK_COMMIT),
+);
 assert("current state impl 8780f84", currentStateSrc.includes(IMPL_COMMIT));
 assert(
   "next actions restore preflight",

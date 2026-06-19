@@ -98,11 +98,17 @@ const nextActionsSrc = readRepo("tools/static-to-astro/docs/ai/03-next-actions.m
 const handoffSrc = readRepo("tools/static-to-astro/docs/ai/handoff-to-chatgpt.md");
 
 assert("current state G-9g4a", currentStateSrc.includes("G-9g4a"));
-assert("current state aebbf98", currentStateSrc.includes("aebbf98"));
-assert("next actions G-9g4a1", nextActionsSrc.includes("G-9g4a1"));
 assert(
-  "handoff G-9g4a complete",
-  handoffSrc.includes("G-9g4a") && handoffSrc.includes("G-9g4a1"),
+  "current state 9a38c11 or G-9g4a1",
+  currentStateSrc.includes("9a38c11") || currentStateSrc.includes("G-9g4a1"),
+);
+assert(
+  "next actions G-9g4a1 or G-9g4a1a",
+  nextActionsSrc.includes("G-9g4a1"),
+);
+assert(
+  "handoff G-9g4a1",
+  handoffSrc.includes("G-9g4a1"),
 );
 
 console.log(`\nG-9g4a verifier: ${passed} passed, ${failed} failed`);

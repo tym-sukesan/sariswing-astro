@@ -21,19 +21,15 @@ Staging Shell
 将来的な顧客オンボーディング・課金・デプロイ自動化
 
 2. Current phase
-現在フェーズ: **G-9g4a1-venue-only-operational-expansion-implementation**（G-9g4a text fields operational expansion planning 完了後）
+現在フェーズ: **G-9g4a1a-venue-only-operational-expansion-preflight**（G-9g4a1 venue-only implementation 完了後）
 
-G-9g4a: Schedule text fields operational expansion planning **complete**（uncommitted）。first slice: G-9g4a1 `venue` only; new approval ID `G-9g4a1-schedule-site-slug-venue-only-non-dry-run`.
+G-9g4a1: Schedule venue-only operational expansion **implementation complete**（uncommitted）。approval ID `G-9g4a1-schedule-site-slug-venue-only-non-dry-run`; env `PUBLIC_ADMIN_SCHEDULE_G9G4A1_VENUE_ONLY_NON_DRY_RUN_ARMED`（default off; not written to `.env`).
 
-G-9g4: Schedule editor usability and field expansion planning **complete**（commit `aebbf98`）。operational proven: `description`; expansion order: G-9g4a text → G-9g4b date/route → G-9g4c visibility → G-9g4d images → G-9g4e client UX.
+G-9g4a: Schedule text fields operational expansion planning **complete**（commit `9a38c11`）。
 
-G-9g3h3: CMS Kit generalization notes **complete**（commit `507f4b1`）。
+G-9g4: Schedule editor usability and field expansion planning **complete**（commit `aebbf98`）。
 
-G-9g3h2b: registry lifecycle cleanup **complete**（commit `7a4dc0d`）。
-
-`markerRemainsInStagingDb: false`. `activeRestoreExceptionsCount: 0`.
-
-Git: 最新 push 済み commit `aebbf98`（G-9g4）。G-9g4a planning **uncommitted**。
+Git: 最新 push 済み commit `9a38c11`（G-9g4a）。G-9g4a1 implementation **uncommitted**。
 
 G-9g3h1: Save success re-click prevention **implemented**（commit `8780f84`）。
 
@@ -548,28 +544,30 @@ PUBLIC_SUPABASE_URL host: kmjqppxjdnwwrtaeqjta.supabase.co (staging)
 **Note:** `tools/static-to-astro/.env.local` に `SUPABASE_SERVICE_ROLE_KEY` が local only（gitignored）で存在する場合がある。G-9g3b execution では使用禁止・参照禁止。anon key + authenticated session のみ。
 
 10. Recommended next phase
-次フェーズ推奨: **G-9g4a1-venue-only-operational-expansion-implementation**
+次フェーズ推奨: **G-9g4a1a-venue-only-operational-expansion-preflight**
 
-G-9g4a Schedule text fields operational expansion planning: **complete**（uncommitted）。
+G-9g4a1 Schedule venue-only operational expansion: **implementation complete**（uncommitted）。
 
-G-9g4 Schedule editor usability and field expansion planning: **complete**（commit `aebbf98`）。
+G-9g4a Schedule text fields operational expansion planning: **complete**（commit `9a38c11`）。
 
 Phase sequence:
 ```txt
-G-9g4-schedule-editor-usability-and-field-expansion-planning ← complete (aebbf98)
-G-9g4a-schedule-text-fields-operational-expansion-planning ← complete (uncommitted)
-G-9g4a1-venue-only-operational-expansion-implementation ← next
+G-9g4a-schedule-text-fields-operational-expansion-planning ← complete (9a38c11)
+G-9g4a1-venue-only-operational-expansion-implementation ← complete (uncommitted)
+G-9g4a1a-venue-only-operational-expansion-preflight ← next
 ```
 
-G-9g4a gates:
+G-9g4a1 gates:
 ```txt
-stagingShellScheduleTextFieldsOperationalExpansionPlanningComplete: true
-readyForG9g4a1VenueOnlyOperationalExpansionImplementation: true
-firstSlice: G-9g4a1-venue-only
+stagingShellScheduleVenueOnlyOperationalExpansionImplementationComplete: true
+readyForG9g4a1aVenueOnlyOperationalExpansionPreflight: true
 operationalProvenFields: description
+venueOnlyOperationalPathImplemented: true
 activeRestoreExceptionsCount: 0
 markerRemainsInStagingDb: false
 readyForAnyDbWrite: false
+cursorClickedSave: false
+cursorClickedPreview: false
 ```
 
 Routine dev: dry-run on / all non-dry-run arms off. **Do not re-click G-9g3h1a smoke Save or G-9g3h1c restore Save.**

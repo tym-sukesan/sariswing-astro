@@ -88,6 +88,14 @@ export const G9G3G5_SCHEDULE_OPERATIONAL_RESTORE_NON_DRY_RUN_APPROVAL_ID:
   ScheduleG9G3g5OperationalRestoreNonDryRunApprovalId =
   "G-9g3g5-schedule-site-slug-operational-restore-non-dry-run";
 
+/** G-9g4a1 Gosaki site_slug venue-only operational non-dry-run — venue field slice. */
+export type ScheduleG9G4a1VenueOnlyNonDryRunApprovalId =
+  "G-9g4a1-schedule-site-slug-venue-only-non-dry-run";
+
+export const G9G4A1_SCHEDULE_VENUE_ONLY_NON_DRY_RUN_APPROVAL_ID:
+  ScheduleG9G4a1VenueOnlyNonDryRunApprovalId =
+  "G-9g4a1-schedule-site-slug-venue-only-non-dry-run";
+
 export type ScheduleWriteApprovalIdUnion =
   | ScheduleWriteApprovalId
   | ScheduleSafeFieldsNonDryRunPocApprovalId
@@ -98,7 +106,8 @@ export type ScheduleWriteApprovalIdUnion =
   | ScheduleG9G3cTimePriceNonDryRunPocApprovalId
   | ScheduleG9G3dGeneralEditNonDryRunPocApprovalId
   | ScheduleG9G3gOperationalGeneralEditNonDryRunApprovalId
-  | ScheduleG9G3g5OperationalRestoreNonDryRunApprovalId;
+  | ScheduleG9G3g5OperationalRestoreNonDryRunApprovalId
+  | ScheduleG9G4a1VenueOnlyNonDryRunApprovalId;
 
 export const SCHEDULE_WRITE_APPROVAL_IDS: readonly ScheduleWriteApprovalIdUnion[] = [
   SCHEDULE_WRITE_APPROVAL_ID,
@@ -111,6 +120,7 @@ export const SCHEDULE_WRITE_APPROVAL_IDS: readonly ScheduleWriteApprovalIdUnion[
   G9G3D_SCHEDULE_GENERAL_EDIT_NON_DRY_RUN_POC_APPROVAL_ID,
   G9G3G_SCHEDULE_OPERATIONAL_GENERAL_EDIT_NON_DRY_RUN_APPROVAL_ID,
   G9G3G5_SCHEDULE_OPERATIONAL_RESTORE_NON_DRY_RUN_APPROVAL_ID,
+  G9G4A1_SCHEDULE_VENUE_ONLY_NON_DRY_RUN_APPROVAL_ID,
 ];
 
 export type ScheduleUpdateWritePayload = {

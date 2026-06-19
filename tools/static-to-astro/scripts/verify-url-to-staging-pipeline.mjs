@@ -3565,6 +3565,45 @@ assert(
   g9g4aPlanningSrc.includes("DB write executed (this phase) | **no**"),
 );
 
+const g9g4a1ImplPath = path.join(
+  TOOL_ROOT,
+  "docs/staging-shell-schedule-venue-only-operational-expansion-implementation.md",
+);
+assert("G-9g4a1 implementation doc exists", fs.existsSync(g9g4a1ImplPath));
+const g9g4a1ImplSrc = fs.readFileSync(g9g4a1ImplPath, "utf8");
+assert(
+  "G-9g4a1 phase marker",
+  g9g4a1ImplSrc.includes("G-9g4a1-venue-only-operational-expansion-implementation"),
+);
+assert(
+  "G-9g4a1 status complete",
+  g9g4a1ImplSrc.includes("**complete**"),
+);
+assert(
+  "G-9g4a1 approval ID",
+  g9g4a1ImplSrc.includes("G-9g4a1-schedule-site-slug-venue-only-non-dry-run"),
+);
+assert(
+  "G-9g4a1 env arm",
+  g9g4a1ImplSrc.includes("PUBLIC_ADMIN_SCHEDULE_G9G4A1_VENUE_ONLY_NON_DRY_RUN_ARMED"),
+);
+assert(
+  "G-9g4a1 venue-only guards",
+  g9g4a1ImplSrc.includes("assertG9G4a1VenueOnlyPayloadOnly"),
+);
+assert(
+  "G-9g4a1 UI button IDs",
+  g9g4a1ImplSrc.includes("site-slug-edit-g9g4a1-venue-only-save-btn"),
+);
+assert(
+  "G-9g4a1 next phase preflight",
+  g9g4a1ImplSrc.includes("G-9g4a1a-venue-only-operational-expansion-preflight"),
+);
+assert(
+  "G-9g4a1 no Save click",
+  g9g4a1ImplSrc.includes("Save clicked (this phase) | **no**"),
+);
+
 const gosakiPublicDist = path.join(TOOL_ROOT, "output/static-public/gosaki-piano/public-dist");
 for (const ym of ["2026-06", "2026-07"]) {
   const canonicalMonthPath = path.join(gosakiPublicDist, "schedule", ym, "index.html");

@@ -8,7 +8,7 @@ import {
 } from "./staging-schedule-site-slug-config";
 import type { G9G3gOperationalPreviewBinding } from "../staging-write/staging-schedule-site-slug-operational-general-edit-save";
 
-export type OperationalSaveMode = "general" | "restore";
+export type OperationalSaveMode = "general" | "restore" | "venue-only";
 
 export type OperationalSaveSuccessRecord = {
   previewIdentity: string;

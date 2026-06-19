@@ -79,6 +79,13 @@ import {
   hasPickerBoundRow,
 } from "./staging-schedule-site-slug-edit-picker-binding";
 import {
+  initG9g4a1VenueOnlyOperationalEditUi,
+  invalidateG9g4a1VenueOnlyPreview,
+  isG9g4a1VenueOnlyArmed,
+  markG9g4a1VenueOnlyPreviewStale,
+  refreshG9g4a1VenueOnlyUiState,
+} from "./staging-schedule-site-slug-venue-only-operational-edit-ui";
+import {
   buildOperationalPreviewIdentity,
   isOperationalSaveReclickBlocked,
   type OperationalSaveSuccessRecord,
@@ -486,6 +493,7 @@ function clearPreviewState(): void {
 function invalidateDryRunPreview(): void {
   clearPreviewState();
   clearOperationalSaveSuccess();
+  invalidateG9g4a1VenueOnlyPreview();
 }
 
 function renderDryRunResult(result: SiteSlugScheduleEditDryRunResult): void {
@@ -1001,6 +1009,12 @@ function canEnableG9G3dSave(): { ok: boolean; reason: string } {
 }
 
 function canEnableG9G3gOperationalGeneralEditSave(): { ok: boolean; reason: string } {
+  if (isG9g4a1VenueOnlyArmed()) {
+    return {
+      ok: false,
+      reason: "G-9g4a1 venue-only arm on — G-9g3g operational Save blocked",
+    };
+  }
   if (isG9g3g5RestoreArmed()) {
     return {
       ok: false,
@@ -1103,6 +1117,12 @@ function canEnableG9G3gOperationalGeneralEditSave(): { ok: boolean; reason: stri
 }
 
 function canEnableG9G3g5OperationalRestoreSave(): { ok: boolean; reason: string } {
+  if (isG9g4a1VenueOnlyArmed()) {
+    return {
+      ok: false,
+      reason: "G-9g4a1 venue-only arm on — restore Save blocked",
+    };
+  }
   if (!isPickerDrivenBinding()) {
     return { ok: false, reason: "Picker-driven binding required for restore Save" };
   }
@@ -1870,6 +1890,7 @@ function initSiteSlugEditUi(): void {
       refreshG9G3cSaveButtonState();
       refreshG9G3dSaveButtonState();
       refreshG9G3gOperationalSaveButtonState();
+      refreshG9g4a1VenueOnlyUiState();
     },
     refreshSaveGatePanel,
     refreshPreviewButtonState,
@@ -1910,6 +1931,9 @@ function initSiteSlugEditUi(): void {
     document.getElementById(SAFE_FIELD_INPUT_IDS[field])?.addEventListener("input", () => {
       if (isPickerDrivenBinding()) {
         markG9PreviewStale(G9G3F3C_PREVIEW_STALE_MSG);
+        if (field === "venue") {
+          markG9g4a1VenueOnlyPreviewStale(G9G3F3C_PREVIEW_STALE_MSG);
+        }
         return;
       }
       const resultEl = document.getElementById("site-slug-edit-dry-run-result");
@@ -1920,6 +1944,8 @@ function initSiteSlugEditUi(): void {
       invalidateDryRunPreview();
     });
   }
+
+  initG9g4a1VenueOnlyOperationalEditUi();
 
   const hostGate = getClientHostGate();
   updateHostGateSummary(hostGate);
@@ -1932,6 +1958,7 @@ function initSiteSlugEditUi(): void {
     refreshG9G3cSaveButtonState();
     refreshG9G3dSaveButtonState();
     refreshG9G3gOperationalSaveButtonState();
+    refreshG9g4a1VenueOnlyUiState();
     refreshPreviewButtonState();
     refreshSaveGatePanel();
   });

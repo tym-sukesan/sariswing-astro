@@ -13,6 +13,7 @@ import {
 import { isActiveRestoreExceptionRow } from "../staging-data/staging-schedule-site-slug-restore-exception-registry";
 import {
   G6F6_SCHEDULE_SAFE_FIELDS_NON_DRY_RUN_POC_APPROVAL_ID,
+  G9G4A1_SCHEDULE_VENUE_ONLY_NON_DRY_RUN_APPROVAL_ID,
   SCHEDULE_WRITE_APPROVAL_ID,
   SCHEDULE_WRITE_APPROVAL_IDS,
   type ScheduleWriteApprovalIdUnion,
@@ -404,6 +405,96 @@ export function buildG9G3gOperationalGeneralEditPayload(
   rawValues: Record<string, string>,
 ): ScheduleUpdateWritePayload {
   return buildG9G3dGeneralEditPayload(changedFields, rawValues);
+}
+
+const G9G4A1_VENUE_ONLY_ALLOWED_PAYLOAD_KEYS = new Set(["venue"]);
+
+const G9G4A1_FORBIDDEN_MUTATION_KEYS = new Set([
+  "date",
+  "year",
+  "month",
+  "source_route",
+  "source_file",
+  "published",
+  "show_on_home",
+  "home_order",
+  "sort_order",
+  "image_url",
+  "home_image_url",
+  "id",
+  "legacy_id",
+  "site_slug",
+  "created_at",
+  "updated_at",
+  "title",
+  "description",
+  "open_time",
+  "start_time",
+  "price",
+]);
+
+export function assertG9G4a1VenueOnlyChangedFieldsOnly(
+  changedFields: string[],
+  label = "G-9g4a1",
+): void {
+  if (changedFields.length !== 1 || changedFields[0] !== "venue") {
+    throw new Error(`${label} changedFields must be exactly ["venue"].`);
+  }
+}
+
+export function assertG9G4a1NoRouteDatePublicationImageMutation(
+  payload: ScheduleUpdateWritePayload,
+  label = "G-9g4a1",
+): void {
+  for (const key of Object.keys(payload)) {
+    if (G9G4A1_FORBIDDEN_MUTATION_KEYS.has(key)) {
+      throw new Error(`${label} forbidden payload field: ${key}`);
+    }
+    if (!G9G4A1_VENUE_ONLY_ALLOWED_PAYLOAD_KEYS.has(key)) {
+      throw new Error(`${label} disallowed payload field: ${key}`);
+    }
+  }
+}
+
+export function assertG9G4a1VenueOnlyPayloadOnly(
+  payload: ScheduleUpdateWritePayload,
+  expectedChangedFields: string[],
+  label = "G-9g4a1",
+): void {
+  assertG9G4a1VenueOnlyChangedFieldsOnly(expectedChangedFields, label);
+  assertG9G4a1NoRouteDatePublicationImageMutation(payload, label);
+  const keys = Object.keys(payload);
+  if (keys.length !== 1 || !keys.includes("venue")) {
+    throw new Error(`${label} payload must be exactly { venue: string }.`);
+  }
+  const venue = payload.venue;
+  if (typeof venue !== "string" || venue.trim() === "") {
+    throw new Error(`${label} venue must be a non-empty string.`);
+  }
+}
+
+export function assertG9G4a1VenueOnlyApproval(
+  approvalId: string,
+  label = "G-9g4a1",
+): void {
+  if (approvalId !== G9G4A1_SCHEDULE_VENUE_ONLY_NON_DRY_RUN_APPROVAL_ID) {
+    throw new Error(`${label} approval ID mismatch.`);
+  }
+}
+
+export function assertG9G4a1VenueOnlyWritableRow(
+  row: ScheduleDryRunSource,
+  label = "G-9g4a1",
+): void {
+  assertOperationalNotPocAuditRow(row, label);
+}
+
+export function buildG9G4a1VenueOnlyPayload(venueRaw: string): ScheduleUpdateWritePayload {
+  const trimmed = venueRaw.trim();
+  if (trimmed === "") {
+    throw new Error("G-9g4a1 venue cannot be empty.");
+  }
+  return { venue: trimmed };
 }
 
 export function assertBeforeSnapshotSiteSlugScope(

@@ -231,6 +231,43 @@ export const G9G3H1_FRESH_PREVIEW_REQUIRED_MSG = "fresh Preview required";
 export const G9G3H1_ROUTINE_DEV_SAFETY_HINT =
   "Routine dev should use dry-run with all non-dry-run arms off.";
 
+export const G9G4A1_PHASE = "G-9g4a1-venue-only-operational-expansion-implementation";
+
+export const G9G4A1_VENUE_ONLY_NON_DRY_RUN_APPROVAL_ID =
+  "G-9g4a1-schedule-site-slug-venue-only-non-dry-run";
+
+export const SCHEDULE_G9G4A1_VENUE_ONLY_NON_DRY_RUN_ARMED_ENV =
+  "PUBLIC_ADMIN_SCHEDULE_G9G4A1_VENUE_ONLY_NON_DRY_RUN_ARMED";
+
+export const G9G4A1_VENUE_ONLY_CHANGED_FIELDS = ["venue"] as const;
+
+export const G9G4A1_VENUE_ONLY_PREVIEW_BTN_ID =
+  "site-slug-edit-g9g4a1-venue-only-dry-run-preview-btn";
+
+export const G9G4A1_VENUE_ONLY_PREVIEW_RESULT_ID =
+  "site-slug-edit-g9g4a1-venue-only-dry-run-result";
+
+export const G9G4A1_VENUE_ONLY_SAVE_GATE_PANEL_ID =
+  "site-slug-edit-g9g4a1-venue-only-save-gate-panel";
+
+export const G9G4A1_VENUE_ONLY_SAVE_BTN_ID =
+  "site-slug-edit-g9g4a1-venue-only-save-btn";
+
+export const G9G4A1_VENUE_ONLY_SAVE_RESULT_ID =
+  "site-slug-edit-g9g4a1-venue-only-save-result";
+
+/** Routine dev default — venue-only Save stays disabled until explicit G-9g4a1 arm. */
+export const G9G4A1_VENUE_ONLY_SAVE_DISABLED_DEFAULT_REASON =
+  "G-9g4a1 venue-only Save disabled — arm not configured (routine dev safety)";
+
+/** Documented smoke example — not written in implementation phase. */
+export const G9G4A1_VENUE_SMOKE_BEFORE_EXAMPLE = "銀座 N";
+
+export const G9G4A1_VENUE_SMOKE_AFTER_EXAMPLE =
+  "銀座 N [G-9g4a1 venue smoke]";
+
+export const G9G4A1_VENUE_SMOKE_RESTORE_EXAMPLE = "銀座 N";
+
 export const G9G3H1_SAVE_RECLICK_GUARD_MSG =
   "Operational Save re-click blocked — preview consumed by prior successful Save.";
 

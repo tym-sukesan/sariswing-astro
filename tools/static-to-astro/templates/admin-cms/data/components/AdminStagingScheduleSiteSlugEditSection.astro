@@ -22,6 +22,8 @@ const g9g3dSaveSectionVisible =
 const operationalSaveSectionVisible = binding.pickerDrivenBinding;
 const g9g4a1VenueOnlySectionVisible = binding.pickerDrivenBinding;
 const g9g4a2aOpenTimeOnlySectionVisible = binding.pickerDrivenBinding;
+const g9g4a2bStartTimeOnlySectionVisible = binding.pickerDrivenBinding;
+const g9g4a2cPriceOnlySectionVisible = binding.pickerDrivenBinding;
 const legacyPoCSectionVisible = binding.legacyPoCUiVisible;
 const hostAlertClass = binding.isKnownProductionHost
   ? "admin-staging-schedule-site-slug-edit__host-danger"
@@ -40,6 +42,8 @@ const hostAlertClass = binding.isKnownProductionHost
   data-g9g3g5-phase={binding.g9g3g5Phase}
   data-g9g4a1-phase={binding.g9g4a1Phase}
   data-g9g4a2a-phase={binding.g9g4a2aPhase}
+  data-g9g4a2b-phase={binding.g9g4a2bPhase}
+  data-g9g4a2c-phase={binding.g9g4a2cPhase}
   data-approval-id={binding.approvalId}
   data-g9g3b-approval-id={binding.g9g3bApprovalId}
   data-g9g3c-approval-id={binding.g9g3cApprovalId}
@@ -48,6 +52,8 @@ const hostAlertClass = binding.isKnownProductionHost
   data-g9g3g5-approval-id={binding.g9g3g5ApprovalId}
   data-g9g4a1-approval-id={binding.g9g4a1ApprovalId}
   data-g9g4a2a-approval-id={binding.g9g4a2aApprovalId}
+  data-g9g4a2b-approval-id={binding.g9g4a2bApprovalId}
+  data-g9g4a2c-approval-id={binding.g9g4a2cApprovalId}
   data-site-slug={binding.siteSlug}
   data-source={binding.source}
   data-dry-run-preview-only="true"
@@ -69,6 +75,10 @@ const hostAlertClass = binding.isKnownProductionHost
   data-g9g4a1-save-enabled={binding.g9g4a1SaveEnabled ? "true" : "false"}
   data-g9g4a2a-armed={binding.g9g4a2aArmed ? "true" : "false"}
   data-g9g4a2a-save-enabled={binding.g9g4a2aSaveEnabled ? "true" : "false"}
+  data-g9g4a2b-armed={binding.g9g4a2bArmed ? "true" : "false"}
+  data-g9g4a2b-save-enabled={binding.g9g4a2bSaveEnabled ? "true" : "false"}
+  data-g9g4a2c-armed={binding.g9g4a2cArmed ? "true" : "false"}
+  data-g9g4a2c-save-enabled={binding.g9g4a2cSaveEnabled ? "true" : "false"}
   data-picker-driven-binding={binding.pickerDrivenBinding ? "true" : "false"}
   data-picker-row-bound="false"
   data-target-id={binding.targetId}
@@ -642,6 +652,144 @@ const hostAlertClass = binding.isKnownProductionHost
   }
 
   {
+    g9g4a2bStartTimeOnlySectionVisible ? (
+      <AdminCard
+        title="G-9g4a2b start_time-only operational edit"
+        description="start_time field slice — separate from G-9g4a2a open_time-only and G-9g3g operational paths"
+      >
+        <p class="admin-staging-schedule-site-slug-edit__binding-phase" role="note">
+          <strong>G-9g4a2b start_time-only</strong> — changedFields: <code>start_time</code> only. Use{" "}
+          <code>#site-slug-edit-g9g4a2b-start-time-only-dry-run-preview-btn</code> then{" "}
+          <code>#site-slug-edit-g9g4a2b-start-time-only-save-btn</code> when armed. Operator manual only.
+          Routine dev: keep <code>{binding.g9g4a2bArmEnv}</code> off.
+        </p>
+        <p class="admin-staging-schedule-site-slug-edit__hint" role="note">
+          approvalId: <code>{binding.g9g4a2bApprovalId}</code> — distinct from G-9g4a2a open_time-only and G-9g3g
+          operational general edit.
+        </p>
+        <div class="admin-staging-schedule-site-slug-edit__actions">
+          <button
+            id="site-slug-edit-g9g4a2b-start-time-only-dry-run-preview-btn"
+            class="admin-button admin-staging-schedule-site-slug-edit__g9-preview-btn"
+            type="button"
+            disabled={candidateDisabled}
+            title="G-9g4a2b start_time-only dry-run Preview — actualWrite=false; changedFields=start_time only"
+          >
+            Preview G-9g4a2b start_time-only dry-run
+          </button>
+          <button
+            id="site-slug-edit-g9g4a2b-start-time-only-save-btn"
+            class="admin-button admin-button--primary"
+            type="button"
+            disabled={true}
+            title="G-9g4a2b start_time-only Save — gated; operator manual only"
+          >
+            Save G-9g4a2b start_time-only
+          </button>
+        </div>
+        <p
+          id="site-slug-edit-g9g4a2b-start-time-only-save-gate-panel"
+          class="admin-staging-schedule-site-slug-edit__save-gate-panel"
+          role="status"
+        >
+          {binding.g9g4a2bArmFailureReason
+            ? `G-9g4a2b start_time-only Save disabled — ${binding.g9g4a2bArmFailureReason}`
+            : binding.g9g4a2bDefaultDisabledReason}
+        </p>
+        <div
+          id="site-slug-edit-g9g4a2b-start-time-only-dry-run-result"
+          class="site-slug-edit-dry-run-result"
+          data-g9g4a2b-result-panel="true"
+          aria-live="polite"
+        >
+          <p class="site-slug-edit-dry-run-result__placeholder">
+            Select a row, edit start_time candidate only, then click{" "}
+            <strong>Preview G-9g4a2b start_time-only dry-run</strong>.
+          </p>
+        </div>
+        <div
+          id="site-slug-edit-g9g4a2b-start-time-only-save-result"
+          class="site-slug-edit-save-result"
+          aria-live="polite"
+        >
+          <p class="site-slug-edit-save-result__placeholder">
+            Save not executed — operator clicks Save G-9g4a2b start_time-only once in execution phase.
+          </p>
+        </div>
+      </AdminCard>
+    ) : null
+  }
+
+  {
+    g9g4a2cPriceOnlySectionVisible ? (
+      <AdminCard
+        title="G-9g4a2c price-only operational edit"
+        description="price field slice — separate from G-9g4a2a open_time-only and G-9g3g operational paths"
+      >
+        <p class="admin-staging-schedule-site-slug-edit__binding-phase" role="note">
+          <strong>G-9g4a2c price-only</strong> — changedFields: <code>price</code> only. Use{" "}
+          <code>#site-slug-edit-g9g4a2c-price-only-dry-run-preview-btn</code> then{" "}
+          <code>#site-slug-edit-g9g4a2c-price-only-save-btn</code> when armed. Operator manual only.
+          Routine dev: keep <code>{binding.g9g4a2cArmEnv}</code> off.
+        </p>
+        <p class="admin-staging-schedule-site-slug-edit__hint" role="note">
+          approvalId: <code>{binding.g9g4a2cApprovalId}</code> — distinct from G-9g4a2a open_time-only and G-9g3g
+          operational general edit.
+        </p>
+        <div class="admin-staging-schedule-site-slug-edit__actions">
+          <button
+            id="site-slug-edit-g9g4a2c-price-only-dry-run-preview-btn"
+            class="admin-button admin-staging-schedule-site-slug-edit__g9-preview-btn"
+            type="button"
+            disabled={candidateDisabled}
+            title="G-9g4a2c price-only dry-run Preview — actualWrite=false; changedFields=price only"
+          >
+            Preview G-9g4a2c price-only dry-run
+          </button>
+          <button
+            id="site-slug-edit-g9g4a2c-price-only-save-btn"
+            class="admin-button admin-button--primary"
+            type="button"
+            disabled={true}
+            title="G-9g4a2c price-only Save — gated; operator manual only"
+          >
+            Save G-9g4a2c price-only
+          </button>
+        </div>
+        <p
+          id="site-slug-edit-g9g4a2c-price-only-save-gate-panel"
+          class="admin-staging-schedule-site-slug-edit__save-gate-panel"
+          role="status"
+        >
+          {binding.g9g4a2cArmFailureReason
+            ? `G-9g4a2c price-only Save disabled — ${binding.g9g4a2cArmFailureReason}`
+            : binding.g9g4a2cDefaultDisabledReason}
+        </p>
+        <div
+          id="site-slug-edit-g9g4a2c-price-only-dry-run-result"
+          class="site-slug-edit-dry-run-result"
+          data-g9g4a2c-result-panel="true"
+          aria-live="polite"
+        >
+          <p class="site-slug-edit-dry-run-result__placeholder">
+            Select a row, edit price candidate only, then click{" "}
+            <strong>Preview G-9g4a2c price-only dry-run</strong>.
+          </p>
+        </div>
+        <div
+          id="site-slug-edit-g9g4a2c-price-only-save-result"
+          class="site-slug-edit-save-result"
+          aria-live="polite"
+        >
+          <p class="site-slug-edit-save-result__placeholder">
+            Save not executed — operator clicks Save G-9g4a2c price-only once in execution phase.
+          </p>
+        </div>
+      </AdminCard>
+    ) : null
+  }
+
+  {
     operationalSaveSectionVisible ? (
       <AdminCard
         title="Save result (G-9g3g operational)"
@@ -749,6 +897,10 @@ const hostAlertClass = binding.isKnownProductionHost
       <div><dt>g9g4a1SaveEnabled</dt><dd>{binding.g9g4a1SaveEnabled ? "true" : "false"}</dd></div>
       <div><dt>g9g4a2aArmed</dt><dd>{binding.g9g4a2aArmed ? "true" : "false"}</dd></div>
       <div><dt>g9g4a2aSaveEnabled</dt><dd>{binding.g9g4a2aSaveEnabled ? "true" : "false"}</dd></div>
+      <div><dt>g9g4a2bArmed</dt><dd>{binding.g9g4a2bArmed ? "true" : "false"}</dd></div>
+      <div><dt>g9g4a2bSaveEnabled</dt><dd>{binding.g9g4a2bSaveEnabled ? "true" : "false"}</dd></div>
+      <div><dt>g9g4a2cArmed</dt><dd>{binding.g9g4a2cArmed ? "true" : "false"}</dd></div>
+      <div><dt>g9g4a2cSaveEnabled</dt><dd>{binding.g9g4a2cSaveEnabled ? "true" : "false"}</dd></div>
       <div><dt>g9g3dArmed</dt><dd>{binding.g9g3dArmed ? "true" : "false"}</dd></div>
       <div><dt>g9g3dSaveEnabled</dt><dd>{binding.g9g3dSaveEnabled ? "true" : "false"}</dd></div>
       <div><dt>g9g3dPocExecuted</dt><dd>{binding.g9g3dPocExecuted ? "true" : "false"}</dd></div>

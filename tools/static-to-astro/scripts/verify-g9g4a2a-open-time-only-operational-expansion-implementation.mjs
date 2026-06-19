@@ -94,6 +94,9 @@ const genericSaveSrc = readRepo(
 const editUiSrc = readRepo(
   "src/lib/admin/staging-data/staging-schedule-site-slug-open-time-only-operational-edit-ui.ts",
 );
+const genericEditUiSrc = readRepo(
+  "src/lib/admin/staging-data/staging-schedule-single-text-field-operational-edit-ui.ts",
+);
 const editBindingSrc = readRepo(
   "src/lib/admin/staging-data/staging-schedule-site-slug-edit-binding.ts",
 );
@@ -243,7 +246,16 @@ assert(
   operationalConfigSrc.includes("SCHEDULE_G9G4A1_VENUE_ONLY_NON_DRY_RUN_ARMED_ENV") &&
     operationalConfigSrc.includes("must be off"),
 );
-assert("open_time-only UI module", editUiSrc.includes("canEnableG9g4a2aOpenTimeOnlySave"));
+assert("open_time-only UI module delegates canEnable", editUiSrc.includes("canEnableSingleTextFieldOperationalSave"));
+assert(
+  "open_time-only UI module delegates to generic edit UI",
+  editUiSrc.includes("staging-schedule-single-text-field-operational-edit-ui") &&
+    editUiSrc.includes('initSingleTextFieldOperationalEditUi("open_time")'),
+);
+assert(
+  "initG9G4a2aOpenTimeOnlyOperationalEditUi export preserved",
+  editUiSrc.includes("export function initG9g4a2aOpenTimeOnlyOperationalEditUi"),
+);
 assert("binding g9g4a2aArmed", editBindingSrc.includes("g9g4a2aArmed"));
 assert("re-click mode open-time-only", reclickSrc.includes('"open-time-only"'));
 assert("preview button in template", editSectionSrc.includes(`id="${PREVIEW_BTN_ID}"`));
@@ -268,30 +280,32 @@ assert(
     genericSaveSrc.includes("serviceRoleUsed false"),
 );
 
-const previewValidIdx = editUiSrc.indexOf("g9g4a2aOpenTimeOnlyPreviewValid = true");
-const saveClickIdx = editUiSrc.indexOf("async function onG9g4a2aOpenTimeOnlySaveClick");
+const previewValidIdx = genericEditUiSrc.indexOf("state.previewValid = true");
+const saveClickIdx = genericEditUiSrc.indexOf("async function onSaveClick");
 const previewSuccessSlice =
   previewValidIdx >= 0 && saveClickIdx > previewValidIdx
-    ? editUiSrc.slice(previewValidIdx, saveClickIdx)
+    ? genericEditUiSrc.slice(previewValidIdx, saveClickIdx)
     : "";
 assert(
   "preview success refresh save button after previewValid",
-  previewSuccessSlice.includes("refreshG9g4a2aOpenTimeOnlySaveButtonState()"),
+  previewSuccessSlice.includes("refreshSingleTextFieldOperationalSaveButtonState(fieldName)"),
 );
 assert(
   "preview success refresh save gate after previewValid",
-  previewSuccessSlice.includes("refreshG9g4a2aOpenTimeOnlySaveGatePanel()"),
+  previewSuccessSlice.includes("refreshSingleTextFieldOperationalSaveGatePanel(fieldName)"),
 );
 assert(
-  "save completed msg conditional on g9g4a2aOpenTimeOnlySaveSuccess",
-  editUiSrc.includes("if (g9g4a2aOpenTimeOnlySaveSuccess)") &&
-    editUiSrc.includes("lines.push(G9G3H1_OPERATOR_MANUAL_SAVE_COMPLETED_MSG)"),
+  "save completed msg conditional on saveSuccess",
+  genericEditUiSrc.includes("if (state.saveSuccess)") &&
+    genericEditUiSrc.includes("lines.push(G9G3H1_OPERATOR_MANUAL_SAVE_COMPLETED_MSG)"),
 );
-const gatePanelFnStart = editUiSrc.indexOf("export function refreshG9g4a2aOpenTimeOnlySaveGatePanel");
-const gatePanelFnEnd = editUiSrc.indexOf("function refreshG9g4a2aOpenTimeOnlyPreviewButtonState");
+const gatePanelFnStart = genericEditUiSrc.indexOf(
+  "export function refreshSingleTextFieldOperationalSaveGatePanel",
+);
+const gatePanelFnEnd = genericEditUiSrc.indexOf("function refreshPreviewButtonState");
 const gatePanelSlice =
   gatePanelFnStart >= 0 && gatePanelFnEnd > gatePanelFnStart
-    ? editUiSrc.slice(gatePanelFnStart, gatePanelFnEnd)
+    ? genericEditUiSrc.slice(gatePanelFnStart, gatePanelFnEnd)
     : "";
 assert(
   "save completed msg not unconditional in gate panel",
@@ -303,12 +317,12 @@ assert(
 );
 assert(
   "preview consumed after save success",
-  editUiSrc.includes("invalidateG9g4a2aOpenTimeOnlyPreview") &&
-    editUiSrc.includes("g9g4a2aOpenTimeOnlySaveSuccess"),
+  genericEditUiSrc.includes("invalidateSingleTextFieldOperationalPreview") &&
+    genericEditUiSrc.includes("state.saveSuccess"),
 );
 assert(
   "loaded open_time updated after save",
-  editUiSrc.includes("site-slug-edit-loaded-open-time"),
+  genericEditUiSrc.includes("site-slug-edit-loaded-open-time"),
 );
 
 const currentStateSrc = readRepo("tools/static-to-astro/docs/ai/00-current-state.md");

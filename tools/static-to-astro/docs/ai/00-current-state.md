@@ -21,17 +21,17 @@ Staging Shell
 将来的な顧客オンボーディング・課金・デプロイ自動化
 
 2. Current phase
-現在フェーズ: **G-9g4-schedule-editor-usability-and-field-expansion-planning**（G-9g3h3 CMS Kit generalization notes 完了後）
+現在フェーズ: **G-9g4a-schedule-text-fields-operational-expansion-planning**（G-9g4 field expansion planning 完了後）
 
-G-9g3h3: CMS Kit Schedule editor generalization notes **complete**（uncommitted）。Gosaki safety round-trip を Kit 一般化資産として文書化。
+G-9g4: Schedule editor usability and field expansion planning **complete**（uncommitted）。operational proven: `description`; expansion order: G-9g4a text → G-9g4b date/route → G-9g4c visibility → G-9g4d images → G-9g4e client UX.
 
-G-9g3h2b: row-picker restore exception lifecycle cleanup **complete**（commit `7a4dc0d`）。
+G-9g3h3: CMS Kit generalization notes **complete**（commit `507f4b1`）。
 
-G-9g3h1d: post-execution hardening **complete**（commit `a01fbf4`）。
+G-9g3h2b: registry lifecycle cleanup **complete**（commit `7a4dc0d`）。
 
-G-9g3h1a→G-9g3h1c round-trip: **complete**。`markerRemainsInStagingDb: false`. `activeRestoreExceptionsCount: 0`.
+`markerRemainsInStagingDb: false`. `activeRestoreExceptionsCount: 0`.
 
-Git: 最新 push 済み commit `7a4dc0d`（G-9g3h2b）。G-9g3h3 generalization notes **uncommitted**。
+Git: 最新 push 済み commit `507f4b1`（G-9g3h3）。G-9g4 planning **uncommitted**。
 
 G-9g3h1: Save success re-click prevention **implemented**（commit `8780f84`）。
 
@@ -546,27 +546,26 @@ PUBLIC_SUPABASE_URL host: kmjqppxjdnwwrtaeqjta.supabase.co (staging)
 **Note:** `tools/static-to-astro/.env.local` に `SUPABASE_SERVICE_ROLE_KEY` が local only（gitignored）で存在する場合がある。G-9g3b execution では使用禁止・参照禁止。anon key + authenticated session のみ。
 
 10. Recommended next phase
-次フェーズ推奨: **G-9g4-schedule-editor-usability-and-field-expansion-planning**
+次フェーズ推奨: **G-9g4a-schedule-text-fields-operational-expansion-planning**
 
-G-9g3h3 CMS Kit generalization notes: **complete**（uncommitted）。
+G-9g4 Schedule editor usability and field expansion planning: **complete**（uncommitted）。
 
-G-9g3h2b row-picker exception lifecycle cleanup: **complete**（commit `7a4dc0d`）。
+G-9g3h3 CMS Kit generalization notes: **complete**（commit `507f4b1`）。
 
 Phase sequence:
 ```txt
-G-9g3h1d-smoke-marker-restore-post-execution-hardening ← complete (a01fbf4)
-G-9g3h2b-row-picker-exception-lifecycle-cleanup ← complete (7a4dc0d)
-G-9g3h3-cms-kit-generalization-notes ← complete (uncommitted)
-G-9g4-schedule-editor-usability-and-field-expansion-planning ← next
+G-9g3h3-cms-kit-generalization-notes ← complete (507f4b1)
+G-9g4-schedule-editor-usability-and-field-expansion-planning ← complete (uncommitted)
+G-9g4a-schedule-text-fields-operational-expansion-planning ← next
 ```
 
-G-9g3h3 gates:
+G-9g4 gates:
 ```txt
-cmsKitScheduleEditorGeneralizationNotesComplete: true
-gosakiScheduleSafetyRoundTripGeneralized: true
+stagingShellScheduleEditorUsabilityAndFieldExpansionPlanningComplete: true
+operationalProvenField: description
+readyForG9g4aScheduleTextFieldsOperationalExpansionPlanning: true
 activeRestoreExceptionsCount: 0
 markerRemainsInStagingDb: false
-readyForG9g4ScheduleEditorUsabilityAndFieldExpansionPlanning: true
 readyForAnyDbWrite: false
 ```
 

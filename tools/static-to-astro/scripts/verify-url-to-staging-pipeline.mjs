@@ -3463,6 +3463,49 @@ assert(
   g9g3h3GenSrc.includes("DB write executed (this phase) | **no**"),
 );
 
+const g9g4PlanningPath = path.join(
+  TOOL_ROOT,
+  "docs/staging-shell-schedule-editor-usability-and-field-expansion-planning.md",
+);
+assert("G-9g4 planning doc exists", fs.existsSync(g9g4PlanningPath));
+const g9g4PlanningSrc = fs.readFileSync(g9g4PlanningPath, "utf8");
+assert(
+  "G-9g4 phase marker",
+  g9g4PlanningSrc.includes("G-9g4-schedule-editor-usability-and-field-expansion-planning"),
+);
+assert(
+  "G-9g4 status complete",
+  g9g4PlanningSrc.includes("**complete**"),
+);
+assert(
+  "G-9g4 proven scope",
+  g9g4PlanningSrc.includes("Current proven scope"),
+);
+assert(
+  "G-9g4 field risk matrix",
+  g9g4PlanningSrc.includes("Field risk matrix"),
+);
+assert(
+  "G-9g4 expansion order",
+  g9g4PlanningSrc.includes("Recommended field expansion order"),
+);
+assert(
+  "G-9g4 UI UX planning",
+  g9g4PlanningSrc.includes("UI/UX planning"),
+);
+assert(
+  "G-9g4 safety requirements",
+  g9g4PlanningSrc.includes("Safety requirements"),
+);
+assert(
+  "G-9g4 next phase G-9g4a",
+  g9g4PlanningSrc.includes("G-9g4a-schedule-text-fields-operational-expansion-planning"),
+);
+assert(
+  "G-9g4 no DB write",
+  g9g4PlanningSrc.includes("DB write executed (this phase) | **no**"),
+);
+
 const gosakiPublicDist = path.join(TOOL_ROOT, "output/static-public/gosaki-piano/public-dist");
 for (const ym of ["2026-06", "2026-07"]) {
   const canonicalMonthPath = path.join(gosakiPublicDist, "schedule", ym, "index.html");

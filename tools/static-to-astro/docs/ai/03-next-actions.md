@@ -3,37 +3,36 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 1. Immediate priority
 
-**Current phase:** `G-9g4-schedule-editor-usability-and-field-expansion-planning`
+**Current phase:** `G-9g4a-schedule-text-fields-operational-expansion-planning`
 
-**Git:** latest pushed commit `7a4dc0d` (G-9g3h2b row-picker exception lifecycle cleanup)
+**Git:** latest pushed commit `507f4b1` (G-9g3h3 CMS Kit generalization notes)
 
-### G-9g3h3 summary
+### G-9g4 summary
 
 | Item | Value |
 | --- | --- |
-| Doc | `cms-kit-schedule-editor-generalization-notes.md` |
-| Status | **complete** — CMS Kit generalization (uncommitted) |
-| Scope | Gosaki Schedule CMS safety → reusable Kit architecture |
-| Pipeline | URL → crawl → Astro → seed → staging shell → Preview → Save → verifier |
-| Kit defaults | site_slug, dry-run default, approval ID, registry, result docs |
-| Marker | `markerRemainsInStagingDb: false` |
-| Active restore exceptions | **0** |
+| Doc | `staging-shell-schedule-editor-usability-and-field-expansion-planning.md` |
+| Status | **complete** — field expansion planning (uncommitted) |
+| Operational proven field | `description` only |
+| PoC frozen fields | title, venue, time, price (pilot row) |
+| Expansion order | G-9g4a text → G-9g4b date/route → G-9g4c visibility → G-9g4d images → G-9g4e UX |
+| First slice (planned) | G-9g4a1 `venue` only |
 
 ### Gates
 
 ```txt
-cmsKitScheduleEditorGeneralizationNotesComplete: true
-gosakiScheduleSafetyRoundTripGeneralized: true
+stagingShellScheduleEditorUsabilityAndFieldExpansionPlanningComplete: true
+readyForG9g4aScheduleTextFieldsOperationalExpansionPlanning: true
+operationalProvenField: description
 activeRestoreExceptionsCount: 0
 markerRemainsInStagingDb: false
-readyForG9g4ScheduleEditorUsabilityAndFieldExpansionPlanning: true
 readyForAnyDbWrite: false
 ```
 
 ## 2. Next steps
 
-1. **G-9g4-schedule-editor-usability-and-field-expansion-planning** — plan field slices beyond description-only
-2. Commit G-9g3h3 generalization notes when ready
+1. **G-9g4a-schedule-text-fields-operational-expansion-planning** — plan operational text field slices on content rows
+2. Commit G-9g4 planning doc when ready
 
 ## 3. Routine dev safety
 
@@ -46,6 +45,7 @@ All non-dry-run arms: off
 ## 4. Do not
 
 - Cursor / AI click Save or Preview
-- Automate DB write / FTP / deploy
+- Re-run G-9g2 / G-9g3b / G-9g3c / G-9g3d PoC Save
+- Implement field expansion without G-9g4a planning
 - Use service_role
 - Touch production or `/admin`

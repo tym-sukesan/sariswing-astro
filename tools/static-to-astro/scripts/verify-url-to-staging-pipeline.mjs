@@ -3321,6 +3321,55 @@ assert(
   g9g3h1b1ImplSrc.includes("DB write executed (this phase) | **no**"),
 );
 
+const g9g3h1dHardeningPath = path.join(
+  TOOL_ROOT,
+  "docs/staging-shell-schedule-site-slug-operational-save-reclick-post-execution-hardening.md",
+);
+assert("G-9g3h1d hardening doc exists", fs.existsSync(g9g3h1dHardeningPath));
+const g9g3h1dHardeningSrc = fs.readFileSync(g9g3h1dHardeningPath, "utf8");
+assert(
+  "G-9g3h1d phase marker",
+  g9g3h1dHardeningSrc.includes("G-9g3h1d-smoke-marker-restore-post-execution-hardening"),
+);
+assert(
+  "G-9g3h1d status complete",
+  g9g3h1dHardeningSrc.includes("**complete**"),
+);
+assert(
+  "G-9g3h1d round-trip summary",
+  g9g3h1dHardeningSrc.includes("G-9g3h1 round-trip summary"),
+);
+assert(
+  "G-9g3h1d marker removed",
+  g9g3h1dHardeningSrc.includes("markerRemainsInStagingDb: false"),
+);
+assert(
+  "G-9g3h1d final updated_at",
+  g9g3h1dHardeningSrc.includes("2026-06-19T02:05:42.615781+00:00"),
+);
+assert(
+  "G-9g3h1d routine dev safety",
+  g9g3h1dHardeningSrc.includes("PUBLIC_ADMIN_WRITE_DRY_RUN: true") &&
+    g9g3h1dHardeningSrc.includes("ENABLE_ADMIN_STAGING_WRITE: false"),
+);
+assert(
+  "G-9g3h1d re-click prevention confirmed",
+  g9g3h1dHardeningSrc.includes("Re-click prevention confirmed"),
+);
+assert(
+  "G-9g3h1d row-picker no longer matches",
+  g9g3h1dHardeningSrc.includes("should no longer match") ||
+    g9g3h1dHardeningSrc.includes("no longer match"),
+);
+assert(
+  "G-9g3h1d next phase G-9g3h2b",
+  g9g3h1dHardeningSrc.includes("G-9g3h2b-row-picker-exception-lifecycle-cleanup"),
+);
+assert(
+  "G-9g3h1d no DB write",
+  g9g3h1dHardeningSrc.includes("DB write executed (this phase) | **no**"),
+);
+
 const gosakiPublicDist = path.join(TOOL_ROOT, "output/static-public/gosaki-piano/public-dist");
 for (const ym of ["2026-06", "2026-07"]) {
   const canonicalMonthPath = path.join(gosakiPublicDist, "schedule", ym, "index.html");

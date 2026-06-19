@@ -125,10 +125,18 @@ const currentStateSrc = readRepo("tools/static-to-astro/docs/ai/00-current-state
 const nextActionsSrc = readRepo("tools/static-to-astro/docs/ai/03-next-actions.md");
 const handoffSrc = readRepo("tools/static-to-astro/docs/ai/handoff-to-chatgpt.md");
 
-assert("current state G-9g3h1c success", currentStateSrc.includes("G-9g3h1c"));
+assert("current state G-9g3h1c success", currentStateSrc.includes("G-9g3h1c") || currentStateSrc.includes("G-9g3h1d"));
 assert("current state marker removed", currentStateSrc.includes("markerRemoved: true") || currentStateSrc.includes("marker removed"));
-assert("current state 863fdff", currentStateSrc.includes(PRIOR_COMMIT));
-assert("next actions post-execution or routine", nextActionsSrc.includes("G-9g3h1d") || nextActionsSrc.includes("routine"));
+assert(
+  "current state e6b3ece or prior",
+  currentStateSrc.includes("e6b3ece") || currentStateSrc.includes(PRIOR_COMMIT),
+);
+assert(
+  "next actions post-execution or routine",
+  nextActionsSrc.includes("G-9g3h1d") ||
+    nextActionsSrc.includes("G-9g3h2b") ||
+    nextActionsSrc.includes("routine"),
+);
 assert("handoff restore success", handoffSrc.includes("G-9g3h1c") && (handoffSrc.includes("success") || handoffSrc.includes("marker removed")));
 
 console.log(`\nG-9g3h1c verifier: ${passed} passed, ${failed} failed`);

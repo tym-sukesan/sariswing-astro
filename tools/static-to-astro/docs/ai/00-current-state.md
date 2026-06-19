@@ -21,17 +21,21 @@ Staging Shell
 将来的な顧客オンボーディング・課金・デプロイ自動化
 
 2. Current phase
-現在フェーズ: **G-9g3h1d-smoke-marker-restore-post-execution-hardening**（G-9g3h1c restore success 後）
+現在フェーズ: **G-9g3h2b-row-picker-exception-lifecycle-cleanup**（G-9g3h1d post-execution hardening 完了後）
 
-G-9g3h1c: G-9g3h1a smoke marker restore **success**（operator manual）。Option A — G-9g3g general operational。Preview 1回 + Save 1回 + marker removed。**Do not re-click G-9g3h1c restore Save.**
+G-9g3h1d: re-click smoke marker restore post-execution hardening **complete**（uncommitted）。
+
+G-9g3h1c: G-9g3h1a smoke marker restore **success**（operator manual; commit `e6b3ece`）。Option A — G-9g3g general operational。Preview 1回 + Save 1回 + marker removed。**Do not re-click G-9g3h1c restore Save.**
 
 G-9g3h1b1: row-picker exception **complete**（commit `863fdff`）。
 
 G-9g3h1a→G-9g3h1c round-trip: **complete**（smoke marker append → restore removal）。
 
-G-9g3h1a smoke marker **removed** from staging DB on row `888c58f2-f152-4563-a3cf-a20d7c2456c1`.
+G-9g3h1a smoke marker **removed** from staging DB on row `888c58f2-f152-4563-a3cf-a20d7c2456c1`. `markerRemainsInStagingDb: false`.
 
-Git: 最新 push 済み commit `863fdff`（G-9g3h1b1）。G-9g3h1c restore result **uncommitted**。
+G-9g3h1b1 row-picker exception: **no longer matches** target row after marker removal — row returns to normal selectable content.
+
+Git: 最新 push 済み commit `e6b3ece`（G-9g3h1c restore execution result）。G-9g3h1d hardening **uncommitted**。
 
 G-9g3h1: Save success re-click prevention **implemented**（commit `8780f84`）。
 
@@ -546,26 +550,31 @@ PUBLIC_SUPABASE_URL host: kmjqppxjdnwwrtaeqjta.supabase.co (staging)
 **Note:** `tools/static-to-astro/.env.local` に `SUPABASE_SERVICE_ROLE_KEY` が local only（gitignored）で存在する場合がある。G-9g3b execution では使用禁止・参照禁止。anon key + authenticated session のみ。
 
 10. Recommended next phase
-次フェーズ推奨: **G-9g3h1d-smoke-marker-restore-post-execution-hardening**
+次フェーズ推奨: **G-9g3h2b-row-picker-exception-lifecycle-cleanup**
 
-G-9g3h1c restore execution: **success**（operator manual; result doc uncommitted）。
+G-9g3h1d post-execution hardening: **complete**（uncommitted）。
+
+G-9g3h1c restore execution: **success**（commit `e6b3ece`）。
 
 Phase sequence:
 ```txt
+G-9g3h1-save-success-reclick-prevention ← complete (8780f84)
 G-9g3h1a-save-success-reclick-prevention-smoke-test ← success (03cbbbe)
 G-9g3h1b-smoke-marker-restore-preflight ← complete (f868435)
 G-9g3h1b1-smoke-marker-restore-row-picker-exception ← complete (863fdff)
-G-9g3h1c-smoke-marker-restore-execution ← success (operator)
-G-9g3h1d-smoke-marker-restore-post-execution-hardening ← next
+G-9g3h1c-smoke-marker-restore-execution ← success (e6b3ece)
+G-9g3h1d-smoke-marker-restore-post-execution-hardening ← complete (uncommitted)
+G-9g3h2b-row-picker-exception-lifecycle-cleanup ← next
 ```
 
 G-9g3h gates:
 ```txt
-stagingShellScheduleSiteSlugOperationalSaveReclickSmokeMarkerRestoreExecutionComplete: true
-readyForG9g3h1dSmokeMarkerRestorePostExecutionHardening: true
+stagingShellScheduleSiteSlugOperationalSaveReclickPostExecutionHardeningComplete: true
+reclickPreventionRoundTripComplete: true
+restoreRoundTripComplete: true
 markerRemainsInStagingDb: false
 markerRemoved: true
-restoreRoundTripComplete: true
+readyForG9g3h2bRowPickerExceptionLifecycleCleanup: true
 readyForAnyDbWrite: false
 ```
 

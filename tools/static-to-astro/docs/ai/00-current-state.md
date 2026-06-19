@@ -21,19 +21,17 @@ Staging Shell
 将来的な顧客オンボーディング・課金・デプロイ自動化
 
 2. Current phase
-現在フェーズ: **G-9g3h3-cms-kit-generalization-notes**（G-9g3h2b row-picker exception lifecycle cleanup 完了後）
+現在フェーズ: **G-9g4-schedule-editor-usability-and-field-expansion-planning**（G-9g3h3 CMS Kit generalization notes 完了後）
 
-G-9g3h2b: row-picker restore exception lifecycle cleanup **complete**（uncommitted）。Option B — centralized registry; G-9g3h1a + G-9g3g4 entries `status: completed`; `activeRestoreExceptionsCount: 0`.
+G-9g3h3: CMS Kit Schedule editor generalization notes **complete**（uncommitted）。Gosaki safety round-trip を Kit 一般化資産として文書化。
 
-G-9g3h1d: re-click smoke marker restore post-execution hardening **complete**（commit `a01fbf4`）。
+G-9g3h2b: row-picker restore exception lifecycle cleanup **complete**（commit `7a4dc0d`）。
 
-G-9g3h1c: G-9g3h1a smoke marker restore **success**（commit `e6b3ece`）。**Do not re-click G-9g3h1c restore Save.**
+G-9g3h1d: post-execution hardening **complete**（commit `a01fbf4`）。
 
-G-9g3h1a→G-9g3h1c round-trip: **complete**。`markerRemainsInStagingDb: false`.
+G-9g3h1a→G-9g3h1c round-trip: **complete**。`markerRemainsInStagingDb: false`. `activeRestoreExceptionsCount: 0`.
 
-G-9g3h1b1 row-picker exception: lifecycle **completed** — historical docs preserved; active code path uses registry.
-
-Git: 最新 push 済み commit `a01fbf4`（G-9g3h1d）。G-9g3h2b cleanup **uncommitted**。
+Git: 最新 push 済み commit `7a4dc0d`（G-9g3h2b）。G-9g3h3 generalization notes **uncommitted**。
 
 G-9g3h1: Save success re-click prevention **implemented**（commit `8780f84`）。
 
@@ -548,27 +546,27 @@ PUBLIC_SUPABASE_URL host: kmjqppxjdnwwrtaeqjta.supabase.co (staging)
 **Note:** `tools/static-to-astro/.env.local` に `SUPABASE_SERVICE_ROLE_KEY` が local only（gitignored）で存在する場合がある。G-9g3b execution では使用禁止・参照禁止。anon key + authenticated session のみ。
 
 10. Recommended next phase
-次フェーズ推奨: **G-9g3h3-cms-kit-generalization-notes**
+次フェーズ推奨: **G-9g4-schedule-editor-usability-and-field-expansion-planning**
 
-G-9g3h2b row-picker exception lifecycle cleanup: **complete**（uncommitted）。
+G-9g3h3 CMS Kit generalization notes: **complete**（uncommitted）。
 
-G-9g3h1d post-execution hardening: **complete**（commit `a01fbf4`）。
+G-9g3h2b row-picker exception lifecycle cleanup: **complete**（commit `7a4dc0d`）。
 
 Phase sequence:
 ```txt
-G-9g3h1c-smoke-marker-restore-execution ← success (e6b3ece)
 G-9g3h1d-smoke-marker-restore-post-execution-hardening ← complete (a01fbf4)
-G-9g3h2b-row-picker-exception-lifecycle-cleanup ← complete (uncommitted)
-G-9g3h3-cms-kit-generalization-notes ← next
+G-9g3h2b-row-picker-exception-lifecycle-cleanup ← complete (7a4dc0d)
+G-9g3h3-cms-kit-generalization-notes ← complete (uncommitted)
+G-9g4-schedule-editor-usability-and-field-expansion-planning ← next
 ```
 
-G-9g3h2b gates:
+G-9g3h3 gates:
 ```txt
-stagingShellScheduleSiteSlugRowPickerExceptionLifecycleCleanupComplete: true
-markerRemainsInStagingDb: false
-g9g3h1aRestoreExceptionLifecycle: completed
+cmsKitScheduleEditorGeneralizationNotesComplete: true
+gosakiScheduleSafetyRoundTripGeneralized: true
 activeRestoreExceptionsCount: 0
-readyForG9g3h3CmsKitGeneralizationNotes: true
+markerRemainsInStagingDb: false
+readyForG9g4ScheduleEditorUsabilityAndFieldExpansionPlanning: true
 readyForAnyDbWrite: false
 ```
 

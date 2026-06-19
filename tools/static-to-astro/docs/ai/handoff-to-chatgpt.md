@@ -5,48 +5,34 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-9g3h3-cms-kit-generalization-notes
-Latest commit (pushed): a01fbf4 (G-9g3h1d post-execution hardening)
-G-9g3h2b row-picker exception lifecycle cleanup: complete (uncommitted)
+Current phase: G-9g4-schedule-editor-usability-and-field-expansion-planning
+Latest commit (pushed): 7a4dc0d (G-9g3h2b row-picker exception lifecycle cleanup)
+G-9g3h3 CMS Kit generalization notes: complete (uncommitted)
 ```
 
 ## Summary
 
-G-9g3h2b **completed** row-picker restore exception lifecycle cleanup:
+G-9g3h3 **documented** Gosaki Schedule CMS safety as CMS Kit reusable assets:
 
-- **Option B:** centralized `STAGING_SCHEDULE_RESTORE_EXCEPTION_REGISTRY`
-- G-9g3h1a entry: `status: completed` (marker removed in G-9g3h1c)
-- G-9g3g4 entry: `status: completed` (marker removed in G-9g3g5c)
-- **Active restore exceptions:** 0
-- Live target row `888c58f2-…` is normal selectable content
-- Generic `[CMS Kit staging]` audit protection **preserved**
-- G-6 pilot row **audit-only**
+- **Proven:** site_slug row picker, dry-run Preview, optimistic lock, host gate, approval ID, env arm, operator Save, re-click prevention, smoke/restore round-trip, audit classification, restore registry, verifiers, AI handoff
+- **Pipeline model:** URL → crawl → Astro → seed → staging shell → Preview → Save → verifier → production checklist (deploy separate)
+- **Kit defaults:** dry-run first, non-dry-run arms off, Preview before Save, registry lifecycle, result docs required
+- **Never automate:** Cursor Save/Preview, service_role, production writes, FTP apply without approval
 
-**Do not re-click G-9g3h1a smoke Save or G-9g3h1c restore Save.**
+- `markerRemainsInStagingDb: false`
+- `activeRestoreExceptionsCount: 0`
 
 **Cursor / AI must not click Save or Preview.**
 
 ## Gates
 
 ```txt
-stagingShellScheduleSiteSlugRowPickerExceptionLifecycleCleanupComplete: true
-markerRemainsInStagingDb: false
-g9g3h1aRestoreExceptionLifecycle: completed
-activeRestoreExceptionsCount: 0
-readyForG9g3h3CmsKitGeneralizationNotes: true
+cmsKitScheduleEditorGeneralizationNotesComplete: true
+gosakiScheduleSafetyRoundTripGeneralized: true
+readyForG9g4ScheduleEditorUsabilityAndFieldExpansionPlanning: true
 readyForAnyDbWrite: false
-```
-
-## Routine dev safety
-
-```txt
-ENABLE_ADMIN_STAGING_WRITE: false
-PUBLIC_ADMIN_WRITE_DRY_RUN: true
-All non-dry-run arms: off
-service_role: not used
-production: untouched
 ```
 
 ## Next
 
-**G-9g3h3** CMS Kit generalization notes — consolidate safety patterns from G-9g3h1 round-trip + G-9g3h2b registry
+**G-9g4** schedule editor usability and field expansion planning — venue, date, published, image slices

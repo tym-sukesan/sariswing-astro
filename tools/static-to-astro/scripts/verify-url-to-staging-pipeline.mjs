@@ -3420,6 +3420,49 @@ assert(
   registrySrc.includes("isActiveRestoreExceptionRow"),
 );
 
+const g9g3h3GenPath = path.join(
+  TOOL_ROOT,
+  "docs/cms-kit-schedule-editor-generalization-notes.md",
+);
+assert("G-9g3h3 generalization doc exists", fs.existsSync(g9g3h3GenPath));
+const g9g3h3GenSrc = fs.readFileSync(g9g3h3GenPath, "utf8");
+assert(
+  "G-9g3h3 phase marker",
+  g9g3h3GenSrc.includes("G-9g3h3-cms-kit-generalization-notes"),
+);
+assert(
+  "G-9g3h3 status complete",
+  g9g3h3GenSrc.includes("**complete**"),
+);
+assert(
+  "G-9g3h3 Gosaki proven",
+  g9g3h3GenSrc.includes("What was proven in Gosaki"),
+);
+assert(
+  "G-9g3h3 safety architecture",
+  g9g3h3GenSrc.includes("Generalized safety architecture"),
+);
+assert(
+  "G-9g3h3 pipeline model",
+  g9g3h3GenSrc.includes("Reusable pipeline model"),
+);
+assert(
+  "G-9g3h3 kit defaults",
+  g9g3h3GenSrc.includes("Kit defaults"),
+);
+assert(
+  "G-9g3h3 never automate",
+  g9g3h3GenSrc.includes("Should never be automated"),
+);
+assert(
+  "G-9g3h3 next phase G-9g4",
+  g9g3h3GenSrc.includes("G-9g4-schedule-editor-usability-and-field-expansion-planning"),
+);
+assert(
+  "G-9g3h3 no DB write",
+  g9g3h3GenSrc.includes("DB write executed (this phase) | **no**"),
+);
+
 const gosakiPublicDist = path.join(TOOL_ROOT, "output/static-public/gosaki-piano/public-dist");
 for (const ym of ["2026-06", "2026-07"]) {
   const canonicalMonthPath = path.join(gosakiPublicDist, "schedule", ym, "index.html");

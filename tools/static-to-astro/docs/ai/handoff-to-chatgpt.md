@@ -5,15 +5,10 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-9g4a2-framework-single-text-field-operational-commonization-implementation — complete, committed, pushed
+Current phase: G-9h-gosaki-schedule-cms-practicalization-planning — complete; latest commit should be checked with git HEAD.
 branch: main
-HEAD = origin/main = d66bae7
-Latest commit (pushed): d66bae7 (Document G-9g4a2 single-text-field operational implementation)
-working tree: clean
-C1 complete: 1e643e7
-C2 complete: 9c3714c
-C3 complete: 1c1fb32
-C4 complete: d66bae7 — committed, pushed
+HEAD = origin/main — check git HEAD for latest commit hash
+G-9g4a2 framework: complete, committed, pushed (C1–C4 through d66bae7)
 ```
 
 ## Summary
@@ -69,9 +64,19 @@ PUBLIC_ADMIN_SCHEDULE_G9G3G_OPERATIONAL_GENERAL_EDIT_NON_DRY_RUN_ARMED=false or 
 PUBLIC_ADMIN_SCHEDULE_G9G3G5_OPERATIONAL_RESTORE_NON_DRY_RUN_ARMED=false or unset
 ```
 
+## G-9h Gosaki schedule CMS practicalization planning — complete
+
+- **Doc:** `gosaki-schedule-cms-practicalization-planning.md`
+- **Verifier:** 34 passed
+- **Phase 1:** client feedback + public read UX + re-upload planning — no DB write
+- **Phase 2:** schedule CMS write slices — explicit gates; no per-field `start_time`/`price` round-trips
+- **YouTube:** separate track — `G-9i-gosaki-youtube-embed-planning`
+
 ## Next
 
-1. Local/static verification (verifiers only — no DB write)
-2. Optional operator dry-run Preview on staging shell (no Save) if explicitly approved
-3. Gosaki schedule CMS practicalization (client preview, Top YouTube embed, schedule UX)
-4. **Not** `start_time`-only manual non-dry-run execution
+1. **G-9h1** client preview feedback closure (staging URL vs Wix; residual list; no DB write)
+2. **G-9h2** public schedule read verification + re-upload planning
+3. **G-9h3** schedule CMS practicalization phase boundary
+4. **G-9i** YouTube embed planning (parallel track)
+5. Optional operator dry-run Preview (`start_time`/`price`) — explicit approval only; no Save
+6. **Not** `start_time`-only manual non-dry-run execution

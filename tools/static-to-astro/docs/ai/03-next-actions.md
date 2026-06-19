@@ -3,9 +3,19 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 1. Immediate priority
 
-**Current phase:** `G-9g4a2-framework-single-text-field-operational-commonization-implementation` — **complete** (committed and pushed — commit `d66bae7`)
+**Current phase:** `G-9h-gosaki-schedule-cms-practicalization-planning` — **complete**（G-9h planning complete. 最新commitは git HEAD を確認すること。）
 
-**Git:** branch `main`; HEAD = origin/main = `d66bae7` (G-9g4a2 framework implementation — committed and pushed); working tree **clean**
+**Git:** branch `main`; HEAD = origin/main — 最新commitは git HEAD を確認すること。
+
+### G-9h Gosaki schedule CMS practicalization planning — complete
+
+| Item | Value |
+| --- | --- |
+| Doc | `gosaki-schedule-cms-practicalization-planning.md` |
+| Verifier | `verify-g9h-gosaki-schedule-cms-practicalization-planning.mjs` — 34 passed |
+| Status | **complete** — planning only; no DB write / Preview / Save |
+| Next recommended | `G-9h1-gosaki-client-preview-feedback-closure` |
+| NOT next | `start_time-only manual non-dry-run execution` |
 
 ### G-9g4a2 framework implementation — complete
 
@@ -49,10 +59,12 @@ cursorClickedPreview: false
 
 ## 2. Next steps
 
-1. **Local / static verification** — re-run all G-9g4a2 verifiers; no DB write
-2. **Optional operator dry-run Preview** — `start_time` / `price` panels on staging shell only if explicitly approved; **no Save**
-3. **Gosaki schedule CMS practicalization** — client preview feedback, Top YouTube embed (G-9a), schedule read UX
-4. **Not** next: `start_time`-only manual non-dry-run execution slice
+1. **G-9h1 client preview feedback closure** — staging URL review vs Wix; residual list; no DB write / Preview / Save
+2. **G-9h2 public schedule read verification + re-upload planning** — `scheduleDataSource` check; manual re-upload checklist
+3. **G-9h3 schedule CMS practicalization phase boundary** — Phase 1 vs Phase 2 write slice roadmap
+4. **G-9i YouTube embed planning** — separate track per G-9a
+5. **Optional:** operator dry-run Preview for `start_time` / `price` (explicit approval only; no Save)
+6. **Not** next: `start_time`-only manual non-dry-run execution slice
 
 ## 3. Routine dev safety
 

@@ -57,6 +57,9 @@ const execPendingSrc = readRepo(
 const rowPickerUtilsSrc = readRepo(
   "src/lib/admin/staging-data/staging-schedule-site-slug-row-picker-utils.ts",
 );
+const registrySrc = readRepo(
+  "src/lib/admin/staging-data/staging-schedule-site-slug-restore-exception-registry.ts",
+);
 const rowPickerUiSrc = readRepo(
   "src/lib/admin/staging-data/staging-schedule-site-slug-row-picker-ui.ts",
 );
@@ -90,13 +93,13 @@ assert(
 assert("UI label in doc", implDocSrc.includes(UI_LABEL));
 
 assert(
-  "isG9g3h1aSmokeMarkerRestoreTargetRow exists",
-  rowPickerUtilsSrc.includes("isG9g3h1aSmokeMarkerRestoreTargetRow"),
+  "isG9g3h1aSmokeMarkerRestoreTargetRow historical",
+  registrySrc.includes("isG9g3h1aSmokeMarkerRestoreTargetRow") ||
+    rowPickerUtilsSrc.includes("isG9g3h1aSmokeMarkerRestoreTargetRow"),
 );
 assert(
-  "exception in isPocAuditScheduleRow",
-  rowPickerUtilsSrc.includes("isG9g3h1aSmokeMarkerRestoreTargetRow(row)") &&
-    rowPickerUtilsSrc.includes("return false"),
+  "exception in isPocAuditScheduleRow via active registry",
+  rowPickerUtilsSrc.includes("isActiveRestoreExceptionRow"),
 );
 assert("rowContainsPocAuditMarker preserved", rowPickerUtilsSrc.includes("rowContainsPocAuditMarker"));
 assert("G9G1 pilot still audit", rowPickerUtilsSrc.includes("G9G1_TARGET_ROW_ID"));
@@ -110,8 +113,8 @@ assert("astro restore badge", astroSrc.includes("site-slug-row-picker__restore-b
 assert("astro Select (restore)", astroSrc.includes("Select (restore)"));
 
 assert(
-  "assertOperationalNotPocAuditRow exception",
-  guardsSrc.includes("isG9g3h1aSmokeMarkerRestoreTargetRow"),
+  "assertOperationalNotPocAuditRow active registry exception",
+  guardsSrc.includes("isActiveRestoreExceptionRow"),
 );
 
 assert("preflight row picker section", preflightSrc.includes("G-9g3h1b1"));

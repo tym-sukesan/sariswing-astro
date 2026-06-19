@@ -3370,6 +3370,56 @@ assert(
   g9g3h1dHardeningSrc.includes("DB write executed (this phase) | **no**"),
 );
 
+const g9g3h2bCleanupPath = path.join(
+  TOOL_ROOT,
+  "docs/staging-shell-schedule-site-slug-row-picker-exception-lifecycle-cleanup.md",
+);
+assert("G-9g3h2b cleanup doc exists", fs.existsSync(g9g3h2bCleanupPath));
+const g9g3h2bCleanupSrc = fs.readFileSync(g9g3h2bCleanupPath, "utf8");
+assert(
+  "G-9g3h2b phase marker",
+  g9g3h2bCleanupSrc.includes("G-9g3h2b-row-picker-exception-lifecycle-cleanup"),
+);
+assert(
+  "G-9g3h2b status complete",
+  g9g3h2bCleanupSrc.includes("**complete**"),
+);
+assert(
+  "G-9g3h2b Option B registry",
+  g9g3h2bCleanupSrc.includes("Option B") &&
+    g9g3h2bCleanupSrc.includes("centralized restore exception registry"),
+);
+assert(
+  "G-9g3h2b marker removed",
+  g9g3h2bCleanupSrc.includes("markerRemainsInStagingDb: false"),
+);
+assert(
+  "G-9g3h2b g9g3h1a lifecycle completed",
+  g9g3h2bCleanupSrc.includes("status: completed") &&
+    g9g3h2bCleanupSrc.includes("g9g3h1a-smoke-marker-restore"),
+);
+assert(
+  "G-9g3h2b next phase G-9g3h3",
+  g9g3h2bCleanupSrc.includes("G-9g3h3-cms-kit-generalization-notes"),
+);
+assert(
+  "G-9g3h2b no DB write",
+  g9g3h2bCleanupSrc.includes("DB write executed (this phase) | **no**"),
+);
+
+const registrySrc = fs.readFileSync(
+  path.join(REPO_ROOT, "src/lib/admin/staging-data/staging-schedule-site-slug-restore-exception-registry.ts"),
+  "utf8",
+);
+assert(
+  "G-9g3h2b registry file",
+  registrySrc.includes("STAGING_SCHEDULE_RESTORE_EXCEPTION_REGISTRY"),
+);
+assert(
+  "G-9g3h2b isActiveRestoreExceptionRow",
+  registrySrc.includes("isActiveRestoreExceptionRow"),
+);
+
 const gosakiPublicDist = path.join(TOOL_ROOT, "output/static-public/gosaki-piano/public-dist");
 for (const ym of ["2026-06", "2026-07"]) {
   const canonicalMonthPath = path.join(gosakiPublicDist, "schedule", ym, "index.html");

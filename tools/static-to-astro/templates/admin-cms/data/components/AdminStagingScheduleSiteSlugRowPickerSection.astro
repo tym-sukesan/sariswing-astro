@@ -5,10 +5,8 @@
 import AdminCard from "../../components/AdminCard.astro";
 import type { SiteSlugScheduleRowPickerBinding } from "../../../../../../src/lib/admin/staging-data/staging-schedule-site-slug-row-picker-binding";
 import {
-  G9G3H1A_RESTORE_SELECTABLE_HINT,
-  G9G3H1A_RESTORE_TARGET_UI_LABEL,
-} from "../../../../../../src/lib/admin/staging-data/staging-schedule-site-slug-config";
-import { isG9g3h1aSmokeMarkerRestoreTargetRow } from "../../../../../../src/lib/admin/staging-data/staging-schedule-site-slug-row-picker-utils";
+  getActiveRestoreExceptionForRow,
+} from "../../../../../../src/lib/admin/staging-data/staging-schedule-site-slug-row-picker-utils";
 
 interface Props {
   binding: SiteSlugScheduleRowPickerBinding;
@@ -162,24 +160,24 @@ const auditRowsJson = JSON.stringify(binding.auditRows);
             <tbody id="site-slug-row-picker-table-body">
               {
                 binding.selectableRows.map((row) => {
-                  const restoreTarget = isG9g3h1aSmokeMarkerRestoreTargetRow(row);
+                  const restoreEntry = getActiveRestoreExceptionForRow(row);
                   return (
                   <tr
                     class:list={[
                       "site-slug-row-picker__row",
-                      restoreTarget && "site-slug-row-picker__row--g9g3h1a-restore",
+                      restoreEntry && "site-slug-row-picker__row--restore-exception",
                     ]}
                     data-row-id={row.id}
                   >
                     <td>{row.date}</td>
                     <td>
                       {row.title ?? "—"}
-                      {restoreTarget ? (
+                      {restoreEntry ? (
                         <span
                           class="site-slug-row-picker__restore-badge"
-                          title={G9G3H1A_RESTORE_SELECTABLE_HINT}
+                          title={restoreEntry.selectableHint}
                         >
-                          {G9G3H1A_RESTORE_TARGET_UI_LABEL} — restore only
+                          {restoreEntry.uiLabel} — restore only
                         </span>
                       ) : null}
                     </td>
@@ -199,11 +197,11 @@ const auditRowsJson = JSON.stringify(binding.auditRows);
                         type="button"
                         class:list={[
                           "site-slug-row-picker__select-btn",
-                          restoreTarget && "site-slug-row-picker__select-btn--restore",
+                          restoreEntry && "site-slug-row-picker__select-btn--restore",
                         ]}
                         data-select-row-id={row.id}
                       >
-                        {restoreTarget ? "Select (restore)" : "Select"}
+                        {restoreEntry ? "Select (restore)" : "Select"}
                       </button>
                     </td>
                   </tr>
@@ -223,10 +221,10 @@ const auditRowsJson = JSON.stringify(binding.auditRows);
         <summary>PoC audit rows (read-only — not selectable)</summary>
         <p class="site-slug-row-picker__audit-banner" role="alert">
           Pilot row <code>{binding.pilotRowId}</code> and rows with{" "}
-          <code>{binding.pocAuditMarker}</code> are excluded from default selection — except the
-          narrow <strong>{G9G3H1A_RESTORE_TARGET_UI_LABEL}</strong> when id, marker, and{" "}
-          <code>updated_at</code> match G-9g3h1b preflight. Do not re-run G-9g2 / G-9g3b / G-9g3c /
-          G-9g3d Save.
+          <code>{binding.pocAuditMarker}</code> are excluded from default selection. Active
+          restore-only exceptions (registry <code>status: active</code>) may appear in the
+          selectable list with a restore badge. Do not re-run G-9g2 / G-9g3b / G-9g3c / G-9g3d
+          Save.
         </p>
         <div class="site-slug-row-picker__table-wrap">
           <table class="site-slug-row-picker__table site-slug-row-picker__table--audit">

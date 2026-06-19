@@ -126,7 +126,12 @@ const nextActionsSrc = readRepo("tools/static-to-astro/docs/ai/03-next-actions.m
 const handoffSrc = readRepo("tools/static-to-astro/docs/ai/handoff-to-chatgpt.md");
 
 assert("current state G-9g3h1c success", currentStateSrc.includes("G-9g3h1c") || currentStateSrc.includes("G-9g3h1d"));
-assert("current state marker removed", currentStateSrc.includes("markerRemoved: true") || currentStateSrc.includes("marker removed"));
+assert(
+  "current state marker removed",
+  currentStateSrc.includes("markerRemoved: true") ||
+    currentStateSrc.includes("marker removed") ||
+    currentStateSrc.includes("markerRemainsInStagingDb: false"),
+);
 assert(
   "current state e6b3ece or prior",
   currentStateSrc.includes("e6b3ece") || currentStateSrc.includes(PRIOR_COMMIT),

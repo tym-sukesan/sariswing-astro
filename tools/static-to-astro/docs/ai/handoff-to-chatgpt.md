@@ -5,30 +5,22 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-9g3h2b-row-picker-exception-lifecycle-cleanup
-Latest commit (pushed): e6b3ece (G-9g3h1c restore execution result)
-G-9g3h1d post-execution hardening: complete (uncommitted)
+Current phase: G-9g3h3-cms-kit-generalization-notes
+Latest commit (pushed): a01fbf4 (G-9g3h1d post-execution hardening)
+G-9g3h2b row-picker exception lifecycle cleanup: complete (uncommitted)
 ```
 
 ## Summary
 
-G-9g3h1 **round-trip complete** (re-click prevention smoke → marker restore):
+G-9g3h2b **completed** row-picker restore exception lifecycle cleanup:
 
-| Phase | Outcome |
-| --- | --- |
-| G-9g3h1 | re-click prevention implemented (`8780f84`) |
-| G-9g3h1a | smoke: Preview once + Save once; marker appended (`03cbbbe`) |
-| G-9g3h1b | restore preflight; Option A chosen (`f868435`) |
-| G-9g3h1b1 | row-picker narrow exception (`863fdff`) |
-| G-9g3h1c | restore: Preview once + Save once; marker removed (`e6b3ece`) |
-| G-9g3h1d | post-execution hardening documented (uncommitted) |
-
-- **Marker:** removed — `markerRemainsInStagingDb: false`
-- **after.description:** original (no smoke marker)
-- **final updated_at:** `2026-06-19T02:05:42.615781+00:00`
-- **Re-click prevention:** confirmed in smoke + restore
-- **Row-picker:** `isG9g3h1aSmokeMarkerRestoreTargetRow` no longer matches; target row is normal selectable content again
-- **Rollback:** not needed / not executed
+- **Option B:** centralized `STAGING_SCHEDULE_RESTORE_EXCEPTION_REGISTRY`
+- G-9g3h1a entry: `status: completed` (marker removed in G-9g3h1c)
+- G-9g3g4 entry: `status: completed` (marker removed in G-9g3g5c)
+- **Active restore exceptions:** 0
+- Live target row `888c58f2-…` is normal selectable content
+- Generic `[CMS Kit staging]` audit protection **preserved**
+- G-6 pilot row **audit-only**
 
 **Do not re-click G-9g3h1a smoke Save or G-9g3h1c restore Save.**
 
@@ -37,12 +29,11 @@ G-9g3h1 **round-trip complete** (re-click prevention smoke → marker restore):
 ## Gates
 
 ```txt
-stagingShellScheduleSiteSlugOperationalSaveReclickPostExecutionHardeningComplete: true
-reclickPreventionRoundTripComplete: true
-restoreRoundTripComplete: true
+stagingShellScheduleSiteSlugRowPickerExceptionLifecycleCleanupComplete: true
 markerRemainsInStagingDb: false
-markerRemoved: true
-readyForG9g3h2bRowPickerExceptionLifecycleCleanup: true
+g9g3h1aRestoreExceptionLifecycle: completed
+activeRestoreExceptionsCount: 0
+readyForG9g3h3CmsKitGeneralizationNotes: true
 readyForAnyDbWrite: false
 ```
 
@@ -52,12 +43,10 @@ readyForAnyDbWrite: false
 ENABLE_ADMIN_STAGING_WRITE: false
 PUBLIC_ADMIN_WRITE_DRY_RUN: true
 All non-dry-run arms: off
-Non-dry-run dev server: stopped after operator execution
 service_role: not used
 production: untouched
-FTP / deploy: not executed
 ```
 
 ## Next
 
-**G-9g3h2b** row-picker exception lifecycle cleanup — retire stale marker-specific exceptions after successful restore
+**G-9g3h3** CMS Kit generalization notes — consolidate safety patterns from G-9g3h1 round-trip + G-9g3h2b registry

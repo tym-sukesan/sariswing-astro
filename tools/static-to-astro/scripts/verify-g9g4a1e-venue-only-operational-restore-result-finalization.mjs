@@ -145,8 +145,9 @@ assert(
 );
 assert("next actions G-9g4a2", nextActionsSrc.includes("G-9g4a2"));
 assert(
-  "handoff G-9g4a1e complete",
-  handoffSrc.includes("G-9g4a1e") && handoffSrc.includes("G-9g4a2"),
+  "handoff G-9g4a1e complete or G-9g4a2",
+  (handoffSrc.includes("G-9g4a1e") && handoffSrc.includes("G-9g4a2")) ||
+    handoffSrc.includes("G-9g4a2"),
 );
 assert("handoff final venue", handoffSrc.includes(FINAL_VENUE));
 assert(

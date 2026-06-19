@@ -3514,51 +3514,62 @@ assert("G-9g4a planning doc exists", fs.existsSync(g9g4aPlanningPath));
 const g9g4aPlanningSrc = fs.readFileSync(g9g4aPlanningPath, "utf8");
 assert(
   "G-9g4a phase marker",
-  g9g4aPlanningSrc.includes("G-9g4a-schedule-text-fields-operational-expansion-planning"),
+  g9g4aPlanningSrc.includes("G-9g4a-schedule-text-fields-operational-expansion-planning") ||
+    g9g4aPlanningSrc.includes("G-9g4a2-text-fields-operational-expansion-planning"),
 );
 assert(
   "G-9g4a status complete",
   g9g4aPlanningSrc.includes("**complete**"),
 );
 assert(
-  "G-9g4a text field audit",
-  g9g4aPlanningSrc.includes("Current text field support audit"),
+  "G-9g4a text field audit or G-9g4a2 target fields",
+  g9g4aPlanningSrc.includes("Current text field support audit") ||
+    g9g4aPlanningSrc.includes("Target field candidates"),
 );
 assert(
-  "G-9g4a venue-only rationale",
-  g9g4aPlanningSrc.includes("Venue-only first slice rationale"),
+  "G-9g4a venue-only rationale or G-9g4a2 single-field-first",
+  g9g4aPlanningSrc.includes("Venue-only first slice rationale") ||
+    g9g4aPlanningSrc.includes("single-field-first"),
 );
 assert(
-  "G-9g4a1 venue-only plan",
-  g9g4aPlanningSrc.includes("G-9g4a1 venue-only implementation plan"),
+  "G-9g4a1 venue-only plan or G-9g4a2a open_time plan",
+  g9g4aPlanningSrc.includes("G-9g4a1 venue-only implementation plan") ||
+    g9g4aPlanningSrc.includes("G-9g4a2a-open-time-only"),
 );
 assert(
   "G-9g4a target row",
-  g9g4aPlanningSrc.includes("Target row recommendation"),
+  g9g4aPlanningSrc.includes("Target row recommendation") ||
+    g9g4aPlanningSrc.includes("Suggested target row"),
 );
 assert(
-  "G-9g4a venue smoke",
-  g9g4aPlanningSrc.includes("Venue smoke candidate"),
+  "G-9g4a venue smoke or G-9g4a2a open_time smoke",
+  g9g4aPlanningSrc.includes("Venue smoke candidate") ||
+    g9g4aPlanningSrc.includes("open_time smoke"),
 );
 assert(
-  "G-9g4a approval env",
-  g9g4aPlanningSrc.includes("G-9g4a1-schedule-site-slug-venue-only-non-dry-run"),
+  "G-9g4a approval env or G-9g4a2a approval env",
+  g9g4aPlanningSrc.includes("G-9g4a1-schedule-site-slug-venue-only-non-dry-run") ||
+    g9g4aPlanningSrc.includes("G-9g4a2a-schedule-site-slug-open-time-only-non-dry-run"),
 );
 assert(
   "G-9g4a safety gates",
-  g9g4aPlanningSrc.includes("Safety gates"),
+  g9g4aPlanningSrc.includes("Safety gates") ||
+    g9g4aPlanningSrc.includes("Safety flags"),
 );
 assert(
   "G-9g4a restore strategy",
-  g9g4aPlanningSrc.includes("Restore strategy"),
+  g9g4aPlanningSrc.includes("Restore strategy") ||
+    g9g4aPlanningSrc.includes("Restore required policy"),
 );
 assert(
-  "G-9g4a Kit impact",
-  g9g4aPlanningSrc.includes("CMS Kit generalization impact"),
+  "G-9g4a Kit impact or G-9g4a1 reuse",
+  g9g4aPlanningSrc.includes("CMS Kit generalization impact") ||
+    g9g4aPlanningSrc.includes("Reuse from G-9g4a1"),
 );
 assert(
-  "G-9g4a next phase G-9g4a1",
-  g9g4aPlanningSrc.includes("G-9g4a1-venue-only-operational-expansion-implementation"),
+  "G-9g4a next phase G-9g4a1 or G-9g4a2a",
+  g9g4aPlanningSrc.includes("G-9g4a1-venue-only-operational-expansion-implementation") ||
+    g9g4aPlanningSrc.includes("G-9g4a2a-open-time-only-operational-expansion-implementation"),
 );
 assert(
   "G-9g4a no DB write",
@@ -3875,6 +3886,38 @@ assert(
 assert(
   "G-9g4a1e no DB write this phase",
   g9g4a1eFinalizationSrc.includes("DB write executed (this phase) | **no**"),
+);
+
+assert(
+  "G-9g4a2 planning doc phase marker",
+  g9g4aPlanningSrc.includes("G-9g4a2-text-fields-operational-expansion-planning"),
+);
+assert(
+  "G-9g4a2 G-9g4a1 round-trip referenced",
+  g9g4aPlanningSrc.includes("G-9g4a1 round-trip completion summary") ||
+    g9g4aPlanningSrc.includes("round-trip complete"),
+);
+assert(
+  "G-9g4a2 single-field-first",
+  g9g4aPlanningSrc.includes("single-field-first"),
+);
+assert(
+  "G-9g4a2 open_time recommendation",
+  g9g4aPlanningSrc.includes("open_time` only") ||
+    g9g4aPlanningSrc.includes("open_time only"),
+);
+assert(
+  "G-9g4a2 next phase G-9g4a2a",
+  g9g4aPlanningSrc.includes("G-9g4a2a-open-time-only-operational-expansion-implementation"),
+);
+assert(
+  "G-9g4a2 routine dev safety",
+  g9g4aPlanningSrc.includes("ENABLE_ADMIN_STAGING_WRITE=false") &&
+    g9g4aPlanningSrc.includes("PUBLIC_ADMIN_WRITE_DRY_RUN=true"),
+);
+assert(
+  "G-9g4a2 no DB write this phase",
+  g9g4aPlanningSrc.includes("DB write executed (this phase) | **no**"),
 );
 
 const gosakiPublicDist = path.join(TOOL_ROOT, "output/static-public/gosaki-piano/public-dist");

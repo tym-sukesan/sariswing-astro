@@ -3,42 +3,42 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 1. Immediate priority
 
-**Current phase:** `G-9g4a2-text-fields-operational-expansion-planning` (planning only)
+**Current phase:** `G-9g4a2a-open-time-only-operational-expansion-implementation` (not started — await commit of G-9g4a2 planning)
 
-**Git:** latest pushed commit `82e1aaa` (G-9g4a1d restore execution result)
+**Git:** latest pushed commit `3b807c8` (G-9g4a1e round-trip finalization)
 
-### G-9g4a1e summary (round-trip finalization — complete)
+### G-9g4a2 summary (text fields planning — complete)
 
 | Item | Value |
 | --- | --- |
-| Doc | `staging-shell-schedule-venue-only-operational-restore-result-finalization.md` |
-| Status | **complete** — documentation / verifier / AI context only (uncommitted) |
-| Round-trip | G-9g4a1b1 write + G-9g4a1d restore via same G-9g4a1 venue-only path |
-| Target row | `eb1f1898-5107-4deb-a6d5-a792e0ec3f69` / `schedule-2026-03-003` |
-| Final venue | `学芸大学 珈琲美学` |
-| final.updated_at | `2026-06-19T05:54:34.767498+00:00` |
+| Doc | `staging-shell-schedule-text-fields-operational-expansion-planning.md` |
+| Status | **complete** — planning only (uncommitted) |
+| G-9g4a1 closure | round-trip complete at `3b807c8` |
+| Policy | **single-field-first** |
+| Target fields | `open_time`, `start_time`, `price`, `description` (description already G-9g3g — defer) |
+| First slice | **G-9g4a2a `open_time` only** |
 | markerRemainsInStagingDb | **false** |
 | activeRestoreExceptionsCount | **0** |
 | restore required | **no** |
-| Further Save / restore | **not needed** |
 
 ### Gates
 
 ```txt
-stagingShellScheduleVenueOnlyOperationalRoundTripComplete: true
-readyForG9g4a2TextFieldsOperationalExpansionPlanning: true
+stagingShellScheduleTextFieldsOperationalExpansionPlanningComplete: true
+readyForG9g4a2aOpenTimeOnlyOperationalExpansionImplementation: true
+g9g4a1VenueOnlyRoundTripComplete: true
+singleFieldFirstPolicy: true
 markerRemainsInStagingDb: false
 activeRestoreExceptionsCount: 0
 restoreRequired: false
-noFurtherSaveOrRestoreNeeded: true
 readyForAnyDbWrite: false
 ```
 
 ## 2. Next steps
 
-1. **G-9g4a2-text-fields-operational-expansion-planning** — planning only; do not implement until approved
-2. Commit G-9g4a1e finalization when ready
-3. Routine dev stack (all non-dry-run arms off) — already documented
+1. **G-9g4a2a-open-time-only-operational-expansion-implementation** — guards, config, UI gate, executor (no operator Save in implementation phase)
+2. Commit G-9g4a2 planning when ready
+3. Routine dev stack unchanged (all non-dry-run arms off)
 
 ## 3. Routine dev safety
 
@@ -50,7 +50,7 @@ PUBLIC_ADMIN_SCHEDULE_G9G3G_OPERATIONAL_GENERAL_EDIT_NON_DRY_RUN_ARMED=false or 
 PUBLIC_ADMIN_SCHEDULE_G9G3G5_OPERATIONAL_RESTORE_NON_DRY_RUN_ARMED=false or unset
 ```
 
-- Execution-only inline env is **ended**
+- G-9g4a2a env arm: **not created in planning phase**
 - Do **not** write arms to `.env` / `.env.local`
 - Production and `/admin` remain out of scope
 - `service_role` prohibition continues
@@ -58,9 +58,9 @@ PUBLIC_ADMIN_SCHEDULE_G9G3G5_OPERATIONAL_RESTORE_NON_DRY_RUN_ARMED=false or unse
 
 ## 4. Do not
 
-- Re-click G-9g4a1 venue-only Save without fresh Preview
+- Implement G-9g4a2a without committing G-9g4a2 planning first
+- Multi-field operational Save (`open_time` + `start_time` together)
 - Cursor / AI click Save or Preview
-- Further restore on this row (marker already removed; round-trip closed)
+- Re-click G-9g4a1 venue-only Save
 - Use service_role
 - Touch production or `/admin`
-- Implement G-9g4a2 without planning phase approval

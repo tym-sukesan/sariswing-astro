@@ -21,11 +21,13 @@ Staging Shell
 将来的な顧客オンボーディング・課金・デプロイ自動化
 
 2. Current phase
-現在フェーズ: **G-9g4a2-text-fields-operational-expansion-planning**（G-9g4a1e venue-only round-trip closure 完了後）
+現在フェーズ: **G-9g4a2a-open-time-only-operational-expansion-implementation**（G-9g4a2 text fields planning 完了後 — implementation 未着手）
 
-G-9g4a1e: venue-only operational restore result **finalization complete**（uncommitted）。round-trip complete; marker removed; final venue `学芸大学 珈琲美学`.
+G-9g4a2: text fields operational expansion **planning complete**（uncommitted）。single-field-first; first slice `open_time` only.
 
-G-9g4a1d: venue-only operational restore **manual execution complete**（commit `82e1aaa`）。marker removed; final venue `学芸大学 珈琲美学`.
+G-9g4a1e: venue-only operational round-trip **finalization complete**（commit `3b807c8`）。marker removed; no restore required.
+
+G-9g4a1d: venue-only operational restore **manual execution complete**（commit `82e1aaa`）。
 
 G-9g4a1c: venue-only operational restore **preflight complete**（commit `3b3e4e0`）。
 
@@ -33,15 +35,11 @@ G-9g4a1b1: venue-only manual execution **complete**（commit `11368be`）。
 
 G-9g4a1 Save gate sync fix: **complete**（commit `78888f5`）。
 
-G-9g4a1b: Schedule venue-only operational expansion **execution runbook complete**（commit `6564061`）。
+G-9g4a1: Schedule venue-only operational expansion **implementation complete**（commit `49986c1`）。**G-9g4a1 venue-only operational round-trip complete.**
 
-G-9g4a1a: Schedule venue-only operational expansion **preflight complete**（commit `01e64af`）。
+G-9g4a: Schedule text fields operational expansion planning **complete**（commit `9a38c11` — superseded for next slice by G-9g4a2）.
 
-G-9g4a1: Schedule venue-only operational expansion **implementation complete**（commit `49986c1`）。
-
-G-9g4a: Schedule text fields operational expansion planning **complete**（commit `9a38c11`）。
-
-Git: 最新 push 済み commit `82e1aaa`（G-9g4a1d）。G-9g4a1e finalization **uncommitted**。
+Git: 最新 push 済み commit `3b807c8`（G-9g4a1e）。G-9g4a2 planning **uncommitted**。
 
 G-9g3h1: Save success re-click prevention **implemented**（commit `8780f84`）。
 
@@ -556,43 +554,39 @@ PUBLIC_SUPABASE_URL host: kmjqppxjdnwwrtaeqjta.supabase.co (staging)
 **Note:** `tools/static-to-astro/.env.local` に `SUPABASE_SERVICE_ROLE_KEY` が local only（gitignored）で存在する場合がある。G-9g3b execution では使用禁止・参照禁止。anon key + authenticated session のみ。
 
 10. Recommended next phase
-次フェーズ推奨: **G-9g4a2-text-fields-operational-expansion-planning**（planning only）
+次フェーズ推奨: **G-9g4a2a-open-time-only-operational-expansion-implementation**
 
-G-9g4a1e Schedule venue-only operational round-trip **finalization complete**（uncommitted）。G-9g4a1 staging operational PoC closed.
+G-9g4a2 Schedule text fields operational expansion planning: **complete**（uncommitted）。single-field-first; `open_time` only first slice.
 
-G-9g4a1d Schedule venue-only operational restore manual execution: **complete**（commit `82e1aaa`）。marker removed on `eb1f1898-5107-4deb-a6d5-a792e0ec3f69`.
+G-9g4a1e Schedule venue-only operational round-trip **finalization complete**（commit `3b807c8`）。G-9g4a1 staging operational PoC closed.
 
-G-9g4a1c Schedule venue-only operational restore preflight: **complete**（commit `3b3e4e0`）。
+G-9g4a1d Schedule venue-only operational restore manual execution: **complete**（commit `82e1aaa`）。
 
 G-9g4a1b1 Schedule venue-only manual execution: **complete**（commit `11368be`）。
 
 Phase sequence:
 ```txt
-G-9g4a1b1-venue-only-operational-expansion-manual-execution ← complete (11368be)
-G-9g4a1c-venue-only-operational-restore-preflight ← complete (3b3e4e0)
-G-9g4a1d-venue-only-operational-restore-manual-execution ← complete (82e1aaa)
-G-9g4a1e-venue-only-operational-restore-result-finalization ← complete (uncommitted)
-G-9g4a2-text-fields-operational-expansion-planning ← next (planning only)
+G-9g4a1e-venue-only-operational-restore-result-finalization ← complete (3b807c8)
+G-9g4a2-text-fields-operational-expansion-planning ← complete (uncommitted)
+G-9g4a2a-open-time-only-operational-expansion-implementation ← next
 ```
 
-G-9g4a1e gates:
+G-9g4a2 gates:
 ```txt
-stagingShellScheduleVenueOnlyOperationalRoundTripComplete: true
-readyForG9g4a2TextFieldsOperationalExpansionPlanning: true
-restoreTargetRowId: eb1f1898-5107-4deb-a6d5-a792e0ec3f69
-markerRemoved: true
+stagingShellScheduleTextFieldsOperationalExpansionPlanningComplete: true
+readyForG9g4a2aOpenTimeOnlyOperationalExpansionImplementation: true
+g9g4a1VenueOnlyRoundTripComplete: true
+singleFieldFirstPolicy: true
+firstRecommendedSlice: open_time only (G-9g4a2a)
 markerRemainsInStagingDb: false
-finalVenue: 学芸大学 珈琲美学
-finalUpdatedAt: 2026-06-19T05:54:34.767498+00:00
 activeRestoreExceptionsCount: 0
 restoreRequired: false
-noFurtherSaveOrRestoreNeeded: true
 readyForAnyDbWrite: false
 cursorClickedSave: false
 cursorClickedPreview: false
 ```
 
-Routine dev: dry-run on / all non-dry-run arms off. **No further G-9g4a1 Save or restore needed.** Do not re-click G-9g3h1a smoke Save or G-9g3h1c restore Save.
+Routine dev: dry-run on / all non-dry-run arms off. **No G-9g4a2a env arm created yet.** Do not re-click G-9g4a1 venue-only Save.
 
 11. AI workflow transition
 チャット履歴への依存を減らすため、リポジトリ側に AI開発文脈管理ファイルを作成。

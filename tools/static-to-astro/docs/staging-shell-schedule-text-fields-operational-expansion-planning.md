@@ -1,27 +1,30 @@
-# Staging shell schedule text fields operational expansion planning (G-9g4a)
+# Staging shell schedule text fields operational expansion planning (G-9g4a2)
 
-**Phase:** `G-9g4a-schedule-text-fields-operational-expansion-planning`  
+**Phase:** `G-9g4a2-text-fields-operational-expansion-planning`  
 **Status:** **complete**  
 **Date:** 2026-06-19  
-**Prior:** G-9g4 field expansion planning — commit `aebbf98`  
+**Prior:** G-9g4a1e venue-only round-trip finalization — commit `3b807c8`; original G-9g4a planning — commit `9a38c11`  
 **Type:** planning only — **no implementation, no Save, no Preview by Cursor, no DB write, no SQL mutation**
 
 | Check | Status |
 | --- | --- |
-| Save clicked (this phase) | **no** |
+| Row picker clicked (Cursor/AI) | **no** |
 | Preview clicked (Cursor/AI) | **no** |
+| Save clicked (this phase) | **no** |
 | DB write executed (this phase) | **no** |
 | SQL mutation executed (this phase) | **no** |
-| Restore / rollback SQL executed | **no** |
+| Rollback SQL executed | **no** |
+| Restore SQL executed | **no** |
 | service_role used | **no** |
+| FTP / workflow_dispatch / deploy | **not executed** |
 
 Prior docs:
 
-- [staging-shell-schedule-editor-usability-and-field-expansion-planning.md](./staging-shell-schedule-editor-usability-and-field-expansion-planning.md)
-- [cms-kit-schedule-editor-generalization-notes.md](./cms-kit-schedule-editor-generalization-notes.md)
-- [staging-shell-schedule-site-slug-venue-description-non-dry-run-poc-execution-result.md](./staging-shell-schedule-site-slug-venue-description-non-dry-run-poc-execution-result.md)
+- [staging-shell-schedule-venue-only-operational-restore-result-finalization.md](./staging-shell-schedule-venue-only-operational-restore-result-finalization.md) (G-9g4a1e — commit `3b807c8`)
+- [staging-shell-schedule-venue-only-operational-expansion-implementation.md](./staging-shell-schedule-venue-only-operational-expansion-implementation.md) (G-9g4a1)
+- Original G-9g4a planning at commit `9a38c11` (venue-first rationale — **superseded for next slice** by this G-9g4a2 doc)
 
-**Do not re-run G-9g2 / G-9g3b / G-9g3c / G-9g3d PoC Save.** **Do not re-click G-9g3g4 / G-9g3h1a / G-9g3h1c operational Save.**
+**Do not re-run G-9g2 / G-9g3b / G-9g3c / G-9g3d PoC Save.** **Do not re-click G-9g3g4 / G-9g3h1 / G-9g4a1 venue-only Save.**
 
 ---
 
@@ -29,308 +32,378 @@ Prior docs:
 
 ```txt
 stagingShellScheduleTextFieldsOperationalExpansionPlanningComplete: true
-readyForG9g4a1VenueOnlyOperationalExpansionImplementation: true
-firstSlice: G-9g4a1-venue-only
-operationalProvenFields: description
-activeRestoreExceptionsCount: 0
+readyForG9g4a2aOpenTimeOnlyOperationalExpansionImplementation: true
+g9g4a1VenueOnlyRoundTripComplete: true
 markerRemainsInStagingDb: false
+activeRestoreExceptionsCount: 0
+restoreRequired: false
+singleFieldFirstPolicy: true
 readyForAnyDbWrite: false
 cursorClickedSave: false
 cursorClickedPreview: false
 ```
 
-**Recommended next:** `G-9g4a1-venue-only-operational-expansion-implementation`
+**Recommended next:** `G-9g4a2a-open-time-only-operational-expansion-implementation`
 
 ---
 
-## 1. Current text field support audit
+## 1. G-9g4a1 round-trip completion summary
 
-### UI / hydrate / dry-run Preview
+G-9g4a1 venue-only operational path is **proven end-to-end** on staging:
 
-| Layer | Text fields | Notes |
-| --- | --- | --- |
-| `SITE_SLUG_EDIT_SAFE_FIELDS` | title, venue, open_time, start_time, price, description | All six in config |
-| `staging-schedule-site-slug-edit-ui.ts` | All six inputs (`site-slug-edit-dry-run-*`) | Hydrate + changed-fields detection for all safe fields |
-| `staging-schedule-site-slug-edit-dry-run.ts` | All six in preview diff | `changedFields` from candidate vs loaded row |
-| Row picker SELECT | All safe fields + metadata | Read-only list |
+| Step | Phase | Commit | Result |
+| --- | --- | --- | --- |
+| Implementation | G-9g4a1 | `49986c1` | Guards, UI gate, Save executor |
+| Save gate sync fix | G-9g4a1 | `78888f5` | Preview → Save gate refresh after `previewValid=true` |
+| Smoke execution | G-9g4a1b1 | `11368be` | `venue` smoke marker appended |
+| Restore preflight | G-9g4a1c | `3b3e4e0` | Restore via same G-9g4a1 path |
+| Restore execution | G-9g4a1d | `82e1aaa` | Smoke marker removed |
+| Round-trip closure | G-9g4a1e | `3b807c8` | Finalization + routine dev safety |
 
-### Write paths
+**Proven row:** `eb1f1898-5107-4deb-a6d5-a792e0ec3f69` / `schedule-2026-03-003` / `gosaki-piano`  
+**Final venue:** `学芸大学 珈琲美学`  
+**markerRemainsInStagingDb:** false  
+**activeRestoreExceptionsCount:** 0  
+**restore required:** no
 
-| Path | Fields actually saved (guards) | Operational on content rows? |
-| --- | --- | --- |
-| G-9g3g operational general edit | Any subset of safe fields via `assertG9G3gOperationalGeneralEditPayloadOnly` | **description only proven** (G-9g3g4) |
-| G-9g3g5 restore | `description` only | proven (G-9g3g5c) |
-| G-9g2 title PoC | `title` only | pilot row only — frozen |
-| G-9g3b venue+description PoC | `venue` + `description` together | pilot row only — frozen |
-| G-9g3c time+price PoC | `open_time`, `start_time`, `price` | pilot row only — frozen |
-| G-9g3d general edit PoC | multi-field dry-run; Save frozen | pilot row only |
-
-### Guards / executor gaps for G-9g4a1
-
-| Item | Today | G-9g4a1 needs |
-| --- | --- | --- |
-| `assertG9G3gOperationalGeneralEditPayloadOnly` | Allows any safe-field combination | **Not sufficient alone** — too broad for venue-only slice |
-| Field-specific operational guard | None for venue-only | `assertG9G4a1VenueOnlyPayloadOnly` (implementation) |
-| Approval ID | `G-9g3g-schedule-site-slug-operational-general-edit-non-dry-run` | **New** `G-9g4a1-schedule-site-slug-venue-only-non-dry-run` |
-| Env arm | `PUBLIC_ADMIN_SCHEDULE_G9G3G_OPERATIONAL_GENERAL_EDIT_NON_DRY_RUN_ARMED` | **New** `PUBLIC_ADMIN_SCHEDULE_G9G4A1_VENUE_ONLY_NON_DRY_RUN_ARMED` |
-| Save executor entry | `executeScheduleGeneralUpdateWrite` via G-9g3g path | Dedicated `executeG9G4a1VenueOnlyNonDryRunSave` or gated wrapper |
-| UI Save button routing | G-9g3g operational when armed | G-9g4a1 arm + approval when venue-only slice active |
-| Verifier | G-9g3g4 / G-9g3h1 docs | New G-9g4a1* verifiers |
-
-**Conclusion:** UI and dry-run **already support** `venue` in preview diff. Operational **non-dry-run Save** for `venue` only on **content rows** is **not yet implemented or proven** — requires G-9g4a1 slice.
+**Pattern established:** field-specific approval ID + env arm + payload guard + changedFields exact check + optimistic lock + re-click prevention + smoke marker + same-path UI restore.
 
 ---
 
-## 2. Venue-only first slice rationale
+## 2. Target field candidates
 
-| Criterion | `venue` | vs title | vs time/price | vs description (done) |
-| --- | --- | --- | --- | --- |
-| Route / date / month impact | **none** | low | none | none |
-| Visibility / homepage / image | **none** | medium | none | none |
-| User-facing value | **high** | high | medium | high |
-| Restore complexity | **low** (single string) | medium (non-empty rule) | low | proven |
-| changed-fields-only fit | **excellent** | good | pair slice | proven |
-| Validation weight | trim; empty→null | non-empty required | format strings | multiline |
-| PoC precedent | G-9g3b (with description, pilot) | G-9g2 | G-9g3c | G-9g3g4 operational |
-| Side effects vs title | **fewer** (no SEO/title display) | — | — | — |
+| Field | Operational today? | Notes |
+| --- | --- | --- |
+| `open_time` | **no** (PoC only G-9g3c on pilot row) | Nullable time string; low route impact |
+| `start_time` | **no** (PoC only G-9g3c) | Pair conceptually with `open_time` but **not combined in next slice** |
+| `price` | **no** (PoC only G-9g3c) | Nullable text; display-only |
+| `description` | **yes** (G-9g3g4 operational on content row) | **Do not re-prove** in G-9g4a2 unless explicit regression slice |
 
-**Decision:** `venue` is the safest **first operational text-field expansion** after `description`.
+**Out of scope for G-9g4a2 text-field expansion:** `title` (non-empty validation, SEO sensitivity — defer to G-9g4a4+), `venue` (proven G-9g4a1), `date` / routes / publication / images.
+
+UI dry-run already diffs all safe fields in `staging-schedule-site-slug-edit-ui.ts`. Gap for each candidate: **field-specific operational guard**, **approval ID**, **env arm**, **Save routing**, **verifier chain** — same as G-9g4a1.
 
 ---
 
-## 3. G-9g4a1 venue-only implementation plan
+## 3. Recommended order (single-field-first)
 
-**Next implementation phase:** `G-9g4a1-venue-only-operational-expansion-implementation`
+| Priority | Slice | Field(s) | Rationale |
+| --- | --- | --- | --- |
+| **1** | **G-9g4a2a** | `open_time` only | Smallest blast radius after venue; one key in payload; G-9g4a1 proved single-field round-trip |
+| 2 | G-9g4a2b | `start_time` only | Same validation class as `open_time`; separate approval ID |
+| 3 | G-9g4a2c | `price` only | Independent display field |
+| — | (defer) | `description` | Already operational under G-9g3g |
+| — | (defer) | `title` | Non-empty rule + SEO — last text slice |
 
-### Scope
+### Why NOT `open_time` + `start_time` together first
 
-| Item | Value |
-| --- | --- |
-| Target field | `venue` only |
-| Allowed payload | `{ "venue": "<candidate>" }` only |
-| changedFields | `["venue"]` only |
-| Forbidden in same Save | title, open_time, start_time, price, description, date, published, images, routes |
+| Concern | Single-field (recommended) | Pair slice (deferred) |
+| --- | --- | --- |
+| changedFields audit | exactly `["open_time"]` | `["open_time", "start_time"]` — harder rollback narrative |
+| Restore | one field back to original | two fields must match preflight exactly |
+| G-9g3c precedent | 3-field PoC on **pilot row only** — not operational template | — |
+| G-9g4a1 precedent | **proven** single-field operational round-trip | — |
+| Verifier / docs | one smoke marker, one restore payload | coupled failure modes |
 
-### Required behavior
+**Decision:** **single-field-first** for all remaining text fields. Pair slice (`open_time` + `start_time`) is **explicitly deferred** until both singles are proven (optional consolidation phase later — not G-9g4a2a).
 
-| Step | Requirement |
-| --- | --- |
-| Preview | `actualWrite=false`, `wouldWrite=true`, `changedFields=["venue"]` |
-| Save gates | Disabled unless valid Preview on selected row |
-| Optimistic lock | `expectedBeforeUpdatedAt` required; stale blocks Save |
-| Host gate | Staging host only (`kmjqppxjdnwwrtaeqjta.supabase.co`) |
-| Approval ID | `G-9g4a1-schedule-site-slug-venue-only-non-dry-run` |
-| Env arm | `PUBLIC_ADMIN_SCHEDULE_G9G4A1_VENUE_ONLY_NON_DRY_RUN_ARMED=true` |
-| Re-click prevention | G-9g3h1 pattern — one Save per preview identity |
-| Row scope | `site_slug=gosaki-piano`; non-PoC audit row |
-| service_role | forbidden |
+---
 
-### Implementation sub-phases (planned)
+## 4. Minimum execution unit
 
 ```txt
-G-9g4a1-venue-only-operational-expansion-implementation
-  → G-9g4a1-preflight (target row lock baseline, beforeSnapshot)
-  → G-9g4a1-execution (operator Preview once + Save once — optional smoke marker)
-  → G-9g4a1b-venue-restore-preflight (if smoke marker used)
-  → G-9g4a1c-venue-restore-execution
-  → G-9g4a1d-post-restore-hardening
+one field
+one approval ID
+one env arm
+one changedFields array with exactly one element
+one operator Preview
+ChatGPT Preview confirmation
+one operator Save
+optional smoke marker + restore round-trip (same slice path)
 ```
 
-### Out of scope for G-9g4a1
-
-- `date`, `year`, `month`, `source_route`, `source_file`
-- `published`, `show_on_home`, `home_order`, `sort_order`
-- `image_url`, `home_image_url`
-- Multi-field operational Save (venue + description together)
-- Reuse of G-9g3g operational arm for venue Save
+**Forbidden:** multi-field operational Save combining `open_time` + `start_time` + `price` in one approval (G-9g3c PoC pattern stays frozen on pilot row).
 
 ---
 
-## 4. Target row recommendation
+## 5. Recommended next implementation slice
 
-### Option A — **Preferred:** different content row (not G-9g3g4/G-9g3h1 row)
+**First implementation:** `G-9g4a2a-open-time-only-operational-expansion-implementation`
 
-Select via row picker at G-9g4a1 preflight:
-
-| Criterion | Requirement |
+| Item | Proposed value |
 | --- | --- |
-| `site_slug` | `gosaki-piano` |
-| Audit | **not** PoC audit (`aa440e29-…`); no `[CMS Kit staging]` marker |
-| `published` | `true` (preferred) |
-| `venue` | short, human-readable (easy before/after diff) |
-| `description` | clean — no operational test markers |
-| History | **no** prior G-9g3g4 / G-9g3h1 description operational writes |
+| Target field | `open_time` only |
+| Allowed payload | `{ "open_time": "<candidate>" }` only |
+| changedFields | `["open_time"]` only |
+| Approval ID (implementation phase) | `G-9g4a2a-schedule-site-slug-open-time-only-non-dry-run` |
+| Env arm (execution only — not created in this planning phase) | `PUBLIC_ADMIN_SCHEDULE_G9G4A2A_OPEN_TIME_ONLY_NON_DRY_RUN_ARMED=true` |
+| Guard naming template | `assertG9G4a2aOpenTimeOnlyPayloadOnly` |
+| Executor template | `executeG9G4a2aOpenTimeOnlyNonDryRunSave` |
+| UI module template | clone G-9g4a1 venue-only pattern with `open_time` input binding |
 
-**Rationale:** Row `888c58f2-f152-4563-a3cf-a20d7c2456c1` was used heavily for description operational + smoke/restore round-trip. A fresh row isolates venue slice evidence and reduces confusion in docs/verifiers.
+### Sub-phase chain (planned — not executed in G-9g4a2)
 
-**Action at preflight:** Operator lists selectable rows in `2026-03` or `2026-04` month filter; pick first row meeting criteria; record `id`, `legacy_id`, `updated_at`, `venue` in preflight doc.
+```txt
+G-9g4a2a-open-time-only-operational-expansion-implementation
+  → G-9g4a2a-preflight (target row, before.open_time, smoke candidate, rollback SQL doc-only)
+  → G-9g4a2a-execution-runbook
+  → G-9g4a2a1-manual-execution (operator Preview + Save once)
+  → G-9g4a2b-restore-preflight (if smoke marker used)
+  → G-9g4a2b1-restore-manual-execution
+  → G-9g4a2c-round-trip-finalization
+```
 
-### Option B — **Acceptable fallback:** reuse known content row
+### Suggested target row (preflight phase — not selected here)
+
+Reuse G-9g4a1 proven row unless operator prefers isolation:
 
 | Field | Value |
 | --- | --- |
-| id | `888c58f2-f152-4563-a3cf-a20d7c2456c1` |
-| legacy_id | `schedule-2026-03-001` |
+| id | `eb1f1898-5107-4deb-a6d5-a792e0ec3f69` |
+| legacy_id | `schedule-2026-03-003` |
 | site_slug | `gosaki-piano` |
-| title | `<ごちまきトリオ>` |
-| venue (expected before) | `銀座 N` |
-| description | original (no G-9g3h1a marker) |
-| Lock baseline (reference) | `updated_at` from G-9g3h1c: `2026-06-19T02:05:42.615781+00:00` — **reconfirm live at preflight** |
+| title | `<Live & Session>` |
+| open_time (current) | `11:30` |
+| start_time (current) | `12:30` |
+| venue | `学芸大学 珈琲美学` (restored — no G-9g4a1 marker) |
+| updated_at (reference) | `2026-06-19T05:54:34.767498+00:00` — **reconfirm at preflight** |
 
-**Caveat:** Venue-only change does not modify `description`; acceptable if operator confirms clean description and accepts shared row history.
+**Rationale:** Row already used for venue round-trip; `open_time` has a clear non-null baseline for smoke suffix test.
 
-**Planning recommendation:** **Option A** at G-9g4a1 preflight; document Option B as documented fallback.
+### open_time smoke marker (execution phase proposal)
+
+```txt
+before.open_time: 11:30
+after.open_time:  11:30 [G-9g4a2a open_time smoke]
+restore.open_time: 11:30
+```
+
+Suffix `[G-9g4a2a open_time smoke]` — slice-specific; avoid generic `[CMS Kit staging]` alone (PoC audit trap).
 
 ---
 
-## 5. Venue smoke candidate
+## 6. Reuse from G-9g4a1 venue-only path
 
-If G-9g4a1 execution uses a **smoke marker** pattern (like G-9g3h1a for description):
-
-### before.venue (expected)
-
-```txt
-銀座 N
-```
-
-(or operator-recorded value from chosen target row at preflight)
-
-### after.venue (smoke candidate — append suffix)
-
-```txt
-銀座 N [G-9g4a1 venue smoke]
-```
-
-**Alternative (more natural for non-銀座 rows):** `{original venue} [CMS Kit staging] G-9g4a1 venue smoke` — use only if suffix pattern is clearer on long venue names.
-
-### restore target.venue
-
-```txt
-銀座 N
-```
-
-(same as before.venue — exact original string)
-
-**Note:** Venue smoke marker is **visible on public schedule cards** if row is published — use staging row with `published=true` only after operator accepts brief visible test, or use `published=false` row if available. Preflight must record choice.
-
-**Marker vocabulary:** Prefer suffix `[G-9g4a1 venue smoke]` without generic `[CMS Kit staging]` alone — avoids PoC audit classification (`rowContainsPocAuditMarker`).
-
----
-
-## 6. Approval ID / env arm proposal
-
-### Comparison
-
-| Approach | Pros | Cons |
+| Component | G-9g4a1 (venue) | G-9g4a2a+ (text fields) |
 | --- | --- | --- |
-| Reuse G-9g3g operational ID/arm | Less code | Mixes description + venue slices; verifier/audit confusion; cannot prove venue-only isolation |
-| **New G-9g4a1 ID/arm** | Field-slice isolation; future slices (G-9g4a2 time, etc.) follow same pattern | New constants, guards, UI gate, verifier |
+| UI gate / Save button / Preview | `staging-schedule-site-slug-venue-only-operational-edit-ui.ts` | New per-slice module (e.g. `...-open-time-only-operational-edit-ui.ts`) |
+| Save executor | `staging-schedule-site-slug-venue-only-operational-save.ts` | New per-slice executor |
+| Guards | `assertG9G4a1VenueOnlyPayloadOnly` | `assertG9G4a2aOpenTimeOnlyPayloadOnly` (field-specific allowed keys) |
+| Config / env arm | `staging-schedule-site-slug-venue-only-operational-config.ts` | New per-slice config |
+| Mutual exclusion | G-9g4a1 blocks G-9g3g / G-9g3g5 | G-9g4a2a blocks G-9g4a1 + G-9g3g + G-9g3g5 + other G-9g4a2* arms |
+| Optimistic lock | `buildScheduleLockedWriteRequest` + `expectedBeforeUpdatedAt` | **Reuse** |
+| Re-click prevention | `staging-schedule-site-slug-operational-save-reclick.ts` | **Reuse** — new mode key per slice |
+| Preview → Save gate sync | refresh after `previewValid=true` | **Reuse** G-9g4a1b1 fix pattern |
+| Host gate | staging host only | **Reuse** |
+| Row picker | existing hydrate | **Reuse** |
+| Restore path | same slice UI (not G-9g3g5) | **Same pattern** |
 
-### Recommended (G-9g4a1)
+**Do not reuse** G-9g3g operational general edit arm for field slices — too broad.
+
+---
+
+## 7. Field guard policy
+
+Per slice, implement:
+
+| Guard | Purpose |
+| --- | --- |
+| `assertG9G4a2aOpenTimeOnlyChangedFieldsOnly` | `changedFields` exactly `["open_time"]` |
+| `assertG9G4a2aOpenTimeOnlyPayloadOnly` | payload exactly `{ open_time: string }` — trim; allow null→empty per existing safe-field rules |
+| `assertG9G4a2aNoRouteDatePublicationImageMutation` | same forbidden key set as G-9g4a1 (extend forbidden list) |
+| `assertG9G4a2aOpenTimeOnlyApproval` | approval ID match |
+| `assertG9G4a2aOpenTimeOnlyWritableRow` | content row; not PoC audit row |
+
+Forbidden in same Save: `venue`, `title`, `start_time`, `price`, `description`, `date`, `published`, images, routes, ids, `site_slug`, `updated_at`, etc.
+
+Future slices: mirror with `start_time` → G-9g4a2b guards, `price` → G-9g4a2c guards.
+
+---
+
+## 8. Payload exact policy
 
 ```txt
-approvalId: G-9g4a1-schedule-site-slug-venue-only-non-dry-run
-env arm:    PUBLIC_ADMIN_SCHEDULE_G9G4A1_VENUE_ONLY_NON_DRY_RUN_ARMED=true
+payload keys === changedFields keys === exactly one safe field for the slice
+no extra keys
+no missing keys
+candidate must match Preview dry-run candidate for selected row
+non-target safe fields must match loaded row at Preview and Save
 ```
 
-### Mutual exclusion (routine dev + armed stacks)
+Example G-9g4a2a:
 
-| Arm | G-9g4a1 execution |
-| --- | --- |
-| `PUBLIC_ADMIN_SCHEDULE_G9G4A1_VENUE_ONLY_NON_DRY_RUN_ARMED` | **on** (execution only) |
-| `PUBLIC_ADMIN_SCHEDULE_G9G3G_OPERATIONAL_GENERAL_EDIT_NON_DRY_RUN_ARMED` | **off** |
-| `PUBLIC_ADMIN_SCHEDULE_G9G3G5_OPERATIONAL_RESTORE_NON_DRY_RUN_ARMED` | **off** |
-| G-9g2 / G-9g3b / G-9g3c PoC arms | **off** |
-| `PUBLIC_ADMIN_WRITE_DRY_RUN` | **false** only during operator execution window; **true** in routine dev |
-
-Register approval ID in `SCHEDULE_WRITE_APPROVAL_IDS` during implementation.
+```json
+{ "open_time": "11:30 [G-9g4a2a open_time smoke]" }
+```
 
 ---
 
-## 7. Safety gates (G-9g4a1 mandatory)
+## 9. changedFields exact policy
 
-| Gate | Check |
-| --- | --- |
-| Target row selected | Row picker → hydrate |
-| `site_slug` match | `gosaki-piano` |
-| Non-PoC audit row | `assertOperationalNotPocAuditRow` passes |
-| `changedFields` | exactly `["venue"]` |
-| Payload | exactly `{ venue: <string> }` |
-| `before.venue` | matches preflight expected value |
-| `after.venue` | matches smoke candidate (execution) or restore target (restore) |
-| Optimistic lock | `optimisticLock.stale=false` at Preview; `expectedBeforeUpdatedAt` matches at Save |
-| Host gate | `hostGatePassed=true`; staging host only |
-| Approval ID | `G-9g4a1-schedule-site-slug-venue-only-non-dry-run` |
-| Env arm | `PUBLIC_ADMIN_SCHEDULE_G9G4A1_VENUE_ONLY_NON_DRY_RUN_ARMED=true` |
-| Dry-run first | Preview executed before Save enabled |
-| Operator Save | manual once; Cursor/AI never clicks |
-| Re-click prevention | Save disabled after success; fresh Preview required |
-| Restore preflight | Required before non-dry-run if smoke marker used |
-| Result doc | preflight + execution (+ restore chain if needed) |
-| Verifier | `verify-g9g4a1*.mjs` |
+```txt
+changedFields.length === 1
+changedFields[0] === slice field name
+order-independent compare in guards
+Preview and Save must agree on changedFields
+```
 
 ---
 
-## 8. Restore strategy
+## 10. Optimistic lock policy
 
-Follow **G-9g3h1 round-trip template** (smoke append → UI restore → post-hardening), adapted for `venue`:
+**Reuse G-9g4a1 / G-9g3g pattern:**
 
-| Phase | Scope |
-| --- | --- |
-| **G-9g4a1** | Implementation: guards, UI gate, Save path (no operator Save in planning) |
-| **G-9g4a1-preflight** | Target row, before.venue, smoke candidate, env stack, rollback SQL documented (not executed) |
-| **G-9g4a1-execution** | Operator Preview once + Save once (optional venue smoke suffix) |
-| **G-9g4a1b-venue-restore-preflight** | Restore path: Option A — G-9g4a1 operational Save with `venue` only back to original |
-| **G-9g4a1c-venue-restore-execution** | Operator Preview once + restore Save once |
-| **G-9g4a1d-post-restore-hardening** | Verify `venue` restored; routine dev safety; registry if needed |
-
-**Restore path:** Same G-9g4a1 approval/arm (venue-only payload to original string) — not G-9g3g5 description restore mode.
-
-**SQL rollback:** Discouraged — UI restore only (project policy).
+- `expectedBeforeUpdatedAt` from loaded row at Preview
+- stale check on Preview blocks Save enablement
+- Save passes `expectedBeforeUpdatedAt` to `executeScheduleGeneralUpdateWrite`
+- DB trigger `schedules_set_updated_at` advances `updated_at` on success
+- Preflight records lock baseline; execution reconfirms live
 
 ---
 
-## 9. Future text field slices (after G-9g4a1)
+## 11. Re-click prevention policy
 
-| Slice | Phase | Fields |
+**Reuse G-9g3h1 / G-9g4a1 pattern:**
+
+- One Save per preview identity
+- After successful Save: Preview consumed message; Save disabled
+- `g9g4a2aOpenTimeOnlySaveSuccess` (or equivalent) gates operator-completed copy
+- Cursor / AI / Playwright must never click Save
+
+---
+
+## 12. Preview → ChatGPT confirmation → Save exactly once
+
+| Step | Actor | Rule |
 | --- | --- | --- |
-| G-9g4a2 | time fields operational | `open_time`, `start_time` |
-| G-9g4a3 | price operational | `price` |
-| G-9g4a4 | title operational | `title` (last — non-empty validation) |
+| 1 | Operator | Select row via row picker |
+| 2 | Operator | Edit `open_time` candidate in slice UI |
+| 3 | Operator | Click Preview once |
+| 4 | ChatGPT | Confirm Preview gate (dry-run flags, changedFields, lock, host) |
+| 5 | Operator | Click Save **exactly once** |
+| 6 | System | Block re-click; require fresh Preview for any further write |
 
-Each slice: new approval ID + env arm + field-specific guard — same pattern as G-9g4a1.
-
-`description` remains proven under G-9g3g operational ID — do not re-prove unless regression slice explicitly planned.
+Cursor / AI: **never** steps 3 or 5.
 
 ---
 
-## 10. CMS Kit generalization impact
+## 13. Restore required policy
 
-| Pattern | G-9g4a1 establishes |
+| State | restore required |
 | --- | --- |
-| Field-specific operational slice | One field (or declared pair) per approval ID |
-| Smoke + restore round-trip | Optional per slice; suffix marker without `[CMS Kit staging]` audit trap |
-| Guard function naming | `assertG9G4a1VenueOnlyPayloadOnly` template for G-9g4a2+ |
-| Env mutual exclusion | Single slice armed at a time |
-| Target row selection | Preflight row picker audit — avoid overused rows |
-| Verifier chain | planning → implementation → preflight → execution → restore |
+| After smoke execution with marker in DB | **yes** — `activeRestoreExceptionsCount: 1` |
+| After successful restore Save (marker removed) | **no** — `activeRestoreExceptionsCount: 0` |
+| After round-trip finalization | **no** — same as G-9g4a1e |
+
+Restore uses **same G-9g4a2a slice path** (not G-9g3g5 description restore).
 
 ---
 
-## 11. Recommended next phase
+## 14. Restore preflight policy
 
-**Recommended:** `G-9g4a1-venue-only-operational-expansion-implementation`
+Before restore manual execution:
 
-**Reason:** Planning complete; UI dry-run already diffs `venue`; gap is guards, approval ID, env arm, Save routing, and verifier — implementation with **no operator Save** in implementation phase.
+- Document `beforeSnapshot` with smoke marker value
+- Document restore payload (original field value only)
+- Document `expectedBeforeUpdatedAt` lock baseline from smoke Save
+- Document rollback SQL (**DO NOT RUN**)
+- Env stack: G-9g4a2a arm on; G-9g4a1 / G-9g3g / G-9g3g5 arms off
+- Cursor / AI: no Preview, no Save in preflight phase
 
-| Sub-phase | First deliverable |
+---
+
+## 15. Rollback SQL document-only policy
+
+```txt
+rollback SQL may be documented in preflight / execution result docs
+rollback SQL must never be executed by Cursor / AI
+UI restore via same slice path is the preferred rollback
+emergency SQL requires separate explicit operator approval (not planned in G-9g4a2a)
+```
+
+Example (G-9g4a2a — **DO NOT RUN**):
+
+```sql
+-- DO NOT RUN — documentation only
+-- UPDATE public.schedules
+-- SET open_time = '11:30'
+-- WHERE id = 'eb1f1898-5107-4deb-a6d5-a792e0ec3f69'
+--   AND site_slug = 'gosaki-piano';
+```
+
+---
+
+## 16. Env arm policy
+
+**This planning phase:** no new env arms created or used. No writes to `.env` / `.env.local`.
+
+**Implementation phase (proposal only):**
+
+```txt
+G-9g4a2a execution only:
+  PUBLIC_ADMIN_SCHEDULE_G9G4A2A_OPEN_TIME_ONLY_NON_DRY_RUN_ARMED=true
+  PUBLIC_ADMIN_SCHEDULE_G9G4A1_VENUE_ONLY_NON_DRY_RUN_ARMED=false
+  PUBLIC_ADMIN_SCHEDULE_G9G3G_OPERATIONAL_GENERAL_EDIT_NON_DRY_RUN_ARMED=false
+  PUBLIC_ADMIN_SCHEDULE_G9G3G5_OPERATIONAL_RESTORE_NON_DRY_RUN_ARMED=false
+  PUBLIC_ADMIN_WRITE_DRY_RUN=false
+  ENABLE_ADMIN_STAGING_WRITE=true
+```
+
+Single slice armed at a time. Mutual exclusion with G-9g4a1 and all other operational arms.
+
+---
+
+## 17. Routine dev safety
+
+```txt
+ENABLE_ADMIN_STAGING_WRITE=false
+PUBLIC_ADMIN_WRITE_DRY_RUN=true
+PUBLIC_ADMIN_SCHEDULE_G9G4A1_VENUE_ONLY_NON_DRY_RUN_ARMED=false or unset
+PUBLIC_ADMIN_SCHEDULE_G9G3G_OPERATIONAL_GENERAL_EDIT_NON_DRY_RUN_ARMED=false or unset
+PUBLIC_ADMIN_SCHEDULE_G9G3G5_OPERATIONAL_RESTORE_NON_DRY_RUN_ARMED=false or unset
+```
+
+- G-9g4a2a env arm: **not created in this phase**
+- Execution-only inline env ended after G-9g4a1e
+- Do **not** write arms to `.env` / `.env.local`
+- Production and `/admin` remain out of scope
+- `service_role` prohibition continues
+- FTP / deploy prohibition continues
+- Staging host only: `kmjqppxjdnwwrtaeqjta.supabase.co`
+
+---
+
+## 18. Forbidden operations (this phase)
+
+| Operation | Status |
 | --- | --- |
-| G-9g4a1 implementation | constants, guard, config, UI gate, executor hook, disarm G-9g3g when G-9g4a1 armed |
-| G-9g4a1-preflight | Option A target row selection + beforeSnapshot |
+| Cursor/AI row picker click | **no** |
+| Cursor/AI Preview click | **no** |
+| Cursor/AI Save click | **no** |
+| DB write / SQL mutation | **no** |
+| Rollback / restore SQL execution | **no** |
+| FTP / workflow_dispatch / deploy | **no** |
+| service_role | **not used** |
+| `/admin` / production | **not touched** |
+| New env arm activation | **no** |
 
 ---
 
-## 12. Safety flags (this phase)
+## 19. Safety flags (proven + this phase)
+
+**G-9g4a1 round-trip (proven):**
+
+```json
+{
+  "serviceRoleUsed": false,
+  "productionBlocked": true,
+  "scheduleMonthsTouched": false,
+  "deleteEnabled": false,
+  "publishTriggered": false
+}
+```
+
+**G-9g4a2 planning (this phase):**
 
 ```json
 {
@@ -338,14 +411,22 @@ Each slice: new approval ID + env arm + field-specific guard — same pattern as
   "productionBlocked": true,
   "serviceRoleUsed": false,
   "markerRemainsInStagingDb": false,
-  "activeRestoreExceptionsCount": 0
+  "activeRestoreExceptionsCount": 0,
+  "restoreRequired": false
 }
 ```
 
-| Item | G-9g4a |
+---
+
+## 20. Recommended next phase
+
+**`G-9g4a2a-open-time-only-operational-expansion-implementation`**
+
+**Reason:** G-9g4a1 proved single-field operational round-trip; `open_time` is the smallest safe text field with clear validation and no SEO coupling. Implementation phase delivers guards, config, UI gate, executor — **no operator Save** in implementation phase.
+
+| Deliverable | Scope |
 | --- | --- |
-| Save clicked | **no** |
-| Preview clicked (Cursor/AI) | **no** |
-| DB write executed | **no** |
-| SQL mutation executed | **no** |
-| FTP / workflow_dispatch / deploy | **not executed** |
+| G-9g4a2a implementation | approval ID registration, guards, config, UI module, executor, mutual exclusion |
+| G-9g4a2a preflight | target row, before.open_time, smoke candidate, rollback SQL doc-only |
+
+**Do not** implement G-9g4a2b (`start_time`) or G-9g4a2c (`price`) until G-9g4a2a round-trip is complete or explicitly deferred by operator.

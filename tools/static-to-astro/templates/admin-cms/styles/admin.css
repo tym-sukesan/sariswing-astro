@@ -1687,6 +1687,31 @@
   max-width: 1120px;
 }
 
+/* Gosaki staging admin — placeholder lighter than entered text */
+.admin-gosaki-schedule-operator input::placeholder,
+.admin-gosaki-schedule-operator textarea::placeholder,
+.admin-gosaki-youtube-operator input::placeholder,
+.admin-gosaki-youtube-operator textarea::placeholder,
+.admin-gosaki-discography-operator input::placeholder,
+.admin-gosaki-discography-operator textarea::placeholder,
+.admin-gosaki-operator-home input::placeholder,
+.admin-gosaki-operator-home textarea::placeholder {
+  color: #a8b0bd;
+  opacity: 1;
+}
+
+.admin-gosaki-schedule-operator input::-webkit-input-placeholder,
+.admin-gosaki-schedule-operator textarea::-webkit-input-placeholder,
+.admin-gosaki-youtube-operator input::-webkit-input-placeholder,
+.admin-gosaki-youtube-operator textarea::-webkit-input-placeholder,
+.admin-gosaki-discography-operator input::-webkit-input-placeholder,
+.admin-gosaki-discography-operator textarea::-webkit-input-placeholder,
+.admin-gosaki-operator-home input::-webkit-input-placeholder,
+.admin-gosaki-operator-home textarea::-webkit-input-placeholder {
+  color: #a8b0bd;
+  opacity: 1;
+}
+
 .admin-form--grid {
   display: grid;
   gap: 1rem;

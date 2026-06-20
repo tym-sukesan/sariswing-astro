@@ -3,6 +3,7 @@
  */
 
 import { STAGING_SHELL_GOSAKI_SCHEDULE_SITE_SLUG } from "../staging-data/staging-schedule-site-slug-config";
+import { assertStaticToAstroCmsStagingSupabaseProject } from "../staging-data/staging-schedule-site-slug-host-gate";
 import type { ScheduleDryRunSource } from "./schedule-dry-run-types";
 import {
   G9J1_PHASE,
@@ -143,9 +144,19 @@ export function executeG9jExistingEventUpdateDryRun(input: {
   beforeSnapshot: ScheduleDryRunSource;
   formValues: G9jExistingEventUpdateFormValues;
   optimisticLockStale?: boolean;
+  supabaseUrl?: string;
 }): G9jExistingEventUpdateDryRunResult {
   const guardErrors: string[] = [];
   const optimisticLockStale = input.optimisticLockStale === true;
+
+  if (input.supabaseUrl !== undefined) {
+    try {
+      assertStaticToAstroCmsStagingSupabaseProject(input.supabaseUrl);
+    } catch (error) {
+      guardErrors.push(error instanceof Error ? error.message : String(error));
+      return emptyDryRunResult(input.beforeSnapshot, guardErrors, optimisticLockStale);
+    }
+  }
 
   try {
     assertG9jExistingEventUpdateWritableRow(input.beforeSnapshot);

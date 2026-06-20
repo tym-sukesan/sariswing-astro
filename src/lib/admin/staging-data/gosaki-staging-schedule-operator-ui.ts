@@ -410,6 +410,7 @@ function runEditDryRunPreview(): void {
   const result = executeG9jExistingEventUpdateDryRun({
     beforeSnapshot: selectedRowSnapshot,
     formValues: readEditFormSafeValues(),
+    supabaseUrl: String(import.meta.env.PUBLIC_SUPABASE_URL ?? ""),
   });
   lastDryRunResult = result;
   renderDryRunResult(result);

@@ -24,7 +24,10 @@ import {
   STAGING_SHELL_GOSAKI_SCHEDULE_SITE_SLUG,
 } from "../staging-data/staging-schedule-site-slug-config";
 import { collectOtherRegistryEnvArmFailures } from "../staging-data/staging-schedule-single-text-field-operational-registry";
-import { evaluateSupabaseHostGate } from "../staging-data/staging-schedule-site-slug-host-gate";
+import {
+  evaluateStagingProjectAllowlist,
+  evaluateSupabaseHostGate,
+} from "../staging-data/staging-schedule-site-slug-host-gate";
 
 export const G9J1_PHASE =
   "G-9j1-gosaki-schedule-existing-event-update-guards-and-dry-run-implementation";
@@ -89,6 +92,7 @@ export function getG9jExistingEventUpdateConfig(
   const supabaseConfigured = Boolean(supabaseUrl && supabaseAnonKey);
   const productionBlocked = looksLikeProductionBlocked(mergedEnv);
   const hostGate = evaluateSupabaseHostGate(supabaseUrl);
+  const projectAllowlist = evaluateStagingProjectAllowlist(supabaseUrl);
   const providerRaw = String(mergedEnv.PUBLIC_ADMIN_WRITE_PROVIDER ?? "").trim();
   const module = String(mergedEnv.PUBLIC_ADMIN_WRITE_MODULE ?? "").trim();
   const approvalIdEnv = String(mergedEnv.PUBLIC_ADMIN_WRITE_APPROVAL_ID ?? "").trim();
@@ -115,6 +119,9 @@ export function getG9jExistingEventUpdateConfig(
   const armFailures: string[] = [];
   if (!hostGate.hostGatePassed) {
     armFailures.push(hostGate.warningMessage ?? "Supabase host gate failed");
+  }
+  if (!projectAllowlist.allowlistPassed) {
+    armFailures.push(projectAllowlist.errorMessage ?? "Staging project allowlist failed");
   }
   if (!dev) armFailures.push("DEV only");
   if (!stagingShellEnabled) armFailures.push("ENABLE_ADMIN_STAGING_SHELL");

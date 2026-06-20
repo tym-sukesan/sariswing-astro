@@ -120,6 +120,14 @@ export const G9G4A2C_SCHEDULE_PRICE_ONLY_NON_DRY_RUN_APPROVAL_ID:
   ScheduleG9G4a2cPriceOnlyNonDryRunApprovalId =
   "G-9g4a2c-schedule-site-slug-price-only-non-dry-run";
 
+/** G-9j Gosaki operator existing event update non-dry-run — staging shell only. */
+export type ScheduleG9jExistingEventUpdateNonDryRunApprovalId =
+  "G-9j-gosaki-schedule-existing-event-update-non-dry-run";
+
+export const G9J_SCHEDULE_EXISTING_EVENT_UPDATE_NON_DRY_RUN_APPROVAL_ID:
+  ScheduleG9jExistingEventUpdateNonDryRunApprovalId =
+  "G-9j-gosaki-schedule-existing-event-update-non-dry-run";
+
 export type ScheduleWriteApprovalIdUnion =
   | ScheduleWriteApprovalId
   | ScheduleSafeFieldsNonDryRunPocApprovalId
@@ -134,7 +142,8 @@ export type ScheduleWriteApprovalIdUnion =
   | ScheduleG9G4a1VenueOnlyNonDryRunApprovalId
   | ScheduleG9G4a2aOpenTimeOnlyNonDryRunApprovalId
   | ScheduleG9G4a2bStartTimeOnlyNonDryRunApprovalId
-  | ScheduleG9G4a2cPriceOnlyNonDryRunApprovalId;
+  | ScheduleG9G4a2cPriceOnlyNonDryRunApprovalId
+  | ScheduleG9jExistingEventUpdateNonDryRunApprovalId;
 
 export const SCHEDULE_WRITE_APPROVAL_IDS: readonly ScheduleWriteApprovalIdUnion[] = [
   SCHEDULE_WRITE_APPROVAL_ID,
@@ -151,6 +160,7 @@ export const SCHEDULE_WRITE_APPROVAL_IDS: readonly ScheduleWriteApprovalIdUnion[
   G9G4A2A_SCHEDULE_OPEN_TIME_ONLY_NON_DRY_RUN_APPROVAL_ID,
   G9G4A2B_SCHEDULE_START_TIME_ONLY_NON_DRY_RUN_APPROVAL_ID,
   G9G4A2C_SCHEDULE_PRICE_ONLY_NON_DRY_RUN_APPROVAL_ID,
+  G9J_SCHEDULE_EXISTING_EVENT_UPDATE_NON_DRY_RUN_APPROVAL_ID,
 ];
 
 export type ScheduleUpdateWritePayload = {

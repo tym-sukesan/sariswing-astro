@@ -193,6 +193,32 @@ const G9G3D_GENERAL_EDIT_SAFE_FIELDS = [
   "description",
 ] as const;
 
+/** G-9j operator existing event UPDATE — same six safe fields as G-9g3d operational set. */
+export const G9J_EXISTING_EVENT_UPDATE_SAFE_FIELDS = G9G3D_GENERAL_EDIT_SAFE_FIELDS;
+
+export type G9jExistingEventUpdateSafeField =
+  (typeof G9J_EXISTING_EVENT_UPDATE_SAFE_FIELDS)[number];
+
+const G9J_EXISTING_EVENT_UPDATE_FORBIDDEN_CHANGED_FIELDS = new Set([
+  "id",
+  "legacy_id",
+  "site_slug",
+  "date",
+  "year",
+  "month",
+  "source_route",
+  "source_file",
+  "published",
+  "show_on_home",
+  "home_order",
+  "sort_order",
+  "image_url",
+  "home_image_url",
+  "created_at",
+  "updated_at",
+  "schedule_months",
+]);
+
 export function normalizeG9G3dGeneralEditFieldValue(
   field: string,
   raw: string,
@@ -245,6 +271,51 @@ export function assertG9G3dGeneralEditPayloadOnly(
   expectedChangedFields: string[],
 ): void {
   assertG9G3gOperationalGeneralEditPayloadOnly(payload, expectedChangedFields, "G-9g3d");
+}
+
+export function assertG9jExistingEventUpdateChangedFieldsOnly(
+  changedFields: string[],
+): void {
+  if (changedFields.length === 0) {
+    throw new Error("G-9j changedFields must include at least one field.");
+  }
+  const safeSet = new Set<string>(G9J_EXISTING_EVENT_UPDATE_SAFE_FIELDS);
+  for (const field of changedFields) {
+    if (G9J_EXISTING_EVENT_UPDATE_FORBIDDEN_CHANGED_FIELDS.has(field)) {
+      throw new Error(`G-9j changed field forbidden: ${field}`);
+    }
+    if (!safeSet.has(field)) {
+      throw new Error(`G-9j changed field not allowed: ${field}`);
+    }
+  }
+}
+
+export function buildG9jExistingEventUpdatePayload(
+  changedFields: string[],
+  rawValues: Record<string, string>,
+): ScheduleUpdateWritePayload {
+  assertG9jExistingEventUpdateChangedFieldsOnly(changedFields);
+  return buildG9G3dGeneralEditPayload(changedFields, rawValues);
+}
+
+export function assertG9jExistingEventUpdatePayloadOnly(
+  payload: ScheduleUpdateWritePayload,
+  expectedChangedFields: string[],
+): void {
+  assertG9jExistingEventUpdateChangedFieldsOnly(expectedChangedFields);
+  assertG9G3gOperationalGeneralEditPayloadOnly(payload, expectedChangedFields, "G-9j");
+}
+
+export function assertG9jExistingEventUpdateWritableRow(
+  row: ScheduleDryRunSource,
+): void {
+  assertScheduleWriteTargetId(row.id);
+  if (row.site_slug !== STAGING_SHELL_GOSAKI_SCHEDULE_SITE_SLUG) {
+    throw new Error(
+      `G-9j site_slug must be ${STAGING_SHELL_GOSAKI_SCHEDULE_SITE_SLUG}.`,
+    );
+  }
+  assertOperationalNotPocAuditRow(row, "G-9j");
 }
 
 const G9G3G_OPERATIONAL_SAFE_FIELDS = G9G3D_GENERAL_EDIT_SAFE_FIELDS;

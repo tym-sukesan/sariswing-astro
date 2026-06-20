@@ -184,6 +184,43 @@ saveEnabled: false
 readyForAnyDbWrite: false
 ```
 
+### G-9j5 explicit admin email policy (2026-06-20)
+
+For non-dry-run DB writes, operator/admin email must be explicitly provided.
+Do not fall back to git config user.email.
+Git user.email is a developer identity, not an authenticated CMS operator identity.
+
+G-9j5 run script email resolution (no git fallback):
+
+```txt
+1. G9J5_STAGING_ADMIN_EMAIL
+2. SUPABASE_ADMIN_EMAIL
+3. none → STOP before signInWithPassword
+```
+
+**Incident:** G-9j5 first attempt used `git config user.email` (`ysktoyamax@gmail.com`) because `SUPABASE_ADMIN_EMAIL` was unset → `Invalid login credentials`. DB UPDATE not executed; target row unchanged.
+
+Operator re-run command (zsh — interactive email + password; do not commit secrets):
+
+```bash
+cd /Users/toyamayusuke/sariswing-astro
+
+read "G9J5_STAGING_ADMIN_EMAIL?Staging admin email: "
+read -s "SUPABASE_ADMIN_PASSWORD?Staging admin password: "; echo
+export G9J5_STAGING_ADMIN_EMAIL
+export SUPABASE_ADMIN_PASSWORD
+
+PUBLIC_ADMIN_GOSAKI_SCHEDULE_EXISTING_EVENT_UPDATE_NON_DRY_RUN_ARMED=true \
+PUBLIC_ADMIN_WRITE_DRY_RUN=false \
+PUBLIC_ADMIN_WRITE_PROVIDER=supabase \
+PUBLIC_ADMIN_WRITE_MODULE=schedule \
+PUBLIC_ADMIN_WRITE_APPROVAL_ID=G-9j-gosaki-schedule-existing-event-update-non-dry-run \
+node tools/static-to-astro/scripts/run-g9j5-gosaki-schedule-existing-event-update-one-row.mjs
+
+unset G9J5_STAGING_ADMIN_EMAIL
+unset SUPABASE_ADMIN_PASSWORD
+```
+
 ---
 
 ## 8. G-9j5 still blocked until

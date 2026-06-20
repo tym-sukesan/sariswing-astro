@@ -108,12 +108,16 @@ for (const field of FORBIDDEN_IN_PAYLOAD) {
   assert(`dry-run field map excludes ${field}`, !fieldIdsBlock.includes(`${field}:`));
 }
 
-assert("no non-dry-run save executor added", !uiSrc.includes("executeG9j") || uiSrc.includes("executeG9jExistingEventUpdateDryRun"));
 assert(
-  "no new non-dry-run save file",
-  !fs.existsSync(
+  "G-9j5 save module exists (UI must not call it yet)",
+  fs.existsSync(
     path.join(REPO_ROOT, "src/lib/admin/staging-write/gosaki-schedule-existing-event-update-save.ts"),
   ),
+);
+assert(
+  "UI does not import G-9j5 save executor",
+  !uiSrc.includes("executeG9j5ExistingEventDescriptionOneRowSave") &&
+    !uiSrc.includes("gosaki-schedule-existing-event-update-save"),
 );
 
 assert("dry-run panel CSS", cssSrc.includes("gosaki-schedule-edit-dry-run"));

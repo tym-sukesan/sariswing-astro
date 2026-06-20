@@ -112,16 +112,10 @@ function displayValue(value: string | null | undefined): string {
         </label>
       </div>
 
-      <div class="gosaki-schedule-admin-form__row">
-        <label class="admin-form__field">
-          <span class="admin-form__label">料金</span>
-          <input id="gosaki-add-price" type="text" placeholder="例: 3,500 (tax in)" />
-        </label>
-        <label class="admin-form__field">
-          <span class="admin-form__label">表示順</span>
-          <input id="gosaki-add-sort-order" type="number" value="10" step="1" />
-        </label>
-      </div>
+      <label class="admin-form__field">
+        <span class="admin-form__label">料金</span>
+        <input id="gosaki-add-price" type="text" placeholder="例: 3,500 (tax in)" />
+      </label>
 
       <label class="admin-form__field admin-form__field--full">
         <span class="admin-form__label">備考 / 説明</span>
@@ -222,43 +216,50 @@ function displayValue(value: string | null | undefined): string {
             登録済みスケジュールがありません。
           </p>
         ) : (
-          <div class="admin-gosaki-schedule-table-wrap">
-            <table class="admin-gosaki-schedule-table">
-              <thead>
-                <tr>
-                  <th scope="col">日付</th>
-                  <th scope="col">タイトル</th>
-                  <th scope="col">会場</th>
-                  <th scope="col">開場</th>
-                  <th scope="col">開演</th>
-                  <th scope="col">料金</th>
-                  <th scope="col">操作</th>
-                </tr>
-              </thead>
-              <tbody id="gosaki-schedule-operator-table-body">
-                {
-                  binding.selectableRows.map((row: ScheduleRecord) => (
-                    <tr class="admin-gosaki-schedule-table__row" data-row-id={row.id}>
-                      <td>{row.date}</td>
-                      <td>{displayValue(row.title)}</td>
-                      <td>{displayValue(row.venue)}</td>
-                      <td>{displayValue(row.open_time)}</td>
-                      <td>{displayValue(row.start_time)}</td>
-                      <td>{displayValue(row.price)}</td>
-                      <td>
-                        <button
-                          type="button"
-                          class="admin-button admin-button--secondary admin-gosaki-schedule-select-btn"
-                          data-select-row-id={row.id}
-                        >
-                          編集する
-                        </button>
-                      </td>
-                    </tr>
-                  ))
-                }
-              </tbody>
-            </table>
+          <div class="gosaki-schedule-admin-list-views">
+            <div class="admin-gosaki-schedule-table-wrap">
+              <table class="admin-gosaki-schedule-table">
+                <thead>
+                  <tr>
+                    <th scope="col">日付</th>
+                    <th scope="col">タイトル</th>
+                    <th scope="col">会場</th>
+                    <th scope="col">開場</th>
+                    <th scope="col">開演</th>
+                    <th scope="col">料金</th>
+                    <th scope="col">操作</th>
+                  </tr>
+                </thead>
+                <tbody id="gosaki-schedule-operator-table-body">
+                  {
+                    binding.selectableRows.map((row: ScheduleRecord) => (
+                      <tr class="admin-gosaki-schedule-table__row" data-row-id={row.id}>
+                        <td>{row.date}</td>
+                        <td>{displayValue(row.title)}</td>
+                        <td>{displayValue(row.venue)}</td>
+                        <td>{displayValue(row.open_time)}</td>
+                        <td>{displayValue(row.start_time)}</td>
+                        <td>{displayValue(row.price)}</td>
+                        <td>
+                          <button
+                            type="button"
+                            class="admin-button admin-button--secondary admin-gosaki-schedule-select-btn"
+                            data-select-row-id={row.id}
+                          >
+                            編集する
+                          </button>
+                        </td>
+                      </tr>
+                    ))
+                  }
+                </tbody>
+              </table>
+            </div>
+            <ul
+              id="gosaki-schedule-operator-card-list"
+              class="gosaki-schedule-admin-card-list"
+              aria-label="公演一覧"
+            ></ul>
           </div>
         )
       }

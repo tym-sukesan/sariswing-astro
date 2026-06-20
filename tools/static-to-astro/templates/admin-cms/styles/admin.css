@@ -1753,6 +1753,109 @@
   overflow-x: auto;
 }
 
+@media (max-width: 767px) {
+  .admin-gosaki-schedule-table-wrap {
+    display: none;
+  }
+}
+
+.gosaki-schedule-admin-card-list {
+  display: none;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  gap: 0.75rem;
+}
+
+@media (max-width: 767px) {
+  .gosaki-schedule-admin-card-list {
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+.gosaki-schedule-admin-card {
+  padding: 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: var(--admin-radius);
+  background: #fff;
+}
+
+.gosaki-schedule-admin-card.is-selected {
+  border-color: #93c5fd;
+  background: #f0f9ff;
+}
+
+.gosaki-schedule-admin-card__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.35rem;
+}
+
+.gosaki-schedule-admin-card__date {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #111827;
+}
+
+.gosaki-schedule-admin-card__status {
+  flex-shrink: 0;
+  font-size: 0.72rem;
+  padding: 0.15rem 0.45rem;
+  border-radius: 999px;
+  font-weight: 600;
+}
+
+.gosaki-schedule-admin-card__status--published {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.gosaki-schedule-admin-card__status--draft {
+  background: #f3f4f6;
+  color: #6b7280;
+}
+
+.gosaki-schedule-admin-card__title {
+  margin: 0 0 0.25rem;
+  font-weight: 600;
+  line-height: 1.45;
+  color: #111827;
+}
+
+.gosaki-schedule-admin-card__venue {
+  margin: 0 0 0.5rem;
+  color: #4b5563;
+  font-size: 0.92rem;
+}
+
+.gosaki-schedule-admin-card__times,
+.gosaki-schedule-admin-card__price {
+  margin: 0 0 0.35rem;
+  font-size: 0.88rem;
+  color: #374151;
+  line-height: 1.5;
+}
+
+.gosaki-schedule-admin-card__actions {
+  margin-top: 0.75rem;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.gosaki-schedule-admin-card__actions .admin-gosaki-schedule-select-btn {
+  min-width: 6.5rem;
+}
+
+.gosaki-schedule-admin-card-list__empty {
+  padding: 1rem;
+  text-align: center;
+  color: #6b7280;
+  font-size: 0.9rem;
+}
+
 .admin-gosaki-schedule-table {
   width: 100%;
   border-collapse: collapse;

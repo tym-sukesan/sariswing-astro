@@ -45,10 +45,33 @@ function parseRowsDataset(): ScheduleRecord[] {
   }
 }
 
-function monthFromDate(date: string): string {
+function normalizeDateInput(date: string): string {
   const trimmed = date.trim();
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) return "";
-  return trimmed.slice(0, 7);
+  if (/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) return trimmed;
+  const slash = trimmed.match(/^(\d{4})\/(\d{2})\/(\d{2})$/);
+  if (slash) return `${slash[1]}-${slash[2]}-${slash[3]}`;
+  return "";
+}
+
+function monthFromDate(date: string): string {
+  const normalized = normalizeDateInput(date);
+  if (!normalized) return "";
+  return normalized.slice(0, 7);
+}
+
+function formatMonthHint(date: string): string {
+  const month = monthFromDate(date);
+  if (!month) {
+    return "日付を入力すると、表示先の月が自動で決まります。";
+  }
+  const [year, mon] = month.split("-");
+  return `この公演は ${year}-${mon} のページに表示されます`;
+}
+
+function setMonthHint(elementId: string, date: string): void {
+  const el = document.getElementById(elementId);
+  if (!el) return;
+  el.textContent = formatMonthHint(date);
 }
 
 function schedulePreviewUrl(month: string | null | undefined): string {
@@ -138,10 +161,8 @@ function setCheckbox(id: string, checked: boolean): void {
 }
 
 function populateAddFormFromRow(row: ScheduleRecord): void {
-  setFieldValue("gosaki-add-date", row.date ?? "");
-  const month = String(row.month ?? monthFromDate(row.date));
-  const monthSelect = document.getElementById("gosaki-add-month") as HTMLSelectElement | null;
-  if (monthSelect) monthSelect.value = month || "";
+  const date = row.date ?? "";
+  setFieldValue("gosaki-add-date", date);
   setFieldValue("gosaki-add-title", String(row.title ?? ""));
   setFieldValue("gosaki-add-venue", String(row.venue ?? ""));
   setFieldValue("gosaki-add-open-time", String(row.open_time ?? ""));
@@ -149,7 +170,8 @@ function populateAddFormFromRow(row: ScheduleRecord): void {
   setFieldValue("gosaki-add-price", String(row.price ?? ""));
   setFieldValue("gosaki-add-description", String(row.description ?? ""));
   setCheckbox("gosaki-add-published", row.published === true);
-  setPreviewLink("gosaki-add-preview-link", month);
+  setMonthHint("gosaki-add-month-hint", date);
+  setPreviewLink("gosaki-add-preview-link", monthFromDate(date));
 }
 
 function renderEditForm(row: ScheduleRecord | null): void {
@@ -166,10 +188,11 @@ function renderEditForm(row: ScheduleRecord | null): void {
   emptyEl.hidden = true;
   formEl.hidden = false;
 
-  const month = String(row.month ?? monthFromDate(row.date));
+  const date = row.date ?? "";
+  const month = monthFromDate(date);
 
-  setFieldValue("gosaki-edit-date", row.date ?? "");
-  setFieldValue("gosaki-edit-month", month);
+  setFieldValue("gosaki-edit-date", date);
+  setMonthHint("gosaki-edit-month-hint", date);
   setFieldValue("gosaki-edit-title", String(row.title ?? ""));
   setFieldValue("gosaki-edit-venue", String(row.venue ?? ""));
   setFieldValue("gosaki-edit-open-time", String(row.open_time ?? ""));
@@ -288,22 +311,19 @@ function wireTableActions(): void {
 
 function wireAddForm(): void {
   const dateInput = document.getElementById("gosaki-add-date") as HTMLInputElement | null;
-  const monthSelect = document.getElementById("gosaki-add-month") as HTMLSelectElement | null;
   const duplicateSelect = document.getElementById(
     "gosaki-add-duplicate-source",
   ) as HTMLSelectElement | null;
 
-  dateInput?.addEventListener("change", () => {
-    const month = monthFromDate(dateInput.value);
-    if (monthSelect && monthSelect.value === "") {
-      setPreviewLink("gosaki-add-preview-link", month);
-    }
-  });
-
-  monthSelect?.addEventListener("change", () => {
-    const month = monthSelect.value || monthFromDate(dateInput?.value ?? "");
+  const syncAddDateDerived = () => {
+    const date = dateInput?.value ?? "";
+    const month = monthFromDate(date);
+    setMonthHint("gosaki-add-month-hint", date);
     setPreviewLink("gosaki-add-preview-link", month);
-  });
+  };
+
+  dateInput?.addEventListener("change", syncAddDateDerived);
+  dateInput?.addEventListener("input", syncAddDateDerived);
 
   duplicateSelect?.addEventListener("change", () => {
     const rowId = duplicateSelect.value;
@@ -311,15 +331,20 @@ function wireAddForm(): void {
     const row = selectableRows.find((r) => r.id === rowId);
     if (row) populateAddFormFromRow(row);
   });
+
+  syncAddDateDerived();
 }
 
 function wireEditForm(): void {
   const dateInput = document.getElementById("gosaki-edit-date") as HTMLInputElement | null;
-  dateInput?.addEventListener("change", () => {
-    const month = monthFromDate(dateInput.value);
-    setFieldValue("gosaki-edit-month", month);
+  const syncEditDateDerived = () => {
+    const date = dateInput?.value ?? "";
+    const month = monthFromDate(date);
+    setMonthHint("gosaki-edit-month-hint", date);
     setPreviewLink("gosaki-edit-preview-link", month);
-  });
+  };
+  dateInput?.addEventListener("change", syncEditDateDerived);
+  dateInput?.addEventListener("input", syncEditDateDerived);
 }
 
 function wireDisabledActions(): void {

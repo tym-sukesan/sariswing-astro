@@ -1672,6 +1672,13 @@
   }
 }
 
+.gosaki-schedule-admin-month-hint {
+  margin: 0.35rem 0 0;
+  font-size: 0.85rem;
+  color: #64748b;
+  line-height: 1.5;
+}
+
 .gosaki-schedule-admin-preview-link-wrap {
   margin: 0;
   font-size: 0.9rem;

@@ -9,7 +9,19 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Schedule | Add + edit forms; save disabled; dev PoC in `<details>` |
 | Next | G-9h1 client preview feedback closure |
 
-## 0b. Gosaki YouTube and Discography (G-9j)
+## 0b. G-9j Gosaki schedule existing event save enablement — planning complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-9j-gosaki-schedule-existing-event-save-enablement-planning` |
+| Doc | `gosaki-schedule-existing-event-save-enablement-planning.md` |
+| Verifier | `verify-g9j-gosaki-schedule-existing-event-save-enablement-planning.mjs` — 33 passed |
+| Scope | Existing row UPDATE only — 6 safe fields; no add/delete/date/published |
+| Status | **planning complete** — no implementation / Save / DB write |
+| Next | `G-9j1-guards-and-dry-run-implementation` |
+| `readyForAnyDbWrite` | **false** |
+
+## 0c. Gosaki YouTube and Discography (UI practicalization)
 
 Static home YouTube embeds (multi-item JSON) + Discography CMS-ready admin UI. Doc: `gosaki-youtube-and-discography-practicalization.md`. No DB / Save / deploy.
 
@@ -71,12 +83,13 @@ cursorClickedPreview: false
 
 ## 2. Next steps
 
-1. **G-9h1 client preview feedback closure** — staging URL review vs Wix; residual list; no DB write / Preview / Save
-2. **G-9h2 public schedule read verification + re-upload planning** — `scheduleDataSource` check; manual re-upload checklist
-3. **G-9h3 schedule CMS practicalization phase boundary** — Phase 1 vs Phase 2 write slice roadmap
-4. **G-9i YouTube embed planning** — separate track per G-9a
-5. **Optional:** operator dry-run Preview for `start_time` / `price` (explicit approval only; no Save)
-6. **Not** next: `start_time`-only manual non-dry-run execution slice
+1. **G-9j1 guards + dry-run implementation** — register approval ID; `assertG9j*` guards; operator dry-run path; Save still disabled; no DB write
+2. **G-9h1 client preview feedback closure** — staging URL review vs Wix; residual list; no DB write / Preview / Save
+3. **G-9h2 public schedule read verification + re-upload planning** — `scheduleDataSource` check; manual re-upload checklist
+4. **G-9h3 schedule CMS practicalization phase boundary** — Phase 1 vs Phase 2 write slice roadmap
+5. **G-9i YouTube embed planning** — separate track per G-9a
+6. **Optional:** operator dry-run Preview for `start_time` / `price` (explicit approval only; no Save)
+7. **Not** next: `start_time`-only manual non-dry-run execution slice
 
 ## 3. Routine dev safety
 

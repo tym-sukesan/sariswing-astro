@@ -5,7 +5,8 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-9h-gosaki-schedule-cms-practicalization-planning — complete; Gosaki staging admin schedule UI refined (check git HEAD).
+Current phase: G-9j-gosaki-schedule-existing-event-save-enablement-planning — complete (planning only). G-9j planning complete; latest commit should be checked with git HEAD.
+Prior: G-9h planning complete; Gosaki staging admin schedule UI refined (check git HEAD).
 branch: main
 HEAD = origin/main — check git HEAD for latest commit hash
 G-9g4a2 framework: complete, committed, pushed (C1–C4 through d66bae7)
@@ -71,6 +72,17 @@ PUBLIC_ADMIN_SCHEDULE_G9G3G_OPERATIONAL_GENERAL_EDIT_NON_DRY_RUN_ARMED=false or 
 PUBLIC_ADMIN_SCHEDULE_G9G3G5_OPERATIONAL_RESTORE_NON_DRY_RUN_ARMED=false or unset
 ```
 
+## G-9j Gosaki schedule existing event save enablement — planning complete
+
+- **Doc:** `gosaki-schedule-existing-event-save-enablement-planning.md`
+- **Verifier:** 33 passed
+- **Scope:** existing row UPDATE only (`title`, `venue`, `open_time`, `start_time`, `price`, `description`)
+- **approvalId:** `G-9j-gosaki-schedule-existing-event-update-non-dry-run`
+- **env:** `PUBLIC_ADMIN_GOSAKI_SCHEDULE_EXISTING_EVENT_UPDATE_NON_DRY_RUN_ARMED`
+- **Reuse:** `buildScheduleLockedWriteRequest`, `updateScheduleWrite`, optimistic lock; **new** operator UI path (not G-9g3g PoC)
+- **Next:** G-9j1 guards + dry-run implementation — **no DB write / Save yet**
+- **`readyForAnyDbWrite: false`**
+
 ## G-9h Gosaki schedule CMS practicalization planning — complete
 
 - **Doc:** `gosaki-schedule-cms-practicalization-planning.md`
@@ -81,9 +93,10 @@ PUBLIC_ADMIN_SCHEDULE_G9G3G5_OPERATIONAL_RESTORE_NON_DRY_RUN_ARMED=false or unse
 
 ## Next
 
-1. **G-9h1** client preview feedback closure (staging URL vs Wix; residual list; no DB write)
-2. **G-9h2** public schedule read verification + re-upload planning
-3. **G-9h3** schedule CMS practicalization phase boundary
-4. **G-9i** YouTube embed planning (parallel track)
-5. Optional operator dry-run Preview (`start_time`/`price`) — explicit approval only; no Save
-6. **Not** `start_time`-only manual non-dry-run execution
+1. **G-9j1** guards + dry-run implementation (Save disabled; no DB write)
+2. **G-9h1** client preview feedback closure (staging URL vs Wix; residual list; no DB write)
+3. **G-9h2** public schedule read verification + re-upload planning
+4. **G-9h3** schedule CMS practicalization phase boundary
+5. **G-9i** YouTube embed planning (parallel track)
+6. Optional operator dry-run Preview (`start_time`/`price`) — explicit approval only; no Save
+7. **Not** `start_time`-only manual non-dry-run execution

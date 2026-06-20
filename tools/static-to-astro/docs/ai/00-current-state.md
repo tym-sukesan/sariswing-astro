@@ -3,6 +3,8 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
+**G-9j Gosaki schedule existing event save enablement planning (2026-06-19):** **complete** — planning only. Doc: `gosaki-schedule-existing-event-save-enablement-planning.md`; verifier 33 passed. Scope: existing row UPDATE (`title`, `venue`, `open_time`, `start_time`, `price`, `description`); dry-run before Save; approval `G-9j-gosaki-schedule-existing-event-update-non-dry-run`. G-9j planning complete. 最新commitは git HEAD を確認すること。 Next: `G-9j1-guards-and-dry-run-implementation`. `readyForAnyDbWrite: false`.
+
 **Gosaki Schedule admin add/edit UI (2026-06-19):** Operator add/edit forms on staging schedule page; save disabled. Commit: `Add Gosaki schedule add and edit admin UI` (check git HEAD). No DB write / Save.
 
 **Gosaki YouTube/Discography admin UI fix (2026-06-19):** Fixed `previewDiscographyUrl` ReferenceError; simplified YouTube admin to embed-code-only (Instagram-style); added admin-form/list CSS to staging shell. Commit: `Fix and simplify Gosaki YouTube and Discography admin UI` (check git HEAD). No DB write / Save.

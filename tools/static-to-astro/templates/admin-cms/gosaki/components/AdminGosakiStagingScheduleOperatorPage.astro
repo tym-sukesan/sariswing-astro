@@ -330,6 +330,27 @@ function displayValue(value: string | null | undefined): string {
           </a>
         </p>
 
+        <div class="gosaki-schedule-edit-dry-run-actions">
+          <button
+            type="button"
+            class="admin-button admin-button-secondary"
+            id="gosaki-schedule-edit-dry-run-btn"
+            data-gosaki-dry-run-only
+          >
+            変更を確認
+          </button>
+          <p class="gosaki-schedule-edit-dry-run-actions__hint" role="note">
+            保存前に、変更内容を画面上で確認できます。データベースは変更されません。
+          </p>
+        </div>
+
+        <div
+          id="gosaki-schedule-edit-dry-run-result"
+          class="gosaki-schedule-edit-dry-run"
+          hidden
+          aria-live="polite"
+        ></div>
+
         <div class="admin-actions gosaki-schedule-admin-edit-actions">
           <button
             type="button"
@@ -338,7 +359,7 @@ function displayValue(value: string | null | undefined): string {
             data-gosaki-schedule-action-disabled
             disabled
           >
-            更新
+            更新する（準備中）
           </button>
           <button
             type="button"
@@ -359,7 +380,9 @@ function displayValue(value: string | null | undefined): string {
             削除
           </button>
         </div>
-        <p class="admin-gosaki-save-note" role="note">※ 更新・複製・削除は準備中です</p>
+        <p class="admin-gosaki-save-note" role="note">
+          ※ 更新・複製・削除は準備中です。この画面ではまだ保存は実行できません。
+        </p>
       </form>
     </section>
   </div>

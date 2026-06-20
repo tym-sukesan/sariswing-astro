@@ -2053,6 +2053,191 @@
   line-height: 1.6;
 }
 
+.gosaki-schedule-edit-dry-run-actions {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0.25rem 0 1rem;
+  grid-column: 1 / -1;
+}
+
+.gosaki-schedule-edit-dry-run-actions__hint {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--admin-color-muted);
+  line-height: 1.5;
+}
+
+.gosaki-schedule-edit-dry-run {
+  grid-column: 1 / -1;
+  margin: 0 0 1rem;
+  padding: 1rem 1.1rem;
+  border: 1px solid #dbe3ef;
+  border-radius: var(--admin-radius);
+  background: #f8fafc;
+}
+
+.gosaki-schedule-edit-dry-run--ok {
+  border-color: #c7d7e8;
+  background: #f4f8fc;
+}
+
+.gosaki-schedule-edit-dry-run--empty {
+  border-color: #e2e8f0;
+  background: #f9fafb;
+}
+
+.gosaki-schedule-edit-dry-run--error {
+  border-color: #f0d4d8;
+  background: #fff8f8;
+}
+
+.gosaki-schedule-edit-dry-run--stale {
+  border-color: #e8dcc0;
+  background: #fffdf6;
+}
+
+.gosaki-schedule-edit-dry-run__title {
+  margin: 0 0 0.5rem;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #334155;
+}
+
+.gosaki-schedule-edit-dry-run__message {
+  margin: 0 0 0.75rem;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: #1f2937;
+}
+
+.gosaki-schedule-edit-dry-run__target {
+  display: grid;
+  gap: 0.65rem;
+  margin: 0 0 0.85rem;
+}
+
+.gosaki-schedule-edit-dry-run__target dt {
+  margin: 0;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #64748b;
+}
+
+.gosaki-schedule-edit-dry-run__target dd {
+  margin: 0.15rem 0 0;
+  font-size: 0.92rem;
+  color: #1f2937;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.gosaki-schedule-edit-dry-run__target-id dd code {
+  font-size: 0.75rem;
+  color: #64748b;
+  word-break: break-all;
+}
+
+.gosaki-schedule-edit-dry-run__chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem;
+  margin: 0 0 0.85rem;
+}
+
+.gosaki-schedule-edit-dry-run__chips-label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #64748b;
+}
+
+.gosaki-schedule-edit-dry-run__chip {
+  display: inline-block;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  background: #e8eef5;
+  color: #334155;
+  font-size: 0.8rem;
+  line-height: 1.4;
+}
+
+.gosaki-schedule-edit-dry-run__chip--empty {
+  background: #eef2f7;
+  color: #64748b;
+}
+
+.gosaki-schedule-edit-dry-run__diff-wrap {
+  overflow-x: auto;
+  margin: 0 0 0.85rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+  background: #fff;
+}
+
+.gosaki-schedule-edit-dry-run__diff {
+  width: 100%;
+  min-width: 18rem;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+
+.gosaki-schedule-edit-dry-run__diff th,
+.gosaki-schedule-edit-dry-run__diff td {
+  padding: 0.55rem 0.65rem;
+  border-bottom: 1px solid #eef2f7;
+  text-align: left;
+  vertical-align: top;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.gosaki-schedule-edit-dry-run__diff thead th {
+  background: #f8fafc;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #64748b;
+}
+
+.gosaki-schedule-edit-dry-run__diff tbody tr:last-child th,
+.gosaki-schedule-edit-dry-run__diff tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.gosaki-schedule-edit-dry-run__before {
+  color: #64748b;
+}
+
+.gosaki-schedule-edit-dry-run__after {
+  color: #0f172a;
+  font-weight: 600;
+}
+
+.gosaki-schedule-edit-dry-run__lock {
+  margin: 0 0 0.5rem;
+  font-size: 0.75rem;
+  color: #64748b;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.gosaki-schedule-edit-dry-run__lock code {
+  font-size: 0.72rem;
+}
+
+.gosaki-schedule-edit-dry-run__note,
+.gosaki-schedule-edit-dry-run__save-disabled,
+.gosaki-schedule-edit-dry-run__stale-note {
+  margin: 0.35rem 0 0;
+  font-size: 0.82rem;
+  color: #64748b;
+  line-height: 1.5;
+}
+
+.gosaki-schedule-edit-dry-run__save-disabled {
+  color: #475569;
+  font-weight: 600;
+}
+
 .admin-gosaki-dev-tools__note {
   margin: 0.5rem 0 1rem;
   font-size: 0.85rem;

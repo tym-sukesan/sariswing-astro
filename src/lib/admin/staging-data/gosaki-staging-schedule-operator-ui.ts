@@ -1,8 +1,17 @@
 /**
- * Gosaki staging shell — operator schedule add/edit UI (no save).
+ * Gosaki staging shell — operator schedule add/edit UI (dry-run preview; no save).
  */
 
 import type { ScheduleRecord } from "../staging-write/schedule-dry-run-types";
+import {
+  executeG9jExistingEventUpdateDryRun,
+  type G9jExistingEventUpdateDryRunResult,
+  type G9jExistingEventUpdateFormValues,
+} from "../staging-write/gosaki-schedule-existing-event-update-dry-run";
+import {
+  G9J_EXISTING_EVENT_UPDATE_SAFE_FIELDS,
+  type G9jExistingEventUpdateSafeField,
+} from "../staging-write/schedule-write-guards";
 import { STAGING_SHELL_GOSAKI_SCHEDULE_SITE_SLUG } from "./staging-schedule-site-slug-config";
 import { dispatchRowSelected } from "./staging-schedule-site-slug-row-picker-events";
 import { confirmDiscardDirtyCandidateIfNeeded } from "./staging-schedule-site-slug-edit-picker-binding";
@@ -10,8 +19,28 @@ import { isPocAuditScheduleRow } from "./staging-schedule-site-slug-row-picker-u
 
 type PublishedFilter = "published" | "all" | "draft";
 
+const G9J2_EDIT_DRY_RUN_FIELD_IDS: Record<G9jExistingEventUpdateSafeField, string> = {
+  title: "gosaki-edit-title",
+  venue: "gosaki-edit-venue",
+  open_time: "gosaki-edit-open-time",
+  start_time: "gosaki-edit-start-time",
+  price: "gosaki-edit-price",
+  description: "gosaki-edit-description",
+};
+
+const G9J2_FIELD_LABELS: Record<G9jExistingEventUpdateSafeField, string> = {
+  title: "タイトル",
+  venue: "会場",
+  open_time: "開場",
+  start_time: "開演",
+  price: "料金",
+  description: "備考 / 説明",
+};
+
 let selectableRows: ScheduleRecord[] = [];
 let selectedRowId: string | null = null;
+let selectedRowSnapshot: ScheduleRecord | null = null;
+let lastDryRunResult: G9jExistingEventUpdateDryRunResult | null = null;
 let previewBase = "https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/";
 
 function escapeHtml(value: string): string {
@@ -25,6 +54,11 @@ function escapeHtml(value: string): string {
 function displayValue(value: string | null | undefined): string {
   const trimmed = String(value ?? "").trim();
   return trimmed || "—";
+}
+
+function displayDryRunValue(value: string | null | undefined): string {
+  const trimmed = String(value ?? "").trim();
+  return trimmed || "（空）";
 }
 
 function getRoot(): HTMLElement | null {
@@ -183,6 +217,8 @@ function renderEditForm(row: ScheduleRecord | null): void {
   if (!row) {
     emptyEl.hidden = false;
     formEl.hidden = true;
+    selectedRowSnapshot = null;
+    clearDryRunResult();
     return;
   }
 
@@ -202,6 +238,181 @@ function renderEditForm(row: ScheduleRecord | null): void {
   setFieldValue("gosaki-edit-description", String(row.description ?? ""));
   setCheckbox("gosaki-edit-published", row.published === true);
   setPreviewLink("gosaki-edit-preview-link", month);
+  clearDryRunResult();
+}
+
+function readEditFormSafeValues(): G9jExistingEventUpdateFormValues {
+  const values = {} as G9jExistingEventUpdateFormValues;
+  for (const field of G9J_EXISTING_EVENT_UPDATE_SAFE_FIELDS) {
+    const el = document.getElementById(G9J2_EDIT_DRY_RUN_FIELD_IDS[field]) as
+      | HTMLInputElement
+      | HTMLTextAreaElement
+      | null;
+    values[field] = el?.value ?? "";
+  }
+  return values;
+}
+
+function clearDryRunResult(): void {
+  lastDryRunResult = null;
+  const el = document.getElementById("gosaki-schedule-edit-dry-run-result");
+  if (!el) return;
+  el.hidden = true;
+  el.classList.remove("gosaki-schedule-edit-dry-run--ok", "gosaki-schedule-edit-dry-run--empty");
+  el.classList.remove("gosaki-schedule-edit-dry-run--error", "gosaki-schedule-edit-dry-run--stale");
+  el.innerHTML = "";
+}
+
+function markDryRunStale(): void {
+  if (!lastDryRunResult) return;
+  const el = document.getElementById("gosaki-schedule-edit-dry-run-result");
+  if (!el || el.hidden) return;
+  el.classList.add("gosaki-schedule-edit-dry-run--stale");
+  const staleNote = el.querySelector(".gosaki-schedule-edit-dry-run__stale-note");
+  if (!staleNote) {
+    const note = document.createElement("p");
+    note.className = "gosaki-schedule-edit-dry-run__stale-note";
+    note.setAttribute("role", "status");
+    note.textContent = "内容が変わりました。再度「変更を確認」を押してください。";
+    el.prepend(note);
+  }
+  lastDryRunResult = null;
+}
+
+function renderChangedFieldChips(changedFields: string[]): string {
+  if (changedFields.length === 0) {
+    return '<span class="gosaki-schedule-edit-dry-run__chip gosaki-schedule-edit-dry-run__chip--empty">なし</span>';
+  }
+  return changedFields
+    .map((field) => {
+      const label =
+        G9J2_FIELD_LABELS[field as G9jExistingEventUpdateSafeField] ?? field;
+      return `<span class="gosaki-schedule-edit-dry-run__chip">${escapeHtml(label)}</span>`;
+    })
+    .join("");
+}
+
+function renderBeforeAfterRows(
+  result: G9jExistingEventUpdateDryRunResult,
+): string {
+  return result.changedFields
+    .map((field) => {
+      const label =
+        G9J2_FIELD_LABELS[field as G9jExistingEventUpdateSafeField] ?? field;
+      const before = displayDryRunValue(result.before[field as G9jExistingEventUpdateSafeField]);
+      const after = displayDryRunValue(result.after[field as G9jExistingEventUpdateSafeField]);
+      return `<tr>
+        <th scope="row">${escapeHtml(label)}</th>
+        <td class="gosaki-schedule-edit-dry-run__before">${escapeHtml(before)}</td>
+        <td class="gosaki-schedule-edit-dry-run__after">${escapeHtml(after)}</td>
+      </tr>`;
+    })
+    .join("");
+}
+
+function renderDryRunResult(result: G9jExistingEventUpdateDryRunResult): void {
+  const el = document.getElementById("gosaki-schedule-edit-dry-run-result");
+  if (!el) return;
+
+  el.hidden = false;
+  el.classList.remove(
+    "gosaki-schedule-edit-dry-run--ok",
+    "gosaki-schedule-edit-dry-run--empty",
+    "gosaki-schedule-edit-dry-run--error",
+    "gosaki-schedule-edit-dry-run--stale",
+  );
+
+  const noChanges =
+    result.changedFields.length === 0 &&
+    result.guardErrors.some((message) => message.includes("no safe-field changes"));
+  const hasGuardFailure =
+    !result.ok && !noChanges && result.guardErrors.length > 0;
+
+  if (noChanges) {
+    el.classList.add("gosaki-schedule-edit-dry-run--empty");
+    el.innerHTML = `
+      <h3 class="gosaki-schedule-edit-dry-run__title">確認結果</h3>
+      <p class="gosaki-schedule-edit-dry-run__message">変更された項目はありません。</p>
+      <p class="gosaki-schedule-edit-dry-run__note">この確認ではデータベースは変更されません。</p>
+    `;
+    return;
+  }
+
+  if (hasGuardFailure) {
+    el.classList.add("gosaki-schedule-edit-dry-run--error");
+    el.innerHTML = `
+      <h3 class="gosaki-schedule-edit-dry-run__title">確認結果</h3>
+      <p class="gosaki-schedule-edit-dry-run__message">確認できませんでした。入力内容を確認してください。</p>
+      <p class="gosaki-schedule-edit-dry-run__note">この確認ではデータベースは変更されません。保存はまだ実行されません。</p>
+    `;
+    return;
+  }
+
+  el.classList.add("gosaki-schedule-edit-dry-run--ok");
+  el.innerHTML = `
+    <h3 class="gosaki-schedule-edit-dry-run__title">確認結果</h3>
+    <p class="gosaki-schedule-edit-dry-run__message">この内容で変更できます。まだ保存は実行されていません。</p>
+    <dl class="gosaki-schedule-edit-dry-run__target">
+      <div>
+        <dt>対象公演</dt>
+        <dd>${escapeHtml(displayValue(result.target.title))}</dd>
+      </div>
+      <div>
+        <dt>日付</dt>
+        <dd>${escapeHtml(result.target.date || "—")}</dd>
+      </div>
+      <div class="gosaki-schedule-edit-dry-run__target-id">
+        <dt>ID</dt>
+        <dd><code>${escapeHtml(result.target.id)}</code></dd>
+      </div>
+    </dl>
+    <div class="gosaki-schedule-edit-dry-run__chips">
+      <span class="gosaki-schedule-edit-dry-run__chips-label">変更する項目</span>
+      ${renderChangedFieldChips(result.changedFields)}
+    </div>
+    <div class="gosaki-schedule-edit-dry-run__diff-wrap">
+      <table class="gosaki-schedule-edit-dry-run__diff">
+        <thead>
+          <tr>
+            <th scope="col">項目</th>
+            <th scope="col">変更前</th>
+            <th scope="col">変更後</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${renderBeforeAfterRows(result)}
+        </tbody>
+      </table>
+    </div>
+    <p class="gosaki-schedule-edit-dry-run__lock">
+      安全確認: <code>expectedBeforeUpdatedAt</code> = ${escapeHtml(result.expectedBeforeUpdatedAt ?? "—")}
+    </p>
+    <p class="gosaki-schedule-edit-dry-run__note">この確認ではデータベースは変更されません。保存はまだ実行されません。</p>
+    <p class="gosaki-schedule-edit-dry-run__save-disabled" data-gosaki-save-allowed="false">
+      保存機能は次の確認フェーズで開放します。この画面ではまだ保存は実行できません。
+    </p>
+  `;
+}
+
+function runEditDryRunPreview(): void {
+  if (!selectedRowSnapshot) {
+    const el = document.getElementById("gosaki-schedule-edit-dry-run-result");
+    if (!el) return;
+    el.hidden = false;
+    el.className = "gosaki-schedule-edit-dry-run gosaki-schedule-edit-dry-run--error";
+    el.innerHTML = `
+      <h3 class="gosaki-schedule-edit-dry-run__title">確認結果</h3>
+      <p class="gosaki-schedule-edit-dry-run__message">先に一覧から編集する公演を選んでください。</p>
+    `;
+    return;
+  }
+
+  const result = executeG9jExistingEventUpdateDryRun({
+    beforeSnapshot: selectedRowSnapshot,
+    formValues: readEditFormSafeValues(),
+  });
+  lastDryRunResult = result;
+  renderDryRunResult(result);
 }
 
 function renderScheduleRowButton(rowId: string, selected: boolean): string {
@@ -275,6 +486,7 @@ function selectRowById(rowId: string): void {
   if (!confirmDiscardDirtyCandidateIfNeeded(rowId)) return;
 
   selectedRowId = rowId;
+  selectedRowSnapshot = { ...row };
   renderScheduleList();
   renderEditForm(row);
   dispatchRowSelected(row);
@@ -346,6 +558,15 @@ function wireEditForm(): void {
   };
   dateInput?.addEventListener("change", syncEditDateDerived);
   dateInput?.addEventListener("input", syncEditDateDerived);
+
+  document
+    .getElementById("gosaki-schedule-edit-dry-run-btn")
+    ?.addEventListener("click", () => runEditDryRunPreview());
+
+  for (const field of G9J_EXISTING_EVENT_UPDATE_SAFE_FIELDS) {
+    const el = document.getElementById(G9J2_EDIT_DRY_RUN_FIELD_IDS[field]);
+    el?.addEventListener("input", () => markDryRunStale());
+  }
 }
 
 function wireDisabledActions(): void {

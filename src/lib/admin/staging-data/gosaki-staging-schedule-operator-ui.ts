@@ -62,10 +62,11 @@ function monthFromDate(date: string): string {
 function formatMonthHint(date: string): string {
   const month = monthFromDate(date);
   if (!month) {
-    return "日付を入力すると、表示先の月が自動で決まります。";
+    return "日付を選ぶと、表示先の月が自動で決まります。";
   }
   const [year, mon] = month.split("-");
-  return `この公演は ${year}-${mon} のページに表示されます`;
+  const monthNum = Number(mon);
+  return `表示先：${year}年${monthNum}月のスケジュールページ`;
 }
 
 function setMonthHint(elementId: string, date: string): void {

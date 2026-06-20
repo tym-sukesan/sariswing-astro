@@ -54,11 +54,11 @@ function displayValue(value: string | null | undefined): string {
   </header>
 
   <p class="admin-form__hint admin-static-notice">
-    公演の内容を入力し、一覧で選択して編集できます。公開サイトへ反映するには再ビルド・再アップロードが必要です。
+    公演の追加・編集ができます。サイトへの反映は、保存機能の開放後に行います。
   </p>
 
-  <p class="admin-gosaki-status-bar" role="status">
-    保存は次フェーズで開放予定です。入力内容はこの画面では保存されません。
+  <p class="admin-gosaki-status-bar admin-gosaki-status-bar--soft" role="status">
+    保存機能は準備中です。
   </p>
 
   {
@@ -70,14 +70,15 @@ function displayValue(value: string | null | undefined): string {
   }
 
   <section class="admin-card admin-gosaki-card gosaki-schedule-admin-add-card">
-    <h2 class="admin-gosaki-card__title">新規公演を追加</h2>
+    <h2 class="admin-gosaki-card__title">新規公演の追加</h2>
+    <p class="admin-gosaki-card__lead">まずここで公演の内容を入力します。</p>
 
     <form id="gosaki-schedule-add-form" class="admin-form admin-form--grid gosaki-schedule-admin-form" novalidate>
       <label class="admin-form__field admin-form__field--full">
         <span class="admin-form__label">日付</span>
         <input id="gosaki-add-date" type="date" />
         <p id="gosaki-add-month-hint" class="gosaki-schedule-admin-month-hint" role="note">
-          日付を入力すると、表示先の月が自動で決まります。
+          日付を選ぶと、表示先の月が自動で決まります。
         </p>
       </label>
 
@@ -158,12 +159,13 @@ function displayValue(value: string | null | undefined): string {
         追加
       </button>
     </div>
-    <p class="admin-gosaki-save-note" role="note">追加の保存は次フェーズで開放予定です。</p>
+    <p class="admin-gosaki-save-note" role="note">※ 保存は準備中です</p>
   </section>
 
   <div class="gosaki-schedule-admin-workspace">
     <section class="admin-card admin-gosaki-card admin-gosaki-schedule-list-card">
       <h2 class="admin-gosaki-card__title">公演一覧</h2>
+      <p class="admin-gosaki-card__lead">編集したい公演を選んでください。</p>
 
       <div class="admin-gosaki-schedule-filters">
         <label class="admin-gosaki-schedule-filters__field">
@@ -260,7 +262,8 @@ function displayValue(value: string | null | undefined): string {
       class="admin-card admin-gosaki-card admin-gosaki-schedule-edit-card"
       aria-live="polite"
     >
-      <h2 class="admin-gosaki-card__title">公演を編集</h2>
+      <h2 class="admin-gosaki-card__title">選択中の公演を編集</h2>
+      <p class="admin-gosaki-card__lead">一覧で選んだ公演の内容を変更します。</p>
       <p id="gosaki-schedule-operator-edit-empty" class="admin-gosaki-schedule-edit__empty">
         一覧から「編集する」を押すと、ここに編集フォームが表示されます。
       </p>
@@ -275,7 +278,7 @@ function displayValue(value: string | null | undefined): string {
           <span class="admin-form__label">日付</span>
           <input id="gosaki-edit-date" type="date" />
           <p id="gosaki-edit-month-hint" class="gosaki-schedule-admin-month-hint" role="note">
-            日付を入力すると、表示先の月が自動で決まります。
+            日付を選ぶと、表示先の月が自動で決まります。
           </p>
         </label>
 
@@ -356,9 +359,7 @@ function displayValue(value: string | null | undefined): string {
             削除
           </button>
         </div>
-        <p class="admin-gosaki-save-note" role="note">
-          更新・複製・削除の保存は次フェーズで開放予定です。
-        </p>
+        <p class="admin-gosaki-save-note" role="note">※ 更新・複製・削除は準備中です</p>
       </form>
     </section>
   </div>

@@ -23,7 +23,7 @@ function renderAddPreview(): void {
   const videoId = parseYoutubeVideoId(embedCode);
   if (!videoId) {
     preview.innerHTML =
-      '<p class="admin-gosaki-operator-empty">埋め込みコードを入力するとプレビューが表示されます。</p>';
+      '<p class="admin-gosaki-operator-empty">埋め込みコードを貼り付けると、ここに動画が表示されます。</p>';
     return;
   }
 

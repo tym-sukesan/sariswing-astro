@@ -36,11 +36,11 @@ const defaultIframeTitle = GOSAKI_YOUTUBE_DEFAULT_IFRAME_TITLE;
   </header>
 
   <p class="admin-form__hint admin-static-notice">
-    埋め込みコードを追加し、並び順を整えます。公開サイトへ反映するには再ビルド・再アップロードが必要です。
+    YouTube の埋め込みコードを貼り付けるだけで、トップページに動画を表示できます。
   </p>
 
-  <p class="admin-gosaki-status-bar" role="status">
-    保存は次フェーズで開放予定です。一覧は静的 JSON（<code>{binding.configPath}</code>）から表示しています。
+  <p class="admin-gosaki-status-bar admin-gosaki-status-bar--soft" role="status">
+    保存機能は準備中です。
   </p>
 
   {
@@ -50,15 +50,19 @@ const defaultIframeTitle = GOSAKI_YOUTUBE_DEFAULT_IFRAME_TITLE;
   }
 
   <section class="admin-card admin-gosaki-card gosaki-youtube-admin-add-card">
-    <h2 class="admin-gosaki-card__title">埋め込みコード追加</h2>
+    <h2 class="admin-gosaki-card__title">動画を追加</h2>
+    <p class="admin-gosaki-card__lead">
+      YouTube の「共有」→「埋め込み」からコピーしたコードを貼り付けてください。
+    </p>
+
     <div class="admin-form gosaki-youtube-admin-form">
       <label class="admin-form__field admin-form__field--full">
         <span class="admin-form__label">埋め込みコード</span>
         <textarea
           id="gosaki-yt-add-embed-code"
-          class="gosaki-youtube-admin-embed-code"
-          rows="8"
-          placeholder='<iframe width="560" height="315" src="https://www.youtube.com/embed/VIDEO_ID" ...></iframe>'
+          class="gosaki-youtube-admin-embed-code gosaki-youtube-admin-embed-code--large"
+          rows="10"
+          placeholder="ここに埋め込みコードを貼り付け"
         ></textarea>
       </label>
       <div class="gosaki-youtube-admin-form__row">
@@ -73,24 +77,26 @@ const defaultIframeTitle = GOSAKI_YOUTUBE_DEFAULT_IFRAME_TITLE;
       </div>
     </div>
 
+    <div class="gosaki-youtube-admin-preview-card">
+      <h3 class="admin-gosaki-card__subtitle">プレビュー</h3>
+      <div id="gosaki-yt-add-preview" class="gosaki-youtube-admin-preview">
+        <p class="admin-gosaki-operator-empty">
+          埋め込みコードを貼り付けると、ここに動画が表示されます。
+        </p>
+      </div>
+    </div>
+
     <div class="admin-actions">
       <button type="button" class="admin-button" data-gosaki-yt-action-disabled disabled>
         追加
       </button>
     </div>
-    <p class="admin-gosaki-save-note" role="note">追加の保存は次フェーズで開放予定です。</p>
-
-    <h3 class="admin-gosaki-card__subtitle">追加プレビュー</h3>
-    <div id="gosaki-yt-add-preview" class="gosaki-youtube-admin-preview gosaki-youtube-admin-preview--add">
-      <p class="admin-gosaki-operator-empty">
-        埋め込みコードを入力するとプレビューが表示されます。
-      </p>
-    </div>
+    <p class="admin-gosaki-save-note" role="note">※ 保存は準備中です</p>
   </section>
 
   <section class="admin-card admin-gosaki-card">
-    <h2 class="admin-gosaki-card__title">現在の YouTube 埋め込み</h2>
-    <p class="admin-form__hint">
+    <h2 class="admin-gosaki-card__title">登録済みの動画</h2>
+    <p class="admin-gosaki-card__lead">
       数字が小さいほど上に表示されます。↑ ↓ で並び替えの見た目を確認できます。
     </p>
 
@@ -101,23 +107,35 @@ const defaultIframeTitle = GOSAKI_YOUTUBE_DEFAULT_IFRAME_TITLE;
         data-gosaki-yt-action-disabled
         disabled
       >
-        表示順を保存
+        並び順を保存
       </button>
     </div>
-    <p class="admin-gosaki-save-note" role="note">表示順の保存は次フェーズで開放予定です。</p>
+    <p class="admin-gosaki-save-note admin-gosaki-save-note--tight" role="note">
+      ※ 並び順・更新・削除は準備中です
+    </p>
 
     {
       binding.items.length === 0 ? (
-        <p class="admin-gosaki-operator-empty">登録されている埋め込みはありません。</p>
+        <p class="admin-gosaki-operator-empty">登録されている動画はありません。</p>
       ) : (
         <ul id="gosaki-yt-item-list" class="admin-list gosaki-youtube-admin-list">
           {
             binding.items.map((view) => (
               <li class="admin-list__item gosaki-youtube-admin-item" data-item-id={view.item.id}>
                 <div class="gosaki-youtube-admin-item__sort-bar">
-                  <button type="button" class="gosaki-sort-handle" disabled aria-label="並び替え">
-                    ☰ 並び替え
-                  </button>
+                  <div class="gosaki-youtube-admin-item__sort-bar-start">
+                    <button type="button" class="gosaki-sort-handle" disabled aria-label="並び替え">
+                      ☰
+                    </button>
+                    <span class="gosaki-youtube-admin-item__order">
+                      表示順 {view.item.sortOrder ?? 0}
+                    </span>
+                    <span
+                      class={`gosaki-youtube-admin-item__status gosaki-youtube-admin-item__status--${view.item.published === true ? "published" : "draft"}`}
+                    >
+                      {view.item.published === true ? "公開" : "非公開"}
+                    </span>
+                  </div>
                   <div class="gosaki-youtube-admin-item__move-controls">
                     <button
                       type="button"
@@ -141,7 +159,7 @@ const defaultIframeTitle = GOSAKI_YOUTUBE_DEFAULT_IFRAME_TITLE;
                 <div class="gosaki-youtube-admin-item__preview">
                   {
                     view.resolved ? (
-                      <div class="gosaki-youtube-admin-preview">
+                      <div class="gosaki-youtube-admin-preview gosaki-youtube-admin-preview-card">
                         <div class="gosaki-youtube-admin-preview__media">
                           <iframe
                             src={view.resolved.embedUrl}
@@ -163,25 +181,27 @@ const defaultIframeTitle = GOSAKI_YOUTUBE_DEFAULT_IFRAME_TITLE;
 
                 <div class="gosaki-youtube-admin-item__editor">
                   <div class="admin-form gosaki-youtube-admin-form">
-                    <label class="admin-form__field gosaki-youtube-admin-item__sort-field">
-                      <span class="admin-form__label">表示順</span>
-                      <input
-                        type="number"
-                        class="edit-sort-order"
-                        value={view.item.sortOrder ?? 0}
-                        readonly
-                      />
-                    </label>
-                    <label class="admin-form__field admin-form__field--checkbox">
-                      <input type="checkbox" checked={view.item.published === true} disabled />
-                      <span>公開する</span>
-                    </label>
                     <label class="admin-form__field admin-form__field--full">
                       <span class="admin-form__label">埋め込みコード</span>
                       <textarea class="edit-embed-code gosaki-youtube-admin-embed-code" rows="8" readonly>
                         {view.item.embedCode ?? ""}
                       </textarea>
                     </label>
+                    <div class="gosaki-youtube-admin-form__row">
+                      <label class="admin-form__field gosaki-youtube-admin-item__sort-field">
+                        <span class="admin-form__label">表示順</span>
+                        <input
+                          type="number"
+                          class="edit-sort-order"
+                          value={view.item.sortOrder ?? 0}
+                          readonly
+                        />
+                      </label>
+                      <label class="admin-form__field admin-form__field--checkbox">
+                        <input type="checkbox" checked={view.item.published === true} disabled />
+                        <span>公開する</span>
+                      </label>
+                    </div>
                   </div>
                   <div class="admin-actions">
                     <button type="button" class="admin-button" data-gosaki-yt-action-disabled disabled>

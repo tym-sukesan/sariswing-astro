@@ -1358,6 +1358,62 @@
   line-height: 1.5;
 }
 
+.admin-gosaki-status-bar--soft {
+  background: #fff;
+  border-color: #e2e8f0;
+  color: #64748b;
+}
+
+.admin-gosaki-card__lead {
+  margin: -0.35rem 0 1rem;
+  font-size: 0.9rem;
+  line-height: 1.55;
+  color: #64748b;
+}
+
+.admin-gosaki-field-hint {
+  margin: 0.35rem 0 0;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: #94a3b8;
+}
+
+.admin-gosaki-form-section {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+
+.admin-gosaki-form-section + .admin-gosaki-form-section {
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid #e8edf2;
+}
+
+.admin-gosaki-form-section__title {
+  display: block;
+  margin: 0 0 0.85rem;
+  padding: 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #334155;
+  letter-spacing: 0.02em;
+}
+
+.admin-gosaki-save-note--tight {
+  margin-top: 0.5rem;
+}
+
+.admin-gosaki-admin-pages .admin-button:disabled,
+.admin-gosaki-admin-pages [data-gosaki-schedule-action-disabled]:disabled,
+.admin-gosaki-admin-pages [data-gosaki-yt-action-disabled]:disabled,
+.admin-gosaki-admin-pages [data-gosaki-disc-action-disabled]:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
 .admin-gosaki-status-bar__link {
   margin-left: 0.5rem;
   color: var(--admin-color-primary);
@@ -1847,9 +1903,22 @@
 }
 
 .gosaki-schedule-admin-card__actions {
-  margin-top: 0.75rem;
+  margin-top: 0.85rem;
   display: flex;
   justify-content: flex-end;
+}
+
+@media (max-width: 767px) {
+  .gosaki-schedule-admin-card__actions {
+    justify-content: stretch;
+  }
+
+  .gosaki-schedule-admin-card__actions .admin-gosaki-schedule-select-btn {
+    width: 100%;
+    min-height: 2.75rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+  }
 }
 
 .gosaki-schedule-admin-card__actions .admin-gosaki-schedule-select-btn {
@@ -2169,14 +2238,54 @@
   width: 100%;
 }
 
+.gosaki-youtube-admin-embed-code--large {
+  min-height: 14rem;
+}
+
+.gosaki-youtube-admin-preview-card {
+  margin: 1rem 0;
+  padding: 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: var(--admin-radius);
+  background: #fafafa;
+}
+
+.gosaki-youtube-admin-preview-card .admin-gosaki-card__subtitle {
+  margin-top: 0;
+}
+
 .gosaki-youtube-admin-preview {
   width: 100%;
 }
 
-.gosaki-youtube-admin-preview--add {
-  margin-top: 0.75rem;
-  padding-top: 0.75rem;
-  border-top: 1px dashed #e2e8f0;
+.gosaki-youtube-admin-item__sort-bar-start {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.75rem;
+}
+
+.gosaki-youtube-admin-item__order {
+  font-size: 0.85rem;
+  color: #64748b;
+  font-weight: 600;
+}
+
+.gosaki-youtube-admin-item__status {
+  font-size: 0.72rem;
+  padding: 0.15rem 0.45rem;
+  border-radius: 999px;
+  font-weight: 600;
+}
+
+.gosaki-youtube-admin-item__status--published {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.gosaki-youtube-admin-item__status--draft {
+  background: #f3f4f6;
+  color: #6b7280;
 }
 
 /* Gosaki YouTube admin (Instagram-inspired) */
@@ -2192,6 +2301,7 @@
   border: 1px solid #e5e7eb;
   border-radius: var(--admin-radius);
   background: #fff;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
 }
 
 .gosaki-youtube-admin-item__sort-bar {
@@ -2265,7 +2375,7 @@
 @media screen and (min-width: 900px) {
   .gosaki-youtube-admin-item {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 360px);
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     grid-template-rows: auto auto;
     gap: 1rem 1.25rem;
   }
@@ -2276,6 +2386,7 @@
 
   .gosaki-youtube-admin-item__preview {
     grid-column: 1;
+    align-self: start;
   }
 
   .gosaki-youtube-admin-item__editor {
@@ -2283,7 +2394,27 @@
   }
 }
 
+@media screen and (max-width: 899px) {
+  .gosaki-youtube-admin-item__editor .admin-actions {
+    justify-content: stretch;
+  }
+
+  .gosaki-youtube-admin-item__editor .admin-actions .admin-button {
+    flex: 1 1 auto;
+  }
+}
+
 /* Gosaki Discography admin */
+.gosaki-discography-admin-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.gosaki-discography-admin-textarea {
+  min-height: 11rem;
+}
+
 .gosaki-discography-admin-list {
   gap: 1.25rem;
 }
@@ -2293,6 +2424,7 @@
   border: 1px solid #e5e7eb;
   border-radius: var(--admin-radius);
   background: #fff;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
 }
 
 .gosaki-discography-admin-item__toolbar {
@@ -2301,13 +2433,26 @@
   align-items: center;
   justify-content: space-between;
   gap: 0.5rem;
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.85rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid #eef2f6;
 }
 
-.gosaki-discography-admin-item__order {
-  font-size: 0.85rem;
-  color: #6b7280;
+.gosaki-discography-admin-item__status {
+  font-size: 0.75rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 999px;
   font-weight: 600;
+}
+
+.gosaki-discography-admin-item__status--published {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.gosaki-discography-admin-item__status--draft {
+  background: #f3f4f6;
+  color: #6b7280;
 }
 
 .gosaki-discography-admin-item__move-controls {
@@ -2325,22 +2470,34 @@
 .gosaki-discography-admin-card__media img {
   width: 100%;
   height: auto;
-  border-radius: 4px;
+  border-radius: 6px;
   border: 1px solid #e5e7eb;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
 }
 
 .gosaki-discography-admin-card__placeholder {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 0.25rem;
   min-height: 120px;
-  padding: 0.5rem;
+  padding: 0.75rem;
   text-align: center;
-  font-size: 0.8rem;
-  color: #6b7280;
-  background: #f3f4f6;
-  border: 1px dashed #d1d5db;
-  border-radius: 4px;
+  background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+  border: 1px dashed #cbd5e1;
+  border-radius: 6px;
+}
+
+.gosaki-discography-admin-card__placeholder-label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #64748b;
+}
+
+.gosaki-discography-admin-card__placeholder-note {
+  font-size: 0.75rem;
+  color: #94a3b8;
 }
 
 .gosaki-discography-admin-card__title {
@@ -2352,6 +2509,12 @@
   margin: 0 0 0.75rem;
   font-size: 0.9rem;
   color: #4b5563;
+}
+
+.gosaki-discography-admin-card__label {
+  margin: 0 0 0.5rem;
+  font-size: 0.85rem;
+  color: #6b7280;
 }
 
 .gosaki-discography-admin-card__columns {
@@ -2373,10 +2536,36 @@
   line-height: 1.5;
 }
 
-.gosaki-discography-admin-card__missing {
+.gosaki-discography-admin-card__purchase {
+  margin-top: 0.75rem;
+  padding: 0.75rem 0.85rem;
+  border: 1px solid #e8dfd2;
+  border-radius: var(--admin-radius);
+  background: #faf8f5;
+}
+
+.gosaki-discography-admin-card__purchase-text {
+  margin: 0 0 0.5rem;
+  font-size: 0.9rem;
+  line-height: 1.55;
+  color: #4b5563;
+}
+
+.gosaki-discography-admin-card__purchase-link {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #8b4513;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.gosaki-discography-admin-card__notes {
   margin: 0.5rem 0 0;
-  font-size: 0.8rem;
-  color: #b45309;
+  font-size: 0.85rem;
+  color: #6b7280;
+  line-height: 1.5;
 }
 
 .admin-form__field--full {

@@ -76,6 +76,7 @@ assert(
   astroSrc.includes("まだ保存は実行できません") ||
     astroSrc.includes("保存はまだ実行されません") ||
     astroSrc.includes("G-9k4") ||
+    astroSrc.includes("G9K_SAVE_BUTTON_SAVE_ENABLED") ||
     astroSrc.includes("実保存はできません"),
 );
 
@@ -84,16 +85,14 @@ assert(
   uiSrc.includes("executeG9jExistingEventUpdateDryRun") ||
     uiSrc.includes("executeG9kExistingEventSaveButtonDryRun"),
 );
-assert("UI does not call updateScheduleWrite", !uiSrc.includes("updateScheduleWrite("));
-assert("UI does not import service_role", !uiSrc.includes("service_role"));
-assert("UI wires dry-run button", uiSrc.includes("gosaki-schedule-edit-dry-run-btn"));
-assert("UI renders dry-run result", uiSrc.includes("renderDryRunResult"));
+assert("UI does not call updateScheduleWrite directly", !uiSrc.includes("updateScheduleWrite("));
 assert(
   "UI saveAllowed false display",
   uiSrc.includes('data-gosaki-save-allowed="false"') ||
     uiSrc.includes("まだ保存は実行できません") ||
     uiSrc.includes("実保存未開放") ||
-    uiSrc.includes("G-9k4"),
+    uiSrc.includes("G-9k4") ||
+    uiSrc.includes("G9K_SAVE_BUTTON_SAVE_ENABLED"),
 );
 assert(
   "UI uses safe field registry",

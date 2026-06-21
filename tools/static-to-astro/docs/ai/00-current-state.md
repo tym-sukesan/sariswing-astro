@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-9k3 Gosaki schedule existing event save button manual dry-run verification (2026-06-21):** **complete** — operator manual dry-run / auth-gate verification recorded. Doc: `gosaki-schedule-existing-event-save-button-manual-dry-run-verification.md`; verifier G-9k3. Checklist 1–8 **PASS** (human). **Save still disabled.** Next: `G-9k4-manual-save-once`. `readyForAnyDbWrite: false`.
+**G-9k4a Gosaki schedule existing event UI Save enable preflight (2026-06-21):** **complete** — Save executor + UI wiring implemented; **Save default disabled** (`G9K_SAVE_BUTTON_SAVE_ENABLED=false`). Doc: `gosaki-schedule-existing-event-ui-save-enable-implementation-preflight.md`. **No DB write in this phase.** Next: `G-9k4-manual-save-once`. `readyForAnyDbWrite: false`.
+
+**G-9k3 Gosaki schedule existing event save button manual dry-run verification (2026-06-21):** **complete** — operator manual dry-run / auth-gate verification recorded. Doc: `gosaki-schedule-existing-event-save-button-manual-dry-run-verification.md`; verifier G-9k3. Checklist 1–8 **PASS** (human). **Save still disabled.** Next: `G-9k4a`. `readyForAnyDbWrite: false`.
 
 **G-9k2 Gosaki schedule existing event save button UI wiring (2026-06-21):** **complete** — dry-run gate only. Doc: `gosaki-schedule-existing-event-save-button-ui-wiring.md`; module `gosaki-schedule-existing-event-save-button-dry-run.ts`; operator UI wired to G-9k dry-run. Save readiness shown; **Save still disabled** (`G9K_SAVE_BUTTON_SAVE_ENABLED = false`). Next: `G-9k3-dry-run-verification`. `readyForAnyDbWrite: false`.
 
@@ -39,9 +41,9 @@ Staging Shell
 将来的な顧客オンボーディング・課金・デプロイ自動化
 
 2. Current phase
-現在フェーズ: **G-9k3-gosaki-schedule-existing-event-save-button-manual-dry-run-verification** — **complete**（manual verification recorded. Save disabled. 最新commitは git HEAD を確認すること。）
+現在フェーズ: **G-9k4a-gosaki-schedule-existing-event-ui-save-enable-implementation-preflight** — **complete**（Save path implemented; default disabled. 最新commitは git HEAD を確認すること。）
 
-G-9k3 manual dry-run verification: **complete**. Doc: `gosaki-schedule-existing-event-save-button-manual-dry-run-verification.md`. Operator checklist 1–8 PASS. **No DB write.** Next: G-9k4 manual Save once. `readyForAnyDbWrite: false`.
+G-9k4a UI Save preflight: **complete**. Save executor + UI gate wired; **G9K_SAVE_BUTTON_SAVE_ENABLED=false**. Next: G-9k4 manual Save once. `readyForAnyDbWrite: false`.
 
 G-9j5c Gosaki schedule existing event update success: **complete**.
 

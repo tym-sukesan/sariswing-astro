@@ -8,6 +8,7 @@ import type { ScheduleDryRunSource } from "./schedule-dry-run-types";
 import {
   G9K2_PHASE,
   G9K_SAVE_BUTTON_SAVE_ENABLED,
+  resolveG9kOperatorSaveButtonSaveEnabled,
 } from "./gosaki-schedule-existing-event-save-button-config";
 import {
   G9K_EXISTING_EVENT_SAVE_BUTTON_SAFE_FIELDS,
@@ -38,7 +39,8 @@ export type G9kSaveButtonDryRunSafety = {
 export type G9kSaveButtonDryRunSaveReadiness =
   | "no_changes"
   | "guard_error"
-  | "ready_but_save_disabled";
+  | "ready_but_save_disabled"
+  | "ready_to_save";
 
 export type G9kExistingEventSaveButtonDryRunResult = {
   ok: boolean;
@@ -258,9 +260,11 @@ export function executeG9kExistingEventSaveButtonDryRun(input: {
     }
 
     const ok = guardErrors.length === 0;
-    const saveReadiness: G9kSaveButtonDryRunSaveReadiness = ok
-      ? "ready_but_save_disabled"
-      : "guard_error";
+    const saveReadiness: G9kSaveButtonDryRunSaveReadiness = !ok
+      ? "guard_error"
+      : resolveG9kOperatorSaveButtonSaveEnabled()
+        ? "ready_to_save"
+        : "ready_but_save_disabled";
 
     return {
       ok,

@@ -125,13 +125,16 @@ assert("reuse G-9j payload guards", guardsSrc.includes("assertG9jExistingEventUp
 assert("buildG9kExistingEventSaveButtonPayload", guardsSrc.includes("buildG9kExistingEventSaveButtonPayload"));
 
 assert(
-  "operator UI save still disabled",
+  "operator UI save default disabled",
   operatorUiSrc.includes('data-gosaki-save-allowed="false"') &&
     operatorUiSrc.includes("G9K_SAVE_BUTTON_SAVE_ENABLED") &&
-    !operatorUiSrc.includes("gosaki-schedule-existing-event-save-button-save") &&
-    !operatorUiSrc.includes("executeG9kExistingEventSaveButtonSave"),
+    operatorUiSrc.includes("executeG9kExistingEventSaveButtonSave"),
 );
-assert("no G-9k save executor module", !fs.existsSync(path.join(REPO_ROOT, "src/lib/admin/staging-write/gosaki-schedule-existing-event-save-button-save.ts")));
+assert(
+  "G-9k save executor exists with default disabled gate",
+  fs.existsSync(path.join(REPO_ROOT, "src/lib/admin/staging-write/gosaki-schedule-existing-event-save-button-save.ts")) &&
+    configSrc.includes("G9K_SAVE_BUTTON_SAVE_ENABLED = false"),
+);
 
 assert("g9j5 runner unchanged", !g9j5RunnerSrc.includes(G9K_APPROVAL) && g9j5RunnerSrc.includes(G9J5_APPROVAL));
 
@@ -193,15 +196,15 @@ try {
   assert("empty title rejected", String(error).includes("empty"));
 }
 
-const planningVerifier = spawnSync(
+const g9k2Verifier = spawnSync(
   "node",
-  ["tools/static-to-astro/scripts/verify-g9k-gosaki-schedule-existing-event-save-button-enablement-planning.mjs"],
+  ["tools/static-to-astro/scripts/verify-g9k2-gosaki-schedule-existing-event-save-button-ui-wiring.mjs"],
   { cwd: REPO_ROOT, encoding: "utf8" },
 );
-assert("G-9k planning verifier passes", planningVerifier.status === 0);
-if (planningVerifier.status !== 0) {
-  console.error(planningVerifier.stdout);
-  console.error(planningVerifier.stderr);
+assert("verify-g9k2 passes", g9k2Verifier.status === 0);
+if (g9k2Verifier.status !== 0) {
+  console.error(g9k2Verifier.stdout);
+  console.error(g9k2Verifier.stderr);
 }
 
 const docPath = path.join(TOOL_ROOT, "docs", "gosaki-schedule-existing-event-save-button-guard-config.md");

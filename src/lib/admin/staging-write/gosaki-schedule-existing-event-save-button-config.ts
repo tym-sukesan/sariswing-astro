@@ -37,14 +37,23 @@ export const G9K1_PHASE =
 export const G9K2_PHASE =
   "G-9k2-gosaki-schedule-existing-event-save-button-ui-wiring-dry-run-gate";
 
+export const G9K4A_PHASE =
+  "G-9k4a-gosaki-schedule-existing-event-ui-save-enable-implementation-preflight";
+
 export const GOSAKI_SCHEDULE_EXISTING_EVENT_SAVE_BUTTON_NON_DRY_RUN_ARMED_ENV =
   "PUBLIC_ADMIN_GOSAKI_SCHEDULE_EXISTING_EVENT_SAVE_BUTTON_NON_DRY_RUN_ARMED";
 
 export const G9K_SAVE_BUTTON_SAVE_DISABLED_DEFAULT_REASON =
-  "G-9k operator save button disabled until G-9k4 explicit approval (G-9k2: dry-run gate only).";
+  "G-9k operator save button disabled until G-9k4 explicit approval and env arm stack.";
 
-/** G-9k1: Save path not exposed even when arm gates would pass. */
+/** G-9k4a: compile-time gate — false until G-9k4 enables Save execution phase. */
 export const G9K_SAVE_BUTTON_SAVE_ENABLED = false as const;
+
+export function resolveG9kOperatorSaveButtonSaveEnabled(
+  env: ImportMetaEnv = import.meta.env,
+): boolean {
+  return getG9kExistingEventSaveButtonConfig(env).saveEnabled;
+}
 
 export interface G9kExistingEventSaveButtonConfig {
   phase: typeof G9K1_PHASE;
@@ -52,7 +61,7 @@ export interface G9kExistingEventSaveButtonConfig {
   siteSlug: typeof STAGING_SHELL_GOSAKI_SCHEDULE_SITE_SLUG;
   envArm: typeof GOSAKI_SCHEDULE_EXISTING_EVENT_SAVE_BUTTON_NON_DRY_RUN_ARMED_ENV;
   armed: boolean;
-  saveEnabled: false;
+  saveEnabled: boolean;
   armFailureReason?: string;
   defaultDisabledReason: typeof G9K_SAVE_BUTTON_SAVE_DISABLED_DEFAULT_REASON;
   dev: boolean;
@@ -187,11 +196,57 @@ export function getG9kExistingEventSaveButtonConfig(
   if (!supabaseConfigured) armFailures.push("Supabase URL/anon key");
 
   const armed = armFailures.length === 0;
+  const saveEnabled = G9K_SAVE_BUTTON_SAVE_ENABLED ? armed : false;
 
   return {
     ...base,
     armed,
-    saveEnabled: G9K_SAVE_BUTTON_SAVE_ENABLED,
+    saveEnabled,
     armFailureReason: armed ? undefined : armFailures.join("; "),
   };
+}
+
+export function evaluateG9kOperatorSaveButtonUiGate(input: {
+  signedIn: boolean;
+  selectedRow: { site_slug?: string | null; updated_at?: string | null } | null;
+  dryRunResult: {
+    ok: boolean;
+    saveReadiness: string;
+    changedFields: string[];
+    expectedBeforeUpdatedAt: string | null;
+  } | null;
+  env?: ImportMetaEnv;
+}): { enabled: boolean; reason: string } {
+  const config = getG9kExistingEventSaveButtonConfig(input.env ?? import.meta.env);
+  if (!config.saveEnabled) {
+    return {
+      enabled: false,
+      reason: config.armFailureReason ?? G9K_SAVE_BUTTON_SAVE_DISABLED_DEFAULT_REASON,
+    };
+  }
+  if (!input.signedIn) {
+    return { enabled: false, reason: "Staging admin session required." };
+  }
+  if (!input.selectedRow) {
+    return { enabled: false, reason: "Select an existing event first." };
+  }
+  if (input.selectedRow.site_slug !== STAGING_SHELL_GOSAKI_SCHEDULE_SITE_SLUG) {
+    return { enabled: false, reason: "site_slug must be gosaki-piano." };
+  }
+  if (!String(input.selectedRow.updated_at ?? "").trim()) {
+    return { enabled: false, reason: "optimistic lock updated_at missing on selected row." };
+  }
+  if (!input.dryRunResult?.ok) {
+    return { enabled: false, reason: "Dry-run must succeed before Save." };
+  }
+  if (input.dryRunResult.saveReadiness !== "ready_to_save") {
+    return { enabled: false, reason: "Save readiness not satisfied." };
+  }
+  if (input.dryRunResult.changedFields.length === 0) {
+    return { enabled: false, reason: "No changedFields — Save blocked." };
+  }
+  if (!String(input.dryRunResult.expectedBeforeUpdatedAt ?? "").trim()) {
+    return { enabled: false, reason: "expectedBeforeUpdatedAt required." };
+  }
+  return { enabled: true, reason: "" };
 }

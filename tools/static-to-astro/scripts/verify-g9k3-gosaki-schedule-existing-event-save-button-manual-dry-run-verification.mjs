@@ -66,7 +66,11 @@ assert("service_role not used", doc.includes("service_role"));
 assert("G9K_SAVE_BUTTON_SAVE_ENABLED false in config", configSrc.includes("G9K_SAVE_BUTTON_SAVE_ENABLED = false"));
 assert("UI save still disabled", uiSrc.includes('data-gosaki-save-allowed="false"'));
 assert("UI no updateScheduleWrite", !uiSrc.includes("updateScheduleWrite("));
-assert("no G-9k save executor module", !fs.existsSync(path.join(REPO_ROOT, "src/lib/admin/staging-write/gosaki-schedule-existing-event-save-button-save.ts")));
+assert("no G-9k save auto-run on init", !uiSrc.includes("void runEditSave();") || uiSrc.includes("wireSaveButton"));
+assert(
+  "G-9k save module default disabled",
+  configSrc.includes("G9K_SAVE_BUTTON_SAVE_ENABLED = false"),
+);
 
 assert("00-current-state updated", read("tools/static-to-astro/docs/ai/00-current-state.md").includes("G-9k3"));
 assert("03-next-actions updated", read("tools/static-to-astro/docs/ai/03-next-actions.md").includes("G-9k3"));

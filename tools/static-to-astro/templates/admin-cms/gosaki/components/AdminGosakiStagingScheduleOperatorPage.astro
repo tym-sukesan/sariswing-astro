@@ -351,6 +351,13 @@ function displayValue(value: string | null | undefined): string {
           aria-live="polite"
         ></div>
 
+        <div
+          id="gosaki-schedule-edit-save-result"
+          class="gosaki-schedule-edit-save-result"
+          hidden
+          aria-live="polite"
+        ></div>
+
         <div class="admin-actions gosaki-schedule-admin-edit-actions">
           <button
             type="button"
@@ -382,7 +389,7 @@ function displayValue(value: string | null | undefined): string {
           </button>
         </div>
         <p id="gosaki-schedule-update-btn-note" class="admin-gosaki-save-note" role="note">
-          「変更を確認」で dry-run を通過すると保存準備状態を表示します。G-9k2 では実保存はできません（G-9k4 で有効化予定）。
+          「変更を確認」で dry-run を通過すると保存準備状態を表示します。Save は G-9k 専用 env arm + G9K_SAVE_BUTTON_SAVE_ENABLED=true で有効化されます。
         </p>
         <p class="admin-gosaki-save-note" role="note">
           ※ 複製・削除は準備中です。この画面ではまだ実行できません。

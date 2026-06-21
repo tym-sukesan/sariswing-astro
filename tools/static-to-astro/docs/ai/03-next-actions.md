@@ -1,6 +1,17 @@
 Last updated: 2026-06-21
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0f. G-9k4a UI Save enable preflight — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-9k4a-gosaki-schedule-existing-event-ui-save-enable-implementation-preflight` |
+| Doc | `gosaki-schedule-existing-event-ui-save-enable-implementation-preflight.md` |
+| Module | `gosaki-schedule-existing-event-save-button-save.ts` |
+| Status | **complete** — Save path wired; **default disabled** |
+| Next | `G-9k4` operator manual Save once |
+| `readyForAnyDbWrite` | **false** |
+
 ## 0e. G-9k3 manual dry-run verification — complete
 
 | Item | Value |
@@ -147,9 +158,9 @@ cursorClickedPreview: false
 
 ## 2. Next steps
 
-1. **G-9k4** operator manual Save once (explicit approval; separate phase)
+1. **G-9k4** operator manual Save once (explicit approval; flip `G9K_SAVE_BUTTON_SAVE_ENABLED` in G-9k4 only)
 2. **G-9h1** client preview feedback closure
-3. **Not** next: G-9j5 runner re-execution; Save enablement before G-9k4 approval
+3. **Not** next: Cursor Save click; G-9j5 runner re-execution
 
 ## 3. Routine dev safety
 

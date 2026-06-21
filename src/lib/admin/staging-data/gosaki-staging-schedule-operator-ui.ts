@@ -1,5 +1,5 @@
 /**
- * Gosaki staging shell — operator schedule add/edit UI (G-9k2 dry-run gate; save disabled).
+ * Gosaki staging shell — operator schedule add/edit UI (G-9k4a Save path; default disabled).
  */
 
 import type { ScheduleRecord } from "../staging-write/schedule-dry-run-types";
@@ -8,7 +8,15 @@ import {
   type G9kExistingEventSaveButtonDryRunResult,
   type G9kExistingEventSaveButtonFormValues,
 } from "../staging-write/gosaki-schedule-existing-event-save-button-dry-run";
-import { G9K_SAVE_BUTTON_SAVE_ENABLED } from "../staging-write/gosaki-schedule-existing-event-save-button-config";
+import {
+  evaluateG9kOperatorSaveButtonUiGate,
+  getG9kExistingEventSaveButtonConfig,
+  G9K_SAVE_BUTTON_SAVE_ENABLED,
+} from "../staging-write/gosaki-schedule-existing-event-save-button-config";
+import {
+  executeG9kExistingEventSaveButtonSave,
+  type G9kExistingEventSaveButtonSaveOutcome,
+} from "../staging-write/gosaki-schedule-existing-event-save-button-save";
 import {
   G9K_EXISTING_EVENT_SAVE_BUTTON_SAFE_FIELDS,
   type G9kExistingEventSaveButtonSafeField,
@@ -44,6 +52,8 @@ let selectableRows: ScheduleRecord[] = [];
 let selectedRowId: string | null = null;
 let selectedRowSnapshot: ScheduleRecord | null = null;
 let lastDryRunResult: G9kExistingEventSaveButtonDryRunResult | null = null;
+let stagingAuthSignedIn: boolean | null = null;
+let saveInFlight = false;
 let previewBase = "https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/";
 
 function escapeHtml(value: string): string {
@@ -270,6 +280,7 @@ function clearDryRunResult(): void {
   );
   el.innerHTML = "";
   updateSaveButtonState(null);
+  clearSaveResult();
 }
 
 function markDryRunStale(): void {
@@ -311,35 +322,54 @@ function updateSaveButtonState(result: G9kExistingEventSaveButtonDryRunResult | 
   const note = document.getElementById("gosaki-schedule-update-btn-note");
   if (!button) return;
 
-  button.disabled = true;
+  const gate = evaluateG9kOperatorSaveButtonUiGate({
+    signedIn: stagingAuthSignedIn === true,
+    selectedRow: selectedRowSnapshot,
+    dryRunResult: result,
+  });
+
+  button.disabled = !gate.enabled || saveInFlight;
+  if (gate.enabled && !saveInFlight) {
+    button.removeAttribute("data-gosaki-schedule-action-disabled");
+    button.setAttribute("data-gosaki-save-allowed", "true");
+    button.title = "変更内容を保存します";
+    button.textContent = "更新する";
+    if (note) {
+      note.textContent = "保存準備OK。内容を確認して「更新する」を押してください。";
+    }
+    return;
+  }
+
   button.setAttribute("data-gosaki-schedule-action-disabled", "");
   button.setAttribute("data-gosaki-save-allowed", "false");
-  button.title = "実保存は G-9k4 で有効化予定です";
 
   if (!result) {
     button.textContent = "更新する（準備中）";
+    button.title = gate.reason;
     if (note) {
       note.textContent =
-        "「変更を確認」で dry-run を通過すると保存準備状態を表示します。G-9k2 では実保存はできません。";
+        "「変更を確認」で dry-run を通過すると保存準備状態を表示します。Save は env arm + G-9k4 で有効化されます。";
     }
     return;
   }
 
   if (result.saveReadiness === "ready_but_save_disabled" && result.ok) {
     button.textContent = "更新する（G-9k4で有効化予定）";
+    button.title = gate.reason;
     if (note) {
       note.textContent =
-        "保存準備OK。ただし G-9k2 では実保存未開放です。実保存は G-9k4 で有効化予定です。";
+        "保存準備OK。ただし Save は未開放です（G9K_SAVE_BUTTON_SAVE_ENABLED=false または env arm 未設定）。";
     }
     return;
   }
 
   button.textContent = "更新する（保存不可）";
+  button.title = gate.reason;
   if (note) {
     if (result.saveReadiness === "no_changes") {
       note.textContent = "変更がありません。保存できません。";
     } else {
-      note.textContent = "確認エラーがあります。保存できません。";
+      note.textContent = gate.reason || "確認エラーがあります。保存できません。";
     }
   }
 }
@@ -416,10 +446,14 @@ function renderDryRunResult(result: G9kExistingEventSaveButtonDryRunResult): voi
   }
 
   el.classList.add("gosaki-schedule-edit-dry-run--ok", "gosaki-schedule-edit-dry-run--ready");
+  const saveReadyMessage =
+    result.saveReadiness === "ready_to_save"
+      ? "保存準備OK。Save が有効な場合は「更新する」から保存できます。"
+      : "保存準備OK。ただし Save は未開放です（G9K_SAVE_BUTTON_SAVE_ENABLED=false または env arm 未設定）。";
   el.innerHTML = `
     <h3 class="gosaki-schedule-edit-dry-run__title">確認結果</h3>
     <p class="gosaki-schedule-edit-dry-run__message gosaki-schedule-edit-dry-run__message--ready">
-      保存準備OK。ただし G-9k2 では実保存未開放です。
+      ${escapeHtml(saveReadyMessage)}
     </p>
     <dl class="gosaki-schedule-edit-dry-run__target">
       <div>
@@ -467,9 +501,78 @@ function renderDryRunResult(result: G9kExistingEventSaveButtonDryRunResult): voi
     </p>
     <p class="gosaki-schedule-edit-dry-run__note">この確認ではデータベースは変更されません。保存はまだ実行されません。</p>
     <p class="gosaki-schedule-edit-dry-run__save-disabled" data-gosaki-save-allowed="false">
-      実保存は G-9k4 で有効化予定です。この画面（G-9k2）では「更新する」から DB UPDATE はできません。
+      Save 実行には G-9k 専用 env arm / approvalId が必要です。G9K_SAVE_BUTTON_SAVE_ENABLED=false の間は DB UPDATE しません。
     </p>
   `;
+}
+
+function renderSaveDiffRows(
+  diff: NonNullable<G9kExistingEventSaveButtonSaveOutcome["beforeAfterDiff"]>,
+): string {
+  return diff
+    .map((row) => {
+      const label = G9K2_FIELD_LABELS[row.field as G9kExistingEventSaveButtonSafeField] ?? row.field;
+      return `<tr>
+        <th scope="row">${escapeHtml(label)}</th>
+        <td class="gosaki-schedule-edit-dry-run__before">${escapeHtml(displayDryRunValue(row.before))}</td>
+        <td class="gosaki-schedule-edit-dry-run__after">${escapeHtml(displayDryRunValue(row.after))}</td>
+      </tr>`;
+    })
+    .join("");
+}
+
+function renderSaveResult(outcome: G9kExistingEventSaveButtonSaveOutcome): void {
+  const el = document.getElementById("gosaki-schedule-edit-save-result");
+  if (!el) return;
+
+  el.hidden = false;
+  const success = outcome.result && !("errorCode" in outcome.result);
+  el.className = `gosaki-schedule-edit-save-result${success ? " gosaki-schedule-edit-save-result--ok" : " gosaki-schedule-edit-save-result--error"}`;
+
+  const changedChips = renderChangedFieldChips(outcome.changedFields);
+  const payloadChips = renderPayloadKeys(outcome.payloadKeys);
+  const diffRows = outcome.beforeAfterDiff ? renderSaveDiffRows(outcome.beforeAfterDiff) : "";
+
+  el.innerHTML = `
+    <h3 class="gosaki-schedule-edit-save-result__title">${success ? "保存結果" : "保存できませんでした"}</h3>
+    ${outcome.errorMessage ? `<p class="gosaki-schedule-edit-save-result__message">${escapeHtml(outcome.errorMessage)}</p>` : ""}
+    <dl class="gosaki-schedule-edit-dry-run__target">
+      <div><dt>target id</dt><dd><code>${escapeHtml(outcome.beforeRecord?.id ?? "—")}</code></dd></div>
+      <div><dt>legacy_id</dt><dd><code>${escapeHtml(outcome.beforeRecord?.legacy_id ?? "—")}</code></dd></div>
+      <div><dt>title</dt><dd>${escapeHtml(displayValue(outcome.afterRecord?.title ?? outcome.beforeRecord?.title))}</dd></div>
+      <div><dt>date</dt><dd>${escapeHtml(outcome.beforeRecord?.date ?? "—")}</dd></div>
+      <div><dt>venue</dt><dd>${escapeHtml(displayValue(outcome.afterRecord?.venue ?? outcome.beforeRecord?.venue))}</dd></div>
+      <div><dt>before updated_at</dt><dd><code>${escapeHtml(outcome.beforeRecord?.updated_at ?? "—")}</code></dd></div>
+      <div><dt>post-save updated_at</dt><dd><code>${escapeHtml(outcome.afterRecord?.updated_at ?? "—")}</code></dd></div>
+    </dl>
+    <div class="gosaki-schedule-edit-dry-run__chips">
+      <span class="gosaki-schedule-edit-dry-run__chips-label">changedFields</span>
+      ${changedChips}
+    </div>
+    <div class="gosaki-schedule-edit-dry-run__chips">
+      <span class="gosaki-schedule-edit-dry-run__chips-label">payload keys</span>
+      ${payloadChips}
+    </div>
+    ${
+      diffRows
+        ? `<div class="gosaki-schedule-edit-dry-run__diff-wrap"><table class="gosaki-schedule-edit-dry-run__diff"><thead><tr><th>項目</th><th>変更前</th><th>変更後</th></tr></thead><tbody>${diffRows}</tbody></table></div>`
+        : ""
+    }
+  `;
+}
+
+function clearSaveResult(): void {
+  const el = document.getElementById("gosaki-schedule-edit-save-result");
+  if (!el) return;
+  el.hidden = true;
+  el.className = "gosaki-schedule-edit-save-result";
+  el.innerHTML = "";
+}
+
+async function refreshStagingAuthSignedIn(): Promise<boolean> {
+  stagingAuthSignedIn = await resolveStagingAuthSignedIn();
+  updateSaveButtonState(lastDryRunResult);
+  return stagingAuthSignedIn;
 }
 
 async function resolveStagingAuthSignedIn(): Promise<boolean> {
@@ -498,7 +601,7 @@ async function runEditDryRunPreview(): Promise<void> {
     return;
   }
 
-  const signedIn = await resolveStagingAuthSignedIn();
+  const signedIn = await refreshStagingAuthSignedIn();
   const result = executeG9kExistingEventSaveButtonDryRun({
     beforeSnapshot: selectedRowSnapshot,
     formValues: readEditFormSafeValues(),
@@ -507,6 +610,85 @@ async function runEditDryRunPreview(): Promise<void> {
   });
   lastDryRunResult = result;
   renderDryRunResult(result);
+}
+
+async function runEditSave(): Promise<void> {
+  if (!G9K_SAVE_BUTTON_SAVE_ENABLED) {
+    window.alert(
+      "G9K_SAVE_BUTTON_SAVE_ENABLED=false のため Save は未開放です。G-9k4 で有効化してください。",
+    );
+    return;
+  }
+
+  const config = getG9kExistingEventSaveButtonConfig();
+  if (!config.saveEnabled) {
+    window.alert(config.armFailureReason ?? "G-9k Save env arm / approval stack が未設定です。");
+    return;
+  }
+
+  if (!selectedRowSnapshot || !lastDryRunResult?.ok) {
+    window.alert("先に「変更を確認」で dry-run を成功させてください。");
+    return;
+  }
+
+  const gate = evaluateG9kOperatorSaveButtonUiGate({
+    signedIn: stagingAuthSignedIn === true,
+    selectedRow: selectedRowSnapshot,
+    dryRunResult: lastDryRunResult,
+  });
+  if (!gate.enabled) {
+    window.alert(gate.reason);
+    return;
+  }
+
+  if (
+    !window.confirm(
+      "この内容で既存公演を更新します。よろしいですか？（1行のみ更新）",
+    )
+  ) {
+    return;
+  }
+
+  saveInFlight = true;
+  updateSaveButtonState(lastDryRunResult);
+
+  const url = String(import.meta.env.PUBLIC_SUPABASE_URL ?? "").trim();
+  const anonKey = String(import.meta.env.PUBLIC_SUPABASE_ANON_KEY ?? "").trim();
+
+  const outcome = await executeG9kExistingEventSaveButtonSave({
+    url,
+    anonKey,
+    beforeSnapshot: selectedRowSnapshot,
+    formValues: readEditFormSafeValues(),
+    saveBinding: {
+      changedFields: [...lastDryRunResult.changedFields],
+      payloadKeys: [...lastDryRunResult.payloadKeys],
+      expectedBeforeUpdatedAt: lastDryRunResult.expectedBeforeUpdatedAt,
+      dryRunOk: lastDryRunResult.ok,
+    },
+  });
+
+  saveInFlight = false;
+  renderSaveResult(outcome);
+
+  const success = outcome.result && !("errorCode" in outcome.result);
+  if (success && outcome.afterRecord && outcome.result && !("errorCode" in outcome.result)) {
+    const writeResult = outcome.result;
+    const updatedRow: ScheduleRecord = {
+      ...selectedRowSnapshot,
+      ...(writeResult.afterSnapshot ?? {}),
+      updated_at: outcome.afterRecord.updated_at,
+    };
+    selectedRowSnapshot = updatedRow;
+    const index = selectableRows.findIndex((row) => row.id === updatedRow.id);
+    if (index >= 0) selectableRows[index] = updatedRow;
+    renderScheduleList();
+    renderEditForm(updatedRow);
+    clearDryRunResult();
+    clearSaveResult();
+  } else {
+    updateSaveButtonState(lastDryRunResult);
+  }
 }
 
 function renderScheduleRowButton(rowId: string, selected: boolean): string {
@@ -665,25 +847,27 @@ function wireEditForm(): void {
   }
 }
 
-function wireDisabledActions(): void {
+function wireSaveButton(): void {
   document
-    .querySelectorAll<HTMLButtonElement>("[data-gosaki-schedule-action-disabled]")
-    .forEach((button) => {
-      button.disabled = true;
-      button.title = "実保存は G-9k4 で有効化予定です";
+    .getElementById("gosaki-schedule-update-btn")
+    ?.addEventListener("click", (event) => {
+      event.preventDefault();
+      void runEditSave();
     });
-
-  document.getElementById("gosaki-schedule-update-btn")?.addEventListener("click", (event) => {
-    event.preventDefault();
-    if (G9K_SAVE_BUTTON_SAVE_ENABLED) return;
-    const message = lastDryRunResult?.saveReadiness === "ready_but_save_disabled"
-      ? "保存準備は完了していますが、G-9k2 では実保存は未開放です。G-9k4 で有効化予定です。"
-      : "実保存は G-9k4 で有効化予定です。この画面では DB UPDATE は実行できません。";
-    window.alert(message);
-  });
 }
 
-export function initGosakiStagingScheduleOperatorUi(): void {
+function wireDisabledActions(): void {
+  document
+    .querySelectorAll<HTMLButtonElement>(
+      "[data-gosaki-schedule-action-disabled]:not(#gosaki-schedule-update-btn)",
+    )
+    .forEach((button) => {
+      button.disabled = true;
+      button.title = "この操作は準備中です";
+    });
+}
+
+export async function initGosakiStagingScheduleOperatorUi(): Promise<void> {
   const root = getRoot();
   if (!root) return;
 
@@ -692,13 +876,15 @@ export function initGosakiStagingScheduleOperatorUi(): void {
   wireTableActions();
   wireAddForm();
   wireEditForm();
+  wireSaveButton();
   wireDisabledActions();
+  await refreshStagingAuthSignedIn();
   renderScheduleList();
   renderEditForm(null);
 }
 
 if (typeof document !== "undefined") {
   document.addEventListener("DOMContentLoaded", () => {
-    initGosakiStagingScheduleOperatorUi();
+    void initGosakiStagingScheduleOperatorUi();
   });
 }

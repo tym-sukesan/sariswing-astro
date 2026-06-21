@@ -2320,6 +2320,36 @@
   font-size: 0.72rem;
 }
 
+.gosaki-schedule-edit-save-result {
+  margin-top: 1rem;
+  padding: 1rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background: #f8fafc;
+}
+
+.gosaki-schedule-edit-save-result--ok {
+  border-color: #86efac;
+  background: #f0fdf4;
+}
+
+.gosaki-schedule-edit-save-result--error {
+  border-color: #fecaca;
+  background: #fef2f2;
+}
+
+.gosaki-schedule-edit-save-result__title {
+  margin: 0 0 0.5rem;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.gosaki-schedule-edit-save-result__message {
+  margin: 0 0 0.75rem;
+  color: #b91c1c;
+  font-size: 0.88rem;
+}
+
 .gosaki-schedule-edit-dry-run--ready {
   border-color: #86efac;
 }

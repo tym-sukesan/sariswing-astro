@@ -5,14 +5,23 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-9j5c-gosaki-schedule-existing-event-update-success-finalization — complete.
-G-9j5 one-row non-dry-run UPDATE succeeded on static-to-astro-cms-staging (operator manual — once).
-Do not re-run G-9j5 without new approval ID.
+Current phase: G-9k-gosaki-schedule-existing-event-save-button-enablement-planning — complete (planning only).
+Prior: G-9j5c one-row UPDATE succeeded on staging (do not re-run G-9j5 runner).
 branch: main
 HEAD = origin/main — check git HEAD for latest commit hash
 ```
 
-## G-9j5c Gosaki schedule existing event update — success
+## G-9k save button enablement — planning complete
+
+- **Doc:** `gosaki-schedule-existing-event-save-button-enablement-planning.md`
+- **Scope:** operator 「更新する」 — existing row UPDATE; 6 safe fields; dry-run before Save
+- **approvalId:** `G-9k-gosaki-schedule-existing-event-save-button-non-dry-run` (not G-9j5)
+- **env arm:** `PUBLIC_ADMIN_GOSAKI_SCHEDULE_EXISTING_EVENT_SAVE_BUTTON_NON_DRY_RUN_ARMED`
+- **Save:** still disabled until G-9k2+ implementation and G-9k4 manual phase
+- **Next:** G-9k1 guard / config / verifier
+- **`readyForAnyDbWrite: false`**
+
+## G-9j5c — success (prior)
 
 - **Doc:** `gosaki-schedule-existing-event-update-success-finalization.md`
 - **Project:** `static-to-astro-cms-staging` / ref `kmjqppxjdnwwrtaeqjta` only — `sari-site` not touched
@@ -105,10 +114,8 @@ PUBLIC_ADMIN_SCHEDULE_G9G3G5_OPERATIONAL_RESTORE_NON_DRY_RUN_ARMED=false or unse
 
 ## Next
 
-1. **G-9j6 / operator Save enablement planning** — separate phase; not G-9j5 re-run
-2. **G-9h1** client preview feedback closure
-3. **G-9h2** public schedule read verification + re-upload planning
-4. **G-9h3** schedule CMS practicalization phase boundary
-5. **G-9i** YouTube embed planning (parallel track)
-6. **Not** G-9j5 one-row non-dry-run re-execution
-7. **Not** `start_time`-only manual non-dry-run execution
+1. **G-9k1** guard / config / verifier (Save disabled)
+2. **G-9k2** UI wiring — dry-run gates Save
+3. **G-9h1** client preview feedback closure
+4. **Not** G-9j5 runner re-execution
+5. **Not** G-9j5 approval/arm for operator Save

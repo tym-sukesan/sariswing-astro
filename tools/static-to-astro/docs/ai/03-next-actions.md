@@ -1,7 +1,20 @@
 Last updated: 2026-06-21
 Project: Static-to-Astro CMS / Musician CMS Kit
 
-## 0a. G-9j5c Gosaki schedule existing event update — success finalization complete
+## 0b. G-9k save button enablement — planning complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-9k-gosaki-schedule-existing-event-save-button-enablement-planning` |
+| Doc | `gosaki-schedule-existing-event-save-button-enablement-planning.md` |
+| Scope | Operator 「更新する」 — existing row UPDATE; 6 safe fields |
+| approvalId | `G-9k-gosaki-schedule-existing-event-save-button-non-dry-run` |
+| env arm | `PUBLIC_ADMIN_GOSAKI_SCHEDULE_EXISTING_EVENT_SAVE_BUTTON_NON_DRY_RUN_ARMED` |
+| Status | **planning complete** — Save **not** enabled |
+| Next | `G-9k1` guard / config / verifier |
+| `readyForAnyDbWrite` | **false** |
+
+## 0a. G-9j5c — success finalization complete
 
 | Item | Value |
 | --- | --- |
@@ -99,20 +112,17 @@ cursorClickedPreview: false
 
 ## 2. Next steps
 
-1. **G-9j6 or operator Save enablement planning** — wire G-9j5-proven path to operator Save UI (separate approval; not G-9j5 re-run)
-2. **G-9h1 client preview feedback closure** — staging URL review vs Wix; residual list; no DB write / Preview / Save
-3. **G-9h2 public schedule read verification + re-upload planning** — `scheduleDataSource` check; manual re-upload checklist
-4. **G-9h3 schedule CMS practicalization phase boundary** — Phase 1 vs Phase 2 write slice roadmap
-5. **G-9i YouTube embed planning** — separate track per G-9a
-6. **Not** next: G-9j5 one-row non-dry-run re-execution
-7. **Not** next: `start_time`-only manual non-dry-run execution slice
+1. **G-9k1** save button guard / config / verifier — Save still disabled
+2. **G-9k2** operator UI wiring — dry-run gates Save button (disabled until G-9k4)
+3. **G-9h1** client preview feedback closure
+4. **Not** next: G-9j5 runner re-execution; G-9j5 approval/arm for operator Save
 
 ## 3. Routine dev safety
 
 ```txt
 PUBLIC_ADMIN_WRITE_DRY_RUN=true
+PUBLIC_ADMIN_GOSAKI_SCHEDULE_EXISTING_EVENT_SAVE_BUTTON_NON_DRY_RUN_ARMED=false or unset
 PUBLIC_ADMIN_GOSAKI_SCHEDULE_EXISTING_EVENT_UPDATE_NON_DRY_RUN_ARMED=false or unset
-ENABLE_ADMIN_STAGING_WRITE=false
 PUBLIC_ADMIN_SCHEDULE_G9G4A2A_OPEN_TIME_ONLY_NON_DRY_RUN_ARMED=false or unset
 PUBLIC_ADMIN_SCHEDULE_G9G4A2B_START_TIME_ONLY_NON_DRY_RUN_ARMED=false or unset
 PUBLIC_ADMIN_SCHEDULE_G9G4A2C_PRICE_ONLY_NON_DRY_RUN_ARMED=false or unset

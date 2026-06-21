@@ -1,0 +1,75 @@
+---
+/**
+ * G-9j5b — Gosaki staging admin auth gate wrapper.
+ */
+import AdminStagingLoginUiSection from "../../auth/components/AdminStagingLoginUiSection.astro";
+import { getStagingAuthConfig } from "../../../../../../src/lib/admin/staging-auth/staging-auth-config";
+import { resolveStagingAuthPageServerFlags } from "../../../../../../src/lib/admin/staging-auth/staging-auth-page-config";
+import { GOSAKI_STAGING_AUTH_FORGOT_PASSWORD_PATH, GOSAKI_STAGING_SHELL_BASE } from "../gosaki-staging-admin-paths";
+
+interface Props {
+  routePath?: string;
+  forgotPasswordHref?: string;
+}
+
+const {
+  routePath = GOSAKI_STAGING_SHELL_BASE,
+  forgotPasswordHref = GOSAKI_STAGING_AUTH_FORGOT_PASSWORD_PATH,
+} = Astro.props;
+
+const authConfig = getStagingAuthConfig();
+const pageFlags = resolveStagingAuthPageServerFlags();
+---
+
+<div
+  id="staging-admin-auth-gate"
+  class="staging-admin-auth-gate"
+  data-phase="G-9j5b-gosaki-staging-admin-auth-gate"
+>
+  <div
+    id="staging-auth-page-config"
+    data-staging-auth-enabled={pageFlags.stagingAuthEnabled ? "true" : "false"}
+    data-admin-auth-provider={pageFlags.adminAuthProvider}
+    data-supabase-configured={authConfig.supabaseConfigured ? "true" : "false"}
+    hidden
+  />
+
+  <p id="staging-admin-auth-gate-loading" class="staging-admin-auth-gate__loading" role="status">
+    ログイン状態を確認しています…
+  </p>
+
+  <div id="staging-admin-auth-gate-signed-in-bar" class="staging-admin-auth-gate__signed-in" hidden>
+    <span id="staging-admin-gate-user-email" class="staging-admin-auth-gate__email" />
+    <button
+      type="button"
+      class="admin-button admin-button--secondary"
+      data-staging-admin-gate-sign-out
+    >
+      ログアウト
+    </button>
+  </div>
+
+  <div id="staging-admin-auth-gate-login" class="staging-admin-auth-gate__login" hidden>
+    <section
+      id="auth-login-shell"
+      class="admin-prototype-section admin-staging-login-section admin-gosaki-login-section"
+      aria-label="管理ログイン"
+    >
+      <AdminStagingLoginUiSection
+        routePath={routePath}
+        phase="G-9j5b-gosaki-staging-admin-auth-gate"
+        operatorMode={true}
+        forgotPasswordHref={forgotPasswordHref}
+      />
+    </section>
+  </div>
+
+  <div id="staging-admin-auth-gate-protected" class="staging-admin-auth-gate__protected" hidden>
+    <slot />
+  </div>
+</div>
+
+<script>
+  import "../../../../../../src/lib/admin/staging-auth/staging-admin-auth-gate.ts";
+  import "../../../../../../src/lib/admin/staging-auth/staging-auth-ui.ts";
+</script>

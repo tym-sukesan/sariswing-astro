@@ -123,7 +123,7 @@ assert(
 assert(
   "login shell links to forgot-password route",
   read(
-    "tools/static-to-astro/templates/admin-cms/gosaki/pages/GosakiStagingAdminHomePage.astro",
+    "tools/static-to-astro/templates/admin-cms/gosaki/components/AdminGosakiStagingAuthGate.astro",
   ).includes("GOSAKI_STAGING_AUTH_FORGOT_PASSWORD_PATH"),
 );
 

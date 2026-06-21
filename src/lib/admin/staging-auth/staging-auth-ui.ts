@@ -13,6 +13,7 @@ import { collectAuthGateBlockers, formatGateBlockers } from "./staging-auth-gate
 import { resolveMockAdminRole } from "./staging-role-resolver";
 import { refreshRoleAllowlistPanel } from "./staging-role-allowlist-ui";
 import { refreshAuthWriteDebugPanel } from "./staging-auth-write-debug-ui";
+import { refreshStagingAdminAuthGate } from "./staging-admin-auth-gate";
 import { clearStagingAuthHashFromUrl } from "./staging-password-reset-callback";
 
 function setText(id: string, value: string): void {
@@ -153,6 +154,7 @@ function wireLoginForm(): void {
       await signOutStagingAuth(config.supabaseUrl, config.supabaseAnonKey);
       await refreshAuthStatusPanel();
       await refreshRoleAllowlistPanel();
+      await refreshStagingAdminAuthGate();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Sign out failed.");
     } finally {
@@ -183,6 +185,7 @@ function wireLoginForm(): void {
       );
       await refreshAuthStatusPanel();
       await refreshRoleAllowlistPanel();
+      await refreshStagingAdminAuthGate();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Login failed.");
     } finally {

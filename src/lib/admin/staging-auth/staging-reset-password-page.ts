@@ -5,6 +5,10 @@
 import { getStagingAuthConfig } from "./staging-auth-config";
 import { STAGING_ADMIN_HOME_PATH } from "./staging-auth-paths";
 import {
+  isStagingAuthInteractiveFromPageConfig,
+  readStagingAuthPageConfigFromDom,
+} from "./staging-auth-page-config";
+import {
   clearStagingAuthHashFromUrl,
   ensureStagingRecoverySession,
   parseStagingAuthHashError,
@@ -12,24 +16,11 @@ import {
   updateStagingAuthPassword,
 } from "./staging-password-reset-callback";
 
-type StagingAuthPageConfig = {
-  stagingAuthEnabled: boolean;
-  adminAuthProvider: string;
-  supabaseConfigured: boolean;
-};
-
-const readStagingAuthPageConfig = (): StagingAuthPageConfig => {
-  const config = document.getElementById("staging-auth-page-config");
-
-  return {
-    stagingAuthEnabled:
-      config?.getAttribute("data-staging-auth-enabled") === "true",
-    adminAuthProvider:
-      config?.getAttribute("data-admin-auth-provider") ?? "",
-    supabaseConfigured:
-      config?.getAttribute("data-supabase-configured") === "true",
-  };
-};
+function isPageAuthInteractive(): boolean {
+  const pageConfig = readStagingAuthPageConfigFromDom();
+  if (!pageConfig) return false;
+  return isStagingAuthInteractiveFromPageConfig(pageConfig);
+}
 
 const MIN_PASSWORD_LENGTH = 8;
 
@@ -53,13 +44,7 @@ function showInvalidLinkState(): void {
 
 export function initStagingResetPasswordPage(): void {
   void (async () => {
-    const pageConfig = readStagingAuthPageConfig();
-
-    if (
-      !pageConfig.stagingAuthEnabled ||
-      pageConfig.adminAuthProvider !== "supabase" ||
-      !pageConfig.supabaseConfigured
-    ) {
+    if (!isPageAuthInteractive()) {
       setError(
         "ステージング Auth が無効です。ENABLE_ADMIN_STAGING_AUTH=true と PUBLIC_ADMIN_AUTH_PROVIDER=supabase を設定してください。",
       );

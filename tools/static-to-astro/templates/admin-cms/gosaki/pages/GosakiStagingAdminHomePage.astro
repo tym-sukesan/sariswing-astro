@@ -1,42 +1,29 @@
 ---
 import AdminGosakiStagingShellLayout from "../components/AdminGosakiStagingShellLayout.astro";
 import AdminGosakiStagingOperatorHome from "../components/AdminGosakiStagingOperatorHome.astro";
-import AdminStagingLoginUiSection from "../../auth/components/AdminStagingLoginUiSection.astro";
+import AdminGosakiStagingAuthGate from "../components/AdminGosakiStagingAuthGate.astro";
 import AdminAuthAdapterStatusPanel from "../../components/AdminAuthAdapterStatusPanel.astro";
 import { getStagingAuthConfig } from "../../../../../../src/lib/admin/staging-auth/staging-auth-config";
 import {
   GOSAKI_STAGING_ADMIN_SCHEDULE_PATH,
-  GOSAKI_STAGING_AUTH_FORGOT_PASSWORD_PATH,
   GOSAKI_STAGING_PREVIEW_URL,
-  GOSAKI_STAGING_SHELL_BASE,
 } from "../gosaki-staging-admin-paths";
 
 const stagingAuthConfig = getStagingAuthConfig();
 ---
 
 <AdminGosakiStagingShellLayout title="管理画面">
-  <div class="admin-gosaki-admin-pages">
-    <AdminGosakiStagingOperatorHome
-      previewUrl={GOSAKI_STAGING_PREVIEW_URL}
-      schedulePath={GOSAKI_STAGING_ADMIN_SCHEDULE_PATH}
-    />
-
-    <section
-      id="auth-login-shell"
-      class="admin-prototype-section admin-staging-login-section admin-gosaki-login-section"
-      aria-label="管理ログイン"
-    >
-      <AdminStagingLoginUiSection
-        routePath={GOSAKI_STAGING_SHELL_BASE}
-        phase="gosaki-admin-ui-and-login-flow-practicalization"
-        operatorMode={true}
-        forgotPasswordHref={GOSAKI_STAGING_AUTH_FORGOT_PASSWORD_PATH}
+  <AdminGosakiStagingAuthGate>
+    <div class="admin-gosaki-admin-pages">
+      <AdminGosakiStagingOperatorHome
+        previewUrl={GOSAKI_STAGING_PREVIEW_URL}
+        schedulePath={GOSAKI_STAGING_ADMIN_SCHEDULE_PATH}
       />
-    </section>
 
-    <details class="admin-gosaki-dev-tools">
-      <summary>開発者向け詳細</summary>
-      <AdminAuthAdapterStatusPanel phase="G-5y-e-a" authConfig={stagingAuthConfig} />
-    </details>
-  </div>
+      <details class="admin-gosaki-dev-tools">
+        <summary>開発者向け詳細</summary>
+        <AdminAuthAdapterStatusPanel phase="G-5y-e-a" authConfig={stagingAuthConfig} />
+      </details>
+    </div>
+  </AdminGosakiStagingAuthGate>
 </AdminGosakiStagingShellLayout>

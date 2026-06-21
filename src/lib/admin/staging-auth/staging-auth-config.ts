@@ -3,6 +3,10 @@
  */
 
 import { mergeStagingShellEnv } from "../staging-shell/staging-shell-client-gates";
+import {
+  isStagingAuthInteractiveFromPageConfig,
+  readStagingAuthPageConfigFromDom,
+} from "./staging-auth-page-config";
 
 export const G5Y_D_APPROVAL_ID = "G-5y-d-staging-auth-connect";
 
@@ -33,37 +37,46 @@ export function getStagingAuthConfig(
   const supabaseUrl = String(mergedEnv.PUBLIC_SUPABASE_URL ?? "").trim();
   const supabaseAnonKey = String(mergedEnv.PUBLIC_SUPABASE_ANON_KEY ?? "").trim();
 
-  const stagingAuthEnabled =
-    dev &&
-    stagingShellEnabled &&
-    stagingAuthFlag &&
-    provider === "supabase";
-
   const supabaseConfigured = Boolean(supabaseUrl && supabaseAnonKey);
+  const pageConfig = readStagingAuthPageConfigFromDom();
+  const pageInteractive = pageConfig
+    ? isStagingAuthInteractiveFromPageConfig(pageConfig)
+    : false;
+
+  const stagingAuthEnabled = pageInteractive
+    ? dev && pageConfig!.adminAuthProvider === "supabase" && supabaseConfigured
+    : dev &&
+      stagingShellEnabled &&
+      stagingAuthFlag &&
+      provider === "supabase";
+
+  const effectiveStagingShellEnabled = pageInteractive || stagingShellEnabled;
+  const effectiveStagingAuthFlag = pageInteractive || stagingAuthFlag;
+  const effectiveProvider = pageConfig?.adminAuthProvider || provider;
   const configMissing =
     dev &&
-    stagingShellEnabled &&
-    stagingAuthFlag &&
-    provider === "supabase" &&
+    effectiveStagingShellEnabled &&
+    effectiveStagingAuthFlag &&
+    effectiveProvider === "supabase" &&
     !supabaseConfigured;
 
   let authMode: StagingAuthMode = "mock";
-  if (!dev || !stagingShellEnabled) {
+  if (!dev || !effectiveStagingShellEnabled) {
     authMode = "disabled";
   } else if (stagingAuthEnabled && supabaseConfigured) {
     authMode = "supabase-staging";
   } else if (configMissing) {
     authMode = "disabled";
-  } else if (provider === "mock" || !stagingAuthFlag) {
+  } else if (effectiveProvider === "mock" || !effectiveStagingAuthFlag) {
     authMode = "mock";
   }
 
   return {
     approvalId: G5Y_D_APPROVAL_ID,
     dev,
-    stagingShellEnabled,
-    stagingAuthFlag,
-    provider,
+    stagingShellEnabled: effectiveStagingShellEnabled,
+    stagingAuthFlag: effectiveStagingAuthFlag,
+    provider: effectiveProvider,
     supabaseUrl,
     supabaseAnonKey,
     stagingAuthEnabled,

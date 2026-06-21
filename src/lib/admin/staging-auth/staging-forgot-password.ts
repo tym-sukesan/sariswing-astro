@@ -4,29 +4,24 @@
 
 import { getStagingAuthConfig } from "./staging-auth-config";
 import {
+  isStagingAuthInteractiveFromPageConfig,
+  readStagingAuthPageConfigFromDom,
+} from "./staging-auth-page-config";
+import {
   getStagingResetPasswordRedirectUrl,
   STAGING_ADMIN_HOME_PATH,
 } from "./staging-auth-paths";
 import { getStagingSupabaseClient } from "./supabase-staging-auth-client";
 
-type StagingAuthPageConfig = {
-  stagingAuthEnabled: boolean;
-  adminAuthProvider: string;
-  supabaseConfigured: boolean;
-};
+function readPageConfig() {
+  return readStagingAuthPageConfigFromDom();
+}
 
-const readStagingAuthPageConfig = (): StagingAuthPageConfig => {
-  const config = document.getElementById("staging-auth-page-config");
-
-  return {
-    stagingAuthEnabled:
-      config?.getAttribute("data-staging-auth-enabled") === "true",
-    adminAuthProvider:
-      config?.getAttribute("data-admin-auth-provider") ?? "",
-    supabaseConfigured:
-      config?.getAttribute("data-supabase-configured") === "true",
-  };
-};
+function isPageAuthInteractive(): boolean {
+  const pageConfig = readPageConfig();
+  if (!pageConfig) return false;
+  return isStagingAuthInteractiveFromPageConfig(pageConfig);
+}
 
 function setError(message: string): void {
   const el = document.getElementById("staging-forgot-password-error");
@@ -47,13 +42,7 @@ function showSuccess(): void {
 }
 
 async function redirectIfAlreadyLoggedIn(): Promise<void> {
-  const pageConfig = readStagingAuthPageConfig();
-
-  if (
-    !pageConfig.stagingAuthEnabled ||
-    pageConfig.adminAuthProvider !== "supabase" ||
-    !pageConfig.supabaseConfigured
-  ) {
+  if (!isPageAuthInteractive()) {
     return;
   }
 
@@ -82,13 +71,7 @@ export function initStagingForgotPasswordPage(): void {
     event.preventDefault();
 
     void (async () => {
-      const pageConfig = readStagingAuthPageConfig();
-
-      if (
-        !pageConfig.stagingAuthEnabled ||
-        pageConfig.adminAuthProvider !== "supabase" ||
-        !pageConfig.supabaseConfigured
-      ) {
+      if (!isPageAuthInteractive()) {
         setError(
           "ステージング Auth が無効です。ENABLE_ADMIN_STAGING_AUTH=true と PUBLIC_ADMIN_AUTH_PROVIDER=supabase を設定してください。",
         );

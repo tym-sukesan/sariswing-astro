@@ -5,11 +5,19 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-9k2-gosaki-schedule-existing-event-save-button-ui-wiring-dry-run-gate — complete (dry-run UI wiring only).
-Prior: G-9k1 guard/config; G-9j5c one-row UPDATE succeeded (do not re-run G-9j5 runner).
+Current phase: G-9k3-gosaki-schedule-existing-event-save-button-manual-dry-run-verification — complete (manual verification recorded).
+Prior: G-9k2 dry-run UI wiring (ea523fb); G-9j5c one-row UPDATE succeeded (do not re-run G-9j5 runner).
 branch: main
 HEAD = origin/main — check git HEAD for latest commit hash
 ```
+
+## G-9k3 manual dry-run verification — complete
+
+- **Doc:** `gosaki-schedule-existing-event-save-button-manual-dry-run-verification.md`
+- **Scope:** operator manual dry-run / auth-gate checklist 1–8 — **PASS** (human)
+- **Save:** still disabled; no DB write / non-dry-run in this phase
+- **Next:** G-9k4 operator manual Save once
+- **`readyForAnyDbWrite: false`**
 
 ## G-9k2 save button UI wiring — complete
 
@@ -134,8 +142,7 @@ PUBLIC_ADMIN_SCHEDULE_G9G3G5_OPERATIONAL_RESTORE_NON_DRY_RUN_ARMED=false or unse
 
 ## Next
 
-1. **G-9k3** dry-run verification
-2. **G-9k4** one manual Save (operator)
-3. **G-9h1** client preview feedback closure
-4. **Not** G-9j5 runner re-execution
-5. **Not** G-9j5 approval/arm for operator Save
+1. **G-9k4** operator manual Save once (explicit approval)
+2. **G-9h1** client preview feedback closure
+3. **Not** G-9j5 runner re-execution
+4. **Not** Save enablement before G-9k4 approval

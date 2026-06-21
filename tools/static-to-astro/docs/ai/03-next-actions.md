@@ -1,6 +1,17 @@
 Last updated: 2026-06-21
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0e. G-9k3 manual dry-run verification — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-9k3-gosaki-schedule-existing-event-save-button-manual-dry-run-verification` |
+| Doc | `gosaki-schedule-existing-event-save-button-manual-dry-run-verification.md` |
+| Status | **complete** — operator manual checklist 1–8 PASS; **no DB write** |
+| Save | **disabled** (`G9K_SAVE_BUTTON_SAVE_ENABLED = false`) |
+| Next | `G-9k4` operator manual Save once |
+| `readyForAnyDbWrite` | **false** |
+
 ## 0d. G-9k2 save button UI wiring — complete
 
 | Item | Value |
@@ -136,10 +147,9 @@ cursorClickedPreview: false
 
 ## 2. Next steps
 
-1. **G-9k3** dry-run verification (static)
-2. **G-9k4** one manual Save (operator; explicit approval)
-3. **G-9h1** client preview feedback closure
-4. **Not** next: G-9j5 runner re-execution; G-9j5 approval/arm for operator Save
+1. **G-9k4** operator manual Save once (explicit approval; separate phase)
+2. **G-9h1** client preview feedback closure
+3. **Not** next: G-9j5 runner re-execution; Save enablement before G-9k4 approval
 
 ## 3. Routine dev safety
 

@@ -1,17 +1,16 @@
 ---
 import AdminGosakiStagingShellLayout from "../components/AdminGosakiStagingShellLayout.astro";
 import AdminGosakiStagingYoutubeOperatorPage from "../components/AdminGosakiStagingYoutubeOperatorPage.astro";
+import AdminGosakiStagingAuthGate from "../components/AdminGosakiStagingAuthGate.astro";
 import { loadGosakiYoutubeEmbedAdminBinding } from "../../../../../../src/lib/admin/staging-data/gosaki-youtube-embed-admin-binding";
 
 const binding = loadGosakiYoutubeEmbedAdminBinding();
 ---
 
 <AdminGosakiStagingShellLayout title="YouTube設定">
-  <div class="admin-gosaki-admin-pages">
-    <AdminGosakiStagingYoutubeOperatorPage binding={binding} />
-  </div>
+  <AdminGosakiStagingAuthGate>
+    <div class="admin-gosaki-admin-pages">
+      <AdminGosakiStagingYoutubeOperatorPage binding={binding} />
+    </div>
+  </AdminGosakiStagingAuthGate>
 </AdminGosakiStagingShellLayout>
-
-<script>
-  import "../../../../../../src/lib/admin/staging-auth/staging-auth-ui.ts";
-</script>

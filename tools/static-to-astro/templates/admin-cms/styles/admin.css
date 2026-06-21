@@ -797,6 +797,39 @@
   display: none !important;
 }
 
+/* G-9j5b — Staging admin auth gate */
+
+.staging-admin-auth-gate__loading {
+  margin: 1rem 0;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  background: #f1f5f9;
+  color: #475569;
+  font-size: 0.9375rem;
+}
+
+.staging-admin-auth-gate__signed-in {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 0 0 1rem;
+  padding: 0.65rem 0.85rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  background: #f8fafc;
+}
+
+.staging-admin-auth-gate__email {
+  font-size: 0.875rem;
+  color: #334155;
+}
+
+.staging-admin-auth-gate__protected[hidden],
+.staging-admin-auth-gate__login[hidden] {
+  display: none !important;
+}
+
 /* G-5n — Media upload scaffold */
 
 .admin-image-uploader {

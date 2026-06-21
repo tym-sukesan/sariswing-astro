@@ -1,6 +1,7 @@
 ---
 import AdminGosakiStagingShellLayout from "../components/AdminGosakiStagingShellLayout.astro";
 import AdminGosakiStagingScheduleOperatorPage from "../components/AdminGosakiStagingScheduleOperatorPage.astro";
+import AdminGosakiStagingAuthGate from "../components/AdminGosakiStagingAuthGate.astro";
 import AdminStagingScheduleSiteSlugReadSection from "../../data/components/AdminStagingScheduleSiteSlugReadSection.astro";
 import AdminStagingScheduleSiteSlugRowPickerSection from "../../data/components/AdminStagingScheduleSiteSlugRowPickerSection.astro";
 import AdminStagingScheduleSiteSlugEditSection from "../../data/components/AdminStagingScheduleSiteSlugEditSection.astro";
@@ -17,35 +18,33 @@ const editBinding = await resolveGosakiScheduleSiteSlugEditBinding();
 ---
 
 <AdminGosakiStagingShellLayout title="Schedule管理">
-  <div class="admin-gosaki-admin-pages">
-    <AdminGosakiStagingScheduleOperatorPage binding={rowPickerBinding} />
+  <AdminGosakiStagingAuthGate>
+    <div class="admin-gosaki-admin-pages">
+      <AdminGosakiStagingScheduleOperatorPage binding={rowPickerBinding} />
 
-    <details class="admin-gosaki-dev-tools admin-gosaki-dev-tools--schedule">
-      <summary>開発者向け詳細</summary>
-      <p class="admin-gosaki-dev-tools__note" role="note">
-        通常の運用確認では開く必要はありません。内部検証用の UI です。
-      </p>
-      {
-        readBinding ? (
-          <AdminStagingScheduleSiteSlugReadSection binding={readBinding} />
-        ) : null
-      }
-      <AdminStagingScheduleSiteSlugRowPickerSection binding={rowPickerBinding} />
-      {
-        editBinding ? (
-          <AdminStagingScheduleSiteSlugEditSection binding={editBinding} />
-        ) : null
-      }
-      <AdminStagingScheduleGeneralEditSection
-        phase="G-6-g1-schedule-title-non-dry-run-slice-implementation"
-        g6g2Phase="G-6-g2-schedule-time-fields-non-dry-run-slice-implementation"
-      />
-      <AdminStagingScheduleSafeFieldsDryRunSection phase="G-6-f4-schedule-safe-fields-dry-run-prototype" />
-      <AdminStagingScheduleSafeFieldsNonDryRunPocSection phase="G-6-f6-schedule-safe-fields-non-dry-run-poc-implementation" />
-    </details>
-  </div>
+      <details class="admin-gosaki-dev-tools admin-gosaki-dev-tools--schedule">
+        <summary>開発者向け詳細</summary>
+        <p class="admin-gosaki-dev-tools__note" role="note">
+          通常の運用確認では開く必要はありません。内部検証用の UI です。
+        </p>
+        {
+          readBinding ? (
+            <AdminStagingScheduleSiteSlugReadSection binding={readBinding} />
+          ) : null
+        }
+        <AdminStagingScheduleSiteSlugRowPickerSection binding={rowPickerBinding} />
+        {
+          editBinding ? (
+            <AdminStagingScheduleSiteSlugEditSection binding={editBinding} />
+          ) : null
+        }
+        <AdminStagingScheduleGeneralEditSection
+          phase="G-6-g1-schedule-title-non-dry-run-slice-implementation"
+          g6g2Phase="G-6-g2-schedule-time-fields-non-dry-run-slice-implementation"
+        />
+        <AdminStagingScheduleSafeFieldsDryRunSection phase="G-6-f4-schedule-safe-fields-dry-run-prototype" />
+        <AdminStagingScheduleSafeFieldsNonDryRunPocSection phase="G-6-f6-schedule-safe-fields-non-dry-run-poc-implementation" />
+      </details>
+    </div>
+  </AdminGosakiStagingAuthGate>
 </AdminGosakiStagingShellLayout>
-
-<script>
-  import "../../../../../../src/lib/admin/staging-auth/staging-auth-ui.ts";
-</script>

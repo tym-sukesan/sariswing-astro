@@ -5,12 +5,24 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-9j-gosaki-schedule-existing-event-save-enablement-planning — complete (planning only). G-9j planning complete; latest commit should be checked with git HEAD.
-Prior: G-9h planning complete; Gosaki staging admin schedule UI refined (check git HEAD).
+Current phase: G-9j5c-gosaki-schedule-existing-event-update-success-finalization — complete.
+G-9j5 one-row non-dry-run UPDATE succeeded on static-to-astro-cms-staging (operator manual — once).
+Do not re-run G-9j5 without new approval ID.
 branch: main
 HEAD = origin/main — check git HEAD for latest commit hash
-G-9g4a2 framework: complete, committed, pushed (C1–C4 through d66bae7)
 ```
+
+## G-9j5c Gosaki schedule existing event update — success
+
+- **Doc:** `gosaki-schedule-existing-event-update-success-finalization.md`
+- **Project:** `static-to-astro-cms-staging` / ref `kmjqppxjdnwwrtaeqjta` only — `sari-site` not touched
+- **Row:** `f687ebf3-407c-49d0-9ab8-58040c499b8e` (`gosaki-piano`, `<Duo>`, 2026-03-15)
+- **Field:** `description` only — `changedFields: ["description"]`, `rowsAffected: 1`
+- **Auth:** anon + `signInWithPassword` — no `service_role`
+- **Safety:** project ref allowlist, explicit admin email guard, G-9j5a password reset, G-9j5b auth gate
+- **UI:** post-save description confirmed on `/__admin-staging-shell/musician-basic/admin/schedule/`
+- **Do not:** re-run G-9j5; operator Save still disabled
+- **`readyForAnyDbWrite: false`** (routine dev)
 
 ## Gosaki staging admin (latest UI work)
 
@@ -93,10 +105,10 @@ PUBLIC_ADMIN_SCHEDULE_G9G3G5_OPERATIONAL_RESTORE_NON_DRY_RUN_ARMED=false or unse
 
 ## Next
 
-1. **G-9j1** guards + dry-run implementation (Save disabled; no DB write)
-2. **G-9h1** client preview feedback closure (staging URL vs Wix; residual list; no DB write)
+1. **G-9j6 / operator Save enablement planning** — separate phase; not G-9j5 re-run
+2. **G-9h1** client preview feedback closure
 3. **G-9h2** public schedule read verification + re-upload planning
 4. **G-9h3** schedule CMS practicalization phase boundary
 5. **G-9i** YouTube embed planning (parallel track)
-6. Optional operator dry-run Preview (`start_time`/`price`) — explicit approval only; no Save
+6. **Not** G-9j5 one-row non-dry-run re-execution
 7. **Not** `start_time`-only manual non-dry-run execution

@@ -1,5 +1,21 @@
-Last updated: 2026-06-19
+Last updated: 2026-06-21
 Project: Static-to-Astro CMS / Musician CMS Kit
+
+## 0a. G-9j5c Gosaki schedule existing event update — success finalization complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-9j5c-gosaki-schedule-existing-event-update-success-finalization` |
+| Doc | `gosaki-schedule-existing-event-update-success-finalization.md` |
+| Status | **G-9j5 one-row non-dry-run UPDATE succeeded** (operator manual — once) |
+| Project | `static-to-astro-cms-staging` / `kmjqppxjdnwwrtaeqjta` only |
+| Row | `f687ebf3-407c-49d0-9ab8-58040c499b8e` — `description` only |
+| `rowsAffected` | **1** |
+| UI | post-save description confirmed on staging schedule admin |
+| Prerequisites | G-9j5a password reset, G-9j5b auth gate, explicit admin email, project allowlist |
+| **Do not** | re-run G-9j5 without new approval ID |
+| Next | operator Save enablement planning or additional field slices (separate phases) |
+| `readyForAnyDbWrite` | **false** (routine dev) |
 
 ## 0. Gosaki staging admin schedule UI — add/edit forms (UI only)
 
@@ -83,19 +99,20 @@ cursorClickedPreview: false
 
 ## 2. Next steps
 
-1. **G-9j1 guards + dry-run implementation** — register approval ID; `assertG9j*` guards; operator dry-run path; Save still disabled; no DB write
+1. **G-9j6 or operator Save enablement planning** — wire G-9j5-proven path to operator Save UI (separate approval; not G-9j5 re-run)
 2. **G-9h1 client preview feedback closure** — staging URL review vs Wix; residual list; no DB write / Preview / Save
 3. **G-9h2 public schedule read verification + re-upload planning** — `scheduleDataSource` check; manual re-upload checklist
 4. **G-9h3 schedule CMS practicalization phase boundary** — Phase 1 vs Phase 2 write slice roadmap
 5. **G-9i YouTube embed planning** — separate track per G-9a
-6. **Optional:** operator dry-run Preview for `start_time` / `price` (explicit approval only; no Save)
+6. **Not** next: G-9j5 one-row non-dry-run re-execution
 7. **Not** next: `start_time`-only manual non-dry-run execution slice
 
 ## 3. Routine dev safety
 
 ```txt
-ENABLE_ADMIN_STAGING_WRITE=false
 PUBLIC_ADMIN_WRITE_DRY_RUN=true
+PUBLIC_ADMIN_GOSAKI_SCHEDULE_EXISTING_EVENT_UPDATE_NON_DRY_RUN_ARMED=false or unset
+ENABLE_ADMIN_STAGING_WRITE=false
 PUBLIC_ADMIN_SCHEDULE_G9G4A2A_OPEN_TIME_ONLY_NON_DRY_RUN_ARMED=false or unset
 PUBLIC_ADMIN_SCHEDULE_G9G4A2B_START_TIME_ONLY_NON_DRY_RUN_ARMED=false or unset
 PUBLIC_ADMIN_SCHEDULE_G9G4A2C_PRICE_ONLY_NON_DRY_RUN_ARMED=false or unset

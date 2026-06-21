@@ -3,41 +3,70 @@
  */
 
 import { getStagingAuthConfig } from "./staging-auth-config";
+import { STAGING_ADMIN_HOME_PATH } from "./staging-auth-paths";
 import {
-  STAGING_ADMIN_HOME_PATH,
-} from "./staging-auth-paths";
-import {
+  clearStagingAuthHashFromUrl,
   ensureStagingRecoverySession,
   parseStagingAuthHashError,
   signOutStagingAfterPasswordReset,
   updateStagingAuthPassword,
-  clearStagingAuthHashFromUrl,
 } from "./staging-password-reset-callback";
+
+type StagingAuthPageConfig = {
+  stagingAuthEnabled: boolean;
+  adminAuthProvider: string;
+  supabaseConfigured: boolean;
+};
+
+const readStagingAuthPageConfig = (): StagingAuthPageConfig => {
+  const config = document.getElementById("staging-auth-page-config");
+
+  return {
+    stagingAuthEnabled:
+      config?.getAttribute("data-staging-auth-enabled") === "true",
+    adminAuthProvider:
+      config?.getAttribute("data-admin-auth-provider") ?? "",
+    supabaseConfigured:
+      config?.getAttribute("data-supabase-configured") === "true",
+  };
+};
 
 const MIN_PASSWORD_LENGTH = 8;
 
 function setError(message: string): void {
   const el = document.getElementById("staging-reset-password-error");
   if (!el) return;
+
   el.textContent = message;
   el.hidden = !message;
 }
 
 function showInvalidLinkState(): void {
-  document.getElementById("staging-reset-password-form")?.classList.add("is-hidden");
-  document.getElementById("staging-reset-password-invalid")?.classList.remove("is-hidden");
+  document
+    .getElementById("staging-reset-password-form")
+    ?.classList.add("is-hidden");
+
+  document
+    .getElementById("staging-reset-password-invalid")
+    ?.classList.remove("is-hidden");
 }
 
 export function initStagingResetPasswordPage(): void {
   void (async () => {
-    const config = getStagingAuthConfig();
-    if (!config.stagingAuthEnabled || !config.supabaseConfigured) {
+    const pageConfig = readStagingAuthPageConfig();
+
+    if (
+      !pageConfig.stagingAuthEnabled ||
+      pageConfig.adminAuthProvider !== "supabase" ||
+      !pageConfig.supabaseConfigured
+    ) {
       setError(
         "ステージング Auth が無効です。ENABLE_ADMIN_STAGING_AUTH=true と PUBLIC_ADMIN_AUTH_PROVIDER=supabase を設定してください。",
       );
-      showInvalidLinkState();
       return;
     }
+
+    const config = getStagingAuthConfig();
 
     const hashError = parseStagingAuthHashError();
     if (hashError) {
@@ -50,6 +79,7 @@ export function initStagingResetPasswordPage(): void {
       config.supabaseUrl,
       config.supabaseAnonKey,
     );
+
     if (!recovery.ok) {
       setError(recovery.error ?? "リンクが無効か期限切れです。");
       showInvalidLinkState();
@@ -61,9 +91,14 @@ export function initStagingResetPasswordPage(): void {
 
     form?.addEventListener("submit", (event) => {
       event.preventDefault();
+
       void (async () => {
-        const passwordInput = document.getElementById("staging-reset-password-new");
-        const confirmInput = document.getElementById("staging-reset-password-confirm");
+        const passwordInput = document.getElementById(
+          "staging-reset-password-new",
+        );
+        const confirmInput = document.getElementById(
+          "staging-reset-password-confirm",
+        );
 
         const password =
           passwordInput instanceof HTMLInputElement ? passwordInput.value : "";
@@ -76,7 +111,9 @@ export function initStagingResetPasswordPage(): void {
         }
 
         if (password.length < MIN_PASSWORD_LENGTH) {
-          setError(`パスワードは${MIN_PASSWORD_LENGTH}文字以上で入力してください。`);
+          setError(
+            `パスワードは${MIN_PASSWORD_LENGTH}文字以上で入力してください。`,
+          );
           return;
         }
 
@@ -92,27 +129,33 @@ export function initStagingResetPasswordPage(): void {
           submitBtn.textContent = "保存中...";
         }
 
-        const result = await updateStagingAuthPassword(
-          config.supabaseUrl,
-          config.supabaseAnonKey,
-          password,
-        );
+        try {
+          const result = await updateStagingAuthPassword(
+            config.supabaseUrl,
+            config.supabaseAnonKey,
+            password,
+          );
 
-        if (submitBtn instanceof HTMLButtonElement) {
-          submitBtn.disabled = false;
-          submitBtn.textContent = "パスワードを保存";
+          if (!result.ok) {
+            setError(result.error ?? "保存に失敗しました。");
+            return;
+          }
+
+          await signOutStagingAfterPasswordReset(
+            config.supabaseUrl,
+            config.supabaseAnonKey,
+          );
+
+          clearStagingAuthHashFromUrl();
+          window.location.replace(`${STAGING_ADMIN_HOME_PATH}?reset=success`);
+        } finally {
+          if (submitBtn instanceof HTMLButtonElement) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = "パスワードを保存";
+          }
         }
-
-        if (!result.ok) {
-          setError(result.error ?? "保存に失敗しました。");
-          return;
-        }
-
-        await signOutStagingAfterPasswordReset(config.supabaseUrl, config.supabaseAnonKey);
-        clearStagingAuthHashFromUrl();
-        window.location.replace(`${STAGING_ADMIN_HOME_PATH}?reset=success`);
       })();
-    })();
+    });
   })();
 }
 

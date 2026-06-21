@@ -2320,6 +2320,22 @@
   font-size: 0.72rem;
 }
 
+.gosaki-schedule-edit-dry-run--ready {
+  border-color: #86efac;
+}
+
+.gosaki-schedule-edit-dry-run__message--ready {
+  color: #166534;
+  font-weight: 600;
+}
+
+.gosaki-schedule-edit-dry-run__guard-errors {
+  margin: 0.5rem 0 0;
+  padding-left: 1.25rem;
+  font-size: 0.82rem;
+  color: #b91c1c;
+}
+
 .gosaki-schedule-edit-dry-run__note,
 .gosaki-schedule-edit-dry-run__save-disabled,
 .gosaki-schedule-edit-dry-run__stale-note {

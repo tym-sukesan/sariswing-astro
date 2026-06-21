@@ -127,8 +127,9 @@ assert("buildG9kExistingEventSaveButtonPayload", guardsSrc.includes("buildG9kExi
 assert(
   "operator UI save still disabled",
   operatorUiSrc.includes('data-gosaki-save-allowed="false"') &&
-    !operatorUiSrc.includes("getG9kExistingEventSaveButtonConfig") &&
-    !operatorUiSrc.includes("executeG9k"),
+    operatorUiSrc.includes("G9K_SAVE_BUTTON_SAVE_ENABLED") &&
+    !operatorUiSrc.includes("gosaki-schedule-existing-event-save-button-save") &&
+    !operatorUiSrc.includes("executeG9kExistingEventSaveButtonSave"),
 );
 assert("no G-9k save executor module", !fs.existsSync(path.join(REPO_ROOT, "src/lib/admin/staging-write/gosaki-schedule-existing-event-save-button-save.ts")));
 

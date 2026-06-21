@@ -357,6 +357,7 @@ function displayValue(value: string | null | undefined): string {
             class="admin-button"
             id="gosaki-schedule-update-btn"
             data-gosaki-schedule-action-disabled
+            data-gosaki-save-allowed="false"
             disabled
           >
             更新する（準備中）
@@ -380,8 +381,11 @@ function displayValue(value: string | null | undefined): string {
             削除
           </button>
         </div>
+        <p id="gosaki-schedule-update-btn-note" class="admin-gosaki-save-note" role="note">
+          「変更を確認」で dry-run を通過すると保存準備状態を表示します。G-9k2 では実保存はできません（G-9k4 で有効化予定）。
+        </p>
         <p class="admin-gosaki-save-note" role="note">
-          ※ 更新・複製・削除は準備中です。この画面ではまだ保存は実行できません。
+          ※ 複製・削除は準備中です。この画面ではまだ実行できません。
         </p>
       </form>
     </section>

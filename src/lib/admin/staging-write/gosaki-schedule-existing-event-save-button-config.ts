@@ -34,11 +34,14 @@ import {
 export const G9K1_PHASE =
   "G-9k1-gosaki-schedule-existing-event-save-button-guard-config-verifier";
 
+export const G9K2_PHASE =
+  "G-9k2-gosaki-schedule-existing-event-save-button-ui-wiring-dry-run-gate";
+
 export const GOSAKI_SCHEDULE_EXISTING_EVENT_SAVE_BUTTON_NON_DRY_RUN_ARMED_ENV =
   "PUBLIC_ADMIN_GOSAKI_SCHEDULE_EXISTING_EVENT_SAVE_BUTTON_NON_DRY_RUN_ARMED";
 
 export const G9K_SAVE_BUTTON_SAVE_DISABLED_DEFAULT_REASON =
-  "G-9k operator save button disabled until G-9k2+ wiring and G-9k4 explicit approval.";
+  "G-9k operator save button disabled until G-9k4 explicit approval (G-9k2: dry-run gate only).";
 
 /** G-9k1: Save path not exposed even when arm gates would pass. */
 export const G9K_SAVE_BUTTON_SAVE_ENABLED = false as const;

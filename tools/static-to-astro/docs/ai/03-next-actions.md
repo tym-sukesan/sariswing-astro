@@ -1,6 +1,17 @@
 Last updated: 2026-06-21
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0d. G-9k2 save button UI wiring — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-9k2-gosaki-schedule-existing-event-save-button-ui-wiring-dry-run-gate` |
+| Doc | `gosaki-schedule-existing-event-save-button-ui-wiring.md` |
+| Module | `gosaki-schedule-existing-event-save-button-dry-run.ts` |
+| Status | **complete** — dry-run gate; Save **not** enabled |
+| Next | `G-9k3` dry-run verification |
+| `readyForAnyDbWrite` | **false** |
+
 ## 0c. G-9k1 save button guard / config — complete
 
 | Item | Value |
@@ -125,9 +136,10 @@ cursorClickedPreview: false
 
 ## 2. Next steps
 
-1. **G-9k2** operator UI wiring — dry-run gates Save button (disabled until G-9k4)
-2. **G-9h1** client preview feedback closure
-3. **Not** next: G-9j5 runner re-execution; G-9j5 approval/arm for operator Save
+1. **G-9k3** dry-run verification (static)
+2. **G-9k4** one manual Save (operator; explicit approval)
+3. **G-9h1** client preview feedback closure
+4. **Not** next: G-9j5 runner re-execution; G-9j5 approval/arm for operator Save
 
 ## 3. Routine dev safety
 

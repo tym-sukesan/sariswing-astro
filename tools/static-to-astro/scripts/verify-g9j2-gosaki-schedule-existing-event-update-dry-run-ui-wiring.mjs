@@ -74,12 +74,15 @@ assert(
 assert(
   "save not available copy",
   astroSrc.includes("まだ保存は実行できません") ||
-    astroSrc.includes("保存はまだ実行されません"),
+    astroSrc.includes("保存はまだ実行されません") ||
+    astroSrc.includes("G-9k4") ||
+    astroSrc.includes("実保存はできません"),
 );
 
 assert(
-  "UI imports dry-run executor",
-  uiSrc.includes("executeG9jExistingEventUpdateDryRun"),
+  "UI imports dry-run executor (G-9j or G-9k operator path)",
+  uiSrc.includes("executeG9jExistingEventUpdateDryRun") ||
+    uiSrc.includes("executeG9kExistingEventSaveButtonDryRun"),
 );
 assert("UI does not call updateScheduleWrite", !uiSrc.includes("updateScheduleWrite("));
 assert("UI does not import service_role", !uiSrc.includes("service_role"));
@@ -88,15 +91,18 @@ assert("UI renders dry-run result", uiSrc.includes("renderDryRunResult"));
 assert(
   "UI saveAllowed false display",
   uiSrc.includes('data-gosaki-save-allowed="false"') ||
-    uiSrc.includes("まだ保存は実行できません"),
+    uiSrc.includes("まだ保存は実行できません") ||
+    uiSrc.includes("実保存未開放") ||
+    uiSrc.includes("G-9k4"),
 );
 assert(
   "UI uses safe field registry",
-  uiSrc.includes("G9J_EXISTING_EVENT_UPDATE_SAFE_FIELDS"),
+  uiSrc.includes("G9J_EXISTING_EVENT_UPDATE_SAFE_FIELDS") ||
+    uiSrc.includes("G9K_EXISTING_EVENT_SAVE_BUTTON_SAFE_FIELDS"),
 );
 
 const fieldIdsMatch = uiSrc.match(
-  /const G9J2_EDIT_DRY_RUN_FIELD_IDS[^=]+=\s*\{([\s\S]*?)\};/,
+  /const G9(?:J2|K2)_EDIT_DRY_RUN_FIELD_IDS[^=]+=\s*\{([\s\S]*?)\};/,
 );
 const fieldIdsBlock = fieldIdsMatch?.[1] ?? "";
 

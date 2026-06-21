@@ -1,6 +1,6 @@
 /**
- * G-9j — Gosaki operator existing event update config (staging shell only).
- * G-9j1: guards + dry-run only — Save remains disabled until G-9j5.
+ * G-9k1 — Gosaki operator save button config (staging shell only).
+ * Save remains disabled until G-9k2+; separate from G-9j5 fixed-row runner.
  */
 
 import { mergeStagingShellEnv } from "../staging-shell/staging-shell-client-gates";
@@ -12,7 +12,9 @@ import {
   SCHEDULE_NON_DRY_RUN_POC_EXPECTED_PROJECT,
   SCHEDULE_NON_DRY_RUN_POC_EXPECTED_SUPABASE_HOST,
 } from "./schedule-non-dry-run-poc-config";
-import { G9J_SCHEDULE_EXISTING_EVENT_UPDATE_NON_DRY_RUN_APPROVAL_ID } from "./schedule-write-types";
+import {
+  G9K_SCHEDULE_EXISTING_EVENT_SAVE_BUTTON_NON_DRY_RUN_APPROVAL_ID,
+} from "./schedule-write-types";
 import {
   SCHEDULE_G9G2_TITLE_NON_DRY_RUN_ARMED_ENV,
   SCHEDULE_G9G3B_VENUE_DESCRIPTION_NON_DRY_RUN_ARMED_ENV,
@@ -29,27 +31,27 @@ import {
   evaluateSupabaseHostGate,
 } from "../staging-data/staging-schedule-site-slug-host-gate";
 
-export const G9J1_PHASE =
-  "G-9j1-gosaki-schedule-existing-event-update-guards-and-dry-run-implementation";
+export const G9K1_PHASE =
+  "G-9k1-gosaki-schedule-existing-event-save-button-guard-config-verifier";
 
-export const GOSAKI_SCHEDULE_EXISTING_EVENT_UPDATE_NON_DRY_RUN_ARMED_ENV =
-  "PUBLIC_ADMIN_GOSAKI_SCHEDULE_EXISTING_EVENT_UPDATE_NON_DRY_RUN_ARMED";
+export const GOSAKI_SCHEDULE_EXISTING_EVENT_SAVE_BUTTON_NON_DRY_RUN_ARMED_ENV =
+  "PUBLIC_ADMIN_GOSAKI_SCHEDULE_EXISTING_EVENT_SAVE_BUTTON_NON_DRY_RUN_ARMED";
 
-export const G9J_EXISTING_EVENT_UPDATE_SAVE_DISABLED_DEFAULT_REASON =
-  "G-9j operator existing event Save disabled until G-9j5 explicit approval.";
+export const G9K_SAVE_BUTTON_SAVE_DISABLED_DEFAULT_REASON =
+  "G-9k operator save button disabled until G-9k2+ wiring and G-9k4 explicit approval.";
 
-/** G-9j1–G-9j4: Save path not exposed even when arm gates would pass. */
-export const G9J_EXISTING_EVENT_UPDATE_SAVE_ENABLED = false as const;
+/** G-9k1: Save path not exposed even when arm gates would pass. */
+export const G9K_SAVE_BUTTON_SAVE_ENABLED = false as const;
 
-export interface G9jExistingEventUpdateConfig {
-  phase: typeof G9J1_PHASE;
-  approvalId: typeof G9J_SCHEDULE_EXISTING_EVENT_UPDATE_NON_DRY_RUN_APPROVAL_ID;
+export interface G9kExistingEventSaveButtonConfig {
+  phase: typeof G9K1_PHASE;
+  approvalId: typeof G9K_SCHEDULE_EXISTING_EVENT_SAVE_BUTTON_NON_DRY_RUN_APPROVAL_ID;
   siteSlug: typeof STAGING_SHELL_GOSAKI_SCHEDULE_SITE_SLUG;
-  envArm: typeof GOSAKI_SCHEDULE_EXISTING_EVENT_UPDATE_NON_DRY_RUN_ARMED_ENV;
+  envArm: typeof GOSAKI_SCHEDULE_EXISTING_EVENT_SAVE_BUTTON_NON_DRY_RUN_ARMED_ENV;
   armed: boolean;
   saveEnabled: false;
   armFailureReason?: string;
-  defaultDisabledReason: typeof G9J_EXISTING_EVENT_UPDATE_SAVE_DISABLED_DEFAULT_REASON;
+  defaultDisabledReason: typeof G9K_SAVE_BUTTON_SAVE_DISABLED_DEFAULT_REASON;
   dev: boolean;
   stagingShellEnabled: boolean;
   stagingWriteFlag: boolean;
@@ -61,6 +63,10 @@ export interface G9jExistingEventUpdateConfig {
   activeSupabaseHost: string;
   hostGatePassed: boolean;
   hostGateWarning?: string;
+  projectAllowlistPassed: boolean;
+  authSessionRequired: true;
+  optimisticLockRequired: true;
+  rowsAffectedMustBeOne: true;
 }
 
 function looksLikeProductionBlocked(env: ImportMetaEnv): boolean {
@@ -74,16 +80,16 @@ function isEnvArmTrue(env: ImportMetaEnv, key: string): boolean {
   return String(env[key] ?? "").trim() === "true";
 }
 
-export function getG9jExistingEventUpdateConfig(
+export function getG9kExistingEventSaveButtonConfig(
   env: ImportMetaEnv = import.meta.env,
-): G9jExistingEventUpdateConfig {
+): G9kExistingEventSaveButtonConfig {
   const mergedEnv = mergeStagingShellEnv(env);
   const dev = mergedEnv.DEV === true;
   const stagingShellEnabled = mergedEnv.ENABLE_ADMIN_STAGING_SHELL === "true";
   const stagingWriteFlag = mergedEnv.ENABLE_ADMIN_STAGING_WRITE === "true";
   const armedFlagMatch = isEnvArmTrue(
     mergedEnv,
-    GOSAKI_SCHEDULE_EXISTING_EVENT_UPDATE_NON_DRY_RUN_ARMED_ENV,
+    GOSAKI_SCHEDULE_EXISTING_EVENT_SAVE_BUTTON_NON_DRY_RUN_ARMED_ENV,
   );
   const dryRun =
     String(mergedEnv.PUBLIC_ADMIN_WRITE_DRY_RUN ?? "true").trim() !== "false";
@@ -98,11 +104,11 @@ export function getG9jExistingEventUpdateConfig(
   const approvalIdEnv = String(mergedEnv.PUBLIC_ADMIN_WRITE_APPROVAL_ID ?? "").trim();
 
   const base = {
-    phase: G9J1_PHASE,
-    approvalId: G9J_SCHEDULE_EXISTING_EVENT_UPDATE_NON_DRY_RUN_APPROVAL_ID,
+    phase: G9K1_PHASE,
+    approvalId: G9K_SCHEDULE_EXISTING_EVENT_SAVE_BUTTON_NON_DRY_RUN_APPROVAL_ID,
     siteSlug: STAGING_SHELL_GOSAKI_SCHEDULE_SITE_SLUG,
-    envArm: GOSAKI_SCHEDULE_EXISTING_EVENT_UPDATE_NON_DRY_RUN_ARMED_ENV,
-    defaultDisabledReason: G9J_EXISTING_EVENT_UPDATE_SAVE_DISABLED_DEFAULT_REASON,
+    envArm: GOSAKI_SCHEDULE_EXISTING_EVENT_SAVE_BUTTON_NON_DRY_RUN_ARMED_ENV,
+    defaultDisabledReason: G9K_SAVE_BUTTON_SAVE_DISABLED_DEFAULT_REASON,
     dev,
     stagingShellEnabled,
     stagingWriteFlag,
@@ -114,6 +120,10 @@ export function getG9jExistingEventUpdateConfig(
     activeSupabaseHost: hostGate.activeHost,
     hostGatePassed: hostGate.hostGatePassed,
     hostGateWarning: hostGate.warningMessage ?? undefined,
+    projectAllowlistPassed: projectAllowlist.allowlistPassed,
+    authSessionRequired: true as const,
+    optimisticLockRequired: true as const,
+    rowsAffectedMustBeOne: true as const,
   };
 
   const armFailures: string[] = [];
@@ -131,17 +141,17 @@ export function getG9jExistingEventUpdateConfig(
     armFailures.push("PUBLIC_ADMIN_WRITE_PROVIDER=supabase");
   }
   if (module !== "schedule") armFailures.push("PUBLIC_ADMIN_WRITE_MODULE=schedule");
-  if (approvalIdEnv !== G9J_SCHEDULE_EXISTING_EVENT_UPDATE_NON_DRY_RUN_APPROVAL_ID) {
+  if (approvalIdEnv !== G9K_SCHEDULE_EXISTING_EVENT_SAVE_BUTTON_NON_DRY_RUN_APPROVAL_ID) {
     armFailures.push(
-      `PUBLIC_ADMIN_WRITE_APPROVAL_ID=${G9J_SCHEDULE_EXISTING_EVENT_UPDATE_NON_DRY_RUN_APPROVAL_ID}`,
+      `PUBLIC_ADMIN_WRITE_APPROVAL_ID=${G9K_SCHEDULE_EXISTING_EVENT_SAVE_BUTTON_NON_DRY_RUN_APPROVAL_ID}`,
     );
   }
   if (dryRun) armFailures.push("PUBLIC_ADMIN_WRITE_DRY_RUN=false");
   if (!armedFlagMatch) {
-    armFailures.push(`${GOSAKI_SCHEDULE_EXISTING_EVENT_UPDATE_NON_DRY_RUN_ARMED_ENV}=true`);
+    armFailures.push(`${GOSAKI_SCHEDULE_EXISTING_EVENT_SAVE_BUTTON_NON_DRY_RUN_ARMED_ENV}=true`);
   }
-  if (isEnvArmTrue(mergedEnv, "PUBLIC_ADMIN_GOSAKI_SCHEDULE_EXISTING_EVENT_SAVE_BUTTON_NON_DRY_RUN_ARMED")) {
-    armFailures.push("PUBLIC_ADMIN_GOSAKI_SCHEDULE_EXISTING_EVENT_SAVE_BUTTON_NON_DRY_RUN_ARMED must be off (G-9k save button arm)");
+  if (isEnvArmTrue(mergedEnv, "PUBLIC_ADMIN_GOSAKI_SCHEDULE_EXISTING_EVENT_UPDATE_NON_DRY_RUN_ARMED")) {
+    armFailures.push("PUBLIC_ADMIN_GOSAKI_SCHEDULE_EXISTING_EVENT_UPDATE_NON_DRY_RUN_ARMED must be off (G-9j5 runner arm)");
   }
   if (isEnvArmTrue(mergedEnv, SCHEDULE_G6G1_TITLE_NON_DRY_RUN_ARMED_ENV)) {
     armFailures.push(`${SCHEDULE_G6G1_TITLE_NON_DRY_RUN_ARMED_ENV} must be off`);
@@ -178,7 +188,7 @@ export function getG9jExistingEventUpdateConfig(
   return {
     ...base,
     armed,
-    saveEnabled: G9J_EXISTING_EVENT_UPDATE_SAVE_ENABLED,
+    saveEnabled: G9K_SAVE_BUTTON_SAVE_ENABLED,
     armFailureReason: armed ? undefined : armFailures.join("; "),
   };
 }

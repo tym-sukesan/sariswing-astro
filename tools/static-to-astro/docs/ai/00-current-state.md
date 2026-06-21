@@ -3,6 +3,8 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
+**G-9k1 Gosaki schedule existing event save button guard / config (2026-06-21):** **complete** — guard/config/verifier only. Doc: `gosaki-schedule-existing-event-save-button-guard-config.md`; modules `gosaki-schedule-existing-event-save-button-config.ts`, `gosaki-schedule-existing-event-save-button-guards.ts`; approval `G-9k-gosaki-schedule-existing-event-save-button-non-dry-run`; arm `PUBLIC_ADMIN_GOSAKI_SCHEDULE_EXISTING_EVENT_SAVE_BUTTON_NON_DRY_RUN_ARMED`. 6 safe fields; separate from G-9j5 fixed runner. **Save still disabled.** Next: `G-9k2-ui-wiring`. `readyForAnyDbWrite: false`.
+
 **G-9k Gosaki schedule existing event save button enablement planning (2026-06-21):** **complete** — planning only. Doc: `gosaki-schedule-existing-event-save-button-enablement-planning.md`; approval `G-9k-gosaki-schedule-existing-event-save-button-non-dry-run`; arm `PUBLIC_ADMIN_GOSAKI_SCHEDULE_EXISTING_EVENT_SAVE_BUTTON_NON_DRY_RUN_ARMED`. Operator UI 「更新する」 for 6 safe fields; dry-run before Save. **Do not reuse G-9j5 approval/arm.** Save still disabled. Next: `G-9k1-guard-config-implementation`. `readyForAnyDbWrite: false`.
 
 **G-9j5c Gosaki schedule existing event update success finalization (2026-06-21):** **complete** — operator manual G-9j5 one-row non-dry-run UPDATE **succeeded** on `static-to-astro-cms-staging` (`kmjqppxjdnwwrtaeqjta`). Doc: `gosaki-schedule-existing-event-update-success-finalization.md`; verifier G-9j5c. Row `f687ebf3-407c-49d0-9ab8-58040c499b8e` — `description` only; `rowsAffected: 1`; post-save `updated_at` `2026-06-21T13:20:16.626423+00:00`; UI confirmed on staging schedule admin. Prerequisites: G-9j5a password reset, G-9j5b auth gate, explicit admin email guard, project ref allowlist. **Do not re-run G-9j5.** `readyForG9j5OneRowNonDryRunReExecution: false`. Routine dev: `PUBLIC_ADMIN_WRITE_DRY_RUN=true`; operator Save still disabled.
@@ -33,9 +35,9 @@ Staging Shell
 将来的な顧客オンボーディング・課金・デプロイ自動化
 
 2. Current phase
-現在フェーズ: **G-9k-gosaki-schedule-existing-event-save-button-enablement-planning** — **complete**（planning only. 最新commitは git HEAD を確認すること。）
+現在フェーズ: **G-9k1-gosaki-schedule-existing-event-save-button-guard-config-verifier** — **complete**（guard/config/verifier only. Save disabled. 最新commitは git HEAD を確認すること。）
 
-G-9k save button enablement planning: **complete**. Doc: `gosaki-schedule-existing-event-save-button-enablement-planning.md`. Operator 「更新する」 for existing event UPDATE (6 safe fields). **Save still disabled.** Next: G-9k1. `readyForAnyDbWrite: false`.
+G-9k1 save button guard/config: **complete**. Doc: `gosaki-schedule-existing-event-save-button-guard-config.md`. G-9k approval/arm registered; separated from G-9j5 runner. **Save still disabled.** Next: G-9k2 UI wiring. `readyForAnyDbWrite: false`.
 
 G-9j5c Gosaki schedule existing event update success: **complete**.
 

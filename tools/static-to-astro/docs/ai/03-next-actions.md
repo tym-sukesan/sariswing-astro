@@ -1,6 +1,19 @@
 Last updated: 2026-06-21
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0c. G-9k1 save button guard / config — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-9k1-gosaki-schedule-existing-event-save-button-guard-config-verifier` |
+| Doc | `gosaki-schedule-existing-event-save-button-guard-config.md` |
+| Modules | `gosaki-schedule-existing-event-save-button-config.ts`, `gosaki-schedule-existing-event-save-button-guards.ts` |
+| approvalId | `G-9k-gosaki-schedule-existing-event-save-button-non-dry-run` |
+| env arm | `PUBLIC_ADMIN_GOSAKI_SCHEDULE_EXISTING_EVENT_SAVE_BUTTON_NON_DRY_RUN_ARMED` |
+| Status | **complete** — Save **not** enabled; no UI wiring / DB write |
+| Next | `G-9k2` operator UI wiring |
+| `readyForAnyDbWrite` | **false** |
+
 ## 0b. G-9k save button enablement — planning complete
 
 | Item | Value |
@@ -112,10 +125,9 @@ cursorClickedPreview: false
 
 ## 2. Next steps
 
-1. **G-9k1** save button guard / config / verifier — Save still disabled
-2. **G-9k2** operator UI wiring — dry-run gates Save button (disabled until G-9k4)
-3. **G-9h1** client preview feedback closure
-4. **Not** next: G-9j5 runner re-execution; G-9j5 approval/arm for operator Save
+1. **G-9k2** operator UI wiring — dry-run gates Save button (disabled until G-9k4)
+2. **G-9h1** client preview feedback closure
+3. **Not** next: G-9j5 runner re-execution; G-9j5 approval/arm for operator Save
 
 ## 3. Routine dev safety
 

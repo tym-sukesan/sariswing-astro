@@ -1,7 +1,16 @@
 /** Gosaki staging shell admin route paths (not production /admin/). */
 
-export const GOSAKI_STAGING_SHELL_BASE = "/__admin-staging-shell/musician-basic/";
-export const GOSAKI_STAGING_ADMIN_BASE = "/__admin-staging-shell/musician-basic/admin/";
+import {
+  STAGING_ADMIN_HOME_PATH,
+  STAGING_FORGOT_PASSWORD_PATH,
+  STAGING_RESET_PASSWORD_PATH,
+  STAGING_SHELL_BASE,
+} from "../../../../../src/lib/admin/staging-auth/staging-auth-paths";
+
+export const GOSAKI_STAGING_SHELL_BASE = STAGING_SHELL_BASE;
+export const GOSAKI_STAGING_ADMIN_BASE = STAGING_ADMIN_HOME_PATH;
+export const GOSAKI_STAGING_AUTH_FORGOT_PASSWORD_PATH = STAGING_FORGOT_PASSWORD_PATH;
+export const GOSAKI_STAGING_AUTH_RESET_PASSWORD_PATH = STAGING_RESET_PASSWORD_PATH;
 export const GOSAKI_STAGING_ADMIN_SCHEDULE_PATH =
   "/__admin-staging-shell/musician-basic/admin/schedule/";
 export const GOSAKI_STAGING_ADMIN_YOUTUBE_PATH =

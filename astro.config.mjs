@@ -77,6 +77,20 @@ function cmsKitAdminShellRoutesIntegration() {
             import.meta.url,
           ),
         });
+        injectRoute({
+          pattern: "/__admin-staging-shell/musician-basic/auth/forgot-password",
+          entrypoint: new URL(
+            "./src/pages/__admin-staging-shell/musician-basic/auth/forgot-password/index.astro",
+            import.meta.url,
+          ),
+        });
+        injectRoute({
+          pattern: "/__admin-staging-shell/musician-basic/auth/reset-password",
+          entrypoint: new URL(
+            "./src/pages/__admin-staging-shell/musician-basic/auth/reset-password/index.astro",
+            import.meta.url,
+          ),
+        });
       },
     },
   };

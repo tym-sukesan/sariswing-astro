@@ -6,6 +6,7 @@ import AdminAuthAdapterStatusPanel from "../../components/AdminAuthAdapterStatus
 import { getStagingAuthConfig } from "../../../../../../src/lib/admin/staging-auth/staging-auth-config";
 import {
   GOSAKI_STAGING_ADMIN_SCHEDULE_PATH,
+  GOSAKI_STAGING_AUTH_FORGOT_PASSWORD_PATH,
   GOSAKI_STAGING_PREVIEW_URL,
   GOSAKI_STAGING_SHELL_BASE,
 } from "../gosaki-staging-admin-paths";
@@ -29,6 +30,7 @@ const stagingAuthConfig = getStagingAuthConfig();
         routePath={GOSAKI_STAGING_SHELL_BASE}
         phase="gosaki-admin-ui-and-login-flow-practicalization"
         operatorMode={true}
+        forgotPasswordHref={GOSAKI_STAGING_AUTH_FORGOT_PASSWORD_PATH}
       />
     </section>
 

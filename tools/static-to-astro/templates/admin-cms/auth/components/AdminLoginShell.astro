@@ -11,9 +11,17 @@ interface Props {
   phase?: string;
   authConfig?: StagingAuthConfig | null;
   operatorMode?: boolean;
+  forgotPasswordHref?: string;
+  forgotPasswordLabel?: string;
 }
 
-const { phase = "G-5y-d", authConfig = null, operatorMode = false } = Astro.props;
+const {
+  phase = "G-5y-d",
+  authConfig = null,
+  operatorMode = false,
+  forgotPasswordHref = "#password-reset-shell",
+  forgotPasswordLabel = operatorMode ? "パスワードをお忘れですか？" : "Forgot password?",
+} = Astro.props;
 
 const interactive =
   Boolean(authConfig?.stagingAuthEnabled && authConfig?.supabaseConfigured);
@@ -80,7 +88,8 @@ const submitLabel = operatorMode
         title={formTitle}
         description={formDescription}
         submitLabel={submitLabel}
-        forgotPasswordHref="#password-reset-shell"
+        forgotPasswordHref={forgotPasswordHref}
+        forgotPasswordLabel={forgotPasswordLabel}
         disabled={!interactive}
         interactive={interactive}
         readonlyNotice={readonlyNotice}

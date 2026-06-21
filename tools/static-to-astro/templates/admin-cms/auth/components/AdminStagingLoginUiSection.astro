@@ -12,12 +12,14 @@ interface Props {
   routePath?: string;
   phase?: string;
   operatorMode?: boolean;
+  forgotPasswordHref?: string;
 }
 
 const {
   routePath = "/__admin-staging-shell/musician-basic/",
   phase = "G-5y-e-a",
   operatorMode = false,
+  forgotPasswordHref,
 } = Astro.props;
 
 const authConfig = getStagingAuthConfig();
@@ -32,7 +34,12 @@ const authConfig = getStagingAuthConfig();
   data-auth-mode={authConfig.authMode}
 >
   {operatorMode ? null : <AdminRoleAllowlistStatusPanel phase={phase} />}
-  <AdminLoginShell phase={phase} authConfig={authConfig} operatorMode={operatorMode} />
+  <AdminLoginShell
+    phase={phase}
+    authConfig={authConfig}
+    operatorMode={operatorMode}
+    forgotPasswordHref={forgotPasswordHref}
+  />
   {
     operatorMode ? null : (
       <>

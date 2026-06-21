@@ -12,6 +12,7 @@ interface Props {
   passwordLabel?: string;
   submitLabel?: string;
   forgotPasswordHref?: string;
+  forgotPasswordLabel?: string;
   disabled?: boolean;
   interactive?: boolean;
   formId?: string;
@@ -26,6 +27,7 @@ const {
   passwordLabel = "Password",
   submitLabel = "Sign in",
   forgotPasswordHref = "#forgot-password",
+  forgotPasswordLabel = "Forgot password?",
   disabled = true,
   interactive = false,
   formId = "staging-admin-login-form",
@@ -89,7 +91,7 @@ const buttonDisabled = disabled && !interactive;
       {submitLabel}
     </button>
     <a class="admin-login-form__forgot" href={forgotPasswordHref}>
-      Forgot password?
+      {forgotPasswordLabel}
     </a>
   </div>
 </form>

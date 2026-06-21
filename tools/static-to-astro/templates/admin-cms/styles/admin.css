@@ -734,6 +734,69 @@
   }
 }
 
+/* G-9j5a — Staging shell auth pages (forgot / reset password) */
+
+.admin-staging-auth-page {
+  max-width: 32rem;
+  margin: 0 auto;
+}
+
+.admin-staging-auth-page__header {
+  margin-bottom: 1rem;
+}
+
+.admin-staging-auth-page__title {
+  margin: 0.5rem 0 0;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--admin-color-text, #0f172a);
+}
+
+.admin-staging-auth-card {
+  padding: 1.25rem;
+}
+
+.admin-staging-auth-lead {
+  margin: 0 0 1rem;
+  font-size: 0.9375rem;
+  line-height: 1.55;
+  color: var(--admin-color-muted, #475569);
+}
+
+.admin-staging-auth-form__actions {
+  margin-top: 0.75rem;
+}
+
+.admin-staging-auth-invalid {
+  margin-top: 0.75rem;
+}
+
+.admin-staging-auth-links {
+  margin: 0.75rem 0 0;
+  font-size: 0.875rem;
+}
+
+.admin-staging-auth-hint {
+  margin: 1rem 0 0;
+  font-size: 0.8125rem;
+  color: var(--admin-color-muted, #64748b);
+  line-height: 1.5;
+}
+
+.admin-back-link {
+  font-size: 0.875rem;
+  color: var(--admin-color-link, #2563eb);
+  text-decoration: none;
+}
+
+.admin-back-link:hover {
+  text-decoration: underline;
+}
+
+.is-hidden {
+  display: none !important;
+}
+
 /* G-5n — Media upload scaffold */
 
 .admin-image-uploader {

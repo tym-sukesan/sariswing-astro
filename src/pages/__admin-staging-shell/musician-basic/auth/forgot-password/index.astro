@@ -1,0 +1,40 @@
+---
+/**
+ * G-9j5a — Gosaki staging forgot-password route.
+ * /__admin-staging-shell/musician-basic/auth/forgot-password/
+ * NOT production /admin/.
+ */
+const isDev = import.meta.env.DEV;
+const shellFlag = import.meta.env.ENABLE_ADMIN_STAGING_SHELL === "true";
+const enabled = isDev && shellFlag;
+
+let GosakiStagingAdminForgotPasswordPage = null;
+if (enabled) {
+  const mod = await import(
+    "../../../../../../tools/static-to-astro/templates/admin-cms/gosaki/pages/GosakiStagingAdminForgotPasswordPage.astro"
+  );
+  GosakiStagingAdminForgotPasswordPage = mod.default;
+}
+
+const disableReason = !isDev
+  ? "Admin staging shell is disabled outside development mode."
+  : "Set ENABLE_ADMIN_STAGING_SHELL=true for local dev.";
+---
+
+{
+  enabled && GosakiStagingAdminForgotPasswordPage ? (
+    <GosakiStagingAdminForgotPasswordPage />
+  ) : (
+    <html lang="ja">
+      <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="robots" content="noindex,nofollow,noarchive" />
+        <title>Admin staging shell disabled</title>
+      </head>
+      <body>
+        <p>{disableReason}</p>
+      </body>
+    </html>
+  )
+}

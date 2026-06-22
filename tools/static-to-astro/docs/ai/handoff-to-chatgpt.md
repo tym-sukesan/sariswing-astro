@@ -5,11 +5,23 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-9k5-gosaki-schedule-existing-event-save-button-success-finalization — complete (G-9k arc closed).
-Prior: G-9k4b UI Save succeeded (commit 2c28578); G-9j5c runner UPDATE succeeded (do not re-run G-9j5).
+Current phase: G-9k6a-gosaki-schedule-existing-event-field-slice-verification-planning — planning complete.
+Prior: G-9k5 arc closed (commit 60820c4); G-9k4b description UI Save succeeded.
 branch: main
 HEAD = origin/main — check git HEAD for latest commit hash
 ```
+
+## G-9k6a field slice verification planning — complete
+
+- **Doc:** `gosaki-schedule-existing-event-field-slice-verification-planning.md`
+- **Scope:** plan + checklist for remaining safe-field slices; **no Save / DB write in this phase**
+- **Done:** `description` (G-9k4b)
+- **Pending (order):** `price` → `open_time` → `start_time` → `venue` → `title` (last)
+- **Policy:** 1 Save = 1 field; `changedFields` / `payload keys` must be single target field
+- **Safety:** same G-9k4b env stack; project `kmjqppxjdnwwrtaeqjta`; block sari-site; `rowsAffected === 1`
+- **Out of scope:** date/month/published/schedule_months; new/delete/duplicate; deploy
+- **Next:** G-9k6b `price` manual Save once (operator)
+- **`readyForAnyDbWrite: false`**
 
 ## G-9k5 save button arc finalization — complete
 

@@ -1,6 +1,22 @@
 Last updated: 2026-06-22
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0i. G-9k6a field slice verification planning — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-9k6a-gosaki-schedule-existing-event-field-slice-verification-planning` |
+| Doc | `gosaki-schedule-existing-event-field-slice-verification-planning.md` |
+| Status | **planning complete** — matrix + checklist only |
+| Done | `description` (G-9k4b) |
+| Pending slices | `price` → `open_time` → `start_time` → `venue` → `title` (last) |
+| Policy | **1 Save = 1 field**; same G-9k4b safety stack |
+| Row | `f687ebf3-407c-49d0-9ab8-58040c499b8e` |
+| Project | `kmjqppxjdnwwrtaeqjta` only |
+| **Do not** | multi-field Save; DB write in planning phase |
+| Next | `G-9k6b` price field slice manual Save |
+| `readyForAnyDbWrite` | **false** |
+
 ## 0h. G-9k5 save button arc finalization — complete
 
 | Item | Value |

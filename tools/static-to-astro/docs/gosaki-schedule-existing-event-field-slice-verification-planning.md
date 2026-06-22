@@ -20,6 +20,7 @@ Prior docs:
 - [gosaki-schedule-existing-event-price-field-slice-save-success-finalization.md](./gosaki-schedule-existing-event-price-field-slice-save-success-finalization.md) (G-9k6b)
 - [gosaki-schedule-existing-event-open-time-field-slice-save-success-finalization.md](./gosaki-schedule-existing-event-open-time-field-slice-save-success-finalization.md) (G-9k6c)
 - [gosaki-schedule-existing-event-start-time-field-slice-save-success-finalization.md](./gosaki-schedule-existing-event-start-time-field-slice-save-success-finalization.md) (G-9k6d)
+- [gosaki-schedule-existing-event-venue-field-slice-save-success-finalization.md](./gosaki-schedule-existing-event-venue-field-slice-save-success-finalization.md) (G-9k6e)
 
 ---
 
@@ -31,7 +32,8 @@ phase: G-9k6a
 readyForG9k6bPriceFieldSliceManualSave: false
 readyForG9k6cOpenTimeFieldSliceManualSave: false
 readyForG9k6dStartTimeFieldSliceManualSave: false
-readyForG9k6eVenueFieldSliceManualSave: true
+readyForG9k6eVenueFieldSliceManualSave: false
+readyForG9k6fTitleFieldSliceManualSave: true
 readyForAnyDbWrite: false
 cursorClickedSave: false
 cursorClickedRun: false
@@ -69,8 +71,8 @@ Reconfirm **id**, **site_slug**, and **updated_at** via UI or read-only SELECT i
 | **site_slug** | `gosaki-piano` |
 | **title** | `<Duo>` |
 | **date** | `2026-03-15` (read-only — **not** in G-9k payload) |
-| **venue** | `川崎 ぴあにしも` (baseline — reconfirm before venue slice) |
-| **post-G-9k6d updated_at** | `2026-06-22T12:42:32.483922+00:00` |
+| **venue** | `川崎 ぴあにしも [G-9k6 venue UI保存テスト]` (post-G-9k6e baseline) |
+| **post-G-9k6e updated_at** | `2026-06-22T13:02:19.63835+00:00` |
 | **post-G-9k6d start_time** | `19:00` |
 | **post-G-9k6c open_time** | `18:00` |
 | **post-G-9k6b price** | `3,000円（G-9k6 price UI保存テスト）` |
@@ -100,7 +102,7 @@ PUBLIC_ADMIN_GOSAKI_SCHEDULE_EXISTING_EVENT_SAVE_BUTTON_NON_DRY_RUN_ARMED=true
 | 1 | `price` | G-9k6b | **succeeded** — do not re-Save unless restore phase |
 | 2 | `open_time` | G-9k6c | **succeeded** — do not re-Save unless restore phase |
 | 3 | `start_time` | G-9k6d | **succeeded** — do not re-Save unless restore phase |
-| 4 | `venue` | G-9k6e | pending |
+| 4 | `venue` | G-9k6e | **succeeded** — do not re-Save unless restore phase |
 | 5 | `title` | G-9k6f | pending (last — high public visibility) |
 
 ---
@@ -180,18 +182,22 @@ PUBLIC_ADMIN_GOSAKI_SCHEDULE_EXISTING_EVENT_SAVE_BUTTON_NON_DRY_RUN_ARMED=true
 
 **Edit rule:** change **start_time input only**.
 
-### 4.5 `venue` — slice 4 (G-9k6e)
+### 4.5 `venue` — slice 4 (G-9k6e) — **succeeded**
 
 | Item | Value |
 | --- | --- |
 | **field** | `venue` |
-| **before value (planning)** | `川崎 ぴあにしも` |
-| **test after value** | `川崎 ぴあにしも [G-9k6 venue UI保存テスト]` |
-| **expected changedFields** | `["venue"]` |
-| **expected payload keys** | `["venue"]` |
+| **before value (at G-9k6e)** | `川崎 ぴあにしも` |
+| **before updated_at** | `2026-06-22T12:42:32.483922+00:00` |
+| **recorded after value** | `川崎 ぴあにしも [G-9k6 venue UI保存テスト]` |
+| **post-save updated_at** | `2026-06-22T13:02:19.63835+00:00` |
+| **recorded changedFields** | `["venue"]` |
+| **recorded payload keys** | `["venue"]` |
+| **rowsAffected** | `1` |
 | **risk** | medium — visible on event card |
-| **rollback / restore** | restore exact venue string |
-| **manual confirmation** | dry-run venue row; post-save result; staging month page spot-check optional |
+| **rollback / restore** | restore to `川崎 ぴあにしも`; match `updated_at` in WHERE clause |
+| **manual confirmation** | dry-run 会場 row; diff venue only; post-save **保存成功** panel |
+| **status** | **complete** — skip re-Save; doc: `gosaki-schedule-existing-event-venue-field-slice-save-success-finalization.md` |
 
 **Edit rule:** change **venue input only**.
 
@@ -353,8 +359,8 @@ Compare only the target field + `updated_at` vs before snapshot. **SELECT only**
 1. price      (G-9k6b) — succeeded
 2. open_time  (G-9k6c) — succeeded
 3. start_time (G-9k6d) — succeeded
-4. venue      (G-9k6e) — next
-5. title      (G-9k6f) — last
+4. venue      (G-9k6e) — succeeded
+5. title      (G-9k6f) — next (last)
 ```
 
 `description` — **skip** (G-9k4b succeeded).
@@ -370,7 +376,7 @@ After all slices: **G-9k6g** (or similar) field-slice closure / finalization doc
 | **G-9k6b** | `price` manual Save once + result doc — **complete** |
 | **G-9k6c** | `open_time` manual Save once + result doc — **complete** |
 | **G-9k6d** | `start_time` manual Save once + result doc — **complete** |
-| **G-9k6e** | `venue` manual Save once |
+| **G-9k6e** | `venue` manual Save once + result doc — **complete** |
 | **G-9k6f** | `title` manual Save once (last) |
 | **G-9k6g** | field-slice verification closure (all slices recorded) |
 | Later | rollback execution, CMS Kit generalization, publish design — **not** G-9k6a |

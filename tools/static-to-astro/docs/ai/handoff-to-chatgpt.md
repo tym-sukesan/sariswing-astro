@@ -5,11 +5,22 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-9k6d-gosaki-schedule-existing-event-start-time-field-slice-save-success-finalization — complete.
-Prior: G-9k6c open_time slice succeeded; G-9k6a field slice planning.
+Current phase: G-9k6e-gosaki-schedule-existing-event-venue-field-slice-save-success-finalization — complete.
+Prior: G-9k6d start_time slice succeeded; G-9k6a field slice planning.
 branch: main
 HEAD = origin/main — check git HEAD for latest commit hash
 ```
+
+## G-9k6e venue field slice Save success — complete
+
+- **Doc:** `gosaki-schedule-existing-event-venue-field-slice-save-success-finalization.md`
+- **Result:** operator manual G-9k6e UI Save **succeeded** — `venue` only; `rowsAffected: 1`
+- **Before → after:** `川崎 ぴあにしも` → `川崎 ぴあにしも [G-9k6 venue UI保存テスト]`
+- **post-save `updated_at`:** `2026-06-22T13:02:19.63835+00:00`
+- **UI:** **保存成功** panel; diff 会場 only; `changedFields` / `payload keys` = `venue` only; post-save description shown (display only)
+- **Do not re-click G-9k6e Save**
+- **Next:** G-9k6f `title` manual Save once (last — operator)
+- **`readyForAnyDbWrite: false`**
 
 ## G-9k6d start_time field slice Save success — complete
 

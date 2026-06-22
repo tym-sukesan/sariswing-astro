@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-9k6d Gosaki schedule existing event start_time field slice Save success (2026-06-22):** **complete** — operator manual G-9k6d UI Save **succeeded**; `start_time` only; `rowsAffected: 1`; before `15:30` → after `19:00`; post-save `updated_at` `2026-06-22T12:42:32.483922+00:00`. Doc: `gosaki-schedule-existing-event-start-time-field-slice-save-success-finalization.md`. **Do not re-click G-9k6d Save.** Next: `G-9k6e-venue-field-slice-manual-save`. `readyForAnyDbWrite: false`.
+**G-9k6e Gosaki schedule existing event venue field slice Save success (2026-06-22):** **complete** — operator manual G-9k6e UI Save **succeeded**; `venue` only; `rowsAffected: 1`; before `川崎 ぴあにしも` → after `川崎 ぴあにしも [G-9k6 venue UI保存テスト]`; post-save `updated_at` `2026-06-22T13:02:19.63835+00:00`. Doc: `gosaki-schedule-existing-event-venue-field-slice-save-success-finalization.md`. **Do not re-click G-9k6e Save.** Next: `G-9k6f-title-field-slice-manual-save`. `readyForAnyDbWrite: false`.
+
+**G-9k6d Gosaki schedule existing event start_time field slice Save success (2026-06-22):** **complete** — operator manual G-9k6d UI Save **succeeded**; `start_time` only; `rowsAffected: 1`; before `15:30` → after `19:00`; post-save `updated_at` `2026-06-22T12:42:32.483922+00:00`. Doc: `gosaki-schedule-existing-event-start-time-field-slice-save-success-finalization.md`. **Do not re-click G-9k6d Save.**
 
 **G-9k6c Gosaki schedule existing event open_time field slice Save success (2026-06-22):** **complete** — operator manual G-9k6c UI Save **succeeded**; `open_time` only. Doc: `gosaki-schedule-existing-event-open-time-field-slice-save-success-finalization.md`. **Do not re-click G-9k6c Save.**
 
@@ -55,11 +57,11 @@ Staging Shell
 将来的な顧客オンボーディング・課金・デプロイ自動化
 
 2. Current phase
-現在フェーズ: **G-9k6d-gosaki-schedule-existing-event-start-time-field-slice-save-success-finalization** — **complete**（operator manual `start_time` slice UI Save succeeded. 最新commitは git HEAD を確認すること。）
+現在フェーズ: **G-9k6e-gosaki-schedule-existing-event-venue-field-slice-save-success-finalization** — **complete**（operator manual `venue` slice UI Save succeeded. 最新commitは git HEAD を確認すること。）
 
-G-9k6d start_time slice: **complete**. `start_time` only; `15:30` → `19:00`; `rowsAffected: 1`; post-save `updated_at` `2026-06-22T12:42:32.483922+00:00`. **Do not re-click G-9k6d Save.** Next: G-9k6e `venue` manual Save. `readyForAnyDbWrite: false`.
+G-9k6e venue slice: **complete**. `venue` only; `川崎 ぴあにしも` → `川崎 ぴあにしも [G-9k6 venue UI保存テスト]`; `rowsAffected: 1`; post-save `updated_at` `2026-06-22T13:02:19.63835+00:00`. **Do not re-click G-9k6e Save.** Next: G-9k6f `title` manual Save (last). `readyForAnyDbWrite: false`.
 
-G-9k6 field slices done: `description` (G-9k4b), `price` (G-9k6b), `open_time` (G-9k6c), `start_time` (G-9k6d). Pending: venue → title.
+G-9k6 field slices done: `description` (G-9k4b), `price` (G-9k6b), `open_time` (G-9k6c), `start_time` (G-9k6d), `venue` (G-9k6e). Pending: title (last).
 
 G-9k5 finalization: **complete** (commit `60820c4`). G-9k arc closed.
 

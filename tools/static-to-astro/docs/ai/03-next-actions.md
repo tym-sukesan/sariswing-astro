@@ -1,6 +1,23 @@
 Last updated: 2026-06-22
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0n. G-9k6f title field slice Save success — complete (G-9k6 all slices done)
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-9k6f-gosaki-schedule-existing-event-title-field-slice-save-success-finalization` |
+| Doc | `gosaki-schedule-existing-event-title-field-slice-save-success-finalization.md` |
+| Status | **complete** — operator manual `title` slice UI Save **succeeded** |
+| Row | `f687ebf3-407c-49d0-9ab8-58040c499b8e` — `title` only |
+| Before → after | `<Duo>` → `<Duo> [G-9k6 title UI保存テスト]` |
+| `rowsAffected` | **1** |
+| post-save `updated_at` | `2026-06-22T15:01:47.671778+00:00` |
+| UI | **保存成功** panel; diff タイトル only; post-save description shown (display only) |
+| **G-9k6 all slices** | `description`, `price`, `open_time`, `start_time`, `venue`, `title` — **all succeeded** |
+| **Do not** | re-click G-9k6f Save (or any G-9k6 slice Save) |
+| Next | `G-9k6g` field-slice closure |
+| `readyForAnyDbWrite` | **false** |
+
 ## 0m. G-9k6e venue field slice Save success — complete
 
 | Item | Value |

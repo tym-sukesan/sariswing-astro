@@ -5,11 +5,25 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-9k6e-gosaki-schedule-existing-event-venue-field-slice-save-success-finalization — complete.
-Prior: G-9k6d start_time slice succeeded; G-9k6a field slice planning.
+Current phase: G-9k6f-gosaki-schedule-existing-event-title-field-slice-save-success-finalization — complete.
+Prior: G-9k6e venue slice succeeded; G-9k6a field slice planning.
+G-9k6 field slice manual Save: **all complete** (description, price, open_time, start_time, venue, title).
+Next: G-9k6g field-slice closure.
 branch: main
 HEAD = origin/main — check git HEAD for latest commit hash
 ```
+
+## G-9k6f title field slice Save success — complete (G-9k6 all slices done)
+
+- **Doc:** `gosaki-schedule-existing-event-title-field-slice-save-success-finalization.md`
+- **Result:** operator manual G-9k6f UI Save **succeeded** — `title` only; `rowsAffected: 1`
+- **Before → after:** `<Duo>` → `<Duo> [G-9k6 title UI保存テスト]`
+- **post-save `updated_at`:** `2026-06-22T15:01:47.671778+00:00`
+- **UI:** **保存成功** panel; diff タイトル only; `changedFields` / `payload keys` = `title` only; post-save description shown (display only)
+- **G-9k6 all slices succeeded:** `description` (G-9k4b), `price` (G-9k6b), `open_time` (G-9k6c), `start_time` (G-9k6d), `venue` (G-9k6e), `title` (G-9k6f)
+- **Do not re-click G-9k6f Save** (or any G-9k6 slice Save)
+- **Next:** G-9k6g field-slice closure
+- **`readyForAnyDbWrite: false`**
 
 ## G-9k6e venue field slice Save success — complete
 

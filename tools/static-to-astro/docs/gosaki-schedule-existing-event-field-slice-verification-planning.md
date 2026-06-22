@@ -21,6 +21,7 @@ Prior docs:
 - [gosaki-schedule-existing-event-open-time-field-slice-save-success-finalization.md](./gosaki-schedule-existing-event-open-time-field-slice-save-success-finalization.md) (G-9k6c)
 - [gosaki-schedule-existing-event-start-time-field-slice-save-success-finalization.md](./gosaki-schedule-existing-event-start-time-field-slice-save-success-finalization.md) (G-9k6d)
 - [gosaki-schedule-existing-event-venue-field-slice-save-success-finalization.md](./gosaki-schedule-existing-event-venue-field-slice-save-success-finalization.md) (G-9k6e)
+- [gosaki-schedule-existing-event-title-field-slice-save-success-finalization.md](./gosaki-schedule-existing-event-title-field-slice-save-success-finalization.md) (G-9k6f)
 
 ---
 
@@ -28,12 +29,14 @@ Prior docs:
 
 ```txt
 gosakiScheduleExistingEventFieldSliceVerificationPlanningComplete: true
+gosakiScheduleExistingEventFieldSliceManualSaveAllComplete: true
 phase: G-9k6a
 readyForG9k6bPriceFieldSliceManualSave: false
 readyForG9k6cOpenTimeFieldSliceManualSave: false
 readyForG9k6dStartTimeFieldSliceManualSave: false
 readyForG9k6eVenueFieldSliceManualSave: false
-readyForG9k6fTitleFieldSliceManualSave: true
+readyForG9k6fTitleFieldSliceManualSave: false
+readyForG9k6gFieldSliceClosure: true
 readyForAnyDbWrite: false
 cursorClickedSave: false
 cursorClickedRun: false
@@ -69,10 +72,10 @@ Reconfirm **id**, **site_slug**, and **updated_at** via UI or read-only SELECT i
 | **id** | `f687ebf3-407c-49d0-9ab8-58040c499b8e` |
 | **legacy_id** | `schedule-2026-03-007` |
 | **site_slug** | `gosaki-piano` |
-| **title** | `<Duo>` |
+| **title** | `<Duo> [G-9k6 title UI保存テスト]` (post-G-9k6f baseline) |
 | **date** | `2026-03-15` (read-only — **not** in G-9k payload) |
 | **venue** | `川崎 ぴあにしも [G-9k6 venue UI保存テスト]` (post-G-9k6e baseline) |
-| **post-G-9k6e updated_at** | `2026-06-22T13:02:19.63835+00:00` |
+| **post-G-9k6f updated_at** | `2026-06-22T15:01:47.671778+00:00` |
 | **post-G-9k6d start_time** | `19:00` |
 | **post-G-9k6c open_time** | `18:00` |
 | **post-G-9k6b price** | `3,000円（G-9k6 price UI保存テスト）` |
@@ -103,7 +106,7 @@ PUBLIC_ADMIN_GOSAKI_SCHEDULE_EXISTING_EVENT_SAVE_BUTTON_NON_DRY_RUN_ARMED=true
 | 2 | `open_time` | G-9k6c | **succeeded** — do not re-Save unless restore phase |
 | 3 | `start_time` | G-9k6d | **succeeded** — do not re-Save unless restore phase |
 | 4 | `venue` | G-9k6e | **succeeded** — do not re-Save unless restore phase |
-| 5 | `title` | G-9k6f | pending (last — high public visibility) |
+| 5 | `title` | G-9k6f | **succeeded** — do not re-Save unless restore phase |
 
 ---
 
@@ -201,20 +204,24 @@ PUBLIC_ADMIN_GOSAKI_SCHEDULE_EXISTING_EVENT_SAVE_BUTTON_NON_DRY_RUN_ARMED=true
 
 **Edit rule:** change **venue input only**.
 
-### 4.6 `title` — slice 5 (G-9k6f) — **last**
+### 4.6 `title` — slice 5 (G-9k6f) — **succeeded**
 
 | Item | Value |
 | --- | --- |
 | **field** | `title` |
-| **before value (planning)** | `<Duo>` |
-| **test after value** | `<Duo> [G-9k6 title UI保存テスト]` |
-| **expected changedFields** | `["title"]` |
-| **expected payload keys** | `["title"]` |
+| **before value (at G-9k6f)** | `<Duo>` |
+| **before updated_at** | `2026-06-22T13:02:19.63835+00:00` |
+| **recorded after value** | `<Duo> [G-9k6 title UI保存テスト]` |
+| **post-save updated_at** | `2026-06-22T15:01:47.671778+00:00` |
+| **recorded changedFields** | `["title"]` |
+| **recorded payload keys** | `["title"]` |
+| **rowsAffected** | `1` |
 | **risk** | **high** — prominent in list, hub, month pages; run last |
-| **rollback / restore** | restore exact title; consider client preview notice |
-| **manual confirmation** | dry-run タイトル row; post-save title; list + month page spot-check |
+| **rollback / restore** | restore to `<Duo>`; match `updated_at` in WHERE clause |
+| **manual confirmation** | dry-run タイトル row; diff title only; post-save **保存成功** panel |
+| **status** | **complete** — skip re-Save; doc: `gosaki-schedule-existing-event-title-field-slice-save-success-finalization.md` |
 
-**Edit rule:** change **title input only**; execute only after slices 1–4 succeed.
+**Edit rule:** change **title input only**.
 
 ---
 
@@ -360,12 +367,12 @@ Compare only the target field + `updated_at` vs before snapshot. **SELECT only**
 2. open_time  (G-9k6c) — succeeded
 3. start_time (G-9k6d) — succeeded
 4. venue      (G-9k6e) — succeeded
-5. title      (G-9k6f) — next (last)
+5. title      (G-9k6f) — succeeded
 ```
 
-`description` — **skip** (G-9k4b succeeded).
+`description` — **succeeded** (G-9k4b).
 
-After all slices: **G-9k6g** (or similar) field-slice closure / finalization doc — separate phase.
+**All G-9k6 field slice manual Saves complete** (`description`, `price`, `open_time`, `start_time`, `venue`, `title`). Next: **G-9k6g** field-slice closure — separate phase (docs only unless separate restore approval).
 
 ---
 
@@ -377,6 +384,6 @@ After all slices: **G-9k6g** (or similar) field-slice closure / finalization doc
 | **G-9k6c** | `open_time` manual Save once + result doc — **complete** |
 | **G-9k6d** | `start_time` manual Save once + result doc — **complete** |
 | **G-9k6e** | `venue` manual Save once + result doc — **complete** |
-| **G-9k6f** | `title` manual Save once (last) |
-| **G-9k6g** | field-slice verification closure (all slices recorded) |
+| **G-9k6f** | `title` manual Save once + result doc — **complete** |
+| **G-9k6g** | field-slice verification closure (all slices recorded) — **next** |
 | Later | rollback execution, CMS Kit generalization, publish design — **not** G-9k6a |

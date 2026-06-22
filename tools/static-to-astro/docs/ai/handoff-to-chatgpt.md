@@ -5,13 +5,20 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-9k6g-gosaki-schedule-existing-event-field-slice-closure — complete.
-Prior: G-9k6f title slice succeeded (commit 421ffac); G-9k6a field slice planning.
-G-9k6 field slice manual Save: **all complete and closed** (description, price, open_time, start_time, venue, title).
-Next: operator choice — UI copy fix, generalization, next feature, Gosaki CMS Kit (G-9h1), or rollback.
+Current phase: G-9k7-gosaki-schedule-save-ui-copy-and-editor-scroll-fix — complete.
+Prior: G-9k6g field slice closure (commit 99ffc6c).
 branch: main
-HEAD = origin/main = 421ffac — check git HEAD for latest commit hash
+HEAD = origin/main = 99ffc6c — check git HEAD for latest commit hash
 ```
+
+## G-9k7 Save UI copy and editor scroll fix — complete
+
+- **Doc:** `gosaki-schedule-save-ui-copy-and-editor-scroll-fix.md`
+- **Copy:** Save 無効時「保存は無効です…」/ 有効時「保存が有効です…」— no `G9K_SAVE_BUTTON_SAVE_ENABLED=false` when Save ready
+- **Scroll:** `gosaki-schedule-admin-list-panel` + `gosaki-schedule-admin-editor-panel` independent scroll @ ≥960px
+- **No DB write / Save click**
+- **Next:** generalization, next feature, Gosaki CMS Kit (`G-9h1`), rollback
+- **`readyForAnyDbWrite: false`**
 
 ## G-9k6g field slice closure — complete
 

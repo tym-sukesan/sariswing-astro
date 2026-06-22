@@ -1,6 +1,19 @@
 Last updated: 2026-06-22
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0p. G-9k7 Save UI copy and editor scroll fix — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-9k7-gosaki-schedule-save-ui-copy-and-editor-scroll-fix` |
+| Doc | `gosaki-schedule-save-ui-copy-and-editor-scroll-fix.md` |
+| Status | **complete** — operator copy + PC scroll layout |
+| Copy | Save 無効/有効で矛盾しない文言 |
+| Scroll | 一覧・編集パネル独立スクロール（≥960px） |
+| **Do not** | DB write / Save click in this phase |
+| Next | generalization, next feature, Gosaki CMS Kit, rollback |
+| `readyForAnyDbWrite` | **false** |
+
 ## 0o. G-9k6g field slice closure — complete
 
 | Item | Value |

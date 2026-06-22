@@ -57,6 +57,45 @@ let stagingAuthSignedIn: boolean | null = null;
 let saveInFlight = false;
 let previewBase = "https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/";
 
+function isG9kOperatorSaveEnabled(): boolean {
+  return getG9kExistingEventSaveButtonConfig().saveEnabled;
+}
+
+function operatorSaveDisabledMessage(): string {
+  return "保存は無効です。DB UPDATE は実行されません。";
+}
+
+function operatorSaveEnabledMessage(): string {
+  return "保存が有効です。内容を確認し、「更新する」を1回だけ押すとDBに反映されます。";
+}
+
+function operatorSavePrepMessage(): string {
+  if (isG9kOperatorSaveEnabled()) {
+    return "「変更を確認」で内容を確認してから「更新する」を押してください。";
+  }
+  return `「変更を確認」で内容を確認できます。${operatorSaveDisabledMessage()}`;
+}
+
+function operatorSaveReadyButDisabledMessage(): string {
+  return `保存内容の確認は完了しています。${operatorSaveDisabledMessage()}`;
+}
+
+function renderDryRunSaveCapabilityNote(
+  saveReadiness: G9kExistingEventSaveButtonDryRunResult["saveReadiness"],
+): string {
+  if (saveReadiness === "ready_to_save") {
+    return `<p class="gosaki-schedule-edit-dry-run__save-enabled" data-gosaki-save-allowed="true" role="note">
+      ${escapeHtml(operatorSaveEnabledMessage())}
+    </p>`;
+  }
+  if (saveReadiness === "ready_but_save_disabled") {
+    return `<p class="gosaki-schedule-edit-dry-run__save-disabled" data-gosaki-save-allowed="false" role="note">
+      ${escapeHtml(operatorSaveReadyButDisabledMessage())}
+    </p>`;
+  }
+  return "";
+}
+
 function escapeHtml(value: string): string {
   return value
     .replace(/&/g, "&amp;")
@@ -372,7 +411,7 @@ function updateSaveButtonState(result: G9kExistingEventSaveButtonDryRunResult | 
     button.title = "変更内容を保存します";
     button.textContent = "更新する";
     if (note) {
-      note.textContent = "保存準備OK。更新できます";
+      note.textContent = operatorSaveEnabledMessage();
     }
     return;
   }
@@ -384,18 +423,16 @@ function updateSaveButtonState(result: G9kExistingEventSaveButtonDryRunResult | 
     button.textContent = "更新する（準備中）";
     button.title = gate.reason;
     if (note) {
-      note.textContent =
-        "「変更を確認」で dry-run を通過すると保存準備状態を表示します。Save は env arm + G-9k4 で有効化されます。";
+      note.textContent = operatorSavePrepMessage();
     }
     return;
   }
 
   if (result.saveReadiness === "ready_but_save_disabled" && result.ok) {
-    button.textContent = "更新する（G-9k4で有効化予定）";
+    button.textContent = "更新する（保存無効）";
     button.title = gate.reason;
     if (note) {
-      note.textContent =
-        "保存準備OK。ただし Save は未開放です（G9K_SAVE_BUTTON_SAVE_ENABLED=false または env arm 未設定）。";
+      note.textContent = operatorSaveReadyButDisabledMessage();
     }
     return;
   }
@@ -486,7 +523,7 @@ function renderDryRunResult(result: G9kExistingEventSaveButtonDryRunResult): voi
   const saveReadyMessage =
     result.saveReadiness === "ready_to_save"
       ? "保存準備OK。更新できます"
-      : "保存準備OK。ただし Save は未開放です（G9K_SAVE_BUTTON_SAVE_ENABLED=false または env arm 未設定）。";
+      : operatorSaveReadyButDisabledMessage();
   el.innerHTML = `
     <h3 class="gosaki-schedule-edit-dry-run__title">確認結果</h3>
     <p class="gosaki-schedule-edit-dry-run__message gosaki-schedule-edit-dry-run__message--ready">
@@ -537,9 +574,7 @@ function renderDryRunResult(result: G9kExistingEventSaveButtonDryRunResult): voi
       （rowsAffected 必須 = ${String(result.rowsAffectedRequired)}）
     </p>
     <p class="gosaki-schedule-edit-dry-run__note">この確認ではデータベースは変更されません。保存はまだ実行されません。</p>
-    <p class="gosaki-schedule-edit-dry-run__save-disabled" data-gosaki-save-allowed="false">
-      Save 実行には G-9k 専用 env arm / approvalId が必要です。G9K_SAVE_BUTTON_SAVE_ENABLED=false の間は DB UPDATE しません。
-    </p>
+    ${renderDryRunSaveCapabilityNote(result.saveReadiness)}
   `;
 }
 
@@ -697,7 +732,7 @@ async function runEditSave(): Promise<void> {
     const pageConfig = readG9kSaveButtonPageConfigFromDom();
     if (!pageConfig?.saveButtonSaveEnabled) {
       window.alert(
-        "G9K_SAVE_BUTTON_SAVE_ENABLED=false のため Save は未開放です。G-9k4b で有効化してください。",
+        "保存は無効です。開発用の Save 有効化が必要です（G-9k4 相当の env stack）。",
       );
       return;
     }

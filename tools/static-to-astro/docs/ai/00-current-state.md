@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-9k6g Gosaki schedule existing event field slice closure (2026-06-22):** **complete** — G-9k6 arc **closed**; all 6 safe fields succeeded (`description` G-9k4b + G-9k6b–G-9k6f); **1 Save = 1 field** maintained; `rowsAffected: 1` / single-field `changedFields` + `payload keys` on every slice. Doc: `gosaki-schedule-existing-event-field-slice-closure.md`. Prior commit `421ffac` (G-9k6f). **Do not re-click any G-9k6 slice Save.** Next: operator choice (UI copy, generalization, next feature, Gosaki CMS Kit, rollback). `readyForAnyDbWrite: false`.
+**G-9k7 Gosaki schedule Save UI copy and editor scroll fix (2026-06-22):** **complete** — operator Save messages match enabled/disabled state; PC list/editor independent scroll. Doc: `gosaki-schedule-save-ui-copy-and-editor-scroll-fix.md`. **No DB write.** `readyForAnyDbWrite: false`.
+
+**G-9k6g Gosaki schedule existing event field slice closure (2026-06-22):** **complete** — G-9k6 arc **closed**; commit `99ffc6c`. Doc: `gosaki-schedule-existing-event-field-slice-closure.md`. **Do not re-click any G-9k6 slice Save.**
 
 **G-9k6f Gosaki schedule existing event title field slice Save success (2026-06-22):** **complete** — operator manual G-9k6f UI Save **succeeded**; `title` only. Doc: `gosaki-schedule-existing-event-title-field-slice-save-success-finalization.md`. Commit: `421ffac`. **Do not re-click G-9k6f Save.**
 
@@ -61,9 +63,9 @@ Staging Shell
 将来的な顧客オンボーディング・課金・デプロイ自動化
 
 2. Current phase
-現在フェーズ: **G-9k6g-gosaki-schedule-existing-event-field-slice-closure** — **complete**（G-9k6 field slice verification arc closed. 最新commitは git HEAD を確認すること。）
+現在フェーズ: **G-9k7-gosaki-schedule-save-ui-copy-and-editor-scroll-fix** — **complete**（Save UI copy + list/editor scroll. 最新commitは git HEAD を確認すること。）
 
-G-9k6g closure: **complete**. All slices succeeded on row `f687ebf3-407c-49d0-9ab8-58040c499b8e` — `description` (G-9k4b), `price` (G-9k6b), `open_time` (G-9k6c), `start_time` (G-9k6d), `venue` (G-9k6e), `title` (G-9k6f). **1 Save = 1 field** on every slice. **Do not re-click any G-9k6 slice Save.** Next: operator choice — UI copy fix, staging shell Save generalization, existing event next feature, Gosaki CMS Kit (`G-9h1`), or rollback. `readyForAnyDbWrite: false`.
+G-9k7: Save 有効/無効の operator 文言を整理；PC で一覧・編集パネル独立スクロール。**No DB write.** Next: operator choice — generalization, next feature, Gosaki CMS Kit, rollback. `readyForAnyDbWrite: false`.
 
 G-9k5 finalization: **complete** (commit `60820c4`). G-9k arc closed.
 

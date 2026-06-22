@@ -1845,7 +1845,16 @@
 
 @media (min-width: 960px) {
   .gosaki-schedule-admin-workspace {
-    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+    grid-template-columns: minmax(320px, 420px) minmax(0, 1fr);
+    align-items: stretch;
+  }
+
+  .gosaki-schedule-admin-list-panel,
+  .gosaki-schedule-admin-editor-panel {
+    max-height: calc(100dvh - 9.5rem);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    min-height: 0;
   }
 }
 
@@ -2406,6 +2415,7 @@
 
 .gosaki-schedule-edit-dry-run__note,
 .gosaki-schedule-edit-dry-run__save-disabled,
+.gosaki-schedule-edit-dry-run__save-enabled,
 .gosaki-schedule-edit-dry-run__stale-note {
   margin: 0.35rem 0 0;
   font-size: 0.82rem;
@@ -2415,6 +2425,11 @@
 
 .gosaki-schedule-edit-dry-run__save-disabled {
   color: #475569;
+  font-weight: 600;
+}
+
+.gosaki-schedule-edit-dry-run__save-enabled {
+  color: #166534;
   font-weight: 600;
 }
 

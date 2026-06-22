@@ -22,6 +22,10 @@ const { binding } = Astro.props;
 
 const g9kSaveButtonPageConfig = resolveG9kSaveButtonPageServerConfig(import.meta.env);
 
+const savePrepNote = g9kSaveButtonPageConfig.saveButtonSaveEnabled
+  ? "「変更を確認」で内容を確認してから「更新する」を押してください。"
+  : "「変更を確認」で内容を確認できます。保存は無効です。DB UPDATE は実行されません。";
+
 const isLive = binding.source === "supabase" && binding.selectableCount > 0;
 const rowsJson = JSON.stringify(binding.selectableRows);
 const monthOptions = binding.monthOptions;
@@ -181,7 +185,7 @@ function displayValue(value: string | null | undefined): string {
   </section>
 
   <div class="gosaki-schedule-admin-workspace">
-    <section class="admin-card admin-gosaki-card admin-gosaki-schedule-list-card">
+    <section class="admin-card admin-gosaki-card admin-gosaki-schedule-list-card gosaki-schedule-admin-list-panel">
       <h2 class="admin-gosaki-card__title">公演一覧</h2>
       <p class="admin-gosaki-card__lead">編集したい公演を選んでください。</p>
 
@@ -277,7 +281,7 @@ function displayValue(value: string | null | undefined): string {
 
     <section
       id="gosaki-schedule-operator-edit"
-      class="admin-card admin-gosaki-card admin-gosaki-schedule-edit-card"
+      class="admin-card admin-gosaki-card admin-gosaki-schedule-edit-card gosaki-schedule-admin-editor-panel"
       aria-live="polite"
     >
       <h2 class="admin-gosaki-card__title">選択中の公演を編集</h2>
@@ -412,7 +416,7 @@ function displayValue(value: string | null | undefined): string {
           </button>
         </div>
         <p id="gosaki-schedule-update-btn-note" class="admin-gosaki-save-note" role="note">
-          「変更を確認」で dry-run を通過すると保存準備状態を表示します。Save は G-9k 専用 env arm + G9K_SAVE_BUTTON_SAVE_ENABLED=true で有効化されます。
+          {savePrepNote}
         </p>
         <p class="admin-gosaki-save-note" role="note">
           ※ 複製・削除は準備中です。この画面ではまだ実行できません。

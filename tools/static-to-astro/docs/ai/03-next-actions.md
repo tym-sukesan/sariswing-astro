@@ -1,6 +1,21 @@
 Last updated: 2026-06-22
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0o. G-9k6g field slice closure — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-9k6g-gosaki-schedule-existing-event-field-slice-closure` |
+| Doc | `gosaki-schedule-existing-event-field-slice-closure.md` |
+| Status | **complete** — G-9k6 arc **closed** |
+| Row | `f687ebf3-407c-49d0-9ab8-58040c499b8e` |
+| All slices | `description` (G-9k4b), `price` (G-9k6b), `open_time` (G-9k6c), `start_time` (G-9k6d), `venue` (G-9k6e), `title` (G-9k6f) — **succeeded** |
+| Policy | **1 Save = 1 field**; `rowsAffected: 1`; single-field `changedFields` + `payload keys` every slice |
+| Final baseline | title / venue / open_time / start_time / price + `updated_at` `2026-06-22T15:01:47.671778+00:00` |
+| **Do not** | re-click any G-9k4b / G-9k6 slice Save |
+| Next (operator choice) | UI copy fix; staging shell Save generalization; existing event next feature; Gosaki CMS Kit (`G-9h1`); rollback |
+| `readyForAnyDbWrite` | **false** |
+
 ## 0n. G-9k6f title field slice Save success — complete (G-9k6 all slices done)
 
 | Item | Value |

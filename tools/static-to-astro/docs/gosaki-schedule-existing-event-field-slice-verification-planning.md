@@ -22,6 +22,7 @@ Prior docs:
 - [gosaki-schedule-existing-event-start-time-field-slice-save-success-finalization.md](./gosaki-schedule-existing-event-start-time-field-slice-save-success-finalization.md) (G-9k6d)
 - [gosaki-schedule-existing-event-venue-field-slice-save-success-finalization.md](./gosaki-schedule-existing-event-venue-field-slice-save-success-finalization.md) (G-9k6e)
 - [gosaki-schedule-existing-event-title-field-slice-save-success-finalization.md](./gosaki-schedule-existing-event-title-field-slice-save-success-finalization.md) (G-9k6f)
+- [gosaki-schedule-existing-event-field-slice-closure.md](./gosaki-schedule-existing-event-field-slice-closure.md) (G-9k6g)
 
 ---
 
@@ -30,13 +31,15 @@ Prior docs:
 ```txt
 gosakiScheduleExistingEventFieldSliceVerificationPlanningComplete: true
 gosakiScheduleExistingEventFieldSliceManualSaveAllComplete: true
+gosakiScheduleExistingEventFieldSliceClosureComplete: true
 phase: G-9k6a
 readyForG9k6bPriceFieldSliceManualSave: false
 readyForG9k6cOpenTimeFieldSliceManualSave: false
 readyForG9k6dStartTimeFieldSliceManualSave: false
 readyForG9k6eVenueFieldSliceManualSave: false
 readyForG9k6fTitleFieldSliceManualSave: false
-readyForG9k6gFieldSliceClosure: true
+readyForG9k6gFieldSliceClosure: false
+readyForG9k6SliceReExecution: false
 readyForAnyDbWrite: false
 cursorClickedSave: false
 cursorClickedRun: false
@@ -372,7 +375,7 @@ Compare only the target field + `updated_at` vs before snapshot. **SELECT only**
 
 `description` — **succeeded** (G-9k4b).
 
-**All G-9k6 field slice manual Saves complete** (`description`, `price`, `open_time`, `start_time`, `venue`, `title`). Next: **G-9k6g** field-slice closure — separate phase (docs only unless separate restore approval).
+**All G-9k6 field slice manual Saves complete** (`description`, `price`, `open_time`, `start_time`, `venue`, `title`). **G-9k6g closure complete** — doc: `gosaki-schedule-existing-event-field-slice-closure.md`. Next: operator-selected phase (UI copy, generalization, next feature, Gosaki CMS Kit, or rollback).
 
 ---
 
@@ -385,5 +388,5 @@ Compare only the target field + `updated_at` vs before snapshot. **SELECT only**
 | **G-9k6d** | `start_time` manual Save once + result doc — **complete** |
 | **G-9k6e** | `venue` manual Save once + result doc — **complete** |
 | **G-9k6f** | `title` manual Save once + result doc — **complete** |
-| **G-9k6g** | field-slice verification closure (all slices recorded) — **next** |
-| Later | rollback execution, CMS Kit generalization, publish design — **not** G-9k6a |
+| **G-9k6g** | field-slice verification closure (all slices recorded) — **complete** |
+| Later | UI copy fix, staging shell Save generalization, next edit feature, Gosaki CMS Kit (`G-9h1` etc.), rollback — operator choice |

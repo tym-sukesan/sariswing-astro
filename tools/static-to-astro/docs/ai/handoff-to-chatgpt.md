@@ -5,13 +5,23 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-9k6f-gosaki-schedule-existing-event-title-field-slice-save-success-finalization — complete.
-Prior: G-9k6e venue slice succeeded; G-9k6a field slice planning.
-G-9k6 field slice manual Save: **all complete** (description, price, open_time, start_time, venue, title).
-Next: G-9k6g field-slice closure.
+Current phase: G-9k6g-gosaki-schedule-existing-event-field-slice-closure — complete.
+Prior: G-9k6f title slice succeeded (commit 421ffac); G-9k6a field slice planning.
+G-9k6 field slice manual Save: **all complete and closed** (description, price, open_time, start_time, venue, title).
+Next: operator choice — UI copy fix, generalization, next feature, Gosaki CMS Kit (G-9h1), or rollback.
 branch: main
-HEAD = origin/main — check git HEAD for latest commit hash
+HEAD = origin/main = 421ffac — check git HEAD for latest commit hash
 ```
+
+## G-9k6g field slice closure — complete
+
+- **Doc:** `gosaki-schedule-existing-event-field-slice-closure.md`
+- **Result:** G-9k6 arc **closed** — all 6 safe fields succeeded on row `f687ebf3-407c-49d0-9ab8-58040c499b8e`
+- **Policy:** **1 Save = 1 field** maintained; every slice `rowsAffected: 1`; `changedFields` / `payload keys` = single field only; optimistic lock OK
+- **Final baseline:** title `<Duo> [G-9k6 title UI保存テスト]`; venue `川崎 ぴあにしも [G-9k6 venue UI保存テスト]`; open_time `18:00`; start_time `19:00`; price `3,000円（G-9k6 price UI保存テスト）`; `updated_at` `2026-06-22T15:01:47.671778+00:00`
+- **Do not re-click** any G-9k4b / G-9k6 slice Save
+- **Next (operator choice):** UI copy fix; staging shell Save generalization; existing event next feature; Gosaki CMS Kit (`G-9h1`); rollback
+- **`readyForAnyDbWrite: false`**
 
 ## G-9k6f title field slice Save success — complete (G-9k6 all slices done)
 

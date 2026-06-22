@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-9k6f Gosaki schedule existing event title field slice Save success (2026-06-22):** **complete** — operator manual G-9k6f UI Save **succeeded**; `title` only; `rowsAffected: 1`; before `<Duo>` → after `<Duo> [G-9k6 title UI保存テスト]`; post-save `updated_at` `2026-06-22T15:01:47.671778+00:00`. **G-9k6 field slice manual Save all complete** (`description`, `price`, `open_time`, `start_time`, `venue`, `title`). Doc: `gosaki-schedule-existing-event-title-field-slice-save-success-finalization.md`. **Do not re-click G-9k6f Save.** Next: `G-9k6g-field-slice-closure`. `readyForAnyDbWrite: false`.
+**G-9k6g Gosaki schedule existing event field slice closure (2026-06-22):** **complete** — G-9k6 arc **closed**; all 6 safe fields succeeded (`description` G-9k4b + G-9k6b–G-9k6f); **1 Save = 1 field** maintained; `rowsAffected: 1` / single-field `changedFields` + `payload keys` on every slice. Doc: `gosaki-schedule-existing-event-field-slice-closure.md`. Prior commit `421ffac` (G-9k6f). **Do not re-click any G-9k6 slice Save.** Next: operator choice (UI copy, generalization, next feature, Gosaki CMS Kit, rollback). `readyForAnyDbWrite: false`.
+
+**G-9k6f Gosaki schedule existing event title field slice Save success (2026-06-22):** **complete** — operator manual G-9k6f UI Save **succeeded**; `title` only. Doc: `gosaki-schedule-existing-event-title-field-slice-save-success-finalization.md`. Commit: `421ffac`. **Do not re-click G-9k6f Save.**
 
 **G-9k6e Gosaki schedule existing event venue field slice Save success (2026-06-22):** **complete** — operator manual G-9k6e UI Save **succeeded**; `venue` only. Doc: `gosaki-schedule-existing-event-venue-field-slice-save-success-finalization.md`. **Do not re-click G-9k6e Save.**
 
@@ -59,11 +61,9 @@ Staging Shell
 将来的な顧客オンボーディング・課金・デプロイ自動化
 
 2. Current phase
-現在フェーズ: **G-9k6f-gosaki-schedule-existing-event-title-field-slice-save-success-finalization** — **complete**（operator manual `title` slice UI Save succeeded. 最新commitは git HEAD を確認すること。）
+現在フェーズ: **G-9k6g-gosaki-schedule-existing-event-field-slice-closure** — **complete**（G-9k6 field slice verification arc closed. 最新commitは git HEAD を確認すること。）
 
-G-9k6f title slice: **complete**. `title` only; `<Duo>` → `<Duo> [G-9k6 title UI保存テスト]`; `rowsAffected: 1`; post-save `updated_at` `2026-06-22T15:01:47.671778+00:00`. **Do not re-click G-9k6f Save.**
-
-**G-9k6 field slice manual Save all complete:** `description` (G-9k4b), `price` (G-9k6b), `open_time` (G-9k6c), `start_time` (G-9k6d), `venue` (G-9k6e), `title` (G-9k6f). Next: G-9k6g field-slice closure. `readyForAnyDbWrite: false`.
+G-9k6g closure: **complete**. All slices succeeded on row `f687ebf3-407c-49d0-9ab8-58040c499b8e` — `description` (G-9k4b), `price` (G-9k6b), `open_time` (G-9k6c), `start_time` (G-9k6d), `venue` (G-9k6e), `title` (G-9k6f). **1 Save = 1 field** on every slice. **Do not re-click any G-9k6 slice Save.** Next: operator choice — UI copy fix, staging shell Save generalization, existing event next feature, Gosaki CMS Kit (`G-9h1`), or rollback. `readyForAnyDbWrite: false`.
 
 G-9k5 finalization: **complete** (commit `60820c4`). G-9k arc closed.
 

@@ -52,6 +52,7 @@ let selectableRows: ScheduleRecord[] = [];
 let selectedRowId: string | null = null;
 let selectedRowSnapshot: ScheduleRecord | null = null;
 let lastDryRunResult: G9kExistingEventSaveButtonDryRunResult | null = null;
+let lastSaveOutcome: G9kExistingEventSaveButtonSaveOutcome | null = null;
 let stagingAuthSignedIn: boolean | null = null;
 let saveInFlight = false;
 let previewBase = "https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/";
@@ -222,7 +223,22 @@ function populateAddFormFromRow(row: ScheduleRecord): void {
   setPreviewLink("gosaki-add-preview-link", monthFromDate(date));
 }
 
-function renderEditForm(row: ScheduleRecord | null): void {
+function setEditFormUpdatedAt(value: string | null | undefined): void {
+  const el = document.getElementById("gosaki-edit-updated-at-value");
+  if (!el) return;
+  el.textContent = String(value ?? "").trim() || "—";
+}
+
+function isG9kSaveOutcomeSuccess(outcome: G9kExistingEventSaveButtonSaveOutcome): boolean {
+  if (outcome.errorCode) return false;
+  if (!outcome.result) return false;
+  return !("errorCode" in outcome.result);
+}
+
+function renderEditForm(
+  row: ScheduleRecord | null,
+  options?: { clearDryRun?: boolean },
+): void {
   const emptyEl = document.getElementById("gosaki-schedule-operator-edit-empty");
   const formEl = document.getElementById("gosaki-schedule-edit-form");
   if (!emptyEl || !formEl) return;
@@ -251,7 +267,10 @@ function renderEditForm(row: ScheduleRecord | null): void {
   setFieldValue("gosaki-edit-description", String(row.description ?? ""));
   setCheckbox("gosaki-edit-published", row.published === true);
   setPreviewLink("gosaki-edit-preview-link", month);
-  clearDryRunResult();
+  setEditFormUpdatedAt(row.updated_at);
+  if (options?.clearDryRun !== false) {
+    clearDryRunResult();
+  }
 }
 
 function readEditFormSafeValues(): G9kExistingEventSaveButtonFormValues {
@@ -277,16 +296,34 @@ function clearDryRunResult(): void {
     "gosaki-schedule-edit-dry-run--error",
     "gosaki-schedule-edit-dry-run--stale",
     "gosaki-schedule-edit-dry-run--ready",
+    "gosaki-schedule-edit-dry-run--saved",
   );
   el.innerHTML = "";
   updateSaveButtonState(null);
-  clearSaveResult();
+}
+
+function showDryRunSavedState(): void {
+  lastDryRunResult = null;
+  const el = document.getElementById("gosaki-schedule-edit-dry-run-result");
+  if (!el) return;
+  el.hidden = false;
+  el.className = "gosaki-schedule-edit-dry-run gosaki-schedule-edit-dry-run--saved";
+  el.innerHTML = `
+    <h3 class="gosaki-schedule-edit-dry-run__title">確認結果</h3>
+    <p class="gosaki-schedule-edit-dry-run__message gosaki-schedule-edit-dry-run__message--saved">
+      保存済み。この内容はデータベースに反映されています。再度保存するには内容を変更して「変更を確認」からやり直してください。
+    </p>
+  `;
+  updateSaveButtonState(null);
 }
 
 function markDryRunStale(): void {
-  if (!lastDryRunResult) return;
+  if (!lastDryRunResult && !lastSaveOutcome) return;
+  clearSaveResult();
+  lastSaveOutcome = null;
   const el = document.getElementById("gosaki-schedule-edit-dry-run-result");
   if (!el || el.hidden) return;
+  el.classList.remove("gosaki-schedule-edit-dry-run--saved");
   el.classList.add("gosaki-schedule-edit-dry-run--stale");
   const staleNote = el.querySelector(".gosaki-schedule-edit-dry-run__stale-note");
   if (!staleNote) {
@@ -525,18 +562,33 @@ function renderSaveResult(outcome: G9kExistingEventSaveButtonSaveOutcome): void 
   const el = document.getElementById("gosaki-schedule-edit-save-result");
   if (!el) return;
 
+  lastSaveOutcome = outcome;
   el.hidden = false;
-  const success = outcome.result && !("errorCode" in outcome.result);
+  const success = isG9kSaveOutcomeSuccess(outcome);
   el.className = `gosaki-schedule-edit-save-result${success ? " gosaki-schedule-edit-save-result--ok" : " gosaki-schedule-edit-save-result--error"}`;
 
   const changedChips = renderChangedFieldChips(outcome.changedFields);
   const payloadChips = renderPayloadKeys(outcome.payloadKeys);
   const diffRows = outcome.beforeAfterDiff ? renderSaveDiffRows(outcome.beforeAfterDiff) : "";
+  const rowsAffected =
+    success && outcome.result && !("errorCode" in outcome.result)
+      ? String(outcome.result.rowsAffected ?? "—")
+      : "—";
+  const postSaveDescription = displayValue(
+    outcome.afterRecord?.description ??
+      outcome.beforeAfterDiff?.find((row) => row.field === "description")?.after,
+  );
 
   el.innerHTML = `
-    <h3 class="gosaki-schedule-edit-save-result__title">${success ? "保存結果" : "保存できませんでした"}</h3>
+    <h3 class="gosaki-schedule-edit-save-result__title">${success ? "保存成功" : "保存できませんでした"}</h3>
+    ${
+      success
+        ? `<p class="gosaki-schedule-edit-save-result__success">データベースへの更新が完了しました。</p>`
+        : ""
+    }
     ${outcome.errorMessage ? `<p class="gosaki-schedule-edit-save-result__message">${escapeHtml(outcome.errorMessage)}</p>` : ""}
     <dl class="gosaki-schedule-edit-dry-run__target">
+      <div><dt>rowsAffected</dt><dd><code>${escapeHtml(rowsAffected)}</code></dd></div>
       <div><dt>target id</dt><dd><code>${escapeHtml(outcome.beforeRecord?.id ?? "—")}</code></dd></div>
       <div><dt>legacy_id</dt><dd><code>${escapeHtml(outcome.beforeRecord?.legacy_id ?? "—")}</code></dd></div>
       <div><dt>title</dt><dd>${escapeHtml(displayValue(outcome.afterRecord?.title ?? outcome.beforeRecord?.title))}</dd></div>
@@ -544,6 +596,7 @@ function renderSaveResult(outcome: G9kExistingEventSaveButtonSaveOutcome): void 
       <div><dt>venue</dt><dd>${escapeHtml(displayValue(outcome.afterRecord?.venue ?? outcome.beforeRecord?.venue))}</dd></div>
       <div><dt>before updated_at</dt><dd><code>${escapeHtml(outcome.beforeRecord?.updated_at ?? "—")}</code></dd></div>
       <div><dt>post-save updated_at</dt><dd><code>${escapeHtml(outcome.afterRecord?.updated_at ?? "—")}</code></dd></div>
+      <div class="gosaki-schedule-edit-save-result__description"><dt>post-save description</dt><dd class="gosaki-schedule-edit-save-result__description-body">${escapeHtml(postSaveDescription)}</dd></div>
     </dl>
     <div class="gosaki-schedule-edit-dry-run__chips">
       <span class="gosaki-schedule-edit-dry-run__chips-label">changedFields</span>
@@ -562,11 +615,37 @@ function renderSaveResult(outcome: G9kExistingEventSaveButtonSaveOutcome): void 
 }
 
 function clearSaveResult(): void {
+  lastSaveOutcome = null;
   const el = document.getElementById("gosaki-schedule-edit-save-result");
   if (!el) return;
   el.hidden = true;
   el.className = "gosaki-schedule-edit-save-result";
   el.innerHTML = "";
+}
+
+function applyPostSaveSuccessState(outcome: G9kExistingEventSaveButtonSaveOutcome): void {
+  if (!outcome.afterRecord || !outcome.result || "errorCode" in outcome.result) return;
+
+  const writeResult = outcome.result;
+  const updatedRow: ScheduleRecord = {
+    ...selectedRowSnapshot!,
+    ...(writeResult.afterSnapshot ?? {}),
+    description:
+      outcome.afterRecord.description ??
+      writeResult.afterSnapshot?.description ??
+      selectedRowSnapshot?.description,
+    updated_at: outcome.afterRecord.updated_at,
+  };
+  selectedRowSnapshot = updatedRow;
+  const index = selectableRows.findIndex((row) => row.id === updatedRow.id);
+  if (index >= 0) selectableRows[index] = updatedRow;
+  renderScheduleList();
+  renderEditForm(updatedRow, { clearDryRun: false });
+  setEditFormUpdatedAt(updatedRow.updated_at);
+  showDryRunSavedState();
+  renderSaveResult(outcome);
+  const saveResultEl = document.getElementById("gosaki-schedule-edit-save-result");
+  saveResultEl?.scrollIntoView({ behavior: "smooth", block: "nearest" });
 }
 
 async function refreshStagingAuthSignedIn(): Promise<boolean> {
@@ -669,26 +748,14 @@ async function runEditSave(): Promise<void> {
   });
 
   saveInFlight = false;
-  renderSaveResult(outcome);
 
-  const success = outcome.result && !("errorCode" in outcome.result);
-  if (success && outcome.afterRecord && outcome.result && !("errorCode" in outcome.result)) {
-    const writeResult = outcome.result;
-    const updatedRow: ScheduleRecord = {
-      ...selectedRowSnapshot,
-      ...(writeResult.afterSnapshot ?? {}),
-      updated_at: outcome.afterRecord.updated_at,
-    };
-    selectedRowSnapshot = updatedRow;
-    const index = selectableRows.findIndex((row) => row.id === updatedRow.id);
-    if (index >= 0) selectableRows[index] = updatedRow;
-    renderScheduleList();
-    renderEditForm(updatedRow);
-    clearDryRunResult();
-    clearSaveResult();
-  } else {
-    updateSaveButtonState(lastDryRunResult);
+  if (isG9kSaveOutcomeSuccess(outcome)) {
+    applyPostSaveSuccessState(outcome);
+    return;
   }
+
+  renderSaveResult(outcome);
+  updateSaveButtonState(lastDryRunResult);
 }
 
 function renderScheduleRowButton(rowId: string, selected: boolean): string {

@@ -1,5 +1,19 @@
-Last updated: 2026-06-21
+Last updated: 2026-06-22
 Project: Static-to-Astro CMS / Musician CMS Kit
+
+## 0g. G-9k4b UI manual Save success + post-save result fix — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-9k4b-gosaki-schedule-existing-event-ui-manual-save-success-and-post-save-result-fix` |
+| Doc | `gosaki-schedule-existing-event-ui-manual-save-success-and-result-fix.md` |
+| Status | **complete** — operator manual G-9k4b UI Save **succeeded**; post-save result UI fix |
+| Row | `f687ebf3-407c-49d0-9ab8-58040c499b8e` — `description` only |
+| `rowsAffected` | **1** |
+| post-save `updated_at` | `2026-06-22T02:20:07.217037+00:00` |
+| **Do not** | re-click G-9k4b Save without new approval |
+| Routine dev | `PUBLIC_ADMIN_WRITE_DRY_RUN=true`; `G9K_SAVE_BUTTON_SAVE_ENABLED=false` |
+| `readyForAnyDbWrite` | **false** |
 
 ## 0f. G-9k4a UI Save enable preflight — complete
 

@@ -5,11 +5,21 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-9k4a-gosaki-schedule-existing-event-ui-save-enable-implementation-preflight — complete.
-Prior: G-9k3 manual dry-run verification (c427b72); G-9j5c one-row UPDATE succeeded (do not re-run G-9j5 runner).
+Current phase: G-9k4b-gosaki-schedule-existing-event-ui-manual-save-success-and-post-save-result-fix — complete.
+Prior: G-9k4a-fix Save gate bridge; G-9k4a Save executor; G-9j5c one-row UPDATE succeeded (do not re-run G-9j5 runner).
 branch: main
 HEAD = origin/main — check git HEAD for latest commit hash
 ```
+
+## G-9k4b UI manual Save success + post-save result fix — complete
+
+- **Doc:** `gosaki-schedule-existing-event-ui-manual-save-success-and-result-fix.md`
+- **Result:** operator manual G-9k4b UI Save **succeeded** — row `f687ebf3-407c-49d0-9ab8-58040c499b8e`, `description` only, `rowsAffected: 1`
+- **post-save `updated_at`:** `2026-06-22T02:20:07.217037+00:00` (operator SQL verify)
+- **UI fix:** post-save result panel no longer cleared on success; shows 保存成功 / rowsAffected / updated_at / description
+- **Do not re-click G-9k4b Save** without new approval ID
+- **Routine dev:** `PUBLIC_ADMIN_WRITE_DRY_RUN=true`; `G9K_SAVE_BUTTON_SAVE_ENABLED=false`
+- **`readyForAnyDbWrite: false`**
 
 ## G-9k4a UI Save enable preflight — complete
 

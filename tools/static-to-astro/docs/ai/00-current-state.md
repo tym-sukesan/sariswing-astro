@@ -1,7 +1,11 @@
-Last updated: 2026-06-21
+Last updated: 2026-06-22
 Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
+
+**G-9k4b Gosaki schedule existing event UI manual Save success + post-save result fix (2026-06-22):** **complete** — operator manual G-9k4b UI Save **succeeded** on `static-to-astro-cms-staging` (`kmjqppxjdnwwrtaeqjta`). Row `f687ebf3-407c-49d0-9ab8-58040c499b8e` — `description` only; `rowsAffected: 1`; post-save `updated_at` `2026-06-22T02:20:07.217037+00:00`. DB confirmed via operator SQL; post-save result UI fix applied (panel was cleared on success path). Doc: `gosaki-schedule-existing-event-ui-manual-save-success-and-result-fix.md`. **Do not re-click G-9k4b Save.** Routine dev: `PUBLIC_ADMIN_WRITE_DRY_RUN=true`; `G9K_SAVE_BUTTON_SAVE_ENABLED=false`. `readyForAnyDbWrite: false`.
+
+**G-9k4a-fix Gosaki schedule existing event UI Save gate bridge (2026-06-21):** **complete** — server-to-client DOM bridge for `G9K_SAVE_BUTTON_SAVE_ENABLED` + write gate flags. Doc: (G-9k4a-fix in commit). Next was G-9k4b manual Save once.
 
 **G-9k4a Gosaki schedule existing event UI Save enable preflight (2026-06-21):** **complete** — Save executor + UI wiring implemented; **Save default disabled** (`G9K_SAVE_BUTTON_SAVE_ENABLED=false`). Doc: `gosaki-schedule-existing-event-ui-save-enable-implementation-preflight.md`. **No DB write in this phase.** Next: `G-9k4-manual-save-once`. `readyForAnyDbWrite: false`.
 
@@ -41,9 +45,11 @@ Staging Shell
 将来的な顧客オンボーディング・課金・デプロイ自動化
 
 2. Current phase
-現在フェーズ: **G-9k4a-gosaki-schedule-existing-event-ui-save-enable-implementation-preflight** — **complete**（Save path implemented; default disabled. 最新commitは git HEAD を確認すること。）
+現在フェーズ: **G-9k4b-gosaki-schedule-existing-event-ui-manual-save-success-and-post-save-result-fix** — **complete**（operator manual G-9k4b UI Save succeeded; post-save result UI fix applied. 最新commitは git HEAD を確認すること。）
 
-G-9k4a UI Save preflight: **complete**. Save executor + UI gate wired; **G9K_SAVE_BUTTON_SAVE_ENABLED=false**. Next: G-9k4 manual Save once. `readyForAnyDbWrite: false`.
+G-9k4b UI manual Save + result fix: **complete**. Row `f687ebf3-407c-49d0-9ab8-58040c499b8e` — `description` only; `rowsAffected: 1`. **Do not re-click G-9k4b Save.** Routine dev: dry-run default; Save disabled. `readyForAnyDbWrite: false`.
+
+G-9k4a UI Save preflight: **complete**. Save executor + UI gate wired; **G9K_SAVE_BUTTON_SAVE_ENABLED=false** default. Next was G-9k4b manual Save once.
 
 G-9j5c Gosaki schedule existing event update success: **complete**.
 

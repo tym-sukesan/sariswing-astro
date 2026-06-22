@@ -331,6 +331,11 @@ function displayValue(value: string | null | undefined): string {
           <textarea id="gosaki-edit-description" rows="5"></textarea>
         </label>
 
+        <p id="gosaki-edit-updated-at" class="gosaki-schedule-admin-updated-at" role="status">
+          <span class="admin-form__label">最終更新（updated_at）</span>
+          <code id="gosaki-edit-updated-at-value">—</code>
+        </p>
+
         <label class="admin-form__field admin-form__field--checkbox">
           <input id="gosaki-edit-published" type="checkbox" />
           <span>公開する</span>

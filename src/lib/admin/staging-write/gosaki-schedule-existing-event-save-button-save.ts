@@ -59,6 +59,7 @@ export type G9kSaveButtonSaveRecordSummary = {
   title: string;
   date: string;
   venue: string | null;
+  description: string | null;
   updated_at: string | null;
 };
 
@@ -88,6 +89,7 @@ function toRecordSummary(row: ScheduleDryRunSource): G9kSaveButtonSaveRecordSumm
     title: String(row.title ?? ""),
     date: String(row.date ?? ""),
     venue: row.venue != null ? String(row.venue) : null,
+    description: row.description != null ? String(row.description) : null,
     updated_at: row.updated_at ?? null,
   };
 }

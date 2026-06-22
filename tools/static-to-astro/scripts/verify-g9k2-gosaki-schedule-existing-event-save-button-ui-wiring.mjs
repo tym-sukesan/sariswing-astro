@@ -63,7 +63,7 @@ assert(
   dryRunSrc.includes("G9K_SCHEDULE_EXISTING_EVENT_SAVE_BUTTON_NON_DRY_RUN_APPROVAL_ID"),
 );
 assert("G-9k dry-run does not use G-9j5 approval", !dryRunSrc.includes(G9J5_APPROVAL));
-assert("dry-run saveAllowed false", dryRunSrc.includes("G9K_SAVE_BUTTON_SAVE_ENABLED"));
+assert("dry-run saveAllowed from runtime gate", dryRunSrc.includes("resolveG9kOperatorSaveButtonSaveEnabled"));
 assert("dry-run no updateScheduleWrite", !dryRunSrc.includes("updateScheduleWrite("));
 assert("dry-run no service_role", !dryRunSrc.includes("service_role"));
 assert("dry-run actualWrite false", dryRunSrc.includes("actualWrite: false"));
@@ -106,7 +106,7 @@ assert("dry-run result panel in Astro", astroSrc.includes("gosaki-schedule-edit-
 assert("update button disabled", astroSrc.includes('id="gosaki-schedule-update-btn"') && astroSrc.includes("disabled"));
 assert(
   "G-9k Save enable copy in Astro",
-  astroSrc.includes("G9K_SAVE_BUTTON_SAVE_ENABLED") || astroSrc.includes("G-9k"),
+  astroSrc.includes("g9k-schedule-save-button-page-config") || astroSrc.includes("G-9k"),
 );
 
 assert("g9j5 runner unchanged", !g9j5RunnerSrc.includes(G9K_APPROVAL) && g9j5RunnerSrc.includes(G9J5_APPROVAL));

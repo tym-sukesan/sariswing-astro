@@ -7,7 +7,6 @@ import { assertStaticToAstroCmsStagingSupabaseProject } from "../staging-data/st
 import type { ScheduleDryRunSource } from "./schedule-dry-run-types";
 import {
   G9K2_PHASE,
-  G9K_SAVE_BUTTON_SAVE_ENABLED,
   resolveG9kOperatorSaveButtonSaveEnabled,
 } from "./gosaki-schedule-existing-event-save-button-config";
 import {
@@ -140,7 +139,7 @@ function emptyDryRunResult(
     optimisticLockStale,
     guardErrors,
     saveReadiness,
-    saveAllowed: G9K_SAVE_BUTTON_SAVE_ENABLED,
+    saveAllowed: resolveG9kOperatorSaveButtonSaveEnabled(),
     rowsAffectedRequired: 1,
     safety: {
       supabaseWriteCalled: false,
@@ -288,7 +287,7 @@ export function executeG9kExistingEventSaveButtonDryRun(input: {
       optimisticLockStale,
       guardErrors,
       saveReadiness,
-      saveAllowed: G9K_SAVE_BUTTON_SAVE_ENABLED,
+      saveAllowed: resolveG9kOperatorSaveButtonSaveEnabled(),
       rowsAffectedRequired: 1,
       safety: {
         supabaseWriteCalled: false,

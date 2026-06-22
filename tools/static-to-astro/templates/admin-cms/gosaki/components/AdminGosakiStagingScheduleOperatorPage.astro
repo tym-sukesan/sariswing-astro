@@ -6,6 +6,10 @@
 import type { SiteSlugScheduleRowPickerBinding } from "../../../../../../src/lib/admin/staging-data/staging-schedule-site-slug-row-picker-binding";
 import type { ScheduleRecord } from "../../../../../../src/lib/admin/staging-write/schedule-dry-run-types";
 import {
+  G9K_SAVE_BUTTON_PAGE_CONFIG_ELEMENT_ID,
+  resolveG9kSaveButtonPageServerConfig,
+} from "../../../../../../src/lib/admin/staging-write/gosaki-schedule-save-button-page-config";
+import {
   GOSAKI_STAGING_ADMIN_BASE,
   GOSAKI_STAGING_PREVIEW_URL,
 } from "../gosaki-staging-admin-paths";
@@ -15,6 +19,8 @@ interface Props {
 }
 
 const { binding } = Astro.props;
+
+const g9kSaveButtonPageConfig = resolveG9kSaveButtonPageServerConfig(import.meta.env);
 
 const isLive = binding.source === "supabase" && binding.selectableCount > 0;
 const rowsJson = JSON.stringify(binding.selectableRows);
@@ -35,6 +41,18 @@ function displayValue(value: string | null | undefined): string {
   data-preview-base={GOSAKI_STAGING_PREVIEW_URL}
   aria-label="Schedule管理"
 >
+  <div
+    id={G9K_SAVE_BUTTON_PAGE_CONFIG_ELEMENT_ID}
+    data-g9k-save-button-save-enabled={g9kSaveButtonPageConfig.saveButtonSaveEnabled ? "true" : "false"}
+    data-g9k-staging-shell-enabled={g9kSaveButtonPageConfig.stagingShellEnabled ? "true" : "false"}
+    data-g9k-staging-write-enabled={g9kSaveButtonPageConfig.stagingWriteEnabled ? "true" : "false"}
+    data-g9k-env-arm-armed={g9kSaveButtonPageConfig.envArmArmed ? "true" : "false"}
+    data-g9k-write-dry-run-disabled={g9kSaveButtonPageConfig.writeDryRunDisabled ? "true" : "false"}
+    data-g9k-write-provider={g9kSaveButtonPageConfig.writeProvider}
+    data-g9k-write-module={g9kSaveButtonPageConfig.writeModule}
+    data-g9k-write-approval-id={g9kSaveButtonPageConfig.writeApprovalId}
+    hidden
+  />
   <header class="admin-gosaki-page-header admin-gosaki-page-header--with-actions">
     <div>
       <a class="admin-gosaki-back-link" href={GOSAKI_STAGING_ADMIN_BASE}>← 管理画面トップへ</a>

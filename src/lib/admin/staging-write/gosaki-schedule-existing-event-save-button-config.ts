@@ -30,6 +30,11 @@ import {
   evaluateStagingProjectAllowlist,
   evaluateSupabaseHostGate,
 } from "../staging-data/staging-schedule-site-slug-host-gate";
+import {
+  applyG9kSaveButtonPageConfigToEnv,
+  G9K_SAVE_BUTTON_SAVE_ENABLED_ENV,
+  readG9kSaveButtonPageConfigFromDom,
+} from "./gosaki-schedule-save-button-page-config";
 
 export const G9K1_PHASE =
   "G-9k1-gosaki-schedule-existing-event-save-button-guard-config-verifier";
@@ -46,8 +51,12 @@ export const GOSAKI_SCHEDULE_EXISTING_EVENT_SAVE_BUTTON_NON_DRY_RUN_ARMED_ENV =
 export const G9K_SAVE_BUTTON_SAVE_DISABLED_DEFAULT_REASON =
   "G-9k operator save button disabled until G-9k4 explicit approval and env arm stack.";
 
-/** G-9k4a: compile-time gate — false until G-9k4 enables Save execution phase. */
+/** G-9k4a: compile-time default — runtime gate uses server bridge + env. */
 export const G9K_SAVE_BUTTON_SAVE_ENABLED = false as const;
+
+export function isG9kSaveCompileGateEnabled(env: ImportMetaEnv): boolean {
+  return String(env[G9K_SAVE_BUTTON_SAVE_ENABLED_ENV] ?? "").trim() === "true";
+}
 
 export function resolveG9kOperatorSaveButtonSaveEnabled(
   env: ImportMetaEnv = import.meta.env,
@@ -95,7 +104,11 @@ function isEnvArmTrue(env: ImportMetaEnv, key: string): boolean {
 export function getG9kExistingEventSaveButtonConfig(
   env: ImportMetaEnv = import.meta.env,
 ): G9kExistingEventSaveButtonConfig {
-  const mergedEnv = mergeStagingShellEnv(env);
+  let mergedEnv = mergeStagingShellEnv(env);
+  const pageConfig = readG9kSaveButtonPageConfigFromDom();
+  if (pageConfig) {
+    mergedEnv = applyG9kSaveButtonPageConfigToEnv(mergedEnv, pageConfig);
+  }
   const dev = mergedEnv.DEV === true;
   const stagingShellEnabled = mergedEnv.ENABLE_ADMIN_STAGING_SHELL === "true";
   const stagingWriteFlag = mergedEnv.ENABLE_ADMIN_STAGING_WRITE === "true";
@@ -196,7 +209,7 @@ export function getG9kExistingEventSaveButtonConfig(
   if (!supabaseConfigured) armFailures.push("Supabase URL/anon key");
 
   const armed = armFailures.length === 0;
-  const saveEnabled = G9K_SAVE_BUTTON_SAVE_ENABLED ? armed : false;
+  const saveEnabled = isG9kSaveCompileGateEnabled(mergedEnv) && armed;
 
   return {
     ...base,

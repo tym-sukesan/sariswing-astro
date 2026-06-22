@@ -11,8 +11,8 @@ import {
 import {
   evaluateG9kOperatorSaveButtonUiGate,
   getG9kExistingEventSaveButtonConfig,
-  G9K_SAVE_BUTTON_SAVE_ENABLED,
 } from "../staging-write/gosaki-schedule-existing-event-save-button-config";
+import { readG9kSaveButtonPageConfigFromDom } from "../staging-write/gosaki-schedule-save-button-page-config";
 import {
   executeG9kExistingEventSaveButtonSave,
   type G9kExistingEventSaveButtonSaveOutcome,
@@ -335,7 +335,7 @@ function updateSaveButtonState(result: G9kExistingEventSaveButtonDryRunResult | 
     button.title = "変更内容を保存します";
     button.textContent = "更新する";
     if (note) {
-      note.textContent = "保存準備OK。内容を確認して「更新する」を押してください。";
+      note.textContent = "保存準備OK。更新できます";
     }
     return;
   }
@@ -448,7 +448,7 @@ function renderDryRunResult(result: G9kExistingEventSaveButtonDryRunResult): voi
   el.classList.add("gosaki-schedule-edit-dry-run--ok", "gosaki-schedule-edit-dry-run--ready");
   const saveReadyMessage =
     result.saveReadiness === "ready_to_save"
-      ? "保存準備OK。Save が有効な場合は「更新する」から保存できます。"
+      ? "保存準備OK。更新できます"
       : "保存準備OK。ただし Save は未開放です（G9K_SAVE_BUTTON_SAVE_ENABLED=false または env arm 未設定）。";
   el.innerHTML = `
     <h3 class="gosaki-schedule-edit-dry-run__title">確認結果</h3>
@@ -613,15 +613,15 @@ async function runEditDryRunPreview(): Promise<void> {
 }
 
 async function runEditSave(): Promise<void> {
-  if (!G9K_SAVE_BUTTON_SAVE_ENABLED) {
-    window.alert(
-      "G9K_SAVE_BUTTON_SAVE_ENABLED=false のため Save は未開放です。G-9k4 で有効化してください。",
-    );
-    return;
-  }
-
   const config = getG9kExistingEventSaveButtonConfig();
   if (!config.saveEnabled) {
+    const pageConfig = readG9kSaveButtonPageConfigFromDom();
+    if (!pageConfig?.saveButtonSaveEnabled) {
+      window.alert(
+        "G9K_SAVE_BUTTON_SAVE_ENABLED=false のため Save は未開放です。G-9k4b で有効化してください。",
+      );
+      return;
+    }
     window.alert(config.armFailureReason ?? "G-9k Save env arm / approval stack が未設定です。");
     return;
   }

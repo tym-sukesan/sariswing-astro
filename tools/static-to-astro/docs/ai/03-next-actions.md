@@ -1,6 +1,22 @@
 Last updated: 2026-06-22
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0l. G-9k6d start_time field slice Save success — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-9k6d-gosaki-schedule-existing-event-start-time-field-slice-save-success-finalization` |
+| Doc | `gosaki-schedule-existing-event-start-time-field-slice-save-success-finalization.md` |
+| Status | **complete** — operator manual `start_time` slice UI Save **succeeded** |
+| Row | `f687ebf3-407c-49d0-9ab8-58040c499b8e` — `start_time` only |
+| Before → after | `15:30` → `19:00` |
+| `rowsAffected` | **1** |
+| post-save `updated_at` | `2026-06-22T12:42:32.483922+00:00` |
+| UI | **保存成功** panel; diff 開演 only |
+| **Do not** | re-click G-9k6d Save |
+| Next | `G-9k6e` `venue` field slice manual Save |
+| `readyForAnyDbWrite` | **false** |
+
 ## 0k. G-9k6c open_time field slice Save success — complete
 
 | Item | Value |
@@ -14,7 +30,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | post-save `updated_at` | `2026-06-22T07:30:35.391238+00:00` |
 | UI | **保存成功** panel; diff 開場 only |
 | **Do not** | re-click G-9k6c Save |
-| Next | `G-9k6d` `start_time` field slice manual Save |
+| Next (at completion) | `G-9k6d` `start_time` — **done** |
 | `readyForAnyDbWrite` | **false** |
 
 ## 0j. G-9k6b price field slice Save success — complete
@@ -30,7 +46,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | post-save `updated_at` | `2026-06-22T06:53:39.857434+00:00` |
 | UI | post-save **保存成功** panel confirmed |
 | **Do not** | re-click G-9k6b Save |
-| Next | `G-9k6d` `start_time` field slice manual Save |
+| Next (at completion) | `G-9k6c` `open_time` — **done** |
 | `readyForAnyDbWrite` | **false** |
 
 ## 0i. G-9k6a field slice verification planning — complete
@@ -40,9 +56,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Phase | `G-9k6a-gosaki-schedule-existing-event-field-slice-verification-planning` |
 | Doc | `gosaki-schedule-existing-event-field-slice-verification-planning.md` |
 | Status | **planning complete** — matrix + checklist only |
-| Done | `description` (G-9k4b), `price` (G-9k6b), `open_time` (G-9k6c) |
-| Pending slices | `start_time` → `venue` → `title` (last) |
-| Next slice | `G-9k6d` `start_time` |
+| Done | `description` (G-9k4b), `price` (G-9k6b), `open_time` (G-9k6c), `start_time` (G-9k6d) |
+| Pending slices | `venue` → `title` (last) |
+| Next slice | `G-9k6e` `venue` |
 | `readyForAnyDbWrite` | **false** |
 
 ## 0h. G-9k5 save button arc finalization — complete

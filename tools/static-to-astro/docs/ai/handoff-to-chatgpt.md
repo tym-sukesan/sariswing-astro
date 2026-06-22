@@ -5,11 +5,22 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-9k6c-gosaki-schedule-existing-event-open-time-field-slice-save-success-finalization — complete.
-Prior: G-9k6b price slice succeeded; G-9k6a field slice planning.
+Current phase: G-9k6d-gosaki-schedule-existing-event-start-time-field-slice-save-success-finalization — complete.
+Prior: G-9k6c open_time slice succeeded; G-9k6a field slice planning.
 branch: main
 HEAD = origin/main — check git HEAD for latest commit hash
 ```
+
+## G-9k6d start_time field slice Save success — complete
+
+- **Doc:** `gosaki-schedule-existing-event-start-time-field-slice-save-success-finalization.md`
+- **Result:** operator manual G-9k6d UI Save **succeeded** — `start_time` only; `rowsAffected: 1`
+- **Before → after:** `15:30` → `19:00`
+- **post-save `updated_at`:** `2026-06-22T12:42:32.483922+00:00`
+- **UI:** **保存成功** panel; diff 開演 `15:30` → `19:00` only; `changedFields` / `payload keys` = `start_time` only
+- **Do not re-click G-9k6d Save**
+- **Next:** G-9k6e `venue` manual Save once (operator)
+- **`readyForAnyDbWrite: false`**
 
 ## G-9k6c open_time field slice Save success — complete
 
@@ -19,7 +30,7 @@ HEAD = origin/main — check git HEAD for latest commit hash
 - **post-save `updated_at`:** `2026-06-22T07:30:35.391238+00:00`
 - **UI:** **保存成功** panel; diff 開場 `15:00` → `18:00` only; `changedFields` / `payload keys` = `open_time` only
 - **Do not re-click G-9k6c Save**
-- **Next:** G-9k6d `start_time` manual Save once (operator)
+- **Next (at completion):** G-9k6d `start_time` — **done**
 - **`readyForAnyDbWrite: false`**
 
 ## G-9k6b price field slice Save success — complete
@@ -30,19 +41,19 @@ HEAD = origin/main — check git HEAD for latest commit hash
 - **post-save `updated_at`:** `2026-06-22T06:53:39.857434+00:00`
 - **UI:** post-save **保存成功** panel visible; `changedFields` / `payload keys` = `price` only
 - **Do not re-click G-9k6b Save**
-- **Next:** G-9k6d `start_time` manual Save once (operator)
+- **Next (at completion):** G-9k6c `open_time` — **done**
 - **`readyForAnyDbWrite: false`**
 
 ## G-9k6a field slice verification planning — complete
 
 - **Doc:** `gosaki-schedule-existing-event-field-slice-verification-planning.md`
 - **Scope:** plan + checklist for remaining safe-field slices; **no Save / DB write in this phase**
-- **Done:** `description` (G-9k4b), `price` (G-9k6b), `open_time` (G-9k6c)
-- **Pending (order):** `start_time` → `venue` → `title` (last)
+- **Done:** `description` (G-9k4b), `price` (G-9k6b), `open_time` (G-9k6c), `start_time` (G-9k6d)
+- **Pending (order):** `venue` → `title` (last)
 - **Policy:** 1 Save = 1 field; `changedFields` / `payload keys` must be single target field
 - **Safety:** same G-9k4b env stack; project `kmjqppxjdnwwrtaeqjta`; block sari-site; `rowsAffected === 1`
 - **Out of scope:** date/month/published/schedule_months; new/delete/duplicate; deploy
-- **Next:** G-9k6d `start_time` manual Save once (operator)
+- **Next:** G-9k6e `venue` manual Save once (operator)
 - **`readyForAnyDbWrite: false`**
 
 ## G-9k5 save button arc finalization — complete

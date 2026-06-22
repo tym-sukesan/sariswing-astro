@@ -1,6 +1,22 @@
 Last updated: 2026-06-22
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0h. G-9k5 save button arc finalization — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-9k5-gosaki-schedule-existing-event-save-button-success-finalization` |
+| Doc | `gosaki-schedule-existing-event-save-button-success-finalization.md` |
+| Status | **G-9k arc closed** — operator UI Save初回成功まで到達 |
+| First UI Save | row `f687ebf3-407c-49d0-9ab8-58040c499b8e` — `description` only; `rowsAffected: 1` |
+| Project | `static-to-astro-cms-staging` / `kmjqppxjdnwwrtaeqjta` only |
+| Production | sari-site / Sariswing **not touched** |
+| `service_role` | **not used** |
+| **Do not** | re-click G-9k4b Save; re-arm G-9k non-dry-run without new approval |
+| Routine dev | `PUBLIC_ADMIN_WRITE_DRY_RUN=true`; `G9K_SAVE_BUTTON_SAVE_ENABLED=false` |
+| Next (separate) | field slices, CMS Kit generalization, rollback policy, publish/deploy design |
+| `readyForAnyDbWrite` | **false** |
+
 ## 0g. G-9k4b UI manual Save success + post-save result fix — complete
 
 | Item | Value |

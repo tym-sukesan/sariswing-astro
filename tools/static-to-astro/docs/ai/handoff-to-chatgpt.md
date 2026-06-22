@@ -5,11 +5,26 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-9k4b-gosaki-schedule-existing-event-ui-manual-save-success-and-post-save-result-fix — complete.
-Prior: G-9k4a-fix Save gate bridge; G-9k4a Save executor; G-9j5c one-row UPDATE succeeded (do not re-run G-9j5 runner).
+Current phase: G-9k5-gosaki-schedule-existing-event-save-button-success-finalization — complete (G-9k arc closed).
+Prior: G-9k4b UI Save succeeded (commit 2c28578); G-9j5c runner UPDATE succeeded (do not re-run G-9j5).
 branch: main
 HEAD = origin/main — check git HEAD for latest commit hash
 ```
+
+## G-9k5 save button arc finalization — complete
+
+- **Doc:** `gosaki-schedule-existing-event-save-button-success-finalization.md`
+- **Outcome:** G-9k arc **closed** — Gosaki staging admin Schedule で既存公演 UI Save 初回成功
+- **First real Save:** `description` only; `rowsAffected: 1`; row `f687ebf3-407c-49d0-9ab8-58040c499b8e`
+- **Project:** `static-to-astro-cms-staging` / `kmjqppxjdnwwrtaeqjta` only — **no** sari-site / production impact
+- **`service_role`:** not used
+- **Safety stack:** auth gate, password reset, project allowlist, approvalId, env arm, dry-run, optimistic lock, rowsAffected guard
+- **Post-save UI:** G-9k4b fix applied (`applyPostSaveSuccessState`)
+- **Out of G-9k scope:** new/delete/duplicate, `date`/`month`/`published`/`schedule_months` write, deploy/rebuild
+- **Do not re-click G-9k4b Save** without new approval ID
+- **Routine dev:** `PUBLIC_ADMIN_WRITE_DRY_RUN=true`; `G9K_SAVE_BUTTON_SAVE_ENABLED=false`
+- **Next (separate phases):** G-9k6+ field slices, generalization, rollback policy, public site reflect / publish design
+- **`readyForAnyDbWrite: false`**
 
 ## G-9k4b UI manual Save success + post-save result fix — complete
 

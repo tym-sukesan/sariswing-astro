@@ -18,6 +18,7 @@ Prior docs:
 - [gosaki-schedule-existing-event-save-button-success-finalization.md](./gosaki-schedule-existing-event-save-button-success-finalization.md) (G-9k5)
 - [gosaki-schedule-existing-event-ui-manual-save-success-and-result-fix.md](./gosaki-schedule-existing-event-ui-manual-save-success-and-result-fix.md) (G-9k4b)
 - [gosaki-schedule-existing-event-price-field-slice-save-success-finalization.md](./gosaki-schedule-existing-event-price-field-slice-save-success-finalization.md) (G-9k6b)
+- [gosaki-schedule-existing-event-open-time-field-slice-save-success-finalization.md](./gosaki-schedule-existing-event-open-time-field-slice-save-success-finalization.md) (G-9k6c)
 
 ---
 
@@ -27,7 +28,8 @@ Prior docs:
 gosakiScheduleExistingEventFieldSliceVerificationPlanningComplete: true
 phase: G-9k6a
 readyForG9k6bPriceFieldSliceManualSave: false
-readyForG9k6cOpenTimeFieldSliceManualSave: true
+readyForG9k6cOpenTimeFieldSliceManualSave: false
+readyForG9k6dStartTimeFieldSliceManualSave: true
 readyForAnyDbWrite: false
 cursorClickedSave: false
 cursorClickedRun: false
@@ -66,7 +68,8 @@ Reconfirm **id**, **site_slug**, and **updated_at** via UI or read-only SELECT i
 | **title** | `<Duo>` |
 | **date** | `2026-03-15` (read-only — **not** in G-9k payload) |
 | **venue** | `川崎 ぴあにしも` (baseline — reconfirm before venue slice) |
-| **post-G-9k6b updated_at** | `2026-06-22T06:53:39.857434+00:00` |
+| **post-G-9k6c updated_at** | `2026-06-22T07:30:35.391238+00:00` |
+| **post-G-9k6c open_time** | `18:00` |
 | **post-G-9k6b price** | `3,000円（G-9k6 price UI保存テスト）` |
 
 ### Project (staging only)
@@ -92,7 +95,7 @@ PUBLIC_ADMIN_GOSAKI_SCHEDULE_EXISTING_EVENT_SAVE_BUTTON_NON_DRY_RUN_ARMED=true
 | --- | --- | --- | --- |
 | — | `description` | G-9k4b (done) | **succeeded** — do not re-Save unless restore phase |
 | 1 | `price` | G-9k6b | **succeeded** — do not re-Save unless restore phase |
-| 2 | `open_time` | G-9k6c | pending |
+| 2 | `open_time` | G-9k6c | **succeeded** — do not re-Save unless restore phase |
 | 3 | `start_time` | G-9k6d | pending |
 | 4 | `venue` | G-9k6e | pending |
 | 5 | `title` | G-9k6f | pending (last — high public visibility) |
@@ -136,18 +139,22 @@ PUBLIC_ADMIN_GOSAKI_SCHEDULE_EXISTING_EVENT_SAVE_BUTTON_NON_DRY_RUN_ARMED=true
 
 **Edit rule:** change **price input only**; leave title, venue, times, description untouched.
 
-### 4.3 `open_time` — slice 2 (G-9k6c)
+### 4.3 `open_time` — slice 2 (G-9k6c) — **succeeded**
 
 | Item | Value |
 | --- | --- |
 | **field** | `open_time` |
-| **before value (planning)** | `15:00` |
-| **test after value** | `18:00` |
-| **expected changedFields** | `["open_time"]` |
-| **expected payload keys** | `["open_time"]` |
+| **before value (at G-9k6c)** | `15:00` |
+| **before updated_at** | `2026-06-22T06:53:39.857434+00:00` |
+| **recorded after value** | `18:00` |
+| **post-save updated_at** | `2026-06-22T07:30:35.391238+00:00` |
+| **recorded changedFields** | `["open_time"]` |
+| **recorded payload keys** | `["open_time"]` |
+| **rowsAffected** | `1` |
 | **risk** | low–medium — schedule display time changes on staging preview |
-| **rollback / restore** | restore to confirmed before (`15:00` or post–G-9k6b baseline) |
-| **manual confirmation** | dry-run before/after row for 開場; post-save result; form `updated_at` |
+| **rollback / restore** | restore to `15:00`; match `updated_at` in WHERE clause |
+| **manual confirmation** | dry-run 開場 row; diff `15:00` → `18:00`; post-save **保存成功** panel |
+| **status** | **complete** — skip re-Save; doc: `gosaki-schedule-existing-event-open-time-field-slice-save-success-finalization.md` |
 
 **Edit rule:** change **open_time input only**.
 
@@ -337,8 +344,8 @@ Compare only the target field + `updated_at` vs before snapshot. **SELECT only**
 
 ```txt
 1. price      (G-9k6b) — succeeded
-2. open_time  (G-9k6c) — next
-3. start_time (G-9k6d)
+2. open_time  (G-9k6c) — succeeded
+3. start_time (G-9k6d) — next
 4. venue      (G-9k6e)
 5. title      (G-9k6f) — last
 ```
@@ -354,7 +361,7 @@ After all slices: **G-9k6g** (or similar) field-slice closure / finalization doc
 | Phase | Scope |
 | --- | --- |
 | **G-9k6b** | `price` manual Save once + result doc — **complete** |
-| **G-9k6c** | `open_time` manual Save once |
+| **G-9k6c** | `open_time` manual Save once + result doc — **complete** |
 | **G-9k6d** | `start_time` manual Save once |
 | **G-9k6e** | `venue` manual Save once |
 | **G-9k6f** | `title` manual Save once (last) |

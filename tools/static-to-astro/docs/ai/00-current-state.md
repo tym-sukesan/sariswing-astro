@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-9k6a Gosaki schedule existing event field slice verification planning (2026-06-22):** **planning complete** — field slice matrix + operator checklist for remaining safe fields (`price`, `open_time`, `start_time`, `venue`, `title`); `description` already succeeded (G-9k4b). Doc: `gosaki-schedule-existing-event-field-slice-verification-planning.md`. **1 Save = 1 field.** No DB write in this phase. Next: `G-9k6b-price-field-slice-manual-save`. `readyForAnyDbWrite: false`.
+**G-9k6b Gosaki schedule existing event price field slice Save success (2026-06-22):** **complete** — operator manual G-9k6b UI Save **succeeded**; `price` only; `rowsAffected: 1`; before `3,000円` → after `3,000円（G-9k6 price UI保存テスト）`; post-save `updated_at` `2026-06-22T06:53:39.857434+00:00`. Doc: `gosaki-schedule-existing-event-price-field-slice-save-success-finalization.md`. **Do not re-click G-9k6b Save.** Next: `G-9k6c-open-time-field-slice-manual-save`. `readyForAnyDbWrite: false`.
+
+**G-9k6a Gosaki schedule existing event field slice verification planning (2026-06-22):** **planning complete** — field slice matrix + operator checklist. Doc: `gosaki-schedule-existing-event-field-slice-verification-planning.md`. **1 Save = 1 field.** No DB write in planning phase.
 
 **G-9k5 Gosaki schedule existing event save button success finalization (2026-06-22):** **complete** — G-9k arc **closed**. Operator UI Save succeeded (G-9k4b); `description` only. Doc: `gosaki-schedule-existing-event-save-button-success-finalization.md`. Commit: `60820c4`. **Do not re-click G-9k4b Save.**
 
@@ -49,9 +51,11 @@ Staging Shell
 将来的な顧客オンボーディング・課金・デプロイ自動化
 
 2. Current phase
-現在フェーズ: **G-9k6a-gosaki-schedule-existing-event-field-slice-verification-planning** — **planning complete**（field slice matrix + checklist; no DB write. 最新commitは git HEAD を確認すること。）
+現在フェーズ: **G-9k6b-gosaki-schedule-existing-event-price-field-slice-save-success-finalization** — **complete**（operator manual `price` slice UI Save succeeded. 最新commitは git HEAD を確認すること。）
 
-G-9k6a field slice planning: **complete**. `description` done (G-9k4b); pending slices: price → open_time → start_time → venue → title (last). **1 Save = 1 field.** Next: G-9k6b price manual Save. `readyForAnyDbWrite: false`.
+G-9k6b price slice: **complete**. `price` only; `rowsAffected: 1`; post-save `updated_at` `2026-06-22T06:53:39.857434+00:00`. **Do not re-click G-9k6b Save.** Next: G-9k6c `open_time` manual Save. `readyForAnyDbWrite: false`.
+
+G-9k6a field slice planning: **complete**. Slices done: `description` (G-9k4b), `price` (G-9k6b). Pending: open_time → start_time → venue → title.
 
 G-9k5 finalization: **complete** (commit `60820c4`). G-9k arc closed.
 

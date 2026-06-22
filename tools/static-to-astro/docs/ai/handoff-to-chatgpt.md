@@ -5,22 +5,33 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-9k6a-gosaki-schedule-existing-event-field-slice-verification-planning — planning complete.
-Prior: G-9k5 arc closed (commit 60820c4); G-9k4b description UI Save succeeded.
+Current phase: G-9k6b-gosaki-schedule-existing-event-price-field-slice-save-success-finalization — complete.
+Prior: G-9k6a field slice planning; G-9k4b description slice succeeded.
 branch: main
 HEAD = origin/main — check git HEAD for latest commit hash
 ```
+
+## G-9k6b price field slice Save success — complete
+
+- **Doc:** `gosaki-schedule-existing-event-price-field-slice-save-success-finalization.md`
+- **Result:** operator manual G-9k6b UI Save **succeeded** — `price` only; `rowsAffected: 1`
+- **Before → after:** `3,000円` → `3,000円（G-9k6 price UI保存テスト）`
+- **post-save `updated_at`:** `2026-06-22T06:53:39.857434+00:00`
+- **UI:** post-save **保存成功** panel visible; `changedFields` / `payload keys` = `price` only
+- **Do not re-click G-9k6b Save**
+- **Next:** G-9k6c `open_time` manual Save once (operator)
+- **`readyForAnyDbWrite: false`**
 
 ## G-9k6a field slice verification planning — complete
 
 - **Doc:** `gosaki-schedule-existing-event-field-slice-verification-planning.md`
 - **Scope:** plan + checklist for remaining safe-field slices; **no Save / DB write in this phase**
-- **Done:** `description` (G-9k4b)
-- **Pending (order):** `price` → `open_time` → `start_time` → `venue` → `title` (last)
+- **Done:** `description` (G-9k4b), `price` (G-9k6b)
+- **Pending (order):** `open_time` → `start_time` → `venue` → `title` (last)
 - **Policy:** 1 Save = 1 field; `changedFields` / `payload keys` must be single target field
 - **Safety:** same G-9k4b env stack; project `kmjqppxjdnwwrtaeqjta`; block sari-site; `rowsAffected === 1`
 - **Out of scope:** date/month/published/schedule_months; new/delete/duplicate; deploy
-- **Next:** G-9k6b `price` manual Save once (operator)
+- **Next:** G-9k6c `open_time` manual Save once (operator)
 - **`readyForAnyDbWrite: false`**
 
 ## G-9k5 save button arc finalization — complete

@@ -1,6 +1,22 @@
 Last updated: 2026-06-22
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0j. G-9k6b price field slice Save success — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-9k6b-gosaki-schedule-existing-event-price-field-slice-save-success-finalization` |
+| Doc | `gosaki-schedule-existing-event-price-field-slice-save-success-finalization.md` |
+| Status | **complete** — operator manual `price` slice UI Save **succeeded** |
+| Row | `f687ebf3-407c-49d0-9ab8-58040c499b8e` — `price` only |
+| Before → after | `3,000円` → `3,000円（G-9k6 price UI保存テスト）` |
+| `rowsAffected` | **1** |
+| post-save `updated_at` | `2026-06-22T06:53:39.857434+00:00` |
+| UI | post-save **保存成功** panel confirmed |
+| **Do not** | re-click G-9k6b Save |
+| Next | `G-9k6c` `open_time` field slice manual Save |
+| `readyForAnyDbWrite` | **false** |
+
 ## 0i. G-9k6a field slice verification planning — complete
 
 | Item | Value |
@@ -8,13 +24,12 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Phase | `G-9k6a-gosaki-schedule-existing-event-field-slice-verification-planning` |
 | Doc | `gosaki-schedule-existing-event-field-slice-verification-planning.md` |
 | Status | **planning complete** — matrix + checklist only |
-| Done | `description` (G-9k4b) |
-| Pending slices | `price` → `open_time` → `start_time` → `venue` → `title` (last) |
+| Done | `description` (G-9k4b), `price` (G-9k6b) |
+| Pending slices | `open_time` → `start_time` → `venue` → `title` (last) |
 | Policy | **1 Save = 1 field**; same G-9k4b safety stack |
 | Row | `f687ebf3-407c-49d0-9ab8-58040c499b8e` |
 | Project | `kmjqppxjdnwwrtaeqjta` only |
-| **Do not** | multi-field Save; DB write in planning phase |
-| Next | `G-9k6b` price field slice manual Save |
+| Next slice | `G-9k6c` `open_time` |
 | `readyForAnyDbWrite` | **false** |
 
 ## 0h. G-9k5 save button arc finalization — complete

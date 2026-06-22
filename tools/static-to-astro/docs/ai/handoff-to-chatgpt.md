@@ -5,11 +5,19 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-9k7-gosaki-schedule-save-ui-copy-and-editor-scroll-fix — complete.
-Prior: G-9k6g field slice closure (commit 99ffc6c).
+Current phase: G-9k7b-gosaki-schedule-save-ui-copy-and-list-usability-fix — complete.
+Prior: G-9k7 Save UI + scroll (commit 44f4d62).
 branch: main
-HEAD = origin/main = 99ffc6c — check git HEAD for latest commit hash
+HEAD = origin/main = 44f4d62 — check git HEAD for latest commit hash
 ```
+
+## G-9k7b Save UI copy dedup + list edit button — complete
+
+- **Doc:** `gosaki-schedule-save-ui-copy-and-editor-scroll-fix.md` §3
+- **Copy:** Save 無効 dry-run 後はパネル1箇所 `保存は無効です。確認のみ完了しました。`；ボタン下 note 非表示
+- **List:** 操作列 sticky；横スクロール時も「編集する」見える
+- **No DB write / Save click**
+- **`readyForAnyDbWrite: false`**
 
 ## G-9k7 Save UI copy and editor scroll fix — complete
 

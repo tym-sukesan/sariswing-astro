@@ -39,7 +39,7 @@ assert("G-9k7 doc phase", doc.includes("G-9k7-gosaki-schedule-save-ui-copy-and-e
 assert("save disabled operator message", uiSrc.includes("保存は無効です。DB UPDATE は実行されません。"));
 assert("save enabled operator message", uiSrc.includes("保存が有効です。内容を確認し、「更新する」を1回だけ押すとDBに反映されます。"));
 assert("no contradictory false assert in dry-run render", !uiSrc.includes("G9K_SAVE_BUTTON_SAVE_ENABLED=false の間は DB UPDATE"));
-assert("conditional save capability note", uiSrc.includes("renderDryRunSaveCapabilityNote"));
+assert("conditional dry-run outcome note", uiSrc.includes("renderDryRunOutcomeNote"));
 assert("list panel class in astro", astroSrc.includes("gosaki-schedule-admin-list-panel"));
 assert("editor panel class in astro", astroSrc.includes("gosaki-schedule-admin-editor-panel"));
 assert("independent scroll CSS", cssSrc.includes("gosaki-schedule-admin-list-panel") && cssSrc.includes("overflow-y: auto"));

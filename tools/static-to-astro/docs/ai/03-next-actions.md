@@ -1,6 +1,18 @@
 Last updated: 2026-06-22
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0q. G-9k7b Save UI copy dedup + list edit button — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-9k7b-gosaki-schedule-save-ui-copy-and-list-usability-fix` |
+| Doc | `gosaki-schedule-save-ui-copy-and-editor-scroll-fix.md` §3 |
+| Status | **complete** — copy dedup + sticky「編集する」列 |
+| Copy | Save 無効 dry-run 後: パネル `保存は無効です。確認のみ完了しました。` のみ |
+| List | `admin-gosaki-schedule-table__actions-col` sticky @ ≥960px |
+| **Do not** | DB write / Save click |
+| `readyForAnyDbWrite` | **false** |
+
 ## 0p. G-9k7 Save UI copy and editor scroll fix — complete
 
 | Item | Value |

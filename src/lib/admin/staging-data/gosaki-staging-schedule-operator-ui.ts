@@ -65,6 +65,10 @@ function operatorSaveDisabledMessage(): string {
   return "保存は無効です。DB UPDATE は実行されません。";
 }
 
+function operatorSaveDisabledDryRunCompleteMessage(): string {
+  return "保存は無効です。確認のみ完了しました。";
+}
+
 function operatorSaveEnabledMessage(): string {
   return "保存が有効です。内容を確認し、「更新する」を1回だけ押すとDBに反映されます。";
 }
@@ -76,22 +80,26 @@ function operatorSavePrepMessage(): string {
   return `「変更を確認」で内容を確認できます。${operatorSaveDisabledMessage()}`;
 }
 
-function operatorSaveReadyButDisabledMessage(): string {
-  return `保存内容の確認は完了しています。${operatorSaveDisabledMessage()}`;
+function setSaveButtonNote(text: string | null): void {
+  const note = document.getElementById("gosaki-schedule-update-btn-note");
+  if (!note) return;
+  if (!text) {
+    note.hidden = true;
+    note.textContent = "";
+    return;
+  }
+  note.hidden = false;
+  note.textContent = text;
 }
 
-function renderDryRunSaveCapabilityNote(
+function renderDryRunOutcomeNote(
   saveReadiness: G9kExistingEventSaveButtonDryRunResult["saveReadiness"],
 ): string {
-  if (saveReadiness === "ready_to_save") {
-    return `<p class="gosaki-schedule-edit-dry-run__save-enabled" data-gosaki-save-allowed="true" role="note">
-      ${escapeHtml(operatorSaveEnabledMessage())}
-    </p>`;
-  }
   if (saveReadiness === "ready_but_save_disabled") {
-    return `<p class="gosaki-schedule-edit-dry-run__save-disabled" data-gosaki-save-allowed="false" role="note">
-      ${escapeHtml(operatorSaveReadyButDisabledMessage())}
-    </p>`;
+    return "";
+  }
+  if (saveReadiness === "ready_to_save") {
+    return `<p class="gosaki-schedule-edit-dry-run__note">この確認ではデータベースは変更されません。保存はまだ実行されません。</p>`;
   }
   return "";
 }
@@ -395,7 +403,6 @@ function updateSaveButtonState(result: G9kExistingEventSaveButtonDryRunResult | 
   const button = document.getElementById(
     "gosaki-schedule-update-btn",
   ) as HTMLButtonElement | null;
-  const note = document.getElementById("gosaki-schedule-update-btn-note");
   if (!button) return;
 
   const gate = evaluateG9kOperatorSaveButtonUiGate({
@@ -410,9 +417,7 @@ function updateSaveButtonState(result: G9kExistingEventSaveButtonDryRunResult | 
     button.setAttribute("data-gosaki-save-allowed", "true");
     button.title = "変更内容を保存します";
     button.textContent = "更新する";
-    if (note) {
-      note.textContent = operatorSaveEnabledMessage();
-    }
+    setSaveButtonNote(operatorSaveEnabledMessage());
     return;
   }
 
@@ -422,29 +427,23 @@ function updateSaveButtonState(result: G9kExistingEventSaveButtonDryRunResult | 
   if (!result) {
     button.textContent = "更新する（準備中）";
     button.title = gate.reason;
-    if (note) {
-      note.textContent = operatorSavePrepMessage();
-    }
+    setSaveButtonNote(operatorSavePrepMessage());
     return;
   }
 
   if (result.saveReadiness === "ready_but_save_disabled" && result.ok) {
     button.textContent = "更新する（保存無効）";
     button.title = gate.reason;
-    if (note) {
-      note.textContent = operatorSaveReadyButDisabledMessage();
-    }
+    setSaveButtonNote(null);
     return;
   }
 
   button.textContent = "更新する（保存不可）";
   button.title = gate.reason;
-  if (note) {
-    if (result.saveReadiness === "no_changes") {
-      note.textContent = "変更がありません。保存できません。";
-    } else {
-      note.textContent = gate.reason || "確認エラーがあります。保存できません。";
-    }
+  if (result.saveReadiness === "no_changes") {
+    setSaveButtonNote("変更がありません。保存できません。");
+  } else {
+    setSaveButtonNote(gate.reason || "確認エラーがあります。保存できません。");
   }
 }
 
@@ -523,7 +522,7 @@ function renderDryRunResult(result: G9kExistingEventSaveButtonDryRunResult): voi
   const saveReadyMessage =
     result.saveReadiness === "ready_to_save"
       ? "保存準備OK。更新できます"
-      : operatorSaveReadyButDisabledMessage();
+      : operatorSaveDisabledDryRunCompleteMessage();
   el.innerHTML = `
     <h3 class="gosaki-schedule-edit-dry-run__title">確認結果</h3>
     <p class="gosaki-schedule-edit-dry-run__message gosaki-schedule-edit-dry-run__message--ready">
@@ -573,8 +572,7 @@ function renderDryRunResult(result: G9kExistingEventSaveButtonDryRunResult): voi
       安全確認: <code>expectedBeforeUpdatedAt</code> = ${escapeHtml(result.expectedBeforeUpdatedAt ?? "—")}
       （rowsAffected 必須 = ${String(result.rowsAffectedRequired)}）
     </p>
-    <p class="gosaki-schedule-edit-dry-run__note">この確認ではデータベースは変更されません。保存はまだ実行されません。</p>
-    ${renderDryRunSaveCapabilityNote(result.saveReadiness)}
+    ${renderDryRunOutcomeNote(result.saveReadiness)}
   `;
 }
 
@@ -822,12 +820,12 @@ function renderScheduleList(): void {
         const selected = selectedRowId === row.id;
         return `<tr class="admin-gosaki-schedule-table__row${selected ? " is-selected" : ""}" data-row-id="${escapeHtml(row.id)}">
         <td>${escapeHtml(row.date)}</td>
-        <td>${escapeHtml(displayValue(row.title))}</td>
+        <td class="admin-gosaki-schedule-table__title-col">${escapeHtml(displayValue(row.title))}</td>
         <td>${escapeHtml(displayValue(row.venue))}</td>
         <td>${escapeHtml(displayValue(row.open_time))}</td>
         <td>${escapeHtml(displayValue(row.start_time))}</td>
         <td>${escapeHtml(displayValue(row.price))}</td>
-        <td>${renderScheduleRowButton(row.id, selected)}</td>
+        <td class="admin-gosaki-schedule-table__actions-col">${renderScheduleRowButton(row.id, selected)}</td>
       </tr>`;
       })
       .join("");

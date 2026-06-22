@@ -241,7 +241,7 @@ function displayValue(value: string | null | undefined): string {
                     <th scope="col">開場</th>
                     <th scope="col">開演</th>
                     <th scope="col">料金</th>
-                    <th scope="col">操作</th>
+                    <th scope="col" class="admin-gosaki-schedule-table__actions-col">操作</th>
                   </tr>
                 </thead>
                 <tbody id="gosaki-schedule-operator-table-body">
@@ -249,12 +249,12 @@ function displayValue(value: string | null | undefined): string {
                     binding.selectableRows.map((row: ScheduleRecord) => (
                       <tr class="admin-gosaki-schedule-table__row" data-row-id={row.id}>
                         <td>{row.date}</td>
-                        <td>{displayValue(row.title)}</td>
+                        <td class="admin-gosaki-schedule-table__title-col">{displayValue(row.title)}</td>
                         <td>{displayValue(row.venue)}</td>
                         <td>{displayValue(row.open_time)}</td>
                         <td>{displayValue(row.start_time)}</td>
                         <td>{displayValue(row.price)}</td>
-                        <td>
+                        <td class="admin-gosaki-schedule-table__actions-col">
                           <button
                             type="button"
                             class="admin-button admin-button--secondary admin-gosaki-schedule-select-btn"

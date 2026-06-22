@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-9k7 Gosaki schedule Save UI copy and editor scroll fix (2026-06-22):** **complete** — operator Save messages match enabled/disabled state; PC list/editor independent scroll. Doc: `gosaki-schedule-save-ui-copy-and-editor-scroll-fix.md`. **No DB write.** `readyForAnyDbWrite: false`.
+**G-9k7b Gosaki schedule Save UI copy and list usability fix (2026-06-22):** **complete** — Save 無効時 copy 重複解消（パネル1箇所）；左一覧「編集する」sticky 操作列。Doc: `gosaki-schedule-save-ui-copy-and-editor-scroll-fix.md` §3. **No DB write.** Prior G-9k7 commit `44f4d62`.
+
+**G-9k7 Gosaki schedule Save UI copy and editor scroll fix (2026-06-22):** **complete** — operator Save messages match enabled/disabled state; PC list/editor independent scroll. Doc: `gosaki-schedule-save-ui-copy-and-editor-scroll-fix.md`. Commit: `44f4d62`. **No DB write.** `readyForAnyDbWrite: false`.
 
 **G-9k6g Gosaki schedule existing event field slice closure (2026-06-22):** **complete** — G-9k6 arc **closed**; commit `99ffc6c`. Doc: `gosaki-schedule-existing-event-field-slice-closure.md`. **Do not re-click any G-9k6 slice Save.**
 
@@ -63,9 +65,9 @@ Staging Shell
 将来的な顧客オンボーディング・課金・デプロイ自動化
 
 2. Current phase
-現在フェーズ: **G-9k7-gosaki-schedule-save-ui-copy-and-editor-scroll-fix** — **complete**（Save UI copy + list/editor scroll. 最新commitは git HEAD を確認すること。）
+現在フェーズ: **G-9k7b-gosaki-schedule-save-ui-copy-and-list-usability-fix** — **complete**（Save copy 重複解消 + 一覧「編集する」sticky. 最新commitは git HEAD を確認すること。）
 
-G-9k7: Save 有効/無効の operator 文言を整理；PC で一覧・編集パネル独立スクロール。**No DB write.** Next: operator choice — generalization, next feature, Gosaki CMS Kit, rollback. `readyForAnyDbWrite: false`.
+G-9k7b: Save 無効時は dry-run パネル1箇所のみ；左一覧操作列 sticky。**No DB write.** `readyForAnyDbWrite: false`.
 
 G-9k5 finalization: **complete** (commit `60820c4`). G-9k arc closed.
 

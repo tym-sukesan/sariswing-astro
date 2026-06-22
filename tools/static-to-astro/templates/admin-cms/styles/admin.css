@@ -1944,6 +1944,46 @@
 
 .admin-gosaki-schedule-table-wrap {
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+@media (min-width: 960px) {
+  .gosaki-schedule-admin-list-panel .admin-gosaki-schedule-table-wrap {
+    overflow-x: auto;
+  }
+
+  .gosaki-schedule-admin-list-panel .admin-gosaki-schedule-table {
+    font-size: 0.82rem;
+  }
+
+  .gosaki-schedule-admin-list-panel .admin-gosaki-schedule-table th,
+  .gosaki-schedule-admin-list-panel .admin-gosaki-schedule-table td {
+    padding: 0.5rem 0.35rem;
+  }
+
+  .gosaki-schedule-admin-list-panel .admin-gosaki-schedule-table__title-col {
+    max-width: 7.5rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .gosaki-schedule-admin-list-panel .admin-gosaki-schedule-table__actions-col {
+    position: sticky;
+    right: 0;
+    z-index: 2;
+    background: #fff;
+    box-shadow: -4px 0 8px -4px rgba(15, 23, 42, 0.12);
+    white-space: nowrap;
+  }
+
+  .gosaki-schedule-admin-list-panel .admin-gosaki-schedule-table th.admin-gosaki-schedule-table__actions-col {
+    background: #f9fafb;
+  }
+
+  .gosaki-schedule-admin-list-panel .admin-gosaki-schedule-table__row.is-selected .admin-gosaki-schedule-table__actions-col {
+    background: #f0f9ff;
+  }
 }
 
 @media (max-width: 767px) {

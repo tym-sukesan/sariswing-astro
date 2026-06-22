@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-9k7b Gosaki schedule Save UI copy and list usability fix (2026-06-22):** **complete** — Save 無効時 copy 重複解消（パネル1箇所）；左一覧「編集する」sticky 操作列。Doc: `gosaki-schedule-save-ui-copy-and-editor-scroll-fix.md` §3. **No DB write.** Prior G-9k7 commit `44f4d62`.
+**G-10a Gosaki completion inventory and next module selection (2026-06-22):** **complete** — Schedule以外棚卸し；次モジュール **YouTube embed CMS** (`G-10b`). Doc: `gosaki-completion-inventory-and-next-module-selection.md`. Parallel: `G-9h1` client feedback. **No DB write.** `readyForAnyDbWrite: false`.
+
+**G-9k7b Gosaki schedule Save UI copy and list usability fix (2026-06-22):** **complete** — commit `ff0c33f`. Doc: `gosaki-schedule-save-ui-copy-and-editor-scroll-fix.md` §3.
 
 **G-9k7 Gosaki schedule Save UI copy and editor scroll fix (2026-06-22):** **complete** — operator Save messages match enabled/disabled state; PC list/editor independent scroll. Doc: `gosaki-schedule-save-ui-copy-and-editor-scroll-fix.md`. Commit: `44f4d62`. **No DB write.** `readyForAnyDbWrite: false`.
 
@@ -65,9 +67,9 @@ Staging Shell
 将来的な顧客オンボーディング・課金・デプロイ自動化
 
 2. Current phase
-現在フェーズ: **G-9k7b-gosaki-schedule-save-ui-copy-and-list-usability-fix** — **complete**（Save copy 重複解消 + 一覧「編集する」sticky. 最新commitは git HEAD を確認すること。）
+現在フェーズ: **G-10a-gosaki-completion-inventory-and-next-module-selection** — **complete**（Gosaki完成棚卸し + 次モジュール選定. 最新commitは git HEAD を確認すること。）
 
-G-9k7b: Save 無効時は dry-run パネル1箇所のみ；左一覧操作列 sticky。**No DB write.** `readyForAnyDbWrite: false`.
+G-10a: Schedule以外の残タスク整理完了。**次モジュール最有力: YouTube embed CMS** (`G-10b`). Parallel: `G-9h1` client preview feedback. Schedule arc G-9k6–G-9k7b **一区切り**. `readyForAnyDbWrite: false`.
 
 G-9k5 finalization: **complete** (commit `60820c4`). G-9k arc closed.
 

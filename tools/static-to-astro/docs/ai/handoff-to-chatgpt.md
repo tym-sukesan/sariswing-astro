@@ -5,11 +5,20 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-9k7b-gosaki-schedule-save-ui-copy-and-list-usability-fix — complete.
-Prior: G-9k7 Save UI + scroll (commit 44f4d62).
+Current phase: G-10a-gosaki-completion-inventory-and-next-module-selection — complete.
+Prior: G-9k7b UI fixes (commit ff0c33f); G-9k6 schedule field slice arc closed.
 branch: main
-HEAD = origin/main = 44f4d62 — check git HEAD for latest commit hash
+HEAD = origin/main = ff0c33f — check git HEAD for latest commit hash
 ```
+
+## G-10a Gosaki completion inventory — complete
+
+- **Doc:** `gosaki-completion-inventory-and-next-module-selection.md`
+- **Schedule:** G-9k6–G-9k7b verification/UI **closed**; remaining = public re-upload loop + client sign-off
+- **Next non-Schedule module:** **YouTube embed CMS** (`G-10b`)
+- **Parallel:** `G-9h1` client preview feedback collection
+- **No DB write / Save click**
+- **`readyForAnyDbWrite: false`**
 
 ## G-9k7b Save UI copy dedup + list edit button — complete
 

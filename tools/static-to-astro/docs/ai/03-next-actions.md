@@ -1,6 +1,17 @@
 Last updated: 2026-06-22
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0u. G-10c1 Save API response fix — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-10c1-gosaki-youtube-embed-static-json-save-api-response-fix` |
+| Doc | `gosaki-youtube-embed-static-json-save-api-response-fix.md` |
+| Incident | Manual Save 1 — `Unexpected token '<'` (HTML 404, not registered API route) |
+| Fix | `injectRoute` in `astro.config.mjs` + client `parseG10cSaveApiJsonResponse` |
+| **Next** | Operator: restart dev → dry-run → Save retry once |
+| JSON config | **unchanged** |
+
 ## 0t. G-10c YouTube embed static JSON write slice — complete
 
 | Item | Value |

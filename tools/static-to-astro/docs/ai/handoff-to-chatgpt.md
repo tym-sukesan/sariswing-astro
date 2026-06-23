@@ -11,6 +11,16 @@ branch: main
 HEAD = origin/main = 88cc484 — check git HEAD for latest commit hash
 ```
 
+**Next:** Operator manual Save retry (`readyForG10cManualSaveRetry`) after dev server restart.
+
+## G-10c1 Save API response fix — complete
+
+- **Incident:** dry-run OK; Save → `network_error: Unexpected token '<'`
+- **Cause:** `__admin-*` API not in `injectRoute` → HTML 404
+- **Fix:** `astro.config.mjs` injectRoute + safe JSON parse on client
+- **Doc:** `gosaki-youtube-embed-static-json-save-api-response-fix.md`
+- **No Save/JSON write by Cursor**
+
 ## G-10c YouTube embed static JSON write slice — complete
 
 - **Doc:** `gosaki-youtube-embed-static-json-write-slice-implementation.md`

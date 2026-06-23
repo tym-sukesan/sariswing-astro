@@ -41,6 +41,9 @@ const operatorSrc = read(
 const apiSrc = read(
   "src/pages/__admin-staging-shell/musician-basic/api/youtube-embed-static-json-write.json.ts",
 );
+const clientSave = read(
+  "src/lib/admin/staging-write/gosaki-youtube-embed-static-json-write-client-save.ts",
+);
 const configJson = read("tools/static-to-astro/config/sites/gosaki-piano-youtube-embed.json");
 
 assert("G-10c doc phase", doc.includes("G-10c-gosaki-youtube-embed-static-json-write-slice-implementation"));
@@ -77,7 +80,10 @@ assert("save disabled message", uiSrc.includes("保存は無効です。確認�
 assert("save enabled message", uiSrc.includes("保存が有効です。内容を確認し、「更新する」を1回だけ押すとJSONに反映されます。"));
 
 assert("API prerender false", apiSrc.includes("prerender = false"));
-assert("API save_not_enabled gate", apiSrc.includes("save_not_enabled"));
+assert("API json content-type", apiSrc.includes("application/json"));
+assert("client fetch via api module", clientSave.includes("gosaki-youtube-embed-static-json-write-api"));
+assert("client uses safe parse", clientSave.includes("parseG10cSaveApiJsonResponse"));
+assert("injectRoute dev only", read("astro.config.mjs").includes('command === "dev"'));
 
 assert("no insert delete in doc scope", doc.includes("INSERT / DELETE") && doc.includes("not implemented"));
 assert("no migration in doc", doc.includes("site_embeds") && doc.includes("G-10e"));

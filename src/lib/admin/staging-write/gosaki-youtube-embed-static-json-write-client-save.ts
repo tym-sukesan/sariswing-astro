@@ -5,6 +5,11 @@
 import { getStagingAuthSessionDetails } from "../staging-auth/staging-auth-session";
 import { getStagingSupabaseClient } from "../staging-auth/supabase-staging-auth-client";
 import { isSignedInStagingAuth } from "../staging-write/schedule-non-dry-run-poc-auth";
+import {
+  G10C_YOUTUBE_EMBED_STATIC_JSON_WRITE_API_PATH,
+  mapG10cSaveApiBodyToOutcome,
+  parseG10cSaveApiJsonResponse,
+} from "./gosaki-youtube-embed-static-json-write-api";
 import { getG10cYoutubeEmbedStaticJsonWriteConfig } from "./gosaki-youtube-embed-static-json-write-config";
 import { executeG10cYoutubeEmbedStaticJsonWriteDryRun } from "./gosaki-youtube-embed-static-json-write-dry-run";
 import {
@@ -16,8 +21,7 @@ import {
   type G10cYoutubeEmbedItemSnapshot,
 } from "./gosaki-youtube-embed-static-json-write-types";
 
-export const G10C_YOUTUBE_EMBED_STATIC_JSON_WRITE_API_PATH =
-  "/__admin-staging-shell/musician-basic/api/youtube-embed-static-json-write.json";
+export { G10C_YOUTUBE_EMBED_STATIC_JSON_WRITE_API_PATH };
 
 export type G10cYoutubeEmbedSaveBinding = {
   changedFields: string[];
@@ -114,6 +118,7 @@ export async function executeG10cYoutubeEmbedStaticJsonClientSave(options: {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        Accept: "application/json",
         Authorization: `Bearer ${accessToken}`,
       },
       body: JSON.stringify({
@@ -127,25 +132,21 @@ export async function executeG10cYoutubeEmbedStaticJsonClientSave(options: {
       }),
     });
 
-    const body = (await response.json()) as {
-      ok?: boolean;
-      itemsAffected?: number;
-      errorCode?: string;
-      errorMessage?: string;
-    };
+    const parsed = await parseG10cSaveApiJsonResponse(response);
+    const mapped = mapG10cSaveApiBodyToOutcome(parsed);
 
-    if (!response.ok || !body.ok) {
+    if (!mapped.ok) {
       return {
         ...base,
-        errorCode: body.errorCode ?? "api_error",
-        errorMessage: body.errorMessage ?? `API error (${response.status})`,
+        errorCode: mapped.errorCode ?? "api_error",
+        errorMessage: mapped.errorMessage ?? `API error (${response.status})`,
       };
     }
 
     return {
       ...base,
       ok: true,
-      itemsAffected: body.itemsAffected,
+      itemsAffected: mapped.itemsAffected,
     };
   } catch (error) {
     return {

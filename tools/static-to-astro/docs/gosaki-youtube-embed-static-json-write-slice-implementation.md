@@ -16,6 +16,8 @@
 
 Prior: [gosaki-youtube-embed-read-and-write-planning.md](./gosaki-youtube-embed-read-and-write-planning.md)
 
+**G-10c1 follow-up:** Manual Save attempt 1 failed (HTML 404 — API not `injectRoute` registered). See [gosaki-youtube-embed-static-json-save-api-response-fix.md](./gosaki-youtube-embed-static-json-save-api-response-fix.md).
+
 ---
 
 ## Gates

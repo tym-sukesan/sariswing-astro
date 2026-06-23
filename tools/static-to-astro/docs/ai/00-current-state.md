@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-10c Gosaki YouTube embed static JSON write slice implementation (2026-06-22):** **complete** — dry-run UI + gated Save + server JSON executor wired; **no Save/JSON write by Cursor**. Doc: `gosaki-youtube-embed-static-json-write-slice-implementation.md`. Default Save disabled. **No DB write.** `readyForAnyDbWrite: false`.
+**G-10c1 Gosaki YouTube embed Save API response fix (2026-06-22):** **complete** — manual Save attempt 1 failed with HTML 404 (`<!doctype` JSON parse error); root cause: API under `__admin-*` missing `injectRoute`. Fixed: `astro.config.mjs` injectRoute + client safe parse. Doc: `gosaki-youtube-embed-static-json-save-api-response-fix.md`. **No Save/JSON write by Cursor.** `readyForG10cManualSaveRetry: true`.
+
+**G-10c Gosaki YouTube embed static JSON write slice implementation (2026-06-22):** **complete** — dry-run UI + gated Save + server JSON executor wired.
 
 **G-10b Gosaki YouTube embed read and write planning (2026-06-22):** **complete** — commit `88cc484`. Doc: `gosaki-youtube-embed-read-and-write-planning.md`.
 
@@ -71,9 +73,9 @@ Staging Shell
 将来的な顧客オンボーディング・課金・デプロイ自動化
 
 2. Current phase
-現在フェーズ: **G-10c-gosaki-youtube-embed-static-json-write-slice-implementation** — **complete**（dry-run + gated Save 実装. 最新commitは git HEAD を確認すること。）
+現在フェーズ: **G-10c1-gosaki-youtube-embed-static-json-save-api-response-fix** — **complete**（Save API injectRoute + non-JSON client handling. 最新commitは git HEAD を確認すること。）
 
-G-10c: YouTube static JSON write slice（`yt-placeholder-01` / embedCode+published）. Default Save disabled. Next: final preflight + operator Save once. `readyForAnyDbWrite: false`.
+G-10c manual Save attempt 1: dry-run OK → Save failed (HTML 404, JSON parse). Fix applied. Operator retry after dev restart. `readyForAnyDbWrite: false`.
 
 G-9k5 finalization: **complete** (commit `60820c4`). G-9k arc closed.
 

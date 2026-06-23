@@ -34,7 +34,7 @@ function cmsKitAdminShellRoutesIntegration() {
   return {
     name: "cms-kit-admin-shell-routes",
     hooks: {
-      "astro:config:setup": ({ injectRoute }) => {
+      "astro:config:setup": ({ injectRoute, command }) => {
         injectRoute({
           pattern: "/__admin-preview/musician-basic",
           entrypoint: new URL(
@@ -70,6 +70,17 @@ function cmsKitAdminShellRoutesIntegration() {
             import.meta.url,
           ),
         });
+        // G-10c Save API — dev only (prerender=false endpoint; static build has no adapter)
+        if (command === "dev") {
+          injectRoute({
+            pattern:
+              "/__admin-staging-shell/musician-basic/api/youtube-embed-static-json-write.json",
+            entrypoint: new URL(
+              "./src/pages/__admin-staging-shell/musician-basic/api/youtube-embed-static-json-write.json.ts",
+              import.meta.url,
+            ),
+          });
+        }
         injectRoute({
           pattern: "/__admin-staging-shell/musician-basic/admin/discography",
           entrypoint: new URL(

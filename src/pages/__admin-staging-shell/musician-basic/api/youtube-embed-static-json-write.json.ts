@@ -16,7 +16,10 @@ export const prerender = false;
 function jsonResponse(body: unknown, status = 200): Response {
   return new Response(JSON.stringify(body), {
     status,
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json; charset=utf-8",
+      "Cache-Control": "no-store",
+    },
   });
 }
 
@@ -47,7 +50,7 @@ async function requireStagingBearerAuth(
   return { ok: true, email: data.user.email };
 }
 
-export const POST: APIRoute = async ({ request }) => {
+async function handlePost(request: Request): Promise<Response> {
   const env = import.meta.env;
   const writeConfig = getG10cYoutubeEmbedStaticJsonWriteConfig(env);
 
@@ -66,18 +69,27 @@ export const POST: APIRoute = async ({ request }) => {
 
   const auth = await requireStagingBearerAuth(request, env);
   if (!auth.ok) {
-    return jsonResponse({ ok: false, errorCode: auth.errorCode }, auth.status);
+    return jsonResponse(
+      { ok: false, errorCode: auth.errorCode, errorMessage: auth.errorCode },
+      auth.status,
+    );
   }
 
   let body: unknown;
   try {
     body = await request.json();
   } catch {
-    return jsonResponse({ ok: false, errorCode: "invalid_json" }, 400);
+    return jsonResponse(
+      { ok: false, errorCode: "invalid_json", errorMessage: "Request body is not valid JSON." },
+      400,
+    );
   }
 
   if (!body || typeof body !== "object") {
-    return jsonResponse({ ok: false, errorCode: "invalid_body" }, 400);
+    return jsonResponse(
+      { ok: false, errorCode: "invalid_body", errorMessage: "Request body must be a JSON object." },
+      400,
+    );
   }
 
   const record = body as Record<string, unknown>;
@@ -94,10 +106,16 @@ export const POST: APIRoute = async ({ request }) => {
   const dryRunOk = record.dryRunOk === true;
 
   if (approvalId !== G10C_YOUTUBE_EMBED_STATIC_JSON_WRITE_APPROVAL_ID) {
-    return jsonResponse({ ok: false, errorCode: "approval_mismatch" }, 400);
+    return jsonResponse(
+      { ok: false, errorCode: "approval_mismatch", errorMessage: "approvalId mismatch." },
+      400,
+    );
   }
   if (itemId !== G10C_YOUTUBE_EMBED_TARGET_ITEM_ID) {
-    return jsonResponse({ ok: false, errorCode: "item_mismatch" }, 400);
+    return jsonResponse(
+      { ok: false, errorCode: "item_mismatch", errorMessage: "itemId mismatch." },
+      400,
+    );
   }
 
   const outcome = executeG10cYoutubeEmbedStaticJsonWrite({
@@ -130,4 +148,30 @@ export const POST: APIRoute = async ({ request }) => {
     configPath: outcome.configPath,
     itemId: outcome.itemId,
   });
+}
+
+export const GET: APIRoute = async () =>
+  jsonResponse(
+    {
+      ok: false,
+      errorCode: "method_not_allowed",
+      errorMessage: "POST only. Use Save from YouTube admin UI.",
+    },
+    405,
+  );
+
+export const POST: APIRoute = async ({ request }) => handlePost(request);
+
+export const ALL: APIRoute = async ({ request }) => {
+  if (request.method === "POST") {
+    return handlePost(request);
+  }
+  return jsonResponse(
+    {
+      ok: false,
+      errorCode: "method_not_allowed",
+      errorMessage: `Method ${request.method} not allowed. POST only.`,
+    },
+    405,
+  );
 };

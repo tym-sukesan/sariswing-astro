@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-10c2 Gosaki YouTube embed static JSON write Save success (2026-06-23):** **complete** — operator manual Save **succeeded**; `yt-placeholder-01` `published:true`, `embedCode` watch URL `Ke4F8JAQz-I`; `itemsAffected: 1`. Doc: `gosaki-youtube-embed-static-json-write-save-success-finalization.md`. **Do not re-click G-10c Save.** Next: G-10d public reflection. `readyForAnyDbWrite: false`.
+**G-10d Gosaki YouTube embed public reflection verification (2026-06-23):** **complete** — local convert/build; home HTML has `youtube-nocookie.com/embed/Ke4F8JAQz-I`. Doc: `gosaki-youtube-embed-public-reflection-verification.md`. Staging upload **not done**. Next: G-10d1 manual upload by operator. `readyForAnyDbWrite: false`.
+
+**G-10c2 Gosaki YouTube embed static JSON write Save success (2026-06-23):** **complete** — commit `5d5b1f1`; operator Save succeeded. Doc: `gosaki-youtube-embed-static-json-write-save-success-finalization.md`. **Do not re-click G-10c Save.**
 
 **G-10c1 Gosaki YouTube embed Save API response fix (2026-06-23):** **complete** — injectRoute + import path fix; curl GET → JSON 405. Operator Save succeeded (G-10c2). Doc: `gosaki-youtube-embed-static-json-save-api-response-fix.md`.
 
@@ -75,9 +77,9 @@ Staging Shell
 将来的な顧客オンボーディング・課金・デプロイ自動化
 
 2. Current phase
-現在フェーズ: **G-10c2-gosaki-youtube-embed-static-json-write-save-success-finalization** — **complete**（operator Save 成功記録. 最新commitは git HEAD を確認すること。）
+現在フェーズ: **G-10d-gosaki-youtube-embed-public-reflection-verification** — **complete**（local convert/build + home HTML embed verified. 最新commitは git HEAD を確認すること。）
 
-G-10c static JSON write: **Save succeeded** — `gosaki-piano-youtube-embed.json` updated. Public反映は未実施 → **G-10d**. `readyForAnyDbWrite: false`.
+G-10d: local build confirms `youtube-nocookie.com/embed/Ke4F8JAQz-I` on Gosaki home. **Staging not updated** → G-10d1 operator manual upload. `readyForAnyDbWrite: false`.
 
 G-9k5 finalization: **complete** (commit `60820c4`). G-9k arc closed.
 

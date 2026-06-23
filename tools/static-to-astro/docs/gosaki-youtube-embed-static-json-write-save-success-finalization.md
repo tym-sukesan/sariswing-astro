@@ -124,7 +124,8 @@ Required operator loop (G-10d):
 
 | Phase | Goal |
 | --- | --- |
-| **G-10d** | `gosaki-youtube-embed-public-reflection-verification` — convert/build + home embed verify + manual upload plan |
+| **G-10d** | `gosaki-youtube-embed-public-reflection-verification` — **complete** — see [gosaki-youtube-embed-public-reflection-verification.md](./gosaki-youtube-embed-public-reflection-verification.md) |
+| **G-10d1** | `gosaki-youtube-embed-staging-manual-upload-by-operator` — package + operator upload + staging QA |
 
 Deferred:
 

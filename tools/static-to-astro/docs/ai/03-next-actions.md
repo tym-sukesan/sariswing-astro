@@ -1,5 +1,18 @@
-Last updated: 2026-06-22
+Last updated: 2026-06-23
 Project: Static-to-Astro CMS / Musician CMS Kit
+
+## 0w. G-10d YouTube embed public reflection verification — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-10d-gosaki-youtube-embed-public-reflection-verification` |
+| Doc | `gosaki-youtube-embed-public-reflection-verification.md` |
+| Status | **complete** — local convert/build + home HTML verified |
+| Source JSON | `yt-placeholder-01` `published:true`, watch URL `Ke4F8JAQz-I` |
+| Home HTML | `youtube-nocookie.com/embed/Ke4F8JAQz-I` + `.gosaki-youtube-embed` |
+| Staging upload | **not done** |
+| **Next** | `G-10d1-gosaki-youtube-embed-staging-manual-upload-by-operator` |
+| **Do not** | re-click G-10c Save; FTP auto-deploy |
 
 ## 0v. G-10c2 YouTube embed static JSON Save success — complete
 
@@ -12,8 +25,8 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | changedFields | `embedCode`, `published` |
 | videoId | `Ke4F8JAQz-I` |
 | itemsAffected | **1** |
-| Public反映 | **not done** — convert/build/manual upload pending |
-| **Next** | `G-10d-gosaki-youtube-embed-public-reflection-verification` |
+| Public反映 | **local verified** — staging upload pending (G-10d1) |
+| **Next** | `G-10d1-gosaki-youtube-embed-staging-manual-upload-by-operator` |
 | **Do not** | re-click G-10c Save |
 
 ## 0u. G-10c1 Save API response fix — complete

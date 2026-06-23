@@ -5,12 +5,20 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-10c2-gosaki-youtube-embed-static-json-write-save-success-finalization — complete.
-Prior: G-10c/G-10c1 Save API fixes; operator Save succeeded 2026-06-23.
+Current phase: G-10d-gosaki-youtube-embed-public-reflection-verification — complete.
+Prior: G-10c2 Save success (commit 5d5b1f1); local home embed verified 2026-06-23.
 branch: main — check git HEAD for latest commit hash
 ```
 
-**Next:** `G-10d-gosaki-youtube-embed-public-reflection-verification` — convert/build + home embed verify + manual upload plan.
+**Next:** `G-10d1-gosaki-youtube-embed-staging-manual-upload-by-operator` — manual-upload package + operator upload + staging QA.
+
+## G-10d YouTube embed public reflection — complete
+
+- **Doc:** `gosaki-youtube-embed-public-reflection-verification.md`
+- **Local:** convert + build → `output/gosaki-piano-g10d-verify/dist/index.html`
+- **HTML:** `gosaki-youtube-embed` + `youtube-nocookie.com/embed/Ke4F8JAQz-I`
+- **Staging:** not updated — G-10d1 operator manual upload
+- **Do not re-click G-10c Save**
 
 ## G-10c2 YouTube embed static JSON Save success — complete
 
@@ -36,7 +44,7 @@ branch: main — check git HEAD for latest commit hash
 - **approvalId:** `G-10c-gosaki-youtube-embed-static-json-write-slice`
 - **Dry-run:** UI「変更を確認」+ `executeG10cYoutubeEmbedStaticJsonWriteDryRun`
 - **Save:** operator manual Save **succeeded** (G-10c2) — `itemsAffected: 1`
-- **Public:** not reflected — G-10d convert/build/manual upload
+- **Public:** local build verified (G-10d); staging upload pending (G-10d1)
 - **`readyForAnyDbWrite: false`**
 
 ## G-10b YouTube embed read/write planning — complete

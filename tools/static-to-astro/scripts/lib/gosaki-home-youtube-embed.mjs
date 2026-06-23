@@ -9,7 +9,7 @@ import { fileURLToPath } from "node:url";
 import { isGosakiPianoFixture } from "./gosaki-about-band-profiles.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const require = createRequire(path.join(__dirname, "../../../package.json"));
+const require = createRequire(path.join(__dirname, "../../package.json"));
 const cheerio = require("cheerio");
 
 export const GOSAKI_YOUTUBE_EMBED_CONFIG_REL = "config/sites/gosaki-piano-youtube-embed.json";
@@ -69,7 +69,7 @@ export function injectYouTubeEmbedIntoHomePage(pageContent) {
   }
 
   const importComponent =
-    'import YouTubeEmbedSection from "../../components/YouTubeEmbedSection.astro";\n';
+    'import YouTubeEmbedSection from "../components/YouTubeEmbedSection.astro";\n';
   let updated = pageContent;
   if (!updated.includes("YouTubeEmbedSection")) {
     updated = updated.replace(/^---\n/m, `---\n${importComponent}`);

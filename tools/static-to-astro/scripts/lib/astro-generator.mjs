@@ -62,6 +62,7 @@ import {
   applyGosakiAboutBandProfiles,
   isGosakiPianoFixture,
 } from "./gosaki-about-band-profiles.mjs";
+import { applyGosakiAboutContent } from "./gosaki-about-content.mjs";
 import { applyGosakiHomeYouTubeEmbed } from "./gosaki-home-youtube-embed.mjs";
 import { applyGosakiScheduleDataPages } from "./gosaki-schedule-data-pages.mjs";
 import { generateGosakiFooterAstro } from "./gosaki-footer-social.mjs";
@@ -961,12 +962,17 @@ export function generateAstroProject(inputDir, outputDir, options = {}) {
   }
 
   let gosakiBandProfilesSummary = { applied: false };
+  let gosakiAboutContentSummary = { applied: false };
   let gosakiYoutubeEmbedSummary = { applied: false };
   if (isGosakiPianoFixture(siteDir)) {
     gosakiBandProfilesSummary = applyGosakiAboutBandProfiles(outDir, TOOL_ROOT);
     if (gosakiBandProfilesSummary.applied) {
       writtenPages.push(path.join(outDir, gosakiBandProfilesSummary.componentPath));
       writtenPages.push(path.join(outDir, gosakiBandProfilesSummary.dataPath));
+    }
+    gosakiAboutContentSummary = applyGosakiAboutContent(outDir, TOOL_ROOT);
+    if (gosakiAboutContentSummary.applied) {
+      writtenPages.push(path.join(outDir, gosakiAboutContentSummary.dataPath));
     }
     gosakiYoutubeEmbedSummary = applyGosakiHomeYouTubeEmbed(outDir, TOOL_ROOT);
     if (gosakiYoutubeEmbedSummary.applied) {

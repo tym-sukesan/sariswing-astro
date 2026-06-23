@@ -1,6 +1,19 @@
 Last updated: 2026-06-23
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zf. G-10h2 About HTML CMS seed JSON + convert hook — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-10h2-gosaki-about-html-content-seed-json-and-convert-hook` |
+| Doc | `gosaki-about-html-content-seed-json-and-convert-hook.md` |
+| Status | **complete** — read-only public reflection |
+| Config | `gosaki-piano-about-content.json` |
+| Hook | `gosaki-about-content.mjs` after G-8a |
+| Verify | `safeForStaticFtp: true`; about in manual-upload package |
+| **Next** | `G-10h3-gosaki-about-html-content-admin-ui` |
+| **Do not** | Save / write API / Cursor FTP |
+
 ## 0ze. G-10h1 About HTML CMS implementation preflight — complete
 
 | Item | Value |
@@ -13,7 +26,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Bands policy | non-empty HTML replaces `<BandProfilesSection />`; else G-8a fallback |
 | Hook | `gosaki-about-content.mjs` after G-8a in convert |
 | Approval ID | `G-10h-about-html-content-static-json-write-slice` |
-| **Next** | `G-10h2-gosaki-about-html-content-cms-implementation` |
+| **Next** | G-10h3 admin UI (G-10h2 complete — see 0zf) |
 | **Do not** | create JSON / hook / Save / Cursor FTP |
 
 ## 0zd. G-10h About HTML content CMS planning — complete

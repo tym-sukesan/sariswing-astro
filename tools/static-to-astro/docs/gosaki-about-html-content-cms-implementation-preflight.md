@@ -31,7 +31,9 @@ Staging About URL: `https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/ab
 ```txt
 gosakiAboutHtmlContentCmsImplementationPreflightComplete: true
 phase: G-10h1
-readyForG10h2GosakiAboutHtmlContentCmsImplementation: true
+readyForG10h2GosakiAboutHtmlContentCmsImplementation: false
+gosakiAboutHtmlContentSeedJsonAndConvertHookComplete: true
+readyForG10h3GosakiAboutHtmlContentAdminUi: true
 configJsonFileCreated: false
 convertHookImplemented: false
 adminAboutPageImplemented: false

@@ -5,12 +5,21 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-10h1-gosaki-about-html-content-cms-implementation-preflight — complete.
-Prior: G-10h planning (commit 51c36ed).
+Current phase: G-10h2-gosaki-about-html-content-seed-json-and-convert-hook — complete.
+Prior: G-10h1 preflight (commit a02eb87).
 branch: main — check git HEAD for latest commit hash
 ```
 
-**Next:** `G-10h2-gosaki-about-html-content-cms-implementation` — seed JSON + convert hook.
+**Next:** `G-10h3-gosaki-about-html-content-admin-ui` — staging admin About page.
+
+## G-10h2 About HTML CMS seed JSON + convert hook — complete
+
+- **Doc:** `gosaki-about-html-content-seed-json-and-convert-hook.md`
+- **Config:** `gosaki-piano-about-content.json` — profile + bands blocks seeded
+- **Hook:** `gosaki-about-content.mjs` — replaces profile grid + bands component
+- **Verify:** convert/build/package PASS; `safeForStaticFtp: true`
+- **Not done:** admin UI / Save / write API / FTP
+- **Cursor:** no Save / no FTP
 
 ## G-10h1 About HTML CMS implementation preflight — complete
 

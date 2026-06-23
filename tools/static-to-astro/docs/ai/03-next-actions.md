@@ -1,6 +1,21 @@
 Last updated: 2026-06-22
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0v. G-10c2 YouTube embed static JSON Save success — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-10c2-gosaki-youtube-embed-static-json-write-save-success-finalization` |
+| Doc | `gosaki-youtube-embed-static-json-write-save-success-finalization.md` |
+| Status | **complete** — operator manual Save **succeeded** |
+| Target | `gosaki-piano-youtube-embed.json` / `yt-placeholder-01` |
+| changedFields | `embedCode`, `published` |
+| videoId | `Ke4F8JAQz-I` |
+| itemsAffected | **1** |
+| Public反映 | **not done** — convert/build/manual upload pending |
+| **Next** | `G-10d-gosaki-youtube-embed-public-reflection-verification` |
+| **Do not** | re-click G-10c Save |
+
 ## 0u. G-10c1 Save API response fix — complete
 
 | Item | Value |

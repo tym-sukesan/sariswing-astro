@@ -5,9 +5,9 @@
   "items": [
     {
       "id": "yt-placeholder-01",
-      "published": false,
+      "published": true,
       "sortOrder": 10,
-      "embedCode": ""
+      "embedCode": "https://www.youtube.com/watch?v=Ke4F8JAQz-I"
     }
   ]
 }

@@ -5,13 +5,21 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-10c-gosaki-youtube-embed-static-json-write-slice-implementation — complete.
-Prior: G-10b planning (commit 88cc484); G-9k6–G-9k7b Schedule arc closed.
-branch: main
-HEAD = origin/main = 88cc484 — check git HEAD for latest commit hash
+Current phase: G-10c2-gosaki-youtube-embed-static-json-write-save-success-finalization — complete.
+Prior: G-10c/G-10c1 Save API fixes; operator Save succeeded 2026-06-23.
+branch: main — check git HEAD for latest commit hash
 ```
 
-**Next:** Operator manual Save retry (`readyForG10cManualSaveRetry`) after dev server restart.
+**Next:** `G-10d-gosaki-youtube-embed-public-reflection-verification` — convert/build + home embed verify + manual upload plan.
+
+## G-10c2 YouTube embed static JSON Save success — complete
+
+- **Doc:** `gosaki-youtube-embed-static-json-write-save-success-finalization.md`
+- **Save:** operator manual — `itemsAffected: 1`
+- **JSON:** `published: true`, `embedCode: https://www.youtube.com/watch?v=Ke4F8JAQz-I`
+- **videoId:** `Ke4F8JAQz-I`
+- **Public:** not reflected yet — G-10d
+- **Do not re-click G-10c Save**
 
 ## G-10c1 Save API response fix — complete
 
@@ -19,7 +27,7 @@ HEAD = origin/main = 88cc484 — check git HEAD for latest commit hash
 - **Incident 2:** curl GET → `FailedToLoadModuleSSR` (import path one `../` too many)
 - **Fix:** dev `injectRoute` + `../../../../lib/admin/...` + safe JSON parse
 - **curl GET verified:** 405 `application/json` `method_not_allowed`
-- **No Save/JSON write by Cursor**
+- **Operator Save:** succeeded (G-10c2) — do not re-click
 
 ## G-10c YouTube embed static JSON write slice — complete
 
@@ -27,10 +35,9 @@ HEAD = origin/main = 88cc484 — check git HEAD for latest commit hash
 - **Target:** `gosaki-piano-youtube-embed.json` / `yt-placeholder-01` / `embedCode` + `published`
 - **approvalId:** `G-10c-gosaki-youtube-embed-static-json-write-slice`
 - **Dry-run:** UI「変更を確認」+ `executeG10cYoutubeEmbedStaticJsonWriteDryRun`
-- **Save:** gated off by default; API + executor wired — **not executed**
-- **No DB write / JSON write / Save click**
+- **Save:** operator manual Save **succeeded** (G-10c2) — `itemsAffected: 1`
+- **Public:** not reflected — G-10d convert/build/manual upload
 - **`readyForAnyDbWrite: false`**
-- **Next:** G-10c final preflight → operator Save once
 
 ## G-10b YouTube embed read/write planning — complete
 

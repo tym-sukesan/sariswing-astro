@@ -130,7 +130,8 @@ Content-Type: application/json; charset=utf-8
 ```txt
 gosakiYoutubeEmbedStaticJsonSaveApiResponseFixComplete: true
 gosakiYoutubeEmbedStaticJsonSaveApiSsrLoadFixComplete: true
-readyForG10cManualSaveRetry: true
+readyForG10cManualSaveRetry: false
+readyForG10dPublicReflectionVerification: true
 cursorClickedSave: false
 cursorExecutedJsonWrite: false
 ```
@@ -140,6 +141,8 @@ cursorExecutedJsonWrite: false
 ## Next
 
 Operator: **restart `astro dev`** (injectRoute is dev-only), re-arm env, dry-run → Save once.
+
+**G-10c2 (2026-06-23):** Operator manual Save **succeeded** — `itemsAffected: 1`; `yt-placeholder-01` published with `Ke4F8JAQz-I`. See [gosaki-youtube-embed-static-json-write-save-success-finalization.md](./gosaki-youtube-embed-static-json-write-save-success-finalization.md). **Do not re-click G-10c Save.**
 
 ---
 

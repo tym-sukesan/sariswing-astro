@@ -1,8 +1,8 @@
 # Gosaki YouTube embed static JSON write slice implementation (G-10c)
 
 **Phase:** `G-10c-gosaki-youtube-embed-static-json-write-slice-implementation`  
-**Status:** **implementation complete** — dry-run UI + Save gates + server executor wired; **no Save execution in implementation phase**  
-**Date:** 2026-06-22  
+**Status:** **implementation complete** — dry-run UI + Save gates + server executor wired; **operator Save succeeded** (G-10c2)  
+**Date:** 2026-06-22 (Save success recorded 2026-06-23)  
 **Prior:** G-10b planning (commit `88cc484`)
 
 | Check | Status |
@@ -18,15 +18,18 @@ Prior: [gosaki-youtube-embed-read-and-write-planning.md](./gosaki-youtube-embed-
 
 **G-10c1 follow-up:** Manual Save attempt 1 failed (HTML 404 — API not `injectRoute` registered). See [gosaki-youtube-embed-static-json-save-api-response-fix.md](./gosaki-youtube-embed-static-json-save-api-response-fix.md).
 
+**G-10c2:** Operator manual Save **succeeded** — see [gosaki-youtube-embed-static-json-write-save-success-finalization.md](./gosaki-youtube-embed-static-json-write-save-success-finalization.md).
+
 ---
 
 ## Gates
 
 ```txt
 gosakiYoutubeEmbedStaticJsonWriteSliceImplementationComplete: true
+gosakiYoutubeEmbedStaticJsonWriteSaveSuccess: true
 phase: G-10c
-readyForG10cFinalPreflightManualSaveOnce: true
-readyForG10dPublicReflectionVerification: false
+readyForG10cFinalPreflightManualSaveOnce: false
+readyForG10dPublicReflectionVerification: true
 cursorClickedSave: false
 cursorExecutedJsonWrite: false
 ```

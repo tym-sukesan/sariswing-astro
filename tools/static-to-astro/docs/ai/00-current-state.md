@@ -3,9 +3,11 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-10e Gosaki YouTube embed section layout improvement (2026-06-23):** **complete** — local CSS/layout fix; section `max-width: 720px`, 16:9 iframe, Wix mesh breakout. Doc: `gosaki-youtube-embed-section-layout-improvement.md`. Package regenerated; `safeForStaticFtp: true`. **No FTP/upload by Cursor.** Next: **G-10e1** operator re-upload. **Do not re-click G-10c Save.**
+**G-10e1 Gosaki YouTube embed section layout reupload QA finalization (2026-06-23):** **complete** — operator manual re-upload + staging QA **PASS**; G-10e layout (`720px`, 16:9, Wix mesh breakout) **live on staging**. Doc: `gosaki-youtube-embed-section-layout-reupload-qa-finalization.md`. YouTube arc **closed** (G-10c→G-10e1). Next: **G-10f** Discography images or **G-10g** HubSpot contact (planning). **Do not re-click G-10c Save.**
 
-**G-10d2a Gosaki YouTube embed staging upload QA finalization (2026-06-23):** **complete** — operator manual upload + staging QA **PASS**; YouTube `Ke4F8JAQz-I` live on staging. Doc: `gosaki-youtube-embed-staging-upload-qa-finalization.md`. Known UI (too small) addressed in G-10e. **Do not re-click G-10c Save.**
+**G-10e Gosaki YouTube embed section layout improvement (2026-06-23):** **complete** — commit `9dabcb4`; local CSS/layout fix; operator re-upload QA PASS (G-10e1). Doc: `gosaki-youtube-embed-section-layout-improvement.md`. **Do not re-click G-10c Save.**
+
+**G-10d2a Gosaki YouTube embed staging upload QA finalization (2026-06-23):** **complete** — operator manual upload + staging QA **PASS**; YouTube `Ke4F8JAQz-I` live on staging. Doc: `gosaki-youtube-embed-staging-upload-qa-finalization.md`. Layout issue fixed in G-10e/G-10e1. **Do not re-click G-10c Save.**
 
 **G-10d2 Gosaki YouTube embed staging manual upload (2026-06-23):** **complete** — commit `5598777` preflight; operator upload succeeded (G-10d2a).
 

@@ -1,16 +1,17 @@
 # Gosaki YouTube embed section layout improvement (G-10e)
 
 **Phase:** `G-10e-gosaki-youtube-embed-section-layout-improvement`  
-**Status:** **complete** — local implementation + convert + build + manual-upload package verified  
+**Status:** **complete** — local implementation + convert + build + manual-upload package verified; **G-10e1 staging re-upload QA PASS**  
 **Date:** 2026-06-23  
-**Prior:** G-10d2a staging QA **PASS**; known UI issue: YouTube section too small
+**Prior:** G-10d2a staging QA **PASS**; known UI issue: YouTube section too small  
+**G-10e commit:** `9dabcb4`
 
 | Check | Status |
 | --- | --- |
 | Local implementation | **yes** |
 | Local convert / build | **yes** |
 | manual-upload package | **yes** |
-| Operator FTP upload | **no** (next: G-10e1) |
+| Operator FTP re-upload (G-10e1) | **yes** — staging QA **PASS** |
 | Cursor FTP / deploy | **no** |
 | `workflow_dispatch` | **no** |
 | JSON write / Save click | **no** |
@@ -19,6 +20,7 @@
 Prior docs:
 
 - [gosaki-youtube-embed-staging-upload-qa-finalization.md](./gosaki-youtube-embed-staging-upload-qa-finalization.md) (G-10d2a)
+- [gosaki-youtube-embed-section-layout-reupload-qa-finalization.md](./gosaki-youtube-embed-section-layout-reupload-qa-finalization.md) (G-10e1)
 
 ---
 
@@ -26,8 +28,12 @@ Prior docs:
 
 ```txt
 gosakiYoutubeEmbedSectionLayoutImprovementComplete: true
+gosakiYoutubeEmbedSectionLayoutStagingReflected: true
 phase: G-10e
-readyForG10e1YoutubeEmbedSectionLayoutOperatorReupload: true
+readyForG10e1YoutubeEmbedSectionLayoutOperatorReupload: false
+gosakiYoutubeEmbedSectionLayoutReuploadQaFinalizationComplete: true
+readyForG10fDiscographyAlbumImagesPlanning: true
+readyForG10gContactHubspotFormPlanning: true
 readyForAnyFutureFtpApply: false
 ftpAutoDeployUsed: false
 workflowDispatchExecuted: false
@@ -132,20 +138,35 @@ Package path: `tools/static-to-astro/output/manual-upload/gosaki-piano/public-di
 
 ---
 
-## 6. Responsive QA plan (operator, G-10e1)
+## 6. Staging re-upload QA (operator, G-10e1 — PASS)
 
-After operator re-upload:
+**Doc:** [gosaki-youtube-embed-section-layout-reupload-qa-finalization.md](./gosaki-youtube-embed-section-layout-reupload-qa-finalization.md)
 
-1. PC ≥1024px — YouTube card ~720px wide, centered, 16:9 iframe.
-2. Tablet ~768px — full content width minus gutter, no clip.
-3. Mobile ≤390px — no horizontal scroll; iframe fills card width.
-4. About / Schedule / Contact — no major regression.
+Operator manual re-upload from `output/manual-upload/gosaki-piano/public-dist/` to `/cms-kit-staging/gosaki-piano/` — overwrite only; no delete/mirror.
+
+| # | Check | Result |
+| --- | --- | --- |
+| 1 | Top page displays | **OK** |
+| 2 | YouTube section visible | **OK** |
+| 3 | Video displays (`Ke4F8JAQz-I`) | **OK** |
+| 4 | Layout size improvement vs G-10d2a | **OK** |
+| 5 | Larger, natural centered iframe | **OK** |
+| 6 | No major layout breakage | **OK** |
+
+**Staging URL:** `https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/`
+
+G-10e layout fixes confirmed live: Wix mesh breakout, `max-width: 720px`, `aspect-ratio: 16 / 9`, mobile `max-width: 100%`.
 
 ---
 
-## 7. Next phase
+## 7. Next phase candidates
 
-**G-10e1-gosaki-youtube-embed-section-layout-operator-reupload** — operator manual upload of updated `public-dist/` to `/cms-kit-staging/gosaki-piano/` (no Cursor FTP).
+| Option | Phase | Goal |
+| --- | --- | --- |
+| **A (recommended)** | `G-10f-gosaki-discography-album-images-planning` | Real discography album artwork on staging |
+| **B (alternate)** | `G-10g-gosaki-contact-hubspot-form-planning` | HubSpot or mailto-first contact form |
+
+YouTube embed public + layout arc **closed** (G-10c → G-10e1).
 
 ---
 

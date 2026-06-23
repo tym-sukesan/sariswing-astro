@@ -5,19 +5,29 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-10e-gosaki-youtube-embed-section-layout-improvement — complete.
-Prior: G-10d2a staging QA PASS (commit 1a8b81e); G-10e local layout fix 2026-06-23.
+Current phase: G-10e1-gosaki-youtube-embed-section-layout-reupload-qa-finalization — complete.
+Prior: G-10e layout fix (commit 9dabcb4); operator re-upload + staging QA PASS 2026-06-23.
 branch: main — check git HEAD for latest commit hash
 ```
 
-**Next:** `G-10e1-gosaki-youtube-embed-section-layout-operator-reupload` — operator manual re-upload of updated package (no Cursor FTP).
+**Next:** Pick one — `G-10f-gosaki-discography-album-images-planning` (recommended) **or** `G-10g-gosaki-contact-hubspot-form-planning`.
+
+## G-10e1 YouTube embed layout reupload QA — complete
+
+- **Doc:** `gosaki-youtube-embed-section-layout-reupload-qa-finalization.md`
+- **Staging:** `https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/` — layout improvement **PASS**
+- **QA:** operator 6 checks **PASS**; larger centered iframe; `Ke4F8JAQz-I` visible
+- **Upload:** operator manual overwrite only; no delete/mirror
+- **Cursor:** no FTP / upload
+- **YouTube arc closed:** G-10c → G-10e1
+- **Do not re-click G-10c Save**
 
 ## G-10e YouTube embed section layout improvement — complete
 
 - **Doc:** `gosaki-youtube-embed-section-layout-improvement.md`
 - **Fix:** section `max-width: 720px`, 16:9 iframe, Wix schedule mesh breakout (G-10e CSS)
-- **Package:** `output/manual-upload/gosaki-piano/public-dist/` regenerated; `verify:manual-upload` PASS
-- **Staging:** not re-uploaded yet — operator G-10e1
+- **Commit:** `9dabcb4`
+- **Staging:** layout improvement **live** (G-10e1 operator re-upload QA PASS)
 - **Cursor:** no FTP / upload / Save click
 - **Do not re-click G-10c Save**
 

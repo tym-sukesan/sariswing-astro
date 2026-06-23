@@ -1,17 +1,29 @@
 Last updated: 2026-06-23
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zi. G-10h4b About profile HTML static JSON write execution — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-10h4b-gosaki-about-profile-html-static-json-write-execution` |
+| Doc | `gosaki-about-profile-html-static-json-write-execution.md` |
+| Block | `about-profile-html` / field `html` only |
+| Change | `<!-- G-10h4b profile save test -->` ×1 at profile html tail |
+| approvalId | `G-10h4a-about-profile-html-static-json-write-dry-run` |
+| Save env | `G10H4A_ABOUT_PROFILE_HTML_SAVE_ENABLED=true` (one-time arm only) |
+| **Next** | `G-10h4c-gosaki-about-bands-html-static-json-write-dry-run` |
+| **Do not** | re-click G-10h4b Save / bands write / Cursor FTP |
+
 ## 0zh. G-10h4a About profile HTML dry-run write slice — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-10h4a-gosaki-about-profile-html-static-json-write-dry-run` |
 | Doc | `gosaki-about-profile-html-static-json-write-dry-run.md` |
+| Commit | `c126efe` |
 | Block | `about-profile-html` / field `html` only |
-| approvalId | `G-10h4a-about-profile-html-static-json-write-dry-run` |
-| Save env | `G10H4A_ABOUT_PROFILE_HTML_SAVE_ENABLED=false` (default) |
-| **Next** | `G-10h4b-gosaki-about-profile-html-static-json-write-execution` |
-| **Do not** | non-dry-run Save / JSON write / Cursor FTP |
+| **Next** | G-10h4c (G-10h4b execution complete — see 0zi) |
+| **Do not** | duplicate G-10h4b Save without rollback |
 
 ## 0zg. G-10h3 About HTML CMS admin read-only preview — complete
 

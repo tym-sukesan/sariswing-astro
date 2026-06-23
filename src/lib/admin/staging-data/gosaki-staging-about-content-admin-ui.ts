@@ -10,7 +10,11 @@ import {
   parseG10h4aDryRunApiJsonResponse,
   type G10h4aDryRunApiJsonBody,
 } from "../staging-write/gosaki-about-profile-html-static-json-write-api";
-import { getG10h4aAboutProfileHtmlStaticJsonWriteConfig } from "../staging-write/gosaki-about-profile-html-static-json-write-config";
+import {
+  evaluateG10h4aAboutProfileHtmlSaveUiGate,
+  getG10h4aAboutProfileHtmlStaticJsonWriteConfig,
+} from "../staging-write/gosaki-about-profile-html-static-json-write-config";
+import { executeG10h4bAboutProfileHtmlStaticJsonClientSave } from "../staging-write/gosaki-about-profile-html-static-json-write-client-save";
 import {
   G10H4A_ABOUT_PROFILE_HTML_STATIC_JSON_WRITE_APPROVAL_ID,
   G10H4A_SITE_SLUG,
@@ -19,6 +23,8 @@ import {
 
 let lastDryRunBody: G10h4aDryRunApiJsonBody | null = null;
 let dryRunInFlight = false;
+let saveInFlight = false;
+let stagingAuthSignedIn = false;
 
 function escapeHtml(value: string): string {
   return value
@@ -58,13 +64,64 @@ function wireReadOnlyBandsUi(): void {
     });
 }
 
-function wireSaveDisabled(): void {
+function setSaveButtonNote(message: string | null): void {
+  const note = document.getElementById("gosaki-about-profile-save-note");
+  if (!note) return;
+  note.textContent =
+    message ??
+    "※ dry-run 成功後、env が有効な場合のみ Save できます。about-bands-html は対象外です。";
+}
+
+function updateSaveButtonState(body: G10h4aDryRunApiJsonBody | null): void {
   const saveButton = document.getElementById(
     "gosaki-about-profile-save-btn",
   ) as HTMLButtonElement | null;
   if (!saveButton) return;
-  saveButton.disabled = true;
-  saveButton.setAttribute("aria-disabled", "true");
+
+  const gate = evaluateG10h4aAboutProfileHtmlSaveUiGate({
+    signedIn: stagingAuthSignedIn,
+    dryRunResult: body,
+  });
+
+  saveButton.disabled = !gate.enabled || saveInFlight;
+  saveButton.setAttribute("aria-disabled", saveButton.disabled ? "true" : "false");
+
+  if (gate.enabled && !saveInFlight) {
+    saveButton.textContent = "保存する";
+    saveButton.title = "about-profile-html の html のみ JSON に保存します";
+    setSaveButtonNote("dry-run OK — Save を1回だけ実行できます。");
+    return;
+  }
+
+  const config = getG10h4aAboutProfileHtmlStaticJsonWriteConfig();
+  if (!config.saveEnabled) {
+    saveButton.textContent = "保存する（env disabled）";
+    saveButton.title = gate.reason;
+    setSaveButtonNote("保存は無効です（G10H4A_ABOUT_PROFILE_HTML_SAVE_ENABLED=false）。");
+    return;
+  }
+
+  if (!body?.ok) {
+    saveButton.textContent = "保存する（dry-run 未確認）";
+    saveButton.title = gate.reason;
+    setSaveButtonNote("先に dry-run を成功させてください。");
+    return;
+  }
+
+  if ((body.changedFields ?? []).length === 0) {
+    saveButton.textContent = "保存する（変更なし）";
+    saveButton.title = gate.reason;
+    setSaveButtonNote("変更がありません。保存できません。");
+    return;
+  }
+
+  saveButton.textContent = "保存する（不可）";
+  saveButton.title = gate.reason;
+  setSaveButtonNote(gate.reason || "Save 条件を満たしていません。");
+}
+
+function wireSaveDisabled(): void {
+  updateSaveButtonState(null);
 }
 
 function renderList(items: string[]): string {
@@ -129,9 +186,14 @@ function renderDryRunResult(body: G10h4aDryRunApiJsonBody, httpOk: boolean): voi
 
   el.classList.add("gosaki-schedule-edit-dry-run--ok", "gosaki-schedule-edit-dry-run--ready");
   const safety = body.htmlSafety;
-  const saveNote = body.saveAllowed
-    ? "Save env は有効ですが、G-10h4a では non-dry-run は未実装です。"
-    : "保存は無効です。dry-run のみ完了しました。";
+  const saveNote =
+    body.saveReadiness === "ready_to_save"
+      ? "保存準備OK。env が有効な場合は Save できます。"
+      : body.saveAllowed
+        ? "Save env は有効ですが、dry-run 条件を確認してください。"
+        : "保存は無効です。dry-run のみ完了しました。";
+
+  updateSaveButtonState(body);
 
   el.innerHTML = `
     <h3 class="gosaki-schedule-edit-dry-run__title">dry-run 結果</h3>
@@ -166,6 +228,66 @@ function renderDryRunResult(body: G10h4aDryRunApiJsonBody, httpOk: boolean): voi
     }
     <p class="gosaki-schedule-edit-dry-run__note">この確認では JSON ファイルは変更されません。</p>
   `;
+}
+
+function renderSaveResult(outcome: {
+  ok: boolean;
+  blocksAffected?: number;
+  changedFields?: string[];
+  errorCode?: string;
+  errorMessage?: string;
+}): void {
+  const el = document.getElementById("gosaki-about-profile-save-result");
+  if (!el) return;
+  el.hidden = false;
+
+  if (outcome.ok) {
+    el.className = "gosaki-schedule-edit-save-result gosaki-schedule-edit-save-result--ok";
+    el.innerHTML = `
+      <h3 class="gosaki-schedule-edit-save-result__title">保存結果</h3>
+      <p class="gosaki-schedule-edit-save-result__message">
+        JSON への保存に成功しました（blocksAffected: ${String(outcome.blocksAffected ?? 1)}）。
+      </p>
+      <p class="gosaki-schedule-edit-dry-run__note">changedFields: ${escapeHtml((outcome.changedFields ?? ["html"]).join(", "))}</p>
+      <p class="gosaki-schedule-edit-dry-run__note">公開反映には convert / build / manual upload が別途必要です。</p>
+    `;
+    return;
+  }
+
+  el.className = "gosaki-schedule-edit-save-result gosaki-schedule-edit-save-result--error";
+  el.innerHTML = `
+    <h3 class="gosaki-schedule-edit-save-result__title">保存結果</h3>
+    <p class="gosaki-schedule-edit-save-result__message">保存できませんでした。</p>
+    <p><code>${escapeHtml(outcome.errorCode ?? "unknown")}</code>: ${escapeHtml(outcome.errorMessage ?? "")}</p>
+  `;
+}
+
+async function refreshStagingAuthSignedIn(): Promise<boolean> {
+  const authRequired =
+    import.meta.env.ENABLE_ADMIN_STAGING_AUTH === "true" ||
+    import.meta.env.PUBLIC_ENABLE_ADMIN_STAGING_AUTH === "true";
+  if (!authRequired) {
+    stagingAuthSignedIn = true;
+    updateSaveButtonState(lastDryRunBody);
+    return true;
+  }
+
+  const url = String(import.meta.env.PUBLIC_SUPABASE_URL ?? "").trim();
+  const anonKey = String(import.meta.env.PUBLIC_SUPABASE_ANON_KEY ?? "").trim();
+  if (!url || !anonKey) {
+    stagingAuthSignedIn = false;
+    updateSaveButtonState(lastDryRunBody);
+    return false;
+  }
+
+  try {
+    const auth = await getStagingAuthSessionDetails(url, anonKey);
+    stagingAuthSignedIn = isSignedInStagingAuth(auth);
+  } catch {
+    stagingAuthSignedIn = false;
+  }
+  updateSaveButtonState(lastDryRunBody);
+  return stagingAuthSignedIn;
 }
 
 async function getBearerToken(): Promise<string | null> {
@@ -246,6 +368,7 @@ async function runProfileDryRun(): Promise<void> {
 
     lastDryRunBody = parsed.body;
     renderDryRunResult(parsed.body, parsed.status < 400);
+    await refreshStagingAuthSignedIn();
   } catch (error) {
     renderDryRunResult(
       {
@@ -263,6 +386,63 @@ async function runProfileDryRun(): Promise<void> {
   }
 }
 
+async function runProfileSave(): Promise<void> {
+  const config = getG10h4aAboutProfileHtmlStaticJsonWriteConfig();
+  if (!config.saveEnabled) {
+    window.alert("保存は無効です（G10H4A_ABOUT_PROFILE_HTML_SAVE_ENABLED=false）。");
+    return;
+  }
+
+  if (!lastDryRunBody?.ok) {
+    window.alert("先に dry-run を成功させてください。");
+    return;
+  }
+
+  const gate = evaluateG10h4aAboutProfileHtmlSaveUiGate({
+    signedIn: stagingAuthSignedIn,
+    dryRunResult: lastDryRunBody,
+  });
+  if (!gate.enabled) {
+    window.alert(gate.reason);
+    return;
+  }
+
+  if (
+    !window.confirm(
+      "about-profile-html の html のみ JSON に保存します。よろしいですか？（1 block のみ更新）",
+    )
+  ) {
+    return;
+  }
+
+  saveInFlight = true;
+  updateSaveButtonState(lastDryRunBody);
+
+  const url = String(import.meta.env.PUBLIC_SUPABASE_URL ?? "").trim();
+  const anonKey = String(import.meta.env.PUBLIC_SUPABASE_ANON_KEY ?? "").trim();
+
+  const outcome = await executeG10h4bAboutProfileHtmlStaticJsonClientSave({
+    url,
+    anonKey,
+    formValues: { html: readProfileHtml() },
+    saveBinding: {
+      changedFields: [...(lastDryRunBody.changedFields ?? [])],
+      dryRunOk: lastDryRunBody.ok === true,
+      saveReadiness: lastDryRunBody.saveReadiness,
+    },
+  });
+
+  saveInFlight = false;
+  renderSaveResult({
+    ok: outcome.ok,
+    blocksAffected: outcome.blocksAffected,
+    changedFields: outcome.changedFields,
+    errorCode: outcome.errorCode,
+    errorMessage: outcome.errorMessage,
+  });
+  updateSaveButtonState(lastDryRunBody);
+}
+
 export function initGosakiStagingAboutContentAdminUi(): void {
   const root = document.getElementById("gosaki-about-operator");
   if (!root) return;
@@ -276,6 +456,7 @@ export function initGosakiStagingAboutContentAdminUi(): void {
     lastDryRunBody = null;
     const result = document.getElementById("gosaki-about-profile-dry-run-result");
     if (result) result.hidden = true;
+    updateSaveButtonState(null);
   });
 
   document.getElementById("gosaki-about-profile-dry-run-btn")?.addEventListener("click", () => {
@@ -283,15 +464,11 @@ export function initGosakiStagingAboutContentAdminUi(): void {
   });
 
   document.getElementById("gosaki-about-profile-save-btn")?.addEventListener("click", () => {
-    const config = getG10h4aAboutProfileHtmlStaticJsonWriteConfig();
-    window.alert(
-      config.saveEnabled
-        ? "G-10h4a では non-dry-run Save は未実装です。"
-        : "保存は無効です（G10H4A_ABOUT_PROFILE_HTML_SAVE_ENABLED=false）。",
-    );
+    void runProfileSave();
   });
 
   renderProfileLivePreview();
+  void refreshStagingAuthSignedIn();
 }
 
 if (typeof document !== "undefined") {

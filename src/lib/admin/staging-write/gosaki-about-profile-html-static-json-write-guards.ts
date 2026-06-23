@@ -17,6 +17,12 @@ import {
   type G10h4aProfileHtmlFormValues,
 } from "./gosaki-about-profile-html-static-json-write-types";
 
+export function assertG10h4aBlocksAffectedExactlyOne(blocksAffected: number): void {
+  if (blocksAffected !== 1) {
+    throw new Error(`blocksAffected must be 1 (got ${blocksAffected})`);
+  }
+}
+
 export function assertG10h4aApproval(
   approvalId: string,
 ): asserts approvalId is typeof G10H4A_ABOUT_PROFILE_HTML_STATIC_JSON_WRITE_APPROVAL_ID {

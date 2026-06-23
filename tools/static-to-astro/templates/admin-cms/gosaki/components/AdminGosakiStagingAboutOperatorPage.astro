@@ -32,15 +32,15 @@ const bandsView =
 
 const g10h4aPageConfig = resolveG10h4aSaveButtonPageServerConfig(import.meta.env);
 const saveDisabledNote = g10h4aPageConfig.saveButtonSaveEnabled
-  ? "Save env は有効ですが、G-10h4a では non-dry-run は未実装です。"
-  : "保存は無効です（G10H4A_ABOUT_PROFILE_HTML_SAVE_ENABLED=false）。JSON ファイルは変更されません。";
+  ? "Save env は有効です。dry-run 成功後、about-profile-html の html のみ1回 Save できます。"
+  : "保存は無効です（G10H4A_ABOUT_PROFILE_HTML_SAVE_ENABLED=false）。dry-run のみ可能です。";
 ---
 
 <section
   id="gosaki-about-operator"
   class="admin-gosaki-about-operator admin-page admin-page--wide admin-prototype-section"
   data-section="admin-about"
-  data-phase="G-10h4a-gosaki-about-profile-html-static-json-write-dry-run"
+  data-phase="G-10h4b-gosaki-about-profile-html-static-json-write-execution"
   aria-label="About HTML管理"
 >
   <div
@@ -58,7 +58,7 @@ const saveDisabledNote = g10h4aPageConfig.saveButtonSaveEnabled
       <a class="admin-gosaki-back-link" href={GOSAKI_STAGING_ADMIN_BASE}>← 管理画面トップへ</a>
       <h1 class="admin-gosaki-page-header__title">About HTML</h1>
       <p class="admin-gosaki-page-header__subtitle">
-        /about/ の本文 HTML ブロックを編集・確認する画面です（G-10h4a dry-run）。
+        /about/ の本文 HTML ブロックを編集・確認する画面です（G-10h4b profile Save）。
       </p>
     </div>
     <button
@@ -72,8 +72,7 @@ const saveDisabledNote = g10h4aPageConfig.saveButtonSaveEnabled
   </header>
 
   <p class="admin-form__hint admin-static-notice" role="note">
-    <strong>about-profile-html</strong> のみ dry-run 確認できます。実 Save は未実装です。JSON
-    ファイルは dry-run では変更されません。
+    <strong>about-profile-html</strong> のみ dry-run / Save 対象です。about-bands-html は今回の保存対象外です。
   </p>
 
   <p class="admin-gosaki-status-bar admin-gosaki-status-bar--soft" role="status">
@@ -222,16 +221,21 @@ const saveDisabledNote = g10h4aPageConfig.saveButtonSaveEnabled
             data-gosaki-about-save-disabled
             disabled
           >
-            保存する（未実装 / env disabled）
+            保存する（env disabled）
           </button>
         </div>
         <p class="admin-gosaki-save-note" id="gosaki-about-profile-save-note" role="note">
-          ※ dry-run のみ実行できます。実 JSON 書き込みは行いません。
+          ※ dry-run 成功後、env が有効な場合のみ Save できます。
         </p>
 
         <div
           id="gosaki-about-profile-dry-run-result"
           class="gosaki-schedule-edit-dry-run"
+          hidden
+        />
+        <div
+          id="gosaki-about-profile-save-result"
+          class="gosaki-schedule-edit-save-result"
           hidden
         />
       </section>

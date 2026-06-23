@@ -37,6 +37,37 @@ export interface G10h4aAboutProfileHtmlStaticJsonWriteConfig {
   blocksAffectedMustBeOne: true;
 }
 
+export function evaluateG10h4aAboutProfileHtmlSaveUiGate(input: {
+  signedIn: boolean;
+  dryRunResult: {
+    ok: boolean;
+    saveReadiness?: string;
+    changedFields?: string[];
+  } | null;
+  env?: ImportMetaEnv;
+}): { enabled: boolean; reason: string } {
+  const config = getG10h4aAboutProfileHtmlStaticJsonWriteConfig(input.env ?? import.meta.env);
+  if (!config.saveEnabled) {
+    return {
+      enabled: false,
+      reason: config.defaultDisabledReason,
+    };
+  }
+  if (!input.signedIn) {
+    return { enabled: false, reason: "Staging admin session required." };
+  }
+  if (!input.dryRunResult?.ok) {
+    return { enabled: false, reason: "Dry-run must succeed before Save." };
+  }
+  if (input.dryRunResult.saveReadiness !== "ready_to_save") {
+    return { enabled: false, reason: "Save readiness not satisfied." };
+  }
+  if ((input.dryRunResult.changedFields ?? []).length === 0) {
+    return { enabled: false, reason: "No changedFields — Save blocked." };
+  }
+  return { enabled: true, reason: "" };
+}
+
 export function getG10h4aAboutProfileHtmlStaticJsonWriteConfig(
   env: ImportMetaEnv = import.meta.env,
 ): G10h4aAboutProfileHtmlStaticJsonWriteConfig {

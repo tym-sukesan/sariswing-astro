@@ -29,7 +29,9 @@ Admin URL (local dev): `/__admin-staging-shell/musician-basic/admin/about/`
 ```txt
 gosakiAboutHtmlContentAdminReadonlyPreviewComplete: true
 phase: G-10h3
-readyForG10h4GosakiAboutHtmlContentStaticJsonWrite: true
+readyForG10h4GosakiAboutHtmlContentStaticJsonWrite: false
+gosakiAboutProfileHtmlStaticJsonWriteDryRunComplete: true
+readyForG10h4bGosakiAboutProfileHtmlStaticJsonWriteExecution: true
 adminAboutPageImplemented: true
 adminAboutPageReadOnly: true
 staticJsonWriteImplemented: false

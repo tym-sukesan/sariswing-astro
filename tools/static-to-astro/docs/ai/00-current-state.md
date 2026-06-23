@@ -3,9 +3,11 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-10f Gosaki discography album images planning (2026-06-23):** **complete** — read-only investigation; 4 releases; public HTML uses Wix CDN (no local images); admin JSON `coverImage` empty. Recommended: **E+B** self-hosted swap via JSON + convert hook. Doc: `gosaki-discography-album-images-planning.md`. **No image/JSON/FTP changes.** Next: **G-10f1** acquisition preflight.
+**G-10h Gosaki About HTML content CMS planning (2026-06-23):** **complete** — Sariswing `site_pages` textarea model mapped to Gosaki static JSON (2 blocks: profile + bands HTML). Doc: `gosaki-about-html-content-cms-planning.md`. PHOTO placeholder = missing `public/images/bands/*`. **No implementation.** Next: **G-10h1**. G-10f Discography **deferred**.
 
-**G-10e1 Gosaki YouTube embed section layout reupload QA finalization (2026-06-23):** **complete** — commit `d83ae32`; operator re-upload + staging QA **PASS**. Doc: `gosaki-youtube-embed-section-layout-reupload-qa-finalization.md`. YouTube arc **closed**. **Do not re-click G-10c Save.**
+**G-10f Gosaki discography album images planning (2026-06-23):** **complete** — commit `ed50a9b`; **deferred** (operator priority → About). Doc: `gosaki-discography-album-images-planning.md`.
+
+**G-10e1 Gosaki YouTube embed section layout reupload QA finalization (2026-06-23):** **complete** — commit `d83ae32`. YouTube arc **closed**. **Do not re-click G-10c Save.**
 
 **G-10e Gosaki YouTube embed section layout improvement (2026-06-23):** **complete** — commit `9dabcb4`. Doc: `gosaki-youtube-embed-section-layout-improvement.md`.
 

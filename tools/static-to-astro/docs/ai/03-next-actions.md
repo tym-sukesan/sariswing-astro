@@ -1,18 +1,35 @@
 Last updated: 2026-06-23
 Project: Static-to-Astro CMS / Musician CMS Kit
 
-## 0zc. G-10f Discography album images planning — complete
+## 0zd. G-10h About HTML content CMS planning — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-10h-gosaki-about-html-content-cms-planning` |
+| Doc | `gosaki-about-html-content-cms-planning.md` |
+| Status | **complete** — planning only |
+| Target | `/about/` — profile Wix block + Bands / Projects HTML |
+| Sariswing ref | `site_pages` + textarea + preview (Gosaki → static JSON) |
+| PHOTO placeholder | `BandProfilesSection` — missing `public/images/bands/*.jpg` |
+| Recommended | **2 HTML blocks** in `gosaki-piano-about-content.json` + G-10c write pattern |
+| **Next** | `G-10h1-gosaki-about-html-content-cms-implementation-preflight` |
+| Deferred | G-10f Discography images |
+| **Do not** | implement / JSON write / Cursor FTP |
+
+## 0zc. G-10f Discography album images planning — complete (deferred)
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-10f-gosaki-discography-album-images-planning` |
 | Doc | `gosaki-discography-album-images-planning.md` |
-| Status | **complete** — read-only investigation + strategy |
+| Status | **complete** — read-only investigation |
+| **Priority** | **deferred** — operator shifted to About CMS (G-10h) |
+| **Resume when** | About CMS v1 live or operator requests discography |
 | Releases | 4 (`continuous`, `skylark`, `about-us`, `ja-jaaaaan`) |
 | Public images | Wix CDN in HTML — **0 local** in package |
 | Admin `coverImage` | **empty** on all 4 → 「準備中」placeholder |
 | Recommended | **E+B** — JSON paths + `public/images/discography/` + convert img rewrite |
-| **Next** | `G-10f1-gosaki-discography-album-images-acquisition-preflight` |
+| **Next** | resume at `G-10f1` when operator re-prioritizes |
 | **Do not** | image mutation / JSON write / Cursor FTP |
 
 ## 0zb. G-10e1 YouTube embed layout reupload QA — complete

@@ -5,14 +5,25 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-10f-gosaki-discography-album-images-planning — complete.
-Prior: G-10e1 YouTube layout QA (commit d83ae32); YouTube arc closed.
+Current phase: G-10h-gosaki-about-html-content-cms-planning — complete.
+Prior: G-10f Discography planning (ed50a9b); G-10e1 YouTube closed (d83ae32).
 branch: main — check git HEAD for latest commit hash
 ```
 
-**Next:** `G-10f1-gosaki-discography-album-images-acquisition-preflight` — operator assets or approved Wix CDN download.
+**Next:** `G-10h1-gosaki-about-html-content-cms-implementation-preflight`
 
-## G-10f Discography album images planning — complete
+## G-10h About HTML content CMS planning — complete
+
+- **Doc:** `gosaki-about-html-content-cms-planning.md`
+- **Staging:** `https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/about/`
+- **Structure:** Wix profile (`#comp-lol1i5l0`) + injected `BandProfilesSection`
+- **PHOTO:** 5× `band-profile__placeholder` — no files in `public/images/bands/`
+- **Recommended:** 2-block static JSON (`about-profile-html`, `about-bands-html`); textarea + preview; G-10c Save pattern
+- **Not Sariswing:** no Supabase `site_pages` for Gosaki v1
+- **Deferred:** G-10f Discography
+- **Cursor:** no implementation / JSON / FTP
+
+## G-10f Discography album images — planning complete (deferred)
 
 - **Doc:** `gosaki-discography-album-images-planning.md`
 - **Public:** `/discography/` = Wix HTML; 4 jackets via **wixstatic.com** (not self-hosted)

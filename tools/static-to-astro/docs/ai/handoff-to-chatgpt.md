@@ -5,12 +5,23 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-10h-gosaki-about-html-content-cms-planning — complete.
-Prior: G-10f Discography planning (ed50a9b); G-10e1 YouTube closed (d83ae32).
+Current phase: G-10h1-gosaki-about-html-content-cms-implementation-preflight — complete.
+Prior: G-10h planning (commit 51c36ed).
 branch: main — check git HEAD for latest commit hash
 ```
 
-**Next:** `G-10h1-gosaki-about-html-content-cms-implementation-preflight`
+**Next:** `G-10h2-gosaki-about-html-content-cms-implementation` — seed JSON + convert hook.
+
+## G-10h1 About HTML CMS implementation preflight — complete
+
+- **Doc:** `gosaki-about-html-content-cms-implementation-preflight.md`
+- **Config:** `gosaki-piano-about-content.json` — schema fixed; **file not created**
+- **Profile anchor:** grid container inner under `#comp-lol1i5l0` (heading + bio + portrait)
+- **Bands:** HTML replaces `BandProfilesSection` when non-empty; else G-8a fallback
+- **Hook:** `gosaki-about-content.mjs` after `applyGosakiAboutBandProfiles`
+- **Write:** approval `G-10h-about-html-content-static-json-write-slice`; 1 block / Save
+- **Images:** `public/images/bands/{band-id}.jpg`
+- **Cursor:** no implementation / JSON / FTP
 
 ## G-10h About HTML content CMS planning — complete
 

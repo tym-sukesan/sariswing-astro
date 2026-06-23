@@ -21,6 +21,7 @@ Prior docs:
 - [gosaki-about-band-profiles-section.md](./gosaki-about-band-profiles-section.md) (G-8a)
 - [gosaki-youtube-embed-static-json-write-slice-implementation.md](./gosaki-youtube-embed-static-json-write-slice-implementation.md) (G-10c)
 - [gosaki-discography-album-images-planning.md](./gosaki-discography-album-images-planning.md) (G-10f — deferred)
+- [gosaki-about-html-content-cms-implementation-preflight.md](./gosaki-about-html-content-cms-implementation-preflight.md) (G-10h1)
 
 ---
 
@@ -29,7 +30,9 @@ Prior docs:
 ```txt
 gosakiAboutHtmlContentCmsPlanningComplete: true
 phase: G-10h
-readyForG10h1GosakiAboutHtmlContentCmsImplementationPreflight: true
+readyForG10h1GosakiAboutHtmlContentCmsImplementationPreflight: false
+gosakiAboutHtmlContentCmsImplementationPreflightComplete: true
+readyForG10h2GosakiAboutHtmlContentCmsImplementation: true
 gosakiDiscographyAlbumImagesDeferred: true
 cursorImplementationExecuted: false
 cursorImageFileMutationExecuted: false
@@ -307,11 +310,12 @@ HubSpot implementation = **G-10g** (unchanged from prior next-phase list).
 
 | Phase | Goal |
 | --- | --- |
-| **G-10h1** | Implementation preflight — seed JSON, anchor map, approval IDs, rollback |
-| **G-10h2** | Config + convert hook + optional band images drop (operator assets) |
-| **G-10h3** | Staging admin About page + dry-run UI |
-| **G-10h4** | Static JSON write slice (one block first, then second) |
+| **G-10h1** | Implementation preflight — **complete** → [gosaki-about-html-content-cms-implementation-preflight.md](./gosaki-about-html-content-cms-implementation-preflight.md) |
+| **G-10h2** | Config seed + `gosaki-about-content.mjs` convert hook |
+| **G-10h3** | Staging admin About UI |
+| **G-10h4** | Static JSON write slice (profile block first) |
 | **G-10h5** | Package verify + operator re-upload |
+| Deferred | G-10f Discography, G-10g HubSpot |
 
 ---
 

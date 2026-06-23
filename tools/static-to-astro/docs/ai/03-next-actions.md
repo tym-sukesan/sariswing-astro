@@ -1,6 +1,21 @@
 Last updated: 2026-06-23
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0ze. G-10h1 About HTML CMS implementation preflight — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-10h1-gosaki-about-html-content-cms-implementation-preflight` |
+| Doc | `gosaki-about-html-content-cms-implementation-preflight.md` |
+| Status | **complete** — design fixed; no implementation |
+| Config path | `gosaki-piano-about-content.json` (**not created yet**) |
+| Profile anchor | `[data-mesh-id="comp-lol1i5l0inlineContent-gridContainer"]` inner |
+| Bands policy | non-empty HTML replaces `<BandProfilesSection />`; else G-8a fallback |
+| Hook | `gosaki-about-content.mjs` after G-8a in convert |
+| Approval ID | `G-10h-about-html-content-static-json-write-slice` |
+| **Next** | `G-10h2-gosaki-about-html-content-cms-implementation` |
+| **Do not** | create JSON / hook / Save / Cursor FTP |
+
 ## 0zd. G-10h About HTML content CMS planning — complete
 
 | Item | Value |
@@ -12,7 +27,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Sariswing ref | `site_pages` + textarea + preview (Gosaki → static JSON) |
 | PHOTO placeholder | `BandProfilesSection` — missing `public/images/bands/*.jpg` |
 | Recommended | **2 HTML blocks** in `gosaki-piano-about-content.json` + G-10c write pattern |
-| **Next** | `G-10h1-gosaki-about-html-content-cms-implementation-preflight` |
+| **Next** | G-10h2 implementation (preflight complete — see 0ze) |
 | Deferred | G-10f Discography images |
 | **Do not** | implement / JSON write / Cursor FTP |
 

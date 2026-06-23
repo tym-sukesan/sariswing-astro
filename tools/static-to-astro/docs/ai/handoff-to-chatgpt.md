@@ -5,12 +5,20 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-10h2-gosaki-about-html-content-seed-json-and-convert-hook — complete.
-Prior: G-10h1 preflight (commit a02eb87).
+Current phase: G-10h3-gosaki-about-html-content-admin-readonly-preview — complete.
+Prior: G-10h2 seed JSON + convert hook (commit 02f75a2).
 branch: main — check git HEAD for latest commit hash
 ```
 
-**Next:** `G-10h3-gosaki-about-html-content-admin-ui` — staging admin About page.
+**Next:** `G-10h4-gosaki-about-html-content-static-json-write-slice` — profile block write (dry-run first).
+
+## G-10h3 About HTML CMS admin read-only preview — complete
+
+- **Doc:** `gosaki-about-html-content-admin-readonly-preview.md`
+- **Route:** `/__admin-staging-shell/musician-basic/admin/about/`
+- **UI:** 2 blocks — readonly textarea + preview; Save disabled
+- **Not done:** write API / JSON write / FTP
+- **Cursor:** no Save / no FTP
 
 ## G-10h2 About HTML CMS seed JSON + convert hook — complete
 

@@ -1,6 +1,17 @@
 Last updated: 2026-06-23
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zg. G-10h3 About HTML CMS admin read-only preview — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-10h3-gosaki-about-html-content-admin-readonly-preview` |
+| Doc | `gosaki-about-html-content-admin-readonly-preview.md` |
+| Route | `/__admin-staging-shell/musician-basic/admin/about/` |
+| Status | **complete** — read-only textarea + preview; Save disabled |
+| **Next** | `G-10h4-gosaki-about-html-content-static-json-write-slice` |
+| **Do not** | enable Save / write API / Cursor FTP |
+
 ## 0zf. G-10h2 About HTML CMS seed JSON + convert hook — complete
 
 | Item | Value |
@@ -26,7 +37,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Bands policy | non-empty HTML replaces `<BandProfilesSection />`; else G-8a fallback |
 | Hook | `gosaki-about-content.mjs` after G-8a in convert |
 | Approval ID | `G-10h-about-html-content-static-json-write-slice` |
-| **Next** | G-10h3 admin UI (G-10h2 complete — see 0zf) |
+| **Next** | G-10h4 static JSON write (G-10h3 complete — see 0zg) |
 | **Do not** | create JSON / hook / Save / Cursor FTP |
 
 ## 0zd. G-10h About HTML content CMS planning — complete

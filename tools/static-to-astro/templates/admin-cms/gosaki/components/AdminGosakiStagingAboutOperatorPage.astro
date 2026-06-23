@@ -1,0 +1,264 @@
+---
+import type { GosakiAboutContentAdminBinding } from "../../../../../../src/lib/admin/staging-data/gosaki-about-content-admin-binding";
+import {
+  GOSAKI_STAGING_ADMIN_BASE,
+  GOSAKI_STAGING_PREVIEW_URL,
+} from "../gosaki-staging-admin-paths";
+
+interface Props {
+  binding: GosakiAboutContentAdminBinding;
+}
+
+const { binding } = Astro.props;
+const previewAboutUrl = `${GOSAKI_STAGING_PREVIEW_URL}${binding.config.previewPath ?? "about/"}`;
+---
+
+<section
+  id="gosaki-about-operator"
+  class="admin-gosaki-about-operator admin-page admin-page--wide admin-prototype-section"
+  data-section="admin-about"
+  data-phase="G-10h3-gosaki-about-html-content-admin-readonly-preview"
+  aria-label="About HTML管理"
+>
+  <header class="admin-gosaki-page-header admin-gosaki-page-header--with-actions">
+    <div>
+      <a class="admin-gosaki-back-link" href={GOSAKI_STAGING_ADMIN_BASE}>← 管理画面トップへ</a>
+      <h1 class="admin-gosaki-page-header__title">About HTML</h1>
+      <p class="admin-gosaki-page-header__subtitle">
+        /about/ の本文 HTML ブロックを確認する画面です。
+      </p>
+    </div>
+    <button
+      type="button"
+      class="admin-button admin-button-secondary admin-gosaki-logout-btn"
+      data-staging-sign-out
+      hidden
+    >
+      ログアウト
+    </button>
+  </header>
+
+  <p class="admin-form__hint admin-static-notice" role="note">
+    この画面は現在 <strong>read-only preview</strong> です。保存機能はまだ実装されていません。JSON
+    ファイルは変更されません。
+  </p>
+
+  <p class="admin-gosaki-status-bar admin-gosaki-status-bar--soft" role="status">
+    保存未実装 — 表示とプレビューのみです。
+  </p>
+
+  {
+    binding.message ? (
+      <p class="admin-gosaki-operator-alert" role="alert">{binding.message}</p>
+    ) : null
+  }
+
+  <section class="admin-card admin-gosaki-card">
+    <h2 class="admin-gosaki-card__title">設定ファイル</h2>
+    <dl class="gosaki-about-admin-meta">
+      <div>
+        <dt>config path</dt>
+        <dd><code>{binding.configPath}</code></dd>
+      </div>
+      <div>
+        <dt>siteSlug</dt>
+        <dd><code>{binding.config.siteSlug ?? "—"}</code></dd>
+      </div>
+      <div>
+        <dt>page</dt>
+        <dd><code>{binding.config.page ?? "—"}</code></dd>
+      </div>
+      <div>
+        <dt>version</dt>
+        <dd>{binding.config.version ?? "—"}</dd>
+      </div>
+      <div>
+        <dt>previewPath</dt>
+        <dd><code>{binding.config.previewPath ?? "about/"}</code></dd>
+      </div>
+      <div>
+        <dt>block count</dt>
+        <dd>{binding.blockCount}（enabled: {binding.enabledBlockCount}）</dd>
+      </div>
+    </dl>
+  </section>
+
+  <section class="admin-card admin-gosaki-card">
+    <h2 class="admin-gosaki-card__title">公開前ページ</h2>
+    <a
+      class="admin-button admin-button--menu admin-button--menu-secondary"
+      href={previewAboutUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      Aboutページを見る
+    </a>
+  </section>
+
+  <section class="admin-card admin-gosaki-card gosaki-about-admin-safety">
+    <h2 class="admin-gosaki-card__title">HTML 安全メモ</h2>
+    <ul class="admin-gosaki-list admin-gosaki-list--compact">
+      <li>管理者信頼コンテンツとして扱います（将来の Save 時に script / iframe / on* を拒否予定）。</li>
+      <li>プレビューは管理画面内のコンテナに表示します（iframe は使用しません）。</li>
+      <li>Contact / HubSpot 埋め込みは別フェーズ（G-10g）で扱います。</li>
+    </ul>
+  </section>
+
+  {
+    binding.blockCount === 0 ? (
+      <p class="admin-gosaki-operator-empty">表示できる HTML ブロックがありません。</p>
+    ) : (
+      binding.blocks.map((view) => (
+        <section
+          class="admin-card admin-gosaki-card gosaki-about-admin-block-card"
+          data-block-id={view.block.id}
+          aria-labelledby={`gosaki-about-block-title-${view.block.id}`}
+        >
+          <header class="gosaki-about-admin-block-card__header">
+            <h2 class="admin-gosaki-card__title" id={`gosaki-about-block-title-${view.block.id}`}>
+              {view.block.label}
+            </h2>
+            <dl class="gosaki-about-admin-block-meta">
+              <div>
+                <dt>block id</dt>
+                <dd><code>{view.block.id}</code></dd>
+              </div>
+              <div>
+                <dt>enabled</dt>
+                <dd>
+                  <span
+                    class={`gosaki-about-admin-block-meta__status gosaki-about-admin-block-meta__status--${view.block.enabled ? "enabled" : "disabled"}`}
+                  >
+                    {view.block.enabled ? "true" : "false"}
+                  </span>
+                </dd>
+              </div>
+              <div>
+                <dt>html length</dt>
+                <dd>{view.htmlLength.toLocaleString("ja-JP")} 文字</dd>
+              </div>
+              <div>
+                <dt>lines</dt>
+                <dd>{view.lineCount.toLocaleString("ja-JP")}</dd>
+              </div>
+            </dl>
+          </header>
+
+          <div class="gosaki-about-admin-block-grid">
+            <label class="admin-form__field admin-form__field--full">
+              <span class="admin-form__label">HTML ソース（読み取り専用）</span>
+              <textarea
+                class="gosaki-about-admin-textarea"
+                rows="14"
+                readonly
+                data-gosaki-about-html-source
+                id={`gosaki-about-html-source-${view.block.id}`}
+              >{view.block.html}</textarea>
+            </label>
+
+            <div class="admin-form__field admin-form__field--full">
+              <span class="admin-form__label">プレビュー</span>
+              <div
+                class="gosaki-about-admin-preview"
+                id={`gosaki-about-preview-${view.block.id}`}
+                data-gosaki-about-preview
+                set:html={view.block.html}
+              />
+            </div>
+          </div>
+        </section>
+      ))
+    )
+  }
+
+  <section class="admin-card admin-gosaki-card">
+    <h2 class="admin-gosaki-card__title">保存（未実装）</h2>
+    <p class="admin-gosaki-card__lead">
+      将来の G-10h4 static JSON write slice で開放予定です。現時点では JSON ファイルは読み取り専用です。
+    </p>
+    <div class="admin-actions">
+      <button
+        type="button"
+        class="admin-button"
+        data-gosaki-about-save-disabled
+        disabled
+      >
+        保存する（未実装）
+      </button>
+    </div>
+    <p class="admin-gosaki-save-note" role="note">
+      ※ 保存機能は未実装です。write API / JSON write は追加されていません。
+    </p>
+  </section>
+</section>
+
+<style>
+  .gosaki-about-admin-meta,
+  .gosaki-about-admin-block-meta {
+    display: grid;
+    gap: 0.75rem 1.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+    margin: 0;
+  }
+
+  .gosaki-about-admin-meta dt,
+  .gosaki-about-admin-block-meta dt {
+    font-size: 0.75rem;
+    color: #6b5f56;
+    margin: 0 0 0.15rem;
+  }
+
+  .gosaki-about-admin-meta dd,
+  .gosaki-about-admin-block-meta dd {
+    margin: 0;
+    font-size: 0.9rem;
+  }
+
+  .gosaki-about-admin-block-card__header {
+    margin-bottom: 1rem;
+  }
+
+  .gosaki-about-admin-block-grid {
+    display: grid;
+    gap: 1.25rem;
+  }
+
+  @media (min-width: 960px) {
+    .gosaki-about-admin-block-grid {
+      grid-template-columns: 1fr 1fr;
+      align-items: start;
+    }
+  }
+
+  .gosaki-about-admin-textarea {
+    width: 100%;
+    min-height: 16rem;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 12px;
+    line-height: 1.5;
+    box-sizing: border-box;
+  }
+
+  .gosaki-about-admin-preview {
+    min-height: 16rem;
+    max-height: 28rem;
+    overflow: auto;
+    padding: 1rem;
+    border: 1px solid #d8cfc4;
+    border-radius: 4px;
+    background: #fffaf5;
+    box-sizing: border-box;
+  }
+
+  .gosaki-about-admin-block-meta__status--enabled {
+    color: #2f6b3c;
+  }
+
+  .gosaki-about-admin-block-meta__status--disabled {
+    color: #8a5a2b;
+  }
+</style>
+
+<script>
+  import "../../../../../../src/lib/admin/staging-data/gosaki-staging-about-content-admin-ui.ts";
+</script>

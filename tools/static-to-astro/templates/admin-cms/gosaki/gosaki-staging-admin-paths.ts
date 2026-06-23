@@ -17,5 +17,7 @@ export const GOSAKI_STAGING_ADMIN_YOUTUBE_PATH =
   "/__admin-staging-shell/musician-basic/admin/youtube/";
 export const GOSAKI_STAGING_ADMIN_DISCOGRAPHY_PATH =
   "/__admin-staging-shell/musician-basic/admin/discography/";
+export const GOSAKI_STAGING_ADMIN_ABOUT_PATH =
+  "/__admin-staging-shell/musician-basic/admin/about/";
 export const GOSAKI_STAGING_PREVIEW_URL =
   "https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/";

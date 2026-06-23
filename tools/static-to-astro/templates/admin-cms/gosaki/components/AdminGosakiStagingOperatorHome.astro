@@ -3,6 +3,7 @@
  * Gosaki staging shell operator home (Sariswing /admin/ inspired).
  */
 import {
+  GOSAKI_STAGING_ADMIN_ABOUT_PATH,
   GOSAKI_STAGING_ADMIN_DISCOGRAPHY_PATH,
   GOSAKI_STAGING_ADMIN_SCHEDULE_PATH,
   GOSAKI_STAGING_ADMIN_YOUTUBE_PATH,
@@ -75,6 +76,14 @@ const {
         <li>
           <a
             class="admin-button admin-button--menu admin-button--menu-primary"
+            href={GOSAKI_STAGING_ADMIN_ABOUT_PATH}
+          >
+            About HTML
+          </a>
+        </li>
+        <li>
+          <a
+            class="admin-button admin-button--menu admin-button--menu-primary"
             href={previewUrl}
             target="_blank"
             rel="noopener noreferrer"
@@ -104,6 +113,7 @@ const {
           <li>スケジュールの確認</li>
           <li>YouTube 設定の確認</li>
           <li>Discography の確認</li>
+          <li>About HTML の確認</li>
           <li>公開前ページの表示確認</li>
         </ul>
       </section>

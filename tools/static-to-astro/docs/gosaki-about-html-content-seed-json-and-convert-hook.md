@@ -30,7 +30,7 @@ Prior docs:
 ```txt
 gosakiAboutHtmlContentSeedJsonAndConvertHookComplete: true
 phase: G-10h2
-readyForG10h3GosakiAboutHtmlContentAdminUi: true
+readyForG10h3GosakiAboutHtmlContentAdminUi: false
 configJsonFileCreated: true
 convertHookImplemented: true
 adminAboutPageImplemented: false
@@ -43,6 +43,8 @@ cursorFtpUploadExecuted: false
 cursorDeployExecuted: false
 workflowDispatchExecuted: false
 ```
+
+G-10h3 admin read-only preview: see [gosaki-about-html-content-admin-readonly-preview.md](./gosaki-about-html-content-admin-readonly-preview.md).
 
 ---
 
@@ -187,7 +189,7 @@ Unit-tested in `verify-g10h2-*.mjs` via `applyAboutContentToPage()`:
 
 | Phase | Scope |
 | --- | --- |
-| **G-10h3** | Staging admin About UI (textarea + preview, Save disabled) |
+| **G-10h3** | Staging admin About UI — **complete** → [gosaki-about-html-content-admin-readonly-preview.md](./gosaki-about-html-content-admin-readonly-preview.md) |
 | **G-10h4** | Static JSON write slice — profile block first |
 | **G-10h4b** | Bands block write + optional band JPG drop |
 | **G-10h5** | Package verify + operator re-upload |

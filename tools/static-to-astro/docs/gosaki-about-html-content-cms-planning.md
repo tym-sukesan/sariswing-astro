@@ -312,7 +312,7 @@ HubSpot implementation = **G-10g** (unchanged from prior next-phase list).
 | --- | --- |
 | **G-10h1** | Implementation preflight — **complete** → [gosaki-about-html-content-cms-implementation-preflight.md](./gosaki-about-html-content-cms-implementation-preflight.md) |
 | **G-10h2** | Config seed + `gosaki-about-content.mjs` convert hook — **complete** → [gosaki-about-html-content-seed-json-and-convert-hook.md](./gosaki-about-html-content-seed-json-and-convert-hook.md) |
-| **G-10h3** | Staging admin About UI |
+| **G-10h3** | Staging admin About UI — **complete** → [gosaki-about-html-content-admin-readonly-preview.md](./gosaki-about-html-content-admin-readonly-preview.md) |
 | **G-10h4** | Static JSON write slice (profile block first) |
 | **G-10h5** | Package verify + operator re-upload |
 | Deferred | G-10f Discography, G-10g HubSpot |

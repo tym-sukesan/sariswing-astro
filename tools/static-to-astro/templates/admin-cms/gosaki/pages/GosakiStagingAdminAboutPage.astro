@@ -1,0 +1,16 @@
+---
+import AdminGosakiStagingShellLayout from "../components/AdminGosakiStagingShellLayout.astro";
+import AdminGosakiStagingAboutOperatorPage from "../components/AdminGosakiStagingAboutOperatorPage.astro";
+import AdminGosakiStagingAuthGate from "../components/AdminGosakiStagingAuthGate.astro";
+import { loadGosakiAboutContentAdminBinding } from "../../../../../../src/lib/admin/staging-data/gosaki-about-content-admin-binding";
+
+const binding = loadGosakiAboutContentAdminBinding();
+---
+
+<AdminGosakiStagingShellLayout title="About HTML">
+  <AdminGosakiStagingAuthGate>
+    <div class="admin-gosaki-admin-pages">
+      <AdminGosakiStagingAboutOperatorPage binding={binding} />
+    </div>
+  </AdminGosakiStagingAuthGate>
+</AdminGosakiStagingShellLayout>

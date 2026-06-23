@@ -1821,5 +1821,60 @@ body.wix-static-export .gosaki-schedule-legacy-stub__link {
   font-weight: 600;
   text-decoration: underline;
 }
+
+/* --- G-10e gosaki YouTube embed section layout improvement (site-specific) --- */
+/* Section sits inside Wix schedule mesh; break out to centered 720px card with 16:9 iframe. */
+body.wix-static-export .gosaki-youtube-embed {
+  width: 100% !important;
+  max-width: 720px !important;
+  margin: 3rem auto 3.5rem !important;
+  padding: 0 1.25rem !important;
+  box-sizing: border-box !important;
+  display: block !important;
+  float: none !important;
+  clear: both !important;
+  min-width: 0 !important;
+  grid-column: 1 / -1 !important;
+  justify-self: center !important;
+}
+
+body.wix-static-export .gosaki-youtube-embed__inner {
+  width: 100% !important;
+  max-width: 720px !important;
+  margin: 0 auto !important;
+  box-sizing: border-box !important;
+}
+
+body.wix-static-export .gosaki-youtube-embed__media {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  aspect-ratio: 16 / 9 !important;
+}
+
+body.wix-static-export .gosaki-youtube-embed__iframe {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+body.wix-static-export [data-mesh-id*="inlineContent-gridContainer"]:has(.gosaki-youtube-embed),
+body.wix-static-export [data-mesh-id*="inlineContent"]:has(.gosaki-youtube-embed) {
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+@media (max-width: 768px) {
+  body.wix-static-export .gosaki-youtube-embed {
+    max-width: 100% !important;
+    margin: 2rem auto 2.5rem !important;
+    padding: 0 1rem !important;
+    overflow-x: clip !important;
+  }
+
+  body.wix-static-export .gosaki-youtube-embed__inner {
+    max-width: 100% !important;
+  }
+}
 `;
 }

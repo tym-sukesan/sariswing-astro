@@ -5,12 +5,21 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-10d2a-gosaki-youtube-embed-staging-upload-qa-finalization — complete.
-Prior: G-10d2 preflight (commit 5598777); operator upload + QA PASS 2026-06-23.
+Current phase: G-10e-gosaki-youtube-embed-section-layout-improvement — complete.
+Prior: G-10d2a staging QA PASS (commit 1a8b81e); G-10e local layout fix 2026-06-23.
 branch: main — check git HEAD for latest commit hash
 ```
 
-**Next:** `G-10e-gosaki-youtube-embed-section-layout-improvement` — YouTube section size / spacing (non-blocking UI).
+**Next:** `G-10e1-gosaki-youtube-embed-section-layout-operator-reupload` — operator manual re-upload of updated package (no Cursor FTP).
+
+## G-10e YouTube embed section layout improvement — complete
+
+- **Doc:** `gosaki-youtube-embed-section-layout-improvement.md`
+- **Fix:** section `max-width: 720px`, 16:9 iframe, Wix schedule mesh breakout (G-10e CSS)
+- **Package:** `output/manual-upload/gosaki-piano/public-dist/` regenerated; `verify:manual-upload` PASS
+- **Staging:** not re-uploaded yet — operator G-10e1
+- **Cursor:** no FTP / upload / Save click
+- **Do not re-click G-10c Save**
 
 ## G-10d2a YouTube embed staging upload QA — complete
 

@@ -1,6 +1,20 @@
 Last updated: 2026-06-23
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0za. G-10e YouTube embed section layout improvement — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-10e-gosaki-youtube-embed-section-layout-improvement` |
+| Doc | `gosaki-youtube-embed-section-layout-improvement.md` |
+| Status | **complete** — local CSS + convert/build/package verified |
+| Layout | `.gosaki-youtube-embed` `max-width: 720px`; `aspect-ratio: 16 / 9`; Wix mesh breakout |
+| Package | `output/manual-upload/gosaki-piano/public-dist/` (20 files) |
+| `safeForStaticFtp` | **true** |
+| Cursor FTP / upload | **not executed** |
+| **Next** | `G-10e1-gosaki-youtube-embed-section-layout-operator-reupload` |
+| **Do not** | re-click G-10c Save; Cursor FTP |
+
 ## 0z. G-10d2a YouTube embed staging upload QA — complete
 
 | Item | Value |

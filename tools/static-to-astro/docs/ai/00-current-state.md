@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-10a Gosaki completion inventory and next module selection (2026-06-22):** **complete** — Schedule以外棚卸し；次モジュール **YouTube embed CMS** (`G-10b`). Doc: `gosaki-completion-inventory-and-next-module-selection.md`. Parallel: `G-9h1` client feedback. **No DB write.** `readyForAnyDbWrite: false`.
+**G-10b Gosaki YouTube embed read and write planning (2026-06-22):** **complete** — public JSON inject + admin binding surveyed; **G-10c recommended: static JSON write slice**. Doc: `gosaki-youtube-embed-read-and-write-planning.md`. **No DB write.** `readyForAnyDbWrite: false`.
+
+**G-10a Gosaki completion inventory and next module selection (2026-06-22):** **complete** — Schedule以外棚卸し；次モジュール YouTube embed CMS → G-10b. Doc: `gosaki-completion-inventory-and-next-module-selection.md`. Commit: `b5fd950`. Parallel: `G-9h1` client feedback. **No DB write.** `readyForAnyDbWrite: false`.
 
 **G-9k7b Gosaki schedule Save UI copy and list usability fix (2026-06-22):** **complete** — commit `ff0c33f`. Doc: `gosaki-schedule-save-ui-copy-and-editor-scroll-fix.md` §3.
 
@@ -67,9 +69,9 @@ Staging Shell
 将来的な顧客オンボーディング・課金・デプロイ自動化
 
 2. Current phase
-現在フェーズ: **G-10a-gosaki-completion-inventory-and-next-module-selection** — **complete**（Gosaki完成棚卸し + 次モジュール選定. 最新commitは git HEAD を確認すること。）
+現在フェーズ: **G-10b-gosaki-youtube-embed-read-and-write-planning** — **complete**（read/write 方針設計. 最新commitは git HEAD を確認すること。）
 
-G-10a: Schedule以外の残タスク整理完了。**次モジュール最有力: YouTube embed CMS** (`G-10b`). Parallel: `G-9h1` client preview feedback. Schedule arc G-9k6–G-9k7b **一区切り**. `readyForAnyDbWrite: false`.
+G-10b: YouTube public = convert-time JSON inject; admin = static JSON read; **G-10c = static JSON write slice**（`site_embeds` は G-10e）. `readyForAnyDbWrite: false`.
 
 G-9k5 finalization: **complete** (commit `60820c4`). G-9k arc closed.
 

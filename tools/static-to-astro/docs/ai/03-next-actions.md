@@ -1,6 +1,22 @@
 Last updated: 2026-06-22
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0s. G-10b YouTube embed read/write planning — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-10b-gosaki-youtube-embed-read-and-write-planning` |
+| Doc | `gosaki-youtube-embed-read-and-write-planning.md` |
+| Status | **complete** — survey + write option comparison |
+| Public read | JSON → convert hook → `YouTubeEmbedSection.astro` → build → manual upload |
+| Admin read | `gosaki-youtube-embed-admin-binding.ts` (fs JSON) |
+| Current data | Placeholder `published:false` — home section hidden |
+| **G-10c recommended** | static JSON write slice (1 item; dry-run + approval) |
+| **G-10e deferred** | `site_embeds` Supabase migration |
+| `readyForAnyDbWrite` | **false** |
+
+**Next:** `G-10c-gosaki-youtube-embed-static-json-write-slice-implementation` — dry-run + gated Save to `gosaki-piano-youtube-embed.json` (1 item; no Supabase).
+
 ## 0r. G-10a Gosaki completion inventory — complete
 
 | Item | Value |
@@ -9,7 +25,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Doc | `gosaki-completion-inventory-and-next-module-selection.md` |
 | Status | **complete** — inventory + next module selection |
 | Schedule arc | G-9k6–G-9k7b **closed** for verification / UI |
-| **Next module** | **YouTube embed CMS** → `G-10b-gosaki-youtube-embed-read-and-write-planning` |
+| **Next module** | **YouTube embed CMS** → `G-10b` **complete** → `G-10c` static JSON write slice |
 | Parallel | `G-9h1` client preview feedback (operator) |
 | `readyForAnyDbWrite` | **false** |
 

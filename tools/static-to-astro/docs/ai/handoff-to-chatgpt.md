@@ -5,11 +5,22 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-10a-gosaki-completion-inventory-and-next-module-selection — complete.
-Prior: G-9k7b UI fixes (commit ff0c33f); G-9k6 schedule field slice arc closed.
+Current phase: G-10b-gosaki-youtube-embed-read-and-write-planning — complete.
+Prior: G-10a inventory (commit b5fd950); G-9k6–G-9k7b Schedule arc closed.
 branch: main
-HEAD = origin/main = ff0c33f — check git HEAD for latest commit hash
+HEAD = origin/main = b5fd950 — check git HEAD for latest commit hash
 ```
+
+## G-10b YouTube embed read/write planning — complete
+
+- **Doc:** `gosaki-youtube-embed-read-and-write-planning.md`
+- **Public:** `gosaki-piano-youtube-embed.json` → `applyGosakiHomeYouTubeEmbed` → home `YouTubeEmbedSection`
+- **Admin:** static JSON binding; Save **disabled** (G-9j)
+- **Current:** placeholder unpublished — no home embed section
+- **G-10c recommended:** static JSON write slice (dry-run + approval; 1 item)
+- **G-10e deferred:** `site_embeds` Supabase
+- **No DB write / Save click**
+- **`readyForAnyDbWrite: false`**
 
 ## G-10a Gosaki completion inventory — complete
 

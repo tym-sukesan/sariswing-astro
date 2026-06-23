@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-10d1 Gosaki YouTube embed manual upload package prep (2026-06-23):** **complete** — package at `output/manual-upload/gosaki-piano/`; `verify:manual-upload` PASS; YouTube embed in package home. Doc: `gosaki-youtube-embed-manual-upload-package-prep.md`. **Staging upload not done.** Next: G-10d2 operator upload. `readyForAnyDbWrite: false`.
+**G-10d2 Gosaki YouTube embed staging manual upload by operator (2026-06-23):** **preflight complete** — operator FileZilla checklist + post-upload QA plan; **upload not executed by Cursor**. Doc: `gosaki-youtube-embed-staging-manual-upload-by-operator.md`. **Operator GO** for manual upload. Next: G-10d2a after operator upload + QA report. `readyForAnyDbWrite: false`.
+
+**G-10d1 Gosaki YouTube embed manual upload package prep (2026-06-23):** **complete** — commit `17fd5ec`. Doc: `gosaki-youtube-embed-manual-upload-package-prep.md`.
 
 **G-10d Gosaki YouTube embed public reflection verification (2026-06-23):** **complete** — commit `c489315`. Doc: `gosaki-youtube-embed-public-reflection-verification.md`.
 
@@ -79,9 +81,9 @@ Staging Shell
 将来的な顧客オンボーディング・課金・デプロイ自動化
 
 2. Current phase
-現在フェーズ: **G-10d1-gosaki-youtube-embed-manual-upload-package-prep** — **complete**（manual-upload package 生成・検証. 最新commitは git HEAD を確認すること。）
+現在フェーズ: **G-10d2-gosaki-youtube-embed-staging-manual-upload-by-operator** — **preflight complete**（operator 手動アップロード待ち. 最新commitは git HEAD を確認すること。）
 
-G-10d1: package `output/manual-upload/gosaki-piano/` ready; `verify:manual-upload` PASS. **Staging upload not done** → G-10d2 operator manual upload. `readyForAnyDbWrite: false`.
+G-10d2: package ready; operator GO for FileZilla upload to `/cms-kit-staging/gosaki-piano/`. Cursor は FTP 未実行。`readyForAnyDbWrite: false`.
 
 G-9k5 finalization: **complete** (commit `60820c4`). G-9k arc closed.
 

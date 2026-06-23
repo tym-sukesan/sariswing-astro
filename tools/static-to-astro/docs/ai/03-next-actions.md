@@ -1,6 +1,20 @@
 Last updated: 2026-06-23
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0y. G-10d2 YouTube embed staging manual upload — preflight complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-10d2-gosaki-youtube-embed-staging-manual-upload-by-operator` |
+| Doc | `gosaki-youtube-embed-staging-manual-upload-by-operator.md` |
+| Status | **preflight complete** — operator upload **pending** |
+| Local source | `output/manual-upload/gosaki-piano/public-dist/` |
+| Remote path | `/cms-kit-staging/gosaki-piano/` |
+| Operator decision | **GO** (manual upload allowed) |
+| Cursor FTP/upload | **not executed** |
+| **Next** | Operator upload → `G-10d2a-gosaki-youtube-embed-staging-upload-qa-finalization` |
+| **Do not** | mirror / sync / delete; FTP auto-deploy; re-click G-10c Save |
+
 ## 0x. G-10d1 YouTube embed manual upload package prep — complete
 
 | Item | Value |

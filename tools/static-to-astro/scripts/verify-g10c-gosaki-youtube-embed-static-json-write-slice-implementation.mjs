@@ -84,6 +84,7 @@ assert("API json content-type", apiSrc.includes("application/json"));
 assert("client fetch via api module", clientSave.includes("gosaki-youtube-embed-static-json-write-api"));
 assert("client uses safe parse", clientSave.includes("parseG10cSaveApiJsonResponse"));
 assert("injectRoute dev only", read("astro.config.mjs").includes('command === "dev"'));
+assert("API import path ../../../../lib", apiSrc.includes('from "../../../../lib/admin/staging-write/'));
 
 assert("no insert delete in doc scope", doc.includes("INSERT / DELETE") && doc.includes("not implemented"));
 assert("no migration in doc", doc.includes("site_embeds") && doc.includes("G-10e"));

@@ -42,7 +42,10 @@ const apiPath =
 assert("G-10c1 doc phase", doc.includes("G-10c1-gosaki-youtube-embed-static-json-save-api-response-fix"));
 assert("incident documented", doc.includes("<!doctype"));
 assert("root cause injectRoute", doc.includes("injectRoute"));
+assert("FailedToLoadModuleSSR documented", doc.includes("FailedToLoadModuleSSR"));
+assert("import path fix documented", doc.includes("../../../../lib/admin"));
 assert("fix complete gate", doc.includes("gosakiYoutubeEmbedStaticJsonSaveApiResponseFixComplete: true"));
+assert("SSR load fix gate", doc.includes("gosakiYoutubeEmbedStaticJsonSaveApiSsrLoadFixComplete: true"));
 
 assert("injectRoute dev only", astroConfig.includes('command === "dev"'));
 assert(
@@ -63,6 +66,9 @@ assert("client Accept json", clientSave.includes('Accept: "application/json"'));
 assert("api json content-type", apiRoute.includes("application/json; charset=utf-8"));
 assert("api GET json 405", apiRoute.includes("method_not_allowed"));
 assert("api POST export", apiRoute.includes("export const POST"));
+assert("API import path depth", apiRoute.includes('from "../../../../lib/admin/staging-write/'));
+assert("API no wrong import depth", !apiRoute.includes("../../../../../lib/admin/"));
+assert("GET returns error field", apiRoute.includes('error: "method_not_allowed"'));
 
 assert("00-current-state G-10c1", read("tools/static-to-astro/docs/ai/00-current-state.md").includes("G-10c1"));
 

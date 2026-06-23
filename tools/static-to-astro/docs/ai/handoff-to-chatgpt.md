@@ -15,10 +15,10 @@ HEAD = origin/main = 88cc484 — check git HEAD for latest commit hash
 
 ## G-10c1 Save API response fix — complete
 
-- **Incident:** dry-run OK; Save → `network_error: Unexpected token '<'`
-- **Cause:** `__admin-*` API not in `injectRoute` → HTML 404
-- **Fix:** `astro.config.mjs` injectRoute + safe JSON parse on client
-- **Doc:** `gosaki-youtube-embed-static-json-save-api-response-fix.md`
+- **Incident 1:** dry-run OK; Save → HTML 404 JSON parse error
+- **Incident 2:** curl GET → `FailedToLoadModuleSSR` (import path one `../` too many)
+- **Fix:** dev `injectRoute` + `../../../../lib/admin/...` + safe JSON parse
+- **curl GET verified:** 405 `application/json` `method_not_allowed`
 - **No Save/JSON write by Cursor**
 
 ## G-10c YouTube embed static JSON write slice — complete

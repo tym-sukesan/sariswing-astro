@@ -4,12 +4,12 @@
  */
 import type { APIRoute } from "astro";
 import { createClient } from "@supabase/supabase-js";
-import { executeG10cYoutubeEmbedStaticJsonWrite } from "../../../../../lib/admin/staging-write/gosaki-youtube-embed-static-json-write-executor";
-import { getG10cYoutubeEmbedStaticJsonWriteConfig } from "../../../../../lib/admin/staging-write/gosaki-youtube-embed-static-json-write-config";
+import { executeG10cYoutubeEmbedStaticJsonWrite } from "../../../../lib/admin/staging-write/gosaki-youtube-embed-static-json-write-executor";
+import { getG10cYoutubeEmbedStaticJsonWriteConfig } from "../../../../lib/admin/staging-write/gosaki-youtube-embed-static-json-write-config";
 import {
   G10C_YOUTUBE_EMBED_STATIC_JSON_WRITE_APPROVAL_ID,
   G10C_YOUTUBE_EMBED_TARGET_ITEM_ID,
-} from "../../../../../lib/admin/staging-write/gosaki-youtube-embed-static-json-write-types";
+} from "../../../../lib/admin/staging-write/gosaki-youtube-embed-static-json-write-types";
 
 export const prerender = false;
 
@@ -154,6 +154,7 @@ export const GET: APIRoute = async () =>
   jsonResponse(
     {
       ok: false,
+      error: "method_not_allowed",
       errorCode: "method_not_allowed",
       errorMessage: "POST only. Use Save from YouTube admin UI.",
     },
@@ -169,6 +170,7 @@ export const ALL: APIRoute = async ({ request }) => {
   return jsonResponse(
     {
       ok: false,
+      error: "method_not_allowed",
       errorCode: "method_not_allowed",
       errorMessage: `Method ${request.method} not allowed. POST only.`,
     },

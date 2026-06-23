@@ -1,8 +1,8 @@
 # Gosaki YouTube embed static JSON Save API response fix (G-10c1)
 
 **Phase:** `G-10c1-gosaki-youtube-embed-static-json-save-api-response-fix`  
-**Status:** **fix complete** — injectRoute + client non-JSON handling; **no Save re-execution by Cursor**  
-**Date:** 2026-06-22
+**Status:** **fix complete** — injectRoute + import path + client non-JSON handling; **no Save re-execution by Cursor**  
+**Date:** 2026-06-22 (updated 2026-06-23 — FailedToLoadModuleSSR follow-up)
 
 ---
 
@@ -39,7 +39,41 @@ Server returned **404 HTML** (`<!doctype html>…`). Client called `response.jso
 
 ---
 
-## Fix
+## Incident (operator API check after G-10c1 — attempt 2)
+
+After dev restart with Save env, `curl -i` GET to the Save API returned:
+
+```txt
+HTTP/1.1 500 Internal Server Error
+Content-Type: text/html
+<title>FailedToLoadModuleSSR</title>
+```
+
+Dev server log:
+
+```txt
+Could not import `../../../../../lib/admin/staging-write/gosaki-youtube-embed-static-json-write-executor`.
+```
+
+**JSON config file still unchanged.**
+
+---
+
+## Root cause (attempt 2 — FailedToLoadModuleSSR)
+
+API endpoint file lives at:
+
+```txt
+src/pages/__admin-staging-shell/musician-basic/api/youtube-embed-static-json-write.json.ts
+```
+
+Imports used **one too many** `../` segments (`../../../../../lib/...` → repo root `lib/`, not `src/lib/`).
+
+Correct relative path from `api/` → `src/lib/` is **`../../../../lib/admin/...`** (4 levels up to `src/`).
+
+---
+
+## Fix (summary)
 
 ### 1. `injectRoute` for Save API (dev only)
 
@@ -64,12 +98,38 @@ entrypoint: src/pages/__admin-staging-shell/musician-basic/api/youtube-embed-sta
 - Operator message on non-JSON: `保存APIからJSON以外の応答が返りました。API route / fetch path を確認してください。`
 - Short snippet only (no full HTML dump)
 
+### 4. API import path (FailedToLoadModuleSSR)
+
+`youtube-embed-static-json-write.json.ts` imports:
+
+```txt
+../../../../lib/admin/staging-write/...
+```
+
+(not `../../../../../lib/...`)
+
+### 5. GET curl verification
+
+```bash
+curl -i http://localhost:4322/__admin-staging-shell/musician-basic/api/youtube-embed-static-json-write.json
+```
+
+Expected (verified after fix):
+
+```txt
+HTTP/1.1 405 Method Not Allowed
+Content-Type: application/json; charset=utf-8
+
+{"ok":false,"error":"method_not_allowed","errorCode":"method_not_allowed",...}
+```
+
 ---
 
 ## Gates
 
 ```txt
 gosakiYoutubeEmbedStaticJsonSaveApiResponseFixComplete: true
+gosakiYoutubeEmbedStaticJsonSaveApiSsrLoadFixComplete: true
 readyForG10cManualSaveRetry: true
 cursorClickedSave: false
 cursorExecutedJsonWrite: false
@@ -96,4 +156,4 @@ Save API `injectRoute` runs only when `command === "dev"`. `npm run build` (stat
 | `astro.config.mjs` | injectRoute for Save API |
 | `gosaki-youtube-embed-static-json-write-api.ts` | **new** — path + parse helpers |
 | `gosaki-youtube-embed-static-json-write-client-save.ts` | safe response handling |
-| `youtube-embed-static-json-write.json.ts` | JSON headers + GET/ALL handlers |
+| `youtube-embed-static-json-write.json.ts` | JSON headers + GET/ALL handlers; **import path fix** |

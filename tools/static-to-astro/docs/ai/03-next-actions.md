@@ -7,8 +7,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | --- | --- |
 | Phase | `G-10c1-gosaki-youtube-embed-static-json-save-api-response-fix` |
 | Doc | `gosaki-youtube-embed-static-json-save-api-response-fix.md` |
-| Incident | Manual Save 1 — `Unexpected token '<'` (HTML 404, not registered API route) |
-| Fix | `injectRoute` in `astro.config.mjs` + client `parseG10cSaveApiJsonResponse` |
+| Incident | Manual Save 1: HTML 404; API check: `FailedToLoadModuleSSR` (wrong import path) |
+| Fix | `injectRoute` (dev) + `../../../../lib/...` imports + client safe parse |
+| **Verify** | `curl GET` → **405 JSON** `method_not_allowed` |
 | **Next** | Operator: restart dev → dry-run → Save retry once |
 | JSON config | **unchanged** |
 

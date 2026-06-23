@@ -1,6 +1,20 @@
 ---
 import type { GosakiAboutContentAdminBinding } from "../../../../../../src/lib/admin/staging-data/gosaki-about-content-admin-binding";
 import {
+  GOSAKI_ABOUT_CONTENT_BLOCK_BANDS_ID,
+  GOSAKI_ABOUT_CONTENT_BLOCK_PROFILE_ID,
+} from "../../../../../../src/lib/admin/staging-data/gosaki-about-content-admin-binding";
+import {
+  G10H4A_SAVE_BUTTON_PAGE_CONFIG_ELEMENT_ID,
+  resolveG10h4aSaveButtonPageServerConfig,
+} from "../../../../../../src/lib/admin/staging-write/gosaki-about-profile-html-static-json-write-page-config";
+import {
+  G10H4A_ABOUT_PROFILE_HTML_STATIC_JSON_WRITE_APPROVAL_ID,
+  G10H4A_SITE_SLUG,
+  G10H4A_WRITE_MODULE,
+  G10H4A_WRITE_PROVIDER,
+} from "../../../../../../src/lib/admin/staging-write/gosaki-about-profile-html-static-json-write-types";
+import {
   GOSAKI_STAGING_ADMIN_BASE,
   GOSAKI_STAGING_PREVIEW_URL,
 } from "../gosaki-staging-admin-paths";
@@ -11,21 +25,40 @@ interface Props {
 
 const { binding } = Astro.props;
 const previewAboutUrl = `${GOSAKI_STAGING_PREVIEW_URL}${binding.config.previewPath ?? "about/"}`;
+const profileView =
+  binding.blocks.find((view) => view.block.id === GOSAKI_ABOUT_CONTENT_BLOCK_PROFILE_ID) ?? null;
+const bandsView =
+  binding.blocks.find((view) => view.block.id === GOSAKI_ABOUT_CONTENT_BLOCK_BANDS_ID) ?? null;
+
+const g10h4aPageConfig = resolveG10h4aSaveButtonPageServerConfig(import.meta.env);
+const saveDisabledNote = g10h4aPageConfig.saveButtonSaveEnabled
+  ? "Save env は有効ですが、G-10h4a では non-dry-run は未実装です。"
+  : "保存は無効です（G10H4A_ABOUT_PROFILE_HTML_SAVE_ENABLED=false）。JSON ファイルは変更されません。";
 ---
 
 <section
   id="gosaki-about-operator"
   class="admin-gosaki-about-operator admin-page admin-page--wide admin-prototype-section"
   data-section="admin-about"
-  data-phase="G-10h3-gosaki-about-html-content-admin-readonly-preview"
+  data-phase="G-10h4a-gosaki-about-profile-html-static-json-write-dry-run"
   aria-label="About HTML管理"
 >
+  <div
+    id={G10H4A_SAVE_BUTTON_PAGE_CONFIG_ELEMENT_ID}
+    data-g10h4a-save-button-save-enabled={g10h4aPageConfig.saveButtonSaveEnabled ? "true" : "false"}
+    data-g10h4a-staging-shell-enabled={g10h4aPageConfig.stagingShellEnabled ? "true" : "false"}
+    data-g10h4a-write-provider={g10h4aPageConfig.writeProvider || G10H4A_WRITE_PROVIDER}
+    data-g10h4a-write-module={g10h4aPageConfig.writeModule || G10H4A_WRITE_MODULE}
+    data-g10h4a-write-approval-id={g10h4aPageConfig.writeApprovalId || G10H4A_ABOUT_PROFILE_HTML_STATIC_JSON_WRITE_APPROVAL_ID}
+    hidden
+  />
+
   <header class="admin-gosaki-page-header admin-gosaki-page-header--with-actions">
     <div>
       <a class="admin-gosaki-back-link" href={GOSAKI_STAGING_ADMIN_BASE}>← 管理画面トップへ</a>
       <h1 class="admin-gosaki-page-header__title">About HTML</h1>
       <p class="admin-gosaki-page-header__subtitle">
-        /about/ の本文 HTML ブロックを確認する画面です。
+        /about/ の本文 HTML ブロックを編集・確認する画面です（G-10h4a dry-run）。
       </p>
     </div>
     <button
@@ -39,12 +72,12 @@ const previewAboutUrl = `${GOSAKI_STAGING_PREVIEW_URL}${binding.config.previewPa
   </header>
 
   <p class="admin-form__hint admin-static-notice" role="note">
-    この画面は現在 <strong>read-only preview</strong> です。保存機能はまだ実装されていません。JSON
-    ファイルは変更されません。
+    <strong>about-profile-html</strong> のみ dry-run 確認できます。実 Save は未実装です。JSON
+    ファイルは dry-run では変更されません。
   </p>
 
   <p class="admin-gosaki-status-bar admin-gosaki-status-bar--soft" role="status">
-    保存未実装 — 表示とプレビューのみです。
+    {saveDisabledNote}
   </p>
 
   {
@@ -80,6 +113,14 @@ const previewAboutUrl = `${GOSAKI_STAGING_PREVIEW_URL}${binding.config.previewPa
         <dt>block count</dt>
         <dd>{binding.blockCount}（enabled: {binding.enabledBlockCount}）</dd>
       </div>
+      <div>
+        <dt>approvalId</dt>
+        <dd><code>{G10H4A_ABOUT_PROFILE_HTML_STATIC_JSON_WRITE_APPROVAL_ID}</code></dd>
+      </div>
+      <div>
+        <dt>siteSlug (write)</dt>
+        <dd><code>{G10H4A_SITE_SLUG}</code></dd>
+      </div>
     </dl>
   </section>
 
@@ -98,98 +139,172 @@ const previewAboutUrl = `${GOSAKI_STAGING_PREVIEW_URL}${binding.config.previewPa
   <section class="admin-card admin-gosaki-card gosaki-about-admin-safety">
     <h2 class="admin-gosaki-card__title">HTML 安全メモ</h2>
     <ul class="admin-gosaki-list admin-gosaki-list--compact">
-      <li>管理者信頼コンテンツとして扱います（将来の Save 時に script / iframe / on* を拒否予定）。</li>
+      <li>dry-run では <code>&lt;script&gt;</code> / <code>&lt;iframe&gt;</code> / <code>on*</code> / <code>javascript:</code> を拒否します。</li>
+      <li><code>style=""</code> インライン属性は Wix 互換のため許容します。</li>
+      <li><code>&lt;style&gt;</code> ブロックは warning です（profile block）。</li>
       <li>プレビューは管理画面内のコンテナに表示します（iframe は使用しません）。</li>
-      <li>Contact / HubSpot 埋め込みは別フェーズ（G-10g）で扱います。</li>
     </ul>
   </section>
 
   {
-    binding.blockCount === 0 ? (
-      <p class="admin-gosaki-operator-empty">表示できる HTML ブロックがありません。</p>
-    ) : (
-      binding.blocks.map((view) => (
-        <section
-          class="admin-card admin-gosaki-card gosaki-about-admin-block-card"
-          data-block-id={view.block.id}
-          aria-labelledby={`gosaki-about-block-title-${view.block.id}`}
-        >
-          <header class="gosaki-about-admin-block-card__header">
-            <h2 class="admin-gosaki-card__title" id={`gosaki-about-block-title-${view.block.id}`}>
-              {view.block.label}
-            </h2>
-            <dl class="gosaki-about-admin-block-meta">
-              <div>
-                <dt>block id</dt>
-                <dd><code>{view.block.id}</code></dd>
-              </div>
-              <div>
-                <dt>enabled</dt>
-                <dd>
-                  <span
-                    class={`gosaki-about-admin-block-meta__status gosaki-about-admin-block-meta__status--${view.block.enabled ? "enabled" : "disabled"}`}
-                  >
-                    {view.block.enabled ? "true" : "false"}
-                  </span>
-                </dd>
-              </div>
-              <div>
-                <dt>html length</dt>
-                <dd>{view.htmlLength.toLocaleString("ja-JP")} 文字</dd>
-              </div>
-              <div>
-                <dt>lines</dt>
-                <dd>{view.lineCount.toLocaleString("ja-JP")}</dd>
-              </div>
-            </dl>
-          </header>
-
-          <div class="gosaki-about-admin-block-grid">
-            <label class="admin-form__field admin-form__field--full">
-              <span class="admin-form__label">HTML ソース（読み取り専用）</span>
-              <textarea
-                class="gosaki-about-admin-textarea"
-                rows="14"
-                readonly
-                data-gosaki-about-html-source
-                id={`gosaki-about-html-source-${view.block.id}`}
-              >{view.block.html}</textarea>
-            </label>
-
-            <div class="admin-form__field admin-form__field--full">
-              <span class="admin-form__label">プレビュー</span>
-              <div
-                class="gosaki-about-admin-preview"
-                id={`gosaki-about-preview-${view.block.id}`}
-                data-gosaki-about-preview
-                set:html={view.block.html}
-              />
+    profileView ? (
+      <section
+        class="admin-card admin-gosaki-card gosaki-about-admin-block-card gosaki-about-admin-block-card--profile"
+        data-block-id={profileView.block.id}
+        aria-labelledby="gosaki-about-block-title-profile"
+      >
+        <header class="gosaki-about-admin-block-card__header">
+          <h2 class="admin-gosaki-card__title" id="gosaki-about-block-title-profile">
+            {profileView.block.label}
+          </h2>
+          <p class="admin-gosaki-card__lead">G-10h4a 保存対象ブロック（dry-run のみ）</p>
+          <dl class="gosaki-about-admin-block-meta">
+            <div>
+              <dt>block id</dt>
+              <dd><code>{profileView.block.id}</code></dd>
             </div>
+            <div>
+              <dt>enabled</dt>
+              <dd>
+                <span
+                  class={`gosaki-about-admin-block-meta__status gosaki-about-admin-block-meta__status--${profileView.block.enabled ? "enabled" : "disabled"}`}
+                >
+                  {profileView.block.enabled ? "true" : "false"}
+                </span>
+              </dd>
+            </div>
+            <div>
+              <dt>html length</dt>
+              <dd>
+                <span id="gosaki-about-profile-html-length">
+                  {profileView.htmlLength.toLocaleString("ja-JP")}
+                </span>{" "}
+                文字
+              </dd>
+            </div>
+            <div>
+              <dt>lines</dt>
+              <dd>{profileView.lineCount.toLocaleString("ja-JP")}</dd>
+            </div>
+          </dl>
+        </header>
+
+        <div class="gosaki-about-admin-block-grid">
+          <label class="admin-form__field admin-form__field--full">
+            <span class="admin-form__label">HTML ソース（編集可 — profile のみ）</span>
+            <textarea
+              class="gosaki-about-admin-textarea"
+              rows="14"
+              id="gosaki-about-html-source-profile"
+              data-gosaki-about-profile-html-editor
+            >{profileView.block.html}</textarea>
+          </label>
+
+          <div class="admin-form__field admin-form__field--full">
+            <span class="admin-form__label">プレビュー</span>
+            <div
+              class="gosaki-about-admin-preview"
+              id="gosaki-about-preview-profile"
+              data-gosaki-about-profile-preview
+              set:html={profileView.block.html}
+            />
           </div>
-        </section>
-      ))
+        </div>
+
+        <div class="admin-actions gosaki-about-admin-profile-actions">
+          <button type="button" class="admin-button admin-button-secondary" id="gosaki-about-profile-dry-run-btn">
+            dry-run 確認
+          </button>
+          <button
+            type="button"
+            class="admin-button"
+            id="gosaki-about-profile-save-btn"
+            data-gosaki-about-save-disabled
+            disabled
+          >
+            保存する（未実装 / env disabled）
+          </button>
+        </div>
+        <p class="admin-gosaki-save-note" id="gosaki-about-profile-save-note" role="note">
+          ※ dry-run のみ実行できます。実 JSON 書き込みは行いません。
+        </p>
+
+        <div
+          id="gosaki-about-profile-dry-run-result"
+          class="gosaki-schedule-edit-dry-run"
+          hidden
+        />
+      </section>
+    ) : (
+      <p class="admin-gosaki-operator-empty">about-profile-html ブロックが見つかりません。</p>
     )
   }
 
-  <section class="admin-card admin-gosaki-card">
-    <h2 class="admin-gosaki-card__title">保存（未実装）</h2>
-    <p class="admin-gosaki-card__lead">
-      将来の G-10h4 static JSON write slice で開放予定です。現時点では JSON ファイルは読み取り専用です。
-    </p>
-    <div class="admin-actions">
-      <button
-        type="button"
-        class="admin-button"
-        data-gosaki-about-save-disabled
-        disabled
+  {
+    bandsView ? (
+      <section
+        class="admin-card admin-gosaki-card gosaki-about-admin-block-card gosaki-about-admin-block-card--bands"
+        data-block-id={bandsView.block.id}
+        aria-labelledby="gosaki-about-block-title-bands"
       >
-        保存する（未実装）
-      </button>
-    </div>
-    <p class="admin-gosaki-save-note" role="note">
-      ※ 保存機能は未実装です。write API / JSON write は追加されていません。
-    </p>
-  </section>
+        <header class="gosaki-about-admin-block-card__header">
+          <h2 class="admin-gosaki-card__title" id="gosaki-about-block-title-bands">
+            {bandsView.block.label}
+          </h2>
+          <p class="admin-gosaki-card__lead admin-gosaki-operator-alert--soft" role="note">
+            Bands / Projects は今回の保存対象外です。
+          </p>
+          <dl class="gosaki-about-admin-block-meta">
+            <div>
+              <dt>block id</dt>
+              <dd><code>{bandsView.block.id}</code></dd>
+            </div>
+            <div>
+              <dt>enabled</dt>
+              <dd>
+                <span
+                  class={`gosaki-about-admin-block-meta__status gosaki-about-admin-block-meta__status--${bandsView.block.enabled ? "enabled" : "disabled"}`}
+                >
+                  {bandsView.block.enabled ? "true" : "false"}
+                </span>
+              </dd>
+            </div>
+            <div>
+              <dt>html length</dt>
+              <dd>{bandsView.htmlLength.toLocaleString("ja-JP")} 文字</dd>
+            </div>
+            <div>
+              <dt>lines</dt>
+              <dd>{bandsView.lineCount.toLocaleString("ja-JP")}</dd>
+            </div>
+          </dl>
+        </header>
+
+        <div class="gosaki-about-admin-block-grid">
+          <label class="admin-form__field admin-form__field--full">
+            <span class="admin-form__label">HTML ソース（読み取り専用）</span>
+            <textarea
+              class="gosaki-about-admin-textarea"
+              rows="14"
+              readonly
+              data-gosaki-about-html-source-readonly
+              id={`gosaki-about-html-source-${bandsView.block.id}`}
+            >{bandsView.block.html}</textarea>
+          </label>
+
+          <div class="admin-form__field admin-form__field--full">
+            <span class="admin-form__label">プレビュー</span>
+            <div
+              class="gosaki-about-admin-preview"
+              id={`gosaki-about-preview-${bandsView.block.id}`}
+              data-gosaki-about-preview-readonly
+              set:html={bandsView.block.html}
+            />
+          </div>
+        </div>
+      </section>
+    ) : null
+  }
 </section>
 
 <style>
@@ -256,6 +371,16 @@ const previewAboutUrl = `${GOSAKI_STAGING_PREVIEW_URL}${binding.config.previewPa
 
   .gosaki-about-admin-block-meta__status--disabled {
     color: #8a5a2b;
+  }
+
+  .gosaki-about-admin-profile-actions {
+    margin-top: 1rem;
+    gap: 0.75rem;
+  }
+
+  .admin-gosaki-operator-alert--soft {
+    color: #6b5f56;
+    margin: 0 0 0.75rem;
   }
 </style>
 

@@ -1,6 +1,18 @@
 Last updated: 2026-06-23
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zh. G-10h4a About profile HTML dry-run write slice — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-10h4a-gosaki-about-profile-html-static-json-write-dry-run` |
+| Doc | `gosaki-about-profile-html-static-json-write-dry-run.md` |
+| Block | `about-profile-html` / field `html` only |
+| approvalId | `G-10h4a-about-profile-html-static-json-write-dry-run` |
+| Save env | `G10H4A_ABOUT_PROFILE_HTML_SAVE_ENABLED=false` (default) |
+| **Next** | `G-10h4b-gosaki-about-profile-html-static-json-write-execution` |
+| **Do not** | non-dry-run Save / JSON write / Cursor FTP |
+
 ## 0zg. G-10h3 About HTML CMS admin read-only preview — complete
 
 | Item | Value |
@@ -9,7 +21,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Doc | `gosaki-about-html-content-admin-readonly-preview.md` |
 | Route | `/__admin-staging-shell/musician-basic/admin/about/` |
 | Status | **complete** — read-only textarea + preview; Save disabled |
-| **Next** | `G-10h4-gosaki-about-html-content-static-json-write-slice` |
+| **Next** | G-10h4b profile Save execution (G-10h4a dry-run complete — see 0zh) |
 | **Do not** | enable Save / write API / Cursor FTP |
 
 ## 0zf. G-10h2 About HTML CMS seed JSON + convert hook — complete

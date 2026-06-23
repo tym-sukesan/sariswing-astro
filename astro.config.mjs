@@ -80,6 +80,14 @@ function cmsKitAdminShellRoutesIntegration() {
               import.meta.url,
             ),
           });
+          injectRoute({
+            pattern:
+              "/__admin-staging-shell/musician-basic/api/about-profile-html-static-json-write.json",
+            entrypoint: new URL(
+              "./src/pages/__admin-staging-shell/musician-basic/api/about-profile-html-static-json-write.json.ts",
+              import.meta.url,
+            ),
+          });
         }
         injectRoute({
           pattern: "/__admin-staging-shell/musician-basic/admin/discography",

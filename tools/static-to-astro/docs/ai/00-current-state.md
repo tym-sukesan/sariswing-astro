@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-10h3 Gosaki About HTML content admin read-only preview (2026-06-23):** **complete** — `/__admin-staging-shell/.../admin/about/` + 2-block textarea/preview; Save disabled. Doc: `gosaki-about-html-content-admin-readonly-preview.md`. **No write API / FTP.** Next: **G-10h4**.
+**G-10h4a Gosaki About profile HTML static JSON write dry-run (2026-06-23):** **complete** — profile `about-profile-html` dry-run API + UI; Save disabled. Doc: `gosaki-about-profile-html-static-json-write-dry-run.md`. **No actual JSON write.** Next: **G-10h4b**.
+
+**G-10h3 Gosaki About HTML content admin read-only preview (2026-06-23):** **complete** — commit `e9137bb`. Doc: `gosaki-about-html-content-admin-readonly-preview.md`.
 
 **G-10h2 Gosaki About HTML content seed JSON + convert hook (2026-06-23):** **complete** — commit `02f75a2`. Doc: `gosaki-about-html-content-seed-json-and-convert-hook.md`.
 

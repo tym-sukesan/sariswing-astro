@@ -5,12 +5,21 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-10h3-gosaki-about-html-content-admin-readonly-preview — complete.
-Prior: G-10h2 seed JSON + convert hook (commit 02f75a2).
+Current phase: G-10h4a-gosaki-about-profile-html-static-json-write-dry-run — complete.
+Prior: G-10h3 admin read-only preview (commit e9137bb).
 branch: main — check git HEAD for latest commit hash
 ```
 
-**Next:** `G-10h4-gosaki-about-html-content-static-json-write-slice` — profile block write (dry-run first).
+**Next:** `G-10h4b-gosaki-about-profile-html-static-json-write-execution` — env-armed Save once.
+
+## G-10h4a About profile HTML dry-run write slice — complete
+
+- **Doc:** `gosaki-about-profile-html-static-json-write-dry-run.md`
+- **Block:** `about-profile-html` only; `html` field
+- **API:** dry-run POST; `dryRun: false` rejected (Save env false)
+- **UI:** profile editable + dry-run panel; bands read-only
+- **Not done:** actual JSON write / non-dry-run Save / FTP
+- **Cursor:** no Save / no FTP
 
 ## G-10h3 About HTML CMS admin read-only preview — complete
 

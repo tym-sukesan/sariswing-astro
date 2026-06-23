@@ -1,23 +1,23 @@
 # Gosaki YouTube embed staging manual upload by operator (G-10d2)
 
 **Phase:** `G-10d2-gosaki-youtube-embed-staging-manual-upload-by-operator`  
-**Status:** **preflight complete** — operator checklist + post-upload QA plan ready; **staging upload not executed by Cursor**  
+**Status:** **complete** — operator manual upload **succeeded**; staging QA **PASS** (G-10d2a)  
 **Date:** 2026-06-23  
-**Prior:** G-10d1 package prep (commit `17fd5ec`); G-10c2 YouTube JSON Save; G-10d local HTML verified
+**Prior:** G-10d2 preflight (commit `5598777`); G-10d1 package prep (commit `17fd5ec`)
 
 | Check | Status |
 | --- | --- |
 | Package exists locally | **yes** |
 | YouTube embed in package home | **yes** |
-| `verify-g10d1` / `verify:manual-upload` | **PASS** (G-10d1) |
-| Operator upload procedure documented | **yes** |
-| Post-upload QA checklist documented | **yes** |
+| Operator manual upload | **yes** (FileZilla / ロリポップFTP) |
+| Staging browser QA | **PASS** (operator) |
 | Cursor FTP / upload / delete | **no** |
-| Staging upload executed | **pending operator** |
+| Known UI issue | YouTube section too small → **G-10e** (non-blocking) |
 
 Prior docs:
 
 - [gosaki-youtube-embed-manual-upload-package-prep.md](./gosaki-youtube-embed-manual-upload-package-prep.md) (G-10d1)
+- [gosaki-youtube-embed-staging-upload-qa-finalization.md](./gosaki-youtube-embed-staging-upload-qa-finalization.md) (G-10d2a)
 - [gosaki-manual-preview-upload-planning.md](./gosaki-manual-preview-upload-planning.md) (G-9d2 baseline)
 - [ftp-deploy-root-delete-incident-and-safety-hardening.md](./ftp-deploy-root-delete-incident-and-safety-hardening.md) (G-7f1)
 
@@ -27,10 +27,11 @@ Prior docs:
 
 ```txt
 gosakiYoutubeEmbedStagingManualUploadPreflightComplete: true
-gosakiYoutubeEmbedStagingManualUploadExecuted: false
+gosakiYoutubeEmbedStagingManualUploadExecuted: true
+gosakiYoutubeEmbedStagingUploadQaPassed: true
 phase: G-10d2
-readyForOperatorGosakiYoutubeEmbedStagingManualUpload: true
 readyForG10d2aStagingUploadQaFinalization: false
+readyForG10eYoutubeEmbedSectionLayoutImprovement: true
 readyForAnyFutureFtpApply: false
 ftpAutoDeployUsed: false
 workflowDispatchExecuted: false
@@ -38,9 +39,11 @@ cursorFtpUploadExecuted: false
 cursorClickedSave: false
 ```
 
+**G-10d2a (2026-06-23):** Operator manual upload + staging QA **succeeded**. See [gosaki-youtube-embed-staging-upload-qa-finalization.md](./gosaki-youtube-embed-staging-upload-qa-finalization.md). **Do not re-upload without new phase.**
+
 **Do not re-click G-10c Save.**
 
-**Next after operator upload + QA report:** `G-10d2a-gosaki-youtube-embed-staging-upload-qa-finalization`
+**Next:** `G-10e-gosaki-youtube-embed-section-layout-improvement` (YouTube section size — non-blocking UI)
 
 ---
 
@@ -146,15 +149,17 @@ After operator confirms upload finished, check staging in a browser.
 | Schedule hub | `…/schedule/` |
 | Contact | `…/contact/` |
 
-### QA checklist
+### QA checklist (operator — G-10d2a **PASS**)
 
-- [ ] **1.** Top page loads (HTTP 200, no fatal error page)
-- [ ] **2.** YouTube section visible on home (heading “YouTube” or `.gosaki-youtube-embed`)
-- [ ] **3.** iframe `src` contains `youtube-nocookie.com/embed/Ke4F8JAQz-I`
-- [ ] **4.** Layout not severely broken (header, schedule block, footer readable)
-- [ ] **5.** Navigation works (Home, About, Schedule, Contact links)
-- [ ] **6.** About / Schedule / Contact pages open (HTTP 200)
-- [ ] **7.** `noindex` maintained (View Source or DevTools → `<meta name="robots" content="noindex…">`)
+- [x] **1.** Top page loads — **OK**
+- [x] **2.** YouTube section visible — **OK**
+- [x] **3.** Video displays (`Ke4F8JAQz-I`) — **OK**
+- [x] **4.** Layout not severely broken — **OK**
+- [x] **5.** Navigation works — **OK** (implicit via about/schedule/contact)
+- [x] **6.** About / Schedule / Contact pages open — **OK**
+- [ ] **7.** `noindex` maintained — not explicitly reported (spot-check optional in G-10e)
+
+**Known non-blocking UI:** YouTube section too small → G-10e.
 
 ### DevTools quick check (home)
 
@@ -183,12 +188,25 @@ After operator confirms upload finished, check staging in a browser.
 
 ---
 
-## E. Not executed (G-10d2 preflight phase)
+## G. Operator upload result (G-10d2a — complete)
+
+Operator executed manual upload per section B. Upload policy: overwrite only; no delete/sync/mirror.
+
+| Item | Value |
+| --- | --- |
+| Staging URL | `https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/` |
+| YouTube on staging | **visible** — `Ke4F8JAQz-I` |
+| QA | **PASS** (6/6 operator checks) |
+| Doc | [gosaki-youtube-embed-staging-upload-qa-finalization.md](./gosaki-youtube-embed-staging-upload-qa-finalization.md) |
+
+---
+
+## E. Not executed by Cursor
 
 - FTP connection / upload / delete
 - `lftp` / `mirror` / `--delete` / `rsync` / `scp` / `sftp`
 - `deploy` / `workflow_dispatch`
-- Staging upload (operator pending)
+- Staging upload by Cursor (operator executed upload)
 - Save / JSON write / DB write by Cursor
 - `src/pages/admin` changes
 

@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-10d2 Gosaki YouTube embed staging manual upload by operator (2026-06-23):** **preflight complete** — operator FileZilla checklist + post-upload QA plan; **upload not executed by Cursor**. Doc: `gosaki-youtube-embed-staging-manual-upload-by-operator.md`. **Operator GO** for manual upload. Next: G-10d2a after operator upload + QA report. `readyForAnyDbWrite: false`.
+**G-10d2a Gosaki YouTube embed staging upload QA finalization (2026-06-23):** **complete** — operator manual upload + staging QA **PASS**; YouTube `Ke4F8JAQz-I` live on staging. Doc: `gosaki-youtube-embed-staging-upload-qa-finalization.md`. Known UI: section too small → **G-10e**. **Do not re-click G-10c Save.**
+
+**G-10d2 Gosaki YouTube embed staging manual upload (2026-06-23):** **complete** — commit `5598777` preflight; operator upload succeeded (G-10d2a).
 
 **G-10d1 Gosaki YouTube embed manual upload package prep (2026-06-23):** **complete** — commit `17fd5ec`. Doc: `gosaki-youtube-embed-manual-upload-package-prep.md`.
 
@@ -81,9 +83,9 @@ Staging Shell
 将来的な顧客オンボーディング・課金・デプロイ自動化
 
 2. Current phase
-現在フェーズ: **G-10d2-gosaki-youtube-embed-staging-manual-upload-by-operator** — **preflight complete**（operator 手動アップロード待ち. 最新commitは git HEAD を確認すること。）
+現在フェーズ: **G-10d2a-gosaki-youtube-embed-staging-upload-qa-finalization** — **complete**（operator upload + staging QA PASS. 最新commitは git HEAD を確認すること。）
 
-G-10d2: package ready; operator GO for FileZilla upload to `/cms-kit-staging/gosaki-piano/`. Cursor は FTP 未実行。`readyForAnyDbWrite: false`.
+G-10d2a: YouTube embed live on `https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/`. Next: **G-10e** layout improvement (non-blocking). `readyForAnyDbWrite: false`.
 
 G-9k5 finalization: **complete** (commit `60820c4`). G-9k arc closed.
 

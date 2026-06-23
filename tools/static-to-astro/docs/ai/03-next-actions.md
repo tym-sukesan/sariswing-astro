@@ -1,18 +1,30 @@
 Last updated: 2026-06-23
 Project: Static-to-Astro CMS / Musician CMS Kit
 
-## 0y. G-10d2 YouTube embed staging manual upload — preflight complete
+## 0z. G-10d2a YouTube embed staging upload QA — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-10d2a-gosaki-youtube-embed-staging-upload-qa-finalization` |
+| Doc | `gosaki-youtube-embed-staging-upload-qa-finalization.md` |
+| Status | **complete** — operator upload + staging QA **PASS** |
+| Staging URL | `https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/` |
+| videoId | `Ke4F8JAQz-I` |
+| Known UI | YouTube section too small → **G-10e** (non-blocking) |
+| Cursor FTP | **not executed** |
+| **Next** | `G-10e-gosaki-youtube-embed-section-layout-improvement` |
+| **Do not** | re-click G-10c Save; mirror/delete re-upload |
+
+## 0y. G-10d2 YouTube embed staging manual upload — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-10d2-gosaki-youtube-embed-staging-manual-upload-by-operator` |
 | Doc | `gosaki-youtube-embed-staging-manual-upload-by-operator.md` |
-| Status | **preflight complete** — operator upload **pending** |
-| Local source | `output/manual-upload/gosaki-piano/public-dist/` |
-| Remote path | `/cms-kit-staging/gosaki-piano/` |
-| Operator decision | **GO** (manual upload allowed) |
+| Status | **complete** — operator upload + QA PASS (G-10d2a) |
+| Operator decision | Upload **done** |
 | Cursor FTP/upload | **not executed** |
-| **Next** | Operator upload → `G-10d2a-gosaki-youtube-embed-staging-upload-qa-finalization` |
+| **Next** | `G-10e-gosaki-youtube-embed-section-layout-improvement` |
 | **Do not** | mirror / sync / delete; FTP auto-deploy; re-click G-10c Save |
 
 ## 0x. G-10d1 YouTube embed manual upload package prep — complete

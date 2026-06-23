@@ -5,21 +5,29 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-10d2-gosaki-youtube-embed-staging-manual-upload-by-operator — preflight complete.
-Prior: G-10d1 package prep (commit 17fd5ec); operator manual upload pending.
+Current phase: G-10d2a-gosaki-youtube-embed-staging-upload-qa-finalization — complete.
+Prior: G-10d2 preflight (commit 5598777); operator upload + QA PASS 2026-06-23.
 branch: main — check git HEAD for latest commit hash
 ```
 
-**Next:** Operator FileZilla upload → report → `G-10d2a-gosaki-youtube-embed-staging-upload-qa-finalization`
+**Next:** `G-10e-gosaki-youtube-embed-section-layout-improvement` — YouTube section size / spacing (non-blocking UI).
 
-## G-10d2 YouTube embed staging manual upload — preflight complete
+## G-10d2a YouTube embed staging upload QA — complete
+
+- **Doc:** `gosaki-youtube-embed-staging-upload-qa-finalization.md`
+- **Staging:** `https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/` — YouTube **visible**, `Ke4F8JAQz-I`
+- **QA:** operator 6 checks **PASS**
+- **Known UI:** section too small → G-10e (non-blocking)
+- **Cursor:** no FTP / upload
+- **Do not re-click G-10c Save**
+
+## G-10d2 YouTube embed staging manual upload — complete
 
 - **Doc:** `gosaki-youtube-embed-staging-manual-upload-by-operator.md`
 - **Local:** `output/manual-upload/gosaki-piano/public-dist/` (upload **contents** only)
 - **Remote:** `/cms-kit-staging/gosaki-piano/` → `https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/`
-- **Operator:** **GO** for manual upload (mirror/delete/sync forbidden)
-- **Cursor:** no FTP / upload / delete
-- **QA after upload:** home YouTube `Ke4F8JAQz-I`, noindex, nav spot-check
+- **Operator:** upload **done**; QA **PASS**
+- **Known UI:** YouTube section too small → G-10e
 
 ## G-10d1 YouTube embed manual upload package prep — complete
 

@@ -1,6 +1,20 @@
 Last updated: 2026-06-23
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0x. G-10d1 YouTube embed manual upload package prep — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-10d1-gosaki-youtube-embed-manual-upload-package-prep` |
+| Doc | `gosaki-youtube-embed-manual-upload-package-prep.md` |
+| Status | **complete** — package generated + verified locally |
+| Package | `output/manual-upload/gosaki-piano/public-dist/` (20 files) |
+| YouTube in package home | `youtube-nocookie.com/embed/Ke4F8JAQz-I` |
+| `verify:manual-upload` | **PASS** |
+| Staging upload | **not done** |
+| **Next** | `G-10d2-gosaki-youtube-embed-staging-manual-upload-by-operator` |
+| **Do not** | FTP auto-deploy; re-click G-10c Save |
+
 ## 0w. G-10d YouTube embed public reflection verification — complete
 
 | Item | Value |
@@ -10,8 +24,8 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Status | **complete** — local convert/build + home HTML verified |
 | Source JSON | `yt-placeholder-01` `published:true`, watch URL `Ke4F8JAQz-I` |
 | Home HTML | `youtube-nocookie.com/embed/Ke4F8JAQz-I` + `.gosaki-youtube-embed` |
-| Staging upload | **not done** |
-| **Next** | `G-10d1-gosaki-youtube-embed-staging-manual-upload-by-operator` |
+| Staging upload | **package ready** — operator upload pending (G-10d2) |
+| **Next** | `G-10d2-gosaki-youtube-embed-staging-manual-upload-by-operator` |
 | **Do not** | re-click G-10c Save; FTP auto-deploy |
 
 ## 0v. G-10c2 YouTube embed static JSON Save success — complete

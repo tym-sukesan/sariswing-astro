@@ -5,12 +5,21 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-10d-gosaki-youtube-embed-public-reflection-verification — complete.
-Prior: G-10c2 Save success (commit 5d5b1f1); local home embed verified 2026-06-23.
+Current phase: G-10d1-gosaki-youtube-embed-manual-upload-package-prep — complete.
+Prior: G-10d public reflection (commit c489315); package prep 2026-06-23.
 branch: main — check git HEAD for latest commit hash
 ```
 
-**Next:** `G-10d1-gosaki-youtube-embed-staging-manual-upload-by-operator` — manual-upload package + operator upload + staging QA.
+**Next:** `G-10d2-gosaki-youtube-embed-staging-manual-upload-by-operator` — operator FTP upload + staging QA (YouTube embed on live staging).
+
+## G-10d1 YouTube embed manual upload package prep — complete
+
+- **Doc:** `gosaki-youtube-embed-manual-upload-package-prep.md`
+- **Package:** `output/manual-upload/gosaki-piano/public-dist/` (20 files, `verify:manual-upload` PASS)
+- **YouTube:** `gosaki-youtube-embed` + `Ke4F8JAQz-I` in package `index.html`
+- **Upload target:** `/cms-kit-staging/gosaki-piano/` on `yskcreate.weblike.jp`
+- **Staging:** not uploaded yet — G-10d2 operator manual upload
+- **Do not:** FTP auto-deploy; re-click G-10c Save
 
 ## G-10d YouTube embed public reflection — complete
 

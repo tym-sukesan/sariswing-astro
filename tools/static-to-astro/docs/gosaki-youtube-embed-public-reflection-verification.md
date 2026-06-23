@@ -152,7 +152,8 @@ FTP auto-apply remains **suspended** (`readyForAnyFutureFtpApply: false`).
 
 | Phase | Goal |
 | --- | --- |
-| **G-10d1** | `gosaki-youtube-embed-staging-manual-upload-by-operator` — package prep + operator manual upload + staging browser QA |
+| **G-10d1** | `gosaki-youtube-embed-manual-upload-package-prep` — **complete** — see [gosaki-youtube-embed-manual-upload-package-prep.md](./gosaki-youtube-embed-manual-upload-package-prep.md) |
+| **G-10d2** | `gosaki-youtube-embed-staging-manual-upload-by-operator` — operator FTP upload + staging browser QA |
 
 Deferred:
 

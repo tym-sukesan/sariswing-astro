@@ -61,6 +61,16 @@ export function markYoutubeEmbedSlotInHomeBody(bodyHtml) {
 }
 
 /**
+ * @param {string} bodyPart Astro page body after frontmatter (includes <BaseLayout> open + inner).
+ * @returns {{ open: string, inner: string } | null}
+ */
+export function splitBaseLayoutOpenAndInner(bodyPart) {
+  const match = bodyPart.match(/^(\s*<BaseLayout[\s\S]*?>)([\s\S]*)$/);
+  if (!match) return null;
+  return { open: match[1], inner: match[2] };
+}
+
+/**
  * @param {string} pageContent
  */
 export function injectYouTubeEmbedIntoHomePage(pageContent) {
@@ -84,17 +94,22 @@ export function injectYouTubeEmbedIntoHomePage(pageContent) {
   const fmEnd = beforeClose.indexOf("---", 3) + 3;
   const bodyPart = beforeClose.slice(fmEnd);
 
-  const strippedBody = bodyPart
+  const layout = splitBaseLayoutOpenAndInner(bodyPart);
+  if (!layout) {
+    throw new Error("Home page body missing <BaseLayout>");
+  }
+
+  const strippedInner = layout.inner
     .replace(/\n\s*<YouTubeEmbedSection\s*\/>\n?/g, "\n")
     .replace(GOSAKI_YOUTUBE_EMBED_SLOT, "");
 
-  const markedBody = markYoutubeEmbedSlotInHomeBody(strippedBody);
-  const withComponent = markedBody.replace(
+  const markedInner = markYoutubeEmbedSlotInHomeBody(strippedInner);
+  const withComponent = markedInner.replace(
     GOSAKI_YOUTUBE_EMBED_SLOT,
     "\n  <YouTubeEmbedSection />\n",
   );
 
-  return beforeClose.slice(0, fmEnd) + withComponent + afterClose;
+  return beforeClose.slice(0, fmEnd) + layout.open + withComponent + afterClose;
 }
 
 /**

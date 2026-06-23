@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-10b Gosaki YouTube embed read and write planning (2026-06-22):** **complete** — public JSON inject + admin binding surveyed; **G-10c recommended: static JSON write slice**. Doc: `gosaki-youtube-embed-read-and-write-planning.md`. **No DB write.** `readyForAnyDbWrite: false`.
+**G-10c Gosaki YouTube embed static JSON write slice implementation (2026-06-22):** **complete** — dry-run UI + gated Save + server JSON executor wired; **no Save/JSON write by Cursor**. Doc: `gosaki-youtube-embed-static-json-write-slice-implementation.md`. Default Save disabled. **No DB write.** `readyForAnyDbWrite: false`.
+
+**G-10b Gosaki YouTube embed read and write planning (2026-06-22):** **complete** — commit `88cc484`. Doc: `gosaki-youtube-embed-read-and-write-planning.md`.
 
 **G-10a Gosaki completion inventory and next module selection (2026-06-22):** **complete** — Schedule以外棚卸し；次モジュール YouTube embed CMS → G-10b. Doc: `gosaki-completion-inventory-and-next-module-selection.md`. Commit: `b5fd950`. Parallel: `G-9h1` client feedback. **No DB write.** `readyForAnyDbWrite: false`.
 
@@ -69,9 +71,9 @@ Staging Shell
 将来的な顧客オンボーディング・課金・デプロイ自動化
 
 2. Current phase
-現在フェーズ: **G-10b-gosaki-youtube-embed-read-and-write-planning** — **complete**（read/write 方針設計. 最新commitは git HEAD を確認すること。）
+現在フェーズ: **G-10c-gosaki-youtube-embed-static-json-write-slice-implementation** — **complete**（dry-run + gated Save 実装. 最新commitは git HEAD を確認すること。）
 
-G-10b: YouTube public = convert-time JSON inject; admin = static JSON read; **G-10c = static JSON write slice**（`site_embeds` は G-10e）. `readyForAnyDbWrite: false`.
+G-10c: YouTube static JSON write slice（`yt-placeholder-01` / embedCode+published）. Default Save disabled. Next: final preflight + operator Save once. `readyForAnyDbWrite: false`.
 
 G-9k5 finalization: **complete** (commit `60820c4`). G-9k arc closed.
 

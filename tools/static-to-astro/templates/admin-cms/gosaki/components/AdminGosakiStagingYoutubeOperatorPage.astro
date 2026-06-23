@@ -2,6 +2,11 @@
 import type { GosakiYoutubeEmbedAdminBinding } from "../../../../../../src/lib/admin/staging-data/gosaki-youtube-embed-admin-binding";
 import { GOSAKI_YOUTUBE_DEFAULT_IFRAME_TITLE } from "../../../../../../tools/static-to-astro/templates/site-extensions/gosaki-piano/gosaki-youtube-embed";
 import { GOSAKI_STAGING_ADMIN_BASE } from "../gosaki-staging-admin-paths";
+import {
+  G10C_SAVE_BUTTON_PAGE_CONFIG_ELEMENT_ID,
+  resolveG10cSaveButtonPageServerConfig,
+} from "../../../../../../src/lib/admin/staging-write/gosaki-youtube-embed-static-json-write-page-config";
+import { G10C_YOUTUBE_EMBED_TARGET_ITEM_ID } from "../../../../../../src/lib/admin/staging-write/gosaki-youtube-embed-static-json-write-types";
 
 interface Props {
   binding: GosakiYoutubeEmbedAdminBinding;
@@ -9,14 +14,39 @@ interface Props {
 
 const { binding } = Astro.props;
 const defaultIframeTitle = GOSAKI_YOUTUBE_DEFAULT_IFRAME_TITLE;
+
+const g10cPageConfig = resolveG10cSaveButtonPageServerConfig(import.meta.env);
+const savePrepNote = g10cPageConfig.saveButtonSaveEnabled
+  ? "「変更を確認」で内容を確認してから「更新する」を押してください。"
+  : "「変更を確認」で内容を確認できます。保存は無効です。JSON ファイルは変更されません。";
+
+const g10cTargetView =
+  binding.items.find((view) => view.item.id === G10C_YOUTUBE_EMBED_TARGET_ITEM_ID) ?? null;
+const g10cConfigJson = JSON.stringify(binding.config);
+const g10cBeforeItemJson = g10cTargetView ? JSON.stringify(g10cTargetView.item) : "";
 ---
 
 <section
   id="gosaki-youtube-operator"
   class="admin-gosaki-youtube-operator admin-page admin-page--wide admin-prototype-section"
   data-section="admin-youtube"
+  data-g10c-config={g10cConfigJson}
+  data-g10c-before-item={g10cBeforeItemJson}
   aria-label="YouTube設定"
 >
+  <div
+    id={G10C_SAVE_BUTTON_PAGE_CONFIG_ELEMENT_ID}
+    data-g10c-save-button-save-enabled={g10cPageConfig.saveButtonSaveEnabled ? "true" : "false"}
+    data-g10c-staging-shell-enabled={g10cPageConfig.stagingShellEnabled ? "true" : "false"}
+    data-g10c-staging-write-enabled={g10cPageConfig.stagingWriteEnabled ? "true" : "false"}
+    data-g10c-env-arm-armed={g10cPageConfig.envArmArmed ? "true" : "false"}
+    data-g10c-write-dry-run-disabled={g10cPageConfig.writeDryRunDisabled ? "true" : "false"}
+    data-g10c-write-provider={g10cPageConfig.writeProvider}
+    data-g10c-write-module={g10cPageConfig.writeModule}
+    data-g10c-write-approval-id={g10cPageConfig.writeApprovalId}
+    hidden
+  />
+
   <header class="admin-gosaki-page-header admin-gosaki-page-header--with-actions">
     <div>
       <a class="admin-gosaki-back-link" href={GOSAKI_STAGING_ADMIN_BASE}>← 管理画面トップへ</a>
@@ -39,15 +69,146 @@ const defaultIframeTitle = GOSAKI_YOUTUBE_DEFAULT_IFRAME_TITLE;
     YouTube の埋め込みコードを貼り付けるだけで、トップページに動画を表示できます。
   </p>
 
-  <p class="admin-gosaki-status-bar admin-gosaki-status-bar--soft" role="status">
-    保存機能は準備中です。
-  </p>
-
   {
     binding.message ? (
       <p class="admin-gosaki-operator-alert" role="alert">{binding.message}</p>
     ) : null
   }
+
+  <section class="admin-card admin-gosaki-card gosaki-youtube-admin-g10c-card">
+    <h2 class="admin-gosaki-card__title">トップページ埋め込み（G-10c）</h2>
+    <p class="admin-gosaki-card__lead">
+      対象 item: <code>{G10C_YOUTUBE_EMBED_TARGET_ITEM_ID}</code> — <code>embedCode</code> と
+      <code>published</code> のみ更新できます。
+    </p>
+
+    {
+      !g10cTargetView ? (
+        <p class="admin-gosaki-operator-empty" role="alert">
+          対象 item（{G10C_YOUTUBE_EMBED_TARGET_ITEM_ID}）が設定ファイルにありません。
+        </p>
+      ) : (
+        <>
+          <dl class="gosaki-youtube-admin-g10c-meta">
+            <div>
+              <dt>現在の公開状態</dt>
+              <dd>
+                <span
+                  class={`gosaki-youtube-admin-item__status gosaki-youtube-admin-item__status--${g10cTargetView.item.published === true ? "published" : "draft"}`}
+                >
+                  {g10cTargetView.item.published === true ? "公開" : "非公開"}
+                </span>
+              </dd>
+            </div>
+            <div>
+              <dt>表示順</dt>
+              <dd>{g10cTargetView.item.sortOrder ?? 0}</dd>
+            </div>
+            <div>
+              <dt>config path</dt>
+              <dd><code>{binding.configPath}</code></dd>
+            </div>
+          </dl>
+
+          <div class="admin-form gosaki-youtube-admin-form">
+            <label class="admin-form__field admin-form__field--full">
+              <span class="admin-form__label">埋め込みコード</span>
+              <textarea
+                id="gosaki-yt-g10c-embed-code"
+                class="gosaki-youtube-admin-embed-code gosaki-youtube-admin-embed-code--large"
+                rows="10"
+                placeholder="YouTube URL / iframe / videoId"
+              >
+                {g10cTargetView.item.embedCode ?? ""}
+              </textarea>
+            </label>
+            <div class="gosaki-youtube-admin-form__row">
+              <label class="admin-form__field admin-form__field--checkbox">
+                <input
+                  id="gosaki-yt-g10c-published"
+                  type="checkbox"
+                  checked={g10cTargetView.item.published === true}
+                />
+                <span>公開する</span>
+              </label>
+              <p class="admin-form__field gosaki-youtube-admin-g10c-video-id-wrap">
+                <span class="admin-form__label">videoId（解析）</span>
+                <code id="gosaki-yt-g10c-video-id">
+                  {g10cTargetView.videoId ?? "—"}
+                </code>
+              </p>
+            </div>
+          </div>
+
+          <div class="gosaki-youtube-admin-preview-card">
+            <h3 class="admin-gosaki-card__subtitle">プレビュー</h3>
+            <div id="gosaki-yt-g10c-live-preview" class="gosaki-youtube-admin-preview">
+              {
+                g10cTargetView.resolved ? (
+                  <div class="gosaki-youtube-admin-preview__media">
+                    <iframe
+                      src={g10cTargetView.resolved.embedUrl}
+                      title={defaultIframeTitle}
+                      loading="lazy"
+                      allowfullscreen
+                    />
+                  </div>
+                ) : (
+                  <p class="admin-gosaki-operator-empty">
+                    埋め込みコードを貼り付けると、ここに動画が表示されます。
+                  </p>
+                )
+              }
+            </div>
+          </div>
+
+          <div class="gosaki-schedule-edit-dry-run-actions">
+            <button
+              type="button"
+              class="admin-button admin-button-secondary"
+              id="gosaki-yt-g10c-dry-run-btn"
+              data-gosaki-dry-run-only
+            >
+              変更を確認
+            </button>
+            <p class="gosaki-schedule-edit-dry-run-actions__hint" role="note">
+              保存前に、変更内容を画面上で確認できます。JSON ファイルは変更されません。
+            </p>
+          </div>
+
+          <div
+            id="gosaki-yt-g10c-dry-run-result"
+            class="gosaki-schedule-edit-dry-run"
+            hidden
+            aria-live="polite"
+          />
+
+          <div
+            id="gosaki-yt-g10c-save-result"
+            class="gosaki-schedule-edit-save-result"
+            hidden
+            aria-live="polite"
+          />
+
+          <div class="admin-actions gosaki-youtube-admin-g10c-actions">
+            <button
+              type="button"
+              class="admin-button"
+              id="gosaki-yt-g10c-update-btn"
+              data-gosaki-yt-action-disabled
+              data-gosaki-save-allowed="false"
+              disabled
+            >
+              更新する（準備中）
+            </button>
+          </div>
+          <p id="gosaki-yt-update-btn-note" class="admin-gosaki-save-note" role="note">
+            {savePrepNote}
+          </p>
+        </>
+      )
+    }
+  </section>
 
   <section class="admin-card admin-gosaki-card gosaki-youtube-admin-add-card">
     <h2 class="admin-gosaki-card__title">動画を追加</h2>
@@ -91,13 +252,13 @@ const defaultIframeTitle = GOSAKI_YOUTUBE_DEFAULT_IFRAME_TITLE;
         追加
       </button>
     </div>
-    <p class="admin-gosaki-save-note" role="note">※ 保存は準備中です</p>
+    <p class="admin-gosaki-save-note" role="note">※ 追加の保存は準備中です</p>
   </section>
 
   <section class="admin-card admin-gosaki-card">
     <h2 class="admin-gosaki-card__title">登録済みの動画</h2>
     <p class="admin-gosaki-card__lead">
-      数字が小さいほど上に表示されます。↑ ↓ で並び替えの見た目を確認できます。
+      数字が小さいほど上に表示されます。↑ ↓ で並び替えの見た目を確認できます（保存は未対応）。
     </p>
 
     <div class="admin-actions admin-actions--compact">
@@ -111,7 +272,7 @@ const defaultIframeTitle = GOSAKI_YOUTUBE_DEFAULT_IFRAME_TITLE;
       </button>
     </div>
     <p class="admin-gosaki-save-note admin-gosaki-save-note--tight" role="note">
-      ※ 並び順・更新・削除は準備中です
+      ※ 並び順・削除は準備中です
     </p>
 
     {

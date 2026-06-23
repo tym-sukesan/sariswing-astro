@@ -1,6 +1,19 @@
 Last updated: 2026-06-22
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0t. G-10c YouTube embed static JSON write slice — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-10c-gosaki-youtube-embed-static-json-write-slice-implementation` |
+| Doc | `gosaki-youtube-embed-static-json-write-slice-implementation.md` |
+| Status | **complete** — dry-run + gated Save UI; executor wired |
+| Write target | `gosaki-piano-youtube-embed.json` / `yt-placeholder-01` |
+| Fields | `embedCode`, `published` only |
+| Default Save | **disabled** (`G10C_YOUTUBE_EMBED_SAVE_ENABLED=false`) |
+| **Next** | G-10c final preflight → operator Save once |
+| `readyForAnyDbWrite` | **false** |
+
 ## 0s. G-10b YouTube embed read/write planning — complete
 
 | Item | Value |
@@ -15,7 +28,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | **G-10e deferred** | `site_embeds` Supabase migration |
 | `readyForAnyDbWrite` | **false** |
 
-**Next:** `G-10c-gosaki-youtube-embed-static-json-write-slice-implementation` — dry-run + gated Save to `gosaki-piano-youtube-embed.json` (1 item; no Supabase).
+**Next:** `G-10c-gosaki-youtube-embed-static-json-write-slice-final-preflight` — operator dry-run + Save once (env arm).
 
 ## 0r. G-10a Gosaki completion inventory — complete
 

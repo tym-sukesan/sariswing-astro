@@ -5,12 +5,21 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-10e1-gosaki-youtube-embed-section-layout-reupload-qa-finalization — complete.
-Prior: G-10e layout fix (commit 9dabcb4); operator re-upload + staging QA PASS 2026-06-23.
+Current phase: G-10f-gosaki-discography-album-images-planning — complete.
+Prior: G-10e1 YouTube layout QA (commit d83ae32); YouTube arc closed.
 branch: main — check git HEAD for latest commit hash
 ```
 
-**Next:** Pick one — `G-10f-gosaki-discography-album-images-planning` (recommended) **or** `G-10g-gosaki-contact-hubspot-form-planning`.
+**Next:** `G-10f1-gosaki-discography-album-images-acquisition-preflight` — operator assets or approved Wix CDN download.
+
+## G-10f Discography album images planning — complete
+
+- **Doc:** `gosaki-discography-album-images-planning.md`
+- **Public:** `/discography/` = Wix HTML; 4 jackets via **wixstatic.com** (not self-hosted)
+- **Admin JSON:** `coverImage` empty ×4 → admin placeholder
+- **NO PHOTO:** home schedule only — **not** on discography page
+- **Recommended:** E+B — local `public/images/discography/{id}.jpg` + JSON + convert hook
+- **Cursor:** no image / JSON / FTP changes
 
 ## G-10e1 YouTube embed layout reupload QA — complete
 

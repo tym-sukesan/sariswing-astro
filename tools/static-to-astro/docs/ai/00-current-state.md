@@ -3,7 +3,11 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-10e1 Gosaki YouTube embed section layout reupload QA finalization (2026-06-23):** **complete** — operator manual re-upload + staging QA **PASS**; G-10e layout (`720px`, 16:9, Wix mesh breakout) **live on staging**. Doc: `gosaki-youtube-embed-section-layout-reupload-qa-finalization.md`. YouTube arc **closed** (G-10c→G-10e1). Next: **G-10f** Discography images or **G-10g** HubSpot contact (planning). **Do not re-click G-10c Save.**
+**G-10f Gosaki discography album images planning (2026-06-23):** **complete** — read-only investigation; 4 releases; public HTML uses Wix CDN (no local images); admin JSON `coverImage` empty. Recommended: **E+B** self-hosted swap via JSON + convert hook. Doc: `gosaki-discography-album-images-planning.md`. **No image/JSON/FTP changes.** Next: **G-10f1** acquisition preflight.
+
+**G-10e1 Gosaki YouTube embed section layout reupload QA finalization (2026-06-23):** **complete** — commit `d83ae32`; operator re-upload + staging QA **PASS**. Doc: `gosaki-youtube-embed-section-layout-reupload-qa-finalization.md`. YouTube arc **closed**. **Do not re-click G-10c Save.**
+
+**G-10e Gosaki YouTube embed section layout improvement (2026-06-23):** **complete** — commit `9dabcb4`. Doc: `gosaki-youtube-embed-section-layout-improvement.md`.
 
 **G-10e Gosaki YouTube embed section layout improvement (2026-06-23):** **complete** — commit `9dabcb4`; local CSS/layout fix; operator re-upload QA PASS (G-10e1). Doc: `gosaki-youtube-embed-section-layout-improvement.md`. **Do not re-click G-10c Save.**
 

@@ -1,6 +1,20 @@
 Last updated: 2026-06-23
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zc. G-10f Discography album images planning — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-10f-gosaki-discography-album-images-planning` |
+| Doc | `gosaki-discography-album-images-planning.md` |
+| Status | **complete** — read-only investigation + strategy |
+| Releases | 4 (`continuous`, `skylark`, `about-us`, `ja-jaaaaan`) |
+| Public images | Wix CDN in HTML — **0 local** in package |
+| Admin `coverImage` | **empty** on all 4 → 「準備中」placeholder |
+| Recommended | **E+B** — JSON paths + `public/images/discography/` + convert img rewrite |
+| **Next** | `G-10f1-gosaki-discography-album-images-acquisition-preflight` |
+| **Do not** | image mutation / JSON write / Cursor FTP |
+
 ## 0zb. G-10e1 YouTube embed layout reupload QA — complete
 
 | Item | Value |

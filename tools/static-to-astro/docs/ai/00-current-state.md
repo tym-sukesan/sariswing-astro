@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-10g2 Gosaki Contact HubSpot layout fix package prep (2026-06-24):** **complete** — PC 2-column grid (photo left, HubSpot form right); mobile stack unchanged. Doc: `gosaki-contact-hubspot-layout-fix-package-prep.md`. Manual-upload package regenerated. **No FTP/upload.** Next: **G-10h5-2a** (operator manual upload — About + Contact layout).
+**G-10g3 Gosaki Contact HubSpot visual layout refinement package prep (2026-06-24):** **complete** — title/intro centered; 2-column block `320px + 56px + 560px` fit-content centered. Doc: `gosaki-contact-hubspot-visual-layout-refinement-package-prep.md`. Manual-upload package regenerated. **No FTP/upload.** Next: **G-10h5-2a** (operator re-upload + Contact visual QA).
+
+**G-10g2 Gosaki Contact HubSpot layout fix package prep (2026-06-24):** **complete** — commit `04eadd9`. PC 2-column grid (photo left, HubSpot form right). Superseded for upload by G-10g3 package regen.
 
 **G-10g1 Gosaki Contact HubSpot embed package prep (2026-06-24):** **complete** — commit `aa352ac`. Contact-only config + convert hook; Wix form replaced. Doc: `gosaki-contact-hubspot-embed-package-prep.md`. Superseded for upload by G-10g2 package regen.
 

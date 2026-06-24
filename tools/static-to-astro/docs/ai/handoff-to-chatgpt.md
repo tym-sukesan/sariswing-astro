@@ -5,20 +5,26 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-10g2-gosaki-contact-hubspot-layout-fix-package-prep — complete.
-Prior: G-10g1 Contact HubSpot embed (commit aa352ac); G-10h5-2 preflight (c1b2bc3).
-branch: main — G-10g2 implementation uncommitted
+Current phase: G-10g3-gosaki-contact-hubspot-visual-layout-refinement-package-prep — complete.
+Prior: G-10g2 layout fix (commit 04eadd9); G-10g1 HubSpot embed (aa352ac).
+branch: main — G-10g3 implementation uncommitted
 ```
 
-**Next:** `G-10h5-2a-gosaki-staging-manual-upload-by-operator` — FileZilla upload (About + Contact HubSpot layout).
+**Next:** `G-10h5-2a-gosaki-staging-manual-upload-by-operator` — FileZilla re-upload (Contact visual refinement).
+
+## G-10g3 Contact HubSpot visual layout refinement package prep — complete
+
+- **Doc:** `gosaki-contact-hubspot-visual-layout-refinement-package-prep.md`
+- **Fix:** Contact title + intro centered; 2-column block `320px / 560px`, gap `56px`, fit-content centering
+- **CSS:** `gosaki-piano-overrides.mjs` G-10g2/G-10g3 block refined (HubSpot allowlist / hook unchanged)
+- **Package:** manual-upload regenerated; `verify:manual-upload` PASS
+- **Do not:** FTP / About CMS re-Save / G-10h4b / G-10h4d re-run
 
 ## G-10g2 Contact HubSpot layout fix package prep — complete
 
+- **Commit:** `04eadd9`
 - **Doc:** `gosaki-contact-hubspot-layout-fix-package-prep.md`
-- **Fix:** PC 2-column CSS grid on `#comp-lol1i5gq` mesh — photo left, HubSpot form right; mobile stack unchanged
-- **CSS:** `gosaki-piano-overrides.mjs` G-10g2 block only (HubSpot allowlist / hook unchanged)
-- **Package:** manual-upload regenerated; `verify:manual-upload` PASS
-- **Do not:** FTP / About CMS re-Save / G-10h4b / G-10h4d re-run
+- **Note:** Use **G-10g3-regenerated** package for upload
 
 ## G-10g1 Contact HubSpot embed package prep — complete
 

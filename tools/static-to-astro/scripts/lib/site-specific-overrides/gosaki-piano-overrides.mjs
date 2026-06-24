@@ -1881,25 +1881,24 @@ body.wix-static-export [data-mesh-id*="inlineContent"]:has(.gosaki-youtube-embed
   }
 }
 
-/* --- G-10g2 gosaki contact HubSpot PC layout fix (site-specific) --- */
+/* --- G-10g2 / G-10g3 gosaki contact HubSpot PC layout (site-specific) --- */
 /*
- * Original Wix mesh placed photo (#comp-jsh29kfc) and form (#comp-jqbwo704) in the
- * same grid row with left offsets. HubSpot replacement drops those mesh rules, so
- * restore a 2-column grid on desktop: photo left, form right; intro above form column.
+ * G-10g2: photo left, HubSpot form right (replaces Wix mesh offsets).
+ * G-10g3: center page title + intro; tighten 2-column block; fit-content centering.
  */
 
 @media (min-width: 769px) {
   body.wix-static-export #comp-lol1i5gq [data-mesh-id="comp-lol1i5gqinlineContent-gridContainer"] {
     display: grid !important;
-    grid-template-columns: minmax(209px, 360px) minmax(320px, 640px) !important;
-    grid-template-rows: auto auto minmax(0, 1fr) !important;
-    column-gap: 48px !important;
-    row-gap: 0 !important;
-    max-width: 980px !important;
-    width: 100% !important;
-    margin-left: auto !important;
-    margin-right: auto !important;
-    padding-bottom: 2.5rem !important;
+    grid-template-columns: 320px 560px !important;
+    grid-template-rows: auto auto auto !important;
+    column-gap: 56px !important;
+    row-gap: 1.5rem !important;
+    width: fit-content !important;
+    max-width: min(100%, 1000px) !important;
+    margin-inline: auto !important;
+    justify-content: center !important;
+    padding: 3.5rem 1.5rem 2.5rem !important;
     box-sizing: border-box !important;
   }
 
@@ -1914,9 +1913,20 @@ body.wix-static-export [data-mesh-id*="inlineContent"]:has(.gosaki-youtube-embed
     > #WRchTxt4 {
     grid-column: 1 / -1 !important;
     grid-row: 1 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    text-align: center !important;
     left: auto !important;
-    margin-left: 0 !important;
+    right: auto !important;
+    margin: 0 !important;
     justify-self: center !important;
+  }
+
+  body.wix-static-export #comp-lol1i5gq #WRchTxt4 h4,
+  body.wix-static-export #comp-lol1i5gq #WRchTxt4 .font_4,
+  body.wix-static-export #comp-lol1i5gq #WRchTxt4 > .wixui-rich-text__text,
+  body.wix-static-export #comp-lol1i5gq #WRchTxt4 h4 .wixui-rich-text__text {
+    text-align: center !important;
   }
 
   body.wix-static-export
@@ -1928,12 +1938,20 @@ body.wix-static-export [data-mesh-id*="inlineContent"]:has(.gosaki-youtube-embed
     [data-mesh-id="comp-lol1i5gqinlineContent-gridContainer"]
     > interact-element
     > #comp-j8pza50e {
-    grid-column: 2 / 3 !important;
+    grid-column: 1 / -1 !important;
     grid-row: 2 !important;
+    width: 100% !important;
+    max-width: 560px !important;
     left: auto !important;
-    margin-left: 0 !important;
-    justify-self: start !important;
-    max-width: 288px !important;
+    margin-inline: auto !important;
+    justify-self: center !important;
+    text-align: center !important;
+    padding: 0 !important;
+  }
+
+  body.wix-static-export #comp-lol1i5gq #comp-j8pza50e .wixui-rich-text__text,
+  body.wix-static-export #comp-lol1i5gq #comp-j8pza50e p {
+    text-align: center !important;
   }
 
   body.wix-static-export
@@ -1948,10 +1966,10 @@ body.wix-static-export [data-mesh-id*="inlineContent"]:has(.gosaki-youtube-embed
     grid-column: 1 !important;
     grid-row: 3 !important;
     left: auto !important;
-    margin-left: 0 !important;
-    margin-top: 0 !important;
-    width: auto !important;
-    max-width: 360px !important;
+    margin: 0 !important;
+    width: 100% !important;
+    max-width: 320px !important;
+    justify-self: center !important;
     align-self: start !important;
   }
 
@@ -1971,10 +1989,9 @@ body.wix-static-export [data-mesh-id*="inlineContent"]:has(.gosaki-youtube-embed
     grid-column: 2 !important;
     grid-row: 3 !important;
     left: auto !important;
-    margin-left: 0 !important;
-    margin-top: 0 !important;
+    margin: 0 !important;
     width: 100% !important;
-    max-width: 640px !important;
+    max-width: 560px !important;
     align-self: start !important;
     box-sizing: border-box !important;
   }

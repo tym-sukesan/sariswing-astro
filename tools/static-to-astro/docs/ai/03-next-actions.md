@@ -1,16 +1,25 @@
 Last updated: 2026-06-24
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zq. G-10g3 Contact HubSpot visual layout refinement package prep — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-10g3-gosaki-contact-hubspot-visual-layout-refinement-package-prep` |
+| Doc | `gosaki-contact-hubspot-visual-layout-refinement-package-prep.md` |
+| Fix | Title/intro centered; `320px + 56px + 560px` grid; fit-content centering |
+| Package | `output/manual-upload/gosaki-piano/public-dist/` (regenerated) |
+| **Next** | `G-10h5-2a-gosaki-staging-manual-upload-by-operator` (Contact visual QA) |
+| **Do not** | Cursor FTP / About JSON re-Save / G-10h4b / G-10h4d re-run |
+
 ## 0zp. G-10g2 Contact HubSpot layout fix package prep — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-10g2-gosaki-contact-hubspot-layout-fix-package-prep` |
 | Doc | `gosaki-contact-hubspot-layout-fix-package-prep.md` |
-| Fix | PC 2-column grid on contact mesh; `.gosaki-contact-hubspot-embed` max-width 640px |
-| Package | `output/manual-upload/gosaki-piano/public-dist/` (regenerated) |
-| **Next** | `G-10h5-2a-gosaki-staging-manual-upload-by-operator` (About + Contact layout) |
-| **Do not** | Cursor FTP / About JSON re-Save / G-10h4b / G-10h4d re-run |
+| Commit | `04eadd9` |
+| **Note** | Use **G-10g3-regenerated** package for upload |
 
 ## 0zo. G-10g1 Contact HubSpot embed package prep — complete
 

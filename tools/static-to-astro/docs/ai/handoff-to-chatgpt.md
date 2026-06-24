@@ -5,20 +5,28 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-10g1-gosaki-contact-hubspot-embed-implementation-and-package-prep — complete.
-Prior: G-10h5-2 preflight (commit c1b2bc3); G-10h5-1 About package (f427f9c).
-branch: main — G-10g1 implementation uncommitted
+Current phase: G-10g2-gosaki-contact-hubspot-layout-fix-package-prep — complete.
+Prior: G-10g1 Contact HubSpot embed (commit aa352ac); G-10h5-2 preflight (c1b2bc3).
+branch: main — G-10g2 implementation uncommitted
 ```
 
-**Next:** `G-10h5-2a-gosaki-staging-manual-upload-by-operator` — FileZilla upload (About + Contact HubSpot).
+**Next:** `G-10h5-2a-gosaki-staging-manual-upload-by-operator` — FileZilla upload (About + Contact HubSpot layout).
+
+## G-10g2 Contact HubSpot layout fix package prep — complete
+
+- **Doc:** `gosaki-contact-hubspot-layout-fix-package-prep.md`
+- **Fix:** PC 2-column CSS grid on `#comp-lol1i5gq` mesh — photo left, HubSpot form right; mobile stack unchanged
+- **CSS:** `gosaki-piano-overrides.mjs` G-10g2 block only (HubSpot allowlist / hook unchanged)
+- **Package:** manual-upload regenerated; `verify:manual-upload` PASS
+- **Do not:** FTP / About CMS re-Save / G-10h4b / G-10h4d re-run
 
 ## G-10g1 Contact HubSpot embed package prep — complete
 
+- **Commit:** `aa352ac`
 - **Doc:** `gosaki-contact-hubspot-embed-package-prep.md`
 - **Config:** `gosaki-piano-contact-hubspot.json` (Contact-only allowlist)
 - **Hook:** replaces Wix `#comp-jqbwo704` with HubSpot embed on `/contact/`
-- **Package:** manual-upload regenerated; `verify:manual-upload` PASS
-- **Do not:** FTP / About CMS for HubSpot / G-10h4b / G-10h4d re-Save
+- **Note:** Use **G-10g2-regenerated** package for upload
 
 ## G-10h5-2 About HTML staging manual upload preflight — complete
 

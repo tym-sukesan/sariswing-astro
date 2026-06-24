@@ -1,5 +1,16 @@
-Last updated: 2026-06-23
+Last updated: 2026-06-24
 Project: Static-to-Astro CMS / Musician CMS Kit
+
+## 0zp. G-10g2 Contact HubSpot layout fix package prep — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-10g2-gosaki-contact-hubspot-layout-fix-package-prep` |
+| Doc | `gosaki-contact-hubspot-layout-fix-package-prep.md` |
+| Fix | PC 2-column grid on contact mesh; `.gosaki-contact-hubspot-embed` max-width 640px |
+| Package | `output/manual-upload/gosaki-piano/public-dist/` (regenerated) |
+| **Next** | `G-10h5-2a-gosaki-staging-manual-upload-by-operator` (About + Contact layout) |
+| **Do not** | Cursor FTP / About JSON re-Save / G-10h4b / G-10h4d re-run |
 
 ## 0zo. G-10g1 Contact HubSpot embed package prep — complete
 
@@ -7,9 +18,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | --- | --- |
 | Phase | `G-10g1-gosaki-contact-hubspot-embed-implementation-and-package-prep` |
 | Doc | `gosaki-contact-hubspot-embed-package-prep.md` |
+| Commit | `aa352ac` |
 | Config | `gosaki-piano-contact-hubspot.json` |
-| Package | `output/manual-upload/gosaki-piano/public-dist/` (regenerated) |
-| **Next** | `G-10h5-2a-gosaki-staging-manual-upload-by-operator` (About + Contact) |
+| **Note** | Use **G-10g2-regenerated** package for upload (includes layout fix) |
 | **Do not** | Cursor FTP / About JSON re-Save / G-10h4b / G-10h4d re-run |
 
 ## 0zn. G-10h5-2 About HTML staging manual upload preflight — complete

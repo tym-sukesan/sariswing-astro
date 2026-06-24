@@ -329,14 +329,16 @@ body.wix-static-export #SITE_HEADER .global-nav a.is-current {
     display: block;
   }
 
-  body.wix-static-export #comp-jqbwo704 {
+  body.wix-static-export #comp-jqbwo704,
+  body.wix-static-export .gosaki-contact-hubspot-embed {
     width: 100% !important;
     padding: 0 0.5rem !important;
     box-sizing: border-box;
   }
 
   body.wix-static-export #comp-jqbwo704 form,
-  body.wix-static-export #comp-jqbwo704 [data-hook="form"] {
+  body.wix-static-export #comp-jqbwo704 [data-hook="form"],
+  body.wix-static-export .gosaki-contact-hubspot-embed .hs-form-frame {
     width: 100% !important;
     max-width: 100% !important;
   }
@@ -541,7 +543,8 @@ body.wix-static-export #SITE_HEADER .global-nav a.is-current {
   }
 
   /* Contact: center form block */
-  body.wix-static-export #comp-jqbwo704 {
+  body.wix-static-export #comp-jqbwo704,
+  body.wix-static-export .gosaki-contact-hubspot-embed {
     margin-left: auto !important;
     margin-right: auto !important;
     left: auto !important;
@@ -554,7 +557,8 @@ body.wix-static-export #SITE_HEADER .global-nav a.is-current {
   body.wix-static-export #comp-jqbwo704 form,
   body.wix-static-export #comp-jqbwo704 [data-hook="form"],
   body.wix-static-export #comp-jqbwo704 .wixui-form,
-  body.wix-static-export #comp-jqbwo704 fieldset {
+  body.wix-static-export #comp-jqbwo704 fieldset,
+  body.wix-static-export .gosaki-contact-hubspot-embed .hs-form-frame {
     width: 100% !important;
     max-width: 100% !important;
     margin-left: auto !important;
@@ -1873,6 +1877,110 @@ body.wix-static-export [data-mesh-id*="inlineContent"]:has(.gosaki-youtube-embed
   }
 
   body.wix-static-export .gosaki-youtube-embed__inner {
+    max-width: 100% !important;
+  }
+}
+
+/* --- G-10g2 gosaki contact HubSpot PC layout fix (site-specific) --- */
+/*
+ * Original Wix mesh placed photo (#comp-jsh29kfc) and form (#comp-jqbwo704) in the
+ * same grid row with left offsets. HubSpot replacement drops those mesh rules, so
+ * restore a 2-column grid on desktop: photo left, form right; intro above form column.
+ */
+
+@media (min-width: 769px) {
+  body.wix-static-export #comp-lol1i5gq [data-mesh-id="comp-lol1i5gqinlineContent-gridContainer"] {
+    display: grid !important;
+    grid-template-columns: minmax(209px, 360px) minmax(320px, 640px) !important;
+    grid-template-rows: auto auto minmax(0, 1fr) !important;
+    column-gap: 48px !important;
+    row-gap: 0 !important;
+    max-width: 980px !important;
+    width: 100% !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    padding-bottom: 2.5rem !important;
+    box-sizing: border-box !important;
+  }
+
+  body.wix-static-export
+    #comp-lol1i5gq
+    [data-mesh-id="comp-lol1i5gqinlineContent-gridContainer"]
+    > #WRchTxt4,
+  body.wix-static-export
+    #comp-lol1i5gq
+    [data-mesh-id="comp-lol1i5gqinlineContent-gridContainer"]
+    > interact-element
+    > #WRchTxt4 {
+    grid-column: 1 / -1 !important;
+    grid-row: 1 !important;
+    left: auto !important;
+    margin-left: 0 !important;
+    justify-self: center !important;
+  }
+
+  body.wix-static-export
+    #comp-lol1i5gq
+    [data-mesh-id="comp-lol1i5gqinlineContent-gridContainer"]
+    > #comp-j8pza50e,
+  body.wix-static-export
+    #comp-lol1i5gq
+    [data-mesh-id="comp-lol1i5gqinlineContent-gridContainer"]
+    > interact-element
+    > #comp-j8pza50e {
+    grid-column: 2 / 3 !important;
+    grid-row: 2 !important;
+    left: auto !important;
+    margin-left: 0 !important;
+    justify-self: start !important;
+    max-width: 288px !important;
+  }
+
+  body.wix-static-export
+    #comp-lol1i5gq
+    [data-mesh-id="comp-lol1i5gqinlineContent-gridContainer"]
+    > #comp-jsh29kfc,
+  body.wix-static-export
+    #comp-lol1i5gq
+    [data-mesh-id="comp-lol1i5gqinlineContent-gridContainer"]
+    > interact-element
+    > #comp-jsh29kfc {
+    grid-column: 1 !important;
+    grid-row: 3 !important;
+    left: auto !important;
+    margin-left: 0 !important;
+    margin-top: 0 !important;
+    width: auto !important;
+    max-width: 360px !important;
+    align-self: start !important;
+  }
+
+  body.wix-static-export
+    #comp-lol1i5gq
+    [data-mesh-id="comp-lol1i5gqinlineContent-gridContainer"]
+    > #gosaki-contact-hubspot-embed,
+  body.wix-static-export
+    #comp-lol1i5gq
+    [data-mesh-id="comp-lol1i5gqinlineContent-gridContainer"]
+    > interact-element
+    > #gosaki-contact-hubspot-embed,
+  body.wix-static-export
+    #comp-lol1i5gq
+    [data-mesh-id="comp-lol1i5gqinlineContent-gridContainer"]
+    > .gosaki-contact-hubspot-embed {
+    grid-column: 2 !important;
+    grid-row: 3 !important;
+    left: auto !important;
+    margin-left: 0 !important;
+    margin-top: 0 !important;
+    width: 100% !important;
+    max-width: 640px !important;
+    align-self: start !important;
+    box-sizing: border-box !important;
+  }
+
+  body.wix-static-export .gosaki-contact-hubspot-embed .hs-form-frame {
+    width: 100% !important;
     max-width: 100% !important;
   }
 }

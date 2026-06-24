@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-10g4 Gosaki Contact photo aspect-ratio fix package prep (2026-06-24):** **complete** — PC portrait `aspect-ratio: 3/4`, `object-position: center top` on `#comp-jsh29kfc`. Doc: `gosaki-contact-photo-aspect-ratio-fix-package-prep.md`. Manual-upload package regenerated. **No FTP/upload.** Next: **G-10h5-2a** (operator re-upload + Contact photo QA).
+**G-10i1 Gosaki About bands/projects images package prep (2026-06-25):** **complete** — 5 band images in `about-bands-html`; `assets/about/bands/` copied to public-dist. Doc: `gosaki-about-bands-projects-images-package-prep.md`. **No FTP/upload.** Next: **G-10h5-2a** (operator upload + About bands visual QA).
+
+**G-10g4 Gosaki Contact photo aspect-ratio fix package prep (2026-06-24):** **complete** — commit `0bd3789`.
 
 **G-10g3 Gosaki Contact HubSpot visual layout refinement package prep (2026-06-24):** **complete** — title/intro centered; 2-column block. Superseded for upload by G-10g4 package regen.
 

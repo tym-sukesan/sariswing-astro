@@ -1,6 +1,16 @@
 Last updated: 2026-06-24
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zs. G-10i1 About bands/projects images package prep — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-10i1-gosaki-about-bands-projects-images-package-prep` |
+| Doc | `gosaki-about-bands-projects-images-package-prep.md` |
+| Images | `fixtures/.../assets/about/bands/` × 5 → `public-dist/assets/about/bands/` |
+| **Next** | `G-10h5-2a-gosaki-staging-manual-upload-by-operator` |
+| **Do not** | Cursor FTP / image file ops / About JSON re-Save |
+
 ## 0zr. G-10g4 Contact photo aspect-ratio fix package prep — complete
 
 | Item | Value |

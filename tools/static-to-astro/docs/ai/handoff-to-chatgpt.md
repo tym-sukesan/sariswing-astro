@@ -5,20 +5,24 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-10g4-gosaki-contact-photo-aspect-ratio-fix-package-prep — complete.
-Prior: G-10g3 visual refinement; G-10g2 layout fix.
-branch: main — G-10g4 implementation uncommitted
+Current phase: G-10i1-gosaki-about-bands-projects-images-package-prep — complete.
+Prior: G-10g4 Contact photo aspect-ratio (0bd3789).
+branch: main — G-10i1 implementation uncommitted
 ```
 
-**Next:** `G-10h5-2a-gosaki-staging-manual-upload-by-operator` — FileZilla re-upload (Contact portrait photo).
+**Next:** `G-10h5-2a-gosaki-staging-manual-upload-by-operator` — FileZilla upload (About bands images + Contact).
+
+## G-10i1 About bands/projects images package prep — complete
+
+- **Doc:** `gosaki-about-bands-projects-images-package-prep.md`
+- **Images:** 5 JPG in `fixtures/.../assets/about/bands/` → `public-dist/assets/about/bands/`
+- **HTML:** `about-bands-html` placeholders → `<img class="band-profile__image">` (natural aspect ratio)
+- **Do not:** FTP / image file ops / G-10h4b / G-10h4d re-Save
 
 ## G-10g4 Contact photo aspect-ratio fix package prep — complete
 
+- **Commit:** `0bd3789`
 - **Doc:** `gosaki-contact-photo-aspect-ratio-fix-package-prep.md`
-- **Fix:** PC `#comp-jsh29kfc` — `aspect-ratio: 3/4`, `object-fit: cover`, `object-position: center top`
-- **Cause:** G-10g3 widened photo to 320px but Wix 275px height remained → landscape crop
-- **Package:** manual-upload regenerated
-- **Do not:** FTP / image file ops / About CMS re-Save
 
 ## G-10g2 Contact HubSpot layout fix package prep — complete
 

@@ -263,7 +263,7 @@ function copyImageAssets(siteDir, analysis, outputDir) {
     if (!fs.existsSync(src)) return;
 
     let destRel = normalized;
-    if (!destRel.startsWith("images/")) {
+    if (!destRel.startsWith("images/") && !destRel.startsWith("assets/")) {
       destRel = `images/${path.basename(normalized)}`;
     }
     const dest = path.join(outputDir, "public", destRel);

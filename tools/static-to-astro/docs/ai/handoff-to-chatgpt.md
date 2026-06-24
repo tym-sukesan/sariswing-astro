@@ -5,20 +5,20 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-10g3-gosaki-contact-hubspot-visual-layout-refinement-package-prep — complete.
-Prior: G-10g2 layout fix (commit 04eadd9); G-10g1 HubSpot embed (aa352ac).
-branch: main — G-10g3 implementation uncommitted
+Current phase: G-10g4-gosaki-contact-photo-aspect-ratio-fix-package-prep — complete.
+Prior: G-10g3 visual refinement; G-10g2 layout fix.
+branch: main — G-10g4 implementation uncommitted
 ```
 
-**Next:** `G-10h5-2a-gosaki-staging-manual-upload-by-operator` — FileZilla re-upload (Contact visual refinement).
+**Next:** `G-10h5-2a-gosaki-staging-manual-upload-by-operator` — FileZilla re-upload (Contact portrait photo).
 
-## G-10g3 Contact HubSpot visual layout refinement package prep — complete
+## G-10g4 Contact photo aspect-ratio fix package prep — complete
 
-- **Doc:** `gosaki-contact-hubspot-visual-layout-refinement-package-prep.md`
-- **Fix:** Contact title + intro centered; 2-column block `320px / 560px`, gap `56px`, fit-content centering
-- **CSS:** `gosaki-piano-overrides.mjs` G-10g2/G-10g3 block refined (HubSpot allowlist / hook unchanged)
-- **Package:** manual-upload regenerated; `verify:manual-upload` PASS
-- **Do not:** FTP / About CMS re-Save / G-10h4b / G-10h4d re-run
+- **Doc:** `gosaki-contact-photo-aspect-ratio-fix-package-prep.md`
+- **Fix:** PC `#comp-jsh29kfc` — `aspect-ratio: 3/4`, `object-fit: cover`, `object-position: center top`
+- **Cause:** G-10g3 widened photo to 320px but Wix 275px height remained → landscape crop
+- **Package:** manual-upload regenerated
+- **Do not:** FTP / image file ops / About CMS re-Save
 
 ## G-10g2 Contact HubSpot layout fix package prep — complete
 

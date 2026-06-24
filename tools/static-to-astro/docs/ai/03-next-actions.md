@@ -1,16 +1,23 @@
 Last updated: 2026-06-24
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zr. G-10g4 Contact photo aspect-ratio fix package prep — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-10g4-gosaki-contact-photo-aspect-ratio-fix-package-prep` |
+| Doc | `gosaki-contact-photo-aspect-ratio-fix-package-prep.md` |
+| Fix | PC `#comp-jsh29kfc` portrait `3/4`, `object-fit: cover`, `object-position: center top` |
+| Package | `output/manual-upload/gosaki-piano/public-dist/` (regenerated) |
+| **Next** | `G-10h5-2a-gosaki-staging-manual-upload-by-operator` (Contact photo QA) |
+| **Do not** | Cursor FTP / image file ops / About JSON re-Save |
+
 ## 0zq. G-10g3 Contact HubSpot visual layout refinement package prep — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-10g3-gosaki-contact-hubspot-visual-layout-refinement-package-prep` |
-| Doc | `gosaki-contact-hubspot-visual-layout-refinement-package-prep.md` |
-| Fix | Title/intro centered; `320px + 56px + 560px` grid; fit-content centering |
-| Package | `output/manual-upload/gosaki-piano/public-dist/` (regenerated) |
-| **Next** | `G-10h5-2a-gosaki-staging-manual-upload-by-operator` (Contact visual QA) |
-| **Do not** | Cursor FTP / About JSON re-Save / G-10h4b / G-10h4d re-run |
+| **Note** | Use **G-10g4-regenerated** package for upload |
 
 ## 0zp. G-10g2 Contact HubSpot layout fix package prep — complete
 

@@ -1881,10 +1881,11 @@ body.wix-static-export [data-mesh-id*="inlineContent"]:has(.gosaki-youtube-embed
   }
 }
 
-/* --- G-10g2 / G-10g3 gosaki contact HubSpot PC layout (site-specific) --- */
+/* --- G-10g2 / G-10g3 / G-10g4 gosaki contact HubSpot PC layout (site-specific) --- */
 /*
  * G-10g2: photo left, HubSpot form right (replaces Wix mesh offsets).
  * G-10g3: center page title + intro; tighten 2-column block; fit-content centering.
+ * G-10g4: portrait aspect-ratio on contact photo (fix PC landscape crop).
  */
 
 @media (min-width: 769px) {
@@ -1967,10 +1968,36 @@ body.wix-static-export [data-mesh-id*="inlineContent"]:has(.gosaki-youtube-embed
     grid-row: 3 !important;
     left: auto !important;
     margin: 0 !important;
-    width: 100% !important;
+    width: 320px !important;
     max-width: 320px !important;
+    height: auto !important;
+    aspect-ratio: 3 / 4 !important;
+    --width: 320px !important;
+    --height: auto !important;
+    overflow: hidden !important;
+    mask-image: none !important;
+    -webkit-mask-image: none !important;
     justify-self: center !important;
     align-self: start !important;
+  }
+
+  /* G-10g4: portrait crop — G-10g3 widened the box but Wix kept 275px height → landscape clip */
+  body.wix-static-export #comp-lol1i5gq #comp-jsh29kfc .apPOZK,
+  body.wix-static-export #comp-lol1i5gq #comp-jsh29kfc [data-testid="linkElement"] {
+    width: 100% !important;
+    height: 100% !important;
+    display: block !important;
+  }
+
+  body.wix-static-export #comp-lol1i5gq #comp-jsh29kfc img,
+  body.wix-static-export #comp-lol1i5gq #comp-jsh29kfc #img_comp-jsh29kfc {
+    width: 100% !important;
+    height: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    display: block !important;
+    object-fit: cover !important;
+    object-position: center top !important;
   }
 
   body.wix-static-export

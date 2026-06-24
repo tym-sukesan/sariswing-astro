@@ -5,19 +5,25 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-10i1-gosaki-about-bands-projects-images-package-prep — complete.
-Prior: G-10g4 Contact photo aspect-ratio (0bd3789).
-branch: main — G-10i1 implementation uncommitted
+Current phase: G-10h5-2a-gosaki-staging-manual-upload-post-qa-finalization — complete.
+Prior: G-10i1 About bands images (e5beedc); operator FileZilla upload.
+branch: main @ e5beedc — G-10h5-2a doc uncommitted
 ```
 
-**Next:** `G-10h5-2a-gosaki-staging-manual-upload-by-operator` — FileZilla upload (About bands images + Contact).
+**Next:** Client preview feedback on staging, or next product module per priority.
+
+## G-10h5-2a staging manual upload post-QA finalization — complete
+
+- **Doc:** `gosaki-staging-manual-upload-post-qa-finalization.md`
+- **Staging:** `https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/`
+- **QA:** About 5 band images + Contact HubSpot — read-only **PASS**; operator visual **PASS**
+- **Upload:** Operator FileZilla only; no mirror/delete
+- **Do not:** Cursor FTP / G-10h4b / G-10h4d re-Save
 
 ## G-10i1 About bands/projects images package prep — complete
 
+- **Commit:** `e5beedc`
 - **Doc:** `gosaki-about-bands-projects-images-package-prep.md`
-- **Images:** 5 JPG in `fixtures/.../assets/about/bands/` → `public-dist/assets/about/bands/`
-- **HTML:** `about-bands-html` placeholders → `<img class="band-profile__image">` (natural aspect ratio)
-- **Do not:** FTP / image file ops / G-10h4b / G-10h4d re-Save
 
 ## G-10g4 Contact photo aspect-ratio fix package prep — complete
 

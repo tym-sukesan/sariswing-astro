@@ -1,15 +1,25 @@
 Last updated: 2026-06-24
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zt. G-10h5-2a staging manual upload post-QA finalization — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-10h5-2a-gosaki-staging-manual-upload-post-qa-finalization` |
+| Doc | `gosaki-staging-manual-upload-post-qa-finalization.md` |
+| Upload | Operator FileZilla — `public-dist/` contents → `/cms-kit-staging/gosaki-piano/` |
+| QA | About bands 5 images **PASS**; Contact HubSpot **PASS**; read-only HTTP **PASS** |
+| Commit | Package `e5beedc` (G-10i1) |
+| **Next** | Client preview feedback or next module (Schedule / discography per priority) |
+| **Do not** | Cursor FTP / G-10h4b / G-10h4d re-Save |
+
 ## 0zs. G-10i1 About bands/projects images package prep — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-10i1-gosaki-about-bands-projects-images-package-prep` |
-| Doc | `gosaki-about-bands-projects-images-package-prep.md` |
-| Images | `fixtures/.../assets/about/bands/` × 5 → `public-dist/assets/about/bands/` |
-| **Next** | `G-10h5-2a-gosaki-staging-manual-upload-by-operator` |
-| **Do not** | Cursor FTP / image file ops / About JSON re-Save |
+| Commit | `e5beedc` |
+| **Note** | Uploaded + QA closed in G-10h5-2a |
 
 ## 0zr. G-10g4 Contact photo aspect-ratio fix package prep — complete
 

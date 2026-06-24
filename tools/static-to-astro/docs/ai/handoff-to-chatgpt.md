@@ -5,23 +5,29 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-10h4b-gosaki-about-profile-html-static-json-write-execution — complete.
-Prior: G-10h4a dry-run (commit c126efe).
-branch: main — check git HEAD for latest commit hash (G-10h4b uncommitted)
+Current phase: G-10h4c-gosaki-about-bands-html-static-json-write-dry-run — complete.
+Prior: G-10h4b profile Save (commit e2d378a).
+branch: main — check git HEAD for latest commit hash (G-10h4c uncommitted)
 ```
 
-**Next:** `G-10h4c-gosaki-about-bands-html-static-json-write-dry-run` — bands block dry-run slice.
+**Next:** `G-10h4d-gosaki-about-bands-html-static-json-write-execution` — env-armed bands Save once.
+
+## G-10h4c About bands HTML dry-run write slice — complete
+
+- **Doc:** `gosaki-about-bands-html-static-json-write-dry-run.md`
+- **Block:** `about-bands-html` only; `html` field
+- **API:** dry-run POST; `dryRun: false` rejected (Save env false)
+- **UI:** bands editable + dry-run panel; profile unchanged (G-10h4b marker preserved)
+- **Not done:** actual JSON write / bands non-dry-run Save / FTP
+- **Do not re-click G-10h4b profile Save**
+- **Cursor:** no bands Save / no FTP
 
 ## G-10h4b About profile HTML static JSON write execution — complete
 
 - **Doc:** `gosaki-about-profile-html-static-json-write-execution.md`
-- **Block:** `about-profile-html` only; `html` field
-- **Change:** `<!-- G-10h4b profile save test -->` appended once (invisible)
-- **Save:** one-time local JSON write; `blocksAffected: 1`; `changedFields: ["html"]`
-- **Env:** `G10H4A_ABOUT_PROFILE_HTML_SAVE_ENABLED=true` session-only; `.env` unchanged
-- **Not done:** bands write / FTP / DB
+- **Commit:** `e2d378a`
+- **Change:** `<!-- G-10h4b profile save test -->` in profile html (once)
 - **Do not re-click G-10h4b Save**
-- **Cursor:** routine dev with Save env **false**
 
 ## G-10h4a About profile HTML dry-run write slice — complete
 

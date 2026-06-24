@@ -9,11 +9,21 @@ import {
   resolveG10h4aSaveButtonPageServerConfig,
 } from "../../../../../../src/lib/admin/staging-write/gosaki-about-profile-html-static-json-write-page-config";
 import {
+  G10H4C_SAVE_BUTTON_PAGE_CONFIG_ELEMENT_ID,
+  resolveG10h4cSaveButtonPageServerConfig,
+} from "../../../../../../src/lib/admin/staging-write/gosaki-about-bands-html-static-json-write-page-config";
+import {
   G10H4A_ABOUT_PROFILE_HTML_STATIC_JSON_WRITE_APPROVAL_ID,
   G10H4A_SITE_SLUG,
   G10H4A_WRITE_MODULE,
   G10H4A_WRITE_PROVIDER,
 } from "../../../../../../src/lib/admin/staging-write/gosaki-about-profile-html-static-json-write-types";
+import {
+  G10H4C_ABOUT_BANDS_HTML_STATIC_JSON_WRITE_APPROVAL_ID,
+  G10H4C_SITE_SLUG,
+  G10H4C_WRITE_MODULE,
+  G10H4C_WRITE_PROVIDER,
+} from "../../../../../../src/lib/admin/staging-write/gosaki-about-bands-html-static-json-write-types";
 import {
   GOSAKI_STAGING_ADMIN_BASE,
   GOSAKI_STAGING_PREVIEW_URL,
@@ -31,16 +41,20 @@ const bandsView =
   binding.blocks.find((view) => view.block.id === GOSAKI_ABOUT_CONTENT_BLOCK_BANDS_ID) ?? null;
 
 const g10h4aPageConfig = resolveG10h4aSaveButtonPageServerConfig(import.meta.env);
+const g10h4cPageConfig = resolveG10h4cSaveButtonPageServerConfig(import.meta.env);
 const saveDisabledNote = g10h4aPageConfig.saveButtonSaveEnabled
-  ? "Save env は有効です。dry-run 成功後、about-profile-html の html のみ1回 Save できます。"
-  : "保存は無効です（G10H4A_ABOUT_PROFILE_HTML_SAVE_ENABLED=false）。dry-run のみ可能です。";
+  ? "profile: Save env 有効（G-10h4b 済み — 再Save禁止）。bands: dry-run のみ（Save 未実装）。"
+  : "profile: Save 無効（G10H4A_ABOUT_PROFILE_HTML_SAVE_ENABLED=false）。bands: dry-run のみ。";
+const bandsDryRunNote = g10h4cPageConfig.saveButtonSaveEnabled
+  ? "bands Save env は有効ですが、G-10h4c では non-dry-run は未実装です。"
+  : "bands 保存は無効です（G10H4C_ABOUT_BANDS_HTML_SAVE_ENABLED=false）。dry-run のみ可能です。";
 ---
 
 <section
   id="gosaki-about-operator"
   class="admin-gosaki-about-operator admin-page admin-page--wide admin-prototype-section"
   data-section="admin-about"
-  data-phase="G-10h4b-gosaki-about-profile-html-static-json-write-execution"
+  data-phase="G-10h4c-gosaki-about-bands-html-static-json-write-dry-run"
   aria-label="About HTML管理"
 >
   <div
@@ -52,13 +66,22 @@ const saveDisabledNote = g10h4aPageConfig.saveButtonSaveEnabled
     data-g10h4a-write-approval-id={g10h4aPageConfig.writeApprovalId || G10H4A_ABOUT_PROFILE_HTML_STATIC_JSON_WRITE_APPROVAL_ID}
     hidden
   />
+  <div
+    id={G10H4C_SAVE_BUTTON_PAGE_CONFIG_ELEMENT_ID}
+    data-g10h4c-save-button-save-enabled={g10h4cPageConfig.saveButtonSaveEnabled ? "true" : "false"}
+    data-g10h4c-staging-shell-enabled={g10h4cPageConfig.stagingShellEnabled ? "true" : "false"}
+    data-g10h4c-write-provider={g10h4cPageConfig.writeProvider || G10H4C_WRITE_PROVIDER}
+    data-g10h4c-write-module={g10h4cPageConfig.writeModule || G10H4C_WRITE_MODULE}
+    data-g10h4c-write-approval-id={g10h4cPageConfig.writeApprovalId || G10H4C_ABOUT_BANDS_HTML_STATIC_JSON_WRITE_APPROVAL_ID}
+    hidden
+  />
 
   <header class="admin-gosaki-page-header admin-gosaki-page-header--with-actions">
     <div>
       <a class="admin-gosaki-back-link" href={GOSAKI_STAGING_ADMIN_BASE}>← 管理画面トップへ</a>
       <h1 class="admin-gosaki-page-header__title">About HTML</h1>
       <p class="admin-gosaki-page-header__subtitle">
-        /about/ の本文 HTML ブロックを編集・確認する画面です（G-10h4b profile Save）。
+        /about/ の本文 HTML ブロックを編集・確認する画面です（G-10h4c bands dry-run）。
       </p>
     </div>
     <button
@@ -72,7 +95,7 @@ const saveDisabledNote = g10h4aPageConfig.saveButtonSaveEnabled
   </header>
 
   <p class="admin-form__hint admin-static-notice" role="note">
-    <strong>about-profile-html</strong> のみ dry-run / Save 対象です。about-bands-html は今回の保存対象外です。
+    <strong>about-profile-html</strong> は G-10h4b Save 済み（再Save禁止）。<strong>about-bands-html</strong> は G-10h4c dry-run のみ対象です。
   </p>
 
   <p class="admin-gosaki-status-bar admin-gosaki-status-bar--soft" role="status">
@@ -140,7 +163,7 @@ const saveDisabledNote = g10h4aPageConfig.saveButtonSaveEnabled
     <ul class="admin-gosaki-list admin-gosaki-list--compact">
       <li>dry-run では <code>&lt;script&gt;</code> / <code>&lt;iframe&gt;</code> / <code>on*</code> / <code>javascript:</code> を拒否します。</li>
       <li><code>style=""</code> インライン属性は Wix 互換のため許容します。</li>
-      <li><code>&lt;style&gt;</code> ブロックは warning です（profile block）。</li>
+      <li><code>&lt;style&gt;</code> ブロックは bands block で許容（warning）。profile では warning のみ。</li>
       <li>プレビューは管理画面内のコンテナに表示します（iframe は使用しません）。</li>
     </ul>
   </section>
@@ -156,7 +179,7 @@ const saveDisabledNote = g10h4aPageConfig.saveButtonSaveEnabled
           <h2 class="admin-gosaki-card__title" id="gosaki-about-block-title-profile">
             {profileView.block.label}
           </h2>
-          <p class="admin-gosaki-card__lead">G-10h4a 保存対象ブロック（dry-run のみ）</p>
+          <p class="admin-gosaki-card__lead">G-10h4b Save 済み — dry-run / 再Save は運用ポリシーにより禁止</p>
           <dl class="gosaki-about-admin-block-meta">
             <div>
               <dt>block id</dt>
@@ -255,13 +278,20 @@ const saveDisabledNote = g10h4aPageConfig.saveButtonSaveEnabled
           <h2 class="admin-gosaki-card__title" id="gosaki-about-block-title-bands">
             {bandsView.block.label}
           </h2>
-          <p class="admin-gosaki-card__lead admin-gosaki-operator-alert--soft" role="note">
-            Bands / Projects は今回の保存対象外です。
-          </p>
+          <p class="admin-gosaki-card__lead">G-10h4c dry-run 対象ブロック（Save 未実装）</p>
+          <p class="admin-gosaki-operator-alert--soft" role="note">{bandsDryRunNote}</p>
           <dl class="gosaki-about-admin-block-meta">
             <div>
               <dt>block id</dt>
               <dd><code>{bandsView.block.id}</code></dd>
+            </div>
+            <div>
+              <dt>approvalId</dt>
+              <dd><code>{G10H4C_ABOUT_BANDS_HTML_STATIC_JSON_WRITE_APPROVAL_ID}</code></dd>
+            </div>
+            <div>
+              <dt>siteSlug (write)</dt>
+              <dd><code>{G10H4C_SITE_SLUG}</code></dd>
             </div>
             <div>
               <dt>enabled</dt>
@@ -275,7 +305,12 @@ const saveDisabledNote = g10h4aPageConfig.saveButtonSaveEnabled
             </div>
             <div>
               <dt>html length</dt>
-              <dd>{bandsView.htmlLength.toLocaleString("ja-JP")} 文字</dd>
+              <dd>
+                <span id="gosaki-about-bands-html-length">
+                  {bandsView.htmlLength.toLocaleString("ja-JP")}
+                </span>{" "}
+                文字
+              </dd>
             </div>
             <div>
               <dt>lines</dt>
@@ -286,13 +321,12 @@ const saveDisabledNote = g10h4aPageConfig.saveButtonSaveEnabled
 
         <div class="gosaki-about-admin-block-grid">
           <label class="admin-form__field admin-form__field--full">
-            <span class="admin-form__label">HTML ソース（読み取り専用）</span>
+            <span class="admin-form__label">HTML ソース（編集可 — bands のみ）</span>
             <textarea
               class="gosaki-about-admin-textarea"
               rows="14"
-              readonly
-              data-gosaki-about-html-source-readonly
-              id={`gosaki-about-html-source-${bandsView.block.id}`}
+              id="gosaki-about-html-source-bands"
+              data-gosaki-about-bands-html-editor
             >{bandsView.block.html}</textarea>
           </label>
 
@@ -300,12 +334,36 @@ const saveDisabledNote = g10h4aPageConfig.saveButtonSaveEnabled
             <span class="admin-form__label">プレビュー</span>
             <div
               class="gosaki-about-admin-preview"
-              id={`gosaki-about-preview-${bandsView.block.id}`}
-              data-gosaki-about-preview-readonly
+              id="gosaki-about-preview-bands"
+              data-gosaki-about-bands-preview
               set:html={bandsView.block.html}
             />
           </div>
         </div>
+
+        <div class="admin-actions gosaki-about-admin-bands-actions">
+          <button type="button" class="admin-button admin-button-secondary" id="gosaki-about-bands-dry-run-btn">
+            dry-run 確認
+          </button>
+          <button
+            type="button"
+            class="admin-button"
+            id="gosaki-about-bands-save-btn"
+            data-gosaki-about-bands-save-disabled
+            disabled
+          >
+            保存する（未実装 / env disabled）
+          </button>
+        </div>
+        <p class="admin-gosaki-save-note" id="gosaki-about-bands-save-note" role="note">
+          ※ G-10h4c では dry-run のみ。実 JSON 書き込みは行いません。
+        </p>
+
+        <div
+          id="gosaki-about-bands-dry-run-result"
+          class="gosaki-schedule-edit-dry-run"
+          hidden
+        />
       </section>
     ) : null
   }
@@ -377,7 +435,8 @@ const saveDisabledNote = g10h4aPageConfig.saveButtonSaveEnabled
     color: #8a5a2b;
   }
 
-  .gosaki-about-admin-profile-actions {
+  .gosaki-about-admin-profile-actions,
+  .gosaki-about-admin-bands-actions {
     margin-top: 1rem;
     gap: 0.75rem;
   }

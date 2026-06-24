@@ -1,17 +1,27 @@
 Last updated: 2026-06-23
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zl. G-10h4d About bands HTML static JSON write execution — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-10h4d-gosaki-about-bands-html-static-json-write-execution` |
+| Doc | `gosaki-about-bands-html-static-json-write-execution.md` |
+| Block | `about-bands-html` / field `html` only |
+| Change | `<!-- G-10h4d bands save test -->` (once, Operator manual) |
+| Save env | `G10H4C_ABOUT_BANDS_HTML_SAVE_ENABLED=false` (routine dev) |
+| **Next** | `G-10h5-gosaki-about-html-public-reflection` (convert / build / manual-upload) |
+| **Do not** | re-run G-10h4d run script / re-click bands Save / G-10h4b profile re-Save / Cursor FTP |
+
 ## 0zk. G-10h4d-1 About bands HTML static JSON write execution prep — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-10h4d-1-gosaki-about-bands-html-static-json-write-execution-prep` |
 | Doc | `gosaki-about-bands-html-static-json-write-execution.md` |
-| Block | `about-bands-html` / field `html` only |
-| approvalId | `G-10h4c-about-bands-html-static-json-write-dry-run` |
-| Save env | `G10H4C_ABOUT_BANDS_HTML_SAVE_ENABLED=false` (default) |
-| **Next** | `G-10h4d-gosaki-about-bands-html-static-json-write-execution` |
-| **Do not** | bands Save in prep / G-10h4b profile re-Save / Cursor FTP |
+| Commit | `6951d63` |
+| **Next** | G-10h4d execution (complete — see 0zl) |
+| **Do not** | re-run prep as if unexecuted |
 
 ## 0zj. G-10h4c About bands HTML dry-run write slice — complete
 

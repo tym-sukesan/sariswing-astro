@@ -5,23 +5,28 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-10h4d-1-gosaki-about-bands-html-static-json-write-execution-prep — complete.
-Prior: G-10h4c bands dry-run (commit 8cabd19); G-10h4b profile Save (commit e2d378a).
-branch: main — G-10h4d-1 prep uncommitted
+Current phase: G-10h4d-gosaki-about-bands-html-static-json-write-execution — complete.
+Prior: G-10h4d-1 prep (commit 6951d63); G-10h4b profile Save (commit e2d378a).
+branch: main — G-10h4d JSON change + finalization uncommitted
 ```
 
-**Next:** `G-10h4d-gosaki-about-bands-html-static-json-write-execution` — env-armed bands Save once.
+**Next:** `G-10h5-gosaki-about-html-public-reflection` — convert / build / manual-upload.
 
-## G-10h4d-1 About bands HTML static JSON write execution prep — complete
+## G-10h4d About bands HTML static JSON write execution — complete
 
 - **Doc:** `gosaki-about-bands-html-static-json-write-execution.md`
 - **Block:** `about-bands-html` only; `html` field
-- **Executor + client Save + run script:** ready
-- **Dry-run:** reconfirmed with `<!-- G-10h4d bands save test -->`
-- **Not done:** actual JSON write / bands non-dry-run Save execution / FTP
+- **Change:** `<!-- G-10h4d bands save test -->` appended once (Operator manual run script)
+- **POST:** `bandsMarkerCount: 1`, `profileUnchanged: true`, `profileMarkerCount: 1`
+- **Do not re-run G-10h4d run script / re-click bands Save**
 - **Do not re-click G-10h4b profile Save**
-- **One-time command (execution phase only):**
-  `G10H4C_ABOUT_BANDS_HTML_SAVE_ENABLED=true node tools/static-to-astro/scripts/run-g10h4d-gosaki-about-bands-html-static-json-write-execution.mjs`
+- **Cursor:** did not execute run script / no FTP
+
+## G-10h4d-1 About bands HTML static JSON write execution prep — complete
+
+- **Commit:** `6951d63`
+- **Verifier (pre):** `verify-g10h4d-...-execution-prep.mjs` (skips when marker present)
+- **Verifier (post):** `verify-g10h4d-...-execution.mjs`
 
 ## G-10h4c About bands HTML dry-run write slice — complete
 

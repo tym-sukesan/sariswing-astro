@@ -138,6 +138,13 @@ const config = JSON.parse(read(G10H4C_ABOUT_CONTENT_CONFIG_REL));
 const bandsBlock = config.blocks?.find((b) => b.id === G10H4C_TARGET_BLOCK_ID);
 const profileBlock = config.blocks?.find((b) => b.id === G10H4A_TARGET_BLOCK_ID);
 
+if (String(bandsBlock?.html ?? "").includes(G10H4D_BANDS_SAVE_TEST_COMMENT)) {
+  console.log(
+    "SKIP: G-10h4d execution already complete (bands marker present). Use verify-g10h4d-gosaki-about-bands-html-static-json-write-execution.mjs",
+  );
+  process.exit(0);
+}
+
 assert("G-10h4d-1 doc phase", doc.includes(G10H4D_1_PHASE));
 assert("prep complete gate", doc.includes("gosakiAboutBandsHtmlStaticJsonWriteExecutionPrepComplete: true"));
 assert("readyFor G-10h4d execution", doc.includes("readyForG10h4dGosakiAboutBandsHtmlStaticJsonWriteExecution: true"));

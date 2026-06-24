@@ -1,46 +1,53 @@
-# Gosaki About bands HTML static JSON write execution (G-10h4d / G-10h4d-1 prep)
+# Gosaki About bands HTML static JSON write execution (G-10h4d)
 
-**Phase (prep):** `G-10h4d-1-gosaki-about-bands-html-static-json-write-execution-prep`  
-**Phase (execution):** `G-10h4d-gosaki-about-bands-html-static-json-write-execution`  
-**Status (prep):** **complete** — executor + client Save + run script ready; **no actual JSON write**  
+**Phase:** `G-10h4d-gosaki-about-bands-html-static-json-write-execution`  
+**Finalization:** `G-10h4d-2-gosaki-about-bands-html-static-json-write-execution-finalization`  
+**Status:** **complete** — one-time non-dry-run Save on `about-bands-html` / `html` only (Operator manual)  
 **Date:** 2026-06-23  
-**Prior:** G-10h4c dry-run slice (commit `8cabd19`)
+**Prior:** G-10h4d-1 prep (commit `6951d63`), G-10h4c dry-run (commit `8cabd19`)
 
-| Check | Prep (G-10h4d-1) | Execution (G-10h4d) |
-| --- | --- | --- |
-| non-dry-run Save implementation | **yes** | pending operator |
-| One-time JSON write | **no** | pending |
-| Target block | `about-bands-html` only | same |
-| Target field | `html` only | same |
-| `about-profile-html` unchanged | **yes** | required |
-| G-10h4b profile marker once | **yes** | required |
-| DB / Supabase write | **no** | **no** |
-| FTP / deploy | **no** | **no** |
-| `src/pages/admin` changed | **no** | **no** |
-| `.env` / `.env.local` changed | **no** | **no** |
+| Check | Status |
+| --- | --- |
+| non-dry-run Save implementation | **yes** (G-10h4d-1) |
+| One-time JSON write | **yes** (Operator manual) |
+| Target block | `about-bands-html` only |
+| Target field | `html` only |
+| `about-profile-html` unchanged | **yes** |
+| G-10h4b profile marker once | **yes** |
+| G-10h4d bands marker once | **yes** |
+| DB / Supabase write | **no** |
+| FTP / deploy | **no** |
+| `src/pages/admin` changed | **no** |
+| `.env` / `.env.local` changed | **no** |
+| Image file add/delete/move/overwrite | **no** |
 
 Prior docs:
 
 - [gosaki-about-bands-html-static-json-write-dry-run.md](./gosaki-about-bands-html-static-json-write-dry-run.md) (G-10h4c)
 - [gosaki-about-profile-html-static-json-write-execution.md](./gosaki-about-profile-html-static-json-write-execution.md) (G-10h4b)
 
+**Verifier note:** Pre-execution checks use `verify-g10h4d-gosaki-about-bands-html-static-json-write-execution-prep.mjs` (skips when marker present). Post-execution use `verify-g10h4d-gosaki-about-bands-html-static-json-write-execution.mjs`.
+
 ---
 
 ## Gates
 
 ```txt
+gosakiAboutBandsHtmlStaticJsonWriteExecutionComplete: true
 gosakiAboutBandsHtmlStaticJsonWriteExecutionPrepComplete: true
-phase: G-10h4d-1
-readyForG10h4dGosakiAboutBandsHtmlStaticJsonWriteExecution: true
-actualJsonWriteExecuted: false
-nonDryRunSaveExecuted: false
+phase: G-10h4d
+readyForG10h5GosakiAboutHtmlPublicReflection: true
+actualJsonWriteExecuted: true
+nonDryRunSaveExecuted: true
 oneTimeSaveOnly: true
 cursorDbWriteExecuted: false
 cursorFtpUploadExecuted: false
 cursorDeployExecuted: false
+cursorImageFileOpsExecuted: false
 workflowDispatchExecuted: false
+doNotReClickG10h4dSave: true
 doNotReClickG10h4bSave: true
-doNotExecuteG10h4dSaveInPrepPhase: true
+doNotReRunG10h4dRunScript: true
 routineDevSaveEnv: G10H4C_ABOUT_BANDS_HTML_SAVE_ENABLED=false
 ```
 
@@ -54,13 +61,13 @@ routineDevSaveEnv: G10H4C_ABOUT_BANDS_HTML_SAVE_ENABLED=false
 | Block | `about-bands-html` |
 | Field | `html` |
 | approvalId | `G-10h4c-about-bands-html-static-json-write-dry-run` (reused from G-10h4c) |
-| Save env | `G10H4C_ABOUT_BANDS_HTML_SAVE_ENABLED=true` (session-only arm — execution phase only) |
+| Save env | `G10H4C_ABOUT_BANDS_HTML_SAVE_ENABLED=true` (session-only — Operator armed once) |
 
 **Out of scope:** `about-profile-html`, `enabled`, `label`, `id`, `siteSlug`, `page`, `version`, `previewPath`.
 
 ---
 
-## 2. Exact change (one-time Save — not executed in prep)
+## 2. Exact change (one-time Save — executed)
 
 Appended once to bands `html` tail:
 
@@ -68,93 +75,101 @@ Appended once to bands `html` tail:
 <!-- G-10h4d bands save test -->
 ```
 
-- HTML comment — no visible layout change
-- Expected `bandsMarkerCount: 1` after Save
+**Execution result (Operator manual, one-time):**
+
+```json
+{
+  "ok": true,
+  "phase": "G-10h4d-gosaki-about-bands-html-static-json-write-execution",
+  "approvalId": "G-10h4c-about-bands-html-static-json-write-dry-run",
+  "siteSlug": "gosaki-piano",
+  "blockId": "about-bands-html",
+  "changedFields": ["html"],
+  "blocksAffected": 1,
+  "dryRun": false,
+  "wouldWrite": true
+}
+```
+
+**POST verification:**
+
+```json
+{
+  "bandsMarkerCount": 1,
+  "profileUnchanged": true,
+  "profileMarkerCount": 1,
+  "metaUnchanged": true
+}
+```
+
+- `bandsHtmlLengthDelta: 32` (comment length)
 - Re-run without rollback → `既存のため変更なし` (`already_present`)
 
 ---
 
-## 3. Implementation added (G-10h4d-1)
+## 3. One-time execution command (executed — do not re-run)
+
+```bash
+G10H4C_ABOUT_BANDS_HTML_SAVE_ENABLED=true node tools/static-to-astro/scripts/run-g10h4d-gosaki-about-bands-html-static-json-write-execution.mjs
+```
+
+**Do not re-run.** Cursor did not execute this command.
+
+After execution:
+
+- `G10H4C_ABOUT_BANDS_HTML_SAVE_ENABLED=false` for routine dev
+- Do not re-click G-10h4d Save
+- Do not re-click G-10h4b profile Save
+
+---
+
+## 4. Implementation (G-10h4d-1 prep — commit `6951d63`)
 
 | File | Role |
 | --- | --- |
 | `gosaki-about-bands-html-static-json-write-executor.ts` | atomic JSON write + dry-run re-check |
 | `gosaki-about-bands-html-static-json-write-client-save.ts` | client Save → API |
 | `api/about-bands-html-static-json-write.json.ts` | `dryRun: false` → executor when env armed |
-| `gosaki-staging-about-content-admin-ui.ts` | bands Save path (env-gated) |
 | `run-g10h4d-gosaki-about-bands-html-static-json-write-execution.mjs` | one-time local execution script |
-| `verify-g10h4d-gosaki-about-bands-html-static-json-write-execution-prep.mjs` | prep verifier |
+| `verify-g10h4d-gosaki-about-bands-html-static-json-write-execution-prep.mjs` | pre-execution verifier |
+| `verify-g10h4d-gosaki-about-bands-html-static-json-write-execution.mjs` | post-execution verifier |
 
 ---
 
-## 4. Dry-run reconfirmation (prep)
+## 5. Verification
 
-Input: current `about-bands-html.html` + `<!-- G-10h4d bands save test -->` (append once).
-
-Expected:
-
-```txt
-ok: true
-dryRun: true
-wouldWrite: false
-changedFields: ["html"]
-blocksAffected: 1
-htmlSafety.ok: true
-saveAllowed: false (env disabled)
-```
-
----
-
-## 5. One-time execution command (G-10h4d — operator only)
-
-**Do not run in G-10h4d-1 prep phase.**
+Post-execution:
 
 ```bash
-G10H4C_ABOUT_BANDS_HTML_SAVE_ENABLED=true node tools/static-to-astro/scripts/run-g10h4d-gosaki-about-bands-html-static-json-write-execution.mjs
-```
-
-Alternative: staging shell UI Save with same env armed + dry-run success.
-
-After execution:
-
-- Restart routine dev with `G10H4C_ABOUT_BANDS_HTML_SAVE_ENABLED=false`
-- Do not re-click G-10h4d Save
-- Do not re-click G-10h4b profile Save
-
----
-
-## 6. Run script safety guards
-
-- `G10H4C_ABOUT_BANDS_HTML_SAVE_ENABLED=true` required for write
-- `approvalId` exact match
-- `siteSlug === gosaki-piano`
-- `blockId === about-bands-html`
-- Config path allowlist: `gosaki-piano-about-content.json` only
-- Dry-run re-validation before write
-- `already_present` / duplicate prevention
-- G-10h4b profile marker count === 1
-- `about-profile-html` unchanged
-- Atomic write (`*.g10h4d.tmp.*` → rename)
-- Re-run does not double-append
-
----
-
-## 7. Verification
-
-```bash
-node tools/static-to-astro/scripts/verify-g10h4d-gosaki-about-bands-html-static-json-write-execution-prep.mjs
+node tools/static-to-astro/scripts/verify-g10h4d-gosaki-about-bands-html-static-json-write-execution.mjs
 ```
 
 ---
 
-## 8. Rollback
+## 6. Rollback
 
-N/A — static JSON only (no DB).
-
-Rollback (staging JSON — execution phase only, not executed in prep):
+Static JSON only (no DB). Not needed (`rollbackNeeded: false`).
 
 ```bash
 git checkout -- tools/static-to-astro/config/sites/gosaki-piano-about-content.json
 ```
 
 Or manual removal of `<!-- G-10h4d bands save test -->` from `about-bands-html` block html.
+
+---
+
+## 7. Next
+
+| Phase | Goal |
+| --- | --- |
+| **G-10h5** | convert / build / manual-upload package + operator re-upload (About bands marker in built output) |
+
+---
+
+## 8. Changed files (G-10h4d-2 finalization — uncommitted)
+
+- `tools/static-to-astro/config/sites/gosaki-piano-about-content.json` (bands html tail — Operator Save)
+- `tools/static-to-astro/docs/gosaki-about-bands-html-static-json-write-execution.md`
+- `tools/static-to-astro/scripts/verify-g10h4d-gosaki-about-bands-html-static-json-write-execution.mjs` (new)
+- `tools/static-to-astro/scripts/verify-g10h4d-gosaki-about-bands-html-static-json-write-execution-prep.mjs` (skip when executed)
+- AI context docs

@@ -5,22 +5,26 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-10h4d-gosaki-about-bands-html-static-json-write-execution — complete.
-Prior: G-10h4d-1 prep (commit 6951d63); G-10h4b profile Save (commit e2d378a).
-branch: main — G-10h4d JSON change + finalization uncommitted
+Current phase: G-10h5-1-gosaki-about-html-content-public-reflection-package-prep — complete.
+Prior: G-10h4d bands Save (commit c3b0d56); G-10h4b profile Save (commit e2d378a).
+branch: main — G-10h5-1 docs/verifier uncommitted; package output local/gitignored
 ```
 
-**Next:** `G-10h5-gosaki-about-html-public-reflection` — convert / build / manual-upload.
+**Next:** `G-10h5-2-gosaki-about-html-staging-manual-upload-by-operator` — FileZilla manual upload + About QA.
+
+## G-10h5-1 About HTML public reflection package prep — complete
+
+- **Doc:** `gosaki-about-html-content-public-reflection-package-prep.md`
+- **Local:** convert + build + `manual-upload:package` + `verify:manual-upload` PASS
+- **Package:** `tools/static-to-astro/output/manual-upload/gosaki-piano/public-dist/`
+- **Upload target:** `/cms-kit-staging/gosaki-piano/` (contents only — not `public-dist` folder)
+- **Bands content:** reflected in `public-dist/about/`; G-10h4d marker stripped in build (documented)
+- **Do not:** FTP / G-10h4b / G-10h4d re-Save / run script re-run
 
 ## G-10h4d About bands HTML static JSON write execution — complete
 
-- **Doc:** `gosaki-about-bands-html-static-json-write-execution.md`
-- **Block:** `about-bands-html` only; `html` field
-- **Change:** `<!-- G-10h4d bands save test -->` appended once (Operator manual run script)
-- **POST:** `bandsMarkerCount: 1`, `profileUnchanged: true`, `profileMarkerCount: 1`
+- **Commit:** `c3b0d56`
 - **Do not re-run G-10h4d run script / re-click bands Save**
-- **Do not re-click G-10h4b profile Save**
-- **Cursor:** did not execute run script / no FTP
 
 ## G-10h4d-1 About bands HTML static JSON write execution prep — complete
 

@@ -1,17 +1,24 @@
 Last updated: 2026-06-24
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zu. G-11a staging online CMS architecture planning — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-11a-gosaki-staging-online-cms-architecture-planning` |
+| Doc | `gosaki-staging-online-cms-architecture-planning.md` |
+| Recommendation | **Hybrid C** — JSON modules via Edge→GitHub Actions→staging FTP; Schedule stays Supabase Edge |
+| First PoC | YouTube URL dry-run (G-11c) |
+| **Next** | `G-11b-staging-online-admin-read-only-page` |
+| **Do not** | `workflow_dispatch` / FTP / `src/pages/admin` / production Supabase |
+
 ## 0zt. G-10h5-2a staging manual upload post-QA finalization — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-10h5-2a-gosaki-staging-manual-upload-post-qa-finalization` |
+| Commit | `ffd1496` |
 | Doc | `gosaki-staging-manual-upload-post-qa-finalization.md` |
-| Upload | Operator FileZilla — `public-dist/` contents → `/cms-kit-staging/gosaki-piano/` |
-| QA | About bands 5 images **PASS**; Contact HubSpot **PASS**; read-only HTTP **PASS** |
-| Commit | Package `e5beedc` (G-10i1) |
-| **Next** | Client preview feedback or next module (Schedule / discography per priority) |
-| **Do not** | Cursor FTP / G-10h4b / G-10h4d re-Save |
 
 ## 0zs. G-10i1 About bands/projects images package prep — complete
 

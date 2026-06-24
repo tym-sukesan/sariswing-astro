@@ -5,25 +5,26 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-10h5-2a-gosaki-staging-manual-upload-post-qa-finalization — complete.
-Prior: G-10i1 About bands images (e5beedc); operator FileZilla upload.
-branch: main @ e5beedc — G-10h5-2a doc uncommitted
+Current phase: G-11a-gosaki-staging-online-cms-architecture-planning — complete.
+Prior: G-10h5-2a staging upload QA (ffd1496); G-10i1 bands images (e5beedc).
+branch: main @ ffd1496 — G-11a doc uncommitted
 ```
 
-**Next:** Client preview feedback on staging, or next product module per priority.
+**Next:** `G-11b-staging-online-admin-read-only-page` — static admin UI on Gosaki staging URL (no Save).
 
-## G-10h5-2a staging manual upload post-QA finalization — complete
+## G-11a staging online CMS architecture planning — complete
 
-- **Doc:** `gosaki-staging-manual-upload-post-qa-finalization.md`
-- **Staging:** `https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/`
-- **QA:** About 5 band images + Contact HubSpot — read-only **PASS**; operator visual **PASS**
-- **Upload:** Operator FileZilla only; no mirror/delete
-- **Do not:** Cursor FTP / G-10h4b / G-10h4d re-Save
+- **Doc:** `gosaki-staging-online-cms-architecture-planning.md`
+- **Constraint:** Lolipop static FTP — no Astro API routes; saves need Edge + GitHub Actions
+- **Recommend:** Hybrid **C** — JSON via Actions pipeline; Schedule via existing Supabase Edge
+- **PoC first:** YouTube URL dry-run (G-11c)
+- **Existing assets:** `__admin-staging-shell/`, G-10c JSON guards, `trigger-deploy` / `deploy-status` Edge patterns
+- **Do not:** production `deploy.yml`, Sariswing `/admin/`, `workflow_dispatch` until G-11d+ approval
 
-## G-10i1 About bands/projects images package prep — complete
+## G-10h5-2a staging manual upload post-QA — complete
 
-- **Commit:** `e5beedc`
-- **Doc:** `gosaki-about-bands-projects-images-package-prep.md`
+- **Commit:** `ffd1496`
+- **Staging:** About bands 5 images + Contact HubSpot — QA PASS
 
 ## G-10g4 Contact photo aspect-ratio fix package prep — complete
 

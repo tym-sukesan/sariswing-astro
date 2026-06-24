@@ -5,22 +5,32 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-10h4c-gosaki-about-bands-html-static-json-write-dry-run — complete.
-Prior: G-10h4b profile Save (commit e2d378a).
-branch: main — check git HEAD for latest commit hash (G-10h4c uncommitted)
+Current phase: G-10h4d-1-gosaki-about-bands-html-static-json-write-execution-prep — complete.
+Prior: G-10h4c bands dry-run (commit 8cabd19); G-10h4b profile Save (commit e2d378a).
+branch: main — G-10h4d-1 prep uncommitted
 ```
 
 **Next:** `G-10h4d-gosaki-about-bands-html-static-json-write-execution` — env-armed bands Save once.
 
+## G-10h4d-1 About bands HTML static JSON write execution prep — complete
+
+- **Doc:** `gosaki-about-bands-html-static-json-write-execution.md`
+- **Block:** `about-bands-html` only; `html` field
+- **Executor + client Save + run script:** ready
+- **Dry-run:** reconfirmed with `<!-- G-10h4d bands save test -->`
+- **Not done:** actual JSON write / bands non-dry-run Save execution / FTP
+- **Do not re-click G-10h4b profile Save**
+- **One-time command (execution phase only):**
+  `G10H4C_ABOUT_BANDS_HTML_SAVE_ENABLED=true node tools/static-to-astro/scripts/run-g10h4d-gosaki-about-bands-html-static-json-write-execution.mjs`
+
 ## G-10h4c About bands HTML dry-run write slice — complete
 
 - **Doc:** `gosaki-about-bands-html-static-json-write-dry-run.md`
+- **Commit:** `8cabd19`
 - **Block:** `about-bands-html` only; `html` field
-- **API:** dry-run POST; `dryRun: false` rejected (Save env false)
+- **API:** dry-run POST; non-dry-run implemented in G-10h4d-1 prep
 - **UI:** bands editable + dry-run panel; profile unchanged (G-10h4b marker preserved)
-- **Not done:** actual JSON write / bands non-dry-run Save / FTP
-- **Do not re-click G-10h4b profile Save**
-- **Cursor:** no bands Save / no FTP
+- **Cursor:** no bands Save execution / no FTP
 
 ## G-10h4b About profile HTML static JSON write execution — complete
 

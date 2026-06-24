@@ -5,6 +5,15 @@
 export const G10H4C_PHASE =
   "G-10h4c-gosaki-about-bands-html-static-json-write-dry-run" as const;
 
+export const G10H4D_PHASE =
+  "G-10h4d-gosaki-about-bands-html-static-json-write-execution" as const;
+
+export const G10H4D_1_PHASE =
+  "G-10h4d-1-gosaki-about-bands-html-static-json-write-execution-prep" as const;
+
+export const G10H4D_BANDS_SAVE_TEST_COMMENT =
+  "<!-- G-10h4d bands save test -->" as const;
+
 export const G10H4C_BANDS_DRY_RUN_TEST_COMMENT =
   "<!-- G-10h4c bands dry-run test -->" as const;
 

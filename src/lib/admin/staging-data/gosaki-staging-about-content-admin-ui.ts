@@ -11,6 +11,11 @@ import {
   type G10h4cDryRunApiJsonBody,
 } from "../staging-write/gosaki-about-bands-html-static-json-write-api";
 import {
+  evaluateG10h4cAboutBandsHtmlSaveUiGate,
+  getG10h4cAboutBandsHtmlStaticJsonWriteConfig,
+} from "../staging-write/gosaki-about-bands-html-static-json-write-config";
+import { executeG10h4dAboutBandsHtmlStaticJsonClientSave } from "../staging-write/gosaki-about-bands-html-static-json-write-client-save";
+import {
   G10H4A_ABOUT_PROFILE_HTML_STATIC_JSON_WRITE_API_PATH,
   parseG10h4aDryRunApiJsonResponse,
   type G10h4aDryRunApiJsonBody,
@@ -36,6 +41,7 @@ let lastBandsDryRunBody: G10h4cDryRunApiJsonBody | null = null;
 let profileDryRunInFlight = false;
 let bandsDryRunInFlight = false;
 let saveInFlight = false;
+let bandsSaveInFlight = false;
 let stagingAuthSignedIn = false;
 
 function escapeHtml(value: string): string {
@@ -89,12 +95,63 @@ function renderBandsLivePreview(): void {
 }
 
 function wireBandsSaveDisabled(): void {
+  updateBandsSaveButtonState(null);
+}
+
+function setBandsSaveButtonNote(message: string | null): void {
+  const note = document.getElementById("gosaki-about-bands-save-note");
+  if (!note) return;
+  note.textContent =
+    message ??
+    "※ G-10h4d-1 prep: dry-run 成功後、env が有効な場合のみ Save できます（実行フェーズまで未Save）。";
+}
+
+function updateBandsSaveButtonState(body: G10h4cDryRunApiJsonBody | null): void {
   const saveButton = document.getElementById(
     "gosaki-about-bands-save-btn",
   ) as HTMLButtonElement | null;
   if (!saveButton) return;
-  saveButton.disabled = true;
-  saveButton.setAttribute("aria-disabled", "true");
+
+  const gate = evaluateG10h4cAboutBandsHtmlSaveUiGate({
+    signedIn: stagingAuthSignedIn,
+    dryRunResult: body,
+  });
+
+  saveButton.disabled = !gate.enabled || bandsSaveInFlight;
+  saveButton.setAttribute("aria-disabled", saveButton.disabled ? "true" : "false");
+
+  if (gate.enabled && !bandsSaveInFlight) {
+    saveButton.textContent = "保存する";
+    saveButton.title = "about-bands-html の html のみ JSON に保存します";
+    setBandsSaveButtonNote("dry-run OK — Save を1回だけ実行できます（承認フェーズのみ）。");
+    return;
+  }
+
+  const config = getG10h4cAboutBandsHtmlStaticJsonWriteConfig();
+  if (!config.saveEnabled) {
+    saveButton.textContent = "保存する（env disabled）";
+    saveButton.title = gate.reason;
+    setBandsSaveButtonNote("保存は無効です（G10H4C_ABOUT_BANDS_HTML_SAVE_ENABLED=false）。");
+    return;
+  }
+
+  if (!body?.ok) {
+    saveButton.textContent = "保存する（dry-run 未確認）";
+    saveButton.title = gate.reason;
+    setBandsSaveButtonNote("先に dry-run を成功させてください。");
+    return;
+  }
+
+  if ((body.changedFields ?? []).length === 0) {
+    saveButton.textContent = "保存する（変更なし）";
+    saveButton.title = gate.reason;
+    setBandsSaveButtonNote("変更がありません。保存できません。");
+    return;
+  }
+
+  saveButton.textContent = "保存する（不可）";
+  saveButton.title = gate.reason;
+  setBandsSaveButtonNote(gate.reason || "Save 条件を満たしていません。");
 }
 
 function setSaveButtonNote(message: string | null): void {
@@ -313,8 +370,10 @@ function renderBandsDryRunResult(body: G10h4cDryRunApiJsonBody, httpOk: boolean)
   el.classList.add("gosaki-schedule-edit-dry-run--ok", "gosaki-schedule-edit-dry-run--ready");
   const safety = body.htmlSafety;
   const saveNote = body.saveAllowed
-    ? "Save env は有効ですが、G-10h4c では non-dry-run は未実装です。"
+    ? "Save env は有効ですが、G-10h4d 実行フェーズまで non-dry-run は未承認です。"
     : "保存は無効です。dry-run のみ完了しました。";
+
+  updateBandsSaveButtonState(body);
 
   el.innerHTML = `
     <h3 class="gosaki-schedule-edit-dry-run__title">dry-run 結果（bands）</h3>
@@ -390,6 +449,7 @@ async function refreshStagingAuthSignedIn(): Promise<boolean> {
   if (!authRequired) {
     stagingAuthSignedIn = true;
     updateSaveButtonState(lastProfileDryRunBody);
+    updateBandsSaveButtonState(lastBandsDryRunBody);
     return true;
   }
 
@@ -398,6 +458,7 @@ async function refreshStagingAuthSignedIn(): Promise<boolean> {
   if (!url || !anonKey) {
     stagingAuthSignedIn = false;
     updateSaveButtonState(lastProfileDryRunBody);
+    updateBandsSaveButtonState(lastBandsDryRunBody);
     return false;
   }
 
@@ -408,6 +469,7 @@ async function refreshStagingAuthSignedIn(): Promise<boolean> {
     stagingAuthSignedIn = false;
   }
   updateSaveButtonState(lastProfileDryRunBody);
+  updateBandsSaveButtonState(lastBandsDryRunBody);
   return stagingAuthSignedIn;
 }
 
@@ -558,6 +620,7 @@ async function runBandsDryRun(): Promise<void> {
 
     lastBandsDryRunBody = parsed.body;
     renderBandsDryRunResult(parsed.body, parsed.status < 400);
+    await refreshStagingAuthSignedIn();
   } catch (error) {
     renderBandsDryRunResult(
       {
@@ -573,6 +636,95 @@ async function runBandsDryRun(): Promise<void> {
     bandsDryRunInFlight = false;
     if (button) button.disabled = false;
   }
+}
+
+function renderBandsSaveResult(outcome: {
+  ok: boolean;
+  blocksAffected?: number;
+  changedFields?: string[];
+  errorCode?: string;
+  errorMessage?: string;
+}): void {
+  const el = document.getElementById("gosaki-about-bands-save-result");
+  if (!el) return;
+  el.hidden = false;
+
+  if (outcome.ok) {
+    el.className = "gosaki-schedule-edit-save-result gosaki-schedule-edit-save-result--ok";
+    el.innerHTML = `
+      <h3 class="gosaki-schedule-edit-save-result__title">保存結果（bands）</h3>
+      <p class="gosaki-schedule-edit-save-result__message">
+        JSON への保存に成功しました（blocksAffected: ${String(outcome.blocksAffected ?? 1)}）。
+      </p>
+      <p class="gosaki-schedule-edit-dry-run__note">changedFields: ${escapeHtml((outcome.changedFields ?? ["html"]).join(", "))}</p>
+      <p class="gosaki-schedule-edit-dry-run__note">公開反映には convert / build / manual upload が別途必要です。</p>
+    `;
+    return;
+  }
+
+  el.className = "gosaki-schedule-edit-save-result gosaki-schedule-edit-save-result--error";
+  el.innerHTML = `
+    <h3 class="gosaki-schedule-edit-save-result__title">保存結果（bands）</h3>
+    <p class="gosaki-schedule-edit-save-result__message">保存できませんでした。</p>
+    <p><code>${escapeHtml(outcome.errorCode ?? "unknown")}</code>: ${escapeHtml(outcome.errorMessage ?? "")}</p>
+  `;
+}
+
+async function runBandsSave(): Promise<void> {
+  const config = getG10h4cAboutBandsHtmlStaticJsonWriteConfig();
+  if (!config.saveEnabled) {
+    window.alert("保存は無効です（G10H4C_ABOUT_BANDS_HTML_SAVE_ENABLED=false）。");
+    return;
+  }
+
+  if (!lastBandsDryRunBody?.ok) {
+    window.alert("先に dry-run を成功させてください。");
+    return;
+  }
+
+  const gate = evaluateG10h4cAboutBandsHtmlSaveUiGate({
+    signedIn: stagingAuthSignedIn,
+    dryRunResult: lastBandsDryRunBody,
+  });
+  if (!gate.enabled) {
+    window.alert(gate.reason);
+    return;
+  }
+
+  if (
+    !window.confirm(
+      "about-bands-html の html のみ JSON に保存します。よろしいですか？（1 block のみ更新）",
+    )
+  ) {
+    return;
+  }
+
+  bandsSaveInFlight = true;
+  updateBandsSaveButtonState(lastBandsDryRunBody);
+
+  const url = String(import.meta.env.PUBLIC_SUPABASE_URL ?? "").trim();
+  const anonKey = String(import.meta.env.PUBLIC_SUPABASE_ANON_KEY ?? "").trim();
+
+  const outcome = await executeG10h4dAboutBandsHtmlStaticJsonClientSave({
+    url,
+    anonKey,
+    formValues: { html: readBandsHtml() },
+    saveBinding: {
+      changedFields: [...(lastBandsDryRunBody.changedFields ?? [])],
+      dryRunOk: lastBandsDryRunBody.ok === true,
+      saveReadiness: lastBandsDryRunBody.saveReadiness,
+    },
+  });
+
+  bandsSaveInFlight = false;
+  renderBandsSaveResult({
+    ok: outcome.ok,
+    blocksAffected: outcome.blocksAffected,
+    changedFields: outcome.changedFields,
+    errorCode: outcome.errorCode,
+    errorMessage: outcome.errorMessage,
+  });
+  updateBandsSaveButtonState(lastBandsDryRunBody);
 }
 
 async function runProfileSave(): Promise<void> {
@@ -662,6 +814,7 @@ export function initGosakiStagingAboutContentAdminUi(): void {
     lastBandsDryRunBody = null;
     const result = document.getElementById("gosaki-about-bands-dry-run-result");
     if (result) result.hidden = true;
+    updateBandsSaveButtonState(null);
   });
 
   document.getElementById("gosaki-about-bands-dry-run-btn")?.addEventListener("click", () => {
@@ -669,7 +822,7 @@ export function initGosakiStagingAboutContentAdminUi(): void {
   });
 
   document.getElementById("gosaki-about-bands-save-btn")?.addEventListener("click", () => {
-    window.alert("G-10h4c では bands の non-dry-run Save は未実装です。");
+    void runBandsSave();
   });
 
   renderProfileLivePreview();

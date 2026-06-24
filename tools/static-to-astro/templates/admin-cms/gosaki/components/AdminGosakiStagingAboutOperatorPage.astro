@@ -43,10 +43,10 @@ const bandsView =
 const g10h4aPageConfig = resolveG10h4aSaveButtonPageServerConfig(import.meta.env);
 const g10h4cPageConfig = resolveG10h4cSaveButtonPageServerConfig(import.meta.env);
 const saveDisabledNote = g10h4aPageConfig.saveButtonSaveEnabled
-  ? "profile: Save env 有効（G-10h4b 済み — 再Save禁止）。bands: dry-run のみ（Save 未実装）。"
-  : "profile: Save 無効（G10H4A_ABOUT_PROFILE_HTML_SAVE_ENABLED=false）。bands: dry-run のみ。";
+  ? "profile: Save env 有効（G-10h4b 済み — 再Save禁止）。bands: G-10h4d-1 prep（Save は承認フェーズまで未実行）。"
+  : "profile: Save 無効（G10H4A_ABOUT_PROFILE_HTML_SAVE_ENABLED=false）。bands: G-10h4d-1 prep（env disabled）。";
 const bandsDryRunNote = g10h4cPageConfig.saveButtonSaveEnabled
-  ? "bands Save env は有効ですが、G-10h4c では non-dry-run は未実装です。"
+  ? "bands Save env は有効ですが、G-10h4d 実行フェーズまで non-dry-run は未承認です。"
   : "bands 保存は無効です（G10H4C_ABOUT_BANDS_HTML_SAVE_ENABLED=false）。dry-run のみ可能です。";
 ---
 
@@ -54,7 +54,7 @@ const bandsDryRunNote = g10h4cPageConfig.saveButtonSaveEnabled
   id="gosaki-about-operator"
   class="admin-gosaki-about-operator admin-page admin-page--wide admin-prototype-section"
   data-section="admin-about"
-  data-phase="G-10h4c-gosaki-about-bands-html-static-json-write-dry-run"
+  data-phase="G-10h4d-1-gosaki-about-bands-html-static-json-write-execution-prep"
   aria-label="About HTML管理"
 >
   <div
@@ -352,16 +352,21 @@ const bandsDryRunNote = g10h4cPageConfig.saveButtonSaveEnabled
             data-gosaki-about-bands-save-disabled
             disabled
           >
-            保存する（未実装 / env disabled）
+            保存する（env disabled）
           </button>
         </div>
         <p class="admin-gosaki-save-note" id="gosaki-about-bands-save-note" role="note">
-          ※ G-10h4c では dry-run のみ。実 JSON 書き込みは行いません。
+          ※ G-10h4d-1 prep: dry-run 成功後、env が有効な場合のみ Save できます（実行フェーズまで未Save）。
         </p>
 
         <div
           id="gosaki-about-bands-dry-run-result"
           class="gosaki-schedule-edit-dry-run"
+          hidden
+        />
+        <div
+          id="gosaki-about-bands-save-result"
+          class="gosaki-schedule-edit-save-result"
           hidden
         />
       </section>

@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-10h4c Gosaki About bands HTML static JSON write dry-run (2026-06-23):** **complete** — `about-bands-html` dry-run API + UI; Save disabled. Doc: `gosaki-about-bands-html-static-json-write-dry-run.md`. **No actual JSON write.** G-10h4b profile marker preserved. Next: **G-10h4d** (bands Save execution).
+**G-10h4d-1 Gosaki About bands HTML static JSON write execution prep (2026-06-23):** **complete** — executor + client Save + run script; dry-run reconfirmed. Doc: `gosaki-about-bands-html-static-json-write-execution.md`. **No actual JSON write.** G-10h4b profile marker preserved. Next: **G-10h4d** (one-time bands Save execution).
+
+**G-10h4c Gosaki About bands HTML static JSON write dry-run (2026-06-23):** **complete** — commit `8cabd19`. `about-bands-html` dry-run API + UI. Doc: `gosaki-about-bands-html-static-json-write-dry-run.md`. Superseded for Save by G-10h4d-1 prep.
 
 **G-10h4b Gosaki About profile HTML static JSON write execution (2026-06-23):** **complete** — commit `e2d378a`. Doc: `gosaki-about-profile-html-static-json-write-execution.md`. **Do not re-click G-10h4b Save.**
 

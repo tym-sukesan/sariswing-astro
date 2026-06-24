@@ -6,6 +6,7 @@ import type { APIRoute } from "astro";
 import { createClient } from "@supabase/supabase-js";
 import { getG10h4cAboutBandsHtmlStaticJsonWriteConfig } from "../../../../lib/admin/staging-write/gosaki-about-bands-html-static-json-write-config";
 import { executeG10h4cAboutBandsHtmlStaticJsonWriteDryRun } from "../../../../lib/admin/staging-write/gosaki-about-bands-html-static-json-write-dry-run";
+import { executeG10h4dAboutBandsHtmlStaticJsonWrite } from "../../../../lib/admin/staging-write/gosaki-about-bands-html-static-json-write-executor";
 import {
   G10H4C_ABOUT_BANDS_HTML_STATIC_JSON_WRITE_APPROVAL_ID,
   G10H4C_SITE_SLUG,
@@ -96,19 +97,73 @@ async function handlePost(request: Request): Promise<Response> {
   const blockId = String(record.blockId ?? "").trim();
   const html = String(record.html ?? "");
   const dryRun = record.dryRun === true;
+  const dryRunOk = record.dryRunOk === true;
+  const changedFields = Array.isArray(record.changedFields)
+    ? record.changedFields.map((field) => String(field))
+    : [];
 
   if (!dryRun) {
-    return jsonResponse(
-      {
-        ok: false,
-        errorCode: "save_not_enabled",
-        errorMessage:
-          "non-dry-run Save rejected — G10H4C_ABOUT_BANDS_HTML_SAVE_ENABLED is false.",
-        dryRun: false,
-        wouldWrite: false,
-      },
-      403,
-    );
+    if (!writeConfig.saveEnabled) {
+      return jsonResponse(
+        {
+          ok: false,
+          errorCode: "save_not_enabled",
+          errorMessage:
+            "non-dry-run Save rejected — G10H4C_ABOUT_BANDS_HTML_SAVE_ENABLED is false.",
+          dryRun: false,
+          wouldWrite: false,
+        },
+        403,
+      );
+    }
+
+    if (isStagingAuthRequired(env)) {
+      const auth = await requireStagingBearerAuth(request, env);
+      if (!auth.ok) {
+        return jsonResponse(
+          { ok: false, errorCode: auth.errorCode, errorMessage: auth.errorCode },
+          auth.status,
+        );
+      }
+    }
+
+    const outcome = executeG10h4dAboutBandsHtmlStaticJsonWrite({
+      cwd: process.cwd(),
+      approvalId,
+      siteSlug,
+      blockId,
+      formValues: { html },
+      changedFields,
+      dryRunOk,
+      signedIn: true,
+      env,
+    });
+
+    if (!outcome.ok) {
+      return jsonResponse(
+        {
+          ok: false,
+          dryRun: false,
+          wouldWrite: false,
+          errorCode: outcome.errorCode ?? "write_failed",
+          errorMessage: outcome.errorMessage,
+          changedFields: outcome.changedFields,
+          blocksAffected: outcome.blocksAffected,
+        },
+        400,
+      );
+    }
+
+    return jsonResponse({
+      ok: true,
+      dryRun: false,
+      wouldWrite: true,
+      approvalId: outcome.approvalId,
+      blockId: outcome.blockId,
+      configPath: outcome.configPath,
+      changedFields: outcome.changedFields,
+      blocksAffected: outcome.blocksAffected,
+    });
   }
 
   if (isStagingAuthRequired(env)) {

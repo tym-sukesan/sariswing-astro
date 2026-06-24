@@ -64,6 +64,7 @@ import {
 } from "./gosaki-about-band-profiles.mjs";
 import { applyGosakiAboutContent } from "./gosaki-about-content.mjs";
 import { applyGosakiHomeYouTubeEmbed } from "./gosaki-home-youtube-embed.mjs";
+import { applyGosakiContactHubspotEmbed } from "./gosaki-contact-hubspot-embed.mjs";
 import { applyGosakiScheduleDataPages } from "./gosaki-schedule-data-pages.mjs";
 import { generateGosakiFooterAstro } from "./gosaki-footer-social.mjs";
 
@@ -964,6 +965,7 @@ export function generateAstroProject(inputDir, outputDir, options = {}) {
   let gosakiBandProfilesSummary = { applied: false };
   let gosakiAboutContentSummary = { applied: false };
   let gosakiYoutubeEmbedSummary = { applied: false };
+  let gosakiContactHubspotSummary = { applied: false };
   if (isGosakiPianoFixture(siteDir)) {
     gosakiBandProfilesSummary = applyGosakiAboutBandProfiles(outDir, TOOL_ROOT);
     if (gosakiBandProfilesSummary.applied) {
@@ -979,6 +981,10 @@ export function generateAstroProject(inputDir, outputDir, options = {}) {
       writtenPages.push(path.join(outDir, gosakiYoutubeEmbedSummary.componentPath));
       writtenPages.push(path.join(outDir, gosakiYoutubeEmbedSummary.dataPath));
       writtenPages.push(path.join(outDir, gosakiYoutubeEmbedSummary.libPath));
+    }
+    gosakiContactHubspotSummary = applyGosakiContactHubspotEmbed(outDir, TOOL_ROOT);
+    if (gosakiContactHubspotSummary.applied) {
+      writtenPages.push(path.join(outDir, gosakiContactHubspotSummary.dataPath));
     }
   }
 

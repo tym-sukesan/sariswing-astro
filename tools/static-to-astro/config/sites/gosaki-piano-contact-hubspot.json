@@ -1,0 +1,11 @@
+{
+  "siteSlug": "gosaki-piano",
+  "page": "contact",
+  "version": 1,
+  "enabled": true,
+  "provider": "hubspot",
+  "region": "na1",
+  "portalId": "21392032",
+  "formId": "57909d0c-9b9f-470a-8a18-e176d1d1a459",
+  "scriptSrc": "https://js.hsforms.net/forms/embed/21392032.js"
+}

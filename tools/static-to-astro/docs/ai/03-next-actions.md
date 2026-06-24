@@ -1,16 +1,26 @@
 Last updated: 2026-06-23
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zo. G-10g1 Contact HubSpot embed package prep — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-10g1-gosaki-contact-hubspot-embed-implementation-and-package-prep` |
+| Doc | `gosaki-contact-hubspot-embed-package-prep.md` |
+| Config | `gosaki-piano-contact-hubspot.json` |
+| Package | `output/manual-upload/gosaki-piano/public-dist/` (regenerated) |
+| **Next** | `G-10h5-2a-gosaki-staging-manual-upload-by-operator` (About + Contact) |
+| **Do not** | Cursor FTP / About JSON re-Save / G-10h4b / G-10h4d re-run |
+
 ## 0zn. G-10h5-2 About HTML staging manual upload preflight — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-10h5-2-gosaki-about-html-staging-manual-upload-preflight` |
 | Doc | `gosaki-about-html-staging-manual-upload-preflight.md` |
-| Package | `output/manual-upload/gosaki-piano/public-dist/` (local) |
-| Upload target | `/cms-kit-staging/gosaki-piano/` (contents only) |
-| **Next** | `G-10h5-2a-gosaki-about-html-staging-manual-upload-by-operator` |
-| **Do not** | Cursor FTP / mirror-delete / G-10h4b / G-10h4d re-Save |
+| Commit | `c1b2bc3` |
+| **Next** | G-10h5-2a operator upload (G-10g1 package regen — see 0zo) |
+| **Do not** | use pre-G-10g1 package for upload |
 
 ## 0zm. G-10h5-1 About HTML public reflection package prep — complete
 

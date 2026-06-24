@@ -5,21 +5,25 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-10h5-2-gosaki-about-html-staging-manual-upload-preflight — complete.
-Prior: G-10h5-1 package prep (commit f427f9c).
-branch: main — G-10h5-2 preflight docs uncommitted
+Current phase: G-10g1-gosaki-contact-hubspot-embed-implementation-and-package-prep — complete.
+Prior: G-10h5-2 preflight (commit c1b2bc3); G-10h5-1 About package (f427f9c).
+branch: main — G-10g1 implementation uncommitted
 ```
 
-**Next:** `G-10h5-2a-gosaki-about-html-staging-manual-upload-by-operator` — Operator FileZilla upload + About QA.
+**Next:** `G-10h5-2a-gosaki-staging-manual-upload-by-operator` — FileZilla upload (About + Contact HubSpot).
+
+## G-10g1 Contact HubSpot embed package prep — complete
+
+- **Doc:** `gosaki-contact-hubspot-embed-package-prep.md`
+- **Config:** `gosaki-piano-contact-hubspot.json` (Contact-only allowlist)
+- **Hook:** replaces Wix `#comp-jqbwo704` with HubSpot embed on `/contact/`
+- **Package:** manual-upload regenerated; `verify:manual-upload` PASS
+- **Do not:** FTP / About CMS for HubSpot / G-10h4b / G-10h4d re-Save
 
 ## G-10h5-2 About HTML staging manual upload preflight — complete
 
-- **Doc:** `gosaki-about-html-staging-manual-upload-preflight.md`
-- **Package:** `tools/static-to-astro/output/manual-upload/gosaki-piano/public-dist/`
-- **Target:** `/cms-kit-staging/gosaki-piano/` (upload contents only)
-- **verify:manual-upload:** PASS; G-10h5-1 verifier: 38/38 PASS
-- **About package:** profile + bands content OK; single `band-profiles`; G-10h4d marker absent in build (expected)
-- **Cursor:** no FTP / no FileZilla / no upload
+- **Commit:** `c1b2bc3`
+- **Note:** Use **G-10g1-regenerated** package (includes Contact HubSpot + About markers)
 
 ## G-10h5-1 About HTML public reflection package prep — complete
 

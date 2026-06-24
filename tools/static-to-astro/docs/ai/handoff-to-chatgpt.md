@@ -5,21 +5,26 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-10h5-1-gosaki-about-html-content-public-reflection-package-prep — complete.
-Prior: G-10h4d bands Save (commit c3b0d56); G-10h4b profile Save (commit e2d378a).
-branch: main — G-10h5-1 docs/verifier uncommitted; package output local/gitignored
+Current phase: G-10h5-2-gosaki-about-html-staging-manual-upload-preflight — complete.
+Prior: G-10h5-1 package prep (commit f427f9c).
+branch: main — G-10h5-2 preflight docs uncommitted
 ```
 
-**Next:** `G-10h5-2-gosaki-about-html-staging-manual-upload-by-operator` — FileZilla manual upload + About QA.
+**Next:** `G-10h5-2a-gosaki-about-html-staging-manual-upload-by-operator` — Operator FileZilla upload + About QA.
+
+## G-10h5-2 About HTML staging manual upload preflight — complete
+
+- **Doc:** `gosaki-about-html-staging-manual-upload-preflight.md`
+- **Package:** `tools/static-to-astro/output/manual-upload/gosaki-piano/public-dist/`
+- **Target:** `/cms-kit-staging/gosaki-piano/` (upload contents only)
+- **verify:manual-upload:** PASS; G-10h5-1 verifier: 38/38 PASS
+- **About package:** profile + bands content OK; single `band-profiles`; G-10h4d marker absent in build (expected)
+- **Cursor:** no FTP / no FileZilla / no upload
 
 ## G-10h5-1 About HTML public reflection package prep — complete
 
+- **Commit:** `f427f9c`
 - **Doc:** `gosaki-about-html-content-public-reflection-package-prep.md`
-- **Local:** convert + build + `manual-upload:package` + `verify:manual-upload` PASS
-- **Package:** `tools/static-to-astro/output/manual-upload/gosaki-piano/public-dist/`
-- **Upload target:** `/cms-kit-staging/gosaki-piano/` (contents only — not `public-dist` folder)
-- **Bands content:** reflected in `public-dist/about/`; G-10h4d marker stripped in build (documented)
-- **Do not:** FTP / G-10h4b / G-10h4d re-Save / run script re-run
 
 ## G-10h4d About bands HTML static JSON write execution — complete
 

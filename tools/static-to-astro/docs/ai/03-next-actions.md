@@ -1,15 +1,26 @@
 Last updated: 2026-06-23
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zn. G-10h5-2 About HTML staging manual upload preflight — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-10h5-2-gosaki-about-html-staging-manual-upload-preflight` |
+| Doc | `gosaki-about-html-staging-manual-upload-preflight.md` |
+| Package | `output/manual-upload/gosaki-piano/public-dist/` (local) |
+| Upload target | `/cms-kit-staging/gosaki-piano/` (contents only) |
+| **Next** | `G-10h5-2a-gosaki-about-html-staging-manual-upload-by-operator` |
+| **Do not** | Cursor FTP / mirror-delete / G-10h4b / G-10h4d re-Save |
+
 ## 0zm. G-10h5-1 About HTML public reflection package prep — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-10h5-1-gosaki-about-html-content-public-reflection-package-prep` |
 | Doc | `gosaki-about-html-content-public-reflection-package-prep.md` |
-| Package | `output/manual-upload/gosaki-piano/` (local, gitignored) |
-| **Next** | `G-10h5-2-gosaki-about-html-staging-manual-upload-by-operator` |
-| **Do not** | FTP / mirror-delete / G-10h4b / G-10h4d re-Save / run script re-run |
+| Commit | `f427f9c` |
+| **Next** | G-10h5-2a operator upload (G-10h5-2 preflight complete — see 0zn) |
+| **Do not** | FTP / mirror-delete / package regen without cause |
 
 ## 0zl. G-10h4d About bands HTML static JSON write execution — complete
 

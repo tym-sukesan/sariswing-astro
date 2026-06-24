@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-10h5-1 Gosaki About HTML content public reflection package prep (2026-06-24):** **complete** — local convert + build + manual-upload package; bands content reflected in `public-dist/about/`. Doc: `gosaki-about-html-content-public-reflection-package-prep.md`. **No FTP/upload.** G-10h4b/G-10h4d markers in JSON; bands marker stripped in public build (documented). Next: **G-10h5-2** (operator manual upload).
+**G-10h5-2 Gosaki About HTML staging manual upload preflight (2026-06-24):** **complete** — package verified; Operator may FileZilla upload. Doc: `gosaki-about-html-staging-manual-upload-preflight.md`. **No FTP/upload by Cursor.** Next: **G-10h5-2a** (operator manual upload + About QA).
+
+**G-10h5-1 Gosaki About HTML content public reflection package prep (2026-06-24):** **complete** — commit `f427f9c`. Doc: `gosaki-about-html-content-public-reflection-package-prep.md`.
 
 **G-10h4d Gosaki About bands HTML static JSON write execution (2026-06-23):** **complete** — commit `c3b0d56`. **Do not re-run G-10h4d run script.**
 

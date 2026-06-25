@@ -1,22 +1,22 @@
 Last updated: 2026-06-25
 Project: Static-to-Astro CMS / Musician CMS Kit
 
-## 0zz. G-11c4b-fix staging admin auth login button enable — complete
+## 0zz. G-11c4c staging admin authorization preflight — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-11c4c-admin-authorization-preflight` |
+| Doc | `gosaki-staging-admin-authorization-preflight.md` |
+| E2E | login OK; dry-run **403** — admin gate (`ADMIN_EMAILS` / role) |
+| **Next** | `G-11c4d-staging-admin-emails-secret-execution` |
+| **Do not** | `secrets set` / redeploy until G-11c4d operator approval |
+
+## 0zzy. G-11c4b-fix auth login button enable — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-11c4b-fix-gosaki-staging-admin-auth-configured-login-button-enable` |
-| Doc | `gosaki-staging-admin-auth-configured-login-button-enable-fix.md` |
-| Fix | CDN wait + no duplicate 未設定; login enabled; dry-run gated on sign-in |
-| **Next** | `G-11c4c-gosaki-staging-admin-auth-dry-run-e2e-after-upload` |
-| **Do not** | FTP until operator |
-
-## 0zzy. G-11c4b Supabase Auth public env package prep — complete
-
-| Item | Value |
-| --- | --- |
-| Phase | `G-11c4b-gosaki-staging-admin-supabase-auth-public-env-wiring-package-prep` |
-| Commit | `3bf783c` |
+| Commit | `ecca35e` |
 
 ## 0zzy. G-11c3b YouTube dry-run Edge Function deploy execution — complete
 

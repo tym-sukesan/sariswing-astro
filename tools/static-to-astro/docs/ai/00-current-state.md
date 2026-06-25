@@ -3,9 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-11c4b-fix Gosaki staging admin auth configured login button enable (2026-06-25):** **complete** — fixed CDN race + duplicate「未設定」message; login enabled when configured; dry-run disabled until login. Doc: `gosaki-staging-admin-auth-configured-login-button-enable-fix.md`. Package regenerated; **no FTP.** Next: **G-11c4c** operator re-upload + E2E dry-run.
+**G-11c4c Gosaki staging admin authorization preflight (2026-06-25):** **complete** — browser E2E: login OK, JWT OK, dry-run **403** (`isAdminUser` NG). Root cause: `ADMIN_EMAILS` unset / login email not allowlisted and `app_metadata.role` ≠ admin. Doc: `gosaki-staging-admin-authorization-preflight.md`. **No secrets set / no deploy.** Next: **G-11c4d** `ADMIN_EMAILS` secret execution (operator approval).
 
-**G-11c4b Gosaki staging admin Supabase Auth public env wiring package prep (2026-06-25):** **complete** — commit `3bf783c`.
+**G-11c4b-fix Gosaki staging admin auth login button enable (2026-06-25):** **complete** — commit `ecca35e`.
 
 **G-11c3b Gosaki YouTube URL dry-run Edge Function deploy execution result (2026-06-25):** **complete** — commit `5844d6f`. Staging deploy once; unauth **401**. Doc: `gosaki-youtube-url-dry-run-edge-function-deploy-execution-result.md`.
 

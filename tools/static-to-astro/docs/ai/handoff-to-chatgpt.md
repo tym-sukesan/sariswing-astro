@@ -5,23 +5,24 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-11c4b-fix-gosaki-staging-admin-auth-configured-login-button-enable — complete.
-Prior: G-11c4b package prep (3bf783c); operator saw duplicate 未設定 + disabled login.
-branch: main @ 3bf783c — G-11c4b-fix doc uncommitted
+Current phase: G-11c4c-admin-authorization-preflight — complete.
+Browser E2E: login OK, dry-run 403 (admin authorization NG).
+branch: main @ ecca35e — G-11c4c doc uncommitted
 ```
 
-**Next:** `G-11c4c-gosaki-staging-admin-auth-dry-run-e2e-after-upload` (operator re-upload admin + browser JWT dry-run).
+**Next:** `G-11c4d-staging-admin-emails-secret-execution` (one-time `ADMIN_EMAILS` on staging — operator approval).
+
+## G-11c4c admin authorization preflight — complete
+
+- **Doc:** `gosaki-staging-admin-authorization-preflight.md`
+- **403 cause:** `isAdminUser` false — need `ADMIN_EMAILS` or `app_metadata.role=admin`
+- **Recommend:** `ADMIN_EMAILS` secret on `kmjqppxjdnwwrtaeqjta` — **no redeploy** for secret-only
+- **Do not:** `secrets set` until G-11c4d; never `vsbvndwuajjhnzpohghh`
 
 ## G-11c4b-fix auth login button enable — complete
 
+- **Commit:** `ecca35e`
 - **Doc:** `gosaki-staging-admin-auth-configured-login-button-enable-fix.md`
-- **Fix:** wait for Supabase CDN; login enabled when configured; dry-run disabled until sign-in
-- **Package:** regenerated via `build-gosaki-staging-admin-package.mjs`
-
-## G-11c4b Supabase Auth public env package prep — complete
-
-- **Commit:** `3bf783c`
-- **Doc:** `gosaki-staging-admin-supabase-auth-public-env-wiring-package-prep.md`
 
 ## G-11c2 Edge Function deploy preflight — complete
 

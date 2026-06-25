@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-11c3a Gosaki YouTube URL dry-run Edge Function deploy readiness config prep (2026-06-25):** **complete** — `supabase/config.toml` `[functions.gosaki-youtube-url-dry-run] verify_jwt = true` added. Doc: `gosaki-youtube-url-dry-run-edge-function-deploy-readiness-config-prep.md`. **No deploy.** Next: **G-11c3b** deploy execution (operator approval).
+**G-11c3b Gosaki YouTube URL dry-run Edge Function deploy execution result (2026-06-25):** **complete** — staging deploy **once** to `kmjqppxjdnwwrtaeqjta`; function live at `https://kmjqppxjdnwwrtaeqjta.supabase.co/functions/v1/gosaki-youtube-url-dry-run`; unauth curl **401** `UNAUTHORIZED_NO_AUTH_HEADER`. Doc: `gosaki-youtube-url-dry-run-edge-function-deploy-execution-result.md`. Prior commit `537e5e6`. **No additional deploy.** `supabase/.temp/cli-latest` local only — do not commit. Next: **G-11c4** endpoint wiring + JWT dry-run E2E.
+
+**G-11c3a Gosaki YouTube URL dry-run Edge Function deploy readiness config prep (2026-06-25):** **complete** — commit `537e5e6`. `supabase/config.toml` `[functions.gosaki-youtube-url-dry-run] verify_jwt = true`. Doc: `gosaki-youtube-url-dry-run-edge-function-deploy-readiness-config-prep.md`.
 
 **G-11c2 Gosaki YouTube URL dry-run Edge Function deploy preflight (2026-06-25):** **complete** — commit `df6e18e`.
 

@@ -1,16 +1,27 @@
-Last updated: 2026-06-24
+Last updated: 2026-06-25
 Project: Static-to-Astro CMS / Musician CMS Kit
 
-## 0zz. G-11c3a YouTube dry-run deploy readiness config prep — complete
+## 0zz. G-11c3b YouTube dry-run Edge Function deploy execution — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-11c3b-gosaki-youtube-url-dry-run-edge-function-deploy-execution-result` |
+| Doc | `gosaki-youtube-url-dry-run-edge-function-deploy-execution-result.md` |
+| Prior commit | `537e5e6` |
+| Target | `kmjqppxjdnwwrtaeqjta` only — **not** `vsbvndwuajjhnzpohghh` |
+| Function URL | `https://kmjqppxjdnwwrtaeqjta.supabase.co/functions/v1/gosaki-youtube-url-dry-run` |
+| Unauth smoke | HTTP **401** `UNAUTHORIZED_NO_AUTH_HEADER` |
+| **Next** | `G-11c4-gosaki-youtube-url-dry-run-endpoint-wiring` |
+| **Do not** | additional `supabase functions deploy`; do not commit `supabase/.temp/cli-latest` |
+
+## 0zzy. G-11c3a YouTube dry-run deploy readiness config prep — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-11c3a-gosaki-youtube-url-dry-run-edge-function-deploy-readiness-config-prep` |
+| Commit | `537e5e6` |
 | Doc | `gosaki-youtube-url-dry-run-edge-function-deploy-readiness-config-prep.md` |
 | config.toml | `[functions.gosaki-youtube-url-dry-run] verify_jwt = true` |
-| Target | `kmjqppxjdnwwrtaeqjta` only |
-| **Next** | `G-11c3b-gosaki-youtube-url-dry-run-edge-function-deploy-execution` |
-| **Do not** | `supabase functions deploy` until G-11c3b operator approval |
 
 ## 0zy. G-11c2 YouTube dry-run Edge Function deploy preflight — complete
 

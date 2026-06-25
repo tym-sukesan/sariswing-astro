@@ -302,12 +302,23 @@ export function scanSupabaseKeyExposure(dir) {
   for (const { rel, abs } of files) {
     if (!/\.(html|js|css|json|mjs|txt|xml)$/i.test(rel)) continue;
     const content = fs.readFileSync(abs, "utf8");
+    const gosakiReadOnlyAdmin =
+      rel === "admin/index.html" && content.includes(GOSAKI_READ_ONLY_ADMIN_DATA_ATTR);
 
     if (JWT_LIKE.test(content)) {
+      if (
+        gosakiReadOnlyAdmin &&
+        !/service_role/i.test(content) &&
+        !/createClient\s*\(\s*['"]https:\/\/[^'"]+\.supabase\.co['"]\s*,\s*['"]eyJ/i.test(content)
+      ) {
+        // G-11c4a: staging anon key (public) in data-gosaki-supabase-anon-key is expected.
+        continue;
+      }
       findings.push({ file: rel, kind: "jwt_like_token" });
     }
 
     if (/createClient\s*\(\s*['"]https:\/\/[^'"]+\.supabase\.co['"]\s*,\s*['"]eyJ/i.test(content)) {
+      if (gosakiReadOnlyAdmin) continue;
       findings.push({ file: rel, kind: "supabase_client_with_inline_key" });
     }
   }

@@ -133,11 +133,15 @@ assert("YouTube JSON unchanged", configBefore === configAfter);
 assert("public-dist admin exists", exists(ADMIN_HTML_REL));
 assert("admin dry-run button label", adminHtml.includes("Dry-run（保存前チェック）"));
 assert("admin dry-run input", adminHtml.includes("gra-youtube-next-url"));
-assert("admin endpoint not configured message", adminHtml.includes("dry-run endpoint not configured"));
+assert("admin G-11c1 or G-11c4a phase", adminHtml.includes('data-phase="G-11c1"') || adminHtml.includes("G-11c4a"));
+assert(
+  "admin dry-run endpoint wiring",
+  adminHtml.includes("dry-run endpoint not configured") ||
+    adminHtml.includes("gosaki-youtube-url-dry-run"),
+);
 assert("admin Save disabled", adminHtml.includes("Save（無効）") && /disabled/.test(adminHtml));
 assert("admin Publish disabled", adminHtml.includes("Publish（無効）"));
 assert("admin Deploy disabled", adminHtml.includes("Deploy（無効）"));
-assert("admin G-11c1 phase", adminHtml.includes('data-phase="G-11c1"'));
 assert("admin no service_role", !/service_role/i.test(adminHtml));
 assert("admin no GITHUB_TOKEN", !/GITHUB_TOKEN/i.test(adminHtml));
 assert("admin no write API ref", !/youtube-embed-static-json-write/i.test(adminHtml));

@@ -5,26 +5,25 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-11c3b-gosaki-youtube-url-dry-run-edge-function-deploy-execution-result — complete.
-Prior commit: 537e5e6 (G-11c3a); deploy executed once to staging.
-branch: main @ 537e5e6 — G-11c3b doc uncommitted
+Current phase: G-11c4a-gosaki-staging-admin-youtube-dry-run-endpoint-wiring-local-prep — complete.
+Prior: G-11c3b deploy execution (5844d6f).
+branch: main @ 5844d6f — G-11c4a doc uncommitted
 ```
 
-**Next:** `G-11c4-gosaki-youtube-url-dry-run-endpoint-wiring` (admin UI → deployed function URL; JWT dry-run E2E).
+**Next:** `G-11c4b-gosaki-staging-admin-youtube-dry-run-endpoint-upload-and-e2e` (operator FTP upload + browser dry-run).
+
+## G-11c4a staging admin endpoint wiring — complete
+
+- **Doc:** `gosaki-staging-admin-youtube-dry-run-endpoint-wiring-local-prep.md`
+- **Endpoint:** `https://kmjqppxjdnwwrtaeqjta.supabase.co/functions/v1/gosaki-youtube-url-dry-run`
+- **Auth:** staging Supabase login + `Authorization: Bearer` + `apikey` (anon only — no service_role)
+- **Package:** `output/manual-upload/gosaki-piano/public-dist/admin/index.html` includes endpoint URL
+- **Do not:** FTP until G-11c4b; no additional Edge Function deploy
 
 ## G-11c3b Edge Function deploy execution — complete
 
+- **Commit:** `5844d6f`
 - **Doc:** `gosaki-youtube-url-dry-run-edge-function-deploy-execution-result.md`
-- **Target:** `static-to-astro-cms-staging` / `kmjqppxjdnwwrtaeqjta` — **not** `vsbvndwuajjhnzpohghh`
-- **Function URL:** `https://kmjqppxjdnwwrtaeqjta.supabase.co/functions/v1/gosaki-youtube-url-dry-run`
-- **Deploy:** executed **once** with operator approval; unauth curl → **401** `UNAUTHORIZED_NO_AUTH_HEADER`
-- **Do not:** additional `supabase functions deploy`; commit `supabase/.temp/cli-latest`
-
-## G-11c3a deploy readiness config prep — complete
-
-- **Commit:** `537e5e6`
-- **Doc:** `gosaki-youtube-url-dry-run-edge-function-deploy-readiness-config-prep.md`
-- **config.toml:** `[functions.gosaki-youtube-url-dry-run] verify_jwt = true`
 
 ## G-11c2 Edge Function deploy preflight — complete
 

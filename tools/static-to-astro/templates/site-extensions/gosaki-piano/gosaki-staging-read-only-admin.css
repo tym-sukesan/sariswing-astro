@@ -173,6 +173,32 @@ body.gosaki-read-only-admin {
   color: #b45309;
 }
 
+.gosaki-read-only-admin__meta--ok {
+  color: #047857;
+}
+
+.gosaki-read-only-admin__auth {
+  margin-top: 0.75rem;
+  padding: 0.75rem;
+  border: 1px solid var(--gra-border);
+  border-radius: 6px;
+  background: #f8fafc;
+}
+
+.gosaki-read-only-admin__auth-form {
+  display: grid;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  max-width: 24rem;
+}
+
+.gosaki-read-only-admin__auth-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+}
+
 .gosaki-read-only-admin__field input:not([readonly]):not(:disabled) {
   background: #fff;
   color: var(--gra-text);

@@ -1,18 +1,25 @@
 Last updated: 2026-06-25
 Project: Static-to-Astro CMS / Musician CMS Kit
 
-## 0zz. G-11c3b YouTube dry-run Edge Function deploy execution — complete
+## 0zz. G-11c4a staging admin YouTube dry-run endpoint wiring — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-11c4a-gosaki-staging-admin-youtube-dry-run-endpoint-wiring-local-prep` |
+| Doc | `gosaki-staging-admin-youtube-dry-run-endpoint-wiring-local-prep.md` |
+| Endpoint | `https://kmjqppxjdnwwrtaeqjta.supabase.co/functions/v1/gosaki-youtube-url-dry-run` |
+| Auth | Bearer JWT + anon `apikey`; login UI on static admin |
+| Package | `output/manual-upload/gosaki-piano/` regenerated |
+| **Next** | `G-11c4b-gosaki-staging-admin-youtube-dry-run-endpoint-upload-and-e2e` |
+| **Do not** | re-run `supabase functions deploy`; FTP until G-11c4b operator |
+
+## 0zzy. G-11c3b YouTube dry-run Edge Function deploy execution — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-11c3b-gosaki-youtube-url-dry-run-edge-function-deploy-execution-result` |
+| Commit | `5844d6f` |
 | Doc | `gosaki-youtube-url-dry-run-edge-function-deploy-execution-result.md` |
-| Prior commit | `537e5e6` |
-| Target | `kmjqppxjdnwwrtaeqjta` only — **not** `vsbvndwuajjhnzpohghh` |
-| Function URL | `https://kmjqppxjdnwwrtaeqjta.supabase.co/functions/v1/gosaki-youtube-url-dry-run` |
-| Unauth smoke | HTTP **401** `UNAUTHORIZED_NO_AUTH_HEADER` |
-| **Next** | `G-11c4-gosaki-youtube-url-dry-run-endpoint-wiring` |
-| **Do not** | additional `supabase functions deploy`; do not commit `supabase/.temp/cli-latest` |
 
 ## 0zzy. G-11c3a YouTube dry-run deploy readiness config prep — complete
 

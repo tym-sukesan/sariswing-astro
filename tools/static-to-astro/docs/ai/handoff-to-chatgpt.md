@@ -5,21 +5,25 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-11c2-gosaki-youtube-url-dry-run-edge-function-deploy-preflight — complete.
-Prior: G-11c1 local prep (8152d7c); G-11b post-upload (d7b4674).
-branch: main @ 8152d7c — G-11c2 doc uncommitted
+Current phase: G-11c3a-gosaki-youtube-url-dry-run-edge-function-deploy-readiness-config-prep — complete.
+Prior: G-11c2 preflight (df6e18e); G-11c1 local prep (8152d7c).
+branch: main @ df6e18e — G-11c3a doc uncommitted
 ```
 
-**Next:** `G-11c3-gosaki-youtube-url-dry-run-edge-function-deploy-execution` (explicit approval).
+**Next:** `G-11c3b-gosaki-youtube-url-dry-run-edge-function-deploy-execution` (operator explicit approval).
+
+## G-11c3a deploy readiness config prep — complete
+
+- **Doc:** `gosaki-youtube-url-dry-run-edge-function-deploy-readiness-config-prep.md`
+- **config.toml:** `[functions.gosaki-youtube-url-dry-run] verify_jwt = true`
+- **Target:** `kmjqppxjdnwwrtaeqjta` — **not** `vsbvndwuajjhnzpohghh`
+- **Deploy command:** documented; **Cursor does not execute** — G-11c3b operator only
+- **Do not:** `supabase functions deploy` until G-11c3b
 
 ## G-11c2 Edge Function deploy preflight — complete
 
+- **Commit:** `df6e18e`
 - **Doc:** `gosaki-youtube-url-dry-run-edge-function-deploy-preflight.md`
-- **Target:** `kmjqppxjdnwwrtaeqjta` (staging) — **not** `vsbvndwuajjhnzpohghh`
-- **Function:** `gosaki-youtube-url-dry-run` — source PASS; dry-run only; no DB/service_role
-- **CORS:** inherits `*` from `admin-auth` (same as admin-schedule)
-- **Gap:** add `config.toml` `[functions.gosaki-youtube-url-dry-run] verify_jwt = true` before G-11c3
-- **Deploy:** documented only — **not executed**
 
 ## G-11c1 YouTube dry-run local prep — complete
 

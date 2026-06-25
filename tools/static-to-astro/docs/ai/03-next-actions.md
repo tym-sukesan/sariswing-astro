@@ -1,16 +1,24 @@
 Last updated: 2026-06-24
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zz. G-11c3a YouTube dry-run deploy readiness config prep — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-11c3a-gosaki-youtube-url-dry-run-edge-function-deploy-readiness-config-prep` |
+| Doc | `gosaki-youtube-url-dry-run-edge-function-deploy-readiness-config-prep.md` |
+| config.toml | `[functions.gosaki-youtube-url-dry-run] verify_jwt = true` |
+| Target | `kmjqppxjdnwwrtaeqjta` only |
+| **Next** | `G-11c3b-gosaki-youtube-url-dry-run-edge-function-deploy-execution` |
+| **Do not** | `supabase functions deploy` until G-11c3b operator approval |
+
 ## 0zy. G-11c2 YouTube dry-run Edge Function deploy preflight — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-11c2-gosaki-youtube-url-dry-run-edge-function-deploy-preflight` |
+| Commit | `df6e18e` |
 | Doc | `gosaki-youtube-url-dry-run-edge-function-deploy-preflight.md` |
-| Target project | `static-to-astro-cms-staging` / `kmjqppxjdnwwrtaeqjta` |
-| Blocked | `sari-site` / `vsbvndwuajjhnzpohghh` |
-| **Next** | `G-11c3-gosaki-youtube-url-dry-run-edge-function-deploy-execution` |
-| **Do not** | `supabase functions deploy` until G-11c3 approval |
 
 ## 0zx. G-11c1 YouTube URL web-save dry-run local prep — complete
 

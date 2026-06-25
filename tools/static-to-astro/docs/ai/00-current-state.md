@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-11c2 Gosaki YouTube URL dry-run Edge Function deploy preflight (2026-06-25):** **complete** — staging ref `kmjqppxjdnwwrtaeqjta` only; deploy command documented; **no deploy.** Doc: `gosaki-youtube-url-dry-run-edge-function-deploy-preflight.md`. Next: **G-11c3** deploy execution (approval required).
+**G-11c3a Gosaki YouTube URL dry-run Edge Function deploy readiness config prep (2026-06-25):** **complete** — `supabase/config.toml` `[functions.gosaki-youtube-url-dry-run] verify_jwt = true` added. Doc: `gosaki-youtube-url-dry-run-edge-function-deploy-readiness-config-prep.md`. **No deploy.** Next: **G-11c3b** deploy execution (operator approval).
+
+**G-11c2 Gosaki YouTube URL dry-run Edge Function deploy preflight (2026-06-25):** **complete** — commit `df6e18e`.
 
 **G-11c1 Gosaki YouTube URL web-save dry-run PoC local prep (2026-06-25):** **complete** — commit `8152d7c`.
 

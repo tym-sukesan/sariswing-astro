@@ -18,3 +18,6 @@ verify_jwt = true
 
 [functions.admin-schedule]
 verify_jwt = true
+
+[functions.gosaki-youtube-url-dry-run]
+verify_jwt = true

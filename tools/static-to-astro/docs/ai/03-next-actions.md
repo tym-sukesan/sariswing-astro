@@ -1,17 +1,24 @@
 Last updated: 2026-06-25
 Project: Static-to-Astro CMS / Musician CMS Kit
 
-## 0zz. G-11c4a staging admin YouTube dry-run endpoint wiring — complete
+## 0zz. G-11c4b staging admin Supabase Auth public env package prep — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-11c4b-gosaki-staging-admin-supabase-auth-public-env-wiring-package-prep` |
+| Doc | `gosaki-staging-admin-supabase-auth-public-env-wiring-package-prep.md` |
+| Build | `node tools/static-to-astro/scripts/build-gosaki-staging-admin-package.mjs` |
+| Auth in HTML | `data-gosaki-supabase-auth-configured="true"` |
+| **Next** | `G-11c4c-gosaki-staging-admin-auth-dry-run-e2e-after-upload` |
+| **Do not** | FTP until G-11c4c operator upload |
+
+## 0zzy. G-11c4a staging admin YouTube dry-run endpoint wiring — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-11c4a-gosaki-staging-admin-youtube-dry-run-endpoint-wiring-local-prep` |
+| Commit | `d116842` |
 | Doc | `gosaki-staging-admin-youtube-dry-run-endpoint-wiring-local-prep.md` |
-| Endpoint | `https://kmjqppxjdnwwrtaeqjta.supabase.co/functions/v1/gosaki-youtube-url-dry-run` |
-| Auth | Bearer JWT + anon `apikey`; login UI on static admin |
-| Package | `output/manual-upload/gosaki-piano/` regenerated |
-| **Next** | `G-11c4b-gosaki-staging-admin-youtube-dry-run-endpoint-upload-and-e2e` |
-| **Do not** | re-run `supabase functions deploy`; FTP until G-11c4b operator |
 
 ## 0zzy. G-11c3b YouTube dry-run Edge Function deploy execution — complete
 

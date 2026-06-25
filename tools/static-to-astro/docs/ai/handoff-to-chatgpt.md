@@ -5,25 +5,24 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-11c4a-gosaki-staging-admin-youtube-dry-run-endpoint-wiring-local-prep — complete.
-Prior: G-11c3b deploy execution (5844d6f).
-branch: main @ 5844d6f — G-11c4a doc uncommitted
+Current phase: G-11c4b-gosaki-staging-admin-supabase-auth-public-env-wiring-package-prep — complete.
+Prior: G-11c4a endpoint wiring (d116842); operator upload showed auth unset.
+branch: main @ d116842 — G-11c4b doc uncommitted
 ```
 
-**Next:** `G-11c4b-gosaki-staging-admin-youtube-dry-run-endpoint-upload-and-e2e` (operator FTP upload + browser dry-run).
+**Next:** `G-11c4c-gosaki-staging-admin-auth-dry-run-e2e-after-upload` (operator re-upload admin + browser JWT dry-run).
+
+## G-11c4b Supabase Auth public env package prep — complete
+
+- **Doc:** `gosaki-staging-admin-supabase-auth-public-env-wiring-package-prep.md`
+- **Build:** `node tools/static-to-astro/scripts/build-gosaki-staging-admin-package.mjs`
+- **HTML:** `data-gosaki-supabase-auth-configured="true"`; banner **Supabase Auth: configured**
+- **Do not:** commit anon key to repo; FTP until G-11c4c
 
 ## G-11c4a staging admin endpoint wiring — complete
 
+- **Commit:** `d116842`
 - **Doc:** `gosaki-staging-admin-youtube-dry-run-endpoint-wiring-local-prep.md`
-- **Endpoint:** `https://kmjqppxjdnwwrtaeqjta.supabase.co/functions/v1/gosaki-youtube-url-dry-run`
-- **Auth:** staging Supabase login + `Authorization: Bearer` + `apikey` (anon only — no service_role)
-- **Package:** `output/manual-upload/gosaki-piano/public-dist/admin/index.html` includes endpoint URL
-- **Do not:** FTP until G-11c4b; no additional Edge Function deploy
-
-## G-11c3b Edge Function deploy execution — complete
-
-- **Commit:** `5844d6f`
-- **Doc:** `gosaki-youtube-url-dry-run-edge-function-deploy-execution-result.md`
 
 ## G-11c2 Edge Function deploy preflight — complete
 

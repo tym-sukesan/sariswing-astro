@@ -8,7 +8,7 @@ import youtubeConfig from "../data/gosaki-youtube-embed.json";
 import aboutConfig from "../data/gosaki-about-content.json";
 import contactConfig from "../data/gosaki-contact-hubspot.json";
 import {
-  G11C4A_PHASE,
+  G11C4B_PHASE,
   G11C4A_STAGING_DRY_RUN_ENDPOINT,
   GOSAKI_STAGING_PREVIEW_URL,
   buildGosakiReadOnlyAdminViewModel,
@@ -53,7 +53,7 @@ const pageTitle = "Gosaki Piano CMS（確認用・読み取り専用）";
   <body
     class="gosaki-read-only-admin"
     data-gosaki-read-only-admin="true"
-    data-phase={G11C4A_PHASE}
+    data-phase={G11C4B_PHASE}
     data-gosaki-youtube-dry-run-endpoint={dryRunEndpoint}
     data-gosaki-supabase-url={supabaseUrl}
     data-gosaki-supabase-anon-key={supabaseAnonKey}
@@ -71,7 +71,7 @@ const pageTitle = "Gosaki Piano CMS（確認用・読み取り専用）";
 
       <main class="gosaki-read-only-admin__main">
         <div class="gosaki-read-only-admin__banner" role="status">
-          <strong>読み取り専用管理画面（G-11c4a dry-run endpoint 接続）</strong>
+          <strong>読み取り専用管理画面（G-11c4b Supabase Auth package prep）</strong>
           <p class="gosaki-read-only-admin__meta">
             YouTube URL の dry-run を staging Edge Function へ送信できます。<strong>保存されません（dry-run のみ）</strong>。Save / Publish / Deploy は無効のままです。
           </p>
@@ -97,11 +97,15 @@ const pageTitle = "Gosaki Piano CMS（確認用・読み取り専用）";
               ログイン状態を確認しています…
             </p>
             {
-              !supabaseAuthConfigured ? (
+              supabaseAuthConfigured ? (
+                <p class="gosaki-read-only-admin__meta gosaki-read-only-admin__meta--ok" id="gra-auth-config-status">
+                  Supabase Auth: configured — ログインして dry-run を実行できます（保存されません）
+                </p>
+              ) : (
                 <p class="gosaki-read-only-admin__meta gosaki-read-only-admin__meta--warn">
                   Supabase Auth 未設定 — build 時に PUBLIC_SUPABASE_URL と PUBLIC_SUPABASE_ANON_KEY（staging anon）が必要です。
                 </p>
-              ) : null
+              )
             }
             <div id="gra-auth-signed-in" class="gosaki-read-only-admin__auth-actions" hidden>
               <button type="button" id="gra-auth-sign-out-btn" class="gosaki-read-only-admin__btn">
@@ -247,7 +251,7 @@ const pageTitle = "Gosaki Piano CMS（確認用・読み取り専用）";
       </main>
 
       <footer class="gosaki-read-only-admin__footer">
-        Gosaki Piano staging read-only CMS — G-11c4a YouTube dry-run endpoint wiring
+        Gosaki Piano staging read-only CMS — G-11c4b Supabase Auth public env package prep
       </footer>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.1/dist/umd/supabase.js"></script>

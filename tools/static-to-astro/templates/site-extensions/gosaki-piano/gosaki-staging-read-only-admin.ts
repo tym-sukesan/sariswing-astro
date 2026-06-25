@@ -13,6 +13,8 @@ export const GOSAKI_STAGING_PREVIEW_URL =
 
 /** G-11c4a — staging-only dry-run endpoint wiring (public URLs; no secrets). */
 export const G11C4A_PHASE = "G-11c4a-gosaki-staging-admin-youtube-dry-run-endpoint-wiring-local-prep";
+/** G-11c4b — staging public env wiring for Supabase Auth in static admin package. */
+export const G11C4B_PHASE = "G-11c4b-gosaki-staging-admin-supabase-auth-public-env-wiring-package-prep";
 export const G11C4A_STAGING_PROJECT_REF = "kmjqppxjdnwwrtaeqjta";
 export const G11C4A_STAGING_SUPABASE_URL = `https://${G11C4A_STAGING_PROJECT_REF}.supabase.co`;
 export const G11C4A_STAGING_DRY_RUN_ENDPOINT = `${G11C4A_STAGING_SUPABASE_URL}/functions/v1/gosaki-youtube-url-dry-run`;

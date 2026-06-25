@@ -1,0 +1,68 @@
+# G-11c6a — Gosaki YouTube URL save (staging JSON patch skeleton)
+# Local-only skeleton — workflow_dispatch inputs only; no push/pull_request/schedule.
+# G-11c6a: JSON patch / commit / FTP / deploy NOT executed.
+
+name: Gosaki YouTube URL save (staging skeleton)
+
+on:
+  workflow_dispatch:
+    inputs:
+      site_slug:
+        description: Site slug (allowlist gosaki-piano)
+        required: true
+        type: string
+      operation_id:
+        description: Operation ID (G-11c6 approval gate)
+        required: true
+        type: string
+      approval_id:
+        description: Approval ID (operator gate)
+        required: true
+        type: string
+      next_embed_code:
+        description: Next YouTube URL / embedCode value
+        required: true
+        type: string
+      next_video_id:
+        description: Next 11-char videoId
+        required: true
+        type: string
+      expected_before_embed:
+        description: Optimistic-lock embedCode before save
+        required: true
+        type: string
+      expected_before_video_id:
+        description: Optimistic-lock videoId before save
+        required: false
+        type: string
+
+concurrency:
+  group: gosaki-youtube-url-save-staging
+  cancel-in-progress: false
+
+jobs:
+  validate-skeleton:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: G-11c6a skeleton validation (no JSON patch)
+        env:
+          SITE_SLUG: ${{ github.event.inputs.site_slug }}
+          OPERATION_ID: ${{ github.event.inputs.operation_id }}
+          APPROVAL_ID: ${{ github.event.inputs.approval_id }}
+        run: |
+          set -euo pipefail
+          echo "G-11c6a skeleton — JSON patch / commit / FTP / deploy deferred to G-11c7+"
+          test -n "$SITE_SLUG"
+          test -n "$OPERATION_ID"
+          test -n "$APPROVAL_ID"
+          test "$SITE_SLUG" = "gosaki-piano"
+          test "$OPERATION_ID" = "G-11c6-gosaki-youtube-url-web-save-non-dry-run-slice"
+          test "$APPROVAL_ID" = "G-11c6-gosaki-youtube-url-web-save-non-dry-run-slice"
+          echo "inputs OK — target JSON: tools/static-to-astro/config/sites/gosaki-piano-youtube-embed.json (future phase)"
+
+      # Future G-11c7+: node patch script + verifiers + manual-upload package
+      # Secrets placeholder names only (set in repo/org secrets — not in this file):
+      #   GOSAKI_STAGING_CONTENT_PUBLISH_TOKEN (GitHub PAT for workflow only)

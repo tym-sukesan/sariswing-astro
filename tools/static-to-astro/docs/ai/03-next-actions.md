@@ -1,22 +1,23 @@
 Last updated: 2026-06-25
 Project: Static-to-Astro CMS / Musician CMS Kit
 
-## 0zz. G-11c5 YouTube URL web-save non-dry-run slice planning — complete
+## 0zz. G-11c6a YouTube URL save slice implementation (local-only) — complete
 
 | Item | Value |
 | --- | --- |
-| Phase | `G-11c5-gosaki-youtube-url-web-save-non-dry-run-slice-planning` |
+| Phase | `G-11c6a-gosaki-youtube-url-web-save-non-dry-run-slice-implementation-local-only` |
+| Doc | `gosaki-youtube-url-web-save-non-dry-run-slice-implementation.md` |
+| Edge | `gosaki-youtube-url-save` (source only — not deployed) |
+| Save UI | **disabled** |
+| **Next** | `G-11c6b-gosaki-youtube-url-save-edge-function-deploy-preflight` |
+| **Do not** | deploy / Save / `workflow_dispatch` until G-11c6b+ gates |
+
+## 0zz1. G-11c5 YouTube URL save slice planning — complete
+
+| Item | Value |
+| --- | --- |
+| Commit | `2f0f88d` |
 | Doc | `gosaki-youtube-url-web-save-non-dry-run-slice-planning.md` |
-| Slice | static JSON patch via Edge save + Gosaki workflow (FTP deferred) |
-| **Next** | `G-11c6-gosaki-youtube-url-web-save-non-dry-run-slice-implementation` |
-| **Do not** | Save / deploy / `secrets set` / FTP until G-11c6+ gates |
-
-## 0zz1. G-11c4d staging admin ADMIN_EMAILS + dry-run E2E — complete
-
-| Item | Value |
-| --- | --- |
-| Commit | `a0e8be3` |
-| Doc | `gosaki-staging-admin-emails-secret-and-youtube-dry-run-e2e-result.md` |
 
 ## 0zzy. G-11c4b-fix auth login button enable — complete
 

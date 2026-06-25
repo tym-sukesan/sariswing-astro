@@ -21,3 +21,6 @@ verify_jwt = true
 
 [functions.gosaki-youtube-url-dry-run]
 verify_jwt = true
+
+[functions.gosaki-youtube-url-save]
+verify_jwt = true

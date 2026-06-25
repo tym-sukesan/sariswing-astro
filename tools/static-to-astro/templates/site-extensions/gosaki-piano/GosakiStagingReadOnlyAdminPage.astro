@@ -8,21 +8,31 @@ import youtubeConfig from "../data/gosaki-youtube-embed.json";
 import aboutConfig from "../data/gosaki-about-content.json";
 import contactConfig from "../data/gosaki-contact-hubspot.json";
 import {
-  G11C4B_FIX_PHASE,
+  G11C6A_PHASE,
   G11C4A_STAGING_DRY_RUN_ENDPOINT,
+  G11C6A_STAGING_SAVE_ENDPOINT,
+  G11C6_APPROVAL_ID,
+  G11C6_OPERATION_ID,
+  G11C6_SAVE_DISABLED_REASON,
+  G11C6_SAVE_ENABLED_DEFAULT,
   GOSAKI_STAGING_PREVIEW_URL,
   buildGosakiReadOnlyAdminViewModel,
   isG11c4aSupabaseAuthConfigured,
+  isG11c6aSaveEnabled,
   resolveG11c4aDryRunEndpoint,
   resolveG11c4aSupabaseAnonKey,
   resolveG11c4aSupabaseUrl,
+  resolveG11c6aSaveEndpoint,
 } from "../lib/gosaki-staging-read-only-admin";
 
 const dryRunEndpoint = resolveG11c4aDryRunEndpoint(import.meta.env);
+const saveEndpoint = resolveG11c6aSaveEndpoint(import.meta.env);
 const supabaseUrl = resolveG11c4aSupabaseUrl(import.meta.env);
 const supabaseAnonKey = resolveG11c4aSupabaseAnonKey(import.meta.env);
 const supabaseAuthConfigured = isG11c4aSupabaseAuthConfigured(import.meta.env);
 const endpointConfigured = Boolean(dryRunEndpoint);
+const saveEndpointConfigured = Boolean(saveEndpoint);
+const saveEnabled = isG11c6aSaveEnabled(import.meta.env);
 const g11c1OperationId = "G-11c1-gosaki-youtube-url-web-save-dry-run-poc";
 const g11c1ApprovalId = "G-11c1-youtube-url-dry-run";
 
@@ -53,8 +63,9 @@ const pageTitle = "Gosaki Piano CMS（確認用・読み取り専用）";
   <body
     class="gosaki-read-only-admin"
     data-gosaki-read-only-admin="true"
-    data-phase={G11C4B_FIX_PHASE}
+    data-phase={G11C6A_PHASE}
     data-gosaki-youtube-dry-run-endpoint={dryRunEndpoint}
+    data-gosaki-youtube-save-endpoint={saveEndpoint}
     data-gosaki-supabase-url={supabaseUrl}
     data-gosaki-supabase-anon-key={supabaseAnonKey}
     data-gosaki-supabase-auth-configured={supabaseAuthConfigured ? "true" : "false"}
@@ -62,6 +73,9 @@ const pageTitle = "Gosaki Piano CMS（確認用・読み取り専用）";
     data-gosaki-youtube-current-videoid={view.youtube.videoId ?? ""}
     data-g11c1-operation-id={g11c1OperationId}
     data-g11c1-approval-id={g11c1ApprovalId}
+    data-g11c6-operation-id={G11C6_OPERATION_ID}
+    data-g11c6-approval-id={G11C6_APPROVAL_ID}
+    data-g11c6-save-enabled={saveEnabled ? "true" : "false"}
   >
     <div class="gosaki-read-only-admin__shell">
       <header class="gosaki-read-only-admin__header">
@@ -71,9 +85,9 @@ const pageTitle = "Gosaki Piano CMS（確認用・読み取り専用）";
 
       <main class="gosaki-read-only-admin__main">
         <div class="gosaki-read-only-admin__banner" role="status">
-          <strong>読み取り専用管理画面（G-11c4b-fix Auth UI）</strong>
+          <strong>読み取り専用管理画面（G-11c6a Save path — UI disabled）</strong>
           <p class="gosaki-read-only-admin__meta">
-            YouTube URL の dry-run を staging Edge Function へ送信できます。<strong>保存されません（dry-run のみ）</strong>。Save / Publish / Deploy は無効のままです。
+            YouTube URL の dry-run を staging Edge Function へ送信できます。<strong>Save は G-11c6a で無効のまま</strong>（JSON / workflow / FTP は実行しません）。
           </p>
         </div>
 
@@ -204,8 +218,45 @@ const pageTitle = "Gosaki Piano CMS（確認用・読み取り専用）";
             }
           </div>
 
-          <div class="gosaki-read-only-admin__actions">
-            <button type="button" class="gosaki-read-only-admin__btn" disabled>Save（無効）</button>
+          <div class="gosaki-read-only-admin__save" id="gra-youtube-save" data-section="youtube-save">
+            <h3 class="gosaki-read-only-admin__meta">Save（G-11c6a — 現在は無効）</h3>
+            <p
+              class:list={[
+                "gosaki-read-only-admin__meta",
+                saveEndpointConfigured
+                  ? "gosaki-read-only-admin__meta--ok"
+                  : "gosaki-read-only-admin__meta--warn",
+              ]}
+              id="gra-youtube-save-endpoint-status"
+            >
+              {
+                saveEndpointConfigured
+                  ? `save endpoint: configured (${saveEndpoint})`
+                  : "save endpoint: not configured"
+              }
+            </p>
+            <p class="gosaki-read-only-admin__meta gosaki-read-only-admin__meta--warn" id="gra-youtube-save-disabled-reason">
+              {G11C6_SAVE_DISABLED_REASON}
+            </p>
+            <p class="gosaki-read-only-admin__meta">
+              saveEnabled (build): {saveEnabled ? "true" : "false"} — default {String(G11C6_SAVE_ENABLED_DEFAULT)}
+            </p>
+            <div class="gosaki-read-only-admin__actions">
+              <button
+                type="button"
+                id="gra-youtube-save-btn"
+                class="gosaki-read-only-admin__btn"
+                disabled
+                title={G11C6_SAVE_DISABLED_REASON}
+              >
+                Save（無効 — G-11c6a）
+              </button>
+            </div>
+            <pre
+              id="gra-youtube-save-result"
+              class="gosaki-read-only-admin__dry-run-result"
+              aria-live="polite"
+            >（Save は G-11c6a で実行不可 — dry-run のみ利用可能）</pre>
           </div>
         </section>
 

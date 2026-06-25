@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-11c5 Gosaki YouTube URL web-save non-dry-run slice planning (2026-06-25):** **complete** — recommend static JSON via new Edge `gosaki-youtube-url-save` + Gosaki-only GitHub workflow; dry-run→save→publish boundaries; no Save/DB/deploy in planning. Doc: `gosaki-youtube-url-web-save-non-dry-run-slice-planning.md`. Next: **G-11c6** implementation (Save UI disabled).
+**G-11c6a Gosaki YouTube URL web-save non-dry-run slice implementation local-only (2026-06-25):** **complete** — Edge `gosaki-youtube-url-save` source + workflow skeleton + Save UI disabled; **no deploy / Save / dispatch**. Doc: `gosaki-youtube-url-web-save-non-dry-run-slice-implementation.md`. Next: **G-11c6b** save Edge deploy preflight.
+
+**G-11c5 Gosaki YouTube URL web-save non-dry-run slice planning (2026-06-25):** **complete** — commit `2f0f88d`.
 
 **G-11c4d Gosaki staging admin `ADMIN_EMAILS` secret + YouTube dry-run E2E (2026-06-25):** **complete** — commit `a0e8be3`.
 

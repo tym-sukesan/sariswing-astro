@@ -17,14 +17,32 @@ export const G11C4A_PHASE = "G-11c4a-gosaki-staging-admin-youtube-dry-run-endpoi
 export const G11C4B_PHASE = "G-11c4b-gosaki-staging-admin-supabase-auth-public-env-wiring-package-prep";
 /** G-11c4b-fix — auth configured login button + status message fix. */
 export const G11C4B_FIX_PHASE = "G-11c4b-fix-gosaki-staging-admin-auth-configured-login-button-enable";
+/** G-11c6a — YouTube URL save path local implementation (Save UI disabled). */
+export const G11C6A_PHASE = "G-11c6a-gosaki-youtube-url-web-save-non-dry-run-slice-implementation-local-only";
 export const G11C4A_STAGING_PROJECT_REF = "kmjqppxjdnwwrtaeqjta";
 export const G11C4A_STAGING_SUPABASE_URL = `https://${G11C4A_STAGING_PROJECT_REF}.supabase.co`;
 export const G11C4A_STAGING_DRY_RUN_ENDPOINT = `${G11C4A_STAGING_SUPABASE_URL}/functions/v1/gosaki-youtube-url-dry-run`;
+export const G11C6A_STAGING_SAVE_ENDPOINT = `${G11C4A_STAGING_SUPABASE_URL}/functions/v1/gosaki-youtube-url-save`;
+export const G11C6_OPERATION_ID = "G-11c6-gosaki-youtube-url-web-save-non-dry-run-slice";
+export const G11C6_APPROVAL_ID = "G-11c6-gosaki-youtube-url-web-save-non-dry-run-slice";
+export const G11C6_SAVE_ENABLED_DEFAULT = false as const;
+export const G11C6_SAVE_DISABLED_REASON =
+  "G-11c6a: Save は無効です。dry-run 成功後も env arm / operator approval / Edge deploy が必要です。";
 
 export function resolveG11c4aDryRunEndpoint(env: ImportMetaEnv): string {
   const fromEnv = String(env.PUBLIC_GOSAKI_YOUTUBE_URL_DRY_RUN_ENDPOINT ?? "").trim();
   if (fromEnv) return fromEnv;
   return G11C4A_STAGING_DRY_RUN_ENDPOINT;
+}
+
+export function resolveG11c6aSaveEndpoint(env: ImportMetaEnv): string {
+  const fromEnv = String(env.PUBLIC_GOSAKI_YOUTUBE_URL_SAVE_ENDPOINT ?? "").trim();
+  if (fromEnv) return fromEnv;
+  return G11C6A_STAGING_SAVE_ENDPOINT;
+}
+
+export function isG11c6aSaveEnabled(env: ImportMetaEnv): boolean {
+  return String(env.PUBLIC_ADMIN_GOSAKI_YOUTUBE_URL_WEB_SAVE_NON_DRY_RUN_ARMED ?? "").trim() === "true";
 }
 
 export function resolveG11c4aSupabaseUrl(env: ImportMetaEnv): string {

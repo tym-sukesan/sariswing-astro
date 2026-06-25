@@ -5,23 +5,24 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-11c5-gosaki-youtube-url-web-save-non-dry-run-slice-planning — complete.
-branch: main @ a0e8be3 — G-11c5 doc uncommitted
+Current phase: G-11c6a-gosaki-youtube-url-web-save-non-dry-run-slice-implementation-local-only — complete.
+branch: main @ 2f0f88d — G-11c6a uncommitted
 ```
 
-**Next:** `G-11c6-gosaki-youtube-url-web-save-non-dry-run-slice-implementation` (Save UI disabled; no execution).
+**Next:** `G-11c6b-gosaki-youtube-url-save-edge-function-deploy-preflight` (no Save execution).
 
-## G-11c5 YouTube URL non-dry-run slice planning — complete
+## G-11c6a YouTube URL save implementation (local-only) — complete
 
+- **Doc:** `gosaki-youtube-url-web-save-non-dry-run-slice-implementation.md`
+- **Edge:** `gosaki-youtube-url-save` + shared guards (not deployed)
+- **Workflow:** `gosaki-youtube-url-save-staging.yml` skeleton (`workflow_dispatch` only)
+- **Save UI:** disabled; dry-run frozen
+- **Do not:** deploy / Save / dispatch until G-11c6b+
+
+## G-11c5 YouTube URL save slice planning — complete
+
+- **Commit:** `2f0f88d`
 - **Doc:** `gosaki-youtube-url-web-save-non-dry-run-slice-planning.md`
-- **Slice:** Edge `gosaki-youtube-url-save` → Gosaki-only workflow → JSON patch (no FTP v1)
-- **Reuse:** G-11c1 validation, G-10c guards, `ADMIN_EMAILS` auth
-- **Do not:** Save / deploy / `secrets set` until G-11c6+; never `vsbvndwuajjhnzpohghh`
-
-## G-11c4d ADMIN_EMAILS + dry-run E2E — complete
-
-- **Commit:** `a0e8be3`
-- **Doc:** `gosaki-staging-admin-emails-secret-and-youtube-dry-run-e2e-result.md`
 
 ## G-11c4b-fix auth login button enable — complete
 

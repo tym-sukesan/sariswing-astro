@@ -1,16 +1,24 @@
 Last updated: 2026-06-24
 Project: Static-to-Astro CMS / Musician CMS Kit
 
-## 0zx. G-11c1 YouTube URL web-save dry-run PoC local prep — complete
+## 0zy. G-11c2 YouTube dry-run Edge Function deploy preflight — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-11c2-gosaki-youtube-url-dry-run-edge-function-deploy-preflight` |
+| Doc | `gosaki-youtube-url-dry-run-edge-function-deploy-preflight.md` |
+| Target project | `static-to-astro-cms-staging` / `kmjqppxjdnwwrtaeqjta` |
+| Blocked | `sari-site` / `vsbvndwuajjhnzpohghh` |
+| **Next** | `G-11c3-gosaki-youtube-url-dry-run-edge-function-deploy-execution` |
+| **Do not** | `supabase functions deploy` until G-11c3 approval |
+
+## 0zx. G-11c1 YouTube URL web-save dry-run local prep — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-11c1-gosaki-youtube-url-web-save-dry-run-poc-local-prep` |
+| Commit | `8152d7c` |
 | Doc | `gosaki-youtube-url-web-save-dry-run-poc-local-prep.md` |
-| Edge Function | `supabase/functions/gosaki-youtube-url-dry-run/` (**source only — not deployed**) |
-| Admin UI | Dry-run input + button; Save disabled |
-| **Next** | `G-11c2-edge-function-deploy-preflight` or operator manual upload |
-| **Do not** | `supabase functions deploy` / Save / FTP / `workflow_dispatch` |
 
 ## 0zw. G-11b staging online admin post-upload finalization — complete
 

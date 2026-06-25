@@ -5,21 +5,26 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-11c1-gosaki-youtube-url-web-save-dry-run-poc-local-prep — complete.
-Prior: G-11b post-upload (d7b4674); G-11b package (d941003).
-branch: main @ d7b4674 — G-11c1 doc uncommitted
+Current phase: G-11c2-gosaki-youtube-url-dry-run-edge-function-deploy-preflight — complete.
+Prior: G-11c1 local prep (8152d7c); G-11b post-upload (d7b4674).
+branch: main @ 8152d7c — G-11c2 doc uncommitted
 ```
 
-**Next:** `G-11c2-edge-function-deploy-preflight` or operator manual upload of G-11c1 admin package.
+**Next:** `G-11c3-gosaki-youtube-url-dry-run-edge-function-deploy-execution` (explicit approval).
 
-## G-11c1 YouTube URL dry-run local prep — complete
+## G-11c2 Edge Function deploy preflight — complete
 
+- **Doc:** `gosaki-youtube-url-dry-run-edge-function-deploy-preflight.md`
+- **Target:** `kmjqppxjdnwwrtaeqjta` (staging) — **not** `vsbvndwuajjhnzpohghh`
+- **Function:** `gosaki-youtube-url-dry-run` — source PASS; dry-run only; no DB/service_role
+- **CORS:** inherits `*` from `admin-auth` (same as admin-schedule)
+- **Gap:** add `config.toml` `[functions.gosaki-youtube-url-dry-run] verify_jwt = true` before G-11c3
+- **Deploy:** documented only — **not executed**
+
+## G-11c1 YouTube dry-run local prep — complete
+
+- **Commit:** `8152d7c`
 - **Doc:** `gosaki-youtube-url-web-save-dry-run-poc-local-prep.md`
-- **Edge Function:** `gosaki-youtube-url-dry-run` source added — **not deployed**
-- **Validation:** `gosaki-youtube-url-dry-run-validation.mjs` — dry-run only, no JSON write
-- **Admin UI:** Dry-run（保存前チェック）button; endpoint unconfigured → safe failure
-- **Package:** `manual-upload/gosaki-piano/public-dist/admin/` regenerated
-- **Do not:** `supabase functions deploy` / Save / FTP / `workflow_dispatch`
 
 ## G-11b staging online admin post-upload — complete
 

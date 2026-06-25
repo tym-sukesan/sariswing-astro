@@ -8,7 +8,7 @@ import youtubeConfig from "../data/gosaki-youtube-embed.json";
 import aboutConfig from "../data/gosaki-about-content.json";
 import contactConfig from "../data/gosaki-contact-hubspot.json";
 import {
-  G11C4B_PHASE,
+  G11C4B_FIX_PHASE,
   G11C4A_STAGING_DRY_RUN_ENDPOINT,
   GOSAKI_STAGING_PREVIEW_URL,
   buildGosakiReadOnlyAdminViewModel,
@@ -53,7 +53,7 @@ const pageTitle = "Gosaki Piano CMS（確認用・読み取り専用）";
   <body
     class="gosaki-read-only-admin"
     data-gosaki-read-only-admin="true"
-    data-phase={G11C4B_PHASE}
+    data-phase={G11C4B_FIX_PHASE}
     data-gosaki-youtube-dry-run-endpoint={dryRunEndpoint}
     data-gosaki-supabase-url={supabaseUrl}
     data-gosaki-supabase-anon-key={supabaseAnonKey}
@@ -71,7 +71,7 @@ const pageTitle = "Gosaki Piano CMS（確認用・読み取り専用）";
 
       <main class="gosaki-read-only-admin__main">
         <div class="gosaki-read-only-admin__banner" role="status">
-          <strong>読み取り専用管理画面（G-11c4b Supabase Auth package prep）</strong>
+          <strong>読み取り専用管理画面（G-11c4b-fix Auth UI）</strong>
           <p class="gosaki-read-only-admin__meta">
             YouTube URL の dry-run を staging Edge Function へ送信できます。<strong>保存されません（dry-run のみ）</strong>。Save / Publish / Deploy は無効のままです。
           </p>
@@ -108,11 +108,15 @@ const pageTitle = "Gosaki Piano CMS（確認用・読み取り専用）";
               )
             }
             <div id="gra-auth-signed-in" class="gosaki-read-only-admin__auth-actions" hidden>
-              <button type="button" id="gra-auth-sign-out-btn" class="gosaki-read-only-admin__btn">
+              <button type="button" id="gra-auth-sign-out-btn" class="gosaki-read-only-admin__btn" disabled>
                 ログアウト
               </button>
             </div>
-            <form id="gra-auth-login-form" class="gosaki-read-only-admin__auth-form" hidden>
+            <form
+              id="gra-auth-login-form"
+              class="gosaki-read-only-admin__auth-form"
+              hidden={!supabaseAuthConfigured}
+            >
               <div class="gosaki-read-only-admin__field">
                 <label for="gra-auth-email">メールアドレス</label>
                 <input id="gra-auth-email" type="email" autocomplete="username" />
@@ -122,7 +126,12 @@ const pageTitle = "Gosaki Piano CMS（確認用・読み取り専用）";
                 <input id="gra-auth-password" type="password" autocomplete="current-password" />
               </div>
               <div class="gosaki-read-only-admin__auth-actions">
-                <button type="submit" id="gra-auth-sign-in-btn" class="gosaki-read-only-admin__btn gosaki-read-only-admin__btn--primary">
+                <button
+                  type="submit"
+                  id="gra-auth-sign-in-btn"
+                  class="gosaki-read-only-admin__btn gosaki-read-only-admin__btn--primary"
+                  disabled={!supabaseAuthConfigured}
+                >
                   ログイン
                 </button>
               </div>
@@ -176,6 +185,7 @@ const pageTitle = "Gosaki Piano CMS（確認用・読み取り専用）";
                 type="button"
                 id="gra-youtube-dry-run-btn"
                 class="gosaki-read-only-admin__btn gosaki-read-only-admin__btn--primary"
+                disabled
               >
                 Dry-run（保存前チェック）
               </button>
@@ -251,7 +261,7 @@ const pageTitle = "Gosaki Piano CMS（確認用・読み取り専用）";
       </main>
 
       <footer class="gosaki-read-only-admin__footer">
-        Gosaki Piano staging read-only CMS — G-11c4b Supabase Auth public env package prep
+        Gosaki Piano staging read-only CMS — G-11c4b-fix Auth UI
       </footer>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.1/dist/umd/supabase.js"></script>
@@ -274,16 +284,26 @@ const pageTitle = "Gosaki Piano CMS（確認用・読み取り専用）";
         var supabaseAnonKey = (body.dataset.gosakiSupabaseAnonKey || "").trim();
         var supabaseAuthConfigured = body.dataset.gosakiSupabaseAuthConfigured === "true";
         var supabaseClient = null;
+        var signedIn = false;
 
         function showResult(obj) {
           result.textContent = JSON.stringify(obj, null, 2);
         }
 
+        function resolveCreateClient() {
+          var lib = window.supabase;
+          if (!lib) return null;
+          if (typeof lib.createClient === "function") return lib.createClient;
+          if (lib.default && typeof lib.default.createClient === "function") return lib.default.createClient;
+          return null;
+        }
+
         function getSupabaseClient() {
           if (!supabaseAuthConfigured || !supabaseUrl || !supabaseAnonKey) return null;
-          if (!window.supabase || typeof window.supabase.createClient !== "function") return null;
+          var createClient = resolveCreateClient();
+          if (!createClient) return null;
           if (!supabaseClient) {
-            supabaseClient = window.supabase.createClient(supabaseUrl, supabaseAnonKey, {
+            supabaseClient = createClient(supabaseUrl, supabaseAnonKey, {
               auth: {
                 persistSession: true,
                 autoRefreshToken: true,
@@ -294,55 +314,125 @@ const pageTitle = "Gosaki Piano CMS（確認用・読み取り専用）";
           return supabaseClient;
         }
 
+        function updateDryRunButton() {
+          btn.disabled = !signedIn;
+        }
+
+        function updateLoginButton() {
+          if (!authSignInBtn) return;
+          if (!supabaseAuthConfigured || signedIn) {
+            authSignInBtn.disabled = true;
+            return;
+          }
+          authSignInBtn.disabled = false;
+        }
+
+        function updateSignOutButton() {
+          if (!authSignOutBtn) return;
+          authSignOutBtn.disabled = !signedIn;
+        }
+
         function setAuthUiSignedIn(email) {
+          signedIn = true;
           if (authStatus) {
             authStatus.textContent = "ログイン済み — " + (email || "（emailなし）") + "（dry-run 可能）";
           }
           if (authLoginForm) authLoginForm.hidden = true;
           if (authSignedIn) authSignedIn.hidden = false;
+          updateLoginButton();
+          updateSignOutButton();
+          updateDryRunButton();
         }
 
         function setAuthUiSignedOut(message) {
+          signedIn = false;
           if (authStatus) {
-            authStatus.textContent =
-              message || "未ログイン — dry-run には staging 管理者ログインが必要です";
+            if (!supabaseAuthConfigured) {
+              authStatus.textContent =
+                message ||
+                "Supabase Auth 未設定 — PUBLIC_SUPABASE_URL / PUBLIC_SUPABASE_ANON_KEY が build に必要です";
+            } else {
+              authStatus.textContent =
+                message || "未ログイン — staging 管理者でログインしてから dry-run してください";
+            }
           }
           if (authLoginForm) authLoginForm.hidden = !supabaseAuthConfigured;
           if (authSignedIn) authSignedIn.hidden = true;
+          updateLoginButton();
+          updateSignOutButton();
+          updateDryRunButton();
+        }
+
+        function waitForSupabaseClient(maxAttempts, delayMs) {
+          return new Promise(function (resolve) {
+            var attempt = 0;
+            function tick() {
+              if (getSupabaseClient()) {
+                resolve(getSupabaseClient());
+                return;
+              }
+              attempt += 1;
+              if (attempt >= maxAttempts) {
+                resolve(null);
+                return;
+              }
+              setTimeout(tick, delayMs);
+            }
+            tick();
+          });
         }
 
         function refreshAuthStatus() {
-          var client = getSupabaseClient();
-          if (!client) {
-            setAuthUiSignedOut(
-              "Supabase Auth 未設定 — PUBLIC_SUPABASE_URL / PUBLIC_SUPABASE_ANON_KEY が build に必要です",
-            );
+          if (!supabaseAuthConfigured) {
+            setAuthUiSignedOut();
             return Promise.resolve();
           }
-          return client.auth.getSession().then(function (sessionRes) {
-            var session = sessionRes.data && sessionRes.data.session;
-            if (session && session.access_token) {
-              setAuthUiSignedIn(session.user && session.user.email);
-            } else {
-              setAuthUiSignedOut();
+
+          if (authStatus) {
+            authStatus.textContent = "ログイン状態を確認しています…";
+          }
+          updateLoginButton();
+
+          return waitForSupabaseClient(40, 100).then(function (client) {
+            if (!client) {
+              setAuthUiSignedOut("Supabase JS の読み込みに失敗しました — ページを再読み込みしてください");
+              return;
             }
+            return client.auth.getSession().then(function (sessionRes) {
+              var session = sessionRes.data && sessionRes.data.session;
+              if (session && session.access_token) {
+                setAuthUiSignedIn(session.user && session.user.email);
+              } else {
+                setAuthUiSignedOut();
+              }
+            });
           });
         }
 
         if (authLoginForm && authEmail && authPassword) {
+          authEmail.addEventListener("input", updateLoginButton);
+          authPassword.addEventListener("input", updateLoginButton);
+
           authLoginForm.addEventListener("submit", function (ev) {
             ev.preventDefault();
+            if (!supabaseAuthConfigured) {
+              setAuthUiSignedOut();
+              return;
+            }
+            var email = String(authEmail.value || "").trim();
+            var password = String(authPassword.value || "");
+            if (!email || !password) {
+              setAuthUiSignedOut("メールアドレスとパスワードを入力してください");
+              return;
+            }
             var client = getSupabaseClient();
             if (!client) {
-              setAuthUiSignedOut("Supabase Auth 未設定のためログインできません");
+              setAuthUiSignedOut("Supabase JS の読み込みに失敗しました — ページを再読み込みしてください");
               return;
             }
             if (authSignInBtn) authSignInBtn.disabled = true;
             client.auth
-              .signInWithPassword({
-                email: String(authEmail.value || "").trim(),
-                password: String(authPassword.value || ""),
-              })
+              .signInWithPassword({ email: email, password: password })
               .then(function (res) {
                 if (res.error) {
                   setAuthUiSignedOut("ログイン失敗: " + res.error.message);
@@ -351,15 +441,17 @@ const pageTitle = "Gosaki Piano CMS（確認用・読み取り専用）";
                 setAuthUiSignedIn(res.data.user && res.data.user.email);
               })
               .finally(function () {
-                if (authSignInBtn) authSignInBtn.disabled = false;
+                updateLoginButton();
               });
           });
         }
 
         if (authSignOutBtn) {
           authSignOutBtn.addEventListener("click", function () {
+            if (!signedIn) return;
             var client = getSupabaseClient();
             if (!client) return;
+            authSignOutBtn.disabled = true;
             client.auth.signOut().then(function () {
               setAuthUiSignedOut();
             });
@@ -369,6 +461,15 @@ const pageTitle = "Gosaki Piano CMS（確認用・読み取り専用）";
         refreshAuthStatus();
 
         btn.addEventListener("click", function () {
+          if (!signedIn) {
+            showResult({
+              ok: false,
+              error: "auth_required",
+              message: "未ログイン — staging 管理者でログインしてから dry-run してください",
+            });
+            return;
+          }
+
           var endpoint = (body.dataset.gosakiYoutubeDryRunEndpoint || "").trim();
           var nextValue = String(input.value || "").trim();
           if (!endpoint) {
@@ -394,13 +495,35 @@ const pageTitle = "Gosaki Piano CMS（確認用・読み取り専用）";
             approvalId: body.dataset.g11c1ApprovalId || "",
           };
 
-          function runDryRun(accessToken) {
-            btn.disabled = true;
-            result.textContent = "Dry-run リクエスト送信中…（保存されません）";
+          var client = getSupabaseClient();
+          if (!client) {
+            showResult({
+              ok: false,
+              error: "auth_client_unavailable",
+              message: "Supabase JS の読み込みに失敗しました",
+            });
+            return;
+          }
 
-            var headers = { "Content-Type": "application/json" };
-            if (supabaseAnonKey) headers.apikey = supabaseAnonKey;
-            if (accessToken) headers.Authorization = "Bearer " + accessToken;
+          btn.disabled = true;
+          result.textContent = "Dry-run リクエスト送信中…（保存されません）";
+
+          client.auth.getSession().then(function (sessionRes) {
+            var token = sessionRes.data && sessionRes.data.session && sessionRes.data.session.access_token;
+            if (!token) {
+              showResult({
+                ok: false,
+                error: "auth_required",
+                message: "未ログイン — staging 管理者でログインしてから dry-run してください",
+                httpStatus: 401,
+              });
+              setAuthUiSignedOut();
+              btn.disabled = true;
+              return;
+            }
+
+            var headers = { "Content-Type": "application/json", apikey: supabaseAnonKey };
+            headers.Authorization = "Bearer " + token;
 
             fetch(endpoint, {
               method: "POST",
@@ -436,33 +559,8 @@ const pageTitle = "Gosaki Piano CMS（確認用・読み取り専用）";
                 });
               })
               .finally(function () {
-                btn.disabled = false;
+                updateDryRunButton();
               });
-          }
-
-          var client = getSupabaseClient();
-          if (!client) {
-            showResult({
-              ok: false,
-              error: "auth_required",
-              message: "Supabase Auth 未設定 — dry-run には JWT が必要です",
-            });
-            return;
-          }
-
-          client.auth.getSession().then(function (sessionRes) {
-            var token = sessionRes.data && sessionRes.data.session && sessionRes.data.session.access_token;
-            if (!token) {
-              showResult({
-                ok: false,
-                error: "auth_required",
-                message: "未ログイン — staging 管理者でログインしてから dry-run してください",
-                httpStatus: 401,
-              });
-              setAuthUiSignedOut();
-              return;
-            }
-            runDryRun(token);
           });
         });
       })();

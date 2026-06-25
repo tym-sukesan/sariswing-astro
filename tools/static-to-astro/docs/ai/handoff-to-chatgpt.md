@@ -5,25 +5,23 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-11c4d-gosaki-staging-admin-emails-secret-and-youtube-dry-run-e2e-result — complete.
-Browser E2E: login OK, dry-run 200 (ADMIN_EMAILS auth OK).
-branch: main @ 1fe0d56 — G-11c4d doc uncommitted
+Current phase: G-11c5-gosaki-youtube-url-web-save-non-dry-run-slice-planning — complete.
+branch: main @ a0e8be3 — G-11c5 doc uncommitted
 ```
 
-**Next:** `G-11c5-gosaki-youtube-url-web-save-non-dry-run-slice-planning` (planning only — no Save).
+**Next:** `G-11c6-gosaki-youtube-url-web-save-non-dry-run-slice-implementation` (Save UI disabled; no execution).
 
-## G-11c4d ADMIN_EMAILS secret + YouTube dry-run E2E — complete
+## G-11c5 YouTube URL non-dry-run slice planning — complete
 
+- **Doc:** `gosaki-youtube-url-web-save-non-dry-run-slice-planning.md`
+- **Slice:** Edge `gosaki-youtube-url-save` → Gosaki-only workflow → JSON patch (no FTP v1)
+- **Reuse:** G-11c1 validation, G-10c guards, `ADMIN_EMAILS` auth
+- **Do not:** Save / deploy / `secrets set` until G-11c6+; never `vsbvndwuajjhnzpohghh`
+
+## G-11c4d ADMIN_EMAILS + dry-run E2E — complete
+
+- **Commit:** `a0e8be3`
 - **Doc:** `gosaki-staging-admin-emails-secret-and-youtube-dry-run-e2e-result.md`
-- **Staging ref:** `kmjqppxjdnwwrtaeqjta` only — operator set `ADMIN_EMAILS` once
-- **E2E:** same URL `no_change`; different URL `changedFields: embedCode, videoId`; `wouldWrite: false`
-- **Do not:** re-run `secrets set`; re-deploy function; never `vsbvndwuajjhnzpohghh`
-
-## G-11c4c admin authorization preflight — complete (superseded)
-
-- **Commit:** `1fe0d56`
-- **Doc:** `gosaki-staging-admin-authorization-preflight.md`
-- **Was:** dry-run **403** — fixed by G-11c4d `ADMIN_EMAILS`
 
 ## G-11c4b-fix auth login button enable — complete
 

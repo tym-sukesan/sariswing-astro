@@ -5,24 +5,23 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-11c6c-gosaki-youtube-url-save-edge-function-deploy-execution-result — complete.
-Save function live on staging; unauth 401. Save UI still disabled.
-branch: main @ 3cdf4f5 — G-11c6c doc uncommitted
+Current phase: G-11c6d-gosaki-youtube-url-save-endpoint-smoke-and-admin-wiring-check — complete.
+Unauth 401; Save UI disabled; saveEnabled:true not sent.
+branch: main @ 5b80ef5 — G-11c6d doc uncommitted
 ```
 
-**Next:** `G-11c6d-gosaki-youtube-url-save-endpoint-smoke-or-admin-package-wiring` (no Save execution).
+**Next:** `G-11c7-gosaki-youtube-url-save-workflow-json-patch-planning` (no dispatch execution).
+
+## G-11c6d save endpoint smoke and admin wiring — complete
+
+- **Doc:** `gosaki-youtube-url-save-endpoint-smoke-and-admin-wiring-check.md`
+- **Smoke:** unauth **401**; JWT admin smoke deferred (no local admin creds)
+- **Wiring:** save URL → `gosaki-youtube-url-save`; dry-run unchanged; Save btn disabled
 
 ## G-11c6c save Edge deploy execution — complete
 
+- **Commit:** `5b80ef5`
 - **Doc:** `gosaki-youtube-url-save-edge-function-deploy-execution-result.md`
-- **URL:** `https://kmjqppxjdnwwrtaeqjta.supabase.co/functions/v1/gosaki-youtube-url-save`
-- **Smoke:** unauth POST → **401** `UNAUTHORIZED_NO_AUTH_HEADER`
-- **Do not:** re-deploy; `secrets set`; Save; `workflow_dispatch`
-
-## G-11c6b save Edge deploy preflight — complete
-
-- **Commit:** `3cdf4f5`
-- **Doc:** `gosaki-youtube-url-save-edge-function-deploy-preflight.md`
 
 ## G-11c4b-fix auth login button enable — complete
 

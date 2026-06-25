@@ -1,23 +1,22 @@
 Last updated: 2026-06-25
 Project: Static-to-Astro CMS / Musician CMS Kit
 
-## 0zz. G-11c6c YouTube URL save Edge deploy execution — complete
+## 0zz. G-11c6d save endpoint smoke and admin wiring — complete
 
 | Item | Value |
 | --- | --- |
-| Phase | `G-11c6c-gosaki-youtube-url-save-edge-function-deploy-execution-result` |
+| Phase | `G-11c6d-gosaki-youtube-url-save-endpoint-smoke-and-admin-wiring-check` |
+| Doc | `gosaki-youtube-url-save-endpoint-smoke-and-admin-wiring-check.md` |
+| Smoke | unauth **401**; admin wiring static PASS |
+| **Next** | `G-11c7-gosaki-youtube-url-save-workflow-json-patch-planning` |
+| **Do not** | `saveEnabled:true` / Save / dispatch / deploy |
+
+## 0zz1. G-11c6c save Edge deploy execution — complete
+
+| Item | Value |
+| --- | --- |
+| Commit | `5b80ef5` |
 | Doc | `gosaki-youtube-url-save-edge-function-deploy-execution-result.md` |
-| Deploy | `gosaki-youtube-url-save` on `kmjqppxjdnwwrtaeqjta` — **once** |
-| Post-smoke | unauth POST **401** |
-| **Next** | `G-11c6d-gosaki-youtube-url-save-endpoint-smoke-or-admin-package-wiring` |
-| **Do not** | re-deploy / `secrets set` / Save / `workflow_dispatch` |
-
-## 0zz1. G-11c6b save Edge deploy preflight — complete
-
-| Item | Value |
-| --- | --- |
-| Commit | `3cdf4f5` |
-| Doc | `gosaki-youtube-url-save-edge-function-deploy-preflight.md` |
 
 ## 0zzy. G-11c4b-fix auth login button enable — complete
 

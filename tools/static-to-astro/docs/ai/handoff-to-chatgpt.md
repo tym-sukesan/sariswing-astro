@@ -5,19 +5,25 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-11c4c-admin-authorization-preflight — complete.
-Browser E2E: login OK, dry-run 403 (admin authorization NG).
-branch: main @ ecca35e — G-11c4c doc uncommitted
+Current phase: G-11c4d-gosaki-staging-admin-emails-secret-and-youtube-dry-run-e2e-result — complete.
+Browser E2E: login OK, dry-run 200 (ADMIN_EMAILS auth OK).
+branch: main @ 1fe0d56 — G-11c4d doc uncommitted
 ```
 
-**Next:** `G-11c4d-staging-admin-emails-secret-execution` (one-time `ADMIN_EMAILS` on staging — operator approval).
+**Next:** `G-11c5-gosaki-youtube-url-web-save-non-dry-run-slice-planning` (planning only — no Save).
 
-## G-11c4c admin authorization preflight — complete
+## G-11c4d ADMIN_EMAILS secret + YouTube dry-run E2E — complete
 
+- **Doc:** `gosaki-staging-admin-emails-secret-and-youtube-dry-run-e2e-result.md`
+- **Staging ref:** `kmjqppxjdnwwrtaeqjta` only — operator set `ADMIN_EMAILS` once
+- **E2E:** same URL `no_change`; different URL `changedFields: embedCode, videoId`; `wouldWrite: false`
+- **Do not:** re-run `secrets set`; re-deploy function; never `vsbvndwuajjhnzpohghh`
+
+## G-11c4c admin authorization preflight — complete (superseded)
+
+- **Commit:** `1fe0d56`
 - **Doc:** `gosaki-staging-admin-authorization-preflight.md`
-- **403 cause:** `isAdminUser` false — need `ADMIN_EMAILS` or `app_metadata.role=admin`
-- **Recommend:** `ADMIN_EMAILS` secret on `kmjqppxjdnwwrtaeqjta` — **no redeploy** for secret-only
-- **Do not:** `secrets set` until G-11c4d; never `vsbvndwuajjhnzpohghh`
+- **Was:** dry-run **403** — fixed by G-11c4d `ADMIN_EMAILS`
 
 ## G-11c4b-fix auth login button enable — complete
 

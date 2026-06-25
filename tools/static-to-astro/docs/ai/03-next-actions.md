@@ -1,15 +1,25 @@
 Last updated: 2026-06-25
 Project: Static-to-Astro CMS / Musician CMS Kit
 
-## 0zz. G-11c4c staging admin authorization preflight — complete
+## 0zz. G-11c4d staging admin ADMIN_EMAILS secret + YouTube dry-run E2E — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-11c4d-gosaki-staging-admin-emails-secret-and-youtube-dry-run-e2e-result` |
+| Doc | `gosaki-staging-admin-emails-secret-and-youtube-dry-run-e2e-result.md` |
+| E2E | login OK; dry-run **200** — same URL `no_change` + different URL `changedFields` |
+| `wouldWrite` | **false** (both cases) |
+| **Next** | `G-11c5-gosaki-youtube-url-web-save-non-dry-run-slice-planning` |
+| **Do not** | re-run `secrets set`; re-deploy function; Save until G-11c5+ approval |
+
+## 0zz1. G-11c4c staging admin authorization preflight — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-11c4c-admin-authorization-preflight` |
+| Commit | `1fe0d56` |
 | Doc | `gosaki-staging-admin-authorization-preflight.md` |
-| E2E | login OK; dry-run **403** — admin gate (`ADMIN_EMAILS` / role) |
-| **Next** | `G-11c4d-staging-admin-emails-secret-execution` |
-| **Do not** | `secrets set` / redeploy until G-11c4d operator approval |
+| E2E | login OK; dry-run **403** — superseded by G-11c4d |
 
 ## 0zzy. G-11c4b-fix auth login button enable — complete
 

@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-11c4c Gosaki staging admin authorization preflight (2026-06-25):** **complete** — browser E2E: login OK, JWT OK, dry-run **403** (`isAdminUser` NG). Root cause: `ADMIN_EMAILS` unset / login email not allowlisted and `app_metadata.role` ≠ admin. Doc: `gosaki-staging-admin-authorization-preflight.md`. **No secrets set / no deploy.** Next: **G-11c4d** `ADMIN_EMAILS` secret execution (operator approval).
+**G-11c4d Gosaki staging admin `ADMIN_EMAILS` secret + YouTube dry-run E2E (2026-06-25):** **complete** — operator set `ADMIN_EMAILS` on staging once; browser E2E: login OK, JWT OK, dry-run **200** (same URL `no_change` + different URL `changedFields`). `wouldWrite: false`; no DB/JSON write. Doc: `gosaki-staging-admin-emails-secret-and-youtube-dry-run-e2e-result.md`. **Do not re-run `secrets set`.** Next: **G-11c5** YouTube URL non-dry-run slice planning.
+
+**G-11c4c Gosaki staging admin authorization preflight (2026-06-25):** **complete** — commit `1fe0d56`. Browser E2E: login OK, JWT OK, dry-run **403** (`isAdminUser` NG). Doc: `gosaki-staging-admin-authorization-preflight.md`. Superseded by G-11c4d E2E PASS.
 
 **G-11c4b-fix Gosaki staging admin auth login button enable (2026-06-25):** **complete** — commit `ecca35e`.
 

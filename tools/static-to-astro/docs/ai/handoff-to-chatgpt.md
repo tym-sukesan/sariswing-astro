@@ -5,21 +5,26 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-11b-gosaki-staging-online-admin-read-only-page-post-upload-finalization — complete.
-Prior: G-11b package prep (d941003); operator FileZilla upload.
-branch: main @ d941003 — G-11b post-upload doc uncommitted
+Current phase: G-11c1-gosaki-youtube-url-web-save-dry-run-poc-local-prep — complete.
+Prior: G-11b post-upload (d7b4674); G-11b package (d941003).
+branch: main @ d7b4674 — G-11c1 doc uncommitted
 ```
 
-**Next:** `G-11c-gosaki-youtube-url-web-save-dry-run-poc`.
+**Next:** `G-11c2-edge-function-deploy-preflight` or operator manual upload of G-11c1 admin package.
+
+## G-11c1 YouTube URL dry-run local prep — complete
+
+- **Doc:** `gosaki-youtube-url-web-save-dry-run-poc-local-prep.md`
+- **Edge Function:** `gosaki-youtube-url-dry-run` source added — **not deployed**
+- **Validation:** `gosaki-youtube-url-dry-run-validation.mjs` — dry-run only, no JSON write
+- **Admin UI:** Dry-run（保存前チェック）button; endpoint unconfigured → safe failure
+- **Package:** `manual-upload/gosaki-piano/public-dist/admin/` regenerated
+- **Do not:** `supabase functions deploy` / Save / FTP / `workflow_dispatch`
 
 ## G-11b staging online admin post-upload — complete
 
-- **Doc:** `gosaki-staging-online-admin-read-only-page-post-upload-finalization.md`
+- **Commit:** `d7b4674`
 - **Admin live:** `https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/admin/`
-- **Upload:** Operator FileZilla — `public-dist/` contents → `/cms-kit-staging/gosaki-piano/` (no mirror/delete)
-- **QA:** Operator visual **PASS**; Cursor HTTP **PASS** (66/66)
-- **Public pages:** top / about / contact — no regression
-- **Do not:** Cursor FTP; `workflow_dispatch`; `src/pages/admin`
 
 ## G-11b staging online admin package prep — complete
 

@@ -1,17 +1,24 @@
 Last updated: 2026-06-24
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zx. G-11c1 YouTube URL web-save dry-run PoC local prep — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-11c1-gosaki-youtube-url-web-save-dry-run-poc-local-prep` |
+| Doc | `gosaki-youtube-url-web-save-dry-run-poc-local-prep.md` |
+| Edge Function | `supabase/functions/gosaki-youtube-url-dry-run/` (**source only — not deployed**) |
+| Admin UI | Dry-run input + button; Save disabled |
+| **Next** | `G-11c2-edge-function-deploy-preflight` or operator manual upload |
+| **Do not** | `supabase functions deploy` / Save / FTP / `workflow_dispatch` |
+
 ## 0zw. G-11b staging online admin post-upload finalization — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-11b-gosaki-staging-online-admin-read-only-page-post-upload-finalization` |
+| Commit | `d7b4674` |
 | Doc | `gosaki-staging-online-admin-read-only-page-post-upload-finalization.md` |
-| Commit (package) | `d941003` |
-| Admin URL live | `https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/admin/` |
-| QA | Operator visual **PASS**; Cursor HTTP **PASS** (66/66) |
-| **Next** | `G-11c-gosaki-youtube-url-web-save-dry-run-poc` |
-| **Do not** | FTP / Save / `workflow_dispatch` / `src/pages/admin` |
 
 ## 0zv. G-11b staging online admin read-only page package prep — complete
 

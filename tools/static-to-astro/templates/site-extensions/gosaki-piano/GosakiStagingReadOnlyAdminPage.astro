@@ -13,6 +13,12 @@ import {
   buildGosakiReadOnlyAdminViewModel,
 } from "../lib/gosaki-staging-read-only-admin";
 
+const dryRunEndpoint = String(
+  import.meta.env.PUBLIC_GOSAKI_YOUTUBE_URL_DRY_RUN_ENDPOINT ?? "",
+).trim();
+const g11c1OperationId = "G-11c1-gosaki-youtube-url-web-save-dry-run-poc";
+const g11c1ApprovalId = "G-11c1-youtube-url-dry-run";
+
 const view = buildGosakiReadOnlyAdminViewModel({
   youtube: youtubeConfig,
   about: aboutConfig,
@@ -40,7 +46,12 @@ const pageTitle = "Gosaki Piano CMS（確認用・読み取り専用）";
   <body
     class="gosaki-read-only-admin"
     data-gosaki-read-only-admin="true"
-    data-phase="G-11b"
+    data-phase="G-11c1"
+    data-gosaki-youtube-dry-run-endpoint={dryRunEndpoint}
+    data-gosaki-youtube-current-embed={view.youtube.sourceUrl}
+    data-gosaki-youtube-current-videoid={view.youtube.videoId ?? ""}
+    data-g11c1-operation-id={g11c1OperationId}
+    data-g11c1-approval-id={g11c1ApprovalId}
   >
     <div class="gosaki-read-only-admin__shell">
       <header class="gosaki-read-only-admin__header">
@@ -50,9 +61,9 @@ const pageTitle = "Gosaki Piano CMS（確認用・読み取り専用）";
 
       <main class="gosaki-read-only-admin__main">
         <div class="gosaki-read-only-admin__banner" role="status">
-          <strong>読み取り専用管理画面（G-11b）</strong>
+          <strong>読み取り専用管理画面（G-11c1 dry-run 準備）</strong>
           <p class="gosaki-read-only-admin__meta">
-            Save / Publish / Deploy は無効です。表示は build 時のローカル config に基づきます。
+            YouTube URL の dry-run 導線を追加しました。Save / Publish / Deploy は無効のままです。
           </p>
         </div>
 
@@ -82,6 +93,42 @@ const pageTitle = "Gosaki Piano CMS（確認用・読み取り専用）";
           <p class="gosaki-read-only-admin__meta">
             published: {view.youtube.published ? "true" : "false"}
           </p>
+
+          <div class="gosaki-read-only-admin__dry-run" id="gra-youtube-dry-run" data-section="youtube-dry-run">
+            <h3 class="gosaki-read-only-admin__meta">Dry-run（G-11c1）</h3>
+            <div class="gosaki-read-only-admin__field">
+              <label for="gra-youtube-next-url">next YouTube URL</label>
+              <input
+                id="gra-youtube-next-url"
+                type="url"
+                inputmode="url"
+                autocomplete="off"
+                placeholder="https://www.youtube.com/watch?v=..."
+              />
+            </div>
+            <div class="gosaki-read-only-admin__actions">
+              <button
+                type="button"
+                id="gra-youtube-dry-run-btn"
+                class="gosaki-read-only-admin__btn gosaki-read-only-admin__btn--primary"
+              >
+                Dry-run（保存前チェック）
+              </button>
+            </div>
+            <pre
+              id="gra-youtube-dry-run-result"
+              class="gosaki-read-only-admin__dry-run-result"
+              aria-live="polite"
+            >（Dry-run 結果はここに表示されます）</pre>
+            {
+              !dryRunEndpoint ? (
+                <p class="gosaki-read-only-admin__meta gosaki-read-only-admin__meta--warn">
+                  dry-run endpoint not configured（Edge Function 未 deploy — G-11c1）
+                </p>
+              ) : null
+            }
+          </div>
+
           <div class="gosaki-read-only-admin__actions">
             <button type="button" class="gosaki-read-only-admin__btn" disabled>Save（無効）</button>
           </div>
@@ -139,8 +186,74 @@ const pageTitle = "Gosaki Piano CMS（確認用・読み取り専用）";
       </main>
 
       <footer class="gosaki-read-only-admin__footer">
-        Gosaki Piano staging read-only CMS — G-11b package prep
+        Gosaki Piano staging read-only CMS — G-11c1 YouTube dry-run local prep
       </footer>
     </div>
+    <script is:inline>
+      (function () {
+        var btn = document.getElementById("gra-youtube-dry-run-btn");
+        var input = document.getElementById("gra-youtube-next-url");
+        var result = document.getElementById("gra-youtube-dry-run-result");
+        var body = document.body;
+        if (!btn || !input || !result || !body) return;
+
+        function showResult(obj) {
+          result.textContent = JSON.stringify(obj, null, 2);
+        }
+
+        btn.addEventListener("click", function () {
+          var endpoint = (body.dataset.gosakiYoutubeDryRunEndpoint || "").trim();
+          var nextValue = String(input.value || "").trim();
+          if (!endpoint) {
+            showResult({
+              ok: false,
+              error: "dry-run endpoint not configured",
+              hint: "Set PUBLIC_GOSAKI_YOUTUBE_URL_DRY_RUN_ENDPOINT after Edge Function deploy",
+            });
+            return;
+          }
+          if (!nextValue) {
+            showResult({ ok: false, error: "next YouTube URL is required" });
+            return;
+          }
+
+          var payload = {
+            siteSlug: "gosaki-piano",
+            module: "youtube-embed",
+            field: "embedCode",
+            nextValue: nextValue,
+            dryRun: true,
+            operationId: body.dataset.g11c1OperationId || "",
+            approvalId: body.dataset.g11c1ApprovalId || "",
+          };
+
+          btn.disabled = true;
+          result.textContent = "Dry-run リクエスト送信中…";
+
+          fetch(endpoint, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          })
+            .then(function (res) {
+              return res.json().then(function (data) {
+                return { status: res.status, data: data };
+              });
+            })
+            .then(function (out) {
+              showResult({ httpStatus: out.status, body: out.data });
+            })
+            .catch(function (err) {
+              showResult({
+                ok: false,
+                error: err && err.message ? err.message : String(err),
+              });
+            })
+            .finally(function () {
+              btn.disabled = false;
+            });
+        });
+      })();
+    </script>
   </body>
 </html>

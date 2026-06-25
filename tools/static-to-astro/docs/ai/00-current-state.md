@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-11b Gosaki staging online admin read-only page post-upload finalization (2026-06-25):** **complete** — operator FileZilla upload + read-only admin staging QA **PASS** (66/66). Doc: `gosaki-staging-online-admin-read-only-page-post-upload-finalization.md`. **No Cursor FTP.** Next: **G-11c** (YouTube URL web-save dry-run PoC).
+**G-11c1 Gosaki YouTube URL web-save dry-run PoC local prep (2026-06-25):** **complete** — Edge Function source (undeployed) + admin dry-run UI + local validation. Doc: `gosaki-youtube-url-web-save-dry-run-poc-local-prep.md`. **No deploy / no JSON write.** Next: **G-11c2** Edge deploy preflight or operator upload.
+
+**G-11b Gosaki staging online admin read-only page post-upload finalization (2026-06-25):** **complete** — commit `d7b4674`.
 
 **G-11b Gosaki staging online admin read-only page package prep (2026-06-25):** **complete** — commit `d941003`. Doc: `gosaki-staging-online-admin-read-only-page-package-prep.md`.
 

@@ -5,21 +5,26 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-11b-gosaki-staging-online-admin-read-only-page-package-prep — complete.
-Prior: G-11a architecture (755ecbe); G-10h5-2a staging QA (ffd1496).
-branch: main @ 755ecbe — G-11b doc uncommitted
+Current phase: G-11b-gosaki-staging-online-admin-read-only-page-post-upload-finalization — complete.
+Prior: G-11b package prep (d941003); operator FileZilla upload.
+branch: main @ d941003 — G-11b post-upload doc uncommitted
 ```
 
-**Next:** Operator upload `admin/` **or** `G-11c-youtube-url-web-save-dry-run-poc`.
+**Next:** `G-11c-gosaki-youtube-url-web-save-dry-run-poc`.
 
-## G-11b staging online admin read-only page — complete
+## G-11b staging online admin post-upload — complete
 
+- **Doc:** `gosaki-staging-online-admin-read-only-page-post-upload-finalization.md`
+- **Admin live:** `https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/admin/`
+- **Upload:** Operator FileZilla — `public-dist/` contents → `/cms-kit-staging/gosaki-piano/` (no mirror/delete)
+- **QA:** Operator visual **PASS**; Cursor HTTP **PASS** (66/66)
+- **Public pages:** top / about / contact — no regression
+- **Do not:** Cursor FTP; `workflow_dispatch`; `src/pages/admin`
+
+## G-11b staging online admin package prep — complete
+
+- **Commit:** `d941003`
 - **Doc:** `gosaki-staging-online-admin-read-only-page-package-prep.md`
-- **URL:** `/cms-kit-staging/gosaki-piano/admin/` (read-only marker `data-gosaki-read-only-admin`)
-- **Package:** `manual-upload/gosaki-piano/public-dist/admin/index.html` included
-- **Sections:** Overview, YouTube, About, Contact HubSpot, Schedule placeholder
-- **Save / Publish / Deploy:** disabled; no API / secrets
-- **Do not:** FTP by Cursor; `src/pages/admin` unchanged
 
 ## G-11a staging online CMS architecture planning — complete
 

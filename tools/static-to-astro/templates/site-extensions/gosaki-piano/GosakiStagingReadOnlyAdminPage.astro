@@ -1,0 +1,146 @@
+---
+/**
+ * Gosaki staging read-only CMS admin (G-11b).
+ * Static build-time data only — no Save / API / Supabase.
+ */
+import "../styles/gosaki-staging-read-only-admin.css";
+import youtubeConfig from "../data/gosaki-youtube-embed.json";
+import aboutConfig from "../data/gosaki-about-content.json";
+import contactConfig from "../data/gosaki-contact-hubspot.json";
+import {
+  GOSAKI_READ_ONLY_ADMIN_MARKER,
+  GOSAKI_STAGING_PREVIEW_URL,
+  buildGosakiReadOnlyAdminViewModel,
+} from "../lib/gosaki-staging-read-only-admin";
+
+const view = buildGosakiReadOnlyAdminViewModel({
+  youtube: youtubeConfig,
+  about: aboutConfig,
+  contact: contactConfig,
+});
+
+const stagingSiteBase = String(import.meta.env.SITE ?? GOSAKI_STAGING_PREVIEW_URL).replace(/\/?$/, "/");
+const adminCanonical = new URL("admin/", stagingSiteBase).href;
+const robotsContent = "noindex,nofollow,noarchive";
+const pageTitle = "Gosaki Piano CMS（確認用・読み取り専用）";
+---
+
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content={robotsContent} />
+    <title>{pageTitle}</title>
+    <link rel="canonical" href={adminCanonical} />
+    <meta property="og:url" content={adminCanonical} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:type" content="website" />
+  </head>
+  <body
+    class="gosaki-read-only-admin"
+    data-gosaki-read-only-admin="true"
+    data-phase="G-11b"
+  >
+    <div class="gosaki-read-only-admin__shell">
+      <header class="gosaki-read-only-admin__header">
+        <a class="gosaki-read-only-admin__brand" href={adminCanonical}>Gosaki Piano CMS</a>
+        <span class="gosaki-read-only-admin__badge">READ-ONLY — 保存不可</span>
+      </header>
+
+      <main class="gosaki-read-only-admin__main">
+        <div class="gosaki-read-only-admin__banner" role="status">
+          <strong>読み取り専用管理画面（G-11b）</strong>
+          <p class="gosaki-read-only-admin__meta">
+            Save / Publish / Deploy は無効です。表示は build 時のローカル config に基づきます。
+          </p>
+        </div>
+
+        <section class="gosaki-read-only-admin__section" aria-labelledby="gra-overview">
+          <h2 id="gra-overview">Site Overview</h2>
+          <p class="gosaki-read-only-admin__meta"><strong>siteSlug:</strong> {view.siteSlug}</p>
+          <p class="gosaki-read-only-admin__meta">
+            <strong>staging URL:</strong>{" "}
+            <a class="gosaki-read-only-admin__link" href={view.stagingUrl} target="_blank" rel="noopener noreferrer">
+              {view.stagingUrl}
+            </a>
+          </p>
+          <p class="gosaki-read-only-admin__meta"><strong>noindex:</strong> {view.noindex ? "yes" : "no"}</p>
+          <p class="gosaki-read-only-admin__meta">{view.packageNote}</p>
+        </section>
+
+        <section class="gosaki-read-only-admin__section" aria-labelledby="gra-youtube">
+          <h2 id="gra-youtube">YouTube Embed</h2>
+          <div class="gosaki-read-only-admin__field">
+            <label for="gra-youtube-url">YouTube URL / embedCode</label>
+            <textarea id="gra-youtube-url" readonly>{view.youtube.sourceUrl}</textarea>
+          </div>
+          <div class="gosaki-read-only-admin__field">
+            <label for="gra-youtube-videoid">videoId</label>
+            <input id="gra-youtube-videoid" type="text" readonly value={view.youtube.videoId ?? "—"} />
+          </div>
+          <p class="gosaki-read-only-admin__meta">
+            published: {view.youtube.published ? "true" : "false"}
+          </p>
+          <div class="gosaki-read-only-admin__actions">
+            <button type="button" class="gosaki-read-only-admin__btn" disabled>Save（無効）</button>
+          </div>
+        </section>
+
+        <section class="gosaki-read-only-admin__section" aria-labelledby="gra-about">
+          <h2 id="gra-about">About</h2>
+          <p class="gosaki-read-only-admin__meta">
+            <strong>{view.about.profileLabel}</strong> — {view.about.profileCharCount} chars
+          </p>
+          <p class="gosaki-read-only-admin__meta">{view.about.profileSummary || "（内容なし）"}</p>
+          <p class="gosaki-read-only-admin__meta">
+            <strong>{view.about.bandsLabel}</strong> — {view.about.bandsCharCount} chars
+          </p>
+          <p class="gosaki-read-only-admin__meta">{view.about.bandsSummary || "（内容なし）"}</p>
+          <h3 class="gosaki-read-only-admin__meta">Bands / Projects 画像（5件）</h3>
+          <ul class="gosaki-read-only-admin__list">
+            {
+              view.about.bandImages.map((img) => (
+                <li>
+                  <code>{img.fileName}</code>
+                  {img.bandName ? ` — ${img.bandName}` : ""}
+                </li>
+              ))
+            }
+          </ul>
+          <div class="gosaki-read-only-admin__actions">
+            <button type="button" class="gosaki-read-only-admin__btn" disabled>Save（無効）</button>
+          </div>
+        </section>
+
+        <section class="gosaki-read-only-admin__section" aria-labelledby="gra-contact">
+          <h2 id="gra-contact">Contact（HubSpot）</h2>
+          <p class="gosaki-read-only-admin__meta"><strong>provider:</strong> {view.contact.provider}</p>
+          <p class="gosaki-read-only-admin__meta"><strong>portalId:</strong> {view.contact.portalId}</p>
+          <p class="gosaki-read-only-admin__meta"><strong>formId:</strong> {view.contact.formId}</p>
+          <p class="gosaki-read-only-admin__meta"><strong>region:</strong> {view.contact.region}</p>
+          <p class="gosaki-read-only-admin__meta">enabled: {view.contact.enabled ? "true" : "false"}</p>
+          <div class="gosaki-read-only-admin__actions">
+            <button type="button" class="gosaki-read-only-admin__btn" disabled>Save（無効）</button>
+          </div>
+        </section>
+
+        <section class="gosaki-read-only-admin__section" aria-labelledby="gra-schedule">
+          <h2 id="gra-schedule">Schedule</h2>
+          <p class="gosaki-read-only-admin__meta"><strong>status:</strong> {view.schedule.status}</p>
+          <p class="gosaki-read-only-admin__meta">{view.schedule.note}</p>
+        </section>
+
+        <div class="gosaki-read-only-admin__actions" aria-label="グローバル操作（無効）">
+          <button type="button" class="gosaki-read-only-admin__btn" disabled>Save（無効）</button>
+          <button type="button" class="gosaki-read-only-admin__btn" disabled>Publish（無効）</button>
+          <button type="button" class="gosaki-read-only-admin__btn" disabled>Deploy（無効）</button>
+        </div>
+      </main>
+
+      <footer class="gosaki-read-only-admin__footer">
+        Gosaki Piano staging read-only CMS — G-11b package prep
+      </footer>
+    </div>
+  </body>
+</html>

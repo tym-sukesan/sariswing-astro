@@ -8,6 +8,7 @@ import path from "node:path";
 import { spawnSync } from "node:child_process";
 import { normalizeDeployBase, verifyPublicDistCssPresence } from "./deploy-base.mjs";
 import {
+  detectGosakiReadOnlyAdminInPublicDir,
   listPublicFiles,
 } from "./static-public-artifact-verifier.mjs";
 
@@ -55,7 +56,11 @@ export function validatePublicDistForManualUpload(publicDistDir) {
     errors.push("safeForStaticFtp is not true in static-public-manifest.json");
   }
 
-  if (fs.existsSync(path.join(abs, "admin"))) errors.push("admin/ must not exist in public-dist");
+  if (fs.existsSync(path.join(abs, "admin"))) {
+    if (!detectGosakiReadOnlyAdminInPublicDir(abs)) {
+      errors.push("admin/ must not exist in public-dist (unless Gosaki read-only admin G-11b)");
+    }
+  }
   if (fs.existsSync(path.join(abs, "api"))) errors.push("api/ must not exist in public-dist");
 
   const cssPresence = verifyPublicDistCssPresence(
@@ -144,6 +149,7 @@ ${base}2026-07/
 ${base}robots.txt
 ${base}sitemap-0.xml
 ${base}sitemap-index.xml
+${base}admin/          (G-11b read-only CMS — optional)
 \`\`\`
 
 ## Wrong layout (do NOT do this)
@@ -168,6 +174,7 @@ ${base}public-dist/about/
 - ${url}contact/
 - ${url}2026-07/
 - ${url}robots.txt
+- ${url}admin/ (read-only CMS, G-11b)
 
 Check: HTTP 200, noindex, canonical / og:url use staging host, Nav Home → staging path.
 

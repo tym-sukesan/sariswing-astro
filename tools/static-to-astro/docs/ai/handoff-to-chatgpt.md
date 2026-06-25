@@ -5,21 +5,26 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-11a-gosaki-staging-online-cms-architecture-planning — complete.
-Prior: G-10h5-2a staging upload QA (ffd1496); G-10i1 bands images (e5beedc).
-branch: main @ ffd1496 — G-11a doc uncommitted
+Current phase: G-11b-gosaki-staging-online-admin-read-only-page-package-prep — complete.
+Prior: G-11a architecture (755ecbe); G-10h5-2a staging QA (ffd1496).
+branch: main @ 755ecbe — G-11b doc uncommitted
 ```
 
-**Next:** `G-11b-staging-online-admin-read-only-page` — static admin UI on Gosaki staging URL (no Save).
+**Next:** Operator upload `admin/` **or** `G-11c-youtube-url-web-save-dry-run-poc`.
+
+## G-11b staging online admin read-only page — complete
+
+- **Doc:** `gosaki-staging-online-admin-read-only-page-package-prep.md`
+- **URL:** `/cms-kit-staging/gosaki-piano/admin/` (read-only marker `data-gosaki-read-only-admin`)
+- **Package:** `manual-upload/gosaki-piano/public-dist/admin/index.html` included
+- **Sections:** Overview, YouTube, About, Contact HubSpot, Schedule placeholder
+- **Save / Publish / Deploy:** disabled; no API / secrets
+- **Do not:** FTP by Cursor; `src/pages/admin` unchanged
 
 ## G-11a staging online CMS architecture planning — complete
 
+- **Commit:** `755ecbe`
 - **Doc:** `gosaki-staging-online-cms-architecture-planning.md`
-- **Constraint:** Lolipop static FTP — no Astro API routes; saves need Edge + GitHub Actions
-- **Recommend:** Hybrid **C** — JSON via Actions pipeline; Schedule via existing Supabase Edge
-- **PoC first:** YouTube URL dry-run (G-11c)
-- **Existing assets:** `__admin-staging-shell/`, G-10c JSON guards, `trigger-deploy` / `deploy-status` Edge patterns
-- **Do not:** production `deploy.yml`, Sariswing `/admin/`, `workflow_dispatch` until G-11d+ approval
 
 ## G-10h5-2a staging manual upload post-QA — complete
 

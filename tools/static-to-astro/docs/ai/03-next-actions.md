@@ -1,16 +1,24 @@
 Last updated: 2026-06-24
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zv. G-11b staging online admin read-only page package prep — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-11b-gosaki-staging-online-admin-read-only-page-package-prep` |
+| Doc | `gosaki-staging-online-admin-read-only-page-package-prep.md` |
+| Admin URL | `https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/admin/` |
+| Package | `output/manual-upload/gosaki-piano/public-dist/admin/index.html` |
+| **Next** | Operator manual upload **or** `G-11c-youtube-url-web-save-dry-run-poc` |
+| **Do not** | Save / FTP / `src/pages/admin` / production Supabase |
+
 ## 0zu. G-11a staging online CMS architecture planning — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-11a-gosaki-staging-online-cms-architecture-planning` |
+| Commit | `755ecbe` |
 | Doc | `gosaki-staging-online-cms-architecture-planning.md` |
-| Recommendation | **Hybrid C** — JSON modules via Edge→GitHub Actions→staging FTP; Schedule stays Supabase Edge |
-| First PoC | YouTube URL dry-run (G-11c) |
-| **Next** | `G-11b-staging-online-admin-read-only-page` |
-| **Do not** | `workflow_dispatch` / FTP / `src/pages/admin` / production Supabase |
 
 ## 0zt. G-10h5-2a staging manual upload post-QA finalization — complete
 

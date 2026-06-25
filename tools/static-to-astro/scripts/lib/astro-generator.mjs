@@ -66,6 +66,7 @@ import { applyGosakiAboutContent } from "./gosaki-about-content.mjs";
 import { applyGosakiHomeYouTubeEmbed } from "./gosaki-home-youtube-embed.mjs";
 import { applyGosakiContactHubspotEmbed } from "./gosaki-contact-hubspot-embed.mjs";
 import { applyGosakiScheduleDataPages } from "./gosaki-schedule-data-pages.mjs";
+import { applyGosakiStagingReadOnlyAdmin } from "./gosaki-staging-read-only-admin.mjs";
 import { generateGosakiFooterAstro } from "./gosaki-footer-social.mjs";
 
 const TRAILING_SLASH = "always";
@@ -966,6 +967,7 @@ export function generateAstroProject(inputDir, outputDir, options = {}) {
   let gosakiAboutContentSummary = { applied: false };
   let gosakiYoutubeEmbedSummary = { applied: false };
   let gosakiContactHubspotSummary = { applied: false };
+  let gosakiReadOnlyAdminSummary = { applied: false };
   if (isGosakiPianoFixture(siteDir)) {
     gosakiBandProfilesSummary = applyGosakiAboutBandProfiles(outDir, TOOL_ROOT);
     if (gosakiBandProfilesSummary.applied) {
@@ -985,6 +987,11 @@ export function generateAstroProject(inputDir, outputDir, options = {}) {
     gosakiContactHubspotSummary = applyGosakiContactHubspotEmbed(outDir, TOOL_ROOT);
     if (gosakiContactHubspotSummary.applied) {
       writtenPages.push(path.join(outDir, gosakiContactHubspotSummary.dataPath));
+    }
+    gosakiReadOnlyAdminSummary = applyGosakiStagingReadOnlyAdmin(outDir, TOOL_ROOT);
+    if (gosakiReadOnlyAdminSummary.applied) {
+      writtenPages.push(path.join(outDir, gosakiReadOnlyAdminSummary.pagePath));
+      writtenPages.push(path.join(outDir, gosakiReadOnlyAdminSummary.libPath));
     }
   }
 

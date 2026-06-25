@@ -1,23 +1,22 @@
 Last updated: 2026-06-25
 Project: Static-to-Astro CMS / Musician CMS Kit
 
-## 0zz. G-11c6a YouTube URL save slice implementation (local-only) — complete
+## 0zz. G-11c6b YouTube URL save Edge deploy preflight — complete
 
 | Item | Value |
 | --- | --- |
-| Phase | `G-11c6a-gosaki-youtube-url-web-save-non-dry-run-slice-implementation-local-only` |
+| Phase | `G-11c6b-gosaki-youtube-url-save-edge-function-deploy-preflight` |
+| Doc | `gosaki-youtube-url-save-edge-function-deploy-preflight.md` |
+| Deploy target | `gosaki-youtube-url-save` → `kmjqppxjdnwwrtaeqjta` only |
+| **Next** | `G-11c6c-gosaki-youtube-url-save-edge-function-deploy-execution` |
+| **Do not** | deploy / `secrets set` / Save / `workflow_dispatch` until G-11c6c approval |
+
+## 0zz1. G-11c6a YouTube URL save slice implementation — complete
+
+| Item | Value |
+| --- | --- |
+| Commit | `e99f58f` |
 | Doc | `gosaki-youtube-url-web-save-non-dry-run-slice-implementation.md` |
-| Edge | `gosaki-youtube-url-save` (source only — not deployed) |
-| Save UI | **disabled** |
-| **Next** | `G-11c6b-gosaki-youtube-url-save-edge-function-deploy-preflight` |
-| **Do not** | deploy / Save / `workflow_dispatch` until G-11c6b+ gates |
-
-## 0zz1. G-11c5 YouTube URL save slice planning — complete
-
-| Item | Value |
-| --- | --- |
-| Commit | `2f0f88d` |
-| Doc | `gosaki-youtube-url-web-save-non-dry-run-slice-planning.md` |
 
 ## 0zzy. G-11c4b-fix auth login button enable — complete
 

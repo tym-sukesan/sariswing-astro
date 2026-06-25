@@ -5,24 +5,23 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-11c6a-gosaki-youtube-url-web-save-non-dry-run-slice-implementation-local-only — complete.
-branch: main @ 2f0f88d — G-11c6a uncommitted
+Current phase: G-11c6b-gosaki-youtube-url-save-edge-function-deploy-preflight — complete.
+branch: main @ e99f58f — G-11c6b doc uncommitted
 ```
 
-**Next:** `G-11c6b-gosaki-youtube-url-save-edge-function-deploy-preflight` (no Save execution).
+**Next:** `G-11c6c-gosaki-youtube-url-save-edge-function-deploy-execution` (one-time staging deploy; no Save).
 
-## G-11c6a YouTube URL save implementation (local-only) — complete
+## G-11c6b save Edge deploy preflight — complete
 
+- **Doc:** `gosaki-youtube-url-save-edge-function-deploy-preflight.md`
+- **Deploy:** `gosaki-youtube-url-save` → `kmjqppxjdnwwrtaeqjta` only
+- **Secrets:** `ADMIN_EMAILS` reuse — **no** `secrets set`
+- **Do not:** deploy until G-11c6c operator approval
+
+## G-11c6a save implementation (local-only) — complete
+
+- **Commit:** `e99f58f`
 - **Doc:** `gosaki-youtube-url-web-save-non-dry-run-slice-implementation.md`
-- **Edge:** `gosaki-youtube-url-save` + shared guards (not deployed)
-- **Workflow:** `gosaki-youtube-url-save-staging.yml` skeleton (`workflow_dispatch` only)
-- **Save UI:** disabled; dry-run frozen
-- **Do not:** deploy / Save / dispatch until G-11c6b+
-
-## G-11c5 YouTube URL save slice planning — complete
-
-- **Commit:** `2f0f88d`
-- **Doc:** `gosaki-youtube-url-web-save-non-dry-run-slice-planning.md`
 
 ## G-11c4b-fix auth login button enable — complete
 

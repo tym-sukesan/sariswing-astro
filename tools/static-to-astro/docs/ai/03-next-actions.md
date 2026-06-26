@@ -1,14 +1,20 @@
 Last updated: 2026-06-25
 Project: Static-to-Astro CMS / Musician CMS Kit
 
-## 0zz. G-12c client preview feedback planning — complete
+## 0zz. G-12d Schedule CMS phase boundary — complete
 
 | Item | Value |
 | --- | --- |
-| Phase | `G-12c-gosaki-client-preview-feedback-closure-planning` |
-| Checklist | `gosaki-client-preview-feedback-closure.md` (refreshed) |
-| Client feedback | **not collected** |
-| **Next** | Share checklist → `G-12c-result` → `G-12d` phase boundary |
+| Phase | `G-12d-gosaki-schedule-cms-phase-boundary-planning` |
+| Phase 1 read | G-12b ✅; client feedback ⏳ |
+| `readyForAnyDbWrite` | **false** |
+| **Next** | `G-12c-result` → `G-13a` dry-run Preview or `G-6-g3` / `G-13b` write |
+
+## 0zz1. G-12c client preview planning — complete
+
+| Item | Value |
+| --- | --- |
+| Commit | `892f86f` |
 
 ## 0zz1. G-12b public schedule read — complete
 

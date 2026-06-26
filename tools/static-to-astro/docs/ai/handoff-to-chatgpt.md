@@ -5,18 +5,17 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-12c-gosaki-client-preview-feedback-closure-planning — complete.
-branch: main @ 372b558
+Current phase: G-12d-gosaki-schedule-cms-phase-boundary-planning — complete.
+branch: main @ 892f86f
 ```
 
-**Next:** Share checklist with client → G-12c-result → G-12d phase boundary.
+**Phase 1/2 boundary documented.** Client feedback still pending (G-12c-result).
 
-## G-12c client preview planning — complete
+## G-12d phase boundary — complete
 
-- **Planning:** `gosaki-client-preview-feedback-closure-planning.md`
-- **Checklist (client):** `gosaki-client-preview-feedback-closure.md`
-- **Verified pre-checks:** YouTube (G-11c15), Schedule supabase read (G-12b)
-- **Feedback:** pending operator/client
+- **Doc:** `gosaki-schedule-cms-phase-boundary-planning.md`
+- **Phase 2 blocked until:** G-12c-result + per-slice preflight + explicit approval
+- **First write candidates:** G-13a (dry-run Preview) → G-13b marker cleanup or G-6-g3 price
 
 ## G-11c10a allowlist registration — complete
 

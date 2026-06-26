@@ -212,6 +212,7 @@ gosakiClientPreviewFeedbackClosurePlanningComplete: true
 gosakiClientPreviewFeedbackClosureComplete: false
 gosakiPublicScheduleReadVerificationComplete: true
 readyForG12dPhaseBoundaryPlanning: true
+gosakiScheduleCmsPhaseBoundaryDocumented: true
 readyForAnyDbWrite: false
 readyForFtpAutoApply: false
 readyForProductionCutover: false

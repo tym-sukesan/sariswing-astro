@@ -5,17 +5,17 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-11c15-gosaki-youtube-url-save-staging-public-verification — complete.
-branch: main @ 213c834
+Current phase: G-12b-gosaki-public-schedule-read-verification — complete.
+branch: main @ d031e03
 ```
 
-**G-11c8→c15 YouTube URL save chain complete.** Staging home verified.
+**Schedule read verified:** `scheduleDataSource=supabase`; 60 events across 5 months on staging.
 
-## G-11c15 staging public verification — complete
+## G-12b public schedule read — complete
 
-- **Doc:** `gosaki-youtube-url-save-staging-public-verification.md`
-- **Staging:** `https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/` — HTTP 200, embed `I-eY9YMq9GI`
-- **Next:** optional client preview feedback; Schedule CMS backlog
+- **Doc:** `gosaki-public-schedule-read-verification.md`
+- **Staging:** `/schedule/` + `/schedule/2026-03/` … `2026-07/` HTTP 200; legacy `/2026-07/` canonical OK
+- **Next:** G-12c client preview feedback or G-9h3 phase boundary
 
 ## G-11c10a allowlist registration — complete
 

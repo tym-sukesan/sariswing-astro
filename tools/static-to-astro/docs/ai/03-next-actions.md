@@ -1,15 +1,20 @@
 Last updated: 2026-06-25
 Project: Static-to-Astro CMS / Musician CMS Kit
 
-## 0zz. G-11c15 staging public verification — complete
+## 0zz. G-12b public schedule read verification — complete
 
 | Item | Value |
 | --- | --- |
-| Phase | `G-11c15-gosaki-youtube-url-save-staging-public-verification` |
-| Staging home | HTTP 200; embed `I-eY9YMq9GI` |
-| Old `Ke4F8JAQz-I` | absent from home |
-| G-11c8→c15 chain | **complete** |
-| **Next** | client preview feedback / backlog (Schedule G-6-g3+ etc.) |
+| Phase | `G-12b-gosaki-public-schedule-read-verification` |
+| Data source | `scheduleDataSource=supabase` on hub + months |
+| Event counts | 13/10/12/11/14 (2026-03…07) — match seed |
+| **Next** | `G-12c-gosaki-client-preview-feedback-closure` or `G-9h3` phase boundary |
+
+## 0zz1. G-11c15 YouTube staging verification — complete
+
+| Item | Value |
+| --- | --- |
+| G-11c8→c15 | **complete** |
 
 ## 0zz1. G-11c14 staging manual upload — complete
 

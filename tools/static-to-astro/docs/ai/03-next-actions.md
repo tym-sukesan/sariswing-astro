@@ -1,16 +1,24 @@
 Last updated: 2026-06-25
 Project: Static-to-Astro CMS / Musician CMS Kit
 
-## 0zz. G-11c8 workflow JSON patch implementation — complete
+## 0zz. G-11c9 workflow dispatch preflight — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-11c9-gosaki-youtube-url-save-workflow-dispatch-preflight` |
+| Doc | `gosaki-youtube-url-save-workflow-dispatch-preflight.md` |
+| Check-only | no_change / changed / conflict / invalid — JSON unchanged |
+| **Next** | `G-11c10-gosaki-youtube-url-save-workflow-dispatch-execution` |
+| **Prerequisite** | Register G-11c10 approval IDs in patch lib before dispatch |
+| **Do not** | `workflow_dispatch` / `gh workflow run` until G-11c10 explicit approval |
+
+## 0zz1. G-11c8 workflow JSON patch implementation — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-11c8-gosaki-youtube-url-save-workflow-json-patch-implementation` |
+| Commit | `3cbcb9e` |
 | Doc | `gosaki-youtube-url-save-workflow-json-patch-implementation.md` |
-| Scripts | `gosaki-youtube-url-save-workflow-json-patch.mjs` + lib |
-| Workflow | `.github/workflows/gosaki-youtube-url-save-staging.yml` — `commit_enabled` default false |
-| **Next** | `G-11c9-gosaki-youtube-url-save-workflow-json-patch-preflight` |
-| **Do not** | `workflow_dispatch` with `commit_enabled: true` / JSON write / Save until G-11c10+ |
 
 ## 0zz1. G-11c7 workflow JSON patch planning — complete
 

@@ -3,7 +3,11 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-11c10b Gosaki YouTube URL save workflow dispatch final preflight (2026-06-25):** **complete** — current JSON snapshot; G-11c10c dispatch inputs finalized (Option A/B); recommend Option B changed; check-only PASS. **No dispatch / JSON write / --apply.** Doc: `gosaki-youtube-url-save-workflow-dispatch-final-preflight.md`. Verifier: `verify-g11c10b-gosaki-youtube-url-save-workflow-dispatch-final-preflight.mjs`. Next: **G-11c10c** dispatch execution.
+**G-11c10c-fix Gosaki YouTube URL save workflow YAML permissions syntax (2026-06-25):** **complete** — fixed `permissions: contents: write` (removed invalid `inputs.*` in permissions); HTTP 422 root cause documented. **No dispatch / JSON write.** Updated: `gosaki-youtube-url-save-workflow-dispatch-execution-result.md`. Verifier: `verify-g11c10c-fix-gosaki-youtube-url-save-workflow-yaml-permissions-syntax.mjs`. Next: commit fix → push → **new approval** → G-11c10c dispatch retry.
+
+**G-11c10c Gosaki YouTube URL save workflow dispatch execution (2026-06-25):** **blocked** — operator `gh workflow run` → HTTP 422 (YAML parse); no run / no commit. Approval consumed; retry needs new approval.
+
+**G-11c10b Gosaki YouTube URL save workflow dispatch final preflight (2026-06-25):** **complete** — commit `e7db19c`.
 
 **G-11c10a Gosaki YouTube URL save workflow dispatch allowlist registration (2026-06-25):** **complete** — commit `282e762`.
 

@@ -5,18 +5,21 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-11c10b-gosaki-youtube-url-save-workflow-dispatch-final-preflight — complete.
-branch: main @ 282e762 — G-11c10b doc uncommitted
+Current phase: G-11c10c-fix-gosaki-youtube-url-save-workflow-yaml-permissions-syntax — complete.
+branch: main @ e7db19c — fix uncommitted
 ```
 
-**Next:** `G-11c10c-gosaki-youtube-url-save-workflow-dispatch-execution` (explicit approval; dispatch ×1; recommend Option B).
+**Next:** Commit YAML fix + push → new explicit approval → one `workflow_dispatch` retry.
 
-## G-11c10b final preflight — complete
+## G-11c10c-fix YAML permissions — complete
 
-- **Doc:** `gosaki-youtube-url-save-workflow-dispatch-final-preflight.md`
-- **Recommend:** Option B changed — `https://youtu.be/I-eY9YMq9GI`, `commit_enabled=true`
-- **Gate:** `承認します。この workflow_dispatch を1回だけ実行してください。`
-- **Do not:** dispatch until G-11c10c approval
+- **Fix:** `permissions: contents: write` (removed `inputs.commit_enabled` from permissions)
+- **Block:** operator `gh workflow run` → HTTP 422, no run created
+- **Retry:** requires new `承認します。この workflow_dispatch を1回だけ実行してください。`
+
+## G-11c10c dispatch — blocked
+
+- **Doc:** `gosaki-youtube-url-save-workflow-dispatch-execution-result.md`
 
 ## G-11c10a allowlist registration — complete
 

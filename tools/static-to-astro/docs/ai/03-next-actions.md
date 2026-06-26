@@ -1,15 +1,21 @@
 Last updated: 2026-06-25
 Project: Static-to-Astro CMS / Musician CMS Kit
 
-## 0zz. G-11c10b workflow dispatch final preflight — complete
+## 0zz. G-11c10c-fix workflow YAML permissions — complete
 
 | Item | Value |
 | --- | --- |
-| Phase | `G-11c10b-gosaki-youtube-url-save-workflow-dispatch-final-preflight` |
-| Doc | `gosaki-youtube-url-save-workflow-dispatch-final-preflight.md` |
-| Recommend | Option B — changed (`I-eY9YMq9GI`), `commit_enabled=true` |
-| **Next** | `G-11c10c-gosaki-youtube-url-save-workflow-dispatch-execution` |
-| **Gate** | `承認します。この workflow_dispatch を1回だけ実行してください。` |
+| Phase | `G-11c10c-fix-gosaki-youtube-url-save-workflow-yaml-permissions-syntax` |
+| Fix | `permissions: contents: write` — no `inputs.*` in permissions |
+| Block cause | HTTP 422 — workflow YAML parse failed |
+| **Next** | Commit + push fix → new approval → G-11c10c dispatch retry |
+
+## 0zz1. G-11c10c dispatch execution — blocked
+
+| Item | Value |
+| --- | --- |
+| Status | blocked — no Actions run created |
+| Doc | `gosaki-youtube-url-save-workflow-dispatch-execution-result.md` |
 
 ## 0zz1. G-11c10a allowlist registration — complete
 

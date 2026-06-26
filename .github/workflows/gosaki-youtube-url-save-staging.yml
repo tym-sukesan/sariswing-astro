@@ -53,18 +53,18 @@ on:
         type: boolean
         default: false
 
+# G-11c10c-fix — permissions fixed to contents: write (inputs.* invalid in permissions context)
+
 concurrency:
   group: gosaki-youtube-url-save-staging
   cancel-in-progress: false
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   patch-json:
     runs-on: ubuntu-latest
-    permissions:
-      contents: ${{ inputs.commit_enabled == true && 'write' || 'read' }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4

@@ -5,17 +5,17 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-11c11-gosaki-youtube-url-save-public-reflection-planning-and-local-verification — complete.
-branch: main @ d2dd35c
+Current phase: G-11c12-gosaki-youtube-url-save-static-public-and-manual-upload-package-regeneration — complete.
+branch: main @ f285786
 ```
 
-**Next:** G-11c12 staging package prep → G-11c13 upload preflight → G-11c14 upload (approval) → G-11c15 verify.
+**Next:** G-11c13 upload preflight → G-11c14 upload (approval) → G-11c15 verify.
 
-## G-11c11 public reflection — complete
+## G-11c12 package regeneration — complete
 
-- **Doc:** `gosaki-youtube-url-save-public-reflection-planning-and-local-verification.md`
-- **Local:** home HTML has `youtube-nocookie.com/embed/I-eY9YMq9GI`
-- **Staging live:** still pre-upload until G-11c14
+- **Package:** `output/manual-upload/gosaki-piano/public-dist/` (27 files, gitignored)
+- **Home embed:** `youtube-nocookie.com/embed/I-eY9YMq9GI`
+- **Do not:** FTP until G-11c14 `承認します。この手動アップロードを1回だけ実行してください。`
 
 ## G-11c10a allowlist registration — complete
 

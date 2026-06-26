@@ -1,15 +1,21 @@
 Last updated: 2026-06-25
 Project: Static-to-Astro CMS / Musician CMS Kit
 
-## 0zz. G-11c11 public reflection planning + local verify — complete
+## 0zz. G-11c12 static-public + manual-upload package — complete
 
 | Item | Value |
 | --- | --- |
-| Phase | `G-11c11-gosaki-youtube-url-save-public-reflection-planning-and-local-verification` |
-| Doc | `gosaki-youtube-url-save-public-reflection-planning-and-local-verification.md` |
-| Local build | `output/gosaki-piano-g11c11-verify` — iframe `I-eY9YMq9GI` |
-| **Next** | `G-11c12-gosaki-youtube-url-save-staging-package-build-artifact-preparation` |
-| **Do not** | FTP / upload until G-11c14 explicit approval |
+| Phase | `G-11c12-gosaki-youtube-url-save-static-public-and-manual-upload-package-regeneration` |
+| Package | `output/manual-upload/gosaki-piano/public-dist/` (27 files) |
+| Embed | `youtube-nocookie.com/embed/I-eY9YMq9GI` on home |
+| **Next** | `G-11c13-gosaki-youtube-url-save-staging-upload-preflight` |
+| **Do not** | FTP / upload until G-11c14 approval |
+
+## 0zz1. G-11c11 public reflection — complete
+
+| Item | Value |
+| --- | --- |
+| Commit | `f285786` |
 
 ## 0zz1. G-11c10c dispatch retry — success
 

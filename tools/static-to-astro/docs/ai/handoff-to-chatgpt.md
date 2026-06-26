@@ -5,23 +5,22 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-11c6d-gosaki-youtube-url-save-endpoint-smoke-and-admin-wiring-check — complete.
-Unauth 401; Save UI disabled; saveEnabled:true not sent.
-branch: main @ 5b80ef5 — G-11c6d doc uncommitted
+Current phase: G-11c7-gosaki-youtube-url-save-workflow-json-patch-planning — complete.
+branch: main @ 747b638 — G-11c7 doc uncommitted
 ```
 
-**Next:** `G-11c7-gosaki-youtube-url-save-workflow-json-patch-planning` (no dispatch execution).
+**Next:** `G-11c8-gosaki-youtube-url-save-workflow-json-patch-implementation` (no dispatch).
 
-## G-11c6d save endpoint smoke and admin wiring — complete
+## G-11c7 workflow JSON patch planning — complete
 
-- **Doc:** `gosaki-youtube-url-save-endpoint-smoke-and-admin-wiring-check.md`
-- **Smoke:** unauth **401**; JWT admin smoke deferred (no local admin creds)
-- **Wiring:** save URL → `gosaki-youtube-url-save`; dry-run unchanged; Save btn disabled
+- **Doc:** `gosaki-youtube-url-save-workflow-json-patch-planning.md`
+- **Patch:** `gosaki-piano-youtube-embed.json` — `embedCode` only; `published` untouched
+- **Gates:** G-11c8 impl → G-11c9 preflight → G-11c10 dispatch ×1 → G-11c11 public reflection
+- **Do not:** dispatch / JSON write until G-11c10 approval
 
-## G-11c6c save Edge deploy execution — complete
+## G-11c6d save endpoint smoke — complete
 
-- **Commit:** `5b80ef5`
-- **Doc:** `gosaki-youtube-url-save-edge-function-deploy-execution-result.md`
+- **Commit:** `747b638`
 
 ## G-11c4b-fix auth login button enable — complete
 

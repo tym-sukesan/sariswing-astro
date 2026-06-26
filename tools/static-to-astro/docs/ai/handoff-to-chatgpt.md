@@ -5,17 +5,17 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-11c14-gosaki-youtube-url-save-staging-manual-upload-execution — complete.
-branch: main @ 1d29158
+Current phase: G-11c15-gosaki-youtube-url-save-staging-public-verification — complete.
+branch: main @ 213c834
 ```
 
-**Next:** G-11c15 staging public verification (HTTP QA — home embed `I-eY9YMq9GI`).
+**G-11c8→c15 YouTube URL save chain complete.** Staging home verified.
 
-## G-11c14 manual upload — complete
+## G-11c15 staging public verification — complete
 
-- **Doc:** `gosaki-youtube-url-save-staging-manual-upload-execution-result.md`
-- **Executor:** operator (戸山); Cursor did **not** FTP/upload
-- **Remote:** `/cms-kit-staging/gosaki-piano/` — overwrite only, no delete/mirror/sync-delete
+- **Doc:** `gosaki-youtube-url-save-staging-public-verification.md`
+- **Staging:** `https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/` — HTTP 200, embed `I-eY9YMq9GI`
+- **Next:** optional client preview feedback; Schedule CMS backlog
 
 ## G-11c10a allowlist registration — complete
 

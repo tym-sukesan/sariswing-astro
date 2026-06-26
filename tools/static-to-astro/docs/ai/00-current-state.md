@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-11c14 Gosaki YouTube URL save staging manual upload execution (2026-06-26):** **complete** — operator (戸山) manual upload to `/cms-kit-staging/gosaki-piano/`; overwrite only; no delete/mirror/sync-delete. **Cursor did not FTP/upload.** Doc: `gosaki-youtube-url-save-staging-manual-upload-execution-result.md`. Next: **G-11c15** staging public verification.
+**G-11c15 Gosaki YouTube URL save staging public verification (2026-06-26):** **complete** — staging home HTTP 200; `youtube-nocookie.com/embed/I-eY9YMq9GI`; old `Ke4F8JAQz-I` absent; spot routes 200. **No FTP/upload.** Doc: `gosaki-youtube-url-save-staging-public-verification.md`. G-11c8→c15 chain **complete**.
+
+**G-11c14 Gosaki YouTube URL save staging manual upload execution (2026-06-26):** **complete** — commit `213c834`.
 
 **G-11c13 Gosaki YouTube URL save staging upload preflight (2026-06-26):** **complete** — commit `1d29158`.
 

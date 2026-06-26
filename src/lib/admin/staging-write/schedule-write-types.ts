@@ -136,6 +136,14 @@ export const G9K_SCHEDULE_EXISTING_EVENT_SAVE_BUTTON_NON_DRY_RUN_APPROVAL_ID:
   ScheduleG9kExistingEventSaveButtonNonDryRunApprovalId =
   "G-9k-gosaki-schedule-existing-event-save-button-non-dry-run";
 
+/** G-13c1 Gosaki Event A PoC visible text cleanup — 6-field bundle; fixed row. */
+export type ScheduleG13c1EventAPocCleanupNonDryRunApprovalId =
+  "G-13c1-gosaki-schedule-event-a-poc-text-cleanup-non-dry-run";
+
+export const G13C1_SCHEDULE_EVENT_A_POC_CLEANUP_NON_DRY_RUN_APPROVAL_ID:
+  ScheduleG13c1EventAPocCleanupNonDryRunApprovalId =
+  "G-13c1-gosaki-schedule-event-a-poc-text-cleanup-non-dry-run";
+
 export type ScheduleWriteApprovalIdUnion =
   | ScheduleWriteApprovalId
   | ScheduleSafeFieldsNonDryRunPocApprovalId
@@ -152,7 +160,8 @@ export type ScheduleWriteApprovalIdUnion =
   | ScheduleG9G4a2bStartTimeOnlyNonDryRunApprovalId
   | ScheduleG9G4a2cPriceOnlyNonDryRunApprovalId
   | ScheduleG9jExistingEventUpdateNonDryRunApprovalId
-  | ScheduleG9kExistingEventSaveButtonNonDryRunApprovalId;
+  | ScheduleG9kExistingEventSaveButtonNonDryRunApprovalId
+  | ScheduleG13c1EventAPocCleanupNonDryRunApprovalId;
 
 export const SCHEDULE_WRITE_APPROVAL_IDS: readonly ScheduleWriteApprovalIdUnion[] = [
   SCHEDULE_WRITE_APPROVAL_ID,
@@ -171,6 +180,7 @@ export const SCHEDULE_WRITE_APPROVAL_IDS: readonly ScheduleWriteApprovalIdUnion[
   G9G4A2C_SCHEDULE_PRICE_ONLY_NON_DRY_RUN_APPROVAL_ID,
   G9J_SCHEDULE_EXISTING_EVENT_UPDATE_NON_DRY_RUN_APPROVAL_ID,
   G9K_SCHEDULE_EXISTING_EVENT_SAVE_BUTTON_NON_DRY_RUN_APPROVAL_ID,
+  G13C1_SCHEDULE_EVENT_A_POC_CLEANUP_NON_DRY_RUN_APPROVAL_ID,
 ];
 
 export type ScheduleUpdateWritePayload = {

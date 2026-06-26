@@ -423,9 +423,52 @@ function displayValue(value: string | null | undefined): string {
         </p>
       </form>
     </section>
+
+    <section
+      id="gosaki-schedule-g13c1-event-a-poc-cleanup"
+      class="admin-gosaki-schedule-g13c1 admin-prototype-section"
+      aria-label="G-13c1 Event A PoC cleanup"
+    >
+      <h2 class="admin-gosaki-section-title">G-13c1 — Event A PoC 文言クリーンアップ</h2>
+      <p class="admin-form__hint">
+        対象: <code>schedule-2026-03-007</code>（2026-03-15）。6フィールド一括復元。Save は env arm 未設定時は無効です。
+      </p>
+      <div class="gosaki-schedule-edit-dry-run-actions">
+        <button
+          type="button"
+          class="admin-button admin-button-secondary"
+          id="gosaki-g13c1-event-a-poc-cleanup-preview-btn"
+        >
+          G-13c1 変更を確認（dry-run）
+        </button>
+      </div>
+      <div
+        id="gosaki-g13c1-event-a-poc-cleanup-preview-result"
+        class="gosaki-schedule-edit-dry-run"
+        hidden
+        aria-live="polite"
+      ></div>
+      <div class="admin-actions">
+        <button
+          type="button"
+          class="admin-button"
+          id="gosaki-g13c1-event-a-poc-cleanup-save-btn"
+          disabled
+        >
+          Event A cleanup 保存（無効）
+        </button>
+      </div>
+      <div
+        id="gosaki-g13c1-event-a-poc-cleanup-save-result"
+        class="gosaki-schedule-edit-save-result"
+        hidden
+        aria-live="polite"
+      ></div>
+    </section>
   </div>
 </section>
 
 <script>
   import "../../../../../../src/lib/admin/staging-data/gosaki-staging-schedule-operator-ui.ts";
+  import "../../../../../../src/lib/admin/staging-data/gosaki-schedule-event-a-poc-cleanup-ui.ts";
 </script>

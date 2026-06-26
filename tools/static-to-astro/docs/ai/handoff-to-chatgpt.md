@@ -5,17 +5,23 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-13b-gosaki-schedule-poc-visible-text-cleanup-preflight — complete.
-branch: main @ 099ee5d
+Current phase: G-13c-gosaki-schedule-poc-visible-text-cleanup-implementation-prep — complete.
+branch: main @ 99f339c (uncommitted G-13c docs)
 ```
 
-**2 PoC events identified on public staging schedule.** Cleanup write not executed.
+**2 PoC events — implementation prep done; cleanup write not executed.**
+
+## G-13c PoC cleanup implementation prep — complete
+
+- **Doc:** `gosaki-schedule-poc-visible-text-cleanup-implementation-prep.md`
+- **Event A:** `f687ebf3…` — G-13c1 approval; G-9k UI path after G-13d implementation
+- **Event B:** `aa440e29…` — G-13c2 approval; PoC audit row exception required
+- **Next:** G-13d-implementation (register approval IDs + guards; no Save)
 
 ## G-13b PoC cleanup preflight — complete
 
 - **Doc:** `gosaki-schedule-poc-visible-text-cleanup-preflight.md`
 - **Rows:** `f687ebf3…` (2026-03-15 G-9k6), `aa440e29…` (2026-07-19 G-9g)
-- **Next:** G-13b-implementation (approval ID + write path)
 
 ## G-11c10a allowlist registration — complete
 

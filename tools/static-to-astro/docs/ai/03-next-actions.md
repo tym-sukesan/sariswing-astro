@@ -1,13 +1,21 @@
 Last updated: 2026-06-25
 Project: Static-to-Astro CMS / Musician CMS Kit
 
-## 0zz. G-13b PoC visible text cleanup preflight — complete
+## 0zz. G-13c PoC visible text cleanup implementation prep — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-13c-gosaki-schedule-poc-visible-text-cleanup-implementation-prep` |
+| Event A approval | `G-13c1-gosaki-schedule-event-a-poc-text-cleanup-non-dry-run` |
+| Event B approval | `G-13c2-gosaki-schedule-event-b-poc-audit-cleanup-non-dry-run` |
+| **Next** | `G-13d-gosaki-schedule-poc-visible-text-cleanup-implementation` |
+
+## 0zz0. G-13b PoC visible text cleanup preflight — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-13b-gosaki-schedule-poc-visible-text-cleanup-preflight` |
 | Affected | 2 events (2026-03-15, 2026-07-19) |
-| **Next** | `G-13b-gosaki-schedule-poc-visible-text-cleanup-implementation` |
 
 ## 0zz1. G-13a dry-run preview — complete
 

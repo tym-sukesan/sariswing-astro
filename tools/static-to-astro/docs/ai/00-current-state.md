@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-13b Gosaki schedule PoC visible text cleanup preflight (2026-06-26):** **complete** — 2 public events with PoC text (2026-03-15 G-9k6, 2026-07-19 G-9g); cleanup fields + approval gates documented. **No DB/write.** Doc: `gosaki-schedule-poc-visible-text-cleanup-preflight.md`. Next: **G-13b-implementation**.
+**G-13c Gosaki schedule PoC visible text cleanup implementation prep (2026-06-26):** **complete** — save path matrix (Event A via G-13c1/G-9k pattern; Event B blocked until G-13c2 PoC row exception); approval IDs `G-13c1-…` / `G-13c2-…`; operator Preview/Save procedure separated. **No DB/write/Save/commit.** Doc: `gosaki-schedule-poc-visible-text-cleanup-implementation-prep.md`. Next: **G-13d-implementation**.
+
+**G-13b Gosaki schedule PoC visible text cleanup preflight (2026-06-26):** **complete** — 2 public events with PoC text (2026-03-15 G-9k6, 2026-07-19 G-9g); cleanup fields + approval gates documented. **No DB/write.** Doc: `gosaki-schedule-poc-visible-text-cleanup-preflight.md`.
 
 **G-13a Gosaki schedule operational dry-run preview verification (2026-06-26):** **complete** — commit `099ee5d` docs chain.
 

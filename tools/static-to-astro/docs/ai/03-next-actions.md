@@ -1,14 +1,20 @@
 Last updated: 2026-06-25
 Project: Static-to-Astro CMS / Musician CMS Kit
 
-## 0zz. G-12d Schedule CMS phase boundary — complete
+## 0zz. G-13a schedule operational dry-run preview — complete
 
 | Item | Value |
 | --- | --- |
-| Phase | `G-12d-gosaki-schedule-cms-phase-boundary-planning` |
-| Phase 1 read | G-12b ✅; client feedback ⏳ |
-| `readyForAnyDbWrite` | **false** |
-| **Next** | `G-12c-result` → `G-13a` dry-run Preview or `G-6-g3` / `G-13b` write |
+| Phase | `G-13a-gosaki-schedule-operational-dry-run-preview` |
+| Preview path | `buildSiteSlugScheduleEditDryRunResult` — no write |
+| Save (routine dev) | **disabled** for start_time / price |
+| **Next** | `G-12c-result` → `G-13b` or `G-6-g3` write slice |
+
+## 0zz1. G-12d phase boundary — complete
+
+| Item | Value |
+| --- | --- |
+| Commit | `993356b` |
 
 ## 0zz1. G-12c client preview planning — complete
 

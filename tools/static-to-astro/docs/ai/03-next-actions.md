@@ -1,16 +1,23 @@
 Last updated: 2026-06-25
 Project: Static-to-Astro CMS / Musician CMS Kit
 
-## 0zz. G-11c9 workflow dispatch preflight — complete
+## 0zz. G-11c10a workflow dispatch allowlist registration — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-11c10a-gosaki-youtube-url-save-workflow-dispatch-allowlist-registration` |
+| Doc | `gosaki-youtube-url-save-workflow-dispatch-allowlist-registration.md` |
+| IDs | `G-11c10-gosaki-youtube-url-save-workflow-dispatch-001` / `gosaki-youtube-url-save-workflow-dispatch-001` |
+| **Next** | `G-11c10-gosaki-youtube-url-save-workflow-dispatch-execution` |
+| **Do not** | `workflow_dispatch` until G-11c10 explicit approval |
+
+## 0zz1. G-11c9 workflow dispatch preflight — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-11c9-gosaki-youtube-url-save-workflow-dispatch-preflight` |
+| Commit | `1182419` |
 | Doc | `gosaki-youtube-url-save-workflow-dispatch-preflight.md` |
-| Check-only | no_change / changed / conflict / invalid — JSON unchanged |
-| **Next** | `G-11c10-gosaki-youtube-url-save-workflow-dispatch-execution` |
-| **Prerequisite** | Register G-11c10 approval IDs in patch lib before dispatch |
-| **Do not** | `workflow_dispatch` / `gh workflow run` until G-11c10 explicit approval |
 
 ## 0zz1. G-11c8 workflow JSON patch implementation — complete
 

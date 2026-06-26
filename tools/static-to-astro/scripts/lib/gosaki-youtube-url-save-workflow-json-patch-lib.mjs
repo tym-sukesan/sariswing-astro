@@ -6,8 +6,8 @@
 import fs from "node:fs";
 import path from "node:path";
 import {
-  G11C6_APPROVAL_ID,
-  G11C6_OPERATION_ID,
+  GOSAKI_YOUTUBE_URL_SAVE_WORKFLOW_APPROVAL_IDS,
+  GOSAKI_YOUTUBE_URL_SAVE_WORKFLOW_OPERATION_IDS,
 } from "./gosaki-youtube-url-save-constants.mjs";
 import {
   assertG11c1NextValueAllowed,
@@ -67,11 +67,19 @@ export function parseG11c8WorkflowPatchInput(raw) {
   if (itemId !== G11C8_TARGET_ITEM_ID) {
     return { ok: false, error: `item_id must be ${G11C8_TARGET_ITEM_ID}`, saveReadiness: "invalid_input" };
   }
-  if (approvalId !== G11C6_APPROVAL_ID) {
-    return { ok: false, error: `approval_id must be ${G11C6_APPROVAL_ID}`, saveReadiness: "invalid_input" };
+  if (!GOSAKI_YOUTUBE_URL_SAVE_WORKFLOW_APPROVAL_IDS.includes(approvalId)) {
+    return {
+      ok: false,
+      error: `approval_id must be one of: ${GOSAKI_YOUTUBE_URL_SAVE_WORKFLOW_APPROVAL_IDS.join(", ")}`,
+      saveReadiness: "invalid_input",
+    };
   }
-  if (operationId !== G11C6_OPERATION_ID) {
-    return { ok: false, error: `operation_id must be ${G11C6_OPERATION_ID}`, saveReadiness: "invalid_input" };
+  if (!GOSAKI_YOUTUBE_URL_SAVE_WORKFLOW_OPERATION_IDS.includes(operationId)) {
+    return {
+      ok: false,
+      error: `operation_id must be one of: ${GOSAKI_YOUTUBE_URL_SAVE_WORKFLOW_OPERATION_IDS.join(", ")}`,
+      saveReadiness: "invalid_input",
+    };
   }
   if (!youtubeUrl) {
     return { ok: false, error: "youtube_url is required", saveReadiness: "invalid_input" };

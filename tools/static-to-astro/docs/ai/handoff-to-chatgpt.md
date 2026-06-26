@@ -5,17 +5,17 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-13a-gosaki-schedule-operational-dry-run-preview — complete.
-branch: main @ 993356b
+Current phase: G-13b-gosaki-schedule-poc-visible-text-cleanup-preflight — complete.
+branch: main @ 099ee5d
 ```
 
-**Dry-run preview path verified.** Client feedback (G-12c-result) still pending before first write slice.
+**2 PoC events identified on public staging schedule.** Cleanup write not executed.
 
-## G-13a dry-run preview — complete
+## G-13b PoC cleanup preflight — complete
 
-- **Doc:** `gosaki-schedule-operational-dry-run-preview.md`
-- **Verified:** `actualWrite:false`, `saveEnabled:false` routine dev; start_time/price simulation OK
-- **Next:** G-12c-result → G-13b marker cleanup or G-6-g3 price slice
+- **Doc:** `gosaki-schedule-poc-visible-text-cleanup-preflight.md`
+- **Rows:** `f687ebf3…` (2026-03-15 G-9k6), `aa440e29…` (2026-07-19 G-9g)
+- **Next:** G-13b-implementation (approval ID + write path)
 
 ## G-11c10a allowlist registration — complete
 

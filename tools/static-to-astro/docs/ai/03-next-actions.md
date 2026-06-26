@@ -1,14 +1,19 @@
 Last updated: 2026-06-25
 Project: Static-to-Astro CMS / Musician CMS Kit
 
-## 0zz. G-13a schedule operational dry-run preview — complete
+## 0zz. G-13b PoC visible text cleanup preflight — complete
 
 | Item | Value |
 | --- | --- |
-| Phase | `G-13a-gosaki-schedule-operational-dry-run-preview` |
-| Preview path | `buildSiteSlugScheduleEditDryRunResult` — no write |
-| Save (routine dev) | **disabled** for start_time / price |
-| **Next** | `G-12c-result` → `G-13b` or `G-6-g3` write slice |
+| Phase | `G-13b-gosaki-schedule-poc-visible-text-cleanup-preflight` |
+| Affected | 2 events (2026-03-15, 2026-07-19) |
+| **Next** | `G-13b-gosaki-schedule-poc-visible-text-cleanup-implementation` |
+
+## 0zz1. G-13a dry-run preview — complete
+
+| Item | Value |
+| --- | --- |
+| Commit | `099ee5d` |
 
 ## 0zz1. G-12d phase boundary — complete
 

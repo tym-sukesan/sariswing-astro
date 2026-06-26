@@ -1,15 +1,21 @@
 Last updated: 2026-06-25
 Project: Static-to-Astro CMS / Musician CMS Kit
 
-## 0zz. G-11c12 static-public + manual-upload package — complete
+## 0zz. G-11c13 staging upload preflight — complete
 
 | Item | Value |
 | --- | --- |
-| Phase | `G-11c12-gosaki-youtube-url-save-static-public-and-manual-upload-package-regeneration` |
-| Package | `output/manual-upload/gosaki-piano/public-dist/` (27 files) |
-| Embed | `youtube-nocookie.com/embed/I-eY9YMq9GI` on home |
-| **Next** | `G-11c13-gosaki-youtube-url-save-staging-upload-preflight` |
-| **Do not** | FTP / upload until G-11c14 approval |
+| Phase | `G-11c13-gosaki-youtube-url-save-staging-upload-preflight` |
+| Upload source | `output/manual-upload/gosaki-piano/public-dist/` (27 files) |
+| Remote | `/cms-kit-staging/gosaki-piano/` |
+| **Next** | `G-11c14-gosaki-youtube-url-save-staging-upload-execution` |
+| **Gate** | `承認します。この手動アップロードを1回だけ実行してください。` |
+
+## 0zz1. G-11c12 package regeneration — complete
+
+| Item | Value |
+| --- | --- |
+| Commit | `de2850e` |
 
 ## 0zz1. G-11c11 public reflection — complete
 

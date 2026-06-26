@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-12b Gosaki public schedule read verification (2026-06-26):** **complete** — staging `/schedule/` + months 2026-03…07 HTTP 200; `scheduleDataSource=supabase`; event counts 13/10/12/11/14 match seed; legacy `/2026-07/` canonical OK; `/schedule/2026-08/` 404 expected. **No DB/write.** Doc: `gosaki-public-schedule-read-verification.md`. Next: **G-12c** client feedback or **G-9h3** phase boundary.
+**G-12c Gosaki client preview feedback closure planning (2026-06-26):** **complete** — checklist refreshed for G-11c15 + G-12b; client-facing vs internal split; Phase 2 entry conditions. **Feedback not collected.** Docs: `gosaki-client-preview-feedback-closure-planning.md`, `gosaki-client-preview-feedback-closure.md`. Next: **G-12c-result** (operator records feedback) or share checklist with client.
+
+**G-12b Gosaki public schedule read verification (2026-06-26):** **complete** — commit `372b558` docs chain.
 
 **G-11c15 Gosaki YouTube URL save staging public verification (2026-06-26):** **complete** — commit `d031e03` docs chain. G-11c8→c15 **complete**.
 

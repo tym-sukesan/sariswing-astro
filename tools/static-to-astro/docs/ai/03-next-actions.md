@@ -1,14 +1,20 @@
 Last updated: 2026-06-25
 Project: Static-to-Astro CMS / Musician CMS Kit
 
-## 0zz. G-12b public schedule read verification — complete
+## 0zz. G-12c client preview feedback planning — complete
 
 | Item | Value |
 | --- | --- |
-| Phase | `G-12b-gosaki-public-schedule-read-verification` |
-| Data source | `scheduleDataSource=supabase` on hub + months |
-| Event counts | 13/10/12/11/14 (2026-03…07) — match seed |
-| **Next** | `G-12c-gosaki-client-preview-feedback-closure` or `G-9h3` phase boundary |
+| Phase | `G-12c-gosaki-client-preview-feedback-closure-planning` |
+| Checklist | `gosaki-client-preview-feedback-closure.md` (refreshed) |
+| Client feedback | **not collected** |
+| **Next** | Share checklist → `G-12c-result` → `G-12d` phase boundary |
+
+## 0zz1. G-12b public schedule read — complete
+
+| Item | Value |
+| --- | --- |
+| Commit | `372b558` |
 
 ## 0zz1. G-11c15 YouTube staging verification — complete
 

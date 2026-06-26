@@ -5,17 +5,18 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-12b-gosaki-public-schedule-read-verification — complete.
-branch: main @ d031e03
+Current phase: G-12c-gosaki-client-preview-feedback-closure-planning — complete.
+branch: main @ 372b558
 ```
 
-**Schedule read verified:** `scheduleDataSource=supabase`; 60 events across 5 months on staging.
+**Next:** Share checklist with client → G-12c-result → G-12d phase boundary.
 
-## G-12b public schedule read — complete
+## G-12c client preview planning — complete
 
-- **Doc:** `gosaki-public-schedule-read-verification.md`
-- **Staging:** `/schedule/` + `/schedule/2026-03/` … `2026-07/` HTTP 200; legacy `/2026-07/` canonical OK
-- **Next:** G-12c client preview feedback or G-9h3 phase boundary
+- **Planning:** `gosaki-client-preview-feedback-closure-planning.md`
+- **Checklist (client):** `gosaki-client-preview-feedback-closure.md`
+- **Verified pre-checks:** YouTube (G-11c15), Schedule supabase read (G-12b)
+- **Feedback:** pending operator/client
 
 ## G-11c10a allowlist registration — complete
 

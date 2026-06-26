@@ -5,17 +5,17 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-11c13-gosaki-youtube-url-save-staging-upload-preflight — complete.
-branch: main @ de2850e
+Current phase: G-11c14-gosaki-youtube-url-save-staging-manual-upload-execution — complete.
+branch: main @ 1d29158
 ```
 
-**Next:** G-11c14 manual upload (explicit approval) → G-11c15 staging verify.
+**Next:** G-11c15 staging public verification (HTTP QA — home embed `I-eY9YMq9GI`).
 
-## G-11c13 upload preflight — complete
+## G-11c14 manual upload — complete
 
-- **Doc:** `gosaki-youtube-url-save-staging-upload-preflight.md`
-- **Upload:** `public-dist/` contents → `/cms-kit-staging/gosaki-piano/`
-- **Forbidden:** mirror --delete, production, FTP auto-scripts
+- **Doc:** `gosaki-youtube-url-save-staging-manual-upload-execution-result.md`
+- **Executor:** operator (戸山); Cursor did **not** FTP/upload
+- **Remote:** `/cms-kit-staging/gosaki-piano/` — overwrite only, no delete/mirror/sync-delete
 
 ## G-11c10a allowlist registration — complete
 

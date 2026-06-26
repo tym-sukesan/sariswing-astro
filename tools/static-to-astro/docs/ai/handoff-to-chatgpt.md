@@ -5,18 +5,24 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-11c7-gosaki-youtube-url-save-workflow-json-patch-planning — complete.
-branch: main @ 747b638 — G-11c7 doc uncommitted
+Current phase: G-11c8-gosaki-youtube-url-save-workflow-json-patch-implementation — complete.
+branch: main @ 4af0fb7 — G-11c8 changes uncommitted
 ```
 
-**Next:** `G-11c8-gosaki-youtube-url-save-workflow-json-patch-implementation` (no dispatch).
+**Next:** `G-11c9-gosaki-youtube-url-save-workflow-json-patch-preflight` (no dispatch).
+
+## G-11c8 workflow JSON patch implementation — complete
+
+- **Doc:** `gosaki-youtube-url-save-workflow-json-patch-implementation.md`
+- **Patch CLI:** default check-only; `--apply` + workflow `commit_enabled` for G-11c10+
+- **Workflow:** `gosaki-youtube-url-save-staging.yml` — `workflow_dispatch` only
+- **Gates:** G-11c9 preflight → G-11c10 dispatch ×1 → G-11c11 public reflection
+- **Do not:** dispatch / JSON write until G-11c10 approval
 
 ## G-11c7 workflow JSON patch planning — complete
 
 - **Doc:** `gosaki-youtube-url-save-workflow-json-patch-planning.md`
 - **Patch:** `gosaki-piano-youtube-embed.json` — `embedCode` only; `published` untouched
-- **Gates:** G-11c8 impl → G-11c9 preflight → G-11c10 dispatch ×1 → G-11c11 public reflection
-- **Do not:** dispatch / JSON write until G-11c10 approval
 
 ## G-11c6d save endpoint smoke — complete
 

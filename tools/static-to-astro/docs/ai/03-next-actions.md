@@ -1,15 +1,24 @@
 Last updated: 2026-06-25
 Project: Static-to-Astro CMS / Musician CMS Kit
 
-## 0zz. G-11c7 workflow JSON patch planning — complete
+## 0zz. G-11c8 workflow JSON patch implementation — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-11c8-gosaki-youtube-url-save-workflow-json-patch-implementation` |
+| Doc | `gosaki-youtube-url-save-workflow-json-patch-implementation.md` |
+| Scripts | `gosaki-youtube-url-save-workflow-json-patch.mjs` + lib |
+| Workflow | `.github/workflows/gosaki-youtube-url-save-staging.yml` — `commit_enabled` default false |
+| **Next** | `G-11c9-gosaki-youtube-url-save-workflow-json-patch-preflight` |
+| **Do not** | `workflow_dispatch` with `commit_enabled: true` / JSON write / Save until G-11c10+ |
+
+## 0zz1. G-11c7 workflow JSON patch planning — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-11c7-gosaki-youtube-url-save-workflow-json-patch-planning` |
 | Doc | `gosaki-youtube-url-save-workflow-json-patch-planning.md` |
 | Patch | `gosaki-piano-youtube-embed.json` — `embedCode` only (Option C) |
-| **Next** | `G-11c8-gosaki-youtube-url-save-workflow-json-patch-implementation` |
-| **Do not** | `workflow_dispatch` / JSON write / Save until G-11c10+ |
 
 ## 0zz1. G-11c6d save endpoint smoke — complete
 

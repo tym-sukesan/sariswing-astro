@@ -1,8 +1,8 @@
-# G-11c6a — Gosaki YouTube URL save (staging JSON patch skeleton)
-# Local-only skeleton — workflow_dispatch inputs only; no push/pull_request/schedule.
-# G-11c6a: JSON patch / commit / FTP / deploy NOT executed.
+# G-11c6a — Gosaki YouTube URL save (staging JSON patch)
+# G-11c8 — patch script wired; default check-only; commit gated by commit_enabled input.
+# workflow_dispatch only — no push/pull_request/schedule. No FTP/deploy.
 
-name: Gosaki YouTube URL save (staging skeleton)
+name: Gosaki YouTube URL save (staging JSON patch)
 
 on:
   workflow_dispatch:
@@ -11,58 +11,125 @@ on:
         description: Site slug (allowlist gosaki-piano)
         required: true
         type: string
-      operation_id:
-        description: Operation ID (G-11c6 approval gate)
+      module:
+        description: Module (allowlist youtube-embed)
         required: true
         type: string
-      approval_id:
-        description: Approval ID (operator gate)
+      item_id:
+        description: Target item id (yt-placeholder-01)
         required: true
         type: string
-      next_embed_code:
-        description: Next YouTube URL / embedCode value
+      youtube_url:
+        description: Next YouTube URL / embedCode
         required: true
         type: string
-      next_video_id:
-        description: Next 11-char videoId
-        required: true
-        type: string
-      expected_before_embed:
+      expected_before_embed_code:
         description: Optimistic-lock embedCode before save
         required: true
         type: string
       expected_before_video_id:
-        description: Optimistic-lock videoId before save
+        description: Optimistic-lock derived videoId before save
+        required: true
+        type: string
+      approval_id:
+        description: Approval ID (G-11c6 gate)
+        required: true
+        type: string
+      operation_id:
+        description: Operation ID (G-11c6 gate)
+        required: true
+        type: string
+      request_id:
+        description: Opaque audit request id (no PII)
+        required: true
+        type: string
+      actor_id_hash:
+        description: Optional SHA-256 actor id hash (no email)
         required: false
         type: string
+      commit_enabled:
+        description: "G-11c10+ only — write JSON and commit (default false)"
+        required: false
+        type: boolean
+        default: false
 
 concurrency:
   group: gosaki-youtube-url-save-staging
   cancel-in-progress: false
 
+permissions:
+  contents: read
+
 jobs:
-  validate-skeleton:
+  patch-json:
     runs-on: ubuntu-latest
+    permissions:
+      contents: ${{ inputs.commit_enabled == true && 'write' || 'read' }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: G-11c6a skeleton validation (no JSON patch)
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Validate and plan JSON patch (check-only default)
+        id: patch
         env:
           SITE_SLUG: ${{ github.event.inputs.site_slug }}
-          OPERATION_ID: ${{ github.event.inputs.operation_id }}
+          MODULE: ${{ github.event.inputs.module }}
+          ITEM_ID: ${{ github.event.inputs.item_id }}
+          YOUTUBE_URL: ${{ github.event.inputs.youtube_url }}
+          EXPECTED_BEFORE_EMBED: ${{ github.event.inputs.expected_before_embed_code }}
+          EXPECTED_BEFORE_VIDEO_ID: ${{ github.event.inputs.expected_before_video_id }}
           APPROVAL_ID: ${{ github.event.inputs.approval_id }}
+          OPERATION_ID: ${{ github.event.inputs.operation_id }}
+          REQUEST_ID: ${{ github.event.inputs.request_id }}
+          ACTOR_ID_HASH: ${{ github.event.inputs.actor_id_hash }}
+          COMMIT_ENABLED: ${{ github.event.inputs.commit_enabled }}
         run: |
           set -euo pipefail
-          echo "G-11c6a skeleton — JSON patch / commit / FTP / deploy deferred to G-11c7+"
-          test -n "$SITE_SLUG"
-          test -n "$OPERATION_ID"
-          test -n "$APPROVAL_ID"
-          test "$SITE_SLUG" = "gosaki-piano"
-          test "$OPERATION_ID" = "G-11c6-gosaki-youtube-url-web-save-non-dry-run-slice"
-          test "$APPROVAL_ID" = "G-11c6-gosaki-youtube-url-web-save-non-dry-run-slice"
-          echo "inputs OK — target JSON: tools/static-to-astro/config/sites/gosaki-piano-youtube-embed.json (future phase)"
+          APPLY_FLAG=""
+          if [ "${COMMIT_ENABLED:-false}" = "true" ]; then
+            APPLY_FLAG="--apply"
+          fi
+          node tools/static-to-astro/scripts/gosaki-youtube-url-save-workflow-json-patch.mjs \
+            --site-slug "$SITE_SLUG" \
+            --module "$MODULE" \
+            --item-id "$ITEM_ID" \
+            --youtube-url "$YOUTUBE_URL" \
+            --expected-before-embed-code "$EXPECTED_BEFORE_EMBED" \
+            --expected-before-video-id "$EXPECTED_BEFORE_VIDEO_ID" \
+            --approval-id "$APPROVAL_ID" \
+            --operation-id "$OPERATION_ID" \
+            --request-id "$REQUEST_ID" \
+            ${ACTOR_ID_HASH:+--actor-id-hash "$ACTOR_ID_HASH"} \
+            $APPLY_FLAG \
+            --json > patch-result.json
+          echo "saveReadiness=$(node -p "JSON.parse(require('fs').readFileSync('patch-result.json','utf8')).saveReadiness")" >> "$GITHUB_OUTPUT"
+          node -e "
+            const r = JSON.parse(require('fs').readFileSync('patch-result.json','utf8'));
+            console.log('G-11c8 patch plan:', JSON.stringify({
+              saveReadiness: r.saveReadiness,
+              changedFields: r.changedFields,
+              applied: r.applied,
+              requestId: r.requestId,
+            }));
+          "
 
-      # Future G-11c7+: node patch script + verifiers + manual-upload package
-      # Secrets placeholder names only (set in repo/org secrets — not in this file):
-      #   GOSAKI_STAGING_CONTENT_PUBLISH_TOKEN (GitHub PAT for workflow only)
+      - name: Commit JSON patch (G-11c10+ only — commit_enabled true)
+        if: github.event.inputs.commit_enabled == 'true' && steps.patch.outputs.saveReadiness == 'changed'
+        env:
+          REQUEST_ID: ${{ github.event.inputs.request_id }}
+          APPROVAL_ID: ${{ github.event.inputs.approval_id }}
+          OPERATION_ID: ${{ github.event.inputs.operation_id }}
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tools/static-to-astro/config/sites/gosaki-piano-youtube-embed.json
+          git commit -m "cms-kit(gosaki-youtube): patch embedCode [request_id=${REQUEST_ID}] [approval=${APPROVAL_ID}] [operation=${OPERATION_ID}]"
+          git push
+
+      # Public site reflection is separate (G-11c11+) — no remote upload in this workflow

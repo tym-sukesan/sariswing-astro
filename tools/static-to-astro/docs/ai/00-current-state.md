@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-11c7 Gosaki YouTube URL save workflow JSON patch planning (2026-06-25):** **complete** — patch `gosaki-piano-youtube-embed.json` (`embedCode` only / Option C); validation, conflict, commit strategy, G-11c8–c11 gates. **No dispatch / JSON write.** Doc: `gosaki-youtube-url-save-workflow-json-patch-planning.md`. Next: **G-11c8** workflow implementation.
+**G-11c8 Gosaki YouTube URL save workflow JSON patch implementation (2026-06-25):** **complete** — patch lib + CLI (default check-only; `--apply` gated); workflow `gosaki-youtube-url-save-staging.yml` calls patch script; `commit_enabled` default false. **No dispatch / JSON write / Save.** Doc: `gosaki-youtube-url-save-workflow-json-patch-implementation.md`. Verifier: `verify-g11c8-gosaki-youtube-url-save-workflow-json-patch-implementation.mjs`. Next: **G-11c9** preflight.
+
+**G-11c7 Gosaki YouTube URL save workflow JSON patch planning (2026-06-25):** **complete** — patch `gosaki-piano-youtube-embed.json` (`embedCode` only / Option C); validation, conflict, commit strategy, G-11c8–c11 gates. Doc: `gosaki-youtube-url-save-workflow-json-patch-planning.md`.
 
 **G-11c6d Gosaki YouTube URL save endpoint smoke and admin wiring (2026-06-25):** **complete** — commit `747b638`.
 

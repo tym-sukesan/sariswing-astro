@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-11c10c Gosaki YouTube URL save workflow dispatch execution retry (2026-06-26):** **success** — run `28219010388`; commit `9f58889` on `origin/main`; `embedCode` → `https://youtu.be/I-eY9YMq9GI`; `published` unchanged. Doc: `gosaki-youtube-url-save-workflow-dispatch-execution-result.md`. Next: **G-11c11** public reflection.
+**G-11c11 Gosaki YouTube URL save public reflection planning and local verification (2026-06-26):** **complete** — reflection path confirmed; local convert+build PASS (`I-eY9YMq9GI` → nocookie iframe); staging upload deferred. Doc: `gosaki-youtube-url-save-public-reflection-planning-and-local-verification.md`. Next: **G-11c12** package prep.
+
+**G-11c10c Gosaki YouTube URL save workflow dispatch execution retry (2026-06-26):** **success** — commit `d2dd35c` docs / `9f58889` JSON.
 
 **G-11c10c-fix Gosaki YouTube URL save workflow YAML permissions syntax (2026-06-25):** **complete** — commit `0173d4c`.
 

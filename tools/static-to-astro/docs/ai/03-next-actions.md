@@ -1,14 +1,22 @@
 Last updated: 2026-06-25
 Project: Static-to-Astro CMS / Musician CMS Kit
 
-## 0zz. G-11c10c dispatch execution retry — success
+## 0zz. G-11c11 public reflection planning + local verify — complete
 
 | Item | Value |
 | --- | --- |
-| Run | https://github.com/tym-sukesan/sariswing-astro/actions/runs/28219010388 |
-| Commit | `9f58889` on `origin/main` |
+| Phase | `G-11c11-gosaki-youtube-url-save-public-reflection-planning-and-local-verification` |
+| Doc | `gosaki-youtube-url-save-public-reflection-planning-and-local-verification.md` |
+| Local build | `output/gosaki-piano-g11c11-verify` — iframe `I-eY9YMq9GI` |
+| **Next** | `G-11c12-gosaki-youtube-url-save-staging-package-build-artifact-preparation` |
+| **Do not** | FTP / upload until G-11c14 explicit approval |
+
+## 0zz1. G-11c10c dispatch retry — success
+
+| Item | Value |
+| --- | --- |
+| JSON commit | `9f58889` |
 | `embedCode` | `https://youtu.be/I-eY9YMq9GI` |
-| **Next** | `G-11c11-gosaki-youtube-url-save-public-reflection` |
 
 ## 0zz1. G-11c10a allowlist registration — complete
 

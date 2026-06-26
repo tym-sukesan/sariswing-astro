@@ -5,17 +5,17 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-11c10c-gosaki-youtube-url-save-workflow-dispatch-execution-retry — success.
-origin/main @ 9f58889 (local may be behind until git pull)
+Current phase: G-11c11-gosaki-youtube-url-save-public-reflection-planning-and-local-verification — complete.
+branch: main @ d2dd35c
 ```
 
-**Next:** `G-11c11-gosaki-youtube-url-save-public-reflection` (FTP separate approval).
+**Next:** G-11c12 staging package prep → G-11c13 upload preflight → G-11c14 upload (approval) → G-11c15 verify.
 
-## G-11c10c retry dispatch — success
+## G-11c11 public reflection — complete
 
-- **Run:** 28219010388 — job success
-- **Commit:** `9f58889` — `gosaki-piano-youtube-embed.json` only
-- **embedCode:** `https://youtu.be/I-eY9YMq9GI`
+- **Doc:** `gosaki-youtube-url-save-public-reflection-planning-and-local-verification.md`
+- **Local:** home HTML has `youtube-nocookie.com/embed/I-eY9YMq9GI`
+- **Staging live:** still pre-upload until G-11c14
 
 ## G-11c10a allowlist registration — complete
 

@@ -1,15 +1,22 @@
 Last updated: 2026-06-25
 Project: Static-to-Astro CMS / Musician CMS Kit
 
-## 0zz. G-11c10a workflow dispatch allowlist registration — complete
+## 0zz. G-11c10b workflow dispatch final preflight — complete
 
 | Item | Value |
 | --- | --- |
-| Phase | `G-11c10a-gosaki-youtube-url-save-workflow-dispatch-allowlist-registration` |
+| Phase | `G-11c10b-gosaki-youtube-url-save-workflow-dispatch-final-preflight` |
+| Doc | `gosaki-youtube-url-save-workflow-dispatch-final-preflight.md` |
+| Recommend | Option B — changed (`I-eY9YMq9GI`), `commit_enabled=true` |
+| **Next** | `G-11c10c-gosaki-youtube-url-save-workflow-dispatch-execution` |
+| **Gate** | `承認します。この workflow_dispatch を1回だけ実行してください。` |
+
+## 0zz1. G-11c10a allowlist registration — complete
+
+| Item | Value |
+| --- | --- |
+| Commit | `282e762` |
 | Doc | `gosaki-youtube-url-save-workflow-dispatch-allowlist-registration.md` |
-| IDs | `G-11c10-gosaki-youtube-url-save-workflow-dispatch-001` / `gosaki-youtube-url-save-workflow-dispatch-001` |
-| **Next** | `G-11c10-gosaki-youtube-url-save-workflow-dispatch-execution` |
-| **Do not** | `workflow_dispatch` until G-11c10 explicit approval |
 
 ## 0zz1. G-11c9 workflow dispatch preflight — complete
 

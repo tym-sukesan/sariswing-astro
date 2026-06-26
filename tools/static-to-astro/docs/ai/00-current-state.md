@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-11c10a Gosaki YouTube URL save workflow dispatch allowlist registration (2026-06-25):** **complete** — G-11c10 `approval_id` / `operation_id` registered in patch lib allowlist; G-11c6 IDs preserved. **No dispatch / JSON write / --apply.** Doc: `gosaki-youtube-url-save-workflow-dispatch-allowlist-registration.md`. Verifier: `verify-g11c10a-gosaki-youtube-url-save-workflow-dispatch-allowlist-registration.mjs`. Next: **G-11c10** dispatch execution.
+**G-11c10b Gosaki YouTube URL save workflow dispatch final preflight (2026-06-25):** **complete** — current JSON snapshot; G-11c10c dispatch inputs finalized (Option A/B); recommend Option B changed; check-only PASS. **No dispatch / JSON write / --apply.** Doc: `gosaki-youtube-url-save-workflow-dispatch-final-preflight.md`. Verifier: `verify-g11c10b-gosaki-youtube-url-save-workflow-dispatch-final-preflight.mjs`. Next: **G-11c10c** dispatch execution.
+
+**G-11c10a Gosaki YouTube URL save workflow dispatch allowlist registration (2026-06-25):** **complete** — commit `282e762`.
 
 **G-11c9 Gosaki YouTube URL save workflow dispatch preflight (2026-06-25):** **complete** — commit `1182419`.
 

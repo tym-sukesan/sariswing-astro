@@ -5,18 +5,22 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-11c10a-gosaki-youtube-url-save-workflow-dispatch-allowlist-registration — complete.
-branch: main @ 1182419 — G-11c10a changes uncommitted
+Current phase: G-11c10b-gosaki-youtube-url-save-workflow-dispatch-final-preflight — complete.
+branch: main @ 282e762 — G-11c10b doc uncommitted
 ```
 
-**Next:** `G-11c10-gosaki-youtube-url-save-workflow-dispatch-execution` (explicit approval; dispatch ×1 only).
+**Next:** `G-11c10c-gosaki-youtube-url-save-workflow-dispatch-execution` (explicit approval; dispatch ×1; recommend Option B).
+
+## G-11c10b final preflight — complete
+
+- **Doc:** `gosaki-youtube-url-save-workflow-dispatch-final-preflight.md`
+- **Recommend:** Option B changed — `https://youtu.be/I-eY9YMq9GI`, `commit_enabled=true`
+- **Gate:** `承認します。この workflow_dispatch を1回だけ実行してください。`
+- **Do not:** dispatch until G-11c10c approval
 
 ## G-11c10a allowlist registration — complete
 
-- **Doc:** `gosaki-youtube-url-save-workflow-dispatch-allowlist-registration.md`
-- **Registered:** G-11c10 approval/operation IDs in patch lib allowlist
-- **Preserved:** G-11c6 IDs still valid
-- **Do not:** dispatch / JSON write until G-11c10 approval
+- **Commit:** `282e762`
 
 ## G-11c9 workflow dispatch preflight — complete
 

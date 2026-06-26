@@ -1,21 +1,14 @@
 Last updated: 2026-06-25
 Project: Static-to-Astro CMS / Musician CMS Kit
 
-## 0zz. G-11c10c-fix workflow YAML permissions — complete
+## 0zz. G-11c10c dispatch execution retry — success
 
 | Item | Value |
 | --- | --- |
-| Phase | `G-11c10c-fix-gosaki-youtube-url-save-workflow-yaml-permissions-syntax` |
-| Fix | `permissions: contents: write` — no `inputs.*` in permissions |
-| Block cause | HTTP 422 — workflow YAML parse failed |
-| **Next** | Commit + push fix → new approval → G-11c10c dispatch retry |
-
-## 0zz1. G-11c10c dispatch execution — blocked
-
-| Item | Value |
-| --- | --- |
-| Status | blocked — no Actions run created |
-| Doc | `gosaki-youtube-url-save-workflow-dispatch-execution-result.md` |
+| Run | https://github.com/tym-sukesan/sariswing-astro/actions/runs/28219010388 |
+| Commit | `9f58889` on `origin/main` |
+| `embedCode` | `https://youtu.be/I-eY9YMq9GI` |
+| **Next** | `G-11c11-gosaki-youtube-url-save-public-reflection` |
 
 ## 0zz1. G-11c10a allowlist registration — complete
 

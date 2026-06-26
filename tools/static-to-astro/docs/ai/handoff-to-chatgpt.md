@@ -5,21 +5,17 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-11c10c-fix-gosaki-youtube-url-save-workflow-yaml-permissions-syntax — complete.
-branch: main @ e7db19c — fix uncommitted
+Current phase: G-11c10c-gosaki-youtube-url-save-workflow-dispatch-execution-retry — success.
+origin/main @ 9f58889 (local may be behind until git pull)
 ```
 
-**Next:** Commit YAML fix + push → new explicit approval → one `workflow_dispatch` retry.
+**Next:** `G-11c11-gosaki-youtube-url-save-public-reflection` (FTP separate approval).
 
-## G-11c10c-fix YAML permissions — complete
+## G-11c10c retry dispatch — success
 
-- **Fix:** `permissions: contents: write` (removed `inputs.commit_enabled` from permissions)
-- **Block:** operator `gh workflow run` → HTTP 422, no run created
-- **Retry:** requires new `承認します。この workflow_dispatch を1回だけ実行してください。`
-
-## G-11c10c dispatch — blocked
-
-- **Doc:** `gosaki-youtube-url-save-workflow-dispatch-execution-result.md`
+- **Run:** 28219010388 — job success
+- **Commit:** `9f58889` — `gosaki-piano-youtube-embed.json` only
+- **embedCode:** `https://youtu.be/I-eY9YMq9GI`
 
 ## G-11c10a allowlist registration — complete
 

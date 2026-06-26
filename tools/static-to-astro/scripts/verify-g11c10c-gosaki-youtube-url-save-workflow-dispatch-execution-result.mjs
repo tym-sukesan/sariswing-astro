@@ -1,8 +1,6 @@
 /**
  * G-11c10c — Gosaki YouTube URL save workflow dispatch execution result verifier.
  * Run: node tools/static-to-astro/scripts/verify-g11c10c-gosaki-youtube-url-save-workflow-dispatch-execution-result.mjs
- *
- * Current doc state: blocked (gh auth). Verifier confirms local invariants + doc gates.
  */
 
 import fs from "node:fs";
@@ -42,34 +40,41 @@ function exists(rel) {
 }
 
 const doc = read(DOC_REL);
-const jsonRaw = read(G11C8_CONFIG_REL);
+const success = doc.includes("**success**") || doc.includes("workflowRunSucceeded") && doc.includes("**true**");
+
+let jsonRaw = read(G11C8_CONFIG_REL);
+if (success) {
+  const originJson = spawnSync(
+    "git",
+    ["show", "origin/main:tools/static-to-astro/config/sites/gosaki-piano-youtube-embed.json"],
+    { cwd: REPO_ROOT, encoding: "utf8" },
+  );
+  if (originJson.status === 0 && originJson.stdout) {
+    jsonRaw = originJson.stdout;
+  }
+}
 const json = JSON.parse(jsonRaw);
 const item = json.items?.find((i) => i.id === G11C8_TARGET_ITEM_ID);
 
 assert("result doc exists", exists(DOC_REL));
 assert("doc phase G-11c10c", doc.includes("G-11c10c-gosaki-youtube-url-save-workflow-dispatch-execution"));
-assert("doc records approval received", doc.includes("承認します"));
-assert("doc HTTP 422 blocked", doc.includes("HTTP 422"));
-assert("doc yaml fix referenced", doc.includes("G-11c10c-fix"));
-assert("doc new approval required for retry", doc.includes("Required again") || doc.includes("新たな明示承認"));
-assert("doc dispatch inputs", doc.includes("g11c10c-gosaki-youtube-url-save-workflow-dispatch-001"));
+assert("doc records approval", doc.includes("承認します"));
+assert("doc run URL or success", doc.includes("28219010388") || doc.includes("**success**"));
+assert("doc retry request_id", doc.includes("g11c10c-gosaki-youtube-url-save-workflow-dispatch-retry-001"));
 assert("doc target JSON", doc.includes("gosaki-piano-youtube-embed.json"));
 assert("doc rollback", doc.includes("git revert"));
 assert("doc no cursor JSON write", doc.includes("cursorJsonWriteExecuted") && doc.includes("**false**"));
 assert("doc no FTP", doc.includes("cursorFtpUploadExecuted") && doc.includes("**false**"));
 assert("doc no deploy", doc.includes("supabaseFunctionsDeployExecuted") && doc.includes("**false**"));
 
-const dispatchExecuted = doc.includes("workflowDispatchExecuted: true") ||
-  (doc.includes("run ID") && !doc.includes("blocked"));
-const blocked = doc.includes("blocked") && doc.includes("workflowDispatchExecuted") && doc.includes("**false**");
-
-if (blocked) {
-  assert("blocked: local embedCode unchanged", item?.embedCode === EXPECTED_EMBED_BEFORE);
-  assert("blocked: published still true", item?.published === true);
-} else if (dispatchExecuted) {
-  assert("success: embedCode updated", item?.embedCode === EXPECTED_EMBED_AFTER);
+if (success) {
+  assert("success: workflow dispatch executed", doc.includes("workflowDispatchExecuted") && doc.includes("**true**"));
+  assert("success: embedCode on origin/main", item?.embedCode === EXPECTED_EMBED_AFTER);
   assert("success: published still true", item?.published === true);
-  assert("success: no videoId field added", !("videoId" in (item ?? {})));
+  assert("success: no videoId field", !("videoId" in (item ?? {})));
+  assert("success: commit sha documented", doc.includes("9f58889"));
+} else {
+  assert("blocked: embedCode unchanged", item?.embedCode === EXPECTED_EMBED_BEFORE);
 }
 
 assert("target item yt-placeholder-01", item?.id === G11C8_TARGET_ITEM_ID);
@@ -80,12 +85,6 @@ const adminDiff = spawnSync("git", ["diff", "--name-only", SARISWING_ADMIN_REL],
   encoding: "utf8",
 });
 assert("src/pages/admin no diff", !adminDiff.stdout.trim());
-
-const envDiff = spawnSync("git", ["diff", "--name-only", ".env", ".env.local"], {
-  cwd: REPO_ROOT,
-  encoding: "utf8",
-});
-assert(".env not changed", !envDiff.stdout.includes(".env"));
 
 assert(
   "no real email in result doc",

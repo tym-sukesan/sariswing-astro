@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-13d1 Gosaki Event A PoC cleanup final preflight (2026-06-26):** **complete** — beforeSnapshot / after values / rollback SQL (doc only) / Save env stack documented. **No Save/SQL execution.** Doc: `gosaki-schedule-event-a-poc-cleanup-final-preflight.md`. Next: **G-13d1-event-a-poc-cleanup-execution**.
+**G-13d1 Gosaki Event A selectable row investigation (2026-06-26):** **complete** — G-13c1 Preview blocked: `not found in selectable rows`; root cause = fixed-row cleanup depends on `data-selectable-rows` not direct row read; past date **not** binding filter. **No Save/code fix.** Doc: `gosaki-schedule-event-a-poc-cleanup-selectable-row-investigation.md`. Next: **G-13d1b-target-row-resolve-fix**.
+
+**G-13d1 Gosaki Event A PoC cleanup final preflight (2026-06-26):** **complete** — beforeSnapshot / rollback SQL (doc only) / Save env stack. Doc: `gosaki-schedule-event-a-poc-cleanup-final-preflight.md`. Execution **blocked** pending G-13d1b fix.
 
 **G-13d2 Gosaki Event A admin reflection local dev verify (2026-06-26):** **complete** — operator G-13c1 dry-run Preview PASS (6 fields). Doc: `gosaki-schedule-event-a-poc-cleanup-admin-reflection-local-dev-verify-result.md`.
 

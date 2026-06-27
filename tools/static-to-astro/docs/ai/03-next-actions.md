@@ -1,13 +1,22 @@
 Last updated: 2026-06-25
 Project: Static-to-Astro CMS / Musician CMS Kit
 
-## 0zz. G-13d1 Event A cleanup final preflight — complete
+## 0zz. G-13d1 Event A selectable row investigation — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-13d1-event-a-poc-cleanup-execution-blocked-selectable-row-investigation` |
+| Error | `not found in selectable rows` on G-13c1 Preview |
+| Root cause | G-13c1 reads `data-selectable-rows` only; not direct `loadScheduleRowForSiteSlugRead` |
+| **Next** | `G-13d1b-gosaki-schedule-event-a-poc-cleanup-target-row-resolve-fix` |
+
+## 0zz0. G-13d1 Event A cleanup final preflight — complete (execution blocked)
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-13d1-final-preflight-gosaki-schedule-event-a-poc-cleanup` |
 | Target | `f687ebf3…` / `schedule-2026-03-007` |
-| **Next** | `G-13d1-event-a-poc-cleanup-execution` |
+| **Blocked by** | G-13d1b target row resolve fix |
 
 ## 0zz0. G-13d2 admin reflection local dev verify — complete
 

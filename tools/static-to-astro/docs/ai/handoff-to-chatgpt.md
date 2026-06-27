@@ -5,17 +5,24 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-13d1-final-preflight-gosaki-schedule-event-a-poc-cleanup — complete.
-branch: main @ 6a026a0 (uncommitted G-13d1 final preflight docs)
+Current phase: G-13d1-event-a-poc-cleanup-execution-blocked-selectable-row-investigation — complete.
+branch: main @ 149f3e4 (uncommitted investigation docs)
 ```
 
-**Final preflight done; Save awaits explicit approval + execution phase.**
+**G-13c1 execution blocked on Preview — fix G-13d1b before operator Save.**
 
-## G-13d1 Event A cleanup final preflight — complete
+## G-13d1 Event A selectable row investigation — complete
+
+- **Doc:** `gosaki-schedule-event-a-poc-cleanup-selectable-row-investigation.md`
+- **Error:** `Event A row (f687ebf3…) not found in selectable rows`
+- **Fix:** G-13c1 should use `loadScheduleRowForSiteSlugRead` (not `data-selectable-rows` only)
+- **Next:** G-13d1b-gosaki-schedule-event-a-poc-cleanup-target-row-resolve-fix
+
+## G-13d1 Event A cleanup final preflight — complete (execution blocked)
 
 - **Doc:** `gosaki-schedule-event-a-poc-cleanup-final-preflight.md`
 - **approval_id:** `G-13c1-gosaki-schedule-event-a-poc-text-cleanup-non-dry-run`
-- **Next:** G-13d1-event-a-poc-cleanup-execution (operator Save once)
+- **Execution:** blocked until G-13d1b
 
 ## G-13d2 admin reflection local dev verify — complete
 

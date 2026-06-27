@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-13c2e Gosaki Event B public reflection local regen + upload preflight (2026-06-28):** **complete** — `build-gosaki-staging-admin-package.mjs` PASS; July Event B cleanup in local HTML; CSS/JS hash unchanged (`index.YcHrHZH4.css`); minimal upload = **1 file** `schedule/2026-07/index.html`; live staging July **still stale** (PoC present); post-upload HTTP **not executed**. Doc: `gosaki-schedule-event-b-public-reflection-local-regen-and-upload-preflight.md`. **Next: operator manual upload execution + HTTP verify.**
+**G-13c2e Gosaki Event B public reflection upload result + HTTP verify (2026-06-28):** **complete** — operator manual upload `schedule/2026-07/index.html` ×1; HTTP **200**; Event B `2026.07.19` clean (`<>` / `出演：`); all G-9g PoC absent; CSS `index.YcHrHZH4.css` unchanged; March/Event A untouched. Doc: `gosaki-schedule-event-b-public-reflection-upload-result-and-http-verify.md`. **Next: G-13c2e closure doc.**
+
+**G-13c2e Gosaki Event B public reflection local regen + upload preflight (2026-06-28):** **complete** — `build-gosaki-staging-admin-package.mjs` PASS; minimal upload = **1 file** `schedule/2026-07/index.html`. Doc: `gosaki-schedule-event-b-public-reflection-local-regen-and-upload-preflight.md`. Upload + HTTP verify **done** — do not re-upload July HTML.
 
 **G-13c2 Gosaki Event B PoC cleanup execution result (2026-06-27):** **complete** — operator manual G-13c2 Save **succeeded** on Event B (`aa440e29…`); 6 fields cleaned; nullable fields **DB null**; `updated_at` `2026-06-27T10:17:42.60691+00:00`. Doc: `gosaki-schedule-event-b-poc-cleanup-execution-result.md`. **Do not re-click G-13c2 Save.**
 

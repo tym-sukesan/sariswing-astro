@@ -5,11 +5,22 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-13c2e-gosaki-schedule-event-b-public-reflection-local-regen-and-upload-preflight — complete.
-branch: main @ 15bf558 (G-13c2e doc/verifier uncommitted)
+Current phase: G-13c2e-gosaki-schedule-event-b-public-reflection-upload-result-and-http-verify — complete.
+branch: main @ 74ece00 (G-13c2e upload result doc uncommitted)
 ```
 
-**Event B local package regen complete. Minimal upload = 1 file `schedule/2026-07/index.html`. Live July still stale. Next: operator manual FTP upload + HTTP verify.**
+**Event B upload + HTTP verify complete. Live July clean. Next: G-13c2e closure doc.**
+
+## G-13c2e Event B public reflection upload result + HTTP verify — complete
+
+- **Doc:** `gosaki-schedule-event-b-public-reflection-upload-result-and-http-verify.md`
+- **Operator:** 戸山 — manual FTP overwrite **1 file** (`schedule/2026-07/index.html`)
+- **HTTP:** **200**; `scheduleDataSource=supabase`; Event B `2026.07.19` — `<>` + `出演：` only
+- **PoC:** all G-9g markers **absent** on live July page
+- **CSS:** `index.YcHrHZH4.css` — unchanged; `_astro/` **not** re-uploaded
+- **March:** Event A still clean (G-13e) — **not** re-uploaded
+- **Next:** **G-13c2e closure** (`gosaki-schedule-event-b-public-reflection-closure.md`)
+- **Do not:** re-upload July HTML; re-click G-13c2 Save; March re-upload
 
 ## G-13c2e Event B public reflection local regen + upload preflight — complete
 

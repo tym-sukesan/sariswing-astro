@@ -5,20 +5,25 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-13e-gosaki-schedule-event-a-poc-cleanup-public-reflection-upload-preflight — complete.
-branch: main @ cd0fb77 (uncommitted G-13e upload preflight doc)
+Current phase: G-13e-gosaki-schedule-event-a-poc-cleanup-public-reflection-upload-execution-result — complete.
+branch: main @ 4986cb8 (uncommitted G-13e upload execution result doc)
 ```
 
-**Upload preflight ready — operator manual upload ×1 next.**
+**Event A public reflection live on staging — closure doc next.**
+
+## G-13e Event A public reflection upload execution — complete
+
+- **Doc:** `gosaki-schedule-event-a-poc-cleanup-public-reflection-upload-execution-result.md`
+- **Operator:** 戸山 — 1 file overwrite; no mirror/delete
+- **URL:** `https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/schedule/2026-03/`
+- **HTTP:** 200; Event A clean; `scheduleDataSource=supabase`; no G-9k6/G-9k4
+- **Event B:** July unchanged (G-9g PoC still present)
+- **Do not re-upload**
+- **Next:** G-13e-gosaki-schedule-event-a-poc-cleanup-public-reflection-closure
 
 ## G-13e Event A public reflection upload preflight — complete
 
 - **Doc:** `gosaki-schedule-event-a-poc-cleanup-public-reflection-upload-preflight.md`
-- **Upload:** 1 file — local `…/public-dist/schedule/2026-03/index.html` → remote `/cms-kit-staging/gosaki-piano/schedule/2026-03/index.html`
-- **Method:** FileZilla / Lolipop FTP GUI overwrite — **no** mirror/delete
-- **Live gap:** March page still shows G-9k6 until upload
-- **Approval:** `承認します。この手動アップロードを1回だけ実行してください。`
-- **Next:** G-13e-gosaki-schedule-event-a-poc-cleanup-public-reflection-upload-execution
 
 ## G-13e Event A public reflection local regen — complete
 

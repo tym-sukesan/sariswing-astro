@@ -1898,6 +1898,39 @@
   }
 }
 
+/* G-13c2d2b — PoC cleanup panels below workspace (not inside sticky edit grid) */
+.gosaki-schedule-operator-poc-cleanup-panels {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  margin-top: 1.5rem;
+  width: 100%;
+  position: relative;
+  z-index: 1;
+}
+
+.admin-gosaki-schedule-g13c1,
+.admin-gosaki-schedule-g13c2 {
+  position: static;
+  max-height: none;
+  overflow: visible;
+}
+
+.admin-gosaki-section-title {
+  margin: 0 0 0.5rem;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+.gosaki-schedule-operator-poc-cleanup-panels .gosaki-schedule-edit-dry-run-actions {
+  margin-top: 0.75rem;
+}
+
+.gosaki-schedule-operator-poc-cleanup-panels .admin-actions {
+  margin-top: 0.75rem;
+}
+
 .admin-gosaki-schedule-filters {
   display: grid;
   gap: 0.75rem 1rem;

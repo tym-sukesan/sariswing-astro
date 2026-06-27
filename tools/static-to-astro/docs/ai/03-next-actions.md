@@ -1,7 +1,16 @@
 Last updated: 2026-06-27
 Project: Static-to-Astro CMS / Musician CMS Kit
 
-## 0zz. G-13c2d2 Event B local dry-run Preview preflight — complete
+## 0zz. G-13c2d2b Event B Preview UI visibility fix — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-13c2d2b-gosaki-schedule-event-b-poc-cleanup-preview-ui-visibility-fix` |
+| Fix | PoC panels outside sticky workspace grid |
+| **Next** | operator retry G-13c2 dry-run Preview |
+| Save / Preview (Cursor) | **not executed** |
+
+## 0zz0. G-13c2d2 Event B local dry-run Preview preflight — complete
 
 | Item | Value |
 | --- | --- |

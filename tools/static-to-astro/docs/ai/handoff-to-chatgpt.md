@@ -5,11 +5,20 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-13c2d2-gosaki-schedule-event-b-poc-cleanup-local-dry-run-preflight — complete.
-branch: main @ 9d64379 (uncommitted G-13c2d2 preflight doc)
+Current phase: G-13c2d2b-gosaki-schedule-event-b-poc-cleanup-preview-ui-visibility-fix — complete.
+branch: main @ 9e03b40 (uncommitted visibility fix)
 ```
 
-**Event B local dry-run Preview preflight done. Operator Preview next. Save/DB not executed.**
+**G-13c2 Preview button visibility fixed. Operator retry dry-run Preview. Save/DB not executed.**
+
+## G-13c2d2b Event B Preview UI visibility fix — complete
+
+- **Doc:** `gosaki-schedule-event-b-poc-cleanup-preview-ui-visibility-fix.md`
+- **Cause:** G-13c2 inside 2-col workspace → hidden behind sticky edit panel; only Save peeked through
+- **Fix:** `.gosaki-schedule-operator-poc-cleanup-panels` full-width below workspace (G-13c1 + G-13c2)
+- **Save:** still `disabled`
+- **Next:** operator retry G-13c2d2 Preview procedure
+- **Do not:** Save / DB / upload in this phase
 
 ## G-13c2d2 Event B local dry-run Preview preflight — complete
 

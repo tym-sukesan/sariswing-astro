@@ -1,6 +1,18 @@
 Last updated: 2026-06-28
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzz. G-14b1b Schedule CMS routine edit local dry-run Preview preflight — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-14b1b-gosaki-schedule-routine-edit-local-dry-run-preview-preflight` |
+| Doc | `gosaki-schedule-routine-edit-local-dry-run-preview-preflight.md` |
+| Target | `14230329…` / `schedule-2026-04-005` / 2026-04-12 |
+| Field | `price` only |
+| `updated_at` baseline | `2026-06-16T16:03:41.551792+00:00` |
+| **Next (recommended)** | **G-14b1b-result** — operator Preview once (Save off) |
+| **Do not** | Cursor Preview / Save in G-14b1b |
+
 ## 0zzzz. G-14b1a Schedule CMS routine edit practical Save enablement — complete
 
 | Item | Value |
@@ -37,7 +49,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | rollbackNeeded | **false** |
 | Event A / March | **untouched** |
 | G-13b (2 events) | **both closed** (A: G-13e, B: G-13c2e) |
-| **Next (recommended)** | **G-14b1b** — local dry-run Preview preflight (G-14b1a **done**) |
+| **Next (recommended)** | **G-14b1b-result** — operator Preview once (G-14b1b preflight **done**) |
 | **Do not** | re-click G-13c2 Save; re-upload July / March HTML |
 
 ## 0zz0. G-13c2e Event B public reflection upload result + HTTP verify — complete

@@ -5,11 +5,21 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-14b1a-gosaki-schedule-routine-edit-practical-save-enablement-implementation — complete.
-branch: main @ e5d4fa3 (G-14b1a implementation uncommitted)
+Current phase: G-14b1b-gosaki-schedule-routine-edit-local-dry-run-preview-preflight — complete.
+branch: main @ b161235 (G-14b1b preflight doc uncommitted)
 ```
 
-**G-14b1a routine edit practical Save enablement implemented. Next: G-14b1b local dry-run Preview preflight.**
+**G-14b1b routine edit Preview preflight complete. Next: G-14b1b-result operator Preview once (Save off).**
+
+## G-14b1b Schedule CMS routine edit local dry-run Preview preflight — complete
+
+- **Doc:** `gosaki-schedule-routine-edit-local-dry-run-preview-preflight.md`
+- **Target:** `14230329-dde5-40d6-b9b3-75aefe140daf` / `schedule-2026-04-005` / 2026-04-12
+- **beforeSnapshot `updated_at`:** `2026-06-16T16:03:41.551792+00:00`
+- **Price edit:** `3,300円(tax in)` → `3,300円（税込）` (operator input; no audit markers)
+- **Save arms:** OFF; `PUBLIC_ADMIN_WRITE_DRY_RUN=true`
+- **Next:** **G-14b1b-result** — operator Preview once; **no Save**
+- **Do not:** Cursor Preview / Save in G-14b1b
 
 ## G-14b1a Schedule CMS routine edit practical Save enablement — complete
 

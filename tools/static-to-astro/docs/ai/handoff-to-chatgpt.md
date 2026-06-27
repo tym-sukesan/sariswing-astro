@@ -5,18 +5,21 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-13d2-gosaki-schedule-event-a-poc-cleanup-admin-reflection-preflight — complete.
-branch: main @ bbb223c (uncommitted G-13d2 docs)
+Current phase: G-13d2-admin-reflection-local-dev-verify-result — complete.
+branch: main @ e74b950 (uncommitted G-13d2 verify result docs)
 ```
 
-**G-13c1 admin UI = local staging shell only; manual-upload not required for reflection.**
+**Operator G-13c1 dry-run Preview PASS; Save not executed.**
+
+## G-13d2 admin reflection local dev verify — complete
+
+- **Doc:** `gosaki-schedule-event-a-poc-cleanup-admin-reflection-local-dev-verify-result.md`
+- **Result:** panel OK; 6 `changedFields`; `ready_but_save_disabled`
+- **Next:** G-13d1-final-preflight
 
 ## G-13d2 admin reflection preflight — complete
 
 - **Doc:** `gosaki-schedule-event-a-poc-cleanup-admin-reflection-preflight.md`
-- **Route:** `http://localhost:4321/__admin-staging-shell/musician-basic/admin/schedule/`
-- **Not in:** `/cms-kit-staging/gosaki-piano/admin/` (read-only)
-- **Next:** local dev verify OR G-13d1-final-preflight
 
 ## G-13d1 Event A cleanup local implementation — complete
 

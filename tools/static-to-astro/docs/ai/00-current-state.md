@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-13d1b Gosaki Event A target row resolve fix (2026-06-26):** **complete** — G-13c1 Preview uses `loadScheduleRowForSiteSlugRead` (not `data-selectable-rows`). Save gate unchanged. Doc: `gosaki-schedule-event-a-poc-cleanup-target-row-resolve-fix.md`. Next: **G-13d1-event-a-poc-cleanup-execution-retry**.
+**G-13d1c Gosaki staging shell server gate injection (2026-06-26):** **complete** — `#staging-shell-server-gates` in `AdminGosakiStagingShellLayout.astro` (G-6-d pattern). Fixes client `ENABLE_ADMIN_STAGING_DATA_READ` for G-13c1 Preview. Doc: `gosaki-staging-shell-server-gate-injection.md`. Next: **G-13d1-event-a-poc-cleanup-execution-retry**.
+
+**G-13d1b Gosaki Event A target row resolve fix (2026-06-26):** **complete** — direct `loadScheduleRowForSiteSlugRead`. Doc: `gosaki-schedule-event-a-poc-cleanup-target-row-resolve-fix.md`.
 
 **G-13d1 Gosaki Event A selectable row investigation (2026-06-26):** **complete** — root cause = `data-selectable-rows` coupling. Doc: `gosaki-schedule-event-a-poc-cleanup-selectable-row-investigation.md`.
 

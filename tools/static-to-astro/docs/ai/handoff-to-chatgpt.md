@@ -5,17 +5,21 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-13d1b-gosaki-schedule-event-a-poc-cleanup-target-row-resolve-fix — complete.
-branch: main @ a428b69 (uncommitted G-13d1b fix)
+Current phase: G-13d1c-gosaki-staging-shell-server-gate-injection — complete.
+branch: main @ 004c6a6 (uncommitted G-13d1c layout gate injection)
 ```
 
-**G-13c1 Preview now resolves Event A via direct read — operator execution retry next.**
+**Server gate injection added — operator G-13c1 Preview retry next.**
+
+## G-13d1c Gosaki staging shell server gate injection — complete
+
+- **Doc:** `gosaki-staging-shell-server-gate-injection.md`
+- **Layout:** `AdminGosakiStagingShellLayout.astro` — `#staging-shell-server-gates`
+- **Next:** G-13d1-event-a-poc-cleanup-execution-retry
 
 ## G-13d1b Event A target row resolve fix — complete
 
 - **Doc:** `gosaki-schedule-event-a-poc-cleanup-target-row-resolve-fix.md`
-- **Module:** `gosaki-schedule-event-a-poc-cleanup-target-row-resolve.ts`
-- **Next:** G-13d1-event-a-poc-cleanup-execution-retry (operator Preview → Save once)
 
 ## G-13d1 selectable row investigation — complete
 

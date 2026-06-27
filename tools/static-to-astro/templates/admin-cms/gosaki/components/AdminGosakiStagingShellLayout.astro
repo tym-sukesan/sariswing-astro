@@ -1,6 +1,10 @@
 ---
 import AdminLayout from "../../components/AdminLayout.astro";
 import { GOSAKI_STAGING_ADMIN_BASE } from "../gosaki-staging-admin-paths";
+import {
+  getStagingShellServerGateSnapshot,
+  STAGING_SHELL_SERVER_GATES_ELEMENT_ID,
+} from "../../../../../../src/lib/admin/staging-shell/staging-shell-server-gates";
 
 interface Props {
   title: string;
@@ -8,7 +12,16 @@ interface Props {
 }
 
 const { title, brandHref = GOSAKI_STAGING_ADMIN_BASE } = Astro.props;
+
+const stagingServerGates = getStagingShellServerGateSnapshot(import.meta.env);
+const stagingServerGatesJson = JSON.stringify(stagingServerGates);
 ---
+
+<script
+  id={STAGING_SHELL_SERVER_GATES_ELEMENT_ID}
+  type="application/json"
+  set:html={stagingServerGatesJson}
+/>
 
 <AdminLayout
   title={title}

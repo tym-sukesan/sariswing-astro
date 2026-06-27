@@ -1,13 +1,19 @@
 Last updated: 2026-06-25
 Project: Static-to-Astro CMS / Musician CMS Kit
 
-## 0zz. G-13d1b Event A target row resolve fix — complete
+## 0zz. G-13d1c Gosaki staging shell server gate injection — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-13d1c-gosaki-staging-shell-server-gate-injection` |
+| Fix | `#staging-shell-server-gates` in Gosaki layout |
+| **Next** | `G-13d1-event-a-poc-cleanup-execution-retry` |
+
+## 0zz0. G-13d1b Event A target row resolve fix — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-13d1b-gosaki-schedule-event-a-poc-cleanup-target-row-resolve-fix` |
-| Fix | `resolveG13c1EventAPocCleanupTargetRow` → direct SELECT |
-| **Next** | `G-13d1-event-a-poc-cleanup-execution-retry` |
 
 ## 0zz0. G-13d1 selectable row investigation — complete
 

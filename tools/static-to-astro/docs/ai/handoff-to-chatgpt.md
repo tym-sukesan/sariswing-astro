@@ -5,13 +5,24 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-14c-gosaki-public-reflection-operation-standardization — complete.
-branch: main @ 70658c0 (uncommitted G-14c reflection playbook doc)
+Current phase: G-13c2-gosaki-schedule-event-b-poc-cleanup-preflight — complete.
+branch: main @ 0074efa (uncommitted G-13c2 preflight doc)
 ```
 
-**Public reflection operation standardized. Next: G-13c2 Event B cleanup.**
+**Event B cleanup preflight done. Expected values confirmed. Next: G-13c2d1 implementation.**
 
-## G-14c Public reflection operation standardization — complete
+## G-13c2 Event B PoC cleanup preflight — complete
+
+- **Doc:** `gosaki-schedule-event-b-poc-cleanup-preflight.md`
+- **DB:** 6 fields have G-9g PoC text; `updated_at` `2026-06-18T01:04:51.312817+00:00`
+- **Expected (confirmed):** `title=<>`; venue/open/start/price=null; `description=出演：`
+- **Sources:** seed SQL + restore template + Wix extractor (3 agree)
+- **Live July:** PoC present; **March clean** (Event A untouched)
+- **Reflection plan:** minimal `schedule/2026-07/index.html` (G-14c)
+- **Next:** **G-13c2d1** local implementation (mirror G-13c1)
+- **Do not:** Save / regen / upload in preflight phase
+
+## G-14c Public reflection standardization — complete
 
 - **Doc:** `gosaki-public-reflection-operation-standardization.md`
 - **Flow:** afterVerification → regen preflight → `build-gosaki-staging-admin-package.mjs` → local verify → upload scope → manual upload → HTTP verify

@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-14c Gosaki public reflection operation standardization (2026-06-27):** **complete** — DB→regen→upload→verify playbook; minimal/full upload rules; Schedule/YouTube/Event B playbooks. Doc: `gosaki-public-reflection-operation-standardization.md`. **Next: G-13c2** Event B cleanup.
+**G-13c2 Gosaki Event B PoC cleanup preflight (2026-06-27):** **complete** — expected values **confirmed** (Wix seed); DB + live July PoC present; Event A untouched. Doc: `gosaki-schedule-event-b-poc-cleanup-preflight.md`. **Next: G-13c2d1** local implementation. **Do not Save yet.**
+
+**G-14c Gosaki public reflection operation standardization (2026-06-27):** **complete** — DB→regen→upload→verify playbook. Doc: `gosaki-public-reflection-operation-standardization.md`.
 
 **G-14b Gosaki Schedule CMS practical editing flow definition (2026-06-27):** **complete** — operator journey, routine/failure flows, MVP field scope. Doc: `gosaki-schedule-cms-practical-editing-flow-definition.md`.
 

@@ -1,15 +1,17 @@
 Last updated: 2026-06-27
 Project: Static-to-Astro CMS / Musician CMS Kit
 
-## 0zz. G-14c Public reflection operation standardization — complete
+## 0zz. G-13c2 Event B PoC cleanup preflight — complete
 
 | Item | Value |
 | --- | --- |
-| Phase | `G-14c-gosaki-public-reflection-operation-standardization` |
-| Playbook | afterVerification → regen → scope decision → upload → HTTP verify |
-| Minimal upload | single `schedule/YYYY-MM/index.html` when CSS unchanged |
-| **Next** | `G-13c2-gosaki-schedule-event-b-poc-cleanup-*` |
-| Then | `G-14b1` practical Save enablement |
+| Phase | `G-13c2-gosaki-schedule-event-b-poc-cleanup-preflight` |
+| Row | `aa440e29…` / `schedule-2026-07-010` / `2026-07-19` |
+| Expected | `<>` / null times / `出演：` (Wix seed — **confirmed**) |
+| **Next** | `G-13c2d1-gosaki-schedule-event-b-poc-cleanup-local-implementation` |
+| Event A / March | **untouched** |
+
+## 0zz0. G-14c Public reflection standardization — complete
 
 ## 0zz0. G-14b Schedule CMS practical editing flow — complete
 

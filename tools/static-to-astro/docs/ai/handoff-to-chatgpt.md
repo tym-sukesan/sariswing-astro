@@ -5,11 +5,25 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-13e-gosaki-schedule-event-a-poc-cleanup-public-reflection-closure — complete.
-branch: main @ 08c3e60 (uncommitted G-13e closure doc)
+Current phase: G-14a-gosaki-cms-completion-roadmap-gap-inventory — complete.
+branch: main @ e0a9656 (uncommitted G-14a roadmap doc)
 ```
 
-**Event A PoC cleanup chain (G-13d1→G-13e) closed.**
+**Gosaki CMS completion roadmap gap inventory done. Client preview excluded from dev tasks.**
+
+## G-14a Gosaki CMS completion roadmap — complete
+
+- **Doc:** `gosaki-cms-completion-roadmap-gap-inventory.md`
+- **MVP estimate:** Schedule+YouTube practical ~65%; full chain proven (G-13e)
+- **Gaps:** practical Schedule edit flow, reflection ops standardization, Event B PoC, kit separation
+- **Next:** **G-14b** Schedule practical editing flow definition (low risk)
+- **Then:** G-14c reflection playbook → G-13c2 Event B cleanup
+- **Not dev tasks:** client preview share / Gosaki本人への共有・日程調整
+
+## G-13e Event A PoC cleanup public reflection closure — complete
+
+- **Doc:** `gosaki-schedule-event-a-poc-cleanup-public-reflection-closure.md`
+- **Chain:** G-13d1→G-13e closed; March clean; Event B deferred
 
 ## G-13e Event A PoC cleanup public reflection closure — complete
 

@@ -1,7 +1,16 @@
 Last updated: 2026-06-27
 Project: Static-to-Astro CMS / Musician CMS Kit
 
-## 0zz. G-13e Event A PoC cleanup public reflection closure — complete
+## 0zz. G-14a Gosaki CMS completion roadmap gap inventory — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-14a-gosaki-cms-completion-roadmap-gap-inventory` |
+| Scope | CMS/system completion gaps; client preview **out of dev scope** |
+| **Next** | `G-14b-gosaki-schedule-cms-practical-editing-flow-definition` |
+| Then | `G-14c` public reflection ops → `G-13c2` Event B cleanup |
+
+## 0zz0. G-13e Event A PoC cleanup public reflection closure — complete
 
 | Item | Value |
 | --- | --- |

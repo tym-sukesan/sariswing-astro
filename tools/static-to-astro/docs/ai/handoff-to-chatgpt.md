@@ -5,11 +5,21 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-14b1b-gosaki-schedule-routine-edit-local-dry-run-preview-preflight — complete.
-branch: main @ b161235 (G-14b1b preflight doc uncommitted)
+Current phase: G-14b1b-result-gosaki-schedule-routine-edit-local-dry-run-preview-result — complete.
+branch: main @ e16a55f (G-14b1b-result doc uncommitted)
 ```
 
-**G-14b1b routine edit Preview preflight complete. Next: G-14b1b-result operator Preview once (Save off).**
+**G-14b1b-result routine edit Preview PASS. Next: G-14b1c final preflight (G-9k Save path).**
+
+## G-14b1b-result Schedule CMS routine edit local dry-run Preview result — complete
+
+- **Doc:** `gosaki-schedule-routine-edit-local-dry-run-preview-result.md`
+- **Preview:** operator used G-9g1 dev-tools `Preview G-9 site_slug general edit dry-run` — **PASS** (`actualWrite: false`, `changedFields: price`)
+- **DB after Preview:** price / `updated_at` **unchanged** (`2026-06-16T16:03:41.551792+00:00`)
+- **Save path:** **G-9k** `G-9k-gosaki-schedule-existing-event-save-button-non-dry-run` + `PUBLIC_ADMIN_GOSAKI_SCHEDULE_PRACTICAL_EDIT_NON_DRY_RUN_ARMED` — **not G-9g3g**
+- **G-14b1a:** no code change required
+- **Next:** **G-14b1c** — final preflight + optional G-9k `変更を確認` before Save
+- **Do not:** Save until G-14b1c
 
 ## G-14b1b Schedule CMS routine edit local dry-run Preview preflight — complete
 

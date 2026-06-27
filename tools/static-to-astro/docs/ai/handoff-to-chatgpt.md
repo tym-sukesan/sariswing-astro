@@ -5,11 +5,19 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-14b-gosaki-schedule-cms-practical-editing-flow-definition — complete.
-branch: main @ 995877c (uncommitted G-14b flow definition doc)
+Current phase: G-14c-gosaki-public-reflection-operation-standardization — complete.
+branch: main @ 70658c0 (uncommitted G-14c reflection playbook doc)
 ```
 
-**Schedule CMS practical editing flow defined. Next: G-14c reflection playbook.**
+**Public reflection operation standardized. Next: G-13c2 Event B cleanup.**
+
+## G-14c Public reflection operation standardization — complete
+
+- **Doc:** `gosaki-public-reflection-operation-standardization.md`
+- **Flow:** afterVerification → regen preflight → `build-gosaki-staging-admin-package.mjs` → local verify → upload scope → manual upload → HTTP verify
+- **Minimal:** `schedule/YYYY-MM/index.html` when CSS hash unchanged (G-13e pattern)
+- **Full:** 27-file `public-dist/` when CSS/home/hub/multi-page changed (G-11c pattern)
+- **Next:** **G-13c2** Event B cleanup (`schedule/2026-07/index.html`) → **G-14b1** Save enablement
 
 ## G-14b Schedule CMS practical editing flow — complete
 

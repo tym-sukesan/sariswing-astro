@@ -1,15 +1,17 @@
 Last updated: 2026-06-27
 Project: Static-to-Astro CMS / Musician CMS Kit
 
-## 0zz. G-14b Schedule CMS practical editing flow definition — complete
+## 0zz. G-14c Public reflection operation standardization — complete
 
 | Item | Value |
 | --- | --- |
-| Phase | `G-14b-gosaki-schedule-cms-practical-editing-flow-definition` |
-| Product path | G-9k picker + 6 safe fields + multi-field Save |
-| date/month | **Deferred** from practical MVP |
-| **Next** | `G-14c-gosaki-schedule-public-reflection-operation-standardization` |
-| Then | `G-13c2` Event B cleanup → `G-14b1` Save enablement |
+| Phase | `G-14c-gosaki-public-reflection-operation-standardization` |
+| Playbook | afterVerification → regen → scope decision → upload → HTTP verify |
+| Minimal upload | single `schedule/YYYY-MM/index.html` when CSS unchanged |
+| **Next** | `G-13c2-gosaki-schedule-event-b-poc-cleanup-*` |
+| Then | `G-14b1` practical Save enablement |
+
+## 0zz0. G-14b Schedule CMS practical editing flow — complete
 
 ## 0zz0. G-14a Gosaki CMS completion roadmap — complete
 

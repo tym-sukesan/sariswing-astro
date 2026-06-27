@@ -14,6 +14,10 @@ import {
   resolveG13c1EventAPocCleanupPageServerConfig,
 } from "../../../../../../src/lib/admin/staging-write/gosaki-schedule-event-a-poc-cleanup-page-config";
 import {
+  G13C2_EVENT_B_POC_CLEANUP_PAGE_CONFIG_ELEMENT_ID,
+  resolveG13c2EventBPocCleanupPageServerConfig,
+} from "../../../../../../src/lib/admin/staging-write/gosaki-schedule-event-b-poc-cleanup-page-config";
+import {
   GOSAKI_STAGING_ADMIN_BASE,
   GOSAKI_STAGING_PREVIEW_URL,
 } from "../gosaki-staging-admin-paths";
@@ -26,6 +30,7 @@ const { binding } = Astro.props;
 
 const g9kSaveButtonPageConfig = resolveG9kSaveButtonPageServerConfig(import.meta.env);
 const g13c1PageConfig = resolveG13c1EventAPocCleanupPageServerConfig(import.meta.env);
+const g13c2PageConfig = resolveG13c2EventBPocCleanupPageServerConfig(import.meta.env);
 
 const savePrepNote = g9kSaveButtonPageConfig.saveButtonSaveEnabled
   ? "「変更を確認」で内容を確認してから「更新する」を押してください。"
@@ -482,10 +487,65 @@ function displayValue(value: string | null | undefined): string {
         aria-live="polite"
       ></div>
     </section>
+
+    <section
+      id="gosaki-schedule-g13c2-event-b-poc-cleanup"
+      class="admin-gosaki-schedule-g13c2 admin-prototype-section"
+      aria-label="G-13c2 Event B PoC cleanup"
+    >
+      <h2 class="admin-gosaki-section-title">G-13c2 — Event B PoC 文言クリーンアップ</h2>
+      <p class="admin-form__hint">
+        対象: <code>schedule-2026-07-010</code>（2026-07-19）。6フィールド一括復元（venue/open/start/price は DB null）。Save は env arm 未設定時は無効です。
+      </p>
+      <div
+        id={G13C2_EVENT_B_POC_CLEANUP_PAGE_CONFIG_ELEMENT_ID}
+        data-g13c2-save-compile-gate-enabled={g13c2PageConfig.saveCompileGateEnabled ? "true" : "false"}
+        data-g13c2-staging-shell-enabled={g13c2PageConfig.stagingShellEnabled ? "true" : "false"}
+        data-g13c2-staging-write-enabled={g13c2PageConfig.stagingWriteEnabled ? "true" : "false"}
+        data-g13c2-env-arm-armed={g13c2PageConfig.envArmArmed ? "true" : "false"}
+        data-g13c2-write-dry-run-disabled={g13c2PageConfig.writeDryRunDisabled ? "true" : "false"}
+        data-g13c2-write-provider={g13c2PageConfig.writeProvider}
+        data-g13c2-write-module={g13c2PageConfig.writeModule}
+        data-g13c2-write-approval-id={g13c2PageConfig.writeApprovalId}
+        hidden
+      />
+      <div class="gosaki-schedule-edit-dry-run-actions">
+        <button
+          type="button"
+          class="admin-button admin-button-secondary"
+          id="gosaki-g13c2-event-b-poc-cleanup-preview-btn"
+        >
+          G-13c2 変更を確認（dry-run）
+        </button>
+      </div>
+      <div
+        id="gosaki-g13c2-event-b-poc-cleanup-preview-result"
+        class="gosaki-schedule-edit-dry-run"
+        hidden
+        aria-live="polite"
+      ></div>
+      <div class="admin-actions">
+        <button
+          type="button"
+          class="admin-button"
+          id="gosaki-g13c2-event-b-poc-cleanup-save-btn"
+          disabled
+        >
+          Event B cleanup 保存（無効）
+        </button>
+      </div>
+      <div
+        id="gosaki-g13c2-event-b-poc-cleanup-save-result"
+        class="gosaki-schedule-edit-save-result"
+        hidden
+        aria-live="polite"
+      ></div>
+    </section>
   </div>
 </section>
 
 <script>
   import "../../../../../../src/lib/admin/staging-data/gosaki-staging-schedule-operator-ui.ts";
   import "../../../../../../src/lib/admin/staging-data/gosaki-schedule-event-a-poc-cleanup-ui.ts";
+  import "../../../../../../src/lib/admin/staging-data/gosaki-schedule-event-b-poc-cleanup-ui.ts";
 </script>

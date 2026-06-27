@@ -5,11 +5,24 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-13c2-gosaki-schedule-event-b-poc-cleanup-preflight — complete.
-branch: main @ 0074efa (uncommitted G-13c2 preflight doc)
+Current phase: G-13c2d1-gosaki-schedule-event-b-poc-cleanup-slice-implementation — complete.
+branch: main @ 4419565 (uncommitted G-13c2d1 implementation)
 ```
 
-**Event B cleanup preflight done. Expected values confirmed. Next: G-13c2d1 implementation.**
+**Event B cleanup slice implemented locally. Save/DB not executed. Next: G-13c2 final preflight.**
+
+## G-13c2d1 Event B PoC cleanup slice implementation — complete
+
+- **Doc:** `gosaki-schedule-event-b-poc-cleanup-slice-implementation.md`
+- **Modules:** config / guards / dry-run / save / page-config / target-row-resolve / UI + Astro G-13c2 panel
+- **Target:** `aa440e29…` / `schedule-2026-07-010` / `2026-07-19` / `gosaki-piano`
+- **Expected:** `title=<>`; venue/open/start/price=**DB null**; `description=出演：`
+- **Env:** `PUBLIC_ADMIN_SCHEDULE_G13C2_EVENT_B_POC_CLEANUP_NON_DRY_RUN_ARMED` + `PUBLIC_ADMIN_G13C2_EVENT_B_POC_CLEANUP_SAVE_ENABLED`
+- **Approval:** `G-13c2-gosaki-schedule-event-b-poc-audit-cleanup-non-dry-run`
+- **Single-arm:** G-13c1 ↔ G-13c2 mutually exclusive
+- **Event A / March:** untouched
+- **Next:** **G-13c2 final preflight** → operator Save once → G-13c2e reflection (`schedule/2026-07/index.html`)
+- **Do not:** Save / DB write / regen / upload in this phase
 
 ## G-13c2 Event B PoC cleanup preflight — complete
 
@@ -19,7 +32,7 @@ branch: main @ 0074efa (uncommitted G-13c2 preflight doc)
 - **Sources:** seed SQL + restore template + Wix extractor (3 agree)
 - **Live July:** PoC present; **March clean** (Event A untouched)
 - **Reflection plan:** minimal `schedule/2026-07/index.html` (G-14c)
-- **Next:** **G-13c2d1** local implementation (mirror G-13c1)
+- **Next:** **G-13c2 final preflight** → execution → reflection
 - **Do not:** Save / regen / upload in preflight phase
 
 ## G-14c Public reflection standardization — complete

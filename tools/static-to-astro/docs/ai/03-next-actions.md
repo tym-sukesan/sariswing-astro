@@ -1,7 +1,19 @@
 Last updated: 2026-06-27
 Project: Static-to-Astro CMS / Musician CMS Kit
 
-## 0zz. G-13c2 Event B PoC cleanup preflight — complete
+## 0zz. G-13c2d1 Event B PoC cleanup slice implementation — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-13c2d1-gosaki-schedule-event-b-poc-cleanup-slice-implementation` |
+| Row | `aa440e29…` / `schedule-2026-07-010` / `2026-07-19` |
+| Expected | `<>` / null times / `出演：` |
+| Verifier | `verify-g13c2d1-gosaki-schedule-event-b-poc-cleanup-slice-implementation.mjs` |
+| **Next** | `G-13c2-gosaki-schedule-event-b-poc-cleanup-final-preflight` |
+| Event A / March | **untouched** |
+| Save / DB | **not executed** |
+
+## 0zz0. G-13c2 Event B PoC cleanup preflight — complete
 
 | Item | Value |
 | --- | --- |
@@ -9,7 +21,6 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Row | `aa440e29…` / `schedule-2026-07-010` / `2026-07-19` |
 | Expected | `<>` / null times / `出演：` (Wix seed — **confirmed**) |
 | **Next** | `G-13c2d1-gosaki-schedule-event-b-poc-cleanup-local-implementation` |
-| Event A / March | **untouched** |
 
 ## 0zz0. G-14c Public reflection standardization — complete
 

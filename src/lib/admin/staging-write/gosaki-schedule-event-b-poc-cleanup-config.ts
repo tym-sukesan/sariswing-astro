@@ -1,5 +1,5 @@
 /**
- * G-13d1 / G-13c1 — Gosaki Event A PoC visible text cleanup (staging shell only).
+ * G-13c2d1 / G-13c2 — Gosaki Event B PoC visible text cleanup (staging shell only).
  */
 
 import { mergeStagingShellEnv } from "../staging-shell/staging-shell-client-gates";
@@ -23,38 +23,40 @@ import {
   SCHEDULE_G9G4A1_VENUE_ONLY_NON_DRY_RUN_ARMED_ENV,
 } from "../staging-data/staging-schedule-site-slug-config";
 import {
-  G13C1_SCHEDULE_EVENT_A_POC_CLEANUP_NON_DRY_RUN_APPROVAL_ID,
+  G13C2_SCHEDULE_EVENT_B_POC_AUDIT_CLEANUP_NON_DRY_RUN_APPROVAL_ID,
 } from "./schedule-write-types";
 import {
   SCHEDULE_NON_DRY_RUN_POC_EXPECTED_PROJECT,
   SCHEDULE_NON_DRY_RUN_POC_EXPECTED_SUPABASE_HOST,
 } from "./schedule-non-dry-run-poc-config";
 import {
-  applyG13c1EventAPocCleanupPageConfigToEnv,
-  readG13c1EventAPocCleanupPageConfigFromDom,
-} from "./gosaki-schedule-event-a-poc-cleanup-page-config";
-import { collectG13c2EventBPocCleanupArmOffFailures } from "./gosaki-schedule-event-b-poc-cleanup-config";
+  applyG13c2EventBPocCleanupPageConfigToEnv,
+  readG13c2EventBPocCleanupPageConfigFromDom,
+} from "./gosaki-schedule-event-b-poc-cleanup-page-config";
+
+const G13C1_EVENT_A_POC_CLEANUP_ARM_ENV =
+  "PUBLIC_ADMIN_SCHEDULE_G13C1_EVENT_A_POC_CLEANUP_NON_DRY_RUN_ARMED";
 
 const GOSAKI_EXISTING_EVENT_SAVE_BUTTON_ARM_ENV =
   "PUBLIC_ADMIN_GOSAKI_SCHEDULE_EXISTING_EVENT_SAVE_BUTTON_NON_DRY_RUN_ARMED";
 
-export const G13D1_PHASE =
-  "G-13d1-gosaki-schedule-event-a-poc-cleanup-local-implementation";
+export const G13C2D1_PHASE =
+  "G-13c2d1-gosaki-schedule-event-b-poc-cleanup-slice-implementation";
 
-export const G13C1_EVENT_A_POC_CLEANUP_OPERATION_ID =
-  "gosaki-schedule-event-a-poc-cleanup";
+export const G13C2_EVENT_B_POC_CLEANUP_OPERATION_ID =
+  "gosaki-schedule-event-b-poc-cleanup";
 
-export const SCHEDULE_G13C1_EVENT_A_POC_CLEANUP_NON_DRY_RUN_ARMED_ENV =
-  "PUBLIC_ADMIN_SCHEDULE_G13C1_EVENT_A_POC_CLEANUP_NON_DRY_RUN_ARMED";
+export const SCHEDULE_G13C2_EVENT_B_POC_CLEANUP_NON_DRY_RUN_ARMED_ENV =
+  "PUBLIC_ADMIN_SCHEDULE_G13C2_EVENT_B_POC_CLEANUP_NON_DRY_RUN_ARMED";
 
-export const G13C1_EVENT_A_POC_CLEANUP_TARGET_ROW_ID =
-  "f687ebf3-407c-49d0-9ab8-58040c499b8e";
+export const G13C2_EVENT_B_POC_CLEANUP_TARGET_ROW_ID =
+  "aa440e29-5be8-402e-9190-0d81c48434c0";
 
-export const G13C1_EVENT_A_POC_CLEANUP_TARGET_LEGACY_ID = "schedule-2026-03-007";
+export const G13C2_EVENT_B_POC_CLEANUP_TARGET_LEGACY_ID = "schedule-2026-07-010";
 
-export const G13C1_EVENT_A_POC_CLEANUP_TARGET_DATE = "2026-03-15";
+export const G13C2_EVENT_B_POC_CLEANUP_TARGET_DATE = "2026-07-19";
 
-export const G13C1_EVENT_A_POC_CLEANUP_CHANGED_FIELDS = [
+export const G13C2_EVENT_B_POC_CLEANUP_CHANGED_FIELDS = [
   "title",
   "venue",
   "open_time",
@@ -63,56 +65,49 @@ export const G13C1_EVENT_A_POC_CLEANUP_CHANGED_FIELDS = [
   "description",
 ] as const;
 
-export const G13C1_EVENT_A_POC_CLEANUP_EXPECTED_TITLE = "<Duo>";
+export const G13C2_EVENT_B_POC_CLEANUP_EXPECTED_TITLE = "<>";
 
-export const G13C1_EVENT_A_POC_CLEANUP_EXPECTED_VENUE = "川崎 ぴあにしも";
+/** Form sentinel for DB null fields — normalized to null in payload. */
+export const G13C2_EVENT_B_POC_CLEANUP_NULL_FIELD_FORM_VALUE = "";
 
-export const G13C1_EVENT_A_POC_CLEANUP_EXPECTED_OPEN_TIME = "15:00";
+export const G13C2_EVENT_B_POC_CLEANUP_EXPECTED_DESCRIPTION = "出演：";
 
-export const G13C1_EVENT_A_POC_CLEANUP_EXPECTED_START_TIME = "15:30";
+export const G13C2_EVENT_B_POC_CLEANUP_SAVE_DISABLED_DEFAULT_REASON =
+  "G-13c2 Event B PoC cleanup Save disabled — arm not configured (routine dev safety).";
 
-export const G13C1_EVENT_A_POC_CLEANUP_EXPECTED_PRICE = "3,000円";
+export const G13C2_SAVE_PHASE = "G-13c2-gosaki-schedule-event-b-poc-cleanup-save";
 
-export const G13C1_EVENT_A_POC_CLEANUP_EXPECTED_DESCRIPTION =
-  "出演：長谷川薫vo 後藤沙紀pf\n会場website: http://pubhpp.com/";
+export const G13C2_SAVE_ENABLED_ENV =
+  "PUBLIC_ADMIN_G13C2_EVENT_B_POC_CLEANUP_SAVE_ENABLED";
 
-export const G13C1_EVENT_A_POC_CLEANUP_SAVE_DISABLED_DEFAULT_REASON =
-  "G-13c1 Event A PoC cleanup Save disabled — arm not configured (routine dev safety).";
-
-export const G13C1_SAVE_PHASE = "G-13c1-gosaki-schedule-event-a-poc-cleanup-save";
-
-/** Runtime compile gate env — default off (routine dev). */
-export const G13C1_SAVE_ENABLED_ENV =
-  "PUBLIC_ADMIN_G13C1_EVENT_A_POC_CLEANUP_SAVE_ENABLED";
-
-export function isG13c1SaveCompileGateEnabled(env: ImportMetaEnv): boolean {
-  return String(env[G13C1_SAVE_ENABLED_ENV] ?? "").trim() === "true";
+export function isG13c2SaveCompileGateEnabled(env: ImportMetaEnv): boolean {
+  return String(env[G13C2_SAVE_ENABLED_ENV] ?? "").trim() === "true";
 }
 
-export const G13C1_PREVIEW_BTN_ID = "gosaki-g13c1-event-a-poc-cleanup-preview-btn";
+export const G13C2_PREVIEW_BTN_ID = "gosaki-g13c2-event-b-poc-cleanup-preview-btn";
 
-export const G13C1_PREVIEW_RESULT_ID = "gosaki-g13c1-event-a-poc-cleanup-preview-result";
+export const G13C2_PREVIEW_RESULT_ID = "gosaki-g13c2-event-b-poc-cleanup-preview-result";
 
-export const G13C1_SAVE_BTN_ID = "gosaki-g13c1-event-a-poc-cleanup-save-btn";
+export const G13C2_SAVE_BTN_ID = "gosaki-g13c2-event-b-poc-cleanup-save-btn";
 
-export const G13C1_SAVE_RESULT_ID = "gosaki-g13c1-event-a-poc-cleanup-save-result";
+export const G13C2_SAVE_RESULT_ID = "gosaki-g13c2-event-b-poc-cleanup-save-result";
 
-export type G13c1EventAPocCleanupSafeField =
-  (typeof G13C1_EVENT_A_POC_CLEANUP_CHANGED_FIELDS)[number];
+export type G13c2EventBPocCleanupSafeField =
+  (typeof G13C2_EVENT_B_POC_CLEANUP_CHANGED_FIELDS)[number];
 
-export type G13c1EventAPocCleanupFormValues = Record<
-  G13c1EventAPocCleanupSafeField,
+export type G13c2EventBPocCleanupFormValues = Record<
+  G13c2EventBPocCleanupSafeField,
   string
 >;
 
-export function buildG13c1EventAPocCleanupTargetFormValues(): G13c1EventAPocCleanupFormValues {
+export function buildG13c2EventBPocCleanupTargetFormValues(): G13c2EventBPocCleanupFormValues {
   return {
-    title: G13C1_EVENT_A_POC_CLEANUP_EXPECTED_TITLE,
-    venue: G13C1_EVENT_A_POC_CLEANUP_EXPECTED_VENUE,
-    open_time: G13C1_EVENT_A_POC_CLEANUP_EXPECTED_OPEN_TIME,
-    start_time: G13C1_EVENT_A_POC_CLEANUP_EXPECTED_START_TIME,
-    price: G13C1_EVENT_A_POC_CLEANUP_EXPECTED_PRICE,
-    description: G13C1_EVENT_A_POC_CLEANUP_EXPECTED_DESCRIPTION,
+    title: G13C2_EVENT_B_POC_CLEANUP_EXPECTED_TITLE,
+    venue: G13C2_EVENT_B_POC_CLEANUP_NULL_FIELD_FORM_VALUE,
+    open_time: G13C2_EVENT_B_POC_CLEANUP_NULL_FIELD_FORM_VALUE,
+    start_time: G13C2_EVENT_B_POC_CLEANUP_NULL_FIELD_FORM_VALUE,
+    price: G13C2_EVENT_B_POC_CLEANUP_NULL_FIELD_FORM_VALUE,
+    description: G13C2_EVENT_B_POC_CLEANUP_EXPECTED_DESCRIPTION,
   };
 }
 
@@ -127,32 +122,32 @@ function looksLikeProductionBlocked(env: ImportMetaEnv): boolean {
   return env.PROD === true;
 }
 
-export function isG13c1EventAPocCleanupEnvArmTrue(env: ImportMetaEnv): boolean {
-  return isEnvArmTrue(env, SCHEDULE_G13C1_EVENT_A_POC_CLEANUP_NON_DRY_RUN_ARMED_ENV);
+export function isG13c2EventBPocCleanupEnvArmTrue(env: ImportMetaEnv): boolean {
+  return isEnvArmTrue(env, SCHEDULE_G13C2_EVENT_B_POC_CLEANUP_NON_DRY_RUN_ARMED_ENV);
 }
 
-/** Mutual exclusion — call from other schedule write configs. */
-export function collectG13c1EventAPocCleanupArmOffFailures(
+export function collectG13c2EventBPocCleanupArmOffFailures(
   env: ImportMetaEnv,
 ): string[] {
-  if (isG13c1EventAPocCleanupEnvArmTrue(env)) {
-    return [`${SCHEDULE_G13C1_EVENT_A_POC_CLEANUP_NON_DRY_RUN_ARMED_ENV} must be off`];
+  if (isG13c2EventBPocCleanupEnvArmTrue(env)) {
+    return [`${SCHEDULE_G13C2_EVENT_B_POC_CLEANUP_NON_DRY_RUN_ARMED_ENV} must be off`];
   }
   return [];
 }
 
-export interface G13c1EventAPocCleanupConfig {
-  phase: typeof G13D1_PHASE;
-  operationId: typeof G13C1_EVENT_A_POC_CLEANUP_OPERATION_ID;
-  approvalId: typeof G13C1_SCHEDULE_EVENT_A_POC_CLEANUP_NON_DRY_RUN_APPROVAL_ID;
-  envArm: typeof SCHEDULE_G13C1_EVENT_A_POC_CLEANUP_NON_DRY_RUN_ARMED_ENV;
-  targetRowId: typeof G13C1_EVENT_A_POC_CLEANUP_TARGET_ROW_ID;
-  targetLegacyId: typeof G13C1_EVENT_A_POC_CLEANUP_TARGET_LEGACY_ID;
+export interface G13c2EventBPocCleanupConfig {
+  phase: typeof G13C2D1_PHASE;
+  operationId: typeof G13C2_EVENT_B_POC_CLEANUP_OPERATION_ID;
+  approvalId: typeof G13C2_SCHEDULE_EVENT_B_POC_AUDIT_CLEANUP_NON_DRY_RUN_APPROVAL_ID;
+  envArm: typeof SCHEDULE_G13C2_EVENT_B_POC_CLEANUP_NON_DRY_RUN_ARMED_ENV;
+  targetRowId: typeof G13C2_EVENT_B_POC_CLEANUP_TARGET_ROW_ID;
+  targetLegacyId: typeof G13C2_EVENT_B_POC_CLEANUP_TARGET_LEGACY_ID;
+  targetDate: typeof G13C2_EVENT_B_POC_CLEANUP_TARGET_DATE;
   siteSlug: typeof STAGING_SHELL_GOSAKI_SCHEDULE_SITE_SLUG;
   armed: boolean;
   saveEnabled: boolean;
   armFailureReason?: string;
-  defaultDisabledReason: typeof G13C1_EVENT_A_POC_CLEANUP_SAVE_DISABLED_DEFAULT_REASON;
+  defaultDisabledReason: typeof G13C2_EVENT_B_POC_CLEANUP_SAVE_DISABLED_DEFAULT_REASON;
   dev: boolean;
   stagingShellEnabled: boolean;
   stagingWriteFlag: boolean;
@@ -167,18 +162,18 @@ export interface G13c1EventAPocCleanupConfig {
   projectAllowlistPassed: boolean;
 }
 
-export function getG13c1EventAPocCleanupConfig(
+export function getG13c2EventBPocCleanupConfig(
   env: ImportMetaEnv = import.meta.env,
-): G13c1EventAPocCleanupConfig {
+): G13c2EventBPocCleanupConfig {
   let mergedEnv = mergeStagingShellEnv(env);
-  const pageConfig = readG13c1EventAPocCleanupPageConfigFromDom();
+  const pageConfig = readG13c2EventBPocCleanupPageConfigFromDom();
   if (pageConfig) {
-    mergedEnv = applyG13c1EventAPocCleanupPageConfigToEnv(mergedEnv, pageConfig);
+    mergedEnv = applyG13c2EventBPocCleanupPageConfigToEnv(mergedEnv, pageConfig);
   }
   const dev = mergedEnv.DEV === true;
   const stagingShellEnabled = mergedEnv.ENABLE_ADMIN_STAGING_SHELL === "true";
   const stagingWriteFlag = mergedEnv.ENABLE_ADMIN_STAGING_WRITE === "true";
-  const armedFlagMatch = isG13c1EventAPocCleanupEnvArmTrue(mergedEnv);
+  const armedFlagMatch = isG13c2EventBPocCleanupEnvArmTrue(mergedEnv);
   const dryRun =
     String(mergedEnv.PUBLIC_ADMIN_WRITE_DRY_RUN ?? "true").trim() !== "false";
   const supabaseUrl = String(mergedEnv.PUBLIC_SUPABASE_URL ?? "").trim();
@@ -191,17 +186,18 @@ export function getG13c1EventAPocCleanupConfig(
   const module = String(mergedEnv.PUBLIC_ADMIN_WRITE_MODULE ?? "").trim();
   const approvalIdEnv = String(mergedEnv.PUBLIC_ADMIN_WRITE_APPROVAL_ID ?? "").trim();
 
-  const base: G13c1EventAPocCleanupConfig = {
-    phase: G13D1_PHASE,
-    operationId: G13C1_EVENT_A_POC_CLEANUP_OPERATION_ID,
-    approvalId: G13C1_SCHEDULE_EVENT_A_POC_CLEANUP_NON_DRY_RUN_APPROVAL_ID,
-    envArm: SCHEDULE_G13C1_EVENT_A_POC_CLEANUP_NON_DRY_RUN_ARMED_ENV,
-    targetRowId: G13C1_EVENT_A_POC_CLEANUP_TARGET_ROW_ID,
-    targetLegacyId: G13C1_EVENT_A_POC_CLEANUP_TARGET_LEGACY_ID,
+  const base: G13c2EventBPocCleanupConfig = {
+    phase: G13C2D1_PHASE,
+    operationId: G13C2_EVENT_B_POC_CLEANUP_OPERATION_ID,
+    approvalId: G13C2_SCHEDULE_EVENT_B_POC_AUDIT_CLEANUP_NON_DRY_RUN_APPROVAL_ID,
+    envArm: SCHEDULE_G13C2_EVENT_B_POC_CLEANUP_NON_DRY_RUN_ARMED_ENV,
+    targetRowId: G13C2_EVENT_B_POC_CLEANUP_TARGET_ROW_ID,
+    targetLegacyId: G13C2_EVENT_B_POC_CLEANUP_TARGET_LEGACY_ID,
+    targetDate: G13C2_EVENT_B_POC_CLEANUP_TARGET_DATE,
     siteSlug: STAGING_SHELL_GOSAKI_SCHEDULE_SITE_SLUG,
     armed: false,
     saveEnabled: false,
-    defaultDisabledReason: G13C1_EVENT_A_POC_CLEANUP_SAVE_DISABLED_DEFAULT_REASON,
+    defaultDisabledReason: G13C2_EVENT_B_POC_CLEANUP_SAVE_DISABLED_DEFAULT_REASON,
     dev,
     stagingShellEnabled,
     stagingWriteFlag,
@@ -225,17 +221,20 @@ export function getG13c1EventAPocCleanupConfig(
     armFailures.push("PUBLIC_ADMIN_WRITE_PROVIDER=supabase");
   }
   if (module !== "schedule") armFailures.push("PUBLIC_ADMIN_WRITE_MODULE=schedule");
-  if (approvalIdEnv !== G13C1_SCHEDULE_EVENT_A_POC_CLEANUP_NON_DRY_RUN_APPROVAL_ID) {
+  if (approvalIdEnv !== G13C2_SCHEDULE_EVENT_B_POC_AUDIT_CLEANUP_NON_DRY_RUN_APPROVAL_ID) {
     armFailures.push(
-      `PUBLIC_ADMIN_WRITE_APPROVAL_ID=${G13C1_SCHEDULE_EVENT_A_POC_CLEANUP_NON_DRY_RUN_APPROVAL_ID}`,
+      `PUBLIC_ADMIN_WRITE_APPROVAL_ID=${G13C2_SCHEDULE_EVENT_B_POC_AUDIT_CLEANUP_NON_DRY_RUN_APPROVAL_ID}`,
     );
   }
   if (dryRun) armFailures.push("PUBLIC_ADMIN_WRITE_DRY_RUN=false");
   if (!armedFlagMatch) {
-    armFailures.push(`${SCHEDULE_G13C1_EVENT_A_POC_CLEANUP_NON_DRY_RUN_ARMED_ENV}=true`);
+    armFailures.push(`${SCHEDULE_G13C2_EVENT_B_POC_CLEANUP_NON_DRY_RUN_ARMED_ENV}=true`);
   }
   if (isEnvArmTrue(mergedEnv, GOSAKI_EXISTING_EVENT_SAVE_BUTTON_ARM_ENV)) {
     armFailures.push(`${GOSAKI_EXISTING_EVENT_SAVE_BUTTON_ARM_ENV} must be off`);
+  }
+  if (isEnvArmTrue(mergedEnv, G13C1_EVENT_A_POC_CLEANUP_ARM_ENV)) {
+    armFailures.push(`${G13C1_EVENT_A_POC_CLEANUP_ARM_ENV} must be off`);
   }
   if (isEnvArmTrue(mergedEnv, SCHEDULE_G6G1_TITLE_NON_DRY_RUN_ARMED_ENV)) {
     armFailures.push(`${SCHEDULE_G6G1_TITLE_NON_DRY_RUN_ARMED_ENV} must be off`);
@@ -264,7 +263,6 @@ export function getG13c1EventAPocCleanupConfig(
   if (isEnvArmTrue(mergedEnv, SCHEDULE_G9G4A1_VENUE_ONLY_NON_DRY_RUN_ARMED_ENV)) {
     armFailures.push(`${SCHEDULE_G9G4A1_VENUE_ONLY_NON_DRY_RUN_ARMED_ENV} must be off`);
   }
-  armFailures.push(...collectG13c2EventBPocCleanupArmOffFailures(mergedEnv));
   armFailures.push(...collectOtherRegistryEnvArmFailures(mergedEnv));
   if (!supabaseConfigured) armFailures.push("Supabase URL/anon key");
   if (!hostGate.hostGatePassed) {
@@ -275,7 +273,7 @@ export function getG13c1EventAPocCleanupConfig(
   }
 
   const armed = armFailures.length === 0;
-  const saveEnabled = isG13c1SaveCompileGateEnabled(mergedEnv) && armed;
+  const saveEnabled = isG13c2SaveCompileGateEnabled(mergedEnv) && armed;
 
   return {
     ...base,
@@ -285,8 +283,8 @@ export function getG13c1EventAPocCleanupConfig(
   };
 }
 
-export function resolveG13c1EventAPocCleanupSaveEnabled(
+export function resolveG13c2EventBPocCleanupSaveEnabled(
   env: ImportMetaEnv = import.meta.env,
 ): boolean {
-  return getG13c1EventAPocCleanupConfig(env).saveEnabled;
+  return getG13c2EventBPocCleanupConfig(env).saveEnabled;
 }

@@ -5,11 +5,20 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-14a-gosaki-cms-completion-roadmap-gap-inventory — complete.
-branch: main @ e0a9656 (uncommitted G-14a roadmap doc)
+Current phase: G-14b-gosaki-schedule-cms-practical-editing-flow-definition — complete.
+branch: main @ 995877c (uncommitted G-14b flow definition doc)
 ```
 
-**Gosaki CMS completion roadmap gap inventory done. Client preview excluded from dev tasks.**
+**Schedule CMS practical editing flow defined. Next: G-14c reflection playbook.**
+
+## G-14b Schedule CMS practical editing flow — complete
+
+- **Doc:** `gosaki-schedule-cms-practical-editing-flow-definition.md`
+- **Product path:** G-9k row picker → 6 safe fields → dry-run Preview → multi-field Save → afterVerification → G-14c reflection
+- **MVP fields:** title, venue, open_time, start_time, price, description
+- **Deferred:** date/month, INSERT, DELETE
+- **G-13c1:** cleanup-only template — not routine edit
+- **Next:** **G-14c** public reflection standardization → **G-13c2** Event B cleanup → **G-14b1** Save enablement
 
 ## G-14a Gosaki CMS completion roadmap — complete
 

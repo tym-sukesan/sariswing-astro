@@ -1,14 +1,22 @@
 Last updated: 2026-06-27
 Project: Static-to-Astro CMS / Musician CMS Kit
 
-## 0zz. G-14a Gosaki CMS completion roadmap gap inventory — complete
+## 0zz. G-14b Schedule CMS practical editing flow definition — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-14b-gosaki-schedule-cms-practical-editing-flow-definition` |
+| Product path | G-9k picker + 6 safe fields + multi-field Save |
+| date/month | **Deferred** from practical MVP |
+| **Next** | `G-14c-gosaki-schedule-public-reflection-operation-standardization` |
+| Then | `G-13c2` Event B cleanup → `G-14b1` Save enablement |
+
+## 0zz0. G-14a Gosaki CMS completion roadmap — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-14a-gosaki-cms-completion-roadmap-gap-inventory` |
 | Scope | CMS/system completion gaps; client preview **out of dev scope** |
-| **Next** | `G-14b-gosaki-schedule-cms-practical-editing-flow-definition` |
-| Then | `G-14c` public reflection ops → `G-13c2` Event B cleanup |
 
 ## 0zz0. G-13e Event A PoC cleanup public reflection closure — complete
 

@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-14a Gosaki CMS completion roadmap gap inventory (2026-06-27):** **complete** — read-only survey; gap classification; next phases G-14b→G-14f evaluated. Client preview **excluded from dev tasks**. Doc: `gosaki-cms-completion-roadmap-gap-inventory.md`. **Next: G-14b** practical Schedule editing flow definition.
+**G-14b Gosaki Schedule CMS practical editing flow definition (2026-06-27):** **complete** — operator journey, routine/failure flows, MVP field scope, G-13c1 generalization, G-14c/G-13c2 connection. Doc: `gosaki-schedule-cms-practical-editing-flow-definition.md`. **Next: G-14c** public reflection standardization.
+
+**G-14a Gosaki CMS completion roadmap gap inventory (2026-06-27):** **complete** — read-only survey; gap classification; next phases G-14b→G-14f evaluated. Client preview **excluded from dev tasks**. Doc: `gosaki-cms-completion-roadmap-gap-inventory.md`.
 
 **G-13e Gosaki Event A PoC cleanup public reflection closure (2026-06-27):** **complete** — G-13d1→G-13e Event A chain closed; DB + live staging March clean; no re-upload / no rollback. Doc: `gosaki-schedule-event-a-poc-cleanup-public-reflection-closure.md`. **Do not re-click G-13c1 Save; do not re-upload March HTML.** Event B deferred (G-13c2).
 

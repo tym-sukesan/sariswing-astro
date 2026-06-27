@@ -5,21 +5,24 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-13e-gosaki-schedule-event-a-poc-cleanup-public-reflection-upload-execution-result — complete.
-branch: main @ 4986cb8 (uncommitted G-13e upload execution result doc)
+Current phase: G-13e-gosaki-schedule-event-a-poc-cleanup-public-reflection-closure — complete.
+branch: main @ 08c3e60 (uncommitted G-13e closure doc)
 ```
 
-**Event A public reflection live on staging — closure doc next.**
+**Event A PoC cleanup chain (G-13d1→G-13e) closed.**
+
+## G-13e Event A PoC cleanup public reflection closure — complete
+
+- **Doc:** `gosaki-schedule-event-a-poc-cleanup-public-reflection-closure.md`
+- **Chain:** G-13d1 DB Save + G-13e local regen + operator upload + HTTP verify — **all complete**
+- **Live:** `https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/schedule/2026-03/` — Event A clean
+- **Do not:** re-click G-13c1 Save; re-upload March HTML
+- **Event B:** deferred — `/schedule/2026-07/` still has G-9g PoC
+- **Next (optional):** client preview share; **G-13c2** Event B cleanup (separate approval)
 
 ## G-13e Event A public reflection upload execution — complete
 
 - **Doc:** `gosaki-schedule-event-a-poc-cleanup-public-reflection-upload-execution-result.md`
-- **Operator:** 戸山 — 1 file overwrite; no mirror/delete
-- **URL:** `https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/schedule/2026-03/`
-- **HTTP:** 200; Event A clean; `scheduleDataSource=supabase`; no G-9k6/G-9k4
-- **Event B:** July unchanged (G-9g PoC still present)
-- **Do not re-upload**
-- **Next:** G-13e-gosaki-schedule-event-a-poc-cleanup-public-reflection-closure
 
 ## G-13e Event A public reflection upload preflight — complete
 

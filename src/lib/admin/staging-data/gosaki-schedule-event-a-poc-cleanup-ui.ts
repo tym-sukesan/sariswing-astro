@@ -1,17 +1,17 @@
 /**
- * G-13d1 — Gosaki Event A PoC cleanup panel (staging shell operator page).
+ * G-13d1 / G-13d1b — Gosaki Event A PoC cleanup panel (staging shell operator page).
  */
 
 import type { ScheduleRecord } from "../staging-write/schedule-dry-run-types";
 import {
   buildG13c1EventAPocCleanupTargetFormValues,
-  G13C1_EVENT_A_POC_CLEANUP_TARGET_ROW_ID,
   G13C1_PREVIEW_BTN_ID,
   G13C1_PREVIEW_RESULT_ID,
   G13C1_SAVE_BTN_ID,
   G13C1_SAVE_RESULT_ID,
   getG13c1EventAPocCleanupConfig,
 } from "../staging-write/gosaki-schedule-event-a-poc-cleanup-config";
+import { resolveG13c1EventAPocCleanupTargetRow } from "./gosaki-schedule-event-a-poc-cleanup-target-row-resolve";
 import {
   executeG13c1EventAPocCleanupDryRun,
   type G13c1EventAPocCleanupDryRunResult,
@@ -33,19 +33,6 @@ function escapeHtml(value: string): string {
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;");
-}
-
-function findTargetRowFromOperatorSection(): ScheduleRecord | null {
-  const section = document.getElementById("gosaki-schedule-operator");
-  if (!section) return null;
-  const raw = section.getAttribute("data-selectable-rows");
-  if (!raw) return null;
-  try {
-    const rows = JSON.parse(raw) as ScheduleRecord[];
-    return rows.find((row) => row.id === G13C1_EVENT_A_POC_CLEANUP_TARGET_ROW_ID) ?? null;
-  } catch {
-    return null;
-  }
 }
 
 function renderChangedFieldChips(changedFields: string[]): string {
@@ -128,18 +115,21 @@ async function resolveSignedIn(): Promise<boolean> {
 }
 
 async function runG13c1Preview(): Promise<void> {
-  targetRowSnapshot = findTargetRowFromOperatorSection();
-  if (!targetRowSnapshot) {
+  const resolved = await resolveG13c1EventAPocCleanupTargetRow();
+  if (!resolved.ok) {
     const el = document.getElementById(G13C1_PREVIEW_RESULT_ID);
     if (el) {
       el.hidden = false;
       el.className = "gosaki-schedule-edit-dry-run gosaki-schedule-edit-dry-run--error";
-      el.innerHTML = `<p>Event A row (${escapeHtml(G13C1_EVENT_A_POC_CLEANUP_TARGET_ROW_ID)}) not found in selectable rows.</p>`;
+      el.innerHTML = `<p>${escapeHtml(resolved.errorMessage)}</p>`;
     }
+    targetRowSnapshot = null;
     lastG13c1DryRun = null;
     updateG13c1SaveButton(null);
     return;
   }
+
+  targetRowSnapshot = resolved.row;
 
   const signedIn = await resolveSignedIn();
   const formValues = buildG13c1EventAPocCleanupTargetFormValues();

@@ -5,18 +5,22 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-13d1-event-a-poc-cleanup-execution-blocked-selectable-row-investigation — complete.
-branch: main @ 149f3e4 (uncommitted investigation docs)
+Current phase: G-13d1b-gosaki-schedule-event-a-poc-cleanup-target-row-resolve-fix — complete.
+branch: main @ a428b69 (uncommitted G-13d1b fix)
 ```
 
-**G-13c1 execution blocked on Preview — fix G-13d1b before operator Save.**
+**G-13c1 Preview now resolves Event A via direct read — operator execution retry next.**
 
-## G-13d1 Event A selectable row investigation — complete
+## G-13d1b Event A target row resolve fix — complete
+
+- **Doc:** `gosaki-schedule-event-a-poc-cleanup-target-row-resolve-fix.md`
+- **Module:** `gosaki-schedule-event-a-poc-cleanup-target-row-resolve.ts`
+- **Next:** G-13d1-event-a-poc-cleanup-execution-retry (operator Preview → Save once)
+
+## G-13d1 selectable row investigation — complete
 
 - **Doc:** `gosaki-schedule-event-a-poc-cleanup-selectable-row-investigation.md`
-- **Error:** `Event A row (f687ebf3…) not found in selectable rows`
-- **Fix:** G-13c1 should use `loadScheduleRowForSiteSlugRead` (not `data-selectable-rows` only)
-- **Next:** G-13d1b-gosaki-schedule-event-a-poc-cleanup-target-row-resolve-fix
+- **Root cause:** `data-selectable-rows` coupling (fixed in G-13d1b)
 
 ## G-13d1 Event A cleanup final preflight — complete (execution blocked)
 

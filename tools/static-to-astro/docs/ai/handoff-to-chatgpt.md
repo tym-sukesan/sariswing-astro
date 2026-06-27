@@ -5,11 +5,22 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-13c2d2b-gosaki-schedule-event-b-poc-cleanup-preview-ui-visibility-fix — complete.
-branch: main @ 9e03b40 (uncommitted visibility fix)
+Current phase: G-13c2d2-result-gosaki-schedule-event-b-poc-cleanup-local-dry-run-result — complete.
+branch: main @ 4f0f162 (uncommitted result doc)
 ```
 
-**G-13c2 Preview button visibility fixed. Operator retry dry-run Preview. Save/DB not executed.**
+**Event B dry-run Preview PASS (operator). Save/DB not executed. Next: G-13c2 final preflight.**
+
+## G-13c2d2-result Event B local dry-run Preview result — complete
+
+- **Doc:** `gosaki-schedule-event-b-poc-cleanup-local-dry-run-result.md`
+- **Operator:** 戸山 — G-13c2 Preview **1回**; Save **未実行**
+- **Result:** `dryRun:true` / `actualWrite:false` / `saveReadiness:ready_but_save_disabled` / 6 changedFields
+- **Payload:** title `<>`; venue/open/start/price **null**; description `出演：`
+- **UI:** G-13c2 panel + Preview button visible (G-13c2d2b fix confirmed)
+- **Event A / March:** untouched
+- **Next:** **G-13c2 final preflight** → execution → G-13c2e reflection
+- **Do not:** re-click Preview; Save until final preflight + approval
 
 ## G-13c2d2b Event B Preview UI visibility fix — complete
 

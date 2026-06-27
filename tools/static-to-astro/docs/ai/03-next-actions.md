@@ -1,13 +1,25 @@
 Last updated: 2026-06-27
 Project: Static-to-Astro CMS / Musician CMS Kit
 
-## 0zz. G-13c2d2b Event B Preview UI visibility fix — complete
+## 0zz. G-13c2d2-result Event B local dry-run Preview result — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-13c2d2-result-gosaki-schedule-event-b-poc-cleanup-local-dry-run-result` |
+| Row | `aa440e29…` / `schedule-2026-07-010` / `2026-07-19` |
+| Preview | **PASS** (operator 1回) |
+| `saveReadiness` | `ready_but_save_disabled` |
+| Null payload | venue / open / start / price = **null** |
+| **Next** | `G-13c2-gosaki-schedule-event-b-poc-cleanup-final-preflight` |
+| Save / DB | **not executed** |
+
+## 0zz0. G-13c2d2b Event B Preview UI visibility fix — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-13c2d2b-gosaki-schedule-event-b-poc-cleanup-preview-ui-visibility-fix` |
 | Fix | PoC panels outside sticky workspace grid |
-| **Next** | operator retry G-13c2 dry-run Preview |
+| **Next** | operator retry G-13c2 dry-run Preview — **done** (G-13c2d2-result) |
 | Save / Preview (Cursor) | **not executed** |
 
 ## 0zz0. G-13c2d2 Event B local dry-run Preview preflight — complete
@@ -18,7 +30,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Row | `aa440e29…` / `schedule-2026-07-010` / `2026-07-19` |
 | Save gate | **OFF** (Preview-only) |
 | Expected Preview | `dryRun:true` / `actualWrite:false` / 6 changedFields / null payload fields |
-| **Next** | operator local dry-run Preview → `G-13c2-gosaki-schedule-event-b-poc-cleanup-final-preflight` |
+| **Next** | `G-13c2d2-result` complete → `G-13c2-gosaki-schedule-event-b-poc-cleanup-final-preflight` |
 | Save / DB | **not executed** |
 
 ## 0zz0. G-13c2d1 Event B PoC cleanup slice implementation — complete

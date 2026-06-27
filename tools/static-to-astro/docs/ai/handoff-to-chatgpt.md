@@ -5,17 +5,27 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-13d1e-gosaki-schedule-event-a-poc-cleanup-save-gate-page-config-bridge — complete.
-branch: main @ 55a6da5 (uncommitted G-13d1e page config bridge)
+Current phase: G-13d1g-gosaki-schedule-event-a-poc-cleanup-project-allowlist-property-fix — complete.
+branch: main @ 9a9c5a1 (uncommitted G-13d1g allowlist property fix)
 ```
 
-**G-13c1 Save gate SSR→DOM bridge added — operator execution retry next.**
+**G-13c1 project allowlist typo fixed — operator execution retry next.**
+
+## G-13d1g Event A project allowlist property fix — complete
+
+- **Doc:** `gosaki-schedule-event-a-poc-cleanup-project-allowlist-property-fix.md`
+- **Fix:** `allowlistPassed` / `errorMessage` in `gosaki-schedule-event-a-poc-cleanup-config.ts`
+- **Next:** G-13d1-event-a-poc-cleanup-execution-retry
+
+## G-13d1f Event A project allowlist investigation — complete
+
+- **Root cause:** G-13c1 read `.passed` / `.failureReason` instead of API fields
+- **Read-only** — no code in phase
 
 ## G-13d1e Event A Save gate page config bridge — complete
 
 - **Doc:** `gosaki-schedule-event-a-poc-cleanup-save-gate-page-config-bridge.md`
 - **Module:** `gosaki-schedule-event-a-poc-cleanup-page-config.ts`
-- **Next:** G-13d1-event-a-poc-cleanup-execution-retry
 
 ## G-13d1c Gosaki staging shell server gate injection — complete
 

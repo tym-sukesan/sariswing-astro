@@ -1,13 +1,27 @@
-Last updated: 2026-06-25
+Last updated: 2026-06-26
 Project: Static-to-Astro CMS / Musician CMS Kit
 
-## 0zz. G-13d1e Event A Save gate page config bridge — complete
+## 0zz. G-13d1g Event A project allowlist property fix — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-13d1g-gosaki-schedule-event-a-poc-cleanup-project-allowlist-property-fix` |
+| Fix | `allowlistPassed` / `errorMessage` in G-13c1 config (G-9k aligned) |
+| **Next** | `G-13d1-event-a-poc-cleanup-execution-retry` |
+
+## 0zz0. G-13d1f Event A project allowlist investigation — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-13d1f-gosaki-schedule-event-a-poc-cleanup-project-allowlist-investigation` |
+| Root cause | Wrong `.passed` / `.failureReason` on allowlist result |
+
+## 0zz0. G-13d1e Event A Save gate page config bridge — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-13d1e-gosaki-schedule-event-a-poc-cleanup-save-gate-page-config-bridge` |
 | Fix | G-9k-style SSR→DOM page config for G-13c1 |
-| **Next** | `G-13d1-event-a-poc-cleanup-execution-retry` |
 
 ## 0zz0. G-13d1c staging shell server gate injection — complete
 

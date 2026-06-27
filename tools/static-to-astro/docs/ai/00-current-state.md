@@ -1,9 +1,13 @@
-Last updated: 2026-06-25
+Last updated: 2026-06-26
 Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-13d1e Gosaki Event A Save gate page config bridge (2026-06-26):** **complete** — G-9k-style SSR→DOM bridge for G-13c1 Save gate; Preview shows failure reason. Doc: `gosaki-schedule-event-a-poc-cleanup-save-gate-page-config-bridge.md`. Next: **G-13d1-event-a-poc-cleanup-execution-retry**.
+**G-13d1g Gosaki Event A project allowlist property fix (2026-06-26):** **complete** — G-13c1 Save gate uses `allowlistPassed` / `errorMessage` (G-9k aligned); fixes false `project allowlist failed`. Doc: `gosaki-schedule-event-a-poc-cleanup-project-allowlist-property-fix.md`. Next: **G-13d1-event-a-poc-cleanup-execution-retry** (operator Preview → `ready_to_save` → Save once).
+
+**G-13d1f Gosaki Event A project allowlist investigation (2026-06-26):** **complete** — root cause = wrong property names on `evaluateStagingProjectAllowlist()` result in G-13c1 config. Read-only; no code in phase.
+
+**G-13d1e Gosaki Event A Save gate page config bridge (2026-06-26):** **complete** — G-9k-style SSR→DOM bridge for G-13c1 Save gate; Preview shows failure reason. Doc: `gosaki-schedule-event-a-poc-cleanup-save-gate-page-config-bridge.md`.
 
 **G-13d1c Gosaki staging shell server gate injection (2026-06-26):** **complete** — `#staging-shell-server-gates` in layout. Doc: `gosaki-staging-shell-server-gate-injection.md`.
 

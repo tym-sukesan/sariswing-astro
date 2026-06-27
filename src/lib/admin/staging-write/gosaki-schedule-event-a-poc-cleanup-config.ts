@@ -212,7 +212,7 @@ export function getG13c1EventAPocCleanupConfig(
     activeSupabaseHost: hostGate.activeHost,
     hostGatePassed: hostGate.hostGatePassed,
     hostGateWarning: hostGate.warningMessage,
-    projectAllowlistPassed: projectAllowlist.passed,
+    projectAllowlistPassed: projectAllowlist.allowlistPassed,
   };
 
   const armFailures: string[] = [];
@@ -268,8 +268,8 @@ export function getG13c1EventAPocCleanupConfig(
   if (!hostGate.hostGatePassed) {
     armFailures.push(hostGate.warningMessage ?? "Supabase host gate failed");
   }
-  if (!projectAllowlist.passed) {
-    armFailures.push(projectAllowlist.failureReason ?? "project allowlist failed");
+  if (!projectAllowlist.allowlistPassed) {
+    armFailures.push(projectAllowlist.errorMessage ?? "project allowlist failed");
   }
 
   const armed = armFailures.length === 0;

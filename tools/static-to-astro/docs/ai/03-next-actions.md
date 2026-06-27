@@ -1,7 +1,22 @@
-Last updated: 2026-06-27
+Last updated: 2026-06-28
 Project: Static-to-Astro CMS / Musician CMS Kit
 
-## 0zz. G-13c2 Event B PoC cleanup execution result — complete
+## 0zz. G-13c2e Event B public reflection local regen + upload preflight — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-13c2e-gosaki-schedule-event-b-public-reflection-local-regen-and-upload-preflight` |
+| Row | `aa440e29…` / `schedule-2026-07-010` / `2026-07-19` |
+| Local regen | `build-gosaki-staging-admin-package.mjs` **PASS** (27 files) |
+| July HTML | Event B clean — `<>` / null fields omitted / `出演：` |
+| CSS/JS hash | **unchanged** (`index.YcHrHZH4.css`) |
+| Minimal upload | **1 file** — `schedule/2026-07/index.html` |
+| Live staging | **stale** — G-9g PoC still on July page |
+| Post-upload HTTP | **not executed** |
+| **Next** | `G-13c2e-gosaki-schedule-event-b-public-reflection-upload-execution` (operator manual FTP ×1) |
+| Event A / March | **untouched** — March re-upload **out of scope** |
+
+## 0zz0. G-13c2 Event B PoC cleanup execution result — complete
 
 | Item | Value |
 | --- | --- |
@@ -10,7 +25,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Save | operator **1回** — `errorCode: (none)` |
 | after `updated_at` | `2026-06-27T10:17:42.60691+00:00` |
 | rollbackNeeded | **false** |
-| **Next** | `G-13c2e-gosaki-schedule-event-b-poc-cleanup-public-reflection` |
+| **Next** | G-13c2e — **done** → upload execution |
 | Event A / March | **untouched** |
 
 ## 0zz0. G-13c2 Event B PoC cleanup final preflight — complete

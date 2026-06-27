@@ -5,11 +5,23 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-13c2-gosaki-schedule-event-b-poc-cleanup-execution-result — complete.
-branch: main @ 3cf0a2b (uncommitted execution result doc)
+Current phase: G-13c2e-gosaki-schedule-event-b-public-reflection-local-regen-and-upload-preflight — complete.
+branch: main @ 15bf558 (G-13c2e doc/verifier uncommitted)
 ```
 
-**Event B DB cleanup Save succeeded (operator once). Do not re-click G-13c2 Save. Next: G-13c2e public reflection.**
+**Event B local package regen complete. Minimal upload = 1 file `schedule/2026-07/index.html`. Live July still stale. Next: operator manual FTP upload + HTTP verify.**
+
+## G-13c2e Event B public reflection local regen + upload preflight — complete
+
+- **Doc:** `gosaki-schedule-event-b-public-reflection-local-regen-and-upload-preflight.md`
+- **Regen:** `build-gosaki-staging-admin-package.mjs` PASS — 27 files; `scheduleDataSource=supabase`
+- **July HTML:** Event B `2026.07.19` — title `<>`; venue/time/price lines absent; description `出演：`; all G-9g PoC absent
+- **CSS/JS:** `index.YcHrHZH4.css` / `CTyGy8yS.js` — **unchanged** vs live staging
+- **Minimal upload:** local `…/schedule/2026-07/index.html` → remote `/cms-kit-staging/gosaki-piano/schedule/2026-07/index.html`
+- **Live gap:** July page still shows G-9g PoC (pre-upload HTTP documented)
+- **Post-upload HTTP:** **not executed** in this phase
+- **Next:** **G-13c2e upload execution** (operator approval) → HTTP verify → closure
+- **Do not:** FTP in this phase; March re-upload; re-click G-13c2 Save
 
 ## G-13c2 Event B PoC cleanup execution result — complete
 

@@ -1,6 +1,19 @@
 Last updated: 2026-06-28
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzz. G-14b1a Schedule CMS routine edit practical Save enablement — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-14b1a-gosaki-schedule-routine-edit-practical-save-enablement-implementation` |
+| Doc | `gosaki-schedule-routine-edit-practical-save-enablement-implementation.md` |
+| Practical arm | `PUBLIC_ADMIN_GOSAKI_SCHEDULE_PRACTICAL_EDIT_NON_DRY_RUN_ARMED` |
+| approval_id | `G-9k-gosaki-schedule-existing-event-save-button-non-dry-run` |
+| Save default | `G9K_SAVE_BUTTON_SAVE_ENABLED=false` (compile + routine dev) |
+| G-13c1 / G-13c2 | panels **unchanged**; practical-arm-off mutual exclusion |
+| **Next (recommended)** | **G-14b1b** — local dry-run Preview preflight |
+| **Do not** | Save / Preview / DB / FTP in G-14b1a |
+
 ## 0zzz. G-14b1 Schedule CMS routine edit flow next PoC planning — complete
 
 | Item | Value |
@@ -24,7 +37,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | rollbackNeeded | **false** |
 | Event A / March | **untouched** |
 | G-13b (2 events) | **both closed** (A: G-13e, B: G-13c2e) |
-| **Next (recommended)** | **G-14b1a** — routine edit Save enablement (G-14b1 planning **done**) |
+| **Next (recommended)** | **G-14b1b** — local dry-run Preview preflight (G-14b1a **done**) |
 | **Do not** | re-click G-13c2 Save; re-upload July / March HTML |
 
 ## 0zz0. G-13c2e Event B public reflection upload result + HTTP verify — complete

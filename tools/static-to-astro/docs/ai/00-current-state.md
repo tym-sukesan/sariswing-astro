@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-14b1 Gosaki Schedule CMS routine edit flow next PoC planning (2026-06-28):** **complete** — routine edit PoC planned; recommended target `schedule-2026-04-005` / `price` only; G-9k path + G-14c reflection chain decomposed. Doc: `gosaki-schedule-routine-edit-flow-next-poc-planning.md`. **Next: G-14b1a practical Save enablement implementation.** **No Save / DB / FTP in planning phase.**
+**G-14b1a Gosaki Schedule CMS routine edit practical Save enablement (2026-06-28):** **complete** — `PUBLIC_ADMIN_GOSAKI_SCHEDULE_PRACTICAL_EDIT_NON_DRY_RUN_ARMED` wired to G-9k Save path; mutual exclusion with G-13c1/G-13c2; no Save execution. Doc: `gosaki-schedule-routine-edit-practical-save-enablement-implementation.md`. **Next: G-14b1b local dry-run Preview preflight.** **No Save / DB / FTP in implementation phase.**
+
+**G-14b1 Gosaki Schedule CMS routine edit flow next PoC planning (2026-06-28):** **complete** — routine edit PoC planned; recommended target `schedule-2026-04-005` / `price` only; G-9k path + G-14c reflection chain decomposed. Doc: `gosaki-schedule-routine-edit-flow-next-poc-planning.md`. **G-14b1a implementation done.**
 
 **G-13c2e Gosaki Event B PoC cleanup public reflection closure (2026-06-28):** **complete** — G-13c2→G-13c2e Event B chain **closed**; DB + live July clean; rollback **not needed**; Event A / March untouched. Doc: `gosaki-schedule-event-b-public-reflection-closure.md`. **G-13b scan (2 events) fully resolved.**
 

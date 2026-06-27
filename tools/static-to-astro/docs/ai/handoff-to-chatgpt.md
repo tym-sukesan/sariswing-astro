@@ -5,11 +5,22 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-14b1-gosaki-schedule-routine-edit-flow-next-poc-planning — complete.
-branch: main @ af21cdf (G-14b1 planning doc uncommitted)
+Current phase: G-14b1a-gosaki-schedule-routine-edit-practical-save-enablement-implementation — complete.
+branch: main @ e5d4fa3 (G-14b1a implementation uncommitted)
 ```
 
-**G-13 PoC cleanup fully closed (Event A + Event B). G-14b1 routine edit next PoC planned. Next recommended: G-14b1a implementation.**
+**G-14b1a routine edit practical Save enablement implemented. Next: G-14b1b local dry-run Preview preflight.**
+
+## G-14b1a Schedule CMS routine edit practical Save enablement — complete
+
+- **Doc:** `gosaki-schedule-routine-edit-practical-save-enablement-implementation.md`
+- **Module:** `gosaki-schedule-routine-edit-practical-save-enablement-config.ts`
+- **Practical arm:** `PUBLIC_ADMIN_GOSAKI_SCHEDULE_PRACTICAL_EDIT_NON_DRY_RUN_ARMED` (alias to G-9k path)
+- **Save compile default:** still `G9K_SAVE_BUTTON_SAVE_ENABLED=false`
+- **Mutual exclusion:** G-13c1 / G-13c2 / G-9j unchanged panels; practical-arm-off checks added
+- **No hardcoded PoC row/values**
+- **Next:** **G-14b1b** — local dry-run Preview preflight (Save off)
+- **Do not:** Save / Preview / DB / FTP in G-14b1a
 
 ## G-14b1 Schedule CMS routine edit flow next PoC planning — complete
 

@@ -37,6 +37,15 @@ import {
   G9K_SAVE_BUTTON_SAVE_ENABLED_ENV,
   readG9kSaveButtonPageConfigFromDom,
 } from "./gosaki-schedule-save-button-page-config";
+import {
+  collectG14b1aRoutineEditArmFailures,
+  G14B1A_PHASE,
+  G14B1A_ROUTINE_EDIT_SAVE_DISABLED_DEFAULT_REASON,
+  GOSAKI_SCHEDULE_PRACTICAL_EDIT_NON_DRY_RUN_ARMED_ENV,
+  isGosakiScheduleLegacyG9kSaveButtonEnvArmTrue,
+  isGosakiSchedulePracticalEditEnvArmTrue,
+  isGosakiScheduleRoutineEditArmSatisfied,
+} from "./gosaki-schedule-routine-edit-practical-save-enablement-config";
 
 export const G9K1_PHASE =
   "G-9k1-gosaki-schedule-existing-event-save-button-guard-config-verifier";
@@ -51,7 +60,9 @@ export const GOSAKI_SCHEDULE_EXISTING_EVENT_SAVE_BUTTON_NON_DRY_RUN_ARMED_ENV =
   "PUBLIC_ADMIN_GOSAKI_SCHEDULE_EXISTING_EVENT_SAVE_BUTTON_NON_DRY_RUN_ARMED";
 
 export const G9K_SAVE_BUTTON_SAVE_DISABLED_DEFAULT_REASON =
-  "G-9k operator save button disabled until G-9k4 explicit approval and env arm stack.";
+  G14B1A_ROUTINE_EDIT_SAVE_DISABLED_DEFAULT_REASON;
+
+export { G14B1A_PHASE, GOSAKI_SCHEDULE_PRACTICAL_EDIT_NON_DRY_RUN_ARMED_ENV };
 
 /** G-9k4a: compile-time default — runtime gate uses server bridge + env. */
 export const G9K_SAVE_BUTTON_SAVE_ENABLED = false as const;
@@ -71,6 +82,10 @@ export interface G9kExistingEventSaveButtonConfig {
   approvalId: typeof G9K_SCHEDULE_EXISTING_EVENT_SAVE_BUTTON_NON_DRY_RUN_APPROVAL_ID;
   siteSlug: typeof STAGING_SHELL_GOSAKI_SCHEDULE_SITE_SLUG;
   envArm: typeof GOSAKI_SCHEDULE_EXISTING_EVENT_SAVE_BUTTON_NON_DRY_RUN_ARMED_ENV;
+  practicalEditArmEnv: typeof GOSAKI_SCHEDULE_PRACTICAL_EDIT_NON_DRY_RUN_ARMED_ENV;
+  practicalEditArmed: boolean;
+  legacyG9kEnvArmed: boolean;
+  routineEditArmSatisfied: boolean;
   armed: boolean;
   saveEnabled: boolean;
   armFailureReason?: string;
@@ -114,10 +129,9 @@ export function getG9kExistingEventSaveButtonConfig(
   const dev = mergedEnv.DEV === true;
   const stagingShellEnabled = mergedEnv.ENABLE_ADMIN_STAGING_SHELL === "true";
   const stagingWriteFlag = mergedEnv.ENABLE_ADMIN_STAGING_WRITE === "true";
-  const armedFlagMatch = isEnvArmTrue(
-    mergedEnv,
-    GOSAKI_SCHEDULE_EXISTING_EVENT_SAVE_BUTTON_NON_DRY_RUN_ARMED_ENV,
-  );
+  const legacyG9kEnvArmed = isGosakiScheduleLegacyG9kSaveButtonEnvArmTrue(mergedEnv);
+  const practicalEditArmed = isGosakiSchedulePracticalEditEnvArmTrue(mergedEnv);
+  const routineEditArmSatisfied = isGosakiScheduleRoutineEditArmSatisfied(mergedEnv);
   const dryRun =
     String(mergedEnv.PUBLIC_ADMIN_WRITE_DRY_RUN ?? "true").trim() !== "false";
   const supabaseUrl = String(mergedEnv.PUBLIC_SUPABASE_URL ?? "").trim();
@@ -135,6 +149,10 @@ export function getG9kExistingEventSaveButtonConfig(
     approvalId: G9K_SCHEDULE_EXISTING_EVENT_SAVE_BUTTON_NON_DRY_RUN_APPROVAL_ID,
     siteSlug: STAGING_SHELL_GOSAKI_SCHEDULE_SITE_SLUG,
     envArm: GOSAKI_SCHEDULE_EXISTING_EVENT_SAVE_BUTTON_NON_DRY_RUN_ARMED_ENV,
+    practicalEditArmEnv: GOSAKI_SCHEDULE_PRACTICAL_EDIT_NON_DRY_RUN_ARMED_ENV,
+    practicalEditArmed,
+    legacyG9kEnvArmed,
+    routineEditArmSatisfied,
     defaultDisabledReason: G9K_SAVE_BUTTON_SAVE_DISABLED_DEFAULT_REASON,
     dev,
     stagingShellEnabled,
@@ -174,9 +192,7 @@ export function getG9kExistingEventSaveButtonConfig(
     );
   }
   if (dryRun) armFailures.push("PUBLIC_ADMIN_WRITE_DRY_RUN=false");
-  if (!armedFlagMatch) {
-    armFailures.push(`${GOSAKI_SCHEDULE_EXISTING_EVENT_SAVE_BUTTON_NON_DRY_RUN_ARMED_ENV}=true`);
-  }
+  armFailures.push(...collectG14b1aRoutineEditArmFailures(mergedEnv));
   if (isEnvArmTrue(mergedEnv, "PUBLIC_ADMIN_GOSAKI_SCHEDULE_EXISTING_EVENT_UPDATE_NON_DRY_RUN_ARMED")) {
     armFailures.push("PUBLIC_ADMIN_GOSAKI_SCHEDULE_EXISTING_EVENT_UPDATE_NON_DRY_RUN_ARMED must be off (G-9j5 runner arm)");
   }
@@ -217,6 +233,9 @@ export function getG9kExistingEventSaveButtonConfig(
 
   return {
     ...base,
+    practicalEditArmed,
+    legacyG9kEnvArmed,
+    routineEditArmSatisfied,
     armed,
     saveEnabled,
     armFailureReason: armed ? undefined : armFailures.join("; "),

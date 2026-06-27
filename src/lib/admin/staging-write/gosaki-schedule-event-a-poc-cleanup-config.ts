@@ -34,6 +34,7 @@ import {
   readG13c1EventAPocCleanupPageConfigFromDom,
 } from "./gosaki-schedule-event-a-poc-cleanup-page-config";
 import { collectG13c2EventBPocCleanupArmOffFailures } from "./gosaki-schedule-event-b-poc-cleanup-config";
+import { collectG14b1aPracticalEditArmOffFailures } from "./gosaki-schedule-routine-edit-practical-save-enablement-config";
 
 const GOSAKI_EXISTING_EVENT_SAVE_BUTTON_ARM_ENV =
   "PUBLIC_ADMIN_GOSAKI_SCHEDULE_EXISTING_EVENT_SAVE_BUTTON_NON_DRY_RUN_ARMED";
@@ -237,6 +238,7 @@ export function getG13c1EventAPocCleanupConfig(
   if (isEnvArmTrue(mergedEnv, GOSAKI_EXISTING_EVENT_SAVE_BUTTON_ARM_ENV)) {
     armFailures.push(`${GOSAKI_EXISTING_EVENT_SAVE_BUTTON_ARM_ENV} must be off`);
   }
+  armFailures.push(...collectG14b1aPracticalEditArmOffFailures(mergedEnv));
   if (isEnvArmTrue(mergedEnv, SCHEDULE_G6G1_TITLE_NON_DRY_RUN_ARMED_ENV)) {
     armFailures.push(`${SCHEDULE_G6G1_TITLE_NON_DRY_RUN_ARMED_ENV} must be off`);
   }

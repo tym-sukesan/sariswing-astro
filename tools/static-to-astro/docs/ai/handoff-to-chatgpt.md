@@ -5,17 +5,21 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-13d2-admin-reflection-local-dev-verify-result — complete.
-branch: main @ e74b950 (uncommitted G-13d2 verify result docs)
+Current phase: G-13d1-final-preflight-gosaki-schedule-event-a-poc-cleanup — complete.
+branch: main @ 6a026a0 (uncommitted G-13d1 final preflight docs)
 ```
 
-**Operator G-13c1 dry-run Preview PASS; Save not executed.**
+**Final preflight done; Save awaits explicit approval + execution phase.**
+
+## G-13d1 Event A cleanup final preflight — complete
+
+- **Doc:** `gosaki-schedule-event-a-poc-cleanup-final-preflight.md`
+- **approval_id:** `G-13c1-gosaki-schedule-event-a-poc-text-cleanup-non-dry-run`
+- **Next:** G-13d1-event-a-poc-cleanup-execution (operator Save once)
 
 ## G-13d2 admin reflection local dev verify — complete
 
 - **Doc:** `gosaki-schedule-event-a-poc-cleanup-admin-reflection-local-dev-verify-result.md`
-- **Result:** panel OK; 6 `changedFields`; `ready_but_save_disabled`
-- **Next:** G-13d1-final-preflight
 
 ## G-13d2 admin reflection preflight — complete
 

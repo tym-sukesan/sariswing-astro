@@ -1,13 +1,19 @@
 Last updated: 2026-06-25
 Project: Static-to-Astro CMS / Musician CMS Kit
 
-## 0zz. G-13d2 admin reflection local dev verify — complete
+## 0zz. G-13d1 Event A cleanup final preflight — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-13d1-final-preflight-gosaki-schedule-event-a-poc-cleanup` |
+| Target | `f687ebf3…` / `schedule-2026-03-007` |
+| **Next** | `G-13d1-event-a-poc-cleanup-execution` |
+
+## 0zz0. G-13d2 admin reflection local dev verify — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-13d2-admin-reflection-local-dev-verify-result` |
-| Preview | 6 fields; `ready_but_save_disabled` |
-| **Next** | `G-13d1-final-preflight` |
 
 ## 0zz0. G-13d2 Event A admin reflection preflight — complete
 

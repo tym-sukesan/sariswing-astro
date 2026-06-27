@@ -3,9 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-13d2 Gosaki Event A admin reflection local dev verify (2026-06-26):** **complete** — operator (戸山) G-13c1 panel + dry-run Preview PASS; 6 `changedFields`; `ready_but_save_disabled`. **No Save/DB write.** Doc: `gosaki-schedule-event-a-poc-cleanup-admin-reflection-local-dev-verify-result.md`. Next: **G-13d1-final-preflight**.
+**G-13d1 Gosaki Event A PoC cleanup final preflight (2026-06-26):** **complete** — beforeSnapshot / after values / rollback SQL (doc only) / Save env stack documented. **No Save/SQL execution.** Doc: `gosaki-schedule-event-a-poc-cleanup-final-preflight.md`. Next: **G-13d1-event-a-poc-cleanup-execution**.
 
-**G-13d2 Gosaki Event A PoC cleanup admin reflection preflight (2026-06-26):** **complete** — doc: `gosaki-schedule-event-a-poc-cleanup-admin-reflection-preflight.md`.
+**G-13d2 Gosaki Event A admin reflection local dev verify (2026-06-26):** **complete** — operator G-13c1 dry-run Preview PASS (6 fields). Doc: `gosaki-schedule-event-a-poc-cleanup-admin-reflection-local-dev-verify-result.md`.
 
 **G-13d1 Gosaki Event A PoC cleanup local implementation (2026-06-26):** **complete** — G-13c1 approval/guards/config/dry-run/Save/UI for `f687ebf3…` only; Save gated off routine dev. Doc: `gosaki-schedule-event-a-poc-cleanup-local-implementation.md`.
 

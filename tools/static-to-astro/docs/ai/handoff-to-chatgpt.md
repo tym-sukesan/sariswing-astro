@@ -5,11 +5,19 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-14b1e-gosaki-schedule-routine-edit-public-reflection-local-regen-and-upload-preflight — complete.
-branch: main @ 83cc049 (G-14b1e preflight doc uncommitted)
+Current phase: G-14b1e-upload-gosaki-schedule-routine-edit-public-reflection-result — complete.
+branch: main @ a549870 (G-14b1e-upload result doc uncommitted)
 ```
 
-**G-14b1e local regen + upload preflight complete. Next: G-14b1e-upload operator manual upload (1 file).**
+**G-14b1e-upload HTTP verify PASS. Next: G-14b1f routine edit reflection closure.**
+
+## G-14b1e-upload Schedule CMS routine edit public reflection upload + HTTP verify — complete
+
+- **Doc:** `gosaki-schedule-routine-edit-public-reflection-result.md`
+- **Upload:** `schedule/2026-04/index.html` ×1 (operator manual)
+- **HTTP:** **200** — `料金：3,300円（税込）` on Trio card; old `tax in` absent
+- **Next:** **G-14b1f** — reflection closure doc
+- **Do not:** re-upload April HTML
 
 ## G-14b1e Schedule CMS routine edit public reflection local regen + upload preflight — complete
 

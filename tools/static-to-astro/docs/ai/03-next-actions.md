@@ -1,7 +1,18 @@
 Last updated: 2026-06-27
 Project: Static-to-Astro CMS / Musician CMS Kit
 
-## 0zz. G-13c2d1 Event B PoC cleanup slice implementation — complete
+## 0zz. G-13c2d2 Event B local dry-run Preview preflight — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-13c2d2-gosaki-schedule-event-b-poc-cleanup-local-dry-run-preflight` |
+| Row | `aa440e29…` / `schedule-2026-07-010` / `2026-07-19` |
+| Save gate | **OFF** (Preview-only) |
+| Expected Preview | `dryRun:true` / `actualWrite:false` / 6 changedFields / null payload fields |
+| **Next** | operator local dry-run Preview → `G-13c2-gosaki-schedule-event-b-poc-cleanup-final-preflight` |
+| Save / DB | **not executed** |
+
+## 0zz0. G-13c2d1 Event B PoC cleanup slice implementation — complete
 
 | Item | Value |
 | --- | --- |
@@ -9,7 +20,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Row | `aa440e29…` / `schedule-2026-07-010` / `2026-07-19` |
 | Expected | `<>` / null times / `出演：` |
 | Verifier | `verify-g13c2d1-gosaki-schedule-event-b-poc-cleanup-slice-implementation.mjs` |
-| **Next** | `G-13c2-gosaki-schedule-event-b-poc-cleanup-final-preflight` |
+| **Next** | `G-13c2d2` preflight complete → operator Preview |
 | Event A / March | **untouched** |
 | Save / DB | **not executed** |
 

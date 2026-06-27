@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-13c2d1 Gosaki Event B PoC cleanup slice implementation (2026-06-19):** **complete** — G-13c2 approval/guards/config/dry-run/Save/UI/page-config/target-resolve for `aa440e29…` only; null-field payload guards; Save gated off routine dev; Event A / March untouched. Doc: `gosaki-schedule-event-b-poc-cleanup-slice-implementation.md`. **Next: G-13c2 final preflight.** **Do not Save yet.**
+**G-13c2d2 Gosaki Event B PoC cleanup local dry-run Preview preflight (2026-06-19):** **complete** — Preview-only procedure / dev env / Save gate OFF documented; operator Preview next. Doc: `gosaki-schedule-event-b-poc-cleanup-local-dry-run-preflight.md`. **Do not Save yet.**
+
+**G-13c2d1 Gosaki Event B PoC cleanup slice implementation (2026-06-19):** **complete** — G-13c2 approval/guards/config/dry-run/Save/UI/page-config/target-resolve for `aa440e29…` only; null-field payload guards; Save gated off routine dev; Event A / March untouched. Doc: `gosaki-schedule-event-b-poc-cleanup-slice-implementation.md`. **Next: operator local dry-run Preview (G-13c2d2).** **Do not Save yet.**
 
 **G-13c2 Gosaki Event B PoC cleanup preflight (2026-06-27):** **complete** — expected values **confirmed** (Wix seed); DB + live July PoC present; Event A untouched. Doc: `gosaki-schedule-event-b-poc-cleanup-preflight.md`. **Do not Save yet.**
 

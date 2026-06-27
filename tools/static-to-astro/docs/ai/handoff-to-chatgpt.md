@@ -5,11 +5,21 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-13c2d1-gosaki-schedule-event-b-poc-cleanup-slice-implementation — complete.
-branch: main @ 4419565 (uncommitted G-13c2d1 implementation)
+Current phase: G-13c2d2-gosaki-schedule-event-b-poc-cleanup-local-dry-run-preflight — complete.
+branch: main @ 9d64379 (uncommitted G-13c2d2 preflight doc)
 ```
 
-**Event B cleanup slice implemented locally. Save/DB not executed. Next: G-13c2 final preflight.**
+**Event B local dry-run Preview preflight done. Operator Preview next. Save/DB not executed.**
+
+## G-13c2d2 Event B local dry-run Preview preflight — complete
+
+- **Doc:** `gosaki-schedule-event-b-poc-cleanup-local-dry-run-preflight.md`
+- **Purpose:** operator local dev **Preview only** (Save gate OFF)
+- **Dev env:** `ENABLE_ADMIN_STAGING_SHELL/AUTH/DATA_READ/WRITE` + `PUBLIC_ADMIN_WRITE_DRY_RUN=true`
+- **Arms OFF:** G-13c2 + G-13c1 + G-9k + other schedule arms
+- **Expected Preview:** `dryRun:true` / `actualWrite:false` / `saveReadiness:ready_but_save_disabled` / 6 fields / null payload for venue/open/start/price
+- **Do not click:** Event B Save, G-13c1 Save, G-9k Save, package regen, FTP
+- **Next:** operator Preview (section 8) → **G-13c2 final preflight** → execution → G-13c2e reflection
 
 ## G-13c2d1 Event B PoC cleanup slice implementation — complete
 

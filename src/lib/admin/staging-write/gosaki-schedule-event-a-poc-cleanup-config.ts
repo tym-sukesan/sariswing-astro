@@ -29,6 +29,10 @@ import {
   SCHEDULE_NON_DRY_RUN_POC_EXPECTED_PROJECT,
   SCHEDULE_NON_DRY_RUN_POC_EXPECTED_SUPABASE_HOST,
 } from "./schedule-non-dry-run-poc-config";
+import {
+  applyG13c1EventAPocCleanupPageConfigToEnv,
+  readG13c1EventAPocCleanupPageConfigFromDom,
+} from "./gosaki-schedule-event-a-poc-cleanup-page-config";
 
 const GOSAKI_EXISTING_EVENT_SAVE_BUTTON_ARM_ENV =
   "PUBLIC_ADMIN_GOSAKI_SCHEDULE_EXISTING_EVENT_SAVE_BUTTON_NON_DRY_RUN_ARMED";
@@ -165,7 +169,11 @@ export interface G13c1EventAPocCleanupConfig {
 export function getG13c1EventAPocCleanupConfig(
   env: ImportMetaEnv = import.meta.env,
 ): G13c1EventAPocCleanupConfig {
-  const mergedEnv = mergeStagingShellEnv(env);
+  let mergedEnv = mergeStagingShellEnv(env);
+  const pageConfig = readG13c1EventAPocCleanupPageConfigFromDom();
+  if (pageConfig) {
+    mergedEnv = applyG13c1EventAPocCleanupPageConfigToEnv(mergedEnv, pageConfig);
+  }
   const dev = mergedEnv.DEV === true;
   const stagingShellEnabled = mergedEnv.ENABLE_ADMIN_STAGING_SHELL === "true";
   const stagingWriteFlag = mergedEnv.ENABLE_ADMIN_STAGING_WRITE === "true";

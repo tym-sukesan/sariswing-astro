@@ -8,6 +8,7 @@ import {
   G13C1_PREVIEW_BTN_ID,
   G13C1_PREVIEW_RESULT_ID,
   G13C1_SAVE_BTN_ID,
+  G13C1_SAVE_ENABLED_ENV,
   G13C1_SAVE_RESULT_ID,
   getG13c1EventAPocCleanupConfig,
 } from "../staging-write/gosaki-schedule-event-a-poc-cleanup-config";
@@ -47,6 +48,23 @@ function renderChangedFieldChips(changedFields: string[]): string {
     .join("");
 }
 
+function buildG13c1SaveGateNote(
+  result: G13c1EventAPocCleanupDryRunResult,
+): string {
+  if (result.saveReadiness !== "ready_but_save_disabled") return "";
+
+  const config = getG13c1EventAPocCleanupConfig();
+  const parts: string[] = [];
+  if (!config.armed) {
+    parts.push(config.armFailureReason ?? "armed=false");
+  } else if (!config.saveEnabled) {
+    parts.push(`${G13C1_SAVE_ENABLED_ENV}=true (compile gate off)`);
+  }
+  if (parts.length === 0) return "";
+
+  return `<p class="gosaki-schedule-edit-dry-run__message">Save gate: ${escapeHtml(parts.join("; "))}</p>`;
+}
+
 function renderG13c1DryRunResult(result: G13c1EventAPocCleanupDryRunResult): void {
   const el = document.getElementById(G13C1_PREVIEW_RESULT_ID);
   if (!el) return;
@@ -61,9 +79,11 @@ function renderG13c1DryRunResult(result: G13c1EventAPocCleanupDryRunResult): voi
           .map((msg) => `<li>${escapeHtml(msg)}</li>`)
           .join("")}</ul>`
       : "";
+  const saveGateNote = buildG13c1SaveGateNote(result);
   el.innerHTML = `
     <h3 class="gosaki-schedule-edit-dry-run__title">G-13c1 Event A cleanup — 確認結果</h3>
     <p class="gosaki-schedule-edit-dry-run__message">dryRun: true / actualWrite: false / saveReadiness: ${escapeHtml(result.saveReadiness)}</p>
+    ${saveGateNote}
     <div><span class="gosaki-schedule-edit-dry-run__chips-label">changedFields</span> ${renderChangedFieldChips(result.changedFields)}</div>
     <p><code>approvalId</code>: ${escapeHtml(result.approvalId)}</p>
     ${guardBlock}

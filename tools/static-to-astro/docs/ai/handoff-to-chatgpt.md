@@ -5,11 +5,21 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-14b1d-gosaki-schedule-routine-edit-save-execution-result — complete.
-branch: main @ 1cd8427 (G-14b1d result doc uncommitted)
+Current phase: G-14b1e-gosaki-schedule-routine-edit-public-reflection-local-regen-and-upload-preflight — complete.
+branch: main @ 83cc049 (G-14b1e preflight doc uncommitted)
 ```
 
-**G-14b1d routine edit Save succeeded. Next: G-14b1e public reflection (`/schedule/2026-04/`).**
+**G-14b1e local regen + upload preflight complete. Next: G-14b1e-upload operator manual upload (1 file).**
+
+## G-14b1e Schedule CMS routine edit public reflection local regen + upload preflight — complete
+
+- **Doc:** `gosaki-schedule-routine-edit-public-reflection-local-regen-and-upload-preflight.md`
+- **Regen:** `build-gosaki-staging-admin-package.mjs` PASS — 27 files; CSS/JS hash **unchanged**
+- **Local April HTML:** `料金：3,300円（税込）` on Trio card; old `tax in` absent
+- **Minimal upload:** `schedule/2026-04/index.html` ×1
+- **Live April:** still stale (`tax in`) — upload pending
+- **Next:** **G-14b1e-upload** — operator manual FTP once
+- **Do not:** FTP in preflight phase; output is gitignored
 
 ## G-14b1d Schedule CMS routine edit Save execution result — complete
 

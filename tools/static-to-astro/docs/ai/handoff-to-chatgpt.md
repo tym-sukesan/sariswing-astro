@@ -5,11 +5,21 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-13c2d2-result-gosaki-schedule-event-b-poc-cleanup-local-dry-run-result — complete.
-branch: main @ 4f0f162 (uncommitted result doc)
+Current phase: G-13c2-gosaki-schedule-event-b-poc-cleanup-final-preflight — complete.
+branch: main @ 7d868f5 (uncommitted final preflight doc)
 ```
 
-**Event B dry-run Preview PASS (operator). Save/DB not executed. Next: G-13c2 final preflight.**
+**Event B final preflight done. Ready for execution (operator Save once). Save/DB not executed in this phase.**
+
+## G-13c2 Event B PoC cleanup final preflight — complete
+
+- **Doc:** `gosaki-schedule-event-b-poc-cleanup-final-preflight.md`
+- **beforeSnapshot:** live anon read confirmed (6 PoC fields + `updated_at` `2026-06-18T01:04:51.312817+00:00`)
+- **expected after:** `<>` / null×4 / `出演：`
+- **Save env stack:** documented (not started)
+- **rollback SQL:** doc-only — **separate approval** if ever needed
+- **Next:** **G-13c2 execution** → G-13c2e reflection (G-14c §12.3)
+- **Do not:** Save / rollback / upload in this phase
 
 ## G-13c2d2-result Event B local dry-run Preview result — complete
 

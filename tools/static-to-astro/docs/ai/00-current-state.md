@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-13c2d2-result Gosaki Event B PoC cleanup local dry-run Preview result (2026-06-19):** **complete** — operator Preview **PASS** (6 fields; null payload; `ready_but_save_disabled`); Save not clicked; DB unchanged. Doc: `gosaki-schedule-event-b-poc-cleanup-local-dry-run-result.md`. **Next: G-13c2 final preflight.** **Do not re-click Preview; do not Save yet.**
+**G-13c2 Gosaki Event B PoC cleanup final preflight (2026-06-19):** **complete** — beforeSnapshot live-confirmed; rollback SQL doc-only; Save env stack documented. Doc: `gosaki-schedule-event-b-poc-cleanup-final-preflight.md`. **Next: G-13c2 execution (operator Save once).** **Do not Save until explicit approval.**
+
+**G-13c2d2-result Gosaki Event B PoC cleanup local dry-run Preview result (2026-06-19):** **complete** — operator Preview **PASS**; Save not clicked. Doc: `gosaki-schedule-event-b-poc-cleanup-local-dry-run-result.md`.
 
 **G-13c2d2b Gosaki Event B PoC cleanup Preview UI visibility fix (2026-06-19):** **complete** — G-13c1/G-13c2 panels moved outside sticky workspace grid. Doc: `gosaki-schedule-event-b-poc-cleanup-preview-ui-visibility-fix.md`.
 

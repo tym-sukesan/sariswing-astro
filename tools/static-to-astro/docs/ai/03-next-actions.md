@@ -1,7 +1,17 @@
 Last updated: 2026-06-27
 Project: Static-to-Astro CMS / Musician CMS Kit
 
-## 0zz. G-13c2d2-result Event B local dry-run Preview result — complete
+## 0zz. G-13c2 Event B PoC cleanup final preflight — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-13c2-gosaki-schedule-event-b-poc-cleanup-final-preflight` |
+| Row | `aa440e29…` / `schedule-2026-07-010` / `2026-07-19` |
+| `updated_at` baseline | `2026-06-18T01:04:51.312817+00:00` (live-confirmed) |
+| **Next** | `G-13c2-gosaki-schedule-event-b-poc-cleanup-execution` |
+| Save / DB | **not executed** |
+
+## 0zz0. G-13c2d2-result Event B local dry-run Preview result — complete
 
 | Item | Value |
 | --- | --- |
@@ -10,7 +20,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Preview | **PASS** (operator 1回) |
 | `saveReadiness` | `ready_but_save_disabled` |
 | Null payload | venue / open / start / price = **null** |
-| **Next** | `G-13c2-gosaki-schedule-event-b-poc-cleanup-final-preflight` |
+| **Next** | `G-13c2-gosaki-schedule-event-b-poc-cleanup-final-preflight` — **done** → execution |
 | Save / DB | **not executed** |
 
 ## 0zz0. G-13c2d2b Event B Preview UI visibility fix — complete

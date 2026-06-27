@@ -1,21 +1,21 @@
 Last updated: 2026-06-28
 Project: Static-to-Astro CMS / Musician CMS Kit
 
-## 0zz. G-13c2e Event B public reflection upload result + HTTP verify — complete
+## 0zz. G-13c2e Event B PoC cleanup public reflection closure — complete
 
 | Item | Value |
 | --- | --- |
-| Phase | `G-13c2e-gosaki-schedule-event-b-public-reflection-upload-result-and-http-verify` |
+| Phase | `G-13c2e-gosaki-schedule-event-b-public-reflection-closure` |
+| Chain | G-13c2 DB → G-13c2e regen → upload → HTTP verify — **closed** |
 | Row | `aa440e29…` / `schedule-2026-07-010` / `2026-07-19` |
-| Upload | operator **1 file** — `schedule/2026-07/index.html` overwrite |
-| HTTP | **200** — Event B clean on live staging |
-| PoC markers | **absent** (G-9g2 / G-9g3b / G-9g3c / G-9g3d) |
-| CSS hash | `index.YcHrHZH4.css` — **unchanged** |
-| `_astro/` re-upload | **no** |
-| **Next** | `G-13c2e-gosaki-schedule-event-b-public-reflection-closure` |
-| Event A / March | **untouched** — do not re-upload March |
+| Live July | **clean** — `<>` / `出演：`; G-9g PoC absent |
+| rollbackNeeded | **false** |
+| Event A / March | **untouched** |
+| G-13b (2 events) | **both closed** (A: G-13e, B: G-13c2e) |
+| **Next (recommended)** | **G-14b1** — Schedule CMS routine edit flow next PoC |
+| **Do not** | re-click G-13c2 Save; re-upload July / March HTML |
 
-## 0zz0. G-13c2e Event B public reflection local regen + upload preflight — complete
+## 0zz0. G-13c2e Event B public reflection upload result + HTTP verify — complete
 
 | Item | Value |
 | --- | --- |
@@ -118,7 +118,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Chain | G-13d1 DB cleanup + G-13e public reflection — **closed** |
 | March re-upload | **not required** |
 | Rollback | **not required** |
-| Event B | **deferred** (G-13c2) |
+| Event B | **closed** (G-13c2e) |
 
 ## 0zz0. G-13e Event A public reflection upload execution — complete
 

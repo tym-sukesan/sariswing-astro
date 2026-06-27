@@ -5,11 +5,23 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-13c2e-gosaki-schedule-event-b-public-reflection-upload-result-and-http-verify — complete.
-branch: main @ 74ece00 (G-13c2e upload result doc uncommitted)
+Current phase: G-13c2e-gosaki-schedule-event-b-public-reflection-closure — complete.
+branch: main @ 272eca4 (G-13c2e closure doc uncommitted)
 ```
 
-**Event B upload + HTTP verify complete. Live July clean. Next: G-13c2e closure doc.**
+**G-13 PoC cleanup fully closed (Event A + Event B). Next recommended: G-14b1 routine edit PoC.**
+
+## G-13c2e Event B PoC cleanup public reflection closure — complete
+
+- **Doc:** `gosaki-schedule-event-b-public-reflection-closure.md`
+- **Chain:** G-13c2 DB (`15bf558`) → G-13c2e regen (`74ece00`) → upload + HTTP (`272eca4`) — **closed**
+- **Live July:** `2026.07.19` — `<>` + `出演：`; G-9g PoC **absent**
+- **rollbackNeeded:** **false**
+- **Event A / March:** untouched — G-13e preserved
+- **G-13b:** both scanned events resolved on staging DB + public HTML
+- **Next (recommended):** **G-14b1** — Schedule CMS routine edit flow next PoC
+- **Also consider:** G-13f residual PoC scan (read-only); G-14a gap inventory refresh
+- **Do not:** re-click G-13c2 Save; re-upload July / March HTML
 
 ## G-13c2e Event B public reflection upload result + HTTP verify — complete
 

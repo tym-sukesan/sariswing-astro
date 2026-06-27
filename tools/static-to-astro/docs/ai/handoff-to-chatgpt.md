@@ -5,20 +5,26 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-13d1-event-a-poc-cleanup-execution-result — complete.
-branch: main @ 0f3cb2a (uncommitted execution result doc)
+Current phase: G-13e-gosaki-schedule-event-a-poc-cleanup-public-reflection-preflight — complete.
+branch: main @ 2fb0ceb (uncommitted G-13e preflight doc)
 ```
 
-**G-13c1 Event A cleanup Save succeeded — G-13e public reflection next.**
+**DB cleanup done — public HTML regen+upload planning complete.**
+
+## G-13e Event A public reflection preflight — complete
+
+- **Doc:** `gosaki-schedule-event-a-poc-cleanup-public-reflection-preflight.md`
+- **Gap:** Live `/schedule/2026-03/` still shows G-9k6 PoC; DB is clean (G-13d1)
+- **Regen:** `build-gosaki-staging-admin-package.mjs` + `manual-upload:package`
+- **Upload target:** `schedule/2026-03/index.html` (minimal) → `/cms-kit-staging/gosaki-piano/`
+- **Next:** G-13e-gosaki-schedule-event-a-poc-cleanup-public-reflection-local-regen
 
 ## G-13d1 Event A PoC cleanup execution — complete
 
 - **Doc:** `gosaki-schedule-event-a-poc-cleanup-execution-result.md`
 - **Operator:** 戸山 — manual Save once; `errorCode: (none)`
 - **Row:** `f687ebf3-407c-49d0-9ab8-58040c499b8e` — 6 fields → Wix seed values
-- **updated_at:** `2026-06-27T05:10:58.008982+00:00` (was `2026-06-22T15:01:47.671778+00:00`)
 - **Do not re-click G-13c1 Save**
-- **Next:** G-13e-gosaki-schedule-event-a-poc-cleanup-public-reflection
 
 ## G-13d1g Event A project allowlist property fix — complete
 

@@ -1,7 +1,15 @@
 Last updated: 2026-06-27
 Project: Static-to-Astro CMS / Musician CMS Kit
 
-## 0zz. G-13d1 Event A PoC cleanup execution — complete
+## 0zz. G-13e Event A public reflection preflight — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-13e-gosaki-schedule-event-a-poc-cleanup-public-reflection-preflight` |
+| Gap | Live `/schedule/2026-03/` still has G-9k6 PoC — DB already clean |
+| **Next** | `G-13e-gosaki-schedule-event-a-poc-cleanup-public-reflection-local-regen` |
+
+## 0zz0. G-13d1 Event A PoC cleanup execution — complete
 
 | Item | Value |
 | --- | --- |
@@ -10,7 +18,6 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | approval_id | `G-13c1-gosaki-schedule-event-a-poc-text-cleanup-non-dry-run` |
 | post-save `updated_at` | `2026-06-27T05:10:58.008982+00:00` |
 | **Do not** | Re-click G-13c1 Save |
-| **Next** | `G-13e-gosaki-schedule-event-a-poc-cleanup-public-reflection` |
 
 ## 0zz0. G-13d1g Event A project allowlist property fix — complete
 

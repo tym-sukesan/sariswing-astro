@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-13d1 Gosaki Event A PoC cleanup execution result (2026-06-27):** **complete** — operator manual G-13c1 Save **succeeded** on Event A (`f687ebf3…`); 6 fields cleaned; `updated_at` `2026-06-27T05:10:58.008982+00:00`. Doc: `gosaki-schedule-event-a-poc-cleanup-execution-result.md`. **Do not re-click G-13c1 Save.** Next: **G-13e-gosaki-schedule-event-a-poc-cleanup-public-reflection**.
+**G-13e Gosaki Event A public reflection preflight (2026-06-27):** **complete** — DB cleaned (G-13d1); live `/schedule/2026-03/` still shows G-9k6 PoC until regen+upload. Doc: `gosaki-schedule-event-a-poc-cleanup-public-reflection-preflight.md`. Next: **G-13e-gosaki-schedule-event-a-poc-cleanup-public-reflection-local-regen**.
+
+**G-13d1 Gosaki Event A PoC cleanup execution result (2026-06-27):** **complete** — operator manual G-13c1 Save **succeeded** on Event A (`f687ebf3…`); 6 fields cleaned; `updated_at` `2026-06-27T05:10:58.008982+00:00`. Doc: `gosaki-schedule-event-a-poc-cleanup-execution-result.md`. **Do not re-click G-13c1 Save.**
 
 **G-13d1g Gosaki Event A project allowlist property fix (2026-06-26):** **complete** — G-13c1 Save gate uses `allowlistPassed` / `errorMessage` (G-9k aligned). Doc: `gosaki-schedule-event-a-poc-cleanup-project-allowlist-property-fix.md`.
 

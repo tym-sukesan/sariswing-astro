@@ -1,6 +1,18 @@
 Last updated: 2026-06-28
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzz. G-14b1 Schedule CMS routine edit flow next PoC planning — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-14b1-gosaki-schedule-routine-edit-flow-next-poc-planning` |
+| Doc | `gosaki-schedule-routine-edit-flow-next-poc-planning.md` |
+| Recommended PoC | `schedule-2026-04-005` / 2026-04-12 / `price` only |
+| approval_id | `G-9k-gosaki-schedule-existing-event-save-button-non-dry-run` |
+| Excluded rows | Event A (`f687ebf3…`), Event B (`aa440e29…`) — cleanup closed |
+| **Next (recommended)** | **G-14b1a** — practical Save enablement implementation |
+| **Do not** | Save / Preview / DB / FTP / regen in planning phase |
+
 ## 0zz. G-13c2e Event B PoC cleanup public reflection closure — complete
 
 | Item | Value |
@@ -12,7 +24,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | rollbackNeeded | **false** |
 | Event A / March | **untouched** |
 | G-13b (2 events) | **both closed** (A: G-13e, B: G-13c2e) |
-| **Next (recommended)** | **G-14b1** — Schedule CMS routine edit flow next PoC |
+| **Next (recommended)** | **G-14b1a** — routine edit Save enablement (G-14b1 planning **done**) |
 | **Do not** | re-click G-13c2 Save; re-upload July / March HTML |
 
 ## 0zz0. G-13c2e Event B public reflection upload result + HTTP verify — complete

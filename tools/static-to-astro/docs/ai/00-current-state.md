@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-13c2e Gosaki Event B PoC cleanup public reflection closure (2026-06-28):** **complete** — G-13c2→G-13c2e Event B chain **closed**; DB + live July clean; rollback **not needed**; Event A / March untouched. Doc: `gosaki-schedule-event-b-public-reflection-closure.md`. **G-13b scan (2 events) fully resolved.** **Next: G-14b1 routine edit PoC (recommended).**
+**G-14b1 Gosaki Schedule CMS routine edit flow next PoC planning (2026-06-28):** **complete** — routine edit PoC planned; recommended target `schedule-2026-04-005` / `price` only; G-9k path + G-14c reflection chain decomposed. Doc: `gosaki-schedule-routine-edit-flow-next-poc-planning.md`. **Next: G-14b1a practical Save enablement implementation.** **No Save / DB / FTP in planning phase.**
+
+**G-13c2e Gosaki Event B PoC cleanup public reflection closure (2026-06-28):** **complete** — G-13c2→G-13c2e Event B chain **closed**; DB + live July clean; rollback **not needed**; Event A / March untouched. Doc: `gosaki-schedule-event-b-public-reflection-closure.md`. **G-13b scan (2 events) fully resolved.**
 
 **G-13c2e Gosaki Event B public reflection upload result + HTTP verify (2026-06-28):** **complete** — operator manual upload `schedule/2026-07/index.html` ×1; HTTP **200**; Event B clean. Doc: `gosaki-schedule-event-b-public-reflection-upload-result-and-http-verify.md`. **Do not re-upload July HTML.**
 

@@ -5,11 +5,22 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-13c2e-gosaki-schedule-event-b-public-reflection-closure — complete.
-branch: main @ 272eca4 (G-13c2e closure doc uncommitted)
+Current phase: G-14b1-gosaki-schedule-routine-edit-flow-next-poc-planning — complete.
+branch: main @ af21cdf (G-14b1 planning doc uncommitted)
 ```
 
-**G-13 PoC cleanup fully closed (Event A + Event B). Next recommended: G-14b1 routine edit PoC.**
+**G-13 PoC cleanup fully closed (Event A + Event B). G-14b1 routine edit next PoC planned. Next recommended: G-14b1a implementation.**
+
+## G-14b1 Schedule CMS routine edit flow next PoC planning — complete
+
+- **Doc:** `gosaki-schedule-routine-edit-flow-next-poc-planning.md`
+- **Verifier:** `verify-g14b1-gosaki-schedule-routine-edit-flow-next-poc-planning.mjs`
+- **Recommended PoC:** `schedule-2026-04-005` (2026-04-12 `<Trio>`) — `price` field only
+- **Path:** G-9k operator UI → dry-run Preview → Save once → G-14c reflection
+- **Excluded:** Event A / Event B cleanup rows; date/month/INSERT/DELETE
+- **Next:** **G-14b1a** — practical Save enablement implementation (no Save in impl phase)
+- **Also consider:** G-13f residual PoC scan (read-only)
+- **Do not:** Save / Preview / DB / FTP / regen in G-14b1 planning
 
 ## G-13c2e Event B PoC cleanup public reflection closure — complete
 

@@ -1,13 +1,20 @@
 Last updated: 2026-06-27
 Project: Static-to-Astro CMS / Musician CMS Kit
 
-## 0zz. G-13e Event A public reflection preflight — complete
+## 0zz. G-13e Event A public reflection local regen — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-13e-gosaki-schedule-event-a-poc-cleanup-public-reflection-local-regen` |
+| Package | 27 files; March Event A clean; `scheduleDataSource=supabase` |
+| Live staging | **still stale** until upload |
+| **Next** | `G-13e-gosaki-schedule-event-a-poc-cleanup-public-reflection-upload-preflight` |
+
+## 0zz0. G-13e Event A public reflection preflight — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-13e-gosaki-schedule-event-a-poc-cleanup-public-reflection-preflight` |
-| Gap | Live `/schedule/2026-03/` still has G-9k6 PoC — DB already clean |
-| **Next** | `G-13e-gosaki-schedule-event-a-poc-cleanup-public-reflection-local-regen` |
 
 ## 0zz0. G-13d1 Event A PoC cleanup execution — complete
 

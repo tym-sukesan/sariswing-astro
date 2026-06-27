@@ -1,9 +1,11 @@
-Last updated: 2026-06-26
+Last updated: 2026-06-27
 Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-13d1g Gosaki Event A project allowlist property fix (2026-06-26):** **complete** — G-13c1 Save gate uses `allowlistPassed` / `errorMessage` (G-9k aligned); fixes false `project allowlist failed`. Doc: `gosaki-schedule-event-a-poc-cleanup-project-allowlist-property-fix.md`. Next: **G-13d1-event-a-poc-cleanup-execution-retry** (operator Preview → `ready_to_save` → Save once).
+**G-13d1 Gosaki Event A PoC cleanup execution result (2026-06-27):** **complete** — operator manual G-13c1 Save **succeeded** on Event A (`f687ebf3…`); 6 fields cleaned; `updated_at` `2026-06-27T05:10:58.008982+00:00`. Doc: `gosaki-schedule-event-a-poc-cleanup-execution-result.md`. **Do not re-click G-13c1 Save.** Next: **G-13e-gosaki-schedule-event-a-poc-cleanup-public-reflection**.
+
+**G-13d1g Gosaki Event A project allowlist property fix (2026-06-26):** **complete** — G-13c1 Save gate uses `allowlistPassed` / `errorMessage` (G-9k aligned). Doc: `gosaki-schedule-event-a-poc-cleanup-project-allowlist-property-fix.md`.
 
 **G-13d1f Gosaki Event A project allowlist investigation (2026-06-26):** **complete** — root cause = wrong property names on `evaluateStagingProjectAllowlist()` result in G-13c1 config. Read-only; no code in phase.
 

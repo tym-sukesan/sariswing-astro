@@ -5,17 +5,25 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-13d1g-gosaki-schedule-event-a-poc-cleanup-project-allowlist-property-fix — complete.
-branch: main @ 9a9c5a1 (uncommitted G-13d1g allowlist property fix)
+Current phase: G-13d1-event-a-poc-cleanup-execution-result — complete.
+branch: main @ 0f3cb2a (uncommitted execution result doc)
 ```
 
-**G-13c1 project allowlist typo fixed — operator execution retry next.**
+**G-13c1 Event A cleanup Save succeeded — G-13e public reflection next.**
+
+## G-13d1 Event A PoC cleanup execution — complete
+
+- **Doc:** `gosaki-schedule-event-a-poc-cleanup-execution-result.md`
+- **Operator:** 戸山 — manual Save once; `errorCode: (none)`
+- **Row:** `f687ebf3-407c-49d0-9ab8-58040c499b8e` — 6 fields → Wix seed values
+- **updated_at:** `2026-06-27T05:10:58.008982+00:00` (was `2026-06-22T15:01:47.671778+00:00`)
+- **Do not re-click G-13c1 Save**
+- **Next:** G-13e-gosaki-schedule-event-a-poc-cleanup-public-reflection
 
 ## G-13d1g Event A project allowlist property fix — complete
 
 - **Doc:** `gosaki-schedule-event-a-poc-cleanup-project-allowlist-property-fix.md`
 - **Fix:** `allowlistPassed` / `errorMessage` in `gosaki-schedule-event-a-poc-cleanup-config.ts`
-- **Next:** G-13d1-event-a-poc-cleanup-execution-retry
 
 ## G-13d1f Event A project allowlist investigation — complete
 

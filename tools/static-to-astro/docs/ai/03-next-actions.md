@@ -1,13 +1,23 @@
-Last updated: 2026-06-26
+Last updated: 2026-06-27
 Project: Static-to-Astro CMS / Musician CMS Kit
 
-## 0zz. G-13d1g Event A project allowlist property fix — complete
+## 0zz. G-13d1 Event A PoC cleanup execution — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-13d1-event-a-poc-cleanup-execution-result` |
+| Row | `f687ebf3…` / `schedule-2026-03-007` — 6 fields cleaned |
+| approval_id | `G-13c1-gosaki-schedule-event-a-poc-text-cleanup-non-dry-run` |
+| post-save `updated_at` | `2026-06-27T05:10:58.008982+00:00` |
+| **Do not** | Re-click G-13c1 Save |
+| **Next** | `G-13e-gosaki-schedule-event-a-poc-cleanup-public-reflection` |
+
+## 0zz0. G-13d1g Event A project allowlist property fix — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-13d1g-gosaki-schedule-event-a-poc-cleanup-project-allowlist-property-fix` |
 | Fix | `allowlistPassed` / `errorMessage` in G-13c1 config (G-9k aligned) |
-| **Next** | `G-13d1-event-a-poc-cleanup-execution-retry` |
 
 ## 0zz0. G-13d1f Event A project allowlist investigation — complete
 

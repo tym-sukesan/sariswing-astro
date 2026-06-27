@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-14b1b-result Gosaki Schedule CMS routine edit local dry-run Preview result (2026-06-28):** **complete** — operator Preview **PASS** (G-9g1 dev-tools path); DB unchanged; save path = **G-9k** + practical arm (not G-9g3g). Doc: `gosaki-schedule-routine-edit-local-dry-run-preview-result.md`. **Next: G-14b1c final preflight.** **No Save / DB / FTP.**
+**G-14b1c Gosaki Schedule CMS routine edit final preflight (2026-06-28):** **complete** — beforeSnapshot confirmed (`updated_at` `2026-06-16T16:03:41.551792+00:00`); G-9k Save env documented. Doc: `gosaki-schedule-routine-edit-final-preflight.md`. **Next: G-14b1d operator Save once.** **No Save / DB / FTP in preflight phase.**
+
+**G-14b1b-result Gosaki Schedule CMS routine edit local dry-run Preview result (2026-06-28):** **complete** — committed `53b28e9`.
 
 **G-14b1b Gosaki Schedule CMS routine edit local dry-run Preview preflight (2026-06-28):** **complete** — committed `e16a55f`.
 

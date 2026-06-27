@@ -5,11 +5,21 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-14b1c-gosaki-schedule-routine-edit-final-preflight — complete.
-branch: main @ 53b28e9 (G-14b1c preflight doc uncommitted)
+Current phase: G-14b1d-gosaki-schedule-routine-edit-save-execution-result — complete.
+branch: main @ 1cd8427 (G-14b1d result doc uncommitted)
 ```
 
-**G-14b1c final preflight complete. Next: G-14b1d operator Save once (G-9k path).**
+**G-14b1d routine edit Save succeeded. Next: G-14b1e public reflection (`/schedule/2026-04/`).**
+
+## G-14b1d Schedule CMS routine edit Save execution result — complete
+
+- **Doc:** `gosaki-schedule-routine-edit-save-execution-result.md`
+- **Target:** `14230329…` / `schedule-2026-04-005` / price `3,300円(tax in)` → `3,300円（税込）`
+- **Path:** G-9k operator UI `変更を確認` → `更新する`
+- **after `updated_at`:** `2026-06-27T17:18:54.986868+00:00`
+- **rollbackNeeded:** false
+- **Next:** **G-14b1e** — G-14c public reflection
+- **Do not:** re-click G-14b1 Save
 
 ## G-14b1c Schedule CMS routine edit final preflight — complete
 

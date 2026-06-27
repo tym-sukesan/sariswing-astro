@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-13e Gosaki Event A public reflection local regen (2026-06-27):** **complete** — `build-gosaki-staging-admin-package.mjs` PASS; March `schedule/2026-03/index.html` Event A clean; package 27 files; PoC markers absent. Doc: `gosaki-schedule-event-a-poc-cleanup-public-reflection-local-regen.md`. **Live staging still stale until upload.** Next: **G-13e-gosaki-schedule-event-a-poc-cleanup-public-reflection-upload-preflight**.
+**G-13e Gosaki Event A public reflection upload preflight (2026-06-27):** **complete** — minimal upload `schedule/2026-03/index.html` only; FileZilla/Lolipop overwrite; G-7f1 no-delete. Doc: `gosaki-schedule-event-a-poc-cleanup-public-reflection-upload-preflight.md`. Next: **G-13e-gosaki-schedule-event-a-poc-cleanup-public-reflection-upload-execution**.
+
+**G-13e Gosaki Event A public reflection local regen (2026-06-27):** **complete** — package 27 files; March Event A clean. Doc: `gosaki-schedule-event-a-poc-cleanup-public-reflection-local-regen.md`.
 
 **G-13e Gosaki Event A public reflection preflight (2026-06-27):** **complete** — DB cleaned (G-13d1); planning doc: `gosaki-schedule-event-a-poc-cleanup-public-reflection-preflight.md`.
 

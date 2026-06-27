@@ -5,21 +5,24 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-13e-gosaki-schedule-event-a-poc-cleanup-public-reflection-local-regen — complete.
-branch: main @ de234bf (uncommitted G-13e local regen doc)
+Current phase: G-13e-gosaki-schedule-event-a-poc-cleanup-public-reflection-upload-preflight — complete.
+branch: main @ cd0fb77 (uncommitted G-13e upload preflight doc)
 ```
 
-**Local package regen PASS — operator upload preflight next.**
+**Upload preflight ready — operator manual upload ×1 next.**
+
+## G-13e Event A public reflection upload preflight — complete
+
+- **Doc:** `gosaki-schedule-event-a-poc-cleanup-public-reflection-upload-preflight.md`
+- **Upload:** 1 file — local `…/public-dist/schedule/2026-03/index.html` → remote `/cms-kit-staging/gosaki-piano/schedule/2026-03/index.html`
+- **Method:** FileZilla / Lolipop FTP GUI overwrite — **no** mirror/delete
+- **Live gap:** March page still shows G-9k6 until upload
+- **Approval:** `承認します。この手動アップロードを1回だけ実行してください。`
+- **Next:** G-13e-gosaki-schedule-event-a-poc-cleanup-public-reflection-upload-execution
 
 ## G-13e Event A public reflection local regen — complete
 
 - **Doc:** `gosaki-schedule-event-a-poc-cleanup-public-reflection-local-regen.md`
-- **Command:** `node scripts/build-gosaki-staging-admin-package.mjs` — PASS
-- **March HTML:** Event A clean; `scheduleDataSource=supabase`; no G-9k6/G-9k4
-- **Package:** 27 files at `output/manual-upload/gosaki-piano/public-dist/`
-- **Minimal upload:** `schedule/2026-03/index.html` (CSS hash unchanged)
-- **Live staging:** still stale until upload
-- **Next:** G-13e-gosaki-schedule-event-a-poc-cleanup-public-reflection-upload-preflight
 
 ## G-13e Event A public reflection preflight — complete
 

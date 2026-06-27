@@ -1,14 +1,21 @@
 Last updated: 2026-06-25
 Project: Static-to-Astro CMS / Musician CMS Kit
 
-## 0zz. G-13d1 Event A PoC cleanup local implementation — complete
+## 0zz. G-13d2 Event A admin reflection preflight — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-13d2-gosaki-schedule-event-a-poc-cleanup-admin-reflection-preflight` |
+| Admin surface | Local `__admin-staging-shell/.../admin/schedule/` only |
+| Package regen for G-13c1 | **not required** |
+| **Next** | `G-13d2-admin-reflection-local-dev-verify` or `G-13d1-final-preflight` |
+
+## 0zz0. G-13d1 Event A cleanup local implementation — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-13d1-gosaki-schedule-event-a-poc-cleanup-local-implementation` |
 | approval_id | `G-13c1-gosaki-schedule-event-a-poc-text-cleanup-non-dry-run` |
-| Target | `f687ebf3…` / `schedule-2026-03-007` only |
-| **Next** | `G-13d1-final-preflight` |
 
 ## 0zz0. G-13c PoC cleanup implementation prep — complete
 

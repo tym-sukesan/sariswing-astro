@@ -5,18 +5,23 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-13d1-gosaki-schedule-event-a-poc-cleanup-local-implementation — complete.
-branch: main @ 91c98e7 (uncommitted G-13d1)
+Current phase: G-13d2-gosaki-schedule-event-a-poc-cleanup-admin-reflection-preflight — complete.
+branch: main @ bbb223c (uncommitted G-13d2 docs)
 ```
 
-**Event A G-13c1 path implemented locally; Save not executed.**
+**G-13c1 admin UI = local staging shell only; manual-upload not required for reflection.**
+
+## G-13d2 admin reflection preflight — complete
+
+- **Doc:** `gosaki-schedule-event-a-poc-cleanup-admin-reflection-preflight.md`
+- **Route:** `http://localhost:4321/__admin-staging-shell/musician-basic/admin/schedule/`
+- **Not in:** `/cms-kit-staging/gosaki-piano/admin/` (read-only)
+- **Next:** local dev verify OR G-13d1-final-preflight
 
 ## G-13d1 Event A cleanup local implementation — complete
 
 - **Doc:** `gosaki-schedule-event-a-poc-cleanup-local-implementation.md`
 - **approval_id:** `G-13c1-gosaki-schedule-event-a-poc-text-cleanup-non-dry-run`
-- **Target:** `f687ebf3…` only — Event B untouched
-- **Next:** G-13d1-final-preflight → operator Save (separate phase)
 
 ## G-13c PoC cleanup implementation prep — complete
 

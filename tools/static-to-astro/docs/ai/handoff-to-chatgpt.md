@@ -5,22 +5,26 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-15b-retry-gosaki-discography-save-retry-result-and-updated-at-investigation — complete (uncommitted).
-branch: main @ cfc0297
+Current phase: G-15b-f8-gosaki-discography-updated-at-trigger-final-preflight — complete (uncommitted).
+branch: main @ c06162b
 ```
 
-**G-15b Save retry succeeded. updated_at unchanged — trigger gap. Next: G-15b-f8 → G-15c.**
+**updated_at trigger preflight done. Next: G-15b-f8-execution (operator SQL apply once).**
 
-## G-15b-retry Discography Save retry — complete
+## G-15b-f8 Discography updated_at trigger final preflight — complete
 
+- **Doc:** `gosaki-discography-updated-at-trigger-final-preflight.md`
+- **Template:** `gosaki-discography-updated-at-trigger.template.sql`
+- **Parity:** schedules `schedules_set_updated_at` (G-6-f8) — same `new.updated_at = now()` pattern
+- **Apply scope:** function + trigger on `public.discography` only — no DML/GRANT/policy
+- **After DDL:** `discography-002.updated_at` stays `2026-06-05T17:39:44.201802+00:00` until next UPDATE
+- **Next:** **G-15b-f8-execution** — operator runs apply block in SQL Editor (explicit approval)
+- **Do not:** Cursor SQL; Save for proof without new approval
+
+## G-15b-retry — complete
+
+- **Commit:** `c06162b`
 - **Doc:** `gosaki-discography-save-retry-result-and-updated-at-investigation.md`
-- **Save:** operator once — **success** (`保存しました`)
-- **purchase_url:** `https://gosakirikako.base.shop/` (was `gosaakiii`)
-- **updated_at:** `2026-06-05T17:39:44.201802+00:00` — **unchanged** (no `discography_set_updated_at` trigger)
-- **Rollback:** not needed
-- **Template:** `gosaki-discography-updated-at-trigger.template.sql` (do not run without approval)
-- **Next:** **G-15b-f8** trigger preflight/apply → **G-15c** public reflection
-- **Do not:** re-Save `discography-002`
 
 ## G-15b-grant-apply — complete
 

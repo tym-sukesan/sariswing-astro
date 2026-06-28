@@ -1,20 +1,27 @@
 Last updated: 2026-06-28
 Project: Static-to-Astro CMS / Musician CMS Kit
 
-## 0zzzzzzzzzzzzzzzzzz. G-15b-retry Discography Save retry + updated_at investigation — complete
+## 0zzzzzzzzzzzzzzzzzzz. G-15b-f8 Discography updated_at trigger final preflight — complete
 
 | Item | Value |
 | --- | --- |
-| Phase | `G-15b-retry-gosaki-discography-save-retry-result-and-updated-at-investigation` |
+| Phase | `G-15b-f8-gosaki-discography-updated-at-trigger-final-preflight` |
+| Doc | `gosaki-discography-updated-at-trigger-final-preflight.md` |
+| Verifier | `verify-g15b-f8-gosaki-discography-updated-at-trigger-final-preflight.mjs` |
+| Template | `gosaki-discography-updated-at-trigger.template.sql` |
+| SQL executed | **none** (preflight only) |
+| **Next (recommended)** | **G-15b-f8-execution** — operator apply trigger once in SQL Editor |
+| **Do not** | Execute SQL in preflight; re-Save discography-002 for proof |
+
+## 0zzzzzzzzzzzzzzzzzz. G-15b-retry Discography Save retry — complete
+
+| Item | Value |
+| --- | --- |
+| Commit | `c06162b` |
 | Doc | `gosaki-discography-save-retry-result-and-updated-at-investigation.md` |
-| Verifier | `verify-g15b-gosaki-discography-save-retry-result-and-updated-at-investigation.mjs` |
-| Target | `discography-002` / `purchase_url` |
-| Save | **succeeded** (operator once) |
-| `purchase_url` | `gosaakiii` → `gosakirikako` |
-| `updated_at` | **unchanged** — no discography trigger |
-| Rollback | **not needed** |
-| **Next (recommended)** | **G-15b-f8** `updated_at` trigger → **G-15c** public reflection |
-| **Do not** | Re-Save `discography-002`; apply trigger in this phase |
+| `purchase_url` | **updated** (`gosakirikako`) |
+| `updated_at` | **unchanged** — trigger gap |
+| **Next** | G-15b-f8 — done (preflight) |
 
 ## 0zzzzzzzzzzzzzzzzz. G-15b-grant-apply Discography UPDATE grant — complete
 

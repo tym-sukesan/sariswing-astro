@@ -3,9 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-15b-grant-apply Gosaki Discography UPDATE grant apply result (2026-06-28):** **complete (uncommitted)** — operator applied `GRANT UPDATE` on `public.discography` to `authenticated` on staging; grants verified; `discography_admin_all` pre-existing; row unchanged. Doc: `gosaki-discography-update-grant-apply-result.md`. **Next: G-15b-retry Save once.**
+**G-15b-retry Gosaki Discography Save retry (2026-06-28):** **complete (uncommitted)** — operator Save once **succeeded**; `purchase_url` `gosaakiii` → `gosakirikako`; `updated_at` **unchanged** (no trigger on discography); rollback not needed. Doc: `gosaki-discography-save-retry-result-and-updated-at-investigation.md`. **Next: G-15b-f8 updated_at trigger → G-15c public reflection.**
 
-**G-15b-fail Gosaki Discography Save permission failure (2026-06-28):** **complete** — committed `5e832fb`; Save failed `permission denied for table discography`; grant gap identified. Doc: `gosaki-discography-save-permission-failure-and-investigation.md`.
+**G-15b-grant-apply Gosaki Discography UPDATE grant (2026-06-28):** **complete** — committed `cfc0297`; `GRANT UPDATE` on `public.discography` to `authenticated`. Doc: `gosaki-discography-update-grant-apply-result.md`.
 
 **G-15b Gosaki Discography Save slice (2026-06-28):** **complete** — committed `eda9047`; G-15b Save path implemented; operator Save attempted — failed at DB permission (see G-15b-fail).
 

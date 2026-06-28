@@ -5,27 +5,27 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-15b-grant-apply-gosaki-discography-update-grant-apply-result — complete (uncommitted).
-branch: main @ 5e832fb
+Current phase: G-15b-retry-gosaki-discography-save-retry-result-and-updated-at-investigation — complete (uncommitted).
+branch: main @ cfc0297
 ```
 
-**GRANT UPDATE applied on staging discography. Next: G-15b-retry Save once.**
+**G-15b Save retry succeeded. updated_at unchanged — trigger gap. Next: G-15b-f8 → G-15c.**
 
-## G-15b-grant-apply Discography UPDATE grant — complete
+## G-15b-retry Discography Save retry — complete
 
+- **Doc:** `gosaki-discography-save-retry-result-and-updated-at-investigation.md`
+- **Save:** operator once — **success** (`保存しました`)
+- **purchase_url:** `https://gosakirikako.base.shop/` (was `gosaakiii`)
+- **updated_at:** `2026-06-05T17:39:44.201802+00:00` — **unchanged** (no `discography_set_updated_at` trigger)
+- **Rollback:** not needed
+- **Template:** `gosaki-discography-updated-at-trigger.template.sql` (do not run without approval)
+- **Next:** **G-15b-f8** trigger preflight/apply → **G-15c** public reflection
+- **Do not:** re-Save `discography-002`
+
+## G-15b-grant-apply — complete
+
+- **Commit:** `cfc0297`
 - **Doc:** `gosaki-discography-update-grant-apply-result.md`
-- **SQL:** `grant update on table public.discography to authenticated;` — **success**
-- **Grants:** authenticated SELECT + UPDATE; no INSERT/DELETE on authenticated
-- **RLS:** `discography_admin_all` already existed
-- **Row:** `discography-002` unchanged (`purchase_url` before value; baseline `updated_at`)
-- **Next:** **G-15b-retry** — operator Preview → Save once → afterVerification
-- **Do not:** additional GRANT; Save in this phase
-
-## G-15b-fail Discography Save permission failure — complete
-
-- **Commit:** `5e832fb`
-- **Doc:** `gosaki-discography-save-permission-failure-and-investigation.md`
-- **Resolved by:** G-15b-grant-apply
 
 ## G-15b Discography Save slice — committed; Save failed safely
 

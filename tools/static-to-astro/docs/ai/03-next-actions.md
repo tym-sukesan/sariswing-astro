@@ -1,30 +1,28 @@
 Last updated: 2026-06-28
 Project: Static-to-Astro CMS / Musician CMS Kit
 
-## 0zzzzzzzzzzzzzzzzz. G-15b-grant-apply Discography UPDATE grant apply result — complete
+## 0zzzzzzzzzzzzzzzzzz. G-15b-retry Discography Save retry + updated_at investigation — complete
 
 | Item | Value |
 | --- | --- |
-| Phase | `G-15b-grant-apply-gosaki-discography-update-grant-apply-result` |
+| Phase | `G-15b-retry-gosaki-discography-save-retry-result-and-updated-at-investigation` |
+| Doc | `gosaki-discography-save-retry-result-and-updated-at-investigation.md` |
+| Verifier | `verify-g15b-gosaki-discography-save-retry-result-and-updated-at-investigation.mjs` |
+| Target | `discography-002` / `purchase_url` |
+| Save | **succeeded** (operator once) |
+| `purchase_url` | `gosaakiii` → `gosakirikako` |
+| `updated_at` | **unchanged** — no discography trigger |
+| Rollback | **not needed** |
+| **Next (recommended)** | **G-15b-f8** `updated_at` trigger → **G-15c** public reflection |
+| **Do not** | Re-Save `discography-002`; apply trigger in this phase |
+
+## 0zzzzzzzzzzzzzzzzz. G-15b-grant-apply Discography UPDATE grant — complete
+
+| Item | Value |
+| --- | --- |
+| Commit | `cfc0297` |
 | Doc | `gosaki-discography-update-grant-apply-result.md` |
-| Verifier | `verify-g15b-gosaki-discography-update-grant-apply-result.mjs` |
-| SQL applied | `grant update on table public.discography to authenticated;` |
-| authenticated UPDATE | **present** |
-| authenticated INSERT/DELETE | **absent** |
-| `discography_admin_all` | **already existed** |
-| Target row | **unchanged** |
-| **Next (recommended)** | **G-15b-retry** — operator Save once |
-| **Do not** | Re-grant; Save in this phase |
-
-## 0zzzzzzzzzzzzzzzz. G-15b-fail Discography Save permission failure — complete
-
-| Item | Value |
-| --- | --- |
-| Phase | `G-15b-fail-gosaki-discography-save-permission-failure-and-investigation` |
-| Commit | `5e832fb` |
-| Save error | `permission denied for table discography` |
-| **Next** | G-15b-grant-apply — done |
-| **Do not** | Retry Save before grant (resolved) |
+| **Next** | G-15b-retry — done |
 
 ## 0zzzzzzzzzzzzzzz. G-15b Discography Save slice — complete (Save failed safely)
 

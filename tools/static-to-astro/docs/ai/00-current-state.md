@@ -3,6 +3,8 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
+**G-15 Gosaki Discography CMS MVP inventory and plan (2026-06-28):** **complete** — 4 releases mapped (Wix HTML public / JSON admin / Supabase DB); MVP = existing-row Supabase UPDATE (Schedule pattern); images/INSERT/tracks defer. Doc: `gosaki-discography-cms-mvp-inventory-and-plan.md`. **Next: G-15a admin Supabase read binding.**
+
 **G-14b1f Gosaki Schedule CMS routine edit reflection closure (2026-06-28):** **complete** — G-14b1 chain **closed** (planning → G-14b1e-upload); G-9k product Save + public reflection success; `schedule-2026-04-005` price only; rollback **not needed**; Event A / Event B / March / July untouched. Doc: `gosaki-schedule-routine-edit-reflection-closure.md`. Verifier: 53 PASS. **Do not re-Save same row; do not re-upload April HTML.**
 
 **G-14b1e-upload Gosaki Schedule CMS routine edit public reflection upload + HTTP verify (2026-06-28):** **complete** — operator upload `schedule/2026-04/index.html` ×1; HTTP **200**; Trio price `3,300円（税込）` live. Doc: `gosaki-schedule-routine-edit-public-reflection-result.md`. Committed `bb342c3`. **Do not re-upload April HTML.**

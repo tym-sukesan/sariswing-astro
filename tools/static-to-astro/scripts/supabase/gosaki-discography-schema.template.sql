@@ -1,0 +1,74 @@
+-- G-15 — Gosaki discography CMS MVP schema reference (TEMPLATE ONLY — DO NOT RUN in G-15)
+-- Project: static-to-astro-cms-staging / kmjqppxjdnwwrtaeqjta
+--
+-- Status (2026-06-28 read-only survey): tables ALREADY EXIST with 4 discography rows + 16 tracks.
+-- This file documents live schema + optional future deltas. Operator approval required before any DDL.
+
+-- ---------------------------------------------------------------------------
+-- LIVE (staging) — public.discography — confirmed columns
+-- ---------------------------------------------------------------------------
+-- id uuid PK
+-- legacy_id text UNIQUE
+-- title text NOT NULL
+-- artist text
+-- release_date date
+-- year integer
+-- label text
+-- catalog_number text
+-- description text          -- personnel + purchase notes merged (not structured)
+-- cover_image_url text      -- Supabase Storage URLs (populated)
+-- purchase_url text
+-- streaming_url text
+-- sort_order integer
+-- published boolean
+-- source_file text
+-- source_route text
+-- created_at timestamptz
+-- updated_at timestamptz
+--
+-- NOT present on live staging (as of G-15):
+--   site_slug   — schedules have it; discography does NOT (single-tenant gosaki rows only)
+--   price       — admin JSON has price; DB stores price only inside Wix HTML / JSON, not column
+
+-- ---------------------------------------------------------------------------
+-- LIVE (staging) — public.discography_tracks — confirmed columns
+-- ---------------------------------------------------------------------------
+-- id uuid PK
+-- discography_legacy_id text NOT NULL  -- FK to discography.legacy_id (logical)
+-- track_number integer NOT NULL
+-- title text NOT NULL
+-- sort_order integer
+-- created_at timestamptz
+--
+-- Gap: DB has 16 tracks total vs 33 in admin JSON (partial seed). Track CMS deferred past G-15 MVP.
+
+-- ---------------------------------------------------------------------------
+-- OPTIONAL FUTURE — site_slug parity with schedules (G-15a migration phase — NOT G-15)
+-- ---------------------------------------------------------------------------
+-- alter table public.discography
+--   add column if not exists site_slug text;
+--
+-- update public.discography
+-- set site_slug = 'gosaki-piano'
+-- where site_slug is null;
+--
+-- create index if not exists discography_site_slug_sort_idx
+--   on public.discography (site_slug, sort_order);
+
+-- ---------------------------------------------------------------------------
+-- OPTIONAL FUTURE — price column (only if operator wants DB-native price editing)
+-- ---------------------------------------------------------------------------
+-- alter table public.discography
+--   add column if not exists price text;
+
+-- ---------------------------------------------------------------------------
+-- OPTIONAL FUTURE — updated_at trigger (mirror schedules G-6-f8 pattern)
+-- ---------------------------------------------------------------------------
+-- See scripts/supabase/schedules-updated-at-trigger.sql for reference pattern.
+
+-- ---------------------------------------------------------------------------
+-- READ-ONLY verification (allowed in inventory phases)
+-- ---------------------------------------------------------------------------
+-- select count(*) from public.discography;
+-- select legacy_id, title, sort_order, published from public.discography order by sort_order;
+-- select discography_legacy_id, count(*) from public.discography_tracks group by 1 order by 1;

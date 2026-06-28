@@ -5,11 +5,21 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-14b1f-gosaki-schedule-routine-edit-reflection-closure — complete (uncommitted).
-branch: main @ bb342c3
+Current phase: G-15-gosaki-discography-cms-mvp-inventory-and-plan — complete (uncommitted).
+branch: main @ 8313349
 ```
 
-**G-14b1 routine Schedule CMS edit chain closed. Next: G-14b2 second routine edit planning or G-9l YouTube embed CMS.**
+**G-15 Discography inventory done. Next: G-15a admin Supabase read binding.**
+
+## G-15 Discography CMS MVP inventory and plan — complete
+
+- **Doc:** `gosaki-discography-cms-mvp-inventory-and-plan.md`
+- **Releases:** 4 — Wix HTML (public SoT) / static JSON (admin read) / Supabase `discography` (4 rows, not wired to admin)
+- **MVP:** existing-row Supabase UPDATE — mirror Schedule G-9k; **not** YouTube static JSON write
+- **Defer:** images, INSERT/DELETE, tracks, public reflection
+- **Artifacts:** `data/gosaki/discography.seed.json`, schema/seed SQL templates (do not run)
+- **Next:** **G-15a** — wire admin to Supabase read
+- **Do not:** DB write / migration / Save / FTP
 
 ## G-14b1f Schedule CMS routine edit reflection closure — complete
 

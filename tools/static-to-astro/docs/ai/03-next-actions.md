@@ -1,6 +1,18 @@
 Last updated: 2026-06-28
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzz. G-15 Discography CMS MVP inventory and plan — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-15-gosaki-discography-cms-mvp-inventory-and-plan` |
+| Doc | `gosaki-discography-cms-mvp-inventory-and-plan.md` |
+| Verifier | `verify-g15-gosaki-discography-cms-mvp-inventory-and-plan.mjs` |
+| Releases | **4** (Wix public / JSON admin / Supabase DB) |
+| MVP path | Supabase `discography` existing-row UPDATE (Schedule pattern) |
+| **Next (recommended)** | **G-15a** — admin Supabase read binding + list UI |
+| **Do not** | DB write / migration / Save / FTP in G-15 |
+
 ## 0zzzzzzzzzzz. G-14b1f Schedule CMS routine edit reflection closure — complete
 
 | Item | Value |

@@ -1,6 +1,19 @@
 Last updated: 2026-06-28
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzz. G-15a Discography admin Supabase read binding — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-15a-gosaki-discography-admin-supabase-read-binding` |
+| Doc | `gosaki-discography-admin-supabase-read-binding.md` |
+| Route | `/__admin-staging-shell/musician-basic/admin/discography/` |
+| Source | Supabase `discography` + `discography_tracks` (read-only) |
+| Albums | **4** — legacy_id `discography-001` … `004` |
+| Save | **disabled** |
+| **Next (recommended)** | **G-15a2** — dry-run Preview preflight |
+| **Do not** | Save / DB write / migration in G-15a |
+
 ## 0zzzzzzzzzzzz. G-15 Discography CMS MVP inventory and plan — complete
 
 | Item | Value |

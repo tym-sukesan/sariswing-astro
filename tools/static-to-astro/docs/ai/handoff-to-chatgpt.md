@@ -5,11 +5,21 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-15-gosaki-discography-cms-mvp-inventory-and-plan — complete (uncommitted).
-branch: main @ 8313349
+Current phase: G-15a-gosaki-discography-admin-supabase-read-binding — complete (uncommitted).
+branch: main @ 8532413
 ```
 
-**G-15 Discography inventory done. Next: G-15a admin Supabase read binding.**
+**Discography admin Supabase read binding done. Next: G-15a2 dry-run Preview preflight.**
+
+## G-15a Discography admin Supabase read binding — complete
+
+- **Doc:** `gosaki-discography-admin-supabase-read-binding.md`
+- **Route:** `/__admin-staging-shell/musician-basic/admin/discography/`
+- **Read:** Supabase `discography` (4 rows) + `discography_tracks` (display only)
+- **UI:** legacy_id / sort_order / published visible; form from Supabase; default select SKYLARK
+- **Gates:** `supabaseReadEnabled`; `saveEnabled: false`; `dbWriteEnabled: false`
+- **Next:** **G-15a2** — dry-run Preview preflight
+- **Do not:** Save / DB write
 
 ## G-15 Discography CMS MVP inventory and plan — complete
 

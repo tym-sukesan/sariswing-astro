@@ -1,5 +1,6 @@
 /**
- * Gosaki staging admin — discography CMS-ready static JSON (no DB).
+ * Gosaki staging admin — discography static JSON loader (legacy G-9j).
+ * @deprecated G-15a — use resolveGosakiDiscographySupabaseReadBinding() instead.
  */
 
 import fs from "node:fs";

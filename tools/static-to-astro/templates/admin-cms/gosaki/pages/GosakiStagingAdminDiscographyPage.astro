@@ -2,9 +2,9 @@
 import AdminGosakiStagingShellLayout from "../components/AdminGosakiStagingShellLayout.astro";
 import AdminGosakiStagingDiscographyOperatorPage from "../components/AdminGosakiStagingDiscographyOperatorPage.astro";
 import AdminGosakiStagingAuthGate from "../components/AdminGosakiStagingAuthGate.astro";
-import { loadGosakiDiscographyAdminBinding } from "../../../../../../src/lib/admin/staging-data/gosaki-discography-admin-binding";
+import { resolveGosakiDiscographySupabaseReadBinding } from "../../../../../../src/lib/admin/staging-data/gosaki-discography-supabase-read-binding";
 
-const binding = loadGosakiDiscographyAdminBinding();
+const binding = await resolveGosakiDiscographySupabaseReadBinding();
 ---
 
 <AdminGosakiStagingShellLayout title="Discography管理">

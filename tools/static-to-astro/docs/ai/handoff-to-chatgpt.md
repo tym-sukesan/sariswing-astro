@@ -5,21 +5,28 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-15b-gosaki-discography-existing-release-purchase-url-non-dry-run-final-preflight — complete (uncommitted).
-branch: main @ 1190323 (+ G-15b working tree)
+Current phase: G-15b-fail-gosaki-discography-save-permission-failure-and-investigation — complete (uncommitted).
+branch: main @ eda9047
 ```
 
-**Discography G-15b Save slice done. Next: G-15b-execution (operator Save once).**
+**G-15b Save failed safely (permission denied). Next: G-15b-grant → retry Save.**
 
-## G-15b Discography Save slice — complete
+## G-15b-fail Discography Save permission failure — complete
 
+- **Doc:** `gosaki-discography-save-permission-failure-and-investigation.md`
+- **Error:** `permission denied for table discography` — `actualWrite: false`
+- **Row:** `discography-002` unchanged (`purchase_url`, `updated_at` baseline intact)
+- **Cause:** likely missing `GRANT UPDATE ON public.discography TO authenticated` (Schedule G-6-e4 parallel)
+- **Template:** `scripts/supabase/gosaki-discography-update-permission.template.sql` (do not run without approval)
+- **Next:** **G-15b-grant** audit + manual grant → **G-15b-retry** Save once
+- **Do not:** retry Save before grant; use service_role
+
+## G-15b Discography Save slice — committed; Save failed safely
+
+- **Commit:** `eda9047`
 - **Doc:** `gosaki-discography-save-slice-final-preflight.md`
-- **Target:** `discography-002` / `purchase_url` only (`gosaakiii` → `gosakirikako`)
-- **Approval:** `G-15b-gosaki-discography-existing-release-purchase-url-non-dry-run`
-- **Save:** implemented + env-gated; **not executed**
-- **beforeSnapshot:** `updated_at` `2026-06-05T17:39:44.201802+00:00` unchanged
-- **Next:** **G-15b-execution** — operator manual Save once + afterVerification SELECT
-- **Do not:** Cursor Save; routine dev with arms on
+- **Dry-run:** passed; Save reached DB then permission denied
+- **Do not:** re-Save until grant phase complete
 
 ## G-15a2 Discography dry-run Preview — complete
 

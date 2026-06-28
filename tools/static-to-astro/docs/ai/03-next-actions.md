@@ -1,18 +1,30 @@
 Last updated: 2026-06-28
 Project: Static-to-Astro CMS / Musician CMS Kit
 
-## 0zzzzzzzzzzzzzzz. G-15b Discography Save slice implementation and final preflight — complete
+## 0zzzzzzzzzzzzzzzz. G-15b-fail Discography Save permission failure — complete
 
 | Item | Value |
 | --- | --- |
-| Phase | `G-15b-gosaki-discography-existing-release-purchase-url-non-dry-run-final-preflight` |
+| Phase | `G-15b-fail-gosaki-discography-save-permission-failure-and-investigation` |
+| Doc | `gosaki-discography-save-permission-failure-and-investigation.md` |
+| Verifier | `verify-g15b-gosaki-discography-save-permission-failure-and-investigation.mjs` |
+| Save error | `permission denied for table discography` |
+| DB state | **unchanged** — rollback not needed |
+| Root cause | **GRANT UPDATE** on `discography` likely missing (Schedule G-6-e4 parallel) |
+| **Next (recommended)** | **G-15b-grant** — read-only audit SQL → manual `GRANT UPDATE` → **G-15b-retry** Save |
+| **Do not** | Retry Save before grant; GRANT/policy in this phase |
+
+## 0zzzzzzzzzzzzzzz. G-15b Discography Save slice — complete (Save failed safely)
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-15b-gosaki-discography-existing-release-purchase-url-non-dry-run` |
+| Commit | `eda9047` |
 | Doc | `gosaki-discography-save-slice-final-preflight.md` |
-| Verifier | `verify-g15b-gosaki-discography-save-slice-final-preflight.mjs` |
-| Target | `discography-002` (SKYLARK) / `purchase_url` only |
-| Approval | `G-15b-gosaki-discography-existing-release-purchase-url-non-dry-run` |
-| Save | **implemented, gated off** (default dev) |
-| **Next (recommended)** | **G-15b-execution** — operator manual Save once |
-| **Do not** | Cursor Save / DB write in G-15b |
+| Target | `discography-002` / `purchase_url` |
+| Operator Save | **attempted once** — failed at DB permission |
+| **Next** | G-15b-fail — done |
+| **Do not** | Re-Save without grant fix |
 
 ## 0zzzzzzzzzzzzzz. G-15a2 Discography dry-run Preview implementation and preflight — complete
 

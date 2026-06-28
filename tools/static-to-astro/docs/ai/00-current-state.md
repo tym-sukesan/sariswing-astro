@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-15b Gosaki Discography existing release Save slice implementation and final preflight (2026-06-28):** **complete (uncommitted)** — G-15b Save path for `discography-002` / `purchase_url`; optimistic lock; Save gated by env stack; live beforeSnapshot confirmed; **no Save executed**. Doc: `gosaki-discography-save-slice-final-preflight.md`. **Next: G-15b-execution (operator Save once).**
+**G-15b-fail Gosaki Discography Save permission failure (2026-06-28):** **complete (uncommitted)** — operator Save once failed safely (`permission denied for table discography`); row unchanged; root cause **GRANT gap** (mirror Schedule G-6-e4); remediation SQL template doc-only. Doc: `gosaki-discography-save-permission-failure-and-investigation.md`. **Next: G-15b-grant prep → manual GRANT → G-15b-retry Save.**
+
+**G-15b Gosaki Discography Save slice (2026-06-28):** **complete** — committed `eda9047`; G-15b Save path implemented; operator Save attempted — failed at DB permission (see G-15b-fail).
 
 **G-15a2 Gosaki Discography dry-run Preview implementation and preflight (2026-06-28):** **complete** — `discography-002` / `purchase_url` slice; dry-run Preview wired; `actualWrite: false`. Doc: `gosaki-discography-dry-run-preview-implementation-and-preflight.md`.
 

@@ -1,18 +1,30 @@
 Last updated: 2026-06-28
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzz. G-15b-grant-apply Discography UPDATE grant apply result — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-15b-grant-apply-gosaki-discography-update-grant-apply-result` |
+| Doc | `gosaki-discography-update-grant-apply-result.md` |
+| Verifier | `verify-g15b-gosaki-discography-update-grant-apply-result.mjs` |
+| SQL applied | `grant update on table public.discography to authenticated;` |
+| authenticated UPDATE | **present** |
+| authenticated INSERT/DELETE | **absent** |
+| `discography_admin_all` | **already existed** |
+| Target row | **unchanged** |
+| **Next (recommended)** | **G-15b-retry** — operator Save once |
+| **Do not** | Re-grant; Save in this phase |
+
 ## 0zzzzzzzzzzzzzzzz. G-15b-fail Discography Save permission failure — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-15b-fail-gosaki-discography-save-permission-failure-and-investigation` |
-| Doc | `gosaki-discography-save-permission-failure-and-investigation.md` |
-| Verifier | `verify-g15b-gosaki-discography-save-permission-failure-and-investigation.mjs` |
+| Commit | `5e832fb` |
 | Save error | `permission denied for table discography` |
-| DB state | **unchanged** — rollback not needed |
-| Root cause | **GRANT UPDATE** on `discography` likely missing (Schedule G-6-e4 parallel) |
-| **Next (recommended)** | **G-15b-grant** — read-only audit SQL → manual `GRANT UPDATE` → **G-15b-retry** Save |
-| **Do not** | Retry Save before grant; GRANT/policy in this phase |
+| **Next** | G-15b-grant-apply — done |
+| **Do not** | Retry Save before grant (resolved) |
 
 ## 0zzzzzzzzzzzzzzz. G-15b Discography Save slice — complete (Save failed safely)
 

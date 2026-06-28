@@ -5,21 +5,27 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-15b-fail-gosaki-discography-save-permission-failure-and-investigation — complete (uncommitted).
-branch: main @ eda9047
+Current phase: G-15b-grant-apply-gosaki-discography-update-grant-apply-result — complete (uncommitted).
+branch: main @ 5e832fb
 ```
 
-**G-15b Save failed safely (permission denied). Next: G-15b-grant → retry Save.**
+**GRANT UPDATE applied on staging discography. Next: G-15b-retry Save once.**
+
+## G-15b-grant-apply Discography UPDATE grant — complete
+
+- **Doc:** `gosaki-discography-update-grant-apply-result.md`
+- **SQL:** `grant update on table public.discography to authenticated;` — **success**
+- **Grants:** authenticated SELECT + UPDATE; no INSERT/DELETE on authenticated
+- **RLS:** `discography_admin_all` already existed
+- **Row:** `discography-002` unchanged (`purchase_url` before value; baseline `updated_at`)
+- **Next:** **G-15b-retry** — operator Preview → Save once → afterVerification
+- **Do not:** additional GRANT; Save in this phase
 
 ## G-15b-fail Discography Save permission failure — complete
 
+- **Commit:** `5e832fb`
 - **Doc:** `gosaki-discography-save-permission-failure-and-investigation.md`
-- **Error:** `permission denied for table discography` — `actualWrite: false`
-- **Row:** `discography-002` unchanged (`purchase_url`, `updated_at` baseline intact)
-- **Cause:** likely missing `GRANT UPDATE ON public.discography TO authenticated` (Schedule G-6-e4 parallel)
-- **Template:** `scripts/supabase/gosaki-discography-update-permission.template.sql` (do not run without approval)
-- **Next:** **G-15b-grant** audit + manual grant → **G-15b-retry** Save once
-- **Do not:** retry Save before grant; use service_role
+- **Resolved by:** G-15b-grant-apply
 
 ## G-15b Discography Save slice — committed; Save failed safely
 

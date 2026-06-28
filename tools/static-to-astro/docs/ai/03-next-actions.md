@@ -1,6 +1,19 @@
 Last updated: 2026-06-28
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzz. G-15b Discography Save slice implementation and final preflight — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-15b-gosaki-discography-existing-release-purchase-url-non-dry-run-final-preflight` |
+| Doc | `gosaki-discography-save-slice-final-preflight.md` |
+| Verifier | `verify-g15b-gosaki-discography-save-slice-final-preflight.mjs` |
+| Target | `discography-002` (SKYLARK) / `purchase_url` only |
+| Approval | `G-15b-gosaki-discography-existing-release-purchase-url-non-dry-run` |
+| Save | **implemented, gated off** (default dev) |
+| **Next (recommended)** | **G-15b-execution** — operator manual Save once |
+| **Do not** | Cursor Save / DB write in G-15b |
+
 ## 0zzzzzzzzzzzzzz. G-15a2 Discography dry-run Preview implementation and preflight — complete
 
 | Item | Value |
@@ -9,9 +22,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Doc | `gosaki-discography-dry-run-preview-implementation-and-preflight.md` |
 | Target | `discography-002` (SKYLARK) / `purchase_url` only |
 | Preview | `actualWrite: false`; `wouldWrite: true` |
-| Save | **disabled** |
-| **Next (recommended)** | **G-15b** — non-dry-run Save slice planning |
-| **Do not** | Enable Save / DB write in G-15a2 |
+| Save | dry-run only in G-15a2 |
+| **Next (recommended)** | **G-15b** — done |
+| **Do not** | Reuse G-15a2 approval for Save |
 
 ## 0zzzzzzzzzzzzz. G-15a Discography admin Supabase read binding — complete
 

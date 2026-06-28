@@ -1,8 +1,10 @@
 /**
- * Gosaki staging shell — Discography admin UI (Supabase read + G-15a2 dry-run Preview).
+ * Gosaki staging shell — Discography admin UI (Supabase read + G-15a2 dry-run + G-15b Save slice).
  */
 
 import type { GosakiDiscographyRecord } from "./gosaki-discography-read-types";
+import { getStagingAuthSessionDetails } from "../staging-auth/staging-auth-session";
+import { isSignedInStagingAuth } from "../staging-write/schedule-non-dry-run-poc-auth";
 import { checkDiscographyRowStale } from "../staging-write/staging-discography-optimistic-lock-stale-check";
 import { getGosakiDiscographyDryRunConfig } from "../staging-write/gosaki-discography-dry-run-config";
 import {
@@ -10,16 +12,29 @@ import {
   readDiscographyDryRunFormValues,
   type G15a2DiscographyDryRunResult,
 } from "../staging-write/gosaki-discography-existing-release-dry-run";
-import { G15A2_TARGET_LEGACY_ID } from "../staging-write/gosaki-discography-dry-run-types";
+import {
+  executeG15bDiscographyPurchaseUrlSave,
+  isG15bDiscographySaveOutcomeSuccess,
+  type G15bDiscographySaveOutcome,
+} from "../staging-write/gosaki-discography-existing-release-save";
+import { G15B_DISCOGRAPHY_PURCHASE_URL_NON_DRY_RUN_APPROVAL_ID } from "../staging-write/discography-write-types";
+import {
+  evaluateG15bDiscographyOperatorSaveUiGate,
+  getG15bDiscographyPurchaseUrlSaveConfig,
+} from "../staging-write/gosaki-discography-purchase-url-save-config";
+import { G15A2_DRY_RUN_SLICE_APPROVAL_ID, G15A2_TARGET_LEGACY_ID } from "../staging-write/gosaki-discography-dry-run-types";
 
 let selectedRowSnapshot: GosakiDiscographyRecord | null = null;
 let lastDryRunResult: G15a2DiscographyDryRunResult | null = null;
+let stagingAuthSignedIn = false;
+let saveInFlight = false;
 
 function wireDisabledActions(): void {
   const disabledButtons = document.querySelectorAll<HTMLButtonElement>(
     "[data-gosaki-disc-action-disabled]",
   );
   disabledButtons.forEach((button) => {
+    if (button.id === "gosaki-disc-update-btn") return;
     button.disabled = true;
     button.title = "保存は次フェーズで開放予定です";
   });
@@ -114,6 +129,80 @@ function clearDryRunResult(): void {
   if (!el) return;
   el.hidden = true;
   el.innerHTML = "";
+  updateSaveButtonState(null);
+}
+
+function updateOperatorStatusPanel(result: G15a2DiscographyDryRunResult | null): void {
+  const saveConfig = getG15bDiscographyPurchaseUrlSaveConfig();
+  const dryRunConfig = getGosakiDiscographyDryRunConfig();
+
+  const setText = (id: string, value: string) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = value;
+  };
+
+  setText("gosaki-disc-status-save", saveConfig.saveEnabled ? "ready_to_save" : "disabled");
+  setText(
+    "gosaki-disc-status-db-write",
+    saveConfig.saveEnabled ? "gated (operator Save only)" : "disabled",
+  );
+  setText("gosaki-disc-status-dry-run-approval", G15A2_DRY_RUN_SLICE_APPROVAL_ID);
+  setText("gosaki-disc-status-save-approval", G15B_DISCOGRAPHY_PURCHASE_URL_NON_DRY_RUN_APPROVAL_ID);
+  setText("gosaki-disc-status-target-legacy-id", G15A2_TARGET_LEGACY_ID);
+  setText(
+    "gosaki-disc-status-changed-fields",
+    result?.changedFields.join(", ") || "—",
+  );
+  setText("gosaki-disc-status-payload-keys", result?.payloadKeys.join(", ") || "—");
+  setText(
+    "gosaki-disc-status-expected-updated-at",
+    result?.expectedBeforeUpdatedAt ?? selectedRowSnapshot?.updated_at ?? "—",
+  );
+  setText(
+    "gosaki-disc-status-stale",
+    result ? (result.optimisticLockStale ? "true" : "false") : "—",
+  );
+  setText(
+    "gosaki-disc-status-host-gate",
+    dryRunConfig.hostGatePassed ? "true" : "false",
+  );
+  setText("gosaki-disc-status-save-readiness", result?.saveReadiness ?? "—");
+}
+
+function updateSaveButtonState(result: G15a2DiscographyDryRunResult | null): void {
+  const button = document.getElementById("gosaki-disc-update-btn") as HTMLButtonElement | null;
+  if (!button) return;
+
+  const gate = evaluateG15bDiscographyOperatorSaveUiGate({
+    signedIn: stagingAuthSignedIn === true,
+    dryRunOk: result?.ok === true,
+    stale: result?.optimisticLockStale === true,
+    saveReadiness: result?.saveReadiness ?? "guard_error",
+  });
+
+  button.disabled = !gate.enabled || saveInFlight;
+  button.setAttribute("data-gosaki-disc-save-allowed", gate.enabled && !saveInFlight ? "true" : "false");
+
+  if (gate.enabled && !saveInFlight) {
+    button.title = "purchase_url を保存します（G-15b）";
+    button.textContent = "更新する";
+    return;
+  }
+
+  if (!result) {
+    button.textContent = "更新する（準備中）";
+    button.title = gate.reason;
+    return;
+  }
+
+  if (result.saveReadiness === "ready_but_save_disabled" && result.ok) {
+    button.textContent = "更新する（保存無効）";
+    button.title = gate.reason;
+    return;
+  }
+
+  button.textContent = "更新する（保存不可）";
+  button.title = gate.reason;
 }
 
 function renderDryRunResult(result: G15a2DiscographyDryRunResult): void {
@@ -128,20 +217,45 @@ function renderDryRunResult(result: G15a2DiscographyDryRunResult): void {
       ? `<ul>${result.guardErrors.map((msg) => `<li>${escapeHtml(msg)}</li>`).join("")}</ul>`
       : "<p>なし</p>";
 
+  const saveConfig = getG15bDiscographyPurchaseUrlSaveConfig();
+
   el.innerHTML = `
     <h3 class="gosaki-disc-dry-run-result__title">確認結果（dry-run）</h3>
+    <p><strong>dryRunApprovalId:</strong> ${escapeHtml(result.approvalId)}</p>
+    <p><strong>saveApprovalId:</strong> ${escapeHtml(G15B_DISCOGRAPHY_PURCHASE_URL_NON_DRY_RUN_APPROVAL_ID)}</p>
     <p><strong>ok:</strong> ${result.ok ? "true" : "false"}</p>
+    <p><strong>dryRun:</strong> ${result.dryRun ? "true" : "false"}</p>
     <p><strong>actualWrite:</strong> ${result.safety.actualWrite ? "true" : "false"}</p>
     <p><strong>wouldWrite:</strong> ${result.safety.wouldWrite ? "true" : "false"}</p>
+    <p><strong>target legacy_id:</strong> ${escapeHtml(result.target.legacy_id)}</p>
     <p><strong>changedFields:</strong> ${escapeHtml(result.changedFields.join(", ") || "—")}</p>
     <p><strong>payloadKeys:</strong> ${escapeHtml(result.payloadKeys.join(", ") || "—")}</p>
     <p><strong>expectedBeforeUpdatedAt:</strong> ${escapeHtml(result.expectedBeforeUpdatedAt ?? "—")}</p>
-    <p><strong>optimisticLockStale:</strong> ${result.optimisticLockStale ? "true" : "false"}</p>
+    <p><strong>stale:</strong> ${result.optimisticLockStale ? "true" : "false"}</p>
+    <p><strong>hostGatePassed:</strong> ${saveConfig.hostGatePassed ? "true" : "false"}</p>
     <p><strong>saveReadiness:</strong> ${escapeHtml(result.saveReadiness)}</p>
+    <p><strong>saveAllowed:</strong> ${result.saveAllowed ? "true" : "false"}</p>
     <p><strong>before:</strong> <code>${escapeHtml(JSON.stringify(result.before))}</code></p>
     <p><strong>after:</strong> <code>${escapeHtml(JSON.stringify(result.after))}</code></p>
     <p><strong>payload:</strong> <code>${escapeHtml(JSON.stringify(result.payload))}</code></p>
     <div><strong>guardErrors:</strong> ${guardHtml}</div>
+  `;
+
+  updateSaveButtonState(result);
+  updateOperatorStatusPanel(result);
+}
+
+function renderSaveResult(outcome: G15bDiscographySaveOutcome): void {
+  const el = document.getElementById("gosaki-disc-save-result");
+  if (!el) return;
+  el.hidden = false;
+  el.className = "gosaki-disc-save-result gosaki-disc-save-result--error";
+  const message =
+    "errorMessage" in outcome ? outcome.errorMessage : JSON.stringify(outcome);
+  el.innerHTML = `
+    <h3 class="gosaki-disc-save-result__title">保存結果</h3>
+    <p><strong>actualWrite:</strong> false</p>
+    <p><strong>error:</strong> ${escapeHtml(String(message))}</p>
   `;
 }
 
@@ -153,16 +267,35 @@ function escapeHtml(value: string): string {
     .replace(/"/g, "&quot;");
 }
 
+async function refreshStagingAuthSignedIn(): Promise<boolean> {
+  const url = String(import.meta.env.PUBLIC_SUPABASE_URL ?? "").trim();
+  const anonKey = String(import.meta.env.PUBLIC_SUPABASE_ANON_KEY ?? "").trim();
+  if (!url || !anonKey) {
+    stagingAuthSignedIn = false;
+    return false;
+  }
+  try {
+    const auth = await getStagingAuthSessionDetails(url, anonKey);
+    stagingAuthSignedIn = isSignedInStagingAuth(auth);
+  } catch {
+    stagingAuthSignedIn = false;
+  }
+  updateSaveButtonState(lastDryRunResult);
+  return stagingAuthSignedIn;
+}
+
 async function runDryRunPreview(): Promise<void> {
   const form = document.getElementById("gosaki-disc-edit-form");
   if (!form || !(form instanceof HTMLFormElement)) return;
 
+  await refreshStagingAuthSignedIn();
+
   if (!selectedRowSnapshot) {
-    renderDryRunResult({
+    const empty: G15a2DiscographyDryRunResult = {
       ok: false,
       dryRun: true,
       phase: "G-15a2-gosaki-discography-dry-run-preview-implementation-and-preflight",
-      approvalId: "G-15a2-gosaki-discography-purchase-url-dry-run-slice",
+      approvalId: G15A2_DRY_RUN_SLICE_APPROVAL_ID,
       target: {
         id: "",
         legacy_id: G15A2_TARGET_LEGACY_ID,
@@ -188,7 +321,9 @@ async function runDryRunPreview(): Promise<void> {
         actualWrite: false,
         wouldWrite: false,
       },
-    });
+    };
+    lastDryRunResult = empty;
+    renderDryRunResult(empty);
     return;
   }
 
@@ -213,6 +348,71 @@ async function runDryRunPreview(): Promise<void> {
   renderDryRunResult(result);
 }
 
+async function runSave(): Promise<void> {
+  const config = getG15bDiscographyPurchaseUrlSaveConfig();
+  if (!config.saveEnabled) {
+    window.alert(config.armFailureReason ?? config.defaultDisabledReason);
+    return;
+  }
+
+  if (!selectedRowSnapshot || !lastDryRunResult?.ok) {
+    window.alert("先に「変更を確認」で dry-run を成功させてください。");
+    return;
+  }
+
+  const gate = evaluateG15bDiscographyOperatorSaveUiGate({
+    signedIn: stagingAuthSignedIn === true,
+    dryRunOk: lastDryRunResult.ok,
+    stale: lastDryRunResult.optimisticLockStale,
+    saveReadiness: lastDryRunResult.saveReadiness,
+  });
+  if (!gate.enabled) {
+    window.alert(gate.reason);
+    return;
+  }
+
+  if (
+    !window.confirm(
+      "purchase_url を更新します。よろしいですか？（discography-002 の 1 行のみ）",
+    )
+  ) {
+    return;
+  }
+
+  saveInFlight = true;
+  updateSaveButtonState(lastDryRunResult);
+
+  const url = String(import.meta.env.PUBLIC_SUPABASE_URL ?? "").trim();
+  const anonKey = String(import.meta.env.PUBLIC_SUPABASE_ANON_KEY ?? "").trim();
+
+  const outcome = await executeG15bDiscographyPurchaseUrlSave({
+    url,
+    anonKey,
+    beforeSnapshot: selectedRowSnapshot,
+    saveBinding: {
+      changedFields: [...lastDryRunResult.changedFields],
+      payloadKeys: [...lastDryRunResult.payloadKeys],
+      expectedBeforeUpdatedAt: lastDryRunResult.expectedBeforeUpdatedAt,
+      dryRunOk: lastDryRunResult.ok,
+    },
+  });
+
+  saveInFlight = false;
+
+  if (isG15bDiscographySaveOutcomeSuccess(outcome)) {
+    selectedRowSnapshot = outcome.afterSnapshot;
+    const updatedAtEl = document.getElementById("gosaki-disc-form-updated-at");
+    if (updatedAtEl) updatedAtEl.textContent = outcome.afterSnapshot.updated_at ?? "—";
+    lastDryRunResult = null;
+    clearDryRunResult();
+    window.alert("保存しました。");
+    return;
+  }
+
+  renderSaveResult(outcome);
+  updateSaveButtonState(lastDryRunResult);
+}
+
 function wireRowSelection(rows: GosakiDiscographyRecord[]): void {
   const list = document.getElementById("gosaki-disc-item-list");
   if (!list) return;
@@ -223,7 +423,6 @@ function wireRowSelection(rows: GosakiDiscographyRecord[]): void {
     if (selectButton) {
       const item = selectButton.closest<HTMLElement>(".gosaki-discography-admin-item");
       if (item) populateEditForm(item, rows);
-      return;
     }
   });
 
@@ -235,9 +434,16 @@ function wireRowSelection(rows: GosakiDiscographyRecord[]): void {
 }
 
 function wireDryRunPreview(): void {
-  const button = document.getElementById("gosaki-disc-dry-run-preview-btn");
-  button?.addEventListener("click", () => {
-    void runDryRunPreview();
+  document
+    .getElementById("gosaki-disc-dry-run-preview-btn")
+    ?.addEventListener("click", () => {
+      void runDryRunPreview();
+    });
+}
+
+function wireSaveButton(): void {
+  document.getElementById("gosaki-disc-update-btn")?.addEventListener("click", () => {
+    void runSave();
   });
 }
 
@@ -252,6 +458,10 @@ export function initGosakiStagingDiscographyAdminUi(): void {
   wireDisabledActions();
   wireRowSelection(rows);
   wireDryRunPreview();
+  wireSaveButton();
+  void refreshStagingAuthSignedIn();
+  updateOperatorStatusPanel(null);
+  updateSaveButtonState(null);
 }
 
 if (typeof document !== "undefined") {

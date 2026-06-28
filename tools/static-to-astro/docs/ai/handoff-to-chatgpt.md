@@ -5,19 +5,28 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-15a2-gosaki-discography-dry-run-preview-implementation-and-preflight — complete (uncommitted).
-branch: main @ 1f36cf9
+Current phase: G-15b-gosaki-discography-existing-release-purchase-url-non-dry-run-final-preflight — complete (uncommitted).
+branch: main @ 1190323 (+ G-15b working tree)
 ```
 
-**Discography dry-run Preview done. Next: G-15b Save slice planning.**
+**Discography G-15b Save slice done. Next: G-15b-execution (operator Save once).**
+
+## G-15b Discography Save slice — complete
+
+- **Doc:** `gosaki-discography-save-slice-final-preflight.md`
+- **Target:** `discography-002` / `purchase_url` only (`gosaakiii` → `gosakirikako`)
+- **Approval:** `G-15b-gosaki-discography-existing-release-purchase-url-non-dry-run`
+- **Save:** implemented + env-gated; **not executed**
+- **beforeSnapshot:** `updated_at` `2026-06-05T17:39:44.201802+00:00` unchanged
+- **Next:** **G-15b-execution** — operator manual Save once + afterVerification SELECT
+- **Do not:** Cursor Save; routine dev with arms on
 
 ## G-15a2 Discography dry-run Preview — complete
 
 - **Doc:** `gosaki-discography-dry-run-preview-implementation-and-preflight.md`
 - **Target:** `discography-002` / `purchase_url` only
-- **Preview:** `actualWrite: false`; `wouldWrite: true`; Save **disabled**
-- **Next:** **G-15b** — non-dry-run Save slice planning
-- **Do not:** Enable Save / DB write
+- **Preview:** `actualWrite: false`; `wouldWrite: true`
+- **Do not:** Reuse G-15a2 approval for Save
 
 ## G-15a Discography admin Supabase read binding — complete
 

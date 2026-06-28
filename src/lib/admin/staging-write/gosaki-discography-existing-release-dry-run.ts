@@ -3,7 +3,7 @@
  */
 
 import { assertStaticToAstroCmsStagingSupabaseProject } from "../staging-data/staging-schedule-site-slug-host-gate";
-import { G15A2_DISCOGRAPHY_SAVE_ENABLED } from "./gosaki-discography-dry-run-config";
+import { resolveG15bDiscographyPurchaseUrlSaveEnabled } from "./gosaki-discography-purchase-url-save-config";
 import {
   assertG15a2DiscographyChangedFieldsOnly,
   assertG15a2DiscographyPayloadOnly,
@@ -57,7 +57,7 @@ export type G15a2DiscographyDryRunResult = {
   optimisticLockStale: boolean;
   guardErrors: string[];
   saveReadiness: G15a2DiscographyDryRunSaveReadiness;
-  saveAllowed: false;
+  saveAllowed: boolean;
   rowsAffectedRequired: 1;
   safety: G15a2DiscographyDryRunSafety;
 };
@@ -255,9 +255,10 @@ export function executeG15a2DiscographyDryRun(input: {
     }
 
     const ok = guardErrors.length === 0;
+    const saveEnabled = resolveG15bDiscographyPurchaseUrlSaveEnabled();
     const saveReadiness: G15a2DiscographyDryRunSaveReadiness = !ok
       ? "guard_error"
-      : G15A2_DISCOGRAPHY_SAVE_ENABLED
+      : saveEnabled
         ? "ready_to_save"
         : "ready_but_save_disabled";
 
@@ -281,7 +282,7 @@ export function executeG15a2DiscographyDryRun(input: {
       optimisticLockStale,
       guardErrors,
       saveReadiness,
-      saveAllowed: false,
+      saveAllowed: ok && saveEnabled,
       rowsAffectedRequired: 1,
       safety: {
         supabaseWriteCalled: false,

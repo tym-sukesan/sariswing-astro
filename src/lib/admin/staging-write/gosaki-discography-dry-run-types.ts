@@ -9,6 +9,14 @@ export const G15A2_PHASE =
 
 export const G15A2_TARGET_LEGACY_ID = "discography-002";
 
+export const G15A2_TARGET_TITLE = "SKYLARK";
+
+export const G15A2_TARGET_PURCHASE_URL_BEFORE = "https://gosaakiii.base.shop/";
+
+export const G15A2_TARGET_PURCHASE_URL_AFTER = "https://gosakirikako.base.shop/";
+
+export const G15A2_TARGET_UPDATED_AT_BASELINE = "2026-06-05T17:39:44.201802+00:00";
+
 export const G15A2_DRY_RUN_SLICE_APPROVAL_ID =
   "G-15a2-gosaki-discography-purchase-url-dry-run-slice";
 

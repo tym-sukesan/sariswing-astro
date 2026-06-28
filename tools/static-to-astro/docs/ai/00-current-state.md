@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-15a Gosaki Discography admin Supabase read binding (2026-06-28):** **complete** — admin `/discography/` reads staging Supabase (4 albums); static JSON replaced; Save/DB write **disabled**. Doc: `gosaki-discography-admin-supabase-read-binding.md`. **Next: G-15a2 dry-run Preview preflight.**
+**G-15a2 Gosaki Discography dry-run Preview implementation and preflight (2026-06-28):** **complete** — `discography-002` / `purchase_url` slice; dry-run Preview wired; `actualWrite: false`; Save disabled. Doc: `gosaki-discography-dry-run-preview-implementation-and-preflight.md`. **Next: G-15b Save slice planning.**
+
+**G-15a Gosaki Discography admin Supabase read binding (2026-06-28):** **complete** — admin `/discography/` reads staging Supabase (4 albums); static JSON replaced; Save/DB write **disabled**. Doc: `gosaki-discography-admin-supabase-read-binding.md`.
 
 **G-15 Gosaki Discography CMS MVP inventory and plan (2026-06-28):** **complete** — 4 releases mapped (Wix HTML public / JSON admin / Supabase DB); MVP = existing-row Supabase UPDATE (Schedule pattern); images/INSERT/tracks defer. Doc: `gosaki-discography-cms-mvp-inventory-and-plan.md`.
 

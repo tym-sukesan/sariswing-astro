@@ -1,6 +1,18 @@
 Last updated: 2026-06-28
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzz. G-15a2 Discography dry-run Preview implementation and preflight — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-15a2-gosaki-discography-dry-run-preview-implementation-and-preflight` |
+| Doc | `gosaki-discography-dry-run-preview-implementation-and-preflight.md` |
+| Target | `discography-002` (SKYLARK) / `purchase_url` only |
+| Preview | `actualWrite: false`; `wouldWrite: true` |
+| Save | **disabled** |
+| **Next (recommended)** | **G-15b** — non-dry-run Save slice planning |
+| **Do not** | Enable Save / DB write in G-15a2 |
+
 ## 0zzzzzzzzzzzzz. G-15a Discography admin Supabase read binding — complete
 
 | Item | Value |

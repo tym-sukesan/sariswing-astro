@@ -5,11 +5,19 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-15a-gosaki-discography-admin-supabase-read-binding — complete (uncommitted).
-branch: main @ 8532413
+Current phase: G-15a2-gosaki-discography-dry-run-preview-implementation-and-preflight — complete (uncommitted).
+branch: main @ 1f36cf9
 ```
 
-**Discography admin Supabase read binding done. Next: G-15a2 dry-run Preview preflight.**
+**Discography dry-run Preview done. Next: G-15b Save slice planning.**
+
+## G-15a2 Discography dry-run Preview — complete
+
+- **Doc:** `gosaki-discography-dry-run-preview-implementation-and-preflight.md`
+- **Target:** `discography-002` / `purchase_url` only
+- **Preview:** `actualWrite: false`; `wouldWrite: true`; Save **disabled**
+- **Next:** **G-15b** — non-dry-run Save slice planning
+- **Do not:** Enable Save / DB write
 
 ## G-15a Discography admin Supabase read binding — complete
 

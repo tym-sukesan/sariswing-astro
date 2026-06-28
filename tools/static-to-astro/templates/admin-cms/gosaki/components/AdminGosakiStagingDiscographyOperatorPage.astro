@@ -1,6 +1,10 @@
 ---
 import type { GosakiDiscographySupabaseReadBinding } from "../../../../../../src/lib/admin/staging-data/gosaki-discography-supabase-read-binding";
 import {
+  G15A2_DISCOGRAPHY_PAGE_CONFIG_ELEMENT_ID,
+  resolveG15a2DiscographyPageServerConfig,
+} from "../../../../../../src/lib/admin/staging-write/gosaki-discography-dry-run-page-config";
+import {
   GOSAKI_STAGING_ADMIN_BASE,
   GOSAKI_STAGING_PREVIEW_URL,
 } from "../gosaki-staging-admin-paths";
@@ -10,7 +14,9 @@ interface Props {
 }
 
 const { binding } = Astro.props;
+const pageConfig = resolveG15a2DiscographyPageServerConfig(import.meta.env);
 const previewDiscographyUrl = `${GOSAKI_STAGING_PREVIEW_URL}${binding.previewPath}`;
+const rowsJson = JSON.stringify(binding.rows);
 const selectedRow =
   binding.rows.find((row) => row.legacy_id === binding.selectedLegacyId) ??
   binding.rows[0] ??
@@ -25,8 +31,16 @@ const trackLines = selectedRow?.tracks.map((track) => track.title).join("\n") ??
   data-gosaki-disc-source={binding.source}
   data-gosaki-disc-read-enabled={binding.supabaseReadEnabled ? "true" : "false"}
   data-gosaki-disc-default-legacy-id="discography-002"
+  data-discography-rows={rowsJson}
   aria-label="Discography管理"
 >
+  <div
+    id={G15A2_DISCOGRAPHY_PAGE_CONFIG_ELEMENT_ID}
+    data-g15a2-dry-run-preview-enabled={pageConfig.dryRunPreviewEnabled ? "true" : "false"}
+    data-g15a2-save-enabled="false"
+    data-g15a2-db-write-enabled="false"
+    hidden
+  />
   <header class="admin-gosaki-page-header admin-gosaki-page-header--with-actions">
     <div>
       <a class="admin-gosaki-back-link" href={GOSAKI_STAGING_ADMIN_BASE}>← 管理画面トップへ</a>
@@ -50,6 +64,10 @@ const trackLines = selectedRow?.tracks.map((track) => track.title).join("\n") ??
       <li>
         Discography Supabase read:
         <strong>{binding.supabaseReadEnabled ? "enabled" : "unavailable"}</strong>
+      </li>
+      <li>
+        Discography dry-run Preview:
+        <strong>{pageConfig.dryRunPreviewEnabled ? "enabled" : "disabled"}</strong>
       </li>
       <li>
         Save: <strong>disabled</strong>
@@ -90,6 +108,7 @@ const trackLines = selectedRow?.tracks.map((track) => track.title).join("\n") ??
     <h2 class="admin-gosaki-card__title">作品を編集</h2>
     <p class="admin-gosaki-card__lead">
       選択中の作品: <code id="gosaki-disc-selected-legacy-id">{selectedRow?.legacy_id ?? "—"}</code>
+      / updated_at: <code id="gosaki-disc-form-updated-at">{selectedRow?.updated_at ?? "—"}</code>
     </p>
 
     <form id="gosaki-disc-edit-form" class="admin-form gosaki-discography-admin-form">
@@ -191,6 +210,9 @@ const trackLines = selectedRow?.tracks.map((track) => track.title).join("\n") ??
     </form>
 
     <div class="admin-actions">
+      <button type="button" class="admin-button admin-button-secondary" id="gosaki-disc-dry-run-preview-btn">
+        変更を確認
+      </button>
       <button type="button" class="admin-button" data-gosaki-disc-action-disabled disabled>
         更新する
       </button>
@@ -198,7 +220,11 @@ const trackLines = selectedRow?.tracks.map((track) => track.title).join("\n") ??
         削除
       </button>
     </div>
-    <p class="admin-gosaki-save-note" role="note">※ Save: disabled / DB write: disabled（G-15a read binding only）</p>
+    <p class="admin-gosaki-save-note" role="note">
+      ※ dry-run Preview のみ（actualWrite: false）。Save / DB write: disabled（G-15a2）
+    </p>
+
+    <div id="gosaki-disc-dry-run-result" class="gosaki-disc-dry-run-result" hidden></div>
   </section>
 
   <section class="admin-card admin-gosaki-card">
@@ -222,6 +248,7 @@ const trackLines = selectedRow?.tracks.map((track) => track.title).join("\n") ??
                     { "gosaki-discography-admin-item--selected": isSelected },
                   ]}
                   data-legacy-id={release.legacy_id}
+                  data-id={release.id}
                   data-title={release.title}
                   data-artist={release.artist ?? ""}
                   data-release-date={release.release_date ?? ""}
@@ -396,5 +423,21 @@ const trackLines = selectedRow?.tracks.map((track) => track.title).join("\n") ??
   .admin-gosaki-status-list {
     margin: 0;
     padding-left: 1.2rem;
+  }
+
+  .gosaki-disc-dry-run-result {
+    margin-top: 1rem;
+    padding: 1rem;
+    border: 1px solid var(--admin-border, #ddd);
+    border-radius: 8px;
+    background: var(--admin-surface-muted, #f8f8f8);
+  }
+
+  .gosaki-disc-dry-run-result--ok {
+    border-color: #2f855a;
+  }
+
+  .gosaki-disc-dry-run-result--error {
+    border-color: #c53030;
   }
 </style>

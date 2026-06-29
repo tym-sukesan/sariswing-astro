@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-18g1 Gosaki Discography tracks GRANT / RLS read-only check (2026-06-29):** **complete (uncommitted)** — `discography_tracks` authenticated UPDATE **missing**; RLS admin policy likely live; G-18g1-apply required before Save. Doc: `gosaki-discography-g18g1-tracks-grant-rls-readonly-check.md`. **Next: G-18g1-apply GRANT UPDATE (operator).**
+**G-18g1-apply Gosaki Discography tracks UPDATE grant apply preflight (2026-06-29):** **complete (uncommitted)** — operator SQL runbook ready; GRANT not executed. Doc: `gosaki-discography-g18g1-apply-update-grant-preflight.md`. **Next: G-18g1-apply-execution (operator manual GRANT once).**
+
+**G-18g1 Gosaki Discography tracks GRANT / RLS read-only check (2026-06-29):** **complete** — committed `418c2bd`. Doc: `gosaki-discography-g18g1-tracks-grant-rls-readonly-check.md`.
 
 **G-18g Gosaki Discography tracklist textarea Save adapter planning (2026-06-29):** **complete** — committed `065539b`. Doc: `gosaki-discography-g18g-tracklist-textarea-save-adapter-planning.md`.
 

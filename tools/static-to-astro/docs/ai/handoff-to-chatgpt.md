@@ -5,9 +5,9 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-18g1-gosaki-discography-tracks-grant-rls-readonly-check — complete.
-discography_tracks: authenticated UPDATE grant missing; G-18g1-apply required before Save.
-Next: G-18g1-apply GRANT UPDATE on discography_tracks (operator, separate approval).
+Current phase: G-18g1-apply-gosaki-discography-tracks-update-grant-preflight — complete.
+discography_tracks UPDATE grant runbook ready; operator execution pending.
+Next: G-18g1-apply-execution — operator manual GRANT once (approval G-18g1-discography-tracks-update-grant-apply).
 ```
 
 **Closed chains — do not re-Save / re-upload:**
@@ -17,14 +17,18 @@ Next: G-18g1-apply GRANT UPDATE on discography_tracks (operator, separate approv
 - `discography-004` / `label` (G-17e-f)
 - `schedule-2026-04-005` / `price` (G-14b1f)
 
+## G-18g1-apply Discography tracks UPDATE grant apply preflight — complete
+
+- **Doc:** `gosaki-discography-g18g1-apply-update-grant-preflight.md`
+- **SQL:** `gosaki-discography-tracks-g18g1-apply-update-grant.sql` (Step 0–4)
+- **Grant:** `grant update on table public.discography_tracks to authenticated;`
+- **approvalId:** `G-18g1-discography-tracks-update-grant-apply`
+- **Rollback (doc-only):** `revoke update on table public.discography_tracks from authenticated;`
+- **Next:** operator runs SQL once in staging SQL Editor
+
 ## G-18g1 Discography tracks GRANT / RLS read-only check — complete
 
-- **Doc:** `gosaki-discography-g18g1-tracks-grant-rls-readonly-check.md`
-- **authenticated UPDATE on `discography_tracks`:** **missing**
-- **RLS:** enabled; `discography_tracks_admin_all` likely live (G-6 audit)
-- **anon write:** **no**
-- **Target row:** track 7 `Like a Lover` unchanged; test title **not** in DB
-- **Next:** G-18g1-apply — `grant update on table public.discography_tracks to authenticated`
+- **Commit:** `418c2bd`
 
 ## G-18g Discography tracklist textarea Save adapter planning — complete
 

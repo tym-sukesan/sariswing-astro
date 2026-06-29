@@ -1,18 +1,25 @@
 Last updated: 2026-06-29
 Project: Static-to-Astro CMS / Musician CMS Kit
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-18g1 Discography tracks GRANT / RLS read-only check — complete
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-18g1-apply Discography tracks UPDATE grant apply preflight — complete
 
 | Item | Value |
 | --- | --- |
-| Phase | `G-18g1-gosaki-discography-tracks-grant-rls-readonly-check` |
-| Result | authenticated UPDATE on `discography_tracks` **missing** |
-| RLS | enabled; `discography_tracks_admin_all` likely live |
-| anon write | **no** (SELECT only) |
-| Doc | `gosaki-discography-g18g1-tracks-grant-rls-readonly-check.md` |
-| Verifier | `verify-g18g1-gosaki-discography-tracks-grant-rls-readonly-check.mjs` |
-| **Next** | **G-18g1-apply** operator `GRANT UPDATE` (separate approval) |
-| **Do not** | GRANT / Save / SQL mutation in G-18g1 |
+| Phase | `G-18g1-apply-gosaki-discography-tracks-update-grant-preflight` |
+| SQL | `gosaki-discography-tracks-g18g1-apply-update-grant.sql` |
+| Grant | `UPDATE` on `discography_tracks` → `authenticated` only |
+| approvalId | `G-18g1-discography-tracks-update-grant-apply` |
+| Doc | `gosaki-discography-g18g1-apply-update-grant-preflight.md` |
+| Verifier | `verify-g18g1-gosaki-discography-tracks-apply-update-grant-preflight.mjs` |
+| **Next** | **Operator** runs SQL Step 1–4 once (separate approval) |
+| **Do not** | Cursor GRANT / Save / row UPDATE |
+
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-18g1 Discography tracks GRANT / RLS read-only check — complete
+
+| Item | Value |
+| --- | --- |
+| Commit | `418c2bd` |
+| **Next** | G-18g1-apply-preflight — **done** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-18g Discography tracklist textarea Save adapter planning — complete
 

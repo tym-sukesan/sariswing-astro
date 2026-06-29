@@ -1,16 +1,28 @@
 Last updated: 2026-06-29
 Project: Static-to-Astro CMS / Musician CMS Kit
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-18a Discography next scalar field selection — complete
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-18b Discography tracks / personnel / price design — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-18b-gosaki-discography-tracks-personnel-price-design` |
+| Result | **Option 1** — G-18c tracks inventory gap plan (16 vs 34 DB rows) |
+| Doc | `gosaki-discography-g18b-tracks-personnel-price-design.md` |
+| Verifier | `verify-g18b-gosaki-discography-tracks-personnel-price-design.mjs` |
+| **Next** | G-18c tracks inventory completion / seed-to-DB gap plan |
+| **Do not** | tracks Save, price DDL, personnel Save, or backfill INSERT without operator approval |
+
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-18a Discography next scalar field selection — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-18a-gosaki-discography-next-scalar-field-selection` |
+| Commit | `7e73c2d` |
 | Result | **Option 2** — no safe scalar Save diff; scalar MVP complete |
 | Doc | `gosaki-discography-g18a-next-scalar-field-selection.md` |
 | Verifier | `verify-g18a-gosaki-discography-next-scalar-field-selection.mjs` |
-| **Next** | G-18b tracks / personnel / price design |
-| **Do not** | Open G-18b Save slice without new inventory diff |
+| **Next** | G-18b — **done** |
+| **Do not** | Re-open scalar Save on closed chains |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-17e-f Discography label Save / public reflection closure — complete
 

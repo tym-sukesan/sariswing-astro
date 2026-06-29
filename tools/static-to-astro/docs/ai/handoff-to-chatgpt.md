@@ -5,8 +5,9 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-18a-gosaki-discography-next-scalar-field-selection — complete.
-Discography scalar Save MVP complete (4 releases). Next: G-18b tracks/personnel/price design.
+Current phase: G-18b-gosaki-discography-tracks-personnel-price-design — complete.
+Discography scalar Save MVP complete (4 releases). DB tracks 16/34 — not SoT.
+Next: G-18c tracks inventory completion / seed-to-DB gap plan.
 ```
 
 **Closed chains — do not re-Save / re-upload:**
@@ -16,12 +17,22 @@ Discography scalar Save MVP complete (4 releases). Next: G-18b tracks/personnel/
 - `discography-004` / `label` (G-17e-f)
 - `schedule-2026-04-005` / `price` (G-14b1f)
 
+## G-18b Discography tracks / personnel / price design — complete
+
+- **Doc:** `gosaki-discography-g18b-tracks-personnel-price-design.md`
+- **Verifier:** `verify-g18b-gosaki-discography-tracks-personnel-price-design.mjs`
+- **DB tracks:** 16 rows vs seed/fixture/public **34** — **not SoT** (prefix subset per album; seed metadata says 33)
+- **Personnel:** merged in `description`; seed has `personnel[]` — recommend JSONB column later
+- **Price:** no DB column; seed/fixture have `3,500` / `2,000` / `2,500` / `2,000 (tax in)`
+- **Recommendation:** **Option 1** — G-18c tracks inventory gap plan before Save/DDL
+- **Do not:** tracks Save, INSERT backfill, price migration, personnel Save in G-18b
+
 ## G-18a Discography next scalar field selection — complete
 
+- **Commit:** `7e73c2d`
 - **Doc:** `gosaki-discography-g18a-next-scalar-field-selection.md`
 - **Result:** **Option 2** — no safe scalar Save diff on 4 releases
 - **Scalar Save MVP:** purchase_url, artist (×2), label — all aligned DB ↔ public
-- **Next:** G-18b tracks / personnel / price design (no Save)
 
 ## G-17e-f Discography label Save / public reflection closure — complete
 

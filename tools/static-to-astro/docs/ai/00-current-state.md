@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-18a Gosaki Discography next scalar field selection (2026-06-29):** **complete (uncommitted)** — read-only inventory; **Option 2**: no safe scalar Save diff; scalar MVP complete for 4 releases. Doc: `gosaki-discography-g18a-next-scalar-field-selection.md`. **Next: G-18b tracks/personnel/price design.**
+**G-18b Gosaki Discography tracks / personnel / price design (2026-06-29):** **complete (uncommitted)** — read-only inventory; DB tracks 16/34 (not SoT); personnel in `description`; no `price` column. Doc: `gosaki-discography-g18b-tracks-personnel-price-design.md`. **Next: G-18c tracks inventory completion / seed-to-DB gap plan.**
+
+**G-18a Gosaki Discography next scalar field selection (2026-06-29):** **complete** — committed `7e73c2d`. **Option 2**: no safe scalar Save diff; scalar MVP complete for 4 releases. Doc: `gosaki-discography-g18a-next-scalar-field-selection.md`.
 
 **G-17e-f Gosaki Discography G-17c label Save / public reflection closure (2026-06-29):** **complete** — committed `8fecb44`. Doc: `gosaki-discography-g17e-label-public-reflection-closure.md`.
 

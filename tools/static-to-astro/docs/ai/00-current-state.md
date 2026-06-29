@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-15e-f Gosaki Discography artist public reflection closure (2026-06-29):** **complete (uncommitted)** — G-15d / G-15e `artist` chain **closed** on `discography-003`; live HTTP PASS; G-15c SKYLARK URL maintained. Doc: `gosaki-discography-artist-public-reflection-closure.md`. **Do not re-Save `discography-003`; do not re-upload discography HTML.**
+**G-16 CMS Kit Save / Reflection playbook consolidation (2026-06-29):** **complete (uncommitted)** — doc-only; Save + Reflection standard procedures from G-14b1 + G-15 ×2. Doc: `cms-kit-save-reflection-playbook.md`. **Next: G-16a — next Discography field slice (recommended).**
+
+**G-15e-f Gosaki Discography artist public reflection closure (2026-06-29):** **complete** — committed `f722cf4`; G-15d / G-15e `artist` chain closed. Doc: `gosaki-discography-artist-public-reflection-closure.md`. **Do not re-Save `discography-003`; do not re-upload discography HTML.**
 
 **G-15e-upload Gosaki Discography artist public reflection upload + HTTP verify (2026-06-29):** **complete** — committed `6dc81c3`; operator upload `discography/index.html` ×1; About Us `ごさきりかこTrio` live. Doc: `gosaki-discography-artist-public-reflection-upload-result.md`. **Chain closed — see G-15e-f.**
 

@@ -5,23 +5,27 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-15e-f-gosaki-discography-artist-public-reflection-closure — complete (uncommitted).
-branch: main @ 6dc81c3 (+ G-15e-f local changes)
+Current phase: G-16-cms-kit-save-reflection-playbook-consolidation — complete (uncommitted).
+branch: main @ f722cf4 (+ G-16 local changes)
 ```
 
-**G-15c-f `purchase_url` chain closed on discography-002. Do not re-Save discography-002.**
+**Closed chains — do not re-Save / re-upload:**
+- `discography-002` / `purchase_url` (G-15c-f)
+- `discography-003` / `artist` (G-15e-f)
+- `schedule-2026-04-005` / `price` (G-14b1f)
 
-**G-15e-f `artist` chain closed on discography-003. Do not re-Save discography-003.**
+## G-16 CMS Kit Save / Reflection playbook — complete
 
-**Do not re-upload `discography/index.html` without new approval.**
+- **Doc:** `cms-kit-save-reflection-playbook.md`
+- **Consolidates:** G-14b1 Schedule + G-15 Discography (purchase_url + artist)
+- **Includes:** Save slice §3, Reflection §4, safety gates, roles, new-field template, forbidden patterns
+- **Next (recommended):** G-16a — next Discography field slice on unclosed row
+- **Do not:** FTP auto-apply; re-Save closed rows
 
 ## G-15e-f Discography artist public reflection closure — complete
 
+- **Commit:** `f722cf4`
 - **Doc:** `gosaki-discography-artist-public-reflection-closure.md`
-- **Chain:** G-15d Save → G-15e hook → G-15e-upload — **closed**
-- **Live:** About Us `ごさきりかこTrio`; G-15c SKYLARK URL maintained
-- **Next (recommended):** G-16a — next field Save slice on unclosed row (`discography-001` or `004`)
-- **Do not:** Re-Save `discography-002` / `003`; re-upload discography HTML
 
 ## G-15e-upload Discography artist public reflection upload + HTTP verify — complete
 

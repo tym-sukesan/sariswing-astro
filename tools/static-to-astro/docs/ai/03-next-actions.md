@@ -1,18 +1,27 @@
 Last updated: 2026-06-29
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-16 CMS Kit Save / Reflection playbook — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-16-cms-kit-save-reflection-playbook-consolidation` |
+| Base commit | `f722cf4` |
+| Doc | `cms-kit-save-reflection-playbook.md` |
+| Verifier | `verify-g16-cms-kit-save-reflection-playbook.mjs` |
+| Sources | G-14b1 Schedule + G-15 purchase_url + G-15 artist |
+| **Next (recommended)** | **G-16a** — next Discography field Save slice (`title` / `year` on unclosed row) |
+| **Do not** | Re-Save closed rows; FTP auto-apply |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-15e-f Discography artist public reflection closure — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-15e-f-gosaki-discography-artist-public-reflection-closure` |
-| Base commit | `6dc81c3` |
+| Commit | `f722cf4` |
 | Doc | `gosaki-discography-artist-public-reflection-closure.md` |
-| Verifier | `verify-g15e-f-gosaki-discography-artist-public-reflection-closure.mjs` |
-| Chain | G-15d → G-15e-upload — **closed** (`discography-003` / `artist`) |
-| Live HTTP | **PASS**; G-15c SKYLARK URL maintained |
-| **Next (recommended)** | **G-16a** — next Discography field Save slice (`title` / `year` on unclosed row) |
-| **Do not** | Re-Save `discography-003`; re-Save `discography-002`; re-upload discography HTML |
+| **Next** | G-16 — **done** |
+| **Do not** | Re-Save `discography-003`; re-upload discography HTML |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-15e-upload Discography artist public reflection upload + HTTP verify — complete
 

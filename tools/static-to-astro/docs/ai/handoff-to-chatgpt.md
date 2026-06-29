@@ -5,22 +5,32 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-16b-upload-gosaki-discography-artist-public-reflection-upload-result — complete (uncommitted).
-branch: main @ d16aeca (+ G-16b-upload local changes)
+Current phase: G-16b-f-gosaki-discography-g16a-artist-public-reflection-closure — complete (uncommitted).
+branch: main @ 418b577 (+ G-16b-f closure local changes)
 ```
 
 **Closed chains — do not re-Save / re-upload:**
-- `discography-001` / `artist` — Save + upload done; closure pending (G-16b-f)
+- `discography-001` / `artist` (G-16b-f)
 - `discography-002` / `purchase_url` (G-15c-f)
 - `discography-003` / `artist` (G-15e-f)
 - `schedule-2026-04-005` / `price` (G-14b1f)
 
+## G-16b-f Discography G-16a artist public reflection closure — complete
+
+- **Doc:** `gosaki-discography-g16b-artist-public-reflection-closure.md`
+- **Verifier:** `verify-g16b-gosaki-discography-artist-public-reflection-closure.mjs`
+- **Chain:** G-16a Save (`db59af7`) → G-16b upload (`418b577`); `artist` 2nd practical Save + reflection success
+- **updated_at:** G-15d + G-16a live proof (2×)
+- **Next:** G-17a next field slice planning (recommended)
+- **Do not:** Re-Save `discography-001`; re-upload discography HTML
+
 ## G-16b-upload Discography G-16a artist public reflection upload + HTTP verify — complete
 
+- **Commit:** `418b577`
 - **Doc:** `gosaki-discography-g16b-artist-public-reflection-upload-result.md`
 - **Upload:** operator manual `discography/index.html` ×1
 - **HTTP:** Continuous `ごさきりかこTrio feat.石川周之介` live; G-15c/G-15e maintained
-- **Next:** G-16b-f closure doc
+- **Chain closed — see G-16b-f**
 - **Do not:** Re-upload discography HTML; Re-Save `001`
 
 ## G-16b Discography G-16a artist public reflection local regen + upload preflight — complete

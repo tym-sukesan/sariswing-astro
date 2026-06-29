@@ -1,6 +1,18 @@
 Last updated: 2026-06-29
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-18f Discography tracklist textarea diff dry-run — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-18f-gosaki-discography-tracklist-textarea-diff-dry-run` |
+| Target | `discography-002` / SKYLARK (8 tracks) |
+| Scope | textarea read → parse → diff Preview; **no DB write** |
+| Doc | `gosaki-discography-g18f-tracklist-textarea-diff-dry-run.md` |
+| Verifier | `verify-g18f-gosaki-discography-tracklist-textarea-diff-dry-run.mjs` |
+| **Next** | **G-18g** textarea Save adapter planning |
+| **Do not** | Save / SQL mutation / re-open scalar chains |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-18e Discography tracks title-edit Save slice planning — complete (+ refinement)
 
 | Item | Value |
@@ -11,8 +23,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Doc | `gosaki-discography-g18e-tracks-title-edit-save-slice-planning.md` |
 | Verifier | `verify-g18e-gosaki-discography-tracks-title-edit-save-slice-planning.mjs` |
 | Single-row PoC | `discography-002` track 7 — **internal adapter reference only** |
-| **Next** | **G-18f** tracklist textarea read/parse/diff dry-run (`discography-002`; no DB write) |
-| Then | G-18f-grant → **G-18g** textarea Save adapter planning |
+| **Next** | G-18f — **done** |
 | **Do not** | Guess typo fixes; re-open scalar Save chains |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-18d-result Discography tracks SQL execution result — complete

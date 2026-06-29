@@ -26,7 +26,11 @@ import {
   G16A_DISCOGRAPHY_ARTIST_NON_DRY_RUN_APPROVAL_ID,
   G17C_DISCOGRAPHY_LABEL_NON_DRY_RUN_APPROVAL_ID,
 } from "../../../../../../src/lib/admin/staging-write/discography-write-types";
-import { G15A2_DRY_RUN_SLICE_APPROVAL_ID } from "../../../../../../src/lib/admin/staging-write/gosaki-discography-dry-run-types";
+import {
+  G18F_DISCOGRAPHY_TRACKLIST_PAGE_CONFIG_ELEMENT_ID,
+  resolveG18fDiscographyTracklistPageServerConfig,
+} from "../../../../../../src/lib/admin/staging-write/gosaki-discography-g18f-tracklist-page-config";
+import { G18F_TRACKLIST_DRY_RUN_APPROVAL_ID } from "../../../../../../src/lib/admin/staging-write/gosaki-discography-g18f-tracklist-types";
 import { G16A_DRY_RUN_SLICE_APPROVAL_ID } from "../../../../../../src/lib/admin/staging-write/gosaki-discography-g16a-next-field-types";
 import { G15D_DRY_RUN_SLICE_APPROVAL_ID } from "../../../../../../src/lib/admin/staging-write/gosaki-discography-next-field-types";
 import {
@@ -44,6 +48,7 @@ const savePageConfig = resolveG15bDiscographySavePageServerConfig(import.meta.en
 const g15dSavePageConfig = resolveG15dDiscographySavePageServerConfig(import.meta.env);
 const g16aSavePageConfig = resolveG16aDiscographySavePageServerConfig(import.meta.env);
 const g17cSavePageConfig = resolveG17cDiscographySavePageServerConfig(import.meta.env);
+const g18fTracklistPageConfig = resolveG18fDiscographyTracklistPageServerConfig(import.meta.env);
 const saveStatusLabel = g17cSavePageConfig.saveEnabled
   ? "ready_to_save"
   : g16aSavePageConfig.saveEnabled
@@ -57,6 +62,7 @@ const dbWriteStatusLabel = g17cSavePageConfig.saveEnabled
 const previewDiscographyUrl = `${GOSAKI_STAGING_PREVIEW_URL}${binding.previewPath}`;
 const rowsJson = JSON.stringify(binding.rows);
 const selectedRow =
+  binding.rows.find((row) => row.legacy_id === "discography-002") ??
   binding.rows.find((row) => row.legacy_id === binding.selectedLegacyId) ??
   binding.rows[0] ??
   null;
@@ -130,6 +136,15 @@ const trackLines = selectedRow?.tracks.map((track) => track.title).join("\n") ??
     hidden
   />
   <div
+    id={G18F_DISCOGRAPHY_TRACKLIST_PAGE_CONFIG_ELEMENT_ID}
+    data-g18f-tracklist-preview-enabled={g18fTracklistPageConfig.tracklistPreviewEnabled ? "true" : "false"}
+    data-g18f-save-enabled="false"
+    data-g18f-db-write-enabled="false"
+    data-g18f-dry-run-required={g18fTracklistPageConfig.dryRunRequired ? "true" : "false"}
+    data-g18f-write-approval-id={g18fTracklistPageConfig.writeApprovalId || G18F_TRACKLIST_DRY_RUN_APPROVAL_ID}
+    hidden
+  />
+  <div
     id={G15A2_DISCOGRAPHY_PAGE_CONFIG_ELEMENT_ID}
     data-g15a2-dry-run-preview-enabled={pageConfig.dryRunPreviewEnabled ? "true" : "false"}
     data-g15a2-save-enabled="false"
@@ -171,13 +186,17 @@ const trackLines = selectedRow?.tracks.map((track) => track.title).join("\n") ??
         DB write: <strong id="gosaki-disc-status-db-write">{dbWriteStatusLabel}</strong>
       </li>
       <li>
-        dry-run approvalId: <code id="gosaki-disc-status-dry-run-approval">{G16A_DRY_RUN_SLICE_APPROVAL_ID}</code>
+        Tracklist textarea diff (G-18f):
+        <strong>{g18fTracklistPageConfig.tracklistPreviewEnabled ? "enabled" : "disabled"}</strong>
+      </li>
+      <li>
+        dry-run approvalId: <code id="gosaki-disc-status-dry-run-approval">{G18F_TRACKLIST_DRY_RUN_APPROVAL_ID}</code>
       </li>
       <li>
         Save approvalId: <code id="gosaki-disc-status-save-approval">{G16A_DISCOGRAPHY_ARTIST_NON_DRY_RUN_APPROVAL_ID}</code>
       </li>
       <li>
-        target legacy_id: <code id="gosaki-disc-status-target-legacy-id">discography-001</code>
+        target legacy_id: <code id="gosaki-disc-status-target-legacy-id">discography-002</code>
       </li>
       <li>
         changedFields: <code id="gosaki-disc-status-changed-fields">—</code>
@@ -321,12 +340,18 @@ const trackLines = selectedRow?.tracks.map((track) => track.title).join("\n") ??
       </fieldset>
 
       <fieldset class="admin-gosaki-form-section">
-        <legend class="admin-gosaki-form-section__title">Track List（Supabase read-only参考）</legend>
+        <legend class="admin-gosaki-form-section__title">Track List（G-18f textarea diff）</legend>
         <label class="admin-form__field admin-form__field--full">
-          <span class="admin-form__label">曲名（discography_tracks）</span>
-          <textarea class="gosaki-discography-admin-textarea" name="tracks" rows="6" readonly
-            >{trackLines}</textarea
-          >
+          <span class="admin-form__label">曲名（1行 = 1曲 / discography_tracks）</span>
+          <textarea
+            class="gosaki-discography-admin-textarea"
+            name="tracks"
+            rows={selectedRow?.legacy_id === "discography-002" ? 8 : 6}
+            readonly={selectedRow?.legacy_id !== "discography-002"}
+          >{trackLines}</textarea>
+          <p class="admin-gosaki-field-hint" role="note">
+            G-18f: <code>discography-002</code> / SKYLARK のみ編集可。変更後「変更を確認」で diff Preview（DB write なし）。
+          </p>
         </label>
       </fieldset>
     </form>
@@ -343,7 +368,7 @@ const trackLines = selectedRow?.tracks.map((track) => track.title).join("\n") ??
       </button>
     </div>
     <p class="admin-gosaki-save-note" role="note">
-      ※ dry-run Preview は有効。Save は G-16a env stack 未設定時は disabled（operator が次フェーズで 1 回 Save）
+      ※ G-18f: <code>discography-002</code> の Track List textarea diff Preview は有効。Save / DB write は無効。
     </p>
 
     <div id="gosaki-disc-dry-run-result" class="gosaki-disc-dry-run-result" hidden></div>

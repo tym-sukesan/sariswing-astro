@@ -5,9 +5,9 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-18e-gosaki-discography-tracks-title-edit-save-slice-planning — complete (+ textarea UI refinement).
-discography_tracks: 34 rows; album-level textarea diff dry-run planned for G-18f.
-Next: G-18f tracklist textarea read/parse/diff dry-run (discography-002 / SKYLARK; no DB write).
+Current phase: G-18f-gosaki-discography-tracklist-textarea-diff-dry-run — complete.
+discography_tracks: 34 rows; G-18f tracklist textarea diff Preview on discography-002 / SKYLARK.
+Next: G-18g textarea Save adapter planning.
 ```
 
 **Closed chains — do not re-Save / re-upload:**
@@ -17,6 +17,16 @@ Next: G-18f tracklist textarea read/parse/diff dry-run (discography-002 / SKYLAR
 - `discography-004` / `label` (G-17e-f)
 - `schedule-2026-04-005` / `price` (G-14b1f)
 
+## G-18f Discography tracklist textarea diff dry-run — complete
+
+- **Doc:** `gosaki-discography-g18f-tracklist-textarea-diff-dry-run.md`
+- **Target:** `discography-002` / SKYLARK (8 tracks)
+- **UI:** album-level textarea editable on target only; 1 line = 1 track
+- **Preview:** unchanged / changed / added / deleted / reordered
+- **Guards:** `dryRun: true`, `actualWrite: false`, Save disabled, no DB write path
+- **approvalId:** `G-18f-gosaki-discography-tracklist-textarea-diff-dry-run`
+- **Next:** G-18g textarea Save adapter planning
+
 ## G-18e Discography tracks title-edit Save slice planning — complete (+ refinement)
 
 - **Doc:** `gosaki-discography-g18e-tracks-title-edit-save-slice-planning.md`
@@ -25,10 +35,10 @@ Next: G-18f tracklist textarea read/parse/diff dry-run (discography-002 / SKYLAR
 - **Not recommended:** 34 fixed inputs; per-track fixed form as primary UI
 - **Single-row PoC:** `discography-002` track 7 / `Like a Lover` — **internal adapter reference only** (not primary UI)
 - **Album-level Save options:** (1) single UPDATE weak UX; (2) diff + per-row plan **target**; (3) full replacement dry-run first
-- **G-18f:** textarea read/parse/diff dry-run on `discography-002` / SKYLARK (8 tracks); **DB write disabled**
+- **G-18f:** textarea read/parse/diff dry-run on `discography-002` / SKYLARK (8 tracks); **DB write disabled** — **done**
 - **G-18g:** textarea Save adapter planning — guards: `legacy_id` + track count + ordered title fingerprint
 - **Prerequisite (G-18g):** `discography_tracks` GRANT preflight (G-18f-grant)
-- **Next:** G-18f tracklist textarea diff dry-run implementation
+- **Next:** G-18g textarea Save adapter planning
 
 ## G-18d-result Discography tracks SQL execution result — complete
 

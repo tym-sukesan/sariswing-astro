@@ -1,17 +1,26 @@
 Last updated: 2026-06-29
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-17b Discography scalar field commonization — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-17b-gosaki-discography-scalar-field-commonization` |
+| Base commit | `5161eaa` |
+| Doc | `gosaki-discography-g17b-scalar-field-commonization.md` |
+| Verifier | `verify-g17b-gosaki-discography-scalar-field-commonization.mjs` |
+| Deliverables | registry, generic config/guards, adapter lookup, public patch registry |
+| **Next** | G-17c registry-native field slice (`discography-004`) |
+| **Do not** | Re-Save closed chains; new Save in G-17b |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-17a Discography CMS commonization audit — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-17a-gosaki-discography-commonization-audit` |
-| Base commit | `de2a388` |
+| Commit | `5161eaa` |
 | Doc | `gosaki-discography-g17a-commonization-audit.md` |
-| Verifier | `verify-g17a-gosaki-discography-commonization-audit.mjs` |
-| Finding | Slice-per-field copy-paste unsustainable; mirror Schedule registry |
-| **Next** | G-17b scalar slice registry (minimal impl) |
-| **Do not** | New Save; refactor closed chains in G-17a |
+| **Next** | G-17b — **done** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-16b-f Discography G-16a artist public reflection closure — complete
 

@@ -5,8 +5,8 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-17a-gosaki-discography-commonization-audit — complete (uncommitted).
-branch: main @ de2a388 (+ G-17a audit local changes)
+Current phase: G-17b-gosaki-discography-scalar-field-commonization — complete (uncommitted).
+branch: main @ 5161eaa (+ G-17b local changes)
 ```
 
 **Closed chains — do not re-Save / re-upload:**
@@ -15,13 +15,19 @@ branch: main @ de2a388 (+ G-17a audit local changes)
 - `discography-003` / `artist` (G-15e-f)
 - `schedule-2026-04-005` / `price` (G-14b1f)
 
+## G-17b Discography scalar field commonization — complete
+
+- **Doc:** `gosaki-discography-g17b-scalar-field-commonization.md`
+- **Registry:** `discography-scalar-field-slice-registry.ts` (3 closed entries)
+- **Generic:** `discography-scalar-field-save-config.ts`, `discography-scalar-field-guards.ts`
+- **Public patch:** `DISCOGRAPHY_PUBLIC_PATCH_REGISTRY` in `supabase-discography-read.mjs`
+- **Next:** G-17c — first registry-native slice on `discography-004` (`title` or `year`)
+- **Do not:** Save / DB write in G-17b
+
 ## G-17a Discography CMS commonization audit — complete
 
+- **Commit:** `5161eaa`
 - **Doc:** `gosaki-discography-g17a-commonization-audit.md`
-- **Finding:** G-15/G-16 slice copy-paste ~2,850 lines TS + 27 docs / 24 verifiers; adopt Schedule-style registry
-- **G-17b next:** `discography-scalar-field-slice-registry.ts` + generic config/guards + patch registry (no new Save)
-- **G-17c+:** first registry-native slice on `discography-004` (`title` or `year`)
-- **Do not:** Save / DB write / FTP in G-17a
 
 ## G-16b-f Discography G-16a artist public reflection closure — complete
 

@@ -139,7 +139,31 @@ export function patchDiscographyItemArtist(segment, title, artist) {
 }
 
 /**
- * Apply Supabase purchase_url + artist values to Wix discography hub HTML.
+ * Registry of public HTML patch handlers per Supabase scalar field.
+ * G-17b: purchase_url + artist; G-17c+ adds title / year / release_date via registry entries.
+ */
+export const DISCOGRAPHY_PUBLIC_PATCH_FIELD_ORDER = ["purchase_url", "artist"];
+
+/** @type {Record<string, { field: string, patchSegment: (segment: string, row: ReturnType<typeof normalizeDiscographyRecord>) => { segment: string, patched: boolean } }>} */
+export const DISCOGRAPHY_PUBLIC_PATCH_REGISTRY = {
+  purchase_url: {
+    field: "purchase_url",
+    patchSegment(segment, row) {
+      if (!row.purchase_url) return { segment, patched: false };
+      return patchDiscographyItemPurchaseUrl(segment, row.purchase_url);
+    },
+  },
+  artist: {
+    field: "artist",
+    patchSegment(segment, row) {
+      if (!row.artist) return { segment, patched: false };
+      return patchDiscographyItemArtist(segment, row.title, row.artist);
+    },
+  },
+};
+
+/**
+ * Apply Supabase scalar field values to Wix discography hub HTML via patch registry.
  * @param {string} html
  * @param {ReturnType<typeof normalizeDiscographyRecord>[]} releases
  */
@@ -159,30 +183,29 @@ export function patchGosakiDiscographySupabaseFields(html, releases) {
     let segment = out.slice(bounds.start, bounds.end);
     let segmentChanged = false;
 
-    if (row.purchase_url) {
-      const purchaseResult = patchDiscographyItemPurchaseUrl(segment, row.purchase_url);
-      if (purchaseResult.patched) {
+    for (const fieldKey of DISCOGRAPHY_PUBLIC_PATCH_FIELD_ORDER) {
+      const handler = DISCOGRAPHY_PUBLIC_PATCH_REGISTRY[fieldKey];
+      if (!handler) continue;
+      const result = handler.patchSegment(segment, row);
+      if (!result.patched) continue;
+
+      if (fieldKey === "purchase_url" && row.purchase_url) {
         purchasePatches.push({
           legacy_id: row.legacy_id,
           title: row.title,
           purchase_url: row.purchase_url,
         });
-        segment = purchaseResult.segment;
-        segmentChanged = true;
       }
-    }
-
-    if (row.artist) {
-      const artistResult = patchDiscographyItemArtist(segment, row.title, row.artist);
-      if (artistResult.patched) {
+      if (fieldKey === "artist" && row.artist) {
         artistPatches.push({
           legacy_id: row.legacy_id,
           title: row.title,
           artist: row.artist,
         });
-        segment = artistResult.segment;
-        segmentChanged = true;
       }
+
+      segment = result.segment;
+      segmentChanged = true;
     }
 
     if (segmentChanged) {

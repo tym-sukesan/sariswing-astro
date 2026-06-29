@@ -7,12 +7,8 @@ import { DISCOGRAPHY_ADMIN_SELECT } from "./staging-discography-read";
 import {
   assertDiscographyWriteApprovalId,
   assertDiscographyWriteTargetId,
-  assertG15bDiscographyUpdatePayloadAllowed,
-  assertG15bDiscographyWritableRow,
-  assertG15dDiscographyUpdatePayloadAllowed,
-  assertG15dDiscographyWritableRow,
-  assertG16aDiscographyUpdatePayloadAllowed,
-  assertG16aDiscographyWritableRow,
+  assertDiscographyScalarSliceWriteGuards,
+  getDiscographyScalarSliceEntryByApprovalId,
 } from "./discography-write-guards";
 import { scheduleUpdatedAtEquals } from "./schedule-write-utils";
 import {
@@ -118,18 +114,15 @@ export async function updateDiscographyWrite(input: {
   try {
     assertDiscographyWriteApprovalId(approvalId);
     assertDiscographyWriteTargetId(targetId, beforeSnapshot);
-    if (approvalId === G15B_DISCOGRAPHY_PURCHASE_URL_NON_DRY_RUN_APPROVAL_ID) {
-      assertG15bDiscographyWritableRow(beforeSnapshot);
-      assertG15bDiscographyUpdatePayloadAllowed(payload);
-    } else if (approvalId === G15D_DISCOGRAPHY_ARTIST_NON_DRY_RUN_APPROVAL_ID) {
-      assertG15dDiscographyWritableRow(beforeSnapshot);
-      assertG15dDiscographyUpdatePayloadAllowed(payload);
-    } else if (approvalId === G16A_DISCOGRAPHY_ARTIST_NON_DRY_RUN_APPROVAL_ID) {
-      assertG16aDiscographyWritableRow(beforeSnapshot);
-      assertG16aDiscographyUpdatePayloadAllowed(payload);
-    } else {
+    const registryEntry = getDiscographyScalarSliceEntryByApprovalId(approvalId);
+    if (!registryEntry) {
       throw new Error(`Discography write slice not implemented for approvalId: ${approvalId}`);
     }
+    assertDiscographyScalarSliceWriteGuards(registryEntry, {
+      approvalId,
+      payload,
+      row: beforeSnapshot,
+    });
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
     return buildFailure({

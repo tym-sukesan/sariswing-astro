@@ -5,23 +5,30 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-15e-gosaki-discography-artist-public-reflection-local-regen-and-upload-preflight — complete (uncommitted).
-branch: main @ db0ae06 (+ G-15e local changes)
+Current phase: G-15e-upload-gosaki-discography-artist-public-reflection-upload-result — complete (uncommitted).
+branch: main @ 566d714 (+ G-15e-upload local changes)
 ```
 
 **G-15 Discography `purchase_url` chain closed on discography-002. Do not re-Save discography-002.**
 
 **G-15d artist Save closed on discography-003. Do not re-Save discography-003.**
 
+**G-15e-upload artist public reflection closed on live staging. Do not re-upload `discography/index.html`.**
+
+## G-15e-upload Discography artist public reflection upload + HTTP verify — complete
+
+- **Doc:** `gosaki-discography-artist-public-reflection-upload-result.md`
+- **Upload:** operator manual `discography/index.html` ×1
+- **HTTP:** **200**; About Us `ごさきりかこTrio` live; old `ごさきりかこtrio` absent
+- **G-15c:** SKYLARK `gosakirikako.base.shop` maintained
+- **Next:** G-15e-f — artist public reflection closure doc (optional)
+- **Do not:** Re-upload discography HTML; re-Save `discography-003`
+
 ## G-15e Discography artist public reflection local regen + upload preflight — complete
 
+- **Commit:** `566d714`
 - **Doc:** `gosaki-discography-artist-public-reflection-local-regen-and-upload-preflight.md`
 - **Hook:** `patchGosakiDiscographySupabaseFields` — `artist` + `purchase_url`
-- **Local:** About Us!! `ごさきりかこTrio`; G-15c SKYLARK URL maintained
-- **CSS/JS:** hash unchanged — minimal upload `discography/index.html` ×1
-- **Live:** About Us artist still `ごさきりかこtrio` (stale until upload)
-- **Next:** G-15e-upload — operator manual upload + HTTP verify
-- **Do not:** FTP auto-apply; re-Save `discography-003`
 
 ## G-15d-execution Discography artist Save result — complete
 

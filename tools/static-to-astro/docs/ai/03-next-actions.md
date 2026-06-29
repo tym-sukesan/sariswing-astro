@@ -1,17 +1,28 @@
 Last updated: 2026-06-29
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-16a Discography next-field Save preflight — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-16a-gosaki-discography-existing-release-artist-non-dry-run` |
+| Base commit | `2d70001` |
+| Doc | `gosaki-discography-g16a-next-field-save-preflight.md` |
+| Verifier | `verify-g16a-gosaki-discography-next-field-save-preflight.mjs` |
+| Target | `discography-001` / Continuous / `artist` |
+| Before → after | `Feat.` → `feat.` in artist credit |
+| Save | **not executed** |
+| **Next** | G-16a-d2/d3 local dry-run Preview → G-16a-execution |
+| **Do not** | Re-Save `002`/`003`; FTP/upload |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-16 CMS Kit Save / Reflection playbook — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-16-cms-kit-save-reflection-playbook-consolidation` |
-| Base commit | `f722cf4` |
+| Commit | `2d70001` |
 | Doc | `cms-kit-save-reflection-playbook.md` |
-| Verifier | `verify-g16-cms-kit-save-reflection-playbook.mjs` |
-| Sources | G-14b1 Schedule + G-15 purchase_url + G-15 artist |
-| **Next (recommended)** | **G-16a** — next Discography field Save slice (`title` / `year` on unclosed row) |
-| **Do not** | Re-Save closed rows; FTP auto-apply |
+| **Next** | G-16a — **done** (preflight) |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-15e-f Discography artist public reflection closure — complete
 

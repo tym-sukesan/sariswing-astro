@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-16 CMS Kit Save / Reflection playbook consolidation (2026-06-29):** **complete (uncommitted)** — doc-only; Save + Reflection standard procedures from G-14b1 + G-15 ×2. Doc: `cms-kit-save-reflection-playbook.md`. **Next: G-16a — next Discography field slice (recommended).**
+**G-16a Gosaki Discography next-field Save preflight (2026-06-29):** **complete (uncommitted)** — `discography-001` / Continuous / `artist` (`Feat.`→`feat.`); dry-run + Save preflight; Save **not executed**. Doc: `gosaki-discography-g16a-next-field-save-preflight.md`. **Next: G-16a-d2/d3 or G-16a-execution.**
+
+**G-16 CMS Kit Save / Reflection playbook consolidation (2026-06-29):** **complete** — committed `2d70001`. Doc: `cms-kit-save-reflection-playbook.md`.
 
 **G-15e-f Gosaki Discography artist public reflection closure (2026-06-29):** **complete** — committed `f722cf4`; G-15d / G-15e `artist` chain closed. Doc: `gosaki-discography-artist-public-reflection-closure.md`. **Do not re-Save `discography-003`; do not re-upload discography HTML.**
 

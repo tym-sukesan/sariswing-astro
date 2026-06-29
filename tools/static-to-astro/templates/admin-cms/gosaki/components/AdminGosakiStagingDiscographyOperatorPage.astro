@@ -5,6 +5,10 @@ import {
   resolveG15a2DiscographyPageServerConfig,
 } from "../../../../../../src/lib/admin/staging-write/gosaki-discography-dry-run-page-config";
 import {
+  G16A_DISCOGRAPHY_SAVE_PAGE_CONFIG_ELEMENT_ID,
+  resolveG16aDiscographySavePageServerConfig,
+} from "../../../../../../src/lib/admin/staging-write/gosaki-discography-g16a-artist-save-page-config";
+import {
   G15B_DISCOGRAPHY_SAVE_PAGE_CONFIG_ELEMENT_ID,
   resolveG15bDiscographySavePageServerConfig,
 } from "../../../../../../src/lib/admin/staging-write/gosaki-discography-save-page-config";
@@ -15,8 +19,10 @@ import {
 import {
   G15B_DISCOGRAPHY_PURCHASE_URL_NON_DRY_RUN_APPROVAL_ID,
   G15D_DISCOGRAPHY_ARTIST_NON_DRY_RUN_APPROVAL_ID,
+  G16A_DISCOGRAPHY_ARTIST_NON_DRY_RUN_APPROVAL_ID,
 } from "../../../../../../src/lib/admin/staging-write/discography-write-types";
 import { G15A2_DRY_RUN_SLICE_APPROVAL_ID } from "../../../../../../src/lib/admin/staging-write/gosaki-discography-dry-run-types";
+import { G16A_DRY_RUN_SLICE_APPROVAL_ID } from "../../../../../../src/lib/admin/staging-write/gosaki-discography-g16a-next-field-types";
 import { G15D_DRY_RUN_SLICE_APPROVAL_ID } from "../../../../../../src/lib/admin/staging-write/gosaki-discography-next-field-types";
 import {
   GOSAKI_STAGING_ADMIN_BASE,
@@ -31,8 +37,9 @@ const { binding } = Astro.props;
 const pageConfig = resolveG15a2DiscographyPageServerConfig(import.meta.env);
 const savePageConfig = resolveG15bDiscographySavePageServerConfig(import.meta.env);
 const g15dSavePageConfig = resolveG15dDiscographySavePageServerConfig(import.meta.env);
-const saveStatusLabel = g15dSavePageConfig.saveEnabled ? "ready_to_save" : "disabled";
-const dbWriteStatusLabel = g15dSavePageConfig.saveEnabled ? "gated" : "disabled";
+const g16aSavePageConfig = resolveG16aDiscographySavePageServerConfig(import.meta.env);
+const saveStatusLabel = g16aSavePageConfig.saveEnabled ? "ready_to_save" : "disabled";
+const dbWriteStatusLabel = g16aSavePageConfig.saveEnabled ? "gated" : "disabled";
 const previewDiscographyUrl = `${GOSAKI_STAGING_PREVIEW_URL}${binding.previewPath}`;
 const rowsJson = JSON.stringify(binding.rows);
 const selectedRow =
@@ -48,10 +55,24 @@ const trackLines = selectedRow?.tracks.map((track) => track.title).join("\n") ??
   data-section="admin-discography"
   data-gosaki-disc-source={binding.source}
   data-gosaki-disc-read-enabled={binding.supabaseReadEnabled ? "true" : "false"}
-  data-gosaki-disc-default-legacy-id="discography-003"
+  data-gosaki-disc-default-legacy-id="discography-001"
   data-discography-rows={rowsJson}
   aria-label="Discography管理"
 >
+  <div
+    id={G16A_DISCOGRAPHY_SAVE_PAGE_CONFIG_ELEMENT_ID}
+    data-g16a-save-enabled={g16aSavePageConfig.saveEnabled ? "true" : "false"}
+    data-g16a-staging-shell-enabled={g16aSavePageConfig.stagingShellEnabled ? "true" : "false"}
+    data-g16a-staging-data-read-enabled={g16aSavePageConfig.stagingDataReadEnabled ? "true" : "false"}
+    data-g16a-staging-write-enabled={g16aSavePageConfig.stagingWriteEnabled ? "true" : "false"}
+    data-g16a-env-arm-armed={g16aSavePageConfig.envArmArmed ? "true" : "false"}
+    data-g16a-optimistic-lock-enabled={g16aSavePageConfig.optimisticLockEnabled ? "true" : "false"}
+    data-g16a-write-dry-run-disabled={g16aSavePageConfig.writeDryRunDisabled ? "true" : "false"}
+    data-g16a-write-provider={g16aSavePageConfig.writeProvider}
+    data-g16a-write-module={g16aSavePageConfig.writeModule}
+    data-g16a-write-approval-id={g16aSavePageConfig.writeApprovalId || G16A_DISCOGRAPHY_ARTIST_NON_DRY_RUN_APPROVAL_ID}
+    hidden
+  />
   <div
     id={G15D_DISCOGRAPHY_SAVE_PAGE_CONFIG_ELEMENT_ID}
     data-g15d-save-enabled={g15dSavePageConfig.saveEnabled ? "true" : "false"}
@@ -122,13 +143,13 @@ const trackLines = selectedRow?.tracks.map((track) => track.title).join("\n") ??
         DB write: <strong id="gosaki-disc-status-db-write">{dbWriteStatusLabel}</strong>
       </li>
       <li>
-        dry-run approvalId: <code id="gosaki-disc-status-dry-run-approval">{G15D_DRY_RUN_SLICE_APPROVAL_ID}</code>
+        dry-run approvalId: <code id="gosaki-disc-status-dry-run-approval">{G16A_DRY_RUN_SLICE_APPROVAL_ID}</code>
       </li>
       <li>
-        Save approvalId: <code id="gosaki-disc-status-save-approval">{G15D_DISCOGRAPHY_ARTIST_NON_DRY_RUN_APPROVAL_ID}</code>
+        Save approvalId: <code id="gosaki-disc-status-save-approval">{G16A_DISCOGRAPHY_ARTIST_NON_DRY_RUN_APPROVAL_ID}</code>
       </li>
       <li>
-        target legacy_id: <code id="gosaki-disc-status-target-legacy-id">discography-003</code>
+        target legacy_id: <code id="gosaki-disc-status-target-legacy-id">discography-001</code>
       </li>
       <li>
         changedFields: <code id="gosaki-disc-status-changed-fields">—</code>
@@ -294,7 +315,7 @@ const trackLines = selectedRow?.tracks.map((track) => track.title).join("\n") ??
       </button>
     </div>
     <p class="admin-gosaki-save-note" role="note">
-      ※ dry-run Preview は有効。Save は G-15b env stack 未設定時は disabled（operator が次フェーズで 1 回 Save）
+      ※ dry-run Preview は有効。Save は G-16a env stack 未設定時は disabled（operator が次フェーズで 1 回 Save）
     </p>
 
     <div id="gosaki-disc-dry-run-result" class="gosaki-disc-dry-run-result" hidden></div>

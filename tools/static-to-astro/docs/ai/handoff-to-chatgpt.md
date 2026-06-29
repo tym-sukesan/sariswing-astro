@@ -5,8 +5,8 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-16-cms-kit-save-reflection-playbook-consolidation — complete (uncommitted).
-branch: main @ f722cf4 (+ G-16 local changes)
+Current phase: G-16a-gosaki-discography-existing-release-artist-non-dry-run — Save preflight complete (uncommitted).
+branch: main @ 2d70001 (+ G-16a local changes)
 ```
 
 **Closed chains — do not re-Save / re-upload:**
@@ -14,13 +14,19 @@ branch: main @ f722cf4 (+ G-16 local changes)
 - `discography-003` / `artist` (G-15e-f)
 - `schedule-2026-04-005` / `price` (G-14b1f)
 
+## G-16a Discography next-field Save preflight — complete
+
+- **Doc:** `gosaki-discography-g16a-next-field-save-preflight.md`
+- **Target:** `discography-001` / Continuous / `artist` (`Feat.`→`feat.`)
+- **Playbook:** `cms-kit-save-reflection-playbook.md`
+- **Save:** not executed
+- **Next:** operator local dry-run Preview (G-16a-d2/d3) → Save execution (G-16a-execution)
+- **Do not:** Re-Save closed rows; FTP/upload
+
 ## G-16 CMS Kit Save / Reflection playbook — complete
 
+- **Commit:** `2d70001`
 - **Doc:** `cms-kit-save-reflection-playbook.md`
-- **Consolidates:** G-14b1 Schedule + G-15 Discography (purchase_url + artist)
-- **Includes:** Save slice §3, Reflection §4, safety gates, roles, new-field template, forbidden patterns
-- **Next (recommended):** G-16a — next Discography field slice on unclosed row
-- **Do not:** FTP auto-apply; re-Save closed rows
 
 ## G-15e-f Discography artist public reflection closure — complete
 

@@ -11,12 +11,15 @@ import {
   assertG15bDiscographyWritableRow,
   assertG15dDiscographyUpdatePayloadAllowed,
   assertG15dDiscographyWritableRow,
+  assertG16aDiscographyUpdatePayloadAllowed,
+  assertG16aDiscographyWritableRow,
 } from "./discography-write-guards";
 import { scheduleUpdatedAtEquals } from "./schedule-write-utils";
 import {
   getDiscographyWriteSafety,
   G15B_DISCOGRAPHY_PURCHASE_URL_NON_DRY_RUN_APPROVAL_ID,
   G15D_DISCOGRAPHY_ARTIST_NON_DRY_RUN_APPROVAL_ID,
+  G16A_DISCOGRAPHY_ARTIST_NON_DRY_RUN_APPROVAL_ID,
   type DiscographyUpdateWritePayload,
   type DiscographyWriteAdapterResult,
   type DiscographyWriteClient,
@@ -29,6 +32,8 @@ const SUCCESS_ROLLBACK_HINT_PURCHASE_URL =
   "Manual rollback required if needed. Restore purchase_url on public.discography by legacy_id.";
 const SUCCESS_ROLLBACK_HINT_ARTIST =
   "Manual rollback required if needed. Restore artist on public.discography by legacy_id.";
+const SUCCESS_ROLLBACK_HINT_G16A_ARTIST =
+  "Manual rollback required if needed. Restore artist on discography-001 by legacy_id.";
 const NO_ROLLBACK_HINT = "No rollback required because actualWrite is false.";
 
 function buildFailure(
@@ -119,6 +124,9 @@ export async function updateDiscographyWrite(input: {
     } else if (approvalId === G15D_DISCOGRAPHY_ARTIST_NON_DRY_RUN_APPROVAL_ID) {
       assertG15dDiscographyWritableRow(beforeSnapshot);
       assertG15dDiscographyUpdatePayloadAllowed(payload);
+    } else if (approvalId === G16A_DISCOGRAPHY_ARTIST_NON_DRY_RUN_APPROVAL_ID) {
+      assertG16aDiscographyWritableRow(beforeSnapshot);
+      assertG16aDiscographyUpdatePayloadAllowed(payload);
     } else {
       throw new Error(`Discography write slice not implemented for approvalId: ${approvalId}`);
     }
@@ -221,9 +229,11 @@ export async function updateDiscographyWrite(input: {
   const changedFields = computeChangedFields(beforeSnapshot, afterSnapshot, payload);
 
   const rollbackHint =
-    approvalId === G15D_DISCOGRAPHY_ARTIST_NON_DRY_RUN_APPROVAL_ID
-      ? SUCCESS_ROLLBACK_HINT_ARTIST
-      : SUCCESS_ROLLBACK_HINT_PURCHASE_URL;
+    approvalId === G16A_DISCOGRAPHY_ARTIST_NON_DRY_RUN_APPROVAL_ID
+      ? SUCCESS_ROLLBACK_HINT_G16A_ARTIST
+      : approvalId === G15D_DISCOGRAPHY_ARTIST_NON_DRY_RUN_APPROVAL_ID
+        ? SUCCESS_ROLLBACK_HINT_ARTIST
+        : SUCCESS_ROLLBACK_HINT_PURCHASE_URL;
 
   const result: DiscographyWriteResult = {
     module: "discography",

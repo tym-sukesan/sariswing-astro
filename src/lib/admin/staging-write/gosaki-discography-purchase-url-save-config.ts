@@ -13,6 +13,7 @@ import {
 } from "./schedule-non-dry-run-poc-config";
 import { G15B_DISCOGRAPHY_PURCHASE_URL_NON_DRY_RUN_APPROVAL_ID } from "./discography-write-types";
 import { G15D_DISCOGRAPHY_ARTIST_NON_DRY_RUN_ARMED_ENV } from "./gosaki-discography-artist-save-config";
+import { G16A_DISCOGRAPHY_ARTIST_NON_DRY_RUN_ARMED_ENV } from "./gosaki-discography-g16a-artist-save-config";
 import { getDiscographyOptimisticLockConfig } from "./gosaki-discography-optimistic-lock-config";
 import {
   applyG15bDiscographySavePageConfigToEnv,
@@ -159,6 +160,9 @@ export function getG15bDiscographyPurchaseUrlSaveConfig(
   }
   if (isEnvArmTrue(mergedEnv, G15D_DISCOGRAPHY_ARTIST_NON_DRY_RUN_ARMED_ENV)) {
     armFailures.push(`${G15D_DISCOGRAPHY_ARTIST_NON_DRY_RUN_ARMED_ENV} must be off`);
+  }
+  if (isEnvArmTrue(mergedEnv, G16A_DISCOGRAPHY_ARTIST_NON_DRY_RUN_ARMED_ENV)) {
+    armFailures.push(`${G16A_DISCOGRAPHY_ARTIST_NON_DRY_RUN_ARMED_ENV} must be off`);
   }
   if (!optimisticLockEnabled) {
     armFailures.push(`${"PUBLIC_ADMIN_DISCOGRAPHY_OPTIMISTIC_LOCK"}=true`);

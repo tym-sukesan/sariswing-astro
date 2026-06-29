@@ -1,5 +1,5 @@
 /**
- * Gosaki staging shell — Discography admin UI (Supabase read + G-15a2/G-15d dry-run + Save slices).
+ * Gosaki staging shell — Discography admin UI (Supabase read + G-15a2/G-15d/G-16a dry-run + Save slices).
  */
 
 import type { GosakiDiscographyRecord } from "./gosaki-discography-read-types";
@@ -17,6 +17,15 @@ import {
   type G15dDiscographyDryRunResult,
 } from "../staging-write/gosaki-discography-existing-release-artist-dry-run";
 import {
+  executeG16aDiscographyArtistDryRun,
+  type G16aDiscographyDryRunResult,
+} from "../staging-write/gosaki-discography-g16a-existing-release-artist-dry-run";
+import {
+  executeG16aDiscographyArtistSave,
+  isG16aDiscographySaveOutcomeSuccess,
+  type G16aDiscographySaveOutcome,
+} from "../staging-write/gosaki-discography-g16a-existing-release-artist-save";
+import {
   executeG15bDiscographyPurchaseUrlSave,
   isG15bDiscographySaveOutcomeSuccess,
   type G15bDiscographySaveOutcome,
@@ -29,7 +38,12 @@ import {
 import {
   G15B_DISCOGRAPHY_PURCHASE_URL_NON_DRY_RUN_APPROVAL_ID,
   G15D_DISCOGRAPHY_ARTIST_NON_DRY_RUN_APPROVAL_ID,
+  G16A_DISCOGRAPHY_ARTIST_NON_DRY_RUN_APPROVAL_ID,
 } from "../staging-write/discography-write-types";
+import {
+  evaluateG16aDiscographyOperatorSaveUiGate,
+  getG16aDiscographyArtistSaveConfig,
+} from "../staging-write/gosaki-discography-g16a-artist-save-config";
 import {
   evaluateG15bDiscographyOperatorSaveUiGate,
   getG15bDiscographyPurchaseUrlSaveConfig,
@@ -43,15 +57,20 @@ import {
   G15A2_TARGET_LEGACY_ID,
 } from "../staging-write/gosaki-discography-dry-run-types";
 import {
+  G16A_DRY_RUN_SLICE_APPROVAL_ID,
+  G16A_TARGET_LEGACY_ID,
+} from "../staging-write/gosaki-discography-g16a-next-field-types";
+import {
   G15D_DRY_RUN_SLICE_APPROVAL_ID,
   G15D_TARGET_LEGACY_ID,
 } from "../staging-write/gosaki-discography-next-field-types";
 
 type GosakiDiscographyDryRunResultUnion =
   | G15a2DiscographyDryRunResult
-  | G15dDiscographyDryRunResult;
+  | G15dDiscographyDryRunResult
+  | G16aDiscographyDryRunResult;
 
-type DiscographyWriteSlice = "g15a2" | "g15d";
+type DiscographyWriteSlice = "g15a2" | "g15d" | "g16a";
 
 let selectedRowSnapshot: GosakiDiscographyRecord | null = null;
 let lastDryRunResult: GosakiDiscographyDryRunResultUnion | null = null;
@@ -61,22 +80,46 @@ let saveInFlight = false;
 function resolveDiscographyWriteSlice(legacyId: string): DiscographyWriteSlice | null {
   if (legacyId === G15A2_TARGET_LEGACY_ID) return "g15a2";
   if (legacyId === G15D_TARGET_LEGACY_ID) return "g15d";
+  if (legacyId === G16A_TARGET_LEGACY_ID) return "g16a";
   return null;
 }
 
+function getSaveConfigForSlice(slice: DiscographyWriteSlice | null) {
+  if (slice === "g16a") return getG16aDiscographyArtistSaveConfig();
+  if (slice === "g15d") return getG15dDiscographyArtistSaveConfig();
+  return getG15bDiscographyPurchaseUrlSaveConfig();
+}
+
+function evaluateSaveGateForSlice(
+  slice: DiscographyWriteSlice | null,
+  input: {
+    signedIn: boolean;
+    dryRunOk: boolean;
+    stale: boolean;
+    saveReadiness: string;
+  },
+) {
+  if (slice === "g16a") return evaluateG16aDiscographyOperatorSaveUiGate(input);
+  if (slice === "g15d") return evaluateG15dDiscographyOperatorSaveUiGate(input);
+  return evaluateG15bDiscographyOperatorSaveUiGate(input);
+}
+
 function getActiveDryRunApprovalId(slice: DiscographyWriteSlice | null): string {
+  if (slice === "g16a") return G16A_DRY_RUN_SLICE_APPROVAL_ID;
   if (slice === "g15d") return G15D_DRY_RUN_SLICE_APPROVAL_ID;
   if (slice === "g15a2") return G15A2_DRY_RUN_SLICE_APPROVAL_ID;
   return "—";
 }
 
 function getActiveSaveApprovalId(slice: DiscographyWriteSlice | null): string {
+  if (slice === "g16a") return G16A_DISCOGRAPHY_ARTIST_NON_DRY_RUN_APPROVAL_ID;
   if (slice === "g15d") return G15D_DISCOGRAPHY_ARTIST_NON_DRY_RUN_APPROVAL_ID;
   if (slice === "g15a2") return G15B_DISCOGRAPHY_PURCHASE_URL_NON_DRY_RUN_APPROVAL_ID;
   return "—";
 }
 
 function getActiveTargetLegacyId(slice: DiscographyWriteSlice | null): string {
+  if (slice === "g16a") return G16A_TARGET_LEGACY_ID;
   if (slice === "g15d") return G15D_TARGET_LEGACY_ID;
   if (slice === "g15a2") return G15A2_TARGET_LEGACY_ID;
   return selectedRowSnapshot?.legacy_id ?? "—";
@@ -188,10 +231,7 @@ function clearDryRunResult(): void {
 
 function updateOperatorStatusPanel(result: GosakiDiscographyDryRunResultUnion | null): void {
   const slice = resolveDiscographyWriteSlice(selectedRowSnapshot?.legacy_id ?? "");
-  const saveConfig =
-    slice === "g15d"
-      ? getG15dDiscographyArtistSaveConfig()
-      : getG15bDiscographyPurchaseUrlSaveConfig();
+  const saveConfig = getSaveConfigForSlice(slice);
   const dryRunConfig = getGosakiDiscographyDryRunConfig();
 
   const setText = (id: string, value: string) => {
@@ -232,20 +272,12 @@ function updateSaveButtonState(result: GosakiDiscographyDryRunResultUnion | null
   if (!button) return;
 
   const slice = resolveDiscographyWriteSlice(selectedRowSnapshot?.legacy_id ?? "");
-  const gate =
-    slice === "g15d"
-      ? evaluateG15dDiscographyOperatorSaveUiGate({
-          signedIn: stagingAuthSignedIn === true,
-          dryRunOk: result?.ok === true,
-          stale: result?.optimisticLockStale === true,
-          saveReadiness: result?.saveReadiness ?? "guard_error",
-        })
-      : evaluateG15bDiscographyOperatorSaveUiGate({
-          signedIn: stagingAuthSignedIn === true,
-          dryRunOk: result?.ok === true,
-          stale: result?.optimisticLockStale === true,
-          saveReadiness: result?.saveReadiness ?? "guard_error",
-        });
+  const gate = evaluateSaveGateForSlice(slice, {
+    signedIn: stagingAuthSignedIn === true,
+    dryRunOk: result?.ok === true,
+    stale: result?.optimisticLockStale === true,
+    saveReadiness: result?.saveReadiness ?? "guard_error",
+  });
 
   button.disabled = !gate.enabled || saveInFlight || slice == null;
   button.setAttribute(
@@ -254,7 +286,12 @@ function updateSaveButtonState(result: GosakiDiscographyDryRunResultUnion | null
   );
 
   if (gate.enabled && !saveInFlight && slice != null) {
-    button.title = slice === "g15d" ? "artist を保存します（G-15d）" : "purchase_url を保存します（G-15b）";
+    button.title =
+      slice === "g16a"
+        ? "artist を保存します（G-16a）"
+        : slice === "g15d"
+          ? "artist を保存します（G-15d）"
+          : "purchase_url を保存します（G-15b）";
     button.textContent = "更新する";
     return;
   }
@@ -281,10 +318,7 @@ function renderDryRunResult(result: GosakiDiscographyDryRunResultUnion): void {
 
   const slice = resolveDiscographyWriteSlice(result.target.legacy_id);
   const saveApprovalId = getActiveSaveApprovalId(slice);
-  const saveConfig =
-    slice === "g15d"
-      ? getG15dDiscographyArtistSaveConfig()
-      : getG15bDiscographyPurchaseUrlSaveConfig();
+  const saveConfig = getSaveConfigForSlice(slice);
 
   el.hidden = false;
   el.className = `gosaki-disc-dry-run-result gosaki-disc-dry-run-result--${result.ok ? "ok" : "error"}`;
@@ -320,7 +354,9 @@ function renderDryRunResult(result: GosakiDiscographyDryRunResultUnion): void {
   updateOperatorStatusPanel(result);
 }
 
-function renderSaveResult(outcome: G15bDiscographySaveOutcome | G15dDiscographySaveOutcome): void {
+function renderSaveResult(
+  outcome: G15bDiscographySaveOutcome | G15dDiscographySaveOutcome | G16aDiscographySaveOutcome,
+): void {
   const el = document.getElementById("gosaki-disc-save-result");
   if (!el) return;
   el.hidden = false;
@@ -452,19 +488,26 @@ async function runDryRunPreview(): Promise<void> {
 
   const formValues = readDiscographyDryRunFormValues(form);
   const result =
-    slice === "g15d"
-      ? executeG15dDiscographyArtistDryRun({
+    slice === "g16a"
+      ? executeG16aDiscographyArtistDryRun({
           beforeSnapshot: selectedRowSnapshot,
           formValues,
           optimisticLockStale: stale.staleDetected,
           supabaseUrl: url,
         })
-      : executeG15a2DiscographyDryRun({
-          beforeSnapshot: selectedRowSnapshot,
-          formValues,
-          optimisticLockStale: stale.staleDetected,
-          supabaseUrl: url,
-        });
+      : slice === "g15d"
+        ? executeG15dDiscographyArtistDryRun({
+            beforeSnapshot: selectedRowSnapshot,
+            formValues,
+            optimisticLockStale: stale.staleDetected,
+            supabaseUrl: url,
+          })
+        : executeG15a2DiscographyDryRun({
+            beforeSnapshot: selectedRowSnapshot,
+            formValues,
+            optimisticLockStale: stale.staleDetected,
+            supabaseUrl: url,
+          });
 
   lastDryRunResult = result;
   renderDryRunResult(result);
@@ -477,10 +520,7 @@ async function runSave(): Promise<void> {
     return;
   }
 
-  const config =
-    slice === "g15d"
-      ? getG15dDiscographyArtistSaveConfig()
-      : getG15bDiscographyPurchaseUrlSaveConfig();
+  const config = getSaveConfigForSlice(slice);
 
   if (!config.saveEnabled) {
     window.alert(config.armFailureReason ?? config.defaultDisabledReason);
@@ -492,20 +532,12 @@ async function runSave(): Promise<void> {
     return;
   }
 
-  const gate =
-    slice === "g15d"
-      ? evaluateG15dDiscographyOperatorSaveUiGate({
-          signedIn: stagingAuthSignedIn === true,
-          dryRunOk: lastDryRunResult.ok,
-          stale: lastDryRunResult.optimisticLockStale,
-          saveReadiness: lastDryRunResult.saveReadiness,
-        })
-      : evaluateG15bDiscographyOperatorSaveUiGate({
-          signedIn: stagingAuthSignedIn === true,
-          dryRunOk: lastDryRunResult.ok,
-          stale: lastDryRunResult.optimisticLockStale,
-          saveReadiness: lastDryRunResult.saveReadiness,
-        });
+  const gate = evaluateSaveGateForSlice(slice, {
+    signedIn: stagingAuthSignedIn === true,
+    dryRunOk: lastDryRunResult.ok,
+    stale: lastDryRunResult.optimisticLockStale,
+    saveReadiness: lastDryRunResult.saveReadiness,
+  });
 
   if (!gate.enabled) {
     window.alert(gate.reason);
@@ -513,9 +545,11 @@ async function runSave(): Promise<void> {
   }
 
   const confirmMessage =
-    slice === "g15d"
-      ? "artist を更新します。よろしいですか？（discography-003 の 1 行のみ）"
-      : "purchase_url を更新します。よろしいですか？（discography-002 の 1 行のみ）";
+    slice === "g16a"
+      ? "artist を更新します。よろしいですか？（discography-001 の 1 行のみ）"
+      : slice === "g15d"
+        ? "artist を更新します。よろしいですか？（discography-003 の 1 行のみ）"
+        : "purchase_url を更新します。よろしいですか？（discography-002 の 1 行のみ）";
 
   if (!window.confirm(confirmMessage)) {
     return;
@@ -533,6 +567,31 @@ async function runSave(): Promise<void> {
     expectedBeforeUpdatedAt: lastDryRunResult.expectedBeforeUpdatedAt,
     dryRunOk: lastDryRunResult.ok,
   };
+
+  if (slice === "g16a") {
+    const outcome = await executeG16aDiscographyArtistSave({
+      url,
+      anonKey,
+      beforeSnapshot: selectedRowSnapshot,
+      saveBinding,
+    });
+
+    saveInFlight = false;
+
+    if (isG16aDiscographySaveOutcomeSuccess(outcome)) {
+      selectedRowSnapshot = outcome.afterSnapshot;
+      const updatedAtEl = document.getElementById("gosaki-disc-form-updated-at");
+      if (updatedAtEl) updatedAtEl.textContent = outcome.afterSnapshot.updated_at ?? "—";
+      lastDryRunResult = null;
+      clearDryRunResult();
+      window.alert("保存しました。");
+      return;
+    }
+
+    renderSaveResult(outcome);
+    updateSaveButtonState(lastDryRunResult);
+    return;
+  }
 
   if (slice === "g15d") {
     const outcome = await executeG15dDiscographyArtistSave({
@@ -596,7 +655,7 @@ function wireRowSelection(rows: GosakiDiscographyRecord[]): void {
   });
 
   const initial =
-    list.querySelector<HTMLElement>(`[data-legacy-id="${G15D_TARGET_LEGACY_ID}"]`) ??
+    list.querySelector<HTMLElement>(`[data-legacy-id="${G16A_TARGET_LEGACY_ID}"]`) ??
     list.querySelector<HTMLElement>(".gosaki-discography-admin-item--selected") ??
     list.querySelector<HTMLElement>(".gosaki-discography-admin-item");
   if (initial) populateEditForm(initial, rows);

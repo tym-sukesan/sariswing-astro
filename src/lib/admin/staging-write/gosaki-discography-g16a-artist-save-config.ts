@@ -1,5 +1,5 @@
 /**
- * G-15d — Gosaki Discography artist non-dry-run Save enablement (staging shell).
+ * G-16a — Gosaki Discography artist non-dry-run Save enablement (staging shell).
  */
 
 import {
@@ -12,36 +12,36 @@ import {
   SCHEDULE_NON_DRY_RUN_POC_EXPECTED_SUPABASE_HOST,
 } from "./schedule-non-dry-run-poc-config";
 import {
-  G15D_DISCOGRAPHY_ARTIST_NON_DRY_RUN_APPROVAL_ID,
+  G16A_DISCOGRAPHY_ARTIST_NON_DRY_RUN_APPROVAL_ID,
 } from "./discography-write-types";
 import { getDiscographyOptimisticLockConfig } from "./gosaki-discography-optimistic-lock-config";
 import {
-  applyG15dDiscographySavePageConfigToEnv,
-  readG15dDiscographySavePageConfigFromDom,
-} from "./gosaki-discography-artist-save-page-config";
-import { G15D_PHASE } from "./gosaki-discography-next-field-types";
+  applyG16aDiscographySavePageConfigToEnv,
+  readG16aDiscographySavePageConfigFromDom,
+} from "./gosaki-discography-g16a-artist-save-page-config";
+import { G16A_PHASE } from "./gosaki-discography-g16a-next-field-types";
 import { G15B_DISCOGRAPHY_PURCHASE_URL_NON_DRY_RUN_ARMED_ENV } from "./gosaki-discography-purchase-url-save-config";
-import { G16A_DISCOGRAPHY_ARTIST_NON_DRY_RUN_ARMED_ENV } from "./gosaki-discography-g16a-artist-save-config";
+import { G15D_DISCOGRAPHY_ARTIST_NON_DRY_RUN_ARMED_ENV } from "./gosaki-discography-artist-save-config";
 
-export { G15D_PHASE };
+export { G16A_PHASE };
 
-export const G15D_DISCOGRAPHY_ARTIST_NON_DRY_RUN_ARMED_ENV =
-  "PUBLIC_ADMIN_GOSAKI_DISCOGRAPHY_ARTIST_NON_DRY_RUN_ARMED";
+export const G16A_DISCOGRAPHY_ARTIST_NON_DRY_RUN_ARMED_ENV =
+  "PUBLIC_ADMIN_GOSAKI_DISCOGRAPHY_G16A_ARTIST_NON_DRY_RUN_ARMED";
 
-export const G15D_DISCOGRAPHY_SAVE_ENABLED_ENV = "G15D_DISCOGRAPHY_SAVE_ENABLED";
+export const G16A_DISCOGRAPHY_SAVE_ENABLED_ENV = "G16A_DISCOGRAPHY_SAVE_ENABLED";
 
-export const G15D_DISCOGRAPHY_SAVE_DISABLED_DEFAULT_REASON =
-  "Save disabled by default. Arm G-15d env stack for operator non-dry-run Save.";
+export const G16A_DISCOGRAPHY_SAVE_DISABLED_DEFAULT_REASON =
+  "Save disabled by default. Arm G-16a env stack for operator non-dry-run Save.";
 
-export const G15D_DISCOGRAPHY_EXPECTED_SUPABASE_HOST =
+export const G16A_DISCOGRAPHY_EXPECTED_SUPABASE_HOST =
   SCHEDULE_NON_DRY_RUN_POC_EXPECTED_SUPABASE_HOST;
 
-export const G15D_DISCOGRAPHY_EXPECTED_PROJECT = SCHEDULE_NON_DRY_RUN_POC_EXPECTED_PROJECT;
+export const G16A_DISCOGRAPHY_EXPECTED_PROJECT = SCHEDULE_NON_DRY_RUN_POC_EXPECTED_PROJECT;
 
-export type G15dDiscographyArtistSaveConfig = {
-  phase: typeof G15D_PHASE;
-  approvalId: typeof G15D_DISCOGRAPHY_ARTIST_NON_DRY_RUN_APPROVAL_ID;
-  envArm: typeof G15D_DISCOGRAPHY_ARTIST_NON_DRY_RUN_ARMED_ENV;
+export type G16aDiscographyArtistSaveConfig = {
+  phase: typeof G16A_PHASE;
+  approvalId: typeof G16A_DISCOGRAPHY_ARTIST_NON_DRY_RUN_APPROVAL_ID;
+  envArm: typeof G16A_DISCOGRAPHY_ARTIST_NON_DRY_RUN_ARMED_ENV;
   saveEnabled: boolean;
   armFailureReason: string | null;
   defaultDisabledReason: string;
@@ -79,20 +79,20 @@ function isEnvArmTrue(env: ImportMetaEnv, key: string): boolean {
   return String(env[key] ?? "").trim() === "true";
 }
 
-export function getG15dDiscographyArtistSaveConfig(
+export function getG16aDiscographyArtistSaveConfig(
   env: ImportMetaEnv = import.meta.env,
-): G15dDiscographyArtistSaveConfig {
+): G16aDiscographyArtistSaveConfig {
   let mergedEnv = mergeStagingShellEnv(env);
-  const pageConfig = readG15dDiscographySavePageConfigFromDom();
+  const pageConfig = readG16aDiscographySavePageConfigFromDom();
   if (pageConfig) {
-    mergedEnv = applyG15dDiscographySavePageConfigToEnv(mergedEnv, pageConfig);
+    mergedEnv = applyG16aDiscographySavePageConfigToEnv(mergedEnv, pageConfig);
   }
 
   const dev = mergedEnv.DEV === true;
   const stagingShellEnabled = mergedEnv.ENABLE_ADMIN_STAGING_SHELL === "true";
   const stagingDataReadEnabled = mergedEnv.ENABLE_ADMIN_STAGING_DATA_READ === "true";
   const stagingWriteFlag = mergedEnv.ENABLE_ADMIN_STAGING_WRITE === "true";
-  const envArmArmed = isEnvArmTrue(mergedEnv, G15D_DISCOGRAPHY_ARTIST_NON_DRY_RUN_ARMED_ENV);
+  const envArmArmed = isEnvArmTrue(mergedEnv, G16A_DISCOGRAPHY_ARTIST_NON_DRY_RUN_ARMED_ENV);
   const dryRun =
     String(mergedEnv.PUBLIC_ADMIN_WRITE_DRY_RUN ?? "true").trim() !== "false";
   const supabaseUrl = String(mergedEnv.PUBLIC_SUPABASE_URL ?? "").trim();
@@ -107,10 +107,10 @@ export function getG15dDiscographyArtistSaveConfig(
   const optimisticLockEnabled = getDiscographyOptimisticLockConfig(mergedEnv).enabled;
 
   const base = {
-    phase: G15D_PHASE,
-    approvalId: G15D_DISCOGRAPHY_ARTIST_NON_DRY_RUN_APPROVAL_ID,
-    envArm: G15D_DISCOGRAPHY_ARTIST_NON_DRY_RUN_ARMED_ENV,
-    defaultDisabledReason: G15D_DISCOGRAPHY_SAVE_DISABLED_DEFAULT_REASON,
+    phase: G16A_PHASE,
+    approvalId: G16A_DISCOGRAPHY_ARTIST_NON_DRY_RUN_APPROVAL_ID,
+    envArm: G16A_DISCOGRAPHY_ARTIST_NON_DRY_RUN_ARMED_ENV,
+    defaultDisabledReason: G16A_DISCOGRAPHY_SAVE_DISABLED_DEFAULT_REASON,
     dev,
     stagingShellEnabled,
     stagingDataReadEnabled,
@@ -119,8 +119,8 @@ export function getG15dDiscographyArtistSaveConfig(
     dryRun,
     supabaseConfigured,
     productionBlocked,
-    expectedProject: G15D_DISCOGRAPHY_EXPECTED_PROJECT,
-    expectedSupabaseHost: G15D_DISCOGRAPHY_EXPECTED_SUPABASE_HOST,
+    expectedProject: G16A_DISCOGRAPHY_EXPECTED_PROJECT,
+    expectedSupabaseHost: G16A_DISCOGRAPHY_EXPECTED_SUPABASE_HOST,
     activeSupabaseHost: hostGate.activeHost,
     hostGatePassed: hostGate.hostGatePassed,
     hostGateWarning: hostGate.warningMessage ?? undefined,
@@ -152,20 +152,20 @@ export function getG15dDiscographyArtistSaveConfig(
   if (module !== "discography") {
     armFailures.push("PUBLIC_ADMIN_WRITE_MODULE=discography");
   }
-  if (approvalIdEnv !== G15D_DISCOGRAPHY_ARTIST_NON_DRY_RUN_APPROVAL_ID) {
+  if (approvalIdEnv !== G16A_DISCOGRAPHY_ARTIST_NON_DRY_RUN_APPROVAL_ID) {
     armFailures.push(
-      `PUBLIC_ADMIN_WRITE_APPROVAL_ID=${G15D_DISCOGRAPHY_ARTIST_NON_DRY_RUN_APPROVAL_ID}`,
+      `PUBLIC_ADMIN_WRITE_APPROVAL_ID=${G16A_DISCOGRAPHY_ARTIST_NON_DRY_RUN_APPROVAL_ID}`,
     );
   }
   if (dryRun) armFailures.push("PUBLIC_ADMIN_WRITE_DRY_RUN=false");
   if (!envArmArmed) {
-    armFailures.push(`${G15D_DISCOGRAPHY_ARTIST_NON_DRY_RUN_ARMED_ENV}=true`);
+    armFailures.push(`${G16A_DISCOGRAPHY_ARTIST_NON_DRY_RUN_ARMED_ENV}=true`);
   }
   if (isEnvArmTrue(mergedEnv, G15B_DISCOGRAPHY_PURCHASE_URL_NON_DRY_RUN_ARMED_ENV)) {
     armFailures.push(`${G15B_DISCOGRAPHY_PURCHASE_URL_NON_DRY_RUN_ARMED_ENV} must be off`);
   }
-  if (isEnvArmTrue(mergedEnv, G16A_DISCOGRAPHY_ARTIST_NON_DRY_RUN_ARMED_ENV)) {
-    armFailures.push(`${G16A_DISCOGRAPHY_ARTIST_NON_DRY_RUN_ARMED_ENV} must be off`);
+  if (isEnvArmTrue(mergedEnv, G15D_DISCOGRAPHY_ARTIST_NON_DRY_RUN_ARMED_ENV)) {
+    armFailures.push(`${G15D_DISCOGRAPHY_ARTIST_NON_DRY_RUN_ARMED_ENV} must be off`);
   }
   if (!optimisticLockEnabled) {
     armFailures.push(`${"PUBLIC_ADMIN_DISCOGRAPHY_OPTIMISTIC_LOCK"}=true`);
@@ -173,7 +173,7 @@ export function getG15dDiscographyArtistSaveConfig(
   if (!supabaseConfigured) armFailures.push("PUBLIC_SUPABASE_URL + PUBLIC_SUPABASE_ANON_KEY");
 
   const compileSaveEnabled =
-    String(mergedEnv[G15D_DISCOGRAPHY_SAVE_ENABLED_ENV] ?? "").trim() === "true";
+    String(mergedEnv[G16A_DISCOGRAPHY_SAVE_ENABLED_ENV] ?? "").trim() === "true";
 
   const saveEnabled = compileSaveEnabled && armFailures.length === 0;
 
@@ -184,24 +184,24 @@ export function getG15dDiscographyArtistSaveConfig(
   };
 }
 
-export function resolveG15dDiscographyArtistSaveEnabled(
+export function resolveG16aDiscographyArtistSaveEnabled(
   env: ImportMetaEnv = import.meta.env,
 ): boolean {
-  return getG15dDiscographyArtistSaveConfig(env).saveEnabled;
+  return getG16aDiscographyArtistSaveConfig(env).saveEnabled;
 }
 
-export type G15dDiscographyOperatorSaveUiGate = {
+export type G16aDiscographyOperatorSaveUiGate = {
   enabled: boolean;
   reason: string;
 };
 
-export function evaluateG15dDiscographyOperatorSaveUiGate(input: {
+export function evaluateG16aDiscographyOperatorSaveUiGate(input: {
   signedIn: boolean;
   dryRunOk: boolean;
   stale: boolean;
   saveReadiness: string;
-}): G15dDiscographyOperatorSaveUiGate {
-  const config = getG15dDiscographyArtistSaveConfig();
+}): G16aDiscographyOperatorSaveUiGate {
+  const config = getG16aDiscographyArtistSaveConfig();
   if (!config.saveEnabled) {
     return {
       enabled: false,

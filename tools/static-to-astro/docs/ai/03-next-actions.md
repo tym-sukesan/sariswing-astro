@@ -1,16 +1,26 @@
 Last updated: 2026-06-29
 Project: Static-to-Astro CMS / Musician CMS Kit
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-18b Discography tracks / personnel / price design — complete
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-18c Discography tracks gap backfill preflight — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-18c-gosaki-discography-tracks-gap-backfill-preflight` |
+| Result | 18-row INSERT template; **5 track_number conflicts** with existing 16 rows |
+| Doc | `gosaki-discography-g18c-tracks-gap-backfill-preflight.md` |
+| SQL | `gosaki-discography-tracks-backfill-g18c.template.sql` |
+| Verifier | `verify-g18c-gosaki-discography-tracks-gap-backfill-preflight.mjs` |
+| **Next** | **G-18c-f** track_number renumber preflight → then G-18d operator INSERT |
+| **Do not** | Run INSERT in SQL Editor without G-18c-f + operator approval |
+
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-18b Discography tracks / personnel / price design — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-18b-gosaki-discography-tracks-personnel-price-design` |
-| Result | **Option 1** — G-18c tracks inventory gap plan (16 vs 34 DB rows) |
+| Commit | `c2bbcd1` |
 | Doc | `gosaki-discography-g18b-tracks-personnel-price-design.md` |
-| Verifier | `verify-g18b-gosaki-discography-tracks-personnel-price-design.mjs` |
-| **Next** | G-18c tracks inventory completion / seed-to-DB gap plan |
-| **Do not** | tracks Save, price DDL, personnel Save, or backfill INSERT without operator approval |
+| **Next** | G-18c — **done** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-18a Discography next scalar field selection — complete
 

@@ -5,9 +5,9 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-18b-gosaki-discography-tracks-personnel-price-design — complete.
-Discography scalar Save MVP complete (4 releases). DB tracks 16/34 — not SoT.
-Next: G-18c tracks inventory completion / seed-to-DB gap plan.
+Current phase: G-18c-gosaki-discography-tracks-gap-backfill-preflight — complete.
+18 missing discography_tracks documented; INSERT template ready; 5 track_number conflicts.
+Next: G-18c-f renumber preflight, then G-18d operator INSERT (not in G-18c).
 ```
 
 **Closed chains — do not re-Save / re-upload:**
@@ -17,15 +17,20 @@ Next: G-18c tracks inventory completion / seed-to-DB gap plan.
 - `discography-004` / `label` (G-17e-f)
 - `schedule-2026-04-005` / `price` (G-14b1f)
 
+## G-18c Discography tracks gap backfill preflight — complete
+
+- **Doc:** `gosaki-discography-g18c-tracks-gap-backfill-preflight.md`
+- **SQL template:** `gosaki-discography-tracks-backfill-g18c.template.sql` (18 INSERT rows — **not executed**)
+- **Gap:** 16 → 34 tracks; 18 missing titles from seed/fixture/public
+- **Blocker:** 5 INSERT rows conflict on `track_number` with existing 16 (sparse renumbered subset, not prefix)
+- **Next:** **G-18c-f** UPDATE renumber preflight → **G-18d** operator INSERT approval
+- **Do not:** Run INSERT in G-18c; do not touch existing 16 rows without G-18c-f plan
+
 ## G-18b Discography tracks / personnel / price design — complete
 
+- **Commit:** `c2bbcd1`
 - **Doc:** `gosaki-discography-g18b-tracks-personnel-price-design.md`
-- **Verifier:** `verify-g18b-gosaki-discography-tracks-personnel-price-design.mjs`
-- **DB tracks:** 16 rows vs seed/fixture/public **34** — **not SoT** (prefix subset per album; seed metadata says 33)
-- **Personnel:** merged in `description`; seed has `personnel[]` — recommend JSONB column later
-- **Price:** no DB column; seed/fixture have `3,500` / `2,000` / `2,500` / `2,000 (tax in)`
-- **Recommendation:** **Option 1** — G-18c tracks inventory gap plan before Save/DDL
-- **Do not:** tracks Save, INSERT backfill, price migration, personnel Save in G-18b
+- **Result:** tracks SoT not ready; personnel in `description`; no `price` column
 
 ## G-18a Discography next scalar field selection — complete
 

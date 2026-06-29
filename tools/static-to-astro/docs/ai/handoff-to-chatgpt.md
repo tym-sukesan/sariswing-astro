@@ -5,23 +5,29 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-16a-d2-d3-gosaki-discography-artist-local-dry-run-result-and-save-final-preflight — complete (uncommitted).
-branch: main @ b19b9a2 (+ G-16a-d2/d3 local changes)
+Current phase: G-16a-execution-gosaki-discography-artist-save-result — complete (uncommitted).
+branch: main @ 40a2896 (+ G-16a-execution local changes)
 ```
 
 **Closed chains — do not re-Save / re-upload:**
+- `discography-001` / `artist` (G-16a-execution — Save done; reflection pending)
 - `discography-002` / `purchase_url` (G-15c-f)
 - `discography-003` / `artist` (G-15e-f)
 - `schedule-2026-04-005` / `price` (G-14b1f)
 
+## G-16a-execution Discography artist Save result — complete
+
+- **Doc:** `gosaki-discography-g16a-artist-save-result.md`
+- **Target:** `discography-001` / Continuous / `artist` (`Feat.`→`feat.`)
+- **Save:** operator once; `updated_at` trigger proof **success**
+- **purchase_url:** preflight `null` was doc misrecord; actual `https://gosakirikako.base.shop/` unchanged
+- **Next:** G-16b public reflection preflight
+- **Do not:** Re-Save `001`; FTP until G-16b
+
 ## G-16a-d2/d3 Discography artist local dry-run + Save final preflight — complete
 
+- **Commit:** `40a2896`
 - **Doc:** `gosaki-discography-g16a-local-dry-run-result-and-save-final-preflight.md`
-- **Operator dry-run:** PASS (`actualWrite: false`, `wouldWrite: true`, `saveReadiness: ready_but_save_disabled`)
-- **Target:** `discography-001` / Continuous / `artist` (`Feat.`→`feat.`)
-- **Save:** not executed
-- **Next:** G-16a-execution (operator Save once + afterVerification)
-- **Do not:** Re-Save closed rows; FTP/upload
 
 ## G-16a Discography next-field Save preflight — complete
 

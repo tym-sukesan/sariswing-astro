@@ -1,19 +1,27 @@
 Last updated: 2026-06-29
 Project: Static-to-Astro CMS / Musician CMS Kit
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-17e-upload Discography label public reflection upload + HTTP verify — complete
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-17e-f Discography label Save / public reflection closure — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-17e-f-gosaki-discography-g17c-label-public-reflection-closure` |
+| Target | `discography-004` / `Ja-Jaaaaan!` / `label` — `null` → `Mardi Gras JAPAN Records` |
+| Chain | G-17c → G-17d → G-17e-upload → **closed** |
+| First G-17b registry scalar chain | **yes** |
+| Doc | `gosaki-discography-g17e-label-public-reflection-closure.md` |
+| Verifier | `verify-g17e-gosaki-discography-label-public-reflection-closure.mjs` |
+| **Next** | G-18a Discography next scalar field selection |
+| **Do not** | Re-Save / re-upload `discography-004` / `label` |
+
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-17e-upload Discography label public reflection upload + HTTP verify — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-17e-upload-gosaki-discography-label-public-reflection-upload-result` |
-| Target | `discography-004` / `Ja-Jaaaaan!` / `label` — `Mardi Gras JAPAN Records` |
-| Upload | 2 files — `discography/index.html` + `_astro/BaseLayout.YcHrHZH4.css` |
-| HTTP verify | **PASS** (`/discography/` + CSS **200**) |
-| Legacy `index.YcHrHZH4.css` | **not deleted** (OK) |
+| Commit | `734e592` |
 | Doc | `gosaki-discography-g17e-label-public-reflection-upload-result.md` |
-| Verifier | `verify-g17e-gosaki-discography-label-public-reflection-upload-result.mjs` |
-| **Next** | G-17e-f label public reflection closure |
-| **Do not** | Re-upload without new approval; re-Save `discography-004` / `label` |
+| **Next** | G-17e-f — **done** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-17e Discography label public reflection local regen + upload preflight — complete
 

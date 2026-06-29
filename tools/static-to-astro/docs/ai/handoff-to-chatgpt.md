@@ -5,16 +5,25 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-17e-upload-gosaki-discography-label-public-reflection-upload-result — complete.
-G-17c/G-17d label slice (discography-004) — Save + public upload done. Next: G-17e-f closure.
+Current phase: G-17e-f-gosaki-discography-g17c-label-public-reflection-closure — complete.
+discography-004 / label chain closed. Next: G-18a next scalar field selection.
 ```
 
 **Closed chains — do not re-Save / re-upload:**
 - `discography-001` / `artist` (G-16b-f)
 - `discography-002` / `purchase_url` (G-15c-f)
 - `discography-003` / `artist` (G-15e-f)
-- `discography-004` / `label` — Save closed (G-17d); public upload done (G-17e-upload); **closure pending** (G-17e-f)
+- `discography-004` / `label` (G-17e-f)
 - `schedule-2026-04-005` / `price` (G-14b1f)
+
+## G-17e-f Discography label Save / public reflection closure — complete
+
+- **Doc:** `gosaki-discography-g17e-label-public-reflection-closure.md`
+- **Chain:** G-17c registry → G-17d Save → G-17e public reflection — **closed**
+- **First G-17b registry + generic scalar Save field chain:** **success**
+- **G-17d note:** unexpected already-applied state documented; Preview did not write; re-Save prohibited
+- **G-17e upload:** 2 files (HTML + `BaseLayout.YcHrHZH4.css`); legacy `index.YcHrHZH4.css` not deleted
+- **Next:** G-18a — next scalar field selection (`title` / `year` / `release_date` / `catalog_number` if diff exists)
 
 ## G-17e-upload Discography label public reflection upload + HTTP verify — complete
 

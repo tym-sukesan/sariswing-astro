@@ -3,9 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-17e-f Gosaki Discography G-17c label Save / public reflection closure (2026-06-29):** **complete (uncommitted)** — `discography-004` / `label` chain **closed**; first G-17b registry + generic scalar Save practical success. Doc: `gosaki-discography-g17e-label-public-reflection-closure.md`. **Next: G-18a next scalar field selection.**
+**G-18a Gosaki Discography next scalar field selection (2026-06-29):** **complete (uncommitted)** — read-only inventory; **Option 2**: no safe scalar Save diff; scalar MVP complete for 4 releases. Doc: `gosaki-discography-g18a-next-scalar-field-selection.md`. **Next: G-18b tracks/personnel/price design.**
 
-**G-17e-upload Gosaki Discography label public reflection upload + HTTP verify (2026-06-29):** **complete** — committed `734e592`. Doc: `gosaki-discography-g17e-label-public-reflection-upload-result.md`.
+**G-17e-f Gosaki Discography G-17c label Save / public reflection closure (2026-06-29):** **complete** — committed `8fecb44`. Doc: `gosaki-discography-g17e-label-public-reflection-closure.md`.
 
 **G-17d-execution Gosaki Discography G-17c label Save result + unexpected state investigation (2026-06-29):** **complete** — committed `7219c6c`. Doc: `gosaki-discography-g17d-label-save-result-and-unexpected-state-investigation.md`. **Do not re-Save `discography-004` / `label`.**
 

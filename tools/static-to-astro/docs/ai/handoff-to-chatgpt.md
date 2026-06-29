@@ -5,8 +5,8 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-17e-f-gosaki-discography-g17c-label-public-reflection-closure — complete.
-discography-004 / label chain closed. Next: G-18a next scalar field selection.
+Current phase: G-18a-gosaki-discography-next-scalar-field-selection — complete.
+Discography scalar Save MVP complete (4 releases). Next: G-18b tracks/personnel/price design.
 ```
 
 **Closed chains — do not re-Save / re-upload:**
@@ -15,6 +15,13 @@ discography-004 / label chain closed. Next: G-18a next scalar field selection.
 - `discography-003` / `artist` (G-15e-f)
 - `discography-004` / `label` (G-17e-f)
 - `schedule-2026-04-005` / `price` (G-14b1f)
+
+## G-18a Discography next scalar field selection — complete
+
+- **Doc:** `gosaki-discography-g18a-next-scalar-field-selection.md`
+- **Result:** **Option 2** — no safe scalar Save diff on 4 releases
+- **Scalar Save MVP:** purchase_url, artist (×2), label — all aligned DB ↔ public
+- **Next:** G-18b tracks / personnel / price design (no Save)
 
 ## G-17e-f Discography label Save / public reflection closure — complete
 

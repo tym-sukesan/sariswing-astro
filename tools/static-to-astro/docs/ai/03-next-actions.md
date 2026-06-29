@@ -1,18 +1,25 @@
 Last updated: 2026-06-29
 Project: Static-to-Astro CMS / Musician CMS Kit
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-17e-f Discography label Save / public reflection closure — complete
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-18a Discography next scalar field selection — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-18a-gosaki-discography-next-scalar-field-selection` |
+| Result | **Option 2** — no safe scalar Save diff; scalar MVP complete |
+| Doc | `gosaki-discography-g18a-next-scalar-field-selection.md` |
+| Verifier | `verify-g18a-gosaki-discography-next-scalar-field-selection.mjs` |
+| **Next** | G-18b tracks / personnel / price design |
+| **Do not** | Open G-18b Save slice without new inventory diff |
+
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-17e-f Discography label Save / public reflection closure — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-17e-f-gosaki-discography-g17c-label-public-reflection-closure` |
-| Target | `discography-004` / `Ja-Jaaaaan!` / `label` — `null` → `Mardi Gras JAPAN Records` |
-| Chain | G-17c → G-17d → G-17e-upload → **closed** |
-| First G-17b registry scalar chain | **yes** |
+| Commit | `8fecb44` |
 | Doc | `gosaki-discography-g17e-label-public-reflection-closure.md` |
-| Verifier | `verify-g17e-gosaki-discography-label-public-reflection-closure.mjs` |
-| **Next** | G-18a Discography next scalar field selection |
-| **Do not** | Re-Save / re-upload `discography-004` / `label` |
+| **Next** | G-18a — **done** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-17e-upload Discography label public reflection upload + HTTP verify — complete
 

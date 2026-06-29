@@ -1,21 +1,31 @@
 Last updated: 2026-06-28
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzz. G-15e Discography artist public reflection local regen + upload preflight — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-15e-gosaki-discography-artist-public-reflection-local-regen-and-upload-preflight` |
+| Doc | `gosaki-discography-artist-public-reflection-local-regen-and-upload-preflight.md` |
+| Verifier | `verify-g15e-gosaki-discography-artist-public-reflection-local-regen-and-upload-preflight.mjs` |
+| Target | `discography-003` / About Us!! / `artist` |
+| Local HTML | `ごさきりかこTrio` present; old `ごさきりかこtrio` absent (About Us item) |
+| G-15c purchase_url | **maintained** |
+| CSS/JS hash | **unchanged** — upload `discography/index.html` ×1 |
+| Live staging | About Us artist **stale** (pre-upload) |
+| **Next** | **G-15e-upload** — operator manual upload + HTTP verify |
+| **Do not** | Re-Save `discography-003`; FTP auto-apply |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzz. G-15d-execution Discography artist Save result — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-15d-execution-gosaki-discography-artist-save-result` |
+| Commit | `db0ae06` |
 | Doc | `gosaki-discography-artist-save-result.md` |
-| Verifier | `verify-g15d-gosaki-discography-artist-save-result.mjs` |
-| Target | `discography-003` / About Us!! / `artist` only |
-| Artist | `ごさきりかこtrio` → `ごさきりかこTrio` |
-| `updated_at` | `2026-06-05T17:39:44.201802+00:00` → `2026-06-29T02:40:57.83085+00:00` |
-| Trigger live proof | **success** |
-| Rollback | **not needed** |
-| Public reflection | **pending** |
-| **Next (recommended)** | **G-15e** — artist public reflection preflight |
-| **Do not** | Re-Save `discography-003`; re-Save `discography-002`; FTP/upload |
+| `updated_at` trigger proof | **success** |
+| **Next** | G-15e — **done** |
+| **Do not** | Re-Save `discography-003` |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzz. G-15d-d2/d3 Discography artist local dry-run + Save final preflight — complete
 

@@ -68,6 +68,7 @@ import { applyGosakiContactHubspotEmbed } from "./gosaki-contact-hubspot-embed.m
 import { applyGosakiScheduleDataPages } from "./gosaki-schedule-data-pages.mjs";
 import {
   injectDiscographyDataSourceMarker,
+  patchGosakiDiscographySupabaseFields,
   patchGosakiDiscographyPurchaseUrls,
 } from "./supabase-discography-read.mjs";
 import { applyGosakiStagingReadOnlyAdmin } from "./gosaki-staging-read-only-admin.mjs";
@@ -938,7 +939,7 @@ export function generateAstroProject(inputDir, outputDir, options = {}) {
       gosakiDiscographyBundle?.discographyDataSource === "supabase" &&
       gosakiDiscographyBundle.releases.length > 0
     ) {
-      const patched = patchGosakiDiscographyPurchaseUrls(
+      const patched = patchGosakiDiscographySupabaseFields(
         mainHtml,
         gosakiDiscographyBundle.releases,
       );
@@ -948,6 +949,8 @@ export function generateAstroProject(inputDir, outputDir, options = {}) {
         discographyDataSource: "supabase",
         rowCount: gosakiDiscographyBundle.releases.length,
         patchCount: patched.patches.length,
+        purchasePatchCount: patched.purchasePatches.length,
+        artistPatchCount: patched.artistPatches.length,
       };
     }
     writeFile(pageFile, generatePage(page, mainHtml, pageScripts, linkTransformContext));
@@ -1218,7 +1221,7 @@ export function printGenerationSummary(result) {
   }
   if (result.gosakiDiscographyDataSummary?.discographyDataSource) {
     console.log(
-      `  Discography data: discographyDataSource=${result.gosakiDiscographyDataSummary.discographyDataSource} (${result.gosakiDiscographyDataSummary.rowCount ?? 0} releases, ${result.gosakiDiscographyDataSummary.patchCount ?? 0} purchase_url patch(es))`,
+      `  Discography data: discographyDataSource=${result.gosakiDiscographyDataSummary.discographyDataSource} (${result.gosakiDiscographyDataSummary.rowCount ?? 0} releases, ${result.gosakiDiscographyDataSummary.purchasePatchCount ?? 0} purchase_url + ${result.gosakiDiscographyDataSummary.artistPatchCount ?? 0} artist patch(es))`,
     );
   } else if (result.gosakiDiscographyBundle?.discographyDataSource === "wix-html") {
     console.log(

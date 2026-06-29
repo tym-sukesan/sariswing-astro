@@ -11,7 +11,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const DEFAULT_TOOL_ROOT = path.resolve(__dirname, "../..");
 
 export const DISCOGRAPHY_SELECT =
-  "legacy_id,title,purchase_url,streaming_url,sort_order,published";
+  "legacy_id,title,artist,purchase_url,streaming_url,sort_order,published";
 
 const REPEATER_ITEM_START_RE =
   /<div id="comp-llexymga__item-[^"]+" class="[^"]*wixui-repeater__item"/g;
@@ -32,6 +32,7 @@ export function normalizeDiscographyRecord(row) {
   return {
     legacy_id: String(row.legacy_id ?? ""),
     title: String(row.title ?? ""),
+    artist: row.artist != null ? String(row.artist).trim() : null,
     purchase_url: row.purchase_url ? normalizeDiscographyUrl(row.purchase_url) : null,
     streaming_url: row.streaming_url ? String(row.streaming_url).trim() : null,
     sort_order: Number(row.sort_order ?? 0),
@@ -107,37 +108,93 @@ export function patchDiscographyItemPurchaseUrl(segment, purchaseUrl) {
 }
 
 /**
- * Apply Supabase purchase_url values to Wix discography hub HTML.
+ * @param {string} value
+ */
+function escapeRegExp(value) {
+  return String(value).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+/**
+ * Patch artist in Wix h2 subtitle pattern `「title」/artist` inside one repeater item.
+ * @param {string} segment
+ * @param {string} title
+ * @param {string} artist
+ */
+export function patchDiscographyItemArtist(segment, title, artist) {
+  const normalizedArtist = String(artist ?? "").trim();
+  if (!normalizedArtist || !title) return { segment, patched: false };
+
+  const re = new RegExp(`(「${escapeRegExp(title)}」/)([^<]+)`, "g");
+  const replaced = segment.replace(re, `$1${normalizedArtist}`);
+  return { segment: replaced, patched: replaced !== segment };
+}
+
+/**
+ * Apply Supabase purchase_url + artist values to Wix discography hub HTML.
  * @param {string} html
  * @param {ReturnType<typeof normalizeDiscographyRecord>[]} releases
  */
-export function patchGosakiDiscographyPurchaseUrls(html, releases) {
+export function patchGosakiDiscographySupabaseFields(html, releases) {
   let out = html;
   /** @type {Array<{ legacy_id: string, title: string, purchase_url: string }>} */
-  const patches = [];
+  const purchasePatches = [];
+  /** @type {Array<{ legacy_id: string, title: string, artist: string }>} */
+  const artistPatches = [];
 
   for (const row of releases) {
-    if (!row.purchase_url || !row.title) continue;
+    if (!row.title) continue;
     const bounds = findDiscographyRepeaterItemBounds(out, row.title);
     if (!bounds) continue;
 
     const before = out.slice(0, bounds.start);
-    const segment = out.slice(bounds.start, bounds.end);
-    const { segment: patchedSegment, patched } = patchDiscographyItemPurchaseUrl(
-      segment,
-      row.purchase_url,
-    );
-    if (patched) {
-      patches.push({
-        legacy_id: row.legacy_id,
-        title: row.title,
-        purchase_url: row.purchase_url,
-      });
-      out = before + patchedSegment + out.slice(bounds.end);
+    let segment = out.slice(bounds.start, bounds.end);
+    let segmentChanged = false;
+
+    if (row.purchase_url) {
+      const purchaseResult = patchDiscographyItemPurchaseUrl(segment, row.purchase_url);
+      if (purchaseResult.patched) {
+        purchasePatches.push({
+          legacy_id: row.legacy_id,
+          title: row.title,
+          purchase_url: row.purchase_url,
+        });
+        segment = purchaseResult.segment;
+        segmentChanged = true;
+      }
+    }
+
+    if (row.artist) {
+      const artistResult = patchDiscographyItemArtist(segment, row.title, row.artist);
+      if (artistResult.patched) {
+        artistPatches.push({
+          legacy_id: row.legacy_id,
+          title: row.title,
+          artist: row.artist,
+        });
+        segment = artistResult.segment;
+        segmentChanged = true;
+      }
+    }
+
+    if (segmentChanged) {
+      out = before + segment + out.slice(bounds.end);
     }
   }
 
-  return { html: out, patches };
+  return {
+    html: out,
+    purchasePatches,
+    artistPatches,
+    patches: [...purchasePatches, ...artistPatches],
+  };
+}
+
+/**
+ * @deprecated Use patchGosakiDiscographySupabaseFields — purchase_url only wrapper.
+ */
+export function patchGosakiDiscographyPurchaseUrls(html, releases) {
+  const result = patchGosakiDiscographySupabaseFields(html, releases);
+  return { html: result.html, patches: result.purchasePatches };
 }
 
 /**

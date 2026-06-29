@@ -5,23 +5,29 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-15d-execution-gosaki-discography-artist-save-result — complete (uncommitted).
-branch: main @ da6e954 (+ G-15d-execution result doc changes)
+Current phase: G-15e-gosaki-discography-artist-public-reflection-local-regen-and-upload-preflight — complete (uncommitted).
+branch: main @ db0ae06 (+ G-15e local changes)
 ```
 
-**G-15 Discography `purchase_url` chain closed. Do not re-Save discography-002; do not re-upload discography HTML.**
+**G-15 Discography `purchase_url` chain closed on discography-002. Do not re-Save discography-002.**
 
 **G-15d artist Save closed on discography-003. Do not re-Save discography-003.**
 
+## G-15e Discography artist public reflection local regen + upload preflight — complete
+
+- **Doc:** `gosaki-discography-artist-public-reflection-local-regen-and-upload-preflight.md`
+- **Hook:** `patchGosakiDiscographySupabaseFields` — `artist` + `purchase_url`
+- **Local:** About Us!! `ごさきりかこTrio`; G-15c SKYLARK URL maintained
+- **CSS/JS:** hash unchanged — minimal upload `discography/index.html` ×1
+- **Live:** About Us artist still `ごさきりかこtrio` (stale until upload)
+- **Next:** G-15e-upload — operator manual upload + HTTP verify
+- **Do not:** FTP auto-apply; re-Save `discography-003`
+
 ## G-15d-execution Discography artist Save result — complete
 
+- **Commit:** `db0ae06`
 - **Doc:** `gosaki-discography-artist-save-result.md`
-- **Save:** operator **once** — `artist` `ごさきりかこTrio`; `updated_at` **advanced** (`2026-06-29T02:40:57.83085+00:00`)
-- **Trigger live proof:** **success** (first proof post G-15b-f8)
-- **Rollback:** not needed
-- **Public reflection:** pending — live `/discography/` likely still `ごさきりかこtrio`
-- **Next (recommended):** G-15e — artist public reflection preflight (hook + regen + upload plan)
-- **Do not:** re-Save `discography-003`; re-Save `discography-002`
+- **updated_at trigger:** live proof **success**
 
 ## G-15d-d2/d3 Discography artist local dry-run + Save final preflight — complete
 

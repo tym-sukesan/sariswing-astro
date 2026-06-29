@@ -5,24 +5,25 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-15d-gosaki-discography-existing-release-artist-non-dry-run — Save preflight complete (uncommitted).
-branch: main @ c2870e0 (+ G-15d local changes)
+Current phase: G-15d-d2-d3-gosaki-discography-artist-local-dry-run-result-and-save-final-preflight — complete (uncommitted).
+branch: main @ 355a96c (+ G-15d-d2/d3 local doc changes)
 ```
 
 **G-15 Discography `purchase_url` chain closed. Do not re-Save discography-002; do not re-upload discography HTML.**
 
+## G-15d-d2/d3 Discography artist local dry-run + Save final preflight — complete
+
+- **Doc:** `gosaki-discography-artist-local-dry-run-result-and-save-final-preflight.md`
+- **Operator dry-run:** **PASS** — `discography-003` / `artist`; `saveReadiness: ready_but_save_disabled`
+- **Save final preflight:** env stack + afterVerification + `updated_at` trigger proof documented
+- **Post-Preview DB:** unchanged (`artist` still `ごさきりかこtrio`)
+- **Next:** G-15d-execution — arm G-15d env stack → Preview (`ready_to_save`) → Save **once**
+- **Do not:** Save in this phase; re-Save `discography-002`
+
 ## G-15d Discography next-field Save preflight — complete
 
+- **Commit:** `355a96c`
 - **Doc:** `gosaki-discography-next-field-save-preflight.md`
-- **Target:** `discography-003` / About Us!! / `artist` (`ごさきりかこtrio` → `ごさきりかこTrio`)
-- **dry-run approvalId:** `G-15d-gosaki-discography-artist-dry-run-slice`
-- **Save approvalId:** `G-15d-gosaki-discography-existing-release-artist-non-dry-run`
-- **Lock baseline:** `2026-06-05T17:39:44.201802+00:00`
-- **Save:** not executed — arm G-15d env stack for execution phase
-- **updated_at proof:** first live proof expected on G-15d Save (`discography_set_updated_at` active)
-- **Public reflection:** later (artist in Wix h2)
-- **Next:** operator Save once → verify `updated_at` → optional reflection phase
-- **Do not:** Save in preflight; re-Save `discography-002`
 
 ## G-15c-f Discography public reflection closure — complete
 

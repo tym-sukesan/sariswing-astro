@@ -1,22 +1,34 @@
 Last updated: 2026-06-28
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzz. G-15d-d2/d3 Discography artist local dry-run + Save final preflight — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-15d-d2-d3-gosaki-discography-artist-local-dry-run-result-and-save-final-preflight` |
+| Doc | `gosaki-discography-artist-local-dry-run-result-and-save-final-preflight.md` |
+| Verifier | `verify-g15d-gosaki-discography-artist-local-dry-run-result-and-save-final-preflight.mjs` |
+| Operator dry-run | **PASS** — `ok: true`, `actualWrite: false`, `wouldWrite: true` |
+| Target | `discography-003` / About Us!! / `artist` only |
+| Lock baseline | `2026-06-05T17:39:44.201802+00:00` |
+| Post-Preview DB | **unchanged** (read-only verify) |
+| Save executed | **no** |
+| **Next** | **G-15d-execution** — armed dev Save once; `updated_at` must advance |
+| Public reflection | **later** |
+| **Do not** | Save in this phase; re-Save `discography-002`; FTP/upload |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzz. G-15d Discography next-field Save preflight — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-15d-gosaki-discography-existing-release-artist-non-dry-run` |
+| Commit | `355a96c` |
 | Doc | `gosaki-discography-next-field-save-preflight.md` |
 | Verifier | `verify-g15d-gosaki-discography-next-field-save-preflight.mjs` |
 | Target | `discography-003` / About Us!! / `artist` only |
 | Before → after | `ごさきりかこtrio` → `ごさきりかこTrio` |
-| dry-run approvalId | `G-15d-gosaki-discography-artist-dry-run-slice` |
-| Save approvalId | `G-15d-gosaki-discography-existing-release-artist-non-dry-run` |
-| Lock baseline | `2026-06-05T17:39:44.201802+00:00` |
-| Save executed | **no** |
-| **Next** | **G-15d-execution** — operator Save once; verify `updated_at` advances |
-| Public reflection | **later** (artist in Wix h2; hook is purchase_url only today) |
-| **Do not** | Save in preflight; re-Save `discography-002`; FTP/upload |
+| **Next** | G-15d-d2/d3 — **done** |
+| **Do not** | Re-Save `discography-002`; FTP/upload |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzz. G-15c-f Discography public reflection closure — complete
 

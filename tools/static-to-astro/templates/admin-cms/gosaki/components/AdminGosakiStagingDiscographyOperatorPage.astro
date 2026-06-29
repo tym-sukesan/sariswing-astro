@@ -17,9 +17,14 @@ import {
   resolveG15dDiscographySavePageServerConfig,
 } from "../../../../../../src/lib/admin/staging-write/gosaki-discography-artist-save-page-config";
 import {
+  G17C_DISCOGRAPHY_SAVE_PAGE_CONFIG_ELEMENT_ID,
+  resolveG17cDiscographySavePageServerConfig,
+} from "../../../../../../src/lib/admin/staging-write/gosaki-discography-g17c-label-save-page-config";
+import {
   G15B_DISCOGRAPHY_PURCHASE_URL_NON_DRY_RUN_APPROVAL_ID,
   G15D_DISCOGRAPHY_ARTIST_NON_DRY_RUN_APPROVAL_ID,
   G16A_DISCOGRAPHY_ARTIST_NON_DRY_RUN_APPROVAL_ID,
+  G17C_DISCOGRAPHY_LABEL_NON_DRY_RUN_APPROVAL_ID,
 } from "../../../../../../src/lib/admin/staging-write/discography-write-types";
 import { G15A2_DRY_RUN_SLICE_APPROVAL_ID } from "../../../../../../src/lib/admin/staging-write/gosaki-discography-dry-run-types";
 import { G16A_DRY_RUN_SLICE_APPROVAL_ID } from "../../../../../../src/lib/admin/staging-write/gosaki-discography-g16a-next-field-types";
@@ -38,8 +43,17 @@ const pageConfig = resolveG15a2DiscographyPageServerConfig(import.meta.env);
 const savePageConfig = resolveG15bDiscographySavePageServerConfig(import.meta.env);
 const g15dSavePageConfig = resolveG15dDiscographySavePageServerConfig(import.meta.env);
 const g16aSavePageConfig = resolveG16aDiscographySavePageServerConfig(import.meta.env);
-const saveStatusLabel = g16aSavePageConfig.saveEnabled ? "ready_to_save" : "disabled";
-const dbWriteStatusLabel = g16aSavePageConfig.saveEnabled ? "gated" : "disabled";
+const g17cSavePageConfig = resolveG17cDiscographySavePageServerConfig(import.meta.env);
+const saveStatusLabel = g17cSavePageConfig.saveEnabled
+  ? "ready_to_save"
+  : g16aSavePageConfig.saveEnabled
+    ? "ready_to_save"
+    : "disabled";
+const dbWriteStatusLabel = g17cSavePageConfig.saveEnabled
+  ? "gated"
+  : g16aSavePageConfig.saveEnabled
+    ? "gated"
+    : "disabled";
 const previewDiscographyUrl = `${GOSAKI_STAGING_PREVIEW_URL}${binding.previewPath}`;
 const rowsJson = JSON.stringify(binding.rows);
 const selectedRow =
@@ -59,6 +73,20 @@ const trackLines = selectedRow?.tracks.map((track) => track.title).join("\n") ??
   data-discography-rows={rowsJson}
   aria-label="Discography管理"
 >
+  <div
+    id={G17C_DISCOGRAPHY_SAVE_PAGE_CONFIG_ELEMENT_ID}
+    data-g17c-save-enabled={g17cSavePageConfig.saveEnabled ? "true" : "false"}
+    data-g17c-staging-shell-enabled={g17cSavePageConfig.stagingShellEnabled ? "true" : "false"}
+    data-g17c-staging-data-read-enabled={g17cSavePageConfig.stagingDataReadEnabled ? "true" : "false"}
+    data-g17c-staging-write-enabled={g17cSavePageConfig.stagingWriteEnabled ? "true" : "false"}
+    data-g17c-env-arm-armed={g17cSavePageConfig.envArmArmed ? "true" : "false"}
+    data-g17c-optimistic-lock-enabled={g17cSavePageConfig.optimisticLockEnabled ? "true" : "false"}
+    data-g17c-write-dry-run-disabled={g17cSavePageConfig.writeDryRunDisabled ? "true" : "false"}
+    data-g17c-write-provider={g17cSavePageConfig.writeProvider}
+    data-g17c-write-module={g17cSavePageConfig.writeModule}
+    data-g17c-write-approval-id={g17cSavePageConfig.writeApprovalId || G17C_DISCOGRAPHY_LABEL_NON_DRY_RUN_APPROVAL_ID}
+    hidden
+  />
   <div
     id={G16A_DISCOGRAPHY_SAVE_PAGE_CONFIG_ELEMENT_ID}
     data-g16a-save-enabled={g16aSavePageConfig.saveEnabled ? "true" : "false"}

@@ -20,6 +20,10 @@ import {
   G17C_DISCOGRAPHY_SAVE_ENABLED_ENV,
 } from "./discography-scalar-field-slice-registry";
 import { G17C_PHASE } from "./gosaki-discography-g17c-next-field-types";
+import {
+  applyG17cDiscographySavePageConfigToEnv,
+  readG17cDiscographySavePageConfigFromDom,
+} from "./gosaki-discography-g17c-label-save-page-config";
 
 export { G17C_PHASE };
 export { G17C_DISCOGRAPHY_LABEL_NON_DRY_RUN_ARMED_ENV, G17C_DISCOGRAPHY_SAVE_ENABLED_ENV };
@@ -34,6 +38,17 @@ export const G17C_DISCOGRAPHY_EXPECTED_PROJECT = SCHEDULE_NON_DRY_RUN_POC_EXPECT
 
 const G17C_REGISTRY_ENTRY = getDiscographyScalarSliceRegistryEntry("g17c-label");
 
+function resolveG17cDiscographyLabelMergedEnv(
+  env: ImportMetaEnv = import.meta.env,
+): ImportMetaEnv {
+  let mergedEnv = mergeStagingShellEnv(env);
+  const pageConfig = readG17cDiscographySavePageConfigFromDom();
+  if (pageConfig) {
+    mergedEnv = applyG17cDiscographySavePageConfigToEnv(mergedEnv, pageConfig);
+  }
+  return mergedEnv;
+}
+
 export type G17cDiscographyLabelSaveConfig = DiscographyScalarSliceSaveConfig & {
   phase: typeof G17C_PHASE;
   approvalId: typeof G17C_DISCOGRAPHY_LABEL_NON_DRY_RUN_APPROVAL_ID;
@@ -43,10 +58,9 @@ export type G17cDiscographyLabelSaveConfig = DiscographyScalarSliceSaveConfig & 
 export function getG17cDiscographyLabelSaveConfig(
   env: ImportMetaEnv = import.meta.env,
 ): G17cDiscographyLabelSaveConfig {
-  const mergedEnv = mergeStagingShellEnv(env);
   return getDiscographyScalarSliceSaveConfig(
     G17C_REGISTRY_ENTRY,
-    mergedEnv,
+    resolveG17cDiscographyLabelMergedEnv(env),
   ) as G17cDiscographyLabelSaveConfig;
 }
 
@@ -67,5 +81,9 @@ export function evaluateG17cDiscographyOperatorSaveUiGate(input: {
   stale: boolean;
   saveReadiness: string;
 }): G17cDiscographyOperatorSaveUiGate {
-  return evaluateDiscographyScalarSliceOperatorSaveUiGate(G17C_REGISTRY_ENTRY, input);
+  return evaluateDiscographyScalarSliceOperatorSaveUiGate(
+    G17C_REGISTRY_ENTRY,
+    input,
+    resolveG17cDiscographyLabelMergedEnv(),
+  );
 }

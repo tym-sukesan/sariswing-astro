@@ -1,18 +1,27 @@
 Last updated: 2026-06-29
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-17d Discography label Save readiness fix — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-17d-gosaki-discography-label-save-readiness-investigation` |
+| Base commit | `0fadd54` |
+| Root cause | `G17C_DISCOGRAPHY_SAVE_ENABLED` not visible on client without save-page-config bridge |
+| Fix | `gosaki-discography-g17c-label-save-page-config.ts` + merged env in dry-run/save/UI |
+| Doc | `gosaki-discography-g17d-label-save-readiness-investigation.md` |
+| Verifier | `verify-g17d-gosaki-discography-label-save-readiness-investigation.mjs` |
+| **Next** | Operator re-Preview (armed dev) → G-17d-execution |
+| **Do not** | Save / DB write in this phase |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-17d Discography label Save path enablement — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-17d-gosaki-discography-label-save-path-enablement` |
-| Base commit | `d1eefb8` |
-| Target | `discography-004` / `label` |
-| Generic Save | `executeDiscographyScalarSliceSave()` |
+| Commit | `0fadd54` |
 | Doc | `gosaki-discography-g17d-label-save-path-enablement.md` |
-| Verifier | `verify-g17d-gosaki-discography-label-save-path-enablement.mjs` |
-| **Next** | G-17d-execution (operator Save once + afterVerification) |
-| **Do not** | Save / DB write in G-17d-implementation; re-Save closed chains |
+| **Next** | Re-Preview after readiness fix — **done** (fix) |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-17c-d2 / G-17d-d3 Discography label dry-run result + Save final preflight — complete
 

@@ -14,6 +14,7 @@ import {
   assertDiscographyScalarSliceNotClosedForReSave,
 } from "./discography-scalar-field-guards";
 import { getDiscographyScalarSliceSaveConfig } from "./discography-scalar-field-save-config";
+import { getG17cDiscographyLabelSaveConfig } from "./gosaki-discography-g17c-label-save-config";
 import type { DiscographyScalarFieldSliceEntry } from "./discography-scalar-field-slice-registry";
 import type { DiscographyUpdateWritePayload } from "./discography-write-types";
 import type { DiscographyWriteAdapterResult } from "./discography-write-types";
@@ -89,7 +90,10 @@ export async function executeDiscographyScalarSliceSave(input: {
   payload: DiscographyUpdateWritePayload;
 }): Promise<DiscographyScalarSliceSaveOutcome> {
   const { entry, beforeSnapshot, saveBinding, payload } = input;
-  const config = getDiscographyScalarSliceSaveConfig(entry);
+  const config =
+    entry.sliceId === "g17c-label"
+      ? getG17cDiscographyLabelSaveConfig()
+      : getDiscographyScalarSliceSaveConfig(entry);
   if (!config.saveEnabled) {
     return buildSaveDisabledOutcome(
       config.armFailureReason ?? config.defaultDisabledReason,

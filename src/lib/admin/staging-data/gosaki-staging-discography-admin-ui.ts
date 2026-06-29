@@ -55,6 +55,10 @@ import {
   getDiscographyScalarSliceSaveConfig,
 } from "../staging-write/discography-scalar-field-save-config";
 import {
+  evaluateG17cDiscographyOperatorSaveUiGate,
+  getG17cDiscographyLabelSaveConfig,
+} from "../staging-write/gosaki-discography-g17c-label-save-config";
+import {
   getDiscographyScalarSliceEntryByLegacyId,
   getDiscographyScalarSliceRegistryEntry,
   type DiscographyScalarFieldSliceId,
@@ -93,6 +97,9 @@ function getSaveConfigForSlice(slice: DiscographyWriteSlice | null) {
   if (!slice) {
     throw new Error("No discography scalar slice for save config.");
   }
+  if (slice === "g17c-label") {
+    return getG17cDiscographyLabelSaveConfig();
+  }
   return getDiscographyScalarSliceSaveConfig(getDiscographyScalarSliceRegistryEntry(slice));
 }
 
@@ -107,6 +114,9 @@ function evaluateSaveGateForSlice(
 ) {
   if (!slice) {
     return { enabled: false, reason: "この行には Save スライスがありません。" };
+  }
+  if (slice === "g17c-label") {
+    return evaluateG17cDiscographyOperatorSaveUiGate(input);
   }
   const entry = getDiscographyScalarSliceRegistryEntry(slice);
   return evaluateDiscographyScalarSliceOperatorSaveUiGate(entry, input);

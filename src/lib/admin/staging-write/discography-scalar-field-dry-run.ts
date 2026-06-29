@@ -4,6 +4,7 @@
 
 import { assertStaticToAstroCmsStagingSupabaseProject } from "../staging-data/staging-schedule-site-slug-host-gate";
 import { getDiscographyScalarSliceSaveConfig } from "./discography-scalar-field-save-config";
+import { getG17cDiscographyLabelSaveConfig } from "./gosaki-discography-g17c-label-save-config";
 import {
   assertDiscographyScalarSliceChangedFieldsOnly,
   assertDiscographyScalarSliceOptimisticLockBaseline,
@@ -137,7 +138,10 @@ export function executeDiscographyScalarSliceDryRun(input: {
     [field]: normalizeCompare(formValues[field as keyof DiscographyDryRunFormValues]) || null,
   };
 
-  const saveConfig = getDiscographyScalarSliceSaveConfig(entry);
+  const saveConfig =
+    entry.sliceId === "g17c-label"
+      ? getG17cDiscographyLabelSaveConfig()
+      : getDiscographyScalarSliceSaveConfig(entry);
   let saveReadiness: DiscographyScalarSliceDryRunSaveReadiness = "guard_error";
   if (guardErrors.length > 0) {
     saveReadiness = "guard_error";

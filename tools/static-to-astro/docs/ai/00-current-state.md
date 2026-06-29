@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-17d Gosaki Discography label Save path enablement (2026-06-29):** **complete (uncommitted)** — `g17c-label` Save unblock; generic `executeDiscographyScalarSliceSave`; closed chains unchanged. Doc: `gosaki-discography-g17d-label-save-path-enablement.md`. **Next: G-17d-execution (operator Save once).**
+**G-17d Gosaki Discography label Save readiness fix (2026-06-29):** **complete (uncommitted)** — root cause: missing G-17c save-page-config DOM bridge for `G17C_DISCOGRAPHY_SAVE_ENABLED`; fix applied. Doc: `gosaki-discography-g17d-label-save-readiness-investigation.md`. **Next: operator re-Preview → G-17d-execution.**
+
+**G-17d Gosaki Discography label Save path enablement (2026-06-29):** **complete** — committed `0fadd54`. Doc: `gosaki-discography-g17d-label-save-path-enablement.md`.
 
 **G-17c-d2 / G-17d-d3 Gosaki Discography label local dry-run + Save final preflight (2026-06-29):** **complete** — committed `d1eefb8`. Doc: `gosaki-discography-g17c-label-dry-run-result-and-g17d-save-final-preflight.md`.
 

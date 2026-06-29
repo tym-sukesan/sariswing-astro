@@ -5,8 +5,8 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-17d-gosaki-discography-label-save-path-enablement — complete (uncommitted).
-branch: main @ d1eefb8 (+ G-17d local changes)
+Current phase: G-17d-gosaki-discography-label-save-readiness-investigation — fix applied (uncommitted).
+branch: main @ 0fadd54 (+ readiness fix local changes)
 ```
 
 **Closed chains — do not re-Save / re-upload:**
@@ -15,13 +15,18 @@ branch: main @ d1eefb8 (+ G-17d local changes)
 - `discography-003` / `artist` (G-15e-f)
 - `schedule-2026-04-005` / `price` (G-14b1f)
 
+## G-17d Discography label Save readiness fix — complete
+
+- **Doc:** `gosaki-discography-g17d-label-save-readiness-investigation.md`
+- **Root cause:** `G17C_DISCOGRAPHY_SAVE_ENABLED` + `ENABLE_*` not on client `import.meta.env` without save-page-config bridge
+- **Fix:** G-17c save-page-config DOM injection (same pattern as G-15b/G-15d/G-16a)
+- **Next:** Operator **restart dev** + re-Preview → expect `ready_to_save` → G-17d-execution
+- **Do not:** Save / DB write in this phase
+
 ## G-17d Discography label Save path enablement — complete
 
+- **Commit:** `0fadd54`
 - **Doc:** `gosaki-discography-g17d-label-save-path-enablement.md`
-- **Save path:** `g17c-label` unblocked; `executeDiscographyScalarSliceSave()` (generic)
-- **Closed chains:** G-15b / G-15d / G-16a dedicated Save paths **unchanged**
-- **Next:** G-17d-execution — operator armed dev Preview → Save once
-- **Do not:** Save / DB write in G-17d-implementation
 
 ## G-17c-d2 / G-17d-d3 Discography label dry-run result + Save final preflight — complete
 

@@ -5,23 +5,34 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-17d-gosaki-discography-label-save-readiness-investigation — fix applied (uncommitted).
-branch: main @ 0fadd54 (+ readiness fix local changes)
+Current phase: G-17d-execution-gosaki-discography-label-save-result — complete.
+G-17c label slice (discography-004) — closed. Next: G-17e public reflection.
 ```
 
 **Closed chains — do not re-Save / re-upload:**
 - `discography-001` / `artist` (G-16b-f)
 - `discography-002` / `purchase_url` (G-15c-f)
 - `discography-003` / `artist` (G-15e-f)
+- `discography-004` / `label` (G-17d-execution — G-17c chain closed)
 - `schedule-2026-04-005` / `price` (G-14b1f)
+
+## G-17d-execution Discography label Save result + unexpected state investigation — complete
+
+- **Doc:** `gosaki-discography-g17d-label-save-result-and-unexpected-state-investigation.md`
+- **DB:** `label` = `Mardi Gras JAPAN Records`; `updated_at` = `2026-06-29T07:36:49.044397+00:00`
+- **Post-bridge Preview:** `no_changes` / `actualWrite: false` — consistent with already-applied DB
+- **Write timing:** Likely prior armed G-17d `更新する` (Preview path ruled out by code review)
+- **Rollback:** not needed; **re-Save:** prohibited
+- **Next:** G-17e label public reflection preflight
+
+### Backlog (known issue)
+
+Admin page header may show stale `Save: disabled` / `DB write: disabled` after successful Save. Display only — no data impact. UI status refresh follow-up deferred.
 
 ## G-17d Discography label Save readiness fix — complete
 
 - **Doc:** `gosaki-discography-g17d-label-save-readiness-investigation.md`
-- **Root cause:** `G17C_DISCOGRAPHY_SAVE_ENABLED` + `ENABLE_*` not on client `import.meta.env` without save-page-config bridge
-- **Fix:** G-17c save-page-config DOM injection (same pattern as G-15b/G-15d/G-16a)
-- **Next:** Operator **restart dev** + re-Preview → expect `ready_to_save` → G-17d-execution
-- **Do not:** Save / DB write in this phase
+- **Fix:** G-17c save-page-config DOM bridge
 
 ## G-17d Discography label Save path enablement — complete
 

@@ -1,18 +1,30 @@
 Last updated: 2026-06-29
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-17d-execution Discography label Save result + unexpected state investigation — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-17d-execution-gosaki-discography-label-save-result-and-unexpected-state-investigation` |
+| Target | `discography-004` / `label` — `Mardi Gras JAPAN Records` |
+| `updated_at` after | `2026-06-29T07:36:49.044397+00:00` |
+| Write timing | Likely prior armed G-17d Save; post-bridge Preview did **not** write |
+| Doc | `gosaki-discography-g17d-label-save-result-and-unexpected-state-investigation.md` |
+| Verifier | `verify-g17d-gosaki-discography-label-save-result-and-unexpected-state-investigation.mjs` |
+| **Next** | G-17e label public reflection preflight |
+| **Do not** | Re-Save `discography-004` / `label`; rollback **not needed** |
+
+### Backlog (known issue — display only)
+
+Post-Save admin header may show stale `Save: disabled` / `DB write: disabled` while DB is correct. Small UI status refresh follow-up — see execution result doc §7.
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-17d Discography label Save readiness fix — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-17d-gosaki-discography-label-save-readiness-investigation` |
-| Base commit | `0fadd54` |
-| Root cause | `G17C_DISCOGRAPHY_SAVE_ENABLED` not visible on client without save-page-config bridge |
-| Fix | `gosaki-discography-g17c-label-save-page-config.ts` + merged env in dry-run/save/UI |
 | Doc | `gosaki-discography-g17d-label-save-readiness-investigation.md` |
-| Verifier | `verify-g17d-gosaki-discography-label-save-readiness-investigation.mjs` |
-| **Next** | Operator re-Preview (armed dev) → G-17d-execution |
-| **Do not** | Save / DB write in this phase |
+| **Next** | G-17d-execution — **done** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-17d Discography label Save path enablement — complete
 

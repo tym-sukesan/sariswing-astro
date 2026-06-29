@@ -5,9 +5,9 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-18f-result-gosaki-discography-tracklist-textarea-diff-dry-run-local-ui-result — complete.
-discography_tracks: 34 rows; G-18f local UI diff Preview PASS (track 7 test edit, not persisted).
-Next: G-18g textarea Save adapter planning.
+Current phase: G-18g-gosaki-discography-tracklist-textarea-save-adapter-planning — complete.
+discography_tracks: 34 rows; first Save PoC A planned (track 7 title via textarea).
+Next: G-18g1 discography_tracks GRANT + RLS read-only preflight.
 ```
 
 **Closed chains — do not re-Save / re-upload:**
@@ -17,9 +17,20 @@ Next: G-18g textarea Save adapter planning.
 - `discography-004` / `label` (G-17e-f)
 - `schedule-2026-04-005` / `price` (G-14b1f)
 
+## G-18g Discography tracklist textarea Save adapter planning — complete
+
+- **Doc:** `gosaki-discography-g18g-tracklist-textarea-save-adapter-planning.md`
+- **First PoC:** A — `discography-002` track 7 / `Like a Lover` → `Like a Lover（テスト）` (textarea path)
+- **Long-term:** Option 2 diff → UPDATE/INSERT/DELETE; Options 3–4 deferred
+- **Guards:** count 8, ordered fingerprint, `changed.length === 1`, no add/delete/reorder
+- **approvalId (G-18g2):** `G-18g2-gosaki-discography-tracklist-single-title-non-dry-run-slice`
+- **updated_at:** defer; composite row + album fingerprint
+- **Public reflection:** G-18h after Save success
+- **Next:** G-18g1 GRANT/RLS read-only preflight
+
 ## G-18f-result Discography tracklist local UI dry-run preview — complete
 
-- **Doc:** `gosaki-discography-g18f-tracklist-textarea-diff-dry-run-local-ui-result.md`
+- **Commit:** `8a23191`
 - **Local URL:** `http://localhost:4321/__admin-staging-shell/musician-basic/admin/discography/`
 - **Preview:** `ok: true`, `dryRun: true`, `actualWrite: false`, `wouldWrite: true`
 - **Changed:** track 7 `Like a Lover` → `Like a Lover（テスト）` (UI only)

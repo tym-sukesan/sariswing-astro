@@ -1,18 +1,25 @@
 Last updated: 2026-06-29
 Project: Static-to-Astro CMS / Musician CMS Kit
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-18f-result Discography tracklist local UI dry-run preview — complete
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-18g Discography tracklist textarea Save adapter planning — complete
 
 | Item | Value |
 | --- | --- |
-| Phase | `G-18f-result-gosaki-discography-tracklist-textarea-diff-dry-run-local-ui-result` |
-| Result | Operator Preview **PASS**; changed #7 only in UI |
-| Changed | `Like a Lover` → `Like a Lover（テスト）` (not persisted) |
-| Doc | `gosaki-discography-g18f-tracklist-textarea-diff-dry-run-local-ui-result.md` |
-| Verifier | `verify-g18f-gosaki-discography-tracklist-textarea-diff-dry-run-local-ui-result.mjs` |
-| Rollback | **not needed** |
-| **Next** | **G-18g** textarea Save adapter planning |
-| **Do not** | Re-run Preview as gate; Save / SQL mutation |
+| Phase | `G-18g-gosaki-discography-tracklist-textarea-save-adapter-planning` |
+| First PoC | **A** — `discography-002` track 7 title via textarea |
+| Long-term Save | Option 2 (diff → per-row ops) |
+| `updated_at` | **defer** — composite fingerprint for first PoC |
+| Doc | `gosaki-discography-g18g-tracklist-textarea-save-adapter-planning.md` |
+| Verifier | `verify-g18g-gosaki-discography-tracklist-textarea-save-adapter-planning.mjs` |
+| **Next** | **G-18g1** `discography_tracks` GRANT + RLS read-only preflight |
+| **Do not** | GRANT / Save / SQL mutation in G-18g |
+
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-18f-result Discography tracklist local UI dry-run preview — complete
+
+| Item | Value |
+| --- | --- |
+| Commit | `8a23191` |
+| **Next** | G-18g — **done** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-18f Discography tracklist textarea diff dry-run — complete
 

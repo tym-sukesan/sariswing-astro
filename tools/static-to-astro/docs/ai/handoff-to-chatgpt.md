@@ -5,8 +5,8 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-18f-gosaki-discography-tracklist-textarea-diff-dry-run — complete.
-discography_tracks: 34 rows; G-18f tracklist textarea diff Preview on discography-002 / SKYLARK.
+Current phase: G-18f-result-gosaki-discography-tracklist-textarea-diff-dry-run-local-ui-result — complete.
+discography_tracks: 34 rows; G-18f local UI diff Preview PASS (track 7 test edit, not persisted).
 Next: G-18g textarea Save adapter planning.
 ```
 
@@ -17,8 +17,19 @@ Next: G-18g textarea Save adapter planning.
 - `discography-004` / `label` (G-17e-f)
 - `schedule-2026-04-005` / `price` (G-14b1f)
 
+## G-18f-result Discography tracklist local UI dry-run preview — complete
+
+- **Doc:** `gosaki-discography-g18f-tracklist-textarea-diff-dry-run-local-ui-result.md`
+- **Local URL:** `http://localhost:4321/__admin-staging-shell/musician-basic/admin/discography/`
+- **Preview:** `ok: true`, `dryRun: true`, `actualWrite: false`, `wouldWrite: true`
+- **Changed:** track 7 `Like a Lover` → `Like a Lover（テスト）` (UI only)
+- **saveReadiness:** `ready_but_save_disabled`; **saveAllowed:** `false`
+- **DB:** unchanged (read-only verify); **rollback:** not needed
+- **Next:** G-18g textarea Save adapter planning
+
 ## G-18f Discography tracklist textarea diff dry-run — complete
 
+- **Commit:** `9bf554a`
 - **Doc:** `gosaki-discography-g18f-tracklist-textarea-diff-dry-run.md`
 - **Target:** `discography-002` / SKYLARK (8 tracks)
 - **UI:** album-level textarea editable on target only; 1 line = 1 track

@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-18f Gosaki Discography tracklist textarea diff dry-run (2026-06-29):** **complete (uncommitted)** — `discography-002` / SKYLARK; parse + diff Preview; Save/DB write disabled. Doc: `gosaki-discography-g18f-tracklist-textarea-diff-dry-run.md`. **Next: G-18g textarea Save adapter planning.**
+**G-18f-result Gosaki Discography tracklist textarea diff dry-run local UI preview (2026-06-29):** **complete (uncommitted)** — operator Preview PASS; track 7 `Like a Lover` → `Like a Lover（テスト）` diff only; DB unchanged. Doc: `gosaki-discography-g18f-tracklist-textarea-diff-dry-run-local-ui-result.md`. **Next: G-18g textarea Save adapter planning.**
+
+**G-18f Gosaki Discography tracklist textarea diff dry-run (2026-06-29):** **complete** — committed `9bf554a`. Doc: `gosaki-discography-g18f-tracklist-textarea-diff-dry-run.md`.
 
 **G-18e Gosaki Discography tracks title-edit Save slice planning (2026-06-29):** **complete** — committed `52b22c0`. Album-level textarea UI direction. Doc: `gosaki-discography-g18e-tracks-title-edit-save-slice-planning.md`.
 

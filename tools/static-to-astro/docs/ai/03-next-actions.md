@@ -1,17 +1,28 @@
 Last updated: 2026-06-29
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-18f-result Discography tracklist local UI dry-run preview — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-18f-result-gosaki-discography-tracklist-textarea-diff-dry-run-local-ui-result` |
+| Result | Operator Preview **PASS**; changed #7 only in UI |
+| Changed | `Like a Lover` → `Like a Lover（テスト）` (not persisted) |
+| Doc | `gosaki-discography-g18f-tracklist-textarea-diff-dry-run-local-ui-result.md` |
+| Verifier | `verify-g18f-gosaki-discography-tracklist-textarea-diff-dry-run-local-ui-result.mjs` |
+| Rollback | **not needed** |
+| **Next** | **G-18g** textarea Save adapter planning |
+| **Do not** | Re-run Preview as gate; Save / SQL mutation |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-18f Discography tracklist textarea diff dry-run — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-18f-gosaki-discography-tracklist-textarea-diff-dry-run` |
+| Commit | `9bf554a` |
 | Target | `discography-002` / SKYLARK (8 tracks) |
-| Scope | textarea read → parse → diff Preview; **no DB write** |
 | Doc | `gosaki-discography-g18f-tracklist-textarea-diff-dry-run.md` |
-| Verifier | `verify-g18f-gosaki-discography-tracklist-textarea-diff-dry-run.mjs` |
-| **Next** | **G-18g** textarea Save adapter planning |
-| **Do not** | Save / SQL mutation / re-open scalar chains |
+| **Next** | G-18f-result — **done** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-18e Discography tracks title-edit Save slice planning — complete (+ refinement)
 

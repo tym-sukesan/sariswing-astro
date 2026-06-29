@@ -1,16 +1,26 @@
 Last updated: 2026-06-29
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-17a Discography CMS commonization audit — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-17a-gosaki-discography-commonization-audit` |
+| Base commit | `de2a388` |
+| Doc | `gosaki-discography-g17a-commonization-audit.md` |
+| Verifier | `verify-g17a-gosaki-discography-commonization-audit.mjs` |
+| Finding | Slice-per-field copy-paste unsustainable; mirror Schedule registry |
+| **Next** | G-17b scalar slice registry (minimal impl) |
+| **Do not** | New Save; refactor closed chains in G-17a |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-16b-f Discography G-16a artist public reflection closure — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-16b-f-gosaki-discography-g16a-artist-public-reflection-closure` |
-| Base commit | `418b577` |
+| Commit | `de2a388` |
 | Doc | `gosaki-discography-g16b-artist-public-reflection-closure.md` |
-| Verifier | `verify-g16b-gosaki-discography-artist-public-reflection-closure.mjs` |
-| Chain | G-16a Save (`db59af7`) → G-16b upload (`418b577`) |
-| **Next** | G-17a Discography next field slice planning (recommended) |
+| **Next** | G-17a — **done** |
 | **Do not** | Re-Save `discography-001`; re-upload discography HTML |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-16b-upload Discography G-16a artist public reflection upload + HTTP verify — complete

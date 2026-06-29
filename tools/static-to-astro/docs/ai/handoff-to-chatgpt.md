@@ -5,8 +5,8 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-16b-f-gosaki-discography-g16a-artist-public-reflection-closure — complete (uncommitted).
-branch: main @ 418b577 (+ G-16b-f closure local changes)
+Current phase: G-17a-gosaki-discography-commonization-audit — complete (uncommitted).
+branch: main @ de2a388 (+ G-17a audit local changes)
 ```
 
 **Closed chains — do not re-Save / re-upload:**
@@ -15,13 +15,18 @@ branch: main @ 418b577 (+ G-16b-f closure local changes)
 - `discography-003` / `artist` (G-15e-f)
 - `schedule-2026-04-005` / `price` (G-14b1f)
 
+## G-17a Discography CMS commonization audit — complete
+
+- **Doc:** `gosaki-discography-g17a-commonization-audit.md`
+- **Finding:** G-15/G-16 slice copy-paste ~2,850 lines TS + 27 docs / 24 verifiers; adopt Schedule-style registry
+- **G-17b next:** `discography-scalar-field-slice-registry.ts` + generic config/guards + patch registry (no new Save)
+- **G-17c+:** first registry-native slice on `discography-004` (`title` or `year`)
+- **Do not:** Save / DB write / FTP in G-17a
+
 ## G-16b-f Discography G-16a artist public reflection closure — complete
 
+- **Commit:** `de2a388`
 - **Doc:** `gosaki-discography-g16b-artist-public-reflection-closure.md`
-- **Verifier:** `verify-g16b-gosaki-discography-artist-public-reflection-closure.mjs`
-- **Chain:** G-16a Save (`db59af7`) → G-16b upload (`418b577`); `artist` 2nd practical Save + reflection success
-- **updated_at:** G-15d + G-16a live proof (2×)
-- **Next:** G-17a next field slice planning (recommended)
 - **Do not:** Re-Save `discography-001`; re-upload discography HTML
 
 ## G-16b-upload Discography G-16a artist public reflection upload + HTTP verify — complete

@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-16b-f Gosaki Discography G-16a artist public reflection closure (2026-06-29):** **complete (uncommitted)** — G-16a / G-16b `discography-001` / `artist` chain **closed**; `updated_at` trigger 2nd live proof; `purchase_url` preflight misrecord corrected; rollback **not needed**. Doc: `gosaki-discography-g16b-artist-public-reflection-closure.md`. Verifier: `verify-g16b-gosaki-discography-artist-public-reflection-closure.mjs`. **Do not re-Save `discography-001`; do not re-upload discography HTML.**
+**G-17a Gosaki Discography CMS commonization audit / acceleration plan (2026-06-29):** **complete (uncommitted)** — G-15/G-16 Save+reflection duplication inventoried; A/B/C classified; G-17b scalar slice registry scoped. Doc: `gosaki-discography-g17a-commonization-audit.md`. **Next: G-17b registry minimal implementation.**
+
+**G-16b-f Gosaki Discography G-16a artist public reflection closure (2026-06-29):** **complete** — committed `de2a388`; G-16a / G-16b `discography-001` / `artist` chain **closed**. Doc: `gosaki-discography-g16b-artist-public-reflection-closure.md`. **Do not re-Save `discography-001`; do not re-upload discography HTML.**
 
 **G-16b-upload Gosaki Discography G-16a artist public reflection upload + HTTP verify (2026-06-29):** **complete** — committed `418b577`; operator upload `discography/index.html` ×1; HTTP **PASS**; Continuous `feat.` live. Doc: `gosaki-discography-g16b-artist-public-reflection-upload-result.md`. **Chain closed — see G-16b-f.**
 

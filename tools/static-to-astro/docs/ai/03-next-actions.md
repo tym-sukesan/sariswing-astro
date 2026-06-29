@@ -1,18 +1,27 @@
 Last updated: 2026-06-29
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-16b-upload Discography G-16a artist public reflection upload + HTTP verify — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-16b-upload-gosaki-discography-artist-public-reflection-upload-result` |
+| Base commit | `d16aeca` |
+| Doc | `gosaki-discography-g16b-artist-public-reflection-upload-result.md` |
+| Verifier | `verify-g16b-gosaki-discography-artist-public-reflection-upload-result.mjs` |
+| Upload | `discography/index.html` ×1 (operator) |
+| HTTP verify | **PASS** — Continuous `feat.` live |
+| **Next** | G-16b-f closure |
+| **Do not** | Re-upload discography HTML; Re-Save `001` |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-16b Discography G-16a artist public reflection local regen + upload preflight — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-16b-gosaki-discography-artist-public-reflection-local-regen-and-upload-preflight` |
-| Base commit | `db59af7` |
+| Commit | `d16aeca` |
 | Doc | `gosaki-discography-g16b-artist-public-reflection-local-regen-and-upload-preflight.md` |
-| Verifier | `verify-g16b-gosaki-discography-artist-public-reflection-local-regen-and-upload-preflight.mjs` |
-| Local HTML | Continuous `feat.` **PASS** |
-| Upload scope | `discography/index.html` ×1 (CSS/JS hash unchanged) |
-| **Next** | G-16b-upload (operator manual upload) |
-| **Do not** | Re-Save `001`; FTP until G-16b-upload approval |
+| **Next** | G-16b-upload — **done** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-16a-execution Discography artist Save result — complete
 

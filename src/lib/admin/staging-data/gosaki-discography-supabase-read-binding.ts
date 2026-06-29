@@ -132,7 +132,7 @@ export async function resolveGosakiDiscographySupabaseReadBinding(): Promise<Gos
   const rows = result.records;
   const legacyIdsFound = rows.map((row) => row.legacy_id);
   const selectedLegacyId =
-    rows.find((row) => row.legacy_id === "discography-002")?.legacy_id ??
+    rows.find((row) => row.legacy_id === "discography-003")?.legacy_id ??
     rows[0]?.legacy_id ??
     null;
 

@@ -1,6 +1,23 @@
 Last updated: 2026-06-28
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzz. G-15d Discography next-field Save preflight — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-15d-gosaki-discography-existing-release-artist-non-dry-run` |
+| Doc | `gosaki-discography-next-field-save-preflight.md` |
+| Verifier | `verify-g15d-gosaki-discography-next-field-save-preflight.mjs` |
+| Target | `discography-003` / About Us!! / `artist` only |
+| Before → after | `ごさきりかこtrio` → `ごさきりかこTrio` |
+| dry-run approvalId | `G-15d-gosaki-discography-artist-dry-run-slice` |
+| Save approvalId | `G-15d-gosaki-discography-existing-release-artist-non-dry-run` |
+| Lock baseline | `2026-06-05T17:39:44.201802+00:00` |
+| Save executed | **no** |
+| **Next** | **G-15d-execution** — operator Save once; verify `updated_at` advances |
+| Public reflection | **later** (artist in Wix h2; hook is purchase_url only today) |
+| **Do not** | Save in preflight; re-Save `discography-002`; FTP/upload |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzz. G-15c-f Discography public reflection closure — complete
 
 | Item | Value |
@@ -11,7 +28,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Chain | G-15a → G-15a2 → G-15b → G-15c → G-15c-upload — **closed** |
 | Field | `discography-002` / SKYLARK / `purchase_url` only |
 | Live HTTP | **PASS** |
-| **Next (recommended)** | **G-16a** — next Discography field Save slice (`streaming_url` or doc-only Kit playbook) |
+| **Next (recommended)** | **G-15d-execution** — artist Save on `discography-003` + `updated_at` proof |
 | **Do not** | Re-Save `discography-002`; re-upload `discography/index.html` |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzz. G-15c-upload Discography public reflection upload + HTTP verify — complete

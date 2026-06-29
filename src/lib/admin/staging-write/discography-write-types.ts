@@ -12,15 +12,26 @@ export const G15B_DISCOGRAPHY_PURCHASE_URL_NON_DRY_RUN_APPROVAL_ID:
   DiscographyG15bPurchaseUrlNonDryRunApprovalId =
   "G-15b-gosaki-discography-existing-release-purchase-url-non-dry-run";
 
+/** G-15d Gosaki Discography artist non-dry-run slice. */
+export type DiscographyG15dArtistNonDryRunApprovalId =
+  "G-15d-gosaki-discography-existing-release-artist-non-dry-run";
+
+export const G15D_DISCOGRAPHY_ARTIST_NON_DRY_RUN_APPROVAL_ID:
+  DiscographyG15dArtistNonDryRunApprovalId =
+  "G-15d-gosaki-discography-existing-release-artist-non-dry-run";
+
 export type DiscographyWriteApprovalIdUnion =
-  DiscographyG15bPurchaseUrlNonDryRunApprovalId;
+  | DiscographyG15bPurchaseUrlNonDryRunApprovalId
+  | DiscographyG15dArtistNonDryRunApprovalId;
 
 export const DISCOGRAPHY_WRITE_APPROVAL_IDS: readonly DiscographyWriteApprovalIdUnion[] = [
   G15B_DISCOGRAPHY_PURCHASE_URL_NON_DRY_RUN_APPROVAL_ID,
+  G15D_DISCOGRAPHY_ARTIST_NON_DRY_RUN_APPROVAL_ID,
 ];
 
 export type DiscographyUpdateWritePayload = {
   purchase_url?: string | null;
+  artist?: string | null;
 };
 
 export type DiscographyWriteSafety = {

@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-15c-f Gosaki Discography public reflection closure (2026-06-28):** **complete (uncommitted)** — G-15 `purchase_url` chain **closed** (G-15a→G-15c-upload); live `/discography/` HTTP PASS; rollback **not needed**; other albums untouched. Doc: `gosaki-discography-public-reflection-closure.md`. **Do not re-Save `discography-002`; do not re-upload discography HTML.**
+**G-15d Gosaki Discography next-field Save preflight (2026-06-28):** **complete (uncommitted)** — target `discography-003` / About Us!! / `artist` only (`ごさきりかこtrio` → `ごさきりかこTrio`); dry-run Preview + Save preflight wired; Save **not executed**. Doc: `gosaki-discography-next-field-save-preflight.md`. **Next: operator G-15d Save once + `updated_at` trigger live proof.**
+
+**G-15c-f Gosaki Discography public reflection closure (2026-06-28):** **complete** — G-15 `purchase_url` chain **closed** (G-15a→G-15c-upload); live `/discography/` HTTP PASS; rollback **not needed**; other albums untouched. Doc: `gosaki-discography-public-reflection-closure.md`. **Do not re-Save `discography-002`; do not re-upload discography HTML.**
 
 **G-15c-upload Gosaki Discography public reflection upload + HTTP verify (2026-06-28):** **complete** — committed `4fea4f2`; operator upload `discography/index.html` ×1; HTTP **200**; SKYLARK `gosakirikako.base.shop` live. Doc: `gosaki-discography-public-reflection-upload-result.md`.
 

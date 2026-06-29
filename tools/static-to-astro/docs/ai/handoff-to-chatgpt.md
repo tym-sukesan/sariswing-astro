@@ -5,18 +5,31 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-15c-f-gosaki-discography-public-reflection-closure — complete (uncommitted).
-branch: main @ 4fea4f2
+Current phase: G-15d-gosaki-discography-existing-release-artist-non-dry-run — Save preflight complete (uncommitted).
+branch: main @ c2870e0 (+ G-15d local changes)
 ```
 
 **G-15 Discography `purchase_url` chain closed. Do not re-Save discography-002; do not re-upload discography HTML.**
+
+## G-15d Discography next-field Save preflight — complete
+
+- **Doc:** `gosaki-discography-next-field-save-preflight.md`
+- **Target:** `discography-003` / About Us!! / `artist` (`ごさきりかこtrio` → `ごさきりかこTrio`)
+- **dry-run approvalId:** `G-15d-gosaki-discography-artist-dry-run-slice`
+- **Save approvalId:** `G-15d-gosaki-discography-existing-release-artist-non-dry-run`
+- **Lock baseline:** `2026-06-05T17:39:44.201802+00:00`
+- **Save:** not executed — arm G-15d env stack for execution phase
+- **updated_at proof:** first live proof expected on G-15d Save (`discography_set_updated_at` active)
+- **Public reflection:** later (artist in Wix h2)
+- **Next:** operator Save once → verify `updated_at` → optional reflection phase
+- **Do not:** Save in preflight; re-Save `discography-002`
 
 ## G-15c-f Discography public reflection closure — complete
 
 - **Doc:** `gosaki-discography-public-reflection-closure.md`
 - **Chain closed:** G-15a → G-15a2 → G-15b-retry → G-15b-f8 → G-15c → G-15c-upload
 - **Live:** `/discography/` HTTP **200**; SKYLARK new URL; old URL absent; `discographyDataSource=supabase`
-- **Next (recommended):** G-16a — next field Save slice (`streaming_url`) or Kit Save/Reflection playbook (doc-only)
+- **Next (recommended):** G-15d-execution — artist Save + `updated_at` proof; then reflection or next field
 - **Do not:** re-Save `discography-002`; re-upload `discography/index.html`
 
 ## G-15c-upload Discography public reflection upload + HTTP verify — complete

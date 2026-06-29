@@ -1,19 +1,28 @@
 Last updated: 2026-06-29
 Project: Static-to-Astro CMS / Musician CMS Kit
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-17e Discography label public reflection local regen + upload preflight — complete
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-17e-upload Discography label public reflection upload + HTTP verify — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-17e-upload-gosaki-discography-label-public-reflection-upload-result` |
+| Target | `discography-004` / `Ja-Jaaaaan!` / `label` — `Mardi Gras JAPAN Records` |
+| Upload | 2 files — `discography/index.html` + `_astro/BaseLayout.YcHrHZH4.css` |
+| HTTP verify | **PASS** (`/discography/` + CSS **200**) |
+| Legacy `index.YcHrHZH4.css` | **not deleted** (OK) |
+| Doc | `gosaki-discography-g17e-label-public-reflection-upload-result.md` |
+| Verifier | `verify-g17e-gosaki-discography-label-public-reflection-upload-result.mjs` |
+| **Next** | G-17e-f label public reflection closure |
+| **Do not** | Re-upload without new approval; re-Save `discography-004` / `label` |
+
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-17e Discography label public reflection local regen + upload preflight — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-17e-gosaki-discography-label-public-reflection-local-regen-and-upload-preflight` |
-| Target | `discography-004` / `Ja-Jaaaaan!` / `label` — `Mardi Gras JAPAN Records` |
-| Hook | `patchDiscographyItemLabel` in `DISCOGRAPHY_PUBLIC_PATCH_REGISTRY` |
-| Local regen | **PASS** — 1 label patch in convert log |
-| Minimal upload | **blocked** — CSS ref `index.YcHrHZH4.css` → `BaseLayout.YcHrHZH4.css` |
+| Commit | `08e63a8` |
 | Doc | `gosaki-discography-g17e-label-public-reflection-local-regen-and-upload-preflight.md` |
-| Verifier | `verify-g17e-gosaki-discography-label-public-reflection-local-regen-and-upload-preflight.mjs` |
-| **Next** | G-17e-upload — operator scope decision + manual upload |
-| **Do not** | Re-Save `discography-004` / `label`; auto 1-file upload |
+| **Next** | G-17e-upload — **done** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-17d-execution Discography label Save result + unexpected state investigation — complete
 

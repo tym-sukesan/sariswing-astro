@@ -5,24 +5,33 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-17e-gosaki-discography-label-public-reflection-local-regen-and-upload-preflight — complete.
-G-17c/G-17d label slice (discography-004) — closed. Next: G-17e-upload (operator scope + manual upload).
+Current phase: G-17e-upload-gosaki-discography-label-public-reflection-upload-result — complete.
+G-17c/G-17d label slice (discography-004) — Save + public upload done. Next: G-17e-f closure.
 ```
 
 **Closed chains — do not re-Save / re-upload:**
 - `discography-001` / `artist` (G-16b-f)
 - `discography-002` / `purchase_url` (G-15c-f)
 - `discography-003` / `artist` (G-15e-f)
-- `discography-004` / `label` (G-17d-execution — G-17c chain closed; public reflection preflight done — upload pending)
+- `discography-004` / `label` — Save closed (G-17d); public upload done (G-17e-upload); **closure pending** (G-17e-f)
 - `schedule-2026-04-005` / `price` (G-14b1f)
+
+## G-17e-upload Discography label public reflection upload + HTTP verify — complete
+
+- **Doc:** `gosaki-discography-g17e-label-public-reflection-upload-result.md`
+- **Upload:** `discography/index.html` + `_astro/BaseLayout.YcHrHZH4.css` (2 files)
+- **HTTP:** `/discography/` **200**; `BaseLayout.YcHrHZH4.css` **200**
+- **Live:** Ja-Jaaaaan! + `Mardi Gras JAPAN Records`; G-15c/G-15e/G-16b maintained
+- **Legacy CSS:** `index.YcHrHZH4.css` not deleted (OK)
+- **Next:** G-17e-f closure
 
 ## G-17e Discography label public reflection local regen + upload preflight — complete
 
 - **Doc:** `gosaki-discography-g17e-label-public-reflection-local-regen-and-upload-preflight.md`
 - **Hook:** `label` in `DISCOGRAPHY_PUBLIC_PATCH_REGISTRY` + `patchDiscographyItemLabel`
 - **Local:** Ja-Jaaaaan! + `Mardi Gras JAPAN Records`; G-15c/G-15e/G-16b maintained
-- **Upload:** **blocked** for 1-file-only — CSS ref changed (`index.YcHrHZH4.css` → `BaseLayout.YcHrHZH4.css`)
-- **Next:** G-17e-upload — operator chooses scope (HTML+CSS or full package)
+- **Upload:** **blocked** for 1-file-only — CSS ref changed (`index.YcHrHZH4.css` → `BaseLayout.YcHrHZH4.css`) — **resolved** in G-17e-upload (2-file upload)
+- **Next:** G-17e-upload — **done**; G-17e-f closure
 
 ## G-17d-execution Discography label Save result + unexpected state investigation — complete
 

@@ -1,18 +1,27 @@
 Last updated: 2026-06-29
 Project: Static-to-Astro CMS / Musician CMS Kit
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-18g1-apply Discography tracks UPDATE grant apply preflight — complete
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-18g1-apply-result Discography tracks UPDATE grant apply result — complete
 
 | Item | Value |
 | --- | --- |
-| Phase | `G-18g1-apply-gosaki-discography-tracks-update-grant-preflight` |
-| SQL | `gosaki-discography-tracks-g18g1-apply-update-grant.sql` |
-| Grant | `UPDATE` on `discography_tracks` → `authenticated` only |
-| approvalId | `G-18g1-discography-tracks-update-grant-apply` |
-| Doc | `gosaki-discography-g18g1-apply-update-grant-preflight.md` |
-| Verifier | `verify-g18g1-gosaki-discography-tracks-apply-update-grant-preflight.mjs` |
-| **Next** | **Operator** runs SQL Step 1–4 once (separate approval) |
-| **Do not** | Cursor GRANT / Save / row UPDATE |
+| Phase | `G-18g1-apply-result-gosaki-discography-tracks-update-grant-apply-result` |
+| Base | `88fab3c` |
+| Grant | `UPDATE` on `discography_tracks` → `authenticated` — **applied once** |
+| Result | Success. No rows returned |
+| Data | `discography-002` 8 tracks; track 7 `Like a Lover` unchanged |
+| Rollback | **not needed** |
+| Doc | `gosaki-discography-g18g1-apply-update-grant-result.md` |
+| Verifier | `verify-g18g1-gosaki-discography-tracks-apply-update-grant-result.mjs` |
+| **Next** | **G-18g2** tracklist single-title Save adapter dry-run implementation + preflight |
+| **Do not** | Re-run GRANT / Save / row UPDATE without new approval |
+
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-18g1-apply Discography tracks UPDATE grant apply preflight — complete
+
+| Item | Value |
+| --- | --- |
+| Commit | `88fab3c` |
+| **Next** | G-18g1-apply-result — **done** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-18g1 Discography tracks GRANT / RLS read-only check — complete
 

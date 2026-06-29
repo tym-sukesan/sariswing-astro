@@ -5,9 +5,9 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-18g1-apply-gosaki-discography-tracks-update-grant-preflight — complete.
-discography_tracks UPDATE grant runbook ready; operator execution pending.
-Next: G-18g1-apply-execution — operator manual GRANT once (approval G-18g1-discography-tracks-update-grant-apply).
+Current phase: G-18g1-apply-result-gosaki-discography-tracks-update-grant-apply-result — complete.
+Operator GRANT success; authenticated UPDATE on discography_tracks; rows unchanged.
+Next: G-18g2-gosaki-discography-tracklist-single-title-save-dry-run-implementation (+ preflight).
 ```
 
 **Closed chains — do not re-Save / re-upload:**
@@ -17,14 +17,21 @@ Next: G-18g1-apply-execution — operator manual GRANT once (approval G-18g1-dis
 - `discography-004` / `label` (G-17e-f)
 - `schedule-2026-04-005` / `price` (G-14b1f)
 
+## G-18g1-apply-result Discography tracks UPDATE grant apply result — complete
+
+- **Doc:** `gosaki-discography-g18g1-apply-update-grant-result.md`
+- **Base:** `88fab3c`
+- **Grant:** `grant update on table public.discography_tracks to authenticated;` — **executed once** by operator
+- **Result:** Success. No rows returned
+- **Post-check:** authenticated UPDATE present; anon write absent; authenticated INSERT/DELETE/TRUNCATE absent
+- **Data:** `discography-002` 8 tracks; track 7 `Like a Lover` unchanged; `Like a Lover（テスト）` = 0 rows
+- **Rollback:** not needed
+- **Next:** G-18g2 Save adapter dry-run implementation + preflight
+
 ## G-18g1-apply Discography tracks UPDATE grant apply preflight — complete
 
+- **Commit:** `88fab3c`
 - **Doc:** `gosaki-discography-g18g1-apply-update-grant-preflight.md`
-- **SQL:** `gosaki-discography-tracks-g18g1-apply-update-grant.sql` (Step 0–4)
-- **Grant:** `grant update on table public.discography_tracks to authenticated;`
-- **approvalId:** `G-18g1-discography-tracks-update-grant-apply`
-- **Rollback (doc-only):** `revoke update on table public.discography_tracks from authenticated;`
-- **Next:** operator runs SQL once in staging SQL Editor
 
 ## G-18g1 Discography tracks GRANT / RLS read-only check — complete
 
@@ -39,7 +46,7 @@ Next: G-18g1-apply-execution — operator manual GRANT once (approval G-18g1-dis
 - **approvalId (G-18g2):** `G-18g2-gosaki-discography-tracklist-single-title-non-dry-run-slice`
 - **updated_at:** defer; composite row + album fingerprint
 - **Public reflection:** G-18h after Save success
-- **Next:** G-18g1 GRANT/RLS read-only preflight
+- **Next:** G-18g2 Save adapter dry-run implementation + preflight (GRANT unblocked by G-18g1-apply-result)
 
 ## G-18f-result Discography tracklist local UI dry-run preview — complete
 

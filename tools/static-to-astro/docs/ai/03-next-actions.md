@@ -1,21 +1,31 @@
 Last updated: 2026-06-28
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzz. G-15d-execution Discography artist Save result — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-15d-execution-gosaki-discography-artist-save-result` |
+| Doc | `gosaki-discography-artist-save-result.md` |
+| Verifier | `verify-g15d-gosaki-discography-artist-save-result.mjs` |
+| Target | `discography-003` / About Us!! / `artist` only |
+| Artist | `ごさきりかこtrio` → `ごさきりかこTrio` |
+| `updated_at` | `2026-06-05T17:39:44.201802+00:00` → `2026-06-29T02:40:57.83085+00:00` |
+| Trigger live proof | **success** |
+| Rollback | **not needed** |
+| Public reflection | **pending** |
+| **Next (recommended)** | **G-15e** — artist public reflection preflight |
+| **Do not** | Re-Save `discography-003`; re-Save `discography-002`; FTP/upload |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzz. G-15d-d2/d3 Discography artist local dry-run + Save final preflight — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-15d-d2-d3-gosaki-discography-artist-local-dry-run-result-and-save-final-preflight` |
+| Commit | `da6e954` |
 | Doc | `gosaki-discography-artist-local-dry-run-result-and-save-final-preflight.md` |
-| Verifier | `verify-g15d-gosaki-discography-artist-local-dry-run-result-and-save-final-preflight.mjs` |
-| Operator dry-run | **PASS** — `ok: true`, `actualWrite: false`, `wouldWrite: true` |
-| Target | `discography-003` / About Us!! / `artist` only |
-| Lock baseline | `2026-06-05T17:39:44.201802+00:00` |
-| Post-Preview DB | **unchanged** (read-only verify) |
-| Save executed | **no** |
-| **Next** | **G-15d-execution** — armed dev Save once; `updated_at` must advance |
-| Public reflection | **later** |
-| **Do not** | Save in this phase; re-Save `discography-002`; FTP/upload |
+| **Next** | G-15d-execution — **done** |
+| **Do not** | Re-Save `discography-002` |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzz. G-15d Discography next-field Save preflight — complete
 

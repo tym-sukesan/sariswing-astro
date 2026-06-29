@@ -3,9 +3,11 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-15d-d2/d3 Gosaki Discography artist local dry-run result + Save final preflight (2026-06-28):** **complete (uncommitted)** — operator local dry-run Preview **PASS**; Save final preflight documented; target `discography-003` / `artist`; Save **not executed**. Doc: `gosaki-discography-artist-local-dry-run-result-and-save-final-preflight.md`. **Next: G-15d-execution — operator Save once + `updated_at` trigger live proof.**
+**G-15d-execution Gosaki Discography artist Save result (2026-06-29):** **complete (uncommitted)** — operator Save **once** on `discography-003`; `artist` `ごさきりかこtrio` → `ごさきりかこTrio`; `updated_at` trigger live proof **success** (`2026-06-29T02:40:57.83085+00:00`); rollback **not needed**; public reflection **pending**. Doc: `gosaki-discography-artist-save-result.md`. **Do not re-Save `discography-003`. Next: G-15e artist public reflection preflight.**
 
-**G-15d Gosaki Discography next-field Save preflight (2026-06-28):** **complete** — committed `355a96c`; target `discography-003` / About Us!! / `artist` only. Doc: `gosaki-discography-next-field-save-preflight.md`.
+**G-15d-d2/d3 Gosaki Discography artist local dry-run + Save final preflight (2026-06-28):** **complete** — committed `da6e954`. Doc: `gosaki-discography-artist-local-dry-run-result-and-save-final-preflight.md`.
+
+**G-15d Gosaki Discography next-field Save preflight (2026-06-28):** **complete** — committed `355a96c`. Doc: `gosaki-discography-next-field-save-preflight.md`.
 
 **G-15c-f Gosaki Discography public reflection closure (2026-06-28):** **complete** — G-15 `purchase_url` chain **closed** (G-15a→G-15c-upload); live `/discography/` HTTP PASS; rollback **not needed**; other albums untouched. Doc: `gosaki-discography-public-reflection-closure.md`. **Do not re-Save `discography-002`; do not re-upload discography HTML.**
 

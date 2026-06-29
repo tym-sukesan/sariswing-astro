@@ -5,20 +5,28 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-15d-d2-d3-gosaki-discography-artist-local-dry-run-result-and-save-final-preflight — complete (uncommitted).
-branch: main @ 355a96c (+ G-15d-d2/d3 local doc changes)
+Current phase: G-15d-execution-gosaki-discography-artist-save-result — complete (uncommitted).
+branch: main @ da6e954 (+ G-15d-execution result doc changes)
 ```
 
 **G-15 Discography `purchase_url` chain closed. Do not re-Save discography-002; do not re-upload discography HTML.**
 
+**G-15d artist Save closed on discography-003. Do not re-Save discography-003.**
+
+## G-15d-execution Discography artist Save result — complete
+
+- **Doc:** `gosaki-discography-artist-save-result.md`
+- **Save:** operator **once** — `artist` `ごさきりかこTrio`; `updated_at` **advanced** (`2026-06-29T02:40:57.83085+00:00`)
+- **Trigger live proof:** **success** (first proof post G-15b-f8)
+- **Rollback:** not needed
+- **Public reflection:** pending — live `/discography/` likely still `ごさきりかこtrio`
+- **Next (recommended):** G-15e — artist public reflection preflight (hook + regen + upload plan)
+- **Do not:** re-Save `discography-003`; re-Save `discography-002`
+
 ## G-15d-d2/d3 Discography artist local dry-run + Save final preflight — complete
 
+- **Commit:** `da6e954`
 - **Doc:** `gosaki-discography-artist-local-dry-run-result-and-save-final-preflight.md`
-- **Operator dry-run:** **PASS** — `discography-003` / `artist`; `saveReadiness: ready_but_save_disabled`
-- **Save final preflight:** env stack + afterVerification + `updated_at` trigger proof documented
-- **Post-Preview DB:** unchanged (`artist` still `ごさきりかこtrio`)
-- **Next:** G-15d-execution — arm G-15d env stack → Preview (`ready_to_save`) → Save **once**
-- **Do not:** Save in this phase; re-Save `discography-002`
 
 ## G-15d Discography next-field Save preflight — complete
 

@@ -5,20 +5,28 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-15b-f8-execution-gosaki-discography-updated-at-trigger-apply-result — complete (uncommitted).
-branch: main @ 1931aaf
+Current phase: G-15c-gosaki-discography-public-reflection-local-regen-and-upload-preflight — complete (uncommitted).
+branch: main @ a32e95d
 ```
 
-**discography_set_updated_at live on staging. Next: G-15c public reflection.**
+**SKYLARK purchase_url reflected in local package. Next: G-15c-upload (operator manual FTP).**
+
+## G-15c Discography public reflection local regen + upload preflight — complete
+
+- **Doc:** `gosaki-discography-public-reflection-local-regen-and-upload-preflight.md`
+- **Hook:** `scripts/lib/supabase-discography-read.mjs` — read Supabase at convert; patch Wix repeater `purchase_url` by album title
+- **Regen:** `build-gosaki-staging-admin-package.mjs` PASS — 27 files; 1 `purchase_url` patch (SKYLARK)
+- **Local:** `discography/index.html` — `gosakirikako.base.shop` present; `gosaakiii.base.shop` absent
+- **Upload scope:** **1 file** — `/cms-kit-staging/gosaki-piano/discography/index.html`
+- **CSS/JS:** unchanged (`index.YcHrHZH4.css`, `index.astro_astro_type_script_index_0_lang.CTyGy8yS.js`)
+- **Live staging:** stale (SKYLARK still old URL until upload)
+- **Next:** **G-15c-upload** — operator manual upload + HTTP verify
+- **Do not:** FTP auto-apply; re-Save; upload `_astro/`
 
 ## G-15b-f8-execution Discography updated_at trigger apply — complete
 
+- **Commit:** `a32e95d`
 - **Doc:** `gosaki-discography-updated-at-trigger-apply-result.md`
-- **Apply:** operator SQL Editor — **Success**
-- **Trigger:** `discography_set_updated_at` enabled (`tgenabled: O`)
-- **discography-002:** `purchase_url` = `https://gosakirikako.base.shop/`; `updated_at` = `2026-06-05T17:39:44.201802+00:00` (unchanged — expected)
-- **Next:** **G-15c** — reflect SKYLARK `purchase_url` to Wix HTML / staging package
-- **Do not:** re-Save for trigger proof; data UPDATE in this phase
 
 ## G-15b-f8 final preflight — complete
 

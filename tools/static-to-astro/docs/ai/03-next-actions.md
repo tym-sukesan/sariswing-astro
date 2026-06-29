@@ -1,6 +1,21 @@
 Last updated: 2026-06-28
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzz. G-15c Discography public reflection local regen + upload preflight — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-15c-gosaki-discography-public-reflection-local-regen-and-upload-preflight` |
+| Doc | `gosaki-discography-public-reflection-local-regen-and-upload-preflight.md` |
+| Verifier | `verify-g15c-gosaki-discography-public-reflection-local-regen-and-upload-preflight.mjs` |
+| Target | `discography-002` / SKYLARK / `purchase_url` only |
+| Hook | `supabase-discography-read.mjs` (convert-time Supabase patch) |
+| Local HTML | new URL present; old URL absent |
+| CSS/JS hash | **unchanged** — upload `discography/index.html` ×1 |
+| Live staging | **stale** (pre-upload) |
+| **Next (recommended)** | **G-15c-upload** — operator manual upload + HTTP verify |
+| **Do not** | FTP auto-apply; re-Save; full `public-dist/` upload |
+
 ## 0zzzzzzzzzzzzzzzzzzzz. G-15b-f8-execution Discography updated_at trigger apply — complete
 
 | Item | Value |

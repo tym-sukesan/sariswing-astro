@@ -66,6 +66,10 @@ import { applyGosakiAboutContent } from "./gosaki-about-content.mjs";
 import { applyGosakiHomeYouTubeEmbed } from "./gosaki-home-youtube-embed.mjs";
 import { applyGosakiContactHubspotEmbed } from "./gosaki-contact-hubspot-embed.mjs";
 import { applyGosakiScheduleDataPages } from "./gosaki-schedule-data-pages.mjs";
+import {
+  injectDiscographyDataSourceMarker,
+  patchGosakiDiscographyPurchaseUrls,
+} from "./supabase-discography-read.mjs";
 import { applyGosakiStagingReadOnlyAdmin } from "./gosaki-staging-read-only-admin.mjs";
 import { generateGosakiFooterAstro } from "./gosaki-footer-social.mjs";
 
@@ -882,6 +886,7 @@ export function generateAstroProject(inputDir, outputDir, options = {}) {
   const scheduleHub = scheduleMonthPages.length > 0;
 
   const gosakiScheduleBundle = options.gosakiScheduleBundle ?? null;
+  const gosakiDiscographyBundle = options.gosakiDiscographyBundle ?? null;
   const useGosakiScheduleData =
     isGosakiPianoFixture(siteDir) &&
     gosakiScheduleBundle &&
@@ -918,13 +923,34 @@ export function generateAstroProject(inputDir, outputDir, options = {}) {
   }
 
   const writtenPages = [];
+  /** @type {{ discographyDataSource?: string, rowCount?: number, patchCount?: number } | null} */
+  let gosakiDiscographyDataSummary = null;
   for (const page of analysis.pages) {
     if (useGosakiScheduleData && gosakiDataMonthRoutes?.has(page.route)) {
       continue;
     }
     const pageFile = path.join(outDir, "src/pages", page.pagePath);
     const pageScripts = pageScriptMap.get(page.sourcePath) ?? [];
-    writeFile(pageFile, generatePage(page, page.mainHtml, pageScripts, linkTransformContext));
+    let mainHtml = page.mainHtml;
+    if (
+      isGosakiPianoFixture(siteDir) &&
+      page.route === "/discography/" &&
+      gosakiDiscographyBundle?.discographyDataSource === "supabase" &&
+      gosakiDiscographyBundle.releases.length > 0
+    ) {
+      const patched = patchGosakiDiscographyPurchaseUrls(
+        mainHtml,
+        gosakiDiscographyBundle.releases,
+      );
+      mainHtml = patched.html;
+      mainHtml = injectDiscographyDataSourceMarker(mainHtml, "supabase");
+      gosakiDiscographyDataSummary = {
+        discographyDataSource: "supabase",
+        rowCount: gosakiDiscographyBundle.releases.length,
+        patchCount: patched.patches.length,
+      };
+    }
+    writeFile(pageFile, generatePage(page, mainHtml, pageScripts, linkTransformContext));
     writtenPages.push(pageFile);
   }
 
@@ -1153,6 +1179,8 @@ export function generateAstroProject(inputDir, outputDir, options = {}) {
     gosakiBandProfilesSummary,
     gosakiScheduleDataSummary,
     gosakiScheduleBundle,
+    gosakiDiscographyDataSummary,
+    gosakiDiscographyBundle,
   };
 }
 
@@ -1186,6 +1214,15 @@ export function printGenerationSummary(result) {
   } else if (result.gosakiScheduleBundle?.scheduleDataSource === "wix-html") {
     console.log(
       `  Schedule data: scheduleDataSource=wix-html (Wix HTML month pages; ${result.gosakiScheduleBundle.fallbackReason ?? "no extractor data"})`,
+    );
+  }
+  if (result.gosakiDiscographyDataSummary?.discographyDataSource) {
+    console.log(
+      `  Discography data: discographyDataSource=${result.gosakiDiscographyDataSummary.discographyDataSource} (${result.gosakiDiscographyDataSummary.rowCount ?? 0} releases, ${result.gosakiDiscographyDataSummary.patchCount ?? 0} purchase_url patch(es))`,
+    );
+  } else if (result.gosakiDiscographyBundle?.discographyDataSource === "wix-html") {
+    console.log(
+      `  Discography data: discographyDataSource=wix-html (${result.gosakiDiscographyBundle.fallbackReason ?? "no supabase data"})`,
     );
   }
   if (result.seoPublishReadiness?.sitemapIntegrationEnabled) {

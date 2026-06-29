@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-15b-f8-execution Gosaki Discography updated_at trigger apply (2026-06-28):** **complete (uncommitted)** — operator applied `discography_set_updated_at` on staging; row `updated_at` unchanged as expected; `purchase_url` retained. Doc: `gosaki-discography-updated-at-trigger-apply-result.md`. **Next: G-15c public reflection.**
+**G-15c Gosaki Discography public reflection local regen + upload preflight (2026-06-28):** **complete (uncommitted)** — Supabase `purchase_url` hook at convert; `build-gosaki-staging-admin-package.mjs` PASS; SKYLARK `gosakirikako` in local `discography/index.html`; CSS/JS hash unchanged → **1-file upload**. Doc: `gosaki-discography-public-reflection-local-regen-and-upload-preflight.md`. **Operator manual upload pending (G-15c-upload).**
+
+**G-15b-f8-execution Gosaki Discography updated_at trigger apply (2026-06-28):** **complete** — committed `a32e95d`; operator applied `discography_set_updated_at` on staging. Doc: `gosaki-discography-updated-at-trigger-apply-result.md`.
 
 **G-15b-f8 Gosaki Discography updated_at trigger final preflight (2026-06-28):** **complete** — committed `1931aaf`. Doc: `gosaki-discography-updated-at-trigger-final-preflight.md`.
 

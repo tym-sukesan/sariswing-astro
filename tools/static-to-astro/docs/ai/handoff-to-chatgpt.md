@@ -5,26 +5,25 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-15b-f8-gosaki-discography-updated-at-trigger-final-preflight — complete (uncommitted).
-branch: main @ c06162b
+Current phase: G-15b-f8-execution-gosaki-discography-updated-at-trigger-apply-result — complete (uncommitted).
+branch: main @ 1931aaf
 ```
 
-**updated_at trigger preflight done. Next: G-15b-f8-execution (operator SQL apply once).**
+**discography_set_updated_at live on staging. Next: G-15c public reflection.**
 
-## G-15b-f8 Discography updated_at trigger final preflight — complete
+## G-15b-f8-execution Discography updated_at trigger apply — complete
 
+- **Doc:** `gosaki-discography-updated-at-trigger-apply-result.md`
+- **Apply:** operator SQL Editor — **Success**
+- **Trigger:** `discography_set_updated_at` enabled (`tgenabled: O`)
+- **discography-002:** `purchase_url` = `https://gosakirikako.base.shop/`; `updated_at` = `2026-06-05T17:39:44.201802+00:00` (unchanged — expected)
+- **Next:** **G-15c** — reflect SKYLARK `purchase_url` to Wix HTML / staging package
+- **Do not:** re-Save for trigger proof; data UPDATE in this phase
+
+## G-15b-f8 final preflight — complete
+
+- **Commit:** `1931aaf`
 - **Doc:** `gosaki-discography-updated-at-trigger-final-preflight.md`
-- **Template:** `gosaki-discography-updated-at-trigger.template.sql`
-- **Parity:** schedules `schedules_set_updated_at` (G-6-f8) — same `new.updated_at = now()` pattern
-- **Apply scope:** function + trigger on `public.discography` only — no DML/GRANT/policy
-- **After DDL:** `discography-002.updated_at` stays `2026-06-05T17:39:44.201802+00:00` until next UPDATE
-- **Next:** **G-15b-f8-execution** — operator runs apply block in SQL Editor (explicit approval)
-- **Do not:** Cursor SQL; Save for proof without new approval
-
-## G-15b-retry — complete
-
-- **Commit:** `c06162b`
-- **Doc:** `gosaki-discography-save-retry-result-and-updated-at-investigation.md`
 
 ## G-15b-grant-apply — complete
 

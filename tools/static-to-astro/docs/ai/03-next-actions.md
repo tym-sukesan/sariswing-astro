@@ -1,17 +1,25 @@
 Last updated: 2026-06-28
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzz. G-15b-f8-execution Discography updated_at trigger apply — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-15b-f8-execution-gosaki-discography-updated-at-trigger-apply-result` |
+| Doc | `gosaki-discography-updated-at-trigger-apply-result.md` |
+| Verifier | `verify-g15b-f8-gosaki-discography-updated-at-trigger-apply-result.mjs` |
+| Trigger | `discography_set_updated_at` — **enabled** |
+| Row `updated_at` | **unchanged** (DDL only — expected) |
+| **Next (recommended)** | **G-15c** — public reflection planning |
+| **Do not** | Re-Save for trigger proof without new approval |
+
 ## 0zzzzzzzzzzzzzzzzzzz. G-15b-f8 Discography updated_at trigger final preflight — complete
 
 | Item | Value |
 | --- | --- |
-| Phase | `G-15b-f8-gosaki-discography-updated-at-trigger-final-preflight` |
+| Commit | `1931aaf` |
 | Doc | `gosaki-discography-updated-at-trigger-final-preflight.md` |
-| Verifier | `verify-g15b-f8-gosaki-discography-updated-at-trigger-final-preflight.mjs` |
-| Template | `gosaki-discography-updated-at-trigger.template.sql` |
-| SQL executed | **none** (preflight only) |
-| **Next (recommended)** | **G-15b-f8-execution** — operator apply trigger once in SQL Editor |
-| **Do not** | Execute SQL in preflight; re-Save discography-002 for proof |
+| **Next** | G-15b-f8-execution — done |
 
 ## 0zzzzzzzzzzzzzzzzzz. G-15b-retry Discography Save retry — complete
 

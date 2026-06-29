@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-15b-f8 Gosaki Discography updated_at trigger final preflight (2026-06-28):** **complete (uncommitted)** — template reviewed vs schedules G-6-f8; apply/verify SQL documented; **no SQL executed**. Doc: `gosaki-discography-updated-at-trigger-final-preflight.md`. **Next: G-15b-f8-execution (operator apply once).**
+**G-15b-f8-execution Gosaki Discography updated_at trigger apply (2026-06-28):** **complete (uncommitted)** — operator applied `discography_set_updated_at` on staging; row `updated_at` unchanged as expected; `purchase_url` retained. Doc: `gosaki-discography-updated-at-trigger-apply-result.md`. **Next: G-15c public reflection.**
+
+**G-15b-f8 Gosaki Discography updated_at trigger final preflight (2026-06-28):** **complete** — committed `1931aaf`. Doc: `gosaki-discography-updated-at-trigger-final-preflight.md`.
 
 **G-15b-retry Gosaki Discography Save retry (2026-06-28):** **complete** — committed `c06162b`; `purchase_url` fix succeeded; `updated_at` unchanged (no trigger). Doc: `gosaki-discography-save-retry-result-and-updated-at-investigation.md`.
 

@@ -5,23 +5,26 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-15c-gosaki-discography-public-reflection-local-regen-and-upload-preflight — complete (uncommitted).
-branch: main @ a32e95d
+Current phase: G-15c-upload-gosaki-discography-public-reflection-upload-result — complete (uncommitted).
+branch: main @ 14e3696
 ```
 
-**SKYLARK purchase_url reflected in local package. Next: G-15c-upload (operator manual FTP).**
+**SKYLARK purchase_url live on staging. G-15b→G-15c-upload chain complete. Do not re-upload discography HTML.**
+
+## G-15c-upload Discography public reflection upload + HTTP verify — complete
+
+- **Doc:** `gosaki-discography-public-reflection-upload-result.md`
+- **Upload:** operator manual — `discography/index.html` ×1
+- **HTTP:** **200**; SKYLARK `https://gosakirikako.base.shop/` present; `gosaakiii.base.shop` absent
+- **Marker:** `discographyDataSource=supabase` present
+- **Other albums:** Continuous / About Us!! / Ja-Jaaaaan! present
+- **Next (optional):** G-15c-f reflection closure
+- **Do not:** re-upload `discography/index.html`; Cursor FTP; package regen
 
 ## G-15c Discography public reflection local regen + upload preflight — complete
 
+- **Commit:** `14e3696`
 - **Doc:** `gosaki-discography-public-reflection-local-regen-and-upload-preflight.md`
-- **Hook:** `scripts/lib/supabase-discography-read.mjs` — read Supabase at convert; patch Wix repeater `purchase_url` by album title
-- **Regen:** `build-gosaki-staging-admin-package.mjs` PASS — 27 files; 1 `purchase_url` patch (SKYLARK)
-- **Local:** `discography/index.html` — `gosakirikako.base.shop` present; `gosaakiii.base.shop` absent
-- **Upload scope:** **1 file** — `/cms-kit-staging/gosaki-piano/discography/index.html`
-- **CSS/JS:** unchanged (`index.YcHrHZH4.css`, `index.astro_astro_type_script_index_0_lang.CTyGy8yS.js`)
-- **Live staging:** stale (SKYLARK still old URL until upload)
-- **Next:** **G-15c-upload** — operator manual upload + HTTP verify
-- **Do not:** FTP auto-apply; re-Save; upload `_astro/`
 
 ## G-15b-f8-execution Discography updated_at trigger apply — complete
 

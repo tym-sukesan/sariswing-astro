@@ -1,19 +1,27 @@
 Last updated: 2026-06-29
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-16b Discography G-16a artist public reflection local regen + upload preflight — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-16b-gosaki-discography-artist-public-reflection-local-regen-and-upload-preflight` |
+| Base commit | `db59af7` |
+| Doc | `gosaki-discography-g16b-artist-public-reflection-local-regen-and-upload-preflight.md` |
+| Verifier | `verify-g16b-gosaki-discography-artist-public-reflection-local-regen-and-upload-preflight.mjs` |
+| Local HTML | Continuous `feat.` **PASS** |
+| Upload scope | `discography/index.html` ×1 (CSS/JS hash unchanged) |
+| **Next** | G-16b-upload (operator manual upload) |
+| **Do not** | Re-Save `001`; FTP until G-16b-upload approval |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-16a-execution Discography artist Save result — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-16a-execution-gosaki-discography-artist-save-result` |
-| Base commit | `40a2896` |
+| Commit | `db59af7` |
 | Doc | `gosaki-discography-g16a-artist-save-result.md` |
-| Verifier | `verify-g16a-gosaki-discography-artist-save-result.mjs` |
-| Target | `discography-001` / Continuous / `artist` |
-| Save | **executed once** (operator) |
-| `updated_at` proof | **success** |
-| **Next** | G-16b public reflection preflight |
-| **Do not** | Re-Save `001`/`002`/`003`; FTP until G-16b |
+| **Next** | G-16b — **done** (preflight) |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-16a-d2/d3 Discography artist local dry-run + Save final preflight — complete
 

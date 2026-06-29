@@ -14,7 +14,7 @@ export const DISCOGRAPHY_SELECT =
   "legacy_id,title,artist,purchase_url,streaming_url,sort_order,published";
 
 const REPEATER_ITEM_START_RE =
-  /<div id="comp-llexymga__item-[^"]+" class="[^"]*wixui-repeater__item"/g;
+  /<div id="comp-llexymga__item[^"]+" class="[^"]*wixui-repeater__item"/g;
 
 /**
  * @param {string | null | undefined} url
@@ -63,11 +63,20 @@ export async function loadDiscographyRowsFromSupabase({ env }) {
 
 /**
  * Find Wix repeater item bounds containing titleNeedle.
+ * Prefer album h2 `「title」` over bare title (avoids track-name collision on "Continuous").
  * @param {string} html
  * @param {string} titleNeedle
  */
 export function findDiscographyRepeaterItemBounds(html, titleNeedle) {
-  const titleIdx = html.indexOf(titleNeedle);
+  const needles = [`\u200b「${titleNeedle}」`, `「${titleNeedle}」`, titleNeedle];
+  let titleIdx = -1;
+  for (const needle of needles) {
+    const idx = html.indexOf(needle);
+    if (idx >= 0) {
+      titleIdx = idx;
+      break;
+    }
+  }
   if (titleIdx < 0) return null;
 
   /** @type {number[]} */
@@ -124,7 +133,7 @@ export function patchDiscographyItemArtist(segment, title, artist) {
   const normalizedArtist = String(artist ?? "").trim();
   if (!normalizedArtist || !title) return { segment, patched: false };
 
-  const re = new RegExp(`(「${escapeRegExp(title)}」/)([^<]+)`, "g");
+  const re = new RegExp(`(\\u200b?「${escapeRegExp(title)}」/)([^<]+)`, "g");
   const replaced = segment.replace(re, `$1${normalizedArtist}`);
   return { segment: replaced, patched: replaced !== segment };
 }

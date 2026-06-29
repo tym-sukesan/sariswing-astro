@@ -5,24 +5,29 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-16a-execution-gosaki-discography-artist-save-result — complete (uncommitted).
-branch: main @ 40a2896 (+ G-16a-execution local changes)
+Current phase: G-16b-gosaki-discography-artist-public-reflection-local-regen-and-upload-preflight — complete (uncommitted).
+branch: main @ db59af7 (+ G-16b local changes)
 ```
 
 **Closed chains — do not re-Save / re-upload:**
-- `discography-001` / `artist` (G-16a-execution — Save done; reflection pending)
+- `discography-001` / `artist` — Save done; reflection upload pending (G-16b-upload)
 - `discography-002` / `purchase_url` (G-15c-f)
 - `discography-003` / `artist` (G-15e-f)
 - `schedule-2026-04-005` / `price` (G-14b1f)
 
+## G-16b Discography G-16a artist public reflection local regen + upload preflight — complete
+
+- **Doc:** `gosaki-discography-g16b-artist-public-reflection-local-regen-and-upload-preflight.md`
+- **Local HTML:** Continuous `ごさきりかこTrio feat.石川周之介` verified; G-15c/G-15e maintained
+- **Upload:** `discography/index.html` ×1 only (CSS/JS hash unchanged)
+- **Hook fix:** `supabase-discography-read.mjs` — `item1` bounds + zwsp + title needle
+- **Next:** G-16b-upload (operator manual upload + HTTP verify)
+- **Do not:** Re-Save `001`; FTP auto-apply
+
 ## G-16a-execution Discography artist Save result — complete
 
+- **Commit:** `db59af7`
 - **Doc:** `gosaki-discography-g16a-artist-save-result.md`
-- **Target:** `discography-001` / Continuous / `artist` (`Feat.`→`feat.`)
-- **Save:** operator once; `updated_at` trigger proof **success**
-- **purchase_url:** preflight `null` was doc misrecord; actual `https://gosakirikako.base.shop/` unchanged
-- **Next:** G-16b public reflection preflight
-- **Do not:** Re-Save `001`; FTP until G-16b
 
 ## G-16a-d2/d3 Discography artist local dry-run + Save final preflight — complete
 

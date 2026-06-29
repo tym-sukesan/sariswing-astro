@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-16a-execution Gosaki Discography artist Save result (2026-06-29):** **complete (uncommitted)** — operator Save once; `updated_at` trigger proof success; `purchase_url` preflight misrecord documented. Doc: `gosaki-discography-g16a-artist-save-result.md`. **Next: G-16b public reflection preflight.** **Do not re-Save `discography-001`.**
+**G-16b Gosaki Discography G-16a artist public reflection local regen + upload preflight (2026-06-29):** **complete (uncommitted)** — Continuous `feat.` verified in local HTML; minimal 1-file upload plan; hook bounds fix. Doc: `gosaki-discography-g16b-artist-public-reflection-local-regen-and-upload-preflight.md`. **Next: G-16b-upload.** **Do not re-Save `discography-001`.**
+
+**G-16a-execution Gosaki Discography artist Save result (2026-06-29):** **complete** — committed `db59af7`. Doc: `gosaki-discography-g16a-artist-save-result.md`. **Do not re-Save `discography-001`.**
 
 **G-16a-d2/d3 Gosaki Discography artist local dry-run + Save final preflight (2026-06-29):** **complete** — committed `40a2896`. Doc: `gosaki-discography-g16a-local-dry-run-result-and-save-final-preflight.md`. **Next: G-16a-execution — done.**
 

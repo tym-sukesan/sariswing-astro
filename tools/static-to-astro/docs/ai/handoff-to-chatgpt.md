@@ -5,10 +5,9 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-18d-result-gosaki-discography-tracks-sql-execution-result — complete.
-discography_tracks: 34 rows (9/8/9/8); tracks SoT ready for planning.
-Operator renumber + INSERT success; rollback not needed.
-Next: G-18e tracks title-edit Save slice planning.
+Current phase: G-18e-gosaki-discography-tracks-title-edit-save-slice-planning — complete (+ textarea UI refinement).
+discography_tracks: 34 rows; album-level textarea diff dry-run planned for G-18f.
+Next: G-18f tracklist textarea read/parse/diff dry-run (discography-002 / SKYLARK; no DB write).
 ```
 
 **Closed chains — do not re-Save / re-upload:**
@@ -18,15 +17,23 @@ Next: G-18e tracks title-edit Save slice planning.
 - `discography-004` / `label` (G-17e-f)
 - `schedule-2026-04-005` / `price` (G-14b1f)
 
+## G-18e Discography tracks title-edit Save slice planning — complete (+ refinement)
+
+- **Doc:** `gosaki-discography-g18e-tracks-title-edit-save-slice-planning.md`
+- **Natural title correction:** **none** (白玉Bluse etc. match Wix/seed — defer)
+- **Recommended UI:** album-level multiline textarea (1 line = 1 track); parse → diff Preview
+- **Not recommended:** 34 fixed inputs; per-track fixed form as primary UI
+- **Single-row PoC:** `discography-002` track 7 / `Like a Lover` — **internal adapter reference only** (not primary UI)
+- **Album-level Save options:** (1) single UPDATE weak UX; (2) diff + per-row plan **target**; (3) full replacement dry-run first
+- **G-18f:** textarea read/parse/diff dry-run on `discography-002` / SKYLARK (8 tracks); **DB write disabled**
+- **G-18g:** textarea Save adapter planning — guards: `legacy_id` + track count + ordered title fingerprint
+- **Prerequisite (G-18g):** `discography_tracks` GRANT preflight (G-18f-grant)
+- **Next:** G-18f tracklist textarea diff dry-run implementation
+
 ## G-18d-result Discography tracks SQL execution result — complete
 
-- **Doc:** `gosaki-discography-g18d-tracks-sql-execution-result.md`
-- **Result:** **success** — operator renumber (7 rows) + INSERT (18 rows)
-- **Final:** 34 rows; per-album 9/8/9/8; seed match; duplicate 0; temp 9001–9007 = 0
-- **Rollback:** not needed; additional SQL not needed
-- **tracks SoT:** ready for next planning (title-edit Save slice)
-- **Do not:** re-run G-18c-f / G-18c INSERT templates
-- **Closed scalars:** purchase_url, artist (×2), label — unchanged
+- **Commit:** `d6d5039`
+- **Final:** 34 rows; seed match; rollback not needed
 
 ## G-18d Discography tracks manual SQL execution readiness — complete
 

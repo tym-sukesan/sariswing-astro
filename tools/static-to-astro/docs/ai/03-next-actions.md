@@ -1,17 +1,28 @@
 Last updated: 2026-06-29
 Project: Static-to-Astro CMS / Musician CMS Kit
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-18d-result Discography tracks SQL execution result — complete
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-18e Discography tracks title-edit Save slice planning — complete (+ refinement)
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-18e-gosaki-discography-tracks-title-edit-save-slice-planning` |
+| Result | No natural correction; **album-level textarea** UI recommended |
+| UI | Multiline textarea per album (1 line = 1 track); **not** 34 fixed inputs |
+| Doc | `gosaki-discography-g18e-tracks-title-edit-save-slice-planning.md` |
+| Verifier | `verify-g18e-gosaki-discography-tracks-title-edit-save-slice-planning.mjs` |
+| Single-row PoC | `discography-002` track 7 — **internal adapter reference only** |
+| **Next** | **G-18f** tracklist textarea read/parse/diff dry-run (`discography-002`; no DB write) |
+| Then | G-18f-grant → **G-18g** textarea Save adapter planning |
+| **Do not** | Guess typo fixes; re-open scalar Save chains |
+
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-18d-result Discography tracks SQL execution result — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-18d-result-gosaki-discography-tracks-sql-execution-result` |
-| Result | **success** — 16→34 rows; renumber + INSERT by operator |
+| Commit | `d6d5039` |
 | Doc | `gosaki-discography-g18d-tracks-sql-execution-result.md` |
-| Verifier | `verify-g18d-gosaki-discography-tracks-sql-execution-result.mjs` |
-| Rollback | **not needed** |
-| **Next** | G-18e tracks title-edit Save slice planning |
-| **Do not** | Re-run G-18c-f renumber or G-18c INSERT templates |
+| **Next** | G-18e — **done** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-18d Discography tracks manual SQL execution readiness — complete
 

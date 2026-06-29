@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-17b Gosaki Discography scalar field commonization (2026-06-29):** **complete (uncommitted)** — registry + generic config/guards + adapter lookup + public patch registry; legacy wrappers preserved. Doc: `gosaki-discography-g17b-scalar-field-commonization.md`. **Next: G-17c registry-native field slice on `discography-004`.**
+**G-17c Gosaki Discography registry-based next field slice preflight (2026-06-29):** **complete (uncommitted)** — `discography-004` / `label` selected; registry entry `g17c-label`; generic dry-run wired; Save blocked until G-17d. Doc: `gosaki-discography-g17c-next-field-registry-slice-preflight.md`. **Next: G-17c-d dry-run Preview operator check → G-17d Save execution.**
+
+**G-17b Gosaki Discography scalar field commonization (2026-06-29):** **complete** — committed `397f245`. Doc: `gosaki-discography-g17b-scalar-field-commonization.md`.
 
 **G-17a Gosaki Discography CMS commonization audit (2026-06-29):** **complete** — committed `5161eaa`. Doc: `gosaki-discography-g17a-commonization-audit.md`.
 

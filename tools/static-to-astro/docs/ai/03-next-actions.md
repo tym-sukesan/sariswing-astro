@@ -1,17 +1,32 @@
 Last updated: 2026-06-29
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-17c Discography registry next field slice preflight — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-17c-gosaki-discography-existing-release-label-non-dry-run` |
+| Base commit | `397f245` |
+| Target | `discography-004` / `Ja-Jaaaaan!` / `label` |
+| Before → after | null → `Mardi Gras JAPAN Records` |
+| Doc | `gosaki-discography-g17c-next-field-registry-slice-preflight.md` |
+| Verifier | `verify-g17c-gosaki-discography-next-field-registry-slice-preflight.mjs` |
+| Dry-run approvalId | `G-17c-gosaki-discography-label-dry-run-slice` |
+| Save approvalId | `G-17c-gosaki-discography-existing-release-label-non-dry-run` |
+| **Next** | G-17c-d operator dry-run Preview check → G-17d Save execution |
+| **Do not** | Save / DB write in G-17c; re-Save closed chains |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-17b Discography scalar field commonization — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-17b-gosaki-discography-scalar-field-commonization` |
-| Base commit | `5161eaa` |
+| Commit | `397f245` |
 | Doc | `gosaki-discography-g17b-scalar-field-commonization.md` |
 | Verifier | `verify-g17b-gosaki-discography-scalar-field-commonization.mjs` |
 | Deliverables | registry, generic config/guards, adapter lookup, public patch registry |
-| **Next** | G-17c registry-native field slice (`discography-004`) |
-| **Do not** | Re-Save closed chains; new Save in G-17b |
+| **Next** | G-17c — **done** |
+| **Do not** | Re-Save closed chains |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-17a Discography CMS commonization audit — complete
 

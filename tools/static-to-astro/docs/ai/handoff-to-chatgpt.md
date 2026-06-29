@@ -5,8 +5,8 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-17b-gosaki-discography-scalar-field-commonization — complete (uncommitted).
-branch: main @ 5161eaa (+ G-17b local changes)
+Current phase: G-17c-gosaki-discography-existing-release-label-non-dry-run — preflight complete (uncommitted).
+branch: main @ 397f245 (+ G-17c local changes)
 ```
 
 **Closed chains — do not re-Save / re-upload:**
@@ -15,14 +15,23 @@ branch: main @ 5161eaa (+ G-17b local changes)
 - `discography-003` / `artist` (G-15e-f)
 - `schedule-2026-04-005` / `price` (G-14b1f)
 
+## G-17c Discography registry next field slice preflight — complete
+
+- **Doc:** `gosaki-discography-g17c-next-field-registry-slice-preflight.md`
+- **Target:** `discography-004` / `label` — null → `Mardi Gras JAPAN Records`
+- **Registry:** `g17c-label` in `discography-scalar-field-slice-registry.ts` (`closed: false`)
+- **Generic dry-run:** `discography-scalar-field-dry-run.ts` + admin UI wired
+- **Save:** blocked until G-17d (`runSave` alert in preflight)
+- **Next:** operator dry-run Preview → G-17d Save execution
+- **Do not:** Save / DB write in G-17c
+
 ## G-17b Discography scalar field commonization — complete
 
+- **Commit:** `397f245`
 - **Doc:** `gosaki-discography-g17b-scalar-field-commonization.md`
-- **Registry:** `discography-scalar-field-slice-registry.ts` (3 closed entries)
+- **Registry:** `discography-scalar-field-slice-registry.ts` (3 closed + 1 open G-17c)
 - **Generic:** `discography-scalar-field-save-config.ts`, `discography-scalar-field-guards.ts`
-- **Public patch:** `DISCOGRAPHY_PUBLIC_PATCH_REGISTRY` in `supabase-discography-read.mjs`
-- **Next:** G-17c — first registry-native slice on `discography-004` (`title` or `year`)
-- **Do not:** Save / DB write in G-17b
+- **Public patch:** `DISCOGRAPHY_PUBLIC_PATCH_REGISTRY` in `supabase-discography-read.mjs` (`purchase_url`, `artist` only — `label` deferred to reflection phase)
 
 ## G-17a Discography CMS commonization audit — complete
 

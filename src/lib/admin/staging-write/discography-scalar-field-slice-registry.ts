@@ -8,6 +8,7 @@ import {
   G15B_DISCOGRAPHY_PURCHASE_URL_NON_DRY_RUN_APPROVAL_ID,
   G15D_DISCOGRAPHY_ARTIST_NON_DRY_RUN_APPROVAL_ID,
   G16A_DISCOGRAPHY_ARTIST_NON_DRY_RUN_APPROVAL_ID,
+  G17C_DISCOGRAPHY_LABEL_NON_DRY_RUN_APPROVAL_ID,
   type DiscographyWriteApprovalIdUnion,
 } from "./discography-write-types";
 import {
@@ -36,6 +37,15 @@ import {
   G16A_TARGET_TITLE,
   G16A_TARGET_UPDATED_AT_BASELINE,
 } from "./gosaki-discography-g16a-next-field-types";
+import {
+  G17C_DRY_RUN_SLICE_APPROVAL_ID,
+  G17C_TARGET_LABEL_AFTER,
+  G17C_TARGET_LABEL_BEFORE,
+  G17C_TARGET_ID,
+  G17C_TARGET_LEGACY_ID,
+  G17C_TARGET_TITLE,
+  G17C_TARGET_UPDATED_AT_BASELINE,
+} from "./gosaki-discography-g17c-next-field-types";
 
 export const G15B_PHASE = "G-15b-gosaki-discography-existing-release-purchase-url-non-dry-run";
 export const G15B_DISCOGRAPHY_PURCHASE_URL_NON_DRY_RUN_ARMED_ENV =
@@ -52,18 +62,25 @@ export const G16A_DISCOGRAPHY_ARTIST_NON_DRY_RUN_ARMED_ENV =
   "PUBLIC_ADMIN_GOSAKI_DISCOGRAPHY_G16A_ARTIST_NON_DRY_RUN_ARMED";
 export const G16A_DISCOGRAPHY_SAVE_ENABLED_ENV = "G16A_DISCOGRAPHY_SAVE_ENABLED";
 
+export const G17C_PHASE = "G-17c-gosaki-discography-existing-release-label-non-dry-run";
+export const G17C_DISCOGRAPHY_LABEL_NON_DRY_RUN_ARMED_ENV =
+  "PUBLIC_ADMIN_GOSAKI_DISCOGRAPHY_G17C_LABEL_NON_DRY_RUN_ARMED";
+export const G17C_DISCOGRAPHY_SAVE_ENABLED_ENV = "G17C_DISCOGRAPHY_SAVE_ENABLED";
+
 export type DiscographyScalarFieldName =
   | "purchase_url"
   | "artist"
   | "title"
   | "year"
   | "release_date"
-  | "catalog_number";
+  | "catalog_number"
+  | "label";
 
 export type DiscographyScalarFieldSliceId =
   | "g15b-purchase-url"
   | "g15d-artist"
-  | "g16a-artist";
+  | "g16a-artist"
+  | "g17c-label";
 
 export type DiscographyScalarFieldSliceEntry = {
   sliceId: DiscographyScalarFieldSliceId;
@@ -80,7 +97,7 @@ export type DiscographyScalarFieldSliceEntry = {
   expectedBeforeUpdatedAt: string;
   expectedBefore: string;
   expectedAfter: string;
-  closed: true;
+  closed: boolean;
   forbiddenMarkers: readonly string[];
   publicPatchField: DiscographyScalarFieldName | null;
   defaultDisabledReason: string;
@@ -152,6 +169,27 @@ export const DISCOGRAPHY_SCALAR_FIELD_SLICE_REGISTRY: readonly DiscographyScalar
       publicPatchField: "artist",
       defaultDisabledReason:
         "Save disabled by default. Arm G-16a env stack for operator non-dry-run Save.",
+    },
+    {
+      sliceId: "g17c-label",
+      phase: G17C_PHASE,
+      phaseLabel: "G-17c",
+      legacyId: G17C_TARGET_LEGACY_ID,
+      rowId: G17C_TARGET_ID,
+      title: G17C_TARGET_TITLE,
+      field: "label",
+      approvalId: G17C_DISCOGRAPHY_LABEL_NON_DRY_RUN_APPROVAL_ID,
+      dryRunApprovalId: G17C_DRY_RUN_SLICE_APPROVAL_ID,
+      armedEnvName: G17C_DISCOGRAPHY_LABEL_NON_DRY_RUN_ARMED_ENV,
+      enabledEnvName: G17C_DISCOGRAPHY_SAVE_ENABLED_ENV,
+      expectedBeforeUpdatedAt: G17C_TARGET_UPDATED_AT_BASELINE,
+      expectedBefore: G17C_TARGET_LABEL_BEFORE,
+      expectedAfter: G17C_TARGET_LABEL_AFTER,
+      closed: false,
+      forbiddenMarkers: ["[CMS Kit staging]", "PoC", "test", "G-17", "dry-run"],
+      publicPatchField: "label",
+      defaultDisabledReason:
+        "Save disabled by default. Arm G-17c env stack for operator non-dry-run Save.",
     },
   ];
 

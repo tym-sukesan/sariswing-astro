@@ -5,9 +5,9 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-18c-f-gosaki-discography-tracks-renumber-update-preflight — complete.
-7-row renumber UPDATE template ready; G-18c INSERT still execution-prohibited.
-Next: G-18d operator renumber SQL → then G-18c INSERT (18 rows).
+Current phase: G-18d-gosaki-discography-tracks-manual-sql-execution-readiness — complete.
+Runbook + operator read-only SQL ready. Cursor did not execute SQL.
+Next: G-18d-operator-readonly-check → renumber → insert → result-recording.
 ```
 
 **Closed chains — do not re-Save / re-upload:**
@@ -17,20 +17,20 @@ Next: G-18d operator renumber SQL → then G-18c INSERT (18 rows).
 - `discography-004` / `label` (G-17e-f)
 - `schedule-2026-04-005` / `price` (G-14b1f)
 
+## G-18d Discography tracks manual SQL execution readiness — complete
+
+- **Doc:** `gosaki-discography-g18d-tracks-manual-sql-execution-readiness.md`
+- **Read-only SQL:** `gosaki-discography-tracks-g18d-operator-readonly-check.sql`
+- **Order:** Step 1 readonly → Step 2 renumber (`gosaki-discography-tracks-renumber-g18c-f.template.sql`) → Step 3 INSERT (`gosaki-discography-tracks-backfill-g18c.template.sql`)
+- **INSERT before renumber:** **prohibited**
+- **Cursor:** did not execute SQL / DB write
+- **Next:** G-18d-operator-readonly-check (operator runs Step 1)
+
 ## G-18c-f Discography tracks renumber UPDATE preflight — complete
 
+- **Commit:** `6d5f78e`
 - **Doc:** `gosaki-discography-g18c-f-tracks-renumber-update-preflight.md`
-- **SQL:** `gosaki-discography-tracks-renumber-g18c-f.template.sql` (7 rows, 2-phase 9001–9007 — **not executed**)
-- **Renumber:** 7 rows; **unchanged:** 9 rows
-- **Note:** discography-002 #8 is **The Water Is Wide** (not Amapola)
-- **G-18c INSERT:** still **execution-prohibited** until renumber succeeds
-- **Next:** G-18d operator renumber → G-18c INSERT
-
-## G-18c Discography tracks gap backfill preflight — complete
-
-- **Commit:** `8fca735`
-- **Doc:** `gosaki-discography-g18c-tracks-gap-backfill-preflight.md`
-- **INSERT template:** 18 rows — blocked until G-18c-f renumber
+- **SQL:** 7-row 2-phase UPDATE template
 
 ## G-18b Discography tracks / personnel / price design — complete
 

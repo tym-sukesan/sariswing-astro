@@ -1,19 +1,28 @@
 Last updated: 2026-06-29
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-15e-f Discography artist public reflection closure — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-15e-f-gosaki-discography-artist-public-reflection-closure` |
+| Base commit | `6dc81c3` |
+| Doc | `gosaki-discography-artist-public-reflection-closure.md` |
+| Verifier | `verify-g15e-f-gosaki-discography-artist-public-reflection-closure.mjs` |
+| Chain | G-15d → G-15e-upload — **closed** (`discography-003` / `artist`) |
+| Live HTTP | **PASS**; G-15c SKYLARK URL maintained |
+| **Next (recommended)** | **G-16a** — next Discography field Save slice (`title` / `year` on unclosed row) |
+| **Do not** | Re-Save `discography-003`; re-Save `discography-002`; re-upload discography HTML |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-15e-upload Discography artist public reflection upload + HTTP verify — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-15e-upload-gosaki-discography-artist-public-reflection-upload-result` |
-| Base commit | `566d714` |
+| Commit | `6dc81c3` |
 | Doc | `gosaki-discography-artist-public-reflection-upload-result.md` |
-| Verifier | `verify-g15e-gosaki-discography-artist-public-reflection-upload-result.mjs` |
-| Upload | `discography/index.html` ×1 (operator manual) |
-| HTTP | **200**; About Us `ごさきりかこTrio` live; old `ごさきりかこtrio` absent |
-| G-15c purchase_url | **maintained** |
-| **Next** | **G-15e-f** — artist public reflection closure doc (optional) |
-| **Do not** | Re-upload `discography/index.html`; re-Save `discography-003` |
+| **Next** | G-15e-f — **done** |
+| **Do not** | Re-upload `discography/index.html` |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzz. G-15e Discography artist public reflection local regen + upload preflight — complete
 

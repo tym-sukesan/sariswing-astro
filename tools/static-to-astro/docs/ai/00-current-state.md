@@ -3,9 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-18c Gosaki Discography tracks gap backfill preflight (2026-06-29):** **complete (uncommitted)** — gap matrix 18 missing; INSERT template; **5 track_number conflicts** → G-18c-f renumber before execution. Doc: `gosaki-discography-g18c-tracks-gap-backfill-preflight.md`. **No INSERT executed.**
+**G-18c-f Gosaki Discography tracks renumber UPDATE preflight (2026-06-29):** **complete (uncommitted)** — 7-row 2-phase UPDATE template (9001–9007 staging); 9 rows unchanged. Doc: `gosaki-discography-g18c-f-tracks-renumber-update-preflight.md`. **No SQL executed.** **Next: G-18d operator renumber execution → G-18c INSERT.**
 
-**G-18b Gosaki Discography tracks / personnel / price design (2026-06-29):** **complete** — committed `c2bbcd1`. Doc: `gosaki-discography-g18b-tracks-personnel-price-design.md`.
+**G-18c Gosaki Discography tracks gap backfill preflight (2026-06-29):** **complete** — committed `8fca735`. Doc: `gosaki-discography-g18c-tracks-gap-backfill-preflight.md`. INSERT template **execution-prohibited** until renumber.
 
 **G-17e-f Gosaki Discography G-17c label Save / public reflection closure (2026-06-29):** **complete** — committed `8fecb44`. Doc: `gosaki-discography-g17e-label-public-reflection-closure.md`.
 

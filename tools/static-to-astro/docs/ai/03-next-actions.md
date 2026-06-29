@@ -1,17 +1,26 @@
 Last updated: 2026-06-29
 Project: Static-to-Astro CMS / Musician CMS Kit
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-18c Discography tracks gap backfill preflight — complete
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-18c-f Discography tracks renumber UPDATE preflight — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-18c-f-gosaki-discography-tracks-renumber-update-preflight` |
+| Result | 7-row 2-phase UPDATE template; 9 rows unchanged |
+| Doc | `gosaki-discography-g18c-f-tracks-renumber-update-preflight.md` |
+| SQL | `gosaki-discography-tracks-renumber-g18c-f.template.sql` |
+| Verifier | `verify-g18c-f-gosaki-discography-tracks-renumber-update-preflight.mjs` |
+| **Next** | G-18d operator renumber SQL execution → then G-18c INSERT |
+| **Do not** | Run UPDATE/INSERT in G-18c-f; G-18c INSERT still blocked until renumber |
+
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-18c Discography tracks gap backfill preflight — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-18c-gosaki-discography-tracks-gap-backfill-preflight` |
-| Result | 18-row INSERT template; **5 track_number conflicts** with existing 16 rows |
+| Commit | `8fca735` |
 | Doc | `gosaki-discography-g18c-tracks-gap-backfill-preflight.md` |
-| SQL | `gosaki-discography-tracks-backfill-g18c.template.sql` |
-| Verifier | `verify-g18c-gosaki-discography-tracks-gap-backfill-preflight.mjs` |
-| **Next** | **G-18c-f** track_number renumber preflight → then G-18d operator INSERT |
-| **Do not** | Run INSERT in SQL Editor without G-18c-f + operator approval |
+| **Next** | G-18c-f — **done** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-18b Discography tracks / personnel / price design — complete
 

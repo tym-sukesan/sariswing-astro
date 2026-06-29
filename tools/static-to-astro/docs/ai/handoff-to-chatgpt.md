@@ -5,9 +5,9 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-18c-gosaki-discography-tracks-gap-backfill-preflight — complete.
-18 missing discography_tracks documented; INSERT template ready; 5 track_number conflicts.
-Next: G-18c-f renumber preflight, then G-18d operator INSERT (not in G-18c).
+Current phase: G-18c-f-gosaki-discography-tracks-renumber-update-preflight — complete.
+7-row renumber UPDATE template ready; G-18c INSERT still execution-prohibited.
+Next: G-18d operator renumber SQL → then G-18c INSERT (18 rows).
 ```
 
 **Closed chains — do not re-Save / re-upload:**
@@ -17,14 +17,20 @@ Next: G-18c-f renumber preflight, then G-18d operator INSERT (not in G-18c).
 - `discography-004` / `label` (G-17e-f)
 - `schedule-2026-04-005` / `price` (G-14b1f)
 
+## G-18c-f Discography tracks renumber UPDATE preflight — complete
+
+- **Doc:** `gosaki-discography-g18c-f-tracks-renumber-update-preflight.md`
+- **SQL:** `gosaki-discography-tracks-renumber-g18c-f.template.sql` (7 rows, 2-phase 9001–9007 — **not executed**)
+- **Renumber:** 7 rows; **unchanged:** 9 rows
+- **Note:** discography-002 #8 is **The Water Is Wide** (not Amapola)
+- **G-18c INSERT:** still **execution-prohibited** until renumber succeeds
+- **Next:** G-18d operator renumber → G-18c INSERT
+
 ## G-18c Discography tracks gap backfill preflight — complete
 
+- **Commit:** `8fca735`
 - **Doc:** `gosaki-discography-g18c-tracks-gap-backfill-preflight.md`
-- **SQL template:** `gosaki-discography-tracks-backfill-g18c.template.sql` (18 INSERT rows — **not executed**)
-- **Gap:** 16 → 34 tracks; 18 missing titles from seed/fixture/public
-- **Blocker:** 5 INSERT rows conflict on `track_number` with existing 16 (sparse renumbered subset, not prefix)
-- **Next:** **G-18c-f** UPDATE renumber preflight → **G-18d** operator INSERT approval
-- **Do not:** Run INSERT in G-18c; do not touch existing 16 rows without G-18c-f plan
+- **INSERT template:** 18 rows — blocked until G-18c-f renumber
 
 ## G-18b Discography tracks / personnel / price design — complete
 

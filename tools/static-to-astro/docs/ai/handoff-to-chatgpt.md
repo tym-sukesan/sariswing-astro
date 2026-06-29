@@ -5,26 +5,24 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-15c-upload-gosaki-discography-public-reflection-upload-result — complete (uncommitted).
-branch: main @ 14e3696
+Current phase: G-15c-f-gosaki-discography-public-reflection-closure — complete (uncommitted).
+branch: main @ 4fea4f2
 ```
 
-**SKYLARK purchase_url live on staging. G-15b→G-15c-upload chain complete. Do not re-upload discography HTML.**
+**G-15 Discography `purchase_url` chain closed. Do not re-Save discography-002; do not re-upload discography HTML.**
+
+## G-15c-f Discography public reflection closure — complete
+
+- **Doc:** `gosaki-discography-public-reflection-closure.md`
+- **Chain closed:** G-15a → G-15a2 → G-15b-retry → G-15b-f8 → G-15c → G-15c-upload
+- **Live:** `/discography/` HTTP **200**; SKYLARK new URL; old URL absent; `discographyDataSource=supabase`
+- **Next (recommended):** G-16a — next field Save slice (`streaming_url`) or Kit Save/Reflection playbook (doc-only)
+- **Do not:** re-Save `discography-002`; re-upload `discography/index.html`
 
 ## G-15c-upload Discography public reflection upload + HTTP verify — complete
 
+- **Commit:** `4fea4f2`
 - **Doc:** `gosaki-discography-public-reflection-upload-result.md`
-- **Upload:** operator manual — `discography/index.html` ×1
-- **HTTP:** **200**; SKYLARK `https://gosakirikako.base.shop/` present; `gosaakiii.base.shop` absent
-- **Marker:** `discographyDataSource=supabase` present
-- **Other albums:** Continuous / About Us!! / Ja-Jaaaaan! present
-- **Next (optional):** G-15c-f reflection closure
-- **Do not:** re-upload `discography/index.html`; Cursor FTP; package regen
-
-## G-15c Discography public reflection local regen + upload preflight — complete
-
-- **Commit:** `14e3696`
-- **Doc:** `gosaki-discography-public-reflection-local-regen-and-upload-preflight.md`
 
 ## G-15b-f8-execution Discography updated_at trigger apply — complete
 

@@ -1,16 +1,30 @@
 Last updated: 2026-06-28
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzz. G-15c-f Discography public reflection closure — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-15c-f-gosaki-discography-public-reflection-closure` |
+| Doc | `gosaki-discography-public-reflection-closure.md` |
+| Verifier | `verify-g15c-f-gosaki-discography-public-reflection-closure.mjs` |
+| Chain | G-15a → G-15a2 → G-15b → G-15c → G-15c-upload — **closed** |
+| Field | `discography-002` / SKYLARK / `purchase_url` only |
+| Live HTTP | **PASS** |
+| **Next (recommended)** | **G-16a** — next Discography field Save slice (`streaming_url` or doc-only Kit playbook) |
+| **Do not** | Re-Save `discography-002`; re-upload `discography/index.html` |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzz. G-15c-upload Discography public reflection upload + HTTP verify — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-15c-upload-gosaki-discography-public-reflection-upload-result` |
+| Commit | `4fea4f2` |
 | Doc | `gosaki-discography-public-reflection-upload-result.md` |
 | Verifier | `verify-g15c-gosaki-discography-public-reflection-upload-result.mjs` |
 | Upload | `discography/index.html` ×1 (operator manual) |
 | HTTP | **200**; SKYLARK new URL live; old URL absent |
-| **Next (optional)** | **G-15c-f** — reflection closure doc |
+| **Next** | G-15c-f — **done** |
 | **Do not** | Re-upload `discography/index.html`; re-Save same row |
 
 ## 0zzzzzzzzzzzzzzzzzzzzz. G-15c Discography public reflection local regen + upload preflight — complete

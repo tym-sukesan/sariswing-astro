@@ -1,17 +1,26 @@
 Last updated: 2026-06-29
 Project: Static-to-Astro CMS / Musician CMS Kit
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-18d Discography tracks manual SQL execution readiness — complete
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-18d-result Discography tracks SQL execution result — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-18d-result-gosaki-discography-tracks-sql-execution-result` |
+| Result | **success** — 16→34 rows; renumber + INSERT by operator |
+| Doc | `gosaki-discography-g18d-tracks-sql-execution-result.md` |
+| Verifier | `verify-g18d-gosaki-discography-tracks-sql-execution-result.mjs` |
+| Rollback | **not needed** |
+| **Next** | G-18e tracks title-edit Save slice planning |
+| **Do not** | Re-run G-18c-f renumber or G-18c INSERT templates |
+
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-18d Discography tracks manual SQL execution readiness — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-18d-gosaki-discography-tracks-manual-sql-execution-readiness` |
-| Result | Runbook + operator read-only SQL; templates re-inspected |
+| Commit | `86df73c` |
 | Doc | `gosaki-discography-g18d-tracks-manual-sql-execution-readiness.md` |
-| Read-only SQL | `gosaki-discography-tracks-g18d-operator-readonly-check.sql` |
-| Verifier | `verify-g18d-gosaki-discography-tracks-manual-sql-execution-readiness.mjs` |
-| **Next** | G-18d-operator-readonly-check → renumber → insert → result-recording |
-| **Do not** | Cursor SQL execution; INSERT before renumber success |
+| **Next** | G-18d-result — **done** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-18c-f Discography tracks renumber UPDATE preflight — complete
 

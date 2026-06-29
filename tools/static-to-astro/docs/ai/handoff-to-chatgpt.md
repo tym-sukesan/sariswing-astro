@@ -5,9 +5,10 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-18d-gosaki-discography-tracks-manual-sql-execution-readiness — complete.
-Runbook + operator read-only SQL ready. Cursor did not execute SQL.
-Next: G-18d-operator-readonly-check → renumber → insert → result-recording.
+Current phase: G-18d-result-gosaki-discography-tracks-sql-execution-result — complete.
+discography_tracks: 34 rows (9/8/9/8); tracks SoT ready for planning.
+Operator renumber + INSERT success; rollback not needed.
+Next: G-18e tracks title-edit Save slice planning.
 ```
 
 **Closed chains — do not re-Save / re-upload:**
@@ -17,20 +18,20 @@ Next: G-18d-operator-readonly-check → renumber → insert → result-recording
 - `discography-004` / `label` (G-17e-f)
 - `schedule-2026-04-005` / `price` (G-14b1f)
 
+## G-18d-result Discography tracks SQL execution result — complete
+
+- **Doc:** `gosaki-discography-g18d-tracks-sql-execution-result.md`
+- **Result:** **success** — operator renumber (7 rows) + INSERT (18 rows)
+- **Final:** 34 rows; per-album 9/8/9/8; seed match; duplicate 0; temp 9001–9007 = 0
+- **Rollback:** not needed; additional SQL not needed
+- **tracks SoT:** ready for next planning (title-edit Save slice)
+- **Do not:** re-run G-18c-f / G-18c INSERT templates
+- **Closed scalars:** purchase_url, artist (×2), label — unchanged
+
 ## G-18d Discography tracks manual SQL execution readiness — complete
 
+- **Commit:** `86df73c`
 - **Doc:** `gosaki-discography-g18d-tracks-manual-sql-execution-readiness.md`
-- **Read-only SQL:** `gosaki-discography-tracks-g18d-operator-readonly-check.sql`
-- **Order:** Step 1 readonly → Step 2 renumber (`gosaki-discography-tracks-renumber-g18c-f.template.sql`) → Step 3 INSERT (`gosaki-discography-tracks-backfill-g18c.template.sql`)
-- **INSERT before renumber:** **prohibited**
-- **Cursor:** did not execute SQL / DB write
-- **Next:** G-18d-operator-readonly-check (operator runs Step 1)
-
-## G-18c-f Discography tracks renumber UPDATE preflight — complete
-
-- **Commit:** `6d5f78e`
-- **Doc:** `gosaki-discography-g18c-f-tracks-renumber-update-preflight.md`
-- **SQL:** 7-row 2-phase UPDATE template
 
 ## G-18b Discography tracks / personnel / price design — complete
 

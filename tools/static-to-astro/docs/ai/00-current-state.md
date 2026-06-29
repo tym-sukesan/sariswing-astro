@@ -3,9 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-18d Gosaki Discography tracks manual SQL execution readiness (2026-06-29):** **complete (uncommitted)** — runbook + operator read-only SQL; templates re-inspected. Doc: `gosaki-discography-g18d-tracks-manual-sql-execution-readiness.md`. **Cursor did not execute SQL.** **Next: G-18d-operator-readonly-check.**
+**G-18d-result Gosaki Discography tracks SQL execution result (2026-06-29):** **complete (uncommitted)** — operator renumber + INSERT success; 16→34 rows; seed match. Doc: `gosaki-discography-g18d-tracks-sql-execution-result.md`. **rollback not needed.** **Next: G-18e tracks title-edit Save slice planning.**
 
-**G-18c-f Gosaki Discography tracks renumber UPDATE preflight (2026-06-29):** **complete** — committed `6d5f78e` (with G-18c). Doc: `gosaki-discography-g18c-f-tracks-renumber-update-preflight.md`.
+**G-18d Gosaki Discography tracks manual SQL execution readiness (2026-06-29):** **complete** — committed `86df73c`. Doc: `gosaki-discography-g18d-tracks-manual-sql-execution-readiness.md`.
 
 **G-17e-f Gosaki Discography G-17c label Save / public reflection closure (2026-06-29):** **complete** — committed `8fecb44`. Doc: `gosaki-discography-g17e-label-public-reflection-closure.md`.
 

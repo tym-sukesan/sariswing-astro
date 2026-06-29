@@ -5,8 +5,8 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-17c-gosaki-discography-existing-release-label-non-dry-run — preflight complete (uncommitted).
-branch: main @ 397f245 (+ G-17c local changes)
+Current phase: G-17c-d2-d3-gosaki-discography-label-local-dry-run-result-and-save-final-preflight — complete (uncommitted).
+branch: main @ 9475286 (+ G-17c-d2/d3 local doc changes)
 ```
 
 **Closed chains — do not re-Save / re-upload:**
@@ -15,15 +15,21 @@ branch: main @ 397f245 (+ G-17c local changes)
 - `discography-003` / `artist` (G-15e-f)
 - `schedule-2026-04-005` / `price` (G-14b1f)
 
+## G-17c-d2 / G-17d-d3 Discography label dry-run result + Save final preflight — complete
+
+- **Doc:** `gosaki-discography-g17c-label-dry-run-result-and-g17d-save-final-preflight.md`
+- **Operator dry-run:** PASS on `discography-004` / `label` via generic registry path
+- **G-17d env stack:** documented (non-dry-run); **not started**
+- **Save UI:** still blocked (`runSave` g17c-label alert) — **G-17d-implementation** required before execution
+- **Next:** G-17d-implementation → G-17d-execution (operator Save once)
+- **Do not:** Save / DB write in this phase
+
 ## G-17c Discography registry next field slice preflight — complete
 
+- **Commit:** `9475286`
 - **Doc:** `gosaki-discography-g17c-next-field-registry-slice-preflight.md`
 - **Target:** `discography-004` / `label` — null → `Mardi Gras JAPAN Records`
-- **Registry:** `g17c-label` in `discography-scalar-field-slice-registry.ts` (`closed: false`)
-- **Generic dry-run:** `discography-scalar-field-dry-run.ts` + admin UI wired
-- **Save:** blocked until G-17d (`runSave` alert in preflight)
-- **Next:** operator dry-run Preview → G-17d Save execution
-- **Do not:** Save / DB write in G-17c
+- **Registry:** `g17c-label` (`closed: false`)
 
 ## G-17b Discography scalar field commonization — complete
 

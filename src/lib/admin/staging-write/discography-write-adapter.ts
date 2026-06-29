@@ -16,6 +16,7 @@ import {
   G15B_DISCOGRAPHY_PURCHASE_URL_NON_DRY_RUN_APPROVAL_ID,
   G15D_DISCOGRAPHY_ARTIST_NON_DRY_RUN_APPROVAL_ID,
   G16A_DISCOGRAPHY_ARTIST_NON_DRY_RUN_APPROVAL_ID,
+  G17C_DISCOGRAPHY_LABEL_NON_DRY_RUN_APPROVAL_ID,
   type DiscographyUpdateWritePayload,
   type DiscographyWriteAdapterResult,
   type DiscographyWriteClient,
@@ -30,6 +31,8 @@ const SUCCESS_ROLLBACK_HINT_ARTIST =
   "Manual rollback required if needed. Restore artist on public.discography by legacy_id.";
 const SUCCESS_ROLLBACK_HINT_G16A_ARTIST =
   "Manual rollback required if needed. Restore artist on discography-001 by legacy_id.";
+const SUCCESS_ROLLBACK_HINT_G17C_LABEL =
+  "Manual rollback required if needed. Restore label on discography-004 by legacy_id.";
 const NO_ROLLBACK_HINT = "No rollback required because actualWrite is false.";
 
 function buildFailure(
@@ -222,11 +225,13 @@ export async function updateDiscographyWrite(input: {
   const changedFields = computeChangedFields(beforeSnapshot, afterSnapshot, payload);
 
   const rollbackHint =
-    approvalId === G16A_DISCOGRAPHY_ARTIST_NON_DRY_RUN_APPROVAL_ID
-      ? SUCCESS_ROLLBACK_HINT_G16A_ARTIST
-      : approvalId === G15D_DISCOGRAPHY_ARTIST_NON_DRY_RUN_APPROVAL_ID
-        ? SUCCESS_ROLLBACK_HINT_ARTIST
-        : SUCCESS_ROLLBACK_HINT_PURCHASE_URL;
+    approvalId === G17C_DISCOGRAPHY_LABEL_NON_DRY_RUN_APPROVAL_ID
+      ? SUCCESS_ROLLBACK_HINT_G17C_LABEL
+      : approvalId === G16A_DISCOGRAPHY_ARTIST_NON_DRY_RUN_APPROVAL_ID
+        ? SUCCESS_ROLLBACK_HINT_G16A_ARTIST
+        : approvalId === G15D_DISCOGRAPHY_ARTIST_NON_DRY_RUN_APPROVAL_ID
+          ? SUCCESS_ROLLBACK_HINT_ARTIST
+          : SUCCESS_ROLLBACK_HINT_PURCHASE_URL;
 
   const result: DiscographyWriteResult = {
     module: "discography",

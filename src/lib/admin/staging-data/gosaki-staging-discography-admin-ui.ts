@@ -45,6 +45,12 @@ import {
   type DiscographyScalarSliceDryRunResult,
 } from "../staging-write/discography-scalar-field-dry-run";
 import {
+  executeDiscographyScalarSliceSave,
+  isDiscographyScalarSliceSaveOutcomeSuccess,
+  type DiscographyScalarSliceSaveOutcome,
+} from "../staging-write/discography-scalar-field-save";
+import type { DiscographyUpdateWritePayload } from "../staging-write/discography-write-types";
+import {
   evaluateDiscographyScalarSliceOperatorSaveUiGate,
   getDiscographyScalarSliceSaveConfig,
 } from "../staging-write/discography-scalar-field-save-config";
@@ -347,7 +353,11 @@ function renderDryRunResult(result: GosakiDiscographyDryRunResultUnion): void {
 }
 
 function renderSaveResult(
-  outcome: G15bDiscographySaveOutcome | G15dDiscographySaveOutcome | G16aDiscographySaveOutcome,
+  outcome:
+    | G15bDiscographySaveOutcome
+    | G15dDiscographySaveOutcome
+    | G16aDiscographySaveOutcome
+    | DiscographyScalarSliceSaveOutcome,
 ): void {
   const el = document.getElementById("gosaki-disc-save-result");
   if (!el) return;
@@ -521,11 +531,6 @@ async function runSave(): Promise<void> {
     return;
   }
 
-  if (slice === "g17c-label") {
-    window.alert("G-17c preflight: Save path is not enabled until G-17d implementation.");
-    return;
-  }
-
   const config = getSaveConfigForSlice(slice);
 
   if (!config.saveEnabled) {
@@ -550,12 +555,15 @@ async function runSave(): Promise<void> {
     return;
   }
 
+  const entry = getDiscographyScalarSliceRegistryEntry(slice);
   const confirmMessage =
-    slice === "g16a"
-      ? "artist を更新します。よろしいですか？（discography-001 の 1 行のみ）"
-      : slice === "g15d"
-        ? "artist を更新します。よろしいですか？（discography-003 の 1 行のみ）"
-        : "purchase_url を更新します。よろしいですか？（discography-002 の 1 行のみ）";
+    slice === "g17c-label"
+      ? `${entry.field} を更新します。よろしいですか？（${entry.legacyId} の 1 行のみ）`
+      : slice === "g16a"
+        ? "artist を更新します。よろしいですか？（discography-001 の 1 行のみ）"
+        : slice === "g15d"
+          ? "artist を更新します。よろしいですか？（discography-003 の 1 行のみ）"
+          : "purchase_url を更新します。よろしいですか？（discography-002 の 1 行のみ）";
 
   if (!window.confirm(confirmMessage)) {
     return;
@@ -573,6 +581,35 @@ async function runSave(): Promise<void> {
     expectedBeforeUpdatedAt: lastDryRunResult.expectedBeforeUpdatedAt,
     dryRunOk: lastDryRunResult.ok,
   };
+
+  if (slice === "g17c-label") {
+    const registryEntry = getDiscographyScalarSliceRegistryEntry(slice);
+    const payload = lastDryRunResult.payload as DiscographyUpdateWritePayload;
+    const outcome = await executeDiscographyScalarSliceSave({
+      entry: registryEntry,
+      url,
+      anonKey,
+      beforeSnapshot: selectedRowSnapshot,
+      saveBinding,
+      payload,
+    });
+
+    saveInFlight = false;
+
+    if (isDiscographyScalarSliceSaveOutcomeSuccess(outcome)) {
+      selectedRowSnapshot = outcome.afterSnapshot;
+      const updatedAtEl = document.getElementById("gosaki-disc-form-updated-at");
+      if (updatedAtEl) updatedAtEl.textContent = outcome.afterSnapshot.updated_at ?? "—";
+      lastDryRunResult = null;
+      clearDryRunResult();
+      window.alert("保存しました。");
+      return;
+    }
+
+    renderSaveResult(outcome);
+    updateSaveButtonState(lastDryRunResult);
+    return;
+  }
 
   if (slice === "g16a") {
     const outcome = await executeG16aDiscographyArtistSave({

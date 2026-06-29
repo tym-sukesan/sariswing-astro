@@ -5,8 +5,8 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-17c-d2-d3-gosaki-discography-label-local-dry-run-result-and-save-final-preflight — complete (uncommitted).
-branch: main @ 9475286 (+ G-17c-d2/d3 local doc changes)
+Current phase: G-17d-gosaki-discography-label-save-path-enablement — complete (uncommitted).
+branch: main @ d1eefb8 (+ G-17d local changes)
 ```
 
 **Closed chains — do not re-Save / re-upload:**
@@ -15,14 +15,19 @@ branch: main @ 9475286 (+ G-17c-d2/d3 local doc changes)
 - `discography-003` / `artist` (G-15e-f)
 - `schedule-2026-04-005` / `price` (G-14b1f)
 
+## G-17d Discography label Save path enablement — complete
+
+- **Doc:** `gosaki-discography-g17d-label-save-path-enablement.md`
+- **Save path:** `g17c-label` unblocked; `executeDiscographyScalarSliceSave()` (generic)
+- **Closed chains:** G-15b / G-15d / G-16a dedicated Save paths **unchanged**
+- **Next:** G-17d-execution — operator armed dev Preview → Save once
+- **Do not:** Save / DB write in G-17d-implementation
+
 ## G-17c-d2 / G-17d-d3 Discography label dry-run result + Save final preflight — complete
 
+- **Commit:** `d1eefb8`
 - **Doc:** `gosaki-discography-g17c-label-dry-run-result-and-g17d-save-final-preflight.md`
-- **Operator dry-run:** PASS on `discography-004` / `label` via generic registry path
-- **G-17d env stack:** documented (non-dry-run); **not started**
-- **Save UI:** still blocked (`runSave` g17c-label alert) — **G-17d-implementation** required before execution
-- **Next:** G-17d-implementation → G-17d-execution (operator Save once)
-- **Do not:** Save / DB write in this phase
+- **Operator dry-run:** PASS on `discography-004` / `label`
 
 ## G-17c Discography registry next field slice preflight — complete
 

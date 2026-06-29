@@ -1,18 +1,27 @@
 Last updated: 2026-06-29
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-17d Discography label Save path enablement — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-17d-gosaki-discography-label-save-path-enablement` |
+| Base commit | `d1eefb8` |
+| Target | `discography-004` / `label` |
+| Generic Save | `executeDiscographyScalarSliceSave()` |
+| Doc | `gosaki-discography-g17d-label-save-path-enablement.md` |
+| Verifier | `verify-g17d-gosaki-discography-label-save-path-enablement.mjs` |
+| **Next** | G-17d-execution (operator Save once + afterVerification) |
+| **Do not** | Save / DB write in G-17d-implementation; re-Save closed chains |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-17c-d2 / G-17d-d3 Discography label dry-run result + Save final preflight — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-17c-d2-d3-gosaki-discography-label-local-dry-run-result-and-save-final-preflight` |
-| Base commit | `9475286` |
-| Target | `discography-004` / `label` — null → `Mardi Gras JAPAN Records` |
-| Operator dry-run | **PASS** (`ok: true`, `wouldWrite: true`, `saveReadiness: ready_but_save_disabled`) |
+| Commit | `d1eefb8` |
 | Doc | `gosaki-discography-g17c-label-dry-run-result-and-g17d-save-final-preflight.md` |
-| Verifier | `verify-g17c-g17d-gosaki-discography-label-dry-run-result-and-save-final-preflight.mjs` |
-| **Next** | G-17d-implementation (unblock Save UI) → G-17d-execution |
-| **Do not** | Save / DB write in this phase; re-Save closed chains |
+| **Next** | G-17d-implementation — **done** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-17c Discography registry next field slice preflight — complete
 

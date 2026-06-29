@@ -1,19 +1,28 @@
 Last updated: 2026-06-29
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-16a-d2/d3 Discography artist local dry-run + Save final preflight — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-16a-d2-d3-gosaki-discography-artist-local-dry-run-result-and-save-final-preflight` |
+| Base commit | `b19b9a2` |
+| Doc | `gosaki-discography-g16a-local-dry-run-result-and-save-final-preflight.md` |
+| Verifier | `verify-g16a-gosaki-discography-local-dry-run-result-and-save-final-preflight.mjs` |
+| Operator dry-run | **PASS** (`actualWrite: false`, `wouldWrite: true`) |
+| Save | **not executed** |
+| **Next** | G-16a-execution (operator Save once) |
+| **Do not** | Re-Save `002`/`003`; FTP/upload |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-16a Discography next-field Save preflight — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-16a-gosaki-discography-existing-release-artist-non-dry-run` |
-| Base commit | `2d70001` |
+| Commit | `b19b9a2` |
 | Doc | `gosaki-discography-g16a-next-field-save-preflight.md` |
-| Verifier | `verify-g16a-gosaki-discography-next-field-save-preflight.mjs` |
 | Target | `discography-001` / Continuous / `artist` |
-| Before → after | `Feat.` → `feat.` in artist credit |
-| Save | **not executed** |
-| **Next** | G-16a-d2/d3 local dry-run Preview → G-16a-execution |
-| **Do not** | Re-Save `002`/`003`; FTP/upload |
+| **Next** | G-16a-d2/d3 — **done** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-16 CMS Kit Save / Reflection playbook — complete
 

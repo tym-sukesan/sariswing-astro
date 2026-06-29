@@ -5,8 +5,8 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-16a-gosaki-discography-existing-release-artist-non-dry-run — Save preflight complete (uncommitted).
-branch: main @ 2d70001 (+ G-16a local changes)
+Current phase: G-16a-d2-d3-gosaki-discography-artist-local-dry-run-result-and-save-final-preflight — complete (uncommitted).
+branch: main @ b19b9a2 (+ G-16a-d2/d3 local changes)
 ```
 
 **Closed chains — do not re-Save / re-upload:**
@@ -14,14 +14,20 @@ branch: main @ 2d70001 (+ G-16a local changes)
 - `discography-003` / `artist` (G-15e-f)
 - `schedule-2026-04-005` / `price` (G-14b1f)
 
+## G-16a-d2/d3 Discography artist local dry-run + Save final preflight — complete
+
+- **Doc:** `gosaki-discography-g16a-local-dry-run-result-and-save-final-preflight.md`
+- **Operator dry-run:** PASS (`actualWrite: false`, `wouldWrite: true`, `saveReadiness: ready_but_save_disabled`)
+- **Target:** `discography-001` / Continuous / `artist` (`Feat.`→`feat.`)
+- **Save:** not executed
+- **Next:** G-16a-execution (operator Save once + afterVerification)
+- **Do not:** Re-Save closed rows; FTP/upload
+
 ## G-16a Discography next-field Save preflight — complete
 
+- **Commit:** `b19b9a2`
 - **Doc:** `gosaki-discography-g16a-next-field-save-preflight.md`
-- **Target:** `discography-001` / Continuous / `artist` (`Feat.`→`feat.`)
 - **Playbook:** `cms-kit-save-reflection-playbook.md`
-- **Save:** not executed
-- **Next:** operator local dry-run Preview (G-16a-d2/d3) → Save execution (G-16a-execution)
-- **Do not:** Re-Save closed rows; FTP/upload
 
 ## G-16 CMS Kit Save / Reflection playbook — complete
 

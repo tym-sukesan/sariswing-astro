@@ -1,18 +1,29 @@
 Last updated: 2026-06-29
 Project: Static-to-Astro CMS / Musician CMS Kit
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-17d-execution Discography label Save result + unexpected state investigation — complete
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-17e Discography label public reflection local regen + upload preflight — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-17e-gosaki-discography-label-public-reflection-local-regen-and-upload-preflight` |
+| Target | `discography-004` / `Ja-Jaaaaan!` / `label` — `Mardi Gras JAPAN Records` |
+| Hook | `patchDiscographyItemLabel` in `DISCOGRAPHY_PUBLIC_PATCH_REGISTRY` |
+| Local regen | **PASS** — 1 label patch in convert log |
+| Minimal upload | **blocked** — CSS ref `index.YcHrHZH4.css` → `BaseLayout.YcHrHZH4.css` |
+| Doc | `gosaki-discography-g17e-label-public-reflection-local-regen-and-upload-preflight.md` |
+| Verifier | `verify-g17e-gosaki-discography-label-public-reflection-local-regen-and-upload-preflight.mjs` |
+| **Next** | G-17e-upload — operator scope decision + manual upload |
+| **Do not** | Re-Save `discography-004` / `label`; auto 1-file upload |
+
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-17d-execution Discography label Save result + unexpected state investigation — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-17d-execution-gosaki-discography-label-save-result-and-unexpected-state-investigation` |
+| Commit | `7219c6c` |
 | Target | `discography-004` / `label` — `Mardi Gras JAPAN Records` |
-| `updated_at` after | `2026-06-29T07:36:49.044397+00:00` |
-| Write timing | Likely prior armed G-17d Save; post-bridge Preview did **not** write |
 | Doc | `gosaki-discography-g17d-label-save-result-and-unexpected-state-investigation.md` |
-| Verifier | `verify-g17d-gosaki-discography-label-save-result-and-unexpected-state-investigation.mjs` |
-| **Next** | G-17e label public reflection preflight |
-| **Do not** | Re-Save `discography-004` / `label`; rollback **not needed** |
+| **Do not** | Re-Save `discography-004` / `label` |
 
 ### Backlog (known issue — display only)
 

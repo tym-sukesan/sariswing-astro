@@ -5,16 +5,24 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-17d-execution-gosaki-discography-label-save-result — complete.
-G-17c label slice (discography-004) — closed. Next: G-17e public reflection.
+Current phase: G-17e-gosaki-discography-label-public-reflection-local-regen-and-upload-preflight — complete.
+G-17c/G-17d label slice (discography-004) — closed. Next: G-17e-upload (operator scope + manual upload).
 ```
 
 **Closed chains — do not re-Save / re-upload:**
 - `discography-001` / `artist` (G-16b-f)
 - `discography-002` / `purchase_url` (G-15c-f)
 - `discography-003` / `artist` (G-15e-f)
-- `discography-004` / `label` (G-17d-execution — G-17c chain closed)
+- `discography-004` / `label` (G-17d-execution — G-17c chain closed; public reflection preflight done — upload pending)
 - `schedule-2026-04-005` / `price` (G-14b1f)
+
+## G-17e Discography label public reflection local regen + upload preflight — complete
+
+- **Doc:** `gosaki-discography-g17e-label-public-reflection-local-regen-and-upload-preflight.md`
+- **Hook:** `label` in `DISCOGRAPHY_PUBLIC_PATCH_REGISTRY` + `patchDiscographyItemLabel`
+- **Local:** Ja-Jaaaaan! + `Mardi Gras JAPAN Records`; G-15c/G-15e/G-16b maintained
+- **Upload:** **blocked** for 1-file-only — CSS ref changed (`index.YcHrHZH4.css` → `BaseLayout.YcHrHZH4.css`)
+- **Next:** G-17e-upload — operator chooses scope (HTML+CSS or full package)
 
 ## G-17d-execution Discography label Save result + unexpected state investigation — complete
 

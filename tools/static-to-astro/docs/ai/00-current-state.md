@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-17d-execution Gosaki Discography G-17c label Save result + unexpected state investigation (2026-06-29):** **complete (uncommitted)** — DB confirms `label` applied; `updated_at` `2026-06-29T07:36:49.044397+00:00`; post-bridge Preview `no_changes` (write likely prior armed Save); **no re-Save**. Doc: `gosaki-discography-g17d-label-save-result-and-unexpected-state-investigation.md`. **Next: G-17e label public reflection preflight.**
+**G-17e Gosaki Discography label public reflection local regen + upload preflight (2026-06-29):** **complete (uncommitted)** — `label` added to `DISCOGRAPHY_PUBLIC_PATCH_REGISTRY`; local regen PASS; Ja-Jaaaaan! `Mardi Gras JAPAN Records` verified; **minimal 1-file upload blocked** (CSS ref `index.*` → `BaseLayout.*`). Doc: `gosaki-discography-g17e-label-public-reflection-local-regen-and-upload-preflight.md`. **Next: G-17e-upload (operator scope decision).**
+
+**G-17d-execution Gosaki Discography G-17c label Save result + unexpected state investigation (2026-06-29):** **complete** — committed `7219c6c`. Doc: `gosaki-discography-g17d-label-save-result-and-unexpected-state-investigation.md`. **Do not re-Save `discography-004` / `label`.**
 
 **G-17d Gosaki Discography label Save readiness fix (2026-06-29):** **complete** — save-page-config DOM bridge for `G17C_DISCOGRAPHY_SAVE_ENABLED`. Doc: `gosaki-discography-g17d-label-save-readiness-investigation.md`.
 

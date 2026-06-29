@@ -951,6 +951,7 @@ export function generateAstroProject(inputDir, outputDir, options = {}) {
         patchCount: patched.patches.length,
         purchasePatchCount: patched.purchasePatches.length,
         artistPatchCount: patched.artistPatches.length,
+        labelPatchCount: patched.labelPatches?.length ?? 0,
       };
     }
     writeFile(pageFile, generatePage(page, mainHtml, pageScripts, linkTransformContext));
@@ -1221,7 +1222,7 @@ export function printGenerationSummary(result) {
   }
   if (result.gosakiDiscographyDataSummary?.discographyDataSource) {
     console.log(
-      `  Discography data: discographyDataSource=${result.gosakiDiscographyDataSummary.discographyDataSource} (${result.gosakiDiscographyDataSummary.rowCount ?? 0} releases, ${result.gosakiDiscographyDataSummary.purchasePatchCount ?? 0} purchase_url + ${result.gosakiDiscographyDataSummary.artistPatchCount ?? 0} artist patch(es))`,
+      `  Discography data: discographyDataSource=${result.gosakiDiscographyDataSummary.discographyDataSource} (${result.gosakiDiscographyDataSummary.rowCount ?? 0} releases, ${result.gosakiDiscographyDataSummary.purchasePatchCount ?? 0} purchase_url + ${result.gosakiDiscographyDataSummary.artistPatchCount ?? 0} artist + ${result.gosakiDiscographyDataSummary.labelPatchCount ?? 0} label patch(es))`,
     );
   } else if (result.gosakiDiscographyBundle?.discographyDataSource === "wix-html") {
     console.log(

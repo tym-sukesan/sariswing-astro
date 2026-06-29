@@ -11,7 +11,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const DEFAULT_TOOL_ROOT = path.resolve(__dirname, "../..");
 
 export const DISCOGRAPHY_SELECT =
-  "legacy_id,title,artist,purchase_url,streaming_url,sort_order,published";
+  "legacy_id,title,artist,label,catalog_number,purchase_url,streaming_url,sort_order,published";
 
 const REPEATER_ITEM_START_RE =
   /<div id="comp-llexymga__item[^"]+" class="[^"]*wixui-repeater__item"/g;
@@ -33,6 +33,8 @@ export function normalizeDiscographyRecord(row) {
     legacy_id: String(row.legacy_id ?? ""),
     title: String(row.title ?? ""),
     artist: row.artist != null ? String(row.artist).trim() : null,
+    label: row.label != null ? String(row.label).trim() : null,
+    catalog_number: row.catalog_number != null ? String(row.catalog_number).trim() : null,
     purchase_url: row.purchase_url ? normalizeDiscographyUrl(row.purchase_url) : null,
     streaming_url: row.streaming_url ? String(row.streaming_url).trim() : null,
     sort_order: Number(row.sort_order ?? 0),
@@ -138,11 +140,77 @@ export function patchDiscographyItemArtist(segment, title, artist) {
   return { segment: replaced, patched: replaced !== segment };
 }
 
+const RELEASE_BLOCK_RE = /<p[^>]*>[\s\S]*?Release[\s\S]*?<\/p>/i;
+const LABEL_PARAGRAPH_TEMPLATE =
+  '<p class="font_8 wixui-rich-text__text" style="font-size:13px; line-height:1.5em;"><span style="font-family: &quot;Helvetica Neue&quot;, Arial, &quot;Hiragino Kaku Gothic ProN&quot;, &quot;Hiragino Sans&quot;, Meiryo, sans-serif;" class="wixui-rich-text__text"><span class="color_17 wixui-rich-text__text"><span style="letter-spacing:normal;" class="wixui-rich-text__text"><span style="font-size:13px;" class="wixui-rich-text__text">';
+
+/**
+ * Patch label in Wix Release block — paragraph between Release line and catalog line.
+ * @param {string} segment
+ * @param {string} label
+ * @param {string | null | undefined} catalogNumber
+ */
+export function patchDiscographyItemLabel(segment, label, catalogNumber) {
+  const normalizedLabel = String(label ?? "").trim();
+  if (!normalizedLabel) return { segment, patched: false };
+
+  const releaseMatch = segment.match(RELEASE_BLOCK_RE);
+  if (!releaseMatch || releaseMatch.index == null) return { segment, patched: false };
+
+  const afterReleaseIdx = releaseMatch.index + releaseMatch[0].length;
+  const afterRelease = segment.slice(afterReleaseIdx);
+  if (!catalogNumber) return { segment, patched: false };
+
+  const catEsc = escapeRegExp(String(catalogNumber).trim());
+  const catParaRe = new RegExp(`<p\\b[^>]*>[\\s\\S]*?${catEsc}[\\s\\S]*?<\\/p>`, "i");
+  const catMatch = afterRelease.match(catParaRe);
+  if (!catMatch || catMatch.index == null) return { segment, patched: false };
+
+  const between = afterRelease.slice(0, catMatch.index);
+  const labelParaRe = /<p\b[^>]*>[\s\S]*?<\/p>/i;
+  const labelMatch = between.match(labelParaRe);
+
+  if (labelMatch) {
+    const oldLabelP = labelMatch[0];
+    const plain = oldLabelP
+      .replace(/<[^>]+>/g, "")
+      .replace(/&nbsp;/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+    if (/^[A-Z]{2,10}-\d{3,6}/.test(plain)) {
+      const insert = `${LABEL_PARAGRAPH_TEMPLATE}${normalizedLabel}</span></span></span></span></p> `;
+      const replaced =
+        segment.slice(0, afterReleaseIdx) + insert + afterRelease;
+      return { segment: replaced, patched: true };
+    }
+    if (plain === normalizedLabel) return { segment, patched: false };
+
+    let newLabelP = oldLabelP.replace(
+      /(<span style="font-size:13px;" class="wixui-rich-text__text">)([^<]*)(<\/span>)/,
+      `$1${normalizedLabel}$3`,
+    );
+    if (newLabelP === oldLabelP) {
+      newLabelP = oldLabelP.replace(/>([^<]+)</, `>${normalizedLabel}<`);
+    }
+    if (newLabelP === oldLabelP) return { segment, patched: false };
+
+    const replaced =
+      segment.slice(0, afterReleaseIdx) +
+      between.replace(oldLabelP, newLabelP) +
+      afterRelease.slice(catMatch.index);
+    return { segment: replaced, patched: true };
+  }
+
+  const insert = `${LABEL_PARAGRAPH_TEMPLATE}${normalizedLabel}</span></span></span></span></p> `;
+  const replaced = segment.slice(0, afterReleaseIdx) + insert + afterRelease;
+  return { segment: replaced, patched: true };
+}
+
 /**
  * Registry of public HTML patch handlers per Supabase scalar field.
- * G-17b: purchase_url + artist; G-17c+ adds title / year / release_date via registry entries.
+ * G-17b: purchase_url + artist; G-17e: label.
  */
-export const DISCOGRAPHY_PUBLIC_PATCH_FIELD_ORDER = ["purchase_url", "artist"];
+export const DISCOGRAPHY_PUBLIC_PATCH_FIELD_ORDER = ["purchase_url", "artist", "label"];
 
 /** @type {Record<string, { field: string, patchSegment: (segment: string, row: ReturnType<typeof normalizeDiscographyRecord>) => { segment: string, patched: boolean } }>} */
 export const DISCOGRAPHY_PUBLIC_PATCH_REGISTRY = {
@@ -160,6 +228,13 @@ export const DISCOGRAPHY_PUBLIC_PATCH_REGISTRY = {
       return patchDiscographyItemArtist(segment, row.title, row.artist);
     },
   },
+  label: {
+    field: "label",
+    patchSegment(segment, row) {
+      if (!row.label) return { segment, patched: false };
+      return patchDiscographyItemLabel(segment, row.label, row.catalog_number);
+    },
+  },
 };
 
 /**
@@ -173,6 +248,8 @@ export function patchGosakiDiscographySupabaseFields(html, releases) {
   const purchasePatches = [];
   /** @type {Array<{ legacy_id: string, title: string, artist: string }>} */
   const artistPatches = [];
+  /** @type {Array<{ legacy_id: string, title: string, label: string }>} */
+  const labelPatches = [];
 
   for (const row of releases) {
     if (!row.title) continue;
@@ -203,6 +280,13 @@ export function patchGosakiDiscographySupabaseFields(html, releases) {
           artist: row.artist,
         });
       }
+      if (fieldKey === "label" && row.label) {
+        labelPatches.push({
+          legacy_id: row.legacy_id,
+          title: row.title,
+          label: row.label,
+        });
+      }
 
       segment = result.segment;
       segmentChanged = true;
@@ -217,7 +301,8 @@ export function patchGosakiDiscographySupabaseFields(html, releases) {
     html: out,
     purchasePatches,
     artistPatches,
-    patches: [...purchasePatches, ...artistPatches],
+    labelPatches,
+    patches: [...purchasePatches, ...artistPatches, ...labelPatches],
   };
 }
 

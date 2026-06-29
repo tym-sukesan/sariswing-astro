@@ -5,9 +5,9 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-18g-gosaki-discography-tracklist-textarea-save-adapter-planning — complete.
-discography_tracks: 34 rows; first Save PoC A planned (track 7 title via textarea).
-Next: G-18g1 discography_tracks GRANT + RLS read-only preflight.
+Current phase: G-18g1-gosaki-discography-tracks-grant-rls-readonly-check — complete.
+discography_tracks: authenticated UPDATE grant missing; G-18g1-apply required before Save.
+Next: G-18g1-apply GRANT UPDATE on discography_tracks (operator, separate approval).
 ```
 
 **Closed chains — do not re-Save / re-upload:**
@@ -17,9 +17,18 @@ Next: G-18g1 discography_tracks GRANT + RLS read-only preflight.
 - `discography-004` / `label` (G-17e-f)
 - `schedule-2026-04-005` / `price` (G-14b1f)
 
+## G-18g1 Discography tracks GRANT / RLS read-only check — complete
+
+- **Doc:** `gosaki-discography-g18g1-tracks-grant-rls-readonly-check.md`
+- **authenticated UPDATE on `discography_tracks`:** **missing**
+- **RLS:** enabled; `discography_tracks_admin_all` likely live (G-6 audit)
+- **anon write:** **no**
+- **Target row:** track 7 `Like a Lover` unchanged; test title **not** in DB
+- **Next:** G-18g1-apply — `grant update on table public.discography_tracks to authenticated`
+
 ## G-18g Discography tracklist textarea Save adapter planning — complete
 
-- **Doc:** `gosaki-discography-g18g-tracklist-textarea-save-adapter-planning.md`
+- **Commit:** `065539b`
 - **First PoC:** A — `discography-002` track 7 / `Like a Lover` → `Like a Lover（テスト）` (textarea path)
 - **Long-term:** Option 2 diff → UPDATE/INSERT/DELETE; Options 3–4 deferred
 - **Guards:** count 8, ordered fingerprint, `changed.length === 1`, no add/delete/reorder

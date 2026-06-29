@@ -1,18 +1,25 @@
 Last updated: 2026-06-29
 Project: Static-to-Astro CMS / Musician CMS Kit
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-18g Discography tracklist textarea Save adapter planning — complete
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-18g1 Discography tracks GRANT / RLS read-only check — complete
 
 | Item | Value |
 | --- | --- |
-| Phase | `G-18g-gosaki-discography-tracklist-textarea-save-adapter-planning` |
-| First PoC | **A** — `discography-002` track 7 title via textarea |
-| Long-term Save | Option 2 (diff → per-row ops) |
-| `updated_at` | **defer** — composite fingerprint for first PoC |
-| Doc | `gosaki-discography-g18g-tracklist-textarea-save-adapter-planning.md` |
-| Verifier | `verify-g18g-gosaki-discography-tracklist-textarea-save-adapter-planning.mjs` |
-| **Next** | **G-18g1** `discography_tracks` GRANT + RLS read-only preflight |
-| **Do not** | GRANT / Save / SQL mutation in G-18g |
+| Phase | `G-18g1-gosaki-discography-tracks-grant-rls-readonly-check` |
+| Result | authenticated UPDATE on `discography_tracks` **missing** |
+| RLS | enabled; `discography_tracks_admin_all` likely live |
+| anon write | **no** (SELECT only) |
+| Doc | `gosaki-discography-g18g1-tracks-grant-rls-readonly-check.md` |
+| Verifier | `verify-g18g1-gosaki-discography-tracks-grant-rls-readonly-check.mjs` |
+| **Next** | **G-18g1-apply** operator `GRANT UPDATE` (separate approval) |
+| **Do not** | GRANT / Save / SQL mutation in G-18g1 |
+
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-18g Discography tracklist textarea Save adapter planning — complete
+
+| Item | Value |
+| --- | --- |
+| Commit | `065539b` |
+| **Next** | G-18g1 — **done** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-18f-result Discography tracklist local UI dry-run preview — complete
 

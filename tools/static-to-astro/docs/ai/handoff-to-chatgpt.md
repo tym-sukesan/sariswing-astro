@@ -5,8 +5,8 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-18g2-gosaki-discography-tracklist-single-title-save-dry-run — complete.
-Save adapter dry-run for discography-002 track 7 title PoC; Save not executed.
+Current phase: G-18g2-result-gosaki-discography-tracklist-single-title-save-dry-run-local-ui-result — complete.
+Operator local Preview PASS; wouldWrite true; saveReadiness ready_but_not_armed; DB unchanged.
 Next: G-18g2-preflight — final preflight + rollback SQL for operator Save once.
 ```
 
@@ -17,10 +17,20 @@ Next: G-18g2-preflight — final preflight + rollback SQL for operator Save once
 - `discography-004` / `label` (G-17e-f)
 - `schedule-2026-04-005` / `price` (G-14b1f)
 
+## G-18g2-result Discography tracklist local UI dry-run preview — complete
+
+- **Doc:** `gosaki-discography-g18g2-tracklist-single-title-save-dry-run-local-ui-result.md`
+- **Base:** `1041646`
+- **Local URL:** `http://localhost:4321/__admin-staging-shell/musician-basic/admin/discography/`
+- **Preview:** `ok: true`, `dryRun: true`, `actualWrite: false`, `wouldWrite: true`
+- **saveReadiness:** `ready_but_not_armed`; **envArmArmed:** `false`
+- **whereGuard / rollbackHint:** displayed in Preview panel
+- **DB:** track 7 `Like a Lover` unchanged (UI edit not persisted)
+- **Next:** G-18g2-preflight → G-18g2-execution
+
 ## G-18g2 Discography tracklist single-title Save adapter dry-run — complete
 
-- **Doc:** `gosaki-discography-g18g2-tracklist-single-title-save-dry-run.md`
-- **Base:** `cf4d571`
+- **Commit:** `1041646`
 - **Target:** `discography-002` track 7 — `Like a Lover` → `Like a Lover（テスト）` via textarea
 - **approvalId:** `G-18g2-gosaki-discography-tracklist-single-title-non-dry-run-slice`
 - **envArm:** `PUBLIC_ADMIN_DISCOGRAPHY_G18G2_TRACKLIST_TITLE_NON_DRY_RUN_ARMED`

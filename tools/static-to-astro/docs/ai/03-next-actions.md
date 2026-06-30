@@ -1,19 +1,27 @@
 Last updated: 2026-06-29
 Project: Static-to-Astro CMS / Musician CMS Kit
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-18g2 Discography tracklist single-title Save adapter dry-run — complete
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-18g2-result Discography tracklist local UI dry-run preview — complete
 
 | Item | Value |
 | --- | --- |
-| Phase | `G-18g2-gosaki-discography-tracklist-single-title-save-dry-run` |
-| Base | `cf4d571` |
-| Target | `discography-002` track 7 / `Like a Lover` → `Like a Lover（テスト）` |
-| approvalId | `G-18g2-gosaki-discography-tracklist-single-title-non-dry-run-slice` |
-| envArm | `PUBLIC_ADMIN_DISCOGRAPHY_G18G2_TRACKLIST_TITLE_NON_DRY_RUN_ARMED` |
-| Doc | `gosaki-discography-g18g2-tracklist-single-title-save-dry-run.md` |
-| Verifier | `verify-g18g2-gosaki-discography-tracklist-single-title-save-dry-run.mjs` |
+| Phase | `G-18g2-result-gosaki-discography-tracklist-single-title-save-dry-run-local-ui-result` |
+| Base | `1041646` |
+| Local URL | `http://localhost:4321/__admin-staging-shell/musician-basic/admin/discography/` |
+| Preview | `ok: true`, `wouldWrite: true`, `saveReadiness: ready_but_not_armed` |
+| Data | track 7 `Like a Lover` unchanged in DB |
+| Rollback | **not needed** |
+| Doc | `gosaki-discography-g18g2-tracklist-single-title-save-dry-run-local-ui-result.md` |
+| Verifier | `verify-g18g2-gosaki-discography-tracklist-single-title-save-dry-run-local-ui-result.mjs` |
 | **Next** | **G-18g2-preflight** — final preflight + rollback SQL |
-| **Do not** | Save / row UPDATE without new approval |
+| **Do not** | Re-Preview / Save without new approval |
+
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-18g2 Discography tracklist single-title Save adapter dry-run — complete
+
+| Item | Value |
+| --- | --- |
+| Commit | `1041646` |
+| **Next** | G-18g2-result — **done** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-18g1-apply-result Discography tracks UPDATE grant apply result — complete
 

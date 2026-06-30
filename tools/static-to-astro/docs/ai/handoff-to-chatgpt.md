@@ -5,9 +5,9 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-18g1-apply-result-gosaki-discography-tracks-update-grant-apply-result — complete.
-Operator GRANT success; authenticated UPDATE on discography_tracks; rows unchanged.
-Next: G-18g2-gosaki-discography-tracklist-single-title-save-dry-run-implementation (+ preflight).
+Current phase: G-18g2-gosaki-discography-tracklist-single-title-save-dry-run — complete.
+Save adapter dry-run for discography-002 track 7 title PoC; Save not executed.
+Next: G-18g2-preflight — final preflight + rollback SQL for operator Save once.
 ```
 
 **Closed chains — do not re-Save / re-upload:**
@@ -17,10 +17,19 @@ Next: G-18g2-gosaki-discography-tracklist-single-title-save-dry-run-implementati
 - `discography-004` / `label` (G-17e-f)
 - `schedule-2026-04-005` / `price` (G-14b1f)
 
+## G-18g2 Discography tracklist single-title Save adapter dry-run — complete
+
+- **Doc:** `gosaki-discography-g18g2-tracklist-single-title-save-dry-run.md`
+- **Base:** `cf4d571`
+- **Target:** `discography-002` track 7 — `Like a Lover` → `Like a Lover（テスト）` via textarea
+- **approvalId:** `G-18g2-gosaki-discography-tracklist-single-title-non-dry-run-slice`
+- **envArm:** `PUBLIC_ADMIN_DISCOGRAPHY_G18G2_TRACKLIST_TITLE_NON_DRY_RUN_ARMED`
+- **Save:** disabled by default; gated `executeG18g2TracklistTitleSave` implemented
+- **Next:** G-18g2-preflight → G-18g2-execution (operator Save once)
+
 ## G-18g1-apply-result Discography tracks UPDATE grant apply result — complete
 
-- **Doc:** `gosaki-discography-g18g1-apply-update-grant-result.md`
-- **Base:** `88fab3c`
+- **Commit:** `cf4d571`
 - **Grant:** `grant update on table public.discography_tracks to authenticated;` — **executed once** by operator
 - **Result:** Success. No rows returned
 - **Post-check:** authenticated UPDATE present; anon write absent; authenticated INSERT/DELETE/TRUNCATE absent
@@ -46,7 +55,7 @@ Next: G-18g2-gosaki-discography-tracklist-single-title-save-dry-run-implementati
 - **approvalId (G-18g2):** `G-18g2-gosaki-discography-tracklist-single-title-non-dry-run-slice`
 - **updated_at:** defer; composite row + album fingerprint
 - **Public reflection:** G-18h after Save success
-- **Next:** G-18g2 Save adapter dry-run implementation + preflight (GRANT unblocked by G-18g1-apply-result)
+- **Next:** G-18g2-preflight → G-18g2-execution (GRANT unblocked by G-18g1-apply-result)
 
 ## G-18f-result Discography tracklist local UI dry-run preview — complete
 

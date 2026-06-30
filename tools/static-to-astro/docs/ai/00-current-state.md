@@ -3,9 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-18g1-apply-result Gosaki Discography tracks UPDATE grant apply result (2026-06-29):** **complete (uncommitted)** — operator GRANT success; authenticated UPDATE on `discography_tracks`; rows unchanged; rollback not needed. Doc: `gosaki-discography-g18g1-apply-update-grant-result.md`. **Next: G-18g2 tracklist single-title Save adapter dry-run implementation/preflight.**
+**G-18g2 Gosaki Discography tracklist single-title Save adapter dry-run (2026-06-29):** **complete (uncommitted)** — G-18g2 Save adapter dry-run for `discography-002` track 7 title PoC; guards + gated write path; Save not executed. Doc: `gosaki-discography-g18g2-tracklist-single-title-save-dry-run.md`. **Next: G-18g2-preflight (final preflight + rollback SQL).**
 
-**G-18g1-apply Gosaki Discography tracks UPDATE grant apply preflight (2026-06-29):** **complete** — committed `88fab3c`. Doc: `gosaki-discography-g18g1-apply-update-grant-preflight.md`. Operator GRANT executed — see G-18g1-apply-result.
+**G-18g1-apply-result Gosaki Discography tracks UPDATE grant apply result (2026-06-29):** **complete** — committed `cf4d571`. Doc: `gosaki-discography-g18g1-apply-update-grant-result.md`.
 
 **G-18g1 Gosaki Discography tracks GRANT / RLS read-only check (2026-06-29):** **complete** — committed `418c2bd`. Doc: `gosaki-discography-g18g1-tracks-grant-rls-readonly-check.md`.
 

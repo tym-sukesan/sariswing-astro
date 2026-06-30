@@ -5,9 +5,9 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-18g2-preflight-gosaki-discography-tracklist-single-title-save-final-preflight — complete.
-Final preflight + rollback runbook ready; Save UI wiring gap documented.
-Next: G-18g2-execution — wire Save button + operator Save once.
+Current phase: G-18g2-execution-wiring-gosaki-discography-tracklist-single-title-save-ui-wiring — complete.
+Save button wired to executeG18g2TracklistTitleSave; default dry-run remains safe.
+Next: G-18g2-execution — operator Save once (armed dev + preflight SELECT).
 ```
 
 **Closed chains — do not re-Save / re-upload:**
@@ -17,10 +17,18 @@ Next: G-18g2-execution — wire Save button + operator Save once.
 - `discography-004` / `label` (G-17e-f)
 - `schedule-2026-04-005` / `price` (G-14b1f)
 
+## G-18g2-execution-wiring Discography tracklist Save UI wiring — complete
+
+- **Doc:** `gosaki-discography-g18g2-tracklist-single-title-save-ui-wiring.md`
+- **Base:** `2c92bb3`
+- **Wiring:** `runSave` → `runG18g2TracklistTitleSave` → `executeG18g2TracklistTitleSave`
+- **Default:** `PUBLIC_ADMIN_WRITE_DRY_RUN=true` — Save disabled / alert
+- **Armed:** requires `PUBLIC_ADMIN_WRITE_DRY_RUN=false` + `PUBLIC_ADMIN_DISCOGRAPHY_G18G2_TRACKLIST_TITLE_NON_DRY_RUN_ARMED=true` + `ENABLE_ADMIN_STAGING_WRITE=true`
+- **Next:** G-18g2-execution — operator Save once
+
 ## G-18g2-preflight Discography tracklist Save final preflight — complete
 
-- **Doc:** `gosaki-discography-g18g2-tracklist-single-title-save-final-preflight.md`
-- **Base:** `9236faf`
+- **Commit:** `2c92bb3`
 - **Preflight SQL:** `gosaki-discography-g18g2-tracklist-title-save-preflight-check.sql` (SELECT only)
 - **Rollback SQL:** `gosaki-discography-g18g2-tracklist-title-save-rollback.sql` (template — separate approval; not executed)
 - **Execution env:** `PUBLIC_ADMIN_WRITE_DRY_RUN=false` + `PUBLIC_ADMIN_DISCOGRAPHY_G18G2_TRACKLIST_TITLE_NON_DRY_RUN_ARMED=true` + `ENABLE_ADMIN_STAGING_WRITE=true`

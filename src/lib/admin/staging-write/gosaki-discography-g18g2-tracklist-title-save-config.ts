@@ -147,10 +147,7 @@ export function evaluateG18g2DiscographyOperatorSaveUiGate(input: {
   if (!input.dryRunOk) {
     return { enabled: false, reason: "Dry-run preview must succeed before Save." };
   }
-  if (
-    input.saveReadiness !== "ready_to_save" &&
-    input.saveReadiness !== "ready_but_not_armed"
-  ) {
+  if (input.saveReadiness !== "ready_to_save") {
     return {
       enabled: false,
       reason: `Save readiness is ${input.saveReadiness}.`,

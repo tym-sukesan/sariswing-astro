@@ -1,20 +1,25 @@
 Last updated: 2026-06-29
 Project: Static-to-Astro CMS / Musician CMS Kit
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-18g2-preflight Discography tracklist Save final preflight — complete
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-18g2-execution-wiring Discography tracklist Save UI wiring — complete
 
 | Item | Value |
 | --- | --- |
-| Phase | `G-18g2-preflight-gosaki-discography-tracklist-single-title-save-final-preflight` |
-| Base | `9236faf` |
-| approvalId | `G-18g2-gosaki-discography-tracklist-single-title-non-dry-run-slice` |
-| Preflight SQL | `gosaki-discography-g18g2-tracklist-title-save-preflight-check.sql` |
-| Rollback SQL | `gosaki-discography-g18g2-tracklist-title-save-rollback.sql` (template — not executed) |
-| Doc | `gosaki-discography-g18g2-tracklist-single-title-save-final-preflight.md` |
-| Verifier | `verify-g18g2-gosaki-discography-tracklist-single-title-save-final-preflight.mjs` |
-| Gap | Save UI wiring required before operator Save |
-| **Next** | **G-18g2-execution** — wire Save + operator Save once |
-| **Do not** | Save / rollback SQL / FTP in preflight |
+| Phase | `G-18g2-execution-wiring-gosaki-discography-tracklist-single-title-save-ui-wiring` |
+| Base | `2c92bb3` |
+| Gap | `runSave` alert-only → **closed** |
+| Path | `runG18g2TracklistTitleSave` → `executeG18g2TracklistTitleSave` |
+| Doc | `gosaki-discography-g18g2-tracklist-single-title-save-ui-wiring.md` |
+| Verifier | `verify-g18g2-gosaki-discography-tracklist-single-title-save-ui-wiring.mjs` |
+| **Next** | **G-18g2-execution** — operator Save once (armed dev) |
+| **Do not** | Cursor Save / DB write |
+
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-18g2-preflight Discography tracklist Save final preflight — complete
+
+| Item | Value |
+| --- | --- |
+| Commit | `2c92bb3` |
+| **Next** | G-18g2-execution-wiring — **done** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-18g2-result Discography tracklist local UI dry-run preview — complete
 

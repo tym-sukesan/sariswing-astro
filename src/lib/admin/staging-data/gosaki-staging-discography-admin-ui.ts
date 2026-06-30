@@ -82,8 +82,12 @@ import {
 } from "../staging-write/gosaki-discography-g18f-tracklist-textarea-dry-run";
 import {
   executeG18g2TracklistTitleDryRun,
+  executeG18g2TracklistTitleSave,
+  G18G2_AFTER_TITLE,
   G18G2_DISCOGRAPHY_TRACKLIST_SINGLE_TITLE_NON_DRY_RUN_APPROVAL_ID,
+  isG18g2TracklistTitleSaveOutcomeSuccess,
   type G18g2TracklistTitleDryRunResult,
+  type G18g2TracklistTitleSaveOutcome,
 } from "../staging-write/gosaki-discography-g18g2-tracklist-title-save";
 import {
   evaluateG18g2DiscographyOperatorSaveUiGate,
@@ -555,6 +559,11 @@ function renderG18g2TracklistSaveDryRunResult(result: G18g2TracklistTitleDryRunR
   if (!el) return;
 
   const g18g2Config = getGosakiDiscographyG18g2TracklistTitleSaveConfig();
+  const saveGate = evaluateG18g2DiscographyOperatorSaveUiGate({
+    signedIn: stagingAuthSignedIn === true,
+    dryRunOk: result.ok,
+    saveReadiness: result.saveReadiness,
+  });
 
   el.hidden = false;
   el.className = `gosaki-disc-dry-run-result gosaki-disc-dry-run-result--${result.ok ? "ok" : "error"}`;
@@ -585,7 +594,10 @@ function renderG18g2TracklistSaveDryRunResult(result: G18g2TracklistTitleDryRunR
     <p><strong>afterCount:</strong> ${result.afterCount}</p>
     <p><strong>orderedTitleFingerprintBefore:</strong> <code>${escapeHtml(result.orderedTitleFingerprintBefore)}</code></p>
     <p><strong>saveReadiness:</strong> ${escapeHtml(result.saveReadiness)}</p>
-    <p><strong>saveAllowed:</strong> false</p>
+    <p><strong>saveAllowed:</strong> ${saveGate.enabled ? "true" : "false"}</p>
+    <p><strong>saveUiGateReason:</strong> ${escapeHtml(saveGate.reason)}</p>
+    <p><strong>saveEnabled:</strong> ${g18g2Config.saveEnabled ? "true" : "false"}</p>
+    <p><strong>dryRunEnv:</strong> ${g18g2Config.dryRun ? "true" : "false"}</p>
     <p><strong>rowsAffectedRequired:</strong> ${result.rowsAffectedRequired}</p>
     <p><strong>hostGatePassed:</strong> ${g18g2Config.hostGatePassed ? "true" : "false"}</p>
     <p><strong>envArmArmed:</strong> ${g18g2Config.envArmArmed ? "true" : "false"}</p>
@@ -602,6 +614,34 @@ function renderG18g2TracklistSaveDryRunResult(result: G18g2TracklistTitleDryRunR
 
   updateSaveButtonState(result);
   updateOperatorStatusPanel(result);
+}
+
+function renderG18g2TracklistSaveResult(outcome: G18g2TracklistTitleSaveOutcome): void {
+  const el = document.getElementById("gosaki-disc-save-result");
+  if (!el) return;
+  el.hidden = false;
+
+  if (isG18g2TracklistTitleSaveOutcomeSuccess(outcome)) {
+    el.className = "gosaki-disc-save-result gosaki-disc-save-result--ok";
+    el.innerHTML = `
+      <h3 class="gosaki-disc-save-result__title">保存結果（G-18g2）</h3>
+      <p><strong>actualWrite:</strong> true</p>
+      <p><strong>approvalId:</strong> ${escapeHtml(outcome.approvalId)}</p>
+      <p><strong>rowsAffected:</strong> ${outcome.rowsAffected}</p>
+      <p><strong>beforeTitle:</strong> ${escapeHtml(outcome.beforeTitle)}</p>
+      <p><strong>afterTitle:</strong> ${escapeHtml(outcome.afterTitle)}</p>
+      <p><strong>rollbackHint:</strong> ${escapeHtml(outcome.rollbackHint)}</p>
+    `;
+    return;
+  }
+
+  el.className = "gosaki-disc-save-result gosaki-disc-save-result--error";
+  el.innerHTML = `
+    <h3 class="gosaki-disc-save-result__title">保存結果（G-18g2）</h3>
+    <p><strong>actualWrite:</strong> false</p>
+    <p><strong>errorCode:</strong> ${escapeHtml(outcome.errorCode)}</p>
+    <p><strong>error:</strong> ${escapeHtml(outcome.errorMessage)}</p>
+  `;
 }
 
 function renderSaveResult(
@@ -786,10 +826,93 @@ async function runDryRunPreview(): Promise<void> {
   renderDryRunResult(result);
 }
 
+async function runG18g2TracklistTitleSave(): Promise<void> {
+  const config = getGosakiDiscographyG18g2TracklistTitleSaveConfig();
+  if (!config.saveEnabled) {
+    window.alert(config.armFailureReason ?? config.defaultDisabledReason);
+    return;
+  }
+
+  if (
+    !selectedRowSnapshot ||
+    !lastDryRunResult?.ok ||
+    !isG18g2TracklistDryRunResult(lastDryRunResult)
+  ) {
+    window.alert("先に「変更を確認」で dry-run を成功させてください。");
+    return;
+  }
+
+  const gate = evaluateG18g2DiscographyOperatorSaveUiGate({
+    signedIn: stagingAuthSignedIn === true,
+    dryRunOk: lastDryRunResult.ok,
+    saveReadiness: lastDryRunResult.saveReadiness,
+  });
+
+  if (!gate.enabled) {
+    window.alert(gate.reason);
+    return;
+  }
+
+  if (
+    !window.confirm(
+      "track 7 の title を更新します。よろしいですか？（discography-002 の 1 行のみ）",
+    )
+  ) {
+    return;
+  }
+
+  const form = document.getElementById("gosaki-disc-edit-form");
+  if (!form || !(form instanceof HTMLFormElement)) {
+    window.alert("編集フォームが見つかりません。");
+    return;
+  }
+
+  saveInFlight = true;
+  updateSaveButtonState(lastDryRunResult);
+
+  const url = String(import.meta.env.PUBLIC_SUPABASE_URL ?? "").trim();
+  const anonKey = String(import.meta.env.PUBLIC_SUPABASE_ANON_KEY ?? "").trim();
+
+  const outcome = await executeG18g2TracklistTitleSave({
+    url,
+    anonKey,
+    beforeSnapshot: selectedRowSnapshot,
+    tracksTextarea: readDiscographyTracklistTextareaFromForm(form),
+    saveBinding: {
+      dryRunOk: lastDryRunResult.ok,
+      saveReadiness: lastDryRunResult.saveReadiness,
+      targetTrackRowId: lastDryRunResult.targetTrackRowId,
+      beforeTitle: lastDryRunResult.beforeTitle,
+      afterTitle: lastDryRunResult.afterTitle,
+    },
+  });
+
+  saveInFlight = false;
+
+  if (isG18g2TracklistTitleSaveOutcomeSuccess(outcome)) {
+    selectedRowSnapshot = {
+      ...selectedRowSnapshot,
+      tracks: selectedRowSnapshot.tracks.map((track) =>
+        track.track_number === 7 ? { ...track, title: G18G2_AFTER_TITLE } : track,
+      ),
+    };
+    const tracksEl = form.querySelector<HTMLTextAreaElement>('textarea[name="tracks"]');
+    if (tracksEl) {
+      tracksEl.value = selectedRowSnapshot.tracks.map((track) => track.title).join("\n");
+    }
+    lastDryRunResult = null;
+    clearDryRunResult();
+    window.alert("保存しました。");
+    return;
+  }
+
+  renderG18g2TracklistSaveResult(outcome);
+  updateSaveButtonState(lastDryRunResult);
+}
+
 async function runSave(): Promise<void> {
   if (selectedRowSnapshot?.legacy_id === G18F_TARGET_LEGACY_ID) {
-    const config = getGosakiDiscographyG18g2TracklistTitleSaveConfig();
-    window.alert(config.armFailureReason ?? config.defaultDisabledReason);
+    await runG18g2TracklistTitleSave();
     return;
   }
 

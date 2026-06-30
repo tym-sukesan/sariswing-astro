@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-18g2-result Gosaki Discography tracklist single-title Save adapter local UI dry-run (2026-06-29):** **complete (uncommitted)** — operator local Preview PASS; `wouldWrite: true`; `saveReadiness: ready_but_not_armed`; DB unchanged. Doc: `gosaki-discography-g18g2-tracklist-single-title-save-dry-run-local-ui-result.md`. **Next: G-18g2-preflight (final preflight + rollback SQL).**
+**G-18g2-preflight Gosaki Discography tracklist single-title Save final preflight (2026-06-29):** **complete (uncommitted)** — preflight SELECT + rollback template + execution runbook; Save UI wiring gap documented. Doc: `gosaki-discography-g18g2-tracklist-single-title-save-final-preflight.md`. **Next: G-18g2-execution (Save UI wiring + operator Save once).**
+
+**G-18g2-result Gosaki Discography tracklist single-title Save adapter local UI dry-run (2026-06-29):** **complete** — committed `9236faf`. Doc: `gosaki-discography-g18g2-tracklist-single-title-save-dry-run-local-ui-result.md`.
 
 **G-18g2 Gosaki Discography tracklist single-title Save adapter dry-run (2026-06-29):** **complete** — committed `1041646`. Doc: `gosaki-discography-g18g2-tracklist-single-title-save-dry-run.md`.
 

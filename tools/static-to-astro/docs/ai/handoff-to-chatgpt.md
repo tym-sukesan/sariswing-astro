@@ -5,9 +5,9 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-18g2-result-gosaki-discography-tracklist-single-title-save-dry-run-local-ui-result — complete.
-Operator local Preview PASS; wouldWrite true; saveReadiness ready_but_not_armed; DB unchanged.
-Next: G-18g2-preflight — final preflight + rollback SQL for operator Save once.
+Current phase: G-18g2-preflight-gosaki-discography-tracklist-single-title-save-final-preflight — complete.
+Final preflight + rollback runbook ready; Save UI wiring gap documented.
+Next: G-18g2-execution — wire Save button + operator Save once.
 ```
 
 **Closed chains — do not re-Save / re-upload:**
@@ -17,10 +17,20 @@ Next: G-18g2-preflight — final preflight + rollback SQL for operator Save once
 - `discography-004` / `label` (G-17e-f)
 - `schedule-2026-04-005` / `price` (G-14b1f)
 
+## G-18g2-preflight Discography tracklist Save final preflight — complete
+
+- **Doc:** `gosaki-discography-g18g2-tracklist-single-title-save-final-preflight.md`
+- **Base:** `9236faf`
+- **Preflight SQL:** `gosaki-discography-g18g2-tracklist-title-save-preflight-check.sql` (SELECT only)
+- **Rollback SQL:** `gosaki-discography-g18g2-tracklist-title-save-rollback.sql` (template — separate approval; not executed)
+- **Execution env:** `PUBLIC_ADMIN_WRITE_DRY_RUN=false` + `PUBLIC_ADMIN_DISCOGRAPHY_G18G2_TRACKLIST_TITLE_NON_DRY_RUN_ARMED=true` + `ENABLE_ADMIN_STAGING_WRITE=true`
+- **Gap:** `runSave()` for `discography-002` still alert-only — wire in G-18g2-execution
+- **G-18h:** public reflection deferred
+- **Next:** G-18g2-execution
+
 ## G-18g2-result Discography tracklist local UI dry-run preview — complete
 
-- **Doc:** `gosaki-discography-g18g2-tracklist-single-title-save-dry-run-local-ui-result.md`
-- **Base:** `1041646`
+- **Commit:** `9236faf`
 - **Local URL:** `http://localhost:4321/__admin-staging-shell/musician-basic/admin/discography/`
 - **Preview:** `ok: true`, `dryRun: true`, `actualWrite: false`, `wouldWrite: true`
 - **saveReadiness:** `ready_but_not_armed`; **envArmArmed:** `false`

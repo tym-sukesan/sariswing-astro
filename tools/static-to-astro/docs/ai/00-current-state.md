@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-20e-closure Gosaki production test text cleanup chain closure (2026-07-01):** **complete (uncommitted)** — G-20b→G-20c→G-20d→G-20e chain **closed**; live test titles absent; production titles present; rollback not needed. Doc: `gosaki-production-test-text-cleanup-closure.md`. **Do not re-UPDATE / re-upload for cleanup.** Next: G-20f.
+**G-20f Gosaki production release config / cutover preflight (2026-07-01):** **complete (uncommitted)** — read-only config inventory; URL/canonical/robots proposal; Supabase strategy (Option A fastest); cutover checklist; roadmap G-20g–G-20k. Doc: `gosaki-production-release-config-and-cutover-preflight.md`. **No package/FTP/DNS.** Next: G-20g.
+
+**G-20e-closure Gosaki production test text cleanup chain closure (2026-07-01):** **complete** — commit `7ce6654`. G-20b→G-20e closed. Doc: `gosaki-production-test-text-cleanup-closure.md`. **M1 blocker resolved.**
 
 **G-20d/G-20e Gosaki production test text cleanup public reflection upload + HTTP verify (2026-07-01):** **complete** — commit `32cb18e`. Doc: `gosaki-production-test-text-cleanup-public-reflection-upload-result.md`. **Chain closed — see G-20e-closure.**
 

@@ -1,18 +1,30 @@
 Last updated: 2026-07-01
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20f Gosaki production release config / cutover preflight — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20f-gosaki-production-release-config-cutover-preflight` |
+| Base | `7ce6654` |
+| Type | read-only inventory + cutover planning |
+| Staging URL | `https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/` |
+| Production target | `https://www.gosaki-piano.com/` |
+| Supabase recommend | **Option A** — interim SoT `kmjqppxjdnwwrtaeqjta` (never `vsbvndwuajjhnzpohghh`) |
+| FTP | manual only; G-7f1 suspended; no mirror/sync/delete |
+| Doc | `gosaki-production-release-config-and-cutover-preflight.md` |
+| Verifier | `verify-g20f-gosaki-production-release-config-cutover-preflight.mjs` |
+| **Next** | `G-20g-gosaki-production-config-implementation-planning` |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20e-closure Gosaki production test text cleanup chain closure — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-20e-closure-gosaki-production-test-text-cleanup-closure` |
-| Base | `32cb18e` |
-| Chain | G-20b DB cleanup → G-20c regen → G-20d upload → G-20e verify — **closed** |
-| Live | test titles **absent**; `Like a Lover` / `Mary Ann` present |
-| Rollback | **not needed** |
+| Base | `7ce6654` |
+| Chain | G-20b → G-20c → G-20d → G-20e — **closed** |
 | Doc | `gosaki-production-test-text-cleanup-closure.md` |
-| Verifier | `verify-g20e-closure-gosaki-production-test-text-cleanup-closure.mjs` |
-| **Next** | `G-20f-gosaki-production-release-config-cutover-preflight` |
+| **Next** | — (superseded by G-20f) |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20d/G-20e Gosaki production test text cleanup upload + HTTP verify — complete
 

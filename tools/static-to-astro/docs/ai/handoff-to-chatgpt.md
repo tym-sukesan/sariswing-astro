@@ -5,12 +5,15 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20e-closure-gosaki-production-test-text-cleanup-closure — complete.
-Chain closed: G-20b DB cleanup → G-20c regen → G-20d upload → G-20e HTTP verify.
-Live /discography/: test titles absent; Like a Lover / Mary Ann present; albums 8+8.
-G-20a must-blocker (2 test titles) resolved on staging.
-Do not re-UPDATE / re-upload discography/index.html for this cleanup.
-Next: G-20f production release config / cutover preflight.
+Current phase: G-20f-gosaki-production-release-config-cutover-preflight — complete.
+Production target: https://www.gosaki-piano.com/ (Wix live today).
+Staging: noindex + Disallow / + staging canonical — correct.
+G-20b–G-20e cleanup chain closed; M1 test titles resolved on staging.
+Supabase recommend: Option A — keep kmjqppxjdnwwrtaeqjta as interim production SoT.
+Never use Sariswing production vsbvndwuajjhnzpohghh.
+FTP: manual only; G-7f1 suspended; no mirror/sync/delete.
+Next: G-20g production config implementation planning.
+No package build / FTP / DNS / DB write in G-20f.
 ```
 
 **Closed chains — do not re-UPDATE / re-Save / re-upload:**
@@ -20,14 +23,21 @@ Next: G-20f production release config / cutover preflight.
 - `discography-004` / `label` (G-17e-f)
 - `schedule-2026-04-005` / `price` (G-14b1f)
 
+## G-20f Gosaki production release config / cutover preflight — complete
+
+- **Doc:** `gosaki-production-release-config-and-cutover-preflight.md`
+- **Base:** `7ce6654` (uncommitted)
+- **Target:** `https://www.gosaki-piano.com/`; staging SEO correct (noindex)
+- **Supabase:** Option A recommended (`kmjqppxjdnwwrtaeqjta`); never `vsbvndwuajjhnzpohghh`
+- **FTP:** manual only; G-7f1; no mirror/sync/delete
+- **Verifier:** `verify-g20f-gosaki-production-release-config-cutover-preflight.mjs`
+- **Next:** G-20g production config implementation planning
+
 ## G-20e-closure Gosaki production test text cleanup chain closure — complete
 
 - **Doc:** `gosaki-production-test-text-cleanup-closure.md`
-- **Base:** `32cb18e` (uncommitted)
-- **Chain closed:** G-20b → G-20c → G-20d → G-20e
-- **Live:** production titles only; G-20a must-blocker resolved
-- **Verifier:** `verify-g20e-closure-gosaki-production-test-text-cleanup-closure.mjs`
-- **Next:** G-20f production release config / cutover preflight
+- **Base:** `7ce6654`
+- **Next:** — (superseded by G-20f)
 
 ## G-20d/G-20e Gosaki production test text cleanup upload + HTTP verify — complete
 

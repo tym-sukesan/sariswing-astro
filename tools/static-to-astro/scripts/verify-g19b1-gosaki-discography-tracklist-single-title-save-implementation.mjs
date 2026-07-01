@@ -48,7 +48,7 @@ const OPERATOR_REL =
   "tools/static-to-astro/templates/admin-cms/gosaki/components/AdminGosakiStagingDiscographyOperatorPage.astro";
 const SARISWING_ADMIN_REL = "src/pages/admin/index.astro";
 
-const BASE_COMMIT = "889a891";
+const BASE_COMMIT = "96e790f";
 const STAGING_REF = "kmjqppxjdnwwrtaeqjta";
 const PROD_REF = "vsbvndwuajjhnzpohghh";
 const G18G2_APPROVAL_ID =
@@ -85,8 +85,8 @@ const origin = spawnSync("git", ["rev-parse", "--short", "origin/main"], {
   encoding: "utf8",
 });
 
-assert("HEAD is 889a891", head.stdout.trim() === BASE_COMMIT, head.stdout.trim());
-assert("origin/main is 889a891", origin.stdout.trim() === BASE_COMMIT, origin.stdout.trim());
+assert("HEAD is 96e790f", head.stdout.trim() === BASE_COMMIT, head.stdout.trim());
+assert("origin/main is 96e790f", origin.stdout.trim() === BASE_COMMIT, origin.stdout.trim());
 
 const doc = read(DOC_REL);
 const g19bPlanning = read(G19B_PLANNING_REL);

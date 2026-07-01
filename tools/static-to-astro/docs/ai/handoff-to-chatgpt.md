@@ -5,9 +5,9 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-19b1-gosaki-discography-tracklist-generic-single-title-save-implementation — complete.
-G-19b1 Save adapter for discography-004 track 1 title only (Mary Ann → Mary Ann（テスト）).
-G-19a generic dry-run Preview (4 albums) complete; G-19b planning complete (889a891).
+Current phase: G-19b1-result-gosaki-discography-tracklist-generic-single-title-save-local-dry-run-qa — complete.
+G-19b1 local UI dry-run Preview PASS (discography-004 readiness ready_but_not_armed; Save disabled).
+G-19b1 implementation committed at 96e790f; verifier baseline 96e790f.
 G-18g2 Save + G-18h public reflection chain closed — do not re-Save track 7.
 Next: G-19b1-tracklist-generic-single-title-save-final-preflight.
 ```
@@ -20,10 +20,19 @@ Next: G-19b1-tracklist-generic-single-title-save-final-preflight.
 - `discography-004` / `label` (G-17e-f)
 - `schedule-2026-04-005` / `price` (G-14b1f)
 
+## G-19b1-result Discography tracklist generic single-title Save local dry-run QA — complete
+
+- **Base:** `96e790f`
+- **Local UI:** PASS — discography-004 G-19b1 Preview; `saveReadiness: ready_but_not_armed`; Save disabled
+- **Other albums:** G-19a Preview only; G-18g2 not re-invoked
+- **Verifier:** implementation verifier HEAD/origin baseline `96e790f`
+- **Save / DB write:** **not executed**
+- **Next:** G-19b1 final preflight
+
 ## G-19b1 Discography tracklist generic single-title Save implementation — complete
 
 - **Doc:** `gosaki-discography-g19b1-tracklist-single-title-save-implementation.md`
-- **Base:** `889a891` (uncommitted implementation)
+- **Base:** `96e790f`
 - **Target:** `discography-004` / track 1 / `Mary Ann` → `Mary Ann（テスト）`
 - **Row id:** `04e987a9-e251-4b0b-b860-21a61e711f8e`
 - **Approval ID:** `G-19b1-gosaki-discography-tracklist-generic-single-title-non-dry-run-slice`

@@ -3,7 +3,7 @@
 **Phase:** `G-19b1-gosaki-discography-tracklist-generic-single-title-save-implementation`  
 **Status:** **complete** — Save adapter implemented; **Save not executed**  
 **Date:** 2026-06-29  
-**Base commit:** `889a891`  
+**Base commit:** `96e790f`  
 **Prior:** [gosaki-discography-g19b-tracklist-save-slice-planning.md](./gosaki-discography-g19b-tracklist-save-slice-planning.md)  
 **Approval ID:** `G-19b1-gosaki-discography-tracklist-generic-single-title-non-dry-run-slice`
 
@@ -15,6 +15,8 @@
 | G-19b1 Save adapter + guards | **yes** |
 | Gated actual write path | **implemented, disabled by default** |
 | Cursor Save / DB write | **no** |
+| Local UI dry-run QA (G-19b1-result) | **PASS** — `ready_but_not_armed`; Save disabled |
+| Verifier baseline | `96e790f` |
 
 ---
 

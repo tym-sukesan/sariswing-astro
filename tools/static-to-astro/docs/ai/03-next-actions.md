@@ -1,19 +1,27 @@
 Last updated: 2026-07-01
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20i Gosaki production upload preflight — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20i-gosaki-production-upload-preflight` |
+| Base | `adfe27d` |
+| Package | `gosaki-piano-production/public-dist/` — **27 files** |
+| Upload type | First production **full package** (not 1-file staging diff) |
+| Remote path | **TBD** (operator confirms on client Lolipop) |
+| Safety | G-7f1 mirror/sync/delete forbidden; manual FTP only |
+| Doc | `gosaki-production-upload-preflight.md` |
+| Verifier | `verify-g20i-gosaki-production-upload-preflight.mjs` |
+| **Next** | `G-20j-gosaki-manual-production-upload` |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20h2 Gosaki initial local production package build — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-20h2-gosaki-production-package-local-build` |
-| Base | `c1ca639` |
-| Build | `npm run build:gosaki-production-package` — **executed** |
-| Output | `output/manual-upload/gosaki-piano-production/` (27 files) |
-| SEO | production canonical/og:url/sitemap; no staging leak on primary routes |
-| Discography | cleanup titles verified (no test titles) |
-| Doc | `gosaki-production-package-build-result.md` |
-| Verifier | `verify-g20h2-gosaki-production-package-build.mjs` |
-| **Next** | `G-20i-gosaki-production-upload-preflight` |
+| Base | `adfe27d` |
+| **Next** | — (superseded by G-20i) |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20h1 Gosaki production config implementation — complete
 

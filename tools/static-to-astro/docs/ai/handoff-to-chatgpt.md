@@ -5,13 +5,13 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20h2-gosaki-production-package-local-build — complete.
-First local production package built: output/manual-upload/gosaki-piano-production/ (27 public-dist files).
-SEO: www.gosaki-piano.com canonical/og:url/sitemap; no staging leak on primary routes.
-Discography cleanup verified: no test titles; Like a Lover / Mary Ann production titles only.
+Current phase: G-20i-gosaki-production-upload-preflight — complete.
+Production package ready: gosaki-piano-production/public-dist/ (27 files, full first upload).
+Remote path TBD — operator confirms client Lolipop document root before G-20j.
+Upload safety: manual FTP only; mirror/sync/delete forbidden (G-7f1).
 Supabase interim SoT: kmjqppxjdnwwrtaeqjta — never vsbvndwuajjhnzpohghh.
-FTP/upload/DNS/DB write NOT executed in G-20h2.
-Next: G-20i production upload preflight.
+FTP/upload/DNS/DB write NOT executed in G-20i.
+Next: G-20j operator manual production FTP upload.
 ```
 
 **Closed chains — do not re-UPDATE / re-Save / re-upload:**
@@ -21,14 +21,20 @@ Next: G-20i production upload preflight.
 - `discography-004` / `label` (G-17e-f)
 - `schedule-2026-04-005` / `price` (G-14b1f)
 
+## G-20i Gosaki production upload preflight — complete
+
+- **Doc:** `gosaki-production-upload-preflight.md`
+- **Base:** `adfe27d` (uncommitted)
+- **Package:** 27 public-dist files — full first production upload scope
+- **Remote path:** TBD (Lolipop document root)
+- **Verifier:** `verify-g20i-gosaki-production-upload-preflight.mjs`
+- **Next:** G-20j manual FTP (operator only — no Cursor FTP)
+
 ## G-20h2 Gosaki initial local production package build — complete
 
 - **Doc:** `gosaki-production-package-build-result.md`
-- **Base:** `c1ca639` (uncommitted)
-- **Output:** `output/manual-upload/gosaki-piano-production/` (27 files)
-- **Build:** `npm run build:gosaki-production-package` executed locally
-- **Verifier:** `verify-g20h2-gosaki-production-package-build.mjs`
-- **Next:** G-20i upload preflight (no FTP in G-20h2)
+- **Base:** `adfe27d`
+- **Next:** — (superseded by G-20i)
 
 ## G-20h1 Gosaki production config implementation — complete
 

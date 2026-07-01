@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-20h2 Gosaki initial local production package build (2026-07-01):** **complete (uncommitted)** — `npm run build:gosaki-production-package` PASS; output `gosaki-piano-production/` (27 public-dist files). SEO/content verifier PASS. Doc: `gosaki-production-package-build-result.md`. **FTP/upload/DNS/DB write not executed.** Next: G-20i.
+**G-20i Gosaki production upload preflight (2026-07-01):** **complete (uncommitted)** — upload manifest (27 files), remote path TBD, Lolipop/DNS checklist, G-7f1 safety rules, G-20j draft. Doc: `gosaki-production-upload-preflight.md`. **FTP/upload/DNS/DB write not executed.** Next: G-20j.
+
+**G-20h2 Gosaki initial local production package build (2026-07-01):** **complete** — commit `adfe27d`. Package `gosaki-piano-production/` (27 files). **Superseded by G-20i preflight.**
 
 **G-20h1 Gosaki production config implementation (2026-07-01):** **complete** — commit `c1ca639`. Deploy profiles + production build script. **Superseded by G-20h2 build execution.**
 

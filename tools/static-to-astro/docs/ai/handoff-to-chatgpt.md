@@ -5,10 +5,11 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-19a-gosaki-discography-tracklist-generic-textarea-dry-run — complete.
-All 4 albums have editable Track List textarea + generic diff Preview (dry-run only).
-G-18g2 Save chain closed; G-18h public reflection uploaded.
-Next: G-19b+ tracklist Save slice planning (deferred).
+Current phase: G-19b-gosaki-discography-tracklist-save-slice-planning — complete.
+G-19a generic dry-run Preview (4 albums) complete; G-19b1 first Save slice planned.
+First Save target: discography-004 track 1 title only (changed-only, 1 row UPDATE).
+G-18g2 Save + G-18h public reflection chain closed — do not re-Save track 7.
+Next: G-19b1-tracklist-generic-single-title-save-implementation.
 ```
 
 **Closed chains — do not re-Save / re-upload:**
@@ -18,6 +19,16 @@ Next: G-19b+ tracklist Save slice planning (deferred).
 - `discography-003` / `artist` (G-15e-f)
 - `discography-004` / `label` (G-17e-f)
 - `schedule-2026-04-005` / `price` (G-14b1f)
+
+## G-19b Discography tracklist Save slice planning — complete
+
+- **Doc:** `gosaki-discography-g19b-tracklist-save-slice-planning.md`
+- **Base:** `e798a94` (uncommitted planning)
+- **First slice:** G-19b1 — `discography-004` / track 1 / `Mary Ann` → `Mary Ann（テスト）`
+- **Scope:** changed-only; 1× UPDATE; 1 album; no add/delete/reorder
+- **Reflection / upload:** G-19c / G-19d — **separate** from Save
+- **G-18g2:** chain closed; **do not** re-Save `discography-002` track 7
+- **Next:** G-19b1 implementation — **no Save yet**
 
 ## G-19a Discography tracklist generic textarea dry-run — complete
 

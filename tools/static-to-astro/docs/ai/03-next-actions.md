@@ -1,6 +1,22 @@
 Last updated: 2026-06-29
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-19b Discography tracklist Save slice planning — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-19b-gosaki-discography-tracklist-save-slice-planning` |
+| Base | `e798a94` |
+| First slice | **G-19b1** — `discography-004` track 1 `Mary Ann` → `Mary Ann（テスト）` |
+| Scope | changed-only; 1 row UPDATE; 1 album |
+| Public reflection | **deferred** — G-19c after G-19b1 Save |
+| Upload | **deferred** — G-19d |
+| G-18g2 / track 7 | **closed** — do not re-Save |
+| DB write / Save | **not executed** |
+| Doc | `gosaki-discography-g19b-tracklist-save-slice-planning.md` |
+| Verifier | `verify-g19b-gosaki-discography-tracklist-save-slice-planning.mjs` |
+| **Next** | `G-19b1-tracklist-generic-single-title-save-implementation` |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-19a Discography tracklist generic textarea dry-run — complete
 
 | Item | Value |
@@ -8,7 +24,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Phase | `G-19a-gosaki-discography-tracklist-generic-textarea-dry-run` |
 | Base | `8c85f53` |
 | Local UI QA | **PASS** (31/31) |
-| Verifier baseline | `8c85f53` (post-commit fix) |
+| Verifier baseline | `e798a94` |
 | Scope | All 4 albums textarea editable + generic diff Preview |
 | Track counts | 9 / 8 / 9 / 8 (34 total) |
 | Save | **disabled** — `actualWrite=false`, `saveAllowed=false` |
@@ -16,7 +32,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | DB write / FTP | **not executed** |
 | Doc | `gosaki-discography-g19a-tracklist-generic-textarea-dry-run.md` |
 | Verifier | `verify-g19a-gosaki-discography-tracklist-generic-textarea-dry-run.mjs` |
-| **Next** | G-19b+ tracklist Save slice planning (deferred) |
+| **Next** | — (superseded by G-19b) |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-18h-upload-result Discography tracklist reflection upload result — complete
 

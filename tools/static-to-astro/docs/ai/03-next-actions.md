@@ -1,20 +1,30 @@
 Last updated: 2026-07-01
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20d/G-20e Gosaki production test text cleanup upload + HTTP verify — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20d` upload + `G-20e` HTTP verify |
+| Base | `0550da4` |
+| Upload | operator manual — **1 file** `discography/index.html` |
+| Live | test titles **absent**; `Like a Lover` / `Mary Ann` present |
+| CSS/JS | pre-existing on server — **200**; not re-uploaded |
+| Doc | `gosaki-production-test-text-cleanup-public-reflection-upload-result.md` |
+| Verifier | `verify-g20de-gosaki-production-test-text-cleanup-public-reflection-upload-result.mjs` |
+| **Next** | `G-20e-closure` cleanup chain closure **or** `G-20f` production cutover preflight |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20c Gosaki production test text cleanup public reflection local regen + upload preflight — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-20c-gosaki-production-test-text-cleanup-public-reflection-local-regen-and-upload-preflight` |
-| Base | `041f16c` |
+| Base | `0550da4` |
 | Regen | `build-gosaki-staging-admin-package.mjs` **PASS** (27 files) |
-| Local HTML | `Like a Lover` / `Mary Ann`; test titles **absent** |
-| CSS/JS hash | **unchanged** — `YcHrHZH4` / `CTyGy8yS` |
 | Upload scope | **1 file** — `discography/index.html` |
-| Live `/discography/` | **stale** — test titles still live until G-20d |
 | Doc | `gosaki-production-test-text-cleanup-public-reflection-local-regen-and-upload-preflight.md` |
 | Verifier | `verify-g20c-gosaki-production-test-text-cleanup-public-reflection-local-regen-and-upload-preflight.mjs` |
-| **Next** | `G-20d-gosaki-cleanup-public-reflection-upload-execution` (operator manual 1 file) |
+| **Next** | — (superseded by G-20d/G-20e) |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20b-execution Gosaki production test text cleanup execution result — complete
 

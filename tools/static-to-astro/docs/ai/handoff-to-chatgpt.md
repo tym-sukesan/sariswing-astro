@@ -5,33 +5,35 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20c-gosaki-production-test-text-cleanup-public-reflection-local-regen-and-upload-preflight — complete.
-Local regen PASS: discography/index.html has Like a Lover / Mary Ann; test titles absent.
-CSS/JS hash unchanged (YcHrHZH4 / CTyGy8yS). Upload scope: 1 file discography/index.html only.
-Live /discography/ still stale (G-19d test titles) until G-20d operator manual upload.
-Next: G-20d manual upload → G-20e HTTP verify + result doc.
-No FTP/upload in G-20c. No DB write.
+Current phase: G-20d/G-20e-gosaki-production-test-text-cleanup-public-reflection-upload-result — complete.
+Operator manual upload 1 file (discography/index.html). Live HTTP verify PASS.
+Test titles absent on /discography/; Like a Lover / Mary Ann present; albums 8+8.
+Chain: G-20b DB cleanup → G-20c regen → G-20d upload → G-20e verify — closed pending G-20e-closure doc.
+Next: G-20e-closure chain closure doc OR G-20f production cutover preflight.
+Do not re-upload discography/index.html for this cleanup.
 ```
 
 **Closed chains — do not re-Save / re-upload:**
-- `discography-001` / `artist` (G-16b-f)
-- `discography-002` / `purchase_url` (G-15c-f)
-- `discography-004` / track 1 `title` (G-20b cleanup — do not re-Save; G-20d upload pending)
-- `discography-002` / track 7 `title` (G-20b cleanup — do not re-Save; G-20d upload pending)
+- `discography-002` / track 7 `title` (G-20b cleanup — live reflected; **do not re-upload**)
+- `discography-004` / track 1 `title` (G-20b cleanup — live reflected; **do not re-upload**)
 - `discography-003` / `artist` (G-15e-f)
 - `discography-004` / `label` (G-17e-f)
 - `schedule-2026-04-005` / `price` (G-14b1f)
 
+## G-20d/G-20e Gosaki production test text cleanup upload + HTTP verify — complete
+
+- **Doc:** `gosaki-production-test-text-cleanup-public-reflection-upload-result.md`
+- **Base:** `0550da4` (uncommitted)
+- **Upload:** operator manual 1 file; `_astro/` not uploaded
+- **Live:** test titles absent; `Like a Lover` / `Mary Ann`; HTTP 200
+- **Verifier:** `verify-g20de-gosaki-production-test-text-cleanup-public-reflection-upload-result.mjs`
+- **Next:** G-20e-closure **or** G-20f production cutover preflight
+
 ## G-20c Gosaki production test text cleanup public reflection local regen + upload preflight — complete
 
 - **Doc:** `gosaki-production-test-text-cleanup-public-reflection-local-regen-and-upload-preflight.md`
-- **Base:** `041f16c` (uncommitted)
-- **Regen:** `build-gosaki-staging-admin-package.mjs` PASS — 27 files
-- **Local HTML:** `Like a Lover` / `Mary Ann`; no `（テスト）`
-- **Upload:** 1 file `discography/index.html`; CSS/JS hash unchanged
-- **Live:** still stale until G-20d
-- **Verifier:** `verify-g20c-gosaki-production-test-text-cleanup-public-reflection-local-regen-and-upload-preflight.mjs`
-- **Next:** G-20d operator manual upload → G-20e HTTP verify
+- **Base:** `0550da4`
+- **Next:** — (superseded by G-20d/G-20e)
 
 ## G-20b-execution Gosaki production test text cleanup execution result — complete
 

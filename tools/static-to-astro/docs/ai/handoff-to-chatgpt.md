@@ -5,11 +5,10 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-19b1-preflight-gosaki-discography-tracklist-generic-single-title-save-final-preflight — complete.
-beforeSnapshot read-only verified on staging (discography-004 track 1 = Mary Ann; 8 tracks; G-18g2 track 7 unchanged).
-Rollback SQL template created only — not executed.
-Operator manual Save once is G-19b1-execution only — Cursor must NOT click Save.
-Next: G-19b1-execution-gosaki-discography-tracklist-generic-single-title-save.
+Current phase: G-19b1-execution-readiness-gosaki-discography-tracklist-generic-single-title-save — complete.
+Operator manual Save runbook ready; armed env stack documented; beforeSnapshot re-checked (Mary Ann / 8 tracks).
+Cursor must NOT click Save. 戸山さん executes Save once with armed dev stack.
+Next: G-19b1-execution — operator Save once + G-19b1-execution-result doc.
 ```
 
 **Closed chains — do not re-Save / re-upload:**
@@ -20,10 +19,19 @@ Next: G-19b1-execution-gosaki-discography-tracklist-generic-single-title-save.
 - `discography-004` / `label` (G-17e-f)
 - `schedule-2026-04-005` / `price` (G-14b1f)
 
+## G-19b1-execution-readiness Discography tracklist generic single-title Save execution readiness — complete
+
+- **Doc:** `gosaki-discography-g19b1-tracklist-single-title-save-execution-readiness.md`
+- **Base:** `0112906` (uncommitted readiness)
+- **Operator:** 戸山さん — armed dev + Preview + Save **once**; Cursor must NOT Save
+- **Env:** `PUBLIC_ADMIN_WRITE_DRY_RUN=false`, G-19b1 arm ON, G-18g2 arm OFF
+- **afterVerification:** SQL in readiness doc §7
+- **Next:** G-19b1-execution-result after operator Save
+
 ## G-19b1-preflight Discography tracklist generic single-title Save final preflight — complete
 
 - **Doc:** `gosaki-discography-g19b1-tracklist-single-title-save-final-preflight.md`
-- **Base:** `450a8a4` (uncommitted preflight)
+- **Base:** `0112906`
 - **beforeSnapshot:** staging read-only — row `04e987a9-...` / track 1 / `Mary Ann`; album 8 tracks; test title 0 rows
 - **G-18g2:** track 7 `Like a Lover（テスト）` maintained — do not re-Save
 - **Rollback SQL:** template only — **not executed**

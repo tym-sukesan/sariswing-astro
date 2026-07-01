@@ -37,7 +37,7 @@ const GUARDS_REL =
   "src/lib/admin/staging-write/gosaki-discography-g19b1-tracklist-generic-title-guards.ts";
 const UI_REL = "src/lib/admin/staging-data/gosaki-staging-discography-admin-ui.ts";
 
-const BASE_COMMIT = "450a8a4";
+const BASE_COMMIT = "0112906";
 const G18G2_TRACK7_ROW_ID = "fd58cd6e-2fff-4ff2-96af-3087c469450b";
 const G18G2_TRACK7_TITLE = "Like a Lover（テスト）";
 const LOCAL_URL =
@@ -91,8 +91,8 @@ const origin = spawnSync("git", ["rev-parse", "--short", "origin/main"], {
   encoding: "utf8",
 });
 
-assert("HEAD is 450a8a4", head.stdout.trim() === BASE_COMMIT, head.stdout.trim());
-assert("origin/main is 450a8a4", origin.stdout.trim() === BASE_COMMIT, origin.stdout.trim());
+assert("HEAD is 0112906", head.stdout.trim() === BASE_COMMIT, head.stdout.trim());
+assert("origin/main is 0112906", origin.stdout.trim() === BASE_COMMIT, origin.stdout.trim());
 
 const doc = read(DOC_REL);
 const implDoc = read(IMPL_DOC_REL);

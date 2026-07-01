@@ -1,12 +1,26 @@
 Last updated: 2026-06-29
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-19b1-execution-readiness Discography tracklist generic single-title Save execution readiness — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-19b1-execution-readiness-gosaki-discography-tracklist-generic-single-title-save` |
+| Base | `0112906` |
+| Operator | 戸山さん manual Save **once** — Cursor must NOT click Save |
+| Armed env stack | documented in readiness doc |
+| beforeSnapshot | re-checked read-only — `Mary Ann` / 8 tracks |
+| DB write / Save | **not executed by Cursor** |
+| Doc | `gosaki-discography-g19b1-tracklist-single-title-save-execution-readiness.md` |
+| Verifier | `verify-g19b1-gosaki-discography-tracklist-single-title-save-execution-readiness.mjs` |
+| **Next** | `G-19b1-execution-gosaki-discography-tracklist-generic-single-title-save` (operator Save once + result doc) |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-19b1-preflight Discography tracklist generic single-title Save final preflight — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-19b1-preflight-gosaki-discography-tracklist-generic-single-title-save-final-preflight` |
-| Base | `450a8a4` |
+| Base | `0112906` |
 | Target | `discography-004` track 1 `Mary Ann` → `Mary Ann（テスト）` |
 | beforeSnapshot | read-only REST verified on staging |
 | Rollback SQL | template only — **not executed** |
@@ -14,7 +28,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | DB write / Save | **not executed** |
 | Doc | `gosaki-discography-g19b1-tracklist-single-title-save-final-preflight.md` |
 | Verifier | `verify-g19b1-gosaki-discography-tracklist-single-title-save-final-preflight.mjs` |
-| **Next** | `G-19b1-execution-gosaki-discography-tracklist-generic-single-title-save` (operator manual Save once) |
+| **Next** | — (superseded by G-19b1-execution-readiness) |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-19b1-result Discography tracklist generic single-title Save local dry-run QA — complete
 

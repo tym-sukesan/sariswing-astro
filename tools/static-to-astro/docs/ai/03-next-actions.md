@@ -1,20 +1,28 @@
 Last updated: 2026-07-01
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20g Gosaki production config implementation planning — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20g-gosaki-production-config-implementation-planning` |
+| Base | `f36e857` |
+| Recommend | **Option C** deploy profile JSON + **production build script** |
+| Production | `www.gosaki-piano.com` / `deployBase=/` |
+| Staging coexist | separate `gosaki-piano-production` output paths |
+| Supabase | interim SoT `kmjqppxjdnwwrtaeqjta` |
+| Doc | `gosaki-production-config-implementation-planning.md` |
+| Verifier | `verify-g20g-gosaki-production-config-implementation-planning.mjs` |
+| **Next** | `G-20h1-gosaki-production-config-implementation` |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20f Gosaki production release config / cutover preflight — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-20f-gosaki-production-release-config-cutover-preflight` |
-| Base | `7ce6654` |
-| Type | read-only inventory + cutover planning |
-| Staging URL | `https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/` |
-| Production target | `https://www.gosaki-piano.com/` |
-| Supabase recommend | **Option A** — interim SoT `kmjqppxjdnwwrtaeqjta` (never `vsbvndwuajjhnzpohghh`) |
-| FTP | manual only; G-7f1 suspended; no mirror/sync/delete |
+| Base | `f36e857` |
 | Doc | `gosaki-production-release-config-and-cutover-preflight.md` |
-| Verifier | `verify-g20f-gosaki-production-release-config-cutover-preflight.mjs` |
-| **Next** | `G-20g-gosaki-production-config-implementation-planning` |
+| **Next** | — (superseded by G-20g) |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20e-closure Gosaki production test text cleanup chain closure — complete
 

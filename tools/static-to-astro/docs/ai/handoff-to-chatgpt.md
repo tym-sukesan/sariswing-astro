@@ -5,15 +5,13 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20f-gosaki-production-release-config-cutover-preflight — complete.
-Production target: https://www.gosaki-piano.com/ (Wix live today).
-Staging: noindex + Disallow / + staging canonical — correct.
-G-20b–G-20e cleanup chain closed; M1 test titles resolved on staging.
-Supabase recommend: Option A — keep kmjqppxjdnwwrtaeqjta as interim production SoT.
-Never use Sariswing production vsbvndwuajjhnzpohghh.
-FTP: manual only; G-7f1 suspended; no mirror/sync/delete.
-Next: G-20g production config implementation planning.
-No package build / FTP / DNS / DB write in G-20f.
+Current phase: G-20g-gosaki-production-config-implementation-planning — complete.
+Recommend: Option C deploy profile JSON + build-gosaki-production-package.mjs (separate output paths).
+Production: www.gosaki-piano.com, deployBase=/, noindex off, robots Allow, canonical production.
+Staging build unchanged; coexist via gosaki-piano-production/ output dirs.
+Supabase interim SoT: kmjqppxjdnwwrtaeqjta — never vsbvndwuajjhnzpohghh.
+Next: G-20h1 config implementation (profile JSON + scripts) — no build in h1.
+No implementation / package regen / FTP / DNS / DB write in G-20g.
 ```
 
 **Closed chains — do not re-UPDATE / re-Save / re-upload:**
@@ -23,15 +21,19 @@ No package build / FTP / DNS / DB write in G-20f.
 - `discography-004` / `label` (G-17e-f)
 - `schedule-2026-04-005` / `price` (G-14b1f)
 
+## G-20g Gosaki production config implementation planning — complete
+
+- **Doc:** `gosaki-production-config-implementation-planning.md`
+- **Base:** `f36e857` (uncommitted)
+- **Recommend:** Option C profile JSON + production build script; separate output paths
+- **Verifier:** `verify-g20g-gosaki-production-config-implementation-planning.mjs`
+- **Next:** G-20h1 implementation (profile JSON + scripts — no build)
+
 ## G-20f Gosaki production release config / cutover preflight — complete
 
 - **Doc:** `gosaki-production-release-config-and-cutover-preflight.md`
-- **Base:** `7ce6654` (uncommitted)
-- **Target:** `https://www.gosaki-piano.com/`; staging SEO correct (noindex)
-- **Supabase:** Option A recommended (`kmjqppxjdnwwrtaeqjta`); never `vsbvndwuajjhnzpohghh`
-- **FTP:** manual only; G-7f1; no mirror/sync/delete
-- **Verifier:** `verify-g20f-gosaki-production-release-config-cutover-preflight.mjs`
-- **Next:** G-20g production config implementation planning
+- **Base:** `f36e857`
+- **Next:** — (superseded by G-20g)
 
 ## G-20e-closure Gosaki production test text cleanup chain closure — complete
 

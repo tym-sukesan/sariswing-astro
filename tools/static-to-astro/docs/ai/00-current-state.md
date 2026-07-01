@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-18h Gosaki Discography public tracks reflection preflight (2026-06-29):** **complete (uncommitted)** — `patchDiscographyItemTracks` + local package regen; local HTML has `Like a Lover（テスト）`; staging live **unchanged** (no upload). Doc: `gosaki-discography-g18h-public-tracks-reflection-preflight.md`. **Do not re-Save `discography-002` track 7.** **Next: G-18h-upload (operator manual upload).**
+**G-18h-upload Gosaki Discography public tracklist reflection manual upload final preflight (2026-06-29):** **complete (uncommitted)** — upload runbook ready; scope **1 file** (`discography/index.html`); CSS/JS upload **not required**; live pre-upload still old `Like a Lover`. Doc: `gosaki-discography-g18h-upload-final-preflight.md`. **Cursor did not FTP/upload.** **Next: G-18h-upload-result (operator manual upload once).**
+
+**G-18h Gosaki Discography public tracks reflection preflight (2026-06-29):** **complete** — commit `7cad34c`. `patchDiscographyItemTracks` + local package regen; local HTML has `Like a Lover（テスト）`. Doc: `gosaki-discography-g18h-public-tracks-reflection-preflight.md`. **Do not re-Save `discography-002` track 7.**
 
 **G-18g2-execution Gosaki Discography tracklist single-title Save execution result (2026-06-29):** **complete** — commit `ab8dee3`. Operator Save once succeeded; track 7 `Like a Lover` → `Like a Lover（テスト）`; rollback not needed. Doc: `gosaki-discography-g18g2-tracklist-single-title-save-execution-result.md`. **Do not re-Save `discography-002` track 7.**
 

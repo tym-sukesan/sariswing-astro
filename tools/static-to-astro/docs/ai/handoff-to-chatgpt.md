@@ -5,10 +5,10 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-18h-gosaki-discography-public-tracks-reflection-preflight — complete.
-Local package regen succeeded; discography-002 track 7 reflected as Like a Lover（テスト） in local HTML.
-Staging live unchanged (no upload).
-Next: G-18h-upload — operator manual upload of discography/index.html.
+Current phase: G-18h-upload-gosaki-discography-public-tracklist-reflection-manual-upload-final-preflight — complete.
+Upload runbook ready: 1 file (discography/index.html); CSS/JS upload not required.
+Staging live still shows old Like a Lover (no upload yet).
+Next: G-18h-upload-result — operator manual upload once + HTTP verify.
 ```
 
 **Closed chains — do not re-Save / re-upload:**
@@ -19,16 +19,24 @@ Next: G-18h-upload — operator manual upload of discography/index.html.
 - `discography-004` / `label` (G-17e-f)
 - `schedule-2026-04-005` / `price` (G-14b1f)
 
+## G-18h-upload Discography tracklist reflection manual upload final preflight — complete
+
+- **Doc:** `gosaki-discography-g18h-upload-final-preflight.md`
+- **Base:** `7cad34c` (uncommitted doc + verifier)
+- **Upload scope:** **1 file** — `discography/index.html` → `/cms-kit-staging/gosaki-piano/discography/index.html`
+- **CSS/JS:** upload **not required** — `index.YcHrHZH4.css` already HTTP 200 on staging
+- **Live pre-upload:** old `Like a Lover` present; `Like a Lover（テスト）` absent
+- **Cursor FTP/upload:** **not executed**
+- **Next:** G-18h-upload-result (operator manual upload + post-upload HTTP verify)
+
 ## G-18h Discography public tracks reflection preflight — complete
 
 - **Doc:** `gosaki-discography-g18h-public-tracks-reflection-preflight.md`
-- **Base:** `ab8dee3` (uncommitted hook + doc)
+- **Commit:** `7cad34c`
 - **Hook:** `patchDiscographyItemTracks` — reads 34 `discography_tracks` rows; patches Track List `<p>` per album
 - **Local:** `output/manual-upload/gosaki-piano/public-dist/discography/index.html` — track 7 `Like a Lover（テスト）`
-- **Staging live:** still `Like a Lover` — **no upload**
-- **Upload candidate:** `discography/index.html` (CSS hash unchanged `index.YcHrHZH4.css`)
+- **Staging live:** still `Like a Lover` — upload deferred to operator
 - **Do not re-Save** `discography-002` track 7
-- **Next:** G-18h-upload (operator FTP/manual upload with explicit approval)
 
 ## G-18g2-execution Discography tracklist single-title Save result — complete
 

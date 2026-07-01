@@ -1,21 +1,28 @@
 Last updated: 2026-06-29
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-18h-upload Discography tracklist reflection manual upload final preflight — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-18h-upload-gosaki-discography-public-tracklist-reflection-manual-upload-final-preflight` |
+| Base | `7cad34c` |
+| Upload scope | **1 file** — `discography/index.html` |
+| CSS/JS upload | **not required** — `index.YcHrHZH4.css` already HTTP 200 on staging |
+| Live pre-upload | old `Like a Lover`; test title **absent** |
+| FTP / upload | **not executed** (Cursor) |
+| Doc | `gosaki-discography-g18h-upload-final-preflight.md` |
+| Verifier | `verify-g18h-gosaki-discography-upload-final-preflight.mjs` |
+| **Next** | **G-18h-upload-result** — operator manual upload + HTTP verify |
+| **Do not** | mirror/sync/delete / FTP root / re-Save track 7 |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-18h Discography public tracks reflection preflight — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-18h-gosaki-discography-public-tracks-reflection-preflight` |
-| Base | `ab8dee3` |
-| Hook | `patchDiscographyItemTracks` + `discography_tracks` read (34 rows) |
-| Local HTML | `Like a Lover（テスト）` in SKYLARK track 7 |
-| Track counts | 9 / 8 / 9 / 8 preserved |
-| Staging live | **unchanged** — old `Like a Lover` still |
-| FTP / upload | **not executed** |
-| Doc | `gosaki-discography-g18h-public-tracks-reflection-preflight.md` |
-| Verifier | `verify-g18h-gosaki-discography-public-tracks-reflection-preflight.mjs` |
-| **Next** | **G-18h-upload** operator manual upload (`discography/index.html`) |
-| **Do not** | Re-Save track 7 / FTP without explicit approval |
+| Base | `7cad34c` |
+| **Next** | G-18h-upload final preflight — **done** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-18g2-execution Discography tracklist single-title Save result — complete
 

@@ -5,26 +5,36 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-19b1-execution-gosaki-discography-tracklist-generic-single-title-save-result — complete.
-Operator Save once succeeded: discography-004 track 1 Mary Ann → Mary Ann（テスト）.
-afterVerification PASS; rollback not needed; G-18g2 track 7 unchanged.
+Current phase: G-19c-gosaki-discography-tracklist-public-reflection-local-regen-and-upload-preflight — complete.
+Local package regen PASS: discography-004 track 1 Mary Ann（テスト） in generated HTML.
+Upload preflight: 1 file discography/index.html only; CSS/JS unchanged; FTP not executed.
 Do not re-Save discography-004 track 1 or discography-002 track 7.
-Next: G-19c public reflection local regen / preflight (no regen/FTP in this phase).
+Next: G-19d operator manual upload + HTTP verify (not in this phase).
 ```
 
 **Closed chains — do not re-Save / re-upload:**
 - `discography-001` / `artist` (G-16b-f)
 - `discography-002` / `purchase_url` (G-15c-f)
-- `discography-004` / track 1 `title` (G-19b1-execution — do not re-Save)
+- `discography-004` / track 1 `title` (G-19b1-execution — do not re-Save; G-19d upload pending)
 - `discography-002` / track 7 `title` + public reflection (G-18g2-execution + G-18h-upload — do not re-Save / re-upload)
 - `discography-003` / `artist` (G-15e-f)
 - `discography-004` / `label` (G-17e-f)
 - `schedule-2026-04-005` / `price` (G-14b1f)
 
+## G-19c Discography G-19b1 tracklist public reflection local regen / upload preflight — complete
+
+- **Doc:** `gosaki-discography-g19c-tracklist-public-reflection-local-regen-and-upload-preflight.md`
+- **Base:** `d311e65` (uncommitted)
+- **Regen:** `build-gosaki-staging-admin-package.mjs` PASS
+- **Local HTML:** `Mary Ann（テスト）` on Ja-Jaaaaan! track 1; G-18g2 track 7 maintained
+- **Upload:** 1 file `discography/index.html`; CSS `YcHrHZH4` / JS `CTyGy8yS` unchanged
+- **FTP/upload:** not executed
+- **Next:** G-19d operator manual upload + HTTP verify
+
 ## G-19b1-execution Discography tracklist generic single-title Save execution result — complete
 
 - **Doc:** `gosaki-discography-g19b1-tracklist-single-title-save-execution-result.md`
-- **Base:** `97d5378` (uncommitted result)
+- **Base:** `d311e65`
 - **Save:** operator once — alert `保存しました。`; Cursor did not Save
 - **after:** track 1 = `Mary Ann（テスト）`; album 8 tracks; test title count 1
 - **G-18g2:** track 7 `Like a Lover（テスト）` unchanged

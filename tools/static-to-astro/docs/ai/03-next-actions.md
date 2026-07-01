@@ -1,21 +1,34 @@
 Last updated: 2026-06-29
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-19c Discography G-19b1 tracklist public reflection local regen / upload preflight — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-19c-gosaki-discography-tracklist-public-reflection-local-regen-and-upload-preflight` |
+| Base | `d311e65` |
+| Local regen | **PASS** — `Mary Ann（テスト）` in `discography/index.html` |
+| Upload scope | **1 file** — `discography/index.html` only |
+| CSS/JS | **unchanged** — `YcHrHZH4` / `CTyGy8yS` |
+| FTP / upload | **not executed** |
+| Doc | `gosaki-discography-g19c-tracklist-public-reflection-local-regen-and-upload-preflight.md` |
+| Verifier | `verify-g19c-gosaki-discography-tracklist-public-reflection-local-regen-and-upload-preflight.mjs` |
+| **Next** | `G-19d-gosaki-discography-tracklist-public-reflection-upload-execution` (operator manual upload) |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-19b1-execution Discography tracklist generic single-title Save execution result — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-19b1-execution-gosaki-discography-tracklist-generic-single-title-save-result` |
-| Base | `97d5378` |
+| Base | `d311e65` |
 | Operator Save | **once** — alert `保存しました。` |
 | after | `Mary Ann（テスト）` on track 1 / `discography-004` |
 | afterVerification | **PASS** — 8 tracks; test title count 1; G-18g2 track 7 unchanged |
 | Rollback | **not needed** |
-| Public reflection | **deferred** — G-19c |
+| Public reflection | **complete** — G-19c local regen |
 | Upload | **deferred** — G-19d |
 | Doc | `gosaki-discography-g19b1-tracklist-single-title-save-execution-result.md` |
-| Verifier | `verify-g19b1-gosaki-discography-tracklist-single-title-save-execution-result.mjs` |
-| **Next** | `G-19c-gosaki-discography-tracklist-public-reflection-local-regen-preflight` |
+| **Next** | — (superseded by G-19c) |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-19b1-execution-readiness Discography tracklist generic single-title Save execution readiness — complete
 

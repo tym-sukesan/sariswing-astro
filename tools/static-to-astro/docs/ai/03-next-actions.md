@@ -1,18 +1,31 @@
 Last updated: 2026-06-29
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20b Gosaki production pre-release test text cleanup final preflight — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20b-gosaki-production-test-text-cleanup-final-preflight` |
+| Base | `7eda613` |
+| Method | **SQL Editor** — 2 strict UPDATEs (`rowsAffected` 2 total) |
+| approvalId | `G-20b-gosaki-production-discography-test-text-cleanup` |
+| beforeSnapshot | 2 test rows; 34 tracks; albums 8+8 |
+| Doc | `gosaki-production-test-text-cleanup-final-preflight.md` |
+| Verifier | `verify-g20b-gosaki-production-test-text-cleanup-final-preflight.mjs` |
+| **Next** | `G-20b-execution-gosaki-production-discography-test-text-cleanup` (operator SQL once) |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20a Gosaki production release readiness inventory — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-20a-gosaki-production-release-readiness-inventory` |
-| Base | `85021b0` |
+| Base | `7eda613` |
 | Type | read-only inventory / planning |
 | Must blockers | test title cleanup; production URL/SEO; cutover preflight; client sign-off; Supabase prod strategy |
 | Test text live | `Like a Lover（テスト）`, `Mary Ann（テスト）` on `/discography/` |
 | Doc | `gosaki-production-release-readiness-inventory.md` |
 | Verifier | `verify-g20a-gosaki-production-release-readiness-inventory.mjs` |
-| **Next** | `G-20b-gosaki-test-text-cleanup-planning` **or** `G-20c-gosaki-production-cutover-preflight` |
+| **Next** | — (superseded by G-20b) |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-19e Discography G-19b1 tracklist Save / public reflection closure — complete
 

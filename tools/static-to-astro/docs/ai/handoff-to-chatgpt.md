@@ -5,10 +5,10 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20a-gosaki-production-release-readiness-inventory — complete.
-Production release inventory: must-fix test titles on discography; production URL/SEO/cutover TBD; admin is local-dev only.
-G-19b1→G-19e chain closed. FTP auto-deploy still suspended (G-7f1).
-Next: G-20b test text cleanup planning; G-20c production cutover preflight; G-19f/G-19g optional parallel.
+Current phase: G-20b-gosaki-production-test-text-cleanup-final-preflight — complete.
+beforeSnapshot PASS: 2 test discography titles on staging DB + live /discography/.
+Cleanup method: operator SQL Editor — 2 strict UPDATEs (not UI Save; G-18g2/G-19b1 chains closed).
+Next: G-20b-execution — operator runs UPDATE once + afterVerification (no regen/FTP in execution).
 ```
 
 **Closed chains — do not re-Save / re-upload:**
@@ -20,10 +20,19 @@ Next: G-20b test text cleanup planning; G-20c production cutover preflight; G-19
 - `discography-004` / `label` (G-17e-f)
 - `schedule-2026-04-005` / `price` (G-14b1f)
 
+## G-20b Gosaki production pre-release test text cleanup final preflight — complete
+
+- **Doc:** `gosaki-production-test-text-cleanup-final-preflight.md`
+- **Base:** `7eda613` (uncommitted)
+- **Targets:** 002/7 `Like a Lover（テスト）`→`Like a Lover`; 004/1 `Mary Ann（テスト）`→`Mary Ann`
+- **Method:** SQL Editor 2 UPDATEs; UI Save **not recommended**
+- **approvalId:** `G-20b-gosaki-production-discography-test-text-cleanup`
+- **Next:** G-20b-execution (operator SQL) → G-20b-reflection (discography regen/upload)
+
 ## G-20a Gosaki production release readiness inventory — complete
 
 - **Doc:** `gosaki-production-release-readiness-inventory.md`
-- **Base:** `85021b0` (uncommitted)
+- **Base:** `7eda613`
 - **Must before public:** test title cleanup (2 discography tracks); production deployBase/canonical/robots; cutover preflight; client sign-off
 - **Admin:** staging shell local-dev only — hosted admin deferred (G-20d)
 - **FTP:** G-7f1 suspended — manual only with explicit approval

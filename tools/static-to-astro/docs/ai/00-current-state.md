@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-19c Gosaki Discography G-19b1 tracklist public reflection local regen / upload preflight (2026-07-01):** **complete (uncommitted)** — local regen PASS; `Mary Ann（テスト）` in generated HTML; 1-file upload plan; CSS/JS unchanged. Doc: `gosaki-discography-g19c-tracklist-public-reflection-local-regen-and-upload-preflight.md`. **FTP/upload not executed.** Next: G-19d.
+**G-19d Gosaki Discography G-19b1 tracklist public reflection upload result (2026-07-01):** **complete (uncommitted)** — operator manual upload 1 file; HTTP verify PASS; live `Mary Ann（テスト）`. Doc: `gosaki-discography-g19d-tracklist-public-reflection-upload-result.md`. **Do not re-upload `discography/index.html` for this change.** Next: G-19e closure.
+
+**G-19c Gosaki Discography G-19b1 tracklist public reflection local regen / upload preflight (2026-07-01):** **complete** — commit `5b9ee8b`. Local regen PASS; 1-file upload plan. Doc: `gosaki-discography-g19c-tracklist-public-reflection-local-regen-and-upload-preflight.md`. Upload done — see G-19d.
 
 **G-19b1-execution Gosaki Discography tracklist generic single-title Save execution result (2026-07-01):** **complete** — commit `d311e65`. Operator Save once succeeded; track 1 `Mary Ann` → `Mary Ann（テスト）`; afterVerification PASS. Doc: `gosaki-discography-g19b1-tracklist-single-title-save-execution-result.md`. **Do not re-Save `discography-004` track 1.**
 

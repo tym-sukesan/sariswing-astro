@@ -1,19 +1,31 @@
 Last updated: 2026-06-29
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-19d Discography G-19b1 tracklist public reflection upload result — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-19d-gosaki-discography-tracklist-public-reflection-upload-result` |
+| Base | `5b9ee8b` |
+| Upload | operator manual — **1 file** `discography/index.html` |
+| HTTP verify | **PASS** — `Mary Ann（テスト）` live |
+| G-18g2 track 7 | **maintained** — `Like a Lover（テスト）` |
+| Doc | `gosaki-discography-g19d-tracklist-public-reflection-upload-result.md` |
+| Verifier | `verify-g19d-gosaki-discography-tracklist-public-reflection-upload-result.mjs` |
+| **Next** | `G-19e-gosaki-discography-g19b1-tracklist-reflection-closure` |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-19c Discography G-19b1 tracklist public reflection local regen / upload preflight — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-19c-gosaki-discography-tracklist-public-reflection-local-regen-and-upload-preflight` |
-| Base | `d311e65` |
+| Base | `5b9ee8b` |
 | Local regen | **PASS** — `Mary Ann（テスト）` in `discography/index.html` |
 | Upload scope | **1 file** — `discography/index.html` only |
 | CSS/JS | **unchanged** — `YcHrHZH4` / `CTyGy8yS` |
-| FTP / upload | **not executed** |
+| FTP / upload | **complete** — G-19d |
 | Doc | `gosaki-discography-g19c-tracklist-public-reflection-local-regen-and-upload-preflight.md` |
-| Verifier | `verify-g19c-gosaki-discography-tracklist-public-reflection-local-regen-and-upload-preflight.mjs` |
-| **Next** | `G-19d-gosaki-discography-tracklist-public-reflection-upload-execution` (operator manual upload) |
+| **Next** | — (superseded by G-19d) |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-19b1-execution Discography tracklist generic single-title Save execution result — complete
 

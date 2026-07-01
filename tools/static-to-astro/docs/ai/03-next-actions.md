@@ -1,19 +1,28 @@
 Last updated: 2026-07-01
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20h2 Gosaki initial local production package build — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20h2-gosaki-production-package-local-build` |
+| Base | `c1ca639` |
+| Build | `npm run build:gosaki-production-package` — **executed** |
+| Output | `output/manual-upload/gosaki-piano-production/` (27 files) |
+| SEO | production canonical/og:url/sitemap; no staging leak on primary routes |
+| Discography | cleanup titles verified (no test titles) |
+| Doc | `gosaki-production-package-build-result.md` |
+| Verifier | `verify-g20h2-gosaki-production-package-build.mjs` |
+| **Next** | `G-20i-gosaki-production-upload-preflight` |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20h1 Gosaki production config implementation — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-20h1-gosaki-production-config-implementation` |
-| Base | `f35e462` |
-| Files | `gosaki-piano.deploy-profiles.json`, `gosaki-package-build-profile.mjs`, `build-gosaki-production-package.mjs` |
-| Staging script | **unchanged** — `build-gosaki-staging-admin-package.mjs` |
-| Production output | `gosaki-piano-production/` (separate from staging) |
-| Production build | **not executed** |
-| Doc | `gosaki-production-config-implementation.md` |
-| Verifier | `verify-g20h1-gosaki-production-config-implementation.mjs` |
-| **Next** | `G-20h2-gosaki-production-package-local-build` |
+| Base | `c1ca639` |
+| Production build | **executed in G-20h2** |
+| **Next** | — (superseded by G-20h2) |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20g Gosaki production config implementation planning — complete
 

@@ -288,11 +288,16 @@ export function verifyAssetPathsIncludeBase(publicDir, deployBase) {
 
 /**
  * G-7e staging preview checks: canonical shape + nav internal link rewrite.
+ * Production root deploy (deployBase=/) uses verifyProductionPreviewHtml instead.
  * @param {string} publicDir
  * @param {string | null | undefined} deployBase
  */
 export function verifyStagingPreviewHtml(publicDir, deployBase) {
   const base = normalizeDeployBase(deployBase);
+  if (base === "/") {
+    return verifyProductionPreviewHtml(publicDir);
+  }
+
   const prefix = base.replace(/^\/|\/$/g, "");
   const indexPath = path.join(publicDir, "index.html");
   if (!fs.existsSync(indexPath)) {
@@ -357,6 +362,77 @@ export function verifyStagingPreviewHtml(publicDir, deployBase) {
           !ogUrlDoesNotDuplicateDeployBase && "duplicate deployBase in og:url",
           !navHomeRewritten && "nav Home not rewritten to deployBase",
           !internalLinksRewritten && "internal nav still contains production URLs",
+        ]
+          .filter(Boolean)
+          .join("; "),
+  };
+}
+
+const PRODUCTION_HOST_PATTERN = /www\.gosaki-piano\.com/i;
+const STAGING_HOST_LEAK_PATTERN = /yskcreate\.weblike\.jp|\/cms-kit-staging\//i;
+
+/**
+ * G-20h2 production package checks: production canonical/og:url + no staging leak.
+ * @param {string} publicDir
+ */
+export function verifyProductionPreviewHtml(publicDir) {
+  const indexPath = path.join(publicDir, "index.html");
+  if (!fs.existsSync(indexPath)) {
+    return {
+      ok: false,
+      reason: "index.html missing",
+      productionHostInCanonical: false,
+      productionHostInOgUrl: false,
+      noStagingHostLeak: false,
+      rootNavPaths: false,
+      rootAssetPaths: false,
+    };
+  }
+
+  const html = fs.readFileSync(indexPath, "utf8");
+  const { canonical, ogUrl } = extractSeoMetaUrlsFromHtml(html);
+  const head = extractHeadHtml(html);
+
+  const productionHostInCanonical = PRODUCTION_HOST_PATTERN.test(canonical);
+  const productionHostInOgUrl = PRODUCTION_HOST_PATTERN.test(ogUrl);
+  const noStagingHostLeak = !STAGING_HOST_LEAK_PATTERN.test(`${canonical}${ogUrl}${head}`);
+  const rootNavPaths =
+    /href="\/discography\/"/.test(html) &&
+    /href="\/schedule\/"/.test(html) &&
+    !/\/cms-kit-staging\//i.test(html.slice(0, 15000));
+  const rootAssetPaths =
+    /href="\/_astro\//.test(html) && !/\/cms-kit-staging\/gosaki-piano\/_astro\//i.test(html);
+
+  const ok =
+    productionHostInCanonical &&
+    productionHostInOgUrl &&
+    noStagingHostLeak &&
+    rootNavPaths &&
+    rootAssetPaths;
+
+  return {
+    ok,
+    canonical,
+    ogUrl,
+    productionHostInCanonical,
+    productionHostInOgUrl,
+    noStagingHostLeak,
+    rootNavPaths,
+    rootAssetPaths,
+    canonicalDoesNotContainProductionHost: productionHostInCanonical,
+    canonicalDoesNotDuplicateDeployBase: true,
+    ogUrlDoesNotContainProductionHost: productionHostInOgUrl,
+    ogUrlDoesNotDuplicateDeployBase: true,
+    navHomeRewritten: rootNavPaths,
+    internalLinksRewritten: noStagingHostLeak,
+    reason: ok
+      ? null
+      : [
+          !productionHostInCanonical && "canonical missing production host",
+          !productionHostInOgUrl && "og:url missing production host",
+          !noStagingHostLeak && "staging host leak in SEO meta",
+          !rootNavPaths && "nav links not root-prefixed",
+          !rootAssetPaths && "asset paths not root /_astro/",
         ]
           .filter(Boolean)
           .join("; "),

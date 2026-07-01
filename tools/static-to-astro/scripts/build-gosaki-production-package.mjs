@@ -37,7 +37,7 @@ const report = reportGosakiStagingAdminPublicEnvPresence();
 const env = loadGosakiStagingAdminPublicEnv();
 const validation = validateGosakiStagingAdminPublicEnv(env);
 
-console.log("G-20h1 Gosaki production package build");
+console.log("G-20h2 Gosaki production package build");
 console.log("profile:", PROFILE_NAME);
 console.log("baseUrl:", profile.baseUrl);
 console.log("deployBase:", profile.deployBase);
@@ -98,8 +98,8 @@ run(
 );
 
 run("npm", ["run", "manual-upload:package:gosaki-production"], buildEnv);
-run("npm", ["run", "verify:manual-upload:gosaki-production"], buildEnv);
+run("node", ["scripts/verify-g20h2-gosaki-production-package-build.mjs"], buildEnv);
 
 console.log("");
-console.log("G-20h1 Gosaki production package build: PASS");
+console.log("G-20h2 Gosaki production package build: PASS");
 console.log(`Output: tools/static-to-astro/${profile.manualUploadOut}/`);

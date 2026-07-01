@@ -5,13 +5,13 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20h1-gosaki-production-config-implementation — complete.
-Deploy profiles JSON + build profile lib + build-gosaki-production-package.mjs + npm scripts added.
-Staging build-gosaki-staging-admin-package.mjs unchanged (reflection flow protected).
-Production output paths: gosaki-piano-production/ (separate from staging).
+Current phase: G-20h2-gosaki-production-package-local-build — complete.
+First local production package built: output/manual-upload/gosaki-piano-production/ (27 public-dist files).
+SEO: www.gosaki-piano.com canonical/og:url/sitemap; no staging leak on primary routes.
+Discography cleanup verified: no test titles; Like a Lover / Mary Ann production titles only.
 Supabase interim SoT: kmjqppxjdnwwrtaeqjta — never vsbvndwuajjhnzpohghh.
-Production build NOT executed in G-20h1.
-Next: G-20h2 first local production package build + SEO verifier.
+FTP/upload/DNS/DB write NOT executed in G-20h2.
+Next: G-20i production upload preflight.
 ```
 
 **Closed chains — do not re-UPDATE / re-Save / re-upload:**
@@ -21,15 +21,20 @@ Next: G-20h2 first local production package build + SEO verifier.
 - `discography-004` / `label` (G-17e-f)
 - `schedule-2026-04-005` / `price` (G-14b1f)
 
+## G-20h2 Gosaki initial local production package build — complete
+
+- **Doc:** `gosaki-production-package-build-result.md`
+- **Base:** `c1ca639` (uncommitted)
+- **Output:** `output/manual-upload/gosaki-piano-production/` (27 files)
+- **Build:** `npm run build:gosaki-production-package` executed locally
+- **Verifier:** `verify-g20h2-gosaki-production-package-build.mjs`
+- **Next:** G-20i upload preflight (no FTP in G-20h2)
+
 ## G-20h1 Gosaki production config implementation — complete
 
 - **Doc:** `gosaki-production-config-implementation.md`
-- **Base:** `f35e462` (uncommitted)
-- **Profiles:** `config/sites/gosaki-piano.deploy-profiles.json`
-- **Scripts:** `build-gosaki-production-package.mjs`, `gosaki-package-build-profile.mjs`
-- **Staging script:** unchanged
-- **Verifier:** `verify-g20h1-gosaki-production-config-implementation.mjs`
-- **Next:** G-20h2 production local build (not executed yet)
+- **Base:** `c1ca639`
+- **Next:** — (superseded by G-20h2)
 
 ## G-20g Gosaki production config implementation planning — complete
 

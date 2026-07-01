@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-20d/G-20e Gosaki production test text cleanup public reflection upload + HTTP verify (2026-07-01):** **complete (uncommitted)** — operator manual upload 1 file; live HTTP verify PASS; test titles absent; `Like a Lover` / `Mary Ann` present; albums 8+8. Doc: `gosaki-production-test-text-cleanup-public-reflection-upload-result.md`. **Do not re-upload `discography/index.html` for cleanup.** Next: G-20e-closure or G-20f.
+**G-20e-closure Gosaki production test text cleanup chain closure (2026-07-01):** **complete (uncommitted)** — G-20b→G-20c→G-20d→G-20e chain **closed**; live test titles absent; production titles present; rollback not needed. Doc: `gosaki-production-test-text-cleanup-closure.md`. **Do not re-UPDATE / re-upload for cleanup.** Next: G-20f.
+
+**G-20d/G-20e Gosaki production test text cleanup public reflection upload + HTTP verify (2026-07-01):** **complete** — commit `32cb18e`. Doc: `gosaki-production-test-text-cleanup-public-reflection-upload-result.md`. **Chain closed — see G-20e-closure.**
 
 **G-20c Gosaki production test text cleanup public reflection local regen + upload preflight (2026-07-01):** **complete** — commit `0550da4`. Doc: `gosaki-production-test-text-cleanup-public-reflection-local-regen-and-upload-preflight.md`. **Upload done — see G-20d/G-20e.**
 

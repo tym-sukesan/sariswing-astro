@@ -5,29 +5,35 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20d/G-20e-gosaki-production-test-text-cleanup-public-reflection-upload-result — complete.
-Operator manual upload 1 file (discography/index.html). Live HTTP verify PASS.
-Test titles absent on /discography/; Like a Lover / Mary Ann present; albums 8+8.
-Chain: G-20b DB cleanup → G-20c regen → G-20d upload → G-20e verify — closed pending G-20e-closure doc.
-Next: G-20e-closure chain closure doc OR G-20f production cutover preflight.
-Do not re-upload discography/index.html for this cleanup.
+Current phase: G-20e-closure-gosaki-production-test-text-cleanup-closure — complete.
+Chain closed: G-20b DB cleanup → G-20c regen → G-20d upload → G-20e HTTP verify.
+Live /discography/: test titles absent; Like a Lover / Mary Ann present; albums 8+8.
+G-20a must-blocker (2 test titles) resolved on staging.
+Do not re-UPDATE / re-upload discography/index.html for this cleanup.
+Next: G-20f production release config / cutover preflight.
 ```
 
-**Closed chains — do not re-Save / re-upload:**
-- `discography-002` / track 7 `title` (G-20b cleanup — live reflected; **do not re-upload**)
-- `discography-004` / track 1 `title` (G-20b cleanup — live reflected; **do not re-upload**)
+**Closed chains — do not re-UPDATE / re-Save / re-upload:**
+- `discography-002` / track 7 `title` (G-20b cleanup chain — **closed**)
+- `discography-004` / track 1 `title` (G-20b cleanup chain — **closed**)
 - `discography-003` / `artist` (G-15e-f)
 - `discography-004` / `label` (G-17e-f)
 - `schedule-2026-04-005` / `price` (G-14b1f)
 
+## G-20e-closure Gosaki production test text cleanup chain closure — complete
+
+- **Doc:** `gosaki-production-test-text-cleanup-closure.md`
+- **Base:** `32cb18e` (uncommitted)
+- **Chain closed:** G-20b → G-20c → G-20d → G-20e
+- **Live:** production titles only; G-20a must-blocker resolved
+- **Verifier:** `verify-g20e-closure-gosaki-production-test-text-cleanup-closure.mjs`
+- **Next:** G-20f production release config / cutover preflight
+
 ## G-20d/G-20e Gosaki production test text cleanup upload + HTTP verify — complete
 
 - **Doc:** `gosaki-production-test-text-cleanup-public-reflection-upload-result.md`
-- **Base:** `0550da4` (uncommitted)
-- **Upload:** operator manual 1 file; `_astro/` not uploaded
-- **Live:** test titles absent; `Like a Lover` / `Mary Ann`; HTTP 200
-- **Verifier:** `verify-g20de-gosaki-production-test-text-cleanup-public-reflection-upload-result.mjs`
-- **Next:** G-20e-closure **or** G-20f production cutover preflight
+- **Base:** `32cb18e`
+- **Next:** — (superseded by G-20e-closure)
 
 ## G-20c Gosaki production test text cleanup public reflection local regen + upload preflight — complete
 

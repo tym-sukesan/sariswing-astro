@@ -1,18 +1,29 @@
 Last updated: 2026-07-01
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20e-closure Gosaki production test text cleanup chain closure — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20e-closure-gosaki-production-test-text-cleanup-closure` |
+| Base | `32cb18e` |
+| Chain | G-20b DB cleanup → G-20c regen → G-20d upload → G-20e verify — **closed** |
+| Live | test titles **absent**; `Like a Lover` / `Mary Ann` present |
+| Rollback | **not needed** |
+| Doc | `gosaki-production-test-text-cleanup-closure.md` |
+| Verifier | `verify-g20e-closure-gosaki-production-test-text-cleanup-closure.mjs` |
+| **Next** | `G-20f-gosaki-production-release-config-cutover-preflight` |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20d/G-20e Gosaki production test text cleanup upload + HTTP verify — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-20d` upload + `G-20e` HTTP verify |
-| Base | `0550da4` |
+| Base | `32cb18e` |
 | Upload | operator manual — **1 file** `discography/index.html` |
-| Live | test titles **absent**; `Like a Lover` / `Mary Ann` present |
-| CSS/JS | pre-existing on server — **200**; not re-uploaded |
 | Doc | `gosaki-production-test-text-cleanup-public-reflection-upload-result.md` |
 | Verifier | `verify-g20de-gosaki-production-test-text-cleanup-public-reflection-upload-result.mjs` |
-| **Next** | `G-20e-closure` cleanup chain closure **or** `G-20f` production cutover preflight |
+| **Next** | — (superseded by G-20e-closure) |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20c Gosaki production test text cleanup public reflection local regen + upload preflight — complete
 

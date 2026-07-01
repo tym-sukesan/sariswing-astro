@@ -5,13 +5,13 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20i-gosaki-production-upload-preflight — complete.
-Production package ready: gosaki-piano-production/public-dist/ (27 files, full first upload).
-Remote path TBD — operator confirms client Lolipop document root before G-20j.
-Upload safety: manual FTP only; mirror/sync/delete forbidden (G-7f1).
+Current phase: G-20i2-gosaki-production-upload-finalization-admin-and-remote-path — complete.
+Admin policy: Option B — exclude admin/ from first production upload (26 files, not 27).
+Current package still has admin/index.html — do NOT upload admin/ unless policy changes.
+Remote path / SSL / DNS / MX: TBD — G-20j STOP until operator checklist complete.
+Recommended next: G-20i3 regen package without admin/ + operator Lolipop path confirmation.
 Supabase interim SoT: kmjqppxjdnwwrtaeqjta — never vsbvndwuajjhnzpohghh.
-FTP/upload/DNS/DB write NOT executed in G-20i.
-Next: G-20j operator manual production FTP upload.
+FTP/upload/DNS/DB write/package regen NOT executed in G-20i2.
 ```
 
 **Closed chains — do not re-UPDATE / re-Save / re-upload:**
@@ -21,14 +21,20 @@ Next: G-20j operator manual production FTP upload.
 - `discography-004` / `label` (G-17e-f)
 - `schedule-2026-04-005` / `price` (G-14b1f)
 
+## G-20i2 Gosaki production upload finalization — complete
+
+- **Doc:** `gosaki-production-upload-finalization-admin-and-remote-path.md`
+- **Base:** `69d538e` (uncommitted)
+- **Admin:** Option B — exclude from first upload (26 files)
+- **G-20j:** STOP until remote path + DNS/SSL/MX confirmed
+- **Verifier:** `verify-g20i2-gosaki-production-upload-finalization-admin-and-remote-path.mjs`
+- **Next:** G-20i3 package admin exclusion regen + operator checklist
+
 ## G-20i Gosaki production upload preflight — complete
 
 - **Doc:** `gosaki-production-upload-preflight.md`
-- **Base:** `adfe27d` (uncommitted)
-- **Package:** 27 public-dist files — full first production upload scope
-- **Remote path:** TBD (Lolipop document root)
-- **Verifier:** `verify-g20i-gosaki-production-upload-preflight.mjs`
-- **Next:** G-20j manual FTP (operator only — no Cursor FTP)
+- **Base:** `69d538e`
+- **Next:** — (superseded by G-20i2)
 
 ## G-20h2 Gosaki initial local production package build — complete
 

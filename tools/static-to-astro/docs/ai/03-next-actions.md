@@ -1,19 +1,28 @@
 Last updated: 2026-07-01
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20i2 Gosaki production upload finalization — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20i2-gosaki-production-upload-finalization-admin-and-remote-path` |
+| Base | `69d538e` |
+| Admin policy | **Option B** — exclude from first production upload |
+| Upload scope (recommended) | **26 files** (no `admin/`) |
+| Current package | 27 files (includes `admin/` — do not upload) |
+| Remote path | **TBD** |
+| G-20j | **STOP** until checklist + scope locked |
+| Doc | `gosaki-production-upload-finalization-admin-and-remote-path.md` |
+| Verifier | `verify-g20i2-gosaki-production-upload-finalization-admin-and-remote-path.mjs` |
+| **Next** | `G-20i3-production-package-admin-exclusion` + operator remote path checklist |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20i Gosaki production upload preflight — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-20i-gosaki-production-upload-preflight` |
-| Base | `adfe27d` |
-| Package | `gosaki-piano-production/public-dist/` — **27 files** |
-| Upload type | First production **full package** (not 1-file staging diff) |
-| Remote path | **TBD** (operator confirms on client Lolipop) |
-| Safety | G-7f1 mirror/sync/delete forbidden; manual FTP only |
-| Doc | `gosaki-production-upload-preflight.md` |
-| Verifier | `verify-g20i-gosaki-production-upload-preflight.mjs` |
-| **Next** | `G-20j-gosaki-manual-production-upload` |
+| Base | `69d538e` |
+| **Next** | — (superseded by G-20i2) |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20h2 Gosaki initial local production package build — complete
 

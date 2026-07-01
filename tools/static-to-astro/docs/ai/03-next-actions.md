@@ -1,19 +1,33 @@
 Last updated: 2026-07-01
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20c Gosaki production test text cleanup public reflection local regen + upload preflight — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20c-gosaki-production-test-text-cleanup-public-reflection-local-regen-and-upload-preflight` |
+| Base | `041f16c` |
+| Regen | `build-gosaki-staging-admin-package.mjs` **PASS** (27 files) |
+| Local HTML | `Like a Lover` / `Mary Ann`; test titles **absent** |
+| CSS/JS hash | **unchanged** — `YcHrHZH4` / `CTyGy8yS` |
+| Upload scope | **1 file** — `discography/index.html` |
+| Live `/discography/` | **stale** — test titles still live until G-20d |
+| Doc | `gosaki-production-test-text-cleanup-public-reflection-local-regen-and-upload-preflight.md` |
+| Verifier | `verify-g20c-gosaki-production-test-text-cleanup-public-reflection-local-regen-and-upload-preflight.mjs` |
+| **Next** | `G-20d-gosaki-cleanup-public-reflection-upload-execution` (operator manual 1 file) |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20b-execution Gosaki production test text cleanup execution result — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-20b-execution-gosaki-production-discography-test-text-cleanup-result` |
-| Base | `a6c1cf1` |
+| Base | `041f16c` |
 | Method | operator SQL Editor — 2 strict UPDATEs once (no approval ceremony) |
 | DB | `（テスト）` count **0**; 002/7 `Like a Lover`; 004/1 `Mary Ann`; albums 8+8; total 34 |
 | Rollback | **not needed** / not executed |
-| Live `/discography/` | **stale** — still G-19d test titles until G-20c |
 | Doc | `gosaki-production-test-text-cleanup-execution-result.md` |
 | Verifier | `verify-g20b-gosaki-production-test-text-cleanup-execution-result.mjs` |
-| **Next** | `G-20c-gosaki-cleanup-public-reflection-local-regen-and-upload-preflight` |
+| **Next** | — (superseded by G-20c) |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20b Gosaki production pre-release test text cleanup final preflight — complete
 

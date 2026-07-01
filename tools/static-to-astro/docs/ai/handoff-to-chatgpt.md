@@ -5,11 +5,11 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-19b1-result-gosaki-discography-tracklist-generic-single-title-save-local-dry-run-qa — complete.
-G-19b1 local UI dry-run Preview PASS (discography-004 readiness ready_but_not_armed; Save disabled).
-G-19b1 implementation committed at 96e790f; verifier baseline 96e790f.
-G-18g2 Save + G-18h public reflection chain closed — do not re-Save track 7.
-Next: G-19b1-tracklist-generic-single-title-save-final-preflight.
+Current phase: G-19b1-preflight-gosaki-discography-tracklist-generic-single-title-save-final-preflight — complete.
+beforeSnapshot read-only verified on staging (discography-004 track 1 = Mary Ann; 8 tracks; G-18g2 track 7 unchanged).
+Rollback SQL template created only — not executed.
+Operator manual Save once is G-19b1-execution only — Cursor must NOT click Save.
+Next: G-19b1-execution-gosaki-discography-tracklist-generic-single-title-save.
 ```
 
 **Closed chains — do not re-Save / re-upload:**
@@ -20,9 +20,19 @@ Next: G-19b1-tracklist-generic-single-title-save-final-preflight.
 - `discography-004` / `label` (G-17e-f)
 - `schedule-2026-04-005` / `price` (G-14b1f)
 
+## G-19b1-preflight Discography tracklist generic single-title Save final preflight — complete
+
+- **Doc:** `gosaki-discography-g19b1-tracklist-single-title-save-final-preflight.md`
+- **Base:** `450a8a4` (uncommitted preflight)
+- **beforeSnapshot:** staging read-only — row `04e987a9-...` / track 1 / `Mary Ann`; album 8 tracks; test title 0 rows
+- **G-18g2:** track 7 `Like a Lover（テスト）` maintained — do not re-Save
+- **Rollback SQL:** template only — **not executed**
+- **Save:** operator (戸山さん) manual once in execution phase — **Cursor must NOT click Save**
+- **Next:** G-19b1-execution — armed env + operator Save once
+
 ## G-19b1-result Discography tracklist generic single-title Save local dry-run QA — complete
 
-- **Base:** `96e790f`
+- **Base:** `450a8a4`
 - **Local UI:** PASS — discography-004 G-19b1 Preview; `saveReadiness: ready_but_not_armed`; Save disabled
 - **Other albums:** G-19a Preview only; G-18g2 not re-invoked
 - **Verifier:** implementation verifier HEAD/origin baseline `96e790f`

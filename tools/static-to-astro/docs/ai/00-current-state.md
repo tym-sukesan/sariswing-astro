@@ -3,9 +3,11 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-19b1-result Gosaki Discography tracklist generic single-title Save local dry-run QA (2026-07-01):** **complete** — commit `96e790f`; local UI Preview **PASS** (discography-004 G-19b1 readiness `ready_but_not_armed`; other albums G-19a only; Save disabled). Verifier baseline `96e790f`. **No Save / DB write.**
+**G-19b1-preflight Gosaki Discography tracklist generic single-title Save final preflight (2026-07-01):** **complete (uncommitted)** — beforeSnapshot read-only verified on staging; rollback SQL template only; Save UI wired. Doc: `gosaki-discography-g19b1-tracklist-single-title-save-final-preflight.md`. **No Save / DB write / rollback SQL.**
 
-**G-19b1 Gosaki Discography tracklist generic single-title Save implementation (2026-06-29):** **complete** — commit `96e790f`; `discography-004` track 1 `Mary Ann` → `Mary Ann（テスト）`; G-19b1 Save adapter + guards; Save disabled by default. Doc: `gosaki-discography-g19b1-tracklist-single-title-save-implementation.md`. **No Save / DB write.**
+**G-19b1-result Gosaki Discography tracklist generic single-title Save local dry-run QA (2026-07-01):** **complete** — commit `450a8a4`; local UI Preview **PASS** (`ready_but_not_armed`). **No Save / DB write.**
+
+**G-19b1 Gosaki Discography tracklist generic single-title Save implementation (2026-06-29):** **complete** — commit `96e790f`; `discography-004` track 1 Save adapter. Doc: `gosaki-discography-g19b1-tracklist-single-title-save-implementation.md`. **No Save / DB write.**
 
 **G-19b Gosaki Discography tracklist Save slice planning (2026-06-29):** **complete** — commit `889a891`; first generic Save slice **G-19b1** = `discography-004` track 1 title only; G-18g2 chain closed. Doc: `gosaki-discography-g19b-tracklist-save-slice-planning.md`. **No Save / DB write.**
 

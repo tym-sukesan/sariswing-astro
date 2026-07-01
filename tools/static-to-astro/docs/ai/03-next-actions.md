@@ -1,17 +1,32 @@
 Last updated: 2026-06-29
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-19b1-preflight Discography tracklist generic single-title Save final preflight — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-19b1-preflight-gosaki-discography-tracklist-generic-single-title-save-final-preflight` |
+| Base | `450a8a4` |
+| Target | `discography-004` track 1 `Mary Ann` → `Mary Ann（テスト）` |
+| beforeSnapshot | read-only REST verified on staging |
+| Rollback SQL | template only — **not executed** |
+| Save UI | wired — operator Save once in execution phase |
+| DB write / Save | **not executed** |
+| Doc | `gosaki-discography-g19b1-tracklist-single-title-save-final-preflight.md` |
+| Verifier | `verify-g19b1-gosaki-discography-tracklist-single-title-save-final-preflight.mjs` |
+| **Next** | `G-19b1-execution-gosaki-discography-tracklist-generic-single-title-save` (operator manual Save once) |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-19b1-result Discography tracklist generic single-title Save local dry-run QA — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-19b1-result-gosaki-discography-tracklist-generic-single-title-save-local-dry-run-qa` |
-| Base | `96e790f` |
+| Base | `450a8a4` |
 | Local UI QA | **PASS** — discography-004 G-19b1 Preview; `saveReadiness: ready_but_not_armed` |
 | Other albums | G-19a Preview only; Save disabled |
 | Verifier baseline | `96e790f` (implementation verifier HEAD fix) |
 | DB write / Save | **not executed** |
-| **Next** | `G-19b1-tracklist-generic-single-title-save-final-preflight` |
+| **Next** | — (superseded by G-19b1-preflight) |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-19b1 Discography tracklist generic single-title Save implementation — complete
 

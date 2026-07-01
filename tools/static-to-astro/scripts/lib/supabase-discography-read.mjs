@@ -13,6 +13,9 @@ const DEFAULT_TOOL_ROOT = path.resolve(__dirname, "../..");
 export const DISCOGRAPHY_SELECT =
   "legacy_id,title,artist,label,catalog_number,purchase_url,streaming_url,sort_order,published";
 
+export const DISCOGRAPHY_TRACKS_SELECT =
+  "id,discography_legacy_id,track_number,title,sort_order";
+
 const REPEATER_ITEM_START_RE =
   /<div id="comp-llexymga__item[^"]+" class="[^"]*wixui-repeater__item"/g;
 
@@ -40,6 +43,58 @@ export function normalizeDiscographyRecord(row) {
     sort_order: Number(row.sort_order ?? 0),
     published: row.published !== false,
   };
+}
+
+/**
+ * @param {Record<string, unknown>} row
+ */
+export function normalizeDiscographyTrackRecord(row) {
+  return {
+    id: String(row.id ?? ""),
+    discography_legacy_id: String(row.discography_legacy_id ?? ""),
+    track_number: Number(row.track_number ?? 0),
+    title: String(row.title ?? "").trim(),
+    sort_order: Number(row.sort_order ?? 0),
+  };
+}
+
+/**
+ * @param {ReturnType<typeof normalizeDiscographyTrackRecord>[]} rows
+ */
+export function groupDiscographyTracksByLegacyId(rows) {
+  /** @type {Record<string, ReturnType<typeof normalizeDiscographyTrackRecord>[]>} */
+  const map = {};
+  for (const row of rows) {
+    if (!row.discography_legacy_id) continue;
+    (map[row.discography_legacy_id] ??= []).push(row);
+  }
+  for (const legacyId of Object.keys(map)) {
+    map[legacyId].sort(
+      (a, b) => a.sort_order - b.sort_order || a.track_number - b.track_number,
+    );
+  }
+  return map;
+}
+
+/**
+ * @param {{
+ *   env: { supabaseUrl: string, anonKey: string },
+ * }} opts
+ */
+export async function loadDiscographyTracksFromSupabase({ env }) {
+  const { createClient } = await import("@supabase/supabase-js");
+  const supabase = createClient(env.supabaseUrl, env.anonKey, {
+    auth: { persistSession: false, autoRefreshToken: false },
+  });
+
+  const { data, error } = await supabase
+    .from("discography_tracks")
+    .select(DISCOGRAPHY_TRACKS_SELECT)
+    .order("discography_legacy_id", { ascending: true })
+    .order("sort_order", { ascending: true });
+
+  if (error) throw new Error(error.message);
+  return (data ?? []).map((row) => normalizeDiscographyTrackRecord(row));
 }
 
 /**
@@ -206,6 +261,131 @@ export function patchDiscographyItemLabel(segment, label, catalogNumber) {
   return { segment: replaced, patched: true };
 }
 
+const TRACK_LIST_HEADING_RE = /Track List/i;
+const TRACK_BLOCK_END_RE = /Personnel|Release/;
+const TRACK_PARAGRAPH_RE = /<p class="font_8[^"]*"[^>]*>[\s\S]*?<\/p>/g;
+
+/**
+ * @param {string} text
+ */
+function decodeHtmlEntities(text) {
+  return String(text)
+    .replace(/&nbsp;/g, " ")
+    .replace(/&#39;/g, "'")
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/\u200b/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+/**
+ * @param {string} text
+ */
+function encodeHtmlText(text) {
+  return String(text)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+/**
+ * @param {string} pHtml
+ */
+function extractTrackParagraphPlainText(pHtml) {
+  return decodeHtmlEntities(pHtml.replace(/<[^>]+>/g, ""));
+}
+
+/**
+ * @param {string} pHtml
+ * @param {string} oldPlain
+ * @param {string} newPlain
+ */
+function replaceTrackParagraphTitle(pHtml, oldPlain, newPlain) {
+  if (!oldPlain || oldPlain === newPlain) return pHtml;
+
+  const oldVariants = [oldPlain, oldPlain.replace(/'/g, "&#39;")];
+  const encodedNew = encodeHtmlText(newPlain).replace(/'/g, "&#39;");
+
+  for (const oldVariant of oldVariants) {
+    const re = new RegExp(`>${escapeRegExp(oldVariant)}<`);
+    if (re.test(pHtml)) {
+      return pHtml.replace(re, `>${encodedNew}<`);
+    }
+  }
+
+  return pHtml.replace(/>([^<]+)</g, (match, inner) => {
+    if (decodeHtmlEntities(inner) === oldPlain) {
+      return `>${encodedNew}<`;
+    }
+    return match;
+  });
+}
+
+/**
+ * Patch Track List titles inside one Wix repeater item from Supabase tracks.
+ * @param {string} segment
+ * @param {ReturnType<typeof normalizeDiscographyTrackRecord>[]} tracks
+ */
+export function patchDiscographyItemTracks(segment, tracks) {
+  if (!tracks?.length) return { segment, patched: false, changedTitles: [] };
+
+  const tlIdx = segment.search(TRACK_LIST_HEADING_RE);
+  if (tlIdx < 0) return { segment, patched: false, changedTitles: [] };
+
+  const afterTl = segment.slice(tlIdx);
+  const headingOffset = afterTl.search(TRACK_LIST_HEADING_RE);
+  const afterHeading = afterTl.slice(headingOffset);
+  const endRel = afterHeading.search(TRACK_BLOCK_END_RE);
+  if (endRel < 0) return { segment, patched: false, changedTitles: [] };
+
+  const blockEnd = tlIdx + headingOffset + endRel;
+  const trackBlock = segment.slice(tlIdx, blockEnd);
+
+  /** @type {Array<{ full: string, plain: string }>} */
+  const paragraphs = [];
+  TRACK_PARAGRAPH_RE.lastIndex = 0;
+  let match;
+  while ((match = TRACK_PARAGRAPH_RE.exec(trackBlock)) !== null) {
+    const plain = extractTrackParagraphPlainText(match[0]);
+    if (!plain || TRACK_LIST_HEADING_RE.test(plain)) continue;
+    paragraphs.push({ full: match[0], plain });
+  }
+
+  if (paragraphs.length !== tracks.length) {
+    return { segment, patched: false, changedTitles: [] };
+  }
+
+  let newTrackBlock = trackBlock;
+  /** @type {string[]} */
+  const changedTitles = [];
+  let patched = false;
+
+  for (let i = 0; i < paragraphs.length; i++) {
+    const { full, plain } = paragraphs[i];
+    const nextTitle = String(tracks[i]?.title ?? "").trim();
+    if (!nextTitle || plain === nextTitle) continue;
+
+    const newParagraph = replaceTrackParagraphTitle(full, plain, nextTitle);
+    if (newParagraph === full) continue;
+
+    newTrackBlock = newTrackBlock.replace(full, newParagraph);
+    changedTitles.push(nextTitle);
+    patched = true;
+  }
+
+  if (!patched) return { segment, patched: false, changedTitles: [] };
+
+  return {
+    segment: segment.slice(0, tlIdx) + newTrackBlock + segment.slice(blockEnd),
+    patched: true,
+    changedTitles,
+  };
+}
+
 /**
  * Registry of public HTML patch handlers per Supabase scalar field.
  * G-17b: purchase_url + artist; G-17e: label.
@@ -238,11 +418,12 @@ export const DISCOGRAPHY_PUBLIC_PATCH_REGISTRY = {
 };
 
 /**
- * Apply Supabase scalar field values to Wix discography hub HTML via patch registry.
+ * Apply Supabase scalar field values and track lists to Wix discography hub HTML.
  * @param {string} html
  * @param {ReturnType<typeof normalizeDiscographyRecord>[]} releases
+ * @param {Record<string, ReturnType<typeof normalizeDiscographyTrackRecord>[]> | null | undefined} [tracksByLegacyId]
  */
-export function patchGosakiDiscographySupabaseFields(html, releases) {
+export function patchGosakiDiscographySupabaseFields(html, releases, tracksByLegacyId = null) {
   let out = html;
   /** @type {Array<{ legacy_id: string, title: string, purchase_url: string }>} */
   const purchasePatches = [];
@@ -250,6 +431,8 @@ export function patchGosakiDiscographySupabaseFields(html, releases) {
   const artistPatches = [];
   /** @type {Array<{ legacy_id: string, title: string, label: string }>} */
   const labelPatches = [];
+  /** @type {Array<{ legacy_id: string, title: string, trackCount: number, changedTitles: string[] }>} */
+  const trackPatches = [];
 
   for (const row of releases) {
     if (!row.title) continue;
@@ -292,6 +475,21 @@ export function patchGosakiDiscographySupabaseFields(html, releases) {
       segmentChanged = true;
     }
 
+    const albumTracks = tracksByLegacyId?.[row.legacy_id];
+    if (albumTracks?.length) {
+      const trackResult = patchDiscographyItemTracks(segment, albumTracks);
+      if (trackResult.patched) {
+        segment = trackResult.segment;
+        segmentChanged = true;
+        trackPatches.push({
+          legacy_id: row.legacy_id,
+          title: row.title,
+          trackCount: albumTracks.length,
+          changedTitles: trackResult.changedTitles ?? [],
+        });
+      }
+    }
+
     if (segmentChanged) {
       out = before + segment + out.slice(bounds.end);
     }
@@ -302,7 +500,8 @@ export function patchGosakiDiscographySupabaseFields(html, releases) {
     purchasePatches,
     artistPatches,
     labelPatches,
-    patches: [...purchasePatches, ...artistPatches, ...labelPatches],
+    trackPatches,
+    patches: [...purchasePatches, ...artistPatches, ...labelPatches, ...trackPatches],
   };
 }
 
@@ -346,11 +545,16 @@ export async function loadGosakiDiscographyDataForBuild(opts = {}) {
     try {
       const releases = await loadDiscographyRowsFromSupabase({ env: readEnv });
       if (releases.length > 0) {
+        const tracks = await loadDiscographyTracksFromSupabase({ env: readEnv });
+        const tracksByLegacyId = groupDiscographyTracksByLegacyId(tracks);
         return {
           discographyDataSource: "supabase",
           fallbackReason: null,
           releases,
+          tracks,
+          tracksByLegacyId,
           rowCount: releases.length,
+          trackRowCount: tracks.length,
         };
       }
       console.warn(`[${logPrefix}] Supabase returned 0 discography rows; using wix-html`);
@@ -365,6 +569,9 @@ export async function loadGosakiDiscographyDataForBuild(opts = {}) {
     discographyDataSource: "wix-html",
     fallbackReason: readEnv ? "supabase_empty_or_error" : "supabase_env_missing",
     releases: [],
+    tracks: [],
+    tracksByLegacyId: {},
     rowCount: 0,
+    trackRowCount: 0,
   };
 }

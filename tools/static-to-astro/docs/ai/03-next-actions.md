@@ -1,6 +1,22 @@
 Last updated: 2026-06-29
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-18h Discography public tracks reflection preflight — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-18h-gosaki-discography-public-tracks-reflection-preflight` |
+| Base | `ab8dee3` |
+| Hook | `patchDiscographyItemTracks` + `discography_tracks` read (34 rows) |
+| Local HTML | `Like a Lover（テスト）` in SKYLARK track 7 |
+| Track counts | 9 / 8 / 9 / 8 preserved |
+| Staging live | **unchanged** — old `Like a Lover` still |
+| FTP / upload | **not executed** |
+| Doc | `gosaki-discography-g18h-public-tracks-reflection-preflight.md` |
+| Verifier | `verify-g18h-gosaki-discography-public-tracks-reflection-preflight.mjs` |
+| **Next** | **G-18h-upload** operator manual upload (`discography/index.html`) |
+| **Do not** | Re-Save track 7 / FTP without explicit approval |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-18g2-execution Discography tracklist single-title Save result — complete
 
 | Item | Value |
@@ -12,7 +28,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Rollback | **not needed** |
 | Doc | `gosaki-discography-g18g2-tracklist-single-title-save-execution-result.md` |
 | Verifier | `verify-g18g2-gosaki-discography-tracklist-single-title-save-execution-result.mjs` |
-| **Next** | **G-18h** public tracks reflection |
+| **Next** | G-18h — **done** |
 | **Do not** | Re-Save track 7 / rollback without new approval |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-18g2-execution-wiring Discography tracklist Save UI wiring — complete

@@ -5,9 +5,10 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-18g2-execution-gosaki-discography-tracklist-single-title-save-result — complete.
-Operator Save once succeeded; discography-002 track 7 title updated in staging DB.
-Next: G-18h — public tracks reflection on staging preview.
+Current phase: G-18h-gosaki-discography-public-tracks-reflection-preflight — complete.
+Local package regen succeeded; discography-002 track 7 reflected as Like a Lover（テスト） in local HTML.
+Staging live unchanged (no upload).
+Next: G-18h-upload — operator manual upload of discography/index.html.
 ```
 
 **Closed chains — do not re-Save / re-upload:**
@@ -18,14 +19,22 @@ Next: G-18h — public tracks reflection on staging preview.
 - `discography-004` / `label` (G-17e-f)
 - `schedule-2026-04-005` / `price` (G-14b1f)
 
+## G-18h Discography public tracks reflection preflight — complete
+
+- **Doc:** `gosaki-discography-g18h-public-tracks-reflection-preflight.md`
+- **Base:** `ab8dee3` (uncommitted hook + doc)
+- **Hook:** `patchDiscographyItemTracks` — reads 34 `discography_tracks` rows; patches Track List `<p>` per album
+- **Local:** `output/manual-upload/gosaki-piano/public-dist/discography/index.html` — track 7 `Like a Lover（テスト）`
+- **Staging live:** still `Like a Lover` — **no upload**
+- **Upload candidate:** `discography/index.html` (CSS hash unchanged `index.YcHrHZH4.css`)
+- **Do not re-Save** `discography-002` track 7
+- **Next:** G-18h-upload (operator FTP/manual upload with explicit approval)
+
 ## G-18g2-execution Discography tracklist single-title Save result — complete
 
 - **Doc:** `gosaki-discography-g18g2-tracklist-single-title-save-execution-result.md`
-- **Base:** `8fd2ff7`
-- **Save:** operator once; alert 保存しました
-- **After:** track 7 `Like a Lover（テスト）`; album 8 tracks; `test_title_rows = 1`
-- **Rollback:** not needed
-- **Public reflection:** deferred — G-18h
+- **Commit:** `ab8dee3`
+- **Public reflection:** G-18h local regen — **done**; upload deferred
 - **Do not re-Save** `discography-002` track 7
 
 ## G-18g2-execution-wiring Discography tracklist Save UI wiring — complete

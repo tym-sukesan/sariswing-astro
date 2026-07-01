@@ -942,6 +942,7 @@ export function generateAstroProject(inputDir, outputDir, options = {}) {
       const patched = patchGosakiDiscographySupabaseFields(
         mainHtml,
         gosakiDiscographyBundle.releases,
+        gosakiDiscographyBundle.tracksByLegacyId,
       );
       mainHtml = patched.html;
       mainHtml = injectDiscographyDataSourceMarker(mainHtml, "supabase");
@@ -952,6 +953,8 @@ export function generateAstroProject(inputDir, outputDir, options = {}) {
         purchasePatchCount: patched.purchasePatches.length,
         artistPatchCount: patched.artistPatches.length,
         labelPatchCount: patched.labelPatches?.length ?? 0,
+        trackPatchCount: patched.trackPatches?.length ?? 0,
+        trackRowCount: gosakiDiscographyBundle.trackRowCount ?? 0,
       };
     }
     writeFile(pageFile, generatePage(page, mainHtml, pageScripts, linkTransformContext));
@@ -1222,7 +1225,7 @@ export function printGenerationSummary(result) {
   }
   if (result.gosakiDiscographyDataSummary?.discographyDataSource) {
     console.log(
-      `  Discography data: discographyDataSource=${result.gosakiDiscographyDataSummary.discographyDataSource} (${result.gosakiDiscographyDataSummary.rowCount ?? 0} releases, ${result.gosakiDiscographyDataSummary.purchasePatchCount ?? 0} purchase_url + ${result.gosakiDiscographyDataSummary.artistPatchCount ?? 0} artist + ${result.gosakiDiscographyDataSummary.labelPatchCount ?? 0} label patch(es))`,
+      `  Discography data: discographyDataSource=${result.gosakiDiscographyDataSummary.discographyDataSource} (${result.gosakiDiscographyDataSummary.rowCount ?? 0} releases, ${result.gosakiDiscographyDataSummary.purchasePatchCount ?? 0} purchase_url + ${result.gosakiDiscographyDataSummary.artistPatchCount ?? 0} artist + ${result.gosakiDiscographyDataSummary.labelPatchCount ?? 0} label + ${result.gosakiDiscographyDataSummary.trackPatchCount ?? 0} track patch(es); ${result.gosakiDiscographyDataSummary.trackRowCount ?? 0} track rows)`,
     );
   } else if (result.gosakiDiscographyBundle?.discographyDataSource === "wix-html") {
     console.log(

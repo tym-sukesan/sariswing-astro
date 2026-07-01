@@ -22,7 +22,9 @@ Next: G-19b+ tracklist Save slice planning (deferred).
 ## G-19a Discography tracklist generic textarea dry-run — complete
 
 - **Doc:** `gosaki-discography-g19a-tracklist-generic-textarea-dry-run.md`
-- **Base:** `8a64b12` (uncommitted implementation)
+- **Commit:** `8c85f53`
+- **Local UI QA:** PASS (31/31)
+- **Verifier baseline:** `8c85f53` (post-commit fix)
 - **Scope:** all 4 albums — editable textarea + `executeG19aTracklistTextareaDryRun`
 - **Save:** disabled (`actualWrite=false`, `saveAllowed=false`)
 - **G-18g2:** adapter preserved; Preview/Save UI **not invoked** (chain closed)

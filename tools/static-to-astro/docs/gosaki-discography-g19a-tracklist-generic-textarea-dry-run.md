@@ -3,7 +3,7 @@
 **Phase:** `G-19a-gosaki-discography-tracklist-generic-textarea-dry-run`  
 **Status:** **complete** — all 4 albums editable + generic diff Preview; **no DB write / Save / upload**  
 **Date:** 2026-06-29  
-**Base commit:** `8a64b12`  
+**Base commit:** `8c85f53` (G-19a implementation commit; prior G-18h-upload `8a64b12`)  
 **Prior:** [gosaki-discography-g18h-upload-result.md](./gosaki-discography-g18h-upload-result.md)
 
 | Check | Status |

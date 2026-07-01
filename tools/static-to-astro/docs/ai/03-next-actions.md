@@ -6,7 +6,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Item | Value |
 | --- | --- |
 | Phase | `G-19a-gosaki-discography-tracklist-generic-textarea-dry-run` |
-| Base | `8a64b12` |
+| Base | `8c85f53` |
+| Local UI QA | **PASS** (31/31) |
+| Verifier baseline | `8c85f53` (post-commit fix) |
 | Scope | All 4 albums textarea editable + generic diff Preview |
 | Track counts | 9 / 8 / 9 / 8 (34 total) |
 | Save | **disabled** — `actualWrite=false`, `saveAllowed=false` |

@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-19b Gosaki Discography tracklist Save slice planning (2026-06-29):** **complete (uncommitted)** — first generic Save slice **G-19b1** = `discography-004` track 1 title only; G-18g2 chain closed. Doc: `gosaki-discography-g19b-tracklist-save-slice-planning.md`. **No Save / DB write.**
+**G-19b1 Gosaki Discography tracklist generic single-title Save implementation (2026-06-29):** **complete (uncommitted)** — `discography-004` track 1 `Mary Ann` → `Mary Ann（テスト）`; G-19b1 Save adapter + guards; Save disabled by default. Doc: `gosaki-discography-g19b1-tracklist-single-title-save-implementation.md`. **No Save / DB write.**
+
+**G-19b Gosaki Discography tracklist Save slice planning (2026-06-29):** **complete** — commit `889a891`; first generic Save slice **G-19b1** = `discography-004` track 1 title only; G-18g2 chain closed. Doc: `gosaki-discography-g19b-tracklist-save-slice-planning.md`. **No Save / DB write.**
 
 **G-19a Gosaki Discography tracklist generic textarea dry-run expansion (2026-06-29):** **complete** — commit `8c85f53` (+ verifier baseline `e798a94`); all 4 albums editable; G-19a generic diff Preview; Save disabled. Local UI QA **PASS** (31/31). Doc: `gosaki-discography-g19a-tracklist-generic-textarea-dry-run.md`. **No DB write / Save / upload.**
 

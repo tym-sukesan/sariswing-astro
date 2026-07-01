@@ -1,12 +1,29 @@
 Last updated: 2026-06-29
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-19b1 Discography tracklist generic single-title Save implementation — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-19b1-gosaki-discography-tracklist-generic-single-title-save-implementation` |
+| Base | `889a891` |
+| Target | `discography-004` track 1 `Mary Ann` → `Mary Ann（テスト）` |
+| Row id | `04e987a9-e251-4b0b-b860-21a61e711f8e` |
+| Approval ID | `G-19b1-gosaki-discography-tracklist-generic-single-title-non-dry-run-slice` |
+| Env arm | `PUBLIC_ADMIN_DISCOGRAPHY_G19B1_TRACKLIST_GENERIC_SINGLE_TITLE_NON_DRY_RUN_ARMED` |
+| Save | **disabled by default** — implementation only |
+| G-18g2 / track 7 | **closed** — not re-invoked |
+| DB write / Save | **not executed** |
+| Doc | `gosaki-discography-g19b1-tracklist-single-title-save-implementation.md` |
+| Verifier | `verify-g19b1-gosaki-discography-tracklist-single-title-save-implementation.mjs` |
+| **Next** | `G-19b1-tracklist-generic-single-title-save-final-preflight` |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-19b Discography tracklist Save slice planning — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-19b-gosaki-discography-tracklist-save-slice-planning` |
-| Base | `e798a94` |
+| Base | `889a891` |
 | First slice | **G-19b1** — `discography-004` track 1 `Mary Ann` → `Mary Ann（テスト）` |
 | Scope | changed-only; 1 row UPDATE; 1 album |
 | Public reflection | **deferred** — G-19c after G-19b1 Save |
@@ -15,7 +32,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | DB write / Save | **not executed** |
 | Doc | `gosaki-discography-g19b-tracklist-save-slice-planning.md` |
 | Verifier | `verify-g19b-gosaki-discography-tracklist-save-slice-planning.mjs` |
-| **Next** | `G-19b1-tracklist-generic-single-title-save-implementation` |
+| **Next** | — (superseded by G-19b1 implementation) |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-19a Discography tracklist generic textarea dry-run — complete
 

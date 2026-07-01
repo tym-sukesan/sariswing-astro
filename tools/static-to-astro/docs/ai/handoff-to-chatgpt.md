@@ -5,11 +5,11 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-19b-gosaki-discography-tracklist-save-slice-planning — complete.
-G-19a generic dry-run Preview (4 albums) complete; G-19b1 first Save slice planned.
-First Save target: discography-004 track 1 title only (changed-only, 1 row UPDATE).
+Current phase: G-19b1-gosaki-discography-tracklist-generic-single-title-save-implementation — complete.
+G-19b1 Save adapter for discography-004 track 1 title only (Mary Ann → Mary Ann（テスト）).
+G-19a generic dry-run Preview (4 albums) complete; G-19b planning complete (889a891).
 G-18g2 Save + G-18h public reflection chain closed — do not re-Save track 7.
-Next: G-19b1-tracklist-generic-single-title-save-implementation.
+Next: G-19b1-tracklist-generic-single-title-save-final-preflight.
 ```
 
 **Closed chains — do not re-Save / re-upload:**
@@ -20,15 +20,27 @@ Next: G-19b1-tracklist-generic-single-title-save-implementation.
 - `discography-004` / `label` (G-17e-f)
 - `schedule-2026-04-005` / `price` (G-14b1f)
 
+## G-19b1 Discography tracklist generic single-title Save implementation — complete
+
+- **Doc:** `gosaki-discography-g19b1-tracklist-single-title-save-implementation.md`
+- **Base:** `889a891` (uncommitted implementation)
+- **Target:** `discography-004` / track 1 / `Mary Ann` → `Mary Ann（テスト）`
+- **Row id:** `04e987a9-e251-4b0b-b860-21a61e711f8e`
+- **Approval ID:** `G-19b1-gosaki-discography-tracklist-generic-single-title-non-dry-run-slice`
+- **Env arm:** `PUBLIC_ADMIN_DISCOGRAPHY_G19B1_TRACKLIST_GENERIC_SINGLE_TITLE_NON_DRY_RUN_ARMED`
+- **Save:** disabled by default; `PUBLIC_ADMIN_WRITE_DRY_RUN=true` blocks write
+- **G-18g2:** chain closed; separate approval/env; not re-invoked
+- **Next:** G-19b1 final preflight — **no Save yet**
+
 ## G-19b Discography tracklist Save slice planning — complete
 
 - **Doc:** `gosaki-discography-g19b-tracklist-save-slice-planning.md`
-- **Base:** `e798a94` (uncommitted planning)
+- **Base:** `889a891`
 - **First slice:** G-19b1 — `discography-004` / track 1 / `Mary Ann` → `Mary Ann（テスト）`
 - **Scope:** changed-only; 1× UPDATE; 1 album; no add/delete/reorder
 - **Reflection / upload:** G-19c / G-19d — **separate** from Save
 - **G-18g2:** chain closed; **do not** re-Save `discography-002` track 7
-- **Next:** G-19b1 implementation — **no Save yet**
+- **Next:** — (superseded by G-19b1 implementation)
 
 ## G-19a Discography tracklist generic textarea dry-run — complete
 

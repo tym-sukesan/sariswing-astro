@@ -35,7 +35,14 @@ import {
   G18G2_DISCOGRAPHY_TRACKLIST_PAGE_CONFIG_ELEMENT_ID,
   resolveG18g2DiscographyTracklistPageServerConfig,
 } from "../../../../../../src/lib/admin/staging-write/gosaki-discography-g18g2-tracklist-title-save-page-config";
-import { G18G2_DISCOGRAPHY_TRACKLIST_SINGLE_TITLE_NON_DRY_RUN_APPROVAL_ID } from "../../../../../../src/lib/admin/staging-write/discography-tracks-write-types";
+import {
+  G19B1_DISCOGRAPHY_TRACKLIST_PAGE_CONFIG_ELEMENT_ID,
+  resolveG19b1DiscographyTracklistPageServerConfig,
+} from "../../../../../../src/lib/admin/staging-write/gosaki-discography-g19b1-tracklist-generic-single-title-save-page-config";
+import {
+  G18G2_DISCOGRAPHY_TRACKLIST_SINGLE_TITLE_NON_DRY_RUN_APPROVAL_ID,
+  G19B1_DISCOGRAPHY_TRACKLIST_GENERIC_SINGLE_TITLE_NON_DRY_RUN_APPROVAL_ID,
+} from "../../../../../../src/lib/admin/staging-write/discography-tracks-write-types";
 import { G16A_DRY_RUN_SLICE_APPROVAL_ID } from "../../../../../../src/lib/admin/staging-write/gosaki-discography-g16a-next-field-types";
 import { G15D_DRY_RUN_SLICE_APPROVAL_ID } from "../../../../../../src/lib/admin/staging-write/gosaki-discography-next-field-types";
 import {
@@ -55,14 +62,19 @@ const g16aSavePageConfig = resolveG16aDiscographySavePageServerConfig(import.met
 const g17cSavePageConfig = resolveG17cDiscographySavePageServerConfig(import.meta.env);
 const g18fTracklistPageConfig = resolveG18fDiscographyTracklistPageServerConfig(import.meta.env);
 const g18g2TracklistPageConfig = resolveG18g2DiscographyTracklistPageServerConfig(import.meta.env);
-const saveStatusLabel = g18g2TracklistPageConfig.saveEnabled
+const g19b1TracklistPageConfig = resolveG19b1DiscographyTracklistPageServerConfig(import.meta.env);
+const saveStatusLabel = g19b1TracklistPageConfig.saveEnabled
+  ? "ready_to_save"
+  : g18g2TracklistPageConfig.saveEnabled
   ? "ready_to_save"
   : g17cSavePageConfig.saveEnabled
   ? "ready_to_save"
   : g16aSavePageConfig.saveEnabled
     ? "ready_to_save"
     : "disabled";
-const dbWriteStatusLabel = g18g2TracklistPageConfig.saveEnabled
+const dbWriteStatusLabel = g19b1TracklistPageConfig.saveEnabled
+  ? "gated"
+  : g18g2TracklistPageConfig.saveEnabled
   ? "gated"
   : g17cSavePageConfig.saveEnabled
   ? "gated"
@@ -146,6 +158,15 @@ const trackLines = selectedRow?.tracks.map((track) => track.title).join("\n") ??
     hidden
   />
   <div
+    id={G19B1_DISCOGRAPHY_TRACKLIST_PAGE_CONFIG_ELEMENT_ID}
+    data-g19b1-save-enabled={g19b1TracklistPageConfig.saveEnabled ? "true" : "false"}
+    data-g19b1-db-write-enabled={g19b1TracklistPageConfig.dbWriteEnabled ? "true" : "false"}
+    data-g19b1-dry-run-required={g19b1TracklistPageConfig.dryRunRequired ? "true" : "false"}
+    data-g19b1-env-arm-armed={g19b1TracklistPageConfig.envArmArmed ? "true" : "false"}
+    data-g19b1-write-approval-id={g19b1TracklistPageConfig.writeApprovalId || G19B1_DISCOGRAPHY_TRACKLIST_GENERIC_SINGLE_TITLE_NON_DRY_RUN_APPROVAL_ID}
+    hidden
+  />
+  <div
     id={G18G2_DISCOGRAPHY_TRACKLIST_PAGE_CONFIG_ELEMENT_ID}
     data-g18g2-save-enabled={g18g2TracklistPageConfig.saveEnabled ? "true" : "false"}
     data-g18g2-db-write-enabled={g18g2TracklistPageConfig.dbWriteEnabled ? "true" : "false"}
@@ -205,17 +226,21 @@ const trackLines = selectedRow?.tracks.map((track) => track.title).join("\n") ??
         DB write: <strong id="gosaki-disc-status-db-write">{dbWriteStatusLabel}</strong>
       </li>
       <li>
+        Tracklist Save adapter (G-19b1):
+        <strong>{g19b1TracklistPageConfig.saveEnabled ? "armed" : "disabled"}</strong>
+      </li>
+      <li>
         Tracklist Save adapter (G-18g2):
         <strong>{g18g2TracklistPageConfig.saveEnabled ? "armed" : "disabled"}</strong>
       </li>
       <li>
-        dry-run approvalId: <code id="gosaki-disc-status-dry-run-approval">{G18G2_DISCOGRAPHY_TRACKLIST_SINGLE_TITLE_NON_DRY_RUN_APPROVAL_ID}</code>
+        dry-run approvalId: <code id="gosaki-disc-status-dry-run-approval">{G19B1_DISCOGRAPHY_TRACKLIST_GENERIC_SINGLE_TITLE_NON_DRY_RUN_APPROVAL_ID}</code>
       </li>
       <li>
-        Save approvalId: <code id="gosaki-disc-status-save-approval">{G18G2_DISCOGRAPHY_TRACKLIST_SINGLE_TITLE_NON_DRY_RUN_APPROVAL_ID}</code>
+        Save approvalId: <code id="gosaki-disc-status-save-approval">{G19B1_DISCOGRAPHY_TRACKLIST_GENERIC_SINGLE_TITLE_NON_DRY_RUN_APPROVAL_ID}</code>
       </li>
       <li>
-        target legacy_id: <code id="gosaki-disc-status-target-legacy-id">discography-002</code>
+        target legacy_id: <code id="gosaki-disc-status-target-legacy-id">discography-004</code>
       </li>
       <li>
         changedFields: <code id="gosaki-disc-status-changed-fields">—</code>

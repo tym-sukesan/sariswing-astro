@@ -5,29 +5,34 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-18h-upload-gosaki-discography-public-tracklist-reflection-manual-upload-final-preflight — complete.
-Upload runbook ready: 1 file (discography/index.html); CSS/JS upload not required.
-Staging live still shows old Like a Lover (no upload yet).
-Next: G-18h-upload-result — operator manual upload once + HTTP verify.
+Current phase: G-18h-upload-result-gosaki-discography-public-tracklist-reflection-upload-result — complete.
+Operator uploaded discography/index.html once; live shows Like a Lover（テスト） at SKYLARK track 7.
+G-18g2 Save + G-18h public tracklist reflection chain closed.
+Next: backlog / optional G-18h-f closure doc.
 ```
 
 **Closed chains — do not re-Save / re-upload:**
 - `discography-001` / `artist` (G-16b-f)
 - `discography-002` / `purchase_url` (G-15c-f)
-- `discography-002` / track 7 `title` (G-18g2-execution — do not re-Save)
+- `discography-002` / track 7 `title` + public reflection (G-18g2-execution + G-18h-upload — do not re-Save / re-upload)
 - `discography-003` / `artist` (G-15e-f)
 - `discography-004` / `label` (G-17e-f)
 - `schedule-2026-04-005` / `price` (G-14b1f)
 
+## G-18h-upload-result Discography tracklist reflection upload result — complete
+
+- **Doc:** `gosaki-discography-g18h-upload-result.md`
+- **Base:** `17926f5` (uncommitted doc + verifier)
+- **Upload:** operator manual — 1 file `discography/index.html`
+- **Live:** `Like a Lover（テスト）` present; SKYLARK 8 tracks; CSS `index.YcHrHZH4.css` **200**
+- **Cursor FTP/upload:** **not executed**
+- **Chain closed:** G-18g2 Save → G-18h local reflection → G-18h-upload
+- **Do not re-upload** `discography/index.html` / **do not re-Save** track 7
+
 ## G-18h-upload Discography tracklist reflection manual upload final preflight — complete
 
 - **Doc:** `gosaki-discography-g18h-upload-final-preflight.md`
-- **Base:** `7cad34c` (uncommitted doc + verifier)
-- **Upload scope:** **1 file** — `discography/index.html` → `/cms-kit-staging/gosaki-piano/discography/index.html`
-- **CSS/JS:** upload **not required** — `index.YcHrHZH4.css` already HTTP 200 on staging
-- **Live pre-upload:** old `Like a Lover` present; `Like a Lover（テスト）` absent
-- **Cursor FTP/upload:** **not executed**
-- **Next:** G-18h-upload-result (operator manual upload + post-upload HTTP verify)
+- **Commit:** `17926f5`
 
 ## G-18h Discography public tracks reflection preflight — complete
 

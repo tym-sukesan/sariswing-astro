@@ -5,29 +5,39 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20b-gosaki-production-test-text-cleanup-final-preflight — complete.
-beforeSnapshot PASS: 2 test discography titles on staging DB + live /discography/.
-Cleanup method: operator SQL Editor — 2 strict UPDATEs (not UI Save; G-18g2/G-19b1 chains closed).
-Next: G-20b-execution — operator runs UPDATE once + afterVerification (no regen/FTP in execution).
+Current phase: G-20b-execution-gosaki-production-discography-test-text-cleanup-result — complete.
+DB cleanup succeeded: （テスト） count 0; 002/7 Like a Lover; 004/1 Mary Ann; albums 8+8; total 34.
+Operator SQL Editor once (no approval ceremony). Cursor did not run UPDATE.
+Live /discography/ still stale (G-19d upload) — reflection pending.
+Next: G-20c — cleanup public reflection local regen + upload preflight (discography/index.html).
+No package regen / FTP / rollback in G-20b-execution.
 ```
 
 **Closed chains — do not re-Save / re-upload:**
 - `discography-001` / `artist` (G-16b-f)
 - `discography-002` / `purchase_url` (G-15c-f)
-- `discography-004` / track 1 `title` (G-19e-f — do not re-Save / re-upload)
-- `discography-002` / track 7 `title` + public reflection (G-18g2-execution + G-18h-upload — do not re-Save / re-upload)
+- `discography-004` / track 1 `title` (G-20b cleanup — DB production title; do not re-Save / re-upload until G-20c reflection)
+- `discography-002` / track 7 `title` (G-20b cleanup — DB production title; live still stale until G-20c)
 - `discography-003` / `artist` (G-15e-f)
 - `discography-004` / `label` (G-17e-f)
 - `schedule-2026-04-005` / `price` (G-14b1f)
 
+## G-20b-execution Gosaki production test text cleanup execution result — complete
+
+- **Doc:** `gosaki-production-test-text-cleanup-execution-result.md`
+- **Base:** `a6c1cf1` (uncommitted)
+- **DB:** cleanup succeeded; test count 0; rollback not needed
+- **Live:** `/discography/` still shows test titles (G-19d) — G-20c regen/upload preflight next
+- **Verifier:** `verify-g20b-gosaki-production-test-text-cleanup-execution-result.mjs`
+- **Next:** G-20c local regen + upload preflight; manual upload separate phase
+
 ## G-20b Gosaki production pre-release test text cleanup final preflight — complete
 
 - **Doc:** `gosaki-production-test-text-cleanup-final-preflight.md`
-- **Base:** `7eda613` (uncommitted)
+- **Base:** `a6c1cf1`
 - **Targets:** 002/7 `Like a Lover（テスト）`→`Like a Lover`; 004/1 `Mary Ann（テスト）`→`Mary Ann`
 - **Method:** SQL Editor 2 UPDATEs; UI Save **not recommended**
-- **approvalId:** `G-20b-gosaki-production-discography-test-text-cleanup`
-- **Next:** G-20b-execution (operator SQL) → G-20b-reflection (discography regen/upload)
+- **Next:** — (execution done — see G-20b-execution)
 
 ## G-20a Gosaki production release readiness inventory — complete
 

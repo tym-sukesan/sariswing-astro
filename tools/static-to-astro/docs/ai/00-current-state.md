@@ -1,9 +1,11 @@
-Last updated: 2026-06-29
+Last updated: 2026-07-01
 Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-20b Gosaki production pre-release test text cleanup final preflight (2026-07-01):** **complete (uncommitted)** — beforeSnapshot PASS; SQL-first cleanup (2 strict UPDATEs); UI Save not recommended. Doc: `gosaki-production-test-text-cleanup-final-preflight.md`. **No SQL UPDATE / Save / FTP.** Next: G-20b-execution.
+**G-20b-execution Gosaki production test text cleanup execution result (2026-07-01):** **complete (uncommitted)** — operator SQL Editor cleanup succeeded; DB `（テスト）` count 0; 002/7 `Like a Lover`, 004/1 `Mary Ann`; albums 8+8; total 34; rollback not needed. Doc: `gosaki-production-test-text-cleanup-execution-result.md`. **Live `/discography/` still stale (G-19d upload).** No regen / FTP. Next: G-20c.
+
+**G-20b Gosaki production pre-release test text cleanup final preflight (2026-07-01):** **complete** — commit `a6c1cf1`. Doc: `gosaki-production-test-text-cleanup-final-preflight.md`. **Execution done — see G-20b-execution.**
 
 **G-20a Gosaki production release readiness inventory (2026-07-01):** **complete** — commit `7eda613`. Doc: `gosaki-production-release-readiness-inventory.md`. Next: G-20b — **done**.
 

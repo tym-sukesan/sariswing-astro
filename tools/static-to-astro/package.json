@@ -16,7 +16,10 @@
     "generate:gosaki-schedule-seed-sql": "node scripts/generate-gosaki-schedules-seed-sql.mjs --out scripts/supabase/gosaki-schedules-seed.template.sql",
     "verify:ftp-deployer-safety": "node scripts/verify-public-dist-ftp-deployer-safety.mjs",
     "manual-upload:package": "node scripts/create-manual-upload-package.mjs --public-dir output/static-public/gosaki-piano/public-dist --out output/manual-upload/gosaki-piano",
-    "verify:manual-upload": "node scripts/verify-manual-upload-package.mjs"
+    "verify:manual-upload": "node scripts/verify-manual-upload-package.mjs",
+    "build:gosaki-production-package": "node scripts/build-gosaki-production-package.mjs",
+    "manual-upload:package:gosaki-production": "node scripts/create-manual-upload-package.mjs --site-slug gosaki-piano --public-dir output/static-public/gosaki-piano-production/public-dist --deploy-base / --staging-url https://www.gosaki-piano.com --out output/manual-upload/gosaki-piano-production",
+    "verify:manual-upload:gosaki-production": "node scripts/verify-manual-upload-package.mjs --package-dir output/manual-upload/gosaki-piano-production"
   },
   "devDependencies": {
     "pixelmatch": "^7.1.0",

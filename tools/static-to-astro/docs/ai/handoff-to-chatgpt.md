@@ -5,13 +5,13 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20g-gosaki-production-config-implementation-planning — complete.
-Recommend: Option C deploy profile JSON + build-gosaki-production-package.mjs (separate output paths).
-Production: www.gosaki-piano.com, deployBase=/, noindex off, robots Allow, canonical production.
-Staging build unchanged; coexist via gosaki-piano-production/ output dirs.
+Current phase: G-20h1-gosaki-production-config-implementation — complete.
+Deploy profiles JSON + build profile lib + build-gosaki-production-package.mjs + npm scripts added.
+Staging build-gosaki-staging-admin-package.mjs unchanged (reflection flow protected).
+Production output paths: gosaki-piano-production/ (separate from staging).
 Supabase interim SoT: kmjqppxjdnwwrtaeqjta — never vsbvndwuajjhnzpohghh.
-Next: G-20h1 config implementation (profile JSON + scripts) — no build in h1.
-No implementation / package regen / FTP / DNS / DB write in G-20g.
+Production build NOT executed in G-20h1.
+Next: G-20h2 first local production package build + SEO verifier.
 ```
 
 **Closed chains — do not re-UPDATE / re-Save / re-upload:**
@@ -21,13 +21,21 @@ No implementation / package regen / FTP / DNS / DB write in G-20g.
 - `discography-004` / `label` (G-17e-f)
 - `schedule-2026-04-005` / `price` (G-14b1f)
 
+## G-20h1 Gosaki production config implementation — complete
+
+- **Doc:** `gosaki-production-config-implementation.md`
+- **Base:** `f35e462` (uncommitted)
+- **Profiles:** `config/sites/gosaki-piano.deploy-profiles.json`
+- **Scripts:** `build-gosaki-production-package.mjs`, `gosaki-package-build-profile.mjs`
+- **Staging script:** unchanged
+- **Verifier:** `verify-g20h1-gosaki-production-config-implementation.mjs`
+- **Next:** G-20h2 production local build (not executed yet)
+
 ## G-20g Gosaki production config implementation planning — complete
 
 - **Doc:** `gosaki-production-config-implementation-planning.md`
-- **Base:** `f36e857` (uncommitted)
-- **Recommend:** Option C profile JSON + production build script; separate output paths
-- **Verifier:** `verify-g20g-gosaki-production-config-implementation-planning.mjs`
-- **Next:** G-20h1 implementation (profile JSON + scripts — no build)
+- **Base:** `f35e462`
+- **Next:** — (superseded by G-20h1)
 
 ## G-20f Gosaki production release config / cutover preflight — complete
 

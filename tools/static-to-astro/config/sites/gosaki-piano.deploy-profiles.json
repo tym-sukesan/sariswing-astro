@@ -1,0 +1,41 @@
+{
+  "$comment": "G-20h1 — Gosaki deploy profiles for staging vs production package builds. No secrets.",
+  "siteSlug": "gosaki-piano",
+  "fixtureDir": "fixtures/gosaki-piano",
+  "profiles": {
+    "staging": {
+      "origin": "https://yskcreate.weblike.jp",
+      "baseUrl": "https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano",
+      "publicUrl": "https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/",
+      "deployBase": "/cms-kit-staging/gosaki-piano/",
+      "outputName": "gosaki-piano",
+      "astroOut": "output/gosaki-piano-astro",
+      "staticPublicOut": "output/static-public/gosaki-piano",
+      "manualUploadOut": "output/manual-upload/gosaki-piano",
+      "remotePath": "/cms-kit-staging/gosaki-piano/",
+      "supabaseProjectRef": "kmjqppxjdnwwrtaeqjta",
+      "seo": {
+        "stagingNoindex": true,
+        "robotsDisallowAll": true,
+        "productionIndexable": false
+      }
+    },
+    "production": {
+      "origin": "https://www.gosaki-piano.com",
+      "baseUrl": "https://www.gosaki-piano.com",
+      "publicUrl": "https://www.gosaki-piano.com/",
+      "deployBase": "/",
+      "outputName": "gosaki-piano-production",
+      "astroOut": "output/gosaki-piano-astro-production",
+      "staticPublicOut": "output/static-public/gosaki-piano-production",
+      "manualUploadOut": "output/manual-upload/gosaki-piano-production",
+      "remotePath": "TBD_G-20i",
+      "supabaseProjectRef": "kmjqppxjdnwwrtaeqjta",
+      "seo": {
+        "stagingNoindex": false,
+        "robotsDisallowAll": false,
+        "productionIndexable": true
+      }
+    }
+  }
+}

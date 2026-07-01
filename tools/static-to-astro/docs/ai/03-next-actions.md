@@ -1,19 +1,28 @@
 Last updated: 2026-07-01
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20h1 Gosaki production config implementation — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20h1-gosaki-production-config-implementation` |
+| Base | `f35e462` |
+| Files | `gosaki-piano.deploy-profiles.json`, `gosaki-package-build-profile.mjs`, `build-gosaki-production-package.mjs` |
+| Staging script | **unchanged** — `build-gosaki-staging-admin-package.mjs` |
+| Production output | `gosaki-piano-production/` (separate from staging) |
+| Production build | **not executed** |
+| Doc | `gosaki-production-config-implementation.md` |
+| Verifier | `verify-g20h1-gosaki-production-config-implementation.mjs` |
+| **Next** | `G-20h2-gosaki-production-package-local-build` |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20g Gosaki production config implementation planning — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-20g-gosaki-production-config-implementation-planning` |
-| Base | `f36e857` |
-| Recommend | **Option C** deploy profile JSON + **production build script** |
-| Production | `www.gosaki-piano.com` / `deployBase=/` |
-| Staging coexist | separate `gosaki-piano-production` output paths |
-| Supabase | interim SoT `kmjqppxjdnwwrtaeqjta` |
+| Base | `f35e462` |
 | Doc | `gosaki-production-config-implementation-planning.md` |
-| Verifier | `verify-g20g-gosaki-production-config-implementation-planning.mjs` |
-| **Next** | `G-20h1-gosaki-production-config-implementation` |
+| **Next** | — (superseded by G-20h1) |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20f Gosaki production release config / cutover preflight — complete
 

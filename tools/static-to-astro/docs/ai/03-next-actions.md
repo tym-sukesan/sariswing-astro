@@ -1,12 +1,25 @@
 Last updated: 2026-06-29
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20a Gosaki production release readiness inventory — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20a-gosaki-production-release-readiness-inventory` |
+| Base | `85021b0` |
+| Type | read-only inventory / planning |
+| Must blockers | test title cleanup; production URL/SEO; cutover preflight; client sign-off; Supabase prod strategy |
+| Test text live | `Like a Lover（テスト）`, `Mary Ann（テスト）` on `/discography/` |
+| Doc | `gosaki-production-release-readiness-inventory.md` |
+| Verifier | `verify-g20a-gosaki-production-release-readiness-inventory.mjs` |
+| **Next** | `G-20b-gosaki-test-text-cleanup-planning` **or** `G-20c-gosaki-production-cutover-preflight` |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-19e Discography G-19b1 tracklist Save / public reflection closure — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-19e-gosaki-discography-g19b1-tracklist-save-public-reflection-closure` |
-| Base | `de54653` |
+| Base | `85021b0` |
 | Chain | G-19b1 Save → G-19c local regen → G-19d upload → HTTP verify — **closed** |
 | Live | `Mary Ann（テスト）` on Ja-Jaaaaan! track 1 |
 | G-18g2 | `Like a Lover（テスト）` maintained |

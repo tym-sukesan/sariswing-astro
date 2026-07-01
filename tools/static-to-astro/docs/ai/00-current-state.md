@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-19e Gosaki Discography G-19b1 tracklist Save / public reflection closure (2026-07-01):** **complete (uncommitted)** — G-19b1 → G-19c → G-19d chain **closed**; live `Mary Ann（テスト）`; rollback not needed. Doc: `gosaki-discography-g19e-tracklist-save-public-reflection-closure.md`. **Do not re-Save / re-upload `discography-004` track 1.**
+**G-20a Gosaki production release readiness inventory (2026-07-01):** **complete (uncommitted)** — CMS inventory, blockers, test text scan, production config checklist. Doc: `gosaki-production-release-readiness-inventory.md`. **No Save / FTP / deploy.** Next: G-20b test cleanup planning.
+
+**G-19e Gosaki Discography G-19b1 tracklist Save / public reflection closure (2026-07-01):** **complete** — commit `85021b0`. G-19b1→G-19c→G-19d chain closed. Doc: `gosaki-discography-g19e-tracklist-save-public-reflection-closure.md`. **Do not re-Save / re-upload `discography-004` track 1.**
 
 **G-19d Gosaki Discography G-19b1 tracklist public reflection upload result (2026-07-01):** **complete** — commit `de54653`. Operator manual upload 1 file; HTTP verify PASS. Doc: `gosaki-discography-g19d-tracklist-public-reflection-upload-result.md`. **Chain closed — see G-19e.**
 

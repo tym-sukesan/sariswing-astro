@@ -5,11 +5,10 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-19e-gosaki-discography-g19b1-tracklist-save-public-reflection-closure — complete.
-G-19b1 Save → G-19c local regen → G-19d upload chain closed on discography-004 track 1.
-Live Mary Ann（テスト） verified; G-18g2 track 7 maintained; rollback not needed.
-Do not re-Save or re-upload discography-004 track 1.
-Next candidates: G-19f preview refresh UX, G-19g next tracklist Save slice, or Discography CMS next domain planning.
+Current phase: G-20a-gosaki-production-release-readiness-inventory — complete.
+Production release inventory: must-fix test titles on discography; production URL/SEO/cutover TBD; admin is local-dev only.
+G-19b1→G-19e chain closed. FTP auto-deploy still suspended (G-7f1).
+Next: G-20b test text cleanup planning; G-20c production cutover preflight; G-19f/G-19g optional parallel.
 ```
 
 **Closed chains — do not re-Save / re-upload:**
@@ -21,10 +20,19 @@ Next candidates: G-19f preview refresh UX, G-19g next tracklist Save slice, or D
 - `discography-004` / `label` (G-17e-f)
 - `schedule-2026-04-005` / `price` (G-14b1f)
 
+## G-20a Gosaki production release readiness inventory — complete
+
+- **Doc:** `gosaki-production-release-readiness-inventory.md`
+- **Base:** `85021b0` (uncommitted)
+- **Must before public:** test title cleanup (2 discography tracks); production deployBase/canonical/robots; cutover preflight; client sign-off
+- **Admin:** staging shell local-dev only — hosted admin deferred (G-20d)
+- **FTP:** G-7f1 suspended — manual only with explicit approval
+- **Next:** G-20b test cleanup **or** G-20c cutover preflight
+
 ## G-19e Discography G-19b1 tracklist Save / public reflection closure — complete
 
 - **Doc:** `gosaki-discography-g19e-tracklist-save-public-reflection-closure.md`
-- **Base:** `de54653` (uncommitted)
+- **Base:** `85021b0`
 - **Chain closed:** G-19b1 Save → G-19c local regen → G-19d upload → HTTP verify
 - **Live:** Mary Ann（テスト）; G-18g2 track 7 maintained; rollback not needed
 - **Next:** G-19f preview UX **or** G-19g next slice **or** Discography CMS next domain planning

@@ -1,6 +1,21 @@
 Last updated: 2026-06-29
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-19a Discography tracklist generic textarea dry-run — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-19a-gosaki-discography-tracklist-generic-textarea-dry-run` |
+| Base | `8a64b12` |
+| Scope | All 4 albums textarea editable + generic diff Preview |
+| Track counts | 9 / 8 / 9 / 8 (34 total) |
+| Save | **disabled** — `actualWrite=false`, `saveAllowed=false` |
+| G-18g2 Save adapter | **preserved** — chain closed, UI not invoked |
+| DB write / FTP | **not executed** |
+| Doc | `gosaki-discography-g19a-tracklist-generic-textarea-dry-run.md` |
+| Verifier | `verify-g19a-gosaki-discography-tracklist-generic-textarea-dry-run.mjs` |
+| **Next** | G-19b+ tracklist Save slice planning (deferred) |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-18h-upload-result Discography tracklist reflection upload result — complete
 
 | Item | Value |

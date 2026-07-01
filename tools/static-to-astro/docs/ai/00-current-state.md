@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-18h-upload-result Gosaki Discography public tracklist reflection upload result (2026-06-29):** **complete (uncommitted)** — operator manual upload 1 file succeeded; live `Like a Lover（テスト）` HTTP verify **PASS**; layout OK. Doc: `gosaki-discography-g18h-upload-result.md`. **Do not re-upload `discography/index.html` or re-Save track 7.**
+**G-19a Gosaki Discography tracklist generic textarea dry-run expansion (2026-06-29):** **complete (uncommitted)** — all 4 albums editable; G-19a generic diff Preview; Save disabled; G-18g2 adapter preserved (chain closed). Doc: `gosaki-discography-g19a-tracklist-generic-textarea-dry-run.md`. **No DB write / Save / upload.**
+
+**G-18h-upload-result Gosaki Discography public tracklist reflection upload result (2026-06-29):** **complete** — commit `8a64b12`. Operator upload 1 file; live `Like a Lover（テスト）` verified. Doc: `gosaki-discography-g18h-upload-result.md`. **Do not re-upload / re-Save track 7.**
 
 **G-18h-upload Gosaki Discography public tracklist reflection manual upload final preflight (2026-06-29):** **complete** — commit `17926f5`. Doc: `gosaki-discography-g18h-upload-final-preflight.md`.
 

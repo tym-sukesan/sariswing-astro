@@ -5,10 +5,10 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-18h-upload-result-gosaki-discography-public-tracklist-reflection-upload-result — complete.
-Operator uploaded discography/index.html once; live shows Like a Lover（テスト） at SKYLARK track 7.
-G-18g2 Save + G-18h public tracklist reflection chain closed.
-Next: backlog / optional G-18h-f closure doc.
+Current phase: G-19a-gosaki-discography-tracklist-generic-textarea-dry-run — complete.
+All 4 albums have editable Track List textarea + generic diff Preview (dry-run only).
+G-18g2 Save chain closed; G-18h public reflection uploaded.
+Next: G-19b+ tracklist Save slice planning (deferred).
 ```
 
 **Closed chains — do not re-Save / re-upload:**
@@ -19,10 +19,19 @@ Next: backlog / optional G-18h-f closure doc.
 - `discography-004` / `label` (G-17e-f)
 - `schedule-2026-04-005` / `price` (G-14b1f)
 
+## G-19a Discography tracklist generic textarea dry-run — complete
+
+- **Doc:** `gosaki-discography-g19a-tracklist-generic-textarea-dry-run.md`
+- **Base:** `8a64b12` (uncommitted implementation)
+- **Scope:** all 4 albums — editable textarea + `executeG19aTracklistTextareaDryRun`
+- **Save:** disabled (`actualWrite=false`, `saveAllowed=false`)
+- **G-18g2:** adapter preserved; Preview/Save UI **not invoked** (chain closed)
+- **SKYLARK track 7:** `Like a Lover（テスト）` — current value, not cleaned up
+
 ## G-18h-upload-result Discography tracklist reflection upload result — complete
 
 - **Doc:** `gosaki-discography-g18h-upload-result.md`
-- **Base:** `17926f5` (uncommitted doc + verifier)
+- **Commit:** `8a64b12`
 - **Upload:** operator manual — 1 file `discography/index.html`
 - **Live:** `Like a Lover（テスト）` present; SKYLARK 8 tracks; CSS `index.YcHrHZH4.css` **200**
 - **Cursor FTP/upload:** **not executed**

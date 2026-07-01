@@ -76,12 +76,14 @@ import {
   G15D_TARGET_LEGACY_ID,
 } from "../staging-write/gosaki-discography-next-field-types";
 import {
-  G18F_TARGET_LEGACY_ID,
+  G19A_TRACKLIST_DRY_RUN_APPROVAL_ID,
+  executeG19aTracklistTextareaDryRun,
+  G18G2_TRACKLIST_SAVE_CHAIN_CLOSED,
+  isG19aTracklistAlbumLegacyId,
   readDiscographyTracklistTextareaFromForm,
-  type G18fTracklistTextareaDryRunResult,
-} from "../staging-write/gosaki-discography-g18f-tracklist-textarea-dry-run";
+  type G19aTracklistTextareaDryRunResult,
+} from "../staging-write/gosaki-discography-g19a-tracklist-generic-dry-run";
 import {
-  executeG18g2TracklistTitleDryRun,
   executeG18g2TracklistTitleSave,
   G18G2_AFTER_TITLE,
   G18G2_DISCOGRAPHY_TRACKLIST_SINGLE_TITLE_NON_DRY_RUN_APPROVAL_ID,
@@ -99,7 +101,7 @@ type GosakiDiscographyDryRunResultUnion =
   | G15dDiscographyDryRunResult
   | G16aDiscographyDryRunResult
   | DiscographyScalarSliceDryRunResult
-  | G18fTracklistTextareaDryRunResult
+  | G19aTracklistTextareaDryRunResult
   | G18g2TracklistTitleDryRunResult;
 
 function isG18g2TracklistDryRunResult(
@@ -108,10 +110,10 @@ function isG18g2TracklistDryRunResult(
   return result.approvalId === G18G2_DISCOGRAPHY_TRACKLIST_SINGLE_TITLE_NON_DRY_RUN_APPROVAL_ID;
 }
 
-function isG18fTracklistDryRunResult(
+function isGenericTracklistDryRunResult(
   result: GosakiDiscographyDryRunResultUnion,
-): result is G18fTracklistTextareaDryRunResult {
-  return "albumLegacyId" in result && "diff" in result && !isG18g2TracklistDryRunResult(result);
+): result is G19aTracklistTextareaDryRunResult {
+  return result.approvalId === G19A_TRACKLIST_DRY_RUN_APPROVAL_ID;
 }
 
 type DiscographyWriteSlice = DiscographyScalarFieldSliceId;
@@ -155,16 +157,16 @@ function evaluateSaveGateForSlice(
 }
 
 function getActiveDryRunApprovalId(slice: DiscographyWriteSlice | null): string {
-  if (selectedRowSnapshot?.legacy_id === G18F_TARGET_LEGACY_ID) {
-    return G18G2_DISCOGRAPHY_TRACKLIST_SINGLE_TITLE_NON_DRY_RUN_APPROVAL_ID;
+  if (isG19aTracklistAlbumLegacyId(selectedRowSnapshot?.legacy_id ?? "")) {
+    return G19A_TRACKLIST_DRY_RUN_APPROVAL_ID;
   }
   if (!slice) return "—";
   return getDiscographyScalarSliceRegistryEntry(slice).dryRunApprovalId;
 }
 
 function getActiveSaveApprovalId(slice: DiscographyWriteSlice | null): string {
-  if (selectedRowSnapshot?.legacy_id === G18F_TARGET_LEGACY_ID) {
-    return G18G2_DISCOGRAPHY_TRACKLIST_SINGLE_TITLE_NON_DRY_RUN_APPROVAL_ID;
+  if (isG19aTracklistAlbumLegacyId(selectedRowSnapshot?.legacy_id ?? "")) {
+    return "—";
   }
   if (!slice) return "—";
   return getDiscographyScalarSliceRegistryEntry(slice).approvalId;
@@ -263,8 +265,8 @@ function populateEditForm(item: HTMLElement, rows: GosakiDiscographyRecord[]): v
 
   const tracksEl = form.querySelector<HTMLTextAreaElement>('textarea[name="tracks"]');
   if (tracksEl) {
-    tracksEl.readOnly = snapshot.legacy_id !== G18F_TARGET_LEGACY_ID;
-    tracksEl.rows = snapshot.legacy_id === G18F_TARGET_LEGACY_ID ? 8 : 6;
+    tracksEl.readOnly = false;
+    tracksEl.rows = Math.max(snapshot.tracks.length, 6);
   }
 
   const published = form.querySelector<HTMLInputElement>('input[name="published"]');
@@ -296,12 +298,8 @@ function clearDryRunResult(): void {
 
 function updateOperatorStatusPanel(result: GosakiDiscographyDryRunResultUnion | null): void {
   const slice = resolveDiscographyWriteSlice(selectedRowSnapshot?.legacy_id ?? "");
-  const g18g2Config =
-    selectedRowSnapshot?.legacy_id === G18F_TARGET_LEGACY_ID
-      ? getGosakiDiscographyG18g2TracklistTitleSaveConfig()
-      : null;
-  const saveConfig =
-    slice != null && g18g2Config == null ? getSaveConfigForSlice(slice) : null;
+  const tracklistAlbum = isG19aTracklistAlbumLegacyId(selectedRowSnapshot?.legacy_id ?? "");
+  const saveConfig = slice != null && !tracklistAlbum ? getSaveConfigForSlice(slice) : null;
   const dryRunConfig = getGosakiDiscographyDryRunConfig();
 
   const setText = (id: string, value: string) => {
@@ -311,20 +309,16 @@ function updateOperatorStatusPanel(result: GosakiDiscographyDryRunResultUnion | 
 
   setText(
     "gosaki-disc-status-save",
-    g18g2Config
-      ? g18g2Config.saveEnabled
-        ? "ready_to_save"
-        : "disabled"
+    tracklistAlbum
+      ? "disabled"
       : saveConfig?.saveEnabled
         ? "ready_to_save"
         : "disabled",
   );
   setText(
     "gosaki-disc-status-db-write",
-    g18g2Config
-      ? g18g2Config.saveEnabled
-        ? "gated (operator Save only)"
-        : "disabled"
+    tracklistAlbum
+      ? "disabled"
       : saveConfig?.saveEnabled
         ? "gated (operator Save only)"
         : "disabled",
@@ -335,7 +329,7 @@ function updateOperatorStatusPanel(result: GosakiDiscographyDryRunResultUnion | 
   setText(
     "gosaki-disc-status-changed-fields",
     result
-      ? isG18g2TracklistDryRunResult(result) || isG18fTracklistDryRunResult(result)
+      ? isGenericTracklistDryRunResult(result)
         ? [
             result.changed.length ? `changed:${result.changed.length}` : "",
             result.added.length ? `added:${result.added.length}` : "",
@@ -350,14 +344,14 @@ function updateOperatorStatusPanel(result: GosakiDiscographyDryRunResultUnion | 
   setText(
     "gosaki-disc-status-payload-keys",
     result
-      ? isG18g2TracklistDryRunResult(result) || isG18fTracklistDryRunResult(result)
+      ? isGenericTracklistDryRunResult(result)
         ? `tracks textarea (${result.afterCount} lines)`
         : result.payloadKeys.join(", ") || "—"
       : "—",
   );
   setText(
     "gosaki-disc-status-expected-updated-at",
-    result && (isG18g2TracklistDryRunResult(result) || isG18fTracklistDryRunResult(result))
+    result && isGenericTracklistDryRunResult(result)
       ? "—"
       : result && "expectedBeforeUpdatedAt" in result
         ? (result.expectedBeforeUpdatedAt ?? "—")
@@ -366,7 +360,7 @@ function updateOperatorStatusPanel(result: GosakiDiscographyDryRunResultUnion | 
   setText(
     "gosaki-disc-status-stale",
     result
-      ? isG18g2TracklistDryRunResult(result) || isG18fTracklistDryRunResult(result)
+      ? isGenericTracklistDryRunResult(result)
         ? "—"
         : "optimisticLockStale" in result
           ? result.optimisticLockStale
@@ -386,25 +380,13 @@ function updateSaveButtonState(result: GosakiDiscographyDryRunResultUnion | null
   const button = document.getElementById("gosaki-disc-update-btn") as HTMLButtonElement | null;
   if (!button) return;
 
-  if (selectedRowSnapshot?.legacy_id === G18F_TARGET_LEGACY_ID) {
-    const g18g2Config = getGosakiDiscographyG18g2TracklistTitleSaveConfig();
-    const gate = evaluateG18g2DiscographyOperatorSaveUiGate({
-      signedIn: stagingAuthSignedIn === true,
-      dryRunOk: result?.ok === true,
-      saveReadiness: result?.saveReadiness ?? "guard_error",
-    });
-    button.disabled = !gate.enabled || saveInFlight;
-    button.setAttribute(
-      "data-gosaki-disc-save-allowed",
-      gate.enabled && !saveInFlight ? "true" : "false",
-    );
-    button.textContent = gate.enabled
-      ? "更新する"
-      : result?.saveReadiness === "ready_but_not_armed" ||
-          result?.saveReadiness === "ready_but_save_disabled"
-        ? "更新する（G-18g2 未arm / dry-run）"
-        : "更新する（G-18g2 tracklist Save 無効）";
-    button.title = gate.reason;
+  if (isG19aTracklistAlbumLegacyId(selectedRowSnapshot?.legacy_id ?? "")) {
+    button.disabled = true;
+    button.setAttribute("data-gosaki-disc-save-allowed", "false");
+    button.textContent = "更新する（Tracklist Save 無効 / G-19a dry-run）";
+    button.title = G18G2_TRACKLIST_SAVE_CHAIN_CLOSED
+      ? "G-19a generic tracklist dry-run only. G-18g2 Save chain closed."
+      : "G-19a generic tracklist dry-run only.";
     return;
   }
 
@@ -446,12 +428,7 @@ function updateSaveButtonState(result: GosakiDiscographyDryRunResultUnion | null
 }
 
 function renderDryRunResult(result: GosakiDiscographyDryRunResultUnion): void {
-  if (isG18g2TracklistDryRunResult(result)) {
-    renderG18g2TracklistSaveDryRunResult(result);
-    return;
-  }
-
-  if (isG18fTracklistDryRunResult(result)) {
+  if (isGenericTracklistDryRunResult(result)) {
     renderTracklistDryRunResult(result);
     return;
   }
@@ -497,7 +474,7 @@ function renderDryRunResult(result: GosakiDiscographyDryRunResultUnion): void {
   updateOperatorStatusPanel(result);
 }
 
-function renderTracklistDryRunResult(result: G18fTracklistTextareaDryRunResult): void {
+function renderTracklistDryRunResult(result: G19aTracklistTextareaDryRunResult): void {
   const el = document.getElementById("gosaki-disc-dry-run-result");
   if (!el) return;
 
@@ -515,7 +492,7 @@ function renderTracklistDryRunResult(result: G18fTracklistTextareaDryRunResult):
       : "<p>なし</p>";
 
   el.innerHTML = `
-    <h3 class="gosaki-disc-dry-run-result__title">Track List 差分（G-18f dry-run）</h3>
+    <h3 class="gosaki-disc-dry-run-result__title">Track List 差分（G-19a generic dry-run）</h3>
     <p><strong>approvalId:</strong> ${escapeHtml(result.approvalId)}</p>
     <p><strong>ok:</strong> ${result.ok ? "true" : "false"}</p>
     <p><strong>dryRun:</strong> ${result.dryRun ? "true" : "false"}</p>
@@ -732,8 +709,8 @@ async function runDryRunPreview(): Promise<void> {
     return;
   }
 
-  if (selectedRowSnapshot.legacy_id === G18F_TARGET_LEGACY_ID) {
-    const result = executeG18g2TracklistTitleDryRun({
+  if (isG19aTracklistAlbumLegacyId(selectedRowSnapshot.legacy_id)) {
+    const result = executeG19aTracklistTextareaDryRun({
       beforeSnapshot: selectedRowSnapshot,
       tracksTextarea: readDiscographyTracklistTextareaFromForm(form),
     });
@@ -826,6 +803,7 @@ async function runDryRunPreview(): Promise<void> {
   renderDryRunResult(result);
 }
 
+/** G-18g2 Save adapter preserved — chain closed; not invoked from operator UI (G-19a). */
 async function runG18g2TracklistTitleSave(): Promise<void> {
   const config = getGosakiDiscographyG18g2TracklistTitleSaveConfig();
   if (!config.saveEnabled) {
@@ -911,8 +889,10 @@ async function runG18g2TracklistTitleSave(): Promise<void> {
 }
 
 async function runSave(): Promise<void> {
-  if (selectedRowSnapshot?.legacy_id === G18F_TARGET_LEGACY_ID) {
-    await runG18g2TracklistTitleSave();
+  if (isG19aTracklistAlbumLegacyId(selectedRowSnapshot?.legacy_id ?? "")) {
+    window.alert(
+      "Track List の Save は G-19a では無効です（dry-run Preview のみ）。G-18g2 Save チェーンは完了済みです。",
+    );
     return;
   }
 
@@ -1089,7 +1069,7 @@ function wireRowSelection(rows: GosakiDiscographyRecord[]): void {
   });
 
   const initial =
-    list.querySelector<HTMLElement>(`[data-legacy-id="${G18F_TARGET_LEGACY_ID}"]`) ??
+    list.querySelector<HTMLElement>('[data-legacy-id="discography-002"]') ??
     list.querySelector<HTMLElement>(`[data-legacy-id="${G16A_TARGET_LEGACY_ID}"]`) ??
     list.querySelector<HTMLElement>(".gosaki-discography-admin-item--selected") ??
     list.querySelector<HTMLElement>(".gosaki-discography-admin-item");

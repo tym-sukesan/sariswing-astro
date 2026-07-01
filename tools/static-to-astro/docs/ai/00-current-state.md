@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-18g2-execution-wiring Gosaki Discography tracklist single-title Save UI wiring (2026-06-29):** **complete (uncommitted)** — `runSave()` wired to `executeG18g2TracklistTitleSave`; default dry-run safe; Save not executed. Doc: `gosaki-discography-g18g2-tracklist-single-title-save-ui-wiring.md`. **Next: G-18g2-execution (operator Save once).**
+**G-18g2-execution Gosaki Discography tracklist single-title Save execution result (2026-06-29):** **complete (uncommitted)** — operator Save once succeeded; track 7 `Like a Lover` → `Like a Lover（テスト）`; rollback not needed. Doc: `gosaki-discography-g18g2-tracklist-single-title-save-execution-result.md`. **Do not re-Save `discography-002` track 7.** **Next: G-18h public tracks reflection.**
+
+**G-18g2-execution-wiring Gosaki Discography tracklist single-title Save UI wiring (2026-06-29):** **complete** — committed `8fd2ff7`. Doc: `gosaki-discography-g18g2-tracklist-single-title-save-ui-wiring.md`.
 
 **G-18g2-preflight Gosaki Discography tracklist single-title Save final preflight (2026-06-29):** **complete** — committed `2c92bb3`. Doc: `gosaki-discography-g18g2-tracklist-single-title-save-final-preflight.md`.
 

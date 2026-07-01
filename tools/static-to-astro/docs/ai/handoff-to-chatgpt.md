@@ -5,26 +5,32 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-18g2-execution-wiring-gosaki-discography-tracklist-single-title-save-ui-wiring — complete.
-Save button wired to executeG18g2TracklistTitleSave; default dry-run remains safe.
-Next: G-18g2-execution — operator Save once (armed dev + preflight SELECT).
+Current phase: G-18g2-execution-gosaki-discography-tracklist-single-title-save-result — complete.
+Operator Save once succeeded; discography-002 track 7 title updated in staging DB.
+Next: G-18h — public tracks reflection on staging preview.
 ```
 
 **Closed chains — do not re-Save / re-upload:**
 - `discography-001` / `artist` (G-16b-f)
 - `discography-002` / `purchase_url` (G-15c-f)
+- `discography-002` / track 7 `title` (G-18g2-execution — do not re-Save)
 - `discography-003` / `artist` (G-15e-f)
 - `discography-004` / `label` (G-17e-f)
 - `schedule-2026-04-005` / `price` (G-14b1f)
 
+## G-18g2-execution Discography tracklist single-title Save result — complete
+
+- **Doc:** `gosaki-discography-g18g2-tracklist-single-title-save-execution-result.md`
+- **Base:** `8fd2ff7`
+- **Save:** operator once; alert 保存しました
+- **After:** track 7 `Like a Lover（テスト）`; album 8 tracks; `test_title_rows = 1`
+- **Rollback:** not needed
+- **Public reflection:** deferred — G-18h
+- **Do not re-Save** `discography-002` track 7
+
 ## G-18g2-execution-wiring Discography tracklist Save UI wiring — complete
 
-- **Doc:** `gosaki-discography-g18g2-tracklist-single-title-save-ui-wiring.md`
-- **Base:** `2c92bb3`
-- **Wiring:** `runSave` → `runG18g2TracklistTitleSave` → `executeG18g2TracklistTitleSave`
-- **Default:** `PUBLIC_ADMIN_WRITE_DRY_RUN=true` — Save disabled / alert
-- **Armed:** requires `PUBLIC_ADMIN_WRITE_DRY_RUN=false` + `PUBLIC_ADMIN_DISCOGRAPHY_G18G2_TRACKLIST_TITLE_NON_DRY_RUN_ARMED=true` + `ENABLE_ADMIN_STAGING_WRITE=true`
-- **Next:** G-18g2-execution — operator Save once
+- **Commit:** `8fd2ff7`
 
 ## G-18g2-preflight Discography tracklist Save final preflight — complete
 

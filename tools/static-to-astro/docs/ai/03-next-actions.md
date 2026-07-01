@@ -1,18 +1,26 @@
 Last updated: 2026-06-29
 Project: Static-to-Astro CMS / Musician CMS Kit
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-18g2-execution-wiring Discography tracklist Save UI wiring — complete
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-18g2-execution Discography tracklist single-title Save result — complete
 
 | Item | Value |
 | --- | --- |
-| Phase | `G-18g2-execution-wiring-gosaki-discography-tracklist-single-title-save-ui-wiring` |
-| Base | `2c92bb3` |
-| Gap | `runSave` alert-only → **closed** |
-| Path | `runG18g2TracklistTitleSave` → `executeG18g2TracklistTitleSave` |
-| Doc | `gosaki-discography-g18g2-tracklist-single-title-save-ui-wiring.md` |
-| Verifier | `verify-g18g2-gosaki-discography-tracklist-single-title-save-ui-wiring.mjs` |
-| **Next** | **G-18g2-execution** — operator Save once (armed dev) |
-| **Do not** | Cursor Save / DB write |
+| Phase | `G-18g2-execution-gosaki-discography-tracklist-single-title-save-result` |
+| Base | `8fd2ff7` |
+| Target | `discography-002` track 7 — `Like a Lover` → `Like a Lover（テスト）` |
+| Result | Save once; alert 保存しました; rowsAffected 1 |
+| Rollback | **not needed** |
+| Doc | `gosaki-discography-g18g2-tracklist-single-title-save-execution-result.md` |
+| Verifier | `verify-g18g2-gosaki-discography-tracklist-single-title-save-execution-result.mjs` |
+| **Next** | **G-18h** public tracks reflection |
+| **Do not** | Re-Save track 7 / rollback without new approval |
+
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-18g2-execution-wiring Discography tracklist Save UI wiring — complete
+
+| Item | Value |
+| --- | --- |
+| Commit | `8fd2ff7` |
+| **Next** | G-18g2-execution — **done** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-18g2-preflight Discography tracklist Save final preflight — complete
 

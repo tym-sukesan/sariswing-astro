@@ -1,20 +1,27 @@
 Last updated: 2026-07-01
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20ui1 Gosaki admin UI polish inventory — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20ui1-gosaki-admin-ui-polish-inventory` |
+| Base | `4a91061` |
+| Scope | Read-only UI inventory + must/should/defer + G-20ui2 plan |
+| Surfaces | Local staging shell + read-only admin (staging only) |
+| UI implementation | **none** |
+| Doc | `gosaki-admin-ui-polish-inventory.md` |
+| Verifier | `verify-g20ui1-gosaki-admin-ui-polish-inventory.mjs` |
+| G-20j | **STOP** — remote path TBD |
+| **Next** | `G-20ui2-admin-ui-polish-implementation` (P1 copy) |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20i3 Gosaki production package admin exclusion — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-20i3-gosaki-production-package-admin-exclusion` |
-| Base | `d34646d` |
-| Upload scope | **26 files** — `admin/` excluded |
-| Build | `npm run build:gosaki-production-package` — **executed** |
-| Profile | `includeGosakiReadOnlyAdmin: false` |
-| Staging script | **unchanged** |
-| Doc | `gosaki-production-package-admin-exclusion-result.md` |
-| Verifier | `verify-g20i3-gosaki-production-package-admin-exclusion.mjs` (63/63) |
-| G-20j | **STOP** — remote path TBD |
-| **Next** | `G-20ui1-admin-ui-adjustment` + operator remote path checklist |
+| Base | `4a91061` |
+| **Next** | — (superseded by G-20ui1 for parallel work) |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20i2 Gosaki production upload finalization — complete
 

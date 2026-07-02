@@ -5,13 +5,14 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20i3-gosaki-production-package-admin-exclusion — complete.
-Production package rebuilt: 26 public-dist files, admin/ excluded (includeGosakiReadOnlyAdmin: false).
-MANIFEST adminExcludedFromPackage: true. Verifier 63/63 PASS.
-G-20j manual FTP: STOP until remote path / DNS / SSL / MX checklist complete.
-Parallel: G-20ui1 admin UI adjustment while server contract pending.
+Current phase: G-20ui1-gosaki-admin-ui-polish-inventory — complete.
+Admin UI inventory: local staging shell + read-only admin (staging only).
+Must-fix: unify Save messaging, hide dev diagnostics, Japanese copy, operator/client explainer.
+Next implementation: G-20ui2 low-risk copy/layout (no Save/DB/deploy changes).
+Parallel: operator remote path checklist; G-20j manual FTP STOP until server contract.
+Production package: 26 files, admin/ excluded (G-20i3).
 Supabase interim SoT: kmjqppxjdnwwrtaeqjta — never vsbvndwuajjhnzpohghh.
-FTP/upload/DNS/DB write NOT executed in G-20i3.
+No UI implementation / Save / package regen / FTP in G-20ui1.
 ```
 
 **Closed chains — do not re-UPDATE / re-Save / re-upload:**
@@ -21,14 +22,23 @@ FTP/upload/DNS/DB write NOT executed in G-20i3.
 - `discography-004` / `label` (G-17e-f)
 - `schedule-2026-04-005` / `price` (G-14b1f)
 
+## G-20ui1 Gosaki admin UI polish inventory — complete
+
+- **Doc:** `gosaki-admin-ui-polish-inventory.md`
+- **Base:** `4a91061` (uncommitted)
+- **Inventory:** local staging shell + read-only admin; contact admin gap
+- **Classification:** must / should / defer / developer-only
+- **Next:** G-20ui2 P1 copy + dev panel collapse (no Save/DB/deploy)
+- **Parallel:** operator remote path checklist; G-20j STOP
+
 ## G-20i3 Gosaki production package admin exclusion — complete
 
 - **Doc:** `gosaki-production-package-admin-exclusion-result.md`
-- **Base:** `d34646d` (uncommitted)
+- **Base:** `4a91061`
 - **Package:** 26 files — `admin/` excluded
 - **Verifier:** 63/63 PASS
 - **G-20j:** STOP (remote path TBD)
-- **Next:** G-20ui1 + operator checklist
+- **Next:** — (superseded by G-20ui1 for UI work)
 
 ## G-20i2 Gosaki production upload finalization — complete
 

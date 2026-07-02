@@ -94,7 +94,7 @@ export function validatePublicDistForManualUpload(publicDistDir) {
  * }} meta
  */
 export function buildManualUploadManifest(meta) {
-  return {
+  const manifest = {
     phase: "G-8c-wix-static-export-responsive-baseline-generalization",
     siteSlug: meta.siteSlug,
     deployBase: normalizeDeployBase(meta.deployBase),
@@ -108,6 +108,14 @@ export function buildManualUploadManifest(meta) {
     uploadTarget: normalizeDeployBase(meta.deployBase),
     uploadContents: "public-dist/ contents only (not the public-dist folder itself)",
   };
+  if (meta.includeGosakiReadOnlyAdmin === false) {
+    manifest.includeGosakiReadOnlyAdmin = false;
+    manifest.adminExcludedFromPackage = true;
+  } else if (meta.includeGosakiReadOnlyAdmin === true) {
+    manifest.includeGosakiReadOnlyAdmin = true;
+    manifest.adminExcludedFromPackage = false;
+  }
+  return manifest;
 }
 
 /**
@@ -274,6 +282,7 @@ export function createManualUploadPackage(opts) {
     stagingUrl,
     toolRoot,
     repoRoot,
+    includeGosakiReadOnlyAdmin,
   } = opts;
 
   const validation = validatePublicDistForManualUpload(publicDistDir);
@@ -307,6 +316,7 @@ export function createManualUploadPackage(opts) {
     fileCount: validation.fileCount,
     safeForStaticFtp: Boolean(validation.manifest?.safeForStaticFtp),
     cssPresenceOk: validation.cssPresence?.ok === true,
+    includeGosakiReadOnlyAdmin: opts.includeGosakiReadOnlyAdmin,
   });
 
   fs.writeFileSync(readmePath, formatReadmeUpload({ deployBase, stagingUrl, siteSlug }), "utf8");

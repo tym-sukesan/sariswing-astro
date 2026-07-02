@@ -5,13 +5,13 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20i2-gosaki-production-upload-finalization-admin-and-remote-path — complete.
-Admin policy: Option B — exclude admin/ from first production upload (26 files, not 27).
-Current package still has admin/index.html — do NOT upload admin/ unless policy changes.
-Remote path / SSL / DNS / MX: TBD — G-20j STOP until operator checklist complete.
-Recommended next: G-20i3 regen package without admin/ + operator Lolipop path confirmation.
+Current phase: G-20i3-gosaki-production-package-admin-exclusion — complete.
+Production package rebuilt: 26 public-dist files, admin/ excluded (includeGosakiReadOnlyAdmin: false).
+MANIFEST adminExcludedFromPackage: true. Verifier 63/63 PASS.
+G-20j manual FTP: STOP until remote path / DNS / SSL / MX checklist complete.
+Parallel: G-20ui1 admin UI adjustment while server contract pending.
 Supabase interim SoT: kmjqppxjdnwwrtaeqjta — never vsbvndwuajjhnzpohghh.
-FTP/upload/DNS/DB write/package regen NOT executed in G-20i2.
+FTP/upload/DNS/DB write NOT executed in G-20i3.
 ```
 
 **Closed chains — do not re-UPDATE / re-Save / re-upload:**
@@ -21,14 +21,20 @@ FTP/upload/DNS/DB write/package regen NOT executed in G-20i2.
 - `discography-004` / `label` (G-17e-f)
 - `schedule-2026-04-005` / `price` (G-14b1f)
 
+## G-20i3 Gosaki production package admin exclusion — complete
+
+- **Doc:** `gosaki-production-package-admin-exclusion-result.md`
+- **Base:** `d34646d` (uncommitted)
+- **Package:** 26 files — `admin/` excluded
+- **Verifier:** 63/63 PASS
+- **G-20j:** STOP (remote path TBD)
+- **Next:** G-20ui1 + operator checklist
+
 ## G-20i2 Gosaki production upload finalization — complete
 
 - **Doc:** `gosaki-production-upload-finalization-admin-and-remote-path.md`
-- **Base:** `69d538e` (uncommitted)
-- **Admin:** Option B — exclude from first upload (26 files)
-- **G-20j:** STOP until remote path + DNS/SSL/MX confirmed
-- **Verifier:** `verify-g20i2-gosaki-production-upload-finalization-admin-and-remote-path.mjs`
-- **Next:** G-20i3 package admin exclusion regen + operator checklist
+- **Base:** `d34646d`
+- **Next:** — (superseded by G-20i3)
 
 ## G-20i Gosaki production upload preflight — complete
 

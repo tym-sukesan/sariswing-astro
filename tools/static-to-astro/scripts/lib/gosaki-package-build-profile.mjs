@@ -95,6 +95,10 @@ function validateProfileShape(profile, name) {
   if (!stagingBuild && seo.productionIndexable !== true) {
     throw new Error(`Profile "${name}" root deploy requires seo.productionIndexable=true`);
   }
+
+  if (name === "production" && p.includeGosakiReadOnlyAdmin !== false) {
+    throw new Error(`Profile "${name}" must set includeGosakiReadOnlyAdmin=false (G-20i3)`);
+  }
 }
 
 /**
@@ -155,6 +159,10 @@ export function resolveGosakiPackageBuildProfile(profileName, options = {}) {
     staticPublicReportRel: path.join(staticPublicOut, "STATIC_PUBLIC_ARTIFACT_REPORT.md"),
     astroOutRepoRel: path.join("tools/static-to-astro", astroOut),
     isStagingSubdirBuild: isStagingSubdirBuild(deployBase),
+    includeGosakiReadOnlyAdmin:
+      profileName === "production"
+        ? false
+        : raw.includeGosakiReadOnlyAdmin !== false,
   };
 }
 

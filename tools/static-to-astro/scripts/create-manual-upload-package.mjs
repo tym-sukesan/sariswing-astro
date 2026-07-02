@@ -30,6 +30,7 @@ Options:
   --deploy-base PATH     Remote deploy base (default: /cms-kit-staging/gosaki-piano/)
   --staging-url URL      Staging public URL
   --out PATH             Output package directory (required)
+  --include-gosaki-read-only-admin BOOL  Record admin inclusion in MANIFEST (true|false)
   --help, -h
 `);
 }
@@ -41,6 +42,7 @@ function parseArgs(argv) {
     deployBase: "/cms-kit-staging/gosaki-piano/",
     stagingUrl: "https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano",
     out: null,
+    includeGosakiReadOnlyAdmin: undefined,
     help: false,
   };
 
@@ -55,7 +57,12 @@ function parseArgs(argv) {
     else if (arg === "--deploy-base") opts.deployBase = argv[++i];
     else if (arg === "--staging-url") opts.stagingUrl = argv[++i];
     else if (arg === "--out") opts.out = argv[++i];
-    else throw new Error(`Unknown argument: ${arg}`);
+    else if (arg === "--include-gosaki-read-only-admin") {
+      const val = argv[++i];
+      if (val === "true") opts.includeGosakiReadOnlyAdmin = true;
+      else if (val === "false") opts.includeGosakiReadOnlyAdmin = false;
+      else throw new Error(`--include-gosaki-read-only-admin expects true or false, got: ${val}`);
+    } else throw new Error(`Unknown argument: ${arg}`);
   }
 
   return opts;
@@ -95,6 +102,7 @@ function main() {
     stagingUrl: opts.stagingUrl,
     toolRoot: TOOL_ROOT,
     repoRoot: REPO_ROOT,
+    includeGosakiReadOnlyAdmin: opts.includeGosakiReadOnlyAdmin,
   });
 
   if (!result.ok) {

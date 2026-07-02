@@ -3,9 +3,11 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-20i2 Gosaki production upload finalization (2026-07-01):** **complete (uncommitted)** — admin/ review; **Option B exclude** recommended; remote path checklist; **G-20j STOP** until path/DNS/SSL confirmed. Doc: `gosaki-production-upload-finalization-admin-and-remote-path.md`. Next: G-20i3 (admin exclusion regen) + operator checklist.
+**G-20i3 Gosaki production package admin exclusion (2026-07-01):** **complete (uncommitted)** — production package rebuilt **without admin/** (26 files); verifier 63/63 PASS. Doc: `gosaki-production-package-admin-exclusion-result.md`. **G-20j STOP** (remote path TBD). Next: G-20ui1 + operator checklist.
 
-**G-20i Gosaki production upload preflight (2026-07-01):** **complete** — commit `69d538e`. **Superseded by G-20i2 for G-20j gates** (`readyForG20j` downgraded to false).
+**G-20i2 Gosaki production upload finalization (2026-07-01):** **complete** — commit `d34646d`. Option B admin exclude. **Superseded by G-20i3 rebuild.**
+
+**G-20i Gosaki production upload preflight (2026-07-01):** **complete** — commit `69d538e`. **Superseded by G-20i2/G-20i3.**
 
 **G-20h2 Gosaki initial local production package build (2026-07-01):** **complete** — commit `adfe27d`. Package `gosaki-piano-production/` (27 files). **Superseded by G-20i preflight.**
 

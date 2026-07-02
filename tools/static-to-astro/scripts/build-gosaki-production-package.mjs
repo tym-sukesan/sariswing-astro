@@ -37,11 +37,12 @@ const report = reportGosakiStagingAdminPublicEnvPresence();
 const env = loadGosakiStagingAdminPublicEnv();
 const validation = validateGosakiStagingAdminPublicEnv(env);
 
-console.log("G-20h2 Gosaki production package build");
+console.log("G-20i3 Gosaki production package build");
 console.log("profile:", PROFILE_NAME);
 console.log("baseUrl:", profile.baseUrl);
 console.log("deployBase:", profile.deployBase);
 console.log("output:", profile.manualUploadOut);
+console.log("includeGosakiReadOnlyAdmin:", profile.includeGosakiReadOnlyAdmin);
 console.log("supabaseProjectRef:", profile.supabaseProjectRef);
 console.log("PUBLIC_SUPABASE_URL:", report.presence.PUBLIC_SUPABASE_URL ? "SET" : "UNSET");
 console.log("PUBLIC_SUPABASE_ANON_KEY:", report.presence.PUBLIC_SUPABASE_ANON_KEY ? "SET" : "UNSET");
@@ -93,13 +94,15 @@ run(
     profile.astroOutRepoRel,
     "--report",
     path.join("tools/static-to-astro", profile.staticPublicReportRel),
+    "--include-gosaki-read-only-admin",
+    profile.includeGosakiReadOnlyAdmin ? "true" : "false",
   ],
   buildEnv,
 );
 
 run("npm", ["run", "manual-upload:package:gosaki-production"], buildEnv);
-run("node", ["scripts/verify-g20h2-gosaki-production-package-build.mjs"], buildEnv);
+run("node", ["scripts/verify-g20i3-gosaki-production-package-admin-exclusion.mjs"], buildEnv);
 
 console.log("");
-console.log("G-20h2 Gosaki production package build: PASS");
+console.log("G-20i3 Gosaki production package build: PASS");
 console.log(`Output: tools/static-to-astro/${profile.manualUploadOut}/`);

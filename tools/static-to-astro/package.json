@@ -18,8 +18,8 @@
     "manual-upload:package": "node scripts/create-manual-upload-package.mjs --public-dir output/static-public/gosaki-piano/public-dist --out output/manual-upload/gosaki-piano",
     "verify:manual-upload": "node scripts/verify-manual-upload-package.mjs",
     "build:gosaki-production-package": "node scripts/build-gosaki-production-package.mjs",
-    "manual-upload:package:gosaki-production": "node scripts/create-manual-upload-package.mjs --site-slug gosaki-piano --public-dir output/static-public/gosaki-piano-production/public-dist --deploy-base / --staging-url https://www.gosaki-piano.com --out output/manual-upload/gosaki-piano-production",
-    "verify:manual-upload:gosaki-production": "node scripts/verify-g20h2-gosaki-production-package-build.mjs"
+    "manual-upload:package:gosaki-production": "node scripts/create-manual-upload-package.mjs --site-slug gosaki-piano --public-dir output/static-public/gosaki-piano-production/public-dist --deploy-base / --staging-url https://www.gosaki-piano.com --out output/manual-upload/gosaki-piano-production --include-gosaki-read-only-admin false",
+    "verify:manual-upload:gosaki-production": "node scripts/verify-g20i3-gosaki-production-package-admin-exclusion.mjs"
   },
   "devDependencies": {
     "pixelmatch": "^7.1.0",

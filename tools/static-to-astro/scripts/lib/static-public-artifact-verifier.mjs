@@ -392,13 +392,14 @@ export function loadOptionalSecretsForScan(toolRoot) {
 }
 
 /**
- * @param {{ astroDir: string, toolRoot: string, publicDirCli?: string | null, manifestOutDir?: string | null }} opts
+ * @param {{ astroDir: string, toolRoot: string, publicDirCli?: string | null, manifestOutDir?: string | null, includeGosakiReadOnlyAdmin?: boolean }} opts
  */
 export function runStaticPublicArtifactVerification({
   astroDir,
   toolRoot,
   publicDirCli = null,
   manifestOutDir = null,
+  includeGosakiReadOnlyAdmin: includeGosakiReadOnlyAdminOverride = undefined,
 }) {
   const astroAbs = path.resolve(astroDir);
   const publicDir = detectPublicDir(astroAbs, publicDirCli);
@@ -455,7 +456,10 @@ export function runStaticPublicArtifactVerification({
 
   result.supabaseKeyScanRaw = scanSupabaseKeyExposure(publicDir);
 
-  const includeGosakiReadOnlyAdmin = detectGosakiReadOnlyAdminInPublicDir(publicDir);
+  const includeGosakiReadOnlyAdmin =
+    includeGosakiReadOnlyAdminOverride !== undefined
+      ? includeGosakiReadOnlyAdminOverride
+      : detectGosakiReadOnlyAdminInPublicDir(publicDir);
   result.includeGosakiReadOnlyAdmin = includeGosakiReadOnlyAdmin;
 
   const outBase =

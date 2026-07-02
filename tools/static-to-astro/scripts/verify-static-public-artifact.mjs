@@ -29,6 +29,7 @@ Options:
   --astro-dir PATH     generated-astro directory (required)
   --report PATH        STATIC_PUBLIC_ARTIFACT_REPORT.md output (required)
   --public-dir PATH    Override public artifact dir (default: dist/client → dist)
+  --include-gosaki-read-only-admin BOOL  Force include/exclude Gosaki read-only admin in copy
   --help, -h
 `);
 }
@@ -38,6 +39,7 @@ function parseArgs(argv) {
     astroDir: null,
     report: null,
     publicDir: null,
+    includeGosakiReadOnlyAdmin: undefined,
     help: false,
   };
 
@@ -57,6 +59,13 @@ function parseArgs(argv) {
     }
     if (arg === "--public-dir") {
       opts.publicDir = argv[++i];
+      continue;
+    }
+    if (arg === "--include-gosaki-read-only-admin") {
+      const val = argv[++i];
+      if (val === "true") opts.includeGosakiReadOnlyAdmin = true;
+      else if (val === "false") opts.includeGosakiReadOnlyAdmin = false;
+      else throw new Error(`--include-gosaki-read-only-admin expects true or false, got: ${val}`);
       continue;
     }
     throw new Error(`Unknown argument: ${arg}`);
@@ -127,6 +136,7 @@ async function main() {
     toolRoot: TOOL_ROOT,
     publicDirCli: opts.publicDir,
     manifestOutDir,
+    includeGosakiReadOnlyAdmin: opts.includeGosakiReadOnlyAdmin,
   });
 
   fs.mkdirSync(path.dirname(reportPath), { recursive: true });

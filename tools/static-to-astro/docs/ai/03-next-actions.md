@@ -1,18 +1,27 @@
 Last updated: 2026-07-02
 Project: Static-to-Astro CMS / Musician CMS Kit
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22d1 Gosaki Schedule duplicate INSERT implementation — complete
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22d2 Gosaki Schedule duplicate INSERT final preflight — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-22d2-gosaki-schedule-duplicate-insert-final-preflight` |
+| Base | `daa1da2` |
+| Scope | before/after/rollback SQL templates; expected payload lock |
+| Doc | `gosaki-schedule-duplicate-insert-final-preflight.md` |
+| Verifier | `verify-g22d2-gosaki-schedule-duplicate-insert-final-preflight.mjs` |
+| **Next** | `G-22d3-gosaki-schedule-duplicate-insert-operator-execution` |
+
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22d1 Gosaki Schedule duplicate INSERT implementation — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-22d1-gosaki-schedule-duplicate-insert-implementation` |
 | Base | `8d0f541` |
-| Scope | INSERT adapter + guards + UI gate; default Save disabled |
-| approvalId | `G-22d-gosaki-schedule-duplicate-insert-non-dry-run-slice` |
-| env arm | `PUBLIC_ADMIN_GOSAKI_SCHEDULE_G22D_DUPLICATE_INSERT_NON_DRY_RUN_ARMED` |
+| Commit | `daa1da2` |
 | Doc | `gosaki-schedule-duplicate-insert-implementation.md` |
 | Verifier | `verify-g22d1-gosaki-schedule-duplicate-insert-implementation.mjs` |
-| **Next** | `G-22d2-gosaki-schedule-duplicate-insert-final-preflight` |
+| **Next** | — (superseded by G-22d2) |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22d Gosaki Schedule duplicate INSERT planning — complete
 

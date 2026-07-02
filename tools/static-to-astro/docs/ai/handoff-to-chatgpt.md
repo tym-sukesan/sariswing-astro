@@ -5,13 +5,13 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-22d1-gosaki-schedule-duplicate-insert-implementation — complete (uncommitted).
-Duplicate INSERT adapter + guards + UI gate wired; default Save disabled; no DB write.
-Next: G-22d2 final preflight → G-22d3 operator single INSERT execution.
+Current phase: G-22d2-gosaki-schedule-duplicate-insert-final-preflight — complete (uncommitted).
+Duplicate INSERT final preflight SQL templates + expected payload locked; no DB write.
+Next: G-22d3 operator single INSERT execution (manual Save once).
 Parallel: operator remote path checklist; G-20j manual FTP STOP until server contract.
 Production package: 26 files, admin/ excluded (G-20i3).
 Supabase interim SoT: kmjqppxjdnwwrtaeqjta — never vsbvndwuajjhnzpohghh.
-No Save / DB write / package regen / FTP in G-22d1.
+No Save / DB write / SQL execution / package regen / FTP in G-22d2.
 ```
 
 **Closed chains — do not re-UPDATE / re-Save / re-upload:**
@@ -21,16 +21,20 @@ No Save / DB write / package regen / FTP in G-22d1.
 - `discography-004` / `label` (G-17e-f)
 - `schedule-2026-04-005` / `price` (G-14b1f)
 
+## G-22d2 Gosaki Schedule duplicate INSERT final preflight — complete
+
+- **Doc:** `gosaki-schedule-duplicate-insert-final-preflight.md`
+- **Base:** `daa1da2` (uncommitted)
+- **SQL:** beforeVerification / afterVerification / rollback templates (not executed)
+- **Expected payload:** `schedule-2026-03-014`, title `（コピー）`, `published=false`, `sort_order=140`
+- **Save / INSERT:** not executed
+- **Next:** G-22d3 operator execution
+
 ## G-22d1 Gosaki Schedule duplicate INSERT implementation — complete
 
 - **Doc:** `gosaki-schedule-duplicate-insert-implementation.md`
-- **Base:** `8d0f541` (uncommitted)
-- **Modules:** `schedule-insert-write-adapter.ts`, `gosaki-schedule-duplicate-insert-{config,guards,save}.ts`
-- **UI:** duplicate Save gate — default disabled; armed label `複製案を保存`
-- **approvalId:** `G-22d-gosaki-schedule-duplicate-insert-non-dry-run-slice`
-- **env arm:** `PUBLIC_ADMIN_GOSAKI_SCHEDULE_G22D_DUPLICATE_INSERT_NON_DRY_RUN_ARMED` (default off)
-- **Save / INSERT:** not executed
-- **Next:** G-22d2 final preflight
+- **Commit:** `daa1da2`
+- **Next:** — (superseded by G-22d2)
 
 ## G-22d Gosaki Schedule duplicate INSERT planning — complete
 

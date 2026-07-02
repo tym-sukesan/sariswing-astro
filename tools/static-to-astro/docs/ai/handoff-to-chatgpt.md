@@ -5,13 +5,13 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20ui3-gosaki-admin-ui-minor-polish — complete.
-Minor polish: JA shell titles, About 変更確認 copy, operator-friendly save notes.
-Deferred: Contact stub, Discography field labels.
+Current phase: G-20ui3qa-gosaki-admin-ui-minor-polish-local-qa — complete.
+Local QA: G-20ui3 JA titles, About 変更確認, operator save notes verified; no blocking issues.
+Admin UI polish chain (G-20ui1–G-20ui3) client-preview ready for operator workflow.
 Parallel: operator remote path checklist; G-20j manual FTP STOP until server contract.
 Production package: 26 files, admin/ excluded (G-20i3).
 Supabase interim SoT: kmjqppxjdnwwrtaeqjta — never vsbvndwuajjhnzpohghh.
-No Save / DB write / package regen / FTP in G-20ui3.
+No Save / dry-run click / DB write / package regen / FTP in G-20ui3-QA.
 ```
 
 **Closed chains — do not re-UPDATE / re-Save / re-upload:**
@@ -21,13 +21,18 @@ No Save / DB write / package regen / FTP in G-20ui3.
 - `discography-004` / `label` (G-17e-f)
 - `schedule-2026-04-005` / `price` (G-14b1f)
 
+## G-20ui3-QA Gosaki admin UI minor polish local QA — complete
+
+- **Doc:** `gosaki-admin-ui-minor-polish-local-qa.md`
+- **Base:** `75e2bc1` (uncommitted)
+- **QA:** all operator pages HTTP 200; G-20ui3 copy verified; no blocking issues
+- **Next:** operator checklist; G-20j STOP
+
 ## G-20ui3 Gosaki admin UI minor polish — complete
 
 - **Doc:** `gosaki-admin-ui-minor-polish.md`
-- **Base:** `8b4cf83` (uncommitted)
-- **Changed:** shell titles, aria-labels, About safety, Schedule/YouTube save notes
-- **Deferred:** Contact stub, Discography field labels
-- **Next:** operator checklist; G-20j STOP
+- **Base:** `75e2bc1`
+- **Next:** — (superseded by G-20ui3-QA)
 
 ## G-20ui2-QA Gosaki admin UI polish local visual QA — complete
 

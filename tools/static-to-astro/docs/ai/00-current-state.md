@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-22b Gosaki Schedule duplicate dry-run UI implementation (2026-07-02):** **complete (uncommitted)** — operator duplicate draft + dry-run preview; Save/INSERT disabled. Doc: `gosaki-schedule-duplicate-dry-run-ui-implementation.md`. Verifier: `verify-g22b-gosaki-schedule-duplicate-dry-run-ui-implementation.mjs`. **No Save/DB/package/FTP.** **Next: G-22c local QA.**
+**G-22c Gosaki Schedule duplicate dry-run local QA (2026-07-02):** **complete (uncommitted)** — local dev QA on `/__admin-staging-shell/musician-basic/admin/schedule/`; duplicate draft + module mirror preview PASS; Save/DB not executed. Doc: `gosaki-schedule-duplicate-dry-run-local-qa.md`. Verifier: `verify-g22c-gosaki-schedule-duplicate-dry-run-local-qa.mjs`. **Next: G-22d duplicate non-dry-run INSERT planning.**
+
+**G-22b Gosaki Schedule duplicate dry-run UI implementation (2026-07-02):** **complete** — commit `266491e`. Operator duplicate draft + dry-run preview; Save/INSERT disabled. Doc: `gosaki-schedule-duplicate-dry-run-ui-implementation.md`. Verifier: `verify-g22b-gosaki-schedule-duplicate-dry-run-ui-implementation.mjs`. **Superseded for QA by G-22c.**
 
 **G-22a Sariswing parity gap inventory for Gosaki CMS (2026-07-02):** **complete** — commit `f8580ec`. Doc: `gosaki-sariswing-parity-gap-inventory.md`. **Superseded for implementation by G-22b.**
 

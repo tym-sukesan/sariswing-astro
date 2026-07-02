@@ -5,14 +5,13 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-22b-gosaki-schedule-duplicate-dry-run-ui-implementation — complete (uncommitted).
-Duplicate: operator UI draft + dry-run preview wired; Save/INSERT disabled.
-Next: G-22c local QA (no Save).
-G-22d: duplicate non-dry-run INSERT (separate approval).
+Current phase: G-22c-gosaki-schedule-duplicate-dry-run-local-qa — complete (uncommitted).
+Duplicate dry-run local QA PASS on staging shell schedule operator UI.
+Next: G-22d duplicate non-dry-run INSERT planning (separate approval).
 Parallel: operator remote path checklist; G-20j manual FTP STOP until server contract.
 Production package: 26 files, admin/ excluded (G-20i3).
 Supabase interim SoT: kmjqppxjdnwwrtaeqjta — never vsbvndwuajjhnzpohghh.
-No Save / DB write / package regen / FTP in G-22b.
+No Save / DB write / package regen / FTP in G-22c.
 ```
 
 **Closed chains — do not re-UPDATE / re-Save / re-upload:**
@@ -22,16 +21,25 @@ No Save / DB write / package regen / FTP in G-22b.
 - `discography-004` / `label` (G-17e-f)
 - `schedule-2026-04-005` / `price` (G-14b1f)
 
+## G-22c Gosaki Schedule duplicate dry-run local QA — complete
+
+- **Doc:** `gosaki-schedule-duplicate-dry-run-local-qa.md`
+- **Base:** `266491e` (uncommitted)
+- **Route:** `/__admin-staging-shell/musician-basic/admin/schedule/`
+- **QA:** HTTP 200 + HTML markers + module mirror `executeG22bScheduleDuplicateDryRun` PASS
+- **Save / 更新する:** not clicked; no DB write
+- **add / delete:** still disabled
+- **Next:** G-22d duplicate non-dry-run INSERT planning
+
 ## G-22b Gosaki Schedule duplicate dry-run UI — complete
 
 - **Doc:** `gosaki-schedule-duplicate-dry-run-ui-implementation.md`
-- **Base:** `f8580ec` (uncommitted)
+- **Commit:** `266491e`
 - **Module:** `gosaki-schedule-duplicate-dry-run.ts`
 - **UI:** 複製案を作成 → duplicate draft banner → 変更を確認 → dry-run preview
 - **approvalId:** `G-22b-gosaki-schedule-duplicate-dry-run`
 - **Save / INSERT:** disabled (G-22d deferred)
-- **add / delete:** still disabled
-- **Next:** G-22c local QA
+- **Next:** — (superseded by G-22c QA)
 
 ## G-22a Sariswing parity gap inventory — complete
 

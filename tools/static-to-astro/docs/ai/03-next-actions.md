@@ -1,17 +1,29 @@
 Last updated: 2026-07-02
 Project: Static-to-Astro CMS / Musician CMS Kit
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22b Gosaki Schedule duplicate dry-run UI — complete
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22c Gosaki Schedule duplicate dry-run local QA — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-22c-gosaki-schedule-duplicate-dry-run-local-qa` |
+| Base | `266491e` |
+| Scope | local dev QA / record only; no Save/DB/package/FTP |
+| Doc | `gosaki-schedule-duplicate-dry-run-local-qa.md` |
+| Verifier | `verify-g22c-gosaki-schedule-duplicate-dry-run-local-qa.mjs` |
+| **Next** | `G-22d-schedule-duplicate-non-dry-run-insert-planning` |
+
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22b Gosaki Schedule duplicate dry-run UI — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-22b-gosaki-schedule-duplicate-dry-run-ui-implementation` |
 | Base | `f8580ec` |
+| Commit | `266491e` |
 | Scope | duplicate draft + dry-run preview in operator UI; no Save/INSERT |
 | approvalId | `G-22b-gosaki-schedule-duplicate-dry-run` |
 | Doc | `gosaki-schedule-duplicate-dry-run-ui-implementation.md` |
 | Verifier | `verify-g22b-gosaki-schedule-duplicate-dry-run-ui-implementation.mjs` |
-| **Next** | `G-22c-schedule-duplicate-dry-run-local-qa` |
+| **Next** | — (superseded by G-22c QA) |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22a Sariswing parity gap inventory — complete
 

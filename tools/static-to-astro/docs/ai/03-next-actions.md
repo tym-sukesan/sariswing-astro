@@ -1,17 +1,24 @@
 Last updated: 2026-07-02
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22d3b2 schedules INSERT grant final preflight — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-22d3b2-gosaki-schedules-insert-grant-final-preflight` |
+| Base | `f61ab6e` |
+| GRANT SQL | `grant insert on table public.schedules to authenticated;` |
+| Doc | `gosaki-schedules-insert-grant-final-preflight.md` |
+| Verifier | `verify-g22d3b2-gosaki-schedules-insert-grant-final-preflight.mjs` |
+| **Next** | `G-22d3b3-gosaki-schedules-insert-grant-operator-execution` |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22d3b-blocker permission denied audit — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-22d3b-blocker-gosaki-schedule-duplicate-insert-permission-denied-audit` |
-| Base | `974738c` |
-| Failure | `permission denied for table schedules` on INSERT |
-| Root cause | **authenticated INSERT grant absent** (UPDATE granted G-6-e4 only) |
-| Doc | `gosaki-schedule-duplicate-insert-permission-denied-audit.md` |
-| Verifier | `verify-g22d3b-blocker-gosaki-schedule-duplicate-insert-permission-denied-audit.mjs` |
-| **Next** | `G-22d3b2-gosaki-schedule-insert-grant-final-preflight` |
+| Commit | `f61ab6e` |
+| **Next** | — (superseded by G-22d3b2) |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22d3b duplicate INSERT operator execution — blocked
 
@@ -19,7 +26,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | --- | --- |
 | Phase | `G-22d3b-gosaki-schedule-duplicate-insert-operator-execution` |
 | Result | Save once → `actualWrite=false`; no `insertedId` |
-| **Next** | — (blocked → G-22d3b-blocker → G-22d3b2 grant) |
+| **Next** | — (blocked → G-22d3b3 grant → G-22d3b4 Save retry) |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22d2b preflight drift fix — complete
 

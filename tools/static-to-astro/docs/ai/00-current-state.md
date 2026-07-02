@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-22d3b-blocker Gosaki Schedule duplicate INSERT permission denied audit (2026-07-02):** **complete (uncommitted)** — G-22d3b Save failed `permission denied for table schedules`; root cause **missing authenticated INSERT grant** (G-6-e4 applied UPDATE only). Doc: `gosaki-schedule-duplicate-insert-permission-denied-audit.md`. Verifier: `verify-g22d3b-blocker-gosaki-schedule-duplicate-insert-permission-denied-audit.mjs`. **No GRANT/Save retry.** **Next: G-22d3b2 INSERT grant final preflight.**
+**G-22d3b2 Gosaki schedules INSERT grant final preflight (2026-07-02):** **complete (uncommitted)** — `GRANT INSERT` SQL fixed; after/rollback templates; STOP conditions. Doc: `gosaki-schedules-insert-grant-final-preflight.md`. Verifier: `verify-g22d3b2-gosaki-schedules-insert-grant-final-preflight.mjs`. **No GRANT/Save.** **Next: G-22d3b3 operator GRANT execution.**
+
+**G-22d3b-blocker Gosaki Schedule duplicate INSERT permission denied audit (2026-07-02):** **complete** — commit `f61ab6e`. Root cause: missing `authenticated INSERT` grant. **Superseded for grant apply by G-22d3b2.**
 
 **G-22d3b Gosaki Schedule duplicate INSERT operator execution (2026-07-02):** **blocked** — Save once attempted; `actualWrite=false`; no row inserted; rollback not needed. **Superseded by G-22d3b-blocker audit.**
 

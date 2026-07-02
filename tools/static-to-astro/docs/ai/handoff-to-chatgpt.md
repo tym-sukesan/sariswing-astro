@@ -5,12 +5,12 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-22d3b-blocker-gosaki-schedule-duplicate-insert-permission-denied-audit — complete (uncommitted).
-G-22d3b Save failed: permission denied for table schedules (INSERT grant gap; G-6-e4 UPDATE only).
-Next: G-22d3b2 INSERT grant final preflight → G-22d3b3 operator GRANT → G-22d3b4 Save retry once.
-Do NOT retry Save until grant + policy verification complete.
+Current phase: G-22d3b2-gosaki-schedules-insert-grant-final-preflight — complete (uncommitted).
+INSERT grant final preflight ready; GRANT SQL: grant insert on public.schedules to authenticated.
+Next: G-22d3b3 operator GRANT once → G-22d3b4 duplicate INSERT Save retry once.
+Do NOT retry Save until G-22d3b3 afterVerification PASS.
 Supabase interim SoT: kmjqppxjdnwwrtaeqjta — never vsbvndwuajjhnzpohghh.
-No GRANT / policy change / Save retry in G-22d3b-blocker.
+No GRANT / Save / DB write in G-22d3b2.
 ```
 
 **Closed chains — do not re-UPDATE / re-Save / re-upload:**
@@ -20,14 +20,19 @@ No GRANT / policy change / Save retry in G-22d3b-blocker.
 - `discography-004` / `label` (G-17e-f)
 - `schedule-2026-04-005` / `price` (G-14b1f)
 
+## G-22d3b2 schedules INSERT grant final preflight — complete
+
+- **GRANT SQL (G-22d3b3 only):** `grant insert on table public.schedules to authenticated;`
+- **Rollback:** `revoke insert on table public.schedules from authenticated;`
+- **approvalId:** `G-22d3b2-gosaki-schedules-insert-grant-apply`
+- **Doc:** `gosaki-schedules-insert-grant-final-preflight.md`
+- **Next:** G-22d3b3 operator GRANT — no Save until afterVerification PASS
+
 ## G-22d3b-blocker permission denied audit — complete
 
-- **Failure:** `permission denied for table schedules` on duplicate INSERT Save
-- **Root cause:** `authenticated INSERT` on `public.schedules` not granted (G-6-e4 applied UPDATE only)
-- **Client path:** anon key + Auth session → `authenticated` role; same as G-9k UPDATE
-- **Recommended fix:** Option A — staging `GRANT INSERT` + verify `schedules_admin_all` INSERT policy
+- **Commit:** `f61ab6e`
+- **Root cause:** `authenticated INSERT` missing on `public.schedules`
 - **Doc:** `gosaki-schedule-duplicate-insert-permission-denied-audit.md`
-- **Next:** G-22d3b2 grant final preflight — **no Save retry until grant applied**
 
 ## G-22d3b duplicate INSERT operator execution — blocked
 

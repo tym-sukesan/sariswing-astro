@@ -36,6 +36,16 @@ import {
   type GosakiScheduleDuplicateDraftState,
   type GosakiScheduleEditDraftMode,
 } from "../staging-write/gosaki-schedule-duplicate-dry-run";
+import {
+  evaluateG22dDuplicateInsertUiGate,
+  getG22dDuplicateInsertConfig,
+  G22D_DUPLICATE_INSERT_PLANNED_LEGACY_ID,
+  G22D_DUPLICATE_INSERT_SOURCE_ID,
+} from "../staging-write/gosaki-schedule-duplicate-insert-config";
+import {
+  executeG22dScheduleDuplicateInsertSave,
+  type G22dDuplicateInsertSaveOutcome,
+} from "../staging-write/gosaki-schedule-duplicate-insert-save";
 
 type PublishedFilter = "published" | "all" | "draft";
 
@@ -523,13 +533,30 @@ function updateSaveButtonState(result: G9kExistingEventSaveButtonDryRunResult | 
   if (!button) return;
 
   if (isDuplicateDraftMode()) {
-    button.disabled = true;
+    const gate = evaluateG22dDuplicateInsertUiGate({
+      signedIn: stagingAuthSignedIn === true,
+      duplicateMode: true,
+      source: duplicateSourceSnapshot,
+      duplicateDryRunResult: lastDuplicateDryRunResult,
+    });
+
+    button.disabled = !gate.enabled || saveInFlight;
+    if (gate.enabled && !saveInFlight) {
+      button.removeAttribute("data-gosaki-schedule-action-disabled");
+      button.setAttribute("data-gosaki-save-allowed", "true");
+      button.textContent = "複製案を保存";
+      button.title = gate.reason;
+      setSaveButtonNote(gate.reason);
+      return;
+    }
+
     button.setAttribute("data-gosaki-schedule-action-disabled", "");
     button.setAttribute("data-gosaki-save-allowed", "false");
-    button.textContent = "更新する（複製案）";
-    button.title = "複製案はまだ保存できません。戸山が確認して反映します。";
+    button.textContent = "複製案を保存（現在は無効）";
+    button.title = gate.reason;
     setSaveButtonNote(
-      "複製案です。保存は戸山が確認して反映します。「変更を確認」で追加予定の内容を確認できます。",
+      gate.reason ||
+        "複製案です。「変更を確認」で内容を確認できます。保存は戸山が確認して反映します。",
     );
     return;
   }
@@ -698,14 +725,29 @@ function renderDuplicateDryRunResult(result: G22bScheduleDuplicateDryRunResult):
 }
 
 function renderDuplicateDryRunDevDetails(result: G22bScheduleDuplicateDryRunResult): string {
+  const insertConfig = getG22dDuplicateInsertConfig();
+  const gate = evaluateG22dDuplicateInsertUiGate({
+    signedIn: stagingAuthSignedIn === true,
+    duplicateMode: isDuplicateDraftMode(),
+    source: duplicateSourceSnapshot,
+    duplicateDryRunResult: result.ok ? result : null,
+  });
+
   return `
     <details class="gosaki-schedule-duplicate-dry-run-dev">
       <summary>開発者向け詳細</summary>
       <dl class="gosaki-schedule-edit-dry-run__target">
         <div><dt>phase</dt><dd><code>${escapeHtml(result.phase)}</code></dd></div>
-        <div><dt>approvalId</dt><dd><code>${escapeHtml(result.approvalId)}</code></dd></div>
+        <div><dt>approvalId (dry-run)</dt><dd><code>${escapeHtml(result.approvalId)}</code></dd></div>
+        <div><dt>insert approvalId</dt><dd><code>${escapeHtml(insertConfig.approvalId)}</code></dd></div>
+        <div><dt>sourceId (fixed)</dt><dd><code>${escapeHtml(G22D_DUPLICATE_INSERT_SOURCE_ID)}</code></dd></div>
+        <div><dt>planned legacy_id</dt><dd><code>${escapeHtml(G22D_DUPLICATE_INSERT_PLANNED_LEGACY_ID)}</code></dd></div>
+        <div><dt>G-22d env arm</dt><dd><code>${escapeHtml(insertConfig.envArm)}=${insertConfig.armed ? "true" : "false"}</code></dd></div>
+        <div><dt>insert saveEnabled</dt><dd><code>${String(insertConfig.saveEnabled)}</code></dd></div>
+        <div><dt>insert saveAllowed (UI)</dt><dd><code>${String(gate.saveAllowed)}</code></dd></div>
         <div><dt>site_slug</dt><dd><code>${escapeHtml(String(result.payload.site_slug ?? "—"))}</code></dd></div>
       </dl>
+      ${insertConfig.armFailureReason ? `<p class="gosaki-schedule-edit-dry-run__note">${escapeHtml(insertConfig.armFailureReason)}</p>` : ""}
       <pre class="gosaki-schedule-duplicate-dry-run-dev__json">${escapeHtml(JSON.stringify(result.payload, null, 2))}</pre>
     </details>
   `;
@@ -880,6 +922,44 @@ function renderSaveResult(outcome: G9kExistingEventSaveButtonSaveOutcome): void 
   `;
 }
 
+function isG22dInsertOutcomeSuccess(outcome: G22dDuplicateInsertSaveOutcome): boolean {
+  return outcome.ok === true && outcome.actualWrite === true && Boolean(outcome.insertedId);
+}
+
+function renderDuplicateInsertSaveResult(outcome: G22dDuplicateInsertSaveOutcome): void {
+  const el = document.getElementById("gosaki-schedule-edit-save-result");
+  if (!el) return;
+
+  el.hidden = false;
+  const success = isG22dInsertOutcomeSuccess(outcome);
+  el.className = `gosaki-schedule-edit-save-result${success ? " gosaki-schedule-edit-save-result--ok" : " gosaki-schedule-edit-save-result--error"}`;
+
+  el.innerHTML = `
+    <h3 class="gosaki-schedule-edit-save-result__title">${success ? "複製案の保存成功" : "複製案を保存できませんでした"}</h3>
+    ${
+      success
+        ? `<p class="gosaki-schedule-edit-save-result__success">データベースへの追加（INSERT）が完了しました。</p>`
+        : ""
+    }
+    ${outcome.errorMessage ? `<p class="gosaki-schedule-edit-save-result__message">${escapeHtml(outcome.errorMessage)}</p>` : ""}
+    <dl class="gosaki-schedule-edit-dry-run__target">
+      <div><dt>operation</dt><dd><code>${escapeHtml(outcome.operation)}</code></dd></div>
+      <div><dt>approvalId</dt><dd><code>${escapeHtml(outcome.approvalId)}</code></dd></div>
+      <div><dt>sourceId</dt><dd><code>${escapeHtml(outcome.sourceId)}</code></dd></div>
+      <div><dt>insertedId</dt><dd><code>${escapeHtml(outcome.insertedId ?? "—")}</code></dd></div>
+      <div><dt>legacy_id</dt><dd><code>${escapeHtml(outcome.legacy_id ?? "—")}</code></dd></div>
+      <div><dt>actualWrite</dt><dd><code>${String(outcome.actualWrite)}</code></dd></div>
+    </dl>
+    ${
+      outcome.guardReasons.length > 0
+        ? `<div class="gosaki-schedule-edit-dry-run__chips"><span class="gosaki-schedule-edit-dry-run__chips-label">guardReasons</span>${outcome.guardReasons.map((reason) => `<span class="gosaki-schedule-edit-dry-run__chip">${escapeHtml(reason)}</span>`).join("")}</div>`
+        : ""
+    }
+    ${outcome.rollbackHint ? `<p class="gosaki-schedule-edit-dry-run__note">${escapeHtml(outcome.rollbackHint)}</p>` : ""}
+  `;
+  el.scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
+
 function clearSaveResult(): void {
   lastSaveOutcome = null;
   const el = document.getElementById("gosaki-schedule-edit-save-result");
@@ -980,7 +1060,46 @@ async function runEditDryRunPreview(): Promise<void> {
 
 async function runEditSave(): Promise<void> {
   if (isDuplicateDraftMode()) {
-    window.alert("複製案はまだ保存できません。戸山が確認して反映します。");
+    const gate = evaluateG22dDuplicateInsertUiGate({
+      signedIn: stagingAuthSignedIn === true,
+      duplicateMode: true,
+      source: duplicateSourceSnapshot,
+      duplicateDryRunResult: lastDuplicateDryRunResult,
+    });
+    if (!gate.enabled) {
+      window.alert(gate.reason);
+      return;
+    }
+    if (!duplicateSourceSnapshot || !lastDuplicateDryRunResult?.ok) {
+      window.alert("先に「変更を確認」で複製案の dry-run を成功させてください。");
+      return;
+    }
+    if (
+      !window.confirm(
+        "この複製案を1件だけ追加します。よろしいですか？（INSERTのみ・source行は変更しません）",
+      )
+    ) {
+      return;
+    }
+
+    saveInFlight = true;
+    updateSaveButtonState(null);
+
+    const url = String(import.meta.env.PUBLIC_SUPABASE_URL ?? "").trim();
+    const anonKey = String(import.meta.env.PUBLIC_SUPABASE_ANON_KEY ?? "").trim();
+    const outcome = await executeG22dScheduleDuplicateInsertSave({
+      url,
+      anonKey,
+      source: duplicateSourceSnapshot,
+      formValues: readEditFormSafeValues(),
+      date: readEditFormDate(),
+      duplicateMode: true,
+      duplicateDryRunOk: lastDuplicateDryRunResult.ok,
+    });
+
+    saveInFlight = false;
+    renderDuplicateInsertSaveResult(outcome);
+    updateSaveButtonState(null);
     return;
   }
 

@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-22d Gosaki Schedule duplicate INSERT planning / final preflight (2026-07-02):** **complete (uncommitted)** — schema/payload/legacy_id/UI/rollback/public reflection plan; G-22d2 SQL templates; no INSERT/Save. Doc: `gosaki-schedule-duplicate-insert-planning.md`. Verifier: `verify-g22d-gosaki-schedule-duplicate-insert-planning.mjs`. **Next: G-22d1 implementation.**
+**G-22d1 Gosaki Schedule duplicate INSERT implementation (2026-07-02):** **complete (uncommitted)** — INSERT adapter + guards + UI gate; default Save disabled. Doc: `gosaki-schedule-duplicate-insert-implementation.md`. Verifier: `verify-g22d1-gosaki-schedule-duplicate-insert-implementation.mjs`. **No Save/DB/package/FTP.** **Next: G-22d2 final preflight.**
+
+**G-22d Gosaki Schedule duplicate INSERT planning / final preflight (2026-07-02):** **complete** — commit `8d0f541`. Doc: `gosaki-schedule-duplicate-insert-planning.md`. **Superseded for implementation by G-22d1.**
 
 **G-22c Gosaki Schedule duplicate dry-run local QA (2026-07-02):** **complete** — commit `d1fa0a8`. Operator spot-check PASS. Doc: `gosaki-schedule-duplicate-dry-run-local-qa.md`. **Superseded for INSERT work by G-22d.**
 

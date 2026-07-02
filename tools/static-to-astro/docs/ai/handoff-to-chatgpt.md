@@ -5,14 +5,13 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-22d-gosaki-schedule-duplicate-insert-planning — complete (uncommitted).
-Duplicate INSERT planning + final preflight templates done; legacy_id Option B; no DB write.
-Next: G-22d1 implementation (INSERT adapter + UI gate; still no execution).
-G-22d3: operator single INSERT (separate approval / manual Save once).
+Current phase: G-22d1-gosaki-schedule-duplicate-insert-implementation — complete (uncommitted).
+Duplicate INSERT adapter + guards + UI gate wired; default Save disabled; no DB write.
+Next: G-22d2 final preflight → G-22d3 operator single INSERT execution.
 Parallel: operator remote path checklist; G-20j manual FTP STOP until server contract.
 Production package: 26 files, admin/ excluded (G-20i3).
 Supabase interim SoT: kmjqppxjdnwwrtaeqjta — never vsbvndwuajjhnzpohghh.
-No Save / DB write / package regen / FTP in G-22d planning.
+No Save / DB write / package regen / FTP in G-22d1.
 ```
 
 **Closed chains — do not re-UPDATE / re-Save / re-upload:**
@@ -22,15 +21,23 @@ No Save / DB write / package regen / FTP in G-22d planning.
 - `discography-004` / `label` (G-17e-f)
 - `schedule-2026-04-005` / `price` (G-14b1f)
 
+## G-22d1 Gosaki Schedule duplicate INSERT implementation — complete
+
+- **Doc:** `gosaki-schedule-duplicate-insert-implementation.md`
+- **Base:** `8d0f541` (uncommitted)
+- **Modules:** `schedule-insert-write-adapter.ts`, `gosaki-schedule-duplicate-insert-{config,guards,save}.ts`
+- **UI:** duplicate Save gate — default disabled; armed label `複製案を保存`
+- **approvalId:** `G-22d-gosaki-schedule-duplicate-insert-non-dry-run-slice`
+- **env arm:** `PUBLIC_ADMIN_GOSAKI_SCHEDULE_G22D_DUPLICATE_INSERT_NON_DRY_RUN_ARMED` (default off)
+- **Save / INSERT:** not executed
+- **Next:** G-22d2 final preflight
+
 ## G-22d Gosaki Schedule duplicate INSERT planning — complete
 
 - **Doc:** `gosaki-schedule-duplicate-insert-planning.md`
-- **Base:** `d1fa0a8` (uncommitted)
-- **legacy_id:** Option B — `schedule-2026-03-014` for first slice
-- **Source row:** `eb1f1898-5107-4deb-a6d5-a792e0ec3f69` (`<Live & Session>`)
-- **approvalId:** `G-22d-gosaki-schedule-duplicate-insert-non-dry-run-slice`
-- **INSERT / Save:** not executed
-- **Next:** G-22d1 implementation → G-22d2 final preflight → G-22d3 operator execution
+- **Commit:** `8d0f541`
+- **legacy_id:** Option B — `schedule-2026-03-014`
+- **Next:** — (superseded by G-22d1)
 
 ## G-22c Gosaki Schedule duplicate dry-run local QA — complete
 

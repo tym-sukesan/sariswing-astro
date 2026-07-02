@@ -28,6 +28,7 @@ import {
 import { collectOtherRegistryEnvArmFailures } from "../staging-data/staging-schedule-single-text-field-operational-registry";
 import { collectG13c1EventAPocCleanupArmOffFailures } from "./gosaki-schedule-event-a-poc-cleanup-config";
 import { collectG13c2EventBPocCleanupArmOffFailures } from "./gosaki-schedule-event-b-poc-cleanup-config";
+import { collectG22dDuplicateInsertArmOffFailures } from "./gosaki-schedule-duplicate-insert-config";
 import {
   evaluateStagingProjectAllowlist,
   evaluateSupabaseHostGate,
@@ -226,6 +227,7 @@ export function getG9kExistingEventSaveButtonConfig(
   armFailures.push(...collectOtherRegistryEnvArmFailures(mergedEnv));
   armFailures.push(...collectG13c1EventAPocCleanupArmOffFailures(mergedEnv));
   armFailures.push(...collectG13c2EventBPocCleanupArmOffFailures(mergedEnv));
+  armFailures.push(...collectG22dDuplicateInsertArmOffFailures(mergedEnv));
   if (!supabaseConfigured) armFailures.push("Supabase URL/anon key");
 
   const armed = armFailures.length === 0;

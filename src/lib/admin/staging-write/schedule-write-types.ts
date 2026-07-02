@@ -152,6 +152,14 @@ export const G13C2_SCHEDULE_EVENT_B_POC_AUDIT_CLEANUP_NON_DRY_RUN_APPROVAL_ID:
   ScheduleG13c2EventBPocAuditCleanupNonDryRunApprovalId =
   "G-13c2-gosaki-schedule-event-b-poc-audit-cleanup-non-dry-run";
 
+/** G-22d Gosaki duplicate INSERT non-dry-run single slice — staging shell operator UI. */
+export type ScheduleG22dDuplicateInsertNonDryRunSliceApprovalId =
+  "G-22d-gosaki-schedule-duplicate-insert-non-dry-run-slice";
+
+export const G22D_SCHEDULE_DUPLICATE_INSERT_NON_DRY_RUN_APPROVAL_ID:
+  ScheduleG22dDuplicateInsertNonDryRunSliceApprovalId =
+  "G-22d-gosaki-schedule-duplicate-insert-non-dry-run-slice";
+
 export type ScheduleWriteApprovalIdUnion =
   | ScheduleWriteApprovalId
   | ScheduleSafeFieldsNonDryRunPocApprovalId
@@ -170,7 +178,8 @@ export type ScheduleWriteApprovalIdUnion =
   | ScheduleG9jExistingEventUpdateNonDryRunApprovalId
   | ScheduleG9kExistingEventSaveButtonNonDryRunApprovalId
   | ScheduleG13c1EventAPocCleanupNonDryRunApprovalId
-  | ScheduleG13c2EventBPocAuditCleanupNonDryRunApprovalId;
+  | ScheduleG13c2EventBPocAuditCleanupNonDryRunApprovalId
+  | ScheduleG22dDuplicateInsertNonDryRunSliceApprovalId;
 
 export const SCHEDULE_WRITE_APPROVAL_IDS: readonly ScheduleWriteApprovalIdUnion[] = [
   SCHEDULE_WRITE_APPROVAL_ID,
@@ -191,6 +200,7 @@ export const SCHEDULE_WRITE_APPROVAL_IDS: readonly ScheduleWriteApprovalIdUnion[
   G9K_SCHEDULE_EXISTING_EVENT_SAVE_BUTTON_NON_DRY_RUN_APPROVAL_ID,
   G13C1_SCHEDULE_EVENT_A_POC_CLEANUP_NON_DRY_RUN_APPROVAL_ID,
   G13C2_SCHEDULE_EVENT_B_POC_AUDIT_CLEANUP_NON_DRY_RUN_APPROVAL_ID,
+  G22D_SCHEDULE_DUPLICATE_INSERT_NON_DRY_RUN_APPROVAL_ID,
 ];
 
 export type ScheduleUpdateWritePayload = {
@@ -206,6 +216,28 @@ export type ScheduleUpdateWritePayload = {
   home_order?: number | null;
   sort_order?: number | null;
   updated_at?: string;
+};
+
+/** G-22d — INSERT-only payload for public.schedules (no id / timestamps). */
+export type ScheduleInsertWritePayload = {
+  legacy_id: string;
+  site_slug: string;
+  date: string;
+  year?: number | null;
+  month?: string | null;
+  title?: string | null;
+  venue?: string | null;
+  open_time?: string | null;
+  start_time?: string | null;
+  price?: string | null;
+  description?: string | null;
+  published?: boolean;
+  show_on_home?: boolean;
+  home_order?: number | null;
+  sort_order?: number | null;
+  source_file?: string | null;
+  source_route?: string | null;
+  image_url?: string | null;
 };
 
 export type ScheduleUpdateWriteInput = {

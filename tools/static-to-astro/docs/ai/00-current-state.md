@@ -3,7 +3,11 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-22d2b Gosaki Schedule duplicate INSERT preflight drift fix (2026-07-02):** **complete (uncommitted)** — live staging G-22d3a drift: `sort_order` 140→70, `source_file` `schedule-2026-03.html`. Verifier: `verify-g22d2b-gosaki-schedule-duplicate-insert-preflight-drift-fix.mjs`. **No Save/DB write.** **Next: G-22d3b operator Save (re-run beforeVerification).**
+**G-22d3b-blocker Gosaki Schedule duplicate INSERT permission denied audit (2026-07-02):** **complete (uncommitted)** — G-22d3b Save failed `permission denied for table schedules`; root cause **missing authenticated INSERT grant** (G-6-e4 applied UPDATE only). Doc: `gosaki-schedule-duplicate-insert-permission-denied-audit.md`. Verifier: `verify-g22d3b-blocker-gosaki-schedule-duplicate-insert-permission-denied-audit.mjs`. **No GRANT/Save retry.** **Next: G-22d3b2 INSERT grant final preflight.**
+
+**G-22d3b Gosaki Schedule duplicate INSERT operator execution (2026-07-02):** **blocked** — Save once attempted; `actualWrite=false`; no row inserted; rollback not needed. **Superseded by G-22d3b-blocker audit.**
+
+**G-22d2b Gosaki Schedule duplicate INSERT preflight drift fix (2026-07-02):** **complete** — commit `974738c`. Payload `sort_order=70`, `source_file=schedule-2026-03.html`.
 
 **G-22d3a Gosaki Schedule duplicate INSERT beforeVerification (2026-07-02):** **complete** — commit `428ed61`. Doc: `gosaki-schedule-duplicate-insert-beforeverification.md`. Live SELECT found drift (max sort_order 60, source_file). **Superseded for payload by G-22d2b.**
 

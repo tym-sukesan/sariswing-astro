@@ -5,11 +5,12 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-22d2b-gosaki-schedule-duplicate-insert-preflight-drift-fix — complete (uncommitted).
-G-22d3a live beforeVerification found drift; payload aligned: sort_order=70, source_file=schedule-2026-03.html.
-Next: re-run beforeVerification → G-22d3b operator single INSERT (manual Save once).
-No Save / DB write / SQL mutation in G-22d2b.
+Current phase: G-22d3b-blocker-gosaki-schedule-duplicate-insert-permission-denied-audit — complete (uncommitted).
+G-22d3b Save failed: permission denied for table schedules (INSERT grant gap; G-6-e4 UPDATE only).
+Next: G-22d3b2 INSERT grant final preflight → G-22d3b3 operator GRANT → G-22d3b4 Save retry once.
+Do NOT retry Save until grant + policy verification complete.
 Supabase interim SoT: kmjqppxjdnwwrtaeqjta — never vsbvndwuajjhnzpohghh.
+No GRANT / policy change / Save retry in G-22d3b-blocker.
 ```
 
 **Closed chains — do not re-UPDATE / re-Save / re-upload:**
@@ -19,13 +20,24 @@ Supabase interim SoT: kmjqppxjdnwwrtaeqjta — never vsbvndwuajjhnzpohghh.
 - `discography-004` / `label` (G-17e-f)
 - `schedule-2026-04-005` / `price` (G-14b1f)
 
-## G-22d2b Gosaki Schedule duplicate INSERT preflight drift fix — complete
+## G-22d3b-blocker permission denied audit — complete
 
-- **Drift source:** G-22d3a live beforeVerification (max sort_order 60; source_file `schedule-2026-03.html`)
-- **Fix:** INSERT `sort_order` 70; beforeVerification check `07_march_max_sort_order_60`
-- **Verifier:** `verify-g22d2b-gosaki-schedule-duplicate-insert-preflight-drift-fix.mjs`
-- **Save / INSERT:** not executed
-- **Next:** re-run beforeVerification → G-22d3b operator Save
+- **Failure:** `permission denied for table schedules` on duplicate INSERT Save
+- **Root cause:** `authenticated INSERT` on `public.schedules` not granted (G-6-e4 applied UPDATE only)
+- **Client path:** anon key + Auth session → `authenticated` role; same as G-9k UPDATE
+- **Recommended fix:** Option A — staging `GRANT INSERT` + verify `schedules_admin_all` INSERT policy
+- **Doc:** `gosaki-schedule-duplicate-insert-permission-denied-audit.md`
+- **Next:** G-22d3b2 grant final preflight — **no Save retry until grant applied**
+
+## G-22d3b duplicate INSERT operator execution — blocked
+
+- Save once attempted; `actualWrite=false`; `schedule-2026-03-014` not inserted
+- rollback not needed
+
+## G-22d2b preflight drift fix — complete
+
+- Commit: `974738c`
+- Payload: `sort_order=70`, `source_file=schedule-2026-03.html`
 
 ## G-22d2 Gosaki Schedule duplicate INSERT final preflight — complete
 

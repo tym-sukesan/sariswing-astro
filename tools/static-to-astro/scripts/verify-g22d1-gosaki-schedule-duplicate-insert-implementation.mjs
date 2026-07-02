@@ -13,7 +13,7 @@ const REPO_ROOT = path.resolve(__dirname, "../../..");
 
 const DOC_REL = "tools/static-to-astro/docs/gosaki-schedule-duplicate-insert-implementation.md";
 const PLAN_REL = "tools/static-to-astro/docs/gosaki-schedule-duplicate-insert-planning.md";
-const BASE_COMMIT = "8d0f541";
+const BASE_COMMIT = "428ed61";
 
 const CONFIG = "src/lib/admin/staging-write/gosaki-schedule-duplicate-insert-config.ts";
 const GUARDS = "src/lib/admin/staging-write/gosaki-schedule-duplicate-insert-guards.ts";
@@ -64,7 +64,7 @@ const head = spawnSync("git", ["rev-parse", "--short", "HEAD"], {
   encoding: "utf8",
 });
 
-assert("HEAD is 8d0f541", head.stdout.trim() === BASE_COMMIT, head.stdout.trim());
+assert("HEAD is 428ed61", head.stdout.trim() === BASE_COMMIT, head.stdout.trim());
 
 for (const rel of [CONFIG, GUARDS, SAVE, INSERT_ADAPTER, DOC_REL]) {
   assert(`exists ${path.basename(rel)}`, exists(rel));
@@ -103,6 +103,7 @@ assert("config dedicated arm env", config.includes(ARM_ENV));
 assert("config default disabled reason", config.includes("routine dev safety"));
 assert("config evaluateG22dDuplicateInsertUiGate", config.includes("evaluateG22dDuplicateInsertUiGate"));
 assert("config saveEnabled from armed", config.includes("saveEnabled = armed"));
+assert("config no stale sort_order 140", !config.includes("G22D_DUPLICATE_INSERT_PLANNED_SORT_ORDER = 140"));
 
 assert("guards buildG22dDuplicateInsertPayload", guards.includes("buildG22dDuplicateInsertPayload"));
 assert("guards assert payload only", guards.includes("assertG22dDuplicateInsertPayloadOnly"));

@@ -15,7 +15,9 @@ const DOC_REL = "tools/static-to-astro/docs/gosaki-schedule-duplicate-insert-fin
 const G22D1_DOC_REL = "tools/static-to-astro/docs/gosaki-schedule-duplicate-insert-implementation.md";
 const G22D1_VERIFIER =
   "tools/static-to-astro/scripts/verify-g22d1-gosaki-schedule-duplicate-insert-implementation.mjs";
-const BASE_COMMIT = "daa1da2";
+const BEFOREVERIF_DOC =
+  "tools/static-to-astro/docs/gosaki-schedule-duplicate-insert-beforeverification.md";
+const BASE_COMMIT = "428ed61";
 
 const CONFIG = "src/lib/admin/staging-write/gosaki-schedule-duplicate-insert-config.ts";
 const GUARDS = "src/lib/admin/staging-write/gosaki-schedule-duplicate-insert-guards.ts";
@@ -66,15 +68,18 @@ const origin = spawnSync("git", ["rev-parse", "--short", "origin/main"], {
   encoding: "utf8",
 });
 
-assert("HEAD is daa1da2", head.stdout.trim() === BASE_COMMIT, head.stdout.trim());
-assert("origin/main is daa1da2", origin.stdout.trim() === BASE_COMMIT, origin.stdout.trim());
+assert("HEAD is 428ed61", head.stdout.trim() === BASE_COMMIT, head.stdout.trim());
+assert("origin/main is 428ed61", origin.stdout.trim() === BASE_COMMIT, origin.stdout.trim());
 
 assert("G-22d2 final preflight doc exists", exists(DOC_REL));
 assert("G-22d1 implementation doc exists", exists(G22D1_DOC_REL));
 assert("G-22d1 verifier exists", exists(G22D1_VERIFIER));
 
+assert("G-22d3a beforeVerification doc exists", exists(BEFOREVERIF_DOC));
+
 const doc = read(DOC_REL);
 const g22d1Doc = read(G22D1_DOC_REL);
+const beforeVerifDoc = read(BEFOREVERIF_DOC);
 const config = read(CONFIG);
 const guards = read(GUARDS);
 const save = read(SAVE);
@@ -107,12 +112,20 @@ assert("doc source legacy", doc.includes(SOURCE_LEGACY));
 assert("doc planned legacy", doc.includes(PLANNED_LEGACY));
 assert("doc copy title", doc.includes("<Live & Session>（コピー）"));
 assert("doc venue", doc.includes("学芸大学 珈琲美学"));
-assert("doc sort_order 140", doc.includes("sort_order") && doc.includes("140"));
+assert("doc sort_order 70", doc.includes("sort_order") && doc.includes("| `70`"));
+assert("doc source_file schedule-2026-03", doc.includes("schedule-2026-03.html"));
+assert("doc max sort_order 60 baseline", doc.includes("max_sort_order = 60"));
+assert("doc no stale insert sort_order 140", !doc.match(/\| `sort_order` \| `140`/));
+assert("doc no stale source_file 2026-03.html slice", !doc.includes("| `source_file` | `2026-03.html` |"));
 assert("doc published false", doc.includes("published") && doc.includes("false"));
 assert("doc march count 14", doc.includes("march_count = 14"));
 assert("doc staging ref", doc.includes(STAGING_REF));
 assert("doc never prod ref", /never.*vsbvndwuajjhnzpohghh/i.test(doc));
-assert("doc base commit daa1da2", doc.includes(BASE_COMMIT));
+assert("doc base commit 428ed61 or drift note", doc.includes("G-22d2b") || doc.includes(BASE_COMMIT));
+assert("beforeVerif check 07 max 60", beforeVerifDoc.includes("07_march_max_sort_order_60"));
+assert("beforeVerif source_file schedule-2026-03", beforeVerifDoc.includes("'schedule-2026-03.html'"));
+assert("beforeVerif insert sort_order 70", beforeVerifDoc.includes("sort_order=70"));
+assert("config sort_order 70", config.includes("G22D_DUPLICATE_INSERT_PLANNED_SORT_ORDER = 70"));
 assert("doc approvalId", doc.includes(APPROVAL_ID));
 
 assert("G-22d1 doc prior", g22d1Doc.includes("G-22d1-gosaki-schedule-duplicate-insert-implementation"));

@@ -61,7 +61,8 @@ G-22b dry-run (`executeG22bScheduleDuplicateDryRun`) は **変更なし**（`act
 | `sourceTitle` | `<Live & Session>` |
 | `plannedLegacyId` | `schedule-2026-03-014` |
 | `plannedTitle` | `<Live & Session>（コピー）` |
-| `sort_order` | `140` |
+| `sort_order` | `70` (live max 60 + 10; G-22d2b drift fix) |
+| `source_file` | `schedule-2026-03.html` (copied from source; G-22d2b) |
 | `site_slug` | `gosaki-piano` |
 | `published` | `false` |
 

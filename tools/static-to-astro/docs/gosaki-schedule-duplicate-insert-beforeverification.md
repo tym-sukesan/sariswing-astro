@@ -115,8 +115,8 @@ from (
     'march_count = ' || (select march_count from march_stats)::text
   union all
   select
-    '07_march_max_sort_order_130',
-    (select max_sort_order from march_stats) = 130,
+    '07_march_max_sort_order_60',
+    (select max_sort_order from march_stats) = 60,
     'max_sort_order = ' || coalesce((select max_sort_order from march_stats)::text, '<null>')
   union all
   select
@@ -154,7 +154,7 @@ from (
   union all
   select
     '14_payload_source_file',
-    coalesce((select source_file from source limit 1) = '2026-03.html', false),
+    coalesce((select source_file from source limit 1) = 'schedule-2026-03.html', false),
     coalesce((select source_file from source limit 1), '<missing>')
   union all
   select
@@ -227,7 +227,7 @@ order by legacy_id asc;
 | `04_source_site_slug` | `true` | `gosaki-piano` |
 | `05_planned_legacy_absent` | `true` | `schedule-2026-03-014 count = 0` |
 | `06_march_count_13` | `true` | `march_count = 13` |
-| `07_march_max_sort_order_130` | `true` | `max_sort_order = 130` |
+| `07_march_max_sort_order_60` | `true` | `max_sort_order = 60` |
 | `08_march_legacy_001_013_only` | `true` | `001-013 count = 13`, `014 count = 0` |
 | `09`–`16_payload_*` | `true` | source fields match G-22d2 §5 INSERT payload (copy source) |
 
@@ -245,9 +245,9 @@ order by legacy_id asc;
 | `price` | `3,850円(税込)` |
 | `published` | `true` |
 | `sort_order` | `30` |
-| `source_file` / `source_route` | `2026-03.html` / `/schedule/2026-03/` |
+| `source_file` / `source_route` | `schedule-2026-03.html` / `/schedule/2026-03/` |
 
-After INSERT (G-22d3b), inserted row will use: title `<Live & Session>（コピー）`, `published=false`, `sort_order=140`, `legacy_id=schedule-2026-03-014`.
+After INSERT (G-22d3b), inserted row will use: title `<Live & Session>（コピー）`, `published=false`, `sort_order=70`, `legacy_id=schedule-2026-03-014`.
 
 ### Result 3 — march inventory (13 rows)
 
@@ -265,7 +265,7 @@ After INSERT (G-22d3b), inserted row will use: title `<Live & Session>（コピ�
 | Any Result 1 row has `pass = false` | STOP — record failing `check_name` + `detail` |
 | Result 2 returns 0 rows or ≠ 1 row | STOP — source row missing or duplicated |
 | Result 3 count ≠ 13 or includes `014` | STOP — re-plan `legacy_id` / `sort_order` |
-| `max_sort_order` ≠ 130 | STOP — update G-22d2 payload `sort_order` before INSERT |
+| `max_sort_order` ≠ 60 | STOP — re-plan INSERT `sort_order` (expected max+10) before G-22d3b |
 
 ---
 

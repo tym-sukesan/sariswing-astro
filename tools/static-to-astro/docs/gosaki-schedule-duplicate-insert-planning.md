@@ -96,7 +96,7 @@ Source: [schedule-schema-read-audit-result.md](./schedule-schema-read-audit-resu
 | `description` | `text NULL` | Copy / form |
 | `image_url` | `text NULL` | Copy source (usually `null`) |
 | `home_image_url` | `text NULL` | Omit / `null` |
-| `source_file` | `text NULL` | Copy source (e.g. `2026-03.html`) |
+| `source_file` | `text NULL` | Copy source (live staging e.g. `schedule-2026-03.html`) |
 | `source_route` | `text NULL` | Copy source (e.g. `/schedule/2026-03/`) |
 | `show_on_home` | `boolean DEFAULT false` | **Force `false`** |
 | `home_order` | `integer NULL` | **Force `null`** |
@@ -121,7 +121,7 @@ Source: [schedule-schema-read-audit-result.md](./schedule-schema-read-audit-resu
 Gosaki seed uses `10, 20, 30…` per month. March 2026 current max: `130` (`schedule-2026-03-013`).
 
 **Recommendation:** `sort_order = max(sort_order) + 10` within `(site_slug, month)` at save time.  
-For G-22d3 fixed slice preflight: **`140`**.
+For G-22d3 fixed slice preflight: **`70`** (live max 60 + 10; G-22d2b).
 
 ---
 
@@ -441,12 +441,12 @@ order by legacy_id asc;
 | `start_time` | `12:30` |
 | `price` | `3,850円(税込)` |
 | `description` | *(same as source)* |
-| `source_file` | `2026-03.html` |
+| `source_file` | `schedule-2026-03.html` |
 | `source_route` | `/schedule/2026-03/` |
 | `show_on_home` | `false` |
 | `home_order` | `null` |
 | `published` | `false` |
-| `sort_order` | `140` |
+| `sort_order` | `70` |
 | `image_url` | `null` |
 
 **Source row must remain unchanged** after INSERT.

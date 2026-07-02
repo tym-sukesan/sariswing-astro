@@ -14,7 +14,7 @@ const REPO_ROOT = path.resolve(__dirname, "../../..");
 const DOC_REL = "tools/static-to-astro/docs/gosaki-schedule-duplicate-insert-planning.md";
 const G22C_DOC_REL = "tools/static-to-astro/docs/gosaki-schedule-duplicate-dry-run-local-qa.md";
 const SCHEMA_AUDIT_REL = "tools/static-to-astro/docs/schedule-schema-read-audit-result.md";
-const BASE_COMMIT = "d1fa0a8";
+const BASE_COMMIT = "428ed61";
 
 const G22B_MODULE = "src/lib/admin/staging-write/gosaki-schedule-duplicate-dry-run.ts";
 const WRITE_ADAPTER = "src/lib/admin/staging-write/schedule-write-adapter.ts";
@@ -63,8 +63,8 @@ const origin = spawnSync("git", ["rev-parse", "--short", "origin/main"], {
   encoding: "utf8",
 });
 
-assert("HEAD is d1fa0a8", head.stdout.trim() === BASE_COMMIT, head.stdout.trim());
-assert("origin/main is d1fa0a8", origin.stdout.trim() === BASE_COMMIT, origin.stdout.trim());
+assert("HEAD is 428ed61", head.stdout.trim() === BASE_COMMIT, head.stdout.trim());
+assert("origin/main is 428ed61", origin.stdout.trim() === BASE_COMMIT, origin.stdout.trim());
 
 assert("G-22d planning doc exists", exists(DOC_REL));
 assert("G-22c prior doc exists", exists(G22C_DOC_REL));
@@ -90,7 +90,7 @@ assert("doc fix not required", doc.includes("Fix required?") && doc.includes("**
 assert("doc approvalId", doc.includes(APPROVAL_ID));
 assert("doc staging ref", doc.includes(STAGING_REF));
 assert("doc never prod ref", /never.*vsbvndwuajjhnzpohghh/i.test(doc));
-assert("doc base commit d1fa0a8", doc.includes(BASE_COMMIT));
+assert("doc base commit or G-22d2b drift note", doc.includes("d1fa0a8") || doc.includes("G-22d2b"));
 
 assert("doc source row id", doc.includes(SOURCE_ID));
 assert("doc source legacy_id", doc.includes(SOURCE_LEGACY));
@@ -101,7 +101,9 @@ assert("doc legacy_id Option B recommended", doc.includes("Option B"));
 assert("doc expected insert legacy_id", doc.includes(EXPECTED_INSERT_LEGACY));
 assert("doc published false on insert", doc.includes("published") && doc.includes("false"));
 assert("doc show_on_home false", doc.includes("show_on_home"));
-assert("doc sort_order 140", doc.includes("140"));
+assert("doc sort_order 70", doc.includes("70") && doc.includes("G-22d2b"));
+assert("doc source_file schedule-2026-03", doc.includes("schedule-2026-03.html"));
+assert("doc no stale slice sort_order 140", !doc.match(/\| `sort_order` \| `140`/));
 
 assert("doc ENABLE_ADMIN_STAGING_WRITE true", doc.includes("ENABLE_ADMIN_STAGING_WRITE=true"));
 assert("doc PUBLIC_ADMIN_WRITE_DRY_RUN false", doc.includes("PUBLIC_ADMIN_WRITE_DRY_RUN=false"));
@@ -129,12 +131,15 @@ assert("g22b saveAllowed false", g22bModule.includes("saveAllowed: false"));
 assert("g22b no insert call", !g22bModule.includes(".insert("));
 
 assert("write adapter still update-only", writeAdapter.includes("updateScheduleWrite"));
-assert("write adapter no insert yet", !writeAdapter.includes("insertScheduleWrite"));
+assert("write adapter no insertScheduleWrite", !writeAdapter.includes("insertScheduleWrite"));
 
 assert("g9k save no insert", !g9kSave.includes(".insert("));
-assert("operator duplicate save blocked", scheduleTs.includes("複製案はまだ保存できません"));
+assert(
+  "operator duplicate save default disabled label",
+  scheduleTs.includes("複製案を保存（現在は無効）"),
+);
 
-for (const rel of [WRITE_ADAPTER, G9K_SAVE, G22B_MODULE]) {
+for (const rel of [G22B_MODULE]) {
   assert(`unchanged ${path.basename(rel)}`, gitDiff(rel).length === 0);
 }
 

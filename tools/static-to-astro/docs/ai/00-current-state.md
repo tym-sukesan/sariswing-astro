@@ -3,7 +3,11 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-22d2 Gosaki Schedule duplicate INSERT final preflight (2026-07-02):** **complete (uncommitted)** — before/after/rollback SQL templates; expected payload locked; G-22d3 procedure. Doc: `gosaki-schedule-duplicate-insert-final-preflight.md`. Verifier: `verify-g22d2-gosaki-schedule-duplicate-insert-final-preflight.mjs`. **No Save/DB/SQL execution.** **Next: G-22d3 operator execution.**
+**G-22d2b Gosaki Schedule duplicate INSERT preflight drift fix (2026-07-02):** **complete (uncommitted)** — live staging G-22d3a drift: `sort_order` 140→70, `source_file` `schedule-2026-03.html`. Verifier: `verify-g22d2b-gosaki-schedule-duplicate-insert-preflight-drift-fix.mjs`. **No Save/DB write.** **Next: G-22d3b operator Save (re-run beforeVerification).**
+
+**G-22d3a Gosaki Schedule duplicate INSERT beforeVerification (2026-07-02):** **complete** — commit `428ed61`. Doc: `gosaki-schedule-duplicate-insert-beforeverification.md`. Live SELECT found drift (max sort_order 60, source_file). **Superseded for payload by G-22d2b.**
+
+**G-22d2 Gosaki Schedule duplicate INSERT final preflight (2026-07-02):** **complete** — commit `07202b3`. Doc: `gosaki-schedule-duplicate-insert-final-preflight.md`. **Payload updated by G-22d2b.**
 
 **G-22d1 Gosaki Schedule duplicate INSERT implementation (2026-07-02):** **complete** — commit `daa1da2`. Doc: `gosaki-schedule-duplicate-insert-implementation.md`. **Superseded for execution by G-22d2.**
 

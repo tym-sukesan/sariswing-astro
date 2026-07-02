@@ -48,7 +48,8 @@ export const G22D_DUPLICATE_INSERT_SOURCE_TITLE = "<Live & Session>";
 
 export const G22D_DUPLICATE_INSERT_PLANNED_LEGACY_ID = "schedule-2026-03-014";
 
-export const G22D_DUPLICATE_INSERT_PLANNED_SORT_ORDER = 140;
+/** Live staging 2026-03 max(sort_order)=60 (G-22d3a) → max+10. */
+export const G22D_DUPLICATE_INSERT_PLANNED_SORT_ORDER = 70;
 
 export const G22D_DUPLICATE_INSERT_EXPECTED_TITLE = "<Live & Session>（コピー）";
 

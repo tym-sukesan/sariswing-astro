@@ -5,13 +5,11 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-22d2-gosaki-schedule-duplicate-insert-final-preflight — complete (uncommitted).
-Duplicate INSERT final preflight SQL templates + expected payload locked; no DB write.
-Next: G-22d3 operator single INSERT execution (manual Save once).
-Parallel: operator remote path checklist; G-20j manual FTP STOP until server contract.
-Production package: 26 files, admin/ excluded (G-20i3).
+Current phase: G-22d2b-gosaki-schedule-duplicate-insert-preflight-drift-fix — complete (uncommitted).
+G-22d3a live beforeVerification found drift; payload aligned: sort_order=70, source_file=schedule-2026-03.html.
+Next: re-run beforeVerification → G-22d3b operator single INSERT (manual Save once).
+No Save / DB write / SQL mutation in G-22d2b.
 Supabase interim SoT: kmjqppxjdnwwrtaeqjta — never vsbvndwuajjhnzpohghh.
-No Save / DB write / SQL execution / package regen / FTP in G-22d2.
 ```
 
 **Closed chains — do not re-UPDATE / re-Save / re-upload:**
@@ -21,14 +19,20 @@ No Save / DB write / SQL execution / package regen / FTP in G-22d2.
 - `discography-004` / `label` (G-17e-f)
 - `schedule-2026-04-005` / `price` (G-14b1f)
 
+## G-22d2b Gosaki Schedule duplicate INSERT preflight drift fix — complete
+
+- **Drift source:** G-22d3a live beforeVerification (max sort_order 60; source_file `schedule-2026-03.html`)
+- **Fix:** INSERT `sort_order` 70; beforeVerification check `07_march_max_sort_order_60`
+- **Verifier:** `verify-g22d2b-gosaki-schedule-duplicate-insert-preflight-drift-fix.mjs`
+- **Save / INSERT:** not executed
+- **Next:** re-run beforeVerification → G-22d3b operator Save
+
 ## G-22d2 Gosaki Schedule duplicate INSERT final preflight — complete
 
 - **Doc:** `gosaki-schedule-duplicate-insert-final-preflight.md`
-- **Base:** `daa1da2` (uncommitted)
-- **SQL:** beforeVerification / afterVerification / rollback templates (not executed)
-- **Expected payload:** `schedule-2026-03-014`, title `（コピー）`, `published=false`, `sort_order=140`
-- **Save / INSERT:** not executed
-- **Next:** G-22d3 operator execution
+- **Commit:** `07202b3`
+- **Expected payload (post G-22d2b):** `sort_order=70`, `source_file=schedule-2026-03.html`
+- **Next:** — (superseded by G-22d2b payload update)
 
 ## G-22d1 Gosaki Schedule duplicate INSERT implementation — complete
 

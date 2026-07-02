@@ -4,7 +4,8 @@
 **Status:** **complete** — final preflight / SQL templates only; **no Save / DB write**  
 **Date:** 2026-07-02  
 **Base commit:** `daa1da2`  
-**Prior:** [gosaki-schedule-duplicate-insert-implementation.md](./gosaki-schedule-duplicate-insert-implementation.md) (G-22d1)
+**Prior:** [gosaki-schedule-duplicate-insert-implementation.md](./gosaki-schedule-duplicate-insert-implementation.md) (G-22d1)  
+**Drift fix:** [gosaki-schedule-duplicate-insert-beforeverification.md](./gosaki-schedule-duplicate-insert-beforeverification.md) (G-22d3a live) → **G-22d2b** applied
 
 | Check | Status |
 | --- | --- |
@@ -163,7 +164,7 @@ where site_slug = 'gosaki-piano'
   and month = '2026-03';
 ```
 
-**Expected:** `max_sort_order = 130`, `march_count = 13` (seed baseline; verify live before G-22d3)
+**Expected:** `max_sort_order = 60`, `march_count = 13` (live staging baseline per G-22d3a; seed template used 130)
 
 ### 4.5 Payload consistency pre-check
 
@@ -204,12 +205,12 @@ Operator compares result with §5 expected INSERT payload (description full text
 | `price` | `3,850円(税込)` |
 | `description` | `出演：【第一部Live】MAREE ARAKY vo,pf 後藤沙紀pianica,pf 【第二部Session】ホスト 後藤沙紀pf\n会場website: https://www.coffeebigaku.com/` |
 | `image_url` | `null` |
-| `source_file` | `2026-03.html` |
+| `source_file` | `schedule-2026-03.html` |
 | `source_route` | `/schedule/2026-03/` |
 | `published` | `false` |
 | `show_on_home` | `false` |
 | `home_order` | `null` |
-| `sort_order` | `140` |
+| `sort_order` | `70` |
 | `id` | *(omit — DB `gen_random_uuid()`)* |
 | `created_at` | *(omit — DB default)* |
 | `updated_at` | *(omit — DB default)* |
@@ -301,7 +302,7 @@ where id = ':inserted_id';
 | `published` | `false` |
 | `show_on_home` | `false` |
 | `home_order` | `null` |
-| `sort_order` | `140` |
+| `sort_order` | `70` |
 
 ```sql
 -- G-22d2 afterVerification — source unchanged
@@ -397,7 +398,7 @@ commit;
 | 3 | Source row not found or `id` ≠ `eb1f1898-5107-4deb-a6d5-a792e0ec3f69` |
 | 4 | Source `legacy_id` ≠ `schedule-2026-03-003` or title ≠ `<Live & Session>` |
 | 5 | `schedule-2026-03-014` already exists |
-| 6 | March `max(sort_order)` ≠ `130` or count ≠ `13` (live drift — re-plan sort_order) |
+| 6 | March `max(sort_order)` ≠ `60` or count ≠ `13` (live drift — re-plan sort_order) |
 | 7 | Duplicate preview payload ≠ §5 expected values |
 | 8 | **複製案を保存** enabled without full §6 env stack |
 | 9 | Any unrelated non-dry-run arm is `true` (G-9k, G-13c*, G-6-g*, etc.) |

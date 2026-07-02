@@ -1,16 +1,34 @@
 Last updated: 2026-07-02
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22d2b Gosaki Schedule duplicate INSERT preflight drift fix — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-22d2b-gosaki-schedule-duplicate-insert-preflight-drift-fix` |
+| Base | `428ed61` |
+| Drift | `sort_order` 140→70; `source_file` → `schedule-2026-03.html`; max sort_order baseline 60 |
+| Verifier | `verify-g22d2b-gosaki-schedule-duplicate-insert-preflight-drift-fix.mjs` |
+| **Next** | `G-22d3b-gosaki-schedule-duplicate-insert-operator-execution` (re-run beforeVerification) |
+
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22d3a Gosaki Schedule duplicate INSERT beforeVerification — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-22d3a-gosaki-schedule-duplicate-insert-beforeverification` |
+| Commit | `428ed61` |
+| Doc | `gosaki-schedule-duplicate-insert-beforeverification.md` |
+| **Next** | — (drift → G-22d2b) |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22d2 Gosaki Schedule duplicate INSERT final preflight — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-22d2-gosaki-schedule-duplicate-insert-final-preflight` |
-| Base | `daa1da2` |
-| Scope | before/after/rollback SQL templates; expected payload lock |
+| Commit | `07202b3` |
 | Doc | `gosaki-schedule-duplicate-insert-final-preflight.md` |
 | Verifier | `verify-g22d2-gosaki-schedule-duplicate-insert-final-preflight.mjs` |
-| **Next** | `G-22d3-gosaki-schedule-duplicate-insert-operator-execution` |
+| **Next** | — (payload updated by G-22d2b) |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22d1 Gosaki Schedule duplicate INSERT implementation — complete
 

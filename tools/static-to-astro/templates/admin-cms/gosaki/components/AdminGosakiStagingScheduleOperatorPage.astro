@@ -34,7 +34,10 @@ const g13c2PageConfig = resolveG13c2EventBPocCleanupPageServerConfig(import.meta
 
 const savePrepNote = g9kSaveButtonPageConfig.saveButtonSaveEnabled
   ? "「変更を確認」で内容を確認してから「更新する」を押してください。"
-  : "「変更を確認」で内容を確認できます。保存は無効です。DB UPDATE は実行されません。";
+  : "「変更を確認」で内容を確認できます。保存が必要な場合は戸山が代行します。";
+const scheduleStatusMessage = g9kSaveButtonPageConfig.saveButtonSaveEnabled
+  ? "変更内容の保存が有効です。「変更を確認」のあと「更新する」で反映できます。"
+  : "公演内容の確認・入力ができます。保存が必要な場合は戸山が代行します。";
 
 const isLive = binding.source === "supabase" && binding.selectableCount > 0;
 const rowsJson = JSON.stringify(binding.selectableRows);
@@ -73,7 +76,7 @@ function displayValue(value: string | null | undefined): string {
   <header class="admin-gosaki-page-header admin-gosaki-page-header--with-actions">
     <div>
       <a class="admin-gosaki-back-link" href={GOSAKI_STAGING_ADMIN_BASE}>← 管理画面トップへ</a>
-      <h1 class="admin-gosaki-page-header__title">Schedule管理</h1>
+      <h1 class="admin-gosaki-page-header__title">スケジュール</h1>
       <p class="admin-gosaki-page-header__subtitle">
         公演スケジュールの追加・編集を行う画面です。
       </p>
@@ -89,11 +92,11 @@ function displayValue(value: string | null | undefined): string {
   </header>
 
   <p class="admin-form__hint admin-static-notice">
-    公演の追加・編集ができます。サイトへの反映は、保存機能の開放後に行います。
+    公演の追加・編集ができます。公開サイトへの反映は、保存後に再生成・アップロードが必要です（戸山が代行）。
   </p>
 
   <p class="admin-gosaki-status-bar admin-gosaki-status-bar--soft" role="status">
-    保存機能は準備中です。
+    {scheduleStatusMessage}
   </p>
 
   {
@@ -194,7 +197,7 @@ function displayValue(value: string | null | undefined): string {
         追加
       </button>
     </div>
-    <p class="admin-gosaki-save-note" role="note">※ 保存は準備中です</p>
+    <p class="admin-gosaki-save-note" role="note">※ 新規追加の保存は準備中です。必要な場合は戸山にお知らせください。</p>
   </section>
 
   <div class="gosaki-schedule-admin-workspace">
@@ -431,6 +434,9 @@ function displayValue(value: string | null | undefined): string {
         <p id="gosaki-schedule-update-btn-note" class="admin-gosaki-save-note" role="note">
           {savePrepNote}
         </p>
+        <p class="admin-gosaki-save-note admin-gosaki-save-note--operator" role="note">
+          現在、公開サイトへの反映は戸山が確認して行います。
+        </p>
         <p class="admin-gosaki-save-note" role="note">
           ※ 複製・削除は準備中です。この画面ではまだ実行できません。
         </p>
@@ -438,10 +444,8 @@ function displayValue(value: string | null | undefined): string {
     </section>
   </div>
 
-  <div
-    class="gosaki-schedule-operator-poc-cleanup-panels"
-    aria-label="PoC cleanup operations"
-  >
+  <details class="admin-gosaki-dev-tools gosaki-schedule-operator-poc-cleanup-panels">
+    <summary>開発者向け詳細 — PoC クリーンアップ（通常は開かないでください）</summary>
     <section
       id="gosaki-schedule-g13c1-event-a-poc-cleanup"
       class="admin-card admin-gosaki-card admin-gosaki-schedule-g13c1 admin-prototype-section"
@@ -549,7 +553,7 @@ function displayValue(value: string | null | undefined): string {
         aria-live="polite"
       ></div>
     </section>
-  </div>
+  </details>
 </section>
 
 <script>

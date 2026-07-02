@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-20ui1 Gosaki admin UI polish inventory (2026-07-01):** **complete (uncommitted)** — admin UI read-only inventory; must/should/defer classification; G-20ui2 low-risk plan. Doc: `gosaki-admin-ui-polish-inventory.md`. **No UI implementation.** Parallel: operator remote path checklist; G-20j STOP.
+**G-20ui2 Gosaki admin UI polish implementation (2026-07-01):** **complete (uncommitted)** — UI copy/layout/dev panel collapse; Save logic unchanged. Doc: `gosaki-admin-ui-polish-implementation.md`. **No Save/DB/package/FTP.** Parallel: operator remote path; G-20j STOP.
+
+**G-20ui1 Gosaki admin UI polish inventory (2026-07-01):** **complete** — commit `6d02ce1`. Superseded by G-20ui2 implementation.
 
 **G-20i3 Gosaki production package admin exclusion (2026-07-01):** **complete** — commit `4a91061`. 26-file package, admin excluded. **Superseded for UI work by G-20ui1.**
 

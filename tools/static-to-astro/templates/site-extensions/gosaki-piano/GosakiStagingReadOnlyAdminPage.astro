@@ -85,10 +85,17 @@ const pageTitle = "Gosaki Piano CMS（確認用・読み取り専用）";
 
       <main class="gosaki-read-only-admin__main">
         <div class="gosaki-read-only-admin__banner" role="status">
-          <strong>読み取り専用管理画面（G-11c6a Save path — UI disabled）</strong>
+          <strong>読み取り専用管理画面</strong>
           <p class="gosaki-read-only-admin__meta">
-            YouTube URL の dry-run を staging Edge Function へ送信できます。<strong>Save は G-11c6a で無効のまま</strong>（JSON / workflow / FTP は実行しません）。
+            内容の確認のみ可能です。保存・本番反映は行えません。
           </p>
+          <details class="admin-gosaki-dev-tools gosaki-read-only-admin__dev-tools">
+            <summary>開発者向け詳細</summary>
+            <p class="gosaki-read-only-admin__meta">
+              YouTube URL の変更確認を staging Edge Function へ送信できます（G-11c6a — Save UI disabled）。
+              JSON / workflow / FTP は実行しません。
+            </p>
+          </details>
         </div>
 
         <section class="gosaki-read-only-admin__section" aria-labelledby="gra-overview">

@@ -103,7 +103,7 @@ function setBandsSaveButtonNote(message: string | null): void {
   if (!note) return;
   note.textContent =
     message ??
-    "※ G-10h4d-1 prep: dry-run 成功後、env が有効な場合のみ Save できます（実行フェーズまで未Save）。";
+    "※ バンド紹介の保存は現在無効です。変更内容は「変更を確認」で確認できます。";
 }
 
 function updateBandsSaveButtonState(body: G10h4cDryRunApiJsonBody | null): void {
@@ -123,22 +123,22 @@ function updateBandsSaveButtonState(body: G10h4cDryRunApiJsonBody | null): void 
   if (gate.enabled && !bandsSaveInFlight) {
     saveButton.textContent = "保存する";
     saveButton.title = "about-bands-html の html のみ JSON に保存します";
-    setBandsSaveButtonNote("dry-run OK — Save を1回だけ実行できます（承認フェーズのみ）。");
+    setBandsSaveButtonNote("変更内容を確認しました。「保存する」で1回だけ反映できます（承認済みの場合のみ）。");
     return;
   }
 
   const config = getG10h4cAboutBandsHtmlStaticJsonWriteConfig();
   if (!config.saveEnabled) {
-    saveButton.textContent = "保存する（env disabled）";
+    saveButton.textContent = "保存する（現在は無効）";
     saveButton.title = gate.reason;
-    setBandsSaveButtonNote("保存は無効です（G10H4C_ABOUT_BANDS_HTML_SAVE_ENABLED=false）。");
+    setBandsSaveButtonNote("保存は現在無効です。変更内容は「変更を確認」で確認できます。");
     return;
   }
 
   if (!body?.ok) {
-    saveButton.textContent = "保存する（dry-run 未確認）";
+    saveButton.textContent = "保存する（変更未確認）";
     saveButton.title = gate.reason;
-    setBandsSaveButtonNote("先に dry-run を成功させてください。");
+    setBandsSaveButtonNote("先に「変更を確認」を成功させてください。");
     return;
   }
 
@@ -151,7 +151,7 @@ function updateBandsSaveButtonState(body: G10h4cDryRunApiJsonBody | null): void 
 
   saveButton.textContent = "保存する（不可）";
   saveButton.title = gate.reason;
-  setBandsSaveButtonNote(gate.reason || "Save 条件を満たしていません。");
+  setBandsSaveButtonNote(gate.reason || "保存条件を満たしていません。");
 }
 
 function setSaveButtonNote(message: string | null): void {
@@ -159,7 +159,7 @@ function setSaveButtonNote(message: string | null): void {
   if (!note) return;
   note.textContent =
     message ??
-    "※ dry-run 成功後、env が有効な場合のみ Save できます。about-bands-html は対象外です。";
+    "※ プロフィールの保存は現在無効です。変更内容は「変更を確認」で確認できます。";
 }
 
 function updateSaveButtonState(body: G10h4aDryRunApiJsonBody | null): void {
@@ -179,22 +179,22 @@ function updateSaveButtonState(body: G10h4aDryRunApiJsonBody | null): void {
   if (gate.enabled && !saveInFlight) {
     saveButton.textContent = "保存する";
     saveButton.title = "about-profile-html の html のみ JSON に保存します";
-    setSaveButtonNote("dry-run OK — Save を1回だけ実行できます。");
+    setSaveButtonNote("変更内容を確認しました。「保存する」で1回だけ反映できます。");
     return;
   }
 
   const config = getG10h4aAboutProfileHtmlStaticJsonWriteConfig();
   if (!config.saveEnabled) {
-    saveButton.textContent = "保存する（env disabled）";
+    saveButton.textContent = "保存する（現在は無効）";
     saveButton.title = gate.reason;
-    setSaveButtonNote("保存は無効です（G10H4A_ABOUT_PROFILE_HTML_SAVE_ENABLED=false）。");
+    setSaveButtonNote("保存は現在無効です。変更内容は「変更を確認」で確認できます。");
     return;
   }
 
   if (!body?.ok) {
-    saveButton.textContent = "保存する（dry-run 未確認）";
+    saveButton.textContent = "保存する（変更未確認）";
     saveButton.title = gate.reason;
-    setSaveButtonNote("先に dry-run を成功させてください。");
+    setSaveButtonNote("先に「変更を確認」を成功させてください。");
     return;
   }
 
@@ -207,7 +207,7 @@ function updateSaveButtonState(body: G10h4aDryRunApiJsonBody | null): void {
 
   saveButton.textContent = "保存する（不可）";
   saveButton.title = gate.reason;
-  setSaveButtonNote(gate.reason || "Save 条件を満たしていません。");
+  setSaveButtonNote(gate.reason || "保存条件を満たしていません。");
 }
 
 function wireSaveDisabled(): void {

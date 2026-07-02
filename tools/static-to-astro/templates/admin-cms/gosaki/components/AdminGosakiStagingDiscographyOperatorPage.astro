@@ -194,9 +194,9 @@ const trackLines = selectedRow?.tracks.map((track) => track.title).join("\n") ??
   <header class="admin-gosaki-page-header admin-gosaki-page-header--with-actions">
     <div>
       <a class="admin-gosaki-back-link" href={GOSAKI_STAGING_ADMIN_BASE}>← 管理画面トップへ</a>
-      <h1 class="admin-gosaki-page-header__title">Discography管理</h1>
+      <h1 class="admin-gosaki-page-header__title">ディスコグラフィ</h1>
       <p class="admin-gosaki-page-header__subtitle">
-        作品情報の編集を行う画面です（Supabase read）。
+        作品情報の確認・編集を行う画面です。
       </p>
     </div>
     <button
@@ -209,7 +209,13 @@ const trackLines = selectedRow?.tracks.map((track) => track.title).join("\n") ??
     </button>
   </header>
 
-  <section class="admin-card admin-gosaki-card admin-gosaki-card--status" aria-label="読み取り状態">
+  <p class="admin-gosaki-status-bar admin-gosaki-status-bar--soft" role="status">
+    作品情報の確認・入力ができます。「変更を確認」で内容をプレビューできます。保存が必要な場合は戸山が代行します。
+  </p>
+
+  <details class="admin-gosaki-dev-tools">
+    <summary>開発者向け詳細 — 読み取り・Save 状態（通常は開かないでください）</summary>
+    <section class="admin-card admin-gosaki-card admin-gosaki-card--status" aria-label="読み取り状態">
     <ul class="admin-gosaki-status-list" role="list">
       <li>
         Discography Supabase read:
@@ -276,6 +282,7 @@ const trackLines = selectedRow?.tracks.map((track) => track.title).join("\n") ??
       ) : null
     }
   </section>
+  </details>
 
   <section class="admin-card admin-gosaki-card">
     <h2 class="admin-gosaki-card__title">公開前ページ</h2>
@@ -384,9 +391,9 @@ const trackLines = selectedRow?.tracks.map((track) => track.title).join("\n") ??
       </fieldset>
 
       <fieldset class="admin-gosaki-form-section">
-        <legend class="admin-gosaki-form-section__title">Track List（G-18f textarea diff）</legend>
+        <legend class="admin-gosaki-form-section__title">Track List</legend>
         <label class="admin-form__field admin-form__field--full">
-          <span class="admin-form__label">曲名（1行 = 1曲 / discography_tracks）</span>
+          <span class="admin-form__label">曲名（1行 = 1曲）</span>
           <textarea
             class="gosaki-discography-admin-textarea"
             name="tracks"
@@ -394,7 +401,7 @@ const trackLines = selectedRow?.tracks.map((track) => track.title).join("\n") ??
             readonly={selectedRow?.legacy_id !== "discography-002"}
           >{trackLines}</textarea>
           <p class="admin-gosaki-field-hint" role="note">
-            G-18f: <code>discography-002</code> / SKYLARK のみ編集可。変更後「変更を確認」で diff Preview（DB write なし）。
+            一部の作品のみ曲リストの編集が可能です。変更後は「変更を確認」で差分を確認できます。
           </p>
         </label>
       </fieldset>
@@ -412,7 +419,10 @@ const trackLines = selectedRow?.tracks.map((track) => track.title).join("\n") ??
       </button>
     </div>
     <p class="admin-gosaki-save-note" role="note">
-      ※ G-18f: <code>discography-002</code> の Track List textarea diff Preview は有効。Save / DB write は無効。
+      ※ 保存が必要な場合は戸山が確認して反映します。
+    </p>
+    <p class="admin-gosaki-save-note admin-gosaki-save-note--operator" role="note">
+      現在、公開サイトへの反映は戸山が確認して行います。
     </p>
 
     <div id="gosaki-disc-dry-run-result" class="gosaki-disc-dry-run-result" hidden></div>

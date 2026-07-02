@@ -5,14 +5,14 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20ui1-gosaki-admin-ui-polish-inventory — complete.
-Admin UI inventory: local staging shell + read-only admin (staging only).
-Must-fix: unify Save messaging, hide dev diagnostics, Japanese copy, operator/client explainer.
-Next implementation: G-20ui2 low-risk copy/layout (no Save/DB/deploy changes).
-Parallel: operator remote path checklist; G-20j manual FTP STOP until server contract.
+Current phase: G-20ui2-gosaki-admin-ui-polish-implementation — complete.
+UI polish: home/schedule/discography/about/youtube copy + dev details collapse.
+Save behavior unchanged; display strings only in about/schedule/youtube admin-ui TS.
+Next: G-20ui3 (Contact stub / read-only admin JA) or operator remote path checklist.
+Parallel: G-20j manual FTP STOP until server contract.
 Production package: 26 files, admin/ excluded (G-20i3).
 Supabase interim SoT: kmjqppxjdnwwrtaeqjta — never vsbvndwuajjhnzpohghh.
-No UI implementation / Save / package regen / FTP in G-20ui1.
+No Save / DB write / package regen / FTP in G-20ui2.
 ```
 
 **Closed chains — do not re-UPDATE / re-Save / re-upload:**
@@ -22,14 +22,19 @@ No UI implementation / Save / package regen / FTP in G-20ui1.
 - `discography-004` / `label` (G-17e-f)
 - `schedule-2026-04-005` / `price` (G-14b1f)
 
+## G-20ui2 Gosaki admin UI polish implementation — complete
+
+- **Doc:** `gosaki-admin-ui-polish-implementation.md`
+- **Base:** `6d02ce1` (uncommitted)
+- **Changed:** home, shell, schedule, discography, about, youtube, read-only banner, admin.css
+- **Save logic:** unchanged (display strings only in 3 admin-ui TS files)
+- **Next:** G-20ui3 or operator remote path; G-20j STOP
+
 ## G-20ui1 Gosaki admin UI polish inventory — complete
 
 - **Doc:** `gosaki-admin-ui-polish-inventory.md`
-- **Base:** `4a91061` (uncommitted)
-- **Inventory:** local staging shell + read-only admin; contact admin gap
-- **Classification:** must / should / defer / developer-only
-- **Next:** G-20ui2 P1 copy + dev panel collapse (no Save/DB/deploy)
-- **Parallel:** operator remote path checklist; G-20j STOP
+- **Base:** `6d02ce1`
+- **Next:** — (superseded by G-20ui2)
 
 ## G-20i3 Gosaki production package admin exclusion — complete
 

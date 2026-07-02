@@ -1,19 +1,26 @@
 Last updated: 2026-07-01
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20ui2 Gosaki admin UI polish implementation — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20ui2-gosaki-admin-ui-polish-implementation` |
+| Base | `6d02ce1` |
+| Scope | UI copy / layout / dev `<details>` collapse only |
+| Save behavior | **unchanged** |
+| Doc | `gosaki-admin-ui-polish-implementation.md` |
+| Verifier | `verify-g20ui2-gosaki-admin-ui-polish-implementation.mjs` |
+| G-20j | **STOP** — remote path TBD |
+| **Next** | G-20ui3 (Contact stub / read-only admin JA) or operator checklist |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20ui1 Gosaki admin UI polish inventory — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-20ui1-gosaki-admin-ui-polish-inventory` |
-| Base | `4a91061` |
-| Scope | Read-only UI inventory + must/should/defer + G-20ui2 plan |
-| Surfaces | Local staging shell + read-only admin (staging only) |
-| UI implementation | **none** |
-| Doc | `gosaki-admin-ui-polish-inventory.md` |
-| Verifier | `verify-g20ui1-gosaki-admin-ui-polish-inventory.mjs` |
-| G-20j | **STOP** — remote path TBD |
-| **Next** | `G-20ui2-admin-ui-polish-implementation` (P1 copy) |
+| Base | `6d02ce1` |
+| **Next** | — (superseded by G-20ui2) |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20i3 Gosaki production package admin exclusion — complete
 

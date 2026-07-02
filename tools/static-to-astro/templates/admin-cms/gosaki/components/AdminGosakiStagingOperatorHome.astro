@@ -31,7 +31,7 @@ const {
     <div>
       <h1 class="admin-gosaki-page-header__title">Gosaki Piano 管理画面</h1>
       <p class="admin-gosaki-page-header__subtitle">
-        スケジュールや公開前ページを確認するための管理画面です。
+        スケジュールや公開前ページを確認・入力するための管理画面です。
       </p>
     </div>
     <button
@@ -45,8 +45,44 @@ const {
   </header>
 
   <p class="admin-gosaki-status-bar admin-gosaki-status-bar--soft" role="status">
-    現在は確認・入力の準備段階です。保存は準備中です。
+    内容の確認・入力はできます。公開サイトへの反映は、現在戸山が代行しています。
   </p>
+
+  <section class="admin-card admin-gosaki-card admin-gosaki-operator-guide" aria-labelledby="gosaki-home-guide-title">
+    <h2 class="admin-gosaki-card__title" id="gosaki-home-guide-title">ご利用の流れ</h2>
+    <ol class="admin-gosaki-list admin-gosaki-list--numbered admin-gosaki-list--compact">
+      <li>各メニューで内容を確認・入力する</li>
+      <li>「変更を確認」で変更内容を画面上で確認する（データベースは変更されません）</li>
+      <li>保存が必要な場合は、戸山が確認のうえ反映します</li>
+      <li>公開サイトの更新には、再生成と手動アップロードが別途必要です</li>
+    </ol>
+  </section>
+
+  <div class="admin-gosaki-operator-grid admin-gosaki-operator-grid--compact">
+    <section class="admin-card admin-gosaki-card admin-gosaki-card--flat" aria-labelledby="gosaki-home-can-do">
+      <h2 class="admin-gosaki-card__subtitle" id="gosaki-home-can-do">いまできること</h2>
+      <ul class="admin-gosaki-list admin-gosaki-list--compact">
+        <li>スケジュールの確認・入力</li>
+        <li>YouTube 設定の確認・入力</li>
+        <li>Discography の確認・入力</li>
+        <li>プロフィール・バンド（About）の確認・入力</li>
+        <li>公開前ページの表示確認</li>
+        <li>「変更を確認」による内容プレビュー</li>
+      </ul>
+    </section>
+    <section class="admin-card admin-gosaki-card admin-gosaki-card--flat" aria-labelledby="gosaki-home-operator">
+      <h2 class="admin-gosaki-card__subtitle" id="gosaki-home-operator">戸山が代行すること</h2>
+      <ul class="admin-gosaki-list admin-gosaki-list--compact">
+        <li>データベースへの保存（必要な場合）</li>
+        <li>サイトの再生成（convert / build）</li>
+        <li>公開サイトへのアップロード</li>
+        <li>本番ドメインへの反映</li>
+      </ul>
+      <p class="admin-gosaki-field-hint" role="note">
+        将来的にはご本人操作も想定していますが、公開準備中は上記を代行します。
+      </p>
+    </section>
+  </div>
 
   <section class="admin-card admin-gosaki-card admin-gosaki-menu-card admin-gosaki-menu-card--primary">
     <h2 class="admin-gosaki-card__title admin-gosaki-card__title--visually-quiet">メニュー</h2>
@@ -54,7 +90,7 @@ const {
       <ul class="admin-gosaki-menu admin-gosaki-menu--primary">
         <li>
           <a class="admin-button admin-button--menu admin-button--menu-primary" href={schedulePath}>
-            Schedule管理
+            スケジュール
           </a>
         </li>
         <li>
@@ -70,7 +106,7 @@ const {
             class="admin-button admin-button--menu admin-button--menu-primary"
             href={GOSAKI_STAGING_ADMIN_DISCOGRAPHY_PATH}
           >
-            Discography管理
+            ディスコグラフィ
           </a>
         </li>
         <li>
@@ -78,7 +114,7 @@ const {
             class="admin-button admin-button--menu admin-button--menu-primary"
             href={GOSAKI_STAGING_ADMIN_ABOUT_PATH}
           >
-            About HTML
+            プロフィール・バンド
           </a>
         </li>
         <li>
@@ -98,32 +134,16 @@ const {
   <section class="admin-gosaki-secondary-menu" aria-label="準備中の機能">
     <ul class="admin-gosaki-secondary-menu__list">
       <li class="admin-gosaki-secondary-menu__item is-disabled">
-        <span class="admin-gosaki-secondary-menu__label">本番反映</span>
-        <span class="admin-gosaki-secondary-menu__badge">未開放</span>
+        <span class="admin-gosaki-secondary-menu__label">本番反映（ご本人操作）</span>
+        <span class="admin-gosaki-secondary-menu__badge">準備中</span>
       </li>
     </ul>
   </section>
 
-  <details class="admin-gosaki-home-supplement">
-    <summary>補足</summary>
-    <div class="admin-gosaki-operator-grid admin-gosaki-operator-grid--compact">
-      <section class="admin-card admin-gosaki-card admin-gosaki-card--flat">
-        <h3 class="admin-gosaki-card__subtitle">いまできること</h3>
-        <ul class="admin-gosaki-list admin-gosaki-list--compact">
-          <li>スケジュールの確認</li>
-          <li>YouTube 設定の確認</li>
-          <li>Discography の確認</li>
-          <li>About HTML の確認</li>
-          <li>公開前ページの表示確認</li>
-        </ul>
-      </section>
-      <section class="admin-card admin-gosaki-card admin-gosaki-card--flat">
-        <h3 class="admin-gosaki-card__subtitle">まだできないこと</h3>
-        <ul class="admin-gosaki-list admin-gosaki-list--compact">
-          <li>各種コンテンツの保存</li>
-          <li>本番サイトへの反映</li>
-        </ul>
-      </section>
-    </div>
+  <details class="admin-gosaki-dev-tools admin-gosaki-home-supplement">
+    <summary>開発者向け詳細（通常は開かないでください）</summary>
+    <p class="admin-gosaki-dev-tools__note" role="note">
+      approvalId / env / dry-run JSON などの技術情報は各ページの開発者向け詳細にあります。
+    </p>
   </details>
 </section>

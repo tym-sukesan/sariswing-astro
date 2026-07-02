@@ -62,7 +62,7 @@ function isG9kOperatorSaveEnabled(): boolean {
 }
 
 function operatorSaveDisabledMessage(): string {
-  return "保存は無効です。DB UPDATE は実行されません。";
+  return "保存が必要な場合は戸山が代行します。";
 }
 
 function operatorSaveDisabledDryRunCompleteMessage(): string {

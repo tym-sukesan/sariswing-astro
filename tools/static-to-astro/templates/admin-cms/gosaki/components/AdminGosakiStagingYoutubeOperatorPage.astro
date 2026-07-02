@@ -18,7 +18,10 @@ const defaultIframeTitle = GOSAKI_YOUTUBE_DEFAULT_IFRAME_TITLE;
 const g10cPageConfig = resolveG10cSaveButtonPageServerConfig(import.meta.env);
 const savePrepNote = g10cPageConfig.saveButtonSaveEnabled
   ? "「変更を確認」で内容を確認してから「更新する」を押してください。"
-  : "「変更を確認」で内容を確認できます。保存は無効です。JSON ファイルは変更されません。";
+  : "「変更を確認」で内容を確認できます。保存が必要な場合は戸山が代行します。";
+const youtubeStatusMessage = g10cPageConfig.saveButtonSaveEnabled
+  ? "YouTube 埋め込みの変更を保存できます。「変更を確認」のあと「更新する」で反映できます。"
+  : "YouTube 埋め込みの確認・入力ができます。保存が必要な場合は戸山が代行します。";
 
 const g10cTargetView =
   binding.items.find((view) => view.item.id === G10C_YOUTUBE_EMBED_TARGET_ITEM_ID) ?? null;
@@ -75,11 +78,14 @@ const g10cBeforeItemJson = g10cTargetView ? JSON.stringify(g10cTargetView.item) 
     ) : null
   }
 
+  <p class="admin-gosaki-status-bar admin-gosaki-status-bar--soft" role="status">
+    {youtubeStatusMessage}
+  </p>
+
   <section class="admin-card admin-gosaki-card gosaki-youtube-admin-g10c-card">
-    <h2 class="admin-gosaki-card__title">トップページ埋め込み（G-10c）</h2>
+    <h2 class="admin-gosaki-card__title">トップページ埋め込み</h2>
     <p class="admin-gosaki-card__lead">
-      対象 item: <code>{G10C_YOUTUBE_EMBED_TARGET_ITEM_ID}</code> — <code>embedCode</code> と
-      <code>published</code> のみ更新できます。
+      トップページに表示する YouTube 動画の埋め込みコードと公開設定を編集できます。
     </p>
 
     {
@@ -104,11 +110,21 @@ const g10cBeforeItemJson = g10cTargetView ? JSON.stringify(g10cTargetView.item) 
               <dt>表示順</dt>
               <dd>{g10cTargetView.item.sortOrder ?? 0}</dd>
             </div>
-            <div>
-              <dt>config path</dt>
-              <dd><code>{binding.configPath}</code></dd>
-            </div>
           </dl>
+
+          <details class="admin-gosaki-dev-tools admin-gosaki-dev-tools--inline">
+            <summary>開発者向けメタデータ</summary>
+            <dl class="gosaki-youtube-admin-g10c-meta">
+              <div>
+                <dt>item id</dt>
+                <dd><code>{G10C_YOUTUBE_EMBED_TARGET_ITEM_ID}</code></dd>
+              </div>
+              <div>
+                <dt>config path</dt>
+                <dd><code>{binding.configPath}</code></dd>
+              </div>
+            </dl>
+          </details>
 
           <div class="admin-form gosaki-youtube-admin-form">
             <label class="admin-form__field admin-form__field--full">
@@ -204,6 +220,9 @@ const g10cBeforeItemJson = g10cTargetView ? JSON.stringify(g10cTargetView.item) 
           </div>
           <p id="gosaki-yt-update-btn-note" class="admin-gosaki-save-note" role="note">
             {savePrepNote}
+          </p>
+          <p class="admin-gosaki-save-note admin-gosaki-save-note--operator" role="note">
+            現在、公開サイトへの反映は戸山が確認して行います。
           </p>
         </>
       )

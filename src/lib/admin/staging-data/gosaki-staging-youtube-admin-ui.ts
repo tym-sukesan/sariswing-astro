@@ -45,7 +45,7 @@ function isG10cOperatorSaveEnabled(): boolean {
 }
 
 function operatorSaveDisabledMessage(): string {
-  return "保存は無効です。JSON ファイルは変更されません。";
+  return "保存が必要な場合は戸山が代行します。";
 }
 
 function operatorSaveDisabledDryRunCompleteMessage(): string {

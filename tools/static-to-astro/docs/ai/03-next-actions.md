@@ -1,17 +1,25 @@
 Last updated: 2026-07-01
 Project: Static-to-Astro CMS / Musician CMS Kit
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20ui3-QA Gosaki admin UI minor polish local QA — complete
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22a Sariswing parity gap inventory — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-22a-gosaki-sariswing-parity-gap-inventory` |
+| Base | `d404ce3` |
+| Scope | Sariswing vs Gosaki gap + Schedule CRUD deep-dive + G-22b+ roadmap |
+| P0 gaps | Schedule duplicate, add, delete, routine UPDATE |
+| Doc | `gosaki-sariswing-parity-gap-inventory.md` |
+| Verifier | `verify-g22a-gosaki-sariswing-parity-gap-inventory.mjs` |
+| **Next** | `G-22b-schedule-duplicate-implementation` |
+
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20ui3-QA Gosaki admin UI minor polish local QA — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-20ui3qa-gosaki-admin-ui-minor-polish-local-qa` |
-| Base | `75e2bc1` |
-| QA | Local dev HTTP 200; G-20ui3 copy verified |
-| Blocking issues | **none** |
-| Doc | `gosaki-admin-ui-minor-polish-local-qa.md` |
-| Verifier | `verify-g20ui3qa-gosaki-admin-ui-minor-polish-local-qa.mjs` |
-| **Next** | operator remote path checklist; G-20j STOP |
+| Base | `d404ce3` |
+| **Next** | — (superseded by G-22a) |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20ui3 Gosaki admin UI minor polish — complete
 

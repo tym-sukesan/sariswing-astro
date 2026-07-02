@@ -5,13 +5,13 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20ui3qa-gosaki-admin-ui-minor-polish-local-qa — complete.
-Local QA: G-20ui3 JA titles, About 変更確認, operator save notes verified; no blocking issues.
-Admin UI polish chain (G-20ui1–G-20ui3) client-preview ready for operator workflow.
+Current phase: G-22a-gosaki-sariswing-parity-gap-inventory — complete.
+Gap inventory: Sariswing admin vs Gosaki CMS; P0 = Schedule duplicate/add/delete + routine UPDATE.
+Next implementation: G-22b Schedule duplicate dry-run + UI wire (no Save).
 Parallel: operator remote path checklist; G-20j manual FTP STOP until server contract.
 Production package: 26 files, admin/ excluded (G-20i3).
 Supabase interim SoT: kmjqppxjdnwwrtaeqjta — never vsbvndwuajjhnzpohghh.
-No Save / dry-run click / DB write / package regen / FTP in G-20ui3-QA.
+No implementation / Save / DB write / package regen / FTP in G-22a.
 ```
 
 **Closed chains — do not re-UPDATE / re-Save / re-upload:**
@@ -21,12 +21,18 @@ No Save / dry-run click / DB write / package regen / FTP in G-20ui3-QA.
 - `discography-004` / `label` (G-17e-f)
 - `schedule-2026-04-005` / `price` (G-14b1f)
 
+## G-22a Sariswing parity gap inventory — complete
+
+- **Doc:** `gosaki-sariswing-parity-gap-inventory.md`
+- **Base:** `d404ce3` (uncommitted)
+- **P0:** Schedule duplicate, add, delete; G-9k routine UPDATE
+- **Next:** G-22b Schedule duplicate implementation (dry-run only)
+
 ## G-20ui3-QA Gosaki admin UI minor polish local QA — complete
 
 - **Doc:** `gosaki-admin-ui-minor-polish-local-qa.md`
-- **Base:** `75e2bc1` (uncommitted)
-- **QA:** all operator pages HTTP 200; G-20ui3 copy verified; no blocking issues
-- **Next:** operator checklist; G-20j STOP
+- **Base:** `d404ce3`
+- **Next:** — (UI polish closed; G-22a functional work started)
 
 ## G-20ui3 Gosaki admin UI minor polish — complete
 

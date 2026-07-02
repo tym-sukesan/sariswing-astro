@@ -3,9 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-20ui3-QA Gosaki admin UI minor polish local QA (2026-07-02):** **complete (uncommitted)** — local dev QA; G-20ui3 titles/notes verified; no blocking issues. Doc: `gosaki-admin-ui-minor-polish-local-qa.md`. **No Save/dry-run click/DB/package/FTP.**
+**G-22a Sariswing parity gap inventory for Gosaki CMS (2026-07-02):** **complete (uncommitted)** — Sariswing vs Gosaki gap table; Schedule CRUD deep-dive; G-22b+ roadmap. Doc: `gosaki-sariswing-parity-gap-inventory.md`. **No implementation/Save/DB/package/FTP.**
 
-**G-20ui3 Gosaki admin UI minor polish (2026-07-01):** **complete** — commit `75e2bc1`. Superseded by G-20ui3-QA for verification.
+**G-20ui3-QA Gosaki admin UI minor polish local QA (2026-07-02):** **complete** — commit `d404ce3`. UI polish chain closed. **Next: G-22b Schedule duplicate (functional parity).**
 
 **G-20ui2 Gosaki admin UI polish implementation (2026-07-01):** **complete** — commit `afcbdcf`. UI copy/layout/dev panel collapse; Save logic unchanged.
 

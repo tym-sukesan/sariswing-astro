@@ -5,14 +5,13 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20ui2-gosaki-admin-ui-polish-implementation — complete.
-UI polish: home/schedule/discography/about/youtube copy + dev details collapse.
-Save behavior unchanged; display strings only in about/schedule/youtube admin-ui TS.
-Next: G-20ui3 (Contact stub / read-only admin JA) or operator remote path checklist.
-Parallel: G-20j manual FTP STOP until server contract.
+Current phase: G-20ui2qa-gosaki-admin-ui-polish-local-visual-qa — complete.
+Local dev QA: home/schedule/discography/about/youtube PASS; no blocking UI issues.
+Optional next: G-20ui3 (shell titles, field labels, Contact stub).
+Parallel: operator remote path checklist; G-20j manual FTP STOP until server contract.
 Production package: 26 files, admin/ excluded (G-20i3).
 Supabase interim SoT: kmjqppxjdnwwrtaeqjta — never vsbvndwuajjhnzpohghh.
-No Save / DB write / package regen / FTP in G-20ui2.
+No Save / DB write / package regen / FTP in G-20ui2-QA.
 ```
 
 **Closed chains — do not re-UPDATE / re-Save / re-upload:**
@@ -22,13 +21,18 @@ No Save / DB write / package regen / FTP in G-20ui2.
 - `discography-004` / `label` (G-17e-f)
 - `schedule-2026-04-005` / `price` (G-14b1f)
 
+## G-20ui2-QA Gosaki admin UI polish local visual QA — complete
+
+- **Doc:** `gosaki-admin-ui-polish-local-visual-qa.md`
+- **Base:** `afcbdcf` (uncommitted)
+- **QA:** local dev all operator pages HTTP 200; no blocking issues
+- **Next:** G-20ui3 optional polish or operator checklist
+
 ## G-20ui2 Gosaki admin UI polish implementation — complete
 
 - **Doc:** `gosaki-admin-ui-polish-implementation.md`
-- **Base:** `6d02ce1` (uncommitted)
-- **Changed:** home, shell, schedule, discography, about, youtube, read-only banner, admin.css
-- **Save logic:** unchanged (display strings only in 3 admin-ui TS files)
-- **Next:** G-20ui3 or operator remote path; G-20j STOP
+- **Base:** `afcbdcf`
+- **Next:** — (superseded by G-20ui2-QA)
 
 ## G-20ui1 Gosaki admin UI polish inventory — complete
 

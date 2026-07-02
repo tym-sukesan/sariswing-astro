@@ -5,13 +5,14 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-22c-gosaki-schedule-duplicate-dry-run-local-qa — complete (uncommitted).
-Duplicate dry-run local QA PASS on staging shell schedule operator UI.
-Next: G-22d duplicate non-dry-run INSERT planning (separate approval).
+Current phase: G-22d-gosaki-schedule-duplicate-insert-planning — complete (uncommitted).
+Duplicate INSERT planning + final preflight templates done; legacy_id Option B; no DB write.
+Next: G-22d1 implementation (INSERT adapter + UI gate; still no execution).
+G-22d3: operator single INSERT (separate approval / manual Save once).
 Parallel: operator remote path checklist; G-20j manual FTP STOP until server contract.
 Production package: 26 files, admin/ excluded (G-20i3).
 Supabase interim SoT: kmjqppxjdnwwrtaeqjta — never vsbvndwuajjhnzpohghh.
-No Save / DB write / package regen / FTP in G-22c.
+No Save / DB write / package regen / FTP in G-22d planning.
 ```
 
 **Closed chains — do not re-UPDATE / re-Save / re-upload:**
@@ -21,15 +22,22 @@ No Save / DB write / package regen / FTP in G-22c.
 - `discography-004` / `label` (G-17e-f)
 - `schedule-2026-04-005` / `price` (G-14b1f)
 
+## G-22d Gosaki Schedule duplicate INSERT planning — complete
+
+- **Doc:** `gosaki-schedule-duplicate-insert-planning.md`
+- **Base:** `d1fa0a8` (uncommitted)
+- **legacy_id:** Option B — `schedule-2026-03-014` for first slice
+- **Source row:** `eb1f1898-5107-4deb-a6d5-a792e0ec3f69` (`<Live & Session>`)
+- **approvalId:** `G-22d-gosaki-schedule-duplicate-insert-non-dry-run-slice`
+- **INSERT / Save:** not executed
+- **Next:** G-22d1 implementation → G-22d2 final preflight → G-22d3 operator execution
+
 ## G-22c Gosaki Schedule duplicate dry-run local QA — complete
 
 - **Doc:** `gosaki-schedule-duplicate-dry-run-local-qa.md`
-- **Base:** `266491e` (uncommitted)
-- **Route:** `/__admin-staging-shell/musician-basic/admin/schedule/`
-- **QA:** HTTP 200 + HTML markers + module mirror `executeG22bScheduleDuplicateDryRun` PASS
-- **Save / 更新する:** not clicked; no DB write
-- **add / delete:** still disabled
-- **Next:** G-22d duplicate non-dry-run INSERT planning
+- **Commit:** `d1fa0a8`
+- **Operator spot-check:** PASS (duplicate preview flags confirmed)
+- **Next:** — (superseded by G-22d)
 
 ## G-22b Gosaki Schedule duplicate dry-run UI — complete
 

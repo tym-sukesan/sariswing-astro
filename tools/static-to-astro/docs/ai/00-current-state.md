@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-22c Gosaki Schedule duplicate dry-run local QA (2026-07-02):** **complete (uncommitted)** — local dev QA on `/__admin-staging-shell/musician-basic/admin/schedule/`; duplicate draft + module mirror preview PASS; Save/DB not executed. Doc: `gosaki-schedule-duplicate-dry-run-local-qa.md`. Verifier: `verify-g22c-gosaki-schedule-duplicate-dry-run-local-qa.mjs`. **Next: G-22d duplicate non-dry-run INSERT planning.**
+**G-22d Gosaki Schedule duplicate INSERT planning / final preflight (2026-07-02):** **complete (uncommitted)** — schema/payload/legacy_id/UI/rollback/public reflection plan; G-22d2 SQL templates; no INSERT/Save. Doc: `gosaki-schedule-duplicate-insert-planning.md`. Verifier: `verify-g22d-gosaki-schedule-duplicate-insert-planning.mjs`. **Next: G-22d1 implementation.**
+
+**G-22c Gosaki Schedule duplicate dry-run local QA (2026-07-02):** **complete** — commit `d1fa0a8`. Operator spot-check PASS. Doc: `gosaki-schedule-duplicate-dry-run-local-qa.md`. **Superseded for INSERT work by G-22d.**
 
 **G-22b Gosaki Schedule duplicate dry-run UI implementation (2026-07-02):** **complete** — commit `266491e`. Operator duplicate draft + dry-run preview; Save/INSERT disabled. Doc: `gosaki-schedule-duplicate-dry-run-ui-implementation.md`. Verifier: `verify-g22b-gosaki-schedule-duplicate-dry-run-ui-implementation.mjs`. **Superseded for QA by G-22c.**
 

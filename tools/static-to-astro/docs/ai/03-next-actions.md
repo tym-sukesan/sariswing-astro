@@ -1,16 +1,28 @@
 Last updated: 2026-07-02
 Project: Static-to-Astro CMS / Musician CMS Kit
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22c Gosaki Schedule duplicate dry-run local QA — complete
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22d Gosaki Schedule duplicate INSERT planning — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-22d-gosaki-schedule-duplicate-insert-planning` |
+| Base | `d1fa0a8` |
+| Scope | INSERT payload / legacy_id / guards / rollback / G-22d1–d3 split |
+| approvalId | `G-22d-gosaki-schedule-duplicate-insert-non-dry-run-slice` |
+| Doc | `gosaki-schedule-duplicate-insert-planning.md` |
+| Verifier | `verify-g22d-gosaki-schedule-duplicate-insert-planning.mjs` |
+| **Next** | `G-22d1-gosaki-schedule-duplicate-insert-implementation` |
+
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22c Gosaki Schedule duplicate dry-run local QA — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-22c-gosaki-schedule-duplicate-dry-run-local-qa` |
 | Base | `266491e` |
-| Scope | local dev QA / record only; no Save/DB/package/FTP |
+| Commit | `d1fa0a8` |
 | Doc | `gosaki-schedule-duplicate-dry-run-local-qa.md` |
 | Verifier | `verify-g22c-gosaki-schedule-duplicate-dry-run-local-qa.mjs` |
-| **Next** | `G-22d-schedule-duplicate-non-dry-run-insert-planning` |
+| **Next** | — (superseded by G-22d) |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22b Gosaki Schedule duplicate dry-run UI — complete
 

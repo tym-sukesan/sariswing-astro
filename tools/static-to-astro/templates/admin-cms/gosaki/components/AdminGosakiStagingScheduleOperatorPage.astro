@@ -312,6 +312,24 @@ function displayValue(value: string | null | undefined): string {
         hidden
         novalidate
       >
+        <div
+          id="gosaki-schedule-duplicate-draft-banner"
+          class="gosaki-schedule-duplicate-draft-banner admin-form__field--full"
+          hidden
+          data-draft-mode=""
+          data-source-id=""
+          data-source-legacy-id=""
+          role="status"
+        >
+          <p class="gosaki-schedule-duplicate-draft-banner__title">複製案</p>
+          <p class="gosaki-schedule-duplicate-draft-banner__body">
+            まだ保存されていません。保存は戸山が確認して反映します。
+          </p>
+          <p class="gosaki-schedule-duplicate-draft-banner__source">
+            複製元: <code data-source-label></code>
+          </p>
+        </div>
+
         <label class="admin-form__field admin-form__field--full">
           <span class="admin-form__label">日付</span>
           <input id="gosaki-edit-date" type="date" />
@@ -354,6 +372,11 @@ function displayValue(value: string | null | undefined): string {
         <p id="gosaki-edit-updated-at" class="gosaki-schedule-admin-updated-at" role="status">
           <span class="admin-form__label">最終更新（updated_at）</span>
           <code id="gosaki-edit-updated-at-value">—</code>
+        </p>
+
+        <p id="gosaki-edit-legacy-id" class="gosaki-schedule-admin-legacy-id" role="status">
+          <span class="admin-form__label">legacy_id</span>
+          <code id="gosaki-edit-legacy-id-value">—</code>
         </p>
 
         <label class="admin-form__field admin-form__field--checkbox">
@@ -416,10 +439,9 @@ function displayValue(value: string | null | undefined): string {
             type="button"
             class="admin-button admin-button-secondary"
             id="gosaki-schedule-duplicate-btn"
-            data-gosaki-schedule-action-disabled
-            disabled
+            title="選択中の公演をもとに複製案を作成します（保存はまだできません）"
           >
-            複製
+            複製案を作成
           </button>
           <button
             type="button"
@@ -438,7 +460,7 @@ function displayValue(value: string | null | undefined): string {
           現在、公開サイトへの反映は戸山が確認して行います。
         </p>
         <p class="admin-gosaki-save-note" role="note">
-          ※ 複製・削除は現在利用できません。必要な場合は戸山にお知らせください。
+          ※ 複製案の作成はできます。保存・削除は戸山が確認して反映します。
         </p>
       </form>
     </section>

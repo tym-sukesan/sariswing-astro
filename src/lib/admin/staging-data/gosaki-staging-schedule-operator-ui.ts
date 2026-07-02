@@ -27,6 +27,15 @@ import { STAGING_SHELL_GOSAKI_SCHEDULE_SITE_SLUG } from "./staging-schedule-site
 import { dispatchRowSelected } from "./staging-schedule-site-slug-row-picker-events";
 import { confirmDiscardDirtyCandidateIfNeeded } from "./staging-schedule-site-slug-edit-picker-binding";
 import { isPocAuditScheduleRow } from "./staging-schedule-site-slug-row-picker-utils";
+import {
+  buildGosakiScheduleDuplicateDraft,
+  executeG22bScheduleDuplicateDryRun,
+  GOSAKI_SCHEDULE_DUPLICATE_DRAFT_LEGACY_LABEL,
+  GOSAKI_SCHEDULE_DUPLICATE_DRAFT_UNSAVED_ID,
+  type G22bScheduleDuplicateDryRunResult,
+  type GosakiScheduleDuplicateDraftState,
+  type GosakiScheduleEditDraftMode,
+} from "../staging-write/gosaki-schedule-duplicate-dry-run";
 
 type PublishedFilter = "published" | "all" | "draft";
 
@@ -56,6 +65,10 @@ let lastSaveOutcome: G9kExistingEventSaveButtonSaveOutcome | null = null;
 let stagingAuthSignedIn: boolean | null = null;
 let saveInFlight = false;
 let previewBase = "https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/";
+let editDraftMode: GosakiScheduleEditDraftMode = "existing";
+let duplicateSourceSnapshot: ScheduleRecord | null = null;
+let duplicateDraftState: GosakiScheduleDuplicateDraftState | null = null;
+let lastDuplicateDryRunResult: G22bScheduleDuplicateDryRunResult | null = null;
 
 function isG9kOperatorSaveEnabled(): boolean {
   return getG9kExistingEventSaveButtonConfig().saveEnabled;
@@ -256,6 +269,74 @@ function setCheckbox(id: string, checked: boolean): void {
   if (el) el.checked = checked;
 }
 
+function isDuplicateDraftMode(): boolean {
+  return editDraftMode === "duplicate" && duplicateDraftState !== null;
+}
+
+function resetDuplicateDraftMode(): void {
+  editDraftMode = "existing";
+  duplicateSourceSnapshot = null;
+  duplicateDraftState = null;
+  lastDuplicateDryRunResult = null;
+  updateDuplicateDraftBanner(null);
+}
+
+function updateDuplicateDraftBanner(state: GosakiScheduleDuplicateDraftState | null): void {
+  const banner = document.getElementById("gosaki-schedule-duplicate-draft-banner");
+  if (!banner) return;
+
+  if (!state) {
+    banner.hidden = true;
+    banner.dataset.draftMode = "";
+    banner.dataset.sourceId = "";
+    banner.dataset.sourceLegacyId = "";
+    const label = banner.querySelector("[data-source-label]");
+    if (label) label.textContent = "";
+    return;
+  }
+
+  banner.hidden = false;
+  banner.dataset.draftMode = "duplicate";
+  banner.dataset.sourceId = state.sourceId;
+  banner.dataset.sourceLegacyId = state.sourceLegacyId ?? "";
+  const label = banner.querySelector("[data-source-label]");
+  if (label) {
+    const legacy = state.sourceLegacyId ? ` / ${state.sourceLegacyId}` : "";
+    label.textContent = `${state.sourceId}${legacy}`;
+  }
+}
+
+function readEditFormDate(): string {
+  const el = document.getElementById("gosaki-edit-date") as HTMLInputElement | null;
+  return normalizeDateInput(el?.value ?? "");
+}
+
+function readEditFormPublished(): boolean {
+  const el = document.getElementById("gosaki-edit-published") as HTMLInputElement | null;
+  return el?.checked === true;
+}
+
+function enterDuplicateDraftFromSelectedRow(): void {
+  if (!selectedRowSnapshot || selectedRowSnapshot.id === GOSAKI_SCHEDULE_DUPLICATE_DRAFT_UNSAVED_ID) {
+    window.alert("先に一覧から複製元の公演を選んでください。");
+    return;
+  }
+
+  duplicateSourceSnapshot = { ...selectedRowSnapshot };
+  duplicateDraftState = buildGosakiScheduleDuplicateDraft(selectedRowSnapshot);
+  editDraftMode = "duplicate";
+  lastDryRunResult = null;
+  lastDuplicateDryRunResult = null;
+  clearSaveResult();
+  clearDryRunResult();
+  updateDuplicateDraftBanner(duplicateDraftState);
+  renderEditForm(duplicateDraftState.draft, { clearDryRun: false });
+  updateSaveButtonState(null);
+  document
+    .getElementById("gosaki-schedule-operator-edit")
+    ?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
+
 function populateAddFormFromRow(row: ScheduleRecord): void {
   const date = row.date ?? "";
   setFieldValue("gosaki-add-date", date);
@@ -273,6 +354,16 @@ function populateAddFormFromRow(row: ScheduleRecord): void {
 function setEditFormUpdatedAt(value: string | null | undefined): void {
   const el = document.getElementById("gosaki-edit-updated-at-value");
   if (!el) return;
+  if (isDuplicateDraftMode()) {
+    el.textContent = "（未保存）";
+    return;
+  }
+  el.textContent = String(value ?? "").trim() || "—";
+}
+
+function setEditFormLegacyId(value: string | null | undefined): void {
+  const el = document.getElementById("gosaki-edit-legacy-id-value");
+  if (!el) return;
   el.textContent = String(value ?? "").trim() || "—";
 }
 
@@ -288,13 +379,22 @@ function renderEditForm(
 ): void {
   const emptyEl = document.getElementById("gosaki-schedule-operator-edit-empty");
   const formEl = document.getElementById("gosaki-schedule-edit-form");
+  const titleEl = document.querySelector(
+    "#gosaki-schedule-operator-edit .admin-gosaki-card__title",
+  );
+  const leadEl = document.querySelector(
+    "#gosaki-schedule-operator-edit .admin-gosaki-card__lead",
+  );
   if (!emptyEl || !formEl) return;
 
   if (!row) {
     emptyEl.hidden = false;
     formEl.hidden = true;
     selectedRowSnapshot = null;
+    resetDuplicateDraftMode();
     clearDryRunResult();
+    if (titleEl) titleEl.textContent = "選択中の公演を編集";
+    if (leadEl) leadEl.textContent = "一覧で選んだ公演の内容を変更します。";
     return;
   }
 
@@ -314,7 +414,22 @@ function renderEditForm(
   setFieldValue("gosaki-edit-description", String(row.description ?? ""));
   setCheckbox("gosaki-edit-published", row.published === true);
   setPreviewLink("gosaki-edit-preview-link", month);
-  setEditFormUpdatedAt(row.updated_at);
+
+  if (isDuplicateDraftMode()) {
+    if (titleEl) titleEl.textContent = "複製案を編集";
+    if (leadEl) {
+      leadEl.textContent =
+        "複製案です。まだ保存されていません。内容を確認してから「変更を確認」を押してください。";
+    }
+    setEditFormUpdatedAt(null);
+    setEditFormLegacyId(GOSAKI_SCHEDULE_DUPLICATE_DRAFT_LEGACY_LABEL);
+  } else {
+    if (titleEl) titleEl.textContent = "選択中の公演を編集";
+    if (leadEl) leadEl.textContent = "一覧で選んだ公演の内容を変更します。";
+    setEditFormUpdatedAt(row.updated_at);
+    setEditFormLegacyId(row.legacy_id ?? "—");
+  }
+
   if (options?.clearDryRun !== false) {
     clearDryRunResult();
   }
@@ -334,6 +449,7 @@ function readEditFormSafeValues(): G9kExistingEventSaveButtonFormValues {
 
 function clearDryRunResult(): void {
   lastDryRunResult = null;
+  lastDuplicateDryRunResult = null;
   const el = document.getElementById("gosaki-schedule-edit-dry-run-result");
   if (!el) return;
   el.hidden = true;
@@ -365,7 +481,7 @@ function showDryRunSavedState(): void {
 }
 
 function markDryRunStale(): void {
-  if (!lastDryRunResult && !lastSaveOutcome) return;
+  if (!lastDryRunResult && !lastDuplicateDryRunResult && !lastSaveOutcome) return;
   clearSaveResult();
   lastSaveOutcome = null;
   const el = document.getElementById("gosaki-schedule-edit-dry-run-result");
@@ -381,6 +497,7 @@ function markDryRunStale(): void {
     el.prepend(note);
   }
   lastDryRunResult = null;
+  lastDuplicateDryRunResult = null;
   updateSaveButtonState(null);
 }
 
@@ -404,6 +521,18 @@ function updateSaveButtonState(result: G9kExistingEventSaveButtonDryRunResult | 
     "gosaki-schedule-update-btn",
   ) as HTMLButtonElement | null;
   if (!button) return;
+
+  if (isDuplicateDraftMode()) {
+    button.disabled = true;
+    button.setAttribute("data-gosaki-schedule-action-disabled", "");
+    button.setAttribute("data-gosaki-save-allowed", "false");
+    button.textContent = "更新する（複製案）";
+    button.title = "複製案はまだ保存できません。戸山が確認して反映します。";
+    setSaveButtonNote(
+      "複製案です。保存は戸山が確認して反映します。「変更を確認」で追加予定の内容を確認できます。",
+    );
+    return;
+  }
 
   const gate = evaluateG9kOperatorSaveButtonUiGate({
     signedIn: stagingAuthSignedIn === true,
@@ -476,6 +605,110 @@ function renderBeforeAfterRows(
       </tr>`;
     })
     .join("");
+}
+
+function renderDuplicateDryRunResult(result: G22bScheduleDuplicateDryRunResult): void {
+  const el = document.getElementById("gosaki-schedule-edit-dry-run-result");
+  if (!el) return;
+
+  el.hidden = false;
+  el.classList.remove(
+    "gosaki-schedule-edit-dry-run--ok",
+    "gosaki-schedule-edit-dry-run--empty",
+    "gosaki-schedule-edit-dry-run--error",
+    "gosaki-schedule-edit-dry-run--stale",
+    "gosaki-schedule-edit-dry-run--ready",
+    "gosaki-schedule-edit-dry-run--saved",
+  );
+
+  updateSaveButtonState(null);
+
+  if (!result.ok) {
+    el.classList.add("gosaki-schedule-edit-dry-run--error");
+    el.innerHTML = `
+      <h3 class="gosaki-schedule-edit-dry-run__title">複製案の確認結果</h3>
+      <p class="gosaki-schedule-edit-dry-run__message">複製案を確認できませんでした。入力内容を確認してください。</p>
+      ${renderGuardErrorList(result.guardErrors)}
+      <p class="gosaki-schedule-edit-dry-run__note">この確認ではデータベースは変更されません。保存はまだ実行されません。</p>
+      ${renderDuplicateDryRunDevDetails(result)}
+    `;
+    return;
+  }
+
+  el.classList.add(
+    "gosaki-schedule-edit-dry-run--ok",
+    "gosaki-schedule-edit-dry-run--ready",
+    "gosaki-schedule-edit-dry-run--duplicate",
+  );
+
+  const month = result.derivedPreview?.recalculatedMonth ?? "—";
+  const group = result.derivedPreview?.scheduleGroup ?? "—";
+
+  el.innerHTML = `
+    <h3 class="gosaki-schedule-edit-dry-run__title">複製案の確認結果</h3>
+    <p class="gosaki-schedule-edit-dry-run__message gosaki-schedule-edit-dry-run__message--ready">
+      ${escapeHtml(result.message)}
+    </p>
+    <p class="gosaki-schedule-edit-dry-run__note">
+      まだ保存されていません。保存は戸山が確認して反映します。
+    </p>
+    <dl class="gosaki-schedule-edit-dry-run__target">
+      <div>
+        <dt>操作</dt>
+        <dd><code>duplicate</code>（新規追加の予定）</dd>
+      </div>
+      <div>
+        <dt>複製元</dt>
+        <dd>${escapeHtml(displayValue(result.source.title))}</dd>
+      </div>
+      <div>
+        <dt>複製元 ID</dt>
+        <dd><code>${escapeHtml(result.source.id)}</code></dd>
+      </div>
+      <div>
+        <dt>複製元 legacy_id</dt>
+        <dd><code>${escapeHtml(result.source.legacy_id ?? "—")}</code></dd>
+      </div>
+      <div>
+        <dt>追加予定の日付</dt>
+        <dd>${escapeHtml(String(result.payload.date ?? "—"))}</dd>
+      </div>
+      <div>
+        <dt>表示先の月</dt>
+        <dd><code>${escapeHtml(String(month))}</code></dd>
+      </div>
+      <div>
+        <dt>区分</dt>
+        <dd>${escapeHtml(String(group))}</dd>
+      </div>
+    </dl>
+    <div class="gosaki-schedule-edit-dry-run__chips">
+      <span class="gosaki-schedule-edit-dry-run__chips-label">payload keys</span>
+      ${renderPayloadKeys(result.payloadKeys)}
+    </div>
+    <p class="gosaki-schedule-edit-dry-run__lock">
+      安全確認:
+      <code>dryRun=true</code>,
+      <code>actualWrite=false</code>,
+      <code>wouldInsert=${String(result.wouldInsert)}</code>,
+      <code>saveAllowed=false</code>
+    </p>
+    ${renderDuplicateDryRunDevDetails(result)}
+  `;
+}
+
+function renderDuplicateDryRunDevDetails(result: G22bScheduleDuplicateDryRunResult): string {
+  return `
+    <details class="gosaki-schedule-duplicate-dry-run-dev">
+      <summary>開発者向け詳細</summary>
+      <dl class="gosaki-schedule-edit-dry-run__target">
+        <div><dt>phase</dt><dd><code>${escapeHtml(result.phase)}</code></dd></div>
+        <div><dt>approvalId</dt><dd><code>${escapeHtml(result.approvalId)}</code></dd></div>
+        <div><dt>site_slug</dt><dd><code>${escapeHtml(String(result.payload.site_slug ?? "—"))}</code></dd></div>
+      </dl>
+      <pre class="gosaki-schedule-duplicate-dry-run-dev__json">${escapeHtml(JSON.stringify(result.payload, null, 2))}</pre>
+    </details>
+  `;
 }
 
 function renderDryRunResult(result: G9kExistingEventSaveButtonDryRunResult): void {
@@ -700,6 +933,27 @@ async function resolveStagingAuthSignedIn(): Promise<boolean> {
 }
 
 async function runEditDryRunPreview(): Promise<void> {
+  if (isDuplicateDraftMode()) {
+    if (!duplicateSourceSnapshot) {
+      window.alert("複製元の公演が見つかりません。再度「複製」を押してください。");
+      return;
+    }
+
+    const signedIn = await refreshStagingAuthSignedIn();
+    const result = executeG22bScheduleDuplicateDryRun({
+      source: duplicateSourceSnapshot,
+      formValues: readEditFormSafeValues(),
+      date: readEditFormDate(),
+      published: readEditFormPublished(),
+      signedIn,
+      supabaseUrl: String(import.meta.env.PUBLIC_SUPABASE_URL ?? ""),
+    });
+    lastDuplicateDryRunResult = result;
+    lastDryRunResult = null;
+    renderDuplicateDryRunResult(result);
+    return;
+  }
+
   if (!selectedRowSnapshot) {
     const el = document.getElementById("gosaki-schedule-edit-dry-run-result");
     if (!el) return;
@@ -725,6 +979,11 @@ async function runEditDryRunPreview(): Promise<void> {
 }
 
 async function runEditSave(): Promise<void> {
+  if (isDuplicateDraftMode()) {
+    window.alert("複製案はまだ保存できません。戸山が確認して反映します。");
+    return;
+  }
+
   const config = getG9kExistingEventSaveButtonConfig();
   if (!config.saveEnabled) {
     const pageConfig = readG9kSaveButtonPageConfigFromDom();
@@ -859,6 +1118,24 @@ function selectRowById(rowId: string): void {
   if (!row) return;
   if (row.site_slug !== STAGING_SHELL_GOSAKI_SCHEDULE_SITE_SLUG) return;
   if (isPocAuditScheduleRow(row)) return;
+
+  if (isDuplicateDraftMode() && rowId === duplicateSourceSnapshot?.id) {
+    selectedRowId = rowId;
+    renderScheduleList();
+    return;
+  }
+
+  if (isDuplicateDraftMode() && rowId !== duplicateSourceSnapshot?.id) {
+    if (
+      !window.confirm(
+        "複製案の編集をやめて、別の公演を選び直しますか？（複製案は保存されません）",
+      )
+    ) {
+      return;
+    }
+    resetDuplicateDraftMode();
+  }
+
   if (!confirmDiscardDirtyCandidateIfNeeded(rowId)) return;
 
   selectedRowId = rowId;
@@ -931,6 +1208,7 @@ function wireEditForm(): void {
     const month = monthFromDate(date);
     setMonthHint("gosaki-edit-month-hint", date);
     setPreviewLink("gosaki-edit-preview-link", month);
+    markDryRunStale();
   };
   dateInput?.addEventListener("change", syncEditDateDerived);
   dateInput?.addEventListener("input", syncEditDateDerived);
@@ -945,6 +1223,10 @@ function wireEditForm(): void {
     const el = document.getElementById(G9K2_EDIT_DRY_RUN_FIELD_IDS[field]);
     el?.addEventListener("input", () => markDryRunStale());
   }
+
+  document.getElementById("gosaki-edit-published")?.addEventListener("change", () => {
+    markDryRunStale();
+  });
 }
 
 function wireSaveButton(): void {
@@ -956,7 +1238,26 @@ function wireSaveButton(): void {
     });
 }
 
+function wireDuplicateButton(): void {
+  document
+    .getElementById("gosaki-schedule-duplicate-btn")
+    ?.addEventListener("click", (event) => {
+      event.preventDefault();
+      enterDuplicateDraftFromSelectedRow();
+    });
+}
+
 function wireDisabledActions(): void {
+  const duplicateBtn = document.getElementById(
+    "gosaki-schedule-duplicate-btn",
+  ) as HTMLButtonElement | null;
+  if (duplicateBtn) {
+    duplicateBtn.disabled = false;
+    duplicateBtn.removeAttribute("data-gosaki-schedule-action-disabled");
+    duplicateBtn.title =
+      "選択中の公演をもとに複製案を作成します（保存はまだできません）";
+  }
+
   document
     .querySelectorAll<HTMLButtonElement>(
       "[data-gosaki-schedule-action-disabled]:not(#gosaki-schedule-update-btn)",
@@ -977,6 +1278,7 @@ export async function initGosakiStagingScheduleOperatorUi(): Promise<void> {
   wireAddForm();
   wireEditForm();
   wireSaveButton();
+  wireDuplicateButton();
   wireDisabledActions();
   await refreshStagingAuthSignedIn();
   renderScheduleList();

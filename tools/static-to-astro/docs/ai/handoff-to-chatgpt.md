@@ -5,13 +5,14 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-22a-gosaki-sariswing-parity-gap-inventory — complete.
-Gap inventory: Sariswing admin vs Gosaki CMS; P0 = Schedule duplicate/add/delete + routine UPDATE.
-Next implementation: G-22b Schedule duplicate dry-run + UI wire (no Save).
+Current phase: G-22b-gosaki-schedule-duplicate-dry-run-ui-implementation — complete (uncommitted).
+Duplicate: operator UI draft + dry-run preview wired; Save/INSERT disabled.
+Next: G-22c local QA (no Save).
+G-22d: duplicate non-dry-run INSERT (separate approval).
 Parallel: operator remote path checklist; G-20j manual FTP STOP until server contract.
 Production package: 26 files, admin/ excluded (G-20i3).
 Supabase interim SoT: kmjqppxjdnwwrtaeqjta — never vsbvndwuajjhnzpohghh.
-No implementation / Save / DB write / package regen / FTP in G-22a.
+No Save / DB write / package regen / FTP in G-22b.
 ```
 
 **Closed chains — do not re-UPDATE / re-Save / re-upload:**
@@ -21,12 +22,23 @@ No implementation / Save / DB write / package regen / FTP in G-22a.
 - `discography-004` / `label` (G-17e-f)
 - `schedule-2026-04-005` / `price` (G-14b1f)
 
+## G-22b Gosaki Schedule duplicate dry-run UI — complete
+
+- **Doc:** `gosaki-schedule-duplicate-dry-run-ui-implementation.md`
+- **Base:** `f8580ec` (uncommitted)
+- **Module:** `gosaki-schedule-duplicate-dry-run.ts`
+- **UI:** 複製案を作成 → duplicate draft banner → 変更を確認 → dry-run preview
+- **approvalId:** `G-22b-gosaki-schedule-duplicate-dry-run`
+- **Save / INSERT:** disabled (G-22d deferred)
+- **add / delete:** still disabled
+- **Next:** G-22c local QA
+
 ## G-22a Sariswing parity gap inventory — complete
 
 - **Doc:** `gosaki-sariswing-parity-gap-inventory.md`
-- **Base:** `d404ce3` (uncommitted)
+- **Base:** `f8580ec`
 - **P0:** Schedule duplicate, add, delete; G-9k routine UPDATE
-- **Next:** G-22b Schedule duplicate implementation (dry-run only)
+- **Next:** — (superseded by G-22b implementation)
 
 ## G-20ui3-QA Gosaki admin UI minor polish local QA — complete
 

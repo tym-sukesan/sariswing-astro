@@ -1,5 +1,17 @@
-Last updated: 2026-07-01
+Last updated: 2026-07-02
 Project: Static-to-Astro CMS / Musician CMS Kit
+
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22b Gosaki Schedule duplicate dry-run UI — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-22b-gosaki-schedule-duplicate-dry-run-ui-implementation` |
+| Base | `f8580ec` |
+| Scope | duplicate draft + dry-run preview in operator UI; no Save/INSERT |
+| approvalId | `G-22b-gosaki-schedule-duplicate-dry-run` |
+| Doc | `gosaki-schedule-duplicate-dry-run-ui-implementation.md` |
+| Verifier | `verify-g22b-gosaki-schedule-duplicate-dry-run-ui-implementation.mjs` |
+| **Next** | `G-22c-schedule-duplicate-dry-run-local-qa` |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22a Sariswing parity gap inventory — complete
 
@@ -11,7 +23,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | P0 gaps | Schedule duplicate, add, delete, routine UPDATE |
 | Doc | `gosaki-sariswing-parity-gap-inventory.md` |
 | Verifier | `verify-g22a-gosaki-sariswing-parity-gap-inventory.mjs` |
-| **Next** | `G-22b-schedule-duplicate-implementation` |
+| **Next** | — (superseded by G-22b) |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20ui3-QA Gosaki admin UI minor polish local QA — complete
 

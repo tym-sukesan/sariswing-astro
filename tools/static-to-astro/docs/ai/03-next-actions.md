@@ -1,17 +1,26 @@
 Last updated: 2026-07-01
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20ui3 Gosaki admin UI minor polish — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20ui3-gosaki-admin-ui-minor-polish` |
+| Base | `8b4cf83` |
+| Scope | Shell titles, About safety copy, save notes |
+| Save behavior | **unchanged** |
+| Doc | `gosaki-admin-ui-minor-polish.md` |
+| Verifier | `verify-g20ui3-gosaki-admin-ui-minor-polish.mjs` |
+| Deferred | Contact stub, Discography field labels |
+| **Next** | operator remote path checklist; G-20j STOP |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20ui2-QA Gosaki admin UI polish local visual QA — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-20ui2qa-gosaki-admin-ui-polish-local-visual-qa` |
-| Base | `afcbdcf` |
-| QA | Local dev HTTP 200 + visible-text analysis |
-| Blocking issues | **none** |
-| Doc | `gosaki-admin-ui-polish-local-visual-qa.md` |
-| Verifier | `verify-g20ui2qa-gosaki-admin-ui-polish-local-visual-qa.mjs` |
-| **Next** | G-20ui3 optional polish or operator checklist |
+| Base | `8b4cf83` |
+| **Next** | — (superseded by G-20ui3) |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20ui2 Gosaki admin UI polish implementation — complete
 

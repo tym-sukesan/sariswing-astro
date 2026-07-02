@@ -5,13 +5,13 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20ui2qa-gosaki-admin-ui-polish-local-visual-qa — complete.
-Local dev QA: home/schedule/discography/about/youtube PASS; no blocking UI issues.
-Optional next: G-20ui3 (shell titles, field labels, Contact stub).
+Current phase: G-20ui3-gosaki-admin-ui-minor-polish — complete.
+Minor polish: JA shell titles, About 変更確認 copy, operator-friendly save notes.
+Deferred: Contact stub, Discography field labels.
 Parallel: operator remote path checklist; G-20j manual FTP STOP until server contract.
 Production package: 26 files, admin/ excluded (G-20i3).
 Supabase interim SoT: kmjqppxjdnwwrtaeqjta — never vsbvndwuajjhnzpohghh.
-No Save / DB write / package regen / FTP in G-20ui2-QA.
+No Save / DB write / package regen / FTP in G-20ui3.
 ```
 
 **Closed chains — do not re-UPDATE / re-Save / re-upload:**
@@ -21,12 +21,19 @@ No Save / DB write / package regen / FTP in G-20ui2-QA.
 - `discography-004` / `label` (G-17e-f)
 - `schedule-2026-04-005` / `price` (G-14b1f)
 
+## G-20ui3 Gosaki admin UI minor polish — complete
+
+- **Doc:** `gosaki-admin-ui-minor-polish.md`
+- **Base:** `8b4cf83` (uncommitted)
+- **Changed:** shell titles, aria-labels, About safety, Schedule/YouTube save notes
+- **Deferred:** Contact stub, Discography field labels
+- **Next:** operator checklist; G-20j STOP
+
 ## G-20ui2-QA Gosaki admin UI polish local visual QA — complete
 
 - **Doc:** `gosaki-admin-ui-polish-local-visual-qa.md`
-- **Base:** `afcbdcf` (uncommitted)
-- **QA:** local dev all operator pages HTTP 200; no blocking issues
-- **Next:** G-20ui3 optional polish or operator checklist
+- **Base:** `8b4cf83`
+- **Next:** — (superseded by G-20ui3)
 
 ## G-20ui2 Gosaki admin UI polish implementation — complete
 

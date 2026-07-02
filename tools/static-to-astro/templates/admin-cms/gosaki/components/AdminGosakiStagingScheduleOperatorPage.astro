@@ -56,7 +56,7 @@ function displayValue(value: string | null | undefined): string {
   data-read-source={binding.source}
   data-selectable-rows={rowsJson}
   data-preview-base={GOSAKI_STAGING_PREVIEW_URL}
-  aria-label="Schedule管理"
+  aria-label="スケジュール管理"
 >
   <div
     id={G9K_SAVE_BUTTON_PAGE_CONFIG_ELEMENT_ID}
@@ -197,7 +197,7 @@ function displayValue(value: string | null | undefined): string {
         追加
       </button>
     </div>
-    <p class="admin-gosaki-save-note" role="note">※ 新規追加の保存は準備中です。必要な場合は戸山にお知らせください。</p>
+    <p class="admin-gosaki-save-note" role="note">※ 新規追加の直接保存はまだ無効です。必要な場合は戸山が確認して反映します。</p>
   </section>
 
   <div class="gosaki-schedule-admin-workspace">
@@ -438,7 +438,7 @@ function displayValue(value: string | null | undefined): string {
           現在、公開サイトへの反映は戸山が確認して行います。
         </p>
         <p class="admin-gosaki-save-note" role="note">
-          ※ 複製・削除は準備中です。この画面ではまだ実行できません。
+          ※ 複製・削除は現在利用できません。必要な場合は戸山にお知らせください。
         </p>
       </form>
     </section>

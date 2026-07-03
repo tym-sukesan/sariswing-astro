@@ -13,6 +13,8 @@ const INSERT_SUCCESS_ROLLBACK_HINT =
   "Manual rollback: DELETE FROM public.schedules WHERE id = <inserted_id> (staging only).";
 const NO_ROLLBACK_HINT = "No rollback required because actualWrite is false.";
 
+export type ScheduleInsertWriteOperation = "duplicate-insert" | "new-event-insert";
+
 export type ScheduleInsertWriteQueryResult = {
   data: ScheduleDryRunSource | null;
   error: { message: string; code?: string } | null;
@@ -33,7 +35,7 @@ export type ScheduleInsertWriteClient = {
 
 export type ScheduleInsertWriteFailureResult = {
   module: "schedule";
-  operation: "duplicate-insert";
+  operation: ScheduleInsertWriteOperation;
   targetTable: "schedules";
   dryRun: false;
   actualWrite: false;
@@ -48,12 +50,12 @@ export type ScheduleInsertWriteFailureResult = {
 
 export type ScheduleInsertWriteResult = {
   module: "schedule";
-  operation: "duplicate-insert";
+  operation: ScheduleInsertWriteOperation;
   targetTable: "schedules";
   dryRun: false;
   actualWrite: true;
   approvalId: ScheduleWriteApprovalIdUnion;
-  sourceId: string;
+  sourceId?: string;
   insertedId: string;
   payload: ScheduleInsertWritePayload;
   afterSnapshot: ScheduleDryRunSource;
@@ -70,6 +72,7 @@ function toScheduleSource(row: Record<string, unknown>): ScheduleDryRunSource {
 }
 
 function buildFailure(
+  operation: ScheduleInsertWriteOperation,
   partial: Pick<
     ScheduleInsertWriteFailureResult,
     "errorCode" | "errorMessage" | "approvalId" | "sourceId" | "payload"
@@ -77,7 +80,7 @@ function buildFailure(
 ): ScheduleInsertWriteFailureResult {
   return {
     module: "schedule",
-    operation: "duplicate-insert",
+    operation,
     targetTable: "schedules",
     dryRun: false,
     actualWrite: false,
@@ -87,19 +90,20 @@ function buildFailure(
   };
 }
 
-export async function insertScheduleWrite(input: {
+async function executeScheduleInsertWrite(input: {
   client: ScheduleInsertWriteClient;
   approvalId: ScheduleWriteApprovalIdUnion;
-  sourceId: string;
+  operation: ScheduleInsertWriteOperation;
+  sourceId?: string;
   payload: ScheduleInsertWritePayload;
 }): Promise<ScheduleInsertWriteAdapterResult> {
-  const { client, approvalId, sourceId, payload } = input;
+  const { client, approvalId, operation, sourceId, payload } = input;
 
   try {
     assertScheduleWriteApprovalId(approvalId);
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
-    return buildFailure({
+    return buildFailure(operation, {
       approvalId,
       sourceId,
       payload,
@@ -115,7 +119,7 @@ export async function insertScheduleWrite(input: {
     .single();
 
   if (insertError) {
-    return buildFailure({
+    return buildFailure(operation, {
       approvalId,
       sourceId,
       payload,
@@ -125,7 +129,7 @@ export async function insertScheduleWrite(input: {
   }
 
   if (!insertedRow) {
-    return buildFailure({
+    return buildFailure(operation, {
       approvalId,
       sourceId,
       payload,
@@ -139,7 +143,7 @@ export async function insertScheduleWrite(input: {
   );
   const insertedId = String(afterSnapshot.id ?? "").trim();
   if (!insertedId) {
-    return buildFailure({
+    return buildFailure(operation, {
       approvalId,
       sourceId,
       payload,
@@ -150,7 +154,7 @@ export async function insertScheduleWrite(input: {
 
   return {
     module: "schedule",
-    operation: "duplicate-insert",
+    operation,
     targetTable: "schedules",
     dryRun: false,
     actualWrite: true,
@@ -162,4 +166,27 @@ export async function insertScheduleWrite(input: {
     rollbackHint: INSERT_SUCCESS_ROLLBACK_HINT.replace("<inserted_id>", insertedId),
     safety: getScheduleWriteSafety(),
   };
+}
+
+export async function insertScheduleWrite(input: {
+  client: ScheduleInsertWriteClient;
+  approvalId: ScheduleWriteApprovalIdUnion;
+  sourceId: string;
+  payload: ScheduleInsertWritePayload;
+}): Promise<ScheduleInsertWriteAdapterResult> {
+  return executeScheduleInsertWrite({
+    ...input,
+    operation: "duplicate-insert",
+  });
+}
+
+export async function insertNewEventScheduleWrite(input: {
+  client: ScheduleInsertWriteClient;
+  approvalId: ScheduleWriteApprovalIdUnion;
+  payload: ScheduleInsertWritePayload;
+}): Promise<ScheduleInsertWriteAdapterResult> {
+  return executeScheduleInsertWrite({
+    ...input,
+    operation: "new-event-insert",
+  });
 }

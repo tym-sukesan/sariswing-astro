@@ -1,6 +1,18 @@
 Last updated: 2026-07-02
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22e3 new event INSERT implementation — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-22e3-gosaki-schedule-new-event-insert-implementation` |
+| Base | `c6e48e5` |
+| approvalId | `G-22e-gosaki-schedule-new-event-insert-non-dry-run-slice` |
+| Doc | `gosaki-schedule-new-event-insert-implementation.md` |
+| Verifier | `verify-g22e3-gosaki-schedule-new-event-insert-implementation.mjs` |
+| Save / DB write | **not executed** |
+| **Next** | **G-22e4** final preflight |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22e2 new event INSERT planning — complete
 
 | Item | Value |
@@ -11,7 +23,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Doc | `gosaki-schedule-new-event-insert-planning.md` |
 | Verifier | `verify-g22e2-gosaki-schedule-new-event-insert-planning.mjs` |
 | Save / DB write | **not executed** |
-| **Next** | **G-22e3** implementation only |
+| **Next** | — (superseded by G-22e3) |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22e1 new event dry-run local QA — complete
 

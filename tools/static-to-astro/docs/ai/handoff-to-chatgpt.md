@@ -5,12 +5,12 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-22e2-gosaki-schedule-new-event-insert-planning — complete (uncommitted).
-New event INSERT planning complete; approvalId / env gate / UI gate / payload assertion / SQL templates documented.
+Current phase: G-22e3-gosaki-schedule-new-event-insert-implementation — complete (uncommitted).
+New event INSERT path implemented (config / guards / insertNewEventScheduleWrite / UI gate); default Save disabled.
 Do NOT re-Save G-22d duplicate slice (schedule-2026-03-014).
-Next: G-22e3 implementation only (new guard / approval registry / save wrapper / UI gate; no Save).
+Next: G-22e4 final preflight (fix operator payload / legacy_id / sort_order; no Save).
 Supabase interim SoT: kmjqppxjdnwwrtaeqjta — never vsbvndwuajjhnzpohghh.
-Routine dev: PUBLIC_ADMIN_WRITE_DRY_RUN=true; G-22d arm off.
+Routine dev: PUBLIC_ADMIN_WRITE_DRY_RUN=true; G-22e arm off; G-22d arm off.
 ```
 
 **Closed chains — do not re-UPDATE / re-Save / re-upload:**
@@ -20,6 +20,16 @@ Routine dev: PUBLIC_ADMIN_WRITE_DRY_RUN=true; G-22d arm off.
 - `discography-003` / `artist` (G-15e-f)
 - `discography-004` / `label` (G-17e-f)
 - `schedule-2026-04-005` / `price` (G-14b1f)
+
+## G-22e3 new event INSERT implementation — complete
+
+- **approvalId:** `G-22e-gosaki-schedule-new-event-insert-non-dry-run-slice`
+- **env arm:** `PUBLIC_ADMIN_GOSAKI_SCHEDULE_G22E_NEW_EVENT_INSERT_NON_DRY_RUN_ARMED` (default false)
+- **Modules:** `gosaki-schedule-new-event-insert-config.ts`, `-guards.ts`, `-save.ts`; `insertNewEventScheduleWrite`
+- **UI:** new draft Save gated via `evaluateG22eNewEventInsertUiGate`; default disabled
+- **Protected:** `schedule-2026-03-014` non-touch
+- **Doc:** `gosaki-schedule-new-event-insert-implementation.md`
+- **Next:** G-22e4 final preflight
 
 ## G-22e2 new event INSERT planning — complete
 

@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-22e2 Gosaki Schedule new event INSERT planning (2026-07-02):** **complete (uncommitted)** — planning doc / SQL templates / guard policy / approvalId defined for future single-slice INSERT. Approval ID: `G-22e-gosaki-schedule-new-event-insert-non-dry-run-slice`. Doc: `gosaki-schedule-new-event-insert-planning.md`. Verifier: `verify-g22e2-gosaki-schedule-new-event-insert-planning.mjs`. **No implementation / Save / DB write / GRANT.** **Next: G-22e3 implementation only.**
+**G-22e3 Gosaki Schedule new event INSERT implementation (2026-07-02):** **complete (uncommitted)** — INSERT adapter / guards / UI gate wired; default Save disabled. Approval ID: `G-22e-gosaki-schedule-new-event-insert-non-dry-run-slice`. Doc: `gosaki-schedule-new-event-insert-implementation.md`. Verifier: `verify-g22e3-gosaki-schedule-new-event-insert-implementation.mjs`. **No Save / DB write / GRANT.** **Next: G-22e4 final preflight.**
+
+**G-22e2 Gosaki Schedule new event INSERT planning (2026-07-02):** **complete (uncommitted)** — planning doc / SQL templates / guard policy / approvalId defined for future single-slice INSERT. **Superseded for implementation by G-22e3.**
 
 **G-22e1 Gosaki Schedule new event dry-run local QA (2026-07-02):** **complete** — commit `4d39598`. local dev HTTP 200 + markup + module smoke PASS; Save/delete disabled; existing/duplicate intact. **Superseded for INSERT planning by G-22e2.**
 

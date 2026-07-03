@@ -1,29 +1,30 @@
 Last updated: 2026-07-02
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22e4 new event INSERT final preflight — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-22e4-gosaki-schedule-new-event-insert-final-preflight` |
+| Base | `e566855` |
+| Target date | `2026-09-12` |
+| Target title | `【G-22eテスト】新規追加テストイベント` |
+| approvalId | `G-22e-gosaki-schedule-new-event-insert-non-dry-run-slice` |
+| legacy_id / sort_order | **pending** until beforeVerification SQL |
+| Doc | `gosaki-schedule-new-event-insert-final-preflight.md` |
+| Verifier | `verify-g22e4-gosaki-schedule-new-event-insert-final-preflight.mjs` |
+| Save / DB write | **not executed** |
+| **Next** | **G-22e5** operator Save once |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22e3 new event INSERT implementation — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-22e3-gosaki-schedule-new-event-insert-implementation` |
-| Base | `c6e48e5` |
+| Commit | `e566855` |
 | approvalId | `G-22e-gosaki-schedule-new-event-insert-non-dry-run-slice` |
 | Doc | `gosaki-schedule-new-event-insert-implementation.md` |
-| Verifier | `verify-g22e3-gosaki-schedule-new-event-insert-implementation.mjs` |
-| Save / DB write | **not executed** |
-| **Next** | **G-22e4** final preflight |
-
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22e2 new event INSERT planning — complete
-
-| Item | Value |
-| --- | --- |
-| Phase | `G-22e2-gosaki-schedule-new-event-insert-planning` |
-| Base | `4d39598` |
-| approvalId | `G-22e-gosaki-schedule-new-event-insert-non-dry-run-slice` |
-| Doc | `gosaki-schedule-new-event-insert-planning.md` |
-| Verifier | `verify-g22e2-gosaki-schedule-new-event-insert-planning.mjs` |
-| Save / DB write | **not executed** |
-| **Next** | — (superseded by G-22e3) |
+| **Next** | — (superseded by G-22e4) |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22e1 new event dry-run local QA — complete
 

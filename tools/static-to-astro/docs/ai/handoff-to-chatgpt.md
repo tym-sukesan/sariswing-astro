@@ -5,12 +5,13 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-22e3-gosaki-schedule-new-event-insert-implementation — complete (uncommitted).
-New event INSERT path implemented (config / guards / insertNewEventScheduleWrite / UI gate); default Save disabled.
+Current phase: G-22e4-gosaki-schedule-new-event-insert-final-preflight — complete (uncommitted).
+Target test event locked (2026-09-12 / 【G-22eテスト】新規追加テストイベント); legacy_id/sort_order pending until beforeVerification SQL.
 Do NOT re-Save G-22d duplicate slice (schedule-2026-03-014).
-Next: G-22e4 final preflight (fix operator payload / legacy_id / sort_order; no Save).
+Next: G-22e5 operator Save once (run §5 SQL first, fix allocation, then §8 env + Save).
 Supabase interim SoT: kmjqppxjdnwwrtaeqjta — never vsbvndwuajjhnzpohghh.
 Routine dev: PUBLIC_ADMIN_WRITE_DRY_RUN=true; G-22e arm off; G-22d arm off.
+published=false → no public reflection for G-22e slice.
 ```
 
 **Closed chains — do not re-UPDATE / re-Save / re-upload:**
@@ -20,6 +21,16 @@ Routine dev: PUBLIC_ADMIN_WRITE_DRY_RUN=true; G-22e arm off; G-22d arm off.
 - `discography-003` / `artist` (G-15e-f)
 - `discography-004` / `label` (G-17e-f)
 - `schedule-2026-04-005` / `price` (G-14b1f)
+
+## G-22e4 new event INSERT final preflight — complete
+
+- **Target:** test event `2026-09-12` / `【G-22eテスト】新規追加テストイベント` / `published=false`
+- **approvalId:** `G-22e-gosaki-schedule-new-event-insert-non-dry-run-slice`
+- **Allocation:** `legacy_id` / `sort_order` **pending** until beforeVerification SQL; code preflight empty-month → `schedule-2026-09-001` / `sort_order=10`
+- **SQL:** beforeVerification / afterVerification SELECT-only; rollback DELETE template (not executed)
+- **Protected:** `schedule-2026-03-014` non-touch
+- **Doc:** `gosaki-schedule-new-event-insert-final-preflight.md`
+- **Next:** G-22e5 operator Save once
 
 ## G-22e3 new event INSERT implementation — complete
 

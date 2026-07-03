@@ -5,10 +5,11 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-22d3c-gosaki-schedule-duplicate-insert-execution-result — complete (uncommitted).
-G-22d3 duplicate INSERT single-slice succeeded; chain closed. Do NOT re-Save G-22d slice.
+Current phase: G-22d3d-gosaki-schedule-duplicate-insert-chain-closure — complete (uncommitted).
+G-22b→G-22d3c duplicate INSERT chain closed. Do NOT re-Save G-22d slice.
 insertedId: 434e4051-86c3-473e-9ad0-39d2e5042fb8 / legacy_id: schedule-2026-03-014 / published=false.
-Public reflection not executed. G-22d3 DB write closed (1 INSERT only).
+Public reflection not executed. authenticated INSERT grant applied (G-22d3b3).
+Next P0: G-22e Schedule new event → G-22f delete/unpublish → G-22g CRUD closure.
 Supabase interim SoT: kmjqppxjdnwwrtaeqjta — never vsbvndwuajjhnzpohghh.
 Routine dev: PUBLIC_ADMIN_WRITE_DRY_RUN=true; G-22d arm off.
 ```
@@ -21,15 +22,22 @@ Routine dev: PUBLIC_ADMIN_WRITE_DRY_RUN=true; G-22d arm off.
 - `discography-004` / `label` (G-17e-f)
 - `schedule-2026-04-005` / `price` (G-14b1f)
 
-## G-22d3c duplicate INSERT execution result — complete (chain closed)
+## G-22d3d duplicate INSERT chain closure — complete
 
-- **insertedId:** `434e4051-86c3-473e-9ad0-39d2e5042fb8`
-- **legacy_id:** `schedule-2026-03-014`
+- **Chain:** G-22b → G-22d3c **closed**
+- **insertedId:** `434e4051-86c3-473e-9ad0-39d2e5042fb8` / **legacy_id:** `schedule-2026-03-014`
 - **published:** `false` — public reflection **not** executed
-- **afterVerification:** PASS; source unchanged; march_count=14
-- **rollback:** not needed / not executed
-- **Doc:** `gosaki-schedule-duplicate-insert-execution-result.md`
+- **Permissions:** `authenticated INSERT` yes (G-22d3b3); RLS `schedules_admin_all` + `is_admin()`; anon INSERT no
+- **rollback:** not needed / not executed (SQL archived)
+- **Doc:** `gosaki-schedule-duplicate-insert-chain-closure.md`
+- **Next P0:** G-22e new event → G-22f delete/unpublish → G-22g CRUD closure
 - **Do not re-Save** G-22d duplicate slice
+
+## G-22d3c duplicate INSERT execution result — complete
+
+- **Commit:** `4e3d55a`
+- **Doc:** `gosaki-schedule-duplicate-insert-execution-result.md`
+- **Superseded by:** G-22d3d closure
 
 ## G-22d3b2–b4 INSERT grant + duplicate Save — complete
 

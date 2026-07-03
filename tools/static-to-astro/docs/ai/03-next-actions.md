@@ -1,17 +1,27 @@
 Last updated: 2026-07-02
 Project: Static-to-Astro CMS / Musician CMS Kit
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22d3c duplicate INSERT execution result — complete (chain closed)
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22d3d duplicate INSERT chain closure — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-22d3d-gosaki-schedule-duplicate-insert-chain-closure` |
+| Base | `4e3d55a` |
+| Chain | G-22b → G-22d3c **closed** |
+| Doc | `gosaki-schedule-duplicate-insert-chain-closure.md` |
+| Verifier | `verify-g22d3d-gosaki-schedule-duplicate-insert-chain-closure.mjs` |
+| **Next P0** | **G-22e** Schedule new event → **G-22f** delete/unpublish → **G-22g** CRUD closure |
+
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22d3c duplicate INSERT execution result — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-22d3c-gosaki-schedule-duplicate-insert-execution-result` |
-| Base | `a3c8f7c` |
+| Commit | `4e3d55a` |
 | `insertedId` | `434e4051-86c3-473e-9ad0-39d2e5042fb8` |
 | `legacy_id` | `schedule-2026-03-014` |
 | Doc | `gosaki-schedule-duplicate-insert-execution-result.md` |
-| Verifier | `verify-g22d3c-gosaki-schedule-duplicate-insert-execution-result.mjs` |
-| **Next** | — (G-22d3 closed; no re-Save) |
+| **Next** | — (superseded by G-22d3d closure) |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22d3b2–b4 INSERT grant + duplicate Save — complete
 

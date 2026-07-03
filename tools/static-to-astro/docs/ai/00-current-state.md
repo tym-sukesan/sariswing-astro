@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-22e Gosaki Schedule new event dry-run UI implementation (2026-07-02):** **complete (uncommitted)** — add button wired; new draft mode + dry-run preview; Save disabled. Doc: `gosaki-schedule-new-event-dry-run-ui-implementation.md`. Verifier: `verify-g22e-gosaki-schedule-new-event-dry-run-ui-implementation.mjs`. **No Save / DB write.** **Next: G-22e1 local QA.**
+**G-22e1 Gosaki Schedule new event dry-run local QA (2026-07-02):** **complete (uncommitted)** — local dev HTTP 200 + markup + module smoke PASS; add button enabled, new draft mode, empty→warnings, valid→wouldInsert=true, saveAllowed=false; Save/delete disabled; existing/duplicate intact. Doc: `gosaki-schedule-new-event-dry-run-local-qa.md`. Verifier: `verify-g22e1-gosaki-schedule-new-event-dry-run-local-qa.mjs`. **No Save / DB write.** **Next: G-22e2 new event INSERT planning.**
+
+**G-22e Gosaki Schedule new event dry-run UI implementation (2026-07-02):** **complete** — commit `c716891`. add button wired; new draft mode + dry-run preview; Save disabled. Doc: `gosaki-schedule-new-event-dry-run-ui-implementation.md`. **Superseded for QA by G-22e1.**
 
 **G-22d3d Gosaki Schedule duplicate INSERT chain closure (2026-07-02):** **complete** — commit `2ed6122`. **Superseded for new event work by G-22e.**
 

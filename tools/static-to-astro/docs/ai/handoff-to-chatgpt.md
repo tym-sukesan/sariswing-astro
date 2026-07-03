@@ -5,10 +5,10 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-22e-gosaki-schedule-new-event-dry-run-ui-implementation — complete (uncommitted).
-New event dry-run UI wired; Save/INSERT disabled. Duplicate INSERT chain closed (G-22d3d).
+Current phase: G-22e1-gosaki-schedule-new-event-dry-run-local-qa — complete (uncommitted).
+New event dry-run UI QA PASS on local dev; Save/INSERT disabled; existing/duplicate intact.
 Do NOT re-Save G-22d duplicate slice (schedule-2026-03-014).
-Next: G-22e1 local QA → G-22e2 new event INSERT planning.
+Next: G-22e2 new event INSERT planning (new guard / approvalId / legacy_id allocation).
 Supabase interim SoT: kmjqppxjdnwwrtaeqjta — never vsbvndwuajjhnzpohghh.
 Routine dev: PUBLIC_ADMIN_WRITE_DRY_RUN=true; G-22d arm off.
 ```
@@ -21,14 +21,20 @@ Routine dev: PUBLIC_ADMIN_WRITE_DRY_RUN=true; G-22d arm off.
 - `discography-004` / `label` (G-17e-f)
 - `schedule-2026-04-005` / `price` (G-14b1f)
 
+## G-22e1 new event dry-run local QA — complete
+
+- **QA:** HTTP 200 + markup + module smoke PASS; no blocking issues
+- **Empty form:** 3 warnings (date/title/venue), `wouldInsert=false`
+- **Valid form:** `operation=new`, `wouldInsert=true`, `actualWrite=false`, `saveAllowed=false`, `published=false`, `site_slug=gosaki-piano`
+- **Save / delete:** disabled; existing / duplicate modes intact
+- **Doc:** `gosaki-schedule-new-event-dry-run-local-qa.md`
+- **Next:** G-22e2 new event INSERT planning
+
 ## G-22e new event dry-run UI — complete
 
 - **Add button:** enabled — 「新規追加案を作成」
-- **Draft mode:** `new` (separate from `existing` / `duplicate`)
-- **Dry-run:** `operation=new`, `actualWrite=false`, `saveAllowed=false`
-- **Save / INSERT:** **disabled** — no insert save module
-- **Doc:** `gosaki-schedule-new-event-dry-run-ui-implementation.md`
-- **Next:** G-22e1 local QA
+- **Save / INSERT:** **disabled**
+- **Superseded by:** G-22e1 QA
 
 ## G-22d3d duplicate INSERT chain closure — complete
 

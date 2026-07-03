@@ -1,17 +1,25 @@
 Last updated: 2026-07-02
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22e1 new event dry-run local QA — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-22e1-gosaki-schedule-new-event-dry-run-local-qa` |
+| Base | `c716891` |
+| QA | HTTP 200 + markup + module smoke PASS; no blocking issues |
+| Doc | `gosaki-schedule-new-event-dry-run-local-qa.md` |
+| Verifier | `verify-g22e1-gosaki-schedule-new-event-dry-run-local-qa.mjs` |
+| Save / INSERT | **not executed** |
+| **Next** | **G-22e2** new event INSERT planning |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22e new event dry-run UI — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-22e-gosaki-schedule-new-event-dry-run-ui-implementation` |
-| Base | `2ed6122` |
-| approvalId (dry-run) | `G-22e-gosaki-schedule-new-event-dry-run` |
-| Doc | `gosaki-schedule-new-event-dry-run-ui-implementation.md` |
-| Verifier | `verify-g22e-gosaki-schedule-new-event-dry-run-ui-implementation.mjs` |
-| Save / INSERT | **disabled** |
-| **Next** | **G-22e1** local QA |
+| Commit | `c716891` |
+| **Next** | — (superseded by G-22e1 QA) |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22d3d duplicate INSERT chain closure — complete
 

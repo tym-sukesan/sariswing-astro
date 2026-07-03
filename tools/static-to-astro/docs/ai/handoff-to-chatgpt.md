@@ -5,11 +5,10 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-22d3d-gosaki-schedule-duplicate-insert-chain-closure — complete (uncommitted).
-G-22b→G-22d3c duplicate INSERT chain closed. Do NOT re-Save G-22d slice.
-insertedId: 434e4051-86c3-473e-9ad0-39d2e5042fb8 / legacy_id: schedule-2026-03-014 / published=false.
-Public reflection not executed. authenticated INSERT grant applied (G-22d3b3).
-Next P0: G-22e Schedule new event → G-22f delete/unpublish → G-22g CRUD closure.
+Current phase: G-22e-gosaki-schedule-new-event-dry-run-ui-implementation — complete (uncommitted).
+New event dry-run UI wired; Save/INSERT disabled. Duplicate INSERT chain closed (G-22d3d).
+Do NOT re-Save G-22d duplicate slice (schedule-2026-03-014).
+Next: G-22e1 local QA → G-22e2 new event INSERT planning.
 Supabase interim SoT: kmjqppxjdnwwrtaeqjta — never vsbvndwuajjhnzpohghh.
 Routine dev: PUBLIC_ADMIN_WRITE_DRY_RUN=true; G-22d arm off.
 ```
@@ -22,15 +21,18 @@ Routine dev: PUBLIC_ADMIN_WRITE_DRY_RUN=true; G-22d arm off.
 - `discography-004` / `label` (G-17e-f)
 - `schedule-2026-04-005` / `price` (G-14b1f)
 
+## G-22e new event dry-run UI — complete
+
+- **Add button:** enabled — 「新規追加案を作成」
+- **Draft mode:** `new` (separate from `existing` / `duplicate`)
+- **Dry-run:** `operation=new`, `actualWrite=false`, `saveAllowed=false`
+- **Save / INSERT:** **disabled** — no insert save module
+- **Doc:** `gosaki-schedule-new-event-dry-run-ui-implementation.md`
+- **Next:** G-22e1 local QA
+
 ## G-22d3d duplicate INSERT chain closure — complete
 
-- **Chain:** G-22b → G-22d3c **closed**
-- **insertedId:** `434e4051-86c3-473e-9ad0-39d2e5042fb8` / **legacy_id:** `schedule-2026-03-014`
-- **published:** `false` — public reflection **not** executed
-- **Permissions:** `authenticated INSERT` yes (G-22d3b3); RLS `schedules_admin_all` + `is_admin()`; anon INSERT no
-- **rollback:** not needed / not executed (SQL archived)
-- **Doc:** `gosaki-schedule-duplicate-insert-chain-closure.md`
-- **Next P0:** G-22e new event → G-22f delete/unpublish → G-22g CRUD closure
+- **Commit:** `2ed6122`
 - **Do not re-Save** G-22d duplicate slice
 
 ## G-22d3c duplicate INSERT execution result — complete

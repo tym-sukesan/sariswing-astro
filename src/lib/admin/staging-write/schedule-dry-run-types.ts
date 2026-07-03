@@ -2,7 +2,7 @@
  * G-6-e3 — Schedule dry-run types (staging shell only; no writes).
  */
 
-export type ScheduleDryRunOperation = "update" | "duplicate";
+export type ScheduleDryRunOperation = "update" | "duplicate" | "new";
 
 export type ScheduleDryRunSource = {
   id: string;

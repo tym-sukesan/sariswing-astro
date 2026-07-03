@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-22d3d Gosaki Schedule duplicate INSERT chain closure (2026-07-02):** **complete (uncommitted)** — G-22b→G-22d3c chain closed; DB/permission state documented; next P0: G-22e/G-22f/G-22g. Doc: `gosaki-schedule-duplicate-insert-chain-closure.md`. Verifier: `verify-g22d3d-gosaki-schedule-duplicate-insert-chain-closure.mjs`. **Do not re-Save G-22d slice.** **No DB write / GRANT in this phase.**
+**G-22e Gosaki Schedule new event dry-run UI implementation (2026-07-02):** **complete (uncommitted)** — add button wired; new draft mode + dry-run preview; Save disabled. Doc: `gosaki-schedule-new-event-dry-run-ui-implementation.md`. Verifier: `verify-g22e-gosaki-schedule-new-event-dry-run-ui-implementation.mjs`. **No Save / DB write.** **Next: G-22e1 local QA.**
+
+**G-22d3d Gosaki Schedule duplicate INSERT chain closure (2026-07-02):** **complete** — commit `2ed6122`. **Superseded for new event work by G-22e.**
 
 **G-22d3c Gosaki Schedule duplicate INSERT execution result (2026-07-02):** **complete** — commit `4e3d55a`. `insertedId=434e4051-86c3-473e-9ad0-39d2e5042fb8`; `legacy_id=schedule-2026-03-014`; afterVerification PASS. Doc: `gosaki-schedule-duplicate-insert-execution-result.md`. **Superseded for closure by G-22d3d.**
 

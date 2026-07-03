@@ -191,13 +191,14 @@ function displayValue(value: string | null | undefined): string {
         type="button"
         class="admin-button"
         id="gosaki-schedule-add-btn"
-        data-gosaki-schedule-action-disabled
-        disabled
+        title="新規追加案を作成します（保存はまだできません）"
       >
-        追加
+        新規追加案を作成
       </button>
     </div>
-    <p class="admin-gosaki-save-note" role="note">※ 新規追加の直接保存はまだ無効です。必要な場合は戸山が確認して反映します。</p>
+    <p class="admin-gosaki-save-note" role="note">
+      ※ 新規追加案の作成と「変更を確認」ができます。保存は現在無効です。必要な場合は戸山が確認して反映します。
+    </p>
   </section>
 
   <div class="gosaki-schedule-admin-workspace">
@@ -312,6 +313,22 @@ function displayValue(value: string | null | undefined): string {
         hidden
         novalidate
       >
+        <div
+          id="gosaki-schedule-new-event-draft-banner"
+          class="gosaki-schedule-new-event-draft-banner admin-form__field--full"
+          hidden
+          data-draft-mode=""
+          role="status"
+        >
+          <p class="gosaki-schedule-new-event-draft-banner__title">新規追加案</p>
+          <p class="gosaki-schedule-new-event-draft-banner__body">
+            まだ保存されていません。保存は戸山が確認して反映します。
+          </p>
+          <p class="gosaki-schedule-new-event-draft-banner__hint">
+            変更を確認すると、新規追加予定の内容を確認できます。保存は現在無効です。
+          </p>
+        </div>
+
         <div
           id="gosaki-schedule-duplicate-draft-banner"
           class="gosaki-schedule-duplicate-draft-banner admin-form__field--full"
@@ -460,7 +477,7 @@ function displayValue(value: string | null | undefined): string {
           現在、公開サイトへの反映は戸山が確認して行います。
         </p>
         <p class="admin-gosaki-save-note" role="note">
-          ※ 複製案の作成はできます。保存・削除は戸山が確認して反映します。
+          ※ 新規追加案・複製案の作成と「変更を確認」ができます。保存・削除は戸山が確認して反映します。
         </p>
       </form>
     </section>

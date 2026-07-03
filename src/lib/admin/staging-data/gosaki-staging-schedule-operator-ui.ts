@@ -46,6 +46,13 @@ import {
   executeG22dScheduleDuplicateInsertSave,
   type G22dDuplicateInsertSaveOutcome,
 } from "../staging-write/gosaki-schedule-duplicate-insert-save";
+import {
+  buildGosakiScheduleNewEventDraft,
+  executeG22eScheduleNewEventDryRun,
+  GOSAKI_SCHEDULE_NEW_EVENT_DRAFT_LEGACY_LABEL,
+  type G22eScheduleNewEventDryRunResult,
+  type GosakiScheduleNewEventDraftState,
+} from "../staging-write/gosaki-schedule-new-event-dry-run";
 
 type PublishedFilter = "published" | "all" | "draft";
 
@@ -79,6 +86,8 @@ let editDraftMode: GosakiScheduleEditDraftMode = "existing";
 let duplicateSourceSnapshot: ScheduleRecord | null = null;
 let duplicateDraftState: GosakiScheduleDuplicateDraftState | null = null;
 let lastDuplicateDryRunResult: G22bScheduleDuplicateDryRunResult | null = null;
+let newEventDraftState: GosakiScheduleNewEventDraftState | null = null;
+let lastNewEventDryRunResult: G22eScheduleNewEventDryRunResult | null = null;
 
 function isG9kOperatorSaveEnabled(): boolean {
   return getG9kExistingEventSaveButtonConfig().saveEnabled;
@@ -283,12 +292,28 @@ function isDuplicateDraftMode(): boolean {
   return editDraftMode === "duplicate" && duplicateDraftState !== null;
 }
 
+function isNewEventDraftMode(): boolean {
+  return editDraftMode === "new" && newEventDraftState !== null;
+}
+
+function resetNewEventDraftMode(): void {
+  editDraftMode = "existing";
+  newEventDraftState = null;
+  lastNewEventDryRunResult = null;
+  updateNewEventDraftBanner(null);
+}
+
 function resetDuplicateDraftMode(): void {
   editDraftMode = "existing";
   duplicateSourceSnapshot = null;
   duplicateDraftState = null;
   lastDuplicateDryRunResult = null;
   updateDuplicateDraftBanner(null);
+}
+
+function resetNonExistingDraftModes(): void {
+  resetDuplicateDraftMode();
+  resetNewEventDraftMode();
 }
 
 function updateDuplicateDraftBanner(state: GosakiScheduleDuplicateDraftState | null): void {
@@ -316,6 +341,20 @@ function updateDuplicateDraftBanner(state: GosakiScheduleDuplicateDraftState | n
   }
 }
 
+function updateNewEventDraftBanner(state: GosakiScheduleNewEventDraftState | null): void {
+  const banner = document.getElementById("gosaki-schedule-new-event-draft-banner");
+  if (!banner) return;
+
+  if (!state) {
+    banner.hidden = true;
+    banner.dataset.draftMode = "";
+    return;
+  }
+
+  banner.hidden = false;
+  banner.dataset.draftMode = "new";
+}
+
 function readEditFormDate(): string {
   const el = document.getElementById("gosaki-edit-date") as HTMLInputElement | null;
   return normalizeDateInput(el?.value ?? "");
@@ -326,7 +365,89 @@ function readEditFormPublished(): boolean {
   return el?.checked === true;
 }
 
+function readAddFormSeed(): Partial<ScheduleRecord> {
+  const date = normalizeDateInput(
+    (document.getElementById("gosaki-add-date") as HTMLInputElement | null)?.value ?? "",
+  );
+  const publishedEl = document.getElementById("gosaki-add-published") as HTMLInputElement | null;
+  return {
+    date,
+    title: String(
+      (document.getElementById("gosaki-add-title") as HTMLInputElement | null)?.value ?? "",
+    ),
+    venue: String(
+      (document.getElementById("gosaki-add-venue") as HTMLInputElement | null)?.value ?? "",
+    ),
+    open_time: String(
+      (document.getElementById("gosaki-add-open-time") as HTMLInputElement | null)?.value ?? "",
+    ),
+    start_time: String(
+      (document.getElementById("gosaki-add-start-time") as HTMLInputElement | null)?.value ?? "",
+    ),
+    price: String(
+      (document.getElementById("gosaki-add-price") as HTMLInputElement | null)?.value ?? "",
+    ),
+    description: String(
+      (document.getElementById("gosaki-add-description") as HTMLTextAreaElement | null)?.value ??
+        "",
+    ),
+    published: publishedEl?.checked === true,
+  };
+}
+
+function enterNewEventDraftMode(): void {
+  if (isDuplicateDraftMode()) {
+    if (
+      !window.confirm(
+        "複製案の編集をやめて、新規追加案を作成しますか？（複製案は保存されません）",
+      )
+    ) {
+      return;
+    }
+    resetDuplicateDraftMode();
+  }
+
+  if (isNewEventDraftMode()) {
+    document
+      .getElementById("gosaki-schedule-operator-edit")
+      ?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    return;
+  }
+
+  const seed = readAddFormSeed();
+  newEventDraftState = buildGosakiScheduleNewEventDraft({
+    ...seed,
+    published: false,
+  });
+  editDraftMode = "new";
+  selectedRowId = null;
+  selectedRowSnapshot = null;
+  lastDryRunResult = null;
+  lastDuplicateDryRunResult = null;
+  lastNewEventDryRunResult = null;
+  clearSaveResult();
+  clearDryRunResult();
+  updateDuplicateDraftBanner(null);
+  updateNewEventDraftBanner(newEventDraftState);
+  renderEditForm(newEventDraftState.draft, { clearDryRun: false });
+  updateSaveButtonState(null);
+  document
+    .getElementById("gosaki-schedule-operator-edit")
+    ?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
+
 function enterDuplicateDraftFromSelectedRow(): void {
+  if (isNewEventDraftMode()) {
+    if (
+      !window.confirm(
+        "新規追加案の編集をやめて、複製案を作成しますか？（新規追加案は保存されません）",
+      )
+    ) {
+      return;
+    }
+    resetNewEventDraftMode();
+  }
+
   if (!selectedRowSnapshot || selectedRowSnapshot.id === GOSAKI_SCHEDULE_DUPLICATE_DRAFT_UNSAVED_ID) {
     window.alert("先に一覧から複製元の公演を選んでください。");
     return;
@@ -368,12 +489,24 @@ function setEditFormUpdatedAt(value: string | null | undefined): void {
     el.textContent = "（未保存）";
     return;
   }
+  if (isNewEventDraftMode()) {
+    el.textContent = "（未保存）";
+    return;
+  }
   el.textContent = String(value ?? "").trim() || "—";
 }
 
 function setEditFormLegacyId(value: string | null | undefined): void {
   const el = document.getElementById("gosaki-edit-legacy-id-value");
   if (!el) return;
+  if (isDuplicateDraftMode()) {
+    el.textContent = GOSAKI_SCHEDULE_DUPLICATE_DRAFT_LEGACY_LABEL;
+    return;
+  }
+  if (isNewEventDraftMode()) {
+    el.textContent = GOSAKI_SCHEDULE_NEW_EVENT_DRAFT_LEGACY_LABEL;
+    return;
+  }
   el.textContent = String(value ?? "").trim() || "—";
 }
 
@@ -401,7 +534,7 @@ function renderEditForm(
     emptyEl.hidden = false;
     formEl.hidden = true;
     selectedRowSnapshot = null;
-    resetDuplicateDraftMode();
+    resetNonExistingDraftModes();
     clearDryRunResult();
     if (titleEl) titleEl.textContent = "選択中の公演を編集";
     if (leadEl) leadEl.textContent = "一覧で選んだ公演の内容を変更します。";
@@ -426,6 +559,7 @@ function renderEditForm(
   setPreviewLink("gosaki-edit-preview-link", month);
 
   if (isDuplicateDraftMode()) {
+    updateNewEventDraftBanner(null);
     if (titleEl) titleEl.textContent = "複製案を編集";
     if (leadEl) {
       leadEl.textContent =
@@ -433,7 +567,19 @@ function renderEditForm(
     }
     setEditFormUpdatedAt(null);
     setEditFormLegacyId(GOSAKI_SCHEDULE_DUPLICATE_DRAFT_LEGACY_LABEL);
+  } else if (isNewEventDraftMode()) {
+    updateDuplicateDraftBanner(null);
+    if (titleEl) titleEl.textContent = "新規追加案を編集";
+    if (leadEl) {
+      leadEl.textContent =
+        "新規追加案です。まだ保存されていません。変更を確認すると、新規追加予定の内容を確認できます。";
+    }
+    setEditFormUpdatedAt(null);
+    setEditFormLegacyId(GOSAKI_SCHEDULE_NEW_EVENT_DRAFT_LEGACY_LABEL);
+    setCheckbox("gosaki-edit-published", false);
   } else {
+    updateDuplicateDraftBanner(null);
+    updateNewEventDraftBanner(null);
     if (titleEl) titleEl.textContent = "選択中の公演を編集";
     if (leadEl) leadEl.textContent = "一覧で選んだ公演の内容を変更します。";
     setEditFormUpdatedAt(row.updated_at);
@@ -460,6 +606,7 @@ function readEditFormSafeValues(): G9kExistingEventSaveButtonFormValues {
 function clearDryRunResult(): void {
   lastDryRunResult = null;
   lastDuplicateDryRunResult = null;
+  lastNewEventDryRunResult = null;
   const el = document.getElementById("gosaki-schedule-edit-dry-run-result");
   if (!el) return;
   el.hidden = true;
@@ -491,7 +638,7 @@ function showDryRunSavedState(): void {
 }
 
 function markDryRunStale(): void {
-  if (!lastDryRunResult && !lastDuplicateDryRunResult && !lastSaveOutcome) return;
+  if (!lastDryRunResult && !lastDuplicateDryRunResult && !lastNewEventDryRunResult && !lastSaveOutcome) return;
   clearSaveResult();
   lastSaveOutcome = null;
   const el = document.getElementById("gosaki-schedule-edit-dry-run-result");
@@ -508,6 +655,7 @@ function markDryRunStale(): void {
   }
   lastDryRunResult = null;
   lastDuplicateDryRunResult = null;
+  lastNewEventDryRunResult = null;
   updateSaveButtonState(null);
 }
 
@@ -531,6 +679,18 @@ function updateSaveButtonState(result: G9kExistingEventSaveButtonDryRunResult | 
     "gosaki-schedule-update-btn",
   ) as HTMLButtonElement | null;
   if (!button) return;
+
+  if (isNewEventDraftMode()) {
+    button.disabled = true;
+    button.setAttribute("data-gosaki-schedule-action-disabled", "");
+    button.setAttribute("data-gosaki-save-allowed", "false");
+    button.textContent = "保存（現在は無効）";
+    button.title = "新規追加の保存はまだ無効です";
+    setSaveButtonNote(
+      "保存は現在無効です。変更を確認すると、新規追加予定の内容を確認できます。保存は戸山が確認して反映します。",
+    );
+    return;
+  }
 
   if (isDuplicateDraftMode()) {
     const gate = evaluateG22dDuplicateInsertUiGate({
@@ -634,6 +794,152 @@ function renderBeforeAfterRows(
     .join("");
 }
 
+function renderValidationWarningsList(warnings: string[]): string {
+  if (warnings.length === 0) return "";
+  const items = warnings.map((message) => `<li>${escapeHtml(message)}</li>`).join("");
+  return `<ul class="gosaki-schedule-edit-dry-run__validation-warnings">${items}</ul>`;
+}
+
+function renderDuplicateDryRunDevDetails(result: G22bScheduleDuplicateDryRunResult): string {
+  const insertConfig = getG22dDuplicateInsertConfig();
+  const gate = evaluateG22dDuplicateInsertUiGate({
+    signedIn: stagingAuthSignedIn === true,
+    duplicateMode: isDuplicateDraftMode(),
+    source: duplicateSourceSnapshot,
+    duplicateDryRunResult: result.ok ? result : null,
+  });
+
+  return `
+    <details class="gosaki-schedule-duplicate-dry-run-dev">
+      <summary>開発者向け詳細</summary>
+      <dl class="gosaki-schedule-edit-dry-run__target">
+        <div><dt>phase</dt><dd><code>${escapeHtml(result.phase)}</code></dd></div>
+        <div><dt>approvalId (dry-run)</dt><dd><code>${escapeHtml(result.approvalId)}</code></dd></div>
+        <div><dt>insert approvalId</dt><dd><code>${escapeHtml(insertConfig.approvalId)}</code></dd></div>
+        <div><dt>sourceId (fixed)</dt><dd><code>${escapeHtml(G22D_DUPLICATE_INSERT_SOURCE_ID)}</code></dd></div>
+        <div><dt>planned legacy_id</dt><dd><code>${escapeHtml(G22D_DUPLICATE_INSERT_PLANNED_LEGACY_ID)}</code></dd></div>
+        <div><dt>G-22d env arm</dt><dd><code>${escapeHtml(insertConfig.envArm)}=${insertConfig.armed ? "true" : "false"}</code></dd></div>
+        <div><dt>insert saveEnabled</dt><dd><code>${String(insertConfig.saveEnabled)}</code></dd></div>
+        <div><dt>insert saveAllowed (UI)</dt><dd><code>${String(gate.saveAllowed)}</code></dd></div>
+        <div><dt>site_slug</dt><dd><code>${escapeHtml(String(result.payload.site_slug ?? "—"))}</code></dd></div>
+      </dl>
+      ${insertConfig.armFailureReason ? `<p class="gosaki-schedule-edit-dry-run__note">${escapeHtml(insertConfig.armFailureReason)}</p>` : ""}
+      <pre class="gosaki-schedule-duplicate-dry-run-dev__json">${escapeHtml(JSON.stringify(result.payload, null, 2))}</pre>
+    </details>
+  `;
+}
+
+function renderNewEventDryRunDevDetails(result: G22eScheduleNewEventDryRunResult): string {
+  return `
+    <details class="gosaki-schedule-new-event-dry-run-dev">
+      <summary>開発者向け詳細</summary>
+      <dl class="gosaki-schedule-edit-dry-run__target">
+        <div><dt>phase</dt><dd><code>${escapeHtml(result.phase)}</code></dd></div>
+        <div><dt>approvalId (dry-run)</dt><dd><code>${escapeHtml(result.approvalId)}</code></dd></div>
+        <div><dt>insert saveEnabled</dt><dd><code>false</code></dd></div>
+        <div><dt>site_slug</dt><dd><code>${escapeHtml(String(result.payload.site_slug ?? "—"))}</code></dd></div>
+      </dl>
+      <pre class="gosaki-schedule-new-event-dry-run-dev__json">${escapeHtml(JSON.stringify(result.payload, null, 2))}</pre>
+    </details>
+  `;
+}
+
+function renderNewEventDryRunResult(result: G22eScheduleNewEventDryRunResult): void {
+  const el = document.getElementById("gosaki-schedule-edit-dry-run-result");
+  if (!el) return;
+
+  el.hidden = false;
+  el.classList.remove(
+    "gosaki-schedule-edit-dry-run--ok",
+    "gosaki-schedule-edit-dry-run--empty",
+    "gosaki-schedule-edit-dry-run--error",
+    "gosaki-schedule-edit-dry-run--stale",
+    "gosaki-schedule-edit-dry-run--ready",
+    "gosaki-schedule-edit-dry-run--saved",
+    "gosaki-schedule-edit-dry-run--duplicate",
+    "gosaki-schedule-edit-dry-run--new",
+  );
+
+  updateSaveButtonState(null);
+
+  if (!result.ok) {
+    el.classList.add("gosaki-schedule-edit-dry-run--error");
+    el.innerHTML = `
+      <h3 class="gosaki-schedule-edit-dry-run__title">新規追加案の確認結果</h3>
+      <p class="gosaki-schedule-edit-dry-run__message">新規追加案を確認できませんでした。入力内容を確認してください。</p>
+      ${renderGuardErrorList(result.guardErrors)}
+      <p class="gosaki-schedule-edit-dry-run__note">この確認ではデータベースは変更されません。保存は現在無効です。</p>
+      ${renderNewEventDryRunDevDetails(result)}
+    `;
+    return;
+  }
+
+  el.classList.add(
+    "gosaki-schedule-edit-dry-run--ok",
+    "gosaki-schedule-edit-dry-run--ready",
+    "gosaki-schedule-edit-dry-run--new",
+  );
+
+  const month = result.derivedPreview?.recalculatedMonth ?? "—";
+  const group = result.derivedPreview?.scheduleGroup ?? "—";
+  const legacyLabel =
+    result.payload.legacy_id == null ? GOSAKI_SCHEDULE_NEW_EVENT_DRAFT_LEGACY_LABEL : String(result.payload.legacy_id);
+
+  el.innerHTML = `
+    <h3 class="gosaki-schedule-edit-dry-run__title">新規追加案の確認結果</h3>
+    <p class="gosaki-schedule-edit-dry-run__message gosaki-schedule-edit-dry-run__message--ready">
+      ${escapeHtml(result.message)}
+    </p>
+    <p class="gosaki-schedule-edit-dry-run__note">
+      まだ保存されていません。保存は戸山が確認して反映します。保存は現在無効です。
+    </p>
+    ${renderValidationWarningsList(result.validation.warnings)}
+    ${result.validation.ok ? "" : renderGuardErrorList(result.guardErrors.filter((e) => !result.validation.warnings.includes(e)))}
+    <dl class="gosaki-schedule-edit-dry-run__target">
+      <div>
+        <dt>操作</dt>
+        <dd><code>new</code>（新規追加の予定）</dd>
+      </div>
+      <div>
+        <dt>legacy_id</dt>
+        <dd><code>${escapeHtml(legacyLabel)}</code></dd>
+      </div>
+      <div>
+        <dt>追加予定の日付</dt>
+        <dd>${escapeHtml(String(result.payload.date ?? "—"))}</dd>
+      </div>
+      <div>
+        <dt>タイトル</dt>
+        <dd>${escapeHtml(displayDryRunValue(String(result.payload.title ?? "")))}</dd>
+      </div>
+      <div>
+        <dt>表示先の月</dt>
+        <dd><code>${escapeHtml(String(month))}</code></dd>
+      </div>
+      <div>
+        <dt>区分</dt>
+        <dd>${escapeHtml(String(group))}</dd>
+      </div>
+      <div>
+        <dt>published</dt>
+        <dd><code>false</code></dd>
+      </div>
+    </dl>
+    <div class="gosaki-schedule-edit-dry-run__chips">
+      <span class="gosaki-schedule-edit-dry-run__chips-label">payload keys</span>
+      ${renderPayloadKeys(result.payloadKeys)}
+    </div>
+    <p class="gosaki-schedule-edit-dry-run__lock">
+      安全確認:
+      <code>dryRun=true</code>,
+      <code>actualWrite=false</code>,
+      <code>wouldInsert=${String(result.wouldInsert)}</code>,
+      <code>saveAllowed=false</code>
+    </p>
+    ${renderNewEventDryRunDevDetails(result)}
+  `;
+}
+
 function renderDuplicateDryRunResult(result: G22bScheduleDuplicateDryRunResult): void {
   const el = document.getElementById("gosaki-schedule-edit-dry-run-result");
   if (!el) return;
@@ -646,6 +952,7 @@ function renderDuplicateDryRunResult(result: G22bScheduleDuplicateDryRunResult):
     "gosaki-schedule-edit-dry-run--stale",
     "gosaki-schedule-edit-dry-run--ready",
     "gosaki-schedule-edit-dry-run--saved",
+    "gosaki-schedule-edit-dry-run--new",
   );
 
   updateSaveButtonState(null);
@@ -721,35 +1028,6 @@ function renderDuplicateDryRunResult(result: G22bScheduleDuplicateDryRunResult):
       <code>saveAllowed=false</code>
     </p>
     ${renderDuplicateDryRunDevDetails(result)}
-  `;
-}
-
-function renderDuplicateDryRunDevDetails(result: G22bScheduleDuplicateDryRunResult): string {
-  const insertConfig = getG22dDuplicateInsertConfig();
-  const gate = evaluateG22dDuplicateInsertUiGate({
-    signedIn: stagingAuthSignedIn === true,
-    duplicateMode: isDuplicateDraftMode(),
-    source: duplicateSourceSnapshot,
-    duplicateDryRunResult: result.ok ? result : null,
-  });
-
-  return `
-    <details class="gosaki-schedule-duplicate-dry-run-dev">
-      <summary>開発者向け詳細</summary>
-      <dl class="gosaki-schedule-edit-dry-run__target">
-        <div><dt>phase</dt><dd><code>${escapeHtml(result.phase)}</code></dd></div>
-        <div><dt>approvalId (dry-run)</dt><dd><code>${escapeHtml(result.approvalId)}</code></dd></div>
-        <div><dt>insert approvalId</dt><dd><code>${escapeHtml(insertConfig.approvalId)}</code></dd></div>
-        <div><dt>sourceId (fixed)</dt><dd><code>${escapeHtml(G22D_DUPLICATE_INSERT_SOURCE_ID)}</code></dd></div>
-        <div><dt>planned legacy_id</dt><dd><code>${escapeHtml(G22D_DUPLICATE_INSERT_PLANNED_LEGACY_ID)}</code></dd></div>
-        <div><dt>G-22d env arm</dt><dd><code>${escapeHtml(insertConfig.envArm)}=${insertConfig.armed ? "true" : "false"}</code></dd></div>
-        <div><dt>insert saveEnabled</dt><dd><code>${String(insertConfig.saveEnabled)}</code></dd></div>
-        <div><dt>insert saveAllowed (UI)</dt><dd><code>${String(gate.saveAllowed)}</code></dd></div>
-        <div><dt>site_slug</dt><dd><code>${escapeHtml(String(result.payload.site_slug ?? "—"))}</code></dd></div>
-      </dl>
-      ${insertConfig.armFailureReason ? `<p class="gosaki-schedule-edit-dry-run__note">${escapeHtml(insertConfig.armFailureReason)}</p>` : ""}
-      <pre class="gosaki-schedule-duplicate-dry-run-dev__json">${escapeHtml(JSON.stringify(result.payload, null, 2))}</pre>
-    </details>
   `;
 }
 
@@ -1013,6 +1291,22 @@ async function resolveStagingAuthSignedIn(): Promise<boolean> {
 }
 
 async function runEditDryRunPreview(): Promise<void> {
+  if (isNewEventDraftMode()) {
+    const signedIn = await refreshStagingAuthSignedIn();
+    const result = executeG22eScheduleNewEventDryRun({
+      formValues: readEditFormSafeValues(),
+      date: readEditFormDate(),
+      published: false,
+      signedIn,
+      supabaseUrl: String(import.meta.env.PUBLIC_SUPABASE_URL ?? ""),
+    });
+    lastNewEventDryRunResult = result;
+    lastDryRunResult = null;
+    lastDuplicateDryRunResult = null;
+    renderNewEventDryRunResult(result);
+    return;
+  }
+
   if (isDuplicateDraftMode()) {
     if (!duplicateSourceSnapshot) {
       window.alert("複製元の公演が見つかりません。再度「複製」を押してください。");
@@ -1059,6 +1353,11 @@ async function runEditDryRunPreview(): Promise<void> {
 }
 
 async function runEditSave(): Promise<void> {
+  if (isNewEventDraftMode()) {
+    window.alert("新規追加の保存はまだ無効です。保存は戸山が確認して反映します。");
+    return;
+  }
+
   if (isDuplicateDraftMode()) {
     const gate = evaluateG22dDuplicateInsertUiGate({
       signedIn: stagingAuthSignedIn === true,
@@ -1238,6 +1537,17 @@ function selectRowById(rowId: string): void {
   if (row.site_slug !== STAGING_SHELL_GOSAKI_SCHEDULE_SITE_SLUG) return;
   if (isPocAuditScheduleRow(row)) return;
 
+  if (isNewEventDraftMode()) {
+    if (
+      !window.confirm(
+        "新規追加案の編集をやめて、別の公演を選び直しますか？（新規追加案は保存されません）",
+      )
+    ) {
+      return;
+    }
+    resetNewEventDraftMode();
+  }
+
   if (isDuplicateDraftMode() && rowId === duplicateSourceSnapshot?.id) {
     selectedRowId = rowId;
     renderScheduleList();
@@ -1259,6 +1569,7 @@ function selectRowById(rowId: string): void {
 
   selectedRowId = rowId;
   selectedRowSnapshot = { ...row };
+  editDraftMode = "existing";
   renderScheduleList();
   renderEditForm(row);
   dispatchRowSelected(row);
@@ -1366,6 +1677,13 @@ function wireDuplicateButton(): void {
     });
 }
 
+function wireAddButton(): void {
+  document.getElementById("gosaki-schedule-add-btn")?.addEventListener("click", (event) => {
+    event.preventDefault();
+    enterNewEventDraftMode();
+  });
+}
+
 function wireDisabledActions(): void {
   const duplicateBtn = document.getElementById(
     "gosaki-schedule-duplicate-btn",
@@ -1377,9 +1695,18 @@ function wireDisabledActions(): void {
       "選択中の公演をもとに複製案を作成します（保存はまだできません）";
   }
 
+  const addBtn = document.getElementById(
+    "gosaki-schedule-add-btn",
+  ) as HTMLButtonElement | null;
+  if (addBtn) {
+    addBtn.disabled = false;
+    addBtn.removeAttribute("data-gosaki-schedule-action-disabled");
+    addBtn.title = "新規追加案を作成します（保存はまだできません）";
+  }
+
   document
     .querySelectorAll<HTMLButtonElement>(
-      "[data-gosaki-schedule-action-disabled]:not(#gosaki-schedule-update-btn)",
+      "[data-gosaki-schedule-action-disabled]:not(#gosaki-schedule-update-btn):not(#gosaki-schedule-add-btn)",
     )
     .forEach((button) => {
       button.disabled = true;
@@ -1398,6 +1725,7 @@ export async function initGosakiStagingScheduleOperatorUi(): Promise<void> {
   wireEditForm();
   wireSaveButton();
   wireDuplicateButton();
+  wireAddButton();
   wireDisabledActions();
   await refreshStagingAuthSignedIn();
   renderScheduleList();

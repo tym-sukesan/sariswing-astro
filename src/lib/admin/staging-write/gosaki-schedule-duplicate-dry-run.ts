@@ -21,7 +21,7 @@ export const GOSAKI_SCHEDULE_DUPLICATE_DRAFT_UNSAVED_ID = "__gosaki-duplicate-dr
 
 export const GOSAKI_SCHEDULE_DUPLICATE_DRAFT_LEGACY_LABEL = "（未保存・採番予定）";
 
-export type GosakiScheduleEditDraftMode = "existing" | "duplicate";
+export type GosakiScheduleEditDraftMode = "existing" | "duplicate" | "new";
 
 export type GosakiScheduleDuplicateDraftState = {
   mode: "duplicate";

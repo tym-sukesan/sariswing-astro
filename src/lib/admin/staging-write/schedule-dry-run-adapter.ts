@@ -24,6 +24,9 @@ const UPDATE_ROLLBACK_HINT =
 const DUPLICATE_ROLLBACK_HINT =
   "If this were a real insert, rollback would delete the created test row by id. No row was created in dry-run.";
 
+const NEW_EVENT_ROLLBACK_HINT =
+  "If this were a real insert, rollback would delete the created test row by id. No row was created in dry-run.";
+
 function todayIso(today: Date): string {
   return today.toISOString().slice(0, 10);
 }
@@ -151,8 +154,56 @@ export function buildScheduleDuplicateDryRunResult(input: {
   return result;
 }
 
+export function buildScheduleNewEventDryRunResult(input: {
+  form: ScheduleDryRunFormInput;
+  approvalId?: string;
+  today?: Date;
+}): ScheduleDryRunResult {
+  const today = input.today ?? new Date();
+  const form: ScheduleDryRunFormInput = {
+    ...input.form,
+    published: false,
+    show_on_home: false,
+    home_order: null,
+    sort_order: null,
+  };
+  const validation = validateDryRunFormInput(form);
+  const wouldWrite = validation.ok;
+  const payload: Record<string, unknown> = {
+    legacy_id: null,
+    ...dryRunFormInputToWritePayload(form),
+    published: false,
+    show_on_home: false,
+    home_order: null,
+    sort_order: null,
+  };
+
+  const derivedPreview = derivePreview(form.date, today);
+
+  const result: ScheduleDryRunResult = {
+    module: "schedule",
+    operation: "new",
+    targetTable: "schedules",
+    dryRun: true,
+    wouldWrite,
+    actualWrite: false,
+    approvalId: input.approvalId ?? G6E3_SCHEDULE_DRY_RUN_ADAPTER_APPROVAL_ID,
+    validation,
+    payload,
+    derivedPreview,
+    rollbackHint: NEW_EVENT_ROLLBACK_HINT,
+    message: validation.ok
+      ? "Dry-run complete — no Supabase schedule insert was called."
+      : "Dry-run validation failed — no Supabase schedule insert was called.",
+    safety: getScheduleDryRunSafety(),
+  };
+
+  assertDryRunOnlyResult(result);
+  return result;
+}
+
 export function buildScheduleDryRunSelectionError(input: {
-  operation: "update" | "duplicate";
+  operation: "update" | "duplicate" | "new";
   message: string;
   errors: string[];
   approvalId?: string;

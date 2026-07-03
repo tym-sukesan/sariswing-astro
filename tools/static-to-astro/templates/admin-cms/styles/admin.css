@@ -2552,6 +2552,40 @@
   font-size: 0.8rem;
 }
 
+.gosaki-schedule-new-event-draft-banner {
+  margin: 0 0 1rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid #6ee7b7;
+  border-radius: 0.5rem;
+  background: #ecfdf5;
+}
+
+.gosaki-schedule-new-event-draft-banner__title {
+  margin: 0 0 0.35rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #047857;
+}
+
+.gosaki-schedule-new-event-draft-banner__body,
+.gosaki-schedule-new-event-draft-banner__hint {
+  margin: 0.2rem 0 0;
+  font-size: 0.84rem;
+  color: #065f46;
+  line-height: 1.5;
+}
+
+.gosaki-schedule-edit-dry-run__validation-warnings {
+  margin: 0.5rem 0 0;
+  padding-left: 1.25rem;
+  color: #b45309;
+  font-size: 0.84rem;
+}
+
+.gosaki-schedule-edit-dry-run--new {
+  border-color: #6ee7b7;
+}
+
 .gosaki-schedule-admin-legacy-id {
   margin: 0;
   font-size: 0.82rem;

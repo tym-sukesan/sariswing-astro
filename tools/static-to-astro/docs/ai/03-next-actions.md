@@ -1,17 +1,29 @@
 Last updated: 2026-07-02
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22e2 new event INSERT planning — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-22e2-gosaki-schedule-new-event-insert-planning` |
+| Base | `4d39598` |
+| approvalId | `G-22e-gosaki-schedule-new-event-insert-non-dry-run-slice` |
+| Doc | `gosaki-schedule-new-event-insert-planning.md` |
+| Verifier | `verify-g22e2-gosaki-schedule-new-event-insert-planning.mjs` |
+| Save / DB write | **not executed** |
+| **Next** | **G-22e3** implementation only |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22e1 new event dry-run local QA — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-22e1-gosaki-schedule-new-event-dry-run-local-qa` |
-| Base | `c716891` |
+| Commit | `4d39598` |
 | QA | HTTP 200 + markup + module smoke PASS; no blocking issues |
 | Doc | `gosaki-schedule-new-event-dry-run-local-qa.md` |
 | Verifier | `verify-g22e1-gosaki-schedule-new-event-dry-run-local-qa.mjs` |
 | Save / INSERT | **not executed** |
-| **Next** | **G-22e2** new event INSERT planning |
+| **Next** | — (superseded by G-22e2 planning) |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22e new event dry-run UI — complete
 

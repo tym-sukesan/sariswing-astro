@@ -5,10 +5,10 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-22e1-gosaki-schedule-new-event-dry-run-local-qa — complete (uncommitted).
-New event dry-run UI QA PASS on local dev; Save/INSERT disabled; existing/duplicate intact.
+Current phase: G-22e2-gosaki-schedule-new-event-insert-planning — complete (uncommitted).
+New event INSERT planning complete; approvalId / env gate / UI gate / payload assertion / SQL templates documented.
 Do NOT re-Save G-22d duplicate slice (schedule-2026-03-014).
-Next: G-22e2 new event INSERT planning (new guard / approvalId / legacy_id allocation).
+Next: G-22e3 implementation only (new guard / approval registry / save wrapper / UI gate; no Save).
 Supabase interim SoT: kmjqppxjdnwwrtaeqjta — never vsbvndwuajjhnzpohghh.
 Routine dev: PUBLIC_ADMIN_WRITE_DRY_RUN=true; G-22d arm off.
 ```
@@ -21,6 +21,17 @@ Routine dev: PUBLIC_ADMIN_WRITE_DRY_RUN=true; G-22d arm off.
 - `discography-004` / `label` (G-17e-f)
 - `schedule-2026-04-005` / `price` (G-14b1f)
 
+## G-22e2 new event INSERT planning — complete
+
+- **approvalId:** `G-22e-gosaki-schedule-new-event-insert-non-dry-run-slice`
+- **Payload policy:** `site_slug=gosaki-piano`, `published=false`, `show_on_home=false`, `home_order=null`
+- **legacy_id:** `schedule-YYYY-MM-NNN` from target month max suffix + 1
+- **sort_order:** target month `max(sort_order)+10`
+- **source:** `source_route=/schedule/YYYY-MM/`, `source_file=schedule-YYYY-MM.html`
+- **SQL:** beforeVerification / afterVerification SELECT-only + rollback DELETE template (not executed)
+- **Doc:** `gosaki-schedule-new-event-insert-planning.md`
+- **Next:** G-22e3 implementation only
+
 ## G-22e1 new event dry-run local QA — complete
 
 - **QA:** HTTP 200 + markup + module smoke PASS; no blocking issues
@@ -28,7 +39,7 @@ Routine dev: PUBLIC_ADMIN_WRITE_DRY_RUN=true; G-22d arm off.
 - **Valid form:** `operation=new`, `wouldInsert=true`, `actualWrite=false`, `saveAllowed=false`, `published=false`, `site_slug=gosaki-piano`
 - **Save / delete:** disabled; existing / duplicate modes intact
 - **Doc:** `gosaki-schedule-new-event-dry-run-local-qa.md`
-- **Next:** G-22e2 new event INSERT planning
+- **Superseded by:** G-22e2 planning
 
 ## G-22e new event dry-run UI — complete
 

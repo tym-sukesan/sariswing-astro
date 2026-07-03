@@ -5,39 +5,36 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-22d3b2-gosaki-schedules-insert-grant-final-preflight — complete (uncommitted).
-INSERT grant final preflight ready; GRANT SQL: grant insert on public.schedules to authenticated.
-Next: G-22d3b3 operator GRANT once → G-22d3b4 duplicate INSERT Save retry once.
-Do NOT retry Save until G-22d3b3 afterVerification PASS.
+Current phase: G-22d3c-gosaki-schedule-duplicate-insert-execution-result — complete (uncommitted).
+G-22d3 duplicate INSERT single-slice succeeded; chain closed. Do NOT re-Save G-22d slice.
+insertedId: 434e4051-86c3-473e-9ad0-39d2e5042fb8 / legacy_id: schedule-2026-03-014 / published=false.
+Public reflection not executed. G-22d3 DB write closed (1 INSERT only).
 Supabase interim SoT: kmjqppxjdnwwrtaeqjta — never vsbvndwuajjhnzpohghh.
-No GRANT / Save / DB write in G-22d3b2.
+Routine dev: PUBLIC_ADMIN_WRITE_DRY_RUN=true; G-22d arm off.
 ```
 
 **Closed chains — do not re-UPDATE / re-Save / re-upload:**
+- `schedule-2026-03-014` duplicate INSERT (G-22d3 slice — **closed**)
 - `discography-002` / track 7 `title` (G-20b cleanup chain — **closed**)
 - `discography-004` / track 1 `title` (G-20b cleanup chain — **closed**)
 - `discography-003` / `artist` (G-15e-f)
 - `discography-004` / `label` (G-17e-f)
 - `schedule-2026-04-005` / `price` (G-14b1f)
 
-## G-22d3b2 schedules INSERT grant final preflight — complete
+## G-22d3c duplicate INSERT execution result — complete (chain closed)
 
-- **GRANT SQL (G-22d3b3 only):** `grant insert on table public.schedules to authenticated;`
-- **Rollback:** `revoke insert on table public.schedules from authenticated;`
-- **approvalId:** `G-22d3b2-gosaki-schedules-insert-grant-apply`
-- **Doc:** `gosaki-schedules-insert-grant-final-preflight.md`
-- **Next:** G-22d3b3 operator GRANT — no Save until afterVerification PASS
+- **insertedId:** `434e4051-86c3-473e-9ad0-39d2e5042fb8`
+- **legacy_id:** `schedule-2026-03-014`
+- **published:** `false` — public reflection **not** executed
+- **afterVerification:** PASS; source unchanged; march_count=14
+- **rollback:** not needed / not executed
+- **Doc:** `gosaki-schedule-duplicate-insert-execution-result.md`
+- **Do not re-Save** G-22d duplicate slice
 
-## G-22d3b-blocker permission denied audit — complete
+## G-22d3b2–b4 INSERT grant + duplicate Save — complete
 
-- **Commit:** `f61ab6e`
-- **Root cause:** `authenticated INSERT` missing on `public.schedules`
-- **Doc:** `gosaki-schedule-duplicate-insert-permission-denied-audit.md`
-
-## G-22d3b duplicate INSERT operator execution — blocked
-
-- Save once attempted; `actualWrite=false`; `schedule-2026-03-014` not inserted
-- rollback not needed
+- **Commit:** `a3c8f7c`
+- G-22d3b3 INSERT grant + G-22d3b4 Save once → success
 
 ## G-22d2b preflight drift fix — complete
 

@@ -1,32 +1,25 @@
 Last updated: 2026-07-02
 Project: Static-to-Astro CMS / Musician CMS Kit
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22d3b2 schedules INSERT grant final preflight — complete
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22d3c duplicate INSERT execution result — complete (chain closed)
 
 | Item | Value |
 | --- | --- |
-| Phase | `G-22d3b2-gosaki-schedules-insert-grant-final-preflight` |
-| Base | `f61ab6e` |
-| GRANT SQL | `grant insert on table public.schedules to authenticated;` |
-| Doc | `gosaki-schedules-insert-grant-final-preflight.md` |
-| Verifier | `verify-g22d3b2-gosaki-schedules-insert-grant-final-preflight.mjs` |
-| **Next** | `G-22d3b3-gosaki-schedules-insert-grant-operator-execution` |
+| Phase | `G-22d3c-gosaki-schedule-duplicate-insert-execution-result` |
+| Base | `a3c8f7c` |
+| `insertedId` | `434e4051-86c3-473e-9ad0-39d2e5042fb8` |
+| `legacy_id` | `schedule-2026-03-014` |
+| Doc | `gosaki-schedule-duplicate-insert-execution-result.md` |
+| Verifier | `verify-g22d3c-gosaki-schedule-duplicate-insert-execution-result.mjs` |
+| **Next** | — (G-22d3 closed; no re-Save) |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22d3b-blocker permission denied audit — complete
-
-| Item | Value |
-| --- | --- |
-| Phase | `G-22d3b-blocker-gosaki-schedule-duplicate-insert-permission-denied-audit` |
-| Commit | `f61ab6e` |
-| **Next** | — (superseded by G-22d3b2) |
-
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22d3b duplicate INSERT operator execution — blocked
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22d3b2–b4 INSERT grant + duplicate Save — complete
 
 | Item | Value |
 | --- | --- |
-| Phase | `G-22d3b-gosaki-schedule-duplicate-insert-operator-execution` |
-| Result | Save once → `actualWrite=false`; no `insertedId` |
-| **Next** | — (blocked → G-22d3b3 grant → G-22d3b4 Save retry) |
+| Phases | G-22d3b2 preflight → G-22d3b3 grant → G-22d3b4 Save |
+| Commit | `a3c8f7c` |
+| **Next** | — (superseded by G-22d3c) |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22d2b preflight drift fix — complete
 

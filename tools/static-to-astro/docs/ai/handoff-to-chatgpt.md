@@ -5,31 +5,27 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-22e6-gosaki-schedule-new-event-insert-execution-result — complete (uncommitted).
-G-22e5 operator Save once succeeded: insertedId=18b48259-9a9a-4b00-b136-6c0c4ff3b2f3; legacy_id=schedule-2026-09-001; afterVerification PASS.
-G-22e5 DB write CLOSED — do not re-click「新規追加を保存」for this slice.
-Do NOT re-Save G-22d duplicate slice (schedule-2026-03-014).
-Do NOT touch schedule-2026-09-001 without new approved phase.
-published=false → no public reflection; package regen / FTP not executed.
+Current phase: G-22e7-gosaki-schedule-new-event-insert-chain-closure — complete (uncommitted).
+G-22e→G-22e6 new event INSERT chain CLOSED. insertedId=18b48259-9a9a-4b00-b136-6c0c4ff3b2f3; legacy_id=schedule-2026-09-001.
+Do NOT re-click「新規追加を保存」for G-22e slice. Do NOT re-Save G-22d duplicate slice (schedule-2026-03-014).
+published=false → no public reflection for both test rows.
 Write-armed dev server stopped; routine dev: PUBLIC_ADMIN_WRITE_DRY_RUN=true; G-22e arm off; G-22d arm off.
 Supabase interim SoT: kmjqppxjdnwwrtaeqjta — never vsbvndwuajjhnzpohghh.
+Next: G-22f Schedule delete/unpublish planning → G-22g CRUD closure.
 ```
 
-## G-22e6 new event INSERT execution result — complete
+## G-22e7 new event INSERT chain closure — complete
 
-- **Save:** operator manual once (G-22e5) — **success**
-- **insertedId:** `18b48259-9a9a-4b00-b136-6c0c4ff3b2f3`
-- **legacy_id:** `schedule-2026-09-001` · **sort_order:** `10`
-- **source_route:** `/schedule/2026-09/` · **source_file:** `schedule-2026-09.html`
-- **published:** `false` · **show_on_home:** `false` · **home_order:** `null`
-- **afterVerification:** PASS — `inserted_legacy_id_count=1`, `target_month_count_after=1`, exact target check PASS
-- **Protected:** `schedule-2026-03-014` (`434e4051-86c3-473e-9ad0-39d2e5042fb8`) **unchanged**
-- **rollback:** not needed / not executed
-- **public reflection:** not executed
+- **Chain:** G-22e (dry-run UI) → G-22e1 (QA) → G-22e2 (planning) → G-22e3 (implementation) → G-22e4 (preflight) → G-22e5-blocker (scroll fix) → G-22e5 (Save once) → G-22e6 (result) → **G-22e7 (closure)**
+- **INSERT success:** `18b48259-9a9a-4b00-b136-6c0c4ff3b2f3` / `schedule-2026-09-001` / `published=false`
+- **afterVerification:** PASS — `inserted_legacy_id_count=1`, `target_month_count_after=1`
+- **Protected:** `schedule-2026-03-014` unchanged
+- **Permissions:** `authenticated INSERT` grant (G-22d3b3) reused; RLS `schedules_admin_all` / `is_admin()`; `anon INSERT` no
+- **G-22e5-blocker:** button existed; scroll-only fix `scrollNewEventDraftIntoView()`
 - **G-22e5 DB write:** closed (1 INSERT only)
 - **write-armed dev server:** stopped
-- **Doc:** `gosaki-schedule-new-event-insert-execution-result.md` · **Verifier:** `verify-g22e6-gosaki-schedule-new-event-insert-execution-result.mjs`
-- **Next:** routine dry-run dev; future publish or general new-event INSERT via new phase
+- **Doc:** `gosaki-schedule-new-event-insert-chain-closure.md` · **Verifier:** `verify-g22e7-gosaki-schedule-new-event-insert-chain-closure.mjs`
+- **Next P0:** G-22f delete/unpublish → G-22g CRUD closure; optional test-row cleanup
 
 **Closed chains — do not re-UPDATE / re-Save / re-upload:**
 - `schedule-2026-09-001` new event INSERT (G-22e5 slice — **closed**)

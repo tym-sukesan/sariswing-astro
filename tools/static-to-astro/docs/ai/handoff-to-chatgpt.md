@@ -5,14 +5,26 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-22e4-gosaki-schedule-new-event-insert-final-preflight — complete (uncommitted).
-Target test event locked (2026-09-12 / 【G-22eテスト】新規追加テストイベント); legacy_id/sort_order pending until beforeVerification SQL.
+Current phase: G-22e5-blocker-new-event-preview-button-missing-investigation — complete (uncommitted).
+Blocker: operator reported「変更を確認」missing in new-event draft. Finding: button was NEVER missing from DOM (present in SSR + wired by JS). Root cause = scroll/discoverability (two-form layout: top add form has no preview button; draft renders in bottom edit panel).
+Fix: scrollNewEventDraftIntoView() in gosaki-staging-schedule-operator-ui.ts (block:"start" panel + center dry-run btn). Scroll-only — no gate/guard/payload/write change.
+Write-armed dev server stopped; verified only in dry-run safe env. No Save / DB write / SQL mutation.
 Do NOT re-Save G-22d duplicate slice (schedule-2026-03-014).
-Next: G-22e5 operator Save once (run §5 SQL first, fix allocation, then §8 env + Save).
+Next: operator re-verify in dry-run safe env, then resume G-22e5 operator Save once (run §5 SQL first, fix allocation, then §8 env + Save).
 Supabase interim SoT: kmjqppxjdnwwrtaeqjta — never vsbvndwuajjhnzpohghh.
 Routine dev: PUBLIC_ADMIN_WRITE_DRY_RUN=true; G-22e arm off; G-22d arm off.
 published=false → no public reflection for G-22e slice.
 ```
+
+## G-22e5-blocker new event「変更を確認」button missing — resolved
+
+- **Symptom:** operator reported「変更を確認」button missing after「新規追加案を作成」.
+- **Finding:** button NOT missing from DOM — present in SSR HTML (`#gosaki-schedule-edit-dry-run-btn`) inside default-`hidden` `#gosaki-schedule-edit-form`, revealed by JS. Client module compiles/loads cleanly.
+- **Root cause:** scroll/discoverability. Two-form layout — top「新規公演の追加」form has no preview button; draft renders in bottom edit panel with the button; prior `block:"nearest"` scroll left the button below the fold.
+- **Fix:** `scrollNewEventDraftIntoView()` — `block:"start"` on edit panel then center `#gosaki-schedule-edit-dry-run-btn`. Scroll-only; no gate/guard/payload/env/write change. Duplicate path left unchanged.
+- **Safety:** write-armed dev server stopped; dry-run safe env only; Save / DB write / SQL / GRANT / rollback / FTP / commit — none executed.
+- **Doc:** `gosaki-schedule-new-event-insert-preview-button-blocker.md` · **Verifier:** `verify-g22e5-blocker-new-event-preview-button.mjs`
+- **Next:** operator re-verify (新規追加案を作成 → panel + 変更を確認 now scroll into view), then resume G-22e5.
 
 **Closed chains — do not re-UPDATE / re-Save / re-upload:**
 - `schedule-2026-03-014` duplicate INSERT (G-22d3 slice — **closed**)

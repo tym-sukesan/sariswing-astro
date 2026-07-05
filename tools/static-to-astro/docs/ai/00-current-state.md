@@ -3,6 +3,8 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
+**G-22e5-blocker New event draft「変更を確認」button missing investigation (2026-07-04):** **complete (uncommitted)** — button was **never missing from DOM** (present in SSR + wired by JS); root cause = scroll/discoverability from the two-form layout (top add form has no preview button; draft renders in bottom edit panel). Fix: `scrollNewEventDraftIntoView()` (`block:"start"` panel + center dry-run btn) in `gosaki-staging-schedule-operator-ui.ts` — **scroll-only, no gate/guard/payload/write change**. Verified in dry-run safe env. Write-armed dev server stopped. **No Save / DB write / SQL mutation.** Doc: `gosaki-schedule-new-event-insert-preview-button-blocker.md`. Verifier: `verify-g22e5-blocker-new-event-preview-button.mjs`. **Next: operator re-verify in dry-run safe env, then resume G-22e5.**
+
 **G-22e4 Gosaki Schedule new event INSERT final preflight (2026-07-02):** **complete (uncommitted)** — target test event locked; before/after/rollback SQL templates; legacy_id/sort_order pending→fixed workflow. Doc: `gosaki-schedule-new-event-insert-final-preflight.md`. Verifier: `verify-g22e4-gosaki-schedule-new-event-insert-final-preflight.mjs`. **No Save / DB write / SQL mutation.** **Next: G-22e5 operator Save once.**
 
 **G-22e3 Gosaki Schedule new event INSERT implementation (2026-07-02):** **complete** — commit `e566855`. **Superseded for execution preflight by G-22e4.**

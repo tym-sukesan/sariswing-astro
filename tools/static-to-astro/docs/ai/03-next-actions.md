@@ -1,6 +1,20 @@
 Last updated: 2026-07-02
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22e5-blocker new event「変更を確認」button — resolved
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-22e5-blocker-new-event-preview-button-missing-investigation` |
+| Base | `d068566` |
+| Root cause | scroll/discoverability (two-form layout); button NOT missing from DOM |
+| Fix | `scrollNewEventDraftIntoView()` — `block:"start"` panel + center dry-run btn (scroll-only) |
+| Doc | `gosaki-schedule-new-event-insert-preview-button-blocker.md` |
+| Verifier | `verify-g22e5-blocker-new-event-preview-button.mjs` |
+| Write-armed dev server | **stopped** |
+| Save / DB write / SQL mutation | **not executed** |
+| **Next** | operator re-verify in dry-run safe env → resume **G-22e5** operator Save once |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22e4 new event INSERT final preflight — complete
 
 | Item | Value |

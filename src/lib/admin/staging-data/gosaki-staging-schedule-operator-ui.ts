@@ -445,9 +445,18 @@ function enterNewEventDraftMode(): void {
   updateNewEventDraftBanner(newEventDraftState);
   renderEditForm(newEventDraftState.draft, { clearDryRun: false });
   updateSaveButtonState(null);
-  document
-    .getElementById("gosaki-schedule-operator-edit")
-    ?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  scrollNewEventDraftIntoView();
+}
+
+function scrollNewEventDraftIntoView(): void {
+  const editPanel = document.getElementById("gosaki-schedule-operator-edit");
+  editPanel?.scrollIntoView({ behavior: "smooth", block: "start" });
+  const dryRunBtn = document.getElementById("gosaki-schedule-edit-dry-run-btn");
+  if (dryRunBtn) {
+    window.setTimeout(() => {
+      dryRunBtn.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, 350);
+  }
 }
 
 function enterDuplicateDraftFromSelectedRow(): void {

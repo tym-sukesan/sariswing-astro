@@ -1,6 +1,26 @@
 Last updated: 2026-07-02
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22e6 new event INSERT execution result — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-22e6-gosaki-schedule-new-event-insert-execution-result` |
+| Base | `82d06bc` |
+| `insertedId` | `18b48259-9a9a-4b00-b136-6c0c4ff3b2f3` |
+| `legacy_id` | `schedule-2026-09-001` |
+| `sort_order` | `10` |
+| afterVerification | **PASS** (`inserted_legacy_id_count=1`, `target_month_count_after=1`) |
+| Protected `schedule-2026-03-014` | **unchanged** |
+| G-22e5 DB write | **closed** (1 INSERT only) |
+| public reflection | **not executed** (`published=false`) |
+| rollback | **not needed / not executed** |
+| write-armed dev server | **stopped** |
+| Doc | `gosaki-schedule-new-event-insert-execution-result.md` |
+| Verifier | `verify-g22e6-gosaki-schedule-new-event-insert-execution-result.mjs` |
+| Save re-exec / DB write (G-22e6) | **not executed** |
+| **Next** | routine dry-run dev; future publish or general new-event slice |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22e5-blocker new event「変更を確認」button — resolved
 
 | Item | Value |

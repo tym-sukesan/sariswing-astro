@@ -5,28 +5,34 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-22e5-blocker-new-event-preview-button-missing-investigation — complete (uncommitted).
-Blocker: operator reported「変更を確認」missing in new-event draft. Finding: button was NEVER missing from DOM (present in SSR + wired by JS). Root cause = scroll/discoverability (two-form layout: top add form has no preview button; draft renders in bottom edit panel).
-Fix: scrollNewEventDraftIntoView() in gosaki-staging-schedule-operator-ui.ts (block:"start" panel + center dry-run btn). Scroll-only — no gate/guard/payload/write change.
-Write-armed dev server stopped; verified only in dry-run safe env. No Save / DB write / SQL mutation.
+Current phase: G-22e6-gosaki-schedule-new-event-insert-execution-result — complete (uncommitted).
+G-22e5 operator Save once succeeded: insertedId=18b48259-9a9a-4b00-b136-6c0c4ff3b2f3; legacy_id=schedule-2026-09-001; afterVerification PASS.
+G-22e5 DB write CLOSED — do not re-click「新規追加を保存」for this slice.
 Do NOT re-Save G-22d duplicate slice (schedule-2026-03-014).
-Next: operator re-verify in dry-run safe env, then resume G-22e5 operator Save once (run §5 SQL first, fix allocation, then §8 env + Save).
+Do NOT touch schedule-2026-09-001 without new approved phase.
+published=false → no public reflection; package regen / FTP not executed.
+Write-armed dev server stopped; routine dev: PUBLIC_ADMIN_WRITE_DRY_RUN=true; G-22e arm off; G-22d arm off.
 Supabase interim SoT: kmjqppxjdnwwrtaeqjta — never vsbvndwuajjhnzpohghh.
-Routine dev: PUBLIC_ADMIN_WRITE_DRY_RUN=true; G-22e arm off; G-22d arm off.
-published=false → no public reflection for G-22e slice.
 ```
 
-## G-22e5-blocker new event「変更を確認」button missing — resolved
+## G-22e6 new event INSERT execution result — complete
 
-- **Symptom:** operator reported「変更を確認」button missing after「新規追加案を作成」.
-- **Finding:** button NOT missing from DOM — present in SSR HTML (`#gosaki-schedule-edit-dry-run-btn`) inside default-`hidden` `#gosaki-schedule-edit-form`, revealed by JS. Client module compiles/loads cleanly.
-- **Root cause:** scroll/discoverability. Two-form layout — top「新規公演の追加」form has no preview button; draft renders in bottom edit panel with the button; prior `block:"nearest"` scroll left the button below the fold.
-- **Fix:** `scrollNewEventDraftIntoView()` — `block:"start"` on edit panel then center `#gosaki-schedule-edit-dry-run-btn`. Scroll-only; no gate/guard/payload/env/write change. Duplicate path left unchanged.
-- **Safety:** write-armed dev server stopped; dry-run safe env only; Save / DB write / SQL / GRANT / rollback / FTP / commit — none executed.
-- **Doc:** `gosaki-schedule-new-event-insert-preview-button-blocker.md` · **Verifier:** `verify-g22e5-blocker-new-event-preview-button.mjs`
-- **Next:** operator re-verify (新規追加案を作成 → panel + 変更を確認 now scroll into view), then resume G-22e5.
+- **Save:** operator manual once (G-22e5) — **success**
+- **insertedId:** `18b48259-9a9a-4b00-b136-6c0c4ff3b2f3`
+- **legacy_id:** `schedule-2026-09-001` · **sort_order:** `10`
+- **source_route:** `/schedule/2026-09/` · **source_file:** `schedule-2026-09.html`
+- **published:** `false` · **show_on_home:** `false` · **home_order:** `null`
+- **afterVerification:** PASS — `inserted_legacy_id_count=1`, `target_month_count_after=1`, exact target check PASS
+- **Protected:** `schedule-2026-03-014` (`434e4051-86c3-473e-9ad0-39d2e5042fb8`) **unchanged**
+- **rollback:** not needed / not executed
+- **public reflection:** not executed
+- **G-22e5 DB write:** closed (1 INSERT only)
+- **write-armed dev server:** stopped
+- **Doc:** `gosaki-schedule-new-event-insert-execution-result.md` · **Verifier:** `verify-g22e6-gosaki-schedule-new-event-insert-execution-result.mjs`
+- **Next:** routine dry-run dev; future publish or general new-event INSERT via new phase
 
 **Closed chains — do not re-UPDATE / re-Save / re-upload:**
+- `schedule-2026-09-001` new event INSERT (G-22e5 slice — **closed**)
 - `schedule-2026-03-014` duplicate INSERT (G-22d3 slice — **closed**)
 - `discography-002` / track 7 `title` (G-20b cleanup chain — **closed**)
 - `discography-004` / track 1 `title` (G-20b cleanup chain — **closed**)

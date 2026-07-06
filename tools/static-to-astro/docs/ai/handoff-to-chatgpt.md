@@ -5,15 +5,25 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-22g1f3-gosaki-schedule-authenticated-admin-read-closure — complete (uncommitted).
-Authenticated admin read chain CLOSED: SSR bootstrap + login refetch; 008 visible; operator smoke PASS.
-RLS/grant/service_role unchanged. Public reflection / package / FTP not executed.
-Transient load error — non-blocking residual. Republish / physical DELETE deferred.
+Current phase: G-22g2-gosaki-schedule-operator-procedure-hints — complete (uncommitted).
+Operator procedure hints added: 4-operation cards, save-target Step panel, admin-read hints, save-state copy.
+No Save / DB write / SQL / RLS / package / FTP in this phase.
+Authenticated admin read chain (G-22g1f3) closed at fd47f8b.
 Do NOT re-Save: schedule-2026-07-008 (G-22f7), schedule-2026-09-001 (G-22e7), schedule-2026-03-014 (G-22d3d).
 Routine dev: PUBLIC_ADMIN_WRITE_DRY_RUN=true; all write arms off.
 Supabase interim SoT: kmjqppxjdnwwrtaeqjta — never vsbvndwuajjhnzpohghh.
-Next: G-22g2 operator procedure hints · Schedule P0 UX summary.
+Next: Schedule P0 UX QA · Schedule P0 UX summary · republish planning (deferred).
 ```
+
+## G-22g2 Schedule operator procedure hints — complete
+
+- **Goal:** operator が次に何を押すか / 保存前か / DB write かを迷わない UI ヒント
+- **Added:** static 4-card panel · dynamic save-target procedure detail · admin-read unpublished hints · save button state copy
+- **Safety copy:** DBは変わりません · 保存前プレビュー · 保存1回のみ（連打禁止） · 非公開化≠物理削除 · 削除（準備中）未使用
+- **Not changed:** save modules · write adapter · approvalId registry · RLS
+- **Not executed:** Save · DB write · SQL · package · FTP
+- **Doc:** `gosaki-schedule-operator-procedure-hints.md` · **Verifier:** `verify-g22g2-gosaki-schedule-operator-procedure-hints.mjs`
+- **Next:** Schedule P0 UX QA · summary · republish planning (deferred)
 
 ## G-22g1f3 Schedule authenticated admin read closure — complete
 

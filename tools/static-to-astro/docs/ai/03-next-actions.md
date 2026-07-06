@@ -1,6 +1,23 @@
 Last updated: 2026-07-07
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22g2 Schedule operator procedure hints — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-22g2-gosaki-schedule-operator-procedure-hints` |
+| Base | `fd47f8b` |
+| Scope | UI hints · docs · verifier · AI context only |
+| Operations | 通常更新 · 複製 · 新規追加 · 非公開化 |
+| Admin read hints | 非公開フィルタ · legacy_id 検索 · 公開サイト非表示 |
+| UI copy | DBは変わりません · 保存前プレビュー · 連打禁止（中国語表記なし） |
+| Save / DB write / SQL | **none** |
+| RLS / grant / service_role | **unchanged** |
+| package / FTP | **none** |
+| Doc | `gosaki-schedule-operator-procedure-hints.md` |
+| Verifier | `verify-g22g2-gosaki-schedule-operator-procedure-hints.mjs` |
+| **Next** | **Schedule P0 UX QA** · **Schedule P0 UX summary** · republish planning (deferred) |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22g1f3 Schedule authenticated admin read closure — complete
 
 | Item | Value |
@@ -15,7 +32,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Residual | transient load error — **non-blocking** |
 | Doc | `gosaki-schedule-authenticated-admin-read-closure.md` |
 | Verifier | `verify-g22g1f3-gosaki-schedule-authenticated-admin-read-closure.mjs` |
-| **Next** | **G-22g2** operator procedure hints · Schedule P0 UX summary |
+| **Next** | **Schedule P0 UX QA** · **Schedule P0 UX summary** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22g1f2c Schedule operator login smoke result — complete
 

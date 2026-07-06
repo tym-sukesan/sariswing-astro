@@ -2937,6 +2937,130 @@
   background: #f8fafc;
 }
 
+.gosaki-schedule-operator-procedure-hints {
+  margin: 0 0 1.25rem;
+  padding: 1rem 1.1rem;
+  border: 1px solid #e2e8f0;
+  border-radius: var(--admin-radius);
+  background: #f8fafc;
+}
+
+.gosaki-schedule-operator-procedure-hints__title {
+  margin: 0 0 0.5rem;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.gosaki-schedule-operator-procedure-hints__lead {
+  margin: 0 0 0.65rem;
+  font-size: 0.88rem;
+  line-height: 1.55;
+  color: #475569;
+}
+
+.gosaki-schedule-operator-procedure-hints__safety {
+  margin: 0 0 0.85rem;
+  padding-left: 1.15rem;
+  font-size: 0.84rem;
+  line-height: 1.55;
+  color: #64748b;
+}
+
+.gosaki-schedule-operator-procedure-hints__grid {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+}
+
+.gosaki-schedule-operator-procedure-hints__card {
+  margin: 0;
+  padding: 0.75rem 0.85rem;
+  border: 1px solid #e2e8f0;
+  border-radius: var(--admin-radius);
+  background: #fff;
+}
+
+.gosaki-schedule-operator-procedure-hints__card--active {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 1px #6366f1;
+}
+
+.gosaki-schedule-operator-procedure-hints__card-title {
+  margin: 0 0 0.45rem;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #334155;
+}
+
+.gosaki-schedule-operator-procedure-hints__steps {
+  margin: 0 0 0.45rem;
+  padding-left: 1.15rem;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: #475569;
+}
+
+.gosaki-schedule-operator-procedure-hints__note {
+  margin: 0;
+  font-size: 0.78rem;
+  line-height: 1.45;
+  color: #64748b;
+}
+
+.gosaki-schedule-operator-procedure-hints__admin-read {
+  margin-top: 0.85rem;
+  padding: 0.75rem 0.85rem;
+  border-radius: var(--admin-radius);
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+}
+
+.gosaki-schedule-operator-procedure-hints__admin-read-title {
+  margin: 0 0 0.4rem;
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: #065f46;
+}
+
+.gosaki-schedule-operator-procedure-hints__admin-read-list {
+  margin: 0;
+  padding-left: 1.15rem;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: #047857;
+}
+
+.gosaki-schedule-procedure-hint-detail {
+  margin: 0 0 0.85rem;
+  padding: 0.65rem 0.75rem;
+  border-radius: var(--admin-radius);
+  background: #fff;
+  border: 1px solid #e2e8f0;
+}
+
+.gosaki-schedule-procedure-hint-detail__steps {
+  margin: 0 0 0.45rem;
+  padding-left: 1.15rem;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: #334155;
+}
+
+.gosaki-schedule-procedure-hint-detail__note,
+.gosaki-schedule-procedure-hint-detail__save-state,
+.gosaki-schedule-procedure-hint-detail__no-delete {
+  margin: 0 0 0.35rem;
+  font-size: 0.8rem;
+  line-height: 1.45;
+  color: #64748b;
+}
+
+.gosaki-schedule-procedure-hint-detail__no-delete {
+  margin-bottom: 0;
+  color: #b45309;
+}
+
 .gosaki-schedule-preview-confirmation__badge {
   margin: 0 0 0.65rem;
   padding: 0.45rem 0.65rem;

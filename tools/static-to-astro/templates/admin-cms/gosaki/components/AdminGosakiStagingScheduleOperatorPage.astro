@@ -117,6 +117,72 @@ function displayValue(value: string | null | undefined): string {
     </p>
   </aside>
 
+  <section class="gosaki-schedule-operator-procedure-hints" aria-label="操作手順のヒント">
+    <h2 class="gosaki-schedule-operator-procedure-hints__title">操作手順のヒント</h2>
+    <p class="gosaki-schedule-operator-procedure-hints__lead">
+      各操作は <strong>Step 1 対象を選ぶ / 案を作成</strong> → <strong>Step 2 変更を確認</strong> →
+      <strong>Step 3 戸山が確認して保存</strong> の順です。
+      「変更を確認」まではDBは変わりません。保存ボタンを押すまでDBは変更されません。
+    </p>
+    <ul class="gosaki-schedule-operator-procedure-hints__safety">
+      <li>「変更を確認」= 保存前プレビュー。DBは変わりません</li>
+      <li>保存ボタンは<strong>1回だけ</strong>押してください（連打禁止）</li>
+      <li>「削除（準備中）」= 現在は使いません（物理削除は未実装）</li>
+    </ul>
+    <div class="gosaki-schedule-operator-procedure-hints__grid">
+      <article class="gosaki-schedule-operator-procedure-hints__card" data-gosaki-procedure-hint="existing-update">
+        <h3 class="gosaki-schedule-operator-procedure-hints__card-title">通常更新</h3>
+        <ol class="gosaki-schedule-operator-procedure-hints__steps">
+          <li>公演一覧で対象を選び「編集する」</li>
+          <li>内容を直して「変更を確認」</li>
+          <li>戸山が確認して「更新する」</li>
+        </ol>
+        <p class="gosaki-schedule-operator-procedure-hints__note">「変更を確認」= 保存前プレビュー。DBは変わりません。</p>
+      </article>
+      <article class="gosaki-schedule-operator-procedure-hints__card" data-gosaki-procedure-hint="duplicate">
+        <h3 class="gosaki-schedule-operator-procedure-hints__card-title">複製</h3>
+        <ol class="gosaki-schedule-operator-procedure-hints__steps">
+          <li>公演を選び「複製案を作成」</li>
+          <li>内容を直して「変更を確認」</li>
+          <li>戸山が確認して「複製案を保存」</li>
+        </ol>
+        <p class="gosaki-schedule-operator-procedure-hints__note">「複製案を作成」= 元の公演は変更しません。</p>
+      </article>
+      <article class="gosaki-schedule-operator-procedure-hints__card" data-gosaki-procedure-hint="new-event">
+        <h3 class="gosaki-schedule-operator-procedure-hints__card-title">新規追加</h3>
+        <ol class="gosaki-schedule-operator-procedure-hints__steps">
+          <li>上部フォームに入力し「新規追加案を作成」</li>
+          <li>内容を直して「変更を確認」</li>
+          <li>戸山が確認して「新規追加を保存」</li>
+        </ol>
+        <p class="gosaki-schedule-operator-procedure-hints__note">「新規追加案を作成」= まだ保存されません。</p>
+      </article>
+      <article class="gosaki-schedule-operator-procedure-hints__card" data-gosaki-procedure-hint="unpublish">
+        <h3 class="gosaki-schedule-operator-procedure-hints__card-title">非公開化</h3>
+        <ol class="gosaki-schedule-operator-procedure-hints__steps">
+          <li>公演を選び「非公開化案を作成」</li>
+          <li>「変更を確認」</li>
+          <li>戸山が確認して「非公開化を保存」</li>
+        </ol>
+        <p class="gosaki-schedule-operator-procedure-hints__note">「非公開化案を作成」= 行は削除しません。「非公開化を保存」= published を false にします（物理削除ではありません）。</p>
+      </article>
+    </div>
+    <aside
+      id="gosaki-schedule-admin-read-procedure-hint"
+      class="gosaki-schedule-operator-procedure-hints__admin-read"
+      hidden
+      role="note"
+    >
+      <p class="gosaki-schedule-operator-procedure-hints__admin-read-title">ログイン後の管理データについて</p>
+      <ul class="gosaki-schedule-operator-procedure-hints__admin-read-list">
+        <li>非公開行（<code>published=false</code>）も管理画面の公演一覧に表示されます</li>
+        <li>「非公開のみ」フィルタで非公開行だけを絞り込めます</li>
+        <li><code>legacy_id</code> キーワード検索が使えます（例: <code>schedule-2026-07-008</code>）</li>
+        <li>公開サイトには非公開行は表示されません</li>
+      </ul>
+    </aside>
+  </section>
+
   {
     binding.message ? (
       <p class="admin-gosaki-schedule-operator__unavailable" role="alert">
@@ -477,7 +543,7 @@ function displayValue(value: string | null | undefined): string {
             変更を確認
           </button>
           <p class="gosaki-schedule-edit-dry-run-actions__hint" role="note">
-            保存前に、変更内容を画面上で確認できます。データベースは変更されません。
+            「変更を確認」= 保存前プレビュー。DBは変わりません。保存ボタンを押すまでDBは変更されません。
           </p>
         </div>
 
@@ -537,13 +603,16 @@ function displayValue(value: string | null | undefined): string {
             id="gosaki-schedule-delete-btn"
             data-gosaki-schedule-action-disabled
             disabled
-            title="物理削除は準備中です"
+            title="物理削除は未実装です。現在は使いません。"
           >
             削除（準備中）
           </button>
         </div>
         <p id="gosaki-schedule-update-btn-note" class="admin-gosaki-save-note" role="note">
           {savePrepNote}
+        </p>
+        <p class="admin-gosaki-save-note admin-gosaki-save-note--operator" role="note">
+          保存ボタンは1回だけ押してください（連打禁止）。書き込み許可がオフのときは保存は無効です。
         </p>
         <p class="admin-gosaki-save-note admin-gosaki-save-note--operator" role="note">
           現在、公開サイトへの反映は戸山が確認して行います。

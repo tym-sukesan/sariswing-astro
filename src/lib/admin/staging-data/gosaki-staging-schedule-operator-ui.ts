@@ -170,6 +170,263 @@ function setSaveButtonNote(text: string | null): void {
   note.textContent = text;
 }
 
+type GosakiScheduleOperationKind = "existing-update" | "duplicate" | "new-event" | "unpublish";
+
+const OPERATION_KIND_LABELS: Record<GosakiScheduleOperationKind, string> = {
+  "existing-update": "既存公演を更新",
+  duplicate: "複製して新規下書きを作成",
+  "new-event": "新規公演を追加",
+  unpublish: "公演を非公開にする",
+};
+
+const WORKFLOW_STEP_LABELS: Record<GosakiScheduleOperationKind, [string, string, string]> = {
+  "existing-update": ["公演を選択", "変更を確認", "更新する"],
+  duplicate: ["複製案を作成", "変更を確認", "複製案を保存"],
+  "new-event": ["新規追加案を作成", "変更を確認", "新規追加を保存"],
+  unpublish: ["非公開化案を作成", "変更を確認", "非公開化を保存"],
+};
+
+function renderPreviewBadge(): string {
+  return `<p class="gosaki-schedule-preview-confirmation__badge" role="status">保存前 preview — <code>actualWrite=false</code>（データベースはまだ変更されません）</p>`;
+}
+
+function renderSaveResultBadge(): string {
+  return `<p class="gosaki-schedule-save-result__badge" role="status">保存結果 — DB への反映結果です（保存前 preview ではありません）</p>`;
+}
+
+function renderOptimisticLockExplanation(): string {
+  return `<p class="gosaki-schedule-edit-dry-run__lock-note">optimistic lock の説明: <strong>保存前 updated_at（before updated_at）</strong> は Save 実行直前の行バージョンです。<strong>保存後 updated_at（saved updated_at）</strong> は DB が更新した新しい値です。通常、両者は一致しません。</p>`;
+}
+
+function renderWorkflowStepIndicator(
+  kind: GosakiScheduleOperationKind,
+  currentStep: 1 | 2 | 3,
+): string {
+  const labels = WORKFLOW_STEP_LABELS[kind];
+  const items = labels
+    .map((label, index) => {
+      const step = (index + 1) as 1 | 2 | 3;
+      const state = step < currentStep ? "done" : step === currentStep ? "current" : "upcoming";
+      return `<li class="gosaki-schedule-workflow-steps__item gosaki-schedule-workflow-steps__item--${state}"><span class="gosaki-schedule-workflow-steps__num" aria-hidden="true">${step}</span><span>${escapeHtml(label)}</span></li>`;
+    })
+    .join("");
+  return `<ol class="gosaki-schedule-workflow-steps" aria-label="操作の流れ">${items}</ol>`;
+}
+
+function renderOperationKindHeader(kind: GosakiScheduleOperationKind): string {
+  return `<p class="gosaki-schedule-preview-confirmation__operation"><strong>${escapeHtml(OPERATION_KIND_LABELS[kind])}</strong> <code>${escapeHtml(kind)}</code></p>`;
+}
+
+function renderOperationSpecificNote(kind: GosakiScheduleOperationKind): string {
+  if (kind === "unpublish") {
+    return `<p class="gosaki-schedule-preview-confirmation__note">この公演を非公開にします。データベースからは削除しません（<code>published true → false</code>）。</p>`;
+  }
+  if (kind === "duplicate") {
+    return `<p class="gosaki-schedule-preview-confirmation__note">元の公演は変更しません。新しい <code>published=false</code> の行を INSERT します。</p>`;
+  }
+  if (kind === "new-event") {
+    return `<p class="gosaki-schedule-preview-confirmation__note"><code>published=false</code> の新規行として追加します。行は削除しません。</p>`;
+  }
+  return `<p class="gosaki-schedule-preview-confirmation__note">選択中の既存行を UPDATE します。行は削除しません。</p>`;
+}
+
+function renderTargetIdentitySection(options: {
+  legacyId?: string | null;
+  targetId?: string | null;
+  date?: string | null;
+  title?: string | null;
+  publishedBefore?: string | null;
+  publishedAfter?: string | null;
+}): string {
+  const publishedRow =
+    options.publishedBefore != null || options.publishedAfter != null
+      ? `<div><dt>published（変更前 → 変更後）</dt><dd><code>${escapeHtml(options.publishedBefore ?? "—")}</code> → <code>${escapeHtml(options.publishedAfter ?? "—")}</code></dd></div>`
+      : "";
+  return `
+    <section class="gosaki-schedule-preview-confirmation__identity">
+      <h4 class="gosaki-schedule-preview-confirmation__identity-title">対象公演の確認</h4>
+      <dl class="gosaki-schedule-preview-confirmation__identity-grid">
+        <div class="gosaki-schedule-preview-confirmation__identity-legacy">
+          <dt>legacy_id</dt>
+          <dd>${renderLegacyIdCode(options.legacyId)}</dd>
+        </div>
+        <div><dt>id</dt><dd><code class="gosaki-schedule-row-id-code">${escapeHtml(displayValue(options.targetId))}</code></dd></div>
+        <div><dt>日付</dt><dd>${escapeHtml(displayValue(options.date))}</dd></div>
+        <div><dt>タイトル</dt><dd>${escapeHtml(displayValue(options.title))}</dd></div>
+        ${publishedRow}
+      </dl>
+    </section>
+  `;
+}
+
+function renderPreviewSafetySection(options: {
+  operation: string;
+  dryRun: boolean;
+  actualWrite: boolean;
+  wouldUpdate?: boolean;
+  wouldInsert?: boolean;
+  wouldDelete?: boolean;
+  physicalDelete?: boolean;
+  saveAllowed?: boolean;
+  saveEnabled?: boolean;
+  approvalId?: string | null;
+  expectedBeforeUpdatedAt?: string | null;
+}): string {
+  const bool = (value: boolean | undefined) =>
+    value == null ? "—" : `<code>${String(value)}</code>`;
+  const lockRow = options.expectedBeforeUpdatedAt
+    ? `<div><dt>保存前 updated_at（before updated_at）</dt><dd><code>${escapeHtml(options.expectedBeforeUpdatedAt)}</code></dd></div>`
+    : "";
+  return `
+    <section class="gosaki-schedule-preview-confirmation__safety">
+      <h4 class="gosaki-schedule-preview-confirmation__safety-title">安全確認</h4>
+      <dl class="gosaki-schedule-preview-confirmation__safety-grid">
+        <div><dt>operation</dt><dd><code>${escapeHtml(options.operation)}</code></dd></div>
+        <div><dt>dryRun</dt><dd>${bool(options.dryRun)}</dd></div>
+        <div><dt>actualWrite</dt><dd>${bool(options.actualWrite)}</dd></div>
+        <div><dt>wouldUpdate</dt><dd>${bool(options.wouldUpdate)}</dd></div>
+        <div><dt>wouldInsert</dt><dd>${bool(options.wouldInsert)}</dd></div>
+        <div><dt>wouldDelete</dt><dd>${bool(options.wouldDelete)}</dd></div>
+        <div><dt>physicalDelete</dt><dd>${bool(options.physicalDelete)}</dd></div>
+        <div><dt>saveAllowed</dt><dd>${bool(options.saveAllowed)}</dd></div>
+        <div><dt>saveEnabled</dt><dd>${bool(options.saveEnabled)}</dd></div>
+        <div><dt>approvalId</dt><dd><code>${escapeHtml(displayValue(options.approvalId))}</code></dd></div>
+        ${lockRow}
+      </dl>
+      <p class="gosaki-schedule-preview-confirmation__no-delete">行は削除しません（physical DELETE ではありません）。</p>
+    </section>
+  `;
+}
+
+function resolveWorkflowStep(kind: GosakiScheduleOperationKind): 1 | 2 | 3 {
+  if (kind === "unpublish") {
+    const gate = evaluateG22fUnpublishUpdateUiGate({
+      signedIn: stagingAuthSignedIn === true,
+      unpublishMode: true,
+      target: unpublishTargetSnapshot,
+      unpublishDryRunResult: lastUnpublishDryRunResult?.ok ? lastUnpublishDryRunResult : null,
+    });
+    if (gate.enabled) return 3;
+    if (lastUnpublishDryRunResult?.ok) return 2;
+    return 2;
+  }
+  if (kind === "duplicate") {
+    const gate = evaluateG22dDuplicateInsertUiGate({
+      signedIn: stagingAuthSignedIn === true,
+      duplicateMode: true,
+      source: duplicateSourceSnapshot,
+      duplicateDryRunResult: lastDuplicateDryRunResult,
+    });
+    if (gate.enabled) return 3;
+    if (lastDuplicateDryRunResult?.ok) return 2;
+    return 2;
+  }
+  if (kind === "new-event") {
+    const gate = evaluateG22eNewEventInsertUiGate({
+      signedIn: stagingAuthSignedIn === true,
+      newEventMode: true,
+      newEventDryRunResult: lastNewEventDryRunResult,
+      hasExistingScheduleId: hasNewEventExistingScheduleId(),
+      hasDuplicateSourceId: hasNewEventDuplicateSourceId(),
+    });
+    if (gate.enabled) return 3;
+    if (lastNewEventDryRunResult?.ok) return 2;
+    return 2;
+  }
+  const gate = evaluateG9kOperatorSaveButtonUiGate({
+    signedIn: stagingAuthSignedIn === true,
+    selectedRow: selectedRowSnapshot,
+    dryRunResult: lastDryRunResult,
+  });
+  if (gate.enabled) return 3;
+  if (lastDryRunResult?.ok) return 2;
+  return selectedRowSnapshot ? 1 : 1;
+}
+
+function updateSaveTargetPanel(): void {
+  const panel = document.getElementById("gosaki-schedule-save-target-panel");
+  if (!panel) return;
+
+  if (isUnpublishDraftMode() && unpublishTargetSnapshot) {
+    const kind: GosakiScheduleOperationKind = "unpublish";
+    const step = resolveWorkflowStep(kind);
+    panel.hidden = false;
+    panel.innerHTML = `
+      ${renderWorkflowStepIndicator(kind, step)}
+      ${renderOperationKindHeader(kind)}
+      ${renderOperationSpecificNote(kind)}
+      ${renderTargetIdentitySection({
+        legacyId: unpublishTargetSnapshot.legacy_id,
+        targetId: unpublishTargetSnapshot.id,
+        date: unpublishTargetSnapshot.date,
+        title: unpublishTargetSnapshot.title,
+        publishedBefore: "true",
+        publishedAfter: "false",
+      })}
+    `;
+    return;
+  }
+
+  if (isDuplicateDraftMode() && duplicateSourceSnapshot) {
+    const kind: GosakiScheduleOperationKind = "duplicate";
+    panel.hidden = false;
+    panel.innerHTML = `
+      ${renderWorkflowStepIndicator(kind, resolveWorkflowStep(kind))}
+      ${renderOperationKindHeader(kind)}
+      ${renderOperationSpecificNote(kind)}
+      ${renderTargetIdentitySection({
+        legacyId: duplicateSourceSnapshot.legacy_id,
+        targetId: duplicateSourceSnapshot.id,
+        date: duplicateSourceSnapshot.date,
+        title: duplicateSourceSnapshot.title,
+      })}
+    `;
+    return;
+  }
+
+  if (isNewEventDraftMode()) {
+    const kind: GosakiScheduleOperationKind = "new-event";
+    const date = readEditFormDate();
+    const title = readEditFormSafeValues().title;
+    panel.hidden = false;
+    panel.innerHTML = `
+      ${renderWorkflowStepIndicator(kind, resolveWorkflowStep(kind))}
+      ${renderOperationKindHeader(kind)}
+      ${renderOperationSpecificNote(kind)}
+      ${renderTargetIdentitySection({
+        legacyId: GOSAKI_SCHEDULE_NEW_EVENT_DRAFT_LEGACY_LABEL,
+        date,
+        title,
+        publishedBefore: "false",
+        publishedAfter: "false",
+      })}
+    `;
+    return;
+  }
+
+  if (selectedRowSnapshot && editDraftMode === "existing") {
+    const kind: GosakiScheduleOperationKind = "existing-update";
+    panel.hidden = false;
+    panel.innerHTML = `
+      ${renderWorkflowStepIndicator(kind, resolveWorkflowStep(kind))}
+      ${renderOperationKindHeader(kind)}
+      ${renderOperationSpecificNote(kind)}
+      ${renderTargetIdentitySection({
+        legacyId: selectedRowSnapshot.legacy_id,
+        targetId: selectedRowSnapshot.id,
+        date: selectedRowSnapshot.date,
+        title: selectedRowSnapshot.title,
+        publishedBefore: formatPublishedStatus(selectedRowSnapshot.published),
+        publishedAfter: formatPublishedStatus(selectedRowSnapshot.published),
+      })}
+    `;
+    return;
+  }
+
+  panel.hidden = true;
+  panel.innerHTML = "";
+}
+
 function renderDryRunOutcomeNote(
   saveReadiness: G9kExistingEventSaveButtonDryRunResult["saveReadiness"],
 ): string {
@@ -869,6 +1126,7 @@ function renderEditForm(
     resetNonExistingDraftModes();
     clearDryRunResult();
     renderSelectedRowSummary(null);
+    updateSaveTargetPanel();
     if (titleEl) titleEl.textContent = "選択中の公演を編集";
     if (leadEl) leadEl.textContent = "一覧で選んだ公演の内容を変更します。";
     return;
@@ -945,6 +1203,7 @@ function renderEditForm(
     clearDryRunResult();
   }
   renderSelectedRowSummary(row);
+  updateSaveTargetPanel();
   updateUnpublishButtonState();
 }
 
@@ -1081,6 +1340,7 @@ function updateSaveButtonState(result: G9kExistingEventSaveButtonDryRunResult | 
       button.textContent = "非公開化を保存";
       button.title = gate.reason;
       setSaveButtonNote(gate.reason);
+      updateSaveTargetPanel();
       return;
     }
 
@@ -1092,6 +1352,7 @@ function updateSaveButtonState(result: G9kExistingEventSaveButtonDryRunResult | 
       gate.reason ||
         "非公開化案です。「変更を確認」で内容を確認できます。保存は現在無効です。データベースからは削除しません。",
     );
+    updateSaveTargetPanel();
     return;
   }
 
@@ -1111,6 +1372,7 @@ function updateSaveButtonState(result: G9kExistingEventSaveButtonDryRunResult | 
       button.textContent = "新規追加を保存";
       button.title = gate.reason;
       setSaveButtonNote(gate.reason);
+      updateSaveTargetPanel();
       return;
     }
 
@@ -1122,6 +1384,7 @@ function updateSaveButtonState(result: G9kExistingEventSaveButtonDryRunResult | 
       gate.reason ||
         "新規追加案です。「変更を確認」で内容を確認できます。保存は戸山が確認して反映します。",
     );
+    updateSaveTargetPanel();
     return;
   }
 
@@ -1140,6 +1403,7 @@ function updateSaveButtonState(result: G9kExistingEventSaveButtonDryRunResult | 
       button.textContent = "複製案を保存";
       button.title = gate.reason;
       setSaveButtonNote(gate.reason);
+      updateSaveTargetPanel();
       return;
     }
 
@@ -1151,6 +1415,7 @@ function updateSaveButtonState(result: G9kExistingEventSaveButtonDryRunResult | 
       gate.reason ||
         "複製案です。「変更を確認」で内容を確認できます。保存は戸山が確認して反映します。",
     );
+    updateSaveTargetPanel();
     return;
   }
 
@@ -1167,6 +1432,7 @@ function updateSaveButtonState(result: G9kExistingEventSaveButtonDryRunResult | 
     button.title = "変更内容を保存します";
     button.textContent = "更新する";
     setSaveButtonNote(operatorSaveEnabledMessage());
+    updateSaveTargetPanel();
     return;
   }
 
@@ -1177,6 +1443,7 @@ function updateSaveButtonState(result: G9kExistingEventSaveButtonDryRunResult | 
     button.textContent = "更新する（準備中）";
     button.title = gate.reason;
     setSaveButtonNote(operatorSavePrepMessage());
+    updateSaveTargetPanel();
     return;
   }
 
@@ -1184,6 +1451,7 @@ function updateSaveButtonState(result: G9kExistingEventSaveButtonDryRunResult | 
     button.textContent = "更新する（保存無効）";
     button.title = gate.reason;
     setSaveButtonNote(null);
+    updateSaveTargetPanel();
     return;
   }
 
@@ -1194,6 +1462,7 @@ function updateSaveButtonState(result: G9kExistingEventSaveButtonDryRunResult | 
   } else {
     setSaveButtonNote(gate.reason || "確認エラーがあります。保存できません。");
   }
+  updateSaveTargetPanel();
 }
 
 function renderChangedFieldChips(changedFields: string[]): string {
@@ -1335,36 +1604,39 @@ function renderNewEventDryRunResult(result: G22eScheduleNewEventDryRunResult): v
 
   const month = result.derivedPreview?.recalculatedMonth ?? "—";
   const group = result.derivedPreview?.scheduleGroup ?? "—";
+  const insertConfig = getG22eNewEventInsertConfig();
+  const gate = evaluateG22eNewEventInsertUiGate({
+    signedIn: stagingAuthSignedIn === true,
+    newEventMode: true,
+    newEventDryRunResult: result,
+    hasExistingScheduleId: hasNewEventExistingScheduleId(),
+    hasDuplicateSourceId: hasNewEventDuplicateSourceId(),
+  });
   const legacyLabel =
     result.payload.legacy_id == null ? GOSAKI_SCHEDULE_NEW_EVENT_DRAFT_LEGACY_LABEL : String(result.payload.legacy_id);
 
   el.innerHTML = `
-    <h3 class="gosaki-schedule-edit-dry-run__title">新規追加案の確認結果</h3>
+    ${renderPreviewBadge()}
+    ${renderWorkflowStepIndicator("new-event", resolveWorkflowStep("new-event"))}
+    <h3 class="gosaki-schedule-edit-dry-run__title">新規追加案の確認結果（保存前 preview）</h3>
+    ${renderOperationKindHeader("new-event")}
     <p class="gosaki-schedule-edit-dry-run__message gosaki-schedule-edit-dry-run__message--ready">
       ${escapeHtml(result.message)}
     </p>
+    ${renderOperationSpecificNote("new-event")}
     <p class="gosaki-schedule-edit-dry-run__note">
       まだ保存されていません。保存は戸山が確認して反映します。保存は現在無効です。
     </p>
     ${renderValidationWarningsList(result.validation.warnings)}
     ${result.validation.ok ? "" : renderGuardErrorList(result.guardErrors.filter((e) => !result.validation.warnings.includes(e)))}
+    ${renderTargetIdentitySection({
+      legacyId: legacyLabel,
+      date: String(result.payload.date ?? "—"),
+      title: String(result.payload.title ?? ""),
+      publishedBefore: "false",
+      publishedAfter: "false",
+    })}
     <dl class="gosaki-schedule-edit-dry-run__target">
-      <div>
-        <dt>操作</dt>
-        <dd><code>new</code>（新規追加の予定）</dd>
-      </div>
-      <div>
-        <dt>legacy_id</dt>
-        <dd><code>${escapeHtml(legacyLabel)}</code></dd>
-      </div>
-      <div>
-        <dt>追加予定の日付</dt>
-        <dd>${escapeHtml(String(result.payload.date ?? "—"))}</dd>
-      </div>
-      <div>
-        <dt>タイトル</dt>
-        <dd>${escapeHtml(displayDryRunValue(String(result.payload.title ?? "")))}</dd>
-      </div>
       <div>
         <dt>表示先の月</dt>
         <dd><code>${escapeHtml(String(month))}</code></dd>
@@ -1373,24 +1645,27 @@ function renderNewEventDryRunResult(result: G22eScheduleNewEventDryRunResult): v
         <dt>区分</dt>
         <dd>${escapeHtml(String(group))}</dd>
       </div>
-      <div>
-        <dt>published</dt>
-        <dd><code>false</code></dd>
-      </div>
     </dl>
     <div class="gosaki-schedule-edit-dry-run__chips">
       <span class="gosaki-schedule-edit-dry-run__chips-label">payload keys</span>
       ${renderPayloadKeys(result.payloadKeys)}
     </div>
-    <p class="gosaki-schedule-edit-dry-run__lock">
-      安全確認:
-      <code>dryRun=true</code>,
-      <code>actualWrite=false</code>,
-      <code>wouldInsert=${String(result.wouldInsert)}</code>,
-      <code>saveAllowed=false</code>
-    </p>
+    ${renderPreviewSafetySection({
+      operation: "new",
+      dryRun: true,
+      actualWrite: false,
+      wouldUpdate: false,
+      wouldInsert: result.wouldInsert,
+      wouldDelete: false,
+      physicalDelete: false,
+      saveAllowed: gate.saveAllowed,
+      saveEnabled: insertConfig.saveEnabled,
+      approvalId: insertConfig.approvalId,
+    })}
     ${renderNewEventDryRunDevDetails(result)}
   `;
+  updateSaveButtonState(null);
+  updateSaveTargetPanel();
 }
 
 function renderUnpublishDryRunDevDetails(result: G22fScheduleUnpublishDryRunResult): string {
@@ -1470,60 +1745,52 @@ function renderUnpublishDryRunResult(result: G22fScheduleUnpublishDryRunResult):
     "gosaki-schedule-edit-dry-run--unpublish",
   );
 
+  const updateConfig = getG22fUnpublishUpdateConfig();
+  const gate = evaluateG22fUnpublishUpdateUiGate({
+    signedIn: stagingAuthSignedIn === true,
+    unpublishMode: true,
+    target: unpublishTargetSnapshot,
+    unpublishDryRunResult: result,
+  });
+  const expectedBeforeUpdatedAt = unpublishTargetSnapshot?.updated_at ?? null;
+
   el.innerHTML = `
-    <h3 class="gosaki-schedule-edit-dry-run__title">非公開化案の確認結果</h3>
+    ${renderPreviewBadge()}
+    ${renderWorkflowStepIndicator("unpublish", resolveWorkflowStep("unpublish"))}
+    <h3 class="gosaki-schedule-edit-dry-run__title">非公開化案の確認結果（保存前 preview）</h3>
+    ${renderOperationKindHeader("unpublish")}
     <p class="gosaki-schedule-edit-dry-run__message gosaki-schedule-edit-dry-run__message--ready">
       ${escapeHtml(result.message)}
     </p>
-    <p class="gosaki-schedule-edit-dry-run__note">
-      まだ保存されていません。データベースからは削除しません。保存は現在無効です。
-    </p>
+    ${renderOperationSpecificNote("unpublish")}
     ${renderValidationWarningsList(result.validation.warnings)}
     ${result.validation.ok ? "" : renderGuardErrorList(result.guardErrors)}
-    <dl class="gosaki-schedule-edit-dry-run__target">
-      <div>
-        <dt>操作</dt>
-        <dd><code>unpublish</code>（非公開化の予定）</dd>
-      </div>
-      <div>
-        <dt>対象 id</dt>
-        <dd><code>${escapeHtml(result.target.id)}</code></dd>
-      </div>
-      <div>
-        <dt>legacy_id</dt>
-        <dd><code>${escapeHtml(result.target.legacy_id ?? "—")}</code></dd>
-      </div>
-      <div>
-        <dt>タイトル</dt>
-        <dd>${escapeHtml(displayDryRunValue(result.target.title))}</dd>
-      </div>
-      <div>
-        <dt>日付</dt>
-        <dd>${escapeHtml(result.target.date)}</dd>
-      </div>
-      <div>
-        <dt>site_slug</dt>
-        <dd><code>${escapeHtml(result.target.site_slug)}</code></dd>
-      </div>
-      <div>
-        <dt>published（変更前 → 変更後）</dt>
-        <dd><code>true</code> → <code>false</code></dd>
-      </div>
-      <div>
-        <dt>physicalDelete</dt>
-        <dd><code>false</code></dd>
-      </div>
-    </dl>
-    <p class="gosaki-schedule-edit-dry-run__lock">
-      安全確認:
-      <code>dryRun=true</code>,
-      <code>actualWrite=false</code>,
-      <code>wouldUpdate=${String(result.wouldUpdate)}</code>,
-      <code>wouldDelete=false</code>,
-      <code>saveAllowed=false</code>
-    </p>
+    ${renderTargetIdentitySection({
+      legacyId: result.target.legacy_id,
+      targetId: result.target.id,
+      date: result.target.date,
+      title: result.target.title,
+      publishedBefore: String(result.before.published),
+      publishedAfter: "false",
+    })}
+    ${renderPreviewSafetySection({
+      operation: result.operation,
+      dryRun: true,
+      actualWrite: false,
+      wouldUpdate: result.wouldUpdate,
+      wouldInsert: false,
+      wouldDelete: false,
+      physicalDelete: false,
+      saveAllowed: gate.saveAllowed,
+      saveEnabled: updateConfig.saveEnabled,
+      approvalId: updateConfig.approvalId,
+      expectedBeforeUpdatedAt,
+    })}
+    ${renderOptimisticLockExplanation()}
     ${renderUnpublishDryRunDevDetails(result)}
   `;
+  updateSaveButtonState(null);
+  updateSaveTargetPanel();
 }
 
 function renderDuplicateDryRunResult(result: G22bScheduleDuplicateDryRunResult): void {
@@ -1563,32 +1830,33 @@ function renderDuplicateDryRunResult(result: G22bScheduleDuplicateDryRunResult):
 
   const month = result.derivedPreview?.recalculatedMonth ?? "—";
   const group = result.derivedPreview?.scheduleGroup ?? "—";
+  const insertConfig = getG22dDuplicateInsertConfig();
+  const gate = evaluateG22dDuplicateInsertUiGate({
+    signedIn: stagingAuthSignedIn === true,
+    duplicateMode: true,
+    source: duplicateSourceSnapshot,
+    duplicateDryRunResult: result,
+  });
 
   el.innerHTML = `
-    <h3 class="gosaki-schedule-edit-dry-run__title">複製案の確認結果</h3>
+    ${renderPreviewBadge()}
+    ${renderWorkflowStepIndicator("duplicate", resolveWorkflowStep("duplicate"))}
+    <h3 class="gosaki-schedule-edit-dry-run__title">複製案の確認結果（保存前 preview）</h3>
+    ${renderOperationKindHeader("duplicate")}
     <p class="gosaki-schedule-edit-dry-run__message gosaki-schedule-edit-dry-run__message--ready">
       ${escapeHtml(result.message)}
     </p>
+    ${renderOperationSpecificNote("duplicate")}
     <p class="gosaki-schedule-edit-dry-run__note">
       まだ保存されていません。保存は戸山が確認して反映します。
     </p>
+    ${renderTargetIdentitySection({
+      legacyId: result.source.legacy_id,
+      targetId: result.source.id,
+      date: result.source.date,
+      title: result.source.title,
+    })}
     <dl class="gosaki-schedule-edit-dry-run__target">
-      <div>
-        <dt>操作</dt>
-        <dd><code>duplicate</code>（新規追加の予定）</dd>
-      </div>
-      <div>
-        <dt>複製元</dt>
-        <dd>${escapeHtml(displayValue(result.source.title))}</dd>
-      </div>
-      <div>
-        <dt>複製元 ID</dt>
-        <dd><code>${escapeHtml(result.source.id)}</code></dd>
-      </div>
-      <div>
-        <dt>複製元 legacy_id</dt>
-        <dd><code>${escapeHtml(result.source.legacy_id ?? "—")}</code></dd>
-      </div>
       <div>
         <dt>追加予定の日付</dt>
         <dd>${escapeHtml(String(result.payload.date ?? "—"))}</dd>
@@ -1606,15 +1874,22 @@ function renderDuplicateDryRunResult(result: G22bScheduleDuplicateDryRunResult):
       <span class="gosaki-schedule-edit-dry-run__chips-label">payload keys</span>
       ${renderPayloadKeys(result.payloadKeys)}
     </div>
-    <p class="gosaki-schedule-edit-dry-run__lock">
-      安全確認:
-      <code>dryRun=true</code>,
-      <code>actualWrite=false</code>,
-      <code>wouldInsert=${String(result.wouldInsert)}</code>,
-      <code>saveAllowed=false</code>
-    </p>
+    ${renderPreviewSafetySection({
+      operation: "duplicate",
+      dryRun: true,
+      actualWrite: false,
+      wouldUpdate: false,
+      wouldInsert: result.wouldInsert,
+      wouldDelete: false,
+      physicalDelete: false,
+      saveAllowed: gate.saveAllowed,
+      saveEnabled: insertConfig.saveEnabled,
+      approvalId: insertConfig.approvalId,
+    })}
     ${renderDuplicateDryRunDevDetails(result)}
   `;
+  updateSaveButtonState(null);
+  updateSaveTargetPanel();
 }
 
 function renderDryRunResult(result: G9kExistingEventSaveButtonDryRunResult): void {
@@ -1662,31 +1937,29 @@ function renderDryRunResult(result: G9kExistingEventSaveButtonDryRunResult): voi
     result.saveReadiness === "ready_to_save"
       ? "保存準備OK。更新できます"
       : operatorSaveDisabledDryRunCompleteMessage();
+  const existingConfig = getG9kExistingEventSaveButtonConfig();
+  const gate = evaluateG9kOperatorSaveButtonUiGate({
+    signedIn: stagingAuthSignedIn === true,
+    selectedRow: selectedRowSnapshot,
+    dryRunResult: result,
+  });
   el.innerHTML = `
-    <h3 class="gosaki-schedule-edit-dry-run__title">確認結果</h3>
+    ${renderPreviewBadge()}
+    ${renderWorkflowStepIndicator("existing-update", resolveWorkflowStep("existing-update"))}
+    <h3 class="gosaki-schedule-edit-dry-run__title">確認結果（保存前 preview）</h3>
+    ${renderOperationKindHeader("existing-update")}
     <p class="gosaki-schedule-edit-dry-run__message gosaki-schedule-edit-dry-run__message--ready">
       ${escapeHtml(saveReadyMessage)}
     </p>
-    <dl class="gosaki-schedule-edit-dry-run__target">
-      <div>
-        <dt>対象公演</dt>
-        <dd>${escapeHtml(displayValue(result.target.title))}</dd>
-      </div>
-      <div>
-        <dt>日付</dt>
-        <dd>${escapeHtml(result.target.date || "—")}</dd>
-      </div>
-      <div class="gosaki-schedule-edit-dry-run__target-id">
-        <dt>ID</dt>
-        <dd><code>${escapeHtml(result.target.id)}</code></dd>
-      </div>
-      <div>
-        <dt>approvalId</dt>
-        <dd><code>${escapeHtml(result.approvalId)}</code></dd>
-      </div>
-    </dl>
+    ${renderOperationSpecificNote("existing-update")}
+    ${renderTargetIdentitySection({
+      legacyId: selectedRowSnapshot?.legacy_id ?? null,
+      targetId: result.target.id,
+      date: result.target.date,
+      title: result.target.title,
+    })}
     <div class="gosaki-schedule-edit-dry-run__chips">
-      <span class="gosaki-schedule-edit-dry-run__chips-label">changedFields</span>
+      <span class="gosaki-schedule-edit-dry-run__chips-label">変更されるフィールド</span>
       ${renderChangedFieldChips(result.changedFields)}
     </div>
     <div class="gosaki-schedule-edit-dry-run__chips">
@@ -1707,15 +1980,24 @@ function renderDryRunResult(result: G9kExistingEventSaveButtonDryRunResult): voi
         </tbody>
       </table>
     </div>
-    <p class="gosaki-schedule-edit-dry-run__lock">
-      安全確認: <code>expectedBeforeUpdatedAt</code> = ${escapeHtml(result.expectedBeforeUpdatedAt ?? "—")}
-      （rowsAffected 必須 = ${String(result.rowsAffectedRequired)}）
-    </p>
+    ${renderPreviewSafetySection({
+      operation: "existing-update",
+      dryRun: true,
+      actualWrite: false,
+      wouldUpdate: true,
+      wouldInsert: false,
+      wouldDelete: false,
+      physicalDelete: false,
+      saveAllowed: gate.saveAllowed,
+      saveEnabled: existingConfig.saveEnabled,
+      approvalId: result.approvalId,
+      expectedBeforeUpdatedAt: result.expectedBeforeUpdatedAt,
+    })}
+    ${renderOptimisticLockExplanation()}
     ${renderDryRunOutcomeNote(result.saveReadiness)}
   `;
+  updateSaveTargetPanel();
 }
-
-function renderSaveDiffRows(
   diff: NonNullable<G9kExistingEventSaveButtonSaveOutcome["beforeAfterDiff"]>,
 ): string {
   return diff
@@ -1752,6 +2034,7 @@ function renderSaveResult(outcome: G9kExistingEventSaveButtonSaveOutcome): void 
   );
 
   el.innerHTML = `
+    ${renderSaveResultBadge()}
     <h3 class="gosaki-schedule-edit-save-result__title">${success ? "保存成功" : "保存できませんでした"}</h3>
     ${
       success
@@ -1759,15 +2042,18 @@ function renderSaveResult(outcome: G9kExistingEventSaveButtonSaveOutcome): void 
         : ""
     }
     ${outcome.errorMessage ? `<p class="gosaki-schedule-edit-save-result__message">${escapeHtml(outcome.errorMessage)}</p>` : ""}
+    ${renderOperationKindHeader("existing-update")}
+    ${renderTargetIdentitySection({
+      legacyId: outcome.beforeRecord?.legacy_id,
+      targetId: outcome.beforeRecord?.id,
+      date: outcome.beforeRecord?.date,
+      title: outcome.afterRecord?.title ?? outcome.beforeRecord?.title,
+    })}
     <dl class="gosaki-schedule-edit-dry-run__target">
       <div><dt>rowsAffected</dt><dd><code>${escapeHtml(rowsAffected)}</code></dd></div>
-      <div><dt>target id</dt><dd><code>${escapeHtml(outcome.beforeRecord?.id ?? "—")}</code></dd></div>
-      <div><dt>legacy_id</dt><dd><code>${escapeHtml(outcome.beforeRecord?.legacy_id ?? "—")}</code></dd></div>
-      <div><dt>title</dt><dd>${escapeHtml(displayValue(outcome.afterRecord?.title ?? outcome.beforeRecord?.title))}</dd></div>
-      <div><dt>date</dt><dd>${escapeHtml(outcome.beforeRecord?.date ?? "—")}</dd></div>
-      <div><dt>venue</dt><dd>${escapeHtml(displayValue(outcome.afterRecord?.venue ?? outcome.beforeRecord?.venue))}</dd></div>
-      <div><dt>before updated_at</dt><dd><code>${escapeHtml(outcome.beforeRecord?.updated_at ?? "—")}</code></dd></div>
-      <div><dt>post-save updated_at</dt><dd><code>${escapeHtml(outcome.afterRecord?.updated_at ?? "—")}</code></dd></div>
+      <div><dt>保存前 updated_at（before updated_at）</dt><dd><code>${escapeHtml(outcome.beforeRecord?.updated_at ?? "—")}</code></dd></div>
+      <div><dt>保存後 updated_at（saved updated_at）</dt><dd><code>${escapeHtml(outcome.afterRecord?.updated_at ?? "—")}</code></dd></div>
+      <div><dt>optimistic lock 基準（expectedBeforeUpdatedAt）</dt><dd><code>${escapeHtml(outcome.expectedBeforeUpdatedAt ?? "—")}</code></dd></div>
       <div class="gosaki-schedule-edit-save-result__description"><dt>post-save description</dt><dd class="gosaki-schedule-edit-save-result__description-body">${escapeHtml(postSaveDescription)}</dd></div>
     </dl>
     <div class="gosaki-schedule-edit-dry-run__chips">
@@ -1783,6 +2069,7 @@ function renderSaveResult(outcome: G9kExistingEventSaveButtonSaveOutcome): void 
         ? `<div class="gosaki-schedule-edit-dry-run__diff-wrap"><table class="gosaki-schedule-edit-dry-run__diff"><thead><tr><th>項目</th><th>変更前</th><th>変更後</th></tr></thead><tbody>${diffRows}</tbody></table></div>`
         : ""
     }
+    ${renderOptimisticLockExplanation()}
   `;
 }
 
@@ -1799,6 +2086,7 @@ function renderNewEventInsertSaveResult(outcome: G22eNewEventInsertSaveOutcome):
   el.className = `gosaki-schedule-edit-save-result${success ? " gosaki-schedule-edit-save-result--ok" : " gosaki-schedule-edit-save-result--error"}`;
 
   el.innerHTML = `
+    ${renderSaveResultBadge()}
     <h3 class="gosaki-schedule-edit-save-result__title">${success ? "新規追加案の保存成功" : "新規追加案を保存できませんでした"}</h3>
     ${
       success
@@ -1806,6 +2094,12 @@ function renderNewEventInsertSaveResult(outcome: G22eNewEventInsertSaveOutcome):
         : ""
     }
     ${outcome.errorMessage ? `<p class="gosaki-schedule-edit-save-result__message">${escapeHtml(outcome.errorMessage)}</p>` : ""}
+    ${renderOperationKindHeader("new-event")}
+    ${renderTargetIdentitySection({
+      legacyId: outcome.legacy_id,
+      targetId: outcome.insertedId,
+      title: outcome.legacy_id,
+    })}
     <dl class="gosaki-schedule-edit-dry-run__target">
       <div><dt>operation</dt><dd><code>${escapeHtml(outcome.operation)}</code></dd></div>
       <div><dt>approvalId</dt><dd><code>${escapeHtml(outcome.approvalId)}</code></dd></div>
@@ -1839,6 +2133,7 @@ function renderDuplicateInsertSaveResult(outcome: G22dDuplicateInsertSaveOutcome
   el.className = `gosaki-schedule-edit-save-result${success ? " gosaki-schedule-edit-save-result--ok" : " gosaki-schedule-edit-save-result--error"}`;
 
   el.innerHTML = `
+    ${renderSaveResultBadge()}
     <h3 class="gosaki-schedule-edit-save-result__title">${success ? "複製案の保存成功" : "複製案を保存できませんでした"}</h3>
     ${
       success
@@ -1846,6 +2141,11 @@ function renderDuplicateInsertSaveResult(outcome: G22dDuplicateInsertSaveOutcome
         : ""
     }
     ${outcome.errorMessage ? `<p class="gosaki-schedule-edit-save-result__message">${escapeHtml(outcome.errorMessage)}</p>` : ""}
+    ${renderOperationKindHeader("duplicate")}
+    ${renderTargetIdentitySection({
+      legacyId: outcome.legacy_id,
+      targetId: outcome.insertedId,
+    })}
     <dl class="gosaki-schedule-edit-dry-run__target">
       <div><dt>operation</dt><dd><code>${escapeHtml(outcome.operation)}</code></dd></div>
       <div><dt>approvalId</dt><dd><code>${escapeHtml(outcome.approvalId)}</code></dd></div>
@@ -1877,6 +2177,7 @@ function renderUnpublishUpdateSaveResult(outcome: G22fUnpublishUpdateSaveOutcome
   el.className = `gosaki-schedule-edit-save-result${success ? " gosaki-schedule-edit-save-result--ok" : " gosaki-schedule-edit-save-result--error"}`;
 
   el.innerHTML = `
+    ${renderSaveResultBadge()}
     <h3 class="gosaki-schedule-edit-save-result__title">${success ? "非公開化の保存成功" : "非公開化を保存できませんでした"}</h3>
     ${
       success
@@ -1884,18 +2185,27 @@ function renderUnpublishUpdateSaveResult(outcome: G22fUnpublishUpdateSaveOutcome
         : ""
     }
     ${outcome.errorMessage ? `<p class="gosaki-schedule-edit-save-result__message">${escapeHtml(outcome.errorMessage)}</p>` : ""}
+    ${renderOperationKindHeader("unpublish")}
+    ${renderOperationSpecificNote("unpublish")}
+    ${renderTargetIdentitySection({
+      legacyId: outcome.targetLegacyId,
+      targetId: outcome.targetId,
+      title: outcome.beforeRecord?.title,
+      date: outcome.beforeRecord?.date,
+      publishedBefore: String(outcome.beforeRecord?.published ?? "true"),
+      publishedAfter: String(outcome.afterRecord?.published ?? "false"),
+    })}
     <dl class="gosaki-schedule-edit-dry-run__target">
       <div><dt>operation</dt><dd><code>${escapeHtml(outcome.operation)}</code></dd></div>
       <div><dt>approvalId</dt><dd><code>${escapeHtml(outcome.approvalId)}</code></dd></div>
-      <div><dt>targetId</dt><dd><code>${escapeHtml(outcome.targetId)}</code></dd></div>
-      <div><dt>legacy_id</dt><dd><code>${escapeHtml(outcome.targetLegacyId ?? "—")}</code></dd></div>
-      <div><dt>before published</dt><dd><code>${escapeHtml(String(outcome.beforeRecord?.published ?? "—"))}</code></dd></div>
-      <div><dt>after published</dt><dd><code>${escapeHtml(String(outcome.afterRecord?.published ?? "—"))}</code></dd></div>
-      <div><dt>expectedBeforeUpdatedAt</dt><dd><code>${escapeHtml(outcome.expectedBeforeUpdatedAt ?? "—")}</code></dd></div>
+      <div><dt>保存前 updated_at（before updated_at）</dt><dd><code>${escapeHtml(outcome.beforeRecord?.updated_at ?? "—")}</code></dd></div>
+      <div><dt>保存後 updated_at（saved updated_at）</dt><dd><code>${escapeHtml(outcome.afterRecord?.updated_at ?? "—")}</code></dd></div>
+      <div><dt>optimistic lock 基準（expectedBeforeUpdatedAt）</dt><dd><code>${escapeHtml(outcome.expectedBeforeUpdatedAt ?? "—")}</code></dd></div>
       <div><dt>wouldDelete</dt><dd><code>false</code></dd></div>
       <div><dt>physicalDelete</dt><dd><code>false</code></dd></div>
       <div><dt>actualWrite</dt><dd><code>${String(outcome.actualWrite)}</code></dd></div>
     </dl>
+    ${renderOptimisticLockExplanation()}
     ${
       outcome.guardReasons.length > 0
         ? `<div class="gosaki-schedule-edit-dry-run__chips"><span class="gosaki-schedule-edit-dry-run__chips-label">guardReasons</span>${outcome.guardReasons.map((reason) => `<span class="gosaki-schedule-edit-dry-run__chip">${escapeHtml(reason)}</span>`).join("")}</div>`
@@ -2547,6 +2857,7 @@ export async function initGosakiStagingScheduleOperatorUi(): Promise<void> {
   renderScheduleList();
   renderEditForm(null);
   updateUnpublishButtonState();
+  updateSaveTargetPanel();
 }
 
 if (typeof document !== "undefined") {

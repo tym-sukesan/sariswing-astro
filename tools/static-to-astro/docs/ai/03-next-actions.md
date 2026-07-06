@@ -1,5 +1,18 @@
-Last updated: 2026-07-06
+Last updated: 2026-07-07
 Project: Static-to-Astro CMS / Musician CMS Kit
+
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22g1c Schedule save preview / target confirmation — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-22g1c-gosaki-schedule-save-preview-target-confirmation` |
+| Base | `9c6d514` |
+| Scope | pre-save confirmation panel · save target panel · workflow steps · save result labels |
+| G-22f5 lesson | target identity · preview vs save result · optimistic lock label clarity |
+| DB write | **no** (display only) |
+| Doc | `gosaki-schedule-save-preview-target-confirmation.md` |
+| Verifier | `verify-g22g1c-gosaki-schedule-save-preview-target-confirmation.mjs` |
+| **Next** | **G-22g2** operator procedure · **Schedule P0 UX QA** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22g1b Schedule dev/mock section isolation — complete
 
@@ -7,6 +20,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | --- | --- |
 | Phase | `G-22g1b-gosaki-schedule-dev-mock-section-isolation` |
 | Base | `406cf16` |
+| Commit | `9c6d514` |
 | Scope | dev-tools warning · mock zone · operator guide · read-source banner |
 | G-22f5 lesson | mock UI ≠ operator UI · use 非公開 not unpublish |
 | DB write | **no** (display only) |

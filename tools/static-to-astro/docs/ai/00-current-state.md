@@ -1,9 +1,11 @@
-Last updated: 2026-07-06
+Last updated: 2026-07-07
 Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-22g1b Gosaki Schedule dev/mock section isolation (2026-07-07):** **complete (uncommitted)** — dev-tools `<details>` warning + `gosaki-schedule-dev-mock-zone`; operator guide「通常の Schedule 操作はこちら」; read-source banner (Supabase vs mock); PoC section banners (`mock-schedule-*` not real). **No Save / DB write / FTP.** Doc: `gosaki-schedule-dev-mock-section-isolation.md`. Verifier: `verify-g22g1b-gosaki-schedule-dev-mock-section-isolation.mjs`. **Next: G-22g1c pre-save panel or G-22g2 operator procedure.**
+**G-22g1c Gosaki Schedule save preview / target confirmation panel (2026-07-07):** **complete (uncommitted)** — pre-save confirmation panel for UPDATE / duplicate / new event / unpublish; `#gosaki-schedule-save-target-panel` near Save; workflow step indicator; save result labels distinguish before/after `updated_at` and `expectedBeforeUpdatedAt`. **No Save / DB write / FTP.** Doc: `gosaki-schedule-save-preview-target-confirmation.md`. Verifier: `verify-g22g1c-gosaki-schedule-save-preview-target-confirmation.mjs`. **Next: G-22g2 operator procedure hints or Schedule P0 UX QA.**
+
+**G-22g1b Gosaki Schedule dev/mock section isolation (2026-07-07):** **complete** — commit `9c6d514`. **Superseded for pre-save panel by G-22g1c.**
 
 **G-22g1a Gosaki Schedule list UX legacy_id visibility (2026-07-06):** **complete** — commit `406cf16`. **Superseded for dev isolation by G-22g1b.**
 

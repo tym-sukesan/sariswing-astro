@@ -5,14 +5,25 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-22g1b-gosaki-schedule-dev-mock-section-isolation — complete (uncommitted).
-Dev/mock PoC sections isolated; operator guide on top UI; read-source banner for Supabase vs mock.
+Current phase: G-22g1c-gosaki-schedule-save-preview-target-confirmation — complete (uncommitted).
+Pre-save confirmation panel + save target panel + workflow steps + save result label clarity.
 Do NOT re-Save: schedule-2026-07-008 (G-22f7), schedule-2026-09-001 (G-22e7), schedule-2026-03-014 (G-22d3d).
 Physical DELETE not implemented. Public reflection / package / FTP not executed.
 Routine dev: PUBLIC_ADMIN_WRITE_DRY_RUN=true; all write arms off.
 Supabase interim SoT: kmjqppxjdnwwrtaeqjta — never vsbvndwuajjhnzpohghh.
-Next: G-22g1c pre-save panel emphasis · G-22g2 operator procedure hints.
+Next: G-22g2 operator procedure hints · Schedule P0 UX QA.
 ```
+
+## G-22g1c Schedule save preview / target confirmation — complete
+
+- **Problem:** G-22f5 — operator unclear which row / which button; `expectedBeforeUpdatedAt` looked like post-save `updated_at`
+- **Pre-save panel:** operation · legacy_id · id · date · title · published before/after · safety flags · `actualWrite=false` badge
+- **Save target panel:** `#gosaki-schedule-save-target-panel` near Save — identity visible before click
+- **Workflow steps:** e.g. 非公開化案を作成 → 変更を確認 → 非公開化を保存
+- **Save result labels:** 保存前 updated_at / 保存後 updated_at / optimistic lock 基準 — display only, logic unchanged
+- **No DB write** — display only; save modules unchanged
+- **Doc:** `gosaki-schedule-save-preview-target-confirmation.md` · **Verifier:** `verify-g22g1c-gosaki-schedule-save-preview-target-confirmation.mjs`
+- **Next:** G-22g2 · Schedule P0 UX QA
 
 ## G-22g1b Schedule dev/mock section isolation — complete
 

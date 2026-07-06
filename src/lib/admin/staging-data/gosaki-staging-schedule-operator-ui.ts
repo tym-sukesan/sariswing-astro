@@ -271,6 +271,41 @@ function displayDryRunValue(value: string | null | undefined): string {
   return trimmed || "（空）";
 }
 
+function renderOperatorReadSourceBanner(): void {
+  const root = getRoot();
+  const banner = document.getElementById("gosaki-schedule-operator-read-source-banner");
+  if (!root || !banner) return;
+
+  const source = String(root.dataset.readSource ?? "").trim().toLowerCase();
+  const isLive = source === "supabase" && selectableRows.length > 0;
+
+  if (isLive) {
+    banner.hidden = false;
+    banner.className =
+      "gosaki-schedule-operator-read-source-banner gosaki-schedule-operator-read-source-banner--live";
+    banner.setAttribute("role", "status");
+    banner.innerHTML = `
+      <p class="gosaki-schedule-operator-read-source-banner__text">
+        <strong>データソース: Supabase（staging）</strong> — 通常の Schedule 操作はこの画面上部の公演一覧で行ってください。
+      </p>
+    `;
+    return;
+  }
+
+  banner.hidden = false;
+  banner.className =
+    "gosaki-schedule-operator-read-source-banner gosaki-schedule-operator-read-source-banner--mock";
+  banner.setAttribute("role", "alert");
+  const sourceLabel = source || "unavailable";
+  banner.innerHTML = `
+    <p class="gosaki-schedule-operator-read-source-banner__text">
+      <strong>データソース: ${escapeHtml(sourceLabel)} — 実データではありません。</strong>
+      ページ下部の「開発者向け詳細」や mock UI は Gosaki の本番運用操作では使いません。
+      Supabase 接続時のみ上部の公演一覧が通常操作対象です。
+    </p>
+  `;
+}
+
 function getRoot(): HTMLElement | null {
   return document.getElementById("gosaki-schedule-operator");
 }
@@ -2498,6 +2533,7 @@ export async function initGosakiStagingScheduleOperatorUi(): Promise<void> {
   if (!root) return;
 
   selectableRows = parseRowsDataset();
+  renderOperatorReadSourceBanner();
   wireFilters();
   wireTableActions();
   wireAddForm();

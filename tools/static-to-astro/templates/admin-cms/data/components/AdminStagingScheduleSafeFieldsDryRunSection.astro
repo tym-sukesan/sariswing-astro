@@ -39,6 +39,11 @@ const targetFieldsLabel = implConfig.targetFields?.join(", ") ?? "title, venue, 
     G-6-e5 approval ID not used. Hidden PoC trigger not armed.
   </p>
 
+  <p class="gosaki-schedule-dev-mock-zone__section-banner" role="alert">
+    <strong>mock / dry-run PoC（運用操作対象外）。</strong>
+    「Selected schedule: <code>mock-schedule-*</code>」は実データではありません。Gosaki 本番操作では使わないでください。
+  </p>
+
   {
     config.disabledReason ? (
       <p class="admin-staging-schedule-safe-fields-dry-run__disabled" role="note">

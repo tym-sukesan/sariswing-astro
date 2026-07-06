@@ -1,6 +1,19 @@
 Last updated: 2026-07-06
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22g1b Schedule dev/mock section isolation — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-22g1b-gosaki-schedule-dev-mock-section-isolation` |
+| Base | `406cf16` |
+| Scope | dev-tools warning · mock zone · operator guide · read-source banner |
+| G-22f5 lesson | mock UI ≠ operator UI · use 非公開 not unpublish |
+| DB write | **no** (display only) |
+| Doc | `gosaki-schedule-dev-mock-section-isolation.md` |
+| Verifier | `verify-g22g1b-gosaki-schedule-dev-mock-section-isolation.mjs` |
+| **Next** | **G-22g1c** pre-save panel · **G-22g2** operator procedure |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22g1a Schedule list UX legacy_id — complete
 
 | Item | Value |

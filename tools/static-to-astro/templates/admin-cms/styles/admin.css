@@ -1679,6 +1679,120 @@
   margin-top: 1rem;
 }
 
+.gosaki-schedule-operator-primary {
+  position: relative;
+}
+
+.gosaki-schedule-operator-guide {
+  margin: 0 0 1rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid #bfdbfe;
+  border-radius: var(--admin-radius);
+  background: #f0f9ff;
+}
+
+.gosaki-schedule-operator-guide__title {
+  margin: 0 0 0.35rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.gosaki-schedule-operator-guide__body,
+.gosaki-schedule-operator-guide__dev-note {
+  margin: 0.35rem 0 0;
+  font-size: 0.88rem;
+  line-height: 1.55;
+  color: #334155;
+}
+
+.gosaki-schedule-operator-guide__dev-note {
+  color: #64748b;
+}
+
+.gosaki-schedule-operator-read-source-banner {
+  margin: 0 0 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: var(--admin-radius);
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
+.gosaki-schedule-operator-read-source-banner--live {
+  border: 1px solid #86efac;
+  background: #f0fdf4;
+  color: #14532d;
+}
+
+.gosaki-schedule-operator-read-source-banner--mock {
+  border: 1px solid #fcd34d;
+  background: #fffbeb;
+  color: #92400e;
+}
+
+.gosaki-schedule-operator-read-source-banner__text {
+  margin: 0;
+}
+
+.gosaki-schedule-dev-tools-panel {
+  margin-top: 2rem;
+  border: 2px dashed #f59e0b;
+  background: #fffbeb;
+}
+
+.gosaki-schedule-dev-tools-panel > summary {
+  color: #92400e;
+  font-weight: 700;
+}
+
+.gosaki-schedule-dev-tools-panel[open] {
+  border-style: solid;
+  box-shadow: inset 0 0 0 1px #fde68a;
+}
+
+.gosaki-schedule-dev-tools-panel__warning {
+  margin: 0.75rem 0 1rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid #fbbf24;
+  border-radius: var(--admin-radius);
+  background: #fef3c7;
+  color: #78350f;
+  font-size: 0.88rem;
+  line-height: 1.55;
+}
+
+.gosaki-schedule-dev-tools-panel__warning p {
+  margin: 0;
+}
+
+.gosaki-schedule-dev-mock-zone {
+  margin-top: 0.5rem;
+  padding: 0.75rem;
+  border-left: 4px solid #f59e0b;
+  background: #fffdf7;
+}
+
+.gosaki-schedule-dev-mock-zone__section-banner {
+  margin: 0 0 0.85rem;
+  padding: 0.65rem 0.85rem;
+  border: 1px solid #fcd34d;
+  border-radius: var(--admin-radius);
+  background: #fffbeb;
+  color: #92400e;
+  font-size: 0.84rem;
+  line-height: 1.5;
+}
+
+.gosaki-schedule-dev-mock-zone .admin-staging-schedule-site-slug-row-picker,
+.gosaki-schedule-dev-mock-zone .admin-staging-schedule-site-slug-read,
+.gosaki-schedule-dev-mock-zone .admin-staging-schedule-site-slug-edit,
+.gosaki-schedule-dev-mock-zone .admin-staging-schedule-general-edit,
+.gosaki-schedule-dev-mock-zone .admin-staging-schedule-safe-fields-dry-run,
+.gosaki-schedule-dev-mock-zone .admin-gosaki-schedule-g13c1,
+.gosaki-schedule-dev-mock-zone .admin-gosaki-schedule-g13c2 {
+  opacity: 0.98;
+}
+
 /* 運用者向け: 内部パネルの開発者向け見出し・説明を非表示（重要な警告は残す） */
 .admin-gosaki-operator-schedule .admin-staging-schedule-site-slug-row-picker__title,
 .admin-gosaki-operator-schedule .admin-staging-schedule-site-slug-row-picker__safety,

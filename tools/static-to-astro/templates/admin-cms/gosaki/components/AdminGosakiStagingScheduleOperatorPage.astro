@@ -51,7 +51,7 @@ function displayValue(value: string | null | undefined): string {
 
 <section
   id="gosaki-schedule-operator"
-  class="admin-gosaki-schedule-operator admin-page admin-page--wide admin-prototype-section"
+  class="admin-gosaki-schedule-operator admin-page admin-page--wide admin-prototype-section gosaki-schedule-operator-primary"
   data-section="admin-schedule"
   data-read-source={binding.source}
   data-selectable-rows={rowsJson}
@@ -98,6 +98,24 @@ function displayValue(value: string | null | undefined): string {
   <p class="admin-gosaki-status-bar admin-gosaki-status-bar--soft" role="status">
     {scheduleStatusMessage}
   </p>
+
+  <div
+    id="gosaki-schedule-operator-read-source-banner"
+    class="gosaki-schedule-operator-read-source-banner"
+    hidden
+    role="status"
+  ></div>
+
+  <aside class="gosaki-schedule-operator-guide" role="note" aria-label="通常操作の案内">
+    <p class="gosaki-schedule-operator-guide__title">通常の Schedule 操作はこちら</p>
+    <p class="gosaki-schedule-operator-guide__body">
+      上部の<strong>公演一覧</strong>で <code>legacy_id</code> / 日付 / タイトルを確認し、「編集する」を押してください。
+      非公開化は「<strong>非公開化案を作成</strong>」→「変更を確認」→「非公開化を保存」の順です（ページ内検索は <code>unpublish</code> ではなく「<strong>非公開</strong>」を使用）。
+    </p>
+    <p class="gosaki-schedule-operator-guide__dev-note">
+      ページ下部の「開発者向け詳細」は <strong>mock / dry-run PoC 用</strong>です。Gosaki の本番運用操作では使いません。
+    </p>
+  </aside>
 
   {
     binding.message ? (
@@ -530,8 +548,16 @@ function displayValue(value: string | null | undefined): string {
     </section>
   </div>
 
-  <details class="admin-gosaki-dev-tools gosaki-schedule-operator-poc-cleanup-panels">
-    <summary>開発者向け詳細 — PoC クリーンアップ（通常は開かないでください）</summary>
+  <details class="admin-gosaki-dev-tools gosaki-schedule-operator-poc-cleanup-panels gosaki-schedule-dev-tools-panel">
+    <summary>開発者向け詳細 — mock / dry-run PoC クリーンアップ（通常操作では使わない）</summary>
+    <div class="gosaki-schedule-dev-tools-panel__warning" role="alert">
+      <p>
+        <strong>運用者向けではありません。</strong>
+        G-13c1 / G-13c2 は内部検証用の PoC クリーンアップ UI です。
+        Gosaki の通常 Schedule 操作はページ上部のオペレーター UI（公演一覧）を使用してください。
+      </p>
+    </div>
+    <div class="gosaki-schedule-dev-mock-zone" aria-label="開発者向け mock / dry-run PoC">
     <section
       id="gosaki-schedule-g13c1-event-a-poc-cleanup"
       class="admin-card admin-gosaki-card admin-gosaki-schedule-g13c1 admin-prototype-section"
@@ -639,6 +665,7 @@ function displayValue(value: string | null | undefined): string {
         aria-live="polite"
       ></div>
     </section>
+    </div>
   </details>
 </section>
 

@@ -5,14 +5,25 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-22g1a-gosaki-schedule-list-ux-legacy-id — complete (uncommitted).
-Schedule operator list now shows legacy_id / id / updated_at in list + selected summary.
+Current phase: G-22g1b-gosaki-schedule-dev-mock-section-isolation — complete (uncommitted).
+Dev/mock PoC sections isolated; operator guide on top UI; read-source banner for Supabase vs mock.
 Do NOT re-Save: schedule-2026-07-008 (G-22f7), schedule-2026-09-001 (G-22e7), schedule-2026-03-014 (G-22d3d).
 Physical DELETE not implemented. Public reflection / package / FTP not executed.
 Routine dev: PUBLIC_ADMIN_WRITE_DRY_RUN=true; all write arms off.
 Supabase interim SoT: kmjqppxjdnwwrtaeqjta — never vsbvndwuajjhnzpohghh.
-Next: G-22g1b dev/mock section isolation · G-22g1c pre-save panel emphasis.
+Next: G-22g1c pre-save panel emphasis · G-22g2 operator procedure hints.
 ```
+
+## G-22g1b Schedule dev/mock section isolation — complete
+
+- **Problem:** G-22f5 operator confused bottom dev-tools mock UI with top operator UI
+- **Isolation:** amber `gosaki-schedule-dev-tools-panel` + `gosaki-schedule-dev-mock-zone`; details closed by default
+- **Banners:** `mock-schedule-*` is not real data — on row picker, safe-fields dry-run, general edit
+- **Operator guide:**「通常の Schedule 操作はこちら」+ 非公開 flow + dev section warning
+- **Read source:** `#gosaki-schedule-operator-read-source-banner` — green Supabase / amber mock
+- **No DB write** — display only; save modules unchanged
+- **Doc:** `gosaki-schedule-dev-mock-section-isolation.md` · **Verifier:** `verify-g22g1b-gosaki-schedule-dev-mock-section-isolation.mjs`
+- **Next:** G-22g1c · G-22g2
 
 ## G-22g1a Schedule list UX legacy_id — complete
 

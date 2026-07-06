@@ -22,11 +22,18 @@ const editBinding = await resolveGosakiScheduleSiteSlugEditBinding();
     <div class="admin-gosaki-admin-pages">
       <AdminGosakiStagingScheduleOperatorPage binding={rowPickerBinding} />
 
-      <details class="admin-gosaki-dev-tools admin-gosaki-dev-tools--schedule">
-        <summary>開発者向け詳細</summary>
-        <p class="admin-gosaki-dev-tools__note" role="note">
-          通常の運用確認では開く必要はありません。内部検証用の UI です。
-        </p>
+      <details class="admin-gosaki-dev-tools admin-gosaki-dev-tools--schedule gosaki-schedule-dev-tools-panel">
+        <summary>開発者向け詳細 — mock / dry-run PoC（通常操作では使わない）</summary>
+        <div class="gosaki-schedule-dev-tools-panel__warning" role="alert">
+          <p>
+            <strong>運用者向けではありません。</strong>
+            このセクションは内部検証用の mock / fixture / dry-run PoC UI です。
+            <code>mock-schedule-*</code> や「Selected schedule: mock-schedule-…」は<strong>実データではありません</strong>。
+            Gosaki の通常 Schedule 操作はページ<strong>上部</strong>のオペレーター UI（公演一覧・legacy_id 表示）を使用してください。
+            非公開化は上部 UI の「非公開化案を作成」から行います（ページ内検索は「非公開」を使用）。
+          </p>
+        </div>
+        <div class="gosaki-schedule-dev-mock-zone" aria-label="開発者向け mock / dry-run PoC">
         {
           readBinding ? (
             <AdminStagingScheduleSiteSlugReadSection binding={readBinding} />
@@ -44,6 +51,7 @@ const editBinding = await resolveGosakiScheduleSiteSlugEditBinding();
         />
         <AdminStagingScheduleSafeFieldsDryRunSection phase="G-6-f4-schedule-safe-fields-dry-run-prototype" />
         <AdminStagingScheduleSafeFieldsNonDryRunPocSection phase="G-6-f6-schedule-safe-fields-non-dry-run-poc-implementation" />
+        </div>
       </details>
     </div>
   </AdminGosakiStagingAuthGate>

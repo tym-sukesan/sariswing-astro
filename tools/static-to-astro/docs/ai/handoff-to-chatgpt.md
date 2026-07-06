@@ -5,15 +5,27 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-22f3-gosaki-schedule-unpublish-update-implementation — complete (uncommitted).
-Unpublish UPDATE save path implemented: operation=unpublish-update, patch={published:false}, optimistic lock via G-9k UPDATE path.
+Current phase: G-22f4-gosaki-schedule-unpublish-update-final-preflight — complete (uncommitted).
+Unpublish UPDATE final preflight: candidate list SQL + beforeVerification / afterVerification SELECT-only templates; rollback UPDATE template (not executed).
+Target row pending — operator selects from published=true candidates; Cursor does not auto-fix.
 approvalId=G-22f-gosaki-schedule-unpublish-update-non-dry-run-slice; env arm PUBLIC_ADMIN_GOSAKI_SCHEDULE_G22F_UNPUBLISH_UPDATE_NON_DRY_RUN_ARMED (default false).
-Default Save disabled; physical DELETE not implemented. G-9k / G-22d / G-22e / G-22f dry-run paths preserved.
-Do NOT re-Save closed slices: schedule-2026-09-001 (G-22e7), schedule-2026-03-014 (G-22d3d).
+Slice: published=true→false UPDATE only — NOT physical DELETE. Default Save disabled.
+Do NOT re-Save closed slices: schedule-2026-09-001 (G-22e7), schedule-2026-03-014 (G-22d3d). Protected rows non-touch for unpublish.
 Routine dev: PUBLIC_ADMIN_WRITE_DRY_RUN=true; all write arms off.
 Supabase interim SoT: kmjqppxjdnwwrtaeqjta — never vsbvndwuajjhnzpohghh.
-Next: G-22f4 final preflight (target row fixed).
+Next: operator runs candidate SQL → fix target → beforeVerification PASS → G-22f5 operator Save once.
 ```
+
+## G-22f4 unpublish UPDATE final preflight — complete
+
+- **Target:** **pending** — operator picks one `published=true` row from candidate list SQL (not `schedule-2026-03-014` / `schedule-2026-09-001`)
+- **approvalId:** `G-22f-gosaki-schedule-unpublish-update-non-dry-run-slice`
+- **SQL:** candidate list + beforeVerification / afterVerification SELECT-only; rollback UPDATE template (**rollback execution forbidden in G-22f4**)
+- **Code preflight:** `buildG22fUnpublishUpdatePayload` → `{ published: false }` only; no `updated_at` in patch; `expectedBeforeUpdatedAt`; `wouldDelete=false` / `physicalDelete=false`
+- **Protected:** `schedule-2026-03-014` / `schedule-2026-09-001` — non-touch
+- **Not executed:** Save / DB write / SQL mutation / rollback / GRANT / package regen / FTP
+- **Doc:** `gosaki-schedule-unpublish-update-final-preflight.md` · **Verifier:** `verify-g22f4-gosaki-schedule-unpublish-update-final-preflight.mjs`
+- **Next:** G-22f5 operator Save once (after target fixed)
 
 ## G-22f3 unpublish UPDATE implementation — complete
 
@@ -24,7 +36,7 @@ Next: G-22f4 final preflight (target row fixed).
 - **Payload:** `{ published: false }` only; no `updated_at` in patch
 - **Protected:** `schedule-2026-03-014` / `schedule-2026-09-001` blocked in guards
 - **Doc:** `gosaki-schedule-unpublish-update-implementation.md` · **Verifier:** `verify-g22f3-gosaki-schedule-unpublish-update-implementation.mjs`
-- **Next:** G-22f4 final preflight → G-22f5 operator Save once
+- **Next:** G-22f4 final preflight — **done** → G-22f5 operator Save once
 
 ## G-22f2 unpublish UPDATE planning — complete
 

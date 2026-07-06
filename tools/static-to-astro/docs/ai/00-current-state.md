@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-22f3 Gosaki Schedule unpublish UPDATE implementation (2026-07-06):** **complete (uncommitted)** — config/guards/save/UI gate for `published=true→false` UPDATE; approvalId `G-22f-gosaki-schedule-unpublish-update-non-dry-run-slice`; optimistic lock via G-9k UPDATE path; default Save disabled. **No Save / DB write / GRANT / FTP.** Doc: `gosaki-schedule-unpublish-update-implementation.md`. Verifier: `verify-g22f3-gosaki-schedule-unpublish-update-implementation.mjs`. **Next: G-22f4 final preflight.**
+**G-22f4 Gosaki Schedule unpublish UPDATE final preflight (2026-07-06):** **complete (uncommitted)** — candidate list + beforeVerification / afterVerification SELECT-only SQL templates; rollback UPDATE template (not executed); target row **pending** (operator selects from `published=true` candidates — Cursor does not auto-fix). approvalId `G-22f-gosaki-schedule-unpublish-update-non-dry-run-slice`. Protected: `schedule-2026-03-014` / `schedule-2026-09-001` non-touch. **No Save / DB write / SQL mutation / rollback / GRANT / package regen / FTP.** Doc: `gosaki-schedule-unpublish-update-final-preflight.md`. Verifier: `verify-g22f4-gosaki-schedule-unpublish-update-final-preflight.mjs`. **Next: G-22f5 operator Save once (after target fixed + beforeVerification PASS).**
+
+**G-22f3 Gosaki Schedule unpublish UPDATE implementation (2026-07-06):** **complete (uncommitted)** — config/guards/save/UI gate for `published=true→false` UPDATE; approvalId `G-22f-gosaki-schedule-unpublish-update-non-dry-run-slice`; optimistic lock via G-9k UPDATE path; default Save disabled. **No Save / DB write / GRANT / FTP.** Doc: `gosaki-schedule-unpublish-update-implementation.md`. Verifier: `verify-g22f3-gosaki-schedule-unpublish-update-implementation.mjs`. **Superseded for execution preflight by G-22f4.**
 
 **G-22f2 Gosaki Schedule unpublish UPDATE planning (2026-07-06):** **complete** — commit `56316a6`. **Superseded for implementation by G-22f3.**
 

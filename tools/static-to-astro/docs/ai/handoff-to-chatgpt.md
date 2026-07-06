@@ -5,14 +5,25 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-22g1c-gosaki-schedule-save-preview-target-confirmation — complete (uncommitted).
-Pre-save confirmation panel + save target panel + workflow steps + save result label clarity.
+Current phase: G-22g1d-gosaki-schedule-p0-ux-qa — complete (uncommitted).
+G-22g1a/b/c verified on dry-run dev: legacy_id list, dev/mock isolation, preview/target panel shell.
+schedule-2026-07-008 not in anon SSR rows (known RLS after unpublish).
 Do NOT re-Save: schedule-2026-07-008 (G-22f7), schedule-2026-09-001 (G-22e7), schedule-2026-03-014 (G-22d3d).
 Physical DELETE not implemented. Public reflection / package / FTP not executed.
 Routine dev: PUBLIC_ADMIN_WRITE_DRY_RUN=true; all write arms off.
 Supabase interim SoT: kmjqppxjdnwwrtaeqjta — never vsbvndwuajjhnzpohghh.
-Next: G-22g2 operator procedure hints · Schedule P0 UX QA.
+Next: G-22g2 operator procedure hints · Schedule P0 summary.
 ```
+
+## G-22g1d Schedule P0 UX QA — complete
+
+- **Scope:** G-22g1a list UX · G-22g1b dev/mock isolation · G-22g1c preview/target panel
+- **Method:** dry-run dev HTTP 200 + HTML markers + duplicate/new/unpublish module smoke
+- **PASS:** legacy_id column · operator guide · read-source supabase · dev-mock zone · selected summary shell · save-target panel · save result labels (source)
+- **Known:** `schedule-2026-07-008` absent from anon SSR (RLS); default published filter hides unpublished when present
+- **No Save** · dev server stopped · port 4321 LISTEN none
+- **Doc:** `gosaki-schedule-p0-ux-qa.md` · **Verifier:** `verify-g22g1d-gosaki-schedule-p0-ux-qa.mjs`
+- **Next:** G-22g2 · Schedule P0 summary
 
 ## G-22g1c Schedule save preview / target confirmation — complete
 

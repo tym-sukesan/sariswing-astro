@@ -3,11 +3,13 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-22g1c Gosaki Schedule save preview / target confirmation panel (2026-07-07):** **complete (uncommitted)** — pre-save confirmation panel for UPDATE / duplicate / new event / unpublish; `#gosaki-schedule-save-target-panel` near Save; workflow step indicator; save result labels distinguish before/after `updated_at` and `expectedBeforeUpdatedAt`. **No Save / DB write / FTP.** Doc: `gosaki-schedule-save-preview-target-confirmation.md`. Verifier: `verify-g22g1c-gosaki-schedule-save-preview-target-confirmation.mjs`. **Next: G-22g2 operator procedure hints or Schedule P0 UX QA.**
+**G-22g1d Gosaki Schedule P0 UX QA after G-22g1a/b/c (2026-07-07):** **complete (uncommitted)** — dry-run dev HTTP 200; legacy_id list / operator guide / dev-mock isolation / selected summary / preview shell PASS; module smoke duplicate/new/unpublish PASS; `schedule-2026-07-008` not in anon SSR rows (known RLS). **No Save / DB write / FTP.** Doc: `gosaki-schedule-p0-ux-qa.md`. Verifier: `verify-g22g1d-gosaki-schedule-p0-ux-qa.mjs`. **Next: G-22g2 operator procedure hints or Schedule P0 summary.**
 
-**G-22g1b Gosaki Schedule dev/mock section isolation (2026-07-07):** **complete** — commit `9c6d514`. **Superseded for pre-save panel by G-22g1c.**
+**G-22g1c Gosaki Schedule save preview / target confirmation panel (2026-07-07):** **complete** — commit `b5ccb9f`. **Superseded for P0 UX QA by G-22g1d.**
 
-**G-22g1a Gosaki Schedule list UX legacy_id visibility (2026-07-06):** **complete** — commit `406cf16`. **Superseded for dev isolation by G-22g1b.**
+**G-22g1b Gosaki Schedule dev/mock section isolation (2026-07-07):** **complete** — commit `9c6d514`. **Superseded for P0 UX QA by G-22g1d.**
+
+**G-22g1a Gosaki Schedule list UX legacy_id visibility (2026-07-06):** **complete** — commit `406cf16`. **Superseded for P0 UX QA by G-22g1d.**
 
 **G-22g Gosaki Schedule P0 CRUD remaining tasks / next plan (2026-07-06):** **complete** — commit `814a77f`. **Superseded for list UX by G-22g1a.**
 

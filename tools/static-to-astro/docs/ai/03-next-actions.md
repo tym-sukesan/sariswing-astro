@@ -1,18 +1,35 @@
 Last updated: 2026-07-07
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22g1d Schedule P0 UX QA — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-22g1d-gosaki-schedule-p0-ux-qa` |
+| Base | `b5ccb9f` |
+| Scope | G-22g1a/b/c live dry-run QA · HTML markers · module smoke |
+| G-22g1 chain | list UX · dev/mock isolation · preview panel — **verified** |
+| `schedule-2026-07-008` | not in anon SSR rows (known RLS; not G-22g1 regression) |
+| Dev env | dry-run · `ENABLE_ADMIN_STAGING_WRITE=false` · arms off |
+| Dev server | started for QA · **stopped** · port 4321 LISTEN none |
+| DB write | **no** |
+| Doc | `gosaki-schedule-p0-ux-qa.md` |
+| Verifier | `verify-g22g1d-gosaki-schedule-p0-ux-qa.mjs` |
+| **Next** | **G-22g2** operator procedure · Schedule P0 summary |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22g1c Schedule save preview / target confirmation — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-22g1c-gosaki-schedule-save-preview-target-confirmation` |
 | Base | `9c6d514` |
+| Commit | `b5ccb9f` |
 | Scope | pre-save confirmation panel · save target panel · workflow steps · save result labels |
 | G-22f5 lesson | target identity · preview vs save result · optimistic lock label clarity |
 | DB write | **no** (display only) |
 | Doc | `gosaki-schedule-save-preview-target-confirmation.md` |
 | Verifier | `verify-g22g1c-gosaki-schedule-save-preview-target-confirmation.mjs` |
-| **Next** | **G-22g2** operator procedure · **Schedule P0 UX QA** |
+| **Next** | **G-22g1d** P0 UX QA · **G-22g2** operator procedure |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22g1b Schedule dev/mock section isolation — complete
 

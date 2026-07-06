@@ -1,19 +1,34 @@
-Last updated: 2026-07-02
+Last updated: 2026-07-06
 Project: Static-to-Astro CMS / Musician CMS Kit
+
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22f1 unpublish dry-run local QA — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-22f1-gosaki-schedule-unpublish-dry-run-local-qa` |
+| Base | `9f495b4` |
+| QA | HTTP 200 + markup + module smoke PASS |
+| Preview | `operation=unpublish` · `wouldUpdate=true` · `wouldDelete=false` · `physicalDelete=false` |
+| published=false exclusion | module validation (`schedule-2026-03-014` / `schedule-2026-09-001` — auditRows, not selectable) |
+| Save / DB write / physical DELETE | **not executed** |
+| Regression | existing / duplicate / new modes **intact** |
+| Doc | `gosaki-schedule-unpublish-dry-run-local-qa.md` |
+| Verifier | `verify-g22f1-gosaki-schedule-unpublish-dry-run-local-qa.mjs` |
+| **Next** | **G-22f2** unpublish UPDATE planning |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22f unpublish dry-run UI — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-22f-gosaki-schedule-unpublish-dry-run-ui-implementation` |
-| Base | `215f638` |
+| Base | `9f495b4` |
 | Feature | unpublish draft + dry-run preview (no physical DELETE) |
 | operation | `unpublish` · `wouldUpdate=true` · `wouldDelete=false` |
 | Save / UPDATE / DELETE | **disabled** |
 | Doc | `gosaki-schedule-unpublish-dry-run-ui-implementation.md` |
 | Verifier | `verify-g22f-gosaki-schedule-unpublish-dry-run-ui-implementation.mjs` |
 | Save / DB write (G-22f) | **not executed** |
-| **Next** | **G-22f1** local QA |
+| **Next** | **G-22f1** local QA — **done** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22e7 new event INSERT chain closure — complete
 

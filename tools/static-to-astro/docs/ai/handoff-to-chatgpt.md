@@ -5,14 +5,25 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-22f-gosaki-schedule-unpublish-dry-run-ui-implementation — complete (uncommitted).
-Unpublish draft mode + dry-run preview wired. operation=unpublish; wouldUpdate=true; wouldDelete=false; physicalDelete=false; Save disabled.
-Physical DELETE not implemented — delete btn「削除（準備中）」disabled.
-Do NOT re-Save closed slices: schedule-2026-09-001 (G-22e5), schedule-2026-03-014 (G-22d3).
+Current phase: G-22f1-gosaki-schedule-unpublish-dry-run-local-qa — complete (uncommitted).
+Local QA PASS: HTTP 200 + unpublish markup + module smoke (operation=unpublish, wouldUpdate=true, wouldDelete=false, saveAllowed=false, physicalDelete=false).
+published=false exclusion verified via module validation; schedule-2026-03-014 / schedule-2026-09-001 not in selectableRows (auditRows).
+Save / DB write / physical DELETE not executed. existing/duplicate/new modes intact.
+Do NOT re-Save closed slices: schedule-2026-09-001 (G-22e7), schedule-2026-03-014 (G-22d3d).
 Routine dev: PUBLIC_ADMIN_WRITE_DRY_RUN=true; all write arms off.
 Supabase interim SoT: kmjqppxjdnwwrtaeqjta — never vsbvndwuajjhnzpohghh.
-Next: G-22f1 unpublish dry-run local QA.
+Next: G-22f2 unpublish UPDATE planning.
 ```
+
+## G-22f1 unpublish dry-run local QA — complete
+
+- **QA:** HTTP 200; unpublish btn/banner/markup PASS; module smoke `executeG22fScheduleUnpublishDryRun` PASS
+- **Preview:** `operation=unpublish`, `dryRun=true`, `actualWrite=false`, `wouldUpdate=true`, `wouldDelete=false`, `saveAllowed=false`, `physicalDelete=false`, `before.published=true` → `after.published=false`
+- **published=false:** `validateG22fUnpublishDryRunTarget` blocks `schedule-2026-03-014` / `schedule-2026-09-001`; not in operator `selectableRows` (POC audit → `auditRows`)
+- **Save / DELETE:** not clicked; delete btn「削除（準備中）」disabled
+- **Regression:** G-9k existing / G-22d duplicate / G-22e new event paths preserved
+- **Doc:** `gosaki-schedule-unpublish-dry-run-local-qa.md` · **Verifier:** `verify-g22f1-gosaki-schedule-unpublish-dry-run-local-qa.mjs`
+- **Next:** G-22f2 unpublish UPDATE planning
 
 ## G-22f unpublish dry-run UI — complete
 

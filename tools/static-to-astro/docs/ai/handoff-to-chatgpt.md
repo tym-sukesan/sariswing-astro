@@ -5,15 +5,27 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-22f1-gosaki-schedule-unpublish-dry-run-local-qa — complete (uncommitted).
-Local QA PASS: HTTP 200 + unpublish markup + module smoke (operation=unpublish, wouldUpdate=true, wouldDelete=false, saveAllowed=false, physicalDelete=false).
-published=false exclusion verified via module validation; schedule-2026-03-014 / schedule-2026-09-001 not in selectableRows (auditRows).
-Save / DB write / physical DELETE not executed. existing/duplicate/new modes intact.
+Current phase: G-22f2-gosaki-schedule-unpublish-update-planning — complete (uncommitted).
+Planning for unpublish UPDATE slice: published=true→false only; approvalId=G-22f-gosaki-schedule-unpublish-update-non-dry-run-slice.
+Env/UI gates, payload assertion, optimistic lock (G-9k UPDATE path), SQL templates (SELECT-only + rollback template) documented.
+Physical DELETE deferred. Target row fixed in G-22f4 — not chosen in G-22f2.
 Do NOT re-Save closed slices: schedule-2026-09-001 (G-22e7), schedule-2026-03-014 (G-22d3d).
 Routine dev: PUBLIC_ADMIN_WRITE_DRY_RUN=true; all write arms off.
 Supabase interim SoT: kmjqppxjdnwwrtaeqjta — never vsbvndwuajjhnzpohghh.
-Next: G-22f2 unpublish UPDATE planning.
+Next: G-22f3 unpublish UPDATE implementation only (no Save / DB write).
 ```
+
+## G-22f2 unpublish UPDATE planning — complete
+
+- **Slice:** `published=true` → `published=false` UPDATE only — not physical DELETE
+- **approvalId:** `G-22f-gosaki-schedule-unpublish-update-non-dry-run-slice`
+- **env arm:** `PUBLIC_ADMIN_GOSAKI_SCHEDULE_G22F_UNPUBLISH_UPDATE_NON_DRY_RUN_ARMED` + full write stack
+- **save operation:** `unpublish-update`; patch `{ published: false }`; `changedFields: ["published"]`
+- **Optimistic lock:** `expectedBeforeUpdatedAt` from beforeSnapshot; reuse `executeScheduleGeneralUpdateWrite`
+- **Protected:** `schedule-2026-03-014` / `schedule-2026-09-001` must not touch
+- **SQL:** beforeVerification / afterVerification SELECT-only templates + rollback UPDATE template (not executed)
+- **Doc:** `gosaki-schedule-unpublish-update-planning.md` · **Verifier:** `verify-g22f2-gosaki-schedule-unpublish-update-planning.mjs`
+- **Next:** G-22f3 implementation only → G-22f4 preflight → G-22f5 operator Save once
 
 ## G-22f1 unpublish dry-run local QA — complete
 

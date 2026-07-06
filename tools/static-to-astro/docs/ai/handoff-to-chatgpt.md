@@ -5,15 +5,30 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-22g2b-gosaki-schedule-p0-ux-summary — complete (uncommitted).
-P0 UX chain CLOSED: G-22g1a→G-22g2a summarized; legacy_id / dev/mock / save preview / admin read / procedure hints / QA runner.
-schedule-2026-07-008 visibility PASS (G-22g1f2c). Admin read closure (G-22g1f3) maintained.
-No Save / DB write / SQL / RLS / package / FTP / public reflection in this phase.
+Current phase: G-22h1-gosaki-schedule-republish-planning — complete (uncommitted).
+Republish planning: published=false→true UPDATE only; mirrors G-22f unpublish inverted.
+Candidate targets: schedule-2026-07-008 · schedule-2026-03-014 · schedule-2026-09-001.
+Proposed approvalId: G-22h-gosaki-schedule-republish-update-non-dry-run-slice.
+Proposed arm: PUBLIC_ADMIN_GOSAKI_SCHEDULE_G22H_REPUBLISH_UPDATE_NON_DRY_RUN_ARMED.
+No implementation / Save / DB write / SQL / RLS / package / FTP / public reflection in this phase.
 Do NOT re-Save: schedule-2026-07-008 (G-22f7), schedule-2026-09-001 (G-22e7), schedule-2026-03-014 (G-22d3d).
 Routine dev: PUBLIC_ADMIN_WRITE_DRY_RUN=true; all write arms off.
 Supabase interim SoT: kmjqppxjdnwwrtaeqjta — never vsbvndwuajjhnzpohghh.
-Next: republish planning · public reflection planning · release readiness review.
+Next: G-22h2 republish dry-run planning · public reflection planning.
 ```
+
+## G-22h1 Schedule republish planning — complete
+
+- **Goal:** Plan safe republish (`published=false→true`) for Gosaki Schedule operator UI
+- **Definition:** UPDATE `{ published: true }` only — not INSERT / physical DELETE; content fields unchanged
+- **Reuse:** G-22f unpublish pattern — `updateScheduleWrite`, optimistic lock, config/guards/save module shape, operator UI flow
+- **Dedicated:** republish guards (before published=false), new approvalId/arm, `editDraftMode=republish`, mutual exclusion
+- **Candidates:** 008 (G-22f unpublish row — recommended first Save with operator approval) · 014 (duplicate test) · 001 (new event test)
+- **High-risk gates:** G-22h6 actual UPDATE separate from public reflection / FTP
+- **Future slices:** G-22h2 dry-run planning → h3 implementation → h4 QA → h5 preflight → h6 Save once → h7 closure
+- **Not executed:** implementation · Save · DB write · SQL · RLS · package · FTP · public reflection
+- **Doc:** `gosaki-schedule-republish-planning.md` · **Verifier:** `verify-g22h1-gosaki-schedule-republish-planning.mjs`
+- **Next:** G-22h2 republish dry-run UI/module planning
 
 ## G-22g2b Schedule P0 UX summary / closure — complete
 

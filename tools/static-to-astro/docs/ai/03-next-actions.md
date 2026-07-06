@@ -1,12 +1,33 @@
 Last updated: 2026-07-07
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22h1 Schedule republish planning — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-22h1-gosaki-schedule-republish-planning` |
+| Base | `d3e76df` |
+| Scope | planning docs · verifier · AI context only |
+| Republish | UPDATE `{ published: true }` only — not INSERT / physical DELETE |
+| Mirror | G-22f unpublish inverted |
+| Proposed approvalId | `G-22h-gosaki-schedule-republish-update-non-dry-run-slice` |
+| Proposed arm | `PUBLIC_ADMIN_GOSAKI_SCHEDULE_G22H_REPUBLISH_UPDATE_NON_DRY_RUN_ARMED` |
+| Candidate targets | `schedule-2026-07-008` · `schedule-2026-03-014` · `schedule-2026-09-001` |
+| Recommended first Save | **008** with operator approval (or 014/001 if reflection deferred) |
+| Save / DB write / SQL | **none** |
+| RLS / grant / service_role | **unchanged** |
+| package / FTP / public reflection | **none** |
+| Doc | `gosaki-schedule-republish-planning.md` |
+| Verifier | `verify-g22h1-gosaki-schedule-republish-planning.mjs` |
+| **Next** | **G-22h2** republish dry-run UI/module planning · public reflection planning |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22g2b Schedule P0 UX summary / closure — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-22g2b-gosaki-schedule-p0-ux-summary` |
 | Base | `73b4d23` |
+| Commit | `d3e76df` |
 | Chain | G-22g1a → … → G-22g2a → **G-22g2b** |
 | P0 UX chain | **CLOSED** |
 | 008 visibility | **PASS** (G-22g1f2c / G-22g1f3) |
@@ -16,7 +37,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | package / FTP / public reflection | **none** |
 | Doc | `gosaki-schedule-p0-ux-summary.md` |
 | Verifier | `verify-g22g2b-gosaki-schedule-p0-ux-summary.mjs` |
-| **Next** | **republish planning** · **public reflection planning** · release readiness review |
+| **Next** | **Superseded by G-22h1 republish planning** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22g2a Schedule P0 UX read-only QA — complete
 

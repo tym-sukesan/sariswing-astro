@@ -5,30 +5,29 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-22f6-gosaki-schedule-unpublish-update-execution-result — complete (uncommitted).
-G-22f5 operator Save once succeeded: schedule-2026-07-008 published=true→false; updated_at_after=2026-07-06T13:58:41.425402+00:00.
-afterVerification PASS. Physical DELETE no. Month count 14 unchanged. Protected rows unchanged. Rollback not needed.
-Do NOT re-Save: schedule-2026-07-008 (G-22f6 closed), schedule-2026-09-001 (G-22e7), schedule-2026-03-014 (G-22d3d).
-approvalId=G-22f-gosaki-schedule-unpublish-update-non-dry-run-slice — G-22f5 write closed.
+Current phase: G-22f7-gosaki-schedule-unpublish-update-chain-closure — complete (uncommitted).
+G-22f unpublish chain CLOSED: G-22f→G-22f6 complete; schedule-2026-07-008 published=true→false (G-22f5 once).
+Do NOT re-Save: schedule-2026-07-008 (G-22f7), schedule-2026-09-001 (G-22e7), schedule-2026-03-014 (G-22d3d).
+write-armed dev server stopped (operator Ctrl+C); port 4321 LISTEN none (G-22f7 verified).
+Physical DELETE deferred. Public reflection / package / FTP not executed.
 Routine dev: PUBLIC_ADMIN_WRITE_DRY_RUN=true; all write arms off.
 Supabase interim SoT: kmjqppxjdnwwrtaeqjta — never vsbvndwuajjhnzpohghh.
-Next: G-22f7 unpublish UPDATE chain closure.
+Next: Schedule P0 remaining tasks · list UX improvement · physical DELETE planning.
 ```
 
+## G-22f7 unpublish UPDATE chain closure — complete
+
+- **Chain:** G-22f → G-22f1 → G-22f2 → G-22f3 → G-22f4 → G-22f4b → G-22f5 → G-22f6 → **G-22f7 closed**
+- **Target:** `schedule-2026-07-008` · `published=true→false` · row still exists (not physical DELETE)
+- **G-22f5 Save:** once · closed · re-Save **forbidden**
+- **afterVerification:** PASS (G-22f6)
+- **write-armed dev server:** operator Ctrl+C stop; port 4321 LISTEN none confirmed
+- **UX lessons:** legacy_id not in list · dev-tools mock UI confusion · use 非公開 not unpublish · button flow documented
+- **Deferred:** physical DELETE · production reflection (careful judgment)
+- **Doc:** `gosaki-schedule-unpublish-update-closure.md` · **Verifier:** `verify-g22f7-gosaki-schedule-unpublish-update-closure.mjs`
+- **Next:** Schedule P0 · list UX · G-22 CRUD summary
+
 ## G-22f6 unpublish UPDATE execution result — complete
-
-- **Target:** `schedule-2026-07-008` · `id=3e572f02-4f35-460e-80a1-3a7d15ca3fd9`
-- **Save (G-22f5):** operator once · `actualWrite=true` · `operation=unpublish-update`
-- **Change:** `published=true` → `false` only — **not physical DELETE**; row still exists
-- **`updated_at_after`:** `2026-07-06T13:58:41.425402+00:00` (DB trigger; preflight `2026-06-16T16:03:41.551792+00:00`)
-- **afterVerification:** PASS — all protected fields unchanged; `target_month_count` 14→14
-- **Protected:** `schedule-2026-03-014` / `schedule-2026-09-001` — unchanged
-- **Rollback / public reflection / package / FTP:** not executed
-- **UI note:** Save result `expectedBeforeUpdatedAt` display matched `updated_at_after`; DB afterVerification confirmed correct
-- **Doc:** `gosaki-schedule-unpublish-update-result.md` · **Verifier:** `verify-g22f6-gosaki-schedule-unpublish-update-result.mjs`
-- **Next:** G-22f7 chain closure
-
-## G-22f4b unpublish UPDATE target fixed / beforeVerification — complete
 
 - **Target:** **fixed** — `schedule-2026-07-008` (G-22f4b)
 - **approvalId:** `G-22f-gosaki-schedule-unpublish-update-non-dry-run-slice`

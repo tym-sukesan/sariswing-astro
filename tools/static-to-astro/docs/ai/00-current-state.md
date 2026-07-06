@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-22f6 Gosaki Schedule unpublish UPDATE execution result (2026-07-06):** **complete (uncommitted)** — G-22f5 operator Save once succeeded; `schedule-2026-07-008` `published=true→false`; `updated_at_after=2026-07-06T13:58:41.425402+00:00`; afterVerification PASS; physical DELETE no; month count 14→14; protected rows unchanged; rollback not needed. **No Cursor Save / SQL mutation / GRANT / FTP.** Doc: `gosaki-schedule-unpublish-update-result.md`. Verifier: `verify-g22f6-gosaki-schedule-unpublish-update-result.mjs`. **Do not re-Save `schedule-2026-07-008`.** **Next: G-22f7 chain closure.**
+**G-22f7 Gosaki Schedule unpublish UPDATE chain closure (2026-07-06):** **complete (uncommitted)** — G-22f→G-22f6 chain closed; `schedule-2026-07-008` unpublish UPDATE single-slice success; re-Save forbidden; write-armed dev server stopped (operator Ctrl+C; port 4321 LISTEN none). UX lessons documented (legacy_id visibility, dev-tools confusion, 非公開 flow). Physical DELETE deferred. **No Cursor Save / SQL mutation / GRANT / FTP.** Doc: `gosaki-schedule-unpublish-update-closure.md`. Verifier: `verify-g22f7-gosaki-schedule-unpublish-update-closure.mjs`. **Next: Schedule P0 / list UX / physical DELETE planning.**
+
+**G-22f6 Gosaki Schedule unpublish UPDATE execution result (2026-07-06):** **complete** — commit `691b020`. **Superseded for chain closure by G-22f7.**
 
 **G-22f4b Gosaki Schedule unpublish UPDATE target fixed / beforeVerification (2026-07-06):** **complete** — commit `500aaf0`. **Superseded for execution result by G-22f6.**
 

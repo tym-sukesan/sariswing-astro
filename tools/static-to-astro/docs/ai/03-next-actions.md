@@ -1,6 +1,25 @@
 Last updated: 2026-07-06
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22g Schedule P0 CRUD next plan — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-22g-gosaki-schedule-p0-crud-next-plan` |
+| Base | `82668b4` |
+| G-22d/e/f | **complete** — duplicate / new event INSERT / unpublish UPDATE |
+| `schedule-2026-07-008` | `published=false` (G-22f closed) |
+| Protected rows | `schedule-2026-03-014` / `schedule-2026-09-001` |
+| Physical DELETE | **not implemented** — deferred |
+| Public reflection / package / FTP | **not executed** |
+| P0/P1/P2 | classified in plan doc |
+| G-22f UX lessons | legacy_id · dev-tools isolation · 非公開 flow · save panel |
+| **Recommended next** | **G-22g1** Schedule list UX improvement (low risk, no DB write) |
+| Doc | `gosaki-schedule-p0-crud-next-plan.md` |
+| Verifier | `verify-g22g-gosaki-schedule-p0-crud-next-plan.mjs` |
+| Save / DB write / FTP (G-22g) | **not executed** |
+| **Next** | **G-22g1** list UX · then G-22g2 operator procedure |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22f7 unpublish UPDATE chain closure — complete
 
 | Item | Value |

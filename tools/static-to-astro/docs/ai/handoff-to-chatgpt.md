@@ -5,15 +5,26 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-22f7-gosaki-schedule-unpublish-update-chain-closure — complete (uncommitted).
-G-22f unpublish chain CLOSED: G-22f→G-22f6 complete; schedule-2026-07-008 published=true→false (G-22f5 once).
+Current phase: G-22g-gosaki-schedule-p0-crud-next-plan — complete (uncommitted).
+G-22d/e/f CRUD slices complete: duplicate INSERT · new event INSERT · unpublish UPDATE.
 Do NOT re-Save: schedule-2026-07-008 (G-22f7), schedule-2026-09-001 (G-22e7), schedule-2026-03-014 (G-22d3d).
-write-armed dev server stopped (operator Ctrl+C); port 4321 LISTEN none (G-22f7 verified).
-Physical DELETE deferred. Public reflection / package / FTP not executed.
+Physical DELETE not implemented. Public reflection / package / FTP not executed.
+write-armed dev server stopped; port 4321 LISTEN none.
 Routine dev: PUBLIC_ADMIN_WRITE_DRY_RUN=true; all write arms off.
 Supabase interim SoT: kmjqppxjdnwwrtaeqjta — never vsbvndwuajjhnzpohghh.
-Next: Schedule P0 remaining tasks · list UX improvement · physical DELETE planning.
+Recommended next: G-22g1 Schedule list UX improvement (legacy_id, dev-section isolation — no DB write).
 ```
+
+## G-22g Schedule P0 CRUD next plan — complete
+
+- **Inventory:** G-22d duplicate INSERT · G-22e new event INSERT · G-22f unpublish UPDATE — all closed single-slices
+- **Test rows:** `schedule-2026-03-014` / `schedule-2026-09-001` protected · `schedule-2026-07-008` published=false
+- **P0 gaps:** list UX (legacy_id) · dev/mock isolation · save-panel target emphasis · operator procedure hints
+- **P2 deferred:** physical DELETE · G-23 public reflection / FTP
+- **G-22f UX:** legacy_id not in list · dev-tools mock confusion · 非公開 flow · expectedBeforeUpdatedAt display
+- **Recommended:** **G-22g1** list UX (low risk, no DB write) → **G-22g2** operator procedure
+- **Doc:** `gosaki-schedule-p0-crud-next-plan.md` · **Verifier:** `verify-g22g-gosaki-schedule-p0-crud-next-plan.mjs`
+- **Next:** G-22g1-schedule-list-ux-improvement
 
 ## G-22f7 unpublish UPDATE chain closure — complete
 

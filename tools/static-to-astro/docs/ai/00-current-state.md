@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-22g1f Gosaki Schedule authenticated admin read planning (2026-07-07):** **complete (uncommitted)** — Option B plan: keep SSR anon bootstrap; login后 client refetch via `getStagingSupabaseClient` session; new read module; banner modes; G-22g1f1/f2 checklist; 008 QA target. **No implementation / RLS / Save / DB write / FTP.** Doc: `gosaki-schedule-authenticated-admin-read-plan.md`. Verifier: `verify-g22g1f-gosaki-schedule-authenticated-admin-read-plan.mjs`. **Next: G-22g1f1 implementation only.**
+**G-22g1f1 Gosaki Schedule authenticated admin read implementation (2026-07-07):** **complete (uncommitted)** — read-only module `gosaki-schedule-authenticated-admin-read.ts`; operator UI refetch + banner modes; SSR bootstrap fallback. **No Save / DB write / RLS / FTP.** Doc: `gosaki-schedule-authenticated-admin-read-implementation.md`. Verifier: `verify-g22g1f1-gosaki-schedule-authenticated-admin-read-implementation.mjs`. **Next: G-22g1f2 read-only QA.**
+
+**G-22g1f Gosaki Schedule authenticated admin read planning (2026-07-07):** **complete** — commit `3de4b78`. **Superseded for implementation by G-22g1f1.**
 
 **G-22g1e Gosaki Schedule admin read / unpublished row visibility investigation (2026-07-07):** **complete** — commit `02158da`. **Superseded for authenticated read planning by G-22g1f.**
 

@@ -1730,8 +1730,41 @@
   color: #92400e;
 }
 
+.gosaki-schedule-operator-read-source-banner--admin {
+  border: 1px solid #93c5fd;
+  background: #eff6ff;
+  color: #1e3a8a;
+}
+
+.gosaki-schedule-operator-read-source-banner--loading {
+  border: 1px solid #cbd5e1;
+  background: #f8fafc;
+  color: #334155;
+}
+
+.gosaki-schedule-operator-read-source-banner--warn {
+  border: 1px solid #fdba74;
+  background: #fff7ed;
+  color: #9a3412;
+}
+
 .gosaki-schedule-operator-read-source-banner__text {
   margin: 0;
+}
+
+.gosaki-schedule-operator-read-source-banner__retry {
+  margin-left: 0.5rem;
+  padding: 0.15rem 0.5rem;
+  border: 1px solid currentColor;
+  border-radius: 4px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.gosaki-schedule-operator-read-source-banner__retry:hover {
+  background: rgba(0, 0, 0, 0.05);
 }
 
 .gosaki-schedule-dev-tools-panel {

@@ -22,7 +22,12 @@ import {
   type G9kExistingEventSaveButtonSafeField,
 } from "../staging-write/gosaki-schedule-existing-event-save-button-guards";
 import { getStagingAuthSessionDetails } from "../staging-auth/staging-auth-session";
+import { getStagingSupabaseClient } from "../staging-auth/supabase-staging-auth-client";
 import { isSignedInStagingAuth } from "../staging-write/schedule-non-dry-run-poc-auth";
+import {
+  loadGosakiSchedulesAuthenticatedAdminRead,
+  type GosakiScheduleAdminReadMode,
+} from "./gosaki-schedule-authenticated-admin-read";
 import { STAGING_SHELL_GOSAKI_SCHEDULE_SITE_SLUG } from "./staging-schedule-site-slug-config";
 import { dispatchRowSelected } from "./staging-schedule-site-slug-row-picker-events";
 import { confirmDiscardDirtyCandidateIfNeeded } from "./staging-schedule-site-slug-edit-picker-binding";
@@ -107,6 +112,10 @@ const G9K2_FIELD_LABELS: Record<G9kExistingEventSaveButtonSafeField, string> = {
 };
 
 let selectableRows: ScheduleRecord[] = [];
+let ssrBootstrapRows: ScheduleRecord[] = [];
+let adminReadMode: GosakiScheduleAdminReadMode = "ssr-bootstrap";
+let adminReadInFlight = false;
+let adminReadError: string | null = null;
 let selectedRowId: string | null = null;
 let selectedRowSnapshot: ScheduleRecord | null = null;
 let lastDryRunResult: G9kExistingEventSaveButtonDryRunResult | null = null;
@@ -533,17 +542,67 @@ function renderOperatorReadSourceBanner(): void {
   const banner = document.getElementById("gosaki-schedule-operator-read-source-banner");
   if (!root || !banner) return;
 
-  const source = String(root.dataset.readSource ?? "").trim().toLowerCase();
-  const isLive = source === "supabase" && selectableRows.length > 0;
+  root.dataset.adminReadMode = adminReadMode;
 
-  if (isLive) {
+  const source = String(root.dataset.readSource ?? "").trim().toLowerCase();
+  const hasSsrBootstrap = ssrBootstrapRows.length > 0;
+  const isMockSource = source !== "supabase" || !hasSsrBootstrap;
+
+  if (isMockSource) {
     banner.hidden = false;
     banner.className =
-      "gosaki-schedule-operator-read-source-banner gosaki-schedule-operator-read-source-banner--live";
+      "gosaki-schedule-operator-read-source-banner gosaki-schedule-operator-read-source-banner--mock";
+    banner.setAttribute("role", "alert");
+    const sourceLabel = source || "unavailable";
+    banner.innerHTML = `
+      <p class="gosaki-schedule-operator-read-source-banner__text">
+        <strong>データソース: ${escapeHtml(sourceLabel)} — 実データではありません。</strong>
+        ページ下部の「開発者向け詳細」や mock UI は Gosaki の本番運用操作では使いません。
+        Supabase 接続時のみ上部の公演一覧が通常操作対象です。
+      </p>
+    `;
+    return;
+  }
+
+  if (adminReadInFlight || adminReadMode === "loading") {
+    banner.hidden = false;
+    banner.className =
+      "gosaki-schedule-operator-read-source-banner gosaki-schedule-operator-read-source-banner--loading";
     banner.setAttribute("role", "status");
     banner.innerHTML = `
       <p class="gosaki-schedule-operator-read-source-banner__text">
-        <strong>データソース: Supabase（staging）</strong> — 通常の Schedule 操作はこの画面上部の公演一覧で行ってください。
+        <strong>管理データを読み込み中…</strong> Supabase admin read（authenticated）で全件を取得しています。
+      </p>
+    `;
+    return;
+  }
+
+  if (adminReadMode === "admin-authenticated") {
+    const unpublishedCount = selectableRows.filter((row) => row.published === false).length;
+    banner.hidden = false;
+    banner.className =
+      "gosaki-schedule-operator-read-source-banner gosaki-schedule-operator-read-source-banner--admin";
+    banner.setAttribute("role", "status");
+    banner.innerHTML = `
+      <p class="gosaki-schedule-operator-read-source-banner__text">
+        <strong>データソース: Supabase admin read（authenticated）</strong>
+        — 非公開行を含む ${selectableRows.length} 件（非公開 ${unpublishedCount} 件）。
+        通常の Schedule 操作はこの画面上部の公演一覧で行ってください。
+      </p>
+    `;
+    return;
+  }
+
+  if (adminReadMode === "error-fallback-bootstrap") {
+    banner.hidden = false;
+    banner.className =
+      "gosaki-schedule-operator-read-source-banner gosaki-schedule-operator-read-source-banner--warn";
+    banner.setAttribute("role", "alert");
+    banner.innerHTML = `
+      <p class="gosaki-schedule-operator-read-source-banner__text">
+        <strong>admin read 失敗 — 公開行 bootstrap を表示中。</strong>
+        ${escapeHtml(adminReadError ?? "Authenticated admin read failed.")}
+        <button type="button" class="gosaki-schedule-operator-read-source-banner__retry" id="gosaki-schedule-admin-read-retry">再読み込み</button>
       </p>
     `;
     return;
@@ -551,16 +610,117 @@ function renderOperatorReadSourceBanner(): void {
 
   banner.hidden = false;
   banner.className =
-    "gosaki-schedule-operator-read-source-banner gosaki-schedule-operator-read-source-banner--mock";
-  banner.setAttribute("role", "alert");
-  const sourceLabel = source || "unavailable";
+    "gosaki-schedule-operator-read-source-banner gosaki-schedule-operator-read-source-banner--live";
+  banner.setAttribute("role", "status");
   banner.innerHTML = `
     <p class="gosaki-schedule-operator-read-source-banner__text">
-      <strong>データソース: ${escapeHtml(sourceLabel)} — 実データではありません。</strong>
-      ページ下部の「開発者向け詳細」や mock UI は Gosaki の本番運用操作では使いません。
-      Supabase 接続時のみ上部の公演一覧が通常操作対象です。
+      <strong>データソース: Supabase bootstrap（公開行のみ）</strong>
+      — ログイン後に全件（非公開行を含む）を読み込みます。
+      通常の Schedule 操作はこの画面上部の公演一覧で行ってください。
     </p>
   `;
+}
+
+function clearSelectionIfRowMissing(): void {
+  if (!selectedRowId) return;
+  if (selectableRows.some((row) => row.id === selectedRowId)) return;
+  selectedRowId = null;
+  selectedRowSnapshot = null;
+}
+
+function revertToSsrBootstrapRows(): void {
+  adminReadMode = "ssr-bootstrap";
+  adminReadError = null;
+  adminReadInFlight = false;
+  selectableRows = [...ssrBootstrapRows];
+  clearSelectionIfRowMissing();
+  renderScheduleList();
+  renderOperatorReadSourceBanner();
+  renderEditForm(selectedRowSnapshot);
+  updateUnpublishButtonState();
+  updateSaveTargetPanel();
+}
+
+async function runAuthenticatedAdminReadRefetch(): Promise<void> {
+  const url = String(import.meta.env.PUBLIC_SUPABASE_URL ?? "").trim();
+  const anonKey = String(import.meta.env.PUBLIC_SUPABASE_ANON_KEY ?? "").trim();
+  if (!url || !anonKey) return;
+
+  const signedIn = await resolveStagingAuthSignedIn();
+  if (!signedIn) {
+    revertToSsrBootstrapRows();
+    return;
+  }
+
+  adminReadInFlight = true;
+  adminReadMode = "loading";
+  renderOperatorReadSourceBanner();
+
+  const result = await loadGosakiSchedulesAuthenticatedAdminRead({
+    siteSlug: STAGING_SHELL_GOSAKI_SCHEDULE_SITE_SLUG,
+    supabaseUrl: url,
+    anonKey,
+  });
+
+  adminReadInFlight = false;
+
+  if (result.ok && result.mode === "admin-authenticated") {
+    adminReadMode = "admin-authenticated";
+    adminReadError = null;
+    selectableRows = result.records;
+    clearSelectionIfRowMissing();
+    renderScheduleList();
+    renderOperatorReadSourceBanner();
+    renderEditForm(selectedRowSnapshot);
+    updateUnpublishButtonState();
+    updateSaveTargetPanel();
+    return;
+  }
+
+  if (result.mode === "ssr-bootstrap") {
+    revertToSsrBootstrapRows();
+    return;
+  }
+
+  adminReadMode = "error-fallback-bootstrap";
+  adminReadError = result.error ?? "Authenticated admin read failed.";
+  selectableRows = [...ssrBootstrapRows];
+  clearSelectionIfRowMissing();
+  renderScheduleList();
+  renderOperatorReadSourceBanner();
+  renderEditForm(selectedRowSnapshot);
+  updateUnpublishButtonState();
+  updateSaveTargetPanel();
+}
+
+function subscribeScheduleOperatorAuthRefetch(): void {
+  const url = String(import.meta.env.PUBLIC_SUPABASE_URL ?? "").trim();
+  const anonKey = String(import.meta.env.PUBLIC_SUPABASE_ANON_KEY ?? "").trim();
+  if (!url || !anonKey) return;
+
+  try {
+    const client = getStagingSupabaseClient(url, anonKey);
+    client.auth.onAuthStateChange((_event, session) => {
+      if (session?.user) {
+        void runAuthenticatedAdminReadRefetch();
+      } else {
+        revertToSsrBootstrapRows();
+        void refreshStagingAuthSignedIn();
+      }
+    });
+  } catch {
+    // Auth client unavailable — stay on SSR bootstrap.
+  }
+}
+
+function wireAdminReadRetryButton(): void {
+  const banner = document.getElementById("gosaki-schedule-operator-read-source-banner");
+  banner?.addEventListener("click", (event) => {
+    const target = event.target;
+    if (!(target instanceof HTMLElement)) return;
+    if (target.id !== "gosaki-schedule-admin-read-retry") return;
+    void runAuthenticatedAdminReadRefetch();
+  });
 }
 
 function getRoot(): HTMLElement | null {
@@ -2842,7 +3002,11 @@ export async function initGosakiStagingScheduleOperatorUi(): Promise<void> {
   const root = getRoot();
   if (!root) return;
 
-  selectableRows = parseRowsDataset();
+  ssrBootstrapRows = parseRowsDataset();
+  selectableRows = [...ssrBootstrapRows];
+  adminReadMode = "ssr-bootstrap";
+  adminReadError = null;
+  adminReadInFlight = false;
   renderOperatorReadSourceBanner();
   wireFilters();
   wireTableActions();
@@ -2853,7 +3017,12 @@ export async function initGosakiStagingScheduleOperatorUi(): Promise<void> {
   wireAddButton();
   wireUnpublishButton();
   wireDisabledActions();
+  wireAdminReadRetryButton();
+  subscribeScheduleOperatorAuthRefetch();
   await refreshStagingAuthSignedIn();
+  if (stagingAuthSignedIn) {
+    await runAuthenticatedAdminReadRefetch();
+  }
   renderScheduleList();
   renderEditForm(null);
   updateUnpublishButtonState();

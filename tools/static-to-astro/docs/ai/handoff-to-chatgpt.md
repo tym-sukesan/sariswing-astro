@@ -5,15 +5,26 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-22g1f-gosaki-schedule-authenticated-admin-read-planning — complete (uncommitted).
-Plan: SSR anon bootstrap + login后 client authenticated refetch (no RLS/grant/service_role change).
-QA target: schedule-2026-07-008 visible under 非公開 filter after G-22g1f1/f2.
+Current phase: G-22g1f1-gosaki-schedule-authenticated-admin-read-implementation — complete (uncommitted).
+Read-only client refetch after login; SSR bootstrap fallback; banner admin/loading/warn modes.
+QA target: schedule-2026-07-008 visible under 非公開 filter in G-22g1f2.
 Do NOT re-Save: schedule-2026-07-008 (G-22f7), schedule-2026-09-001 (G-22e7), schedule-2026-03-014 (G-22d3d).
 Physical DELETE not implemented. Public reflection / package / FTP not executed.
 Routine dev: PUBLIC_ADMIN_WRITE_DRY_RUN=true; all write arms off.
 Supabase interim SoT: kmjqppxjdnwwrtaeqjta — never vsbvndwuajjhnzpohghh.
-Next: G-22g1f1 implementation only · G-22g1f2 read-only QA.
+Next: G-22g1f2 read-only QA.
 ```
+
+## G-22g1f1 Schedule authenticated admin read implementation — complete
+
+- **Module:** `gosaki-schedule-authenticated-admin-read.ts` — SELECT only via session-bearing `getStagingSupabaseClient`
+- **UI:** `runAuthenticatedAdminReadRefetch` + `onAuthStateChange`; `ssrBootstrapRows` fallback on error/logout
+- **Banner:** `--live` bootstrap · `--admin` · `--loading` · `--warn` · `--mock`
+- **Safety:** no RLS/grant/service_role; save modules untouched; no env arm
+- **QA target:** `schedule-2026-07-008` under「非公開のみ」— **G-22g1f2**
+- **No Save / DB write in this phase**
+- **Doc:** `gosaki-schedule-authenticated-admin-read-implementation.md` · **Verifier:** `verify-g22g1f1-...mjs`
+- **Next:** G-22g1f2
 
 ## G-22g1f Schedule authenticated admin read planning — complete
 

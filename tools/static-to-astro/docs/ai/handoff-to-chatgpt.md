@@ -5,15 +5,25 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-22g1f2c-gosaki-schedule-authenticated-admin-read-operator-smoke-result — complete (uncommitted).
-Operator login smoke PASS: admin read banner 60件/非公開2件; schedule-2026-07-008 visible under 非公開+keyword.
-Selected summary PASS. Transient load error noted — non-blocking. Dev server stopped; port 4321 LISTEN none.
+Current phase: G-22g1f3-gosaki-schedule-authenticated-admin-read-closure — complete (uncommitted).
+Authenticated admin read chain CLOSED: SSR bootstrap + login refetch; 008 visible; operator smoke PASS.
+RLS/grant/service_role unchanged. Public reflection / package / FTP not executed.
+Transient load error — non-blocking residual. Republish / physical DELETE deferred.
 Do NOT re-Save: schedule-2026-07-008 (G-22f7), schedule-2026-09-001 (G-22e7), schedule-2026-03-014 (G-22d3d).
-Physical DELETE not implemented. Public reflection / package / FTP not executed.
 Routine dev: PUBLIC_ADMIN_WRITE_DRY_RUN=true; all write arms off.
 Supabase interim SoT: kmjqppxjdnwwrtaeqjta — never vsbvndwuajjhnzpohghh.
-Next: G-22g1f3 authenticated admin read closure · G-22g2 operator procedure hints.
+Next: G-22g2 operator procedure hints · Schedule P0 UX summary.
 ```
+
+## G-22g1f3 Schedule authenticated admin read closure — complete
+
+- **Chain:** G-22g1e investigation → G-22g1f plan → G-22g1f1 impl → G-22g1f2 QA → G-22g1f2c operator smoke → **closure**
+- **Reached:** login後 admin read; published=false rows visible; 008 under 非公開+keyword; selected summary OK
+- **Operator smoke:** 60件 / 非公開2件 · banner authenticated
+- **Not touched:** RLS / grant / service_role / public site / package / FTP
+- **Residual:** brief load error message — UX polish candidate; not blocking
+- **Doc:** `gosaki-schedule-authenticated-admin-read-closure.md` · **Verifier:** `verify-g22g1f3-...mjs`
+- **Next:** G-22g2 · Schedule P0 UX summary · republish planning (deferred)
 
 ## G-22g1f2c Schedule operator login smoke result — complete
 

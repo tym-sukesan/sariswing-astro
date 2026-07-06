@@ -1,22 +1,33 @@
 Last updated: 2026-07-07
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22g1f3 Schedule authenticated admin read closure — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-22g1f3-gosaki-schedule-authenticated-admin-read-closure` |
+| Base | `60d442d` |
+| Chain | G-22g1e → G-22g1f → G-22g1f1 → G-22g1f2 → G-22g1f2c → **G-22g1f3** |
+| SSR bootstrap | **maintained** |
+| Login後 admin read | **PASS** — 60件 / 非公開2件 |
+| `schedule-2026-07-008` | **visible** after login |
+| RLS / grant / service_role | **unchanged** |
+| Residual | transient load error — **non-blocking** |
+| Doc | `gosaki-schedule-authenticated-admin-read-closure.md` |
+| Verifier | `verify-g22g1f3-gosaki-schedule-authenticated-admin-read-closure.mjs` |
+| **Next** | **G-22g2** operator procedure hints · Schedule P0 UX summary |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22g1f2c Schedule operator login smoke result — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-22g1f2c-gosaki-schedule-authenticated-admin-read-operator-smoke-result` |
 | Base | `8729a9a` |
+| Commit | `60d442d` |
 | Operator login smoke | **PASS** |
 | Banner | admin read · **60件** · **非公開2件** |
-| `schedule-2026-07-008` | **visible** — 非公開のみ + keyword |
-| Selected summary | **PASS** |
-| Transient error | noted · **non-blocking** |
-| Credentials | **not recorded** |
-| Dev server | **stopped** · port 4321 **LISTEN none** |
-| Doc | `gosaki-schedule-authenticated-admin-read-operator-smoke-result.md` |
-| Verifier | `verify-g22g1f2c-gosaki-schedule-authenticated-admin-read-operator-smoke-result.mjs` |
-| **Next** | **G-22g1f3** closure · **G-22g2** operator hints |
+| `schedule-2026-07-008` | **visible** |
+| **Next** | **G-22g1f3** closure |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22g1f2 Schedule authenticated admin read QA — complete
 

@@ -3,11 +3,13 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-22g1f2c Gosaki Schedule authenticated admin read operator login smoke result (2026-07-07):** **complete (uncommitted)** — operator manual login PASS; banner admin read 60件/非公開2件; `schedule-2026-07-008` visible under 非公開+keyword; selected summary PASS; transient error non-blocking. **No Save / DB write / RLS / FTP.** Doc: `gosaki-schedule-authenticated-admin-read-operator-smoke-result.md`. Verifier: `verify-g22g1f2c-gosaki-schedule-authenticated-admin-read-operator-smoke-result.mjs`. **Next: G-22g1f3 closure · G-22g2 operator hints.**
+**G-22g1f3 Gosaki Schedule authenticated admin read closure (2026-07-07):** **complete (uncommitted)** — G-22g1e→G-22g1f2c chain closed; SSR bootstrap + login refetch; 008 visible; 60件/非公開2件 operator PASS. **No Save / DB write / RLS / FTP / public reflection.** Doc: `gosaki-schedule-authenticated-admin-read-closure.md`. Verifier: `verify-g22g1f3-gosaki-schedule-authenticated-admin-read-closure.mjs`. **Next: G-22g2 operator procedure hints.**
 
-**G-22g1f2 Gosaki Schedule authenticated admin read read-only QA (2026-07-07):** **complete** — commit `7b726df`. Live login deferred in G-22g1f2; **closed by G-22g1f2c operator smoke PASS.**
+**G-22g1f2c Gosaki Schedule authenticated admin read operator login smoke result (2026-07-07):** **complete** — commit `60d442d`. **Superseded for chain closure by G-22g1f3.**
 
-**G-22g1f1 Gosaki Schedule authenticated admin read implementation (2026-07-07):** **complete** — commit `35007fc` (+ syntax fix `8729a9a`). **Superseded for QA closure by G-22g1f2c.**
+**G-22g1f2 Gosaki Schedule authenticated admin read read-only QA (2026-07-07):** **complete** — commit `7b726df`. **Closed by G-22g1f2c + G-22g1f3.**
+
+**G-22g1f1 Gosaki Schedule authenticated admin read implementation (2026-07-07):** **complete** — commits `35007fc`, syntax fix `8729a9a`. **Chain closed in G-22g1f3.**
 
 **G-22g1f Gosaki Schedule authenticated admin read planning (2026-07-07):** **complete** — commit `3de4b78`. **Superseded by G-22g1f1/f2 chain.**
 

@@ -2765,6 +2765,45 @@
   border-color: #fcd34d;
 }
 
+.gosaki-schedule-republish-draft-banner {
+  margin: 0 0 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid #86efac;
+  background: #ecfdf5;
+}
+
+.gosaki-schedule-republish-draft-banner__title {
+  margin: 0;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #166534;
+}
+
+.gosaki-schedule-republish-draft-banner__body,
+.gosaki-schedule-republish-draft-banner__hint,
+.gosaki-schedule-republish-draft-banner__target {
+  margin: 0.2rem 0 0;
+  font-size: 0.84rem;
+  color: #166534;
+  line-height: 1.5;
+}
+
+.gosaki-schedule-republish-draft-banner__target code {
+  font-size: 0.82rem;
+}
+
+.gosaki-schedule-edit-dry-run--republish {
+  border-color: #86efac;
+}
+
+.gosaki-schedule-preview-confirmation__public-reflection {
+  margin: 0.5rem 0 0;
+  font-size: 0.84rem;
+  color: #475569;
+  line-height: 1.5;
+}
+
 .gosaki-schedule-admin-legacy-id {
   margin: 0;
   font-size: 0.82rem;

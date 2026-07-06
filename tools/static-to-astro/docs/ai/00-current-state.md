@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-22h2 Gosaki Schedule republish dry-run UI planning (2026-07-07):** **complete (uncommitted)** — dry-run module API, UI flow, save target panel, approvalId/env arm, implementation candidate files, refined slices G-22h3–h7. **No implementation / Save / DB write / SQL / RLS / GRANT / package / FTP / public reflection.** Doc: `gosaki-schedule-republish-dry-run-ui-planning.md`. Verifier: `verify-g22h2-gosaki-schedule-republish-dry-run-ui-planning.mjs`. **Next: G-22h3 republish dry-run implementation.**
+**G-22h3 Gosaki Schedule republish dry-run UI implementation (2026-07-07):** **complete (uncommitted)** — `executeG22hScheduleRepublishDryRun` + republish draft UI + save target panel; Save **disabled / alert-only** until G-22h6; `actualWrite=false` only. **No DB write / SQL / RLS / GRANT / package / FTP / public reflection.** Doc: `gosaki-schedule-republish-dry-run-implementation.md`. Verifier: `verify-g22h3-gosaki-schedule-republish-dry-run-implementation.mjs`. **Next: G-22h4 republish dry-run read-only QA.**
+
+**G-22h2 Gosaki Schedule republish dry-run UI planning (2026-07-07):** **complete** — commit `541d0dd`. **Superseded for implementation by G-22h3.**
 
 **G-22h1 Gosaki Schedule republish planning (2026-07-07):** **complete** — commit `f399add`. `published=false→true` UPDATE policy; candidate targets 008/014/001. **Superseded for dry-run design by G-22h2.**
 

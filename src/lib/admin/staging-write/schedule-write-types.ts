@@ -176,6 +176,14 @@ export const G22F_SCHEDULE_UNPUBLISH_UPDATE_NON_DRY_RUN_APPROVAL_ID:
   ScheduleG22fUnpublishUpdateNonDryRunSliceApprovalId =
   "G-22f-gosaki-schedule-unpublish-update-non-dry-run-slice";
 
+/** G-22h Gosaki republish UPDATE non-dry-run single slice — staging shell operator UI. */
+export type ScheduleG22hRepublishUpdateNonDryRunSliceApprovalId =
+  "G-22h-gosaki-schedule-republish-update-non-dry-run-slice";
+
+export const G22H_SCHEDULE_REPUBLISH_UPDATE_NON_DRY_RUN_APPROVAL_ID:
+  ScheduleG22hRepublishUpdateNonDryRunSliceApprovalId =
+  "G-22h-gosaki-schedule-republish-update-non-dry-run-slice";
+
 export type ScheduleWriteApprovalIdUnion =
   | ScheduleWriteApprovalId
   | ScheduleSafeFieldsNonDryRunPocApprovalId
@@ -197,7 +205,8 @@ export type ScheduleWriteApprovalIdUnion =
   | ScheduleG13c2EventBPocAuditCleanupNonDryRunApprovalId
   | ScheduleG22dDuplicateInsertNonDryRunSliceApprovalId
   | ScheduleG22eNewEventInsertNonDryRunSliceApprovalId
-  | ScheduleG22fUnpublishUpdateNonDryRunSliceApprovalId;
+  | ScheduleG22fUnpublishUpdateNonDryRunSliceApprovalId
+  | ScheduleG22hRepublishUpdateNonDryRunSliceApprovalId;
 
 export const SCHEDULE_WRITE_APPROVAL_IDS: readonly ScheduleWriteApprovalIdUnion[] = [
   SCHEDULE_WRITE_APPROVAL_ID,
@@ -221,6 +230,7 @@ export const SCHEDULE_WRITE_APPROVAL_IDS: readonly ScheduleWriteApprovalIdUnion[
   G22D_SCHEDULE_DUPLICATE_INSERT_NON_DRY_RUN_APPROVAL_ID,
   G22E_SCHEDULE_NEW_EVENT_INSERT_NON_DRY_RUN_APPROVAL_ID,
   G22F_SCHEDULE_UNPUBLISH_UPDATE_NON_DRY_RUN_APPROVAL_ID,
+  G22H_SCHEDULE_REPUBLISH_UPDATE_NON_DRY_RUN_APPROVAL_ID,
 ];
 
 export type ScheduleUpdateWritePayload = {

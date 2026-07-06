@@ -251,8 +251,57 @@ export function buildScheduleUnpublishDryRunResult(input: {
   return result;
 }
 
+const REPUBLISH_ROLLBACK_HINT =
+  "If this were a real republish update, rollback would restore published=false on this row by id. No row was updated in dry-run.";
+
+export function buildScheduleRepublishDryRunResult(input: {
+  source: ScheduleDryRunSource;
+  approvalId?: string;
+}): ScheduleDryRunResult {
+  const errors: string[] = [];
+  const warnings: string[] = [];
+
+  if (!String(input.source.id ?? "").trim()) {
+    errors.push("Target schedule id is required for republish dry-run.");
+  }
+  if (!String(input.source.legacy_id ?? "").trim()) {
+    errors.push("Target schedule legacy_id is required for republish dry-run.");
+  }
+  if (input.source.published !== false) {
+    errors.push("Target schedule is already published (published=true).");
+  }
+
+  const validation = { ok: errors.length === 0, errors, warnings };
+  const wouldWrite = validation.ok;
+  const payload: Record<string, unknown> = {
+    published: true,
+  };
+
+  const result: ScheduleDryRunResult = {
+    module: "schedule",
+    operation: "republish",
+    targetTable: "schedules",
+    targetId: input.source.id,
+    dryRun: true,
+    wouldWrite,
+    actualWrite: false,
+    approvalId: input.approvalId ?? G6E3_SCHEDULE_DRY_RUN_ADAPTER_APPROVAL_ID,
+    validation,
+    beforeSnapshot: snapshotSource(input.source),
+    payload,
+    rollbackHint: REPUBLISH_ROLLBACK_HINT,
+    message: validation.ok
+      ? "Dry-run complete — no Supabase schedule republish update was called."
+      : "Dry-run validation failed — no Supabase schedule republish update was called.",
+    safety: getScheduleDryRunSafety(),
+  };
+
+  assertDryRunOnlyResult(result);
+  return result;
+}
+
 export function buildScheduleDryRunSelectionError(input: {
-  operation: "update" | "duplicate" | "new" | "unpublish";
+  operation: "update" | "duplicate" | "new" | "unpublish" | "republish";
   message: string;
   errors: string[];
   approvalId?: string;

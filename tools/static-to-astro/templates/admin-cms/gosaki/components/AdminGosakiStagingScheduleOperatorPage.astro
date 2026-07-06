@@ -110,7 +110,9 @@ function displayValue(value: string | null | undefined): string {
     <p class="gosaki-schedule-operator-guide__title">通常の Schedule 操作はこちら</p>
     <p class="gosaki-schedule-operator-guide__body">
       上部の<strong>公演一覧</strong>で <code>legacy_id</code> / 日付 / タイトルを確認し、「編集する」を押してください。
-      非公開化は「<strong>非公開化案を作成</strong>」→「変更を確認」→「非公開化を保存」の順です（ページ内検索は <code>unpublish</code> ではなく「<strong>非公開</strong>」を使用）。
+      非公開化は「<strong>非公開化案を作成</strong>」→「変更を確認」→「非公開化を保存」の順です。
+      再公開（非公開行）は「<strong>再公開案を作成</strong>」→「変更を確認」→「再公開を保存（準備中）」の順です（保存は G-22h6 以降）。
+      ページ内検索は <code>unpublish</code> / <code>republish</code> ではなく「<strong>非公開</strong>」「<strong>再公開</strong>」を使用。
     </p>
     <p class="gosaki-schedule-operator-guide__dev-note">
       ページ下部の「開発者向け詳細」は <strong>mock / dry-run PoC 用</strong>です。Gosaki の本番運用操作では使いません。
@@ -165,6 +167,15 @@ function displayValue(value: string | null | undefined): string {
           <li>戸山が確認して「非公開化を保存」</li>
         </ol>
         <p class="gosaki-schedule-operator-procedure-hints__note">「非公開化案を作成」= 行は削除しません。「非公開化を保存」= published を false にします（物理削除ではありません）。</p>
+      </article>
+      <article class="gosaki-schedule-operator-procedure-hints__card" data-gosaki-procedure-hint="republish">
+        <h3 class="gosaki-schedule-operator-procedure-hints__card-title">再公開</h3>
+        <ol class="gosaki-schedule-operator-procedure-hints__steps">
+          <li>非公開行を選び「再公開案を作成」</li>
+          <li>「変更を確認」</li>
+          <li>「再公開を保存（準備中）」— G-22h6 以降</li>
+        </ol>
+        <p class="gosaki-schedule-operator-procedure-hints__note">published を false から true に戻します。保存ボタンを押すまでDBは変更されません。公開サイトへの反映は別フェーズです。</p>
       </article>
     </div>
     <aside
@@ -424,6 +435,27 @@ function displayValue(value: string | null | undefined): string {
         </div>
 
         <div
+          id="gosaki-schedule-republish-draft-banner"
+          class="gosaki-schedule-republish-draft-banner admin-form__field--full"
+          hidden
+          data-draft-mode=""
+          data-target-id=""
+          data-target-legacy-id=""
+          role="status"
+        >
+          <p class="gosaki-schedule-republish-draft-banner__title">再公開案</p>
+          <p class="gosaki-schedule-republish-draft-banner__body">
+            まだ保存されていません。published を false から true に戻す操作です。
+          </p>
+          <p class="gosaki-schedule-republish-draft-banner__hint">
+            保存ボタンを押すまでDBは変更されません。公開サイトへの反映は別フェーズです。保存は G-22h6 以降で有効化されます。
+          </p>
+          <p class="gosaki-schedule-republish-draft-banner__target">
+            対象: <code data-target-label></code>
+          </p>
+        </div>
+
+        <div
           id="gosaki-schedule-unpublish-draft-banner"
           class="gosaki-schedule-unpublish-draft-banner admin-form__field--full"
           hidden
@@ -590,6 +622,16 @@ function displayValue(value: string | null | undefined): string {
           <button
             type="button"
             class="admin-button admin-button-secondary"
+            id="gosaki-schedule-republish-btn"
+            data-gosaki-schedule-action-disabled
+            disabled
+            title="選択中の非公開公演を再公開する案を作成します（保存は G-22h6 以降）"
+          >
+            再公開案を作成
+          </button>
+          <button
+            type="button"
+            class="admin-button admin-button-secondary"
             id="gosaki-schedule-unpublish-btn"
             data-gosaki-schedule-action-disabled
             disabled
@@ -618,7 +660,7 @@ function displayValue(value: string | null | undefined): string {
           現在、公開サイトへの反映は戸山が確認して行います。
         </p>
         <p class="admin-gosaki-save-note" role="note">
-          ※ 新規追加案・複製案・非公開化案の作成と「変更を確認」ができます。保存・物理削除は戸山が確認して反映します。
+          ※ 新規追加案・複製案・非公開化案・再公開案の作成と「変更を確認」ができます。保存・物理削除は戸山が確認して反映します（再公開 Save は G-22h6 以降）。
         </p>
       </form>
     </section>

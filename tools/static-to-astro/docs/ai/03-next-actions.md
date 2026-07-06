@@ -1,12 +1,35 @@
 Last updated: 2026-07-07
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22h3 Schedule republish dry-run UI implementation — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-22h3-gosaki-schedule-republish-dry-run-ui-implementation` |
+| Base | `541d0dd` |
+| Scope | dry-run module · UI · config stub · guards · no Save module |
+| Module | `executeG22hScheduleRepublishDryRun` |
+| UI | `#gosaki-schedule-republish-btn` · `editDraftMode=republish` |
+| dry-run approvalId | `G-22h-gosaki-schedule-republish-dry-run` |
+| Save approvalId | `G-22h-gosaki-schedule-republish-update-non-dry-run-slice` (registry only) |
+| env arm | `PUBLIC_ADMIN_GOSAKI_SCHEDULE_G22H_REPUBLISH_UPDATE_NON_DRY_RUN_ARMED` |
+| Save | **disabled / alert-only** — G-22h6 deferred |
+| actualWrite | **false** only |
+| publicReflectionPending | **true** in dry-run |
+| Save / DB write / SQL | **none** |
+| RLS / grant / service_role | **unchanged** |
+| package / FTP / public reflection | **none** |
+| Doc | `gosaki-schedule-republish-dry-run-implementation.md` |
+| Verifier | `verify-g22h3-gosaki-schedule-republish-dry-run-implementation.mjs` |
+| **Next** | **G-22h4** republish dry-run read-only QA |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22h2 Schedule republish dry-run UI planning — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-22h2-gosaki-schedule-republish-dry-run-ui-planning` |
 | Base | `f399add` |
+| Commit | `541d0dd` |
 | Scope | planning docs · verifier · AI context only |
 | Dry-run module | `executeG22hScheduleRepublishDryRun` (designed) |
 | UI flow | 再公開案を作成 → 変更を確認 → 再公開を保存 (Save disabled until G-22h6) |
@@ -20,7 +43,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | package / FTP / public reflection | **none** |
 | Doc | `gosaki-schedule-republish-dry-run-ui-planning.md` |
 | Verifier | `verify-g22h2-gosaki-schedule-republish-dry-run-ui-planning.mjs` |
-| **Next** | **G-22h3** republish dry-run implementation (Save disabled) |
+| **Next** | **Superseded by G-22h3 implementation** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22h1 Schedule republish planning — complete
 

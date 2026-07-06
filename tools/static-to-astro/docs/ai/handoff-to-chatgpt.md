@@ -5,18 +5,27 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-22h2-gosaki-schedule-republish-dry-run-ui-planning — complete (uncommitted).
-Dry-run module + UI + save target panel design for republish (published=false→true).
+Current phase: G-22h3-gosaki-schedule-republish-dry-run-ui-implementation — complete (uncommitted).
+Republish dry-run UI: published=false→true preview; Save disabled / alert-only until G-22h6.
 dry-run approvalId: G-22h-gosaki-schedule-republish-dry-run.
-Save approvalId: G-22h-gosaki-schedule-republish-update-non-dry-run-slice (G-22h6).
-env arm: PUBLIC_ADMIN_GOSAKI_SCHEDULE_G22H_REPUBLISH_UPDATE_NON_DRY_RUN_ARMED.
-actualWrite=false in dry-run; Save disabled until G-22h6.
-No implementation / Save / DB write / SQL / RLS / package / FTP / public reflection in this phase.
+Module: executeG22hScheduleRepublishDryRun; actualWrite=false only; publicReflectionPending=true.
+No DB write / SQL / RLS / package / FTP / public reflection in this phase.
 Do NOT re-Save: schedule-2026-07-008 (G-22f7), schedule-2026-09-001 (G-22e7), schedule-2026-03-014 (G-22d3d).
 Routine dev: PUBLIC_ADMIN_WRITE_DRY_RUN=true; all write arms off.
 Supabase interim SoT: kmjqppxjdnwwrtaeqjta — never vsbvndwuajjhnzpohghh.
-Next: G-22h3 republish dry-run implementation (Save disabled).
+Next: G-22h4 republish dry-run read-only QA.
 ```
+
+## G-22h3 Schedule republish dry-run UI implementation — complete
+
+- **Goal:** Republish dry-run / preview UI; Save disabled until G-22h6
+- **Module:** `gosaki-schedule-republish-dry-run.ts` — `executeG22hScheduleRepublishDryRun`
+- **UI:** `#gosaki-schedule-republish-btn` · `editDraftMode=republish` · procedure hint `republish`
+- **Save:** alert-only stub — `再公開を保存（準備中）` always disabled
+- **Output:** published false→true · actualWrite=false · publicReflectionPending=true · contentFieldsChanged=false
+- **Not executed:** DB write · Save · SQL · RLS · package · FTP · public reflection
+- **Doc:** `gosaki-schedule-republish-dry-run-implementation.md` · **Verifier:** `verify-g22h3-...mjs`
+- **Next:** G-22h4 read-only / dry-run QA
 
 ## G-22h2 Schedule republish dry-run UI planning — complete
 

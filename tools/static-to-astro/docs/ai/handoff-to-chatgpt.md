@@ -5,16 +5,27 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-22g1e-gosaki-schedule-admin-read-unpublished-visibility — complete (uncommitted).
-Root cause: admin SSR read uses anon key (no JWT) → RLS schedules_public_select → unpublished hidden.
-schedule-2026-07-008 published=false, exists in DB, not in SSR selectable rows.
-Recommended fix: Option B — client authenticated refetch after auth gate (no RLS change yet).
+Current phase: G-22g1f-gosaki-schedule-authenticated-admin-read-planning — complete (uncommitted).
+Plan: SSR anon bootstrap + login后 client authenticated refetch (no RLS/grant/service_role change).
+QA target: schedule-2026-07-008 visible under 非公開 filter after G-22g1f1/f2.
 Do NOT re-Save: schedule-2026-07-008 (G-22f7), schedule-2026-09-001 (G-22e7), schedule-2026-03-014 (G-22d3d).
 Physical DELETE not implemented. Public reflection / package / FTP not executed.
 Routine dev: PUBLIC_ADMIN_WRITE_DRY_RUN=true; all write arms off.
 Supabase interim SoT: kmjqppxjdnwwrtaeqjta — never vsbvndwuajjhnzpohghh.
-Next: G-22g1f authenticated admin read planning · G-22g2 operator procedure hints.
+Next: G-22g1f1 implementation only · G-22g1f2 read-only QA.
 ```
+
+## G-22g1f Schedule authenticated admin read planning — complete
+
+- **Policy:** keep SSR anon bootstrap; after login refetch with browser Supabase session (`getStagingSupabaseClient`)
+- **Module (f1):** `gosaki-schedule-authenticated-admin-read.ts` — SELECT only, site_slug filter, audit split
+- **UI:** banner modes bootstrap / admin-authenticated / loading / error-fallback; filters unchanged
+- **Auth hook:** operator subscribes to same client `onAuthStateChange`; no gate core change required
+- **Safety:** no RLS/grant/service_role; write modules untouched; fallback to SSR rows on error
+- **QA target:** `schedule-2026-07-008` under「非公開のみ」after f1+f2
+- **No implementation / Save / DB write**
+- **Doc:** `gosaki-schedule-authenticated-admin-read-plan.md` · **Verifier:** `verify-g22g1f-gosaki-schedule-authenticated-admin-read-plan.mjs`
+- **Next:** G-22g1f1 · G-22g1f2
 
 ## G-22g1e Schedule admin read / unpublished visibility — complete
 

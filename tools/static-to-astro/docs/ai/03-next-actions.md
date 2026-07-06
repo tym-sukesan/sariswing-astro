@@ -1,18 +1,32 @@
 Last updated: 2026-07-07
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22g1f Schedule authenticated admin read planning — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-22g1f-gosaki-schedule-authenticated-admin-read-planning` |
+| Base | `02158da` |
+| Policy | SSR anon bootstrap + login后 client authenticated refetch |
+| New module (f1) | `gosaki-schedule-authenticated-admin-read.ts` |
+| RLS / grant / service_role | **no change** |
+| QA target | `schedule-2026-07-008` under 非公開 filter |
+| Doc | `gosaki-schedule-authenticated-admin-read-plan.md` |
+| Verifier | `verify-g22g1f-gosaki-schedule-authenticated-admin-read-plan.mjs` |
+| **Next** | **G-22g1f1** implementation · **G-22g1f2** read-only QA |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22g1e Schedule admin read / unpublished visibility — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-22g1e-gosaki-schedule-admin-read-unpublished-visibility` |
 | Base | `6018696` |
+| Commit | `02158da` |
 | Finding | SSR read = anon key · no JWT · RLS `schedules_public_select` hides unpublished |
 | `schedule-2026-07-008` | `published=false` · absent from SSR · row exists in DB |
 | Recommended | **Option B** — client authenticated refetch after auth gate |
 | RLS / grant change | **no** (investigation only) |
 | Doc | `gosaki-schedule-admin-read-unpublished-visibility.md` |
-| SQL (readonly) | `gosaki-schedules-g22g1e-unpublished-visibility-readonly-check.sql` |
 | Verifier | `verify-g22g1e-gosaki-schedule-admin-read-unpublished-visibility.mjs` |
 | **Next** | **G-22g1f** authenticated admin read planning |
 

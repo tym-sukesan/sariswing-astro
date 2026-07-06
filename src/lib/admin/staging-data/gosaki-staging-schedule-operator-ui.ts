@@ -2158,6 +2158,8 @@ function renderDryRunResult(result: G9kExistingEventSaveButtonDryRunResult): voi
   `;
   updateSaveTargetPanel();
 }
+
+function renderSaveDiffRows(
   diff: NonNullable<G9kExistingEventSaveButtonSaveOutcome["beforeAfterDiff"]>,
 ): string {
   return diff

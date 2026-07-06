@@ -1,9 +1,9 @@
 # G-22f4 — Gosaki Schedule unpublish UPDATE final preflight
 
 **Phase:** `G-22f4-gosaki-schedule-unpublish-update-final-preflight`  
-**Status:** **complete** — SQL templates + target selection procedure; **no Save / DB write**  
+**Status:** **complete** — SQL templates + target selection procedure; target fixed in [G-22f4b](./gosaki-schedule-unpublish-update-target-fixed-beforeverification.md)  
 **Date:** 2026-07-06  
-**Base commit:** `953be40`  
+**Base commit:** `953be40` (G-22f4); target fixed at `8945905` (G-22f4b)  
 **Prior:** [gosaki-schedule-unpublish-update-implementation.md](./gosaki-schedule-unpublish-update-implementation.md) (G-22f3)
 
 | Check | Status |
@@ -13,7 +13,8 @@
 | beforeVerification SQL templates | **yes** |
 | afterVerification SQL templates | **yes** |
 | rollback SQL template | **yes** (not executed) |
-| Target row fixed in doc | **pending** — operator selects from `published=true` candidates |
+| Target row fixed in doc | **yes** — `schedule-2026-07-008` ([G-22f4b](./gosaki-schedule-unpublish-update-target-fixed-beforeverification.md)) |
+| beforeVerification PASS | **yes** (operator; G-22f4b) |
 | Code-level preflight | **PASS** |
 | Save / UPDATE executed | **no** |
 | Blocking issues | **none** |
@@ -26,7 +27,9 @@
 gosakiScheduleUnpublishUpdateFinalPreflightComplete: true
 phase: G-22f4-gosaki-schedule-unpublish-update-final-preflight
 approvalId: G-22f-gosaki-schedule-unpublish-update-non-dry-run-slice
-targetFixedInDoc: pending
+targetFixedInDoc: true
+targetLegacyId: schedule-2026-07-008
+beforeVerificationPass: true
 readyForG22f5ScheduleUnpublishUpdateOperatorExecution: true
 saveExecuted: false
 dbWriteExecuted: false
@@ -127,24 +130,33 @@ limit 30;
 
 ---
 
-## 5. Target fixed record — **pending**
+## 5. Target fixed record — **fixed (G-22f4b)**
 
-Fill this table **after** operator selects a candidate and §6 beforeVerification passes.
+Full record: [gosaki-schedule-unpublish-update-target-fixed-beforeverification.md](./gosaki-schedule-unpublish-update-target-fixed-beforeverification.md)
 
 | Field | Value |
 | --- | --- |
-| `id` | **pending** (`:target_id`) |
-| `legacy_id` | **pending** (`:target_legacy_id`) |
-| `date` | **pending** |
-| `title` | **pending** |
-| `venue` | **pending** (record for afterVerification; not changed by slice) |
-| `month` | **pending** (record for month count check) |
-| `published` (before) | `true` (required) |
-| `updated_at` (before) | **pending** — `expectedBeforeUpdatedAt` baseline |
-| `source_route` | **pending** (unchanged by slice) |
-| `source_file` | **pending** (unchanged by slice) |
-| `sort_order` | **pending** (unchanged by slice) |
-| `site_slug` | `gosaki-piano` (fixed) |
+| `id` | `3e572f02-4f35-460e-80a1-3a7d15ca3fd9` |
+| `legacy_id` | `schedule-2026-07-008` |
+| `date` | `2026-07-17` |
+| `year` | `2026` |
+| `month` | `2026-07` |
+| `title` | `<>` |
+| `venue` | `` (empty string) |
+| `open_time` | `null` |
+| `start_time` | `null` |
+| `price` | `null` |
+| `description` | `出演：` |
+| `published` (before) | `true` |
+| `show_on_home` | `false` |
+| `home_order` | `null` |
+| `sort_order` | `8` |
+| `updated_at` (before) | `2026-06-16T16:03:41.551792+00:00` — **`expectedBeforeUpdatedAt`** |
+| `source_route` | `/schedule/2026-07/` |
+| `source_file` | `schedule-2026-07.html` |
+| `created_at` | `2026-06-05T17:39:44.140168+00:00` |
+| `site_slug` | `gosaki-piano` |
+| `target_month_count_before` | `14` |
 
 ### UPDATE payload (fixed by implementation)
 
@@ -152,22 +164,24 @@ Fill this table **after** operator selects a candidate and §6 beforeVerificatio
 | --- | --- | --- |
 | `published` | `true` | `false` |
 | All other columns | unchanged | unchanged |
-| `updated_at` | `:target_updated_at_before` | changes via DB trigger (record in G-22f6) |
+| `updated_at` | `2026-06-16T16:03:41.551792+00:00` | changes via DB trigger (record in G-22f6) |
 
 **Public reflection:** not part of G-22f4 / G-22f5. Package regen / FTP **not** executed.
 
 ---
 
-## 6. beforeVerification SQL (SELECT only — operator runs before G-22f5 Save)
+## 6. beforeVerification SQL (SELECT only — **PASS recorded G-22f4b**)
 
-Replace placeholders after §5 target fixed:
+Fixed target placeholders:
 
-- `:target_id`
-- `:target_legacy_id`
-- `:target_updated_at_before`
-- `:target_month` (from target row)
+- `:target_id` → `3e572f02-4f35-460e-80a1-3a7d15ca3fd9`
+- `:target_legacy_id` → `schedule-2026-07-008`
+- `:target_updated_at_before` → `2026-06-16T16:03:41.551792+00:00`
+- `:target_month` → `2026-07`
 
-**Cursor does not execute in G-22f4.**
+**Operator PASS (G-22f4b):** authenticated UPDATE yes · anon UPDATE no · RLS enabled · `schedules_admin_all` unchanged · `target_id_count=1` · `target_legacy_id_count=1` · `target_published_true_count=1` · `target_is_protected_legacy_count=0` · protected rows unchanged · `target_month_count_before=14`.
+
+**Cursor did not execute SQL in G-22f4b.**
 
 ### 6.1 Grants — authenticated UPDATE yes, anon UPDATE no, DELETE not required
 
@@ -320,14 +334,15 @@ Record result for G-22f6 afterVerification (must be unchanged).
 
 ## 7. afterVerification SQL (SELECT only — G-22f5 success / G-22f6)
 
-Replace placeholders:
+Fixed values for target `schedule-2026-07-008`:
 
-- `:target_id`
-- `:target_legacy_id`
-- `:target_updated_at_before`
-- `:target_updated_at_after` (from post-Save row)
-- `:before_date`, `:before_title`, `:before_venue`, etc. (from §5 / §6.5)
-- `:target_month_count_before`
+- `:target_id` → `3e572f02-4f35-460e-80a1-3a7d15ca3fd9`
+- `:target_legacy_id` → `schedule-2026-07-008`
+- `:target_updated_at_before` → `2026-06-16T16:03:41.551792+00:00`
+- `:target_updated_at_after` — from post-Save row
+- `:target_month` → `2026-07`
+- `:target_month_count_before` → `14`
+- `:before_date` → `2026-07-17` · `:before_title` → `<>` · `:before_venue` → `` · `:before_open_time` / `:before_start_time` / `:before_price` → `null` · `:before_description` → `出演：` · `:before_source_route` → `/schedule/2026-07/` · `:before_source_file` → `schedule-2026-07.html` · `:before_sort_order` → `8`
 
 ```sql
 -- G-22f6 afterVerification — target row (SELECT only)
@@ -437,8 +452,8 @@ begin;
 
 update public.schedules
 set published = true
-where id = ':target_id'
-  and legacy_id = ':target_legacy_id'
+where id = '3e572f02-4f35-460e-80a1-3a7d15ca3fd9'
+  and legacy_id = 'schedule-2026-07-008'
   and site_slug = 'gosaki-piano'
   and published = false
   and updated_at = ':target_updated_at_after';
@@ -493,9 +508,9 @@ npm run dev -- --port 4321 --host 127.0.0.1
 ### G-22f5 UI procedure (operator)
 
 1. Open `/__admin-staging-shell/musician-basic/admin/schedule/`
-2. Select **fixed target row** (`published=true`)
+2. Select row **`schedule-2026-07-008`** (`published=true`, title `<>`)
 3. **非公開化案を作成** → **変更を確認** (dry-run `operation=unpublish`)
-4. Verify dev panel: `update saveEnabled=true`, `expectedBeforeUpdatedAt` matches §5
+4. Verify dev panel: `expectedBeforeUpdatedAt = 2026-06-16T16:03:41.551792+00:00`
 5. **非公開化を保存** — click **once** only
 6. Do **not** re-click Save; do **not** unpublish protected rows
 
@@ -525,4 +540,4 @@ node tools/static-to-astro/scripts/verify-g22f4-gosaki-schedule-unpublish-update
 
 ## 13. Fix required?
 
-**No.** Templates and procedure are ready. Target row remains **pending** until operator runs §4 SQL and confirms selection. G-22f5 is operator Save once only.
+**No.** Target fixed (`schedule-2026-07-008`) and beforeVerification PASS recorded (G-22f4b). Proceed to **G-22f5** — operator Save once only.

@@ -1,21 +1,40 @@
 Last updated: 2026-07-06
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22f4b unpublish UPDATE target fixed / beforeVerification — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-22f4b-gosaki-schedule-unpublish-update-target-fixed-beforeverification` |
+| Base | `8945905` |
+| Target | `schedule-2026-07-008` / `id=3e572f02-4f35-460e-80a1-3a7d15ca3fd9` |
+| `expectedBeforeUpdatedAt` | `2026-06-16T16:03:41.551792+00:00` |
+| `target_month_count_before` | `14` |
+| Slice | `published=true` → `published=false` UPDATE only (not physical DELETE) |
+| approvalId | `G-22f-gosaki-schedule-unpublish-update-non-dry-run-slice` |
+| beforeVerification | **PASS** (operator) |
+| Rollback | **not needed** / not executed |
+| Protected rows | `schedule-2026-03-014` / `schedule-2026-09-001` — non-touch |
+| Doc | `gosaki-schedule-unpublish-update-target-fixed-beforeverification.md` |
+| Verifier | `verify-g22f4b-gosaki-schedule-unpublish-update-target-fixed-beforeverification.mjs` |
+| Save / DB write / SQL mutation (G-22f4b) | **not executed** |
+| **Next** | **G-22f5** operator Save once |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22f4 unpublish UPDATE final preflight — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-22f4-gosaki-schedule-unpublish-update-final-preflight` |
-| Base | `953be40` |
+| Base | `953be40` / commit `8945905` |
 | Slice | `published=true` → `published=false` UPDATE only (not physical DELETE) |
 | approvalId | `G-22f-gosaki-schedule-unpublish-update-non-dry-run-slice` |
-| Target row | **pending** — operator picks from `published=true` candidate list |
+| Target row | **fixed** — `schedule-2026-07-008` (G-22f4b) |
 | Protected rows | `schedule-2026-03-014` / `schedule-2026-09-001` — non-touch |
 | SQL | candidate list + beforeVerification / afterVerification SELECT-only; rollback UPDATE template (not executed) |
 | Doc | `gosaki-schedule-unpublish-update-final-preflight.md` |
 | Verifier | `verify-g22f4-gosaki-schedule-unpublish-update-final-preflight.mjs` |
 | Save / DB write / SQL mutation (G-22f4) | **not executed** |
-| **Next** | Operator runs candidate SQL → fix target in doc → beforeVerification → **G-22f5** Save once |
+| **Next** | **G-22f4b** target fixed — **done** → **G-22f5** Save once |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22f3 unpublish UPDATE implementation — complete
 

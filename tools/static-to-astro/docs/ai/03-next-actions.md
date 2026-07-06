@@ -1,21 +1,36 @@
 Last updated: 2026-07-07
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22g1e Schedule admin read / unpublished visibility — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-22g1e-gosaki-schedule-admin-read-unpublished-visibility` |
+| Base | `6018696` |
+| Finding | SSR read = anon key · no JWT · RLS `schedules_public_select` hides unpublished |
+| `schedule-2026-07-008` | `published=false` · absent from SSR · row exists in DB |
+| Recommended | **Option B** — client authenticated refetch after auth gate |
+| RLS / grant change | **no** (investigation only) |
+| Doc | `gosaki-schedule-admin-read-unpublished-visibility.md` |
+| SQL (readonly) | `gosaki-schedules-g22g1e-unpublished-visibility-readonly-check.sql` |
+| Verifier | `verify-g22g1e-gosaki-schedule-admin-read-unpublished-visibility.mjs` |
+| **Next** | **G-22g1f** authenticated admin read planning |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22g1d Schedule P0 UX QA — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-22g1d-gosaki-schedule-p0-ux-qa` |
 | Base | `b5ccb9f` |
+| Commit | `6018696` |
 | Scope | G-22g1a/b/c live dry-run QA · HTML markers · module smoke |
 | G-22g1 chain | list UX · dev/mock isolation · preview panel — **verified** |
-| `schedule-2026-07-008` | not in anon SSR rows (known RLS; not G-22g1 regression) |
-| Dev env | dry-run · `ENABLE_ADMIN_STAGING_WRITE=false` · arms off |
-| Dev server | started for QA · **stopped** · port 4321 LISTEN none |
+| `schedule-2026-07-008` | not in anon SSR rows → **G-22g1e** root cause |
+| Dev server | started dry-run · **stopped** · port 4321 LISTEN none |
 | DB write | **no** |
 | Doc | `gosaki-schedule-p0-ux-qa.md` |
 | Verifier | `verify-g22g1d-gosaki-schedule-p0-ux-qa.mjs` |
-| **Next** | **G-22g2** operator procedure · Schedule P0 summary |
+| **Next** | **G-22g1e** read investigation · **G-22g2** operator procedure |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22g1c Schedule save preview / target confirmation — complete
 

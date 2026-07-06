@@ -3,9 +3,11 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-22g1d Gosaki Schedule P0 UX QA after G-22g1a/b/c (2026-07-07):** **complete (uncommitted)** — dry-run dev HTTP 200; legacy_id list / operator guide / dev-mock isolation / selected summary / preview shell PASS; module smoke duplicate/new/unpublish PASS; `schedule-2026-07-008` not in anon SSR rows (known RLS). **No Save / DB write / FTP.** Doc: `gosaki-schedule-p0-ux-qa.md`. Verifier: `verify-g22g1d-gosaki-schedule-p0-ux-qa.mjs`. **Next: G-22g2 operator procedure hints or Schedule P0 summary.**
+**G-22g1e Gosaki Schedule admin read / unpublished row visibility investigation (2026-07-07):** **complete (uncommitted)** — SSR admin read uses anon key without JWT; `schedules_public_select` hides unpublished; Save uses authenticated+is_admin. Root cause: anon SSR + RLS (not G-22g1 regression). Recommended: Option B client authenticated refetch after auth gate. **No RLS/grant change / Save / DB write / FTP.** Doc: `gosaki-schedule-admin-read-unpublished-visibility.md`. Verifier: `verify-g22g1e-gosaki-schedule-admin-read-unpublished-visibility.mjs`. **Next: G-22g1f authenticated admin read planning.**
 
-**G-22g1c Gosaki Schedule save preview / target confirmation panel (2026-07-07):** **complete** — commit `b5ccb9f`. **Superseded for P0 UX QA by G-22g1d.**
+**G-22g1d Gosaki Schedule P0 UX QA after G-22g1a/b/c (2026-07-07):** **complete** — commit `6018696`. **Superseded for read investigation by G-22g1e.**
+
+**G-22g1c Gosaki Schedule save preview / target confirmation panel (2026-07-07):** **complete** — commit `b5ccb9f`. **Superseded for read investigation by G-22g1e.**
 
 **G-22g1b Gosaki Schedule dev/mock section isolation (2026-07-07):** **complete** — commit `9c6d514`. **Superseded for P0 UX QA by G-22g1d.**
 

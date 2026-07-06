@@ -5,15 +5,27 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-22g1d-gosaki-schedule-p0-ux-qa — complete (uncommitted).
-G-22g1a/b/c verified on dry-run dev: legacy_id list, dev/mock isolation, preview/target panel shell.
-schedule-2026-07-008 not in anon SSR rows (known RLS after unpublish).
+Current phase: G-22g1e-gosaki-schedule-admin-read-unpublished-visibility — complete (uncommitted).
+Root cause: admin SSR read uses anon key (no JWT) → RLS schedules_public_select → unpublished hidden.
+schedule-2026-07-008 published=false, exists in DB, not in SSR selectable rows.
+Recommended fix: Option B — client authenticated refetch after auth gate (no RLS change yet).
 Do NOT re-Save: schedule-2026-07-008 (G-22f7), schedule-2026-09-001 (G-22e7), schedule-2026-03-014 (G-22d3d).
 Physical DELETE not implemented. Public reflection / package / FTP not executed.
 Routine dev: PUBLIC_ADMIN_WRITE_DRY_RUN=true; all write arms off.
 Supabase interim SoT: kmjqppxjdnwwrtaeqjta — never vsbvndwuajjhnzpohghh.
-Next: G-22g2 operator procedure hints · Schedule P0 summary.
+Next: G-22g1f authenticated admin read planning · G-22g2 operator procedure hints.
 ```
+
+## G-22g1e Schedule admin read / unpublished visibility — complete
+
+- **Problem:** G-22g1d — `schedule-2026-07-008` not in operator SSR list after unpublish
+- **Read path:** Astro SSR → `loadSchedulesForSiteSlugRead` → `getStagingSupabaseClient(anonKey)` — **no auth session**
+- **RLS:** anon sees `published=true` only (`schedules_public_select`); write uses `authenticated`+`is_admin()` (`schedules_admin_all`)
+- **Not G-22g1 regression** — UI filters cannot show rows never loaded
+- **Recommended:** Option B — SSR published bootstrap + **client refetch** after login (no RLS/grant change first)
+- **No implementation / RLS / Save / DB write**
+- **Doc:** `gosaki-schedule-admin-read-unpublished-visibility.md` · **Verifier:** `verify-g22g1e-gosaki-schedule-admin-read-unpublished-visibility.mjs`
+- **Next:** G-22g1f planning · G-22g1f1 implementation · G-22g1f2 QA
 
 ## G-22g1d Schedule P0 UX QA — complete
 

@@ -5,15 +5,25 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-22g2a-gosaki-schedule-p0-ux-readonly-qa — complete (uncommitted).
-P0 UX read-only QA: HTTP 200; G-22g1a〜G-22g2 markers PASS; preview smoke PASS.
-Login後 admin read: regression PASS via G-22g1f2c (live re-smoke deferred).
-No Save / DB write / SQL / RLS / package / FTP in this phase.
+Current phase: G-22g2b-gosaki-schedule-p0-ux-summary — complete (uncommitted).
+P0 UX chain CLOSED: G-22g1a→G-22g2a summarized; legacy_id / dev/mock / save preview / admin read / procedure hints / QA runner.
+schedule-2026-07-008 visibility PASS (G-22g1f2c). Admin read closure (G-22g1f3) maintained.
+No Save / DB write / SQL / RLS / package / FTP / public reflection in this phase.
 Do NOT re-Save: schedule-2026-07-008 (G-22f7), schedule-2026-09-001 (G-22e7), schedule-2026-03-014 (G-22d3d).
 Routine dev: PUBLIC_ADMIN_WRITE_DRY_RUN=true; all write arms off.
 Supabase interim SoT: kmjqppxjdnwwrtaeqjta — never vsbvndwuajjhnzpohghh.
-Next: Schedule P0 UX まとめ · republish planning (deferred).
+Next: republish planning · public reflection planning · release readiness review.
 ```
+
+## G-22g2b Schedule P0 UX summary / closure — complete
+
+- **Goal:** Close G-22g1a–G-22g2a P0 UX chain; record achievements, residuals, high-risk deferrals
+- **Achieved:** legacy_id visibility · dev/mock isolation · save preview/target · admin read closure · 008 visible after login · procedure hints · read-only QA runner
+- **Residual:** transient load error alert (non-blocking) · live login re-smoke deferred · interactive preview auto-QA deferred
+- **Deferred high-risk:** republish · public reflection · package/FTP · physical DELETE · production
+- **Not executed:** Save · DB write · SQL · RLS · package · FTP
+- **Doc:** `gosaki-schedule-p0-ux-summary.md` · **Verifier:** `verify-g22g2b-gosaki-schedule-p0-ux-summary.mjs`
+- **Next:** republish planning · public reflection planning
 
 ## G-22g2a Schedule P0 UX read-only QA — complete
 

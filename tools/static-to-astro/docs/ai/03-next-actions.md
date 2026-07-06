@@ -1,6 +1,23 @@
 Last updated: 2026-07-07
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22g2b Schedule P0 UX summary / closure — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-22g2b-gosaki-schedule-p0-ux-summary` |
+| Base | `73b4d23` |
+| Chain | G-22g1a → … → G-22g2a → **G-22g2b** |
+| P0 UX chain | **CLOSED** |
+| 008 visibility | **PASS** (G-22g1f2c / G-22g1f3) |
+| Admin read | **closed** (G-22g1f3) |
+| QA runner | `run-g22g2a-schedule-p0-ux-readonly-qa.mjs` |
+| Save / DB write / SQL | **none** |
+| package / FTP / public reflection | **none** |
+| Doc | `gosaki-schedule-p0-ux-summary.md` |
+| Verifier | `verify-g22g2b-gosaki-schedule-p0-ux-summary.mjs` |
+| **Next** | **republish planning** · **public reflection planning** · release readiness review |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22g2a Schedule P0 UX read-only QA — complete
 
 | Item | Value |
@@ -16,7 +33,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | QA runner | `run-g22g2a-schedule-p0-ux-readonly-qa.mjs` (re-runnable live markers) |
 | Doc | `gosaki-schedule-p0-ux-readonly-qa.md` |
 | Verifier | `verify-g22g2a-gosaki-schedule-p0-ux-readonly-qa.mjs` |
-| **Next** | **Schedule P0 UX まとめ** · republish planning (deferred) |
+| **Next** | **Superseded by G-22g2b closure** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22g2 Schedule operator procedure hints — complete
 

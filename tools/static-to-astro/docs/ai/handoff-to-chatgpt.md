@@ -5,15 +5,26 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-22g2-gosaki-schedule-operator-procedure-hints — complete (uncommitted).
-Operator procedure hints added: 4-operation cards, save-target Step panel, admin-read hints, save-state copy.
+Current phase: G-22g2a-gosaki-schedule-p0-ux-readonly-qa — complete (uncommitted).
+P0 UX read-only QA: HTTP 200; G-22g1a〜G-22g2 markers PASS; preview smoke PASS.
+Login後 admin read: regression PASS via G-22g1f2c (live re-smoke deferred).
 No Save / DB write / SQL / RLS / package / FTP in this phase.
-Authenticated admin read chain (G-22g1f3) closed at fd47f8b.
 Do NOT re-Save: schedule-2026-07-008 (G-22f7), schedule-2026-09-001 (G-22e7), schedule-2026-03-014 (G-22d3d).
 Routine dev: PUBLIC_ADMIN_WRITE_DRY_RUN=true; all write arms off.
 Supabase interim SoT: kmjqppxjdnwwrtaeqjta — never vsbvndwuajjhnzpohghh.
-Next: Schedule P0 UX QA · Schedule P0 UX summary · republish planning (deferred).
+Next: Schedule P0 UX まとめ · republish planning (deferred).
 ```
+
+## G-22g2a Schedule P0 UX read-only QA — complete
+
+- **Goal:** G-22g1a〜G-22g2 UX improvements verified on live dry-run page without Save
+- **Result:** HTTP 200 · Transform error none · 27/27 HTML marker checks PASS · preview module smoke PASS
+- **G-22g2:** procedure hints / DB unchanged copy / save-once notes — **PASS**
+- **G-22g1f:** SSR bootstrap 58 published-only; login後 behavior regression **PASS** (G-22g1f2c)
+- **Residual:** transient load error alert on SSR (non-blocking)
+- **Not executed:** Save · DB write · SQL · package · FTP · live browser login re-smoke
+- **Doc:** `gosaki-schedule-p0-ux-readonly-qa.md` · **Verifier:** `verify-g22g2a-gosaki-schedule-p0-ux-readonly-qa.mjs` · **QA runner:** `run-g22g2a-schedule-p0-ux-readonly-qa.mjs` (re-runnable)
+- **Next:** Schedule P0 UX まとめ
 
 ## G-22g2 Schedule operator procedure hints — complete
 

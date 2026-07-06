@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-22g2 Gosaki Schedule operator procedure hints (2026-07-07):** **complete (uncommitted)** — 操作手順ヒント UI（4操作カード + save target panel 動的 Step + admin read ヒント + 保存状態文言）。UI文言は「DBは変わりません」「保存前プレビュー」に統一（中国語表記なし）。**No Save / DB write / RLS / FTP / package regen.** Doc: `gosaki-schedule-operator-procedure-hints.md`. Verifier: `verify-g22g2-gosaki-schedule-operator-procedure-hints.mjs`. **Next: Schedule P0 UX QA / summary.**
+**G-22g2a Gosaki Schedule P0 UX read-only QA (2026-07-07):** **complete (uncommitted)** — dry-run dev HTTP 200; G-22g1a〜G-22g2 markers 27/27 PASS; preview module smoke PASS; login後 admin read regression via G-22g1f2c. **No Save / DB write / RLS / FTP.** Doc: `gosaki-schedule-p0-ux-readonly-qa.md`. Verifier: `verify-g22g2a-gosaki-schedule-p0-ux-readonly-qa.mjs`. QA runner: `run-g22g2a-schedule-p0-ux-readonly-qa.mjs` (re-runnable). **Next: Schedule P0 UX まとめ.**
+
+**G-22g2 Gosaki Schedule operator procedure hints (2026-07-07):** **complete** — commit `8e83348`. **Superseded for P0 UX QA by G-22g2a.**
 
 **G-22g1f3 Gosaki Schedule authenticated admin read closure (2026-07-07):** **complete** — commit `fd47f8b`. G-22g1e→G-22g1f2c chain closed; SSR bootstrap + login refetch; 008 visible; 60件/非公開2件 operator PASS. **Superseded for procedure hints by G-22g2.**
 

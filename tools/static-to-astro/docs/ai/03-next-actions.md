@@ -1,6 +1,23 @@
 Last updated: 2026-07-06
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22f3 unpublish UPDATE implementation — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-22f3-gosaki-schedule-unpublish-update-implementation` |
+| Base | `56316a6` |
+| Slice | `published=true` → `published=false` UPDATE only |
+| approvalId | `G-22f-gosaki-schedule-unpublish-update-non-dry-run-slice` |
+| save operation | `unpublish-update` |
+| Default Save | **disabled** (env arm off) |
+| Physical DELETE | **not implemented** |
+| Protected rows | `schedule-2026-03-014` / `schedule-2026-09-001` — guard non-touch |
+| Doc | `gosaki-schedule-unpublish-update-implementation.md` |
+| Verifier | `verify-g22f3-gosaki-schedule-unpublish-update-implementation.mjs` |
+| Save / DB write (G-22f3) | **not executed** |
+| **Next** | **G-22f4** final preflight |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22f2 unpublish UPDATE planning — complete
 
 | Item | Value |
@@ -16,7 +33,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Doc | `gosaki-schedule-unpublish-update-planning.md` |
 | Verifier | `verify-g22f2-gosaki-schedule-unpublish-update-planning.mjs` |
 | Save / DB write / GRANT (G-22f2) | **not executed** |
-| **Next** | **G-22f3** implementation only |
+| **Next** | **G-22f3** implementation only — **done** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22f1 unpublish dry-run local QA — complete
 

@@ -1,5 +1,5 @@
 /**
- * G-22d1 — Gosaki Schedule duplicate INSERT config (staging shell; single slice).
+ * G-22f3 — Gosaki Schedule unpublish UPDATE config (staging shell; single slice).
  */
 
 import { mergeStagingShellEnv } from "../staging-shell/staging-shell-client-gates";
@@ -32,43 +32,26 @@ import {
   SCHEDULE_NON_DRY_RUN_POC_EXPECTED_PROJECT,
   SCHEDULE_NON_DRY_RUN_POC_EXPECTED_SUPABASE_HOST,
 } from "./schedule-non-dry-run-poc-config";
-import { G22D_SCHEDULE_DUPLICATE_INSERT_NON_DRY_RUN_APPROVAL_ID } from "./schedule-write-types";
+import { G22F_SCHEDULE_UNPUBLISH_UPDATE_NON_DRY_RUN_APPROVAL_ID } from "./schedule-write-types";
 
-export const G22D1_PHASE = "G-22d1-gosaki-schedule-duplicate-insert-implementation";
+export const G22F3_PHASE = "G-22f3-gosaki-schedule-unpublish-update-implementation";
 
-export const GOSAKI_SCHEDULE_G22D_DUPLICATE_INSERT_NON_DRY_RUN_ARMED_ENV =
-  "PUBLIC_ADMIN_GOSAKI_SCHEDULE_G22D_DUPLICATE_INSERT_NON_DRY_RUN_ARMED";
+export const GOSAKI_SCHEDULE_G22F_UNPUBLISH_UPDATE_NON_DRY_RUN_ARMED_ENV =
+  "PUBLIC_ADMIN_GOSAKI_SCHEDULE_G22F_UNPUBLISH_UPDATE_NON_DRY_RUN_ARMED";
 
-export const G22D_DUPLICATE_INSERT_SOURCE_ID =
-  "eb1f1898-5107-4deb-a6d5-a792e0ec3f69";
+export const G22F_UNPUBLISH_UPDATE_SAVE_DISABLED_DEFAULT_REASON =
+  "G-22f unpublish UPDATE Save disabled — dedicated env arm / approval stack not satisfied (routine dev safety).";
 
-export const G22D_DUPLICATE_INSERT_SOURCE_LEGACY_ID = "schedule-2026-03-003";
-
-export const G22D_DUPLICATE_INSERT_SOURCE_TITLE = "<Live & Session>";
-
-export const G22D_DUPLICATE_INSERT_PLANNED_LEGACY_ID = "schedule-2026-03-014";
-
-/** Live staging 2026-03 max(sort_order)=60 (G-22d3a) → max+10. */
-export const G22D_DUPLICATE_INSERT_PLANNED_SORT_ORDER = 70;
-
-export const G22D_DUPLICATE_INSERT_EXPECTED_TITLE = "<Live & Session>（コピー）";
-
-export const G22D_DUPLICATE_INSERT_SAVE_DISABLED_DEFAULT_REASON =
-  "G-22d duplicate INSERT Save disabled — dedicated env arm / approval stack not satisfied (routine dev safety).";
-
-export interface G22dDuplicateInsertConfig {
-  phase: typeof G22D1_PHASE;
-  approvalId: typeof G22D_SCHEDULE_DUPLICATE_INSERT_NON_DRY_RUN_APPROVAL_ID;
-  envArm: typeof GOSAKI_SCHEDULE_G22D_DUPLICATE_INSERT_NON_DRY_RUN_ARMED_ENV;
-  sourceId: typeof G22D_DUPLICATE_INSERT_SOURCE_ID;
-  sourceLegacyId: typeof G22D_DUPLICATE_INSERT_SOURCE_LEGACY_ID;
-  plannedLegacyId: typeof G22D_DUPLICATE_INSERT_PLANNED_LEGACY_ID;
+export interface G22fUnpublishUpdateConfig {
+  phase: typeof G22F3_PHASE;
+  approvalId: typeof G22F_SCHEDULE_UNPUBLISH_UPDATE_NON_DRY_RUN_APPROVAL_ID;
+  envArm: typeof GOSAKI_SCHEDULE_G22F_UNPUBLISH_UPDATE_NON_DRY_RUN_ARMED_ENV;
   siteSlug: typeof STAGING_SHELL_GOSAKI_SCHEDULE_SITE_SLUG;
   armed: boolean;
   saveEnabled: boolean;
   saveAllowed: boolean;
   armFailureReason?: string;
-  defaultDisabledReason: typeof G22D_DUPLICATE_INSERT_SAVE_DISABLED_DEFAULT_REASON;
+  defaultDisabledReason: typeof G22F_UNPUBLISH_UPDATE_SAVE_DISABLED_DEFAULT_REASON;
   dev: boolean;
   stagingShellEnabled: boolean;
   stagingWriteFlag: boolean;
@@ -94,21 +77,21 @@ function looksLikeProductionBlocked(env: ImportMetaEnv): boolean {
   return env.PROD === true;
 }
 
-export function isG22dDuplicateInsertEnvArmTrue(env: ImportMetaEnv): boolean {
-  return isEnvArmTrue(env, GOSAKI_SCHEDULE_G22D_DUPLICATE_INSERT_NON_DRY_RUN_ARMED_ENV);
+export function isG22fUnpublishUpdateEnvArmTrue(env: ImportMetaEnv): boolean {
+  return isEnvArmTrue(env, GOSAKI_SCHEDULE_G22F_UNPUBLISH_UPDATE_NON_DRY_RUN_ARMED_ENV);
 }
 
 /** Mutual exclusion — call from other schedule write configs. */
-export function collectG22dDuplicateInsertArmOffFailures(env: ImportMetaEnv): string[] {
-  if (isG22dDuplicateInsertEnvArmTrue(env)) {
-    return [`${GOSAKI_SCHEDULE_G22D_DUPLICATE_INSERT_NON_DRY_RUN_ARMED_ENV} must be off`];
+export function collectG22fUnpublishUpdateArmOffFailures(env: ImportMetaEnv): string[] {
+  if (isG22fUnpublishUpdateEnvArmTrue(env)) {
+    return [`${GOSAKI_SCHEDULE_G22F_UNPUBLISH_UPDATE_NON_DRY_RUN_ARMED_ENV} must be off`];
   }
   return [];
 }
 
-export function getG22dDuplicateInsertConfig(
+export function getG22fUnpublishUpdateConfig(
   env: ImportMetaEnv = import.meta.env,
-): G22dDuplicateInsertConfig {
+): G22fUnpublishUpdateConfig {
   const mergedEnv = mergeStagingShellEnv(env);
   const dev = mergedEnv.DEV === true;
   const stagingShellEnabled = mergedEnv.ENABLE_ADMIN_STAGING_SHELL === "true";
@@ -124,17 +107,14 @@ export function getG22dDuplicateInsertConfig(
   const providerRaw = String(mergedEnv.PUBLIC_ADMIN_WRITE_PROVIDER ?? "").trim();
   const module = String(mergedEnv.PUBLIC_ADMIN_WRITE_MODULE ?? "").trim();
   const approvalIdEnv = String(mergedEnv.PUBLIC_ADMIN_WRITE_APPROVAL_ID ?? "").trim();
-  const dedicatedArm = isG22dDuplicateInsertEnvArmTrue(mergedEnv);
+  const dedicatedArm = isG22fUnpublishUpdateEnvArmTrue(mergedEnv);
 
   const base = {
-    phase: G22D1_PHASE,
-    approvalId: G22D_SCHEDULE_DUPLICATE_INSERT_NON_DRY_RUN_APPROVAL_ID,
-    envArm: GOSAKI_SCHEDULE_G22D_DUPLICATE_INSERT_NON_DRY_RUN_ARMED_ENV,
-    sourceId: G22D_DUPLICATE_INSERT_SOURCE_ID,
-    sourceLegacyId: G22D_DUPLICATE_INSERT_SOURCE_LEGACY_ID,
-    plannedLegacyId: G22D_DUPLICATE_INSERT_PLANNED_LEGACY_ID,
+    phase: G22F3_PHASE,
+    approvalId: G22F_SCHEDULE_UNPUBLISH_UPDATE_NON_DRY_RUN_APPROVAL_ID,
+    envArm: GOSAKI_SCHEDULE_G22F_UNPUBLISH_UPDATE_NON_DRY_RUN_ARMED_ENV,
     siteSlug: STAGING_SHELL_GOSAKI_SCHEDULE_SITE_SLUG,
-    defaultDisabledReason: G22D_DUPLICATE_INSERT_SAVE_DISABLED_DEFAULT_REASON,
+    defaultDisabledReason: G22F_UNPUBLISH_UPDATE_SAVE_DISABLED_DEFAULT_REASON,
     dev,
     stagingShellEnabled,
     stagingWriteFlag,
@@ -151,7 +131,7 @@ export function getG22dDuplicateInsertConfig(
 
   const armFailures: string[] = [];
   if (!dedicatedArm) {
-    armFailures.push(`${GOSAKI_SCHEDULE_G22D_DUPLICATE_INSERT_NON_DRY_RUN_ARMED_ENV}=true`);
+    armFailures.push(`${GOSAKI_SCHEDULE_G22F_UNPUBLISH_UPDATE_NON_DRY_RUN_ARMED_ENV}=true`);
   }
   if (!hostGate.hostGatePassed) {
     armFailures.push(hostGate.warningMessage ?? "Supabase host gate failed");
@@ -167,9 +147,9 @@ export function getG22dDuplicateInsertConfig(
     armFailures.push("PUBLIC_ADMIN_WRITE_PROVIDER=supabase");
   }
   if (module !== "schedule") armFailures.push("PUBLIC_ADMIN_WRITE_MODULE=schedule");
-  if (approvalIdEnv !== G22D_SCHEDULE_DUPLICATE_INSERT_NON_DRY_RUN_APPROVAL_ID) {
+  if (approvalIdEnv !== G22F_SCHEDULE_UNPUBLISH_UPDATE_NON_DRY_RUN_APPROVAL_ID) {
     armFailures.push(
-      `PUBLIC_ADMIN_WRITE_APPROVAL_ID=${G22D_SCHEDULE_DUPLICATE_INSERT_NON_DRY_RUN_APPROVAL_ID}`,
+      `PUBLIC_ADMIN_WRITE_APPROVAL_ID=${G22F_SCHEDULE_UNPUBLISH_UPDATE_NON_DRY_RUN_APPROVAL_ID}`,
     );
   }
   if (dryRun) armFailures.push("PUBLIC_ADMIN_WRITE_DRY_RUN=false");
@@ -210,11 +190,11 @@ export function getG22dDuplicateInsertConfig(
   armFailures.push(...collectG14b1aPracticalEditArmOffFailures(mergedEnv));
   armFailures.push(...collectG13c1EventAPocCleanupArmOffFailures(mergedEnv));
   armFailures.push(...collectG13c2EventBPocCleanupArmOffFailures(mergedEnv));
+  if (isEnvArmTrue(mergedEnv, "PUBLIC_ADMIN_GOSAKI_SCHEDULE_G22D_DUPLICATE_INSERT_NON_DRY_RUN_ARMED")) {
+    armFailures.push("PUBLIC_ADMIN_GOSAKI_SCHEDULE_G22D_DUPLICATE_INSERT_NON_DRY_RUN_ARMED must be off");
+  }
   if (isEnvArmTrue(mergedEnv, "PUBLIC_ADMIN_GOSAKI_SCHEDULE_G22E_NEW_EVENT_INSERT_NON_DRY_RUN_ARMED")) {
     armFailures.push("PUBLIC_ADMIN_GOSAKI_SCHEDULE_G22E_NEW_EVENT_INSERT_NON_DRY_RUN_ARMED must be off");
-  }
-  if (isEnvArmTrue(mergedEnv, "PUBLIC_ADMIN_GOSAKI_SCHEDULE_G22F_UNPUBLISH_UPDATE_NON_DRY_RUN_ARMED")) {
-    armFailures.push("PUBLIC_ADMIN_GOSAKI_SCHEDULE_G22F_UNPUBLISH_UPDATE_NON_DRY_RUN_ARMED must be off");
   }
   if (!supabaseConfigured) armFailures.push("Supabase URL/anon key");
 
@@ -231,61 +211,139 @@ export function getG22dDuplicateInsertConfig(
   };
 }
 
-export function evaluateG22dDuplicateInsertUiGate(input: {
+export function evaluateG22fUnpublishUpdateUiGate(input: {
   signedIn: boolean;
-  duplicateMode: boolean;
-  source: { id: string; legacy_id?: string | null; site_slug?: string | null } | null;
-  duplicateDryRunResult: { ok: boolean } | null;
+  unpublishMode: boolean;
+  target: {
+    id: string;
+    legacy_id?: string | null;
+    site_slug?: string | null;
+    published?: boolean | null;
+    updated_at?: string | null;
+  } | null;
+  unpublishDryRunResult: {
+    ok: boolean;
+    operation: string;
+    wouldUpdate: boolean;
+    wouldDelete: boolean;
+    physicalDelete: boolean;
+    before: { published: boolean };
+    after: { published: false };
+    validation: { ok: boolean; errors: string[] };
+    guardErrors: string[];
+  } | null;
   env?: ImportMetaEnv;
 }): { enabled: boolean; reason: string; saveAllowed: boolean } {
-  const config = getG22dDuplicateInsertConfig(input.env ?? import.meta.env);
-  if (!input.duplicateMode) {
+  const config = getG22fUnpublishUpdateConfig(input.env ?? import.meta.env);
+  if (!input.unpublishMode) {
     return {
       enabled: false,
       saveAllowed: false,
-      reason: "Duplicate draft mode required.",
+      reason: "Unpublish draft mode required.",
     };
   }
   if (!config.saveEnabled) {
     return {
       enabled: false,
       saveAllowed: false,
-      reason: config.armFailureReason ?? G22D_DUPLICATE_INSERT_SAVE_DISABLED_DEFAULT_REASON,
+      reason: config.armFailureReason ?? G22F_UNPUBLISH_UPDATE_SAVE_DISABLED_DEFAULT_REASON,
     };
   }
   if (!input.signedIn) {
     return { enabled: false, saveAllowed: false, reason: "Staging admin session required." };
   }
-  if (!input.source) {
-    return { enabled: false, saveAllowed: false, reason: "Duplicate source row missing." };
+  if (!input.target) {
+    return { enabled: false, saveAllowed: false, reason: "Unpublish target row missing." };
   }
-  if (input.source.id !== G22D_DUPLICATE_INSERT_SOURCE_ID) {
-    return {
-      enabled: false,
-      saveAllowed: false,
-      reason: `sourceId must be ${G22D_DUPLICATE_INSERT_SOURCE_ID}.`,
-    };
+  if (!String(input.target.id ?? "").trim()) {
+    return { enabled: false, saveAllowed: false, reason: "Target id required." };
   }
-  if (input.source.legacy_id !== G22D_DUPLICATE_INSERT_SOURCE_LEGACY_ID) {
-    return {
-      enabled: false,
-      saveAllowed: false,
-      reason: `source legacy_id must be ${G22D_DUPLICATE_INSERT_SOURCE_LEGACY_ID}.`,
-    };
+  if (!String(input.target.legacy_id ?? "").trim()) {
+    return { enabled: false, saveAllowed: false, reason: "Target legacy_id required." };
   }
-  if (input.source.site_slug !== STAGING_SHELL_GOSAKI_SCHEDULE_SITE_SLUG) {
+  if (input.target.site_slug !== STAGING_SHELL_GOSAKI_SCHEDULE_SITE_SLUG) {
     return { enabled: false, saveAllowed: false, reason: "site_slug must be gosaki-piano." };
   }
-  if (!input.duplicateDryRunResult?.ok) {
+  if (input.target.published !== true) {
     return {
       enabled: false,
       saveAllowed: false,
-      reason: "Duplicate dry-run preview must succeed first.",
+      reason: "Target must be published=true before unpublish UPDATE.",
+    };
+  }
+  if (!input.unpublishDryRunResult?.ok) {
+    return {
+      enabled: false,
+      saveAllowed: false,
+      reason: "Unpublish dry-run preview must succeed first.",
+    };
+  }
+  if (input.unpublishDryRunResult.operation !== "unpublish") {
+    return {
+      enabled: false,
+      saveAllowed: false,
+      reason: "Latest dry-run operation must be unpublish.",
+    };
+  }
+  if (!input.unpublishDryRunResult.validation.ok) {
+    return {
+      enabled: false,
+      saveAllowed: false,
+      reason: "Unpublish dry-run has blocking validation errors.",
+    };
+  }
+  if (input.unpublishDryRunResult.guardErrors.length > 0) {
+    return {
+      enabled: false,
+      saveAllowed: false,
+      reason: "Unpublish dry-run has blocking guard errors.",
+    };
+  }
+  if (input.unpublishDryRunResult.before.published !== true) {
+    return {
+      enabled: false,
+      saveAllowed: false,
+      reason: "before.published must be true.",
+    };
+  }
+  if (input.unpublishDryRunResult.after.published !== false) {
+    return {
+      enabled: false,
+      saveAllowed: false,
+      reason: "after.published must be false.",
+    };
+  }
+  if (!input.unpublishDryRunResult.wouldUpdate) {
+    return {
+      enabled: false,
+      saveAllowed: false,
+      reason: "wouldUpdate must be true.",
+    };
+  }
+  if (input.unpublishDryRunResult.wouldDelete !== false) {
+    return {
+      enabled: false,
+      saveAllowed: false,
+      reason: "wouldDelete must be false.",
+    };
+  }
+  if (input.unpublishDryRunResult.physicalDelete !== false) {
+    return {
+      enabled: false,
+      saveAllowed: false,
+      reason: "physicalDelete must be false.",
+    };
+  }
+  if (!String(input.target.updated_at ?? "").trim()) {
+    return {
+      enabled: false,
+      saveAllowed: false,
+      reason: "expectedBeforeUpdatedAt (target updated_at) required.",
     };
   }
   return {
     enabled: true,
     saveAllowed: true,
-    reason: "複製案を1件だけ追加できます（G-22d single slice）。",
+    reason: "非公開化を1件だけ保存できます（G-22f single slice）。",
   };
 }

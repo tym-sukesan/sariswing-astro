@@ -72,6 +72,18 @@ import {
   type G22fScheduleUnpublishDryRunResult,
   type GosakiScheduleUnpublishDraftState,
 } from "../staging-write/gosaki-schedule-unpublish-dry-run";
+import {
+  evaluateG22fUnpublishUpdateUiGate,
+  getG22fUnpublishUpdateConfig,
+} from "../staging-write/gosaki-schedule-unpublish-update-config";
+import {
+  G22F_PROTECTED_LEGACY_SCHEDULE_2026_03_014,
+  G22F_PROTECTED_LEGACY_SCHEDULE_2026_09_001,
+} from "../staging-write/gosaki-schedule-unpublish-update-guards";
+import {
+  executeG22fScheduleUnpublishUpdateSave,
+  type G22fUnpublishUpdateSaveOutcome,
+} from "../staging-write/gosaki-schedule-unpublish-update-save";
 import type { GosakiScheduleEditDraftMode } from "../staging-write/schedule-dry-run-types";
 
 type PublishedFilter = "published" | "all" | "draft";
@@ -933,13 +945,30 @@ function updateSaveButtonState(result: G9kExistingEventSaveButtonDryRunResult | 
   if (!button) return;
 
   if (isUnpublishDraftMode()) {
-    button.disabled = true;
+    const gate = evaluateG22fUnpublishUpdateUiGate({
+      signedIn: stagingAuthSignedIn === true,
+      unpublishMode: true,
+      target: unpublishTargetSnapshot,
+      unpublishDryRunResult: lastUnpublishDryRunResult,
+    });
+
+    button.disabled = !gate.enabled || saveInFlight;
+    if (gate.enabled && !saveInFlight) {
+      button.removeAttribute("data-gosaki-schedule-action-disabled");
+      button.setAttribute("data-gosaki-save-allowed", "true");
+      button.textContent = "非公開化を保存";
+      button.title = gate.reason;
+      setSaveButtonNote(gate.reason);
+      return;
+    }
+
     button.setAttribute("data-gosaki-schedule-action-disabled", "");
     button.setAttribute("data-gosaki-save-allowed", "false");
     button.textContent = "非公開化を保存（現在は無効）";
-    button.title = "非公開化の保存はまだ無効です。戸山が確認して反映します。";
+    button.title = gate.reason;
     setSaveButtonNote(
-      "非公開化案です。「変更を確認」で内容を確認できます。保存は現在無効です。データベースからは削除しません。",
+      gate.reason ||
+        "非公開化案です。「変更を確認」で内容を確認できます。保存は現在無効です。データベースからは削除しません。",
     );
     return;
   }
@@ -1243,23 +1272,40 @@ function renderNewEventDryRunResult(result: G22eScheduleNewEventDryRunResult): v
 }
 
 function renderUnpublishDryRunDevDetails(result: G22fScheduleUnpublishDryRunResult): string {
+  const updateConfig = getG22fUnpublishUpdateConfig();
+  const gate = evaluateG22fUnpublishUpdateUiGate({
+    signedIn: stagingAuthSignedIn === true,
+    unpublishMode: isUnpublishDraftMode(),
+    target: unpublishTargetSnapshot,
+    unpublishDryRunResult: result.ok ? result : null,
+  });
+  const expectedBeforeUpdatedAt = unpublishTargetSnapshot?.updated_at ?? "—";
+
   return `
     <details class="gosaki-schedule-unpublish-dry-run-dev">
       <summary>開発者向け詳細</summary>
       <dl class="gosaki-schedule-edit-dry-run__target">
         <div><dt>phase</dt><dd><code>${escapeHtml(result.phase)}</code></dd></div>
         <div><dt>approvalId (dry-run)</dt><dd><code>${escapeHtml(result.approvalId)}</code></dd></div>
+        <div><dt>unpublish update approvalId</dt><dd><code>${escapeHtml(updateConfig.approvalId)}</code></dd></div>
         <div><dt>operation</dt><dd><code>${escapeHtml(result.operation)}</code></dd></div>
+        <div><dt>G-22f env arm</dt><dd><code>${escapeHtml(updateConfig.envArm)}=${updateConfig.armed ? "true" : "false"}</code></dd></div>
+        <div><dt>update saveEnabled</dt><dd><code>${String(updateConfig.saveEnabled)}</code></dd></div>
+        <div><dt>update saveAllowed (UI)</dt><dd><code>${String(gate.saveAllowed)}</code></dd></div>
         <div><dt>target id</dt><dd><code>${escapeHtml(result.target.id)}</code></dd></div>
         <div><dt>legacy_id</dt><dd><code>${escapeHtml(result.target.legacy_id ?? "—")}</code></dd></div>
         <div><dt>site_slug</dt><dd><code>${escapeHtml(result.target.site_slug)}</code></dd></div>
         <div><dt>before.published</dt><dd><code>${String(result.before.published)}</code></dd></div>
         <div><dt>after.published</dt><dd><code>false</code></dd></div>
+        <div><dt>expectedBeforeUpdatedAt</dt><dd><code>${escapeHtml(String(expectedBeforeUpdatedAt))}</code></dd></div>
         <div><dt>wouldUpdate</dt><dd><code>${String(result.wouldUpdate)}</code></dd></div>
         <div><dt>wouldDelete</dt><dd><code>false</code></dd></div>
         <div><dt>physicalDelete</dt><dd><code>false</code></dd></div>
-        <div><dt>saveAllowed</dt><dd><code>false</code></dd></div>
+        <div><dt>dry-run saveAllowed</dt><dd><code>false</code></dd></div>
+        <div><dt>protected ${escapeHtml(G22F_PROTECTED_LEGACY_SCHEDULE_2026_03_014)}</dt><dd><code>non-touch</code></dd></div>
+        <div><dt>protected ${escapeHtml(G22F_PROTECTED_LEGACY_SCHEDULE_2026_09_001)}</dt><dd><code>non-touch</code></dd></div>
       </dl>
+      ${updateConfig.armFailureReason ? `<p class="gosaki-schedule-edit-dry-run__note">${escapeHtml(updateConfig.armFailureReason)}</p>` : ""}
       <pre class="gosaki-schedule-unpublish-dry-run-dev__json">${escapeHtml(JSON.stringify(result.payload, null, 2))}</pre>
     </details>
   `;
@@ -1696,6 +1742,48 @@ function renderDuplicateInsertSaveResult(outcome: G22dDuplicateInsertSaveOutcome
   el.scrollIntoView({ behavior: "smooth", block: "nearest" });
 }
 
+function isG22fUnpublishUpdateOutcomeSuccess(outcome: G22fUnpublishUpdateSaveOutcome): boolean {
+  return outcome.ok === true && outcome.actualWrite === true && outcome.operation === "unpublish-update";
+}
+
+function renderUnpublishUpdateSaveResult(outcome: G22fUnpublishUpdateSaveOutcome): void {
+  const el = document.getElementById("gosaki-schedule-edit-save-result");
+  if (!el) return;
+
+  el.hidden = false;
+  const success = isG22fUnpublishUpdateOutcomeSuccess(outcome);
+  el.className = `gosaki-schedule-edit-save-result${success ? " gosaki-schedule-edit-save-result--ok" : " gosaki-schedule-edit-save-result--error"}`;
+
+  el.innerHTML = `
+    <h3 class="gosaki-schedule-edit-save-result__title">${success ? "非公開化の保存成功" : "非公開化を保存できませんでした"}</h3>
+    ${
+      success
+        ? `<p class="gosaki-schedule-edit-save-result__success">データベースの published を false に更新しました（物理削除は行っていません）。</p>`
+        : ""
+    }
+    ${outcome.errorMessage ? `<p class="gosaki-schedule-edit-save-result__message">${escapeHtml(outcome.errorMessage)}</p>` : ""}
+    <dl class="gosaki-schedule-edit-dry-run__target">
+      <div><dt>operation</dt><dd><code>${escapeHtml(outcome.operation)}</code></dd></div>
+      <div><dt>approvalId</dt><dd><code>${escapeHtml(outcome.approvalId)}</code></dd></div>
+      <div><dt>targetId</dt><dd><code>${escapeHtml(outcome.targetId)}</code></dd></div>
+      <div><dt>legacy_id</dt><dd><code>${escapeHtml(outcome.targetLegacyId ?? "—")}</code></dd></div>
+      <div><dt>before published</dt><dd><code>${escapeHtml(String(outcome.beforeRecord?.published ?? "—"))}</code></dd></div>
+      <div><dt>after published</dt><dd><code>${escapeHtml(String(outcome.afterRecord?.published ?? "—"))}</code></dd></div>
+      <div><dt>expectedBeforeUpdatedAt</dt><dd><code>${escapeHtml(outcome.expectedBeforeUpdatedAt ?? "—")}</code></dd></div>
+      <div><dt>wouldDelete</dt><dd><code>false</code></dd></div>
+      <div><dt>physicalDelete</dt><dd><code>false</code></dd></div>
+      <div><dt>actualWrite</dt><dd><code>${String(outcome.actualWrite)}</code></dd></div>
+    </dl>
+    ${
+      outcome.guardReasons.length > 0
+        ? `<div class="gosaki-schedule-edit-dry-run__chips"><span class="gosaki-schedule-edit-dry-run__chips-label">guardReasons</span>${outcome.guardReasons.map((reason) => `<span class="gosaki-schedule-edit-dry-run__chip">${escapeHtml(reason)}</span>`).join("")}</div>`
+        : ""
+    }
+    ${outcome.rollbackHint ? `<p class="gosaki-schedule-edit-dry-run__note">${escapeHtml(outcome.rollbackHint)}</p>` : ""}
+  `;
+  el.scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
+
 function clearSaveResult(): void {
   lastSaveOutcome = null;
   const el = document.getElementById("gosaki-schedule-edit-save-result");
@@ -1834,7 +1922,54 @@ async function runEditDryRunPreview(): Promise<void> {
 
 async function runEditSave(): Promise<void> {
   if (isUnpublishDraftMode()) {
-    window.alert("非公開化の保存はまだ無効です。戸山が確認して反映します。");
+    const gate = evaluateG22fUnpublishUpdateUiGate({
+      signedIn: stagingAuthSignedIn === true,
+      unpublishMode: true,
+      target: unpublishTargetSnapshot,
+      unpublishDryRunResult: lastUnpublishDryRunResult,
+    });
+    if (!gate.enabled) {
+      window.alert(gate.reason);
+      return;
+    }
+    if (!unpublishTargetSnapshot || !lastUnpublishDryRunResult?.ok) {
+      window.alert("先に「変更を確認」で非公開化案の dry-run を成功させてください。");
+      return;
+    }
+    if (
+      !window.confirm(
+        "この公演を非公開にします（published=false）。1行のみ更新します。よろしいですか？",
+      )
+    ) {
+      return;
+    }
+
+    saveInFlight = true;
+    updateSaveButtonState(null);
+
+    const url = String(import.meta.env.PUBLIC_SUPABASE_URL ?? "").trim();
+    const anonKey = String(import.meta.env.PUBLIC_SUPABASE_ANON_KEY ?? "").trim();
+    const outcome = await executeG22fScheduleUnpublishUpdateSave({
+      url,
+      anonKey,
+      target: unpublishTargetSnapshot,
+      unpublishMode: true,
+      unpublishDryRunOk: lastUnpublishDryRunResult.ok,
+      unpublishDryRunOperation: lastUnpublishDryRunResult.operation,
+      wouldUpdate: lastUnpublishDryRunResult.wouldUpdate,
+      wouldDelete: lastUnpublishDryRunResult.wouldDelete,
+      physicalDelete: lastUnpublishDryRunResult.physicalDelete,
+      beforePublished: lastUnpublishDryRunResult.before.published,
+      afterPublished: lastUnpublishDryRunResult.after.published,
+      duplicateMode: false,
+      newEventMode: false,
+      existingUpdateMode: false,
+      expectedBeforeUpdatedAt: unpublishTargetSnapshot.updated_at ?? null,
+    });
+
+    saveInFlight = false;
+    renderUnpublishUpdateSaveResult(outcome);
+    updateSaveButtonState(null);
     return;
   }
 

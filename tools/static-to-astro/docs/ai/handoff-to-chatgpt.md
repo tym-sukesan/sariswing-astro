@@ -5,15 +5,26 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-22f2-gosaki-schedule-unpublish-update-planning — complete (uncommitted).
-Planning for unpublish UPDATE slice: published=true→false only; approvalId=G-22f-gosaki-schedule-unpublish-update-non-dry-run-slice.
-Env/UI gates, payload assertion, optimistic lock (G-9k UPDATE path), SQL templates (SELECT-only + rollback template) documented.
-Physical DELETE deferred. Target row fixed in G-22f4 — not chosen in G-22f2.
+Current phase: G-22f3-gosaki-schedule-unpublish-update-implementation — complete (uncommitted).
+Unpublish UPDATE save path implemented: operation=unpublish-update, patch={published:false}, optimistic lock via G-9k UPDATE path.
+approvalId=G-22f-gosaki-schedule-unpublish-update-non-dry-run-slice; env arm PUBLIC_ADMIN_GOSAKI_SCHEDULE_G22F_UNPUBLISH_UPDATE_NON_DRY_RUN_ARMED (default false).
+Default Save disabled; physical DELETE not implemented. G-9k / G-22d / G-22e / G-22f dry-run paths preserved.
 Do NOT re-Save closed slices: schedule-2026-09-001 (G-22e7), schedule-2026-03-014 (G-22d3d).
 Routine dev: PUBLIC_ADMIN_WRITE_DRY_RUN=true; all write arms off.
 Supabase interim SoT: kmjqppxjdnwwrtaeqjta — never vsbvndwuajjhnzpohghh.
-Next: G-22f3 unpublish UPDATE implementation only (no Save / DB write).
+Next: G-22f4 final preflight (target row fixed).
 ```
+
+## G-22f3 unpublish UPDATE implementation — complete
+
+- **Modules:** `gosaki-schedule-unpublish-update-config.ts`, `-guards.ts`, `-save.ts`
+- **approvalId:** `G-22f-gosaki-schedule-unpublish-update-non-dry-run-slice` registered in `SCHEDULE_WRITE_APPROVAL_IDS`
+- **Save:** `executeG22fScheduleUnpublishUpdateSave` → `updateScheduleWrite` + `buildScheduleLockedWriteRequest`
+- **UI:** unpublish Save gate wired; default「非公開化を保存（現在は無効）」; armed「非公開化を保存」
+- **Payload:** `{ published: false }` only; no `updated_at` in patch
+- **Protected:** `schedule-2026-03-014` / `schedule-2026-09-001` blocked in guards
+- **Doc:** `gosaki-schedule-unpublish-update-implementation.md` · **Verifier:** `verify-g22f3-gosaki-schedule-unpublish-update-implementation.mjs`
+- **Next:** G-22f4 final preflight → G-22f5 operator Save once
 
 ## G-22f2 unpublish UPDATE planning — complete
 

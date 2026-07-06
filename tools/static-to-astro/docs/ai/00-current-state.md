@@ -3,9 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-22f2 Gosaki Schedule unpublish UPDATE planning (2026-07-06):** **complete (uncommitted)** — planning / SQL templates / guard policy for `published=true→false` single-slice UPDATE; approvalId `G-22f-gosaki-schedule-unpublish-update-non-dry-run-slice`; env/UI gates; optimistic lock via G-9k UPDATE path; physical DELETE deferred. **No implementation / Save / DB write / GRANT / FTP.** Doc: `gosaki-schedule-unpublish-update-planning.md`. Verifier: `verify-g22f2-gosaki-schedule-unpublish-update-planning.mjs`. **Next: G-22f3 implementation only.**
+**G-22f3 Gosaki Schedule unpublish UPDATE implementation (2026-07-06):** **complete (uncommitted)** — config/guards/save/UI gate for `published=true→false` UPDATE; approvalId `G-22f-gosaki-schedule-unpublish-update-non-dry-run-slice`; optimistic lock via G-9k UPDATE path; default Save disabled. **No Save / DB write / GRANT / FTP.** Doc: `gosaki-schedule-unpublish-update-implementation.md`. Verifier: `verify-g22f3-gosaki-schedule-unpublish-update-implementation.mjs`. **Next: G-22f4 final preflight.**
 
-**G-22f1 Gosaki Schedule unpublish dry-run local QA (2026-07-06):** **complete** — commit `e2b9f7c` (with G-22f1 doc). **Superseded for UPDATE planning by G-22f2.**
+**G-22f2 Gosaki Schedule unpublish UPDATE planning (2026-07-06):** **complete** — commit `56316a6`. **Superseded for implementation by G-22f3.**
 
 **G-22f Gosaki Schedule unpublish dry-run UI implementation (2026-07-05):** **complete** — commit `9f495b4`. unpublish draft mode +「非公開化案を作成」+ dry-run preview. Doc: `gosaki-schedule-unpublish-dry-run-ui-implementation.md`. **Superseded for QA by G-22f1.**
 

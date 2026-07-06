@@ -196,6 +196,9 @@ export function getG22eNewEventInsertConfig(
   if (isEnvArmTrue(mergedEnv, "PUBLIC_ADMIN_GOSAKI_SCHEDULE_G22D_DUPLICATE_INSERT_NON_DRY_RUN_ARMED")) {
     armFailures.push("PUBLIC_ADMIN_GOSAKI_SCHEDULE_G22D_DUPLICATE_INSERT_NON_DRY_RUN_ARMED must be off");
   }
+  if (isEnvArmTrue(mergedEnv, "PUBLIC_ADMIN_GOSAKI_SCHEDULE_G22F_UNPUBLISH_UPDATE_NON_DRY_RUN_ARMED")) {
+    armFailures.push("PUBLIC_ADMIN_GOSAKI_SCHEDULE_G22F_UNPUBLISH_UPDATE_NON_DRY_RUN_ARMED must be off");
+  }
   if (!supabaseConfigured) armFailures.push("Supabase URL/anon key");
 
   const armed = armFailures.length === 0;

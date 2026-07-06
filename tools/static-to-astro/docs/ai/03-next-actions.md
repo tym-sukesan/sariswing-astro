@@ -1,17 +1,31 @@
 Last updated: 2026-07-07
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22g1f2 Schedule authenticated admin read QA — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-22g1f2-gosaki-schedule-authenticated-admin-read-qa` |
+| Base | `35007fc` |
+| SSR bootstrap | 58 rows · all published · **008 absent (expected)** |
+| Live login QA | **deferred** — staging admin creds UNSET locally |
+| Filter / keyword simulation | **PASS** for 008 |
+| RLS / grant / service_role | **no change** |
+| Doc | `gosaki-schedule-authenticated-admin-read-qa.md` |
+| Verifier | `verify-g22g1f2-gosaki-schedule-authenticated-admin-read-qa.mjs` |
+| **Next** | **G-22g2** operator procedure hints · optional operator login smoke |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22g1f1 Schedule authenticated admin read implementation — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-22g1f1-gosaki-schedule-authenticated-admin-read-implementation` |
 | Base | `3de4b78` |
+| Commit | `35007fc` |
 | Module | `gosaki-schedule-authenticated-admin-read.ts` (SELECT only) |
 | UI | refetch on login + `onAuthStateChange`; banner modes |
 | SSR bootstrap | **maintained** as fallback |
 | RLS / grant / service_role | **no change** |
-| QA target | `schedule-2026-07-008` — verify in **G-22g1f2** |
 | Doc | `gosaki-schedule-authenticated-admin-read-implementation.md` |
 | Verifier | `verify-g22g1f1-gosaki-schedule-authenticated-admin-read-implementation.mjs` |
 | **Next** | **G-22g1f2** read-only QA |

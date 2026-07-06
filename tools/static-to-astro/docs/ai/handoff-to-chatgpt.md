@@ -5,15 +5,26 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-22g1f1-gosaki-schedule-authenticated-admin-read-implementation — complete (uncommitted).
-Read-only client refetch after login; SSR bootstrap fallback; banner admin/loading/warn modes.
-QA target: schedule-2026-07-008 visible under 非公開 filter in G-22g1f2.
+Current phase: G-22g1f2-gosaki-schedule-authenticated-admin-read-qa — complete (uncommitted).
+SSR bootstrap PASS (58 published-only; 008 absent expected). Live login QA deferred (creds UNSET).
+Filter/keyword simulation PASS for schedule-2026-07-008. Optional operator manual login smoke remains.
 Do NOT re-Save: schedule-2026-07-008 (G-22f7), schedule-2026-09-001 (G-22e7), schedule-2026-03-014 (G-22d3d).
 Physical DELETE not implemented. Public reflection / package / FTP not executed.
 Routine dev: PUBLIC_ADMIN_WRITE_DRY_RUN=true; all write arms off.
 Supabase interim SoT: kmjqppxjdnwwrtaeqjta — never vsbvndwuajjhnzpohghh.
-Next: G-22g1f2 read-only QA.
+Next: G-22g2 operator procedure hints · Schedule P0 UX summary.
 ```
+
+## G-22g1f2 Schedule authenticated admin read QA — complete
+
+- **SSR bootstrap:** 58 rows · all `published=true` · **008 not in SSR** (expected anon/RLS)
+- **Live login QA:** **deferred** — `G9J5_STAGING_ADMIN_EMAIL` / `SUPABASE_ADMIN_EMAIL` UNSET in local env
+- **Filter simulation:** 008 visible under「非公開のみ」+ keyword when in admin dataset — **PASS**
+- **Selected summary:** field model matches G-22f5 expected values — simulation **PASS**
+- **Fallback:** `revertToSsrBootstrapRows` + unsigned module `ssr-bootstrap` — **PASS**
+- **No Save / DB write / RLS change**
+- **Doc:** `gosaki-schedule-authenticated-admin-read-qa.md` · **Verifier:** `verify-g22g1f2-...mjs`
+- **Next:** G-22g2 · optional operator login smoke
 
 ## G-22g1f1 Schedule authenticated admin read implementation — complete
 

@@ -1,19 +1,35 @@
 Last updated: 2026-07-07
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22g1f2c Schedule operator login smoke result — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-22g1f2c-gosaki-schedule-authenticated-admin-read-operator-smoke-result` |
+| Base | `8729a9a` |
+| Operator login smoke | **PASS** |
+| Banner | admin read · **60件** · **非公開2件** |
+| `schedule-2026-07-008` | **visible** — 非公開のみ + keyword |
+| Selected summary | **PASS** |
+| Transient error | noted · **non-blocking** |
+| Credentials | **not recorded** |
+| Dev server | **stopped** · port 4321 **LISTEN none** |
+| Doc | `gosaki-schedule-authenticated-admin-read-operator-smoke-result.md` |
+| Verifier | `verify-g22g1f2c-gosaki-schedule-authenticated-admin-read-operator-smoke-result.mjs` |
+| **Next** | **G-22g1f3** closure · **G-22g2** operator hints |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22g1f2 Schedule authenticated admin read QA — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-22g1f2-gosaki-schedule-authenticated-admin-read-qa` |
 | Base | `35007fc` |
-| SSR bootstrap | 58 rows · all published · **008 absent (expected)** |
-| Live login QA | **deferred** — staging admin creds UNSET locally |
-| Filter / keyword simulation | **PASS** for 008 |
-| RLS / grant / service_role | **no change** |
+| Commit | `7b726df` |
+| SSR bootstrap | 58 rows · all published · 008 absent (expected) |
+| Live login QA | deferred in f2 · **PASS in G-22g1f2c** |
 | Doc | `gosaki-schedule-authenticated-admin-read-qa.md` |
 | Verifier | `verify-g22g1f2-gosaki-schedule-authenticated-admin-read-qa.mjs` |
-| **Next** | **G-22g2** operator procedure hints · optional operator login smoke |
+| **Next** | **G-22g1f2c** operator smoke · **G-22g1f3** closure |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22g1f1 Schedule authenticated admin read implementation — complete
 

@@ -5,15 +5,28 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-22g1f2-gosaki-schedule-authenticated-admin-read-qa — complete (uncommitted).
-SSR bootstrap PASS (58 published-only; 008 absent expected). Live login QA deferred (creds UNSET).
-Filter/keyword simulation PASS for schedule-2026-07-008. Optional operator manual login smoke remains.
+Current phase: G-22g1f2c-gosaki-schedule-authenticated-admin-read-operator-smoke-result — complete (uncommitted).
+Operator login smoke PASS: admin read banner 60件/非公開2件; schedule-2026-07-008 visible under 非公開+keyword.
+Selected summary PASS. Transient load error noted — non-blocking. Dev server stopped; port 4321 LISTEN none.
 Do NOT re-Save: schedule-2026-07-008 (G-22f7), schedule-2026-09-001 (G-22e7), schedule-2026-03-014 (G-22d3d).
 Physical DELETE not implemented. Public reflection / package / FTP not executed.
 Routine dev: PUBLIC_ADMIN_WRITE_DRY_RUN=true; all write arms off.
 Supabase interim SoT: kmjqppxjdnwwrtaeqjta — never vsbvndwuajjhnzpohghh.
-Next: G-22g2 operator procedure hints · Schedule P0 UX summary.
+Next: G-22g1f3 authenticated admin read closure · G-22g2 operator procedure hints.
 ```
+
+## G-22g1f2c Schedule operator login smoke result — complete
+
+- **Operator:** manual staging admin login (credentials **not recorded**)
+- **Banner:** Supabase admin read（authenticated）— **60件** / **非公開2件**
+- **008:** visible — filter「非公開のみ」+ keyword `schedule-2026-07-008` — **1件**
+- **Fields confirmed:** legacy_id · id · date 2026-07-17 · title `<>` · published=false · updated_at 2026-07-06T13:58:41.425402+00:00
+- **Selected summary:** legacy_id / id / 非公開 / updated_at — **PASS**
+- **Transient error:** brief「読み込めませんでした」— resolved; **non-blocking**
+- **No Save / DB write**
+- **Dev server:** stopped · port 4321 **LISTEN none**
+- **Doc:** `gosaki-schedule-authenticated-admin-read-operator-smoke-result.md` · **Verifier:** `verify-g22g1f2c-...mjs`
+- **Next:** G-22g1f3 · G-22g2
 
 ## G-22g1f2 Schedule authenticated admin read QA — complete
 

@@ -5,30 +5,30 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-22f4b-gosaki-schedule-unpublish-update-target-fixed-beforeverification — complete (uncommitted).
-Target fixed: schedule-2026-07-008 (id=3e572f02-4f35-460e-80a1-3a7d15ca3fd9); expectedBeforeUpdatedAt=2026-06-16T16:03:41.551792+00:00; target_month_count_before=14.
-beforeVerification PASS (operator). Slice published=true→false UPDATE only — NOT physical DELETE. Rollback not needed.
-approvalId=G-22f-gosaki-schedule-unpublish-update-non-dry-run-slice; env arm PUBLIC_ADMIN_GOSAKI_SCHEDULE_G22F_UNPUBLISH_UPDATE_NON_DRY_RUN_ARMED (default false).
-Do NOT re-Save closed slices: schedule-2026-09-001 (G-22e7), schedule-2026-03-014 (G-22d3d). Protected rows non-touch for unpublish.
+Current phase: G-22f6-gosaki-schedule-unpublish-update-execution-result — complete (uncommitted).
+G-22f5 operator Save once succeeded: schedule-2026-07-008 published=true→false; updated_at_after=2026-07-06T13:58:41.425402+00:00.
+afterVerification PASS. Physical DELETE no. Month count 14 unchanged. Protected rows unchanged. Rollback not needed.
+Do NOT re-Save: schedule-2026-07-008 (G-22f6 closed), schedule-2026-09-001 (G-22e7), schedule-2026-03-014 (G-22d3d).
+approvalId=G-22f-gosaki-schedule-unpublish-update-non-dry-run-slice — G-22f5 write closed.
 Routine dev: PUBLIC_ADMIN_WRITE_DRY_RUN=true; all write arms off.
 Supabase interim SoT: kmjqppxjdnwwrtaeqjta — never vsbvndwuajjhnzpohghh.
-Next: G-22f5 operator Save once (schedule-2026-07-008 unpublish).
+Next: G-22f7 unpublish UPDATE chain closure.
 ```
 
+## G-22f6 unpublish UPDATE execution result — complete
+
+- **Target:** `schedule-2026-07-008` · `id=3e572f02-4f35-460e-80a1-3a7d15ca3fd9`
+- **Save (G-22f5):** operator once · `actualWrite=true` · `operation=unpublish-update`
+- **Change:** `published=true` → `false` only — **not physical DELETE**; row still exists
+- **`updated_at_after`:** `2026-07-06T13:58:41.425402+00:00` (DB trigger; preflight `2026-06-16T16:03:41.551792+00:00`)
+- **afterVerification:** PASS — all protected fields unchanged; `target_month_count` 14→14
+- **Protected:** `schedule-2026-03-014` / `schedule-2026-09-001` — unchanged
+- **Rollback / public reflection / package / FTP:** not executed
+- **UI note:** Save result `expectedBeforeUpdatedAt` display matched `updated_at_after`; DB afterVerification confirmed correct
+- **Doc:** `gosaki-schedule-unpublish-update-result.md` · **Verifier:** `verify-g22f6-gosaki-schedule-unpublish-update-result.mjs`
+- **Next:** G-22f7 chain closure
+
 ## G-22f4b unpublish UPDATE target fixed / beforeVerification — complete
-
-- **Target:** `schedule-2026-07-008` · `id=3e572f02-4f35-460e-80a1-3a7d15ca3fd9` · `date=2026-07-17` · `title=<>` · `published=true` (before)
-- **`expectedBeforeUpdatedAt`:** `2026-06-16T16:03:41.551792+00:00`
-- **`target_month_count_before`:** `14`
-- **beforeVerification:** PASS — authenticated UPDATE yes · anon no · RLS on · `schedules_admin_all` unchanged · target counts OK · protected rows unchanged
-- **Slice:** `{ published: false }` only — not physical DELETE
-- **Rollback:** not needed / not executed
-- **Protected:** `schedule-2026-03-014` / `schedule-2026-09-001` — non-touch
-- **Not executed:** Save / DB write / SQL mutation / GRANT / package regen / FTP
-- **Doc:** `gosaki-schedule-unpublish-update-target-fixed-beforeverification.md` · **Verifier:** `verify-g22f4b-gosaki-schedule-unpublish-update-target-fixed-beforeverification.mjs`
-- **Next:** G-22f5 operator Save once
-
-## G-22f4 unpublish UPDATE final preflight — complete
 
 - **Target:** **fixed** — `schedule-2026-07-008` (G-22f4b)
 - **approvalId:** `G-22f-gosaki-schedule-unpublish-update-non-dry-run-slice`
@@ -84,6 +84,7 @@ Next: G-22f5 operator Save once (schedule-2026-07-008 unpublish).
 - **Next:** G-22f1 local QA → G-22f2 unpublish UPDATE planning
 
 **Closed chains — do not re-UPDATE / re-Save / re-upload:**
+- `schedule-2026-07-008` unpublish UPDATE (G-22f5 slice — **closed**)
 - `schedule-2026-09-001` new event INSERT (G-22e5 slice — **closed**)
 - `schedule-2026-03-014` duplicate INSERT (G-22d3 slice — **closed**)
 - `discography-002` / track 7 `title` (G-20b cleanup chain — **closed**)

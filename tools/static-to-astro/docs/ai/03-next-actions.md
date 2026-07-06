@@ -1,6 +1,27 @@
 Last updated: 2026-07-06
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22f6 unpublish UPDATE execution result — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-22f6-gosaki-schedule-unpublish-update-execution-result` |
+| Base | `500aaf0` |
+| Target | `schedule-2026-07-008` / `id=3e572f02-4f35-460e-80a1-3a7d15ca3fd9` |
+| Slice | `published=true` → `published=false` UPDATE only (not physical DELETE) |
+| `updated_at_after` | `2026-07-06T13:58:41.425402+00:00` |
+| `target_month_count` | `14` → `14` (unchanged) |
+| approvalId | `G-22f-gosaki-schedule-unpublish-update-non-dry-run-slice` |
+| G-22f5 Save | **once** (operator) — **closed** |
+| afterVerification | **PASS** |
+| Rollback | **not needed** / not executed |
+| Public reflection / package / FTP | **not executed** |
+| Protected rows | `schedule-2026-03-014` / `schedule-2026-09-001` — unchanged |
+| Doc | `gosaki-schedule-unpublish-update-result.md` |
+| Verifier | `verify-g22f6-gosaki-schedule-unpublish-update-result.mjs` |
+| Cursor Save / DB write (G-22f6) | **not executed** |
+| **Next** | **G-22f7** chain closure |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22f4b unpublish UPDATE target fixed / beforeVerification — complete
 
 | Item | Value |
@@ -18,7 +39,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Doc | `gosaki-schedule-unpublish-update-target-fixed-beforeverification.md` |
 | Verifier | `verify-g22f4b-gosaki-schedule-unpublish-update-target-fixed-beforeverification.mjs` |
 | Save / DB write / SQL mutation (G-22f4b) | **not executed** |
-| **Next** | **G-22f5** operator Save once |
+| **Next** | **G-22f5** operator Save once — **done** → **G-22f6** result — **done** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22f4 unpublish UPDATE final preflight — complete
 

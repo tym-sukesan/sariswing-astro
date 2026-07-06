@@ -2,7 +2,14 @@
  * G-6-e3 — Schedule dry-run types (staging shell only; no writes).
  */
 
-export type ScheduleDryRunOperation = "update" | "duplicate" | "new";
+export type ScheduleDryRunOperation = "update" | "duplicate" | "new" | "unpublish";
+
+/** Gosaki operator edit panel draft modes (G-22b / G-22e / G-22f). */
+export type GosakiScheduleEditDraftMode =
+  | "existing"
+  | "duplicate"
+  | "new"
+  | "unpublish";
 
 export type ScheduleDryRunSource = {
   id: string;

@@ -2586,6 +2586,38 @@
   border-color: #6ee7b7;
 }
 
+.gosaki-schedule-unpublish-draft-banner {
+  margin: 0 0 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid #fcd34d;
+  background: #fffbeb;
+}
+
+.gosaki-schedule-unpublish-draft-banner__title {
+  margin: 0;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #92400e;
+}
+
+.gosaki-schedule-unpublish-draft-banner__body,
+.gosaki-schedule-unpublish-draft-banner__hint,
+.gosaki-schedule-unpublish-draft-banner__target {
+  margin: 0.2rem 0 0;
+  font-size: 0.84rem;
+  color: #92400e;
+  line-height: 1.5;
+}
+
+.gosaki-schedule-unpublish-draft-banner__target code {
+  font-size: 0.82rem;
+}
+
+.gosaki-schedule-edit-dry-run--unpublish {
+  border-color: #fcd34d;
+}
+
 .gosaki-schedule-admin-legacy-id {
   margin: 0;
   font-size: 0.82rem;

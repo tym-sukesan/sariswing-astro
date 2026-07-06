@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-22e7 Gosaki Schedule new event INSERT chain closure (2026-07-05):** **complete (uncommitted)** — G-22e→G-22e6 chain closed; `schedule-2026-09-001` INSERT success recorded; protected `schedule-2026-03-014` unchanged; INSERT grant (G-22d3b3) reused; G-22e5-blocker scroll fix documented; **G-22e5 DB write closed**. Write-armed dev server stopped. **No Save / DB write / GRANT / FTP.** Doc: `gosaki-schedule-new-event-insert-chain-closure.md`. Verifier: `verify-g22e7-gosaki-schedule-new-event-insert-chain-closure.mjs`. **Next: G-22f delete/unpublish planning.**
+**G-22f Gosaki Schedule unpublish dry-run UI implementation (2026-07-05):** **complete (uncommitted)** — unpublish draft mode +「非公開化案を作成」+ dry-run preview (`operation=unpublish`, `wouldUpdate=true`, `wouldDelete=false`, `physicalDelete=false`); Save/UPDATE/DELETE disabled; physical delete btn「削除（準備中）」disabled. **No Save / DB write / GRANT / FTP.** Doc: `gosaki-schedule-unpublish-dry-run-ui-implementation.md`. Verifier: `verify-g22f-gosaki-schedule-unpublish-dry-run-ui-implementation.mjs`. **Next: G-22f1 local QA.**
+
+**G-22e7 Gosaki Schedule new event INSERT chain closure (2026-07-05):** **complete** — commit `215f638`. **Superseded for unpublish work by G-22f.**
 
 **G-22e6 Gosaki Schedule new event INSERT execution result (2026-07-05):** **complete** — commit `c080a1d`. `insertedId=18b48259-9a9a-4b00-b136-6c0c4ff3b2f3`; afterVerification PASS. **Superseded for chain closure by G-22e7.**
 

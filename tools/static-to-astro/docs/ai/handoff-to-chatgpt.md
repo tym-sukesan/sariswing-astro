@@ -5,27 +5,25 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-22e7-gosaki-schedule-new-event-insert-chain-closure — complete (uncommitted).
-G-22e→G-22e6 new event INSERT chain CLOSED. insertedId=18b48259-9a9a-4b00-b136-6c0c4ff3b2f3; legacy_id=schedule-2026-09-001.
-Do NOT re-click「新規追加を保存」for G-22e slice. Do NOT re-Save G-22d duplicate slice (schedule-2026-03-014).
-published=false → no public reflection for both test rows.
-Write-armed dev server stopped; routine dev: PUBLIC_ADMIN_WRITE_DRY_RUN=true; G-22e arm off; G-22d arm off.
+Current phase: G-22f-gosaki-schedule-unpublish-dry-run-ui-implementation — complete (uncommitted).
+Unpublish draft mode + dry-run preview wired. operation=unpublish; wouldUpdate=true; wouldDelete=false; physicalDelete=false; Save disabled.
+Physical DELETE not implemented — delete btn「削除（準備中）」disabled.
+Do NOT re-Save closed slices: schedule-2026-09-001 (G-22e5), schedule-2026-03-014 (G-22d3).
+Routine dev: PUBLIC_ADMIN_WRITE_DRY_RUN=true; all write arms off.
 Supabase interim SoT: kmjqppxjdnwwrtaeqjta — never vsbvndwuajjhnzpohghh.
-Next: G-22f Schedule delete/unpublish planning → G-22g CRUD closure.
+Next: G-22f1 unpublish dry-run local QA.
 ```
 
-## G-22e7 new event INSERT chain closure — complete
+## G-22f unpublish dry-run UI — complete
 
-- **Chain:** G-22e (dry-run UI) → G-22e1 (QA) → G-22e2 (planning) → G-22e3 (implementation) → G-22e4 (preflight) → G-22e5-blocker (scroll fix) → G-22e5 (Save once) → G-22e6 (result) → **G-22e7 (closure)**
-- **INSERT success:** `18b48259-9a9a-4b00-b136-6c0c4ff3b2f3` / `schedule-2026-09-001` / `published=false`
-- **afterVerification:** PASS — `inserted_legacy_id_count=1`, `target_month_count_after=1`
-- **Protected:** `schedule-2026-03-014` unchanged
-- **Permissions:** `authenticated INSERT` grant (G-22d3b3) reused; RLS `schedules_admin_all` / `is_admin()`; `anon INSERT` no
-- **G-22e5-blocker:** button existed; scroll-only fix `scrollNewEventDraftIntoView()`
-- **G-22e5 DB write:** closed (1 INSERT only)
-- **write-armed dev server:** stopped
-- **Doc:** `gosaki-schedule-new-event-insert-chain-closure.md` · **Verifier:** `verify-g22e7-gosaki-schedule-new-event-insert-chain-closure.mjs`
-- **Next P0:** G-22f delete/unpublish → G-22g CRUD closure; optional test-row cleanup
+- **UI:**「非公開化案を作成」button; unpublish draft banner; read-only form;「変更を確認」dry-run preview
+- **Dry-run:** `executeG22fScheduleUnpublishDryRun` — `published true → false`; no DB write; no DELETE
+- **Eligibility:** `published=true` only; `published=false` →「すでに非公開」disabled
+- **Save:** disabled — alert「非公開化の保存はまだ無効です」
+- **Physical DELETE:** not implemented — `#gosaki-schedule-delete-btn` disabled
+- **Regression:** G-9k UPDATE / G-22d duplicate / G-22e new event paths preserved
+- **Doc:** `gosaki-schedule-unpublish-dry-run-ui-implementation.md` · **Verifier:** `verify-g22f-gosaki-schedule-unpublish-dry-run-ui-implementation.mjs`
+- **Next:** G-22f1 local QA → G-22f2 unpublish UPDATE planning
 
 **Closed chains — do not re-UPDATE / re-Save / re-upload:**
 - `schedule-2026-09-001` new event INSERT (G-22e5 slice — **closed**)

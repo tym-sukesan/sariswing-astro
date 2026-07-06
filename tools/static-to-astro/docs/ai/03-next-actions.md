@@ -1,6 +1,20 @@
 Last updated: 2026-07-02
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22f unpublish dry-run UI — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-22f-gosaki-schedule-unpublish-dry-run-ui-implementation` |
+| Base | `215f638` |
+| Feature | unpublish draft + dry-run preview (no physical DELETE) |
+| operation | `unpublish` · `wouldUpdate=true` · `wouldDelete=false` |
+| Save / UPDATE / DELETE | **disabled** |
+| Doc | `gosaki-schedule-unpublish-dry-run-ui-implementation.md` |
+| Verifier | `verify-g22f-gosaki-schedule-unpublish-dry-run-ui-implementation.mjs` |
+| Save / DB write (G-22f) | **not executed** |
+| **Next** | **G-22f1** local QA |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22e7 new event INSERT chain closure — complete
 
 | Item | Value |

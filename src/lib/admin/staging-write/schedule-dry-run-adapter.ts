@@ -202,8 +202,57 @@ export function buildScheduleNewEventDryRunResult(input: {
   return result;
 }
 
+const UNPUBLISH_ROLLBACK_HINT =
+  "If this were a real unpublish update, rollback would restore published=true on this row by id. No row was updated in dry-run.";
+
+export function buildScheduleUnpublishDryRunResult(input: {
+  source: ScheduleDryRunSource;
+  approvalId?: string;
+}): ScheduleDryRunResult {
+  const errors: string[] = [];
+  const warnings: string[] = [];
+
+  if (!String(input.source.id ?? "").trim()) {
+    errors.push("Target schedule id is required for unpublish dry-run.");
+  }
+  if (!String(input.source.legacy_id ?? "").trim()) {
+    errors.push("Target schedule legacy_id is required for unpublish dry-run.");
+  }
+  if (input.source.published !== true) {
+    errors.push("Target schedule is already unpublished (published=false).");
+  }
+
+  const validation = { ok: errors.length === 0, errors, warnings };
+  const wouldWrite = validation.ok;
+  const payload: Record<string, unknown> = {
+    published: false,
+  };
+
+  const result: ScheduleDryRunResult = {
+    module: "schedule",
+    operation: "unpublish",
+    targetTable: "schedules",
+    targetId: input.source.id,
+    dryRun: true,
+    wouldWrite,
+    actualWrite: false,
+    approvalId: input.approvalId ?? G6E3_SCHEDULE_DRY_RUN_ADAPTER_APPROVAL_ID,
+    validation,
+    beforeSnapshot: snapshotSource(input.source),
+    payload,
+    rollbackHint: UNPUBLISH_ROLLBACK_HINT,
+    message: validation.ok
+      ? "Dry-run complete — no Supabase schedule unpublish update was called."
+      : "Dry-run validation failed — no Supabase schedule unpublish update was called.",
+    safety: getScheduleDryRunSafety(),
+  };
+
+  assertDryRunOnlyResult(result);
+  return result;
+}
+
 export function buildScheduleDryRunSelectionError(input: {
-  operation: "update" | "duplicate" | "new";
+  operation: "update" | "duplicate" | "new" | "unpublish";
   message: string;
   errors: string[];
   approvalId?: string;

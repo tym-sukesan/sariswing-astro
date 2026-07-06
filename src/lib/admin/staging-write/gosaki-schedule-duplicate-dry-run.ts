@@ -7,10 +7,13 @@ import { assertStaticToAstroCmsStagingSupabaseProject } from "../staging-data/st
 import type { G9kExistingEventSaveButtonFormValues } from "./gosaki-schedule-existing-event-save-button-dry-run";
 import { buildScheduleDuplicateDryRunResult } from "./schedule-dry-run-adapter";
 import type {
+  GosakiScheduleEditDraftMode,
   ScheduleDryRunFormInput,
   ScheduleDryRunResult,
   ScheduleRecord,
 } from "./schedule-dry-run-types";
+
+export type { GosakiScheduleEditDraftMode };
 
 export const G22B_PHASE = "G-22b-gosaki-schedule-duplicate-dry-run-ui-implementation";
 
@@ -20,8 +23,6 @@ export const G22B_SCHEDULE_DUPLICATE_DRY_RUN_APPROVAL_ID =
 export const GOSAKI_SCHEDULE_DUPLICATE_DRAFT_UNSAVED_ID = "__gosaki-duplicate-draft-unsaved__";
 
 export const GOSAKI_SCHEDULE_DUPLICATE_DRAFT_LEGACY_LABEL = "（未保存・採番予定）";
-
-export type GosakiScheduleEditDraftMode = "existing" | "duplicate" | "new";
 
 export type GosakiScheduleDuplicateDraftState = {
   mode: "duplicate";

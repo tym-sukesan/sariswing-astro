@@ -34,7 +34,6 @@ import {
   GOSAKI_SCHEDULE_DUPLICATE_DRAFT_UNSAVED_ID,
   type G22bScheduleDuplicateDryRunResult,
   type GosakiScheduleDuplicateDraftState,
-  type GosakiScheduleEditDraftMode,
 } from "../staging-write/gosaki-schedule-duplicate-dry-run";
 import {
   evaluateG22dDuplicateInsertUiGate,
@@ -67,6 +66,13 @@ import {
   executeG22eScheduleNewEventInsertSave,
   type G22eNewEventInsertSaveOutcome,
 } from "../staging-write/gosaki-schedule-new-event-insert-save";
+import {
+  buildGosakiScheduleUnpublishDraft,
+  executeG22fScheduleUnpublishDryRun,
+  type G22fScheduleUnpublishDryRunResult,
+  type GosakiScheduleUnpublishDraftState,
+} from "../staging-write/gosaki-schedule-unpublish-dry-run";
+import type { GosakiScheduleEditDraftMode } from "../staging-write/schedule-dry-run-types";
 
 type PublishedFilter = "published" | "all" | "draft";
 
@@ -102,6 +108,20 @@ let duplicateDraftState: GosakiScheduleDuplicateDraftState | null = null;
 let lastDuplicateDryRunResult: G22bScheduleDuplicateDryRunResult | null = null;
 let newEventDraftState: GosakiScheduleNewEventDraftState | null = null;
 let lastNewEventDryRunResult: G22eScheduleNewEventDryRunResult | null = null;
+let unpublishDraftState: GosakiScheduleUnpublishDraftState | null = null;
+let unpublishTargetSnapshot: ScheduleRecord | null = null;
+let lastUnpublishDryRunResult: G22fScheduleUnpublishDryRunResult | null = null;
+
+const G22F_EDIT_FORM_FIELD_IDS = [
+  "gosaki-edit-date",
+  "gosaki-edit-title",
+  "gosaki-edit-venue",
+  "gosaki-edit-open-time",
+  "gosaki-edit-start-time",
+  "gosaki-edit-price",
+  "gosaki-edit-description",
+  "gosaki-edit-published",
+] as const;
 
 function isG9kOperatorSaveEnabled(): boolean {
   return getG9kExistingEventSaveButtonConfig().saveEnabled;
@@ -310,6 +330,19 @@ function isNewEventDraftMode(): boolean {
   return editDraftMode === "new" && newEventDraftState !== null;
 }
 
+function isUnpublishDraftMode(): boolean {
+  return editDraftMode === "unpublish" && unpublishDraftState !== null;
+}
+
+function resetUnpublishDraftMode(): void {
+  editDraftMode = "existing";
+  unpublishDraftState = null;
+  unpublishTargetSnapshot = null;
+  lastUnpublishDryRunResult = null;
+  updateUnpublishDraftBanner(null);
+  setEditFormFieldsReadOnly(false);
+}
+
 function resetNewEventDraftMode(): void {
   editDraftMode = "existing";
   newEventDraftState = null;
@@ -328,6 +361,69 @@ function resetDuplicateDraftMode(): void {
 function resetNonExistingDraftModes(): void {
   resetDuplicateDraftMode();
   resetNewEventDraftMode();
+  resetUnpublishDraftMode();
+}
+
+function setEditFormFieldsReadOnly(readOnly: boolean): void {
+  for (const id of G22F_EDIT_FORM_FIELD_IDS) {
+    const el = document.getElementById(id) as HTMLInputElement | HTMLTextAreaElement | null;
+    if (el) el.disabled = readOnly;
+  }
+}
+
+function updateUnpublishDraftBanner(state: GosakiScheduleUnpublishDraftState | null): void {
+  const banner = document.getElementById("gosaki-schedule-unpublish-draft-banner");
+  if (!banner) return;
+
+  if (!state) {
+    banner.hidden = true;
+    banner.dataset.draftMode = "";
+    banner.dataset.targetId = "";
+    banner.dataset.targetLegacyId = "";
+    const label = banner.querySelector("[data-target-label]");
+    if (label) label.textContent = "";
+    return;
+  }
+
+  banner.hidden = false;
+  banner.dataset.draftMode = "unpublish";
+  banner.dataset.targetId = state.targetId;
+  banner.dataset.targetLegacyId = state.targetLegacyId ?? "";
+  const label = banner.querySelector("[data-target-label]");
+  if (label) {
+    const legacy = state.targetLegacyId ? ` / ${state.targetLegacyId}` : "";
+    label.textContent = `${state.targetId}${legacy}`;
+  }
+}
+
+function updateUnpublishButtonState(): void {
+  const button = document.getElementById(
+    "gosaki-schedule-unpublish-btn",
+  ) as HTMLButtonElement | null;
+  if (!button) return;
+
+  if (isNewEventDraftMode() || isDuplicateDraftMode() || isUnpublishDraftMode()) {
+    button.disabled = true;
+    button.title = "他の案を編集中です。先に案をやめるか、別の操作を選んでください。";
+    return;
+  }
+
+  const row = selectedRowSnapshot;
+  if (!row) {
+    button.disabled = true;
+    button.title = "先に一覧から公演を選んでください。";
+    return;
+  }
+
+  if (row.published !== true) {
+    button.disabled = true;
+    button.title = "このイベントはすでに非公開です。";
+    return;
+  }
+
+  button.disabled = false;
+  button.removeAttribute("data-gosaki-schedule-action-disabled");
+  button.title = "選択中の公演を非公開にする案を作成します（保存はまだできません）";
 }
 
 function updateDuplicateDraftBanner(state: GosakiScheduleDuplicateDraftState | null): void {
@@ -410,6 +506,17 @@ function readAddFormSeed(): Partial<ScheduleRecord> {
 }
 
 function enterNewEventDraftMode(): void {
+  if (isUnpublishDraftMode()) {
+    if (
+      !window.confirm(
+        "非公開化案の編集をやめて、新規追加案を作成しますか？（非公開化案は保存されません）",
+      )
+    ) {
+      return;
+    }
+    resetUnpublishDraftMode();
+  }
+
   if (isDuplicateDraftMode()) {
     if (
       !window.confirm(
@@ -460,6 +567,17 @@ function scrollNewEventDraftIntoView(): void {
 }
 
 function enterDuplicateDraftFromSelectedRow(): void {
+  if (isUnpublishDraftMode()) {
+    if (
+      !window.confirm(
+        "非公開化案の編集をやめて、複製案を作成しますか？（非公開化案は保存されません）",
+      )
+    ) {
+      return;
+    }
+    resetUnpublishDraftMode();
+  }
+
   if (isNewEventDraftMode()) {
     if (
       !window.confirm(
@@ -491,6 +609,61 @@ function enterDuplicateDraftFromSelectedRow(): void {
     ?.scrollIntoView({ behavior: "smooth", block: "nearest" });
 }
 
+function enterUnpublishDraftFromSelectedRow(): void {
+  if (isNewEventDraftMode()) {
+    if (
+      !window.confirm(
+        "新規追加案の編集をやめて、非公開化案を作成しますか？（新規追加案は保存されません）",
+      )
+    ) {
+      return;
+    }
+    resetNewEventDraftMode();
+  }
+
+  if (isDuplicateDraftMode()) {
+    if (
+      !window.confirm(
+        "複製案の編集をやめて、非公開化案を作成しますか？（複製案は保存されません）",
+      )
+    ) {
+      return;
+    }
+    resetDuplicateDraftMode();
+  }
+
+  if (!selectedRowSnapshot) {
+    window.alert("先に一覧から非公開にする公演を選んでください。");
+    return;
+  }
+
+  if (selectedRowSnapshot.published !== true) {
+    window.alert("このイベントはすでに非公開です。非公開化の対象にできません。");
+    updateUnpublishButtonState();
+    return;
+  }
+
+  unpublishTargetSnapshot = { ...selectedRowSnapshot };
+  unpublishDraftState = buildGosakiScheduleUnpublishDraft(selectedRowSnapshot);
+  editDraftMode = "unpublish";
+  lastDryRunResult = null;
+  lastDuplicateDryRunResult = null;
+  lastNewEventDryRunResult = null;
+  lastUnpublishDryRunResult = null;
+  clearSaveResult();
+  clearDryRunResult();
+  updateDuplicateDraftBanner(null);
+  updateNewEventDraftBanner(null);
+  updateUnpublishDraftBanner(unpublishDraftState);
+  setEditFormFieldsReadOnly(true);
+  renderEditForm(unpublishDraftState.source, { clearDryRun: false });
+  updateSaveButtonState(null);
+  updateUnpublishButtonState();
+  document
+    .getElementById("gosaki-schedule-operator-edit")
+    ?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
+
 function populateAddFormFromRow(row: ScheduleRecord): void {
   const date = row.date ?? "";
   setFieldValue("gosaki-add-date", date);
@@ -516,6 +689,10 @@ function setEditFormUpdatedAt(value: string | null | undefined): void {
     el.textContent = "（未保存）";
     return;
   }
+  if (isUnpublishDraftMode()) {
+    el.textContent = String(value ?? "").trim() || "—";
+    return;
+  }
   el.textContent = String(value ?? "").trim() || "—";
 }
 
@@ -528,6 +705,10 @@ function setEditFormLegacyId(value: string | null | undefined): void {
   }
   if (isNewEventDraftMode()) {
     el.textContent = GOSAKI_SCHEDULE_NEW_EVENT_DRAFT_LEGACY_LABEL;
+    return;
+  }
+  if (isUnpublishDraftMode()) {
+    el.textContent = String(value ?? "").trim() || "—";
     return;
   }
   el.textContent = String(value ?? "").trim() || "—";
@@ -583,6 +764,7 @@ function renderEditForm(
 
   if (isDuplicateDraftMode()) {
     updateNewEventDraftBanner(null);
+    updateUnpublishDraftBanner(null);
     if (titleEl) titleEl.textContent = "複製案を編集";
     if (leadEl) {
       leadEl.textContent =
@@ -590,8 +772,10 @@ function renderEditForm(
     }
     setEditFormUpdatedAt(null);
     setEditFormLegacyId(GOSAKI_SCHEDULE_DUPLICATE_DRAFT_LEGACY_LABEL);
+    setEditFormFieldsReadOnly(false);
   } else if (isNewEventDraftMode()) {
     updateDuplicateDraftBanner(null);
+    updateUnpublishDraftBanner(null);
     if (titleEl) titleEl.textContent = "新規追加案を編集";
     if (leadEl) {
       leadEl.textContent =
@@ -600,9 +784,24 @@ function renderEditForm(
     setEditFormUpdatedAt(null);
     setEditFormLegacyId(GOSAKI_SCHEDULE_NEW_EVENT_DRAFT_LEGACY_LABEL);
     setCheckbox("gosaki-edit-published", false);
+    setEditFormFieldsReadOnly(false);
+  } else if (isUnpublishDraftMode()) {
+    updateDuplicateDraftBanner(null);
+    updateNewEventDraftBanner(null);
+    if (titleEl) titleEl.textContent = "非公開化案を確認";
+    if (leadEl) {
+      leadEl.textContent =
+        "非公開化案です。まだ保存されていません。変更を確認すると、非公開化予定の内容を確認できます。";
+    }
+    setEditFormUpdatedAt(row.updated_at);
+    setEditFormLegacyId(row.legacy_id ?? "—");
+    setCheckbox("gosaki-edit-published", row.published === true);
+    setEditFormFieldsReadOnly(true);
   } else {
     updateDuplicateDraftBanner(null);
     updateNewEventDraftBanner(null);
+    updateUnpublishDraftBanner(null);
+    setEditFormFieldsReadOnly(false);
     if (titleEl) titleEl.textContent = "選択中の公演を編集";
     if (leadEl) leadEl.textContent = "一覧で選んだ公演の内容を変更します。";
     setEditFormUpdatedAt(row.updated_at);
@@ -612,6 +811,7 @@ function renderEditForm(
   if (options?.clearDryRun !== false) {
     clearDryRunResult();
   }
+  updateUnpublishButtonState();
 }
 
 function readEditFormSafeValues(): G9kExistingEventSaveButtonFormValues {
@@ -630,6 +830,7 @@ function clearDryRunResult(): void {
   lastDryRunResult = null;
   lastDuplicateDryRunResult = null;
   lastNewEventDryRunResult = null;
+  lastUnpublishDryRunResult = null;
   const el = document.getElementById("gosaki-schedule-edit-dry-run-result");
   if (!el) return;
   el.hidden = true;
@@ -730,6 +931,18 @@ function updateSaveButtonState(result: G9kExistingEventSaveButtonDryRunResult | 
     "gosaki-schedule-update-btn",
   ) as HTMLButtonElement | null;
   if (!button) return;
+
+  if (isUnpublishDraftMode()) {
+    button.disabled = true;
+    button.setAttribute("data-gosaki-schedule-action-disabled", "");
+    button.setAttribute("data-gosaki-save-allowed", "false");
+    button.textContent = "非公開化を保存（現在は無効）";
+    button.title = "非公開化の保存はまだ無効です。戸山が確認して反映します。";
+    setSaveButtonNote(
+      "非公開化案です。「変更を確認」で内容を確認できます。保存は現在無効です。データベースからは削除しません。",
+    );
+    return;
+  }
 
   if (isNewEventDraftMode()) {
     const gate = evaluateG22eNewEventInsertUiGate({
@@ -1026,6 +1239,122 @@ function renderNewEventDryRunResult(result: G22eScheduleNewEventDryRunResult): v
       <code>saveAllowed=false</code>
     </p>
     ${renderNewEventDryRunDevDetails(result)}
+  `;
+}
+
+function renderUnpublishDryRunDevDetails(result: G22fScheduleUnpublishDryRunResult): string {
+  return `
+    <details class="gosaki-schedule-unpublish-dry-run-dev">
+      <summary>開発者向け詳細</summary>
+      <dl class="gosaki-schedule-edit-dry-run__target">
+        <div><dt>phase</dt><dd><code>${escapeHtml(result.phase)}</code></dd></div>
+        <div><dt>approvalId (dry-run)</dt><dd><code>${escapeHtml(result.approvalId)}</code></dd></div>
+        <div><dt>operation</dt><dd><code>${escapeHtml(result.operation)}</code></dd></div>
+        <div><dt>target id</dt><dd><code>${escapeHtml(result.target.id)}</code></dd></div>
+        <div><dt>legacy_id</dt><dd><code>${escapeHtml(result.target.legacy_id ?? "—")}</code></dd></div>
+        <div><dt>site_slug</dt><dd><code>${escapeHtml(result.target.site_slug)}</code></dd></div>
+        <div><dt>before.published</dt><dd><code>${String(result.before.published)}</code></dd></div>
+        <div><dt>after.published</dt><dd><code>false</code></dd></div>
+        <div><dt>wouldUpdate</dt><dd><code>${String(result.wouldUpdate)}</code></dd></div>
+        <div><dt>wouldDelete</dt><dd><code>false</code></dd></div>
+        <div><dt>physicalDelete</dt><dd><code>false</code></dd></div>
+        <div><dt>saveAllowed</dt><dd><code>false</code></dd></div>
+      </dl>
+      <pre class="gosaki-schedule-unpublish-dry-run-dev__json">${escapeHtml(JSON.stringify(result.payload, null, 2))}</pre>
+    </details>
+  `;
+}
+
+function renderUnpublishDryRunResult(result: G22fScheduleUnpublishDryRunResult): void {
+  const el = document.getElementById("gosaki-schedule-edit-dry-run-result");
+  if (!el) return;
+
+  el.hidden = false;
+  el.classList.remove(
+    "gosaki-schedule-edit-dry-run--ok",
+    "gosaki-schedule-edit-dry-run--empty",
+    "gosaki-schedule-edit-dry-run--error",
+    "gosaki-schedule-edit-dry-run--stale",
+    "gosaki-schedule-edit-dry-run--ready",
+    "gosaki-schedule-edit-dry-run--saved",
+    "gosaki-schedule-edit-dry-run--duplicate",
+    "gosaki-schedule-edit-dry-run--new",
+    "gosaki-schedule-edit-dry-run--unpublish",
+  );
+
+  updateSaveButtonState(null);
+
+  if (!result.ok) {
+    el.classList.add("gosaki-schedule-edit-dry-run--error");
+    el.innerHTML = `
+      <h3 class="gosaki-schedule-edit-dry-run__title">非公開化案の確認結果</h3>
+      <p class="gosaki-schedule-edit-dry-run__message">非公開化案を確認できませんでした。</p>
+      ${renderGuardErrorList(result.guardErrors)}
+      <p class="gosaki-schedule-edit-dry-run__note">この確認ではデータベースは変更されません。行は削除しません。保存は現在無効です。</p>
+      ${renderUnpublishDryRunDevDetails(result)}
+    `;
+    return;
+  }
+
+  el.classList.add(
+    "gosaki-schedule-edit-dry-run--ok",
+    "gosaki-schedule-edit-dry-run--ready",
+    "gosaki-schedule-edit-dry-run--unpublish",
+  );
+
+  el.innerHTML = `
+    <h3 class="gosaki-schedule-edit-dry-run__title">非公開化案の確認結果</h3>
+    <p class="gosaki-schedule-edit-dry-run__message gosaki-schedule-edit-dry-run__message--ready">
+      ${escapeHtml(result.message)}
+    </p>
+    <p class="gosaki-schedule-edit-dry-run__note">
+      まだ保存されていません。データベースからは削除しません。保存は現在無効です。
+    </p>
+    ${renderValidationWarningsList(result.validation.warnings)}
+    ${result.validation.ok ? "" : renderGuardErrorList(result.guardErrors)}
+    <dl class="gosaki-schedule-edit-dry-run__target">
+      <div>
+        <dt>操作</dt>
+        <dd><code>unpublish</code>（非公開化の予定）</dd>
+      </div>
+      <div>
+        <dt>対象 id</dt>
+        <dd><code>${escapeHtml(result.target.id)}</code></dd>
+      </div>
+      <div>
+        <dt>legacy_id</dt>
+        <dd><code>${escapeHtml(result.target.legacy_id ?? "—")}</code></dd>
+      </div>
+      <div>
+        <dt>タイトル</dt>
+        <dd>${escapeHtml(displayDryRunValue(result.target.title))}</dd>
+      </div>
+      <div>
+        <dt>日付</dt>
+        <dd>${escapeHtml(result.target.date)}</dd>
+      </div>
+      <div>
+        <dt>site_slug</dt>
+        <dd><code>${escapeHtml(result.target.site_slug)}</code></dd>
+      </div>
+      <div>
+        <dt>published（変更前 → 変更後）</dt>
+        <dd><code>true</code> → <code>false</code></dd>
+      </div>
+      <div>
+        <dt>physicalDelete</dt>
+        <dd><code>false</code></dd>
+      </div>
+    </dl>
+    <p class="gosaki-schedule-edit-dry-run__lock">
+      安全確認:
+      <code>dryRun=true</code>,
+      <code>actualWrite=false</code>,
+      <code>wouldUpdate=${String(result.wouldUpdate)}</code>,
+      <code>wouldDelete=false</code>,
+      <code>saveAllowed=false</code>
+    </p>
+    ${renderUnpublishDryRunDevDetails(result)}
   `;
 }
 
@@ -1432,7 +1761,28 @@ async function runEditDryRunPreview(): Promise<void> {
     lastNewEventDryRunResult = result;
     lastDryRunResult = null;
     lastDuplicateDryRunResult = null;
+    lastUnpublishDryRunResult = null;
     renderNewEventDryRunResult(result);
+    return;
+  }
+
+  if (isUnpublishDraftMode()) {
+    if (!unpublishTargetSnapshot) {
+      window.alert("非公開化対象の公演が見つかりません。再度「非公開化案を作成」を押してください。");
+      return;
+    }
+
+    const signedIn = await refreshStagingAuthSignedIn();
+    const result = executeG22fScheduleUnpublishDryRun({
+      target: unpublishTargetSnapshot,
+      signedIn,
+      supabaseUrl: String(import.meta.env.PUBLIC_SUPABASE_URL ?? ""),
+    });
+    lastUnpublishDryRunResult = result;
+    lastDryRunResult = null;
+    lastDuplicateDryRunResult = null;
+    lastNewEventDryRunResult = null;
+    renderUnpublishDryRunResult(result);
     return;
   }
 
@@ -1453,6 +1803,7 @@ async function runEditDryRunPreview(): Promise<void> {
     });
     lastDuplicateDryRunResult = result;
     lastDryRunResult = null;
+    lastUnpublishDryRunResult = null;
     renderDuplicateDryRunResult(result);
     return;
   }
@@ -1482,6 +1833,11 @@ async function runEditDryRunPreview(): Promise<void> {
 }
 
 async function runEditSave(): Promise<void> {
+  if (isUnpublishDraftMode()) {
+    window.alert("非公開化の保存はまだ無効です。戸山が確認して反映します。");
+    return;
+  }
+
   if (isNewEventDraftMode()) {
     const gate = evaluateG22eNewEventInsertUiGate({
       signedIn: stagingAuthSignedIn === true,
@@ -1719,6 +2075,23 @@ function selectRowById(rowId: string): void {
     resetNewEventDraftMode();
   }
 
+  if (isUnpublishDraftMode()) {
+    if (rowId === unpublishTargetSnapshot?.id) {
+      selectedRowId = rowId;
+      renderScheduleList();
+      updateUnpublishButtonState();
+      return;
+    }
+    if (
+      !window.confirm(
+        "非公開化案の編集をやめて、別の公演を選び直しますか？（非公開化案は保存されません）",
+      )
+    ) {
+      return;
+    }
+    resetUnpublishDraftMode();
+  }
+
   if (isDuplicateDraftMode() && rowId === duplicateSourceSnapshot?.id) {
     selectedRowId = rowId;
     renderScheduleList();
@@ -1744,6 +2117,7 @@ function selectRowById(rowId: string): void {
   renderScheduleList();
   renderEditForm(row);
   dispatchRowSelected(row);
+  updateUnpublishButtonState();
 
   const editCard = document.getElementById("gosaki-schedule-operator-edit");
   editCard?.scrollIntoView({ behavior: "smooth", block: "nearest" });
@@ -1855,6 +2229,15 @@ function wireAddButton(): void {
   });
 }
 
+function wireUnpublishButton(): void {
+  document
+    .getElementById("gosaki-schedule-unpublish-btn")
+    ?.addEventListener("click", (event) => {
+      event.preventDefault();
+      enterUnpublishDraftFromSelectedRow();
+    });
+}
+
 function wireDisabledActions(): void {
   const duplicateBtn = document.getElementById(
     "gosaki-schedule-duplicate-btn",
@@ -1877,7 +2260,7 @@ function wireDisabledActions(): void {
 
   document
     .querySelectorAll<HTMLButtonElement>(
-      "[data-gosaki-schedule-action-disabled]:not(#gosaki-schedule-update-btn):not(#gosaki-schedule-add-btn)",
+      "[data-gosaki-schedule-action-disabled]:not(#gosaki-schedule-update-btn):not(#gosaki-schedule-add-btn):not(#gosaki-schedule-unpublish-btn)",
     )
     .forEach((button) => {
       button.disabled = true;
@@ -1897,10 +2280,12 @@ export async function initGosakiStagingScheduleOperatorUi(): Promise<void> {
   wireSaveButton();
   wireDuplicateButton();
   wireAddButton();
+  wireUnpublishButton();
   wireDisabledActions();
   await refreshStagingAuthSignedIn();
   renderScheduleList();
   renderEditForm(null);
+  updateUnpublishButtonState();
 }
 
 if (typeof document !== "undefined") {

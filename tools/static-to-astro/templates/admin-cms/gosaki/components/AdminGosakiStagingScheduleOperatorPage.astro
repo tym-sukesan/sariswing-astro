@@ -330,6 +330,27 @@ function displayValue(value: string | null | undefined): string {
         </div>
 
         <div
+          id="gosaki-schedule-unpublish-draft-banner"
+          class="gosaki-schedule-unpublish-draft-banner admin-form__field--full"
+          hidden
+          data-draft-mode=""
+          data-target-id=""
+          data-target-legacy-id=""
+          role="status"
+        >
+          <p class="gosaki-schedule-unpublish-draft-banner__title">非公開化案</p>
+          <p class="gosaki-schedule-unpublish-draft-banner__body">
+            まだ保存されていません。保存は戸山が確認して反映します。
+          </p>
+          <p class="gosaki-schedule-unpublish-draft-banner__hint">
+            公開サイトから外す予定です。データベースからは削除しません。保存は現在無効です。
+          </p>
+          <p class="gosaki-schedule-unpublish-draft-banner__target">
+            対象: <code data-target-label></code>
+          </p>
+        </div>
+
+        <div
           id="gosaki-schedule-duplicate-draft-banner"
           class="gosaki-schedule-duplicate-draft-banner admin-form__field--full"
           hidden
@@ -462,12 +483,23 @@ function displayValue(value: string | null | undefined): string {
           </button>
           <button
             type="button"
+            class="admin-button admin-button-secondary"
+            id="gosaki-schedule-unpublish-btn"
+            data-gosaki-schedule-action-disabled
+            disabled
+            title="選択中の公演を非公開にする案を作成します（保存はまだできません）"
+          >
+            非公開化案を作成
+          </button>
+          <button
+            type="button"
             class="admin-button admin-button-danger"
             id="gosaki-schedule-delete-btn"
             data-gosaki-schedule-action-disabled
             disabled
+            title="物理削除は準備中です"
           >
-            削除
+            削除（準備中）
           </button>
         </div>
         <p id="gosaki-schedule-update-btn-note" class="admin-gosaki-save-note" role="note">
@@ -477,7 +509,7 @@ function displayValue(value: string | null | undefined): string {
           現在、公開サイトへの反映は戸山が確認して行います。
         </p>
         <p class="admin-gosaki-save-note" role="note">
-          ※ 新規追加案・複製案の作成と「変更を確認」ができます。保存・削除は戸山が確認して反映します。
+          ※ 新規追加案・複製案・非公開化案の作成と「変更を確認」ができます。保存・物理削除は戸山が確認して反映します。
         </p>
       </form>
     </section>

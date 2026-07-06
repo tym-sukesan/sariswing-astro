@@ -5,15 +5,24 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-22g-gosaki-schedule-p0-crud-next-plan — complete (uncommitted).
-G-22d/e/f CRUD slices complete: duplicate INSERT · new event INSERT · unpublish UPDATE.
+Current phase: G-22g1a-gosaki-schedule-list-ux-legacy-id — complete (uncommitted).
+Schedule operator list now shows legacy_id / id / updated_at in list + selected summary.
 Do NOT re-Save: schedule-2026-07-008 (G-22f7), schedule-2026-09-001 (G-22e7), schedule-2026-03-014 (G-22d3d).
 Physical DELETE not implemented. Public reflection / package / FTP not executed.
-write-armed dev server stopped; port 4321 LISTEN none.
 Routine dev: PUBLIC_ADMIN_WRITE_DRY_RUN=true; all write arms off.
 Supabase interim SoT: kmjqppxjdnwwrtaeqjta — never vsbvndwuajjhnzpohghh.
-Recommended next: G-22g1 Schedule list UX improvement (legacy_id, dev-section isolation — no DB write).
+Next: G-22g1b dev/mock section isolation · G-22g1c pre-save panel emphasis.
 ```
+
+## G-22g1a Schedule list UX legacy_id — complete
+
+- **List:** legacy_id column (desktop) · legacy_id + updated_at on mobile cards
+- **Summary:** `#gosaki-schedule-operator-selected-summary` — legacy_id, id, updated_at, published, date, title
+- **Search:** keyword includes legacy_id and id (`schedule-2026-07-008` findable when filter allows)
+- **Form:** read-only `id` field added alongside legacy_id / updated_at
+- **No DB write** — display / filter only; save modules unchanged
+- **Doc:** `gosaki-schedule-list-ux-legacy-id.md` · **Verifier:** `verify-g22g1a-gosaki-schedule-list-ux-legacy-id.mjs`
+- **Next:** G-22g1b · G-22g1c · G-22g2
 
 ## G-22g Schedule P0 CRUD next plan — complete
 

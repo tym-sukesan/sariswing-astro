@@ -164,7 +164,7 @@ function displayValue(value: string | null | undefined): string {
             {
               binding.selectableRows.map((row: ScheduleRecord) => (
                 <option value={row.id}>
-                  {row.date} — {displayValue(row.title)}
+                  {row.date} — {displayValue(row.legacy_id)} — {displayValue(row.title)}
                 </option>
               ))
             }
@@ -231,7 +231,7 @@ function displayValue(value: string | null | undefined): string {
           <input
             id="gosaki-schedule-operator-keyword"
             type="search"
-            placeholder="タイトル・会場で検索"
+            placeholder="legacy_id・タイトル・会場で検索"
             autocomplete="off"
           />
         </label>
@@ -253,6 +253,7 @@ function displayValue(value: string | null | undefined): string {
                 <thead>
                   <tr>
                     <th scope="col">日付</th>
+                    <th scope="col">legacy_id</th>
                     <th scope="col">タイトル</th>
                     <th scope="col">会場</th>
                     <th scope="col">開場</th>
@@ -266,6 +267,9 @@ function displayValue(value: string | null | undefined): string {
                     binding.selectableRows.map((row: ScheduleRecord) => (
                       <tr class="admin-gosaki-schedule-table__row" data-row-id={row.id}>
                         <td>{row.date}</td>
+                        <td class="admin-gosaki-schedule-table__legacy-col">
+                          <code class="gosaki-schedule-legacy-id-code">{displayValue(row.legacy_id)}</code>
+                        </td>
                         <td class="admin-gosaki-schedule-table__title-col">{displayValue(row.title)}</td>
                         <td>{displayValue(row.venue)}</td>
                         <td>{displayValue(row.open_time)}</td>
@@ -303,6 +307,12 @@ function displayValue(value: string | null | undefined): string {
     >
       <h2 class="admin-gosaki-card__title">選択中の公演を編集</h2>
       <p class="admin-gosaki-card__lead">一覧で選んだ公演の内容を変更します。</p>
+      <div
+        id="gosaki-schedule-operator-selected-summary"
+        class="gosaki-schedule-operator-selected-summary"
+        hidden
+        aria-live="polite"
+      ></div>
       <p id="gosaki-schedule-operator-edit-empty" class="admin-gosaki-schedule-edit__empty">
         一覧から「編集する」を押すと、ここに編集フォームが表示されます。
       </p>
@@ -415,6 +425,11 @@ function displayValue(value: string | null | undefined): string {
         <p id="gosaki-edit-legacy-id" class="gosaki-schedule-admin-legacy-id" role="status">
           <span class="admin-form__label">legacy_id</span>
           <code id="gosaki-edit-legacy-id-value">—</code>
+        </p>
+
+        <p id="gosaki-edit-row-id" class="gosaki-schedule-admin-row-id" role="status">
+          <span class="admin-form__label">id</span>
+          <code id="gosaki-edit-row-id-value">—</code>
         </p>
 
         <label class="admin-form__field admin-form__field--checkbox">

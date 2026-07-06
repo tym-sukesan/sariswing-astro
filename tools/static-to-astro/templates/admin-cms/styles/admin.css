@@ -2630,6 +2630,158 @@
   font-size: 0.8rem;
 }
 
+.gosaki-schedule-admin-row-id {
+  margin: 0;
+  font-size: 0.78rem;
+  color: #64748b;
+}
+
+.gosaki-schedule-admin-row-id code {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 0.72rem;
+  word-break: break-all;
+}
+
+.gosaki-schedule-legacy-id-code {
+  display: inline-block;
+  max-width: 100%;
+  padding: 0.1rem 0.35rem;
+  border-radius: 0.25rem;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 0.75rem;
+  line-height: 1.35;
+  word-break: break-all;
+  user-select: all;
+}
+
+.gosaki-schedule-row-id-code {
+  display: inline-block;
+  max-width: 100%;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 0.72rem;
+  line-height: 1.35;
+  word-break: break-all;
+  user-select: all;
+}
+
+.admin-gosaki-schedule-table__legacy-col {
+  min-width: 8.5rem;
+  max-width: 11rem;
+}
+
+.admin-gosaki-schedule-table__legacy-col .gosaki-schedule-legacy-id-code {
+  font-size: 0.7rem;
+}
+
+.admin-gosaki-schedule-row-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.45rem;
+}
+
+.admin-gosaki-schedule-row-meta {
+  margin: 0;
+  display: grid;
+  gap: 0.2rem;
+  max-width: 11rem;
+  font-size: 0.68rem;
+  line-height: 1.35;
+  color: #64748b;
+}
+
+.admin-gosaki-schedule-row-meta__legacy .gosaki-schedule-legacy-id-code {
+  font-size: 0.68rem;
+}
+
+.admin-gosaki-schedule-row-meta__status--published {
+  color: #047857;
+}
+
+.admin-gosaki-schedule-row-meta__status--draft {
+  color: #b45309;
+}
+
+.admin-gosaki-schedule-row-meta__updated time {
+  font-size: 0.65rem;
+  color: #94a3b8;
+}
+
+.gosaki-schedule-admin-card__legacy {
+  margin: 0.35rem 0 0.15rem;
+}
+
+.gosaki-schedule-admin-card__updated {
+  margin: 0.35rem 0 0;
+  font-size: 0.75rem;
+  color: #94a3b8;
+}
+
+.gosaki-schedule-operator-selected-summary {
+  margin: 0 0 1rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid #bfdbfe;
+  border-radius: var(--admin-radius);
+  background: #f0f9ff;
+}
+
+.gosaki-schedule-operator-selected-summary__title {
+  margin: 0 0 0.65rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.gosaki-schedule-operator-selected-summary__grid {
+  margin: 0;
+  display: grid;
+  gap: 0.55rem 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+}
+
+.gosaki-schedule-operator-selected-summary__item {
+  margin: 0;
+}
+
+.gosaki-schedule-operator-selected-summary__item dt {
+  margin: 0 0 0.15rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.gosaki-schedule-operator-selected-summary__item dd {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #0f172a;
+}
+
+.gosaki-schedule-operator-selected-summary__item--legacy dd .gosaki-schedule-legacy-id-code {
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.gosaki-schedule-operator-selected-summary__status--published {
+  color: #047857;
+  font-weight: 600;
+}
+
+.gosaki-schedule-operator-selected-summary__status--draft {
+  color: #b45309;
+  font-weight: 600;
+}
+
+.gosaki-schedule-operator-selected-summary__item--updated dd,
+.gosaki-schedule-operator-selected-summary__item--id dd {
+  font-size: 0.75rem;
+  color: #475569;
+}
+
 .gosaki-schedule-edit-dry-run--duplicate {
   border-color: #93c5fd;
   background: #f8fbff;

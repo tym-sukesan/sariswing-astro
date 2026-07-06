@@ -1,6 +1,19 @@
 Last updated: 2026-07-06
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22g1a Schedule list UX legacy_id — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-22g1a-gosaki-schedule-list-ux-legacy-id` |
+| Base | `814a77f` |
+| Scope | legacy_id column · mobile card · selected summary · keyword search · form id |
+| G-22f lesson | `schedule-2026-07-008` findable via legacy_id / keyword |
+| DB write | **no** (display only) |
+| Doc | `gosaki-schedule-list-ux-legacy-id.md` |
+| Verifier | `verify-g22g1a-gosaki-schedule-list-ux-legacy-id.mjs` |
+| **Next** | **G-22g1b** dev/mock isolation · **G-22g1c** pre-save panel |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22g Schedule P0 CRUD next plan — complete
 
 | Item | Value |

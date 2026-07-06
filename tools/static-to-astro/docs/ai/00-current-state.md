@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-22g Gosaki Schedule P0 CRUD remaining tasks / next plan (2026-07-06):** **complete (uncommitted)** — G-22d/e/f inventory; P0/P1/P2 classification; G-22f UX lessons reflected; **recommended next: G-22g1 Schedule list UX improvement** (legacy_id display, dev-section isolation, armed-target highlight — no DB write). Physical DELETE / public reflection deferred. **No Save / DB write / SQL mutation / FTP.** Doc: `gosaki-schedule-p0-crud-next-plan.md`. Verifier: `verify-g22g-gosaki-schedule-p0-crud-next-plan.mjs`. **Next: G-22g1-schedule-list-ux-improvement.**
+**G-22g1a Gosaki Schedule list UX legacy_id visibility (2026-07-06):** **complete (uncommitted)** — operator list shows `legacy_id` column (desktop) + card line (mobile); keyword search includes legacy_id/id; selected-row summary panel with legacy_id, id, updated_at, published, date, title; edit form adds read-only `id`. **No Save / DB write / SQL mutation / FTP.** Doc: `gosaki-schedule-list-ux-legacy-id.md`. Verifier: `verify-g22g1a-gosaki-schedule-list-ux-legacy-id.mjs`. **Next: G-22g1b dev/mock isolation or G-22g1c pre-save panel.**
+
+**G-22g Gosaki Schedule P0 CRUD remaining tasks / next plan (2026-07-06):** **complete** — commit `814a77f`. **Superseded for list UX by G-22g1a.**
 
 **G-22f7 Gosaki Schedule unpublish UPDATE chain closure (2026-07-06):** **complete** — commit `82668b4`. G-22f→G-22f6 chain closed; `schedule-2026-07-008` unpublish UPDATE single-slice success; re-Save forbidden; write-armed dev server stopped. **Superseded for P0 planning by G-22g.**
 

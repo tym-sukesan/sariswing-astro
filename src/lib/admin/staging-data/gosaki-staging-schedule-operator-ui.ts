@@ -195,6 +195,77 @@ function displayValue(value: string | null | undefined): string {
   return trimmed || "—";
 }
 
+function formatPublishedStatus(published: boolean | null | undefined): string {
+  return published === true ? "公開" : "非公開";
+}
+
+function formatUpdatedAtDisplay(value: string | null | undefined): string {
+  return displayValue(value);
+}
+
+function renderLegacyIdCode(legacyId: string | null | undefined): string {
+  const value = displayValue(legacyId);
+  return `<code class="gosaki-schedule-legacy-id-code" title="${escapeHtml(value)}">${escapeHtml(value)}</code>`;
+}
+
+function renderScheduleTableRowMeta(row: ScheduleRecord): string {
+  const published = row.published === true;
+  return `<p class="admin-gosaki-schedule-row-meta" aria-label="行の識別情報">
+    <span class="admin-gosaki-schedule-row-meta__status admin-gosaki-schedule-row-meta__status--${published ? "published" : "draft"}">${formatPublishedStatus(row.published)}</span>
+    <span class="admin-gosaki-schedule-row-meta__updated">更新: <time datetime="${escapeHtml(formatUpdatedAtDisplay(row.updated_at))}">${escapeHtml(formatUpdatedAtDisplay(row.updated_at))}</time></span>
+  </p>`;
+}
+
+function renderScheduleTableRowActions(row: ScheduleRecord, selected: boolean): string {
+  return `<div class="admin-gosaki-schedule-row-actions">
+    ${renderScheduleTableRowMeta(row)}
+    ${renderScheduleRowButton(row.id, selected)}
+  </div>`;
+}
+
+function renderSelectedRowSummary(row: ScheduleRecord | null): void {
+  const panel = document.getElementById("gosaki-schedule-operator-selected-summary");
+  if (!panel) return;
+
+  if (!row) {
+    panel.hidden = true;
+    panel.innerHTML = "";
+    return;
+  }
+
+  const published = row.published === true;
+  panel.hidden = false;
+  panel.innerHTML = `
+    <h3 class="gosaki-schedule-operator-selected-summary__title">選択中の公演</h3>
+    <dl class="gosaki-schedule-operator-selected-summary__grid">
+      <div class="gosaki-schedule-operator-selected-summary__item gosaki-schedule-operator-selected-summary__item--legacy">
+        <dt>legacy_id</dt>
+        <dd>${renderLegacyIdCode(row.legacy_id)}</dd>
+      </div>
+      <div class="gosaki-schedule-operator-selected-summary__item">
+        <dt>日付</dt>
+        <dd><time datetime="${escapeHtml(row.date)}">${escapeHtml(row.date)}</time></dd>
+      </div>
+      <div class="gosaki-schedule-operator-selected-summary__item">
+        <dt>タイトル</dt>
+        <dd>${escapeHtml(displayValue(row.title))}</dd>
+      </div>
+      <div class="gosaki-schedule-operator-selected-summary__item">
+        <dt>公開状態</dt>
+        <dd><span class="gosaki-schedule-operator-selected-summary__status gosaki-schedule-operator-selected-summary__status--${published ? "published" : "draft"}">${formatPublishedStatus(row.published)}</span></dd>
+      </div>
+      <div class="gosaki-schedule-operator-selected-summary__item gosaki-schedule-operator-selected-summary__item--id">
+        <dt>id</dt>
+        <dd><code class="gosaki-schedule-row-id-code" title="${escapeHtml(row.id)}">${escapeHtml(row.id)}</code></dd>
+      </div>
+      <div class="gosaki-schedule-operator-selected-summary__item gosaki-schedule-operator-selected-summary__item--updated">
+        <dt>updated_at</dt>
+        <dd><time datetime="${escapeHtml(formatUpdatedAtDisplay(row.updated_at))}">${escapeHtml(formatUpdatedAtDisplay(row.updated_at))}</time></dd>
+      </div>
+    </dl>
+  `;
+}
+
 function displayDryRunValue(value: string | null | undefined): string {
   const trimmed = String(value ?? "").trim();
   return trimmed || "（空）";
@@ -300,7 +371,7 @@ function rowMatchesFilters(row: ScheduleRecord): boolean {
 
   const keyword = getKeywordFilter();
   if (keyword) {
-    const haystack = [row.title, row.venue, row.description]
+    const haystack = [row.legacy_id, row.id, row.title, row.venue, row.description]
       .map((v) => String(v ?? "").toLowerCase())
       .join(" ");
     if (!haystack.includes(keyword)) return false;
@@ -726,6 +797,16 @@ function setEditFormLegacyId(value: string | null | undefined): void {
   el.textContent = String(value ?? "").trim() || "—";
 }
 
+function setEditFormRowId(value: string | null | undefined): void {
+  const el = document.getElementById("gosaki-edit-row-id-value");
+  if (!el) return;
+  if (isDuplicateDraftMode() || isNewEventDraftMode()) {
+    el.textContent = "（未保存）";
+    return;
+  }
+  el.textContent = String(value ?? "").trim() || "—";
+}
+
 function isG9kSaveOutcomeSuccess(outcome: G9kExistingEventSaveButtonSaveOutcome): boolean {
   if (outcome.errorCode) return false;
   if (!outcome.result) return false;
@@ -752,6 +833,7 @@ function renderEditForm(
     selectedRowSnapshot = null;
     resetNonExistingDraftModes();
     clearDryRunResult();
+    renderSelectedRowSummary(null);
     if (titleEl) titleEl.textContent = "選択中の公演を編集";
     if (leadEl) leadEl.textContent = "一覧で選んだ公演の内容を変更します。";
     return;
@@ -784,6 +866,7 @@ function renderEditForm(
     }
     setEditFormUpdatedAt(null);
     setEditFormLegacyId(GOSAKI_SCHEDULE_DUPLICATE_DRAFT_LEGACY_LABEL);
+    setEditFormRowId(row.id);
     setEditFormFieldsReadOnly(false);
   } else if (isNewEventDraftMode()) {
     updateDuplicateDraftBanner(null);
@@ -795,6 +878,7 @@ function renderEditForm(
     }
     setEditFormUpdatedAt(null);
     setEditFormLegacyId(GOSAKI_SCHEDULE_NEW_EVENT_DRAFT_LEGACY_LABEL);
+    setEditFormRowId(null);
     setCheckbox("gosaki-edit-published", false);
     setEditFormFieldsReadOnly(false);
   } else if (isUnpublishDraftMode()) {
@@ -807,6 +891,7 @@ function renderEditForm(
     }
     setEditFormUpdatedAt(row.updated_at);
     setEditFormLegacyId(row.legacy_id ?? "—");
+    setEditFormRowId(row.id);
     setCheckbox("gosaki-edit-published", row.published === true);
     setEditFormFieldsReadOnly(true);
   } else {
@@ -818,11 +903,13 @@ function renderEditForm(
     if (leadEl) leadEl.textContent = "一覧で選んだ公演の内容を変更します。";
     setEditFormUpdatedAt(row.updated_at);
     setEditFormLegacyId(row.legacy_id ?? "—");
+    setEditFormRowId(row.id);
   }
 
   if (options?.clearDryRun !== false) {
     clearDryRunResult();
   }
+  renderSelectedRowSummary(row);
   updateUnpublishButtonState();
 }
 
@@ -2144,7 +2231,7 @@ function renderScheduleList(): void {
 
   if (filtered.length === 0) {
     const emptyMessage =
-      '<tr><td colspan="7" class="admin-gosaki-schedule-table__empty">該当する公演はありません。</td></tr>';
+      '<tr><td colspan="8" class="admin-gosaki-schedule-table__empty">該当する公演はありません。</td></tr>';
     if (tbody) tbody.innerHTML = emptyMessage;
     if (cardList) {
       cardList.innerHTML =
@@ -2159,12 +2246,13 @@ function renderScheduleList(): void {
         const selected = selectedRowId === row.id;
         return `<tr class="admin-gosaki-schedule-table__row${selected ? " is-selected" : ""}" data-row-id="${escapeHtml(row.id)}">
         <td>${escapeHtml(row.date)}</td>
+        <td class="admin-gosaki-schedule-table__legacy-col">${renderLegacyIdCode(row.legacy_id)}</td>
         <td class="admin-gosaki-schedule-table__title-col">${escapeHtml(displayValue(row.title))}</td>
         <td>${escapeHtml(displayValue(row.venue))}</td>
         <td>${escapeHtml(displayValue(row.open_time))}</td>
         <td>${escapeHtml(displayValue(row.start_time))}</td>
         <td>${escapeHtml(displayValue(row.price))}</td>
-        <td class="admin-gosaki-schedule-table__actions-col">${renderScheduleRowButton(row.id, selected)}</td>
+        <td class="admin-gosaki-schedule-table__actions-col">${renderScheduleTableRowActions(row, selected)}</td>
       </tr>`;
       })
       .join("");
@@ -2180,10 +2268,12 @@ function renderScheduleList(): void {
           <time class="gosaki-schedule-admin-card__date" datetime="${escapeHtml(row.date)}">${escapeHtml(row.date)}</time>
           <span class="gosaki-schedule-admin-card__status gosaki-schedule-admin-card__status--${published ? "published" : "draft"}">${published ? "公開" : "非公開"}</span>
         </div>
+        <p class="gosaki-schedule-admin-card__legacy">${renderLegacyIdCode(row.legacy_id)}</p>
         <p class="gosaki-schedule-admin-card__title">${escapeHtml(displayValue(row.title))}</p>
         <p class="gosaki-schedule-admin-card__venue">${escapeHtml(displayValue(row.venue))}</p>
         <p class="gosaki-schedule-admin-card__times">${escapeHtml(formatTimes(row))}</p>
         <p class="gosaki-schedule-admin-card__price">${escapeHtml(formatPriceLabel(row.price))}</p>
+        <p class="gosaki-schedule-admin-card__updated">更新: <time datetime="${escapeHtml(formatUpdatedAtDisplay(row.updated_at))}">${escapeHtml(formatUpdatedAtDisplay(row.updated_at))}</time></p>
         <div class="gosaki-schedule-admin-card__actions">
           ${renderScheduleRowButton(row.id, selected)}
         </div>

@@ -5,17 +5,32 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-22h1-gosaki-schedule-republish-planning — complete (uncommitted).
-Republish planning: published=false→true UPDATE only; mirrors G-22f unpublish inverted.
-Candidate targets: schedule-2026-07-008 · schedule-2026-03-014 · schedule-2026-09-001.
-Proposed approvalId: G-22h-gosaki-schedule-republish-update-non-dry-run-slice.
-Proposed arm: PUBLIC_ADMIN_GOSAKI_SCHEDULE_G22H_REPUBLISH_UPDATE_NON_DRY_RUN_ARMED.
+Current phase: G-22h2-gosaki-schedule-republish-dry-run-ui-planning — complete (uncommitted).
+Dry-run module + UI + save target panel design for republish (published=false→true).
+dry-run approvalId: G-22h-gosaki-schedule-republish-dry-run.
+Save approvalId: G-22h-gosaki-schedule-republish-update-non-dry-run-slice (G-22h6).
+env arm: PUBLIC_ADMIN_GOSAKI_SCHEDULE_G22H_REPUBLISH_UPDATE_NON_DRY_RUN_ARMED.
+actualWrite=false in dry-run; Save disabled until G-22h6.
 No implementation / Save / DB write / SQL / RLS / package / FTP / public reflection in this phase.
 Do NOT re-Save: schedule-2026-07-008 (G-22f7), schedule-2026-09-001 (G-22e7), schedule-2026-03-014 (G-22d3d).
 Routine dev: PUBLIC_ADMIN_WRITE_DRY_RUN=true; all write arms off.
 Supabase interim SoT: kmjqppxjdnwwrtaeqjta — never vsbvndwuajjhnzpohghh.
-Next: G-22h2 republish dry-run planning · public reflection planning.
+Next: G-22h3 republish dry-run implementation (Save disabled).
 ```
+
+## G-22h2 Schedule republish dry-run UI planning — complete
+
+- **Goal:** Concrete dry-run module / UI / save target panel / approvalId design before G-22h3 implementation
+- **Dry-run module:** `executeG22hScheduleRepublishDryRun` — input id/legacy_id/expectedBeforeUpdatedAt/published=false; output operation republish, actualWrite=false, publicReflectionPending=true
+- **UI flow:** 非公開行選択 → 再公開案を作成 → 変更を確認 → target panel; 再公開を保存 disabled until G-22h6
+- **Save target panel:** id, legacy_id, date, title, published false→true, expectedBeforeUpdatedAt, actualWrite=false, public reflection pending note
+- **approvalId:** dry-run `G-22h-gosaki-schedule-republish-dry-run`; Save `G-22h-gosaki-schedule-republish-update-non-dry-run-slice`
+- **env arm:** `PUBLIC_ADMIN_GOSAKI_SCHEDULE_G22H_REPUBLISH_UPDATE_NON_DRY_RUN_ARMED` (G-22h6 only)
+- **Candidates:** 008 (recommended first Save) · 014 · 001 — dry-run QA on any published=false row
+- **Implementation files listed:** republish-dry-run.ts, config/guards/save stubs, operator-ui, astro template, admin.css (G-22h3 — not touched in G-22h2)
+- **Not executed:** implementation · Save · DB write · SQL · RLS · package · FTP · public reflection
+- **Doc:** `gosaki-schedule-republish-dry-run-ui-planning.md` · **Verifier:** `verify-g22h2-gosaki-schedule-republish-dry-run-ui-planning.mjs`
+- **Next:** G-22h3 republish dry-run implementation
 
 ## G-22h1 Schedule republish planning — complete
 

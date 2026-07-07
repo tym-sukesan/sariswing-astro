@@ -5,16 +5,16 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-22h6b-blocker-gosaki-schedule-republish-save-disabled-session-gate — blocked.
-G-22h6b operator Save once NOT executed. Dry-run preview PASS; Save disabled: Staging admin session required.
-Root cause: stagingAuthSignedIn module cache desync on auth refetch (admin read ok, save gate false).
-Fix applied in working tree (session sync) — not re-tested with Save yet.
+Current phase: G-22h6b-retry2-blocker-gosaki-schedule-republish-save-still-disabled — blocked.
+G-22h6b operator Save once NOT executed (retry2). Dry-run preview PASS; env arm displayed true; Save still disabled.
+Root cause: auth refetch renderEditForm cleared lastRepublishDryRunResult after preview (misleading G-22h6 note).
+Fix applied in working tree: preserve dry-run in draft modes; Save gate fields in target panel — not re-tested with Save.
 expectedBeforeUpdatedAt=2026-07-06T13:58:41.425402+00:00; target schedule-2026-07-008 only.
-No Save / DB write / SQL mutation in blocker phase. write-armed dev stopped; port 4321 LISTEN none.
+No Save / DB write / SQL mutation. write-armed dev stopped; port 4321 LISTEN none.
 Do NOT re-Save: schedule-2026-07-008 unpublish (G-22f7); schedule-2026-03-014 (G-22d3d); schedule-2026-09-001 (G-22e7).
 Routine dev: PUBLIC_ADMIN_WRITE_DRY_RUN=true; all write arms off.
 Supabase interim SoT: kmjqppxjdnwwrtaeqjta — never vsbvndwuajjhnzpohghh.
-Next: G-22h6b-retry operator Save once (write-armed, after fix verification).
+Next: G-22h6b retry3 operator Save once (write-armed, after fix verification).
 ```
 
 ## G-22h6a Schedule republish UPDATE implementation — complete

@@ -307,7 +307,9 @@ export function evaluateG22hRepublishUpdateUiGate(input: {
     return {
       enabled: false,
       saveAllowed: false,
-      reason: "再公開の保存はG-22h6以降で有効化します。現在は保存できません。",
+      reason: input.republishDryRunResult
+        ? "Republish dry-run preview has blocking errors — review the preview panel."
+        : "Republish dry-run preview required — click「変更を確認」before Save.",
     };
   }
 

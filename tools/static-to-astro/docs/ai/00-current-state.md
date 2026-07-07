@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-22h6b blocker Gosaki Schedule republish Save disabled / session gate (2026-07-07):** **blocked** — operator dry-run preview PASS on `schedule-2026-07-008`; Save disabled with `Staging admin session required.`; **no Save / DB write**. Root cause: `stagingAuthSignedIn` module cache not synced on auth refetch. Fix applied (session sync + UI/CSS). write-armed dev **stopped**. Doc: `gosaki-schedule-republish-save-disabled-blocker.md`. **Next: G-22h6b-retry operator Save once.**
+**G-22h6b retry2 blocker Gosaki Schedule republish Save still disabled (2026-07-07):** **blocked** — env arm displayed true; dry-run preview PASS; Save disabled (`再公開を保存（現在は無効）`); misleading G-22h6 note. Root cause: `clearDryRunResult()` on auth refetch `renderEditForm`. Fix: preserve dry-run in draft modes + Save gate panel fields. **No Save / DB write.** Doc: `gosaki-schedule-republish-save-still-disabled-blocker.md`. **Next: G-22h6b retry3.**
+
+**G-22h6b blocker Gosaki Schedule republish Save disabled / session gate (2026-07-07):** **complete** — commit `3d5f8b0`. **Superseded for retry2 by dry-run preservation fix.**
 
 **G-22h6a Gosaki Schedule republish UPDATE implementation (2026-07-07):** **complete** — commit `9880091`. **Superseded for execution by G-22h6b (blocked).**
 

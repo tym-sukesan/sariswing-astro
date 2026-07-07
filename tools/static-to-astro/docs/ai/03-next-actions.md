@@ -20,7 +20,22 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Verifier | `verify-g22h4b-gosaki-schedule-republish-ui-wording-cleanup.mjs` |
 | **Next** | **G-22h5** republish target preflight |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22h6b blocker Schedule republish Save disabled — blocked
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22h6b retry2 blocker Save still disabled — blocked
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-22h6b-retry2-blocker-gosaki-schedule-republish-save-still-disabled` |
+| Base | `3d5f8b0` |
+| Preview | **operator PASS** |
+| env arm displayed | **true** |
+| Save executed | **no** |
+| Root cause | `clearDryRunResult()` on auth refetch after preview |
+| Fix | dry-run preservation + Save gate panel fields |
+| Doc | `gosaki-schedule-republish-save-still-disabled-blocker.md` |
+| Verifier | `verify-g22h6b-gosaki-schedule-republish-save-still-disabled-blocker.mjs` |
+| **Next** | **G-22h6b retry3** operator Save once |
+
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22h6b blocker Save disabled / session gate — complete
 
 | Item | Value |
 | --- | --- |

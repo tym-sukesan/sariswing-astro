@@ -503,6 +503,12 @@ function updateSaveTargetPanel(): void {
     const kind: GosakiScheduleOperationKind = "republish";
     const step = resolveWorkflowStep(kind);
     const updateConfig = getG22hRepublishUpdateConfig();
+    const gate = evaluateG22hRepublishUpdateUiGate({
+      signedIn: stagingAuthSignedIn === true,
+      republishMode: true,
+      target: republishTargetSnapshot,
+      republishDryRunResult: lastRepublishDryRunResult,
+    });
     const expectedBeforeUpdatedAt =
       republishDraftState?.expectedBeforeUpdatedAt ??
       republishTargetSnapshot.updated_at ??
@@ -528,10 +534,13 @@ function updateSaveTargetPanel(): void {
           <div><dt>expectedBeforeUpdatedAt</dt><dd><code>${escapeHtml(String(expectedBeforeUpdatedAt))}</code></dd></div>
           <div><dt>preflight baseline</dt><dd><code>${escapeHtml(G22H_PREFLIGHT_EXPECTED_BEFORE_UPDATED_AT)}</code></dd></div>
           <div><dt>G-22h env arm</dt><dd><code>${escapeHtml(updateConfig.envArm)}=${updateConfig.armed ? "true" : "false"}</code></dd></div>
+          <div><dt>saveEnabled (config)</dt><dd><code>${String(updateConfig.saveEnabled)}</code></dd></div>
+          <div><dt>dry-run ok</dt><dd><code>${String(lastRepublishDryRunResult?.ok ?? false)}</code></dd></div>
+          <div><dt>Save gate</dt><dd>${gate.enabled ? "<code>true</code>" : escapeHtml(gate.reason)}</dd></div>
           <div><dt>actualWrite</dt><dd><code>false</code></dd></div>
           <div><dt>publicReflectionPending</dt><dd><code>true</code></dd></div>
         </dl>
-        <p class="gosaki-schedule-edit-dry-run__note">Save は <strong>G-22h6b</strong> で operator が <strong>1回だけ</strong> 実行します（成功時のみ actualWrite=true）。env arm が false のときは保存できません。公開サイトへの反映は別フェーズです。reference rows（${escapeHtml(G22H_REFERENCE_LEGACY_SCHEDULE_2026_03_014)} / ${escapeHtml(G22H_REFERENCE_LEGACY_SCHEDULE_2026_09_001)}）は対象外です。</p>
+        <p class="gosaki-schedule-edit-dry-run__note">Save は <strong>G-22h6b</strong> で operator が <strong>1回だけ</strong> 実行します（成功時のみ actualWrite=true）。<code>saveEnabled</code> と <code>dry-run ok</code> が両方 true のとき「再公開を保存」が有効になります。公開サイトへの反映は別フェーズです。</p>
       </section>
     `;
     updateActiveProcedureHintCard();
@@ -831,7 +840,7 @@ function revertToSsrBootstrapRows(): void {
   clearSelectionIfRowMissing();
   renderScheduleList();
   renderOperatorReadSourceBanner();
-  renderEditForm(selectedRowSnapshot);
+  renderEditForm(selectedRowSnapshot, { clearDryRun: !isDraftModePreservingDryRun() });
   updateUnpublishButtonState();
   updateRepublishButtonState();
   updateSaveTargetPanel();
@@ -869,7 +878,7 @@ async function runAuthenticatedAdminReadRefetch(): Promise<void> {
     clearSelectionIfRowMissing();
     renderScheduleList();
     renderOperatorReadSourceBanner();
-    renderEditForm(selectedRowSnapshot);
+    renderEditForm(selectedRowSnapshot, { clearDryRun: !isDraftModePreservingDryRun() });
     updateUnpublishButtonState();
     updateRepublishButtonState();
     updateSaveTargetPanel();
@@ -889,7 +898,7 @@ async function runAuthenticatedAdminReadRefetch(): Promise<void> {
   clearSelectionIfRowMissing();
   renderScheduleList();
   renderOperatorReadSourceBanner();
-  renderEditForm(selectedRowSnapshot);
+  renderEditForm(selectedRowSnapshot, { clearDryRun: !isDraftModePreservingDryRun() });
   updateUnpublishButtonState();
   updateRepublishButtonState();
   updateSaveTargetPanel();
@@ -1654,6 +1663,21 @@ function isG9kSaveOutcomeSuccess(outcome: G9kExistingEventSaveButtonSaveOutcome)
   return !("errorCode" in outcome.result);
 }
 
+function isDraftModePreservingDryRun(): boolean {
+  return (
+    isRepublishDraftMode() ||
+    isUnpublishDraftMode() ||
+    isDuplicateDraftMode() ||
+    isNewEventDraftMode()
+  );
+}
+
+function shouldClearDryRunOnEditFormRender(options?: { clearDryRun?: boolean }): boolean {
+  if (options?.clearDryRun === true) return true;
+  if (options?.clearDryRun === false) return false;
+  return !isDraftModePreservingDryRun();
+}
+
 function renderEditForm(
   row: ScheduleRecord | null,
   options?: { clearDryRun?: boolean },
@@ -1765,13 +1789,16 @@ function renderEditForm(
     setEditFormRowId(row.id);
   }
 
-  if (options?.clearDryRun !== false) {
+  if (shouldClearDryRunOnEditFormRender(options)) {
     clearDryRunResult();
   }
   renderSelectedRowSummary(row);
   updateSaveTargetPanel();
   updateUnpublishButtonState();
   updateRepublishButtonState();
+  if (isDraftModePreservingDryRun()) {
+    updateSaveButtonState(null);
+  }
 }
 
 function readEditFormSafeValues(): G9kExistingEventSaveButtonFormValues {

@@ -5,16 +5,25 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-23h-static-to-astro-onboarding-orchestrator-skeleton — complete.
-Orchestrator CLI: run-onboarding-orchestrator.mjs
-Modes: validate-only · fixture-dry-run (unsupported modes → NOT_IMPLEMENTED)
-Pipeline: config → validator → registry → fixture → seed extractor → steps 0–9 report
-Sample fixture: schedule 2 · news/profile/discography/video/contact 1 each — PASS
-DB/package/FTP steps: planOnly (allowDbWrite/allowPackageBuild/allowFtpUpload=false)
-No crawl / network / DB / SQL / package / FTP / deploy in G-23h.
-Next: G-23i fixture integration · G-23j full dry-run · G-23k crawl-dry-run planning.
+Current phase: G-23i-static-to-astro-fixture-mode-orchestrator-integration — complete.
+Standard entry: run-onboarding-orchestrator.mjs --mode fixture-dry-run
+Compatibility entry: run-onboarding-fixture-dry-run.mjs (delegates to orchestrator)
+Both entries: schedule 2 · news/profile/discography/video/contact 1 each — counts match
+G-23d / G-23h functional verifier compatibility preserved
+No crawl / network / DB / SQL / package / FTP / deploy in G-23i
+Next: G-23j full dry-run · G-23k crawl-dry-run planning · G-23l report output
 Schedule CMS P0 chain remains CLOSED (G-22j1/j2). Do NOT re-Save closed slices.
 ```
+
+## G-23i fixture mode orchestrator integration — complete
+
+- **Goal:** Orchestrator = standard fixture entry; G-23d script = compatibility wrapper
+- **Standard:** `run-onboarding-orchestrator.mjs --config --fixture --mode fixture-dry-run`
+- **Compat:** `run-onboarding-fixture-dry-run.mjs <config> <fixture>` delegates + maps G-23d output
+- **Seed counts:** both entries match (schedule 2 · others 1)
+- **Not executed:** crawl · network · DB · SQL · package · FTP · deploy
+- **Verifier:** `verify-g23i-static-to-astro-fixture-mode-orchestrator-integration.mjs`
+- **Next:** G-23j full dry-run · G-23k crawl planning · G-23l report output
 
 ## G-23h orchestrator skeleton — complete
 

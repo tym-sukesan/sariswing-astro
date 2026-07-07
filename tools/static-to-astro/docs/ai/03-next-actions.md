@@ -1,6 +1,21 @@
 Last updated: 2026-07-08
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-23i fixture mode orchestrator integration — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-23i-static-to-astro-fixture-mode-orchestrator-integration` |
+| Base | `dfd1453` |
+| Standard entry | `run-onboarding-orchestrator.mjs --mode fixture-dry-run` |
+| Compatibility entry | `run-onboarding-fixture-dry-run.mjs` (delegates) |
+| Seed counts match | schedule **2** · others **1** each |
+| G-23d / G-23h functional compat | **yes** |
+| Crawl / DB / SQL / package / FTP | **not executed** |
+| Doc | `static-to-astro-fixture-mode-orchestrator-integration-result.md` |
+| Verifier | `verify-g23i-static-to-astro-fixture-mode-orchestrator-integration.mjs` |
+| **Next** | **G-23j** full dry-run · **G-23k** crawl planning · **G-23l** report output |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-23h orchestrator skeleton — complete
 
 | Item | Value |
@@ -14,7 +29,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Crawl / DB / SQL / package / FTP | **not executed** |
 | Doc | `static-to-astro-onboarding-orchestrator-skeleton-result.md` |
 | Verifier | `verify-g23h-static-to-astro-onboarding-orchestrator-skeleton.mjs` |
-| **Next** | **G-23i** fixture integration · **G-23j** full dry-run · **G-23k** crawl-dry-run planning |
+| **Next** | **Superseded by G-23i** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-23g seed extractor standardization — complete
 

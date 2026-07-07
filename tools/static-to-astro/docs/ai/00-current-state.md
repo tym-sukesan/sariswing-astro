@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-22h6a Gosaki Schedule republish UPDATE implementation (2026-07-07):** **complete (uncommitted)** — `executeG22hScheduleRepublishUpdateSave` + config/guards/UI gate for `published=false→true` UPDATE on `schedule-2026-07-008` only; default Save **disabled** until G-22h6b write-armed execution. **No Save / DB write / SQL / RLS / GRANT / package / FTP.** Doc: `gosaki-schedule-republish-update-implementation.md`. Verifier: `verify-g22h6a-gosaki-schedule-republish-update-implementation.mjs`. **Next: G-22h6b operator Save once.**
+**G-22h6b blocker Gosaki Schedule republish Save disabled / session gate (2026-07-07):** **blocked** — operator dry-run preview PASS on `schedule-2026-07-008`; Save disabled with `Staging admin session required.`; **no Save / DB write**. Root cause: `stagingAuthSignedIn` module cache not synced on auth refetch. Fix applied (session sync + UI/CSS). write-armed dev **stopped**. Doc: `gosaki-schedule-republish-save-disabled-blocker.md`. **Next: G-22h6b-retry operator Save once.**
+
+**G-22h6a Gosaki Schedule republish UPDATE implementation (2026-07-07):** **complete** — commit `9880091`. **Superseded for execution by G-22h6b (blocked).**
 
 **G-22h5 Gosaki Schedule republish target selection / preflight (2026-07-07):** **complete** — commit `fabfd2f`. G-22h6 first candidate `schedule-2026-07-008`; expectedBeforeUpdatedAt recorded. **Superseded for implementation by G-22h6a.**
 

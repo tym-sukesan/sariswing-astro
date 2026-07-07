@@ -141,7 +141,7 @@ export function executeG22hScheduleRepublishDryRun(input: {
 }): G22hScheduleRepublishDryRunResult {
   const guardErrors: string[] = [];
 
-  if (input.signedIn === false) {
+  if (!input.signedIn) {
     guardErrors.push("G-22h authenticated admin session required for republish preview.");
   }
 

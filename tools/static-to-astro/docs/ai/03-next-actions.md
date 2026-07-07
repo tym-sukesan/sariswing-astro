@@ -20,6 +20,25 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Verifier | `verify-g22h4b-gosaki-schedule-republish-ui-wording-cleanup.mjs` |
 | **Next** | **G-22h5** republish target preflight |
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22h6b blocker Schedule republish Save disabled — blocked
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-22h6b-blocker-gosaki-schedule-republish-save-disabled-session-gate` |
+| Base | `9880091` |
+| Target | `schedule-2026-07-008` |
+| expectedBeforeUpdatedAt | `2026-07-06T13:58:41.425402+00:00` |
+| Dry-run preview | **operator PASS** |
+| Save executed | **no** |
+| actualWrite | **false** |
+| Displayed reason | `Staging admin session required.` |
+| Root cause | `stagingAuthSignedIn` not synced on auth refetch |
+| Fix | session sync + dry-run guard alignment + CSS overlap |
+| write-armed dev | **stopped**; port 4321 LISTEN **none** |
+| Doc | `gosaki-schedule-republish-save-disabled-blocker.md` |
+| Verifier | `verify-g22h6b-gosaki-schedule-republish-save-disabled-blocker.mjs` |
+| **Next** | **G-22h6b-retry** operator Save once |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22h6a Schedule republish UPDATE implementation — complete
 
 | Item | Value |

@@ -5,14 +5,16 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-22h6a-gosaki-schedule-republish-update-implementation — complete (uncommitted).
-Republish UPDATE save module wired for schedule-2026-07-008 only; default Save disabled until G-22h6b write-armed execution.
-expectedBeforeUpdatedAt=2026-07-06T13:58:41.425402+00:00; payload { published: true } only; optimistic lock required.
-No Save / DB write / SQL mutation in G-22h6a implementation phase.
+Current phase: G-22h6b-blocker-gosaki-schedule-republish-save-disabled-session-gate — blocked.
+G-22h6b operator Save once NOT executed. Dry-run preview PASS; Save disabled: Staging admin session required.
+Root cause: stagingAuthSignedIn module cache desync on auth refetch (admin read ok, save gate false).
+Fix applied in working tree (session sync) — not re-tested with Save yet.
+expectedBeforeUpdatedAt=2026-07-06T13:58:41.425402+00:00; target schedule-2026-07-008 only.
+No Save / DB write / SQL mutation in blocker phase. write-armed dev stopped; port 4321 LISTEN none.
 Do NOT re-Save: schedule-2026-07-008 unpublish (G-22f7); schedule-2026-03-014 (G-22d3d); schedule-2026-09-001 (G-22e7).
 Routine dev: PUBLIC_ADMIN_WRITE_DRY_RUN=true; all write arms off.
 Supabase interim SoT: kmjqppxjdnwwrtaeqjta — never vsbvndwuajjhnzpohghh.
-Next: G-22h6b operator Save once (write-armed, operator approval).
+Next: G-22h6b-retry operator Save once (write-armed, after fix verification).
 ```
 
 ## G-22h6a Schedule republish UPDATE implementation — complete

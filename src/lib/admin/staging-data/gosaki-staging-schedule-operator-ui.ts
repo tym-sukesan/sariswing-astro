@@ -528,11 +528,10 @@ function updateSaveTargetPanel(): void {
           <div><dt>expectedBeforeUpdatedAt</dt><dd><code>${escapeHtml(String(expectedBeforeUpdatedAt))}</code></dd></div>
           <div><dt>preflight baseline</dt><dd><code>${escapeHtml(G22H_PREFLIGHT_EXPECTED_BEFORE_UPDATED_AT)}</code></dd></div>
           <div><dt>G-22h env arm</dt><dd><code>${escapeHtml(updateConfig.envArm)}=${updateConfig.armed ? "true" : "false"}</code></dd></div>
-          <div><dt>actualWrite</dt><dd><code>false</code>（Save成功時のみ true — G-22h6b）</dd></div>
+          <div><dt>actualWrite</dt><dd><code>false</code></dd></div>
           <div><dt>publicReflectionPending</dt><dd><code>true</code></dd></div>
         </dl>
-        <p class="gosaki-schedule-edit-dry-run__note">Save は <strong>G-22h6b</strong> で operator が <strong>1回だけ</strong> 実行します。env arm が false のときは保存できません。公開サイトへの反映は別フェーズです。reference rows（${escapeHtml(G22H_REFERENCE_LEGACY_SCHEDULE_2026_03_014)} / ${escapeHtml(G22H_REFERENCE_LEGACY_SCHEDULE_2026_09_001)}）は対象外です。</p>
-        ${renderPublicReflectionPendingNote()}
+        <p class="gosaki-schedule-edit-dry-run__note">Save は <strong>G-22h6b</strong> で operator が <strong>1回だけ</strong> 実行します（成功時のみ actualWrite=true）。env arm が false のときは保存できません。公開サイトへの反映は別フェーズです。reference rows（${escapeHtml(G22H_REFERENCE_LEGACY_SCHEDULE_2026_03_014)} / ${escapeHtml(G22H_REFERENCE_LEGACY_SCHEDULE_2026_09_001)}）は対象外です。</p>
       </section>
     `;
     updateActiveProcedureHintCard();
@@ -844,8 +843,10 @@ async function runAuthenticatedAdminReadRefetch(): Promise<void> {
   if (!url || !anonKey) return;
 
   const signedIn = await resolveStagingAuthSignedIn();
+  stagingAuthSignedIn = signedIn;
   if (!signedIn) {
     revertToSsrBootstrapRows();
+    updateSaveButtonState(lastDryRunResult);
     return;
   }
 
@@ -870,13 +871,15 @@ async function runAuthenticatedAdminReadRefetch(): Promise<void> {
     renderOperatorReadSourceBanner();
     renderEditForm(selectedRowSnapshot);
     updateUnpublishButtonState();
-  updateRepublishButtonState();
+    updateRepublishButtonState();
     updateSaveTargetPanel();
+    updateSaveButtonState(lastDryRunResult);
     return;
   }
 
   if (result.mode === "ssr-bootstrap") {
     revertToSsrBootstrapRows();
+    updateSaveButtonState(lastDryRunResult);
     return;
   }
 
@@ -890,6 +893,7 @@ async function runAuthenticatedAdminReadRefetch(): Promise<void> {
   updateUnpublishButtonState();
   updateRepublishButtonState();
   updateSaveTargetPanel();
+  updateSaveButtonState(lastDryRunResult);
 }
 
 function subscribeScheduleOperatorAuthRefetch(): void {
@@ -901,7 +905,7 @@ function subscribeScheduleOperatorAuthRefetch(): void {
     const client = getStagingSupabaseClient(url, anonKey);
     client.auth.onAuthStateChange((_event, session) => {
       if (session?.user) {
-        void runAuthenticatedAdminReadRefetch();
+        void refreshStagingAuthSignedIn().then(() => runAuthenticatedAdminReadRefetch());
       } else {
         revertToSsrBootstrapRows();
         void refreshStagingAuthSignedIn();

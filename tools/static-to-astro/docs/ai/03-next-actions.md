@@ -20,6 +20,23 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Verifier | `verify-g22h4b-gosaki-schedule-republish-ui-wording-cleanup.mjs` |
 | **Next** | **G-22h5** republish target preflight |
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22i3 Schedule package/diff dry-run — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-22i3-gosaki-schedule-package-diff-dry-run-result` |
+| Base | `442f8db` |
+| Package regen | **PASS** — local only (`build-gosaki-staging-admin-package.mjs`) |
+| Output | `output/manual-upload/gosaki-piano/public-dist/` (27 files) |
+| `schedule-2026-07-008` | **included** — JSON + July HTML `2026.07.17` |
+| `schedule-2026-03-014` / `schedule-2026-09-001` | **excluded** |
+| `scheduleDataSource` | **supabase** · `safeForStaticFtp: true` |
+| FTP / deploy | **not executed** |
+| Upload candidate (planning) | `schedule/2026-07/index.html` |
+| Doc | `gosaki-schedule-package-diff-dry-run-result.md` |
+| Verifier | `verify-g22i3-gosaki-schedule-package-diff-dry-run-result.mjs` |
+| **Next** | **G-22i4** public output review |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22i2 Schedule public reflection planning — complete
 
 | Item | Value |
@@ -30,11 +47,11 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | `schedule-2026-07-008` | **public eligible** · `published=true` |
 | `schedule-2026-03-014` / `schedule-2026-09-001` | **excluded** · `published=false` |
 | Expected primary output | `schedule/2026-07/index.html` |
-| package / FTP / deploy | **not executed** |
+| package / FTP / deploy | **not executed** (planning only) |
 | production | **not executed** |
 | Doc | `gosaki-schedule-public-reflection-planning.md` |
 | Verifier | `verify-g22i2-gosaki-schedule-public-reflection-planning.mjs` |
-| **Next** | **G-22i3** package/diff dry-run |
+| **Next** | **Superseded by G-22i3** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22i1 Schedule P0 release readiness review — complete
 

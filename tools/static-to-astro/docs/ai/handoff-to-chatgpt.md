@@ -5,18 +5,18 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-22i2-gosaki-schedule-public-reflection-planning — complete.
-Public reflection planned: staging DB published=true → local static package (read-only build). FTP is separate.
-Include: schedule-2026-07-008 (published=true, public eligible) on schedule/2026-07/.
-Exclude: schedule-2026-03-014 and schedule-2026-09-001 (published=false test rows).
-Package / FTP / deploy NOT executed. Production NOT touched. Physical DELETE deferred.
-Do NOT re-Save closed slices: G-22d duplicate (014), G-22e new event (001), G-22f unpublish (008), G-22h republish (008).
+Current phase: G-22i3-gosaki-schedule-package-diff-dry-run-result — complete.
+Local package regen PASS: build-gosaki-staging-admin-package.mjs (27 files, safeForStaticFtp=true).
+Include: schedule-2026-07-008 in JSON + schedule/2026-07/index.html (2026.07.17).
+Exclude: schedule-2026-03-014 and schedule-2026-09-001 (absent from JSON and month HTML).
+FTP / deploy / workflow_dispatch NOT executed. Production NOT touched.
+Do NOT re-Save closed slices: G-22d (014), G-22e (001), G-22f unpublish (008), G-22h republish (008).
 Routine dev: PUBLIC_ADMIN_WRITE_DRY_RUN=true; all write arms off.
 Supabase interim SoT: kmjqppxjdnwwrtaeqjta — never vsbvndwuajjhnzpohghh.
 FTP auto --apply suspended (G-7f). readyForAnyFutureFtpApply: false.
-Next: G-22i3 package/diff dry-run → G-22i4 public output review → G-22i5 FTP planning → G-22i6 actual upload.
-Build entry (G-22i3+): node tools/static-to-astro/scripts/build-gosaki-staging-admin-package.mjs
-Upload target (G-22i6): /cms-kit-staging/gosaki-piano/ on Lolipop (operator manual only).
+Upload candidate (planning only): schedule/2026-07/index.html → /cms-kit-staging/gosaki-piano/schedule/2026-07/index.html
+Next: G-22i4 public output review (local + live HTTP compare) → G-22i5 FTP planning → G-22i6 actual upload.
+Do NOT FTP until G-22i5+ with explicit operator approval.
 ```
 
 ## G-22h6a Schedule republish UPDATE implementation — complete

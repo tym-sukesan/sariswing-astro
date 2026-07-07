@@ -5,17 +5,28 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-23b-static-to-astro-onboarding-config-schema-planning — complete.
-Onboarding config schema designed: single JSON for URL · site_slug · preset · outputs · safety gates.
-Schema draft: config/onboarding.schema.example.json
-Gosaki sample: config/onboarding.gosaki-piano.example.json
-Safety gates default safe: allowDbWrite/PackageBuild/FtpUpload/ProductionDeploy = false.
-30-min flow wiring: config sections map to G-23a timeline (0–3 intake → 26–30 report).
-Supabase staging only: kmjqppxjdnwwrtaeqjta — never vsbvndwuajjhnzpohghh.
-CLI / crawl / DB write / package / FTP / deploy NOT executed in G-23b.
-Next: G-23c config validator · G-23d sample site dry-run (fixture-only).
+Current phase: G-23c-static-to-astro-onboarding-config-validator — complete.
+Onboarding config local validator: scripts/validate-onboarding-config.mjs
+Gosaki example PASS; bad-config FAIL cases verified (safety gates · prod ref · service_role).
+Schema example onboarding.schema.example.json = structure-only (NOT validation target).
+Safety gates enforced: allowDbWrite/PackageBuild/FtpUpload/ProductionDeploy = false.
+Production ref vsbvndwuajjhnzpohghh forbidden as active target; staging kmjqppxjdnwwrtaeqjta allowed.
+No network / crawl / DB write / package / FTP / deploy in G-23c.
+Next: G-23d sample site dry-run (fixture-only) · G-23e onboarding orchestrator planning.
 Schedule CMS P0 chain remains CLOSED (G-22j1/j2). Do NOT re-Save closed slices.
 ```
+
+## G-23c onboarding config validator — complete
+
+- **Goal:** Validate G-23b onboarding config JSON locally before pipeline execution
+- **Artifacts:** `validate-onboarding-config.mjs` · `static-to-astro-onboarding-config-validator-result.md`
+- **Gosaki:** `onboarding.gosaki-piano.example.json` → **PASS** (schedule enabled)
+- **Schema example:** JSON Schema draft — **not** an onboarding instance (validator FAIL expected)
+- **Guards:** safety gates · ftp.disabled · forbidden prod ref · service_role keys · secrets/tokens · output paths under `tools/static-to-astro/output/`
+- **CLI:** `--json` for machine-readable result
+- **Not executed:** crawl · DB write · package regen · FTP · deploy · network
+- **Verifier:** `verify-g23c-static-to-astro-onboarding-config-validator.mjs` (77 PASS)
+- **Next:** G-23d fixture-only dry-run · G-23e orchestrator planning · G-23f CMS preset registry
 
 ## G-23b onboarding config schema planning — complete
 

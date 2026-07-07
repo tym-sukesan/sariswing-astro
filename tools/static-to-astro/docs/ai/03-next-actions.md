@@ -1,6 +1,23 @@
 Last updated: 2026-07-08
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-23c onboarding config validator — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-23c-static-to-astro-onboarding-config-validator` |
+| Base | `9b43d55` |
+| Validator | `scripts/validate-onboarding-config.mjs` |
+| Gosaki example | **PASS** |
+| Bad config cases | **FAIL** (safety gates · URL · slug · prod ref · service_role) |
+| Schema example | structure-only — **not** validation target |
+| Safety gates | allowDbWrite/PackageBuild/FtpUpload/ProductionDeploy = false enforced |
+| Production ref guard | `vsbvndwuajjhnzpohghh` forbidden as active target |
+| Crawl / DB write / package / FTP / network | **not executed** |
+| Doc | `static-to-astro-onboarding-config-validator-result.md` |
+| Verifier | `verify-g23c-static-to-astro-onboarding-config-validator.mjs` (77 PASS) |
+| **Next** | **G-23d** sample site dry-run (fixture-only) · **G-23e** onboarding orchestrator planning |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-23b onboarding config schema planning — complete
 
 | Item | Value |
@@ -16,7 +33,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Crawl / DB write / package / FTP | **not executed** |
 | Doc | `static-to-astro-onboarding-config-schema-planning.md` |
 | Verifier | `verify-g23b-static-to-astro-onboarding-config-schema-planning.mjs` |
-| **Next** | **G-23c** config validator · **G-23d** sample site dry-run |
+| **Next** | **Superseded by G-23c** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22h4b Schedule republish UI wording cleanup — complete
 

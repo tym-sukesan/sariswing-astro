@@ -5,15 +5,27 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-23g-static-to-astro-seed-extractor-standardization — complete.
-Seed extractor: schedule/news/profile/discography/video/contact from fixture/crawl result.
-Exports: extractOnboardingSeedCandidates · extractModuleSeedCandidates · normalizeSeedCandidate.
-Sample musician fixture: schedule 2 · news/profile/discography/video/contact 1 each — PASS.
-Inspect: scripts/inspect-onboarding-seed-extraction.mjs
-No DB / network / crawl / SQL / package / FTP / orchestrator impl in G-23g.
-Next: G-23h orchestrator skeleton · G-23i fixture integration · G-23j full dry-run.
+Current phase: G-23h-static-to-astro-onboarding-orchestrator-skeleton — complete.
+Orchestrator CLI: run-onboarding-orchestrator.mjs
+Modes: validate-only · fixture-dry-run (unsupported modes → NOT_IMPLEMENTED)
+Pipeline: config → validator → registry → fixture → seed extractor → steps 0–9 report
+Sample fixture: schedule 2 · news/profile/discography/video/contact 1 each — PASS
+DB/package/FTP steps: planOnly (allowDbWrite/allowPackageBuild/allowFtpUpload=false)
+No crawl / network / DB / SQL / package / FTP / deploy in G-23h.
+Next: G-23i fixture integration · G-23j full dry-run · G-23k crawl-dry-run planning.
 Schedule CMS P0 chain remains CLOSED (G-22j1/j2). Do NOT re-Save closed slices.
 ```
+
+## G-23h orchestrator skeleton — complete
+
+- **Goal:** Wire G-23b–G-23g into single fixture/dry-run orchestrator CLI
+- **Artifacts:** `run-onboarding-orchestrator.mjs` · result doc · verifier
+- **Modes:** validate-only · fixture-dry-run; others NOT_IMPLEMENTED
+- **Steps:** 0–9 with planOnly DB/package/FTP when gates false
+- **Sample fixture:** schedule 2 · others 1 each — **PASS**
+- **Not executed:** crawl · network · DB · SQL · package · FTP · deploy
+- **Verifier:** `verify-g23h-static-to-astro-onboarding-orchestrator-skeleton.mjs`
+- **Next:** G-23i fixture integration · G-23j full dry-run · G-23k crawl-dry-run planning
 
 ## G-23g seed extractor standardization — complete
 

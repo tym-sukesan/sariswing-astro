@@ -5,16 +5,27 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-23d-static-to-astro-onboarding-sample-site-dry-run — complete.
-Fixture-only 30-min onboarding dry-run: run-onboarding-fixture-dry-run.mjs
-Sample config: onboarding.sample-musician-fixture.example.json (example.com — NOT fetched)
-Fixture: fixtures/onboarding/sample-musician-basic-crawl-result.json (6 pages · seed candidates)
-Dry-run PASS: config validation · page classification · CMS modules · output paths (computed only)
-Safety gates: allowDbWrite/PackageBuild/FtpUpload=false; staging ref kmjqppxjdnwwrtaeqjta only.
-No live crawl / network / DB / package / FTP / deploy in G-23d.
-Next: G-23e orchestrator planning · G-23f CMS preset registry · G-23g seed extractor.
+Current phase: G-23e-static-to-astro-onboarding-orchestrator-planning — complete.
+Orchestrator design: steps 0–9 · CLI modes (fixture-dry-run first) · safety gate matrix · failure policy.
+Future entry: run-onboarding-orchestrator.mjs — NOT implemented in G-23e.
+G-23d run-onboarding-fixture-dry-run.mjs retained as fixture-mode prototype (not replaced).
+Building blocks: G-23b config · G-23c validator · G-23d fixture dry-run · G-23a 30-min flow.
+No live crawl / network / DB / package / FTP / deploy in G-23e.
+Next: G-23f CMS preset registry · G-23g seed extractor · G-23h orchestrator skeleton.
 Schedule CMS P0 chain remains CLOSED (G-22j1/j2). Do NOT re-Save closed slices.
 ```
+
+## G-23e onboarding orchestrator planning — complete
+
+- **Goal:** Design unified orchestrator for 30-min onboarding pipeline (planning only)
+- **Artifacts:** `static-to-astro-onboarding-orchestrator-planning.md`
+- **Steps:** 0 validate → 1 intake → 2 crawl/fixture → 3 classify → 4 CMS plan → 5 seed plan → 6 DB plan → 7 package plan → 8 diff/QA → 9 handoff
+- **CLI modes:** validate-only · fixture-dry-run · crawl-dry-run · seed-dry-run · package-dry-run · full-dry-run · apply-staging-db · prepare-upload-plan (all future)
+- **Safety:** gate matrix + fail-fast policy documented
+- **G-23d:** prototype for fixture mode — do not replace until G-23i
+- **Not executed:** orchestrator impl · live crawl · DB · package · FTP · deploy
+- **Verifier:** `verify-g23e-static-to-astro-onboarding-orchestrator-planning.mjs`
+- **Next:** G-23f preset registry · G-23g seed extractor · G-23h skeleton
 
 ## G-23d onboarding sample site dry-run — complete
 

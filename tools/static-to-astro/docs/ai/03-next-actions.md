@@ -1,6 +1,21 @@
 Last updated: 2026-07-08
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-23e onboarding orchestrator planning — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-23e-static-to-astro-onboarding-orchestrator-planning` |
+| Base | `72951ee` |
+| Orchestrator design | **complete** — steps 0–9 · CLI modes · safety matrix · failure policy |
+| Future CLI | `run-onboarding-orchestrator.mjs` — **not implemented** |
+| G-23d relationship | fixture dry-run = prototype; **not replaced** |
+| Implementation | **not executed** |
+| Live crawl / network / DB / package / FTP | **not executed** |
+| Doc | `static-to-astro-onboarding-orchestrator-planning.md` |
+| Verifier | `verify-g23e-static-to-astro-onboarding-orchestrator-planning.mjs` |
+| **Next** | **G-23f** CMS preset registry · **G-23g** seed extractor · **G-23h** orchestrator skeleton |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-23d onboarding sample site dry-run — complete
 
 | Item | Value |
@@ -17,7 +32,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Live crawl / network / DB / package / FTP | **not executed** |
 | Doc | `static-to-astro-onboarding-sample-site-dry-run-result.md` |
 | Verifier | `verify-g23d-static-to-astro-onboarding-sample-site-dry-run.mjs` |
-| **Next** | **G-23e** orchestrator planning · **G-23f** CMS preset registry · **G-23g** seed extractor |
+| **Next** | **Superseded by G-23e** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-23c onboarding config validator — complete
 

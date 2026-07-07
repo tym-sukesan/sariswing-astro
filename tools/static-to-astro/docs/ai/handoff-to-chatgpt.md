@@ -5,27 +5,41 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-22h3-gosaki-schedule-republish-dry-run-ui-implementation — complete (uncommitted).
-Republish dry-run UI: published=false→true preview; Save disabled / alert-only until G-22h6.
-dry-run approvalId: G-22h-gosaki-schedule-republish-dry-run.
-Module: executeG22hScheduleRepublishDryRun; actualWrite=false only; publicReflectionPending=true.
+Current phase: G-22h4-gosaki-schedule-republish-dry-run-readonly-qa — complete (uncommitted).
+Operator manual login QA PASS on schedule-2026-07-008: republish dry-run preview published=false→true.
+actualWrite=false; publicReflectionPending=true; Save disabled (再公開を保存（準備中）); no Save clicked.
 No DB write / SQL / RLS / package / FTP / public reflection in this phase.
-Do NOT re-Save: schedule-2026-07-008 (G-22f7), schedule-2026-09-001 (G-22e7), schedule-2026-03-014 (G-22d3d).
+Do NOT re-Save: schedule-2026-07-008 until G-22h6; schedule-2026-09-001 (G-22e7); schedule-2026-03-014 (G-22d3d).
 Routine dev: PUBLIC_ADMIN_WRITE_DRY_RUN=true; all write arms off.
 Supabase interim SoT: kmjqppxjdnwwrtaeqjta — never vsbvndwuajjhnzpohghh.
-Next: G-22h4 republish dry-run read-only QA.
+Residual: English wording non-blocking — G-22h4b cleanup candidate.
+Next: G-22h4b UI wording cleanup or G-22h5 republish target preflight.
 ```
+
+## G-22h4 Schedule republish dry-run read-only QA — complete
+
+- **Goal:** Operator manual login read-only QA of G-22h3 republish dry-run UI on live dev
+- **Target:** `schedule-2026-07-008` · id `3e572f02-4f35-460e-80a1-3a7d15ca3fd9` · published=false
+- **Flow:** 非公開のみ filter → keyword → 再公開案を作成 → 変更を確認
+- **Preview PASS:** operation republish/republish-update · published false→true · actualWrite=false · publicReflectionPending=true · expectedBeforeUpdatedAt `2026-07-06T13:58:41.425402+00:00`
+- **Save:** 再公開を保存（準備中）disabled — **not clicked**
+- **Not executed:** Save · DB write · SQL · RLS · package · FTP · public reflection
+- **Dev server:** stopped · port 4321 LISTEN none
+- **Residual:** `"Republish dry-run preview must succeed before Save (G-22h6)."` — non-blocking; G-22h4b candidate
+- **Doc:** `gosaki-schedule-republish-dry-run-readonly-qa.md` · **Verifier:** `verify-g22h4-...mjs`
+- **Next:** G-22h4b wording cleanup or G-22h5 preflight
 
 ## G-22h3 Schedule republish dry-run UI implementation — complete
 
 - **Goal:** Republish dry-run / preview UI; Save disabled until G-22h6
+- **Commit:** `646f680`
 - **Module:** `gosaki-schedule-republish-dry-run.ts` — `executeG22hScheduleRepublishDryRun`
 - **UI:** `#gosaki-schedule-republish-btn` · `editDraftMode=republish` · procedure hint `republish`
 - **Save:** alert-only stub — `再公開を保存（準備中）` always disabled
 - **Output:** published false→true · actualWrite=false · publicReflectionPending=true · contentFieldsChanged=false
 - **Not executed:** DB write · Save · SQL · RLS · package · FTP · public reflection
 - **Doc:** `gosaki-schedule-republish-dry-run-implementation.md` · **Verifier:** `verify-g22h3-...mjs`
-- **Next:** G-22h4 read-only / dry-run QA
+- **Next:** Superseded by G-22h4 read-only QA
 
 ## G-22h2 Schedule republish dry-run UI planning — complete
 

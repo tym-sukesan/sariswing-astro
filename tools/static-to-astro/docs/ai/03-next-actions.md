@@ -1,12 +1,34 @@
 Last updated: 2026-07-07
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22h4 Schedule republish dry-run read-only QA — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-22h4-gosaki-schedule-republish-dry-run-readonly-qa` |
+| Base | `646f680` |
+| Scope | operator manual login read-only QA · record only |
+| Target | `schedule-2026-07-008` (`3e572f02-4f35-460e-80a1-3a7d15ca3fd9`) |
+| Flow | 再公開案を作成 → 変更を確認 |
+| Preview | `published=false→true` · `actualWrite=false` · `publicReflectionPending=true` |
+| expectedBeforeUpdatedAt | `2026-07-06T13:58:41.425402+00:00` |
+| Save | **disabled** — 再公開を保存（準備中）· **not clicked** |
+| Save / DB write / SQL | **none** |
+| RLS / grant / service_role | **unchanged** |
+| package / FTP / public reflection | **none** |
+| Dev server | **stopped** — port 4321 LISTEN none |
+| Residual | English wording non-blocking — G-22h4b candidate |
+| Doc | `gosaki-schedule-republish-dry-run-readonly-qa.md` |
+| Verifier | `verify-g22h4-gosaki-schedule-republish-dry-run-readonly-qa.mjs` |
+| **Next** | **G-22h4b** UI wording cleanup **or** **G-22h5** preflight |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22h3 Schedule republish dry-run UI implementation — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-22h3-gosaki-schedule-republish-dry-run-ui-implementation` |
 | Base | `541d0dd` |
+| Commit | `646f680` |
 | Scope | dry-run module · UI · config stub · guards · no Save module |
 | Module | `executeG22hScheduleRepublishDryRun` |
 | UI | `#gosaki-schedule-republish-btn` · `editDraftMode=republish` |
@@ -21,7 +43,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | package / FTP / public reflection | **none** |
 | Doc | `gosaki-schedule-republish-dry-run-implementation.md` |
 | Verifier | `verify-g22h3-gosaki-schedule-republish-dry-run-implementation.mjs` |
-| **Next** | **G-22h4** republish dry-run read-only QA |
+| **Next** | **Superseded by G-22h4 read-only QA** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22h2 Schedule republish dry-run UI planning — complete
 

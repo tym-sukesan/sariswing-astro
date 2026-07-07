@@ -1,0 +1,122 @@
+{
+  "$comment": "G-23d — Fixture-only crawl result for sample musician site. Not from a live crawl.",
+  "schemaVersion": "1.0",
+  "phase": "G-23d-fixture-crawl-result",
+  "fixtureOnly": true,
+  "siteSlug": "sample-musician-fixture",
+  "source": {
+    "url": "https://example.com/sample-musician/",
+    "platform": "fixture/static",
+    "crawledAt": null,
+    "liveCrawl": false
+  },
+  "metadata": {
+    "title": "Sample Musician — Official Site (Fixture)",
+    "description": "Fixture-only sample site for CMS Kit onboarding dry-run.",
+    "detectedPlatform": "fixture/static",
+    "locale": "ja-JP"
+  },
+  "pages": [
+    {
+      "path": "/",
+      "title": "Home — Sample Musician",
+      "pageType": "home",
+      "hasScheduleTeaser": true,
+      "hasVideoEmbed": true
+    },
+    {
+      "path": "/profile/",
+      "title": "Profile — Sample Musician",
+      "pageType": "profile"
+    },
+    {
+      "path": "/schedule/",
+      "title": "Schedule — Sample Musician",
+      "pageType": "schedule"
+    },
+    {
+      "path": "/discography/",
+      "title": "Discography — Sample Musician",
+      "pageType": "discography"
+    },
+    {
+      "path": "/videos/",
+      "title": "Videos — Sample Musician",
+      "pageType": "video"
+    },
+    {
+      "path": "/contact/",
+      "title": "Contact — Sample Musician",
+      "pageType": "contact"
+    }
+  ],
+  "assets": {
+    "css": [
+      { "path": "/assets/styles/main.css", "bytes": 12480 },
+      { "path": "/assets/styles/schedule.css", "bytes": 3200 }
+    ],
+    "images": [
+      { "path": "/images/hero.jpg", "bytes": 98240, "role": "hero" },
+      { "path": "/images/profile-portrait.jpg", "bytes": 45120, "role": "profile" },
+      { "path": "/images/album-cover-01.jpg", "bytes": 38400, "role": "discography" }
+    ]
+  },
+  "seedCandidates": {
+    "schedule": [
+      {
+        "legacyId": "schedule-2026-08-001",
+        "date": "2026-08-15",
+        "title": "Summer Jazz Night (fixture)",
+        "venue": "Sample Hall Tokyo",
+        "published": true
+      },
+      {
+        "legacyId": "schedule-2026-09-001",
+        "date": "2026-09-20",
+        "title": "Acoustic Session (fixture)",
+        "venue": "Sample Cafe Osaka",
+        "published": true
+      }
+    ],
+    "news": [
+      {
+        "legacyId": "news-2026-07-001",
+        "date": "2026-07-01",
+        "title": "New album announcement (fixture)",
+        "published": true
+      }
+    ],
+    "profile": {
+      "headline": "Sample Musician",
+      "bio": "Fixture biography text for onboarding dry-run.",
+      "image": "/images/profile-portrait.jpg"
+    },
+    "discography": [
+      {
+        "legacyId": "discography-001",
+        "title": "First Light (fixture)",
+        "year": 2024,
+        "published": true
+      }
+    ],
+    "video": [
+      {
+        "legacyId": "video-001",
+        "title": "Live at Sample Hall (fixture)",
+        "embedUrl": "https://www.youtube-nocookie.com/embed/EXAMPLEVIDEO01",
+        "published": true
+      }
+    ],
+    "contact": {
+      "formType": "static-email",
+      "emailLabel": "booking@example.com",
+      "note": "Fixture contact block — no real form endpoint."
+    }
+  },
+  "stats": {
+    "pagesFetched": 6,
+    "assetsFetched": 5,
+    "failed": 0,
+    "durationMs": 0
+  }
+}

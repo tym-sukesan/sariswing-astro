@@ -1,0 +1,140 @@
+{
+  "$comment": "G-23d — Sample musician onboarding config for fixture-only dry-run. No live crawl. No secrets.",
+  "schemaVersion": "1.0",
+  "phase": "G-23d-onboarding-fixture-dry-run",
+  "projectName": "sample-musician-fixture",
+  "siteSlug": "sample-musician-fixture",
+  "sourceUrl": "https://example.com/sample-musician/",
+  "sourcePlatform": "static",
+  "siteType": "musician-basic",
+  "cmsPreset": "musician-basic",
+  "locale": "ja-JP",
+  "timezone": "Asia/Tokyo",
+  "ownerLabel": "Sample Musician (fixture)",
+  "publicDomain": "https://example.com/sample-musician",
+  "stagingDomain": "https://example.com/cms-kit-staging/sample-musician-fixture",
+  "crawl": {
+    "maxPages": 20,
+    "sameOriginOnly": true,
+    "respectRobots": true,
+    "concurrency": 1,
+    "pageInclude": ["/", "/profile/", "/schedule/", "/discography/", "/videos/", "/contact/"],
+    "pageExclude": ["/admin"],
+    "assetRules": {
+      "downloadImages": true,
+      "downloadCss": true,
+      "crossOriginAssets": "reference-only"
+    }
+  },
+  "cms": {
+    "modules": [
+      {
+        "id": "schedule",
+        "enabled": true,
+        "extractionStrategy": "static-json",
+        "table": "public.schedules",
+        "seedPolicy": "extract-and-review",
+        "publishField": "published",
+        "adminUiEnabled": true,
+        "publicRoute": "/schedule/"
+      },
+      {
+        "id": "news",
+        "enabled": true,
+        "extractionStrategy": "static-json",
+        "table": null,
+        "seedPolicy": "extract-and-review",
+        "publishField": "published",
+        "adminUiEnabled": true,
+        "publicRoute": "/news/"
+      },
+      {
+        "id": "profile",
+        "enabled": true,
+        "extractionStrategy": "static-json",
+        "table": null,
+        "seedPolicy": "extract-and-review",
+        "publishField": "published",
+        "adminUiEnabled": true,
+        "publicRoute": "/profile/"
+      },
+      {
+        "id": "discography",
+        "enabled": true,
+        "extractionStrategy": "static-json",
+        "table": "public.discography",
+        "seedPolicy": "extract-and-review",
+        "publishField": "published",
+        "adminUiEnabled": true,
+        "publicRoute": "/discography/"
+      },
+      {
+        "id": "video",
+        "enabled": true,
+        "extractionStrategy": "static-json",
+        "table": null,
+        "seedPolicy": "extract-and-review",
+        "publishField": "published",
+        "adminUiEnabled": true,
+        "publicRoute": "/videos/"
+      },
+      {
+        "id": "contact",
+        "enabled": true,
+        "extractionStrategy": "static-json",
+        "table": null,
+        "seedPolicy": "skip",
+        "publishField": "published",
+        "adminUiEnabled": false,
+        "publicRoute": "/contact/"
+      }
+    ]
+  },
+  "supabase": {
+    "environment": "staging",
+    "projectLabel": "static-to-astro-cms-staging",
+    "projectRef": "kmjqppxjdnwwrtaeqjta",
+    "forbiddenProjectRefs": ["vsbvndwuajjhnzpohghh"],
+    "siteSlugColumn": "site_slug"
+  },
+  "output": {
+    "workspaceRoot": "tools/static-to-astro",
+    "fixtureOut": "fixtures/onboarding/sample-musician-fixture",
+    "astroOut": "output/sample-musician-fixture-astro",
+    "staticPublicOut": "output/static-public/sample-musician-fixture",
+    "manualUploadOut": "output/manual-upload/sample-musician-fixture",
+    "reportsOut": "output/onboarding-reports/sample-musician-fixture",
+    "docsOut": "docs/onboarding/sample-musician-fixture",
+    "deployBase": "/cms-kit-staging/sample-musician-fixture/"
+  },
+  "ftp": {
+    "enabled": false,
+    "remoteBase": null,
+    "method": "disabled",
+    "autoApply": false
+  },
+  "safetyGates": {
+    "stagingOnly": true,
+    "requireHumanReview": true,
+    "allowDbWrite": false,
+    "allowPackageBuild": false,
+    "allowFtpUpload": false,
+    "allowProductionDeploy": false,
+    "forbidMirrorDelete": true,
+    "forbidServiceRole": true,
+    "requireOutputDiffReview": true,
+    "requireUploadFileList": true,
+    "requireRollbackPlanForDbWrite": true,
+    "manualCommitPush": true
+  },
+  "approvals": {
+    "dbWriteApprovalId": null,
+    "packageBuildApprovalId": null,
+    "ftpUploadApprovalId": null
+  },
+  "seo": {
+    "stagingNoindex": true,
+    "robotsDisallowAll": true,
+    "canonicalMode": "staging-url"
+  }
+}

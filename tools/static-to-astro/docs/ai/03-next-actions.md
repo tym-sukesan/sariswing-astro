@@ -1,6 +1,24 @@
 Last updated: 2026-07-08
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-23d onboarding sample site dry-run — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-23d-static-to-astro-onboarding-sample-site-dry-run` |
+| Base | `dac762c` |
+| Mode | **fixture-only** — no live crawl |
+| Config | `config/onboarding.sample-musician-fixture.example.json` |
+| Fixture | `fixtures/onboarding/sample-musician-basic-crawl-result.json` |
+| Dry-run script | `scripts/run-onboarding-fixture-dry-run.mjs` |
+| Result | **PASS** — config validation · fixture load · 6 pages · seed counts |
+| 30-min flow | 7 steps mapped (INTAKE → REPORT) |
+| Safety gates | allowDbWrite/PackageBuild/FtpUpload = false confirmed |
+| Live crawl / network / DB / package / FTP | **not executed** |
+| Doc | `static-to-astro-onboarding-sample-site-dry-run-result.md` |
+| Verifier | `verify-g23d-static-to-astro-onboarding-sample-site-dry-run.mjs` |
+| **Next** | **G-23e** orchestrator planning · **G-23f** CMS preset registry · **G-23g** seed extractor |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-23c onboarding config validator — complete
 
 | Item | Value |
@@ -16,7 +34,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Crawl / DB write / package / FTP / network | **not executed** |
 | Doc | `static-to-astro-onboarding-config-validator-result.md` |
 | Verifier | `verify-g23c-static-to-astro-onboarding-config-validator.mjs` (77 PASS) |
-| **Next** | **G-23d** sample site dry-run (fixture-only) · **G-23e** onboarding orchestrator planning |
+| **Next** | **Superseded by G-23d** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-23b onboarding config schema planning — complete
 

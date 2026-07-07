@@ -5,16 +5,28 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-23c-static-to-astro-onboarding-config-validator — complete.
-Onboarding config local validator: scripts/validate-onboarding-config.mjs
-Gosaki example PASS; bad-config FAIL cases verified (safety gates · prod ref · service_role).
-Schema example onboarding.schema.example.json = structure-only (NOT validation target).
-Safety gates enforced: allowDbWrite/PackageBuild/FtpUpload/ProductionDeploy = false.
-Production ref vsbvndwuajjhnzpohghh forbidden as active target; staging kmjqppxjdnwwrtaeqjta allowed.
-No network / crawl / DB write / package / FTP / deploy in G-23c.
-Next: G-23d sample site dry-run (fixture-only) · G-23e onboarding orchestrator planning.
+Current phase: G-23d-static-to-astro-onboarding-sample-site-dry-run — complete.
+Fixture-only 30-min onboarding dry-run: run-onboarding-fixture-dry-run.mjs
+Sample config: onboarding.sample-musician-fixture.example.json (example.com — NOT fetched)
+Fixture: fixtures/onboarding/sample-musician-basic-crawl-result.json (6 pages · seed candidates)
+Dry-run PASS: config validation · page classification · CMS modules · output paths (computed only)
+Safety gates: allowDbWrite/PackageBuild/FtpUpload=false; staging ref kmjqppxjdnwwrtaeqjta only.
+No live crawl / network / DB / package / FTP / deploy in G-23d.
+Next: G-23e orchestrator planning · G-23f CMS preset registry · G-23g seed extractor.
 Schedule CMS P0 chain remains CLOSED (G-22j1/j2). Do NOT re-Save closed slices.
 ```
+
+## G-23d onboarding sample site dry-run — complete
+
+- **Goal:** Fixture-only 30-min onboarding dry-run report without live crawl / DB / package / FTP
+- **Artifacts:** `run-onboarding-fixture-dry-run.mjs` · `onboarding.sample-musician-fixture.example.json` · `sample-musician-basic-crawl-result.json`
+- **Flow:** G-23c validator → fixture load → classify → CMS seeds → supabase check (no DB) → output paths → report
+- **Pages:** / · /profile/ · /schedule/ · /discography/ · /videos/ · /contact/
+- **Seeds:** schedule×2 · news×1 · profile×1 · discography×1 · video×1 · contact×1
+- **CLI:** `--json` supported
+- **Not executed:** live crawl · network · DB write · package regen · FTP · deploy
+- **Verifier:** `verify-g23d-static-to-astro-onboarding-sample-site-dry-run.mjs`
+- **Next:** G-23e orchestrator planning · G-23f CMS preset registry · G-23g seed extractor
 
 ## G-23c onboarding config validator — complete
 

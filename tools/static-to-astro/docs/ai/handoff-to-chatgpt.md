@@ -5,18 +5,16 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-22i3-gosaki-schedule-package-diff-dry-run-result — complete.
-Local package regen PASS: build-gosaki-staging-admin-package.mjs (27 files, safeForStaticFtp=true).
-Include: schedule-2026-07-008 in JSON + schedule/2026-07/index.html (2026.07.17).
-Exclude: schedule-2026-03-014 and schedule-2026-09-001 (absent from JSON and month HTML).
-FTP / deploy / workflow_dispatch NOT executed. Production NOT touched.
+Current phase: G-22i4-gosaki-schedule-public-output-review-result — complete.
+Local vs live staging HTTP: MD5 IDENTICAL for schedule/2026-07/index.html, schedule/index.html, _astro/index.YcHrHZH4.css, 2026-07/index.html, schedule/2026-03/index.html.
+Conclusion A: upload NOT needed for G-22h republish reflection (live already shows schedule-2026-07-008 / 2026.07.17).
+Include: 008 on local + live. Exclude: 014/001 on local + live.
+FTP / deploy / workflow_dispatch NOT executed. Package regen NOT executed in G-22i4.
 Do NOT re-Save closed slices: G-22d (014), G-22e (001), G-22f unpublish (008), G-22h republish (008).
 Routine dev: PUBLIC_ADMIN_WRITE_DRY_RUN=true; all write arms off.
 Supabase interim SoT: kmjqppxjdnwwrtaeqjta — never vsbvndwuajjhnzpohghh.
-FTP auto --apply suspended (G-7f). readyForAnyFutureFtpApply: false.
-Upload candidate (planning only): schedule/2026-07/index.html → /cms-kit-staging/gosaki-piano/schedule/2026-07/index.html
-Next: G-22i4 public output review (local + live HTTP compare) → G-22i5 FTP planning → G-22i6 actual upload.
-Do NOT FTP until G-22i5+ with explicit operator approval.
+Next: G-22i republish public reflection closure (skip G-22i5/G-22i6 for this slice).
+Future DB schedule changes: re-run G-22i3 → G-22i4 before any upload.
 ```
 
 ## G-22h6a Schedule republish UPDATE implementation — complete

@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-22j2 Gosaki Schedule CMS P0 release note (2026-07-07):** **complete** — operator/client-facing release note for Schedule CMS P0 capabilities, safety design, DB/live state, future roadmap. Doc: `gosaki-schedule-cms-p0-release-note.md`. Verifier: `verify-g22j2-gosaki-schedule-cms-p0-release-note.mjs`. **Next: UX polish · other CMS slices · 30-min onboarding.**
+**G-23a Static-to-Astro CMS 30-minute onboarding flow planning (2026-07-08):** **complete** — strategic 30-min flow design; CMS presets; Gosaki safety gates; Phase 1–4 roadmap; implementation candidates. Doc: `static-to-astro-30-minute-onboarding-flow-planning.md`. Verifier: `verify-g23a-static-to-astro-30-minute-onboarding-flow-planning.mjs`. **Next: G-23b onboarding config schema or sample site dry-run.**
+
+**G-22j2 Gosaki Schedule CMS P0 release note (2026-07-07):** **complete** — commit `5fa7fdb`. **Superseded for strategic planning by G-23a.**
 
 **G-22j1 Gosaki Schedule P0 overall closure (2026-07-07):** **complete** — commit `904a248`. **Superseded for release communication by G-22j2.**
 

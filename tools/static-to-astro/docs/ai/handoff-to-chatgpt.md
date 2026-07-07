@@ -5,16 +5,15 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-22j2-gosaki-schedule-cms-p0-release-note — complete.
-Schedule CMS P0 release note published (operator/client-facing).
-P0 capabilities: login, list, search, filter, legacy_id, new/duplicate/unpublish/republish, dry-run preview, optimistic lock.
-Safety: DB update separated from public reflection; FTP separate high-risk gate; no physical DELETE; no service_role.
-DB/local/live aligned for 008 (published=true). 014/001 test rows retained (published=false). Upload NOT needed.
-FTP/deploy/package NOT executed in G-22j2. Production NOT touched. Physical DELETE deferred.
-Do NOT re-Save closed slices.
-Routine dev: PUBLIC_ADMIN_WRITE_DRY_RUN=true; all write arms off.
-Supabase interim SoT: kmjqppxjdnwwrtaeqjta — never vsbvndwuajjhnzpohghh.
-Next: UX polish · Discography/YouTube/News CMS · 30-min onboarding flow.
+Current phase: G-23a-static-to-astro-30-minute-onboarding-flow-planning — complete.
+30-minute onboarding flow designed: URL → crawl → classify → CMS seed → staging → package → report.
+CMS presets: musician-basic (Gosaki proven), lesson-studio-basic, shop-basic.
+Gosaki Schedule P0 safety gates standardized for all future sites.
+Phase roadmap: Phase 1 (half-day/site today) → Phase 4 (URL-only semi-auto).
+Implementation / DB write / package / FTP / deploy NOT executed in G-23a.
+Supabase staging only: kmjqppxjdnwwrtaeqjta — never vsbvndwuajjhnzpohghh.
+Next: G-23b onboarding config schema · CMS preset registry · sample site dry-run.
+Schedule CMS P0 chain remains CLOSED (G-22j1/j2). Do NOT re-Save closed slices.
 ```
 
 ## G-22h6a Schedule republish UPDATE implementation — complete

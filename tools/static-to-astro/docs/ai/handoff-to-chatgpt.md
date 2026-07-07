@@ -5,15 +5,26 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-23e-static-to-astro-onboarding-orchestrator-planning — complete.
-Orchestrator design: steps 0–9 · CLI modes (fixture-dry-run first) · safety gate matrix · failure policy.
-Future entry: run-onboarding-orchestrator.mjs — NOT implemented in G-23e.
-G-23d run-onboarding-fixture-dry-run.mjs retained as fixture-mode prototype (not replaced).
-Building blocks: G-23b config · G-23c validator · G-23d fixture dry-run · G-23a 30-min flow.
-No live crawl / network / DB / package / FTP / deploy in G-23e.
-Next: G-23f CMS preset registry · G-23g seed extractor · G-23h orchestrator skeleton.
+Current phase: G-23f-static-to-astro-cms-preset-registry — complete.
+CMS preset registry: musician-basic · lesson-studio-basic · shop-basic (read-only metadata).
+Exports: getCmsPreset · listCmsPresets · listPresetModules · validateCmsPresetConfig.
+Gosaki onboarding.gosaki-piano.example.json → validateCmsPresetConfig PASS.
+Inspect: scripts/inspect-cms-preset-registry.mjs
+No DB / network / crawl / package / FTP / orchestrator impl in G-23f.
+Next: G-23g seed extractor standardization · G-23h orchestrator skeleton · G-23i fixture integration.
 Schedule CMS P0 chain remains CLOSED (G-22j1/j2). Do NOT re-Save closed slices.
 ```
+
+## G-23f CMS preset registry — complete
+
+- **Goal:** Code-level CMS preset registry for 30-min onboarding (read-only)
+- **Artifacts:** `lib/cms-preset-registry.mjs` · `inspect-cms-preset-registry.mjs` · result doc
+- **Presets:** musician-basic (schedule default on) · lesson-studio-basic · shop-basic
+- **validateCmsPresetConfig:** unknown module FAIL · enabled module table/route/publishField must match registry
+- **Gosaki:** `onboarding.gosaki-piano.example.json` → **PASS**
+- **Not executed:** DB · network · crawl · package · FTP · orchestrator impl
+- **Verifier:** `verify-g23f-static-to-astro-cms-preset-registry.mjs`
+- **Next:** G-23g seed extractor · G-23h orchestrator skeleton · G-23i fixture integration
 
 ## G-23e onboarding orchestrator planning — complete
 

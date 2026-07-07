@@ -1,6 +1,22 @@
 Last updated: 2026-07-08
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-23f CMS preset registry — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-23f-static-to-astro-cms-preset-registry` |
+| Base | `e32ab31` |
+| Registry | `scripts/lib/cms-preset-registry.mjs` |
+| Presets | musician-basic · lesson-studio-basic · shop-basic |
+| musician-basic schedule | **enabledByDefault=true** |
+| Gosaki config | **validateCmsPresetConfig PASS** |
+| Inspect CLI | `scripts/inspect-cms-preset-registry.mjs` |
+| DB / network / crawl / package / FTP | **not executed** |
+| Doc | `static-to-astro-cms-preset-registry-result.md` |
+| Verifier | `verify-g23f-static-to-astro-cms-preset-registry.mjs` |
+| **Next** | **G-23g** seed extractor · **G-23h** orchestrator skeleton · **G-23i** fixture integration |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-23e onboarding orchestrator planning — complete
 
 | Item | Value |
@@ -14,7 +30,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Live crawl / network / DB / package / FTP | **not executed** |
 | Doc | `static-to-astro-onboarding-orchestrator-planning.md` |
 | Verifier | `verify-g23e-static-to-astro-onboarding-orchestrator-planning.mjs` |
-| **Next** | **G-23f** CMS preset registry · **G-23g** seed extractor · **G-23h** orchestrator skeleton |
+| **Next** | **Superseded by G-23f** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-23d onboarding sample site dry-run — complete
 

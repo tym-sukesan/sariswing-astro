@@ -5,17 +5,15 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-22h7-gosaki-schedule-republish-update-result-closure — complete.
-G-22h→G-22h6b republish UPDATE chain CLOSED. Operator Save once succeeded on schedule-2026-07-008.
-actualWrite=true; published false→true; saved updated_at=2026-07-07T02:30:32.260326+00:00.
-afterVerification SELECT only PASS; reference rows 014/001 unchanged.
-Do NOT re-Save G-22h6b slice (approvalId G-22h-gosaki-schedule-republish-update-non-dry-run-slice).
-publicReflectionPending=true — public reflection / package / FTP NOT executed (separate high-risk gate).
-write-armed dev server stopped; port 4321 LISTEN none.
-Do NOT re-Save: schedule-2026-07-008 unpublish (G-22f7); schedule-2026-03-014 (G-22d3d); schedule-2026-09-001 (G-22e7).
+Current phase: G-22i1-gosaki-schedule-p0-release-readiness-review — complete.
+P0 Gosaki Schedule CRUD/UX/republish chains reviewed. Ready for G-22i2 public reflection planning.
+DB staging: schedule-2026-07-008 published=true (G-22h6b republish); 014/001 test rows published=false.
+Public reflection / package / FTP NOT executed. Production NOT touched. Physical DELETE deferred.
+Do NOT re-Save closed slices: G-22d duplicate (014), G-22e new event (001), G-22f unpublish (008), G-22h republish (008).
 Routine dev: PUBLIC_ADMIN_WRITE_DRY_RUN=true; all write arms off.
 Supabase interim SoT: kmjqppxjdnwwrtaeqjta — never vsbvndwuajjhnzpohghh.
-Next: public reflection planning · Schedule P0 release readiness review · UX polish (optional).
+Next: G-22i2 public reflection planning → G-22i3 package/diff dry-run → G-22i4 review → G-22i5 FTP planning → G-22i6 actual reflection/upload (high-risk gates).
+Optional: UX polish (gate copy) before G-22i2.
 ```
 
 ## G-22h6a Schedule republish UPDATE implementation — complete

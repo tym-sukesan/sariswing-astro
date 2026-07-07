@@ -20,6 +20,23 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Verifier | `verify-g22h4b-gosaki-schedule-republish-ui-wording-cleanup.mjs` |
 | **Next** | **G-22h5** republish target preflight |
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22i1 Schedule P0 release readiness review — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-22i1-gosaki-schedule-p0-release-readiness-review` |
+| Base | `4857f77` |
+| P0 CRUD / UX / republish | **complete** (review documented) |
+| `schedule-2026-07-008` | **published=true** · `updated_at=2026-07-07T02:30:32.260326+00:00` |
+| `schedule-2026-03-014` / `schedule-2026-09-001` | **published=false** (test rows) |
+| public reflection / package / FTP | **not executed** |
+| production | **not executed** |
+| physical DELETE | **deferred** |
+| Save re-execution on closed slices | **forbidden** |
+| Doc | `gosaki-schedule-p0-release-readiness-review.md` |
+| Verifier | `verify-g22i1-gosaki-schedule-p0-release-readiness-review.mjs` |
+| **Next** | **G-22i2** public reflection planning |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22h7 Schedule republish UPDATE result closure — complete
 
 | Item | Value |

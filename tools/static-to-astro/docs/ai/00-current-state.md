@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-22h7 Gosaki Schedule republish UPDATE result closure (2026-07-07):** **complete** — G-22h→G-22h6b chain **closed**; operator Save once on `schedule-2026-07-008` (`published=false→true`); afterVerification PASS; reference rows `014`/`001` unchanged. **No re-Save.** public reflection / package / FTP **deferred**. Doc: `gosaki-schedule-republish-update-result-closure.md`. Verifier: `verify-g22h7-gosaki-schedule-republish-update-result-closure.mjs`. **Next: public reflection planning or Schedule P0 release readiness review.**
+**G-22i1 Gosaki Schedule P0 release readiness review (2026-07-07):** **complete** — P0 CRUD/UX/republish chains documented; DB `008` published=true; `014`/`001` test rows published=false; public reflection/package/FTP **deferred**. Doc: `gosaki-schedule-p0-release-readiness-review.md`. Verifier: `verify-g22i1-gosaki-schedule-p0-release-readiness-review.mjs`. **Next: G-22i2 public reflection planning.**
+
+**G-22h7 Gosaki Schedule republish UPDATE result closure (2026-07-07):** **complete** — commit `4857f77`. **Superseded for readiness by G-22i1.**
 
 **G-22h6b Gosaki Schedule republish operator Save once (2026-07-07):** **complete** — retry3 success; `actualWrite=true`; saved `updated_at=2026-07-07T02:30:32.260326+00:00`. **Superseded for closure by G-22h7.**
 

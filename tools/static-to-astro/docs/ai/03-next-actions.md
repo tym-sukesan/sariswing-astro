@@ -20,6 +20,20 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Verifier | `verify-g22h4b-gosaki-schedule-republish-ui-wording-cleanup.mjs` |
 | **Next** | **G-22h5** republish target preflight |
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22j2 Schedule CMS P0 release note — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-22j2-gosaki-schedule-cms-p0-release-note` |
+| Base | `904a248` |
+| Schedule CMS P0 | **complete** (release note published) |
+| Audience | developers · operators · client explanation |
+| Upload / FTP / deploy | **not required** |
+| Physical DELETE | **deferred** |
+| Doc | `gosaki-schedule-cms-p0-release-note.md` |
+| Verifier | `verify-g22j2-gosaki-schedule-cms-p0-release-note.mjs` |
+| **Next** | **UX polish** · Discography/YouTube/News CMS · 30-min onboarding |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22j1 Schedule P0 overall closure — complete
 
 | Item | Value |
@@ -36,7 +50,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | FTP / deploy / package (G-22j1) | **not executed** |
 | Doc | `gosaki-schedule-p0-overall-closure.md` |
 | Verifier | `verify-g22j1-gosaki-schedule-p0-overall-closure.mjs` |
-| **Next** | **P0 release note** · UX polish · other CMS · 30-min onboarding |
+| **Next** | **Superseded by G-22j2** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22i5skip Schedule republish public reflection closure — complete
 

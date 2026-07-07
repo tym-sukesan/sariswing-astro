@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-22i1 Gosaki Schedule P0 release readiness review (2026-07-07):** **complete** — P0 CRUD/UX/republish chains documented; DB `008` published=true; `014`/`001` test rows published=false; public reflection/package/FTP **deferred**. Doc: `gosaki-schedule-p0-release-readiness-review.md`. Verifier: `verify-g22i1-gosaki-schedule-p0-release-readiness-review.mjs`. **Next: G-22i2 public reflection planning.**
+**G-22i2 Gosaki Schedule public reflection planning (2026-07-07):** **complete** — reflection definition, include/exclude rows, output diff, G-22i3–G-22i6 gate chain documented; package/FTP **not executed**. Doc: `gosaki-schedule-public-reflection-planning.md`. Verifier: `verify-g22i2-gosaki-schedule-public-reflection-planning.mjs`. **Next: G-22i3 package/diff dry-run.**
+
+**G-22i1 Gosaki Schedule P0 release readiness review (2026-07-07):** **complete** — commit `f093e97`. **Superseded for reflection work by G-22i2.**
 
 **G-22h7 Gosaki Schedule republish UPDATE result closure (2026-07-07):** **complete** — commit `4857f77`. **Superseded for readiness by G-22i1.**
 

@@ -5,16 +5,17 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-22h6b-retry2-blocker-gosaki-schedule-republish-save-still-disabled — blocked.
-G-22h6b operator Save once NOT executed (retry2). Dry-run preview PASS; env arm displayed true; Save still disabled.
-Root cause: auth refetch renderEditForm cleared lastRepublishDryRunResult after preview (misleading G-22h6 note).
-Fix applied in working tree: preserve dry-run in draft modes; Save gate fields in target panel — not re-tested with Save.
-expectedBeforeUpdatedAt=2026-07-06T13:58:41.425402+00:00; target schedule-2026-07-008 only.
-No Save / DB write / SQL mutation. write-armed dev stopped; port 4321 LISTEN none.
+Current phase: G-22h7-gosaki-schedule-republish-update-result-closure — complete.
+G-22h→G-22h6b republish UPDATE chain CLOSED. Operator Save once succeeded on schedule-2026-07-008.
+actualWrite=true; published false→true; saved updated_at=2026-07-07T02:30:32.260326+00:00.
+afterVerification SELECT only PASS; reference rows 014/001 unchanged.
+Do NOT re-Save G-22h6b slice (approvalId G-22h-gosaki-schedule-republish-update-non-dry-run-slice).
+publicReflectionPending=true — public reflection / package / FTP NOT executed (separate high-risk gate).
+write-armed dev server stopped; port 4321 LISTEN none.
 Do NOT re-Save: schedule-2026-07-008 unpublish (G-22f7); schedule-2026-03-014 (G-22d3d); schedule-2026-09-001 (G-22e7).
 Routine dev: PUBLIC_ADMIN_WRITE_DRY_RUN=true; all write arms off.
 Supabase interim SoT: kmjqppxjdnwwrtaeqjta — never vsbvndwuajjhnzpohghh.
-Next: G-22h6b retry3 operator Save once (write-armed, after fix verification).
+Next: public reflection planning · Schedule P0 release readiness review · UX polish (optional).
 ```
 
 ## G-22h6a Schedule republish UPDATE implementation — complete

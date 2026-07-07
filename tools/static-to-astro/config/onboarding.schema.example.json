@@ -1,0 +1,270 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cms-kit.local/schemas/onboarding.schema.example.json",
+  "$comment": "G-23b — Onboarding config schema draft (example). Planning only — not wired to CLI yet.",
+  "title": "Static-to-Astro CMS Onboarding Config",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "phase",
+    "projectName",
+    "siteSlug",
+    "sourceUrl",
+    "sourcePlatform",
+    "siteType",
+    "cmsPreset",
+    "stagingDomain",
+    "crawl",
+    "cms",
+    "supabase",
+    "output",
+    "ftp",
+    "safetyGates",
+    "approvals"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "type": "string",
+      "const": "1.0",
+      "description": "Onboarding config schema version"
+    },
+    "phase": {
+      "type": "string",
+      "description": "Kit phase identifier, e.g. G-23b-onboarding-config"
+    },
+    "projectName": {
+      "type": "string",
+      "description": "Human-readable project name"
+    },
+    "siteSlug": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+      "description": "URL-safe site slug; maps to site_slug in Supabase"
+    },
+    "sourceUrl": {
+      "type": "string",
+      "format": "uri",
+      "description": "Crawl start URL"
+    },
+    "sourcePlatform": {
+      "type": "string",
+      "enum": ["wix", "studio", "jimdo", "wordpress", "static", "unknown"]
+    },
+    "siteType": {
+      "type": "string",
+      "enum": ["musician-basic", "lesson-studio-basic", "shop-basic", "custom"]
+    },
+    "cmsPreset": {
+      "type": "string",
+      "enum": ["musician-basic", "lesson-studio-basic", "shop-basic", "custom"]
+    },
+    "locale": {
+      "type": "string",
+      "default": "ja-JP"
+    },
+    "timezone": {
+      "type": "string",
+      "default": "Asia/Tokyo"
+    },
+    "ownerLabel": {
+      "type": "string",
+      "description": "Operator or client label"
+    },
+    "publicDomain": {
+      "type": "string",
+      "format": "uri",
+      "description": "Future production domain (placeholder allowed)"
+    },
+    "stagingDomain": {
+      "type": "string",
+      "format": "uri",
+      "description": "Staging preview base URL"
+    },
+    "crawl": {
+      "type": "object",
+      "required": ["maxPages", "sameOriginOnly", "respectRobots"],
+      "properties": {
+        "maxPages": { "type": "integer", "minimum": 1, "maximum": 500 },
+        "sameOriginOnly": { "type": "boolean" },
+        "respectRobots": { "type": "boolean" },
+        "concurrency": { "type": "integer", "minimum": 1, "maximum": 8, "default": 1 },
+        "pageInclude": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Path prefixes or globs to include"
+        },
+        "pageExclude": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Path prefixes or globs to exclude"
+        },
+        "assetRules": {
+          "type": "object",
+          "properties": {
+            "downloadImages": { "type": "boolean", "default": true },
+            "downloadCss": { "type": "boolean", "default": true },
+            "crossOriginAssets": {
+              "type": "string",
+              "enum": ["skip", "reference-only", "download"],
+              "default": "reference-only"
+            }
+          }
+        }
+      }
+    },
+    "cms": {
+      "type": "object",
+      "required": ["modules"],
+      "properties": {
+        "modules": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "enabled", "extractionStrategy", "seedPolicy", "adminUiEnabled"],
+            "properties": {
+              "id": {
+                "type": "string",
+                "enum": [
+                  "schedule",
+                  "news",
+                  "profile",
+                  "discography",
+                  "video",
+                  "contact",
+                  "classes",
+                  "instructors",
+                  "pricing",
+                  "menu",
+                  "access",
+                  "gallery"
+                ]
+              },
+              "enabled": { "type": "boolean" },
+              "extractionStrategy": {
+                "type": "string",
+                "enum": ["wix-html", "supabase-existing", "static-json", "manual", "skip"]
+              },
+              "table": { "type": ["string", "null"] },
+              "seedPolicy": {
+                "type": "string",
+                "enum": ["extract-and-review", "skip", "import-existing"]
+              },
+              "publishField": { "type": "string", "default": "published" },
+              "adminUiEnabled": { "type": "boolean" },
+              "publicRoute": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "supabase": {
+      "type": "object",
+      "required": ["environment", "projectLabel", "projectRef", "forbiddenProjectRefs", "siteSlugColumn"],
+      "properties": {
+        "environment": { "type": "string", "enum": ["staging"] },
+        "projectLabel": { "type": "string" },
+        "projectRef": {
+          "type": "string",
+          "description": "Staging project ref only, e.g. kmjqppxjdnwwrtaeqjta"
+        },
+        "forbiddenProjectRefs": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Production refs that must never be used"
+        },
+        "siteSlugColumn": { "type": "string", "default": "site_slug" }
+      }
+    },
+    "output": {
+      "type": "object",
+      "required": [
+        "workspaceRoot",
+        "fixtureOut",
+        "astroOut",
+        "staticPublicOut",
+        "manualUploadOut",
+        "reportsOut",
+        "docsOut",
+        "deployBase"
+      ],
+      "properties": {
+        "workspaceRoot": { "type": "string", "default": "tools/static-to-astro" },
+        "fixtureOut": { "type": "string" },
+        "astroOut": { "type": "string" },
+        "staticPublicOut": { "type": "string" },
+        "manualUploadOut": { "type": "string" },
+        "reportsOut": { "type": "string" },
+        "docsOut": { "type": "string" },
+        "deployBase": { "type": "string" }
+      }
+    },
+    "ftp": {
+      "type": "object",
+      "required": ["enabled", "method", "autoApply"],
+      "properties": {
+        "enabled": { "type": "boolean", "default": false },
+        "remoteBase": {
+          "type": ["string", "null"],
+          "description": "Placeholder remote path; null when disabled"
+        },
+        "method": {
+          "type": "string",
+          "enum": ["manual-filezilla", "lftp-script", "disabled"],
+          "default": "disabled"
+        },
+        "autoApply": { "type": "boolean", "default": false }
+      }
+    },
+    "safetyGates": {
+      "type": "object",
+      "required": [
+        "stagingOnly",
+        "requireHumanReview",
+        "allowDbWrite",
+        "allowPackageBuild",
+        "allowFtpUpload",
+        "allowProductionDeploy",
+        "forbidMirrorDelete",
+        "forbidServiceRole",
+        "requireOutputDiffReview",
+        "requireUploadFileList",
+        "requireRollbackPlanForDbWrite",
+        "manualCommitPush"
+      ],
+      "properties": {
+        "stagingOnly": { "type": "boolean", "default": true },
+        "requireHumanReview": { "type": "boolean", "default": true },
+        "allowDbWrite": { "type": "boolean", "default": false },
+        "allowPackageBuild": { "type": "boolean", "default": false },
+        "allowFtpUpload": { "type": "boolean", "default": false },
+        "allowProductionDeploy": { "type": "boolean", "default": false },
+        "forbidMirrorDelete": { "type": "boolean", "default": true },
+        "forbidServiceRole": { "type": "boolean", "default": true },
+        "requireOutputDiffReview": { "type": "boolean", "default": true },
+        "requireUploadFileList": { "type": "boolean", "default": true },
+        "requireRollbackPlanForDbWrite": { "type": "boolean", "default": true },
+        "manualCommitPush": { "type": "boolean", "default": true }
+      }
+    },
+    "approvals": {
+      "type": "object",
+      "properties": {
+        "dbWriteApprovalId": { "type": ["string", "null"] },
+        "packageBuildApprovalId": { "type": ["string", "null"] },
+        "ftpUploadApprovalId": { "type": ["string", "null"] }
+      }
+    },
+    "seo": {
+      "type": "object",
+      "properties": {
+        "stagingNoindex": { "type": "boolean", "default": true },
+        "robotsDisallowAll": { "type": "boolean", "default": true },
+        "canonicalMode": {
+          "type": "string",
+          "enum": ["staging-url", "production-url"],
+          "default": "staging-url"
+        }
+      }
+    }
+  }
+}

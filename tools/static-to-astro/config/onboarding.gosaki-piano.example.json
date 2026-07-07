@@ -1,0 +1,140 @@
+{
+  "$comment": "G-23b — Gosaki-piano onboarding config example. Planning only — not executed. No secrets.",
+  "schemaVersion": "1.0",
+  "phase": "G-23b-onboarding-config-example",
+  "projectName": "gosaki-piano",
+  "siteSlug": "gosaki-piano",
+  "sourceUrl": "https://www.gosaki-piano.com/",
+  "sourcePlatform": "wix",
+  "siteType": "musician-basic",
+  "cmsPreset": "musician-basic",
+  "locale": "ja-JP",
+  "timezone": "Asia/Tokyo",
+  "ownerLabel": "後藤沙紀（gosaki-piano）",
+  "publicDomain": "https://www.gosaki-piano.com",
+  "stagingDomain": "https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano",
+  "crawl": {
+    "maxPages": 80,
+    "sameOriginOnly": true,
+    "respectRobots": true,
+    "concurrency": 1,
+    "pageInclude": ["/", "/about", "/contact", "/discography", "/schedule", "/link"],
+    "pageExclude": ["/admin", "/_api"],
+    "assetRules": {
+      "downloadImages": true,
+      "downloadCss": true,
+      "crossOriginAssets": "reference-only"
+    }
+  },
+  "cms": {
+    "modules": [
+      {
+        "id": "schedule",
+        "enabled": true,
+        "extractionStrategy": "wix-html",
+        "table": "public.schedules",
+        "seedPolicy": "extract-and-review",
+        "publishField": "published",
+        "adminUiEnabled": true,
+        "publicRoute": "/schedule/"
+      },
+      {
+        "id": "news",
+        "enabled": false,
+        "extractionStrategy": "skip",
+        "table": null,
+        "seedPolicy": "skip",
+        "publishField": "published",
+        "adminUiEnabled": false,
+        "publicRoute": "/news/"
+      },
+      {
+        "id": "profile",
+        "enabled": false,
+        "extractionStrategy": "static-json",
+        "table": null,
+        "seedPolicy": "extract-and-review",
+        "publishField": "published",
+        "adminUiEnabled": false,
+        "publicRoute": "/about/"
+      },
+      {
+        "id": "discography",
+        "enabled": false,
+        "extractionStrategy": "wix-html",
+        "table": "public.discography",
+        "seedPolicy": "extract-and-review",
+        "publishField": "published",
+        "adminUiEnabled": false,
+        "publicRoute": "/discography/"
+      },
+      {
+        "id": "video",
+        "enabled": false,
+        "extractionStrategy": "static-json",
+        "table": null,
+        "seedPolicy": "import-existing",
+        "publishField": "published",
+        "adminUiEnabled": false,
+        "publicRoute": "/"
+      },
+      {
+        "id": "contact",
+        "enabled": false,
+        "extractionStrategy": "static-json",
+        "table": null,
+        "seedPolicy": "skip",
+        "publishField": "published",
+        "adminUiEnabled": false,
+        "publicRoute": "/contact/"
+      }
+    ]
+  },
+  "supabase": {
+    "environment": "staging",
+    "projectLabel": "static-to-astro-cms-staging",
+    "projectRef": "kmjqppxjdnwwrtaeqjta",
+    "forbiddenProjectRefs": ["vsbvndwuajjhnzpohghh"],
+    "siteSlugColumn": "site_slug"
+  },
+  "output": {
+    "workspaceRoot": "tools/static-to-astro",
+    "fixtureOut": "fixtures/gosaki-piano",
+    "astroOut": "output/gosaki-piano-astro",
+    "staticPublicOut": "output/static-public/gosaki-piano",
+    "manualUploadOut": "output/manual-upload/gosaki-piano",
+    "reportsOut": "output/onboarding-reports/gosaki-piano",
+    "docsOut": "docs/onboarding/gosaki-piano",
+    "deployBase": "/cms-kit-staging/gosaki-piano/"
+  },
+  "ftp": {
+    "enabled": false,
+    "remoteBase": null,
+    "method": "disabled",
+    "autoApply": false
+  },
+  "safetyGates": {
+    "stagingOnly": true,
+    "requireHumanReview": true,
+    "allowDbWrite": false,
+    "allowPackageBuild": false,
+    "allowFtpUpload": false,
+    "allowProductionDeploy": false,
+    "forbidMirrorDelete": true,
+    "forbidServiceRole": true,
+    "requireOutputDiffReview": true,
+    "requireUploadFileList": true,
+    "requireRollbackPlanForDbWrite": true,
+    "manualCommitPush": true
+  },
+  "approvals": {
+    "dbWriteApprovalId": null,
+    "packageBuildApprovalId": null,
+    "ftpUploadApprovalId": null
+  },
+  "seo": {
+    "stagingNoindex": true,
+    "robotsDisallowAll": true,
+    "canonicalMode": "staging-url"
+  }
+}

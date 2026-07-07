@@ -5,16 +5,29 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-23a-static-to-astro-30-minute-onboarding-flow-planning — complete.
-30-minute onboarding flow designed: URL → crawl → classify → CMS seed → staging → package → report.
-CMS presets: musician-basic (Gosaki proven), lesson-studio-basic, shop-basic.
-Gosaki Schedule P0 safety gates standardized for all future sites.
-Phase roadmap: Phase 1 (half-day/site today) → Phase 4 (URL-only semi-auto).
-Implementation / DB write / package / FTP / deploy NOT executed in G-23a.
+Current phase: G-23b-static-to-astro-onboarding-config-schema-planning — complete.
+Onboarding config schema designed: single JSON for URL · site_slug · preset · outputs · safety gates.
+Schema draft: config/onboarding.schema.example.json
+Gosaki sample: config/onboarding.gosaki-piano.example.json
+Safety gates default safe: allowDbWrite/PackageBuild/FtpUpload/ProductionDeploy = false.
+30-min flow wiring: config sections map to G-23a timeline (0–3 intake → 26–30 report).
 Supabase staging only: kmjqppxjdnwwrtaeqjta — never vsbvndwuajjhnzpohghh.
-Next: G-23b onboarding config schema · CMS preset registry · sample site dry-run.
+CLI / crawl / DB write / package / FTP / deploy NOT executed in G-23b.
+Next: G-23c config validator · G-23d sample site dry-run (fixture-only).
 Schedule CMS P0 chain remains CLOSED (G-22j1/j2). Do NOT re-Save closed slices.
 ```
+
+## G-23b onboarding config schema planning — complete
+
+- **Goal:** Design onboarding config schema for 30-minute build flow
+- **Artifacts:** `static-to-astro-onboarding-config-schema-planning.md` · `onboarding.schema.example.json` · `onboarding.gosaki-piano.example.json`
+- **Config sections:** identity · crawl · cms.modules · supabase · output · ftp (disabled) · safetyGates · approvals
+- **musician-basic modules:** schedule (enabled) · news/profile/discography/video/contact (planned)
+- **Safety defaults:** allowDbWrite=false · allowPackageBuild=false · allowFtpUpload=false · allowProductionDeploy=false
+- **Gosaki:** siteSlug gosaki-piano · staging ref kmjqppxjdnwwrtaeqjta · FTP disabled
+- **Not executed:** CLI · crawl · DB write · package regen · FTP · deploy · secrets in config
+- **Verifier:** `verify-g23b-static-to-astro-onboarding-config-schema-planning.mjs`
+- **Next:** G-23c config validator · G-23d sample site dry-run
 
 ## G-22h6a Schedule republish UPDATE implementation — complete
 

@@ -1,9 +1,11 @@
-Last updated: 2026-07-07
+Last updated: 2026-07-08
 Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-23a Static-to-Astro CMS 30-minute onboarding flow planning (2026-07-08):** **complete** — strategic 30-min flow design; CMS presets; Gosaki safety gates; Phase 1–4 roadmap; implementation candidates. Doc: `static-to-astro-30-minute-onboarding-flow-planning.md`. Verifier: `verify-g23a-static-to-astro-30-minute-onboarding-flow-planning.mjs`. **Next: G-23b onboarding config schema or sample site dry-run.**
+**G-23b Static-to-Astro onboarding config schema planning (2026-07-08):** **complete** — onboarding config schema designed; safety gates default safe; Gosaki example config; 30-min flow wiring documented. Doc: `static-to-astro-onboarding-config-schema-planning.md`. Schema: `config/onboarding.schema.example.json`. Sample: `config/onboarding.gosaki-piano.example.json`. Verifier: `verify-g23b-static-to-astro-onboarding-config-schema-planning.mjs`. **No CLI / crawl / DB write / package / FTP.** **Next: G-23c config validator or G-23d sample site dry-run.**
+
+**G-23a Static-to-Astro CMS 30-minute onboarding flow planning (2026-07-08):** **complete** — strategic 30-min flow design; CMS presets; Gosaki safety gates; Phase 1–4 roadmap; implementation candidates. Doc: `static-to-astro-30-minute-onboarding-flow-planning.md`. Verifier: `verify-g23a-static-to-astro-30-minute-onboarding-flow-planning.mjs`. **Superseded for config schema by G-23b.**
 
 **G-22j2 Gosaki Schedule CMS P0 release note (2026-07-07):** **complete** — commit `5fa7fdb`. **Superseded for strategic planning by G-23a.**
 

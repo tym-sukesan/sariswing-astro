@@ -1,5 +1,22 @@
-Last updated: 2026-07-07
+Last updated: 2026-07-08
 Project: Static-to-Astro CMS / Musician CMS Kit
+
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-23b onboarding config schema planning — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-23b-static-to-astro-onboarding-config-schema-planning` |
+| Base | `a97e80a` |
+| Onboarding config schema | **designed** |
+| Safety gates | **default safe** (allowDbWrite/PackageBuild/FtpUpload/ProductionDeploy = false) |
+| Gosaki example | `config/onboarding.gosaki-piano.example.json` |
+| Schema draft | `config/onboarding.schema.example.json` |
+| 30-min flow wiring | config sections → G-23a timeline steps |
+| Implementation | **not executed** |
+| Crawl / DB write / package / FTP | **not executed** |
+| Doc | `static-to-astro-onboarding-config-schema-planning.md` |
+| Verifier | `verify-g23b-static-to-astro-onboarding-config-schema-planning.mjs` |
+| **Next** | **G-23c** config validator · **G-23d** sample site dry-run |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22h4b Schedule republish UI wording cleanup — complete
 

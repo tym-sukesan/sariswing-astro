@@ -28,7 +28,7 @@ const G22D_SAVE = "src/lib/admin/staging-write/gosaki-schedule-duplicate-insert-
 const G22E_SAVE = "src/lib/admin/staging-write/gosaki-schedule-new-event-insert-save.ts";
 const G22F_SAVE = "src/lib/admin/staging-write/gosaki-schedule-unpublish-update-save.ts";
 
-const BASE_COMMIT = "4e45f90";
+const BASE_COMMIT = "fabfd2f";
 const PROD_REF = "vsbvndwuajjhnzpohghh";
 const STAGING_REF = "kmjqppxjdnwwrtaeqjta";
 const ENGLISH_RESIDUAL =
@@ -36,7 +36,7 @@ const ENGLISH_RESIDUAL =
 const JAPANESE_GATE =
   "再公開の保存はG-22h6以降で有効化します。現在は保存できません。";
 const JAPANESE_DEFAULT =
-  "再公開の保存は現在無効です。G-22h6以降で、戸山が確認してから有効化します。";
+  "再公開の保存は現在無効です。G-22h6b で env arm を有効化したうえで、戸山が確認してから1回だけ保存します。";
 
 let passed = 0;
 let failed = 0;
@@ -85,12 +85,15 @@ const origin = spawnSync("git", ["rev-parse", "--short", "origin/main"], {
   encoding: "utf8",
 });
 
-assert("HEAD is 4e45f90", head.stdout.trim() === BASE_COMMIT, head.stdout.trim());
-assert("origin/main is 4e45f90", origin.stdout.trim() === BASE_COMMIT, origin.stdout.trim());
+assert("HEAD is fabfd2f (G-22h5 base)", head.stdout.trim() === BASE_COMMIT, head.stdout.trim());
+assert("origin/main is fabfd2f", origin.stdout.trim() === BASE_COMMIT, origin.stdout.trim());
 
 assert("G-22h4b cleanup doc exists", exists(DOC_REL));
 assert("G-22h4 prior QA doc exists", exists(G22H4_DOC));
-assert("republish save module absent", !exists(REPUBLISH_SAVE));
+assert(
+  "republish save module (G-22h6a supersedes absent)",
+  exists(REPUBLISH_SAVE),
+);
 
 const doc = read(DOC_REL);
 const republishConfig = read(REPUBLISH_CONFIG);
@@ -114,7 +117,7 @@ assert("doc ftp not executed", doc.includes("ftpUploadExecuted: false"));
 assert("doc public reflection not executed", doc.includes("publicReflectionExecuted: false"));
 assert("doc next G-22h5", doc.includes("G-22h5"));
 assert("doc fix not required", doc.includes("Fix required?") && doc.includes("**No.**"));
-assert("doc base commit 4e45f90", doc.includes(BASE_COMMIT));
+assert("doc base commit recorded", doc.includes("4e45f90") || doc.includes(BASE_COMMIT));
 assert("doc never sariswing prod", /never.*vsbvndwuajjhnzpohghh/i.test(doc));
 assert("doc staging ref only", doc.includes(STAGING_REF));
 assert(
@@ -126,9 +129,9 @@ assert("config no english residual", !republishConfig.includes(ENGLISH_RESIDUAL)
 assert("config japanese gate reason", republishConfig.includes(JAPANESE_GATE));
 assert("config japanese default reason", republishConfig.includes(JAPANESE_DEFAULT));
 assert("config 現在は保存できません", republishConfig.includes("現在は保存できません"));
-assert("config saveEnabled false", republishConfig.includes("saveEnabled: false"));
+assert("config saveEnabled from armed", republishConfig.includes("saveEnabled = armed"));
 assert("config saveAllowed false", republishConfig.includes("saveAllowed: false"));
-assert("config gate always disabled", republishConfig.includes("enabled: false"));
+assert("config default disabled when arm off", republishConfig.includes("enabled: false"));
 assert("config no .update(", !republishConfig.includes(".update("));
 assert("config no actualWrite true", !/actualWrite:\s*true/.test(republishConfig));
 
@@ -136,8 +139,8 @@ assert("dry-run module no .update(", !dryRunModule.includes(".update("));
 assert("dry-run module actualWrite false", dryRunModule.includes("actualWrite: false"));
 assert("dry-run module unchanged", gitDiff(REPUBLISH_DRY_RUN).length === 0);
 
-assert("operator UI save stub unchanged", operatorUi.includes("再公開を保存（準備中）"));
-assert("operator UI G-22h6 alert stub", operatorUi.includes("G-22h6 以降"));
+assert("operator UI save stub updated for G-22h6a", operatorUi.includes("再公開を保存（現在は無効）"));
+assert("operator UI G-22h6b note", operatorUi.includes("G-22h6b"));
 assert("operator UI no actualWrite true", !/actualWrite:\s*true/.test(operatorUi));
 assert("operator diff no english residual", !gitDiff(OPERATOR_UI).includes(ENGLISH_RESIDUAL));
 

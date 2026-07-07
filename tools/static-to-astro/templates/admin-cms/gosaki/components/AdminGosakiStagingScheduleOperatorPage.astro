@@ -111,7 +111,7 @@ function displayValue(value: string | null | undefined): string {
     <p class="gosaki-schedule-operator-guide__body">
       上部の<strong>公演一覧</strong>で <code>legacy_id</code> / 日付 / タイトルを確認し、「編集する」を押してください。
       非公開化は「<strong>非公開化案を作成</strong>」→「変更を確認」→「非公開化を保存」の順です。
-      再公開（非公開行）は「<strong>再公開案を作成</strong>」→「変更を確認」→「再公開を保存（準備中）」の順です（保存は G-22h6 以降）。
+      再公開（非公開行）は「<strong>再公開案を作成</strong>」→「変更を確認」→「再公開を保存」の順です（G-22h6b で env arm 有効化後に1回だけ）。
       ページ内検索は <code>unpublish</code> / <code>republish</code> ではなく「<strong>非公開</strong>」「<strong>再公開</strong>」を使用。
     </p>
     <p class="gosaki-schedule-operator-guide__dev-note">
@@ -173,7 +173,7 @@ function displayValue(value: string | null | undefined): string {
         <ol class="gosaki-schedule-operator-procedure-hints__steps">
           <li>非公開行を選び「再公開案を作成」</li>
           <li>「変更を確認」</li>
-          <li>「再公開を保存（準備中）」— G-22h6 以降</li>
+          <li>「再公開を保存」— G-22h6b で env arm 有効化後に1回だけ</li>
         </ol>
         <p class="gosaki-schedule-operator-procedure-hints__note">published を false から true に戻します。保存ボタンを押すまでDBは変更されません。公開サイトへの反映は別フェーズです。</p>
       </article>

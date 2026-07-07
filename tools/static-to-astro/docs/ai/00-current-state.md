@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-22h5 Gosaki Schedule republish target selection / preflight (2026-07-07):** **complete (uncommitted)** — G-22h6 first candidate `schedule-2026-07-008`; `expectedBeforeUpdatedAt=2026-07-06T13:58:41.425402+00:00`; reference rows 014/001 non-target. **No Save / DB write / SQL mutation / RLS / GRANT / package / FTP.** Doc: `gosaki-schedule-republish-target-preflight.md`. Verifier: `verify-g22h5-gosaki-schedule-republish-target-preflight.mjs`. **Next: G-22h6 actual republish UPDATE.**
+**G-22h6a Gosaki Schedule republish UPDATE implementation (2026-07-07):** **complete (uncommitted)** — `executeG22hScheduleRepublishUpdateSave` + config/guards/UI gate for `published=false→true` UPDATE on `schedule-2026-07-008` only; default Save **disabled** until G-22h6b write-armed execution. **No Save / DB write / SQL / RLS / GRANT / package / FTP.** Doc: `gosaki-schedule-republish-update-implementation.md`. Verifier: `verify-g22h6a-gosaki-schedule-republish-update-implementation.mjs`. **Next: G-22h6b operator Save once.**
+
+**G-22h5 Gosaki Schedule republish target selection / preflight (2026-07-07):** **complete** — commit `fabfd2f`. G-22h6 first candidate `schedule-2026-07-008`; expectedBeforeUpdatedAt recorded. **Superseded for implementation by G-22h6a.**
 
 **G-22h4b Gosaki Schedule republish UI wording cleanup (2026-07-07):** **complete** — commit `92eaf55`. **Superseded for preflight by G-22h5.**
 

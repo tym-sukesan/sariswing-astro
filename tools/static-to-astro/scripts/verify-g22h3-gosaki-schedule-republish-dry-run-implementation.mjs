@@ -34,7 +34,7 @@ const ASTRO_PAGE =
 const ADMIN_CSS = "tools/static-to-astro/templates/admin-cms/styles/admin.css";
 const G22F_SAVE = "src/lib/admin/staging-write/gosaki-schedule-unpublish-update-save.ts";
 
-const BASE_COMMIT = "541d0dd";
+const BASE_COMMIT = "fabfd2f";
 const PROD_REF = "vsbvndwuajjhnzpohghh";
 const STAGING_REF = "kmjqppxjdnwwrtaeqjta";
 const DRY_RUN_APPROVAL = "G-22h-gosaki-schedule-republish-dry-run";
@@ -71,15 +71,18 @@ const origin = spawnSync("git", ["rev-parse", "--short", "origin/main"], {
   encoding: "utf8",
 });
 
-assert("HEAD is 541d0dd", head.stdout.trim() === BASE_COMMIT, head.stdout.trim());
-assert("origin/main is 541d0dd", origin.stdout.trim() === BASE_COMMIT, origin.stdout.trim());
+assert("HEAD is fabfd2f (G-22h5 base)", head.stdout.trim() === BASE_COMMIT, head.stdout.trim());
+assert("origin/main is fabfd2f", origin.stdout.trim() === BASE_COMMIT, origin.stdout.trim());
 
 assert("G-22h3 doc exists", exists(DOC_REL));
 assert("G-22h2 planning doc exists", exists(G22H2_DOC));
 assert("republish dry-run module exists", exists(REPUBLISH_DRY_RUN));
 assert("republish config exists", exists(REPUBLISH_CONFIG));
 assert("republish guards exist", exists(REPUBLISH_GUARDS));
-assert("republish save module absent", !exists(REPUBLISH_SAVE));
+assert(
+  "republish save module present (G-22h6a supersedes absent)",
+  exists(REPUBLISH_SAVE),
+);
 
 const doc = read(DOC_REL);
 const dryRunModule = read(REPUBLISH_DRY_RUN);
@@ -121,20 +124,20 @@ assert("draft mode republish type", dryRunTypes.includes('"republish"'));
 assert("non-dry-run approvalId in write types", writeTypes.includes(SAVE_APPROVAL));
 assert("approval registry includes G-22h", writeTypes.includes("G22H_SCHEDULE_REPUBLISH_UPDATE_NON_DRY_RUN_APPROVAL_ID"));
 
-assert("config saveEnabled false", republishConfig.includes("saveEnabled: false"));
+assert("config saveEnabled from armed (G-22h6a supersedes fixed false)", republishConfig.includes("saveEnabled = armed") || republishConfig.includes("saveEnabled: boolean"));
 assert("config env arm constant", republishConfig.includes(ENV_ARM));
-assert("config G-22h6 deferred reason", republishConfig.includes("G-22h6"));
+assert("config G-22h6b deferred reason", republishConfig.includes("G-22h6b") || republishConfig.includes("G-22h6"));
 
 assert("UI republish button id", astroPage.includes('id="gosaki-schedule-republish-btn"'));
 assert("UI procedure hint republish", astroPage.includes('data-gosaki-procedure-hint="republish"'));
 assert("UI 再公開案を作成", astroPage.includes("再公開案を作成"));
-assert("UI 再公開を保存（準備中）", astroPage.includes("再公開を保存（準備中）") || operatorUi.includes("再公開を保存（準備中）"));
+assert("UI republish save label G-22h6a", astroPage.includes("再公開を保存") || operatorUi.includes("再公開を保存（現在は無効）"));
 assert("UI public reflection note", astroPage.includes("公開サイトへの反映は別フェーズ"));
 
 assert("operator UI executeG22h", operatorUi.includes("executeG22hScheduleRepublishDryRun"));
 assert("operator UI renderRepublishDryRunResult", operatorUi.includes("renderRepublishDryRunResult"));
 assert("operator UI enterRepublishDraft", operatorUi.includes("enterRepublishDraftFromSelectedRow"));
-assert("operator UI save alert stub", operatorUi.includes("G-22h6 以降"));
+assert("operator UI G-22h6b save note", operatorUi.includes("G-22h6b") || operatorUi.includes("G-22h6 以降"));
 assert("operator UI no actualWrite true", !/actualWrite:\s*true/.test(operatorUi));
 
 const republishImplSources = [dryRunModule, republishConfig, read(REPUBLISH_GUARDS)];

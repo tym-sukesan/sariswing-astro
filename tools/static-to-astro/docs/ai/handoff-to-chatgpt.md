@@ -5,25 +5,32 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-22h5-gosaki-schedule-republish-target-preflight — complete (uncommitted).
-G-22h6 first candidate: schedule-2026-07-008; expectedBeforeUpdatedAt=2026-07-06T13:58:41.425402+00:00.
-Reference rows 014/001 non-target; SELECT-only preflight; no Save / DB write / SQL mutation.
+Current phase: G-22h6a-gosaki-schedule-republish-update-implementation — complete (uncommitted).
+Republish UPDATE save module wired for schedule-2026-07-008 only; default Save disabled until G-22h6b write-armed execution.
+expectedBeforeUpdatedAt=2026-07-06T13:58:41.425402+00:00; payload { published: true } only; optimistic lock required.
+No Save / DB write / SQL mutation in G-22h6a implementation phase.
 Do NOT re-Save: schedule-2026-07-008 unpublish (G-22f7); schedule-2026-03-014 (G-22d3d); schedule-2026-09-001 (G-22e7).
 Routine dev: PUBLIC_ADMIN_WRITE_DRY_RUN=true; all write arms off.
 Supabase interim SoT: kmjqppxjdnwwrtaeqjta — never vsbvndwuajjhnzpohghh.
-Next: G-22h6 actual republish UPDATE implementation + operator Save once.
+Next: G-22h6b operator Save once (write-armed, operator approval).
 ```
+
+## G-22h6a Schedule republish UPDATE implementation — complete
+
+- **Goal:** Implement republish UPDATE save path; default disabled until G-22h6b
+- **Target:** `schedule-2026-07-008` · id `3e572f02-4f35-460e-80a1-3a7d15ca3fd9` only
+- **Module:** `executeG22hScheduleRepublishUpdateSave` · operation `republish-update`
+- **Payload:** `{ published: true }` only · optimistic lock · publicReflectionPending=true
+- **UI:** 再公開を保存（現在は無効）default; 再公開を保存 when env arm + gates pass
+- **Not executed:** Save · DB write · SQL · RLS · package · FTP · public reflection
+- **Doc:** `gosaki-schedule-republish-update-implementation.md` · **Verifier:** `verify-g22h6a-...mjs`
+- **Next:** G-22h6b operator Save once
 
 ## G-22h5 Schedule republish target preflight — complete
 
-- **Goal:** Select G-22h6 republish target; read-only preflight; record expectedBeforeUpdatedAt
-- **G-22h6 first candidate:** `schedule-2026-07-008` · id `3e572f02-4f35-460e-80a1-3a7d15ca3fd9`
-- **expectedBeforeUpdatedAt:** `2026-07-06T13:58:41.425402+00:00` (G-22f6 + G-22h4 chain; refresh SELECT before G-22h6 Save)
-- **Reference rows:** 014 duplicate test · 001 new-event test — **non-target**
-- **Required:** before `published=false` → after `published=true`; operation `republish-update`; Save once G-22h6 only
-- **Not executed:** Save · DB write · SQL mutation · RLS · package · FTP · public reflection · implementation changes
-- **Doc:** `gosaki-schedule-republish-target-preflight.md` · **SQL:** `gosaki-schedule-g22h5-republish-target-preflight-check.sql` · **Verifier:** `verify-g22h5-...mjs`
-- **Next:** G-22h6 actual republish UPDATE
+- **Commit:** `fabfd2f`
+- **G-22h6 first candidate:** `schedule-2026-07-008`
+- **Next:** Superseded by G-22h6a
 
 ## G-22h4b Schedule republish UI wording cleanup — complete
 

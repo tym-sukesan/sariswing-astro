@@ -98,7 +98,17 @@ import {
 import {
   evaluateG22hRepublishUpdateUiGate,
   getG22hRepublishUpdateConfig,
+  G22H_PREFLIGHT_EXPECTED_BEFORE_UPDATED_AT,
 } from "../staging-write/gosaki-schedule-republish-update-config";
+import {
+  G22H_FIXED_TARGET_LEGACY,
+  G22H_REFERENCE_LEGACY_SCHEDULE_2026_03_014,
+  G22H_REFERENCE_LEGACY_SCHEDULE_2026_09_001,
+} from "../staging-write/gosaki-schedule-republish-update-guards";
+import {
+  executeG22hScheduleRepublishUpdateSave,
+  type G22hRepublishUpdateSaveOutcome,
+} from "../staging-write/gosaki-schedule-republish-update-save";
 import type { GosakiScheduleEditDraftMode } from "../staging-write/schedule-dry-run-types";
 
 type PublishedFilter = "published" | "all" | "draft";
@@ -492,6 +502,7 @@ function updateSaveTargetPanel(): void {
   if (isRepublishDraftMode() && republishTargetSnapshot) {
     const kind: GosakiScheduleOperationKind = "republish";
     const step = resolveWorkflowStep(kind);
+    const updateConfig = getG22hRepublishUpdateConfig();
     const expectedBeforeUpdatedAt =
       republishDraftState?.expectedBeforeUpdatedAt ??
       republishTargetSnapshot.updated_at ??
@@ -513,10 +524,14 @@ function updateSaveTargetPanel(): void {
       <section class="gosaki-schedule-preview-confirmation__safety">
         <h4 class="gosaki-schedule-preview-confirmation__safety-title">再公開の確認</h4>
         <dl class="gosaki-schedule-preview-confirmation__safety-grid">
+          <div><dt>target fixed</dt><dd><code>${escapeHtml(G22H_FIXED_TARGET_LEGACY)}</code></dd></div>
           <div><dt>expectedBeforeUpdatedAt</dt><dd><code>${escapeHtml(String(expectedBeforeUpdatedAt))}</code></dd></div>
-          <div><dt>actualWrite</dt><dd><code>false</code></dd></div>
+          <div><dt>preflight baseline</dt><dd><code>${escapeHtml(G22H_PREFLIGHT_EXPECTED_BEFORE_UPDATED_AT)}</code></dd></div>
+          <div><dt>G-22h env arm</dt><dd><code>${escapeHtml(updateConfig.envArm)}=${updateConfig.armed ? "true" : "false"}</code></dd></div>
+          <div><dt>actualWrite</dt><dd><code>false</code>（Save成功時のみ true — G-22h6b）</dd></div>
           <div><dt>publicReflectionPending</dt><dd><code>true</code></dd></div>
         </dl>
+        <p class="gosaki-schedule-edit-dry-run__note">Save は <strong>G-22h6b</strong> で operator が <strong>1回だけ</strong> 実行します。env arm が false のときは保存できません。公開サイトへの反映は別フェーズです。reference rows（${escapeHtml(G22H_REFERENCE_LEGACY_SCHEDULE_2026_03_014)} / ${escapeHtml(G22H_REFERENCE_LEGACY_SCHEDULE_2026_09_001)}）は対象外です。</p>
         ${renderPublicReflectionPendingNote()}
       </section>
     `;
@@ -1894,14 +1909,24 @@ function updateSaveButtonState(result: G9kExistingEventSaveButtonDryRunResult | 
       republishDryRunResult: lastRepublishDryRunResult,
     });
 
-    button.disabled = true;
+    button.disabled = !gate.enabled || saveInFlight;
+    if (gate.enabled && !saveInFlight) {
+      button.removeAttribute("data-gosaki-schedule-action-disabled");
+      button.setAttribute("data-gosaki-save-allowed", "true");
+      button.textContent = "再公開を保存";
+      button.title = gate.reason;
+      setSaveButtonNote(gate.reason);
+      updateSaveTargetPanel();
+      return;
+    }
+
     button.setAttribute("data-gosaki-schedule-action-disabled", "");
     button.setAttribute("data-gosaki-save-allowed", "false");
-    button.textContent = "再公開を保存（準備中）";
+    button.textContent = "再公開を保存（現在は無効）";
     button.title = gate.reason;
     setSaveButtonNote(
       gate.reason ||
-        "再公開案です。先に「変更を確認」してください。保存は G-22h6 以降で有効化されます。公開サイトへの反映は別フェーズです。",
+        "再公開案です。先に「変更を確認」してください。保存は G-22h6b で env arm 有効化後に1回だけ。公開サイトへの反映は別フェーズです。",
     );
     updateSaveTargetPanel();
     return;
@@ -2877,6 +2902,60 @@ function renderDuplicateInsertSaveResult(outcome: G22dDuplicateInsertSaveOutcome
   el.scrollIntoView({ behavior: "smooth", block: "nearest" });
 }
 
+function isG22hRepublishUpdateOutcomeSuccess(outcome: G22hRepublishUpdateSaveOutcome): boolean {
+  return outcome.ok === true && outcome.actualWrite === true && outcome.operation === "republish-update";
+}
+
+function renderRepublishUpdateSaveResult(outcome: G22hRepublishUpdateSaveOutcome): void {
+  const el = document.getElementById("gosaki-schedule-edit-save-result");
+  if (!el) return;
+
+  el.hidden = false;
+  const success = isG22hRepublishUpdateOutcomeSuccess(outcome);
+  el.className = `gosaki-schedule-edit-save-result${success ? " gosaki-schedule-edit-save-result--ok" : " gosaki-schedule-edit-save-result--error"}`;
+
+  el.innerHTML = `
+    ${renderSaveResultBadge()}
+    <h3 class="gosaki-schedule-edit-save-result__title">${success ? "再公開の保存成功" : "再公開を保存できませんでした"}</h3>
+    ${
+      success
+        ? `<p class="gosaki-schedule-edit-save-result__success">データベースの published を true に更新しました（物理削除は行っていません）。公開サイトへの反映は別フェーズです。</p>`
+        : ""
+    }
+    ${outcome.errorMessage ? `<p class="gosaki-schedule-edit-save-result__message">${escapeHtml(outcome.errorMessage)}</p>` : ""}
+    ${renderOperationKindHeader("republish")}
+    ${renderOperationSpecificNote("republish")}
+    ${renderTargetIdentitySection({
+      legacyId: outcome.targetLegacyId,
+      targetId: outcome.targetId,
+      title: outcome.beforeRecord?.title,
+      date: outcome.beforeRecord?.date,
+      publishedBefore: String(outcome.beforeRecord?.published ?? "false"),
+      publishedAfter: String(outcome.afterRecord?.published ?? "true"),
+    })}
+    <dl class="gosaki-schedule-edit-dry-run__target">
+      <div><dt>operation</dt><dd><code>${escapeHtml(outcome.operation)}</code></dd></div>
+      <div><dt>approvalId</dt><dd><code>${escapeHtml(outcome.approvalId)}</code></dd></div>
+      <div><dt>保存前 updated_at（before updated_at）</dt><dd><code>${escapeHtml(outcome.beforeRecord?.updated_at ?? "—")}</code></dd></div>
+      <div><dt>保存後 updated_at（saved updated_at）</dt><dd><code>${escapeHtml(outcome.afterRecord?.updated_at ?? "—")}</code></dd></div>
+      <div><dt>optimistic lock 基準（expectedBeforeUpdatedAt）</dt><dd><code>${escapeHtml(outcome.expectedBeforeUpdatedAt ?? "—")}</code></dd></div>
+      <div><dt>wouldDelete</dt><dd><code>false</code></dd></div>
+      <div><dt>physicalDelete</dt><dd><code>false</code></dd></div>
+      <div><dt>contentFieldsChanged</dt><dd><code>false</code></dd></div>
+      <div><dt>publicReflectionPending</dt><dd><code>true</code></dd></div>
+      <div><dt>actualWrite</dt><dd><code>${String(outcome.actualWrite)}</code></dd></div>
+    </dl>
+    ${renderOptimisticLockExplanation()}
+    ${
+      outcome.guardReasons.length > 0
+        ? `<div class="gosaki-schedule-edit-dry-run__chips"><span class="gosaki-schedule-edit-dry-run__chips-label">guardReasons</span>${outcome.guardReasons.map((reason) => `<span class="gosaki-schedule-edit-dry-run__chip">${escapeHtml(reason)}</span>`).join("")}</div>`
+        : ""
+    }
+    ${outcome.rollbackHint ? `<p class="gosaki-schedule-edit-dry-run__note">${escapeHtml(outcome.rollbackHint)}</p>` : ""}
+  `;
+  el.scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
+
 function isG22fUnpublishUpdateOutcomeSuccess(outcome: G22fUnpublishUpdateSaveOutcome): boolean {
   return outcome.ok === true && outcome.actualWrite === true && outcome.operation === "unpublish-update";
 }
@@ -3090,9 +3169,58 @@ async function runEditDryRunPreview(): Promise<void> {
 
 async function runEditSave(): Promise<void> {
   if (isRepublishDraftMode()) {
-    window.alert(
-      "再公開の保存は G-22h6 以降で有効化されます。現在は「変更を確認」まで利用できます（DBは変わりません）。公開サイトへの反映は別フェーズです。",
-    );
+    const gate = evaluateG22hRepublishUpdateUiGate({
+      signedIn: stagingAuthSignedIn === true,
+      republishMode: true,
+      target: republishTargetSnapshot,
+      republishDryRunResult: lastRepublishDryRunResult,
+    });
+    if (!gate.enabled) {
+      window.alert(gate.reason);
+      return;
+    }
+    if (!republishTargetSnapshot || !lastRepublishDryRunResult?.ok) {
+      window.alert("先に「変更を確認」で再公開案の内容を確認してください。");
+      return;
+    }
+    if (
+      !window.confirm(
+        "この公演を再公開します（published=true）。1行のみ更新します。よろしいですか？",
+      )
+    ) {
+      return;
+    }
+
+    saveInFlight = true;
+    updateSaveButtonState(null);
+
+    const url = String(import.meta.env.PUBLIC_SUPABASE_URL ?? "").trim();
+    const anonKey = String(import.meta.env.PUBLIC_SUPABASE_ANON_KEY ?? "").trim();
+    const outcome = await executeG22hScheduleRepublishUpdateSave({
+      url,
+      anonKey,
+      target: republishTargetSnapshot,
+      republishMode: true,
+      republishDryRunOk: lastRepublishDryRunResult.ok,
+      republishDryRunOperation: lastRepublishDryRunResult.operation,
+      wouldUpdate: lastRepublishDryRunResult.wouldUpdate,
+      wouldDelete: lastRepublishDryRunResult.wouldDelete,
+      physicalDelete: lastRepublishDryRunResult.physicalDelete,
+      beforePublished: lastRepublishDryRunResult.before.published,
+      afterPublished: lastRepublishDryRunResult.after.published,
+      duplicateMode: false,
+      newEventMode: false,
+      unpublishMode: false,
+      existingUpdateMode: false,
+      expectedBeforeUpdatedAt:
+        republishDraftState?.expectedBeforeUpdatedAt ??
+        republishTargetSnapshot.updated_at ??
+        null,
+    });
+
+    saveInFlight = false;
+    renderRepublishUpdateSaveResult(outcome);
+    updateSaveButtonState(null);
     return;
   }
 

@@ -20,24 +20,33 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Verifier | `verify-g22h4b-gosaki-schedule-republish-ui-wording-cleanup.mjs` |
 | **Next** | **G-22h5** republish target preflight |
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22h6a Schedule republish UPDATE implementation — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-22h6a-gosaki-schedule-republish-update-implementation` |
+| Base | `fabfd2f` |
+| Scope | config · guards · save module · UI gate — **implementation only** |
+| Target | **`schedule-2026-07-008`** only |
+| expectedBeforeUpdatedAt | `2026-07-06T13:58:41.425402+00:00` |
+| Payload | `{ published: true }` only |
+| approvalId | `G-22h-gosaki-schedule-republish-update-non-dry-run-slice` |
+| env arm | `PUBLIC_ADMIN_GOSAKI_SCHEDULE_G22H_REPUBLISH_UPDATE_NON_DRY_RUN_ARMED` |
+| Default Save | **disabled** (env arm off) |
+| Save / DB write | **none** (G-22h6a) |
+| Doc | `gosaki-schedule-republish-update-implementation.md` |
+| Verifier | `verify-g22h6a-gosaki-schedule-republish-update-implementation.mjs` |
+| **Next** | **G-22h6b** operator Save once |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22h5 Schedule republish target preflight — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-22h5-gosaki-schedule-republish-target-preflight` |
 | Base | `92eaf55` |
-| Scope | target selection · read-only preflight · SELECT SQL template only |
-| G-22h6 first candidate | **`schedule-2026-07-008`** (`3e572f02-4f35-460e-80a1-3a7d15ca3fd9`) |
-| expectedBeforeUpdatedAt | `2026-07-06T13:58:41.425402+00:00` |
-| Reference rows | `schedule-2026-03-014` · `schedule-2026-09-001` — **non-target** |
-| Preflight | SELECT-only chain (G-22f6 + G-22h4); anon API 0 rows (RLS) |
-| Save / DB write / SQL mutation | **none** |
-| RLS / grant / service_role | **unchanged** |
-| package / FTP / public reflection | **none** |
-| Doc | `gosaki-schedule-republish-target-preflight.md` |
-| SQL | `gosaki-schedule-g22h5-republish-target-preflight-check.sql` |
-| Verifier | `verify-g22h5-gosaki-schedule-republish-target-preflight.mjs` |
-| **Next** | **G-22h6** actual republish UPDATE |
+| Commit | `fabfd2f` |
+| G-22h6 first candidate | **`schedule-2026-07-008`** |
+| **Next** | **Superseded by G-22h6a implementation** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22h4b Schedule republish UI wording cleanup — complete
 

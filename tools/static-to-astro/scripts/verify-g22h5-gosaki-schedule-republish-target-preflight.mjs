@@ -26,7 +26,7 @@ const REPUBLISH_DRY_RUN =
 const REPUBLISH_SAVE =
   "src/lib/admin/staging-write/gosaki-schedule-republish-update-save.ts";
 
-const BASE_COMMIT = "92eaf55";
+const BASE_COMMIT = "fabfd2f";
 const PROD_REF = "vsbvndwuajjhnzpohghh";
 const STAGING_REF = "kmjqppxjdnwwrtaeqjta";
 const TARGET_LEGACY = "schedule-2026-07-008";
@@ -72,15 +72,15 @@ const origin = spawnSync("git", ["rev-parse", "--short", "origin/main"], {
   encoding: "utf8",
 });
 
-assert("HEAD is 92eaf55", head.stdout.trim() === BASE_COMMIT, head.stdout.trim());
-assert("origin/main is 92eaf55", origin.stdout.trim() === BASE_COMMIT, origin.stdout.trim());
+assert("HEAD is fabfd2f (G-22h5 base)", head.stdout.trim() === BASE_COMMIT, head.stdout.trim());
+assert("origin/main is fabfd2f", origin.stdout.trim() === BASE_COMMIT, origin.stdout.trim());
 
 assert("G-22h5 preflight doc exists", exists(DOC_REL));
 assert("G-22h4b prior doc exists", exists(G22H4B_DOC));
 assert("G-22h4 prior QA doc exists", exists(G22H4_DOC));
 assert("G-22h1 planning doc exists", exists(G22H1_DOC));
 assert("preflight SQL exists", exists(PREFLIGHT_SQL));
-assert("republish save module absent", !exists(REPUBLISH_SAVE));
+assert("republish save module present (G-22h6a)", exists(REPUBLISH_SAVE));
 
 const doc = read(DOC_REL);
 const sql = read(PREFLIGHT_SQL);
@@ -121,7 +121,7 @@ assert("doc next G-22h6", doc.includes("G-22h6"));
 assert("doc next G-22h7", doc.includes("G-22h7"));
 assert("doc approvalId", doc.includes(APPROVAL_ID));
 assert("doc fix not required", doc.includes("Fix required?") && doc.includes("**No.**"));
-assert("doc base commit 92eaf55", doc.includes(BASE_COMMIT));
+assert("doc base commit recorded", doc.includes("92eaf55") || doc.includes(BASE_COMMIT));
 assert("doc never sariswing prod", /never.*vsbvndwuajjhnzpohghh/i.test(doc));
 assert("doc staging ref only", doc.includes(STAGING_REF));
 assert(
@@ -140,11 +140,14 @@ assert("sql target legacy ids", sql.includes(TARGET_LEGACY) && sql.includes(REF_
 assert("sql site slug", sql.includes("gosaki-piano"));
 assert("sql staging ref in comment", sql.includes(STAGING_REF));
 
-assert("config saveEnabled false", republishConfig.includes("saveEnabled: false"));
+assert("config saveEnabled from armed", republishConfig.includes("saveEnabled = armed"));
 assert("config no .update(", !republishConfig.includes(".update("));
 assert("dry-run no .update(", !dryRunModule.includes(".update("));
 assert("dry-run actualWrite false", dryRunModule.includes("actualWrite: false"));
-assert("republish config unchanged", gitDiff(REPUBLISH_CONFIG).length === 0);
+assert(
+  "config fixed target via guards import (G-22h6a may modify config)",
+  republishConfig.includes("G22H_FIXED_TARGET_LEGACY") || republishConfig.includes(TARGET_LEGACY),
+);
 assert("republish dry-run unchanged", gitDiff(REPUBLISH_DRY_RUN).length === 0);
 
 assert("00-current-state mentions G-22h5", currentState.includes("G-22h5"));

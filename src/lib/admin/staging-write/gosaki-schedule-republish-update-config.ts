@@ -14,7 +14,7 @@ export const GOSAKI_SCHEDULE_G22H_REPUBLISH_UPDATE_NON_DRY_RUN_ARMED_ENV =
   "PUBLIC_ADMIN_GOSAKI_SCHEDULE_G22H_REPUBLISH_UPDATE_NON_DRY_RUN_ARMED";
 
 export const G22H_REPUBLISH_UPDATE_SAVE_DISABLED_G22H3_REASON =
-  "G-22h3 republish UPDATE Save disabled — non-dry-run execution deferred to G-22h6 (dry-run preview only).";
+  "再公開の保存は現在無効です。G-22h6以降で、戸山が確認してから有効化します。";
 
 export interface G22hRepublishUpdateConfig {
   phase: typeof G22H3_REPUBLISH_CONFIG_PHASE;
@@ -106,7 +106,7 @@ export function evaluateG22hRepublishUpdateUiGate(input: {
     return {
       enabled: false,
       saveAllowed: false,
-      reason: "Republish dry-run preview must succeed before Save (G-22h6).",
+      reason: "再公開の保存はG-22h6以降で有効化します。現在は保存できません。",
     };
   }
 

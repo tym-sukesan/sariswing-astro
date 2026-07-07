@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-22h4 Gosaki Schedule republish dry-run read-only QA (2026-07-07):** **complete (uncommitted)** — operator manual login QA on `schedule-2026-07-008`; `published=false→true` preview; `actualWrite=false`; `publicReflectionPending=true`; Save **disabled**. **No Save / DB write / SQL / RLS / GRANT / package / FTP / public reflection.** Residual: English wording non-blocking. Doc: `gosaki-schedule-republish-dry-run-readonly-qa.md`. Verifier: `verify-g22h4-gosaki-schedule-republish-dry-run-readonly-qa.mjs`. **Next: G-22h4b UI wording cleanup or G-22h5 preflight.**
+**G-22h4b Gosaki Schedule republish UI wording cleanup (2026-07-07):** **complete (uncommitted)** — G-22h4 residual English Save gate copy → Japanese in `gosaki-schedule-republish-update-config.ts`; Save **disabled / alert-only unchanged**. **No Save / DB write / SQL / RLS / GRANT / package / FTP.** Doc: `gosaki-schedule-republish-ui-wording-cleanup.md`. Verifier: `verify-g22h4b-gosaki-schedule-republish-ui-wording-cleanup.mjs`. **Next: G-22h5 republish target preflight.**
+
+**G-22h4 Gosaki Schedule republish dry-run read-only QA (2026-07-07):** **complete** — commit `4e45f90`. Operator manual login QA on `schedule-2026-07-008`; residual English wording fixed in G-22h4b. **Superseded for wording by G-22h4b.**
 
 **G-22h3 Gosaki Schedule republish dry-run UI implementation (2026-07-07):** **complete** — commit `646f680`. `executeG22hScheduleRepublishDryRun` + republish draft UI + save target panel; Save **disabled / alert-only** until G-22h6. **Superseded for QA by G-22h4.**
 

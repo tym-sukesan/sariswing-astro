@@ -31,7 +31,7 @@ const G22D_SAVE = "src/lib/admin/staging-write/gosaki-schedule-duplicate-insert-
 const G22E_SAVE = "src/lib/admin/staging-write/gosaki-schedule-new-event-insert-save.ts";
 const G22F_SAVE = "src/lib/admin/staging-write/gosaki-schedule-unpublish-update-save.ts";
 
-const BASE_COMMIT = "646f680";
+const BASE_COMMIT = "4e45f90";
 const PROD_REF = "vsbvndwuajjhnzpohghh";
 const STAGING_REF = "kmjqppxjdnwwrtaeqjta";
 const TARGET_LEGACY = "schedule-2026-07-008";
@@ -74,8 +74,8 @@ const origin = spawnSync("git", ["rev-parse", "--short", "origin/main"], {
   encoding: "utf8",
 });
 
-assert("HEAD is 646f680", head.stdout.trim() === BASE_COMMIT, head.stdout.trim());
-assert("origin/main is 646f680", origin.stdout.trim() === BASE_COMMIT, origin.stdout.trim());
+assert("HEAD is 4e45f90", head.stdout.trim() === BASE_COMMIT, head.stdout.trim());
+assert("origin/main is 4e45f90", origin.stdout.trim() === BASE_COMMIT, origin.stdout.trim());
 
 assert("G-22h4 QA doc exists", exists(DOC_REL));
 assert("G-22h3 prior doc exists", exists(G22H3_DOC));
@@ -145,7 +145,7 @@ assert("doc next G-22h5 preflight", doc.includes("G-22h5"));
 assert("doc next G-22h6 actual UPDATE", doc.includes("G-22h6"));
 assert("doc fix not required", doc.includes("Fix required?") && doc.includes("**No.**"));
 assert("doc references G-22h3", doc.includes("G-22h3"));
-assert("doc base commit 646f680", doc.includes(BASE_COMMIT));
+assert("doc base commit 646f680 or 4e45f90", doc.includes("646f680") || doc.includes("4e45f90"));
 assert("doc never sariswing prod", /never.*vsbvndwuajjhnzpohghh/i.test(doc));
 assert("doc staging ref only", doc.includes(STAGING_REF));
 assert(
@@ -160,7 +160,10 @@ assert(
 
 assert("operator UI republish dry-run", operatorUi.includes("executeG22hScheduleRepublishDryRun"));
 assert("operator UI republish save stub", operatorUi.includes("再公開を保存（準備中）"));
-assert("config english residual in source", republishConfig.includes(ENGLISH_RESIDUAL));
+assert(
+  "config english residual historical only (G-22h4b resolved)",
+  !republishConfig.includes(ENGLISH_RESIDUAL),
+);
 assert("page republish btn", astroPage.includes('id="gosaki-schedule-republish-btn"'));
 assert("page procedure hint republish", astroPage.includes('data-gosaki-procedure-hint="republish"'));
 
@@ -190,7 +193,6 @@ if (portCheck.stdout.trim().length === 0) {
 assert("00-current-state mentions G-22h4", currentState.includes("G-22h4"));
 assert("03-next-actions mentions G-22h4", nextActions.includes("G-22h4"));
 assert("handoff mentions G-22h4", handoff.includes("G-22h4"));
-assert("handoff current phase G-22h4", handoff.includes("G-22h4"));
 
 assert("Save not executed by Cursor", true);
 assert("DB write not executed by Cursor", true);

@@ -1,26 +1,41 @@
 Last updated: 2026-07-07
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22h4b Schedule republish UI wording cleanup — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-22h4b-gosaki-schedule-republish-ui-wording-cleanup` |
+| Base | `4e45f90` |
+| Scope | operator-facing Japanese copy only |
+| File | `gosaki-schedule-republish-update-config.ts` |
+| Before | `Republish dry-run preview must succeed before Save (G-22h6).` |
+| After | `再公開の保存はG-22h6以降で有効化します。現在は保存できません。` |
+| Default reason | `再公開の保存は現在無効です。G-22h6以降で、戸山が確認してから有効化します。` |
+| Save disabled / alert-only | **unchanged** |
+| Save / DB write / SQL | **none** |
+| RLS / grant / service_role | **unchanged** |
+| package / FTP / public reflection | **none** |
+| Doc | `gosaki-schedule-republish-ui-wording-cleanup.md` |
+| Verifier | `verify-g22h4b-gosaki-schedule-republish-ui-wording-cleanup.mjs` |
+| **Next** | **G-22h5** republish target preflight |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22h4 Schedule republish dry-run read-only QA — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-22h4-gosaki-schedule-republish-dry-run-readonly-qa` |
 | Base | `646f680` |
+| Commit | `4e45f90` |
 | Scope | operator manual login read-only QA · record only |
 | Target | `schedule-2026-07-008` (`3e572f02-4f35-460e-80a1-3a7d15ca3fd9`) |
 | Flow | 再公開案を作成 → 変更を確認 |
 | Preview | `published=false→true` · `actualWrite=false` · `publicReflectionPending=true` |
-| expectedBeforeUpdatedAt | `2026-07-06T13:58:41.425402+00:00` |
-| Save | **disabled** — 再公開を保存（準備中）· **not clicked** |
-| Save / DB write / SQL | **none** |
-| RLS / grant / service_role | **unchanged** |
-| package / FTP / public reflection | **none** |
-| Dev server | **stopped** — port 4321 LISTEN none |
-| Residual | English wording non-blocking — G-22h4b candidate |
+| Save | **disabled** — **not clicked** |
+| Residual | English wording — **fixed in G-22h4b** |
 | Doc | `gosaki-schedule-republish-dry-run-readonly-qa.md` |
 | Verifier | `verify-g22h4-gosaki-schedule-republish-dry-run-readonly-qa.mjs` |
-| **Next** | **G-22h4b** UI wording cleanup **or** **G-22h5** preflight |
+| **Next** | **Superseded by G-22h4b wording cleanup** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22h3 Schedule republish dry-run UI implementation — complete
 

@@ -5,25 +5,33 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-22h4b-gosaki-schedule-republish-ui-wording-cleanup — complete (uncommitted).
-G-22h4 residual English republish Save gate copy replaced with Japanese; Save disabled / alert-only unchanged.
-No DB write / SQL / RLS / package / FTP / public reflection in this phase.
-Do NOT re-Save: schedule-2026-07-008 until G-22h6; schedule-2026-09-001 (G-22e7); schedule-2026-03-014 (G-22d3d).
+Current phase: G-22h5-gosaki-schedule-republish-target-preflight — complete (uncommitted).
+G-22h6 first candidate: schedule-2026-07-008; expectedBeforeUpdatedAt=2026-07-06T13:58:41.425402+00:00.
+Reference rows 014/001 non-target; SELECT-only preflight; no Save / DB write / SQL mutation.
+Do NOT re-Save: schedule-2026-07-008 unpublish (G-22f7); schedule-2026-03-014 (G-22d3d); schedule-2026-09-001 (G-22e7).
 Routine dev: PUBLIC_ADMIN_WRITE_DRY_RUN=true; all write arms off.
 Supabase interim SoT: kmjqppxjdnwwrtaeqjta — never vsbvndwuajjhnzpohghh.
-Next: G-22h5 republish target selection / preflight.
+Next: G-22h6 actual republish UPDATE implementation + operator Save once.
 ```
+
+## G-22h5 Schedule republish target preflight — complete
+
+- **Goal:** Select G-22h6 republish target; read-only preflight; record expectedBeforeUpdatedAt
+- **G-22h6 first candidate:** `schedule-2026-07-008` · id `3e572f02-4f35-460e-80a1-3a7d15ca3fd9`
+- **expectedBeforeUpdatedAt:** `2026-07-06T13:58:41.425402+00:00` (G-22f6 + G-22h4 chain; refresh SELECT before G-22h6 Save)
+- **Reference rows:** 014 duplicate test · 001 new-event test — **non-target**
+- **Required:** before `published=false` → after `published=true`; operation `republish-update`; Save once G-22h6 only
+- **Not executed:** Save · DB write · SQL mutation · RLS · package · FTP · public reflection · implementation changes
+- **Doc:** `gosaki-schedule-republish-target-preflight.md` · **SQL:** `gosaki-schedule-g22h5-republish-target-preflight-check.sql` · **Verifier:** `verify-g22h5-...mjs`
+- **Next:** G-22h6 actual republish UPDATE
 
 ## G-22h4b Schedule republish UI wording cleanup — complete
 
 - **Goal:** Replace G-22h4 residual English operator copy with natural Japanese
-- **File:** `gosaki-schedule-republish-update-config.ts`
-- **Gate reason:** `再公開の保存はG-22h6以降で有効化します。現在は保存できません。`
-- **Default disabled:** `再公開の保存は現在無効です。G-22h6以降で、戸山が確認してから有効化します。`
-- **Behavior:** Save disabled / alert-only stub **unchanged** — no `.update()` / no `actualWrite: true`
-- **Not executed:** Save · DB write · SQL · RLS · package · FTP · public reflection
+- **Commit:** `92eaf55`
+- **Behavior:** Save disabled / alert-only stub **unchanged**
 - **Doc:** `gosaki-schedule-republish-ui-wording-cleanup.md` · **Verifier:** `verify-g22h4b-...mjs`
-- **Next:** G-22h5 preflight
+- **Next:** Superseded by G-22h5 preflight
 
 ## G-22h4 Schedule republish dry-run read-only QA — complete
 

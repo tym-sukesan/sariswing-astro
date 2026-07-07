@@ -20,22 +20,37 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Verifier | `verify-g22h4b-gosaki-schedule-republish-ui-wording-cleanup.mjs` |
 | **Next** | **G-22h5** republish target preflight |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22h4 Schedule republish dry-run read-only QA — complete
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22h5 Schedule republish target preflight — complete
 
 | Item | Value |
 | --- | --- |
-| Phase | `G-22h4-gosaki-schedule-republish-dry-run-readonly-qa` |
-| Base | `646f680` |
-| Commit | `4e45f90` |
-| Scope | operator manual login read-only QA · record only |
-| Target | `schedule-2026-07-008` (`3e572f02-4f35-460e-80a1-3a7d15ca3fd9`) |
-| Flow | 再公開案を作成 → 変更を確認 |
-| Preview | `published=false→true` · `actualWrite=false` · `publicReflectionPending=true` |
-| Save | **disabled** — **not clicked** |
-| Residual | English wording — **fixed in G-22h4b** |
-| Doc | `gosaki-schedule-republish-dry-run-readonly-qa.md` |
-| Verifier | `verify-g22h4-gosaki-schedule-republish-dry-run-readonly-qa.mjs` |
-| **Next** | **Superseded by G-22h4b wording cleanup** |
+| Phase | `G-22h5-gosaki-schedule-republish-target-preflight` |
+| Base | `92eaf55` |
+| Scope | target selection · read-only preflight · SELECT SQL template only |
+| G-22h6 first candidate | **`schedule-2026-07-008`** (`3e572f02-4f35-460e-80a1-3a7d15ca3fd9`) |
+| expectedBeforeUpdatedAt | `2026-07-06T13:58:41.425402+00:00` |
+| Reference rows | `schedule-2026-03-014` · `schedule-2026-09-001` — **non-target** |
+| Preflight | SELECT-only chain (G-22f6 + G-22h4); anon API 0 rows (RLS) |
+| Save / DB write / SQL mutation | **none** |
+| RLS / grant / service_role | **unchanged** |
+| package / FTP / public reflection | **none** |
+| Doc | `gosaki-schedule-republish-target-preflight.md` |
+| SQL | `gosaki-schedule-g22h5-republish-target-preflight-check.sql` |
+| Verifier | `verify-g22h5-gosaki-schedule-republish-target-preflight.mjs` |
+| **Next** | **G-22h6** actual republish UPDATE |
+
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22h4b Schedule republish UI wording cleanup — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-22h4b-gosaki-schedule-republish-ui-wording-cleanup` |
+| Base | `4e45f90` |
+| Commit | `92eaf55` |
+| Scope | operator-facing Japanese copy only |
+| Save disabled / alert-only | **unchanged** |
+| Doc | `gosaki-schedule-republish-ui-wording-cleanup.md` |
+| Verifier | `verify-g22h4b-gosaki-schedule-republish-ui-wording-cleanup.mjs` |
+| **Next** | **Superseded by G-22h5 preflight** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22h3 Schedule republish dry-run UI implementation — complete
 

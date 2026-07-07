@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-23i Static-to-Astro fixture mode orchestrator integration (2026-07-08):** **complete** — `run-onboarding-orchestrator.mjs` = standard entry; `run-onboarding-fixture-dry-run.mjs` = compatibility wrapper delegating to fixture-dry-run; seed counts match both entries. Doc: `static-to-astro-fixture-mode-orchestrator-integration-result.md`. Verifier: `verify-g23i-static-to-astro-fixture-mode-orchestrator-integration.mjs`. **No crawl / DB / SQL / package / FTP.** **Next: G-23j full dry-run · G-23k crawl planning.**
+**G-23j Static-to-Astro first non-network sample full dry-run (2026-07-08):** **complete** — `full-dry-run` mode on sample musician fixture; steps 0–9 PASS; seed 7 candidates; warnings (news unmapped); DB/package/FTP planOnly. Doc: `static-to-astro-first-non-network-sample-full-dry-run-result.md`. Verifier: `verify-g23j-static-to-astro-first-non-network-sample-full-dry-run.mjs`. **No crawl / network / DB / SQL / package / FTP.** **Next: G-23k crawl planning · G-23l report output.**
+
+**G-23i Static-to-Astro fixture mode orchestrator integration (2026-07-08):** **complete** — orchestrator = standard entry; G-23d script = compatibility wrapper. Doc: `static-to-astro-fixture-mode-orchestrator-integration-result.md`. **Superseded for full dry-run by G-23j.**
 
 **G-23h Static-to-Astro onboarding orchestrator skeleton (2026-07-08):** **complete** — `run-onboarding-orchestrator.mjs` wires G-23c validator · G-23f registry · G-23g seed extractor; modes `validate-only` · `fixture-dry-run`; steps 0–9; planOnly DB/package/FTP. Doc: `static-to-astro-onboarding-orchestrator-skeleton-result.md`. Verifier: `verify-g23h-static-to-astro-onboarding-orchestrator-skeleton.mjs`. **Superseded for fixture entry by G-23i.**
 

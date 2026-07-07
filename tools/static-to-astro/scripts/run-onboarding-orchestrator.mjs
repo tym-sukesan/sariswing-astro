@@ -6,7 +6,7 @@
  * Usage:
  *   node tools/static-to-astro/scripts/run-onboarding-orchestrator.mjs \
  *     --config <onboarding.json> \
- *     --mode validate-only|fixture-dry-run \
+ *     --mode validate-only|fixture-dry-run|full-dry-run \
  *     [--fixture <fixture-crawl-result.json>] \
  *     [--json]
  */
@@ -32,16 +32,24 @@ const REPO_ROOT = path.resolve(TOOL_ROOT, "../..");
 
 /** @typedef {"PASS" | "WARN" | "FAIL" | "SKIP" | "PLAN_ONLY" | "NOT_IMPLEMENTED"} StepStatus */
 
-export const SUPPORTED_MODES = ["validate-only", "fixture-dry-run"];
+export const FIXTURE_MODES = ["fixture-dry-run", "full-dry-run"];
+
+export const SUPPORTED_MODES = ["validate-only", ...FIXTURE_MODES];
 
 export const UNSUPPORTED_MODES = [
   "crawl-dry-run",
   "seed-dry-run",
   "package-dry-run",
-  "full-dry-run",
   "apply-staging-db",
   "prepare-upload-plan",
 ];
+
+/**
+ * @param {string | null | undefined} mode
+ */
+export function isFixtureMode(mode) {
+  return FIXTURE_MODES.includes(mode);
+}
 
 const MODULE_PAGE_MAP = {
   schedule: ["schedule"],
@@ -158,8 +166,9 @@ function buildPageClassification(config, fixture) {
 /**
  * @param {object} config
  * @param {object} fixture
+ * @param {string[]} [unmappedModules]
  */
-function buildCmsModulePlanner(config, fixture) {
+function buildCmsModulePlanner(config, fixture, unmappedModules = []) {
   const seeds = fixture.seedCandidates ?? {};
   /** @type {Array<{ id: string, enabled: boolean, status: StepStatus, seedCount: number, note?: string }>} */
   const modules = [];
@@ -177,7 +186,10 @@ function buildCmsModulePlanner(config, fixture) {
 
     let status = "PASS";
     let note;
-    if (seedCount === 0 && mod.seedPolicy !== "skip") {
+    if (unmappedModules.includes(mod.id)) {
+      status = "WARN";
+      note = `enabled module has no page route in fixture (missing ${mod.publicRoute ?? `/${mod.id}/`})`;
+    } else if (seedCount === 0 && mod.seedPolicy !== "skip") {
       status = "WARN";
       note = "enabled module has no seed candidates in fixture";
     }
@@ -282,15 +294,175 @@ function worstStatus(items) {
 
 /**
  * @param {object} fixture
- * @param {string[]} errors
  */
-function validateFixtureShape(fixture, errors) {
+function countFixtureAssets(fixture) {
+  const css = fixture.assets?.css?.length ?? 0;
+  const images = fixture.assets?.images?.length ?? 0;
+  return css + images;
+}
+
+/**
+ * @param {object} config
+ * @param {object} safetyGates
+ */
+function buildDbPlan(config, safetyGates) {
+  const sb = config.supabase ?? {};
+  const tables = (config.cms?.modules ?? [])
+    .filter((m) => m.enabled && m.table)
+    .map((m) => ({ moduleId: m.id, table: m.table }));
+
+  return {
+    status: "PLAN_ONLY",
+    planOnly: safetyGates.planOnly?.stagingDb !== false,
+    allowDbWrite: config.safetyGates?.allowDbWrite === true,
+    dbConnectionAttempted: false,
+    sqlGenerated: false,
+    sqlExecuted: false,
+    humanApprovalRequired: true,
+    projectRef: sb.projectRef ?? null,
+    environment: sb.environment ?? null,
+    tables,
+    rollbackPlanRequired: config.safetyGates?.requireRollbackPlanForDbWrite === true,
+  };
+}
+
+/**
+ * @param {object} config
+ * @param {object} intake
+ */
+function buildPackagePlan(config, intake) {
+  return {
+    status: "PLAN_ONLY",
+    planOnly: true,
+    allowPackageBuild: config.safetyGates?.allowPackageBuild === true,
+    packageBuildExecuted: false,
+    astroBuildExecuted: false,
+    outputPaths: intake.outputPaths ?? [],
+    filesCreated: 0,
+  };
+}
+
+/**
+ * @param {object} config
+ * @param {object} intake
+ * @param {object} safetyGates
+ */
+function buildUploadPlan(config, intake, safetyGates) {
+  const deployBase = intake.deployBase ?? config.output?.deployBase ?? "/";
+  /** @type {string[]} */
+  const uploadCandidates = [
+    `${deployBase}index.html`,
+    `${deployBase}schedule/index.html`,
+    `${deployBase}profile/index.html`,
+    `${deployBase}discography/index.html`,
+    `${deployBase}videos/index.html`,
+    `${deployBase}contact/index.html`,
+    `${deployBase}_astro/`,
+    `${deployBase}robots.txt`,
+  ];
+
+  return {
+    status: "PLAN_ONLY",
+    planOnly: safetyGates.planOnly?.upload !== false,
+    allowFtpUpload: config.safetyGates?.allowFtpUpload === true,
+    ftpConnectionAttempted: false,
+    ftpUploadExecuted: false,
+    requireOutputDiffReview: config.safetyGates?.requireOutputDiffReview === true,
+    requireUploadFileList: config.safetyGates?.requireUploadFileList === true,
+    uploadCandidates,
+    deployExecuted: false,
+  };
+}
+
+/**
+ * @param {object} params
+ */
+function buildWarnings(params) {
+  const {
+    configValidation,
+    registryValidation,
+    pageClassification,
+    cmsModulePlanner,
+    seedExtraction,
+    unmappedModules = [],
+  } = params;
+
+  /** @type {Array<{ code: string, severity: "WARN" | "INFO", message: string }>} */
+  const warnings = [];
+
+  for (const w of configValidation?.warnings ?? []) {
+    warnings.push({ code: "config", severity: "WARN", message: w });
+  }
+  for (const w of registryValidation?.warnings ?? []) {
+    warnings.push({ code: "registry", severity: "WARN", message: w });
+  }
+  for (const modId of unmappedModules) {
+    warnings.push({
+      code: "unmapped-module",
+      severity: "WARN",
+      message: `enabled module ${modId} has no matching page route in fixture (e.g. missing /news/)`,
+    });
+  }
+  for (const row of pageClassification?.rows ?? []) {
+    if (row.status === "WARN" && row.note) {
+      warnings.push({
+        code: "page-classification",
+        severity: "WARN",
+        message: `${row.path}: ${row.note}`,
+      });
+    }
+  }
+  for (const mod of cmsModulePlanner ?? []) {
+    if (mod.status === "WARN" && mod.note) {
+      warnings.push({
+        code: "cms-module",
+        severity: "WARN",
+        message: `${mod.id}: ${mod.note}`,
+      });
+    }
+  }
+  for (const w of seedExtraction?.warnings ?? []) {
+    warnings.push({ code: "seed-extraction", severity: "WARN", message: w });
+  }
+
+  return warnings;
+}
+
+/**
+ * @param {Array<{ severity: string, message: string }>} warnings
+ * @param {Array<{ status: string, label: string }>} steps
+ */
+function buildRiskSummary(warnings, steps) {
+  const warnSteps = (steps ?? []).filter((s) => s.status === "WARN").map((s) => s.label);
+  const planOnlySteps = (steps ?? [])
+    .filter((s) => s.status === "PLAN_ONLY")
+    .map((s) => s.label);
+
+  return {
+    overallRisk: warnings.some((w) => w.severity === "WARN") ? "low-with-warnings" : "low",
+    warningCount: warnings.length,
+    warnSteps,
+    planOnlySteps,
+    destructiveOpsBlocked: true,
+    notes: [
+      "Non-network fixture-only dry-run — no live crawl",
+      "DB / package / FTP steps are planOnly — human approval required for any future write",
+    ],
+  };
+}
+
+/**
+ * @param {object} fixture
+ * @param {string[]} errors
+ * @param {string} modeLabel
+ */
+function validateFixtureShape(fixture, errors, modeLabel = "fixture mode") {
   if (!isPlainObject(fixture)) {
     errors.push("fixture root must be a JSON object");
     return;
   }
   if (fixture.fixtureOnly !== true) {
-    errors.push("fixture.fixtureOnly must be true for fixture-dry-run mode");
+    errors.push(`fixture.fixtureOnly must be true for ${modeLabel}`);
   }
   if (!Array.isArray(fixture.pages) || fixture.pages.length === 0) {
     errors.push("fixture.pages must be a non-empty array");
@@ -315,7 +487,10 @@ export function runOnboardingOrchestrator(options) {
     fixture: fixtureInline = null,
   } = options;
 
-  const phase = "G-23h-onboarding-orchestrator-skeleton";
+  const phase =
+    mode === "full-dry-run"
+      ? "G-23j-first-non-network-sample-full-dry-run"
+      : "G-23h-onboarding-orchestrator-skeleton";
 
   if (!mode) {
     return {
@@ -386,7 +561,7 @@ export function runOnboardingOrchestrator(options) {
   }
 
   let fixture = null;
-  if (mode === "fixture-dry-run") {
+  if (isFixtureMode(mode)) {
     if (fixtureInline) {
       fixture = fixtureInline;
     } else if (fixturePath) {
@@ -396,7 +571,7 @@ export function runOnboardingOrchestrator(options) {
         fatalErrors.push(`fixture read/parse error: ${err.message}`);
       }
     } else {
-      fatalErrors.push("--fixture is required for fixture-dry-run mode");
+      fatalErrors.push(`--fixture is required for ${mode} mode`);
     }
   }
 
@@ -453,6 +628,13 @@ export function runOnboardingOrchestrator(options) {
   let seedExtraction = null;
   /** @type {Record<string, number>} */
   let moduleCandidateCounts = {};
+  let dbPlan = null;
+  let packagePlan = null;
+  let uploadPlan = null;
+  /** @type {Array<{ code: string, severity: string, message: string }>} */
+  let warnings = [];
+  let riskSummary = null;
+  const elevateUnmappedWarnings = mode === "full-dry-run";
 
   if (mode === "validate-only") {
     steps.push({
@@ -479,10 +661,10 @@ export function runOnboardingOrchestrator(options) {
       status: "SKIP",
       summary: "validate-only mode — skipped",
     });
-  } else if (mode === "fixture-dry-run" && fixture) {
+  } else if (isFixtureMode(mode) && fixture) {
     /** @type {string[]} */
     const fixtureErrors = [];
-    validateFixtureShape(fixture, fixtureErrors);
+    validateFixtureShape(fixture, fixtureErrors, mode);
 
     if (config.siteSlug && fixture.siteSlug && config.siteSlug !== fixture.siteSlug) {
       fixtureErrors.push(
@@ -490,13 +672,18 @@ export function runOnboardingOrchestrator(options) {
       );
     }
 
+    const assetsCount = countFixtureAssets(fixture);
+
     fixtureLoad = {
       status: fixtureErrors.length === 0 ? "PASS" : "FAIL",
       errors: fixtureErrors,
       fixtureOnly: fixture.fixtureOnly === true,
       liveCrawl: fixture.source?.liveCrawl === true,
       pagesCount: fixture.pages?.length ?? 0,
+      assetsCount,
       siteSlug: fixture.siteSlug ?? null,
+      metadata: fixture.metadata ?? {},
+      stats: fixture.stats ?? {},
     };
 
     steps.push({
@@ -505,7 +692,7 @@ export function runOnboardingOrchestrator(options) {
       status: fixtureLoad.status,
       summary:
         fixtureErrors.length === 0
-          ? `${fixtureLoad.pagesCount} pages · fixtureOnly=true · liveCrawl=false`
+          ? `${fixtureLoad.pagesCount} pages · ${assetsCount} assets · fixtureOnly=true · liveCrawl=false`
           : fixtureErrors.join("; "),
     });
 
@@ -543,7 +730,16 @@ export function runOnboardingOrchestrator(options) {
         id: "step-5",
         label: "Step 5 — seed extraction",
         status: seedExtraction.status === "FAIL" ? "FAIL" : seedExtraction.status,
-        summary: `counts: ${JSON.stringify(moduleCandidateCounts)}`,
+        summary: `counts: ${JSON.stringify(moduleCandidateCounts)} · total=${seedSummary.totalCandidates ?? 0}`,
+      });
+
+      warnings = buildWarnings({
+        configValidation,
+        registryValidation,
+        pageClassification,
+        cmsModulePlanner,
+        seedExtraction,
+        unmappedModules: elevateUnmappedWarnings ? pageClassification.unmappedModules : [],
       });
     } else {
       steps.push({
@@ -568,33 +764,36 @@ export function runOnboardingOrchestrator(options) {
   }
 
   const dbPlanOnly = safetyGates.planOnly.stagingDb;
+  dbPlan = buildDbPlan(config, safetyGates);
   steps.push({
     id: "step-6",
     label: "Step 6 — staging DB plan only",
     status: dbPlanOnly ? "PLAN_ONLY" : "WARN",
     summary: dbPlanOnly
-      ? `planOnly · ref=${config.supabase?.projectRef} · allowDbWrite=false · no connection`
-      : "allowDbWrite=true — execution not implemented in G-23h",
+      ? `planOnly · ref=${config.supabase?.projectRef} · allowDbWrite=false · no connection · human approval required`
+      : "allowDbWrite=true — execution not implemented",
   });
 
   const packagePlanOnly = safetyGates.planOnly.package;
+  packagePlan = buildPackagePlan(config, intake);
   steps.push({
     id: "step-7",
     label: "Step 7 — package plan only",
     status: packagePlanOnly ? "PLAN_ONLY" : "WARN",
     summary: packagePlanOnly
-      ? `planOnly · astroOut=${config.output?.astroOut} · allowPackageBuild=false`
-      : "allowPackageBuild=true — execution not implemented in G-23h",
+      ? `planOnly · astroOut=${config.output?.astroOut} · allowPackageBuild=false · no build`
+      : "allowPackageBuild=true — execution not implemented",
   });
 
   const uploadPlanOnly = safetyGates.planOnly.upload;
+  uploadPlan = buildUploadPlan(config, intake, safetyGates);
   steps.push({
     id: "step-8",
     label: "Step 8 — diff/QA plan only",
     status: uploadPlanOnly ? "PLAN_ONLY" : "WARN",
     summary: uploadPlanOnly
-      ? `planOnly · requireOutputDiffReview=${config.safetyGates?.requireOutputDiffReview} · allowFtpUpload=false`
-      : "allowFtpUpload=true — FTP not implemented in G-23h",
+      ? `planOnly · requireOutputDiffReview=${config.safetyGates?.requireOutputDiffReview} · requireUploadFileList=${config.safetyGates?.requireUploadFileList} · allowFtpUpload=false`
+      : "allowFtpUpload=true — FTP not implemented",
   });
 
   const stepStatuses = steps.map((s) => ({ status: s.status }));
@@ -608,22 +807,32 @@ export function runOnboardingOrchestrator(options) {
   const nextRecommendedPhase =
     mode === "validate-only"
       ? "G-23i-fixture-mode-orchestrator-integration"
-      : "G-23j-first-non-network-sample-full-dry-run";
+      : mode === "full-dry-run"
+        ? "G-23k-crawl-dry-run-planning"
+        : "G-23j-first-non-network-sample-full-dry-run";
+
+  riskSummary = buildRiskSummary(warnings, steps);
 
   steps.push({
     id: "step-9",
     label: "Step 9 — handoff next action",
     status: overallStatus === "FAIL" ? "WARN" : "PASS",
-    summary: `next: ${nextRecommendedPhase} · overall=${overallStatus}`,
+    summary:
+      mode === "full-dry-run"
+        ? `next: ${nextRecommendedPhase} · overall=${overallStatus} · warnings=${warnings.length} · risk=${riskSummary.overallRisk}`
+        : `next: ${nextRecommendedPhase} · overall=${overallStatus}`,
   });
 
   const ok = overallStatus === "PASS" || overallStatus === "WARN";
+
+  const totalActiveCandidates = Object.values(moduleCandidateCounts).reduce((a, b) => a + b, 0);
 
   return {
     ok,
     status: overallStatus,
     phase,
     mode,
+    nonNetworkFullDryRun: mode === "full-dry-run",
     siteSlug: config.siteSlug ?? null,
     cmsPreset: config.cmsPreset ?? null,
     configPath: configPath ? path.resolve(configPath) : null,
@@ -653,6 +862,12 @@ export function runOnboardingOrchestrator(options) {
         }
       : null,
     moduleCandidateCounts,
+    totalActiveCandidates,
+    dbPlan,
+    packagePlan,
+    uploadPlan,
+    warnings,
+    riskSummary,
     safetyGates,
     steps,
     nextRecommendedPhase,
@@ -662,7 +877,9 @@ export function runOnboardingOrchestrator(options) {
     networkAccess: false,
     dbConnectionAttempted: false,
     dbWriteExecuted: false,
+    sqlMutationExecuted: false,
     packageBuildExecuted: false,
+    astroBuildExecuted: false,
     ftpUploadExecuted: false,
     deployExecuted: false,
     filesCreated: 0,
@@ -674,8 +891,15 @@ export function runOnboardingOrchestrator(options) {
  * @param {ReturnType<typeof runOnboardingOrchestrator>} result
  */
 function printHumanReport(result) {
-  console.log(`\nG-23h Onboarding orchestrator: ${result.status}`);
+  const title =
+    result.mode === "full-dry-run"
+      ? "G-23j Non-network sample full dry-run"
+      : "G-23h Onboarding orchestrator";
+  console.log(`\n${title}: ${result.status}`);
   console.log(`Mode: ${result.mode}`);
+  if (result.nonNetworkFullDryRun) {
+    console.log("Non-network · fixture-only · DB/package/FTP planOnly");
+  }
   if (result.status === "NOT_IMPLEMENTED") {
     console.log(`\nMode not implemented: ${result.mode}`);
     console.log(`Supported: ${result.supportedModes?.join(", ")}`);
@@ -696,7 +920,10 @@ function printHumanReport(result) {
 
   console.log(`\nValidation: config=${result.validation?.config?.status} · registry=${result.validation?.registry?.status}`);
   if (result.fixtureLoad) {
-    console.log(`Fixture load: ${result.fixtureLoad.status} · pages=${result.fixtureLoad.pagesCount}`);
+    console.log(
+      `Fixture load: ${result.fixtureLoad.status} · pages=${result.fixtureLoad.pagesCount}` +
+        (result.fixtureLoad.assetsCount != null ? ` · assets=${result.fixtureLoad.assetsCount}` : ""),
+    );
   }
   if (result.seedExtraction) {
     console.log(`Seed extraction: ${result.seedExtraction.status}`);
@@ -705,6 +932,30 @@ function printHumanReport(result) {
   console.log("\nModule candidate counts:");
   for (const [modId, count] of Object.entries(result.moduleCandidateCounts ?? {})) {
     console.log(`  - ${modId}: ${count}`);
+  }
+  if (result.totalActiveCandidates != null) {
+    console.log(`  total active: ${result.totalActiveCandidates}`);
+  }
+
+  if (result.warnings?.length) {
+    console.log("\nWarnings:");
+    for (const w of result.warnings) {
+      console.log(`  [${w.severity}] ${w.code}: ${w.message}`);
+    }
+  }
+
+  if (result.riskSummary) {
+    console.log(`\nRisk summary: ${result.riskSummary.overallRisk} (${result.riskSummary.warningCount} warnings)`);
+  }
+
+  if (result.uploadPlan?.uploadCandidates?.length) {
+    console.log("\nUpload candidates (plan only):");
+    for (const f of result.uploadPlan.uploadCandidates.slice(0, 5)) {
+      console.log(`  - ${f}`);
+    }
+    if (result.uploadPlan.uploadCandidates.length > 5) {
+      console.log(`  ... +${result.uploadPlan.uploadCandidates.length - 5} more`);
+    }
   }
 
   console.log(`\nSafety gates: ${result.safetyGates?.status}`);

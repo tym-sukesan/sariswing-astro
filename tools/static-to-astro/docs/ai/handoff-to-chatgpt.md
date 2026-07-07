@@ -5,15 +5,25 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-23i-static-to-astro-fixture-mode-orchestrator-integration — complete.
-Standard entry: run-onboarding-orchestrator.mjs --mode fixture-dry-run
-Compatibility entry: run-onboarding-fixture-dry-run.mjs (delegates to orchestrator)
-Both entries: schedule 2 · news/profile/discography/video/contact 1 each — counts match
-G-23d / G-23h functional verifier compatibility preserved
-No crawl / network / DB / SQL / package / FTP / deploy in G-23i
-Next: G-23j full dry-run · G-23k crawl-dry-run planning · G-23l report output
+Current phase: G-23j-first-non-network-sample-full-dry-run — complete.
+Mode: full-dry-run on sample musician fixture (non-network · fixtureOnly=true)
+Steps 0–9 PASS · seed candidates 7 · warnings: news unmapped (/news/ missing)
+DB/package/FTP: planOnly · no connection · no build · no FTP
+fixture-dry-run mode still PASS (backward compatible)
+No crawl / network / DB / SQL / package / FTP / deploy in G-23j
+Next: G-23k crawl-dry-run planning · G-23l report output · G-23m report artifact
 Schedule CMS P0 chain remains CLOSED (G-22j1/j2). Do NOT re-Save closed slices.
 ```
+
+## G-23j first non-network sample full dry-run — complete
+
+- **Goal:** Pseudo-full 30-min onboarding flow without network/DB/package/FTP
+- **Mode:** `full-dry-run` — fixture-only · planOnly steps 6–8
+- **Sample:** pages 6 · assets 5 · candidates 7 (schedule 2 · others 1)
+- **Warnings:** news module unmapped (no /news/ page in fixture)
+- **Not executed:** crawl · network · DB · SQL · package · Astro build · FTP · deploy
+- **Verifier:** `verify-g23j-static-to-astro-first-non-network-sample-full-dry-run.mjs`
+- **Next:** G-23k crawl planning · G-23l report output · G-23m report artifact · G-23n live crawl safety
 
 ## G-23i fixture mode orchestrator integration — complete
 

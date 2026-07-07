@@ -20,6 +20,24 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Verifier | `verify-g22h4b-gosaki-schedule-republish-ui-wording-cleanup.mjs` |
 | **Next** | **G-22h5** republish target preflight |
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22j1 Schedule P0 overall closure — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-22j1-gosaki-schedule-p0-overall-closure` |
+| Base | `8551933` |
+| G-22d→G-22i5skip chain | **closed** |
+| P0 CRUD | duplicate · new event · unpublish · republish — **all closed** |
+| Read / UX | authenticated admin read · P0 UX — **complete** |
+| Public reflection | G-22i1→G-22i5skip — **complete** · upload **not needed** |
+| `schedule-2026-07-008` | **published=true** · DB/local/live **aligned** |
+| `schedule-2026-03-014` / `schedule-2026-09-001` | **published=false** · test rows **retained** |
+| Physical DELETE | **deferred** |
+| FTP / deploy / package (G-22j1) | **not executed** |
+| Doc | `gosaki-schedule-p0-overall-closure.md` |
+| Verifier | `verify-g22j1-gosaki-schedule-p0-overall-closure.mjs` |
+| **Next** | **P0 release note** · UX polish · other CMS · 30-min onboarding |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22i5skip Schedule republish public reflection closure — complete
 
 | Item | Value |
@@ -35,7 +53,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Rollback | **not needed** |
 | Doc | `gosaki-schedule-republish-public-reflection-closure.md` |
 | Verifier | `verify-g22i5skip-gosaki-schedule-republish-public-reflection-closure.mjs` |
-| **Next** | **Schedule P0 overall closure** · UX polish · other CMS |
+| **Next** | **Superseded by G-22j1** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22i4 Schedule public output review — complete
 

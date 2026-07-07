@@ -5,15 +5,17 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-22i5skip-gosaki-schedule-republish-public-reflection-closure — complete.
-G-22i public reflection chain CLOSED for G-22h republish on schedule-2026-07-008.
-DB/local/live aligned: 008 published=true and displayed; 014/001 excluded.
-G-22i4: local vs live byte-identical — upload NOT needed. G-22i5/G-22i6 SKIPPED for this slice.
-FTP / deploy / workflow_dispatch / package regen NOT executed. Rollback NOT needed.
-Do NOT re-Save closed slices: G-22d (014), G-22e (001), G-22f unpublish (008), G-22h republish (008).
+Current phase: G-22j1-gosaki-schedule-p0-overall-closure — complete.
+Gosaki Schedule CMS P0 chain CLOSED (G-22d→G-22i5skip).
+P0 CRUD: duplicate (014), new event (001), unpublish (008), republish (008) — all closed.
+Read/UX: authenticated admin read + P0 UX complete.
+Public reflection: G-22i1→G-22i5skip complete; upload NOT needed; G-22i5/G-22i6 skipped.
+DB/local/live aligned for 008 (published=true, live displayed). 014/001 test rows retained (published=false).
+Physical DELETE deferred. FTP/deploy/package NOT executed in G-22j1. Rollback NOT needed.
+Do NOT re-Save closed slices.
 Routine dev: PUBLIC_ADMIN_WRITE_DRY_RUN=true; all write arms off.
 Supabase interim SoT: kmjqppxjdnwwrtaeqjta — never vsbvndwuajjhnzpohghh.
-Next: Schedule P0 overall closure · UX polish · other CMS · 30-min build flow standardization.
+Next: Schedule CMS P0 release note · UX polish · Discography/YouTube/News CMS · 30-min onboarding flow.
 Future DB schedule changes: re-run G-22i3 → G-22i4 before any upload.
 ```
 

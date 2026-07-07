@@ -16,6 +16,7 @@
  * @property {string} seedPolicy
  * @property {boolean} adminUiEnabled
  * @property {string} publicRoute
+ * @property {string[]} [publicRouteAliases]
  * @property {RiskLevel} riskLevel
  * @property {string} [notes]
  */
@@ -110,8 +111,9 @@ export const CMS_PRESET_REGISTRY = {
         seedPolicy: "extract-and-review",
         adminUiEnabled: false,
         publicRoute: "/about/",
+        publicRouteAliases: ["/profile/"],
         riskLevel: "low",
-        notes: "About page HTML or static JSON blocks (Gosaki uses /about/).",
+        notes: "About page HTML or static JSON blocks (Gosaki /about/; fixtures may use /profile/).",
       }),
       discography: mod({
         id: "discography",
@@ -136,8 +138,9 @@ export const CMS_PRESET_REGISTRY = {
         seedPolicy: "import-existing",
         adminUiEnabled: false,
         publicRoute: "/",
+        publicRouteAliases: ["/videos/"],
         riskLevel: "low",
-        notes: "Home embed via static JSON (G-10c pattern).",
+        notes: "Home embed via static JSON (G-10c pattern); fixtures may use /videos/ hub.",
       }),
       contact: mod({
         id: "contact",
@@ -382,6 +385,16 @@ function valuesMatch(a, b) {
 }
 
 /**
+ * @param {CmsPresetModule} registryModule
+ * @param {string} configRoute
+ */
+function publicRouteMatches(registryModule, configRoute) {
+  if (configRoute === registryModule.publicRoute) return true;
+  const aliases = registryModule.publicRouteAliases ?? [];
+  return aliases.includes(configRoute);
+}
+
+/**
  * @param {unknown} config
  * @returns {{ ok: boolean, status: "PASS" | "FAIL", errors: string[], warnings: string[], presetId: string | null }}
  */
@@ -464,7 +477,7 @@ export function validateCmsPresetConfig(config) {
           `${prefix}.publishField ${JSON.stringify(entry.publishField)} conflicts with registry ${JSON.stringify(registryModule.publishField)}`,
         );
       }
-      if (entry.publicRoute !== registryModule.publicRoute) {
+      if (!publicRouteMatches(registryModule, entry.publicRoute)) {
         errors.push(
           `${prefix}.publicRoute ${JSON.stringify(entry.publicRoute)} conflicts with registry ${JSON.stringify(registryModule.publicRoute)}`,
         );

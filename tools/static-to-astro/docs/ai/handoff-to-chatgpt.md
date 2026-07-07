@@ -5,15 +5,26 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-23f-static-to-astro-cms-preset-registry — complete.
-CMS preset registry: musician-basic · lesson-studio-basic · shop-basic (read-only metadata).
-Exports: getCmsPreset · listCmsPresets · listPresetModules · validateCmsPresetConfig.
-Gosaki onboarding.gosaki-piano.example.json → validateCmsPresetConfig PASS.
-Inspect: scripts/inspect-cms-preset-registry.mjs
-No DB / network / crawl / package / FTP / orchestrator impl in G-23f.
-Next: G-23g seed extractor standardization · G-23h orchestrator skeleton · G-23i fixture integration.
+Current phase: G-23g-static-to-astro-seed-extractor-standardization — complete.
+Seed extractor: schedule/news/profile/discography/video/contact from fixture/crawl result.
+Exports: extractOnboardingSeedCandidates · extractModuleSeedCandidates · normalizeSeedCandidate.
+Sample musician fixture: schedule 2 · news/profile/discography/video/contact 1 each — PASS.
+Inspect: scripts/inspect-onboarding-seed-extraction.mjs
+No DB / network / crawl / SQL / package / FTP / orchestrator impl in G-23g.
+Next: G-23h orchestrator skeleton · G-23i fixture integration · G-23j full dry-run.
 Schedule CMS P0 chain remains CLOSED (G-22j1/j2). Do NOT re-Save closed slices.
 ```
+
+## G-23g seed extractor standardization — complete
+
+- **Goal:** Reusable seed candidate extractor for orchestrator (read-only, no DB SQL)
+- **Artifacts:** `lib/onboarding-seed-extractor.mjs` · `inspect-onboarding-seed-extraction.mjs` · result doc
+- **Supported modules:** schedule · news · profile · discography · video · contact
+- **Standard format:** moduleId · siteSlug · sourcePath · normalized · confidence · status
+- **Sample fixture:** schedule 2 · others 1 each — **PASS**
+- **Not executed:** DB · network · crawl · SQL · package · FTP · orchestrator impl
+- **Verifier:** `verify-g23g-static-to-astro-seed-extractor-standardization.mjs`
+- **Next:** G-23h orchestrator skeleton · G-23i fixture integration · G-23j full dry-run
 
 ## G-23f CMS preset registry — complete
 

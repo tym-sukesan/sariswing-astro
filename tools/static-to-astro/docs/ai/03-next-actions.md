@@ -1,6 +1,21 @@
 Last updated: 2026-07-08
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-23g seed extractor standardization — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-23g-static-to-astro-seed-extractor-standardization` |
+| Base | `914be95` |
+| Extractor | `scripts/lib/onboarding-seed-extractor.mjs` |
+| Supported modules | schedule · news · profile · discography · video · contact |
+| Sample fixture counts | schedule **2** · others **1** each |
+| Inspect CLI | `scripts/inspect-onboarding-seed-extraction.mjs` |
+| DB / network / crawl / SQL / package / FTP | **not executed** |
+| Doc | `static-to-astro-seed-extractor-standardization-result.md` |
+| Verifier | `verify-g23g-static-to-astro-seed-extractor-standardization.mjs` |
+| **Next** | **G-23h** orchestrator skeleton · **G-23i** fixture integration · **G-23j** full dry-run |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-23f CMS preset registry — complete
 
 | Item | Value |
@@ -15,7 +30,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | DB / network / crawl / package / FTP | **not executed** |
 | Doc | `static-to-astro-cms-preset-registry-result.md` |
 | Verifier | `verify-g23f-static-to-astro-cms-preset-registry.mjs` |
-| **Next** | **G-23g** seed extractor · **G-23h** orchestrator skeleton · **G-23i** fixture integration |
+| **Next** | **Superseded by G-23g** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-23e onboarding orchestrator planning — complete
 

@@ -20,6 +20,23 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Verifier | `verify-g22h4b-gosaki-schedule-republish-ui-wording-cleanup.mjs` |
 | **Next** | **G-22h5** republish target preflight |
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22i5skip Schedule republish public reflection closure — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-22i5skip-gosaki-schedule-republish-public-reflection-closure` |
+| Base | `8df485d` |
+| G-22i chain | **closed** (G-22i1→G-22i4 + this closure) |
+| `schedule-2026-07-008` | DB/local/live **aligned** · `published=true` |
+| `schedule-2026-03-014` / `schedule-2026-09-001` | **excluded** |
+| Upload | **not needed** (G-22i4 byte-identical) |
+| G-22i5 / G-22i6 | **skipped** |
+| FTP / deploy / package regen | **not executed** |
+| Rollback | **not needed** |
+| Doc | `gosaki-schedule-republish-public-reflection-closure.md` |
+| Verifier | `verify-g22i5skip-gosaki-schedule-republish-public-reflection-closure.mjs` |
+| **Next** | **Schedule P0 overall closure** · UX polish · other CMS |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22i4 Schedule public output review — complete
 
 | Item | Value |
@@ -34,7 +51,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Package regen (G-22i4) | **not executed** |
 | Doc | `gosaki-schedule-public-output-review-result.md` |
 | Verifier | `verify-g22i4-gosaki-schedule-public-output-review-result.mjs` |
-| **Next** | **G-22i republish reflection closure** (G-22i5/G-22i6 skip) |
+| **Next** | **Superseded by G-22i5skip** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22i3 Schedule package/diff dry-run — complete
 

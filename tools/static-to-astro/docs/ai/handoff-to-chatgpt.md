@@ -5,15 +5,15 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-22i4-gosaki-schedule-public-output-review-result — complete.
-Local vs live staging HTTP: MD5 IDENTICAL for schedule/2026-07/index.html, schedule/index.html, _astro/index.YcHrHZH4.css, 2026-07/index.html, schedule/2026-03/index.html.
-Conclusion A: upload NOT needed for G-22h republish reflection (live already shows schedule-2026-07-008 / 2026.07.17).
-Include: 008 on local + live. Exclude: 014/001 on local + live.
-FTP / deploy / workflow_dispatch NOT executed. Package regen NOT executed in G-22i4.
+Current phase: G-22i5skip-gosaki-schedule-republish-public-reflection-closure — complete.
+G-22i public reflection chain CLOSED for G-22h republish on schedule-2026-07-008.
+DB/local/live aligned: 008 published=true and displayed; 014/001 excluded.
+G-22i4: local vs live byte-identical — upload NOT needed. G-22i5/G-22i6 SKIPPED for this slice.
+FTP / deploy / workflow_dispatch / package regen NOT executed. Rollback NOT needed.
 Do NOT re-Save closed slices: G-22d (014), G-22e (001), G-22f unpublish (008), G-22h republish (008).
 Routine dev: PUBLIC_ADMIN_WRITE_DRY_RUN=true; all write arms off.
 Supabase interim SoT: kmjqppxjdnwwrtaeqjta — never vsbvndwuajjhnzpohghh.
-Next: G-22i republish public reflection closure (skip G-22i5/G-22i6 for this slice).
+Next: Schedule P0 overall closure · UX polish · other CMS · 30-min build flow standardization.
 Future DB schedule changes: re-run G-22i3 → G-22i4 before any upload.
 ```
 

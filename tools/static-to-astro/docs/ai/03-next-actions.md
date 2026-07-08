@@ -1,17 +1,22 @@
 Last updated: 2026-07-08
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20r2 Gosaki schedule August seed planning — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20r2-gosaki-schedule-august-seed-planning` |
+| Base | `32333b9` |
+| Candidates | **19** (insert 16 · needs_client_confirmation 3) |
+| SQL | **none** |
+| Doc | `gosaki-schedule-august-seed-planning.md` |
+| **Next** | **G-20r2a client confirmation question list** |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20r1b Gosaki limited public URL capture — complete
 
 | Item | Value |
 | --- | --- |
-| Phase | `G-20r1b-gosaki-limited-public-url-capture` |
-| Base | `aa128b8` |
-| Method | public GET only — `/2026-08` |
-| Events | **19** (HIGH confidence) |
-| Playwright | **no** |
-| Doc | `gosaki-schedule-public-url-capture-result.md` |
-| **Next** | **G-20r2 schedule august seed planning** |
+| **Superseded for seed by** | G-20r2 |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20r1 Gosaki schedule source capture plan — complete
 

@@ -5,15 +5,26 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: gosaki-completion-audit — complete.
-Priority shift: G-23 onboarding paused at d7a7250 → Gosaki-piano site completion
+Current phase: gosaki-production-cutover-gap-refresh — complete.
+Priority: Gosaki-piano production cutover (G-23 paused at d7a7250)
 Schedule CMS P0: CLOSED (G-22j1/j2) — do NOT re-Save closed slices
-G-23o live crawl: ON HOLD
-seiichijazz.com: deferred
-Audit: P0/P1/P2/保留 classified in gosaki-completion-audit.md
-No DB / Save / deploy / FTP in audit phase
-Next: Gosaki production-cutover gap refresh (read-only/local)
+G-20j full production upload: STOP (DNS/SSL/MX/remote path pending)
+Production package G-20i3: stale vs G-22j — regen needed before G-20j upload
+Partial prod: /discography/ only (G-20d/e); rest Wix
+G-23o live crawl: ON HOLD · seiichijazz.com: deferred
+No DB / Save / deploy / FTP / package build in gap refresh phase
+Next: G-20p production package staleness review (read-only/local)
 ```
+
+## Gosaki production-cutover gap refresh — complete
+
+- **Goal:** Refresh G-20a/G-20j cutover gaps to post-G-22j Schedule P0 state
+- **G-20j STOP:** unchanged — DNS/SSL/MX/remote path + client sign-off pending
+- **G-22j impact:** Schedule CMS P0 closed; G-20i3 package predates P0 — staleness flagged
+- **Checklists:** route/canonical/SEO/robots/sitemap · Contact/HubSpot · mobile · client sign-off · deploy前後 · P0/P1/P2/保留 · high-risk separation
+- **Next task:** G-20p production package staleness review (read-only — no regen)
+- **Doc:** `gosaki-production-cutover-gap-refresh.md`
+- **Verifier:** `verify-gosaki-production-cutover-gap-refresh.mjs`
 
 ## Gosaki completion audit — complete
 

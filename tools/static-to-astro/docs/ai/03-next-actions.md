@@ -1,6 +1,20 @@
 Last updated: 2026-07-08
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. Gosaki production-cutover gap refresh — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `gosaki-production-cutover-gap-refresh` |
+| Base | `1729378` |
+| Scope | Read-only refresh — G-20j STOP + G-22j post-state · pre-launch checklists |
+| G-20j full upload | **STOP** — DNS/SSL/MX/remote path pending |
+| Production package | G-20i3 (26 files) — **stale vs G-22j** schedule DB |
+| Partial prod live | `/discography/` only (G-20d/e) |
+| Doc | `gosaki-production-cutover-gap-refresh.md` |
+| Verifier | `verify-gosaki-production-cutover-gap-refresh.mjs` |
+| **Next** | **G-20p production package staleness review** (read-only/local) |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. Gosaki completion audit — complete
 
 | Item | Value |
@@ -10,9 +24,8 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Scope | Read-only inventory — Gosaki-piano remaining work |
 | Schedule CMS P0 | **closed** (G-22j1/j2) |
 | G-23 onboarding | **paused** at d7a7250 · G-23o deferred |
-| P0 focus | Production cutover gap · package verify · client sign-off · DNS/SSL · mobile QA · hosted admin plan |
 | Doc | `gosaki-completion-audit.md` |
-| **Next** | **Gosaki production-cutover gap refresh** (read-only/local) |
+| **Superseded by** | gap refresh doc for cutover checklists |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-23 series — paused at d7a7250
 

@@ -1,6 +1,21 @@
 Last updated: 2026-07-08
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-23k crawl-dry-run safety planning — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-23k-static-to-astro-crawl-dry-run-safety-planning` |
+| Base | `ad6091a` |
+| Scope | Planning only — live crawl-dry-run safety design |
+| Gates | `explicitCrawlApprovalId` · `sameOriginOnly` · `maxPages` · `concurrency` · `timeout` · no POST/login/credentials |
+| URL policy | https · no localhost/private IP/example.com/fixture · staging vs production separation |
+| Output | Crawl result schema (fixture-compatible) · orchestrator `crawl-dry-run` mode plan |
+| Live crawl / network / DB / SQL / package / FTP / deploy | **not executed** |
+| Doc | `static-to-astro-crawl-dry-run-safety-planning.md` |
+| Verifier | `verify-g23k-static-to-astro-crawl-dry-run-safety-planning.mjs` |
+| **Next** | **G-23l** report output · **G-23m** crawl design closure · **G-23n** allowlist · **G-23o** first approved crawl (operator approval) |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-23j first non-network sample full dry-run — complete
 
 | Item | Value |
@@ -15,7 +30,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Crawl / network / DB / SQL / package / FTP | **not executed** |
 | Doc | `static-to-astro-first-non-network-sample-full-dry-run-result.md` |
 | Verifier | `verify-g23j-static-to-astro-first-non-network-sample-full-dry-run.mjs` |
-| **Next** | **G-23k** crawl planning · **G-23l** report output · **G-23m** report artifact |
+| **Next** | **Superseded for crawl safety by G-23k** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-23i fixture mode orchestrator integration — complete
 

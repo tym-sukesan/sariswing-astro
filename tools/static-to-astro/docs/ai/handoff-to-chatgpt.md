@@ -5,15 +5,27 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-23j-first-non-network-sample-full-dry-run — complete.
-Mode: full-dry-run on sample musician fixture (non-network · fixtureOnly=true)
-Steps 0–9 PASS · seed candidates 7 · warnings: news unmapped (/news/ missing)
-DB/package/FTP: planOnly · no connection · no build · no FTP
-fixture-dry-run mode still PASS (backward compatible)
-No crawl / network / DB / SQL / package / FTP / deploy in G-23j
-Next: G-23k crawl-dry-run planning · G-23l report output · G-23m report artifact
+Current phase: G-23k-static-to-astro-crawl-dry-run-safety-planning — complete.
+Scope: planning only — live crawl-dry-run safety design before G-23o
+Gates: explicitCrawlApprovalId · sameOriginOnly · maxPages/concurrency/timeout · no POST/login/credentials
+URL policy: https · no localhost/private IP/example.com · staging vs production separation
+Crawl result schema planned (fixture-compatible) · orchestrator crawl-dry-run mode planned
+No live crawl / network / DB / SQL / package / FTP / deploy in G-23k
+Next: G-23l report output · G-23m crawl design closure · G-23n allowlist · G-23o first approved crawl (operator approval)
 Schedule CMS P0 chain remains CLOSED (G-22j1/j2). Do NOT re-Save closed slices.
 ```
+
+## G-23k crawl-dry-run safety planning — complete
+
+- **Goal:** Safety design before live crawl-dry-run (post G-23j non-network full dry-run)
+- **Gates:** `explicitCrawlApprovalId` · `requireHumanReview` · `sameOriginOnly` · `maxPages` ≤ 20 · `concurrency` ≤ 2 · timeout · robots · denylist · private IP block
+- **URL:** https only recommended; localhost/private IP/example.com/fixture blocked; `sourceUrl` vs `publicDomain` documented
+- **Schema:** `liveCrawl=true` · `fixtureOnly=false` · pages/assets/warnings/blocked/safetySummary
+- **Orchestrator:** future `crawl-dry-run` mode — Step 2 fixture → crawl source; Steps 3–5 unchanged
+- **Failure policy:** missing approval → FAIL; unsafe URL → FAIL; redirect off-origin → STOP; login → SKIP
+- **Not executed:** live crawl · network · DB · SQL · package · FTP · deploy
+- **Verifier:** `verify-g23k-static-to-astro-crawl-dry-run-safety-planning.mjs`
+- **Next:** G-23l report output · G-23m design closure · G-23n allowlist · G-23o first approved crawl (requires operator approval)
 
 ## G-23j first non-network sample full dry-run — complete
 

@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-23j Static-to-Astro first non-network sample full dry-run (2026-07-08):** **complete** — `full-dry-run` mode on sample musician fixture; steps 0–9 PASS; seed 7 candidates; warnings (news unmapped); DB/package/FTP planOnly. Doc: `static-to-astro-first-non-network-sample-full-dry-run-result.md`. Verifier: `verify-g23j-static-to-astro-first-non-network-sample-full-dry-run.mjs`. **No crawl / network / DB / SQL / package / FTP.** **Next: G-23k crawl planning · G-23l report output.**
+**G-23k Static-to-Astro crawl-dry-run safety planning (2026-07-08):** **complete** — safety design for live crawl-dry-run before G-23o; explicit approval gates · sameOriginOnly · maxPages/concurrency/timeout · URL restrictions · crawl result schema · orchestrator Step 2 swap · failure policy. Doc: `static-to-astro-crawl-dry-run-safety-planning.md`. Verifier: `verify-g23k-static-to-astro-crawl-dry-run-safety-planning.mjs`. **Planning only — no live crawl / network / DB / SQL / package / FTP / deploy.** **Next: G-23l report output · G-23m crawl design closure · G-23n allowlist · G-23o first approved crawl (operator approval required).**
+
+**G-23j Static-to-Astro first non-network sample full dry-run (2026-07-08):** **complete** — `full-dry-run` mode on sample musician fixture; steps 0–9 PASS; seed 7 candidates; warnings (news unmapped); DB/package/FTP planOnly. Doc: `static-to-astro-first-non-network-sample-full-dry-run-result.md`. Verifier: `verify-g23j-static-to-astro-first-non-network-sample-full-dry-run.mjs`. **No crawl / network / DB / SQL / package / FTP.** **Superseded for crawl safety design by G-23k.**
 
 **G-23i Static-to-Astro fixture mode orchestrator integration (2026-07-08):** **complete** — orchestrator = standard entry; G-23d script = compatibility wrapper. Doc: `static-to-astro-fixture-mode-orchestrator-integration-result.md`. **Superseded for full dry-run by G-23j.**
 

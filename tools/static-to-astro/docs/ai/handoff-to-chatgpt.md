@@ -5,21 +5,29 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20q-gosaki-internal-preview-readiness-gap-audit — complete.
-Client: 後藤沙紀さん — pianist personal musician site
-clientPreviewVerdict: NOT_READY (2026-08 schedule freshness gap · mobile pending · HubSpot E2E)
-<> titles: Wix source parity — NOT a Kit P0 blocker
-Internal operator preview: READY_WITH_NOTES on staging URL
-Next: G-20r-schedule-source-freshness-audit (read-only)
+Current phase: G-20r-gosaki-schedule-source-freshness-audit — complete.
+Source freshness gap: CONFIRMED — Kit 2026-07 max; Wix 2026-08 per operator report
+G-20p content GO (03-07 vs G-22j): unchanged — separate issue
+<> titles: Wix source parity — not Kit bug
+No crawl / network / DB / Save / regen / FTP
+Next: G-20r1-schedule-source-capture-plan (read-only doc)
 ```
+
+## G-20r schedule source freshness audit — complete
+
+- **Kit:** schedule months 03–07 only; 0 JSON rows for 2026-08; no sitemap 08
+- **Wix:** operator reports `/2026-08` exists — event count **unknown** (no HTTP)
+- **Gap type:** source freshness — **not** package staleness vs G-22j
+- **Next chain:** G-20r1 capture → G-20r2 seed plan → G-20r3 DB preflight → G-20r4 reflection plan
+- **Doc:** `gosaki-schedule-source-freshness-audit.md`
 
 ## G-20q internal preview readiness gap audit — complete
 
 - **Verdict:** NOT_READY for client · READY_WITH_NOTES for internal staging review
-- **P0:** Wix **2026-08** not in Kit package (source freshness gap) · mobile device QA pending · HubSpot submit unverified
+- **P0:** Wix **2026-08** not in Kit (source freshness gap — **confirmed G-20r**) · mobile QA · HubSpot E2E
 - **`<>` titles:** Wix source parity on live site — **not** Kit conversion defect · P1 / Content note
 - **Not G-20p issue:** package staleness vs G-22j remains closed for 03–07 published content
-- **Next:** G-20r-schedule-source-freshness-audit (read-only — no crawl/Save/regen)
+- **Next:** G-20r1-schedule-source-capture-plan (read-only — operator manual Wix capture)
 - **Doc:** `gosaki-internal-preview-readiness-gap-audit.md`
 
 ## G-20j production upload preflight refresh — complete

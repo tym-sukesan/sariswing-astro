@@ -1,18 +1,25 @@
 Last updated: 2026-07-08
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20r Gosaki schedule source freshness audit — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20r-gosaki-schedule-source-freshness-audit` |
+| Base | `5fa16c3` |
+| Kit months | **2026-03 … 2026-07** |
+| Wix report | **`/2026-08` exists** (operator; no HTTP verify) |
+| Gap | **source freshness** — not G-20p/G-22j staleness |
+| JSON 2026-08 rows | **0** |
+| Doc | `gosaki-schedule-source-freshness-audit.md` |
+| **Next** | **G-20r1 schedule source capture plan** (read-only doc) |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20q Gosaki internal preview readiness gap audit — complete
 
 | Item | Value |
 | --- | --- |
-| Phase | `G-20q-gosaki-internal-preview-readiness-gap-audit` |
-| Base | `fd59ceb` |
 | clientPreviewVerdict | **NOT_READY** |
-| Internal preview | **READY_WITH_NOTES** (staging) |
-| P0 blockers | **2026-08 schedule freshness gap** · mobile QA · HubSpot E2E |
-| `<>` titles | **Wix source parity** — P1 / Content note (not Kit P0) |
-| Doc | `gosaki-internal-preview-readiness-gap-audit.md` |
-| **Next** | **G-20r-schedule-source-freshness-audit** (read-only) |
+| **Superseded for freshness by** | G-20r |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20j Gosaki production upload preflight refresh — complete
 

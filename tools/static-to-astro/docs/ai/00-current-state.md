@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-20q Gosaki internal preview readiness gap audit (2026-07-08):** **complete** (reclassified) — `clientPreviewVerdict: NOT_READY` (schedule **2026-08 freshness gap** · mobile pending · HubSpot E2E); `<>` titles = **Wix source parity** (not Kit P0). Doc: `gosaki-internal-preview-readiness-gap-audit.md`. **Next: G-20r-schedule-source-freshness-audit** (read-only).
+**G-20r Gosaki schedule source freshness audit (2026-07-08):** **complete** — Kit schedule **2026-03〜2026-07** only; **no 2026-08** in package/JSON/sitemap; operator report: Wix live has `/2026-08`; **source freshness gap CONFIRMED** (not G-20p/G-22j staleness). Doc: `gosaki-schedule-source-freshness-audit.md`. **No crawl/network/DB/Save/regen.** **Next: G-20r1 schedule source capture plan (read-only doc).**
+
+**G-20q Gosaki internal preview readiness gap audit (2026-07-08):** **complete** (reclassified) — `clientPreviewVerdict: NOT_READY`; `<>` = Wix source parity. Doc: `gosaki-internal-preview-readiness-gap-audit.md`. **Superseded for freshness detail by G-20r.**
 
 **G-20j Gosaki production upload preflight refresh (2026-07-08):** **complete** — G-20p reflected; 26-file manifest verified; content **GO** · execution **HOLD** (DNS/SSL/MX/remote path/sign-off); FTP **operator manual only**. Doc: `gosaki-production-upload-preflight-refresh.md`. **Client sign-off outreach deferred** — internal QA priority (G-20q).
 

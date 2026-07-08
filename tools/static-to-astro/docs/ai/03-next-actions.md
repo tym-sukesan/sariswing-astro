@@ -1,18 +1,23 @@
 Last updated: 2026-07-08
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20r1 Gosaki schedule source capture plan — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20r1-gosaki-schedule-source-capture-plan` |
+| Base | `406ec63` |
+| Target | Wix live **2026-08** — operator browser capture |
+| Cursor | **no** network / crawl |
+| Doc | `gosaki-schedule-source-capture-plan.md` |
+| **Next** | **G-20r1a operator capture result** (human) |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20r Gosaki schedule source freshness audit — complete
 
 | Item | Value |
 | --- | --- |
-| Phase | `G-20r-gosaki-schedule-source-freshness-audit` |
-| Base | `5fa16c3` |
-| Kit months | **2026-03 … 2026-07** |
-| Wix report | **`/2026-08` exists** (operator; no HTTP verify) |
-| Gap | **source freshness** — not G-20p/G-22j staleness |
-| JSON 2026-08 rows | **0** |
-| Doc | `gosaki-schedule-source-freshness-audit.md` |
-| **Next** | **G-20r1 schedule source capture plan** (read-only doc) |
+| Gap | source freshness CONFIRMED |
+| **Superseded for capture by** | G-20r1 |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20q Gosaki internal preview readiness gap audit — complete
 

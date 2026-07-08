@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-20r Gosaki schedule source freshness audit (2026-07-08):** **complete** — Kit schedule **2026-03〜2026-07** only; **no 2026-08** in package/JSON/sitemap; operator report: Wix live has `/2026-08`; **source freshness gap CONFIRMED** (not G-20p/G-22j staleness). Doc: `gosaki-schedule-source-freshness-audit.md`. **No crawl/network/DB/Save/regen.** **Next: G-20r1 schedule source capture plan (read-only doc).**
+**G-20r1 Gosaki schedule source capture plan (2026-07-08):** **complete** — operator manual browser procedure for Wix **2026-08** schedule; record format + normalization draft; **no crawl/network/DB/Save**. Doc: `gosaki-schedule-source-capture-plan.md`. **Next: G-20r1a operator capture result (human execution).**
+
+**G-20r Gosaki schedule source freshness audit (2026-07-08):** **complete** — source freshness gap CONFIRMED; Kit 03–07 only. Doc: `gosaki-schedule-source-freshness-audit.md`. **Superseded for capture procedure by G-20r1.**
 
 **G-20q Gosaki internal preview readiness gap audit (2026-07-08):** **complete** (reclassified) — `clientPreviewVerdict: NOT_READY`; `<>` = Wix source parity. Doc: `gosaki-internal-preview-readiness-gap-audit.md`. **Superseded for freshness detail by G-20r.**
 

@@ -1,16 +1,23 @@
 Last updated: 2026-07-08
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20r1b Gosaki limited public URL capture — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20r1b-gosaki-limited-public-url-capture` |
+| Base | `aa128b8` |
+| Method | public GET only — `/2026-08` |
+| Events | **19** (HIGH confidence) |
+| Playwright | **no** |
+| Doc | `gosaki-schedule-public-url-capture-result.md` |
+| **Next** | **G-20r2 schedule august seed planning** |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20r1 Gosaki schedule source capture plan — complete
 
 | Item | Value |
 | --- | --- |
-| Phase | `G-20r1-gosaki-schedule-source-capture-plan` |
-| Base | `406ec63` |
-| Target | Wix live **2026-08** — operator browser capture |
-| Cursor | **no** network / crawl |
-| Doc | `gosaki-schedule-source-capture-plan.md` |
-| **Next** | **G-20r1a operator capture result** (human) |
+| **Superseded for capture by** | G-20r1b |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20r Gosaki schedule source freshness audit — complete
 

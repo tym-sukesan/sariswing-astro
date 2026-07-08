@@ -5,27 +5,35 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20r1-gosaki-schedule-source-capture-plan — complete.
-Target: Wix 2026-08 schedule — operator manual browser capture procedure
-Cursor: no network / crawl / DB / Save / regen / FTP
-Next: G-20r1a-operator-capture-result (human execution + result doc)
+Current phase: G-20r1b-gosaki-limited-public-url-capture — complete.
+Target: Wix 2026-08 schedule — public GET only (single URL)
+Captured: 19 events · extraction confidence HIGH · no Playwright
+Cursor: limited public GET only — no crawl / DB / Save / regen / FTP
+Next: G-20r2-schedule-august-seed-planning (read-only planning)
 ```
+
+## G-20r1b limited public URL capture — complete
+
+- **URL:** `https://www.gosaki-piano.com/2026-08` (GET only; trailing `/` → 301 redirect)
+- **Events:** 19 detected from SSR HTML
+- **Artifacts:** `output/gosaki-source-captures/2026-08/` (gitignored)
+- **Safety:** no login/crawl/DB/Save/regen/FTP
+- **Supersedes:** G-20r1a operator manual capture
+- **Next:** G-20r2 seed planning
+- **Doc:** `gosaki-schedule-public-url-capture-result.md`
 
 ## G-20r1 schedule source capture plan — complete
 
-- **Goal:** Operator manual procedure to capture Wix August schedule
-- **URLs:** gosaki-piano.com/2026-08 (and /2026-08/)
-- **Format:** markdown table + CSV header · intended_action labels
-- **Safety:** no DB/Save/regen — G-20r2+ for seed/insert
-- **Next:** G-20r1a operator capture result (human)
+- **Goal:** Operator manual procedure (plan only)
+- **Superseded for execution by:** G-20r1b
 - **Doc:** `gosaki-schedule-source-capture-plan.md`
 
 ## G-20r schedule source freshness audit — complete
 
 - **Kit:** schedule months 03–07 only; 0 JSON rows for 2026-08; no sitemap 08
-- **Wix:** operator reports `/2026-08` exists — event count **unknown** (no HTTP)
+- **Wix:** **19 events** on `/2026-08` (G-20r1b public GET — HIGH confidence)
 - **Gap type:** source freshness — **not** package staleness vs G-22j
-- **Next chain:** G-20r1a capture result → G-20r2 seed → G-20r3 preflight → G-20r4 reflection
+- **Next chain:** G-20r2 seed → G-20r3 preflight → G-20r4 reflection
 - **Doc:** `gosaki-schedule-source-freshness-audit.md`
 
 ## G-20q internal preview readiness gap audit — complete
@@ -34,7 +42,7 @@ Next: G-20r1a-operator-capture-result (human execution + result doc)
 - **P0:** Wix **2026-08** not in Kit (source freshness gap — **confirmed G-20r**) · mobile QA · HubSpot E2E
 - **`<>` titles:** Wix source parity on live site — **not** Kit conversion defect · P1 / Content note
 - **Not G-20p issue:** package staleness vs G-22j remains closed for 03–07 published content
-- **Next:** G-20r1a-operator-capture-result (human browser capture)
+- **Next:** G-20r2-schedule-august-seed-planning
 - **Doc:** `gosaki-internal-preview-readiness-gap-audit.md`
 
 ## G-20j production upload preflight refresh — complete

@@ -1,19 +1,26 @@
 Last updated: 2026-07-08
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20q Gosaki internal preview readiness gap audit — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20q-gosaki-internal-preview-readiness-gap-audit` |
+| Base | `fd59ceb` |
+| clientPreviewVerdict | **NOT_READY** |
+| Internal preview | **READY_WITH_NOTES** (staging) |
+| P0 blockers | **2026-08 schedule freshness gap** · mobile QA · HubSpot E2E |
+| `<>` titles | **Wix source parity** — P1 / Content note (not Kit P0) |
+| Doc | `gosaki-internal-preview-readiness-gap-audit.md` |
+| **Next** | **G-20r-schedule-source-freshness-audit** (read-only) |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20j Gosaki production upload preflight refresh — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-20j-gosaki-production-upload-preflight-refresh` |
-| Base | `f5f038c` |
-| Client | 後藤沙紀さん — pianist personal musician site |
-| Package | 26 files · content **GO** · regen **not required** |
-| G-20j FTP execution | **HOLD** — DNS/SSL/MX/remote path/client sign-off |
-| FTP policy | **戸山さん manual only** — AI never FTP |
-| Doc | `gosaki-production-upload-preflight-refresh.md` |
-| Verifier | `verify-gosaki-production-upload-preflight-refresh.mjs` |
-| **Next** | **G-20j1 client sign-off outreach** (read-only doc) |
+| G-20j FTP | **HOLD** — DNS/SSL/MX/sign-off |
+| Client outreach | **deferred** — internal QA first (G-20q) |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20p Gosaki production package staleness review — complete
 

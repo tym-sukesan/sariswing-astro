@@ -5,15 +5,22 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20j-gosaki-production-upload-preflight-refresh — complete.
-Client: 後藤沙紀さん — pianist personal musician site (not music school)
-G-20i3 package: 26 files · content GO · regen NOT required (G-20p)
-G-20j FTP execution: HOLD — DNS/SSL/MX/remote path/client sign-off
-FTP: 戸山さん manual only — AI never FTP · mirror --delete forbidden
-G-23o / seiichijazz: ON HOLD
-No build / regen / DB / Save / FTP / deploy in this phase
-Next: G-20j1 client sign-off outreach (read-only doc)
+Current phase: G-20q-gosaki-internal-preview-readiness-gap-audit — complete.
+Client: 後藤沙紀さん — pianist personal musician site
+clientPreviewVerdict: NOT_READY (2026-08 schedule freshness gap · mobile pending · HubSpot E2E)
+<> titles: Wix source parity — NOT a Kit P0 blocker
+Internal operator preview: READY_WITH_NOTES on staging URL
+Next: G-20r-schedule-source-freshness-audit (read-only)
 ```
+
+## G-20q internal preview readiness gap audit — complete
+
+- **Verdict:** NOT_READY for client · READY_WITH_NOTES for internal staging review
+- **P0:** Wix **2026-08** not in Kit package (source freshness gap) · mobile device QA pending · HubSpot submit unverified
+- **`<>` titles:** Wix source parity on live site — **not** Kit conversion defect · P1 / Content note
+- **Not G-20p issue:** package staleness vs G-22j remains closed for 03–07 published content
+- **Next:** G-20r-schedule-source-freshness-audit (read-only — no crawl/Save/regen)
+- **Doc:** `gosaki-internal-preview-readiness-gap-audit.md`
 
 ## G-20j production upload preflight refresh — complete
 

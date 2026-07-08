@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-23l Static-to-Astro onboarding report output (2026-07-08):** **complete** — local report artifacts under `output/onboarding-reports/{siteSlug}/latest/`; `--write-report` / `--report-out` on orchestrator; summary.json · seeds-preview.json · human-review.md · risk-summary.md. Writer: `scripts/lib/onboarding-report-writer.mjs`. Doc: `static-to-astro-onboarding-report-output-result.md`. Verifier: `verify-g23l-static-to-astro-onboarding-report-output.mjs`. **Local file write only — no crawl / network / DB / SQL / package / FTP / deploy.** **Next: G-23m report artifact review · G-23n allowlist · G-23o first approved crawl.**
+**G-23m Static-to-Astro sample full dry-run report artifact review (2026-07-08):** **complete** — reviewed G-23l report artifacts for sample musician fixture; verdict PASS_WITH_KNOWN_WARNING (news unmapped); improved human-review / risk-summary / seeds-preview reviewOnly flags. Doc: `static-to-astro-sample-full-dry-run-report-artifact-review-result.md`. Verifier: `verify-g23m-static-to-astro-sample-full-dry-run-report-artifact-review.mjs`. **Review only — no crawl / network / DB / SQL / package / FTP / deploy.** **Next: G-23n allowlist · G-23o first approved crawl · G-23p crawl result review.**
+
+**G-23l Static-to-Astro onboarding report output (2026-07-08):** **complete** — local report artifacts under `output/onboarding-reports/{siteSlug}/latest/`. Doc: `static-to-astro-onboarding-report-output-result.md`. **Superseded for artifact review by G-23m.**
 
 **G-23k Static-to-Astro crawl-dry-run safety planning (2026-07-08):** **complete** — safety design for live crawl-dry-run before G-23o. Doc: `static-to-astro-crawl-dry-run-safety-planning.md`. **Superseded for report output by G-23l.**
 

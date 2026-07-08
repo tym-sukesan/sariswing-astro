@@ -5,15 +5,25 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-23l-onboarding-report-output — complete.
-Scope: local report artifacts from orchestrator dry-run (--write-report)
-Output: output/onboarding-reports/{siteSlug}/latest/ (gitignored, overwrite)
-Reports: summary.json · seeds-preview.json · human-review.md · risk-summary.md
-Sample: schedule 2 · news/profile/discography/video/contact 1 each
-No live crawl / network / DB / SQL / package / FTP / deploy in G-23l
-Next: G-23m report artifact review · G-23n allowlist · G-23o first approved crawl (operator approval)
+Current phase: G-23m-sample-full-dry-run-report-artifact-review — complete.
+Verdict: PASS_WITH_KNOWN_WARNING (news unmapped route in fixture)
+Reports reviewed: summary.json · seeds-preview.json · human-review.md · risk-summary.md
+Improvements: reviewOnly · operator checklist · blocked ops · next-phase risk table
+Output: output/onboarding-reports/sample-musician-fixture/latest/ (gitignored)
+No live crawl / network / DB / SQL / package / FTP / deploy in G-23m
+Next: G-23n allowlist · G-23o first approved crawl · G-23p crawl result review
 Schedule CMS P0 chain remains CLOSED (G-22j1/j2). Do NOT re-Save closed slices.
 ```
+
+## G-23m sample full dry-run report artifact review — complete
+
+- **Goal:** Confirm G-23l report artifacts are operator-review-ready before live crawl
+- **Verdict:** PASS_WITH_KNOWN_WARNING — 1 warning (news unmapped `/news/` page)
+- **Reviewed:** summary (steps 0–9, seedCounts, planOnly) · seeds-preview (reviewOnly, not SQL) · human-review (checklist) · risk-summary (blocked ops)
+- **Improvements:** reviewOnly/doNotExecuteAsSql · operator checklist · do-not-proceed · next-phase risk table
+- **Not executed:** live crawl · network · DB · SQL · package · FTP · deploy
+- **Verifier:** `verify-g23m-static-to-astro-sample-full-dry-run-report-artifact-review.mjs`
+- **Next:** G-23n allowlist · G-23o first approved crawl · G-23p crawl result review
 
 ## G-23l onboarding report output — complete
 

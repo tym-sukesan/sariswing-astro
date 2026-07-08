@@ -1,21 +1,28 @@
 Last updated: 2026-07-08
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-23m sample full dry-run report artifact review — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-23m-sample-full-dry-run-report-artifact-review` |
+| Base | `b1f7dcb` |
+| Verdict | **PASS_WITH_KNOWN_WARNING** (news unmapped) |
+| Reports reviewed | summary.json · seeds-preview.json · human-review.md · risk-summary.md |
+| Output | `output/onboarding-reports/sample-musician-fixture/latest/` |
+| Improvements | reviewOnly · operator checklist · blocked ops table · next-phase risk |
+| Live crawl / network / DB / SQL / package / FTP / deploy | **not executed** |
+| Doc | `static-to-astro-sample-full-dry-run-report-artifact-review-result.md` |
+| Verifier | `verify-g23m-static-to-astro-sample-full-dry-run-report-artifact-review.mjs` |
+| **Next** | **G-23n** allowlist · **G-23o** first approved crawl · **G-23p** crawl result review |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-23l onboarding report output — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-23l-onboarding-report-output` |
 | Base | `5b9ceb0` |
-| Writer | `scripts/lib/onboarding-report-writer.mjs` |
-| CLI | `--write-report` · `--report-out` on orchestrator |
-| Output | `output/onboarding-reports/{siteSlug}/latest/` (gitignored, overwrite) |
-| Reports | summary.json · seeds-preview.json · human-review.md · risk-summary.md |
-| Sample seed counts | schedule **2** · news/profile/discography/video/contact **1** each |
-| Live crawl / network / DB / SQL / package / FTP / deploy | **not executed** |
-| Doc | `static-to-astro-onboarding-report-output-result.md` |
-| Verifier | `verify-g23l-static-to-astro-onboarding-report-output.mjs` |
-| **Next** | **G-23m** report artifact review · **G-23n** allowlist · **G-23o** first approved crawl |
+| **Next** | **Superseded for artifact review by G-23m** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-23k crawl-dry-run safety planning — complete
 

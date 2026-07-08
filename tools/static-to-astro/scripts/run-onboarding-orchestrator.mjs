@@ -817,7 +817,7 @@ export function runOnboardingOrchestrator(options) {
     mode === "validate-only"
       ? "G-23l-onboarding-report-output"
       : mode === "full-dry-run"
-        ? "G-23m-sample-full-dry-run-report-artifact-review"
+        ? "G-23n-live-crawl-allowlist-config"
         : "G-23l-onboarding-report-output";
 
   riskSummary = buildRiskSummary(warnings, steps);

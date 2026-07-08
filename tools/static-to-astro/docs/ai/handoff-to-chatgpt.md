@@ -5,15 +5,26 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-23k-static-to-astro-crawl-dry-run-safety-planning — complete.
-Scope: planning only — live crawl-dry-run safety design before G-23o
-Gates: explicitCrawlApprovalId · sameOriginOnly · maxPages/concurrency/timeout · no POST/login/credentials
-URL policy: https · no localhost/private IP/example.com · staging vs production separation
-Crawl result schema planned (fixture-compatible) · orchestrator crawl-dry-run mode planned
-No live crawl / network / DB / SQL / package / FTP / deploy in G-23k
-Next: G-23l report output · G-23m crawl design closure · G-23n allowlist · G-23o first approved crawl (operator approval)
+Current phase: G-23l-onboarding-report-output — complete.
+Scope: local report artifacts from orchestrator dry-run (--write-report)
+Output: output/onboarding-reports/{siteSlug}/latest/ (gitignored, overwrite)
+Reports: summary.json · seeds-preview.json · human-review.md · risk-summary.md
+Sample: schedule 2 · news/profile/discography/video/contact 1 each
+No live crawl / network / DB / SQL / package / FTP / deploy in G-23l
+Next: G-23m report artifact review · G-23n allowlist · G-23o first approved crawl (operator approval)
 Schedule CMS P0 chain remains CLOSED (G-22j1/j2). Do NOT re-Save closed slices.
 ```
+
+## G-23l onboarding report output — complete
+
+- **Goal:** Save orchestrator dry-run results as reviewable local report artifacts
+- **CLI:** `--write-report` · `--report-out` on `run-onboarding-orchestrator.mjs`
+- **Writer:** `onboarding-report-writer.mjs` — path-safe, onboarding-reports/ only
+- **Strategy:** `{siteSlug}/latest/` overwrite (output/ gitignored)
+- **Reports:** summary.json · seeds-preview.json (not SQL) · human-review.md · risk-summary.md
+- **Not executed:** live crawl · network · DB · SQL · package · FTP · deploy
+- **Verifier:** `verify-g23l-static-to-astro-onboarding-report-output.mjs`
+- **Next:** G-23m report artifact review · G-23n allowlist · G-23o first approved crawl
 
 ## G-23k crawl-dry-run safety planning — complete
 

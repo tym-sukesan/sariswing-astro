@@ -8,6 +8,8 @@
  *     --config <onboarding.json> \
  *     --mode validate-only|fixture-dry-run|full-dry-run \
  *     [--fixture <fixture-crawl-result.json>] \
+ *     [--write-report] \
+ *     [--report-out <dir-under-onboarding-reports>] \
  *     [--json]
  */
 
@@ -16,6 +18,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { validateCmsPresetConfig } from "./lib/cms-preset-registry.mjs";
+import { writeOnboardingReport } from "./lib/onboarding-report-writer.mjs";
 import {
   extractOnboardingSeedCandidates,
   summarizeSeedExtraction,
@@ -73,17 +76,21 @@ function isPlainObject(value) {
  */
 export function parseOrchestratorArgs(argv) {
   const json = argv.includes("--json");
+  const writeReport = argv.includes("--write-report");
   const configIdx = argv.indexOf("--config");
   const fixtureIdx = argv.indexOf("--fixture");
   const modeIdx = argv.indexOf("--mode");
+  const reportOutIdx = argv.indexOf("--report-out");
 
   const configPath =
     configIdx >= 0 && argv[configIdx + 1] ? path.resolve(argv[configIdx + 1]) : null;
   const fixturePath =
     fixtureIdx >= 0 && argv[fixtureIdx + 1] ? path.resolve(argv[fixtureIdx + 1]) : null;
   const mode = modeIdx >= 0 && argv[modeIdx + 1] ? argv[modeIdx + 1] : null;
+  const reportOut =
+    reportOutIdx >= 0 && argv[reportOutIdx + 1] ? path.resolve(argv[reportOutIdx + 1]) : null;
 
-  return { json, configPath, fixturePath, mode };
+  return { json, writeReport, configPath, fixturePath, mode, reportOut };
 }
 
 /**
@@ -485,6 +492,8 @@ export function runOnboardingOrchestrator(options) {
     mode = null,
     config: configInline = null,
     fixture: fixtureInline = null,
+    writeReport = false,
+    reportOut = null,
   } = options;
 
   const phase =
@@ -806,10 +815,10 @@ export function runOnboardingOrchestrator(options) {
 
   const nextRecommendedPhase =
     mode === "validate-only"
-      ? "G-23i-fixture-mode-orchestrator-integration"
+      ? "G-23l-onboarding-report-output"
       : mode === "full-dry-run"
-        ? "G-23k-crawl-dry-run-planning"
-        : "G-23j-first-non-network-sample-full-dry-run";
+        ? "G-23m-sample-full-dry-run-report-artifact-review"
+        : "G-23l-onboarding-report-output";
 
   riskSummary = buildRiskSummary(warnings, steps);
 
@@ -826,6 +835,97 @@ export function runOnboardingOrchestrator(options) {
   const ok = overallStatus === "PASS" || overallStatus === "WARN";
 
   const totalActiveCandidates = Object.values(moduleCandidateCounts).reduce((a, b) => a + b, 0);
+
+  /** @type {object | null} */
+  let reportOutput = null;
+  let filesCreated = 0;
+
+  if (writeReport) {
+    const summaryOnly = mode === "validate-only";
+    try {
+      const reportResult = {
+        ok,
+        status: overallStatus,
+        phase,
+        mode,
+        siteSlug: config.siteSlug ?? null,
+        cmsPreset: config.cmsPreset ?? null,
+        validation: {
+          config: {
+            status: configValidation.ok ? "PASS" : "FAIL",
+            errors: configValidation.errors,
+            warnings: configValidation.warnings,
+          },
+          registry: {
+            status: registryValidation.status,
+            errors: registryValidation.errors,
+            warnings: registryValidation.warnings,
+          },
+        },
+        intake,
+        fixtureLoad,
+        pageClassification,
+        cmsModulePlanner,
+        seedExtraction: seedExtraction
+          ? {
+              status: seedExtraction.status,
+              summary: summarizeSeedExtraction(seedExtraction),
+              errors: seedExtraction.errors,
+              warnings: seedExtraction.warnings,
+            }
+          : null,
+        seedExtractionFull: seedExtraction,
+        moduleCandidateCounts,
+        totalActiveCandidates,
+        dbPlan,
+        packagePlan,
+        uploadPlan,
+        warnings,
+        riskSummary,
+        safetyGates,
+        steps,
+        nextRecommendedPhase,
+      };
+
+      reportOutput = writeOnboardingReport(reportResult, {
+        toolRoot: TOOL_ROOT,
+        reportOut: reportOut ?? null,
+        useLatest: !reportOut,
+        summaryOnly,
+      });
+
+      if (!reportOutput.ok) {
+        return {
+          ok: false,
+          status: "FAIL",
+          phase: "G-23l-onboarding-report-output",
+          mode,
+          errors: [reportOutput.error ?? "report write failed"],
+          reportOutput,
+          steps,
+          liveCrawlExecuted: false,
+          networkAccess: false,
+          dbWriteExecuted: false,
+          filesCreated: 0,
+        };
+      }
+
+      filesCreated = reportOutput.filesCreated ?? 0;
+    } catch (err) {
+      return {
+        ok: false,
+        status: "FAIL",
+        phase: "G-23l-onboarding-report-output",
+        mode,
+        errors: [`report write error: ${err.message}`],
+        steps,
+        liveCrawlExecuted: false,
+        networkAccess: false,
+        dbWriteExecuted: false,
+        filesCreated: 0,
+      };
+    }
+  }
 
   return {
     ok,
@@ -861,6 +961,7 @@ export function runOnboardingOrchestrator(options) {
           warnings: seedExtraction.warnings,
         }
       : null,
+    seedExtractionFull: seedExtraction ?? null,
     moduleCandidateCounts,
     totalActiveCandidates,
     dbPlan,
@@ -882,7 +983,10 @@ export function runOnboardingOrchestrator(options) {
     astroBuildExecuted: false,
     ftpUploadExecuted: false,
     deployExecuted: false,
-    filesCreated: 0,
+    reportOutput,
+    reportPath: reportOutput?.reportDir ?? null,
+    reportFiles: reportOutput?.files ?? [],
+    filesCreated,
     fatalErrors: [],
   };
 }
@@ -970,22 +1074,38 @@ function printHumanReport(result) {
   }
 
   console.log(`\nNext recommended phase: ${result.nextRecommendedPhase}`);
+
+  if (result.reportPath) {
+    console.log(`\nReport written to: ${result.reportPath}`);
+    for (const f of result.reportFiles ?? []) {
+      console.log(`  - ${f}`);
+    }
+  }
+
   console.log(
     "\nOperations NOT executed: live crawl · network · DB · SQL · package · FTP · deploy\n",
   );
 }
 
 function main() {
-  const { json, configPath, fixturePath, mode } = parseOrchestratorArgs(process.argv.slice(2));
+  const { json, writeReport, configPath, fixturePath, mode, reportOut } = parseOrchestratorArgs(
+    process.argv.slice(2),
+  );
 
   if (!configPath || !mode) {
     console.error(
-      "Usage: node run-onboarding-orchestrator.mjs --config <path> --mode <mode> [--fixture <path>] [--json]",
+      "Usage: node run-onboarding-orchestrator.mjs --config <path> --mode <mode> [--fixture <path>] [--write-report] [--report-out <dir>] [--json]",
     );
     process.exit(2);
   }
 
-  const result = runOnboardingOrchestrator({ configPath, fixturePath, mode });
+  const result = runOnboardingOrchestrator({
+    configPath,
+    fixturePath,
+    mode,
+    writeReport,
+    reportOut,
+  });
 
   if (json) {
     console.log(JSON.stringify(result, null, 2));

@@ -1,6 +1,22 @@
 Last updated: 2026-07-08
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-23l onboarding report output — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-23l-onboarding-report-output` |
+| Base | `5b9ceb0` |
+| Writer | `scripts/lib/onboarding-report-writer.mjs` |
+| CLI | `--write-report` · `--report-out` on orchestrator |
+| Output | `output/onboarding-reports/{siteSlug}/latest/` (gitignored, overwrite) |
+| Reports | summary.json · seeds-preview.json · human-review.md · risk-summary.md |
+| Sample seed counts | schedule **2** · news/profile/discography/video/contact **1** each |
+| Live crawl / network / DB / SQL / package / FTP / deploy | **not executed** |
+| Doc | `static-to-astro-onboarding-report-output-result.md` |
+| Verifier | `verify-g23l-static-to-astro-onboarding-report-output.mjs` |
+| **Next** | **G-23m** report artifact review · **G-23n** allowlist · **G-23o** first approved crawl |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-23k crawl-dry-run safety planning — complete
 
 | Item | Value |
@@ -8,13 +24,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Phase | `G-23k-static-to-astro-crawl-dry-run-safety-planning` |
 | Base | `ad6091a` |
 | Scope | Planning only — live crawl-dry-run safety design |
-| Gates | `explicitCrawlApprovalId` · `sameOriginOnly` · `maxPages` · `concurrency` · `timeout` · no POST/login/credentials |
-| URL policy | https · no localhost/private IP/example.com/fixture · staging vs production separation |
-| Output | Crawl result schema (fixture-compatible) · orchestrator `crawl-dry-run` mode plan |
-| Live crawl / network / DB / SQL / package / FTP / deploy | **not executed** |
-| Doc | `static-to-astro-crawl-dry-run-safety-planning.md` |
-| Verifier | `verify-g23k-static-to-astro-crawl-dry-run-safety-planning.mjs` |
-| **Next** | **G-23l** report output · **G-23m** crawl design closure · **G-23n** allowlist · **G-23o** first approved crawl (operator approval) |
+| **Next** | **Superseded for report output by G-23l** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-23j first non-network sample full dry-run — complete
 

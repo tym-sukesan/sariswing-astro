@@ -5,15 +5,32 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-23n-live-crawl-allowlist-config — complete.
-Scope: crawl allowlist config + static validator + inspect CLI (no network/DNS/crawl)
-Default: readyForLiveCrawl=false → PASS_WITH_NOT_READY
-Deny: localhost · private IP · example.com · production ref vsbvndwuajjhnzpohghh
-Invalid fixtures: localhost / production ref / missing approval → FAIL
-No live crawl / DNS / network / DB / SQL / package / FTP / deploy in G-23n
-Next: G-23o first approved crawl-dry-run (operator approval required) · G-23p crawl result review
-Schedule CMS P0 chain remains CLOSED (G-22j1/j2). Do NOT re-Save closed slices.
+Current phase: gosaki-completion-audit — complete.
+Priority shift: G-23 onboarding paused at d7a7250 → Gosaki-piano site completion
+Schedule CMS P0: CLOSED (G-22j1/j2) — do NOT re-Save closed slices
+G-23o live crawl: ON HOLD
+seiichijazz.com: deferred
+Audit: P0/P1/P2/保留 classified in gosaki-completion-audit.md
+No DB / Save / deploy / FTP in audit phase
+Next: Gosaki production-cutover gap refresh (read-only/local)
 ```
+
+## Gosaki completion audit — complete
+
+- **Goal:** Inventory remaining Gosaki-piano work before production cutover
+- **Completed areas:** static staging (G-7/8), Schedule CMS P0 (G-22), YouTube/About/Discography/Contact CMS slices, canonical+legacy routes (G-9c), prod package build (G-20h2), discography test cleanup (G-20e)
+- **P0 gaps:** production cutover checklist, full package verify, client sign-off, DNS/SSL, robots/canonical flip, contact E2E, mobile spot-check, hosted admin plan
+- **P1:** discography UX, reflection runbooks, admin copy, Supabase prod strategy
+- **P2:** G-23 resume, News CMS, image upload, FTP auto, seiichijazz
+- **保留:** G-23o crawl, FTP auto-apply, closed P0 Saves, `/admin` prod
+- **Next task:** Gosaki production-cutover gap refresh (read-only/local)
+- **Doc:** `gosaki-completion-audit.md`
+
+## G-23 series — paused at d7a7250
+
+- **Complete through:** G-23n (allowlist config)
+- **Deferred:** G-23o live crawl · G-23p crawl review
+- **Resume when:** Gosaki completion milestones met or operator directs
 
 ## G-23n live crawl allowlist config — complete
 

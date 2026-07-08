@@ -1,21 +1,35 @@
 Last updated: 2026-07-08
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. Gosaki completion audit — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `gosaki-completion-audit` |
+| Base | `d7a7250` |
+| Scope | Read-only inventory — Gosaki-piano remaining work |
+| Schedule CMS P0 | **closed** (G-22j1/j2) |
+| G-23 onboarding | **paused** at d7a7250 · G-23o deferred |
+| P0 focus | Production cutover gap · package verify · client sign-off · DNS/SSL · mobile QA · hosted admin plan |
+| Doc | `gosaki-completion-audit.md` |
+| **Next** | **Gosaki production-cutover gap refresh** (read-only/local) |
+
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-23 series — paused at d7a7250
+
+| Item | Value |
+| --- | --- |
+| Completed | G-23a–G-23n (onboarding flow, orchestrator, report output, crawl allowlist) |
+| Deferred | **G-23o** live crawl-dry-run · **G-23p** crawl result review |
+| seiichijazz.com | **deferred** |
+| **Priority** | **Gosaki-piano completion** |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-23n live crawl allowlist config — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-23n-live-crawl-allowlist-config` |
 | Base | `76eab7e` |
-| Example config | `config/onboarding.crawl-allowlist.example.json` |
-| Default | `readyForLiveCrawl: false` → **PASS_WITH_NOT_READY** |
-| Validator | `scripts/lib/onboarding-crawl-allowlist.mjs` |
-| Inspect | `scripts/inspect-onboarding-crawl-allowlist.mjs` |
-| Invalid fixtures | localhost · production ref · missing approval → **FAIL** |
-| Live crawl / DNS / network / DB / SQL / package / FTP / deploy | **not executed** |
-| Doc | `static-to-astro-live-crawl-allowlist-config-result.md` |
-| Verifier | `verify-g23n-static-to-astro-live-crawl-allowlist-config.mjs` |
-| **Next** | **G-23o** first approved crawl-dry-run (operator approval) · **G-23p** crawl result review |
+| **Next** | **Paused** — resume after Gosaki completion milestones |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-23m sample full dry-run report artifact review — complete
 

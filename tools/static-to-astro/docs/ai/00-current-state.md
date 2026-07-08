@@ -3,7 +3,11 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-23n Static-to-Astro live crawl allowlist config (2026-07-08):** **complete** — crawl allowlist example + static validator + inspect CLI; `readyForLiveCrawl=false` default; deny localhost/private IP/example.com/production ref. Config: `config/onboarding.crawl-allowlist.example.json`. Validator: `scripts/lib/onboarding-crawl-allowlist.mjs`. Doc: `static-to-astro-live-crawl-allowlist-config-result.md`. Verifier: `verify-g23n-static-to-astro-live-crawl-allowlist-config.mjs`. **Static validation only — no crawl / DNS / network / DB / SQL / package / FTP / deploy.** **Next: G-23o first approved crawl-dry-run (operator approval required).**
+**Gosaki completion audit (2026-07-08):** **complete** — read-only inventory of Gosaki-piano remaining work; P0/P1/P2/保留 classified; G-23 paused at `d7a7250`; Schedule CMS P0 closed (G-22j). Doc: `gosaki-completion-audit.md`. **No DB / Save / deploy / FTP.** **Next: Gosaki production-cutover gap refresh (read-only/local).**
+
+**G-23 series paused at d7a7250 (2026-07-08):** G-23a–G-23n complete (onboarding orchestrator, report output, crawl allowlist). **G-23o live crawl ON HOLD.** Priority returned to Gosaki-piano completion. seiichijazz.com deferred.
+
+**G-23n Static-to-Astro live crawl allowlist config (2026-07-08):** **complete** — crawl allowlist example + static validator + inspect CLI. Doc: `static-to-astro-live-crawl-allowlist-config-result.md`. **Superseded by Gosaki completion audit priority shift.**
 
 **G-23m Static-to-Astro sample full dry-run report artifact review (2026-07-08):** **complete** — verdict PASS_WITH_KNOWN_WARNING. Doc: `static-to-astro-sample-full-dry-run-report-artifact-review-result.md`. **Superseded for allowlist config by G-23n.**
 

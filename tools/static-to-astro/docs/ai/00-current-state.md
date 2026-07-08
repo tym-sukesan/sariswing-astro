@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-23m Static-to-Astro sample full dry-run report artifact review (2026-07-08):** **complete** — reviewed G-23l report artifacts for sample musician fixture; verdict PASS_WITH_KNOWN_WARNING (news unmapped); improved human-review / risk-summary / seeds-preview reviewOnly flags. Doc: `static-to-astro-sample-full-dry-run-report-artifact-review-result.md`. Verifier: `verify-g23m-static-to-astro-sample-full-dry-run-report-artifact-review.mjs`. **Review only — no crawl / network / DB / SQL / package / FTP / deploy.** **Next: G-23n allowlist · G-23o first approved crawl · G-23p crawl result review.**
+**G-23n Static-to-Astro live crawl allowlist config (2026-07-08):** **complete** — crawl allowlist example + static validator + inspect CLI; `readyForLiveCrawl=false` default; deny localhost/private IP/example.com/production ref. Config: `config/onboarding.crawl-allowlist.example.json`. Validator: `scripts/lib/onboarding-crawl-allowlist.mjs`. Doc: `static-to-astro-live-crawl-allowlist-config-result.md`. Verifier: `verify-g23n-static-to-astro-live-crawl-allowlist-config.mjs`. **Static validation only — no crawl / DNS / network / DB / SQL / package / FTP / deploy.** **Next: G-23o first approved crawl-dry-run (operator approval required).**
+
+**G-23m Static-to-Astro sample full dry-run report artifact review (2026-07-08):** **complete** — verdict PASS_WITH_KNOWN_WARNING. Doc: `static-to-astro-sample-full-dry-run-report-artifact-review-result.md`. **Superseded for allowlist config by G-23n.**
 
 **G-23l Static-to-Astro onboarding report output (2026-07-08):** **complete** — local report artifacts under `output/onboarding-reports/{siteSlug}/latest/`. Doc: `static-to-astro-onboarding-report-output-result.md`. **Superseded for artifact review by G-23m.**
 

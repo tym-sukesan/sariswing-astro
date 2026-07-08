@@ -1,0 +1,43 @@
+{
+  "$comment": "G-23n invalid fixture — localhost as crawl target when armed",
+  "version": "1.0",
+  "purpose": "invalid-crawl-allowlist-localhost",
+  "phase": "G-23n-invalid-fixture",
+  "readyForLiveCrawl": true,
+  "explicitCrawlApprovalId": "G-23n-test-localhost-invalid",
+  "approvedBy": "verifier-fixture",
+  "approvedAt": "2026-07-08T00:00:00.000Z",
+  "allowedTargets": [
+    {
+      "label": "localhost-invalid",
+      "sourceUrl": "http://localhost:3000/",
+      "allowedOrigin": "http://localhost:3000",
+      "sameOriginOnly": true,
+      "maxPages": 5,
+      "concurrency": 1,
+      "requestTimeoutMs": 10000,
+      "respectRobotsTxt": true,
+      "allowAssets": false,
+      "maxAssetBytes": 1048576,
+      "allowedContentTypes": ["text/html"],
+      "denyQueryStrings": true,
+      "denyExternalRedirects": true,
+      "denyPrivateIp": true,
+      "denyLocalhost": true,
+      "denyLoginPages": true,
+      "denyFormsSubmit": true,
+      "denyCredentials": true,
+      "denyCookies": true,
+      "denyServiceRole": true,
+      "denyDbWrite": true,
+      "denyFtp": true,
+      "notes": "invalid — localhost must FAIL static validation"
+    }
+  ],
+  "deniedTargets": [
+    { "label": "localhost", "pattern": "localhost" },
+    { "label": "127.0.0.1", "pattern": "127.0.0.1" },
+    { "label": "example.com", "pattern": "example.com" },
+    { "label": "production-ref", "pattern": "vsbvndwuajjhnzpohghh" }
+  ]
+}

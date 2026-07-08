@@ -1,0 +1,79 @@
+{
+  "$comment": "G-23n — Crawl allowlist example. readyForLiveCrawl=false by default. No live URLs. No secrets.",
+  "version": "1.0",
+  "purpose": "G-23n-live-crawl-allowlist-config — structure and deny rules only; not armed for live crawl",
+  "phase": "G-23n-live-crawl-allowlist-config",
+  "readyForLiveCrawl": false,
+  "explicitCrawlApprovalId": null,
+  "approvedBy": null,
+  "approvedAt": null,
+  "allowedTargets": [],
+  "deniedTargets": [
+    {
+      "label": "localhost",
+      "pattern": "localhost",
+      "reason": "local loopback — never crawl target"
+    },
+    {
+      "label": "127.0.0.1",
+      "pattern": "127.0.0.1",
+      "reason": "loopback IPv4"
+    },
+    {
+      "label": "private-ipv4-10",
+      "pattern": "10.0.0.0/8",
+      "reason": "RFC1918 private range"
+    },
+    {
+      "label": "private-ipv4-172",
+      "pattern": "172.16.0.0/12",
+      "reason": "RFC1918 private range"
+    },
+    {
+      "label": "private-ipv4-192",
+      "pattern": "192.168.0.0/16",
+      "reason": "RFC1918 private range"
+    },
+    {
+      "label": "example-com",
+      "pattern": "example.com",
+      "reason": "IANA example domain — not a live crawl target in G-23n"
+    },
+    {
+      "label": "sariswing-production-ref",
+      "pattern": "vsbvndwuajjhnzpohghh",
+      "reason": "forbidden production Supabase project ref — never active crawl target"
+    },
+    {
+      "label": "fixture-placeholder",
+      "pattern": "fixture/static",
+      "reason": "fixture paths are not live crawl origins"
+    }
+  ],
+  "defaultTargetPolicy": {
+    "sameOriginOnly": true,
+    "maxPages": 20,
+    "concurrency": 2,
+    "requestTimeoutMs": 15000,
+    "respectRobotsTxt": true,
+    "allowAssets": true,
+    "maxAssetBytes": 5242880,
+    "allowedContentTypes": ["text/html", "text/css", "image/jpeg", "image/png", "image/webp"],
+    "denyQueryStrings": true,
+    "denyExternalRedirects": true,
+    "denyPrivateIp": true,
+    "denyLocalhost": true,
+    "denyLoginPages": true,
+    "denyFormsSubmit": true,
+    "denyCredentials": true,
+    "denyCookies": true,
+    "denyServiceRole": true,
+    "denyDbWrite": true,
+    "denyFtp": true
+  },
+  "notes": [
+    "G-23n validates allowlist structure only — no DNS / HTTP / crawl execution",
+    "Set readyForLiveCrawl=true only in G-23o+ with operator approval and real sourceUrl",
+    "explicitCrawlApprovalId must be registered before any live crawl-dry-run"
+  ]
+}

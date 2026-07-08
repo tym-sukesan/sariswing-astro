@@ -1,20 +1,29 @@
 Last updated: 2026-07-08
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-23n live crawl allowlist config — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-23n-live-crawl-allowlist-config` |
+| Base | `76eab7e` |
+| Example config | `config/onboarding.crawl-allowlist.example.json` |
+| Default | `readyForLiveCrawl: false` → **PASS_WITH_NOT_READY** |
+| Validator | `scripts/lib/onboarding-crawl-allowlist.mjs` |
+| Inspect | `scripts/inspect-onboarding-crawl-allowlist.mjs` |
+| Invalid fixtures | localhost · production ref · missing approval → **FAIL** |
+| Live crawl / DNS / network / DB / SQL / package / FTP / deploy | **not executed** |
+| Doc | `static-to-astro-live-crawl-allowlist-config-result.md` |
+| Verifier | `verify-g23n-static-to-astro-live-crawl-allowlist-config.mjs` |
+| **Next** | **G-23o** first approved crawl-dry-run (operator approval) · **G-23p** crawl result review |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-23m sample full dry-run report artifact review — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-23m-sample-full-dry-run-report-artifact-review` |
 | Base | `b1f7dcb` |
-| Verdict | **PASS_WITH_KNOWN_WARNING** (news unmapped) |
-| Reports reviewed | summary.json · seeds-preview.json · human-review.md · risk-summary.md |
-| Output | `output/onboarding-reports/sample-musician-fixture/latest/` |
-| Improvements | reviewOnly · operator checklist · blocked ops table · next-phase risk |
-| Live crawl / network / DB / SQL / package / FTP / deploy | **not executed** |
-| Doc | `static-to-astro-sample-full-dry-run-report-artifact-review-result.md` |
-| Verifier | `verify-g23m-static-to-astro-sample-full-dry-run-report-artifact-review.mjs` |
-| **Next** | **G-23n** allowlist · **G-23o** first approved crawl · **G-23p** crawl result review |
+| **Next** | **Superseded for allowlist by G-23n** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-23l onboarding report output — complete
 

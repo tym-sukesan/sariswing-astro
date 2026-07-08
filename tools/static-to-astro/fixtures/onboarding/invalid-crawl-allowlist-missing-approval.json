@@ -1,0 +1,43 @@
+{
+  "$comment": "G-23n invalid fixture — armed without approval metadata",
+  "version": "1.0",
+  "purpose": "invalid-crawl-allowlist-missing-approval",
+  "phase": "G-23n-invalid-fixture",
+  "readyForLiveCrawl": true,
+  "explicitCrawlApprovalId": "",
+  "approvedBy": null,
+  "approvedAt": null,
+  "allowedTargets": [
+    {
+      "label": "missing-approval",
+      "sourceUrl": "https://staging-placeholder.example.invalid/",
+      "allowedOrigin": "https://staging-placeholder.example.invalid",
+      "sameOriginOnly": true,
+      "maxPages": 10,
+      "concurrency": 1,
+      "requestTimeoutMs": 10000,
+      "respectRobotsTxt": true,
+      "allowAssets": true,
+      "maxAssetBytes": 5242880,
+      "allowedContentTypes": ["text/html"],
+      "denyQueryStrings": true,
+      "denyExternalRedirects": true,
+      "denyPrivateIp": true,
+      "denyLocalhost": true,
+      "denyLoginPages": true,
+      "denyFormsSubmit": true,
+      "denyCredentials": true,
+      "denyCookies": true,
+      "denyServiceRole": true,
+      "denyDbWrite": true,
+      "denyFtp": true,
+      "notes": "invalid — readyForLiveCrawl without approvalId/approvedBy/approvedAt"
+    }
+  ],
+  "deniedTargets": [
+    { "label": "localhost", "pattern": "localhost" },
+    { "label": "127.0.0.1", "pattern": "127.0.0.1" },
+    { "label": "example.com", "pattern": "example.com" },
+    { "label": "production-ref", "pattern": "vsbvndwuajjhnzpohghh" }
+  ]
+}

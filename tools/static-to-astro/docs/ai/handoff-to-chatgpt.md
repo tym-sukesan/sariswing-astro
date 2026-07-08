@@ -5,15 +5,25 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-23m-sample-full-dry-run-report-artifact-review — complete.
-Verdict: PASS_WITH_KNOWN_WARNING (news unmapped route in fixture)
-Reports reviewed: summary.json · seeds-preview.json · human-review.md · risk-summary.md
-Improvements: reviewOnly · operator checklist · blocked ops · next-phase risk table
-Output: output/onboarding-reports/sample-musician-fixture/latest/ (gitignored)
-No live crawl / network / DB / SQL / package / FTP / deploy in G-23m
-Next: G-23n allowlist · G-23o first approved crawl · G-23p crawl result review
+Current phase: G-23n-live-crawl-allowlist-config — complete.
+Scope: crawl allowlist config + static validator + inspect CLI (no network/DNS/crawl)
+Default: readyForLiveCrawl=false → PASS_WITH_NOT_READY
+Deny: localhost · private IP · example.com · production ref vsbvndwuajjhnzpohghh
+Invalid fixtures: localhost / production ref / missing approval → FAIL
+No live crawl / DNS / network / DB / SQL / package / FTP / deploy in G-23n
+Next: G-23o first approved crawl-dry-run (operator approval required) · G-23p crawl result review
 Schedule CMS P0 chain remains CLOSED (G-22j1/j2). Do NOT re-Save closed slices.
 ```
+
+## G-23n live crawl allowlist config — complete
+
+- **Goal:** Machine-verifiable allowlist before G-23o live crawl-dry-run
+- **Config:** `onboarding.crawl-allowlist.example.json` — readyForLiveCrawl=false default
+- **Validator:** static checks only — maxPages≤20 · concurrency≤2 · sameOriginOnly · deny flags
+- **Inspect:** `inspect-onboarding-crawl-allowlist.mjs` — human + `--json`
+- **Not executed:** live crawl · DNS · network · DB · SQL · package · FTP · deploy
+- **Verifier:** `verify-g23n-static-to-astro-live-crawl-allowlist-config.mjs`
+- **Next:** G-23o first approved crawl (real URL + approvalId + operator approval)
 
 ## G-23m sample full dry-run report artifact review — complete
 

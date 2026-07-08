@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**Gosaki production-cutover gap refresh (2026-07-08):** **complete** — read-only refresh of G-20a/G-20j cutover state post G-22j Schedule P0; pre-launch checklists; P0/P1/P2/保留 reclassified; G-20j STOP (DNS/SSL/MX/remote path) unchanged; production package G-20i3 **stale vs G-22j**. Doc: `gosaki-production-cutover-gap-refresh.md`. Verifier: `verify-gosaki-production-cutover-gap-refresh.mjs`. **No DB / Save / deploy / FTP / package build.** **Next: G-20p production package staleness review (read-only/local).**
+**G-20p Gosaki production package staleness review (2026-07-08):** **complete** — read-only compare G-20i3 production package vs G-22j; schedule content **NOT stale**; upload content **GO** · execution **HOLD** (DNS/SSL/MX); regen **not required**. Doc: `gosaki-production-package-staleness-review.md`. Verifier: `verify-gosaki-production-package-staleness-review.mjs`. **No build / regen / DB / Save / FTP.** **Next: G-20j upload preflight refresh (read-only/local).**
+
+**Gosaki production-cutover gap refresh (2026-07-08):** **complete** — read-only refresh of G-20a/G-20j cutover state post G-22j Schedule P0; pre-launch checklists; P0/P1/P2/保留 reclassified; G-20j STOP (DNS/SSL/MX/remote path) unchanged. Doc: `gosaki-production-cutover-gap-refresh.md`. **Superseded for package staleness verdict by G-20p.**
 
 **Gosaki completion audit (2026-07-08):** **complete** — read-only inventory of Gosaki-piano remaining work; P0/P1/P2/保留 classified; G-23 paused at `d7a7250`; Schedule CMS P0 closed (G-22j). Doc: `gosaki-completion-audit.md`. **Superseded for cutover checklists by gap refresh.**
 

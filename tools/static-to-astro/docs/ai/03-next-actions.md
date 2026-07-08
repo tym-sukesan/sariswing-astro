@@ -1,6 +1,22 @@
 Last updated: 2026-07-08
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20p Gosaki production package staleness review — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20p-gosaki-production-package-staleness-review` |
+| Base | `ba4faa2` |
+| Scope | Read-only artifact compare — G-20i3 vs G-22j |
+| Package | `output/manual-upload/gosaki-piano-production/` · MANIFEST `2026-07-01T17:16:34Z` · **26 files** |
+| Schedule content stale? | **no** — JSON MD5 match · 14 July cards · `008` present |
+| Upload content verdict | **GO** |
+| Upload execution verdict | **HOLD** — G-20j STOP (DNS/SSL/MX/sign-off) |
+| Package regen required? | **no** |
+| Doc | `gosaki-production-package-staleness-review.md` |
+| Verifier | `verify-gosaki-production-package-staleness-review.mjs` |
+| **Next** | **G-20j upload preflight refresh** (read-only/local) |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. Gosaki production-cutover gap refresh — complete
 
 | Item | Value |
@@ -8,12 +24,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Phase | `gosaki-production-cutover-gap-refresh` |
 | Base | `1729378` |
 | Scope | Read-only refresh — G-20j STOP + G-22j post-state · pre-launch checklists |
-| G-20j full upload | **STOP** — DNS/SSL/MX/remote path pending |
-| Production package | G-20i3 (26 files) — **stale vs G-22j** schedule DB |
-| Partial prod live | `/discography/` only (G-20d/e) |
-| Doc | `gosaki-production-cutover-gap-refresh.md` |
-| Verifier | `verify-gosaki-production-cutover-gap-refresh.mjs` |
-| **Next** | **G-20p production package staleness review** (read-only/local) |
+| **Superseded for staleness by** | G-20p |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. Gosaki completion audit — complete
 

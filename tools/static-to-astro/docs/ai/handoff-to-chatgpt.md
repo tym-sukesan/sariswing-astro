@@ -5,16 +5,29 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: gosaki-production-cutover-gap-refresh — complete.
+Current phase: G-20p-gosaki-production-package-staleness-review — complete.
 Priority: Gosaki-piano production cutover (G-23 paused at d7a7250)
 Schedule CMS P0: CLOSED (G-22j1/j2) — do NOT re-Save closed slices
-G-20j full production upload: STOP (DNS/SSL/MX/remote path pending)
-Production package G-20i3: stale vs G-22j — regen needed before G-20j upload
+G-20i3 production package: content GO — schedule NOT stale vs G-22j
+G-20j full production upload: HOLD — DNS/SSL/MX/remote path/sign-off pending
+Package regen: NOT required before G-20j
 Partial prod: /discography/ only (G-20d/e); rest Wix
 G-23o live crawl: ON HOLD · seiichijazz.com: deferred
-No DB / Save / deploy / FTP / package build in gap refresh phase
-Next: G-20p production package staleness review (read-only/local)
+No build / regen / DB / Save / deploy / FTP in G-20p
+Next: G-20j upload preflight refresh (read-only/local)
 ```
+
+## G-20p production package staleness review — complete
+
+- **Goal:** Verify whether G-20i3 production package is stale after G-22j Schedule P0
+- **Finding:** Schedule published content **NOT stale** — `gosaki-schedules.json` MD5 identical to G-22i3 staging; July 14 cards; `008` present; no PoC text
+- **HTML:** All `/schedule/*` + legacy stubs **MATCH** staging when deploy-profile-normalized
+- **SEO:** Production package has correct `www.gosaki-piano.com` canonicals · indexable primary routes
+- **Verdict:** Content **GO** · G-20j execution **HOLD** · regen **not required**
+- **Minor:** Package `CHECKLIST.md` still has staging wording (P1 doc fix in preflight refresh)
+- **Next:** G-20j upload preflight refresh (read-only)
+- **Doc:** `gosaki-production-package-staleness-review.md`
+- **Verifier:** `verify-gosaki-production-package-staleness-review.mjs`
 
 ## Gosaki production-cutover gap refresh — complete
 

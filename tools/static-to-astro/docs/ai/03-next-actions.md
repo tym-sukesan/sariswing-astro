@@ -1,21 +1,28 @@
 Last updated: 2026-07-08
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20j Gosaki production upload preflight refresh — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20j-gosaki-production-upload-preflight-refresh` |
+| Base | `f5f038c` |
+| Client | 後藤沙紀さん — pianist personal musician site |
+| Package | 26 files · content **GO** · regen **not required** |
+| G-20j FTP execution | **HOLD** — DNS/SSL/MX/remote path/client sign-off |
+| FTP policy | **戸山さん manual only** — AI never FTP |
+| Doc | `gosaki-production-upload-preflight-refresh.md` |
+| Verifier | `verify-gosaki-production-upload-preflight-refresh.mjs` |
+| **Next** | **G-20j1 client sign-off outreach** (read-only doc) |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20p Gosaki production package staleness review — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-20p-gosaki-production-package-staleness-review` |
 | Base | `ba4faa2` |
-| Scope | Read-only artifact compare — G-20i3 vs G-22j |
-| Package | `output/manual-upload/gosaki-piano-production/` · MANIFEST `2026-07-01T17:16:34Z` · **26 files** |
-| Schedule content stale? | **no** — JSON MD5 match · 14 July cards · `008` present |
-| Upload content verdict | **GO** |
-| Upload execution verdict | **HOLD** — G-20j STOP (DNS/SSL/MX/sign-off) |
-| Package regen required? | **no** |
-| Doc | `gosaki-production-package-staleness-review.md` |
-| Verifier | `verify-gosaki-production-package-staleness-review.mjs` |
-| **Next** | **G-20j upload preflight refresh** (read-only/local) |
+| Upload content | **GO** · regen **not required** |
+| **Superseded for preflight by** | G-20j refresh |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. Gosaki production-cutover gap refresh — complete
 

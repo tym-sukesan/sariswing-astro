@@ -5,17 +5,24 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20p-gosaki-production-package-staleness-review — complete.
-Priority: Gosaki-piano production cutover (G-23 paused at d7a7250)
-Schedule CMS P0: CLOSED (G-22j1/j2) — do NOT re-Save closed slices
-G-20i3 production package: content GO — schedule NOT stale vs G-22j
-G-20j full production upload: HOLD — DNS/SSL/MX/remote path/sign-off pending
-Package regen: NOT required before G-20j
-Partial prod: /discography/ only (G-20d/e); rest Wix
-G-23o live crawl: ON HOLD · seiichijazz.com: deferred
-No build / regen / DB / Save / deploy / FTP in G-20p
-Next: G-20j upload preflight refresh (read-only/local)
+Current phase: G-20j-gosaki-production-upload-preflight-refresh — complete.
+Client: 後藤沙紀さん — pianist personal musician site (not music school)
+G-20i3 package: 26 files · content GO · regen NOT required (G-20p)
+G-20j FTP execution: HOLD — DNS/SSL/MX/remote path/client sign-off
+FTP: 戸山さん manual only — AI never FTP · mirror --delete forbidden
+G-23o / seiichijazz: ON HOLD
+No build / regen / DB / Save / FTP / deploy in this phase
+Next: G-20j1 client sign-off outreach (read-only doc)
 ```
+
+## G-20j production upload preflight refresh — complete
+
+- **Goal:** Refresh G-20j preflight with G-20p findings
+- **Package:** 26 files verified · `deployBase=/` · admin excluded · `/about/` not `/profile/`
+- **Content:** GO · **Execution:** HOLD (DNS/SSL/MX/remote path/sign-off)
+- **FTP:** Operator manual only — AI provides file list + procedure docs only
+- **Next:** G-20j1 client sign-off outreach
+- **Doc:** `gosaki-production-upload-preflight-refresh.md`
 
 ## G-20p production package staleness review — complete
 

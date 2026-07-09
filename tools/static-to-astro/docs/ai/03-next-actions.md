@@ -1,5 +1,24 @@
-Last updated: 2026-07-09
+Last updated: 2026-07-10
 Project: Static-to-Astro CMS / Musician CMS Kit
+
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u6 Astro generator hook registry — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u6-astro-generator-hook-registry` |
+| Base | `3decd7f` |
+| Registry | `site-generator-hooks.mjs` — `resolveSiteGeneratorHooks` + default noop |
+| Gosaki | factory calls existing `gosaki-*` modules unchanged |
+| Generator | `astro-generator.mjs` delegates; no direct `gosaki-*` imports |
+| Output compat | Gosaki generation path preserved; no wrapper removal |
+| Package | **29 files** · full regen verified at `3decd7f` · freshness PASS |
+| August | **14 cards** · `/schedule/2026-08/` · legacy `/2026-08/` stub |
+| Sitemap | `/schedule/2026-08/` present · `/admin/` absent |
+| Hooks | Discography / About / Contact / YouTube / admin — **intact** |
+| Commit note | **commit後は package stale** — regen + freshness before upload |
+| Production | dry-run only · upload **STOP** |
+| Doc | `gosaki-astro-generator-hook-registry.md` |
+| Verifier | `verify-g20u6-astro-generator-hook-registry.mjs` |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u5 Site package npm convenience & freshness flow — complete
 

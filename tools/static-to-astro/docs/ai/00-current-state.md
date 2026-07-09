@@ -1,7 +1,9 @@
-Last updated: 2026-07-09
+Last updated: 2026-07-10
 Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
+
+**G-20u6 Astro generator hook registry (2026-07-10):** **complete** — `site-generator-hooks.mjs` + `resolveSiteGeneratorHooks`; Gosaki factory delegates to existing `gosaki-*` modules; `astro-generator.mjs` no direct Gosaki imports; default/noop hooks for unregistered sites; **output compat preserved**; **full staging regen verified at `3decd7f`** (29 files · August 14 cards · freshness PASS); **commit後は package stale** until regen; **no FTP / deploy**. Doc: `gosaki-astro-generator-hook-registry.md`. Verifier: `verify-g20u6-astro-generator-hook-registry.mjs`.
 
 **G-20u5 Site package npm convenience & freshness flow (2026-07-09):** **complete** — `build:gosaki:*` / `verify:gosaki:*` / `preflight:gosaki:*` npm scripts; operator flow build → verify → freshness; production upload **STOP**; **no FTP / deploy**. Doc: `gosaki-site-package-npm-convenience-and-freshness-flow.md`. Verifier: `verify-g20u5-site-package-npm-convenience-and-freshness-flow.mjs`.
 

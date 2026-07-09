@@ -5,14 +5,23 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u5-site-package-npm-convenience-and-freshness-flow — complete.
-Operator flow: build:gosaki:* → verify:gosaki:* → verify:package-freshness:* → manual FTP.
-preflight:gosaki:staging|production chains verify + freshness.
-Freshness: build stamps HEAD; any commit after → stale; verify PASS alone does not authorize upload.
-Production upload: STOP (TBD_G-20i, G-20j).
-Legacy npm scripts retained.
-No FTP / deploy in G-20u5.
+Current phase: G-20u6-astro-generator-hook-registry — complete.
+Hook registry: site-generator-hooks.mjs resolves per-site hooks; default noop for unregistered sites.
+Gosaki: factory calls existing gosaki-* modules unchanged; astro-generator delegates (no direct imports).
+Output compat: Gosaki generation path preserved; no wrapper removal.
+Package: on-disk manual-upload stale until regen at current HEAD.
+No FTP / deploy in G-20u6.
 ```
+
+## G-20u6 astro generator hook registry — complete
+
+- **Registry:** `resolveSiteGeneratorHooks` + `DEFAULT_SITE_GENERATOR_HOOKS` + `gosaki-piano` factory
+- **Generator:** `astro-generator.mjs` delegates footer, schedule data, discography, legacy stubs, post-generate
+- **Compat:** existing Gosaki modules unchanged; hub/stub HTML generators remain in generator
+- **Full regen:** staging verified at `3decd7f` — 29 files · August 14 · freshness PASS
+- **Commit note:** commit後は on-disk package **stale** until regen + `verify:package-freshness:staging`
+- **Not executed:** FTP · DB write · production upload
+- **Next:** G-20u7 convert CLI `--siteKey` pass-through
 
 ## G-20u5 site package npm convenience & freshness flow — complete
 

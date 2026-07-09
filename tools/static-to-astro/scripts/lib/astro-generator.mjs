@@ -32,11 +32,8 @@ import {
 } from "./site-verification.mjs";
 import { generateHeaderAstro } from "./header-transform.mjs";
 import {
-  cmsKitScheduleMonthRoute,
-  parseScheduleMonthSourcePath,
   detectScheduleMonthPages,
   SCHEDULE_INDEX_ROUTE,
-  LIVE_CRAWL_MONTH_FILENAME,
 } from "./schedule-pages.mjs";
 import { analyzeJavaScript, jsPublicPath } from "./js-analysis.mjs";
 import {
@@ -59,21 +56,7 @@ import {
   applyScheduleDataViews,
   scheduleMonthsFromDetected,
 } from "./schedule-seed-extractor.mjs";
-import {
-  applyGosakiAboutBandProfiles,
-  isGosakiPianoFixture,
-} from "./gosaki-about-band-profiles.mjs";
-import { applyGosakiAboutContent } from "./gosaki-about-content.mjs";
-import { applyGosakiHomeYouTubeEmbed } from "./gosaki-home-youtube-embed.mjs";
-import { applyGosakiContactHubspotEmbed } from "./gosaki-contact-hubspot-embed.mjs";
-import { applyGosakiScheduleDataPages } from "./gosaki-schedule-data-pages.mjs";
-import {
-  injectDiscographyDataSourceMarker,
-  patchGosakiDiscographySupabaseFields,
-  patchGosakiDiscographyPurchaseUrls,
-} from "./supabase-discography-read.mjs";
-import { applyGosakiStagingReadOnlyAdmin } from "./gosaki-staging-read-only-admin.mjs";
-import { generateGosakiFooterAstro } from "./gosaki-footer-social.mjs";
+import { resolveSiteGeneratorHooks } from "./site-generator-hooks.mjs";
 
 const TRAILING_SLASH = "always";
 const GLOBAL_CSS_PATH = "src/styles/global.css";
@@ -767,19 +750,6 @@ function fixtureLabelFromPath(siteDir) {
   return base;
 }
 
-function toCanonicalScheduleMonthPage(page, baseUrl, deployBase) {
-  const parsed = parseScheduleMonthSourcePath(page.sourcePath);
-  if (!parsed) return page;
-  const route = cmsKitScheduleMonthRoute(parsed.year, parsed.month);
-  return {
-    ...page,
-    route,
-    astroRoute: route,
-    pagePath: `schedule/${parsed.year}-${parsed.month}/index.astro`,
-    seo: applyBaseUrlToSeo(page.seo, route, baseUrl, deployBase),
-  };
-}
-
 function resolveProductionOrigin(siteDir, options) {
   if (options.productionBaseUrl) {
     return normalizeBaseUrl(options.productionBaseUrl);
@@ -811,12 +781,24 @@ export function generateAstroProject(inputDir, outputDir, options = {}) {
   const siteProfileSummary = buildSiteProfileSummary(siteProfileResolved.profile, {
     source: siteProfileResolved.source,
   });
+  const siteHooks = resolveSiteGeneratorHooks(siteDir, {
+    siteKey: options.siteKey ?? null,
+    toolRoot: TOOL_ROOT,
+  });
+  const siteDirBasename = path.basename(siteDir);
 
   const analysis = analyzeStaticSite(siteDir);
   analysis.pages = applyBaseUrlToPages(analysis.pages, baseUrl, deployBase);
-  if (isGosakiPianoFixture(siteDir)) {
-    analysis.pages = analysis.pages.map((page) => toCanonicalScheduleMonthPage(page, baseUrl, deployBase));
-  }
+  analysis.pages = siteHooks.transformAnalysisPages(analysis.pages, {
+    siteDir,
+    siteKey: siteHooks.siteKey,
+    baseUrl,
+    deployBase,
+    linkTransformContext: { productionOrigin: null },
+    outDir: outDir,
+    toolRoot: TOOL_ROOT,
+    writeFile,
+  });
   const domainReviewPages = baseUrl ? [] : pagesNeedingDomainReview(analysis.pages);
   const jsAnalysis = analyzeJavaScript(analysis.rawPages);
   const externalCss = collectExternalStylesheets(analysis.rawPages).filter(
@@ -836,10 +818,13 @@ export function generateAstroProject(inputDir, outputDir, options = {}) {
   const cssRelPaths = collectCssFiles(siteDir, analysis);
   const inlineHeadStyles = collectInlineHeadStyles(analysis.rawPages);
   const wixStaticExport = inlineHeadStyles.length > 0;
+  const visualOverrideSiteSlug =
+    siteHooks.resolveVisualOverrideSiteSlug(siteDir, siteDirBasename) ??
+    fixtureLabelFromPath(siteDir);
   const globalCss = sanitizeWixFontCss(
     appendWixStagingVisualOverrides(
       buildGlobalCss(siteDir, cssRelPaths, inlineHeadStyles),
-      { inlineHeadStyleCount: inlineHeadStyles.length, siteSlug: fixtureLabelFromPath(siteDir) },
+      { inlineHeadStyleCount: inlineHeadStyles.length, siteSlug: visualOverrideSiteSlug },
     ),
   );
   const mainWrapperApplied = cssExpectsMainWrapper(globalCss);
@@ -875,28 +860,38 @@ export function generateAstroProject(inputDir, outputDir, options = {}) {
 
   const gosakiScheduleBundle = options.gosakiScheduleBundle ?? null;
   const gosakiDiscographyBundle = options.gosakiDiscographyBundle ?? null;
-  const useGosakiScheduleData =
-    isGosakiPianoFixture(siteDir) &&
-    gosakiScheduleBundle &&
-    (gosakiScheduleBundle.scheduleDataSource === "supabase" ||
-      gosakiScheduleBundle.scheduleDataSource === "static-fallback") &&
-    gosakiScheduleBundle.schedules.length > 0;
-
-  const gosakiDataMonthRoutes = useGosakiScheduleData
-    ? new Set(gosakiScheduleBundle.months.map((m) => m.route))
-    : null;
+  const hookContextBase = {
+    siteDir,
+    siteKey: siteHooks.siteKey,
+    baseUrl,
+    deployBase,
+    linkTransformContext,
+    gosakiScheduleBundle,
+    gosakiDiscographyBundle,
+    scheduleMonthPages,
+    outDir,
+    toolRoot: TOOL_ROOT,
+    writeFile,
+    generateScheduleLegacyMonthStubPage,
+  };
+  const scheduleDataUsage = siteHooks.resolveScheduleDataUsage(hookContextBase);
+  const useGosakiScheduleData = scheduleDataUsage.useScheduleData;
+  const gosakiDataMonthRoutes = scheduleDataUsage.monthRoutes;
+  const hookContext = {
+    ...hookContextBase,
+    useScheduleData: useGosakiScheduleData,
+    monthRoutes: gosakiDataMonthRoutes,
+  };
 
   const headerResult = generateHeaderAstro(headerHtml, "Header", {
     scheduleHub,
     productionOrigin,
   });
   writeFile(path.join(outDir, "src/components/Header.astro"), headerResult.content);
-  writeFile(
-    path.join(outDir, "src/components/Footer.astro"),
-    isGosakiPianoFixture(siteDir)
-      ? generateGosakiFooterAstro(footerHtml, linkTransformContext)
-      : generateComponent(footerHtml, "Footer", linkTransformContext),
-  );
+  const footerContent =
+    siteHooks.generateFooter(footerHtml, hookContext) ??
+    generateComponent(footerHtml, "Footer", linkTransformContext);
+  writeFile(path.join(outDir, "src/components/Footer.astro"), footerContent);
   writeFile(
     path.join(outDir, "src/layouts/BaseLayout.astro"),
     generateBaseLayout({ layoutScripts, externalCss, wixStaticExport }),
@@ -914,35 +909,16 @@ export function generateAstroProject(inputDir, outputDir, options = {}) {
   /** @type {{ discographyDataSource?: string, rowCount?: number, patchCount?: number } | null} */
   let gosakiDiscographyDataSummary = null;
   for (const page of analysis.pages) {
-    if (useGosakiScheduleData && gosakiDataMonthRoutes?.has(page.route)) {
+    if (siteHooks.shouldSkipScheduleMonthPage(page, hookContext)) {
       continue;
     }
     const pageFile = path.join(outDir, "src/pages", page.pagePath);
     const pageScripts = pageScriptMap.get(page.sourcePath) ?? [];
     let mainHtml = page.mainHtml;
-    if (
-      isGosakiPianoFixture(siteDir) &&
-      page.route === "/discography/" &&
-      gosakiDiscographyBundle?.discographyDataSource === "supabase" &&
-      gosakiDiscographyBundle.releases.length > 0
-    ) {
-      const patched = patchGosakiDiscographySupabaseFields(
-        mainHtml,
-        gosakiDiscographyBundle.releases,
-        gosakiDiscographyBundle.tracksByLegacyId,
-      );
-      mainHtml = patched.html;
-      mainHtml = injectDiscographyDataSourceMarker(mainHtml, "supabase");
-      gosakiDiscographyDataSummary = {
-        discographyDataSource: "supabase",
-        rowCount: gosakiDiscographyBundle.releases.length,
-        patchCount: patched.patches.length,
-        purchasePatchCount: patched.purchasePatches.length,
-        artistPatchCount: patched.artistPatches.length,
-        labelPatchCount: patched.labelPatches?.length ?? 0,
-        trackPatchCount: patched.trackPatches?.length ?? 0,
-        trackRowCount: gosakiDiscographyBundle.trackRowCount ?? 0,
-      };
+    const discographyPatch = siteHooks.patchDiscographyPageMainHtml(mainHtml, page, hookContext);
+    if (discographyPatch) {
+      mainHtml = discographyPatch.html;
+      gosakiDiscographyDataSummary = discographyPatch.summary;
     }
     writeFile(pageFile, generatePage(page, mainHtml, pageScripts, linkTransformContext));
     writtenPages.push(pageFile);
@@ -954,10 +930,7 @@ export function generateAstroProject(inputDir, outputDir, options = {}) {
   let gosakiScheduleDataSummary = null;
   if (scheduleHub) {
     if (useGosakiScheduleData) {
-      gosakiScheduleDataSummary = applyGosakiScheduleDataPages(outDir, gosakiScheduleBundle, {
-        baseUrl,
-        deployBase,
-      });
+      gosakiScheduleDataSummary = siteHooks.applyScheduleDataPages(hookContext);
       writtenPages.push(gosakiScheduleDataSummary.hubPath, ...gosakiScheduleDataSummary.monthPaths);
       scheduleIndexGenerated = true;
     } else {
@@ -967,77 +940,23 @@ export function generateAstroProject(inputDir, outputDir, options = {}) {
       scheduleIndexGenerated = true;
     }
 
-    if (isGosakiPianoFixture(siteDir)) {
-      if (useGosakiScheduleData && gosakiScheduleBundle?.months?.length) {
-        for (const monthMeta of gosakiScheduleBundle.months) {
-          const [year, month] = String(monthMeta.month ?? "").split("-");
-          if (!year || !month) continue;
-          const legacyPagePath = `${year}-${month}/index.astro`;
-          const legacyFile = path.join(outDir, "src/pages", legacyPagePath);
-          writeFile(
-            legacyFile,
-            generateScheduleLegacyMonthStubPage(
-              {
-                route: monthMeta.route,
-                year,
-                month,
-                label: monthMeta.label,
-              },
-              baseUrl,
-              deployBase,
-            ),
-          );
-          writtenPages.push(legacyFile);
-          legacyMonthStubsGenerated += 1;
-        }
-      } else {
-        for (const monthEntry of scheduleMonthPages) {
-          const parsed = parseScheduleMonthSourcePath(monthEntry.sourcePath);
-          if (!parsed || !LIVE_CRAWL_MONTH_FILENAME.test(parsed.basename)) continue;
-          const legacyPagePath = `${parsed.year}-${parsed.month}/index.astro`;
-          const legacyFile = path.join(outDir, "src/pages", legacyPagePath);
-          writeFile(
-            legacyFile,
-            generateScheduleLegacyMonthStubPage(monthEntry, baseUrl, deployBase),
-          );
-          writtenPages.push(legacyFile);
-          legacyMonthStubsGenerated += 1;
-        }
-      }
+    if (siteHooks.active) {
+      const legacyStubResult = siteHooks.applyLegacyMonthStubs(hookContext);
+      legacyMonthStubsGenerated = legacyStubResult.count;
+      writtenPages.push(...legacyStubResult.paths);
     }
   }
 
-  let gosakiBandProfilesSummary = { applied: false };
-  let gosakiAboutContentSummary = { applied: false };
-  let gosakiYoutubeEmbedSummary = { applied: false };
-  let gosakiContactHubspotSummary = { applied: false };
-  let gosakiReadOnlyAdminSummary = { applied: false };
-  if (isGosakiPianoFixture(siteDir)) {
-    gosakiBandProfilesSummary = applyGosakiAboutBandProfiles(outDir, TOOL_ROOT);
-    if (gosakiBandProfilesSummary.applied) {
-      writtenPages.push(path.join(outDir, gosakiBandProfilesSummary.componentPath));
-      writtenPages.push(path.join(outDir, gosakiBandProfilesSummary.dataPath));
-    }
-    gosakiAboutContentSummary = applyGosakiAboutContent(outDir, TOOL_ROOT);
-    if (gosakiAboutContentSummary.applied) {
-      writtenPages.push(path.join(outDir, gosakiAboutContentSummary.dataPath));
-    }
-    gosakiYoutubeEmbedSummary = applyGosakiHomeYouTubeEmbed(outDir, TOOL_ROOT);
-    if (gosakiYoutubeEmbedSummary.applied) {
-      writtenPages.push(path.join(outDir, gosakiYoutubeEmbedSummary.componentPath));
-      writtenPages.push(path.join(outDir, gosakiYoutubeEmbedSummary.dataPath));
-      writtenPages.push(path.join(outDir, gosakiYoutubeEmbedSummary.libPath));
-    }
-    gosakiContactHubspotSummary = applyGosakiContactHubspotEmbed(outDir, TOOL_ROOT);
-    if (gosakiContactHubspotSummary.applied) {
-      writtenPages.push(path.join(outDir, gosakiContactHubspotSummary.dataPath));
-    }
-    gosakiReadOnlyAdminSummary = applyGosakiStagingReadOnlyAdmin(outDir, TOOL_ROOT);
-    if (gosakiReadOnlyAdminSummary.applied) {
-      writtenPages.push(path.join(outDir, gosakiReadOnlyAdminSummary.pagePath));
-      writtenPages.push(path.join(outDir, gosakiReadOnlyAdminSummary.libPath));
-    }
-  }
+  const postGenerateSummary = siteHooks.applyPostGenerate(outDir, hookContext);
+  const {
+    gosakiBandProfilesSummary,
+    gosakiAboutContentSummary,
+    gosakiYoutubeEmbedSummary,
+    gosakiContactHubspotSummary,
+    gosakiReadOnlyAdminSummary,
+    writtenPaths: postGenerateWrittenPaths = [],
+  } = postGenerateSummary;
+  writtenPages.push(...postGenerateWrittenPaths);
 
   writeFile(path.join(outDir, "package.json"), generatePackageJson(baseUrl));
   writeFile(path.join(outDir, "astro.config.mjs"), generateAstroConfig(baseUrl, deployBase));

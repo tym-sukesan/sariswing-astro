@@ -1,6 +1,19 @@
 Last updated: 2026-07-09
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u1 Gosaki hardcode generalization audit — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u1-gosaki-hardcode-generalization-audit` |
+| Base | `2c0dec3` |
+| Inventory | build scripts · configs · lib hooks · verifiers · npm scripts |
+| Classification | 4 tiers (generalize now / abstract later / Gosaki-only / safety risk) |
+| Next | **G-20u2** site-package-build-profile generalization |
+| Large refactor | **not executed** |
+| Doc | `gosaki-hardcode-generalization-audit.md` |
+| Verifier | `verify-g20u1-gosaki-hardcode-generalization-audit.mjs` |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20t6 Gosaki package freshness gate — complete
 
 | Item | Value |

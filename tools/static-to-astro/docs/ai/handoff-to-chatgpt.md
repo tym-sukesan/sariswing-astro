@@ -5,12 +5,21 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20t6-package-freshness-gate — complete.
-Upload preflight: MANIFEST sourceCommit must match current git HEAD.
-Stale package → STOP (no FTP). generatedAt shown for operator review.
-Applies to staging + production manual-upload packages.
-FTP / deploy NOT executed in G-20t6.
+Current phase: G-20u1-gosaki-hardcode-generalization-audit — complete.
+Gosaki hardcode inventory: ~343 docs · 47+ verifiers · 35 lib hooks · 9 site configs.
+Classification: P0 generalize package/build/config · P1 astro hooks · P2 historical docs · safety risks documented.
+G-23 onboarding config + cms-preset-registry already site-agnostic shape.
+Next: G-20u2 site-package-build-profile generalization.
+No large refactor / FTP / deploy in G-20u1.
 ```
+
+## G-20u1 hardcode generalization audit — complete
+
+- **Inventory:** build-gosaki-* · gosaki-package-build-profile · package.json paths · astro-generator hooks
+- **Touch count site #2:** ~12–18 files (excluding historical verifiers)
+- **P0:** site-neutral profile loader · generic build CLI · verify-site-package · site registry
+- **Safety:** freshness gate exists; slug inconsistency gosaki vs gosaki-piano flagged
+- **Not executed:** large refactor · FTP · DB write
 
 ## G-20t6 package freshness gate — complete
 

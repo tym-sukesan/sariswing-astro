@@ -25,7 +25,8 @@
     "verify:g20t5-staging-regen": "node scripts/verify-g20t5-gosaki-staging-profile-current-head-regen-dry-run.mjs",
     "verify:package-freshness:staging": "node scripts/verify-package-upload-freshness.mjs --profile staging",
     "verify:package-freshness:production": "node scripts/verify-package-upload-freshness.mjs --profile production",
-    "verify:package-freshness-gate": "node scripts/verify-g20t6-package-freshness-gate.mjs"
+    "verify:package-freshness-gate": "node scripts/verify-g20t6-package-freshness-gate.mjs",
+    "verify:g20u1-hardcode-audit": "node scripts/verify-g20u1-gosaki-hardcode-generalization-audit.mjs"
   },
   "devDependencies": {
     "pixelmatch": "^7.1.0",

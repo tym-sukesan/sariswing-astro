@@ -3,6 +3,8 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
+**G-20u1 Gosaki hardcode generalization audit (2026-07-09):** **complete** — inventory + 4-tier classification + G-20u2–u10 roadmap; **no large refactor**. Doc: `gosaki-hardcode-generalization-audit.md`. Verifier: `verify-g20u1-gosaki-hardcode-generalization-audit.mjs`.
+
 **G-20t6 Gosaki package freshness gate (2026-07-09):** **complete** — `sourceCommit` vs git HEAD upload preflight; staging + production; stale → STOP; **no FTP / deploy**. Doc: `gosaki-package-freshness-gate.md`. Verifier: `verify-g20t6-package-freshness-gate.mjs`. Preflight: `verify-package-upload-freshness.mjs`.
 
 **G-20t5 Gosaki staging profile current-head regen dry-run (2026-07-09):** **complete** — local staging full regen at `c9d35d7`; 29 files; August 14 cards; `includesAdmin: true`; sitemap no admin; **no FTP / deploy**. Doc: `gosaki-staging-profile-current-head-regen-dry-run.md`. Verifier: `verify-g20t5-gosaki-staging-profile-current-head-regen-dry-run.mjs`.

@@ -1,16 +1,18 @@
 Last updated: 2026-07-09
 Project: Static-to-Astro CMS / Musician CMS Kit
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20r4d Gosaki schedule August upload preflight — complete
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20r4e Gosaki schedule August manual upload execution closure — complete
 
 | Item | Value |
 | --- | --- |
-| Phase | `G-20r4d-gosaki-schedule-upload-preflight` |
-| Base | `ffca478` |
-| Scope | **full public-dist 29 files** (recommended) |
-| Remote | `/cms-kit-staging/gosaki-piano/` |
-| FTP | **not executed** · operator manual only |
-| **Next** | **G-20r4e-operator-manual-upload-execution** |
+| Phase | `G-20r4e-gosaki-schedule-manual-upload-execution-closure` |
+| Base | `3bd165f` |
+| Operator upload | **executed** (manual GUI) |
+| Live HTTP verify | **PASS** · August 14 cards |
+| FTP re-execution | **forbidden** |
+| **Next** | optional G-20r4 staging closure doc · G-20r4f · client preview |
+
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20r4d Gosaki schedule August upload preflight — complete
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20r4c Gosaki schedule public output review — complete
 

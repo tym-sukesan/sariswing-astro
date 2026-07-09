@@ -5,19 +5,24 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20r4d-gosaki-schedule-upload-preflight — complete.
-Upload plan: full 29 files · remote /cms-kit-staging/gosaki-piano/
-FTP: NOT executed · operator manual GUI only (G-20r4e)
-Next: G-20r4e-operator-manual-upload-execution
+Current phase: G-20r4e-gosaki-schedule-manual-upload-execution-closure — complete.
+Operator manual upload: executed (FileZilla/Lolipop GUI)
+Live staging HTTP verify: PASS · August 14 cards · exclusions OK
+FTP re-execution: forbidden
+Next: optional G-20r4 August staging closure / G-20r4f / client preview
 ```
+
+## G-20r4e schedule August manual upload execution closure — complete
+
+- **Upload:** operator manual · full public-dist 29 files · remote /cms-kit-staging/gosaki-piano/
+- **HTTP verify:** PASS on all 6 URLs · 14 August cards · legacy stub noindex
+- **Doc:** gosaki-schedule-manual-upload-execution-closure.md
+- **FTP re-execution:** forbidden
 
 ## G-20r4d schedule August upload preflight — complete
 
 - **Scope:** full public-dist 29 files (recommended)
-- **Remote:** /cms-kit-staging/gosaki-piano/
-- **Tool:** FileZilla / Lolipop GUI only · no delete · no mirror
 - **Doc:** gosaki-schedule-upload-preflight.md
-- **Next:** G-20r4e operator manual upload + HTTP verify
 
 ## G-20r4c schedule public output review — complete
 

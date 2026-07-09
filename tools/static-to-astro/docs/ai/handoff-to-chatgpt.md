@@ -5,11 +5,19 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20r4a-schedule-august-generation-path-enablement — complete.
-expectedMonths: 03–08 · legacy /2026-08/ data-driven stub enabled
-build/regen: NOT executed
-Next: G-20r4b-local-regen-dry-run
+Current phase: G-20r4b-gosaki-schedule-local-regen-dry-run-result — complete.
+Staging regen: PASS · JSON 74 · August 14 cards · exclusions PASS
+Local package: FRESH · live staging: STALE (no FTP)
+Next: G-20r4c-public-output-review
 ```
+
+## G-20r4b schedule local regen dry-run — complete
+
+- **Regen:** build-gosaki-staging-admin-package.mjs PASS
+- **August:** JSON 14 · HTML 14 cards · legacy stub · sitemap canonical only
+- **Exclusions:** 007/009/013 · hold 008/018 · test 014/001 — all absent
+- **Doc:** gosaki-schedule-local-regen-dry-run-result.md
+- **Next:** G-20r4c-public-output-review
 
 ## G-20r4a schedule August generation path enablement — complete
 

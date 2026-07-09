@@ -1,6 +1,18 @@
 Last updated: 2026-07-09
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20r4b Gosaki schedule local regen dry-run — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20r4b-gosaki-schedule-local-regen-dry-run-result` |
+| Base | `8475a00` |
+| Regen | staging profile **PASS** |
+| JSON | **74** rows · August **14** |
+| Package | `manual-upload/gosaki-piano/` · 29 files |
+| Live staging | **stale** (no FTP) |
+| **Next** | **G-20r4c-public-output-review** |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20r4a Gosaki schedule August generation path enablement — complete
 
 | Item | Value |

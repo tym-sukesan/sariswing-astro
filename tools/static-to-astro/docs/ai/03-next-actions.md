@@ -1,16 +1,22 @@
 Last updated: 2026-07-08
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20r2a Gosaki client confirmation question list — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20r2a-gosaki-client-confirmation-question-list` |
+| Base | `abfa594` |
+| Mandatory confirm | **3** (8/10, 8/15, 8/21) |
+| Partial gaps | **5** groups |
+| Doc | `gosaki-schedule-client-confirmation-question-list.md` |
+| **Next** | **G-20r2b client confirmation message final** |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20r2 Gosaki schedule August seed planning — complete
 
 | Item | Value |
 | --- | --- |
-| Phase | `G-20r2-gosaki-schedule-august-seed-planning` |
-| Base | `32333b9` |
-| Candidates | **19** (insert 16 · needs_client_confirmation 3) |
-| SQL | **none** |
-| Doc | `gosaki-schedule-august-seed-planning.md` |
-| **Next** | **G-20r2a client confirmation question list** |
+| **Superseded for client Q by** | G-20r2a |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20r1b Gosaki limited public URL capture — complete
 

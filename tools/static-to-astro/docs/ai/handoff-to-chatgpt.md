@@ -5,12 +5,22 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20r2-gosaki-schedule-august-seed-planning — complete.
-Input: G-20r1b local capture (19 events, HIGH confidence)
-Output: 19 seed candidates · insert 16 · needs_client_confirmation 3
+Current phase: G-20r2a-gosaki-client-confirmation-question-list — complete.
+Input: G-20r2 seed candidates (19 events)
+Output: client Q list · mandatory 3 · partial gaps 5 · message draft
 SQL: none · DB write: none · Save/regen/FTP: none
-Next: G-20r2a-client-confirmation-question-list
+Next: G-20r2b-client-confirmation-message-final
 ```
+
+## G-20r2a client confirmation question list — complete
+
+- **Mandatory:** 8/10 Duo · 8/15 Duo · 8/21 原田茅子Quartet
+- **Partial gaps:** #1–2, #8, #11, #14, #18
+- **`<>`:** source parity — client confirm for new site display
+- **Message draft:** in question list doc (G-20r2b to finalize)
+- **Internal recommend:** insert 16 published · 3 draft · `<>` keep
+- **Next:** G-20r2b message final
+- **Doc:** `gosaki-schedule-client-confirmation-question-list.md`
 
 ## G-20r2 schedule August seed planning — complete
 
@@ -19,8 +29,7 @@ Next: G-20r2a-client-confirmation-question-list
 - **insert:** 16 · **needs_client_confirmation:** 3 (#7, #9, #13)
 - **sort_order:** proposed 1–19 (July bump TBD in G-20r3)
 - **SQL:** not created
-- **Next:** G-20r2a client confirmation question list
-- **Docs:** `gosaki-schedule-august-seed-planning.md`, `gosaki-schedule-august-seed-candidates.json`
+- **Next:** G-20r2b → G-20r3 → G-20r4
 
 ## G-20r1b limited public URL capture — complete
 
@@ -52,7 +61,7 @@ Next: G-20r2a-client-confirmation-question-list
 - **P0:** Wix **2026-08** not in Kit (source freshness gap — **confirmed G-20r**) · mobile QA · HubSpot E2E
 - **`<>` titles:** Wix source parity on live site — **not** Kit conversion defect · P1 / Content note
 - **Not G-20p issue:** package staleness vs G-22j remains closed for 03–07 published content
-- **Next:** G-20r2a-client-confirmation-question-list
+- **Next:** G-20r2b-client-confirmation-message-final
 - **Doc:** `gosaki-internal-preview-readiness-gap-audit.md`
 
 ## G-20j production upload preflight refresh — complete

@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-20r2 Gosaki schedule August seed planning (2026-07-09):** **complete** — 19 INSERT candidates from G-20r1b capture; legacy_id/sort_order rules; **no SQL/DB/Save/regen**. Docs: `gosaki-schedule-august-seed-planning.md`, `gosaki-schedule-august-seed-candidates.json`. **Next: G-20r2a client confirmation question list.**
+**G-20r2a Gosaki schedule client confirmation question list (2026-07-09):** **complete** — 必須確認3件 + partial gaps5グループ + `<>` / published 質問 · 本人向けメッセージ案; **no SQL/DB/Save**. Doc: `gosaki-schedule-client-confirmation-question-list.md`. **Next: G-20r2b client confirmation message final.**
+
+**G-20r2 Gosaki schedule August seed planning (2026-07-09):** **complete** — **superseded for client questions by G-20r2a**. Docs: `gosaki-schedule-august-seed-planning.md`, `gosaki-schedule-august-seed-candidates.json`.
 
 **G-20r1b Gosaki limited public URL capture (2026-07-08):** **complete** — **superseded for seed input by G-20r2**. Doc: `gosaki-schedule-public-url-capture-result.md`.
 

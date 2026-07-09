@@ -1,15 +1,22 @@
 #!/usr/bin/env node
 /**
  * Static HTML → Astro minimal scaffold generator.
- * Usage: node convert-static-to-astro.mjs <input-dir> <output-dir> [--base-url URL] [--verify-build] [--dry-run]
+ * Usage: node convert-static-to-astro.mjs <input-dir> <output-dir> [--site SITE_KEY] [--base-url URL] [--verify-build] [--dry-run]
  */
 
 import fs from "node:fs";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { generateAstroProject, printGenerationSummary } from "./lib/astro-generator.mjs";
-import { isGosakiPianoFixture } from "./lib/gosaki-about-band-profiles.mjs";
+import {
+  GOSAKI_SITE_KEY,
+  TOOL_ROOT,
+} from "./lib/site-registry.mjs";
+import { resolveEffectiveConvertSiteKey } from "./lib/convert-site-key.mjs";
 import { loadGosakiScheduleDataForBuild } from "./lib/supabase-schedule-read.mjs";
 import { loadGosakiDiscographyDataForBuild } from "./lib/supabase-discography-read.mjs";
+
+const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 
 function parseArgs(argv) {
   const positional = [];
@@ -19,6 +26,7 @@ function parseArgs(argv) {
   let verifyBuild = false;
   let withAdminCms = false;
   let siteProfile = null;
+  let siteKey = null;
 
   for (let i = 2; i < argv.length; i++) {
     const arg = argv[i];
@@ -35,6 +43,11 @@ function parseArgs(argv) {
     }
     if (arg === "--with-admin-cms") {
       withAdminCms = true;
+      continue;
+    }
+    if (arg === "--site") {
+      siteKey = argv[++i];
+      if (!siteKey) throw new Error("--site requires a siteKey");
       continue;
     }
     if (arg === "--site-profile") {
@@ -67,6 +80,7 @@ function parseArgs(argv) {
     verifyBuild,
     withAdminCms,
     siteProfile,
+    siteKey,
     help: false,
   };
 }
@@ -77,6 +91,7 @@ function printHelp() {
 Generates a minimal Astro project under output-dir from a static HTML site.
 
 Options:
+  --site SITE_KEY    Registry siteKey (preferred for multi-site; e.g. gosaki-piano)
   --base-url URL     Site origin for canonical / og:url / sitemap (production or staging host)
   --deploy-base PATH Astro base path for subdirectory deploy (default: /)
                      Example: /cms-kit-staging/gosaki/
@@ -103,7 +118,17 @@ async function main() {
     process.exit(0);
   }
 
-  const { inputDir, outputDir, dryRun, baseUrl, deployBase, verifyBuild, withAdminCms, siteProfile } = args;
+  const {
+    inputDir,
+    outputDir,
+    dryRun,
+    baseUrl,
+    deployBase,
+    verifyBuild,
+    withAdminCms,
+    siteProfile,
+    siteKey: explicitSiteKey,
+  } = args;
   if (!inputDir || !outputDir) {
     printHelp();
     process.exit(1);
@@ -111,16 +136,25 @@ async function main() {
 
   const inputAbs = path.resolve(process.cwd(), inputDir);
   const outputAbs = path.resolve(process.cwd(), outputDir);
+  const toolRoot = path.resolve(SCRIPT_DIR, "..");
 
   if (!fs.existsSync(inputAbs) || !fs.statSync(inputAbs).isDirectory()) {
     console.error(`Error: input is not a directory: ${inputAbs}`);
     process.exit(1);
   }
 
+  let effectiveSiteKey;
+  try {
+    effectiveSiteKey = resolveEffectiveConvertSiteKey(explicitSiteKey, inputAbs, toolRoot);
+  } catch (err) {
+    console.error(`Error: ${err.message}`);
+    process.exit(1);
+  }
+
   try {
     let gosakiScheduleBundle = null;
     let gosakiDiscographyBundle = null;
-    if (!dryRun && isGosakiPianoFixture(inputAbs)) {
+    if (!dryRun && effectiveSiteKey === GOSAKI_SITE_KEY) {
       gosakiScheduleBundle = await loadGosakiScheduleDataForBuild({ inputDir: inputAbs });
       gosakiDiscographyBundle = await loadGosakiDiscographyDataForBuild();
     }
@@ -132,12 +166,14 @@ async function main() {
       verifyBuild,
       withAdminCms,
       siteProfile,
+      siteKey: effectiveSiteKey,
       gosakiScheduleBundle,
       gosakiDiscographyBundle,
     });
     if (dryRun) {
       console.log("static-to-astro convert (dry-run)");
       console.log(`  Would generate ${result.analysis.pages.length} pages at: ${outputAbs}`);
+      if (effectiveSiteKey) console.log(`  siteKey: ${effectiveSiteKey}`);
       if (baseUrl) console.log(`  baseUrl: ${baseUrl}`);
       if (deployBase) console.log(`  deployBase: ${deployBase}`);
       process.exit(0);

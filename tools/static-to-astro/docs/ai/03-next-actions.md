@@ -1,6 +1,23 @@
 Last updated: 2026-07-10
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u7 Convert pipeline siteKey propagation — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u7-convert-pipeline-sitekey-propagation` |
+| Base | `528b06a` |
+| Path | `build-site-package` → `convert --site` → `generateAstroProject({ siteKey })` → hooks |
+| Helper | `buildConvertCliArgs` · `resolveEffectiveConvertSiteKey` |
+| Fallback | fixtureDir basename · `matchFixture` retained |
+| Unknown `--site` | clear registry error |
+| Wrappers | `build-gosaki-*` unchanged |
+| Package | **29 files** · full regen verified at `528b06a` · freshness PASS |
+| MANIFEST | `siteKey: gosaki-piano` · `includesAdmin: true` |
+| Commit note | **commit後は package stale** — regen + freshness before upload |
+| Doc | `gosaki-convert-pipeline-sitekey-propagation.md` |
+| Verifier | `verify-g20u7-convert-pipeline-sitekey-propagation.mjs` |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u6 Astro generator hook registry — complete
 
 | Item | Value |

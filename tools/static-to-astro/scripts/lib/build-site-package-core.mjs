@@ -86,12 +86,40 @@ export function planSitePackageBuild(siteKey, profileName, options = {}) {
     packageDir,
     verifierRel,
     steps: [
-      `convert ${profile.fixtureDir} → ${profile.astroOut}`,
+      `convert ${profile.fixtureDir} → ${profile.astroOut} (--site ${siteKey})`,
       `verify-static-public-artifact ${profile.staticPublicOut}`,
       `manual-upload package → ${profile.manualUploadOut}`,
       `verifier ${verifierRel}`,
     ],
   };
+}
+
+/**
+ * Build argv for convert-static-to-astro.mjs from a registry siteKey + profile.
+ *
+ * @param {string} siteKey
+ * @param {string} profileName
+ * @param {{ toolRoot?: string }} [options]
+ * @returns {string[]}
+ */
+export function buildConvertCliArgs(siteKey, profileName, options = {}) {
+  const toolRoot = options.toolRoot ?? TOOL_ROOT;
+  const plan = planSitePackageBuild(siteKey, profileName, { toolRoot });
+  const { profile, convertSiteProfile } = plan;
+  return [
+    "scripts/convert-static-to-astro.mjs",
+    profile.fixtureDir,
+    profile.astroOut,
+    "--site",
+    siteKey,
+    "--base-url",
+    profile.baseUrl,
+    "--deploy-base",
+    profile.deployBase,
+    "--site-profile",
+    convertSiteProfile,
+    "--verify-build",
+  ];
 }
 
 /**
@@ -171,18 +199,7 @@ export function runSitePackageBuild(options) {
 
   run(
     "node",
-    [
-      "scripts/convert-static-to-astro.mjs",
-      profile.fixtureDir,
-      profile.astroOut,
-      "--base-url",
-      profile.baseUrl,
-      "--deploy-base",
-      profile.deployBase,
-      "--site-profile",
-      convertSiteProfile,
-      "--verify-build",
-    ],
+    buildConvertCliArgs(siteKey, profileName, { toolRoot }),
     buildEnv,
   );
 

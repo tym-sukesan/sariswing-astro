@@ -5,13 +5,24 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u6-astro-generator-hook-registry — complete.
-Hook registry: site-generator-hooks.mjs resolves per-site hooks; default noop for unregistered sites.
-Gosaki: factory calls existing gosaki-* modules unchanged; astro-generator delegates (no direct imports).
-Output compat: Gosaki generation path preserved; no wrapper removal.
+Current phase: G-20u7-convert-pipeline-sitekey-propagation — complete.
+siteKey path: build-site-package --site → convert --site → generateAstroProject({ siteKey }) → resolveSiteGeneratorHooks.
+Fallback: fixtureDir basename + matchFixture retained.
+Unknown --site: clear registry error; unregistered fixture without --site → noop hooks.
+Wrappers: build-gosaki-* unchanged.
 Package: on-disk manual-upload stale until regen at current HEAD.
-No FTP / deploy in G-20u6.
+No FTP / deploy in G-20u7.
 ```
+
+## G-20u7 convert pipeline siteKey propagation — complete
+
+- **CLI:** convert `--site SITE_KEY`; build passes `--site` via `buildConvertCliArgs`
+- **Resolver:** `resolveEffectiveConvertSiteKey` (explicit → fixtureDir → null)
+- **Hooks:** `options.siteKey` preferred in `resolveSiteGeneratorHooks`
+- **Compat:** fixture basename / matchFixture fallback · build-gosaki-* wrappers unchanged
+- **Full regen:** staging verified at `528b06a` — 29 files · August 14 · MANIFEST siteKey · freshness PASS
+- **Commit note:** commit後は on-disk package **stale** until regen + `verify:package-freshness:staging`
+- **Next:** G-20u8 second-site pilot
 
 ## G-20u6 astro generator hook registry — complete
 
@@ -21,7 +32,6 @@ No FTP / deploy in G-20u6.
 - **Full regen:** staging verified at `3decd7f` — 29 files · August 14 · freshness PASS
 - **Commit note:** commit後は on-disk package **stale** until regen + `verify:package-freshness:staging`
 - **Not executed:** FTP · DB write · production upload
-- **Next:** G-20u7 convert CLI `--siteKey` pass-through
 
 ## G-20u5 site package npm convenience & freshness flow — complete
 

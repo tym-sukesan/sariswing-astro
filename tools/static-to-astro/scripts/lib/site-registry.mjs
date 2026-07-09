@@ -76,6 +76,36 @@ export function listSiteKeys(toolRoot = TOOL_ROOT) {
 }
 
 /**
+ * Resolve registry siteKey from a fixture directory path (basename match).
+ * Returns null when no registry entry matches.
+ *
+ * @param {string} fixtureDir
+ * @param {string} [toolRoot]
+ * @returns {string | null}
+ */
+export function resolveSiteKeyFromFixtureDir(fixtureDir, toolRoot = TOOL_ROOT) {
+  const basename = path.basename(path.resolve(fixtureDir));
+  const registry = loadSiteRegistry(toolRoot);
+  for (const [siteKey, entry] of Object.entries(registry.sites ?? {})) {
+    const fixtureBase = path.basename(String(entry.fixtureDir ?? ""));
+    if (fixtureBase && basename === fixtureBase) {
+      return siteKey;
+    }
+  }
+  return null;
+}
+
+/**
+ * @param {string} siteKey
+ * @param {string} [toolRoot]
+ * @returns {string}
+ */
+export function assertRegisteredSiteKey(siteKey, toolRoot = TOOL_ROOT) {
+  getSiteRegistryEntry(siteKey, toolRoot);
+  return siteKey;
+}
+
+/**
  * @param {string} rel
  * @param {string} [toolRoot]
  */

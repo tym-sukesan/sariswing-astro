@@ -316,6 +316,14 @@ export function mergeSiteGeneratorHooks(siteKey, methods) {
 }
 
 /**
+ * Resolve per-site generator hooks.
+ *
+ * Resolution order:
+ * 1. options.siteKey when a hook factory is registered (explicit — preferred)
+ * 2. registry fixtureDir basename match
+ * 3. per-site matchFixture() fallback
+ * 4. DEFAULT_SITE_GENERATOR_HOOKS (noop)
+ *
  * @param {string} siteDir
  * @param {{ siteKey?: string | null, toolRoot?: string }} [options]
  * @returns {SiteGeneratorHooks}

@@ -1,0 +1,47 @@
+{
+  "$comment": "G-20u2 — CMS Kit site registry (no secrets). Canonical slug semantics + package profile metadata.",
+  "schemaVersion": "1.0",
+  "phase": "G-20u2-site-registry-build-profile-foundation",
+  "sites": {
+    "gosaki-piano": {
+      "siteKey": "gosaki-piano",
+      "displayName": "gosaki-piano (Saki Goto)",
+      "cmsPreset": "musician-basic",
+      "slugSemantics": {
+        "siteKey": "gosaki-piano",
+        "packageKey": "gosaki-piano",
+        "filesystemSlug": "gosaki-piano",
+        "cmsSiteSlug": "gosaki",
+        "supabaseSiteSlug": "gosaki-piano",
+        "legacyAliases": ["gosaki"],
+        "slugMismatchNotes": "Legacy gosaki.site-config.example.json uses cmsSiteSlug 'gosaki'. Supabase public.schedules.site_slug and deploy-profiles siteSlug use 'gosaki-piano'. DB values must not change without explicit migration."
+      },
+      "fixtureDir": "fixtures/gosaki-piano",
+      "deployProfilesFile": "config/sites/gosaki-piano.deploy-profiles.json",
+      "packageProfiles": {
+        "staging": {
+          "profileName": "staging",
+          "packageKey": "gosaki-piano",
+          "targetEnvironment": "staging",
+          "publicBaseUrl": "https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/",
+          "stagingBaseUrl": "https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano",
+          "deployBase": "/cms-kit-staging/gosaki-piano/",
+          "intendedRemotePath": "/cms-kit-staging/gosaki-piano/",
+          "includesAdmin": true,
+          "includeGosakiReadOnlyAdmin": true
+        },
+        "production": {
+          "profileName": "production",
+          "packageKey": "gosaki-piano-production",
+          "targetEnvironment": "production",
+          "publicBaseUrl": "https://www.gosaki-piano.com/",
+          "stagingBaseUrl": null,
+          "deployBase": "/",
+          "intendedRemotePath": "TBD_G-20i",
+          "includesAdmin": false,
+          "includeGosakiReadOnlyAdmin": false
+        }
+      }
+    }
+  }
+}

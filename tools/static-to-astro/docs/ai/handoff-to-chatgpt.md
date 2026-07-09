@@ -5,13 +5,21 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u1-gosaki-hardcode-generalization-audit — complete.
-Gosaki hardcode inventory: ~343 docs · 47+ verifiers · 35 lib hooks · 9 site configs.
-Classification: P0 generalize package/build/config · P1 astro hooks · P2 historical docs · safety risks documented.
-G-23 onboarding config + cms-preset-registry already site-agnostic shape.
-Next: G-20u2 site-package-build-profile generalization.
-No large refactor / FTP / deploy in G-20u1.
+Current phase: G-20u2-site-registry-build-profile-foundation — complete.
+Site registry: config/sites/registry.json (Gosaki 1 site).
+Loader: site-registry.mjs — resolveSitePackageBuildProfile / resolvePackageManifestMetaFromRegistry.
+Gosaki wrapper: gosaki-package-build-profile.mjs delegates (backward compatible).
+Slug semantics: cmsSiteSlug=gosaki vs supabaseSiteSlug=gosaki-piano documented — DB unchanged.
+Next: G-20u3 build-site-package.mjs generic CLI.
+No FTP / deploy / wrapper removal in G-20u2.
 ```
+
+## G-20u2 site registry foundation — complete
+
+- **Registry:** `siteKey`, `cmsSiteSlug`, `supabaseSiteSlug`, package profiles staging/production
+- **MANIFEST:** optional `siteKey`, `cmsSiteSlug`, `supabaseSiteSlug`, `packageKey` via `--site-key`
+- **Compat:** `build-gosaki-*` unchanged · `resolveGosakiPackageBuildProfile` same critical fields
+- **Not executed:** FTP · DB write · package regen · wrapper removal
 
 ## G-20u1 hardcode generalization audit — complete
 

@@ -17,6 +17,7 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { createManualUploadPackage } from "./lib/manual-upload-package.mjs";
+import { resolvePackageManifestMetaFromRegistry } from "./lib/site-registry.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const TOOL_ROOT = path.resolve(__dirname, "..");
@@ -29,6 +30,7 @@ Build manual FTP upload package from public-dist. No FTP connection.
 
 Options:
   --site-slug SLUG              Site slug (default: gosaki-piano)
+  --site-key KEY                Registry siteKey — fills profile fields when set
   --public-dir PATH             public-dist source (required)
   --deploy-base PATH            Remote deploy base (default: /cms-kit-staging/gosaki-piano/)
   --staging-url URL             Public base URL (legacy alias)
@@ -44,6 +46,7 @@ Options:
 
 function parseArgs(argv) {
   const opts = {
+    siteKey: null,
     siteSlug: "gosaki-piano",
     publicDir: null,
     deployBase: "/cms-kit-staging/gosaki-piano/",
@@ -55,6 +58,17 @@ function parseArgs(argv) {
     out: null,
     includeGosakiReadOnlyAdmin: undefined,
     help: false,
+    registryMeta: null,
+  };
+  const explicit = {
+    siteSlug: false,
+    deployBase: false,
+    stagingUrl: false,
+    publicBaseUrl: false,
+    targetEnvironment: false,
+    packageProfile: false,
+    intendedRemotePath: false,
+    includeGosakiReadOnlyAdmin: false,
   };
 
   for (let i = 2; i < argv.length; i++) {
@@ -63,25 +77,40 @@ function parseArgs(argv) {
       opts.help = true;
       continue;
     }
-    if (arg === "--site-slug") opts.siteSlug = argv[++i];
-    else if (arg === "--public-dir") opts.publicDir = argv[++i];
-    else if (arg === "--deploy-base") opts.deployBase = argv[++i];
-    else if (arg === "--staging-url") opts.stagingUrl = argv[++i];
-    else if (arg === "--public-base-url") opts.publicBaseUrl = argv[++i];
-    else if (arg === "--target-environment") {
+    if (arg === "--site-key") opts.siteKey = argv[++i];
+    else if (arg === "--site-slug") {
+      opts.siteSlug = argv[++i];
+      explicit.siteSlug = true;
+    } else if (arg === "--public-dir") opts.publicDir = argv[++i];
+    else if (arg === "--deploy-base") {
+      opts.deployBase = argv[++i];
+      explicit.deployBase = true;
+    } else if (arg === "--staging-url") {
+      opts.stagingUrl = argv[++i];
+      explicit.stagingUrl = true;
+    } else if (arg === "--public-base-url") {
+      opts.publicBaseUrl = argv[++i];
+      explicit.publicBaseUrl = true;
+    } else if (arg === "--target-environment") {
       const val = argv[++i];
       if (val !== "staging" && val !== "production") {
         throw new Error(`--target-environment must be staging or production, got: ${val}`);
       }
       opts.targetEnvironment = val;
-    } else if (arg === "--package-profile") opts.packageProfile = argv[++i];
-    else if (arg === "--intended-remote-path") opts.intendedRemotePath = argv[++i];
-    else if (arg === "--out") opts.out = argv[++i];
+      explicit.targetEnvironment = true;
+    } else if (arg === "--package-profile") {
+      opts.packageProfile = argv[++i];
+      explicit.packageProfile = true;
+    } else if (arg === "--intended-remote-path") {
+      opts.intendedRemotePath = argv[++i];
+      explicit.intendedRemotePath = true;
+    } else if (arg === "--out") opts.out = argv[++i];
     else if (arg === "--include-gosaki-read-only-admin") {
       const val = argv[++i];
       if (val === "true") opts.includeGosakiReadOnlyAdmin = true;
       else if (val === "false") opts.includeGosakiReadOnlyAdmin = false;
       else throw new Error(`--include-gosaki-read-only-admin expects true or false, got: ${val}`);
+      explicit.includeGosakiReadOnlyAdmin = true;
     } else throw new Error(`Unknown argument: ${arg}`);
   }
 
@@ -93,6 +122,26 @@ function parseArgs(argv) {
   }
   if (!opts.intendedRemotePath) {
     opts.intendedRemotePath = opts.deployBase;
+  }
+
+  if (opts.siteKey) {
+    const profileName = opts.packageProfile ?? opts.targetEnvironment;
+    const registryMeta = resolvePackageManifestMetaFromRegistry(opts.siteKey, profileName, {
+      toolRoot: TOOL_ROOT,
+    });
+    if (!explicit.siteSlug) opts.siteSlug = registryMeta.siteSlug;
+    if (!explicit.deployBase) opts.deployBase = registryMeta.deployBase;
+    if (!explicit.publicBaseUrl && !explicit.stagingUrl) {
+      opts.publicBaseUrl = registryMeta.publicBaseUrl.replace(/\/$/, "");
+      opts.stagingUrl = registryMeta.stagingBaseUrl ?? registryMeta.publicBaseUrl.replace(/\/$/, "");
+    }
+    if (!explicit.intendedRemotePath) opts.intendedRemotePath = registryMeta.intendedRemotePath;
+    if (!explicit.targetEnvironment) opts.targetEnvironment = registryMeta.targetEnvironment;
+    if (!explicit.packageProfile) opts.packageProfile = registryMeta.packageProfileName;
+    if (!explicit.includeGosakiReadOnlyAdmin) {
+      opts.includeGosakiReadOnlyAdmin = registryMeta.includeGosakiReadOnlyAdmin;
+    }
+    opts.registryMeta = registryMeta;
   }
 
   return opts;
@@ -118,7 +167,7 @@ function main() {
   }
 
   console.log("Manual upload package (G-20t3 — no FTP)");
-  console.log(`Site: ${opts.siteSlug}`);
+  console.log(`Site: ${opts.siteSlug}${opts.siteKey ? ` (siteKey: ${opts.siteKey})` : ""}`);
   console.log(`Profile: ${opts.packageProfile}`);
   console.log(`Target: ${opts.targetEnvironment}`);
   console.log(`Source: ${opts.publicDir}`);
@@ -139,6 +188,10 @@ function main() {
     toolRoot: TOOL_ROOT,
     repoRoot: REPO_ROOT,
     includeGosakiReadOnlyAdmin: opts.includeGosakiReadOnlyAdmin,
+    siteKey: opts.registryMeta?.siteKey ?? opts.siteKey ?? null,
+    cmsSiteSlug: opts.registryMeta?.cmsSiteSlug ?? null,
+    supabaseSiteSlug: opts.registryMeta?.supabaseSiteSlug ?? opts.siteSlug,
+    packageKey: opts.registryMeta?.packageKey ?? null,
   });
 
   if (!result.ok) {

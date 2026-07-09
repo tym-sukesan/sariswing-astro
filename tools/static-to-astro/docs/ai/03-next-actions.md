@@ -1,6 +1,20 @@
 Last updated: 2026-07-09
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u2 Site registry & build profile foundation — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u2-site-registry-build-profile-foundation` |
+| Base | `bdefcf7` |
+| Registry | `config/sites/registry.json` (Gosaki only) |
+| Loader | `scripts/lib/site-registry.mjs` |
+| Slug semantics | `cmsSiteSlug=gosaki` · `supabaseSiteSlug=gosaki-piano` |
+| Wrapper | `gosaki-package-build-profile.mjs` delegates — unchanged build scripts |
+| Next | **G-20u3** `build-site-package.mjs` generic CLI |
+| Doc | `gosaki-site-registry-build-profile-foundation.md` |
+| Verifier | `verify-g20u2-site-registry-build-profile-foundation.mjs` |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u1 Gosaki hardcode generalization audit — complete
 
 | Item | Value |

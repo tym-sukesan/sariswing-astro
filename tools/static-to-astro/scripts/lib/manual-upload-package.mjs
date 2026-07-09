@@ -109,6 +109,10 @@ export function validatePublicDistForManualUpload(publicDistDir, opts = {}) {
  *   sourceCommit?: string | null,
  *   includesAdmin?: boolean,
  *   includeGosakiReadOnlyAdmin?: boolean,
+ *   siteKey?: string,
+ *   cmsSiteSlug?: string,
+ *   supabaseSiteSlug?: string,
+ *   packageKey?: string,
  * }} meta
  */
 export function buildManualUploadManifest(meta) {
@@ -125,6 +129,10 @@ export function buildManualUploadManifest(meta) {
   const manifest = {
     phase: "G-20t3-package-upload-safety-hardening",
     siteSlug: meta.siteSlug,
+    siteKey: meta.siteKey ?? null,
+    cmsSiteSlug: meta.cmsSiteSlug ?? null,
+    supabaseSiteSlug: meta.supabaseSiteSlug ?? meta.siteSlug ?? null,
+    packageKey: meta.packageKey ?? meta.siteSlug ?? null,
     packageProfileName,
     targetEnvironment,
     deployBase,
@@ -444,6 +452,10 @@ export function createManualUploadPackage(opts) {
     targetEnvironment = "staging",
     packageProfileName,
     intendedRemotePath,
+    siteKey,
+    cmsSiteSlug,
+    supabaseSiteSlug,
+    packageKey,
   } = opts;
 
   const profileName =
@@ -488,6 +500,10 @@ export function createManualUploadPackage(opts) {
 
   const manifest = buildManualUploadManifest({
     siteSlug,
+    siteKey,
+    cmsSiteSlug,
+    supabaseSiteSlug,
+    packageKey,
     deployBase,
     stagingUrl,
     publicBaseUrl: resolvedPublicBaseUrl,

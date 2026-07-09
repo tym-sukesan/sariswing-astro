@@ -5,11 +5,17 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20r4b-gosaki-schedule-local-regen-dry-run-result — complete.
-Staging regen: PASS · JSON 74 · August 14 cards · exclusions PASS
-Local package: FRESH · live staging: STALE (no FTP)
-Next: G-20r4c-public-output-review
+Current phase: G-20r4c-gosaki-schedule-public-output-review — complete.
+Local review: PASS · August 14 cards · exclusions OK · P0 none
+Live staging: STALE · upload-needed
+Next: G-20r4d-upload-preflight
 ```
+
+## G-20r4c schedule public output review — complete
+
+- **Review:** local public-dist PASS · P0 none · P1/P2 documented
+- **Doc:** gosaki-schedule-public-output-review.md
+- **Next:** G-20r4d-upload-preflight (FTP still forbidden until preflight)
 
 ## G-20r4b schedule local regen dry-run — complete
 

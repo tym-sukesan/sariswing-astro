@@ -5,12 +5,20 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20s2-gosaki-contact-hubspot-e2e-verify — complete.
-Form render: PASS on staging /contact/
-Cursor submit: NOT executed
-Operator manual submit: pending (G-20s2b)
-Next: G-20s2b-contact-hubspot-e2e-execution-closure
+Current phase: G-20s2b-gosaki-contact-hubspot-e2e-execution-closure — complete.
+Operator manual HubSpot submit: PASS · notification received
+P0-C1: RESOLVED · p0ClientPreviewBlockers: 0
+clientPreviewVerdict: READY_WITH_NOTES
+Next: staging client preview share · optional G-20s3
 ```
+
+## G-20s2b Contact HubSpot E2E execution closure — complete
+
+- **Submit:** operator manual ×1 · success message confirmed
+- **Notification:** received · payload reflected
+- **Notes:** spam classification possible · free form branding visible (non-P0)
+- **P0-C1:** RESOLVED
+- **Doc:** gosaki-contact-hubspot-e2e-execution-closure.md
 
 ## G-20s2 Contact HubSpot E2E verify — complete
 

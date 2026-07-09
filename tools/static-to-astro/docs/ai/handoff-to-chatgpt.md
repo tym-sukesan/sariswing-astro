@@ -5,12 +5,19 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20r4e-gosaki-schedule-manual-upload-execution-closure — complete.
-Operator manual upload: executed (FileZilla/Lolipop GUI)
-Live staging HTTP verify: PASS · August 14 cards · exclusions OK
-FTP re-execution: forbidden
-Next: optional G-20r4 August staging closure / G-20r4f / client preview
+Current phase: G-20s1-gosaki-mobile-device-qa — complete.
+Mobile QA: PASS (390px Playwright) · MENU · schedule August · footer OK
+Client preview: NOT_READY — P0-C1 Contact HubSpot E2E unverified
+Next: G-20s2-contact-hubspot-e2e-verify
 ```
+
+## G-20s1 mobile device QA — complete
+
+- **Viewport:** 390×844 · Playwright Chromium
+- **PASS:** MENU toggle · schedule hub/august 14 cards · discography · about · footer
+- **P0 open:** Contact HubSpot submit E2E (iframe renders · submit not tested)
+- **Doc:** gosaki-mobile-device-qa.md
+- **Next:** G-20s2
 
 ## G-20r4e schedule August manual upload execution closure — complete
 

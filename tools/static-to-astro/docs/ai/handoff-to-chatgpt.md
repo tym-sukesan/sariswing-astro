@@ -5,18 +5,24 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20r3-gosaki-schedule-august-db-insert-preflight — complete.
-INSERT: 17 · hold: 2 · published 14/3 · sort_order +19 plan
-SQL draft: NOT EXECUTED
-Next: G-20r3a-operator-batch-insert-execution
+Current phase: G-20r3a-gosaki-schedule-august-db-insert-execution-closure — complete.
+Operator SQL: PASS · INSERT 17 · published 14/3 · hold 008/018 not inserted
+sort_order +19 on 60 published · DB total 79 · mutation 77 · published 74 · staging DB 2026-08 reflected
+local package/public-dist: STALE (no regen)
+Next: G-20r4-schedule-public-reflection-plan
 ```
 
-## G-20r3 schedule August DB INSERT preflight — complete
+## G-20r3a schedule August DB INSERT execution closure — complete
 
 - **approvalId:** G-20r3-gosaki-schedule-august-batch-insert-non-dry-run-slice
-- **Target:** kmjqppxjdnwwrtaeqjta only
-- **SQL:** scripts/supabase/gosaki-schedule-august-2026-insert-preflight.sql (draft)
-- **Next:** G-20r3a operator execution (1 session · explicit approval)
+- **Target:** kmjqppxjdnwwrtaeqjta only · operator SQL Editor · all checks PASS
+- **Doc:** gosaki-schedule-august-db-insert-execution-closure.md
+- **Do not re-run** G-20r3 batch INSERT without new approval
+- **Next:** G-20r4-schedule-public-reflection-plan (regen / diff / sitemap 2026-08)
+
+## G-20r3 schedule August DB INSERT preflight — complete (execution closed in G-20r3a)
+
+- **SQL draft:** scripts/supabase/gosaki-schedule-august-2026-insert-preflight.sql
 
 ## G-20s whole-site product quality audit — complete
 

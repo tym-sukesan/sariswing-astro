@@ -1,18 +1,28 @@
-Last updated: 2026-07-08
+Last updated: 2026-07-09
 Project: Static-to-Astro CMS / Musician CMS Kit
+
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20r3a Gosaki schedule August DB INSERT execution closure — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20r3a-gosaki-schedule-august-db-insert-execution-closure` |
+| Base | `0c09c98` |
+| Operator SQL | **executed · all checks PASS** |
+| INSERT | **17** (14 published · 3 unpublished) |
+| hold excluded | **2** (#8, #18) |
+| sort_order | **+19** on 60 published rows |
+| DB total after | **79** (62 + 17) |
+| Mutation affected | **77** (60 + 17) · published **74** |
+| Staging DB | **2026-08 reflected** |
+| Local package | **stale** (no regen) |
+| **Next** | **G-20r4-schedule-public-reflection-plan** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20r3 Gosaki schedule August DB INSERT preflight — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-20r3-gosaki-schedule-august-db-insert-preflight` |
-| Base | `75e8db6` |
-| INSERT targets | **17** |
-| hold excluded | **2** (#8, #18) |
-| published | **14 true · 3 false** |
-| approvalId | `G-20r3-gosaki-schedule-august-batch-insert-non-dry-run-slice` |
-| SQL | draft only · **not executed** |
-| **Next** | **G-20r3a operator batch INSERT execution** |
+| Execution | **closed in G-20r3a** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20s Gosaki whole-site product quality audit — complete
 

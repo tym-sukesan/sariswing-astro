@@ -1,9 +1,11 @@
-Last updated: 2026-07-08
+Last updated: 2026-07-09
 Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-20r3 Gosaki schedule August DB INSERT preflight (2026-07-09):** **complete** — 17 INSERT targets · 2 hold excluded · sort_order +19 plan · SQL draft **NOT EXECUTED**. Docs: `gosaki-schedule-august-db-insert-preflight.md`, `scripts/supabase/gosaki-schedule-august-2026-insert-preflight.sql`. **Next: G-20r3a operator batch INSERT execution.**
+**G-20r3a Gosaki schedule August DB INSERT execution closure (2026-07-09):** **complete** — operator SQL on staging **PASS** · 17 INSERT · August 14/3 published · hold 008/018 not inserted · sort_order +19 on 60 published rows · 2 test rows unchanged · **DB total 79** (62+17) · **mutation affected 77** (60+17) · **published 74**. Staging DB reflects 2026-08; **local package/public-dist stale** (no regen). Doc: `gosaki-schedule-august-db-insert-execution-closure.md`. **Next: G-20r4-schedule-public-reflection-plan.**
+
+**G-20r3 Gosaki schedule August DB INSERT preflight (2026-07-09):** **complete** — preflight + SQL draft; execution closed in G-20r3a. Doc: `gosaki-schedule-august-db-insert-preflight.md`.
 
 **G-20s Gosaki whole-site product quality audit (2026-07-09):** **complete** — G-20r3 proceed OK. Doc: `gosaki-whole-site-product-quality-audit.md`.
 

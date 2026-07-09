@@ -1,16 +1,24 @@
 Last updated: 2026-07-08
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20r2b Gosaki schedule product quality policy — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20r2b-gosaki-schedule-product-quality-policy` |
+| Base | `64afcc4` |
+| published=true | **14** |
+| published=false | **3** (#7, #9, #13) |
+| hold | **2** (#8, #18) |
+| G-20r3 batch | **17 insert** |
+| Doc | `gosaki-schedule-product-quality-policy.md` |
+| **Next** | **G-20r3 DB insert preflight** |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20r2a Gosaki client confirmation question list — complete
 
 | Item | Value |
 | --- | --- |
-| Phase | `G-20r2a-gosaki-client-confirmation-question-list` |
-| Base | `abfa594` |
-| Mandatory confirm | **3** (8/10, 8/15, 8/21) |
-| Partial gaps | **5** groups |
-| Doc | `gosaki-schedule-client-confirmation-question-list.md` |
-| **Next** | **G-20r2b client confirmation message final** |
+| **Superseded for blocking by** | G-20r2b |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20r2 Gosaki schedule August seed planning — complete
 

@@ -5,12 +5,21 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20r2a-gosaki-client-confirmation-question-list — complete.
-Input: G-20r2 seed candidates (19 events)
-Output: client Q list · mandatory 3 · partial gaps 5 · message draft
-SQL: none · DB write: none · Save/regen/FTP: none
-Next: G-20r2b-client-confirmation-message-final
+Current phase: G-20r2b-gosaki-schedule-product-quality-policy — complete.
+Quality: 14 published=true · 3 published=false · 2 hold
+G-20r3 first batch: 17 insert (hold 2 deferred)
+SQL/DB/Save/regen/FTP: none
+Next: G-20r3-schedule-august-db-insert-preflight
 ```
+
+## G-20r2b schedule product quality policy — complete
+
+- **Priority:** product quality > incomplete Wix parity
+- **<>:** retain (not Kit bug) · empty labels forbidden in UI
+- **hold:** #8 堤智恵子 Trio · #18 Set Sail Quartet
+- **published=false:** #7, #9, #13 (8/10·8/15 Duo · 8/21)
+- **readyForG20r3:** true (17 insert)
+- **Doc:** `gosaki-schedule-product-quality-policy.md`
 
 ## G-20r2a client confirmation question list — complete
 
@@ -61,7 +70,7 @@ Next: G-20r2b-client-confirmation-message-final
 - **P0:** Wix **2026-08** not in Kit (source freshness gap — **confirmed G-20r**) · mobile QA · HubSpot E2E
 - **`<>` titles:** Wix source parity on live site — **not** Kit conversion defect · P1 / Content note
 - **Not G-20p issue:** package staleness vs G-22j remains closed for 03–07 published content
-- **Next:** G-20r2b-client-confirmation-message-final
+- **Next:** G-20r3-schedule-august-db-insert-preflight
 - **Doc:** `gosaki-internal-preview-readiness-gap-audit.md`
 
 ## G-20j production upload preflight refresh — complete

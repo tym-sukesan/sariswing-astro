@@ -7,6 +7,7 @@
       "siteKey": "gosaki-piano",
       "displayName": "gosaki-piano (Saki Goto)",
       "cmsPreset": "musician-basic",
+      "convertSiteProfile": "musician",
       "slugSemantics": {
         "siteKey": "gosaki-piano",
         "packageKey": "gosaki-piano",

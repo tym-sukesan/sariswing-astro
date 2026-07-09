@@ -5,14 +5,24 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u2-site-registry-build-profile-foundation — complete.
-Site registry: config/sites/registry.json (Gosaki 1 site).
-Loader: site-registry.mjs — resolveSitePackageBuildProfile / resolvePackageManifestMetaFromRegistry.
-Gosaki wrapper: gosaki-package-build-profile.mjs delegates (backward compatible).
-Slug semantics: cmsSiteSlug=gosaki vs supabaseSiteSlug=gosaki-piano documented — DB unchanged.
-Next: G-20u3 build-site-package.mjs generic CLI.
-No FTP / deploy / wrapper removal in G-20u2.
+Current phase: G-20u3-build-site-package-generic-cli — complete.
+Generic CLI: build-site-package.mjs --site gosaki-piano --profile staging|production.
+Shared core: build-site-package-core.mjs (convert → static-public → manual-upload).
+Gosaki wrappers delegate to core — not removed.
+npm: build:site-package added; build:gosaki-* retained.
+Production upload still NG (TBD_G-20i).
+Freshness (G-20t6): regen stamps HEAD; any commit after regen → stale until regen + verify:package-freshness:* PASS.
+Next: G-20u4 verify-site-package.mjs.
+No FTP / deploy in G-20u3.
 ```
+
+## G-20u3 build site package generic CLI — complete
+
+- **CLI:** `--site gosaki-piano` `--profile staging|production` `--dry-run`
+- **Core:** registry profile → convert → verify-static-public → createManualUploadPackage → verifier
+- **Wrappers:** build-gosaki-staging-admin / build-gosaki-production delegate
+- **Freshness:** regen → `sourceCommit` = HEAD at regen time; committing G-20u3+ advances HEAD → on-disk package **stale** until regen + `verify:package-freshness:staging|production` PASS
+- **Not executed:** FTP · DB write · production upload
 
 ## G-20u2 site registry foundation — complete
 

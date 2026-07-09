@@ -1,6 +1,21 @@
 Last updated: 2026-07-09
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u3 Build site package generic CLI — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u3-build-site-package-generic-cli` |
+| Base | `567b169` |
+| CLI | `build-site-package.mjs --site --profile [--dry-run]` |
+| Core | `build-site-package-core.mjs` |
+| Wrappers | `build-gosaki-*` delegate — not removed |
+| npm | `build:site-package` added; Gosaki scripts retained |
+| Freshness | Regen → `sourceCommit` = HEAD at regen; **commit advances HEAD → package stale** until regen + `verify:package-freshness:*` PASS |
+| Next | **G-20u4** `verify-site-package.mjs` |
+| Doc | `gosaki-build-site-package-generic-cli.md` |
+| Verifier | `verify-g20u3-build-site-package-generic-cli.mjs` |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u2 Site registry & build profile foundation — complete
 
 | Item | Value |

@@ -5,12 +5,17 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20r4-schedule-public-reflection-plan — complete.
-DB: total 79 · published 74 · August 17 (14/3) · staging reflected
-local package: STALE · expectedMonths blocker → G-20r4a
-FTP: manual only · AI/Cursor 禁止 · operator checklist（承認文言不要）
-Next: G-20r4a-expected-months-code-gate
+Current phase: G-20r4a-schedule-august-generation-path-enablement — complete.
+expectedMonths: 03–08 · legacy /2026-08/ data-driven stub enabled
+build/regen: NOT executed
+Next: G-20r4b-local-regen-dry-run
 ```
+
+## G-20r4a schedule August generation path enablement — complete
+
+- **Code:** supabase-schedule-read.mjs expectedMonths + 2026-08 · astro-generator data-driven legacy stubs
+- **Doc:** gosaki-schedule-august-generation-path-enablement.md
+- **Next:** G-20r4b-local-regen-dry-run
 
 ## G-20r4 schedule August public reflection plan — complete
 

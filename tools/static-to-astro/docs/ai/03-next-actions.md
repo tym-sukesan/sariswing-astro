@@ -1,6 +1,17 @@
 Last updated: 2026-07-09
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20r4a Gosaki schedule August generation path enablement — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20r4a-schedule-august-generation-path-enablement` |
+| Base | `cdbf1cc` |
+| `expectedMonths` | **03–08** (6 months) |
+| Legacy `/2026-08/` | data-driven stub path enabled |
+| Build / regen | **not executed** |
+| **Next** | **G-20r4b-local-regen-dry-run** |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20r4 Gosaki schedule August public reflection plan — complete
 
 | Item | Value |

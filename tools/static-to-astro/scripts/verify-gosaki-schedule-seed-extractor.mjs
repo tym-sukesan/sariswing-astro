@@ -275,7 +275,11 @@ assert(
   "g9e_gosaki_site_config_site_slug",
   GOSAKI_SCHEDULE_SITE_CONFIG.siteSlug === GOSAKI_SITE_SLUG,
 );
-assertEqual("g9e_gosaki_expected_month_count", GOSAKI_SCHEDULE_SITE_CONFIG.expectedMonths.length, 5);
+assertEqual("g9e_gosaki_expected_month_count", GOSAKI_SCHEDULE_SITE_CONFIG.expectedMonths.length, 6);
+assert(
+  "g9e_gosaki_expected_months_includes_2026_08",
+  GOSAKI_SCHEDULE_SITE_CONFIG.expectedMonths.includes("2026-08"),
+);
 assert(
   "g9e_canonical_route_filter",
   isCanonicalScheduleSourceRoute("/schedule/2026-07/") &&

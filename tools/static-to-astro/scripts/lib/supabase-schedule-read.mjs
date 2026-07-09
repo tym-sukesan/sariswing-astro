@@ -30,7 +30,7 @@ export const DEFAULT_CANONICAL_ROUTE_PREFIX = "/schedule/";
 export const GOSAKI_SCHEDULE_SITE_CONFIG = {
   siteSlug: GOSAKI_SITE_SLUG,
   canonicalRoutePrefix: DEFAULT_CANONICAL_ROUTE_PREFIX,
-  expectedMonths: ["2026-03", "2026-04", "2026-05", "2026-06", "2026-07"],
+  expectedMonths: ["2026-03", "2026-04", "2026-05", "2026-06", "2026-07", "2026-08"],
 };
 
 /**

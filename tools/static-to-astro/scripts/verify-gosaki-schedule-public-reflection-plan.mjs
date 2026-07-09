@@ -24,7 +24,7 @@ const PUBLIC_DIST_SCHEDULE_REL =
 const JSON_REL =
   "tools/static-to-astro/output/gosaki-piano-astro-production/src/data/gosaki-schedules.json";
 
-const BASE_COMMIT = "a4d4e6d";
+const BASE_COMMIT = "cdbf1cc";
 const STAGING_REF = "kmjqppxjdnwwrtaeqjta";
 const FORBIDDEN_PROD_REF = "vsbvndwuajjhnzpohghh";
 
@@ -64,8 +64,8 @@ const nextActions = read(`${AI_DIR}/03-next-actions.md`);
 const handoff = read(`${AI_DIR}/handoff-to-chatgpt.md`);
 const scheduleRead = read(SCHEDULE_READ);
 
-assert("HEAD is a4d4e6d", head === BASE_COMMIT, `HEAD=${head}`);
-assert("origin/main is a4d4e6d", origin === BASE_COMMIT, `origin=${origin}`);
+assert("HEAD is cdbf1cc", head === BASE_COMMIT, `HEAD=${head}`);
+assert("origin/main is cdbf1cc", origin === BASE_COMMIT, `origin=${origin}`);
 
 assert("plan doc exists", exists(DOC_REL));
 assert("G-20r3a closure doc exists", exists(G20R3A_REL));
@@ -98,7 +98,7 @@ assert("staging project ref", doc.includes(STAGING_REF));
 
 assert("expectedMonths blocker documented", /expectedMonths|G-20r4a/i.test(doc));
 assert("ready for G-20r4a", /readyForG20r4aExpectedMonthsCodeGate: true/i.test(doc));
-assert("code still lacks 2026-08 in expectedMonths", !scheduleRead.includes('"2026-08"'));
+assert("expectedMonths includes 2026-08", scheduleRead.includes('"2026-08"'));
 
 assert("gosaki-schedules.json path documented", /gosaki-schedules\.json/i.test(doc));
 assert("expected json 74 rows", /74.*published|Total rows.*74/i.test(doc));
@@ -151,7 +151,7 @@ if (exists(JSON_REL)) {
 assert("00-current-state mentions G-20r4", /G-20r4|public-reflection-plan/i.test(currentState));
 assert("03-next-actions mentions G-20r4", /G-20r4|public-reflection-plan/i.test(nextActions));
 assert("handoff mentions G-20r4", /G-20r4|public-reflection-plan/i.test(handoff));
-assert("03-next-actions next G-20r4a", /G-20r4a/i.test(nextActions));
+assert("03-next-actions next G-20r4b or G-20r4a", /G-20r4b|G-20r4a/i.test(nextActions));
 
 const portCheck = spawnSync("lsof", ["-nP", "-iTCP:4321", "-sTCP:LISTEN"], {
   encoding: "utf8",

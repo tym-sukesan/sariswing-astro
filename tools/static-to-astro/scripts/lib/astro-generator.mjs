@@ -981,17 +981,41 @@ export function generateAstroProject(inputDir, outputDir, options = {}) {
     }
 
     if (isGosakiPianoFixture(siteDir)) {
-      for (const monthEntry of scheduleMonthPages) {
-        const parsed = parseScheduleMonthSourcePath(monthEntry.sourcePath);
-        if (!parsed || !LIVE_CRAWL_MONTH_FILENAME.test(parsed.basename)) continue;
-        const legacyPagePath = `${parsed.year}-${parsed.month}/index.astro`;
-        const legacyFile = path.join(outDir, "src/pages", legacyPagePath);
-        writeFile(
-          legacyFile,
-          generateScheduleLegacyMonthStubPage(monthEntry, baseUrl, deployBase),
-        );
-        writtenPages.push(legacyFile);
-        legacyMonthStubsGenerated += 1;
+      if (useGosakiScheduleData && gosakiScheduleBundle?.months?.length) {
+        for (const monthMeta of gosakiScheduleBundle.months) {
+          const [year, month] = String(monthMeta.month ?? "").split("-");
+          if (!year || !month) continue;
+          const legacyPagePath = `${year}-${month}/index.astro`;
+          const legacyFile = path.join(outDir, "src/pages", legacyPagePath);
+          writeFile(
+            legacyFile,
+            generateScheduleLegacyMonthStubPage(
+              {
+                route: monthMeta.route,
+                year,
+                month,
+                label: monthMeta.label,
+              },
+              baseUrl,
+              deployBase,
+            ),
+          );
+          writtenPages.push(legacyFile);
+          legacyMonthStubsGenerated += 1;
+        }
+      } else {
+        for (const monthEntry of scheduleMonthPages) {
+          const parsed = parseScheduleMonthSourcePath(monthEntry.sourcePath);
+          if (!parsed || !LIVE_CRAWL_MONTH_FILENAME.test(parsed.basename)) continue;
+          const legacyPagePath = `${parsed.year}-${parsed.month}/index.astro`;
+          const legacyFile = path.join(outDir, "src/pages", legacyPagePath);
+          writeFile(
+            legacyFile,
+            generateScheduleLegacyMonthStubPage(monthEntry, baseUrl, deployBase),
+          );
+          writtenPages.push(legacyFile);
+          legacyMonthStubsGenerated += 1;
+        }
       }
     }
   }

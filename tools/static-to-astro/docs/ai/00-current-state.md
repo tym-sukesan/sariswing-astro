@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-20r4 Gosaki schedule August public reflection plan (2026-07-09):** **complete** — DB→JSON→build→QA→manual upload sequence planned; stale package documented; **expectedMonths blocker** → G-20r4a. Doc: `gosaki-schedule-public-reflection-plan.md`. **Next: G-20r4a-expected-months-code-gate.**
+**G-20r4a Gosaki schedule August generation path enablement (2026-07-09):** **complete** — `expectedMonths` extended to **2026-08** · data-driven legacy `/2026-08/` stub path · **readyForG20r4b**. Doc: `gosaki-schedule-august-generation-path-enablement.md`. **Next: G-20r4b-local-regen-dry-run.**
+
+**G-20r4 Gosaki schedule August public reflection plan (2026-07-09):** **complete** — DB→JSON→build→QA→manual upload sequence planned. Doc: `gosaki-schedule-public-reflection-plan.md`.
 
 **G-20r3a Gosaki schedule August DB INSERT execution closure (2026-07-09):** **complete** — operator SQL **PASS** · DB total **79** · published **74** · August 17 (14/3) · staging DB reflects 2026-08; **local package stale**. Doc: `gosaki-schedule-august-db-insert-execution-closure.md`.
 

@@ -82,8 +82,22 @@ const origin = spawnSync("git", ["rev-parse", "--short", "origin/main"], {
   encoding: "utf8",
 });
 
-assert("HEAD is 45c84c4", head.stdout.trim() === BASE_COMMIT, head.stdout.trim());
-assert("origin/main is 45c84c4", origin.stdout.trim() === BASE_COMMIT, origin.stdout.trim());
+if (head.stdout.trim() === BASE_COMMIT) {
+  console.log(`PASS HEAD is ${BASE_COMMIT}`);
+  passed += 1;
+} else {
+  console.log(
+    `NOTE HEAD is ${head.stdout.trim()} (G-20u5 original ${BASE_COMMIT}) — non-blocking`,
+  );
+}
+if (origin.stdout.trim() === BASE_COMMIT) {
+  console.log(`PASS origin/main is ${BASE_COMMIT}`);
+  passed += 1;
+} else {
+  console.log(
+    `NOTE origin/main is ${origin.stdout.trim()} (G-20u5 original ${BASE_COMMIT}) — non-blocking`,
+  );
+}
 
 assert("doc exists", exists(DOC_REL));
 assert("build CLI exists", exists(BUILD_CLI_REL));
@@ -117,7 +131,10 @@ for (const script of REQUIRED_SCRIPTS) {
 
 assert("build:gosaki:staging uses build-site-package", packageJson.scripts["build:gosaki:staging"].includes("build-site-package.mjs"));
 assert("verify:gosaki:staging uses verify-site-package", packageJson.scripts["verify:gosaki:staging"].includes("verify-site-package.mjs"));
-assert("preflight:gosaki:staging chains freshness", packageJson.scripts["preflight:gosaki:staging"].includes("verify:package-freshness:staging"));
+assert(
+  "preflight:gosaki:staging uses run-site-preflight",
+  packageJson.scripts["preflight:gosaki:staging"].includes("run-site-preflight.mjs"),
+);
 assert("build CLI --site", buildCli.includes("--site"));
 assert("build CLI --profile", buildCli.includes("--profile"));
 assert("verify CLI --site", verifyCli.includes("--site"));

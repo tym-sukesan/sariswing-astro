@@ -5,10 +5,21 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u14-url-to-staging-pipeline-site-aware — complete.
-URL-to-staging: --site SITE_KEY → registry → loadSiteSupabaseDataForBuild + siteKey convert.
-Gosaki legacy --config retained. Pilot noop + Supabase skip. No FTP / deploy / DB write.
+Current phase: G-20u15-current-active-regression-suite — complete.
+npm run verify:current-active-regression runs G-20u2–u14 active verifiers (14).
+Historical HEAD-pinned verifiers excluded. Stale package NOTE/skip expected.
+No FTP / deploy / DB write / package regen.
 ```
+
+## G-20u15 current active regression suite — complete
+
+- **CLI:** `npm run verify:current-active-regression`
+- **Script:** `verify-current-active-regression-suite.mjs` — 14 G-20u2–u14 verifiers sequential
+- **Excluded:** G-20u1 audit · `verify-url-to-staging-pipeline.mjs` (G-7b+ mega) · G-20t3–t6 HEAD-pinned
+- **Result:** 14/14 PASS at `3ae56b1`
+- **Child HEAD pins:** G-20u2–u7/u9 normalized to NOTE (G-20t2 policy)
+- **Not executed:** FTP · deploy · DB write · package regen · live preflight CLI
+- **Doc:** `current-active-regression-suite.md`
 
 ## G-20u14 URL-to-staging pipeline site-aware — complete
 

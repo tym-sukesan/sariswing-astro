@@ -1,6 +1,21 @@
 Last updated: 2026-07-10
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u15 Current active regression suite — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u15-current-active-regression-suite` |
+| Base | `3ae56b1` |
+| CLI | `npm run verify:current-active-regression` |
+| Scope | G-20u2–u14 active verifiers (14 scripts) |
+| Excluded | G-20u1 audit · G-7b+ mega-suite · G-20t3–t6 HEAD-pinned |
+| Result | **14/14 PASS at `3ae56b1`** |
+| Child HEAD pins | G-20u2–u7/u9 normalized to G-20t2 NOTE policy |
+| Not executed | FTP · deploy · DB write · package regen |
+| Doc | `current-active-regression-suite.md` |
+| Verifier | `verify-current-active-regression-suite.mjs` |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u14 URL-to-staging pipeline site-aware — complete
 
 | Item | Value |

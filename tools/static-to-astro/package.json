@@ -55,6 +55,7 @@
     "verify:g20u12-pilot-enotempty": "node scripts/verify-g20u12-pilot-build-enotempty-fix.mjs",
     "verify:g20u13-supabase-loaders": "node scripts/verify-g20u13-site-aware-supabase-loaders.mjs",
     "verify:g20u14-url-staging": "node scripts/verify-g20u14-url-to-staging-pipeline-site-aware.mjs",
+    "verify:current-active-regression": "node scripts/verify-current-active-regression-suite.mjs",
     "build:pilot:staging": "node scripts/build-site-package.mjs --site pilot-sample-static --profile staging",
     "build:pilot:staging:dry-run": "node scripts/build-site-package.mjs --site pilot-sample-static --profile staging --dry-run",
     "verify:pilot:staging": "node scripts/verify-site-package.mjs --site pilot-sample-static --profile staging",

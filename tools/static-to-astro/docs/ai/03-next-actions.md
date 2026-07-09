@@ -1,16 +1,20 @@
 Last updated: 2026-07-08
 Project: Static-to-Astro CMS / Musician CMS Kit
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20s Gosaki whole-site product quality audit — complete
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20r3 Gosaki schedule August DB INSERT preflight — complete
 
 | Item | Value |
 | --- | --- |
-| Phase | `G-20s-gosaki-whole-site-product-quality-audit` |
-| Base | `ecfb736` |
-| clientPreviewVerdict | **NOT_READY** |
-| G-20r3 proceed | **OK** (non-Schedule non-blocking) |
-| Doc | `gosaki-whole-site-product-quality-audit.md` |
-| **Next** | **G-20r3** + **G-20s1 mobile QA** (parallel) |
+| Phase | `G-20r3-gosaki-schedule-august-db-insert-preflight` |
+| Base | `75e8db6` |
+| INSERT targets | **17** |
+| hold excluded | **2** (#8, #18) |
+| published | **14 true · 3 false** |
+| approvalId | `G-20r3-gosaki-schedule-august-batch-insert-non-dry-run-slice` |
+| SQL | draft only · **not executed** |
+| **Next** | **G-20r3a operator batch INSERT execution** |
+
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20s Gosaki whole-site product quality audit — complete
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20r2b Gosaki schedule product quality policy — complete
 

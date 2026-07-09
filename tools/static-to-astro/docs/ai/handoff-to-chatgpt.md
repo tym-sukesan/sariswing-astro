@@ -5,12 +5,20 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20r2b-gosaki-schedule-product-quality-policy — complete.
-Quality: 14 published=true · 3 published=false · 2 hold
-G-20r3 first batch: 17 insert (hold 2 deferred)
-SQL/DB/Save/regen/FTP: none
-Next: G-20r3-schedule-august-db-insert-preflight
+Current phase: G-20s-gosaki-whole-site-product-quality-audit — complete.
+clientPreviewVerdict: NOT_READY (mobile · contact E2E · schedule aug regen pending)
+G-20r3 proceed: OK — non-Schedule P0 does not block schedule DB preflight
+Next: G-20r3-schedule-august-db-insert-preflight + G-20s1-mobile-device-qa (parallel)
 ```
+
+## G-20s whole-site product quality audit — complete
+
+- **P0:** schedule aug data (G-20r3) · mobile QA · HubSpot E2E
+- **P1:** `<>` parity · copy/OGP · legacy stub JP · empty-field UI QA
+- **P2:** sitemap `/admin/` · cutover SEO
+- **Defer:** News · hosted admin · FTP · DNS cutover
+- **G-20r3:** proceed OK
+- **Doc:** `gosaki-whole-site-product-quality-audit.md`
 
 ## G-20r2b schedule product quality policy — complete
 
@@ -70,7 +78,7 @@ Next: G-20r3-schedule-august-db-insert-preflight
 - **P0:** Wix **2026-08** not in Kit (source freshness gap — **confirmed G-20r**) · mobile QA · HubSpot E2E
 - **`<>` titles:** Wix source parity on live site — **not** Kit conversion defect · P1 / Content note
 - **Not G-20p issue:** package staleness vs G-22j remains closed for 03–07 published content
-- **Next:** G-20r3-schedule-august-db-insert-preflight
+- **Next:** G-20r3 + G-20s1 mobile QA (parallel)
 - **Doc:** `gosaki-internal-preview-readiness-gap-audit.md`
 
 ## G-20j production upload preflight refresh — complete

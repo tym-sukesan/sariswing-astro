@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-20r2b Gosaki schedule product quality policy (2026-07-09):** **complete** — internal quality rules; **14 published=true · 3 published=false · 2 hold**; readyForG20r3 **true** (17 insert batch). Doc: `gosaki-schedule-product-quality-policy.md`. **Next: G-20r3 schedule august DB insert preflight.**
+**G-20s Gosaki whole-site product quality audit (2026-07-09):** **complete** — P0/P1/P2/Defer classified; clientPreview **NOT_READY**; **G-20r3 proceed OK** (non-Schedule P0 non-blocking). Doc: `gosaki-whole-site-product-quality-audit.md`. **Next: G-20r3 DB preflight + G-20s1 mobile QA (parallel).**
+
+**G-20r2b Gosaki schedule product quality policy (2026-07-09):** **complete** — 14/3/2 classification; readyForG20r3 true. Doc: `gosaki-schedule-product-quality-policy.md`.
 
 **G-20r2a Gosaki schedule client confirmation question list (2026-07-09):** **complete** — **superseded for blocking path by G-20r2b** (client message optional G-20r2c). Doc: `gosaki-schedule-client-confirmation-question-list.md`.
 

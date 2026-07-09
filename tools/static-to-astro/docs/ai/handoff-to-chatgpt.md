@@ -5,11 +5,17 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u15-current-active-regression-suite — complete.
-npm run verify:current-active-regression runs G-20u2–u14 active verifiers (14).
-Historical HEAD-pinned verifiers excluded. Stale package NOTE/skip expected.
-No FTP / deploy / DB write / package regen.
+Current phase: G-20u16-remaining-site-specific-coupling-audit — complete.
+Post G-20u15 coupling inventory. Next: G-20u17–u21 (see audit doc).
+Read-only audit. No refactor / FTP / deploy / DB write.
 ```
+
+## G-20u16 remaining site-specific coupling audit — complete
+
+- **Doc:** `remaining-site-specific-coupling-audit.md` — A–E tiers, G-20u1 delta, non-schedule inventory
+- **Remaining C items:** POST_BUILD_VERIFIERS map, manual-upload npm defaults, `gosaki*Bundle` naming, `isGosakiPianoFixture`, `includeGosakiReadOnlyAdmin`, non-gosaki discography loader
+- **Next order:** u18 defaults → u17 verifier registry → u19 naming → u20 Supabase CMS → u21 admin flag
+- **Not executed:** refactor · FTP · deploy · DB write
 
 ## G-20u15 current active regression suite — complete
 

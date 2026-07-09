@@ -145,4 +145,9 @@ function main() {
   process.exit(failed > 0 ? 1 : 0);
 }
 
-main();
+const isDirectRun =
+  process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url);
+
+if (isDirectRun) {
+  main();
+}

@@ -1,6 +1,18 @@
 Last updated: 2026-07-10
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u16 Remaining site-specific coupling audit — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u16-remaining-site-specific-coupling-audit` |
+| Base | `90f732d` |
+| Scope | Post G-20u15 inventory · A–E classification · non-schedule sections |
+| Next candidates | G-20u17 post-build verifier registry · G-20u18 CLI defaults · G-20u19 option naming · G-20u20 Supabase CMS features · G-20u21 admin flag |
+| Not executed | refactor · FTP · deploy · DB write |
+| Doc | `remaining-site-specific-coupling-audit.md` |
+| Verifier | `verify-g20u16-remaining-site-specific-coupling-audit.mjs` |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u15 Current active regression suite — complete
 
 | Item | Value |

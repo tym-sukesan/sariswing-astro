@@ -3,6 +3,8 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
+**G-20u16 Remaining site-specific coupling audit (2026-07-10):** **complete** — post G-20u15 inventory; A–E classification; non-schedule sections (discography/about/contact/link/youtube/home/footer/admin); next candidates G-20u17–u21; **read-only audit** · **no refactor / FTP / DB write**. Doc: `remaining-site-specific-coupling-audit.md`. Verifier: `verify-g20u16-remaining-site-specific-coupling-audit.mjs`.
+
 **G-20u15 Current active regression suite (2026-07-10):** **complete** — `verify-current-active-regression-suite.mjs` runs G-20u2–u14 active verifiers (14 scripts); npm `verify:current-active-regression`; **14/14 PASS at `3ae56b1`**; child verifier HEAD pins normalized (G-20t2 NOTE); historical verifiers excluded; **no FTP / deploy / DB write / package regen**. Doc: `current-active-regression-suite.md`.
 
 **G-20u14 URL-to-staging pipeline site-aware (2026-07-10):** **complete** — `--site SITE_KEY` on `url-to-staging-pipeline.mjs`; registry resolves fixtureDir / staging profile / deployBase; convert uses `loadSiteSupabaseDataForBuild` + `siteKey` (replaces `isGosakiPianoFixture`); step plan + `buildNextManualSteps` pass `--site`; legacy verifier 2 historical FAILs fixed (G-9c0b/G-9d source-location drift after G-20t1/G-20u6); **no FTP / deploy / DB write**. Doc: `url-to-staging-pipeline-site-aware.md`. Verifiers: `verify-g20u14-*` + `verify-url-to-staging-pipeline.mjs` **0 failed**.

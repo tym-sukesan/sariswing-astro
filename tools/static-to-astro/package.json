@@ -43,7 +43,8 @@
     "verify:g20u4-verify-site-package": "node scripts/verify-g20u4-verify-site-package-generic-cli.mjs",
     "verify:g20u5-site-package-flow": "node scripts/verify-g20u5-site-package-npm-convenience-and-freshness-flow.mjs",
     "verify:g20u6-astro-generator-hooks": "node scripts/verify-g20u6-astro-generator-hook-registry.mjs",
-    "verify:g20u7-convert-sitekey": "node scripts/verify-g20u7-convert-pipeline-sitekey-propagation.mjs"
+    "verify:g20u7-convert-sitekey": "node scripts/verify-g20u7-convert-pipeline-sitekey-propagation.mjs",
+    "verify:g20u8-pilot-noop": "node scripts/verify-g20u8-second-site-noop-hooks-pilot-dry-run.mjs"
   },
   "devDependencies": {
     "pixelmatch": "^7.1.0",

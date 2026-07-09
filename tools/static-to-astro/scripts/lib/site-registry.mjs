@@ -14,6 +14,7 @@ export const TOOL_ROOT = path.resolve(__dirname, "../..");
 
 export const SITE_REGISTRY_REL = "config/sites/registry.json";
 export const GOSAKI_SITE_KEY = "gosaki-piano";
+export const PILOT_SAMPLE_STATIC_SITE_KEY = "pilot-sample-static";
 export const GOSAKI_DEPLOY_PROFILES_REL = "config/sites/gosaki-piano.deploy-profiles.json";
 export const ALLOWED_PROFILE_NAMES = /** @type {const} */ (["staging", "production"]);
 export const STAGING_KIT_SUPABASE_REF = "kmjqppxjdnwwrtaeqjta";

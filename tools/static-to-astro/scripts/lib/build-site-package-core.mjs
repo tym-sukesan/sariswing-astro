@@ -9,6 +9,7 @@ import { fileURLToPath } from "node:url";
 import { createManualUploadPackage } from "./manual-upload-package.mjs";
 import {
   TOOL_ROOT,
+  GOSAKI_SITE_KEY,
   getSiteRegistryEntry,
   resolvePackageManifestMetaFromRegistry,
   resolveSitePackageBuildProfile,
@@ -27,6 +28,9 @@ const POST_BUILD_VERIFIERS = {
   "gosaki-piano": {
     staging: "scripts/verify-manual-upload-package.mjs",
     production: "scripts/verify-g20i3-gosaki-production-package-admin-exclusion.mjs",
+  },
+  "pilot-sample-static": {
+    staging: "scripts/verify-site-package.mjs",
   },
 };
 
@@ -59,6 +63,23 @@ export function resolvePostBuildVerifier(siteKey, profileName) {
     );
   }
   return rel;
+}
+
+/**
+ * @param {string} siteKey
+ * @param {string} profileName
+ * @param {{ manualUploadOut: string }} profile
+ * @returns {string[]}
+ */
+export function buildPostBuildVerifierArgs(siteKey, profileName, profile) {
+  const rel = resolvePostBuildVerifier(siteKey, profileName);
+  const args = [rel];
+  if (rel.endsWith("verify-site-package.mjs")) {
+    args.push("--site", siteKey, "--profile", profileName, "--package-dir", profile.manualUploadOut);
+  } else if (profileName === "staging" && siteKey === GOSAKI_SITE_KEY) {
+    args.push("--package-dir", profile.manualUploadOut);
+  }
+  return args;
 }
 
 /**
@@ -163,39 +184,48 @@ export function runSitePackageBuild(options) {
     return { ok: true, dryRun: true, plan, manifestMeta };
   }
 
-  const report = reportGosakiStagingAdminPublicEnvPresence();
-  const env = loadGosakiStagingAdminPublicEnv();
-  const validation = validateGosakiStagingAdminPublicEnv(env);
+  const isGosakiSite = siteKey === GOSAKI_SITE_KEY;
+  /** @type {NodeJS.ProcessEnv} */
+  let buildEnv = { ...process.env };
 
-  console.log("PUBLIC_SUPABASE_URL:", report.presence.PUBLIC_SUPABASE_URL ? "SET" : "UNSET");
-  console.log(
-    "PUBLIC_SUPABASE_ANON_KEY:",
-    report.presence.PUBLIC_SUPABASE_ANON_KEY ? "SET" : "UNSET",
-  );
-  console.log(
-    "PUBLIC_GOSAKI_YOUTUBE_URL_DRY_RUN_ENDPOINT:",
-    report.presence.PUBLIC_GOSAKI_YOUTUBE_URL_DRY_RUN_ENDPOINT
-      ? "SET"
-      : "UNSET (using staging default)",
-  );
+  if (isGosakiSite) {
+    const report = reportGosakiStagingAdminPublicEnvPresence();
+    const env = loadGosakiStagingAdminPublicEnv();
+    const validation = validateGosakiStagingAdminPublicEnv(env);
 
-  if (!validation.ok) {
-    if (validation.missing.length) {
-      console.error("Missing required public env:");
-      for (const key of validation.missing) console.error(`  - ${key}`);
+    console.log("PUBLIC_SUPABASE_URL:", report.presence.PUBLIC_SUPABASE_URL ? "SET" : "UNSET");
+    console.log(
+      "PUBLIC_SUPABASE_ANON_KEY:",
+      report.presence.PUBLIC_SUPABASE_ANON_KEY ? "SET" : "UNSET",
+    );
+    console.log(
+      "PUBLIC_GOSAKI_YOUTUBE_URL_DRY_RUN_ENDPOINT:",
+      report.presence.PUBLIC_GOSAKI_YOUTUBE_URL_DRY_RUN_ENDPOINT
+        ? "SET"
+        : "UNSET (using staging default)",
+    );
+
+    if (!validation.ok) {
+      if (validation.missing.length) {
+        console.error("Missing required public env:");
+        for (const key of validation.missing) console.error(`  - ${key}`);
+      }
+      if (validation.errors.length) {
+        console.error("Env validation errors:");
+        for (const msg of validation.errors) console.error(`  - ${msg}`);
+      }
+      process.exit(1);
     }
-    if (validation.errors.length) {
-      console.error("Env validation errors:");
-      for (const msg of validation.errors) console.error(`  - ${msg}`);
-    }
-    process.exit(1);
+
+    buildEnv = {
+      ...process.env,
+      PUBLIC_SUPABASE_URL: env.PUBLIC_SUPABASE_URL,
+      PUBLIC_SUPABASE_ANON_KEY: env.PUBLIC_SUPABASE_ANON_KEY,
+      PUBLIC_GOSAKI_YOUTUBE_URL_DRY_RUN_ENDPOINT: env.PUBLIC_GOSAKI_YOUTUBE_URL_DRY_RUN_ENDPOINT,
+    };
+  } else {
+    console.log("Gosaki staging admin env: skipped (non-gosaki site)");
   }
-
-  const buildEnv = {
-    PUBLIC_SUPABASE_URL: env.PUBLIC_SUPABASE_URL,
-    PUBLIC_SUPABASE_ANON_KEY: env.PUBLIC_SUPABASE_ANON_KEY,
-    PUBLIC_GOSAKI_YOUTUBE_URL_DRY_RUN_ENDPOINT: env.PUBLIC_GOSAKI_YOUTUBE_URL_DRY_RUN_ENDPOINT,
-  };
 
   run(
     "node",
@@ -239,10 +269,7 @@ export function runSitePackageBuild(options) {
     process.exit(1);
   }
 
-  const verifierArgs = [verifierRel];
-  if (profileName === "staging" && siteKey === "gosaki-piano") {
-    verifierArgs.push("--package-dir", profile.manualUploadOut);
-  }
+  const verifierArgs = buildPostBuildVerifierArgs(siteKey, profileName, profile);
   run("node", verifierArgs, buildEnv);
 
   console.log("");

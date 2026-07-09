@@ -43,6 +43,36 @@
           "includeGosakiReadOnlyAdmin": false
         }
       }
+    },
+    "pilot-sample-static": {
+      "siteKey": "pilot-sample-static",
+      "displayName": "pilot-sample-static (noop hooks dry-run)",
+      "cmsPreset": "generic",
+      "convertSiteProfile": "generic",
+      "slugSemantics": {
+        "siteKey": "pilot-sample-static",
+        "packageKey": "pilot-sample-static",
+        "filesystemSlug": "pilot-sample-static",
+        "cmsSiteSlug": "pilot-sample-static",
+        "supabaseSiteSlug": "pilot-sample-static",
+        "legacyAliases": [],
+        "slugMismatchNotes": "G-20u8 pilot only — noop generator hooks; no Supabase CMS binding; staging dry-run."
+      },
+      "fixtureDir": "fixtures/sample-static-site",
+      "deployProfilesFile": "config/sites/pilot-sample-static.deploy-profiles.json",
+      "packageProfiles": {
+        "staging": {
+          "profileName": "staging",
+          "packageKey": "pilot-sample-static",
+          "targetEnvironment": "staging",
+          "publicBaseUrl": "https://yskcreate.weblike.jp/cms-kit-staging/pilot-sample-static/",
+          "stagingBaseUrl": "https://yskcreate.weblike.jp/cms-kit-staging/pilot-sample-static",
+          "deployBase": "/cms-kit-staging/pilot-sample-static/",
+          "intendedRemotePath": "/cms-kit-staging/pilot-sample-static/",
+          "includesAdmin": false,
+          "includeGosakiReadOnlyAdmin": false
+        }
+      }
     }
   }
 }

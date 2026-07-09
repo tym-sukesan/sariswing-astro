@@ -1,0 +1,25 @@
+{
+  "$comment": "G-20u8 — Pilot sample static site deploy profiles (staging dry-run only). No secrets.",
+  "siteSlug": "pilot-sample-static",
+  "fixtureDir": "fixtures/sample-static-site",
+  "profiles": {
+    "staging": {
+      "origin": "https://yskcreate.weblike.jp",
+      "baseUrl": "https://yskcreate.weblike.jp/cms-kit-staging/pilot-sample-static",
+      "publicUrl": "https://yskcreate.weblike.jp/cms-kit-staging/pilot-sample-static/",
+      "deployBase": "/cms-kit-staging/pilot-sample-static/",
+      "outputName": "pilot-sample-static",
+      "astroOut": "output/pilot-sample-static-astro",
+      "staticPublicOut": "output/static-public/pilot-sample-static",
+      "manualUploadOut": "output/manual-upload/pilot-sample-static",
+      "remotePath": "/cms-kit-staging/pilot-sample-static/",
+      "supabaseProjectRef": "kmjqppxjdnwwrtaeqjta",
+      "includeGosakiReadOnlyAdmin": false,
+      "seo": {
+        "stagingNoindex": true,
+        "robotsDisallowAll": true,
+        "productionIndexable": false
+      }
+    }
+  }
+}

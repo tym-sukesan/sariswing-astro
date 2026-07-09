@@ -156,25 +156,27 @@ export function verifySitePackage(options) {
     }
   }
 
-  const augustCanonical = path.join(publicDist, "schedule/2026-08/index.html");
-  if (!fs.existsSync(augustCanonical)) {
-    errors.push("missing canonical month page: public-dist/schedule/2026-08/index.html");
-  }
-
   const sitemapPath = path.join(publicDist, "sitemap-0.xml");
   if (fs.existsSync(sitemapPath)) {
     const sitemap = fs.readFileSync(sitemapPath, "utf8");
-    if (!sitemap.includes("/schedule/2026-08/")) {
-      errors.push("sitemap missing canonical /schedule/2026-08/");
-    }
     if (meta.targetEnvironment === "staging" && sitemap.includes("/admin/")) {
       errors.push("staging sitemap must not include /admin/");
+    }
+    if (siteKey === GOSAKI_SITE_KEY && !sitemap.includes("/schedule/2026-08/")) {
+      errors.push("sitemap missing canonical /schedule/2026-08/");
     }
     for (const violation of findSitemapSafetyViolations(sitemap)) {
       errors.push(`sitemap safety: ${violation}`);
     }
   } else {
     errors.push("missing sitemap-0.xml");
+  }
+
+  if (siteKey === GOSAKI_SITE_KEY) {
+    const augustCanonical = path.join(publicDist, "schedule/2026-08/index.html");
+    if (!fs.existsSync(augustCanonical)) {
+      errors.push("missing canonical month page: public-dist/schedule/2026-08/index.html");
+    }
   }
 
   if (includeGosakiExtensions && siteKey === GOSAKI_SITE_KEY) {

@@ -1,6 +1,21 @@
 Last updated: 2026-07-10
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u8 Second-site noop hooks pilot dry-run — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u8-second-site-noop-hooks-pilot-dry-run` |
+| Base | `d3e8ff7` |
+| Pilot siteKey | `pilot-sample-static` |
+| Fixture | `fixtures/sample-static-site` (existing) |
+| Hooks | default/noop only — no Gosaki factory |
+| Profiles | staging only · `includesAdmin: false` |
+| Checks | build/convert dry-run · local convert no gosaki artifacts |
+| Gosaki | build dry-run unchanged · schedule verify scoped to gosaki-piano |
+| Doc | `second-site-noop-hooks-pilot-dry-run.md` |
+| Verifier | `verify-g20u8-second-site-noop-hooks-pilot-dry-run.mjs` |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u7 Convert pipeline siteKey propagation — complete
 
 | Item | Value |

@@ -5,14 +5,20 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u7-convert-pipeline-sitekey-propagation — complete.
-siteKey path: build-site-package --site → convert --site → generateAstroProject({ siteKey }) → resolveSiteGeneratorHooks.
-Fallback: fixtureDir basename + matchFixture retained.
-Unknown --site: clear registry error; unregistered fixture without --site → noop hooks.
-Wrappers: build-gosaki-* unchanged.
-Package: on-disk manual-upload stale until regen at current HEAD.
-No FTP / deploy in G-20u7.
+Current phase: G-20u8-second-site-noop-hooks-pilot-dry-run — complete.
+Pilot: pilot-sample-static on fixtures/sample-static-site — noop hooks only.
+siteKey explicit --site → generator; Gosaki hooks not mis-applied.
+Gosaki build dry-run unchanged; verify schedule gates scoped to gosaki-piano.
+No FTP / deploy / DB write in G-20u8.
 ```
+
+## G-20u8 second-site noop hooks pilot dry-run — complete
+
+- **Pilot:** `pilot-sample-static` · staging only · `includesAdmin: false`
+- **Hooks:** DEFAULT noop — no Gosaki factory for pilot
+- **Verified:** build/convert dry-run · local convert without gosaki artifacts
+- **Not executed:** FTP · DB write · full pilot package build · production profile
+- **Next:** G-20u9 optional full pilot package build
 
 ## G-20u7 convert pipeline siteKey propagation — complete
 

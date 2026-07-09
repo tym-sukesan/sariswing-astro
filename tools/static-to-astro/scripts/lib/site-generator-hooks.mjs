@@ -333,8 +333,16 @@ export function resolveSiteGeneratorHooks(siteDir, options = {}) {
   const basename = path.basename(resolvedSiteDir);
   const toolRoot = options.toolRoot ?? TOOL_ROOT;
 
-  if (options.siteKey && SITE_GENERATOR_HOOK_FACTORIES[options.siteKey]) {
-    return mergeSiteGeneratorHooks(options.siteKey, SITE_GENERATOR_HOOK_FACTORIES[options.siteKey]());
+  if (options.siteKey) {
+    const factory = SITE_GENERATOR_HOOK_FACTORIES[options.siteKey];
+    if (factory) {
+      return mergeSiteGeneratorHooks(options.siteKey, factory());
+    }
+    return {
+      ...DEFAULT_SITE_GENERATOR_HOOKS,
+      siteKey: options.siteKey,
+      active: false,
+    };
   }
 
   try {

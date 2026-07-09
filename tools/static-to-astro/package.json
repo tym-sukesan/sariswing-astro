@@ -29,7 +29,9 @@
     "verify:package-freshness-gate": "node scripts/verify-g20t6-package-freshness-gate.mjs",
     "verify:g20u1-hardcode-audit": "node scripts/verify-g20u1-gosaki-hardcode-generalization-audit.mjs",
     "verify:g20u2-site-registry": "node scripts/verify-g20u2-site-registry-build-profile-foundation.mjs",
-    "verify:g20u3-build-site-package": "node scripts/verify-g20u3-build-site-package-generic-cli.mjs"
+    "verify:g20u3-build-site-package": "node scripts/verify-g20u3-build-site-package-generic-cli.mjs",
+    "verify:site-package": "node scripts/verify-site-package.mjs",
+    "verify:g20u4-verify-site-package": "node scripts/verify-g20u4-verify-site-package-generic-cli.mjs"
   },
   "devDependencies": {
     "pixelmatch": "^7.1.0",

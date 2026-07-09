@@ -1,6 +1,20 @@
 Last updated: 2026-07-09
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u4 Verify site package generic CLI — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u4-verify-site-package-generic-cli` |
+| Base | `bbb174f` |
+| CLI | `verify-site-package.mjs --site --profile` |
+| Core | `verify-site-package-core.mjs` + Gosaki extensions |
+| Legacy | `verify-manual-upload-package` / `verify-g20i3` delegate — not removed |
+| Freshness | Structure verify ≠ HEAD match; use `verify:package-freshness:*` before upload |
+| Next | **G-20u5** npm convenience + freshness by `--site` |
+| Doc | `gosaki-verify-site-package-generic-cli.md` |
+| Verifier | `verify-g20u4-verify-site-package-generic-cli.mjs` |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u3 Build site package generic CLI — complete
 
 | Item | Value |

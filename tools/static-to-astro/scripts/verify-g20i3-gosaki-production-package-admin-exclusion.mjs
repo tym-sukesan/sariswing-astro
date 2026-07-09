@@ -13,6 +13,8 @@ import {
   SARISWING_PRODUCTION_SUPABASE_REF,
   resolveGosakiPackageBuildProfile,
 } from "./lib/gosaki-package-build-profile.mjs";
+import { GOSAKI_SITE_KEY } from "./lib/site-registry.mjs";
+import { verifySitePackage } from "./lib/verify-site-package-core.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = path.resolve(__dirname, "../../..");
@@ -169,6 +171,19 @@ assert("doc G-20ui1 next", doc.includes("G-20ui1"));
 
 assert("production package exists", exists(packageRel));
 assert("public-dist exists", exists(publicDistRel));
+
+const genericVerify = verifySitePackage({
+  siteKey: GOSAKI_SITE_KEY,
+  profileName: "production",
+});
+if (genericVerify.ok) {
+  assert("generic verifySitePackage production", true);
+} else {
+  for (const err of genericVerify.errors) {
+    assert(`generic verify: ${err}`, false, err);
+  }
+}
+
 assert("admin index absent", !exists(path.join(publicDistRel, "admin/index.html")));
 assert("admin dir absent", !exists(path.join(publicDistRel, "admin")));
 

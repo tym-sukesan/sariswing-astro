@@ -5,16 +5,21 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u3-build-site-package-generic-cli — complete.
-Generic CLI: build-site-package.mjs --site gosaki-piano --profile staging|production.
-Shared core: build-site-package-core.mjs (convert → static-public → manual-upload).
-Gosaki wrappers delegate to core — not removed.
-npm: build:site-package added; build:gosaki-* retained.
-Production upload still NG (TBD_G-20i).
-Freshness (G-20t6): regen stamps HEAD; any commit after regen → stale until regen + verify:package-freshness:* PASS.
-Next: G-20u4 verify-site-package.mjs.
-No FTP / deploy in G-20u3.
+Current phase: G-20u4-verify-site-package-generic-cli — complete.
+Generic verify: verify-site-package.mjs --site gosaki-piano --profile staging|production.
+Legacy verify-manual-upload / verify-g20i3 delegate to shared core — not removed.
+Freshness: verify-site-package checks sourceCommit exists only; HEAD match via verify:package-freshness:*.
+Next: G-20u5 npm convenience scripts.
+No FTP / deploy in G-20u4.
 ```
+
+## G-20u4 verify site package generic CLI — complete
+
+- **CLI:** `--site` `--profile` `--package-dir` optional
+- **Checks:** registry MANIFEST fields · sitemap safety · 2026-08 · staging admin present/sitemap absent · production admin absent
+- **Legacy:** verify-manual-upload-package.mjs → staging delegate; g20i3 → generic + doc asserts
+- **Freshness:** separate from G-20t6; commit after regen → stale until regen
+- **Not executed:** FTP · DB write · package regen
 
 ## G-20u3 build site package generic CLI — complete
 

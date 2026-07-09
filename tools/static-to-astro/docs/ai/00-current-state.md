@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-20u16 Remaining site-specific coupling audit (2026-07-10):** **complete** — post G-20u15 inventory; A–E classification; non-schedule sections (discography/about/contact/link/youtube/home/footer/admin); next candidates G-20u17–u21; **read-only audit** · **no refactor / FTP / DB write**. Doc: `remaining-site-specific-coupling-audit.md`. Verifier: `verify-g20u16-remaining-site-specific-coupling-audit.mjs`.
+**G-20u18 package.json / CLI default decoupling (2026-07-10):** **complete** — generic `manual-upload:site-package` requires `--site-key`; Gosaki inline defaults moved to named wrappers (`manual-upload:package:gosaki:staging`); legacy aliases retained (`manual-upload:package`, `verify:package-freshness:staging`); freshness npm uses explicit `--site`; **no FTP / deploy / DB write**. Doc: `package-json-cli-default-decoupling.md`. Verifier: `verify-g20u18-package-json-cli-default-decoupling.mjs`.
+
+**G-20u16 Remaining site-specific coupling audit (2026-07-10):** **complete** — post G-20u15 inventory; A–E classification; next candidates G-20u17–u21; **read-only audit** · **no refactor / FTP / DB write**. Doc: `remaining-site-specific-coupling-audit.md`. Verifier: `verify-g20u16-remaining-site-specific-coupling-audit.mjs`.
 
 **G-20u15 Current active regression suite (2026-07-10):** **complete** — `verify-current-active-regression-suite.mjs` runs G-20u2–u14 active verifiers (14 scripts); npm `verify:current-active-regression`; **14/14 PASS at `3ae56b1`**; child verifier HEAD pins normalized (G-20t2 NOTE); historical verifiers excluded; **no FTP / deploy / DB write / package regen**. Doc: `current-active-regression-suite.md`.
 

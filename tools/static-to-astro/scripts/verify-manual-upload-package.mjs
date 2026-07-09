@@ -28,7 +28,11 @@ function parseArgs(argv) {
 function main() {
   const opts = parseArgs(process.argv);
   if (opts.help) {
-    console.log("Usage: node scripts/verify-manual-upload-package.mjs [--package-dir PATH]");
+    console.log(`Usage: node scripts/verify-manual-upload-package.mjs [--package-dir PATH]
+
+Legacy Gosaki staging package verifier (G-7g wrapper).
+Prefer: npm run verify:gosaki:staging  or  npm run verify:site-package -- --site gosaki-piano --profile staging
+`);
     process.exit(0);
   }
 

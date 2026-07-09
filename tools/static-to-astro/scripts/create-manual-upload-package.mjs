@@ -1,58 +1,71 @@
 #!/usr/bin/env node
 /**
- * Create manual staging upload package (G-7g / G-20t3 — no FTP).
+ * Create manual staging upload package (G-7g / G-20t3 / G-20u18 — no FTP).
  *
- * Usage:
+ * Generic usage (requires --site-key):
  *   node scripts/create-manual-upload-package.mjs \
- *     --site-slug gosaki-piano \
+ *     --site-key gosaki-piano \
+ *     --profile staging \
  *     --public-dir output/static-public/gosaki-piano/public-dist \
- *     --deploy-base /cms-kit-staging/gosaki-piano/ \
- *     --staging-url https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano \
- *     --target-environment staging \
- *     --package-profile staging \
- *     --intended-remote-path /cms-kit-staging/gosaki-piano/ \
  *     --out output/manual-upload/gosaki-piano
+ *
+ * Legacy Gosaki convenience (npm):
+ *   npm run manual-upload:package:gosaki:staging
+ *   npm run manual-upload:package:gosaki:production
  */
 
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { createManualUploadPackage } from "./lib/manual-upload-package.mjs";
-import { resolvePackageManifestMetaFromRegistry } from "./lib/site-registry.mjs";
+import { listSiteKeys, resolvePackageManifestMetaFromRegistry } from "./lib/site-registry.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const TOOL_ROOT = path.resolve(__dirname, "..");
 const REPO_ROOT = path.resolve(TOOL_ROOT, "../..");
+
+const LEGACY_HINT = [
+  "Legacy Gosaki staging:    npm run manual-upload:package:gosaki:staging",
+  "Legacy Gosaki production: npm run manual-upload:package:gosaki:production",
+  "Generic:                  npm run manual-upload:site-package -- --site-key SITE --profile PROFILE --public-dir PATH --out PATH",
+].join("\n  ");
 
 function printHelp() {
   console.log(`Usage: node scripts/create-manual-upload-package.mjs [options]
 
 Build manual FTP upload package from public-dist. No FTP connection.
 
+Required:
+  --site-key KEY (or --site KEY)   Registry site key
+  --public-dir PATH              public-dist source
+  --out PATH                     Output package directory
+
 Options:
-  --site-slug SLUG              Site slug (default: gosaki-piano)
-  --site-key KEY                Registry siteKey — fills profile fields when set
-  --public-dir PATH             public-dist source (required)
-  --deploy-base PATH            Remote deploy base (default: /cms-kit-staging/gosaki-piano/)
-  --staging-url URL             Public base URL (legacy alias)
-  --public-base-url URL         Public base URL for MANIFEST.publicBaseUrl
-  --target-environment ENV      staging | production (default: staging)
-  --package-profile NAME        staging | production (default: matches target-environment)
-  --intended-remote-path PATH   Operator FTP destination path
-  --out PATH                    Output package directory (required)
+  --profile NAME                 staging | production (alias for --package-profile)
+  --site-slug SLUG               Override site slug (default from registry when --site-key set)
+  --deploy-base PATH             Remote deploy base (default from registry)
+  --staging-url URL              Public base URL (legacy alias)
+  --public-base-url URL          Public base URL for MANIFEST.publicBaseUrl
+  --target-environment ENV       staging | production (default from --profile)
+  --package-profile NAME         staging | production
+  --intended-remote-path PATH    Operator FTP destination path
   --include-gosaki-read-only-admin BOOL  Record admin inclusion (true|false)
   --help, -h
+
+Registered sites: ${listSiteKeys().join(", ")}
+
+${LEGACY_HINT}
 `);
 }
 
 function parseArgs(argv) {
   const opts = {
     siteKey: null,
-    siteSlug: "gosaki-piano",
+    siteSlug: null,
     publicDir: null,
-    deployBase: "/cms-kit-staging/gosaki-piano/",
-    stagingUrl: "https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano",
+    deployBase: null,
+    stagingUrl: null,
     publicBaseUrl: null,
-    targetEnvironment: "staging",
+    targetEnvironment: null,
     packageProfile: null,
     intendedRemotePath: null,
     out: null,
@@ -77,7 +90,7 @@ function parseArgs(argv) {
       opts.help = true;
       continue;
     }
-    if (arg === "--site-key") opts.siteKey = argv[++i];
+    if (arg === "--site-key" || arg === "--site") opts.siteKey = argv[++i];
     else if (arg === "--site-slug") {
       opts.siteSlug = argv[++i];
       explicit.siteSlug = true;
@@ -98,7 +111,7 @@ function parseArgs(argv) {
       }
       opts.targetEnvironment = val;
       explicit.targetEnvironment = true;
-    } else if (arg === "--package-profile") {
+    } else if (arg === "--package-profile" || arg === "--profile") {
       opts.packageProfile = argv[++i];
       explicit.packageProfile = true;
     } else if (arg === "--intended-remote-path") {
@@ -115,13 +128,13 @@ function parseArgs(argv) {
   }
 
   if (!opts.packageProfile) {
-    opts.packageProfile = opts.targetEnvironment;
+    opts.packageProfile = opts.targetEnvironment ?? "staging";
   }
-  if (!opts.publicBaseUrl) {
+  if (!opts.targetEnvironment) {
+    opts.targetEnvironment = opts.packageProfile;
+  }
+  if (!opts.publicBaseUrl && opts.stagingUrl) {
     opts.publicBaseUrl = opts.stagingUrl;
-  }
-  if (!opts.intendedRemotePath) {
-    opts.intendedRemotePath = opts.deployBase;
   }
 
   if (opts.siteKey) {
@@ -144,6 +157,10 @@ function parseArgs(argv) {
     opts.registryMeta = registryMeta;
   }
 
+  if (!opts.intendedRemotePath && opts.deployBase) {
+    opts.intendedRemotePath = opts.deployBase;
+  }
+
   return opts;
 }
 
@@ -161,13 +178,21 @@ function main() {
     process.exit(0);
   }
 
+  if (!opts.siteKey) {
+    console.error("Error: --site-key (or --site) is required.");
+    console.error(`  ${LEGACY_HINT}`);
+    printHelp();
+    process.exit(1);
+  }
+
   if (!opts.publicDir || !opts.out) {
+    console.error("Error: --public-dir and --out are required.");
     printHelp();
     process.exit(1);
   }
 
   console.log("Manual upload package (G-20t3 — no FTP)");
-  console.log(`Site: ${opts.siteSlug}${opts.siteKey ? ` (siteKey: ${opts.siteKey})` : ""}`);
+  console.log(`Site: ${opts.siteSlug} (siteKey: ${opts.siteKey})`);
   console.log(`Profile: ${opts.packageProfile}`);
   console.log(`Target: ${opts.targetEnvironment}`);
   console.log(`Source: ${opts.publicDir}`);

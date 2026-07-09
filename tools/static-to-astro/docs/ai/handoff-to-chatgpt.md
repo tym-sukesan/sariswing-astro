@@ -5,10 +5,20 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u16-remaining-site-specific-coupling-audit — complete.
-Post G-20u15 coupling inventory. Next: G-20u17–u21 (see audit doc).
-Read-only audit. No refactor / FTP / deploy / DB write.
+Current phase: G-20u18-package-json-cli-default-decoupling — complete.
+Generic CLIs require --site/--site-key. Gosaki convenience scripts retained as named legacy wrappers.
+No FTP / deploy / DB write.
 ```
+
+## G-20u18 package.json / CLI default decoupling — complete
+
+- **Generic:** `manual-upload:site-package` requires `--site-key` (no implicit gosaki defaults)
+- **Legacy wrappers:** `manual-upload:package:gosaki:staging`, `manual-upload:package` alias
+- **Freshness:** `verify:package-freshness:gosaki:staging` explicit; `:staging` alias retained
+- **Convenience retained:** `build:gosaki:*`, `verify:gosaki:*`, `preflight:gosaki:*`, `url:staging:gosaki`
+- **Upload rule:** rebuild at HEAD + preflight PASS before manual FTP
+- **Not executed:** FTP · deploy · DB write
+- **Next:** G-20u17 post-build verifier registry
 
 ## G-20u16 remaining site-specific coupling audit — complete
 

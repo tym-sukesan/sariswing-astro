@@ -1,6 +1,20 @@
 Last updated: 2026-07-10
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u18 package.json / CLI default decoupling — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u18-package-json-cli-default-decoupling` |
+| Base | `a544998` |
+| Generic | `manual-upload:site-package` requires `--site-key` + `--public-dir` + `--out` |
+| Legacy | `manual-upload:package` → `manual-upload:package:gosaki:staging` |
+| Freshness | `verify:package-freshness:gosaki:staging` explicit; `:staging` alias retained |
+| Not executed | FTP · deploy · DB write |
+| Doc | `package-json-cli-default-decoupling.md` |
+| Verifier | `verify-g20u18-package-json-cli-default-decoupling.mjs` |
+| Next | G-20u17 post-build verifier registry |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u16 Remaining site-specific coupling audit — complete
 
 | Item | Value |

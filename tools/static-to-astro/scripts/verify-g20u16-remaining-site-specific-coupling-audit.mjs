@@ -98,7 +98,8 @@ assert("loaders gosaki delegate retained", loadersSrc.includes("GOSAKI_SITE_KEY"
 
 const packageJson = read("tools/static-to-astro/package.json");
 assert("npm verify:current-active-regression", packageJson.includes("verify:current-active-regression"));
-assert("manual-upload:package still gosaki default (C item)", packageJson.includes("gosaki-piano"));
+assert("manual-upload:package legacy alias to gosaki staging", packageJson.includes('"manual-upload:package": "npm run manual-upload:package:gosaki:staging"'));
+assert("manual-upload:package:gosaki:staging explicit site-key", packageJson.includes("manual-upload:package:gosaki:staging"));
 
 const gosakiExt = read("tools/static-to-astro/scripts/lib/verify-site-package-gosaki-extensions.mjs");
 assert("gosaki extensions schedule months", gosakiExt.includes("2026-06"));

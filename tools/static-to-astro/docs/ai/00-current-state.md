@@ -3,6 +3,8 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
+**G-20u5 Site package npm convenience & freshness flow (2026-07-09):** **complete** — `build:gosaki:*` / `verify:gosaki:*` / `preflight:gosaki:*` npm scripts; operator flow build → verify → freshness; production upload **STOP**; **no FTP / deploy**. Doc: `gosaki-site-package-npm-convenience-and-freshness-flow.md`. Verifier: `verify-g20u5-site-package-npm-convenience-and-freshness-flow.mjs`.
+
 **G-20u4 Verify site package generic CLI (2026-07-09):** **complete** — `verify-site-package.mjs --site --profile`; shared `verify-site-package-core.mjs`; Gosaki extensions; legacy verifiers delegate; **no FTP / deploy**. Freshness: structure verify separate from `verify:package-freshness:*` HEAD match. Doc: `gosaki-verify-site-package-generic-cli.md`. Verifier: `verify-g20u4-verify-site-package-generic-cli.mjs`.
 
 **G-20u3 Build site package generic CLI (2026-07-09):** **complete** — `build-site-package.mjs --site --profile`; shared `build-site-package-core.mjs`; Gosaki wrappers delegate; **no FTP / deploy**. Freshness: regen stamps current HEAD; **any later commit makes package stale** until regen + `verify:package-freshness:*` PASS. Doc: `gosaki-build-site-package-generic-cli.md`. Verifier: `verify-g20u3-build-site-package-generic-cli.mjs`.

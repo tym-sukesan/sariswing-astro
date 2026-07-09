@@ -1,6 +1,19 @@
 Last updated: 2026-07-09
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u5 Site package npm convenience & freshness flow — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u5-site-package-npm-convenience-and-freshness-flow` |
+| Base | `45c84c4` |
+| npm | `build:gosaki:*` · `verify:gosaki:*` · `preflight:gosaki:*` |
+| Flow | build → verify:site-package → verify:package-freshness → manual FTP |
+| Freshness | verify PASS alone ≠ upload OK; commit after build → stale |
+| Production upload | **STOP** (TBD_G-20i + G-20j) |
+| Doc | `gosaki-site-package-npm-convenience-and-freshness-flow.md` |
+| Verifier | `verify-g20u5-site-package-npm-convenience-and-freshness-flow.mjs` |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u4 Verify site package generic CLI — complete
 
 | Item | Value |

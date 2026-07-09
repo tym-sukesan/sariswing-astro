@@ -5,13 +5,22 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u4-verify-site-package-generic-cli — complete.
-Generic verify: verify-site-package.mjs --site gosaki-piano --profile staging|production.
-Legacy verify-manual-upload / verify-g20i3 delegate to shared core — not removed.
-Freshness: verify-site-package checks sourceCommit exists only; HEAD match via verify:package-freshness:*.
-Next: G-20u5 npm convenience scripts.
-No FTP / deploy in G-20u4.
+Current phase: G-20u5-site-package-npm-convenience-and-freshness-flow — complete.
+Operator flow: build:gosaki:* → verify:gosaki:* → verify:package-freshness:* → manual FTP.
+preflight:gosaki:staging|production chains verify + freshness.
+Freshness: build stamps HEAD; any commit after → stale; verify PASS alone does not authorize upload.
+Production upload: STOP (TBD_G-20i, G-20j).
+Legacy npm scripts retained.
+No FTP / deploy in G-20u5.
 ```
+
+## G-20u5 site package npm convenience & freshness flow — complete
+
+- **npm:** build:gosaki:staging|production (+ :dry-run) · verify:gosaki:* · preflight:gosaki:*
+- **Flow:** build current HEAD → verify structure → verify freshness → CHECKLIST → manual FTP
+- **Freshness:** commit after build → stale; upload needs freshness PASS at current HEAD
+- **Production:** G-20j preflight still required; upload STOP
+- **Not executed:** FTP · DB write · full regen
 
 ## G-20u4 verify site package generic CLI — complete
 

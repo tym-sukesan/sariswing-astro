@@ -5,13 +5,23 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20t3-staging-prod-package-upload-safety-hardening — complete.
-Package MANIFEST: targetEnvironment · includesAdmin · intendedRemotePath · sourceCommit · packageProfileName.
-Production package: includesAdmin=false · admin/__admin-staging-shell absent · sitemap excludes admin/api/preview/draft.
-Staging package: includesAdmin=true · intendedRemotePath under /cms-kit-staging/ only.
-Upload docs: public-dist contents only · no mirror/sync/CLI FTP · manifest generatedAt/sourceCommit check.
-FTP / deploy NOT executed in G-20t3.
+Current phase: G-20t4-gosaki-production-profile-full-regen-dry-run — complete.
+Production package: local full regen at 55d0364 · 28 files · August 14 cards.
+Safety: includesAdmin=false · admin absent · sitemap clean · intendedRemotePath=TBD_G-20i (upload STOP).
+G-20t1/t2/t3 reflected in production static-public + manual-upload package.
+FTP / deploy / production upload NOT executed.
+Next: G-20j production upload preflight (remote path / DNS / SSL) when approved.
 ```
+
+## G-20t4 production profile full regen dry-run — complete
+
+- **Command:** `npm run build:gosaki-production-package` (local only)
+- **Output:** `output/manual-upload/gosaki-piano-production/`
+- **MANIFEST:** targetEnvironment=production · includesAdmin=false · sourceCommit=55d0364
+- **August:** schedule/2026-08 · 14 event cards · supabase source
+- **Upload:** blocked (`TBD_G-20i`)
+- **Doc:** gosaki-production-profile-full-regen-dry-run.md
+- **Not executed:** FTP · deploy · DB write
 
 ## G-20t3 package upload safety hardening — complete
 

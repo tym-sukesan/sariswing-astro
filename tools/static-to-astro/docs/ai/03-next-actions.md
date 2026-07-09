@@ -1,6 +1,21 @@
 Last updated: 2026-07-09
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20t4 Gosaki production profile full regen dry-run — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20t4-gosaki-production-profile-full-regen-dry-run` |
+| Base | `55d0364` |
+| Production package | **28 files** · August 14 cards · `scheduleDataSource=supabase` |
+| Admin | **excluded** · `includesAdmin: false` |
+| Sitemap | no admin/api/preview/draft/legacy root · `/schedule/2026-08/` yes |
+| `intendedRemotePath` | `TBD_G-20i` — **upload blocked** |
+| `sourceCommit` | `55d0364…` |
+| FTP / deploy / production upload | **not executed** |
+| Doc | `gosaki-production-profile-full-regen-dry-run.md` |
+| Verifier | `verify-g20t4-gosaki-production-profile-full-regen-dry-run.mjs` |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20t3 Gosaki package upload safety hardening — complete
 
 | Item | Value |

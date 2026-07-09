@@ -20,7 +20,8 @@
     "build:gosaki-production-package": "node scripts/build-gosaki-production-package.mjs",
     "manual-upload:package:gosaki-production": "node scripts/create-manual-upload-package.mjs --site-slug gosaki-piano --public-dir output/static-public/gosaki-piano-production/public-dist --deploy-base / --public-base-url https://www.gosaki-piano.com --target-environment production --package-profile production --intended-remote-path TBD_G-20i --out output/manual-upload/gosaki-piano-production --include-gosaki-read-only-admin false",
     "verify:manual-upload:gosaki-production": "node scripts/verify-g20i3-gosaki-production-package-admin-exclusion.mjs",
-    "verify:package-upload-safety": "node scripts/verify-g20t3-staging-prod-package-upload-safety-hardening.mjs"
+    "verify:package-upload-safety": "node scripts/verify-g20t3-staging-prod-package-upload-safety-hardening.mjs",
+    "verify:g20t4-production-regen": "node scripts/verify-g20t4-gosaki-production-profile-full-regen-dry-run.mjs"
   },
   "devDependencies": {
     "pixelmatch": "^7.1.0",

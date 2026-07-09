@@ -3,6 +3,8 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
+**G-20t4 Gosaki production profile full regen dry-run (2026-07-09):** **complete** — local full production regen at `55d0364`; 28 files; August 14 cards; admin excluded; sitemap clean; `intendedRemotePath: TBD_G-20i` (upload blocked); **no FTP / deploy**. Doc: `gosaki-production-profile-full-regen-dry-run.md`. Verifier: `verify-g20t4-gosaki-production-profile-full-regen-dry-run.mjs`.
+
 **G-20t3 Gosaki staging / production package upload safety hardening (2026-07-09):** **complete** — MANIFEST metadata (`targetEnvironment`, `includesAdmin`, `intendedRemotePath`, `sourceCommit`); environment-aware README/CHECKLIST; production admin/sitemap verifier hardening; **no FTP / deploy**. Doc: `gosaki-package-upload-safety-hardening.md`. Verifier: `verify-g20t3-staging-prod-package-upload-safety-hardening.mjs`.
 
 **G-20t2 Gosaki schedule month discovery generalization (2026-07-09):** **complete** — auto-discover months from published Supabase rows; `optionalMonthOverride` for empty months only; G-20r4a `expectedMonths` gate removed; historical verifier HEAD pins → NOTE (non-blocking). Doc: `gosaki-schedule-month-discovery-generalization.md`.

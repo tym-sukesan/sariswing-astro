@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-20r4c Gosaki schedule public output review (2026-07-09):** **complete** — local review **PASS** · August 14 cards · exclusions OK · **P0 none** · upload-needed for live staging. Doc: `gosaki-schedule-public-output-review.md`. **Next: G-20r4d-upload-preflight.**
+**G-20r4d Gosaki schedule August upload preflight (2026-07-09):** **complete** — 29-file upload plan · remote `/cms-kit-staging/gosaki-piano/` · manual GUI only · **readyForG20r4e**. Doc: `gosaki-schedule-upload-preflight.md`. **Next: G-20r4e-operator-manual-upload-execution.**
+
+**G-20r4c Gosaki schedule public output review (2026-07-09):** **complete**. Doc: `gosaki-schedule-public-output-review.md`.
 
 **G-20r4b Gosaki schedule local regen dry-run (2026-07-09):** **complete**. Doc: `gosaki-schedule-local-regen-dry-run-result.md`.
 

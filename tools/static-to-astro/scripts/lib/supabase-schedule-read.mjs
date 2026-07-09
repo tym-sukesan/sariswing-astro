@@ -14,6 +14,7 @@ import {
   extractAllGosakiScheduleSeeds,
   GOSAKI_SITE_SLUG,
 } from "./gosaki-wix-schedule-extractor.mjs";
+import { resolveScheduleMonthsForBuild } from "./schedule-month-discovery.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const DEFAULT_TOOL_ROOT = path.resolve(__dirname, "../..");
@@ -26,11 +27,15 @@ export const SCHEDULE_SELECT = GOSAKI_SCHEDULE_SELECT;
 
 export const DEFAULT_CANONICAL_ROUTE_PREFIX = "/schedule/";
 
-/** Gosaki pilot — site_slug read config (G-9e) */
+/** Gosaki pilot — site_slug read config (G-9e / G-20t2) */
 export const GOSAKI_SCHEDULE_SITE_CONFIG = {
   siteSlug: GOSAKI_SITE_SLUG,
   canonicalRoutePrefix: DEFAULT_CANONICAL_ROUTE_PREFIX,
-  expectedMonths: ["2026-03", "2026-04", "2026-05", "2026-06", "2026-07", "2026-08"],
+  /**
+   * Optional YYYY-MM keys to include on hub/month routes even when no published rows exist.
+   * Default null — months are auto-discovered from published schedule rows (G-20t2).
+   */
+  optionalMonthOverride: null,
 };
 
 /**
@@ -244,7 +249,7 @@ export async function fetchGosakiSchedulesFromSupabase(env, siteSlug = GOSAKI_SI
   return loadScheduleRowsFromSupabase({
     env,
     siteSlug,
-    months: GOSAKI_SCHEDULE_SITE_CONFIG.expectedMonths,
+    months: null,
     canonicalRoutePrefix: GOSAKI_SCHEDULE_SITE_CONFIG.canonicalRoutePrefix,
   });
 }
@@ -258,6 +263,7 @@ export async function fetchGosakiSchedulesFromSupabase(env, siteSlug = GOSAKI_SI
  *   toolRoot?: string,
  *   canonicalRoutePrefix?: string,
  *   months?: string[] | null,
+ *   optionalMonthOverride?: string[] | null,
  *   logPrefix?: string,
  * }} opts
  */
@@ -269,6 +275,7 @@ export async function loadScheduleDataForBuild({
   toolRoot = DEFAULT_TOOL_ROOT,
   canonicalRoutePrefix = DEFAULT_CANONICAL_ROUTE_PREFIX,
   months = null,
+  optionalMonthOverride = null,
   logPrefix = "schedule-read",
 }) {
   if (!siteSlug) {
@@ -294,7 +301,7 @@ export async function loadScheduleDataForBuild({
           scheduleDataSource: "supabase",
           fallbackReason: null,
           schedules,
-          months: deriveScheduleMonthsFromSchedules(schedules),
+          months: resolveScheduleMonthsForBuild(schedules, optionalMonthOverride),
           siteSlug,
           rowCount: schedules.length,
         };
@@ -325,7 +332,7 @@ export async function loadScheduleDataForBuild({
       scheduleDataSource: "static-fallback",
       fallbackReason: readEnv ? "supabase_empty_or_error" : "supabase_env_missing",
       schedules,
-      months: deriveScheduleMonthsFromSchedules(schedules),
+      months: resolveScheduleMonthsForBuild(schedules, optionalMonthOverride),
       siteSlug,
       rowCount: schedules.length,
     };
@@ -357,7 +364,8 @@ export async function loadGosakiScheduleDataForBuild({
     env,
     toolRoot,
     canonicalRoutePrefix: GOSAKI_SCHEDULE_SITE_CONFIG.canonicalRoutePrefix,
-    months: GOSAKI_SCHEDULE_SITE_CONFIG.expectedMonths,
+    months: null,
+    optionalMonthOverride: GOSAKI_SCHEDULE_SITE_CONFIG.optionalMonthOverride,
     logPrefix: "gosaki-schedule",
     staticFallback: async (inputAbs) => {
       const extracted = extractAllGosakiScheduleSeeds(inputAbs);

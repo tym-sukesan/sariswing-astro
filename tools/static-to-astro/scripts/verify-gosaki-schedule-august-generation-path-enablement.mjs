@@ -19,7 +19,7 @@ const SCHEDULE_READ = "tools/static-to-astro/scripts/lib/supabase-schedule-read.
 const ASTRO_GEN = "tools/static-to-astro/scripts/lib/astro-generator.mjs";
 const DATA_PAGES = "tools/static-to-astro/scripts/lib/gosaki-schedule-data-pages.mjs";
 
-const BASE_COMMIT = "cdbf1cc";
+const BASE_COMMIT = "cdbf1cc"; // historical phase base — superseded by G-20t2 for month discovery
 
 let passed = 0;
 let failed = 0;
@@ -42,6 +42,10 @@ function exists(rel) {
   return fs.existsSync(path.join(REPO_ROOT, rel));
 }
 
+function noteHeadPin(label, actual, expected) {
+  console.log(`NOTE ${label}: current=${actual}, historical phase base=${expected} (non-blocking)`);
+}
+
 const head = spawnSync("git", ["rev-parse", "--short", "HEAD"], {
   cwd: REPO_ROOT,
   encoding: "utf8",
@@ -58,8 +62,8 @@ const currentState = read(`${AI_DIR}/00-current-state.md`);
 const nextActions = read(`${AI_DIR}/03-next-actions.md`);
 const handoff = read(`${AI_DIR}/handoff-to-chatgpt.md`);
 
-assert("HEAD is cdbf1cc", head === BASE_COMMIT, `HEAD=${head}`);
-assert("origin/main is cdbf1cc", origin === BASE_COMMIT, `origin=${origin}`);
+noteHeadPin("HEAD", head, BASE_COMMIT);
+noteHeadPin("origin/main", origin, BASE_COMMIT);
 
 assert("enablement doc exists", exists(DOC_REL));
 assert("G-20r4 plan doc exists", exists(G20R4_REL));
@@ -73,17 +77,16 @@ assert(
 );
 assert("gate complete", /gosakiScheduleAugustGenerationPathEnablementComplete: true/i.test(doc));
 assert("ready for G-20r4b", /readyForG20r4bLocalRegenDryRun: true/i.test(doc));
-assert("expected months count 6", /expectedMonthsCount: 6|6 months/i.test(doc));
+assert("expected months count 6 (historical G-20r4a doc)", /expectedMonthsCount: 6|6 months/i.test(doc));
 
-assert("expectedMonths includes 2026-08 in code", scheduleRead.includes('"2026-08"'));
 assert(
-  "expectedMonths array has six entries",
-  /expectedMonths:\s*\[[\s\S]*"2026-08"[\s\S]*\]/m.test(scheduleRead),
+  "G-20t2 auto-discovery supersedes expectedMonths in code",
+  scheduleRead.includes("resolveScheduleMonthsForBuild") &&
+    scheduleRead.includes("optionalMonthOverride: null"),
 );
 assert(
-  "expectedMonths ends with 2026-08",
-  /"2026-07",\s*"2026-08"/.test(scheduleRead) ||
-    /"2026-07", "2026-08"/.test(scheduleRead),
+  "supabase read no month filter by default",
+  /months:\s*null/.test(scheduleRead),
 );
 
 assert(

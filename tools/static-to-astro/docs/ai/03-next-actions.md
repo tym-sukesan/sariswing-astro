@@ -1,6 +1,19 @@
 Last updated: 2026-07-09
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20t2 Gosaki schedule month discovery generalization — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20t2-schedule-month-discovery-generalization` |
+| Base | `e30e334` |
+| Discovery | `resolveScheduleMonthsForBuild()` from published rows |
+| `expectedMonths` | **removed** — `optionalMonthOverride: null` |
+| New month (e.g. 2026-09) | DB publish only · no config change |
+| Package regen | local (if env present) |
+| FTP / DB write | **forbidden** |
+| Verifier cleanup | HEAD exact pins → NOTE · historical stale → NOTE |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20t1 Gosaki sitemap admin exclusion hardening — complete
 
 | Item | Value |

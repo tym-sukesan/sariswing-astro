@@ -19,7 +19,7 @@ const AI_DIR = "tools/static-to-astro/docs/ai";
 const DOC_REL = "tools/static-to-astro/docs/gosaki-sitemap-admin-exclusion-hardening.md";
 const PACKAGE_SITEMAP = "tools/static-to-astro/output/manual-upload/gosaki-piano/public-dist/sitemap-0.xml";
 const ASTRO_CONFIG = "tools/static-to-astro/output/gosaki-piano-astro/astro.config.mjs";
-const BASE_COMMIT = "6a1fdeb";
+const BASE_COMMIT = "6a1fdeb"; // historical phase base — not a current gate
 const STAGING_BASE = "https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano";
 
 const PUBLIC_ROUTES = [
@@ -57,6 +57,10 @@ function sitemapLocs(xml) {
   return [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]);
 }
 
+function noteHeadPin(label, actual, expected) {
+  console.log(`NOTE ${label}: current=${actual}, historical phase base=${expected} (non-blocking)`);
+}
+
 const head = spawnSync("git", ["rev-parse", "--short", "HEAD"], {
   cwd: REPO_ROOT,
   encoding: "utf8",
@@ -71,8 +75,8 @@ const currentState = read(`${AI_DIR}/00-current-state.md`);
 const nextActions = read(`${AI_DIR}/03-next-actions.md`);
 const handoff = read(`${AI_DIR}/handoff-to-chatgpt.md`);
 
-assert("HEAD is 6a1fdeb", head === BASE_COMMIT, `HEAD=${head}`);
-assert("origin/main is 6a1fdeb", origin === BASE_COMMIT, `origin=${origin}`);
+noteHeadPin("HEAD", head, BASE_COMMIT);
+noteHeadPin("origin/main", origin, BASE_COMMIT);
 
 assert("hardening doc exists", exists(DOC_REL));
 assert("sitemap-exclusions module exists", exists("tools/static-to-astro/scripts/lib/sitemap-exclusions.mjs"));

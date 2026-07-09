@@ -24,9 +24,11 @@ const PUBLIC_DIST_SCHEDULE_REL =
 const JSON_REL =
   "tools/static-to-astro/output/gosaki-piano-astro-production/src/data/gosaki-schedules.json";
 
-const BASE_COMMIT = "cdbf1cc";
+const BASE_COMMIT = "cdbf1cc"; // historical phase base — not a current gate
 const STAGING_REF = "kmjqppxjdnwwrtaeqjta";
 const FORBIDDEN_PROD_REF = "vsbvndwuajjhnzpohghh";
+const STAGING_PACKAGE_SCHEDULE_REL =
+  "tools/static-to-astro/output/manual-upload/gosaki-piano/public-dist/schedule";
 
 let passed = 0;
 let failed = 0;
@@ -49,6 +51,10 @@ function exists(rel) {
   return fs.existsSync(path.join(REPO_ROOT, rel));
 }
 
+function noteHeadPin(label, actual, expected) {
+  console.log(`NOTE ${label}: current=${actual}, historical phase base=${expected} (non-blocking)`);
+}
+
 const head = spawnSync("git", ["rev-parse", "--short", "HEAD"], {
   cwd: REPO_ROOT,
   encoding: "utf8",
@@ -64,8 +70,8 @@ const nextActions = read(`${AI_DIR}/03-next-actions.md`);
 const handoff = read(`${AI_DIR}/handoff-to-chatgpt.md`);
 const scheduleRead = read(SCHEDULE_READ);
 
-assert("HEAD is cdbf1cc", head === BASE_COMMIT, `HEAD=${head}`);
-assert("origin/main is cdbf1cc", origin === BASE_COMMIT, `origin=${origin}`);
+noteHeadPin("HEAD", head, BASE_COMMIT);
+noteHeadPin("origin/main", origin, BASE_COMMIT);
 
 assert("plan doc exists", exists(DOC_REL));
 assert("G-20r3a closure doc exists", exists(G20R3A_REL));
@@ -92,13 +98,23 @@ assert("published false 007 excluded", /schedule-2026-08-007/i.test(doc));
 assert("published false 009 excluded", /schedule-2026-08-009/i.test(doc));
 assert("published false 013 excluded", /schedule-2026-08-013/i.test(doc));
 
-assert("local package stale", /localPackageStale: true|stale/i.test(doc));
+assert("local package stale (historical plan doc)", /localPackageStale: true|stale/i.test(doc));
+assert(
+  "G-20t2 supersedes expectedMonths gate (doc or code)",
+  /G-20t2|month-discovery-generalization/i.test(doc) ||
+    (scheduleRead.includes("resolveScheduleMonthsForBuild") &&
+      scheduleRead.includes("optionalMonthOverride")),
+);
 assert("sql re-execution forbidden", /g20r3SqlReExecution: forbidden|SQL re-execution.*forbidden/i.test(doc));
 assert("staging project ref", doc.includes(STAGING_REF));
 
-assert("expectedMonths blocker documented", /expectedMonths|G-20r4a/i.test(doc));
+assert("expectedMonths blocker documented (historical G-20r4a)", /expectedMonths|G-20r4a/i.test(doc));
 assert("ready for G-20r4a", /readyForG20r4aExpectedMonthsCodeGate: true/i.test(doc));
-assert("expectedMonths includes 2026-08", scheduleRead.includes('"2026-08"'));
+assert(
+  "G-20t2 auto-discovery supersedes expectedMonths gate",
+  scheduleRead.includes("resolveScheduleMonthsForBuild") &&
+    scheduleRead.includes("optionalMonthOverride"),
+);
 
 assert("gosaki-schedules.json path documented", /gosaki-schedules\.json/i.test(doc));
 assert("expected json 74 rows", /74.*published|Total rows.*74/i.test(doc));
@@ -139,13 +155,35 @@ if (exists(PUBLIC_DIST_SCHEDULE_REL)) {
     .readdirSync(path.join(REPO_ROOT, PUBLIC_DIST_SCHEDULE_REL), { withFileTypes: true })
     .filter((d) => d.isDirectory())
     .map((d) => d.name);
-  assert("on-disk public-dist no 2026-08 (stale)", !scheduleDirs.includes("2026-08"));
+  console.log(
+    `NOTE on-disk production schedule months (historical stale snapshot): ${scheduleDirs.join(",") || "(none)"}`,
+  );
+} else {
+  console.log("NOTE on-disk production schedule dir missing (historical stale check skipped)");
 }
 
 if (exists(JSON_REL)) {
   const json = JSON.parse(read(JSON_REL));
   const aug = json.filter((r) => String(r.month ?? "").startsWith("2026-08"));
-  assert("on-disk json 2026-08 rows 0 (stale)", aug.length === 0, `got ${aug.length}`);
+  console.log(
+    `NOTE on-disk production gosaki-schedules.json 2026-08 rows (historical): ${aug.length}`,
+  );
+} else {
+  console.log("NOTE on-disk production gosaki-schedules.json missing (historical stale check skipped)");
+}
+
+if (exists(STAGING_PACKAGE_SCHEDULE_REL)) {
+  const stagingMonths = fs
+    .readdirSync(path.join(REPO_ROOT, STAGING_PACKAGE_SCHEDULE_REL), { withFileTypes: true })
+    .filter((d) => d.isDirectory())
+    .map((d) => d.name);
+  assert(
+    "staging package includes 2026-08 (post G-20r4b/G-20t2)",
+    stagingMonths.includes("2026-08"),
+    stagingMonths.join(","),
+  );
+} else {
+  console.log("SKIP staging package 2026-08 check (run build-gosaki-staging-admin-package.mjs)");
 }
 
 assert("00-current-state mentions G-20r4", /G-20r4|public-reflection-plan/i.test(currentState));

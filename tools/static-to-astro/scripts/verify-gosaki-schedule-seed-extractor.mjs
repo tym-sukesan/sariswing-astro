@@ -23,7 +23,9 @@ import {
   isCanonicalScheduleSourceRoute,
   loadGosakiScheduleDataForBuild,
   loadScheduleDataForBuild,
+  normalizeScheduleRecord,
 } from "./lib/supabase-schedule-read.mjs";
+import { resolveScheduleMonthsForBuild } from "./lib/schedule-month-discovery.mjs";
 import { extractSchedulesFromHtmlFile } from "./lib/schedule-seed-extractor.mjs";
 import fs from "node:fs";
 
@@ -275,10 +277,29 @@ assert(
   "g9e_gosaki_site_config_site_slug",
   GOSAKI_SCHEDULE_SITE_CONFIG.siteSlug === GOSAKI_SITE_SLUG,
 );
-assertEqual("g9e_gosaki_expected_month_count", GOSAKI_SCHEDULE_SITE_CONFIG.expectedMonths.length, 6);
 assert(
-  "g9e_gosaki_expected_months_includes_2026_08",
-  GOSAKI_SCHEDULE_SITE_CONFIG.expectedMonths.includes("2026-08"),
+  "g9e_gosaki_optional_month_override_null",
+  GOSAKI_SCHEDULE_SITE_CONFIG.optionalMonthOverride == null,
+);
+const mockNewMonthRows = [
+  normalizeScheduleRecord({
+    legacy_id: "schedule-2026-09-001",
+    site_slug: GOSAKI_SITE_SLUG,
+    date: "2026-09-01",
+    month: "2026-09",
+    source_route: "/schedule/2026-09/",
+    published: true,
+    sort_order: 1,
+  }),
+];
+const discoveredMonths = resolveScheduleMonthsForBuild(mockNewMonthRows, null);
+assert(
+  "g20t2_auto_discovers_new_month_without_config",
+  discoveredMonths.some((m) => m.month === "2026-09"),
+);
+assert(
+  "g20t2_optional_override_adds_empty_month",
+  resolveScheduleMonthsForBuild([], ["2026-10"]).some((m) => m.month === "2026-10" && m.count === 0),
 );
 assert(
   "g9e_canonical_route_filter",

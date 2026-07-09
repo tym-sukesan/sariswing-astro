@@ -5,10 +5,19 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20t1-gosaki-sitemap-admin-exclusion-hardening — complete.
-Sitemap: /admin/ excluded · schedule/2026-08/ retained · CMS Kit generic rules
-Package: local regen verified · FTP not executed
+Current phase: G-20t2-schedule-month-discovery-generalization — complete.
+Schedule months: auto-discovered from published rows · optionalMonthOverride for empty months
+Sitemap: /schedule/YYYY-MM/ yes · legacy /YYYY-MM/ root no · admin excluded (G-20t1)
+Package: local regen verified when env present · FTP not executed
 ```
+
+## G-20t2 schedule month discovery generalization — complete
+
+- **Module:** schedule-month-discovery.mjs · resolveScheduleMonthsForBuild()
+- **Change:** removed expectedMonths Supabase filter; months from published rows
+- **Override:** optionalMonthOverride null — empty-month hub only
+- **Verifier:** historical HEAD pins are NOTE-only (G-20t2 follow-up)
+- **Doc:** gosaki-schedule-month-discovery-generalization.md
 
 ## G-20t1 sitemap admin exclusion hardening — complete
 

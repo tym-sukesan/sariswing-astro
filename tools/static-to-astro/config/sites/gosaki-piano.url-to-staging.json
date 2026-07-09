@@ -1,6 +1,7 @@
 {
   "$comment": "G-7b — URL-to-staging orchestrator config for gosaki-piano.com pilot. No secrets.",
   "siteSlug": "gosaki-piano",
+  "siteKey": "gosaki-piano",
   "startUrl": "https://www.gosaki-piano.com/",
   "fixtureOut": "fixtures/gosaki-piano",
   "projectOut": "output/gosaki-piano-astro",

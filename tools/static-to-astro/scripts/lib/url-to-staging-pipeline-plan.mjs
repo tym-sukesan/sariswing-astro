@@ -107,6 +107,7 @@ export function buildUrlToStagingStepPlan(config, gates, dryRun) {
     wouldDeploy: false,
     command: [
       `node scripts/convert-static-to-astro.mjs ${config.fixtureOutRel} ${config.projectOutRel}`,
+      config.siteKey ? `--site ${config.siteKey}` : "",
       config.stagingBaseUrl ? `--base-url ${config.stagingBaseUrl}` : "",
       `--deploy-base ${config.deployBase}`,
       `--site-profile ${config.siteProfile}`,
@@ -117,6 +118,7 @@ export function buildUrlToStagingStepPlan(config, gates, dryRun) {
       .join(" "),
     details: {
       gate: "runConvert",
+      siteKey: config.siteKey ?? config.siteSlug,
       siteProfile: config.siteProfile,
       skippedReason: gates.runConvert ? null : "gate runConvert=false",
     },
@@ -241,8 +243,9 @@ export function buildNextManualSteps(config, gates, dryRun) {
     steps.push(`Ensure fixture exists at ${config.fixtureOutRel} or pass --run-crawl.`);
   }
   if (!gates.runConvert) {
+    const siteFlag = config.siteKey ? ` --site ${config.siteKey}` : "";
     steps.push(
-      `Run convert: node scripts/convert-static-to-astro.mjs ${config.fixtureOutRel} ${config.projectOutRel} --base-url <staging> --deploy-base ${config.deployBase}`,
+      `Run convert: node scripts/convert-static-to-astro.mjs ${config.fixtureOutRel} ${config.projectOutRel}${siteFlag} --base-url <staging> --deploy-base ${config.deployBase}`,
     );
   }
   if (!gates.runBuild) {

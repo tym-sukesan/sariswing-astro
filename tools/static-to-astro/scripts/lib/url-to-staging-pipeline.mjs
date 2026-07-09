@@ -146,14 +146,17 @@ export async function runUrlToStagingPipeline(opts) {
         throw new Error(`Fixture not found: ${config.fixtureOut}`);
       }
       const { generateAstroProject } = await import("./astro-generator.mjs");
-      const { isGosakiPianoFixture } = await import("./gosaki-about-band-profiles.mjs");
-      const { loadGosakiScheduleDataForBuild } = await import("./supabase-schedule-read.mjs");
-      let gosakiScheduleBundle = null;
-      if (isGosakiPianoFixture(config.fixtureOut)) {
-        gosakiScheduleBundle = await loadGosakiScheduleDataForBuild({
-          inputDir: config.fixtureOut,
-        });
+      const { loadSiteSupabaseDataForBuild } = await import("./site-aware-supabase-loaders.mjs");
+      const { resolveEffectiveUrlToStagingSiteKey } = await import("./url-to-staging-site-registry.mjs");
+      const siteKey = resolveEffectiveUrlToStagingSiteKey(config);
+      if (!siteKey) {
+        throw new Error("siteKey required for convert step (use --site or siteKey in config)");
       }
+      const supabaseData = await loadSiteSupabaseDataForBuild({
+        siteKey,
+        inputDir: config.fixtureOut,
+        toolRoot,
+      });
       const result = generateAstroProject(config.fixtureOut, config.projectOut, {
         dryRun: false,
         baseUrl: config.stagingBaseUrl ?? null,
@@ -161,7 +164,9 @@ export async function runUrlToStagingPipeline(opts) {
         productionBaseUrl: config.productionBaseUrl ?? config.startUrl ?? null,
         siteProfile: config.siteProfile,
         verifyBuild: gates.runBuild,
-        gosakiScheduleBundle,
+        siteKey,
+        gosakiScheduleBundle: supabaseData.schedule,
+        gosakiDiscographyBundle: supabaseData.discography,
       });
       artifacts.astroProject = config.projectOut;
       artifacts.conversionReport = path.join(config.projectOut, "CONVERSION_REPORT.md");
@@ -219,6 +224,7 @@ export async function runUrlToStagingPipeline(opts) {
         toolRoot,
         publicDirCli: null,
         manifestOutDir: config.staticPublicOut,
+        siteKey: config.siteKey ?? config.siteSlug,
       });
       artifacts.staticPublic = pubResult.staticPublicCopy?.dest ?? config.staticPublicOut;
       if (publicStep) {
@@ -289,6 +295,7 @@ export async function runUrlToStagingPipeline(opts) {
   /** @type {Record<string, unknown>} */
   const manifest = {
     phase: pilotPhase ?? PIPELINE_PHASE,
+    siteKey: config.siteKey ?? config.siteSlug,
     siteSlug: config.siteSlug,
     startUrl: config.startUrl,
     fixtureOut: config.fixtureOutRel,

@@ -709,6 +709,14 @@ const astroGeneratorSrc = fs.readFileSync(
   path.join(TOOL_ROOT, "scripts/lib/astro-generator.mjs"),
   "utf8",
 );
+const sitemapExclusionsSrc = fs.readFileSync(
+  path.join(TOOL_ROOT, "scripts/lib/sitemap-exclusions.mjs"),
+  "utf8",
+);
+const siteGeneratorHooksSrc = fs.readFileSync(
+  path.join(TOOL_ROOT, "scripts/lib/site-generator-hooks.mjs"),
+  "utf8",
+);
 assert(
   "gosaki G-8g3 schedule hub design block present",
   gosakiOverrides.includes("G-8g3 gosaki schedule hub design and link fix") &&
@@ -899,7 +907,7 @@ assert(
 assert(
   "gosaki G-9c0b sitemap excludes legacy month routes",
   astroGeneratorSrc.includes("buildSitemapIntegrationBlock") &&
-    astroGeneratorSrc.includes("filter: (page)"),
+    sitemapExclusionsSrc.includes("filter: (page)"),
 );
 assert(
   "gosaki G-9c0b legacy stub css present",
@@ -990,7 +998,7 @@ assert(
 );
 assert(
   "G-9d astro generator wires data pages",
-  astroGeneratorSrc.includes("applyGosakiScheduleDataPages") &&
+  siteGeneratorHooksSrc.includes("applyGosakiScheduleDataPages") &&
     astroGeneratorSrc.includes("gosakiScheduleBundle"),
 );
 assert(
@@ -4241,6 +4249,41 @@ assert(
 assert(
   "G-9b3 still uses safe display stack not futura",
   gosakiOverrides.includes('"Avenir Next"') && !gosakiOverrides.includes("futura-lt-w01-book"),
+);
+
+// --- G-20u14 URL-to-staging pipeline site-aware ---
+
+const urlStagingPipelineSrc = fs.readFileSync(
+  path.join(TOOL_ROOT, "scripts/lib/url-to-staging-pipeline.mjs"),
+  "utf8",
+);
+const urlStagingCliSrc = fs.readFileSync(
+  path.join(TOOL_ROOT, "scripts/url-to-staging-pipeline.mjs"),
+  "utf8",
+);
+const urlStagingPlanSrc = fs.readFileSync(
+  path.join(TOOL_ROOT, "scripts/lib/url-to-staging-pipeline-plan.mjs"),
+  "utf8",
+);
+assert(
+  "G-20u14 pipeline no isGosakiPianoFixture",
+  !urlStagingPipelineSrc.includes("isGosakiPianoFixture"),
+);
+assert(
+  "G-20u14 pipeline uses loadSiteSupabaseDataForBuild",
+  urlStagingPipelineSrc.includes("loadSiteSupabaseDataForBuild"),
+);
+assert(
+  "G-20u14 CLI --site flag",
+  urlStagingCliSrc.includes('arg === "--site"'),
+);
+assert(
+  "G-20u14 plan convert includes --site",
+  urlStagingPlanSrc.includes("`--site ${config.siteKey}`"),
+);
+assert(
+  "G-20u14 buildNextManualSteps includes --site",
+  urlStagingPlanSrc.includes(" --site ${config.siteKey}"),
 );
 
 // --- cleanup temp manifest ---

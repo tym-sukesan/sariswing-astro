@@ -5,11 +5,22 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u13-site-aware-supabase-loaders — complete.
-Supabase reads: siteKey → registry supabaseSiteSlug + supabaseFeatures.
-Gosaki wrappers retained. Pilot skips Supabase (null bundles). Read-only only.
-No DB write / FTP / deploy.
+Current phase: G-20u14-url-to-staging-pipeline-site-aware — complete.
+URL-to-staging: --site SITE_KEY → registry → loadSiteSupabaseDataForBuild + siteKey convert.
+Gosaki legacy --config retained. Pilot noop + Supabase skip. No FTP / deploy / DB write.
 ```
+
+## G-20u14 URL-to-staging pipeline site-aware — complete
+
+- **CLI:** `npm run url:staging -- --site gosaki-piano --dry-run` (or `pilot-sample-static`)
+- **Module:** `url-to-staging-site-registry.mjs` — `buildUrlToStagingConfigFromSite`
+- **Convert:** replaced `isGosakiPianoFixture` with `loadSiteSupabaseDataForBuild({ siteKey })`
+- **Plan:** convert step command includes `--site ${siteKey}`
+- **Legacy:** `--config config/sites/gosaki-piano.url-to-staging.json` still works
+- **Pilot:** `pilot-sample-static.url-to-staging.json` · noop hooks · null Supabase bundles
+- **Not executed:** FTP · deploy · DB write · live crawl
+- **Legacy verifier:** G-9c0b/G-9d historical FAILs fixed (sitemap filter → `sitemap-exclusions.mjs`; data pages → `site-generator-hooks.mjs`); `verify-url-to-staging-pipeline.mjs` **0 failed**
+- **Manual steps:** `buildNextManualSteps` includes `--site`
 
 ## G-20u13 site-aware Supabase loaders — complete
 

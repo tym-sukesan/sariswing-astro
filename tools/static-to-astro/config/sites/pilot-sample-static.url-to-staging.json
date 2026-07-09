@@ -1,0 +1,20 @@
+{
+  "$comment": "G-20u14 — URL-to-staging dry-run config for pilot-sample-static. No secrets.",
+  "siteKey": "pilot-sample-static",
+  "siteSlug": "pilot-sample-static",
+  "startUrl": "https://example.com/",
+  "fixtureOut": "fixtures/sample-static-site",
+  "projectOut": "output/pilot-sample-static-astro",
+  "staticPublicOut": "output/static-public/pilot-sample-static",
+  "deployBase": "/cms-kit-staging/pilot-sample-static/",
+  "stagingBaseUrl": "https://yskcreate.weblike.jp/cms-kit-staging/pilot-sample-static",
+  "siteProfile": "generic",
+  "maxPages": 10,
+  "sameOriginOnly": true,
+  "respectRobots": true,
+  "seo": {
+    "stagingNoindex": true,
+    "robotsDisallowAll": true,
+    "canonicalMode": "staging-url"
+  }
+}

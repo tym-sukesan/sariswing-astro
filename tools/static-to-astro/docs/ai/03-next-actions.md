@@ -1,6 +1,23 @@
 Last updated: 2026-07-10
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u14 URL-to-staging pipeline site-aware — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u14-url-to-staging-pipeline-site-aware` |
+| Base | `861ea4d` |
+| CLI | `url-to-staging-pipeline.mjs --site SITE_KEY` |
+| Module | `url-to-staging-site-registry.mjs` |
+| Convert | `loadSiteSupabaseDataForBuild` + `siteKey` (no `isGosakiPianoFixture`) |
+| Pilot | noop hooks · Supabase skip · `--site pilot-sample-static` dry-run |
+| Legacy | `--config config/sites/gosaki-piano.url-to-staging.json` retained |
+| Not executed | FTP · deploy · DB write · live crawl |
+| Doc | `url-to-staging-pipeline-site-aware.md` |
+| Verifier | `verify-g20u14-url-to-staging-pipeline-site-aware.mjs` |
+| Legacy verifier | `verify-url-to-staging-pipeline.mjs` — G-9c0b/G-9d historical source-location drift fixed; **0 failed** |
+| Manual steps | `buildNextManualSteps` includes `--site` in convert hint |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u13 Site-aware Supabase loaders — complete
 
 | Item | Value |

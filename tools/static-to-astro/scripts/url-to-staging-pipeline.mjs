@@ -13,6 +13,9 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import {
+  buildUrlToStagingConfigFromSite,
+} from "./lib/url-to-staging-site-registry.mjs";
+import {
   loadUrlToStagingConfig,
   mergeConfigWithCli,
   normalizeUrlToStagingConfig,
@@ -29,6 +32,7 @@ function printHelp() {
 Orchestrate crawl → analyze → convert → build → static-public for URL-to-staging pipeline.
 
 Options:
+  --site SITE_KEY        Resolve config from site registry (e.g. gosaki-piano, pilot-sample-static)
   --config PATH          Site config JSON (e.g. config/sites/gosaki-piano.url-to-staging.json)
   --url URL              Start URL (overrides config)
   --site-slug SLUG       Site slug (overrides config)
@@ -55,6 +59,10 @@ Options:
 
 Examples:
   npm run url:staging -- \\
+    --site gosaki-piano \\
+    --dry-run
+
+  npm run url:staging -- \\
     --config config/sites/gosaki-piano.url-to-staging.json \\
     --dry-run
 
@@ -73,6 +81,7 @@ Safety: default dry-run. Do not crawl gosaki-piano.com without explicit operator
 function parseArgs(argv) {
   /** @type {Record<string, unknown>} */
   const opts = {
+    site: null,
     config: null,
     url: null,
     siteSlug: null,
@@ -137,6 +146,7 @@ function parseArgs(argv) {
       return v;
     };
     if (arg === "--config") opts.config = nextVal();
+    else if (arg === "--site") opts.site = nextVal();
     else if (arg === "--url") opts.url = nextVal();
     else if (arg === "--site-slug") opts.siteSlug = nextVal();
     else if (arg === "--fixture-out") opts.fixtureOut = nextVal();
@@ -162,6 +172,7 @@ function configFromCliOnly(cli) {
     throw new Error("--url and --site-slug required when --config is not provided");
   }
   const raw = {
+    siteKey: cli.site ?? cli.siteSlug,
     siteSlug: cli.siteSlug,
     startUrl: cli.url,
     fixtureOut: cli.fixtureOut ?? `fixtures/${cli.siteSlug}`,
@@ -194,9 +205,14 @@ async function main() {
 
   try {
     let config;
-    if (cli.config) {
+    if (cli.site) {
+      config = buildUrlToStagingConfigFromSite(String(cli.site), TOOL_ROOT, cli);
+    } else if (cli.config) {
       config = loadUrlToStagingConfig(String(cli.config), TOOL_ROOT);
       config = mergeConfigWithCli(config, cli);
+      if (!config.siteKey) {
+        config.siteKey = config.siteSlug;
+      }
     } else {
       config = configFromCliOnly(cli);
     }

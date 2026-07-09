@@ -74,6 +74,7 @@ export function normalizeUrlToStagingConfig(raw, toolRoot = DEFAULT_TOOL_ROOT, r
     raw.productionBaseUrl != null ? String(raw.productionBaseUrl).replace(/\/$/, "") : null;
 
   return {
+    siteKey: raw.siteKey != null ? String(raw.siteKey) : siteSlug,
     siteSlug,
     startUrl: String(raw.startUrl),
     fixtureOut,
@@ -108,6 +109,7 @@ export function mergeConfigWithCli(config, cli) {
   const merged = { ...config };
   if (cli.url) merged.startUrl = String(cli.url);
   if (cli.siteSlug) merged.siteSlug = String(cli.siteSlug);
+  if (cli.siteKey) merged.siteKey = String(cli.siteKey);
   if (cli.fixtureOut) {
     merged.fixtureOut = resolveSiteConfigPath(String(cli.fixtureOut), DEFAULT_TOOL_ROOT);
     merged.fixtureOutRel = toRepoRelativePath(merged.fixtureOut, DEFAULT_TOOL_ROOT);

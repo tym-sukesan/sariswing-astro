@@ -15,11 +15,12 @@
     "extract:gosaki-schedule-seed": "node scripts/extract-gosaki-schedule-seed.mjs",
     "generate:gosaki-schedule-seed-sql": "node scripts/generate-gosaki-schedules-seed-sql.mjs --out scripts/supabase/gosaki-schedules-seed.template.sql",
     "verify:ftp-deployer-safety": "node scripts/verify-public-dist-ftp-deployer-safety.mjs",
-    "manual-upload:package": "node scripts/create-manual-upload-package.mjs --public-dir output/static-public/gosaki-piano/public-dist --out output/manual-upload/gosaki-piano",
+    "manual-upload:package": "node scripts/create-manual-upload-package.mjs --public-dir output/static-public/gosaki-piano/public-dist --out output/manual-upload/gosaki-piano --target-environment staging --package-profile staging --deploy-base /cms-kit-staging/gosaki-piano/ --staging-url https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano --intended-remote-path /cms-kit-staging/gosaki-piano/ --include-gosaki-read-only-admin true",
     "verify:manual-upload": "node scripts/verify-manual-upload-package.mjs",
     "build:gosaki-production-package": "node scripts/build-gosaki-production-package.mjs",
-    "manual-upload:package:gosaki-production": "node scripts/create-manual-upload-package.mjs --site-slug gosaki-piano --public-dir output/static-public/gosaki-piano-production/public-dist --deploy-base / --staging-url https://www.gosaki-piano.com --out output/manual-upload/gosaki-piano-production --include-gosaki-read-only-admin false",
-    "verify:manual-upload:gosaki-production": "node scripts/verify-g20i3-gosaki-production-package-admin-exclusion.mjs"
+    "manual-upload:package:gosaki-production": "node scripts/create-manual-upload-package.mjs --site-slug gosaki-piano --public-dir output/static-public/gosaki-piano-production/public-dist --deploy-base / --public-base-url https://www.gosaki-piano.com --target-environment production --package-profile production --intended-remote-path TBD_G-20i --out output/manual-upload/gosaki-piano-production --include-gosaki-read-only-admin false",
+    "verify:manual-upload:gosaki-production": "node scripts/verify-g20i3-gosaki-production-package-admin-exclusion.mjs",
+    "verify:package-upload-safety": "node scripts/verify-g20t3-staging-prod-package-upload-safety-hardening.mjs"
   },
   "devDependencies": {
     "pixelmatch": "^7.1.0",

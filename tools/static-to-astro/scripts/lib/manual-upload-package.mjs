@@ -1,5 +1,5 @@
 /**
- * Manual staging upload package builder (G-7g).
+ * Manual staging upload package builder (G-7g / G-20t3).
  * No FTP connection — copies public-dist locally and writes operator docs.
  */
 
@@ -11,6 +11,7 @@ import {
   detectGosakiReadOnlyAdminInPublicDir,
   listPublicFiles,
 } from "./static-public-artifact-verifier.mjs";
+import { isUnsafeIntendedRemotePath, resolveSourceCommit, sanitizeProductionPublicDistSitemaps } from "./package-upload-safety.mjs";
 
 function resolveStaticPublicManifestPath(publicDir) {
   const abs = path.resolve(publicDir);
@@ -35,11 +36,13 @@ export function loadStaticPublicManifest(publicDistDir) {
 
 /**
  * @param {string} publicDistDir
+ * @param {{ targetEnvironment?: "staging"|"production" }} [opts]
  */
-export function validatePublicDistForManualUpload(publicDistDir) {
+export function validatePublicDistForManualUpload(publicDistDir, opts = {}) {
   /** @type {string[]} */
   const errors = [];
   const abs = path.resolve(publicDistDir);
+  const targetEnvironment = opts.targetEnvironment ?? "staging";
 
   if (!fs.existsSync(abs) || !fs.statSync(abs).isDirectory()) {
     return { ok: false, errors: ["public-dist does not exist or is not a directory"], fileCount: 0 };
@@ -56,11 +59,18 @@ export function validatePublicDistForManualUpload(publicDistDir) {
     errors.push("safeForStaticFtp is not true in static-public-manifest.json");
   }
 
-  if (fs.existsSync(path.join(abs, "admin"))) {
+  const adminPresent = fs.existsSync(path.join(abs, "admin"));
+  if (targetEnvironment === "production") {
+    if (adminPresent) errors.push("admin/ must not exist in production public-dist");
+    if (fs.existsSync(path.join(abs, "__admin-staging-shell"))) {
+      errors.push("__admin-staging-shell/ must not exist in production public-dist");
+    }
+  } else if (adminPresent) {
     if (!detectGosakiReadOnlyAdminInPublicDir(abs)) {
       errors.push("admin/ must not exist in public-dist (unless Gosaki read-only admin G-11b)");
     }
   }
+
   if (fs.existsSync(path.join(abs, "api"))) errors.push("api/ must not exist in public-dist");
 
   const cssPresence = verifyPublicDistCssPresence(
@@ -79,6 +89,7 @@ export function validatePublicDistForManualUpload(publicDistDir) {
     manifest: manifestState.manifest,
     manifestPath: manifestState.manifestPath,
     cssPresence,
+    adminPresent,
   };
 }
 
@@ -86,48 +97,124 @@ export function validatePublicDistForManualUpload(publicDistDir) {
  * @param {{
  *   siteSlug: string,
  *   deployBase: string,
- *   stagingUrl: string,
+ *   stagingUrl?: string,
+ *   publicBaseUrl?: string,
  *   sourcePublicDist: string,
  *   fileCount: number,
  *   safeForStaticFtp: boolean,
  *   cssPresenceOk?: boolean,
+ *   targetEnvironment?: "staging"|"production",
+ *   packageProfileName?: string,
+ *   intendedRemotePath?: string,
+ *   sourceCommit?: string | null,
+ *   includesAdmin?: boolean,
+ *   includeGosakiReadOnlyAdmin?: boolean,
  * }} meta
  */
 export function buildManualUploadManifest(meta) {
+  const deployBase = normalizeDeployBase(meta.deployBase);
+  const publicBaseUrl = (meta.publicBaseUrl ?? meta.stagingUrl ?? "").replace(/\/$/, "") + "/";
+  const intendedRemotePath = meta.intendedRemotePath ?? deployBase;
+  const targetEnvironment = meta.targetEnvironment ?? "staging";
+  const packageProfileName =
+    meta.packageProfileName ?? (targetEnvironment === "production" ? "production" : "staging");
+  const includesAdmin =
+    meta.includesAdmin === true ||
+    (meta.includeGosakiReadOnlyAdmin === true && targetEnvironment !== "production");
+
   const manifest = {
-    phase: "G-8c-wix-static-export-responsive-baseline-generalization",
+    phase: "G-20t3-package-upload-safety-hardening",
     siteSlug: meta.siteSlug,
-    deployBase: normalizeDeployBase(meta.deployBase),
-    stagingUrl: meta.stagingUrl.replace(/\/$/, "") + "/",
+    packageProfileName,
+    targetEnvironment,
+    deployBase,
+    stagingUrl: publicBaseUrl,
+    publicBaseUrl,
+    intendedRemotePath,
     source: meta.sourcePublicDist.replace(/\\/g, "/"),
+    sourceCommit: meta.sourceCommit ?? null,
     fileCount: meta.fileCount,
     generatedAt: new Date().toISOString(),
     ftpAutoDeployUsed: false,
     safeForStaticFtp: meta.safeForStaticFtp,
     cssPresenceOk: meta.cssPresenceOk === true,
-    uploadTarget: normalizeDeployBase(meta.deployBase),
+    includesAdmin,
+    uploadTarget: intendedRemotePath,
     uploadContents: "public-dist/ contents only (not the public-dist folder itself)",
+    includeGosakiReadOnlyAdmin: includesAdmin,
+    adminExcludedFromPackage: !includesAdmin,
   };
-  if (meta.includeGosakiReadOnlyAdmin === false) {
-    manifest.includeGosakiReadOnlyAdmin = false;
-    manifest.adminExcludedFromPackage = true;
-  } else if (meta.includeGosakiReadOnlyAdmin === true) {
-    manifest.includeGosakiReadOnlyAdmin = true;
-    manifest.adminExcludedFromPackage = false;
-  }
+
   return manifest;
 }
 
 /**
- * @param {{ deployBase: string, stagingUrl: string, siteSlug: string }} opts
+ * @param {{
+ *   deployBase: string,
+ *   stagingUrl?: string,
+ *   publicBaseUrl?: string,
+ *   siteSlug: string,
+ *   targetEnvironment?: "staging"|"production",
+ *   packageProfileName?: string,
+ *   intendedRemotePath?: string,
+ *   includesAdmin?: boolean,
+ *   zipName?: string,
+ * }} opts
  */
 export function formatReadmeUpload(opts) {
   const base = normalizeDeployBase(opts.deployBase);
-  const url = opts.stagingUrl.replace(/\/$/, "") + "/";
+  const url = (opts.publicBaseUrl ?? opts.stagingUrl ?? "").replace(/\/$/, "") + "/";
+  const targetEnvironment = opts.targetEnvironment ?? "staging";
+  const packageProfileName = opts.packageProfileName ?? targetEnvironment;
+  const intendedRemotePath = opts.intendedRemotePath ?? base;
+  const includesAdmin = opts.includesAdmin === true;
+  const zipName = opts.zipName ?? `${opts.siteSlug}-manual-upload.zip`;
+  const isProduction = targetEnvironment === "production";
 
-  return `# Manual staging upload — ${opts.siteSlug}
+  const environmentLabel = isProduction ? "production" : "staging";
+  const adminLine = includesAdmin
+    ? `${base}admin/          (G-11b read-only CMS — staging only)`
+    : `${base}admin/          (must NOT exist in this package)`;
 
-This package is for **manual FTP upload only**. Do **not** use automated FTP deploy scripts.
+  const postUploadChecks = isProduction
+    ? `- ${url}
+- ${url}about/
+- ${url}contact/
+- ${url}schedule/
+- ${url}robots.txt
+- ${url}sitemap-index.xml
+
+Check: HTTP 200, **no** noindex on public pages, canonical / og:url use **www.gosaki-piano.com**.`
+    : `- ${url}
+- ${url}about/
+- ${url}contact/
+- ${url}2026-07/
+- ${url}robots.txt
+${includesAdmin ? `- ${url}admin/ (read-only CMS, G-11b)` : ""}
+
+Check: HTTP 200, noindex, canonical / og:url use staging host, Nav Home → staging path.`;
+
+  const profileWarning = isProduction
+    ? `**PRODUCTION package** (\`${packageProfileName}\`) — do **not** upload to staging path \`/cms-kit-staging/\`.`
+    : `**STAGING package** (\`${packageProfileName}\`) — do **not** upload to production root \`/\` or www.gosaki-piano.com document root until cutover is approved.`;
+
+  return `# Manual ${environmentLabel} upload — ${opts.siteSlug}
+
+${profileWarning}
+
+This package is for **manual FTP upload only**. Do **not** use automated FTP deploy scripts, mirror, sync, or CLI FTP tools.
+
+## Package identity (verify before upload)
+
+| Field | Value |
+| --- | --- |
+| \`packageProfileName\` | \`${packageProfileName}\` |
+| \`targetEnvironment\` | \`${targetEnvironment}\` |
+| \`includesAdmin\` | \`${includesAdmin}\` |
+| \`intendedRemotePath\` | \`${intendedRemotePath}\` |
+| \`publicBaseUrl\` | \`${url}\` |
+
+Open \`MANIFEST.json\` and confirm \`generatedAt\` and \`sourceCommit\` match the build you intend to upload.
 
 ## What this is
 
@@ -137,8 +224,10 @@ This package is for **manual FTP upload only**. Do **not** use automated FTP dep
 ## Upload destination (remote path)
 
 \`\`\`txt
-${base}
+${intendedRemotePath}
 \`\`\`
+
+**STOP** if remote path is empty, account root \`/\`, \`./\`, or still marked \`TBD\`.
 
 ## What to upload
 
@@ -151,13 +240,11 @@ ${base}index.html
 ${base}about/
 ${base}contact/
 ${base}discography/
-${base}link/
-${base}2026-03/
-${base}2026-07/
+${base}schedule/
 ${base}robots.txt
 ${base}sitemap-0.xml
 ${base}sitemap-index.xml
-${base}admin/          (G-11b read-only CMS — optional)
+${adminLine}
 \`\`\`
 
 ## Wrong layout (do NOT do this)
@@ -169,61 +256,100 @@ ${base}public-dist/about/
 
 ## Safety rules
 
-- Open \`${base}\` in FTP before uploading — **confirm you are NOT at account root \`/\`**
+- Open \`${intendedRemotePath}\` in FTP before uploading — **confirm you are NOT at account root \`/\`** unless this is an approved production cutover
 - Do **not** delete existing root or other folders
-- Do **not** use mirror / sync / delete-remote-extras options in FileZilla
-- Overwrite existing files in \`${base}\` only — no delete-sync
+- Do **not** use mirror / sync / delete-remote-extras / \`mirror --delete\` in FileZilla or lftp
+- Do **not** use command-line FTP or automated deploy scripts
+- Overwrite existing files in the target path only — no delete-sync
+- Do **not** mix staging and production packages — check \`MANIFEST.json\` \`targetEnvironment\`
 - Visually confirm remote path before upload
 
 ## After upload — verify these URLs
 
-- ${url}
-- ${url}about/
-- ${url}contact/
-- ${url}2026-07/
-- ${url}robots.txt
-- ${url}admin/ (read-only CMS, G-11b)
-
-Check: HTTP 200, noindex, canonical / og:url use staging host, Nav Home → staging path.
+${postUploadChecks}
 
 ## Package files
 
 | File | Purpose |
 |------|---------|
-| \`public-dist/\` | Files to upload |
+| \`public-dist/\` | Files to upload (contents only) |
 | \`CHECKLIST.md\` | Before/after checklist |
-| \`MANIFEST.json\` | Package metadata |
-| \`gosaki-piano-manual-upload.zip\` | Same package archived |
+| \`MANIFEST.json\` | Package metadata — **read first** |
+| \`${zipName}\` | Same package archived |
 `;
 }
 
 /**
- * @param {{ deployBase: string }} opts
+ * @param {{
+ *   deployBase: string,
+ *   publicBaseUrl?: string,
+ *   stagingUrl?: string,
+ *   targetEnvironment?: "staging"|"production",
+ *   packageProfileName?: string,
+ *   intendedRemotePath?: string,
+ *   includesAdmin?: boolean,
+ * }} opts
  */
 export function formatUploadChecklist(opts) {
   const base = normalizeDeployBase(opts.deployBase);
-  return `# Manual upload checklist
+  const url = (opts.publicBaseUrl ?? opts.stagingUrl ?? "").replace(/\/$/, "") + "/";
+  const targetEnvironment = opts.targetEnvironment ?? "staging";
+  const packageProfileName = opts.packageProfileName ?? targetEnvironment;
+  const intendedRemotePath = opts.intendedRemotePath ?? base;
+  const includesAdmin = opts.includesAdmin === true;
+  const isProduction = targetEnvironment === "production";
+  const remotePathUnsafe = isUnsafeIntendedRemotePath(intendedRemotePath);
 
-## Before upload
+  const manifestChecks = `- [ ] Open \`MANIFEST.json\`
+- [ ] \`targetEnvironment\` is **${targetEnvironment}** (not ${isProduction ? "staging" : "production"})
+- [ ] \`packageProfileName\` is **${packageProfileName}**
+- [ ] \`includesAdmin\` is **${includesAdmin}**${isProduction ? " — production must be false" : ""}
+- [ ] \`generatedAt\` is recent enough for this release
+- [ ] \`sourceCommit\` matches the intended build commit
+- [ ] \`safeForStaticFtp\` is **true**
+- [ ] \`ftpAutoDeployUsed\` is **false**`;
 
-- [ ] FTP host / credentials are correct (FileZilla or Lolipop FTP)
-- [ ] Navigate to remote path: \`${base}\`
-- [ ] Confirm you are **NOT** at account root \`/\`
-- [ ] Select **contents** of local \`public-dist/\` (not the \`public-dist\` folder)
-- [ ] Do **not** use mirror / sync / delete-remote-extras
+  const remoteChecks = remotePathUnsafe
+    ? `- [ ] **STOP** — \`intendedRemotePath\` is \`${intendedRemotePath}\` (unsafe / TBD). Do not upload until path is confirmed.`
+    : `- [ ] Navigate to remote path: \`${intendedRemotePath}\`
+- [ ] Confirm you are **NOT** at the wrong environment path
+- [ ] ${isProduction ? "Confirm this is the approved production document root — not staging" : "Confirm path is under `/cms-kit-staging/` — not production root"}`;
+
+  const afterUpload = isProduction
+    ? `- [ ] Top page HTTP 200 — ${url}
+- [ ] \`/about/\` HTTP 200
+- [ ] \`/schedule/\` HTTP 200
+- [ ] \`robots.txt\` references production sitemap
+- [ ] HTML pages have **no** noindex
+- [ ] canonical / og:url use **www.gosaki-piano.com** (not staging host)
+- [ ] \`/admin/\` returns 404 (production must not expose admin)`
+    : `- [ ] Top page HTTP 200 — staging URL root
+- [ ] \`/about/\` HTTP 200
+- [ ] \`/contact/\` HTTP 200
+- [ ] \`/schedule/\` HTTP 200
+- [ ] \`robots.txt\` HTTP 200
+- [ ] noindex meta present on HTML pages
+- [ ] canonical / og:url use staging host (not gosaki-piano.com)
+- [ ] Nav Home links to staging path under \`${base}\``;
+
+  return `# Manual upload checklist — ${packageProfileName}
+
+## Before upload — manifest
+
+${manifestChecks}
+
+## Before upload — remote path & package mix-up prevention
+
+${remoteChecks}
+- [ ] This folder is the **${targetEnvironment}** package — not ${isProduction ? "staging `gosaki-piano/`" : "production `gosaki-piano-production/`"}
+- [ ] Select **contents** of local \`public-dist/\` (not the \`public-dist\` folder itself)
+- [ ] Do **not** use mirror / sync / delete-remote-extras / CLI FTP
 - [ ] Overwrite is OK; delete-sync is **not** OK
 - [ ] Do not delete unrelated remote folders
 
 ## After upload
 
-- [ ] Top page HTTP 200 — staging URL root
-- [ ] \`/about/\` HTTP 200
-- [ ] \`/contact/\` HTTP 200
-- [ ] \`/2026-07/\` HTTP 200
-- [ ] \`robots.txt\` HTTP 200
-- [ ] noindex meta present on HTML pages
-- [ ] canonical / og:url use staging host (not gosaki-piano.com)
-- [ ] Nav Home links to staging path under \`${base}\`
+${afterUpload}
 
 ## If something looks wrong
 
@@ -271,6 +397,17 @@ export function createZipArchive(packageDir, zipPath, entries) {
 }
 
 /**
+ * @param {string} siteSlug
+ * @param {string} packageProfileName
+ */
+export function resolvePackageZipName(siteSlug, packageProfileName) {
+  if (packageProfileName === "production") {
+    return `${siteSlug}-production-manual-upload.zip`;
+  }
+  return `${siteSlug}-manual-upload.zip`;
+}
+
+/**
  * @param {object} opts
  */
 export function createManualUploadPackage(opts) {
@@ -280,22 +417,36 @@ export function createManualUploadPackage(opts) {
     siteSlug,
     deployBase,
     stagingUrl,
+    publicBaseUrl,
     toolRoot,
     repoRoot,
     includeGosakiReadOnlyAdmin,
+    targetEnvironment = "staging",
+    packageProfileName,
+    intendedRemotePath,
   } = opts;
 
-  const validation = validatePublicDistForManualUpload(publicDistDir);
+  const profileName =
+    packageProfileName ?? (targetEnvironment === "production" ? "production" : "staging");
+
+  const validation = validatePublicDistForManualUpload(publicDistDir, { targetEnvironment });
   if (!validation.ok) {
     return { ok: false, errors: validation.errors, packageDir: null };
   }
+
+  const includesAdmin =
+    targetEnvironment === "production"
+      ? false
+      : includeGosakiReadOnlyAdmin === true ||
+        (includeGosakiReadOnlyAdmin !== false && validation.adminPresent === true);
 
   const packageDir = path.resolve(outDir);
   const publicDistOut = path.join(packageDir, "public-dist");
   const readmePath = path.join(packageDir, "README-UPLOAD.md");
   const checklistPath = path.join(packageDir, "CHECKLIST.md");
   const manifestPath = path.join(packageDir, "MANIFEST.json");
-  const zipPath = path.join(packageDir, `${siteSlug}-manual-upload.zip`);
+  const zipName = resolvePackageZipName(siteSlug, profileName);
+  const zipPath = path.join(packageDir, zipName);
 
   if (fs.existsSync(packageDir)) {
     fs.rmSync(packageDir, { recursive: true, force: true });
@@ -304,23 +455,48 @@ export function createManualUploadPackage(opts) {
 
   copyPublicDistRecursive(publicDistDir, publicDistOut);
 
+  if (targetEnvironment === "production") {
+    sanitizeProductionPublicDistSitemaps(publicDistOut);
+  }
+
   const sourceRel = path
     .relative(repoRoot, path.resolve(publicDistDir))
     .replace(/\\/g, "/");
+
+  const resolvedIntendedRemotePath = intendedRemotePath ?? normalizeDeployBase(deployBase);
+  const resolvedPublicBaseUrl = publicBaseUrl ?? stagingUrl ?? "";
 
   const manifest = buildManualUploadManifest({
     siteSlug,
     deployBase,
     stagingUrl,
+    publicBaseUrl: resolvedPublicBaseUrl,
     sourcePublicDist: sourceRel,
     fileCount: validation.fileCount,
     safeForStaticFtp: Boolean(validation.manifest?.safeForStaticFtp),
     cssPresenceOk: validation.cssPresence?.ok === true,
-    includeGosakiReadOnlyAdmin: opts.includeGosakiReadOnlyAdmin,
+    targetEnvironment,
+    packageProfileName: profileName,
+    intendedRemotePath: resolvedIntendedRemotePath,
+    sourceCommit: resolveSourceCommit(repoRoot),
+    includesAdmin,
+    includeGosakiReadOnlyAdmin: includesAdmin,
   });
 
-  fs.writeFileSync(readmePath, formatReadmeUpload({ deployBase, stagingUrl, siteSlug }), "utf8");
-  fs.writeFileSync(checklistPath, formatUploadChecklist({ deployBase }), "utf8");
+  const docOpts = {
+    deployBase,
+    stagingUrl,
+    publicBaseUrl: resolvedPublicBaseUrl,
+    siteSlug,
+    targetEnvironment,
+    packageProfileName: profileName,
+    intendedRemotePath: resolvedIntendedRemotePath,
+    includesAdmin,
+    zipName,
+  };
+
+  fs.writeFileSync(readmePath, formatReadmeUpload(docOpts), "utf8");
+  fs.writeFileSync(checklistPath, formatUploadChecklist(docOpts), "utf8");
   fs.writeFileSync(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`, "utf8");
 
   createZipArchive(packageDir, zipPath, [
@@ -339,6 +515,7 @@ export function createManualUploadPackage(opts) {
     checklistPath,
     manifestPath,
     zipPath,
+    zipName,
     manifest,
     validation,
     toolRoot,

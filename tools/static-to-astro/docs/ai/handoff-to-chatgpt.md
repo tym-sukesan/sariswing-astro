@@ -5,11 +5,21 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20t2-schedule-month-discovery-generalization — complete.
-Schedule months: auto-discovered from published rows · optionalMonthOverride for empty months
-Sitemap: /schedule/YYYY-MM/ yes · legacy /YYYY-MM/ root no · admin excluded (G-20t1)
-Package: local regen verified when env present · FTP not executed
+Current phase: G-20t3-staging-prod-package-upload-safety-hardening — complete.
+Package MANIFEST: targetEnvironment · includesAdmin · intendedRemotePath · sourceCommit · packageProfileName.
+Production package: includesAdmin=false · admin/__admin-staging-shell absent · sitemap excludes admin/api/preview/draft.
+Staging package: includesAdmin=true · intendedRemotePath under /cms-kit-staging/ only.
+Upload docs: public-dist contents only · no mirror/sync/CLI FTP · manifest generatedAt/sourceCommit check.
+FTP / deploy NOT executed in G-20t3.
 ```
+
+## G-20t3 package upload safety hardening — complete
+
+- **MANIFEST:** targetEnvironment · packageProfileName · includesAdmin · intendedRemotePath · publicBaseUrl · sourceCommit
+- **Production zip:** gosaki-piano-production-manual-upload.zip
+- **Verifier:** verify-g20t3 + extended G-20i3 / verify:manual-upload
+- **Doc:** gosaki-package-upload-safety-hardening.md
+- **Not executed:** FTP · deploy · DB write
 
 ## G-20t2 schedule month discovery generalization — complete
 

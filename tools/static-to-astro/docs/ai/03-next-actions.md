@@ -1,6 +1,19 @@
 Last updated: 2026-07-09
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20t3 Gosaki package upload safety hardening — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20t3-staging-prod-package-upload-safety-hardening` |
+| Base | `3e78c84` |
+| MANIFEST | `targetEnvironment` · `includesAdmin` · `intendedRemotePath` · `sourceCommit` |
+| Production | `includesAdmin: false` · admin/sitemap verifier |
+| Staging | `includesAdmin: true` · staging path only |
+| FTP / deploy | **not executed** |
+| Doc | `gosaki-package-upload-safety-hardening.md` |
+| Verifier | `verify-g20t3-staging-prod-package-upload-safety-hardening.mjs` |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20t2 Gosaki schedule month discovery generalization — complete
 
 | Item | Value |

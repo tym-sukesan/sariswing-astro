@@ -7,6 +7,11 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { verifyPublicDistCssPresence } from "./lib/deploy-base.mjs";
+import {
+  findSitemapSafetyViolations,
+  validatePackageManifestSafety,
+  validatePublicDistAdminSafety,
+} from "./lib/package-upload-safety.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const TOOL_ROOT = path.resolve(__dirname, "..");
@@ -66,6 +71,13 @@ function main() {
     }
     if (manifest.fileCount < 1) errors.push("fileCount must be > 0");
     if (manifest.cssPresenceOk !== true) errors.push("cssPresenceOk must be true");
+    for (const err of validatePackageManifestSafety(manifest, "staging")) {
+      errors.push(`manifest safety: ${err}`);
+    }
+    if (manifest.includesAdmin !== true) {
+      errors.push("staging package includesAdmin must be true (G-20t3)");
+    }
+    if (!manifest.sourceCommit) errors.push("manifest sourceCommit missing");
   }
 
   const publicDist = path.join(pkg, "public-dist");
@@ -84,6 +96,22 @@ function main() {
     errors.push("README missing upload path");
   }
   if (!readme.includes("public-dist")) errors.push("README missing public-dist guidance");
+  if (!readme.includes("STAGING package")) errors.push("README missing staging package identity warning");
+  if (!/not.*`public-dist` folder itself/i.test(readme)) {
+    errors.push("README missing upload-contents warning");
+  }
+  if (!readme.includes("mirror")) errors.push("README missing mirror/sync prohibition");
+
+  const checklist = fs.existsSync(path.join(pkg, "CHECKLIST.md"))
+    ? fs.readFileSync(path.join(pkg, "CHECKLIST.md"), "utf8")
+    : "";
+  if (!checklist.includes("targetEnvironment")) errors.push("CHECKLIST missing targetEnvironment check");
+  if (!checklist.includes("sourceCommit")) errors.push("CHECKLIST missing sourceCommit check");
+  if (!checklist.includes("generatedAt")) errors.push("CHECKLIST missing generatedAt check");
+
+  for (const err of validatePublicDistAdminSafety(publicDist, "staging")) {
+    errors.push(err);
+  }
 
   for (const ym of ["2026-06", "2026-07"]) {
     const canonicalMonthPath = path.join(publicDist, "schedule", ym, "index.html");
@@ -149,6 +177,9 @@ function main() {
     }
     if (sitemap.includes("/gosaki-piano/2026-07/")) {
       errors.push("sitemap must not include legacy /2026-07/ URL");
+    }
+    for (const violation of findSitemapSafetyViolations(sitemap)) {
+      errors.push(`sitemap safety: ${violation}`);
     }
   } else {
     errors.push("missing sitemap-0.xml");

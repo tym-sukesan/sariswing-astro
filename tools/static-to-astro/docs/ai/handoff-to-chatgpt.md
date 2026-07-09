@@ -5,12 +5,20 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20r3a-gosaki-schedule-august-db-insert-execution-closure — complete.
-Operator SQL: PASS · INSERT 17 · published 14/3 · hold 008/018 not inserted
-sort_order +19 on 60 published · DB total 79 · mutation 77 · published 74 · staging DB 2026-08 reflected
-local package/public-dist: STALE (no regen)
-Next: G-20r4-schedule-public-reflection-plan
+Current phase: G-20r4-schedule-public-reflection-plan — complete.
+DB: total 79 · published 74 · August 17 (14/3) · staging reflected
+local package: STALE · expectedMonths blocker → G-20r4a
+FTP: manual only · AI/Cursor 禁止 · operator checklist（承認文言不要）
+Next: G-20r4a-expected-months-code-gate
 ```
+
+## G-20r4 schedule August public reflection plan — complete
+
+- **Doc:** gosaki-schedule-public-reflection-plan.md
+- **Sequence:** G-20r4a code → G-20r4b regen → G-20r4c QA → G-20r4d upload preflight → G-20r4e manual upload
+- **Blocker:** `supabase-schedule-read.mjs` expectedMonths needs `2026-08`
+- **FTP:** operator manual only（戸山さん）· AI/Cursor 実行禁止 · 手動チェックリスト（承認文言不要）
+- **Next:** G-20r4a-expected-months-code-gate
 
 ## G-20r3a schedule August DB INSERT execution closure — complete
 

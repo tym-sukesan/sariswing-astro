@@ -1,6 +1,18 @@
 Last updated: 2026-07-09
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20r4 Gosaki schedule August public reflection plan — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20r4-schedule-public-reflection-plan` |
+| Base | `a4d4e6d` |
+| DB state | total **79** · published **74** · August **17** (14/3) |
+| Local package | **stale** (no 2026-08) |
+| Blocker | `expectedMonths` lacks `2026-08` |
+| FTP | **operator manual only** · AI/Cursor 実行禁止 · checklist（承認文言不要） |
+| **Next** | **G-20r4a-expected-months-code-gate** |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20r3a Gosaki schedule August DB INSERT execution closure — complete
 
 | Item | Value |

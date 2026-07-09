@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-20s2b Gosaki Contact HubSpot E2E execution closure (2026-07-09):** **complete** — operator manual submit · success + notification **PASS** · **P0-C1 RESOLVED** · `clientPreviewVerdict: READY_WITH_NOTES` · `p0ClientPreviewBlockers: 0`. Doc: `gosaki-contact-hubspot-e2e-execution-closure.md`. **Next: staging client preview share / optional G-20s3.**
+**G-20t1 Gosaki sitemap admin exclusion hardening (2026-07-09):** **complete** — CMS Kit sitemap filter excludes `/admin/`, staging shell, API · `/schedule/2026-08/` retained · local package regen verified. Doc: `gosaki-sitemap-admin-exclusion-hardening.md`.
+
+**G-20s2b Gosaki Contact HubSpot E2E execution closure (2026-07-09):** **complete**. Doc: `gosaki-contact-hubspot-e2e-execution-closure.md`.
 
 **G-20s2 Gosaki Contact HubSpot E2E verify (2026-07-09):** **complete**. Doc: `gosaki-contact-hubspot-e2e-verify.md`.
 

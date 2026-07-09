@@ -25,6 +25,7 @@ import {
   sanitizeWixFontCss,
 } from "./wix-font-safety.mjs";
 import { normalizeDeployBase } from "./deploy-base.mjs";
+import { buildSitemapIntegrationBlock } from "./sitemap-exclusions.mjs";
 import {
   runBuildVerification,
   verifyGeneratedStructure,
@@ -663,26 +664,12 @@ function generatePackageJson(baseUrl) {
 /**
  * @param {string | null} baseUrl
  * @param {string | null | undefined} deployBase
- * @param {{ excludeLegacyMonthRoutesFromSitemap?: boolean }} [options]
  */
-function generateAstroConfig(baseUrl, deployBase = "/", options = {}) {
+function generateAstroConfig(baseUrl, deployBase = "/") {
   const site = normalizeBaseUrl(baseUrl);
   const base = normalizeDeployBase(deployBase);
   const baseLine = base !== "/" ? `  base: "${base}",\n` : "";
-  const sitemapIntegration = options.excludeLegacyMonthRoutesFromSitemap
-    ? `  integrations: [sitemap({
-    filter: (page) => {
-      try {
-        const pathname = new URL(page).pathname;
-        const p = pathname.endsWith("/") ? pathname : \`\${pathname}/\`;
-        if (/^\\/\\d{4}-\\d{2}\\/$/.test(p)) return false;
-        return !(/\\/\\d{4}-\\d{2}\\/$/.test(p) && !/\\/schedule\\/\\d{4}-\\d{2}\\/$/.test(p));
-      } catch {
-        return true;
-      }
-    },
-  })],`
-    : `  integrations: [sitemap()],`;
+  const sitemapIntegration = site ? buildSitemapIntegrationBlock() : "";
 
   if (!site) {
     return `import { defineConfig } from "astro/config";
@@ -1053,12 +1040,7 @@ export function generateAstroProject(inputDir, outputDir, options = {}) {
   }
 
   writeFile(path.join(outDir, "package.json"), generatePackageJson(baseUrl));
-  writeFile(
-    path.join(outDir, "astro.config.mjs"),
-    generateAstroConfig(baseUrl, deployBase, {
-      excludeLegacyMonthRoutesFromSitemap: legacyMonthStubsGenerated > 0,
-    }),
-  );
+  writeFile(path.join(outDir, "astro.config.mjs"), generateAstroConfig(baseUrl, deployBase));
   writeFile(path.join(outDir, "tsconfig.json"), generateTsConfig());
   writeFile(path.join(outDir, ".gitignore"), generateGitignore());
 

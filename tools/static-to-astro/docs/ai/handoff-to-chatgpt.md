@@ -5,12 +5,16 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20s2b-gosaki-contact-hubspot-e2e-execution-closure — complete.
-Operator manual HubSpot submit: PASS · notification received
-P0-C1: RESOLVED · p0ClientPreviewBlockers: 0
-clientPreviewVerdict: READY_WITH_NOTES
-Next: staging client preview share · optional G-20s3
+Current phase: G-20t1-gosaki-sitemap-admin-exclusion-hardening — complete.
+Sitemap: /admin/ excluded · schedule/2026-08/ retained · CMS Kit generic rules
+Package: local regen verified · FTP not executed
 ```
+
+## G-20t1 sitemap admin exclusion hardening — complete
+
+- **Module:** sitemap-exclusions.mjs (admin / staging-shell / API / legacy month)
+- **Sitemap:** 12 URLs · no /admin/
+- **Doc:** gosaki-sitemap-admin-exclusion-hardening.md
 
 ## G-20s2b Contact HubSpot E2E execution closure — complete
 

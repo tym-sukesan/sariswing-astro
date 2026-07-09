@@ -1,6 +1,17 @@
 Last updated: 2026-07-09
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20t1 Gosaki sitemap admin exclusion hardening — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20t1-gosaki-sitemap-admin-exclusion-hardening` |
+| Base | `6a1fdeb` |
+| Module | `sitemap-exclusions.mjs` |
+| `/admin/` in sitemap | **excluded** |
+| `/schedule/2026-08/` | **retained** |
+| Package regen | **yes** (local) |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20s2b Gosaki Contact HubSpot E2E execution closure — complete
 
 | Item | Value |

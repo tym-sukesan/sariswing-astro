@@ -5,6 +5,7 @@
 
 import fs from "node:fs";
 import path from "node:path";
+import { buildSitemapIntegrationBlock } from "./sitemap-exclusions.mjs";
 import { fileURLToPath } from "node:url";
 import { normalizeDeployBase } from "./deploy-base.mjs";
 
@@ -137,7 +138,7 @@ import sitemap from "@astrojs/sitemap";
 export default defineConfig({
   adapter: node({ mode: "standalone" }),
 ${siteLine}${baseLine}  trailingSlash: "${trailingSlash}",
-  integrations: [sitemap()],
+${buildSitemapIntegrationBlock()}
 });
 `;
   }

@@ -14,7 +14,8 @@ const TOOL_ROOT = path.resolve(__dirname, "..");
 const AI_DIR = "tools/static-to-astro/docs/ai";
 
 const DOC_REL = "tools/static-to-astro/docs/gosaki-whole-site-product-quality-audit.md";
-const PKG_DIST = path.join(TOOL_ROOT, "output/manual-upload/gosaki-piano-production/public-dist");
+const STAGING_PKG_DIST = path.join(TOOL_ROOT, "output/manual-upload/gosaki-piano/public-dist");
+const PROD_PKG_DIST = path.join(TOOL_ROOT, "output/manual-upload/gosaki-piano-production/public-dist");
 const FORBIDDEN_PROD_REF = "vsbvndwuajjhnzpohghh";
 
 const head = spawnSync("git", ["rev-parse", "--short", "HEAD"], {
@@ -41,6 +42,11 @@ function read(rel) {
 
 function exists(rel) {
   return fs.existsSync(path.join(REPO_ROOT, rel));
+}
+
+/** @param {string} xml */
+function sitemapLocs(xml) {
+  return [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]);
 }
 
 const doc = read(DOC_REL);
@@ -78,11 +84,44 @@ assert("SQL none", /sqlFileCreated: false|SQL.*\*\*no\*\*/i.test(doc));
 
 const deniedOk = new RegExp(`Never.*${FORBIDDEN_PROD_REF}|forbiddenProjectRef`, "i");
 assert("forbidden prod ref not active target", deniedOk.test(doc));
+assert(
+  "audit doc sitemap policy superseded by G-20t1",
+  /G-20t1|sitemap-admin-exclusion|P2-SEO1.*G-20t1/i.test(doc),
+);
 
-if (fs.existsSync(PKG_DIST)) {
-  const sitemap = fs.readFileSync(path.join(PKG_DIST, "sitemap-0.xml"), "utf8");
-  assert("local sitemap has no 2026-08", !sitemap.includes("2026-08"));
-  assert("local sitemap admin url noted", sitemap.includes("/admin/"));
+const stagingSitemapPath = path.join(STAGING_PKG_DIST, "sitemap-0.xml");
+if (fs.existsSync(stagingSitemapPath)) {
+  const sitemap = fs.readFileSync(stagingSitemapPath, "utf8");
+  const locs = sitemapLocs(sitemap);
+  assert("staging sitemap excludes admin", !locs.some((u) => u.includes("/admin/")));
+  assert(
+    "staging sitemap includes schedule august",
+    locs.some((u) => u.includes("/schedule/2026-08/")),
+  );
+  assert(
+    "staging sitemap no legacy august root",
+    !locs.some((u) => /\/2026-08\/$/.test(u) && !u.includes("/schedule/")),
+  );
+  if (fs.existsSync(path.join(STAGING_PKG_DIST, "admin/index.html"))) {
+    console.log("PASS staging admin html present in package (not in sitemap)");
+    passed += 1;
+  }
+} else {
+  console.error("FAIL staging package sitemap missing for G-20t1 policy check");
+  failed += 1;
+}
+
+if (fs.existsSync(path.join(PROD_PKG_DIST, "sitemap-0.xml"))) {
+  const prodSitemap = fs.readFileSync(path.join(PROD_PKG_DIST, "sitemap-0.xml"), "utf8");
+  assert(
+    "prod package admin html absent",
+    !fs.existsSync(path.join(PROD_PKG_DIST, "admin/index.html")),
+  );
+  if (prodSitemap.includes("/admin/")) {
+    console.log(
+      "NOTE prod sitemap still lists /admin/ — pre-G-20t1 artifact; regen with production profile applies G-20t1 filter",
+    );
+  }
 }
 
 assert("00-current-state mentions G-20s", /G-20s|whole-site-product-quality/i.test(currentState));

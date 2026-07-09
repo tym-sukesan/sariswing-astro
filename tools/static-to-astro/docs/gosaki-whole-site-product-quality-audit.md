@@ -101,7 +101,7 @@ PC staging / production artifact は route 横断で **概ね OK**（G-7j · G-2
 | **Header / Nav** | ⚠️ | Markup OK | 6 links + MENU toggle · **mobile 未実機確認** | **P0** |
 | **Footer** | ✓ | Good | G-7i2/G-8g fixes · SNS text fallback | P1 |
 | **Mobile** | ⚠️ | Unverified | CSS/JS あり · G-8 SP polish 済 · **実機 QA なし** | **P0** |
-| **SEO / sitemap** | ⚠️ | Mostly OK | prod robots Allow ✓ · sitemap に `/admin/` 幽霊 URL | P2 |
+| **SEO / sitemap** | ⚠️ | Mostly OK | prod robots Allow ✓ · **G-20s 時点:** sitemap に `/admin/` 幽霊 URL（**G-20t1 で新ビルドは除外**） | P2 → **G-20t1 resolved (new builds)** |
 | **Legacy `/YYYY-MM/`** | △ | Functional | noindex + canonical OK · **英語 stub 本文** | P1 |
 | **Admin / CMS ops** | N/A | Internal | hosted admin なし · 本人 solo 運用は未成立 | Defer† |
 | **Cutover / FTP** | N/A | HOLD | G-20j STOP · DNS/SSL/MX pending | Defer† |
@@ -139,7 +139,7 @@ PC staging / production artifact は route 横断で **概ね OK**（G-7j · G-2
 
 | ID | Area | Issue |
 | --- | --- | --- |
-| **P2-SEO1** | sitemap | `sitemap-0.xml` に `/admin/` 含む（package に admin なし → 404 リスク） |
+| **P2-SEO1** | sitemap | ~~`sitemap-0.xml` に `/admin/` 含む~~ — **G-20t1:** CMS Kit filter で除外 · staging regen 済 · prod artifact は regen 待ち |
 | **P2-SEO2** | sitemap | 2026-08 追加後の sitemap 更新（G-20r4 後） |
 | **P2-SEO3** | robots/canonical | cutover 時の indexable 最終確認（G-20j） |
 | **P2-HS1** | HubSpot | production domain allowlist |
@@ -215,8 +215,8 @@ PC staging / production artifact は route 横断で **概ね OK**（G-7j · G-2
 | --- | --- |
 | `robots.txt` | `Allow: /` + sitemap line · prod indexable intent |
 | `noindex` on pages | **absent** in prod package（staging は noindex — 意図的差分） |
-| `sitemap-0.xml` | 12 URLs · schedule 03–07 · **`/admin/` 含む** |
-| 2026-08 in sitemap | **no** — expected until G-20r4 |
+| `sitemap-0.xml` | **G-20s 時点:** 12 URLs · schedule 03–07 · **`/admin/` 含む**（audit 当時の prod artifact） |
+| 2026-08 in sitemap | **G-20s 時点:** no — G-20r4 後に追加 · **G-20t1 staging:** `/schedule/2026-08/` あり · `/admin/` なし |
 | canonical / og:url | `www.gosaki-piano.com` — G-20h built |
 
 ### 6.7 Wix 由来の未反映・差分
@@ -267,7 +267,7 @@ Track C (Optional):       G-20r2c client message · G-20s3 copy patch batch
 | --- | --- | --- |
 | **1** | `G-20s1-mobile-device-qa` | 実機 ≤767px · MENU · schedule month · footer · discography |
 | **2** | `G-20s2-contact-hubspot-e2e-verify` | staging 上で送信 → inbox 確認 · disclaimer |
-| **3** | `G-20s3-client-preview-copy-patch` | legacy stub 日本語化 · title/OGP · sitemap `/admin/` 除去 |
+| **3** | `G-20s3-client-preview-copy-patch` | legacy stub 日本語化 · title/OGP · ~~sitemap `/admin/` 除去~~（**G-20t1 で実装済**） |
 | **4** | `G-20r2c-client-confirmation-message-final` | 任意 · hold 3件の背景説明 |
 | **5** | `G-20r4-schedule-public-reflection-plan` | G-20r3 後 · regen + diff + upload plan |
 

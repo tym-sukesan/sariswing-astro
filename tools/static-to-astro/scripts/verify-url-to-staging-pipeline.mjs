@@ -898,7 +898,7 @@ assert(
 );
 assert(
   "gosaki G-9c0b sitemap excludes legacy month routes",
-  astroGeneratorSrc.includes("excludeLegacyMonthRoutesFromSitemap") &&
+  astroGeneratorSrc.includes("buildSitemapIntegrationBlock") &&
     astroGeneratorSrc.includes("filter: (page)"),
 );
 assert(
@@ -925,6 +925,43 @@ assert(
   shouldIncludePageInSitemap(
     "https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/2026-07/",
   ) === false,
+);
+
+// --- G-20t1 CMS Kit sitemap admin / staging-shell exclusion ---
+
+assert(
+  "G-20t1 sitemap filter excludes admin URL",
+  shouldIncludePageInSitemap(
+    "https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/admin/",
+  ) === false,
+);
+assert(
+  "G-20t1 sitemap filter excludes admin subpath",
+  shouldIncludePageInSitemap("https://example.com/admin/schedule/") === false,
+);
+assert(
+  "G-20t1 sitemap filter excludes staging shell",
+  shouldIncludePageInSitemap("https://example.com/__admin-staging-shell/musician-basic/") === false,
+);
+assert(
+  "G-20t1 sitemap filter excludes api",
+  shouldIncludePageInSitemap("https://example.com/api/admin/me.json") === false,
+);
+assert(
+  "G-20t1 sitemap filter keeps public about",
+  shouldIncludePageInSitemap(
+    "https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/about/",
+  ) === true,
+);
+assert(
+  "G-20t1 astro generator uses buildSitemapIntegrationBlock",
+  astroGeneratorSrc.includes("buildSitemapIntegrationBlock"),
+);
+assert(
+  "G-20t1 admin cms template uses sitemap filter",
+  fs.readFileSync(path.join(TOOL_ROOT, "scripts/lib/admin-cms-template.mjs"), "utf8").includes(
+    "buildSitemapIntegrationBlock",
+  ),
 );
 
 const supabaseScheduleReadPath = path.join(TOOL_ROOT, "scripts/lib/supabase-schedule-read.mjs");

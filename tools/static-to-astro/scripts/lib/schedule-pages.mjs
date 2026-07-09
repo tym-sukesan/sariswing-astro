@@ -52,13 +52,7 @@ export function isLegacyWixScheduleMonthUrl(pageUrl) {
   }
 }
 
-/**
- * Exclude legacy root month URLs from sitemap (@astrojs/sitemap filter).
- * @param {string} pageUrl absolute page URL
- */
-export function shouldIncludePageInSitemap(pageUrl) {
-  return !isLegacyWixScheduleMonthUrl(pageUrl);
-}
+export { shouldIncludePageInSitemap } from "./sitemap-exclusions.mjs";
 
 /**
  * @param {string} relPath e.g. `schedule-2026-07.html` or `2026-07.html`

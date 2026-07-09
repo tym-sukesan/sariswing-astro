@@ -5,11 +5,21 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20s1-gosaki-mobile-device-qa — complete.
-Mobile QA: PASS (390px Playwright) · MENU · schedule August · footer OK
-Client preview: NOT_READY — P0-C1 Contact HubSpot E2E unverified
-Next: G-20s2-contact-hubspot-e2e-verify
+Current phase: G-20s2-gosaki-contact-hubspot-e2e-verify — complete.
+Form render: PASS on staging /contact/
+Cursor submit: NOT executed
+Operator manual submit: pending (G-20s2b)
+Next: G-20s2b-contact-hubspot-e2e-execution-closure
 ```
+
+## G-20s2 Contact HubSpot E2E verify — complete
+
+- **URL:** /cms-kit-staging/gosaki-piano/contact/
+- **Form:** HubSpot iframe · 姓/名/Eメール/お問い合わせ内容 · 送信
+- **Test payload:** documented · operator manual submit only
+- **Cursor submit:** no
+- **Doc:** gosaki-contact-hubspot-e2e-verify.md
+- **Next:** G-20s2b inbox confirmation
 
 ## G-20s1 mobile device QA — complete
 

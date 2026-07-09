@@ -1,6 +1,20 @@
 Last updated: 2026-07-10
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u11 Site-aware preflight scripts — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u11-site-aware-preflight-scripts` |
+| Base | `207a455` |
+| CLI | `run-site-preflight.mjs` — verify-site-package + freshness with `--site`/`--profile` |
+| npm | `preflight` generic · `preflight:gosaki:*` · `preflight:pilot:staging` |
+| Legacy | build/verify/freshness scripts retained |
+| Stale | preflight STOP at freshness step — rebuild at HEAD required |
+| Production upload | **STOP** (G-20j + TBD_G-20i) |
+| Doc | `site-aware-preflight-scripts.md` |
+| Verifier | `verify-g20u11-site-aware-preflight-scripts.mjs` |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u10 Site-aware package freshness CLI — complete
 
 | Item | Value |

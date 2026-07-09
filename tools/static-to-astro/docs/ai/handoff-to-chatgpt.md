@@ -5,11 +5,21 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u10-site-aware-package-freshness-cli — complete.
-Freshness CLI: --site + --profile registry resolution; --package-dir + legacy --profile retained.
-On-disk packages stale at 8db175d until regen.
-No FTP / deploy in G-20u10.
+Current phase: G-20u11-site-aware-preflight-scripts — complete.
+Preflight npm: preflight:gosaki:* / preflight:pilot:staging / generic preflight.
+Both steps use --site + --profile via run-site-preflight.mjs.
+Stale package → preflight STOP (expected). No FTP / deploy.
 ```
+
+## G-20u11 site-aware preflight scripts — complete
+
+- **CLI:** `run-site-preflight.mjs` — verify-site-package → verify-package-upload-freshness
+- **npm:** `preflight` generic · `preflight:gosaki:staging|production` · `preflight:pilot:staging`
+- **Stale:** preflight fails at freshness step — rebuild at current HEAD before upload
+- **Legacy:** build/verify/freshness convenience scripts unchanged
+- **Production:** G-20j preflight still required; upload STOP
+- **Not executed:** FTP · DB write · package upload
+- **Next:** update manual-upload README/CHECKLIST to reference site-aware preflight
 
 ## G-20u10 site-aware package freshness CLI — complete
 

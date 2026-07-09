@@ -67,7 +67,7 @@ npm run verify:package-freshness -- --site pilot-sample-static --profile staging
 
 ## Backward compatibility
 
-- `preflight:gosaki:*` unchanged (uses legacy `--profile` scripts)
+- `preflight:gosaki:*` unchanged (uses legacy `--profile` scripts) — **superseded by G-20u11** (now site-aware via `run-site-preflight.mjs`)
 - `--package-dir` unchanged
 - Core freshness logic (`verifyPackageUploadFreshness`) unchanged
 
@@ -92,5 +92,6 @@ On-disk packages after G-20u9 commit are **stale** at `8db175d` until regen at c
 
 ## Next
 
-- Wire `preflight:gosaki:*` to explicit `--site gosaki-piano` (optional cosmetic)
-- `preflight:pilot:staging` npm convenience script
+- ~~Wire `preflight:gosaki:*` to explicit `--site gosaki-piano`~~ — done in G-20u11
+- ~~`preflight:pilot:staging` npm convenience script~~ — done in G-20u11
+- Update manual-upload README/CHECKLIST to reference site-aware preflight

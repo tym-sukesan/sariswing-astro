@@ -1,6 +1,19 @@
 Last updated: 2026-07-09
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20t5 Gosaki staging profile current-head regen dry-run — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20t5-gosaki-staging-profile-current-head-regen-dry-run` |
+| Base | `c9d35d7` |
+| Staging package | **29 files** · August 14 cards · `includesAdmin: true` |
+| Admin | **in package** · **not in sitemap** |
+| `sourceCommit` | `c9d35d7…` |
+| FTP / deploy | **not executed** |
+| Doc | `gosaki-staging-profile-current-head-regen-dry-run.md` |
+| Verifier | `verify-g20t5-gosaki-staging-profile-current-head-regen-dry-run.mjs` |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20t4 Gosaki production profile full regen dry-run — complete
 
 | Item | Value |

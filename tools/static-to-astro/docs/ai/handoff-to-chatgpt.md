@@ -5,13 +5,20 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20t4-gosaki-production-profile-full-regen-dry-run — complete.
-Production package: local full regen at 55d0364 · 28 files · August 14 cards.
-Safety: includesAdmin=false · admin absent · sitemap clean · intendedRemotePath=TBD_G-20i (upload STOP).
-G-20t1/t2/t3 reflected in production static-public + manual-upload package.
+Current phase: G-20t5-gosaki-staging-profile-current-head-regen-dry-run — complete.
+Staging package: local full regen at c9d35d7 · 29 files · August 14 cards · includesAdmin=true.
+Sitemap: /schedule/2026-08/ yes · /admin/ no · legacy month root no.
+Production package (G-20t4): 28 files · includesAdmin=false · upload STOP (TBD_G-20i).
 FTP / deploy / production upload NOT executed.
-Next: G-20j production upload preflight (remote path / DNS / SSL) when approved.
 ```
+
+## G-20t5 staging profile current-head regen dry-run — complete
+
+- **Command:** `node scripts/build-gosaki-staging-admin-package.mjs`
+- **Output:** `output/manual-upload/gosaki-piano/`
+- **MANIFEST:** targetEnvironment=staging · includesAdmin=true · sourceCommit=c9d35d7
+- **August:** schedule/2026-08 · 14 cards · supabase
+- **Not executed:** FTP · deploy · DB write
 
 ## G-20t4 production profile full regen dry-run — complete
 

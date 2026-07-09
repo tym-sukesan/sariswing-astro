@@ -1,6 +1,20 @@
 Last updated: 2026-07-10
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u10 Site-aware package freshness CLI — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u10-site-aware-package-freshness-cli` |
+| Base | `8db175d` |
+| CLI | `--site` + `--profile` → registry path; `--package-dir` retained |
+| Legacy | `--profile` only → Gosaki staging/production |
+| npm | `verify:package-freshness` generic; staging/production/pilot scripts retained |
+| Targets | gosaki-piano staging/production · pilot-sample-static staging |
+| Package state | **stale at HEAD** until regen |
+| Doc | `site-aware-package-freshness-cli.md` |
+| Verifier | `verify-g20u10-site-aware-package-freshness-cli.mjs` |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u9 Pilot full package build + verify — complete
 
 | Item | Value |

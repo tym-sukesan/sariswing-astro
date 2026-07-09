@@ -5,12 +5,20 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u9-pilot-sample-static-full-package-build-verify — complete.
-Pilot full build: 9 files · verify-site-package PASS · freshness via --package-dir.
-Per-site static-public expectations for pilot vs gosaki.
-Gosaki dry-run regression PASS.
-No FTP / deploy in G-20u9.
+Current phase: G-20u10-site-aware-package-freshness-cli — complete.
+Freshness CLI: --site + --profile registry resolution; --package-dir + legacy --profile retained.
+On-disk packages stale at 8db175d until regen.
+No FTP / deploy in G-20u10.
 ```
+
+## G-20u10 site-aware package freshness CLI — complete
+
+- **CLI:** `--site SITE_KEY --profile staging|production` resolves registry `manualUploadOut`
+- **Compat:** `--package-dir` · legacy `--profile`-only Gosaki scripts unchanged
+- **npm:** `verify:package-freshness` generic; pilot uses `--site pilot-sample-static`
+- **Helper:** `package-freshness-target.mjs` → `resolvePackageFreshnessTarget`
+- **Not executed:** FTP · DB write · package upload
+- **Next:** optional preflight:pilot npm · explicit `--site gosaki-piano` on preflight scripts
 
 ## G-20u9 pilot full package build + verify — complete
 

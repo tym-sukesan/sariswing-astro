@@ -35,6 +35,7 @@
     "verify:g20t5-staging-regen": "node scripts/verify-g20t5-gosaki-staging-profile-current-head-regen-dry-run.mjs",
     "verify:package-freshness:staging": "node scripts/verify-package-upload-freshness.mjs --profile staging",
     "verify:package-freshness:production": "node scripts/verify-package-upload-freshness.mjs --profile production",
+    "verify:package-freshness": "node scripts/verify-package-upload-freshness.mjs",
     "verify:package-freshness-gate": "node scripts/verify-g20t6-package-freshness-gate.mjs",
     "verify:g20u1-hardcode-audit": "node scripts/verify-g20u1-gosaki-hardcode-generalization-audit.mjs",
     "verify:g20u2-site-registry": "node scripts/verify-g20u2-site-registry-build-profile-foundation.mjs",
@@ -46,10 +47,11 @@
     "verify:g20u7-convert-sitekey": "node scripts/verify-g20u7-convert-pipeline-sitekey-propagation.mjs",
     "verify:g20u8-pilot-noop": "node scripts/verify-g20u8-second-site-noop-hooks-pilot-dry-run.mjs",
     "verify:g20u9-pilot-full-package": "node scripts/verify-g20u9-pilot-sample-static-full-package-build-verify.mjs",
+    "verify:g20u10-package-freshness": "node scripts/verify-g20u10-site-aware-package-freshness-cli.mjs",
     "build:pilot:staging": "node scripts/build-site-package.mjs --site pilot-sample-static --profile staging",
     "build:pilot:staging:dry-run": "node scripts/build-site-package.mjs --site pilot-sample-static --profile staging --dry-run",
     "verify:pilot:staging": "node scripts/verify-site-package.mjs --site pilot-sample-static --profile staging",
-    "verify:package-freshness:pilot": "node scripts/verify-package-upload-freshness.mjs --package-dir output/manual-upload/pilot-sample-static"
+    "verify:package-freshness:pilot": "node scripts/verify-package-upload-freshness.mjs --site pilot-sample-static --profile staging"
   },
   "devDependencies": {
     "pixelmatch": "^7.1.0",

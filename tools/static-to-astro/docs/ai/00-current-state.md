@@ -3,6 +3,8 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
+**G-20u10 Site-aware package freshness CLI (2026-07-10):** **complete** — `verify-package-upload-freshness.mjs` accepts `--site` + `--profile` (registry `manualUploadOut`); `--package-dir` retained; legacy `--profile`-only Gosaki compat; generic `verify:package-freshness` npm; pilot script uses `--site pilot-sample-static`; **on-disk packages stale at `8db175d`** until regen; **no FTP / deploy**. Doc: `site-aware-package-freshness-cli.md`. Verifier: `verify-g20u10-site-aware-package-freshness-cli.mjs`.
+
 **G-20u9 Pilot sample static full package build + verify (2026-07-10):** **complete** — full `build-site-package pilot-sample-static staging` PASS (9 files); `verify-site-package` PASS; freshness via `--package-dir`; per-site static-public expectations; no admin/gosaki/schedule artifacts; Gosaki dry-run regression PASS; **no FTP / deploy**. Doc: `pilot-sample-static-full-package-build-verify.md`. Verifier: `verify-g20u9-pilot-sample-static-full-package-build-verify.mjs`.
 
 **G-20u8 Second-site noop hooks pilot dry-run (2026-07-10):** **complete** — registry `pilot-sample-static` on existing `fixtures/sample-static-site`; noop hooks via explicit `--site`; Gosaki hooks not mis-applied; generic build/convert dry-run PASS; verify schedule gates scoped to gosaki-piano; **no FTP / deploy / DB write**. Doc: `second-site-noop-hooks-pilot-dry-run.md`. Verifier: `verify-g20u8-second-site-noop-hooks-pilot-dry-run.mjs`.

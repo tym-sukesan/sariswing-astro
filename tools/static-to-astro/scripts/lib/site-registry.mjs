@@ -107,6 +107,41 @@ export function assertRegisteredSiteKey(siteKey, toolRoot = TOOL_ROOT) {
 }
 
 /**
+ * @typedef {{ schedule: boolean, discography: boolean }} SupabaseFeatures
+ */
+
+/**
+ * @param {string} siteKey
+ * @param {string} [toolRoot]
+ * @returns {string}
+ */
+export function resolveSupabaseSiteSlug(siteKey, toolRoot = TOOL_ROOT) {
+  const entry = getSiteRegistryEntry(siteKey, toolRoot);
+  const slug = entry.slugSemantics ?? {};
+  return String(slug.supabaseSiteSlug ?? siteKey);
+}
+
+/**
+ * @param {string} siteKey
+ * @param {string} [toolRoot]
+ * @returns {SupabaseFeatures}
+ */
+export function resolveSupabaseFeatures(siteKey, toolRoot = TOOL_ROOT) {
+  const entry = getSiteRegistryEntry(siteKey, toolRoot);
+  const raw = entry.supabaseFeatures;
+  if (raw && typeof raw === "object") {
+    return {
+      schedule: raw.schedule === true,
+      discography: raw.discography === true,
+    };
+  }
+  if (siteKey === GOSAKI_SITE_KEY) {
+    return { schedule: true, discography: true };
+  }
+  return { schedule: false, discography: false };
+}
+
+/**
  * @param {string} rel
  * @param {string} [toolRoot]
  */

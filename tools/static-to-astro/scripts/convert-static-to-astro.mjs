@@ -8,13 +8,8 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { generateAstroProject, printGenerationSummary } from "./lib/astro-generator.mjs";
-import {
-  GOSAKI_SITE_KEY,
-  TOOL_ROOT,
-} from "./lib/site-registry.mjs";
 import { resolveEffectiveConvertSiteKey } from "./lib/convert-site-key.mjs";
-import { loadGosakiScheduleDataForBuild } from "./lib/supabase-schedule-read.mjs";
-import { loadGosakiDiscographyDataForBuild } from "./lib/supabase-discography-read.mjs";
+import { loadSiteSupabaseDataForBuild } from "./lib/site-aware-supabase-loaders.mjs";
 
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 
@@ -154,9 +149,14 @@ async function main() {
   try {
     let gosakiScheduleBundle = null;
     let gosakiDiscographyBundle = null;
-    if (!dryRun && effectiveSiteKey === GOSAKI_SITE_KEY) {
-      gosakiScheduleBundle = await loadGosakiScheduleDataForBuild({ inputDir: inputAbs });
-      gosakiDiscographyBundle = await loadGosakiDiscographyDataForBuild();
+    if (!dryRun && effectiveSiteKey) {
+      const supabaseData = await loadSiteSupabaseDataForBuild({
+        siteKey: effectiveSiteKey,
+        inputDir: inputAbs,
+        toolRoot,
+      });
+      gosakiScheduleBundle = supabaseData.schedule;
+      gosakiDiscographyBundle = supabaseData.discography;
     }
 
     const result = generateAstroProject(inputAbs, outputAbs, {

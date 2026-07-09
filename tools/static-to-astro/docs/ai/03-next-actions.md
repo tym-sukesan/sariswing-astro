@@ -1,6 +1,20 @@
 Last updated: 2026-07-10
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u13 Site-aware Supabase loaders — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u13-site-aware-supabase-loaders` |
+| Base | `23806c5` |
+| Module | `site-aware-supabase-loaders.mjs` |
+| Registry | `supabaseSiteSlug` + `supabaseFeatures` per site |
+| Gosaki | schedule + discography via wrappers · slug `gosaki-piano` |
+| Pilot | `supabaseFeatures` off → null bundles · no Supabase call |
+| DB | **read-only** · no write / SQL mutation |
+| Doc | `site-aware-supabase-loaders.md` |
+| Verifier | `verify-g20u13-site-aware-supabase-loaders.mjs` |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u12 Manual-upload README/CHECKLIST preflight integration — complete
 
 | Item | Value |

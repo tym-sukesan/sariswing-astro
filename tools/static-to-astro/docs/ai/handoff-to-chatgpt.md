@@ -5,11 +5,21 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u12-manual-upload-readme-checklist-preflight-integration — complete.
-README/CHECKLIST embed site-aware preflight (G-20u11).
-Stale STOP + rebuild at HEAD documented. G-20j production STOP retained.
-Regen README/CHECKLIST on next build. No FTP / deploy.
+Current phase: G-20u13-site-aware-supabase-loaders — complete.
+Supabase reads: siteKey → registry supabaseSiteSlug + supabaseFeatures.
+Gosaki wrappers retained. Pilot skips Supabase (null bundles). Read-only only.
+No DB write / FTP / deploy.
 ```
+
+## G-20u13 site-aware Supabase loaders — complete
+
+- **Module:** `site-aware-supabase-loaders.mjs` — `loadSiteSupabaseDataForBuild`
+- **Registry:** `supabaseSiteSlug` + `supabaseFeatures.schedule|discography`
+- **Gosaki:** delegates to `loadGosakiScheduleDataForBuild` / `loadGosakiDiscographyDataForBuild`
+- **Pilot:** features off → null bundles (no Gosaki loader mis-apply)
+- **Convert:** `loadSiteSupabaseDataForBuild` replaces hardcoded `GOSAKI_SITE_KEY` gate
+- **Not executed:** DB write · SQL mutation · FTP · deploy
+- **Next:** discography `site_slug` filter when multi-site rows exist
 
 ## G-20u12 manual-upload README/CHECKLIST preflight integration — complete
 

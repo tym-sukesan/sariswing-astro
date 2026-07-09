@@ -53,6 +53,7 @@
     "verify:g20u11-preflight": "node scripts/verify-g20u11-site-aware-preflight-scripts.mjs",
     "verify:g20u12-readme-preflight": "node scripts/verify-g20u12-manual-upload-readme-checklist-preflight-integration.mjs",
     "verify:g20u12-pilot-enotempty": "node scripts/verify-g20u12-pilot-build-enotempty-fix.mjs",
+    "verify:g20u13-supabase-loaders": "node scripts/verify-g20u13-site-aware-supabase-loaders.mjs",
     "build:pilot:staging": "node scripts/build-site-package.mjs --site pilot-sample-static --profile staging",
     "build:pilot:staging:dry-run": "node scripts/build-site-package.mjs --site pilot-sample-static --profile staging --dry-run",
     "verify:pilot:staging": "node scripts/verify-site-package.mjs --site pilot-sample-static --profile staging",

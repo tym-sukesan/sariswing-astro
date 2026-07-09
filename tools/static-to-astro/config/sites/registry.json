@@ -19,6 +19,10 @@
       },
       "fixtureDir": "fixtures/gosaki-piano",
       "deployProfilesFile": "config/sites/gosaki-piano.deploy-profiles.json",
+      "supabaseFeatures": {
+        "schedule": true,
+        "discography": true
+      },
       "packageProfiles": {
         "staging": {
           "profileName": "staging",
@@ -60,6 +64,10 @@
       },
       "fixtureDir": "fixtures/sample-static-site",
       "deployProfilesFile": "config/sites/pilot-sample-static.deploy-profiles.json",
+      "supabaseFeatures": {
+        "schedule": false,
+        "discography": false
+      },
       "packageProfiles": {
         "staging": {
           "profileName": "staging",

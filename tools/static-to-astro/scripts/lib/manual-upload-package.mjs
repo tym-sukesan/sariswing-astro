@@ -159,6 +159,8 @@ export function buildManualUploadManifest(meta) {
  *   intendedRemotePath?: string,
  *   includesAdmin?: boolean,
  *   zipName?: string,
+ *   sourceCommit?: string | null,
+ *   generatedAt?: string | null,
  * }} opts
  */
 export function formatReadmeUpload(opts) {
@@ -213,8 +215,22 @@ This package is for **manual FTP upload only**. Do **not** use automated FTP dep
 | \`includesAdmin\` | \`${includesAdmin}\` |
 | \`intendedRemotePath\` | \`${intendedRemotePath}\` |
 | \`publicBaseUrl\` | \`${url}\` |
+| \`generatedAt\` | \`${opts.generatedAt ?? "(see MANIFEST.json)"}\` |
+| \`sourceCommit\` | \`${opts.sourceCommit ?? "(see MANIFEST.json)"}\` |
 
-Open \`MANIFEST.json\` and confirm \`generatedAt\` and \`sourceCommit\` match the build you intend to upload.
+## Freshness gate (G-20t6) — run before FTP upload
+
+**STOP** if \`sourceCommit\` in \`MANIFEST.json\` does not match current git HEAD.
+
+\`\`\`bash
+cd tools/static-to-astro
+npm run verify:package-freshness:${packageProfileName === "production" ? "production" : "staging"}
+\`\`\`
+
+- **PASS** → package was built at current HEAD; upload may proceed (other safety gates still apply)
+- **STOP** → stale package; regen with \`build-gosaki-${packageProfileName === "production" ? "production" : "staging-admin"}-package.mjs\` first
+
+Open \`MANIFEST.json\` and confirm \`generatedAt\` is recent enough for this release.
 
 ## What this is
 
@@ -288,6 +304,8 @@ ${postUploadChecks}
  *   packageProfileName?: string,
  *   intendedRemotePath?: string,
  *   includesAdmin?: boolean,
+ *   sourceCommit?: string | null,
+ *   generatedAt?: string | null,
  * }} opts
  */
 export function formatUploadChecklist(opts) {
@@ -304,8 +322,10 @@ export function formatUploadChecklist(opts) {
 - [ ] \`targetEnvironment\` is **${targetEnvironment}** (not ${isProduction ? "staging" : "production"})
 - [ ] \`packageProfileName\` is **${packageProfileName}**
 - [ ] \`includesAdmin\` is **${includesAdmin}**${isProduction ? " — production must be false" : ""}
-- [ ] \`generatedAt\` is recent enough for this release
-- [ ] \`sourceCommit\` matches the intended build commit
+- [ ] \`generatedAt\` is **${opts.generatedAt ?? "(check MANIFEST)"}** — recent enough for this release
+- [ ] \`sourceCommit\` is **${opts.sourceCommit ?? "(check MANIFEST)"}**
+- [ ] Run freshness preflight: \`npm run verify:package-freshness:${isProduction ? "production" : "staging"}\` → **PASS**
+- [ ] **STOP** if sourceCommit !== current git HEAD (stale package)
 - [ ] \`safeForStaticFtp\` is **true**
 - [ ] \`ftpAutoDeployUsed\` is **false**`;
 
@@ -493,6 +513,8 @@ export function createManualUploadPackage(opts) {
     intendedRemotePath: resolvedIntendedRemotePath,
     includesAdmin,
     zipName,
+    sourceCommit: manifest.sourceCommit,
+    generatedAt: manifest.generatedAt,
   };
 
   fs.writeFileSync(readmePath, formatReadmeUpload(docOpts), "utf8");

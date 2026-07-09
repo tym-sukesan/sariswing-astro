@@ -5,12 +5,20 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20t5-gosaki-staging-profile-current-head-regen-dry-run — complete.
-Staging package: local full regen at c9d35d7 · 29 files · August 14 cards · includesAdmin=true.
-Sitemap: /schedule/2026-08/ yes · /admin/ no · legacy month root no.
-Production package (G-20t4): 28 files · includesAdmin=false · upload STOP (TBD_G-20i).
-FTP / deploy / production upload NOT executed.
+Current phase: G-20t6-package-freshness-gate — complete.
+Upload preflight: MANIFEST sourceCommit must match current git HEAD.
+Stale package → STOP (no FTP). generatedAt shown for operator review.
+Applies to staging + production manual-upload packages.
+FTP / deploy NOT executed in G-20t6.
 ```
+
+## G-20t6 package freshness gate — complete
+
+- **Gate:** sourceCommit === git HEAD → PASS; mismatch → STOP
+- **CLI:** npm run verify:package-freshness:staging | :production
+- **Module:** validatePackageFreshness in package-upload-safety.mjs
+- **Docs:** README/CHECKLIST include freshness preflight step
+- **Not executed:** FTP · deploy · package regen (unless operator)
 
 ## G-20t5 staging profile current-head regen dry-run — complete
 

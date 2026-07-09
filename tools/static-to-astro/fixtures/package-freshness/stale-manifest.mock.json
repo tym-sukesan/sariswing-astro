@@ -1,0 +1,12 @@
+{
+  "$comment": "G-20t6 — Stale package manifest mock for freshness gate verifier tests only.",
+  "phase": "G-20t6-package-freshness-gate-mock",
+  "siteSlug": "gosaki-piano",
+  "packageProfileName": "staging",
+  "targetEnvironment": "staging",
+  "sourceCommit": "0000000000000000000000000000000000000000",
+  "generatedAt": "2020-01-01T00:00:00.000Z",
+  "ftpAutoDeployUsed": false,
+  "safeForStaticFtp": true,
+  "includesAdmin": true
+}

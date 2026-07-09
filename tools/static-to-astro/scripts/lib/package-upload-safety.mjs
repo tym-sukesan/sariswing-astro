@@ -131,6 +131,161 @@ export function findSitemapSafetyViolations(sitemapXml) {
 }
 
 /**
+ * @param {string | null | undefined} ref
+ */
+export function normalizeGitCommit(ref) {
+  return String(ref ?? "").trim().toLowerCase();
+}
+
+/**
+ * Compare manifest sourceCommit with current git HEAD (full or short).
+ * @param {string | null | undefined} manifestCommit
+ * @param {string | null | undefined} headCommit
+ */
+export function commitsMatch(manifestCommit, headCommit) {
+  const manifest = normalizeGitCommit(manifestCommit);
+  const head = normalizeGitCommit(headCommit);
+  if (!manifest || !head) return false;
+  return manifest === head || manifest.startsWith(head) || head.startsWith(manifest);
+}
+
+/**
+ * G-20t6 — Package freshness gate for manual-upload preflight.
+ * @param {object | null | undefined} manifest
+ * @param {string | null | undefined} currentHead
+ */
+export function validatePackageFreshness(manifest, currentHead) {
+  /** @type {string[]} */
+  const errors = [];
+  /** @type {string[]} */
+  const stopReasons = [];
+  const generatedAt = manifest?.generatedAt ?? null;
+  const manifestCommit = manifest?.sourceCommit ?? null;
+
+  if (!manifest || typeof manifest !== "object") {
+    errors.push("manifest missing or not an object");
+    stopReasons.push("MANIFEST.json missing or invalid — STOP upload");
+    return {
+      fresh: false,
+      ok: false,
+      errors,
+      stopReasons,
+      manifestCommit,
+      currentHead: currentHead ?? null,
+      generatedAt,
+    };
+  }
+
+  if (!manifestCommit) {
+    errors.push("sourceCommit missing in MANIFEST.json");
+    stopReasons.push("sourceCommit missing — STOP upload; regen package");
+    return {
+      fresh: false,
+      ok: false,
+      errors,
+      stopReasons,
+      manifestCommit,
+      currentHead: currentHead ?? null,
+      generatedAt,
+    };
+  }
+
+  if (!currentHead) {
+    errors.push("current git HEAD could not be resolved");
+    stopReasons.push("git HEAD unavailable — STOP upload until HEAD is known");
+    return {
+      fresh: false,
+      ok: false,
+      errors,
+      stopReasons,
+      manifestCommit,
+      currentHead: null,
+      generatedAt,
+    };
+  }
+
+  const fresh = commitsMatch(manifestCommit, currentHead);
+  if (!fresh) {
+    errors.push(
+      `sourceCommit mismatch: MANIFEST=${manifestCommit} current HEAD=${currentHead}`,
+    );
+    stopReasons.push(
+      "sourceCommit !== current HEAD — STOP upload; run package regen at current HEAD first",
+    );
+  }
+
+  return {
+    fresh,
+    ok: fresh,
+    errors,
+    stopReasons,
+    manifestCommit,
+    currentHead,
+    generatedAt,
+  };
+}
+
+/**
+ * @param {{
+ *   fresh: boolean,
+ *   manifestCommit: string | null,
+ *   currentHead: string | null,
+ *   generatedAt: string | null,
+ *   packageProfileName?: string,
+ *   targetEnvironment?: string,
+ *   stopReasons?: string[],
+ * }} result
+ */
+export function formatPackageFreshnessReport(result) {
+  const lines = [
+    "=== Package freshness gate (G-20t6) ===",
+    `fresh: ${result.fresh ? "PASS" : "STOP"}`,
+    `targetEnvironment: ${result.targetEnvironment ?? "unknown"}`,
+    `packageProfileName: ${result.packageProfileName ?? "unknown"}`,
+    `generatedAt: ${result.generatedAt ?? "(missing)"}`,
+    `manifest sourceCommit: ${result.manifestCommit ?? "(missing)"}`,
+    `current git HEAD: ${result.currentHead ?? "(unknown)"}`,
+  ];
+  if (!result.fresh && result.stopReasons?.length) {
+    lines.push("stopReasons:");
+    for (const reason of result.stopReasons) lines.push(`  - ${reason}`);
+  }
+  return lines.join("\n");
+}
+
+/**
+ * @param {string} packageDir
+ * @param {string} repoRoot
+ * @param {{ currentHead?: string | null }} [opts]
+ */
+export function verifyPackageUploadFreshness(packageDir, repoRoot, opts = {}) {
+  const manifestState = readPackageManifest(packageDir);
+  if (!manifestState.ok) {
+    return {
+      fresh: false,
+      ok: false,
+      errors: [manifestState.error ?? "MANIFEST.json unreadable"],
+      stopReasons: ["MANIFEST.json missing or invalid — STOP upload"],
+      manifestCommit: null,
+      currentHead: opts.currentHead ?? resolveSourceCommit(repoRoot),
+      generatedAt: null,
+      manifest: null,
+      packageDir,
+    };
+  }
+
+  const currentHead = opts.currentHead ?? resolveSourceCommit(repoRoot);
+  const result = validatePackageFreshness(manifestState.manifest, currentHead);
+  return {
+    ...result,
+    manifest: manifestState.manifest,
+    packageDir,
+    targetEnvironment: manifestState.manifest?.targetEnvironment,
+    packageProfileName: manifestState.manifest?.packageProfileName,
+  };
+}
+
+/**
  * @param {string} packageDir
  */
 export function readPackageManifest(packageDir) {

@@ -22,7 +22,10 @@
     "verify:manual-upload:gosaki-production": "node scripts/verify-g20i3-gosaki-production-package-admin-exclusion.mjs",
     "verify:package-upload-safety": "node scripts/verify-g20t3-staging-prod-package-upload-safety-hardening.mjs",
     "verify:g20t4-production-regen": "node scripts/verify-g20t4-gosaki-production-profile-full-regen-dry-run.mjs",
-    "verify:g20t5-staging-regen": "node scripts/verify-g20t5-gosaki-staging-profile-current-head-regen-dry-run.mjs"
+    "verify:g20t5-staging-regen": "node scripts/verify-g20t5-gosaki-staging-profile-current-head-regen-dry-run.mjs",
+    "verify:package-freshness:staging": "node scripts/verify-package-upload-freshness.mjs --profile staging",
+    "verify:package-freshness:production": "node scripts/verify-package-upload-freshness.mjs --profile production",
+    "verify:package-freshness-gate": "node scripts/verify-g20t6-package-freshness-gate.mjs"
   },
   "devDependencies": {
     "pixelmatch": "^7.1.0",

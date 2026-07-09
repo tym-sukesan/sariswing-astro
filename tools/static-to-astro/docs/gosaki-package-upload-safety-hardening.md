@@ -39,7 +39,7 @@ Manual upload accidents to prevent:
 | Admin in production upload | `includesAdmin: false` + verifier blocks `admin/` |
 | Wrong remote path (root `/`, empty, TBD) | `intendedRemotePath` + STOP checklist |
 | Uploading `public-dist/` folder itself | README + CHECKLIST explicit warning |
-| Stale package upload | `generatedAt` + `sourceCommit` in MANIFEST |
+| Stale package upload | `generatedAt` + `sourceCommit` in MANIFEST · **G-20t6 enforces at preflight** |
 | mirror / sync / CLI FTP | Prohibited in README + CHECKLIST |
 
 ---

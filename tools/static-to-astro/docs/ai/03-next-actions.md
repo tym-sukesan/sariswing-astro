@@ -1,6 +1,20 @@
 Last updated: 2026-07-09
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20t6 Gosaki package freshness gate — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20t6-package-freshness-gate` |
+| Base | `3fcb625` |
+| Gate | `sourceCommit` === current git HEAD |
+| Stale | **STOP** upload preflight |
+| Profiles | staging + production |
+| Preflight | `verify-package-upload-freshness.mjs` |
+| FTP / deploy | **not executed** |
+| Doc | `gosaki-package-freshness-gate.md` |
+| Verifier | `verify-g20t6-package-freshness-gate.mjs` |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20t5 Gosaki staging profile current-head regen dry-run — complete
 
 | Item | Value |

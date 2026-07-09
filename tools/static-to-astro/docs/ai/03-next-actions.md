@@ -1,6 +1,20 @@
 Last updated: 2026-07-10
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u9 Pilot full package build + verify — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u9-pilot-sample-static-full-package-build-verify` |
+| Base | `49f1786` |
+| Build | full package · **9 files** · `includesAdmin: false` |
+| Verify | `verify-site-package` PASS |
+| Freshness | `verify:package-freshness:pilot` (--package-dir) PASS |
+| Artifacts | no admin/gosaki/schedule |
+| Gosaki regression | build dry-run PASS |
+| Doc | `pilot-sample-static-full-package-build-verify.md` |
+| Verifier | `verify-g20u9-pilot-sample-static-full-package-build-verify.mjs` |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u8 Second-site noop hooks pilot dry-run — complete
 
 | Item | Value |
@@ -13,6 +27,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Profiles | staging only · `includesAdmin: false` |
 | Checks | build/convert dry-run · local convert no gosaki artifacts |
 | Gosaki | build dry-run unchanged · schedule verify scoped to gosaki-piano |
+| Verifier HEAD | exact pin → NOTE non-blocking after later commits (G-20u8 follow-up) |
 | Doc | `second-site-noop-hooks-pilot-dry-run.md` |
 | Verifier | `verify-g20u8-second-site-noop-hooks-pilot-dry-run.mjs` |
 

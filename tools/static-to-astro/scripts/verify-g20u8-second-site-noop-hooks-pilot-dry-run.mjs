@@ -32,6 +32,7 @@ const REPO_ROOT = path.resolve(TOOL_ROOT, "../..");
 const AI_DIR = "tools/static-to-astro/docs/ai";
 
 const DOC_REL = "tools/static-to-astro/docs/second-site-noop-hooks-pilot-dry-run.md";
+/** Documented at G-20u8 completion; verifier HEAD pin is non-blocking after later commits. */
 const BASE_COMMIT = "d3e8ff7";
 
 const PILOT_FIXTURE = path.join(TOOL_ROOT, "fixtures/sample-static-site");
@@ -79,8 +80,22 @@ const origin = spawnSync("git", ["rev-parse", "--short", "origin/main"], {
   encoding: "utf8",
 });
 
-assert("HEAD is d3e8ff7", head.stdout.trim() === BASE_COMMIT, head.stdout.trim());
-assert("origin/main is d3e8ff7", origin.stdout.trim() === BASE_COMMIT, origin.stdout.trim());
+if (head.stdout.trim() === BASE_COMMIT) {
+  console.log(`PASS HEAD is ${BASE_COMMIT} (G-20u8 original)`);
+  passed += 1;
+} else {
+  console.log(
+    `NOTE HEAD is ${head.stdout.trim()} (G-20u8 original ${BASE_COMMIT}) — non-blocking`,
+  );
+}
+if (origin.stdout.trim() === BASE_COMMIT) {
+  console.log(`PASS origin/main is ${BASE_COMMIT} (G-20u8 original)`);
+  passed += 1;
+} else {
+  console.log(
+    `NOTE origin/main is ${origin.stdout.trim()} (G-20u8 original ${BASE_COMMIT}) — non-blocking`,
+  );
+}
 
 assert("doc exists", exists(DOC_REL));
 assert("pilot deploy profiles exists", exists("tools/static-to-astro/config/sites/pilot-sample-static.deploy-profiles.json"));

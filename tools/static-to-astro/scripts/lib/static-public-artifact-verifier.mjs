@@ -15,6 +15,7 @@ import {
   verifyStagingPreviewHtml,
 } from "./deploy-base.mjs";
 import { loadExportEnv } from "./supabase-json-exporter.mjs";
+import { resolveStaticPublicVerifyOptions } from "./static-public-site-expectations.mjs";
 
 /** Always required in gosaki-style static public artifacts. */
 export const CORE_PUBLIC_HTML = ["index.html", "discography/index.html"];
@@ -217,12 +218,15 @@ export function listPublicFiles(publicDir) {
 
 /**
  * @param {string} publicDir
+ * @param {{ corePublicHtml?: string[], useGosakiScheduleFallback?: boolean }} [options]
  */
-export function verifyPublicHtmlExists(publicDir) {
+export function verifyPublicHtmlExists(publicDir, options = {}) {
   /** @type {Array<{ path: string, exists: boolean, kind?: string, yearMonth?: string, variant?: string, alternative?: string | null, acceptedVariants?: string[] }>} */
   const checks = [];
+  const coreHtml = options.corePublicHtml ?? CORE_PUBLIC_HTML;
+  const useGosakiScheduleFallback = options.useGosakiScheduleFallback ?? true;
 
-  for (const rel of CORE_PUBLIC_HTML) {
+  for (const rel of coreHtml) {
     checks.push({
       path: rel,
       exists: fs.existsSync(path.join(publicDir, rel)),
@@ -231,7 +235,12 @@ export function verifyPublicHtmlExists(publicDir) {
   }
 
   const discovered = discoverMonthlyScheduleMonths(publicDir);
-  const months = discovered.length > 0 ? discovered : DEFAULT_GOSAKI_SCHEDULE_MONTHS;
+  const months =
+    discovered.length > 0
+      ? discovered
+      : useGosakiScheduleFallback
+        ? DEFAULT_GOSAKI_SCHEDULE_MONTHS
+        : [];
 
   for (const ym of months) {
     const resolved = resolveMonthlySchedulePath(publicDir, ym);
@@ -392,7 +401,7 @@ export function loadOptionalSecretsForScan(toolRoot) {
 }
 
 /**
- * @param {{ astroDir: string, toolRoot: string, publicDirCli?: string | null, manifestOutDir?: string | null, includeGosakiReadOnlyAdmin?: boolean }} opts
+ * @param {{ astroDir: string, toolRoot: string, publicDirCli?: string | null, manifestOutDir?: string | null, includeGosakiReadOnlyAdmin?: boolean, siteKey?: string | null }} opts
  */
 export function runStaticPublicArtifactVerification({
   astroDir,
@@ -400,6 +409,7 @@ export function runStaticPublicArtifactVerification({
   publicDirCli = null,
   manifestOutDir = null,
   includeGosakiReadOnlyAdmin: includeGosakiReadOnlyAdminOverride = undefined,
+  siteKey = null,
 }) {
   const astroAbs = path.resolve(astroDir);
   const publicDir = detectPublicDir(astroAbs, publicDirCli);
@@ -429,9 +439,12 @@ export function runStaticPublicArtifactVerification({
     return result;
   }
 
+  const publicVerifyOptions = resolveStaticPublicVerifyOptions(siteKey, publicDir);
+  result.publicVerifyOptions = publicVerifyOptions;
+
   result.publicHtml = {
-    checks: verifyPublicHtmlExists(publicDir),
-    allPresent: verifyPublicHtmlExists(publicDir).every((c) => c.exists),
+    checks: verifyPublicHtmlExists(publicDir, publicVerifyOptions),
+    allPresent: verifyPublicHtmlExists(publicDir, publicVerifyOptions).every((c) => c.exists),
   };
 
   if (!result.publicHtml.allPresent) {
@@ -473,7 +486,9 @@ export function runStaticPublicArtifactVerification({
   });
 
   const deployBase = readAstroDeployBaseFromConfig(astroAbs);
-  result.deployBaseCheck = verifyAssetPathsIncludeBase(publicDistDir, deployBase);
+  result.deployBaseCheck = verifyAssetPathsIncludeBase(publicDistDir, deployBase, {
+    navSampleSegment: publicVerifyOptions.navSampleSegment,
+  });
   result.seoFlags = verifyPublicDistSeoFlags(publicDistDir, deployBase);
   result.stagingPreview = verifyStagingPreviewHtml(publicDistDir, deployBase);
   result.cssPresence = verifyPublicDistCssPresence(publicDistDir, deployBase);

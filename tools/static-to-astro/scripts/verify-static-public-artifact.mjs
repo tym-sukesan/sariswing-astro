@@ -30,6 +30,7 @@ Options:
   --report PATH        STATIC_PUBLIC_ARTIFACT_REPORT.md output (required)
   --public-dir PATH    Override public artifact dir (default: dist/client → dist)
   --include-gosaki-read-only-admin BOOL  Force include/exclude Gosaki read-only admin in copy
+  --site SITE_KEY          Registry siteKey for per-site HTML/nav expectations
   --help, -h
 `);
 }
@@ -40,6 +41,7 @@ function parseArgs(argv) {
     report: null,
     publicDir: null,
     includeGosakiReadOnlyAdmin: undefined,
+    siteKey: null,
     help: false,
   };
 
@@ -66,6 +68,11 @@ function parseArgs(argv) {
       if (val === "true") opts.includeGosakiReadOnlyAdmin = true;
       else if (val === "false") opts.includeGosakiReadOnlyAdmin = false;
       else throw new Error(`--include-gosaki-read-only-admin expects true or false, got: ${val}`);
+      continue;
+    }
+    if (arg === "--site") {
+      opts.siteKey = argv[++i];
+      if (!opts.siteKey) throw new Error("--site requires a siteKey");
       continue;
     }
     throw new Error(`Unknown argument: ${arg}`);
@@ -137,6 +144,7 @@ async function main() {
     publicDirCli: opts.publicDir,
     manifestOutDir,
     includeGosakiReadOnlyAdmin: opts.includeGosakiReadOnlyAdmin,
+    siteKey: opts.siteKey,
   });
 
   fs.mkdirSync(path.dirname(reportPath), { recursive: true });

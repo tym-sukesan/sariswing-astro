@@ -243,8 +243,10 @@ export function readAstroDeployBaseFromConfig(astroDir) {
 /**
  * @param {string} publicDir
  * @param {string | null | undefined} deployBase
+ * @param {{ navSampleSegment?: string }} [options]
  */
-export function verifyAssetPathsIncludeBase(publicDir, deployBase) {
+export function verifyAssetPathsIncludeBase(publicDir, deployBase, options = {}) {
+  const navSegment = options.navSampleSegment ?? "discography";
   const base = normalizeDeployBase(deployBase);
   const indexPath = path.join(publicDir, "index.html");
   if (!fs.existsSync(indexPath)) {
@@ -252,6 +254,7 @@ export function verifyAssetPathsIncludeBase(publicDir, deployBase) {
   }
 
   const html = fs.readFileSync(indexPath, "utf8");
+  const navPattern = new RegExp(`href="([^"]*${navSegment}[^"]*)"`);
 
   if (base === "/") {
     const hasSubdirAssets = /\/cms-kit-staging\//i.test(html);
@@ -261,14 +264,14 @@ export function verifyAssetPathsIncludeBase(publicDir, deployBase) {
       stagingSubdirBuild: false,
       assetPathsIncludeBase: !/\/cms-kit-staging\/gosaki\/_astro\//i.test(html),
       sampleCss: html.match(/href="([^"]*_astro[^"]*)"/)?.[1] ?? null,
-      sampleNav: html.match(/href="([^"]*discography[^"]*)"/)?.[1] ?? null,
+      sampleNav: html.match(navPattern)?.[1] ?? null,
     };
   }
 
   const prefix = base.replace(/^\/|\/$/g, "");
   const needsAstroAssets = publicDirReferencesAstroAssets(publicDir);
   const assetOk = needsAstroAssets ? new RegExp(`/${prefix}/_astro/`).test(html) : true;
-  const navOk = new RegExp(`href="/${prefix}/discography/"`).test(html);
+  const navOk = new RegExp(`href="/${prefix}/${navSegment}/"`).test(html);
   const pathsOk = navOk && assetOk;
   return {
     ok: pathsOk,
@@ -277,7 +280,7 @@ export function verifyAssetPathsIncludeBase(publicDir, deployBase) {
     assetPathsIncludeBase: pathsOk,
     needsAstroAssets,
     sampleCss: html.match(/href="([^"]*_astro[^"]*)"/)?.[1] ?? null,
-    sampleNav: html.match(/href="([^"]*discography[^"]*)"/)?.[1] ?? null,
+    sampleNav: html.match(navPattern)?.[1] ?? null,
     reason: !navOk
       ? "missing base-prefixed nav link"
       : needsAstroAssets && !assetOk

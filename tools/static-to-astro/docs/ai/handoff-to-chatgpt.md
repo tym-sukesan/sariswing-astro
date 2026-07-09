@@ -5,12 +5,20 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u8-second-site-noop-hooks-pilot-dry-run — complete.
-Pilot: pilot-sample-static on fixtures/sample-static-site — noop hooks only.
-siteKey explicit --site → generator; Gosaki hooks not mis-applied.
-Gosaki build dry-run unchanged; verify schedule gates scoped to gosaki-piano.
-No FTP / deploy / DB write in G-20u8.
+Current phase: G-20u9-pilot-sample-static-full-package-build-verify — complete.
+Pilot full build: 9 files · verify-site-package PASS · freshness via --package-dir.
+Per-site static-public expectations for pilot vs gosaki.
+Gosaki dry-run regression PASS.
+No FTP / deploy in G-20u9.
 ```
+
+## G-20u9 pilot full package build + verify — complete
+
+- **Build:** `build:pilot:staging` → 9 files · MANIFEST siteKey pilot-sample-static
+- **Verify:** `verify:pilot:staging` · `verify:package-freshness:pilot`
+- **Fix:** static-public-site-expectations (no Gosaki schedule/discography gates for pilot)
+- **Not executed:** FTP · DB write · production profile
+- **Next:** G-20u10 real customer hook factory
 
 ## G-20u8 second-site noop hooks pilot dry-run — complete
 

@@ -243,6 +243,7 @@ export function runSitePackageBuild(options) {
   if (profile.includeGosakiReadOnlyAdmin === false) {
     verifyArgs.push("--include-gosaki-read-only-admin", "false");
   }
+  verifyArgs.push("--site", siteKey);
   run("node", verifyArgs, buildEnv);
 
   const packageResult = createManualUploadPackage({

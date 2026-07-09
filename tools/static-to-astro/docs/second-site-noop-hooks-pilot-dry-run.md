@@ -79,6 +79,8 @@ node scripts/build-site-package.mjs --site pilot-sample-static --profile staging
 node scripts/build-site-package.mjs --site gosaki-piano --profile staging --dry-run
 ```
 
+**Verifier HEAD pin:** `BASE_COMMIT` documents G-20u8 completion (`d3e8ff7`). Mismatch prints **NOTE — non-blocking**; functional checks remain required.
+
 Local minimal convert (gitignored `output/_g20u8-pilot-sample-astro`):
 
 - No `gosaki-*` data/components

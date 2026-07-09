@@ -51,6 +51,8 @@
     "verify:g20u9-pilot-full-package": "node scripts/verify-g20u9-pilot-sample-static-full-package-build-verify.mjs",
     "verify:g20u10-package-freshness": "node scripts/verify-g20u10-site-aware-package-freshness-cli.mjs",
     "verify:g20u11-preflight": "node scripts/verify-g20u11-site-aware-preflight-scripts.mjs",
+    "verify:g20u12-readme-preflight": "node scripts/verify-g20u12-manual-upload-readme-checklist-preflight-integration.mjs",
+    "verify:g20u12-pilot-enotempty": "node scripts/verify-g20u12-pilot-build-enotempty-fix.mjs",
     "build:pilot:staging": "node scripts/build-site-package.mjs --site pilot-sample-static --profile staging",
     "build:pilot:staging:dry-run": "node scripts/build-site-package.mjs --site pilot-sample-static --profile staging --dry-run",
     "verify:pilot:staging": "node scripts/verify-site-package.mjs --site pilot-sample-static --profile staging",

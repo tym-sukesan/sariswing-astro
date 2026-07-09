@@ -8,10 +8,56 @@ import path from "node:path";
 import { spawnSync } from "node:child_process";
 import { normalizeDeployBase, verifyPublicDistCssPresence } from "./deploy-base.mjs";
 import {
+  GOSAKI_SITE_KEY,
+  PILOT_SAMPLE_STATIC_SITE_KEY,
+} from "./site-registry.mjs";
+import {
   detectGosakiReadOnlyAdminInPublicDir,
   listPublicFiles,
 } from "./static-public-artifact-verifier.mjs";
 import { isUnsafeIntendedRemotePath, resolveSourceCommit, sanitizeProductionPublicDistSitemaps } from "./package-upload-safety.mjs";
+
+/**
+ * @param {string | null | undefined} siteKey
+ * @param {string} profileName
+ */
+export function resolvePreflightNpmCommand(siteKey, profileName) {
+  if (siteKey === GOSAKI_SITE_KEY) {
+    return profileName === "production"
+      ? "npm run preflight:gosaki:production"
+      : "npm run preflight:gosaki:staging";
+  }
+  if (siteKey === PILOT_SAMPLE_STATIC_SITE_KEY && profileName === "staging") {
+    return "npm run preflight:pilot:staging";
+  }
+  if (siteKey) {
+    return `npm run preflight -- --site ${siteKey} --profile ${profileName}`;
+  }
+  return profileName === "production"
+    ? "npm run preflight:gosaki:production"
+    : "npm run preflight:gosaki:staging";
+}
+
+/**
+ * @param {string | null | undefined} siteKey
+ * @param {string} profileName
+ */
+export function resolveBuildNpmCommand(siteKey, profileName) {
+  if (siteKey === GOSAKI_SITE_KEY) {
+    return profileName === "production"
+      ? "npm run build:gosaki:production"
+      : "npm run build:gosaki:staging";
+  }
+  if (siteKey === PILOT_SAMPLE_STATIC_SITE_KEY && profileName === "staging") {
+    return "npm run build:pilot:staging";
+  }
+  if (siteKey) {
+    return `npm run build:site-package -- --site ${siteKey} --profile ${profileName}`;
+  }
+  return profileName === "production"
+    ? "npm run build:gosaki:production"
+    : "npm run build:gosaki:staging";
+}
 
 function resolveStaticPublicManifestPath(publicDir) {
   const abs = path.resolve(publicDir);
@@ -169,6 +215,7 @@ export function buildManualUploadManifest(meta) {
  *   zipName?: string,
  *   sourceCommit?: string | null,
  *   generatedAt?: string | null,
+ *   siteKey?: string | null,
  * }} opts
  */
 export function formatReadmeUpload(opts) {
@@ -180,6 +227,9 @@ export function formatReadmeUpload(opts) {
   const includesAdmin = opts.includesAdmin === true;
   const zipName = opts.zipName ?? `${opts.siteSlug}-manual-upload.zip`;
   const isProduction = targetEnvironment === "production";
+  const siteKey = opts.siteKey ?? null;
+  const preflightCommand = resolvePreflightNpmCommand(siteKey, packageProfileName);
+  const buildCommand = resolveBuildNpmCommand(siteKey, packageProfileName);
 
   const environmentLabel = isProduction ? "production" : "staging";
   const adminLine = includesAdmin
@@ -226,20 +276,50 @@ This package is for **manual FTP upload only**. Do **not** use automated FTP dep
 | \`generatedAt\` | \`${opts.generatedAt ?? "(see MANIFEST.json)"}\` |
 | \`sourceCommit\` | \`${opts.sourceCommit ?? "(see MANIFEST.json)"}\` |
 
-## Freshness gate (G-20t6) — run before FTP upload
+## Preflight before upload (G-20u11) — **required**
 
-**STOP** if \`sourceCommit\` in \`MANIFEST.json\` does not match current git HEAD.
+Run **structure verify + freshness** at current git HEAD **before** opening FileZilla / Lolipop GUI.
 
 \`\`\`bash
 cd tools/static-to-astro
-npm run verify:package-freshness:${packageProfileName === "production" ? "production" : "staging"}
+${preflightCommand}
 \`\`\`
 
-- **PASS** → package was built at current HEAD; upload may proceed (other safety gates still apply)
-- **STOP** → stale package; regen with \`build-gosaki-${packageProfileName === "production" ? "production" : "staging-admin"}-package.mjs\` first
+Generic form (any registered site):
 
-Open \`MANIFEST.json\` and confirm \`generatedAt\` is recent enough for this release.
+\`\`\`bash
+npm run preflight -- --site SITE_KEY --profile ${packageProfileName}
+\`\`\`
 
+Named shortcuts:
+
+| Site | Profile | Command |
+| --- | --- | --- |
+| \`gosaki-piano\` | staging | \`npm run preflight:gosaki:staging\` |
+| \`gosaki-piano\` | production | \`npm run preflight:gosaki:production\` |
+| \`pilot-sample-static\` | staging | \`npm run preflight:pilot:staging\` |
+
+### Freshness STOP — upload forbidden when stale
+
+**STOP** if \`sourceCommit\` in \`MANIFEST.json\` does not match current git HEAD.
+
+- **PASS** → structure OK and package built at current HEAD; manual FTP may proceed (other safety gates still apply)
+- **STOP (stale)** → **upload forbidden**; rebuild at current HEAD, then re-run preflight:
+
+\`\`\`bash
+${buildCommand}
+${preflightCommand}
+\`\`\`
+
+**After any git commit**, on-disk packages become stale until regen + preflight PASS.
+
+Open \`MANIFEST.json\` and confirm \`generatedAt\` and \`sourceCommit\` match this release.
+
+${isProduction ? `## Production upload — **STOP until G-20j approval**
+
+Even if preflight PASS, production FTP upload remains **blocked** until G-20j cutover preflight is complete (DNS/SSL/MX/client sign-off). Do **not** upload to production root until approved.
+
+` : ""}
 ## What this is
 
 - A local copy of \`public-dist/\` ready for FileZilla or Lolipop FTP manual upload
@@ -314,6 +394,7 @@ ${postUploadChecks}
  *   includesAdmin?: boolean,
  *   sourceCommit?: string | null,
  *   generatedAt?: string | null,
+ *   siteKey?: string | null,
  * }} opts
  */
 export function formatUploadChecklist(opts) {
@@ -325,6 +406,9 @@ export function formatUploadChecklist(opts) {
   const includesAdmin = opts.includesAdmin === true;
   const isProduction = targetEnvironment === "production";
   const remotePathUnsafe = isUnsafeIntendedRemotePath(intendedRemotePath);
+  const siteKey = opts.siteKey ?? null;
+  const preflightCommand = resolvePreflightNpmCommand(siteKey, packageProfileName);
+  const buildCommand = resolveBuildNpmCommand(siteKey, packageProfileName);
 
   const manifestChecks = `- [ ] Open \`MANIFEST.json\`
 - [ ] \`targetEnvironment\` is **${targetEnvironment}** (not ${isProduction ? "staging" : "production"})
@@ -332,8 +416,11 @@ export function formatUploadChecklist(opts) {
 - [ ] \`includesAdmin\` is **${includesAdmin}**${isProduction ? " — production must be false" : ""}
 - [ ] \`generatedAt\` is **${opts.generatedAt ?? "(check MANIFEST)"}** — recent enough for this release
 - [ ] \`sourceCommit\` is **${opts.sourceCommit ?? "(check MANIFEST)"}**
-- [ ] Run freshness preflight: \`npm run verify:package-freshness:${isProduction ? "production" : "staging"}\` → **PASS**
-- [ ] **STOP** if sourceCommit !== current git HEAD (stale package)
+- [ ] Run site-aware preflight: \`${preflightCommand}\` → **PASS**
+- [ ] Preflight runs verify-site-package + verify-package-upload-freshness (both with \`--site\` / \`--profile\`)
+- [ ] **STOP** if preflight fails — stale package (**upload forbidden**) or structure error
+- [ ] If stale: rebuild at current HEAD (\`${buildCommand}\`) then re-run preflight
+- [ ] **After any git commit**, package is stale until regen + preflight PASS
 - [ ] \`safeForStaticFtp\` is **true**
 - [ ] \`ftpAutoDeployUsed\` is **false**`;
 
@@ -371,9 +458,11 @@ ${manifestChecks}
 ${remoteChecks}
 - [ ] This folder is the **${targetEnvironment}** package — not ${isProduction ? "staging `gosaki-piano/`" : "production `gosaki-piano-production/`"}
 - [ ] Select **contents** of local \`public-dist/\` (not the \`public-dist\` folder itself)
+- [ ] Confirm remote path before upload — **not** account root \`/\` unless approved production cutover
 - [ ] Do **not** use mirror / sync / delete-remote-extras / CLI FTP
 - [ ] Overwrite is OK; delete-sync is **not** OK
 - [ ] Do not delete unrelated remote folders
+${isProduction ? "- [ ] **STOP** — production upload blocked until G-20j cutover approval (even if preflight PASS)\n" : ""}
 
 ## After upload
 
@@ -524,6 +613,7 @@ export function createManualUploadPackage(opts) {
     stagingUrl,
     publicBaseUrl: resolvedPublicBaseUrl,
     siteSlug,
+    siteKey,
     targetEnvironment,
     packageProfileName: profileName,
     intendedRemotePath: resolvedIntendedRemotePath,

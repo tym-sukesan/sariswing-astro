@@ -1,6 +1,22 @@
 Last updated: 2026-07-10
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u12 Manual-upload README/CHECKLIST preflight integration — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u12-manual-upload-readme-checklist-preflight-integration` |
+| Base | `e6f2531` |
+| Source | `manual-upload-package.mjs` — README + CHECKLIST generation |
+| Added | site-aware preflight commands · stale STOP · rebuild at HEAD |
+| Retained | public-dist contents · no mirror/CLI FTP · G-20j production STOP |
+| Regen | README/CHECKLIST refresh on next build |
+| ENOTEMPTY fix | `safe-output-cleanup.mjs` — path-guarded cleanup under `output/` |
+| Pilot build | **PASS at `e6f2531`** · preflight PASS · 9 files |
+| Commit note | **commit後は package stale** — rebuild + preflight before upload |
+| Doc | `manual-upload-readme-checklist-preflight-integration.md` |
+| Verifier | `verify-g20u12-manual-upload-readme-checklist-preflight-integration.mjs` |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u11 Site-aware preflight scripts — complete
 
 | Item | Value |

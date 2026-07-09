@@ -93,5 +93,5 @@ node scripts/verify-g20u11-site-aware-preflight-scripts.mjs
 
 ## Next
 
-- Wire README/CHECKLIST in manual-upload packages to reference site-aware preflight
+- ~~Wire README/CHECKLIST in manual-upload packages~~ — done in G-20u12
 - Add `preflight:pilot:production` when pilot production profile exists

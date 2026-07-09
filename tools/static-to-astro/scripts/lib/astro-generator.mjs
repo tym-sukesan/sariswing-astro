@@ -57,6 +57,7 @@ import {
   scheduleMonthsFromDetected,
 } from "./schedule-seed-extractor.mjs";
 import { resolveSiteGeneratorHooks } from "./site-generator-hooks.mjs";
+import { removeGeneratedOutputDir } from "./safe-output-cleanup.mjs";
 
 const TRAILING_SLASH = "always";
 const GLOBAL_CSS_PATH = "src/styles/global.css";
@@ -83,9 +84,7 @@ function copyPublicStagingLibs(outDir) {
 }
 
 function rmDirRecursive(dir) {
-  if (fs.existsSync(dir)) {
-    fs.rmSync(dir, { recursive: true, force: true, maxRetries: 3, retryDelay: 100 });
-  }
+  removeGeneratedOutputDir(dir, { toolRoot: TOOL_ROOT });
 }
 
 function collectCssFiles(siteDir, analysis) {

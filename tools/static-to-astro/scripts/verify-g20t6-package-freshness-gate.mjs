@@ -90,7 +90,7 @@ assert("lib validatePackageFreshness", lib.includes("validatePackageFreshness"))
 assert("lib verifyPackageUploadFreshness", lib.includes("verifyPackageUploadFreshness"));
 assert("lib commitsMatch", lib.includes("commitsMatch"));
 assert("manual README freshness gate", manualLib.includes("Freshness gate (G-20t6)"));
-assert("manual CHECKLIST freshness preflight", manualLib.includes("verify:package-freshness"));
+assert("manual CHECKLIST site-aware preflight", manualLib.includes("preflight"));
 
 const currentHead = head.stdout.trim();
 const matchingManifest = {

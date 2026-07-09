@@ -5,11 +5,22 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u11-site-aware-preflight-scripts — complete.
-Preflight npm: preflight:gosaki:* / preflight:pilot:staging / generic preflight.
-Both steps use --site + --profile via run-site-preflight.mjs.
-Stale package → preflight STOP (expected). No FTP / deploy.
+Current phase: G-20u12-manual-upload-readme-checklist-preflight-integration — complete.
+README/CHECKLIST embed site-aware preflight (G-20u11).
+Stale STOP + rebuild at HEAD documented. G-20j production STOP retained.
+Regen README/CHECKLIST on next build. No FTP / deploy.
 ```
+
+## G-20u12 manual-upload README/CHECKLIST preflight integration — complete
+
+- **Source:** `formatReadmeUpload` / `formatUploadChecklist` in `manual-upload-package.mjs`
+- **Added:** `preflight:gosaki:*`, `preflight:pilot:staging`, generic `preflight -- --site`
+- **Stale:** upload forbidden until rebuild at current HEAD + preflight PASS
+- **Retained:** public-dist contents rule · no mirror/CLI FTP · G-20j production STOP
+- **Regen:** next `build:gosaki:*` / `build:pilot:*` refreshes on-disk README/CHECKLIST
+- **ENOTEMPTY fix:** `safe-output-cleanup.mjs` for partial `output/*-astro/node_modules`
+- **Verified:** `build:pilot:staging` + `preflight:pilot:staging` PASS at `e6f2531`
+- **Commit note:** commit後 package stale until rebuild + preflight PASS
 
 ## G-20u11 site-aware preflight scripts — complete
 
@@ -19,7 +30,7 @@ Stale package → preflight STOP (expected). No FTP / deploy.
 - **Legacy:** build/verify/freshness convenience scripts unchanged
 - **Production:** G-20j preflight still required; upload STOP
 - **Not executed:** FTP · DB write · package upload
-- **Next:** update manual-upload README/CHECKLIST to reference site-aware preflight
+- **Next:** ~~update manual-upload README/CHECKLIST~~ — done in G-20u12
 
 ## G-20u10 site-aware package freshness CLI — complete
 

@@ -66,6 +66,7 @@
     "verify:g20u16-coupling-audit": "node scripts/verify-g20u16-remaining-site-specific-coupling-audit.mjs",
     "verify:g20u17-post-build-verifier": "node scripts/verify-g20u17-post-build-verifier-registry.mjs",
     "verify:g20u19-generator-options": "node scripts/verify-g20u19-generator-option-naming-and-fixture-registry.mjs",
+    "verify:g20u20-supabase-cms-features": "node scripts/verify-g20u20-supabase-cms-features-generalization.mjs",
     "verify:g20u18-cli-decoupling": "node scripts/verify-g20u18-package-json-cli-default-decoupling.mjs",
     "build:pilot:staging": "node scripts/build-site-package.mjs --site pilot-sample-static --profile staging",
     "build:pilot:staging:dry-run": "node scripts/build-site-package.mjs --site pilot-sample-static --profile staging --dry-run",

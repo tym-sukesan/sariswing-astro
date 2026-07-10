@@ -21,7 +21,14 @@
       "deployProfilesFile": "config/sites/gosaki-piano.deploy-profiles.json",
       "supabaseFeatures": {
         "schedule": true,
-        "discography": true
+        "discography": true,
+        "siteEmbeds": false
+      },
+      "cmsFeatures": {
+        "youtube": true,
+        "contact": true,
+        "aboutBandProfiles": true,
+        "aboutContent": true
       },
       "packageProfiles": {
         "staging": {
@@ -74,7 +81,14 @@
       "deployProfilesFile": "config/sites/pilot-sample-static.deploy-profiles.json",
       "supabaseFeatures": {
         "schedule": false,
-        "discography": false
+        "discography": false,
+        "siteEmbeds": false
+      },
+      "cmsFeatures": {
+        "youtube": false,
+        "contact": false,
+        "aboutBandProfiles": false,
+        "aboutContent": false
       },
       "packageProfiles": {
         "staging": {

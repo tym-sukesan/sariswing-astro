@@ -1,6 +1,24 @@
 Last updated: 2026-07-10
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u20 Supabase CMS features generalization — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u20-supabase-cms-features-generalization` |
+| Base | `8012bb7` |
+| Registry | `supabaseFeatures` (+ `siteEmbeds`) · `cmsFeatures` (youtube/contact/about*) |
+| Module | `site-cms-features.mjs` |
+| Loaders | feature-gated read-only · `embeds` stub pending G-9f |
+| Hooks | `isCmsFeatureEnabled` gates Gosaki post-generate injects |
+| Gosaki | schedule+discography on · cmsFeatures all on · siteEmbeds off |
+| Pilot | all supabase/cms features off → null/noop |
+| Not executed | DB write · SQL migration · FTP · deploy |
+| Doc | `supabase-cms-features-generalization.md` |
+| Verifier | `verify-g20u20-supabase-cms-features-generalization.mjs` |
+| Regression | G-20u2–u14 + G-20u17–u20 (**18** verifiers) |
+| Next | G-20u21 read-only admin flag |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u19 Generator option naming and fixture registry — complete
 
 | Item | Value |
@@ -15,8 +33,8 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Not executed | FTP · deploy · DB write |
 | Doc | `generator-option-naming-and-fixture-registry.md` |
 | Verifier | `verify-g20u19-generator-option-naming-and-fixture-registry.mjs` |
-| Regression | G-20u2–u14 + G-20u17–u19 (**17** verifiers) |
-| Next | G-20u20 Supabase CMS features |
+| Regression | G-20u2–u14 + G-20u17–u20 (**18** verifiers) |
+| Next | ~~G-20u20 Supabase CMS features~~ (complete) |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u17 Post-build verifier registry — complete
 

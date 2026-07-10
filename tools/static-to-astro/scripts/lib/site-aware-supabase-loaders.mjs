@@ -7,9 +7,9 @@
 import {
   GOSAKI_SITE_KEY,
   TOOL_ROOT,
-  resolveSupabaseFeatures,
-  resolveSupabaseSiteSlug,
+  resolveSiteCmsFeaturePlan,
 } from "./site-registry.mjs";
+import { loadSiteEmbedsDataForBuild } from "./site-cms-features.mjs";
 import {
   GOSAKI_SCHEDULE_SITE_CONFIG,
   loadGosakiScheduleDataForBuild,
@@ -21,7 +21,8 @@ import { loadGosakiDiscographyDataForBuild } from "./supabase-discography-read.m
  * @typedef {object} SiteSupabaseLoadPlan
  * @property {string} siteKey
  * @property {string} supabaseSiteSlug
- * @property {{ schedule: boolean, discography: boolean }} features
+ * @property {{ schedule: boolean, discography: boolean, siteEmbeds: boolean }} features
+ * @property {import('./site-cms-features.mjs').CmsFeatures} cmsFeatures
  */
 
 /**
@@ -30,10 +31,12 @@ import { loadGosakiDiscographyDataForBuild } from "./supabase-discography-read.m
  * @returns {SiteSupabaseLoadPlan}
  */
 export function resolveSiteSupabaseLoadPlan(siteKey, toolRoot = TOOL_ROOT) {
+  const plan = resolveSiteCmsFeaturePlan(siteKey, toolRoot);
   return {
-    siteKey,
-    supabaseSiteSlug: resolveSupabaseSiteSlug(siteKey, toolRoot),
-    features: resolveSupabaseFeatures(siteKey, toolRoot),
+    siteKey: plan.siteKey,
+    supabaseSiteSlug: plan.supabaseSiteSlug,
+    features: plan.supabaseFeatures,
+    cmsFeatures: plan.cmsFeatures,
   };
 }
 
@@ -117,5 +120,14 @@ export async function loadSiteDiscographyDataForBuild(opts) {
 export async function loadSiteSupabaseDataForBuild(opts) {
   const schedule = await loadSiteScheduleDataForBuild(opts);
   const discography = await loadSiteDiscographyDataForBuild(opts);
-  return { schedule, discography, plan: resolveSiteSupabaseLoadPlan(opts.siteKey, opts.toolRoot) };
+  const embeds = await loadSiteEmbedsDataForBuild({
+    siteKey: opts.siteKey,
+    toolRoot: opts.toolRoot,
+  });
+  return {
+    schedule,
+    discography,
+    embeds,
+    plan: resolveSiteSupabaseLoadPlan(opts.siteKey, opts.toolRoot),
+  };
 }

@@ -26,6 +26,7 @@ import {
 import { applyGosakiStagingReadOnlyAdmin } from "./gosaki-staging-read-only-admin.mjs";
 import { generateGosakiFooterAstro } from "./gosaki-footer-social.mjs";
 import { GOSAKI_SITE_KEY, loadSiteRegistry } from "./site-registry.mjs";
+import { isCmsFeatureEnabled } from "./site-cms-features.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 export const TOOL_ROOT = path.resolve(__dirname, "../..");
@@ -249,9 +250,13 @@ function createGosakiPianoHookMethods() {
     },
     applyPostGenerate(outDir, ctx) {
       const toolRoot = ctx.toolRoot ?? TOOL_ROOT;
+      const siteKey = ctx.siteKey ?? GOSAKI_SITE_KEY;
       const writtenPaths = [];
 
-      const gosakiBandProfilesSummary = applyGosakiAboutBandProfiles(outDir, toolRoot);
+      const gosakiBandProfilesSummary =
+        siteKey && isCmsFeatureEnabled(siteKey, "aboutBandProfiles", toolRoot)
+          ? applyGosakiAboutBandProfiles(outDir, toolRoot)
+          : { applied: false, reason: "cms_feature_aboutBandProfiles_disabled" };
       if (gosakiBandProfilesSummary.applied) {
         writtenPaths.push(
           path.join(outDir, gosakiBandProfilesSummary.componentPath),
@@ -259,12 +264,18 @@ function createGosakiPianoHookMethods() {
         );
       }
 
-      const gosakiAboutContentSummary = applyGosakiAboutContent(outDir, toolRoot);
+      const gosakiAboutContentSummary =
+        siteKey && isCmsFeatureEnabled(siteKey, "aboutContent", toolRoot)
+          ? applyGosakiAboutContent(outDir, toolRoot)
+          : { applied: false, reason: "cms_feature_aboutContent_disabled" };
       if (gosakiAboutContentSummary.applied) {
         writtenPaths.push(path.join(outDir, gosakiAboutContentSummary.dataPath));
       }
 
-      const gosakiYoutubeEmbedSummary = applyGosakiHomeYouTubeEmbed(outDir, toolRoot);
+      const gosakiYoutubeEmbedSummary =
+        siteKey && isCmsFeatureEnabled(siteKey, "youtube", toolRoot)
+          ? applyGosakiHomeYouTubeEmbed(outDir, toolRoot)
+          : { applied: false, reason: "cms_feature_youtube_disabled" };
       if (gosakiYoutubeEmbedSummary.applied) {
         writtenPaths.push(
           path.join(outDir, gosakiYoutubeEmbedSummary.componentPath),
@@ -273,7 +284,10 @@ function createGosakiPianoHookMethods() {
         );
       }
 
-      const gosakiContactHubspotSummary = applyGosakiContactHubspotEmbed(outDir, toolRoot);
+      const gosakiContactHubspotSummary =
+        siteKey && isCmsFeatureEnabled(siteKey, "contact", toolRoot)
+          ? applyGosakiContactHubspotEmbed(outDir, toolRoot)
+          : { applied: false, reason: "cms_feature_contact_disabled" };
       if (gosakiContactHubspotSummary.applied) {
         writtenPaths.push(path.join(outDir, gosakiContactHubspotSummary.dataPath));
       }

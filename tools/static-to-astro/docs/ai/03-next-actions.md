@@ -1,6 +1,25 @@
 Last updated: 2026-07-10
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u24d Discography site_slug migration execution record — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u24d-discography-site-slug-migration-execution-record` |
+| Base | `fba8a65` |
+| Project | `static-to-astro-cms-staging` / `kmjqppxjdnwwrtaeqjta` |
+| G-20u24a | before SELECT **PASS** |
+| G-20u24b | migration DDL+backfill **PASS** |
+| G-20u24c | after SELECT false STOP → SQL aggregation bug |
+| Follow-up | corrected SELECT **PASS** (34 tracks / 4 album groups) |
+| Rollback | **not needed** |
+| Loader flag | `DISCOGRAPHY_SITE_SLUG_COLUMN_READY=false` (unchanged) |
+| Not executed | new SQL · FTP · deploy |
+| Doc | `discography-site-slug-migration-execution-result.md` |
+| Verifier | `verify-g20u24d-discography-site-slug-migration-execution-record.mjs` |
+| Regression | G-20u2–u14 + G-20u17–u24d (**22** verifiers) |
+| Next | loader column-ready enablement (separate phase) |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u23 Discography site_slug migration planning — complete
 
 | Item | Value |
@@ -16,7 +35,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Doc | `discography-site-slug-migration-planning.md` |
 | Verifier | `verify-g20u23-discography-site-slug-migration-planning.mjs` |
 | Regression | G-20u2–u14 + G-20u17–u23 (**21** verifiers) |
-| Next | G-20u24 migration execution (operator approval · staging only) |
+| Next | ~~G-20u24 migration execution~~ (G-20u24d recorded) · loader `DISCOGRAPHY_SITE_SLUG_COLUMN_READY` enablement (deferred) |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u22 Discography loader multi-site readiness — complete
 

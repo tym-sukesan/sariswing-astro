@@ -2,7 +2,7 @@
 
 **Phase:** `G-20u15-current-active-regression-suite`  
 **Base:** `3ae56b1` (G-20u14 committed)  
-**Scope:** G-20u2–u14 + G-20u17–u23 site-aware active verifiers — **no FTP / deploy / DB write / package regen**
+**Scope:** G-20u2–u14 + G-20u17–u24d site-aware active verifiers — **no FTP / deploy / DB write / package regen**
 
 ## Purpose
 
@@ -19,7 +19,7 @@ List only:
 node scripts/verify-current-active-regression-suite.mjs --list
 ```
 
-## Current active verifiers (21)
+## Current active verifiers (22)
 
 | ID | Area | Script |
 | --- | --- | --- |
@@ -44,6 +44,7 @@ node scripts/verify-current-active-regression-suite.mjs --list
 | G-20u21 | admin-flag | `verify-g20u21-generic-read-only-admin-flag.mjs` |
 | G-20u22 | discography-loader | `verify-g20u22-discography-loader-multisite-readiness.mjs` |
 | G-20u23 | discography-migration | `verify-g20u23-discography-site-slug-migration-planning.mjs` |
+| G-20u24d | discography-migration-exec | `verify-g20u24d-discography-site-slug-migration-execution-record.mjs` |
 
 ## Historical verifiers (excluded)
 

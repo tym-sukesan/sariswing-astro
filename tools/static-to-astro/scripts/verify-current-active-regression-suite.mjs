@@ -2,7 +2,7 @@
 /**
  * G-20u15 — Current active regression suite.
  *
- * Runs G-20u2–u14 + G-20u17–u23 site-aware active verifiers in sequence.
+ * Runs G-20u2–u14 + G-20u17–u24d site-aware active verifiers in sequence.
  * No FTP / deploy / DB write / package regen.
  *
  * Usage:
@@ -44,6 +44,7 @@ export const CURRENT_ACTIVE_VERIFIERS = [
   { id: "G-20u21", label: "Generic read-only admin flag", script: "verify-g20u21-generic-read-only-admin-flag.mjs", area: "admin-flag" },
   { id: "G-20u22", label: "Discography loader multi-site readiness", script: "verify-g20u22-discography-loader-multisite-readiness.mjs", area: "discography-loader" },
   { id: "G-20u23", label: "Discography site_slug migration planning", script: "verify-g20u23-discography-site-slug-migration-planning.mjs", area: "discography-migration" },
+  { id: "G-20u24d", label: "Discography site_slug migration execution record", script: "verify-g20u24d-discography-site-slug-migration-execution-record.mjs", area: "discography-migration-exec" },
 ];
 
 /**
@@ -117,7 +118,7 @@ function main() {
   }
 
   console.log(`\n${PHASE}`);
-  console.log("Scope: G-20u2–u14 + G-20u17–u23 active verifiers · dry-run / module tests only");
+  console.log("Scope: G-20u2–u14 + G-20u17–u24d active verifiers · dry-run / module tests only");
   console.log("Excluded: FTP · deploy · DB write · package regen · historical HEAD-pinned verifiers\n");
 
   /** @type {Array<{ entry: typeof CURRENT_ACTIVE_VERIFIERS[number]; ok: boolean; summary: string; elapsedMs: number }>} */

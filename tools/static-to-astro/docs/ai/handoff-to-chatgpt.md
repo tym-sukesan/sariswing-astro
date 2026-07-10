@@ -5,10 +5,24 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u23-discography-site-slug-migration-planning — complete.
-SQL templates for discography site_slug migration prepared. No SQL execution.
-Loader DISCOGRAPHY_SITE_SLUG_COLUMN_READY remains false.
+Current phase: G-20u24d-discography-site-slug-migration-execution-record — complete.
+Staging discography site_slug migration executed (G-20u24a/b/c). After SQL aggregation fix recorded.
+DISCOGRAPHY_SITE_SLUG_COLUMN_READY remains false. No new SQL / FTP / deploy.
 ```
+
+## G-20u24d Discography site_slug migration execution record — complete
+
+- **Staging:** `static-to-astro-cms-staging` (`kmjqppxjdnwwrtaeqjta`)
+- **G-20u24a:** before SELECT **PASS**
+- **G-20u24b:** migration (ADD COLUMN + backfill) **PASS**
+- **G-20u24c:** after SELECT — 1 false STOP due to `count(*)` on grouped subquery (4 ≠ 34 tracks)
+- **Follow-up:** corrected SELECT with `sum(track_count)` **PASS** — 34 tracks / 4 album groups
+- **State:** discography 4 · tracks 34 · all `site_slug=gosaki-piano` · orphan 0 · mismatch 0 · RLS on
+- **Rollback:** not needed
+- **Loader:** `DISCOGRAPHY_SITE_SLUG_COLUMN_READY=false` (unchanged)
+- **Regression:** `verify:current-active-regression` — **22** verifiers
+- **Not executed:** new SQL · FTP · deploy
+- **Next:** loader column-ready enablement (separate phase)
 
 ## G-20u23 Discography site_slug migration planning — complete
 
@@ -19,7 +33,7 @@ Loader DISCOGRAPHY_SITE_SLUG_COLUMN_READY remains false.
 - **Loader:** `DISCOGRAPHY_SITE_SLUG_COLUMN_READY=false` — **not flipped in G-20u23**
 - **Regression:** `verify:current-active-regression` — **21** verifiers
 - **Not executed:** SQL execution · DB write · FTP · deploy
-- **Next:** G-20u24 migration execution (operator approval · staging only)
+- **Next:** ~~G-20u24 migration execution~~ (G-20u24d recorded) · loader column-ready enablement (deferred)
 
 ## G-20u22 Discography loader multi-site readiness — complete
 
@@ -98,13 +112,13 @@ Loader DISCOGRAPHY_SITE_SLUG_COLUMN_READY remains false.
 
 - **Doc:** `remaining-site-specific-coupling-audit.md` — A–E tiers, G-20u1 delta, non-schedule inventory
 - **Remaining C items:** ~~gosaki*Bundle naming~~ · ~~isGosakiPianoFixture in hook matchFixture~~ · ~~supabaseFeatures youtube/embeds~~ (G-20u20 cmsFeatures) · ~~`includeGosakiReadOnlyAdmin`~~ (G-20u21 generic flag) · ~~non-gosaki discography loader~~ (G-20u22 readiness)
-- **Next order:** ~~u22 discography loader~~ · ~~u23 migration planning~~ → u24 migration execution (deferred)
+- **Next order:** ~~u23 migration planning~~ · ~~u24 migration execution~~ → loader column-ready enablement (deferred)
 - **Not executed:** refactor · FTP · deploy · DB write
 
 ## G-20u15 current active regression suite — complete
 
 - **CLI:** `npm run verify:current-active-regression`
-- **Script:** `verify-current-active-regression-suite.mjs` — **21** G-20u2–u14 + G-20u17–u23 verifiers sequential
+- **Script:** `verify-current-active-regression-suite.mjs` — **22** G-20u2–u14 + G-20u17–u24d verifiers sequential
 - **Excluded:** G-20u1 audit · `verify-url-to-staging-pipeline.mjs` (G-7b+ mega) · G-20t3–t6 HEAD-pinned
 - **Result:** 14/14 PASS at `3ae56b1`
 - **Child HEAD pins:** G-20u2–u7/u9 normalized to NOTE (G-20t2 policy)

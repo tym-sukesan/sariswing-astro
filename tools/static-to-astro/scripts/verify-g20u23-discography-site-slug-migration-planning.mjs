@@ -143,6 +143,8 @@ assert("migration uses begin/commit", migrationSql.includes("begin;") && migrati
 assert("after verifies backfill", afterSql.includes("site_slug = 'gosaki-piano'"));
 assert("after expects 4 discography", afterSql.includes("EXPECT: 4"));
 assert("after expects 34 tracks", afterSql.includes("EXPECT: 34"));
+assert("after sum track_count aggregation", afterSql.includes("sum(track_count)") && afterSql.includes("filtered_tracks"));
+assert("after filtered album groups expect 4", afterSql.includes("filtered_album_groups 4"));
 
 assert("rollback has option A clear", rollbackSql.includes("set site_slug = null"));
 assert("rollback has option B drop column", rollbackSql.includes("drop column"));

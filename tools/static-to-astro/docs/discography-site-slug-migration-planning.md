@@ -107,11 +107,13 @@ npm run verify:g20u23-discography-site-slug-migration-planning
 npm run verify:current-active-regression
 ```
 
-## Not executed
+## Not executed (G-20u23 planning phase)
 
 - No SQL execution · no DB write · no migration apply
 - No FTP / deploy · no package regen
 - `DISCOGRAPHY_SITE_SLUG_COLUMN_READY` remains **false**
+
+**Staging execution record:** `discography-site-slug-migration-execution-result.md` (G-20u24a/b/c/d).
 
 ## Gates
 

@@ -126,9 +126,15 @@ for (const pattern of MIGRATION_FORBIDDEN) {
   assert(`migration sql no forbidden ${pattern}`, !pattern.test(stripSqlComments(migrationSql)));
 }
 
-assert("loader DISCOGRAPHY_SITE_SLUG_COLUMN_READY false", DISCOGRAPHY_SITE_SLUG_COLUMN_READY === false);
+assert("loader DISCOGRAPHY_SITE_SLUG_COLUMN_READY", typeof DISCOGRAPHY_SITE_SLUG_COLUMN_READY === "boolean");
 const discographyLib = read("tools/static-to-astro/scripts/lib/supabase-discography-read.mjs");
-assert("code flag still false", discographyLib.includes("DISCOGRAPHY_SITE_SLUG_COLUMN_READY = false"));
+if (DISCOGRAPHY_SITE_SLUG_COLUMN_READY) {
+  console.log("NOTE DISCOGRAPHY_SITE_SLUG_COLUMN_READY=true (post G-20u25) — execution-record false assertion skipped");
+  assert("code flag true in source", discographyLib.includes("DISCOGRAPHY_SITE_SLUG_COLUMN_READY = true"));
+} else {
+  assert("loader flag false at execution record", DISCOGRAPHY_SITE_SLUG_COLUMN_READY === false);
+  assert("code flag still false", discographyLib.includes("DISCOGRAPHY_SITE_SLUG_COLUMN_READY = false"));
+}
 
 const packageJson = read("tools/static-to-astro/package.json");
 assert("npm verify:g20u24d", packageJson.includes("verify:g20u24d-discography-site-slug-migration-execution-record"));

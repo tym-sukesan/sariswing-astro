@@ -17,10 +17,10 @@ export const GOSAKI_DISCOGRAPHY_SITE_CONFIG = {
 };
 
 /**
- * When true, discography / discography_tracks queries may filter by site_slug.
- * Migration is a separate high-risk phase — do not enable without explicit approval.
+ * When true, discography / discography_tracks queries filter by site_slug.
+ * Enabled G-20u25 after staging migration (G-20u24a/b/c/d).
  */
-export const DISCOGRAPHY_SITE_SLUG_COLUMN_READY = false;
+export const DISCOGRAPHY_SITE_SLUG_COLUMN_READY = true;
 
 export const DISCOGRAPHY_SELECT =
   "legacy_id,title,artist,label,catalog_number,purchase_url,streaming_url,sort_order,published";
@@ -664,7 +664,7 @@ export async function loadGosakiDiscographyDataForBuild(opts = {}) {
     env,
     toolRoot,
     logPrefix,
-    legacyUnfilteredRead: true,
-    requireSiteSlugFilter: false,
+    legacyUnfilteredRead: false,
+    requireSiteSlugFilter: true,
   });
 }

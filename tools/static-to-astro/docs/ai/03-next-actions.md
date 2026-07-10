@@ -1,6 +1,23 @@
 Last updated: 2026-07-10
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u25 Discography filtered read enablement — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u25-discography-filtered-read-enablement` |
+| Base | `4363e3d` |
+| Loader flag | `DISCOGRAPHY_SITE_SLUG_COLUMN_READY=true` |
+| Gosaki | `generic_filtered` · `site_slug=gosaki-piano` · 4 releases / 34 tracks / 4 album groups |
+| Pilot | discography null/noop · no Supabase call |
+| Non-Gosaki | unfiltered read not used on default path |
+| Not executed | SQL · DB write · FTP · deploy · package regen |
+| Upload rule | rebuild at HEAD + preflight PASS before manual upload |
+| Doc | `discography-filtered-read-enablement.md` |
+| Verifier | `verify-g20u25-discography-filtered-read-enablement.mjs` |
+| Regression | G-20u2–u14 + G-20u17–u25 (**23** verifiers) |
+| Next | package regen + preflight (operator) · multi-site discography (future) |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u24d Discography site_slug migration execution record — complete
 
 | Item | Value |
@@ -13,12 +30,12 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | G-20u24c | after SELECT false STOP → SQL aggregation bug |
 | Follow-up | corrected SELECT **PASS** (34 tracks / 4 album groups) |
 | Rollback | **not needed** |
-| Loader flag | `DISCOGRAPHY_SITE_SLUG_COLUMN_READY=false` (unchanged) |
+| Loader flag | `DISCOGRAPHY_SITE_SLUG_COLUMN_READY=true` (G-20u25) |
 | Not executed | new SQL · FTP · deploy |
 | Doc | `discography-site-slug-migration-execution-result.md` |
 | Verifier | `verify-g20u24d-discography-site-slug-migration-execution-record.mjs` |
-| Regression | G-20u2–u14 + G-20u17–u24d (**22** verifiers) |
-| Next | loader column-ready enablement (separate phase) |
+| Regression | G-20u2–u14 + G-20u17–u25 (**23** verifiers) |
+| Next | ~~loader column-ready enablement~~ (G-20u25 complete) · package regen + preflight |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u23 Discography site_slug migration planning — complete
 

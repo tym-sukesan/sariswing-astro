@@ -149,9 +149,15 @@ assert("after filtered album groups expect 4", afterSql.includes("filtered_album
 assert("rollback has option A clear", rollbackSql.includes("set site_slug = null"));
 assert("rollback has option B drop column", rollbackSql.includes("drop column"));
 
-assert("loader DISCOGRAPHY_SITE_SLUG_COLUMN_READY false", DISCOGRAPHY_SITE_SLUG_COLUMN_READY === false);
 const discographyLib = read("tools/static-to-astro/scripts/lib/supabase-discography-read.mjs");
-assert("code flag still false in source", discographyLib.includes("DISCOGRAPHY_SITE_SLUG_COLUMN_READY = false"));
+assert("loader DISCOGRAPHY_SITE_SLUG_COLUMN_READY", typeof DISCOGRAPHY_SITE_SLUG_COLUMN_READY === "boolean");
+if (DISCOGRAPHY_SITE_SLUG_COLUMN_READY) {
+  console.log("NOTE DISCOGRAPHY_SITE_SLUG_COLUMN_READY=true (post G-20u25) — planning-phase false assertion skipped");
+  assert("code flag true in source", discographyLib.includes("DISCOGRAPHY_SITE_SLUG_COLUMN_READY = true"));
+} else {
+  assert("loader flag false at planning", DISCOGRAPHY_SITE_SLUG_COLUMN_READY === false);
+  assert("code flag false in source", discographyLib.includes("DISCOGRAPHY_SITE_SLUG_COLUMN_READY = false"));
+}
 
 const readinessDoc = read("tools/static-to-astro/docs/discography-loader-multisite-readiness.md");
 assert("G-20u22 prior doc exists", readinessDoc.includes("G-20u22"));

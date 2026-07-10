@@ -99,13 +99,24 @@ for (const pattern of WRITE_PATTERNS) {
   assert(`discography lib no write pattern ${pattern}`, !pattern.test(discographyLib));
 }
 
-assert("site_slug column not ready", DISCOGRAPHY_SITE_SLUG_COLUMN_READY === false);
+assert("site_slug column ready flag export", discographyLib.includes("DISCOGRAPHY_SITE_SLUG_COLUMN_READY"));
 assert("gosaki config siteSlug", GOSAKI_DISCOGRAPHY_SITE_CONFIG.siteSlug === GOSAKI_SITE_KEY);
 
+if (DISCOGRAPHY_SITE_SLUG_COLUMN_READY) {
+  console.log("NOTE DISCOGRAPHY_SITE_SLUG_COLUMN_READY=true (G-20u25) — legacy-unfiltered assertions skipped");
+} else {
+  assert("site_slug column not ready pre-G-20u25", DISCOGRAPHY_SITE_SLUG_COLUMN_READY === false);
+}
+
 const gosakiCap = resolveDiscographyLoaderCapability(GOSAKI_SITE_KEY);
-assert("gosaki capability legacy unfiltered", gosakiCap.mode === "gosaki_legacy_unfiltered");
+if (DISCOGRAPHY_SITE_SLUG_COLUMN_READY) {
+  assert("gosaki capability generic filtered", gosakiCap.mode === "generic_filtered");
+  assert("gosaki legacyUnfilteredRead false", gosakiCap.legacyUnfilteredRead === false);
+} else {
+  assert("gosaki capability legacy unfiltered", gosakiCap.mode === "gosaki_legacy_unfiltered");
+  assert("gosaki legacyUnfilteredRead", gosakiCap.legacyUnfilteredRead === true);
+}
 assert("gosaki supabaseCallAllowed", gosakiCap.supabaseCallAllowed === true);
-assert("gosaki legacyUnfilteredRead", gosakiCap.legacyUnfilteredRead === true);
 
 const pilotCap = resolveDiscographyLoaderCapability(PILOT_SAMPLE_STATIC_SITE_KEY);
 assert("pilot capability noop feature off", pilotCap.mode === "noop_feature_off");
@@ -120,20 +131,26 @@ const filteredNoop = await loadDiscographyDataForBuild({
   requireSiteSlugFilter: true,
   legacyUnfilteredRead: false,
 });
-assert("filtered read blocked when column pending", filteredNoop.fallbackReason === "discography_site_slug_column_pending");
-assert("filtered read no releases", filteredNoop.rowCount === 0);
-
-let filterThrows = false;
-try {
-  await loadDiscographyRowsFromSupabase({
-    env: { supabaseUrl: "https://example.supabase.co", anonKey: "test-key" },
-    siteSlug: "future-site",
-    requireSiteSlugFilter: true,
-  });
-} catch (err) {
-  filterThrows = err.message.includes("site_slug filter requested but column migration pending");
+if (!DISCOGRAPHY_SITE_SLUG_COLUMN_READY) {
+  assert("filtered read blocked when column pending", filteredNoop.fallbackReason === "discography_site_slug_column_pending");
+  assert("filtered read no releases when pending", filteredNoop.rowCount === 0);
+} else {
+  console.log("NOTE column ready — filtered noop pending test skipped");
 }
-assert("loadDiscographyRowsFromSupabase throws when filter required but column pending", filterThrows);
+
+if (!DISCOGRAPHY_SITE_SLUG_COLUMN_READY) {
+  let filterThrows = false;
+  try {
+    await loadDiscographyRowsFromSupabase({
+      env: { supabaseUrl: "https://example.supabase.co", anonKey: "test-key" },
+      siteSlug: "future-site",
+      requireSiteSlugFilter: true,
+    });
+  } catch (err) {
+    filterThrows = err.message.includes("site_slug filter requested but column migration pending");
+  }
+  assert("loadDiscographyRowsFromSupabase throws when filter required but column pending", filterThrows);
+}
 
 const pilotDisc = await loadSiteDiscographyDataForBuild({
   siteKey: PILOT_SAMPLE_STATIC_SITE_KEY,
@@ -161,6 +178,9 @@ if (readEnv) {
   if (discWrapper.discographyDataSource === "supabase" && discSiteAware.discographyDataSource === "supabase") {
     assert("gosaki discography 4 releases", discWrapper.rowCount === 4, `got ${discWrapper.rowCount}`);
     assert("site-aware discography matches wrapper", discSiteAware.rowCount === discWrapper.rowCount);
+    if (DISCOGRAPHY_SITE_SLUG_COLUMN_READY) {
+      assert("gosaki filtered siteSlugFilterApplied", discSiteAware.siteSlugFilterApplied === true);
+    }
   } else {
     console.log(
       `NOTE Supabase discography source=${discWrapper.discographyDataSource} — skipped live 4-release assertion`,

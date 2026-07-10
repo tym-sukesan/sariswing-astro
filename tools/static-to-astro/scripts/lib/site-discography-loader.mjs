@@ -1,7 +1,7 @@
 /**
- * G-20u22 — Site-aware discography loader readiness (read-only).
+ * G-20u22 / G-20u25 — Site-aware discography loader (read-only).
  * Routes siteKey → registry feature flags → safe Supabase read or noop.
- * No DB writes. Non-Gosaki sites skip unfiltered reads until site_slug column exists.
+ * G-20u25: filtered read when DISCOGRAPHY_SITE_SLUG_COLUMN_READY=true.
  */
 
 import {
@@ -53,18 +53,17 @@ export function resolveDiscographyLoaderCapability(siteKey, toolRoot = TOOL_ROOT
     };
   }
 
-  if (siteKey === GOSAKI_SITE_KEY) {
-    return {
-      mode: "gosaki_legacy_unfiltered",
-      siteKey,
-      siteSlug,
-      supabaseCallAllowed: true,
-      fallbackReason: null,
-      legacyUnfilteredRead: true,
-    };
-  }
-
   if (!DISCOGRAPHY_SITE_SLUG_COLUMN_READY) {
+    if (siteKey === GOSAKI_SITE_KEY) {
+      return {
+        mode: "gosaki_legacy_unfiltered",
+        siteKey,
+        siteSlug,
+        supabaseCallAllowed: true,
+        fallbackReason: null,
+        legacyUnfilteredRead: true,
+      };
+    }
     return {
       mode: "noop_site_slug_pending",
       siteKey,
@@ -125,10 +124,10 @@ export async function loadSiteDiscographyBundleForBuild(opts) {
 
   if (capability.mode === "gosaki_legacy_unfiltered") {
     const bundle = await loadGosakiDiscographyDataForBuild({ env, toolRoot });
-    return { ...bundle, siteSlug: capability.siteSlug };
+    return { ...bundle, siteSlug: capability.siteSlug, siteSlugFilterApplied: false };
   }
 
-  return loadDiscographyDataForBuild({
+  const bundle = await loadDiscographyDataForBuild({
     siteSlug: capability.siteSlug,
     env,
     toolRoot,
@@ -136,5 +135,6 @@ export async function loadSiteDiscographyBundleForBuild(opts) {
     legacyUnfilteredRead: false,
     requireSiteSlugFilter: true,
   });
+  return { ...bundle, siteSlugFilterApplied: true };
 }
 

@@ -5,10 +5,23 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u24d-discography-site-slug-migration-execution-record — complete.
-Staging discography site_slug migration executed (G-20u24a/b/c). After SQL aggregation fix recorded.
-DISCOGRAPHY_SITE_SLUG_COLUMN_READY remains false. No new SQL / FTP / deploy.
+Current phase: G-20u25-discography-filtered-read-enablement — complete.
+Staging discography site_slug migration (G-20u24a/b/c/d) + loader filtered read enabled.
+DISCOGRAPHY_SITE_SLUG_COLUMN_READY=true. No SQL / FTP / deploy in G-20u25.
+On-disk packages stale until regen + preflight PASS.
 ```
+
+## G-20u25 Discography filtered read enablement — complete
+
+- **Base:** `4363e3d` (post G-20u24d)
+- **Loader:** `DISCOGRAPHY_SITE_SLUG_COLUMN_READY=true`
+- **Gosaki:** `generic_filtered` · `.eq("site_slug", "gosaki-piano")` · **4 releases / 34 tracks / 4 album groups** (when Supabase env live)
+- **Pilot:** `discography: false` → **null** (no Supabase API call)
+- **Non-Gosaki:** unfiltered read not used on default path
+- **Regression:** `verify:current-active-regression` — **23** verifiers
+- **Not executed:** SQL · DB write · FTP · deploy · package regen
+- **Upload rule:** rebuild at HEAD + preflight PASS before manual upload; production STOP (G-20j)
+- **Next:** operator package regen + preflight · multi-site discography (future)
 
 ## G-20u24d Discography site_slug migration execution record — complete
 
@@ -19,10 +32,10 @@ DISCOGRAPHY_SITE_SLUG_COLUMN_READY remains false. No new SQL / FTP / deploy.
 - **Follow-up:** corrected SELECT with `sum(track_count)` **PASS** — 34 tracks / 4 album groups
 - **State:** discography 4 · tracks 34 · all `site_slug=gosaki-piano` · orphan 0 · mismatch 0 · RLS on
 - **Rollback:** not needed
-- **Loader:** `DISCOGRAPHY_SITE_SLUG_COLUMN_READY=false` (unchanged)
-- **Regression:** `verify:current-active-regression` — **22** verifiers
+- **Loader:** `DISCOGRAPHY_SITE_SLUG_COLUMN_READY=true` (enabled G-20u25)
+- **Regression:** `verify:current-active-regression` — **23** verifiers
 - **Not executed:** new SQL · FTP · deploy
-- **Next:** loader column-ready enablement (separate phase)
+- **Next:** ~~loader column-ready enablement~~ (G-20u25 complete) · package regen + preflight
 
 ## G-20u23 Discography site_slug migration planning — complete
 

@@ -1,6 +1,24 @@
 Last updated: 2026-07-10
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u26 Gosaki staging package regen after discography filtered read — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u26-gosaki-staging-package-regen-after-discography-filtered-read` |
+| Base | `72b064c` |
+| Build | `npm run build:gosaki:staging` **PASS** |
+| Preflight | `npm run preflight:gosaki:staging` **PASS** (fresh) |
+| MANIFEST | `sourceCommit=72b064c` · `siteKey=gosaki-piano` · `includesAdmin=true` |
+| Schedule | August `/schedule/2026-08/` · **14** cards |
+| Discography | **4** releases · **34** tracks · filtered `site_slug=gosaki-piano` |
+| Sitemap | no `/admin/` |
+| Not executed | FTP · deploy · package upload · DB write |
+| Upload rule | manual FTP only · production STOP (G-20j) |
+| Doc | `gosaki-staging-package-regen-after-discography-filtered-read.md` |
+| Verifier | `verify-g20u26-gosaki-staging-package-regen-after-discography-filtered-read.mjs` (historical) |
+| Next | operator manual FTP upload (optional) · multi-site discography (future) |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u25 Discography filtered read enablement — complete
 
 | Item | Value |
@@ -16,7 +34,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Doc | `discography-filtered-read-enablement.md` |
 | Verifier | `verify-g20u25-discography-filtered-read-enablement.mjs` |
 | Regression | G-20u2–u14 + G-20u17–u25 (**23** verifiers) |
-| Next | package regen + preflight (operator) · multi-site discography (future) |
+| Next | ~~package regen + preflight~~ (G-20u26 complete) · operator manual FTP upload (optional) |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u24d Discography site_slug migration execution record — complete
 

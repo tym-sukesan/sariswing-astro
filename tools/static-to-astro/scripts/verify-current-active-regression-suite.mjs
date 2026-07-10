@@ -59,6 +59,7 @@ export const HISTORICAL_VERIFIERS = [
   { id: "G-20t4", label: "Production profile full regen dry-run (HEAD-pinned)", script: "verify-g20t4-gosaki-production-profile-full-regen-dry-run.mjs" },
   { id: "G-20t5", label: "Staging profile current-head regen (HEAD-pinned)", script: "verify-g20t5-gosaki-staging-profile-current-head-regen-dry-run.mjs" },
   { id: "G-20t6", label: "Package freshness gate (phase snapshot)", script: "verify-g20t6-package-freshness-gate.mjs" },
+  { id: "G-20u26", label: "Gosaki staging regen after discography filtered read (HEAD-pinned)", script: "verify-g20u26-gosaki-staging-package-regen-after-discography-filtered-read.mjs" },
 ];
 
 /**

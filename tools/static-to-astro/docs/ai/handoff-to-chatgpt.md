@@ -5,11 +5,23 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u25-discography-filtered-read-enablement — complete.
-Staging discography site_slug migration (G-20u24a/b/c/d) + loader filtered read enabled.
-DISCOGRAPHY_SITE_SLUG_COLUMN_READY=true. No SQL / FTP / deploy in G-20u25.
-On-disk packages stale until regen + preflight PASS.
+Current phase: G-20u26-gosaki-staging-package-regen-after-discography-filtered-read — complete.
+Gosaki staging package regen + preflight PASS at 72b064c after G-20u25 filtered read.
+Package fresh at HEAD. Manual FTP only — no auto deploy. Production upload STOP (G-20j).
 ```
+
+## G-20u26 Gosaki staging package regen after discography filtered read — complete
+
+- **Base:** `72b064c` (post G-20u25)
+- **Build:** `npm run build:gosaki:staging` **PASS**
+- **Preflight:** `npm run preflight:gosaki:staging` **PASS** (structure + freshness)
+- **MANIFEST:** `sourceCommit=72b064c` · `siteKey=gosaki-piano` · `includesAdmin=true` · `includeGosakiReadOnlyAdmin=true`
+- **Schedule:** `/schedule/2026-08/` · **14** event cards · `scheduleDataSource=supabase`
+- **Discography:** **4** releases · **34** tracks · `discographyDataSource=supabase` · `siteSlugFilterApplied=true`
+- **Sitemap:** includes `/schedule/2026-08/` · **no** `/admin/`
+- **Not executed:** FTP · deploy · package upload · DB write
+- **Upload rule:** manual FTP only; production STOP (G-20j)
+- **Next:** operator manual FTP upload (optional) · multi-site discography (future)
 
 ## G-20u25 Discography filtered read enablement — complete
 
@@ -19,9 +31,9 @@ On-disk packages stale until regen + preflight PASS.
 - **Pilot:** `discography: false` → **null** (no Supabase API call)
 - **Non-Gosaki:** unfiltered read not used on default path
 - **Regression:** `verify:current-active-regression` — **23** verifiers
-- **Not executed:** SQL · DB write · FTP · deploy · package regen
+- **Not executed:** SQL · DB write · FTP · deploy
 - **Upload rule:** rebuild at HEAD + preflight PASS before manual upload; production STOP (G-20j)
-- **Next:** operator package regen + preflight · multi-site discography (future)
+- **Next:** ~~operator package regen + preflight~~ (G-20u26 complete) · manual FTP upload (optional)
 
 ## G-20u24d Discography site_slug migration execution record — complete
 

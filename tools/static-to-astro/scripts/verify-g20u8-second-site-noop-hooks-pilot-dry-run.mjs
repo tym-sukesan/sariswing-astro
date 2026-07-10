@@ -184,7 +184,7 @@ const pilotBuildDryRun = spawnSync(
 );
 assert("pilot build dry-run exit 0", pilotBuildDryRun.status === 0, pilotBuildDryRun.stderr?.slice(0, 300));
 assert("pilot build dry-run siteKey", pilotBuildDryRun.stdout.includes("siteKey: pilot-sample-static"));
-assert("pilot build dry-run includesAdmin false", pilotBuildDryRun.stdout.includes("includeGosakiReadOnlyAdmin: false"));
+assert("pilot build dry-run admin excluded", pilotBuildDryRun.stdout.includes("includeReadOnlyAdmin: false"));
 
 const gosakiBuildDryRun = spawnSync(
   "node",

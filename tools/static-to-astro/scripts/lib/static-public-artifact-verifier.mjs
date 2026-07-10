@@ -16,6 +16,7 @@ import {
 } from "./deploy-base.mjs";
 import { loadExportEnv } from "./supabase-json-exporter.mjs";
 import { resolveStaticPublicVerifyOptions } from "./static-public-site-expectations.mjs";
+import { resolveIncludeReadOnlyAdminOption } from "./site-admin-features.mjs";
 
 /** Always required in gosaki-style static public artifacts. */
 export const CORE_PUBLIC_HTML = ["index.html", "discography/index.html"];
@@ -164,14 +165,14 @@ export function detectServerDir(astroDir) {
 
 /**
  * @param {string} relativePath POSIX relative path
- * @param {{ includeGosakiReadOnlyAdmin?: boolean }} [options]
+ * @param {{ includeReadOnlyAdmin?: boolean, includeGosakiReadOnlyAdmin?: boolean }} [options]
  */
 export function shouldExcludeFromStaticPublic(relativePath, options = {}) {
-  const { includeGosakiReadOnlyAdmin = false } = options;
+  const includeReadOnlyAdmin = resolveIncludeReadOnlyAdminOption(options);
   const rel = relativePath.replace(/\\/g, "/").replace(/^\/+/, "");
   const top = rel.split("/")[0];
 
-  if (top === "admin" && includeGosakiReadOnlyAdmin) {
+  if (top === "admin" && includeReadOnlyAdmin) {
     for (const marker of ADMIN_API_PATH_MARKERS) {
       if (marker.id === "admin_dir") continue;
       if (marker.test(rel)) return true;
@@ -341,10 +342,10 @@ export function scanSupabaseKeyExposure(dir) {
 /**
  * @param {string} sourceDir
  * @param {string} destDir
- * @param {{ includeGosakiReadOnlyAdmin?: boolean }} [options]
+ * @param {{ includeReadOnlyAdmin?: boolean, includeGosakiReadOnlyAdmin?: boolean }} [options]
  */
 export function copyStaticPublicArtifact(sourceDir, destDir, options = {}) {
-  const { includeGosakiReadOnlyAdmin = false } = options;
+  const includeReadOnlyAdmin = resolveIncludeReadOnlyAdminOption(options);
   if (fs.existsSync(destDir)) {
     fs.rmSync(destDir, { recursive: true, force: true });
   }
@@ -353,7 +354,7 @@ export function copyStaticPublicArtifact(sourceDir, destDir, options = {}) {
   const excluded = [];
 
   for (const file of listPublicFiles(sourceDir)) {
-    if (shouldExcludeFromStaticPublic(file.rel, { includeGosakiReadOnlyAdmin })) {
+    if (shouldExcludeFromStaticPublic(file.rel, { includeReadOnlyAdmin })) {
       excluded.push(file.rel);
       continue;
     }
@@ -369,7 +370,8 @@ export function copyStaticPublicArtifact(sourceDir, destDir, options = {}) {
     copiedCount: copied.length,
     excluded: [...new Set(excluded.map((rel) => rel.split("/")[0]))].sort(),
     excludedPaths: excluded,
-    includeGosakiReadOnlyAdmin,
+    includeReadOnlyAdmin,
+    includeGosakiReadOnlyAdmin: includeReadOnlyAdmin,
   };
 }
 
@@ -401,14 +403,15 @@ export function loadOptionalSecretsForScan(toolRoot) {
 }
 
 /**
- * @param {{ astroDir: string, toolRoot: string, publicDirCli?: string | null, manifestOutDir?: string | null, includeGosakiReadOnlyAdmin?: boolean, siteKey?: string | null }} opts
+ * @param {{ astroDir: string, toolRoot: string, publicDirCli?: string | null, manifestOutDir?: string | null, includeReadOnlyAdmin?: boolean, includeGosakiReadOnlyAdmin?: boolean, siteKey?: string | null }} opts
  */
 export function runStaticPublicArtifactVerification({
   astroDir,
   toolRoot,
   publicDirCli = null,
   manifestOutDir = null,
-  includeGosakiReadOnlyAdmin: includeGosakiReadOnlyAdminOverride = undefined,
+  includeReadOnlyAdmin: includeReadOnlyAdminOverride = undefined,
+  includeGosakiReadOnlyAdmin: includeGosakiLegacyOverride = undefined,
   siteKey = null,
 }) {
   const astroAbs = path.resolve(astroDir);
@@ -469,11 +472,15 @@ export function runStaticPublicArtifactVerification({
 
   result.supabaseKeyScanRaw = scanSupabaseKeyExposure(publicDir);
 
-  const includeGosakiReadOnlyAdmin =
-    includeGosakiReadOnlyAdminOverride !== undefined
-      ? includeGosakiReadOnlyAdminOverride
+  const includeReadOnlyAdmin =
+    includeReadOnlyAdminOverride !== undefined || includeGosakiLegacyOverride !== undefined
+      ? resolveIncludeReadOnlyAdminOption({
+          includeReadOnlyAdmin: includeReadOnlyAdminOverride,
+          includeGosakiReadOnlyAdmin: includeGosakiLegacyOverride,
+        })
       : detectGosakiReadOnlyAdminInPublicDir(publicDir);
-  result.includeGosakiReadOnlyAdmin = includeGosakiReadOnlyAdmin;
+  result.includeReadOnlyAdmin = includeReadOnlyAdmin;
+  result.includeGosakiReadOnlyAdmin = includeReadOnlyAdmin;
 
   const outBase =
     manifestOutDir ??
@@ -482,7 +489,7 @@ export function runStaticPublicArtifactVerification({
   const manifestPath = path.join(outBase, "static-public-manifest.json");
 
   result.staticPublicCopy = copyStaticPublicArtifact(publicDir, publicDistDir, {
-    includeGosakiReadOnlyAdmin,
+    includeReadOnlyAdmin,
   });
 
   const deployBase = readAstroDeployBaseFromConfig(astroAbs);
@@ -495,7 +502,7 @@ export function runStaticPublicArtifactVerification({
 
   const copyContamination = scanAdminApiContamination(publicDistDir);
   const copyUnsafeForFtp =
-    includeGosakiReadOnlyAdmin
+    includeReadOnlyAdmin
       ? copyContamination.apiInClient.length > 0 ||
         copyContamination.hits.some((h) => h.marker !== "admin_dir")
       : copyContamination.contaminated;
@@ -541,7 +548,8 @@ export function runStaticPublicArtifactVerification({
       result.seoFlags.ok &&
       result.stagingPreview.ok &&
       result.cssPresence.ok,
-    includeGosakiReadOnlyAdmin,
+    includeReadOnlyAdmin,
+    includeGosakiReadOnlyAdmin: includeReadOnlyAdmin,
     rawClientHasAdminHtml: result.rawClientContamination.adminDirExists,
     directClientUploadRecommended: !result.rawClientContamination.contaminated,
     note: result.rawClientContamination.adminDirExists
@@ -562,7 +570,7 @@ export function runStaticPublicArtifactVerification({
 
   if (copyUnsafeForFtp) {
     result.errors.push(
-      includeGosakiReadOnlyAdmin
+      includeReadOnlyAdmin
         ? "static-public copy contains api/write paths (read-only admin allowed)"
         : "excluded copy still contains admin/api paths",
     );

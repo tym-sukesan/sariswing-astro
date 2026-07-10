@@ -8,6 +8,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { isStagingSubdirBuild, normalizeDeployBase } from "./deploy-base.mjs";
+import { resolvePackageAdminFlags } from "./site-admin-features.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 export const TOOL_ROOT = path.resolve(__dirname, "../..");
@@ -122,6 +123,11 @@ export function resolveSupabaseSiteSlug(siteKey, toolRoot = TOOL_ROOT) {
 }
 
 export {
+  resolvePackageAdminFlags,
+  resolveIncludeReadOnlyAdminOption,
+} from "./site-admin-features.mjs";
+
+export {
   resolveSupabaseFeatures,
   resolveCmsFeatures,
   resolveSiteCmsFeaturePlan,
@@ -195,8 +201,14 @@ function validateDeployProfileShape(profile, name) {
     throw new Error(`Profile "${name}" root deploy requires seo.productionIndexable=true`);
   }
 
-  if (name === "production" && p.includeGosakiReadOnlyAdmin !== false) {
-    throw new Error(`Profile "${name}" must set includeGosakiReadOnlyAdmin=false (G-20i3)`);
+  if (name === "production") {
+    const adminOff =
+      p.includeReadOnlyAdmin === false || p.includeGosakiReadOnlyAdmin === false;
+    if (!adminOff) {
+      throw new Error(
+        `Profile "${name}" must set includeReadOnlyAdmin=false (or legacy includeGosakiReadOnlyAdmin=false, G-20i3)`,
+      );
+    }
   }
 }
 
@@ -269,11 +281,10 @@ export function resolveSitePackageBuildProfile(siteKey, profileName, options = {
   const intendedRemotePath = String(
     packageOverlay.intendedRemotePath ?? raw.remotePath ?? deployBase,
   );
-  const includesAdmin =
-    packageOverlay.includesAdmin === true ||
-    (profileName !== "production" && raw.includeGosakiReadOnlyAdmin !== false);
-  const includeGosakiReadOnlyAdmin =
-    profileName === "production" ? false : packageOverlay.includeGosakiReadOnlyAdmin !== false;
+  const adminFlags = resolvePackageAdminFlags(siteKey, profileName, {
+    packageOverlay,
+    deployProfile: raw,
+  });
 
   return {
     profileName,
@@ -301,7 +312,9 @@ export function resolveSitePackageBuildProfile(siteKey, profileName, options = {
     intendedRemotePath,
     targetEnvironment: packageOverlay.targetEnvironment ?? profileName,
     packageProfileName: packageOverlay.profileName ?? profileName,
-    includesAdmin,
+    includesAdmin: adminFlags.includesAdmin,
+    includeReadOnlyAdmin: adminFlags.includeReadOnlyAdmin,
+    includeGosakiReadOnlyAdmin: adminFlags.includeReadOnlyAdmin,
     supabaseProjectRef: STAGING_KIT_SUPABASE_REF,
     seo: {
       stagingNoindex: Boolean(raw.seo?.stagingNoindex),
@@ -311,7 +324,6 @@ export function resolveSitePackageBuildProfile(siteKey, profileName, options = {
     staticPublicReportRel: path.join(staticPublicOut, "STATIC_PUBLIC_ARTIFACT_REPORT.md"),
     astroOutRepoRel: path.join("tools/static-to-astro", astroOut),
     isStagingSubdirBuild: isStagingSubdirBuild(deployBase),
-    includeGosakiReadOnlyAdmin,
     deployProfilesFile: deployProfilesRel,
     cmsPreset: entry.cmsPreset ?? null,
   };
@@ -339,7 +351,8 @@ export function resolvePackageManifestMetaFromRegistry(siteKey, profileName, opt
     stagingBaseUrl: profile.stagingBaseUrl,
     intendedRemotePath: profile.intendedRemotePath,
     includesAdmin: profile.includesAdmin,
-    includeGosakiReadOnlyAdmin: profile.includeGosakiReadOnlyAdmin,
+    includeReadOnlyAdmin: profile.includeReadOnlyAdmin,
+    includeGosakiReadOnlyAdmin: profile.includeReadOnlyAdmin,
     manualUploadOut: profile.manualUploadOut,
   };
 }

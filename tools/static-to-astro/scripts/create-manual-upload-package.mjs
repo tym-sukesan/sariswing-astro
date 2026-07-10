@@ -69,6 +69,7 @@ function parseArgs(argv) {
     packageProfile: null,
     intendedRemotePath: null,
     out: null,
+    includeReadOnlyAdmin: undefined,
     includeGosakiReadOnlyAdmin: undefined,
     help: false,
     registryMeta: null,
@@ -81,6 +82,7 @@ function parseArgs(argv) {
     targetEnvironment: false,
     packageProfile: false,
     intendedRemotePath: false,
+    includeReadOnlyAdmin: false,
     includeGosakiReadOnlyAdmin: false,
   };
 
@@ -118,7 +120,13 @@ function parseArgs(argv) {
       opts.intendedRemotePath = argv[++i];
       explicit.intendedRemotePath = true;
     } else if (arg === "--out") opts.out = argv[++i];
-    else if (arg === "--include-gosaki-read-only-admin") {
+    else if (arg === "--include-read-only-admin") {
+      const val = argv[++i];
+      if (val === "true") opts.includeReadOnlyAdmin = true;
+      else if (val === "false") opts.includeReadOnlyAdmin = false;
+      else throw new Error(`--include-read-only-admin expects true or false, got: ${val}`);
+      explicit.includeReadOnlyAdmin = true;
+    } else if (arg === "--include-gosaki-read-only-admin") {
       const val = argv[++i];
       if (val === "true") opts.includeGosakiReadOnlyAdmin = true;
       else if (val === "false") opts.includeGosakiReadOnlyAdmin = false;
@@ -151,8 +159,13 @@ function parseArgs(argv) {
     if (!explicit.intendedRemotePath) opts.intendedRemotePath = registryMeta.intendedRemotePath;
     if (!explicit.targetEnvironment) opts.targetEnvironment = registryMeta.targetEnvironment;
     if (!explicit.packageProfile) opts.packageProfile = registryMeta.packageProfileName;
-    if (!explicit.includeGosakiReadOnlyAdmin) {
-      opts.includeGosakiReadOnlyAdmin = registryMeta.includeGosakiReadOnlyAdmin;
+    if (!explicit.includeReadOnlyAdmin && !explicit.includeGosakiReadOnlyAdmin) {
+      opts.includeReadOnlyAdmin = registryMeta.includeReadOnlyAdmin;
+      opts.includeGosakiReadOnlyAdmin = registryMeta.includeReadOnlyAdmin;
+    } else if (opts.includeReadOnlyAdmin === undefined && opts.includeGosakiReadOnlyAdmin !== undefined) {
+      opts.includeReadOnlyAdmin = opts.includeGosakiReadOnlyAdmin;
+    } else if (opts.includeGosakiReadOnlyAdmin === undefined && opts.includeReadOnlyAdmin !== undefined) {
+      opts.includeGosakiReadOnlyAdmin = opts.includeReadOnlyAdmin;
     }
     opts.registryMeta = registryMeta;
   }
@@ -212,7 +225,8 @@ function main() {
     intendedRemotePath: opts.intendedRemotePath,
     toolRoot: TOOL_ROOT,
     repoRoot: REPO_ROOT,
-    includeGosakiReadOnlyAdmin: opts.includeGosakiReadOnlyAdmin,
+    includeReadOnlyAdmin: opts.includeReadOnlyAdmin,
+    includeGosakiReadOnlyAdmin: opts.includeGosakiReadOnlyAdmin ?? opts.includeReadOnlyAdmin,
     siteKey: opts.registryMeta?.siteKey ?? opts.siteKey ?? null,
     cmsSiteSlug: opts.registryMeta?.cmsSiteSlug ?? null,
     supabaseSiteSlug: opts.registryMeta?.supabaseSiteSlug ?? opts.siteSlug,

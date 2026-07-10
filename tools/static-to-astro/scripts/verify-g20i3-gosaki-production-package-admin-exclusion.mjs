@@ -142,9 +142,11 @@ if (origin.stdout.trim() === BASE_COMMIT) {
 assert("staging build script unchanged", stagingDiff.stdout.length === 0);
 
 const profiles = JSON.parse(read(PROFILES_REL));
-assert("production profile admin exclusion", profiles.profiles.production.includeGosakiReadOnlyAdmin === false);
+assert("production profile admin exclusion", profiles.profiles.production.includeReadOnlyAdmin === false);
+assert("production profile legacy admin exclusion", profiles.profiles.production.includeGosakiReadOnlyAdmin === false);
 
 const profile = resolveGosakiPackageBuildProfile("production");
+assert("profile includeReadOnlyAdmin false", profile.includeReadOnlyAdmin === false);
 assert("profile includeGosakiReadOnlyAdmin false", profile.includeGosakiReadOnlyAdmin === false);
 
 const packageRel = path.join("tools/static-to-astro", profile.manualUploadOut);
@@ -226,6 +228,7 @@ assert("discography Mary Ann present", discHtml.includes(AFTER_B));
 const manifest = JSON.parse(read(path.join(packageRel, "MANIFEST.json")));
 assert("manifest fileCount 28", manifest.fileCount === EXPECTED_PUBLIC_DIST_COUNT, String(manifest.fileCount));
 assert("manifest adminExcludedFromPackage", manifest.adminExcludedFromPackage === true);
+assert("manifest includeReadOnlyAdmin false", manifest.includeReadOnlyAdmin === false);
 assert("manifest includeGosakiReadOnlyAdmin false", manifest.includeGosakiReadOnlyAdmin === false);
 assert("manifest includesAdmin false", manifest.includesAdmin === false);
 assert("manifest targetEnvironment production", manifest.targetEnvironment === "production");

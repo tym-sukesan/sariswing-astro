@@ -170,6 +170,7 @@ export function buildManualUploadManifest(meta) {
     meta.packageProfileName ?? (targetEnvironment === "production" ? "production" : "staging");
   const includesAdmin =
     meta.includesAdmin === true ||
+    (meta.includeReadOnlyAdmin === true && targetEnvironment !== "production") ||
     (meta.includeGosakiReadOnlyAdmin === true && targetEnvironment !== "production");
 
   const manifest = {
@@ -537,6 +538,7 @@ export function createManualUploadPackage(opts) {
     publicBaseUrl,
     toolRoot,
     repoRoot,
+    includeReadOnlyAdmin,
     includeGosakiReadOnlyAdmin,
     targetEnvironment = "staging",
     packageProfileName,
@@ -558,8 +560,11 @@ export function createManualUploadPackage(opts) {
   const includesAdmin =
     targetEnvironment === "production"
       ? false
-      : includeGosakiReadOnlyAdmin === true ||
-        (includeGosakiReadOnlyAdmin !== false && validation.adminPresent === true);
+      : opts.includeReadOnlyAdmin === true ||
+        opts.includeGosakiReadOnlyAdmin === true ||
+        (opts.includeReadOnlyAdmin !== false &&
+          opts.includeGosakiReadOnlyAdmin !== false &&
+          validation.adminPresent === true);
 
   const packageDir = path.resolve(outDir);
   const publicDistOut = path.join(packageDir, "public-dist");
@@ -605,6 +610,7 @@ export function createManualUploadPackage(opts) {
     intendedRemotePath: resolvedIntendedRemotePath,
     sourceCommit: resolveSourceCommit(repoRoot),
     includesAdmin,
+    includeReadOnlyAdmin: includesAdmin,
     includeGosakiReadOnlyAdmin: includesAdmin,
   });
 

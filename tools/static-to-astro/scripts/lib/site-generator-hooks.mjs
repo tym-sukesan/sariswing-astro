@@ -292,7 +292,10 @@ function createGosakiPianoHookMethods() {
         writtenPaths.push(path.join(outDir, gosakiContactHubspotSummary.dataPath));
       }
 
-      const gosakiReadOnlyAdminSummary = applyGosakiStagingReadOnlyAdmin(outDir, toolRoot);
+      const gosakiReadOnlyAdminSummary =
+        siteKey && isCmsFeatureEnabled(siteKey, "readOnlyAdmin", toolRoot)
+          ? applyGosakiStagingReadOnlyAdmin(outDir, toolRoot)
+          : { applied: false, reason: "cms_feature_readOnlyAdmin_disabled" };
       if (gosakiReadOnlyAdminSummary.applied) {
         writtenPaths.push(
           path.join(outDir, gosakiReadOnlyAdminSummary.pagePath),

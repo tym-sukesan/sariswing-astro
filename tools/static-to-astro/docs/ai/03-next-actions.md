@@ -1,6 +1,27 @@
 Last updated: 2026-07-10
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u21 Generic read-only admin flag — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u21-generic-read-only-admin-flag` |
+| Base | `7c0a939` |
+| Primary flag | `packageProfiles.includeReadOnlyAdmin` |
+| Manifest | `includesAdmin` (unchanged) |
+| Legacy alias | `includeGosakiReadOnlyAdmin` |
+| CMS capability | `cmsFeatures.readOnlyAdmin` gates hook inject |
+| Module | `site-admin-features.mjs` |
+| Gosaki staging | `includesAdmin: true` |
+| Gosaki production | `includesAdmin: false` |
+| Pilot staging | `includesAdmin: false` |
+| Sitemap | `/admin/` excluded (G-20t1 unchanged) |
+| Not executed | FTP · deploy · DB write · package regen |
+| Doc | `generic-read-only-admin-flag.md` |
+| Verifier | `verify-g20u21-generic-read-only-admin-flag.mjs` |
+| Regression | G-20u2–u14 + G-20u17–u21 (**19** verifiers) |
+| Next | TBD (post G-20u21 coupling audit follow-up) |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u20 Supabase CMS features generalization — complete
 
 | Item | Value |
@@ -17,7 +38,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Doc | `supabase-cms-features-generalization.md` |
 | Verifier | `verify-g20u20-supabase-cms-features-generalization.mjs` |
 | Regression | G-20u2–u14 + G-20u17–u20 (**18** verifiers) |
-| Next | G-20u21 read-only admin flag |
+| Next | ~~G-20u21 read-only admin flag~~ (complete) |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u19 Generator option naming and fixture registry — complete
 

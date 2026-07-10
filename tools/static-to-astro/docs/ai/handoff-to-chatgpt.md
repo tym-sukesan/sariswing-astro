@@ -5,10 +5,24 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u20-supabase-cms-features-generalization — complete.
-Registry cmsFeatures + supabaseFeatures drive read-only loaders and hook gating.
-Gosaki CMS features enabled; pilot noop. No DB write / FTP / deploy.
+Current phase: G-20u21-generic-read-only-admin-flag — complete.
+Registry includeReadOnlyAdmin drives package admin inclusion; cmsFeatures.readOnlyAdmin gates hook inject.
+Gosaki staging includes admin; production/pilot exclude. No FTP / deploy / DB write.
 ```
+
+## G-20u21 Generic read-only admin flag — complete
+
+- **Primary:** `packageProfiles.includeReadOnlyAdmin` → MANIFEST `includesAdmin`
+- **Legacy alias:** `includeGosakiReadOnlyAdmin` retained for backward compat
+- **Module:** `site-admin-features.mjs` — `resolvePackageAdminFlags`, `resolveIncludeReadOnlyAdminOption`
+- **CMS capability:** `cmsFeatures.readOnlyAdmin` gates `applyGosakiStagingReadOnlyAdmin` in hooks
+- **Gosaki staging:** `includesAdmin: true` · `includeReadOnlyAdmin: true`
+- **Gosaki production:** `includesAdmin: false` (forced for production profile)
+- **Pilot staging:** `includesAdmin: false`
+- **Sitemap:** `/admin/` excluded (G-20t1 unchanged — admin in package OK, not in sitemap)
+- **Regression:** `verify:current-active-regression` — **19** verifiers
+- **Not executed:** FTP · deploy · DB write · package regen
+- **Upload rule:** rebuild at HEAD + preflight PASS; production STOP (G-20j)
 
 ## G-20u20 Supabase CMS features generalization — complete
 
@@ -16,12 +30,12 @@ Gosaki CMS features enabled; pilot noop. No DB write / FTP / deploy.
 - **Module:** `site-cms-features.mjs` — `resolveSiteCmsFeaturePlan`, `isCmsFeatureEnabled`, `loadSiteEmbedsDataForBuild`
 - **Loaders:** `loadSiteSupabaseDataForBuild` returns `{ schedule, discography, embeds, plan }` — feature off → null
 - **Hooks:** Gosaki `applyPostGenerate` gated by `isCmsFeatureEnabled`
-- **Deferred:** `public.site_embeds` migration (G-9f) · Supabase YouTube read (G-9g) · admin flag (G-20u21)
+- **Deferred:** `public.site_embeds` migration (G-9f) · Supabase YouTube read (G-9g)
 - **Gosaki:** supabase schedule+discography on · cmsFeatures all on · 74/14/4 when Supabase live
 - **Pilot:** all features off · null bundles · noop hooks
 - **Regression:** `verify:current-active-regression` — **18** verifiers
 - **Not executed:** DB write · SQL migration · FTP · deploy
-- **Next:** G-20u21 read-only admin flag
+- **Next:** ~~G-20u21 read-only admin flag~~ (complete)
 
 ## G-20u19 generator option naming and fixture registry — complete
 
@@ -61,14 +75,14 @@ Gosaki CMS features enabled; pilot noop. No DB write / FTP / deploy.
 ## G-20u16 remaining site-specific coupling audit — complete
 
 - **Doc:** `remaining-site-specific-coupling-audit.md` — A–E tiers, G-20u1 delta, non-schedule inventory
-- **Remaining C items:** ~~gosaki*Bundle naming~~ · ~~isGosakiPianoFixture in hook matchFixture~~ · ~~supabaseFeatures youtube/embeds~~ (G-20u20 cmsFeatures) · `includeGosakiReadOnlyAdmin`, non-gosaki discography loader
-- **Next order:** ~~u19 naming~~ · ~~u20 Supabase CMS~~ → u21 admin flag
+- **Remaining C items:** ~~gosaki*Bundle naming~~ · ~~isGosakiPianoFixture in hook matchFixture~~ · ~~supabaseFeatures youtube/embeds~~ (G-20u20 cmsFeatures) · ~~`includeGosakiReadOnlyAdmin`~~ (G-20u21 generic flag) · non-gosaki discography loader
+- **Next order:** ~~u19 naming~~ · ~~u20 Supabase CMS~~ · ~~u21 admin flag~~ → TBD follow-up
 - **Not executed:** refactor · FTP · deploy · DB write
 
 ## G-20u15 current active regression suite — complete
 
 - **CLI:** `npm run verify:current-active-regression`
-- **Script:** `verify-current-active-regression-suite.mjs` — **18** G-20u2–u14 + G-20u17–u20 verifiers sequential
+- **Script:** `verify-current-active-regression-suite.mjs` — **19** G-20u2–u14 + G-20u17–u21 verifiers sequential
 - **Excluded:** G-20u1 audit · `verify-url-to-staging-pipeline.mjs` (G-7b+ mega) · G-20t3–t6 HEAD-pinned
 - **Result:** 14/14 PASS at `3ae56b1`
 - **Child HEAD pins:** G-20u2–u7/u9 normalized to NOTE (G-20t2 policy)

@@ -133,7 +133,7 @@ export function runSitePackageBuild(options) {
   console.log("baseUrl:", profile.baseUrl);
   console.log("deployBase:", profile.deployBase);
   console.log("output:", profile.manualUploadOut);
-  console.log("includeGosakiReadOnlyAdmin:", profile.includeGosakiReadOnlyAdmin);
+  console.log("includeReadOnlyAdmin:", profile.includeReadOnlyAdmin);
   console.log("supabaseProjectRef:", profile.supabaseProjectRef);
   console.log("intendedRemotePath:", profile.intendedRemotePath);
   console.log("dryRun:", dryRun);
@@ -205,8 +205,8 @@ export function runSitePackageBuild(options) {
     "--report",
     path.join("tools/static-to-astro", profile.staticPublicReportRel),
   ];
-  if (profile.includeGosakiReadOnlyAdmin === false) {
-    verifyArgs.push("--include-gosaki-read-only-admin", "false");
+  if (profile.includeReadOnlyAdmin === false) {
+    verifyArgs.push("--include-read-only-admin", "false");
   }
   verifyArgs.push("--site", siteKey);
   run("node", verifyArgs, buildEnv);
@@ -227,7 +227,7 @@ export function runSitePackageBuild(options) {
     intendedRemotePath: manifestMeta.intendedRemotePath,
     toolRoot,
     repoRoot: REPO_ROOT,
-    includeGosakiReadOnlyAdmin: manifestMeta.includeGosakiReadOnlyAdmin,
+    includeReadOnlyAdmin: manifestMeta.includeReadOnlyAdmin,
   });
 
   if (!packageResult.ok) {

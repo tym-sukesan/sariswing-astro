@@ -31,6 +31,7 @@
       "manualUploadOut": "output/manual-upload/gosaki-piano-production",
       "remotePath": "TBD_G-20i",
       "supabaseProjectRef": "kmjqppxjdnwwrtaeqjta",
+      "includeReadOnlyAdmin": false,
       "includeGosakiReadOnlyAdmin": false,
       "seo": {
         "stagingNoindex": false,

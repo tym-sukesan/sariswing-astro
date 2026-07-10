@@ -29,7 +29,8 @@ Options:
   --astro-dir PATH     generated-astro directory (required)
   --report PATH        STATIC_PUBLIC_ARTIFACT_REPORT.md output (required)
   --public-dir PATH    Override public artifact dir (default: dist/client → dist)
-  --include-gosaki-read-only-admin BOOL  Force include/exclude Gosaki read-only admin in copy
+  --include-read-only-admin BOOL  Force include/exclude read-only admin in static-public copy
+  --include-gosaki-read-only-admin BOOL  Legacy alias for --include-read-only-admin
   --site SITE_KEY          Registry siteKey for per-site HTML/nav expectations
   --help, -h
 `);
@@ -40,6 +41,7 @@ function parseArgs(argv) {
     astroDir: null,
     report: null,
     publicDir: null,
+    includeReadOnlyAdmin: undefined,
     includeGosakiReadOnlyAdmin: undefined,
     siteKey: null,
     help: false,
@@ -61,6 +63,13 @@ function parseArgs(argv) {
     }
     if (arg === "--public-dir") {
       opts.publicDir = argv[++i];
+      continue;
+    }
+    if (arg === "--include-read-only-admin") {
+      const val = argv[++i];
+      if (val === "true") opts.includeReadOnlyAdmin = true;
+      else if (val === "false") opts.includeReadOnlyAdmin = false;
+      else throw new Error(`--include-read-only-admin expects true or false, got: ${val}`);
       continue;
     }
     if (arg === "--include-gosaki-read-only-admin") {
@@ -143,6 +152,7 @@ async function main() {
     toolRoot: TOOL_ROOT,
     publicDirCli: opts.publicDir,
     manifestOutDir,
+    includeReadOnlyAdmin: opts.includeReadOnlyAdmin,
     includeGosakiReadOnlyAdmin: opts.includeGosakiReadOnlyAdmin,
     siteKey: opts.siteKey,
   });

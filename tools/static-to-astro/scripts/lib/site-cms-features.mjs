@@ -11,7 +11,7 @@ import {
 } from "./site-registry.mjs";
 
 /** @typedef {'schedule' | 'discography' | 'siteEmbeds'} SupabaseFeatureId */
-/** @typedef {'youtube' | 'contact' | 'aboutBandProfiles' | 'aboutContent'} CmsFeatureId */
+/** @typedef {'youtube' | 'contact' | 'aboutBandProfiles' | 'aboutContent' | 'readOnlyAdmin'} CmsFeatureId */
 
 /**
  * @typedef {object} SupabaseFeatures
@@ -26,6 +26,7 @@ import {
  * @property {boolean} contact
  * @property {boolean} aboutBandProfiles
  * @property {boolean} aboutContent
+ * @property {boolean} readOnlyAdmin
  */
 
 /**
@@ -43,6 +44,7 @@ export const CMS_FEATURE_IDS = /** @type {const} */ ([
   "contact",
   "aboutBandProfiles",
   "aboutContent",
+  "readOnlyAdmin",
 ]);
 
 /** @type {SupabaseFeatures} */
@@ -55,6 +57,7 @@ const GOSAKI_CMS_DEFAULTS = {
   contact: true,
   aboutBandProfiles: true,
   aboutContent: true,
+  readOnlyAdmin: true,
 };
 /** @type {CmsFeatures} */
 const PILOT_CMS_DEFAULTS = {
@@ -62,6 +65,7 @@ const PILOT_CMS_DEFAULTS = {
   contact: false,
   aboutBandProfiles: false,
   aboutContent: false,
+  readOnlyAdmin: false,
 };
 
 /**
@@ -116,6 +120,7 @@ export function normalizeCmsFeatures(raw, siteKey) {
     contact: obj.contact === true,
     aboutBandProfiles: obj.aboutBandProfiles === true,
     aboutContent: obj.aboutContent === true,
+    readOnlyAdmin: obj.readOnlyAdmin === true,
   };
 }
 

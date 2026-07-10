@@ -131,7 +131,8 @@ assert("staging publicBaseUrl", stagingProfile.publicBaseUrl === STAGING_PUBLIC_
 assert("staging intendedRemotePath", stagingProfile.intendedRemotePath === "/cms-kit-staging/gosaki-piano/");
 assert("staging includesAdmin true", stagingProfile.includesAdmin === true);
 assert("staging manualUploadOut", stagingProfile.manualUploadOut === "output/manual-upload/gosaki-piano");
-assert("staging includeGosakiReadOnlyAdmin", stagingProfile.includeGosakiReadOnlyAdmin === true);
+assert("staging includeReadOnlyAdmin", stagingProfile.includeReadOnlyAdmin === true);
+assert("staging includeGosakiReadOnlyAdmin legacy alias", stagingProfile.includeGosakiReadOnlyAdmin === true);
 assert("staging fixtureDir", stagingProfile.fixtureDir === "fixtures/gosaki-piano");
 
 assert("production siteSlug", productionProfile.siteSlug === "gosaki-piano");
@@ -139,6 +140,7 @@ assert("production publicBaseUrl", productionProfile.publicBaseUrl === PRODUCTIO
 assert("production deployBase root", productionProfile.deployBase === "/");
 assert("production intendedRemotePath TBD", productionProfile.intendedRemotePath === "TBD_G-20i");
 assert("production includesAdmin false", productionProfile.includesAdmin === false);
+assert("production includeReadOnlyAdmin false", productionProfile.includeReadOnlyAdmin === false);
 assert("production includeGosakiReadOnlyAdmin false", productionProfile.includeGosakiReadOnlyAdmin === false);
 assert("production manualUploadOut", productionProfile.manualUploadOut === "output/manual-upload/gosaki-piano-production");
 
@@ -172,7 +174,8 @@ const mockManifest = buildManualUploadManifest({
   intendedRemotePath: stagingManifestMeta.intendedRemotePath,
   sourceCommit: BASE_COMMIT,
   includesAdmin: stagingManifestMeta.includesAdmin,
-  includeGosakiReadOnlyAdmin: stagingManifestMeta.includeGosakiReadOnlyAdmin,
+  includeReadOnlyAdmin: stagingManifestMeta.includeReadOnlyAdmin,
+  includeGosakiReadOnlyAdmin: stagingManifestMeta.includeReadOnlyAdmin,
 });
 
 for (const field of REQUIRED_MANIFEST_FIELDS) {

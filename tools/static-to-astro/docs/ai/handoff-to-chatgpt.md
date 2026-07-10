@@ -5,10 +5,21 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u22-discography-loader-multisite-readiness — complete.
-Discography loader organized for multi-site; Gosaki 4 releases; pilot noop.
-Non-Gosaki blocked until site_slug migration. No DB write / FTP / deploy.
+Current phase: G-20u23-discography-site-slug-migration-planning — complete.
+SQL templates for discography site_slug migration prepared. No SQL execution.
+Loader DISCOGRAPHY_SITE_SLUG_COLUMN_READY remains false.
 ```
+
+## G-20u23 Discography site_slug migration planning — complete
+
+- **SQL:** before (SELECT) · migration (ADD COLUMN + UPDATE backfill) · after (SELECT) · rollback (template)
+- **Tables:** `discography` + `discography_tracks` — nullable `site_slug` → backfill `gosaki-piano`
+- **Baseline:** 4 releases · 34 tracks · join via `discography_legacy_id`
+- **Deferred:** NOT NULL · UNIQUE · RLS · GRANT · indexes (commented optional)
+- **Loader:** `DISCOGRAPHY_SITE_SLUG_COLUMN_READY=false` — **not flipped in G-20u23**
+- **Regression:** `verify:current-active-regression` — **21** verifiers
+- **Not executed:** SQL execution · DB write · FTP · deploy
+- **Next:** G-20u24 migration execution (operator approval · staging only)
 
 ## G-20u22 Discography loader multi-site readiness — complete
 
@@ -87,13 +98,13 @@ Non-Gosaki blocked until site_slug migration. No DB write / FTP / deploy.
 
 - **Doc:** `remaining-site-specific-coupling-audit.md` — A–E tiers, G-20u1 delta, non-schedule inventory
 - **Remaining C items:** ~~gosaki*Bundle naming~~ · ~~isGosakiPianoFixture in hook matchFixture~~ · ~~supabaseFeatures youtube/embeds~~ (G-20u20 cmsFeatures) · ~~`includeGosakiReadOnlyAdmin`~~ (G-20u21 generic flag) · ~~non-gosaki discography loader~~ (G-20u22 readiness)
-- **Next order:** ~~u19 naming~~ · ~~u20 Supabase CMS~~ · ~~u21 admin flag~~ · ~~u22 discography loader~~ → TBD follow-up
+- **Next order:** ~~u22 discography loader~~ · ~~u23 migration planning~~ → u24 migration execution (deferred)
 - **Not executed:** refactor · FTP · deploy · DB write
 
 ## G-20u15 current active regression suite — complete
 
 - **CLI:** `npm run verify:current-active-regression`
-- **Script:** `verify-current-active-regression-suite.mjs` — **20** G-20u2–u14 + G-20u17–u22 verifiers sequential
+- **Script:** `verify-current-active-regression-suite.mjs` — **21** G-20u2–u14 + G-20u17–u23 verifiers sequential
 - **Excluded:** G-20u1 audit · `verify-url-to-staging-pipeline.mjs` (G-7b+ mega) · G-20t3–t6 HEAD-pinned
 - **Result:** 14/14 PASS at `3ae56b1`
 - **Child HEAD pins:** G-20u2–u7/u9 normalized to NOTE (G-20t2 policy)

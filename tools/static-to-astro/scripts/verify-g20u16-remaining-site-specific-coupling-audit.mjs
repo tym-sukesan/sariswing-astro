@@ -74,7 +74,7 @@ assert("G-20u1 prior audit doc exists", exists(G20U1_DOC));
 assert("regression suite doc exists", exists(REGRESSION_DOC));
 assert("regression suite runner exists", exists("tools/static-to-astro/scripts/verify-current-active-regression-suite.mjs"));
 
-assert("active verifier count 20", CURRENT_ACTIVE_VERIFIERS.length === 20);
+assert("active verifier count 21", CURRENT_ACTIVE_VERIFIERS.length === 21);
 
 const registry = read("tools/static-to-astro/config/sites/registry.json");
 assert("registry cmsFeatures", registry.includes("cmsFeatures"));

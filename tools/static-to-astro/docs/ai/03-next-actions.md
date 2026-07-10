@@ -1,6 +1,23 @@
 Last updated: 2026-07-10
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u23 Discography site_slug migration planning — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u23-discography-site-slug-migration-planning` |
+| Base | `668780d` |
+| Tables | `public.discography` · `public.discography_tracks` |
+| Baseline | 4 releases · 34 tracks · no `site_slug` column |
+| Strategy | nullable `site_slug` + backfill `gosaki-piano` |
+| SQL | before (SELECT) · migration (DDL+UPDATE) · after (SELECT) · rollback (template) |
+| Loader flag | `DISCOGRAPHY_SITE_SLUG_COLUMN_READY=false` (unchanged) |
+| Not executed | SQL execution · DB write · FTP · deploy |
+| Doc | `discography-site-slug-migration-planning.md` |
+| Verifier | `verify-g20u23-discography-site-slug-migration-planning.mjs` |
+| Regression | G-20u2–u14 + G-20u17–u23 (**21** verifiers) |
+| Next | G-20u24 migration execution (operator approval · staging only) |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u22 Discography loader multi-site readiness — complete
 
 | Item | Value |
@@ -37,7 +54,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Doc | `generic-read-only-admin-flag.md` |
 | Verifier | `verify-g20u21-generic-read-only-admin-flag.mjs` |
 | Regression | G-20u2–u14 + G-20u17–u21 (**19** verifiers) |
-| Next | ~~G-20u21 read-only admin flag~~ (complete) · ~~G-20u22 discography loader~~ (complete) |
+| Next | ~~G-20u22 discography loader~~ (complete) · G-20u24 migration execution (deferred) |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u20 Supabase CMS features generalization — complete
 

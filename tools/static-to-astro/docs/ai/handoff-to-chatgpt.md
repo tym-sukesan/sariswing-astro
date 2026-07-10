@@ -5,23 +5,33 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u26-gosaki-staging-package-regen-after-discography-filtered-read — complete.
-Gosaki staging package regen + preflight PASS at 72b064c after G-20u25 filtered read.
-Package fresh at HEAD. Manual FTP only — no auto deploy. Production upload STOP (G-20j).
+Current phase: G-20u26b-staging-ftp-upload-http-verification-record — complete.
+Operator manual FTP upload to staging complete; primary routes HTTP-verified.
+Package sourceCommit=3287219. Production upload STOP (G-20j).
 ```
+
+## G-20u26b Gosaki staging FTP upload HTTP verification record — complete
+
+- **Base:** `3287219`
+- **Package:** `sourceCommit=32872197659ebe359f106a5b2db298dbc8ee1cde` · preflight **PASS**
+- **Upload:** manual FTP (FileZilla) · `public-dist/` contents → `/cms-kit-staging/gosaki-piano/`
+- **HTTP verified (operator):** `/` · `/about/` · `/schedule/` · `/schedule/2026-08/` · `/discography/` · `/contact/`
+- **Production:** **not updated** · upload **STOP** (G-20j)
+- **Not executed:** Cursor FTP · CLI mirror/sync/delete · DB write · production deploy
+- **Next:** client preview feedback · production upload planning (G-20j STOP)
 
 ## G-20u26 Gosaki staging package regen after discography filtered read — complete
 
-- **Base:** `72b064c` (post G-20u25)
+- **Base:** `3287219` (post G-20u25)
 - **Build:** `npm run build:gosaki:staging` **PASS**
 - **Preflight:** `npm run preflight:gosaki:staging` **PASS** (structure + freshness)
-- **MANIFEST:** `sourceCommit=72b064c` · `siteKey=gosaki-piano` · `includesAdmin=true` · `includeGosakiReadOnlyAdmin=true`
+- **MANIFEST:** `sourceCommit=3287219` · `siteKey=gosaki-piano` · `includesAdmin=true` · `includeGosakiReadOnlyAdmin=true`
 - **Schedule:** `/schedule/2026-08/` · **14** event cards · `scheduleDataSource=supabase`
 - **Discography:** **4** releases · **34** tracks · `discographyDataSource=supabase` · `siteSlugFilterApplied=true`
 - **Sitemap:** includes `/schedule/2026-08/` · **no** `/admin/`
-- **Not executed:** FTP · deploy · package upload · DB write
+- **Not executed:** Cursor FTP · deploy · DB write
 - **Upload rule:** manual FTP only; production STOP (G-20j)
-- **Next:** operator manual FTP upload (optional) · multi-site discography (future)
+- **Next:** ~~operator manual FTP upload~~ (G-20u26b complete) · client preview feedback
 
 ## G-20u25 Discography filtered read enablement — complete
 

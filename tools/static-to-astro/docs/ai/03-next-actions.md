@@ -1,23 +1,39 @@
 Last updated: 2026-07-10
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u26b Gosaki staging FTP upload HTTP verification record — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u26b-staging-ftp-upload-http-verification-record` |
+| Base | `3287219` |
+| Package `sourceCommit` | `32872197659ebe359f106a5b2db298dbc8ee1cde` |
+| Preflight | `preflight:gosaki:staging` **PASS** (pre-upload) |
+| Upload | manual FTP (FileZilla) · `public-dist/` contents → `/cms-kit-staging/gosaki-piano/` |
+| HTTP verified | home · about · schedule · `/schedule/2026-08/` · discography · contact |
+| Production | **not updated** · upload **STOP** (G-20j) |
+| Not executed | Cursor FTP · CLI mirror/sync/delete · DB write |
+| Doc | `gosaki-staging-ftp-upload-http-verification-record.md` |
+| Verifier | `verify-g20u26b-staging-ftp-upload-http-verification-record.mjs` (historical doc-only) |
+| Next | client preview feedback · production upload planning (G-20j STOP) |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u26 Gosaki staging package regen after discography filtered read — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-20u26-gosaki-staging-package-regen-after-discography-filtered-read` |
-| Base | `72b064c` |
+| Base | `3287219` |
 | Build | `npm run build:gosaki:staging` **PASS** |
 | Preflight | `npm run preflight:gosaki:staging` **PASS** (fresh) |
-| MANIFEST | `sourceCommit=72b064c` · `siteKey=gosaki-piano` · `includesAdmin=true` |
+| MANIFEST | `sourceCommit=3287219` · `siteKey=gosaki-piano` · `includesAdmin=true` |
 | Schedule | August `/schedule/2026-08/` · **14** cards |
 | Discography | **4** releases · **34** tracks · filtered `site_slug=gosaki-piano` |
 | Sitemap | no `/admin/` |
-| Not executed | FTP · deploy · package upload · DB write |
+| Not executed | Cursor FTP · deploy · DB write |
 | Upload rule | manual FTP only · production STOP (G-20j) |
 | Doc | `gosaki-staging-package-regen-after-discography-filtered-read.md` |
 | Verifier | `verify-g20u26-gosaki-staging-package-regen-after-discography-filtered-read.mjs` (historical) |
-| Next | operator manual FTP upload (optional) · multi-site discography (future) |
+| Next | ~~operator manual FTP upload~~ (G-20u26b recorded) · client preview feedback |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u25 Discography filtered read enablement — complete
 

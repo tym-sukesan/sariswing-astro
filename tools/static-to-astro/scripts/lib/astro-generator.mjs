@@ -57,6 +57,7 @@ import {
   scheduleMonthsFromDetected,
 } from "./schedule-seed-extractor.mjs";
 import { resolveSiteGeneratorHooks } from "./site-generator-hooks.mjs";
+import { normalizeSiteDataBundles } from "./site-generator-options.mjs";
 import { removeGeneratedOutputDir } from "./safe-output-cleanup.mjs";
 
 const TRAILING_SLASH = "always";
@@ -857,16 +858,17 @@ export function generateAstroProject(inputDir, outputDir, options = {}) {
   const scheduleMonthPages = detectScheduleMonthPages(analysis.pages);
   const scheduleHub = scheduleMonthPages.length > 0;
 
-  const gosakiScheduleBundle = options.gosakiScheduleBundle ?? null;
-  const gosakiDiscographyBundle = options.gosakiDiscographyBundle ?? null;
+  const { scheduleBundle, discographyBundle } = normalizeSiteDataBundles(options);
   const hookContextBase = {
     siteDir,
     siteKey: siteHooks.siteKey,
     baseUrl,
     deployBase,
     linkTransformContext,
-    gosakiScheduleBundle,
-    gosakiDiscographyBundle,
+    scheduleBundle,
+    discographyBundle,
+    gosakiScheduleBundle: scheduleBundle,
+    gosakiDiscographyBundle: discographyBundle,
     scheduleMonthPages,
     outDir,
     toolRoot: TOOL_ROOT,
@@ -874,12 +876,12 @@ export function generateAstroProject(inputDir, outputDir, options = {}) {
     generateScheduleLegacyMonthStubPage,
   };
   const scheduleDataUsage = siteHooks.resolveScheduleDataUsage(hookContextBase);
-  const useGosakiScheduleData = scheduleDataUsage.useScheduleData;
-  const gosakiDataMonthRoutes = scheduleDataUsage.monthRoutes;
+  const useScheduleData = scheduleDataUsage.useScheduleData;
+  const scheduleDataMonthRoutes = scheduleDataUsage.monthRoutes;
   const hookContext = {
     ...hookContextBase,
-    useScheduleData: useGosakiScheduleData,
-    monthRoutes: gosakiDataMonthRoutes,
+    useScheduleData,
+    monthRoutes: scheduleDataMonthRoutes,
   };
 
   const headerResult = generateHeaderAstro(headerHtml, "Header", {
@@ -928,7 +930,7 @@ export function generateAstroProject(inputDir, outputDir, options = {}) {
   /** @type {{ scheduleDataSource?: string, eventCount?: number, fallbackReason?: string | null } | null} */
   let gosakiScheduleDataSummary = null;
   if (scheduleHub) {
-    if (useGosakiScheduleData) {
+    if (useScheduleData) {
       gosakiScheduleDataSummary = siteHooks.applyScheduleDataPages(hookContext);
       writtenPages.push(gosakiScheduleDataSummary.hubPath, ...gosakiScheduleDataSummary.monthPaths);
       scheduleIndexGenerated = true;
@@ -1109,9 +1111,11 @@ export function generateAstroProject(inputDir, outputDir, options = {}) {
     siteProfileSummary,
     gosakiBandProfilesSummary,
     gosakiScheduleDataSummary,
-    gosakiScheduleBundle,
+    scheduleBundle,
+    gosakiScheduleBundle: scheduleBundle,
     gosakiDiscographyDataSummary,
-    gosakiDiscographyBundle,
+    discographyBundle,
+    gosakiDiscographyBundle: discographyBundle,
   };
 }
 
@@ -1142,18 +1146,24 @@ export function printGenerationSummary(result) {
     console.log(
       `  Schedule data: scheduleDataSource=${result.gosakiScheduleDataSummary.scheduleDataSource} (${result.gosakiScheduleDataSummary.eventCount ?? 0} events)`,
     );
-  } else if (result.gosakiScheduleBundle?.scheduleDataSource === "wix-html") {
+  } else if (
+    (result.scheduleBundle ?? result.gosakiScheduleBundle)?.scheduleDataSource === "wix-html"
+  ) {
+    const bundle = result.scheduleBundle ?? result.gosakiScheduleBundle;
     console.log(
-      `  Schedule data: scheduleDataSource=wix-html (Wix HTML month pages; ${result.gosakiScheduleBundle.fallbackReason ?? "no extractor data"})`,
+      `  Schedule data: scheduleDataSource=wix-html (Wix HTML month pages; ${bundle.fallbackReason ?? "no extractor data"})`,
     );
   }
   if (result.gosakiDiscographyDataSummary?.discographyDataSource) {
     console.log(
       `  Discography data: discographyDataSource=${result.gosakiDiscographyDataSummary.discographyDataSource} (${result.gosakiDiscographyDataSummary.rowCount ?? 0} releases, ${result.gosakiDiscographyDataSummary.purchasePatchCount ?? 0} purchase_url + ${result.gosakiDiscographyDataSummary.artistPatchCount ?? 0} artist + ${result.gosakiDiscographyDataSummary.labelPatchCount ?? 0} label + ${result.gosakiDiscographyDataSummary.trackPatchCount ?? 0} track patch(es); ${result.gosakiDiscographyDataSummary.trackRowCount ?? 0} track rows)`,
     );
-  } else if (result.gosakiDiscographyBundle?.discographyDataSource === "wix-html") {
+  } else if (
+    (result.discographyBundle ?? result.gosakiDiscographyBundle)?.discographyDataSource === "wix-html"
+  ) {
+    const bundle = result.discographyBundle ?? result.gosakiDiscographyBundle;
     console.log(
-      `  Discography data: discographyDataSource=wix-html (${result.gosakiDiscographyBundle.fallbackReason ?? "no supabase data"})`,
+      `  Discography data: discographyDataSource=wix-html (${bundle.fallbackReason ?? "no supabase data"})`,
     );
   }
   if (result.seoPublishReadiness?.sitemapIntegrationEnabled) {

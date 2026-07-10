@@ -147,16 +147,16 @@ async function main() {
   }
 
   try {
-    let gosakiScheduleBundle = null;
-    let gosakiDiscographyBundle = null;
+    let scheduleBundle = null;
+    let discographyBundle = null;
     if (!dryRun && effectiveSiteKey) {
       const supabaseData = await loadSiteSupabaseDataForBuild({
         siteKey: effectiveSiteKey,
         inputDir: inputAbs,
         toolRoot,
       });
-      gosakiScheduleBundle = supabaseData.schedule;
-      gosakiDiscographyBundle = supabaseData.discography;
+      scheduleBundle = supabaseData.schedule;
+      discographyBundle = supabaseData.discography;
     }
 
     const result = generateAstroProject(inputAbs, outputAbs, {
@@ -167,8 +167,8 @@ async function main() {
       withAdminCms,
       siteProfile,
       siteKey: effectiveSiteKey,
-      gosakiScheduleBundle,
-      gosakiDiscographyBundle,
+      scheduleBundle,
+      discographyBundle,
     });
     if (dryRun) {
       console.log("static-to-astro convert (dry-run)");

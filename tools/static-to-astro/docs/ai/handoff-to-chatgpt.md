@@ -5,10 +5,22 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u17-post-build-verifier-registry — complete.
-Post-build verifiers resolved from registry.json packageProfiles.postBuildVerifier.
-Gosaki / pilot build verify behavior unchanged. No FTP / deploy / DB write.
+Current phase: G-20u19-generator-option-naming-and-fixture-registry — complete.
+Generic scheduleBundle/discographyBundle options; registry fixtureDir matching.
+Gosaki / pilot convert behavior unchanged. No FTP / deploy / DB write.
 ```
+
+## G-20u19 generator option naming and fixture registry — complete
+
+- **Options:** `scheduleBundle` / `discographyBundle` — legacy `gosakiScheduleBundle` / `gosakiDiscographyBundle` aliases accepted
+- **Modules:** `site-generator-options.mjs` · `site-fixture-match.mjs`
+- **Fixture:** `matchRegistryFixtureDir(siteDir, siteKey)` in Gosaki hook `matchFixture`
+- **Legacy:** `isGosakiPianoFixture` deprecated in gosaki-only inject modules only
+- **Gosaki:** 74 schedule events · August 14 cards · 4 discography releases (Supabase live)
+- **Pilot:** null bundles · noop hooks · convert dry-run PASS
+- **Regression:** `verify:current-active-regression` — **17** verifiers
+- **Not executed:** FTP · deploy · DB write
+- **Next:** G-20u20 Supabase CMS features
 
 ## G-20u17 post-build verifier registry — complete
 
@@ -19,9 +31,9 @@ Gosaki / pilot build verify behavior unchanged. No FTP / deploy / DB write.
 - **Pilot:** staging → `verify-site-package.mjs` (`site-package`)
 - **Legacy:** `LEGACY_POST_BUILD_VERIFIER_FALLBACK` if registry field omitted
 - **Fail fast:** unknown site/profile without config
-- **Regression:** `verify:current-active-regression` — **16** verifiers (G-20u2–u14 + G-20u17–u18)
+- **Regression:** `verify:current-active-regression` — **17** verifiers (G-20u2–u14 + G-20u17–u19)
 - **Not executed:** FTP · deploy · DB write
-- **Next:** G-20u19 option naming
+- **Next:** ~~G-20u19 option naming~~ (complete) · G-20u20 Supabase CMS features
 
 ## G-20u18 package.json / CLI default decoupling — complete
 
@@ -36,8 +48,8 @@ Gosaki / pilot build verify behavior unchanged. No FTP / deploy / DB write.
 ## G-20u16 remaining site-specific coupling audit — complete
 
 - **Doc:** `remaining-site-specific-coupling-audit.md` — A–E tiers, G-20u1 delta, non-schedule inventory
-- **Remaining C items:** ~~POST_BUILD_VERIFIERS map~~ (G-20u17 complete), manual-upload npm defaults (G-20u18 complete), `gosaki*Bundle` naming, `isGosakiPianoFixture`, `includeGosakiReadOnlyAdmin`, non-gosaki discography loader
-- **Next order:** ~~u18 defaults~~ · ~~u17 verifier registry~~ → u19 naming → u20 Supabase CMS → u21 admin flag
+- **Remaining C items:** ~~POST_BUILD_VERIFIERS map~~ · ~~manual-upload npm defaults~~ · ~~gosaki*Bundle naming~~ · ~~isGosakiPianoFixture in hook matchFixture~~ · `includeGosakiReadOnlyAdmin`, non-gosaki discography loader
+- **Next order:** ~~u17 verifier registry~~ · ~~u18 defaults~~ · ~~u19 naming~~ → u20 Supabase CMS → u21 admin flag
 - **Not executed:** refactor · FTP · deploy · DB write
 
 ## G-20u15 current active regression suite — complete

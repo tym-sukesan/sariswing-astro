@@ -37,6 +37,7 @@ export function loadGosakiBandProfilesConfig(toolRoot) {
 
 /**
  * @param {string} siteDir
+ * @deprecated Use matchRegistryFixtureDir(siteDir, GOSAKI_SITE_KEY) from site-fixture-match.mjs
  */
 export function isGosakiPianoFixture(siteDir) {
   return path.basename(path.resolve(siteDir)) === "gosaki-piano";

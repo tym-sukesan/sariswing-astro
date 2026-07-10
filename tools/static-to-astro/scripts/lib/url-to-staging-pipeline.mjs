@@ -165,8 +165,8 @@ export async function runUrlToStagingPipeline(opts) {
         siteProfile: config.siteProfile,
         verifyBuild: gates.runBuild,
         siteKey,
-        gosakiScheduleBundle: supabaseData.schedule,
-        gosakiDiscographyBundle: supabaseData.discography,
+        scheduleBundle: supabaseData.schedule,
+        discographyBundle: supabaseData.discography,
       });
       artifacts.astroProject = config.projectOut;
       artifacts.conversionReport = path.join(config.projectOut, "CONVERSION_REPORT.md");

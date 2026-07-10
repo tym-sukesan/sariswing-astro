@@ -1,6 +1,23 @@
 Last updated: 2026-07-10
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u19 Generator option naming and fixture registry — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u19-generator-option-naming-and-fixture-registry` |
+| Base | `14214dd` |
+| Options | `scheduleBundle` / `discographyBundle` (legacy `gosaki*` aliases accepted) |
+| Modules | `site-generator-options.mjs` · `site-fixture-match.mjs` |
+| Fixture | `matchRegistryFixtureDir` in hook `matchFixture` (not `isGosakiPianoFixture`) |
+| Gosaki | 74 events · August 14 · discography 4 (when Supabase live) |
+| Pilot | schedule/discography null · noop hooks |
+| Not executed | FTP · deploy · DB write |
+| Doc | `generator-option-naming-and-fixture-registry.md` |
+| Verifier | `verify-g20u19-generator-option-naming-and-fixture-registry.mjs` |
+| Regression | G-20u2–u14 + G-20u17–u19 (**17** verifiers) |
+| Next | G-20u20 Supabase CMS features |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u17 Post-build verifier registry — complete
 
 | Item | Value |
@@ -15,8 +32,8 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Not executed | FTP · deploy · DB write |
 | Doc | `post-build-verifier-registry.md` |
 | Verifier | `verify-g20u17-post-build-verifier-registry.mjs` |
-| Regression | G-20u2–u14 + G-20u17–u18 (**16** verifiers) |
-| Next | G-20u19 option naming |
+| Regression | G-20u2–u14 + G-20u17–u19 (**17** verifiers) |
+| Next | ~~G-20u19 option naming~~ (complete) |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u18 package.json / CLI default decoupling — complete
 

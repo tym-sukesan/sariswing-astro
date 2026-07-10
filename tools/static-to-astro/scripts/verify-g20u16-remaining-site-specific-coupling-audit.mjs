@@ -74,7 +74,7 @@ assert("G-20u1 prior audit doc exists", exists(G20U1_DOC));
 assert("regression suite doc exists", exists(REGRESSION_DOC));
 assert("regression suite runner exists", exists("tools/static-to-astro/scripts/verify-current-active-regression-suite.mjs"));
 
-assert("active verifier count 16", CURRENT_ACTIVE_VERIFIERS.length === 16);
+assert("active verifier count 17", CURRENT_ACTIVE_VERIFIERS.length === 17);
 assert("historical verifiers documented", HISTORICAL_VERIFIERS.length >= 4);
 assert("historical excludes mega url-staging", HISTORICAL_VERIFIERS.some((v) => v.script.includes("verify-url-to-staging-pipeline")));
 
@@ -86,7 +86,9 @@ assert("registry supabaseFeatures", registry.includes("supabaseFeatures"));
 const hooksSrc = read("tools/static-to-astro/scripts/lib/site-generator-hooks.mjs");
 assert("hooks registry resolveSiteGeneratorHooks", hooksSrc.includes("resolveSiteGeneratorHooks"));
 assert("hooks gosaki factory retained", hooksSrc.includes("createGosakiPianoHookMethods"));
-assert("hooks isGosakiPianoFixture still present (C item)", hooksSrc.includes("isGosakiPianoFixture"));
+assert("hooks matchRegistryFixtureDir", hooksSrc.includes("matchRegistryFixtureDir"));
+assert("hooks no isGosakiPianoFixture in matchFixture", !/matchFixture[\s\S]{0,80}isGosakiPianoFixture/.test(hooksSrc));
+assert("fixture registry module exists", exists("tools/static-to-astro/scripts/lib/site-fixture-match.mjs"));
 
 const buildCore = read("tools/static-to-astro/scripts/lib/build-site-package-core.mjs");
 assert("build core post-build verifier registry import (G-20u17)", buildCore.includes("post-build-verifier-registry.mjs"));

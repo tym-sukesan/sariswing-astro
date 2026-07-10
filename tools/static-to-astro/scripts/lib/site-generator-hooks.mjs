@@ -13,8 +13,8 @@ import {
 } from "./schedule-pages.mjs";
 import {
   applyGosakiAboutBandProfiles,
-  isGosakiPianoFixture,
 } from "./gosaki-about-band-profiles.mjs";
+import { matchRegistryFixtureDir } from "./site-fixture-match.mjs";
 import { applyGosakiAboutContent } from "./gosaki-about-content.mjs";
 import { applyGosakiHomeYouTubeEmbed } from "./gosaki-home-youtube-embed.mjs";
 import { applyGosakiContactHubspotEmbed } from "./gosaki-contact-hubspot-embed.mjs";
@@ -39,6 +39,8 @@ export const TOOL_ROOT = path.resolve(__dirname, "../..");
  * @property {string | null} baseUrl
  * @property {string} deployBase
  * @property {{ productionOrigin: string | null }} linkTransformContext
+ * @property {unknown} [scheduleBundle]
+ * @property {unknown} [discographyBundle]
  * @property {unknown} [gosakiScheduleBundle]
  * @property {unknown} [gosakiDiscographyBundle]
  * @property {boolean} [useScheduleData]
@@ -131,7 +133,7 @@ export const DEFAULT_SITE_GENERATOR_HOOKS = {
 function createGosakiPianoHookMethods() {
   return {
     matchFixture(siteDir) {
-      return isGosakiPianoFixture(siteDir);
+      return matchRegistryFixtureDir(siteDir, GOSAKI_SITE_KEY);
     },
     resolveVisualOverrideSiteSlug(_siteDir, basename) {
       if (basename === "gosaki-static-site") return "gosaki-static-site";
@@ -144,7 +146,7 @@ function createGosakiPianoHookMethods() {
       return generateGosakiFooterAstro(footerHtml, ctx.linkTransformContext);
     },
     resolveScheduleDataUsage(ctx) {
-      const bundle = /** @type {any} */ (ctx.gosakiScheduleBundle);
+      const bundle = /** @type {any} */ (ctx.scheduleBundle ?? ctx.gosakiScheduleBundle);
       const useScheduleData = Boolean(
         bundle &&
           (bundle.scheduleDataSource === "supabase" || bundle.scheduleDataSource === "static-fallback") &&
@@ -159,7 +161,7 @@ function createGosakiPianoHookMethods() {
       return Boolean(ctx.useScheduleData && ctx.monthRoutes?.has(page.route));
     },
     patchDiscographyPageMainHtml(mainHtml, page, ctx) {
-      const bundle = /** @type {any} */ (ctx.gosakiDiscographyBundle);
+      const bundle = /** @type {any} */ (ctx.discographyBundle ?? ctx.gosakiDiscographyBundle);
       if (
         page.route !== "/discography/" ||
         bundle?.discographyDataSource !== "supabase" ||
@@ -188,14 +190,14 @@ function createGosakiPianoHookMethods() {
       };
     },
     applyScheduleDataPages(ctx) {
-      const bundle = /** @type {any} */ (ctx.gosakiScheduleBundle);
+      const bundle = /** @type {any} */ (ctx.scheduleBundle ?? ctx.gosakiScheduleBundle);
       return applyGosakiScheduleDataPages(ctx.outDir, bundle, {
         baseUrl: ctx.baseUrl,
         deployBase: ctx.deployBase,
       });
     },
     applyLegacyMonthStubs(ctx) {
-      const bundle = /** @type {any} */ (ctx.gosakiScheduleBundle);
+      const bundle = /** @type {any} */ (ctx.scheduleBundle ?? ctx.gosakiScheduleBundle);
       const scheduleMonthPages = ctx.scheduleMonthPages ?? [];
       const writeFile = ctx.writeFile;
       const generateScheduleLegacyMonthStubPage = ctx.generateScheduleLegacyMonthStubPage;

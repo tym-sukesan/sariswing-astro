@@ -10,12 +10,12 @@ import {
   resolveSiteCmsFeaturePlan,
 } from "./site-registry.mjs";
 import { loadSiteEmbedsDataForBuild } from "./site-cms-features.mjs";
+import { loadSiteDiscographyBundleForBuild } from "./site-discography-loader.mjs";
 import {
   GOSAKI_SCHEDULE_SITE_CONFIG,
   loadGosakiScheduleDataForBuild,
   loadScheduleDataForBuild,
 } from "./supabase-schedule-read.mjs";
-import { loadGosakiDiscographyDataForBuild } from "./supabase-discography-read.mjs";
 
 /**
  * @typedef {object} SiteSupabaseLoadPlan
@@ -86,27 +86,7 @@ export async function loadSiteScheduleDataForBuild(opts) {
  * }} opts
  */
 export async function loadSiteDiscographyDataForBuild(opts) {
-  const { siteKey, env = process.env, toolRoot = TOOL_ROOT } = opts;
-  const plan = resolveSiteSupabaseLoadPlan(siteKey, toolRoot);
-
-  if (!plan.features.discography) {
-    return null;
-  }
-
-  if (siteKey === GOSAKI_SITE_KEY) {
-    return loadGosakiDiscographyDataForBuild({ env, toolRoot });
-  }
-
-  return {
-    discographyDataSource: "wix-html",
-    fallbackReason: "site_discography_loader_not_implemented",
-    releases: [],
-    tracks: [],
-    tracksByLegacyId: {},
-    rowCount: 0,
-    trackRowCount: 0,
-    siteSlug: plan.supabaseSiteSlug,
-  };
+  return loadSiteDiscographyBundleForBuild(opts);
 }
 
 /**

@@ -5,10 +5,22 @@
 
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { GOSAKI_SITE_KEY } from "./site-registry.mjs";
 import { resolveSupabaseAnonReadEnv } from "./supabase-schedule-read.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const DEFAULT_TOOL_ROOT = path.resolve(__dirname, "../..");
+
+/** Gosaki pilot — single-tenant discography read until site_slug column exists (G-20u22). */
+export const GOSAKI_DISCOGRAPHY_SITE_CONFIG = {
+  siteSlug: GOSAKI_SITE_KEY,
+};
+
+/**
+ * When true, discography / discography_tracks queries may filter by site_slug.
+ * Migration is a separate high-risk phase — do not enable without explicit approval.
+ */
+export const DISCOGRAPHY_SITE_SLUG_COLUMN_READY = false;
 
 export const DISCOGRAPHY_SELECT =
   "legacy_id,title,artist,label,catalog_number,purchase_url,streaming_url,sort_order,published";
@@ -79,19 +91,31 @@ export function groupDiscographyTracksByLegacyId(rows) {
 /**
  * @param {{
  *   env: { supabaseUrl: string, anonKey: string },
+ *   siteSlug?: string | null,
+ *   requireSiteSlugFilter?: boolean,
  * }} opts
  */
-export async function loadDiscographyTracksFromSupabase({ env }) {
+export async function loadDiscographyTracksFromSupabase({ env, siteSlug = null, requireSiteSlugFilter = false }) {
+  if (requireSiteSlugFilter && !DISCOGRAPHY_SITE_SLUG_COLUMN_READY) {
+    throw new Error("discography_tracks site_slug filter requested but column migration pending (G-20u22)");
+  }
+
   const { createClient } = await import("@supabase/supabase-js");
   const supabase = createClient(env.supabaseUrl, env.anonKey, {
     auth: { persistSession: false, autoRefreshToken: false },
   });
 
-  const { data, error } = await supabase
+  let query = supabase
     .from("discography_tracks")
     .select(DISCOGRAPHY_TRACKS_SELECT)
     .order("discography_legacy_id", { ascending: true })
     .order("sort_order", { ascending: true });
+
+  if (requireSiteSlugFilter && siteSlug) {
+    query = query.eq("site_slug", siteSlug);
+  }
+
+  const { data, error } = await query;
 
   if (error) throw new Error(error.message);
   return (data ?? []).map((row) => normalizeDiscographyTrackRecord(row));
@@ -100,19 +124,31 @@ export async function loadDiscographyTracksFromSupabase({ env }) {
 /**
  * @param {{
  *   env: { supabaseUrl: string, anonKey: string },
+ *   siteSlug?: string | null,
+ *   requireSiteSlugFilter?: boolean,
  * }} opts
  */
-export async function loadDiscographyRowsFromSupabase({ env }) {
+export async function loadDiscographyRowsFromSupabase({ env, siteSlug = null, requireSiteSlugFilter = false }) {
+  if (requireSiteSlugFilter && !DISCOGRAPHY_SITE_SLUG_COLUMN_READY) {
+    throw new Error("discography site_slug filter requested but column migration pending (G-20u22)");
+  }
+
   const { createClient } = await import("@supabase/supabase-js");
   const supabase = createClient(env.supabaseUrl, env.anonKey, {
     auth: { persistSession: false, autoRefreshToken: false },
   });
 
-  const { data, error } = await supabase
+  let query = supabase
     .from("discography")
     .select(DISCOGRAPHY_SELECT)
     .eq("published", true)
     .order("sort_order", { ascending: true });
+
+  if (requireSiteSlugFilter && siteSlug) {
+    query = query.eq("site_slug", siteSlug);
+  }
+
+  const { data, error } = await query;
 
   if (error) throw new Error(error.message);
   return (data ?? []).map((row) => normalizeDiscographyRecord(row));
@@ -531,21 +567,56 @@ export function injectDiscographyDataSourceMarker(html, source) {
 }
 
 /**
- * @param {{ env?: NodeJS.ProcessEnv, toolRoot?: string, logPrefix?: string }} [opts]
+ * Generic discography read for convert/build (anon key only).
+ *
+ * @param {{
+ *   siteSlug?: string,
+ *   env?: NodeJS.ProcessEnv,
+ *   toolRoot?: string,
+ *   logPrefix?: string,
+ *   legacyUnfilteredRead?: boolean,
+ *   requireSiteSlugFilter?: boolean,
+ * }} [opts]
  */
-export async function loadGosakiDiscographyDataForBuild(opts = {}) {
+export async function loadDiscographyDataForBuild(opts = {}) {
   const {
+    siteSlug = GOSAKI_DISCOGRAPHY_SITE_CONFIG.siteSlug,
     env = process.env,
     toolRoot = DEFAULT_TOOL_ROOT,
-    logPrefix = "gosaki-discography",
+    logPrefix = "discography",
+    legacyUnfilteredRead = false,
+    requireSiteSlugFilter = false,
   } = opts;
+
+  if (requireSiteSlugFilter && !legacyUnfilteredRead && !DISCOGRAPHY_SITE_SLUG_COLUMN_READY) {
+    return {
+      discographyDataSource: "wix-html",
+      fallbackReason: "discography_site_slug_column_pending",
+      releases: [],
+      tracks: [],
+      tracksByLegacyId: {},
+      rowCount: 0,
+      trackRowCount: 0,
+      siteSlug,
+    };
+  }
+
   const readEnv = resolveSupabaseAnonReadEnv(env, toolRoot);
+  const useSiteSlugFilter = requireSiteSlugFilter && DISCOGRAPHY_SITE_SLUG_COLUMN_READY;
 
   if (readEnv) {
     try {
-      const releases = await loadDiscographyRowsFromSupabase({ env: readEnv });
+      const releases = await loadDiscographyRowsFromSupabase({
+        env: readEnv,
+        siteSlug,
+        requireSiteSlugFilter: useSiteSlugFilter,
+      });
       if (releases.length > 0) {
-        const tracks = await loadDiscographyTracksFromSupabase({ env: readEnv });
+        const tracks = await loadDiscographyTracksFromSupabase({
+          env: readEnv,
+          siteSlug,
+          requireSiteSlugFilter: useSiteSlugFilter,
+        });
         const tracksByLegacyId = groupDiscographyTracksByLegacyId(tracks);
         return {
           discographyDataSource: "supabase",
@@ -555,6 +626,7 @@ export async function loadGosakiDiscographyDataForBuild(opts = {}) {
           tracksByLegacyId,
           rowCount: releases.length,
           trackRowCount: tracks.length,
+          siteSlug,
         };
       }
       console.warn(`[${logPrefix}] Supabase returned 0 discography rows; using wix-html`);
@@ -573,5 +645,26 @@ export async function loadGosakiDiscographyDataForBuild(opts = {}) {
     tracksByLegacyId: {},
     rowCount: 0,
     trackRowCount: 0,
+    siteSlug,
   };
+}
+
+/**
+ * @param {{ env?: NodeJS.ProcessEnv, toolRoot?: string, logPrefix?: string }} [opts]
+ */
+export async function loadGosakiDiscographyDataForBuild(opts = {}) {
+  const {
+    env = process.env,
+    toolRoot = DEFAULT_TOOL_ROOT,
+    logPrefix = "gosaki-discography",
+  } = opts;
+
+  return loadDiscographyDataForBuild({
+    siteSlug: GOSAKI_DISCOGRAPHY_SITE_CONFIG.siteSlug,
+    env,
+    toolRoot,
+    logPrefix,
+    legacyUnfilteredRead: true,
+    requireSiteSlugFilter: false,
+  });
 }

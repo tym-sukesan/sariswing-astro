@@ -124,7 +124,8 @@ assert("convert uses loadSiteSupabaseDataForBuild", convertCli.includes("loadSit
 assert("convert not hardcoded gosaki only", !convertCli.includes("effectiveSiteKey === GOSAKI_SITE_KEY"));
 
 assert("site-aware loadGosakiScheduleDataForBuild", siteAwareLib.includes("loadGosakiScheduleDataForBuild"));
-assert("site-aware loadGosakiDiscographyDataForBuild", siteAwareLib.includes("loadGosakiDiscographyDataForBuild"));
+assert("site-aware loadSiteDiscographyBundleForBuild", siteAwareLib.includes("loadSiteDiscographyBundleForBuild"));
+assert("site-discography-loader module exists", exists("tools/static-to-astro/scripts/lib/site-discography-loader.mjs"));
 assert("schedule lib site_slug filter", scheduleLib.includes('.eq("site_slug", siteSlug)'));
 assert("Gosaki wrapper preserved", scheduleLib.includes("export async function loadGosakiScheduleDataForBuild"));
 assert("discography wrapper preserved", discographyLib.includes("export async function loadGosakiDiscographyDataForBuild"));

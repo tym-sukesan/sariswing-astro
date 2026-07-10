@@ -2,7 +2,7 @@
 /**
  * G-20u15 — Current active regression suite.
  *
- * Runs G-20u2–u14 + G-20u17–u21 site-aware active verifiers in sequence.
+ * Runs G-20u2–u14 + G-20u17–u22 site-aware active verifiers in sequence.
  * No FTP / deploy / DB write / package regen.
  *
  * Usage:
@@ -42,6 +42,7 @@ export const CURRENT_ACTIVE_VERIFIERS = [
   { id: "G-20u19", label: "Generator option naming & fixture registry", script: "verify-g20u19-generator-option-naming-and-fixture-registry.mjs", area: "generator-options" },
   { id: "G-20u20", label: "Supabase CMS features generalization", script: "verify-g20u20-supabase-cms-features-generalization.mjs", area: "cms-features" },
   { id: "G-20u21", label: "Generic read-only admin flag", script: "verify-g20u21-generic-read-only-admin-flag.mjs", area: "admin-flag" },
+  { id: "G-20u22", label: "Discography loader multi-site readiness", script: "verify-g20u22-discography-loader-multisite-readiness.mjs", area: "discography-loader" },
 ];
 
 /**
@@ -115,7 +116,7 @@ function main() {
   }
 
   console.log(`\n${PHASE}`);
-  console.log("Scope: G-20u2–u14 + G-20u17–u21 active verifiers · dry-run / module tests only");
+  console.log("Scope: G-20u2–u14 + G-20u17–u22 active verifiers · dry-run / module tests only");
   console.log("Excluded: FTP · deploy · DB write · package regen · historical HEAD-pinned verifiers\n");
 
   /** @type {Array<{ entry: typeof CURRENT_ACTIVE_VERIFIERS[number]; ok: boolean; summary: string; elapsedMs: number }>} */

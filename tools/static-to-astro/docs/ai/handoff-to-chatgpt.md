@@ -5,10 +5,21 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u21-generic-read-only-admin-flag — complete.
-Registry includeReadOnlyAdmin drives package admin inclusion; cmsFeatures.readOnlyAdmin gates hook inject.
-Gosaki staging includes admin; production/pilot exclude. No FTP / deploy / DB write.
+Current phase: G-20u22-discography-loader-multisite-readiness — complete.
+Discography loader organized for multi-site; Gosaki 4 releases; pilot noop.
+Non-Gosaki blocked until site_slug migration. No DB write / FTP / deploy.
 ```
+
+## G-20u22 Discography loader multi-site readiness — complete
+
+- **Module:** `site-discography-loader.mjs` — `resolveDiscographyLoaderCapability`, `loadSiteDiscographyBundleForBuild`
+- **Generic:** `loadDiscographyDataForBuild` in `supabase-discography-read.mjs`
+- **Gosaki:** `loadGosakiDiscographyDataForBuild` wrapper retained · **4 releases** when Supabase live
+- **Pilot:** `discography: false` → **null** (no Supabase API call)
+- **Non-Gosaki:** `DISCOGRAPHY_SITE_SLUG_COLUMN_READY=false` → noop without unfiltered read
+- **Migration:** deferred — high-risk separate phase (see doc)
+- **Regression:** `verify:current-active-regression` — **20** verifiers
+- **Not executed:** DB write · SQL migration · FTP · deploy
 
 ## G-20u21 Generic read-only admin flag — complete
 
@@ -75,14 +86,14 @@ Gosaki staging includes admin; production/pilot exclude. No FTP / deploy / DB wr
 ## G-20u16 remaining site-specific coupling audit — complete
 
 - **Doc:** `remaining-site-specific-coupling-audit.md` — A–E tiers, G-20u1 delta, non-schedule inventory
-- **Remaining C items:** ~~gosaki*Bundle naming~~ · ~~isGosakiPianoFixture in hook matchFixture~~ · ~~supabaseFeatures youtube/embeds~~ (G-20u20 cmsFeatures) · ~~`includeGosakiReadOnlyAdmin`~~ (G-20u21 generic flag) · non-gosaki discography loader
-- **Next order:** ~~u19 naming~~ · ~~u20 Supabase CMS~~ · ~~u21 admin flag~~ → TBD follow-up
+- **Remaining C items:** ~~gosaki*Bundle naming~~ · ~~isGosakiPianoFixture in hook matchFixture~~ · ~~supabaseFeatures youtube/embeds~~ (G-20u20 cmsFeatures) · ~~`includeGosakiReadOnlyAdmin`~~ (G-20u21 generic flag) · ~~non-gosaki discography loader~~ (G-20u22 readiness)
+- **Next order:** ~~u19 naming~~ · ~~u20 Supabase CMS~~ · ~~u21 admin flag~~ · ~~u22 discography loader~~ → TBD follow-up
 - **Not executed:** refactor · FTP · deploy · DB write
 
 ## G-20u15 current active regression suite — complete
 
 - **CLI:** `npm run verify:current-active-regression`
-- **Script:** `verify-current-active-regression-suite.mjs` — **19** G-20u2–u14 + G-20u17–u21 verifiers sequential
+- **Script:** `verify-current-active-regression-suite.mjs` — **20** G-20u2–u14 + G-20u17–u22 verifiers sequential
 - **Excluded:** G-20u1 audit · `verify-url-to-staging-pipeline.mjs` (G-7b+ mega) · G-20t3–t6 HEAD-pinned
 - **Result:** 14/14 PASS at `3ae56b1`
 - **Child HEAD pins:** G-20u2–u7/u9 normalized to NOTE (G-20t2 policy)

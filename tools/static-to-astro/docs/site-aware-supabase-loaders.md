@@ -20,8 +20,10 @@ convert-static-to-astro.mjs (--site SITE_KEY)
        │    └─ gosaki-piano → loadGosakiScheduleDataForBuild(siteSlug)
        │    └─ pilot → null (features.schedule=false)
        └─ loadSiteDiscographyDataForBuild
-            └─ gosaki-piano → loadGosakiDiscographyDataForBuild()
-            └─ pilot → null (features.discography=false)
+            └─ loadSiteDiscographyBundleForBuild (G-20u22)
+                 ├─ gosaki-piano → loadGosakiDiscographyDataForBuild (legacy unfiltered)
+                 ├─ pilot → null (features.discography=false)
+                 └─ other → noop until site_slug column migration
 ```
 
 ## Registry fields
@@ -36,7 +38,8 @@ convert-static-to-astro.mjs (--site SITE_KEY)
 | Legacy wrapper | Delegates to |
 | --- | --- |
 | `loadGosakiScheduleDataForBuild` | `loadScheduleDataForBuild({ siteSlug })` + Gosaki static fallback |
-| `loadGosakiDiscographyDataForBuild` | `loadDiscographyRowsFromSupabase` (anon read) |
+| `loadGosakiDiscographyDataForBuild` | `loadDiscographyDataForBuild` (legacy unfiltered) |
+| **New** `loadSiteDiscographyBundleForBuild` | G-20u22 capability resolver → safe read or noop |
 | **New** `loadSiteScheduleDataForBuild` | registry plan → Gosaki wrapper or generic schedule loader |
 | **New** `loadSiteDiscographyDataForBuild` | registry plan → Gosaki wrapper or noop |
 
@@ -67,5 +70,5 @@ node scripts/verify-g20u13-site-aware-supabase-loaders.mjs
 
 ## Next
 
-- Add `site_slug` filter to discography when multi-site rows exist
-- Wire `url-to-staging-pipeline` to site-aware loaders
+- ~~Add `site_slug` filter to discography when multi-site rows exist~~ → G-20u22 readiness (migration deferred)
+- See `discography-loader-multisite-readiness.md` for migration planning

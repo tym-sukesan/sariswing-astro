@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-20u18 package.json / CLI default decoupling (2026-07-10):** **complete** — generic `manual-upload:site-package` requires `--site-key`; Gosaki inline defaults moved to named wrappers (`manual-upload:package:gosaki:staging`); legacy aliases retained (`manual-upload:package`, `verify:package-freshness:staging`); freshness npm uses explicit `--site`; **no FTP / deploy / DB write**. Doc: `package-json-cli-default-decoupling.md`. Verifier: `verify-g20u18-package-json-cli-default-decoupling.mjs`.
+**G-20u17 Post-build verifier registry (2026-07-10):** **complete** — `postBuildVerifier` in `registry.json` `packageProfiles`; resolver `post-build-verifier-registry.mjs`; build core re-exports (no `POST_BUILD_VERIFIERS` map); Gosaki staging/production + pilot staging behavior preserved; unknown site/profile fail fast; legacy `LEGACY_POST_BUILD_VERIFIER_FALLBACK` retained; **no FTP / deploy / DB write**. Doc: `post-build-verifier-registry.md`. Verifier: `verify-g20u17-post-build-verifier-registry.mjs`. Regression suite: **16** verifiers (G-20u2–u14 + G-20u17–u18).
+
+**G-20u18 package.json / CLI default decoupling (2026-07-10):** **complete** — generic `manual-upload:site-package` requires `--site-key`; Gosaki inline defaults moved to named wrappers (`manual-upload:package:gosaki:staging`); legacy aliases retained (`manual-upload:package`, `verify:package-freshness:staging`); freshness npm uses explicit `--site`; **no FTP / deploy / DB write**. Doc: `package-json-cli-default-decoupling.md`. Verifier: `verify-g20u18-package-json-cli-default-decoupling.mjs` (in `verify:current-active-regression`).
 
 **G-20u16 Remaining site-specific coupling audit (2026-07-10):** **complete** — post G-20u15 inventory; A–E classification; next candidates G-20u17–u21; **read-only audit** · **no refactor / FTP / DB write**. Doc: `remaining-site-specific-coupling-audit.md`. Verifier: `verify-g20u16-remaining-site-specific-coupling-audit.mjs`.
 

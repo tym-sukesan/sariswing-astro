@@ -1,6 +1,23 @@
 Last updated: 2026-07-10
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u17 Post-build verifier registry — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u17-post-build-verifier-registry` |
+| Base | `34ada59` |
+| Registry field | `packageProfiles.{profile}.postBuildVerifier` (`script` + `argsMode`) |
+| Module | `post-build-verifier-registry.mjs` |
+| Gosaki | staging `package-dir-only` · production `none` (unchanged) |
+| Pilot | staging `site-package` (unchanged) |
+| Legacy | `LEGACY_POST_BUILD_VERIFIER_FALLBACK` when registry field omitted |
+| Not executed | FTP · deploy · DB write |
+| Doc | `post-build-verifier-registry.md` |
+| Verifier | `verify-g20u17-post-build-verifier-registry.mjs` |
+| Regression | G-20u2–u14 + G-20u17–u18 (**16** verifiers) |
+| Next | G-20u19 option naming |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u18 package.json / CLI default decoupling — complete
 
 | Item | Value |
@@ -13,7 +30,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Not executed | FTP · deploy · DB write |
 | Doc | `package-json-cli-default-decoupling.md` |
 | Verifier | `verify-g20u18-package-json-cli-default-decoupling.mjs` |
-| Next | G-20u17 post-build verifier registry |
+| Next | ~~G-20u17 post-build verifier registry~~ (complete) |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u16 Remaining site-specific coupling audit — complete
 

@@ -33,7 +33,11 @@
           "deployBase": "/cms-kit-staging/gosaki-piano/",
           "intendedRemotePath": "/cms-kit-staging/gosaki-piano/",
           "includesAdmin": true,
-          "includeGosakiReadOnlyAdmin": true
+          "includeGosakiReadOnlyAdmin": true,
+          "postBuildVerifier": {
+            "script": "scripts/verify-manual-upload-package.mjs",
+            "argsMode": "package-dir-only"
+          }
         },
         "production": {
           "profileName": "production",
@@ -44,7 +48,11 @@
           "deployBase": "/",
           "intendedRemotePath": "TBD_G-20i",
           "includesAdmin": false,
-          "includeGosakiReadOnlyAdmin": false
+          "includeGosakiReadOnlyAdmin": false,
+          "postBuildVerifier": {
+            "script": "scripts/verify-g20i3-gosaki-production-package-admin-exclusion.mjs",
+            "argsMode": "none"
+          }
         }
       }
     },
@@ -78,7 +86,11 @@
           "deployBase": "/cms-kit-staging/pilot-sample-static/",
           "intendedRemotePath": "/cms-kit-staging/pilot-sample-static/",
           "includesAdmin": false,
-          "includeGosakiReadOnlyAdmin": false
+          "includeGosakiReadOnlyAdmin": false,
+          "postBuildVerifier": {
+            "script": "scripts/verify-site-package.mjs",
+            "argsMode": "site-package"
+          }
         }
       }
     }

@@ -2,7 +2,7 @@
 /**
  * G-20u15 — Current active regression suite.
  *
- * Runs G-20u2–u14 site-aware active verifiers in sequence.
+ * Runs G-20u2–u14 + G-20u17–u18 site-aware active verifiers in sequence.
  * No FTP / deploy / DB write / package regen.
  *
  * Usage:
@@ -37,6 +37,8 @@ export const CURRENT_ACTIVE_VERIFIERS = [
   { id: "G-20u12b", label: "Pilot build ENOTEMPTY fix", script: "verify-g20u12-pilot-build-enotempty-fix.mjs", area: "build-safety" },
   { id: "G-20u13", label: "Site-aware Supabase loaders", script: "verify-g20u13-site-aware-supabase-loaders.mjs", area: "supabase-read" },
   { id: "G-20u14", label: "URL-to-staging pipeline site-aware", script: "verify-g20u14-url-to-staging-pipeline-site-aware.mjs", area: "url-staging" },
+  { id: "G-20u17", label: "Post-build verifier registry", script: "verify-g20u17-post-build-verifier-registry.mjs", area: "post-build-verify" },
+  { id: "G-20u18", label: "package.json / CLI default decoupling", script: "verify-g20u18-package-json-cli-default-decoupling.mjs", area: "cli-defaults" },
 ];
 
 /**
@@ -110,7 +112,7 @@ function main() {
   }
 
   console.log(`\n${PHASE}`);
-  console.log("Scope: G-20u2–u14 active verifiers · dry-run / module tests only");
+  console.log("Scope: G-20u2–u14 + G-20u17–u18 active verifiers · dry-run / module tests only");
   console.log("Excluded: FTP · deploy · DB write · package regen · historical HEAD-pinned verifiers\n");
 
   /** @type {Array<{ entry: typeof CURRENT_ACTIVE_VERIFIERS[number]; ok: boolean; summary: string; elapsedMs: number }>} */

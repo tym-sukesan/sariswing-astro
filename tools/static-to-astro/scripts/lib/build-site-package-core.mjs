@@ -20,19 +20,15 @@ import {
   validateGosakiStagingAdminPublicEnv,
 } from "./gosaki-staging-admin-public-env.mjs";
 
+import {
+  buildPostBuildVerifierArgs,
+  resolvePostBuildVerifier,
+} from "./post-build-verifier-registry.mjs";
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 export const REPO_ROOT = path.resolve(TOOL_ROOT, "../..");
 
-/** @type {Record<string, Record<string, string>>} */
-const POST_BUILD_VERIFIERS = {
-  "gosaki-piano": {
-    staging: "scripts/verify-manual-upload-package.mjs",
-    production: "scripts/verify-g20i3-gosaki-production-package-admin-exclusion.mjs",
-  },
-  "pilot-sample-static": {
-    staging: "scripts/verify-site-package.mjs",
-  },
-};
+export { buildPostBuildVerifierArgs, resolvePostBuildVerifier };
 
 /**
  * @param {string} cmd
@@ -54,37 +50,6 @@ function run(cmd, args, env = process.env) {
 /**
  * @param {string} siteKey
  * @param {string} profileName
- */
-export function resolvePostBuildVerifier(siteKey, profileName) {
-  const rel = POST_BUILD_VERIFIERS[siteKey]?.[profileName];
-  if (!rel) {
-    throw new Error(
-      `No post-build verifier configured for site="${siteKey}" profile="${profileName}"`,
-    );
-  }
-  return rel;
-}
-
-/**
- * @param {string} siteKey
- * @param {string} profileName
- * @param {{ manualUploadOut: string }} profile
- * @returns {string[]}
- */
-export function buildPostBuildVerifierArgs(siteKey, profileName, profile) {
-  const rel = resolvePostBuildVerifier(siteKey, profileName);
-  const args = [rel];
-  if (rel.endsWith("verify-site-package.mjs")) {
-    args.push("--site", siteKey, "--profile", profileName, "--package-dir", profile.manualUploadOut);
-  } else if (profileName === "staging" && siteKey === GOSAKI_SITE_KEY) {
-    args.push("--package-dir", profile.manualUploadOut);
-  }
-  return args;
-}
-
-/**
- * @param {string} siteKey
- * @param {string} profileName
  * @param {{ toolRoot?: string }} [options]
  */
 export function planSitePackageBuild(siteKey, profileName, options = {}) {
@@ -95,7 +60,7 @@ export function planSitePackageBuild(siteKey, profileName, options = {}) {
   const convertSiteProfile = String(entry.convertSiteProfile ?? "musician");
   const publicDistDir = path.join(toolRoot, profile.staticPublicOut, "public-dist");
   const packageDir = path.join(toolRoot, profile.manualUploadOut);
-  const verifierRel = resolvePostBuildVerifier(siteKey, profileName);
+  const verifierRel = resolvePostBuildVerifier(siteKey, profileName, toolRoot);
 
   return {
     siteKey,
@@ -270,7 +235,7 @@ export function runSitePackageBuild(options) {
     process.exit(1);
   }
 
-  const verifierArgs = buildPostBuildVerifierArgs(siteKey, profileName, profile);
+  const verifierArgs = buildPostBuildVerifierArgs(siteKey, profileName, profile, toolRoot);
   run("node", verifierArgs, buildEnv);
 
   console.log("");

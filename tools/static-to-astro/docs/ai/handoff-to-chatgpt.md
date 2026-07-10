@@ -5,10 +5,23 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u18-package-json-cli-default-decoupling — complete.
-Generic CLIs require --site/--site-key. Gosaki convenience scripts retained as named legacy wrappers.
-No FTP / deploy / DB write.
+Current phase: G-20u17-post-build-verifier-registry — complete.
+Post-build verifiers resolved from registry.json packageProfiles.postBuildVerifier.
+Gosaki / pilot build verify behavior unchanged. No FTP / deploy / DB write.
 ```
+
+## G-20u17 post-build verifier registry — complete
+
+- **Registry:** `packageProfiles.{profile}.postBuildVerifier` — `script` + `argsMode`
+- **Module:** `post-build-verifier-registry.mjs` — `resolvePostBuildVerifierConfig`, `buildPostBuildVerifierArgs`
+- **Build core:** imports registry module; `POST_BUILD_VERIFIERS` hardcoded map removed
+- **Gosaki:** staging → `verify-manual-upload-package.mjs` (`package-dir-only`); production → `verify-g20i3-*` (`none`)
+- **Pilot:** staging → `verify-site-package.mjs` (`site-package`)
+- **Legacy:** `LEGACY_POST_BUILD_VERIFIER_FALLBACK` if registry field omitted
+- **Fail fast:** unknown site/profile without config
+- **Regression:** `verify:current-active-regression` — **16** verifiers (G-20u2–u14 + G-20u17–u18)
+- **Not executed:** FTP · deploy · DB write
+- **Next:** G-20u19 option naming
 
 ## G-20u18 package.json / CLI default decoupling — complete
 
@@ -16,21 +29,21 @@ No FTP / deploy / DB write.
 - **Legacy wrappers:** `manual-upload:package:gosaki:staging`, `manual-upload:package` alias
 - **Freshness:** `verify:package-freshness:gosaki:staging` explicit; `:staging` alias retained
 - **Convenience retained:** `build:gosaki:*`, `verify:gosaki:*`, `preflight:gosaki:*`, `url:staging:gosaki`
+- **Verifier:** `verify-g20u18-package-json-cli-default-decoupling.mjs` (in `verify:current-active-regression`)
 - **Upload rule:** rebuild at HEAD + preflight PASS before manual FTP
 - **Not executed:** FTP · deploy · DB write
-- **Next:** G-20u17 post-build verifier registry
 
 ## G-20u16 remaining site-specific coupling audit — complete
 
 - **Doc:** `remaining-site-specific-coupling-audit.md` — A–E tiers, G-20u1 delta, non-schedule inventory
-- **Remaining C items:** POST_BUILD_VERIFIERS map, manual-upload npm defaults, `gosaki*Bundle` naming, `isGosakiPianoFixture`, `includeGosakiReadOnlyAdmin`, non-gosaki discography loader
-- **Next order:** u18 defaults → u17 verifier registry → u19 naming → u20 Supabase CMS → u21 admin flag
+- **Remaining C items:** ~~POST_BUILD_VERIFIERS map~~ (G-20u17 complete), manual-upload npm defaults (G-20u18 complete), `gosaki*Bundle` naming, `isGosakiPianoFixture`, `includeGosakiReadOnlyAdmin`, non-gosaki discography loader
+- **Next order:** ~~u18 defaults~~ · ~~u17 verifier registry~~ → u19 naming → u20 Supabase CMS → u21 admin flag
 - **Not executed:** refactor · FTP · deploy · DB write
 
 ## G-20u15 current active regression suite — complete
 
 - **CLI:** `npm run verify:current-active-regression`
-- **Script:** `verify-current-active-regression-suite.mjs` — 14 G-20u2–u14 verifiers sequential
+- **Script:** `verify-current-active-regression-suite.mjs` — **16** G-20u2–u14 + G-20u17–u18 verifiers sequential
 - **Excluded:** G-20u1 audit · `verify-url-to-staging-pipeline.mjs` (G-7b+ mega) · G-20t3–t6 HEAD-pinned
 - **Result:** 14/14 PASS at `3ae56b1`
 - **Child HEAD pins:** G-20u2–u7/u9 normalized to NOTE (G-20t2 policy)

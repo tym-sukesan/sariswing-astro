@@ -74,7 +74,7 @@ assert("G-20u1 prior audit doc exists", exists(G20U1_DOC));
 assert("regression suite doc exists", exists(REGRESSION_DOC));
 assert("regression suite runner exists", exists("tools/static-to-astro/scripts/verify-current-active-regression-suite.mjs"));
 
-assert("active verifier count 14", CURRENT_ACTIVE_VERIFIERS.length === 14);
+assert("active verifier count 16", CURRENT_ACTIVE_VERIFIERS.length === 16);
 assert("historical verifiers documented", HISTORICAL_VERIFIERS.length >= 4);
 assert("historical excludes mega url-staging", HISTORICAL_VERIFIERS.some((v) => v.script.includes("verify-url-to-staging-pipeline")));
 
@@ -89,8 +89,11 @@ assert("hooks gosaki factory retained", hooksSrc.includes("createGosakiPianoHook
 assert("hooks isGosakiPianoFixture still present (C item)", hooksSrc.includes("isGosakiPianoFixture"));
 
 const buildCore = read("tools/static-to-astro/scripts/lib/build-site-package-core.mjs");
-assert("build core POST_BUILD_VERIFIERS (C item)", buildCore.includes("POST_BUILD_VERIFIERS"));
+assert("build core post-build verifier registry import (G-20u17)", buildCore.includes("post-build-verifier-registry.mjs"));
+assert("build core no hardcoded POST_BUILD_VERIFIERS", !buildCore.includes("POST_BUILD_VERIFIERS"));
 assert("build core generic resolveSitePackageBuildProfile", buildCore.includes("resolveSitePackageBuildProfile"));
+assert("registry postBuildVerifier field (G-20u17)", registry.includes("postBuildVerifier"));
+assert("post-build verifier registry module exists", exists("tools/static-to-astro/scripts/lib/post-build-verifier-registry.mjs"));
 
 const loadersSrc = read("tools/static-to-astro/scripts/lib/site-aware-supabase-loaders.mjs");
 assert("loaders site-aware entry", loadersSrc.includes("loadSiteSupabaseDataForBuild"));

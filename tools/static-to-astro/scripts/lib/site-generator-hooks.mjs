@@ -294,12 +294,16 @@ function createGosakiPianoHookMethods() {
 
       const gosakiReadOnlyAdminSummary =
         siteKey && isCmsFeatureEnabled(siteKey, "readOnlyAdmin", toolRoot)
-          ? applyGosakiStagingReadOnlyAdmin(outDir, toolRoot)
+          ? applyGosakiStagingReadOnlyAdmin(outDir, toolRoot, {
+              scheduleBundle: ctx.scheduleBundle ?? ctx.gosakiScheduleBundle,
+              discographyBundle: ctx.discographyBundle ?? ctx.gosakiDiscographyBundle,
+            })
           : { applied: false, reason: "cms_feature_readOnlyAdmin_disabled" };
       if (gosakiReadOnlyAdminSummary.applied) {
         writtenPaths.push(
           path.join(outDir, gosakiReadOnlyAdminSummary.pagePath),
           path.join(outDir, gosakiReadOnlyAdminSummary.libPath),
+          path.join(outDir, gosakiReadOnlyAdminSummary.dashboardPath),
         );
       }
 

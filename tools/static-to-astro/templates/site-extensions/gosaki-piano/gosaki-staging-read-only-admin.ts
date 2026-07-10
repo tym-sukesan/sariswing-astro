@@ -29,6 +29,9 @@ export const G11C6_SAVE_ENABLED_DEFAULT = false as const;
 export const G11C6_SAVE_DISABLED_REASON =
   "G-11c6a: Save は無効です。dry-run 成功後も env arm / operator approval / Edge deploy が必要です。";
 
+/** G-20u28 — staging read-only admin dashboard foundation polish. */
+export const G20U28_ADMIN_UI_PHASE = "G-20u28-gosaki-admin-ui-foundation-polish";
+
 export function resolveG11c4aDryRunEndpoint(env: ImportMetaEnv): string {
   const fromEnv = String(env.PUBLIC_GOSAKI_YOUTUBE_URL_DRY_RUN_ENDPOINT ?? "").trim();
   if (fromEnv) return fromEnv;
@@ -222,8 +225,8 @@ export function buildGosakiReadOnlyAdminViewModel(input: {
       enabled: input.contact.enabled !== false,
     },
     schedule: {
-      status: "read-only placeholder",
-      note: "Schedule CMS は Supabase 連携予定（G-11c 以降）。今回は DB 読み込みなし。",
+      status: "read-only",
+      note: "スケジュールは build 時の Supabase 読み取り結果を公開ページに反映します。管理画面からの編集 UI は別フェーズで追加予定です。",
     },
   };
 }

@@ -1,12 +1,13 @@
 ---
 /**
- * Gosaki staging read-only CMS admin (G-11b / G-11c4a).
+ * Gosaki staging read-only CMS admin (G-11b / G-20u28 dashboard polish).
  * Static build-time data + YouTube dry-run endpoint wiring (no Save / JSON write).
  */
 import "../styles/gosaki-staging-read-only-admin.css";
 import youtubeConfig from "../data/gosaki-youtube-embed.json";
 import aboutConfig from "../data/gosaki-about-content.json";
 import contactConfig from "../data/gosaki-contact-hubspot.json";
+import dashboardSnapshot from "../data/gosaki-read-only-admin-dashboard.json";
 import {
   G11C6A_PHASE,
   G11C4A_STAGING_DRY_RUN_ENDPOINT,
@@ -15,6 +16,7 @@ import {
   G11C6_OPERATION_ID,
   G11C6_SAVE_DISABLED_REASON,
   G11C6_SAVE_ENABLED_DEFAULT,
+  G20U28_ADMIN_UI_PHASE,
   GOSAKI_STAGING_PREVIEW_URL,
   buildGosakiReadOnlyAdminViewModel,
   isG11c4aSupabaseAuthConfigured,
@@ -42,10 +44,17 @@ const view = buildGosakiReadOnlyAdminViewModel({
   contact: contactConfig,
 });
 
+const dashboard = dashboardSnapshot;
 const stagingSiteBase = String(import.meta.env.SITE ?? GOSAKI_STAGING_PREVIEW_URL).replace(/\/?$/, "/");
 const adminCanonical = new URL("admin/", stagingSiteBase).href;
+const publicHomeUrl = stagingSiteBase;
+const publicScheduleUrl = new URL("schedule/", stagingSiteBase).href;
+const publicAugustUrl = new URL("schedule/2026-08/", stagingSiteBase).href;
+const publicDiscographyUrl = new URL("discography/", stagingSiteBase).href;
+const publicContactUrl = new URL("contact/", stagingSiteBase).href;
+const publicLinkUrl = new URL("link/", stagingSiteBase).href;
 const robotsContent = "noindex,nofollow,noarchive";
-const pageTitle = "Gosaki Piano CMS（確認用・読み取り専用）";
+const pageTitle = "Gosaki Piano 管理画面（staging · 読み取り専用）";
 ---
 
 <!doctype html>
@@ -63,7 +72,8 @@ const pageTitle = "Gosaki Piano CMS（確認用・読み取り専用）";
   <body
     class="gosaki-read-only-admin"
     data-gosaki-read-only-admin="true"
-    data-phase={G11C6A_PHASE}
+    data-phase={G20U28_ADMIN_UI_PHASE}
+    data-g11c6a-phase={G11C6A_PHASE}
     data-gosaki-youtube-dry-run-endpoint={dryRunEndpoint}
     data-gosaki-youtube-save-endpoint={saveEndpoint}
     data-gosaki-supabase-url={supabaseUrl}
@@ -80,39 +90,155 @@ const pageTitle = "Gosaki Piano CMS（確認用・読み取り専用）";
     <div class="gosaki-read-only-admin__shell">
       <header class="gosaki-read-only-admin__header">
         <a class="gosaki-read-only-admin__brand" href={adminCanonical}>Gosaki Piano CMS</a>
-        <span class="gosaki-read-only-admin__badge">READ-ONLY — 保存不可</span>
+        <div class="gosaki-read-only-admin__badges" aria-label="管理画面モード">
+          <span class="gosaki-read-only-admin__badge">READ-ONLY</span>
+          <span class="gosaki-read-only-admin__badge gosaki-read-only-admin__badge--staging">STAGING ONLY</span>
+          <span class="gosaki-read-only-admin__badge gosaki-read-only-admin__badge--muted">Save disabled</span>
+        </div>
       </header>
 
       <main class="gosaki-read-only-admin__main">
         <div class="gosaki-read-only-admin__banner" role="status">
-          <strong>読み取り専用管理画面</strong>
+          <strong>staging 読み取り専用管理画面</strong>
           <p class="gosaki-read-only-admin__meta">
-            内容の確認のみ可能です。保存・本番反映は行えません。
+            内容の確認と dry-run プレビューのみ可能です。Save · Publish · Deploy · FTP は実行できません。
           </p>
-          <details class="admin-gosaki-dev-tools gosaki-read-only-admin__dev-tools">
-            <summary>開発者向け詳細</summary>
-            <p class="gosaki-read-only-admin__meta">
-              YouTube URL の変更確認を staging Edge Function へ送信できます（G-11c6a — Save UI disabled）。
-              JSON / workflow / FTP は実行しません。
-            </p>
-          </details>
+          <ul class="gosaki-read-only-admin__safety-list">
+            <li>本番パッケージには <code>/admin/</code> を含めません（sitemap からも除外）</li>
+            <li>staging への反映は <strong>手動 FTP のみ</strong>（自動 deploy なし）</li>
+            <li>本番アップロードは <strong>G-20j 承認まで STOP</strong></li>
+          </ul>
         </div>
 
+        <section class="gosaki-read-only-admin__section" aria-labelledby="gra-dashboard">
+          <h2 id="gra-dashboard">ダッシュボード</h2>
+          <p class="gosaki-read-only-admin__meta">
+            <strong>siteSlug:</strong> {view.siteSlug} · build 時スナップショット（{dashboard.phase}）
+          </p>
+          <div class="gosaki-read-only-admin__dashboard-grid">
+            <article class="gosaki-read-only-admin__dashboard-card" data-section-card="schedule">
+              <h3 class="gosaki-read-only-admin__dashboard-card-title">Schedule</h3>
+              <div class="gosaki-read-only-admin__dashboard-badges">
+                <span class="gosaki-read-only-admin__pill">read-only</span>
+                <span class="gosaki-read-only-admin__pill gosaki-read-only-admin__pill--staging">staging</span>
+              </div>
+              <p class="gosaki-read-only-admin__dashboard-stat">
+                {dashboard.schedule.totalEvents} events · 2026-08: {dashboard.schedule.august2026Events} cards
+              </p>
+              <p class="gosaki-read-only-admin__meta">source: {dashboard.schedule.dataSource}</p>
+              <div class="gosaki-read-only-admin__actions">
+                <a class="gosaki-read-only-admin__btn gosaki-read-only-admin__btn--link" href={publicAugustUrl} target="_blank" rel="noopener noreferrer">Read-only preview</a>
+                <button type="button" class="gosaki-read-only-admin__btn" disabled title="編集 UI は別フェーズ">編集導線（予定）</button>
+              </div>
+            </article>
+
+            <article class="gosaki-read-only-admin__dashboard-card" data-section-card="discography">
+              <h3 class="gosaki-read-only-admin__dashboard-card-title">Discography</h3>
+              <div class="gosaki-read-only-admin__dashboard-badges">
+                <span class="gosaki-read-only-admin__pill">read-only</span>
+                {dashboard.discography.filteredRead ? (
+                  <span class="gosaki-read-only-admin__pill gosaki-read-only-admin__pill--ok">filtered read</span>
+                ) : null}
+              </div>
+              <p class="gosaki-read-only-admin__dashboard-stat">
+                {dashboard.discography.releases} releases · {dashboard.discography.tracks} tracks
+              </p>
+              <p class="gosaki-read-only-admin__meta">source: {dashboard.discography.dataSource}</p>
+              <div class="gosaki-read-only-admin__actions">
+                <a class="gosaki-read-only-admin__btn gosaki-read-only-admin__btn--link" href={publicDiscographyUrl} target="_blank" rel="noopener noreferrer">Read-only preview</a>
+                <button type="button" class="gosaki-read-only-admin__btn" disabled>編集導線（予定）</button>
+              </div>
+            </article>
+
+            <article class="gosaki-read-only-admin__dashboard-card" data-section-card="youtube">
+              <h3 class="gosaki-read-only-admin__dashboard-card-title">YouTube</h3>
+              <div class="gosaki-read-only-admin__dashboard-badges">
+                <span class="gosaki-read-only-admin__pill">read-only</span>
+                <span class="gosaki-read-only-admin__pill">dry-run only</span>
+              </div>
+              <p class="gosaki-read-only-admin__dashboard-stat">
+                videoId: {view.youtube.videoId ?? "—"}
+              </p>
+              <div class="gosaki-read-only-admin__actions">
+                <a class="gosaki-read-only-admin__btn gosaki-read-only-admin__btn--link" href="#gra-youtube">詳細を見る</a>
+                <button type="button" class="gosaki-read-only-admin__btn" disabled>Save（無効）</button>
+              </div>
+            </article>
+
+            <article class="gosaki-read-only-admin__dashboard-card" data-section-card="about">
+              <h3 class="gosaki-read-only-admin__dashboard-card-title">About</h3>
+              <div class="gosaki-read-only-admin__dashboard-badges">
+                <span class="gosaki-read-only-admin__pill">read-only</span>
+              </div>
+              <p class="gosaki-read-only-admin__dashboard-stat">
+                profile {view.about.profileCharCount} chars · bands {view.about.bandImages.length} images
+              </p>
+              <div class="gosaki-read-only-admin__actions">
+                <a class="gosaki-read-only-admin__btn gosaki-read-only-admin__btn--link" href={new URL("about/", stagingSiteBase).href} target="_blank" rel="noopener noreferrer">Read-only preview</a>
+                <button type="button" class="gosaki-read-only-admin__btn" disabled>編集導線（予定）</button>
+              </div>
+            </article>
+
+            <article class="gosaki-read-only-admin__dashboard-card" data-section-card="contact">
+              <h3 class="gosaki-read-only-admin__dashboard-card-title">Contact</h3>
+              <div class="gosaki-read-only-admin__dashboard-badges">
+                <span class="gosaki-read-only-admin__pill">read-only</span>
+              </div>
+              <p class="gosaki-read-only-admin__dashboard-stat">
+                {view.contact.provider} · enabled: {view.contact.enabled ? "yes" : "no"}
+              </p>
+              <div class="gosaki-read-only-admin__actions">
+                <a class="gosaki-read-only-admin__btn gosaki-read-only-admin__btn--link" href={publicContactUrl} target="_blank" rel="noopener noreferrer">Read-only preview</a>
+                <button type="button" class="gosaki-read-only-admin__btn" disabled>編集導線（予定）</button>
+              </div>
+            </article>
+
+            <article class="gosaki-read-only-admin__dashboard-card" data-section-card="link">
+              <h3 class="gosaki-read-only-admin__dashboard-card-title">Link</h3>
+              <div class="gosaki-read-only-admin__dashboard-badges">
+                <span class="gosaki-read-only-admin__pill">static</span>
+              </div>
+              <p class="gosaki-read-only-admin__dashboard-stat">静的ページ（CMS 編集 UI 未接続）</p>
+              <div class="gosaki-read-only-admin__actions">
+                <a class="gosaki-read-only-admin__btn gosaki-read-only-admin__btn--link" href={publicLinkUrl} target="_blank" rel="noopener noreferrer">Read-only preview</a>
+              </div>
+            </article>
+
+            <article class="gosaki-read-only-admin__dashboard-card gosaki-read-only-admin__dashboard-card--safety" data-section-card="upload-safety">
+              <h3 class="gosaki-read-only-admin__dashboard-card-title">Production readiness / Upload safety</h3>
+              <div class="gosaki-read-only-admin__dashboard-badges">
+                <span class="gosaki-read-only-admin__pill gosaki-read-only-admin__pill--warn">production STOP</span>
+              </div>
+              <ul class="gosaki-read-only-admin__list gosaki-read-only-admin__list--compact">
+                <li>本番 upload: G-20j まで STOP</li>
+                <li>本番 package: admin 除外</li>
+                <li>FTP: 手動のみ（auto deploy なし）</li>
+                <li>sitemap: /admin/ 非掲載</li>
+              </ul>
+            </article>
+          </div>
+        </section>
+
         <section class="gosaki-read-only-admin__section" aria-labelledby="gra-overview">
-          <h2 id="gra-overview">Site Overview</h2>
-          <p class="gosaki-read-only-admin__meta"><strong>siteSlug:</strong> {view.siteSlug}</p>
+          <h2 id="gra-overview">サイト概要</h2>
           <p class="gosaki-read-only-admin__meta">
             <strong>staging URL:</strong>{" "}
             <a class="gosaki-read-only-admin__link" href={view.stagingUrl} target="_blank" rel="noopener noreferrer">
               {view.stagingUrl}
             </a>
           </p>
+          <p class="gosaki-read-only-admin__meta">
+            <strong>公開ページ:</strong>{" "}
+            <a class="gosaki-read-only-admin__link" href={publicHomeUrl} target="_blank" rel="noopener noreferrer">トップ</a>
+            {" · "}
+            <a class="gosaki-read-only-admin__link" href={publicScheduleUrl} target="_blank" rel="noopener noreferrer">Schedule</a>
+          </p>
           <p class="gosaki-read-only-admin__meta"><strong>noindex:</strong> {view.noindex ? "yes" : "no"}</p>
           <p class="gosaki-read-only-admin__meta">{view.packageNote}</p>
         </section>
 
         <section class="gosaki-read-only-admin__section" aria-labelledby="gra-auth">
-          <h2 id="gra-auth">Staging Auth（dry-run 用）</h2>
+          <h2 id="gra-auth">Staging Auth（YouTube dry-run 用）</h2>
           <div class="gosaki-read-only-admin__auth" id="gra-auth-panel">
             <p class="gosaki-read-only-admin__meta" id="gra-auth-status" aria-live="polite">
               ログイン状態を確認しています…
@@ -216,37 +342,12 @@ const pageTitle = "Gosaki Piano CMS（確認用・読み取り専用）";
               class="gosaki-read-only-admin__dry-run-result"
               aria-live="polite"
             >（Dry-run 結果はここに表示されます — ok / dryRun / wouldWrite / changedFields / next.videoId）</pre>
-            {
-              !endpointConfigured ? (
-                <p class="gosaki-read-only-admin__meta gosaki-read-only-admin__meta--warn">
-                  dry-run endpoint not configured — 既定値は {G11C4A_STAGING_DRY_RUN_ENDPOINT}
-                </p>
-              ) : null
-            }
           </div>
 
           <div class="gosaki-read-only-admin__save" id="gra-youtube-save" data-section="youtube-save">
             <h3 class="gosaki-read-only-admin__meta">Save（G-11c6a — 現在は無効）</h3>
-            <p
-              class:list={[
-                "gosaki-read-only-admin__meta",
-                saveEndpointConfigured
-                  ? "gosaki-read-only-admin__meta--ok"
-                  : "gosaki-read-only-admin__meta--warn",
-              ]}
-              id="gra-youtube-save-endpoint-status"
-            >
-              {
-                saveEndpointConfigured
-                  ? `save endpoint: configured (${saveEndpoint})`
-                  : "save endpoint: not configured"
-              }
-            </p>
             <p class="gosaki-read-only-admin__meta gosaki-read-only-admin__meta--warn" id="gra-youtube-save-disabled-reason">
               {G11C6_SAVE_DISABLED_REASON}
-            </p>
-            <p class="gosaki-read-only-admin__meta">
-              saveEnabled (build): {saveEnabled ? "true" : "false"} — default {String(G11C6_SAVE_ENABLED_DEFAULT)}
             </p>
             <div class="gosaki-read-only-admin__actions">
               <button
@@ -259,11 +360,6 @@ const pageTitle = "Gosaki Piano CMS（確認用・読み取り専用）";
                 Save（無効 — G-11c6a）
               </button>
             </div>
-            <pre
-              id="gra-youtube-save-result"
-              class="gosaki-read-only-admin__dry-run-result"
-              aria-live="polite"
-            >（Save は G-11c6a で実行不可 — dry-run のみ利用可能）</pre>
           </div>
         </section>
 
@@ -274,23 +370,8 @@ const pageTitle = "Gosaki Piano CMS（確認用・読み取り専用）";
           </p>
           <p class="gosaki-read-only-admin__meta">{view.about.profileSummary || "（内容なし）"}</p>
           <p class="gosaki-read-only-admin__meta">
-            <strong>{view.about.bandsLabel}</strong> — {view.about.bandsCharCount} chars
+            <strong>{view.about.bandsLabel}</strong> — {view.about.bandsCharCount} chars · {view.about.bandImages.length} images
           </p>
-          <p class="gosaki-read-only-admin__meta">{view.about.bandsSummary || "（内容なし）"}</p>
-          <h3 class="gosaki-read-only-admin__meta">Bands / Projects 画像（5件）</h3>
-          <ul class="gosaki-read-only-admin__list">
-            {
-              view.about.bandImages.map((img) => (
-                <li>
-                  <code>{img.fileName}</code>
-                  {img.bandName ? ` — ${img.bandName}` : ""}
-                </li>
-              ))
-            }
-          </ul>
-          <div class="gosaki-read-only-admin__actions">
-            <button type="button" class="gosaki-read-only-admin__btn" disabled>Save（無効）</button>
-          </div>
         </section>
 
         <section class="gosaki-read-only-admin__section" aria-labelledby="gra-contact">
@@ -298,28 +379,28 @@ const pageTitle = "Gosaki Piano CMS（確認用・読み取り専用）";
           <p class="gosaki-read-only-admin__meta"><strong>provider:</strong> {view.contact.provider}</p>
           <p class="gosaki-read-only-admin__meta"><strong>portalId:</strong> {view.contact.portalId}</p>
           <p class="gosaki-read-only-admin__meta"><strong>formId:</strong> {view.contact.formId}</p>
-          <p class="gosaki-read-only-admin__meta"><strong>region:</strong> {view.contact.region}</p>
           <p class="gosaki-read-only-admin__meta">enabled: {view.contact.enabled ? "true" : "false"}</p>
-          <div class="gosaki-read-only-admin__actions">
-            <button type="button" class="gosaki-read-only-admin__btn" disabled>Save（無効）</button>
-          </div>
         </section>
 
         <section class="gosaki-read-only-admin__section" aria-labelledby="gra-schedule">
           <h2 id="gra-schedule">Schedule</h2>
           <p class="gosaki-read-only-admin__meta"><strong>status:</strong> {view.schedule.status}</p>
           <p class="gosaki-read-only-admin__meta">{view.schedule.note}</p>
+          <p class="gosaki-read-only-admin__meta">
+            build snapshot: {dashboard.schedule.totalEvents} events · {dashboard.schedule.monthCount} months · August 2026: {dashboard.schedule.august2026Events} cards
+          </p>
         </section>
 
         <div class="gosaki-read-only-admin__actions" aria-label="グローバル操作（無効）">
           <button type="button" class="gosaki-read-only-admin__btn" disabled>Save（無効）</button>
           <button type="button" class="gosaki-read-only-admin__btn" disabled>Publish（無効）</button>
           <button type="button" class="gosaki-read-only-admin__btn" disabled>Deploy（無効）</button>
+          <button type="button" class="gosaki-read-only-admin__btn" disabled>FTP（無効）</button>
         </div>
       </main>
 
       <footer class="gosaki-read-only-admin__footer">
-        Gosaki Piano staging read-only CMS — G-11c4b-fix Auth UI
+        Gosaki Piano staging read-only CMS — {G20U28_ADMIN_UI_PHASE}
       </footer>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.1/dist/umd/supabase.js"></script>

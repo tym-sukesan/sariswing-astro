@@ -1,6 +1,21 @@
 Last updated: 2026-07-10
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u28 Gosaki admin UI foundation polish — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u28-gosaki-admin-ui-foundation-polish` |
+| Base | `62e3367` |
+| Target | staging read-only admin (`GosakiStagingReadOnlyAdminPage.astro`) |
+| Dashboard | Schedule · Discography · YouTube · About · Contact · Link · Upload safety |
+| Stats | build-time snapshot (74 events / Aug 14 · 4 releases / 34 tracks when bundled) |
+| Safety | read-only · Save disabled · production STOP (G-20j) · manual FTP only |
+| Not executed | DB write · Save enable · FTP · deploy · package upload |
+| Doc | `gosaki-admin-ui-foundation-polish.md` |
+| Verifier | `verify-g20u28-gosaki-admin-ui-foundation-polish.mjs` |
+| Next | Discography edit UI · YouTube edit UI · About edit UI · Schedule UI polish |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u27 Gosaki staging post-upload final verification — complete
 
 | Item | Value |
@@ -15,7 +30,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Not executed | FTP · deploy · DB write |
 | Doc | `gosaki-staging-post-upload-final-verification.md` |
 | Verifier | `verify-g20u27-staging-post-upload-final-verification.mjs` (historical) |
-| Next (recommended) | **A.** Gosaki admin UI improvement |
+| Next (recommended) | **G-20u28** admin UI foundation polish — **complete** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u26b Gosaki staging FTP upload HTTP verification record — complete
 

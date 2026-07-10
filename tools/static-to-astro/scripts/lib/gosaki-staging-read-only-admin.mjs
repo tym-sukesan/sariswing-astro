@@ -15,7 +15,9 @@ export const GOSAKI_READ_ONLY_ADMIN_COMPONENT_REL =
   "src/components/GosakiStagingReadOnlyAdminPage.astro";
 export const GOSAKI_READ_ONLY_ADMIN_LIB_REL = "src/lib/gosaki-staging-read-only-admin.ts";
 export const GOSAKI_READ_ONLY_ADMIN_CSS_REL = "src/styles/gosaki-staging-read-only-admin.css";
+export const GOSAKI_READ_ONLY_ADMIN_DASHBOARD_DATA_REL = "src/data/gosaki-read-only-admin-dashboard.json";
 export const GOSAKI_CONTACT_HUBSPOT_CONFIG_REL = "config/sites/gosaki-piano-contact-hubspot.json";
+export const G20U28_ADMIN_UI_PHASE = "G-20u28-gosaki-admin-ui-foundation-polish";
 
 export const EXPECTED_BAND_IMAGE_FILES = [
   "gosakirikako_trio.jpg",
@@ -79,10 +81,97 @@ export function extractBandImageFileNamesFromHtml(bandsHtml) {
 }
 
 /**
+ * Count published schedule rows for August 2026 from a build-time bundle.
+ *
+ * @param {unknown[]} schedules
+ */
+export function countAugust2026ScheduleEvents(schedules) {
+  if (!Array.isArray(schedules)) return 0;
+  return schedules.filter((row) => {
+    const year = Number(row?.year);
+    const month = Number(row?.month);
+    if (year === 2026 && month === 8) return true;
+    const date = String(row?.date ?? "");
+    return /^2026-08/.test(date);
+  }).length;
+}
+
+/**
+ * Build dashboard snapshot for read-only admin (build-time only — no DB writes).
+ *
+ * @param {{
+ *   scheduleBundle?: { scheduleDataSource?: string, schedules?: unknown[], months?: unknown[], siteSlugFilterApplied?: boolean } | null,
+ *   discographyBundle?: { discographyDataSource?: string, releases?: unknown[], rowCount?: number, trackRowCount?: number, siteSlugFilterApplied?: boolean } | null,
+ * }} [input]
+ */
+export function buildReadOnlyAdminDashboardSnapshot(input = {}) {
+  const scheduleBundle = input.scheduleBundle ?? null;
+  const discographyBundle = input.discographyBundle ?? null;
+  const schedules = scheduleBundle?.schedules ?? [];
+  const releases =
+    discographyBundle?.rowCount ??
+    (Array.isArray(discographyBundle?.releases) ? discographyBundle.releases.length : 0);
+  const tracks = discographyBundle?.trackRowCount ?? 0;
+
+  return {
+    phase: G20U28_ADMIN_UI_PHASE,
+    environment: "staging",
+    readOnly: true,
+    saveEnabled: false,
+    productionUploadStop: true,
+    schedule: {
+      dataSource: scheduleBundle?.scheduleDataSource ?? "unknown",
+      totalEvents: Array.isArray(schedules) ? schedules.length : 0,
+      august2026Events: countAugust2026ScheduleEvents(schedules),
+      monthCount: Array.isArray(scheduleBundle?.months) ? scheduleBundle.months.length : 0,
+      status: "read-only",
+      editUi: "planned",
+    },
+    discography: {
+      dataSource: discographyBundle?.discographyDataSource ?? "unknown",
+      releases,
+      tracks,
+      filteredRead: discographyBundle?.siteSlugFilterApplied === true,
+      status: "read-only",
+      editUi: "planned",
+    },
+    youtube: {
+      status: "read-only",
+      dryRunOnly: true,
+      saveEnabled: false,
+      editUi: "planned",
+    },
+    about: {
+      status: "read-only",
+      editUi: "planned",
+    },
+    contact: {
+      status: "read-only",
+      editUi: "planned",
+    },
+    link: {
+      status: "static",
+      editUi: "planned",
+    },
+    uploadSafety: {
+      manualFtpOnly: true,
+      ftpAutoDeploy: false,
+      productionAdminExcluded: true,
+      sitemapAdminExcluded: true,
+      productionUploadStopReason: "G-20j",
+    },
+  };
+}
+
+/**
  * @param {string} outDir
  * @param {string} toolRoot
+ * @param {{
+ *   scheduleBundle?: unknown,
+ *   discographyBundle?: unknown,
+ * }} [options]
  */
-export function applyGosakiStagingReadOnlyAdmin(outDir, toolRoot) {
+export function applyGosakiStagingReadOnlyAdmin(outDir, toolRoot, options = {}) {
   const youtube = loadGosakiYoutubeEmbedConfig(toolRoot);
   const about = loadGosakiAboutContentConfig(toolRoot);
   const contact = loadGosakiContactHubspotConfig(toolRoot);
@@ -129,8 +218,20 @@ export function applyGosakiStagingReadOnlyAdmin(outDir, toolRoot) {
     .replace('import youtubeConfig from "../data/gosaki-youtube-embed.json";', 'import youtubeConfig from "../../data/gosaki-youtube-embed.json";')
     .replace('import aboutConfig from "../data/gosaki-about-content.json";', 'import aboutConfig from "../../data/gosaki-about-content.json";')
     .replace('import contactConfig from "../data/gosaki-contact-hubspot.json";', 'import contactConfig from "../../data/gosaki-contact-hubspot.json";')
-    .replace('} from "../lib/gosaki-staging-read-only-admin";', '} from "../../lib/gosaki-staging-read-only-admin";');
+    .replace('} from "../lib/gosaki-staging-read-only-admin";', '} from "../../lib/gosaki-staging-read-only-admin";')
+    .replace(
+      'import dashboardSnapshot from "../data/gosaki-read-only-admin-dashboard.json";',
+      'import dashboardSnapshot from "../../data/gosaki-read-only-admin-dashboard.json";',
+    );
   fs.writeFileSync(pageDest, pageTemplate, "utf8");
+
+  const dashboardSnapshot = buildReadOnlyAdminDashboardSnapshot({
+    scheduleBundle: /** @type {any} */ (options.scheduleBundle),
+    discographyBundle: /** @type {any} */ (options.discographyBundle),
+  });
+  const dashboardDest = path.join(outDir, GOSAKI_READ_ONLY_ADMIN_DASHBOARD_DATA_REL);
+  fs.mkdirSync(path.dirname(dashboardDest), { recursive: true });
+  fs.writeFileSync(dashboardDest, `${JSON.stringify(dashboardSnapshot, null, 2)}\n`, "utf8");
 
   const bandsBlock = about.config.blocks?.find((b) => b?.id === "about-bands-html");
   const bandImages = extractBandImageFileNamesFromHtml(bandsBlock?.html ?? "");
@@ -142,6 +243,8 @@ export function applyGosakiStagingReadOnlyAdmin(outDir, toolRoot) {
     pagePath: GOSAKI_READ_ONLY_ADMIN_PAGE_REL,
     componentPath: GOSAKI_READ_ONLY_ADMIN_COMPONENT_REL,
     libPath: GOSAKI_READ_ONLY_ADMIN_LIB_REL,
+    dashboardPath: GOSAKI_READ_ONLY_ADMIN_DASHBOARD_DATA_REL,
+    dashboardSnapshot,
     bandImageCount: bandImages.length,
     bandImageFiles: bandImages,
     contactPortalId: contact.config.portalId ?? null,

@@ -5,11 +5,19 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u27-staging-post-upload-final-verification — complete.
-STG post-upload read-only HTTP verification PASS. Deployed package 3287219.
-Production readiness gap documented. Production upload STOP (G-20j).
-Next recommended: Gosaki admin UI improvement.
+Current phase: G-20u28-gosaki-admin-ui-foundation-polish — complete.
+Staging read-only admin dashboard polished. Save/FTP/deploy disabled. Production upload STOP (G-20j).
+STG live package still 3287219 until operator regen + manual FTP.
 ```
+
+## G-20u28 Gosaki admin UI foundation polish — complete
+
+- **Base:** `62e3367`
+- **Target:** online staging read-only admin (`/admin/` in staging package)
+- **UI:** dashboard section cards · status badges · build-time schedule/discography stats
+- **Safety:** read-only · Save disabled · production STOP · manual FTP only · sitemap `/admin/` excluded
+- **Not executed:** DB write · Save enable · FTP · deploy · package upload
+- **Next:** Discography edit UI · YouTube edit UI · About edit UI · Schedule UI polish
 
 ## G-20u27 Gosaki staging post-upload final verification — complete
 

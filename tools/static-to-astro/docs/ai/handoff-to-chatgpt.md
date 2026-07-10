@@ -5,10 +5,21 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u26b-staging-ftp-upload-http-verification-record — complete.
-Operator manual FTP upload to staging complete; primary routes HTTP-verified.
-Package sourceCommit=3287219. Production upload STOP (G-20j).
+Current phase: G-20u27-staging-post-upload-final-verification — complete.
+STG post-upload read-only HTTP verification PASS. Deployed package 3287219.
+Production readiness gap documented. Production upload STOP (G-20j).
+Next recommended: Gosaki admin UI improvement.
 ```
+
+## G-20u27 Gosaki staging post-upload final verification — complete
+
+- **Doc HEAD:** `27e98da` · **Deployed STG package:** `3287219`
+- **Regression:** `verify:current-active-regression` **23/23 PASS**
+- **STG HTTP (read-only):** 6 primary routes **200** · August **14** cards · discography **4** albums · contact OK
+- **Sitemap:** `/admin/` **not** in sitemap · `/admin/` page **200** on STG (expected)
+- **Production gap:** regen · preflight · admin exclusion · `intendedRemotePath` · DNS/SSL · G-20j approval · manual FTP only
+- **Not executed:** FTP · deploy · DB write · production upload
+- **Next (recommended):** **A.** Gosaki admin UI improvement · B. production readiness · C. non-schedule CMS UI
 
 ## G-20u26b Gosaki staging FTP upload HTTP verification record — complete
 

@@ -1,6 +1,22 @@
 Last updated: 2026-07-10
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u27 Gosaki staging post-upload final verification — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u27-staging-post-upload-final-verification` |
+| Doc HEAD | `27e98da` |
+| Deployed STG package | `3287219` |
+| Regression | `verify:current-active-regression` **23/23 PASS** |
+| STG HTTP | 6 primary routes **200** · August **14** cards · discography **4** albums |
+| Sitemap | `/admin/` **excluded** · `/admin/` page accessible on STG (expected) |
+| Production gap | regen · preflight · admin exclusion · remote path · G-20j approval |
+| Not executed | FTP · deploy · DB write |
+| Doc | `gosaki-staging-post-upload-final-verification.md` |
+| Verifier | `verify-g20u27-staging-post-upload-final-verification.mjs` (historical) |
+| Next (recommended) | **A.** Gosaki admin UI improvement |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u26b Gosaki staging FTP upload HTTP verification record — complete
 
 | Item | Value |
@@ -15,13 +31,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Not executed | Cursor FTP · CLI mirror/sync/delete · DB write |
 | Doc | `gosaki-staging-ftp-upload-http-verification-record.md` |
 | Verifier | `verify-g20u26b-staging-ftp-upload-http-verification-record.mjs` (historical doc-only) |
-| Next | client preview feedback · production upload planning (G-20j STOP) |
+| Next | ~~client preview feedback~~ · **G-20u27 final verification complete** · admin UI improvement (recommended) |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u26 Gosaki staging package regen after discography filtered read — complete
-
-| Item | Value |
-| --- | --- |
-| Phase | `G-20u26-gosaki-staging-package-regen-after-discography-filtered-read` |
 | Base | `3287219` |
 | Build | `npm run build:gosaki:staging` **PASS** |
 | Preflight | `npm run preflight:gosaki:staging` **PASS** (fresh) |

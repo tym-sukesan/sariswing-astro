@@ -1,6 +1,20 @@
 Last updated: 2026-07-11
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u31 Gosaki Discography Save design — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u31-gosaki-discography-save-design` |
+| Base | `5143e45` |
+| Scope | Save spec · diff · DB write policy · Edge Function proposal · rollback · security |
+| Save UI | **disabled** (unchanged) |
+| DB / Edge / SQL | **not executed** — design only |
+| Key rules | `site_slug=gosaki-piano` · Edge Function only · no anon write · no service_role in browser |
+| Doc | `gosaki-discography-save-design.md` |
+| Verifier | `verify-g20u31-gosaki-discography-save-design.mjs` (historical) |
+| Next | G-20u32 Save API schema · G-20u33 Edge dry-run draft · G-20u36 first album Save pilot |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u30b Gosaki Discography dry-run staging reflection record — complete
 
 | Item | Value |
@@ -17,7 +31,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Not executed | Cursor FTP · deploy · DB write |
 | Doc | `gosaki-discography-dry-run-staging-reflection-record.md` |
 | Verifier | `verify-g20u30b-gosaki-discography-dry-run-staging-reflection-record.mjs` (historical) |
-| Next | Discography Save design · DB write SQL/Edge design · YouTube/About edit UI |
+| Next | **G-20u31** Save design — **complete** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u30 Gosaki Discography dry-run validation — complete
 

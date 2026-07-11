@@ -5,9 +5,19 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u30b-gosaki-discography-dry-run-staging-reflection-record — complete.
-G-20u30 Discography dry-run validation reflected on STG (package 00c8888). Editable textarea · dry-run buttons · wouldWrite: false. Save disabled. Sitemap excludes /admin/. Production upload STOP (G-20j).
+Current phase: G-20u31-gosaki-discography-save-design — complete.
+Discography Save specification designed. Save disabled. No DB write / Edge Function / SQL. Production upload STOP (G-20j).
+STG live package still 00c8888 (G-20u30b dry-run UI).
 ```
+
+## G-20u31 Gosaki Discography Save design — complete
+
+- **Base:** `5143e45`
+- **Scope:** Save spec design only — release metadata + track textarea · diff rules · Edge Function proposal · approval gates · rollback · security
+- **Save UI:** **disabled** (unchanged)
+- **DB / Edge / SQL:** **not executed**
+- **Key rules:** staging only · `site_slug=gosaki-piano` · Edge Function write path · no anon write · no `service_role` in browser
+- **Next:** G-20u32 API schema · G-20u33 Edge dry-run draft · G-20u35 write test plan · G-20u36 first album Save pilot
 
 ## G-20u30b Gosaki Discography dry-run staging reflection record — complete
 

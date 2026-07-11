@@ -68,6 +68,7 @@ export const HISTORICAL_VERIFIERS = [
   { id: "G-20u29b", label: "Gosaki Discography editor staging reflection record", script: "verify-g20u29b-gosaki-discography-editor-staging-reflection-record.mjs" },
   { id: "G-20u30", label: "Gosaki Discography dry-run validation", script: "verify-g20u30-gosaki-discography-dry-run-validation.mjs" },
   { id: "G-20u30b", label: "Gosaki Discography dry-run staging reflection record", script: "verify-g20u30b-gosaki-discography-dry-run-staging-reflection-record.mjs" },
+  { id: "G-20u31", label: "Gosaki Discography Save design", script: "verify-g20u31-gosaki-discography-save-design.mjs" },
 ];
 
 /**

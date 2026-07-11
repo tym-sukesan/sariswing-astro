@@ -1,5 +1,22 @@
-Last updated: 2026-07-10
+Last updated: 2026-07-11
 Project: Static-to-Astro CMS / Musician CMS Kit
+
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u28b Gosaki admin UI staging reflection record — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u28b-gosaki-admin-ui-staging-reflection-record` |
+| Doc HEAD | `f03122b` |
+| Deployed STG package | `f03122b` (30 files · `includesAdmin: true`) |
+| Build / preflight | **PASS** |
+| Upload | manual FTP (FileZilla) · `public-dist/` → `/cms-kit-staging/gosaki-piano/` |
+| `/admin/` G-20u28 UI | **PASS** — dashboard · READ-ONLY · Save disabled · 74/Aug14 · 4/34 |
+| Sitemap | `/admin/` **excluded** (0 admin matches) |
+| Production | upload **STOP** (G-20j) · not executed |
+| Not executed | Cursor FTP · deploy · DB write |
+| Doc | `gosaki-admin-ui-staging-reflection-record.md` |
+| Verifier | `verify-g20u28b-gosaki-admin-ui-staging-reflection-record.mjs` (historical) |
+| Next | Discography edit UI · YouTube edit UI · About edit UI · Schedule UI polish |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u28 Gosaki admin UI foundation polish — complete
 
@@ -14,7 +31,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Not executed | DB write · Save enable · FTP · deploy · package upload |
 | Doc | `gosaki-admin-ui-foundation-polish.md` |
 | Verifier | `verify-g20u28-gosaki-admin-ui-foundation-polish.mjs` |
-| Next | Discography edit UI · YouTube edit UI · About edit UI · Schedule UI polish |
+| Next | **G-20u28b** STG reflection — **complete** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u27 Gosaki staging post-upload final verification — complete
 

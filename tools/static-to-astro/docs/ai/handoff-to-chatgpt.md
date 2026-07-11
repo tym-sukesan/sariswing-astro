@@ -5,10 +5,20 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u28-gosaki-admin-ui-foundation-polish — complete.
-Staging read-only admin dashboard polished. Save/FTP/deploy disabled. Production upload STOP (G-20j).
-STG live package still 3287219 until operator regen + manual FTP.
+Current phase: G-20u28b-gosaki-admin-ui-staging-reflection-record — complete.
+G-20u28 admin UI reflected on STG (package f03122b). Sitemap excludes /admin/. Production upload STOP (G-20j).
 ```
+
+## G-20u28b Gosaki admin UI staging reflection record — complete
+
+- **Doc HEAD:** `f03122b` · **Deployed STG package:** `f03122b59fcb289d6b3e527bd5420a1bdd776084`
+- **Build / preflight:** **PASS** · 30 files · `includesAdmin: true` · `safeForStaticFtp: true`
+- **Upload:** manual FTP (FileZilla) · `public-dist/` contents → `/cms-kit-staging/gosaki-piano/`
+- **STG `/admin/`:** G-20u28 dashboard UI **PASS** · READ-ONLY · STAGING ONLY · Save disabled · Schedule 74/Aug 14 · Discography 4/34
+- **Sitemap:** `/admin/` **not** listed (0 admin string matches)
+- **Production:** **not updated** · upload **STOP** (G-20j)
+- **Not executed:** Cursor FTP · CLI mirror/sync/delete · DB write · production deploy
+- **Next:** Discography edit UI · YouTube edit UI · About edit UI · Schedule UI polish
 
 ## G-20u28 Gosaki admin UI foundation polish — complete
 

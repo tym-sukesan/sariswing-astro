@@ -1,7 +1,9 @@
-Last updated: 2026-07-10
+Last updated: 2026-07-11
 Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
+
+**G-20u28b Gosaki admin UI staging reflection record (2026-07-11):** **complete** — STG package `f03122b` (30 files · `includesAdmin: true` · `safeForStaticFtp: true`); operator manual FTP from `public-dist/` → `/cms-kit-staging/gosaki-piano/`; `/admin/` G-20u28 dashboard UI **PASS** (READ-ONLY · STAGING ONLY · Save disabled · 7 section cards · Schedule 74/Aug 14 · Discography 4/34); sitemap **no** `/admin/` (0 admin matches); production upload **STOP** (G-20j); **Cursor FTP/deploy/DB write なし**. Doc: `gosaki-admin-ui-staging-reflection-record.md`. Verifier: `verify-g20u28b-gosaki-admin-ui-staging-reflection-record.mjs` (historical).
 
 **G-20u28 Gosaki admin UI foundation polish (2026-07-10):** **complete** — staging read-only admin dashboard (Schedule / Discography / YouTube / About / Contact / Link / Upload safety cards); build-time stats from schedule+discography bundles; read-only / Save disabled / production STOP badges; **no DB write / Save / FTP / deploy**. Doc: `gosaki-admin-ui-foundation-polish.md`. Verifier: `verify-g20u28-gosaki-admin-ui-foundation-polish.mjs`.
 

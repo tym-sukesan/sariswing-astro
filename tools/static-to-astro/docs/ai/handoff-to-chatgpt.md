@@ -5,10 +5,21 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u29-gosaki-discography-edit-ui-prototype — complete.
-Discography Editor Prototype in staging read-only admin. Track list: 1 textarea per album (1 line = 1 track). Save disabled. Production upload STOP (G-20j).
-STG live package still f03122b until operator regen + manual FTP.
+Current phase: G-20u29b-gosaki-discography-editor-staging-reflection-record — complete.
+G-20u29 Discography Editor Prototype reflected on STG (package 2a5dc68). 4 albums · 4 track textareas (1 line = 1 track). Save disabled. Sitemap excludes /admin/. Production upload STOP (G-20j).
 ```
+
+## G-20u29b Gosaki Discography editor staging reflection record — complete
+
+- **Doc HEAD:** `2a5dc68` · **Deployed STG package:** `2a5dc6825dcab03b1b28705877f5bcd5423ba37c`
+- **Build / preflight:** **PASS** · 30 files · `includesAdmin: true` · `safeForStaticFtp: true`
+- **Upload:** manual FTP (FileZilla) · `public-dist/` contents → `/cms-kit-staging/gosaki-piano/`
+- **STG `/admin/`:** Discography Editor Prototype **PASS** · 4 albums · 4 track list textareas · **1 line = 1 track** · Save disabled · dashboard 4/34
+- **Track UI:** **not** 34 fixed `<input>` fields
+- **Sitemap:** `/admin/` **not** listed (0 admin string matches)
+- **Production:** **not updated** · upload **STOP** (G-20j)
+- **Not executed:** Cursor FTP · CLI mirror/sync/delete · DB write · production deploy
+- **Next:** Discography dry-run validation · Discography Save design · YouTube edit UI · About edit UI
 
 ## G-20u29 Gosaki Discography edit UI prototype — complete
 

@@ -5,10 +5,22 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36a-permissions-remediation-preflight-result-record — complete.
-Operator ran remediation preflight SELECT-only SQL. READY_FOR_MANUAL_REVOKE. REVOKE not executed. Save/Edge blocked.
+Current phase: G-20u36a-permissions-remediation-apply-plan — complete.
+Formal apply plan prepared for 2× REVOKE UPDATE (staging only). Not executed. Save/Edge blocked.
 STG live package still 00c8888 (G-20u30b dry-run UI).
 ```
+
+## G-20u36a-permissions-remediation-apply-plan — complete
+
+- **Base:** `3487f51`
+- **Scope:** Apply plan doc only — no execution
+- **Prerequisite:** preflight **READY_FOR_MANUAL_REVOKE**
+- **Manual target:** 2× `REVOKE UPDATE` — `discography` + `discography_tracks` · authenticated
+- **Future block:** doc fenced code — **NOT EXECUTED / HUMAN OPERATOR ONLY / STAGING ONLY**
+- **Rollback:** emergency draft — separate approval only
+- **After-verification:** required before G-20u36b Edge deploy plan
+- **Save / Edge deploy:** **blocked**
+- **Next:** apply-manual · after-verification
 
 ## G-20u36a-permissions-remediation-preflight-result — complete
 
@@ -19,7 +31,7 @@ STG live package still 00c8888 (G-20u30b dry-run UI).
 - **Data:** **4/34** · **discography-002/8** · integrity PASS
 - **REVOKE:** **not executed** in this phase
 - **Save / Edge deploy:** **blocked**
-- **Next:** G-20u36a-permissions-remediation-apply-plan
+- **Next:** **G-20u36a-permissions-remediation-apply-plan** — **complete** · apply-manual · after-verification
 
 ## G-20u36a-permissions-remediation-preflight-select-only — complete
 

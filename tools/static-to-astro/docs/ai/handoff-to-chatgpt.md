@@ -5,10 +5,19 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u34-gosaki-discography-save-ui-arm-design — complete.
-Discography Save UI arm gate design ready. Save disabled. executableSaveAllowed always false. No fetch/Edge/DB/env. Production upload STOP (G-20j).
+Current phase: G-20u35-gosaki-discography-staging-db-write-test-plan-rollback-drill — complete.
+Discography staging DB write test plan + rollback drill designed. No DB write / SQL / Edge deploy. Save disabled. Production STOP (G-20j).
 STG live package still 00c8888 (G-20u30b dry-run UI).
 ```
+
+## G-20u35 Gosaki Discography staging DB write test plan & rollback drill — complete
+
+- **Base:** `648e083`
+- **Scope:** Test plan + rollback drill design only — backup JSON · transaction policy · read-back · STOP conditions · G-20u36a–g split
+- **First Save candidate:** `discography-002` (track list minor change · release metadata deferred)
+- **Save UI:** **disabled** (unchanged)
+- **Not executed:** DB write · SQL mutation · Edge deploy · Save enable · FTP
+- **Next:** G-20u36a SELECT-only before verify · G-20u36b–c Edge dry-run live · G-20u36e first Save (operator manual)
 
 ## G-20u34 Gosaki Discography Save UI arm design — complete
 

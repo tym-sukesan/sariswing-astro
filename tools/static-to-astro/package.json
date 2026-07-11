@@ -85,6 +85,7 @@
     "verify:g20u32-gosaki-discography-save-api-schema-approval-registry": "node scripts/verify-g20u32-gosaki-discography-save-api-schema-approval-registry.mjs",
     "verify:g20u33-gosaki-discography-save-dry-run-endpoint-draft": "node scripts/verify-g20u33-gosaki-discography-save-dry-run-endpoint-draft.mjs",
     "verify:g20u34-gosaki-discography-save-ui-arm-design": "node scripts/verify-g20u34-gosaki-discography-save-ui-arm-design.mjs",
+    "verify:g20u35-gosaki-discography-staging-db-write-test-plan-rollback-drill": "node scripts/verify-g20u35-gosaki-discography-staging-db-write-test-plan-rollback-drill.mjs",
     "verify:g20u18-cli-decoupling": "node scripts/verify-g20u18-package-json-cli-default-decoupling.mjs",
     "build:pilot:staging": "node scripts/build-site-package.mjs --site pilot-sample-static --profile staging",
     "build:pilot:staging:dry-run": "node scripts/build-site-package.mjs --site pilot-sample-static --profile staging --dry-run",

@@ -5,10 +5,20 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u31-gosaki-discography-save-design — complete.
-Discography Save specification designed. Save disabled. No DB write / Edge Function / SQL. Production upload STOP (G-20j).
+Current phase: G-20u32-gosaki-discography-save-api-schema-approval-registry — complete.
+Discography Save API schema + approval registry ready. Save disabled. No DB write / Edge Function / SQL. Production upload STOP (G-20j).
 STG live package still 00c8888 (G-20u30b dry-run UI).
 ```
+
+## G-20u32 Gosaki Discography Save API schema & approval registry — complete
+
+- **Base:** `c40b88e`
+- **Scope:** Request/response schema · approval ID registry · validation helpers only
+- **Modules:** `gosaki-discography-save-schema.mjs` · `gosaki-discography-save-approval-registry.mjs`
+- **Save UI:** **disabled** (unchanged)
+- **DB / Edge / SQL:** **not executed**
+- **Key rules:** staging only · `site_slug=gosaki-piano` · server dry-run before Save · no anon write · no `service_role` in browser · `didWrite` false in schema phase
+- **Next:** G-20u33 Edge dry-run draft · G-20u34 Save UI arm · G-20u35 write test plan · G-20u36 first album Save pilot
 
 ## G-20u31 Gosaki Discography Save design — complete
 

@@ -5,10 +5,21 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36a-permissions-rls-deep-dive — complete.
-SELECT-only permissions/RLS deep-dive SQL prepared. Cursor did not execute SQL. Prior STOP: authenticated UPDATE grants (2). Do not proceed to Save/DB write/REVOKE/GRANT/RLS change.
+Current phase: G-20u36a-permissions-rls-deep-dive-result-record — complete.
+Operator ran permissions/RLS deep-dive SELECT-only SQL on staging. RISK confirmed (authenticated UPDATE + ALL/is_admin policies). H.review_summary STOP. Do not proceed to Save/DB write/Edge deploy.
 STG live package still 00c8888 (G-20u30b dry-run UI).
 ```
+
+## G-20u36a-permissions-rls-deep-dive-result Gosaki Discography permissions / RLS deep-dive result — complete
+
+- **Base:** `dfdd15e`
+- **Executor:** Human operator · staging `kmjqppxjdnwwrtaeqjta` (production **not** used)
+- **Outcome:** **RISK confirmed** · **`H.review_summary.proceed_to_remediation_planning` = STOP**
+- **RISK:** authenticated **UPDATE** grant + **ALL** policy (`is_admin()`) on `discography` + `discography_tracks`
+- **Policies:** `discography_admin_all` · `discography_tracks_admin_all` — cmd ALL · roles authenticated
+- **Edge-only path:** **contradiction** — direct authenticated admin UPDATE possible
+- **Decision:** **Do not proceed** to Save / DB write / Edge deploy / REVOKE/GRANT/RLS change in this phase
+- **Next:** G-20u36a-permissions-remediation-plan
 
 ## G-20u36a-permissions-rls-deep-dive Gosaki Discography permissions / RLS deep-dive — complete
 
@@ -18,7 +29,7 @@ STG live package still 00c8888 (G-20u30b dry-run UI).
 - **SQL executed:** **no** (Cursor) — operator runs in result-record phase
 - **Previous STOP:** authenticated UPDATE on `discography` + `discography_tracks`
 - **Not done:** REVOKE / GRANT / RLS change / Edge deploy / Save enable
-- **Next:** G-20u36a-permissions-rls-deep-dive-result-record · G-20u36a-permissions-remediation-plan · G-20u36b Edge dry-run deploy plan (after permissions gate)
+- **Next:** **G-20u36a-permissions-rls-deep-dive-result-record** — **complete** · **G-20u36a-permissions-remediation-plan**
 
 ## G-20u36a-result Gosaki Discography SELECT-only before verification result — complete
 

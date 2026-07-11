@@ -1,6 +1,18 @@
 Last updated: 2026-07-11
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36b-edge-dry-run-endpoint-inert-implementation — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u36b-edge-dry-run-endpoint-inert-implementation` |
+| Base | `7af5fdf` |
+| Scope | Deploy-inert module + local verifier — no Edge deploy |
+| Module | `gosaki-discography-edge-dry-run-endpoint-inert.mjs` |
+| Root supabase/functions | **unchanged** |
+| Doc | `gosaki-discography-g20u36b-edge-dry-run-endpoint-inert-implementation.md` |
+| Next | G-20u36b-edge-dry-run-endpoint-deploy-preflight |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36b-edge-dry-run-endpoint-implementation-plan — complete
 
 | Item | Value |
@@ -9,9 +21,8 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Base | `1629573` |
 | Scope | Implementation plan doc only — no Edge source / deploy |
 | Prerequisite | G-20u36b deploy plan · G-20u36a PASS |
-| Modules | draft · schema · approval registry referenced |
 | Doc | `gosaki-discography-g20u36b-edge-dry-run-endpoint-implementation-plan.md` |
-| Next | G-20u36b-edge-dry-run-endpoint-inert-implementation |
+| Next | **inert-implementation** — **complete** · **deploy-preflight** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36b-edge-dry-run-endpoint-deploy-plan — complete
 

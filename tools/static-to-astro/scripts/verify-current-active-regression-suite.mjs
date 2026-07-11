@@ -86,6 +86,7 @@ export const HISTORICAL_VERIFIERS = [
   { id: "G-20u36a-permissions-remediation-after-verification-result", label: "Gosaki Discography permissions remediation after-verification result record", script: "verify-g20u36a-result-gosaki-discography-permissions-remediation-after-verification-result.mjs" },
   { id: "G-20u36b", label: "Gosaki Discography Edge dry-run endpoint deploy plan", script: "verify-g20u36b-edge-dry-run-endpoint-deploy-plan.mjs" },
   { id: "G-20u36b-impl", label: "Gosaki Discography Edge dry-run endpoint implementation plan", script: "verify-g20u36b-edge-dry-run-endpoint-implementation-plan.mjs" },
+  { id: "G-20u36b-inert", label: "Gosaki Discography Edge dry-run endpoint inert implementation", script: "verify-g20u36b-edge-dry-run-endpoint-inert-implementation.mjs" },
 ];
 
 /**

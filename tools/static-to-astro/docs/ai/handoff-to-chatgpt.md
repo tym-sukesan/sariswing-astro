@@ -5,10 +5,19 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36b-edge-dry-run-endpoint-implementation-plan — complete.
-Implementation plan prepared. No Edge source/deploy. Save still blocked. Next: G-20u36b inert-implementation.
+Current phase: G-20u36b-edge-dry-run-endpoint-inert-implementation — complete.
+Inert module prepared. No Edge deploy. Root supabase/functions unchanged. Save still blocked. Next: G-20u36b deploy-preflight.
 STG live package still 00c8888 (G-20u30b dry-run UI).
 ```
+
+## G-20u36b-edge-dry-run-endpoint-inert-implementation — complete
+
+- **Base:** `7af5fdf`
+- **Scope:** Deploy-inert module + local verifier — no Edge deploy / SQL / Save / fetch POST
+- **Module:** `scripts/lib/gosaki-discography-edge-dry-run-endpoint-inert.mjs`
+- **Handler:** `handleDiscographyEdgeDryRunInert` · POST/json · dryRun only · write flags always false
+- **Root `supabase/functions/**`:** **unchanged**
+- **Next:** **G-20u36b-edge-dry-run-endpoint-deploy-preflight**
 
 ## G-20u36b-edge-dry-run-endpoint-implementation-plan — complete
 

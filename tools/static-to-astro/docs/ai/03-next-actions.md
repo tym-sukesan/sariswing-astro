@@ -1,6 +1,20 @@
 Last updated: 2026-07-11
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36a Gosaki Discography SELECT-only before verification — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u36a-gosaki-discography-select-only-before-verification` |
+| Base | `d750708` |
+| Scope | SELECT-only SQL prep for `discography-002` baseline |
+| SQL | `gosaki-discography-g20u36a-select-only-before-verification.sql` |
+| SQL executed | **no** (operator manual in result-record phase) |
+| DB / mutation / Edge / Save | **not executed** |
+| Doc | `gosaki-discography-g20u36a-select-only-before-verification.md` |
+| Verifier | `verify-g20u36a-gosaki-discography-select-only-before-verification.mjs` (historical) |
+| Next | G-20u36a-result-record · G-20u36b Edge deploy plan |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u35 Gosaki Discography staging DB write test plan & rollback drill — complete
 
 | Item | Value |
@@ -58,7 +72,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Key rules | staging only · `site_slug=gosaki-piano` · server dry-run before Save · no anon write · no service_role in browser · `didWrite` false in schema phase |
 | Doc | `gosaki-discography-save-api-schema-approval-registry.md` |
 | Verifier | `verify-g20u32-gosaki-discography-save-api-schema-approval-registry.mjs` (historical) |
-| Next | **G-20u35** write test plan — **complete** |
+| Next | **G-20u36a** SELECT-only before verification — **complete** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u31 Gosaki Discography Save design — complete
 

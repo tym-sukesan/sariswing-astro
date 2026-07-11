@@ -5,10 +5,19 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u35-gosaki-discography-staging-db-write-test-plan-rollback-drill — complete.
-Discography staging DB write test plan + rollback drill designed. No DB write / SQL / Edge deploy. Save disabled. Production STOP (G-20j).
+Current phase: G-20u36a-gosaki-discography-select-only-before-verification — complete.
+SELECT-only before verification SQL prepared for discography-002. Cursor did not execute SQL. No DB write. Production STOP.
 STG live package still 00c8888 (G-20u30b dry-run UI).
 ```
+
+## G-20u36a Gosaki Discography SELECT-only before verification — complete
+
+- **Base:** `d750708`
+- **Scope:** SELECT-only SQL for staging baseline check · backup JSON · checksum · STOP summary
+- **Target:** `kmjqppxjdnwwrtaeqjta` · `discography-002` · `site_slug=gosaki-piano`
+- **Forbidden:** production ref `vsbvndwuajjhnzpohghh`
+- **SQL executed:** **no** (Cursor) — operator runs in G-20u36a-result-record
+- **Next:** G-20u36a-result-record · G-20u36b Edge dry-run deploy plan
 
 ## G-20u35 Gosaki Discography staging DB write test plan & rollback drill — complete
 

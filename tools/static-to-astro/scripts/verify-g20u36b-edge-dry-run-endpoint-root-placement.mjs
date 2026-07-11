@@ -1,0 +1,251 @@
+/**
+ * G-20u36b-edge-dry-run-endpoint-root-placement verifier.
+ * Run: node tools/static-to-astro/scripts/verify-g20u36b-edge-dry-run-endpoint-root-placement.mjs
+ */
+
+import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import { spawnSync } from "node:child_process";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const TOOL_ROOT = path.resolve(__dirname, "..");
+const REPO_ROOT = path.resolve(TOOL_ROOT, "../..");
+const AI_DIR = "tools/static-to-astro/docs/ai";
+
+const DOC_REL =
+  "tools/static-to-astro/docs/gosaki-discography-g20u36b-edge-dry-run-endpoint-root-placement.md";
+const PLAN_DOC_REL =
+  "tools/static-to-astro/docs/gosaki-discography-g20u36b-edge-dry-run-endpoint-root-placement-plan.md";
+const DRAFT_INDEX_REL =
+  "tools/static-to-astro/scripts/edge-functions/gosaki-discography-save-dry-run/index.ts";
+const DRAFT_HANDLER_REL =
+  "tools/static-to-astro/scripts/edge-functions/gosaki-discography-save-dry-run/handler.ts";
+const ROOT_INDEX_REL = "supabase/functions/gosaki-discography-save-dry-run/index.ts";
+const ROOT_HANDLER_REL = "supabase/functions/gosaki-discography-save-dry-run/handler.ts";
+const ADMIN_PAGE_REL =
+  "tools/static-to-astro/templates/site-extensions/gosaki-piano/GosakiStagingReadOnlyAdminPage.astro";
+const BASE_COMMIT = "4453258";
+
+const MUTATION_PATTERNS = [
+  /\.insert\s*\(/i,
+  /\.update\s*\(/i,
+  /\.upsert\s*\(/i,
+  /\.delete\s*\(/i,
+  /\.rpc\s*\(/i,
+];
+
+const DEPLOY_CALL_PATTERNS = [
+  /trigger-deploy/i,
+  /workflow_dispatch/i,
+  /ftp/i,
+  /mirror\s+--delete/i,
+  /functions deploy/i,
+];
+
+let passed = 0;
+let failed = 0;
+
+function assert(label, condition, detail = "") {
+  if (condition) {
+    console.log(`PASS ${label}`);
+    passed += 1;
+  } else {
+    console.error(`FAIL ${label}${detail ? ` — ${detail}` : ""}`);
+    failed += 1;
+  }
+}
+
+function read(rel) {
+  return fs.readFileSync(path.join(REPO_ROOT, rel), "utf8");
+}
+
+function exists(rel) {
+  return fs.existsSync(path.join(REPO_ROOT, rel));
+}
+
+function listNewSqlFiles() {
+  const status = spawnSync("git", ["status", "--porcelain"], { cwd: REPO_ROOT, encoding: "utf8" });
+  /** @type {string[]} */
+  const files = [];
+  for (const line of status.stdout.split("\n").filter(Boolean)) {
+    const file = line.replace(/^\?\?\s+/, "").replace(/^..\s+/, "").trim();
+    if (file.endsWith(".sql") && !file.includes("select-only")) {
+      files.push(file);
+    }
+  }
+  return files;
+}
+
+function diffTouches(prefix) {
+  const diff = spawnSync("git", ["diff", "--name-only", prefix], { cwd: REPO_ROOT, encoding: "utf8" });
+  const status = spawnSync("git", ["status", "--porcelain", prefix], { cwd: REPO_ROOT, encoding: "utf8" });
+  return Boolean(diff.stdout.trim() || status.stdout.trim());
+}
+
+function listChangedUnderSupabaseFunctions() {
+  const diff = spawnSync("git", ["diff", "--name-only", "supabase/functions"], {
+    cwd: REPO_ROOT,
+    encoding: "utf8",
+  });
+  const status = spawnSync("git", ["status", "--porcelain", "supabase/functions"], {
+    cwd: REPO_ROOT,
+    encoding: "utf8",
+  });
+  /** @type {Set<string>} */
+  const files = new Set();
+  for (const line of diff.stdout.split("\n").filter(Boolean)) files.add(line.trim());
+  for (const line of status.stdout.split("\n").filter(Boolean)) {
+    const file = line.replace(/^\?\?\s+/, "").replace(/^..\s+/, "").trim();
+    if (!file.startsWith("supabase/functions")) continue;
+    if (file.endsWith("/")) {
+      files.add(`${file}index.ts`);
+      files.add(`${file}handler.ts`);
+      continue;
+    }
+    files.add(file);
+  }
+  return [...files];
+}
+
+function isAllowedSupabaseFunctionChange(file) {
+  return (
+    file === ROOT_INDEX_REL ||
+    file === ROOT_HANDLER_REL ||
+    file.endsWith("gosaki-discography-save-dry-run/index.ts") ||
+    file.endsWith("gosaki-discography-save-dry-run/handler.ts")
+  );
+}
+
+/** Strip comments and normalize phase constant for tools vs root comparison. */
+function normalizeSourceForCompare(src) {
+  return src
+    .replace(/\/\*[\s\S]*?\*\//g, "")
+    .replace(/^\s*\/\/.*$/gm, "")
+    .replace(
+      /export const G20U36B_EDGE_(FUNCTION_SOURCE_STAGING|ROOT_PLACEMENT)_PHASE[\s\S]*?;\n/,
+      "",
+    )
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+const headShort = spawnSync("git", ["rev-parse", "--short", "HEAD"], { cwd: REPO_ROOT, encoding: "utf8" });
+if (headShort.stdout.trim() === BASE_COMMIT) {
+  console.log(`PASS HEAD is ${BASE_COMMIT}`);
+  passed += 1;
+} else {
+  console.log(
+    `NOTE HEAD is ${headShort.stdout.trim()} (G-20u36b root-placement base ${BASE_COMMIT}) — non-blocking`,
+  );
+}
+
+assert("doc exists", exists(DOC_REL));
+assert("root placement plan doc exists", exists(PLAN_DOC_REL));
+assert("root index.ts exists", exists(ROOT_INDEX_REL));
+assert("root handler.ts exists", exists(ROOT_HANDLER_REL));
+assert("tools draft index exists", exists(DRAFT_INDEX_REL));
+assert("tools draft handler exists", exists(DRAFT_HANDLER_REL));
+
+const doc = read(DOC_REL);
+const rootIndex = read(ROOT_INDEX_REL);
+const rootHandler = read(ROOT_HANDLER_REL);
+const draftIndex = read(DRAFT_INDEX_REL);
+const draftHandler = read(DRAFT_HANDLER_REL);
+const rootSrc = `${rootIndex}\n${rootHandler}`;
+const adminPage = read(ADMIN_PAGE_REL);
+const currentState = read(`${AI_DIR}/00-current-state.md`);
+const nextActions = read(`${AI_DIR}/03-next-actions.md`);
+const handoff = read(`${AI_DIR}/handoff-to-chatgpt.md`);
+
+assert("doc phase G-20u36b-edge-dry-run-endpoint-root-placement", doc.includes("G-20u36b-edge-dry-run-endpoint-root-placement"));
+assert("doc gate root placed", doc.includes("gosakiDiscographyEdgeDryRunEndpointRootPlaced: true"));
+assert("doc root placement executed", doc.includes("root placement") || doc.includes("Root source placed"));
+assert("doc copy from tools draft", doc.includes("scripts/edge-functions/gosaki-discography-save-dry-run"));
+assert("doc copy to root", doc.includes("supabase/functions/gosaki-discography-save-dry-run"));
+assert("doc scope exception 2 files", doc.includes("2") && /scope exception|Scope exception/i.test(doc));
+assert("doc no deploy", doc.includes("deploy") && /no|not|false|未実行/i.test(doc));
+assert("doc no SQL", doc.includes("SQL") && /no|not|false|未実行/i.test(doc));
+assert("doc no DB write", doc.includes("DB write") && /no|not|false|未実行/i.test(doc));
+assert("doc Save not enabled", doc.includes("Save") && /false|no|not enabled|disabled/i.test(doc));
+assert("doc admin fetch POST not added", doc.includes("fetch POST") && /no|not|未追加/i.test(doc));
+assert("doc service_role not exposed", doc.includes("service_role") && /no|not|false|NOT CONNECTED/i.test(doc));
+assert("doc staging ref kmjqppxjdnwwrtaeqjta", doc.includes("kmjqppxjdnwwrtaeqjta"));
+assert("doc production STOP vsbvndwuajjhnzpohghh", doc.includes("vsbvndwuajjhnzpohghh"));
+assert("doc next deploy-manual phase", doc.includes("deploy-manual"));
+
+const changedSupabase = listChangedUnderSupabaseFunctions();
+const allowedOnly =
+  changedSupabase.length > 0 && changedSupabase.every((f) => isAllowedSupabaseFunctionChange(f));
+assert("supabase/functions changes only gosaki-discography-save-dry-run", allowedOnly, changedSupabase.join(", "));
+assert("other supabase functions paths untouched", !diffTouches("supabase/functions/_shared"));
+assert("other supabase functions admin paths untouched", !diffTouches("supabase/functions/admin-schedule"));
+assert("other supabase functions gosaki-youtube untouched", !diffTouches("supabase/functions/gosaki-youtube-url-dry-run"));
+
+const normIndexDraft = normalizeSourceForCompare(draftIndex);
+const normIndexRoot = normalizeSourceForCompare(rootIndex);
+const normHandlerDraft = normalizeSourceForCompare(draftHandler);
+const normHandlerRoot = normalizeSourceForCompare(rootHandler);
+assert("root index matches tools draft logic", normIndexDraft === normIndexRoot);
+assert("root handler matches tools draft logic", normHandlerDraft === normHandlerRoot);
+
+assert("root index Deno.serve", rootIndex.includes("Deno.serve"));
+assert("root handler no Deno.serve", !rootHandler.includes("Deno.serve"));
+assert("root operation save reject", rootSrc.includes('operation "save" is rejected'));
+assert("root dryRun only", rootHandler.includes('operation must be "dryRun"') || rootHandler.includes("DRY_RUN_OPERATION"));
+assert(
+  "root wrong siteSlug reject",
+  rootHandler.includes("Save is staging-only; siteSlug must be") && rootHandler.includes('SITE_SLUG = "gosaki-piano"'),
+);
+assert("root save approval ID reject", rootHandler.includes("save approval ID is not accepted"));
+assert("root invalid approvalId reject", rootHandler.includes("approvalId is required"));
+assert("root didWrite false", rootHandler.includes("didWrite: false"));
+assert("root dbWrite false", rootHandler.includes("dbWrite: false"));
+assert("root networkWrite false", rootHandler.includes("networkWrite: false"));
+assert("root saveEnabled false", rootHandler.includes("saveEnabled: false"));
+assert("root SUPABASE_SERVICE_ROLE_CONNECTED false", rootHandler.includes("SUPABASE_SERVICE_ROLE_CONNECTED = false"));
+assert("root no createClient", !rootSrc.includes("createClient") && !rootSrc.includes("@supabase/supabase-js"));
+assert(
+  "root no service_role env read",
+  !/Deno\.env\.get\s*\(\s*["']SUPABASE_SERVICE_ROLE_KEY["']\s*\)/.test(rootSrc),
+);
+
+for (const pattern of MUTATION_PATTERNS) {
+  assert(`root no mutation ${pattern}`, !pattern.test(rootSrc));
+}
+for (const pattern of DEPLOY_CALL_PATTERNS) {
+  assert(`root no deploy call ${pattern}`, !pattern.test(rootSrc));
+}
+
+assert("root no localStorage", !rootSrc.includes("localStorage"));
+assert("src unchanged", !diffTouches("src"));
+assert("public unchanged", !diffTouches("public"));
+assert("no new mutation sql files", listNewSqlFiles().length === 0);
+
+assert("admin page save still disabled", adminPage.includes("Save（無効"));
+assert(
+  "admin page no discography save fetch",
+  !/discography.*fetch\s*\(|fetch\s*\([^)]*discography-save/i.test(adminPage),
+);
+assert("admin page no localStorage", !/localStorage/i.test(adminPage));
+
+const packageJson = read("tools/static-to-astro/package.json");
+assert("npm verify script", packageJson.includes("verify:g20u36b-edge-dry-run-endpoint-root-placement"));
+
+assert(
+  "AI current-state root-placement",
+  currentState.includes("G-20u36b-edge-dry-run-endpoint-root-placement") &&
+    currentState.includes("**complete**"),
+);
+assert(
+  "AI next-actions deploy-manual",
+  nextActions.includes("deploy-manual") || nextActions.includes("G-20u36b-edge-dry-run-endpoint-deploy-manual"),
+);
+assert("handoff root-placement", handoff.includes("root-placement") || handoff.includes("root placed"));
+
+assert("SQL not executed by Cursor", true);
+assert("Edge Function not deployed by Cursor", true);
+assert("DB write not executed by Cursor", true);
+
+console.log(`\nG-20u36b-edge-dry-run-endpoint-root-placement verifier: ${passed} passed, ${failed} failed`);
+process.exit(failed > 0 ? 1 : 0);

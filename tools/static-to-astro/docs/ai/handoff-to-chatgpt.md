@@ -5,20 +5,27 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36b-edge-dry-run-endpoint-root-placement-plan — complete.
-Root placement plan prepared. Root supabase/functions unchanged. No Edge deploy. Save still blocked. Next: root-placement (separate approval).
+Current phase: G-20u36b-edge-dry-run-endpoint-root-placement — complete.
+Root source placed at supabase/functions/gosaki-discography-save-dry-run/. No Edge deploy. Save still blocked. Next: deploy-manual (separate approval).
 STG live package still 00c8888 (G-20u30b dry-run UI).
 ```
+
+## G-20u36b-edge-dry-run-endpoint-root-placement — complete
+
+- **Base:** `4453258`
+- **Scope:** Root copy only — **scope exception 2 files**
+- **Root path:** `supabase/functions/gosaki-discography-save-dry-run/index.ts` + `handler.ts`
+- **Policy:** dryRun only · write flags false · service_role NOT CONNECTED · no deploy
+- **Edge deploy / SQL / Save / fetch POST:** **not executed**
+- **Next:** **G-20u36b-edge-dry-run-endpoint-deploy-manual** (separate operator approval)
 
 ## G-20u36b-edge-dry-run-endpoint-root-placement-plan — complete
 
 - **Base:** `e3b5e01`
-- **Scope:** Root placement plan doc only — copy map documented · **no root copy / deploy / SQL / Save / fetch POST**
+- **Scope:** Root placement plan doc only — copy map documented · **no root copy in plan phase**
 - **Copy from:** `scripts/edge-functions/gosaki-discography-save-dry-run/index.ts` + `handler.ts`
 - **Copy to:** `supabase/functions/gosaki-discography-save-dry-run/index.ts` + `handler.ts`
-- **Deploy:** remains separate phase (deploy-manual)
-- **Root `supabase/functions/**`:** **unchanged**
-- **Next:** **G-20u36b-edge-dry-run-endpoint-root-placement** (separate operator approval)
+- **Next:** **root-placement** — **complete** · **deploy-manual**
 
 ## G-20u36b-edge-dry-run-endpoint-function-source-staging — complete
 

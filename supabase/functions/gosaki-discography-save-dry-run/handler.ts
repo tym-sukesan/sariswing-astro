@@ -1,0 +1,497 @@
+/**
+ * G-20u36b — Gosaki Discography Edge dry-run endpoint handler (root source · NOT deployed).
+ * Ported from gosaki-discography-edge-dry-run-endpoint-inert.mjs + G-20u33 draft.
+ * Copied from tools/static-to-astro/scripts/edge-functions/gosaki-discography-save-dry-run/handler.ts
+ * No Supabase client · no service_role · no DB write · Edge deploy NOT EXECUTED.
+ */
+
+export const G20U36B_EDGE_ROOT_PLACEMENT_PHASE =
+  "G-20u36b-edge-dry-run-endpoint-root-placement";
+
+export const ENDPOINT_NAME = "gosaki-discography-save-dry-run";
+export const SITE_SLUG = "gosaki-piano";
+export const STAGING_PROJECT_REF = "kmjqppxjdnwwrtaeqjta";
+export const DRY_RUN_OPERATION = "dryRun";
+export const DRY_RUN_APPROVAL_ID = "G-20u31-gosaki-discography-save-dry-run-endpoint";
+export const SAVE_APPROVAL_ID = "G-20u36-gosaki-discography-tracklist-save-non-dry-run-slice";
+
+/** Supabase service_role — NOT CONNECTED in root-placement phase. */
+export const SUPABASE_SERVICE_ROLE_CONNECTED = false;
+
+const RELEASE_FIELDS = [
+  "title",
+  "artist",
+  "release_date",
+  "label",
+  "catalog_number",
+  "published",
+  "cover_image_url",
+  "purchase_url",
+  "streaming_url",
+  "description",
+] as const;
+
+const SAVE_APPROVAL_REGISTRY = [
+  { approvalId: DRY_RUN_APPROVAL_ID, operation: "dryRun" as const },
+  { approvalId: SAVE_APPROVAL_ID, operation: "save" as const },
+];
+
+export type CurrentSnapshot = {
+  tracksText?: string;
+  release?: Record<string, unknown>;
+};
+
+export type DryRunRequest = Record<string, unknown>;
+
+export type DryRunHandlerResult = Record<string, unknown> & {
+  status: number;
+};
+
+const WRITE_FLAGS = {
+  didWrite: false,
+  dbWrite: false,
+  networkWrite: false,
+  saveEnabled: false,
+} as const;
+
+function lookupApprovalEntry(approvalId: string) {
+  return SAVE_APPROVAL_REGISTRY.find((entry) => entry.approvalId === approvalId) ?? null;
+}
+
+export function getDryRunApprovalRequirements() {
+  return {
+    operation: DRY_RUN_OPERATION,
+    approvalId: DRY_RUN_APPROVAL_ID,
+    siteSlug: SITE_SLUG,
+    endpoint: ENDPOINT_NAME,
+    humanConfirmationRequired: true,
+    description: "Server dry-run endpoint wiring (G-20u33+)",
+  };
+}
+
+/**
+ * SELECT-only baseline via internal service_role — NOT CONNECTED in root-placement phase.
+ * Returns empty snapshot (schema-only dry-run).
+ */
+export function resolveCurrentSnapshot(_legacyId: string): CurrentSnapshot {
+  return {};
+}
+
+export function parseDiscographyTrackListLines(text: string): string[] {
+  return String(text ?? "")
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean);
+}
+
+function findDuplicateTitles(lines: string[]): string[] {
+  const seen = new Set<string>();
+  const dupes: string[] = [];
+  for (const line of lines) {
+    if (seen.has(line)) {
+      if (!dupes.includes(line)) dupes.push(line);
+    } else {
+      seen.add(line);
+    }
+  }
+  return dupes;
+}
+
+function diffReleaseFields(before: Record<string, unknown>, after: Record<string, unknown>): string[] {
+  const changed: string[] = [];
+  for (const field of RELEASE_FIELDS) {
+    const b = before?.[field] ?? null;
+    const a = after?.[field] ?? null;
+    if (String(b ?? "") !== String(a ?? "")) changed.push(field);
+  }
+  return changed;
+}
+
+function validateDiscographyTrackListDryRun(
+  originalText: string,
+  nextText: string,
+  meta: { legacyId?: string; title?: string } = {},
+) {
+  const before = parseDiscographyTrackListLines(originalText);
+  const after = parseDiscographyTrackListLines(nextText);
+  const beforeRemain = [...before];
+  const afterRemain = [...after];
+  const removed: string[] = [];
+  const added: string[] = [];
+
+  for (let i = beforeRemain.length - 1; i >= 0; i -= 1) {
+    const title = beforeRemain[i];
+    const matchIdx = afterRemain.indexOf(title);
+    if (matchIdx >= 0) {
+      beforeRemain.splice(i, 1);
+      afterRemain.splice(matchIdx, 1);
+    }
+  }
+  removed.push(...beforeRemain);
+  added.push(...afterRemain);
+
+  const unchanged = before.length - removed.length;
+  const maxLen = Math.max(before.length, after.length);
+  const changedLines: Array<{ line: number; before: string | null; after: string | null; kind: string }> = [];
+  for (let i = 0; i < maxLen; i += 1) {
+    const b = before[i] ?? null;
+    const a = after[i] ?? null;
+    if (b === a) continue;
+    if (b && a) changedLines.push({ line: i + 1, before: b, after: a, kind: "changed" });
+    else if (!b && a) changedLines.push({ line: i + 1, before: null, after: a, kind: "added" });
+    else if (b && !a) changedLines.push({ line: i + 1, before: b, after: null, kind: "removed" });
+  }
+
+  const reordered =
+    before.join("\n") !== after.join("\n") && added.length === 0 && removed.length === 0;
+
+  return {
+    ok: true,
+    dryRun: true,
+    wouldWrite: false,
+    saveEnabled: false,
+    networkWrite: false,
+    blankLinesIgnored: true,
+    legacyId: meta.legacyId,
+    title: meta.title,
+    totalBefore: before.length,
+    totalAfter: after.length,
+    added,
+    removed,
+    unchanged,
+    changedLines,
+    reordered,
+  };
+}
+
+function assertNoServiceRoleInPayload(payload: Record<string, unknown>) {
+  const serialized = JSON.stringify(payload);
+  if (/service_role/i.test(serialized)) {
+    return ["service_role must not appear in Save request/response payload exposed to browser"];
+  }
+  return [];
+}
+
+function validateReleaseObject(release: Record<string, unknown>) {
+  const errors: string[] = [];
+  if (!release || typeof release !== "object") {
+    return ["release must be an object"];
+  }
+  if (typeof release.title !== "string" || !release.title.trim()) {
+    errors.push("release.title must be a non-empty string");
+  }
+  if (typeof release.artist !== "string" || !release.artist.trim()) {
+    errors.push("release.artist must be a non-empty string");
+  }
+  if (typeof release.published !== "boolean") {
+    errors.push("release.published must be boolean");
+  }
+  return errors;
+}
+
+function validateTrackPolicy(trackPolicy: Record<string, unknown>) {
+  const errors: string[] = [];
+  if (!trackPolicy || typeof trackPolicy !== "object") {
+    return ["trackPolicy must be an object"];
+  }
+  if (trackPolicy.oneLineOneTrack !== true) errors.push("trackPolicy.oneLineOneTrack must be true");
+  if (trackPolicy.blankLinesIgnored !== true) errors.push("trackPolicy.blankLinesIgnored must be true");
+  if (typeof trackPolicy.allowDuplicateTitles !== "boolean") {
+    errors.push("trackPolicy.allowDuplicateTitles must be boolean");
+  }
+  if (typeof trackPolicy.allowEmptyTrackList !== "boolean") {
+    errors.push("trackPolicy.allowEmptyTrackList must be boolean");
+  }
+  return errors;
+}
+
+function validateClientDryRun(clientDryRun: Record<string, unknown>) {
+  const errors: string[] = [];
+  if (!clientDryRun || typeof clientDryRun !== "object") {
+    return ["clientDryRun must be an object"];
+  }
+  if (clientDryRun.wouldWrite !== false) {
+    errors.push("clientDryRun.wouldWrite must be false (browser never writes)");
+  }
+  return errors;
+}
+
+function validateDryRunRequest(request: DryRunRequest) {
+  const errors: string[] = [];
+  const warnings: string[] = [];
+
+  if (!request || typeof request !== "object") {
+    return { ok: false, errors: ["request must be an object"], warnings: [] };
+  }
+
+  if (request.operation === "save") {
+    errors.push('operation "save" is rejected by dry-run endpoint — use dryRun only');
+    return { ok: false, errors, warnings };
+  }
+
+  if (request.operation !== DRY_RUN_OPERATION) {
+    errors.push(`operation must be "${DRY_RUN_OPERATION}"`);
+  }
+
+  const siteSlug = String(request.siteSlug ?? "").trim();
+  if (siteSlug !== SITE_SLUG) {
+    errors.push(`Save is staging-only; siteSlug must be "${SITE_SLUG}"`);
+  }
+
+  const legacyId = String(request.legacyId ?? "").trim();
+  if (!legacyId) errors.push("legacyId is required");
+
+  const approvalId = String(request.approvalId ?? "").trim();
+  if (!approvalId) {
+    errors.push("approvalId is required");
+  } else {
+    const entry = lookupApprovalEntry(approvalId);
+    if (entry?.operation === "save") {
+      errors.push("save approval ID is not accepted on dry-run endpoint");
+    }
+    if (entry && entry.operation !== DRY_RUN_OPERATION) {
+      errors.push(`approvalId ${approvalId} is registered for operation "${entry.operation}", not "${DRY_RUN_OPERATION}"`);
+    }
+  }
+
+  errors.push(...assertNoServiceRoleInPayload(request));
+
+  const release = (request.release ?? {}) as Record<string, unknown>;
+  errors.push(...validateReleaseObject(release));
+
+  if (typeof request.tracksText !== "string") {
+    errors.push("tracksText must be a string");
+  } else {
+    const trackPolicy = (request.trackPolicy ?? {}) as Record<string, unknown>;
+    errors.push(...validateTrackPolicy(trackPolicy));
+    const lines = parseDiscographyTrackListLines(request.tracksText);
+    if (lines.length === 0 && trackPolicy.allowEmptyTrackList !== true) {
+      errors.push("empty track list blocked (trackPolicy.allowEmptyTrackList must be true to override)");
+    }
+    const dupes = findDuplicateTitles(lines);
+    if (dupes.length > 0) warnings.push(`duplicate track titles: ${dupes.join(", ")}`);
+  }
+
+  const clientDryRun = (request.clientDryRun ?? {}) as Record<string, unknown>;
+  errors.push(...validateClientDryRun(clientDryRun));
+
+  return { ok: errors.length === 0, errors, warnings };
+}
+
+export function buildDryRunEndpointResponse(input: {
+  ok: boolean;
+  legacyId: string;
+  approvalId: string;
+  wouldWrite: boolean;
+  diff: Record<string, unknown>;
+  changedCounts: Record<string, unknown>;
+  errors?: string[];
+  warnings?: string[];
+  serverTime?: string;
+}) {
+  return {
+    ok: input.ok,
+    operation: DRY_RUN_OPERATION,
+    endpoint: ENDPOINT_NAME,
+    siteSlug: SITE_SLUG,
+    legacyId: input.legacyId,
+    approvalId: input.approvalId,
+    wouldWrite: input.wouldWrite,
+    ...WRITE_FLAGS,
+    changedCounts: input.changedCounts,
+    diff: input.diff,
+    backupToken: null,
+    backupPreview: null,
+    errors: input.errors ?? [],
+    warnings: input.warnings ?? [],
+    readBack: null,
+    serverTime: input.serverTime ?? new Date().toISOString(),
+  };
+}
+
+function buildRejectionResponse(input: {
+  legacyId?: string;
+  approvalId?: string;
+  errors: string[];
+  warnings?: string[];
+  status?: number;
+}) {
+  return {
+    ...buildDryRunEndpointResponse({
+      ok: false,
+      legacyId: String(input.legacyId ?? ""),
+      approvalId: String(input.approvalId ?? ""),
+      wouldWrite: false,
+      diff: {},
+      changedCounts: {},
+      errors: input.errors,
+      warnings: input.warnings ?? [],
+    }),
+    status: input.status ?? 400,
+    approvalRequirements: getDryRunApprovalRequirements(),
+  };
+}
+
+export function simulateDiscographySaveDryRunEndpoint(
+  request: DryRunRequest,
+  currentSnapshot: CurrentSnapshot = {},
+) {
+  const validation = validateDryRunRequest(request);
+  const legacyId = String(request?.legacyId ?? "");
+  const approvalId = String(request?.approvalId ?? "");
+
+  if (!validation.ok) {
+    return {
+      ...buildDryRunEndpointResponse({
+        ok: false,
+        legacyId,
+        approvalId,
+        wouldWrite: false,
+        diff: {},
+        changedCounts: {},
+        errors: validation.errors,
+        warnings: validation.warnings,
+      }),
+      status: 400,
+      approvalRequirements: getDryRunApprovalRequirements(),
+    };
+  }
+
+  const warnings = [...validation.warnings];
+  const tracksText = String(request.tracksText ?? "");
+  const release = (request.release ?? {}) as Record<string, unknown>;
+  const trackPolicy = (request.trackPolicy ?? {
+    allowDuplicateTitles: true,
+    allowEmptyTrackList: false,
+  }) as Record<string, unknown>;
+
+  const beforeText = String(currentSnapshot.tracksText ?? "");
+  const trackDiff = validateDiscographyTrackListDryRun(beforeText, tracksText, {
+    legacyId,
+    title: String(release.title ?? ""),
+  });
+
+  const afterLines = parseDiscographyTrackListLines(tracksText);
+  if (afterLines.length === 0 && trackPolicy.allowEmptyTrackList !== true) {
+    return {
+      ...buildDryRunEndpointResponse({
+        ok: false,
+        legacyId,
+        approvalId,
+        wouldWrite: false,
+        diff: trackDiff,
+        changedCounts: {
+          releaseFields: [],
+          tracksAdded: 0,
+          tracksRemoved: 0,
+          tracksReordered: false,
+        },
+        errors: ["empty track list blocked (allowEmptyTrackList must be true to override)"],
+        warnings,
+      }),
+      status: 400,
+      approvalRequirements: getDryRunApprovalRequirements(),
+    };
+  }
+
+  const currentRelease = (currentSnapshot.release ?? {}) as Record<string, unknown>;
+  const releaseFieldsChanged = diffReleaseFields(currentRelease, release);
+  const tracksChanged =
+    trackDiff.added.length > 0 ||
+    trackDiff.removed.length > 0 ||
+    trackDiff.reordered ||
+    trackDiff.changedLines.length > 0;
+
+  const hasCurrentBaseline = Boolean(currentSnapshot.tracksText != null || currentSnapshot.release);
+  const wouldWrite = hasCurrentBaseline
+    ? tracksChanged || releaseFieldsChanged.length > 0
+    : afterLines.length > 0 || releaseFieldsChanged.length > 0;
+
+  return {
+    ...buildDryRunEndpointResponse({
+      ok: true,
+      legacyId,
+      approvalId,
+      wouldWrite,
+      diff: {
+        totalBefore: trackDiff.totalBefore,
+        totalAfter: trackDiff.totalAfter,
+        added: trackDiff.added,
+        removed: trackDiff.removed,
+        unchanged: trackDiff.unchanged,
+        changedLines: trackDiff.changedLines,
+        reordered: trackDiff.reordered,
+        releaseFieldsChanged,
+      },
+      changedCounts: {
+        releaseFields: releaseFieldsChanged,
+        tracksAdded: trackDiff.added.length,
+        tracksRemoved: trackDiff.removed.length,
+        tracksReordered: trackDiff.reordered,
+      },
+      errors: [],
+      warnings,
+    }),
+    status: 200,
+  };
+}
+
+export function validateHttpEnvelope(input: {
+  method?: string;
+  contentType?: string;
+  body?: unknown;
+}) {
+  const errors: string[] = [];
+  const method = String(input.method ?? "").toUpperCase();
+  const contentType = String(input.contentType ?? "")
+    .split(";")[0]
+    .trim()
+    .toLowerCase();
+
+  if (method !== "POST") errors.push("HTTP method must be POST");
+  if (contentType !== "application/json") errors.push("Content-Type must be application/json");
+  if (input.body != null && (typeof input.body !== "object" || Array.isArray(input.body))) {
+    errors.push("request body must be a JSON object");
+  }
+
+  let status = 200;
+  if (errors.length > 0) {
+    status = method !== "POST" ? 405 : 415;
+  }
+
+  return { ok: errors.length === 0, errors, status };
+}
+
+/**
+ * HTTP handler entry — POST/json only · dryRun only · no service_role · no DB write.
+ */
+export function handleDiscographyEdgeDryRunHttp(input: {
+  method?: string;
+  contentType?: string;
+  body?: unknown;
+}): DryRunHandlerResult {
+  const envelope = validateHttpEnvelope(input);
+  if (!envelope.ok) {
+    return buildRejectionResponse({
+      legacyId: "",
+      approvalId: "",
+      errors: envelope.errors,
+      status: envelope.status,
+    });
+  }
+
+  const request = (input.body ?? {}) as DryRunRequest;
+
+  if (request.operation === "save") {
+    return buildRejectionResponse({
+      legacyId: String(request.legacyId ?? ""),
+      approvalId: String(request.approvalId ?? ""),
+      errors: ['operation "save" is rejected by dry-run endpoint — use dryRun only'],
+      status: 400,
+    });
+  }
+
+  const currentSnapshot = resolveCurrentSnapshot(String(request.legacyId ?? ""));
+  const result = simulateDiscographySaveDryRunEndpoint(request, currentSnapshot);
+  return result as DryRunHandlerResult;
+}

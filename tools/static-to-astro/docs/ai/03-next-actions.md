@@ -1,6 +1,18 @@
 Last updated: 2026-07-12
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36b-edge-dry-run-endpoint-root-placement — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u36b-edge-dry-run-endpoint-root-placement` |
+| Base | `4453258` |
+| Scope | Root copy only — scope exception 2 files |
+| Root path | `supabase/functions/gosaki-discography-save-dry-run/` |
+| Edge deploy | **not executed** |
+| Doc | `gosaki-discography-g20u36b-edge-dry-run-endpoint-root-placement.md` |
+| Next | G-20u36b-edge-dry-run-endpoint-deploy-manual (separate approval) |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36b-edge-dry-run-endpoint-root-placement-plan — complete
 
 | Item | Value |
@@ -9,9 +21,8 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Base | `e3b5e01` |
 | Scope | Root placement plan doc only — no root copy / deploy |
 | Copy map | tools draft → `supabase/functions/gosaki-discography-save-dry-run/` |
-| Root supabase/functions | **unchanged** |
 | Doc | `gosaki-discography-g20u36b-edge-dry-run-endpoint-root-placement-plan.md` |
-| Next | G-20u36b-edge-dry-run-endpoint-root-placement (separate approval) |
+| Next | **root-placement** — **complete** · **deploy-manual** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36b-edge-dry-run-endpoint-function-source-staging — complete
 

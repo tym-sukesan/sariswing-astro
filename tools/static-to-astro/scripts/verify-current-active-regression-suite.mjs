@@ -90,6 +90,7 @@ export const HISTORICAL_VERIFIERS = [
   { id: "G-20u36b-preflight", label: "Gosaki Discography Edge dry-run endpoint deploy preflight", script: "verify-g20u36b-edge-dry-run-endpoint-deploy-preflight.mjs" },
   { id: "G-20u36b-preflight-result", label: "Gosaki Discography Edge dry-run endpoint deploy preflight result record", script: "verify-g20u36b-result-gosaki-discography-edge-dry-run-endpoint-deploy-preflight-result.mjs" },
   { id: "G-20u36b-deploy-manual-plan", label: "Gosaki Discography Edge dry-run endpoint deploy manual plan", script: "verify-g20u36b-edge-dry-run-endpoint-deploy-manual-plan.mjs" },
+  { id: "G-20u36b-function-source-staging", label: "Gosaki Discography Edge dry-run endpoint function source staging", script: "verify-g20u36b-edge-dry-run-endpoint-function-source-staging.mjs" },
 ];
 
 /**

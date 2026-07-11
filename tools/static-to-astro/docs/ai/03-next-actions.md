@@ -1,5 +1,17 @@
-Last updated: 2026-07-11
+Last updated: 2026-07-12
 Project: Static-to-Astro CMS / Musician CMS Kit
+
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36b-edge-dry-run-endpoint-function-source-staging — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u36b-edge-dry-run-endpoint-function-source-staging` |
+| Base | `13c5bc6` |
+| Scope | Tools draft only — no root placement / deploy |
+| Draft | `scripts/edge-functions/gosaki-discography-save-dry-run/` |
+| Root supabase/functions | **unchanged** |
+| Doc | `gosaki-discography-g20u36b-edge-dry-run-endpoint-function-source-staging.md` |
+| Next | G-20u36b-edge-dry-run-endpoint-root-placement-plan |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36b-edge-dry-run-endpoint-deploy-manual-plan — complete
 
@@ -10,7 +22,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Scope | Manual deploy plan doc only — no deploy |
 | Prerequisite | Preflight result READY |
 | Doc | `gosaki-discography-g20u36b-edge-dry-run-endpoint-deploy-manual-plan.md` |
-| Next | G-20u36b-edge-dry-run-endpoint-function-source-staging |
+| Next | **function-source-staging** — **complete** · **root-placement-plan** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36b-edge-dry-run-endpoint-deploy-preflight-result — complete
 

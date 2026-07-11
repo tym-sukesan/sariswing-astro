@@ -81,6 +81,7 @@ export const HISTORICAL_VERIFIERS = [
   { id: "G-20u36a-permissions-remediation-preflight", label: "Gosaki Discography permissions remediation preflight SELECT-only", script: "verify-g20u36a-permissions-remediation-preflight-select-only.mjs" },
   { id: "G-20u36a-permissions-remediation-preflight-result", label: "Gosaki Discography permissions remediation preflight result record", script: "verify-g20u36a-result-gosaki-discography-permissions-remediation-preflight-result.mjs" },
   { id: "G-20u36a-permissions-remediation-apply-plan", label: "Gosaki Discography permissions remediation apply plan", script: "verify-g20u36a-permissions-remediation-apply-plan.mjs" },
+  { id: "G-20u36a-permissions-remediation-apply-manual-result", label: "Gosaki Discography permissions remediation apply manual result record", script: "verify-g20u36a-result-gosaki-discography-permissions-remediation-apply-manual-result.mjs" },
 ];
 
 /**

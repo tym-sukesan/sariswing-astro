@@ -5,10 +5,21 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36a-permissions-remediation-apply-plan — complete.
-Formal apply plan prepared for 2× REVOKE UPDATE (staging only). Not executed. Save/Edge blocked.
+Current phase: G-20u36a-permissions-remediation-apply-manual-result-record — complete.
+Human operator executed 2× REVOKE UPDATE on staging. Success. No rows returned. After-verification pending. Save/Edge blocked.
 STG live package still 00c8888 (G-20u30b dry-run UI).
 ```
+
+## G-20u36a-permissions-remediation-apply-manual-result — complete
+
+- **Base:** `e6dba96`
+- **Executor:** Human operator · staging `kmjqppxjdnwwrtaeqjta` (production **not** used)
+- **Executed:** 2× `REVOKE UPDATE` — `discography` + `discography_tracks` · authenticated
+- **SQL Editor result:** **Success. No rows returned.**
+- **Not done:** GRANT · RLS change · data row change · Edge deploy · Save enable
+- **After-verification:** **not executed** — remediation **not complete**
+- **Save / Edge deploy:** **blocked**
+- **Next:** G-20u36a-permissions-remediation-after-verification
 
 ## G-20u36a-permissions-remediation-apply-plan — complete
 
@@ -20,7 +31,7 @@ STG live package still 00c8888 (G-20u30b dry-run UI).
 - **Rollback:** emergency draft — separate approval only
 - **After-verification:** required before G-20u36b Edge deploy plan
 - **Save / Edge deploy:** **blocked**
-- **Next:** apply-manual · after-verification
+- **Next:** **apply-manual** — **complete** · **G-20u36a-permissions-remediation-after-verification**
 
 ## G-20u36a-permissions-remediation-preflight-result — complete
 

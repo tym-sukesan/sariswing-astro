@@ -5,10 +5,20 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36b-edge-dry-run-endpoint-function-source-staging — complete.
-Tools draft staged. Root supabase/functions unchanged. No Edge deploy. Save still blocked. Next: root-placement-plan.
+Current phase: G-20u36b-edge-dry-run-endpoint-root-placement-plan — complete.
+Root placement plan prepared. Root supabase/functions unchanged. No Edge deploy. Save still blocked. Next: root-placement (separate approval).
 STG live package still 00c8888 (G-20u30b dry-run UI).
 ```
+
+## G-20u36b-edge-dry-run-endpoint-root-placement-plan — complete
+
+- **Base:** `e3b5e01`
+- **Scope:** Root placement plan doc only — copy map documented · **no root copy / deploy / SQL / Save / fetch POST**
+- **Copy from:** `scripts/edge-functions/gosaki-discography-save-dry-run/index.ts` + `handler.ts`
+- **Copy to:** `supabase/functions/gosaki-discography-save-dry-run/index.ts` + `handler.ts`
+- **Deploy:** remains separate phase (deploy-manual)
+- **Root `supabase/functions/**`:** **unchanged**
+- **Next:** **G-20u36b-edge-dry-run-endpoint-root-placement** (separate operator approval)
 
 ## G-20u36b-edge-dry-run-endpoint-function-source-staging — complete
 
@@ -17,7 +27,7 @@ STG live package still 00c8888 (G-20u30b dry-run UI).
 - **Policy:** POST/json · dryRun only · save reject · write flags false · service_role NOT CONNECTED
 - **Root `supabase/functions/**`:** **unchanged**
 - **Edge deploy / SQL / Save / fetch POST:** **not executed**
-- **Next:** **G-20u36b-edge-dry-run-endpoint-root-placement-plan**
+- **Next:** **root-placement-plan** — **complete** · **root-placement**
 
 ## G-20u36b-edge-dry-run-endpoint-deploy-manual-plan — complete
 

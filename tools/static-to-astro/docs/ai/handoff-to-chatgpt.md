@@ -5,10 +5,21 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36a-permissions-remediation-preflight-select-only — complete.
-Preflight SELECT-only SQL prepared before manual REVOKE UPDATE x2. Cursor did not execute SQL. READY_FOR_MANUAL_REVOKE/STOP gate documented.
+Current phase: G-20u36a-permissions-remediation-preflight-result-record — complete.
+Operator ran remediation preflight SELECT-only SQL. READY_FOR_MANUAL_REVOKE. REVOKE not executed. Save/Edge blocked.
 STG live package still 00c8888 (G-20u30b dry-run UI).
 ```
+
+## G-20u36a-permissions-remediation-preflight-result — complete
+
+- **Base:** `a8b7ac0`
+- **Executor:** Human operator · staging `kmjqppxjdnwwrtaeqjta` (production **not** used)
+- **Outcome:** **READY_FOR_MANUAL_REVOKE** · `H.preflight_summary` = READY
+- **Grants:** authenticated UPDATE **2** · anon write **0** · SELECT preserved (anon 2 · auth 2)
+- **Data:** **4/34** · **discography-002/8** · integrity PASS
+- **REVOKE:** **not executed** in this phase
+- **Save / Edge deploy:** **blocked**
+- **Next:** G-20u36a-permissions-remediation-apply-plan
 
 ## G-20u36a-permissions-remediation-preflight-select-only — complete
 
@@ -18,7 +29,7 @@ STG live package still 00c8888 (G-20u30b dry-run UI).
 - **Gate:** `READY_FOR_MANUAL_REVOKE` when all checks PASS · else **STOP**
 - **SQL executed:** **no** (Cursor)
 - **REVOKE / GRANT / RLS / Edge / Save:** **not executed**
-- **Next:** preflight-result-record · apply-plan · apply-manual · after-verification
+- **Next:** **G-20u36a-permissions-remediation-preflight-result-record** — **complete** · **G-20u36a-permissions-remediation-apply-plan**
 
 ## G-20u36a-permissions-remediation-plan Gosaki Discography permissions remediation plan — complete
 

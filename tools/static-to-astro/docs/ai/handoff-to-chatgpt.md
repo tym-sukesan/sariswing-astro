@@ -5,10 +5,20 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36a-gosaki-discography-select-only-before-verification — complete.
-SELECT-only before verification SQL prepared for discography-002. Cursor did not execute SQL. No DB write. Production STOP.
+Current phase: G-20u36a-result-record-gosaki-discography-select-only-before-verification — complete.
+Operator ran G-20u36a SELECT-only SQL on staging. Data mostly PASS. authenticated UPDATE grants STOP. Do not proceed to Save/DB write.
 STG live package still 00c8888 (G-20u30b dry-run UI).
 ```
+
+## G-20u36a-result Gosaki Discography SELECT-only before verification result — complete
+
+- **Base:** `074583c`
+- **Executor:** Human operator · staging `kmjqppxjdnwwrtaeqjta` (production **not** used)
+- **Outcome:** Data baseline mostly PASS · **`H.stop_summary.any_stop` = STOP**
+- **STOP reason:** `authenticated` **UPDATE** on `public.discography` + `public.discography_tracks` (2 grants)
+- **Target:** `discography-002` · SKYLARK · 8 tracks · checksums recorded
+- **Decision:** **Do not proceed** to Save / DB write / REVOKE/GRANT/RLS change in this phase
+- **Next:** G-20u36a-permissions-rls-deep-dive (SELECT-only)
 
 ## G-20u36a Gosaki Discography SELECT-only before verification — complete
 

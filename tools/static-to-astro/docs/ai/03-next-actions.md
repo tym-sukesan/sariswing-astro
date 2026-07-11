@@ -1,6 +1,19 @@
 Last updated: 2026-07-11
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36a-result Gosaki Discography SELECT-only before verification result — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u36a-result-record-gosaki-discography-select-only-before-verification` |
+| Base | `074583c` |
+| Executor | Human operator · staging SQL Editor |
+| Outcome | Data mostly PASS · **permissions STOP** |
+| STOP | authenticated UPDATE on `discography` + `discography_tracks` |
+| Proceed to Save | **no** |
+| Doc | `gosaki-discography-g20u36a-select-only-before-verification-result.md` |
+| Next | G-20u36a-permissions-rls-deep-dive (SELECT-only) |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36a Gosaki Discography SELECT-only before verification — complete
 
 | Item | Value |
@@ -13,7 +26,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | DB / mutation / Edge / Save | **not executed** |
 | Doc | `gosaki-discography-g20u36a-select-only-before-verification.md` |
 | Verifier | `verify-g20u36a-gosaki-discography-select-only-before-verification.mjs` (historical) |
-| Next | G-20u36a-result-record · G-20u36b Edge deploy plan |
+| Next | **G-20u36a-result** execution record — **complete** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u35 Gosaki Discography staging DB write test plan & rollback drill — complete
 

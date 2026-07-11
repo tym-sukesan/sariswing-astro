@@ -1,6 +1,17 @@
 Last updated: 2026-07-11
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36a-permissions-remediation-plan Gosaki Discography permissions remediation plan — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u36a-permissions-remediation-plan` |
+| Base | `83b42c9` |
+| Scope | Plan doc only — REVOKE UPDATE recommended first |
+| SQL executed | **no** |
+| Doc | `gosaki-discography-g20u36a-permissions-remediation-plan.md` |
+| Next | G-20u36a-permissions-remediation-preflight-select-only |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36a-permissions-rls-deep-dive-result Gosaki Discography permissions / RLS deep-dive result — complete
 
 | Item | Value |
@@ -12,7 +23,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | RISK | authenticated UPDATE + ALL/`is_admin()` on both tables |
 | Proceed to Save | **no** |
 | Doc | `gosaki-discography-g20u36a-permissions-rls-deep-dive-result.md` |
-| Next | G-20u36a-permissions-remediation-plan |
+| Next | **G-20u36a-permissions-remediation-plan** — **complete** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36a-permissions-rls-deep-dive Gosaki Discography permissions / RLS deep-dive — complete
 

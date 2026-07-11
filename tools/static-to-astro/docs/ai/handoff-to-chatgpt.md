@@ -5,10 +5,21 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36a-permissions-rls-deep-dive-result-record — complete.
-Operator ran permissions/RLS deep-dive SELECT-only SQL on staging. RISK confirmed (authenticated UPDATE + ALL/is_admin policies). H.review_summary STOP. Do not proceed to Save/DB write/Edge deploy.
+Current phase: G-20u36a-permissions-remediation-plan — complete.
+Permissions remediation plan prepared (doc only). First apply candidate: REVOKE authenticated UPDATE x2. No SQL/REVOKE/GRANT/RLS/Edge/Save executed.
 STG live package still 00c8888 (G-20u30b dry-run UI).
 ```
+
+## G-20u36a-permissions-remediation-plan Gosaki Discography permissions remediation plan — complete
+
+- **Base:** `83b42c9`
+- **Scope:** Plan doc only — no execution
+- **First remediation:** REVOKE authenticated UPDATE on `discography` + `discography_tracks`
+- **Preserve:** SELECT grants · anon write 0 · RLS enabled
+- **Deferred:** policy hardening (ALL → SELECT-only) — separate phase
+- **Future draft:** in doc — **NOT EXECUTED / DO NOT RUN IN THIS PHASE**
+- **Save / Edge deploy:** still **blocked**
+- **Next:** G-20u36a-permissions-remediation-preflight-select-only · apply-plan · apply-manual · after-verification
 
 ## G-20u36a-permissions-rls-deep-dive-result Gosaki Discography permissions / RLS deep-dive result — complete
 
@@ -19,7 +30,7 @@ STG live package still 00c8888 (G-20u30b dry-run UI).
 - **Policies:** `discography_admin_all` · `discography_tracks_admin_all` — cmd ALL · roles authenticated
 - **Edge-only path:** **contradiction** — direct authenticated admin UPDATE possible
 - **Decision:** **Do not proceed** to Save / DB write / Edge deploy / REVOKE/GRANT/RLS change in this phase
-- **Next:** G-20u36a-permissions-remediation-plan
+- **Next:** **G-20u36a-permissions-remediation-plan** — **complete** · remediation preflight / apply phases
 
 ## G-20u36a-permissions-rls-deep-dive Gosaki Discography permissions / RLS deep-dive — complete
 

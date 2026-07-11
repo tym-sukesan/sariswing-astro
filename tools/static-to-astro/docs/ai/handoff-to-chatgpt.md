@@ -5,10 +5,20 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36a-permissions-remediation-apply-manual-result-record — complete.
-Human operator executed 2× REVOKE UPDATE on staging. Success. No rows returned. After-verification pending. Save/Edge blocked.
+Current phase: G-20u36a-permissions-remediation-after-verification — complete.
+Post-REVOKE after-verification SELECT-only SQL prepared. Cursor did not execute SQL. Save/Edge blocked.
 STG live package still 00c8888 (G-20u30b dry-run UI).
 ```
+
+## G-20u36a-permissions-remediation-after-verification — complete
+
+- **Base:** `da5fb05`
+- **Scope:** Post-REVOKE SELECT-only verification SQL
+- **Prerequisite:** manual REVOKE x2 executed (apply-manual-result)
+- **Gate:** `H.after_verification.summary` PASS/STOP
+- **SQL executed:** **no** (Cursor)
+- **Save / Edge deploy:** **blocked** until result record PASS
+- **Next:** after-verification-result-record · G-20u36b (after PASS)
 
 ## G-20u36a-permissions-remediation-apply-manual-result — complete
 
@@ -19,7 +29,7 @@ STG live package still 00c8888 (G-20u30b dry-run UI).
 - **Not done:** GRANT · RLS change · data row change · Edge deploy · Save enable
 - **After-verification:** **not executed** — remediation **not complete**
 - **Save / Edge deploy:** **blocked**
-- **Next:** G-20u36a-permissions-remediation-after-verification
+- **Next:** **G-20u36a-permissions-remediation-after-verification** — **complete** · after-verification-result-record
 
 ## G-20u36a-permissions-remediation-apply-plan — complete
 

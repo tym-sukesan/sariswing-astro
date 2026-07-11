@@ -1,6 +1,24 @@
 Last updated: 2026-07-11
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u30b Gosaki Discography dry-run staging reflection record — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u30b-gosaki-discography-dry-run-staging-reflection-record` |
+| Doc HEAD | `00c8888` |
+| Deployed STG package | `00c8888` (30 files · `includesAdmin: true`) |
+| Build / preflight | **PASS** |
+| Upload | manual FTP (FileZilla) · `public-dist/` → `/cms-kit-staging/gosaki-piano/` |
+| `/admin/` dry-run validation | **PASS** — editable textarea · dry-run buttons · diff result area |
+| Policy | `wouldWrite: false` · `networkWrite: false` · `saveEnabled: false` · Save disabled |
+| Sitemap | `/admin/` **excluded** (0 admin matches) |
+| Production | upload **STOP** (G-20j) · not executed |
+| Not executed | Cursor FTP · deploy · DB write |
+| Doc | `gosaki-discography-dry-run-staging-reflection-record.md` |
+| Verifier | `verify-g20u30b-gosaki-discography-dry-run-staging-reflection-record.mjs` (historical) |
+| Next | Discography Save design · DB write SQL/Edge design · YouTube/About edit UI |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u30 Gosaki Discography dry-run validation — complete
 
 | Item | Value |
@@ -14,7 +32,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Not executed | Save enable · fetch POST (Discography) · localStorage · FTP · deploy |
 | Doc | `gosaki-discography-dry-run-validation.md` |
 | Verifier | `verify-g20u30-gosaki-discography-dry-run-validation.mjs` (historical) |
-| Next | Discography dry-run STG reflection · Save design · YouTube/About edit UI |
+| Next | **G-20u30b** STG reflection — **complete** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u29b Gosaki Discography editor staging reflection record — complete
 

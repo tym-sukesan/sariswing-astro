@@ -5,10 +5,21 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u30-gosaki-discography-dry-run-validation — complete.
-Discography track list dry-run validation in staging read-only admin (browser-only diff). Save disabled. No DB/network write. Production upload STOP (G-20j).
-STG live package still 2a5dc68 until operator regen + manual FTP.
+Current phase: G-20u30b-gosaki-discography-dry-run-staging-reflection-record — complete.
+G-20u30 Discography dry-run validation reflected on STG (package 00c8888). Editable textarea · dry-run buttons · wouldWrite: false. Save disabled. Sitemap excludes /admin/. Production upload STOP (G-20j).
 ```
+
+## G-20u30b Gosaki Discography dry-run staging reflection record — complete
+
+- **Doc HEAD:** `00c8888` · **Deployed STG package:** `00c8888667205e0deb879a4780201e61e7313e65`
+- **Build / preflight:** **PASS** · 30 files · `includesAdmin: true` · `safeForStaticFtp: true`
+- **Upload:** manual FTP (FileZilla) · `public-dist/` contents → `/cms-kit-staging/gosaki-piano/`
+- **STG `/admin/`:** dry-run validation **PASS** · editable textarea · per-album + all-albums buttons · diff result area
+- **Policy:** `wouldWrite: false` · `networkWrite: false` · `saveEnabled: false` · Save disabled
+- **Sitemap:** `/admin/` **not** listed (0 admin string matches)
+- **Production:** **not updated** · upload **STOP** (G-20j)
+- **Not executed:** Cursor FTP · CLI mirror/sync/delete · DB write · production deploy
+- **Next:** Discography Save design · DB write SQL/Edge design · YouTube/About edit UI
 
 ## G-20u30 Gosaki Discography dry-run validation — complete
 

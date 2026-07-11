@@ -5,10 +5,20 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36b-edge-dry-run-endpoint-deploy-preflight-result-record — complete.
-Preflight SQL READY. Edge deploy not executed. Save still blocked. Next: G-20u36b deploy-manual.
+Current phase: G-20u36b-edge-dry-run-endpoint-deploy-manual-plan — complete.
+Manual deploy plan prepared. No Edge deploy. Save still blocked. Next: function-source-staging.
 STG live package still 00c8888 (G-20u30b dry-run UI).
 ```
+
+## G-20u36b-edge-dry-run-endpoint-deploy-manual-plan — complete
+
+- **Base:** `2189c82`
+- **Scope:** Manual deploy plan doc only — no deploy / SQL / Save / fetch POST
+- **Prerequisite:** Preflight result **READY_FOR_EDGE_DRY_RUN_DEPLOY_PREFLIGHT**
+- **Function:** `gosaki-discography-save-dry-run` · staging `kmjqppxjdnwwrtaeqjta` only
+- **Deploy command:** NOT EXECUTED draft in doc only
+- **Root `supabase/functions/**`:** **unchanged**
+- **Next:** **G-20u36b-edge-dry-run-endpoint-function-source-staging**
 
 ## G-20u36b-edge-dry-run-endpoint-deploy-preflight-result — complete
 

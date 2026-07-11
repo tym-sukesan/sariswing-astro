@@ -1,17 +1,27 @@
 Last updated: 2026-07-11
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36b-edge-dry-run-endpoint-deploy-manual-plan — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u36b-edge-dry-run-endpoint-deploy-manual-plan` |
+| Base | `2189c82` |
+| Scope | Manual deploy plan doc only — no deploy |
+| Prerequisite | Preflight result READY |
+| Doc | `gosaki-discography-g20u36b-edge-dry-run-endpoint-deploy-manual-plan.md` |
+| Next | G-20u36b-edge-dry-run-endpoint-function-source-staging |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36b-edge-dry-run-endpoint-deploy-preflight-result — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-20u36b-edge-dry-run-endpoint-deploy-preflight-result-record` |
 | Base | `2d754f7` |
-| Executor | Human operator · staging SQL Editor |
 | Outcome | **READY_FOR_EDGE_DRY_RUN_DEPLOY_PREFLIGHT** |
 | Edge deploy | **not executed** |
 | Doc | `gosaki-discography-g20u36b-edge-dry-run-endpoint-deploy-preflight-result.md` |
-| Next | G-20u36b-edge-dry-run-endpoint-deploy-manual |
+| Next | **deploy-manual-plan** — **complete** · **function-source-staging** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36b-edge-dry-run-endpoint-deploy-preflight — complete
 

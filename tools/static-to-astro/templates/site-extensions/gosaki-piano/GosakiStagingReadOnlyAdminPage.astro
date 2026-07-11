@@ -20,6 +20,8 @@ import {
   G20U28_ADMIN_UI_PHASE,
   G20U29_DISCOGRAPHY_EDITOR_PHASE,
   G20U29_DISCOGRAPHY_EDITOR_SAVE_DISABLED_REASON,
+  G20U30_DISCOGRAPHY_DRY_RUN_PHASE,
+  G20U30_DISCOGRAPHY_DRY_RUN_NOTE,
   GOSAKI_STAGING_PREVIEW_URL,
   buildGosakiReadOnlyAdminViewModel,
   isG11c4aSupabaseAuthConfigured,
@@ -78,6 +80,7 @@ const pageTitle = "Gosaki Piano 管理画面（staging · 読み取り専用）"
     data-gosaki-read-only-admin="true"
     data-phase={G20U28_ADMIN_UI_PHASE}
     data-discography-editor-phase={G20U29_DISCOGRAPHY_EDITOR_PHASE}
+    data-discography-dry-run-phase={G20U30_DISCOGRAPHY_DRY_RUN_PHASE}
     data-g11c6a-phase={G11C6A_PHASE}
     data-gosaki-youtube-dry-run-endpoint={dryRunEndpoint}
     data-gosaki-youtube-save-endpoint={saveEndpoint}
@@ -233,15 +236,15 @@ const pageTitle = "Gosaki Piano 管理画面（staging · 読み取り専用）"
           <h2 id="gra-discography-editor-heading">Discography Editor Prototype</h2>
           <div class="gosaki-read-only-admin__banner gosaki-read-only-admin__banner--compact" role="status">
             <div class="gosaki-read-only-admin__dashboard-badges">
-              <span class="gosaki-read-only-admin__pill">read-only prototype</span>
+              <span class="gosaki-read-only-admin__pill gosaki-read-only-admin__pill--ok">Dry-run only</span>
               <span class="gosaki-read-only-admin__pill gosaki-read-only-admin__pill--staging">STAGING ONLY</span>
               <span class="gosaki-read-only-admin__pill gosaki-read-only-admin__pill--warn">Save disabled</span>
             </div>
             <p class="gosaki-read-only-admin__meta">
-              {G20U29_DISCOGRAPHY_EDITOR_SAVE_DISABLED_REASON}
+              {G20U30_DISCOGRAPHY_DRY_RUN_NOTE}
             </p>
             <ul class="gosaki-read-only-admin__safety-list">
-              <li>DB write なし · Supabase insert/update/delete なし</li>
+              <li>No DB write · No network write · Discography fetch POST なし</li>
               <li>本番 package には <code>/admin/</code> を含めません（sitemap からも除外）</li>
               <li>本番 upload: <strong>G-20j まで STOP</strong></li>
             </ul>
@@ -357,15 +360,31 @@ const pageTitle = "Gosaki Piano 管理画面（staging · 読み取り専用）"
                   </div>
                   <div class="gosaki-read-only-admin__field">
                     <label for={`gra-disc-tracks-${album.legacyId}`}>
-                      track list — 1 line = 1 track · Save disabled
+                      track list — 1 line = 1 track · editable · Save disabled
                     </label>
                     <textarea
                       id={`gra-disc-tracks-${album.legacyId}`}
-                      class="gosaki-read-only-admin__textarea-readonly gosaki-read-only-admin__track-list-textarea"
+                      class="gosaki-read-only-admin__track-list-textarea gosaki-read-only-admin__track-list-textarea--editable"
                       data-track-list-textarea="true"
-                      readonly
+                      data-original-track-list={album.trackListText}
                       rows={Math.max(4, Math.min(16, album.trackCount + 1))}
-                    >{album.trackListText || "—"}</textarea>
+                    >{album.trackListText || ""}</textarea>
+                  </div>
+                  <div class="gosaki-read-only-admin__dry-run" data-section="discography-dry-run-album">
+                    <div class="gosaki-read-only-admin__actions">
+                      <button
+                        type="button"
+                        class="gosaki-read-only-admin__btn gosaki-read-only-admin__btn--primary gosaki-read-only-admin__btn--dry-run"
+                        data-disc-dry-run-btn="album"
+                      >
+                        Dry-run validation（保存なし）
+                      </button>
+                    </div>
+                    <pre
+                      class="gosaki-read-only-admin__dry-run-result"
+                      data-disc-dry-run-result="album"
+                      aria-live="polite"
+                    >（Dry-run 結果 — added / removed / changedLines / wouldWrite: false）</pre>
                   </div>
                   <div class="gosaki-read-only-admin__actions">
                     <button type="button" class="gosaki-read-only-admin__btn" disabled title={G20U29_DISCOGRAPHY_EDITOR_SAVE_DISABLED_REASON}>
@@ -376,6 +395,26 @@ const pageTitle = "Gosaki Piano 管理画面（staging · 読み取り専用）"
               ))}
             </div>
           )}
+
+          <div class="gosaki-read-only-admin__dry-run gosaki-read-only-admin__dry-run--all" data-section="discography-dry-run-all">
+            <h3 class="gosaki-read-only-admin__meta">All albums — Dry-run validation</h3>
+            <div class="gosaki-read-only-admin__actions">
+              <button
+                type="button"
+                id="gra-disc-dry-run-all-btn"
+                class="gosaki-read-only-admin__btn gosaki-read-only-admin__btn--primary gosaki-read-only-admin__btn--dry-run"
+                data-disc-dry-run-btn="all"
+              >
+                Validate changes — no save（全アルバム）
+              </button>
+            </div>
+            <pre
+              id="gra-disc-dry-run-all-result"
+              class="gosaki-read-only-admin__dry-run-result"
+              data-disc-dry-run-result="all"
+              aria-live="polite"
+            >（全アルバム Dry-run 結果 — wouldWrite: false · networkWrite: false）</pre>
+          </div>
 
           <div class="gosaki-read-only-admin__actions">
             <button type="button" class="gosaki-read-only-admin__btn" disabled title={G20U29_DISCOGRAPHY_EDITOR_SAVE_DISABLED_REASON}>
@@ -565,7 +604,7 @@ const pageTitle = "Gosaki Piano 管理画面（staging · 読み取り専用）"
       </main>
 
       <footer class="gosaki-read-only-admin__footer">
-        Gosaki Piano staging read-only CMS — {G20U28_ADMIN_UI_PHASE} · {G20U29_DISCOGRAPHY_EDITOR_PHASE}
+        Gosaki Piano staging read-only CMS — {G20U28_ADMIN_UI_PHASE} · {G20U29_DISCOGRAPHY_EDITOR_PHASE} · {G20U30_DISCOGRAPHY_DRY_RUN_PHASE}
       </footer>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.1/dist/umd/supabase.js"></script>
@@ -868,6 +907,55 @@ const pageTitle = "Gosaki Piano 管理画面（staging · 読み取り専用）"
           });
         });
       })();
+    </script>
+    <script>
+      import {
+        validateDiscographyTrackListDryRun,
+        validateDiscographyTrackListDryRunBatch,
+      } from "../lib/gosaki-staging-read-only-admin";
+
+      function findAlbumCard(el) {
+        return el instanceof Element ? el.closest("[data-album-legacy-id]") : null;
+      }
+
+      function runAlbumDryRun(card) {
+        if (!card) return;
+        const textarea = card.querySelector('[data-track-list-textarea="true"]');
+        const resultEl = card.querySelector('[data-disc-dry-run-result="album"]');
+        if (!textarea || !resultEl) return;
+        const original = textarea.getAttribute("data-original-track-list") ?? "";
+        const titleEl = card.querySelector(".gosaki-read-only-admin__album-card-title");
+        const result = validateDiscographyTrackListDryRun(original, textarea.value, {
+          legacyId: card.getAttribute("data-album-legacy-id") ?? undefined,
+          title: titleEl?.textContent?.trim() ?? undefined,
+        });
+        resultEl.textContent = JSON.stringify(result, null, 2);
+      }
+
+      document.querySelectorAll('[data-disc-dry-run-btn="album"]').forEach((btn) => {
+        btn.addEventListener("click", () => runAlbumDryRun(findAlbumCard(btn)));
+      });
+
+      const allBtn = document.getElementById("gra-disc-dry-run-all-btn");
+      const allResult = document.getElementById("gra-disc-dry-run-all-result");
+      if (allBtn && allResult) {
+        allBtn.addEventListener("click", () => {
+          const albums = [];
+          document.querySelectorAll("[data-album-legacy-id]").forEach((card) => {
+            const textarea = card.querySelector('[data-track-list-textarea="true"]');
+            const titleEl = card.querySelector(".gosaki-read-only-admin__album-card-title");
+            if (!textarea) return;
+            albums.push({
+              legacyId: card.getAttribute("data-album-legacy-id") ?? "",
+              title: titleEl?.textContent?.trim() ?? "",
+              originalText: textarea.getAttribute("data-original-track-list") ?? "",
+              nextText: textarea.value,
+            });
+          });
+          const batch = validateDiscographyTrackListDryRunBatch(albums);
+          allResult.textContent = JSON.stringify(batch, null, 2);
+        });
+      }
     </script>
   </body>
 </html>

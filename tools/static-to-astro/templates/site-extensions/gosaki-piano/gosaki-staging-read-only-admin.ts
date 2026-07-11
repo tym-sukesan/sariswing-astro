@@ -37,6 +37,142 @@ export const G20U29_DISCOGRAPHY_EDITOR_PHASE = "G-20u29-gosaki-discography-edit-
 export const G20U29_DISCOGRAPHY_EDITOR_SAVE_DISABLED_REASON =
   "G-20u29: Discography Editor はプロトタイプです。Save は無効 — dry-run 検証と Save 設計は別フェーズです。";
 
+/** G-20u30 — Discography track list dry-run validation (browser-only · no network write). */
+export const G20U30_DISCOGRAPHY_DRY_RUN_PHASE = "G-20u30-gosaki-discography-dry-run-validation";
+export const G20U30_DISCOGRAPHY_DRY_RUN_NOTE =
+  "G-20u30: Dry-run validation のみ — ブラウザ内差分表示。Save / DB write / network write なし。本番 Save には operator approval + DB write 設計が必要です。";
+
+export interface DiscographyTrackListChangedLine {
+  line: number;
+  before: string | null;
+  after: string | null;
+  kind: "added" | "removed" | "changed";
+}
+
+export interface DiscographyTrackListDryRunResult {
+  ok: true;
+  dryRun: true;
+  wouldWrite: false;
+  saveEnabled: false;
+  networkWrite: false;
+  blankLinesIgnored: true;
+  legacyId?: string;
+  title?: string;
+  totalBefore: number;
+  totalAfter: number;
+  added: string[];
+  removed: string[];
+  unchanged: number;
+  changedLines: DiscographyTrackListChangedLine[];
+  reordered: boolean;
+}
+
+export interface DiscographyTrackListDryRunBatchResult {
+  ok: true;
+  dryRun: true;
+  wouldWrite: false;
+  saveEnabled: false;
+  networkWrite: false;
+  blankLinesIgnored: true;
+  albumCount: number;
+  albums: DiscographyTrackListDryRunResult[];
+}
+
+/**
+ * Parse multiline track list textarea: trim lines, ignore blank lines.
+ */
+export function parseDiscographyTrackListLines(text: string): string[] {
+  return String(text ?? "")
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean);
+}
+
+/**
+ * Compare original vs edited track list (1 line = 1 track). Browser-only dry-run — no DB write.
+ */
+export function validateDiscographyTrackListDryRun(
+  originalText: string,
+  nextText: string,
+  meta: { legacyId?: string; title?: string } = {},
+): DiscographyTrackListDryRunResult {
+  const before = parseDiscographyTrackListLines(originalText);
+  const after = parseDiscographyTrackListLines(nextText);
+
+  const beforeRemain = [...before];
+  const afterRemain = [...after];
+  const removed: string[] = [];
+  const added: string[] = [];
+
+  for (let i = beforeRemain.length - 1; i >= 0; i -= 1) {
+    const title = beforeRemain[i];
+    const matchIdx = afterRemain.indexOf(title);
+    if (matchIdx >= 0) {
+      beforeRemain.splice(i, 1);
+      afterRemain.splice(matchIdx, 1);
+    }
+  }
+  removed.push(...beforeRemain);
+  added.push(...afterRemain);
+
+  const unchanged = before.length - removed.length;
+  const maxLen = Math.max(before.length, after.length);
+  /** @type {DiscographyTrackListChangedLine[]} */
+  const changedLines: DiscographyTrackListChangedLine[] = [];
+  for (let i = 0; i < maxLen; i += 1) {
+    const b = before[i] ?? null;
+    const a = after[i] ?? null;
+    if (b === a) continue;
+    if (b && a) changedLines.push({ line: i + 1, before: b, after: a, kind: "changed" });
+    else if (!b && a) changedLines.push({ line: i + 1, before: null, after: a, kind: "added" });
+    else if (b && !a) changedLines.push({ line: i + 1, before: b, after: null, kind: "removed" });
+  }
+
+  const reordered =
+    before.join("\n") !== after.join("\n") && added.length === 0 && removed.length === 0;
+
+  return {
+    ok: true,
+    dryRun: true,
+    wouldWrite: false,
+    saveEnabled: false,
+    networkWrite: false,
+    blankLinesIgnored: true,
+    legacyId: meta.legacyId,
+    title: meta.title,
+    totalBefore: before.length,
+    totalAfter: after.length,
+    added,
+    removed,
+    unchanged,
+    changedLines,
+    reordered,
+  };
+}
+
+/**
+ * Dry-run all album track lists in one batch (still no network / DB write).
+ */
+export function validateDiscographyTrackListDryRunBatch(
+  albums: Array<{ legacyId: string; title: string; originalText: string; nextText: string }>,
+): DiscographyTrackListDryRunBatchResult {
+  return {
+    ok: true,
+    dryRun: true,
+    wouldWrite: false,
+    saveEnabled: false,
+    networkWrite: false,
+    blankLinesIgnored: true,
+    albumCount: albums.length,
+    albums: albums.map((album) =>
+      validateDiscographyTrackListDryRun(album.originalText, album.nextText, {
+        legacyId: album.legacyId,
+        title: album.title,
+      }),
+    ),
+  };
+}
+
 export interface GosakiDiscographyEditorAlbumSnapshot {
   legacyId: string;
   title: string;

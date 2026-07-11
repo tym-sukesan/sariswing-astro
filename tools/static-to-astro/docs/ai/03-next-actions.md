@@ -1,6 +1,21 @@
 Last updated: 2026-07-11
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u30 Gosaki Discography dry-run validation — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u30-gosaki-discography-dry-run-validation` |
+| Base | `7b44f24` |
+| UI | editable track textarea · Dry-run validation buttons · result JSON |
+| Diff | added / removed / unchanged / changedLines / reordered · `wouldWrite: false` |
+| Track UI | 1 textarea / album · 1 line = 1 track · **not** 34 fixed inputs |
+| Safety | Dry-run only · Save disabled · no DB/network write · G-20j STOP |
+| Not executed | Save enable · fetch POST (Discography) · localStorage · FTP · deploy |
+| Doc | `gosaki-discography-dry-run-validation.md` |
+| Verifier | `verify-g20u30-gosaki-discography-dry-run-validation.mjs` (historical) |
+| Next | Discography dry-run STG reflection · Save design · YouTube/About edit UI |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u29b Gosaki Discography editor staging reflection record — complete
 
 | Item | Value |
@@ -18,7 +33,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Not executed | Cursor FTP · deploy · DB write |
 | Doc | `gosaki-discography-editor-staging-reflection-record.md` |
 | Verifier | `verify-g20u29b-gosaki-discography-editor-staging-reflection-record.mjs` (historical) |
-| Next | Discography dry-run validation · Discography Save design · YouTube edit UI · About edit UI |
+| Next | **G-20u30** dry-run validation — **complete** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u29 Gosaki Discography edit UI prototype — complete
 
@@ -33,7 +48,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Not executed | Save enable · localStorage · FTP · deploy · package upload |
 | Doc | `gosaki-discography-edit-ui-prototype.md` |
 | Verifier | `verify-g20u29-gosaki-discography-edit-ui-prototype.mjs` (historical) |
-| Next | **G-20u29b** STG reflection — **complete** |
+| Next | **G-20u29b** STG reflection — **complete** · **G-20u30** dry-run validation — **complete** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u28b Gosaki admin UI staging reflection record — complete
 

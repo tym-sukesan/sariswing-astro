@@ -5,9 +5,19 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u29b-gosaki-discography-editor-staging-reflection-record — complete.
-G-20u29 Discography Editor Prototype reflected on STG (package 2a5dc68). 4 albums · 4 track textareas (1 line = 1 track). Save disabled. Sitemap excludes /admin/. Production upload STOP (G-20j).
+Current phase: G-20u30-gosaki-discography-dry-run-validation — complete.
+Discography track list dry-run validation in staging read-only admin (browser-only diff). Save disabled. No DB/network write. Production upload STOP (G-20j).
+STG live package still 2a5dc68 until operator regen + manual FTP.
 ```
+
+## G-20u30 Gosaki Discography dry-run validation — complete
+
+- **Base:** `7b44f24`
+- **UI:** editable track textarea · `Dry-run validation（保存なし）` per album · all-albums validate button
+- **Diff:** `parseDiscographyTrackListLines` → added / removed / unchanged / changedLines / reordered · `wouldWrite: false`
+- **Safety:** Dry-run only · Save disabled · no DB write · no Discography fetch POST · no localStorage · G-20j STOP
+- **Not executed:** Save enable · FTP · deploy · package upload · Supabase mutation
+- **Next:** Discography dry-run STG reflection · Save design · DB write SQL/Edge design · YouTube/About edit UI
 
 ## G-20u29b Gosaki Discography editor staging reflection record — complete
 

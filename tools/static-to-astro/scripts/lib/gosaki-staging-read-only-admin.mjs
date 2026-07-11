@@ -22,6 +22,7 @@ export const GOSAKI_READ_ONLY_ADMIN_DISCOGRAPHY_EDITOR_DATA_REL =
 export const GOSAKI_CONTACT_HUBSPOT_CONFIG_REL = "config/sites/gosaki-piano-contact-hubspot.json";
 export const G20U28_ADMIN_UI_PHASE = "G-20u28-gosaki-admin-ui-foundation-polish";
 export const G20U29_DISCOGRAPHY_EDITOR_PHASE = "G-20u29-gosaki-discography-edit-ui-prototype";
+export const G20U30_DISCOGRAPHY_DRY_RUN_PHASE = "G-20u30-gosaki-discography-dry-run-validation";
 
 export const EXPECTED_BAND_IMAGE_FILES = [
   "gosakirikako_trio.jpg",
@@ -121,6 +122,102 @@ export function formatDiscographyTrackListTextarea(tracks) {
 }
 
 /**
+ * Parse multiline track list (trim · ignore blank lines). G-20u30 — keep in sync with .ts
+ *
+ * @param {string} text
+ */
+export function parseDiscographyTrackListLines(text) {
+  return String(text ?? "")
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean);
+}
+
+/**
+ * Browser-only dry-run diff for track list textarea. G-20u30 — keep in sync with .ts
+ *
+ * @param {string} originalText
+ * @param {string} nextText
+ * @param {{ legacyId?: string, title?: string }} [meta]
+ */
+export function validateDiscographyTrackListDryRun(originalText, nextText, meta = {}) {
+  const before = parseDiscographyTrackListLines(originalText);
+  const after = parseDiscographyTrackListLines(nextText);
+  const beforeRemain = [...before];
+  const afterRemain = [...after];
+  /** @type {string[]} */
+  const removed = [];
+  /** @type {string[]} */
+  const added = [];
+
+  for (let i = beforeRemain.length - 1; i >= 0; i -= 1) {
+    const title = beforeRemain[i];
+    const matchIdx = afterRemain.indexOf(title);
+    if (matchIdx >= 0) {
+      beforeRemain.splice(i, 1);
+      afterRemain.splice(matchIdx, 1);
+    }
+  }
+  removed.push(...beforeRemain);
+  added.push(...afterRemain);
+
+  const unchanged = before.length - removed.length;
+  const maxLen = Math.max(before.length, after.length);
+  /** @type {Array<{ line: number, before: string | null, after: string | null, kind: string }>} */
+  const changedLines = [];
+  for (let i = 0; i < maxLen; i += 1) {
+    const b = before[i] ?? null;
+    const a = after[i] ?? null;
+    if (b === a) continue;
+    if (b && a) changedLines.push({ line: i + 1, before: b, after: a, kind: "changed" });
+    else if (!b && a) changedLines.push({ line: i + 1, before: null, after: a, kind: "added" });
+    else if (b && !a) changedLines.push({ line: i + 1, before: b, after: null, kind: "removed" });
+  }
+
+  const reordered =
+    before.join("\n") !== after.join("\n") && added.length === 0 && removed.length === 0;
+
+  return {
+    ok: true,
+    dryRun: true,
+    wouldWrite: false,
+    saveEnabled: false,
+    networkWrite: false,
+    blankLinesIgnored: true,
+    legacyId: meta.legacyId,
+    title: meta.title,
+    totalBefore: before.length,
+    totalAfter: after.length,
+    added,
+    removed,
+    unchanged,
+    changedLines,
+    reordered,
+  };
+}
+
+/**
+ * @param {Array<{ legacyId: string, title: string, originalText: string, nextText: string }>} albums
+ */
+export function validateDiscographyTrackListDryRunBatch(albums) {
+  return {
+    ok: true,
+    dryRun: true,
+    wouldWrite: false,
+    saveEnabled: false,
+    networkWrite: false,
+    blankLinesIgnored: true,
+    albumCount: albums.length,
+    albums: albums.map((album) =>
+      validateDiscographyTrackListDryRun(album.originalText, album.nextText, {
+        legacyId: album.legacyId,
+        title: album.title,
+      }),
+    ),
+  };
+}
+
+/**
  * Build Discography editor prototype snapshot (build-time read-only — no DB writes).
  *
  * @param {unknown} discographyBundle
@@ -165,6 +262,8 @@ export function buildDiscographyEditorPrototypeSnapshot(discographyBundle) {
     dataSource: bundle.discographyDataSource ?? "unknown",
     releaseCount: albums.length,
     trackCount: trackRowCount,
+    dryRunValidation: true,
+    dryRunValidationPhase: G20U30_DISCOGRAPHY_DRY_RUN_PHASE,
     albums,
   };
 }
@@ -291,7 +390,7 @@ export function applyGosakiStagingReadOnlyAdmin(outDir, toolRoot, options = {}) 
     .replace('import youtubeConfig from "../data/gosaki-youtube-embed.json";', 'import youtubeConfig from "../../data/gosaki-youtube-embed.json";')
     .replace('import aboutConfig from "../data/gosaki-about-content.json";', 'import aboutConfig from "../../data/gosaki-about-content.json";')
     .replace('import contactConfig from "../data/gosaki-contact-hubspot.json";', 'import contactConfig from "../../data/gosaki-contact-hubspot.json";')
-    .replace('} from "../lib/gosaki-staging-read-only-admin";', '} from "../../lib/gosaki-staging-read-only-admin";')
+    .replaceAll('} from "../lib/gosaki-staging-read-only-admin";', '} from "../../lib/gosaki-staging-read-only-admin";')
     .replace(
       'import dashboardSnapshot from "../data/gosaki-read-only-admin-dashboard.json";',
       'import dashboardSnapshot from "../../data/gosaki-read-only-admin-dashboard.json";',

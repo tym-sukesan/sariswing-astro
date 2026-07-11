@@ -381,3 +381,29 @@ body.gosaki-read-only-admin {
 .gosaki-read-only-admin__track-list-textarea {
   min-height: 6rem;
 }
+
+.gosaki-read-only-admin__track-list-textarea--editable {
+  min-height: 6rem;
+  background: #fff;
+  color: var(--gra-text);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.85rem;
+  line-height: 1.45;
+}
+
+.gosaki-read-only-admin__btn--dry-run {
+  background: var(--gra-accent);
+  color: #fff;
+  border-color: var(--gra-accent);
+  cursor: pointer;
+}
+
+.gosaki-read-only-admin__btn--dry-run:hover {
+  background: #1d4ed8;
+}
+
+.gosaki-read-only-admin__dry-run--all {
+  margin-top: 1rem;
+  padding-top: 0.75rem;
+  border-top: 1px dashed var(--gra-border);
+}

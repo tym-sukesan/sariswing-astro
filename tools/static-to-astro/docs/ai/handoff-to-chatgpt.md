@@ -5,10 +5,20 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36a-result-record-gosaki-discography-select-only-before-verification — complete.
-Operator ran G-20u36a SELECT-only SQL on staging. Data mostly PASS. authenticated UPDATE grants STOP. Do not proceed to Save/DB write.
+Current phase: G-20u36a-permissions-rls-deep-dive — complete.
+SELECT-only permissions/RLS deep-dive SQL prepared. Cursor did not execute SQL. Prior STOP: authenticated UPDATE grants (2). Do not proceed to Save/DB write/REVOKE/GRANT/RLS change.
 STG live package still 00c8888 (G-20u30b dry-run UI).
 ```
+
+## G-20u36a-permissions-rls-deep-dive Gosaki Discography permissions / RLS deep-dive — complete
+
+- **Base:** `eb93f92`
+- **Scope:** SELECT-only grants · RLS policies · effective write risk (RISK / NEEDS_REVIEW / PASS)
+- **SQL:** `gosaki-discography-g20u36a-permissions-rls-deep-dive.sql`
+- **SQL executed:** **no** (Cursor) — operator runs in result-record phase
+- **Previous STOP:** authenticated UPDATE on `discography` + `discography_tracks`
+- **Not done:** REVOKE / GRANT / RLS change / Edge deploy / Save enable
+- **Next:** G-20u36a-permissions-rls-deep-dive-result-record · G-20u36a-permissions-remediation-plan · G-20u36b Edge dry-run deploy plan (after permissions gate)
 
 ## G-20u36a-result Gosaki Discography SELECT-only before verification result — complete
 
@@ -18,7 +28,7 @@ STG live package still 00c8888 (G-20u30b dry-run UI).
 - **STOP reason:** `authenticated` **UPDATE** on `public.discography` + `public.discography_tracks` (2 grants)
 - **Target:** `discography-002` · SKYLARK · 8 tracks · checksums recorded
 - **Decision:** **Do not proceed** to Save / DB write / REVOKE/GRANT/RLS change in this phase
-- **Next:** G-20u36a-permissions-rls-deep-dive (SELECT-only)
+- **Next:** **G-20u36a-permissions-rls-deep-dive** — **complete**
 
 ## G-20u36a Gosaki Discography SELECT-only before verification — complete
 

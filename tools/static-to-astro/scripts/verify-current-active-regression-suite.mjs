@@ -75,6 +75,7 @@ export const HISTORICAL_VERIFIERS = [
   { id: "G-20u35", label: "Gosaki Discography staging DB write test plan & rollback drill", script: "verify-g20u35-gosaki-discography-staging-db-write-test-plan-rollback-drill.mjs" },
   { id: "G-20u36a", label: "Gosaki Discography SELECT-only before verification", script: "verify-g20u36a-gosaki-discography-select-only-before-verification.mjs" },
   { id: "G-20u36a-result", label: "Gosaki Discography SELECT-only before verification result record", script: "verify-g20u36a-result-gosaki-discography-select-only-before-verification-result.mjs" },
+  { id: "G-20u36a-permissions-rls-deep-dive", label: "Gosaki Discography permissions / RLS deep-dive (SELECT-only)", script: "verify-g20u36a-permissions-rls-deep-dive.mjs" },
 ];
 
 /**

@@ -1,6 +1,19 @@
 Last updated: 2026-07-11
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36a-permissions-rls-deep-dive Gosaki Discography permissions / RLS deep-dive — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u36a-permissions-rls-deep-dive` |
+| Base | `eb93f92` |
+| Scope | SELECT-only grants / RLS / effective write risk deep-dive |
+| SQL | `gosaki-discography-g20u36a-permissions-rls-deep-dive.sql` |
+| SQL executed | **no** (Cursor) — operator manual in result-record phase |
+| Previous STOP | authenticated UPDATE on `discography` + `discography_tracks` |
+| Doc | `gosaki-discography-g20u36a-permissions-rls-deep-dive.md` |
+| Next | G-20u36a-permissions-rls-deep-dive-result-record · G-20u36a-permissions-remediation-plan |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36a-result Gosaki Discography SELECT-only before verification result — complete
 
 | Item | Value |
@@ -12,7 +25,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | STOP | authenticated UPDATE on `discography` + `discography_tracks` |
 | Proceed to Save | **no** |
 | Doc | `gosaki-discography-g20u36a-select-only-before-verification-result.md` |
-| Next | G-20u36a-permissions-rls-deep-dive (SELECT-only) |
+| Next | **G-20u36a-permissions-rls-deep-dive** — **complete** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36a Gosaki Discography SELECT-only before verification — complete
 

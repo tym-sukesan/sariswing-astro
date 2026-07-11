@@ -5,10 +5,21 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u32-gosaki-discography-save-api-schema-approval-registry — complete.
-Discography Save API schema + approval registry ready. Save disabled. No DB write / Edge Function / SQL. Production upload STOP (G-20j).
+Current phase: G-20u33-gosaki-discography-save-dry-run-endpoint-draft — complete.
+Discography Save dry-run endpoint draft ready. Save disabled. No Edge deploy / DB write / SQL. Production upload STOP (G-20j).
 STG live package still 00c8888 (G-20u30b dry-run UI).
 ```
+
+## G-20u33 Gosaki Discography Save dry-run endpoint draft — complete
+
+- **Base:** `f2aec2c`
+- **Scope:** Edge Function dry-run endpoint design + non-deployable draft module only
+- **Endpoint:** `gosaki-discography-save-dry-run` (not deployed · `supabase/functions/**` untouched)
+- **Draft module:** `gosaki-discography-save-dry-run-endpoint-draft.mjs`
+- **Save UI:** **disabled** (unchanged)
+- **DB / Edge deploy / SQL:** **not executed**
+- **Key rules:** staging only · `site_slug=gosaki-piano` · `wouldWrite` ok · `didWrite`/`dbWrite`/`networkWrite` always false · no service_role in draft
+- **Next:** G-20u34 Save UI arm · G-20u35 write test plan · G-20u36 first album Save pilot
 
 ## G-20u32 Gosaki Discography Save API schema & approval registry — complete
 

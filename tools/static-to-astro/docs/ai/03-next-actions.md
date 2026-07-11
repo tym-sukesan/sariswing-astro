@@ -1,6 +1,22 @@
 Last updated: 2026-07-11
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u33 Gosaki Discography Save dry-run endpoint draft — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u33-gosaki-discography-save-dry-run-endpoint-draft` |
+| Base | `f2aec2c` |
+| Scope | Edge Function dry-run endpoint design + non-deployable draft module |
+| Endpoint | `gosaki-discography-save-dry-run` (not deployed) |
+| Module | `gosaki-discography-save-dry-run-endpoint-draft.mjs` |
+| Save UI | **disabled** (unchanged) |
+| DB / Edge deploy / SQL | **not executed** |
+| Key rules | staging only · `site_slug=gosaki-piano` · `didWrite`/`dbWrite`/`networkWrite` false · no service_role in draft |
+| Doc | `gosaki-discography-save-dry-run-endpoint-draft.md` |
+| Verifier | `verify-g20u33-gosaki-discography-save-dry-run-endpoint-draft.mjs` (historical) |
+| Next | G-20u34 Save UI arm · G-20u35 write test plan · G-20u36 first album Save pilot |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u32 Gosaki Discography Save API schema & approval registry — complete
 
 | Item | Value |
@@ -14,7 +30,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Key rules | staging only · `site_slug=gosaki-piano` · server dry-run before Save · no anon write · no service_role in browser · `didWrite` false in schema phase |
 | Doc | `gosaki-discography-save-api-schema-approval-registry.md` |
 | Verifier | `verify-g20u32-gosaki-discography-save-api-schema-approval-registry.mjs` (historical) |
-| Next | G-20u33 Edge dry-run draft · G-20u34 Save UI arm · G-20u36 first album Save pilot |
+| Next | **G-20u33** Edge dry-run draft — **complete** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u31 Gosaki Discography Save design — complete
 

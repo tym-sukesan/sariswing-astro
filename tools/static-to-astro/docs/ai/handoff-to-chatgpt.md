@@ -5,10 +5,21 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36b-edge-dry-run-endpoint-inert-implementation — complete.
-Inert module prepared. No Edge deploy. Root supabase/functions unchanged. Save still blocked. Next: G-20u36b deploy-preflight.
+Current phase: G-20u36b-edge-dry-run-endpoint-deploy-preflight — complete.
+Deploy preflight doc + SELECT-only SQL prepared. No Edge deploy. Save still blocked. Next: preflight-result-record.
 STG live package still 00c8888 (G-20u30b dry-run UI).
 ```
+
+## G-20u36b-edge-dry-run-endpoint-deploy-preflight — complete
+
+- **Base:** `94c5c18`
+- **Scope:** Preflight doc + SELECT-only SQL — no Edge deploy / SQL execution by Cursor
+- **Staging:** `kmjqppxjdnwwrtaeqjta` · production **STOP** `vsbvndwuajjhnzpohghh`
+- **SQL gate:** `H.deploy_preflight.summary` = `READY_FOR_EDGE_DRY_RUN_DEPLOY_PREFLIGHT` or STOP
+- **Secrets:** names only — values not printed
+- **Deploy command:** NOT EXECUTED draft in doc only
+- **Root `supabase/functions/**`:** **unchanged**
+- **Next:** **deploy-preflight-result-record** → deploy-manual (separate approval)
 
 ## G-20u36b-edge-dry-run-endpoint-inert-implementation — complete
 

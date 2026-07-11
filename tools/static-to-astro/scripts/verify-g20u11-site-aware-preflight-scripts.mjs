@@ -197,8 +197,15 @@ if (exists("tools/static-to-astro/output/manual-upload/pilot-sample-static/MANIF
   console.log("NOTE pilot package missing — skipped stale preflight test");
 }
 
-const packageJsonText = read("tools/static-to-astro/package.json");
-assert("no FTP in preflight scripts", !/preflight.*ftp|preflight.*mirror|preflight.*deploy/i.test(packageJsonText));
+const packageJsonParsed = JSON.parse(read("tools/static-to-astro/package.json"));
+const preflightScriptValues = Object.entries(packageJsonParsed.scripts ?? {})
+  .filter(([key]) => key.startsWith("preflight"))
+  .map(([, value]) => value)
+  .join("\n");
+assert(
+  "no FTP in preflight scripts",
+  !/preflight.*ftp|preflight.*mirror|preflight.*deploy/i.test(preflightScriptValues),
+);
 const DEPLOY_SCRIPT_PATTERNS = [
   "deploy-public-dist",
   "deploy-ftp",

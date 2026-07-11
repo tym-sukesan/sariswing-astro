@@ -1,6 +1,21 @@
 Last updated: 2026-07-11
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u34 Gosaki Discography Save UI arm design — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u34-gosaki-discography-save-ui-arm-design` |
+| Base | `533595e` |
+| Scope | Save UI arm gate design · UI states · prerequisite checklist |
+| Module | `gosaki-discography-save-ui-arm-design.mjs` |
+| Save UI | **disabled** (unchanged) |
+| executableSaveAllowed | **always false** |
+| DB / Edge / fetch / env | **not executed / not changed** |
+| Doc | `gosaki-discography-save-ui-arm-design.md` |
+| Verifier | `verify-g20u34-gosaki-discography-save-ui-arm-design.mjs` (historical) |
+| Next | G-20u35 write test plan · G-20u36 first album Save pilot |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u33 Gosaki Discography Save dry-run endpoint draft — complete
 
 | Item | Value |
@@ -30,7 +45,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Key rules | staging only · `site_slug=gosaki-piano` · server dry-run before Save · no anon write · no service_role in browser · `didWrite` false in schema phase |
 | Doc | `gosaki-discography-save-api-schema-approval-registry.md` |
 | Verifier | `verify-g20u32-gosaki-discography-save-api-schema-approval-registry.mjs` (historical) |
-| Next | **G-20u33** Edge dry-run draft — **complete** |
+| Next | **G-20u34** Save UI arm design — **complete** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u31 Gosaki Discography Save design — complete
 

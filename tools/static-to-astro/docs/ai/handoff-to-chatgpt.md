@@ -5,10 +5,19 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u33-gosaki-discography-save-dry-run-endpoint-draft — complete.
-Discography Save dry-run endpoint draft ready. Save disabled. No Edge deploy / DB write / SQL. Production upload STOP (G-20j).
+Current phase: G-20u34-gosaki-discography-save-ui-arm-design — complete.
+Discography Save UI arm gate design ready. Save disabled. executableSaveAllowed always false. No fetch/Edge/DB/env. Production upload STOP (G-20j).
 STG live package still 00c8888 (G-20u30b dry-run UI).
 ```
+
+## G-20u34 Gosaki Discography Save UI arm design — complete
+
+- **Base:** `533595e`
+- **Scope:** Save UI arm gate design only — `PUBLIC_GOSAKI_*` gate names · UI states · prerequisite checklist
+- **Module:** `gosaki-discography-save-ui-arm-design.mjs`
+- **Save UI:** **disabled** (unchanged) · **executableSaveAllowed: always false**
+- **Not executed:** fetch POST · Edge call · DB write · env/secrets change · admin STG reflection
+- **Next:** G-20u35 write test plan · G-20u36 first album Save pilot
 
 ## G-20u33 Gosaki Discography Save dry-run endpoint draft — complete
 

@@ -5,10 +5,20 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36b-edge-dry-run-endpoint-deploy-plan — complete.
-Edge dry-run deploy plan prepared. No Edge implementation/deploy. Save still blocked. Next: G-20u36b implementation-plan.
+Current phase: G-20u36b-edge-dry-run-endpoint-implementation-plan — complete.
+Implementation plan prepared. No Edge source/deploy. Save still blocked. Next: G-20u36b inert-implementation.
 STG live package still 00c8888 (G-20u30b dry-run UI).
 ```
+
+## G-20u36b-edge-dry-run-endpoint-implementation-plan — complete
+
+- **Base:** `1629573`
+- **Scope:** Implementation plan doc only — no Edge source / deploy / SQL / Save
+- **Prerequisite:** G-20u36b deploy plan · G-20u36a PASS · authenticated UPDATE **0**
+- **Modules referenced:** draft · schema · approval registry · UI arm design
+- **Plans documented:** request validation · response validation · security · STOP conditions
+- **`supabase/functions/**`:** **unchanged**
+- **Next:** **G-20u36b-edge-dry-run-endpoint-inert-implementation**
 
 ## G-20u36b-edge-dry-run-endpoint-deploy-plan — complete
 

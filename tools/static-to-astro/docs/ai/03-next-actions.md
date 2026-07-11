@@ -1,6 +1,18 @@
 Last updated: 2026-07-11
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36b-edge-dry-run-endpoint-implementation-plan — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u36b-edge-dry-run-endpoint-implementation-plan` |
+| Base | `1629573` |
+| Scope | Implementation plan doc only — no Edge source / deploy |
+| Prerequisite | G-20u36b deploy plan · G-20u36a PASS |
+| Modules | draft · schema · approval registry referenced |
+| Doc | `gosaki-discography-g20u36b-edge-dry-run-endpoint-implementation-plan.md` |
+| Next | G-20u36b-edge-dry-run-endpoint-inert-implementation |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36b-edge-dry-run-endpoint-deploy-plan — complete
 
 | Item | Value |
@@ -11,7 +23,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Prerequisite | G-20u36a after-verification PASS · permissions complete candidate |
 | Endpoint | `gosaki-discography-save-dry-run` · dryRun only · staging only |
 | Doc | `gosaki-discography-g20u36b-edge-dry-run-endpoint-deploy-plan.md` |
-| Next | G-20u36b-edge-dry-run-endpoint-implementation-plan |
+| Next | **implementation-plan** — **complete** · **inert-implementation** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36a-permissions-remediation-after-verification-result — complete
 

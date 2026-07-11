@@ -8,6 +8,7 @@ import youtubeConfig from "../data/gosaki-youtube-embed.json";
 import aboutConfig from "../data/gosaki-about-content.json";
 import contactConfig from "../data/gosaki-contact-hubspot.json";
 import dashboardSnapshot from "../data/gosaki-read-only-admin-dashboard.json";
+import discographyEditorSnapshot from "../data/gosaki-read-only-admin-discography-editor.json";
 import {
   G11C6A_PHASE,
   G11C4A_STAGING_DRY_RUN_ENDPOINT,
@@ -17,6 +18,8 @@ import {
   G11C6_SAVE_DISABLED_REASON,
   G11C6_SAVE_ENABLED_DEFAULT,
   G20U28_ADMIN_UI_PHASE,
+  G20U29_DISCOGRAPHY_EDITOR_PHASE,
+  G20U29_DISCOGRAPHY_EDITOR_SAVE_DISABLED_REASON,
   GOSAKI_STAGING_PREVIEW_URL,
   buildGosakiReadOnlyAdminViewModel,
   isG11c4aSupabaseAuthConfigured,
@@ -45,6 +48,7 @@ const view = buildGosakiReadOnlyAdminViewModel({
 });
 
 const dashboard = dashboardSnapshot;
+const discographyEditor = discographyEditorSnapshot;
 const stagingSiteBase = String(import.meta.env.SITE ?? GOSAKI_STAGING_PREVIEW_URL).replace(/\/?$/, "/");
 const adminCanonical = new URL("admin/", stagingSiteBase).href;
 const publicHomeUrl = stagingSiteBase;
@@ -73,6 +77,7 @@ const pageTitle = "Gosaki Piano 管理画面（staging · 読み取り専用）"
     class="gosaki-read-only-admin"
     data-gosaki-read-only-admin="true"
     data-phase={G20U28_ADMIN_UI_PHASE}
+    data-discography-editor-phase={G20U29_DISCOGRAPHY_EDITOR_PHASE}
     data-g11c6a-phase={G11C6A_PHASE}
     data-gosaki-youtube-dry-run-endpoint={dryRunEndpoint}
     data-gosaki-youtube-save-endpoint={saveEndpoint}
@@ -146,7 +151,7 @@ const pageTitle = "Gosaki Piano 管理画面（staging · 読み取り専用）"
               <p class="gosaki-read-only-admin__meta">source: {dashboard.discography.dataSource}</p>
               <div class="gosaki-read-only-admin__actions">
                 <a class="gosaki-read-only-admin__btn gosaki-read-only-admin__btn--link" href={publicDiscographyUrl} target="_blank" rel="noopener noreferrer">Read-only preview</a>
-                <button type="button" class="gosaki-read-only-admin__btn" disabled>編集導線（予定）</button>
+                <a class="gosaki-read-only-admin__btn gosaki-read-only-admin__btn--link" href="#gra-discography-editor">Editor prototype</a>
               </div>
             </article>
 
@@ -216,6 +221,166 @@ const pageTitle = "Gosaki Piano 管理画面（staging · 読み取り専用）"
                 <li>sitemap: /admin/ 非掲載</li>
               </ul>
             </article>
+          </div>
+        </section>
+
+        <section
+          class="gosaki-read-only-admin__section gosaki-read-only-admin__section--discography-editor"
+          id="gra-discography-editor"
+          aria-labelledby="gra-discography-editor-heading"
+          data-section="discography-editor-prototype"
+        >
+          <h2 id="gra-discography-editor-heading">Discography Editor Prototype</h2>
+          <div class="gosaki-read-only-admin__banner gosaki-read-only-admin__banner--compact" role="status">
+            <div class="gosaki-read-only-admin__dashboard-badges">
+              <span class="gosaki-read-only-admin__pill">read-only prototype</span>
+              <span class="gosaki-read-only-admin__pill gosaki-read-only-admin__pill--staging">STAGING ONLY</span>
+              <span class="gosaki-read-only-admin__pill gosaki-read-only-admin__pill--warn">Save disabled</span>
+            </div>
+            <p class="gosaki-read-only-admin__meta">
+              {G20U29_DISCOGRAPHY_EDITOR_SAVE_DISABLED_REASON}
+            </p>
+            <ul class="gosaki-read-only-admin__safety-list">
+              <li>DB write なし · Supabase insert/update/delete なし</li>
+              <li>本番 package には <code>/admin/</code> を含めません（sitemap からも除外）</li>
+              <li>本番 upload: <strong>G-20j まで STOP</strong></li>
+            </ul>
+          </div>
+          <p class="gosaki-read-only-admin__meta">
+            <strong>siteSlug:</strong> {discographyEditor.siteSlug} ·{" "}
+            {discographyEditor.releaseCount} releases · {discographyEditor.trackCount} tracks · source:{" "}
+            {discographyEditor.dataSource}
+            {discographyEditor.filteredRead ? " · filtered read" : ""}
+          </p>
+
+          {discographyEditor.albums.length === 0 ? (
+            <p class="gosaki-read-only-admin__meta gosaki-read-only-admin__meta--warn">
+              Discography データがありません（build 時 Supabase read 未接続または 0 件）。
+            </p>
+          ) : (
+            <div class="gosaki-read-only-admin__discography-editor-grid">
+              {discographyEditor.albums.map((album) => (
+                <article
+                  class="gosaki-read-only-admin__album-card"
+                  data-album-legacy-id={album.legacyId}
+                  data-section-card="discography-album"
+                >
+                  <header class="gosaki-read-only-admin__album-card-header">
+                    <h3 class="gosaki-read-only-admin__album-card-title">{album.title}</h3>
+                    <p class="gosaki-read-only-admin__meta">
+                      {album.legacyId} · {album.trackCount} tracks
+                    </p>
+                  </header>
+
+                  {album.coverImageUrl ? (
+                    <div class="gosaki-read-only-admin__cover-preview-wrap">
+                      <img
+                        class="gosaki-read-only-admin__cover-preview"
+                        src={album.coverImageUrl}
+                        alt={`${album.title} cover`}
+                        loading="lazy"
+                      />
+                      <p class="gosaki-read-only-admin__meta gosaki-read-only-admin__cover-url">{album.coverImageUrl}</p>
+                    </div>
+                  ) : (
+                    <p class="gosaki-read-only-admin__meta">cover_image_url: —</p>
+                  )}
+
+                  <div class="gosaki-read-only-admin__field">
+                    <label for={`gra-disc-title-${album.legacyId}`}>title</label>
+                    <input id={`gra-disc-title-${album.legacyId}`} type="text" readonly value={album.title} />
+                  </div>
+                  <div class="gosaki-read-only-admin__field">
+                    <label for={`gra-disc-artist-${album.legacyId}`}>artist</label>
+                    <input
+                      id={`gra-disc-artist-${album.legacyId}`}
+                      type="text"
+                      readonly
+                      value={album.artist ?? "—"}
+                    />
+                  </div>
+                  <div class="gosaki-read-only-admin__field">
+                    <label for={`gra-disc-release-date-${album.legacyId}`}>release_date</label>
+                    <input
+                      id={`gra-disc-release-date-${album.legacyId}`}
+                      type="text"
+                      readonly
+                      value={album.releaseDate ?? "—"}
+                    />
+                  </div>
+                  <div class="gosaki-read-only-admin__field">
+                    <label for={`gra-disc-label-${album.legacyId}`}>label / catalog_number</label>
+                    <input
+                      id={`gra-disc-label-${album.legacyId}`}
+                      type="text"
+                      readonly
+                      value={`${album.label ?? "—"} · ${album.catalogNumber ?? "—"}`}
+                    />
+                  </div>
+                  <div class="gosaki-read-only-admin__field">
+                    <label for={`gra-disc-published-${album.legacyId}`}>published</label>
+                    <input
+                      id={`gra-disc-published-${album.legacyId}`}
+                      type="text"
+                      readonly
+                      value={album.published ? "true" : "false"}
+                    />
+                  </div>
+                  <div class="gosaki-read-only-admin__field">
+                    <label for={`gra-disc-purchase-${album.legacyId}`}>purchase_url</label>
+                    <input
+                      id={`gra-disc-purchase-${album.legacyId}`}
+                      type="url"
+                      readonly
+                      value={album.purchaseUrl ?? "—"}
+                    />
+                  </div>
+                  <div class="gosaki-read-only-admin__field">
+                    <label for={`gra-disc-streaming-${album.legacyId}`}>streaming_url</label>
+                    <input
+                      id={`gra-disc-streaming-${album.legacyId}`}
+                      type="url"
+                      readonly
+                      value={album.streamingUrl ?? "—"}
+                    />
+                  </div>
+                  <div class="gosaki-read-only-admin__field">
+                    <label for={`gra-disc-description-${album.legacyId}`}>
+                      description / personnel (readonly preview)
+                    </label>
+                    <textarea
+                      id={`gra-disc-description-${album.legacyId}`}
+                      class="gosaki-read-only-admin__textarea-readonly"
+                      readonly
+                      rows={4}
+                    >{album.description || "—"}</textarea>
+                  </div>
+                  <div class="gosaki-read-only-admin__field">
+                    <label for={`gra-disc-tracks-${album.legacyId}`}>
+                      track list — 1 line = 1 track · Save disabled
+                    </label>
+                    <textarea
+                      id={`gra-disc-tracks-${album.legacyId}`}
+                      class="gosaki-read-only-admin__textarea-readonly gosaki-read-only-admin__track-list-textarea"
+                      data-track-list-textarea="true"
+                      readonly
+                      rows={Math.max(4, Math.min(16, album.trackCount + 1))}
+                    >{album.trackListText || "—"}</textarea>
+                  </div>
+                  <div class="gosaki-read-only-admin__actions">
+                    <button type="button" class="gosaki-read-only-admin__btn" disabled title={G20U29_DISCOGRAPHY_EDITOR_SAVE_DISABLED_REASON}>
+                      Save（無効 — future phase）
+                    </button>
+                  </div>
+                </article>
+              ))}
+            </div>
+          )}
+
+          <div class="gosaki-read-only-admin__actions">
+            <button type="button" class="gosaki-read-only-admin__btn" disabled title={G20U29_DISCOGRAPHY_EDITOR_SAVE_DISABLED_REASON}>
+              Save Discography（無効 — future phase）
+            </button>
           </div>
         </section>
 
@@ -400,7 +565,7 @@ const pageTitle = "Gosaki Piano 管理画面（staging · 読み取り専用）"
       </main>
 
       <footer class="gosaki-read-only-admin__footer">
-        Gosaki Piano staging read-only CMS — {G20U28_ADMIN_UI_PHASE}
+        Gosaki Piano staging read-only CMS — {G20U28_ADMIN_UI_PHASE} · {G20U29_DISCOGRAPHY_EDITOR_PHASE}
       </footer>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.1/dist/umd/supabase.js"></script>

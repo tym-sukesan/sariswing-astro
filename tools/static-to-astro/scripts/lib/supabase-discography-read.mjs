@@ -23,7 +23,7 @@ export const GOSAKI_DISCOGRAPHY_SITE_CONFIG = {
 export const DISCOGRAPHY_SITE_SLUG_COLUMN_READY = true;
 
 export const DISCOGRAPHY_SELECT =
-  "legacy_id,title,artist,label,catalog_number,purchase_url,streaming_url,sort_order,published";
+  "legacy_id,title,artist,label,catalog_number,purchase_url,streaming_url,sort_order,published,release_date,description,cover_image_url";
 
 export const DISCOGRAPHY_TRACKS_SELECT =
   "id,discography_legacy_id,track_number,title,sort_order";
@@ -52,6 +52,9 @@ export function normalizeDiscographyRecord(row) {
     catalog_number: row.catalog_number != null ? String(row.catalog_number).trim() : null,
     purchase_url: row.purchase_url ? normalizeDiscographyUrl(row.purchase_url) : null,
     streaming_url: row.streaming_url ? String(row.streaming_url).trim() : null,
+    release_date: row.release_date != null ? String(row.release_date).trim() : null,
+    description: row.description != null ? String(row.description).trim() : null,
+    cover_image_url: row.cover_image_url != null ? String(row.cover_image_url).trim() : null,
     sort_order: Number(row.sort_order ?? 0),
     published: row.published !== false,
   };

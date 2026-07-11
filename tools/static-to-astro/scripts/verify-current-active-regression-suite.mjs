@@ -64,6 +64,7 @@ export const HISTORICAL_VERIFIERS = [
   { id: "G-20u27", label: "Gosaki staging post-upload final verification (doc + read-only HTTP)", script: "verify-g20u27-staging-post-upload-final-verification.mjs" },
   { id: "G-20u28", label: "Gosaki admin UI foundation polish", script: "verify-g20u28-gosaki-admin-ui-foundation-polish.mjs" },
   { id: "G-20u28b", label: "Gosaki admin UI staging reflection record", script: "verify-g20u28b-gosaki-admin-ui-staging-reflection-record.mjs" },
+  { id: "G-20u29", label: "Gosaki Discography edit UI prototype", script: "verify-g20u29-gosaki-discography-edit-ui-prototype.mjs" },
 ];
 
 /**

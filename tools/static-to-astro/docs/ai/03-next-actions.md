@@ -1,6 +1,21 @@
 Last updated: 2026-07-11
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u29 Gosaki Discography edit UI prototype — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u29-gosaki-discography-edit-ui-prototype` |
+| Base | `11eadf5` |
+| UI | `#gra-discography-editor` · album cards · track list textarea (1 line = 1 track) |
+| Data | build-time `gosaki-read-only-admin-discography-editor.json` · 4 releases / 34 tracks when bundled |
+| Track UI | multiline textarea per album · **not** 34 fixed inputs |
+| Safety | read-only · Save disabled · production STOP (G-20j) · no DB write |
+| Not executed | Save enable · localStorage · FTP · deploy · package upload |
+| Doc | `gosaki-discography-edit-ui-prototype.md` |
+| Verifier | `verify-g20u29-gosaki-discography-edit-ui-prototype.mjs` (historical) |
+| Next | Discography dry-run validation · Discography Save design · YouTube edit UI · About edit UI |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u28b Gosaki admin UI staging reflection record — complete
 
 | Item | Value |
@@ -16,7 +31,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Not executed | Cursor FTP · deploy · DB write |
 | Doc | `gosaki-admin-ui-staging-reflection-record.md` |
 | Verifier | `verify-g20u28b-gosaki-admin-ui-staging-reflection-record.mjs` (historical) |
-| Next | Discography edit UI · YouTube edit UI · About edit UI · Schedule UI polish |
+| Next | **G-20u29** Discography edit UI prototype — **complete** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u28 Gosaki admin UI foundation polish — complete
 

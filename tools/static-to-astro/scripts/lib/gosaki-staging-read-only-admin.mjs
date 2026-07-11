@@ -6,6 +6,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { isGosakiPianoFixture } from "./gosaki-about-band-profiles.mjs";
 import { loadGosakiAboutContentConfig } from "./gosaki-about-content.mjs";
+import { groupDiscographyTracksByLegacyId } from "./supabase-discography-read.mjs";
 import { loadGosakiYoutubeEmbedConfig } from "./gosaki-home-youtube-embed.mjs";
 
 export const GOSAKI_READ_ONLY_ADMIN_MARKER = "gosaki-read-only-admin";
@@ -16,8 +17,11 @@ export const GOSAKI_READ_ONLY_ADMIN_COMPONENT_REL =
 export const GOSAKI_READ_ONLY_ADMIN_LIB_REL = "src/lib/gosaki-staging-read-only-admin.ts";
 export const GOSAKI_READ_ONLY_ADMIN_CSS_REL = "src/styles/gosaki-staging-read-only-admin.css";
 export const GOSAKI_READ_ONLY_ADMIN_DASHBOARD_DATA_REL = "src/data/gosaki-read-only-admin-dashboard.json";
+export const GOSAKI_READ_ONLY_ADMIN_DISCOGRAPHY_EDITOR_DATA_REL =
+  "src/data/gosaki-read-only-admin-discography-editor.json";
 export const GOSAKI_CONTACT_HUBSPOT_CONFIG_REL = "config/sites/gosaki-piano-contact-hubspot.json";
 export const G20U28_ADMIN_UI_PHASE = "G-20u28-gosaki-admin-ui-foundation-polish";
+export const G20U29_DISCOGRAPHY_EDITOR_PHASE = "G-20u29-gosaki-discography-edit-ui-prototype";
 
 export const EXPECTED_BAND_IMAGE_FILES = [
   "gosakirikako_trio.jpg",
@@ -97,6 +101,75 @@ export function countAugust2026ScheduleEvents(schedules) {
 }
 
 /**
+ * Format track rows as multiline textarea content (1 line = 1 track title).
+ *
+ * @param {unknown[]} tracks
+ */
+export function formatDiscographyTrackListTextarea(tracks) {
+  if (!Array.isArray(tracks) || tracks.length === 0) return "";
+  return tracks
+    .slice()
+    .sort((a, b) => {
+      const ao = Number(a?.sort_order ?? a?.track_number ?? 0);
+      const bo = Number(b?.sort_order ?? b?.track_number ?? 0);
+      if (ao !== bo) return ao - bo;
+      return Number(a?.track_number ?? 0) - Number(b?.track_number ?? 0);
+    })
+    .map((track) => String(track?.title ?? "").trim())
+    .filter(Boolean)
+    .join("\n");
+}
+
+/**
+ * Build Discography editor prototype snapshot (build-time read-only — no DB writes).
+ *
+ * @param {unknown} discographyBundle
+ */
+export function buildDiscographyEditorPrototypeSnapshot(discographyBundle) {
+  const bundle = /** @type {any} */ (discographyBundle ?? {});
+  const releases = Array.isArray(bundle.releases) ? bundle.releases : [];
+  const tracksByLegacyId =
+    bundle.tracksByLegacyId && typeof bundle.tracksByLegacyId === "object"
+      ? bundle.tracksByLegacyId
+      : groupDiscographyTracksByLegacyId(Array.isArray(bundle.tracks) ? bundle.tracks : []);
+  const trackRowCount =
+    bundle.trackRowCount ?? (Array.isArray(bundle.tracks) ? bundle.tracks.length : 0);
+
+  const albums = releases.map((release) => {
+    const legacyId = String(release?.legacy_id ?? "");
+    const tracks = tracksByLegacyId[legacyId] ?? [];
+    return {
+      legacyId,
+      title: String(release?.title ?? ""),
+      artist: release?.artist ?? null,
+      releaseDate: release?.release_date ?? null,
+      label: release?.label ?? null,
+      catalogNumber: release?.catalog_number ?? null,
+      published: release?.published !== false,
+      coverImageUrl: release?.cover_image_url ?? null,
+      purchaseUrl: release?.purchase_url ?? null,
+      streamingUrl: release?.streaming_url ?? null,
+      description: release?.description ?? "",
+      trackListText: formatDiscographyTrackListTextarea(tracks),
+      trackCount: tracks.length,
+    };
+  });
+
+  return {
+    phase: G20U29_DISCOGRAPHY_EDITOR_PHASE,
+    readOnly: true,
+    saveEnabled: false,
+    productionUploadStop: true,
+    siteSlug: bundle.siteSlug ?? "gosaki-piano",
+    filteredRead: bundle.siteSlugFilterApplied === true,
+    dataSource: bundle.discographyDataSource ?? "unknown",
+    releaseCount: albums.length,
+    trackCount: trackRowCount,
+    albums,
+  };
+}
+
+/**
  * Build dashboard snapshot for read-only admin (build-time only — no DB writes).
  *
  * @param {{
@@ -133,7 +206,7 @@ export function buildReadOnlyAdminDashboardSnapshot(input = {}) {
       tracks,
       filteredRead: discographyBundle?.siteSlugFilterApplied === true,
       status: "read-only",
-      editUi: "planned",
+      editUi: releases > 0 ? "prototype" : "planned",
     },
     youtube: {
       status: "read-only",
@@ -222,16 +295,29 @@ export function applyGosakiStagingReadOnlyAdmin(outDir, toolRoot, options = {}) 
     .replace(
       'import dashboardSnapshot from "../data/gosaki-read-only-admin-dashboard.json";',
       'import dashboardSnapshot from "../../data/gosaki-read-only-admin-dashboard.json";',
+    )
+    .replace(
+      'import discographyEditorSnapshot from "../data/gosaki-read-only-admin-discography-editor.json";',
+      'import discographyEditorSnapshot from "../../data/gosaki-read-only-admin-discography-editor.json";',
     );
   fs.writeFileSync(pageDest, pageTemplate, "utf8");
 
+  const discographyBundle = /** @type {any} */ (options.discographyBundle);
   const dashboardSnapshot = buildReadOnlyAdminDashboardSnapshot({
     scheduleBundle: /** @type {any} */ (options.scheduleBundle),
-    discographyBundle: /** @type {any} */ (options.discographyBundle),
+    discographyBundle,
   });
+  const discographyEditorSnapshot = buildDiscographyEditorPrototypeSnapshot(discographyBundle);
   const dashboardDest = path.join(outDir, GOSAKI_READ_ONLY_ADMIN_DASHBOARD_DATA_REL);
+  const discographyEditorDest = path.join(outDir, GOSAKI_READ_ONLY_ADMIN_DISCOGRAPHY_EDITOR_DATA_REL);
   fs.mkdirSync(path.dirname(dashboardDest), { recursive: true });
+  fs.mkdirSync(path.dirname(discographyEditorDest), { recursive: true });
   fs.writeFileSync(dashboardDest, `${JSON.stringify(dashboardSnapshot, null, 2)}\n`, "utf8");
+  fs.writeFileSync(
+    discographyEditorDest,
+    `${JSON.stringify(discographyEditorSnapshot, null, 2)}\n`,
+    "utf8",
+  );
 
   const bandsBlock = about.config.blocks?.find((b) => b?.id === "about-bands-html");
   const bandImages = extractBandImageFileNamesFromHtml(bandsBlock?.html ?? "");
@@ -244,7 +330,9 @@ export function applyGosakiStagingReadOnlyAdmin(outDir, toolRoot, options = {}) 
     componentPath: GOSAKI_READ_ONLY_ADMIN_COMPONENT_REL,
     libPath: GOSAKI_READ_ONLY_ADMIN_LIB_REL,
     dashboardPath: GOSAKI_READ_ONLY_ADMIN_DASHBOARD_DATA_REL,
+    discographyEditorPath: GOSAKI_READ_ONLY_ADMIN_DISCOGRAPHY_EDITOR_DATA_REL,
     dashboardSnapshot,
+    discographyEditorSnapshot,
     bandImageCount: bandImages.length,
     bandImageFiles: bandImages,
     contactPortalId: contact.config.portalId ?? null,

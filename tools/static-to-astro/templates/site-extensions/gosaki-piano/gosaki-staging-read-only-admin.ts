@@ -32,6 +32,40 @@ export const G11C6_SAVE_DISABLED_REASON =
 /** G-20u28 — staging read-only admin dashboard foundation polish. */
 export const G20U28_ADMIN_UI_PHASE = "G-20u28-gosaki-admin-ui-foundation-polish";
 
+/** G-20u29 — Discography editor prototype (read-only / Save disabled). */
+export const G20U29_DISCOGRAPHY_EDITOR_PHASE = "G-20u29-gosaki-discography-edit-ui-prototype";
+export const G20U29_DISCOGRAPHY_EDITOR_SAVE_DISABLED_REASON =
+  "G-20u29: Discography Editor はプロトタイプです。Save は無効 — dry-run 検証と Save 設計は別フェーズです。";
+
+export interface GosakiDiscographyEditorAlbumSnapshot {
+  legacyId: string;
+  title: string;
+  artist: string | null;
+  releaseDate: string | null;
+  label: string | null;
+  catalogNumber: string | null;
+  published: boolean;
+  coverImageUrl: string | null;
+  purchaseUrl: string | null;
+  streamingUrl: string | null;
+  description: string;
+  trackListText: string;
+  trackCount: number;
+}
+
+export interface GosakiDiscographyEditorSnapshot {
+  phase: string;
+  readOnly: boolean;
+  saveEnabled: boolean;
+  productionUploadStop: boolean;
+  siteSlug: string;
+  filteredRead: boolean;
+  dataSource: string;
+  releaseCount: number;
+  trackCount: number;
+  albums: GosakiDiscographyEditorAlbumSnapshot[];
+}
+
 export function resolveG11c4aDryRunEndpoint(env: ImportMetaEnv): string {
   const fromEnv = String(env.PUBLIC_GOSAKI_YOUTUBE_URL_DRY_RUN_ENDPOINT ?? "").trim();
   if (fromEnv) return fromEnv;

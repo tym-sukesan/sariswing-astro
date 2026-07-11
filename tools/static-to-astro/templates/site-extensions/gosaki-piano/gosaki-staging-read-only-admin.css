@@ -313,3 +313,71 @@ body.gosaki-read-only-admin {
   color: var(--gra-muted);
   text-align: center;
 }
+
+.gosaki-read-only-admin__banner--compact {
+  margin-bottom: 0.85rem;
+}
+
+.gosaki-read-only-admin__section--discography-editor {
+  border-color: #93c5fd;
+}
+
+.gosaki-read-only-admin__discography-editor-grid {
+  display: grid;
+  gap: 1rem;
+  margin-top: 0.75rem;
+}
+
+@media (min-width: 720px) {
+  .gosaki-read-only-admin__discography-editor-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.gosaki-read-only-admin__album-card {
+  border: 1px solid var(--gra-border);
+  border-radius: 8px;
+  padding: 0.85rem;
+  background: #f8fafc;
+}
+
+.gosaki-read-only-admin__album-card-header {
+  margin-bottom: 0.65rem;
+}
+
+.gosaki-read-only-admin__album-card-title {
+  margin: 0 0 0.25rem;
+  font-size: 1rem;
+}
+
+.gosaki-read-only-admin__cover-preview-wrap {
+  margin: 0.5rem 0 0.75rem;
+}
+
+.gosaki-read-only-admin__cover-preview {
+  display: block;
+  max-width: 120px;
+  max-height: 120px;
+  width: auto;
+  height: auto;
+  border-radius: 6px;
+  border: 1px solid var(--gra-border);
+  object-fit: cover;
+}
+
+.gosaki-read-only-admin__cover-url {
+  word-break: break-all;
+  font-size: 0.75rem;
+  margin-top: 0.35rem;
+}
+
+.gosaki-read-only-admin__textarea-readonly {
+  min-height: 5rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.85rem;
+  line-height: 1.45;
+}
+
+.gosaki-read-only-admin__track-list-textarea {
+  min-height: 6rem;
+}

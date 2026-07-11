@@ -5,9 +5,21 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u28b-gosaki-admin-ui-staging-reflection-record — complete.
-G-20u28 admin UI reflected on STG (package f03122b). Sitemap excludes /admin/. Production upload STOP (G-20j).
+Current phase: G-20u29-gosaki-discography-edit-ui-prototype — complete.
+Discography Editor Prototype in staging read-only admin. Track list: 1 textarea per album (1 line = 1 track). Save disabled. Production upload STOP (G-20j).
+STG live package still f03122b until operator regen + manual FTP.
 ```
+
+## G-20u29 Gosaki Discography edit UI prototype — complete
+
+- **Base:** `11eadf5`
+- **UI:** `#gra-discography-editor` · album cards · readonly scalar fields · track list textarea per album
+- **Track policy:** **1 line = 1 track** · multiline textarea · **not** 34 fixed `<input>` fields
+- **Data:** build-time snapshot `gosaki-read-only-admin-discography-editor.json` (4/34 when Supabase bundled)
+- **Dashboard:** Discography card → `#gra-discography-editor` (Editor prototype)
+- **Safety:** read-only · Save disabled · no DB write · no localStorage · production STOP (G-20j)
+- **Not executed:** Save enable · FTP · deploy · package upload · DB mutation
+- **Next:** Discography dry-run validation · Discography Save design · YouTube edit UI · About edit UI
 
 ## G-20u28b Gosaki admin UI staging reflection record — complete
 

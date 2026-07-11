@@ -304,6 +304,7 @@ function createGosakiPianoHookMethods() {
           path.join(outDir, gosakiReadOnlyAdminSummary.pagePath),
           path.join(outDir, gosakiReadOnlyAdminSummary.libPath),
           path.join(outDir, gosakiReadOnlyAdminSummary.dashboardPath),
+          path.join(outDir, gosakiReadOnlyAdminSummary.discographyEditorPath),
         );
       }
 

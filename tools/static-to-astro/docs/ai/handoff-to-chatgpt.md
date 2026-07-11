@@ -5,10 +5,20 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36a-permissions-remediation-after-verification-result-record — complete.
-After-verification PASS. authenticated UPDATE=0. Permissions remediation complete candidate. Save still blocked. G-20u36b may proceed.
+Current phase: G-20u36b-edge-dry-run-endpoint-deploy-plan — complete.
+Edge dry-run deploy plan prepared. No Edge implementation/deploy. Save still blocked. Next: G-20u36b implementation-plan.
 STG live package still 00c8888 (G-20u30b dry-run UI).
 ```
+
+## G-20u36b-edge-dry-run-endpoint-deploy-plan — complete
+
+- **Base:** `0c07a95`
+- **Scope:** Deploy plan doc only — no Edge Function implementation / deploy / SQL / Save
+- **Prerequisite:** G-20u36a after-verification PASS · authenticated UPDATE **0** · permissions complete candidate
+- **Endpoint:** `gosaki-discography-save-dry-run` · staging `kmjqppxjdnwwrtaeqjta` · `operation=dryRun` only
+- **Write flags:** `didWrite`/`dbWrite`/`networkWrite` always **false** · Save **disabled**
+- **`supabase/functions/**`:** **unchanged**
+- **Next:** **G-20u36b-edge-dry-run-endpoint-implementation-plan**
 
 ## G-20u36a-permissions-remediation-after-verification-result — complete
 

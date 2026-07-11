@@ -5,10 +5,21 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36a-permissions-remediation-after-verification — complete.
-Post-REVOKE after-verification SELECT-only SQL prepared. Cursor did not execute SQL. Save/Edge blocked.
+Current phase: G-20u36a-permissions-remediation-after-verification-result-record — complete.
+After-verification PASS. authenticated UPDATE=0. Permissions remediation complete candidate. Save still blocked. G-20u36b may proceed.
 STG live package still 00c8888 (G-20u30b dry-run UI).
 ```
+
+## G-20u36a-permissions-remediation-after-verification-result — complete
+
+- **Base:** `159cf92`
+- **Executor:** Human operator · staging `kmjqppxjdnwwrtaeqjta` (production **not** used)
+- **Outcome:** **`H.after_verification.summary` = PASS** · **permissions remediation complete candidate = true**
+- **Grants:** authenticated UPDATE **0** · anon write **0** · SELECT preserved (4 grants)
+- **Data:** **4/34** · **discography-002/8** · integrity PASS
+- **Risk:** **NEEDS_REVIEW** — **no longer RISK** · admin ALL policies remain
+- **Save / Edge deploy:** **not executed** — G-20u36b plan may proceed
+- **Next:** **G-20u36b** Edge dry-run endpoint deploy plan
 
 ## G-20u36a-permissions-remediation-after-verification — complete
 
@@ -29,7 +40,7 @@ STG live package still 00c8888 (G-20u30b dry-run UI).
 - **Not done:** GRANT · RLS change · data row change · Edge deploy · Save enable
 - **After-verification:** **not executed** — remediation **not complete**
 - **Save / Edge deploy:** **blocked**
-- **Next:** **G-20u36a-permissions-remediation-after-verification** — **complete** · after-verification-result-record
+- **Next:** **G-20u36a-permissions-remediation-after-verification-result-record** — **complete** · **G-20u36b**
 
 ## G-20u36a-permissions-remediation-apply-plan — complete
 

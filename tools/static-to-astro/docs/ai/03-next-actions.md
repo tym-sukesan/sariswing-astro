@@ -1,6 +1,20 @@
 Last updated: 2026-07-11
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36a-permissions-remediation-after-verification-result — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u36a-permissions-remediation-after-verification-result-record` |
+| Base | `159cf92` |
+| Executor | Human operator · staging SQL Editor |
+| Outcome | **H.after_verification.summary = PASS** |
+| authenticated UPDATE | **0** (was 2) |
+| Complete candidate | **true** |
+| Effective risk | NEEDS_REVIEW / no longer RISK |
+| Doc | `gosaki-discography-g20u36a-permissions-remediation-after-verification-result.md` |
+| Next | G-20u36b Edge dry-run deploy plan |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36a-permissions-remediation-after-verification — complete
 
 | Item | Value |
@@ -12,7 +26,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | SQL executed | **no** (Cursor) |
 | Gate | PASS / STOP via `H.after_verification.summary` |
 | Doc | `gosaki-discography-g20u36a-permissions-remediation-after-verification.md` |
-| Next | after-verification-result-record · G-20u36b |
+| Next | **after-verification-result-record** — **complete** · **G-20u36b** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36a-permissions-remediation-apply-manual-result — complete
 

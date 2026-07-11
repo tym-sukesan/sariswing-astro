@@ -5,10 +5,20 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36b-edge-dry-run-endpoint-deploy-preflight — complete.
-Deploy preflight doc + SELECT-only SQL prepared. No Edge deploy. Save still blocked. Next: preflight-result-record.
+Current phase: G-20u36b-edge-dry-run-endpoint-deploy-preflight-result-record — complete.
+Preflight SQL READY. Edge deploy not executed. Save still blocked. Next: G-20u36b deploy-manual.
 STG live package still 00c8888 (G-20u30b dry-run UI).
 ```
+
+## G-20u36b-edge-dry-run-endpoint-deploy-preflight-result — complete
+
+- **Base:** `2d754f7`
+- **Executor:** Human operator · staging `kmjqppxjdnwwrtaeqjta` (production **not** used)
+- **Outcome:** **`H.deploy_preflight.summary` = READY_FOR_EDGE_DRY_RUN_DEPLOY_PREFLIGHT**
+- **Permissions:** authenticated UPDATE **0** · anon write **0** · SELECT preserved · RLS on · data **4/34** · **discography-002/8**
+- **Risk:** **NEEDS_REVIEW** — **no longer RISK** · admin ALL policies remain
+- **Edge deploy / Save / fetch POST:** **not executed**
+- **Next:** **G-20u36b-edge-dry-run-endpoint-deploy-manual** (separate approval)
 
 ## G-20u36b-edge-dry-run-endpoint-deploy-preflight — complete
 

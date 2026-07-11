@@ -1,6 +1,18 @@
 Last updated: 2026-07-11
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36b-edge-dry-run-endpoint-deploy-preflight-result — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u36b-edge-dry-run-endpoint-deploy-preflight-result-record` |
+| Base | `2d754f7` |
+| Executor | Human operator · staging SQL Editor |
+| Outcome | **READY_FOR_EDGE_DRY_RUN_DEPLOY_PREFLIGHT** |
+| Edge deploy | **not executed** |
+| Doc | `gosaki-discography-g20u36b-edge-dry-run-endpoint-deploy-preflight-result.md` |
+| Next | G-20u36b-edge-dry-run-endpoint-deploy-manual |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36b-edge-dry-run-endpoint-deploy-preflight — complete
 
 | Item | Value |
@@ -10,8 +22,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Scope | Preflight doc + SELECT-only SQL — no deploy |
 | SQL gate | `READY_FOR_EDGE_DRY_RUN_DEPLOY_PREFLIGHT` or STOP |
 | Doc | `gosaki-discography-g20u36b-edge-dry-run-endpoint-deploy-preflight.md` |
-| SQL | `gosaki-discography-g20u36b-edge-dry-run-endpoint-deploy-preflight.sql` |
-| Next | deploy-preflight-result-record |
+| Next | **deploy-preflight-result-record** — **complete** · **deploy-manual** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36b-edge-dry-run-endpoint-inert-implementation — complete
 

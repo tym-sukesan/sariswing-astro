@@ -5,20 +5,30 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36d-readback-release-id-select-fix-edge-deploy-preflight — complete.
-Deploy gate: release-id fix preflight (not historical readBack preflight). Save blocked. Next: edge-deploy.
+Current phase: G-20u36d-readback-release-id-select-fix-edge-deploy-result-record — complete.
+Staging Edge: release-id fix + readBack deployed. Live verify retry pending. Save blocked.
 ```
+
+## G-20u36d-readback-release-id-select-fix-edge-deploy-result-record — complete
+
+- **Base:** `df4a8be`
+- **Scope:** Result record only — **no re-deploy / SQL / Save / admin UI / FTP / root edit**
+- **Gate:** `gosakiDiscographyEdgeDryRunReadBackReleaseIdSelectFixEdgeDeployed: true`
+- **Deploy:** operator SUCCESS · `gosaki-discography-save-dry-run` @ `kmjqppxjdnwwrtaeqjta`
+- **Code:** release-id fix + readBack-capable · `cli-latest` unchanged · git clean
+- **Live verify retry:** **not executed**
+- **service_role:** **not used**
+- **Next:** **G-20u36d-readback-live-verify-retry**
 
 ## G-20u36d-readback-release-id-select-fix-edge-deploy-preflight — complete
 
 - **Base:** `ae4175b`
 - **Scope:** Preflight doc + verifier only — **no Edge deploy / SQL / Save / admin UI / FTP / root edit**
 - **Gate:** `gosakiDiscographyEdgeDryRunReadBackReleaseIdSelectFixEdgeDeployPreflightReady: true`
-- **Old preflight FAIL:** historical `verify:g20u36d-readback-root-placement` mismatch after release-id fix (not dangerous)
-- **Deploy gate:** release-id fix targeted verifiers (root-placement · tools-draft · plan · env-secret-result)
-- **Deploy:** `gosaki-discography-save-dry-run` @ `kmjqppxjdnwwrtaeqjta` — **NOT EXECUTED**
+- **Deploy gate:** release-id fix targeted verifiers
+- **Deploy:** `gosaki-discography-save-dry-run` @ `kmjqppxjdnwwrtaeqjta` — **complete (operator)**
 - **service_role:** **not used**
-- **Next:** **G-20u36d-readback-release-id-select-fix-edge-deploy**
+- **Next:** **G-20u36d-readback-release-id-select-fix-edge-deploy-result-record** — **complete**
 
 ## G-20u36d-readback-release-id-select-fix-root-placement — complete
 

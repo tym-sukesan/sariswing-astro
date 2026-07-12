@@ -74,6 +74,12 @@ function releaseSelectMissingId(src) {
   return !/["']id["']/.test(match[1]);
 }
 
+function releaseSelectIncludesId(src) {
+  const match = src.match(/RELEASE_SELECT_FIELDS\s*=\s*\[([\s\S]*?)\]/);
+  if (!match) return false;
+  return /["']id["']/.test(match[1]);
+}
+
 const headShort = spawnSync("git", ["rev-parse", "--short", "HEAD"], { cwd: REPO_ROOT, encoding: "utf8" });
 const originShort = spawnSync("git", ["rev-parse", "--short", "origin/main"], {
   cwd: REPO_ROOT,
@@ -158,12 +164,23 @@ assert("doc next live verify retry", doc.includes("G-20u36d-readback-live-verify
 assert("live verify doc gate false", liveVerifyDoc.includes("gosakiDiscographyEdgeDryRunReadBackLiveVerified: false"));
 assert("live verify doc trackCount zero", liveVerifyDoc.includes("trackCount") && /0/.test(liveVerifyDoc));
 
-assert("root handler bug release select missing id", releaseSelectMissingId(rootHandler));
-assert("tools handler bug release select missing id", releaseSelectMissingId(toolsHandler));
-assert("readback lib bug release select missing id", releaseSelectMissingId(readbackLib));
+const toolsDraftFixDocRel =
+  "tools/static-to-astro/docs/gosaki-discography-g20u36d-readback-release-id-select-fix-tools-draft.md";
+const toolsDraftFixComplete = exists(toolsDraftFixDocRel);
+
 assert("root handler resolveReadBackSnapshot uses releaseRow.id", rootHandler.includes("releaseRow.id"));
 assert("root mapReleaseRow omits id", rootHandler.includes("mapReleaseRowToCurrentSnapshotRelease") && !/title: row\?\.title[\s\S]{0,200}id:/.test(rootHandler));
 assert("root buildSanitizedReadBackSummary no id field", !/buildSanitizedReadBackSummary[\s\S]{0,300}\bid\b:/.test(rootHandler));
+
+if (toolsDraftFixComplete) {
+  assert("root handler release select still missing id (pre-root-placement)", releaseSelectMissingId(rootHandler));
+  assert("tools handler release select includes id", releaseSelectIncludesId(toolsHandler));
+  assert("readback lib release select includes id", releaseSelectIncludesId(readbackLib));
+} else {
+  assert("root handler bug release select missing id", releaseSelectMissingId(rootHandler));
+  assert("tools handler bug release select missing id", releaseSelectMissingId(toolsHandler));
+  assert("readback lib bug release select missing id", releaseSelectMissingId(readbackLib));
+}
 
 assert(
   "package script verify:g20u36d-readback-release-id-select-fix-plan",
@@ -171,8 +188,10 @@ assert(
 );
 
 assert("supabase/functions not modified this phase", !diffTouches("supabase/functions/"));
-assert("tools edge handler not modified this phase", !diffTouches(TOOLS_HANDLER_REL));
-assert("readback lib not modified this phase", !diffTouches(READBACK_LIB_REL));
+if (!toolsDraftFixComplete) {
+  assert("tools edge handler not modified this phase", !diffTouches(TOOLS_HANDLER_REL));
+  assert("readback lib not modified this phase", !diffTouches(READBACK_LIB_REL));
+}
 assert("admin UI not modified", !diffTouches(ADMIN_PAGE_REL));
 assert("src not modified", !diffTouches("src/"));
 assert("public not modified", !diffTouches("public/"));

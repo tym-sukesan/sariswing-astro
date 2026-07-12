@@ -1,15 +1,25 @@
 Last updated: 2026-07-12
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36d-readback-release-id-select-fix-tools-draft — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u36d-readback-release-id-select-fix-tools-draft` |
+| Base | `2494ca1` |
+| Scope | Tools draft · release SELECT + id · mock trackCount=8 |
+| Doc | `gosaki-discography-g20u36d-readback-release-id-select-fix-tools-draft.md` |
+| Next | G-20u36d-readback-release-id-select-fix-root-placement |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36d-readback-release-id-select-fix-planning — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-20u36d-readback-release-id-select-fix-planning` |
 | Base | `79a5bfb` |
-| Scope | Fix plan · internal `id` in release SELECT · summary stays sanitized |
+| Scope | Fix plan · internal id in release SELECT |
 | Doc | `gosaki-discography-g20u36d-readback-release-id-select-fix-plan.md` |
-| Next | G-20u36d-readback-release-id-select-fix-tools-draft |
+| Next | release-id select fix tools-draft — **complete** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36d-readback-live-verify — complete (PARTIAL STOP)
 

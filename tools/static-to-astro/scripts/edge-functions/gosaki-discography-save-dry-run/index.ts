@@ -1,5 +1,6 @@
 /**
  * G-20u36b / G-20u36d — Gosaki Discography Edge dry-run endpoint (tools draft · NOT deployed).
+ * G-20u36d release-id select fix: release SELECT includes internal id for tracks lookup (tools draft only).
  * Endpoint: gosaki-discography-save-dry-run
  * Target: static-to-astro-cms-staging (kmjqppxjdnwwrtaeqjta) — deploy in future phase only.
  * NOT EXECUTED — tools/static-to-astro/scripts/edge-functions draft · root supabase/functions/** unchanged.

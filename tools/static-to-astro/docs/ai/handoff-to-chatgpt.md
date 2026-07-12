@@ -5,21 +5,25 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36d-readback-release-id-select-fix-planning — complete.
-Live verify STOP: release SELECT missing internal id → trackCount=0.
-Fix plan: add id for tracks release_id lookup only; keep summary sanitized. Save blocked.
-Next: tools-draft fix.
+Current phase: G-20u36d-readback-release-id-select-fix-tools-draft — complete.
+Tools draft: release SELECT includes internal id for tracks lookup. Summary stays sanitized.
+Root not updated. Save blocked. Next: root-placement.
 ```
+
+## G-20u36d-readback-release-id-select-fix-tools-draft — complete
+
+- **Base:** `2494ca1`
+- **Scope:** Tools draft fix only — **no root / Edge deploy / SQL / Save / admin UI / FTP**
+- **Gate:** `gosakiDiscographyEdgeDryRunReadBackReleaseIdSelectFixToolsDraftImplemented: true`
+- **Fix:** `RELEASE_SELECT_FIELDS` + `id` · tracks via `release_id` · id not in readBack summary
+- **Mock:** matching trackCount=8 · wouldWrite=false · +1 track wouldWrite=true
+- **service_role:** **not used**
+- **Next:** **G-20u36d-readback-release-id-select-fix-root-placement**
 
 ## G-20u36d-readback-release-id-select-fix-planning — complete
 
 - **Base:** `79a5bfb`
-- **Scope:** Fix plan only — **no root/tools draft edit / Edge deploy / SQL / Save / admin UI / FTP**
-- **Gate:** `gosakiDiscographyEdgeDryRunReadBackReleaseIdSelectFixPlanPrepared: true`
-- **STOP cause:** `RELEASE_SELECT_FIELDS` omits `id` → tracks SELECT skipped → trackCount=0
-- **Fix:** add internal `id` to release SELECT · use for `release_id` filter · **never expose in readBack summary**
-- **service_role:** **not used** · anon SELECT maintained
-- **Next:** **G-20u36d-readback-release-id-select-fix-tools-draft**
+- **Next:** tools-draft fix — **complete**
 
 ## G-20u36d-readback-live-verify — complete (PARTIAL STOP)
 

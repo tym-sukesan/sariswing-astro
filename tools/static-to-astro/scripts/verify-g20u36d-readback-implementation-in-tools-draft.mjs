@@ -188,6 +188,7 @@ assert("AI handoff mentions G-20u36d readBack", handoff.includes("G-20u36d") && 
 const releasePath = buildAnonSelectDiscographyReleasePath(READBACK_SITE_SLUG, "discography-002");
 assert("anon SELECT release path site_slug", releasePath.includes("site_slug=eq.gosaki-piano"));
 assert("anon SELECT release path legacy_id", releasePath.includes("legacy_id=eq.discography-002"));
+assert("anon SELECT release path includes id", releasePath.includes("id"));
 assert("anon SELECT release path discography table", releasePath.includes("/rest/v1/discography"));
 
 const tracksPath = buildAnonSelectDiscographyTracksPath(

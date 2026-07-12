@@ -8,6 +8,7 @@ export const G20U36B_EDGE_FUNCTION_SOURCE_STAGING_PHASE =
   "G-20u36b-edge-dry-run-endpoint-function-source-staging";
 
 export const G20U36D_READBACK_PHASE = "G-20u36d-readback-implementation-in-tools-draft";
+export const G20U36D_RELEASE_ID_SELECT_FIX_PHASE = "G-20u36d-readback-release-id-select-fix-tools-draft";
 export const READBACK_SOURCE = "supabase-select";
 export const PRODUCTION_REF_STOP = "vsbvndwuajjhnzpohghh";
 
@@ -64,7 +65,9 @@ export type SanitizedReadBackSummary = {
   siteSlug: string;
 };
 
+/** PostgREST release SELECT — includes internal `id` for tracks lookup only (not exposed in snapshot/summary). */
 const RELEASE_SELECT_FIELDS = [
+  "id",
   "legacy_id",
   "site_slug",
   "title",
@@ -227,16 +230,28 @@ export function snapshotFromReadBackRows(
 export async function resolveReadBackSnapshot(
   adapter: ReadBackQueryAdapter,
   input: { siteSlug: string; legacyId: string },
-): Promise<{ snapshot: CurrentSnapshot; summary: SanitizedReadBackSummary }> {
+): Promise<{ snapshot: CurrentSnapshot; summary: SanitizedReadBackSummary; warnings: string[] }> {
   const siteSlug = String(input?.siteSlug ?? SITE_SLUG);
   const legacyId = String(input?.legacyId ?? "").trim();
+  const warnings: string[] = [];
   const releaseRow = await adapter.fetchRelease({ siteSlug, legacyId });
   if (!releaseRow) {
-    return snapshotFromReadBackRows(null, [], { legacyId, siteSlug });
+    return { ...snapshotFromReadBackRows(null, [], { legacyId, siteSlug }), warnings };
   }
-  const releaseId = String(releaseRow.id ?? "");
-  const trackRows = releaseId ? await adapter.fetchTracks({ siteSlug, releaseId }) : [];
-  return snapshotFromReadBackRows(releaseRow, trackRows, { legacyId, siteSlug });
+  const releaseId = String(releaseRow.id ?? "").trim();
+  if (!releaseId) {
+    warnings.push("readBack: release row missing internal id — tracks SELECT skipped");
+    return { ...snapshotFromReadBackRows(releaseRow, [], { legacyId, siteSlug }), warnings };
+  }
+  let trackRows: Array<Record<string, unknown>> = [];
+  try {
+    trackRows = await adapter.fetchTracks({ siteSlug, releaseId });
+  } catch (error) {
+    warnings.push(
+      `readBack: anon SELECT tracks failed (${error instanceof Error ? error.message : String(error)})`,
+    );
+  }
+  return { ...snapshotFromReadBackRows(releaseRow, trackRows, { legacyId, siteSlug }), warnings };
 }
 
 export function createAnonSelectReadBackAdapter(deps: {
@@ -673,6 +688,7 @@ export async function simulateDiscographySaveDryRunEndpointWithReadBack(
       });
       currentSnapshot = readBack.snapshot;
       readBackSummary = readBack.summary;
+      readBackWarnings.push(...readBack.warnings);
       if (!readBack.summary.releaseFound) {
         readBackWarnings.push("readBack: release not found in database");
       }

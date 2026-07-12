@@ -3,6 +3,8 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
+**G-20u36b-edge-dry-run-endpoint-deploy-manual-result-record Gosaki Discography Edge dry-run endpoint deploy manual result (2026-07-12):** **complete** — human operator deployed `gosaki-discography-save-dry-run` to staging `kmjqppxjdnwwrtaeqjta`; pre-deploy verify PASS; production **not used**; live verify **not executed** · Save **disabled** · fetch POST **not added**; **Cursor did not deploy / SQL / DB write**. Doc: `gosaki-discography-g20u36b-edge-dry-run-endpoint-deploy-manual-result.md`. Verifier: `verify-g20u36b-edge-dry-run-endpoint-deploy-manual-result.mjs` (historical). **Next:** live-verify.
+
 **G-20u36b-edge-dry-run-endpoint-root-placement-verifier-postcommit-fix (2026-07-12):** **complete** — root-placement verifier uses committed diff `4453258..HEAD` + working tree for supabase/functions scope; post-commit clean state PASS; **no supabase/functions edit / Edge deploy / SQL / Save**. Verifier: `verify-g20u36b-edge-dry-run-endpoint-root-placement.mjs`.
 
 **G-20u36b-edge-dry-run-endpoint-root-placement Gosaki Discography Edge dry-run endpoint root placement (2026-07-12):** **complete** — tools draft copied to `supabase/functions/gosaki-discography-save-dry-run/` (index.ts + handler.ts); scope exception **2 files only** · dryRun only · write flags false · service_role NOT CONNECTED; **no Edge deploy / SQL / Save / fetch POST**. Doc: `gosaki-discography-g20u36b-edge-dry-run-endpoint-root-placement.md`. Verifier: `verify-g20u36b-edge-dry-run-endpoint-root-placement.mjs` (historical). **Next:** deploy-manual (separate approval).

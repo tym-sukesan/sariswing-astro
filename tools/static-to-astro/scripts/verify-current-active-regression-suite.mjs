@@ -93,6 +93,7 @@ export const HISTORICAL_VERIFIERS = [
   { id: "G-20u36b-function-source-staging", label: "Gosaki Discography Edge dry-run endpoint function source staging", script: "verify-g20u36b-edge-dry-run-endpoint-function-source-staging.mjs" },
   { id: "G-20u36b-root-placement-plan", label: "Gosaki Discography Edge dry-run endpoint root placement plan", script: "verify-g20u36b-edge-dry-run-endpoint-root-placement-plan.mjs" },
   { id: "G-20u36b-root-placement", label: "Gosaki Discography Edge dry-run endpoint root placement", script: "verify-g20u36b-edge-dry-run-endpoint-root-placement.mjs" },
+  { id: "G-20u36b-deploy-manual-result", label: "Gosaki Discography Edge dry-run endpoint deploy manual result record", script: "verify-g20u36b-edge-dry-run-endpoint-deploy-manual-result.mjs" },
 ];
 
 /**

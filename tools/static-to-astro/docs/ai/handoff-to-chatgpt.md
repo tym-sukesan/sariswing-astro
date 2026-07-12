@@ -5,10 +5,19 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36b-edge-dry-run-endpoint-root-placement-verifier-postcommit-fix — complete.
-Root-placement verifier fixed for post-commit clean state. Next: deploy-manual (separate approval).
+Current phase: G-20u36b-edge-dry-run-endpoint-deploy-manual-result-record — complete.
+Operator deployed gosaki-discography-save-dry-run to staging kmjqppxjdnwwrtaeqjta. Live verify not executed. Save still blocked. Next: live-verify.
 STG live package still 00c8888 (G-20u30b dry-run UI).
 ```
+
+## G-20u36b-edge-dry-run-endpoint-deploy-manual-result-record — complete
+
+- **Base:** `9b727d1`
+- **Scope:** Operator deploy result record only — **Cursor did not deploy**
+- **Command:** `supabase functions deploy gosaki-discography-save-dry-run --project-ref kmjqppxjdnwwrtaeqjta`
+- **Outcome:** **SUCCESS** — staging only · production **not used**
+- **Live verify:** **not executed** · Save **disabled** · fetch POST **not added**
+- **Next:** **G-20u36b-edge-dry-run-endpoint-live-verify**
 
 ## G-20u36b-edge-dry-run-endpoint-root-placement-verifier-postcommit-fix — complete
 

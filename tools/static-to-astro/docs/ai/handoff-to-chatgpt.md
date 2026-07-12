@@ -5,9 +5,17 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36d-readback-root-placement — complete.
-readBack root source placed (2 files). Deployed Edge still pre-readBack until edge-deploy. Save blocked. Next: edge-deploy-plan.
+Current phase: G-20u36d-readback-edge-deploy-plan — complete.
+readBack edge deploy plan prepared. Deployed Edge still pre-readBack until operator redeploy. Save blocked. Next: edge-deploy-preflight.
 ```
+
+## G-20u36d-readback-edge-deploy-plan — complete
+
+- **Base:** `a91e49e`
+- **Scope:** Deploy plan only — **no Edge deploy / SQL / Save / admin UI / FTP / root edit**
+- **Target:** `gosaki-discography-save-dry-run` · staging `kmjqppxjdnwwrtaeqjta`
+- **readBack env:** `GOSAKI_DISCOGRAPHY_DRY_RUN_READBACK_ENABLED=true` opt-in · anon SELECT · service_role **not used**
+- **Next:** **G-20u36d-readback-edge-deploy-preflight**
 
 ## G-20u36d-readback-root-placement — complete
 
@@ -16,7 +24,7 @@ readBack root source placed (2 files). Deployed Edge still pre-readBack until ed
 - **Files:** `supabase/functions/gosaki-discography-save-dry-run/index.ts` + `handler.ts`
 - **readBack:** anon SELECT · env gate · sanitized summary · schema-only fallback when disabled
 - **service_role:** **not used**
-- **Next:** **G-20u36d-readback-edge-deploy-plan**
+- **Next:** G-20u36d-readback-edge-deploy-plan — **complete**
 
 ## G-20u36d-readback-root-placement-plan — complete
 

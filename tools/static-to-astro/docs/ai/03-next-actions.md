@@ -1,6 +1,16 @@
 Last updated: 2026-07-12
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36d-readback-edge-deploy-plan — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u36d-readback-edge-deploy-plan` |
+| Base | `a91e49e` |
+| Scope | Deploy plan only · env names · command draft |
+| Doc | `gosaki-discography-g20u36d-readback-edge-deploy-plan.md` |
+| Next | G-20u36d-readback-edge-deploy-preflight |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36d-readback-root-placement — complete
 
 | Item | Value |
@@ -9,7 +19,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Base | `d8be0da` |
 | Scope | Root copy · 2 files only · readBack source |
 | Doc | `gosaki-discography-g20u36d-readback-root-placement.md` |
-| Next | G-20u36d-readback-edge-deploy-plan |
+| Next | G-20u36d-readback-edge-deploy-plan — **complete** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36d-readback-root-placement-plan — complete
 

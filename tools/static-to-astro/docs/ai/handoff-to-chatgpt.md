@@ -5,21 +5,30 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36d-readback-env-secret-setting-result-record — complete.
-Operator added GOSAKI_DISCOGRAPHY_DRY_RUN_READBACK_ENABLED on staging. readBack opt-in armed.
-Deployed Edge still pre-readBack until operator redeploy. Save blocked. Next: edge-deploy.
+Current phase: G-20u36d-readback-edge-deploy-result-record — complete.
+Operator redeployed readBack-capable gosaki-discography-save-dry-run to staging.
+readBack opt-in secret armed. Live verify not executed. Save blocked. Next: live-verify.
 ```
+
+## G-20u36d-readback-edge-deploy-result-record — complete
+
+- **Base:** `2d55aa9`
+- **Scope:** Result record only — **no re-deploy / SQL / Save / admin UI / FTP / root edit**
+- **Gate:** `gosakiDiscographyEdgeDryRunReadBackEdgeDeployed: true`
+- **Deploy:** operator SUCCESS · ref `kmjqppxjdnwwrtaeqjta` · `gosaki-discography-save-dry-run`
+- **Assets:** `index.ts` + `handler.ts` (readBack-capable)
+- **Warnings:** Docker not running — non-blocking · CLI update notice — non-blocking
+- **Local:** `supabase/.temp/cli-latest` changed then `git restore` · final git clean
+- **Live verify:** **not executed**
+- **service_role:** **not used**
+- **Next:** **G-20u36d-readback-live-verify**
 
 ## G-20u36d-readback-env-secret-setting-result-record — complete
 
 - **Base:** `185b4fd`
 - **Scope:** Result record only — **no Edge deploy / SQL / Save / admin UI / FTP / root edit**
 - **Gate:** `gosakiDiscographyEdgeDryRunReadBackEnvSecretSet: true`
-- **Operator:** Dashboard · ref `kmjqppxjdnwwrtaeqjta` · `GOSAKI_DISCOGRAPHY_DRY_RUN_READBACK_ENABLED` **added**
-- **readBack opt-in:** armed on staging secrets (value not recorded)
-- **Edge deploy:** **not executed**
-- **service_role:** **not used**
-- **Next:** **G-20u36d-readback-edge-deploy** (operator approval)
+- **Next:** edge-deploy — **complete** · edge-deploy-result-record — **complete**
 
 ## G-20u36d-readback-env-secret-setting-plan — complete
 

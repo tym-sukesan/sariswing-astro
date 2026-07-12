@@ -1,6 +1,16 @@
 Last updated: 2026-07-12
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36d-readback-release-id-select-fix-planning — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u36d-readback-release-id-select-fix-planning` |
+| Base | `79a5bfb` |
+| Scope | Fix plan · internal `id` in release SELECT · summary stays sanitized |
+| Doc | `gosaki-discography-g20u36d-readback-release-id-select-fix-plan.md` |
+| Next | G-20u36d-readback-release-id-select-fix-tools-draft |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36d-readback-live-verify — complete (PARTIAL STOP)
 
 | Item | Value |
@@ -10,7 +20,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Scope | Direct endpoint · readBack enabled · trackCount=0 STOP |
 | Gate | `gosakiDiscographyEdgeDryRunReadBackLiveVerified: false` |
 | Doc | `gosaki-discography-g20u36d-readback-live-verify.md` |
-| Next | readBack release-id select fix planning |
+| Next | release-id select fix planning — **complete** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36d-readback-edge-deploy-result-record — complete
 

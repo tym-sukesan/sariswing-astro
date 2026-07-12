@@ -5,23 +5,27 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36d-readback-live-verify — complete (PARTIAL STOP).
-readBack enabled + supabase-select confirmed live. trackCount=0 — matching dryRun blocked.
-+1 track / save reject / wrong siteSlug PASS. Save blocked. Next: release-id select fix planning.
+Current phase: G-20u36d-readback-release-id-select-fix-planning — complete.
+Live verify STOP: release SELECT missing internal id → trackCount=0.
+Fix plan: add id for tracks release_id lookup only; keep summary sanitized. Save blocked.
+Next: tools-draft fix.
 ```
+
+## G-20u36d-readback-release-id-select-fix-planning — complete
+
+- **Base:** `79a5bfb`
+- **Scope:** Fix plan only — **no root/tools draft edit / Edge deploy / SQL / Save / admin UI / FTP**
+- **Gate:** `gosakiDiscographyEdgeDryRunReadBackReleaseIdSelectFixPlanPrepared: true`
+- **STOP cause:** `RELEASE_SELECT_FIELDS` omits `id` → tracks SELECT skipped → trackCount=0
+- **Fix:** add internal `id` to release SELECT · use for `release_id` filter · **never expose in readBack summary**
+- **service_role:** **not used** · anon SELECT maintained
+- **Next:** **G-20u36d-readback-release-id-select-fix-tools-draft**
 
 ## G-20u36d-readback-live-verify — complete (PARTIAL STOP)
 
 - **Base:** `8ec25a7`
-- **Scope:** Live HTTP verify only — **no re-deploy / SQL / Save / admin UI / FTP / root edit**
 - **Gate:** `gosakiDiscographyEdgeDryRunReadBackLiveVerified: false`
-- **Endpoint:** staging `gosaki-discography-save-dry-run` · anon key only (values not logged)
-- **readBack:** enabled=true · source=supabase-select · releaseFound=true · **trackCount=0**
-- **matching dryRun:** **STOP** (400 empty track list)
-- **+1 track:** PASS (wouldWrite=true · tracksAdded=1)
-- **save / wrong siteSlug:** PASS (400 reject)
-- **Write flags:** all false · service_role **not used**
-- **Next:** **readBack release-id select fix planning** — do not proceed to Save
+- **Next:** release-id select fix planning — **complete**
 
 ## G-20u36d-readback-edge-deploy-result-record — complete
 

@@ -5,9 +5,18 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36d-readback-implementation-in-tools-draft — complete.
-readBack tools draft implemented (anon SELECT · mock verifier). Save still blocked. Next: root placement plan.
+Current phase: G-20u36d-readback-root-placement-plan — complete.
+readBack root placement plan prepared. Save still blocked. Next: root placement (scope exception).
 ```
+
+## G-20u36d-readback-root-placement-plan — complete
+
+- **Base:** `0cbcf2f`
+- **Scope:** Plan only — **no root Edge edit / deploy / SQL / Save / admin UI / FTP**
+- **Copy map:** tools draft `index.ts` + `handler.ts` → `supabase/functions/gosaki-discography-save-dry-run/`
+- **readBack env:** `GOSAKI_DISCOGRAPHY_DRY_RUN_READBACK_ENABLED` opt-in · disabled = schema-only fallback
+- **service_role:** **not used**
+- **Next:** **G-20u36d-readback-root-placement**
 
 ## G-20u36d-readback-implementation-in-tools-draft — complete
 
@@ -15,7 +24,7 @@ readBack tools draft implemented (anon SELECT · mock verifier). Save still bloc
 - **Scope:** Tools draft only — **no root Edge edit / deploy / SQL / Save / admin UI / FTP**
 - **readBack:** anon SELECT adapter · sanitized summary · DB-grounded diff via mock fixture
 - **service_role:** **not used**
-- **Next:** **G-20u36d-readback-root-placement-plan**
+- **Next:** G-20u36d-readback-root-placement-plan — **complete**
 
 ## G-20u36d-discography-edge-dry-run-readback-enhancement-planning — complete
 

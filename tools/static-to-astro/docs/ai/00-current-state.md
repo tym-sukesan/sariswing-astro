@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-20u36c-admin-discography-dry-run-stg-browser-qa-result-record Gosaki Discography endpoint dry-run STG browser QA (2026-07-12):** **complete** — operator manual FTP re-upload at `c2fcdb8` · endpoint dry-run **200 / ok=true** · write flags false · Save **disabled** · clientDryRun 400 resolved; **Cursor did not FTP / deploy / SQL / Save**. Doc: `gosaki-discography-g20u36c-admin-discography-dry-run-stg-browser-qa-result.md`. Verifier: `verify-g20u36c-admin-discography-dry-run-stg-browser-qa-result.mjs` (historical). **Next:** G-20u36d planning.
+**G-20u36d-discography-edge-dry-run-readback-enhancement-planning Gosaki Discography Edge dry-run readBack enhancement plan (2026-07-12):** **complete** — planning only · anon SELECT preferred · service_role **not in plan** · sanitized readBack summary · STOP conditions documented; **no Edge edit / deploy / SQL / Save / admin UI / FTP**. Doc: `gosaki-discography-g20u36d-discography-edge-dry-run-readback-enhancement-plan.md`. Verifier: `verify-g20u36d-discography-edge-dry-run-readback-enhancement-plan.mjs` (historical). **Next:** G-20u36d-readback-implementation-in-tools-draft.
+
+**G-20u36c-admin-discography-dry-run-stg-browser-qa-result-record Gosaki Discography endpoint dry-run STG browser QA (2026-07-12):** **complete** — operator FTP re-upload at `c2fcdb8` · endpoint dry-run **200 / ok=true** · write flags false · wouldWrite=true acceptable (schema-only baseline); readBack enhancement planned in G-20u36d. Doc: `gosaki-discography-g20u36c-admin-discography-dry-run-stg-browser-qa-result.md`.
 
 **G-20u36c-admin-discography-endpoint-dry-run-clientDryRun-contract-fix Gosaki Discography endpoint dry-run clientDryRun contract (2026-07-12):** **complete** — STG QA **400** resolved after fix + re-upload · **STG browser QA PASS** recorded in follow-up phase. **Next:** G-20u36d planning.
 

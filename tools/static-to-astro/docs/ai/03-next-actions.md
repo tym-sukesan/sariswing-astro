@@ -1,6 +1,16 @@
 Last updated: 2026-07-12
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36d-discography-edge-dry-run-readback-enhancement-planning — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u36d-discography-edge-dry-run-readback-enhancement-planning` |
+| Base | `f31165f` |
+| Scope | Planning only — anon SELECT readBack |
+| Doc | `gosaki-discography-g20u36d-discography-edge-dry-run-readback-enhancement-plan.md` |
+| Next | G-20u36d-readback-implementation-in-tools-draft |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36c-admin-discography-dry-run-stg-browser-qa-result-record — complete
 
 | Item | Value |

@@ -5,9 +5,17 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36c-admin-discography-dry-run-stg-browser-qa-result-record — complete.
-STG endpoint dry-run browser QA PASS (200 / ok=true / write flags false). Save still blocked. Next: G-20u36d planning.
+Current phase: G-20u36d-discography-edge-dry-run-readback-enhancement-planning — complete.
+readBack plan prepared (anon SELECT first). Save still blocked. Next: tools-draft readBack implementation.
 ```
+
+## G-20u36d-discography-edge-dry-run-readback-enhancement-planning — complete
+
+- **Base:** `f31165f`
+- **Scope:** Planning only — **no Edge edit / deploy / SQL / Save / admin UI / FTP**
+- **Goal:** DB-grounded dry-run diff via SELECT-only readBack · anon SELECT preferred
+- **service_role:** **not in this plan** — separate approval if anon fails
+- **Next:** **G-20u36d-readback-implementation-in-tools-draft**
 
 ## G-20u36c-admin-discography-dry-run-stg-browser-qa-result-record — complete
 

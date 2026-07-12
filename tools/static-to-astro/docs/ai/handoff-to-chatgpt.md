@@ -5,21 +5,26 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36d-readback-live-verify-retry — complete (PARTIAL STOP).
-readBack enabled but trackCount=0 — tracks SELECT fails (duration column missing). Save blocked.
+Current phase: G-20u36d-readback-tracks-select-fields-fix-planning — complete.
+Fix plan: remove duration from TRACK_SELECT_FIELDS. Save blocked until live verify retry-2 PASS.
 ```
+
+## G-20u36d-readback-tracks-select-fields-fix-planning — complete
+
+- **Base:** `6e677cf`
+- **Scope:** Fix plan only — **no root/tools draft edit / Edge deploy / SQL / Save / admin UI / FTP**
+- **Gate:** `gosakiDiscographyEdgeDryRunReadBackTracksSelectFieldsFixPlanPrepared: true`
+- **STOP cause:** `discography_tracks.duration` does not exist → PostgREST 42703 → trackCount=0
+- **Fix:** remove `duration` from `TRACK_SELECT_FIELDS` · use staging columns only
+- **service_role:** **not used**
+- **Next:** **G-20u36d-readback-tracks-select-fields-fix-tools-draft**
 
 ## G-20u36d-readback-live-verify-retry — complete (PARTIAL STOP)
 
 - **Base:** `9c5c074`
-- **Scope:** Live HTTP verify retry only — **no re-deploy / SQL / Save / admin UI / FTP**
 - **Gate:** `gosakiDiscographyEdgeDryRunReadBackLiveVerifyRetryPassed: false`
-- **readBack:** enabled · source=supabase-select · releaseFound=true · **trackCount=0** (expected 8)
-- **matching dryRun:** **400** STOP · **+1 track:** 200 PASS · **save/siteSlug:** 400 reject PASS
-- **STOP cause:** `discography_tracks.duration` does not exist → tracks anon SELECT 400
-- **Release-id fix:** release SELECT returns `id` — partial progress vs prior live verify
-- **service_role:** **not used**
-- **Next:** **tracks SELECT fields fix planning** (not G-20u36e until retry PASS)
+- **Release-id fix:** working · tracks SELECT reached but **400**
+- **Next:** **tracks SELECT fields fix planning** — **complete**
 
 ## G-20u36d-readback-release-id-select-fix-edge-deploy-result-record — complete
 

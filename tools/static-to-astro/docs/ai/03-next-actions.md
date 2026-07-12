@@ -1,6 +1,16 @@
 Last updated: 2026-07-12
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36d-readback-tracks-select-fields-fix-planning — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u36d-readback-tracks-select-fields-fix-planning` |
+| Base | `6e677cf` |
+| Scope | Fix plan · remove duration from TRACK_SELECT_FIELDS |
+| Doc | `gosaki-discography-g20u36d-readback-tracks-select-fields-fix-plan.md` |
+| Next | G-20u36d-readback-tracks-select-fields-fix-tools-draft |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36d-readback-live-verify-retry — complete (PARTIAL STOP)
 
 | Item | Value |
@@ -11,7 +21,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Gate | `gosakiDiscographyEdgeDryRunReadBackLiveVerifyRetryPassed: false` |
 | STOP cause | `discography_tracks.duration` column missing · tracks SELECT 400 |
 | Doc | `gosaki-discography-g20u36d-readback-live-verify-retry.md` |
-| Next | tracks SELECT fields fix planning |
+| Next | tracks SELECT fields fix planning — **complete** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36d-readback-release-id-select-fix-edge-deploy-result-record — complete
 

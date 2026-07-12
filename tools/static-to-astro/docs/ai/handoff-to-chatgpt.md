@@ -5,17 +5,24 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36d-readback-edge-deploy-plan — complete.
-readBack edge deploy plan prepared. Deployed Edge still pre-readBack until operator redeploy. Save blocked. Next: edge-deploy-preflight.
+Current phase: G-20u36d-readback-edge-deploy-preflight — complete.
+readBack edge deploy preflight READY. Deployed Edge still pre-readBack until operator redeploy. Save blocked. Next: edge-deploy.
 ```
+
+## G-20u36d-readback-edge-deploy-preflight — complete
+
+- **Base:** `edc27fc`
+- **Scope:** Deploy preflight only — **no Edge deploy / SQL / Save / admin UI / FTP / root edit**
+- **Gate:** `gosakiDiscographyEdgeDryRunReadBackEdgeDeployPreflightReady: true`
+- **Deploy command:** `supabase functions deploy gosaki-discography-save-dry-run --project-ref kmjqppxjdnwwrtaeqjta`
+- **readBack env:** `GOSAKI_DISCOGRAPHY_DRY_RUN_READBACK_ENABLED=true` opt-in · anon SELECT · service_role **not used**
+- **Next:** **G-20u36d-readback-edge-deploy** (operator approval)
 
 ## G-20u36d-readback-edge-deploy-plan — complete
 
 - **Base:** `a91e49e`
 - **Scope:** Deploy plan only — **no Edge deploy / SQL / Save / admin UI / FTP / root edit**
-- **Target:** `gosaki-discography-save-dry-run` · staging `kmjqppxjdnwwrtaeqjta`
-- **readBack env:** `GOSAKI_DISCOGRAPHY_DRY_RUN_READBACK_ENABLED=true` opt-in · anon SELECT · service_role **not used**
-- **Next:** **G-20u36d-readback-edge-deploy-preflight**
+- **Next:** G-20u36d-readback-edge-deploy-preflight — **complete**
 
 ## G-20u36d-readback-root-placement — complete
 

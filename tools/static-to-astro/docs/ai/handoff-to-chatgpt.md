@@ -5,10 +5,19 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36b-edge-dry-run-endpoint-live-verify — complete.
-Live HTTP verify PASS on staging gosaki-discography-save-dry-run. Save still blocked. Next: G-20u36c admin fetch POST wiring.
-STG live package still 00c8888 (G-20u30b dry-run UI).
+Current phase: G-20u36c-admin-discography-dry-run-fetch-post-wiring — complete.
+Discography editor fetch POST wired to staging dry-run endpoint. Save still blocked. Next: STG package rebuild + manual upload + UI dry-run QA.
+STG live package still 00c8888 (G-20u30b dry-run UI) — rebuild required for G-20u36c wiring.
 ```
+
+## G-20u36c-admin-discography-dry-run-fetch-post-wiring — complete
+
+- **Base:** `4e048d4`
+- **Scope:** Admin Discography editor dry-run fetch POST only — **Save disabled**
+- **Endpoint:** `https://kmjqppxjdnwwrtaeqjta.supabase.co/functions/v1/gosaki-discography-save-dry-run`
+- **Auth:** Bearer `PUBLIC_SUPABASE_ANON_KEY` (value not logged)
+- **operation:** `dryRun` only — **operation=save not sent**
+- **Next:** local build/regression → staging package rebuild → manual FTP upload → STG UI dry-run verification
 
 ## G-20u36b-edge-dry-run-endpoint-live-verify — complete
 

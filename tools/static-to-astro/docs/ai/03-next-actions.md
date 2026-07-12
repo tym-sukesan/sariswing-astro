@@ -1,6 +1,18 @@
 Last updated: 2026-07-12
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36c-admin-discography-dry-run-fetch-post-wiring — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u36c-admin-discography-dry-run-fetch-post-wiring` |
+| Base | `4e048d4` |
+| Scope | Admin Discography editor fetch POST wiring only |
+| Endpoint | staging `gosaki-discography-save-dry-run` |
+| Save | **disabled** |
+| Doc | `gosaki-discography-g20u36c-admin-discography-dry-run-fetch-post-wiring.md` |
+| Next | STG package rebuild · manual FTP · UI dry-run QA |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36b-edge-dry-run-endpoint-live-verify — complete
 
 | Item | Value |

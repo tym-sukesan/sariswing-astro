@@ -40,7 +40,179 @@ export const G20U29_DISCOGRAPHY_EDITOR_SAVE_DISABLED_REASON =
 /** G-20u30 — Discography track list dry-run validation (browser-only · no network write). */
 export const G20U30_DISCOGRAPHY_DRY_RUN_PHASE = "G-20u30-gosaki-discography-dry-run-validation";
 export const G20U30_DISCOGRAPHY_DRY_RUN_NOTE =
-  "G-20u30: Dry-run validation のみ — ブラウザ内差分表示。Save / DB write / network write なし。本番 Save には operator approval + DB write 設計が必要です。";
+  "G-20u30: ローカル Dry-run validation — ブラウザ内差分表示。Save / DB write なし。Endpoint dry-run POST は G-20u36c。";
+
+/** G-20u36c — Discography dry-run fetch POST wiring (staging Edge Function · Save disabled). */
+export const G20U36C_DISCOGRAPHY_DRY_RUN_FETCH_POST_PHASE =
+  "G-20u36c-admin-discography-dry-run-fetch-post-wiring";
+export const G20U36C_DISCOGRAPHY_DRY_RUN_ENDPOINT = `${G11C4A_STAGING_SUPABASE_URL}/functions/v1/gosaki-discography-save-dry-run`;
+export const G20U36C_DISCOGRAPHY_DRY_RUN_APPROVAL_ID = "G-20u31-gosaki-discography-save-dry-run-endpoint";
+export const G20U36C_DISCOGRAPHY_DRY_RUN_OPERATION = "dryRun" as const;
+export const G20U36C_DISCOGRAPHY_DRY_RUN_NOTE =
+  "G-20u36c: Dry-run only — POST to staging Edge Function. No DB write. Save is still disabled. This checks the request and endpoint response only.";
+export const G20U36C_PRODUCTION_PROJECT_REF_STOP = "vsbvndwuajjhnzpohghh";
+
+export interface DiscographyDryRunEndpointReleaseInput {
+  title: string;
+  artist?: string | null;
+  release_date?: string | null;
+  label?: string | null;
+  catalog_number?: string | null;
+  published?: boolean;
+  cover_image_url?: string | null;
+  purchase_url?: string | null;
+  streaming_url?: string | null;
+  description?: string | null;
+}
+
+export interface DiscographyDryRunEndpointRequestInput {
+  legacyId: string;
+  tracksText: string;
+  release: DiscographyDryRunEndpointReleaseInput;
+}
+
+export interface DiscographyDryRunEndpointDisplay {
+  httpStatus?: number;
+  ok?: boolean;
+  operation?: string;
+  wouldWrite?: boolean;
+  changedCounts?: Record<string, unknown>;
+  diffSummary?: {
+    tracksAdded?: number;
+    tracksRemoved?: number;
+    tracksReordered?: boolean;
+    releaseFields?: string[];
+    added?: string[];
+    removed?: string[];
+  };
+  errors?: string[];
+  warnings?: string[];
+  didWrite: false;
+  dbWrite: false;
+  networkWrite: false;
+  saveEnabled: false;
+  authIssue?: boolean;
+  authCategory?: string;
+  sensitiveResponseBlocked?: boolean;
+  fetchError?: string;
+}
+
+const DISCOGRAPHY_DRY_RUN_FORBIDDEN_RESPONSE_PATTERNS = [
+  /service_role/i,
+  /SUPABASE_SERVICE_ROLE_KEY/i,
+  /\beyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\b/,
+];
+
+export function resolveG20u36cDiscographyDryRunEndpoint(env: ImportMetaEnv): string {
+  const fromEnv = String(env.PUBLIC_GOSAKI_DISCOGRAPHY_SAVE_DRY_RUN_ENDPOINT ?? "").trim();
+  if (fromEnv) return fromEnv;
+  return G20U36C_DISCOGRAPHY_DRY_RUN_ENDPOINT;
+}
+
+export function assertG20u36cDiscographyDryRunEndpointSafe(endpoint: string): boolean {
+  const trimmed = String(endpoint ?? "").trim();
+  if (!trimmed) return false;
+  if (trimmed.includes(G20U36C_PRODUCTION_PROJECT_REF_STOP)) return false;
+  return trimmed.includes(G11C4A_STAGING_PROJECT_REF);
+}
+
+/**
+ * Build dry-run endpoint POST payload — operation=dryRun only · never save.
+ */
+export function buildDiscographyDryRunEndpointRequest(
+  input: DiscographyDryRunEndpointRequestInput,
+): Record<string, unknown> {
+  const release = input.release;
+  return {
+    operation: G20U36C_DISCOGRAPHY_DRY_RUN_OPERATION,
+    siteSlug: GOSAKI_STAGING_SITE_SLUG,
+    legacyId: input.legacyId,
+    approvalId: G20U36C_DISCOGRAPHY_DRY_RUN_APPROVAL_ID,
+    expectedBeforeUpdatedAt: null,
+    release: {
+      title: release.title,
+      artist: release.artist ?? null,
+      release_date: release.release_date ?? null,
+      label: release.label ?? null,
+      catalog_number: release.catalog_number ?? null,
+      published: release.published === true,
+      cover_image_url: release.cover_image_url ?? null,
+      purchase_url: release.purchase_url ?? null,
+      streaming_url: release.streaming_url ?? null,
+      description: release.description ?? null,
+    },
+    tracksText: input.tracksText,
+    trackPolicy: {
+      oneLineOneTrack: true,
+      blankLinesIgnored: true,
+      allowDuplicateTitles: true,
+      allowEmptyTrackList: false,
+    },
+  };
+}
+
+function responseTextLooksSensitive(text: string): boolean {
+  return DISCOGRAPHY_DRY_RUN_FORBIDDEN_RESPONSE_PATTERNS.some((pattern) => pattern.test(text));
+}
+
+/**
+ * Sanitize endpoint response for admin UI display — strip secrets · block sensitive bodies.
+ */
+export function sanitizeDiscographyDryRunEndpointDisplay(
+  body: unknown,
+  httpStatus?: number,
+): DiscographyDryRunEndpointDisplay {
+  const rawText = JSON.stringify(body ?? {});
+  if (responseTextLooksSensitive(rawText)) {
+    return {
+      httpStatus,
+      ok: false,
+      didWrite: false,
+      dbWrite: false,
+      networkWrite: false,
+      saveEnabled: false,
+      sensitiveResponseBlocked: true,
+      errors: ["Response contained forbidden content — not displayed"],
+    };
+  }
+
+  const data = (body && typeof body === "object" ? body : {}) as Record<string, unknown>;
+  const diff = (data.diff && typeof data.diff === "object" ? data.diff : {}) as Record<string, unknown>;
+  const changedCounts =
+    data.changedCounts && typeof data.changedCounts === "object"
+      ? (data.changedCounts as Record<string, unknown>)
+      : undefined;
+
+  const authIssue = httpStatus === 401 || httpStatus === 403;
+
+  return {
+    httpStatus,
+    ok: typeof data.ok === "boolean" ? data.ok : undefined,
+    operation: typeof data.operation === "string" ? data.operation : undefined,
+    wouldWrite: typeof data.wouldWrite === "boolean" ? data.wouldWrite : undefined,
+    changedCounts,
+    diffSummary: {
+      tracksAdded: typeof changedCounts?.tracksAdded === "number" ? changedCounts.tracksAdded : undefined,
+      tracksRemoved:
+        typeof changedCounts?.tracksRemoved === "number" ? changedCounts.tracksRemoved : undefined,
+      tracksReordered:
+        typeof changedCounts?.tracksReordered === "boolean" ? changedCounts.tracksReordered : undefined,
+      releaseFields: Array.isArray(changedCounts?.releaseFields)
+        ? (changedCounts.releaseFields as string[])
+        : undefined,
+      added: Array.isArray(diff.added) ? (diff.added as string[]) : undefined,
+      removed: Array.isArray(diff.removed) ? (diff.removed as string[]) : undefined,
+    },
+    errors: Array.isArray(data.errors) ? (data.errors as string[]) : undefined,
+    warnings: Array.isArray(data.warnings) ? (data.warnings as string[]) : undefined,
+    didWrite: false,
+    dbWrite: false,
+    networkWrite: false,
+    saveEnabled: false,
+    authIssue,
+    authCategory: authIssue ? "auth_required_bearer_anon" : undefined,
+  };
+}
 
 export interface DiscographyTrackListChangedLine {
   line: number;

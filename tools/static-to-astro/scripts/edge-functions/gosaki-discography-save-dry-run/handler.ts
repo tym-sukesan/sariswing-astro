@@ -1,11 +1,15 @@
 /**
- * G-20u36b — Gosaki Discography Edge dry-run endpoint handler (tools draft).
- * Ported from gosaki-discography-edge-dry-run-endpoint-inert.mjs + G-20u33 draft.
- * NOT deployed — tools/static-to-astro draft only · no Supabase client · no service_role · no DB write.
+ * G-20u36b / G-20u36d — Gosaki Discography Edge dry-run endpoint handler (tools draft).
+ * Ported from gosaki-discography-edge-dry-run-endpoint-inert.mjs + G-20u33 draft + G-20u36d readBack.
+ * NOT deployed — tools/static-to-astro draft only · anon SELECT readBack · no service_role · no DB write.
  */
 
 export const G20U36B_EDGE_FUNCTION_SOURCE_STAGING_PHASE =
   "G-20u36b-edge-dry-run-endpoint-function-source-staging";
+
+export const G20U36D_READBACK_PHASE = "G-20u36d-readback-implementation-in-tools-draft";
+export const READBACK_SOURCE = "supabase-select";
+export const PRODUCTION_REF_STOP = "vsbvndwuajjhnzpohghh";
 
 export const ENDPOINT_NAME = "gosaki-discography-save-dry-run";
 export const SITE_SLUG = "gosaki-piano";
@@ -46,6 +50,39 @@ export type DryRunHandlerResult = Record<string, unknown> & {
   status: number;
 };
 
+export type ReadBackQueryAdapter = {
+  fetchRelease(input: { siteSlug: string; legacyId: string }): Promise<Record<string, unknown> | null>;
+  fetchTracks(input: { siteSlug: string; releaseId: string }): Promise<Array<Record<string, unknown>>>;
+};
+
+export type SanitizedReadBackSummary = {
+  enabled: boolean;
+  source: typeof READBACK_SOURCE;
+  releaseFound: boolean;
+  trackCount: number;
+  legacyId: string;
+  siteSlug: string;
+};
+
+const RELEASE_SELECT_FIELDS = [
+  "legacy_id",
+  "site_slug",
+  "title",
+  "artist",
+  "release_date",
+  "year",
+  "label",
+  "catalog_number",
+  "description",
+  "cover_image_url",
+  "purchase_url",
+  "streaming_url",
+  "sort_order",
+  "published",
+].join(",");
+
+const TRACK_SELECT_FIELDS = ["track_number", "title", "duration", "sort_order", "site_slug"].join(",");
+
 const WRITE_FLAGS = {
   didWrite: false,
   dbWrite: false,
@@ -69,11 +106,189 @@ export function getDryRunApprovalRequirements() {
 }
 
 /**
- * Future root-placement phase: SELECT-only baseline via internal service_role.
- * NOT CONNECTED — returns empty snapshot (schema-only dry-run).
+ * Schema-only baseline when readBack is disabled — returns empty snapshot.
  */
 export function resolveCurrentSnapshot(_legacyId: string): CurrentSnapshot {
   return {};
+}
+
+export function assertStagingSupabaseUrl(supabaseUrl: string) {
+  const url = String(supabaseUrl ?? "");
+  if (!url) {
+    throw new Error("SUPABASE_URL is required for anon SELECT readBack");
+  }
+  if (url.includes(PRODUCTION_REF_STOP)) {
+    throw new Error("production Supabase ref is blocked for readBack");
+  }
+  if (!url.includes(STAGING_PROJECT_REF)) {
+    throw new Error("readBack anon SELECT is staging-only");
+  }
+}
+
+export function buildAnonSelectDiscographyReleasePath(siteSlug: string, legacyId: string): string {
+  const slug = encodeURIComponent(String(siteSlug ?? "").trim());
+  const legacy = encodeURIComponent(String(legacyId ?? "").trim());
+  return `/rest/v1/discography?site_slug=eq.${slug}&legacy_id=eq.${legacy}&select=${RELEASE_SELECT_FIELDS}&limit=1`;
+}
+
+export function buildAnonSelectDiscographyTracksPath(siteSlug: string, releaseId: string): string {
+  const slug = encodeURIComponent(String(siteSlug ?? "").trim());
+  const id = encodeURIComponent(String(releaseId ?? "").trim());
+  return `/rest/v1/discography_tracks?site_slug=eq.${slug}&release_id=eq.${id}&select=${TRACK_SELECT_FIELDS}&order=track_number.asc.nullslast,sort_order.asc.nullslast`;
+}
+
+export function sortTrackRows(rows: Array<Record<string, unknown>>): Array<Record<string, unknown>> {
+  return [...(rows ?? [])].sort((a, b) => {
+    const trackA = Number(a?.track_number ?? 0);
+    const trackB = Number(b?.track_number ?? 0);
+    if (trackA !== trackB) return trackA - trackB;
+    const sortA = Number(a?.sort_order ?? 0);
+    const sortB = Number(b?.sort_order ?? 0);
+    return sortA - sortB;
+  });
+}
+
+export function mapTrackRowsToTracksText(rows: Array<Record<string, unknown>>): string {
+  return sortTrackRows(rows)
+    .map((row) => String(row?.title ?? "").trim())
+    .filter(Boolean)
+    .join("\n");
+}
+
+export function mapReleaseRowToCurrentSnapshotRelease(row: Record<string, unknown>): Record<string, unknown> {
+  return {
+    title: row?.title ?? null,
+    artist: row?.artist ?? null,
+    release_date: row?.release_date ?? null,
+    label: row?.label ?? null,
+    catalog_number: row?.catalog_number ?? null,
+    published: row?.published ?? null,
+    cover_image_url: row?.cover_image_url ?? null,
+    purchase_url: row?.purchase_url ?? null,
+    streaming_url: row?.streaming_url ?? null,
+    description: row?.description ?? null,
+  };
+}
+
+export function buildSanitizedReadBackSummary(input: {
+  legacyId: string;
+  siteSlug?: string;
+  releaseFound: boolean;
+  trackCount: number;
+  enabled?: boolean;
+}): SanitizedReadBackSummary {
+  return {
+    enabled: input.enabled !== false,
+    source: READBACK_SOURCE,
+    releaseFound: Boolean(input.releaseFound),
+    trackCount: Number(input.trackCount ?? 0),
+    legacyId: String(input.legacyId ?? ""),
+    siteSlug: String(input.siteSlug ?? SITE_SLUG),
+  };
+}
+
+export function snapshotFromReadBackRows(
+  releaseRow: Record<string, unknown> | null | undefined,
+  trackRows: Array<Record<string, unknown>>,
+  meta: { legacyId: string; siteSlug?: string },
+): { snapshot: CurrentSnapshot; summary: SanitizedReadBackSummary } {
+  const legacyId = String(meta?.legacyId ?? "");
+  const siteSlug = String(meta?.siteSlug ?? SITE_SLUG);
+  const sortedTracks = sortTrackRows(trackRows ?? []);
+
+  if (!releaseRow) {
+    return {
+      snapshot: {},
+      summary: buildSanitizedReadBackSummary({
+        legacyId,
+        siteSlug,
+        releaseFound: false,
+        trackCount: 0,
+        enabled: true,
+      }),
+    };
+  }
+
+  return {
+    snapshot: {
+      tracksText: mapTrackRowsToTracksText(sortedTracks),
+      release: mapReleaseRowToCurrentSnapshotRelease(releaseRow),
+    },
+    summary: buildSanitizedReadBackSummary({
+      legacyId,
+      siteSlug,
+      releaseFound: true,
+      trackCount: sortedTracks.length,
+      enabled: true,
+    }),
+  };
+}
+
+export async function resolveReadBackSnapshot(
+  adapter: ReadBackQueryAdapter,
+  input: { siteSlug: string; legacyId: string },
+): Promise<{ snapshot: CurrentSnapshot; summary: SanitizedReadBackSummary }> {
+  const siteSlug = String(input?.siteSlug ?? SITE_SLUG);
+  const legacyId = String(input?.legacyId ?? "").trim();
+  const releaseRow = await adapter.fetchRelease({ siteSlug, legacyId });
+  if (!releaseRow) {
+    return snapshotFromReadBackRows(null, [], { legacyId, siteSlug });
+  }
+  const releaseId = String(releaseRow.id ?? "");
+  const trackRows = releaseId ? await adapter.fetchTracks({ siteSlug, releaseId }) : [];
+  return snapshotFromReadBackRows(releaseRow, trackRows, { legacyId, siteSlug });
+}
+
+export function createAnonSelectReadBackAdapter(deps: {
+  fetchFn: typeof fetch;
+  supabaseUrl: string;
+  anonKey: string;
+}): ReadBackQueryAdapter {
+  const fetchFn = deps.fetchFn;
+  const supabaseUrl = String(deps.supabaseUrl ?? "").replace(/\/+$/, "");
+  const anonKey = String(deps.anonKey ?? "");
+  assertStagingSupabaseUrl(supabaseUrl);
+  if (!anonKey) {
+    throw new Error("SUPABASE_ANON_KEY is required for anon SELECT readBack");
+  }
+
+  const headers = {
+    apikey: anonKey,
+    Authorization: `Bearer ${anonKey}`,
+    Accept: "application/json",
+  };
+
+  return {
+    async fetchRelease({ siteSlug, legacyId }) {
+      const path = buildAnonSelectDiscographyReleasePath(siteSlug, legacyId);
+      const response = await fetchFn(`${supabaseUrl}${path}`, { method: "GET", headers });
+      if (!response.ok) {
+        throw new Error(`anon SELECT release failed (${response.status})`);
+      }
+      const rows = await response.json();
+      return Array.isArray(rows) && rows.length > 0 ? (rows[0] as Record<string, unknown>) : null;
+    },
+    async fetchTracks({ siteSlug, releaseId }) {
+      const path = buildAnonSelectDiscographyTracksPath(siteSlug, releaseId);
+      const response = await fetchFn(`${supabaseUrl}${path}`, { method: "GET", headers });
+      if (!response.ok) {
+        throw new Error(`anon SELECT tracks failed (${response.status})`);
+      }
+      const rows = await response.json();
+      return Array.isArray(rows) ? (rows as Array<Record<string, unknown>>) : [];
+    },
+  };
+}
+
+export function createDefaultAnonSelectReadBackAdapter(env: {
+  fetch?: typeof fetch;
+  supabaseUrl?: string;
+  anonKey?: string;
+} = {}): ReadBackQueryAdapter {
+  const fetchFn = env.fetch ?? globalThis.fetch.bind(globalThis);
+  const supabaseUrl = env.supabaseUrl ?? "";
+  const anonKey = env.anonKey ?? "";
+  return createAnonSelectReadBackAdapter({ fetchFn, supabaseUrl, anonKey });
 }
 
 export function parseDiscographyTrackListLines(text: string): string[] {
@@ -287,6 +502,7 @@ export function buildDryRunEndpointResponse(input: {
   errors?: string[];
   warnings?: string[];
   serverTime?: string;
+  readBack?: SanitizedReadBackSummary | null;
 }) {
   return {
     ok: input.ok,
@@ -303,7 +519,7 @@ export function buildDryRunEndpointResponse(input: {
     backupPreview: null,
     errors: input.errors ?? [],
     warnings: input.warnings ?? [],
-    readBack: null,
+    readBack: input.readBack ?? null,
     serverTime: input.serverTime ?? new Date().toISOString(),
   };
 }
@@ -334,6 +550,7 @@ function buildRejectionResponse(input: {
 export function simulateDiscographySaveDryRunEndpoint(
   request: DryRunRequest,
   currentSnapshot: CurrentSnapshot = {},
+  options: { readBack?: SanitizedReadBackSummary | null } = {},
 ) {
   const validation = validateDryRunRequest(request);
   const legacyId = String(request?.legacyId ?? "");
@@ -350,6 +567,7 @@ export function simulateDiscographySaveDryRunEndpoint(
         changedCounts: {},
         errors: validation.errors,
         warnings: validation.warnings,
+        readBack: options.readBack ?? null,
       }),
       status: 400,
       approvalRequirements: getDryRunApprovalRequirements(),
@@ -387,6 +605,7 @@ export function simulateDiscographySaveDryRunEndpoint(
         },
         errors: ["empty track list blocked (allowEmptyTrackList must be true to override)"],
         warnings,
+        readBack: options.readBack ?? null,
       }),
       status: 400,
       approvalRequirements: getDryRunApprovalRequirements(),
@@ -430,9 +649,56 @@ export function simulateDiscographySaveDryRunEndpoint(
       },
       errors: [],
       warnings,
+      readBack: options.readBack ?? null,
     }),
     status: 200,
   };
+}
+
+export async function simulateDiscographySaveDryRunEndpointWithReadBack(
+  request: DryRunRequest,
+  adapter: ReadBackQueryAdapter | null,
+  options: { readBackEnabled?: boolean } = {},
+): Promise<DryRunHandlerResult> {
+  const readBackEnabled = options.readBackEnabled !== false && adapter != null;
+  let currentSnapshot: CurrentSnapshot = {};
+  let readBackSummary: SanitizedReadBackSummary | null = null;
+  const readBackWarnings: string[] = [];
+
+  if (readBackEnabled && adapter) {
+    try {
+      const readBack = await resolveReadBackSnapshot(adapter, {
+        siteSlug: SITE_SLUG,
+        legacyId: String(request.legacyId ?? ""),
+      });
+      currentSnapshot = readBack.snapshot;
+      readBackSummary = readBack.summary;
+      if (!readBack.summary.releaseFound) {
+        readBackWarnings.push("readBack: release not found in database");
+      }
+    } catch (error) {
+      readBackWarnings.push(
+        `readBack: anon SELECT failed (${error instanceof Error ? error.message : String(error)})`,
+      );
+      readBackSummary = buildSanitizedReadBackSummary({
+        legacyId: String(request.legacyId ?? ""),
+        siteSlug: SITE_SLUG,
+        releaseFound: false,
+        trackCount: 0,
+        enabled: true,
+      });
+    }
+  }
+
+  const result = simulateDiscographySaveDryRunEndpoint(request, currentSnapshot, {
+    readBack: readBackSummary,
+  });
+  const mergedWarnings = [...(Array.isArray(result.warnings) ? result.warnings : []), ...readBackWarnings];
+  return {
+    ...result,
+    warnings: mergedWarnings,
+    readBack: readBackSummary,
+  } as DryRunHandlerResult;
 }
 
 export function validateHttpEnvelope(input: {
@@ -463,6 +729,7 @@ export function validateHttpEnvelope(input: {
 
 /**
  * HTTP handler entry — POST/json only · dryRun only · no service_role · no DB write.
+ * Sync path: schema-only baseline (readBack null) when readBack disabled.
  */
 export function handleDiscographyEdgeDryRunHttp(input: {
   method?: string;
@@ -487,6 +754,53 @@ export function handleDiscographyEdgeDryRunHttp(input: {
       approvalId: String(request.approvalId ?? ""),
       errors: ['operation "save" is rejected by dry-run endpoint — use dryRun only'],
       status: 400,
+    });
+  }
+
+  const currentSnapshot = resolveCurrentSnapshot(String(request.legacyId ?? ""));
+  const result = simulateDiscographySaveDryRunEndpoint(request, currentSnapshot);
+  return result as DryRunHandlerResult;
+}
+
+/**
+ * Async HTTP handler — optional anon SELECT readBack via injectable adapter.
+ */
+export async function handleDiscographyEdgeDryRunHttpAsync(
+  input: {
+    method?: string;
+    contentType?: string;
+    body?: unknown;
+  },
+  options: {
+    readBackEnabled?: boolean;
+    readBackAdapter?: ReadBackQueryAdapter | null;
+  } = {},
+): Promise<DryRunHandlerResult> {
+  const envelope = validateHttpEnvelope(input);
+  if (!envelope.ok) {
+    return buildRejectionResponse({
+      legacyId: "",
+      approvalId: "",
+      errors: envelope.errors,
+      status: envelope.status,
+    });
+  }
+
+  const request = (input.body ?? {}) as DryRunRequest;
+
+  if (request.operation === "save") {
+    return buildRejectionResponse({
+      legacyId: String(request.legacyId ?? ""),
+      approvalId: String(request.approvalId ?? ""),
+      errors: ['operation "save" is rejected by dry-run endpoint — use dryRun only'],
+      status: 400,
+    });
+  }
+
+  const readBackEnabled = Boolean(options.readBackEnabled && options.readBackAdapter);
+  if (readBackEnabled) {
+    return simulateDiscographySaveDryRunEndpointWithReadBack(request, options.readBackAdapter ?? null, {
+      readBackEnabled: true,
     });
   }
 

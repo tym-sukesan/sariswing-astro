@@ -5,9 +5,17 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36d-discography-edge-dry-run-readback-enhancement-planning — complete.
-readBack plan prepared (anon SELECT first). Save still blocked. Next: tools-draft readBack implementation.
+Current phase: G-20u36d-readback-implementation-in-tools-draft — complete.
+readBack tools draft implemented (anon SELECT · mock verifier). Save still blocked. Next: root placement plan.
 ```
+
+## G-20u36d-readback-implementation-in-tools-draft — complete
+
+- **Base:** `d99fd21`
+- **Scope:** Tools draft only — **no root Edge edit / deploy / SQL / Save / admin UI / FTP**
+- **readBack:** anon SELECT adapter · sanitized summary · DB-grounded diff via mock fixture
+- **service_role:** **not used**
+- **Next:** **G-20u36d-readback-root-placement-plan**
 
 ## G-20u36d-discography-edge-dry-run-readback-enhancement-planning — complete
 
@@ -15,7 +23,7 @@ readBack plan prepared (anon SELECT first). Save still blocked. Next: tools-draf
 - **Scope:** Planning only — **no Edge edit / deploy / SQL / Save / admin UI / FTP**
 - **Goal:** DB-grounded dry-run diff via SELECT-only readBack · anon SELECT preferred
 - **service_role:** **not in this plan** — separate approval if anon fails
-- **Next:** **G-20u36d-readback-implementation-in-tools-draft**
+- **Next:** G-20u36d-readback-implementation-in-tools-draft — **complete**
 
 ## G-20u36c-admin-discography-dry-run-stg-browser-qa-result-record — complete
 

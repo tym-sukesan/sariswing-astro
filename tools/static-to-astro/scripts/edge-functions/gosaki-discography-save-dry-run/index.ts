@@ -1,11 +1,15 @@
 /**
- * G-20u36b — Gosaki Discography Edge dry-run endpoint (tools draft · NOT deployed).
+ * G-20u36b / G-20u36d — Gosaki Discography Edge dry-run endpoint (tools draft · NOT deployed).
  * Endpoint: gosaki-discography-save-dry-run
  * Target: static-to-astro-cms-staging (kmjqppxjdnwwrtaeqjta) — deploy in future phase only.
  * NOT EXECUTED — tools/static-to-astro/scripts/edge-functions draft · root supabase/functions/** unchanged.
  */
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
-import { handleDiscographyEdgeDryRunHttp } from "./handler.ts";
+import {
+  createDefaultAnonSelectReadBackAdapter,
+  handleDiscographyEdgeDryRunHttp,
+  handleDiscographyEdgeDryRunHttpAsync,
+} from "./handler.ts";
 
 const corsHeaders: Record<string, string> = {
   "Access-Control-Allow-Origin": "*",
@@ -20,13 +24,42 @@ function jsonResponse(body: Record<string, unknown>, status = 200): Response {
   });
 }
 
+function resolveReadBackOptions() {
+  const readBackEnabled = Deno.env.get("GOSAKI_DISCOGRAPHY_DRY_RUN_READBACK_ENABLED") === "true";
+  if (!readBackEnabled) {
+    return { readBackEnabled: false, readBackAdapter: null };
+  }
+  try {
+    const readBackAdapter = createDefaultAnonSelectReadBackAdapter({
+      fetch: globalThis.fetch.bind(globalThis),
+      supabaseUrl: Deno.env.get("SUPABASE_URL") ?? "",
+      anonKey: Deno.env.get("SUPABASE_ANON_KEY") ?? "",
+    });
+    return { readBackEnabled: true, readBackAdapter };
+  } catch {
+    return { readBackEnabled: false, readBackAdapter: null };
+  }
+}
+
+async function handleRequest(input: {
+  method: string;
+  contentType: string;
+  body?: unknown;
+}): Promise<Record<string, unknown>> {
+  const readBackOptions = resolveReadBackOptions();
+  if (readBackOptions.readBackEnabled && readBackOptions.readBackAdapter) {
+    return handleDiscographyEdgeDryRunHttpAsync(input, readBackOptions);
+  }
+  return handleDiscographyEdgeDryRunHttp(input);
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
   }
 
   if (req.method !== "POST") {
-    const result = handleDiscographyEdgeDryRunHttp({
+    const result = await handleRequest({
       method: req.method,
       contentType: req.headers.get("content-type") ?? "",
     });
@@ -39,7 +72,7 @@ Deno.serve(async (req) => {
   try {
     body = await req.json();
   } catch {
-    const result = handleDiscographyEdgeDryRunHttp({
+    const result = await handleRequest({
       method: req.method,
       contentType,
       body: null,
@@ -47,7 +80,7 @@ Deno.serve(async (req) => {
     return jsonResponse(result, result.status ?? 400);
   }
 
-  const result = handleDiscographyEdgeDryRunHttp({
+  const result = await handleRequest({
     method: req.method,
     contentType,
     body,

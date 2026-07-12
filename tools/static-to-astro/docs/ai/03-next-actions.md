@@ -1,15 +1,25 @@
 Last updated: 2026-07-12
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36d-readback-root-placement — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u36d-readback-root-placement` |
+| Base | `d8be0da` |
+| Scope | Root copy · 2 files only · readBack source |
+| Doc | `gosaki-discography-g20u36d-readback-root-placement.md` |
+| Next | G-20u36d-readback-edge-deploy-plan |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36d-readback-root-placement-plan — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-20u36d-readback-root-placement-plan` |
-| Base | `0cbcf2f` |
-| Scope | Plan only — copy map · review checklist · STOP conditions |
+| Base | `d8be0da` |
+| Scope | Plan only — copy map · review checklist |
 | Doc | `gosaki-discography-g20u36d-readback-root-placement-plan.md` |
-| Next | G-20u36d-readback-root-placement |
+| Next | G-20u36d-readback-root-placement — **complete** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36d-readback-implementation-in-tools-draft — complete
 

@@ -5,18 +5,25 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36d-readback-root-placement-plan — complete.
-readBack root placement plan prepared. Save still blocked. Next: root placement (scope exception).
+Current phase: G-20u36d-readback-root-placement — complete.
+readBack root source placed (2 files). Deployed Edge still pre-readBack until edge-deploy. Save blocked. Next: edge-deploy-plan.
 ```
+
+## G-20u36d-readback-root-placement — complete
+
+- **Base:** `d8be0da`
+- **Scope:** Root copy only — **2 files** · **no Edge deploy / SQL / Save / admin UI / FTP**
+- **Files:** `supabase/functions/gosaki-discography-save-dry-run/index.ts` + `handler.ts`
+- **readBack:** anon SELECT · env gate · sanitized summary · schema-only fallback when disabled
+- **service_role:** **not used**
+- **Next:** **G-20u36d-readback-edge-deploy-plan**
 
 ## G-20u36d-readback-root-placement-plan — complete
 
-- **Base:** `0cbcf2f`
+- **Base:** `d8be0da`
 - **Scope:** Plan only — **no root Edge edit / deploy / SQL / Save / admin UI / FTP**
 - **Copy map:** tools draft `index.ts` + `handler.ts` → `supabase/functions/gosaki-discography-save-dry-run/`
-- **readBack env:** `GOSAKI_DISCOGRAPHY_DRY_RUN_READBACK_ENABLED` opt-in · disabled = schema-only fallback
-- **service_role:** **not used**
-- **Next:** **G-20u36d-readback-root-placement**
+- **Next:** G-20u36d-readback-root-placement — **complete**
 
 ## G-20u36d-readback-implementation-in-tools-draft — complete
 

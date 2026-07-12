@@ -5,20 +5,28 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36d-readback-release-id-select-fix-edge-deploy-result-record — complete.
-Staging Edge: release-id fix + readBack deployed. Live verify retry pending. Save blocked.
+Current phase: G-20u36d-readback-live-verify-retry — complete (PARTIAL STOP).
+readBack enabled but trackCount=0 — tracks SELECT fails (duration column missing). Save blocked.
 ```
+
+## G-20u36d-readback-live-verify-retry — complete (PARTIAL STOP)
+
+- **Base:** `9c5c074`
+- **Scope:** Live HTTP verify retry only — **no re-deploy / SQL / Save / admin UI / FTP**
+- **Gate:** `gosakiDiscographyEdgeDryRunReadBackLiveVerifyRetryPassed: false`
+- **readBack:** enabled · source=supabase-select · releaseFound=true · **trackCount=0** (expected 8)
+- **matching dryRun:** **400** STOP · **+1 track:** 200 PASS · **save/siteSlug:** 400 reject PASS
+- **STOP cause:** `discography_tracks.duration` does not exist → tracks anon SELECT 400
+- **Release-id fix:** release SELECT returns `id` — partial progress vs prior live verify
+- **service_role:** **not used**
+- **Next:** **tracks SELECT fields fix planning** (not G-20u36e until retry PASS)
 
 ## G-20u36d-readback-release-id-select-fix-edge-deploy-result-record — complete
 
 - **Base:** `df4a8be`
-- **Scope:** Result record only — **no re-deploy / SQL / Save / admin UI / FTP / root edit**
 - **Gate:** `gosakiDiscographyEdgeDryRunReadBackReleaseIdSelectFixEdgeDeployed: true`
-- **Deploy:** operator SUCCESS · `gosaki-discography-save-dry-run` @ `kmjqppxjdnwwrtaeqjta`
-- **Code:** release-id fix + readBack-capable · `cli-latest` unchanged · git clean
-- **Live verify retry:** **not executed**
-- **service_role:** **not used**
-- **Next:** **G-20u36d-readback-live-verify-retry**
+- **Deploy:** operator SUCCESS · release-id fix + readBack deployed
+- **Next:** **G-20u36d-readback-live-verify-retry** — **complete (PARTIAL STOP)**
 
 ## G-20u36d-readback-release-id-select-fix-edge-deploy-preflight — complete
 

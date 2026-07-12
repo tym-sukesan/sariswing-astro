@@ -5,10 +5,20 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36d-readback-release-id-select-fix-root-placement — complete.
-Root: release SELECT includes internal id for tracks lookup. Live endpoint still pre-fix until Edge deploy.
-Save blocked. Next: edge-deploy.
+Current phase: G-20u36d-readback-release-id-select-fix-edge-deploy-preflight — complete.
+Deploy gate: release-id fix preflight (not historical readBack preflight). Save blocked. Next: edge-deploy.
 ```
+
+## G-20u36d-readback-release-id-select-fix-edge-deploy-preflight — complete
+
+- **Base:** `ae4175b`
+- **Scope:** Preflight doc + verifier only — **no Edge deploy / SQL / Save / admin UI / FTP / root edit**
+- **Gate:** `gosakiDiscographyEdgeDryRunReadBackReleaseIdSelectFixEdgeDeployPreflightReady: true`
+- **Old preflight FAIL:** historical `verify:g20u36d-readback-root-placement` mismatch after release-id fix (not dangerous)
+- **Deploy gate:** release-id fix targeted verifiers (root-placement · tools-draft · plan · env-secret-result)
+- **Deploy:** `gosaki-discography-save-dry-run` @ `kmjqppxjdnwwrtaeqjta` — **NOT EXECUTED**
+- **service_role:** **not used**
+- **Next:** **G-20u36d-readback-release-id-select-fix-edge-deploy**
 
 ## G-20u36d-readback-release-id-select-fix-root-placement — complete
 
@@ -18,7 +28,7 @@ Save blocked. Next: edge-deploy.
 - **Fix:** tools draft release-id fix → root `supabase/functions/gosaki-discography-save-dry-run/`
 - **Live:** deployed Edge **still pre-fix** until redeploy
 - **service_role:** **not used**
-- **Next:** **G-20u36d-readback-release-id-select-fix-edge-deploy**
+- **Next:** **G-20u36d-readback-release-id-select-fix-edge-deploy-preflight** — **complete**
 
 ## G-20u36d-readback-release-id-select-fix-tools-draft — complete
 

@@ -1,6 +1,16 @@
 Last updated: 2026-07-12
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36d-readback-release-id-select-fix-edge-deploy-preflight — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u36d-readback-release-id-select-fix-edge-deploy-preflight` |
+| Base | `ae4175b` |
+| Scope | Deploy preflight · release-id fix gate · old preflight historical |
+| Doc | `gosaki-discography-g20u36d-readback-release-id-select-fix-edge-deploy-preflight.md` |
+| Next | G-20u36d-readback-release-id-select-fix-edge-deploy |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36d-readback-release-id-select-fix-root-placement — complete
 
 | Item | Value |
@@ -9,7 +19,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Base | `49791bd` |
 | Scope | Root placement · release SELECT + id · scope exception 2 files |
 | Doc | `gosaki-discography-g20u36d-readback-release-id-select-fix-root-placement.md` |
-| Next | G-20u36d-readback-release-id-select-fix-edge-deploy |
+| Next | G-20u36d-readback-release-id-select-fix-edge-deploy-preflight — **complete** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36d-readback-release-id-select-fix-tools-draft — complete
 

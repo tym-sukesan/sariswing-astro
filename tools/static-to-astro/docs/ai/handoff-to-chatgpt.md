@@ -5,10 +5,20 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36b-edge-dry-run-endpoint-deploy-manual-result-record — complete.
-Operator deployed gosaki-discography-save-dry-run to staging kmjqppxjdnwwrtaeqjta. Live verify not executed. Save still blocked. Next: live-verify.
+Current phase: G-20u36b-edge-dry-run-endpoint-live-verify — complete.
+Live HTTP verify PASS on staging gosaki-discography-save-dry-run. Save still blocked. Next: G-20u36c admin fetch POST wiring.
 STG live package still 00c8888 (G-20u30b dry-run UI).
 ```
+
+## G-20u36b-edge-dry-run-endpoint-live-verify — complete
+
+- **Base:** `7fe788b`
+- **Scope:** Live HTTP verify only — **Cursor did not re-deploy**
+- **Target URL:** `https://kmjqppxjdnwwrtaeqjta.supabase.co/functions/v1/gosaki-discography-save-dry-run`
+- **Auth:** Bearer `PUBLIC_SUPABASE_ANON_KEY` (value not logged)
+- **Outcome:** **PASS** — dryRun accepted · save/siteSlug/approvalId rejected · write flags false
+- **Save / fetch POST:** **disabled / not added**
+- **Next:** **G-20u36c** admin UI dry-run fetch POST wiring (no Save)
 
 ## G-20u36b-edge-dry-run-endpoint-deploy-manual-result-record — complete
 

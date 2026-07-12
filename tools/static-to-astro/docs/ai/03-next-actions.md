@@ -1,6 +1,18 @@
 Last updated: 2026-07-12
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36b-edge-dry-run-endpoint-live-verify — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u36b-edge-dry-run-endpoint-live-verify` |
+| Base | `7fe788b` |
+| Scope | Live HTTP verify only — no re-deploy |
+| Target | staging `kmjqppxjdnwwrtaeqjta` / `gosaki-discography-save-dry-run` |
+| Outcome | **PASS** · write flags false |
+| Doc | `gosaki-discography-g20u36b-edge-dry-run-endpoint-live-verify.md` |
+| Next | G-20u36c admin fetch POST wiring (no Save) |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36b-edge-dry-run-endpoint-deploy-manual-result-record — complete
 
 | Item | Value |

@@ -5,10 +5,17 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36b-edge-dry-run-endpoint-root-placement — complete.
-Root source placed at supabase/functions/gosaki-discography-save-dry-run/. No Edge deploy. Save still blocked. Next: deploy-manual (separate approval).
+Current phase: G-20u36b-edge-dry-run-endpoint-root-placement-verifier-postcommit-fix — complete.
+Root-placement verifier fixed for post-commit clean state. Next: deploy-manual (separate approval).
 STG live package still 00c8888 (G-20u30b dry-run UI).
 ```
+
+## G-20u36b-edge-dry-run-endpoint-root-placement-verifier-postcommit-fix — complete
+
+- **Base:** `2bd83ad`
+- **Fix:** Root-placement verifier uses committed diff `4453258..HEAD` + working tree for supabase/functions scope
+- **Root `supabase/functions/**`:** **not edited in this phase**
+- **Next:** **G-20u36b-edge-dry-run-endpoint-deploy-manual** (separate operator approval)
 
 ## G-20u36b-edge-dry-run-endpoint-root-placement — complete
 

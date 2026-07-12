@@ -1,6 +1,16 @@
 Last updated: 2026-07-12
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36b-edge-dry-run-endpoint-root-placement-verifier-postcommit-fix — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u36b-edge-dry-run-endpoint-root-placement-verifier-postcommit-fix` |
+| Base | `2bd83ad` |
+| Scope | Verifier fix only — committed diff + working tree scope check |
+| Root supabase/functions | **not edited in this phase** |
+| Next | deploy-manual (separate approval) |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36b-edge-dry-run-endpoint-root-placement — complete
 
 | Item | Value |

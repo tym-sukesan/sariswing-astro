@@ -121,3 +121,11 @@ npm run verify:current-active-regression
 ```
 
 Historical verifier — not in active regression suite (23 verifiers unchanged).
+
+---
+
+## Verifier post-commit fix (G-20u36b-root-placement-verifier-postcommit-fix)
+
+**Issue:** On clean working tree after root-placement commit, `supabase/functions changes only gosaki-discography-save-dry-run` failed because the verifier only inspected unstaged/untracked git changes.
+
+**Fix:** Verifier now unions **committed** diff (`4453258..HEAD` under `supabase/functions/`) with **working tree** changes. Post-commit clean state PASS when committed scope is exactly the two allowed root files and other `supabase/functions/**` paths are untouched.

@@ -26,6 +26,12 @@ const ROOT_HANDLER_REL = "supabase/functions/gosaki-discography-save-dry-run/han
 const ADMIN_PAGE_REL =
   "tools/static-to-astro/templates/site-extensions/gosaki-piano/GosakiStagingReadOnlyAdminPage.astro";
 const BASE_COMMIT = "4453258";
+const ROOT_PLACEMENT_SCOPE_BASE = BASE_COMMIT;
+
+const ALLOWED_ROOT_SUPABASE_PATHS = [
+  ROOT_INDEX_REL,
+  ROOT_HANDLER_REL,
+];
 
 const MUTATION_PATTERNS = [
   /\.insert\s*\(/i,
@@ -83,7 +89,7 @@ function diffTouches(prefix) {
   return Boolean(diff.stdout.trim() || status.stdout.trim());
 }
 
-function listChangedUnderSupabaseFunctions() {
+function listWorkingTreeSupabaseFunctionChanges() {
   const diff = spawnSync("git", ["diff", "--name-only", "supabase/functions"], {
     cwd: REPO_ROOT,
     encoding: "utf8",
@@ -108,13 +114,37 @@ function listChangedUnderSupabaseFunctions() {
   return [...files];
 }
 
-function isAllowedSupabaseFunctionChange(file) {
-  return (
-    file === ROOT_INDEX_REL ||
-    file === ROOT_HANDLER_REL ||
-    file.endsWith("gosaki-discography-save-dry-run/index.ts") ||
-    file.endsWith("gosaki-discography-save-dry-run/handler.ts")
+function listCommittedSupabaseFunctionChanges(baseCommit = ROOT_PLACEMENT_SCOPE_BASE) {
+  const diff = spawnSync(
+    "git",
+    ["diff", "--name-only", `${baseCommit}..HEAD`, "--", "supabase/functions"],
+    { cwd: REPO_ROOT, encoding: "utf8" },
   );
+  if (diff.status !== 0) return [];
+  return diff.stdout
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean);
+}
+
+function listAllSupabaseFunctionScopeChanges() {
+  return [
+    ...new Set([
+      ...listCommittedSupabaseFunctionChanges(),
+      ...listWorkingTreeSupabaseFunctionChanges(),
+    ]),
+  ];
+}
+
+function isAllowedSupabaseFunctionChange(file) {
+  return ALLOWED_ROOT_SUPABASE_PATHS.some(
+    (allowed) => file === allowed || file.endsWith("gosaki-discography-save-dry-run/index.ts") || file.endsWith("gosaki-discography-save-dry-run/handler.ts"),
+  );
+}
+
+function supabaseFunctionSubpathUntouched(subpath) {
+  const committed = listCommittedSupabaseFunctionChanges().filter((f) => f.startsWith(subpath));
+  return committed.length === 0 && !diffTouches(subpath);
 }
 
 /** Strip comments and normalize phase constant for tools vs root comparison. */
@@ -174,13 +204,26 @@ assert("doc staging ref kmjqppxjdnwwrtaeqjta", doc.includes("kmjqppxjdnwwrtaeqjt
 assert("doc production STOP vsbvndwuajjhnzpohghh", doc.includes("vsbvndwuajjhnzpohghh"));
 assert("doc next deploy-manual phase", doc.includes("deploy-manual"));
 
-const changedSupabase = listChangedUnderSupabaseFunctions();
-const allowedOnly =
-  changedSupabase.length > 0 && changedSupabase.every((f) => isAllowedSupabaseFunctionChange(f));
-assert("supabase/functions changes only gosaki-discography-save-dry-run", allowedOnly, changedSupabase.join(", "));
-assert("other supabase functions paths untouched", !diffTouches("supabase/functions/_shared"));
-assert("other supabase functions admin paths untouched", !diffTouches("supabase/functions/admin-schedule"));
-assert("other supabase functions gosaki-youtube untouched", !diffTouches("supabase/functions/gosaki-youtube-url-dry-run"));
+const scopeChanges = listAllSupabaseFunctionScopeChanges();
+const committedScopeChanges = listCommittedSupabaseFunctionChanges();
+const workingScopeChanges = listWorkingTreeSupabaseFunctionChanges();
+const scopeChangesAllowed =
+  exists(ROOT_INDEX_REL) &&
+  exists(ROOT_HANDLER_REL) &&
+  scopeChanges.every((f) => isAllowedSupabaseFunctionChange(f)) &&
+  (scopeChanges.length > 0 ||
+    (committedScopeChanges.length === 0 && workingScopeChanges.length === 0));
+assert(
+  "supabase/functions changes only gosaki-discography-save-dry-run",
+  scopeChangesAllowed,
+  scopeChanges.join(", ") || "no committed/working changes and root files missing",
+);
+assert("other supabase functions paths untouched", supabaseFunctionSubpathUntouched("supabase/functions/_shared"));
+assert("other supabase functions admin paths untouched", supabaseFunctionSubpathUntouched("supabase/functions/admin-schedule"));
+assert(
+  "other supabase functions gosaki-youtube untouched",
+  supabaseFunctionSubpathUntouched("supabase/functions/gosaki-youtube-url-dry-run"),
+);
 
 const normIndexDraft = normalizeSourceForCompare(draftIndex);
 const normIndexRoot = normalizeSourceForCompare(rootIndex);

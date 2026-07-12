@@ -170,9 +170,17 @@ for (const pattern of MUTATION_PATTERNS) {
   assert(`handler no mutation ${pattern}`, !pattern.test(handlerTs));
 }
 
-assert("root handler not modified", !diffTouches("supabase/functions/"));
-if (rootHandler) {
+const ROOT_PLACEMENT_DOC_REL =
+  "tools/static-to-astro/docs/gosaki-discography-g20u36d-readback-release-id-select-fix-root-placement.md";
+const rootPlacementComplete = exists(ROOT_PLACEMENT_DOC_REL);
+
+assert("root handler not modified", rootPlacementComplete || !diffTouches("supabase/functions/"));
+if (!rootPlacementComplete && rootHandler) {
   assert("root handler still missing id (pre-placement)", releaseSelectMissingId(rootHandler));
+} else if (rootPlacementComplete) {
+  console.log(
+    "NOTE root placement complete — tools-draft root-unmodified checks skipped (historical tools-draft doc)",
+  );
 }
 
 const releasePath = buildAnonSelectDiscographyReleasePath(READBACK_SITE_SLUG, "discography-002");

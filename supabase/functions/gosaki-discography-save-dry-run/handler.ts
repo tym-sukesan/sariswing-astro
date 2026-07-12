@@ -2,10 +2,12 @@
  * G-20u36b / G-20u36d — Gosaki Discography Edge dry-run endpoint handler (root source · NOT deployed).
  * Ported from gosaki-discography-edge-dry-run-endpoint-inert.mjs + G-20u33 draft + G-20u36d readBack.
  * Copied from tools/static-to-astro/scripts/edge-functions/gosaki-discography-save-dry-run/handler.ts
- * anon SELECT readBack · no service_role · no DB write · Edge deploy NOT EXECUTED.
+ * G-20u36d release-id select fix root placement · anon SELECT readBack · Edge deploy NOT EXECUTED.
  */
 
 export const G20U36D_READBACK_ROOT_PLACEMENT_PHASE = "G-20u36d-readback-root-placement";
+export const G20U36D_RELEASE_ID_SELECT_FIX_ROOT_PLACEMENT_PHASE =
+  "G-20u36d-readback-release-id-select-fix-root-placement";
 export const READBACK_SOURCE = "supabase-select";
 export const PRODUCTION_REF_STOP = "vsbvndwuajjhnzpohghh";
 
@@ -16,7 +18,7 @@ export const DRY_RUN_OPERATION = "dryRun";
 export const DRY_RUN_APPROVAL_ID = "G-20u31-gosaki-discography-save-dry-run-endpoint";
 export const SAVE_APPROVAL_ID = "G-20u36-gosaki-discography-tracklist-save-non-dry-run-slice";
 
-/** Supabase service_role — NOT CONNECTED in readBack root-placement phase. */
+/** Supabase service_role — NOT CONNECTED in release-id select fix root-placement phase. */
 export const SUPABASE_SERVICE_ROLE_CONNECTED = false;
 
 const RELEASE_FIELDS = [
@@ -62,7 +64,9 @@ export type SanitizedReadBackSummary = {
   siteSlug: string;
 };
 
+/** PostgREST release SELECT — includes internal `id` for tracks lookup only (not exposed in snapshot/summary). */
 const RELEASE_SELECT_FIELDS = [
+  "id",
   "legacy_id",
   "site_slug",
   "title",
@@ -225,16 +229,28 @@ export function snapshotFromReadBackRows(
 export async function resolveReadBackSnapshot(
   adapter: ReadBackQueryAdapter,
   input: { siteSlug: string; legacyId: string },
-): Promise<{ snapshot: CurrentSnapshot; summary: SanitizedReadBackSummary }> {
+): Promise<{ snapshot: CurrentSnapshot; summary: SanitizedReadBackSummary; warnings: string[] }> {
   const siteSlug = String(input?.siteSlug ?? SITE_SLUG);
   const legacyId = String(input?.legacyId ?? "").trim();
+  const warnings: string[] = [];
   const releaseRow = await adapter.fetchRelease({ siteSlug, legacyId });
   if (!releaseRow) {
-    return snapshotFromReadBackRows(null, [], { legacyId, siteSlug });
+    return { ...snapshotFromReadBackRows(null, [], { legacyId, siteSlug }), warnings };
   }
-  const releaseId = String(releaseRow.id ?? "");
-  const trackRows = releaseId ? await adapter.fetchTracks({ siteSlug, releaseId }) : [];
-  return snapshotFromReadBackRows(releaseRow, trackRows, { legacyId, siteSlug });
+  const releaseId = String(releaseRow.id ?? "").trim();
+  if (!releaseId) {
+    warnings.push("readBack: release row missing internal id — tracks SELECT skipped");
+    return { ...snapshotFromReadBackRows(releaseRow, [], { legacyId, siteSlug }), warnings };
+  }
+  let trackRows: Array<Record<string, unknown>> = [];
+  try {
+    trackRows = await adapter.fetchTracks({ siteSlug, releaseId });
+  } catch (error) {
+    warnings.push(
+      `readBack: anon SELECT tracks failed (${error instanceof Error ? error.message : String(error)})`,
+    );
+  }
+  return { ...snapshotFromReadBackRows(releaseRow, trackRows, { legacyId, siteSlug }), warnings };
 }
 
 export function createAnonSelectReadBackAdapter(deps: {
@@ -671,6 +687,7 @@ export async function simulateDiscographySaveDryRunEndpointWithReadBack(
       });
       currentSnapshot = readBack.snapshot;
       readBackSummary = readBack.summary;
+      readBackWarnings.push(...readBack.warnings);
       if (!readBack.summary.releaseFound) {
         readBackWarnings.push("readBack: release not found in database");
       }

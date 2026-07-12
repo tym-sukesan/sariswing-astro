@@ -166,13 +166,20 @@ assert("live verify doc trackCount zero", liveVerifyDoc.includes("trackCount") &
 
 const toolsDraftFixDocRel =
   "tools/static-to-astro/docs/gosaki-discography-g20u36d-readback-release-id-select-fix-tools-draft.md";
+const rootPlacementDocRel =
+  "tools/static-to-astro/docs/gosaki-discography-g20u36d-readback-release-id-select-fix-root-placement.md";
 const toolsDraftFixComplete = exists(toolsDraftFixDocRel);
+const rootPlacementComplete = exists(rootPlacementDocRel);
 
 assert("root handler resolveReadBackSnapshot uses releaseRow.id", rootHandler.includes("releaseRow.id"));
 assert("root mapReleaseRow omits id", rootHandler.includes("mapReleaseRowToCurrentSnapshotRelease") && !/title: row\?\.title[\s\S]{0,200}id:/.test(rootHandler));
 assert("root buildSanitizedReadBackSummary no id field", !/buildSanitizedReadBackSummary[\s\S]{0,300}\bid\b:/.test(rootHandler));
 
-if (toolsDraftFixComplete) {
+if (rootPlacementComplete) {
+  assert("root handler release select includes id", releaseSelectIncludesId(rootHandler));
+  assert("tools handler release select includes id", releaseSelectIncludesId(toolsHandler));
+  assert("readback lib release select includes id", releaseSelectIncludesId(readbackLib));
+} else if (toolsDraftFixComplete) {
   assert("root handler release select still missing id (pre-root-placement)", releaseSelectMissingId(rootHandler));
   assert("tools handler release select includes id", releaseSelectIncludesId(toolsHandler));
   assert("readback lib release select includes id", releaseSelectIncludesId(readbackLib));
@@ -187,7 +194,10 @@ assert(
   packageJson.includes("verify:g20u36d-readback-release-id-select-fix-plan"),
 );
 
-assert("supabase/functions not modified this phase", !diffTouches("supabase/functions/"));
+assert(
+  "supabase/functions not modified this phase",
+  rootPlacementComplete || !diffTouches("supabase/functions/"),
+);
 if (!toolsDraftFixComplete) {
   assert("tools edge handler not modified this phase", !diffTouches(TOOLS_HANDLER_REL));
   assert("readback lib not modified this phase", !diffTouches(READBACK_LIB_REL));

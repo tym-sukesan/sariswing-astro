@@ -5,10 +5,20 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36d-readback-release-id-select-fix-tools-draft — complete.
-Tools draft: release SELECT includes internal id for tracks lookup. Summary stays sanitized.
-Root not updated. Save blocked. Next: root-placement.
+Current phase: G-20u36d-readback-release-id-select-fix-root-placement — complete.
+Root: release SELECT includes internal id for tracks lookup. Live endpoint still pre-fix until Edge deploy.
+Save blocked. Next: edge-deploy.
 ```
+
+## G-20u36d-readback-release-id-select-fix-root-placement — complete
+
+- **Base:** `49791bd`
+- **Scope:** Root placement only — **scope exception 2 files** · **no Edge deploy / SQL / Save / admin UI / FTP**
+- **Gate:** `gosakiDiscographyEdgeDryRunReadBackReleaseIdSelectFixRootPlaced: true`
+- **Fix:** tools draft release-id fix → root `supabase/functions/gosaki-discography-save-dry-run/`
+- **Live:** deployed Edge **still pre-fix** until redeploy
+- **service_role:** **not used**
+- **Next:** **G-20u36d-readback-release-id-select-fix-edge-deploy**
 
 ## G-20u36d-readback-release-id-select-fix-tools-draft — complete
 
@@ -18,7 +28,7 @@ Root not updated. Save blocked. Next: root-placement.
 - **Fix:** `RELEASE_SELECT_FIELDS` + `id` · tracks via `release_id` · id not in readBack summary
 - **Mock:** matching trackCount=8 · wouldWrite=false · +1 track wouldWrite=true
 - **service_role:** **not used**
-- **Next:** **G-20u36d-readback-release-id-select-fix-root-placement**
+- **Next:** **G-20u36d-readback-release-id-select-fix-root-placement** — **complete**
 
 ## G-20u36d-readback-release-id-select-fix-planning — complete
 

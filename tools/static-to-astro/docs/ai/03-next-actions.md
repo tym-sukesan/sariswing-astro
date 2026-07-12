@@ -1,6 +1,16 @@
 Last updated: 2026-07-12
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36d-readback-release-id-select-fix-root-placement — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u36d-readback-release-id-select-fix-root-placement` |
+| Base | `49791bd` |
+| Scope | Root placement · release SELECT + id · scope exception 2 files |
+| Doc | `gosaki-discography-g20u36d-readback-release-id-select-fix-root-placement.md` |
+| Next | G-20u36d-readback-release-id-select-fix-edge-deploy |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36d-readback-release-id-select-fix-tools-draft — complete
 
 | Item | Value |
@@ -9,7 +19,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Base | `2494ca1` |
 | Scope | Tools draft · release SELECT + id · mock trackCount=8 |
 | Doc | `gosaki-discography-g20u36d-readback-release-id-select-fix-tools-draft.md` |
-| Next | G-20u36d-readback-release-id-select-fix-root-placement |
+| Next | G-20u36d-readback-release-id-select-fix-root-placement — **complete** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36d-readback-release-id-select-fix-planning — complete
 

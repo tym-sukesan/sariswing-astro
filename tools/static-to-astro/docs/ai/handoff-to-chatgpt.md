@@ -5,9 +5,21 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36d-readback-edge-deploy-preflight — complete.
-readBack edge deploy preflight READY. Deployed Edge still pre-readBack until operator redeploy. Save blocked. Next: edge-deploy.
+Current phase: G-20u36d-readback-env-secret-setting-plan — complete.
+Dashboard: SUPABASE_URL/ANON_KEY exist; GOSAKI_DISCOGRAPHY_DRY_RUN_READBACK_ENABLED missing.
+Operator must set =true on staging before edge-deploy enables anon SELECT readBack. Save blocked.
+Next: env-secret-setting (operator Dashboard).
 ```
+
+## G-20u36d-readback-env-secret-setting-plan — complete
+
+- **Base:** `4be4bf1`
+- **Scope:** Env secret setting plan only — **no secret set / Edge deploy / SQL / Save / admin UI / FTP / root edit**
+- **Gate:** `gosakiDiscographyEdgeDryRunReadBackEnvSecretSettingPlanPrepared: true`
+- **Dashboard check:** `SUPABASE_URL` exists · `SUPABASE_ANON_KEY` exists · `GOSAKI_DISCOGRAPHY_DRY_RUN_READBACK_ENABLED` **missing**
+- **Operator plan:** name `GOSAKI_DISCOGRAPHY_DRY_RUN_READBACK_ENABLED` · value `true` · ref `kmjqppxjdnwwrtaeqjta` only
+- **service_role:** **not used**
+- **Next:** **G-20u36d-readback-env-secret-setting** (operator Dashboard)
 
 ## G-20u36d-readback-edge-deploy-preflight — complete
 
@@ -16,7 +28,7 @@ readBack edge deploy preflight READY. Deployed Edge still pre-readBack until ope
 - **Gate:** `gosakiDiscographyEdgeDryRunReadBackEdgeDeployPreflightReady: true`
 - **Deploy command:** `supabase functions deploy gosaki-discography-save-dry-run --project-ref kmjqppxjdnwwrtaeqjta`
 - **readBack env:** `GOSAKI_DISCOGRAPHY_DRY_RUN_READBACK_ENABLED=true` opt-in · anon SELECT · service_role **not used**
-- **Next:** **G-20u36d-readback-edge-deploy** (operator approval)
+- **Next:** env-secret-setting-plan — **complete** · edge-deploy after secret + redeploy
 
 ## G-20u36d-readback-edge-deploy-plan — complete
 

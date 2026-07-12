@@ -1,6 +1,16 @@
 Last updated: 2026-07-12
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36d-readback-env-secret-setting-plan — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u36d-readback-env-secret-setting-plan` |
+| Base | `4be4bf1` |
+| Scope | Env secret setting plan · Dashboard missing gate · operator `=true` |
+| Doc | `gosaki-discography-g20u36d-readback-env-secret-setting-plan.md` |
+| Next | G-20u36d-readback-env-secret-setting |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36d-readback-edge-deploy-preflight — complete
 
 | Item | Value |
@@ -9,7 +19,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Base | `edc27fc` |
 | Scope | Deploy preflight · env names · deploy readiness |
 | Doc | `gosaki-discography-g20u36d-readback-edge-deploy-preflight.md` |
-| Next | G-20u36d-readback-edge-deploy |
+| Next | G-20u36d-readback-env-secret-setting-plan — **complete** · then edge-deploy after secret setting |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36d-readback-edge-deploy-plan — complete
 

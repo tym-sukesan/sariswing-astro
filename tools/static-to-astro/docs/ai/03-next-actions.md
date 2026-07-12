@@ -1,6 +1,17 @@
 Last updated: 2026-07-12
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36d-readback-live-verify — complete (PARTIAL STOP)
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u36d-readback-live-verify` |
+| Base | `8ec25a7` |
+| Scope | Direct endpoint · readBack enabled · trackCount=0 STOP |
+| Gate | `gosakiDiscographyEdgeDryRunReadBackLiveVerified: false` |
+| Doc | `gosaki-discography-g20u36d-readback-live-verify.md` |
+| Next | readBack release-id select fix planning |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36d-readback-edge-deploy-result-record — complete
 
 | Item | Value |
@@ -9,7 +20,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Base | `2d55aa9` |
 | Scope | Operator redeploy SUCCESS · readBack-capable code · cli-latest restored |
 | Doc | `gosaki-discography-g20u36d-readback-edge-deploy-result.md` |
-| Next | G-20u36d-readback-live-verify |
+| Next | G-20u36d-readback-live-verify — **complete (PARTIAL STOP)** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36d-readback-env-secret-setting-result-record — complete
 

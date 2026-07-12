@@ -5,23 +5,29 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36d-readback-edge-deploy-result-record — complete.
-Operator redeployed readBack-capable gosaki-discography-save-dry-run to staging.
-readBack opt-in secret armed. Live verify not executed. Save blocked. Next: live-verify.
+Current phase: G-20u36d-readback-live-verify — complete (PARTIAL STOP).
+readBack enabled + supabase-select confirmed live. trackCount=0 — matching dryRun blocked.
++1 track / save reject / wrong siteSlug PASS. Save blocked. Next: release-id select fix planning.
 ```
+
+## G-20u36d-readback-live-verify — complete (PARTIAL STOP)
+
+- **Base:** `8ec25a7`
+- **Scope:** Live HTTP verify only — **no re-deploy / SQL / Save / admin UI / FTP / root edit**
+- **Gate:** `gosakiDiscographyEdgeDryRunReadBackLiveVerified: false`
+- **Endpoint:** staging `gosaki-discography-save-dry-run` · anon key only (values not logged)
+- **readBack:** enabled=true · source=supabase-select · releaseFound=true · **trackCount=0**
+- **matching dryRun:** **STOP** (400 empty track list)
+- **+1 track:** PASS (wouldWrite=true · tracksAdded=1)
+- **save / wrong siteSlug:** PASS (400 reject)
+- **Write flags:** all false · service_role **not used**
+- **Next:** **readBack release-id select fix planning** — do not proceed to Save
 
 ## G-20u36d-readback-edge-deploy-result-record — complete
 
 - **Base:** `2d55aa9`
 - **Scope:** Result record only — **no re-deploy / SQL / Save / admin UI / FTP / root edit**
-- **Gate:** `gosakiDiscographyEdgeDryRunReadBackEdgeDeployed: true`
-- **Deploy:** operator SUCCESS · ref `kmjqppxjdnwwrtaeqjta` · `gosaki-discography-save-dry-run`
-- **Assets:** `index.ts` + `handler.ts` (readBack-capable)
-- **Warnings:** Docker not running — non-blocking · CLI update notice — non-blocking
-- **Local:** `supabase/.temp/cli-latest` changed then `git restore` · final git clean
-- **Live verify:** **not executed**
-- **service_role:** **not used**
-- **Next:** **G-20u36d-readback-live-verify**
+- **Next:** live-verify — **complete (PARTIAL STOP)**
 
 ## G-20u36d-readback-env-secret-setting-result-record — complete
 

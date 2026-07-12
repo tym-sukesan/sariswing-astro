@@ -5,21 +5,28 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36d-readback-env-secret-setting-plan — complete.
-Dashboard: SUPABASE_URL/ANON_KEY exist; GOSAKI_DISCOGRAPHY_DRY_RUN_READBACK_ENABLED missing.
-Operator must set =true on staging before edge-deploy enables anon SELECT readBack. Save blocked.
-Next: env-secret-setting (operator Dashboard).
+Current phase: G-20u36d-readback-env-secret-setting-result-record — complete.
+Operator added GOSAKI_DISCOGRAPHY_DRY_RUN_READBACK_ENABLED on staging. readBack opt-in armed.
+Deployed Edge still pre-readBack until operator redeploy. Save blocked. Next: edge-deploy.
 ```
+
+## G-20u36d-readback-env-secret-setting-result-record — complete
+
+- **Base:** `185b4fd`
+- **Scope:** Result record only — **no Edge deploy / SQL / Save / admin UI / FTP / root edit**
+- **Gate:** `gosakiDiscographyEdgeDryRunReadBackEnvSecretSet: true`
+- **Operator:** Dashboard · ref `kmjqppxjdnwwrtaeqjta` · `GOSAKI_DISCOGRAPHY_DRY_RUN_READBACK_ENABLED` **added**
+- **readBack opt-in:** armed on staging secrets (value not recorded)
+- **Edge deploy:** **not executed**
+- **service_role:** **not used**
+- **Next:** **G-20u36d-readback-edge-deploy** (operator approval)
 
 ## G-20u36d-readback-env-secret-setting-plan — complete
 
 - **Base:** `4be4bf1`
 - **Scope:** Env secret setting plan only — **no secret set / Edge deploy / SQL / Save / admin UI / FTP / root edit**
 - **Gate:** `gosakiDiscographyEdgeDryRunReadBackEnvSecretSettingPlanPrepared: true`
-- **Dashboard check:** `SUPABASE_URL` exists · `SUPABASE_ANON_KEY` exists · `GOSAKI_DISCOGRAPHY_DRY_RUN_READBACK_ENABLED` **missing**
-- **Operator plan:** name `GOSAKI_DISCOGRAPHY_DRY_RUN_READBACK_ENABLED` · value `true` · ref `kmjqppxjdnwwrtaeqjta` only
-- **service_role:** **not used**
-- **Next:** **G-20u36d-readback-env-secret-setting** (operator Dashboard)
+- **Next:** env-secret-setting-result-record — **complete**
 
 ## G-20u36d-readback-edge-deploy-preflight — complete
 

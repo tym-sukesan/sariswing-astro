@@ -92,6 +92,16 @@ proceedToSave: false
 
 ---
 
+## STG QA follow-up — clientDryRun contract fix
+
+**Phase:** `G-20u36c-admin-discography-endpoint-dry-run-clientDryRun-contract-fix`  
+**Issue:** STG browser QA returned **400** — `clientDryRun.wouldWrite must be false (browser never writes)`  
+**Cause:** Initial wiring omitted `clientDryRun` (Edge saw `{}` → `wouldWrite` undefined). Not auth/login.  
+**Fix:** `buildDiscographyDryRunClientSnapshot()` — always `clientDryRun.wouldWrite: false`; local diff stats optional; local `wouldWrite` never forwarded.  
+**Package regen / FTP:** deferred to next operator phase after source fix.
+
+---
+
 ## Next phase
 
 1. Local build + regression

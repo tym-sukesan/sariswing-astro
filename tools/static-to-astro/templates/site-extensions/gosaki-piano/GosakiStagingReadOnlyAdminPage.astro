@@ -1063,10 +1063,23 @@ const pageTitle = "Gosaki Piano 管理画面（staging · 読み取り専用）"
         }
 
         const { legacyId, release } = readReleaseFromCard(card);
+        const original = textarea.getAttribute("data-original-track-list") ?? "";
+        const titleEl = card.querySelector(".gosaki-read-only-admin__album-card-title");
+        const localDryRun = validateDiscographyTrackListDryRun(original, textarea.value, {
+          legacyId,
+          title: titleEl?.textContent?.trim() ?? undefined,
+        });
         const payload = buildDiscographyDryRunEndpointRequest({
           legacyId,
           tracksText: textarea.value,
           release,
+          localDryRun: {
+            totalBefore: localDryRun.totalBefore,
+            totalAfter: localDryRun.totalAfter,
+            added: localDryRun.added,
+            removed: localDryRun.removed,
+            reordered: localDryRun.reordered,
+          },
         });
 
         if (payload.operation !== G20U36C_DISCOGRAPHY_DRY_RUN_OPERATION) {

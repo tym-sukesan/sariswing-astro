@@ -1,6 +1,28 @@
 Last updated: 2026-07-12
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36c-admin-discography-endpoint-dry-run-clientDryRun-contract-fix — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u36c-admin-discography-endpoint-dry-run-clientDryRun-contract-fix` |
+| Issue | STG 400 · `clientDryRun.wouldWrite must be false` |
+| Fix | `clientDryRun.wouldWrite` always false in endpoint payload |
+| Package regen | **deferred** |
+| Next | regen + FTP re-upload + STG QA retry |
+
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36c-admin-discography-dry-run-staging-package-rebuild-preflight — complete (prior)
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u36c-admin-discography-dry-run-staging-package-rebuild-preflight` |
+| Base | `4595dce` |
+| Package | `output/manual-upload/gosaki-piano/` |
+| sourceCommit | `4595dce` · freshness **PASS** |
+| FTP upload | **not executed** |
+| Doc | `gosaki-discography-g20u36c-admin-discography-dry-run-staging-package-rebuild-preflight.md` |
+| Next | manual FTP upload + STG browser QA |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36c-admin-discography-dry-run-fetch-post-wiring — complete
 
 | Item | Value |

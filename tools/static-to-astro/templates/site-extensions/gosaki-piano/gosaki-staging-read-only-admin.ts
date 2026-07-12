@@ -69,6 +69,24 @@ export interface DiscographyDryRunEndpointRequestInput {
   legacyId: string;
   tracksText: string;
   release: DiscographyDryRunEndpointReleaseInput;
+  /**
+   * Optional browser diff stats for Edge cross-check.
+   * Local `wouldWrite` is UI-only — never forwarded to `clientDryRun.wouldWrite`.
+   */
+  localDryRun?: Pick<
+    DiscographyTrackListDryRunResult,
+    "totalBefore" | "totalAfter" | "added" | "removed" | "reordered"
+  >;
+}
+
+export interface DiscographyDryRunClientSnapshot {
+  totalBefore: number;
+  totalAfter: number;
+  added: string[];
+  removed: string[];
+  reordered: boolean;
+  /** Always false — browser never writes (Edge contract). */
+  wouldWrite: false;
 }
 
 export interface DiscographyDryRunEndpointDisplay {
@@ -117,6 +135,26 @@ export function assertG20u36cDiscographyDryRunEndpointSafe(endpoint: string): bo
 }
 
 /**
+ * Build clientDryRun snapshot for Edge dry-run POST.
+ * Diff stats may come from local UI validation; wouldWrite is always false (browser never writes).
+ */
+export function buildDiscographyDryRunClientSnapshot(
+  localDryRun?: Pick<
+    DiscographyTrackListDryRunResult,
+    "totalBefore" | "totalAfter" | "added" | "removed" | "reordered"
+  >,
+): DiscographyDryRunClientSnapshot {
+  return {
+    totalBefore: localDryRun?.totalBefore ?? 0,
+    totalAfter: localDryRun?.totalAfter ?? 0,
+    added: localDryRun?.added ?? [],
+    removed: localDryRun?.removed ?? [],
+    reordered: localDryRun?.reordered ?? false,
+    wouldWrite: false,
+  };
+}
+
+/**
  * Build dry-run endpoint POST payload — operation=dryRun only · never save.
  */
 export function buildDiscographyDryRunEndpointRequest(
@@ -148,6 +186,7 @@ export function buildDiscographyDryRunEndpointRequest(
       allowDuplicateTitles: true,
       allowEmptyTrackList: false,
     },
+    clientDryRun: buildDiscographyDryRunClientSnapshot(input.localDryRun),
   };
 }
 

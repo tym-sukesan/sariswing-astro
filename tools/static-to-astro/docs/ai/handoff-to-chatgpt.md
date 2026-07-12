@@ -5,10 +5,24 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36c-admin-discography-dry-run-fetch-post-wiring — complete.
-Discography editor fetch POST wired to staging dry-run endpoint. Save still blocked. Next: STG package rebuild + manual upload + UI dry-run QA.
-STG live package still 00c8888 (G-20u30b dry-run UI) — rebuild required for G-20u36c wiring.
+Current phase: G-20u36c-admin-discography-endpoint-dry-run-clientDryRun-contract-fix — complete.
+STG QA 400 fixed in source (clientDryRun.wouldWrite always false). Package regen + FTP re-upload + QA retry next.
 ```
+
+## G-20u36c-admin-discography-endpoint-dry-run-clientDryRun-contract-fix — complete
+
+- **Issue:** STG endpoint dry-run **400** — not auth; Edge validation `clientDryRun.wouldWrite must be false`
+- **Fix:** `buildDiscographyDryRunClientSnapshot()` · local diff optional · `wouldWrite: false` fixed
+- **Package / FTP:** **not executed** in this phase
+- **Next:** `build:gosaki:staging` → preflight → manual FTP re-upload → STG endpoint dry-run QA
+
+## G-20u36c-admin-discography-dry-run-staging-package-rebuild-preflight — complete (prior upload)
+
+- **Base:** `4595dce`
+- **Package:** `output/manual-upload/gosaki-piano/` · sourceCommit `4595dce` · freshness **PASS**
+- **Preflight:** `preflight:gosaki:staging` **PASS**
+- **FTP upload:** **not executed**
+- **Next:** operator manual FTP upload → STG Discography Editor endpoint dry-run browser QA
 
 ## G-20u36c-admin-discography-dry-run-fetch-post-wiring — complete
 

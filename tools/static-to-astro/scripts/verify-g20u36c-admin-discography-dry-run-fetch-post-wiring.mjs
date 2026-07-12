@@ -82,6 +82,10 @@ assert("doc no DB write", doc.includes("DB write") && /no|not|false|なし/i.tes
 assert("doc service_role not used", doc.includes("service_role") && /not used|未使用|no/i.test(doc));
 assert("doc no deploy upload", doc.includes("deploy") || doc.includes("upload") || doc.includes("FTP"));
 assert("doc next phase STG", doc.includes("STG") || doc.includes("staging package") || doc.includes("manual"));
+assert(
+  "doc clientDryRun contract fix note",
+  doc.includes("clientDryRun") && (doc.includes("400") || doc.includes("wouldWrite must be false")),
+);
 
 assert("admin ts G20U36C phase", adminTs.includes("G20U36C_DISCOGRAPHY_DRY_RUN_FETCH_POST_PHASE"));
 assert("admin ts staging endpoint", adminTs.includes(STAGING_REF) && adminTs.includes(FUNCTION_NAME));
@@ -123,6 +127,20 @@ assert("admin ts approval id", adminTs.includes(DRY_RUN_APPROVAL_ID));
 assert("build payload operation dryRun", adminTs.includes("operation: G20U36C_DISCOGRAPHY_DRY_RUN_OPERATION"));
 assert("build payload siteSlug gosaki-piano", adminTs.includes('siteSlug: GOSAKI_STAGING_SITE_SLUG'));
 assert("build payload no save operation", !/operation:\s*["']save["']/.test(adminTs));
+assert("admin ts buildDiscographyDryRunClientSnapshot", adminTs.includes("buildDiscographyDryRunClientSnapshot"));
+assert("admin ts clientDryRun in payload", adminTs.includes("clientDryRun: buildDiscographyDryRunClientSnapshot"));
+assert("admin ts clientDryRun wouldWrite false", adminTs.includes("wouldWrite: false"));
+assert(
+  "admin ts local wouldWrite not forwarded",
+  !/localDryRun\.wouldWrite|clientDryRun\.wouldWrite:\s*local/.test(adminTs),
+);
+assert(
+  "admin page localDryRun diff without wouldWrite",
+  adminPage.includes("localDryRun:") &&
+    adminPage.includes("totalBefore: localDryRun.totalBefore") &&
+    !/localDryRun:\s*localDryRun\b/.test(adminPage) &&
+    !/wouldWrite:\s*localDryRun/.test(adminPage),
+);
 
 assert("supabase/functions not edited", !diffTouches("supabase/functions"));
 assert("src unchanged", !diffTouches("src"));
@@ -137,9 +155,15 @@ if (exists(DOC_REL)) {
   assert("AI current-state G-20u36c", currentState.includes("G-20u36c") || currentState.includes("FetchPostWired"));
   assert(
     "AI next-actions staging package or STG",
-    nextActions.includes("staging package") || nextActions.includes("STG") || nextActions.includes("manual FTP"),
+    nextActions.includes("staging package") ||
+      nextActions.includes("STG") ||
+      nextActions.includes("manual FTP") ||
+      nextActions.includes("clientDryRun"),
   );
-  assert("handoff G-20u36c", handoff.includes("G-20u36c") || handoff.includes("fetch POST"));
+  assert(
+    "handoff G-20u36c",
+    handoff.includes("G-20u36c") || handoff.includes("fetch POST") || handoff.includes("clientDryRun"),
+  );
 }
 
 assert("SQL not executed by Cursor", true);

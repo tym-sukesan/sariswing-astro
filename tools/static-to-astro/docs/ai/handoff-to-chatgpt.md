@@ -5,9 +5,18 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36c-admin-discography-endpoint-dry-run-clientDryRun-contract-fix — complete.
-STG QA 400 fixed in source (clientDryRun.wouldWrite always false). Package regen + FTP re-upload + QA retry next.
+Current phase: G-20u36c-admin-discography-dry-run-stg-browser-qa-result-record — complete.
+STG endpoint dry-run browser QA PASS (200 / ok=true / write flags false). Save still blocked. Next: G-20u36d planning.
 ```
+
+## G-20u36c-admin-discography-dry-run-stg-browser-qa-result-record — complete
+
+- **Base:** `c2fcdb8`
+- **Package:** sourceCommit `c2fcdb8f1f959e512b5423252cd926c0f859b1c9`
+- **FTP:** operator manual re-upload to `/cms-kit-staging/gosaki-piano/` — **Cursor did not FTP**
+- **STG QA:** endpoint dry-run **200 / ok=true** · `authIssue: false` · write flags **false**
+- **Save:** **disabled** · `proceedToSave: false`
+- **Next:** **G-20u36d** — readBack enhancement / controlled Save planning
 
 ## G-20u36c-admin-discography-endpoint-dry-run-clientDryRun-contract-fix — complete
 

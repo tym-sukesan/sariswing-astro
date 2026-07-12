@@ -97,6 +97,7 @@ export const HISTORICAL_VERIFIERS = [
   { id: "G-20u36b-live-verify", label: "Gosaki Discography Edge dry-run endpoint live verify", script: "verify-g20u36b-edge-dry-run-endpoint-live-verify.mjs" },
   { id: "G-20u36c-fetch-post", label: "Gosaki Discography admin dry-run fetch POST wiring", script: "verify-g20u36c-admin-discography-dry-run-fetch-post-wiring.mjs" },
   { id: "G-20u36c-preflight", label: "Gosaki Discography admin dry-run staging package rebuild preflight", script: "verify-g20u36c-admin-discography-dry-run-staging-package-rebuild-preflight.mjs" },
+  { id: "G-20u36c-stg-qa", label: "Gosaki Discography admin endpoint dry-run STG browser QA result", script: "verify-g20u36c-admin-discography-dry-run-stg-browser-qa-result.mjs" },
 ];
 
 /**

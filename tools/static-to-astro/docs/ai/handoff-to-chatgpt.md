@@ -5,9 +5,21 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36d-readback-tracks-relation-filter-fix-tools-draft — complete.
-Tools draft tracks filter uses discography_legacy_id. Save blocked.
+Current phase: G-20u36d-readback-tracks-relation-filter-fix-root-placement — complete.
+Root handler tracks filter uses discography_legacy_id. Live endpoint still pre-fix. Save blocked.
 ```
+
+## G-20u36d-readback-tracks-relation-filter-fix-root-placement — complete
+
+- **Base:** `a4b6973`
+- **Scope:** Root placement only — scope exception **2 files** · **no Edge deploy / SQL / Save / admin UI / FTP**
+- **Gate:** `gosakiDiscographyEdgeDryRunReadBackTracksRelationFilterFixRootPlaced: true`
+- **Filter:** `site_slug=eq.{siteSlug}` + `discography_legacy_id=eq.{legacyId}`
+- **Removed:** `release_id=eq.{uuid}` · `releaseRow.id` tracks gate
+- **Root files:** `supabase/functions/gosaki-discography-save-dry-run/handler.ts` · `index.ts`
+- **Live endpoint:** still pre-fix until operator Edge deploy
+- **service_role:** **not used**
+- **Next:** **G-20u36d-readback-tracks-relation-filter-fix-edge-deploy-preflight**
 
 ## G-20u36d-readback-tracks-relation-filter-fix-tools-draft — complete
 
@@ -19,7 +31,7 @@ Tools draft tracks filter uses discography_legacy_id. Save blocked.
 - **TRACK_SELECT_FIELDS:** unchanged · `discography_legacy_id` filter-only
 - **Mock:** matching trackCount=8 wouldWrite=false · +1 track wouldWrite=true
 - **service_role:** **not used**
-- **Next:** **G-20u36d-readback-tracks-relation-filter-fix-root-placement**
+- **Next:** **G-20u36d-readback-tracks-relation-filter-fix-root-placement** — **complete**
 
 ## G-20u36d-readback-tracks-relation-filter-fix-planning — complete
 

@@ -162,7 +162,23 @@ assert("doc next live verify retry-3", doc.includes("retry-3") || doc.includes("
 assert("retry-2 doc gate false", retry2Doc.includes("gosakiDiscographyEdgeDryRunReadBackLiveVerifyRetry2Passed: false"));
 assert("retry-2 doc release_id cause", retry2Doc.includes("release_id") && retry2Doc.includes("does not exist"));
 
-assert("root handler still uses release_id filter", rootHandler.includes("release_id=eq."));
+const ROOT_PLACEMENT_DOC_REL =
+  "tools/static-to-astro/docs/gosaki-discography-g20u36d-readback-tracks-relation-filter-fix-root-placement.md";
+const rootPlacementComplete =
+  exists(ROOT_PLACEMENT_DOC_REL) &&
+  read(ROOT_PLACEMENT_DOC_REL).includes(
+    "gosakiDiscographyEdgeDryRunReadBackTracksRelationFilterFixRootPlaced: true",
+  );
+
+if (rootPlacementComplete) {
+  assert("root handler discography_legacy_id filter placed", rootHandler.includes("discography_legacy_id=eq."));
+  assert("root handler no release_id in tracks path", !rootHandler.includes("release_id=eq."));
+  console.log(
+    "NOTE root placement complete — inspection-plan verifier skips root pre-placement release_id check",
+  );
+} else {
+  assert("root handler still uses release_id filter", rootHandler.includes("release_id=eq."));
+}
 
 const toolsDraftFilterFixComplete =
   exists(TOOLS_DRAFT_DOC_REL) &&
@@ -171,7 +187,9 @@ const toolsDraftFilterFixComplete =
   );
 if (toolsDraftFilterFixComplete) {
   console.log(
-    "NOTE tools-draft filter fix complete — tools readback lib uses discography_legacy_id (root still release_id)",
+    rootPlacementComplete
+      ? "NOTE tools-draft + root placement complete — tools/root readback lib use discography_legacy_id"
+      : "NOTE tools-draft filter fix complete — tools readback lib uses discography_legacy_id (root still release_id)",
   );
   assert("tools handler uses discography_legacy_id filter", toolsHandler.includes("discography_legacy_id=eq."));
   assert("readback lib uses discography_legacy_id filter", readbackLib.includes("discography_legacy_id=eq."));
@@ -186,7 +204,10 @@ assert(
   packageJson.includes("verify:g20u36d-readback-tracks-relation-column-inspection-plan"),
 );
 
-assert("supabase/functions not modified this phase", !diffTouches("supabase/functions/"));
+assert(
+  "supabase/functions not modified this phase",
+  rootPlacementComplete || !diffTouches("supabase/functions/"),
+);
 if (toolsDraftFilterFixComplete) {
   console.log("NOTE tools-draft filter fix complete — skip tools handler/readback lib not-modified checks");
 } else {

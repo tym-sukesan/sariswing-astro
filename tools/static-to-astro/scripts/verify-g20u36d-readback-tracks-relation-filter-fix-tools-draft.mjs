@@ -169,8 +169,22 @@ for (const pattern of MUTATION_PATTERNS) {
   assert(`handler no mutation ${pattern}`, !pattern.test(handlerTs));
 }
 
-assert("root supabase/functions not modified", !diffTouches("supabase/functions/"));
-assert("root handler still uses release_id filter (pre-placement)", rootHandler.includes("release_id=eq."));
+const ROOT_PLACEMENT_DOC_REL =
+  "tools/static-to-astro/docs/gosaki-discography-g20u36d-readback-tracks-relation-filter-fix-root-placement.md";
+const rootPlacementComplete =
+  exists(ROOT_PLACEMENT_DOC_REL) &&
+  read(ROOT_PLACEMENT_DOC_REL).includes(
+    "gosakiDiscographyEdgeDryRunReadBackTracksRelationFilterFixRootPlaced: true",
+  );
+
+assert("root supabase/functions not modified", rootPlacementComplete || !diffTouches("supabase/functions/"));
+if (!rootPlacementComplete && rootHandler) {
+  assert("root handler still uses release_id filter (pre-placement)", rootHandler.includes("release_id=eq."));
+} else if (rootPlacementComplete) {
+  console.log(
+    "NOTE root placement complete — tools-draft root-unmodified checks skipped (historical tools-draft doc)",
+  );
+}
 
 const tracksPath = buildAnonSelectDiscographyTracksPath(READBACK_SITE_SLUG, "discography-002");
 assert("tracks path no release_id filter", !tracksPath.includes("release_id=eq."));
@@ -239,8 +253,11 @@ assert(
     currentState.includes("tracks-relation-filter-fix-tools-draft"),
 );
 assert(
-  "AI next-actions root placement",
-  nextActions.includes("G-20u36d-readback-tracks-relation-filter-fix-root-placement"),
+  "AI next-actions root placement or edge deploy preflight",
+  rootPlacementComplete
+    ? nextActions.includes("G-20u36d-readback-tracks-relation-filter-fix-edge-deploy-preflight") ||
+        nextActions.includes("tracks-relation-filter-fix-edge-deploy-preflight")
+    : nextActions.includes("G-20u36d-readback-tracks-relation-filter-fix-root-placement"),
 );
 assert(
   "AI handoff filter fix tools draft",

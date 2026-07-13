@@ -165,14 +165,33 @@ assert(
   resultDoc.includes("relationColumnConfirmed: discography_legacy_id") || resultDoc.includes("Relation column confirmed"),
 );
 assert("retry-2 doc gate false", retry2Doc.includes("gosakiDiscographyEdgeDryRunReadBackLiveVerifyRetry2Passed: false"));
-assert("root handler still uses release_id filter", rootHandler.includes("release_id=eq."));
+const ROOT_PLACEMENT_DOC_REL =
+  "tools/static-to-astro/docs/gosaki-discography-g20u36d-readback-tracks-relation-filter-fix-root-placement.md";
+const rootPlacementComplete =
+  exists(ROOT_PLACEMENT_DOC_REL) &&
+  read(ROOT_PLACEMENT_DOC_REL).includes(
+    "gosakiDiscographyEdgeDryRunReadBackTracksRelationFilterFixRootPlaced: true",
+  );
+
+if (rootPlacementComplete) {
+  assert("root handler discography_legacy_id filter placed", rootHandler.includes("discography_legacy_id=eq."));
+  assert("root handler no release_id in tracks path", !rootHandler.includes("release_id=eq."));
+  console.log(
+    "NOTE root placement complete — plan verifier skips root pre-placement release_id check",
+  );
+} else {
+  assert("root handler still uses release_id filter", rootHandler.includes("release_id=eq."));
+}
 
 assert(
   "package script verify:g20u36d-readback-tracks-relation-filter-fix-plan",
   packageJson.includes("verify:g20u36d-readback-tracks-relation-filter-fix-plan"),
 );
 
-assert("supabase/functions not modified this phase", !diffTouches("supabase/functions/"));
+assert(
+  "supabase/functions not modified this phase",
+  rootPlacementComplete || !diffTouches("supabase/functions/"),
+);
 
 const toolsDraftComplete =
   exists(TOOLS_DRAFT_DOC_REL) &&

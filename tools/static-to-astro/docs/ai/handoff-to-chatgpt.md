@@ -5,23 +5,34 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36d-readback-tracks-relation-filter-fix-edge-deploy-result-record — complete.
-Operator redeploy SUCCESS. Live verify retry-3 pending. Save blocked.
+Current phase: G-20u36d-readback-live-verify-retry-3 — complete (PASS).
+readBack trackCount=8 on live Edge. Save still blocked until G-20u36e planning.
 ```
+
+## G-20u36d-readback-live-verify-retry-3 — complete (PASS)
+
+- **Base:** `8edeec6`
+- **Scope:** Live HTTP verify · dryRun only · **no re-deploy / SQL / Save / admin UI / FTP**
+- **Gate:** `gosakiDiscographyEdgeDryRunReadBackLiveVerifyRetry3Passed: true`
+- **Endpoint:** `https://kmjqppxjdnwwrtaeqjta.supabase.co/functions/v1/gosaki-discography-save-dry-run`
+- **Auth:** public anon key only (values not logged)
+- **readBack:** enabled · source=supabase-select · releaseFound=true · **trackCount=8**
+- **matching:** status **200** · ok=true · wouldWrite=false · tracksAdded=0
+- **+1 track:** status **200** · wouldWrite=true · tracksAdded=1
+- **save reject:** status **400** · operation=save rejected
+- **wrong siteSlug:** status **400** · rejected
+- **Write flags:** all **false**
+- **service_role:** **not used**
+- **Next:** **G-20u36e-controlled-save-planning**
 
 ## G-20u36d-readback-tracks-relation-filter-fix-edge-deploy-result-record — complete
 
 - **Base:** `7578f26`
 - **Scope:** Deploy result record only — **no re-deploy / SQL / Save / admin UI / FTP / root edit**
 - **Gate:** `gosakiDiscographyEdgeDryRunReadBackTracksRelationFilterFixEdgeDeployed: true`
-- **Deploy:** operator SUCCESS · `Deployed Functions on project kmjqppxjdnwwrtaeqjta: gosaki-discography-save-dry-run`
-- **Production STOP:** `vsbvndwuajjhnzpohghh` — **unused**
-- **Deployed filter:** `site_slug=eq.{siteSlug}` + `discography_legacy_id=eq.{legacyId}` · `release_id` filter **removed**
-- **cli-latest:** changed after deploy · **restored** by operator · final git **clean**
-- **Env:** `GOSAKI_DISCOGRAPHY_DRY_RUN_READBACK_ENABLED` added済み
-- **Live verify retry-3:** **not executed** in this phase
+- **Deploy:** operator SUCCESS · staging `kmjqppxjdnwwrtaeqjta`
 - **service_role:** **not used**
-- **Next:** **G-20u36d-readback-live-verify-retry-3**
+- **Next:** **G-20u36d-readback-live-verify-retry-3** — **complete (PASS)**
 
 ## G-20u36d-readback-tracks-relation-filter-fix-edge-deploy-preflight — complete
 

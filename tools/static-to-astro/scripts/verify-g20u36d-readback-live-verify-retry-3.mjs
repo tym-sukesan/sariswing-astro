@@ -1,7 +1,7 @@
 /**
- * G-20u36d-readback-live-verify-retry-2
- * Live HTTP verify retry-2 — readBack anon SELECT on staging Edge Function (read-only · no DB write · no secrets logged).
- * Run: node tools/static-to-astro/scripts/verify-g20u36d-readback-live-verify-retry-2.mjs
+ * G-20u36d-readback-live-verify-retry-3
+ * Live HTTP verify retry-3 — readBack anon SELECT on staging Edge Function (read-only · no DB write · no secrets logged).
+ * Run: node tools/static-to-astro/scripts/verify-g20u36d-readback-live-verify-retry-3.mjs
  */
 
 import fs from "node:fs";
@@ -25,20 +25,19 @@ const STAGING_REF = "kmjqppxjdnwwrtaeqjta";
 const PRODUCTION_REF = "vsbvndwuajjhnzpohghh";
 const FUNCTION_NAME = "gosaki-discography-save-dry-run";
 const TARGET_URL = `https://${STAGING_REF}.supabase.co/functions/v1/${FUNCTION_NAME}`;
-const DOC_REL = "tools/static-to-astro/docs/gosaki-discography-g20u36d-readback-live-verify-retry-2.md";
+const DOC_REL = "tools/static-to-astro/docs/gosaki-discography-g20u36d-readback-live-verify-retry-3.md";
 const DEPLOY_RESULT_DOC_REL =
-  "tools/static-to-astro/docs/gosaki-discography-g20u36d-readback-tracks-select-fields-fix-edge-deploy-result.md";
+  "tools/static-to-astro/docs/gosaki-discography-g20u36d-readback-tracks-relation-filter-fix-edge-deploy-result.md";
 const PRIOR_RETRY_DOC_REL =
-  "tools/static-to-astro/docs/gosaki-discography-g20u36d-readback-live-verify-retry.md";
-const RETRY3_DOC_REL = "tools/static-to-astro/docs/gosaki-discography-g20u36d-readback-live-verify-retry-3.md";
+  "tools/static-to-astro/docs/gosaki-discography-g20u36d-readback-live-verify-retry-2.md";
 const ADMIN_PAGE_REL =
   "tools/static-to-astro/templates/site-extensions/gosaki-piano/GosakiStagingReadOnlyAdminPage.astro";
 const DRY_RUN_APPROVAL_ID = "G-20u31-gosaki-discography-save-dry-run-endpoint";
 const LEGACY_ID = "discography-002";
 const SITE_SLUG = "gosaki-piano";
 const EXPECTED_TRACK_COUNT = 8;
-const BASE_COMMIT = "eaba751";
-const BONUS_TRACK = "G-20u36d Live Verify Retry-2 Bonus Track";
+const BASE_COMMIT = "8edeec6";
+const BONUS_TRACK = "G-20u36d Live Verify Retry-3 Bonus Track";
 
 const FORBIDDEN_RESPONSE_PATTERNS = [
   /service_role/i,
@@ -46,8 +45,8 @@ const FORBIDDEN_RESPONSE_PATTERNS = [
   /eyJ[a-zA-Z0-9_-]{10,}\.[a-zA-Z0-9_-]{10,}\.[a-zA-Z0-9_-]{10,}/,
 ];
 
-/** @type {{ matching?: object, plusOne?: object, saveReject?: object, wrongSlug?: object, dbTrackCount?: number, retry2Passed?: boolean }} */
-export const liveVerifyRetry2Capture = {};
+/** @type {{ matching?: object, plusOne?: object, saveReject?: object, wrongSlug?: object, dbTrackCount?: number, retry3Passed?: boolean }} */
+export const liveVerifyRetry3Capture = {};
 
 let passed = 0;
 let failed = 0;
@@ -166,7 +165,7 @@ async function prefetchDbSnapshot(anonKey, supabaseUrl) {
   return resolveReadBackSnapshot(adapter, { siteSlug: SITE_SLUG, legacyId: LEGACY_ID });
 }
 
-async function runLiveVerifyRetry2Cases(anonKey, supabaseUrl) {
+async function runLiveVerifyRetry3Cases(anonKey, supabaseUrl) {
   const authHeaders = {
     "Content-Type": "application/json",
     Authorization: `Bearer ${anonKey}`,
@@ -174,7 +173,7 @@ async function runLiveVerifyRetry2Cases(anonKey, supabaseUrl) {
   };
 
   const { snapshot, summary: dbSummary } = await prefetchDbSnapshot(anonKey, supabaseUrl);
-  liveVerifyRetry2Capture.dbTrackCount = dbSummary.trackCount;
+  liveVerifyRetry3Capture.dbTrackCount = dbSummary.trackCount;
 
   assert("prefetch readBack releaseFound", dbSummary.releaseFound === true);
   assert("prefetch readBack source supabase-select", dbSummary.source === READBACK_SOURCE);
@@ -196,7 +195,7 @@ async function runLiveVerifyRetry2Cases(anonKey, supabaseUrl) {
     body: JSON.stringify(matchingBody),
   });
   const matchingSummary = sanitizeCaseSummary(matching.json, matching.res.status);
-  liveVerifyRetry2Capture.matching = matchingSummary;
+  liveVerifyRetry3Capture.matching = matchingSummary;
 
   assert("live matching response safe", responseBodySafe(matching.text));
   assert("live matching readBack enabled", matchingSummary.readBack?.enabled === true);
@@ -205,9 +204,13 @@ async function runLiveVerifyRetry2Cases(anonKey, supabaseUrl) {
   assert("live matching readBack sanitized", isReadBackSummarySanitized(matching.json?.readBack));
   assert("live matching write flags false", writeFlagsOk(matching.json));
 
-  const retry2Passed = trackCount === EXPECTED_TRACK_COUNT;
+  const retry3Passed =
+    trackCount === EXPECTED_TRACK_COUNT &&
+    matching.res.status === 200 &&
+    matchingSummary.ok === true &&
+    matchingSummary.readBack?.trackCount === EXPECTED_TRACK_COUNT;
 
-  if (retry2Passed) {
+  if (retry3Passed) {
     assert("live matching status 200", matching.res.status === 200, String(matching.res.status));
     assert("live matching ok true", matchingSummary.ok === true);
     assert("live matching readBack trackCount 8", matchingSummary.readBack?.trackCount === EXPECTED_TRACK_COUNT);
@@ -252,7 +255,7 @@ async function runLiveVerifyRetry2Cases(anonKey, supabaseUrl) {
     body: JSON.stringify(plusOneBody),
   });
   const plusOneSummary = sanitizeCaseSummary(plusOne.json, plusOne.res.status);
-  liveVerifyRetry2Capture.plusOne = plusOneSummary;
+  liveVerifyRetry3Capture.plusOne = plusOneSummary;
 
   assert("live plusOne response safe", responseBodySafe(plusOne.text));
   assert("live plusOne status 200", plusOne.res.status === 200);
@@ -277,7 +280,7 @@ async function runLiveVerifyRetry2Cases(anonKey, supabaseUrl) {
     body: JSON.stringify(saveBody),
   });
   const saveSummary = sanitizeCaseSummary(save.json, save.res.status);
-  liveVerifyRetry2Capture.saveReject = saveSummary;
+  liveVerifyRetry3Capture.saveReject = saveSummary;
 
   assert("live save reject response safe", responseBodySafe(save.text));
   assert("live save reject status 400", save.res.status === 400, String(save.res.status));
@@ -298,7 +301,7 @@ async function runLiveVerifyRetry2Cases(anonKey, supabaseUrl) {
     body: JSON.stringify(wrongSlugBody),
   });
   const wrongSlugSummary = sanitizeCaseSummary(wrongSlug.json, wrongSlug.res.status);
-  liveVerifyRetry2Capture.wrongSlug = wrongSlugSummary;
+  liveVerifyRetry3Capture.wrongSlug = wrongSlugSummary;
 
   assert("live wrong siteSlug reject status 400", wrongSlug.res.status === 400);
   assert("live wrong siteSlug ok false", wrongSlugSummary.ok === false);
@@ -314,12 +317,12 @@ async function runLiveVerifyRetry2Cases(anonKey, supabaseUrl) {
   const authFailure = caseResults.some((r) => r.status === 401 || r.status === 403);
   assert("no auth failure on live cases", !authFailure);
 
-  liveVerifyRetry2Capture.retry2Passed = retry2Passed && failed === 0;
-  return retry2Passed;
+  liveVerifyRetry3Capture.retry3Passed = retry3Passed && failed === 0;
+  return retry3Passed;
 }
 
 function printCaseSummaryTable() {
-  console.log("\n--- Live verify retry-2 case summary (sanitized) ---");
+  console.log("\n--- Live verify retry-3 case summary (sanitized) ---");
   for (const row of caseResults) {
     console.log(
       `${row.id}: status=${row.status} ok=${row.ok} category=${row.category}` +
@@ -334,14 +337,14 @@ if (headShort.stdout.trim() === BASE_COMMIT) {
   passed += 1;
 } else {
   console.log(
-    `NOTE HEAD is ${headShort.stdout.trim()} (G-20u36d readBack live-verify-retry-2 base ${BASE_COMMIT}) — non-blocking`,
+    `NOTE HEAD is ${headShort.stdout.trim()} (G-20u36d readBack live-verify-retry-3 base ${BASE_COMMIT}) — non-blocking`,
   );
 }
 
 assert("target URL staging only", TARGET_URL.includes(STAGING_REF) && !TARGET_URL.includes(PRODUCTION_REF));
 assert("deploy result doc exists", exists(DEPLOY_RESULT_DOC_REL));
 assert("prior retry doc exists", exists(PRIOR_RETRY_DOC_REL));
-assert("live verify retry-2 doc exists", exists(DOC_REL));
+assert("live verify retry-3 doc exists", exists(DOC_REL));
 
 const env = loadGosakiStagingAdminPublicEnv();
 const anonKey = String(env.PUBLIC_SUPABASE_ANON_KEY ?? "").trim();
@@ -362,28 +365,19 @@ assert(
 console.log("Auth: Bearer + apikey PUBLIC_SUPABASE_ANON_KEY (values not logged)");
 console.log(`Target: ${TARGET_URL}`);
 
-const retry2PassedLive = await runLiveVerifyRetry2Cases(anonKey, supabaseUrl);
+const retry3PassedLive = await runLiveVerifyRetry3Cases(anonKey, supabaseUrl);
 printCaseSummaryTable();
 
 const doc = read(DOC_REL);
-const docGatePass = doc.includes("gosakiDiscographyEdgeDryRunReadBackLiveVerifyRetry2Passed: true");
-const docGateStop = doc.includes("gosakiDiscographyEdgeDryRunReadBackLiveVerifyRetry2Passed: false");
-const retry3Complete =
-  exists(RETRY3_DOC_REL) &&
-  read(RETRY3_DOC_REL).includes("gosakiDiscographyEdgeDryRunReadBackLiveVerifyRetry3Passed: true");
+const docGatePass = doc.includes("gosakiDiscographyEdgeDryRunReadBackLiveVerifyRetry3Passed: true");
+const docGateStop = doc.includes("gosakiDiscographyEdgeDryRunReadBackLiveVerifyRetry3Passed: false");
 
-assert("doc phase G-20u36d-readback-live-verify-retry-2", doc.includes("G-20u36d-readback-live-verify-retry-2"));
-if (retry3Complete) {
-  console.log(
-    "NOTE retry-3 PASS complete — retry-2 verifier skips doc gate mismatch (historical PARTIAL STOP doc retained)",
-  );
-} else {
-  assert(
-    "doc gate matches live outcome",
-    retry2PassedLive ? docGatePass : docGateStop,
-    `live retry2Passed=${retry2PassedLive} docPass=${docGatePass} docStop=${docGateStop}`,
-  );
-}
+assert("doc phase G-20u36d-readback-live-verify-retry-3", doc.includes("G-20u36d-readback-live-verify-retry-3"));
+assert(
+  "doc gate matches live outcome",
+  retry3PassedLive ? docGatePass : docGateStop,
+  `live retry3Passed=${retry3PassedLive} docPass=${docGatePass} docStop=${docGateStop}`,
+);
 assert("doc target URL", doc.includes(TARGET_URL));
 assert("doc staging ref", doc.includes(STAGING_REF));
 assert("doc production not used", doc.includes(PRODUCTION_REF) && /not used|未使用|STOP|forbidden/i.test(doc));
@@ -392,6 +386,12 @@ assert(
   doc.includes("PUBLIC_SUPABASE_ANON_KEY") && /not log|値を出さ|not logged|非表示/i.test(doc),
 );
 assert("doc service_role not used", doc.includes("service_role") && /not use|不使用|not used/i.test(doc));
+assert(
+  "doc tracks-relation-filter fix deployed",
+  doc.includes("tracks relation filter fix") || doc.includes("tracksRelationFilterFixDeployed"),
+);
+assert("doc release_id filter removed", doc.includes("release_id") && /remove|removed|除去/i.test(doc));
+assert("doc discography_legacy_id filter", doc.includes("discography_legacy_id"));
 assert(
   "doc tracks-select-fields fix deployed",
   doc.includes("tracks SELECT fields fix") || doc.includes("tracksSelectFieldsFixDeployed"),
@@ -402,20 +402,18 @@ assert("doc readBack source", doc.includes("supabase-select") || doc.includes("r
 assert("doc releaseFound", doc.includes("releaseFound"));
 assert("doc trackCount", doc.includes("trackCount"));
 
-if (retry2PassedLive && !retry3Complete) {
+if (retry3PassedLive) {
   assert("doc matching status 200", doc.includes("200") && doc.includes("matching"));
   assert("doc trackCount 8", doc.includes("trackCount") && doc.includes("8"));
   assert("doc matching wouldWrite false", doc.includes("wouldWrite") && doc.includes("false"));
   assert("doc matching tracksAdded 0", doc.includes("tracksAdded") && doc.includes("0"));
-} else if (!retry2PassedLive) {
-  assert("doc STOP or PARTIAL STOP", doc.includes("STOP") || doc.includes("PARTIAL STOP"));
+  assert("doc PASS summary", doc.includes("PASS"));
+} else {
+  assert("doc STOP or FAIL", doc.includes("STOP") || doc.includes("FAIL"));
   assert(
     "doc matching status 400 or STOP",
     (doc.includes("400") && doc.includes("matching")) || doc.includes("STOP"),
   );
-  assert("doc trackCount zero observed", doc.includes("trackCount") && doc.includes("0"));
-} else {
-  console.log("NOTE retry-3 PASS — retry-2 historical STOP doc assertions skipped for matching case");
 }
 
 assert("doc plusOne wouldWrite true", doc.includes("wouldWrite") && doc.includes("true") && doc.includes("tracksAdded"));
@@ -432,8 +430,10 @@ assert("doc admin UI not changed", doc.includes("Admin UI") && /no|not|unchanged
 assert("doc FTP not executed", doc.includes("FTP") && /no|not|false/i.test(doc));
 assert("doc no Edge redeploy", doc.includes("Edge") && /not executed|no re-deploy|再実行なし|not executed/i.test(doc));
 assert(
-  "doc next phase",
-  doc.includes("G-20u36e") || doc.includes("release_id") || doc.includes("STOP"),
+  "doc next phase G20u36e or STOP",
+  retry3PassedLive
+    ? doc.includes("G-20u36e-controlled-save-planning") || doc.includes("G-20u36e")
+    : doc.includes("STOP") || doc.includes("FAIL"),
 );
 
 assert("supabase/functions not edited", !diffTouches("supabase/functions"));
@@ -442,35 +442,33 @@ assert("public unchanged", !diffTouches("public"));
 assert("admin UI not modified this phase", !diffTouches(ADMIN_PAGE_REL));
 
 const packageJson = read("tools/static-to-astro/package.json");
-assert("npm verify script", packageJson.includes("verify:g20u36d-readback-live-verify-retry-2"));
+assert("npm verify script", packageJson.includes("verify:g20u36d-readback-live-verify-retry-3"));
 
 const currentState = read(`${AI_DIR}/00-current-state.md`);
 const nextActions = read(`${AI_DIR}/03-next-actions.md`);
 const handoff = read(`${AI_DIR}/handoff-to-chatgpt.md`);
 assert(
-  "AI current-state live-verify-retry-2",
-  currentState.includes("G-20u36d-readback-live-verify-retry-2") || currentState.includes("live-verify-retry-2"),
+  "AI current-state live-verify-retry-3",
+  currentState.includes("G-20u36d-readback-live-verify-retry-3") || currentState.includes("live-verify-retry-3"),
 );
 assert(
-  "AI next-actions after live-verify-retry-2",
-  nextActions.includes("live-verify-retry-2") ||
-    nextActions.includes("release_id") ||
-    nextActions.includes("G-20u36e"),
+  "AI next-actions after live-verify-retry-3",
+  nextActions.includes("live-verify-retry-3") || nextActions.includes("G-20u36e-controlled-save-planning"),
 );
 assert(
-  "handoff live-verify-retry-2",
-  handoff.includes("live-verify-retry-2") || handoff.includes("LiveVerifyRetry2"),
+  "handoff live-verify-retry-3",
+  handoff.includes("live-verify-retry-3") || handoff.includes("LiveVerifyRetry3"),
 );
 
 assert("SQL not executed by Cursor", true);
 assert("Edge redeploy not executed by Cursor", true);
 assert("DB write not executed by Cursor", true);
 
-if (retry2PassedLive) {
-  console.log("\nRESULT: live verify retry-2 PASS — gate may be true");
+if (retry3PassedLive) {
+  console.log("\nRESULT: live verify retry-3 PASS — gate true");
 } else {
-  console.log("\nRESULT: live verify retry-2 PARTIAL STOP — gate false documented");
+  console.log("\nRESULT: live verify retry-3 STOP — gate false documented");
 }
 
-console.log(`\nG-20u36d-readback-live-verify-retry-2: ${passed} passed, ${failed} failed`);
+console.log(`\nG-20u36d-readback-live-verify-retry-3: ${passed} passed, ${failed} failed`);
 process.exit(failed > 0 ? 1 : 0);

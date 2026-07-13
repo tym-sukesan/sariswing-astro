@@ -1,6 +1,18 @@
 Last updated: 2026-07-13
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36d-readback-live-verify-retry-3 — complete (PASS)
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u36d-readback-live-verify-retry-3` |
+| Base | `8edeec6` |
+| Scope | Live HTTP verify · dryRun only · anon key auth |
+| Gate | `gosakiDiscographyEdgeDryRunReadBackLiveVerifyRetry3Passed: true` |
+| trackCount | **8** · matching **200** |
+| Doc | `gosaki-discography-g20u36d-readback-live-verify-retry-3.md` |
+| Next | G-20u36e-controlled-save-planning |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36d-readback-tracks-relation-filter-fix-edge-deploy-result-record — complete
 
 | Item | Value |
@@ -10,9 +22,8 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Scope | Deploy result record only · operator redeploy SUCCESS |
 | Gate | `gosakiDiscographyEdgeDryRunReadBackTracksRelationFilterFixEdgeDeployed: true` |
 | Deploy target | `gosaki-discography-save-dry-run` @ `kmjqppxjdnwwrtaeqjta` |
-| Filter deployed | `site_slug` + `discography_legacy_id=eq.{legacyId}` |
 | Doc | `gosaki-discography-g20u36d-readback-tracks-relation-filter-fix-edge-deploy-result.md` |
-| Next | G-20u36d-readback-live-verify-retry-3 |
+| Next | G-20u36d-readback-live-verify-retry-3 — **complete (PASS)** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36d-readback-tracks-relation-filter-fix-edge-deploy-preflight — complete
 

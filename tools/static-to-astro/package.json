@@ -133,6 +133,7 @@
     "verify:g20u36d-readback-tracks-select-fields-fix-edge-deploy-preflight": "node scripts/verify-g20u36d-readback-tracks-select-fields-fix-edge-deploy-preflight.mjs",
     "verify:g20u36d-readback-tracks-select-fields-fix-edge-deploy-result": "node scripts/verify-g20u36d-readback-tracks-select-fields-fix-edge-deploy-result.mjs",
     "verify:g20u36d-readback-live-verify-retry-2": "node scripts/verify-g20u36d-readback-live-verify-retry-2.mjs",
+    "verify:g20u36d-readback-live-verify-retry-3": "node scripts/verify-g20u36d-readback-live-verify-retry-3.mjs",
     "verify:g20u36d-readback-tracks-relation-column-inspection-plan": "node scripts/verify-g20u36d-readback-tracks-relation-column-inspection-plan.mjs",
     "verify:g20u36d-readback-tracks-relation-column-inspection-preflight": "node scripts/verify-g20u36d-readback-tracks-relation-column-inspection-preflight.mjs",
     "verify:g20u36d-readback-tracks-relation-column-inspection-result": "node scripts/verify-g20u36d-readback-tracks-relation-column-inspection-result.mjs",

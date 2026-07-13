@@ -24,6 +24,8 @@ const ROOT_HANDLER_REL = "supabase/functions/gosaki-discography-save-dry-run/han
 const TOOLS_HANDLER_REL =
   "tools/static-to-astro/scripts/edge-functions/gosaki-discography-save-dry-run/handler.ts";
 const READBACK_LIB_REL = "tools/static-to-astro/scripts/lib/gosaki-discography-edge-dry-run-readback.mjs";
+const TOOLS_DRAFT_DOC_REL =
+  "tools/static-to-astro/docs/gosaki-discography-g20u36d-readback-tracks-relation-filter-fix-tools-draft.md";
 const ADMIN_PAGE_REL =
   "tools/static-to-astro/templates/site-extensions/gosaki-piano/GosakiStagingReadOnlyAdminPage.astro";
 const BASE_COMMIT = "cdcb649";
@@ -161,8 +163,22 @@ assert("retry-2 doc gate false", retry2Doc.includes("gosakiDiscographyEdgeDryRun
 assert("retry-2 doc release_id cause", retry2Doc.includes("release_id") && retry2Doc.includes("does not exist"));
 
 assert("root handler still uses release_id filter", rootHandler.includes("release_id=eq."));
-assert("tools handler still uses release_id filter", toolsHandler.includes("release_id=eq."));
-assert("readback lib still uses release_id filter", readbackLib.includes("release_id=eq."));
+
+const toolsDraftFilterFixComplete =
+  exists(TOOLS_DRAFT_DOC_REL) &&
+  read(TOOLS_DRAFT_DOC_REL).includes(
+    "gosakiDiscographyEdgeDryRunReadBackTracksRelationFilterFixToolsDraftImplemented: true",
+  );
+if (toolsDraftFilterFixComplete) {
+  console.log(
+    "NOTE tools-draft filter fix complete — tools readback lib uses discography_legacy_id (root still release_id)",
+  );
+  assert("tools handler uses discography_legacy_id filter", toolsHandler.includes("discography_legacy_id=eq."));
+  assert("readback lib uses discography_legacy_id filter", readbackLib.includes("discography_legacy_id=eq."));
+} else {
+  assert("tools handler still uses release_id filter", toolsHandler.includes("release_id=eq."));
+  assert("readback lib still uses release_id filter", readbackLib.includes("release_id=eq."));
+}
 assert("root handler TRACK_SELECT_FIELDS without duration", !/TRACK_SELECT_FIELDS[\s\S]{0,120}duration/.test(rootHandler));
 
 assert(
@@ -171,8 +187,12 @@ assert(
 );
 
 assert("supabase/functions not modified this phase", !diffTouches("supabase/functions/"));
-assert("tools edge handler not modified this phase", !diffTouches(TOOLS_HANDLER_REL));
-assert("readback lib not modified this phase", !diffTouches(READBACK_LIB_REL));
+if (toolsDraftFilterFixComplete) {
+  console.log("NOTE tools-draft filter fix complete — skip tools handler/readback lib not-modified checks");
+} else {
+  assert("tools edge handler not modified this phase", !diffTouches(TOOLS_HANDLER_REL));
+  assert("readback lib not modified this phase", !diffTouches(READBACK_LIB_REL));
+}
 assert("admin UI not modified", !diffTouches(ADMIN_PAGE_REL));
 assert("src not modified", !diffTouches("src/"));
 assert("public not modified", !diffTouches("public/"));

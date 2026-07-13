@@ -9,12 +9,14 @@ export const G20U36D_READBACK_PHASE = "G-20u36d-readback-implementation-in-tools
 export const G20U36D_RELEASE_ID_SELECT_FIX_PHASE = "G-20u36d-readback-release-id-select-fix-tools-draft";
 export const G20U36D_TRACKS_SELECT_FIELDS_FIX_PHASE =
   "G-20u36d-readback-tracks-select-fields-fix-tools-draft";
+export const G20U36D_TRACKS_RELATION_FILTER_FIX_PHASE =
+  "G-20u36d-readback-tracks-relation-filter-fix-tools-draft";
 export const READBACK_SOURCE = "supabase-select";
 export const READBACK_SITE_SLUG = "gosaki-piano";
 export const STAGING_PROJECT_REF = "kmjqppxjdnwwrtaeqjta";
 export const PRODUCTION_REF_STOP = "vsbvndwuajjhnzpohghh";
 
-/** PostgREST release SELECT — includes internal `id` for tracks lookup only (not exposed in snapshot/summary). */
+/** PostgREST release SELECT — may include internal `id` (not used for tracks relation · not in readBack summary). */
 const RELEASE_SELECT_FIELDS = [
   "id",
   "legacy_id",
@@ -58,10 +60,9 @@ export const DISCOGRAPHY_002_READBACK_FIXTURE = {
     published: true,
   },
   tracks: SKYLARK_TRACKS_CURRENT.map((title, index) => ({
-    release_id: DISCOGRAPHY_002_RELEASE_ID,
+    discography_legacy_id: "discography-002",
     track_number: index + 1,
     title,
-    duration: null, // optional in-memory only — not in PostgREST TRACK_SELECT_FIELDS
     sort_order: index + 1,
     site_slug: READBACK_SITE_SLUG,
   })),
@@ -81,16 +82,16 @@ export function buildAnonSelectDiscographyReleasePath(siteSlug, legacyId) {
 }
 
 /**
- * Build PostgREST anon SELECT path for tracks by release_id (internal id — not returned in readBack).
+ * Build PostgREST anon SELECT path for tracks by discography_legacy_id (not release UUID).
  *
  * @param {string} siteSlug
- * @param {string} releaseId
+ * @param {string} legacyId
  * @returns {string}
  */
-export function buildAnonSelectDiscographyTracksPath(siteSlug, releaseId) {
+export function buildAnonSelectDiscographyTracksPath(siteSlug, legacyId) {
   const slug = encodeURIComponent(String(siteSlug ?? "").trim());
-  const id = encodeURIComponent(String(releaseId ?? "").trim());
-  return `/rest/v1/discography_tracks?site_slug=eq.${slug}&release_id=eq.${id}&select=${TRACK_SELECT_FIELDS}&order=track_number.asc.nullslast,sort_order.asc.nullslast`;
+  const legacy = encodeURIComponent(String(legacyId ?? "").trim());
+  return `/rest/v1/discography_tracks?site_slug=eq.${slug}&discography_legacy_id=eq.${legacy}&select=${TRACK_SELECT_FIELDS}&order=track_number.asc.nullslast,sort_order.asc.nullslast`;
 }
 
 /**
@@ -220,7 +221,7 @@ export function snapshotFromReadBackRows(releaseRow, trackRows, meta) {
 /**
  * @typedef {object} ReadBackQueryAdapter
  * @property {(input: { siteSlug: string, legacyId: string }) => Promise<Record<string, unknown> | null>} fetchRelease
- * @property {(input: { siteSlug: string, releaseId: string }) => Promise<Array<Record<string, unknown>>>} fetchTracks
+ * @property {(input: { siteSlug: string, legacyId: string }) => Promise<Array<Record<string, unknown>>>} fetchTracks
  */
 
 /**
@@ -239,14 +240,9 @@ export async function resolveReadBackSnapshot(adapter, input) {
   if (!releaseRow) {
     return { ...snapshotFromReadBackRows(null, [], { legacyId, siteSlug }), warnings };
   }
-  const releaseId = String(releaseRow.id ?? "").trim();
-  if (!releaseId) {
-    warnings.push("readBack: release row missing internal id — tracks SELECT skipped");
-    return { ...snapshotFromReadBackRows(releaseRow, [], { legacyId, siteSlug }), warnings };
-  }
   let trackRows = [];
   try {
-    trackRows = await adapter.fetchTracks({ siteSlug, releaseId });
+    trackRows = await adapter.fetchTracks({ siteSlug, legacyId });
   } catch (error) {
     warnings.push(
       `readBack: anon SELECT tracks failed (${error instanceof Error ? error.message : String(error)})`,
@@ -268,14 +264,10 @@ export function createMockReadBackAdapter(fixturesByLegacyId = {}) {
       if (!fixture || siteSlug !== READBACK_SITE_SLUG) return null;
       return fixture.release ?? null;
     },
-    async fetchTracks({ siteSlug, releaseId }) {
-      for (const fixture of Object.values(fixturesByLegacyId)) {
-        const release = fixture?.release;
-        if (release && String(release.id) === String(releaseId) && siteSlug === READBACK_SITE_SLUG) {
-          return fixture.tracks ?? [];
-        }
-      }
-      return [];
+    async fetchTracks({ siteSlug, legacyId }) {
+      const fixture = fixturesByLegacyId[String(legacyId ?? "")];
+      if (!fixture || siteSlug !== READBACK_SITE_SLUG) return [];
+      return fixture.tracks ?? [];
     },
   };
 }
@@ -311,8 +303,8 @@ export function createAnonSelectReadBackAdapter(deps) {
       const rows = await response.json();
       return Array.isArray(rows) && rows.length > 0 ? rows[0] : null;
     },
-    async fetchTracks({ siteSlug, releaseId }) {
-      const path = buildAnonSelectDiscographyTracksPath(siteSlug, releaseId);
+    async fetchTracks({ siteSlug, legacyId }) {
+      const path = buildAnonSelectDiscographyTracksPath(siteSlug, legacyId);
       const response = await fetchFn(`${supabaseUrl}${path}`, { method: "GET", headers });
       if (!response.ok) {
         throw new Error(`anon SELECT tracks failed (${response.status})`);

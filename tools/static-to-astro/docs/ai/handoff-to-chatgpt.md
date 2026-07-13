@@ -5,9 +5,21 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36d-readback-tracks-relation-filter-fix-planning — complete.
-Tracks filter fix plan: discography_legacy_id. Save blocked.
+Current phase: G-20u36d-readback-tracks-relation-filter-fix-tools-draft — complete.
+Tools draft tracks filter uses discography_legacy_id. Save blocked.
 ```
+
+## G-20u36d-readback-tracks-relation-filter-fix-tools-draft — complete
+
+- **Base:** `4b79db8`
+- **Scope:** Tools draft only — **no root edit / Edge deploy / SQL / Save / admin UI / FTP**
+- **Gate:** `gosakiDiscographyEdgeDryRunReadBackTracksRelationFilterFixToolsDraftImplemented: true`
+- **Filter:** `site_slug=eq.{siteSlug}` + `discography_legacy_id=eq.{legacyId}`
+- **Removed:** `release_id=eq.{uuid}` · `releaseRow.id` tracks gate
+- **TRACK_SELECT_FIELDS:** unchanged · `discography_legacy_id` filter-only
+- **Mock:** matching trackCount=8 wouldWrite=false · +1 track wouldWrite=true
+- **service_role:** **not used**
+- **Next:** **G-20u36d-readback-tracks-relation-filter-fix-root-placement**
 
 ## G-20u36d-readback-tracks-relation-filter-fix-planning — complete
 
@@ -20,7 +32,7 @@ Tracks filter fix plan: discography_legacy_id. Save blocked.
 - **Migration:** add `release_id` **not required**
 - **Retry-3:** matching trackCount=8 · wouldWrite=false · save reject 400
 - **service_role:** **not used**
-- **Next:** **G-20u36d-readback-tracks-relation-filter-fix-tools-draft**
+- **Next:** **G-20u36d-readback-tracks-relation-filter-fix-tools-draft** — **complete**
 
 ## G-20u36d-readback-tracks-relation-column-inspection-result-record — complete
 

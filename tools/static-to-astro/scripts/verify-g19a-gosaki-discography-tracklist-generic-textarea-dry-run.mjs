@@ -34,7 +34,8 @@ const G18G2_SAVE_REL =
 const UI_REL = "src/lib/admin/staging-data/gosaki-staging-discography-admin-ui.ts";
 
 const BASE_COMMIT = "8c85f53";
-const AFTER_TITLE = "Like a Lover（テスト）";
+const CANONICAL_TRACK7 = "Like a Lover";
+const G19A_DOC_ERA_TEST_TITLE = "Like a Lover（テスト）";
 const STAGING_REF = "kmjqppxjdnwwrtaeqjta";
 const SARISWING_HOST = "vsbvndwuajjhnzpohghh";
 
@@ -84,7 +85,7 @@ assert("G-19a doc exists", exists(DOC_REL));
 assert("doc phase G-19a", doc.includes("G-19a-gosaki-discography-tracklist-generic-textarea-dry-run"));
 assert("doc complete gate", doc.includes("gosakiDiscographyG19aTracklistGenericTextareaDryRunComplete: true"));
 assert("doc G-18h upload closed", doc.includes("G-18h") || doc.includes("upload chain"));
-assert("doc Like a Lover test title", doc.includes(AFTER_TITLE));
+assert("doc G-19a era test title documented", doc.includes(G19A_DOC_ERA_TEST_TITLE));
 assert("doc all 4 albums", doc.includes("discography-001") && doc.includes("discography-004"));
 assert("doc track counts 9/8/9/8", doc.includes("9") && doc.includes("8"));
 assert("doc total 34 tracks", doc.includes("34"));
@@ -102,7 +103,7 @@ assert("g19a types module", exists(TYPES_REL));
 assert("g19a 4 album legacy ids", typesSrc.includes("discography-001") && typesSrc.includes("discography-004"));
 assert("g19a album track counts", typesSrc.includes("discography-002") && typesSrc.includes(": 8"));
 assert("g19a total 34", typesSrc.includes("34"));
-assert("g19a skylark track 7 current", typesSrc.includes(AFTER_TITLE));
+assert("g19a skylark track 7 types constant", typesSrc.includes("G19A_SKYLARK_TRACK_7_CURRENT"));
 assert("g19a g18g2 chain closed flag", typesSrc.includes("G18G2_TRACKLIST_SAVE_CHAIN_CLOSED"));
 
 assert("g19a config module", exists(CONFIG_REL));
@@ -136,7 +137,7 @@ for (const album of G19A_ALBUMS) {
 
 const skylarkBefore = buildDbTracks(SKYLARK_TRACKS_CURRENT);
 assert("skylark 8 tracks baseline", skylarkBefore.length === 8);
-assert("skylark track 7 test title", skylarkBefore[6].title === AFTER_TITLE);
+assert("skylark track 7 canonical title", skylarkBefore[6].title === CANONICAL_TRACK7);
 
 const noChange = simulateG19aDryRun(skylarkBefore, SKYLARK_TRACKS_CURRENT.join("\n"));
 assert("sim no-change ok", !noChange.hasChanges);

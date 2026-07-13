@@ -1,6 +1,17 @@
 Last updated: 2026-07-13
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-canonical-track-fixture-audit — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u36e-controlled-save-canonical-track-fixture-audit` |
+| Base | `0fc431a` |
+| Scope | Fixture audit · SKYLARK_TRACKS_CURRENT track 7 → `Like a Lover` |
+| Gate | `gosakiDiscographyControlledSaveCanonicalTrackFixtureAuditPassed: true` |
+| Doc | `gosaki-discography-g20u36e-controlled-save-canonical-track-fixture-audit.md` |
+| Next | G-20u36e-controlled-save-dryrun-payload-live-verify |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-snapshot-select-result — complete
 
 | Item | Value |
@@ -8,10 +19,10 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Phase | `G-20u36e-controlled-save-snapshot-select-result-record-and-expectation-correction` |
 | Base | `b5a7141` |
 | Scope | Operator snapshot result + track 7 expectation correction |
-| Gate | `gosakiDiscographyControlledSaveSnapshotSelectResultRecorded: true` · `gosakiDiscographyControlledSaveTrack7ExpectationCorrected: true` |
-| Snapshot | PASS · track_count=8 · track_7=`Like a Lover` |
+| Gate | `gosakiDiscographyControlledSaveSnapshotSelectResultRecorded: true` |
+| Snapshot | PASS · track_7=`Like a Lover` |
 | Doc | `gosaki-discography-g20u36e-controlled-save-snapshot-select-result.md` |
-| Next | dryrun-payload-live-verify or edge-save-path-planning |
+| Next | G-20u36e-controlled-save-canonical-track-fixture-audit — **complete** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-preflight — complete
 

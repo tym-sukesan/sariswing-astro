@@ -21,7 +21,7 @@ export const SKYLARK_TRACKS_CURRENT = [
   "Skylark",
   "Set Sail",
   "What a Wonderful World",
-  "Like a Lover（テスト）",
+  "Like a Lover",
   "The Water Is Wide",
 ];
 

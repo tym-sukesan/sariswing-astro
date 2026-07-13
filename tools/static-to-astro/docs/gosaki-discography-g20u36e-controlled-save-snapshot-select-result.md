@@ -190,4 +190,4 @@ Operator snapshot on staging DB returned **`Like a Lover`**.
 | **G-20u36e-controlled-save-dryrun-payload-live-verify** | Step A/B dryRun HTTP with corrected `tracksText` |
 | **G-20u36e-controlled-save-edge-save-path-planning** | Edge `operation=save` gate design |
 
-**Note:** readBack matching fixture (`SKYLARK_TRACKS_CURRENT` in tools lib) may still cite `Like a Lover（テスト）` — reconcile in dryRun live-verify phase if matching dryRun wouldWrite≠false.
+**Note:** `SKYLARK_TRACKS_CURRENT` reconciled to canonical `Like a Lover` in G-20u36e canonical track fixture audit — ready for dryRun payload live verify.

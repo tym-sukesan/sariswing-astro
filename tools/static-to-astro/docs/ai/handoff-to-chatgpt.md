@@ -5,9 +5,23 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36e-controlled-save-snapshot-select-result — complete.
-Snapshot PASS. Track 7 expectation corrected to Like a Lover. Save still blocked.
+Current phase: G-20u36e-controlled-save-canonical-track-fixture-audit — complete.
+SKYLARK_TRACKS_CURRENT aligned to Like a Lover. Ready for dryRun payload live verify.
 ```
+
+## G-20u36e-controlled-save-canonical-track-fixture-audit — complete
+
+- **Base:** `0fc431a`
+- **Scope:** Fixture audit + correction — **no dryRun HTTP / Save / SQL / DB write / Edge deploy / admin UI / FTP**
+- **Gate:** `gosakiDiscographyControlledSaveCanonicalTrackFixtureAuditPassed: true`
+- **Canonical track 7:** **`Like a Lover`**
+- **Artifact:** `Like a Lover（テスト）` — historical only; DB not changed
+- **Fixed:** `SKYLARK_TRACKS_CURRENT` in `discography-g19a-generic-dry-run-lib.mjs` (+ readback fixture via import)
+- **Historical unchanged:** G-18g2/G-19/G-20 phase docs and verifiers
+- **Out of scope:** `src/**` `G19A_SKYLARK_TRACK_7_CURRENT` still test era
+- **Staging ref:** `kmjqppxjdnwwrtaeqjta` · **production STOP:** `vsbvndwuajjhnzpohghh`
+- **service_role:** **not used**
+- **Next:** **G-20u36e-controlled-save-dryrun-payload-live-verify**
 
 ## G-20u36e-controlled-save-snapshot-select-result — complete
 

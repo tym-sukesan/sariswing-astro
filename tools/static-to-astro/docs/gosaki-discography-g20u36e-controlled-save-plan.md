@@ -91,7 +91,7 @@ Edge readBack fixes verified on live staging: release-id fix · tracks-select-fi
 | Track count | **unchanged (8)** — no INSERT / DELETE |
 | Environment | **staging only** · operator-controlled |
 
-**Why track 1 (not track 7):** G-18g2 closed chain on `discography-002` track 7 (`Like a Lover（テスト）`) — **do not re-Save track 7** in first or early slices.
+**Why track 1 (not track 7):** track 7 is **Save off-limits** on `discography-002` — canonical title `Like a Lover` (snapshot G-20u36e); preflight once cited G-18g2 test string `Like a Lover（テスト）` as expectation artifact — **do not re-Save track 7** in first or early slices.
 
 **Why not +1 track then revert:** adds DELETE risk on rollback · wider diff surface · tracksAdded=1 path is for dryRun verification only, not first Save.
 
@@ -112,7 +112,7 @@ Edge readBack fixes verified on live staging: release-id fix · tracks-select-fi
 
 From G-19b / G-18g2 (still binding):
 
-- `discography-002` track 7 `title` = `Like a Lover（テスト）` — **closed**
+- `discography-002` track 7 `title` = `Like a Lover` (canonical) — **do not change in G-20u36e**
 - Scalar closed chains: `discography-001` artist · `discography-002` purchase_url · `discography-003` artist · `discography-004` label
 
 ---
@@ -141,7 +141,7 @@ SELECT-only on `public.discography_tracks`:
 - **expected count: 8**
 
 Expected track 1 before title: `On a Clear Day`  
-Expected track 7 (must remain unchanged): `Like a Lover（テスト）`
+Expected track 7 (must remain unchanged): `Like a Lover`
 
 ### 2.3 Rollback snapshot fields (record in preflight)
 
@@ -204,7 +204,7 @@ Then dryRun with **G-20u36e1 payload** (track 1 title marker):
 4. `Skylark`
 5. `Set Sail`
 6. `What a Wonderful World`
-7. `Like a Lover（テスト）` ← **must not change**
+7. `Like a Lover` ← **must not change**
 8. `The Water Is Wide`
 
 **expectedAfter (tracks):**
@@ -255,7 +255,7 @@ Permissions baseline (G-20u36a): `authenticated` UPDATE on `discography_tracks` 
 Repeat §2.1–2.2 queries:
 
 - track 1 title = expectedAfter
-- track 7 still `Like a Lover（テスト）`
+- track 7 still `Like a Lover`
 - track count = 8
 - release scalars unchanged
 

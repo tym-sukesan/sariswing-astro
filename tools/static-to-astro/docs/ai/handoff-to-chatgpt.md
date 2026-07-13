@@ -5,9 +5,21 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36e-controlled-save-preflight — complete.
-Snapshot SQL + rollback SQL + dryRun payload locked. Save still blocked.
+Current phase: G-20u36e-controlled-save-snapshot-select-result — complete.
+Snapshot PASS. Track 7 expectation corrected to Like a Lover. Save still blocked.
 ```
+
+## G-20u36e-controlled-save-snapshot-select-result — complete
+
+- **Base:** `b5a7141`
+- **Scope:** Operator snapshot result record + docs expectation correction — **no SQL re-run / DB write / Save / dryRun HTTP / Edge deploy / admin UI / FTP**
+- **Gate:** `gosakiDiscographyControlledSaveSnapshotSelectResultRecorded: true` · `gosakiDiscographyControlledSaveTrack7ExpectationCorrected: true`
+- **Snapshot:** PASS — release_row_count=1 · track_count=8 · track_1=`On a Clear Day` · track_7=`Like a Lover`
+- **Correction:** preflight/plan cited `Like a Lover（テスト）` as expectation artifact — canonical DB title is **`Like a Lover`** — **do not UPDATE DB to test string**
+- **Slice:** G-20u36e1 — track 1 Save target only · track 7 off-limits
+- **Staging ref:** `kmjqppxjdnwwrtaeqjta` · **production STOP:** `vsbvndwuajjhnzpohghh`
+- **service_role:** **not used**
+- **Next:** **G-20u36e-controlled-save-dryrun-payload-live-verify** or **G-20u36e-controlled-save-edge-save-path-planning**
 
 ## G-20u36e-controlled-save-preflight — complete
 

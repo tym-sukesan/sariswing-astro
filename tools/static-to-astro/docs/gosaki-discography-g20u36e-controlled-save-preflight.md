@@ -69,7 +69,7 @@ readyForFirstControlledSaveExecution: false
 | **after title** | `On a Clear Day [CMS Kit staging G-20u36e]` |
 | **track count** | **8 → 8** (no INSERT / DELETE) |
 | **release scalar fields** | **unchanged** |
-| **track 7** | **must not change** — `Like a Lover（テスト）` (G-18g2 closed chain) |
+| **track 7** | **must not change** — `Like a Lover` (canonical; Save off-limits) |
 | **no-op Save** | **forbidden** — dryRun must show `wouldWrite=true` |
 
 **Endpoint (dryRun verify only — future phases):**
@@ -166,7 +166,7 @@ SELECT jsonb_build_object(
 | `release.title` | `SKYLARK` |
 | `track_count` | **8** |
 | `track_1_title` | `On a Clear Day` |
-| `track_7_title` | `Like a Lover（テスト）` |
+| `track_7_title` | `Like a Lover` |
 | `wrong_legacy_id_rows` | **0** |
 | `wrong_site_slug_rows` | **0** |
 | All tracks `discography_legacy_id` | `discography-002` only |
@@ -182,7 +182,7 @@ SELECT jsonb_build_object(
 | 4 | Skylark |
 | 5 | Set Sail |
 | 6 | What a Wonderful World |
-| 7 | Like a Lover（テスト） |
+| 7 | Like a Lover |
 | 8 | The Water Is Wide |
 
 **Release scalar fields in snapshot:** record `published`, `updated_at`, `release_date`, `catalog_number` from SQL result for rollback / optimistic-lock baseline. **Do not mutate release scalars in First Save.**
@@ -258,7 +258,7 @@ Run **after** §2 snapshot confirms expectedBefore. **Not sent in preflight phas
     "streaming_url": "<from snapshot>",
     "description": "<from snapshot>"
   },
-  "tracksText": "On a Clear Day\nMy Blue Heaven\nHow Deep Is The Ocean\nSkylark\nSet Sail\nWhat a Wonderful World\nLike a Lover（テスト）\nThe Water Is Wide",
+  "tracksText": "On a Clear Day\nMy Blue Heaven\nHow Deep Is The Ocean\nSkylark\nSet Sail\nWhat a Wonderful World\nLike a Lover\nThe Water Is Wide",
   "trackPolicy": {
     "oneLineOneTrack": true,
     "blankLinesIgnored": true,
@@ -315,7 +315,7 @@ Run **after** §2 snapshot confirms expectedBefore. **Not sent in preflight phas
     "streaming_url": "<from snapshot — unchanged>",
     "description": "<from snapshot — unchanged>"
   },
-  "tracksText": "On a Clear Day [CMS Kit staging G-20u36e]\nMy Blue Heaven\nHow Deep Is The Ocean\nSkylark\nSet Sail\nWhat a Wonderful World\nLike a Lover（テスト）\nThe Water Is Wide",
+  "tracksText": "On a Clear Day [CMS Kit staging G-20u36e]\nMy Blue Heaven\nHow Deep Is The Ocean\nSkylark\nSet Sail\nWhat a Wonderful World\nLike a Lover\nThe Water Is Wide",
   "trackPolicy": {
     "oneLineOneTrack": true,
     "blankLinesIgnored": true,
@@ -380,7 +380,7 @@ Stop and ask operator if:
 
 - track count ≠ **8**
 - track 1 title ≠ `On a Clear Day` at snapshot time
-- track 7 title ≠ `Like a Lover（テスト）` or would change in dryRun diff
+- track 7 title ≠ `Like a Lover` or would change in dryRun diff
 - release scalar field would change
 - tracksAdded > 0 or tracksRemoved > 0 or tracksReordered = true
 - siteSlug ≠ `gosaki-piano` or legacyId ≠ `discography-002`

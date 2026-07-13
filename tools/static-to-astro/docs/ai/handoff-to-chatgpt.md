@@ -5,9 +5,19 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36d-readback-tracks-select-fields-fix-planning — complete.
-Fix plan: remove duration from TRACK_SELECT_FIELDS. Save blocked until live verify retry-2 PASS.
+Current phase: G-20u36d-readback-tracks-select-fields-fix-tools-draft — complete.
+Tools draft fix: TRACK_SELECT_FIELDS without duration. Save blocked until live verify retry-2 PASS.
 ```
+
+## G-20u36d-readback-tracks-select-fields-fix-tools-draft — complete
+
+- **Base:** `7f8572d`
+- **Scope:** Tools draft fix only — **no root edit / Edge deploy / SQL / Save / admin UI / FTP**
+- **Gate:** `gosakiDiscographyEdgeDryRunReadBackTracksSelectFieldsFixToolsDraftImplemented: true`
+- **Fix:** remove `duration` from `TRACK_SELECT_FIELDS` · `track_number/title/sort_order/site_slug` only
+- **Mock:** matching trackCount=8 wouldWrite=false · +1 track wouldWrite=true tracksAdded=1
+- **service_role:** **not used**
+- **Next:** **G-20u36d-readback-tracks-select-fields-fix-root-placement**
 
 ## G-20u36d-readback-tracks-select-fields-fix-planning — complete
 
@@ -17,7 +27,7 @@ Fix plan: remove duration from TRACK_SELECT_FIELDS. Save blocked until live veri
 - **STOP cause:** `discography_tracks.duration` does not exist → PostgREST 42703 → trackCount=0
 - **Fix:** remove `duration` from `TRACK_SELECT_FIELDS` · use staging columns only
 - **service_role:** **not used**
-- **Next:** **G-20u36d-readback-tracks-select-fields-fix-tools-draft**
+- **Next:** **G-20u36d-readback-tracks-select-fields-fix-tools-draft** — **complete**
 
 ## G-20u36d-readback-live-verify-retry — complete (PARTIAL STOP)
 

@@ -7,6 +7,8 @@ import { SKYLARK_TRACKS_CURRENT } from "./discography-g19a-generic-dry-run-lib.m
 
 export const G20U36D_READBACK_PHASE = "G-20u36d-readback-implementation-in-tools-draft";
 export const G20U36D_RELEASE_ID_SELECT_FIX_PHASE = "G-20u36d-readback-release-id-select-fix-tools-draft";
+export const G20U36D_TRACKS_SELECT_FIELDS_FIX_PHASE =
+  "G-20u36d-readback-tracks-select-fields-fix-tools-draft";
 export const READBACK_SOURCE = "supabase-select";
 export const READBACK_SITE_SLUG = "gosaki-piano";
 export const STAGING_PROJECT_REF = "kmjqppxjdnwwrtaeqjta";
@@ -31,7 +33,8 @@ const RELEASE_SELECT_FIELDS = [
   "published",
 ].join(",");
 
-const TRACK_SELECT_FIELDS = ["track_number", "title", "duration", "sort_order", "site_slug"].join(",");
+/** PostgREST tracks SELECT — staging columns only; `duration` optional/absent (not in SELECT list). */
+const TRACK_SELECT_FIELDS = ["track_number", "title", "sort_order", "site_slug"].join(",");
 
 /** Staging discography-002 fixture — internal adapter use only; UUID never exposed in readBack summary. */
 const DISCOGRAPHY_002_RELEASE_ID = "00000000-0000-4000-8000-000000000002";
@@ -58,7 +61,7 @@ export const DISCOGRAPHY_002_READBACK_FIXTURE = {
     release_id: DISCOGRAPHY_002_RELEASE_ID,
     track_number: index + 1,
     title,
-    duration: null,
+    duration: null, // optional in-memory only — not in PostgREST TRACK_SELECT_FIELDS
     sort_order: index + 1,
     site_slug: READBACK_SITE_SLUG,
   })),

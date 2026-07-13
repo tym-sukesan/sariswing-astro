@@ -9,6 +9,8 @@ export const G20U36B_EDGE_FUNCTION_SOURCE_STAGING_PHASE =
 
 export const G20U36D_READBACK_PHASE = "G-20u36d-readback-implementation-in-tools-draft";
 export const G20U36D_RELEASE_ID_SELECT_FIX_PHASE = "G-20u36d-readback-release-id-select-fix-tools-draft";
+export const G20U36D_TRACKS_SELECT_FIELDS_FIX_PHASE =
+  "G-20u36d-readback-tracks-select-fields-fix-tools-draft";
 export const READBACK_SOURCE = "supabase-select";
 export const PRODUCTION_REF_STOP = "vsbvndwuajjhnzpohghh";
 
@@ -84,7 +86,8 @@ const RELEASE_SELECT_FIELDS = [
   "published",
 ].join(",");
 
-const TRACK_SELECT_FIELDS = ["track_number", "title", "duration", "sort_order", "site_slug"].join(",");
+/** PostgREST tracks SELECT — staging columns only; `duration` omitted (column absent on staging). */
+const TRACK_SELECT_FIELDS = ["track_number", "title", "sort_order", "site_slug"].join(",");
 
 const WRITE_FLAGS = {
   didWrite: false,

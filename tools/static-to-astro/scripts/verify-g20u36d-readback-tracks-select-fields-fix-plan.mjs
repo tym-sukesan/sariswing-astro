@@ -74,6 +74,10 @@ function trackSelectIncludesDuration(src) {
   return /["']duration["']/.test(match[1]);
 }
 
+function trackSelectMissingDuration(src) {
+  return !trackSelectIncludesDuration(src);
+}
+
 const headShort = spawnSync("git", ["rev-parse", "--short", "HEAD"], { cwd: REPO_ROOT, encoding: "utf8" });
 const originShort = spawnSync("git", ["rev-parse", "--short", "origin/main"], {
   cwd: REPO_ROOT,
@@ -165,20 +169,43 @@ assert("doc production STOP", doc.includes(PRODUCTION_REF) && /STOP|forbidden|ç¦
 assert("live verify retry doc gate false", liveVerifyRetryDoc.includes("gosakiDiscographyEdgeDryRunReadBackLiveVerifyRetryPassed: false"));
 assert("live verify retry doc duration cause", liveVerifyRetryDoc.includes("duration") && liveVerifyRetryDoc.includes("does not exist"));
 
-assert("root handler bug TRACK_SELECT_FIELDS includes duration", trackSelectIncludesDuration(rootHandler));
-assert("tools handler bug TRACK_SELECT_FIELDS includes duration", trackSelectIncludesDuration(toolsHandler));
-assert("readback lib bug TRACK_SELECT_FIELDS includes duration", trackSelectIncludesDuration(readbackLib));
+const toolsDraftFixDocRel =
+  "tools/static-to-astro/docs/gosaki-discography-g20u36d-readback-tracks-select-fields-fix-tools-draft.md";
+const rootPlacementDocRel =
+  "tools/static-to-astro/docs/gosaki-discography-g20u36d-readback-tracks-select-fields-fix-root-placement.md";
+const toolsDraftFixComplete = exists(toolsDraftFixDocRel);
+const rootPlacementComplete = exists(rootPlacementDocRel);
+
 assert("root handler mapTrackRowsToTracksText title only", rootHandler.includes("mapTrackRowsToTracksText"));
 assert("root handler buildSanitizedReadBackSummary", rootHandler.includes("buildSanitizedReadBackSummary"));
+
+if (rootPlacementComplete) {
+  assert("root handler TRACK_SELECT_FIELDS missing duration", trackSelectMissingDuration(rootHandler));
+  assert("tools handler TRACK_SELECT_FIELDS missing duration", trackSelectMissingDuration(toolsHandler));
+  assert("readback lib TRACK_SELECT_FIELDS missing duration", trackSelectMissingDuration(readbackLib));
+} else if (toolsDraftFixComplete) {
+  assert("root handler bug TRACK_SELECT_FIELDS still includes duration (pre-root-placement)", trackSelectIncludesDuration(rootHandler));
+  assert("tools handler TRACK_SELECT_FIELDS missing duration", trackSelectMissingDuration(toolsHandler));
+  assert("readback lib TRACK_SELECT_FIELDS missing duration", trackSelectMissingDuration(readbackLib));
+} else {
+  assert("root handler bug TRACK_SELECT_FIELDS includes duration", trackSelectIncludesDuration(rootHandler));
+  assert("tools handler bug TRACK_SELECT_FIELDS includes duration", trackSelectIncludesDuration(toolsHandler));
+  assert("readback lib bug TRACK_SELECT_FIELDS includes duration", trackSelectIncludesDuration(readbackLib));
+}
 
 assert(
   "package script verify:g20u36d-readback-tracks-select-fields-fix-plan",
   packageJson.includes("verify:g20u36d-readback-tracks-select-fields-fix-plan"),
 );
 
-assert("supabase/functions not modified this phase", !diffTouches("supabase/functions/"));
-assert("tools edge handler not modified this phase", !diffTouches(TOOLS_HANDLER_REL));
-assert("readback lib not modified this phase", !diffTouches(READBACK_LIB_REL));
+assert(
+  "supabase/functions not modified this phase",
+  rootPlacementComplete || !diffTouches("supabase/functions/"),
+);
+if (!toolsDraftFixComplete) {
+  assert("tools edge handler not modified this phase", !diffTouches(TOOLS_HANDLER_REL));
+  assert("readback lib not modified this phase", !diffTouches(READBACK_LIB_REL));
+}
 assert("admin UI not modified", !diffTouches(ADMIN_PAGE_REL));
 assert("src not modified", !diffTouches("src/"));
 assert("public not modified", !diffTouches("public/"));

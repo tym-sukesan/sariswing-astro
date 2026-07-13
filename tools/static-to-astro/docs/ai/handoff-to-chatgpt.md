@@ -5,9 +5,23 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36d-readback-live-verify-retry-3 — complete (PASS).
-readBack trackCount=8 on live Edge. Save still blocked until G-20u36e planning.
+Current phase: G-20u36e-controlled-save-planning — complete.
+First controlled Save plan prepared. Save still blocked until preflight + Edge Save arm.
 ```
+
+## G-20u36e-controlled-save-planning — complete
+
+- **Base:** `58a57b8`
+- **Scope:** First controlled Save planning only — **no Save / SQL / DB write / Edge deploy / admin UI / FTP**
+- **Gate:** `gosakiDiscographyControlledSavePlanPrepared: true`
+- **Unlock:** retry-3 PASS (readBack trackCount=8)
+- **First slice:** G-20u36e1 — `discography-002` / SKYLARK — track 1 title → `On a Clear Day [CMS Kit staging G-20u36e]`
+- **Avoid:** track 7 (G-18g2 closed chain) · +1 track add/remove · no-op Save
+- **Enablement:** direct endpoint controlled Save first; UI Save button defer
+- **approvalId:** `G-20u36-gosaki-discography-tracklist-save-non-dry-run-slice`
+- **Staging ref:** `kmjqppxjdnwwrtaeqjta` · **production STOP:** `vsbvndwuajjhnzpohghh`
+- **service_role:** **not used**
+- **Next:** **G-20u36e-controlled-save-preflight**
 
 ## G-20u36d-readback-live-verify-retry-3 — complete (PASS)
 

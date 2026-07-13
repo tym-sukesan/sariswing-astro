@@ -5,9 +5,19 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36e-controlled-save-canonical-track-fixture-audit — complete.
-SKYLARK_TRACKS_CURRENT aligned to Like a Lover. Ready for dryRun payload live verify.
+Current phase: G-20u36e-controlled-save-dryrun-payload-live-verify — complete.
+DryRun payload live verify PASS. Ready for edge save path planning.
 ```
+
+## G-20u36e-controlled-save-dryrun-payload-live-verify — complete
+
+- **Phase:** G-20u36e-controlled-save-dryrun-payload-live-verify
+- **Gate:** `gosakiDiscographyControlledSaveDryRunPayloadLiveVerifyPassed: true`
+- **Endpoint:** staging `kmjqppxjdnwwrtaeqjta` / `gosaki-discography-save-dry-run` · anon key only · service_role **not used**
+- **Step A:** matching dryRun 200 · wouldWrite=false · trackCount=8 · tracksAdded=0
+- **Step B:** controlled slice 200 · wouldWrite=true · track 1 title only · track 7 unchanged · 8→8 · dry-run approval **G-20u31** (save approval G-20u36 reserved for future Save path)
+- **Not done:** operation=save · DB write · SQL · Edge deploy · admin UI · FTP
+- **Next:** **G-20u36e-controlled-save-edge-save-path-planning**
 
 ## G-20u36e-controlled-save-canonical-track-fixture-audit — complete
 
@@ -21,7 +31,7 @@ SKYLARK_TRACKS_CURRENT aligned to Like a Lover. Ready for dryRun payload live ve
 - **Out of scope:** `src/**` `G19A_SKYLARK_TRACK_7_CURRENT` still test era
 - **Staging ref:** `kmjqppxjdnwwrtaeqjta` · **production STOP:** `vsbvndwuajjhnzpohghh`
 - **service_role:** **not used**
-- **Next:** **G-20u36e-controlled-save-dryrun-payload-live-verify**
+- **Next:** G-20u36e-controlled-save-dryrun-payload-live-verify — **complete**
 
 ## G-20u36e-controlled-save-snapshot-select-result — complete
 
@@ -33,7 +43,7 @@ SKYLARK_TRACKS_CURRENT aligned to Like a Lover. Ready for dryRun payload live ve
 - **Slice:** G-20u36e1 — track 1 Save target only · track 7 off-limits
 - **Staging ref:** `kmjqppxjdnwwrtaeqjta` · **production STOP:** `vsbvndwuajjhnzpohghh`
 - **service_role:** **not used**
-- **Next:** **G-20u36e-controlled-save-dryrun-payload-live-verify** or **G-20u36e-controlled-save-edge-save-path-planning**
+- **Next:** G-20u36e-controlled-save-dryrun-payload-live-verify — **complete**
 
 ## G-20u36e-controlled-save-preflight — complete
 

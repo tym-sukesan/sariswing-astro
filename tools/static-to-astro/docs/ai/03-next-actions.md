@@ -1,6 +1,18 @@
 Last updated: 2026-07-13
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-preflight — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u36e-controlled-save-preflight` |
+| Base | `df580a7` |
+| Scope | Preflight only · snapshot SQL + rollback SQL + dryRun payload locked |
+| Gate | `gosakiDiscographyControlledSavePreflightReady: true` |
+| Slice | G-20u36e1 · discography-002 / SKYLARK · track 1 title marker |
+| Doc | `gosaki-discography-g20u36e-controlled-save-preflight.md` |
+| Next | G-20u36e-controlled-save-snapshot-select-execution or edge-save-path-planning |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-planning — complete
 
 | Item | Value |
@@ -11,7 +23,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Gate | `gosakiDiscographyControlledSavePlanPrepared: true` |
 | First slice | G-20u36e1 · discography-002 / SKYLARK · track 1 title marker |
 | Doc | `gosaki-discography-g20u36e-controlled-save-plan.md` |
-| Next | G-20u36e-controlled-save-preflight |
+| Next | G-20u36e-controlled-save-preflight — **complete** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36d-readback-live-verify-retry-3 — complete (PASS)
 

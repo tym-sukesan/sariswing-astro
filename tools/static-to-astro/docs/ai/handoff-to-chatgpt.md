@@ -5,9 +5,24 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36e-controlled-save-planning — complete.
-First controlled Save plan prepared. Save still blocked until preflight + Edge Save arm.
+Current phase: G-20u36e-controlled-save-preflight — complete.
+Snapshot SQL + rollback SQL + dryRun payload locked. Save still blocked.
 ```
+
+## G-20u36e-controlled-save-preflight — complete
+
+- **Base:** `df580a7`
+- **Scope:** Preflight only — **no Save / SQL execution / DB write / dryRun HTTP / Edge deploy / admin UI / FTP**
+- **Gate:** `gosakiDiscographyControlledSavePreflightReady: true`
+- **Slice:** G-20u36e1 — `discography-002` / SKYLARK — track 1 title marker
+- **Before → after:** `On a Clear Day` → `On a Clear Day [CMS Kit staging G-20u36e]`
+- **Snapshot:** SELECT-only SQL → single JSON `g20u36e_before_snapshot` (not executed in preflight)
+- **Rollback:** UPDATE template documented · execution **forbidden** in preflight
+- **dryRun:** Step A matching (wouldWrite=false) + Step B slice (wouldWrite=true) — **not sent**
+- **approvalId:** `G-20u36-gosaki-discography-tracklist-save-non-dry-run-slice`
+- **Staging ref:** `kmjqppxjdnwwrtaeqjta` · **production STOP:** `vsbvndwuajjhnzpohghh`
+- **service_role:** **not used**
+- **Next:** **G-20u36e-controlled-save-snapshot-select-execution** or **G-20u36e-controlled-save-edge-save-path-planning**
 
 ## G-20u36e-controlled-save-planning — complete
 

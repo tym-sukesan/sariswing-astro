@@ -1,6 +1,19 @@
 Last updated: 2026-07-13
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36d-readback-live-verify-retry-2 — complete (PARTIAL STOP)
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u36d-readback-live-verify-retry-2` |
+| Base | `eaba751` |
+| Scope | Live HTTP verify retry-2 · dryRun only · anon key auth |
+| Gate | `gosakiDiscographyEdgeDryRunReadBackLiveVerifyRetry2Passed: false` |
+| STOP cause | `discography_tracks.release_id` column missing · tracks SELECT 400 |
+| Duration fix | **resolved** |
+| Doc | `gosaki-discography-g20u36d-readback-live-verify-retry-2.md` |
+| Next | release_id column / tracks FK schema fix planning |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36d-readback-tracks-select-fields-fix-edge-deploy-result-record — complete
 
 | Item | Value |
@@ -11,7 +24,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Gate | `gosakiDiscographyEdgeDryRunReadBackTracksSelectFieldsFixEdgeDeployed: true` |
 | Deploy target | `gosaki-discography-save-dry-run` @ `kmjqppxjdnwwrtaeqjta` |
 | Doc | `gosaki-discography-g20u36d-readback-tracks-select-fields-fix-edge-deploy-result.md` |
-| Next | G-20u36d-readback-live-verify-retry-2 |
+| Next | G-20u36d-readback-live-verify-retry-2 — **complete (PARTIAL STOP)** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36d-readback-tracks-select-fields-fix-edge-deploy-preflight — complete
 

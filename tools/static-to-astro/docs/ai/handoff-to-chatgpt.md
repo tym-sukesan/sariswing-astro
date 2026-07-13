@@ -5,20 +5,26 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36d-readback-tracks-select-fields-fix-edge-deploy-result-record — complete.
-Operator redeploy SUCCESS. Tracks SELECT fields fix deployed on staging. Save blocked until live verify retry-2 PASS.
+Current phase: G-20u36d-readback-live-verify-retry-2 — complete (PARTIAL STOP).
+Duration fix resolved. New STOP: discography_tracks.release_id column missing. Save blocked.
 ```
+
+## G-20u36d-readback-live-verify-retry-2 — complete (PARTIAL STOP)
+
+- **Base:** `eaba751`
+- **Gate:** `gosakiDiscographyEdgeDryRunReadBackLiveVerifyRetry2Passed: false`
+- **readBack:** enabled · source=supabase-select · releaseFound=true · **trackCount=0** (expected 8)
+- **matching dryRun:** **400** STOP · **+1 track:** 200 PASS · **save/siteSlug:** 400 reject PASS
+- **Duration fix:** **resolved** · new STOP: **`release_id` column missing** on staging `discography_tracks`
+- **service_role:** **not used**
+- **Next:** **release_id column / tracks FK schema fix planning**
 
 ## G-20u36d-readback-tracks-select-fields-fix-edge-deploy-result-record — complete
 
 - **Base:** `3bc0d4c`
-- **Scope:** Deploy result record only — **no re-deploy / SQL / Save / admin UI / FTP / root edit**
 - **Gate:** `gosakiDiscographyEdgeDryRunReadBackTracksSelectFieldsFixEdgeDeployed: true`
-- **Deploy:** operator SUCCESS · `gosaki-discography-save-dry-run` @ `kmjqppxjdnwwrtaeqjta`
-- **Code:** tracks SELECT fields fix + release-id fix + readBack-capable
-- **cli-latest:** changed after deploy · restored by operator · final git clean
-- **service_role:** **not used**
-- **Next:** **G-20u36d-readback-live-verify-retry-2**
+- **Deploy:** operator SUCCESS · tracks SELECT fields fix deployed
+- **Next:** **G-20u36d-readback-live-verify-retry-2** — **complete (PARTIAL STOP)**
 
 ## G-20u36d-readback-tracks-select-fields-fix-edge-deploy-preflight — complete
 

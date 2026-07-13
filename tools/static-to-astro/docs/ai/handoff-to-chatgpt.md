@@ -5,9 +5,23 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36d-readback-tracks-relation-filter-fix-root-placement — complete.
-Root handler tracks filter uses discography_legacy_id. Live endpoint still pre-fix. Save blocked.
+Current phase: G-20u36d-readback-tracks-relation-filter-fix-edge-deploy-preflight — complete.
+Deploy preflight ready for operator. Live endpoint still pre-fix. Save blocked.
 ```
+
+## G-20u36d-readback-tracks-relation-filter-fix-edge-deploy-preflight — complete
+
+- **Base:** `4aba597`
+- **Scope:** Preflight only — **no Edge deploy / SQL / Save / admin UI / FTP / root edit**
+- **Gate:** `gosakiDiscographyEdgeDryRunReadBackTracksRelationFilterFixEdgeDeployPreflightReady: true`
+- **Deploy target:** `gosaki-discography-save-dry-run` @ **`kmjqppxjdnwwrtaeqjta`**
+- **Production STOP:** `vsbvndwuajjhnzpohghh` — **unused**
+- **Root filter:** `site_slug=eq.{siteSlug}` + `discography_legacy_id=eq.{legacyId}`
+- **Removed:** `release_id=eq.{uuid}` · `releaseRow.id` tracks gate
+- **Env:** `GOSAKI_DISCOGRAPHY_DRY_RUN_READBACK_ENABLED` added済み · `SUPABASE_URL` / `SUPABASE_ANON_KEY` exist
+- **Deploy command (NOT executed):** `supabase functions deploy gosaki-discography-save-dry-run --project-ref kmjqppxjdnwwrtaeqjta`
+- **service_role:** **not used**
+- **Next:** **G-20u36d-readback-tracks-relation-filter-fix-edge-deploy** (operator)
 
 ## G-20u36d-readback-tracks-relation-filter-fix-root-placement — complete
 
@@ -19,7 +33,7 @@ Root handler tracks filter uses discography_legacy_id. Live endpoint still pre-f
 - **Root files:** `supabase/functions/gosaki-discography-save-dry-run/handler.ts` · `index.ts`
 - **Live endpoint:** still pre-fix until operator Edge deploy
 - **service_role:** **not used**
-- **Next:** **G-20u36d-readback-tracks-relation-filter-fix-edge-deploy-preflight**
+- **Next:** **G-20u36d-readback-tracks-relation-filter-fix-edge-deploy-preflight** — **complete**
 
 ## G-20u36d-readback-tracks-relation-filter-fix-tools-draft — complete
 

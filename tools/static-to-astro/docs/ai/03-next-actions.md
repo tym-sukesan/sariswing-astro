@@ -1,6 +1,19 @@
 Last updated: 2026-07-13
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36d-readback-tracks-relation-filter-fix-edge-deploy-preflight — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u36d-readback-tracks-relation-filter-fix-edge-deploy-preflight` |
+| Base | `4aba597` |
+| Scope | Preflight only · no deploy |
+| Gate | `gosakiDiscographyEdgeDryRunReadBackTracksRelationFilterFixEdgeDeployPreflightReady: true` |
+| Deploy target | `gosaki-discography-save-dry-run` @ `kmjqppxjdnwwrtaeqjta` |
+| Filter | `site_slug` + `discography_legacy_id=eq.{legacyId}` |
+| Doc | `gosaki-discography-g20u36d-readback-tracks-relation-filter-fix-edge-deploy-preflight.md` |
+| Next | G-20u36d-readback-tracks-relation-filter-fix-edge-deploy (operator) |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36d-readback-tracks-relation-filter-fix-root-placement — complete
 
 | Item | Value |
@@ -12,7 +25,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Filter | `site_slug` + `discography_legacy_id=eq.{legacyId}` |
 | Live endpoint | **pre-fix** until operator Edge deploy |
 | Doc | `gosaki-discography-g20u36d-readback-tracks-relation-filter-fix-root-placement.md` |
-| Next | G-20u36d-readback-tracks-relation-filter-fix-edge-deploy-preflight |
+| Next | G-20u36d-readback-tracks-relation-filter-fix-edge-deploy-preflight — **complete** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36d-readback-tracks-relation-filter-fix-tools-draft — complete
 

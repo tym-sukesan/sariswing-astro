@@ -1,6 +1,15 @@
 Last updated: 2026-07-13
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-permission-model-decision — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u36e-controlled-save-permission-model-decision` |
+| Gate | `gosakiDiscographyControlledSavePermissionModelDecided: true` |
+| Selected | Option A — authenticated UPDATE(title) + restrictive RLS + operator JWT |
+| Next | G-20u36e-controlled-save-auth-jwt-feasibility-planning |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-permission-snapshot-select-result — complete
 
 | Item | Value |
@@ -9,7 +18,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Gate | `gosakiDiscographyControlledSavePermissionSnapshotSelectResultRecorded: true` |
 | Snapshot | **PASS** — grants SELECT-only · UPDATE 0 · RLS enabled |
 | Save | **not executable** — DB write likely blocked |
-| Next | G-20u36e-controlled-save-permission-model-decision |
+| Next | G-20u36e-controlled-save-permission-model-decision — **complete** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-permission-snapshot-select-prep — complete
 

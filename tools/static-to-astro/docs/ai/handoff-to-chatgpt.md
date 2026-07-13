@@ -5,9 +5,21 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36e-controlled-save-permission-snapshot-select-result-record — complete.
-Permission snapshot PASS. Permission model decision next.
+Current phase: G-20u36e-controlled-save-permission-model-decision — complete.
+Option A selected. Auth JWT feasibility planning next.
 ```
+
+## G-20u36e-controlled-save-permission-model-decision — complete
+
+- **Phase:** G-20u36e-controlled-save-permission-model-decision
+- **Gate:** `gosakiDiscographyControlledSavePermissionModelDecided: true`
+- **Selected:** Option A — authenticated UPDATE(title) + restrictive RLS + operator JWT (staging · temporary · minimal)
+- **Rejected:** anon UPDATE · service_role · RPC/SECURITY DEFINER · manual SQL as primary
+- **Next gate:** operator JWT feasibility — Edge must not stay anon-only for write
+- **Not done:** SQL · GRANT/REVOKE · RLS change · DB write · Edge · deploy · operation=save
+- **service_role:** **not used**
+- **First controlled Save:** **still not executable**
+- **Next:** **G-20u36e-controlled-save-auth-jwt-feasibility-planning**
 
 ## G-20u36e-controlled-save-permission-snapshot-select-result — complete
 
@@ -17,7 +29,7 @@ Permission snapshot PASS. Permission model decision next.
 - **Judgment:** DB write likely blocked without grant/RLS change · service_role **not used**
 - **First controlled Save:** **still not executable**
 - **Not done:** SQL re-run · GRANT/REVOKE · RLS change · DB write · Edge · deploy · operation=save
-- **Next:** **G-20u36e-controlled-save-permission-model-decision**
+- **Next:** G-20u36e-controlled-save-permission-model-decision — **complete**
 
 ## G-20u36e-controlled-save-permission-snapshot-select-prep — complete
 

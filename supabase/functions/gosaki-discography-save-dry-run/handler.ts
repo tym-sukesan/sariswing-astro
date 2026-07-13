@@ -2,12 +2,14 @@
  * G-20u36b / G-20u36d — Gosaki Discography Edge dry-run endpoint handler (root source · NOT deployed).
  * Ported from gosaki-discography-edge-dry-run-endpoint-inert.mjs + G-20u33 draft + G-20u36d readBack.
  * Copied from tools/static-to-astro/scripts/edge-functions/gosaki-discography-save-dry-run/handler.ts
- * G-20u36d release-id select fix root placement · anon SELECT readBack · Edge deploy NOT EXECUTED.
+ * G-20u36d release-id select fix root placement · G-20u36d tracks select fields fix root placement · anon SELECT readBack · Edge deploy NOT EXECUTED.
  */
 
 export const G20U36D_READBACK_ROOT_PLACEMENT_PHASE = "G-20u36d-readback-root-placement";
 export const G20U36D_RELEASE_ID_SELECT_FIX_ROOT_PLACEMENT_PHASE =
   "G-20u36d-readback-release-id-select-fix-root-placement";
+export const G20U36D_TRACKS_SELECT_FIELDS_FIX_ROOT_PLACEMENT_PHASE =
+  "G-20u36d-readback-tracks-select-fields-fix-root-placement";
 export const READBACK_SOURCE = "supabase-select";
 export const PRODUCTION_REF_STOP = "vsbvndwuajjhnzpohghh";
 
@@ -18,7 +20,7 @@ export const DRY_RUN_OPERATION = "dryRun";
 export const DRY_RUN_APPROVAL_ID = "G-20u31-gosaki-discography-save-dry-run-endpoint";
 export const SAVE_APPROVAL_ID = "G-20u36-gosaki-discography-tracklist-save-non-dry-run-slice";
 
-/** Supabase service_role — NOT CONNECTED in release-id select fix root-placement phase. */
+/** Supabase service_role — NOT CONNECTED in tracks select fields fix root-placement phase. */
 export const SUPABASE_SERVICE_ROLE_CONNECTED = false;
 
 const RELEASE_FIELDS = [
@@ -83,7 +85,8 @@ const RELEASE_SELECT_FIELDS = [
   "published",
 ].join(",");
 
-const TRACK_SELECT_FIELDS = ["track_number", "title", "duration", "sort_order", "site_slug"].join(",");
+/** PostgREST tracks SELECT — staging columns only; `duration` omitted (column absent on staging). */
+const TRACK_SELECT_FIELDS = ["track_number", "title", "sort_order", "site_slug"].join(",");
 
 const WRITE_FLAGS = {
   didWrite: false,

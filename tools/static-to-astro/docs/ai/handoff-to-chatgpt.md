@@ -5,9 +5,20 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36d-readback-tracks-select-fields-fix-tools-draft — complete.
-Tools draft fix: TRACK_SELECT_FIELDS without duration. Save blocked until live verify retry-2 PASS.
+Current phase: G-20u36d-readback-tracks-select-fields-fix-root-placement — complete.
+Root placed: TRACK_SELECT_FIELDS without duration. Live endpoint still pre-fix until Edge redeploy.
+Save blocked until live verify retry-2 PASS.
 ```
+
+## G-20u36d-readback-tracks-select-fields-fix-root-placement — complete
+
+- **Base:** `6cf991d`
+- **Scope:** Root placement only — scope exception **2 files** · **no Edge deploy / SQL / Save / admin UI / FTP**
+- **Gate:** `gosakiDiscographyEdgeDryRunReadBackTracksSelectFieldsFixRootPlaced: true`
+- **Fix:** root `TRACK_SELECT_FIELDS` without `duration` · `track_number/title/sort_order/site_slug` only
+- **Live endpoint:** still pre-fix until operator Edge redeploy
+- **service_role:** **not used**
+- **Next:** **G-20u36d-readback-tracks-select-fields-fix-edge-deploy-preflight**
 
 ## G-20u36d-readback-tracks-select-fields-fix-tools-draft — complete
 
@@ -17,7 +28,7 @@ Tools draft fix: TRACK_SELECT_FIELDS without duration. Save blocked until live v
 - **Fix:** remove `duration` from `TRACK_SELECT_FIELDS` · `track_number/title/sort_order/site_slug` only
 - **Mock:** matching trackCount=8 wouldWrite=false · +1 track wouldWrite=true tracksAdded=1
 - **service_role:** **not used**
-- **Next:** **G-20u36d-readback-tracks-select-fields-fix-root-placement**
+- **Next:** **G-20u36d-readback-tracks-select-fields-fix-root-placement** — **complete**
 
 ## G-20u36d-readback-tracks-select-fields-fix-planning — complete
 

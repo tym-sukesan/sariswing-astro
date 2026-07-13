@@ -3,7 +3,7 @@
  * Endpoint: gosaki-discography-save-dry-run
  * Target: static-to-astro-cms-staging (kmjqppxjdnwwrtaeqjta) — deploy in separate phase only.
  * Copied from tools/static-to-astro/scripts/edge-functions/gosaki-discography-save-dry-run/index.ts
- * G-20u36d release-id select fix root placement · Edge deploy NOT EXECUTED.
+ * G-20u36d release-id select fix root placement · G-20u36d tracks select fields fix root placement · Edge deploy NOT EXECUTED.
  */
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import {

@@ -1,5 +1,16 @@
-Last updated: 2026-07-13
+Last updated: 2026-07-14
 Project: Static-to-Astro CMS / Musician CMS Kit
+
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-auth-jwt-feasibility-planning — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u36e-controlled-save-auth-jwt-feasibility-planning` |
+| Gate | `gosakiDiscographyControlledSaveAuthJwtFeasibilityPlanned: true` |
+| Verdict | **FEASIBLE** — Edge can accept operator JWT · staging shell has session + YouTube JWT precedent |
+| dryRun | anon/public key OK (unchanged) |
+| save | operator JWT required (future) |
+| Next | G-20u36e-controlled-save-auth-jwt-feasibility-preflight |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-permission-model-decision — complete
 
@@ -8,7 +19,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Phase | `G-20u36e-controlled-save-permission-model-decision` |
 | Gate | `gosakiDiscographyControlledSavePermissionModelDecided: true` |
 | Selected | Option A — authenticated UPDATE(title) + restrictive RLS + operator JWT |
-| Next | G-20u36e-controlled-save-auth-jwt-feasibility-planning |
+| Next | G-20u36e-controlled-save-auth-jwt-feasibility-planning — **complete** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-permission-snapshot-select-result — complete
 

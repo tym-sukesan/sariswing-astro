@@ -5,9 +5,22 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36e-controlled-save-permission-model-decision — complete.
-Option A selected. Auth JWT feasibility planning next.
+Current phase: G-20u36e-controlled-save-auth-jwt-feasibility-planning — complete.
+Verdict FEASIBLE. Auth JWT feasibility preflight next.
 ```
+
+## G-20u36e-controlled-save-auth-jwt-feasibility-planning — complete
+
+- **Phase:** G-20u36e-controlled-save-auth-jwt-feasibility-planning
+- **Gate:** `gosakiDiscographyControlledSaveAuthJwtFeasibilityPlanned: true`
+- **Verdict:** **FEASIBLE** — Edge can accept operator JWT (CORS + header pass-through) · caller staging shell has Supabase Auth session + YouTube JWT precedent · dryRun stays anon · save requires user JWT
+- **Edge today:** readBack anon only · incoming Authorization not parsed · `SUPABASE_SERVICE_ROLE_CONNECTED=false` · operation=save 400 reject
+- **Caller today:** discography dryRun uses anon key · Save can mirror YouTube Bearer access_token pattern
+- **RLS note:** `is_admin()` ALL + restrictive policy composition must be verified in preflight before permission change SQL
+- **Not done:** SQL · GRANT/REVOKE · RLS change · DB write · Edge impl · deploy · operation=save · dryRun HTTP · admin UI
+- **service_role:** **not used**
+- **First controlled Save:** **still not executable**
+- **Next:** **G-20u36e-controlled-save-auth-jwt-feasibility-preflight**
 
 ## G-20u36e-controlled-save-permission-model-decision — complete
 

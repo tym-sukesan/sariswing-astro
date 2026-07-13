@@ -5,9 +5,23 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36d-readback-tracks-relation-filter-fix-edge-deploy-preflight — complete.
-Deploy preflight ready for operator. Live endpoint still pre-fix. Save blocked.
+Current phase: G-20u36d-readback-tracks-relation-filter-fix-edge-deploy-result-record — complete.
+Operator redeploy SUCCESS. Live verify retry-3 pending. Save blocked.
 ```
+
+## G-20u36d-readback-tracks-relation-filter-fix-edge-deploy-result-record — complete
+
+- **Base:** `7578f26`
+- **Scope:** Deploy result record only — **no re-deploy / SQL / Save / admin UI / FTP / root edit**
+- **Gate:** `gosakiDiscographyEdgeDryRunReadBackTracksRelationFilterFixEdgeDeployed: true`
+- **Deploy:** operator SUCCESS · `Deployed Functions on project kmjqppxjdnwwrtaeqjta: gosaki-discography-save-dry-run`
+- **Production STOP:** `vsbvndwuajjhnzpohghh` — **unused**
+- **Deployed filter:** `site_slug=eq.{siteSlug}` + `discography_legacy_id=eq.{legacyId}` · `release_id` filter **removed**
+- **cli-latest:** changed after deploy · **restored** by operator · final git **clean**
+- **Env:** `GOSAKI_DISCOGRAPHY_DRY_RUN_READBACK_ENABLED` added済み
+- **Live verify retry-3:** **not executed** in this phase
+- **service_role:** **not used**
+- **Next:** **G-20u36d-readback-live-verify-retry-3**
 
 ## G-20u36d-readback-tracks-relation-filter-fix-edge-deploy-preflight — complete
 
@@ -19,9 +33,8 @@ Deploy preflight ready for operator. Live endpoint still pre-fix. Save blocked.
 - **Root filter:** `site_slug=eq.{siteSlug}` + `discography_legacy_id=eq.{legacyId}`
 - **Removed:** `release_id=eq.{uuid}` · `releaseRow.id` tracks gate
 - **Env:** `GOSAKI_DISCOGRAPHY_DRY_RUN_READBACK_ENABLED` added済み · `SUPABASE_URL` / `SUPABASE_ANON_KEY` exist
-- **Deploy command (NOT executed):** `supabase functions deploy gosaki-discography-save-dry-run --project-ref kmjqppxjdnwwrtaeqjta`
 - **service_role:** **not used**
-- **Next:** **G-20u36d-readback-tracks-relation-filter-fix-edge-deploy** (operator)
+- **Next:** **G-20u36d-readback-tracks-relation-filter-fix-edge-deploy** (operator) — **complete**
 
 ## G-20u36d-readback-tracks-relation-filter-fix-root-placement — complete
 

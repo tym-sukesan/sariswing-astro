@@ -1,6 +1,18 @@
 Last updated: 2026-07-13
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36d-readback-tracks-relation-column-inspection-preflight — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u36d-readback-tracks-relation-column-inspection-preflight` |
+| Base | `e73d79a` |
+| Scope | Preflight SELECT-only SQL · operator checklist · no execution |
+| Gate | `gosakiDiscographyEdgeDryRunReadBackTracksRelationColumnInspectionPreflightReady: true` |
+| STOP cause | `discography_tracks.release_id` missing · duration fix resolved |
+| Doc | `gosaki-discography-g20u36d-readback-tracks-relation-column-inspection-preflight.md` |
+| Next | operator manual SELECT-only execution → G-20u36d-readback-tracks-relation-column-inspection-result-record |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36d-readback-tracks-relation-column-inspection-planning — complete
 
 | Item | Value |
@@ -11,7 +23,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Gate | `gosakiDiscographyEdgeDryRunReadBackTracksRelationColumnInspectionPlanPrepared: true` |
 | STOP cause | `discography_tracks.release_id` missing · duration fix resolved |
 | Doc | `gosaki-discography-g20u36d-readback-tracks-relation-column-inspection-plan.md` |
-| Next | G-20u36d-readback-tracks-relation-column-inspection-preflight |
+| Next | G-20u36d-readback-tracks-relation-column-inspection-preflight — **complete** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36d-readback-live-verify-retry-2 — complete (PARTIAL STOP)
 

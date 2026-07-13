@@ -5,9 +5,21 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36d-readback-tracks-relation-column-inspection-preflight — complete.
-Locked SELECT-only inspection SQL for operator. Save blocked.
+Current phase: G-20u36d-readback-tracks-relation-column-inspection-result-record — complete.
+Relation column discography_legacy_id confirmed. Save blocked.
 ```
+
+## G-20u36d-readback-tracks-relation-column-inspection-result-record — complete
+
+- **Base:** `4103f21`
+- **Scope:** Result record only — **no SQL re-run / tools-root edit / Edge deploy / Save / admin UI / FTP**
+- **Gate:** `gosakiDiscographyEdgeDryRunReadBackTracksRelationColumnInspectionResultRecorded: true`
+- **Operator:** SELECT-only SQL executed on staging `kmjqppxjdnwwrtaeqjta`
+- **Relation column:** **`discography_legacy_id`** → join `discography.legacy_id`
+- **Filter fix:** replace `release_id=eq.{uuid}` with `discography_legacy_id=eq.{legacyId}`
+- **Migration:** add `release_id` **not required**
+- **service_role:** **not used**
+- **Next:** **G-20u36d-readback-tracks-relation-filter-fix-planning**
 
 ## G-20u36d-readback-tracks-relation-column-inspection-preflight — complete
 
@@ -17,7 +29,7 @@ Locked SELECT-only inspection SQL for operator. Save blocked.
 - **STOP cause:** `release_id` column missing on staging `discography_tracks` · duration fix **resolved**
 - **SQL:** SELECT-only block A–G · `to_jsonb` safe track samples · staging ref `kmjqppxjdnwwrtaeqjta` only
 - **service_role:** **not used**
-- **Next:** **operator manual SELECT-only execution** → **G-20u36d-readback-tracks-relation-column-inspection-result-record**
+- **Next:** **operator manual SELECT-only execution** → **G-20u36d-readback-tracks-relation-column-inspection-result-record** — **complete**
 
 ## G-20u36d-readback-tracks-relation-column-inspection-planning — complete
 

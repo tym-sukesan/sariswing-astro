@@ -1,6 +1,18 @@
 Last updated: 2026-07-13
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36d-readback-tracks-relation-column-inspection-planning — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u36d-readback-tracks-relation-column-inspection-planning` |
+| Base | `cdcb649` |
+| Scope | SELECT-only inspection plan · staging schema discovery |
+| Gate | `gosakiDiscographyEdgeDryRunReadBackTracksRelationColumnInspectionPlanPrepared: true` |
+| STOP cause | `discography_tracks.release_id` missing · duration fix resolved |
+| Doc | `gosaki-discography-g20u36d-readback-tracks-relation-column-inspection-plan.md` |
+| Next | G-20u36d-readback-tracks-relation-column-inspection-preflight |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36d-readback-live-verify-retry-2 — complete (PARTIAL STOP)
 
 | Item | Value |
@@ -12,7 +24,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | STOP cause | `discography_tracks.release_id` column missing · tracks SELECT 400 |
 | Duration fix | **resolved** |
 | Doc | `gosaki-discography-g20u36d-readback-live-verify-retry-2.md` |
-| Next | release_id column / tracks FK schema fix planning |
+| Next | tracks relation column inspection planning — **complete** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36d-readback-tracks-select-fields-fix-edge-deploy-result-record — complete
 

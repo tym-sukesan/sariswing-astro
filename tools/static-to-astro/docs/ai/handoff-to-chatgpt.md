@@ -5,9 +5,19 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36d-readback-live-verify-retry-2 — complete (PARTIAL STOP).
-Duration fix resolved. New STOP: discography_tracks.release_id column missing. Save blocked.
+Current phase: G-20u36d-readback-tracks-relation-column-inspection-planning — complete.
+SELECT-only inspection plan for discography_tracks relation column. Save blocked.
 ```
+
+## G-20u36d-readback-tracks-relation-column-inspection-planning — complete
+
+- **Base:** `cdcb649`
+- **Scope:** Plan only — **no SQL / tools-root edit / Edge deploy / Save / admin UI / FTP**
+- **Gate:** `gosakiDiscographyEdgeDryRunReadBackTracksRelationColumnInspectionPlanPrepared: true`
+- **STOP cause:** `release_id` column missing on staging `discography_tracks` · duration fix **resolved**
+- **Inspection:** SELECT-only SQL block for operator · staging ref `kmjqppxjdnwwrtaeqjta` only
+- **service_role:** **not used**
+- **Next:** **G-20u36d-readback-tracks-relation-column-inspection-preflight**
 
 ## G-20u36d-readback-live-verify-retry-2 — complete (PARTIAL STOP)
 
@@ -17,7 +27,7 @@ Duration fix resolved. New STOP: discography_tracks.release_id column missing. S
 - **matching dryRun:** **400** STOP · **+1 track:** 200 PASS · **save/siteSlug:** 400 reject PASS
 - **Duration fix:** **resolved** · new STOP: **`release_id` column missing** on staging `discography_tracks`
 - **service_role:** **not used**
-- **Next:** **release_id column / tracks FK schema fix planning**
+- **Next:** **tracks relation column inspection planning** — **complete**
 
 ## G-20u36d-readback-tracks-select-fields-fix-edge-deploy-result-record — complete
 

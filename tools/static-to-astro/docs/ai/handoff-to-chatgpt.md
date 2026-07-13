@@ -5,9 +5,20 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36d-readback-tracks-select-fields-fix-edge-deploy-preflight — complete.
-Deploy preflight ready. Operator may redeploy staging Edge. Save blocked until live verify retry-2 PASS.
+Current phase: G-20u36d-readback-tracks-select-fields-fix-edge-deploy-result-record — complete.
+Operator redeploy SUCCESS. Tracks SELECT fields fix deployed on staging. Save blocked until live verify retry-2 PASS.
 ```
+
+## G-20u36d-readback-tracks-select-fields-fix-edge-deploy-result-record — complete
+
+- **Base:** `3bc0d4c`
+- **Scope:** Deploy result record only — **no re-deploy / SQL / Save / admin UI / FTP / root edit**
+- **Gate:** `gosakiDiscographyEdgeDryRunReadBackTracksSelectFieldsFixEdgeDeployed: true`
+- **Deploy:** operator SUCCESS · `gosaki-discography-save-dry-run` @ `kmjqppxjdnwwrtaeqjta`
+- **Code:** tracks SELECT fields fix + release-id fix + readBack-capable
+- **cli-latest:** changed after deploy · restored by operator · final git clean
+- **service_role:** **not used**
+- **Next:** **G-20u36d-readback-live-verify-retry-2**
 
 ## G-20u36d-readback-tracks-select-fields-fix-edge-deploy-preflight — complete
 
@@ -18,7 +29,7 @@ Deploy preflight ready. Operator may redeploy staging Edge. Save blocked until l
 - **Root:** `TRACK_SELECT_FIELDS` without `duration` · root placement complete
 - **Env:** `GOSAKI_DISCOGRAPHY_DRY_RUN_READBACK_ENABLED` added済み
 - **service_role:** **not used**
-- **Next:** **G-20u36d-readback-tracks-select-fields-fix-edge-deploy** (operator)
+- **Next:** **G-20u36d-readback-tracks-select-fields-fix-edge-deploy** — **complete (operator)**
 
 ## G-20u36d-readback-tracks-select-fields-fix-root-placement — complete
 

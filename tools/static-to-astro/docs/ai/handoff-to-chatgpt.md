@@ -5,9 +5,19 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36e-controlled-save-permission-preflight-planning — complete.
-Permission model planned. SELECT-only snapshot prep recommended next.
+Current phase: G-20u36e-controlled-save-permission-snapshot-select-prep — complete.
+Permission snapshot SELECT-only SQL prepared. Operator execution next.
 ```
+
+## G-20u36e-controlled-save-permission-snapshot-select-prep — complete
+
+- **Phase:** G-20u36e-controlled-save-permission-snapshot-select-prep
+- **Gate:** `gosakiDiscographyControlledSavePermissionSnapshotSelectPrepReady: true`
+- **Prepared:** SELECT-only SQL block → column `g20u36e_permission_snapshot`
+- **Checks:** grants · column privileges · RLS · policies · target row/slice
+- **Not done:** SQL execution · GRANT/REVOKE · RLS change · DB write · Edge · deploy · operation=save
+- **service_role:** **not used**
+- **Next:** **G-20u36e-controlled-save-permission-snapshot-select-execution** (operator manual SELECT)
 
 ## G-20u36e-controlled-save-permission-preflight-planning — complete
 
@@ -18,7 +28,7 @@ Permission model planned. SELECT-only snapshot prep recommended next.
 - **Avoid:** anon UPDATE · service_role **STOP**
 - **Not done:** SQL · executable SQL · GRANT/REVOKE · RLS change · DB write · Edge impl · deploy · operation=save · dryRun HTTP
 - **service_role:** **not used**
-- **Next:** **G-20u36e-controlled-save-permission-snapshot-select-prep** → snapshot SELECT execution
+- **Next:** G-20u36e-controlled-save-permission-snapshot-select-prep — **complete**
 
 ## G-20u36e-controlled-save-edge-save-path-planning — complete
 

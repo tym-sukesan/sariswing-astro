@@ -1,6 +1,18 @@
 Last updated: 2026-07-13
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36d-readback-tracks-select-fields-fix-edge-deploy-preflight — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u36d-readback-tracks-select-fields-fix-edge-deploy-preflight` |
+| Base | `cd6b0d5` |
+| Scope | Deploy preflight · tracks SELECT fields fix redeploy |
+| Gate | `gosakiDiscographyEdgeDryRunReadBackTracksSelectFieldsFixEdgeDeployPreflightReady: true` |
+| Deploy target | `gosaki-discography-save-dry-run` @ `kmjqppxjdnwwrtaeqjta` |
+| Doc | `gosaki-discography-g20u36d-readback-tracks-select-fields-fix-edge-deploy-preflight.md` |
+| Next | G-20u36d-readback-tracks-select-fields-fix-edge-deploy (operator) |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36d-readback-tracks-select-fields-fix-root-placement — complete
 
 | Item | Value |
@@ -11,7 +23,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Gate | `gosakiDiscographyEdgeDryRunReadBackTracksSelectFieldsFixRootPlaced: true` |
 | Scope exception | 2 files — `supabase/functions/gosaki-discography-save-dry-run/` |
 | Doc | `gosaki-discography-g20u36d-readback-tracks-select-fields-fix-root-placement.md` |
-| Next | G-20u36d-readback-tracks-select-fields-fix-edge-deploy-preflight |
+| Next | G-20u36d-readback-tracks-select-fields-fix-edge-deploy-preflight — **complete** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36d-readback-tracks-select-fields-fix-tools-draft — complete
 

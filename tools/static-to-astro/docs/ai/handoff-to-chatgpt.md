@@ -5,10 +5,20 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36d-readback-tracks-select-fields-fix-root-placement — complete.
-Root placed: TRACK_SELECT_FIELDS without duration. Live endpoint still pre-fix until Edge redeploy.
-Save blocked until live verify retry-2 PASS.
+Current phase: G-20u36d-readback-tracks-select-fields-fix-edge-deploy-preflight — complete.
+Deploy preflight ready. Operator may redeploy staging Edge. Save blocked until live verify retry-2 PASS.
 ```
+
+## G-20u36d-readback-tracks-select-fields-fix-edge-deploy-preflight — complete
+
+- **Base:** `cd6b0d5`
+- **Scope:** Preflight doc + verifier only — **no Edge deploy / SQL / Save / admin UI / FTP / root edit**
+- **Gate:** `gosakiDiscographyEdgeDryRunReadBackTracksSelectFieldsFixEdgeDeployPreflightReady: true`
+- **Deploy:** `gosaki-discography-save-dry-run` @ `kmjqppxjdnwwrtaeqjta` (staging only)
+- **Root:** `TRACK_SELECT_FIELDS` without `duration` · root placement complete
+- **Env:** `GOSAKI_DISCOGRAPHY_DRY_RUN_READBACK_ENABLED` added済み
+- **service_role:** **not used**
+- **Next:** **G-20u36d-readback-tracks-select-fields-fix-edge-deploy** (operator)
 
 ## G-20u36d-readback-tracks-select-fields-fix-root-placement — complete
 
@@ -18,7 +28,7 @@ Save blocked until live verify retry-2 PASS.
 - **Fix:** root `TRACK_SELECT_FIELDS` without `duration` · `track_number/title/sort_order/site_slug` only
 - **Live endpoint:** still pre-fix until operator Edge redeploy
 - **service_role:** **not used**
-- **Next:** **G-20u36d-readback-tracks-select-fields-fix-edge-deploy-preflight**
+- **Next:** **G-20u36d-readback-tracks-select-fields-fix-edge-deploy-preflight** — **complete**
 
 ## G-20u36d-readback-tracks-select-fields-fix-tools-draft — complete
 

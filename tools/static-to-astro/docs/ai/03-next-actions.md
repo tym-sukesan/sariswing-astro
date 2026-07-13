@@ -1,6 +1,17 @@
 Last updated: 2026-07-13
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-permission-preflight-planning — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u36e-controlled-save-permission-preflight-planning` |
+| Gate | `gosakiDiscographyControlledSavePermissionPreflightPlanPrepared: true` |
+| Recommended | Option A: authenticated UPDATE(title) + RLS + operator JWT |
+| Risk | authenticated UPDATE grant 0 · Edge anon key only |
+| SQL / GRANT / RLS change | **none** |
+| Next | G-20u36e-controlled-save-permission-snapshot-select-prep |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-edge-save-path-planning — complete
 
 | Item | Value |
@@ -10,7 +21,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Recommended write | one-row UPDATE track 1 title |
 | Permission preflight | **required before Save arm** |
 | Save / SQL / DB write / deploy | **none** |
-| Next | G-20u36e-controlled-save-permission-preflight-planning (recommended) |
+| Next | G-20u36e-controlled-save-permission-preflight-planning — **complete** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-dryrun-payload-live-verify — complete
 

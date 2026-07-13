@@ -5,9 +5,20 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36e-controlled-save-edge-save-path-planning — complete.
-DryRun live verify PASS. Edge save path planned. Permission preflight recommended next.
+Current phase: G-20u36e-controlled-save-permission-preflight-planning — complete.
+Permission model planned. SELECT-only snapshot prep recommended next.
 ```
+
+## G-20u36e-controlled-save-permission-preflight-planning — complete
+
+- **Phase:** G-20u36e-controlled-save-permission-preflight-planning
+- **Gate:** `gosakiDiscographyControlledSavePermissionPreflightPlanPrepared: true`
+- **Current risk:** authenticated UPDATE grant **0** · Edge **anon key only** · Save blocked at grant layer
+- **Recommended:** Option A — authenticated UPDATE(title) + restrictive RLS + operator JWT (pending snapshot)
+- **Avoid:** anon UPDATE · service_role **STOP**
+- **Not done:** SQL · executable SQL · GRANT/REVOKE · RLS change · DB write · Edge impl · deploy · operation=save · dryRun HTTP
+- **service_role:** **not used**
+- **Next:** **G-20u36e-controlled-save-permission-snapshot-select-prep** → snapshot SELECT execution
 
 ## G-20u36e-controlled-save-edge-save-path-planning — complete
 
@@ -20,7 +31,7 @@ DryRun live verify PASS. Edge save path planned. Permission preflight recommende
 - **Permission preflight:** **required before Save arm** (recommended next phase)
 - **Not done:** Edge impl · supabase/functions edit · deploy · SQL · DB write · operation=save · dryRun HTTP · admin UI · FTP
 - **service_role:** **not used**
-- **Next:** **G-20u36e-controlled-save-permission-preflight-planning** (then tools draft)
+- **Next:** G-20u36e-controlled-save-permission-preflight-planning — **complete**
 
 ## G-20u36e-controlled-save-dryrun-payload-live-verify — complete
 

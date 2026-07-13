@@ -1,6 +1,16 @@
 Last updated: 2026-07-13
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-permission-snapshot-select-result — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u36e-controlled-save-permission-snapshot-select-result-record` |
+| Gate | `gosakiDiscographyControlledSavePermissionSnapshotSelectResultRecorded: true` |
+| Snapshot | **PASS** — grants SELECT-only · UPDATE 0 · RLS enabled |
+| Save | **not executable** — DB write likely blocked |
+| Next | G-20u36e-controlled-save-permission-model-decision |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-permission-snapshot-select-prep — complete
 
 | Item | Value |
@@ -9,7 +19,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Gate | `gosakiDiscographyControlledSavePermissionSnapshotSelectPrepReady: true` |
 | Output column | `g20u36e_permission_snapshot` |
 | SQL executed | **no** |
-| Next | G-20u36e-controlled-save-permission-snapshot-select-execution |
+| Next | G-20u36e-controlled-save-permission-snapshot-select-execution — **complete** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-permission-preflight-planning — complete
 

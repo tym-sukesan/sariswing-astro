@@ -5,9 +5,19 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36e-controlled-save-permission-snapshot-select-prep — complete.
-Permission snapshot SELECT-only SQL prepared. Operator execution next.
+Current phase: G-20u36e-controlled-save-permission-snapshot-select-result-record — complete.
+Permission snapshot PASS. Permission model decision next.
 ```
+
+## G-20u36e-controlled-save-permission-snapshot-select-result — complete
+
+- **Phase:** G-20u36e-controlled-save-permission-snapshot-select-result-record
+- **Gate:** `gosakiDiscographyControlledSavePermissionSnapshotSelectResultRecorded: true`
+- **Snapshot:** **PASS** — track_count=8 · target_row_count=1 · track_7=`Like a Lover` · UPDATE grants **0** · RLS enabled · admin ALL **2**
+- **Judgment:** DB write likely blocked without grant/RLS change · service_role **not used**
+- **First controlled Save:** **still not executable**
+- **Not done:** SQL re-run · GRANT/REVOKE · RLS change · DB write · Edge · deploy · operation=save
+- **Next:** **G-20u36e-controlled-save-permission-model-decision**
 
 ## G-20u36e-controlled-save-permission-snapshot-select-prep — complete
 
@@ -17,7 +27,7 @@ Permission snapshot SELECT-only SQL prepared. Operator execution next.
 - **Checks:** grants · column privileges · RLS · policies · target row/slice
 - **Not done:** SQL execution · GRANT/REVOKE · RLS change · DB write · Edge · deploy · operation=save
 - **service_role:** **not used**
-- **Next:** **G-20u36e-controlled-save-permission-snapshot-select-execution** (operator manual SELECT)
+- **Next:** G-20u36e-controlled-save-permission-snapshot-select-execution — **complete** (result recorded)
 
 ## G-20u36e-controlled-save-permission-preflight-planning — complete
 

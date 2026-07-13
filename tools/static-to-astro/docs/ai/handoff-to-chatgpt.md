@@ -5,9 +5,21 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36e-controlled-save-auth-jwt-feasibility-preflight — complete.
-Verdict NEEDS_SELECT_ONLY_AUTH_SNAPSHOT. Auth-admin-rls-select-prep next.
+Current phase: G-20u36e-controlled-save-auth-admin-rls-select-prep — complete.
+SELECT-only SQL prepared. Operator execution next.
 ```
+
+## G-20u36e-controlled-save-auth-admin-rls-select-prep — complete
+
+- **Phase:** G-20u36e-controlled-save-auth-admin-rls-select-prep
+- **Gate:** `gosakiDiscographyControlledSaveAuthAdminRlsSelectPrepReady: true`
+- **Prepared:** SELECT-only SQL → column `g20u36e_auth_admin_rls_snapshot`
+- **Covers:** is_admin() metadata/definition · policies · permissive/restrictive · RLS · grants re-check · SQL Editor is_admin probe (≠ JWT) · target slice
+- **Not done:** SQL execution · GRANT/REVOKE · RLS change · DB write · Edge · deploy · operation=save
+- **Secrets:** no JWT/email dump · auth.users **count only**
+- **service_role:** **not used**
+- **First controlled Save:** **still not executable**
+- **Next:** **G-20u36e-controlled-save-auth-admin-rls-select-execution** (operator runs SELECT once on `kmjqppxjdnwwrtaeqjta`)
 
 ## G-20u36e-controlled-save-auth-jwt-feasibility-preflight — complete
 
@@ -20,7 +32,7 @@ Verdict NEEDS_SELECT_ONLY_AUTH_SNAPSHOT. Auth-admin-rls-select-prep next.
 - **Not done:** SQL execution · GRANT/REVOKE · RLS change · DB write · Edge impl · deploy · operation=save · dryRun HTTP · admin UI
 - **service_role:** **not used**
 - **First controlled Save:** **still not executable**
-- **Next:** **G-20u36e-controlled-save-auth-admin-rls-select-prep** (before permission-change SQL)
+- **Next:** G-20u36e-controlled-save-auth-admin-rls-select-prep — **complete**
 
 ## G-20u36e-controlled-save-auth-jwt-feasibility-planning — complete
 

@@ -1,6 +1,16 @@
 Last updated: 2026-07-14
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-auth-admin-rls-select-prep — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u36e-controlled-save-auth-admin-rls-select-prep` |
+| Gate | `gosakiDiscographyControlledSaveAuthAdminRlsSelectPrepReady: true` |
+| SQL | SELECT-only prepared · **not executed** |
+| Output column | `g20u36e_auth_admin_rls_snapshot` |
+| Next | G-20u36e-controlled-save-auth-admin-rls-select-execution |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-auth-jwt-feasibility-preflight — complete
 
 | Item | Value |
@@ -10,7 +20,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Verdict | **NEEDS_SELECT_ONLY_AUTH_SNAPSHOT** |
 | Operator JWT / Edge design | documented · execution deferred |
 | DB gap | `is_admin()` · operator admin · RLS composition unverified |
-| Next | G-20u36e-controlled-save-auth-admin-rls-select-prep |
+| Next | G-20u36e-controlled-save-auth-admin-rls-select-prep — **complete** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-auth-jwt-feasibility-planning — complete
 

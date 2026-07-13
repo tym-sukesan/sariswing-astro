@@ -1,6 +1,19 @@
 Last updated: 2026-07-13
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36d-readback-tracks-relation-filter-fix-planning — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u36d-readback-tracks-relation-filter-fix-planning` |
+| Base | `3a8a655` |
+| Scope | Tracks SELECT filter fix plan · `discography_legacy_id` |
+| Gate | `gosakiDiscographyEdgeDryRunReadBackTracksRelationFilterFixPlanPrepared: true` |
+| Filter fix | `site_slug` + `discography_legacy_id=eq.{legacyId}` |
+| Migration | **not required** |
+| Doc | `gosaki-discography-g20u36d-readback-tracks-relation-filter-fix-plan.md` |
+| Next | G-20u36d-readback-tracks-relation-filter-fix-tools-draft |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36d-readback-tracks-relation-column-inspection-result-record — complete
 
 | Item | Value |
@@ -10,9 +23,8 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Scope | Operator SELECT-only inspection result · relation column confirmed |
 | Gate | `gosakiDiscographyEdgeDryRunReadBackTracksRelationColumnInspectionResultRecorded: true` |
 | Relation column | **`discography_legacy_id`** |
-| STOP resolved (schema) | `release_id` filter incorrect · use `discography_legacy_id=eq.{legacyId}` |
 | Doc | `gosaki-discography-g20u36d-readback-tracks-relation-column-inspection-result.md` |
-| Next | G-20u36d-readback-tracks-relation-filter-fix-planning |
+| Next | G-20u36d-readback-tracks-relation-filter-fix-planning — **complete** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36d-readback-tracks-relation-column-inspection-preflight — complete
 

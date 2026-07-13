@@ -5,9 +5,22 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36d-readback-tracks-relation-column-inspection-result-record — complete.
-Relation column discography_legacy_id confirmed. Save blocked.
+Current phase: G-20u36d-readback-tracks-relation-filter-fix-planning — complete.
+Tracks filter fix plan: discography_legacy_id. Save blocked.
 ```
+
+## G-20u36d-readback-tracks-relation-filter-fix-planning — complete
+
+- **Base:** `3a8a655`
+- **Scope:** Plan only — **no tools-root edit / Edge deploy / SQL / Save / admin UI / FTP**
+- **Gate:** `gosakiDiscographyEdgeDryRunReadBackTracksRelationFilterFixPlanPrepared: true`
+- **Filter fix:** `site_slug=eq.{siteSlug}` + `discography_legacy_id=eq.{legacyId}`
+- **Remove:** `release_id=eq.{releaseRow.id}` — column absent · wrong relation
+- **TRACK_SELECT_FIELDS:** unchanged · `discography_legacy_id` filter-only (not in select list)
+- **Migration:** add `release_id` **not required**
+- **Retry-3:** matching trackCount=8 · wouldWrite=false · save reject 400
+- **service_role:** **not used**
+- **Next:** **G-20u36d-readback-tracks-relation-filter-fix-tools-draft**
 
 ## G-20u36d-readback-tracks-relation-column-inspection-result-record — complete
 
@@ -19,7 +32,7 @@ Relation column discography_legacy_id confirmed. Save blocked.
 - **Filter fix:** replace `release_id=eq.{uuid}` with `discography_legacy_id=eq.{legacyId}`
 - **Migration:** add `release_id` **not required**
 - **service_role:** **not used**
-- **Next:** **G-20u36d-readback-tracks-relation-filter-fix-planning**
+- **Next:** **G-20u36d-readback-tracks-relation-filter-fix-planning** — **complete**
 
 ## G-20u36d-readback-tracks-relation-column-inspection-preflight — complete
 

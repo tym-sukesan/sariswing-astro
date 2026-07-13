@@ -5,9 +5,25 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36e-controlled-save-auth-admin-rls-select-prep — complete.
-SELECT-only SQL prepared. Operator execution next.
+Current phase: G-20u36e-controlled-save-auth-admin-rls-select-result-record — complete.
+Snapshot PASS. JWT-scoped admin probe planning next.
 ```
+
+## G-20u36e-controlled-save-auth-admin-rls-select-result-record — complete
+
+- **Phase:** G-20u36e-controlled-save-auth-admin-rls-select-result-record
+- **Gate:** `gosakiDiscographyControlledSaveAuthAdminRlsSelectResultRecorded: true`
+- **Snapshot:** **PASS** (staging `kmjqppxjdnwwrtaeqjta`)
+- **is_admin():** `exists in public.admin_users where user_id = auth.uid() and role = 'admin'` · **SECURITY DEFINER** · stable · sql
+- **SQL Editor is_admin():** callable **true** · result **false** — **not STOP** (≠ operator JWT context)
+- **Policies:** admin ALL ×2 PERMISSIVE · restrictive on tracks **0**
+- **Grants:** SELECT only · authenticated UPDATE **0** · title column UPDATE **0** · anon write **0**
+- **Target:** track 1 `On a Clear Day` · count 8 · track 7 `Like a Lover`
+- **Operator JWT admin status:** **unverified**
+- **First controlled Save:** **still not allowed**
+- **Not done:** SQL re-run · GRANT/REVOKE · RLS change · DB write · Edge · deploy · operation=save
+- **service_role:** **not used**
+- **Next:** **G-20u36e-controlled-save-auth-jwt-admin-probe-planning** (before permission-change SQL)
 
 ## G-20u36e-controlled-save-auth-admin-rls-select-prep — complete
 
@@ -15,11 +31,11 @@ SELECT-only SQL prepared. Operator execution next.
 - **Gate:** `gosakiDiscographyControlledSaveAuthAdminRlsSelectPrepReady: true`
 - **Prepared:** SELECT-only SQL → column `g20u36e_auth_admin_rls_snapshot`
 - **Covers:** is_admin() metadata/definition · policies · permissive/restrictive · RLS · grants re-check · SQL Editor is_admin probe (≠ JWT) · target slice
-- **Not done:** SQL execution · GRANT/REVOKE · RLS change · DB write · Edge · deploy · operation=save
+- **Not done:** GRANT/REVOKE · RLS change · DB write · Edge · deploy · operation=save
 - **Secrets:** no JWT/email dump · auth.users **count only**
 - **service_role:** **not used**
 - **First controlled Save:** **still not executable**
-- **Next:** **G-20u36e-controlled-save-auth-admin-rls-select-execution** (operator runs SELECT once on `kmjqppxjdnwwrtaeqjta`)
+- **Next:** G-20u36e-controlled-save-auth-admin-rls-select-execution — **complete** (result recorded)
 
 ## G-20u36e-controlled-save-auth-jwt-feasibility-preflight — complete
 

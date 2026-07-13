@@ -1,15 +1,27 @@
 Last updated: 2026-07-14
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-auth-admin-rls-select-result — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u36e-controlled-save-auth-admin-rls-select-result-record` |
+| Gate | `gosakiDiscographyControlledSaveAuthAdminRlsSelectResultRecorded: true` |
+| Snapshot | **PASS** |
+| is_admin() | `admin_users` + `auth.uid()` + `role='admin'` · SECURITY DEFINER |
+| Operator JWT admin | **unverified** |
+| Restrictive policy | **0** |
+| Next | G-20u36e-controlled-save-auth-jwt-admin-probe-planning |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-auth-admin-rls-select-prep — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-20u36e-controlled-save-auth-admin-rls-select-prep` |
 | Gate | `gosakiDiscographyControlledSaveAuthAdminRlsSelectPrepReady: true` |
-| SQL | SELECT-only prepared · **not executed** |
+| SQL | SELECT-only prepared · operator executed · result recorded |
 | Output column | `g20u36e_auth_admin_rls_snapshot` |
-| Next | G-20u36e-controlled-save-auth-admin-rls-select-execution |
+| Next | G-20u36e-controlled-save-auth-admin-rls-select-execution — **complete** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-auth-jwt-feasibility-preflight — complete
 

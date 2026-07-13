@@ -1,16 +1,25 @@
 Last updated: 2026-07-14
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-auth-jwt-feasibility-preflight — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u36e-controlled-save-auth-jwt-feasibility-preflight` |
+| Gate | `gosakiDiscographyControlledSaveAuthJwtFeasibilityPreflightReady: true` |
+| Verdict | **NEEDS_SELECT_ONLY_AUTH_SNAPSHOT** |
+| Operator JWT / Edge design | documented · execution deferred |
+| DB gap | `is_admin()` · operator admin · RLS composition unverified |
+| Next | G-20u36e-controlled-save-auth-admin-rls-select-prep |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-auth-jwt-feasibility-planning — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-20u36e-controlled-save-auth-jwt-feasibility-planning` |
 | Gate | `gosakiDiscographyControlledSaveAuthJwtFeasibilityPlanned: true` |
-| Verdict | **FEASIBLE** — Edge can accept operator JWT · staging shell has session + YouTube JWT precedent |
-| dryRun | anon/public key OK (unchanged) |
-| save | operator JWT required (future) |
-| Next | G-20u36e-controlled-save-auth-jwt-feasibility-preflight |
+| Verdict | **FEASIBLE** |
+| Next | G-20u36e-controlled-save-auth-jwt-feasibility-preflight — **complete** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-permission-model-decision — complete
 

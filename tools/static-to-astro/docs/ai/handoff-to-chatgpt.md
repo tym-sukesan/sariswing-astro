@@ -5,9 +5,22 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36e-controlled-save-auth-jwt-feasibility-planning — complete.
-Verdict FEASIBLE. Auth JWT feasibility preflight next.
+Current phase: G-20u36e-controlled-save-auth-jwt-feasibility-preflight — complete.
+Verdict NEEDS_SELECT_ONLY_AUTH_SNAPSHOT. Auth-admin-rls-select-prep next.
 ```
+
+## G-20u36e-controlled-save-auth-jwt-feasibility-preflight — complete
+
+- **Phase:** G-20u36e-controlled-save-auth-jwt-feasibility-preflight
+- **Gate:** `gosakiDiscographyControlledSaveAuthJwtFeasibilityPreflightReady: true`
+- **Verdict:** **NEEDS_SELECT_ONLY_AUTH_SNAPSHOT** — operator JWT + Edge JWT designs sufficient · DB `is_admin()` / operator admin / RLS composition need SELECT-only prep first
+- **Operator JWT preflight:** session via staging shell · YouTube JWT precedent · access_token non-display policy · dryRun anon · save JWT-only
+- **Edge preflight:** Authorization header pass-through · save-only JWT gate · user JWT Supabase client (no service_role) · reject matrix
+- **DB preflight:** investigation checklist D1–D10 · no executable SQL in this phase
+- **Not done:** SQL execution · GRANT/REVOKE · RLS change · DB write · Edge impl · deploy · operation=save · dryRun HTTP · admin UI
+- **service_role:** **not used**
+- **First controlled Save:** **still not executable**
+- **Next:** **G-20u36e-controlled-save-auth-admin-rls-select-prep** (before permission-change SQL)
 
 ## G-20u36e-controlled-save-auth-jwt-feasibility-planning — complete
 

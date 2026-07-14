@@ -26,6 +26,9 @@ const STAGING = "kmjqppxjdnwwrtaeqjta";
 const PRODUCTION = "vsbvndwuajjhnzpohghh";
 const FUNCTION = "gosaki-discography-save-dry-run";
 const NEXT = "G-20u36e-controlled-save-smoke-readonly-check-execution";
+const NEXT_AFTER_SMOKE = "G-20u36e-controlled-save-pre-save-select-prep";
+const SMOKE_RESULT_PHASE =
+  "G-20u36e-controlled-save-smoke-readonly-check-result-record";
 
 let passed = 0;
 let failed = 0;
@@ -168,6 +171,8 @@ assert(
 assert(
   "AI next-actions smoke execution or result",
   nextActions.includes(NEXT) ||
+    nextActions.includes(NEXT_AFTER_SMOKE) ||
+    nextActions.includes(SMOKE_RESULT_PHASE) ||
     nextActions.includes(DEPLOY_PHASE) ||
     nextActions.includes(SMOKE_PHASE),
 );

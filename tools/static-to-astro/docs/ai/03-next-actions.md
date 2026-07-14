@@ -1,15 +1,24 @@
 Last updated: 2026-07-14
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-smoke-readonly-check-result-record — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u36e-controlled-save-smoke-readonly-check-result-record` |
+| Gate | `gosakiDiscographyControlledSaveSmokeReadonlyCheckPassed: true` |
+| OPTIONS / dryRun | **PASS** · didWrite/dbWrite/networkWrite false |
+| Save | **not executed** |
+| Next | G-20u36e-controlled-save-pre-save-select-prep |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-edge-deploy-result-and-smoke-prep — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | deploy-result-record + smoke-readonly-check-prep |
 | Gates | EdgeDeployedToStaging · SmokeReadonlyCheckPrepared |
-| Deploy | **PASS** (operator) · Docker warn OK |
-| HTTP / Save | **not sent / not executed** |
-| Next | G-20u36e-controlled-save-smoke-readonly-check-execution |
+| Follow-on | smoke execution — **PASS recorded** |
+| Next | pre-save-select-prep |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-edge-deploy-prep — complete
 
@@ -17,8 +26,8 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | --- | --- |
 | Phase | `G-20u36e-controlled-save-edge-deploy-prep` |
 | Gate | `gosakiDiscographyControlledSaveEdgeDeployPrepared: true` |
-| Follow-on | deploy — **PASS recorded** |
-| Next | smoke-readonly-check-execution |
+| Follow-on | deploy + smoke — **PASS recorded** |
+| Next | pre-save-select-prep |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-handler-permission-aware-local-verification — complete
 

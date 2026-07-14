@@ -240,13 +240,34 @@ body.gosaki-read-only-admin {
   font: inherit;
 }
 
+/* G-20u36e login-blocked tools-draft: enabled buttons must not look disabled */
+.gosaki-read-only-admin__btn:not(:disabled) {
+  background: #f8fafc;
+  color: #0f172a;
+  border-color: #94a3b8;
+  cursor: pointer;
+}
+
+.gosaki-read-only-admin__btn--primary:not(:disabled) {
+  background: #1e293b;
+  color: #f8fafc;
+  border-color: #1e293b;
+  cursor: pointer;
+}
+
 .gosaki-read-only-admin__btn:disabled:not(.gosaki-read-only-admin__btn--primary) {
+  background: #e2e8f0;
+  color: #94a3b8;
+  border-color: var(--gra-border);
   cursor: not-allowed;
 }
 
 .gosaki-read-only-admin__btn--primary:disabled {
+  background: #e2e8f0;
+  color: #94a3b8;
+  border-color: var(--gra-border);
   opacity: 0.6;
-  cursor: wait;
+  cursor: not-allowed;
 }
 
 .gosaki-read-only-admin__dry-run {

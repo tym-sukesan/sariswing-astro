@@ -1,6 +1,16 @@
 Last updated: 2026-07-14
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-auth-ui-login-blocked-tools-draft — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u36e-controlled-save-auth-ui-login-blocked-tools-draft` |
+| Gate | `gosakiDiscographyControlledSaveAuthUiLoginBlockedToolsDrafted: true` |
+| Draft | CSS `:not(:disabled)` · auth IIFE harden · probe try/catch |
+| Not done | package · FTP · browser · probe · Save |
+| Next | G-20u36e-controlled-save-auth-ui-login-blocked-local-verify |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-auth-ui-login-blocked-diagnosis-planning — complete
 
 | Item | Value |
@@ -9,7 +19,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Gate | `gosakiDiscographyControlledSaveAuthUiLoginBlockedDiagnosisPlanPrepared: true` |
 | Finding | CSS false-disabled look likely · Candidates A–H documented |
 | Not done | UI fix · package · FTP · probe · RPC · Save |
-| Next | G-20u36e-controlled-save-auth-ui-login-blocked-tools-draft |
+| Next | tools-draft — **complete** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-auth-jwt-admin-probe-ui-stg-login-blocked-result-record — complete
 

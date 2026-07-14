@@ -707,10 +707,13 @@ const pageTitle = "Gosaki Piano 管理画面（staging · 読み取り専用）"
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.1/dist/umd/supabase.js"></script>
     <script is:inline>
       (function () {
+        var body = document.body;
+        // Auth wiring must not depend on YouTube dry-run DOM (G-20u36e login-blocked tools-draft)
+        if (!body) return;
+
         var btn = document.getElementById("gra-youtube-dry-run-btn");
         var input = document.getElementById("gra-youtube-next-url");
         var result = document.getElementById("gra-youtube-dry-run-result");
-        var body = document.body;
         var authStatus = document.getElementById("gra-auth-status");
         var authLoginForm = document.getElementById("gra-auth-login-form");
         var authSignedIn = document.getElementById("gra-auth-signed-in");
@@ -718,7 +721,6 @@ const pageTitle = "Gosaki Piano 管理画面（staging · 読み取り専用）"
         var authSignOutBtn = document.getElementById("gra-auth-sign-out-btn");
         var authEmail = document.getElementById("gra-auth-email");
         var authPassword = document.getElementById("gra-auth-password");
-        if (!btn || !input || !result || !body) return;
 
         var supabaseUrl = (body.dataset.gosakiSupabaseUrl || "").trim();
         var supabaseAnonKey = (body.dataset.gosakiSupabaseAnonKey || "").trim();
@@ -727,6 +729,7 @@ const pageTitle = "Gosaki Piano 管理画面（staging · 読み取り専用）"
         var signedIn = false;
 
         function showResult(obj) {
+          if (!result) return;
           result.textContent = JSON.stringify(obj, null, 2);
         }
 
@@ -755,11 +758,13 @@ const pageTitle = "Gosaki Piano 管理画面（staging · 読み取り専用）"
         }
 
         function updateDryRunButton() {
+          if (!btn) return;
           btn.disabled = !signedIn;
         }
 
         function updateLoginButton() {
           if (!authSignInBtn) return;
+          // Enable only when Auth configured and signed out — no Save / probe coupling
           if (!supabaseAuthConfigured || signedIn) {
             authSignInBtn.disabled = true;
             return;
@@ -850,8 +855,10 @@ const pageTitle = "Gosaki Piano 管理画面（staging · 読み取り専用）"
         }
 
         if (authLoginForm && authEmail && authPassword) {
-          authEmail.addEventListener("input", updateLoginButton);
-          authPassword.addEventListener("input", updateLoginButton);
+          ["input", "change", "keyup"].forEach(function (evtName) {
+            authEmail.addEventListener(evtName, updateLoginButton);
+            authPassword.addEventListener(evtName, updateLoginButton);
+          });
 
           authLoginForm.addEventListener("submit", function (ev) {
             ev.preventDefault();
@@ -875,7 +882,8 @@ const pageTitle = "Gosaki Piano 管理画面（staging · 読み取り専用）"
               .signInWithPassword({ email: email, password: password })
               .then(function (res) {
                 if (res.error) {
-                  setAuthUiSignedOut("ログイン失敗: " + res.error.message);
+                  // Do not dump raw provider error.message (may include sensitive hints)
+                  setAuthUiSignedOut("ログイン失敗 — 認証情報を確認してください");
                   return;
                 }
                 setAuthUiSignedIn(res.data.user && res.data.user.email);
@@ -898,9 +906,16 @@ const pageTitle = "Gosaki Piano 管理画面（staging · 読み取り専用）"
           });
         }
 
+        // After auth config read: ensure login button state is applied (and autofill-safe re-eval)
+        updateLoginButton();
+        setTimeout(updateLoginButton, 0);
+        setTimeout(updateLoginButton, 250);
+        setTimeout(updateLoginButton, 1000);
+
         refreshAuthStatus();
 
-        btn.addEventListener("click", function () {
+        if (btn && input && result) {
+          btn.addEventListener("click", function () {
           if (!signedIn) {
             showResult({
               ok: false,
@@ -995,14 +1010,15 @@ const pageTitle = "Gosaki Piano 管理画面（staging · 読み取り専用）"
               .catch(function (err) {
                 showResult({
                   ok: false,
-                  error: err && err.message ? err.message : String(err),
+                  error: "dry_run_request_failed",
                 });
               })
               .finally(function () {
                 updateDryRunButton();
               });
           });
-        });
+          });
+        }
       })();
     </script>
     <script>
@@ -1024,6 +1040,7 @@ const pageTitle = "Gosaki Piano 管理画面（staging · 読み取り専用）"
 
       /** G-20u36e admin probe — manual `rpc('is_admin')` only · never logs tokens / user_id / email · never arms Save. */
       (function wireG20u36eAdminProbe() {
+        try {
         const probeBtn = document.getElementById("gra-admin-probe-btn");
         const probeResult = document.getElementById("gra-admin-probe-result");
         const body = document.body;
@@ -1127,6 +1144,9 @@ const pageTitle = "Gosaki Piano 管理画面（staging · 読み取り専用）"
               // Explicit: probe must never enable Save buttons
             });
         });
+        } catch (_probeInitError) {
+          // Probe init failure must never stop auth / page scripts
+        }
       })();
 
       function findAlbumCard(el) {

@@ -214,19 +214,35 @@ assert(
   !diffTouches("tools/static-to-astro/output/manual-upload"),
   "unexpected output/manual-upload changes",
 );
-assert(
-  "admin UI templates not modified in diagnosis planning",
-  !diffTouches(
-    "tools/static-to-astro/templates/site-extensions/gosaki-piano/GosakiStagingReadOnlyAdminPage.astro",
+
+const toolsDraftGate =
+  exists(
+    "tools/static-to-astro/docs/gosaki-discography-g20u36e-controlled-save-auth-ui-login-blocked-tools-draft.md",
   ) &&
-    !diffTouches(
-      "tools/static-to-astro/templates/site-extensions/gosaki-piano/gosaki-staging-read-only-admin.ts",
-    ) &&
-    !diffTouches(
-      "tools/static-to-astro/templates/site-extensions/gosaki-piano/gosaki-staging-read-only-admin.css",
-    ),
-  "unexpected template changes",
-);
+  read(
+    "tools/static-to-astro/docs/gosaki-discography-g20u36e-controlled-save-auth-ui-login-blocked-tools-draft.md",
+  ).includes("gosakiDiscographyControlledSaveAuthUiLoginBlockedToolsDrafted: true");
+const templateDirty =
+  diffTouches(
+    "tools/static-to-astro/templates/site-extensions/gosaki-piano/GosakiStagingReadOnlyAdminPage.astro",
+  ) ||
+  diffTouches(
+    "tools/static-to-astro/templates/site-extensions/gosaki-piano/gosaki-staging-read-only-admin.ts",
+  ) ||
+  diffTouches(
+    "tools/static-to-astro/templates/site-extensions/gosaki-piano/gosaki-staging-read-only-admin.css",
+  );
+if (toolsDraftGate && templateDirty) {
+  console.log(
+    "NOTE admin UI templates changed after diagnosis — allowed by follow-on tools-draft (non-blocking)",
+  );
+} else {
+  assert(
+    "admin UI templates not modified in diagnosis planning",
+    !templateDirty,
+    "unexpected template changes",
+  );
+}
 
 console.log(
   `\nverify-g20u36e-controlled-save-auth-ui-login-blocked-diagnosis-plan: ${passed} passed, ${failed} failed`,

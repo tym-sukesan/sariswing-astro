@@ -5,9 +5,22 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36e-controlled-save-auth-ui-login-blocked-diagnosis-planning — complete.
-Next: G-20u36e-controlled-save-auth-ui-login-blocked-tools-draft. Do not click probe / FTP until after tools-draft + package flow.
+Current phase: G-20u36e-controlled-save-auth-ui-login-blocked-tools-draft — complete.
+Next: G-20u36e-controlled-save-auth-ui-login-blocked-local-verify. No package/FTP/probe until local-verify + explicit follow-on.
 ```
+
+## G-20u36e-controlled-save-auth-ui-login-blocked-tools-draft — complete
+
+- **Phase:** G-20u36e-controlled-save-auth-ui-login-blocked-tools-draft
+- **Gate:** `gosakiDiscographyControlledSaveAuthUiLoginBlockedToolsDrafted: true`
+- **CSS:** `.gosaki-read-only-admin__btn:not(:disabled)` + primary enabled · `cursor: pointer` · disabled grey/`not-allowed` retained
+- **Auth:** body-only early return · YouTube DOM optional · `updateLoginButton` after config + autofill timeouts 0/250/1000 · `input`/`change`/`keyup` · enable = configured && !signedIn
+- **Probe:** try/catch init — must not stop auth
+- **Save separation:** no Save arm · no operation=save · no saveEnabled true
+- **Never show:** access_token · refresh_token · JWT · user_id · email in probe result · service_role
+- **Not done:** package · FTP · browser · probe click · RPC · SQL · DB write · operation=save · Save enable
+- **First controlled Save:** **still not allowed**
+- **Next:** **G-20u36e-controlled-save-auth-ui-login-blocked-local-verify**
 
 ## G-20u36e-controlled-save-auth-ui-login-blocked-diagnosis-planning — complete
 
@@ -19,7 +32,7 @@ Next: G-20u36e-controlled-save-auth-ui-login-blocked-tools-draft. Do not click p
 - **Not done:** UI fix · package · FTP · browser · probe · RPC · SQL · DB write · operation=save · Save
 - **service_role:** **not used** · JWT/token/user_id **not displayed**
 - **First controlled Save:** **still not allowed**
-- **Next:** **G-20u36e-controlled-save-auth-ui-login-blocked-tools-draft**
+- **Next:** tools-draft — **complete**
 
 ## G-20u36e-controlled-save-auth-jwt-admin-probe-ui-stg-login-blocked-result-record — complete
 

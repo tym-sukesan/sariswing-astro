@@ -5,9 +5,22 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36e-controlled-save-auth-ui-login-blocked-manual-ftp-reupload-result-record — complete.
-Next: G-20u36e-controlled-save-auth-ui-login-blocked-stg-login-check. Do not click probe until after login check.
+Current phase: G-20u36e-controlled-save-auth-ui-login-blocked-stg-login-check-result-record — complete.
+Next: G-20u36e-controlled-save-auth-jwt-admin-probe-ui-stg-readonly-probe-execution. Operator may click DB admin probe once (read-only).
 ```
+
+## G-20u36e-controlled-save-auth-ui-login-blocked-stg-login-check-result-record — complete
+
+- **Phase:** G-20u36e-controlled-save-auth-ui-login-blocked-stg-login-check-result-record
+- **Gate:** `gosakiDiscographyControlledSaveAuthUiLoginBlockedStgLoginCheckResultRecorded: true`
+- **STG login check:** **PASS** · operator **ログイン済み** · dry-run 可能表示
+- **Buttons:** logout **enabled** · login **disabled** (already logged in · expected) · DB admin probe **visible/ready**
+- **Probe panel:** still idle `not_run` / `isAdmin=null` / `reasonCode=not_run`
+- **Not done:** probe click · RPC · HTTP · SQL · DB write · operation=save · Save
+- **Package on STG:** sourceCommit `724d951f4d64eb5fa03e96d9d97c79da1c91bade`
+- **service_role:** **not used** · JWT/token **not displayed**
+- **First controlled Save:** **still not allowed**
+- **Next:** **G-20u36e-controlled-save-auth-jwt-admin-probe-ui-stg-readonly-probe-execution**
 
 ## G-20u36e-controlled-save-auth-ui-login-blocked-manual-ftp-reupload-result-record — complete
 
@@ -16,11 +29,9 @@ Next: G-20u36e-controlled-save-auth-ui-login-blocked-stg-login-check. Do not cli
 - **Upload:** operator FileZilla · `public-dist/` contents → `/cms-kit-staging/gosaki-piano/`
 - **sourceCommit:** `724d951f4d64eb5fa03e96d9d97c79da1c91bade`
 - **STG admin:** display **PASS** · login button **有効表示** · DB admin probe button **表示改善**
-- **Probe panel:** `not_run` / `isAdmin=null` / `reasonCode=not_run` / `saveEnabled=false` / `diagnosticOnly=true`
-- **Not done:** login · probe click · RPC · HTTP · SQL · DB write · operation=save · Save enable
-- **service_role:** **not used** · JWT/token/user_id/email **not in probe result**
+- **Follow-on:** operator login — **login check recorded**
 - **First controlled Save:** **still not allowed**
-- **Next:** **G-20u36e-controlled-save-auth-ui-login-blocked-stg-login-check**
+- **Next:** stg-login-check — **complete**
 
 ## G-20u36e-controlled-save-auth-ui-login-blocked-local-verify — complete
 

@@ -1,6 +1,17 @@
 Last updated: 2026-07-14
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-auth-ui-login-blocked-stg-login-check-result-record — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u36e-controlled-save-auth-ui-login-blocked-stg-login-check-result-record` |
+| Gate | `gosakiDiscographyControlledSaveAuthUiLoginBlockedStgLoginCheckResultRecorded: true` |
+| STG login | **PASS** · logged in · dry-run possible |
+| Probe | ready · **not clicked** · idle `not_run` |
+| Not done | probe · RPC · Save |
+| Next | G-20u36e-controlled-save-auth-jwt-admin-probe-ui-stg-readonly-probe-execution |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-auth-ui-login-blocked-manual-ftp-reupload-result-record — complete
 
 | Item | Value |
@@ -9,8 +20,8 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Gate | `gosakiDiscographyControlledSaveAuthUiLoginBlockedManualFtpReuploadResultRecorded: true` |
 | Upload | operator FileZilla · sourceCommit `724d951…` |
 | STG display | **PASS** · login 有効表示 · probe 表示改善 · idle `not_run` |
-| Not done | login · probe · RPC · Save |
-| Next | G-20u36e-controlled-save-auth-ui-login-blocked-stg-login-check |
+| Not done | probe · RPC · Save |
+| Next | stg-login-check — **complete** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-auth-ui-login-blocked-local-verify — complete
 

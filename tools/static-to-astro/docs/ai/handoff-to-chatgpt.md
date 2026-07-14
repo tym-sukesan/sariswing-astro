@@ -5,9 +5,20 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36e-controlled-save-permission-change-planning — complete.
-Next: G-20u36e-controlled-save-permission-change-sql-prep (SQL text only — no execution). First controlled Save still not allowed.
+Current phase: G-20u36e-controlled-save-permission-change-sql-prep — complete.
+Next: G-20u36e-controlled-save-permission-change-preflight-select-execution (operator runs preflight SELECT once). No apply yet. First controlled Save still not allowed.
 ```
+
+## G-20u36e-controlled-save-permission-change-sql-prep — complete
+
+- **Phase:** G-20u36e-controlled-save-permission-change-sql-prep
+- **Gate:** `gosakiDiscographyControlledSavePermissionChangeSqlPrepared: true`
+- **Prepared (not executed):** preflight SELECT · apply (GRANT UPDATE(title) + RESTRICTIVE policy) · post-apply SELECT · rollback · post-rollback SELECT
+- **Policy name:** `discography_tracks_g20u36e_controlled_save_title_update_restrictive`
+- **Apply rules:** no DROP POLICY IF EXISTS · no data UPDATE · no anon grant · no service_role · BEGIN/COMMIT preferred
+- **Not done:** any SQL run · GRANT/POLICY apply · DB write · operation=save · Save · Edge
+- **First controlled Save:** **still not allowed**
+- **Next:** **G-20u36e-controlled-save-permission-change-preflight-select-execution**
 
 ## G-20u36e-controlled-save-permission-change-planning — complete
 
@@ -17,9 +28,9 @@ Next: G-20u36e-controlled-save-permission-change-sql-prep (SQL text only — no 
 - **Operator JWT admin:** **VERIFIED** · current UPDATE grants still **0**
 - **Slice:** `discography-002` track 1 · `e30c5ea9-…` · `On a Clear Day` → staging marker title
 - **Rejected:** anon UPDATE · table-wide UPDATE · service_role · SECURITY DEFINER Save RPC · manual SQL as main route · production
-- **Not done:** executable SQL · GRANT · POLICY · DB write · Edge · operation=save · Save
+- **Follow-on:** SQL prep — **complete**
 - **First controlled Save:** **still not allowed**
-- **Next:** **G-20u36e-controlled-save-permission-change-sql-prep**
+- **Next:** SQL prep — **complete**
 
 ## G-20u36e-controlled-save-auth-jwt-admin-probe-ui-stg-readonly-probe-execution-result-record — complete
 

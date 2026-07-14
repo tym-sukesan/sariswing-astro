@@ -1,6 +1,16 @@
 Last updated: 2026-07-14
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-permission-change-sql-prep — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u36e-controlled-save-permission-change-sql-prep` |
+| Gate | `gosakiDiscographyControlledSavePermissionChangeSqlPrepared: true` |
+| SQL | preflight · apply · post-apply · rollback · post-rollback prepared |
+| Executed | **none** |
+| Next | G-20u36e-controlled-save-permission-change-preflight-select-execution |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-permission-change-planning — complete
 
 | Item | Value |
@@ -9,7 +19,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Gate | `gosakiDiscographyControlledSavePermissionChangePlanPrepared: true` |
 | Model | authenticated UPDATE(title) + restrictive RLS |
 | Not done | SQL · GRANT · POLICY · Save |
-| Next | G-20u36e-controlled-save-permission-change-sql-prep |
+| Next | SQL prep — **complete** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-auth-jwt-admin-probe-ui-stg-readonly-probe-execution-result-record — complete
 

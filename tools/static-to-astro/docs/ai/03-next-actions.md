@@ -1,6 +1,15 @@
 Last updated: 2026-07-14
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-auth-jwt-admin-probe-ui-stg-readonly-probe-preflight — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u36e-controlled-save-auth-jwt-admin-probe-ui-stg-readonly-probe-preflight` |
+| Gate | `gosakiDiscographyControlledSaveAuthJwtAdminProbeUiStgReadonlyProbePreflightPrepared: true` |
+| Prep | one-click STG `rpc('is_admin')` checklist · probe **not** clicked |
+| Next | G-20u36e-controlled-save-auth-jwt-admin-probe-ui-stg-readonly-probe-execution |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-auth-jwt-admin-probe-ui-manual-ftp-upload-result-record — complete
 
 | Item | Value |
@@ -10,7 +19,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Upload | operator FileZilla · sourceCommit `a92d45d…` |
 | STG display | **PASS** · signed-out · probe idle `not_run` · Save disabled |
 | Probe click | **not done** |
-| Next | G-20u36e-controlled-save-auth-jwt-admin-probe-ui-stg-login-ready-check |
+| Next | stg-readonly-probe-preflight — **complete** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-auth-jwt-admin-probe-ui-package-preflight-prep — complete
 

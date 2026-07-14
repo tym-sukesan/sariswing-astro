@@ -5,9 +5,23 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36e-controlled-save-auth-jwt-admin-probe-ui-manual-ftp-upload-result-record — complete.
-STG shows probe UI (signed-out, not_run). Login-ready check next. Do not click probe yet.
+Current phase: G-20u36e-controlled-save-auth-jwt-admin-probe-ui-stg-readonly-probe-preflight — complete.
+Preflight ready. After commit/push: STG login + one probe click (execution phase).
 ```
+
+## G-20u36e-controlled-save-auth-jwt-admin-probe-ui-stg-readonly-probe-preflight — complete
+
+- **Phase:** G-20u36e-controlled-save-auth-jwt-admin-probe-ui-stg-readonly-probe-preflight
+- **Gate:** `gosakiDiscographyControlledSaveAuthJwtAdminProbeUiStgReadonlyProbePreflightPrepared: true`
+- **Purpose:** Confirm operator JWT → DB `is_admin()` true · diagnostic only · does **not** arm Save
+- **URL:** `https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/admin/`
+- **Package on STG:** sourceCommit `a92d45d7dd345aad9d1509d49f5949a3fa9b1ffe`
+- **Checks:** pre-login · post-login · one allowed click · PASS/FAIL/ERROR/STOP · paste-safe fields
+- **Not done:** probe click · RPC · HTTP · SQL · DB write · operation=save · Save enable · FTP re-upload
+- **Never paste:** JWT · access_token · user_id · email · password · service_role
+- **service_role:** **not used**
+- **First controlled Save:** **still not allowed**
+- **Next:** **G-20u36e-controlled-save-auth-jwt-admin-probe-ui-stg-readonly-probe-execution** (after this preflight is on main)
 
 ## G-20u36e-controlled-save-auth-jwt-admin-probe-ui-manual-ftp-upload-result-record — complete
 
@@ -15,14 +29,9 @@ STG shows probe UI (signed-out, not_run). Login-ready check next. Do not click p
 - **Gate:** `gosakiDiscographyControlledSaveAuthJwtAdminProbeUiManualFtpUploadResultRecorded: true`
 - **Upload:** operator FileZilla · `public-dist/` → `/cms-kit-staging/gosaki-piano/`
 - **sourceCommit:** `a92d45d7dd345aad9d1509d49f5949a3fa9b1ffe`
-- **STG admin:** display **PASS** (screenshot) · **未ログイン**
-- **Probe UI:** **DB admin probe (read-only)** visible · `adminProbeStatus=not_run` · `isAdmin=null` · `reasonCode=not_run` · `saveEnabled=false` · `diagnosticOnly=true`
-- **Not done:** probe click · RPC · HTTP intentional · SQL · DB write · operation=save · Save enable
-- **Never shown in probe result:** JWT · access_token · user_id · email · service_role
-- **Production:** **unchanged**
-- **service_role:** **not used**
-- **First controlled Save:** **still not allowed**
-- **Next:** **G-20u36e-controlled-save-auth-jwt-admin-probe-ui-stg-login-ready-check** (or stg-readonly-probe-preflight)
+- **STG admin:** display **PASS** (screenshot) · **未ログイン** · idle `not_run`
+- **Not done:** probe click · RPC · Save
+- **Next:** stg-readonly-probe-preflight — **complete**
 
 ## G-20u36e-controlled-save-auth-jwt-admin-probe-ui-package-preflight-prep — complete
 

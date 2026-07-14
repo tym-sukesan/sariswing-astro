@@ -5,9 +5,21 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36e-controlled-save-auth-jwt-admin-probe-ui-stg-login-blocked-result-record — complete.
-STG login blocked (login button appears disabled). Diagnosis planning next. Do not click probe.
+Current phase: G-20u36e-controlled-save-auth-ui-login-blocked-diagnosis-planning — complete.
+Next: G-20u36e-controlled-save-auth-ui-login-blocked-tools-draft. Do not click probe / FTP until after tools-draft + package flow.
 ```
+
+## G-20u36e-controlled-save-auth-ui-login-blocked-diagnosis-planning — complete
+
+- **Phase:** G-20u36e-controlled-save-auth-ui-login-blocked-diagnosis-planning
+- **Gate:** `gosakiDiscographyControlledSaveAuthUiLoginBlockedDiagnosisPlanPrepared: true`
+- **Finding (static):** `.gosaki-read-only-admin__btn` CSS always muted + `cursor:not-allowed` with **no** `:not(:disabled)` active style → buttons can **look** disabled when Auth configured / HTML enabled
+- **Also noted:** auth IIFE early-return gated on YouTube dry-run DOM; `updateLoginButton` enable = configured && !signedIn (no email/password fill gate)
+- **Candidates:** A–H documented in diagnosis plan
+- **Not done:** UI fix · package · FTP · browser · probe · RPC · SQL · DB write · operation=save · Save
+- **service_role:** **not used** · JWT/token/user_id **not displayed**
+- **First controlled Save:** **still not allowed**
+- **Next:** **G-20u36e-controlled-save-auth-ui-login-blocked-tools-draft**
 
 ## G-20u36e-controlled-save-auth-jwt-admin-probe-ui-stg-login-blocked-result-record — complete
 
@@ -20,7 +32,7 @@ STG login blocked (login button appears disabled). Diagnosis planning next. Do n
 - **service_role:** **not used**
 - **Readonly probe execution:** **deferred** until login works
 - **First controlled Save:** **still not allowed**
-- **Next:** **G-20u36e-controlled-save-auth-ui-login-blocked-diagnosis-planning**
+- **Next:** diagnosis planning — **complete**
 
 ## G-20u36e-controlled-save-auth-jwt-admin-probe-ui-stg-readonly-probe-preflight — complete
 

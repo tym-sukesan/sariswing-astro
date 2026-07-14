@@ -5,19 +5,28 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36e-controlled-save-handler-permission-aware-local-verification — complete.
-Next: G-20u36e-controlled-save-edge-deploy-prep.
-Local verification PASS. No Edge deploy / Save / operation=save / Rollback yet.
+Current phase: G-20u36e-controlled-save-edge-deploy-prep — complete.
+Next: G-20u36e-controlled-save-edge-deploy-execution (operator manual after review).
+Deploy command prepared. Edge deploy NOT executed. No Save / operation=save yet.
 ```
+
+## G-20u36e-controlled-save-edge-deploy-prep — complete
+
+- **Phase:** G-20u36e-controlled-save-edge-deploy-prep
+- **Gate:** `gosakiDiscographyControlledSaveEdgeDeployPrepared: true`
+- **Target:** `gosaki-discography-save-dry-run` · `--project-ref kmjqppxjdnwwrtaeqjta`
+- **Production STOP:** `vsbvndwuajjhnzpohghh`
+- **Command prepared (not run):** `supabase functions deploy gosaki-discography-save-dry-run --project-ref kmjqppxjdnwwrtaeqjta`
+- **After deploy:** smoke → non-save checks → pre-save SELECT · **not** immediate Save
+- **Not done:** Edge deploy · operation=save · Save · Rollback · DB write
+- **Next:** **G-20u36e-controlled-save-edge-deploy-execution**
 
 ## G-20u36e-controlled-save-handler-permission-aware-local-verification — complete
 
 - **Phase:** G-20u36e-controlled-save-handler-permission-aware-local-verification
 - **Gate:** `gosakiDiscographyControlledSaveHandlerPermissionAwareLocalVerified: true`
-- **Review:** Authorization forward · user-JWT · `is_admin` · controlled gate · title-only UPDATE · WHERE guards — **PASS**
-- **Tooling:** `deno` not installed (skipped) · brace-balance **PASS** · local-implementation verifier **strengthened**
-- **Not done:** Edge deploy · operation=save · Save · DB write · Rollback
-- **Next:** **G-20u36e-controlled-save-edge-deploy-prep**
+- **Follow-on:** edge deploy prep — **complete**
+- **Next:** edge-deploy-execution
 
 ## G-20u36e-controlled-save-handler-permission-aware-local-implementation — complete
 

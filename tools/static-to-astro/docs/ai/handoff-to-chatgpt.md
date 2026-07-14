@@ -5,9 +5,23 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36e-controlled-save-auth-jwt-admin-probe-ui-local-verify — complete.
-Local static verify PASS. Package-preflight next.
+Current phase: G-20u36e-controlled-save-auth-jwt-admin-probe-ui-package-preflight-prep — complete.
+Prep ready. Package generate+freshness next (after this prep is on main).
 ```
+
+## G-20u36e-controlled-save-auth-jwt-admin-probe-ui-package-preflight-prep — complete
+
+- **Phase:** G-20u36e-controlled-save-auth-jwt-admin-probe-ui-package-preflight-prep
+- **Gate:** `gosakiDiscographyControlledSaveAuthJwtAdminProbeUiPackagePreflightPrepared: true`
+- **Command:** `npm run build:gosaki:staging` (preferred) · optional `manual-upload:package:gosaki:staging`
+- **Freshness:** clean git · HEAD=origin/main · MANIFEST.sourceCommit=HEAD · no post-gen commit without regen
+- **Upload:** `output/manual-upload/gosaki-piano/public-dist/` contents → `/cms-kit-staging/gosaki-piano/` · FileZilla overwrite OK · delete/mirror/CLI FTP **NG**
+- **Why prep-first:** generating before this prep commit would stale MANIFEST vs new HEAD
+- **Not done:** package generate · output update · FTP · browser probe · Save
+- **STG:** probe UI **still not reflecting**
+- **service_role:** **not used**
+- **First controlled Save:** **still not allowed**
+- **Next:** **G-20u36e-controlled-save-auth-jwt-admin-probe-ui-package-generate-freshness**
 
 ## G-20u36e-controlled-save-auth-jwt-admin-probe-ui-local-verify — complete
 
@@ -20,7 +34,7 @@ Local static verify PASS. Package-preflight next.
 - **Not done:** STG upload · FTP · browser probe click · HTTP · SQL · GRANT/RLS · Edge · operation=save
 - **service_role:** **not used**
 - **First controlled Save:** **still not allowed**
-- **Next:** **G-20u36e-controlled-save-auth-jwt-admin-probe-ui-package-preflight**
+- **Next:** G-20u36e-controlled-save-auth-jwt-admin-probe-ui-package-preflight-prep — **complete**
 
 ## G-20u36e-controlled-save-auth-jwt-admin-probe-ui-tools-draft — complete
 

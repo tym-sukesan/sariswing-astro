@@ -5,21 +5,29 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36e-controlled-save-rollback-name-adjustment-prep — complete.
-Next: G-20u36e-controlled-save-handler-permission-aware-planning.
-Rollback SQL execution is NOT next by default. Permission applied. Save still not executed.
+Current phase: G-20u36e-controlled-save-handler-permission-aware-planning — complete.
+Next: G-20u36e-controlled-save-handler-permission-aware-implementation-prep.
+No Edge implement / Save / operation=save / Rollback yet. Permission applied. First controlled Save still not executed.
 ```
+
+## G-20u36e-controlled-save-handler-permission-aware-planning — complete
+
+- **Phase:** G-20u36e-controlled-save-handler-permission-aware-planning
+- **Gate:** `gosakiDiscographyControlledSaveHandlerPermissionAwarePlanPrepared: true`
+- **Survey:** dry-run Edge hard-rejects `operation=save` · Authorization not forwarded · readBack = anon Bearer · no `is_admin()` in Edge · `SAVE_APPROVAL_ID` registered but refused
+- **Model:** user-JWT client (`SUPABASE_URL` + anon + Bearer operator JWT) · `is_admin()` must be true · exact approvalId + sliceId · single-row `UPDATE(title)` only under applied RLS
+- **Slice:** `discography-002` track 1 · `e30c5ea9-…` · `On a Clear Day` → staging marker · track_count 8 · track_7 unchanged
+- **Not done:** Edge implement · Save · operation=save · Rollback · SQL · DB write
+- **Next:** **G-20u36e-controlled-save-handler-permission-aware-implementation-prep**
 
 ## G-20u36e-controlled-save-rollback-name-adjustment-prep — complete
 
 - **Phase:** G-20u36e-controlled-save-rollback-name-adjustment-prep
 - **Gate:** `gosakiDiscographyControlledSaveRollbackNameAdjustmentPrepared: true`
-- **Observed DROP target:** `discography_tracks_g20u36e_controlled_save_title_update_restric` (length **63**)
-- **Intended full name:** reference only (`…_restrictive`)
-- **Prepared (not executed):** adjusted rollback · pre-rollback SELECT · post-rollback adjusted SELECT
-- **Title allow:** old `On a Clear Day` **or** new staging marker (Save may or may not have run)
-- **Not done:** Rollback · REVOKE · DROP · SQL run · Save · operation=save
-- **Next:** **G-20u36e-controlled-save-handler-permission-aware-planning**
+- **Observed DROP target:** `discography_tracks_g20u36e_controlled_save_title_update_restric` (63)
+- **Follow-on:** handler planning — **complete**
+- **Rollback:** **not executed**
+- **Next:** implementation-prep
 
 ## G-20u36e-controlled-save-permission-change-post-apply-result-record — complete
 

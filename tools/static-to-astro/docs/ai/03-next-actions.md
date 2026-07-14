@@ -1,6 +1,16 @@
 Last updated: 2026-07-14
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-handler-permission-aware-planning — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u36e-controlled-save-handler-permission-aware-planning` |
+| Gate | `gosakiDiscographyControlledSaveHandlerPermissionAwarePlanPrepared: true` |
+| Model | user-JWT + is_admin + slice gates + title-only UPDATE |
+| Edge / Save | **not implemented / not executed** |
+| Next | G-20u36e-controlled-save-handler-permission-aware-implementation-prep |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-rollback-name-adjustment-prep — complete
 
 | Item | Value |
@@ -9,7 +19,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Gate | `gosakiDiscographyControlledSaveRollbackNameAdjustmentPrepared: true` |
 | DROP target | observed truncated name (63) |
 | Rollback / Save | **not executed** |
-| Next | G-20u36e-controlled-save-handler-permission-aware-planning |
+| Next | handler planning — **complete** → implementation-prep |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-permission-change-post-apply-result-record — complete
 

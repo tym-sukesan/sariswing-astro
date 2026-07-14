@@ -222,6 +222,74 @@ assert(
   ),
 );
 
+// Strengthened static gates (G-20u36e local-verification)
+const controlledStart = handlerExec.indexOf("handleControlledG20u36eSaveHttp");
+const controlledBody =
+  controlledStart >= 0 ? handlerExec.slice(controlledStart) : "";
+const updateBlockMatch = controlledBody.match(
+  /\.from\(\s*["']discography_tracks["']\s*\)\s*\.update\(\s*\{\s*title:\s*CONTROLLED_SAVE_TITLE_AFTER\s*\}\s*\)([\s\S]*?)\.select\(/,
+);
+assert(
+  "handler UPDATE only on discography_tracks",
+  /\.from\(\s*["']discography_tracks["']\s*\)\s*\.update\(\s*\{\s*title:\s*CONTROLLED_SAVE_TITLE_AFTER\s*\}\s*\)/.test(
+    controlledBody,
+  ),
+);
+assert(
+  "handler UPDATE WHERE site_slug",
+  Boolean(updateBlockMatch?.[1]?.includes('.eq("site_slug"') || updateBlockMatch?.[1]?.includes(".eq('site_slug'")),
+);
+assert(
+  "handler UPDATE WHERE discography_legacy_id",
+  Boolean(
+    updateBlockMatch?.[1]?.includes('.eq("discography_legacy_id"') ||
+      updateBlockMatch?.[1]?.includes(".eq('discography_legacy_id'"),
+  ),
+);
+assert(
+  "handler UPDATE WHERE track_number",
+  Boolean(
+    updateBlockMatch?.[1]?.includes('.eq("track_number"') ||
+      updateBlockMatch?.[1]?.includes(".eq('track_number'"),
+  ),
+);
+assert(
+  "handler UPDATE WHERE id",
+  Boolean(updateBlockMatch?.[1]?.includes('.eq("id"') || updateBlockMatch?.[1]?.includes(".eq('id'")),
+);
+assert(
+  "handler UPDATE WHERE title before",
+  Boolean(
+    updateBlockMatch?.[1]?.includes('.eq("title"') ||
+      updateBlockMatch?.[1]?.includes(".eq('title'"),
+  ),
+);
+assert(
+  "handler no SERVICE_ROLE_KEY env use",
+  !/SERVICE_ROLE_KEY/i.test(handlerExec) && !/SERVICE_ROLE_KEY/i.test(indexExec),
+);
+assert(
+  "handler privileged key flag false",
+  /SUPABASE_SERVICE_ROLE_CONNECTED\s*=\s*false/.test(handler),
+);
+assert(
+  "handler createClient uses anonKey only",
+  /createClient\(\s*supabaseUrl\s*,\s*anonKey\s*,/.test(handlerExec),
+);
+assert(
+  "handler no live HTTP operation=save sender",
+  !/functions\/v1\/gosaki-discography-save-dry-run/i.test(handlerExec) &&
+    !/fetch\(\s*[`'"].*operation["']\s*:\s*["']save/i.test(handlerExec),
+);
+assert(
+  "handler generic Save still gated (slice required)",
+  /slice_id_mismatch/.test(handler) && /CONTROLLED_SAVE_SLICE_ID/.test(handler),
+);
+assert(
+  "index never console.logs Authorization",
+  !/console\.(log|info|debug|warn|error)/i.test(indexExec),
+);
+
 assert(
   "package.json verify script",
   packageJson.includes(

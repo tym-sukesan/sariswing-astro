@@ -5,18 +5,26 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36e-controlled-save-handler-permission-aware-local-implementation — complete.
-Next: G-20u36e-controlled-save-handler-permission-aware-local-verification.
-Local gate implemented. No Edge deploy / Save / operation=save / Rollback yet.
+Current phase: G-20u36e-controlled-save-handler-permission-aware-local-verification — complete.
+Next: G-20u36e-controlled-save-edge-deploy-prep.
+Local verification PASS. No Edge deploy / Save / operation=save / Rollback yet.
 ```
+
+## G-20u36e-controlled-save-handler-permission-aware-local-verification — complete
+
+- **Phase:** G-20u36e-controlled-save-handler-permission-aware-local-verification
+- **Gate:** `gosakiDiscographyControlledSaveHandlerPermissionAwareLocalVerified: true`
+- **Review:** Authorization forward · user-JWT · `is_admin` · controlled gate · title-only UPDATE · WHERE guards — **PASS**
+- **Tooling:** `deno` not installed (skipped) · brace-balance **PASS** · local-implementation verifier **strengthened**
+- **Not done:** Edge deploy · operation=save · Save · DB write · Rollback
+- **Next:** **G-20u36e-controlled-save-edge-deploy-prep**
 
 ## G-20u36e-controlled-save-handler-permission-aware-local-implementation — complete
 
 - **Phase:** G-20u36e-controlled-save-handler-permission-aware-local-implementation
 - **Gate:** `gosakiDiscographyControlledSaveHandlerPermissionAwareLocalImplementationPrepared: true`
-- **Code:** `gosaki-discography-save-dry-run` · Authorization forwarded · user-JWT client · `rpc('is_admin')` · exact approvalId/sliceId/row/title · title-only UPDATE
-- **Not done:** Edge deploy · operation=save HTTP · Save · Rollback · DB write
-- **Next:** **G-20u36e-controlled-save-handler-permission-aware-local-verification**
+- **Follow-on:** local verification — **complete**
+- **Next:** edge-deploy-prep
 
 ## G-20u36e-controlled-save-handler-permission-aware-planning — complete
 

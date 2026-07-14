@@ -5,19 +5,33 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36e-controlled-save-permission-change-preflight-select-result-record — complete.
-Next: G-20u36e-controlled-save-permission-change-apply-sql-extract (extract only — no Apply execution). First controlled Save still not allowed.
+Current phase: G-20u36e-controlled-save-permission-change-post-apply-result-record — complete.
+Next (ChatGPT choose): G-20u36e-controlled-save-handler-permission-aware-planning OR G-20u36e-controlled-save-rollback-name-adjustment-prep.
+Permission change applied. Save / Rollback still not executed. First controlled Save still not executed.
 ```
+
+## G-20u36e-controlled-save-permission-change-post-apply-result-record — complete
+
+- **Phase:** G-20u36e-controlled-save-permission-change-post-apply-result-record
+- **Gate:** `gosakiDiscographyControlledSavePermissionChangePostApplyResultRecorded: true`
+- **Apply:** staging SQL Editor · **Success. No rows returned** · permission/RLS only
+- **Post-apply v2:** **PASS** · `captured_at=2026-07-14T14:01:27.966199+00:00`
+- **Truncation:** intended `…_restrictive` → observed **`discography_tracks_g20u36e_controlled_save_title_update_restric`** (length **63**)
+- **Initial exact-name verify:** false negative · v2 confirmed policy + USING/WITH CHECK
+- **Grants:** title UPDATE **1** · table UPDATE **0** · anon write **0**
+- **Target row:** unchanged · `On a Clear Day` · track_count=8 · track_7=`Like a Lover`
+- **Not done:** Save · Rollback · operation=save · Edge · data DML
+- **Rollback docs:** should use observed truncated name — **not executed**
+- **First controlled Save:** **still not executed**
+- **Next:** ChatGPT — **handler-permission-aware-planning** **or** **rollback-name-adjustment-prep**
 
 ## G-20u36e-controlled-save-permission-change-preflight-select-result-record — complete
 
 - **Phase:** G-20u36e-controlled-save-permission-change-preflight-select-result-record
 - **Gate:** `gosakiDiscographyControlledSavePermissionChangePreflightSelectResultRecorded: true`
-- **Preflight SELECT:** **PASS** · operator staging SQL Editor · `captured_at=2026-07-14T13:23:45.361706+00:00` · `data_mutation=false`
-- **Checks:** target_row_count=1 · title=`On a Clear Day` · track_count=8 · track_7=`Like a Lover` · grants SELECT-only · collision=0 · RLS on · admin_all=2
-- **Not done:** Apply · GRANT/REVOKE · CREATE POLICY · DB write · operation=save · Save · Edge
-- **First controlled Save:** **still not allowed**
-- **Next:** **G-20u36e-controlled-save-permission-change-apply-sql-extract**
+- **Preflight SELECT:** **PASS** · then Apply — **post-apply recorded**
+- **First controlled Save:** **still not executed**
+- **Next:** post-apply result — **complete**
 
 ## G-20u36e-controlled-save-permission-change-sql-prep — complete
 

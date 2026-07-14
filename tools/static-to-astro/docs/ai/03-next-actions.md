@@ -1,6 +1,17 @@
 Last updated: 2026-07-14
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-permission-change-post-apply-result-record — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u36e-controlled-save-permission-change-post-apply-result-record` |
+| Gate | `gosakiDiscographyControlledSavePermissionChangePostApplyResultRecorded: true` |
+| Apply | **Success. No rows returned** |
+| Post-apply v2 | **PASS** · truncated policy name length 63 |
+| Save / Rollback | **not executed** |
+| Next | ChatGPT: handler-permission-aware-planning **or** rollback-name-adjustment-prep |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-permission-change-preflight-select-result-record — complete
 
 | Item | Value |
@@ -8,8 +19,8 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Phase | `G-20u36e-controlled-save-permission-change-preflight-select-result-record` |
 | Gate | `gosakiDiscographyControlledSavePermissionChangePreflightSelectResultRecorded: true` |
 | Preflight | **PASS** · SELECT-only · `data_mutation=false` |
-| Apply | **not executed** |
-| Next | G-20u36e-controlled-save-permission-change-apply-sql-extract |
+| Apply | **executed** · post-apply recorded |
+| Next | post-apply result — **complete** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-permission-change-sql-prep — complete
 

@@ -155,6 +155,7 @@
     "verify:g20u36e-controlled-save-permission-change-plan": "node scripts/verify-g20u36e-controlled-save-permission-change-plan.mjs",
     "verify:g20u36e-controlled-save-permission-change-sql-prep": "node scripts/verify-g20u36e-controlled-save-permission-change-sql-prep.mjs",
     "verify:g20u36e-controlled-save-permission-change-preflight-select-result": "node scripts/verify-g20u36e-controlled-save-permission-change-preflight-select-result.mjs",
+    "verify:g20u36e-controlled-save-permission-change-post-apply-result": "node scripts/verify-g20u36e-controlled-save-permission-change-post-apply-result.mjs",
     "verify:g20u36e-controlled-save-auth-jwt-feasibility-plan": "node scripts/verify-g20u36e-controlled-save-auth-jwt-feasibility-plan.mjs",
     "verify:g20u36e-controlled-save-auth-jwt-feasibility-preflight": "node scripts/verify-g20u36e-controlled-save-auth-jwt-feasibility-preflight.mjs",
     "verify:g20u36e-controlled-save-auth-admin-rls-select-prep": "node scripts/verify-g20u36e-controlled-save-auth-admin-rls-select-prep.mjs",

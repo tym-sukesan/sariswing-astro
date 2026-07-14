@@ -5,25 +5,31 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36e-controlled-save-permission-change-post-apply-result-record — complete.
-Next (ChatGPT choose): G-20u36e-controlled-save-handler-permission-aware-planning OR G-20u36e-controlled-save-rollback-name-adjustment-prep.
-Permission change applied. Save / Rollback still not executed. First controlled Save still not executed.
+Current phase: G-20u36e-controlled-save-rollback-name-adjustment-prep — complete.
+Next: G-20u36e-controlled-save-handler-permission-aware-planning.
+Rollback SQL execution is NOT next by default. Permission applied. Save still not executed.
 ```
+
+## G-20u36e-controlled-save-rollback-name-adjustment-prep — complete
+
+- **Phase:** G-20u36e-controlled-save-rollback-name-adjustment-prep
+- **Gate:** `gosakiDiscographyControlledSaveRollbackNameAdjustmentPrepared: true`
+- **Observed DROP target:** `discography_tracks_g20u36e_controlled_save_title_update_restric` (length **63**)
+- **Intended full name:** reference only (`…_restrictive`)
+- **Prepared (not executed):** adjusted rollback · pre-rollback SELECT · post-rollback adjusted SELECT
+- **Title allow:** old `On a Clear Day` **or** new staging marker (Save may or may not have run)
+- **Not done:** Rollback · REVOKE · DROP · SQL run · Save · operation=save
+- **Next:** **G-20u36e-controlled-save-handler-permission-aware-planning**
 
 ## G-20u36e-controlled-save-permission-change-post-apply-result-record — complete
 
 - **Phase:** G-20u36e-controlled-save-permission-change-post-apply-result-record
 - **Gate:** `gosakiDiscographyControlledSavePermissionChangePostApplyResultRecorded: true`
-- **Apply:** staging SQL Editor · **Success. No rows returned** · permission/RLS only
-- **Post-apply v2:** **PASS** · `captured_at=2026-07-14T14:01:27.966199+00:00`
-- **Truncation:** intended `…_restrictive` → observed **`discography_tracks_g20u36e_controlled_save_title_update_restric`** (length **63**)
-- **Initial exact-name verify:** false negative · v2 confirmed policy + USING/WITH CHECK
-- **Grants:** title UPDATE **1** · table UPDATE **0** · anon write **0**
-- **Target row:** unchanged · `On a Clear Day` · track_count=8 · track_7=`Like a Lover`
-- **Not done:** Save · Rollback · operation=save · Edge · data DML
-- **Rollback docs:** should use observed truncated name — **not executed**
+- **Apply:** **Success. No rows returned** · Post-apply v2 **PASS**
+- **Truncation:** observed `…_restric` (63)
+- **Follow-on:** rollback name adjustment — **prep complete**
 - **First controlled Save:** **still not executed**
-- **Next:** ChatGPT — **handler-permission-aware-planning** **or** **rollback-name-adjustment-prep**
+- **Next:** handler-permission-aware-planning
 
 ## G-20u36e-controlled-save-permission-change-preflight-select-result-record — complete
 

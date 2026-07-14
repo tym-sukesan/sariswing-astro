@@ -1,6 +1,16 @@
 Last updated: 2026-07-14
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-rollback-name-adjustment-prep — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u36e-controlled-save-rollback-name-adjustment-prep` |
+| Gate | `gosakiDiscographyControlledSaveRollbackNameAdjustmentPrepared: true` |
+| DROP target | observed truncated name (63) |
+| Rollback / Save | **not executed** |
+| Next | G-20u36e-controlled-save-handler-permission-aware-planning |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-permission-change-post-apply-result-record — complete
 
 | Item | Value |
@@ -10,7 +20,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Apply | **Success. No rows returned** |
 | Post-apply v2 | **PASS** · truncated policy name length 63 |
 | Save / Rollback | **not executed** |
-| Next | ChatGPT: handler-permission-aware-planning **or** rollback-name-adjustment-prep |
+| Next | rollback name adjustment — **complete** → handler planning |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-permission-change-preflight-select-result-record — complete
 

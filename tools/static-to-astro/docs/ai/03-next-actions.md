@@ -1,6 +1,17 @@
 Last updated: 2026-07-14
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-auth-jwt-admin-probe-ui-stg-readonly-probe-execution-result-record — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u36e-controlled-save-auth-jwt-admin-probe-ui-stg-readonly-probe-execution-result-record` |
+| Gate | `gosakiDiscographyControlledSaveAuthJwtAdminProbeUiStgReadonlyProbeExecutionResultRecorded: true` |
+| Probe | **PASS** · `isAdmin=true` · `rpc_success_true` · once |
+| JWT admin | **VERIFIED** |
+| Save / permission | **still blocked** (UPDATE grant 0) |
+| Next | G-20u36e-controlled-save-permission-change-planning |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-auth-ui-login-blocked-stg-login-check-result-record — complete
 
 | Item | Value |
@@ -8,9 +19,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Phase | `G-20u36e-controlled-save-auth-ui-login-blocked-stg-login-check-result-record` |
 | Gate | `gosakiDiscographyControlledSaveAuthUiLoginBlockedStgLoginCheckResultRecorded: true` |
 | STG login | **PASS** · logged in · dry-run possible |
-| Probe | ready · **not clicked** · idle `not_run` |
-| Not done | probe · RPC · Save |
-| Next | G-20u36e-controlled-save-auth-jwt-admin-probe-ui-stg-readonly-probe-execution |
+| Probe | then executed once — **result recorded** |
+| Not done | permission change · Save |
+| Next | readonly probe execution — **complete** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-auth-ui-login-blocked-manual-ftp-reupload-result-record — complete
 

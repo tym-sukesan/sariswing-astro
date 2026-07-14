@@ -5,22 +5,31 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36e-controlled-save-auth-ui-login-blocked-stg-login-check-result-record — complete.
-Next: G-20u36e-controlled-save-auth-jwt-admin-probe-ui-stg-readonly-probe-execution. Operator may click DB admin probe once (read-only).
+Current phase: G-20u36e-controlled-save-auth-jwt-admin-probe-ui-stg-readonly-probe-execution-result-record — complete.
+Next: G-20u36e-controlled-save-permission-change-planning (planning only — no SQL yet). First controlled Save still not allowed.
 ```
+
+## G-20u36e-controlled-save-auth-jwt-admin-probe-ui-stg-readonly-probe-execution-result-record — complete
+
+- **Phase:** G-20u36e-controlled-save-auth-jwt-admin-probe-ui-stg-readonly-probe-execution-result-record
+- **Gate:** `gosakiDiscographyControlledSaveAuthJwtAdminProbeUiStgReadonlyProbeExecutionResultRecorded: true`
+- **STG readonly probe:** **PASS** · clicked **exactly once** · RPC **read-only**
+- **Result:** `adminProbeStatus=pass` · `isAdmin=true` · `reasonCode=rpc_success_true` · `saveEnabled=false` · `diagnosticOnly=true`
+- **Operator JWT admin:** **VERIFIED** (`public.is_admin()` = true under operator JWT)
+- **Not done:** permission change · GRANT/REVOKE · RLS · SQL · DB write · operation=save · Save · Edge
+- **Package on STG:** sourceCommit `724d951f4d64eb5fa03e96d9d97c79da1c91bade`
+- **service_role:** **not used** · JWT/token/user_id/email **not in probe result**
+- **First controlled Save:** **still not allowed** (authenticated UPDATE grant still **0**)
+- **Next:** **G-20u36e-controlled-save-permission-change-planning** (alt: `G-20u36e-controlled-save-authenticated-title-update-rls-planning`)
 
 ## G-20u36e-controlled-save-auth-ui-login-blocked-stg-login-check-result-record — complete
 
 - **Phase:** G-20u36e-controlled-save-auth-ui-login-blocked-stg-login-check-result-record
 - **Gate:** `gosakiDiscographyControlledSaveAuthUiLoginBlockedStgLoginCheckResultRecorded: true`
 - **STG login check:** **PASS** · operator **ログイン済み** · dry-run 可能表示
-- **Buttons:** logout **enabled** · login **disabled** (already logged in · expected) · DB admin probe **visible/ready**
-- **Probe panel:** still idle `not_run` / `isAdmin=null` / `reasonCode=not_run`
-- **Not done:** probe click · RPC · HTTP · SQL · DB write · operation=save · Save
-- **Package on STG:** sourceCommit `724d951f4d64eb5fa03e96d9d97c79da1c91bade`
-- **service_role:** **not used** · JWT/token **not displayed**
+- **Follow-on:** readonly probe — **execution result recorded**
 - **First controlled Save:** **still not allowed**
-- **Next:** **G-20u36e-controlled-save-auth-jwt-admin-probe-ui-stg-readonly-probe-execution**
+- **Next:** readonly probe execution — **complete**
 
 ## G-20u36e-controlled-save-auth-ui-login-blocked-manual-ftp-reupload-result-record — complete
 

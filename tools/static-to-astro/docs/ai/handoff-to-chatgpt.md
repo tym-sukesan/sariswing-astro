@@ -5,20 +5,25 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36e-controlled-save-handler-permission-aware-planning — complete.
-Next: G-20u36e-controlled-save-handler-permission-aware-implementation-prep.
-No Edge implement / Save / operation=save / Rollback yet. Permission applied. First controlled Save still not executed.
+Current phase: G-20u36e-controlled-save-handler-permission-aware-local-implementation — complete.
+Next: G-20u36e-controlled-save-handler-permission-aware-local-verification.
+Local gate implemented. No Edge deploy / Save / operation=save / Rollback yet.
 ```
+
+## G-20u36e-controlled-save-handler-permission-aware-local-implementation — complete
+
+- **Phase:** G-20u36e-controlled-save-handler-permission-aware-local-implementation
+- **Gate:** `gosakiDiscographyControlledSaveHandlerPermissionAwareLocalImplementationPrepared: true`
+- **Code:** `gosaki-discography-save-dry-run` · Authorization forwarded · user-JWT client · `rpc('is_admin')` · exact approvalId/sliceId/row/title · title-only UPDATE
+- **Not done:** Edge deploy · operation=save HTTP · Save · Rollback · DB write
+- **Next:** **G-20u36e-controlled-save-handler-permission-aware-local-verification**
 
 ## G-20u36e-controlled-save-handler-permission-aware-planning — complete
 
 - **Phase:** G-20u36e-controlled-save-handler-permission-aware-planning
 - **Gate:** `gosakiDiscographyControlledSaveHandlerPermissionAwarePlanPrepared: true`
-- **Survey:** dry-run Edge hard-rejects `operation=save` · Authorization not forwarded · readBack = anon Bearer · no `is_admin()` in Edge · `SAVE_APPROVAL_ID` registered but refused
-- **Model:** user-JWT client (`SUPABASE_URL` + anon + Bearer operator JWT) · `is_admin()` must be true · exact approvalId + sliceId · single-row `UPDATE(title)` only under applied RLS
-- **Slice:** `discography-002` track 1 · `e30c5ea9-…` · `On a Clear Day` → staging marker · track_count 8 · track_7 unchanged
-- **Not done:** Edge implement · Save · operation=save · Rollback · SQL · DB write
-- **Next:** **G-20u36e-controlled-save-handler-permission-aware-implementation-prep**
+- **Follow-on:** local implementation — **complete**
+- **Next:** local-verification
 
 ## G-20u36e-controlled-save-rollback-name-adjustment-prep — complete
 

@@ -1,14 +1,12 @@
 /**
- * G-20u36b / G-20u36d — Gosaki Discography Edge dry-run endpoint (root source · NOT deployed).
+ * G-20u36b / G-20u36d / G-20u36e — Gosaki Discography Edge dry-run (+ controlled Save local).
  * Endpoint: gosaki-discography-save-dry-run
- * Target: static-to-astro-cms-staging (kmjqppxjdnwwrtaeqjta) — deploy in separate phase only.
- * Copied from tools/static-to-astro/scripts/edge-functions/gosaki-discography-save-dry-run/index.ts
- * G-20u36d release-id select fix root placement · G-20u36d tracks select fields fix root placement · G-20u36d tracks relation filter fix root placement · Edge deploy NOT EXECUTED.
+ * Target: static-to-astro-cms-staging (kmjqppxjdnwwrtaeqjta) — Edge deploy NOT EXECUTED in local-implementation.
+ * G-20u36e: forwards Authorization for controlled Save · never logs tokens · no service_role.
  */
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import {
   createDefaultAnonSelectReadBackAdapter,
-  handleDiscographyEdgeDryRunHttp,
   handleDiscographyEdgeDryRunHttpAsync,
 } from "./handler.ts";
 
@@ -46,12 +44,22 @@ async function handleRequest(input: {
   method: string;
   contentType: string;
   body?: unknown;
+  authorizationHeader?: string | null;
 }): Promise<Record<string, unknown>> {
   const readBackOptions = resolveReadBackOptions();
-  if (readBackOptions.readBackEnabled && readBackOptions.readBackAdapter) {
-    return handleDiscographyEdgeDryRunHttpAsync(input, readBackOptions);
-  }
-  return handleDiscographyEdgeDryRunHttp(input);
+  return handleDiscographyEdgeDryRunHttpAsync(
+    {
+      method: input.method,
+      contentType: input.contentType,
+      body: input.body,
+      authorizationHeader: input.authorizationHeader ?? null,
+    },
+    {
+      ...readBackOptions,
+      supabaseUrl: Deno.env.get("SUPABASE_URL") ?? "",
+      anonKey: Deno.env.get("SUPABASE_ANON_KEY") ?? "",
+    },
+  );
 }
 
 Deno.serve(async (req) => {
@@ -59,10 +67,14 @@ Deno.serve(async (req) => {
     return new Response("ok", { headers: corsHeaders });
   }
 
+  // Forward Authorization to handler · never log header / token values.
+  const authorizationHeader = req.headers.get("authorization");
+
   if (req.method !== "POST") {
     const result = await handleRequest({
       method: req.method,
       contentType: req.headers.get("content-type") ?? "",
+      authorizationHeader,
     });
     return jsonResponse(result, result.status ?? 405);
   }
@@ -77,6 +89,7 @@ Deno.serve(async (req) => {
       method: req.method,
       contentType,
       body: null,
+      authorizationHeader,
     });
     return jsonResponse(result, result.status ?? 400);
   }
@@ -85,6 +98,7 @@ Deno.serve(async (req) => {
     method: req.method,
     contentType,
     body,
+    authorizationHeader,
   });
 
   return jsonResponse(result, result.status ?? (result.ok ? 200 : 400));

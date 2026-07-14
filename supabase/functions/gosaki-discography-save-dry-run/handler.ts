@@ -1,9 +1,11 @@
 /**
- * G-20u36b / G-20u36d — Gosaki Discography Edge dry-run endpoint handler (root source · NOT deployed).
+ * G-20u36b / G-20u36d / G-20u36e — Gosaki Discography Edge dry-run (+ controlled Save local impl).
  * Ported from gosaki-discography-edge-dry-run-endpoint-inert.mjs + G-20u33 draft + G-20u36d readBack.
  * Copied from tools/static-to-astro/scripts/edge-functions/gosaki-discography-save-dry-run/handler.ts
- * G-20u36d release-id select fix root placement · G-20u36d tracks select fields fix root placement · G-20u36d tracks relation filter fix root placement · anon SELECT readBack · Edge deploy NOT EXECUTED.
+ * G-20u36e local controlled Save: user JWT + is_admin + title-only UPDATE · Edge deploy NOT EXECUTED.
  */
+
+import { createClient, type SupabaseClient } from "npm:@supabase/supabase-js@2";
 
 export const G20U36D_READBACK_ROOT_PLACEMENT_PHASE = "G-20u36d-readback-root-placement";
 export const G20U36D_RELEASE_ID_SELECT_FIX_ROOT_PLACEMENT_PHASE =
@@ -22,7 +24,22 @@ export const DRY_RUN_OPERATION = "dryRun";
 export const DRY_RUN_APPROVAL_ID = "G-20u31-gosaki-discography-save-dry-run-endpoint";
 export const SAVE_APPROVAL_ID = "G-20u36-gosaki-discography-tracklist-save-non-dry-run-slice";
 
-/** Supabase service_role — NOT CONNECTED in tracks relation filter fix root-placement phase. */
+/** G-20u36e — one-off controlled Save slice (local implementation · not deployed in this phase). */
+export const CONTROLLED_SAVE_OPERATION = "save";
+export const CONTROLLED_SAVE_SLICE_ID =
+  "G-20u36e1-discography-002-track-1-title-staging-marker";
+export const CONTROLLED_SAVE_LEGACY_ID = "discography-002";
+export const CONTROLLED_SAVE_TARGET_ROW_ID = "e30c5ea9-2857-492b-8a78-58cbfcbe7929";
+export const CONTROLLED_SAVE_TRACK_NUMBER = 1;
+export const CONTROLLED_SAVE_TRACK_COUNT = 8;
+export const CONTROLLED_SAVE_TITLE_BEFORE = "On a Clear Day";
+export const CONTROLLED_SAVE_TITLE_AFTER =
+  "On a Clear Day [CMS Kit staging G-20u36e]";
+export const CONTROLLED_SAVE_TRACK_7_TITLE = "Like a Lover";
+export const CONTROLLED_SAVE_PHASE =
+  "G-20u36e-controlled-save-handler-permission-aware-local-implementation";
+
+/** Supabase service_role — NOT CONNECTED · controlled Save uses user JWT + anon key only. */
 export const SUPABASE_SERVICE_ROLE_CONNECTED = false;
 
 const RELEASE_FIELDS = [
@@ -742,14 +759,662 @@ export function validateHttpEnvelope(input: {
   return { ok: errors.length === 0, errors, status };
 }
 
+const CONTROLLED_TRACK_SELECT =
+  "id,track_number,title,sort_order,site_slug,discography_legacy_id";
+
+function buildControlledSaveFailure(input: {
+  reasonCode: string;
+  message: string;
+  status: number;
+  legacyId?: string;
+  approvalId?: string;
+  sliceId?: string;
+}): DryRunHandlerResult {
+  return {
+    ok: false,
+    operation: CONTROLLED_SAVE_OPERATION,
+    controlledSave: true,
+    endpoint: ENDPOINT_NAME,
+    siteSlug: SITE_SLUG,
+    legacyId: String(input.legacyId ?? ""),
+    approvalId: String(input.approvalId ?? ""),
+    sliceId: String(input.sliceId ?? ""),
+    reasonCode: input.reasonCode,
+    errors: [input.message],
+    warnings: [],
+    wouldWrite: false,
+    ...WRITE_FLAGS,
+    saveEnabled: false,
+    didWrite: false,
+    dbWrite: false,
+    networkWrite: false,
+    updatedRows: 0,
+    status: input.status,
+    serverTime: new Date().toISOString(),
+  };
+}
+
+/** Strip Bearer prefix · never log the raw token. */
+export function extractBearerToken(authorizationHeader: string | null | undefined): string | null {
+  const raw = String(authorizationHeader ?? "").trim();
+  if (!raw) return null;
+  const match = /^Bearer\s+(.+)$/i.exec(raw);
+  const token = match?.[1]?.trim() ?? "";
+  return token.length > 0 ? token : null;
+}
+
+export function createUserJwtSupabaseClient(input: {
+  supabaseUrl: string;
+  anonKey: string;
+  authorizationHeader: string;
+}): SupabaseClient {
+  const supabaseUrl = String(input.supabaseUrl ?? "").replace(/\/+$/, "");
+  const anonKey = String(input.anonKey ?? "");
+  const authorizationHeader = String(input.authorizationHeader ?? "").trim();
+  assertStagingSupabaseUrl(supabaseUrl);
+  if (!anonKey) {
+    throw new Error("SUPABASE_ANON_KEY is required for controlled Save");
+  }
+  if (!authorizationHeader.toLowerCase().startsWith("bearer ")) {
+    throw new Error("Authorization Bearer token is required for controlled Save");
+  }
+  return createClient(supabaseUrl, anonKey, {
+    global: { headers: { Authorization: authorizationHeader } },
+    auth: { persistSession: false, autoRefreshToken: false },
+  });
+}
+
+export async function assertOperatorIsAdmin(
+  client: SupabaseClient,
+): Promise<{ ok: true } | { ok: false; reasonCode: string; status: number; message: string }> {
+  const { data, error } = await client.rpc("is_admin");
+  if (error) {
+    const msg = String(error.message ?? "");
+    if (/jwt|token|auth/i.test(msg)) {
+      return {
+        ok: false,
+        reasonCode: "invalid_jwt",
+        status: 401,
+        message: "Invalid or expired Authorization",
+      };
+    }
+    return {
+      ok: false,
+      reasonCode: "admin_probe_failed",
+      status: 403,
+      message: "Admin probe failed",
+    };
+  }
+  if (data !== true) {
+    return {
+      ok: false,
+      reasonCode: "admin_required",
+      status: 403,
+      message: "public.is_admin() must be true",
+    };
+  }
+  return { ok: true };
+}
+
+function resolveControlledLegacyId(request: DryRunRequest): string {
+  return String(request.discographyLegacyId ?? request.legacyId ?? "").trim();
+}
+
+function validateControlledSaveGates(request: DryRunRequest): {
+  ok: boolean;
+  reasonCode?: string;
+  message?: string;
+  legacyId: string;
+  approvalId: string;
+  sliceId: string;
+  targetRowId: string;
+  afterTitle: string;
+} {
+  const legacyId = resolveControlledLegacyId(request);
+  const approvalId = String(request.approvalId ?? "").trim();
+  const sliceId = String(request.sliceId ?? "").trim();
+  const siteSlug = String(request.siteSlug ?? "").trim();
+  const targetRowId = String(request.targetRowId ?? request.trackTargetId ?? "").trim();
+  const trackNumber = Number(request.trackNumber ?? CONTROLLED_SAVE_TRACK_NUMBER);
+  const afterTitle = String(
+    request.afterTitle ?? request.requestedTitle ?? "",
+  ).trim();
+  const beforeTitle = String(request.beforeTitle ?? "").trim();
+
+  if (String(request.operation ?? "") !== CONTROLLED_SAVE_OPERATION) {
+    return {
+      ok: false,
+      reasonCode: "operation_mismatch",
+      message: 'operation must be "save" for controlled Save',
+      legacyId,
+      approvalId,
+      sliceId,
+      targetRowId,
+      afterTitle,
+    };
+  }
+  if (siteSlug !== SITE_SLUG) {
+    return {
+      ok: false,
+      reasonCode: "site_mismatch",
+      message: `siteSlug must be "${SITE_SLUG}"`,
+      legacyId,
+      approvalId,
+      sliceId,
+      targetRowId,
+      afterTitle,
+    };
+  }
+  if (approvalId !== SAVE_APPROVAL_ID) {
+    return {
+      ok: false,
+      reasonCode: "approval_id_mismatch",
+      message: "approvalId mismatch for controlled Save",
+      legacyId,
+      approvalId,
+      sliceId,
+      targetRowId,
+      afterTitle,
+    };
+  }
+  if (sliceId !== CONTROLLED_SAVE_SLICE_ID) {
+    return {
+      ok: false,
+      reasonCode: "slice_id_mismatch",
+      message: "sliceId mismatch — broad Save is forbidden",
+      legacyId,
+      approvalId,
+      sliceId,
+      targetRowId,
+      afterTitle,
+    };
+  }
+  if (legacyId !== CONTROLLED_SAVE_LEGACY_ID) {
+    return {
+      ok: false,
+      reasonCode: "discography_mismatch",
+      message: "discographyLegacyId / legacyId mismatch",
+      legacyId,
+      approvalId,
+      sliceId,
+      targetRowId,
+      afterTitle,
+    };
+  }
+  if (targetRowId !== CONTROLLED_SAVE_TARGET_ROW_ID) {
+    return {
+      ok: false,
+      reasonCode: "row_id_mismatch",
+      message: "targetRowId mismatch",
+      legacyId,
+      approvalId,
+      sliceId,
+      targetRowId,
+      afterTitle,
+    };
+  }
+  if (trackNumber !== CONTROLLED_SAVE_TRACK_NUMBER) {
+    return {
+      ok: false,
+      reasonCode: "track_number_mismatch",
+      message: "trackNumber must be 1",
+      legacyId,
+      approvalId,
+      sliceId,
+      targetRowId,
+      afterTitle,
+    };
+  }
+  if (beforeTitle && beforeTitle !== CONTROLLED_SAVE_TITLE_BEFORE) {
+    return {
+      ok: false,
+      reasonCode: "before_title_mismatch",
+      message: "beforeTitle must be On a Clear Day",
+      legacyId,
+      approvalId,
+      sliceId,
+      targetRowId,
+      afterTitle,
+    };
+  }
+  const resolvedAfter =
+    afterTitle ||
+    (() => {
+      if (typeof request.tracksText !== "string") return "";
+      const lines = parseDiscographyTrackListLines(request.tracksText);
+      return lines[0] ?? "";
+    })();
+  if (resolvedAfter !== CONTROLLED_SAVE_TITLE_AFTER) {
+    return {
+      ok: false,
+      reasonCode: "requested_title_mismatch",
+      message: "after title must be exact controlled staging marker",
+      legacyId,
+      approvalId,
+      sliceId,
+      targetRowId,
+      afterTitle: resolvedAfter,
+    };
+  }
+
+  const serviceRoleErrors = assertNoServiceRoleInPayload(request);
+  if (serviceRoleErrors.length > 0) {
+    return {
+      ok: false,
+      reasonCode: "service_role_forbidden",
+      message: serviceRoleErrors[0],
+      legacyId,
+      approvalId,
+      sliceId,
+      targetRowId,
+      afterTitle: resolvedAfter,
+    };
+  }
+
+  return {
+    ok: true,
+    legacyId,
+    approvalId,
+    sliceId,
+    targetRowId,
+    afterTitle: resolvedAfter,
+  };
+}
+
+function validateControlledTracksTextAgainstDb(
+  request: DryRunRequest,
+  dbTitles: string[],
+): { ok: true } | { ok: false; reasonCode: string; message: string } {
+  if (dbTitles.length !== CONTROLLED_SAVE_TRACK_COUNT) {
+    return {
+      ok: false,
+      reasonCode: "track_count_mismatch",
+      message: `DB track_count must be ${CONTROLLED_SAVE_TRACK_COUNT}`,
+    };
+  }
+  if (dbTitles[0] !== CONTROLLED_SAVE_TITLE_BEFORE) {
+    return {
+      ok: false,
+      reasonCode: "current_title_mismatch",
+      message: "current track 1 title must be On a Clear Day",
+    };
+  }
+  if (dbTitles[6] !== CONTROLLED_SAVE_TRACK_7_TITLE) {
+    return {
+      ok: false,
+      reasonCode: "track_7_mismatch",
+      message: "track 7 must remain Like a Lover",
+    };
+  }
+
+  if (typeof request.tracksText === "string") {
+    const afterLines = parseDiscographyTrackListLines(request.tracksText);
+    if (afterLines.length !== CONTROLLED_SAVE_TRACK_COUNT) {
+      return {
+        ok: false,
+        reasonCode: "track_count_mismatch",
+        message: "tracksText must contain exactly 8 tracks",
+      };
+    }
+    const trackDiff = validateDiscographyTrackListDryRun(dbTitles.join("\n"), afterLines.join("\n"));
+    if (trackDiff.added.length > 0 || trackDiff.removed.length > 0) {
+      return {
+        ok: false,
+        reasonCode: "add_or_delete_forbidden",
+        message: "track add/delete is forbidden for controlled Save",
+      };
+    }
+    if (trackDiff.reordered) {
+      return {
+        ok: false,
+        reasonCode: "reorder_forbidden",
+        message: "track reorder is forbidden for controlled Save",
+      };
+    }
+    if (trackDiff.changedLines.length !== 1) {
+      return {
+        ok: false,
+        reasonCode: "changed_lines_mismatch",
+        message: "controlled Save allows exactly one changed title line",
+      };
+    }
+    const only = trackDiff.changedLines[0];
+    if (only.line !== 1 || only.kind !== "changed") {
+      return {
+        ok: false,
+        reasonCode: "changed_field_forbidden",
+        message: "only track 1 title may change",
+      };
+    }
+    if (only.before !== CONTROLLED_SAVE_TITLE_BEFORE || only.after !== CONTROLLED_SAVE_TITLE_AFTER) {
+      return {
+        ok: false,
+        reasonCode: "requested_title_mismatch",
+        message: "changed title must match controlled before/after strings",
+      };
+    }
+    if (afterLines[6] !== CONTROLLED_SAVE_TRACK_7_TITLE) {
+      return {
+        ok: false,
+        reasonCode: "track_7_mismatch",
+        message: "track 7 must remain Like a Lover",
+      };
+    }
+  }
+
+  return { ok: true };
+}
+
 /**
- * HTTP handler entry — POST/json only · dryRun only · no service_role · no DB write.
+ * G-20u36e controlled Save — user JWT + is_admin + RLS + title-only single-row UPDATE.
+ * Broad Save remains forbidden. Never logs Authorization / JWT / user_id / email.
+ */
+export async function handleControlledG20u36eSaveHttp(input: {
+  request: DryRunRequest;
+  authorizationHeader?: string | null;
+  supabaseUrl?: string;
+  anonKey?: string;
+}): Promise<DryRunHandlerResult> {
+  const gates = validateControlledSaveGates(input.request);
+  if (!gates.ok) {
+    return buildControlledSaveFailure({
+      reasonCode: gates.reasonCode ?? "controlled_gate_failed",
+      message: gates.message ?? "controlled Save gate failed",
+      status: 400,
+      legacyId: gates.legacyId,
+      approvalId: gates.approvalId,
+      sliceId: gates.sliceId,
+    });
+  }
+
+  const bearer = extractBearerToken(input.authorizationHeader);
+  if (!bearer) {
+    return buildControlledSaveFailure({
+      reasonCode: "missing_authorization",
+      message: "Authorization Bearer token is required",
+      status: 401,
+      legacyId: gates.legacyId,
+      approvalId: gates.approvalId,
+      sliceId: gates.sliceId,
+    });
+  }
+
+  const authorizationHeader = `Bearer ${bearer}`;
+  let client: SupabaseClient;
+  try {
+    client = createUserJwtSupabaseClient({
+      supabaseUrl: input.supabaseUrl ?? "",
+      anonKey: input.anonKey ?? "",
+      authorizationHeader,
+    });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    const production = /production/i.test(message);
+    return buildControlledSaveFailure({
+      reasonCode: production ? "production_ref_blocked" : "config_error",
+      message: production ? "production Supabase ref is blocked" : "controlled Save config error",
+      status: production ? 403 : 500,
+      legacyId: gates.legacyId,
+      approvalId: gates.approvalId,
+      sliceId: gates.sliceId,
+    });
+  }
+
+  const admin = await assertOperatorIsAdmin(client);
+  if (!admin.ok) {
+    return buildControlledSaveFailure({
+      reasonCode: admin.reasonCode,
+      message: admin.message,
+      status: admin.status,
+      legacyId: gates.legacyId,
+      approvalId: gates.approvalId,
+      sliceId: gates.sliceId,
+    });
+  }
+
+  const { data: trackRows, error: tracksError } = await client
+    .from("discography_tracks")
+    .select(CONTROLLED_TRACK_SELECT)
+    .eq("site_slug", SITE_SLUG)
+    .eq("discography_legacy_id", CONTROLLED_SAVE_LEGACY_ID)
+    .order("track_number", { ascending: true });
+
+  if (tracksError) {
+    return buildControlledSaveFailure({
+      reasonCode: "rls_or_permission_denied",
+      message: "failed to read tracks for controlled Save",
+      status: 403,
+      legacyId: gates.legacyId,
+      approvalId: gates.approvalId,
+      sliceId: gates.sliceId,
+    });
+  }
+
+  const sorted = sortTrackRows((trackRows ?? []) as Array<Record<string, unknown>>);
+  const dbTitles = sorted.map((row) => String(row.title ?? "").trim());
+  const targetRow = sorted.find(
+    (row) => String(row.id ?? "") === CONTROLLED_SAVE_TARGET_ROW_ID,
+  );
+  if (!targetRow) {
+    return buildControlledSaveFailure({
+      reasonCode: "row_id_mismatch",
+      message: "target row id not found in discography-002 tracks",
+      status: 409,
+      legacyId: gates.legacyId,
+      approvalId: gates.approvalId,
+      sliceId: gates.sliceId,
+    });
+  }
+  if (Number(targetRow.track_number) !== CONTROLLED_SAVE_TRACK_NUMBER) {
+    return buildControlledSaveFailure({
+      reasonCode: "track_number_mismatch",
+      message: "target row track_number must be 1",
+      status: 409,
+      legacyId: gates.legacyId,
+      approvalId: gates.approvalId,
+      sliceId: gates.sliceId,
+    });
+  }
+
+  const tracksOk = validateControlledTracksTextAgainstDb(input.request, dbTitles);
+  if (!tracksOk.ok) {
+    return buildControlledSaveFailure({
+      reasonCode: tracksOk.reasonCode,
+      message: tracksOk.message,
+      status: 409,
+      legacyId: gates.legacyId,
+      approvalId: gates.approvalId,
+      sliceId: gates.sliceId,
+    });
+  }
+
+  if (input.request.release && typeof input.request.release === "object") {
+    const { data: releaseRow, error: releaseError } = await client
+      .from("discography")
+      .select(RELEASE_SELECT_FIELDS)
+      .eq("site_slug", SITE_SLUG)
+      .eq("legacy_id", CONTROLLED_SAVE_LEGACY_ID)
+      .limit(1)
+      .maybeSingle();
+    if (releaseError || !releaseRow) {
+      return buildControlledSaveFailure({
+        reasonCode: "release_read_failed",
+        message: "failed to read release for scalar comparison",
+        status: 403,
+        legacyId: gates.legacyId,
+        approvalId: gates.approvalId,
+        sliceId: gates.sliceId,
+      });
+    }
+    const currentRelease = mapReleaseRowToCurrentSnapshotRelease(releaseRow as Record<string, unknown>);
+    const releaseFieldsChanged = diffReleaseFields(
+      currentRelease,
+      input.request.release as Record<string, unknown>,
+    );
+    if (releaseFieldsChanged.length > 0) {
+      return buildControlledSaveFailure({
+        reasonCode: "release_scalar_change_forbidden",
+        message: "release scalar changes are forbidden for controlled Save",
+        status: 400,
+        legacyId: gates.legacyId,
+        approvalId: gates.approvalId,
+        sliceId: gates.sliceId,
+      });
+    }
+  }
+
+  // Title-only payload — no updated_at / sort_order / other columns · no discography table write.
+  const { data: updatedRows, error: updateError } = await client
+    .from("discography_tracks")
+    .update({ title: CONTROLLED_SAVE_TITLE_AFTER })
+    .eq("site_slug", SITE_SLUG)
+    .eq("discography_legacy_id", CONTROLLED_SAVE_LEGACY_ID)
+    .eq("track_number", CONTROLLED_SAVE_TRACK_NUMBER)
+    .eq("id", CONTROLLED_SAVE_TARGET_ROW_ID)
+    .eq("title", CONTROLLED_SAVE_TITLE_BEFORE)
+    .select("id,title,track_number");
+
+  if (updateError) {
+    return buildControlledSaveFailure({
+      reasonCode: "rls_or_permission_denied",
+      message: "controlled Save UPDATE denied by RLS or grants",
+      status: 403,
+      legacyId: gates.legacyId,
+      approvalId: gates.approvalId,
+      sliceId: gates.sliceId,
+    });
+  }
+
+  const updatedCount = Array.isArray(updatedRows) ? updatedRows.length : 0;
+  if (updatedCount === 0) {
+    return buildControlledSaveFailure({
+      reasonCode: "update_zero_rows",
+      message: "UPDATE matched 0 rows — conflict / already changed / STOP",
+      status: 409,
+      legacyId: gates.legacyId,
+      approvalId: gates.approvalId,
+      sliceId: gates.sliceId,
+    });
+  }
+  if (updatedCount !== 1) {
+    return buildControlledSaveFailure({
+      reasonCode: "update_multiple_rows",
+      message: "UPDATE matched multiple rows — STOP",
+      status: 500,
+      legacyId: gates.legacyId,
+      approvalId: gates.approvalId,
+      sliceId: gates.sliceId,
+    });
+  }
+
+  const { data: postTracks, error: postTracksError } = await client
+    .from("discography_tracks")
+    .select(CONTROLLED_TRACK_SELECT)
+    .eq("site_slug", SITE_SLUG)
+    .eq("discography_legacy_id", CONTROLLED_SAVE_LEGACY_ID)
+    .order("track_number", { ascending: true });
+
+  if (postTracksError) {
+    return buildControlledSaveFailure({
+      reasonCode: "post_save_readback_failed",
+      message: "UPDATE succeeded but post-save readBack failed",
+      status: 500,
+      legacyId: gates.legacyId,
+      approvalId: gates.approvalId,
+      sliceId: gates.sliceId,
+    });
+  }
+
+  const postSorted = sortTrackRows((postTracks ?? []) as Array<Record<string, unknown>>);
+  const postTitles = postSorted.map((row) => String(row.title ?? "").trim());
+  const postTrack1 = postTitles[0] ?? "";
+  const postTrack7 = postTitles[6] ?? "";
+  const readBackSummary = {
+    enabled: true,
+    source: "user-jwt-select",
+    releaseFound: true,
+    trackCount: postTitles.length,
+    track_7_title: postTrack7,
+    targetTitle: postTrack1,
+    targetRowCount: postSorted.filter((row) => String(row.id ?? "") === CONTROLLED_SAVE_TARGET_ROW_ID)
+      .length,
+    legacyId: CONTROLLED_SAVE_LEGACY_ID,
+    siteSlug: SITE_SLUG,
+    noAddedRemoved:
+      postTitles.length === CONTROLLED_SAVE_TRACK_COUNT &&
+      postTrack7 === CONTROLLED_SAVE_TRACK_7_TITLE,
+  };
+
+  if (
+    postTrack1 !== CONTROLLED_SAVE_TITLE_AFTER ||
+    postTitles.length !== CONTROLLED_SAVE_TRACK_COUNT ||
+    postTrack7 !== CONTROLLED_SAVE_TRACK_7_TITLE
+  ) {
+    return {
+      ok: false,
+      operation: CONTROLLED_SAVE_OPERATION,
+      controlledSave: true,
+      endpoint: ENDPOINT_NAME,
+      siteSlug: SITE_SLUG,
+      discographyLegacyId: CONTROLLED_SAVE_LEGACY_ID,
+      legacyId: CONTROLLED_SAVE_LEGACY_ID,
+      approvalId: gates.approvalId,
+      sliceId: gates.sliceId,
+      trackNumber: CONTROLLED_SAVE_TRACK_NUMBER,
+      beforeTitle: CONTROLLED_SAVE_TITLE_BEFORE,
+      afterTitle: CONTROLLED_SAVE_TITLE_AFTER,
+      updatedRows: 1,
+      reasonCode: "post_save_verification_failed",
+      errors: ["post-save readBack did not match controlled expectations"],
+      warnings: [],
+      readBack: readBackSummary,
+      wouldWrite: true,
+      didWrite: true,
+      dbWrite: true,
+      networkWrite: true,
+      saveEnabled: true,
+      status: 500,
+      serverTime: new Date().toISOString(),
+    };
+  }
+
+  return {
+    ok: true,
+    operation: CONTROLLED_SAVE_OPERATION,
+    controlledSave: true,
+    endpoint: ENDPOINT_NAME,
+    siteSlug: SITE_SLUG,
+    discographyLegacyId: CONTROLLED_SAVE_LEGACY_ID,
+    legacyId: CONTROLLED_SAVE_LEGACY_ID,
+    approvalId: gates.approvalId,
+    sliceId: gates.sliceId,
+    trackNumber: CONTROLLED_SAVE_TRACK_NUMBER,
+    beforeTitle: CONTROLLED_SAVE_TITLE_BEFORE,
+    afterTitle: CONTROLLED_SAVE_TITLE_AFTER,
+    updatedRows: 1,
+    errors: [],
+    warnings: [],
+    readBack: readBackSummary,
+    wouldWrite: true,
+    didWrite: true,
+    dbWrite: true,
+    networkWrite: true,
+    saveEnabled: true,
+    status: 200,
+    serverTime: new Date().toISOString(),
+    phase: CONTROLLED_SAVE_PHASE,
+  };
+}
+
+/**
+ * HTTP handler entry — POST/json · dryRun (sync) · controlled save deferred to async path.
  * Sync path: schema-only baseline (readBack null) when readBack disabled.
  */
 export function handleDiscographyEdgeDryRunHttp(input: {
   method?: string;
   contentType?: string;
   body?: unknown;
+  authorizationHeader?: string | null;
 }): DryRunHandlerResult {
   const envelope = validateHttpEnvelope(input);
   if (!envelope.ok) {
@@ -763,12 +1428,15 @@ export function handleDiscographyEdgeDryRunHttp(input: {
 
   const request = (input.body ?? {}) as DryRunRequest;
 
-  if (request.operation === "save") {
-    return buildRejectionResponse({
-      legacyId: String(request.legacyId ?? ""),
-      approvalId: String(request.approvalId ?? ""),
-      errors: ['operation "save" is rejected by dry-run endpoint — use dryRun only'],
+  if (request.operation === CONTROLLED_SAVE_OPERATION) {
+    return buildControlledSaveFailure({
+      reasonCode: "controlled_save_requires_async",
+      message:
+        'operation "save" requires async controlled Save path (Authorization + user JWT)',
       status: 400,
+      legacyId: resolveControlledLegacyId(request),
+      approvalId: String(request.approvalId ?? ""),
+      sliceId: String(request.sliceId ?? ""),
     });
   }
 
@@ -778,17 +1446,20 @@ export function handleDiscographyEdgeDryRunHttp(input: {
 }
 
 /**
- * Async HTTP handler — optional anon SELECT readBack via injectable adapter.
+ * Async HTTP handler — dryRun (+ optional anon readBack) or G-20u36e controlled Save.
  */
 export async function handleDiscographyEdgeDryRunHttpAsync(
   input: {
     method?: string;
     contentType?: string;
     body?: unknown;
+    authorizationHeader?: string | null;
   },
   options: {
     readBackEnabled?: boolean;
     readBackAdapter?: ReadBackQueryAdapter | null;
+    supabaseUrl?: string;
+    anonKey?: string;
   } = {},
 ): Promise<DryRunHandlerResult> {
   const envelope = validateHttpEnvelope(input);
@@ -803,12 +1474,12 @@ export async function handleDiscographyEdgeDryRunHttpAsync(
 
   const request = (input.body ?? {}) as DryRunRequest;
 
-  if (request.operation === "save") {
-    return buildRejectionResponse({
-      legacyId: String(request.legacyId ?? ""),
-      approvalId: String(request.approvalId ?? ""),
-      errors: ['operation "save" is rejected by dry-run endpoint — use dryRun only'],
-      status: 400,
+  if (request.operation === CONTROLLED_SAVE_OPERATION) {
+    return handleControlledG20u36eSaveHttp({
+      request,
+      authorizationHeader: input.authorizationHeader ?? null,
+      supabaseUrl: options.supabaseUrl,
+      anonKey: options.anonKey,
     });
   }
 

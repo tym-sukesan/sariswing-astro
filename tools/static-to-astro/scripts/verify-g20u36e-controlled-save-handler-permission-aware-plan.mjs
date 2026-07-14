@@ -202,9 +202,26 @@ assert(
     ),
 );
 
+function supabaseFunctionsOnlyAllowedLocalImplOrClean() {
+  const status = spawnSync(
+    "git",
+    ["status", "--porcelain", "--", "supabase/functions/"],
+    { cwd: REPO_ROOT, encoding: "utf8" },
+  );
+  const allowed = new Set([
+    "supabase/functions/gosaki-discography-save-dry-run/handler.ts",
+    "supabase/functions/gosaki-discography-save-dry-run/index.ts",
+  ]);
+  const files = status.stdout
+    .split("\n")
+    .filter((line) => line.trim().length > 0)
+    .map((line) => line.slice(3).trim());
+  return files.every((file) => allowed.has(file));
+}
+
 assert(
-  "supabase/functions not modified",
-  !diffTouches("supabase/functions/"),
+  "supabase/functions not modified (or only controlled local-impl files)",
+  supabaseFunctionsOnlyAllowedLocalImplOrClean(),
   "unexpected supabase/functions changes",
 );
 assert(

@@ -298,6 +298,17 @@ body.gosaki-read-only-admin {
   margin-top: 0.25rem;
 }
 
+.gosaki-read-only-admin__admin-probe {
+  margin-top: 1rem;
+  padding-top: 0.85rem;
+  border-top: 1px dashed var(--gra-border);
+}
+
+.gosaki-read-only-admin__admin-probe .gosaki-read-only-admin__result {
+  margin-top: 0.5rem;
+  max-width: 36rem;
+}
+
 .gosaki-read-only-admin__field input:not([readonly]):not(:disabled) {
   background: #fff;
   color: var(--gra-text);

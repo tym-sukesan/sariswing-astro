@@ -1,6 +1,16 @@
 Last updated: 2026-07-14
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-auth-jwt-admin-probe-ui-tools-draft — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u36e-controlled-save-auth-jwt-admin-probe-ui-tools-draft` |
+| Gate | `gosakiDiscographyControlledSaveAuthJwtAdminProbeUiToolsDrafted: true` |
+| Draft | `#gra-auth` · manual `rpc('is_admin')` · reasonCode · Save decoupled |
+| Not done | browser RPC · HTTP · SQL · Save · Edge |
+| Next | G-20u36e-controlled-save-auth-jwt-admin-probe-ui-local-verify (or ui-package-preflight) |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-auth-jwt-admin-probe-ui-planning — complete
 
 | Item | Value |
@@ -8,7 +18,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Phase | `G-20u36e-controlled-save-auth-jwt-admin-probe-ui-planning` |
 | Gate | `gosakiDiscographyControlledSaveAuthJwtAdminProbeUiPlanPrepared: true` |
 | Design | Manual `#gra-auth` `rpc('is_admin')` · reasonCode · Save decoupled |
-| Next | G-20u36e-controlled-save-auth-jwt-admin-probe-ui-tools-draft |
+| Next | G-20u36e-controlled-save-auth-jwt-admin-probe-ui-tools-draft — **complete** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-auth-jwt-admin-probe-planning — complete
 

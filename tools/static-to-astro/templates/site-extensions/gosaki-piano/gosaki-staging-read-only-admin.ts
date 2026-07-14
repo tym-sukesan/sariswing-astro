@@ -52,6 +52,155 @@ export const G20U36C_DISCOGRAPHY_DRY_RUN_NOTE =
   "G-20u36c: Dry-run only — POST to staging Edge Function. No DB write. Save is still disabled. This checks the request and endpoint response only.";
 export const G20U36C_PRODUCTION_PROJECT_REF_STOP = "vsbvndwuajjhnzpohghh";
 
+/** G-20u36e — DB admin probe UI tools draft (read-only `rpc('is_admin')` · Save decoupled). */
+export const G20U36E_ADMIN_PROBE_UI_TOOLS_DRAFT_PHASE =
+  "G-20u36e-controlled-save-auth-jwt-admin-probe-ui-tools-draft";
+export const G20U36E_ADMIN_PROBE_RPC_NAME = "is_admin" as const;
+export const G20U36E_ADMIN_PROBE_BUTTON_LABEL = "DB admin probe (read-only)";
+export const G20U36E_ADMIN_PROBE_NOTE =
+  "Diagnostic only · DB is_admin() via admin_users (role=admin) · not mock allowlist · First controlled Save remains disabled · JWT / access_token / user_id / email not shown in probe result";
+
+export type G20u36eAdminProbeStatus = "not_run" | "running" | "pass" | "fail" | "error";
+
+export type G20u36eAdminProbeReasonCode =
+  | "not_run"
+  | "session_missing"
+  | "rpc_success_true"
+  | "rpc_success_false"
+  | "rpc_error"
+  | "production_ref_blocked"
+  | "unexpected";
+
+/**
+ * Safe probe display only — never include tokens, user_id, email, or raw RPC messages.
+ * saveEnabled is always false (probe must not arm Save).
+ */
+export interface G20u36eAdminProbeDisplay {
+  adminProbeStatus: G20u36eAdminProbeStatus;
+  isAdmin: boolean | null;
+  reasonCode: G20u36eAdminProbeReasonCode;
+  saveEnabled: false;
+  diagnosticOnly: true;
+}
+
+export function createG20u36eAdminProbeIdleDisplay(): G20u36eAdminProbeDisplay {
+  return {
+    adminProbeStatus: "not_run",
+    isAdmin: null,
+    reasonCode: "not_run",
+    saveEnabled: false,
+    diagnosticOnly: true,
+  };
+}
+
+export function createG20u36eAdminProbeRunningDisplay(): G20u36eAdminProbeDisplay {
+  return {
+    adminProbeStatus: "running",
+    isAdmin: null,
+    reasonCode: "not_run",
+    saveEnabled: false,
+    diagnosticOnly: true,
+  };
+}
+
+/** Staging host only — production STOP · non-staging blocked as production_ref_blocked. */
+export function assertG20u36eAdminProbeSupabaseHostSafe(supabaseUrl: string): boolean {
+  const trimmed = String(supabaseUrl ?? "").trim();
+  if (!trimmed) return false;
+  if (trimmed.includes(G20U36C_PRODUCTION_PROJECT_REF_STOP)) return false;
+  return trimmed.includes(G11C4A_STAGING_PROJECT_REF);
+}
+
+export function resolveG20u36eAdminProbeHostBlockReason(
+  supabaseUrl: string,
+): "production_ref_blocked" | null {
+  return assertG20u36eAdminProbeSupabaseHostSafe(supabaseUrl) ? null : "production_ref_blocked";
+}
+
+/**
+ * Map session presence + is_admin RPC outcome to display.
+ * Pass `sessionPresent` only — never pass access_token / user / email.
+ * Pass `rpcFailed` as boolean — never pass raw error.message into UI.
+ */
+export function buildG20u36eAdminProbeDisplay(input: {
+  supabaseUrl: string;
+  sessionPresent: boolean;
+  rpcData?: unknown;
+  rpcFailed?: boolean;
+}): G20u36eAdminProbeDisplay {
+  const base = {
+    saveEnabled: false as const,
+    diagnosticOnly: true as const,
+  };
+
+  if (resolveG20u36eAdminProbeHostBlockReason(input.supabaseUrl)) {
+    return {
+      ...base,
+      adminProbeStatus: "error",
+      isAdmin: null,
+      reasonCode: "production_ref_blocked",
+    };
+  }
+
+  if (!input.sessionPresent) {
+    return {
+      ...base,
+      adminProbeStatus: "fail",
+      isAdmin: null,
+      reasonCode: "session_missing",
+    };
+  }
+
+  if (input.rpcFailed) {
+    return {
+      ...base,
+      adminProbeStatus: "error",
+      isAdmin: null,
+      reasonCode: "rpc_error",
+    };
+  }
+
+  if (input.rpcData === true) {
+    return {
+      ...base,
+      adminProbeStatus: "pass",
+      isAdmin: true,
+      reasonCode: "rpc_success_true",
+    };
+  }
+
+  if (input.rpcData === false) {
+    return {
+      ...base,
+      adminProbeStatus: "fail",
+      isAdmin: false,
+      reasonCode: "rpc_success_false",
+    };
+  }
+
+  return {
+    ...base,
+    adminProbeStatus: "error",
+    isAdmin: null,
+    reasonCode: "unexpected",
+  };
+}
+
+/** Serialize only safe fields for UI / copy-paste (no secrets). */
+export function formatG20u36eAdminProbeDisplay(display: G20u36eAdminProbeDisplay): string {
+  return JSON.stringify(
+    {
+      adminProbeStatus: display.adminProbeStatus,
+      isAdmin: display.isAdmin,
+      reasonCode: display.reasonCode,
+      saveEnabled: display.saveEnabled,
+      diagnosticOnly: display.diagnosticOnly,
+    },
+    null,
+    2,
+  );
+}
+
 export interface DiscographyDryRunEndpointReleaseInput {
   title: string;
   artist?: string | null;

@@ -5,9 +5,22 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36e-controlled-save-auth-jwt-admin-probe-ui-planning — complete.
-UI probe design ready. Tools draft next.
+Current phase: G-20u36e-controlled-save-auth-jwt-admin-probe-ui-tools-draft — complete.
+UI tools draft ready. Local-verify or package-preflight next.
 ```
+
+## G-20u36e-controlled-save-auth-jwt-admin-probe-ui-tools-draft — complete
+
+- **Phase:** G-20u36e-controlled-save-auth-jwt-admin-probe-ui-tools-draft
+- **Gate:** `gosakiDiscographyControlledSaveAuthJwtAdminProbeUiToolsDrafted: true`
+- **Draft:** `#gra-auth` · **DB admin probe (read-only)** · `client.rpc('is_admin')` · status/reasonCode only
+- **Never show:** access_token · refresh_token · JWT · user_id · email in probe result · service_role
+- **Save:** fully decoupled — probe PASS does not arm Save · `saveEnabled: false` always
+- **Production guard:** non-staging / `vsbvndwuajjhnzpohghh` → `production_ref_blocked`
+- **Not done:** browser RPC click · HTTP · SQL · GRANT/RLS · Edge · operation=save · FTP
+- **service_role:** **not used**
+- **First controlled Save:** **still not allowed**
+- **Next:** **G-20u36e-controlled-save-auth-jwt-admin-probe-ui-local-verify** (or ui-package-preflight)
 
 ## G-20u36e-controlled-save-auth-jwt-admin-probe-ui-planning — complete
 
@@ -20,7 +33,7 @@ UI probe design ready. Tools draft next.
 - **Not done:** UI impl · RPC/HTTP · SQL · GRANT/RLS · Edge · Save
 - **service_role:** **not used**
 - **First controlled Save:** **still not allowed**
-- **Next:** **G-20u36e-controlled-save-auth-jwt-admin-probe-ui-tools-draft**
+- **Next:** G-20u36e-controlled-save-auth-jwt-admin-probe-ui-tools-draft — **complete**
 
 ## G-20u36e-controlled-save-auth-jwt-admin-probe-planning — complete
 

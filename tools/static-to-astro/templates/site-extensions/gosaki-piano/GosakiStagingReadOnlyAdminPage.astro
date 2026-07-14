@@ -26,6 +26,9 @@ import {
   G20U36C_DISCOGRAPHY_DRY_RUN_NOTE,
   G20U36C_DISCOGRAPHY_DRY_RUN_APPROVAL_ID,
   G20U36C_DISCOGRAPHY_DRY_RUN_OPERATION,
+  G20U36E_ADMIN_PROBE_UI_TOOLS_DRAFT_PHASE,
+  G20U36E_ADMIN_PROBE_BUTTON_LABEL,
+  G20U36E_ADMIN_PROBE_NOTE,
   GOSAKI_STAGING_PREVIEW_URL,
   buildGosakiReadOnlyAdminViewModel,
   isG11c4aSupabaseAuthConfigured,
@@ -548,6 +551,39 @@ const pageTitle = "Gosaki Piano 管理画面（staging · 読み取り専用）"
                 </button>
               </div>
             </form>
+            <div
+              class="gosaki-read-only-admin__admin-probe"
+              id="gra-admin-probe"
+              data-section="g20u36e-admin-probe"
+              data-g20u36e-admin-probe-phase={G20U36E_ADMIN_PROBE_UI_TOOLS_DRAFT_PHASE}
+            >
+              <h3 class="gosaki-read-only-admin__meta">DB admin probe (read-only)</h3>
+              <p class="gosaki-read-only-admin__meta">{G20U36E_ADMIN_PROBE_NOTE}</p>
+              <p class="gosaki-read-only-admin__meta gosaki-read-only-admin__meta--warn">
+                Manual only · no auto-run · probe PASS does not enable Save · operation=save not sent
+              </p>
+              <div class="gosaki-read-only-admin__auth-actions">
+                <button
+                  type="button"
+                  id="gra-admin-probe-btn"
+                  class="gosaki-read-only-admin__btn"
+                  disabled={!supabaseAuthConfigured}
+                >
+                  {G20U36E_ADMIN_PROBE_BUTTON_LABEL}
+                </button>
+              </div>
+              <pre
+                class="gosaki-read-only-admin__result"
+                id="gra-admin-probe-result"
+                aria-live="polite"
+              >{`{
+  "adminProbeStatus": "not_run",
+  "isAdmin": null,
+  "reasonCode": "not_run",
+  "saveEnabled": false,
+  "diagnosticOnly": true
+}`}</pre>
+            </div>
           </div>
         </section>
 
@@ -978,7 +1014,120 @@ const pageTitle = "Gosaki Piano 管理画面（staging · 読み取り専用）"
         assertG20u36cDiscographyDryRunEndpointSafe,
         G20U36C_DISCOGRAPHY_DRY_RUN_OPERATION,
         G20U36C_PRODUCTION_PROJECT_REF_STOP,
+        G20U36E_ADMIN_PROBE_RPC_NAME,
+        assertG20u36eAdminProbeSupabaseHostSafe,
+        buildG20u36eAdminProbeDisplay,
+        createG20u36eAdminProbeIdleDisplay,
+        createG20u36eAdminProbeRunningDisplay,
+        formatG20u36eAdminProbeDisplay,
       } from "../lib/gosaki-staging-read-only-admin";
+
+      /** G-20u36e admin probe — manual `rpc('is_admin')` only · never logs tokens / user_id / email · never arms Save. */
+      (function wireG20u36eAdminProbe() {
+        const probeBtn = document.getElementById("gra-admin-probe-btn");
+        const probeResult = document.getElementById("gra-admin-probe-result");
+        const body = document.body;
+        if (!(probeBtn instanceof HTMLButtonElement) || !probeResult || !body) return;
+
+        const supabaseUrl = (body.dataset.gosakiSupabaseUrl || "").trim();
+        const supabaseAnonKey = (body.dataset.gosakiSupabaseAnonKey || "").trim();
+        const supabaseAuthConfigured = body.dataset.gosakiSupabaseAuthConfigured === "true";
+
+        function showProbe(display) {
+          probeResult.textContent = formatG20u36eAdminProbeDisplay(display);
+        }
+
+        showProbe(createG20u36eAdminProbeIdleDisplay());
+
+        function resolveCreateClient() {
+          const lib = window.supabase;
+          if (!lib) return null;
+          if (typeof lib.createClient === "function") return lib.createClient;
+          if (lib.default && typeof lib.default.createClient === "function") return lib.default.createClient;
+          return null;
+        }
+
+        function getProbeClient() {
+          if (!supabaseAuthConfigured || !supabaseUrl || !supabaseAnonKey) return null;
+          const createClient = resolveCreateClient();
+          if (!createClient) return null;
+          return createClient(supabaseUrl, supabaseAnonKey, {
+            auth: {
+              persistSession: true,
+              autoRefreshToken: true,
+              detectSessionInUrl: false,
+            },
+          });
+        }
+
+        probeBtn.addEventListener("click", () => {
+          // Host gate first — production STOP · staging ref required
+          if (!assertG20u36eAdminProbeSupabaseHostSafe(supabaseUrl)) {
+            showProbe(
+              buildG20u36eAdminProbeDisplay({
+                supabaseUrl,
+                sessionPresent: false,
+              }),
+            );
+            return;
+          }
+
+          const client = getProbeClient();
+          if (!client) {
+            showProbe(
+              buildG20u36eAdminProbeDisplay({
+                supabaseUrl,
+                sessionPresent: false,
+              }),
+            );
+            return;
+          }
+
+          probeBtn.disabled = true;
+          showProbe(createG20u36eAdminProbeRunningDisplay());
+
+          client.auth
+            .getSession()
+            .then((sessionRes) => {
+              const session = sessionRes?.data?.session;
+              // Session object presence only — do not read/display user id, email, or tokens in probe result
+              const sessionPresent = Boolean(session);
+              if (!sessionPresent) {
+                showProbe(
+                  buildG20u36eAdminProbeDisplay({
+                    supabaseUrl,
+                    sessionPresent: false,
+                  }),
+                );
+                return;
+              }
+
+              return client.rpc(G20U36E_ADMIN_PROBE_RPC_NAME).then((rpcRes) => {
+                showProbe(
+                  buildG20u36eAdminProbeDisplay({
+                    supabaseUrl,
+                    sessionPresent: true,
+                    rpcData: rpcRes?.data,
+                    rpcFailed: Boolean(rpcRes?.error),
+                  }),
+                );
+              });
+            })
+            .catch(() => {
+              showProbe(
+                buildG20u36eAdminProbeDisplay({
+                  supabaseUrl,
+                  sessionPresent: true,
+                  rpcFailed: true,
+                }),
+              );
+            })
+            .finally(() => {
+              probeBtn.disabled = !supabaseAuthConfigured;
+              // Explicit: probe must never enable Save buttons
+            });
+        });
+      })();
 
       function findAlbumCard(el) {
         return el instanceof Element ? el.closest("[data-album-legacy-id]") : null;

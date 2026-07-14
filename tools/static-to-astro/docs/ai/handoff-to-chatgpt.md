@@ -5,9 +5,21 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36e-controlled-save-auth-jwt-admin-probe-ui-stg-readonly-probe-execution-result-record — complete.
-Next: G-20u36e-controlled-save-permission-change-planning (planning only — no SQL yet). First controlled Save still not allowed.
+Current phase: G-20u36e-controlled-save-permission-change-planning — complete.
+Next: G-20u36e-controlled-save-permission-change-sql-prep (SQL text only — no execution). First controlled Save still not allowed.
 ```
+
+## G-20u36e-controlled-save-permission-change-planning — complete
+
+- **Phase:** G-20u36e-controlled-save-permission-change-planning
+- **Gate:** `gosakiDiscographyControlledSavePermissionChangePlanPrepared: true`
+- **Model:** authenticated `UPDATE(title)` only + **RESTRICTIVE** UPDATE policy (USING old title / WITH CHECK new title) · keep PERMISSIVE admin_all
+- **Operator JWT admin:** **VERIFIED** · current UPDATE grants still **0**
+- **Slice:** `discography-002` track 1 · `e30c5ea9-…` · `On a Clear Day` → staging marker title
+- **Rejected:** anon UPDATE · table-wide UPDATE · service_role · SECURITY DEFINER Save RPC · manual SQL as main route · production
+- **Not done:** executable SQL · GRANT · POLICY · DB write · Edge · operation=save · Save
+- **First controlled Save:** **still not allowed**
+- **Next:** **G-20u36e-controlled-save-permission-change-sql-prep**
 
 ## G-20u36e-controlled-save-auth-jwt-admin-probe-ui-stg-readonly-probe-execution-result-record — complete
 
@@ -16,11 +28,9 @@ Next: G-20u36e-controlled-save-permission-change-planning (planning only — no 
 - **STG readonly probe:** **PASS** · clicked **exactly once** · RPC **read-only**
 - **Result:** `adminProbeStatus=pass` · `isAdmin=true` · `reasonCode=rpc_success_true` · `saveEnabled=false` · `diagnosticOnly=true`
 - **Operator JWT admin:** **VERIFIED** (`public.is_admin()` = true under operator JWT)
-- **Not done:** permission change · GRANT/REVOKE · RLS · SQL · DB write · operation=save · Save · Edge
-- **Package on STG:** sourceCommit `724d951f4d64eb5fa03e96d9d97c79da1c91bade`
-- **service_role:** **not used** · JWT/token/user_id/email **not in probe result**
+- **Follow-on:** permission-change planning — **complete**
 - **First controlled Save:** **still not allowed** (authenticated UPDATE grant still **0**)
-- **Next:** **G-20u36e-controlled-save-permission-change-planning** (alt: `G-20u36e-controlled-save-authenticated-title-update-rls-planning`)
+- **Next:** permission-change planning — **complete**
 
 ## G-20u36e-controlled-save-auth-ui-login-blocked-stg-login-check-result-record — complete
 

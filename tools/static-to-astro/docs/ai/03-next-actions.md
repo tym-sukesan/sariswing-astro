@@ -1,16 +1,24 @@
 Last updated: 2026-07-14
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-ui-visible-verification — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u36e-controlled-save-ui-visible-verification` |
+| Gate | `gosakiDiscographyControlledSaveUiVisibleVerificationPrepared: true` |
+| Scope | UI check prep only · no Save/package/FTP |
+| Delta | live admin SSR vs baked STG public/admin |
+| Next | ui-visible-verification-result-record |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-post-close-result-record — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-20u36e-controlled-save-post-close-result-record` |
 | Gate | `gosakiDiscographyControlledSavePostCloseCompleted: true` |
-| Save / close / post-close | **PASS** / **PASS** / **PASS** |
-| Grants / policy | title UPDATE **0** · restrictive **removed** |
-| Additional Save | **not allowed** |
-| Next | G-20u36e-controlled-save-ui-visible-verification |
+| Follow-on | UI-visible verification prep — **complete** |
+| Next | ui-visible-verification-result-record |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-execution-result-and-post-save-select-prep — complete
 

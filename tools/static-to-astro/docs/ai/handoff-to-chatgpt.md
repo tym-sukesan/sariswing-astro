@@ -5,23 +5,26 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36e-controlled-save-post-close-result-record — complete.
-Next: G-20u36e-controlled-save-ui-visible-verification (or completion handoff).
-First controlled Save PASS. Permission close PASS. Additional Save forbidden.
+Current phase: G-20u36e-controlled-save-ui-visible-verification — complete (prep).
+Next: G-20u36e-controlled-save-ui-visible-verification-result-record (operator browser check).
+DB title updated. STG public/packaged admin may still show old baked HTML until package+upload.
 ```
+
+## G-20u36e-controlled-save-ui-visible-verification — complete (prep)
+
+- **Gate:** `gosakiDiscographyControlledSaveUiVisibleVerificationPrepared: true`
+- **Admin URL:** `https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/admin/`
+- **Public URL:** `https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/discography/`
+- **Search:** `On a Clear Day [CMS Kit staging G-20u36e]` · `Like a Lover`
+- **Delta:** local live SSR can show new title; packaged STG admin/public are build-time — lag expected
+- **Not done:** Save · SQL · Edge · package · FTP
+- **Next:** **G-20u36e-controlled-save-ui-visible-verification-result-record**
 
 ## G-20u36e-controlled-save-post-close-result-record — complete
 
 - **Gate:** `gosakiDiscographyControlledSavePostCloseCompleted: true`
-- **First controlled Save:** **PASS**
-- **Permission close:** **PASS** (`Success. No rows returned`)
-- **Post-close SELECT:** **PASS**
-- **Final title:** `On a Clear Day [CMS Kit staging G-20u36e]`
-- **Grants:** title UPDATE **0** · table UPDATE **0** · anon write **0**
-- **Policy:** G-20u36e restrictive **removed** · admin_all **2** · RLS **on**
-- **Additional Save:** **not allowed**
-- **service_role / production:** unused / unchanged
-- **Next:** **G-20u36e-controlled-save-ui-visible-verification** (or completion handoff)
+- **Follow-on:** UI-visible verification prep — **complete**
+- **Next:** ui-visible-verification-result-record
 
 ## G-20u36e-controlled-save-execution-result-record — complete
 

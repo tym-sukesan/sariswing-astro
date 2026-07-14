@@ -161,6 +161,9 @@ assert(
   "AI next-actions ui or handoff or post-close",
   nextActions.includes(NEXT_UI) ||
     nextActions.includes(NEXT_HANDOFF) ||
+    nextActions.includes(
+      "G-20u36e-controlled-save-ui-visible-verification-result-record",
+    ) ||
     nextActions.includes(PHASE),
 );
 assert(

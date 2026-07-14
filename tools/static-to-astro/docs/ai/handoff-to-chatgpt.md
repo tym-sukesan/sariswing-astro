@@ -5,20 +5,26 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36e-controlled-save-ui-visible-verification — complete (prep).
-Next: G-20u36e-controlled-save-ui-visible-verification-result-record (operator browser check).
-DB title updated. STG public/packaged admin may still show old baked HTML until package+upload.
+Current phase: G-20u36e-controlled-save-ui-visible-verification-result-record — complete.
+Next: G-20u36e-controlled-save-static-package-regeneration-prep.
+Admin/Public still show old title. DB Save PASS. Static snapshot lag.
 ```
+
+## G-20u36e-controlled-save-ui-visible-verification-result-record — complete
+
+- **Gate:** `gosakiDiscographyControlledSaveUiVisibleVerificationResultRecorded: true`
+- **Admin:** new title **見えない** · `Like a Lover` / old title **見える**
+- **Public:** new title **見えない** · `Like a Lover` / old title **見える**
+- **DB Save / permission close:** remain **PASS**
+- **Cause:** likely **static package / build-time snapshot lag**
+- **Not done:** package · FTP/upload · Save
+- **Next:** **G-20u36e-controlled-save-static-package-regeneration-prep**
 
 ## G-20u36e-controlled-save-ui-visible-verification — complete (prep)
 
 - **Gate:** `gosakiDiscographyControlledSaveUiVisibleVerificationPrepared: true`
-- **Admin URL:** `https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/admin/`
-- **Public URL:** `https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/discography/`
-- **Search:** `On a Clear Day [CMS Kit staging G-20u36e]` · `Like a Lover`
-- **Delta:** local live SSR can show new title; packaged STG admin/public are build-time — lag expected
-- **Not done:** Save · SQL · Edge · package · FTP
-- **Next:** **G-20u36e-controlled-save-ui-visible-verification-result-record**
+- **Follow-on:** result — **recorded**
+- **Next:** static-package-regeneration-prep
 
 ## G-20u36e-controlled-save-post-close-result-record — complete
 

@@ -137,6 +137,9 @@ assert(
     nextActions.includes(
       "G-20u36e-controlled-save-ui-visible-verification-result-record",
     ) ||
+    nextActions.includes(
+      "G-20u36e-controlled-save-static-package-regeneration-prep",
+    ) ||
     nextActions.includes("completion handoff"),
 );
 assert(

@@ -163,6 +163,7 @@
     "verify:g20u36e-controlled-save-auth-jwt-admin-probe-ui-package-preflight-prep": "node scripts/verify-g20u36e-controlled-save-auth-jwt-admin-probe-ui-package-preflight-prep.mjs",
     "verify:g20u36e-controlled-save-auth-jwt-admin-probe-ui-manual-ftp-upload-result": "node scripts/verify-g20u36e-controlled-save-auth-jwt-admin-probe-ui-manual-ftp-upload-result.mjs",
     "verify:g20u36e-controlled-save-auth-jwt-admin-probe-ui-stg-readonly-probe-preflight": "node scripts/verify-g20u36e-controlled-save-auth-jwt-admin-probe-ui-stg-readonly-probe-preflight.mjs",
+    "verify:g20u36e-controlled-save-auth-jwt-admin-probe-ui-stg-login-blocked-result": "node scripts/verify-g20u36e-controlled-save-auth-jwt-admin-probe-ui-stg-login-blocked-result.mjs",
     "verify:g20u18-cli-decoupling": "node scripts/verify-g20u18-package-json-cli-default-decoupling.mjs",
     "build:pilot:staging": "node scripts/build-site-package.mjs --site pilot-sample-static --profile staging",
     "build:pilot:staging:dry-run": "node scripts/build-site-package.mjs --site pilot-sample-static --profile staging --dry-run",

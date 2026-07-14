@@ -5,23 +5,30 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36e-controlled-save-auth-jwt-admin-probe-ui-stg-readonly-probe-preflight — complete.
-Preflight ready. After commit/push: STG login + one probe click (execution phase).
+Current phase: G-20u36e-controlled-save-auth-jwt-admin-probe-ui-stg-login-blocked-result-record — complete.
+STG login blocked (login button appears disabled). Diagnosis planning next. Do not click probe.
 ```
+
+## G-20u36e-controlled-save-auth-jwt-admin-probe-ui-stg-login-blocked-result-record — complete
+
+- **Phase:** G-20u36e-controlled-save-auth-jwt-admin-probe-ui-stg-login-blocked-result-record
+- **Gate:** `gosakiDiscographyControlledSaveAuthJwtAdminProbeUiStgLoginBlockedResultRecorded: true`
+- **STG:** login **blocked** · 未ログイン · Auth configured copy · login/logout/probe look **disabled**
+- **Probe panel:** `not_run` / `isAdmin=null` / `reasonCode=not_run` / `saveEnabled=false` / `diagnosticOnly=true`
+- **Not done:** UI fix · probe click · RPC · HTTP · SQL · DB write · operation=save · Save enable · FTP
+- **Package on STG:** sourceCommit `a92d45d7dd345aad9d1509d49f5949a3fa9b1ffe`
+- **service_role:** **not used**
+- **Readonly probe execution:** **deferred** until login works
+- **First controlled Save:** **still not allowed**
+- **Next:** **G-20u36e-controlled-save-auth-ui-login-blocked-diagnosis-planning**
 
 ## G-20u36e-controlled-save-auth-jwt-admin-probe-ui-stg-readonly-probe-preflight — complete
 
 - **Phase:** G-20u36e-controlled-save-auth-jwt-admin-probe-ui-stg-readonly-probe-preflight
 - **Gate:** `gosakiDiscographyControlledSaveAuthJwtAdminProbeUiStgReadonlyProbePreflightPrepared: true`
-- **Purpose:** Confirm operator JWT → DB `is_admin()` true · diagnostic only · does **not** arm Save
-- **URL:** `https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/admin/`
-- **Package on STG:** sourceCommit `a92d45d7dd345aad9d1509d49f5949a3fa9b1ffe`
-- **Checks:** pre-login · post-login · one allowed click · PASS/FAIL/ERROR/STOP · paste-safe fields
-- **Not done:** probe click · RPC · HTTP · SQL · DB write · operation=save · Save enable · FTP re-upload
-- **Never paste:** JWT · access_token · user_id · email · password · service_role
-- **service_role:** **not used**
-- **First controlled Save:** **still not allowed**
-- **Next:** **G-20u36e-controlled-save-auth-jwt-admin-probe-ui-stg-readonly-probe-execution** (after this preflight is on main)
+- **Purpose:** one-click STG `is_admin` checklist · diagnostic only
+- **Blocked by:** STG Auth login UX (see login-blocked result)
+- **Next:** diagnosis planning — **not** probe execution yet
 
 ## G-20u36e-controlled-save-auth-jwt-admin-probe-ui-manual-ftp-upload-result-record — complete
 

@@ -5,20 +5,30 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36e-controlled-save-permission-change-sql-prep — complete.
-Next: G-20u36e-controlled-save-permission-change-preflight-select-execution (operator runs preflight SELECT once). No apply yet. First controlled Save still not allowed.
+Current phase: G-20u36e-controlled-save-permission-change-preflight-select-result-record — complete.
+Next: G-20u36e-controlled-save-permission-change-apply-sql-extract (extract only — no Apply execution). First controlled Save still not allowed.
 ```
+
+## G-20u36e-controlled-save-permission-change-preflight-select-result-record — complete
+
+- **Phase:** G-20u36e-controlled-save-permission-change-preflight-select-result-record
+- **Gate:** `gosakiDiscographyControlledSavePermissionChangePreflightSelectResultRecorded: true`
+- **Preflight SELECT:** **PASS** · operator staging SQL Editor · `captured_at=2026-07-14T13:23:45.361706+00:00` · `data_mutation=false`
+- **Checks:** target_row_count=1 · title=`On a Clear Day` · track_count=8 · track_7=`Like a Lover` · grants SELECT-only · collision=0 · RLS on · admin_all=2
+- **Not done:** Apply · GRANT/REVOKE · CREATE POLICY · DB write · operation=save · Save · Edge
+- **First controlled Save:** **still not allowed**
+- **Next:** **G-20u36e-controlled-save-permission-change-apply-sql-extract**
 
 ## G-20u36e-controlled-save-permission-change-sql-prep — complete
 
 - **Phase:** G-20u36e-controlled-save-permission-change-sql-prep
 - **Gate:** `gosakiDiscographyControlledSavePermissionChangeSqlPrepared: true`
-- **Prepared (not executed):** preflight SELECT · apply (GRANT UPDATE(title) + RESTRICTIVE policy) · post-apply SELECT · rollback · post-rollback SELECT
+- **Prepared:** preflight SELECT · apply (GRANT UPDATE(title) + RESTRICTIVE policy) · post-apply SELECT · rollback · post-rollback SELECT
 - **Policy name:** `discography_tracks_g20u36e_controlled_save_title_update_restrictive`
 - **Apply rules:** no DROP POLICY IF EXISTS · no data UPDATE · no anon grant · no service_role · BEGIN/COMMIT preferred
-- **Not done:** any SQL run · GRANT/POLICY apply · DB write · operation=save · Save · Edge
+- **Follow-on:** preflight SELECT — **PASS recorded**
 - **First controlled Save:** **still not allowed**
-- **Next:** **G-20u36e-controlled-save-permission-change-preflight-select-execution**
+- **Next:** apply-sql-extract
 
 ## G-20u36e-controlled-save-permission-change-planning — complete
 

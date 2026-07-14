@@ -5,9 +5,22 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36e-controlled-save-auth-ui-login-blocked-local-verify — complete.
-Next: G-20u36e-controlled-save-auth-ui-login-blocked-package-generate-freshness. STG still on a92d45d (login fix not reflected).
+Current phase: G-20u36e-controlled-save-auth-ui-login-blocked-manual-ftp-reupload-result-record — complete.
+Next: G-20u36e-controlled-save-auth-ui-login-blocked-stg-login-check. Do not click probe until after login check.
 ```
+
+## G-20u36e-controlled-save-auth-ui-login-blocked-manual-ftp-reupload-result-record — complete
+
+- **Phase:** G-20u36e-controlled-save-auth-ui-login-blocked-manual-ftp-reupload-result-record
+- **Gate:** `gosakiDiscographyControlledSaveAuthUiLoginBlockedManualFtpReuploadResultRecorded: true`
+- **Upload:** operator FileZilla · `public-dist/` contents → `/cms-kit-staging/gosaki-piano/`
+- **sourceCommit:** `724d951f4d64eb5fa03e96d9d97c79da1c91bade`
+- **STG admin:** display **PASS** · login button **有効表示** · DB admin probe button **表示改善**
+- **Probe panel:** `not_run` / `isAdmin=null` / `reasonCode=not_run` / `saveEnabled=false` / `diagnosticOnly=true`
+- **Not done:** login · probe click · RPC · HTTP · SQL · DB write · operation=save · Save enable
+- **service_role:** **not used** · JWT/token/user_id/email **not in probe result**
+- **First controlled Save:** **still not allowed**
+- **Next:** **G-20u36e-controlled-save-auth-ui-login-blocked-stg-login-check**
 
 ## G-20u36e-controlled-save-auth-ui-login-blocked-local-verify — complete
 
@@ -17,10 +30,9 @@ Next: G-20u36e-controlled-save-auth-ui-login-blocked-package-generate-freshness.
 - **Auth:** body-only early return · input/change/keyup · autofill 0/250/1000 · YouTube optional · probe try/catch — **PASS**
 - **Save separation / secrets:** no Save arm · no operation=save · no token/user_id/email in probe · no service_role — **PASS**
 - **Local dry-run:** `build:gosaki:staging:dry-run` **DRY-RUN PASS** (no convert/package/FTP)
-- **STG:** login-button fix **未反映** — package sourceCommit still `a92d45d7dd345aad9d1509d49f5949a3fa9b1ffe`
-- **Not done:** package · FTP · browser · probe · RPC · SQL · DB write · operation=save · Save
+- **Follow-on:** package at `724d951…` · manual FTP reupload — **result recorded**
 - **First controlled Save:** **still not allowed**
-- **Next:** **G-20u36e-controlled-save-auth-ui-login-blocked-package-generate-freshness**
+- **Next:** package-generate → FTP reupload — **complete**
 
 ## G-20u36e-controlled-save-auth-ui-login-blocked-tools-draft — complete
 

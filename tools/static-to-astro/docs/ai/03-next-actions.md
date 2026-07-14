@@ -1,6 +1,17 @@
 Last updated: 2026-07-14
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-auth-ui-login-blocked-manual-ftp-reupload-result-record — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u36e-controlled-save-auth-ui-login-blocked-manual-ftp-reupload-result-record` |
+| Gate | `gosakiDiscographyControlledSaveAuthUiLoginBlockedManualFtpReuploadResultRecorded: true` |
+| Upload | operator FileZilla · sourceCommit `724d951…` |
+| STG display | **PASS** · login 有効表示 · probe 表示改善 · idle `not_run` |
+| Not done | login · probe · RPC · Save |
+| Next | G-20u36e-controlled-save-auth-ui-login-blocked-stg-login-check |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-auth-ui-login-blocked-local-verify — complete
 
 | Item | Value |
@@ -9,9 +20,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Gate | `gosakiDiscographyControlledSaveAuthUiLoginBlockedLocalVerified: true` |
 | CSS / auth / Save separation | **PASS** |
 | Dry-run build | **DRY-RUN PASS** |
-| STG | **未反映** (still `a92d45d…`) |
-| Not done | package · FTP · browser · probe · Save |
-| Next | G-20u36e-controlled-save-auth-ui-login-blocked-package-generate-freshness |
+| STG | package + reupload — **result recorded** |
+| Not done | login · probe · Save |
+| Next | package-generate → manual FTP reupload — **complete** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-auth-ui-login-blocked-tools-draft — complete
 

@@ -1,15 +1,24 @@
 Last updated: 2026-07-14
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-edge-deploy-result-and-smoke-prep — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | deploy-result-record + smoke-readonly-check-prep |
+| Gates | EdgeDeployedToStaging · SmokeReadonlyCheckPrepared |
+| Deploy | **PASS** (operator) · Docker warn OK |
+| HTTP / Save | **not sent / not executed** |
+| Next | G-20u36e-controlled-save-smoke-readonly-check-execution |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-edge-deploy-prep — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-20u36e-controlled-save-edge-deploy-prep` |
 | Gate | `gosakiDiscographyControlledSaveEdgeDeployPrepared: true` |
-| Function | `gosaki-discography-save-dry-run` → staging `kmjqppxjdnwwrtaeqjta` |
-| Deploy | **not executed** |
-| Next | G-20u36e-controlled-save-edge-deploy-execution |
+| Follow-on | deploy — **PASS recorded** |
+| Next | smoke-readonly-check-execution |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-handler-permission-aware-local-verification — complete
 

@@ -161,6 +161,7 @@
     "verify:g20u36e-controlled-save-handler-permission-aware-local-implementation": "node scripts/verify-g20u36e-controlled-save-handler-permission-aware-local-implementation.mjs",
     "verify:g20u36e-controlled-save-handler-permission-aware-local-verification": "node scripts/verify-g20u36e-controlled-save-handler-permission-aware-local-verification.mjs",
     "verify:g20u36e-controlled-save-edge-deploy-prep": "node scripts/verify-g20u36e-controlled-save-edge-deploy-prep.mjs",
+    "verify:g20u36e-controlled-save-edge-deploy-result-and-smoke-prep": "node scripts/verify-g20u36e-controlled-save-edge-deploy-result-and-smoke-prep.mjs",
     "verify:g20u36e-controlled-save-auth-jwt-feasibility-plan": "node scripts/verify-g20u36e-controlled-save-auth-jwt-feasibility-plan.mjs",
     "verify:g20u36e-controlled-save-auth-jwt-feasibility-preflight": "node scripts/verify-g20u36e-controlled-save-auth-jwt-feasibility-preflight.mjs",
     "verify:g20u36e-controlled-save-auth-admin-rls-select-prep": "node scripts/verify-g20u36e-controlled-save-auth-admin-rls-select-prep.mjs",

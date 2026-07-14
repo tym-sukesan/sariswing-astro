@@ -5,21 +5,33 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36e-controlled-save-edge-deploy-prep — complete.
-Next: G-20u36e-controlled-save-edge-deploy-execution (operator manual after review).
-Deploy command prepared. Edge deploy NOT executed. No Save / operation=save yet.
+Current phase: G-20u36e-controlled-save-edge-deploy-result-and-smoke-prep — complete.
+Next: G-20u36e-controlled-save-smoke-readonly-check-execution (OPTIONS + dryRun only — no Save).
+Staging Edge deploy PASS. operation=save still forbidden.
 ```
+
+## G-20u36e-controlled-save-edge-deploy-result-record — complete
+
+- **Gate:** `gosakiDiscographyControlledSaveEdgeDeployedToStaging: true`
+- **Deploy:** operator · **PASS** · `gosaki-discography-save-dry-run` @ `kmjqppxjdnwwrtaeqjta`
+- **Docker warning:** present · did **not** block deploy
+- **Uploaded:** `index.ts` · `handler.ts`
+- **Not done:** operation=save · Save · DB write · Rollback
+- **Next:** smoke-readonly-check-execution
+
+## G-20u36e-controlled-save-smoke-readonly-check-prep — complete
+
+- **Gate:** `gosakiDiscographyControlledSaveSmokeReadonlyCheckPrepared: true`
+- **HTTP:** **not sent** this phase
+- **Safe sequence:** OPTIONS → (optional UI admin probe) → Edge dryRun → pre-save SELECT → Save judgment later
+- **Forbidden:** `operation=save` · real JWT in docs · production
+- **Placeholder:** `<OPERATOR_JWT>`
+- **Next:** **G-20u36e-controlled-save-smoke-readonly-check-execution**
 
 ## G-20u36e-controlled-save-edge-deploy-prep — complete
 
-- **Phase:** G-20u36e-controlled-save-edge-deploy-prep
-- **Gate:** `gosakiDiscographyControlledSaveEdgeDeployPrepared: true`
-- **Target:** `gosaki-discography-save-dry-run` · `--project-ref kmjqppxjdnwwrtaeqjta`
-- **Production STOP:** `vsbvndwuajjhnzpohghh`
-- **Command prepared (not run):** `supabase functions deploy gosaki-discography-save-dry-run --project-ref kmjqppxjdnwwrtaeqjta`
-- **After deploy:** smoke → non-save checks → pre-save SELECT · **not** immediate Save
-- **Not done:** Edge deploy · operation=save · Save · Rollback · DB write
-- **Next:** **G-20u36e-controlled-save-edge-deploy-execution**
+- **Follow-on:** deploy — **PASS recorded**
+- **Next:** smoke-readonly-check-execution
 
 ## G-20u36e-controlled-save-handler-permission-aware-local-verification — complete
 

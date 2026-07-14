@@ -1,6 +1,18 @@
 Last updated: 2026-07-14
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-auth-ui-login-blocked-local-verify — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u36e-controlled-save-auth-ui-login-blocked-local-verify` |
+| Gate | `gosakiDiscographyControlledSaveAuthUiLoginBlockedLocalVerified: true` |
+| CSS / auth / Save separation | **PASS** |
+| Dry-run build | **DRY-RUN PASS** |
+| STG | **未反映** (still `a92d45d…`) |
+| Not done | package · FTP · browser · probe · Save |
+| Next | G-20u36e-controlled-save-auth-ui-login-blocked-package-generate-freshness |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-auth-ui-login-blocked-tools-draft — complete
 
 | Item | Value |
@@ -9,7 +21,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Gate | `gosakiDiscographyControlledSaveAuthUiLoginBlockedToolsDrafted: true` |
 | Draft | CSS `:not(:disabled)` · auth IIFE harden · probe try/catch |
 | Not done | package · FTP · browser · probe · Save |
-| Next | G-20u36e-controlled-save-auth-ui-login-blocked-local-verify |
+| Next | local-verify — **complete** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-auth-ui-login-blocked-diagnosis-planning — complete
 

@@ -5,19 +5,33 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36e-controlled-save-pre-save-select-prep-and-extract — complete.
-Next: G-20u36e-controlled-save-pre-save-select-execution (operator SELECT-only · no Save).
-SQL prepared. SQL not executed. operation=save still forbidden.
+Current phase: G-20u36e-controlled-save-pre-save-result-and-save-execution-prep — complete.
+Next: G-20u36e-controlled-save-execution (operator curl once · Save).
+Pre-save SELECT PASS. Save curl prepared but NOT sent.
 ```
+
+## G-20u36e-controlled-save-pre-save-select-result-record — complete
+
+- **Gate:** `gosakiDiscographyControlledSavePreSaveSelectPassed: true`
+- **Judgment:** Pre-save SELECT **PASS** · execution conditions **satisfied**
+- **target_title:** still `On a Clear Day`
+- **grants/policy/RLS:** title UPDATE=1 · table UPDATE=0 · anon write=0 · restrictive=1 · RLS on
+- **Not done:** operation=save · Save · Rollback
+- **Next:** execution (after prep)
+
+## G-20u36e-controlled-save-execution-prep — complete
+
+- **Gate:** `gosakiDiscographyControlledSaveExecutionPrepared: true`
+- **Endpoint:** staging `gosaki-discography-save-dry-run`
+- **Body:** `operation=save` · approvalId · sliceId · targetRowId · before/after titles
+- **Auth:** `Authorization: Bearer $OPERATOR_JWT` · `apikey: $STAGING_ANON_KEY`
+- **HTTP:** **not sent** this phase
+- **Next:** **G-20u36e-controlled-save-execution**
 
 ## G-20u36e-controlled-save-pre-save-select-prep-and-extract — complete
 
-- **Gate:** `gosakiDiscographyControlledSavePreSaveSelectPrepared: true`
-- **SQL:** SELECT-only · column `g20u36e_controlled_save_pre_save_snapshot`
-- **Policy name:** `discography_tracks_g20u36e_controlled_save_title_update_restric`
-- **Target:** row `e30c5ea9-…` · title still expected `On a Clear Day`
-- **Not done:** SQL execution · operation=save · Save · Rollback · DB write
-- **Next:** **G-20u36e-controlled-save-pre-save-select-execution**
+- **Follow-on:** Pre-save SELECT — **PASS recorded** · Save execution prep — **complete**
+- **Next:** controlled-save-execution
 
 ## G-20u36e-controlled-save-smoke-readonly-check-result-record — complete
 

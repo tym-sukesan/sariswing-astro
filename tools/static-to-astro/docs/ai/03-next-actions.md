@@ -1,15 +1,24 @@
 Last updated: 2026-07-14
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-pre-save-result-and-save-execution-prep — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | pre-save-result-record + execution-prep |
+| Gates | PreSaveSelectPassed · ExecutionPrepared |
+| Pre-save | **PASS** · title still old |
+| Save curl | prepared · **not sent** |
+| Next | G-20u36e-controlled-save-execution |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-pre-save-select-prep-and-extract — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-20u36e-controlled-save-pre-save-select-prep-and-extract` |
 | Gate | `gosakiDiscographyControlledSavePreSaveSelectPrepared: true` |
-| SQL | SELECT-only prepared · **not executed** |
-| Save | **not executed** |
-| Next | G-20u36e-controlled-save-pre-save-select-execution |
+| Follow-on | Pre-save SELECT — **PASS** · execution prep — **complete** |
+| Next | controlled-save-execution |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-smoke-readonly-check-result-record — complete
 

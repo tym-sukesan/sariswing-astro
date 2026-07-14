@@ -185,7 +185,10 @@ assert(
 );
 assert(
   "AI next-actions pre-save-select-execution or prep",
-  nextActions.includes(NEXT) || nextActions.includes(PHASE),
+  nextActions.includes(NEXT) ||
+    nextActions.includes("G-20u36e-controlled-save-execution") ||
+    nextActions.includes("G-20u36e-controlled-save-pre-save-result-and-save-execution-prep") ||
+    nextActions.includes(PHASE),
 );
 assert(
   "AI handoff pre-save select prep",

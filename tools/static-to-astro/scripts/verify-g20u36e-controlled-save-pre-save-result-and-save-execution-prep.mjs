@@ -197,6 +197,8 @@ assert(
 assert(
   "AI next-actions execution or prep",
   nextActions.includes("G-20u36e-controlled-save-execution") ||
+    nextActions.includes("G-20u36e-controlled-save-post-save-select-execution") ||
+    nextActions.includes("G-20u36e-controlled-save-execution-result-record") ||
     nextActions.includes(EXEC_PHASE) ||
     nextActions.includes(PRE_SAVE_PHASE),
 );

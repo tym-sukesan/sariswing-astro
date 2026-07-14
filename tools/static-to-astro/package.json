@@ -165,6 +165,7 @@
     "verify:g20u36e-controlled-save-smoke-readonly-check-result": "node scripts/verify-g20u36e-controlled-save-smoke-readonly-check-result.mjs",
     "verify:g20u36e-controlled-save-pre-save-select-prep": "node scripts/verify-g20u36e-controlled-save-pre-save-select-prep.mjs",
     "verify:g20u36e-controlled-save-pre-save-result-and-save-execution-prep": "node scripts/verify-g20u36e-controlled-save-pre-save-result-and-save-execution-prep.mjs",
+    "verify:g20u36e-controlled-save-execution-result-and-post-save-select-prep": "node scripts/verify-g20u36e-controlled-save-execution-result-and-post-save-select-prep.mjs",
     "verify:g20u36e-controlled-save-auth-jwt-feasibility-plan": "node scripts/verify-g20u36e-controlled-save-auth-jwt-feasibility-plan.mjs",
     "verify:g20u36e-controlled-save-auth-jwt-feasibility-preflight": "node scripts/verify-g20u36e-controlled-save-auth-jwt-feasibility-preflight.mjs",
     "verify:g20u36e-controlled-save-auth-admin-rls-select-prep": "node scripts/verify-g20u36e-controlled-save-auth-admin-rls-select-prep.mjs",

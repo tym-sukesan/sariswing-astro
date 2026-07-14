@@ -5,28 +5,41 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36e-controlled-save-pre-save-result-and-save-execution-prep — complete.
-Next: G-20u36e-controlled-save-execution (operator curl once · Save).
-Pre-save SELECT PASS. Save curl prepared but NOT sent.
+Current phase: G-20u36e-controlled-save-execution-result-and-post-save-select-prep — complete.
+Next: G-20u36e-controlled-save-post-save-select-execution (SELECT-only · no Rollback yet).
+First controlled Save PASS. Permission/RLS still open. Additional Save forbidden.
 ```
+
+## G-20u36e-controlled-save-execution-result-record — complete
+
+- **Gate:** `gosakiDiscographyControlledSaveExecuted: true`
+- **First controlled Save:** **PASS** · `ok=true` · `updatedRows=1` · status 200
+- **Titles:** `On a Clear Day` → `On a Clear Day [CMS Kit staging G-20u36e]`
+- **readBack:** trackCount 8 · track_7 Like a Lover · noAddedRemoved · targetTitle=new
+- **Permission/RLS:** **still open**
+- **Additional Save:** **not allowed**
+- **Secrets:** not recorded · service_role not used
+- **Next:** post-save SELECT execution
+
+## G-20u36e-controlled-save-post-save-select-prep — complete
+
+- **Gate:** `gosakiDiscographyControlledSavePostSaveSelectPrepared: true`
+- **SQL:** SELECT-only · column `g20u36e_controlled_save_post_save_snapshot`
+- **Expect:** new title · old_title_count_for_target=0 · grants still open
+- **SQL:** **not executed** this phase
+- **Next:** **G-20u36e-controlled-save-post-save-select-execution**
 
 ## G-20u36e-controlled-save-pre-save-select-result-record — complete
 
 - **Gate:** `gosakiDiscographyControlledSavePreSaveSelectPassed: true`
-- **Judgment:** Pre-save SELECT **PASS** · execution conditions **satisfied**
-- **target_title:** still `On a Clear Day`
-- **grants/policy/RLS:** title UPDATE=1 · table UPDATE=0 · anon write=0 · restrictive=1 · RLS on
-- **Not done:** operation=save · Save · Rollback
-- **Next:** execution (after prep)
+- **Follow-on:** First Save — **PASS recorded**
+- **Next:** post-save-select-execution
 
 ## G-20u36e-controlled-save-execution-prep — complete
 
 - **Gate:** `gosakiDiscographyControlledSaveExecutionPrepared: true`
-- **Endpoint:** staging `gosaki-discography-save-dry-run`
-- **Body:** `operation=save` · approvalId · sliceId · targetRowId · before/after titles
-- **Auth:** `Authorization: Bearer $OPERATOR_JWT` · `apikey: $STAGING_ANON_KEY`
-- **HTTP:** **not sent** this phase
-- **Next:** **G-20u36e-controlled-save-execution**
+- **Follow-on:** Save — **PASS recorded**
+- **Next:** post-save-select-execution
 
 ## G-20u36e-controlled-save-pre-save-select-prep-and-extract — complete
 

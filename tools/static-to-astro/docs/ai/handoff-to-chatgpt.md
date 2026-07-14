@@ -5,9 +5,22 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36e-controlled-save-auth-admin-rls-select-result-record — complete.
-Snapshot PASS. JWT-scoped admin probe planning next.
+Current phase: G-20u36e-controlled-save-auth-jwt-admin-probe-planning — complete.
+Option C recommended. JWT admin probe UI planning next.
 ```
+
+## G-20u36e-controlled-save-auth-jwt-admin-probe-planning — complete
+
+- **Phase:** G-20u36e-controlled-save-auth-jwt-admin-probe-planning
+- **Gate:** `gosakiDiscographyControlledSaveAuthJwtAdminProbePlanPrepared: true`
+- **Recommended:** **Option C** — staging admin UI Supabase client `rpc('is_admin')` read-only · JWT never displayed
+- **Alternate:** Option A — Edge `operation=adminProbe` (Save-path parity · needs deploy later)
+- **Rejected:** Option D SQL Editor (not JWT context) · Option E service_role / user dump (**STOP**)
+- **Conditionally later:** Option B direct PostgREST RPC (needs RPC preflight)
+- **Not done:** probe impl · SQL · RPC/HTTP execution · GRANT/RLS · DB write · Edge · Save
+- **service_role:** **not used**
+- **First controlled Save:** **still not allowed**
+- **Next:** **G-20u36e-controlled-save-auth-jwt-admin-probe-ui-planning**
 
 ## G-20u36e-controlled-save-auth-admin-rls-select-result-record — complete
 
@@ -23,7 +36,7 @@ Snapshot PASS. JWT-scoped admin probe planning next.
 - **First controlled Save:** **still not allowed**
 - **Not done:** SQL re-run · GRANT/REVOKE · RLS change · DB write · Edge · deploy · operation=save
 - **service_role:** **not used**
-- **Next:** **G-20u36e-controlled-save-auth-jwt-admin-probe-planning** (before permission-change SQL)
+- **Next:** G-20u36e-controlled-save-auth-jwt-admin-probe-planning — **complete**
 
 ## G-20u36e-controlled-save-auth-admin-rls-select-prep — complete
 

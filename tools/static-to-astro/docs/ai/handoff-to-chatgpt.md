@@ -5,23 +5,34 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36e-controlled-save-auth-jwt-admin-probe-ui-package-preflight-prep — complete.
-Prep ready. Package generate+freshness next (after this prep is on main).
+Current phase: G-20u36e-controlled-save-auth-jwt-admin-probe-ui-manual-ftp-upload-result-record — complete.
+STG shows probe UI (signed-out, not_run). Login-ready check next. Do not click probe yet.
 ```
+
+## G-20u36e-controlled-save-auth-jwt-admin-probe-ui-manual-ftp-upload-result-record — complete
+
+- **Phase:** G-20u36e-controlled-save-auth-jwt-admin-probe-ui-manual-ftp-upload-result-record
+- **Gate:** `gosakiDiscographyControlledSaveAuthJwtAdminProbeUiManualFtpUploadResultRecorded: true`
+- **Upload:** operator FileZilla · `public-dist/` → `/cms-kit-staging/gosaki-piano/`
+- **sourceCommit:** `a92d45d7dd345aad9d1509d49f5949a3fa9b1ffe`
+- **STG admin:** display **PASS** (screenshot) · **未ログイン**
+- **Probe UI:** **DB admin probe (read-only)** visible · `adminProbeStatus=not_run` · `isAdmin=null` · `reasonCode=not_run` · `saveEnabled=false` · `diagnosticOnly=true`
+- **Not done:** probe click · RPC · HTTP intentional · SQL · DB write · operation=save · Save enable
+- **Never shown in probe result:** JWT · access_token · user_id · email · service_role
+- **Production:** **unchanged**
+- **service_role:** **not used**
+- **First controlled Save:** **still not allowed**
+- **Next:** **G-20u36e-controlled-save-auth-jwt-admin-probe-ui-stg-login-ready-check** (or stg-readonly-probe-preflight)
 
 ## G-20u36e-controlled-save-auth-jwt-admin-probe-ui-package-preflight-prep — complete
 
 - **Phase:** G-20u36e-controlled-save-auth-jwt-admin-probe-ui-package-preflight-prep
 - **Gate:** `gosakiDiscographyControlledSaveAuthJwtAdminProbeUiPackagePreflightPrepared: true`
-- **Command:** `npm run build:gosaki:staging` (preferred) · optional `manual-upload:package:gosaki:staging`
-- **Freshness:** clean git · HEAD=origin/main · MANIFEST.sourceCommit=HEAD · no post-gen commit without regen
-- **Upload:** `output/manual-upload/gosaki-piano/public-dist/` contents → `/cms-kit-staging/gosaki-piano/` · FileZilla overwrite OK · delete/mirror/CLI FTP **NG**
-- **Why prep-first:** generating before this prep commit would stale MANIFEST vs new HEAD
-- **Not done:** package generate · output update · FTP · browser probe · Save
-- **STG:** probe UI **still not reflecting**
+- **Command:** `npm run build:gosaki:staging` (preferred)
+- **Upload path:** `public-dist/` → `/cms-kit-staging/gosaki-piano/` · FileZilla overwrite OK
+- **Follow-on:** package generated at `a92d45d` · operator manual FTP — **result recorded**
 - **service_role:** **not used**
-- **First controlled Save:** **still not allowed**
-- **Next:** **G-20u36e-controlled-save-auth-jwt-admin-probe-ui-package-generate-freshness**
+- **Next:** generate-freshness / FTP — **upload result recorded**
 
 ## G-20u36e-controlled-save-auth-jwt-admin-probe-ui-local-verify — complete
 

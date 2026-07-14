@@ -1,14 +1,25 @@
 Last updated: 2026-07-14
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-auth-jwt-admin-probe-ui-manual-ftp-upload-result-record — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u36e-controlled-save-auth-jwt-admin-probe-ui-manual-ftp-upload-result-record` |
+| Gate | `gosakiDiscographyControlledSaveAuthJwtAdminProbeUiManualFtpUploadResultRecorded: true` |
+| Upload | operator FileZilla · sourceCommit `a92d45d…` |
+| STG display | **PASS** · signed-out · probe idle `not_run` · Save disabled |
+| Probe click | **not done** |
+| Next | G-20u36e-controlled-save-auth-jwt-admin-probe-ui-stg-login-ready-check |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-auth-jwt-admin-probe-ui-package-preflight-prep — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-20u36e-controlled-save-auth-jwt-admin-probe-ui-package-preflight-prep` |
 | Gate | `gosakiDiscographyControlledSaveAuthJwtAdminProbeUiPackagePreflightPrepared: true` |
-| Prep | command · freshness · upload target · STOP — **no package gen** |
-| Next | G-20u36e-controlled-save-auth-jwt-admin-probe-ui-package-generate-freshness |
+| Prep | command · freshness · upload target · STOP — **no package gen in prep** |
+| Next | generate-freshness → manual FTP — **upload result recorded** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-auth-jwt-admin-probe-ui-local-verify — complete
 

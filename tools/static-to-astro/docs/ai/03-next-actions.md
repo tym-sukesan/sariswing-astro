@@ -1,16 +1,25 @@
 Last updated: 2026-07-14
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-post-close-result-record — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u36e-controlled-save-post-close-result-record` |
+| Gate | `gosakiDiscographyControlledSavePostCloseCompleted: true` |
+| Save / close / post-close | **PASS** / **PASS** / **PASS** |
+| Grants / policy | title UPDATE **0** · restrictive **removed** |
+| Additional Save | **not allowed** |
+| Next | G-20u36e-controlled-save-ui-visible-verification |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-execution-result-and-post-save-select-prep — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | execution-result-record + post-save-select-prep |
 | Gates | ControlledSaveExecuted · PostSaveSelectPrepared |
-| First Save | **PASS** · once |
-| Permission / RLS | **still open** |
-| Post-save SQL | prepared · **not executed** |
-| Next | G-20u36e-controlled-save-post-save-select-execution |
+| Follow-on | permission close + post-close — **PASS recorded** |
+| Next | ui-visible-verification |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-pre-save-result-and-save-execution-prep — complete
 

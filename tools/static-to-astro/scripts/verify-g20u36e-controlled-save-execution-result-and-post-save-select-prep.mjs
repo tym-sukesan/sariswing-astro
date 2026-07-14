@@ -231,6 +231,8 @@ assert(
 assert(
   "AI next-actions post-save select or execution",
   nextActions.includes(NEXT) ||
+    nextActions.includes("G-20u36e-controlled-save-post-close-result-record") ||
+    nextActions.includes("G-20u36e-controlled-save-ui-visible-verification") ||
     nextActions.includes(EXEC_PHASE) ||
     nextActions.includes(POST_PHASE),
 );

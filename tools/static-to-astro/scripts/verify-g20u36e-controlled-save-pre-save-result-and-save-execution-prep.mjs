@@ -199,6 +199,8 @@ assert(
   nextActions.includes("G-20u36e-controlled-save-execution") ||
     nextActions.includes("G-20u36e-controlled-save-post-save-select-execution") ||
     nextActions.includes("G-20u36e-controlled-save-execution-result-record") ||
+    nextActions.includes("G-20u36e-controlled-save-post-close-result-record") ||
+    nextActions.includes("G-20u36e-controlled-save-ui-visible-verification") ||
     nextActions.includes(EXEC_PHASE) ||
     nextActions.includes(PRE_SAVE_PHASE),
 );

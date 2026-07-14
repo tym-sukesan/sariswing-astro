@@ -5,29 +5,35 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36e-controlled-save-execution-result-and-post-save-select-prep — complete.
-Next: G-20u36e-controlled-save-post-save-select-execution (SELECT-only · no Rollback yet).
-First controlled Save PASS. Permission/RLS still open. Additional Save forbidden.
+Current phase: G-20u36e-controlled-save-post-close-result-record — complete.
+Next: G-20u36e-controlled-save-ui-visible-verification (or completion handoff).
+First controlled Save PASS. Permission close PASS. Additional Save forbidden.
 ```
+
+## G-20u36e-controlled-save-post-close-result-record — complete
+
+- **Gate:** `gosakiDiscographyControlledSavePostCloseCompleted: true`
+- **First controlled Save:** **PASS**
+- **Permission close:** **PASS** (`Success. No rows returned`)
+- **Post-close SELECT:** **PASS**
+- **Final title:** `On a Clear Day [CMS Kit staging G-20u36e]`
+- **Grants:** title UPDATE **0** · table UPDATE **0** · anon write **0**
+- **Policy:** G-20u36e restrictive **removed** · admin_all **2** · RLS **on**
+- **Additional Save:** **not allowed**
+- **service_role / production:** unused / unchanged
+- **Next:** **G-20u36e-controlled-save-ui-visible-verification** (or completion handoff)
 
 ## G-20u36e-controlled-save-execution-result-record — complete
 
 - **Gate:** `gosakiDiscographyControlledSaveExecuted: true`
-- **First controlled Save:** **PASS** · `ok=true` · `updatedRows=1` · status 200
-- **Titles:** `On a Clear Day` → `On a Clear Day [CMS Kit staging G-20u36e]`
-- **readBack:** trackCount 8 · track_7 Like a Lover · noAddedRemoved · targetTitle=new
-- **Permission/RLS:** **still open**
-- **Additional Save:** **not allowed**
-- **Secrets:** not recorded · service_role not used
-- **Next:** post-save SELECT execution
+- **Follow-on:** permission close + post-close — **PASS recorded**
+- **Next:** ui-visible-verification
 
 ## G-20u36e-controlled-save-post-save-select-prep — complete
 
 - **Gate:** `gosakiDiscographyControlledSavePostSaveSelectPrepared: true`
-- **SQL:** SELECT-only · column `g20u36e_controlled_save_post_save_snapshot`
-- **Expect:** new title · old_title_count_for_target=0 · grants still open
-- **SQL:** **not executed** this phase
-- **Next:** **G-20u36e-controlled-save-post-save-select-execution**
+- **Follow-on:** post-close completed
+- **Next:** ui-visible-verification
 
 ## G-20u36e-controlled-save-pre-save-select-result-record — complete
 

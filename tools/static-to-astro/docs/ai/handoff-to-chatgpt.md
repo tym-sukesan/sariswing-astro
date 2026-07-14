@@ -5,20 +5,25 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36e-controlled-save-smoke-readonly-check-result-record — complete.
-Next: G-20u36e-controlled-save-pre-save-select-prep (SELECT-only · no Save).
-OPTIONS + dryRun/readBack PASS. operation=save still forbidden.
+Current phase: G-20u36e-controlled-save-pre-save-select-prep-and-extract — complete.
+Next: G-20u36e-controlled-save-pre-save-select-execution (operator SELECT-only · no Save).
+SQL prepared. SQL not executed. operation=save still forbidden.
 ```
+
+## G-20u36e-controlled-save-pre-save-select-prep-and-extract — complete
+
+- **Gate:** `gosakiDiscographyControlledSavePreSaveSelectPrepared: true`
+- **SQL:** SELECT-only · column `g20u36e_controlled_save_pre_save_snapshot`
+- **Policy name:** `discography_tracks_g20u36e_controlled_save_title_update_restric`
+- **Target:** row `e30c5ea9-…` · title still expected `On a Clear Day`
+- **Not done:** SQL execution · operation=save · Save · Rollback · DB write
+- **Next:** **G-20u36e-controlled-save-pre-save-select-execution**
 
 ## G-20u36e-controlled-save-smoke-readonly-check-result-record — complete
 
 - **Gate:** `gosakiDiscographyControlledSaveSmokeReadonlyCheckPassed: true`
-- **OPTIONS:** HTTP/2 200 · body `ok` · staging ref `kmjqppxjdnwwrtaeqjta`
-- **dryRun:** `ok=true` · `operation=dryRun` · `didWrite=false` · `dbWrite=false` · `networkWrite=false` · `saveEnabled=false`
-- **wouldWrite:** `true` (prediction only · placeholder tracks)
-- **readBack:** enabled · `trackCount=8` · releaseFound
-- **Not done:** operation=save · Save · DB write · Rollback
-- **Next:** **G-20u36e-controlled-save-pre-save-select-prep**
+- **Follow-on:** pre-save SELECT prep — **complete**
+- **Next:** pre-save-select-execution
 
 ## G-20u36e-controlled-save-edge-deploy-result-record — complete
 

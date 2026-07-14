@@ -140,7 +140,10 @@ assert(
 );
 assert(
   "AI next-actions pre-save-select-prep or smoke result",
-  nextActions.includes(NEXT) || nextActions.includes(PHASE),
+  nextActions.includes(NEXT) ||
+    nextActions.includes("G-20u36e-controlled-save-pre-save-select-prep-and-extract") ||
+    nextActions.includes("G-20u36e-controlled-save-pre-save-select-execution") ||
+    nextActions.includes(PHASE),
 );
 assert(
   "AI handoff smoke result",

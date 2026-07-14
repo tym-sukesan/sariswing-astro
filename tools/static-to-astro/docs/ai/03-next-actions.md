@@ -1,15 +1,25 @@
 Last updated: 2026-07-14
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-pre-save-select-prep-and-extract — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u36e-controlled-save-pre-save-select-prep-and-extract` |
+| Gate | `gosakiDiscographyControlledSavePreSaveSelectPrepared: true` |
+| SQL | SELECT-only prepared · **not executed** |
+| Save | **not executed** |
+| Next | G-20u36e-controlled-save-pre-save-select-execution |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-smoke-readonly-check-result-record — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-20u36e-controlled-save-smoke-readonly-check-result-record` |
 | Gate | `gosakiDiscographyControlledSaveSmokeReadonlyCheckPassed: true` |
-| OPTIONS / dryRun | **PASS** · didWrite/dbWrite/networkWrite false |
-| Save | **not executed** |
-| Next | G-20u36e-controlled-save-pre-save-select-prep |
+| OPTIONS / dryRun | **PASS** |
+| Follow-on | pre-save SELECT prep — **complete** |
+| Next | pre-save-select-execution |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-edge-deploy-result-and-smoke-prep — complete
 

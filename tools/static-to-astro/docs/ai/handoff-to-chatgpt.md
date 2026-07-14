@@ -5,9 +5,22 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36e-controlled-save-auth-jwt-admin-probe-planning — complete.
-Option C recommended. JWT admin probe UI planning next.
+Current phase: G-20u36e-controlled-save-auth-jwt-admin-probe-ui-planning — complete.
+UI probe design ready. Tools draft next.
 ```
+
+## G-20u36e-controlled-save-auth-jwt-admin-probe-ui-planning — complete
+
+- **Phase:** G-20u36e-controlled-save-auth-jwt-admin-probe-ui-planning
+- **Gate:** `gosakiDiscographyControlledSaveAuthJwtAdminProbeUiPlanPrepared: true`
+- **Design:** Manual button near `#gra-auth` · `client.rpc('is_admin')` · status/reasonCode only
+- **Never show:** access_token · user_id · email in probe result · service_role
+- **Save:** fully decoupled — probe PASS does not arm Save
+- **Findings:** YouTube dry-run session precedent · discography endpoint uses anon · mock-allowlist ≠ DB admin
+- **Not done:** UI impl · RPC/HTTP · SQL · GRANT/RLS · Edge · Save
+- **service_role:** **not used**
+- **First controlled Save:** **still not allowed**
+- **Next:** **G-20u36e-controlled-save-auth-jwt-admin-probe-ui-tools-draft**
 
 ## G-20u36e-controlled-save-auth-jwt-admin-probe-planning — complete
 
@@ -20,7 +33,7 @@ Option C recommended. JWT admin probe UI planning next.
 - **Not done:** probe impl · SQL · RPC/HTTP execution · GRANT/RLS · DB write · Edge · Save
 - **service_role:** **not used**
 - **First controlled Save:** **still not allowed**
-- **Next:** **G-20u36e-controlled-save-auth-jwt-admin-probe-ui-planning**
+- **Next:** G-20u36e-controlled-save-auth-jwt-admin-probe-ui-planning — **complete**
 
 ## G-20u36e-controlled-save-auth-admin-rls-select-result-record — complete
 

@@ -1,6 +1,15 @@
 Last updated: 2026-07-14
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-auth-jwt-admin-probe-ui-planning — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u36e-controlled-save-auth-jwt-admin-probe-ui-planning` |
+| Gate | `gosakiDiscographyControlledSaveAuthJwtAdminProbeUiPlanPrepared: true` |
+| Design | Manual `#gra-auth` `rpc('is_admin')` · reasonCode · Save decoupled |
+| Next | G-20u36e-controlled-save-auth-jwt-admin-probe-ui-tools-draft |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-auth-jwt-admin-probe-planning — complete
 
 | Item | Value |
@@ -10,7 +19,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Recommended | **Option C** — admin UI `rpc('is_admin')` read-only |
 | Alternate | Option A — Edge adminProbe branch |
 | Rejected | Option D SQL Editor · Option E service_role dump |
-| Next | G-20u36e-controlled-save-auth-jwt-admin-probe-ui-planning |
+| Next | G-20u36e-controlled-save-auth-jwt-admin-probe-ui-planning — **complete** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-auth-admin-rls-select-result — complete
 

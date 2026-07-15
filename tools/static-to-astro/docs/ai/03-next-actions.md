@@ -1,15 +1,25 @@
 Last updated: 2026-07-14
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36f-discography-marker-title-restore-edge-deploy-result-record — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u36f-discography-marker-title-restore-edge-deploy-result-record` |
+| Gate | `gosakiDiscographyMarkerTitleRestoreEdgeDeployed: true` |
+| Deploy | **PASS** |
+| OPTIONS | **PASS** |
+| dryRun restore-shaped | safe FAIL · no DB write |
+| Next | G-20u36f-discography-marker-title-restore-preflight-select |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36f-discography-marker-title-restore-edge-deploy-prep — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-20u36f-discography-marker-title-restore-edge-deploy-prep` |
 | Gate | `gosakiDiscographyMarkerTitleRestoreEdgeDeployPrepared: true` |
-| Deploy | prepared · not executed |
-| Smoke | OPTIONS + dryRun only |
-| Next | G-20u36f-discography-marker-title-restore-edge-deploy-execution |
+| Follow-on | deploy + smoke — **recorded** |
+| Next | preflight-select |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36f-discography-marker-title-restore-handler-implementation — complete
 

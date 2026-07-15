@@ -5,20 +5,24 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36f-discography-marker-title-restore-edge-deploy-prep — complete.
-Deploy command + smoke prepared. Edge deploy not executed. Restore Save blocked.
-Next: edge-deploy-execution (operator manual deploy + OPTIONS/dryRun smoke).
+Current phase: G-20u36f-discography-marker-title-restore-edge-deploy-result-record — complete.
+Edge deploy PASS. OPTIONS PASS. dryRun restore-shaped safe FAIL (no DB write).
+Next: pre-restore SELECT (preflight-select). No Save yet.
 ```
+
+## G-20u36f-discography-marker-title-restore-edge-deploy-result-record — complete
+
+- **Gate:** `gosakiDiscographyMarkerTitleRestoreEdgeDeployed: true`
+- **Deploy:** operator **PASS** · ref `kmjqppxjdnwwrtaeqjta`
+- **OPTIONS:** **PASS** · dryRun restore-shaped: **safe FAIL** (contract mismatch · no DB write)
+- **Not done:** Save · SQL · permission open · package · FTP
+- **Next:** **G-20u36f-discography-marker-title-restore-preflight-select**
 
 ## G-20u36f-discography-marker-title-restore-edge-deploy-prep — complete
 
 - **Gate:** `gosakiDiscographyMarkerTitleRestoreEdgeDeployPrepared: true`
-- **Function:** `gosaki-discography-save-dry-run` · ref `kmjqppxjdnwwrtaeqjta`
-- **Deploy:** prepared · **not executed**
-- **Smoke:** OPTIONS + dryRun only · **no operation=save**
-- **Restore Save:** blocked until deploy result + pre-restore SELECT + permission open
-- **Not done:** Save · SQL · package · FTP
-- **Next:** **G-20u36f-discography-marker-title-restore-edge-deploy-execution**
+- **Follow-on:** deploy + smoke — **recorded**
+- **Next:** preflight-select
 
 ## G-20u36f-discography-marker-title-restore-handler-implementation — complete
 

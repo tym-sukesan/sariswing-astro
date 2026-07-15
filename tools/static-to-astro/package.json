@@ -189,6 +189,7 @@
     "verify:g20u38b2-gosaki-production-package-regeneration-at-current-head": "node scripts/verify-g20u38b2-gosaki-production-package-regeneration-at-current-head.mjs",
     "verify:g20u38c-gosaki-production-package-verification-review": "node scripts/verify-g20u38c-gosaki-production-package-verification-review.mjs",
     "verify:g20u38d-gosaki-production-hosting-not-ready-and-return-to-staging-p1-record": "node scripts/verify-g20u38d-gosaki-production-hosting-not-ready-and-return-to-staging-p1-record.mjs",
+    "verify:g20u39-gosaki-staging-p1-review-planning": "node scripts/verify-g20u39-gosaki-staging-p1-review-planning.mjs",
     "verify:g20i3-gosaki-production-manual-upload-verifier-drift-review": "node scripts/verify-g20i3-gosaki-production-manual-upload-verifier-drift-review.mjs",
     "verify:g20u36e-controlled-save-auth-jwt-feasibility-plan": "node scripts/verify-g20u36e-controlled-save-auth-jwt-feasibility-plan.mjs",
     "verify:g20u36e-controlled-save-auth-jwt-feasibility-preflight": "node scripts/verify-g20u36e-controlled-save-auth-jwt-feasibility-preflight.mjs",

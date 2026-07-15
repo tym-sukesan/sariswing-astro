@@ -5,12 +5,28 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u38d-gosaki-production-hosting-not-ready-and-return-to-staging-p1-record — complete.
+Current phase: G-20u39-gosaki-staging-p1-review-planning — complete.
 Current live production: Wix (https://www.gosaki-piano.com/).
-Replacement hosting: not contracted. Production upload blocked.
-Remote path confirmation must not be requested yet. FTP prep paused.
-Next: G-20u39 staging P1 (review planning or Contact HubSpot E2E).
+Replacement hosting: not contracted. Production FTP remote path not available.
+Production FTP preparation paused. HOSTING_READY: false. GO_LIVE_READY: false. PRODUCTION_UPLOAD_READY: false.
+STAGING_P1_REVIEW_PLANNED: true. PUBLIC_READY: CONDITIONAL.
+Next: G-20u39a-gosaki-staging-p1-contact-hubspot-submit-e2e-planning (planning only — no submit).
+Alternate: G-20u39b-gosaki-staging-p1-admin-mobile-left-align-polish.
 ```
+
+## G-20u39-gosaki-staging-p1-review-planning — complete
+
+- **Gate:** `gosakiStagingP1ReviewPlanned: true`
+- **STAGING_P1_REVIEW_PLANNED:** **true**
+- **Live production:** **Wix** — do not change
+- **Replacement hosting:** **not contracted** · remote path **not available**
+- **Production FTP prep:** **paused**
+- **HOSTING_READY / GO_LIVE_READY / PRODUCTION_UPLOAD_READY:** **false**
+- **PUBLIC_READY:** **CONDITIONAL**
+- **Active P1:** P1-CON1 (Contact HubSpot submit E2E) · P1-ADM-MOB1 (admin mobile left-align)
+- **Not done:** Contact submit · CSS · build · package · FTP · browser E2E · client contact
+- **Next:** **G-20u39a-gosaki-staging-p1-contact-hubspot-submit-e2e-planning**
+- **Alternate:** **G-20u39b-gosaki-staging-p1-admin-mobile-left-align-polish**
 
 ## G-20u38d-gosaki-production-hosting-not-ready-and-return-to-staging-p1-record — complete
 
@@ -20,7 +36,7 @@ Next: G-20u39 staging P1 (review planning or Contact HubSpot E2E).
 - **Production FTP track:** **paused** (G-20u38e–g blocked)
 - **G-20u38b2:** local package verify = useful prep · **not upload-ready**
 - **Not done:** remote path confirmation · FileZilla checklist · FTP · Wix change
-- **Next:** **G-20u39-gosaki-staging-p1-review-planning** or **G-20u39-gosaki-staging-p1-contact-hubspot-submit-e2e**
+- **Next:** — (superseded by G-20u39)
 
 ## G-20u38c-gosaki-production-package-verification-review — complete
 

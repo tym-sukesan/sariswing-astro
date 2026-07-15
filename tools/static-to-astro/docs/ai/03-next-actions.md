@@ -1,6 +1,32 @@
 Last updated: 2026-07-15
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u39-gosaki-staging-p1-review-planning — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u39-gosaki-staging-p1-review-planning` |
+| Gate | `gosakiStagingP1ReviewPlanned: true` |
+| STAGING_P1_REVIEW_PLANNED | **true** |
+| Current live production | **Wix** (`https://www.gosaki-piano.com/`) |
+| Replacement hosting | **not contracted** |
+| Production FTP remote path | **not available** |
+| Production FTP prep | **paused** |
+| HOSTING_READY | **false** |
+| GO_LIVE_READY | **false** |
+| PRODUCTION_UPLOAD_READY | **false** |
+| PUBLIC_READY | **CONDITIONAL** |
+| Active P1 | **P1-CON1** · **P1-ADM-MOB1** |
+| Next | **G-20u39a-gosaki-staging-p1-contact-hubspot-submit-e2e-planning** |
+| Alternate | **G-20u39b-gosaki-staging-p1-admin-mobile-left-align-polish** |
+
+```txt
+HOSTING_READY: false
+GO_LIVE_READY: false
+PRODUCTION_UPLOAD_READY: false
+PUBLIC_READY: CONDITIONAL
+```
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u38d-gosaki-production-hosting-not-ready-and-return-to-staging-p1-record — complete
 
 | Item | Value |
@@ -14,7 +40,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | GO_LIVE_READY | **false** |
 | PRODUCTION_UPLOAD_READY | **false** |
 | Production FTP prep | **paused** |
-| Next | **G-20u39-gosaki-staging-p1-review-planning** |
+| Next | — (superseded by G-20u39) |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u38c-gosaki-production-package-verification-review — complete
 

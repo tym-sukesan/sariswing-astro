@@ -5,11 +5,20 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36f-discography-marker-title-restore-manual-upload-ui-pass-result — complete.
-Package regen PASS. Manual FTP done. Admin + Public UI PASS.
-Marker removed. On a Clear Day restored. Like a Lover preserved.
-Next: slice-complete record.
+Current phase: G-20u36f-discography-marker-title-restore-slice-complete — COMPLETE.
+Restore full loop PASS. DB + STG UI restored. Permission closed. Regression 23/23 PASS.
+Uploaded package sourceCommit e3616a3 deployed to STG. HEAD f4265b9 — reupload requires regen.
+Next candidates: Gosaki public-readiness QA · Discography Save UI · Schedule/YouTube/About/Contact/Link/Home.
 ```
+
+## G-20u36f-discography-marker-title-restore-slice-complete — COMPLETE
+
+- **Gate:** `gosakiDiscographyMarkerTitleRestoreSliceCompleted: true`
+- **Result:** **COMPLETE** · restore full loop **PASS**
+- **Title:** marker **removed** · `On a Clear Day` **restored** · Like a Lover **preserved**
+- **Permission:** **closed** · regression **23/23 PASS** · commit **`f4265b9`**
+- **Package:** uploaded `e3616a3` on STG · HEAD `f4265b9` — reupload NG without regen
+- **Next candidates:** Gosaki public-readiness QA · Discography Save UI generalization · Schedule/YouTube/About/Contact/Link/Home readiness
 
 ## G-20u36f-discography-marker-title-restore-manual-upload-ui-pass-result — complete
 

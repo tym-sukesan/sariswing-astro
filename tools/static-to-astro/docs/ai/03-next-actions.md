@@ -1,14 +1,24 @@
 Last updated: 2026-07-14
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36f-discography-marker-title-restore-edge-deploy-prep — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u36f-discography-marker-title-restore-edge-deploy-prep` |
+| Gate | `gosakiDiscographyMarkerTitleRestoreEdgeDeployPrepared: true` |
+| Deploy | prepared · not executed |
+| Smoke | OPTIONS + dryRun only |
+| Next | G-20u36f-discography-marker-title-restore-edge-deploy-execution |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36f-discography-marker-title-restore-handler-implementation — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-20u36f-discography-marker-title-restore-handler-implementation` |
 | Gate | `gosakiDiscographyMarkerTitleRestoreHandlerImplemented: true` |
-| Approach | allowlist · G-20u36e + G-20u36f |
-| Next | G-20u36f-discography-marker-title-restore-edge-deploy-prep |
+| Follow-on | edge deploy prep — **complete** |
+| Next | edge-deploy-execution |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36f-discography-marker-title-restore-planning — complete
 

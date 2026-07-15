@@ -5,17 +5,26 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36f-discography-marker-title-restore-handler-implementation — complete.
-Allowlist handler supports G-20u36e forward + G-20u36f restore. No Edge deploy yet.
-Next: edge-deploy-prep → pre-restore SELECT → permission open → Save → close → package → FTP.
+Current phase: G-20u36f-discography-marker-title-restore-edge-deploy-prep — complete.
+Deploy command + smoke prepared. Edge deploy not executed. Restore Save blocked.
+Next: edge-deploy-execution (operator manual deploy + OPTIONS/dryRun smoke).
 ```
+
+## G-20u36f-discography-marker-title-restore-edge-deploy-prep — complete
+
+- **Gate:** `gosakiDiscographyMarkerTitleRestoreEdgeDeployPrepared: true`
+- **Function:** `gosaki-discography-save-dry-run` · ref `kmjqppxjdnwwrtaeqjta`
+- **Deploy:** prepared · **not executed**
+- **Smoke:** OPTIONS + dryRun only · **no operation=save**
+- **Restore Save:** blocked until deploy result + pre-restore SELECT + permission open
+- **Not done:** Save · SQL · package · FTP
+- **Next:** **G-20u36f-discography-marker-title-restore-edge-deploy-execution**
 
 ## G-20u36f-discography-marker-title-restore-handler-implementation — complete
 
 - **Gate:** `gosakiDiscographyMarkerTitleRestoreHandlerImplemented: true`
-- **Allowlist:** G-20u36e forward + G-20u36f restore · title-only UPDATE
-- **Not done:** Edge deploy · Save · SQL · package · FTP
-- **Next:** **G-20u36f-discography-marker-title-restore-edge-deploy-prep**
+- **Follow-on:** edge deploy prep — **complete**
+- **Next:** edge-deploy-execution
 
 ## G-20u36f-discography-marker-title-restore-planning — complete
 

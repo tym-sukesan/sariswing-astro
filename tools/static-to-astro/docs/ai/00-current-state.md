@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-20u36f-discography-marker-title-restore-handler-implementation Gosaki Discography marker title restore handler (2026-07-15):** **complete** — allowlist · G-20u36e forward + G-20u36f restore · slice-scoped title UPDATE · **no Edge deploy / Save / SQL / package / FTP** · service_role **not used**. Doc: `gosaki-discography-g20u36f-marker-title-restore-handler-implementation.md`. Verifier: `verify:g20u36f-marker-title-restore-handler-implementation`. Gate: **`gosakiDiscographyMarkerTitleRestoreHandlerImplemented: true`**. **Next:** **G-20u36f-discography-marker-title-restore-edge-deploy-prep**.
+**G-20u36f-discography-marker-title-restore-edge-deploy-prep Gosaki Discography marker title restore Edge deploy prep (2026-07-15):** **complete** — deploy command + OPTIONS/dryRun smoke prepared · restore Save blocked until pre-restore SELECT + permission open · **no Edge deploy / Save / SQL / package / FTP** · service_role **not used**. Doc: `gosaki-discography-g20u36f-marker-title-restore-edge-deploy-prep.md`. Verifier: `verify:g20u36f-marker-title-restore-edge-deploy-prep`. Gate: **`gosakiDiscographyMarkerTitleRestoreEdgeDeployPrepared: true`**. **Next:** **G-20u36f-discography-marker-title-restore-edge-deploy-execution**.
+
+**G-20u36f-discography-marker-title-restore-handler-implementation Gosaki Discography marker title restore handler (2026-07-15):** **complete** — then edge deploy prep — **complete**. Gate: **`gosakiDiscographyMarkerTitleRestoreHandlerImplemented: true`**. **Next:** edge-deploy-execution.
 
 **G-20u36f-discography-marker-title-restore-planning Gosaki Discography marker title restore plan (2026-07-15):** **complete** — then handler implementation — **complete**. Gate: **`gosakiDiscographyMarkerTitleRestorePlanned: true`**. **Next:** edge-deploy-prep.
 

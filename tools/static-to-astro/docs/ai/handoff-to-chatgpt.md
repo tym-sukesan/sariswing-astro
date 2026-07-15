@@ -5,22 +5,26 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36e-controlled-save-manual-upload-ui-pass-result-record — complete.
-First controlled Save full loop PASS. Admin + Public marker title visible.
-sourceCommit: 8c9cd9210641d473c72c752f7b20903cb4d501bf
-Next: G-20u36e-controlled-save-slice-complete (await next slice planning).
+Current phase: G-20u36e-controlled-save-slice-complete — complete.
+First controlled Save full loop PASS. Result commit bf6c863. Regression 23/23 PASS.
+Uploaded package 8c9cd92; HEAD bf6c863 — re-upload needs regen.
+Next: marker title restore · Discography Save UI generalization · Gosaki public-readiness QA.
 ```
+
+## G-20u36e-controlled-save-slice-complete — complete
+
+- **Gate:** `gosakiDiscographyControlledSaveSliceCompleted: true`
+- **Full loop:** **PASS** · result commit **`bf6c863`** · regression **23/23 PASS**
+- **Uploaded package:** `8c9cd92` · **HEAD:** `bf6c863` · re-upload → regen required
+- **Public note:** restore marker title to `On a Clear Day` before Gosaki public
+- **Not done (this phase):** Save · SQL · package · FTP
+- **Next candidates:** (1) marker title restore (2) Discography Save UI generalization (3) Gosaki public-readiness QA
 
 ## G-20u36e-controlled-save-manual-upload-ui-pass-result-record — complete
 
 - **Gate:** `gosakiDiscographyControlledSaveManualUploadUiPassCompleted: true`
-- **Full loop:** **PASS** (Save · close · package · FTP · Admin/Public UI)
-- **sourceCommit:** `8c9cd9210641d473c72c752f7b20903cb4d501bf`
-- **Admin / Public:** marker title + `Like a Lover` **visible**
-- **Manual FTP:** operator FileZilla · no CLI automation
-- **Not done (this phase):** additional Save · SQL · package regen · FTP re-upload
-- **Re-upload note:** after this commit, regen required before re-upload
-- **Next:** **G-20u36e-controlled-save-slice-complete**
+- **Follow-on:** slice complete — **recorded**
+- **Next:** slice-complete — **done**
 
 ## G-20u36e-controlled-save-static-package-regeneration-prep — complete
 

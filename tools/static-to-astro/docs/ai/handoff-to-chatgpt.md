@@ -5,27 +5,34 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36e-controlled-save-static-package-regeneration-prep — complete.
-Next: G-20u36e-controlled-save-static-package-regeneration-execution (build:gosaki:staging at clean HEAD).
-DB Save PASS. UI lag. No package/FTP yet.
+Current phase: G-20u36e-controlled-save-manual-upload-ui-pass-result-record — complete.
+First controlled Save full loop PASS. Admin + Public marker title visible.
+sourceCommit: 8c9cd9210641d473c72c752f7b20903cb4d501bf
+Next: G-20u36e-controlled-save-slice-complete (await next slice planning).
 ```
+
+## G-20u36e-controlled-save-manual-upload-ui-pass-result-record — complete
+
+- **Gate:** `gosakiDiscographyControlledSaveManualUploadUiPassCompleted: true`
+- **Full loop:** **PASS** (Save · close · package · FTP · Admin/Public UI)
+- **sourceCommit:** `8c9cd9210641d473c72c752f7b20903cb4d501bf`
+- **Admin / Public:** marker title + `Like a Lover` **visible**
+- **Manual FTP:** operator FileZilla · no CLI automation
+- **Not done (this phase):** additional Save · SQL · package regen · FTP re-upload
+- **Re-upload note:** after this commit, regen required before re-upload
+- **Next:** **G-20u36e-controlled-save-slice-complete**
 
 ## G-20u36e-controlled-save-static-package-regeneration-prep — complete
 
 - **Gate:** `gosakiDiscographyControlledSaveStaticPackageRegenerationPrepared: true`
-- **Planned:** `cd ~/sariswing-astro/tools/static-to-astro && npm run build:gosaki:staging`
-- **Freshness:** `MANIFEST.sourceCommit` = HEAD · `generatedAt` current run
-- **Verify after gen:** marker title in `discography/index.html` + admin · `Like a Lover` · freshness PASS
-- **Upload (later):** `public-dist/` contents → `/cms-kit-staging/gosaki-piano/` · manual FileZilla only
-- **Forbidden:** CLI FTP · mirror · delete · Save · SQL
-- **Not done:** package · FTP · Save
-- **Next:** **G-20u36e-controlled-save-static-package-regeneration-execution**
+- **Follow-on:** package regen + manual FTP + UI pass — **recorded**
+- **Next:** manual-upload-ui-pass — **complete**
 
 ## G-20u36e-controlled-save-ui-visible-verification-result-record — complete
 
 - **Gate:** `gosakiDiscographyControlledSaveUiVisibleVerificationResultRecorded: true`
-- **Follow-on:** regen prep — **complete**
-- **Next:** static-package-regeneration-execution
+- **Follow-on:** regen + upload resolved UI
+- **Next:** manual-upload-ui-pass — **complete**
 
 ## G-20u36e-controlled-save-ui-visible-verification — complete (prep)
 

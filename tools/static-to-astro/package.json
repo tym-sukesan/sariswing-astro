@@ -170,6 +170,7 @@
     "verify:g20u36e-controlled-save-ui-visible-verification": "node scripts/verify-g20u36e-controlled-save-ui-visible-verification.mjs",
     "verify:g20u36e-controlled-save-ui-visible-verification-result": "node scripts/verify-g20u36e-controlled-save-ui-visible-verification-result.mjs",
     "verify:g20u36e-controlled-save-static-package-regeneration-prep": "node scripts/verify-g20u36e-controlled-save-static-package-regeneration-prep.mjs",
+    "verify:g20u36e-controlled-save-manual-upload-ui-pass-result": "node scripts/verify-g20u36e-controlled-save-manual-upload-ui-pass-result.mjs",
     "verify:g20u36e-controlled-save-auth-jwt-feasibility-plan": "node scripts/verify-g20u36e-controlled-save-auth-jwt-feasibility-plan.mjs",
     "verify:g20u36e-controlled-save-auth-jwt-feasibility-preflight": "node scripts/verify-g20u36e-controlled-save-auth-jwt-feasibility-preflight.mjs",
     "verify:g20u36e-controlled-save-auth-admin-rls-select-prep": "node scripts/verify-g20u36e-controlled-save-auth-admin-rls-select-prep.mjs",

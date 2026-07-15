@@ -5,10 +5,19 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36f-discography-marker-title-restore-edge-deploy-result-record — complete.
-Edge deploy PASS. OPTIONS PASS. dryRun restore-shaped safe FAIL (no DB write).
-Next: pre-restore SELECT (preflight-select). No Save yet.
+Current phase: G-20u36f-discography-marker-title-restore-save-result-record — complete.
+Restore Save PASS. Permission close PASS. DB title = On a Clear Day. Permission closed.
+Package not regen yet — STG static UI may still show marker.
+Next: static-package-regeneration-prep. Manual FTP after package freshness PASS.
 ```
+
+## G-20u36f-discography-marker-title-restore-save-result-record — complete
+
+- **Gate:** `gosakiDiscographyMarkerTitleRestoreSaveCompleted: true`
+- **Save:** operator **PASS** · marker → `On a Clear Day` · track_count=8 · Like a Lover retained
+- **Permission close:** **PASS** · grants 0 · G-20u36f policy removed
+- **Not done:** package regen · FTP · STG UI may lag
+- **Next:** **G-20u36f-discography-marker-title-restore-static-package-regeneration-prep**
 
 ## G-20u36f-discography-marker-title-restore-edge-deploy-result-record — complete
 

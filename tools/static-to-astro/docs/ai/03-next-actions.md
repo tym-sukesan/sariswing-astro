@@ -1,5 +1,16 @@
-Last updated: 2026-07-14
+Last updated: 2026-07-15
 Project: Static-to-Astro CMS / Musician CMS Kit
+
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36f-discography-marker-title-restore-save-result-record — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u36f-discography-marker-title-restore-save-result-record` |
+| Gate | `gosakiDiscographyMarkerTitleRestoreSaveCompleted: true` |
+| Save | **PASS** · marker → `On a Clear Day` |
+| Permission close | **PASS** |
+| Package / FTP | **not done** · STG UI may lag |
+| Next | G-20u36f-discography-marker-title-restore-static-package-regeneration-prep |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36f-discography-marker-title-restore-edge-deploy-result-record — complete
 

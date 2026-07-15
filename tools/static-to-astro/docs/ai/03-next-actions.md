@@ -1,15 +1,23 @@
 Last updated: 2026-07-14
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36f-discography-marker-title-restore-handler-implementation — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u36f-discography-marker-title-restore-handler-implementation` |
+| Gate | `gosakiDiscographyMarkerTitleRestoreHandlerImplemented: true` |
+| Approach | allowlist · G-20u36e + G-20u36f |
+| Next | G-20u36f-discography-marker-title-restore-edge-deploy-prep |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36f-discography-marker-title-restore-planning — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-20u36f-discography-marker-title-restore-planning` |
 | Gate | `gosakiDiscographyMarkerTitleRestorePlanned: true` |
-| Handler | NOT reverse-compatible as-is |
-| Restore | marker → `On a Clear Day` |
-| Next | G-20u36f-discography-marker-title-restore-handler-implementation |
+| Follow-on | handler implementation — **complete** |
+| Next | edge-deploy-prep |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-slice-complete — complete
 

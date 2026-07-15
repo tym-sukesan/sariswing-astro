@@ -204,8 +204,10 @@ assert(
     handoff.includes("gosakiDiscographyMarkerTitleRestorePlanned"),
 );
 assert(
-  "supabase/functions not modified",
-  !diffTouches("supabase/functions/"),
+  "planning doc records handler unchanged in planning phase",
+  /Handler changed.*\*\*no\*\*|handlerChanged:\s*false|handler change.*\*\*no\*\*/i.test(
+    doc,
+  ),
 );
 assert(
   "output/manual-upload not modified",

@@ -1,8 +1,8 @@
 /**
- * G-20u36b / G-20u36d / G-20u36e — Gosaki Discography Edge dry-run (+ controlled Save local).
+ * G-20u36b / G-20u36d / G-20u36e / G-20u36f — Gosaki Discography Edge dry-run (+ controlled Save).
  * Endpoint: gosaki-discography-save-dry-run
- * Target: static-to-astro-cms-staging (kmjqppxjdnwwrtaeqjta) — Edge deploy NOT EXECUTED in local-implementation.
- * G-20u36e: forwards Authorization for controlled Save · never logs tokens · no service_role.
+ * Target: static-to-astro-cms-staging (kmjqppxjdnwwrtaeqjta)
+ * Controlled Save: allowlisted slices (G-20u36e forward · G-20u36f restore) · user JWT · no service_role.
  */
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import {

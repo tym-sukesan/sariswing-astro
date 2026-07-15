@@ -5,20 +5,23 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36f-discography-marker-title-restore-planning — complete.
-G-20u36e slice COMPLETE. Marker title on DB + STG UI. Restore planned.
-Handler NOT reverse-compatible as-is — handler implementation next.
-No SQL / Save / package / FTP in planning phase.
+Current phase: G-20u36f-discography-marker-title-restore-handler-implementation — complete.
+Allowlist handler supports G-20u36e forward + G-20u36f restore. No Edge deploy yet.
+Next: edge-deploy-prep → pre-restore SELECT → permission open → Save → close → package → FTP.
 ```
+
+## G-20u36f-discography-marker-title-restore-handler-implementation — complete
+
+- **Gate:** `gosakiDiscographyMarkerTitleRestoreHandlerImplemented: true`
+- **Allowlist:** G-20u36e forward + G-20u36f restore · title-only UPDATE
+- **Not done:** Edge deploy · Save · SQL · package · FTP
+- **Next:** **G-20u36f-discography-marker-title-restore-edge-deploy-prep**
 
 ## G-20u36f-discography-marker-title-restore-planning — complete
 
 - **Gate:** `gosakiDiscographyMarkerTitleRestorePlanned: true`
-- **Restore:** marker → `On a Clear Day` · discography-002 track 1
-- **Handler:** NOT reverse-compatible · minimal change required
-- **Prepared:** preflight SELECT · permission open/close SQL · Save curl draft
-- **Not done:** SQL · Save · package · FTP · handler change
-- **Next:** **G-20u36f-discography-marker-title-restore-handler-implementation**
+- **Follow-on:** handler implementation — **complete**
+- **Next:** edge-deploy-prep
 
 ## G-20u36e-controlled-save-slice-complete — complete
 

@@ -1,8 +1,8 @@
 /**
- * G-20u36b / G-20u36d / G-20u36e — Gosaki Discography Edge dry-run (+ controlled Save local impl).
+ * G-20u36b / G-20u36d / G-20u36e / G-20u36f — Gosaki Discography Edge dry-run (+ controlled Save).
  * Ported from gosaki-discography-edge-dry-run-endpoint-inert.mjs + G-20u33 draft + G-20u36d readBack.
  * Copied from tools/static-to-astro/scripts/edge-functions/gosaki-discography-save-dry-run/handler.ts
- * G-20u36e local controlled Save: user JWT + is_admin + title-only UPDATE · Edge deploy NOT EXECUTED.
+ * Controlled Save: allowlisted slices only · user JWT + is_admin + title-only UPDATE · no service_role.
  */
 
 import { createClient, type SupabaseClient } from "npm:@supabase/supabase-js@2";
@@ -38,6 +38,64 @@ export const CONTROLLED_SAVE_TITLE_AFTER =
 export const CONTROLLED_SAVE_TRACK_7_TITLE = "Like a Lover";
 export const CONTROLLED_SAVE_PHASE =
   "G-20u36e-controlled-save-handler-permission-aware-local-implementation";
+
+/** G-20u36f — marker title restore slice (local implementation · deploy in later phase). */
+export const G20U36F_RESTORE_APPROVAL_ID =
+  "G-20u36f-gosaki-discography-marker-title-restore";
+export const G20U36F_RESTORE_SLICE_ID =
+  "G-20u36f-discography-002-track-1-title-restore";
+export const G20U36F_RESTORE_TITLE_BEFORE =
+  "On a Clear Day [CMS Kit staging G-20u36e]";
+export const G20U36F_RESTORE_TITLE_AFTER = "On a Clear Day";
+export const G20U36F_RESTORE_PHASE =
+  "G-20u36f-discography-marker-title-restore-handler-implementation";
+
+export type ControlledSaveSliceSpec = {
+  sliceKey: string;
+  approvalId: string;
+  sliceId: string;
+  siteSlug: string;
+  legacyId: string;
+  targetRowId: string;
+  trackNumber: number;
+  trackCount: number;
+  track7Title: string;
+  beforeTitle: string;
+  afterTitle: string;
+  phase: string;
+};
+
+/** Explicit allowlist — no unlisted Save slices permitted. */
+export const CONTROLLED_SAVE_SLICE_ALLOWLIST: ControlledSaveSliceSpec[] = [
+  {
+    sliceKey: "G-20u36e",
+    approvalId: SAVE_APPROVAL_ID,
+    sliceId: CONTROLLED_SAVE_SLICE_ID,
+    siteSlug: SITE_SLUG,
+    legacyId: CONTROLLED_SAVE_LEGACY_ID,
+    targetRowId: CONTROLLED_SAVE_TARGET_ROW_ID,
+    trackNumber: CONTROLLED_SAVE_TRACK_NUMBER,
+    trackCount: CONTROLLED_SAVE_TRACK_COUNT,
+    track7Title: CONTROLLED_SAVE_TRACK_7_TITLE,
+    beforeTitle: CONTROLLED_SAVE_TITLE_BEFORE,
+    afterTitle: CONTROLLED_SAVE_TITLE_AFTER,
+    phase: CONTROLLED_SAVE_PHASE,
+  },
+  {
+    sliceKey: "G-20u36f",
+    approvalId: G20U36F_RESTORE_APPROVAL_ID,
+    sliceId: G20U36F_RESTORE_SLICE_ID,
+    siteSlug: SITE_SLUG,
+    legacyId: CONTROLLED_SAVE_LEGACY_ID,
+    targetRowId: CONTROLLED_SAVE_TARGET_ROW_ID,
+    trackNumber: CONTROLLED_SAVE_TRACK_NUMBER,
+    trackCount: CONTROLLED_SAVE_TRACK_COUNT,
+    track7Title: CONTROLLED_SAVE_TRACK_7_TITLE,
+    beforeTitle: G20U36F_RESTORE_TITLE_BEFORE,
+    afterTitle: G20U36F_RESTORE_TITLE_AFTER,
+    phase: G20U36F_RESTORE_PHASE,
+  },
+];
 
 /** Supabase service_role — NOT CONNECTED · controlled Save uses user JWT + anon key only. */
 export const SUPABASE_SERVICE_ROLE_CONNECTED = false;
@@ -860,14 +918,29 @@ function resolveControlledLegacyId(request: DryRunRequest): string {
   return String(request.discographyLegacyId ?? request.legacyId ?? "").trim();
 }
 
-function validateControlledSaveGates(request: DryRunRequest): {
+function resolveControlledAfterTitle(
+  request: DryRunRequest,
+  slice: ControlledSaveSliceSpec,
+): string {
+  const explicit = String(request.afterTitle ?? request.requestedTitle ?? "").trim();
+  if (explicit) return explicit;
+  if (typeof request.tracksText === "string") {
+    const lines = parseDiscographyTrackListLines(request.tracksText);
+    return lines[0] ?? "";
+  }
+  return slice.afterTitle;
+}
+
+export function resolveControlledSaveSlice(request: DryRunRequest): {
   ok: boolean;
   reasonCode?: string;
   message?: string;
+  slice?: ControlledSaveSliceSpec;
   legacyId: string;
   approvalId: string;
   sliceId: string;
   targetRowId: string;
+  beforeTitle: string;
   afterTitle: string;
 } {
   const legacyId = resolveControlledLegacyId(request);
@@ -875,11 +948,8 @@ function validateControlledSaveGates(request: DryRunRequest): {
   const sliceId = String(request.sliceId ?? "").trim();
   const siteSlug = String(request.siteSlug ?? "").trim();
   const targetRowId = String(request.targetRowId ?? request.trackTargetId ?? "").trim();
-  const trackNumber = Number(request.trackNumber ?? CONTROLLED_SAVE_TRACK_NUMBER);
-  const afterTitle = String(
-    request.afterTitle ?? request.requestedTitle ?? "",
-  ).trim();
-  const beforeTitle = String(request.beforeTitle ?? "").trim();
+  const trackNumber = Number(request.trackNumber ?? NaN);
+  const requestBeforeTitle = String(request.beforeTitle ?? "").trim();
 
   if (String(request.operation ?? "") !== CONTROLLED_SAVE_OPERATION) {
     return {
@@ -890,109 +960,75 @@ function validateControlledSaveGates(request: DryRunRequest): {
       approvalId,
       sliceId,
       targetRowId,
-      afterTitle,
+      beforeTitle: requestBeforeTitle,
+      afterTitle: "",
     };
   }
-  if (siteSlug !== SITE_SLUG) {
+
+  const candidate = CONTROLLED_SAVE_SLICE_ALLOWLIST.find(
+    (entry) =>
+      entry.approvalId === approvalId &&
+      entry.sliceId === sliceId &&
+      entry.siteSlug === siteSlug &&
+      entry.legacyId === legacyId &&
+      entry.targetRowId === targetRowId &&
+      entry.trackNumber === trackNumber,
+  );
+
+  if (!candidate) {
+    const reasonCode =
+      approvalId && !CONTROLLED_SAVE_SLICE_ALLOWLIST.some((e) => e.approvalId === approvalId)
+        ? "approval_id_mismatch"
+        : sliceId && !CONTROLLED_SAVE_SLICE_ALLOWLIST.some((e) => e.sliceId === sliceId)
+          ? "slice_id_mismatch"
+          : siteSlug !== SITE_SLUG
+            ? "site_mismatch"
+            : legacyId !== CONTROLLED_SAVE_LEGACY_ID
+              ? "discography_mismatch"
+              : targetRowId !== CONTROLLED_SAVE_TARGET_ROW_ID
+                ? "row_id_mismatch"
+                : trackNumber !== CONTROLLED_SAVE_TRACK_NUMBER
+                  ? "track_number_mismatch"
+                  : "controlled_slice_not_allowlisted";
     return {
       ok: false,
-      reasonCode: "site_mismatch",
-      message: `siteSlug must be "${SITE_SLUG}"`,
+      reasonCode,
+      message: "controlled Save slice not allowlisted — broad Save is forbidden",
       legacyId,
       approvalId,
       sliceId,
       targetRowId,
-      afterTitle,
+      beforeTitle: requestBeforeTitle,
+      afterTitle: "",
     };
   }
-  if (approvalId !== SAVE_APPROVAL_ID) {
-    return {
-      ok: false,
-      reasonCode: "approval_id_mismatch",
-      message: "approvalId mismatch for controlled Save",
-      legacyId,
-      approvalId,
-      sliceId,
-      targetRowId,
-      afterTitle,
-    };
-  }
-  if (sliceId !== CONTROLLED_SAVE_SLICE_ID) {
-    return {
-      ok: false,
-      reasonCode: "slice_id_mismatch",
-      message: "sliceId mismatch — broad Save is forbidden",
-      legacyId,
-      approvalId,
-      sliceId,
-      targetRowId,
-      afterTitle,
-    };
-  }
-  if (legacyId !== CONTROLLED_SAVE_LEGACY_ID) {
-    return {
-      ok: false,
-      reasonCode: "discography_mismatch",
-      message: "discographyLegacyId / legacyId mismatch",
-      legacyId,
-      approvalId,
-      sliceId,
-      targetRowId,
-      afterTitle,
-    };
-  }
-  if (targetRowId !== CONTROLLED_SAVE_TARGET_ROW_ID) {
-    return {
-      ok: false,
-      reasonCode: "row_id_mismatch",
-      message: "targetRowId mismatch",
-      legacyId,
-      approvalId,
-      sliceId,
-      targetRowId,
-      afterTitle,
-    };
-  }
-  if (trackNumber !== CONTROLLED_SAVE_TRACK_NUMBER) {
-    return {
-      ok: false,
-      reasonCode: "track_number_mismatch",
-      message: "trackNumber must be 1",
-      legacyId,
-      approvalId,
-      sliceId,
-      targetRowId,
-      afterTitle,
-    };
-  }
-  if (beforeTitle && beforeTitle !== CONTROLLED_SAVE_TITLE_BEFORE) {
+
+  const resolvedBefore = requestBeforeTitle || candidate.beforeTitle;
+  const resolvedAfter = resolveControlledAfterTitle(request, candidate);
+
+  if (resolvedBefore !== candidate.beforeTitle) {
     return {
       ok: false,
       reasonCode: "before_title_mismatch",
-      message: "beforeTitle must be On a Clear Day",
+      message: "beforeTitle must match allowlisted slice exactly",
       legacyId,
       approvalId,
       sliceId,
       targetRowId,
-      afterTitle,
+      beforeTitle: resolvedBefore,
+      afterTitle: resolvedAfter,
     };
   }
-  const resolvedAfter =
-    afterTitle ||
-    (() => {
-      if (typeof request.tracksText !== "string") return "";
-      const lines = parseDiscographyTrackListLines(request.tracksText);
-      return lines[0] ?? "";
-    })();
-  if (resolvedAfter !== CONTROLLED_SAVE_TITLE_AFTER) {
+  if (resolvedAfter !== candidate.afterTitle) {
     return {
       ok: false,
       reasonCode: "requested_title_mismatch",
-      message: "after title must be exact controlled staging marker",
+      message: "afterTitle must match allowlisted slice exactly",
       legacyId,
       approvalId,
       sliceId,
       targetRowId,
+      beforeTitle: resolvedBefore,
       afterTitle: resolvedAfter,
     };
   }
@@ -1007,39 +1043,48 @@ function validateControlledSaveGates(request: DryRunRequest): {
       approvalId,
       sliceId,
       targetRowId,
+      beforeTitle: resolvedBefore,
       afterTitle: resolvedAfter,
     };
   }
 
   return {
     ok: true,
+    slice: candidate,
     legacyId,
     approvalId,
     sliceId,
     targetRowId,
+    beforeTitle: resolvedBefore,
     afterTitle: resolvedAfter,
   };
+}
+
+/** @deprecated Use resolveControlledSaveSlice — kept for doc/verifier string references. */
+export function validateControlledSaveGates(request: DryRunRequest) {
+  return resolveControlledSaveSlice(request);
 }
 
 function validateControlledTracksTextAgainstDb(
   request: DryRunRequest,
   dbTitles: string[],
+  slice: ControlledSaveSliceSpec,
 ): { ok: true } | { ok: false; reasonCode: string; message: string } {
-  if (dbTitles.length !== CONTROLLED_SAVE_TRACK_COUNT) {
+  if (dbTitles.length !== slice.trackCount) {
     return {
       ok: false,
       reasonCode: "track_count_mismatch",
-      message: `DB track_count must be ${CONTROLLED_SAVE_TRACK_COUNT}`,
+      message: `DB track_count must be ${slice.trackCount}`,
     };
   }
-  if (dbTitles[0] !== CONTROLLED_SAVE_TITLE_BEFORE) {
+  if (dbTitles[0] !== slice.beforeTitle) {
     return {
       ok: false,
       reasonCode: "current_title_mismatch",
-      message: "current track 1 title must be On a Clear Day",
+      message: "current track 1 title must match allowlisted beforeTitle",
     };
   }
-  if (dbTitles[6] !== CONTROLLED_SAVE_TRACK_7_TITLE) {
+  if (dbTitles[6] !== slice.track7Title) {
     return {
       ok: false,
       reasonCode: "track_7_mismatch",
@@ -1049,11 +1094,11 @@ function validateControlledTracksTextAgainstDb(
 
   if (typeof request.tracksText === "string") {
     const afterLines = parseDiscographyTrackListLines(request.tracksText);
-    if (afterLines.length !== CONTROLLED_SAVE_TRACK_COUNT) {
+    if (afterLines.length !== slice.trackCount) {
       return {
         ok: false,
         reasonCode: "track_count_mismatch",
-        message: "tracksText must contain exactly 8 tracks",
+        message: `tracksText must contain exactly ${slice.trackCount} tracks`,
       };
     }
     const trackDiff = validateDiscographyTrackListDryRun(dbTitles.join("\n"), afterLines.join("\n"));
@@ -1086,14 +1131,14 @@ function validateControlledTracksTextAgainstDb(
         message: "only track 1 title may change",
       };
     }
-    if (only.before !== CONTROLLED_SAVE_TITLE_BEFORE || only.after !== CONTROLLED_SAVE_TITLE_AFTER) {
+    if (only.before !== slice.beforeTitle || only.after !== slice.afterTitle) {
       return {
         ok: false,
         reasonCode: "requested_title_mismatch",
-        message: "changed title must match controlled before/after strings",
+        message: "changed title must match allowlisted before/after strings",
       };
     }
-    if (afterLines[6] !== CONTROLLED_SAVE_TRACK_7_TITLE) {
+    if (afterLines[6] !== slice.track7Title) {
       return {
         ok: false,
         reasonCode: "track_7_mismatch",
@@ -1106,8 +1151,8 @@ function validateControlledTracksTextAgainstDb(
 }
 
 /**
- * G-20u36e controlled Save — user JWT + is_admin + RLS + title-only single-row UPDATE.
- * Broad Save remains forbidden. Never logs Authorization / JWT / user_id / email.
+ * Controlled Save — user JWT + is_admin + RLS + title-only single-row UPDATE.
+ * Allowlisted slices only (G-20u36e forward · G-20u36f restore). Never logs Authorization / JWT.
  */
 export async function handleControlledG20u36eSaveHttp(input: {
   request: DryRunRequest;
@@ -1115,8 +1160,8 @@ export async function handleControlledG20u36eSaveHttp(input: {
   supabaseUrl?: string;
   anonKey?: string;
 }): Promise<DryRunHandlerResult> {
-  const gates = validateControlledSaveGates(input.request);
-  if (!gates.ok) {
+  const gates = resolveControlledSaveSlice(input.request);
+  if (!gates.ok || !gates.slice) {
     return buildControlledSaveFailure({
       reasonCode: gates.reasonCode ?? "controlled_gate_failed",
       message: gates.message ?? "controlled Save gate failed",
@@ -1126,6 +1171,8 @@ export async function handleControlledG20u36eSaveHttp(input: {
       sliceId: gates.sliceId,
     });
   }
+
+  const slice = gates.slice;
 
   const bearer = extractBearerToken(input.authorizationHeader);
   if (!bearer) {
@@ -1175,8 +1222,8 @@ export async function handleControlledG20u36eSaveHttp(input: {
   const { data: trackRows, error: tracksError } = await client
     .from("discography_tracks")
     .select(CONTROLLED_TRACK_SELECT)
-    .eq("site_slug", SITE_SLUG)
-    .eq("discography_legacy_id", CONTROLLED_SAVE_LEGACY_ID)
+    .eq("site_slug", slice.siteSlug)
+    .eq("discography_legacy_id", slice.legacyId)
     .order("track_number", { ascending: true });
 
   if (tracksError) {
@@ -1192,9 +1239,7 @@ export async function handleControlledG20u36eSaveHttp(input: {
 
   const sorted = sortTrackRows((trackRows ?? []) as Array<Record<string, unknown>>);
   const dbTitles = sorted.map((row) => String(row.title ?? "").trim());
-  const targetRow = sorted.find(
-    (row) => String(row.id ?? "") === CONTROLLED_SAVE_TARGET_ROW_ID,
-  );
+  const targetRow = sorted.find((row) => String(row.id ?? "") === slice.targetRowId);
   if (!targetRow) {
     return buildControlledSaveFailure({
       reasonCode: "row_id_mismatch",
@@ -1205,10 +1250,10 @@ export async function handleControlledG20u36eSaveHttp(input: {
       sliceId: gates.sliceId,
     });
   }
-  if (Number(targetRow.track_number) !== CONTROLLED_SAVE_TRACK_NUMBER) {
+  if (Number(targetRow.track_number) !== slice.trackNumber) {
     return buildControlledSaveFailure({
       reasonCode: "track_number_mismatch",
-      message: "target row track_number must be 1",
+      message: "target row track_number must match allowlisted slice",
       status: 409,
       legacyId: gates.legacyId,
       approvalId: gates.approvalId,
@@ -1216,7 +1261,7 @@ export async function handleControlledG20u36eSaveHttp(input: {
     });
   }
 
-  const tracksOk = validateControlledTracksTextAgainstDb(input.request, dbTitles);
+  const tracksOk = validateControlledTracksTextAgainstDb(input.request, dbTitles, slice);
   if (!tracksOk.ok) {
     return buildControlledSaveFailure({
       reasonCode: tracksOk.reasonCode,
@@ -1232,8 +1277,8 @@ export async function handleControlledG20u36eSaveHttp(input: {
     const { data: releaseRow, error: releaseError } = await client
       .from("discography")
       .select(RELEASE_SELECT_FIELDS)
-      .eq("site_slug", SITE_SLUG)
-      .eq("legacy_id", CONTROLLED_SAVE_LEGACY_ID)
+      .eq("site_slug", slice.siteSlug)
+      .eq("legacy_id", slice.legacyId)
       .limit(1)
       .maybeSingle();
     if (releaseError || !releaseRow) {
@@ -1266,12 +1311,12 @@ export async function handleControlledG20u36eSaveHttp(input: {
   // Title-only payload — no updated_at / sort_order / other columns · no discography table write.
   const { data: updatedRows, error: updateError } = await client
     .from("discography_tracks")
-    .update({ title: CONTROLLED_SAVE_TITLE_AFTER })
-    .eq("site_slug", SITE_SLUG)
-    .eq("discography_legacy_id", CONTROLLED_SAVE_LEGACY_ID)
-    .eq("track_number", CONTROLLED_SAVE_TRACK_NUMBER)
-    .eq("id", CONTROLLED_SAVE_TARGET_ROW_ID)
-    .eq("title", CONTROLLED_SAVE_TITLE_BEFORE)
+    .update({ title: slice.afterTitle })
+    .eq("site_slug", slice.siteSlug)
+    .eq("discography_legacy_id", slice.legacyId)
+    .eq("track_number", slice.trackNumber)
+    .eq("id", slice.targetRowId)
+    .eq("title", slice.beforeTitle)
     .select("id,title,track_number");
 
   if (updateError) {
@@ -1310,8 +1355,8 @@ export async function handleControlledG20u36eSaveHttp(input: {
   const { data: postTracks, error: postTracksError } = await client
     .from("discography_tracks")
     .select(CONTROLLED_TRACK_SELECT)
-    .eq("site_slug", SITE_SLUG)
-    .eq("discography_legacy_id", CONTROLLED_SAVE_LEGACY_ID)
+    .eq("site_slug", slice.siteSlug)
+    .eq("discography_legacy_id", slice.legacyId)
     .order("track_number", { ascending: true });
 
   if (postTracksError) {
@@ -1336,33 +1381,33 @@ export async function handleControlledG20u36eSaveHttp(input: {
     trackCount: postTitles.length,
     track_7_title: postTrack7,
     targetTitle: postTrack1,
-    targetRowCount: postSorted.filter((row) => String(row.id ?? "") === CONTROLLED_SAVE_TARGET_ROW_ID)
+    targetRowCount: postSorted.filter((row) => String(row.id ?? "") === slice.targetRowId)
       .length,
-    legacyId: CONTROLLED_SAVE_LEGACY_ID,
-    siteSlug: SITE_SLUG,
+    legacyId: slice.legacyId,
+    siteSlug: slice.siteSlug,
     noAddedRemoved:
-      postTitles.length === CONTROLLED_SAVE_TRACK_COUNT &&
-      postTrack7 === CONTROLLED_SAVE_TRACK_7_TITLE,
+      postTitles.length === slice.trackCount && postTrack7 === slice.track7Title,
   };
 
   if (
-    postTrack1 !== CONTROLLED_SAVE_TITLE_AFTER ||
-    postTitles.length !== CONTROLLED_SAVE_TRACK_COUNT ||
-    postTrack7 !== CONTROLLED_SAVE_TRACK_7_TITLE
+    postTrack1 !== slice.afterTitle ||
+    postTitles.length !== slice.trackCount ||
+    postTrack7 !== slice.track7Title ||
+    readBackSummary.targetRowCount !== 1
   ) {
     return {
       ok: false,
       operation: CONTROLLED_SAVE_OPERATION,
       controlledSave: true,
       endpoint: ENDPOINT_NAME,
-      siteSlug: SITE_SLUG,
-      discographyLegacyId: CONTROLLED_SAVE_LEGACY_ID,
-      legacyId: CONTROLLED_SAVE_LEGACY_ID,
+      siteSlug: slice.siteSlug,
+      discographyLegacyId: slice.legacyId,
+      legacyId: slice.legacyId,
       approvalId: gates.approvalId,
       sliceId: gates.sliceId,
-      trackNumber: CONTROLLED_SAVE_TRACK_NUMBER,
-      beforeTitle: CONTROLLED_SAVE_TITLE_BEFORE,
-      afterTitle: CONTROLLED_SAVE_TITLE_AFTER,
+      trackNumber: slice.trackNumber,
+      beforeTitle: slice.beforeTitle,
+      afterTitle: slice.afterTitle,
       updatedRows: 1,
       reasonCode: "post_save_verification_failed",
       errors: ["post-save readBack did not match controlled expectations"],
@@ -1383,14 +1428,14 @@ export async function handleControlledG20u36eSaveHttp(input: {
     operation: CONTROLLED_SAVE_OPERATION,
     controlledSave: true,
     endpoint: ENDPOINT_NAME,
-    siteSlug: SITE_SLUG,
-    discographyLegacyId: CONTROLLED_SAVE_LEGACY_ID,
-    legacyId: CONTROLLED_SAVE_LEGACY_ID,
+    siteSlug: slice.siteSlug,
+    discographyLegacyId: slice.legacyId,
+    legacyId: slice.legacyId,
     approvalId: gates.approvalId,
     sliceId: gates.sliceId,
-    trackNumber: CONTROLLED_SAVE_TRACK_NUMBER,
-    beforeTitle: CONTROLLED_SAVE_TITLE_BEFORE,
-    afterTitle: CONTROLLED_SAVE_TITLE_AFTER,
+    trackNumber: slice.trackNumber,
+    beforeTitle: slice.beforeTitle,
+    afterTitle: slice.afterTitle,
     updatedRows: 1,
     errors: [],
     warnings: [],
@@ -1402,7 +1447,7 @@ export async function handleControlledG20u36eSaveHttp(input: {
     saveEnabled: true,
     status: 200,
     serverTime: new Date().toISOString(),
-    phase: CONTROLLED_SAVE_PHASE,
+    phase: slice.phase,
   };
 }
 
@@ -1446,7 +1491,7 @@ export function handleDiscographyEdgeDryRunHttp(input: {
 }
 
 /**
- * Async HTTP handler — dryRun (+ optional anon readBack) or G-20u36e controlled Save.
+ * Async HTTP handler — dryRun (+ optional anon readBack) or allowlisted controlled Save.
  */
 export async function handleDiscographyEdgeDryRunHttpAsync(
   input: {

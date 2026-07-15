@@ -206,10 +206,6 @@ assert(
     /marker title restore|Discography Save UI|public-readiness/i.test(handoff),
 );
 assert(
-  "supabase/functions not modified",
-  !diffTouches("supabase/functions/"),
-);
-assert(
   "output/manual-upload not modified",
   !diffTouches("tools/static-to-astro/output/manual-upload"),
 );

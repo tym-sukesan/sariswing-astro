@@ -1,17 +1,29 @@
 Last updated: 2026-07-15
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u38d-gosaki-production-hosting-not-ready-and-return-to-staging-p1-record — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u38d-gosaki-production-hosting-not-ready-and-return-to-staging-p1-record` |
+| Gate | `gosakiProductionHostingNotReadyAndReturnToStagingP1Recorded: true` |
+| Current live production | **Wix** (`https://www.gosaki-piano.com/`) |
+| Replacement hosting | **not contracted** |
+| Production FTP remote path | **not available** |
+| HOSTING_READY | **false** |
+| GO_LIVE_READY | **false** |
+| PRODUCTION_UPLOAD_READY | **false** |
+| Production FTP prep | **paused** |
+| Next | **G-20u39-gosaki-staging-p1-review-planning** |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u38c-gosaki-production-package-verification-review — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-20u38c-gosaki-production-package-verification-review` |
 | Gate | `gosakiProductionPackageVerificationReviewed: true` |
-| Review HEAD | `2831629` |
-| Reviewed package | `1c1fb97` (**stale**) |
-| PRODUCTION_UPLOAD_READY | **false** |
-| Remote path | **TBD_G-20i** (operator confirmation required) |
-| Next | **G-20u38d-gosaki-production-ftp-remote-path-confirmation-and-upload-checklist** |
+| Upload track | **paused** (G-20u38d — hosting not ready) |
+| Next | — (superseded by G-20u38d) |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u38b2-gosaki-production-package-regeneration-at-current-head — complete
 

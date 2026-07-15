@@ -5,20 +5,27 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u38c-gosaki-production-package-verification-review — complete.
-PRODUCTION_PACKAGE_VERIFIED_LOCALLY: true. PRODUCTION_UPLOAD_READY: false.
-On-disk package 1c1fb97 stale vs HEAD 2831629. Remote TBD_G-20i.
-Next: G-20u38d-gosaki-production-ftp-remote-path-confirmation-and-upload-checklist.
+Current phase: G-20u38d-gosaki-production-hosting-not-ready-and-return-to-staging-p1-record — complete.
+Current live production: Wix (https://www.gosaki-piano.com/).
+Replacement hosting: not contracted. Production upload blocked.
+Remote path confirmation must not be requested yet. FTP prep paused.
+Next: G-20u39 staging P1 (review planning or Contact HubSpot E2E).
 ```
+
+## G-20u38d-gosaki-production-hosting-not-ready-and-return-to-staging-p1-record — complete
+
+- **Gate:** `gosakiProductionHostingNotReadyAndReturnToStagingP1Recorded: true`
+- **Live production:** **Wix** — do not change in CMS Kit phases
+- **Replacement hosting:** **not contracted** — Lolipop/FTP path **not available**
+- **Production FTP track:** **paused** (G-20u38e–g blocked)
+- **G-20u38b2:** local package verify = useful prep · **not upload-ready**
+- **Not done:** remote path confirmation · FileZilla checklist · FTP · Wix change
+- **Next:** **G-20u39-gosaki-staging-p1-review-planning** or **G-20u39-gosaki-staging-p1-contact-hubspot-submit-e2e**
 
 ## G-20u38c-gosaki-production-package-verification-review — complete
 
 - **Gate:** `gosakiProductionPackageVerificationReviewed: true`
-- **Review:** G-20u38–G-20u38b2 local verification sound · upload blocked
-- **Stale:** on-disk `1c1fb97` vs HEAD `2831629`
-- **Remote:** `TBD_G-20i` — operator confirmation required (G-20u38d)
-- **Not done:** package regen · FTP · remote path confirmation
-- **Next:** **G-20u38d-gosaki-production-ftp-remote-path-confirmation-and-upload-checklist**
+- **Superseded for upload:** G-20u38d hosting blocker
 
 ## G-20u38b2-gosaki-production-package-regeneration-at-current-head — complete
 

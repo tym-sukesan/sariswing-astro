@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**G-20u36e-controlled-save-slice-complete Gosaki Discography controlled Save slice complete (2026-07-15):** **complete** — **First controlled Save full loop PASS** · result commit **`bf6c863`** · regression **23/23 PASS** · uploaded package **`8c9cd92`** · HEAD **`bf6c863`** · re-upload needs regen · marker restore before public · **no Save / SQL / package / FTP** · service_role **not used**. Doc: `gosaki-discography-g20u36e-controlled-save-slice-complete.md`. Verifier: `verify:g20u36e-controlled-save-slice-complete`. Gate: **`gosakiDiscographyControlledSaveSliceCompleted: true`**. **Next:** marker title restore · Discography Save UI generalization · Gosaki public-readiness QA (operator choice).
+**G-20u36f-discography-marker-title-restore-planning Gosaki Discography marker title restore plan (2026-07-15):** **complete** — planning only · handler **NOT reverse-compatible as-is** · preflight SQL · permission open/close drafts · Save curl draft · **no SQL / Save / package / FTP / handler change** · service_role **not used**. Doc: `gosaki-discography-g20u36f-marker-title-restore-planning.md`. Verifier: `verify:g20u36f-marker-title-restore-planning`. Gate: **`gosakiDiscographyMarkerTitleRestorePlanned: true`**. **Next:** **G-20u36f-discography-marker-title-restore-handler-implementation**.
+
+**G-20u36e-controlled-save-slice-complete Gosaki Discography controlled Save slice complete (2026-07-15):** **complete** — First controlled Save full loop **PASS** · then marker restore planning — **complete**. Gate: **`gosakiDiscographyControlledSaveSliceCompleted: true`**. **Next:** G-20u36f marker title restore planning — **done**.
 
 **G-20u36e-controlled-save-manual-upload-ui-pass-result-record Gosaki Discography controlled Save manual upload UI pass result (2026-07-15):** **complete** — then slice complete — **recorded**. Gate: **`gosakiDiscographyControlledSaveManualUploadUiPassCompleted: true`**. **Next:** slice-complete — **done**.
 

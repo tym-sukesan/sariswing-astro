@@ -1,17 +1,24 @@
 Last updated: 2026-07-14
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36f-discography-marker-title-restore-planning — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u36f-discography-marker-title-restore-planning` |
+| Gate | `gosakiDiscographyMarkerTitleRestorePlanned: true` |
+| Handler | NOT reverse-compatible as-is |
+| Restore | marker → `On a Clear Day` |
+| Next | G-20u36f-discography-marker-title-restore-handler-implementation |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-slice-complete — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-20u36e-controlled-save-slice-complete` |
 | Gate | `gosakiDiscographyControlledSaveSliceCompleted: true` |
-| Full loop | **PASS** |
-| Result commit | `bf6c863` |
-| Regression | **23/23 PASS** |
-| Uploaded package | `8c9cd92` · HEAD `bf6c863` |
-| Next candidates | marker restore · Save UI gen · public-readiness QA |
+| Follow-on | marker restore planning — **complete** |
+| Next | G-20u36f handler implementation |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-manual-upload-ui-pass-result-record — complete
 

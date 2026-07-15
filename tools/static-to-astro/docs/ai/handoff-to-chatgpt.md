@@ -5,20 +5,26 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36e-controlled-save-slice-complete — complete.
-First controlled Save full loop PASS. Result commit bf6c863. Regression 23/23 PASS.
-Uploaded package 8c9cd92; HEAD bf6c863 — re-upload needs regen.
-Next: marker title restore · Discography Save UI generalization · Gosaki public-readiness QA.
+Current phase: G-20u36f-discography-marker-title-restore-planning — complete.
+G-20u36e slice COMPLETE. Marker title on DB + STG UI. Restore planned.
+Handler NOT reverse-compatible as-is — handler implementation next.
+No SQL / Save / package / FTP in planning phase.
 ```
+
+## G-20u36f-discography-marker-title-restore-planning — complete
+
+- **Gate:** `gosakiDiscographyMarkerTitleRestorePlanned: true`
+- **Restore:** marker → `On a Clear Day` · discography-002 track 1
+- **Handler:** NOT reverse-compatible · minimal change required
+- **Prepared:** preflight SELECT · permission open/close SQL · Save curl draft
+- **Not done:** SQL · Save · package · FTP · handler change
+- **Next:** **G-20u36f-discography-marker-title-restore-handler-implementation**
 
 ## G-20u36e-controlled-save-slice-complete — complete
 
 - **Gate:** `gosakiDiscographyControlledSaveSliceCompleted: true`
-- **Full loop:** **PASS** · result commit **`bf6c863`** · regression **23/23 PASS**
-- **Uploaded package:** `8c9cd92` · **HEAD:** `bf6c863` · re-upload → regen required
-- **Public note:** restore marker title to `On a Clear Day` before Gosaki public
-- **Not done (this phase):** Save · SQL · package · FTP
-- **Next candidates:** (1) marker title restore (2) Discography Save UI generalization (3) Gosaki public-readiness QA
+- **Follow-on:** marker restore planning — **complete**
+- **Next:** G-20u36f handler implementation
 
 ## G-20u36e-controlled-save-manual-upload-ui-pass-result-record — complete
 

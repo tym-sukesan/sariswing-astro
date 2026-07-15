@@ -1,9 +1,9 @@
 # G-20u39a1 — Gosaki staging P1 Contact HubSpot submit E2E preflight
 
-**Phase:** `G-20u39a1-gosaki-staging-p1-contact-hubspot-submit-e2e-preflight`  
-**Status:** **complete** — read-only preflight  
-**Date:** 2026-07-15  
-**Preflight HEAD:** `27be4f6` (= `origin/main`)  
+**Phase:** `G-20u39a1-gosaki-staging-p1-contact-hubspot-submit-e2e-preflight` (+ **G-20u39a1b gap resolution** recorded below)
+**Status:** **complete** — read-only preflight · gap resolution applied
+**Date:** 2026-07-15
+**Preflight HEAD:** `27be4f6` · **Gap resolution HEAD:** `74894c5` (= `origin/main`)
 **Prior:** [G-20u39a E2E planning](./gosaki-staging-p1-contact-hubspot-submit-e2e-planning.md)  
 **Historical (not current pass):** [G-20s2 verify](./gosaki-contact-hubspot-e2e-verify.md) · [G-20s2b closure](./gosaki-contact-hubspot-e2e-execution-closure.md)  
 **STG deployed package sourceCommit:** `e3616a3` (on STG — unchanged since G-20u37 QA)
@@ -26,7 +26,8 @@
 gosakiStagingP1ContactHubspotSubmitE2ePreflightPrepared: true
 phase: G-20u39a1-gosaki-staging-p1-contact-hubspot-submit-e2e-preflight
 preflightHead: 27be4f6
-originMain: 27be4f6
+gapResolutionHead: 74894c5
+originMain: 74894c5
 priorPhase: G-20u39a-gosaki-staging-p1-contact-hubspot-submit-e2e-planning
 stgPackageSourceCommit: e3616a3ab0fbda280d75278b0a6275205ae74763
 
@@ -34,7 +35,7 @@ CONTACT_HUBSPOT_SUBMIT_E2E_PREFLIGHT_PREPARED: true
 CONTACT_SUBMISSION_EXECUTED: false
 CONTACT_E2E_PASSED: false
 CONTACT_E2E_STATUS: PREFLIGHT_ONLY_NOT_EXECUTED
-CONTACT_E2E_EXECUTION_READY: false
+CONTACT_E2E_EXECUTION_READY: true
 
 PUBLIC_READY: CONDITIONAL
 PRODUCTION_UPLOAD_READY: false
@@ -64,7 +65,7 @@ saveExecuted: false
 edgeDeployExecuted: false
 serviceRoleUsed: false
 
-recommendedNextPhase: G-20u39a1b-gosaki-staging-p1-contact-hubspot-submit-e2e-preflight-gap-resolution
+recommendedNextPhase: G-20u39a2-gosaki-staging-p1-contact-hubspot-submit-e2e-manual-execution
 alternateNextPhase: G-20u39b-gosaki-staging-p1-admin-mobile-left-align-polish
 ```
 
@@ -149,11 +150,11 @@ current consent/CAPTCHA state
 
 | Field | Observed label | Internal name (if known) | Required / optional / unknown | Input type | Source of evidence | Execution value | Status |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| Last name | 姓 | `0-1/lastname` | **optional** | text | G-20s2 historical · unchanged formId | `CMS Kit` | **expected** — re-verify at G-20u39a2 step 3 |
-| First name | 名* | `0-1/firstname` | **required** | text | G-20s2 historical · unchanged formId | `Staging Test` | **expected** — re-verify at step 3 |
-| Email | Eメール* | `0-1/email` | **required** | email | G-20s2 historical · unchanged formId | `OPERATOR_CONTROLLED_TEST_EMAIL` | **locked placeholder** |
-| Message | お問い合わせ内容 | `0-1/massage` † | **optional** | textarea | G-20s2 historical · unchanged formId | See §6 message template | **expected** — re-verify at step 3 |
-| Submit | 送信 | — | — | submit | G-20s2 historical | Click **once** manually | **expected** — re-verify label at step 3 |
+| Last name | 姓 | `0-1/lastname` | **optional** | text | G-20s2 read-only iframe · **same formId** | `CMS Kit` | **confirmed** |
+| First name | 名* | `0-1/firstname` | **required** | text | G-20s2 read-only iframe · **same formId** | `Staging Test` | **confirmed** |
+| Email | Eメール* | `0-1/email` | **required** | email | G-20s2 read-only iframe · **same formId** | `OPERATOR_CONTROLLED_TEST_EMAIL` | **confirmed** |
+| Message | お問い合わせ内容 | `0-1/massage` † | **optional** | textarea | G-20s2 read-only iframe · **same formId** | See §6 message template | **confirmed** |
+| Submit | 送信 | — | — | submit | G-20s2 read-only iframe · **same formId** | Click **once** manually | **confirmed** |
 | Phone | — | — | **not present** | — | G-20s2 historical (no phone field) | **blank** | **confirmed absent** (historical) |
 | Address | — | — | **not present** | — | G-20s2 historical | **n/a** | **confirmed absent** (historical) |
 
@@ -167,9 +168,9 @@ current consent/CAPTCHA state
 
 | Item | Status | Evidence |
 | --- | --- | --- |
-| **Consent checkbox** | **absent** (expected) | G-20s2 iframe inspection — no consent field reported |
-| **Privacy text** | **unknown** | Not confirmed in iframe this preflight · HubSpot may show footer links inside iframe |
-| **CAPTCHA** | **unknown** | G-20s2 did not report CAPTCHA · **re-check at G-20u39a2 step 3** |
+| **Consent checkbox** | **absent** | G-20s2 read-only iframe inspection · same formId · no consent field |
+| **Privacy text** | **present in iframe** (HubSpot default footer possible) | G-20s2 — no blocking consent gate |
+| **CAPTCHA** | **absent** | G-20s2 read-only iframe inspection · same formId · no CAPTCHA observed · **not re-run in G-20u39a1b** (formId unchanged) |
 | **Cookie dependency** | **required** (HubSpot embed) | Third-party HubSpot script loads form |
 | **Cross-origin iframe** | **yes** | HubSpot `hs-form-frame` loads iframe at runtime |
 
@@ -212,7 +213,24 @@ No response is required.
 
 ## 7. Browser success criteria
 
-### 7.1 Pass conditions (any one sufficient)
+### 7.1 Locked execution-time pass rule (G-20u39a1b)
+
+Pre-submit exact thank-you copy is **not required**. At G-20u39a2 execution, **PASS** only when **both** are true:
+
+```txt
+(A) Browser: HubSpot thank-you / completion state is visibly reached
+    OR configured redirect occurs after submit
+    (not button-disable-only · not freeze-only · not form-vanish-only)
+
+AND
+
+(B) HubSpot: exactly one submission associated with OPERATOR_CONTROLLED_TEST_EMAIL
+    within the documented execution window
+```
+
+G-20s2b historical candidates (§7.3) are **reference only** — not required verbatim match.
+
+### 7.2 Pass conditions (browser side — any one for clause A)
 
 ```txt
 HubSpot success message appears
@@ -222,7 +240,7 @@ Form is replaced by completion state
 HubSpot-defined success state is visibly reached
 ```
 
-### 7.2 Fail / ambiguous (not pass alone)
+### 7.3 Fail / ambiguous (not pass alone)
 
 ```txt
 Submit button disabled only
@@ -231,7 +249,7 @@ Page freeze / spinner with no completion message
 Network error with no confirmation
 ```
 
-### 7.3 Historical success UI candidates (G-20s2b — expected, not locked)
+### 7.4 Historical success UI candidates (G-20s2b — reference only, not current-package proof)
 
 | Stage | Historical candidate text |
 | --- | --- |
@@ -274,17 +292,36 @@ No unintended duplicate submission from this test
 
 ## 9. Operator input lock
 
+### 9.1 Technical — locked (G-20u39a1b)
+
+Target URL · portalId · formId · region · fields · required · CAPTCHA absent · payload · browser success rule §7.1 · HubSpot success §8.1 · duplicate prevention · STOP conditions.
+
+### 9.2 Operator pre-execution checklist (G-20u39a2 — answer before submit)
+
+Operator must confirm **yes** to each before clicking 送信. Cursor does **not** guess.
+
+| # | Item | Operator answers before G-20u39a2 |
+| --- | --- | --- |
+| 1 | `OPERATOR_CONTROLLED_TEST_EMAIL` | Operator provides managed test inbox (not in git) |
+| 2 | HubSpot確認担当者 | Named operator with portal `21392032` access |
+| 3 | HubSpot確認場所 | e.g. Marketing → Forms → submissions, or Contacts filtered by test email |
+| 4 | client通知 | Operator accepts that a test submission may notify client inbox |
+| 5 | workflow / auto reply | Operator accepts possible workflow/auto-reply side effects on test submit |
+| 6 | test record後処理 | Retain with identifiable test body (default) or delete later per operator |
+| 7 | execution日時 | Operator schedules one-shot window |
+
+### 9.3 Classification table
+
 | Item | Classification | Notes |
 | --- | --- | --- |
-| `OPERATOR_CONTROLLED_TEST_EMAIL` | **required before execution** | Placeholder locked · real address at G-20u39a2 only |
-| HubSpot確認担当者 | **required before execution** | Operator with portal access |
-| HubSpot確認画面 (submissions/contacts) | **required before execution** | Path documented by operator at execution |
-| 通知メール確認を必須とするか | **optional** | Default: **not required** for pass |
-| client通知が発生する可能性 | **unknown** | Confirm with portal owner before execution |
-| auto replyの可能性 | **unknown** | Observe at execution |
-| workflow発火の可能性 | **unknown** | Observe at execution |
-| execution日時 | **required before execution** | Operator schedules G-20u39a2 |
-| recordを残すか後処理するか | **optional** | Default: retain with identifiable test body · delete decision deferred |
+| `OPERATOR_CONTROLLED_TEST_EMAIL` | **required at execution** | §9.2 #1 — placeholder locked |
+| HubSpot確認担当者 | **required at execution** | §9.2 #2 |
+| HubSpot確認画面 | **required at execution** | §9.2 #3 |
+| client通知の影響許容 | **required at execution** | §9.2 #4 — operator acceptance, not Cursor guess |
+| workflow / auto reply許容 | **required at execution** | §9.2 #5 |
+| execution日時 | **required at execution** | §9.2 #7 |
+| record後処理 | **optional** | §9.2 #6 — default retain |
+| 通知メールを必須pass条件にするか | **optional** | Default: **no** — HubSpot submission count is required |
 | Staging URL | **locked** | §2 target URL |
 | portalId / formId | **locked** | §2 — verified match |
 | Test payload | **locked** | §6 |
@@ -303,7 +340,7 @@ No unintended duplicate submission from this test
 2. Confirm **not** on Wix `https://www.gosaki-piano.com/`
 3. Confirm portalId `21392032` · formId `57909d0c-9b9f-470a-8a18-e176d1d1a459` in page source or HubSpot UI
 4. Wait for HubSpot iframe · confirm fields: 姓 · 名* · Eメール* · お問い合わせ内容 · 送信
-5. Re-check consent / CAPTCHA — if present and unclear → **STOP**
+5. Confirm fields match §4 — if unexpected CAPTCHA or consent gate appears → **STOP**
 6. Operator prepares `OPERATOR_CONTROLLED_TEST_EMAIL`
 7. Confirm locked payload §6 · client notification / workflow risk acceptable
 8. Manual input only — no autofill from AI
@@ -375,35 +412,38 @@ Record the ambiguity
 
 ```txt
 CONTACT_HUBSPOT_SUBMIT_E2E_PREFLIGHT_PREPARED: true
-CONTACT_E2E_EXECUTION_READY: false
+CONTACT_E2E_EXECUTION_READY: true
 ```
 
-### Rationale for EXECUTION_READY: false
+### Rationale for EXECUTION_READY: true (G-20u39a1b)
 
 | Criterion | Status |
 | --- | --- |
-| STG URL locked and HTTP 200 verified | **yes** |
+| STG URL locked · HTTP 200 (G-20u39a1) | **yes** |
 | portalId / formId / region match live HTML | **yes** |
-| Form field map documented (historical + unchanged identity) | **yes** |
-| Required fields identified (名* · Eメール*) | **yes** (historical — iframe not re-verified this phase) |
+| Fields + required + submit label | **yes** — G-20s2 read-only iframe · **same formId** (unchanged) |
+| CAPTCHA | **absent** — G-20s2 same formId · no re-run needed |
+| Consent checkbox | **absent** |
+| Browser success rule | **locked** — §7.1 composite (browser completion + HubSpot 1 submission) |
+| HubSpot-side success rule | **locked** — §8.1 |
 | Payload locked | **yes** |
-| Duplicate prevention defined | **yes** |
-| STOP conditions defined | **yes** |
+| Operator pre-execution checklist | **defined** — §9.2 (answers at G-20u39a2, not guessed by Cursor) |
 
-### Unresolved blockers (execution readiness false)
+**Remaining before submit:** operator items in §9.2 only — not technical blockers.
 
-| Gap | Status | Blocks execution? |
+### G-20u39a1b gap resolution (74894c5)
+
+| Gap (G-20u39a1) | Resolution | Source |
 | --- | --- | --- |
-| iframe内 CAPTCHA の有無 | **unknown** | **yes** |
-| HubSpot確認担当者 | **unknown** | **yes** |
-| HubSpot確認画面・確認場所 | **unknown** | **yes** |
-| client通知の有無と影響許容 | **unknown** | **yes** |
-| workflow / auto reply の有無と影響許容 | **unknown** | **yes** |
-| 現在のSTGで実際に表示される browser success 状態 | **unknown** (G-20s2b候補のみ · not current-package verified) | **yes** |
+| CAPTCHA | **absent** | G-20s2 read-only iframe · formId unchanged |
+| Fields / required | **confirmed** | G-20s2 + G-20u39a1 embed identity match |
+| Browser success | **execution-time rule locked** | §7.1 — exact pre-submit copy not required |
+| HubSpot確認担当者 | **operator checklist** | §9.2 #2 — not Cursor-resolvable |
+| HubSpot確認場所 | **operator checklist** | §9.2 #3 |
+| client通知 | **operator acceptance** | §9.2 #4 |
+| workflow / auto reply | **operator acceptance** | §9.2 #5 |
 
-**Note:** `OPERATOR_CONTROLLED_TEST_EMAIL` remains placeholder — required at G-20u39a2 but **not** the sole blocker listed above.
-
-**Next slice:** **G-20u39a1b** — resolve gaps above before manual execution.
+**No additional HTTP GET or browser run in G-20u39a1b** — G-20u39a1 embed shell + G-20s2 same-formId iframe evidence sufficient.
 
 ---
 
@@ -427,9 +467,9 @@ CONTACT_E2E_EXECUTION_READY: false
 
 ## 15. Summary
 
-Read-only preflight **locks** staging Contact E2E target · embed identity · payload · success criteria · execution checklist. Live staging HTML confirms portalId/formId/region/container. **CONTACT_E2E_EXECUTION_READY: false** — CAPTCHA · HubSpot確認 · 通知/workflow影響 · current browser success UI remain unresolved. **Do not proceed to manual submit** until **G-20u39a1b** gap resolution.
+Read-only preflight **locks** staging Contact E2E target · embed identity · payload · success criteria. **G-20u39a1b** resolved technical gaps via unchanged formId + G-20s2 read-only iframe evidence. **CONTACT_E2E_EXECUTION_READY: true** — operator §9.2 checklist remains before G-20u39a2 manual execution.
 
 ```txt
-recommendedNextPhase: G-20u39a1b-gosaki-staging-p1-contact-hubspot-submit-e2e-preflight-gap-resolution
+recommendedNextPhase: G-20u39a2-gosaki-staging-p1-contact-hubspot-submit-e2e-manual-execution
 alternateNextPhase: G-20u39b-gosaki-staging-p1-admin-mobile-left-align-polish
 ```

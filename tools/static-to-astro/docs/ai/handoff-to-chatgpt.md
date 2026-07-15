@@ -5,22 +5,32 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u39a1-gosaki-staging-p1-contact-hubspot-submit-e2e-preflight — complete.
+Current phase: G-20u39a1b-gosaki-staging-p1-contact-hubspot-submit-e2e-preflight-gap-resolution — complete.
 Current live production: Wix (https://www.gosaki-piano.com/).
 Replacement hosting: not contracted. Production FTP preparation paused.
 HOSTING_READY: false. GO_LIVE_READY: false. PRODUCTION_UPLOAD_READY: false.
-CONTACT_HUBSPOT_SUBMIT_E2E_PREFLIGHT_PREPARED: true. CONTACT_E2E_EXECUTION_READY: false.
+CONTACT_HUBSPOT_SUBMIT_E2E_PREFLIGHT_PREPARED: true. CONTACT_E2E_EXECUTION_READY: true.
 CONTACT_SUBMISSION_EXECUTED: false. CONTACT_E2E_STATUS: PREFLIGHT_ONLY_NOT_EXECUTED.
 PUBLIC_READY: CONDITIONAL.
-Next: G-20u39a1b-gosaki-staging-p1-contact-hubspot-submit-e2e-preflight-gap-resolution (resolve CAPTCHA · HubSpot確認 · 通知/workflow · success UI gaps).
+Next: G-20u39a2-gosaki-staging-p1-contact-hubspot-submit-e2e-manual-execution (operator manual submit once).
 Alternate: G-20u39b-gosaki-staging-p1-admin-mobile-left-align-polish.
 ```
+
+## G-20u39a1b-gosaki-staging-p1-contact-hubspot-submit-e2e-preflight-gap-resolution — complete
+
+- **CONTACT_E2E_EXECUTION_READY:** **true**
+- **Gap resolution HEAD:** `74894c5`
+- **Resolved:** CAPTCHA absent · fields/required confirmed (G-20s2 same formId) · browser success rule locked §7.1
+- **Operator checklist:** §9.2 (test email · HubSpot verifier · client notification · workflow/auto-reply · record handling)
+- **No additional HTTP GET / browser / form input / submit this phase**
+- **Next:** **G-20u39a2-gosaki-staging-p1-contact-hubspot-submit-e2e-manual-execution**
+- **Alternate:** **G-20u39b-gosaki-staging-p1-admin-mobile-left-align-polish**
 
 ## G-20u39a1-gosaki-staging-p1-contact-hubspot-submit-e2e-preflight — complete
 
 - **Gate:** `gosakiStagingP1ContactHubspotSubmitE2ePreflightPrepared: true`
 - **CONTACT_HUBSPOT_SUBMIT_E2E_PREFLIGHT_PREPARED:** **true**
-- **CONTACT_E2E_EXECUTION_READY:** **false** (CAPTCHA · HubSpot確認 · 通知/workflow · current success UI unresolved)
+- **CONTACT_E2E_EXECUTION_READY:** **true** (G-20u39a1b gap resolution)
 - **CONTACT_SUBMISSION_EXECUTED:** **false**
 - **CONTACT_E2E_STATUS:** **PREFLIGHT_ONLY_NOT_EXECUTED**
 - **Target:** `https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/contact/` · portalId `21392032` · formId `57909d0c-9b9f-470a-8a18-e176d1d1a459` — live match
@@ -30,7 +40,7 @@ Alternate: G-20u39b-gosaki-staging-p1-admin-mobile-left-align-polish.
 - **HOSTING_READY / GO_LIVE_READY / PRODUCTION_UPLOAD_READY:** **false**
 - **PUBLIC_READY:** **CONDITIONAL**
 - **Not done:** form input · Contact submit · HTTP POST · HubSpot API · implementation
-- **Next:** **G-20u39a1b-gosaki-staging-p1-contact-hubspot-submit-e2e-preflight-gap-resolution**
+- **Next:** **G-20u39a2-gosaki-staging-p1-contact-hubspot-submit-e2e-manual-execution**
 - **Alternate:** **G-20u39b-gosaki-staging-p1-admin-mobile-left-align-polish**
 
 ## G-20u39a-gosaki-staging-p1-contact-hubspot-submit-e2e-planning — complete

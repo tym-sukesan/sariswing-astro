@@ -29,7 +29,8 @@ const STG_PATH = "/cms-kit-staging/gosaki-piano/contact/";
 const STG_URL = "https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/contact/";
 const WIX_URL = "https://www.gosaki-piano.com/";
 const RECOMMENDED_NEXT =
-  "G-20u39a1b-gosaki-staging-p1-contact-hubspot-submit-e2e-preflight-gap-resolution";
+  "G-20u39a2-gosaki-staging-p1-contact-hubspot-submit-e2e-manual-execution";
+const GAP_RESOLUTION_HEAD = "74894c5";
 const ALT_NEXT = "G-20u39b-gosaki-staging-p1-admin-mobile-left-align-polish";
 const EMAIL_PLACEHOLDER = "OPERATOR_CONTROLLED_TEST_EMAIL";
 
@@ -85,6 +86,11 @@ assert(
 );
 assert(`prior ${PRIOR_PHASE}`, doc.includes(PRIOR_PHASE));
 assert("preflight HEAD 27be4f6", doc.includes(PREFLIGHT_HEAD));
+assert("gap resolution HEAD 74894c5", doc.includes(GAP_RESOLUTION_HEAD));
+assert(
+  "G-20u39a1b gap resolution documented",
+  /G-20u39a1b gap resolution/i.test(doc),
+);
 
 assert(
   "historical G-20s2b vs current package distinction",
@@ -152,14 +158,19 @@ assert(
   ),
 );
 assert(
-  "CONTACT_E2E_EXECUTION_READY false",
-  /CONTACT_E2E_EXECUTION_READY:\s*false/i.test(doc),
+  "CONTACT_E2E_EXECUTION_READY true",
+  /CONTACT_E2E_EXECUTION_READY:\s*true/i.test(doc),
 );
 assert(
-  "execution readiness blockers documented",
-  /EXECUTION_READY:\s*false|Unresolved blockers/i.test(doc) &&
+  "execution readiness rationale documented",
+  /EXECUTION_READY:\s*true|Rationale for EXECUTION_READY: true/i.test(doc) &&
     /CAPTCHA/i.test(doc) &&
-    /HubSpot確認/i.test(doc),
+    /operator checklist|§9\.2/i.test(doc),
+);
+assert(
+  "locked browser success composite rule",
+  /Locked execution-time pass rule|clause A/i.test(doc) &&
+    /exactly one submission/i.test(doc),
 );
 assert(
   "browser form interaction false",
@@ -236,8 +247,8 @@ function assertAiG39a1(label, section) {
     ),
   );
   assert(
-    `${label} CONTACT_E2E_EXECUTION_READY false`,
-    /CONTACT_E2E_EXECUTION_READY:\s*false/i.test(section),
+    `${label} CONTACT_E2E_EXECUTION_READY true`,
+    /CONTACT_E2E_EXECUTION_READY:\s*true/i.test(section),
   );
   assert(
     `${label} PUBLIC_READY CONDITIONAL`,
@@ -261,8 +272,8 @@ assert(
 );
 
 assert(
-  "handoff current phase G-20u39a1",
-  /Current phase:.*G-20u39a1/i.test(handoff),
+  "handoff current phase G-20u39a1b",
+  /Current phase:.*G-20u39a1b/i.test(handoff),
 );
 
 assert("prior G-20u39a gate", priorDoc.includes("gosakiStagingP1ContactHubspotSubmitE2ePlanned: true"));

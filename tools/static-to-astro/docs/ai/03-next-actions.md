@@ -1,6 +1,39 @@
 Last updated: 2026-07-15
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u39a1-gosaki-staging-p1-contact-hubspot-submit-e2e-preflight — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u39a1-gosaki-staging-p1-contact-hubspot-submit-e2e-preflight` |
+| Gate | `gosakiStagingP1ContactHubspotSubmitE2ePreflightPrepared: true` |
+| CONTACT_HUBSPOT_SUBMIT_E2E_PREFLIGHT_PREPARED | **true** |
+| CONTACT_E2E_EXECUTION_READY | **false** |
+| CONTACT_SUBMISSION_EXECUTED | **false** |
+| CONTACT_E2E_STATUS | **PREFLIGHT_ONLY_NOT_EXECUTED** |
+| CONTACT_E2E_PASSED | **false** |
+| Target STG URL | `https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/contact/` |
+| portalId / formId | `21392032` / `57909d0c-9b9f-470a-8a18-e176d1d1a459` — **live match** |
+| Current live production | **Wix** (`https://www.gosaki-piano.com/`) |
+| Replacement hosting | **not contracted** |
+| Production FTP prep | **paused** |
+| HOSTING_READY | **false** |
+| GO_LIVE_READY | **false** |
+| PRODUCTION_UPLOAD_READY | **false** |
+| PUBLIC_READY | **CONDITIONAL** |
+| Next | **G-20u39a1b-gosaki-staging-p1-contact-hubspot-submit-e2e-preflight-gap-resolution** |
+| Alternate | **G-20u39b-gosaki-staging-p1-admin-mobile-left-align-polish** |
+
+```txt
+HOSTING_READY: false
+GO_LIVE_READY: false
+PRODUCTION_UPLOAD_READY: false
+PUBLIC_READY: CONDITIONAL
+CONTACT_SUBMISSION_EXECUTED: false
+CONTACT_E2E_STATUS: PREFLIGHT_ONLY_NOT_EXECUTED
+CONTACT_E2E_EXECUTION_READY: false
+```
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u39a-gosaki-staging-p1-contact-hubspot-submit-e2e-planning — complete
 
 | Item | Value |
@@ -19,7 +52,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | GO_LIVE_READY | **false** |
 | PRODUCTION_UPLOAD_READY | **false** |
 | PUBLIC_READY | **CONDITIONAL** |
-| Next | **G-20u39a1-gosaki-staging-p1-contact-hubspot-submit-e2e-preflight** |
+| Next | — (superseded by G-20u39a1) |
 | Alternate | **G-20u39b-gosaki-staging-p1-admin-mobile-left-align-polish** |
 
 ```txt

@@ -1,21 +1,26 @@
 Last updated: 2026-07-15
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20i3-gosaki-production-manual-upload-verifier-drift-review — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20i3-gosaki-production-manual-upload-verifier-drift-review` |
+| Gate | `gosakiProductionManualUploadVerifierDriftReviewed: true` |
+| G20I3_VERIFIER_DRIFT_RESOLVED | **true** |
+| Package at | `4259c8c` (**stale** vs HEAD `de960b7`) |
+| PRODUCTION_UPLOAD_READY | **false** |
+| Next | **G-20u38b2-gosaki-production-package-regeneration-at-current-head** |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u38b-gosaki-production-package-generation-at-head — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-20u38b-gosaki-production-package-generation-at-head` |
 | Gate | `gosakiProductionPackageGeneratedAtHead: true` |
-| HEAD / sourceCommit | `4259c8c` |
-| fileCount | **30** |
-| PRODUCTION_PACKAGE_CONTENT_OK | **true** |
-| PRODUCTION_PACKAGE_FRESH | **true** |
-| PRODUCTION_PACKAGE_VERIFIED_FOR_UPLOAD | **false** |
-| G20I3_VERIFIER_DRIFT | **true** |
+| G20I3 drift | **resolved** (G-20i3 review) |
 | PRODUCTION_UPLOAD_READY | **false** |
-| PUBLIC_READY | **CONDITIONAL** |
-| Next | **G-20u38c-gosaki-production-package-verification-review** · G-20i3 drift review |
+| Next | **G-20u38b2-gosaki-production-package-regeneration-at-current-head** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u38a-gosaki-production-profile-static-preflight — complete
 

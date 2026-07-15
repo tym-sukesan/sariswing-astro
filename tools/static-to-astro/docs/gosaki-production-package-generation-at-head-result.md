@@ -35,6 +35,8 @@ productionPackageContentOk: true
 productionPackageFresh: true
 productionPackageVerifiedForUpload: false
 g20i3VerifierDrift: true
+g20i3VerifierDriftResolved: true
+g20i3VerifierDriftResolvedPhase: G-20i3-gosaki-production-manual-upload-verifier-drift-review
 productionUploadReady: false
 publicReady: conditional
 p0Stop: false
@@ -196,7 +198,7 @@ P0_STOP: false
 
 **P2 note:** Orphan `_astro/index.astro_astro_type_script_index_0_lang.BA9SPEq7.js` + admin CSS remain in package but are **not referenced** by any public HTML — optional bundle pruning in future phase.
 
-**Build pipeline exit code 1** due to G-20i3 post-build hook — package artifacts are valid; freshness + preflight **PASS**.
+**Build pipeline exit code 1** due to G-20i3 post-build hook — resolved in [G-20i3 drift review](./gosaki-production-manual-upload-verifier-drift-review.md) (verifier assertions updated; package at generation time unchanged).
 
 ---
 
@@ -208,7 +210,8 @@ P0_STOP: false
 | **PRODUCTION_PACKAGE_CONTENT_OK** | **true** | admin excluded · prod URL/robots/sitemap · secrets P0 clear · discography restored |
 | **PRODUCTION_PACKAGE_FRESH** | **true** | `sourceCommit` = HEAD · freshness + preflight **PASS** |
 | **PRODUCTION_PACKAGE_VERIFIED_FOR_UPLOAD** | **false** | Build pipeline exit **1** · G-20i3 **70/73** (not full PASS) |
-| **G20I3_VERIFIER_DRIFT** | **true** | Hardcoded fileCount 28 vs 30 · manifest field naming drift |
+| **G20I3_VERIFIER_DRIFT** | **true** (at G-20u38b generation) |
+| **G20I3_VERIFIER_DRIFT_RESOLVED** | **true** — see [G-20i3 drift review](./gosaki-production-manual-upload-verifier-drift-review.md) |
 | **PRODUCTION_UPLOAD_READY** | **false** | `TBD_G-20i` · verifier drift unresolved · FTP not executed |
 | **PUBLIC_READY** | **CONDITIONAL** | |
 | **P0_STOP** | **false** | Package content P0 checks pass; upload gate not cleared |
@@ -231,8 +234,8 @@ P0_STOP: false
 ## 13. Next
 
 ```txt
-recommendedNextPhase: G-20u38c-gosaki-production-package-verification-review
-alternateNextPhase: G-20i3 verifier drift review / update
+recommendedNextPhase: G-20u38b2-gosaki-production-package-regeneration-at-current-head
+alternateNextPhase: G-20u38c-gosaki-production-package-verification-review
 ```
 
-G-20u38c: formal verification review rollup. G-20i3: update hardcoded fileCount / manifest field assertions if approved. Remote path confirmation required before G-20u38d upload checklist.
+Package at `4259c8c` remains **stale** vs current HEAD — regen required before upload. G-20i3 verifier drift **resolved**; re-run `build:gosaki:production` at current HEAD in G-20u38b2.

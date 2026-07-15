@@ -181,6 +181,7 @@
     "verify:g20u36f-marker-title-restore-slice-complete": "node scripts/verify-g20u36f-marker-title-restore-slice-complete.mjs",
     "verify:g20u37-gosaki-public-readiness-qa-planning": "node scripts/verify-g20u37-gosaki-public-readiness-qa-planning.mjs",
     "verify:g20u37a-gosaki-public-readiness-static-inspection": "node scripts/verify-g20u37a-gosaki-public-readiness-static-inspection.mjs",
+    "verify:g20u37b-gosaki-public-readiness-manual-browser-qa-result": "node scripts/verify-g20u37b-gosaki-public-readiness-manual-browser-qa-result.mjs",
     "verify:g20u36e-controlled-save-auth-jwt-feasibility-plan": "node scripts/verify-g20u36e-controlled-save-auth-jwt-feasibility-plan.mjs",
     "verify:g20u36e-controlled-save-auth-jwt-feasibility-preflight": "node scripts/verify-g20u36e-controlled-save-auth-jwt-feasibility-preflight.mjs",
     "verify:g20u36e-controlled-save-auth-admin-rls-select-prep": "node scripts/verify-g20u36e-controlled-save-auth-admin-rls-select-prep.mjs",

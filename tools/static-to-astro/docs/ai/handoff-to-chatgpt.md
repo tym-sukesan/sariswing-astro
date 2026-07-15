@@ -5,11 +5,20 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u37a-gosaki-public-readiness-static-inspection — complete.
-P0_BLOCKERS: false. PUBLIC_READY: NO. STAGING_QA_READY: YES. STAGING_BROWSER_QA_READY: YES.
-Read-only static inspection on e3616a3 package — no static P0 blockers.
-Next: G-20u37b-gosaki-public-readiness-manual-browser-qa.
+Current phase: G-20u37b-gosaki-public-readiness-manual-browser-qa-result — complete.
+P0_BLOCKERS: false. PUBLIC_READY: CONDITIONAL (not final). STAGING_QA_READY: YES. STAGING_BROWSER_QA_READY: YES.
+Operator STG browser QA PASS on e3616a3 — P1: admin mobile left-align, contact submit E2E not done.
+Next: G-20u37c-gosaki-public-readiness-final-p0-review or Admin mobile layout polish.
 ```
+
+## G-20u37b-gosaki-public-readiness-manual-browser-qa-result — complete
+
+- **Gate:** `gosakiPublicReadinessManualBrowserQaCompleted: true`
+- **Verdict:** **P0_BLOCKERS: false** · **PUBLIC_READY: CONDITIONAL (not final)** · **STAGING_QA_READY: YES** · **STAGING_BROWSER_QA_READY: YES**
+- **Operator:** 諸々問題なさそう · public pages PASS · admin read-only PASS · discography restored PASS
+- **P1:** Admin mobile left-align (iPhone SE) · Contact HubSpot submit E2E not executed · admin prod policy
+- **Not done:** implementation · Save · SQL · package · FTP · contact submit E2E
+- **Next:** **G-20u37c-gosaki-public-readiness-final-p0-review** · or Admin mobile layout polish
 
 ## G-20u37a-gosaki-public-readiness-static-inspection — complete
 
@@ -17,7 +26,7 @@ Next: G-20u37b-gosaki-public-readiness-manual-browser-qa.
 - **Verdict:** **P0_BLOCKERS: false** · **PUBLIC_READY: NO** · **STAGING_QA_READY: YES** · **STAGING_BROWSER_QA_READY: YES**
 - **Artifact:** sourceCommit `e3616a3` · 31 files · marker absent · discography restored
 - **Not done:** implementation · Save · SQL · package · FTP · browser QA
-- **Next:** **G-20u37b-gosaki-public-readiness-manual-browser-qa**
+- **Next:** **G-20u37c-gosaki-public-readiness-final-p0-review**
 
 ## G-20u37-gosaki-public-readiness-qa-planning — complete
 

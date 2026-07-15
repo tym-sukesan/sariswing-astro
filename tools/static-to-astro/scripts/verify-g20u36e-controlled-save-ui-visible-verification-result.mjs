@@ -136,7 +136,10 @@ assert(
 );
 assert(
   "AI next-actions package regeneration or result",
-  nextActions.includes(NEXT) || nextActions.includes(PHASE),
+  nextActions.includes(NEXT) ||
+    nextActions.includes("G-20u36e-controlled-save-static-package-regeneration-prep") ||
+    nextActions.includes("G-20u36e-controlled-save-static-package-regeneration-execution") ||
+    nextActions.includes(PHASE),
 );
 assert(
   "AI handoff ui-visible result",

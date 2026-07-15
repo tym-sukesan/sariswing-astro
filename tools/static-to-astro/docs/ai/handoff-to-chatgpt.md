@@ -5,20 +5,27 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36e-controlled-save-ui-visible-verification-result-record — complete.
-Next: G-20u36e-controlled-save-static-package-regeneration-prep.
-Admin/Public still show old title. DB Save PASS. Static snapshot lag.
+Current phase: G-20u36e-controlled-save-static-package-regeneration-prep — complete.
+Next: G-20u36e-controlled-save-static-package-regeneration-execution (build:gosaki:staging at clean HEAD).
+DB Save PASS. UI lag. No package/FTP yet.
 ```
+
+## G-20u36e-controlled-save-static-package-regeneration-prep — complete
+
+- **Gate:** `gosakiDiscographyControlledSaveStaticPackageRegenerationPrepared: true`
+- **Planned:** `cd ~/sariswing-astro/tools/static-to-astro && npm run build:gosaki:staging`
+- **Freshness:** `MANIFEST.sourceCommit` = HEAD · `generatedAt` current run
+- **Verify after gen:** marker title in `discography/index.html` + admin · `Like a Lover` · freshness PASS
+- **Upload (later):** `public-dist/` contents → `/cms-kit-staging/gosaki-piano/` · manual FileZilla only
+- **Forbidden:** CLI FTP · mirror · delete · Save · SQL
+- **Not done:** package · FTP · Save
+- **Next:** **G-20u36e-controlled-save-static-package-regeneration-execution**
 
 ## G-20u36e-controlled-save-ui-visible-verification-result-record — complete
 
 - **Gate:** `gosakiDiscographyControlledSaveUiVisibleVerificationResultRecorded: true`
-- **Admin:** new title **見えない** · `Like a Lover` / old title **見える**
-- **Public:** new title **見えない** · `Like a Lover` / old title **見える**
-- **DB Save / permission close:** remain **PASS**
-- **Cause:** likely **static package / build-time snapshot lag**
-- **Not done:** package · FTP/upload · Save
-- **Next:** **G-20u36e-controlled-save-static-package-regeneration-prep**
+- **Follow-on:** regen prep — **complete**
+- **Next:** static-package-regeneration-execution
 
 ## G-20u36e-controlled-save-ui-visible-verification — complete (prep)
 

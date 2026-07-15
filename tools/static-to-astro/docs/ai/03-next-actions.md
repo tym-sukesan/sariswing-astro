@@ -1,16 +1,25 @@
 Last updated: 2026-07-14
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-static-package-regeneration-prep — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u36e-controlled-save-static-package-regeneration-prep` |
+| Gate | `gosakiDiscographyControlledSaveStaticPackageRegenerationPrepared: true` |
+| Scope | regen prep only · no package/FTP |
+| Command | `build:gosaki:staging` (planned) |
+| Next | G-20u36e-controlled-save-static-package-regeneration-execution |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-ui-visible-verification-result-record — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-20u36e-controlled-save-ui-visible-verification-result-record` |
 | Gate | `gosakiDiscographyControlledSaveUiVisibleVerificationResultRecorded: true` |
-| Admin / Public new title | **not visible** |
-| DB Save / close | remain **PASS** |
-| Cause | static snapshot lag |
-| Next | G-20u36e-controlled-save-static-package-regeneration-prep |
+| UI | new title not visible · static lag |
+| Follow-on | regen prep — **complete** |
+| Next | static-package-regeneration-execution |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-ui-visible-verification — complete
 

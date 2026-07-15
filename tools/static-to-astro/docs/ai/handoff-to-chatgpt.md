@@ -5,11 +5,19 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u37-gosaki-public-readiness-qa-planning — complete.
-PUBLIC_READY: NO. STAGING_QA_READY: YES.
-Checklist + static inspection plan + manual browser QA checklist ready.
-Next: G-20u37a static-inspection (read-only) then G-20u37b manual-browser-qa.
+Current phase: G-20u37a-gosaki-public-readiness-static-inspection — complete.
+P0_BLOCKERS: false. PUBLIC_READY: NO. STAGING_QA_READY: YES. STAGING_BROWSER_QA_READY: YES.
+Read-only static inspection on e3616a3 package — no static P0 blockers.
+Next: G-20u37b-gosaki-public-readiness-manual-browser-qa.
 ```
+
+## G-20u37a-gosaki-public-readiness-static-inspection — complete
+
+- **Gate:** `gosakiPublicReadinessStaticInspectionCompleted: true`
+- **Verdict:** **P0_BLOCKERS: false** · **PUBLIC_READY: NO** · **STAGING_QA_READY: YES** · **STAGING_BROWSER_QA_READY: YES**
+- **Artifact:** sourceCommit `e3616a3` · 31 files · marker absent · discography restored
+- **Not done:** implementation · Save · SQL · package · FTP · browser QA
+- **Next:** **G-20u37b-gosaki-public-readiness-manual-browser-qa**
 
 ## G-20u37-gosaki-public-readiness-qa-planning — complete
 
@@ -17,7 +25,7 @@ Next: G-20u37a static-inspection (read-only) then G-20u37b manual-browser-qa.
 - **Verdict:** **PUBLIC_READY: NO** · **STAGING_QA_READY: YES**
 - **Delivered:** P0/P1/P2 checklist · static inspection plan · browser QA checklist
 - **Not done:** implementation · Save · SQL · package · FTP
-- **Next:** **G-20u37a-gosaki-public-readiness-static-inspection** · **G-20u37b-gosaki-public-readiness-manual-browser-qa**
+- **Next:** **G-20u37b-gosaki-public-readiness-manual-browser-qa**
 
 ## G-20u36f-discography-marker-title-restore-slice-complete — COMPLETE
 

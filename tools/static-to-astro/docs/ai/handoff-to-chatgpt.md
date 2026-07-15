@@ -5,11 +5,19 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u36f-discography-marker-title-restore-save-result-record — complete.
-Restore Save PASS. Permission close PASS. DB title = On a Clear Day. Permission closed.
-Package not regen yet — STG static UI may still show marker.
-Next: static-package-regeneration-prep. Manual FTP after package freshness PASS.
+Current phase: G-20u36f-discography-marker-title-restore-manual-upload-ui-pass-result — complete.
+Package regen PASS. Manual FTP done. Admin + Public UI PASS.
+Marker removed. On a Clear Day restored. Like a Lover preserved.
+Next: slice-complete record.
 ```
+
+## G-20u36f-discography-marker-title-restore-manual-upload-ui-pass-result — complete
+
+- **Gate:** `gosakiDiscographyMarkerTitleRestoreManualUploadUiPassCompleted: true`
+- **Package:** sourceCommit `e3616a3` · freshness **PASS** · manual FTP **done**
+- **UI:** Admin + Public **PASS** · marker **absent** · `On a Clear Day` **restored** · Like a Lover **preserved**
+- **Not done this phase:** Save · SQL · package regen · FTP re-upload
+- **Next:** **G-20u36f-discography-marker-title-restore-slice-complete**
 
 ## G-20u36f-discography-marker-title-restore-save-result-record — complete
 

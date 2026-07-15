@@ -1,6 +1,16 @@
 Last updated: 2026-07-15
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36f-discography-marker-title-restore-manual-upload-ui-pass-result — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u36f-discography-marker-title-restore-manual-upload-ui-pass-result` |
+| Gate | `gosakiDiscographyMarkerTitleRestoreManualUploadUiPassCompleted: true` |
+| Package / FTP / UI | regen **PASS** · FTP **done** · Admin + Public **PASS** |
+| Title | marker **removed** · `On a Clear Day` **restored** |
+| Next | G-20u36f-discography-marker-title-restore-slice-complete |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36f-discography-marker-title-restore-save-result-record — complete
 
 | Item | Value |

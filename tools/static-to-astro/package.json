@@ -177,6 +177,7 @@
     "verify:g20u36f-marker-title-restore-edge-deploy-prep": "node scripts/verify-g20u36f-marker-title-restore-edge-deploy-prep.mjs",
     "verify:g20u36f-marker-title-restore-edge-deploy-result": "node scripts/verify-g20u36f-marker-title-restore-edge-deploy-result.mjs",
     "verify:g20u36f-marker-title-restore-save-result": "node scripts/verify-g20u36f-marker-title-restore-save-result.mjs",
+    "verify:g20u36f-marker-title-restore-manual-upload-ui-pass-result": "node scripts/verify-g20u36f-marker-title-restore-manual-upload-ui-pass-result.mjs",
     "verify:g20u36e-controlled-save-auth-jwt-feasibility-plan": "node scripts/verify-g20u36e-controlled-save-auth-jwt-feasibility-plan.mjs",
     "verify:g20u36e-controlled-save-auth-jwt-feasibility-preflight": "node scripts/verify-g20u36e-controlled-save-auth-jwt-feasibility-preflight.mjs",
     "verify:g20u36e-controlled-save-auth-admin-rls-select-prep": "node scripts/verify-g20u36e-controlled-save-auth-admin-rls-select-prep.mjs",

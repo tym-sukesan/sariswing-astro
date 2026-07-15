@@ -5,19 +5,26 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u37c-gosaki-public-readiness-final-p0-review — complete.
-P0_BLOCKERS: false. STAGING_QA_COMPLETE: true. PUBLIC_READY: CONDITIONAL.
-PUBLIC_P0_READY_FOR_PRODUCTION_PACKAGE_PREP: true.
-Next: G-20u38-gosaki-production-package-prep-planning or Contact HubSpot submit E2E.
+Current phase: G-20u38-gosaki-production-package-prep-planning — complete.
+PRODUCTION_PACKAGE_PREP_PLANNED: true. PRODUCTION_PACKAGE_GENERATION_READY: CONDITIONAL.
+PRODUCTION_UPLOAD_READY: false. PUBLIC_READY: CONDITIONAL.
+STG e3616a3 not for production. Prod build must use HEAD 9944164 + production profile.
+Next: G-20u38a-gosaki-production-profile-static-preflight.
 ```
+
+## G-20u38-gosaki-production-package-prep-planning — complete
+
+- **Gate:** `gosakiProductionPackagePrepPlanned: true`
+- **Verdict:** **PRODUCTION_PACKAGE_GENERATION_READY: CONDITIONAL** · **PRODUCTION_UPLOAD_READY: false** · **PUBLIC_READY: CONDITIONAL**
+- **Rules:** prod excludes `/admin/` · FileZilla manual only · remote path TBD_G-20i · no e3616a3 on prod
+- **Not done:** package build · FTP · production deploy
+- **Next:** **G-20u38a-gosaki-production-profile-static-preflight**
 
 ## G-20u37c-gosaki-public-readiness-final-p0-review — complete
 
 - **Gate:** `gosakiPublicReadinessFinalP0Reviewed: true`
-- **Verdict:** **P0_BLOCKERS: false** · **STAGING_QA_COMPLETE: true** · **PUBLIC_READY: CONDITIONAL** · **PUBLIC_P0_READY_FOR_PRODUCTION_PACKAGE_PREP: true**
-- **Conditional:** prod package/upload pending · prod must exclude `/admin/` · contact submit E2E not done (P1)
-- **Not done:** implementation · Save · SQL · package · FTP · production deploy
-- **Next:** **G-20u38-gosaki-production-package-prep-planning** · or Contact HubSpot submit E2E
+- **Verdict:** **PUBLIC_READY: CONDITIONAL** · **PUBLIC_P0_READY_FOR_PRODUCTION_PACKAGE_PREP: true**
+- **Next:** **G-20u38a-gosaki-production-profile-static-preflight**
 
 ## G-20u37b-gosaki-public-readiness-manual-browser-qa-result — complete
 

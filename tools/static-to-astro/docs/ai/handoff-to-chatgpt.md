@@ -5,24 +5,31 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20i3-gosaki-production-manual-upload-verifier-drift-review — complete.
-G20I3_VERIFIER_DRIFT_RESOLVED: true. PRODUCTION_UPLOAD_READY: false.
-Package at 4259c8c still stale vs HEAD de960b7.
-Next: G-20u38b2-gosaki-production-package-regeneration-at-current-head.
+Current phase: G-20u38b2-gosaki-production-package-regeneration-at-current-head — complete.
+PRODUCTION_PACKAGE_VERIFIED_LOCALLY: true. PRODUCTION_PACKAGE_VERIFIED_FOR_UPLOAD: false.
+PRODUCTION_UPLOAD_READY: false. Package stale after result commit.
+Next: G-20u38c-gosaki-production-package-verification-review.
 ```
+
+## G-20u38b2-gosaki-production-package-regeneration-at-current-head — complete
+
+- **Gate:** `gosakiProductionPackageRegeneratedAtCurrentHead: true`
+- **Package:** `output/manual-upload/gosaki-piano-production/` · 30 files · HEAD `1c1fb97` · build exit **0**
+- **Local verify:** freshness + preflight + G-20i3 **74/74 PASS**
+- **Upload gate:** **PRODUCTION_UPLOAD_READY: false** · remote `TBD_G-20i` · regen at latest HEAD before FTP
+- **Not done:** FTP · production deploy · remote path confirmation
+- **Next:** **G-20u38c-gosaki-production-package-verification-review**
 
 ## G-20i3-gosaki-production-manual-upload-verifier-drift-review — complete
 
 - **Gate:** `gosakiProductionManualUploadVerifierDriftReviewed: true`
 - **Fix:** G-20i3 fileCount min+sync · manifest admin flags · P0 preserved
-- **Not done:** package regen · FTP
-- **Next:** **G-20u38b2-gosaki-production-package-regeneration-at-current-head**
+- **Superseded by:** G-20u38b2 regen at HEAD
 
 ## G-20u38b-gosaki-production-package-generation-at-head — complete
 
 - **Gate:** `gosakiProductionPackageGeneratedAtHead: true`
-- **Drift:** resolved via G-20i3 review
-- **Next:** **G-20u38b2-gosaki-production-package-regeneration-at-current-head**
+- **Superseded by:** G-20u38b2 at `1c1fb97`
 
 ## G-20u38a-gosaki-production-profile-static-preflight — complete
 

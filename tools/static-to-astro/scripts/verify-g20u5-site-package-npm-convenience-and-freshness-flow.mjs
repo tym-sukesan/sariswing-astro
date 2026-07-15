@@ -170,12 +170,25 @@ if (exists("tools/static-to-astro/output/manual-upload/gosaki-piano-production/M
   const verifyProduction = runNpm("verify:gosaki:production");
   assert("npm verify:gosaki:production PASS", verifyProduction.ok, verifyProduction.stderr);
 
-  const freshnessProduction = runNpm("verify:package-freshness:production", [], { expectFail: true });
-  assert(
-    "npm verify:package-freshness:production STOP expected (stale on disk)",
-    freshnessProduction.ok,
-    `exit ${freshnessProduction.status}`,
-  );
+  const freshnessProduction = runNpm("verify:package-freshness:production");
+  if (freshnessProduction.ok) {
+    assert(
+      "npm verify:package-freshness:production PASS (fresh at HEAD)",
+      /fresh:\s*PASS|UPLOAD PREFLIGHT:\s*PASS/i.test(
+        `${freshnessProduction.stdout}\n${freshnessProduction.stderr}`,
+      ),
+      freshnessProduction.stderr || freshnessProduction.stdout,
+    );
+    console.log(
+      "NOTE production package fresh at HEAD — recent regen (e.g. G-20u38b2) — non-blocking",
+    );
+  } else {
+    assert(
+      "npm verify:package-freshness:production STOP expected (stale on disk)",
+      freshnessProduction.stderr.includes("STOP") || freshnessProduction.stdout.includes("STOP"),
+      `exit ${freshnessProduction.status}`,
+    );
+  }
 } else {
   console.log("NOTE production package missing — skipped on-disk verify/freshness tests");
 }

@@ -1,6 +1,20 @@
 Last updated: 2026-07-15
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u38b2-gosaki-production-package-regeneration-at-current-head — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u38b2-gosaki-production-package-regeneration-at-current-head` |
+| Gate | `gosakiProductionPackageRegeneratedAtCurrentHead: true` |
+| HEAD / sourceCommit | `1c1fb97` |
+| fileCount | **30** |
+| build exit | **0** |
+| PRODUCTION_PACKAGE_VERIFIED_LOCALLY | **true** |
+| PRODUCTION_PACKAGE_VERIFIED_FOR_UPLOAD | **false** |
+| PRODUCTION_UPLOAD_READY | **false** |
+| Next | **G-20u38c-gosaki-production-package-verification-review** |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20i3-gosaki-production-manual-upload-verifier-drift-review — complete
 
 | Item | Value |
@@ -8,9 +22,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Phase | `G-20i3-gosaki-production-manual-upload-verifier-drift-review` |
 | Gate | `gosakiProductionManualUploadVerifierDriftReviewed: true` |
 | G20I3_VERIFIER_DRIFT_RESOLVED | **true** |
-| Package at | `4259c8c` (**stale** vs HEAD `de960b7`) |
-| PRODUCTION_UPLOAD_READY | **false** |
-| Next | **G-20u38b2-gosaki-production-package-regeneration-at-current-head** |
+| Next | — (superseded by G-20u38b2) |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u38b-gosaki-production-package-generation-at-head — complete
 
@@ -18,9 +30,8 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | --- | --- |
 | Phase | `G-20u38b-gosaki-production-package-generation-at-head` |
 | Gate | `gosakiProductionPackageGeneratedAtHead: true` |
-| G20I3 drift | **resolved** (G-20i3 review) |
-| PRODUCTION_UPLOAD_READY | **false** |
-| Next | **G-20u38b2-gosaki-production-package-regeneration-at-current-head** |
+| Package at | `4259c8c` (**superseded** by G-20u38b2) |
+| Next | — (superseded by G-20u38b2) |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u38a-gosaki-production-profile-static-preflight — complete
 

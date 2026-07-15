@@ -1,20 +1,27 @@
 Last updated: 2026-07-15
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u38a-gosaki-production-profile-static-preflight — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u38a-gosaki-production-profile-static-preflight` |
+| Gate | `gosakiProductionProfileStaticPreflightCompleted: true` |
+| ADMIN_EXCLUDED | **true** |
+| PRODUCTION_PACKAGE_GENERATION_READY | **true** |
+| PRODUCTION_UPLOAD_READY | **false** |
+| PUBLIC_READY | **CONDITIONAL** |
+| Preflight HEAD | `51ae3fe` |
+| Remote path | `TBD_G-20i` |
+| Next | **G-20u38b-gosaki-production-package-generation-at-head** |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u38-gosaki-production-package-prep-planning — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-20u38-gosaki-production-package-prep-planning` |
 | Gate | `gosakiProductionPackagePrepPlanned: true` |
-| PRODUCTION_PACKAGE_PREP_PLANNED | **true** |
-| PRODUCTION_PACKAGE_GENERATION_READY | **CONDITIONAL** |
-| PRODUCTION_UPLOAD_READY | **false** |
-| PUBLIC_READY | **CONDITIONAL** |
-| Planning HEAD | `9944164` |
-| STG package | `e3616a3` — not for production |
-| Remote path | `TBD_G-20i` |
-| Next | **G-20u38a-gosaki-production-profile-static-preflight** |
+| Next | **G-20u38b-gosaki-production-package-generation-at-head** |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u37c-gosaki-public-readiness-final-p0-review — complete
 

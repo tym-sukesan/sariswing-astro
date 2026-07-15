@@ -5,19 +5,24 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u38a-gosaki-production-profile-static-preflight — complete.
-PRODUCTION_PACKAGE_GENERATION_READY: true. PRODUCTION_UPLOAD_READY: false. PUBLIC_READY: CONDITIONAL.
-Admin excluded in production profile. Remote path TBD_G-20i. On-disk prod package stale vs HEAD 51ae3fe.
-Next: G-20u38b-gosaki-production-package-generation-at-head.
+Current phase: G-20u38b-gosaki-production-package-generation-at-head — complete.
+PRODUCTION_PACKAGE_CONTENT_OK: true. PRODUCTION_PACKAGE_FRESH: true.
+PRODUCTION_PACKAGE_VERIFIED_FOR_UPLOAD: false. G20I3_VERIFIER_DRIFT: true.
+PRODUCTION_UPLOAD_READY: false. Next: G-20u38c + G-20i3 drift review.
 ```
+
+## G-20u38b-gosaki-production-package-generation-at-head — complete
+
+- **Gate:** `gosakiProductionPackageGeneratedAtHead: true`
+- **Package:** `output/manual-upload/gosaki-piano-production/` · 30 files · content OK · fresh at HEAD
+- **Upload gate:** **PRODUCTION_PACKAGE_VERIFIED_FOR_UPLOAD: false** · G-20i3 70/73 · pipeline exit 1
+- **Not done:** FTP · production deploy · G-20i3 full PASS
+- **Next:** **G-20u38c-gosaki-production-package-verification-review** · G-20i3 drift review
 
 ## G-20u38a-gosaki-production-profile-static-preflight — complete
 
 - **Gate:** `gosakiProductionProfileStaticPreflightCompleted: true`
-- **Verdict:** **PRODUCTION_PACKAGE_GENERATION_READY: true** · **PRODUCTION_UPLOAD_READY: false** · **PUBLIC_READY: CONDITIONAL**
-- **Findings:** admin excluded · robots/sitemap/SEO prod-ready by spec · scripts/preflight/freshness gates exist
-- **Not done:** package build · FTP · production deploy
-- **Next:** **G-20u38b-gosaki-production-package-generation-at-head**
+- **Next:** **G-20u38c-gosaki-production-package-verification-review**
 
 ## G-20u38-gosaki-production-package-prep-planning — complete
 

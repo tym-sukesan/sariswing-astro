@@ -1,19 +1,26 @@
 Last updated: 2026-07-15
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u38c-gosaki-production-package-verification-review — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u38c-gosaki-production-package-verification-review` |
+| Gate | `gosakiProductionPackageVerificationReviewed: true` |
+| Review HEAD | `2831629` |
+| Reviewed package | `1c1fb97` (**stale**) |
+| PRODUCTION_UPLOAD_READY | **false** |
+| Remote path | **TBD_G-20i** (operator confirmation required) |
+| Next | **G-20u38d-gosaki-production-ftp-remote-path-confirmation-and-upload-checklist** |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u38b2-gosaki-production-package-regeneration-at-current-head — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-20u38b2-gosaki-production-package-regeneration-at-current-head` |
 | Gate | `gosakiProductionPackageRegeneratedAtCurrentHead: true` |
-| HEAD / sourceCommit | `1c1fb97` |
-| fileCount | **30** |
-| build exit | **0** |
-| PRODUCTION_PACKAGE_VERIFIED_LOCALLY | **true** |
-| PRODUCTION_PACKAGE_VERIFIED_FOR_UPLOAD | **false** |
-| PRODUCTION_UPLOAD_READY | **false** |
-| Next | **G-20u38c-gosaki-production-package-verification-review** |
+| Package at | `1c1fb97` (**stale** vs HEAD `2831629`) |
+| Next | — (superseded by G-20u38c review) |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20i3-gosaki-production-manual-upload-verifier-drift-review — complete
 

@@ -5,20 +5,25 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u38b2-gosaki-production-package-regeneration-at-current-head — complete.
-PRODUCTION_PACKAGE_VERIFIED_LOCALLY: true. PRODUCTION_PACKAGE_VERIFIED_FOR_UPLOAD: false.
-PRODUCTION_UPLOAD_READY: false. Package stale after result commit.
-Next: G-20u38c-gosaki-production-package-verification-review.
+Current phase: G-20u38c-gosaki-production-package-verification-review — complete.
+PRODUCTION_PACKAGE_VERIFIED_LOCALLY: true. PRODUCTION_UPLOAD_READY: false.
+On-disk package 1c1fb97 stale vs HEAD 2831629. Remote TBD_G-20i.
+Next: G-20u38d-gosaki-production-ftp-remote-path-confirmation-and-upload-checklist.
 ```
+
+## G-20u38c-gosaki-production-package-verification-review — complete
+
+- **Gate:** `gosakiProductionPackageVerificationReviewed: true`
+- **Review:** G-20u38–G-20u38b2 local verification sound · upload blocked
+- **Stale:** on-disk `1c1fb97` vs HEAD `2831629`
+- **Remote:** `TBD_G-20i` — operator confirmation required (G-20u38d)
+- **Not done:** package regen · FTP · remote path confirmation
+- **Next:** **G-20u38d-gosaki-production-ftp-remote-path-confirmation-and-upload-checklist**
 
 ## G-20u38b2-gosaki-production-package-regeneration-at-current-head — complete
 
 - **Gate:** `gosakiProductionPackageRegeneratedAtCurrentHead: true`
-- **Package:** `output/manual-upload/gosaki-piano-production/` · 30 files · HEAD `1c1fb97` · build exit **0**
-- **Local verify:** freshness + preflight + G-20i3 **74/74 PASS**
-- **Upload gate:** **PRODUCTION_UPLOAD_READY: false** · remote `TBD_G-20i` · regen at latest HEAD before FTP
-- **Not done:** FTP · production deploy · remote path confirmation
-- **Next:** **G-20u38c-gosaki-production-package-verification-review**
+- **Superseded by:** G-20u38c verification review
 
 ## G-20i3-gosaki-production-manual-upload-verifier-drift-review — complete
 

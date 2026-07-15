@@ -5,14 +5,31 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u39-gosaki-staging-p1-review-planning — complete.
+Current phase: G-20u39a-gosaki-staging-p1-contact-hubspot-submit-e2e-planning — complete.
 Current live production: Wix (https://www.gosaki-piano.com/).
 Replacement hosting: not contracted. Production FTP remote path not available.
 Production FTP preparation paused. HOSTING_READY: false. GO_LIVE_READY: false. PRODUCTION_UPLOAD_READY: false.
-STAGING_P1_REVIEW_PLANNED: true. PUBLIC_READY: CONDITIONAL.
-Next: G-20u39a-gosaki-staging-p1-contact-hubspot-submit-e2e-planning (planning only — no submit).
+CONTACT_HUBSPOT_SUBMIT_E2E_PLANNED: true. CONTACT_SUBMISSION_EXECUTED: false. CONTACT_E2E_STATUS: PLANNED_NOT_EXECUTED.
+PUBLIC_READY: CONDITIONAL.
+Next: G-20u39a1-gosaki-staging-p1-contact-hubspot-submit-e2e-preflight (read-only preflight — no submit).
 Alternate: G-20u39b-gosaki-staging-p1-admin-mobile-left-align-polish.
 ```
+
+## G-20u39a-gosaki-staging-p1-contact-hubspot-submit-e2e-planning — complete
+
+- **Gate:** `gosakiStagingP1ContactHubspotSubmitE2ePlanned: true`
+- **CONTACT_HUBSPOT_SUBMIT_E2E_PLANNED:** **true**
+- **CONTACT_SUBMISSION_EXECUTED:** **false**
+- **CONTACT_E2E_STATUS:** **PLANNED_NOT_EXECUTED**
+- **CONTACT_E2E_PASSED:** **false** (not executed — not a failure)
+- **P1:** P1-CON1 · priority **high**
+- **Live production:** **Wix** — do not change
+- **Replacement hosting:** **not contracted** · production FTP prep **paused**
+- **HOSTING_READY / GO_LIVE_READY / PRODUCTION_UPLOAD_READY:** **false**
+- **PUBLIC_READY:** **CONDITIONAL**
+- **Not done:** browser · form input · Contact submit · HTTP · HubSpot API · implementation · package · FTP
+- **Next:** **G-20u39a1-gosaki-staging-p1-contact-hubspot-submit-e2e-preflight**
+- **Alternate:** **G-20u39b-gosaki-staging-p1-admin-mobile-left-align-polish**
 
 ## G-20u39-gosaki-staging-p1-review-planning — complete
 
@@ -25,7 +42,7 @@ Alternate: G-20u39b-gosaki-staging-p1-admin-mobile-left-align-polish.
 - **PUBLIC_READY:** **CONDITIONAL**
 - **Active P1:** P1-CON1 (Contact HubSpot submit E2E) · P1-ADM-MOB1 (admin mobile left-align)
 - **Not done:** Contact submit · CSS · build · package · FTP · browser E2E · client contact
-- **Next:** **G-20u39a-gosaki-staging-p1-contact-hubspot-submit-e2e-planning**
+- **Next:** — (superseded by G-20u39a)
 - **Alternate:** **G-20u39b-gosaki-staging-p1-admin-mobile-left-align-polish**
 
 ## G-20u38d-gosaki-production-hosting-not-ready-and-return-to-staging-p1-record — complete

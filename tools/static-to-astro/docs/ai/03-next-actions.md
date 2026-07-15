@@ -1,6 +1,37 @@
 Last updated: 2026-07-15
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u39a-gosaki-staging-p1-contact-hubspot-submit-e2e-planning — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u39a-gosaki-staging-p1-contact-hubspot-submit-e2e-planning` |
+| Gate | `gosakiStagingP1ContactHubspotSubmitE2ePlanned: true` |
+| CONTACT_HUBSPOT_SUBMIT_E2E_PLANNED | **true** |
+| CONTACT_SUBMISSION_EXECUTED | **false** |
+| CONTACT_E2E_STATUS | **PLANNED_NOT_EXECUTED** |
+| CONTACT_E2E_PASSED | **false** (not executed — not a failure) |
+| P1 item | **P1-CON1** · priority **high** |
+| Current live production | **Wix** (`https://www.gosaki-piano.com/`) |
+| Replacement hosting | **not contracted** |
+| Production FTP prep | **paused** |
+| HOSTING_READY | **false** |
+| GO_LIVE_READY | **false** |
+| PRODUCTION_UPLOAD_READY | **false** |
+| PUBLIC_READY | **CONDITIONAL** |
+| Next | **G-20u39a1-gosaki-staging-p1-contact-hubspot-submit-e2e-preflight** |
+| Alternate | **G-20u39b-gosaki-staging-p1-admin-mobile-left-align-polish** |
+
+```txt
+HOSTING_READY: false
+GO_LIVE_READY: false
+PRODUCTION_UPLOAD_READY: false
+PUBLIC_READY: CONDITIONAL
+CONTACT_HUBSPOT_SUBMIT_E2E_PLANNED: true
+CONTACT_SUBMISSION_EXECUTED: false
+CONTACT_E2E_STATUS: PLANNED_NOT_EXECUTED
+```
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u39-gosaki-staging-p1-review-planning — complete
 
 | Item | Value |
@@ -17,7 +48,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | PRODUCTION_UPLOAD_READY | **false** |
 | PUBLIC_READY | **CONDITIONAL** |
 | Active P1 | **P1-CON1** · **P1-ADM-MOB1** |
-| Next | **G-20u39a-gosaki-staging-p1-contact-hubspot-submit-e2e-planning** |
+| Next | — (superseded by G-20u39a) |
 | Alternate | **G-20u39b-gosaki-staging-p1-admin-mobile-left-align-polish** |
 
 ```txt

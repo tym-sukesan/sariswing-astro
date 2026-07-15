@@ -5,20 +5,25 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u37b-gosaki-public-readiness-manual-browser-qa-result — complete.
-P0_BLOCKERS: false. PUBLIC_READY: CONDITIONAL (not final). STAGING_QA_READY: YES. STAGING_BROWSER_QA_READY: YES.
-Operator STG browser QA PASS on e3616a3 — P1: admin mobile left-align, contact submit E2E not done.
-Next: G-20u37c-gosaki-public-readiness-final-p0-review or Admin mobile layout polish.
+Current phase: G-20u37c-gosaki-public-readiness-final-p0-review — complete.
+P0_BLOCKERS: false. STAGING_QA_COMPLETE: true. PUBLIC_READY: CONDITIONAL.
+PUBLIC_P0_READY_FOR_PRODUCTION_PACKAGE_PREP: true.
+Next: G-20u38-gosaki-production-package-prep-planning or Contact HubSpot submit E2E.
 ```
+
+## G-20u37c-gosaki-public-readiness-final-p0-review — complete
+
+- **Gate:** `gosakiPublicReadinessFinalP0Reviewed: true`
+- **Verdict:** **P0_BLOCKERS: false** · **STAGING_QA_COMPLETE: true** · **PUBLIC_READY: CONDITIONAL** · **PUBLIC_P0_READY_FOR_PRODUCTION_PACKAGE_PREP: true**
+- **Conditional:** prod package/upload pending · prod must exclude `/admin/` · contact submit E2E not done (P1)
+- **Not done:** implementation · Save · SQL · package · FTP · production deploy
+- **Next:** **G-20u38-gosaki-production-package-prep-planning** · or Contact HubSpot submit E2E
 
 ## G-20u37b-gosaki-public-readiness-manual-browser-qa-result — complete
 
 - **Gate:** `gosakiPublicReadinessManualBrowserQaCompleted: true`
-- **Verdict:** **P0_BLOCKERS: false** · **PUBLIC_READY: CONDITIONAL (not final)** · **STAGING_QA_READY: YES** · **STAGING_BROWSER_QA_READY: YES**
-- **Operator:** 諸々問題なさそう · public pages PASS · admin read-only PASS · discography restored PASS
-- **P1:** Admin mobile left-align (iPhone SE) · Contact HubSpot submit E2E not executed · admin prod policy
-- **Not done:** implementation · Save · SQL · package · FTP · contact submit E2E
-- **Next:** **G-20u37c-gosaki-public-readiness-final-p0-review** · or Admin mobile layout polish
+- **Verdict:** **P0_BLOCKERS: false** · **PUBLIC_READY: CONDITIONAL** · **STAGING_BROWSER_QA_READY: YES**
+- **Next:** **G-20u38-gosaki-production-package-prep-planning**
 
 ## G-20u37a-gosaki-public-readiness-static-inspection — complete
 

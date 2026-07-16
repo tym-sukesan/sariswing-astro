@@ -466,6 +466,25 @@ body.gosaki-read-only-admin {
   min-width: 0;
 }
 
+.gosaki-read-only-admin__dev-details {
+  margin: 0 0 1.25rem;
+  padding: 0.65rem 0.85rem;
+  border: 1px dashed var(--gra-border, #cbd5e1);
+  border-radius: 8px;
+  background: #f8fafc;
+  min-width: 0;
+}
+
+.gosaki-read-only-admin__dev-details > summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: #475569;
+}
+
+.gosaki-read-only-admin__dev-details[open] {
+  margin-bottom: 1.25rem;
+}
+
 @media (max-width: 640px) {
   .gosaki-read-only-admin__main,
   .gosaki-read-only-admin__header,

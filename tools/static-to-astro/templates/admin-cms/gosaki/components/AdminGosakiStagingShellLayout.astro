@@ -1,5 +1,6 @@
 ---
 import AdminLayout from "../../components/AdminLayout.astro";
+import AdminGosakiStagingSafetyChips from "./AdminGosakiStagingSafetyChips.astro";
 import { GOSAKI_STAGING_ADMIN_BASE } from "../gosaki-staging-admin-paths";
 import {
   getStagingShellServerGateSnapshot,
@@ -27,13 +28,20 @@ const stagingServerGatesJson = JSON.stringify(stagingServerGates);
   title={title}
   siteName="Gosaki Piano"
   brandHref={brandHref}
-  stagingLabel="Gosaki 管理画面（確認用）"
+  stagingLabel="Gosaki Piano CMS（テスト環境）"
 >
-  <p class="admin-gosaki-global-status" slot="status" role="status">
-    確認・入力用の管理画面です。公開サイトへの反映は戸山が代行します。
-  </p>
+  <div class="admin-gosaki-global-status" slot="status" role="status">
+    <AdminGosakiStagingSafetyChips showSaveDisabled={false} />
+    <p class="admin-gosaki-global-status__note">
+      確認・入力用です。公開反映は管理者が行います。
+    </p>
+  </div>
   <slot />
 </AdminLayout>
+
+<style is:global>
+  @import "../../styles/admin.css";
+</style>
 
 <style is:global>
   @import "../../styles/admin.css";

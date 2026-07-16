@@ -111,131 +111,127 @@ const pageTitle = "Gosaki Piano 管理画面（staging · 読み取り専用）"
     <div class="gosaki-read-only-admin__shell">
       <header class="gosaki-read-only-admin__header">
         <a class="gosaki-read-only-admin__brand" href={adminCanonical}>Gosaki Piano CMS</a>
-        <div class="gosaki-read-only-admin__badges" aria-label="管理画面モード">
-          <span class="gosaki-read-only-admin__badge">READ-ONLY</span>
-          <span class="gosaki-read-only-admin__badge gosaki-read-only-admin__badge--staging">STAGING ONLY</span>
+        <div class="gosaki-read-only-admin__badges" aria-label="管理画面の状態">
+          <span class="gosaki-read-only-admin__badge gosaki-read-only-admin__badge--staging">テスト環境</span>
+          <span class="gosaki-read-only-admin__badge">閲覧のみ</span>
           <span class="gosaki-read-only-admin__badge gosaki-read-only-admin__badge--muted">Save disabled</span>
         </div>
       </header>
 
       <main class="gosaki-read-only-admin__main">
-        <div class="gosaki-read-only-admin__banner" role="status">
-          <strong>staging 読み取り専用管理画面</strong>
+        <div class="gosaki-read-only-admin__banner" role="status" data-gosaki-admin-main-banner="true">
+          <strong>Gosaki Piano CMS（テスト環境）</strong>
           <p class="gosaki-read-only-admin__meta">
-            内容の確認と dry-run プレビューのみ可能です。Save · Publish · Deploy · FTP は実行できません。
+            内容の確認と dry-run プレビューのみ可能です。公開反映は管理者が行います。
           </p>
-          <ul class="gosaki-read-only-admin__safety-list">
-            <li>本番パッケージには <code>/admin/</code> を含めません（sitemap からも除外）</li>
-            <li>staging への反映は <strong>手動 FTP のみ</strong>（自動 deploy なし）</li>
-            <li>本番アップロードは <strong>G-20j 承認まで STOP</strong></li>
-          </ul>
+          <p class="gosaki-read-only-admin__meta">
+            <a href={stagingSiteBase} target="_blank" rel="noopener noreferrer">公開サイトを確認する</a>
+          </p>
         </div>
+
+        <details class="gosaki-read-only-admin__dev-details" data-gosaki-admin-dev-details="true">
+          <summary>開発者向け詳細（通常は開かないでください）</summary>
+          <ul class="gosaki-read-only-admin__safety-list">
+            <li>
+              <strong>siteSlug:</strong> {view.siteSlug} · build snapshot phase: {dashboard.phase}
+            </li>
+            <li>本番パッケージには <code>/admin/</code> を含めません（sitemap からも除外）</li>
+            <li>staging への反映は手動 FTP のみ（自動 deploy なし）</li>
+            <li>本番アップロードは G-20j 承認まで STOP</li>
+            <li>FTP: 手動のみ · auto deploy なし · sitemap: /admin/ 非掲載</li>
+            <li>
+              phases: {G20U28_ADMIN_UI_PHASE} · {G20U29_DISCOGRAPHY_EDITOR_PHASE} ·{" "}
+              {G20U30_DISCOGRAPHY_DRY_RUN_PHASE} · {G20U36C_DISCOGRAPHY_DRY_RUN_FETCH_POST_PHASE}
+            </li>
+          </ul>
+          <p class="gosaki-read-only-admin__meta">
+            複数 route（/admin/schedule/ 等）への分割は G-20u39b4。本テンプレートは STG 単一ページのまま表示整理のみ。
+          </p>
+        </details>
 
         <section class="gosaki-read-only-admin__section" aria-labelledby="gra-dashboard">
           <h2 id="gra-dashboard">ダッシュボード</h2>
-          <p class="gosaki-read-only-admin__meta">
-            <strong>siteSlug:</strong> {view.siteSlug} · build 時スナップショット（{dashboard.phase}）
-          </p>
           <div class="gosaki-read-only-admin__dashboard-grid">
             <article class="gosaki-read-only-admin__dashboard-card" data-section-card="schedule">
               <h3 class="gosaki-read-only-admin__dashboard-card-title">Schedule</h3>
               <div class="gosaki-read-only-admin__dashboard-badges">
-                <span class="gosaki-read-only-admin__pill">read-only</span>
-                <span class="gosaki-read-only-admin__pill gosaki-read-only-admin__pill--staging">staging</span>
+                <span class="gosaki-read-only-admin__pill">閲覧可能</span>
+                <span class="gosaki-read-only-admin__pill gosaki-read-only-admin__pill--staging">テスト環境</span>
               </div>
               <p class="gosaki-read-only-admin__dashboard-stat">
                 {dashboard.schedule.totalEvents} events · 2026-08: {dashboard.schedule.august2026Events} cards
               </p>
-              <p class="gosaki-read-only-admin__meta">source: {dashboard.schedule.dataSource}</p>
               <div class="gosaki-read-only-admin__actions">
-                <a class="gosaki-read-only-admin__btn gosaki-read-only-admin__btn--link" href={publicAugustUrl} target="_blank" rel="noopener noreferrer">Read-only preview</a>
-                <button type="button" class="gosaki-read-only-admin__btn" disabled title="編集 UI は別フェーズ">編集導線（予定）</button>
+                <a class="gosaki-read-only-admin__btn gosaki-read-only-admin__btn--link" href={publicAugustUrl} target="_blank" rel="noopener noreferrer">公開プレビュー</a>
+                <a class="gosaki-read-only-admin__btn gosaki-read-only-admin__btn--link" href="#gra-schedule">詳細を見る</a>
               </div>
             </article>
 
             <article class="gosaki-read-only-admin__dashboard-card" data-section-card="discography">
               <h3 class="gosaki-read-only-admin__dashboard-card-title">Discography</h3>
               <div class="gosaki-read-only-admin__dashboard-badges">
-                <span class="gosaki-read-only-admin__pill">read-only</span>
-                {dashboard.discography.filteredRead ? (
-                  <span class="gosaki-read-only-admin__pill gosaki-read-only-admin__pill--ok">filtered read</span>
-                ) : null}
+                <span class="gosaki-read-only-admin__pill">閲覧可能</span>
+                <span class="gosaki-read-only-admin__pill gosaki-read-only-admin__pill--ok">dry-run可能</span>
               </div>
               <p class="gosaki-read-only-admin__dashboard-stat">
                 {dashboard.discography.releases} releases · {dashboard.discography.tracks} tracks
               </p>
-              <p class="gosaki-read-only-admin__meta">source: {dashboard.discography.dataSource}</p>
               <div class="gosaki-read-only-admin__actions">
-                <a class="gosaki-read-only-admin__btn gosaki-read-only-admin__btn--link" href={publicDiscographyUrl} target="_blank" rel="noopener noreferrer">Read-only preview</a>
-                <a class="gosaki-read-only-admin__btn gosaki-read-only-admin__btn--link" href="#gra-discography-editor">Editor prototype</a>
+                <a class="gosaki-read-only-admin__btn gosaki-read-only-admin__btn--link" href={publicDiscographyUrl} target="_blank" rel="noopener noreferrer">公開プレビュー</a>
+                <a class="gosaki-read-only-admin__btn gosaki-read-only-admin__btn--link" href="#gra-discography-editor">Editor へ</a>
               </div>
             </article>
 
             <article class="gosaki-read-only-admin__dashboard-card" data-section-card="youtube">
               <h3 class="gosaki-read-only-admin__dashboard-card-title">YouTube</h3>
               <div class="gosaki-read-only-admin__dashboard-badges">
-                <span class="gosaki-read-only-admin__pill">read-only</span>
-                <span class="gosaki-read-only-admin__pill">dry-run only</span>
+                <span class="gosaki-read-only-admin__pill">閲覧可能</span>
+                <span class="gosaki-read-only-admin__pill">dry-run可能</span>
               </div>
               <p class="gosaki-read-only-admin__dashboard-stat">
                 videoId: {view.youtube.videoId ?? "—"}
               </p>
               <div class="gosaki-read-only-admin__actions">
                 <a class="gosaki-read-only-admin__btn gosaki-read-only-admin__btn--link" href="#gra-youtube">詳細を見る</a>
-                <button type="button" class="gosaki-read-only-admin__btn" disabled>Save（無効）</button>
               </div>
             </article>
 
             <article class="gosaki-read-only-admin__dashboard-card" data-section-card="about">
               <h3 class="gosaki-read-only-admin__dashboard-card-title">About</h3>
               <div class="gosaki-read-only-admin__dashboard-badges">
-                <span class="gosaki-read-only-admin__pill">read-only</span>
+                <span class="gosaki-read-only-admin__pill">閲覧可能</span>
               </div>
               <p class="gosaki-read-only-admin__dashboard-stat">
                 profile {view.about.profileCharCount} chars · bands {view.about.bandImages.length} images
               </p>
               <div class="gosaki-read-only-admin__actions">
-                <a class="gosaki-read-only-admin__btn gosaki-read-only-admin__btn--link" href={new URL("about/", stagingSiteBase).href} target="_blank" rel="noopener noreferrer">Read-only preview</a>
-                <button type="button" class="gosaki-read-only-admin__btn" disabled>編集導線（予定）</button>
+                <a class="gosaki-read-only-admin__btn gosaki-read-only-admin__btn--link" href={new URL("about/", stagingSiteBase).href} target="_blank" rel="noopener noreferrer">公開プレビュー</a>
               </div>
             </article>
 
             <article class="gosaki-read-only-admin__dashboard-card" data-section-card="contact">
               <h3 class="gosaki-read-only-admin__dashboard-card-title">Contact</h3>
               <div class="gosaki-read-only-admin__dashboard-badges">
-                <span class="gosaki-read-only-admin__pill">read-only</span>
+                <span class="gosaki-read-only-admin__pill">閲覧可能</span>
+                <span class="gosaki-read-only-admin__pill gosaki-read-only-admin__pill--staging">準備中（管理 UI）</span>
               </div>
               <p class="gosaki-read-only-admin__dashboard-stat">
                 {view.contact.provider} · enabled: {view.contact.enabled ? "yes" : "no"}
               </p>
               <div class="gosaki-read-only-admin__actions">
-                <a class="gosaki-read-only-admin__btn gosaki-read-only-admin__btn--link" href={publicContactUrl} target="_blank" rel="noopener noreferrer">Read-only preview</a>
-                <button type="button" class="gosaki-read-only-admin__btn" disabled>編集導線（予定）</button>
+                <a class="gosaki-read-only-admin__btn gosaki-read-only-admin__btn--link" href={publicContactUrl} target="_blank" rel="noopener noreferrer">公開プレビュー</a>
               </div>
             </article>
 
             <article class="gosaki-read-only-admin__dashboard-card" data-section-card="link">
               <h3 class="gosaki-read-only-admin__dashboard-card-title">Link</h3>
               <div class="gosaki-read-only-admin__dashboard-badges">
-                <span class="gosaki-read-only-admin__pill">static</span>
+                <span class="gosaki-read-only-admin__pill">準備中</span>
               </div>
               <p class="gosaki-read-only-admin__dashboard-stat">静的ページ（CMS 編集 UI 未接続）</p>
               <div class="gosaki-read-only-admin__actions">
-                <a class="gosaki-read-only-admin__btn gosaki-read-only-admin__btn--link" href={publicLinkUrl} target="_blank" rel="noopener noreferrer">Read-only preview</a>
+                <a class="gosaki-read-only-admin__btn gosaki-read-only-admin__btn--link" href={publicLinkUrl} target="_blank" rel="noopener noreferrer">公開プレビュー</a>
               </div>
-            </article>
-
-            <article class="gosaki-read-only-admin__dashboard-card gosaki-read-only-admin__dashboard-card--safety" data-section-card="upload-safety">
-              <h3 class="gosaki-read-only-admin__dashboard-card-title">Production readiness / Upload safety</h3>
-              <div class="gosaki-read-only-admin__dashboard-badges">
-                <span class="gosaki-read-only-admin__pill gosaki-read-only-admin__pill--warn">production STOP</span>
-              </div>
-              <ul class="gosaki-read-only-admin__list gosaki-read-only-admin__list--compact">
-                <li>本番 upload: G-20j まで STOP</li>
-                <li>本番 package: admin 除外</li>
-                <li>FTP: 手動のみ（auto deploy なし）</li>
-                <li>sitemap: /admin/ 非掲載</li>
-              </ul>
             </article>
           </div>
         </section>
@@ -249,30 +245,33 @@ const pageTitle = "Gosaki Piano 管理画面（staging · 読み取り専用）"
           <h2 id="gra-discography-editor-heading">Discography Editor Prototype</h2>
           <div class="gosaki-read-only-admin__banner gosaki-read-only-admin__banner--compact" role="status">
             <div class="gosaki-read-only-admin__dashboard-badges">
-              <span class="gosaki-read-only-admin__pill gosaki-read-only-admin__pill--ok">Dry-run only</span>
-              <span class="gosaki-read-only-admin__pill gosaki-read-only-admin__pill--staging">STAGING ONLY</span>
+              <span class="gosaki-read-only-admin__pill gosaki-read-only-admin__pill--ok">dry-run可能</span>
+              <span class="gosaki-read-only-admin__pill gosaki-read-only-admin__pill--staging">テスト環境</span>
               <span class="gosaki-read-only-admin__pill gosaki-read-only-admin__pill--warn">Save disabled</span>
             </div>
             <p class="gosaki-read-only-admin__meta">
-              {G20U30_DISCOGRAPHY_DRY_RUN_NOTE}
+              変更プレビューのみです。データベースには書き込みません。
             </p>
-            <p class="gosaki-read-only-admin__meta">
-              {G20U36C_DISCOGRAPHY_DRY_RUN_NOTE}
-            </p>
+          </div>
+          <p class="gosaki-read-only-admin__meta">
+            {discographyEditor.releaseCount} releases · {discographyEditor.trackCount} tracks
+            {discographyEditor.filteredRead ? " · filtered read" : ""}
+          </p>
+          <details class="gosaki-read-only-admin__dev-details">
+            <summary>開発者向け — Discography dry-run / package policy</summary>
+            <p class="gosaki-read-only-admin__meta">{G20U30_DISCOGRAPHY_DRY_RUN_NOTE}</p>
+            <p class="gosaki-read-only-admin__meta">{G20U36C_DISCOGRAPHY_DRY_RUN_NOTE}</p>
             <ul class="gosaki-read-only-admin__safety-list">
               <li>Dry-run only · No DB write · Save is still disabled</li>
               <li>This checks the request and endpoint response only — nothing is saved</li>
               <li>Endpoint dry-run POST: staging Edge Function（DB write なし）</li>
               <li>本番 package には <code>/admin/</code> を含めません（sitemap からも除外）</li>
-              <li>本番 upload: <strong>G-20j まで STOP</strong></li>
+              <li>本番 upload: G-20j まで STOP</li>
+              <li>
+                <strong>siteSlug:</strong> {discographyEditor.siteSlug} · source: {discographyEditor.dataSource}
+              </li>
             </ul>
-          </div>
-          <p class="gosaki-read-only-admin__meta">
-            <strong>siteSlug:</strong> {discographyEditor.siteSlug} ·{" "}
-            {discographyEditor.releaseCount} releases · {discographyEditor.trackCount} tracks · source:{" "}
-            {discographyEditor.dataSource}
-            {discographyEditor.filteredRead ? " · filtered read" : ""}
-          </p>
+          </details>
 
           {discographyEditor.albums.length === 0 ? (
             <p class="gosaki-read-only-admin__meta gosaki-read-only-admin__meta--warn">
@@ -677,31 +676,35 @@ const pageTitle = "Gosaki Piano 管理画面（staging · 読み取り専用）"
 
         <section class="gosaki-read-only-admin__section" aria-labelledby="gra-contact">
           <h2 id="gra-contact">Contact（HubSpot）</h2>
-          <p class="gosaki-read-only-admin__meta"><strong>provider:</strong> {view.contact.provider}</p>
-          <p class="gosaki-read-only-admin__meta"><strong>portalId:</strong> {view.contact.portalId}</p>
-          <p class="gosaki-read-only-admin__meta"><strong>formId:</strong> {view.contact.formId}</p>
-          <p class="gosaki-read-only-admin__meta">enabled: {view.contact.enabled ? "true" : "false"}</p>
+          <p class="gosaki-read-only-admin__meta">公開フォームの確認用です。CMS 編集 UI は準備中です。</p>
+          <details class="gosaki-read-only-admin__dev-details">
+            <summary>開発者向け — HubSpot 識別子</summary>
+            <p class="gosaki-read-only-admin__meta"><strong>provider:</strong> {view.contact.provider}</p>
+            <p class="gosaki-read-only-admin__meta"><strong>portalId:</strong> {view.contact.portalId}</p>
+            <p class="gosaki-read-only-admin__meta"><strong>formId:</strong> {view.contact.formId}</p>
+            <p class="gosaki-read-only-admin__meta">enabled: {view.contact.enabled ? "true" : "false"}</p>
+          </details>
         </section>
 
         <section class="gosaki-read-only-admin__section" aria-labelledby="gra-schedule">
           <h2 id="gra-schedule">Schedule</h2>
           <p class="gosaki-read-only-admin__meta"><strong>status:</strong> {view.schedule.status}</p>
           <p class="gosaki-read-only-admin__meta">{view.schedule.note}</p>
-          <p class="gosaki-read-only-admin__meta">
-            build snapshot: {dashboard.schedule.totalEvents} events · {dashboard.schedule.monthCount} months · August 2026: {dashboard.schedule.august2026Events} cards
-          </p>
+          <details class="gosaki-read-only-admin__dev-details">
+            <summary>開発者向け — build snapshot</summary>
+            <p class="gosaki-read-only-admin__meta">
+              build snapshot: {dashboard.schedule.totalEvents} events · {dashboard.schedule.monthCount} months · August 2026: {dashboard.schedule.august2026Events} cards
+            </p>
+          </details>
         </section>
 
-        <div class="gosaki-read-only-admin__actions" aria-label="グローバル操作（無効）">
-          <button type="button" class="gosaki-read-only-admin__btn" disabled>Save（無効）</button>
-          <button type="button" class="gosaki-read-only-admin__btn" disabled>Publish（無効）</button>
-          <button type="button" class="gosaki-read-only-admin__btn" disabled>Deploy（無効）</button>
-          <button type="button" class="gosaki-read-only-admin__btn" disabled>FTP（無効）</button>
-        </div>
+        <p class="gosaki-read-only-admin__meta" role="note" data-gosaki-save-disabled-note="true">
+          Save は無効です。公開反映は管理者が行います。
+        </p>
       </main>
 
       <footer class="gosaki-read-only-admin__footer">
-        Gosaki Piano staging read-only CMS — {G20U28_ADMIN_UI_PHASE} · {G20U29_DISCOGRAPHY_EDITOR_PHASE} · {G20U30_DISCOGRAPHY_DRY_RUN_PHASE} · {G20U36C_DISCOGRAPHY_DRY_RUN_FETCH_POST_PHASE}
+        Gosaki Piano staging read-only CMS — テスト環境 · 閲覧のみ · Save disabled
       </footer>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.1/dist/umd/supabase.js"></script>

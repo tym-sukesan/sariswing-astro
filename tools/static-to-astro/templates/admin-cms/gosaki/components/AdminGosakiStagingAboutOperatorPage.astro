@@ -24,6 +24,8 @@ import {
   G10H4C_WRITE_MODULE,
   G10H4C_WRITE_PROVIDER,
 } from "../../../../../../src/lib/admin/staging-write/gosaki-about-bands-html-static-json-write-types";
+import AdminGosakiStagingNav from "./AdminGosakiStagingNav.astro";
+import AdminGosakiStagingSafetyChips from "./AdminGosakiStagingSafetyChips.astro";
 import {
   GOSAKI_STAGING_ADMIN_BASE,
   GOSAKI_STAGING_PREVIEW_URL,
@@ -43,7 +45,7 @@ const bandsView =
 const g10h4aPageConfig = resolveG10h4aSaveButtonPageServerConfig(import.meta.env);
 const g10h4cPageConfig = resolveG10h4cSaveButtonPageServerConfig(import.meta.env);
 const aboutStatusMessage =
-  "プロフィールとバンド紹介の HTML を確認・編集できます。「変更を確認」で内容をプレビューできます。保存が必要な場合は戸山が代行します。";
+  "プロフィールとバンド紹介の HTML を確認・編集できます。「変更を確認」で内容をプレビューできます。保存が必要な場合は管理者が行います。";
 const profileSaveNoteDefault =
   "※ プロフィールの保存は現在無効です。変更内容は「変更を確認」で確認できます。";
 const bandsSaveNoteDefault =
@@ -78,11 +80,12 @@ const bandsSaveNoteDefault =
 
   <header class="admin-gosaki-page-header admin-gosaki-page-header--with-actions">
     <div>
-      <a class="admin-gosaki-back-link" href={GOSAKI_STAGING_ADMIN_BASE}>← 管理画面トップへ</a>
+      <a class="admin-gosaki-back-link" href={GOSAKI_STAGING_ADMIN_BASE}>← 管理トップへ</a>
       <h1 class="admin-gosaki-page-header__title">プロフィール・バンド</h1>
       <p class="admin-gosaki-page-header__subtitle">
         About ページの本文 HTML を確認・編集する画面です。
       </p>
+      <AdminGosakiStagingSafetyChips />
     </div>
     <button
       type="button"
@@ -93,6 +96,8 @@ const bandsSaveNoteDefault =
       ログアウト
     </button>
   </header>
+
+  <AdminGosakiStagingNav current="about" />
 
   <p class="admin-form__hint admin-static-notice" role="note">
     プロフィールとバンド紹介の2つのブロックがあります。それぞれ HTML を編集し、「変更を確認」でプレビューできます。

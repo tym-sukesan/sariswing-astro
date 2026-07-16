@@ -1,0 +1,48 @@
+---
+/**
+ * Shared Gosaki staging admin navigation (G-20u39b3).
+ * Local shell paths under __admin-staging-shell; STG package multi-route is G-20u39b4.
+ */
+import {
+  GOSAKI_STAGING_ADMIN_ABOUT_PATH,
+  GOSAKI_STAGING_ADMIN_BASE,
+  GOSAKI_STAGING_ADMIN_DISCOGRAPHY_PATH,
+  GOSAKI_STAGING_ADMIN_SCHEDULE_PATH,
+  GOSAKI_STAGING_ADMIN_YOUTUBE_PATH,
+} from "../gosaki-staging-admin-paths";
+
+interface Props {
+  current?: "home" | "schedule" | "discography" | "youtube" | "about";
+}
+
+const { current = "home" } = Astro.props;
+
+const items = [
+  { id: "home" as const, label: "管理トップ", href: GOSAKI_STAGING_ADMIN_BASE },
+  { id: "schedule" as const, label: "スケジュール", href: GOSAKI_STAGING_ADMIN_SCHEDULE_PATH },
+  { id: "discography" as const, label: "ディスコグラフィ", href: GOSAKI_STAGING_ADMIN_DISCOGRAPHY_PATH },
+  { id: "youtube" as const, label: "YouTube", href: GOSAKI_STAGING_ADMIN_YOUTUBE_PATH },
+  { id: "about" as const, label: "プロフィール", href: GOSAKI_STAGING_ADMIN_ABOUT_PATH },
+];
+---
+
+<nav class="admin-gosaki-staging-nav" aria-label="Gosaki 管理画面ナビゲーション" data-gosaki-admin-nav="true">
+  <ul class="admin-gosaki-staging-nav__list">
+    {
+      items.map((item) => (
+        <li class="admin-gosaki-staging-nav__item">
+          <a
+            class:list={[
+              "admin-gosaki-staging-nav__link",
+              current === item.id && "is-current",
+            ]}
+            href={item.href}
+            aria-current={current === item.id ? "page" : undefined}
+          >
+            {item.label}
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</nav>

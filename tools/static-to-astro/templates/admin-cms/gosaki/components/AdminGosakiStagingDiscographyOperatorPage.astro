@@ -45,6 +45,8 @@ import {
 } from "../../../../../../src/lib/admin/staging-write/discography-tracks-write-types";
 import { G16A_DRY_RUN_SLICE_APPROVAL_ID } from "../../../../../../src/lib/admin/staging-write/gosaki-discography-g16a-next-field-types";
 import { G15D_DRY_RUN_SLICE_APPROVAL_ID } from "../../../../../../src/lib/admin/staging-write/gosaki-discography-next-field-types";
+import AdminGosakiStagingNav from "./AdminGosakiStagingNav.astro";
+import AdminGosakiStagingSafetyChips from "./AdminGosakiStagingSafetyChips.astro";
 import {
   GOSAKI_STAGING_ADMIN_BASE,
   GOSAKI_STAGING_PREVIEW_URL,
@@ -193,11 +195,12 @@ const trackLines = selectedRow?.tracks.map((track) => track.title).join("\n") ??
   />
   <header class="admin-gosaki-page-header admin-gosaki-page-header--with-actions">
     <div>
-      <a class="admin-gosaki-back-link" href={GOSAKI_STAGING_ADMIN_BASE}>← 管理画面トップへ</a>
+      <a class="admin-gosaki-back-link" href={GOSAKI_STAGING_ADMIN_BASE}>← 管理トップへ</a>
       <h1 class="admin-gosaki-page-header__title">ディスコグラフィ</h1>
       <p class="admin-gosaki-page-header__subtitle">
         作品情報の確認・編集を行う画面です。
       </p>
+      <AdminGosakiStagingSafetyChips />
     </div>
     <button
       type="button"
@@ -209,8 +212,10 @@ const trackLines = selectedRow?.tracks.map((track) => track.title).join("\n") ??
     </button>
   </header>
 
+  <AdminGosakiStagingNav current="discography" />
+
   <p class="admin-gosaki-status-bar admin-gosaki-status-bar--soft" role="status">
-    作品情報の確認・入力ができます。「変更を確認」で内容をプレビューできます。保存が必要な場合は戸山が代行します。
+    作品情報の確認・入力ができます。「変更を確認」で内容をプレビューできます。保存が必要な場合は管理者が行います。
   </p>
 
   <details class="admin-gosaki-dev-tools">

@@ -1,7 +1,10 @@
 ---
 /**
- * Gosaki staging shell operator home (Sariswing /admin/ inspired).
+ * Gosaki staging shell operator portal (G-20u39b3).
+ * Portal only — no content lists / forms on the home route.
  */
+import AdminGosakiStagingNav from "./AdminGosakiStagingNav.astro";
+import AdminGosakiStagingSafetyChips from "./AdminGosakiStagingSafetyChips.astro";
 import {
   GOSAKI_STAGING_ADMIN_ABOUT_PATH,
   GOSAKI_STAGING_ADMIN_DISCOGRAPHY_PATH,
@@ -19,20 +22,65 @@ const {
   previewUrl = GOSAKI_STAGING_PREVIEW_URL,
   schedulePath = GOSAKI_STAGING_ADMIN_SCHEDULE_PATH,
 } = Astro.props;
+
+const portalCards = [
+  {
+    id: "schedule",
+    title: "スケジュール",
+    href: schedulePath,
+    statuses: [
+      { label: "閲覧可能", tone: "ok" },
+      { label: "dry-run可能", tone: "ok" },
+    ],
+    blurb: "公演の確認・入力と変更プレビュー",
+  },
+  {
+    id: "discography",
+    title: "ディスコグラフィ",
+    href: GOSAKI_STAGING_ADMIN_DISCOGRAPHY_PATH,
+    statuses: [
+      { label: "閲覧可能", tone: "ok" },
+      { label: "dry-run可能", tone: "ok" },
+    ],
+    blurb: "作品情報の確認・入力と変更プレビュー",
+  },
+  {
+    id: "youtube",
+    title: "YouTube",
+    href: GOSAKI_STAGING_ADMIN_YOUTUBE_PATH,
+    statuses: [
+      { label: "閲覧可能", tone: "ok" },
+      { label: "dry-run可能", tone: "ok" },
+    ],
+    blurb: "トップ埋め込みの確認・入力",
+  },
+  {
+    id: "about",
+    title: "プロフィール・バンド",
+    href: GOSAKI_STAGING_ADMIN_ABOUT_PATH,
+    statuses: [
+      { label: "閲覧可能", tone: "ok" },
+      { label: "dry-run可能", tone: "ok" },
+    ],
+    blurb: "About 本文の確認・入力",
+  },
+];
 ---
 
 <section
   id="gosaki-home"
-  class="admin-gosaki-operator-home admin-prototype-section"
+  class="admin-gosaki-operator-home admin-gosaki-operator-portal admin-prototype-section"
   data-section="admin-home"
+  data-gosaki-admin-portal="true"
   aria-label="Gosaki Piano 管理画面トップ"
 >
   <header class="admin-gosaki-page-header admin-gosaki-page-header--with-actions">
     <div>
-      <h1 class="admin-gosaki-page-header__title">Gosaki Piano 管理画面</h1>
+      <h1 class="admin-gosaki-page-header__title">Gosaki Piano CMS</h1>
       <p class="admin-gosaki-page-header__subtitle">
-        スケジュールや公開前ページを確認・入力するための管理画面です。
+        管理トップです。各機能の画面へ移動して内容を確認・入力できます。
       </p>
+      <AdminGosakiStagingSafetyChips showSaveDisabled={false} />
     </div>
     <button
       type="button"
@@ -44,106 +92,78 @@ const {
     </button>
   </header>
 
+  <AdminGosakiStagingNav current="home" />
+
   <p class="admin-gosaki-status-bar admin-gosaki-status-bar--soft" role="status">
-    内容の確認・入力はできます。公開サイトへの反映は、現在戸山が代行しています。
+    内容の確認・入力はできます。公開サイトへの反映は管理者が行います。
   </p>
 
-  <section class="admin-card admin-gosaki-card admin-gosaki-operator-guide" aria-labelledby="gosaki-home-guide-title">
-    <h2 class="admin-gosaki-card__title" id="gosaki-home-guide-title">ご利用の流れ</h2>
-    <ol class="admin-gosaki-list admin-gosaki-list--numbered admin-gosaki-list--compact">
-      <li>各メニューで内容を確認・入力する</li>
-      <li>「変更を確認」で変更内容を画面上で確認する（データベースは変更されません）</li>
-      <li>保存が必要な場合は、戸山が確認のうえ反映します</li>
-      <li>公開サイトの更新には、再生成と手動アップロードが別途必要です</li>
-    </ol>
-  </section>
-
-  <div class="admin-gosaki-operator-grid admin-gosaki-operator-grid--compact">
-    <section class="admin-card admin-gosaki-card admin-gosaki-card--flat" aria-labelledby="gosaki-home-can-do">
-      <h2 class="admin-gosaki-card__subtitle" id="gosaki-home-can-do">いまできること</h2>
-      <ul class="admin-gosaki-list admin-gosaki-list--compact">
-        <li>スケジュールの確認・入力</li>
-        <li>YouTube 設定の確認・入力</li>
-        <li>Discography の確認・入力</li>
-        <li>プロフィール・バンド（About）の確認・入力</li>
-        <li>公開前ページの表示確認</li>
-        <li>「変更を確認」による内容プレビュー</li>
-      </ul>
-    </section>
-    <section class="admin-card admin-gosaki-card admin-gosaki-card--flat" aria-labelledby="gosaki-home-operator">
-      <h2 class="admin-gosaki-card__subtitle" id="gosaki-home-operator">戸山が代行すること</h2>
-      <ul class="admin-gosaki-list admin-gosaki-list--compact">
-        <li>データベースへの保存（必要な場合）</li>
-        <li>サイトの再生成（convert / build）</li>
-        <li>公開サイトへのアップロード</li>
-        <li>本番ドメインへの反映</li>
-      </ul>
-      <p class="admin-gosaki-field-hint" role="note">
-        将来的にはご本人操作も想定していますが、公開準備中は上記を代行します。
-      </p>
-    </section>
-  </div>
-
-  <section class="admin-card admin-gosaki-card admin-gosaki-menu-card admin-gosaki-menu-card--primary">
-    <h2 class="admin-gosaki-card__title admin-gosaki-card__title--visually-quiet">メニュー</h2>
-    <nav aria-label="Gosaki 管理メニュー">
-      <ul class="admin-gosaki-menu admin-gosaki-menu--primary">
-        <li>
-          <a class="admin-button admin-button--menu admin-button--menu-primary" href={schedulePath}>
-            スケジュール
-          </a>
-        </li>
-        <li>
-          <a
-            class="admin-button admin-button--menu admin-button--menu-primary"
-            href={GOSAKI_STAGING_ADMIN_YOUTUBE_PATH}
-          >
-            YouTube設定
-          </a>
-        </li>
-        <li>
-          <a
-            class="admin-button admin-button--menu admin-button--menu-primary"
-            href={GOSAKI_STAGING_ADMIN_DISCOGRAPHY_PATH}
-          >
-            ディスコグラフィ
-          </a>
-        </li>
-        <li>
-          <a
-            class="admin-button admin-button--menu admin-button--menu-primary"
-            href={GOSAKI_STAGING_ADMIN_ABOUT_PATH}
-          >
-            プロフィール・バンド
-          </a>
-        </li>
-        <li>
-          <a
-            class="admin-button admin-button--menu admin-button--menu-primary"
-            href={previewUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            公開前ページ確認
-          </a>
-        </li>
-      </ul>
-    </nav>
-  </section>
-
-  <section class="admin-gosaki-secondary-menu" aria-label="準備中の機能">
-    <ul class="admin-gosaki-secondary-menu__list">
-      <li class="admin-gosaki-secondary-menu__item is-disabled">
-        <span class="admin-gosaki-secondary-menu__label">本番反映（ご本人操作）</span>
-        <span class="admin-gosaki-secondary-menu__badge">準備中</span>
+  <section
+    class="admin-gosaki-portal-cards"
+    aria-labelledby="gosaki-portal-cards-title"
+    data-gosaki-portal-cards="true"
+  >
+    <h2 class="admin-gosaki-card__title--visually-quiet" id="gosaki-portal-cards-title">
+      管理画面メニュー
+    </h2>
+    <ul class="admin-gosaki-portal-cards__list">
+      {
+        portalCards.map((card) => (
+          <li class="admin-gosaki-portal-card">
+            <a class="admin-gosaki-portal-card__link" href={card.href} data-portal-card={card.id}>
+              <span class="admin-gosaki-portal-card__title">{card.title}</span>
+              <span class="admin-gosaki-portal-card__blurb">{card.blurb}</span>
+              <span class="admin-gosaki-portal-card__statuses" aria-label="機能の状態">
+                {card.statuses.map((status) => (
+                  <span
+                    class:list={[
+                      "admin-gosaki-portal-status",
+                      status.tone === "ok" && "admin-gosaki-portal-status--ok",
+                      status.tone === "pending" && "admin-gosaki-portal-status--pending",
+                    ]}
+                  >
+                    {status.label}
+                  </span>
+                ))}
+              </span>
+            </a>
+          </li>
+        ))
+      }
+      <li class="admin-gosaki-portal-card admin-gosaki-portal-card--muted">
+        <div class="admin-gosaki-portal-card__static" data-portal-card="publish-self">
+          <span class="admin-gosaki-portal-card__title">本番反映（ご本人操作）</span>
+          <span class="admin-gosaki-portal-card__blurb">公開操作のセルフサービス</span>
+          <span class="admin-gosaki-portal-card__statuses">
+            <span class="admin-gosaki-portal-status admin-gosaki-portal-status--pending">準備中</span>
+          </span>
+        </div>
       </li>
     </ul>
   </section>
 
+  <p class="admin-gosaki-portal-preview">
+    <a
+      class="admin-button admin-button-secondary"
+      href={previewUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      data-gosaki-public-preview-link="true"
+    >
+      公開サイトを確認する
+    </a>
+  </p>
+
+  <p class="admin-gosaki-field-hint admin-gosaki-portal-hint" role="note">
+    「変更を確認」まではデータベースは変わりません。保存が必要な場合は管理者が確認のうえ反映します。
+  </p>
+
   <details class="admin-gosaki-dev-tools admin-gosaki-home-supplement">
     <summary>開発者向け詳細（通常は開かないでください）</summary>
     <p class="admin-gosaki-dev-tools__note" role="note">
-      approvalId / env / 変更確認の詳細 JSON などの技術情報は各ページの開発者向け詳細にあります。
+      siteSlug / build snapshot / sourceCommit / phase ID / approval ID / PoC / dry-run JSON
+      などの技術情報は各コンテンツ画面の開発者向け詳細にあります。
+      STG パッケージの複数 route 化は G-20u39b4 です（本フェーズはローカル portal のみ）。
     </p>
   </details>
 </section>

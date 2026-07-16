@@ -17,6 +17,8 @@ import {
   G13C2_EVENT_B_POC_CLEANUP_PAGE_CONFIG_ELEMENT_ID,
   resolveG13c2EventBPocCleanupPageServerConfig,
 } from "../../../../../../src/lib/admin/staging-write/gosaki-schedule-event-b-poc-cleanup-page-config";
+import AdminGosakiStagingNav from "./AdminGosakiStagingNav.astro";
+import AdminGosakiStagingSafetyChips from "./AdminGosakiStagingSafetyChips.astro";
 import {
   GOSAKI_STAGING_ADMIN_BASE,
   GOSAKI_STAGING_PREVIEW_URL,
@@ -34,10 +36,10 @@ const g13c2PageConfig = resolveG13c2EventBPocCleanupPageServerConfig(import.meta
 
 const savePrepNote = g9kSaveButtonPageConfig.saveButtonSaveEnabled
   ? "「変更を確認」で内容を確認してから「更新する」を押してください。"
-  : "「変更を確認」で内容を確認できます。保存が必要な場合は戸山が代行します。";
+  : "「変更を確認」で内容を確認できます。保存が必要な場合は管理者が行います。";
 const scheduleStatusMessage = g9kSaveButtonPageConfig.saveButtonSaveEnabled
   ? "変更内容の保存が有効です。「変更を確認」のあと「更新する」で反映できます。"
-  : "公演内容の確認・入力ができます。保存が必要な場合は戸山が代行します。";
+  : "公演内容の確認・入力ができます。保存が必要な場合は管理者が行います。";
 
 const isLive = binding.source === "supabase" && binding.selectableCount > 0;
 const rowsJson = JSON.stringify(binding.selectableRows);
@@ -75,11 +77,12 @@ function displayValue(value: string | null | undefined): string {
   />
   <header class="admin-gosaki-page-header admin-gosaki-page-header--with-actions">
     <div>
-      <a class="admin-gosaki-back-link" href={GOSAKI_STAGING_ADMIN_BASE}>← 管理画面トップへ</a>
+      <a class="admin-gosaki-back-link" href={GOSAKI_STAGING_ADMIN_BASE}>← 管理トップへ</a>
       <h1 class="admin-gosaki-page-header__title">スケジュール</h1>
       <p class="admin-gosaki-page-header__subtitle">
         公演スケジュールの追加・編集を行う画面です。
       </p>
+      <AdminGosakiStagingSafetyChips />
     </div>
     <button
       type="button"
@@ -91,9 +94,7 @@ function displayValue(value: string | null | undefined): string {
     </button>
   </header>
 
-  <p class="admin-form__hint admin-static-notice">
-    公演の追加・編集ができます。公開サイトへの反映は、保存後に再生成・アップロードが必要です（戸山が代行）。
-  </p>
+  <AdminGosakiStagingNav current="schedule" />
 
   <p class="admin-gosaki-status-bar admin-gosaki-status-bar--soft" role="status">
     {scheduleStatusMessage}
@@ -107,15 +108,10 @@ function displayValue(value: string | null | undefined): string {
   ></div>
 
   <aside class="gosaki-schedule-operator-guide" role="note" aria-label="通常操作の案内">
-    <p class="gosaki-schedule-operator-guide__title">通常の Schedule 操作はこちら</p>
+    <p class="gosaki-schedule-operator-guide__title">通常の操作</p>
     <p class="gosaki-schedule-operator-guide__body">
-      上部の<strong>公演一覧</strong>で <code>legacy_id</code> / 日付 / タイトルを確認し、「編集する」を押してください。
-      非公開化は「<strong>非公開化案を作成</strong>」→「変更を確認」→「非公開化を保存」の順です。
-      再公開（非公開行）は「<strong>再公開案を作成</strong>」→「変更を確認」→「再公開を保存」の順です（G-22h6b で env arm 有効化後に1回だけ）。
-      ページ内検索は <code>unpublish</code> / <code>republish</code> ではなく「<strong>非公開</strong>」「<strong>再公開</strong>」を使用。
-    </p>
-    <p class="gosaki-schedule-operator-guide__dev-note">
-      ページ下部の「開発者向け詳細」は <strong>mock / dry-run PoC 用</strong>です。Gosaki の本番運用操作では使いません。
+      上部の<strong>公演一覧</strong>で日付・タイトルを確認し、「編集する」を押してください。
+      非公開化・再公開は「案を作成」→「変更を確認」→（保存が有効な場合のみ）保存の順です。
     </p>
   </aside>
 
@@ -123,7 +119,7 @@ function displayValue(value: string | null | undefined): string {
     <h2 class="gosaki-schedule-operator-procedure-hints__title">操作手順のヒント</h2>
     <p class="gosaki-schedule-operator-procedure-hints__lead">
       各操作は <strong>Step 1 対象を選ぶ / 案を作成</strong> → <strong>Step 2 変更を確認</strong> →
-      <strong>Step 3 戸山が確認して保存</strong> の順です。
+      <strong>Step 3 管理者が確認して保存</strong> の順です。
       「変更を確認」まではDBは変わりません。保存ボタンを押すまでDBは変更されません。
     </p>
     <ul class="gosaki-schedule-operator-procedure-hints__safety">
@@ -668,6 +664,10 @@ function displayValue(value: string | null | undefined): string {
 
   <details class="admin-gosaki-dev-tools gosaki-schedule-operator-poc-cleanup-panels gosaki-schedule-dev-tools-panel">
     <summary>開発者向け詳細 — mock / dry-run PoC クリーンアップ（通常操作では使わない）</summary>
+    <p class="admin-gosaki-dev-tools__note" role="note">
+      legacy_id 検索・G-22h6b env arm・unpublish/republish 内部語・PoC クリーンアップはここにあります。
+      通常の Schedule 操作では使いません。
+    </p>
     <div class="gosaki-schedule-dev-tools-panel__warning" role="alert">
       <p>
         <strong>運用者向けではありません。</strong>

@@ -5,14 +5,30 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u39b2-gosaki-admin-operational-ui-information-architecture-planning — complete.
-ADMIN_OPERATIONAL_UI_IA_PLANNED: true. IMPLEMENTATION_EXECUTED: false.
+Current phase: G-20u39b3-gosaki-admin-portal-and-content-routes-local-implementation — complete.
+ADMIN_PORTAL_LOCAL_IMPLEMENTED: true.
+INDIVIDUAL_ADMIN_ROUTES_LOCAL_IMPLEMENTED: true.
+DEVELOPER_CONTENT_CLEANUP_IMPLEMENTED: true.
+SAVE_REMAINS_DISABLED: true.
+STG_PACKAGE_AND_BROWSER_QA_REQUIRED: true.
 P1-CON1: resolved. P1-ADM-MOB1: resolved.
 HOSTING_READY: false. GO_LIVE_READY: false. PRODUCTION_UPLOAD_READY: false.
 PUBLIC_READY: CONDITIONAL.
-Next: G-20u39b3-gosaki-admin-portal-and-content-routes-local-implementation.
-Alternate: G-20u39c-gosaki-staging-public-mobile-visual-p1-review.
+Next: G-20u39b4-gosaki-admin-multi-route-staging-package-and-manual-upload-prep.
 ```
+
+## G-20u39b3-gosaki-admin-portal-and-content-routes-local-implementation — complete
+
+- **Gate:** `gosakiAdminPortalAndContentRoutesLocalImplemented: true`
+- **ADMIN_PORTAL_LOCAL_IMPLEMENTED:** **true**
+- **INDIVIDUAL_ADMIN_ROUTES_LOCAL_IMPLEMENTED:** **true**
+- **DEVELOPER_CONTENT_CLEANUP_IMPLEMENTED:** **true**
+- **SAVE_REMAINS_DISABLED:** **true**
+- **STG_PACKAGE_AND_BROWSER_QA_REQUIRED:** **true**
+- **Local:** portal home + shared nav + chips · schedule/discography/youtube/about
+- **STG template:** display cleanup only (still single-page until b4)
+- **Not done:** package · FTP · STG browser QA · Save enable · multi-route STG inject
+- **Next:** **G-20u39b4-gosaki-admin-multi-route-staging-package-and-manual-upload-prep**
 
 ## G-20u39b2-gosaki-admin-operational-ui-information-architecture-planning — complete
 

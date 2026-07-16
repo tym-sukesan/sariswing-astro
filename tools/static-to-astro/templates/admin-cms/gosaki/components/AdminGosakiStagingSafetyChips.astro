@@ -1,0 +1,22 @@
+---
+/**
+ * Compact staging / read-only chips for Gosaki operator shell (G-20u39b3).
+ * Keep gates; avoid FTP / phase / package essays on the main surface.
+ */
+interface Props {
+  /** When false, omit the Save-disabled chip (e.g. portal home). Default true. */
+  showSaveDisabled?: boolean;
+}
+
+const { showSaveDisabled = true } = Astro.props;
+---
+
+<div class="admin-gosaki-safety-chips" role="status" aria-label="管理画面の状態">
+  <span class="admin-gosaki-safety-chip admin-gosaki-safety-chip--staging">テスト環境</span>
+  <span class="admin-gosaki-safety-chip">閲覧のみ</span>
+  {
+    showSaveDisabled ? (
+      <span class="admin-gosaki-safety-chip admin-gosaki-safety-chip--muted">Save disabled</span>
+    ) : null
+  }
+</div>

@@ -1,6 +1,8 @@
 ---
 import type { GosakiYoutubeEmbedAdminBinding } from "../../../../../../src/lib/admin/staging-data/gosaki-youtube-embed-admin-binding";
 import { GOSAKI_YOUTUBE_DEFAULT_IFRAME_TITLE } from "../../../../../../tools/static-to-astro/templates/site-extensions/gosaki-piano/gosaki-youtube-embed";
+import AdminGosakiStagingNav from "./AdminGosakiStagingNav.astro";
+import AdminGosakiStagingSafetyChips from "./AdminGosakiStagingSafetyChips.astro";
 import { GOSAKI_STAGING_ADMIN_BASE } from "../gosaki-staging-admin-paths";
 import {
   G10C_SAVE_BUTTON_PAGE_CONFIG_ELEMENT_ID,
@@ -18,10 +20,10 @@ const defaultIframeTitle = GOSAKI_YOUTUBE_DEFAULT_IFRAME_TITLE;
 const g10cPageConfig = resolveG10cSaveButtonPageServerConfig(import.meta.env);
 const savePrepNote = g10cPageConfig.saveButtonSaveEnabled
   ? "「変更を確認」で内容を確認してから「更新する」を押してください。"
-  : "「変更を確認」で内容を確認できます。保存が必要な場合は戸山が代行します。";
+  : "「変更を確認」で内容を確認できます。保存が必要な場合は管理者が行います。";
 const youtubeStatusMessage = g10cPageConfig.saveButtonSaveEnabled
   ? "YouTube 埋め込みの変更を保存できます。「変更を確認」のあと「更新する」で反映できます。"
-  : "YouTube 埋め込みの確認・入力ができます。保存が必要な場合は戸山が代行します。";
+  : "YouTube 埋め込みの確認・入力ができます。保存が必要な場合は管理者が行います。";
 
 const g10cTargetView =
   binding.items.find((view) => view.item.id === G10C_YOUTUBE_EMBED_TARGET_ITEM_ID) ?? null;
@@ -52,11 +54,12 @@ const g10cBeforeItemJson = g10cTargetView ? JSON.stringify(g10cTargetView.item) 
 
   <header class="admin-gosaki-page-header admin-gosaki-page-header--with-actions">
     <div>
-      <a class="admin-gosaki-back-link" href={GOSAKI_STAGING_ADMIN_BASE}>← 管理画面トップへ</a>
+      <a class="admin-gosaki-back-link" href={GOSAKI_STAGING_ADMIN_BASE}>← 管理トップへ</a>
       <h1 class="admin-gosaki-page-header__title">YouTube設定</h1>
       <p class="admin-gosaki-page-header__subtitle">
         トップページに表示する YouTube 動画を管理します。
       </p>
+      <AdminGosakiStagingSafetyChips />
     </div>
     <button
       type="button"
@@ -67,6 +70,8 @@ const g10cBeforeItemJson = g10cTargetView ? JSON.stringify(g10cTargetView.item) 
       ログアウト
     </button>
   </header>
+
+  <AdminGosakiStagingNav current="youtube" />
 
   <p class="admin-form__hint admin-static-notice">
     YouTube の埋め込みコードを貼り付けるだけで、トップページに動画を表示できます。

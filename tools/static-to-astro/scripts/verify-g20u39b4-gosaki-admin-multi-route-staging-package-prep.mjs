@@ -33,7 +33,7 @@ const PHASE =
   "G-20u39b4-gosaki-admin-multi-route-staging-package-and-manual-upload-prep";
 const GATE = "gosakiAdminMultiRouteStagingPackagePrepComplete: true";
 const RECOMMENDED_NEXT =
-  "G-20u41-gosaki-discography-operational-save-ui-gated-local-wiring";
+  "Commit / Push後に fresh staging package 生成 · STG browser で Save disabled と gate 表示のみ確認";
 
 /** Fixture-only known anon (not a real project key). payload.role=anon */
 const KNOWN_ANON =
@@ -219,6 +219,14 @@ assert(
   /DISCOGRAPHY_DB_WRITE_EXECUTED:\s*false/i.test(doc),
 );
 assert(
+  "DISCOGRAPHY_GATED_SAVE_UI_WIRED true",
+  /DISCOGRAPHY_GATED_SAVE_UI_WIRED:\s*true/i.test(doc),
+);
+assert(
+  "DISCOGRAPHY_SAVE_DEFAULT_DISABLED true",
+  /DISCOGRAPHY_SAVE_DEFAULT_DISABLED:\s*true/i.test(doc),
+);
+assert(
   "scanner multi-route admin path helper",
   scannerSrc.includes("isGosakiStagingAdminHtmlRelPath") &&
     scannerSrc.includes("stripAllowedGosakiStagingAdminAnonKeyAttrs"),
@@ -369,20 +377,164 @@ assert(
     discographyOpEditSrc.includes("data-gosaki-unsaved-banner"),
 );
 assert(
-  "discography dry-run connected without Save",
-  discographyOpEditSrc.includes("buildEndpointRequest") &&
+  "discography dry-run connected with gated Save wiring",
+  discographyOpEditSrc.includes("buildDryRunEndpointRequest") &&
+    discographyOpEditSrc.includes("buildSaveEndpointRequest") &&
     discographyOpEditSrc.includes("expectedBeforeUpdatedAt") &&
     discographyOpEditSrc.includes("dryRunInFlight") &&
-    !discographyOpEditSrc.includes("executeDiscographySave") &&
+    discographyOpEditSrc.includes("saveInFlight") &&
+    discographyOpEditSrc.includes("dryRunLockedFingerprint") &&
+    discographyOpEditSrc.includes("evaluateSaveGate") &&
+    discographyOpEditSrc.includes("isSaveConflictResponse") &&
     discographyPanelSrc.includes("showDryRun={true}") &&
+    discographyPanelSrc.includes('data-gosaki-disc-save-panel="true"') &&
+    discographyPanelSrc.includes("data-gosaki-disc-save") &&
+    discographyPanelSrc.includes("data-gosaki-disc-save-disabled-reason") &&
+    discographyPanelSrc.includes("data-gosaki-disc-save-conflict") &&
     editToolbarSrc.includes("data-gosaki-edit-dry-run") &&
     saveDisabledStatusSrc.includes("data-gosaki-save-disabled"),
 );
+const readOnlyAdminTs = read(
+  "tools/static-to-astro/templates/site-extensions/gosaki-piano/gosaki-staging-read-only-admin.ts",
+);
+assert(
+  "discography Save endpoint reuses formal Edge URL",
+  readOnlyAdminTs.includes("G20U41_DISCOGRAPHY_SAVE_ENDPOINT = G20U36C_DISCOGRAPHY_DRY_RUN_ENDPOINT") &&
+    readOnlyAdminTs.includes("buildDiscographySaveEndpointRequest") &&
+    readOnlyAdminTs.includes('operation: G20U41_DISCOGRAPHY_SAVE_OPERATION') &&
+    readOnlyAdminTs.includes("G20U41_DISCOGRAPHY_SAVE_APPROVAL_ID"),
+);
+assert(
+  "discography Save payload includes expectedBeforeUpdatedAt",
+  readOnlyAdminTs.includes("expectedBeforeUpdatedAt: expected") &&
+    readOnlyAdminTs.includes("evaluateDiscographyOperationalSaveGate"),
+);
+assert(
+  "discography Save gate requires env arm",
+  readOnlyAdminTs.includes("G20U41_DISCOGRAPHY_SAVE_UI_ARMED_ENV") &&
+    readOnlyAdminTs.includes("isG20u41DiscographyOperationalSaveArmed") &&
+    discographyOpEditSrc.includes("envArmed: deps.saveArmed"),
+);
+assert(
+  "discography Save approval gate uses separate candidate and expected",
+  discographyOpEditSrc.includes("candidateApprovalId") &&
+    discographyOpEditSrc.includes("approvalId: candidateApprovalId") &&
+    discographyOpEditSrc.includes("expectedApprovalId: deps.expectedSaveApprovalId") &&
+    discographyOpEditSrc.includes("dataset.g20u41DiscographySaveApprovalId") &&
+    !discographyOpEditSrc.includes("approvalId: deps.saveApprovalId") &&
+    !/approvalId:\s*deps\.expectedSaveApprovalId[\s\S]{0,80}expectedApprovalId:\s*deps\.expectedSaveApprovalId/.test(
+      discographyOpEditSrc,
+    ) &&
+    !/approvalId:\s*deps\.saveApprovalId[\s\S]{0,80}expectedApprovalId:\s*deps\.saveApprovalId/.test(
+      discographyOpEditSrc,
+    ),
+);
+assert(
+  "discography Save approval gate empty candidate fails closed in helper",
+  readOnlyAdminTs.includes('return { enabled: false, reason: "approval ID が空です" }') &&
+    readOnlyAdminTs.includes("candidateApprovalId !== expectedApprovalId"),
+);
+
+/** Local replica of approval slice in evaluateDiscographyOperationalSaveGate (no network). */
+function approvalGateFailsClosed(candidate, expected) {
+  const candidateApprovalId = String(candidate ?? "").trim();
+  const expectedApprovalId = String(expected ?? "").trim();
+  if (!candidateApprovalId) return true; // fails closed
+  if (!expectedApprovalId) return true;
+  if (candidateApprovalId !== expectedApprovalId) return true;
+  return false;
+}
+function otherSaveGatesOk() {
+  return {
+    authenticated: true,
+    dryRunSucceeded: true,
+    formMatchesDryRunSnapshot: true,
+    expectedBeforeUpdatedAt: "2026-06-14T15:03:08.762993+00:00",
+    saveEndpointConfigured: true,
+    saveEndpointSafe: true,
+    envArmed: true,
+    saveInFlight: false,
+  };
+}
+function evaluateApprovalGateLocal(approvalId, expectedApprovalId) {
+  const g = otherSaveGatesOk();
+  if (g.saveInFlight) return { enabled: false };
+  if (!g.authenticated) return { enabled: false };
+  if (!g.dryRunSucceeded) return { enabled: false };
+  if (!g.formMatchesDryRunSnapshot) return { enabled: false };
+  if (!String(g.expectedBeforeUpdatedAt ?? "").trim()) return { enabled: false };
+  if (!g.saveEndpointConfigured || !g.saveEndpointSafe) return { enabled: false };
+  if (!g.envArmed) return { enabled: false };
+  const candidateApprovalId = String(approvalId ?? "").trim();
+  const expected = String(expectedApprovalId ?? "").trim();
+  if (!candidateApprovalId) return { enabled: false };
+  if (!expected) return { enabled: false };
+  if (candidateApprovalId !== expected) return { enabled: false };
+  return { enabled: true };
+}
+const FORMAL_SAVE_APPROVAL = "G-20u36-gosaki-discography-tracklist-save-non-dry-run-slice";
+const DRY_RUN_APPROVAL = "G-20u31-gosaki-discography-save-dry-run-endpoint";
+assert(
+  "PASS candidate approval ID = expected approval ID",
+  evaluateApprovalGateLocal(FORMAL_SAVE_APPROVAL, FORMAL_SAVE_APPROVAL).enabled === true &&
+    readOnlyAdminTs.includes(FORMAL_SAVE_APPROVAL) &&
+    !approvalGateFailsClosed(FORMAL_SAVE_APPROVAL, FORMAL_SAVE_APPROVAL),
+);
+assert(
+  "PASS other Save gates also required with matching approval",
+  evaluateApprovalGateLocal(FORMAL_SAVE_APPROVAL, FORMAL_SAVE_APPROVAL).enabled === true &&
+    readOnlyAdminTs.includes("authenticated") &&
+    readOnlyAdminTs.includes("dryRunSucceeded") &&
+    readOnlyAdminTs.includes("formMatchesDryRunSnapshot") &&
+    readOnlyAdminTs.includes("expectedBeforeUpdatedAt") &&
+    readOnlyAdminTs.includes("envArmed") &&
+    readOnlyAdminTs.includes("saveInFlight"),
+);
+assert(
+  "FAIL candidate approval ID empty",
+  evaluateApprovalGateLocal("", FORMAL_SAVE_APPROVAL).enabled === false &&
+    approvalGateFailsClosed("", FORMAL_SAVE_APPROVAL),
+);
+assert(
+  "FAIL candidate approval ID is dry-run approval ID",
+  evaluateApprovalGateLocal(DRY_RUN_APPROVAL, FORMAL_SAVE_APPROVAL).enabled === false &&
+    DRY_RUN_APPROVAL !== FORMAL_SAVE_APPROVAL,
+);
+assert(
+  "FAIL candidate approval ID is unknown value",
+  evaluateApprovalGateLocal("G-unknown-approval", FORMAL_SAVE_APPROVAL).enabled === false,
+);
+assert(
+  "FAIL same-variable dual-pass of approval IDs is absent",
+  !discographyOpEditSrc.includes("approvalId: deps.saveApprovalId") &&
+    !/approvalId:\s*deps\.expectedSaveApprovalId,\s*\n\s*expectedApprovalId:\s*deps\.expectedSaveApprovalId/.test(
+      discographyOpEditSrc,
+    ) &&
+    discographyOpEditSrc.includes("approvalId: candidateApprovalId") &&
+    discographyOpEditSrc.includes("expectedApprovalId: deps.expectedSaveApprovalId"),
+);
+assert(
+  "discography post-dry-run mutation relocks Save",
+  discographyOpEditSrc.includes("clearDryRunLock") &&
+    discographyOpEditSrc.includes("dryRunLockedFingerprint") &&
+    readOnlyAdminTs.includes("formMatchesDryRunSnapshot"),
+);
+assert(
+  "discography conflict UI no auto retry",
+  discographyOpEditSrc.includes("isSaveConflictResponse") &&
+    discographyOpEditSrc.includes("clearDryRunLock") &&
+    readOnlyAdminTs.includes("G20U41_DISCOGRAPHY_CONFLICT_MESSAGE") &&
+    !discographyOpEditSrc.includes("retrySave") &&
+    !discographyOpEditSrc.match(/conflict[\s\S]{0,200}fetch\(/),
+);
+assert(
+  "discography Save updates updated_at on success",
+  discographyOpEditSrc.includes("updateAlbumCacheUpdatedAt") &&
+    discographyOpEditSrc.includes("form.dataset.expectedBeforeUpdatedAt = nextUpdatedAt"),
+);
 assert(
   "discography optimistic lock preserved in request builder",
-  read(
-    "tools/static-to-astro/templates/site-extensions/gosaki-piano/gosaki-staging-read-only-admin.ts",
-  ).includes("expectedBeforeUpdatedAt: expected") &&
+  readOnlyAdminTs.includes("expectedBeforeUpdatedAt: expected") &&
     discographyOpEditSrc.includes("expectedBeforeUpdatedAt"),
 );
 assert(
@@ -875,6 +1027,10 @@ assert(
 assert(
   "AI P1-DISCOGRAPHY-EDIT-UI resolved",
   /P1-DISCOGRAPHY-EDIT-UI:\s*resolved/i.test(currentState + nextActions + handoff),
+);
+assert(
+  "AI DISCOGRAPHY_GATED_SAVE_UI_WIRED",
+  /DISCOGRAPHY_GATED_SAVE_UI_WIRED:\s*true/i.test(currentState + nextActions + handoff),
 );
 
 console.log("");

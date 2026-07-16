@@ -52,6 +52,20 @@ export const G20U36C_DISCOGRAPHY_DRY_RUN_NOTE =
   "G-20u36c: Dry-run only — POST to staging Edge Function. No DB write. Save is still disabled. This checks the request and endpoint response only.";
 export const G20U36C_PRODUCTION_PROJECT_REF_STOP = "vsbvndwuajjhnzpohghh";
 
+/** G-20u41 — Discography operational Save gated wiring (same Edge endpoint · default disabled). */
+export const G20U41_DISCOGRAPHY_OPERATIONAL_SAVE_PHASE =
+  "G-20u41-gosaki-discography-operational-save-ui-gated-local-wiring";
+export const G20U41_DISCOGRAPHY_SAVE_OPERATION = "save" as const;
+export const G20U41_DISCOGRAPHY_SAVE_APPROVAL_ID =
+  "G-20u36-gosaki-discography-tracklist-save-non-dry-run-slice";
+/** Formal Save uses the same staging Edge Function URL as dry-run (`operation` differs). */
+export const G20U41_DISCOGRAPHY_SAVE_ENDPOINT = G20U36C_DISCOGRAPHY_DRY_RUN_ENDPOINT;
+export const G20U41_DISCOGRAPHY_SAVE_UI_ARMED_ENV = "PUBLIC_GOSAKI_DISCOGRAPHY_SAVE_UI_ARMED";
+export const G20U41_DISCOGRAPHY_SAVE_DEFAULT_DISABLED_REASON =
+  "Save は無効です。dry-run 成功・ログイン・env arm・approval が揃うまで実行できません。";
+export const G20U41_DISCOGRAPHY_CONFLICT_MESSAGE =
+  "他の場所で更新された可能性があります。再読み込みしてください。";
+
 /** G-20u36e — DB admin probe UI tools draft (read-only `rpc('is_admin')` · Save decoupled). */
 export const G20U36E_ADMIN_PROBE_UI_TOOLS_DRAFT_PHASE =
   "G-20u36e-controlled-save-auth-jwt-admin-probe-ui-tools-draft";
@@ -278,6 +292,18 @@ export function resolveG20u36cDiscographyDryRunEndpoint(env: ImportMetaEnv): str
   return G20U36C_DISCOGRAPHY_DRY_RUN_ENDPOINT;
 }
 
+export function resolveG20u41DiscographySaveEndpoint(env: ImportMetaEnv): string {
+  return resolveG20u36cDiscographyDryRunEndpoint(env);
+}
+
+export function isG20u41DiscographyOperationalSaveArmed(env: ImportMetaEnv): boolean {
+  return String(env[G20U41_DISCOGRAPHY_SAVE_UI_ARMED_ENV as keyof ImportMetaEnv] ?? "").trim() === "true";
+}
+
+export function assertG20u41DiscographySaveEndpointSafe(endpoint: string): boolean {
+  return assertG20u36cDiscographyDryRunEndpointSafe(endpoint);
+}
+
 export function assertG20u36cDiscographyDryRunEndpointSafe(endpoint: string): boolean {
   const trimmed = String(endpoint ?? "").trim();
   if (!trimmed) return false;
@@ -343,6 +369,90 @@ export function buildDiscographyDryRunEndpointRequest(
     },
     clientDryRun: buildDiscographyDryRunClientSnapshot(input.localDryRun),
   };
+}
+
+/**
+ * Build Save endpoint POST payload — same field values as dry-run · operation=save · G-20u36 approval.
+ */
+export function buildDiscographySaveEndpointRequest(
+  input: DiscographyDryRunEndpointRequestInput,
+): Record<string, unknown> {
+  const dryRunPayload = buildDiscographyDryRunEndpointRequest(input);
+  return {
+    ...dryRunPayload,
+    operation: G20U41_DISCOGRAPHY_SAVE_OPERATION,
+    approvalId: G20U41_DISCOGRAPHY_SAVE_APPROVAL_ID,
+  };
+}
+
+export interface DiscographyOperationalSaveGateInput {
+  authenticated: boolean;
+  dryRunSucceeded: boolean;
+  formMatchesDryRunSnapshot: boolean;
+  expectedBeforeUpdatedAt: string | null;
+  saveEndpointConfigured: boolean;
+  saveEndpointSafe: boolean;
+  envArmed: boolean;
+  approvalId: string;
+  expectedApprovalId: string;
+  saveInFlight: boolean;
+}
+
+export function evaluateDiscographyOperationalSaveGate(
+  input: DiscographyOperationalSaveGateInput,
+): { enabled: boolean; reason: string } {
+  if (input.saveInFlight) {
+    return { enabled: false, reason: "保存処理中です…" };
+  }
+  if (!input.authenticated) {
+    return { enabled: false, reason: "ログインが必要です" };
+  }
+  if (!input.dryRunSucceeded) {
+    return { enabled: false, reason: "先に「変更を確認」（dry-run）を成功させてください" };
+  }
+  if (!input.formMatchesDryRunSnapshot) {
+    return {
+      enabled: false,
+      reason: "dry-run 後に内容が変わりました。再度「変更を確認」してください",
+    };
+  }
+  const lock = String(input.expectedBeforeUpdatedAt ?? "").trim();
+  if (!lock) {
+    return { enabled: false, reason: "optimistic lock（updated_at）がありません" };
+  }
+  if (!input.saveEndpointConfigured || !input.saveEndpointSafe) {
+    return { enabled: false, reason: "Save endpoint が未設定またはブロックされています" };
+  }
+  if (!input.envArmed) {
+    return {
+      enabled: false,
+      reason: `env arm（${G20U41_DISCOGRAPHY_SAVE_UI_ARMED_ENV}）が無効です`,
+    };
+  }
+  const candidateApprovalId = String(input.approvalId ?? "").trim();
+  const expectedApprovalId = String(input.expectedApprovalId ?? "").trim();
+  if (!candidateApprovalId) {
+    return { enabled: false, reason: "approval ID が空です" };
+  }
+  if (!expectedApprovalId) {
+    return { enabled: false, reason: "expected approval ID が未設定です" };
+  }
+  if (candidateApprovalId !== expectedApprovalId) {
+    return { enabled: false, reason: "approval ID が一致しません" };
+  }
+  return { enabled: true, reason: "" };
+}
+
+export function isDiscographySaveConflictResponse(body: unknown): boolean {
+  const data = (body && typeof body === "object" ? body : {}) as Record<string, unknown>;
+  const reasonCode = String(data.reasonCode ?? "").toLowerCase();
+  const message = String(data.message ?? "").toLowerCase();
+  const errors = Array.isArray(data.errors) ? data.errors.map(String) : [];
+  const haystack = [reasonCode, message, ...errors].join(" ");
+  return (
+    /stale|conflict|optimistic|updated_at|0 rows|already changed/.test(haystack) ||
+    data.ok === false && /conflict|stale/.test(haystack)
+  );
 }
 
 function responseTextLooksSensitive(text: string): boolean {

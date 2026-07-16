@@ -257,12 +257,78 @@ function display(value: string | null | undefined): string {
       <p class="gosaki-discography-content-panel__hint">
         既存 STG Discography dry-run endpoint へ接続します。DB には書き込みません。
       </p>
+      <p
+        class="gosaki-discography-content-panel__dry-run-ok"
+        data-gosaki-disc-dry-run-ok
+        hidden
+        role="status"
+      >
+        dry-run 成功 — 内容を確認済み
+      </p>
       <pre
         class="gosaki-discography-content-panel__dry-run-result"
         data-disc-endpoint-dry-run-result="album"
         data-gosaki-disc-dry-run-result
         aria-live="polite"
       >（まだ確認していません）</pre>
+    </div>
+
+    <div
+      class="gosaki-discography-content-panel__save"
+      data-gosaki-disc-save-panel="true"
+      role="region"
+      aria-label="保存"
+    >
+      <h2 class="gosaki-discography-content-panel__section-title">保存</h2>
+      <p class="gosaki-discography-content-panel__hint" role="note">
+        gated Save — 既定では無効。dry-run 成功・ログイン・env arm が必要です。
+      </p>
+      <p
+        class="gosaki-discography-content-panel__save-reason"
+        data-gosaki-disc-save-disabled-reason
+        role="status"
+      >
+        Save は無効です
+      </p>
+      <p
+        class="gosaki-discography-content-panel__save-in-flight"
+        data-gosaki-disc-save-in-flight
+        hidden
+        role="status"
+      >
+        保存中…
+      </p>
+      <p
+        class="gosaki-discography-content-panel__save-success"
+        data-gosaki-disc-save-success
+        hidden
+        role="status"
+      />
+      <p
+        class="gosaki-discography-content-panel__save-validation"
+        data-gosaki-disc-save-validation
+        hidden
+        role="alert"
+      />
+      <p
+        class="gosaki-discography-content-panel__save-conflict"
+        data-gosaki-disc-save-conflict
+        hidden
+        role="alert"
+      >
+        他の場所で更新された可能性があります。再読み込みしてください。
+      </p>
+      <p class="gosaki-admin-save-disabled-status__actions">
+        <button
+          type="button"
+          class="gosaki-admin-save-disabled-status__save gosaki-discography-content-panel__save-btn"
+          disabled
+          aria-disabled="true"
+          data-gosaki-disc-save
+        >
+          保存する
+        </button>
+      </p>
     </div>
 
     <AdminGosakiStagingSaveDisabledStatus />
@@ -279,7 +345,7 @@ function display(value: string | null | undefined): string {
   <details class="gosaki-read-only-admin__dev-details" data-gosaki-admin-dev-details="true">
     <summary>開発者情報</summary>
     <p class="gosaki-admin-content-panel__meta">
-      operational edit · dry-run only · Save disabled · image edit deferred
+      operational edit · dry-run + gated Save wiring · Save default disabled · image edit deferred
     </p>
     <ul class="gosaki-discography-content-panel__dev-list">
       {
@@ -459,6 +525,80 @@ function display(value: string | null | undefined): string {
     white-space: pre-wrap;
     word-break: break-word;
     box-sizing: border-box;
+  }
+
+  .gosaki-discography-content-panel__dry-run-ok {
+    margin: 0.35rem 0 0;
+    padding: 0.45rem 0.65rem;
+    border-radius: 6px;
+    background: #ecfdf5;
+    border: 1px solid #6ee7b7;
+    color: #065f46;
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+
+  .gosaki-discography-content-panel__save {
+    margin: 1rem 0 0;
+    padding: 0.85rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    background: #fff;
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .gosaki-discography-content-panel__save-reason {
+    margin: 0.35rem 0 0.65rem;
+    color: #6b7280;
+    font-size: 0.9rem;
+  }
+
+  .gosaki-discography-content-panel__save-in-flight {
+    margin: 0 0 0.5rem;
+    color: #1d4ed8;
+    font-weight: 600;
+  }
+
+  .gosaki-discography-content-panel__save-success {
+    margin: 0 0 0.5rem;
+    padding: 0.45rem 0.65rem;
+    border-radius: 6px;
+    background: #ecfdf5;
+    border: 1px solid #6ee7b7;
+    color: #065f46;
+    font-weight: 600;
+  }
+
+  .gosaki-discography-content-panel__save-validation,
+  .gosaki-discography-content-panel__save-conflict {
+    margin: 0 0 0.5rem;
+    padding: 0.45rem 0.65rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  .gosaki-discography-content-panel__save-validation {
+    background: #fff7ed;
+    border: 1px solid #fdba74;
+    color: #9a3412;
+  }
+
+  .gosaki-discography-content-panel__save-conflict {
+    background: #fef2f2;
+    border: 1px solid #fca5a5;
+    color: #991b1b;
+    font-weight: 600;
+  }
+
+  .gosaki-discography-content-panel__save-btn:not(:disabled) {
+    border-color: #15803d;
+    background: #16a34a;
+    color: #fff;
+    cursor: pointer;
   }
 
   .gosaki-discography-content-panel__dev-list {

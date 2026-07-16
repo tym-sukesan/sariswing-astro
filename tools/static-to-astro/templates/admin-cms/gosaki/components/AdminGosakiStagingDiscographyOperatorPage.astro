@@ -641,9 +641,16 @@ const operationalAlbums = binding.rows.map((row) => ({
   import {
     validateDiscographyTrackListDryRun,
     buildDiscographyDryRunEndpointRequest,
+    buildDiscographySaveEndpointRequest,
     sanitizeDiscographyDryRunEndpointDisplay,
     assertG20u36cDiscographyDryRunEndpointSafe,
+    assertG20u41DiscographySaveEndpointSafe,
+    evaluateDiscographyOperationalSaveGate,
+    isDiscographySaveConflictResponse,
     G20U36C_DISCOGRAPHY_DRY_RUN_OPERATION,
+    G20U41_DISCOGRAPHY_SAVE_OPERATION,
+    G20U41_DISCOGRAPHY_SAVE_APPROVAL_ID,
+    G20U41_DISCOGRAPHY_CONFLICT_MESSAGE,
     G20U36C_PRODUCTION_PROJECT_REF_STOP,
   } from "../../../../site-extensions/gosaki-piano/gosaki-staging-read-only-admin";
   import { initGosakiDiscographyOperationalEdit } from "../../../../site-extensions/gosaki-piano/gosaki-staging-discography-operational-edit";
@@ -652,10 +659,18 @@ const operationalAlbums = binding.rows.map((row) => ({
   if (discRoot instanceof HTMLElement) {
     initGosakiDiscographyOperationalEdit(discRoot, {
       validateTrackListDryRun: validateDiscographyTrackListDryRun,
-      buildEndpointRequest: buildDiscographyDryRunEndpointRequest,
+      buildDryRunEndpointRequest: buildDiscographyDryRunEndpointRequest,
+      buildSaveEndpointRequest: buildDiscographySaveEndpointRequest,
       sanitizeEndpointDisplay: sanitizeDiscographyDryRunEndpointDisplay,
-      assertEndpointSafe: assertG20u36cDiscographyDryRunEndpointSafe,
+      isSaveConflictResponse: isDiscographySaveConflictResponse,
+      evaluateSaveGate: evaluateDiscographyOperationalSaveGate,
+      assertDryRunEndpointSafe: assertG20u36cDiscographyDryRunEndpointSafe,
+      assertSaveEndpointSafe: assertG20u41DiscographySaveEndpointSafe,
       dryRunOperation: G20U36C_DISCOGRAPHY_DRY_RUN_OPERATION,
+      saveOperation: G20U41_DISCOGRAPHY_SAVE_OPERATION,
+      expectedSaveApprovalId: G20U41_DISCOGRAPHY_SAVE_APPROVAL_ID,
+      saveArmed: false,
+      conflictMessage: G20U41_DISCOGRAPHY_CONFLICT_MESSAGE,
       productionProjectRefStop: G20U36C_PRODUCTION_PROJECT_REF_STOP,
     });
   }

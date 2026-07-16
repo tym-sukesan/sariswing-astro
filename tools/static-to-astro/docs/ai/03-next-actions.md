@@ -1,20 +1,32 @@
 Last updated: 2026-07-16
 Project: Static-to-Astro CMS / Musician CMS Kit
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u41-gosaki-discography-operational-save-ui-gated-local-wiring — next
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u41-gosaki-discography-operational-save-ui-gated-local-wiring — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-20u41-gosaki-discography-operational-save-ui-gated-local-wiring` |
-| Goal | Wire existing gated Save endpoint + optimistic lock into operational Discography UI |
-| DISCOGRAPHY_SAVE_REMAINS_DISABLED | **true** (until explicit future slice) |
-| Scope | Local wiring / dry-run verify only |
-| Next | Implementation — **no** actual Save / DB write |
+| DISCOGRAPHY_GATED_SAVE_UI_WIRED | **true** |
+| DISCOGRAPHY_SAVE_DEFAULT_DISABLED | **true** |
+| DISCOGRAPHY_DRY_RUN_REQUIRED_BEFORE_SAVE | **true** |
+| DISCOGRAPHY_POST_DRY_RUN_MUTATION_RELOCKS_SAVE | **true** |
+| DISCOGRAPHY_OPTIMISTIC_LOCK_SAVE_PRESERVED | **true** |
+| DISCOGRAPHY_SAVE_IN_FLIGHT_GUARD | **true** |
+| DISCOGRAPHY_CONFLICT_UI_IMPLEMENTED | **true** |
+| DISCOGRAPHY_DB_WRITE_EXECUTED | **false** |
+| FRESH_PACKAGE_REUPLOAD_REQUIRED | **true** |
+| Next | Commit / Push後に fresh staging package 生成 · STG browser で Save disabled と gate 表示のみ確認 |
 
 ```txt
-DISCOGRAPHY_OPERATIONAL_EDIT_UI_STG_READY: true
-DISCOGRAPHY_SAVE_REMAINS_DISABLED: true
+DISCOGRAPHY_GATED_SAVE_UI_WIRED: true
+DISCOGRAPHY_SAVE_DEFAULT_DISABLED: true
+DISCOGRAPHY_DRY_RUN_REQUIRED_BEFORE_SAVE: true
+DISCOGRAPHY_POST_DRY_RUN_MUTATION_RELOCKS_SAVE: true
+DISCOGRAPHY_OPTIMISTIC_LOCK_SAVE_PRESERVED: true
+DISCOGRAPHY_SAVE_IN_FLIGHT_GUARD: true
+DISCOGRAPHY_CONFLICT_UI_IMPLEMENTED: true
 DISCOGRAPHY_DB_WRITE_EXECUTED: false
+FRESH_PACKAGE_REUPLOAD_REQUIRED: true
 ```
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u40-gosaki-discography-operational-edit-ui — complete
@@ -34,7 +46,7 @@ DISCOGRAPHY_DB_WRITE_EXECUTED: false
 | DISCOGRAPHY_DB_WRITE_EXECUTED | **false** |
 | P1-DISCOGRAPHY-EDIT-UI | **resolved** |
 | uploadedPackageSourceCommit | `82cec1508a793c0d4367358960b39c0a1c865a96` |
-| Next | **G-20u41-gosaki-discography-operational-save-ui-gated-local-wiring** |
+| Next | Commit / Push後に fresh staging package 生成 · STG browser で Save disabled と gate 表示のみ確認 |
 
 ```txt
 DISCOGRAPHY_VIEW_EDIT_MODE_IMPLEMENTED: true

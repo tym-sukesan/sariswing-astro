@@ -84,7 +84,30 @@ operatorManualFtpUpload: true
 uploadedPackageSourceCommit: 82cec1508a793c0d4367358960b39c0a1c865a96
 ```
 
-**No** Save · **no** DB write · **no** Cursor FTP in this recording phase.
+**No** Save execution · **no** DB write · **no** Cursor FTP in this recording phase.
+
+## Discography gated Save UI wiring (G-20u41 local)
+
+Operational edit UI now wires **gated Save** to the existing staging Edge Function (`gosaki-discography-save-dry-run`).
+
+- **Dry-run:** `operation=dryRun` · approval `G-20u31-gosaki-discography-save-dry-run-endpoint`
+- **Save:** same endpoint URL · `operation=save` · approval `G-20u36-gosaki-discography-tracklist-save-non-dry-run-slice`
+- **Payload:** same field values as dry-run (`release` · `tracksText` · `expectedBeforeUpdatedAt` from snapshot)
+- **Gates (all required):** authenticated · dry-run success · no post-dry-run mutation · `expectedBeforeUpdatedAt` present · env arm `PUBLIC_GOSAKI_DISCOGRAPHY_SAVE_UI_ARMED` · approval match (candidate from `data-g20u41-discography-save-approval-id` vs expected `G-20u36-gosaki-discography-tracklist-save-non-dry-run-slice` — not the same binding) · not `saveInFlight`
+- **UI:** dry-run ok banner · Save disabled reason · Save in-flight · success · validation · conflict (no auto-retry)
+- **Default STG package:** Save button **disabled** (`PUBLIC_GOSAKI_DISCOGRAPHY_SAVE_UI_ARMED` unset/false)
+
+```txt
+DISCOGRAPHY_GATED_SAVE_UI_WIRED: true
+DISCOGRAPHY_SAVE_DEFAULT_DISABLED: true
+DISCOGRAPHY_DRY_RUN_REQUIRED_BEFORE_SAVE: true
+DISCOGRAPHY_POST_DRY_RUN_MUTATION_RELOCKS_SAVE: true
+DISCOGRAPHY_OPTIMISTIC_LOCK_SAVE_PRESERVED: true
+DISCOGRAPHY_SAVE_IN_FLIGHT_GUARD: true
+DISCOGRAPHY_CONFLICT_UI_IMPLEMENTED: true
+DISCOGRAPHY_DB_WRITE_EXECUTED: false
+FRESH_PACKAGE_REUPLOAD_REQUIRED: true
+```
 
 ## About admin form + mobile preview follow-up (G-20u39b5 STG QA)
 
@@ -166,6 +189,15 @@ DISCOGRAPHY_STG_BROWSER_QA_PASSED: true
 DISCOGRAPHY_OPERATIONAL_EDIT_UI_STG_READY: true
 DISCOGRAPHY_DB_WRITE_EXECUTED: false
 P1-DISCOGRAPHY-EDIT-UI: resolved
+DISCOGRAPHY_GATED_SAVE_UI_WIRED: true
+DISCOGRAPHY_SAVE_DEFAULT_DISABLED: true
+DISCOGRAPHY_DRY_RUN_REQUIRED_BEFORE_SAVE: true
+DISCOGRAPHY_POST_DRY_RUN_MUTATION_RELOCKS_SAVE: true
+DISCOGRAPHY_OPTIMISTIC_LOCK_SAVE_PRESERVED: true
+DISCOGRAPHY_SAVE_IN_FLIGHT_GUARD: true
+DISCOGRAPHY_CONFLICT_UI_IMPLEMENTED: true
+DISCOGRAPHY_DB_WRITE_EXECUTED: false
+FRESH_PACKAGE_REUPLOAD_REQUIRED: true
 packageGenerationExecuted: false
 ftpUploadExecuted: false
 saveEnabled: false
@@ -181,4 +213,4 @@ npm run verify:g20u39b4-gosaki-admin-multi-route-staging-package-prep
 
 ## Recommended next
 
-`G-20u41-gosaki-discography-operational-save-ui-gated-local-wiring` — wire gated Save endpoint + optimistic lock into operational UI locally; **no** actual Save / DB write yet.
+Commit / Push後に fresh staging package 生成 · STG browser で Save disabled と gate 表示のみ確認

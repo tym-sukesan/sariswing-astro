@@ -43,6 +43,16 @@ import {
   G20U36E_ADMIN_PROBE_UI_TOOLS_DRAFT_PHASE,
   G20U36E_ADMIN_PROBE_BUTTON_LABEL,
   G20U36E_ADMIN_PROBE_NOTE,
+  G20U41_DISCOGRAPHY_OPERATIONAL_SAVE_PHASE,
+  G20U41_DISCOGRAPHY_SAVE_OPERATION,
+  G20U41_DISCOGRAPHY_SAVE_APPROVAL_ID,
+  G20U41_DISCOGRAPHY_CONFLICT_MESSAGE,
+  buildDiscographySaveEndpointRequest,
+  evaluateDiscographyOperationalSaveGate,
+  isDiscographySaveConflictResponse,
+  isG20u41DiscographyOperationalSaveArmed,
+  resolveG20u41DiscographySaveEndpoint,
+  assertG20u41DiscographySaveEndpointSafe,
   GOSAKI_STAGING_PREVIEW_URL,
   buildGosakiReadOnlyAdminViewModel,
   isG11c4aSupabaseAuthConfigured,
@@ -63,6 +73,8 @@ const { page = "portal" } = Astro.props as Props;
 const dryRunEndpoint = resolveG11c4aDryRunEndpoint(import.meta.env);
 const saveEndpoint = resolveG11c6aSaveEndpoint(import.meta.env);
 const discographyDryRunEndpoint = resolveG20u36cDiscographyDryRunEndpoint(import.meta.env);
+const discographySaveEndpoint = resolveG20u41DiscographySaveEndpoint(import.meta.env);
+const discographySaveArmed = isG20u41DiscographyOperationalSaveArmed(import.meta.env);
 const supabaseUrl = resolveG11c4aSupabaseUrl(import.meta.env);
 const supabaseAnonKey = resolveG11c4aSupabaseAnonKey(import.meta.env);
 const supabaseAuthConfigured = isG11c4aSupabaseAuthConfigured(import.meta.env);
@@ -131,6 +143,11 @@ const showClientScript = page !== "portal";
     data-gosaki-youtube-dry-run-endpoint={dryRunEndpoint}
     data-gosaki-youtube-save-endpoint={saveEndpoint}
     data-gosaki-discography-dry-run-endpoint={discographyDryRunEndpoint}
+    data-gosaki-discography-save-endpoint={discographySaveEndpoint}
+    data-g20u41-discography-operational-save-phase={G20U41_DISCOGRAPHY_OPERATIONAL_SAVE_PHASE}
+    data-g20u41-discography-save-operation={G20U41_DISCOGRAPHY_SAVE_OPERATION}
+    data-g20u41-discography-save-approval-id={G20U41_DISCOGRAPHY_SAVE_APPROVAL_ID}
+    data-gosaki-discography-save-armed={discographySaveArmed ? "true" : "false"}
     data-g20u36c-discography-dry-run-operation={G20U36C_DISCOGRAPHY_DRY_RUN_OPERATION}
     data-g20u36c-discography-dry-run-approval-id={G20U36C_DISCOGRAPHY_DRY_RUN_APPROVAL_ID}
     data-gosaki-supabase-url={supabaseUrl}
@@ -728,9 +745,16 @@ const showClientScript = page !== "portal";
       import {
         validateDiscographyTrackListDryRun,
         buildDiscographyDryRunEndpointRequest,
+        buildDiscographySaveEndpointRequest,
         sanitizeDiscographyDryRunEndpointDisplay,
         assertG20u36cDiscographyDryRunEndpointSafe,
+        assertG20u41DiscographySaveEndpointSafe,
+        evaluateDiscographyOperationalSaveGate,
+        isDiscographySaveConflictResponse,
         G20U36C_DISCOGRAPHY_DRY_RUN_OPERATION,
+        G20U41_DISCOGRAPHY_SAVE_OPERATION,
+        G20U41_DISCOGRAPHY_SAVE_APPROVAL_ID,
+        G20U41_DISCOGRAPHY_CONFLICT_MESSAGE,
         G20U36C_PRODUCTION_PROJECT_REF_STOP,
         G20U36E_ADMIN_PROBE_RPC_NAME,
         assertG20u36eAdminProbeSupabaseHostSafe,
@@ -740,6 +764,28 @@ const showClientScript = page !== "portal";
         formatG20u36eAdminProbeDisplay,
       } from "../lib/gosaki-staging-read-only-admin";
       import { initGosakiDiscographyOperationalEdit } from "../lib/gosaki-staging-discography-operational-edit";
+
+      function resolveDiscographyAccessToken() {
+        const body = document.body;
+        const supabaseUrl = (body?.dataset.gosakiSupabaseUrl || "").trim();
+        const supabaseAnonKey = (body?.dataset.gosakiSupabaseAnonKey || "").trim();
+        const configured = body?.dataset.gosakiSupabaseAuthConfigured === "true";
+        if (!configured || !supabaseUrl || !supabaseAnonKey) {
+          return Promise.resolve(null);
+        }
+        const lib = window.supabase;
+        const createClient =
+          lib && typeof lib.createClient === "function"
+            ? lib.createClient
+            : lib?.default && typeof lib.default.createClient === "function"
+              ? lib.default.createClient
+              : null;
+        if (!createClient) return Promise.resolve(null);
+        const client = createClient(supabaseUrl, supabaseAnonKey, {
+          auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: false },
+        });
+        return client.auth.getSession().then((res) => res.data?.session?.access_token ?? null);
+      }
 
       /** G-20u36e admin probe — manual `rpc('is_admin')` only · never logs tokens / user_id / email · never arms Save. */
       (function wireG20u36eAdminProbe() {
@@ -854,13 +900,23 @@ const showClientScript = page !== "portal";
 
       const discRoot = document.getElementById("gosaki-discography-content");
       if (discRoot instanceof HTMLElement) {
+        const body = document.body;
         initGosakiDiscographyOperationalEdit(discRoot, {
           validateTrackListDryRun: validateDiscographyTrackListDryRun,
-          buildEndpointRequest: buildDiscographyDryRunEndpointRequest,
+          buildDryRunEndpointRequest: buildDiscographyDryRunEndpointRequest,
+          buildSaveEndpointRequest: buildDiscographySaveEndpointRequest,
           sanitizeEndpointDisplay: sanitizeDiscographyDryRunEndpointDisplay,
-          assertEndpointSafe: assertG20u36cDiscographyDryRunEndpointSafe,
+          isSaveConflictResponse: isDiscographySaveConflictResponse,
+          evaluateSaveGate: evaluateDiscographyOperationalSaveGate,
+          assertDryRunEndpointSafe: assertG20u36cDiscographyDryRunEndpointSafe,
+          assertSaveEndpointSafe: assertG20u41DiscographySaveEndpointSafe,
           dryRunOperation: G20U36C_DISCOGRAPHY_DRY_RUN_OPERATION,
+          saveOperation: G20U41_DISCOGRAPHY_SAVE_OPERATION,
+          expectedSaveApprovalId: G20U41_DISCOGRAPHY_SAVE_APPROVAL_ID,
+          saveArmed: body?.dataset.gosakiDiscographySaveArmed === "true",
+          conflictMessage: G20U41_DISCOGRAPHY_CONFLICT_MESSAGE,
           productionProjectRefStop: G20U36C_PRODUCTION_PROJECT_REF_STOP,
+          getAccessToken: resolveDiscographyAccessToken,
         });
       }
     </script>

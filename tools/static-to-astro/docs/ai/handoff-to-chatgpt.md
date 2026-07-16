@@ -5,15 +5,22 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u40-gosaki-discography-operational-edit-ui — complete (local + package + STG browser QA · Save disabled).
-DISCOGRAPHY_STG_BROWSER_QA_PASSED: true.
-DISCOGRAPHY_OPERATIONAL_EDIT_UI_STG_READY: true.
-DISCOGRAPHY_SAVE_REMAINS_DISABLED: true.
+Current phase: G-20u41-gosaki-discography-operational-save-ui-gated-local-wiring — complete (gated Save wired · default disabled).
+DISCOGRAPHY_GATED_SAVE_UI_WIRED: true.
+DISCOGRAPHY_SAVE_DEFAULT_DISABLED: true.
 DISCOGRAPHY_DB_WRITE_EXECUTED: false.
-P1-DISCOGRAPHY-EDIT-UI: resolved.
-uploadedPackageSourceCommit: 82cec1508a793c0d4367358960b39c0a1c865a96.
-Previous: G-20u39b4/b5 multi-route + About form/preview.
-Next: G-20u41-gosaki-discography-operational-save-ui-gated-local-wiring.```
+FRESH_PACKAGE_REUPLOAD_REQUIRED: true.
+Previous: G-20u40 Discography view/edit/dry-run + STG browser QA.
+Next: Commit / Push後に fresh staging package 生成 · STG browser で Save disabled と gate 表示のみ確認.```
+
+## G-20u41-gosaki-discography-operational-save-ui-gated-local-wiring — complete
+
+- **Save endpoint:** same staging Edge URL as dry-run (`gosaki-discography-save-dry-run`) · `operation=save`
+- **Approval:** `G-20u36-gosaki-discography-tracklist-save-non-dry-run-slice`
+- **Gates:** auth · dry-run ok · no post-dry-run mutation · optimistic lock · env arm · approval · saveInFlight
+- **UI:** Save disabled reason · conflict message (no auto-retry) · success/validation regions
+- **Not done:** Save click · DB write · package · FTP
+- **Next:** Commit / Push → fresh package → STG browser QA (Save disabled + gate labels only)
 
 ## G-20u40-gosaki-discography-operational-edit-ui — complete
 
@@ -22,7 +29,7 @@ Next: G-20u41-gosaki-discography-operational-save-ui-gated-local-wiring.```
 - **DISCOGRAPHY_SAVE_REMAINS_DISABLED / DISCOGRAPHY_DB_WRITE_EXECUTED:** **true / false**
 - **Shared:** DiscographyContentPanel · EditToolbar · SaveDisabledStatus · operational-edit client
 - **Not done:** Save enable · DB write · jacket upload
-- **Next:** **G-20u41-gosaki-discography-operational-save-ui-gated-local-wiring** (local gated Save wiring only)
+- **Next:** Commit / Push → fresh package → STG browser QA (Save disabled + gate labels)
 
 ## G-20u39b4-gosaki-admin-multi-route-staging-package-and-manual-upload-prep — complete
 

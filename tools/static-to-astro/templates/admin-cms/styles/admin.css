@@ -1397,6 +1397,36 @@
     margin-left: 0;
     width: 100%;
   }
+
+  .admin-gosaki-admin-pages,
+  .admin-gosaki-operator-home,
+  .admin-gosaki-schedule-operator.admin-page--wide {
+    width: 100%;
+    max-width: 100%;
+    margin-inline: auto;
+    min-width: 0;
+  }
+
+  .admin-gosaki-operator-grid,
+  .admin-gosaki-menu--primary,
+  .admin-gosaki-secondary-menu__list {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .admin-card,
+  .admin-gosaki-status-bar,
+  .admin-gosaki-page-header {
+    min-width: 0;
+  }
+}
+
+.admin-body:has(.admin-gosaki-admin-pages) {
+  overflow-x: clip;
+}
+
+.admin-shell:has(.admin-gosaki-admin-pages) {
+  overflow-x: clip;
+  width: 100%;
 }
 
 /* Gosaki staging shell operator UI (Sariswing /admin inspired) */
@@ -1946,7 +1976,10 @@
 }
 
 .admin-gosaki-admin-pages {
+  width: 100%;
   max-width: 1120px;
+  margin-inline: auto;
+  box-sizing: border-box;
 }
 
 /* Gosaki staging admin — placeholder lighter than entered text */
@@ -3343,7 +3376,10 @@
 
 /* Shared admin form / list (Sariswing Instagram-style) */
 .admin-page--wide {
+  width: 100%;
   max-width: 1120px;
+  margin-inline: auto;
+  box-sizing: border-box;
 }
 
 .admin-static-notice {

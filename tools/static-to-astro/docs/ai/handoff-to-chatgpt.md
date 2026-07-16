@@ -5,15 +5,21 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u39a2-gosaki-staging-p1-contact-hubspot-submit-e2e-result-record — complete.
-Current live production: Wix (https://www.gosaki-piano.com/).
-Replacement hosting: not contracted. Production FTP preparation paused.
+Current phase: G-20u39b-gosaki-staging-p1-admin-mobile-left-align-polish — complete.
+P1-ADM-MOB1: locally_resolved. STG_BROWSER_RECHECK_REQUIRED: true.
 HOSTING_READY: false. GO_LIVE_READY: false. PRODUCTION_UPLOAD_READY: false.
-CONTACT_SUBMISSION_EXECUTED: true. HUBSPOT_SUBMISSION_RECEIVED: true.
-CONTACT_E2E_PASSED: true. CONTACT_E2E_STATUS: PASS. P1-CON1: resolved.
-PUBLIC_READY: CONDITIONAL.
-Next: G-20u39b-gosaki-staging-p1-admin-mobile-left-align-polish.
+CONTACT_E2E_PASSED: true. P1-CON1: resolved. PUBLIC_READY: CONDITIONAL.
+Next: G-20u39b1-gosaki-staging-p1-admin-mobile-left-align-package-and-manual-upload-prep.
 ```
+
+## G-20u39b-gosaki-staging-p1-admin-mobile-left-align-polish — complete
+
+- **Gate:** `gosakiStagingP1AdminMobileLeftAlignPolishImplemented: true`
+- **P1-ADM-MOB1:** **locally_resolved** (CSS container fix · local Playwright verify)
+- **STG_BROWSER_RECHECK_REQUIRED:** **true** (not uploaded yet)
+- **Fix:** read-only admin CSS + Gosaki `admin.css` mobile container alignment
+- **Not done:** package · FTP · STG browser re-check
+- **Next:** **G-20u39b1-gosaki-staging-p1-admin-mobile-left-align-package-and-manual-upload-prep**
 
 ## G-20u39a2-gosaki-staging-p1-contact-hubspot-submit-e2e-result-record — complete
 

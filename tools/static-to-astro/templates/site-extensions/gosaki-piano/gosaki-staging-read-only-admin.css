@@ -439,3 +439,51 @@ body.gosaki-read-only-admin {
   padding-top: 0.75rem;
   border-top: 1px dashed var(--gra-border);
 }
+
+/* G-20u39b — Gosaki staging admin mobile container alignment (P1-ADM-MOB1) */
+
+body.gosaki-read-only-admin {
+  overflow-x: clip;
+}
+
+.gosaki-read-only-admin__shell {
+  width: 100%;
+  overflow-x: clip;
+}
+
+.gosaki-read-only-admin__main {
+  width: min(100%, 960px);
+  margin-inline: auto;
+  box-sizing: border-box;
+}
+
+.gosaki-read-only-admin__banner,
+.gosaki-read-only-admin__section,
+.gosaki-read-only-admin__dashboard-grid,
+.gosaki-read-only-admin__dashboard-card,
+.gosaki-read-only-admin__discography-editor-grid,
+.gosaki-read-only-admin__album-card {
+  min-width: 0;
+}
+
+@media (max-width: 640px) {
+  .gosaki-read-only-admin__main,
+  .gosaki-read-only-admin__header,
+  .gosaki-read-only-admin__footer {
+    padding-inline: 1rem;
+  }
+
+  .gosaki-read-only-admin__header {
+    align-items: flex-start;
+  }
+
+  .gosaki-read-only-admin__badges {
+    margin-left: 0;
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .gosaki-read-only-admin__dashboard-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

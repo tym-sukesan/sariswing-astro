@@ -5,16 +5,30 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u39a1b-gosaki-staging-p1-contact-hubspot-submit-e2e-preflight-gap-resolution — complete.
+Current phase: G-20u39a2-gosaki-staging-p1-contact-hubspot-submit-e2e-result-record — complete.
 Current live production: Wix (https://www.gosaki-piano.com/).
 Replacement hosting: not contracted. Production FTP preparation paused.
 HOSTING_READY: false. GO_LIVE_READY: false. PRODUCTION_UPLOAD_READY: false.
-CONTACT_HUBSPOT_SUBMIT_E2E_PREFLIGHT_PREPARED: true. CONTACT_E2E_EXECUTION_READY: true.
-CONTACT_SUBMISSION_EXECUTED: false. CONTACT_E2E_STATUS: PREFLIGHT_ONLY_NOT_EXECUTED.
+CONTACT_SUBMISSION_EXECUTED: true. HUBSPOT_SUBMISSION_RECEIVED: true.
+CONTACT_E2E_PASSED: true. CONTACT_E2E_STATUS: PASS. P1-CON1: resolved.
 PUBLIC_READY: CONDITIONAL.
-Next: G-20u39a2-gosaki-staging-p1-contact-hubspot-submit-e2e-manual-execution (operator manual submit once).
-Alternate: G-20u39b-gosaki-staging-p1-admin-mobile-left-align-polish.
+Next: G-20u39b-gosaki-staging-p1-admin-mobile-left-align-polish.
 ```
+
+## G-20u39a2-gosaki-staging-p1-contact-hubspot-submit-e2e-result-record — complete
+
+- **Gate:** `gosakiStagingP1ContactHubspotSubmitE2ePassed: true`
+- **CONTACT_SUBMISSION_EXECUTED:** **true** (operator manual · once)
+- **HUBSPOT_SUBMISSION_RECEIVED:** **true**
+- **CONTACT_E2E_PASSED:** **true** · **CONTACT_E2E_STATUS:** **PASS**
+- **P1-CON1:** **resolved**
+- **Test email / payload:** not recorded in repository
+- **Workflow / auto reply / notification:** out of scope (HubSpot settings)
+- **Live production:** **Wix** · **replacement hosting:** **not contracted** · FTP prep **paused**
+- **HOSTING_READY / GO_LIVE_READY / PRODUCTION_UPLOAD_READY:** **false**
+- **PUBLIC_READY:** **CONDITIONAL**
+- **Not done:** additional Contact submit · browser investigation · HubSpot API · implementation
+- **Next:** **G-20u39b-gosaki-staging-p1-admin-mobile-left-align-polish**
 
 ## G-20u39a1b-gosaki-staging-p1-contact-hubspot-submit-e2e-preflight-gap-resolution — complete
 

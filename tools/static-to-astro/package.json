@@ -192,6 +192,7 @@
     "verify:g20u39-gosaki-staging-p1-review-planning": "node scripts/verify-g20u39-gosaki-staging-p1-review-planning.mjs",
     "verify:g20u39a-gosaki-staging-p1-contact-hubspot-submit-e2e-planning": "node scripts/verify-g20u39a-gosaki-staging-p1-contact-hubspot-submit-e2e-planning.mjs",
     "verify:g20u39a1-gosaki-staging-p1-contact-hubspot-submit-e2e-preflight": "node scripts/verify-g20u39a1-gosaki-staging-p1-contact-hubspot-submit-e2e-preflight.mjs",
+    "verify:g20u39a2-gosaki-staging-p1-contact-hubspot-submit-e2e-result": "node scripts/verify-g20u39a2-gosaki-staging-p1-contact-hubspot-submit-e2e-result.mjs",
     "verify:g20i3-gosaki-production-manual-upload-verifier-drift-review": "node scripts/verify-g20i3-gosaki-production-manual-upload-verifier-drift-review.mjs",
     "verify:g20u36e-controlled-save-auth-jwt-feasibility-plan": "node scripts/verify-g20u36e-controlled-save-auth-jwt-feasibility-plan.mjs",
     "verify:g20u36e-controlled-save-auth-jwt-feasibility-preflight": "node scripts/verify-g20u36e-controlled-save-auth-jwt-feasibility-preflight.mjs",

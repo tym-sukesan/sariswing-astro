@@ -11,14 +11,27 @@ import { loadGosakiYoutubeEmbedConfig } from "./gosaki-home-youtube-embed.mjs";
 
 export const GOSAKI_READ_ONLY_ADMIN_MARKER = "gosaki-read-only-admin";
 export const GOSAKI_READ_ONLY_ADMIN_DATA_ATTR = 'data-gosaki-read-only-admin="true"';
+export const GOSAKI_READ_ONLY_ADMIN_MULTI_ROUTE_ATTR = 'data-gosaki-admin-multi-route="true"';
 export const GOSAKI_READ_ONLY_ADMIN_PAGE_REL = "src/pages/admin/index.astro";
 export const GOSAKI_READ_ONLY_ADMIN_COMPONENT_REL =
   "src/components/GosakiStagingReadOnlyAdminPage.astro";
 export const GOSAKI_READ_ONLY_ADMIN_LIB_REL = "src/lib/gosaki-staging-read-only-admin.ts";
+export const GOSAKI_PACKAGE_ADMIN_PATHS_REL = "src/lib/gosaki-package-admin-paths.ts";
 export const GOSAKI_READ_ONLY_ADMIN_CSS_REL = "src/styles/gosaki-staging-read-only-admin.css";
+export const GOSAKI_ADMIN_SHELL_CHROME_CSS_REL = "src/styles/gosaki-admin-shell-chrome.css";
+export const GOSAKI_ADMIN_CHROME_COMPONENT_DIR_REL = "src/components/gosaki-admin";
 export const GOSAKI_READ_ONLY_ADMIN_DASHBOARD_DATA_REL = "src/data/gosaki-read-only-admin-dashboard.json";
 export const GOSAKI_READ_ONLY_ADMIN_DISCOGRAPHY_EDITOR_DATA_REL =
   "src/data/gosaki-read-only-admin-discography-editor.json";
+
+/** @type {ReadonlyArray<{ page: string, rel: string }>} */
+export const GOSAKI_ADMIN_MULTI_ROUTE_PAGES = [
+  { page: "portal", rel: "src/pages/admin/index.astro" },
+  { page: "schedule", rel: "src/pages/admin/schedule/index.astro" },
+  { page: "discography", rel: "src/pages/admin/discography/index.astro" },
+  { page: "youtube", rel: "src/pages/admin/youtube/index.astro" },
+  { page: "about", rel: "src/pages/admin/about/index.astro" },
+];
 export const GOSAKI_CONTACT_HUBSPOT_CONFIG_REL = "config/sites/gosaki-piano-contact-hubspot.json";
 export const G20U28_ADMIN_UI_PHASE = "G-20u28-gosaki-admin-ui-foundation-polish";
 export const G20U29_DISCOGRAPHY_EDITOR_PHASE = "G-20u29-gosaki-discography-edit-ui-prototype";
@@ -362,44 +375,85 @@ export function applyGosakiStagingReadOnlyAdmin(outDir, toolRoot, options = {}) 
   }
 
   const templateRoot = path.join(toolRoot, "templates/site-extensions/gosaki-piano");
+  const chromeRoot = path.join(toolRoot, "templates/admin-cms/gosaki/components");
+  const chromeCssSrc = path.join(
+    toolRoot,
+    "templates/admin-cms/gosaki/styles/gosaki-admin-shell-chrome.css",
+  );
   const componentSrc = path.join(templateRoot, "GosakiStagingReadOnlyAdminPage.astro");
   const libSrc = path.join(templateRoot, "gosaki-staging-read-only-admin.ts");
+  const packagePathsSrc = path.join(templateRoot, "gosaki-package-admin-paths.ts");
   const cssSrc = path.join(templateRoot, "gosaki-staging-read-only-admin.css");
+  const chromeComponents = [
+    "AdminGosakiStagingNav.astro",
+    "AdminGosakiStagingSafetyChips.astro",
+    "AdminGosakiStagingOperatorHome.astro",
+  ];
 
-  for (const src of [componentSrc, libSrc, cssSrc]) {
+  for (const src of [componentSrc, libSrc, packagePathsSrc, cssSrc, chromeCssSrc]) {
     if (!fs.existsSync(src)) {
       return { applied: false, reason: `template missing: ${path.basename(src)}` };
+    }
+  }
+  for (const name of chromeComponents) {
+    if (!fs.existsSync(path.join(chromeRoot, name))) {
+      return { applied: false, reason: `chrome component missing: ${name}` };
     }
   }
 
   const componentDest = path.join(outDir, GOSAKI_READ_ONLY_ADMIN_COMPONENT_REL);
   const libDest = path.join(outDir, GOSAKI_READ_ONLY_ADMIN_LIB_REL);
+  const packagePathsDest = path.join(outDir, GOSAKI_PACKAGE_ADMIN_PATHS_REL);
   const cssDest = path.join(outDir, GOSAKI_READ_ONLY_ADMIN_CSS_REL);
-  const pageDest = path.join(outDir, GOSAKI_READ_ONLY_ADMIN_PAGE_REL);
+  const chromeCssDest = path.join(outDir, GOSAKI_ADMIN_SHELL_CHROME_CSS_REL);
+  const chromeDirDest = path.join(outDir, GOSAKI_ADMIN_CHROME_COMPONENT_DIR_REL);
 
   fs.mkdirSync(path.dirname(libDest), { recursive: true });
   fs.mkdirSync(path.dirname(cssDest), { recursive: true });
-  fs.mkdirSync(path.dirname(pageDest), { recursive: true });
+  fs.mkdirSync(path.dirname(chromeCssDest), { recursive: true });
+  fs.mkdirSync(path.dirname(componentDest), { recursive: true });
+  fs.mkdirSync(chromeDirDest, { recursive: true });
 
   fs.copyFileSync(libSrc, libDest);
+  fs.copyFileSync(packagePathsSrc, packagePathsDest);
   fs.copyFileSync(cssSrc, cssDest);
+  fs.copyFileSync(chromeCssSrc, chromeCssDest);
 
-  let pageTemplate = fs.readFileSync(componentSrc, "utf8");
-  pageTemplate = pageTemplate
-    .replace('import "../styles/gosaki-staging-read-only-admin.css";', 'import "../../styles/gosaki-staging-read-only-admin.css";')
-    .replace('import youtubeConfig from "../data/gosaki-youtube-embed.json";', 'import youtubeConfig from "../../data/gosaki-youtube-embed.json";')
-    .replace('import aboutConfig from "../data/gosaki-about-content.json";', 'import aboutConfig from "../../data/gosaki-about-content.json";')
-    .replace('import contactConfig from "../data/gosaki-contact-hubspot.json";', 'import contactConfig from "../../data/gosaki-contact-hubspot.json";')
-    .replaceAll('} from "../lib/gosaki-staging-read-only-admin";', '} from "../../lib/gosaki-staging-read-only-admin";')
-    .replace(
-      'import dashboardSnapshot from "../data/gosaki-read-only-admin-dashboard.json";',
-      'import dashboardSnapshot from "../../data/gosaki-read-only-admin-dashboard.json";',
-    )
-    .replace(
-      'import discographyEditorSnapshot from "../data/gosaki-read-only-admin-discography-editor.json";',
-      'import discographyEditorSnapshot from "../../data/gosaki-read-only-admin-discography-editor.json";',
-    );
-  fs.writeFileSync(pageDest, pageTemplate, "utf8");
+  for (const name of chromeComponents) {
+    let chrome = fs.readFileSync(path.join(chromeRoot, name), "utf8");
+    chrome = chrome
+      .replaceAll(
+        'from "../gosaki-staging-admin-paths"',
+        'from "../../lib/gosaki-package-admin-paths"',
+      )
+      .replaceAll(
+        'from "../gosaki-staging-admin-paths.ts"',
+        'from "../../lib/gosaki-package-admin-paths"',
+      );
+    fs.writeFileSync(path.join(chromeDirDest, name), chrome, "utf8");
+  }
+
+  // Component lives at src/components/ — keep ../styles ../lib ../data ./gosaki-admin imports as authored.
+  let componentTemplate = fs.readFileSync(componentSrc, "utf8");
+  if (!componentTemplate.includes(GOSAKI_READ_ONLY_ADMIN_MULTI_ROUTE_ATTR)) {
+    return { applied: false, reason: "multi-route admin template marker missing" };
+  }
+  fs.writeFileSync(componentDest, componentTemplate, "utf8");
+
+  /** @type {string[]} */
+  const pagePaths = [];
+  for (const route of GOSAKI_ADMIN_MULTI_ROUTE_PAGES) {
+    const pageDest = path.join(outDir, route.rel);
+    fs.mkdirSync(path.dirname(pageDest), { recursive: true });
+    const ups = route.page === "portal" ? "../../components" : "../../../components";
+    const pageSource = `---
+import GosakiStagingReadOnlyAdminPage from "${ups}/GosakiStagingReadOnlyAdminPage.astro";
+---
+<GosakiStagingReadOnlyAdminPage page="${route.page}" />
+`;
+    fs.writeFileSync(pageDest, pageSource, "utf8");
+    pagePaths.push(route.rel);
+  }
 
   const discographyBundle = /** @type {any} */ (options.discographyBundle);
   const dashboardSnapshot = buildReadOnlyAdminDashboardSnapshot({
@@ -425,9 +479,15 @@ export function applyGosakiStagingReadOnlyAdmin(outDir, toolRoot, options = {}) 
     applied: true,
     reason: null,
     adminRoute: "/admin/",
+    adminRoutes: GOSAKI_ADMIN_MULTI_ROUTE_PAGES.map((r) =>
+      r.page === "portal" ? "/admin/" : `/admin/${r.page}/`,
+    ),
     pagePath: GOSAKI_READ_ONLY_ADMIN_PAGE_REL,
+    pagePaths,
     componentPath: GOSAKI_READ_ONLY_ADMIN_COMPONENT_REL,
     libPath: GOSAKI_READ_ONLY_ADMIN_LIB_REL,
+    packagePathsPath: GOSAKI_PACKAGE_ADMIN_PATHS_REL,
+    chromeComponentDir: GOSAKI_ADMIN_CHROME_COMPONENT_DIR_REL,
     dashboardPath: GOSAKI_READ_ONLY_ADMIN_DASHBOARD_DATA_REL,
     discographyEditorPath: GOSAKI_READ_ONLY_ADMIN_DISCOGRAPHY_EDITOR_DATA_REL,
     dashboardSnapshot,
@@ -436,5 +496,6 @@ export function applyGosakiStagingReadOnlyAdmin(outDir, toolRoot, options = {}) 
     bandImageFiles: bandImages,
     contactPortalId: contact.config.portalId ?? null,
     contactFormId: contact.config.formId ?? null,
+    multiRoute: true,
   };
 }

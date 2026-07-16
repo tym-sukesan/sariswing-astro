@@ -196,6 +196,7 @@
     "verify:g20u39b-gosaki-staging-p1-admin-mobile-left-align-polish": "node scripts/verify-g20u39b-gosaki-staging-p1-admin-mobile-left-align-polish.mjs",
     "verify:g20u39b2-gosaki-admin-operational-ui-information-architecture-planning": "node scripts/verify-g20u39b2-gosaki-admin-operational-ui-information-architecture-planning.mjs",
     "verify:g20u39b3-gosaki-admin-portal-and-content-routes-local-implementation": "node scripts/verify-g20u39b3-gosaki-admin-portal-and-content-routes-local-implementation.mjs",
+    "verify:g20u39b4-gosaki-admin-multi-route-staging-package-prep": "node scripts/verify-g20u39b4-gosaki-admin-multi-route-staging-package-prep.mjs",
     "verify:g20i3-gosaki-production-manual-upload-verifier-drift-review": "node scripts/verify-g20i3-gosaki-production-manual-upload-verifier-drift-review.mjs",
     "verify:g20u36e-controlled-save-auth-jwt-feasibility-plan": "node scripts/verify-g20u36e-controlled-save-auth-jwt-feasibility-plan.mjs",
     "verify:g20u36e-controlled-save-auth-jwt-feasibility-preflight": "node scripts/verify-g20u36e-controlled-save-auth-jwt-feasibility-preflight.mjs",

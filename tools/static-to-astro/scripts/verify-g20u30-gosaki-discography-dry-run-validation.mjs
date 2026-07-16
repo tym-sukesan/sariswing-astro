@@ -90,7 +90,10 @@ assert("editable track textarea", adminPage.includes("track-list-textarea--edita
 assert("track textarea not readonly", !adminPage.includes('data-track-list-textarea="true"') || !/data-track-list-textarea="true"[^>]*readonly/.test(adminPage));
 assert("G20U30 phase on section", adminPage.includes("G20U30_DISCOGRAPHY_DRY_RUN_PHASE"));
 assert("dry-run only badge", adminPage.includes("Dry-run only"));
-assert("no network write banner", adminPage.includes("No network write") || adminPage.includes("network write"));
+assert(
+  "no network write / wouldWrite false retained",
+  adminPage.includes("wouldWrite: false") && adminPage.includes("networkWrite: false"),
+);
 assert("validateDiscographyTrackListDryRun import in script", adminPage.includes("validateDiscographyTrackListDryRun"));
 assert("wouldWrite false in result hint", adminPage.includes("wouldWrite: false"));
 
@@ -99,7 +102,12 @@ const trackTextareaElements =
 assert("one track textarea element template", trackTextareaElements.length === 1, String(trackTextareaElements.length));
 assert("no 34 fixed track inputs", !adminPage.includes("gra-disc-track-034"));
 
-assert("global Save disabled", adminPage.includes("Save（無効）"));
+assert(
+  "Save disabled retained (discography UI)",
+  adminPage.includes("Save Discography（無効 — future phase）") &&
+    adminPage.includes('data-gosaki-save-disabled-note="true"') &&
+    adminPage.includes("Save disabled"),
+);
 assert("no discography fetch POST", !/discography.*fetch\s*\(|fetch\s*\([^)]*discography/i.test(adminPage));
 assert("no localStorage", !/localStorage/i.test(adminPage));
 assert("no supabase write in page", !/\.(insert|update|upsert|delete)\(/i.test(adminPage.split("gra-youtube-dry-run-btn")[0] + adminPage.split("Discography Editor")[1]?.split("gra-youtube-dry-run-btn")[0]));
@@ -148,9 +156,56 @@ assert("snapshot dryRun phase", snapshot.dryRunValidationPhase === G20U30_DISCOG
 const tmpOut = fs.mkdtempSync(path.join(os.tmpdir(), "g20u30-admin-"));
 const applyResult = applyGosakiStagingReadOnlyAdmin(tmpOut, TOOL_ROOT, { discographyBundle: mockBundle });
 assert("apply admin tmp", applyResult.applied === true, applyResult.reason ?? "");
-const pageContent = fs.readFileSync(path.join(tmpOut, "src/pages/admin/index.astro"), "utf8");
-assert("applied page dry-run btn", pageContent.includes("Dry-run validation（保存なし）"));
-assert("applied page lib import ../../", pageContent.includes('../../lib/gosaki-staging-read-only-admin"'));
+
+const discographyRouteRel = "src/pages/admin/discography/index.astro";
+const discographyRouteAbs = path.join(tmpOut, discographyRouteRel);
+assert("applied discography route page exists", fs.existsSync(discographyRouteAbs));
+const discographyRoutePage = fs.readFileSync(discographyRouteAbs, "utf8");
+assert(
+  "discography route wires page=discography",
+  discographyRoutePage.includes('page="discography"') &&
+    discographyRoutePage.includes("GosakiStagingReadOnlyAdminPage"),
+);
+
+const componentImportMatch = discographyRoutePage.match(
+  /import\s+GosakiStagingReadOnlyAdminPage\s+from\s+"([^"]+)"/,
+);
+assert("discography route imports admin component", Boolean(componentImportMatch), "import not found");
+const componentRelFromRoute = componentImportMatch?.[1] ?? "";
+const componentAbs = path.resolve(path.dirname(discographyRouteAbs), componentRelFromRoute);
+assert("discography route component file exists", fs.existsSync(componentAbs), componentAbs);
+
+const appliedComponent = fs.readFileSync(componentAbs, "utf8");
+assert(
+  "applied discography component keeps Dry-run validation button UI",
+  appliedComponent.includes('data-disc-dry-run-btn="album"') &&
+    appliedComponent.includes("Dry-run validation（保存なし）") &&
+    appliedComponent.includes('data-section="discography-dry-run-album"') &&
+    appliedComponent.includes('data-section="discography-dry-run-all"'),
+);
+assert(
+  "applied discography component keeps dry-run handlers",
+  appliedComponent.includes("validateDiscographyTrackListDryRun") &&
+    appliedComponent.includes("validateDiscographyTrackListDryRunBatch") &&
+    appliedComponent.includes('data-disc-dry-run-result="album"'),
+);
+assert(
+  "applied discography page mode gates dry-run section",
+  appliedComponent.includes('page === "discography"'),
+);
+assert(
+  "applied component keeps Save disabled on discography",
+  appliedComponent.includes("Save Discography（無効 — future phase）") &&
+    appliedComponent.includes('data-gosaki-save-disabled-note="true"'),
+);
+assert(
+  "applied component lib import for dry-run helpers",
+  appliedComponent.includes('../lib/gosaki-staging-read-only-admin"'),
+);
+assert(
+  "applied snapshot path for discography editor",
+  fs.existsSync(path.join(tmpOut, GOSAKI_READ_ONLY_ADMIN_DISCOGRAPHY_EDITOR_DATA_REL)),
+);
 
 const sitemapHasAdminExclusion = CMS_KIT_SITEMAP_EXCLUDED_SEGMENT_PATTERNS.some((re) =>
   re.test("/cms-kit-staging/gosaki-piano/admin/"),

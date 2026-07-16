@@ -5,17 +5,30 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u39b3-gosaki-admin-portal-and-content-routes-local-implementation — complete.
-ADMIN_PORTAL_LOCAL_IMPLEMENTED: true.
-INDIVIDUAL_ADMIN_ROUTES_LOCAL_IMPLEMENTED: true.
-DEVELOPER_CONTENT_CLEANUP_IMPLEMENTED: true.
+Current phase: G-20u39b4-gosaki-admin-multi-route-staging-package-and-manual-upload-prep — complete.
+STAGING_ADMIN_MULTI_ROUTE_GENERATION_IMPLEMENTED: true.
+STAGING_ADMIN_MULTI_ROUTE_DRY_RUN_PASSED: true.
 SAVE_REMAINS_DISABLED: true.
-STG_PACKAGE_AND_BROWSER_QA_REQUIRED: true.
+PRODUCTION_ADMIN_EXCLUSION_PRESERVED: true.
+FRESH_PACKAGE_GENERATION_REQUIRED_AFTER_COMMIT: true.
 P1-CON1: resolved. P1-ADM-MOB1: resolved.
 HOSTING_READY: false. GO_LIVE_READY: false. PRODUCTION_UPLOAD_READY: false.
 PUBLIC_READY: CONDITIONAL.
-Next: G-20u39b4-gosaki-admin-multi-route-staging-package-and-manual-upload-prep.
+Next: G-20u39b5-gosaki-admin-multi-route-staging-package-generation-at-head.
 ```
+
+## G-20u39b4-gosaki-admin-multi-route-staging-package-and-manual-upload-prep — complete
+
+- **Gate:** `gosakiAdminMultiRouteStagingPackagePrepComplete: true`
+- **STAGING_ADMIN_MULTI_ROUTE_GENERATION_IMPLEMENTED:** **true**
+- **STAGING_ADMIN_MULTI_ROUTE_DRY_RUN_PASSED:** **true**
+- **SAVE_REMAINS_DISABLED:** **true**
+- **PRODUCTION_ADMIN_EXCLUSION_PRESERVED:** **true**
+- **FRESH_PACKAGE_GENERATION_REQUIRED_AFTER_COMMIT:** **true**
+- **Generation:** apply() emits `/admin/` portal + schedule/discography/youtube/about
+- **Reuse:** b3 OperatorHome / Nav / SafetyChips via package paths (`BASE_URL`)
+- **Not done:** real package generation · FTP · STG browser QA · Save enable
+- **Next:** **G-20u39b5-gosaki-admin-multi-route-staging-package-generation-at-head**
 
 ## G-20u39b3-gosaki-admin-portal-and-content-routes-local-implementation — complete
 

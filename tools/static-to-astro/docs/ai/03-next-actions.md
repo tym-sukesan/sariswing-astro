@@ -1,6 +1,43 @@
 Last updated: 2026-07-17
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u43-gosaki-discography-label-controlled-save-slice-local-implementation — complete (not execution-ready)
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u43-gosaki-discography-label-controlled-save-slice-local-implementation` |
+| LABEL_CONTROLLED_SAVE_SLICE_IMPLEMENTED | **true** |
+| NESTED_PAYLOAD_ALLOWLIST_FAILS_CLOSED | **true** |
+| ATOMIC_LABEL_WHERE_VERIFIED | **true** |
+| ZERO_ROW_UPDATE_TESTED | **true** |
+| MULTI_ROW_UPDATE_TESTED | **true** |
+| TARGET_RESTRICTED_TO_DISCOGRAPHY_004 | **true** |
+| LABEL_ONLY_CHANGE_ENFORCED | **true** |
+| EXACT_TWO_WAY_TRANSITION_ENFORCED | **true** |
+| NEW_APPROVAL_ID_ENFORCED | **true** |
+| OPTIMISTIC_LOCK_REQUIRED | **true** |
+| LOCAL_SHELL_ARM_FAILS_CLOSED | **true** |
+| STAGING_PACKAGE_DEFAULT_DISARMED | **true** |
+| Approval ID | `G-20u43-gosaki-discography-label-controlled-save-slice` |
+| EDGE_DEPLOY / SAVE / DB_WRITE | **false** |
+| CONTROLLED_SAVE_PREFLIGHT_READY | **false** |
+| Next | **G-20u43a-gosaki-discography-label-save-edge-deploy-preflight** |
+
+```txt
+LABEL_CONTROLLED_SAVE_SLICE_IMPLEMENTED: true
+TARGET_RESTRICTED_TO_DISCOGRAPHY_004: true
+LABEL_ONLY_CHANGE_ENFORCED: true
+EXACT_TWO_WAY_TRANSITION_ENFORCED: true
+NEW_APPROVAL_ID_ENFORCED: true
+OPTIMISTIC_LOCK_REQUIRED: true
+LOCAL_SHELL_ARM_FAILS_CLOSED: true
+STAGING_PACKAGE_DEFAULT_DISARMED: true
+EDGE_DEPLOY_EXECUTED: false
+SAVE_REQUEST_EXECUTED: false
+DB_WRITE_EXECUTED: false
+CONTROLLED_SAVE_PREFLIGHT_READY: false
+```
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u42-gosaki-discography-controlled-save-enablement-preflight — complete (not execution-ready)
 
 | Item | Value |
@@ -17,7 +54,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Preferred future candidate | `discography-004` · `label` · before `Mardi Gras JAPAN Records` |
 | DB_WRITE_EXECUTED | **false** |
 | ENV_CHANGED / PACKAGE / FTP | **false** |
-| Next | ChatGPT: facts→手順は「実行 ready」にしない · 次フェーズは scalar Edge allowlist / UI payload 整合 |
+| Next | ~~G-20u43 local~~ done → **G-20u43a edge deploy preflight** |
 
 ```txt
 CONTROLLED_SAVE_PREFLIGHT_READY: false

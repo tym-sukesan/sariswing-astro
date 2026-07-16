@@ -557,7 +557,8 @@ function evaluateApprovalGateLocal(approvalId, expectedApprovalId) {
   if (candidateApprovalId !== expected) return { enabled: false };
   return { enabled: true };
 }
-const FORMAL_SAVE_APPROVAL = "G-20u36-gosaki-discography-tracklist-save-non-dry-run-slice";
+const FORMAL_SAVE_APPROVAL = "G-20u43-gosaki-discography-label-controlled-save-slice";
+const TRACKLIST_SAVE_APPROVAL = "G-20u36-gosaki-discography-tracklist-save-non-dry-run-slice";
 const DRY_RUN_APPROVAL = "G-20u31-gosaki-discography-save-dry-run-endpoint";
 assert(
   "PASS candidate approval ID = expected approval ID",
@@ -584,6 +585,11 @@ assert(
   "FAIL candidate approval ID is dry-run approval ID",
   evaluateApprovalGateLocal(DRY_RUN_APPROVAL, FORMAL_SAVE_APPROVAL).enabled === false &&
     DRY_RUN_APPROVAL !== FORMAL_SAVE_APPROVAL,
+);
+assert(
+  "FAIL candidate approval ID is tracklist Save approval ID",
+  evaluateApprovalGateLocal(TRACKLIST_SAVE_APPROVAL, FORMAL_SAVE_APPROVAL).enabled === false &&
+    TRACKLIST_SAVE_APPROVAL !== FORMAL_SAVE_APPROVAL,
 );
 assert(
   "FAIL candidate approval ID is unknown value",

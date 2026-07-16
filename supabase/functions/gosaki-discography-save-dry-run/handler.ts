@@ -1,8 +1,9 @@
 /**
- * G-20u36b / G-20u36d / G-20u36e / G-20u36f — Gosaki Discography Edge dry-run (+ controlled Save).
+ * G-20u36b / G-20u36d / G-20u36e / G-20u36f / G-20u43 — Gosaki Discography Edge dry-run (+ controlled Save).
  * Ported from gosaki-discography-edge-dry-run-endpoint-inert.mjs + G-20u33 draft + G-20u36d readBack.
  * Copied from tools/static-to-astro/scripts/edge-functions/gosaki-discography-save-dry-run/handler.ts
- * Controlled Save: allowlisted slices only · user JWT + is_admin + title-only UPDATE · no service_role.
+ * Controlled Save: allowlisted slices only · user JWT + is_admin · no service_role.
+ * G-20u36e/f: track-title · G-20u43: discography-004 label original↔temporary (local · not deployed in G-20u43).
  */
 
 import { createClient, type SupabaseClient } from "npm:@supabase/supabase-js@2";
@@ -49,6 +50,59 @@ export const G20U36F_RESTORE_TITLE_BEFORE =
 export const G20U36F_RESTORE_TITLE_AFTER = "On a Clear Day";
 export const G20U36F_RESTORE_PHASE =
   "G-20u36f-discography-marker-title-restore-handler-implementation";
+
+/** G-20u43 — discography-004 label controlled Save (local implementation · Edge deploy later). */
+export const G20U43_LABEL_SAVE_APPROVAL_ID =
+  "G-20u43-gosaki-discography-label-controlled-save-slice";
+export const G20U43_LABEL_LEGACY_ID = "discography-004";
+export const G20U43_LABEL_ALBUM_TITLE = "Ja-Jaaaaan!";
+export const G20U43_LABEL_ORIGINAL = "Mardi Gras JAPAN Records";
+export const G20U43_LABEL_TEMPORARY = "[CMS Kit staging] G-20u42 label PoC";
+export const G20U43_LABEL_PHASE =
+  "G-20u43-gosaki-discography-label-controlled-save-slice-local-implementation";
+export const G20U43_ALLOWED_TOP_LEVEL_KEYS = [
+  "operation",
+  "siteSlug",
+  "legacyId",
+  "discographyLegacyId",
+  "approvalId",
+  "expectedBeforeUpdatedAt",
+  "release",
+  "tracksText",
+  "trackPolicy",
+  "clientDryRun",
+  "beforeLabel",
+] as const;
+
+/** G-20u43 nested keys — must match buildDiscographyDryRunEndpointRequest. */
+export const G20U43_RELEASE_ALLOWED_KEYS = [
+  "title",
+  "artist",
+  "release_date",
+  "label",
+  "catalog_number",
+  "published",
+  "cover_image_url",
+  "purchase_url",
+  "streaming_url",
+  "description",
+] as const;
+
+export const G20U43_TRACK_POLICY_ALLOWED_KEYS = [
+  "oneLineOneTrack",
+  "blankLinesIgnored",
+  "allowDuplicateTitles",
+  "allowEmptyTrackList",
+] as const;
+
+export const G20U43_CLIENT_DRY_RUN_ALLOWED_KEYS = [
+  "totalBefore",
+  "totalAfter",
+  "added",
+  "removed",
+  "reordered",
+  "wouldWrite",
+] as const;
 
 export type ControlledSaveSliceSpec = {
   sliceKey: string;
@@ -116,6 +170,7 @@ const RELEASE_FIELDS = [
 const SAVE_APPROVAL_REGISTRY = [
   { approvalId: DRY_RUN_APPROVAL_ID, operation: "dryRun" as const },
   { approvalId: SAVE_APPROVAL_ID, operation: "save" as const },
+  { approvalId: G20U43_LABEL_SAVE_APPROVAL_ID, operation: "save" as const },
 ];
 
 export type CurrentSnapshot = {
@@ -161,6 +216,9 @@ const RELEASE_SELECT_FIELDS = [
   "sort_order",
   "published",
 ].join(",");
+
+/** Release SELECT including optimistic lock column (G-20u43 label Save). */
+const RELEASE_SELECT_FIELDS_WITH_UPDATED_AT = `${RELEASE_SELECT_FIELDS},updated_at`;
 
 /** PostgREST tracks SELECT — staging columns only; `duration` omitted (column absent on staging). */
 const TRACK_SELECT_FIELDS = ["track_number", "title", "sort_order", "site_slug"].join(",");
@@ -1151,6 +1209,528 @@ function validateControlledTracksTextAgainstDb(
 }
 
 /**
+ * G-20u43 — exact two-way label transition (original ↔ temporary).
+ */
+export function resolveG20u43LabelTransition(
+  beforeLabel: unknown,
+  afterLabel: unknown,
+):
+  | {
+      ok: true;
+      direction: "original_to_temporary" | "temporary_to_original";
+      beforeLabel: string;
+      afterLabel: string;
+    }
+  | { ok: false; reasonCode: string; message: string } {
+  const before = String(beforeLabel ?? "").trim();
+  const after = String(afterLabel ?? "").trim();
+  if (!before || !after) {
+    return {
+      ok: false,
+      reasonCode: "empty_label_forbidden",
+      message: "empty label is forbidden",
+    };
+  }
+  if (before === G20U43_LABEL_ORIGINAL && after === G20U43_LABEL_TEMPORARY) {
+    return {
+      ok: true,
+      direction: "original_to_temporary",
+      beforeLabel: before,
+      afterLabel: after,
+    };
+  }
+  if (before === G20U43_LABEL_TEMPORARY && after === G20U43_LABEL_ORIGINAL) {
+    return {
+      ok: true,
+      direction: "temporary_to_original",
+      beforeLabel: before,
+      afterLabel: after,
+    };
+  }
+  return {
+    ok: false,
+    reasonCode: "label_transition_not_allowlisted",
+    message: "label must be exact original↔temporary transition only",
+  };
+}
+
+export function assertG20u43NoUnexpectedPayloadKeys(request: DryRunRequest): string[] {
+  const unexpected = Object.keys(request ?? {}).filter(
+    (key) => !(G20U43_ALLOWED_TOP_LEVEL_KEYS as readonly string[]).includes(key),
+  );
+  if (unexpected.length === 0) return [];
+  return [`unexpected payload keys: ${unexpected.join(", ")}`];
+}
+
+function g20u43OwnKeys(value: unknown): string[] | null {
+  if (value === null || typeof value !== "object" || Array.isArray(value)) return null;
+  return Object.keys(value as Record<string, unknown>);
+}
+
+function g20u43UnexpectedOwnKeys(
+  value: unknown,
+  allowedKeys: readonly string[],
+  path: string,
+): string[] {
+  const keys = g20u43OwnKeys(value);
+  if (!keys) return [`${path} must be a non-null object`];
+  const unexpected = keys.filter((k) => !allowedKeys.includes(k));
+  if (unexpected.length > 0) {
+    return [`unexpected ${path} keys: ${unexpected.join(", ")}`];
+  }
+  const missing = allowedKeys.filter((k) => !keys.includes(k));
+  if (missing.length > 0) {
+    return [`missing required ${path} keys: ${missing.join(", ")}`];
+  }
+  return [];
+}
+
+function g20u43IsNullableString(value: unknown): boolean {
+  return value === null || typeof value === "string";
+}
+
+/** G-20u43 nested payload allowlist — release / trackPolicy / clientDryRun only. */
+export function validateG20u43NestedSavePayload(request: DryRunRequest): string[] {
+  const errors: string[] = [];
+  if (!request || typeof request !== "object" || Array.isArray(request)) {
+    return ["request must be an object"];
+  }
+
+  const release = request.release;
+  errors.push(...g20u43UnexpectedOwnKeys(release, G20U43_RELEASE_ALLOWED_KEYS, "release"));
+  if (errors.length === 0 && release && typeof release === "object" && !Array.isArray(release)) {
+    const rel = release as Record<string, unknown>;
+    if (typeof rel.title !== "string" || !String(rel.title).trim()) {
+      errors.push("release.title must be a non-empty string");
+    }
+    if (typeof rel.artist !== "string" || !String(rel.artist).trim()) {
+      errors.push("release.artist must be a non-empty string");
+    }
+    if (!g20u43IsNullableString(rel.release_date)) {
+      errors.push("release.release_date must be string or null");
+    }
+    if (typeof rel.label !== "string" || !String(rel.label).trim()) {
+      errors.push("release.label must be a non-empty string");
+    }
+    if (!g20u43IsNullableString(rel.catalog_number)) {
+      errors.push("release.catalog_number must be string or null");
+    }
+    if (typeof rel.published !== "boolean") {
+      errors.push("release.published must be boolean");
+    }
+    if (!g20u43IsNullableString(rel.cover_image_url)) {
+      errors.push("release.cover_image_url must be string or null");
+    }
+    if (!g20u43IsNullableString(rel.purchase_url)) {
+      errors.push("release.purchase_url must be string or null");
+    }
+    if (!g20u43IsNullableString(rel.streaming_url)) {
+      errors.push("release.streaming_url must be string or null");
+    }
+    if (!g20u43IsNullableString(rel.description)) {
+      errors.push("release.description must be string or null");
+    }
+  }
+
+  const trackPolicy = request.trackPolicy;
+  errors.push(...g20u43UnexpectedOwnKeys(trackPolicy, G20U43_TRACK_POLICY_ALLOWED_KEYS, "trackPolicy"));
+  if (errors.length === 0 && trackPolicy && typeof trackPolicy === "object" && !Array.isArray(trackPolicy)) {
+    const tp = trackPolicy as Record<string, unknown>;
+    if (tp.oneLineOneTrack !== true) errors.push("trackPolicy.oneLineOneTrack must be true");
+    if (tp.blankLinesIgnored !== true) errors.push("trackPolicy.blankLinesIgnored must be true");
+    if (typeof tp.allowDuplicateTitles !== "boolean") {
+      errors.push("trackPolicy.allowDuplicateTitles must be boolean");
+    }
+    if (typeof tp.allowEmptyTrackList !== "boolean") {
+      errors.push("trackPolicy.allowEmptyTrackList must be boolean");
+    }
+  }
+
+  const clientDryRun = request.clientDryRun;
+  errors.push(...g20u43UnexpectedOwnKeys(clientDryRun, G20U43_CLIENT_DRY_RUN_ALLOWED_KEYS, "clientDryRun"));
+  if (errors.length === 0 && clientDryRun && typeof clientDryRun === "object" && !Array.isArray(clientDryRun)) {
+    const cd = clientDryRun as Record<string, unknown>;
+    if (typeof cd.totalBefore !== "number") errors.push("clientDryRun.totalBefore must be number");
+    if (typeof cd.totalAfter !== "number") errors.push("clientDryRun.totalAfter must be number");
+    if (!Array.isArray(cd.added)) errors.push("clientDryRun.added must be array");
+    if (!Array.isArray(cd.removed)) errors.push("clientDryRun.removed must be array");
+    if (typeof cd.reordered !== "boolean") errors.push("clientDryRun.reordered must be boolean");
+    if (cd.wouldWrite !== false) errors.push("clientDryRun.wouldWrite must be false");
+  }
+
+  return errors;
+}
+
+export function classifyG20u43LabelUpdateOutcome(input: {
+  updatedRows: unknown;
+}):
+  | { ok: true; updatedCount: 1; nextUpdatedAt: string; updatedRow: Record<string, unknown> }
+  | { ok: false; reasonCode: string; status: number; updatedCount: number } {
+  const rows = Array.isArray(input.updatedRows) ? input.updatedRows : [];
+  const count = rows.length;
+  if (count === 0) {
+    return { ok: false, reasonCode: "update_zero_rows", status: 409, updatedCount: 0 };
+  }
+  if (count !== 1) {
+    return { ok: false, reasonCode: "update_multiple_rows", status: 500, updatedCount: count };
+  }
+  const updatedRow = rows[0] as Record<string, unknown>;
+  const nextUpdatedAt = String(updatedRow.updated_at ?? updatedRow.updatedAt ?? "").trim();
+  if (!nextUpdatedAt) {
+    return { ok: false, reasonCode: "post_save_updated_at_missing", status: 500, updatedCount: 1 };
+  }
+  return { ok: true, updatedCount: 1, nextUpdatedAt, updatedRow };
+}
+
+/**
+ * Controlled Save — G-20u43 discography-004 label only · user JWT + is_admin + optimistic lock.
+ * Does not modify G-20u36e/f track-title allowlist path.
+ */
+export async function handleControlledG20u43LabelSaveHttp(input: {
+  request: DryRunRequest;
+  authorizationHeader?: string | null;
+  supabaseUrl?: string;
+  anonKey?: string;
+}): Promise<DryRunHandlerResult> {
+  const request = input.request ?? {};
+  const approvalId = String(request.approvalId ?? "").trim();
+  const legacyId = resolveControlledLegacyId(request);
+
+  const serviceRoleErrors = assertNoServiceRoleInPayload(request);
+  if (serviceRoleErrors.length > 0) {
+    return buildControlledSaveFailure({
+      reasonCode: "service_role_forbidden",
+      message: serviceRoleErrors[0],
+      status: 400,
+      legacyId,
+      approvalId,
+    });
+  }
+
+  const unexpectedKeyErrors = assertG20u43NoUnexpectedPayloadKeys(request);
+  if (unexpectedKeyErrors.length > 0) {
+    return buildControlledSaveFailure({
+      reasonCode: "unexpected_payload_key",
+      message: unexpectedKeyErrors[0],
+      status: 400,
+      legacyId,
+      approvalId,
+    });
+  }
+
+  const nestedPayloadErrors = validateG20u43NestedSavePayload(request);
+  if (nestedPayloadErrors.length > 0) {
+    return buildControlledSaveFailure({
+      reasonCode: "nested_payload_invalid",
+      message: nestedPayloadErrors[0],
+      status: 400,
+      legacyId,
+      approvalId,
+    });
+  }
+
+  if (String(request.operation ?? "") !== CONTROLLED_SAVE_OPERATION) {
+    return buildControlledSaveFailure({
+      reasonCode: "operation_mismatch",
+      message: 'operation must be "save" for controlled Save',
+      status: 400,
+      legacyId,
+      approvalId,
+    });
+  }
+
+  if (approvalId !== G20U43_LABEL_SAVE_APPROVAL_ID) {
+    return buildControlledSaveFailure({
+      reasonCode: "approval_id_mismatch",
+      message: "approvalId must match G-20u43 label controlled Save slice",
+      status: 400,
+      legacyId,
+      approvalId,
+    });
+  }
+
+  const siteSlug = String(request.siteSlug ?? "").trim();
+  if (siteSlug !== SITE_SLUG) {
+    return buildControlledSaveFailure({
+      reasonCode: "site_mismatch",
+      message: `siteSlug must be "${SITE_SLUG}"`,
+      status: 400,
+      legacyId,
+      approvalId,
+    });
+  }
+
+  if (legacyId !== G20U43_LABEL_LEGACY_ID) {
+    return buildControlledSaveFailure({
+      reasonCode: "legacy_id_mismatch",
+      message: `legacyId must be "${G20U43_LABEL_LEGACY_ID}"`,
+      status: 400,
+      legacyId,
+      approvalId,
+    });
+  }
+
+  const expectedBeforeUpdatedAt = String(request.expectedBeforeUpdatedAt ?? "").trim();
+  if (!expectedBeforeUpdatedAt) {
+    return buildControlledSaveFailure({
+      reasonCode: "optimistic_lock_missing",
+      message: "expectedBeforeUpdatedAt is required",
+      status: 400,
+      legacyId,
+      approvalId,
+    });
+  }
+
+  const release = request.release as Record<string, unknown>;
+
+  const bearer = extractBearerToken(input.authorizationHeader);
+  if (!bearer) {
+    return buildControlledSaveFailure({
+      reasonCode: "missing_authorization",
+      message: "Authorization Bearer token is required",
+      status: 401,
+      legacyId,
+      approvalId,
+    });
+  }
+
+  let client: SupabaseClient;
+  try {
+    client = createUserJwtSupabaseClient({
+      supabaseUrl: input.supabaseUrl ?? "",
+      anonKey: input.anonKey ?? "",
+      authorizationHeader: `Bearer ${bearer}`,
+    });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    const production = /production/i.test(message);
+    return buildControlledSaveFailure({
+      reasonCode: production ? "production_ref_blocked" : "config_error",
+      message: production ? "production Supabase ref is blocked" : "controlled Save config error",
+      status: production ? 403 : 500,
+      legacyId,
+      approvalId,
+    });
+  }
+
+  const admin = await assertOperatorIsAdmin(client);
+  if (!admin.ok) {
+    return buildControlledSaveFailure({
+      reasonCode: admin.reasonCode,
+      message: admin.message,
+      status: admin.status,
+      legacyId,
+      approvalId,
+    });
+  }
+
+  const { data: releaseRow, error: releaseError } = await client
+    .from("discography")
+    .select(RELEASE_SELECT_FIELDS_WITH_UPDATED_AT)
+    .eq("site_slug", SITE_SLUG)
+    .eq("legacy_id", G20U43_LABEL_LEGACY_ID)
+    .limit(1)
+    .maybeSingle();
+
+  if (releaseError || !releaseRow) {
+    return buildControlledSaveFailure({
+      reasonCode: "release_read_failed",
+      message: "failed to read discography-004 for G-20u43 label Save",
+      status: 403,
+      legacyId,
+      approvalId,
+    });
+  }
+
+  const currentRelease = mapReleaseRowToCurrentSnapshotRelease(releaseRow as Record<string, unknown>);
+  const currentUpdatedAt = String(
+    (releaseRow as Record<string, unknown>).updated_at ?? "",
+  ).trim();
+  currentRelease.updated_at = currentUpdatedAt;
+
+  if (String(currentRelease.title ?? "").trim() !== G20U43_LABEL_ALBUM_TITLE) {
+    return buildControlledSaveFailure({
+      reasonCode: "album_title_mismatch",
+      message: `album title must be "${G20U43_LABEL_ALBUM_TITLE}"`,
+      status: 409,
+      legacyId,
+      approvalId,
+    });
+  }
+
+  if (!currentUpdatedAt) {
+    return buildControlledSaveFailure({
+      reasonCode: "optimistic_lock_unavailable",
+      message: "current updated_at is unavailable",
+      status: 409,
+      legacyId,
+      approvalId,
+    });
+  }
+
+  if (expectedBeforeUpdatedAt !== currentUpdatedAt) {
+    return buildControlledSaveFailure({
+      reasonCode: "optimistic_lock_conflict",
+      message: "expectedBeforeUpdatedAt does not match current updated_at",
+      status: 409,
+      legacyId,
+      approvalId,
+    });
+  }
+
+  const releaseFieldsChanged = diffReleaseFields(currentRelease, release);
+  if (releaseFieldsChanged.length !== 1 || releaseFieldsChanged[0] !== "label") {
+    return buildControlledSaveFailure({
+      reasonCode: "label_only_required",
+      message:
+        releaseFieldsChanged.length === 0
+          ? "no label change detected"
+          : `only label may change (changed: ${releaseFieldsChanged.join(", ")})`,
+      status: 400,
+      legacyId,
+      approvalId,
+    });
+  }
+
+  const beforeLabel = String(currentRelease.label ?? "").trim();
+  const afterLabel = String(release.label ?? "").trim();
+  const transition = resolveG20u43LabelTransition(beforeLabel, afterLabel);
+  if (!transition.ok) {
+    return buildControlledSaveFailure({
+      reasonCode: transition.reasonCode,
+      message: transition.message,
+      status: 400,
+      legacyId,
+      approvalId,
+    });
+  }
+
+  if (typeof request.tracksText === "string") {
+    const { data: trackRows, error: tracksError } = await client
+      .from("discography_tracks")
+      .select(CONTROLLED_TRACK_SELECT)
+      .eq("site_slug", SITE_SLUG)
+      .eq("discography_legacy_id", G20U43_LABEL_LEGACY_ID)
+      .order("track_number", { ascending: true });
+
+    if (tracksError) {
+      return buildControlledSaveFailure({
+        reasonCode: "rls_or_permission_denied",
+        message: "failed to read tracks for G-20u43 label Save",
+        status: 403,
+        legacyId,
+        approvalId,
+      });
+    }
+
+    const dbTitles = sortTrackRows((trackRows ?? []) as Array<Record<string, unknown>>).map(
+      (row) => String(row.title ?? "").trim(),
+    );
+    const requestTitles = parseDiscographyTrackListLines(request.tracksText);
+    if (dbTitles.join("\n") !== requestTitles.join("\n")) {
+      return buildControlledSaveFailure({
+        reasonCode: "tracklist_change_forbidden",
+        message: "tracklist changes are forbidden for G-20u43 label Save",
+        status: 400,
+        legacyId,
+        approvalId,
+      });
+    }
+  }
+
+  const { data: updatedRows, error: updateError } = await client
+    .from("discography")
+    .update({ label: transition.afterLabel })
+    .eq("site_slug", SITE_SLUG)
+    .eq("legacy_id", G20U43_LABEL_LEGACY_ID)
+    .eq("label", transition.beforeLabel)
+    .eq("updated_at", expectedBeforeUpdatedAt)
+    .select("id,legacy_id,label,updated_at");
+
+  if (updateError) {
+    return buildControlledSaveFailure({
+      reasonCode: "rls_or_permission_denied",
+      message: "G-20u43 label UPDATE denied by RLS or grants",
+      status: 403,
+      legacyId,
+      approvalId,
+    });
+  }
+
+  const updateOutcome = classifyG20u43LabelUpdateOutcome({ updatedRows });
+  if (!updateOutcome.ok) {
+    return buildControlledSaveFailure({
+      reasonCode: updateOutcome.reasonCode,
+      message:
+        updateOutcome.reasonCode === "update_zero_rows"
+          ? "UPDATE matched 0 rows — conflict / already changed / STOP"
+          : updateOutcome.reasonCode === "update_multiple_rows"
+            ? "UPDATE matched multiple rows — STOP"
+            : "UPDATE succeeded but post-save updated_at is missing",
+      status: updateOutcome.status,
+      legacyId,
+      approvalId,
+    });
+  }
+
+  const updatedRow = updateOutcome.updatedRow;
+  const nextUpdatedAt = updateOutcome.nextUpdatedAt;
+  const postLabel = String(updatedRow.label ?? "").trim();
+  if (postLabel !== transition.afterLabel) {
+    return {
+      ok: false,
+      operation: CONTROLLED_SAVE_OPERATION,
+      controlledSave: true,
+      endpoint: ENDPOINT_NAME,
+      siteSlug: SITE_SLUG,
+      legacyId: G20U43_LABEL_LEGACY_ID,
+      discographyLegacyId: G20U43_LABEL_LEGACY_ID,
+      approvalId,
+      reasonCode: "post_save_verification_failed",
+      errors: ["post-save label did not match allowlisted afterLabel"],
+      warnings: [],
+      wouldWrite: true,
+      didWrite: true,
+      dbWrite: true,
+      networkWrite: true,
+      saveEnabled: true,
+      updatedRows: 1,
+      status: 500,
+      serverTime: new Date().toISOString(),
+    };
+  }
+
+  return {
+    ok: true,
+    operation: CONTROLLED_SAVE_OPERATION,
+    controlledSave: true,
+    endpoint: ENDPOINT_NAME,
+    siteSlug: SITE_SLUG,
+    legacyId: G20U43_LABEL_LEGACY_ID,
+    discographyLegacyId: G20U43_LABEL_LEGACY_ID,
+    approvalId,
+    field: "label",
+    beforeLabel: transition.beforeLabel,
+    afterLabel: transition.afterLabel,
+    direction: transition.direction,
+    changedFields: ["label"],
+    updatedRows: 1,
+    updated_at: nextUpdatedAt,
+    updatedAt: nextUpdatedAt,
+    errors: [],
+    warnings: [],
+    wouldWrite: true,
+    didWrite: true,
+    dbWrite: true,
+    networkWrite: true,
+    saveEnabled: true,
+    status: 200,
+    serverTime: new Date().toISOString(),
+    phase: G20U43_LABEL_PHASE,
+  };
+}
+
+/**
  * Controlled Save — user JWT + is_admin + RLS + title-only single-row UPDATE.
  * Allowlisted slices only (G-20u36e forward · G-20u36f restore). Never logs Authorization / JWT.
  */
@@ -1520,6 +2100,15 @@ export async function handleDiscographyEdgeDryRunHttpAsync(
   const request = (input.body ?? {}) as DryRunRequest;
 
   if (request.operation === CONTROLLED_SAVE_OPERATION) {
+    const approvalId = String(request.approvalId ?? "").trim();
+    if (approvalId === G20U43_LABEL_SAVE_APPROVAL_ID) {
+      return handleControlledG20u43LabelSaveHttp({
+        request,
+        authorizationHeader: input.authorizationHeader ?? null,
+        supabaseUrl: options.supabaseUrl,
+        anonKey: options.anonKey,
+      });
+    }
     return handleControlledG20u36eSaveHttp({
       request,
       authorizationHeader: input.authorizationHeader ?? null,

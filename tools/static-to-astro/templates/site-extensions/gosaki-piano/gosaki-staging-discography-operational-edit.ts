@@ -53,6 +53,12 @@ export type DiscographyOperationalEditDeps = {
     approvalId: string;
     expectedApprovalId: string;
     saveInFlight: boolean;
+    g20u43LabelSlice?: {
+      legacyId: string;
+      originalLabel: string;
+      currentLabel: string;
+      changedFields: string[];
+    } | null;
   }) => { enabled: boolean; reason: string };
   assertDryRunEndpointSafe: (endpoint: string) => boolean;
   assertSaveEndpointSafe: (endpoint: string) => boolean;
@@ -179,6 +185,20 @@ function isDirty(form: HTMLFormElement): boolean {
   }
 }
 
+function changedEditableFields(form: HTMLFormElement): string[] {
+  const raw = form.dataset.originalSnapshot || "";
+  if (!raw) return [];
+  try {
+    const original = JSON.parse(raw) as Record<string, unknown>;
+    const current = readFormSnapshot(form) as Record<string, unknown>;
+    return EDITABLE_KEYS.filter(
+      (key) => String(original[key] ?? "") !== String(current[key] ?? ""),
+    );
+  } catch {
+    return [];
+  }
+}
+
 function buildReleasePayload(current: ReturnType<typeof readFormSnapshot>) {
   return {
     title: current.title,
@@ -298,6 +318,14 @@ export function initGosakiDiscographyOperationalEdit(
       currentFingerprint === dryRunLockedFingerprint;
     // Candidate from page attr; expected from formal constant dep — never the same binding.
     const candidateApprovalId = String(body?.dataset.g20u41DiscographySaveApprovalId ?? "").trim();
+    const current = readFormSnapshot(form);
+    let originalLabel = "";
+    try {
+      const original = JSON.parse(form.dataset.originalSnapshot || "{}") as { label?: string };
+      originalLabel = String(original.label ?? "");
+    } catch {
+      originalLabel = "";
+    }
 
     const gate = deps.evaluateSaveGate({
       authenticated,
@@ -310,6 +338,12 @@ export function initGosakiDiscographyOperationalEdit(
       approvalId: candidateApprovalId,
       expectedApprovalId: deps.expectedSaveApprovalId,
       saveInFlight,
+      g20u43LabelSlice: {
+        legacyId: current.legacyId,
+        originalLabel,
+        currentLabel: current.label,
+        changedFields: changedEditableFields(form),
+      },
     });
 
     if (saveReasonEl instanceof HTMLElement) {

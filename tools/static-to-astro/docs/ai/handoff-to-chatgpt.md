@@ -5,26 +5,33 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u42-gosaki-discography-controlled-save-enablement-preflight — complete (NOT execution-ready).
-CONTROLLED_SAVE_PREFLIGHT_READY: false.
-CONTROLLED_SAVE_TARGET_FIXED: false.
-EXECUTION_SURFACE_RECOMMENDED: local_shell.
-Preferred future candidate: discography-004.label (Mardi Gras JAPAN Records).
-Blocker: Edge Save = track-title allowlist only; G-20u41 UI payload missing slice gates; scalar forbidden by Edge; G-20u42 forbids tracklist.
-DB_WRITE / ENV / PACKAGE / FTP: false.
-Previous: G-20u41 gated Save UI STG QA.
-Next: ChatGPT — do NOT write “ready to Save” operator runbook; plan scalar Edge allowlist + UI alignment phase first.```
+Current phase: G-20u43-gosaki-discography-label-controlled-save-slice-local-implementation — complete (NOT execution-ready).
+LABEL_CONTROLLED_SAVE_SLICE_IMPLEMENTED: true.
+NESTED_PAYLOAD_ALLOWLIST_FAILS_CLOSED: true.
+ATOMIC_LABEL_WHERE_VERIFIED: true.
+Approval: G-20u43-gosaki-discography-label-controlled-save-slice.
+Target: discography-004.label original↔temporary.
+EDGE_DEPLOY / SAVE / DB_WRITE: false.
+CONTROLLED_SAVE_PREFLIGHT_READY: false (Edge undeployed).
+Previous: G-20u42 preflight.
+Next: G-20u43a-gosaki-discography-label-save-edge-deploy-preflight.```
+
+## G-20u43-gosaki-discography-label-controlled-save-slice-local-implementation — complete (not execution-ready)
+
+- **Doc:** `gosaki-discography-label-controlled-save-slice-local-implementation.md`
+- **Verifier:** `verify:g20u43-gosaki-discography-label-controlled-save-slice-local-implementation`
+- **Edge (local):** `handleControlledG20u43LabelSaveHttp` · `validateG20u43NestedSavePayload` · `classifyG20u43LabelUpdateOutcome` · router by approval ID · track-title path preserved
+- **UI:** Save approval → G-20u43 · label-only gate · env arm fail-closed · STG default disarmed
+- **Do not:** Edge deploy · Save · DB write · arm STG package · claim 実行可能
+- **Next:** **G-20u43a-gosaki-discography-label-save-edge-deploy-preflight**
 
 ## G-20u42-gosaki-discography-controlled-save-enablement-preflight — complete (not execution-ready)
 
 - **Doc:** `gosaki-discography-controlled-save-enablement-preflight.md`
 - **Verifier:** `verify:g20u42-gosaki-discography-controlled-save-enablement-preflight`
-- **Save endpoint:** same Edge URL as dry-run · `operation=save` · approval `G-20u36-gosaki-discography-tracklist-save-non-dry-run-slice`
-- **Arm:** `PUBLIC_GOSAKI_DISCOGRAPHY_SAVE_UI_ARMED` exact `"true"` (default false)
-- **Recommend surface:** **local_shell** (not armed STG package FTP for first Save)
-- **Preferred future target (not executable):** `discography-004` / `Ja-Jaaaaan!` / `label` / before+restore `Mardi Gras JAPAN Records` / temp `[CMS Kit staging] G-20u42 label PoC` / `updated_at` `2026-07-10T05:59:35.138671+00:00`
-- **Do not:** arm Save · click Save · open grants · Edge deploy · package/FTP in follow-up without new slice phase
-- **Next:** ChatGPT operator手順作成は可だが **実行 ready と書かない** · 次実装フェーズ計画が先
+- **CONTROLLED_SAVE_PREFLIGHT_READY:** **false** (still · Edge undeployed)
+- **Preferred target:** `discography-004` / `label` / `Mardi Gras JAPAN Records` ↔ `[CMS Kit staging] G-20u42 label PoC`
+- **Next:** ~~G-20u43 local~~ done → **G-20u43a**
 
 ## G-20u41-gosaki-discography-operational-save-ui-gated-local-wiring — completed
 

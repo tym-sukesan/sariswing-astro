@@ -56,8 +56,18 @@ export const G20U36C_PRODUCTION_PROJECT_REF_STOP = "vsbvndwuajjhnzpohghh";
 export const G20U41_DISCOGRAPHY_OPERATIONAL_SAVE_PHASE =
   "G-20u41-gosaki-discography-operational-save-ui-gated-local-wiring";
 export const G20U41_DISCOGRAPHY_SAVE_OPERATION = "save" as const;
-export const G20U41_DISCOGRAPHY_SAVE_APPROVAL_ID =
+/** Historical tracklist Save approval (G-20u36e Edge allowlist) — not used by G-20u43 UI Save. */
+export const G20U36_DISCOGRAPHY_TRACKLIST_SAVE_APPROVAL_ID =
   "G-20u36-gosaki-discography-tracklist-save-non-dry-run-slice";
+/** G-20u43 — label controlled Save slice (formal UI + Edge allowlist approval). */
+export const G20U43_DISCOGRAPHY_LABEL_SAVE_APPROVAL_ID =
+  "G-20u43-gosaki-discography-label-controlled-save-slice";
+export const G20U43_DISCOGRAPHY_LABEL_LEGACY_ID = "discography-004";
+export const G20U43_DISCOGRAPHY_LABEL_ALBUM_TITLE = "Ja-Jaaaaan!";
+export const G20U43_DISCOGRAPHY_LABEL_ORIGINAL = "Mardi Gras JAPAN Records";
+export const G20U43_DISCOGRAPHY_LABEL_TEMPORARY = "[CMS Kit staging] G-20u42 label PoC";
+/** Operational UI Save approval — G-20u43 label slice (do not reuse tracklist ID). */
+export const G20U41_DISCOGRAPHY_SAVE_APPROVAL_ID = G20U43_DISCOGRAPHY_LABEL_SAVE_APPROVAL_ID;
 /** Formal Save uses the same staging Edge Function URL as dry-run (`operation` differs). */
 export const G20U41_DISCOGRAPHY_SAVE_ENDPOINT = G20U36C_DISCOGRAPHY_DRY_RUN_ENDPOINT;
 export const G20U41_DISCOGRAPHY_SAVE_UI_ARMED_ENV = "PUBLIC_GOSAKI_DISCOGRAPHY_SAVE_UI_ARMED";
@@ -65,6 +75,8 @@ export const G20U41_DISCOGRAPHY_SAVE_DEFAULT_DISABLED_REASON =
   "Save は無効です。dry-run 成功・ログイン・env arm・approval が揃うまで実行できません。";
 export const G20U41_DISCOGRAPHY_CONFLICT_MESSAGE =
   "他の場所で更新された可能性があります。再読み込みしてください。";
+export const G20U43_DISCOGRAPHY_LABEL_SAVE_HINT =
+  "初回 controlled Save（G-20u43）は discography-004 の label 単一変更（original↔temporary）のみ対応。他フィールド変更・env arm なし・通常 STG package では Save 無効。";
 
 /** G-20u36e — DB admin probe UI tools draft (read-only `rpc('is_admin')` · Save decoupled). */
 export const G20U36E_ADMIN_PROBE_UI_TOOLS_DRAFT_PHASE =
@@ -396,6 +408,61 @@ export interface DiscographyOperationalSaveGateInput {
   approvalId: string;
   expectedApprovalId: string;
   saveInFlight: boolean;
+  /** G-20u43 — when provided, Save requires label-only allowlisted transition on discography-004. */
+  g20u43LabelSlice?: {
+    legacyId: string;
+    originalLabel: string;
+    currentLabel: string;
+    changedFields: string[];
+  } | null;
+}
+
+/**
+ * G-20u43 UI eligibility — discography-004 · label-only · original↔temporary.
+ */
+export function evaluateG20u43LabelSliceEligibility(input: {
+  legacyId: string;
+  originalLabel: string;
+  currentLabel: string;
+  changedFields: string[];
+}): { ok: boolean; reason: string; reasonCode: string } {
+  const legacyId = String(input.legacyId ?? "").trim();
+  if (legacyId !== G20U43_DISCOGRAPHY_LABEL_LEGACY_ID) {
+    return {
+      ok: false,
+      reason: `G-20u43 Save は ${G20U43_DISCOGRAPHY_LABEL_LEGACY_ID} の label のみ対応です`,
+      reasonCode: "legacy_id_mismatch",
+    };
+  }
+  const changed = Array.isArray(input.changedFields) ? input.changedFields.map(String) : [];
+  if (changed.length !== 1 || changed[0] !== "label") {
+    return {
+      ok: false,
+      reason: "G-20u43 Save は label 単一変更のみ許可（他フィールド変更時は不可）",
+      reasonCode: "label_only_required",
+    };
+  }
+  const before = String(input.originalLabel ?? "").trim();
+  const after = String(input.currentLabel ?? "").trim();
+  const forward =
+    before === G20U43_DISCOGRAPHY_LABEL_ORIGINAL && after === G20U43_DISCOGRAPHY_LABEL_TEMPORARY;
+  const reverse =
+    before === G20U43_DISCOGRAPHY_LABEL_TEMPORARY && after === G20U43_DISCOGRAPHY_LABEL_ORIGINAL;
+  if (!forward && !reverse) {
+    return {
+      ok: false,
+      reason: "許可された label 遷移（original↔temporary）ではありません",
+      reasonCode: "label_transition_not_allowlisted",
+    };
+  }
+  if (!before || !after) {
+    return {
+      ok: false,
+      reason: "空の label は許可されません",
+      reasonCode: "empty_label_forbidden",
+    };
+  }
+  return { ok: true, reason: "", reasonCode: "ok" };
 }
 
 export function evaluateDiscographyOperationalSaveGate(
@@ -439,6 +506,20 @@ export function evaluateDiscographyOperationalSaveGate(
   }
   if (candidateApprovalId !== expectedApprovalId) {
     return { enabled: false, reason: "approval ID が一致しません" };
+  }
+  if (expectedApprovalId !== G20U43_DISCOGRAPHY_LABEL_SAVE_APPROVAL_ID) {
+    return { enabled: false, reason: "expected approval ID が G-20u43 label slice ではありません" };
+  }
+  if (input.g20u43LabelSlice) {
+    const slice = evaluateG20u43LabelSliceEligibility(input.g20u43LabelSlice);
+    if (!slice.ok) {
+      return { enabled: false, reason: slice.reason };
+    }
+  } else {
+    return {
+      enabled: false,
+      reason: "G-20u43 label slice 条件が未評価です",
+    };
   }
   return { enabled: true, reason: "" };
 }

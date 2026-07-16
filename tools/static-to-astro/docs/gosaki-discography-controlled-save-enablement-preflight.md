@@ -41,6 +41,10 @@ PRODUCTION_TOUCHED: false
 
 **STOP:** Do not treat this phase as permission to arm Save, click Save, open RLS grants, or deploy Edge.
 
+**Follow-up (G-20u43 local · 2026-07-17):** Label controlled Save slice implemented **locally** (`G-20u43-gosaki-discography-label-controlled-save-slice`) for `discography-004.label` original↔temporary. **Edge not deployed.** UI Save approval now points at G-20u43 (tracklist ID retained as historical constant only).
+**Commit-pre safety fix (same phase):** nested `release` / `trackPolicy` / `clientDryRun` own-key allowlist on Edge · UPDATE row-count classifier · verifier negative cases. **Still not execution-ready.**
+**CONTROLLED_SAVE_PREFLIGHT_READY remains false** until Edge deploy preflight + execution readiness are separately recorded.
+
 **Supabase target:** `static-to-astro-cms-staging` / `kmjqppxjdnwwrtaeqjta` only.  
 **Production STOP:** `vsbvndwuajjhnzpohghh`.
 

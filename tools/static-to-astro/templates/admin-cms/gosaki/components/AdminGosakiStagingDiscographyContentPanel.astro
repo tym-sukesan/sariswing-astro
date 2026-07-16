@@ -296,7 +296,7 @@ function display(value: string | null | undefined): string {
     >
       <h2 class="gosaki-discography-content-panel__section-title">保存</h2>
       <p class="gosaki-discography-content-panel__hint" role="note">
-        保存機能は現在無効です（既定）。「変更を確認」（dry-run）成功・ログイン・env arm（PUBLIC_GOSAKI_DISCOGRAPHY_SAVE_UI_ARMED）が揃うまで実行できません。
+        初回 controlled Save（G-20u43）は discography-004 の label 単一変更（original↔temporary）のみ対応。他フィールド変更を含む場合は Save 不可。通常は無効（env arm PUBLIC_GOSAKI_DISCOGRAPHY_SAVE_UI_ARMED=true かつ dry-run 成功・ログインが必要）。通常 STG package は armed にしない。
       </p>
       <p
         class="gosaki-discography-content-panel__save-reason"

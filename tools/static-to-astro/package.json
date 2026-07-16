@@ -198,6 +198,7 @@
     "verify:g20u39b3-gosaki-admin-portal-and-content-routes-local-implementation": "node scripts/verify-g20u39b3-gosaki-admin-portal-and-content-routes-local-implementation.mjs",
     "verify:g20u39b4-gosaki-admin-multi-route-staging-package-prep": "node scripts/verify-g20u39b4-gosaki-admin-multi-route-staging-package-prep.mjs",
     "verify:g20u42-gosaki-discography-controlled-save-enablement-preflight": "node scripts/verify-g20u42-gosaki-discography-controlled-save-enablement-preflight.mjs",
+    "verify:g20u43-gosaki-discography-label-controlled-save-slice-local-implementation": "node scripts/verify-g20u43-gosaki-discography-label-controlled-save-slice-local-implementation.mjs",
     "verify:g20i3-gosaki-production-manual-upload-verifier-drift-review": "node scripts/verify-g20i3-gosaki-production-manual-upload-verifier-drift-review.mjs",
     "verify:g20u36e-controlled-save-auth-jwt-feasibility-plan": "node scripts/verify-g20u36e-controlled-save-auth-jwt-feasibility-plan.mjs",
     "verify:g20u36e-controlled-save-auth-jwt-feasibility-preflight": "node scripts/verify-g20u36e-controlled-save-auth-jwt-feasibility-preflight.mjs",

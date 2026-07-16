@@ -8,6 +8,10 @@ Paste this file at the start of a new ChatGPT thread.
 Current phase: G-20u39b4-gosaki-admin-multi-route-staging-package-and-manual-upload-prep — complete.
 STAGING_ADMIN_MULTI_ROUTE_GENERATION_IMPLEMENTED: true.
 STAGING_ADMIN_MULTI_ROUTE_DRY_RUN_PASSED: true.
+MULTI_ROUTE_ANON_ALLOWLIST_FIXED: true.
+ALLOWLIST_IS_ATTRIBUTE_AND_VALUE_SCOPED: true.
+SERVICE_ROLE_REMAINS_BLOCKED: true.
+PUBLIC_HTML_KEY_EXPOSURE_REMAINS_BLOCKED: true.
 SAVE_REMAINS_DISABLED: true.
 PRODUCTION_ADMIN_EXCLUSION_PRESERVED: true.
 FRESH_PACKAGE_GENERATION_REQUIRED_AFTER_COMMIT: true.
@@ -22,10 +26,15 @@ Next: G-20u39b5-gosaki-admin-multi-route-staging-package-generation-at-head.
 - **Gate:** `gosakiAdminMultiRouteStagingPackagePrepComplete: true`
 - **STAGING_ADMIN_MULTI_ROUTE_GENERATION_IMPLEMENTED:** **true**
 - **STAGING_ADMIN_MULTI_ROUTE_DRY_RUN_PASSED:** **true**
+- **MULTI_ROUTE_ANON_ALLOWLIST_FIXED:** **true**
+- **ALLOWLIST_IS_ATTRIBUTE_AND_VALUE_SCOPED:** **true**
+- **SERVICE_ROLE_REMAINS_BLOCKED:** **true**
+- **PUBLIC_HTML_KEY_EXPOSURE_REMAINS_BLOCKED:** **true**
 - **SAVE_REMAINS_DISABLED:** **true**
 - **PRODUCTION_ADMIN_EXCLUSION_PRESERVED:** **true**
 - **FRESH_PACKAGE_GENERATION_REQUIRED_AFTER_COMMIT:** **true**
 - **Generation:** apply() emits `/admin/` portal + schedule/discography/youtube/about
+- **Security:** `scanSupabaseKeyExposure` allowlists known staging anon only in `data-gosaki-supabase-anon-key` on `admin/**/index.html` with read-only marker
 - **Reuse:** b3 OperatorHome / Nav / SafetyChips via package paths (`BASE_URL`)
 - **Not done:** real package generation · FTP · STG browser QA · Save enable
 - **Next:** **G-20u39b5-gosaki-admin-multi-route-staging-package-generation-at-head**

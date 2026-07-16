@@ -15,6 +15,7 @@ import {
 import {
   listPublicFiles,
   loadOptionalSecretsForScan,
+  resolveKnownGosakiStagingAnonKeyForScan,
   scanAdminApiContamination,
   scanPublicDirForSecrets,
   scanSupabaseKeyExposure,
@@ -204,7 +205,10 @@ export function validatePublicDirForDeploy(publicDir, toolRoot) {
   const secrets = loadOptionalSecretsForScan(toolRoot);
   const secretValues = [secrets.serviceRoleKey, secrets.adminPassword, secrets.anonKey].filter(Boolean);
   const secretScan = scanPublicDirForSecrets(abs, secretValues);
-  const supabaseScan = scanSupabaseKeyExposure(abs);
+  const knownAnonKey = resolveKnownGosakiStagingAnonKeyForScan({
+    secretsAnonKey: secrets.anonKey,
+  });
+  const supabaseScan = scanSupabaseKeyExposure(abs, { knownAnonKey });
   const secretLeakOk = secretScan.ok && supabaseScan.publicStaticDoesNotNeedSupabaseKeys;
   if (!secretLeakOk) errors.push("secret leak scan failed for public-dir");
 

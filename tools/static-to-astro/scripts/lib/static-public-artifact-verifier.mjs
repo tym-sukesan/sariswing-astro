@@ -14,6 +14,7 @@ import {
   verifyPublicDistSeoFlags,
   verifyStagingPreviewHtml,
 } from "./deploy-base.mjs";
+import { loadGosakiStagingAdminPublicEnv } from "./gosaki-staging-admin-public-env.mjs";
 import { loadExportEnv } from "./supabase-json-exporter.mjs";
 import { resolveStaticPublicVerifyOptions } from "./static-public-site-expectations.mjs";
 import { resolveIncludeReadOnlyAdminOption } from "./site-admin-features.mjs";
@@ -120,6 +121,113 @@ export const ADMIN_API_PATH_MARKERS = [
 const JWT_LIKE = /eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}/;
 
 const GOSAKI_READ_ONLY_ADMIN_DATA_ATTR = 'data-gosaki-read-only-admin="true"';
+
+/** Attribute that may hold the staging anon key on Gosaki read-only admin HTML only. */
+export const GOSAKI_STAGING_ADMIN_ANON_KEY_ATTR = "data-gosaki-supabase-anon-key";
+
+/**
+ * @param {string} relPath
+ */
+export function isGosakiStagingAdminHtmlRelPath(relPath) {
+  const n = String(relPath || "").replace(/\\/g, "/");
+  return n === "admin/index.html" || /^admin\/.+\/index\.html$/.test(n);
+}
+
+/**
+ * @param {string} value
+ */
+function escapeRegExp(value) {
+  return String(value).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+/**
+ * Decode JWT payload segment (Base64URL) to object. No signature verification.
+ * @param {string} payloadSegment
+ * @returns {Record<string, unknown> | null}
+ */
+function decodeJwtPayloadJson(payloadSegment) {
+  const seg = String(payloadSegment || "").trim();
+  if (!seg) return null;
+  try {
+    const padded =
+      seg.replace(/-/g, "+").replace(/_/g, "/") +
+      "=".repeat((4 - (seg.length % 4)) % 4);
+    const text = Buffer.from(padded, "base64").toString("utf8");
+    const parsed = JSON.parse(text);
+    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) return null;
+    return /** @type {Record<string, unknown>} */ (parsed);
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Fail-closed: accept only JWTs whose payload.role === "anon".
+ * Rejects service_role, other roles, missing role, malformed, empty.
+ * Signature verification is intentionally not performed.
+ *
+ * @param {string | null | undefined} token
+ * @returns {string | null} trimmed token when accepted, else null
+ */
+export function acceptSupabaseAnonJwtForAllowlist(token) {
+  const raw = String(token ?? "").trim();
+  if (!raw) return null;
+  const parts = raw.split(".");
+  if (parts.length < 2) return null;
+  const payload = decodeJwtPayloadJson(parts[1]);
+  if (!payload) return null;
+  if (payload.role !== "anon") return null;
+  return raw;
+}
+
+/**
+ * Resolve known Gosaki staging anon key for attribute-scoped allowlist.
+ * Prefer explicit option / secrets; fall back to PUBLIC_SUPABASE_ANON_KEY.
+ * Every candidate is validated via {@link acceptSupabaseAnonJwtForAllowlist}.
+ * If an explicit candidate is provided but rejected, do not fall through (fail closed).
+ *
+ * @param {{ knownAnonKey?: string | null, secretsAnonKey?: string | null }} [opts]
+ */
+export function resolveKnownGosakiStagingAnonKeyForScan(opts = {}) {
+  const knownRaw = String(opts.knownAnonKey ?? "").trim();
+  if (knownRaw) {
+    return acceptSupabaseAnonJwtForAllowlist(knownRaw);
+  }
+  const secretsRaw = String(opts.secretsAnonKey ?? "").trim();
+  if (secretsRaw) {
+    return acceptSupabaseAnonJwtForAllowlist(secretsRaw);
+  }
+  try {
+    const env = loadGosakiStagingAdminPublicEnv();
+    return acceptSupabaseAnonJwtForAllowlist(env.PUBLIC_SUPABASE_ANON_KEY);
+  } catch {
+    // ignore — fail closed without a known key
+  }
+  return null;
+}
+
+/**
+ * Strip only exact known anon key values in `data-gosaki-supabase-anon-key="…"`
+ * on Gosaki staging read-only admin HTML paths. Does not strip service_role,
+ * unknown JWTs, or keys outside that attribute.
+ *
+ * @param {string} content
+ * @param {string} rel
+ * @param {string | null} knownAnonKey
+ */
+export function stripAllowedGosakiStagingAdminAnonKeyAttrs(content, rel, knownAnonKey) {
+  const accepted = acceptSupabaseAnonJwtForAllowlist(knownAnonKey);
+  if (!accepted || accepted.length < 20) return content;
+  if (!isGosakiStagingAdminHtmlRelPath(rel)) return content;
+  if (!content.includes(GOSAKI_READ_ONLY_ADMIN_DATA_ATTR)) return content;
+
+  const escaped = escapeRegExp(accepted);
+  const re = new RegExp(
+    `(${GOSAKI_STAGING_ADMIN_ANON_KEY_ATTR}\\s*=\\s*)(["'])${escaped}\\2`,
+    "g",
+  );
+  return content.replace(re, "$1$2__GOSAKI_STAGING_ANON_ALLOWLISTED__$2");
+}
 
 /**
  * @param {string} publicDir
@@ -302,9 +410,24 @@ export function scanPublicDirForSecrets(dir, secretValues) {
 }
 
 /**
+ * Scan for JWT-like / inline Supabase key exposure.
+ *
+ * Allowlist (all required — fail closed otherwise):
+ * - path is admin/index.html or admin/.../index.html
+ * - file has data-gosaki-read-only-admin="true"
+ * - token appears only as exact value of data-gosaki-supabase-anon-key="..."
+ * - value equals configured known staging anon key
+ *
+ * Never allows: path-only admin JWT, unknown JWT, service_role, public HTML keys,
+ * createClient inline keys, JS/JSON leaks outside the attribute.
+ *
  * @param {string} dir
+ * @param {{ knownAnonKey?: string | null }} [options]
  */
-export function scanSupabaseKeyExposure(dir) {
+export function scanSupabaseKeyExposure(dir, options = {}) {
+  const knownAnonKey = resolveKnownGosakiStagingAnonKeyForScan({
+    knownAnonKey: options.knownAnonKey,
+  });
   const files = listPublicFiles(dir);
   /** @type {Array<{ file: string, kind: string }>} */
   const findings = [];
@@ -312,23 +435,17 @@ export function scanSupabaseKeyExposure(dir) {
   for (const { rel, abs } of files) {
     if (!/\.(html|js|css|json|mjs|txt|xml)$/i.test(rel)) continue;
     const content = fs.readFileSync(abs, "utf8");
-    const gosakiReadOnlyAdmin =
-      rel === "admin/index.html" && content.includes(GOSAKI_READ_ONLY_ADMIN_DATA_ATTR);
+    const contentForJwtScan = stripAllowedGosakiStagingAdminAnonKeyAttrs(
+      content,
+      rel,
+      knownAnonKey,
+    );
 
-    if (JWT_LIKE.test(content)) {
-      if (
-        gosakiReadOnlyAdmin &&
-        !/service_role/i.test(content) &&
-        !/createClient\s*\(\s*['"]https:\/\/[^'"]+\.supabase\.co['"]\s*,\s*['"]eyJ/i.test(content)
-      ) {
-        // G-11c4a: staging anon key (public) in data-gosaki-supabase-anon-key is expected.
-        continue;
-      }
+    if (JWT_LIKE.test(contentForJwtScan)) {
       findings.push({ file: rel, kind: "jwt_like_token" });
     }
 
     if (/createClient\s*\(\s*['"]https:\/\/[^'"]+\.supabase\.co['"]\s*,\s*['"]eyJ/i.test(content)) {
-      if (gosakiReadOnlyAdmin) continue;
       findings.push({ file: rel, kind: "supabase_client_with_inline_key" });
     }
   }
@@ -336,6 +453,7 @@ export function scanSupabaseKeyExposure(dir) {
   return {
     publicStaticDoesNotNeedSupabaseKeys: findings.length === 0,
     findings,
+    knownAnonKeyConfigured: Boolean(knownAnonKey),
   };
 }
 
@@ -470,7 +588,10 @@ export function runStaticPublicArtifactVerification({
   result.keyLeakScanRaw = scanPublicDirForSecrets(publicDir, secretValues);
   result.keyLeakScan = result.keyLeakScanRaw;
 
-  result.supabaseKeyScanRaw = scanSupabaseKeyExposure(publicDir);
+  const knownAnonKey = resolveKnownGosakiStagingAnonKeyForScan({
+    secretsAnonKey: secrets.anonKey,
+  });
+  result.supabaseKeyScanRaw = scanSupabaseKeyExposure(publicDir, { knownAnonKey });
 
   const includeReadOnlyAdmin =
     includeReadOnlyAdminOverride !== undefined || includeGosakiLegacyOverride !== undefined
@@ -507,7 +628,7 @@ export function runStaticPublicArtifactVerification({
         copyContamination.hits.some((h) => h.marker !== "admin_dir")
       : copyContamination.contaminated;
   const copyKeyLeak = scanPublicDirForSecrets(publicDistDir, secretValues);
-  const copySupabaseScan = scanSupabaseKeyExposure(publicDistDir);
+  const copySupabaseScan = scanSupabaseKeyExposure(publicDistDir, { knownAnonKey });
 
   result.keyLeakScanCopy = copyKeyLeak;
   result.supabaseKeyScanCopy = copySupabaseScan;

@@ -25,7 +25,8 @@ const ADMIN_CSS_REL = "tools/static-to-astro/templates/admin-cms/styles/admin.cs
 const PHASE = "G-20u39b-gosaki-staging-p1-admin-mobile-left-align-polish";
 const GATE = "gosakiStagingP1AdminMobileLeftAlignPolishImplemented: true";
 const RECOMMENDED_NEXT =
-  "G-20u39b1-gosaki-staging-p1-admin-mobile-left-align-package-and-manual-upload-prep";
+  "G-20u39c-gosaki-staging-public-mobile-visual-p1-review";
+const UPLOADED_COMMIT = "d3bf6246cf76be00ea619eefcf7d89fb6b6474b1";
 const VIEWPORTS = [
   { label: "320px", width: 320, height: 568 },
   { label: "375px", width: 375, height: 667 },
@@ -129,7 +130,7 @@ const hoG39b = latestSection(handoff, "G-20u39b");
 
 assert(`doc phase ${PHASE}`, doc.includes(PHASE));
 assert(`doc gate ${GATE}`, doc.includes(GATE));
-assert("P1-ADM-MOB1 locally_resolved", /P1-ADM-MOB1:\s*locally_resolved/i.test(doc));
+assert("P1-ADM-MOB1 resolved", /P1-ADM-MOB1:\s*resolved/i.test(doc));
 assert(
   "ADMIN_MOBILE_LEFT_ALIGN_POLISH_IMPLEMENTED true",
   /ADMIN_MOBILE_LEFT_ALIGN_POLISH_IMPLEMENTED:\s*true/i.test(doc),
@@ -139,14 +140,25 @@ assert(
   /ADMIN_MOBILE_LOCAL_VERIFY_PASSED:\s*true/i.test(doc),
 );
 assert(
-  "STG_BROWSER_RECHECK_REQUIRED true",
-  /STG_BROWSER_RECHECK_REQUIRED:\s*true/i.test(doc),
+  "ADMIN_MOBILE_STG_BROWSER_RECHECK_PASSED true",
+  /ADMIN_MOBILE_STG_BROWSER_RECHECK_PASSED:\s*true/i.test(doc),
 );
+assert(
+  "STG_BROWSER_RECHECK_REQUIRED false",
+  /STG_BROWSER_RECHECK_REQUIRED:\s*false/i.test(doc),
+);
+assert("uploaded sourceCommit d3bf624", doc.includes(UPLOADED_COMMIT));
+assert("STG browser PASS recorded", /Browser result.*PASS|STG browser re-check.*PASS/i.test(doc));
+assert("viewport 375", /375\s*[×x]\s*667/i.test(doc));
 assert("root cause documented", /Root cause|margin-left: auto/i.test(doc));
 assert("read-only css path", doc.includes("gosaki-staging-read-only-admin.css"));
 assert("admin css path", doc.includes("templates/admin-cms/styles/admin.css"));
-assert("no package generation", /packageGenerationExecuted:\s*false/i.test(doc));
-assert("no FTP", /ftpUploadExecuted:\s*false/i.test(doc));
+assert("no package generation this record", /packageGenerationExecuted:\s*false/i.test(doc));
+assert("no Cursor FTP", /cursorFtpUploadExecuted:\s*false/i.test(doc));
+assert(
+  "operator manual FTP completed",
+  /operatorManualFtpUploadCompleted:\s*true/i.test(doc),
+);
 assert(`recommended next ${RECOMMENDED_NEXT}`, doc.includes(RECOMMENDED_NEXT));
 
 assert(
@@ -192,14 +204,18 @@ function assertAiG39b(label, section) {
     /gosakiStagingP1AdminMobileLeftAlignPolishImplemented:\s*true/i.test(section),
   );
   assert(
-    `${label} P1-ADM-MOB1 locally_resolved`,
-    /P1-ADM-MOB1.*locally_resolved|P1-ADM-MOB1:\s*locally_resolved/i.test(section),
+    `${label} P1-ADM-MOB1 resolved`,
+    /P1-ADM-MOB1:\s*resolved|P1-ADM-MOB1.*resolved/i.test(section),
   );
   assert(
-    `${label} STG_BROWSER_RECHECK_REQUIRED`,
-    /STG_BROWSER_RECHECK_REQUIRED:\s*true/i.test(section),
+    `${label} ADMIN_MOBILE_STG_BROWSER_RECHECK_PASSED`,
+    /ADMIN_MOBILE_STG_BROWSER_RECHECK_PASSED:\s*true/i.test(section),
   );
-  assert(`${label} next G-20u39b1`, section.includes(RECOMMENDED_NEXT));
+  assert(
+    `${label} STG_BROWSER_RECHECK_REQUIRED false`,
+    /STG_BROWSER_RECHECK_REQUIRED:\s*false/i.test(section),
+  );
+  assert(`${label} next G-20u39c`, section.includes(RECOMMENDED_NEXT));
 }
 
 assertAiG39b("00-current-state", csG39b);

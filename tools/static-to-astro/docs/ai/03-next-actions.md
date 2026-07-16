@@ -7,17 +7,19 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | --- | --- |
 | Phase | `G-20u39b-gosaki-staging-p1-admin-mobile-left-align-polish` |
 | Gate | `gosakiStagingP1AdminMobileLeftAlignPolishImplemented: true` |
-| P1-ADM-MOB1 | **locally_resolved** |
-| ADMIN_MOBILE_LOCAL_VERIFY_PASSED | **true** |
-| STG_BROWSER_RECHECK_REQUIRED | **true** |
-| CSS files | `gosaki-staging-read-only-admin.css` · `admin.css` (Gosaki blocks) |
-| Package / FTP | **no** |
-| Next | **G-20u39b1-gosaki-staging-p1-admin-mobile-left-align-package-and-manual-upload-prep** |
+| P1-ADM-MOB1 | **resolved** |
+| ADMIN_MOBILE_STG_BROWSER_RECHECK_PASSED | **true** |
+| STG_BROWSER_RECHECK_REQUIRED | **false** |
+| Uploaded sourceCommit | `d3bf6246cf76be00ea619eefcf7d89fb6b6474b1` |
+| STG viewport | 375 × 667 · **PASS** |
+| P1-CON1 | **resolved** |
+| Next | **G-20u39c-gosaki-staging-public-mobile-visual-p1-review** |
 
 ```txt
-P1-ADM-MOB1: locally_resolved
-ADMIN_MOBILE_LEFT_ALIGN_POLISH_IMPLEMENTED: true
-STG_BROWSER_RECHECK_REQUIRED: true
+P1-ADM-MOB1: resolved
+ADMIN_MOBILE_STG_BROWSER_RECHECK_PASSED: true
+STG_BROWSER_RECHECK_REQUIRED: false
+P1-CON1: resolved
 ```
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u39a2-gosaki-staging-p1-contact-hubspot-submit-e2e-result-record — complete

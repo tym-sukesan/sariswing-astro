@@ -6,20 +6,23 @@ Paste this file at the start of a new ChatGPT thread.
 
 ```txt
 Current phase: G-20u39b-gosaki-staging-p1-admin-mobile-left-align-polish — complete.
-P1-ADM-MOB1: locally_resolved. STG_BROWSER_RECHECK_REQUIRED: true.
+P1-ADM-MOB1: resolved. ADMIN_MOBILE_STG_BROWSER_RECHECK_PASSED: true.
+STG_BROWSER_RECHECK_REQUIRED: false. P1-CON1: resolved.
 HOSTING_READY: false. GO_LIVE_READY: false. PRODUCTION_UPLOAD_READY: false.
-CONTACT_E2E_PASSED: true. P1-CON1: resolved. PUBLIC_READY: CONDITIONAL.
-Next: G-20u39b1-gosaki-staging-p1-admin-mobile-left-align-package-and-manual-upload-prep.
+PUBLIC_READY: CONDITIONAL.
+Next: G-20u39c-gosaki-staging-public-mobile-visual-p1-review.
 ```
 
 ## G-20u39b-gosaki-staging-p1-admin-mobile-left-align-polish — complete
 
 - **Gate:** `gosakiStagingP1AdminMobileLeftAlignPolishImplemented: true`
-- **P1-ADM-MOB1:** **locally_resolved** (CSS container fix · local Playwright verify)
-- **STG_BROWSER_RECHECK_REQUIRED:** **true** (not uploaded yet)
-- **Fix:** read-only admin CSS + Gosaki `admin.css` mobile container alignment
-- **Not done:** package · FTP · STG browser re-check
-- **Next:** **G-20u39b1-gosaki-staging-p1-admin-mobile-left-align-package-and-manual-upload-prep**
+- **P1-ADM-MOB1:** **resolved**
+- **ADMIN_MOBILE_STG_BROWSER_RECHECK_PASSED:** **true**
+- **STG_BROWSER_RECHECK_REQUIRED:** **false**
+- **Uploaded sourceCommit:** `d3bf624` · STG admin · viewport **375×667** · browser **PASS**
+- **Observed:** centered layout · even side margins · badges fit · left-align fixed · no major horizontal break
+- **P1-CON1:** **resolved**
+- **Next:** **G-20u39c-gosaki-staging-public-mobile-visual-p1-review**
 
 ## G-20u39a2-gosaki-staging-p1-contact-hubspot-submit-e2e-result-record — complete
 

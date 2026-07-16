@@ -153,8 +153,12 @@ function display(value: string | null | undefined): string {
       <input type="hidden" name="streaming_url" data-gosaki-disc-field="streaming_url" value="" />
       <input type="hidden" name="cover_image_url" data-gosaki-disc-field="cover_image_url" value="" />
 
-      <fieldset class="gosaki-discography-content-panel__fieldset">
-        <legend class="gosaki-discography-content-panel__legend">基本情報</legend>
+      <section
+        class="gosaki-discography-form-section"
+        aria-labelledby="gosaki-disc-section-basic"
+        data-gosaki-disc-form-section="basic"
+      >
+        <h3 class="gosaki-discography-form-section__title" id="gosaki-disc-section-basic">基本情報</h3>
         <label class="gosaki-discography-content-panel__field">
           <span class="gosaki-discography-content-panel__label">タイトル</span>
           <input
@@ -195,10 +199,14 @@ function display(value: string | null | undefined): string {
             autocomplete="off"
           />
         </label>
-      </fieldset>
+      </section>
 
-      <fieldset class="gosaki-discography-content-panel__fieldset">
-        <legend class="gosaki-discography-content-panel__legend">リンク・説明</legend>
+      <section
+        class="gosaki-discography-form-section"
+        aria-labelledby="gosaki-disc-section-links"
+        data-gosaki-disc-form-section="links"
+      >
+        <h3 class="gosaki-discography-form-section__title" id="gosaki-disc-section-links">リンク・説明</h3>
         <label class="gosaki-discography-content-panel__field">
           <span class="gosaki-discography-content-panel__label">購入URL</span>
           <input
@@ -218,10 +226,14 @@ function display(value: string | null | undefined): string {
             rows="5"
           />
         </label>
-      </fieldset>
+      </section>
 
-      <fieldset class="gosaki-discography-content-panel__fieldset">
-        <legend class="gosaki-discography-content-panel__legend">収録曲</legend>
+      <section
+        class="gosaki-discography-form-section"
+        aria-labelledby="gosaki-disc-section-tracks"
+        data-gosaki-disc-form-section="tracks"
+      >
+        <h3 class="gosaki-discography-form-section__title" id="gosaki-disc-section-tracks">収録曲</h3>
         <label class="gosaki-discography-content-panel__field">
           <span class="gosaki-discography-content-panel__label">曲名（1行 = 1曲）</span>
           <textarea
@@ -236,14 +248,18 @@ function display(value: string | null | undefined): string {
         <p class="gosaki-discography-content-panel__hint" role="note">
           固定数の曲入力欄は使いません。行を増減して曲数を調整します。
         </p>
-      </fieldset>
+      </section>
 
-      <fieldset class="gosaki-discography-content-panel__fieldset gosaki-discography-content-panel__fieldset--cover">
-        <legend class="gosaki-discography-content-panel__legend">ジャケット画像</legend>
+      <section
+        class="gosaki-discography-form-section gosaki-discography-form-section--cover"
+        aria-labelledby="gosaki-disc-section-cover"
+        data-gosaki-disc-form-section="cover"
+      >
+        <h3 class="gosaki-discography-form-section__title" id="gosaki-disc-section-cover">ジャケット画像</h3>
         <div class="gosaki-discography-content-panel__cover" data-gosaki-disc-cover-preview>
           <p class="gosaki-discography-content-panel__hint">画像変更は後続フェーズです。</p>
         </div>
-      </fieldset>
+      </section>
     </form>
 
     <div
@@ -436,9 +452,9 @@ function display(value: string | null | undefined): string {
     max-width: 100%;
   }
 
-  .gosaki-discography-content-panel__fieldset {
+  .gosaki-discography-form-section {
     margin: 0;
-    padding: 0.75rem 0.85rem 0.85rem;
+    padding: 0.85rem;
     border: 1px solid #e5e7eb;
     border-radius: 8px;
     background: #f8fafc;
@@ -447,42 +463,45 @@ function display(value: string | null | undefined): string {
     box-sizing: border-box;
   }
 
-  .gosaki-discography-content-panel__fieldset::after {
-    content: "";
-    display: table;
-    clear: both;
-  }
-
-  /* Float legend above border so native legend mid-border cut does not clip text on narrow viewports. */
-  .gosaki-discography-content-panel__legend {
-    float: left;
-    width: 100%;
+  .gosaki-discography-form-section__title {
+    display: block;
+    margin: 0 0 0.75rem;
+    padding: 0;
     max-width: 100%;
-    margin: 0 0 0.55rem;
-    padding: 0.15rem 0.35rem 0.35rem;
     box-sizing: border-box;
-    background: #f8fafc;
     color: #111827;
     font-size: 0.95rem;
     font-weight: 700;
     line-height: 1.35;
+    white-space: normal;
     overflow-wrap: anywhere;
     word-break: break-word;
   }
 
   .gosaki-discography-content-panel__field {
-    display: grid;
-    gap: 0.35rem;
+    display: block;
     margin: 0 0 0.75rem;
     min-width: 0;
+    max-width: 100%;
+  }
+
+  .gosaki-discography-content-panel__field:last-of-type {
+    margin-bottom: 0;
   }
 
   .gosaki-discography-content-panel__label {
+    display: block;
+    margin: 0 0 0.35rem;
     font-size: 0.85rem;
     font-weight: 600;
+    line-height: 1.35;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: break-word;
   }
 
   .gosaki-discography-content-panel__control {
+    display: block;
     width: 100%;
     max-width: 100%;
     min-width: 0;
@@ -496,9 +515,15 @@ function display(value: string | null | undefined): string {
 
   .gosaki-discography-content-panel__control--textarea,
   .gosaki-discography-content-panel__control--tracks {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
     resize: vertical;
     min-height: 6rem;
     white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    word-break: break-word;
     font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
     font-size: 0.9rem;
   }

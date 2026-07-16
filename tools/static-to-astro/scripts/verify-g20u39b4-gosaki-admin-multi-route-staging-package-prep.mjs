@@ -33,7 +33,7 @@ const PHASE =
   "G-20u39b4-gosaki-admin-multi-route-staging-package-and-manual-upload-prep";
 const GATE = "gosakiAdminMultiRouteStagingPackagePrepComplete: true";
 const RECOMMENDED_NEXT =
-  "Commit / Push後に fresh package 生成 · manual FTP · Discography mobile 再確認";
+  "Commit / Push後に fresh package 生成 · manual FTP · Discography STG 再確認";
 
 /** Fixture-only known anon (not a real project key). payload.role=anon */
 const KNOWN_ANON =
@@ -223,8 +223,13 @@ assert(
   /DISCOGRAPHY_GATED_SAVE_UI_WIRED:\s*true/i.test(doc),
 );
 assert(
+  "DISCOGRAPHY_FIELD_GROUP_LAYOUT_REGRESSION_FIXED true",
+  /DISCOGRAPHY_FIELD_GROUP_LAYOUT_REGRESSION_FIXED:\s*true/i.test(doc),
+);
+assert(
   "DISCOGRAPHY_FIELDSET_HEADING_MOBILE_FIXED true",
-  /DISCOGRAPHY_FIELDSET_HEADING_MOBILE_FIXED:\s*true/i.test(doc),
+  /DISCOGRAPHY_FIELDSET_HEADING_MOBILE_FIXED:\s*true/i.test(doc) ||
+    /DISCOGRAPHY_FIELD_GROUP_LAYOUT_REGRESSION_FIXED:\s*true/i.test(doc),
 );
 assert(
   "DISCOGRAPHY_SAVE_UI_DEDUPLICATED true",
@@ -422,13 +427,27 @@ assert(
     !discographyPanelSrc.includes('data-gosaki-save-disabled"'),
 );
 assert(
-  "discography fieldset legend mobile-safe (no clip/overflow hide)",
-  discographyPanelSrc.includes("gosaki-discography-content-panel__legend") &&
-    discographyPanelSrc.includes("float: left") &&
-    discographyPanelSrc.includes("overflow-wrap: anywhere") &&
-    discographyPanelSrc.includes("max-width: 100%") &&
-    !/__fieldset[\s\S]{0,200}overflow-x:\s*hidden/.test(discographyPanelSrc) &&
-    !/__legend[\s\S]{0,200}transform:\s*scale/.test(discographyPanelSrc),
+  "discography form sections use stable section+heading (no legend float hack)",
+  discographyPanelSrc.includes('data-gosaki-disc-form-section="basic"') &&
+    discographyPanelSrc.includes("gosaki-discography-form-section") &&
+    discographyPanelSrc.includes("gosaki-discography-form-section__title") &&
+    discographyPanelSrc.includes('aria-labelledby="gosaki-disc-section-basic"') &&
+    !discographyPanelSrc.includes("<fieldset") &&
+    !discographyPanelSrc.includes("<legend") &&
+    !discographyPanelSrc.includes("float: left") &&
+    !discographyPanelSrc.includes("float:left") &&
+    !/__legend[\s\S]{0,120}width:\s*100%/.test(discographyPanelSrc) &&
+    !/overflow-x:\s*hidden/.test(discographyPanelSrc) &&
+    !/transform:\s*scale/.test(discographyPanelSrc),
+);
+assert(
+  "discography form controls are full-width block with min-width 0",
+  discographyPanelSrc.includes(".gosaki-discography-content-panel__label") &&
+    discographyPanelSrc.includes("display: block") &&
+    discographyPanelSrc.includes("width: 100%") &&
+    discographyPanelSrc.includes("min-width: 0") &&
+    discographyPanelSrc.includes("box-sizing: border-box") &&
+    discographyPanelSrc.includes(".gosaki-discography-content-panel__control"),
 );
 assert(
   "discography edit toolbar wraps on narrow viewports",

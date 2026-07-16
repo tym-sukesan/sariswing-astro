@@ -5,11 +5,22 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u44c-gosaki-discography-label-permission-enablement-prep — complete.
-PERMISSION_PREFLIGHT_SQL_READY: true · PERMISSION_APPLY_SQL_READY: true.
-G-20u43 Save blocked by Class B (no label UPDATE grant) — SQL prep fixed, not applied.
-SQL_EXECUTED: false · DB_WRITE_EXECUTED: false · SAVE_REQUEST_EXECUTED: false.
-Next: Commit/Push → operator preflight SELECT only (G-20u44d).```
+Current phase: G-20u44-gosaki-discography-controlled-save-round-trip — complete.
+CONTROLLED_SAVE_ROUND_TRIP_COMPLETED: true · FINAL_LABEL_RESTORED: true.
+discography-004.label restored · updated_at 2026-07-16T18:35:15.236693+00:00.
+LOCAL_ARM_TERMINATED: true · STG package disarmed.
+Next: Commit/Push → G-20u44c §D Rollback SQL + §E verify (operator).```
+
+## G-20u44-gosaki-discography-controlled-save-round-trip — complete
+
+- **Doc:** `gosaki-discography-controlled-save-enablement-preflight.md` (§ G-20u44) · `gosaki-discography-label-controlled-save-slice-local-implementation.md`
+- **Operator:** original→temporary Save OK · restore Save OK · hard reload each leg · no conflict
+- **Final label:** `Mardi Gras JAPAN Records` · **updated_at:** `2026-07-16T18:35:15.236693+00:00`
+- **Counts:** 4 releases · 34 tracks · other data unchanged
+- **Termination:** local dev stopped · no env arm · STG disarmed
+- **Gates:** CONTROLLED_SAVE_* all **true** · LOCAL_ARM_TERMINATED **true**
+- **Not done by Cursor:** Save clicks · SQL · rollback
+- **Next:** Commit/Push → G-20u44c §D/E permission rollback
 
 ## G-20u44c-gosaki-discography-label-permission-enablement-prep — complete
 

@@ -317,6 +317,33 @@ assert(
 assert("g20u42 doc references G-20u44c", g20u42Doc.includes("G-20u44c"));
 assert("g20u43 doc references G-20u44c", g20u43Doc.includes("G-20u44c"));
 
+assert("doc G-20u44 round-trip follow-up", doc.includes("G-20u44 follow-up"));
+assert(
+  "doc CONTROLLED_SAVE_ROUND_TRIP_COMPLETED true",
+  doc.includes("CONTROLLED_SAVE_ROUND_TRIP_COMPLETED: true"),
+);
+assert(
+  "doc post-restore updated_at",
+  doc.includes("2026-07-16T18:35:15.236693+00:00"),
+);
+assert(
+  "g20u42 doc round-trip complete",
+  g20u42Doc.includes("CONTROLLED_SAVE_ROUND_TRIP_COMPLETED: true"),
+);
+assert(
+  "AI 00 G-20u44 round-trip",
+  currentState.includes("G-20u44-gosaki-discography-controlled-save-round-trip"),
+);
+assert(
+  "AI 03 G-20u44 round-trip",
+  nextActions.includes("G-20u44-gosaki-discography-controlled-save-round-trip") ||
+    nextActions.includes("CONTROLLED_SAVE_ROUND_TRIP_COMPLETED: true"),
+);
+assert(
+  "handoff G-20u44 round-trip",
+  handoff.includes("G-20u44-gosaki-discography-controlled-save-round-trip"),
+);
+
 assert(
   "supabase/functions not modified",
   !diffTouches("supabase/functions/"),

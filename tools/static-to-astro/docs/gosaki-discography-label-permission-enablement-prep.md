@@ -742,3 +742,31 @@ RLS prevents other releases, columns, and arbitrary label strings; Edge prevents
 | G-20u44b | 403 diagnosis — root cause Class B |
 | **G-20u44c** | **This doc** — permission SQL prep |
 | G-20u44d | Preflight SELECT execution (operator + ChatGPT) |
+| G-20u44 | Controlled Save round-trip (operator) — **complete** |
+
+---
+
+## G-20u44 follow-up (controlled Save round-trip — complete)
+
+Operator executed permission apply (G-20u44c §B–§C) then G-20u43 label controlled Save round-trip on `local_shell`. Cursor read-only verification **2026-07-17**.
+
+| Item | Value |
+| --- | --- |
+| `discography-004.label` (final) | `Mardi Gras JAPAN Records` (exact) |
+| post-restore `updated_at` | `2026-07-16T18:35:15.236693+00:00` |
+| releases / tracks | **4** / **34** |
+| other releases unchanged | **yes** |
+| local dev terminated | **yes** |
+| env arm残留 | **none** |
+| STG package disarmed | **yes** |
+
+```txt
+CONTROLLED_SAVE_TEMPORARY_WRITE_PASSED: true
+CONTROLLED_SAVE_RESTORE_PASSED: true
+FINAL_LABEL_RESTORED: true
+OTHER_DATA_UNCHANGED: true
+LOCAL_ARM_TERMINATED: true
+CONTROLLED_SAVE_ROUND_TRIP_COMPLETED: true
+```
+
+**Next:** Commit/Push → operator runs **§D Rollback SQL** + **§E Post-rollback verification** to close verification-only permission.

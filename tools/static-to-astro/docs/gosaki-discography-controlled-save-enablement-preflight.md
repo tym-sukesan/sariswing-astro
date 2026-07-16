@@ -334,4 +334,70 @@ G-20u44b diagnosed controlled Save **403** as Class **B**: `authenticated` lacks
 | DB_WRITE_EXECUTED | **false** |
 | SAVE_REQUEST_EXECUTED | **false** |
 
-**Next:** Commit/Push → operator runs §A preflight SELECT on staging `kmjqppxjdnwwrtaeqjta` only.
+**Next:** Commit/Push → operator runs G-20u44c §D Rollback SQL + §E post-rollback verification to close verification-only permission.
+
+---
+
+## G-20u44 controlled Save round-trip result (operator · read-only verification)
+
+**Status:** complete · **read-only record** (Cursor did not click Save / run SQL / rollback)
+**Date:** 2026-07-17
+**Surface:** `local_shell` · `http://localhost:4321/__admin-staging-shell/musician-basic/admin/discography/`
+**Staging:** `kmjqppxjdnwwrtaeqjta` only · production **not touched**
+
+### Operator execution (recorded)
+
+| Step | Result |
+| --- | --- |
+| original → temporary Save | **success** (single click) |
+| hard reload · temporary visible | **confirmed** |
+| temporary → original restore Save | **success** (single click) |
+| hard reload · original visible | **confirmed** |
+| double-click | **no** |
+| conflict | **no** |
+
+### Values
+
+| Item | Value |
+| --- | --- |
+| original label | `Mardi Gras JAPAN Records` |
+| temporary label | `[CMS Kit staging] G-20u42 label PoC` |
+| preflight baseline `updated_at` | `2026-07-10T05:59:35.138671+00:00` |
+| post-restore `updated_at` (staging anon SELECT) | `2026-07-16T18:35:15.236693+00:00` |
+
+### Post-restore staging read-only snapshot (anon SELECT · `site_slug=gosaki-piano`)
+
+| legacy_id | label | title | updated_at |
+| --- | --- | --- | --- |
+| discography-001 | `null` | Continuous | `2026-07-10T05:59:35.138671+00:00` |
+| discography-002 | `null` | SKYLARK | `2026-07-10T05:59:35.138671+00:00` |
+| discography-003 | `null` | About Us!! | `2026-07-10T05:59:35.138671+00:00` |
+| discography-004 | `Mardi Gras JAPAN Records` | Ja-Jaaaaan! | `2026-07-16T18:35:15.236693+00:00` |
+
+| Count | Value |
+| --- | --- |
+| releases | **4** |
+| tracks | **34** |
+
+Other releases and non-label fields on `discography-004` match G-20u42 §3 filtered-read baseline.
+
+### Termination checks (read-only)
+
+| Check | Result |
+| --- | --- |
+| local `astro dev` process | **not running** |
+| `PUBLIC_GOSAKI_DISCOGRAPHY_SAVE_UI_ARMED` in `.env` / `.env.local` | **absent** |
+| STG package default `saveArmed` | **false** (unchanged) |
+
+### Gates
+
+```txt
+CONTROLLED_SAVE_TEMPORARY_WRITE_PASSED: true
+CONTROLLED_SAVE_RESTORE_PASSED: true
+FINAL_LABEL_RESTORED: true
+OTHER_DATA_UNCHANGED: true
+LOCAL_ARM_TERMINATED: true
+CONTROLLED_SAVE_ROUND_TRIP_COMPLETED: true
+```
+
+**Next:** Commit/Push → operator runs G-20u44c §D Rollback SQL + §E post-rollback verification.

@@ -168,4 +168,23 @@ Pure Node-runnable mirror of allowlist rules — **no fetch / no Save**.
 
 ## Recommended next
 
-~~ChatGPT controlled Save operator procedure~~ **G-20u44c permission SQL prep complete** → Commit/Push → operator preflight SELECT (`G-20u44d`) → apply → controlled Save retry.
+~~ChatGPT controlled Save operator procedure~~ **G-20u44c permission SQL prep complete** → operator apply → **G-20u44 round-trip complete** → permission rollback.
+
+---
+
+## G-20u44 controlled Save round-trip result (operator · read-only verification)
+
+**Status:** complete · recorded in `gosaki-discography-controlled-save-enablement-preflight.md` (§ G-20u44)
+**Staging:** `kmjqppxjdnwwrtaeqjta` · `discography-004.label` restored to `Mardi Gras JAPAN Records`
+**Post-restore `updated_at`:** `2026-07-16T18:35:15.236693+00:00` · releases **4** · tracks **34**
+
+```txt
+CONTROLLED_SAVE_TEMPORARY_WRITE_PASSED: true
+CONTROLLED_SAVE_RESTORE_PASSED: true
+FINAL_LABEL_RESTORED: true
+OTHER_DATA_UNCHANGED: true
+LOCAL_ARM_TERMINATED: true
+CONTROLLED_SAVE_ROUND_TRIP_COMPLETED: true
+```
+
+**Next:** Commit/Push → G-20u44c §D Rollback SQL + §E post-rollback verification (operator).

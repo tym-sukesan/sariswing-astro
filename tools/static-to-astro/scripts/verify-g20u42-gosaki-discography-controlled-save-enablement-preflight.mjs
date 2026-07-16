@@ -155,6 +155,39 @@ assert(
     handoff.includes("CONTROLLED_SAVE_PREFLIGHT_READY: false"),
 );
 
+assert("doc G-20u44 round-trip section", doc.includes("G-20u44 controlled Save round-trip"));
+assert(
+  "doc CONTROLLED_SAVE_ROUND_TRIP_COMPLETED true",
+  doc.includes("CONTROLLED_SAVE_ROUND_TRIP_COMPLETED: true"),
+);
+assert(
+  "doc CONTROLLED_SAVE_TEMPORARY_WRITE_PASSED true",
+  doc.includes("CONTROLLED_SAVE_TEMPORARY_WRITE_PASSED: true"),
+);
+assert(
+  "doc CONTROLLED_SAVE_RESTORE_PASSED true",
+  doc.includes("CONTROLLED_SAVE_RESTORE_PASSED: true"),
+);
+assert("doc FINAL_LABEL_RESTORED true", doc.includes("FINAL_LABEL_RESTORED: true"));
+assert("doc OTHER_DATA_UNCHANGED true", doc.includes("OTHER_DATA_UNCHANGED: true"));
+assert("doc LOCAL_ARM_TERMINATED true", doc.includes("LOCAL_ARM_TERMINATED: true"));
+assert(
+  "doc post-restore updated_at",
+  doc.includes("2026-07-16T18:35:15.236693+00:00"),
+);
+assert(
+  "AI 00 G-20u44 round-trip",
+  currentState.includes("G-20u44-gosaki-discography-controlled-save-round-trip"),
+);
+assert(
+  "AI 03 G-20u44 round-trip",
+  nextActions.includes("G-20u44-gosaki-discography-controlled-save-round-trip"),
+);
+assert(
+  "handoff G-20u44 round-trip",
+  handoff.includes("G-20u44-gosaki-discography-controlled-save-round-trip"),
+);
+
 console.log("");
 console.log(`Passed: ${passed}`);
 console.log(`Failed: ${failed}`);

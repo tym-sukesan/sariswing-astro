@@ -1,0 +1,59 @@
+---
+/**
+ * Minimal shared edit toolbar (Discography now · reusable later for Schedule).
+ */
+interface Props {
+  mode?: "view" | "edit";
+  editLabel?: string;
+  cancelLabel?: string;
+  dryRunLabel?: string;
+  showDryRun?: boolean;
+}
+
+const {
+  mode = "view",
+  editLabel = "編集する",
+  cancelLabel = "編集をやめる",
+  dryRunLabel = "変更を確認",
+  showDryRun = false,
+} = Astro.props as Props;
+---
+
+<div
+  class="gosaki-admin-edit-toolbar"
+  data-gosaki-edit-toolbar="true"
+  data-mode={mode}
+>
+  {
+    mode === "view" ? (
+      <button
+        type="button"
+        class="gosaki-admin-edit-toolbar__btn gosaki-admin-edit-toolbar__btn--primary"
+        data-gosaki-edit-start
+      >
+        {editLabel}
+      </button>
+    ) : (
+      <>
+        <button
+          type="button"
+          class="gosaki-admin-edit-toolbar__btn"
+          data-gosaki-edit-cancel
+        >
+          {cancelLabel}
+        </button>
+        {
+          showDryRun ? (
+            <button
+              type="button"
+              class="gosaki-admin-edit-toolbar__btn gosaki-admin-edit-toolbar__btn--primary"
+              data-gosaki-edit-dry-run
+            >
+              {dryRunLabel}
+            </button>
+          ) : null
+        }
+      </>
+    )
+  }
+</div>

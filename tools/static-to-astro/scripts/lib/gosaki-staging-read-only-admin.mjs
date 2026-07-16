@@ -30,6 +30,9 @@ export const GOSAKI_READ_ONLY_ADMIN_SCHEDULE_EVENTS_DATA_REL =
 export const GOSAKI_ADMIN_CONTENT_PANEL_COMPONENTS = [
   "AdminGosakiStagingScheduleContentPanel.astro",
   "AdminGosakiStagingAboutContentPanel.astro",
+  "AdminGosakiStagingDiscographyContentPanel.astro",
+  "AdminGosakiStagingEditToolbar.astro",
+  "AdminGosakiStagingSaveDisabledStatus.astro",
   "AdminGosakiStagingCompactAuthBar.astro",
 ];
 
@@ -327,6 +330,7 @@ export function buildDiscographyEditorPrototypeSnapshot(discographyBundle) {
       description: release?.description ?? "",
       trackListText: formatDiscographyTrackListTextarea(tracks),
       trackCount: tracks.length,
+      updatedAt: release?.updated_at ?? null,
     };
   });
 
@@ -447,6 +451,10 @@ export function applyGosakiStagingReadOnlyAdmin(outDir, toolRoot, options = {}) 
   );
   const componentSrc = path.join(templateRoot, "GosakiStagingReadOnlyAdminPage.astro");
   const libSrc = path.join(templateRoot, "gosaki-staging-read-only-admin.ts");
+  const discographyEditSrc = path.join(
+    templateRoot,
+    "gosaki-staging-discography-operational-edit.ts",
+  );
   const packagePathsSrc = path.join(templateRoot, "gosaki-package-admin-paths.ts");
   const cssSrc = path.join(templateRoot, "gosaki-staging-read-only-admin.css");
   const chromeComponents = [
@@ -456,7 +464,7 @@ export function applyGosakiStagingReadOnlyAdmin(outDir, toolRoot, options = {}) 
     ...GOSAKI_ADMIN_CONTENT_PANEL_COMPONENTS,
   ];
 
-  for (const src of [componentSrc, libSrc, packagePathsSrc, cssSrc, chromeCssSrc]) {
+  for (const src of [componentSrc, libSrc, discographyEditSrc, packagePathsSrc, cssSrc, chromeCssSrc]) {
     if (!fs.existsSync(src)) {
       return { applied: false, reason: `template missing: ${path.basename(src)}` };
     }
@@ -481,6 +489,10 @@ export function applyGosakiStagingReadOnlyAdmin(outDir, toolRoot, options = {}) 
   fs.mkdirSync(chromeDirDest, { recursive: true });
 
   fs.copyFileSync(libSrc, libDest);
+  fs.copyFileSync(
+    discographyEditSrc,
+    path.join(path.dirname(libDest), "gosaki-staging-discography-operational-edit.ts"),
+  );
   fs.copyFileSync(packagePathsSrc, packagePathsDest);
   fs.copyFileSync(cssSrc, cssDest);
   fs.copyFileSync(chromeCssSrc, chromeCssDest);

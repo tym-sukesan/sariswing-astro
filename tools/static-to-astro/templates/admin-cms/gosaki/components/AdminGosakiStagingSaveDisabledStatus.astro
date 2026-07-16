@@ -1,0 +1,35 @@
+---
+/**
+ * Shared Save-disabled status line (Discography · reusable later).
+ */
+interface Props {
+  message?: string;
+  hint?: string;
+}
+
+const {
+  message = "保存機能は現在無効です",
+  hint = "まず「変更を確認」で内容を確認してください",
+} = Astro.props as Props;
+---
+
+<div
+  class="gosaki-admin-save-disabled-status"
+  data-gosaki-save-disabled-status="true"
+  data-gosaki-save-disabled-note="true"
+  role="note"
+>
+  <p class="gosaki-admin-save-disabled-status__message">{message}</p>
+  <p class="gosaki-admin-save-disabled-status__hint">{hint}</p>
+  <p class="gosaki-admin-save-disabled-status__actions">
+    <button
+      type="button"
+      class="gosaki-admin-save-disabled-status__save"
+      disabled
+      aria-disabled="true"
+      data-gosaki-save-disabled
+    >
+      保存する（現在は無効）
+    </button>
+  </p>
+</div>

@@ -1,6 +1,32 @@
 Last updated: 2026-07-16
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u40-gosaki-discography-operational-edit-ui-local-implementation — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u40-gosaki-discography-operational-edit-ui-local-implementation` |
+| DISCOGRAPHY_VIEW_EDIT_MODE_IMPLEMENTED | **true** |
+| DISCOGRAPHY_TRACKLIST_MULTILINE_IMPLEMENTED | **true** |
+| DISCOGRAPHY_UNSAVED_GUARD_IMPLEMENTED | **true** |
+| DISCOGRAPHY_DRY_RUN_CONNECTED | **true** |
+| DISCOGRAPHY_OPTIMISTIC_LOCK_PRESERVED | **true** |
+| DISCOGRAPHY_SAVE_REMAINS_DISABLED | **true** |
+| DISCOGRAPHY_IMAGE_EDIT_DEFERRED | **true** |
+| FRESH_PACKAGE_REUPLOAD_REQUIRED | **true** |
+| Next | Commit/Push → fresh package → manual FTP → Discography STG browser QA |
+
+```txt
+DISCOGRAPHY_VIEW_EDIT_MODE_IMPLEMENTED: true
+DISCOGRAPHY_TRACKLIST_MULTILINE_IMPLEMENTED: true
+DISCOGRAPHY_UNSAVED_GUARD_IMPLEMENTED: true
+DISCOGRAPHY_DRY_RUN_CONNECTED: true
+DISCOGRAPHY_OPTIMISTIC_LOCK_PRESERVED: true
+DISCOGRAPHY_SAVE_REMAINS_DISABLED: true
+DISCOGRAPHY_IMAGE_EDIT_DEFERRED: true
+FRESH_PACKAGE_REUPLOAD_REQUIRED: true
+```
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u39b4-gosaki-admin-multi-route-staging-package-and-manual-upload-prep — complete
 
 | Item | Value |

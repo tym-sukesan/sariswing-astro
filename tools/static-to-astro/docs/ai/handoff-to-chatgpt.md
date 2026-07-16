@@ -5,26 +5,24 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u39b4-gosaki-admin-multi-route-staging-package-and-manual-upload-prep — complete (content UI restore + About form/mobile preview follow-up).
-STG_MULTI_ROUTE_UI_QA_PREVIOUS_RESULT: FAIL.
-ABOUT_ADMIN_FORM_AFFORDANCE_ADDED: true.
-ABOUT_PREVIEW_MOBILE_RESPONSIVE: true.
-ABOUT_FORM_BEFORE_PREVIEW: true.
-ABOUT_SAVE_REMAINS_DISABLED: true.
-PUBLIC_ABOUT_UNCHANGED: true.
-SCHEDULE_CONTENT_UI_RESTORED: true.
-DISCOGRAPHY_CONTENT_UI_RESTORED: true.
-YOUTUBE_CONTENT_UI_RESTORED: true.
-ABOUT_CONTENT_UI_RESTORED: true.
-AUTH_UI_DEEMPHASIZED: true.
-DEVELOPER_DIAGNOSTICS_COLLAPSED: true.
-SAVE_REMAINS_DISABLED: true.
+Current phase: G-20u40-gosaki-discography-operational-edit-ui-local-implementation — complete (Edit UI + dry-run · Save disabled).
+DISCOGRAPHY_VIEW_EDIT_MODE_IMPLEMENTED: true.
+DISCOGRAPHY_TRACKLIST_MULTILINE_IMPLEMENTED: true.
+DISCOGRAPHY_UNSAVED_GUARD_IMPLEMENTED: true.
+DISCOGRAPHY_DRY_RUN_CONNECTED: true.
+DISCOGRAPHY_OPTIMISTIC_LOCK_PRESERVED: true.
+DISCOGRAPHY_SAVE_REMAINS_DISABLED: true.
+DISCOGRAPHY_IMAGE_EDIT_DEFERRED: true.
 FRESH_PACKAGE_REUPLOAD_REQUIRED: true.
-MULTI_ROUTE_ANON_ALLOWLIST_FIXED: true.
-P1-CON1: resolved. P1-ADM-MOB1: resolved.
-HOSTING_READY: false. GO_LIVE_READY: false. PRODUCTION_UPLOAD_READY: false.
-PUBLIC_READY: CONDITIONAL.
-Next: Commit/Push → G-20u39b5-gosaki-admin-multi-route-staging-package-generation-at-head → manual FTP → About STG recheck.```
+Previous: G-20u39b4/b5 multi-route + About form/preview.
+Next: Commit/Push → fresh package → manual FTP → Discography STG browser QA.```
+
+## G-20u40-gosaki-discography-operational-edit-ui-local-implementation — complete
+
+- **DISCOGRAPHY_VIEW_EDIT_MODE / TRACKLIST / UNSAVED / DRY_RUN / LOCK / SAVE_DISABLED / IMAGE_DEFERRED:** **true**
+- **Shared:** DiscographyContentPanel · EditToolbar · SaveDisabledStatus · operational-edit client
+- **Not done:** Save · DB write · package · FTP · jacket upload
+- **Next:** Commit / Push → fresh package → manual FTP → Discography STG browser QA
 
 ## G-20u39b4-gosaki-admin-multi-route-staging-package-and-manual-upload-prep — complete
 

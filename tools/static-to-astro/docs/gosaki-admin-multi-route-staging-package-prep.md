@@ -38,6 +38,31 @@ SAVE_REMAINS_DISABLED: true
 FRESH_PACKAGE_REUPLOAD_REQUIRED: true
 ```
 
+## Discography operational edit UI (G-20u40 local)
+
+STG / local Discography was browse-first with prototype dry-run on every album card.
+
+Fix (source + dry-run verify only — **no** Save · package · FTP):
+
+- Shared `AdminGosakiStagingDiscographyContentPanel` — **view mode** (album list + 編集する) → **edit mode** (1 album)
+- Editable: title / artist / release_date / label / purchase_url / description / tracks（1行=1曲 textarea）
+- Unsaved banner · cancel confirm · album switch confirm
+- Dry-run: existing STG Edge endpoint + `expectedBeforeUpdatedAt` preserved · Save disabled
+- Jacket: display only · 「画像変更は後続フェーズ」
+- Shared chrome: `AdminGosakiStagingEditToolbar` · `AdminGosakiStagingSaveDisabledStatus`
+- Client: `gosaki-staging-discography-operational-edit.ts`
+
+```txt
+DISCOGRAPHY_VIEW_EDIT_MODE_IMPLEMENTED: true
+DISCOGRAPHY_TRACKLIST_MULTILINE_IMPLEMENTED: true
+DISCOGRAPHY_UNSAVED_GUARD_IMPLEMENTED: true
+DISCOGRAPHY_DRY_RUN_CONNECTED: true
+DISCOGRAPHY_OPTIMISTIC_LOCK_PRESERVED: true
+DISCOGRAPHY_SAVE_REMAINS_DISABLED: true
+DISCOGRAPHY_IMAGE_EDIT_DEFERRED: true
+FRESH_PACKAGE_REUPLOAD_REQUIRED: true
+```
+
 ## About admin form + mobile preview follow-up (G-20u39b5 STG QA)
 
 STG About QA: preview-only feel · Profile/Bands edit location unclear · iPhone SE 375px horizontal overflow / clipped right edge.

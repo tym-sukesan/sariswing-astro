@@ -47,6 +47,7 @@ import { G16A_DRY_RUN_SLICE_APPROVAL_ID } from "../../../../../../src/lib/admin/
 import { G15D_DRY_RUN_SLICE_APPROVAL_ID } from "../../../../../../src/lib/admin/staging-write/gosaki-discography-next-field-types";
 import AdminGosakiStagingNav from "./AdminGosakiStagingNav.astro";
 import AdminGosakiStagingSafetyChips from "./AdminGosakiStagingSafetyChips.astro";
+import AdminGosakiStagingDiscographyContentPanel from "./AdminGosakiStagingDiscographyContentPanel.astro";
 import {
   GOSAKI_STAGING_ADMIN_BASE,
   GOSAKI_STAGING_PREVIEW_URL,
@@ -91,6 +92,22 @@ const selectedRow =
   binding.rows[0] ??
   null;
 const trackLines = selectedRow?.tracks.map((track) => track.title).join("\n") ?? "";
+const operationalAlbums = binding.rows.map((row) => ({
+  legacyId: row.legacy_id,
+  title: row.title,
+  artist: row.artist,
+  releaseDate: row.release_date,
+  label: row.label,
+  catalogNumber: row.catalog_number,
+  published: row.published !== false,
+  coverImageUrl: row.cover_image_url,
+  purchaseUrl: row.purchase_url,
+  streamingUrl: row.streaming_url,
+  description: row.description ?? "",
+  trackListText: row.tracks.map((track) => track.title).join("\n"),
+  trackCount: row.tracks.length,
+  updatedAt: row.updated_at,
+}));
 ---
 
 <section
@@ -213,6 +230,18 @@ const trackLines = selectedRow?.tracks.map((track) => track.title).join("\n") ??
   </header>
 
   <AdminGosakiStagingNav current="discography" />
+
+  <AdminGosakiStagingDiscographyContentPanel
+    albums={operationalAlbums}
+    dataSource={binding.source}
+    releaseCount={binding.releaseCount}
+    trackCount={binding.rows.reduce((n, row) => n + row.tracks.length, 0)}
+    publicDiscographyUrl={previewDiscographyUrl}
+    dryRunEndpointConfigured={false}
+  />
+
+  <details class="admin-gosaki-dev-tools" data-gosaki-admin-dev-details="true">
+    <summary>開発者情報（レガシー slice dry-run / Save configs）</summary>
 
   <p class="admin-gosaki-status-bar admin-gosaki-status-bar--soft" role="status">
     作品情報の確認・入力ができます。「変更を確認」で内容をプレビューできます。保存が必要な場合は管理者が行います。
@@ -604,10 +633,32 @@ const trackLines = selectedRow?.tracks.map((track) => track.title).join("\n") ??
       )
     }
   </section>
+  </details>
 </section>
 
 <script>
   import "../../../../../../src/lib/admin/staging-data/gosaki-staging-discography-admin-ui.ts";
+  import {
+    validateDiscographyTrackListDryRun,
+    buildDiscographyDryRunEndpointRequest,
+    sanitizeDiscographyDryRunEndpointDisplay,
+    assertG20u36cDiscographyDryRunEndpointSafe,
+    G20U36C_DISCOGRAPHY_DRY_RUN_OPERATION,
+    G20U36C_PRODUCTION_PROJECT_REF_STOP,
+  } from "../../../../site-extensions/gosaki-piano/gosaki-staging-read-only-admin";
+  import { initGosakiDiscographyOperationalEdit } from "../../../../site-extensions/gosaki-piano/gosaki-staging-discography-operational-edit";
+
+  const discRoot = document.getElementById("gosaki-discography-content");
+  if (discRoot instanceof HTMLElement) {
+    initGosakiDiscographyOperationalEdit(discRoot, {
+      validateTrackListDryRun: validateDiscographyTrackListDryRun,
+      buildEndpointRequest: buildDiscographyDryRunEndpointRequest,
+      sanitizeEndpointDisplay: sanitizeDiscographyDryRunEndpointDisplay,
+      assertEndpointSafe: assertG20u36cDiscographyDryRunEndpointSafe,
+      dryRunOperation: G20U36C_DISCOGRAPHY_DRY_RUN_OPERATION,
+      productionProjectRefStop: G20U36C_PRODUCTION_PROJECT_REF_STOP,
+    });
+  }
 </script>
 
 <style>

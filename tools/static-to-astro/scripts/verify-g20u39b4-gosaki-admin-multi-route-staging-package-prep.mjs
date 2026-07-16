@@ -176,6 +176,7 @@ assert(
   "apply copies content panels",
   applySrc.includes("AdminGosakiStagingScheduleContentPanel.astro") &&
     applySrc.includes("AdminGosakiStagingAboutContentPanel.astro") &&
+    applySrc.includes("AdminGosakiStagingDiscographyContentPanel.astro") &&
     applySrc.includes("AdminGosakiStagingCompactAuthBar.astro") &&
     applySrc.includes("buildScheduleAdminEventsSnapshot"),
 );
@@ -246,9 +247,8 @@ assert(
     ),
 );
 assert(
-  "discography has content marker + dry-run",
-  adminComponent.includes('data-gosaki-discography-content="true"') &&
-    adminComponent.includes("Dry-run validation（保存なし）"),
+  "component uses DiscographyContentPanel",
+  adminComponent.includes("AdminGosakiStagingDiscographyContentPanel"),
 );
 assert(
   "discography has no YouTube dry-run用 heading",
@@ -273,6 +273,15 @@ const schedulePanelSrc = read(
 const aboutPanelSrc = read(
   "tools/static-to-astro/templates/admin-cms/gosaki/components/AdminGosakiStagingAboutContentPanel.astro",
 );
+const discographyPanelSrc = read(
+  "tools/static-to-astro/templates/admin-cms/gosaki/components/AdminGosakiStagingDiscographyContentPanel.astro",
+);
+assert(
+  "discography has content marker + operational edit",
+  adminComponent.includes("AdminGosakiStagingDiscographyContentPanel") &&
+    discographyPanelSrc.includes('data-gosaki-discography-content="true"') &&
+    discographyPanelSrc.includes('data-gosaki-discography-operational-edit="true"'),
+);
 
 assert(
   "auth credentials form marked for gated display",
@@ -294,6 +303,82 @@ assert(
   "about panel has profile + bands",
   aboutPanelSrc.includes('data-about-block="profile"') &&
     aboutPanelSrc.includes('data-about-block="bands"'),
+);
+const editToolbarSrc = read(
+  "tools/static-to-astro/templates/admin-cms/gosaki/components/AdminGosakiStagingEditToolbar.astro",
+);
+const saveDisabledStatusSrc = read(
+  "tools/static-to-astro/templates/admin-cms/gosaki/components/AdminGosakiStagingSaveDisabledStatus.astro",
+);
+const discographyOpEditSrc = read(
+  "tools/static-to-astro/templates/site-extensions/gosaki-piano/gosaki-staging-discography-operational-edit.ts",
+);
+assert(
+  "discography panel view/edit mode markers",
+  discographyPanelSrc.includes("data-gosaki-disc-view-mode") &&
+    discographyPanelSrc.includes("data-gosaki-disc-edit-mode") &&
+    discographyPanelSrc.includes('data-mode="view"') &&
+    discographyPanelSrc.includes("AdminGosakiStagingEditToolbar") &&
+    editToolbarSrc.includes("data-gosaki-edit-start") &&
+    editToolbarSrc.includes("data-gosaki-edit-cancel"),
+);
+assert(
+  "discography tracklist multiline textarea",
+  discographyPanelSrc.includes('data-track-list-textarea="true"') &&
+    discographyPanelSrc.includes("1行 = 1曲") &&
+    !discographyPanelSrc.includes('name="track-1"') &&
+    !discographyPanelSrc.includes("data-fixed-track-slots"),
+);
+assert(
+  "discography edit fields present",
+  discographyPanelSrc.includes('data-gosaki-disc-field="title"') &&
+    discographyPanelSrc.includes('data-gosaki-disc-field="artist"') &&
+    discographyPanelSrc.includes('data-gosaki-disc-field="release_date"') &&
+    discographyPanelSrc.includes('data-gosaki-disc-field="label"') &&
+    discographyPanelSrc.includes('data-gosaki-disc-field="purchase_url"') &&
+    discographyPanelSrc.includes('data-gosaki-disc-field="description"') &&
+    discographyPanelSrc.includes('data-gosaki-disc-field="tracks"'),
+);
+assert(
+  "discography image edit deferred",
+  discographyPanelSrc.includes("画像変更は後続フェーズ") &&
+    !discographyPanelSrc.includes("uploadAdminImage") &&
+    !discographyPanelSrc.includes("data-image-upload"),
+);
+assert(
+  "discography unsaved guard in client",
+  discographyOpEditSrc.includes("isDirty") &&
+    discographyOpEditSrc.includes("UNSAVED_LEAVE") &&
+    discographyOpEditSrc.includes("UNSAVED_SWITCH") &&
+    discographyOpEditSrc.includes("data-gosaki-unsaved-banner"),
+);
+assert(
+  "discography dry-run connected without Save",
+  discographyOpEditSrc.includes("buildEndpointRequest") &&
+    discographyOpEditSrc.includes("expectedBeforeUpdatedAt") &&
+    discographyOpEditSrc.includes("dryRunInFlight") &&
+    !discographyOpEditSrc.includes("executeDiscographySave") &&
+    discographyPanelSrc.includes("showDryRun={true}") &&
+    editToolbarSrc.includes("data-gosaki-edit-dry-run") &&
+    saveDisabledStatusSrc.includes("data-gosaki-save-disabled"),
+);
+assert(
+  "discography optimistic lock preserved in request builder",
+  read(
+    "tools/static-to-astro/templates/site-extensions/gosaki-piano/gosaki-staging-read-only-admin.ts",
+  ).includes("expectedBeforeUpdatedAt: expected") &&
+    discographyOpEditSrc.includes("expectedBeforeUpdatedAt"),
+);
+assert(
+  "shared edit chrome components exist",
+  editToolbarSrc.includes("data-gosaki-edit-toolbar") &&
+    saveDisabledStatusSrc.includes("保存機能は現在無効です") &&
+    saveDisabledStatusSrc.includes("data-gosaki-save-disabled"),
+);
+assert(
+  "apply copies discography content panel",
+  applySrc.includes("AdminGosakiStagingDiscographyContentPanel.astro") &&
+    applySrc.includes("gosaki-staging-discography-operational-edit.ts"),
 );
 assert(
   "about panel form affordance markers",
@@ -398,7 +483,11 @@ assert(
   adminComponent.includes("data-gosaki-save-disabled-note") ||
     aboutPanelSrc.includes("data-gosaki-save-disabled-note"),
 );
-assert("discography dry-run retained", adminComponent.includes("Dry-run validation（保存なし）"));
+assert(
+  "discography dry-run retained",
+  adminComponent.includes("initGosakiDiscographyOperationalEdit") ||
+    discographyOpEditSrc.includes("initGosakiDiscographyOperationalEdit"),
+);
 assert(
   "no global Publish/Deploy/FTP disabled row restored",
   !adminComponent.includes("Publish（無効）") && !adminComponent.includes("Deploy（無効）"),
@@ -474,6 +563,18 @@ assert(
   ),
 );
 assert(
+  "tmp discography content panel copied",
+  fs.existsSync(
+    path.join(tmpOut, "src/components/gosaki-admin/AdminGosakiStagingDiscographyContentPanel.astro"),
+  ),
+);
+assert(
+  "tmp discography operational edit lib copied",
+  fs.existsSync(
+    path.join(tmpOut, "src/lib/gosaki-staging-discography-operational-edit.ts"),
+  ),
+);
+assert(
   "tmp compact auth copied",
   fs.existsSync(
     path.join(tmpOut, "src/components/gosaki-admin/AdminGosakiStagingCompactAuthBar.astro"),
@@ -516,6 +617,11 @@ assert(
 assert(
   "tmp component about content panel",
   appliedComponent.includes("AdminGosakiStagingAboutContentPanel"),
+);
+assert(
+  "tmp component discography content panel",
+  appliedComponent.includes("AdminGosakiStagingDiscographyContentPanel") &&
+    appliedComponent.includes("initGosakiDiscographyOperationalEdit"),
 );
 assert(
   "tmp component no YouTube dry-run用 on discography path",

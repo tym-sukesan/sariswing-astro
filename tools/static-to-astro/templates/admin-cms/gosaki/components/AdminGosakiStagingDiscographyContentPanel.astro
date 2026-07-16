@@ -1,0 +1,536 @@
+---
+/**
+ * Shared Discography operational panel (local shell + STG package).
+ * View mode → Edit mode (1 album) · dry-run · Save disabled · no image edit.
+ */
+import AdminGosakiStagingEditToolbar from "./AdminGosakiStagingEditToolbar.astro";
+import AdminGosakiStagingSaveDisabledStatus from "./AdminGosakiStagingSaveDisabledStatus.astro";
+
+export interface DiscographyAlbumView {
+  legacyId: string;
+  title: string;
+  artist?: string | null;
+  releaseDate?: string | null;
+  label?: string | null;
+  catalogNumber?: string | null;
+  published?: boolean;
+  coverImageUrl?: string | null;
+  purchaseUrl?: string | null;
+  streamingUrl?: string | null;
+  description?: string | null;
+  trackListText?: string;
+  trackCount?: number;
+  updatedAt?: string | null;
+}
+
+interface Props {
+  albums?: DiscographyAlbumView[];
+  dataSource?: string;
+  releaseCount?: number;
+  trackCount?: number;
+  publicDiscographyUrl?: string;
+  dryRunEndpointConfigured?: boolean;
+}
+
+const {
+  albums = [],
+  dataSource = "build-snapshot",
+  releaseCount = albums.length,
+  trackCount = albums.reduce((n, a) => n + (a.trackCount ?? 0), 0),
+  publicDiscographyUrl = "",
+  dryRunEndpointConfigured = false,
+} = Astro.props as Props;
+
+function display(value: string | null | undefined): string {
+  const t = String(value ?? "").trim();
+  return t || "—";
+}
+---
+
+<section
+  id="gosaki-discography-content"
+  class="gosaki-admin-content-panel gosaki-discography-content-panel"
+  data-section="admin-discography-content"
+  data-gosaki-discography-content="true"
+  data-gosaki-discography-operational-edit="true"
+  data-mode="view"
+  data-dry-run-endpoint-configured={dryRunEndpointConfigured ? "true" : "false"}
+  aria-label="ディスコグラフィー管理"
+>
+  <header class="gosaki-admin-content-panel__header">
+    <h1 class="gosaki-admin-content-panel__title">ディスコグラフィー</h1>
+    <p class="gosaki-admin-content-panel__subtitle" data-gosaki-disc-status>
+      アルバム一覧の確認と編集（閲覧／編集）· Save 無効
+    </p>
+    <p class="gosaki-admin-content-panel__meta" role="status">
+      <strong>{releaseCount}</strong> releases · <strong>{trackCount}</strong> tracks · source: {dataSource}
+      {
+        publicDiscographyUrl ? (
+          <>
+            {" · "}
+            <a
+              class="gosaki-read-only-admin__link"
+              href={publicDiscographyUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              data-gosaki-disc-public-link
+            >
+              公開 Discography を見る
+            </a>
+          </>
+        ) : null
+      }
+    </p>
+  </header>
+
+  <p
+    class="gosaki-discography-content-panel__unsaved"
+    data-gosaki-unsaved-banner
+    hidden
+    role="status"
+  >
+    未保存の変更があります
+  </p>
+
+  {/* —— View mode —— */}
+  <div class="gosaki-discography-content-panel__view" data-gosaki-disc-view-mode>
+    {
+      albums.length === 0 ? (
+        <p class="gosaki-admin-content-panel__empty">Discography データがありません。</p>
+      ) : (
+        <ul class="gosaki-discography-content-panel__album-list" data-gosaki-disc-album-list>
+          {albums.map((album) => (
+            <li
+              class="gosaki-discography-content-panel__album-item"
+              data-gosaki-disc-album-summary={album.legacyId}
+            >
+              <div class="gosaki-discography-content-panel__album-summary">
+                {
+                  album.coverImageUrl ? (
+                    <img
+                      class="gosaki-discography-content-panel__thumb"
+                      src={album.coverImageUrl}
+                      alt=""
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  ) : (
+                    <div class="gosaki-discography-content-panel__thumb gosaki-discography-content-panel__thumb--empty" aria-hidden="true" />
+                  )
+                }
+                <div class="gosaki-discography-content-panel__album-meta">
+                  <h2 class="gosaki-discography-content-panel__album-title">{album.title}</h2>
+                  <p class="gosaki-admin-content-panel__meta">
+                    {display(album.artist)} · {display(album.releaseDate)} · {album.trackCount ?? 0} tracks
+                  </p>
+                  <p class="gosaki-admin-content-panel__meta">{display(album.label)}</p>
+                </div>
+                <AdminGosakiStagingEditToolbar mode="view" />
+              </div>
+            </li>
+          ))}
+        </ul>
+      )
+    }
+    <AdminGosakiStagingSaveDisabledStatus />
+  </div>
+
+  {/* —— Edit mode (single album) —— */}
+  <div class="gosaki-discography-content-panel__edit" data-gosaki-disc-edit-mode hidden>
+    <div class="gosaki-discography-content-panel__edit-toolbar-row">
+      <AdminGosakiStagingEditToolbar mode="edit" showDryRun={true} />
+    </div>
+
+    <form
+      class="gosaki-discography-content-panel__form"
+      data-gosaki-disc-edit-form
+      data-album-legacy-id=""
+      data-expected-before-updated-at=""
+      data-original-snapshot=""
+      novalidate
+    >
+      <input type="hidden" name="legacy_id" data-gosaki-disc-field="legacy_id" value="" />
+      <input type="hidden" name="catalog_number" data-gosaki-disc-field="catalog_number" value="" />
+      <input type="hidden" name="published" data-gosaki-disc-field="published" value="true" />
+      <input type="hidden" name="streaming_url" data-gosaki-disc-field="streaming_url" value="" />
+      <input type="hidden" name="cover_image_url" data-gosaki-disc-field="cover_image_url" value="" />
+
+      <fieldset class="gosaki-discography-content-panel__fieldset">
+        <legend>基本情報</legend>
+        <label class="gosaki-discography-content-panel__field">
+          <span class="gosaki-discography-content-panel__label">タイトル</span>
+          <input
+            class="gosaki-discography-content-panel__control"
+            type="text"
+            name="title"
+            data-gosaki-disc-field="title"
+            autocomplete="off"
+          />
+        </label>
+        <label class="gosaki-discography-content-panel__field">
+          <span class="gosaki-discography-content-panel__label">アーティスト</span>
+          <input
+            class="gosaki-discography-content-panel__control"
+            type="text"
+            name="artist"
+            data-gosaki-disc-field="artist"
+            autocomplete="off"
+          />
+        </label>
+        <label class="gosaki-discography-content-panel__field">
+          <span class="gosaki-discography-content-panel__label">発売日</span>
+          <input
+            class="gosaki-discography-content-panel__control"
+            type="text"
+            name="release_date"
+            data-gosaki-disc-field="release_date"
+            autocomplete="off"
+          />
+        </label>
+        <label class="gosaki-discography-content-panel__field">
+          <span class="gosaki-discography-content-panel__label">レーベル</span>
+          <input
+            class="gosaki-discography-content-panel__control"
+            type="text"
+            name="label"
+            data-gosaki-disc-field="label"
+            autocomplete="off"
+          />
+        </label>
+      </fieldset>
+
+      <fieldset class="gosaki-discography-content-panel__fieldset">
+        <legend>リンク・説明</legend>
+        <label class="gosaki-discography-content-panel__field">
+          <span class="gosaki-discography-content-panel__label">購入URL</span>
+          <input
+            class="gosaki-discography-content-panel__control"
+            type="url"
+            name="purchase_url"
+            data-gosaki-disc-field="purchase_url"
+            autocomplete="off"
+          />
+        </label>
+        <label class="gosaki-discography-content-panel__field">
+          <span class="gosaki-discography-content-panel__label">説明文</span>
+          <textarea
+            class="gosaki-discography-content-panel__control gosaki-discography-content-panel__control--textarea"
+            name="description"
+            data-gosaki-disc-field="description"
+            rows="5"
+          />
+        </label>
+      </fieldset>
+
+      <fieldset class="gosaki-discography-content-panel__fieldset">
+        <legend>収録曲</legend>
+        <label class="gosaki-discography-content-panel__field">
+          <span class="gosaki-discography-content-panel__label">曲名（1行 = 1曲）</span>
+          <textarea
+            class="gosaki-discography-content-panel__control gosaki-discography-content-panel__control--tracks"
+            name="tracks"
+            data-gosaki-disc-field="tracks"
+            data-track-list-textarea="true"
+            data-original-track-list=""
+            rows="10"
+          />
+        </label>
+        <p class="gosaki-discography-content-panel__hint" role="note">
+          固定数の曲入力欄は使いません。行を増減して曲数を調整します。
+        </p>
+      </fieldset>
+
+      <fieldset class="gosaki-discography-content-panel__fieldset gosaki-discography-content-panel__fieldset--cover">
+        <legend>ジャケット画像</legend>
+        <div class="gosaki-discography-content-panel__cover" data-gosaki-disc-cover-preview>
+          <p class="gosaki-discography-content-panel__hint">画像変更は後続フェーズです。</p>
+        </div>
+      </fieldset>
+    </form>
+
+    <div
+      class="gosaki-discography-content-panel__dry-run"
+      data-gosaki-disc-dry-run-panel
+      data-gosaki-edit-dry-run-result
+    >
+      <h2 class="gosaki-discography-content-panel__section-title">変更確認（dry-run）</h2>
+      <p class="gosaki-discography-content-panel__hint">
+        既存 STG Discography dry-run endpoint へ接続します。DB には書き込みません。
+      </p>
+      <pre
+        class="gosaki-discography-content-panel__dry-run-result"
+        data-disc-endpoint-dry-run-result="album"
+        data-gosaki-disc-dry-run-result
+        aria-live="polite"
+      >（まだ確認していません）</pre>
+    </div>
+
+    <AdminGosakiStagingSaveDisabledStatus />
+  </div>
+
+  {/* Album data for client (JSON) */}
+  <script
+    type="application/json"
+    id="gosaki-disc-albums-json"
+    data-gosaki-disc-albums-json
+    set:html={JSON.stringify(albums)}
+  />
+
+  <details class="gosaki-read-only-admin__dev-details" data-gosaki-admin-dev-details="true">
+    <summary>開発者情報</summary>
+    <p class="gosaki-admin-content-panel__meta">
+      operational edit · dry-run only · Save disabled · image edit deferred
+    </p>
+    <ul class="gosaki-discography-content-panel__dev-list">
+      {
+        albums.map((album) => (
+          <li data-band-image={album.legacyId}>
+            <code>{album.legacyId}</code>
+            {" · updated_at: "}
+            <code>{album.updatedAt ?? "—"}</code>
+            {" · cover: "}
+            <code>{album.coverImageUrl ?? "—"}</code>
+          </li>
+        ))
+      }
+    </ul>
+  </details>
+</section>
+
+<style>
+  .gosaki-discography-content-panel {
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .gosaki-discography-content-panel__unsaved {
+    margin: 0 0 0.85rem;
+    padding: 0.55rem 0.75rem;
+    border-radius: 6px;
+    background: #fff7ed;
+    border: 1px solid #fdba74;
+    color: #9a3412;
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+
+  .gosaki-discography-content-panel__album-list {
+    list-style: none;
+    margin: 0 0 1.25rem;
+    padding: 0;
+    display: grid;
+    gap: 0.85rem;
+    min-width: 0;
+  }
+
+  .gosaki-discography-content-panel__album-item {
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .gosaki-discography-content-panel__album-summary {
+    display: grid;
+    grid-template-columns: 72px 1fr auto;
+    gap: 0.75rem;
+    align-items: center;
+    padding: 0.85rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    background: #fff;
+    min-width: 0;
+    box-sizing: border-box;
+  }
+
+  .gosaki-discography-content-panel__thumb {
+    width: 72px;
+    height: 72px;
+    object-fit: cover;
+    border-radius: 4px;
+    background: #f3f4f6;
+    max-width: 100%;
+  }
+
+  .gosaki-discography-content-panel__thumb--empty {
+    border: 1px dashed #d1d5db;
+  }
+
+  .gosaki-discography-content-panel__album-meta {
+    min-width: 0;
+  }
+
+  .gosaki-discography-content-panel__album-title {
+    margin: 0 0 0.25rem;
+    font-size: 1.05rem;
+    word-break: break-word;
+  }
+
+  .gosaki-discography-content-panel__form {
+    display: grid;
+    gap: 1rem;
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .gosaki-discography-content-panel__fieldset {
+    margin: 0;
+    padding: 0.85rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    background: #f8fafc;
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .gosaki-discography-content-panel__field {
+    display: grid;
+    gap: 0.35rem;
+    margin: 0 0 0.75rem;
+    min-width: 0;
+  }
+
+  .gosaki-discography-content-panel__label {
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+
+  .gosaki-discography-content-panel__control {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    padding: 0.55rem 0.7rem;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    background: #fff;
+    font: inherit;
+  }
+
+  .gosaki-discography-content-panel__control--textarea,
+  .gosaki-discography-content-panel__control--tracks {
+    resize: vertical;
+    min-height: 6rem;
+    white-space: pre-wrap;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 0.9rem;
+  }
+
+  .gosaki-discography-content-panel__hint {
+    margin: 0.25rem 0 0;
+    color: #6b7280;
+    font-size: 0.85rem;
+  }
+
+  .gosaki-discography-content-panel__cover img {
+    display: block;
+    max-width: min(220px, 100%);
+    height: auto;
+    border-radius: 4px;
+    border: 1px solid #e5e7eb;
+  }
+
+  .gosaki-discography-content-panel__section-title {
+    margin: 0 0 0.5rem;
+    font-size: 1.05rem;
+  }
+
+  .gosaki-discography-content-panel__dry-run {
+    margin: 1rem 0;
+    padding: 0.85rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    background: #fff;
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .gosaki-discography-content-panel__dry-run-result {
+    margin: 0.5rem 0 0;
+    padding: 0.75rem;
+    max-width: 100%;
+    overflow-x: auto;
+    background: #0f172a;
+    color: #e2e8f0;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    white-space: pre-wrap;
+    word-break: break-word;
+    box-sizing: border-box;
+  }
+
+  .gosaki-discography-content-panel__dev-list {
+    margin: 0.5rem 0 0;
+    padding-left: 1.1rem;
+    font-size: 0.8rem;
+    word-break: break-all;
+  }
+
+  .gosaki-admin-edit-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+  }
+
+  .gosaki-admin-edit-toolbar__btn {
+    padding: 0.45rem 0.8rem;
+    border-radius: 6px;
+    border: 1px solid #d1d5db;
+    background: #fff;
+    font: inherit;
+    cursor: pointer;
+  }
+
+  .gosaki-admin-edit-toolbar__btn--primary {
+    border-color: #1d4ed8;
+    background: #1d4ed8;
+    color: #fff;
+  }
+
+  .gosaki-admin-edit-toolbar__btn:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+
+  .gosaki-admin-save-disabled-status {
+    margin: 1rem 0 0;
+    padding: 0.75rem;
+    border: 1px dashed #d1d5db;
+    border-radius: 8px;
+    background: #f8fafc;
+  }
+
+  .gosaki-admin-save-disabled-status__message {
+    margin: 0 0 0.25rem;
+    font-weight: 600;
+  }
+
+  .gosaki-admin-save-disabled-status__hint {
+    margin: 0 0 0.65rem;
+    color: #6b7280;
+    font-size: 0.9rem;
+  }
+
+  .gosaki-admin-save-disabled-status__save {
+    padding: 0.45rem 0.85rem;
+    border-radius: 6px;
+    border: 1px solid #d1d5db;
+    background: #e5e7eb;
+    color: #6b7280;
+    font: inherit;
+    cursor: not-allowed;
+  }
+
+  @media (max-width: 560px) {
+    .gosaki-discography-content-panel__album-summary {
+      grid-template-columns: 56px 1fr;
+    }
+
+    .gosaki-discography-content-panel__album-summary .gosaki-admin-edit-toolbar {
+      grid-column: 1 / -1;
+    }
+  }
+</style>

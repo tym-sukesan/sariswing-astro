@@ -218,6 +218,8 @@ export interface DiscographyDryRunEndpointRequestInput {
   legacyId: string;
   tracksText: string;
   release: DiscographyDryRunEndpointReleaseInput;
+  /** Optimistic lock baseline — preserved for Edge dry-run (no Save). */
+  expectedBeforeUpdatedAt?: string | null;
   /**
    * Optional browser diff stats for Edge cross-check.
    * Local `wouldWrite` is UI-only — never forwarded to `clientDryRun.wouldWrite`.
@@ -310,12 +312,16 @@ export function buildDiscographyDryRunEndpointRequest(
   input: DiscographyDryRunEndpointRequestInput,
 ): Record<string, unknown> {
   const release = input.release;
+  const expected =
+    input.expectedBeforeUpdatedAt != null && String(input.expectedBeforeUpdatedAt).trim() !== ""
+      ? String(input.expectedBeforeUpdatedAt).trim()
+      : null;
   return {
     operation: G20U36C_DISCOGRAPHY_DRY_RUN_OPERATION,
     siteSlug: GOSAKI_STAGING_SITE_SLUG,
     legacyId: input.legacyId,
     approvalId: G20U36C_DISCOGRAPHY_DRY_RUN_APPROVAL_ID,
-    expectedBeforeUpdatedAt: null,
+    expectedBeforeUpdatedAt: expected,
     release: {
       title: release.title,
       artist: release.artist ?? null,

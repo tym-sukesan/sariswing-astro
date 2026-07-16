@@ -10,6 +10,7 @@ import AdminGosakiStagingNav from "./gosaki-admin/AdminGosakiStagingNav.astro";
 import AdminGosakiStagingSafetyChips from "./gosaki-admin/AdminGosakiStagingSafetyChips.astro";
 import AdminGosakiStagingScheduleContentPanel from "./gosaki-admin/AdminGosakiStagingScheduleContentPanel.astro";
 import AdminGosakiStagingAboutContentPanel from "./gosaki-admin/AdminGosakiStagingAboutContentPanel.astro";
+import AdminGosakiStagingDiscographyContentPanel from "./gosaki-admin/AdminGosakiStagingDiscographyContentPanel.astro";
 import AdminGosakiStagingCompactAuthBar from "./gosaki-admin/AdminGosakiStagingCompactAuthBar.astro";
 import {
   GOSAKI_STAGING_ADMIN_BASE,
@@ -249,270 +250,21 @@ const showClientScript = page !== "portal";
 
         {page === "discography" ? (
           <>
-<section
-          class="gosaki-read-only-admin__section gosaki-read-only-admin__section--discography-editor"
-          id="gra-discography-editor"
-          aria-labelledby="gra-discography-editor-heading"
-          data-section="discography-editor-prototype"
-          data-gosaki-discography-content="true"
-        >
-          <h2 id="gra-discography-editor-heading">Discography</h2>
-          <div class="gosaki-read-only-admin__banner gosaki-read-only-admin__banner--compact" role="status">
-            <div class="gosaki-read-only-admin__dashboard-badges">
-              <span class="gosaki-read-only-admin__pill gosaki-read-only-admin__pill--ok">dry-run可能</span>
-              <span class="gosaki-read-only-admin__pill gosaki-read-only-admin__pill--staging">テスト環境</span>
-              <span class="gosaki-read-only-admin__pill gosaki-read-only-admin__pill--warn">Save disabled</span>
-            </div>
-            <p class="gosaki-read-only-admin__meta">
-              変更プレビューのみです。データベースには書き込みません。
-            </p>
-          </div>
-          <p class="gosaki-read-only-admin__meta">
-            {discographyEditor.releaseCount} releases · {discographyEditor.trackCount} tracks
-            {discographyEditor.filteredRead ? " · filtered read" : ""}
-          </p>
-          <details class="gosaki-read-only-admin__dev-details">
-            <summary>開発者向け — Discography dry-run / package policy</summary>
-            <p class="gosaki-read-only-admin__meta">{G20U30_DISCOGRAPHY_DRY_RUN_NOTE}</p>
-            <p class="gosaki-read-only-admin__meta">{G20U36C_DISCOGRAPHY_DRY_RUN_NOTE}</p>
-            <ul class="gosaki-read-only-admin__safety-list">
-              <li>Dry-run only · No DB write · Save is still disabled</li>
-              <li>This checks the request and endpoint response only — nothing is saved</li>
-              <li>Endpoint dry-run POST: staging Edge Function（DB write なし）</li>
-              <li>本番 package には <code>/admin/</code> を含めません（sitemap からも除外）</li>
-              <li>本番 upload: G-20j まで STOP</li>
-              <li>
-                <strong>siteSlug:</strong> {discographyEditor.siteSlug} · source: {discographyEditor.dataSource}
-              </li>
-            </ul>
-          </details>
-
-          {discographyEditor.albums.length === 0 ? (
-            <p class="gosaki-read-only-admin__meta gosaki-read-only-admin__meta--warn">
-              Discography データがありません（build 時 Supabase read 未接続または 0 件）。
-            </p>
-          ) : (
-            <div class="gosaki-read-only-admin__discography-editor-grid">
-              {discographyEditor.albums.map((album) => (
-                <article
-                  class="gosaki-read-only-admin__album-card"
-                  data-album-legacy-id={album.legacyId}
-                  data-section-card="discography-album"
-                  data-release-title={album.title}
-                  data-release-artist={album.artist ?? ""}
-                  data-release-date={album.releaseDate ?? ""}
-                  data-release-label={album.label ?? ""}
-                  data-release-catalog-number={album.catalogNumber ?? ""}
-                  data-release-published={album.published ? "true" : "false"}
-                  data-release-cover-image-url={album.coverImageUrl ?? ""}
-                  data-release-purchase-url={album.purchaseUrl ?? ""}
-                  data-release-streaming-url={album.streamingUrl ?? ""}
-                  data-release-description={album.description ?? ""}
-                >
-                  <header class="gosaki-read-only-admin__album-card-header">
-                    <h3 class="gosaki-read-only-admin__album-card-title">{album.title}</h3>
-                    <p class="gosaki-read-only-admin__meta">
-                      {album.legacyId} · {album.trackCount} tracks
-                    </p>
-                  </header>
-
-                  {album.coverImageUrl ? (
-                    <div class="gosaki-read-only-admin__cover-preview-wrap">
-                      <img
-                        class="gosaki-read-only-admin__cover-preview"
-                        src={album.coverImageUrl}
-                        alt={`${album.title} cover`}
-                        loading="lazy"
-                      />
-                      <p class="gosaki-read-only-admin__meta gosaki-read-only-admin__cover-url">{album.coverImageUrl}</p>
-                    </div>
-                  ) : (
-                    <p class="gosaki-read-only-admin__meta">cover_image_url: —</p>
-                  )}
-
-                  <div class="gosaki-read-only-admin__field">
-                    <label for={`gra-disc-title-${album.legacyId}`}>title</label>
-                    <input id={`gra-disc-title-${album.legacyId}`} type="text" readonly value={album.title} />
-                  </div>
-                  <div class="gosaki-read-only-admin__field">
-                    <label for={`gra-disc-artist-${album.legacyId}`}>artist</label>
-                    <input
-                      id={`gra-disc-artist-${album.legacyId}`}
-                      type="text"
-                      readonly
-                      value={album.artist ?? "—"}
-                    />
-                  </div>
-                  <div class="gosaki-read-only-admin__field">
-                    <label for={`gra-disc-release-date-${album.legacyId}`}>release_date</label>
-                    <input
-                      id={`gra-disc-release-date-${album.legacyId}`}
-                      type="text"
-                      readonly
-                      value={album.releaseDate ?? "—"}
-                    />
-                  </div>
-                  <div class="gosaki-read-only-admin__field">
-                    <label for={`gra-disc-label-${album.legacyId}`}>label / catalog_number</label>
-                    <input
-                      id={`gra-disc-label-${album.legacyId}`}
-                      type="text"
-                      readonly
-                      value={`${album.label ?? "—"} · ${album.catalogNumber ?? "—"}`}
-                    />
-                  </div>
-                  <div class="gosaki-read-only-admin__field">
-                    <label for={`gra-disc-published-${album.legacyId}`}>published</label>
-                    <input
-                      id={`gra-disc-published-${album.legacyId}`}
-                      type="text"
-                      readonly
-                      value={album.published ? "true" : "false"}
-                    />
-                  </div>
-                  <div class="gosaki-read-only-admin__field">
-                    <label for={`gra-disc-purchase-${album.legacyId}`}>purchase_url</label>
-                    <input
-                      id={`gra-disc-purchase-${album.legacyId}`}
-                      type="url"
-                      readonly
-                      value={album.purchaseUrl ?? "—"}
-                    />
-                  </div>
-                  <div class="gosaki-read-only-admin__field">
-                    <label for={`gra-disc-streaming-${album.legacyId}`}>streaming_url</label>
-                    <input
-                      id={`gra-disc-streaming-${album.legacyId}`}
-                      type="url"
-                      readonly
-                      value={album.streamingUrl ?? "—"}
-                    />
-                  </div>
-                  <div class="gosaki-read-only-admin__field">
-                    <label for={`gra-disc-description-${album.legacyId}`}>
-                      description / personnel (readonly preview)
-                    </label>
-                    <textarea
-                      id={`gra-disc-description-${album.legacyId}`}
-                      class="gosaki-read-only-admin__textarea-readonly"
-                      readonly
-                      rows={4}
-                    >{album.description || "—"}</textarea>
-                  </div>
-                  <div class="gosaki-read-only-admin__field">
-                    <label for={`gra-disc-tracks-${album.legacyId}`}>
-                      track list — 1 line = 1 track · editable · Save disabled
-                    </label>
-                    <textarea
-                      id={`gra-disc-tracks-${album.legacyId}`}
-                      class="gosaki-read-only-admin__track-list-textarea gosaki-read-only-admin__track-list-textarea--editable"
-                      data-track-list-textarea="true"
-                      data-original-track-list={album.trackListText}
-                      rows={Math.max(4, Math.min(16, album.trackCount + 1))}
-                    >{album.trackListText || ""}</textarea>
-                  </div>
-                  <div class="gosaki-read-only-admin__dry-run" data-section="discography-dry-run-album">
-                    <div class="gosaki-read-only-admin__actions">
-                      <button
-                        type="button"
-                        class="gosaki-read-only-admin__btn gosaki-read-only-admin__btn--primary gosaki-read-only-admin__btn--dry-run"
-                        data-disc-dry-run-btn="album"
-                      >
-                        Dry-run validation（保存なし）
-                      </button>
-                    </div>
-                    <pre
-                      class="gosaki-read-only-admin__dry-run-result"
-                      data-disc-dry-run-result="album"
-                      aria-live="polite"
-                    >（Local dry-run — added / removed / changedLines · browser-only）</pre>
-                  </div>
-                  <div
-                    class="gosaki-read-only-admin__dry-run gosaki-read-only-admin__dry-run--endpoint"
-                    data-section="discography-endpoint-dry-run-album"
-                  >
-                    <p class="gosaki-read-only-admin__meta">
-                      Endpoint dry-run — POST to staging Edge Function · Dry-run only · No DB write · Save is still disabled
-                    </p>
-                    <p
-                      class:list={[
-                        "gosaki-read-only-admin__meta",
-                        discographyDryRunEndpoint
-                          ? "gosaki-read-only-admin__meta--ok"
-                          : "gosaki-read-only-admin__meta--warn",
-                      ]}
-                    >
-                      {
-                        discographyDryRunEndpoint
-                          ? "discography dry-run endpoint: configured (staging only)"
-                          : "discography dry-run endpoint: not configured"
-                      }
-                    </p>
-                    <div class="gosaki-read-only-admin__actions">
-                      <button
-                        type="button"
-                        class="gosaki-read-only-admin__btn gosaki-read-only-admin__btn--primary gosaki-read-only-admin__btn--dry-run"
-                        data-disc-endpoint-dry-run-btn="album"
-                      >
-                        Endpoint dry-run (POST · no save)
-                      </button>
-                    </div>
-                    <pre
-                      class="gosaki-read-only-admin__dry-run-result"
-                      data-disc-endpoint-dry-run-result="album"
-                      aria-live="polite"
-                    >（Endpoint dry-run — status / ok / wouldWrite / changedCounts · didWrite=false）</pre>
-                  </div>
-                  <div class="gosaki-read-only-admin__actions">
-                    <button type="button" class="gosaki-read-only-admin__btn" disabled title={G20U29_DISCOGRAPHY_EDITOR_SAVE_DISABLED_REASON}>
-                      Save（無効 — future phase）
-                    </button>
-                  </div>
-                </article>
-              ))}
-            </div>
-          )}
-
-          <div class="gosaki-read-only-admin__dry-run gosaki-read-only-admin__dry-run--all" data-section="discography-dry-run-all">
-            <h3 class="gosaki-read-only-admin__meta">All albums — Dry-run validation</h3>
-            <div class="gosaki-read-only-admin__actions">
-              <button
-                type="button"
-                id="gra-disc-dry-run-all-btn"
-                class="gosaki-read-only-admin__btn gosaki-read-only-admin__btn--primary gosaki-read-only-admin__btn--dry-run"
-                data-disc-dry-run-btn="all"
-              >
-                Validate changes — no save（全アルバム）
-              </button>
-            </div>
-            <pre
-              id="gra-disc-dry-run-all-result"
-              class="gosaki-read-only-admin__dry-run-result"
-              data-disc-dry-run-result="all"
-              aria-live="polite"
-            >（全アルバム Dry-run 結果 — wouldWrite: false · networkWrite: false）</pre>
-          </div>
-
-          <div class="gosaki-read-only-admin__actions">
-            <button type="button" class="gosaki-read-only-admin__btn" disabled title={G20U29_DISCOGRAPHY_EDITOR_SAVE_DISABLED_REASON}>
-              Save Discography（無効 — future phase）
-            </button>
-          </div>
-        </section>
-
-
-                        <AdminGosakiStagingCompactAuthBar
+            <AdminGosakiStagingDiscographyContentPanel
+              albums={discographyEditor.albums ?? []}
+              dataSource={discographyEditor.dataSource ?? "build-snapshot"}
+              releaseCount={discographyEditor.releaseCount ?? 0}
+              trackCount={discographyEditor.trackCount ?? 0}
+              publicDiscographyUrl={publicDiscographyUrl}
+              dryRunEndpointConfigured={Boolean(discographyDryRunEndpoint)}
+            />
+            <AdminGosakiStagingCompactAuthBar
               supabaseAuthConfigured={supabaseAuthConfigured}
               probePhase={G20U36E_ADMIN_PROBE_UI_TOOLS_DRAFT_PHASE}
               probeNote={G20U36E_ADMIN_PROBE_NOTE}
               probeButtonLabel={G20U36E_ADMIN_PROBE_BUTTON_LABEL}
               purposeNote="Endpoint dry-run 実行時のみログインが必要です。"
             />
-
-<p class="gosaki-read-only-admin__meta" role="note" data-gosaki-save-disabled-note="true">
-          Save は無効です。公開反映は管理者が行います。
-        </p>
-
           </>
         ) : null}
 
@@ -975,7 +727,6 @@ const showClientScript = page !== "portal";
     <script>
       import {
         validateDiscographyTrackListDryRun,
-        validateDiscographyTrackListDryRunBatch,
         buildDiscographyDryRunEndpointRequest,
         sanitizeDiscographyDryRunEndpointDisplay,
         assertG20u36cDiscographyDryRunEndpointSafe,
@@ -988,6 +739,7 @@ const showClientScript = page !== "portal";
         createG20u36eAdminProbeRunningDisplay,
         formatG20u36eAdminProbeDisplay,
       } from "../lib/gosaki-staging-read-only-admin";
+      import { initGosakiDiscographyOperationalEdit } from "../lib/gosaki-staging-discography-operational-edit";
 
       /** G-20u36e admin probe — manual `rpc('is_admin')` only · never logs tokens / user_id / email · never arms Save. */
       (function wireG20u36eAdminProbe() {
@@ -1100,192 +852,15 @@ const showClientScript = page !== "portal";
         }
       })();
 
-      function findAlbumCard(el) {
-        return el instanceof Element ? el.closest("[data-album-legacy-id]") : null;
-      }
-
-      function readReleaseFromCard(card) {
-        const legacyId = card.getAttribute("data-album-legacy-id") ?? "";
-        return {
-          legacyId,
-          release: {
-            title: card.getAttribute("data-release-title") ?? "",
-            artist: card.getAttribute("data-release-artist") || null,
-            release_date: card.getAttribute("data-release-date") || null,
-            label: card.getAttribute("data-release-label") || null,
-            catalog_number: card.getAttribute("data-release-catalog-number") || null,
-            published: card.getAttribute("data-release-published") === "true",
-            cover_image_url: card.getAttribute("data-release-cover-image-url") || null,
-            purchase_url: card.getAttribute("data-release-purchase-url") || null,
-            streaming_url: card.getAttribute("data-release-streaming-url") || null,
-            description: card.getAttribute("data-release-description") || null,
-          },
-        };
-      }
-
-      function runAlbumDryRun(card) {
-        if (!card) return;
-        const textarea = card.querySelector('[data-track-list-textarea="true"]');
-        const resultEl = card.querySelector('[data-disc-dry-run-result="album"]');
-        if (!textarea || !resultEl) return;
-        const original = textarea.getAttribute("data-original-track-list") ?? "";
-        const titleEl = card.querySelector(".gosaki-read-only-admin__album-card-title");
-        const result = validateDiscographyTrackListDryRun(original, textarea.value, {
-          legacyId: card.getAttribute("data-album-legacy-id") ?? undefined,
-          title: titleEl?.textContent?.trim() ?? undefined,
-        });
-        resultEl.textContent = JSON.stringify(result, null, 2);
-      }
-
-      async function runAlbumEndpointDryRun(card, btn) {
-        if (!card) return;
-        const textarea = card.querySelector('[data-track-list-textarea="true"]');
-        const resultEl = card.querySelector('[data-disc-endpoint-dry-run-result="album"]');
-        const body = document.body;
-        if (!textarea || !resultEl || !body) return;
-
-        const endpoint = (body.dataset.gosakiDiscographyDryRunEndpoint || "").trim();
-        const anonKey = (body.dataset.gosakiSupabaseAnonKey || "").trim();
-
-        if (!endpoint || !anonKey) {
-          resultEl.textContent = JSON.stringify(
-            {
-              ok: false,
-              errors: ["Endpoint or anon key not configured at build time"],
-              didWrite: false,
-              dbWrite: false,
-              networkWrite: false,
-              saveEnabled: false,
-            },
-            null,
-            2,
-          );
-          return;
-        }
-
-        if (
-          endpoint.includes(G20U36C_PRODUCTION_PROJECT_REF_STOP) ||
-          !assertG20u36cDiscographyDryRunEndpointSafe(endpoint)
-        ) {
-          resultEl.textContent = JSON.stringify(
-            {
-              ok: false,
-              errors: ["Production endpoint blocked — staging only"],
-              didWrite: false,
-              dbWrite: false,
-              networkWrite: false,
-              saveEnabled: false,
-            },
-            null,
-            2,
-          );
-          return;
-        }
-
-        const { legacyId, release } = readReleaseFromCard(card);
-        const original = textarea.getAttribute("data-original-track-list") ?? "";
-        const titleEl = card.querySelector(".gosaki-read-only-admin__album-card-title");
-        const localDryRun = validateDiscographyTrackListDryRun(original, textarea.value, {
-          legacyId,
-          title: titleEl?.textContent?.trim() ?? undefined,
-        });
-        const payload = buildDiscographyDryRunEndpointRequest({
-          legacyId,
-          tracksText: textarea.value,
-          release,
-          localDryRun: {
-            totalBefore: localDryRun.totalBefore,
-            totalAfter: localDryRun.totalAfter,
-            added: localDryRun.added,
-            removed: localDryRun.removed,
-            reordered: localDryRun.reordered,
-          },
-        });
-
-        if (payload.operation !== G20U36C_DISCOGRAPHY_DRY_RUN_OPERATION) {
-          resultEl.textContent = JSON.stringify(
-            {
-              ok: false,
-              errors: ["operation must be dryRun only"],
-              didWrite: false,
-              dbWrite: false,
-              networkWrite: false,
-              saveEnabled: false,
-            },
-            null,
-            2,
-          );
-          return;
-        }
-
-        if (btn instanceof HTMLButtonElement) btn.disabled = true;
-        resultEl.textContent = "Endpoint dry-run 送信中…（Dry-run only · No DB write · Save disabled）";
-
-        try {
-          const res = await fetch(endpoint, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: "Bearer " + anonKey,
-              apikey: anonKey,
-            },
-            body: JSON.stringify(payload),
-          });
-
-          let data = {};
-          try {
-            data = await res.json();
-          } catch {
-            data = { ok: false, errors: ["non-JSON response"] };
-          }
-
-          const display = sanitizeDiscographyDryRunEndpointDisplay(data, res.status);
-          resultEl.textContent = JSON.stringify(display, null, 2);
-        } catch (err) {
-          const message = err instanceof Error ? err.message : String(err);
-          resultEl.textContent = JSON.stringify(
-            {
-              ok: false,
-              fetchError: message,
-              didWrite: false,
-              dbWrite: false,
-              networkWrite: false,
-              saveEnabled: false,
-            },
-            null,
-            2,
-          );
-        } finally {
-          if (btn instanceof HTMLButtonElement) btn.disabled = false;
-        }
-      }
-
-      document.querySelectorAll('[data-disc-dry-run-btn="album"]').forEach((btn) => {
-        btn.addEventListener("click", () => runAlbumDryRun(findAlbumCard(btn)));
-      });
-
-      document.querySelectorAll('[data-disc-endpoint-dry-run-btn="album"]').forEach((btn) => {
-        btn.addEventListener("click", () => runAlbumEndpointDryRun(findAlbumCard(btn), btn));
-      });
-
-      const allBtn = document.getElementById("gra-disc-dry-run-all-btn");
-      const allResult = document.getElementById("gra-disc-dry-run-all-result");
-      if (allBtn && allResult) {
-        allBtn.addEventListener("click", () => {
-          const albums = [];
-          document.querySelectorAll("[data-album-legacy-id]").forEach((card) => {
-            const textarea = card.querySelector('[data-track-list-textarea="true"]');
-            const titleEl = card.querySelector(".gosaki-read-only-admin__album-card-title");
-            if (!textarea) return;
-            albums.push({
-              legacyId: card.getAttribute("data-album-legacy-id") ?? "",
-              title: titleEl?.textContent?.trim() ?? "",
-              originalText: textarea.getAttribute("data-original-track-list") ?? "",
-              nextText: textarea.value,
-            });
-          });
-          const batch = validateDiscographyTrackListDryRunBatch(albums);
-          allResult.textContent = JSON.stringify(batch, null, 2);
+      const discRoot = document.getElementById("gosaki-discography-content");
+      if (discRoot instanceof HTMLElement) {
+        initGosakiDiscographyOperationalEdit(discRoot, {
+          validateTrackListDryRun: validateDiscographyTrackListDryRun,
+          buildEndpointRequest: buildDiscographyDryRunEndpointRequest,
+          sanitizeEndpointDisplay: sanitizeDiscographyDryRunEndpointDisplay,
+          assertEndpointSafe: assertG20u36cDiscographyDryRunEndpointSafe,
+          dryRunOperation: G20U36C_DISCOGRAPHY_DRY_RUN_OPERATION,
+          productionProjectRefStop: G20U36C_PRODUCTION_PROJECT_REF_STOP,
         });
       }
     </script>

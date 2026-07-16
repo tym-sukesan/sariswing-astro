@@ -1,10 +1,11 @@
 # G-20u43a — Gosaki Discography label Save Edge deploy preflight
 
-**Phase:** `G-20u43a-gosaki-discography-label-save-edge-deploy-preflight`  
-**Status:** **complete** — read-only preflight record only  
-**Date:** 2026-07-17  
-**HEAD at preflight:** `5c0d892` (= `origin/main`; working tree clean at phase **start**)  
-**Deploy diff baseline (rollback):** `4c2e589` (pre-G-20u43 Edge source)  
+**Phase:** `G-20u43a-gosaki-discography-label-save-edge-deploy-preflight`
+**Status:** **complete** — preflight + post-deploy non-write smoke recorded
+**Date:** 2026-07-17
+**HEAD at preflight:** `5c0d892` (= `origin/main`; working tree clean at phase **start**)
+**HEAD at post-deploy smoke:** `7d09dbc` (= `origin/main`, working tree clean at smoke **start**)
+**Deploy diff baseline (rollback):** `4c2e589` (pre-G-20u43 Edge source)
 **Prior:** G-20u43 label controlled Save slice local implementation
 
 | Check | Status |
@@ -14,7 +15,8 @@
 | Deploy diff vs `4c2e589` documented | **yes** |
 | Safety / rollback / smoke-test plan fixed | **yes** |
 | Operator execution commands | **not in this doc** (ChatGPT later) |
-| Edge deploy | **no** |
+| Edge deploy | **yes** (operator · version **9**) |
+| Post-deploy non-write smoke | **yes** (Cursor · `7d09dbc`) |
 | Save request | **no** |
 | DB write | **no** |
 | env / Secret change | **no** |
@@ -28,6 +30,16 @@
 ```txt
 phase: G-20u43a-gosaki-discography-label-save-edge-deploy-preflight
 EDGE_DEPLOY_PREFLIGHT_READY: true
+EDGE_DEPLOY_COMPLETED: true
+DEPLOYED_VERSION_ACTIVE: true
+OPTIONS_CORS_PASSED: true
+UNAUTHENTICATED_REQUEST_REJECTED: true
+UNKNOWN_OPERATION_REJECTED: true
+WRONG_APPROVAL_REJECTED: true
+INVALID_NESTED_PAYLOAD_REJECTED: true
+BASELINE_LABEL_UNCHANGED: true
+BASELINE_UPDATED_AT_UNCHANGED: true
+FILTERED_READ_PASSED: true
 TARGET_PROJECT_FIXED: true
 TARGET_FUNCTION_FIXED: true
 SINGLE_FUNCTION_DEPLOY_CONFIRMED: true
@@ -35,16 +47,18 @@ NEW_SECRETS_REQUIRED: false
 NON_WRITE_SMOKE_TEST_PLAN_FIXED: true
 ROLLBACK_BASELINE_FIXED: true
 ROLLBACK_PLAN_FIXED: true
-EDGE_DEPLOY_EXECUTED: false
+EDGE_DEPLOY_EXECUTED: true
 SAVE_REQUEST_EXECUTED: false
+AUTHENTICATED_SAVE_REQUEST_EXECUTED: false
 DB_WRITE_EXECUTED: false
+ROLLBACK_EXECUTED: false
 CONTROLLED_SAVE_PREFLIGHT_READY: false
 SERVICE_ROLE_USED: false
 PRODUCTION_TOUCHED: false
 ```
 
-**STOP:** This phase does **not** authorize Edge deploy, env/Secret mutation, authenticated Save, or STG package arm.  
-**CONTROLLED_SAVE_PREFLIGHT_READY** remains **false** until a separate controlled Save execution-readiness phase after deploy + smoke.
+**STOP:** Post-deploy smoke **does not** authorize authenticated label Save or STG package arm.
+**CONTROLLED_SAVE_PREFLIGHT_READY** remains **false** until controlled Save execution-readiness phase.
 
 ---
 
@@ -57,7 +71,7 @@ PRODUCTION_TOUCHED: false
 | Production STOP | `vsbvndwuajjhnzpohghh` — **forbidden** |
 | Edge Function (only) | **`gosaki-discography-save-dry-run`** |
 | Endpoint path | `/functions/v1/gosaki-discography-save-dry-run` |
-| Source commit to deploy | **`5c0d892`** (G-20u43 on main) |
+| Source commit to deploy | **`5c0d892`** (G-20u43 on main) · deployed as version **9** @ `2026-07-16T17:00:40Z` |
 | Rollback baseline commit | **`4c2e589`** |
 
 **Out of scope:** all other Edge Functions · DB migrations · Secrets rotation · RLS · Storage · GitHub Actions · STG package regen · FTP.
@@ -73,7 +87,7 @@ PRODUCTION_TOUCHED: false
 | `supabase/functions/gosaki-discography-save-dry-run/handler.ts` | **+593 lines** — G-20u43 label slice + nested allowlist + update row classifier |
 | `supabase/functions/gosaki-discography-save-dry-run/index.ts` | **comment only** (+5 / −4) — documents G-20u43; **no runtime / CORS change** |
 
-**Local modules imported by deploy bundle:** **none** beyond `./handler.ts`.  
+**Local modules imported by deploy bundle:** **none** beyond `./handler.ts`.
 `handler.ts` imports only `npm:@supabase/supabase-js@2` (bundled by Supabase CLI).
 
 **Other repo Edge Functions exist** (`admin-schedule`, `gosaki-youtube-url-dry-run`, etc.) but are **not** in this deploy scope.
@@ -167,7 +181,7 @@ Optional: `deno check` on `supabase/functions/gosaki-discography-save-dry-run/in
 
 ## 4. Post-deploy non-write smoke test plan (criteria only)
 
-**Purpose:** confirm deploy did not widen write surface before any controlled Save execution.  
+**Purpose:** confirm deploy did not widen write surface before any controlled Save execution.
 **Operator procedure:** ChatGPT presents commands; this doc fixes **expected outcomes only**.
 
 ### Must NOT cause DB write
@@ -257,6 +271,67 @@ Optional: `deno check` on `supabase/functions/gosaki-discography-save-dry-run/in
 
 ## Recommended next
 
-**ChatGPT:** Edge deploy execution judgment + operator procedure (separate phase; not this doc).
+**ChatGPT:** controlled Save operator procedure finalization (after Commit / Push of smoke record).
 
-Do **not** treat `EDGE_DEPLOY_PREFLIGHT_READY: true` as permission to execute authenticated label Save.
+Do **not** treat post-deploy smoke PASS as permission to execute authenticated label Save without a separate execution-readiness phase.
+
+---
+
+## 8. Post-deploy non-write smoke results (`7d09dbc`)
+
+**Recorded:** 2026-07-17 · Cursor · no authenticated Save · no dry-run POST · no DB write · no rollback.
+
+### 8.1 Function version (`supabase functions list`)
+
+| Function | STATUS | VERSION | Notes |
+| --- | --- | --- | --- |
+| `gosaki-discography-save-dry-run` | **ACTIVE** | **9** | matches expected deployed version |
+| `gosaki-youtube-url-dry-run` | ACTIVE | 3 | unchanged |
+| `gosaki-youtube-url-save` | ACTIVE | 2 | unchanged |
+
+Project ref: **`kmjqppxjdnwwrtaeqjta`** only.
+
+### 8.2 OPTIONS / CORS
+
+| Check | Result |
+| --- | --- |
+| HTTP status | **200** |
+| `Access-Control-Allow-Origin` | **`*`** |
+| `Access-Control-Allow-Methods` | **`POST, OPTIONS`** |
+| DB write | **none** |
+
+### 8.3 Unauthenticated POST rejection (no `Authorization` header)
+
+All cases used `Content-Type: application/json` + `apikey` only (no Bearer JWT). **No retry.**
+
+| Case | HTTP | `ok` | `didWrite` / `dbWrite` | Result |
+| --- | --- | --- | --- | --- |
+| A. unknown `operation` (`unknownOperation`) | **401** | n/a | n/a | **reject** (not 2xx) |
+| B. wrong approval (`G-20u36…` tracklist Save ID) + `operation=save` | **401** | n/a | n/a | **reject** (not 2xx) |
+| C. G-20u43 approval + `release.extra` (invalid nested) | **401** | n/a | n/a | **reject** (not 2xx) |
+
+**Note:** Rejection occurred at the **gateway/auth layer (401)** before Edge handler body evaluation. No JSON success body · no write flags observed.
+
+### 8.4 Baseline unchanged (read-only SELECT)
+
+| Item | Value | Match |
+| --- | --- | --- |
+| Filtered releases (`site_slug=gosaki-piano`) | **4** | yes (G-20u25 PASS) |
+| Filtered tracks | **34** | yes (G-20u25 PASS) |
+| `discography-004.label` | `Mardi Gras JAPAN Records` | **exact** |
+| `discography-004.updated_at` | `2026-07-10T05:59:35.138671+00:00` | **exact** |
+
+### 8.5 Verifiers re-run (post-smoke)
+
+| Verifier | Result |
+| --- | --- |
+| `verify:g20u25-discography-filtered-read-enablement` | **PASS** (49) |
+| `verify:g20u43-gosaki-discography-label-controlled-save-slice-local-implementation` | **PASS** (90) |
+| `verify:g20u43a-gosaki-discography-label-save-edge-deploy-preflight` | **PASS** (post-smoke record) |
+| `verify:current-active-regression` | **23/23 PASS** |
+
+### 8.6 Not executed
+
+- authenticated G-20u43 Save payload
+- formal dry-run network POST
+- DB write / SQL / rollback / env change / package / FTP / production

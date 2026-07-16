@@ -5,24 +5,21 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u43a-gosaki-discography-label-save-edge-deploy-preflight — complete (read-only).
-EDGE_DEPLOY_PREFLIGHT_READY: true.
-TARGET: static-to-astro-cms-staging / kmjqppxjdnwwrtaeqjta / gosaki-discography-save-dry-run only.
-NEW_SECRETS_REQUIRED: false.
-ROLLBACK_BASELINE: 4c2e589 · deploy source: 5c0d892.
-EDGE_DEPLOY / SAVE / DB_WRITE: false (this phase).
+Current phase: G-20u43a-gosaki-discography-label-save-edge-deploy-preflight — complete (post-deploy smoke).
+EDGE_DEPLOY_COMPLETED: true · DEPLOYED_VERSION_ACTIVE: true (v9).
+OPTIONS_CORS_PASSED: true · baseline label/updated_at unchanged.
+AUTHENTICATED_SAVE / DB_WRITE: false.
 CONTROLLED_SAVE_PREFLIGHT_READY: false.
-Next: ChatGPT Edge deploy execution judgment + operator procedure (not in repo doc).```
+Next: Commit/Push → ChatGPT controlled Save operator procedure finalization.```
 
-## G-20u43a-gosaki-discography-label-save-edge-deploy-preflight — complete
+## G-20u43a-gosaki-discography-label-save-edge-deploy-preflight — complete (post-deploy smoke)
 
-- **Doc:** `gosaki-discography-label-save-edge-deploy-preflight.md`
+- **Doc:** `gosaki-discography-label-save-edge-deploy-preflight.md` (§8 results)
 - **Verifier:** `verify:g20u43a-gosaki-discography-label-save-edge-deploy-preflight`
-- **Deploy scope:** single function `gosaki-discography-save-dry-run` · staging ref only · no new Secrets
-- **Rollback:** redeploy from commit `4c2e589` via worktree — no main reset · no DB rollback
-- **Smoke plan:** non-write only — no authenticated G-20u43 Save in smoke phase
-- **Do not:** deploy · Save · DB write · paste operator commands into repo doc
-- **Next:** ChatGPT presents deploy + smoke operator steps
+- **Deployed:** `gosaki-discography-save-dry-run` v**9** @ `kmjqppxjdnwwrtaeqjta`
+- **Smoke:** OPTIONS 200 · unauthenticated POST → 401 (no 2xx) · baseline 4/34 · label/updated_at exact
+- **Not done:** authenticated Save · dry-run POST · DB write · rollback
+- **Next:** Commit/Push → ChatGPT controlled Save operator procedure
 
 ## G-20u43-gosaki-discography-label-controlled-save-slice-local-implementation — complete (not execution-ready)
 

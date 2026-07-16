@@ -1,34 +1,39 @@
 Last updated: 2026-07-17
 Project: Static-to-Astro CMS / Musician CMS Kit
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u43a-gosaki-discography-label-save-edge-deploy-preflight — complete
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u43a-gosaki-discography-label-save-edge-deploy-preflight — complete (post-deploy smoke)
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-20u43a-gosaki-discography-label-save-edge-deploy-preflight` |
 | EDGE_DEPLOY_PREFLIGHT_READY | **true** |
-| TARGET_PROJECT_FIXED | **true** (`kmjqppxjdnwwrtaeqjta`) |
-| TARGET_FUNCTION_FIXED | **true** (`gosaki-discography-save-dry-run`) |
-| SINGLE_FUNCTION_DEPLOY_CONFIRMED | **true** |
-| NEW_SECRETS_REQUIRED | **false** |
-| NON_WRITE_SMOKE_TEST_PLAN_FIXED | **true** |
-| ROLLBACK_BASELINE_FIXED | **true** (`4c2e589`) |
-| ROLLBACK_PLAN_FIXED | **true** |
-| EDGE_DEPLOY / SAVE / DB_WRITE | **false** |
+| EDGE_DEPLOY_COMPLETED | **true** |
+| DEPLOYED_VERSION_ACTIVE | **true** (v**9**) |
+| OPTIONS_CORS_PASSED | **true** |
+| UNAUTHENTICATED_REQUEST_REJECTED | **true** |
+| UNKNOWN_OPERATION_REJECTED | **true** |
+| WRONG_APPROVAL_REJECTED | **true** |
+| INVALID_NESTED_PAYLOAD_REJECTED | **true** |
+| BASELINE_LABEL_UNCHANGED | **true** |
+| BASELINE_UPDATED_AT_UNCHANGED | **true** |
+| FILTERED_READ_PASSED | **true** |
+| AUTHENTICATED_SAVE_REQUEST_EXECUTED | **false** |
+| DB_WRITE_EXECUTED | **false** |
 | CONTROLLED_SAVE_PREFLIGHT_READY | **false** |
-| Next | **ChatGPT** Edge deploy execution judgment + operator procedure |
+| Next | Commit/Push → ChatGPT controlled Save operator procedure |
 
 ```txt
-EDGE_DEPLOY_PREFLIGHT_READY: true
-TARGET_PROJECT_FIXED: true
-TARGET_FUNCTION_FIXED: true
-SINGLE_FUNCTION_DEPLOY_CONFIRMED: true
-NEW_SECRETS_REQUIRED: false
-NON_WRITE_SMOKE_TEST_PLAN_FIXED: true
-ROLLBACK_BASELINE_FIXED: true
-ROLLBACK_PLAN_FIXED: true
-EDGE_DEPLOY_EXECUTED: false
-SAVE_REQUEST_EXECUTED: false
+EDGE_DEPLOY_COMPLETED: true
+DEPLOYED_VERSION_ACTIVE: true
+OPTIONS_CORS_PASSED: true
+UNAUTHENTICATED_REQUEST_REJECTED: true
+UNKNOWN_OPERATION_REJECTED: true
+WRONG_APPROVAL_REJECTED: true
+INVALID_NESTED_PAYLOAD_REJECTED: true
+BASELINE_LABEL_UNCHANGED: true
+BASELINE_UPDATED_AT_UNCHANGED: true
+FILTERED_READ_PASSED: true
+AUTHENTICATED_SAVE_REQUEST_EXECUTED: false
 DB_WRITE_EXECUTED: false
 CONTROLLED_SAVE_PREFLIGHT_READY: false
 ```

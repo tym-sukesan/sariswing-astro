@@ -82,6 +82,21 @@ assert(
 );
 assert("doc phase id", doc.includes(PHASE));
 assert("doc EDGE_DEPLOY_PREFLIGHT_READY true", doc.includes("EDGE_DEPLOY_PREFLIGHT_READY: true"));
+assert("doc EDGE_DEPLOY_COMPLETED true", doc.includes("EDGE_DEPLOY_COMPLETED: true"));
+assert("doc DEPLOYED_VERSION_ACTIVE true", doc.includes("DEPLOYED_VERSION_ACTIVE: true"));
+assert("doc OPTIONS_CORS_PASSED true", doc.includes("OPTIONS_CORS_PASSED: true"));
+assert("doc UNAUTHENTICATED_REQUEST_REJECTED true", doc.includes("UNAUTHENTICATED_REQUEST_REJECTED: true"));
+assert("doc UNKNOWN_OPERATION_REJECTED true", doc.includes("UNKNOWN_OPERATION_REJECTED: true"));
+assert("doc WRONG_APPROVAL_REJECTED true", doc.includes("WRONG_APPROVAL_REJECTED: true"));
+assert("doc INVALID_NESTED_PAYLOAD_REJECTED true", doc.includes("INVALID_NESTED_PAYLOAD_REJECTED: true"));
+assert("doc BASELINE_LABEL_UNCHANGED true", doc.includes("BASELINE_LABEL_UNCHANGED: true"));
+assert("doc BASELINE_UPDATED_AT_UNCHANGED true", doc.includes("BASELINE_UPDATED_AT_UNCHANGED: true"));
+assert("doc FILTERED_READ_PASSED true", doc.includes("FILTERED_READ_PASSED: true"));
+assert("doc deployed version 9", doc.includes("VERSION") && doc.includes("| **9**"));
+assert("doc post-deploy smoke section", doc.includes("Post-deploy non-write smoke results"));
+assert("doc smoke OPTIONS 200", doc.includes("HTTP status") && doc.includes("**200**"));
+assert("doc smoke rejection 401", doc.includes("**401**"));
+assert("doc AUTHENTICATED_SAVE_REQUEST_EXECUTED false", doc.includes("AUTHENTICATED_SAVE_REQUEST_EXECUTED: false"));
 assert("doc TARGET_PROJECT_FIXED true", doc.includes("TARGET_PROJECT_FIXED: true"));
 assert("doc TARGET_FUNCTION_FIXED true", doc.includes("TARGET_FUNCTION_FIXED: true"));
 assert(
@@ -95,9 +110,10 @@ assert(
 );
 assert("doc ROLLBACK_BASELINE_FIXED true", doc.includes("ROLLBACK_BASELINE_FIXED: true"));
 assert("doc ROLLBACK_PLAN_FIXED true", doc.includes("ROLLBACK_PLAN_FIXED: true"));
-assert("doc EDGE_DEPLOY_EXECUTED false", doc.includes("EDGE_DEPLOY_EXECUTED: false"));
+assert("doc EDGE_DEPLOY_EXECUTED true", doc.includes("EDGE_DEPLOY_EXECUTED: true"));
 assert("doc SAVE_REQUEST_EXECUTED false", doc.includes("SAVE_REQUEST_EXECUTED: false"));
 assert("doc DB_WRITE_EXECUTED false", doc.includes("DB_WRITE_EXECUTED: false"));
+assert("doc ROLLBACK_EXECUTED false", doc.includes("ROLLBACK_EXECUTED: false"));
 assert(
   "doc CONTROLLED_SAVE_PREFLIGHT_READY false",
   doc.includes("CONTROLLED_SAVE_PREFLIGHT_READY: false"),

@@ -5,13 +5,27 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u39b-gosaki-staging-p1-admin-mobile-left-align-polish — complete.
-P1-ADM-MOB1: resolved. ADMIN_MOBILE_STG_BROWSER_RECHECK_PASSED: true.
-STG_BROWSER_RECHECK_REQUIRED: false. P1-CON1: resolved.
+Current phase: G-20u39b2-gosaki-admin-operational-ui-information-architecture-planning — complete.
+ADMIN_OPERATIONAL_UI_IA_PLANNED: true. IMPLEMENTATION_EXECUTED: false.
+P1-CON1: resolved. P1-ADM-MOB1: resolved.
 HOSTING_READY: false. GO_LIVE_READY: false. PRODUCTION_UPLOAD_READY: false.
 PUBLIC_READY: CONDITIONAL.
-Next: G-20u39c-gosaki-staging-public-mobile-visual-p1-review.
+Next: G-20u39b3-gosaki-admin-portal-and-content-routes-local-implementation.
+Alternate: G-20u39c-gosaki-staging-public-mobile-visual-p1-review.
 ```
+
+## G-20u39b2-gosaki-admin-operational-ui-information-architecture-planning — complete
+
+- **Gate:** `gosakiAdminOperationalUiInformationArchitecturePlanned: true`
+- **ADMIN_OPERATIONAL_UI_IA_PLANNED:** **true**
+- **ADMIN_PORTAL_ROUTE_PLANNED:** **true**
+- **INDIVIDUAL_CONTENT_ADMIN_ROUTES_PLANNED:** **true**
+- **IMPLEMENTATION_EXECUTED:** **false**
+- **IA:** portal `/admin/` + Schedule / Discography / YouTube / About (+ Contact read-only)
+- **Dev content:** A retain chips · B developer details · C remove FTP/phase noise from main UI
+- **Not done:** implementation · Save · build · package · FTP
+- **Next:** **G-20u39b3-gosaki-admin-portal-and-content-routes-local-implementation**
+- **Alternate:** **G-20u39c-gosaki-staging-public-mobile-visual-p1-review**
 
 ## G-20u39b-gosaki-staging-p1-admin-mobile-left-align-polish — complete
 

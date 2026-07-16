@@ -1,6 +1,39 @@
 Last updated: 2026-07-17
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u42-gosaki-discography-controlled-save-enablement-preflight — complete (not execution-ready)
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u42-gosaki-discography-controlled-save-enablement-preflight` |
+| CONTROLLED_SAVE_PREFLIGHT_READY | **false** |
+| CONTROLLED_SAVE_TARGET_FIXED | **false** |
+| EXACT_BEFORE_VALUE_CAPTURED | **true** |
+| EXACT_RESTORE_VALUE_FIXED | **true** |
+| OPTIMISTIC_LOCK_BASELINE_CAPTURED | **true** |
+| EXECUTION_SURFACE_RECOMMENDED | **local_shell** |
+| ARM_DISARM_PLAN_FIXED | **true** |
+| RESTORE_PLAN_FIXED | **true** |
+| Preferred future candidate | `discography-004` · `label` · before `Mardi Gras JAPAN Records` |
+| DB_WRITE_EXECUTED | **false** |
+| ENV_CHANGED / PACKAGE / FTP | **false** |
+| Next | ChatGPT: facts→手順は「実行 ready」にしない · 次フェーズは scalar Edge allowlist / UI payload 整合 |
+
+```txt
+CONTROLLED_SAVE_PREFLIGHT_READY: false
+CONTROLLED_SAVE_TARGET_FIXED: false
+EXACT_BEFORE_VALUE_CAPTURED: true
+EXACT_RESTORE_VALUE_FIXED: true
+OPTIMISTIC_LOCK_BASELINE_CAPTURED: true
+EXECUTION_SURFACE_RECOMMENDED: local_shell
+ARM_DISARM_PLAN_FIXED: true
+RESTORE_PLAN_FIXED: true
+DB_WRITE_EXECUTED: false
+ENV_CHANGED: false
+PACKAGE_GENERATED: false
+FTP_EXECUTED: false
+```
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u41-gosaki-discography-operational-save-ui-gated-local-wiring — completed
 
 | Item | Value |
@@ -15,7 +48,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | DB_WRITE_EXECUTED | **false** |
 | uploadedPackageSourceCommit | `930a2fb9569d510e185813e91631ab6512854c82` |
 | G-20u41 | **completed** |
-| Next | **G-20u42-gosaki-discography-controlled-save-enablement-preflight** |
+| Next | ~~G-20u42~~ complete (not execution-ready) |
 
 ```txt
 DISCOGRAPHY_STG_FORM_LAYOUT_QA_PASSED: true

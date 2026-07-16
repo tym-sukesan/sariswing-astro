@@ -5,12 +5,20 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u43a-gosaki-discography-label-save-edge-deploy-preflight — complete (post-deploy smoke).
-EDGE_DEPLOY_COMPLETED: true · DEPLOYED_VERSION_ACTIVE: true (v9).
-OPTIONS_CORS_PASSED: true · baseline label/updated_at unchanged.
-AUTHENTICATED_SAVE / DB_WRITE: false.
-CONTROLLED_SAVE_PREFLIGHT_READY: false.
-Next: Commit/Push → ChatGPT controlled Save operator procedure finalization.```
+Current phase: G-20u44a-gosaki-discography-local-controlled-save-wiring-fix — complete.
+LOCAL_OPERATOR_SAVE_ARM_WIRED: true · CONTROLLED_SAVE_EXECUTION_READY: true.
+Edge v9 active · STG package default disarmed (unchanged).
+SAVE_REQUEST_EXECUTED: false · DB_WRITE_EXECUTED: false.
+Next: Commit/Push → ChatGPT controlled Save operator procedure.```
+
+## G-20u44a-gosaki-discography-local-controlled-save-wiring-fix — complete
+
+- **Fix:** local `__admin-staging-shell/musician-basic/admin/discography/` mirrors `GosakiStagingReadOnlyAdminPage` body datasets + `getAccessToken` + env-armed `saveArmed`
+- **Files:** `AdminGosakiStagingShellLayout.astro` · `AdminGosakiStagingDiscographyOperatorPage.astro` · `GosakiStagingAdminDiscographyPage.astro` · `AdminLayout.astro`
+- **Gates:** LOCAL_OPERATOR_* wired · UNARMED fails closed · STG package disarmed unchanged
+- **CONTROLLED_SAVE_EXECUTION_READY:** **true** (operator Save still manual one-off)
+- **Not done:** Save request · dry-run network · DB write
+- **Next:** Commit/Push → ChatGPT operator procedure
 
 ## G-20u43a-gosaki-discography-label-save-edge-deploy-preflight — complete (post-deploy smoke)
 

@@ -52,12 +52,35 @@ import {
   GOSAKI_STAGING_ADMIN_BASE,
   GOSAKI_STAGING_PREVIEW_URL,
 } from "../gosaki-staging-admin-paths";
+import {
+  assertG20u36cDiscographyDryRunEndpointSafe,
+  assertG20u36eAdminProbeSupabaseHostSafe,
+  isG11c4aSupabaseAuthConfigured,
+  resolveG11c4aSupabaseAnonKey,
+  resolveG11c4aSupabaseUrl,
+  resolveG20u36cDiscographyDryRunEndpoint,
+} from "../../../site-extensions/gosaki-piano/gosaki-staging-read-only-admin";
 
 interface Props {
   binding: GosakiDiscographySupabaseReadBinding;
 }
 
 const { binding } = Astro.props;
+const discographyDryRunEndpoint = resolveG20u36cDiscographyDryRunEndpoint(import.meta.env);
+const supabaseUrl = resolveG11c4aSupabaseUrl(import.meta.env);
+const supabaseAnonKey = resolveG11c4aSupabaseAnonKey(import.meta.env);
+const authProvider = String(import.meta.env.PUBLIC_ADMIN_AUTH_PROVIDER ?? "").trim();
+const dataProvider = String(import.meta.env.PUBLIC_ADMIN_DATA_PROVIDER ?? "").trim();
+const stagingShellEnabled = import.meta.env.ENABLE_ADMIN_STAGING_SHELL === "true";
+const dryRunEndpointConfigured =
+  stagingShellEnabled &&
+  authProvider === "supabase" &&
+  dataProvider === "supabase" &&
+  Boolean(discographyDryRunEndpoint) &&
+  Boolean(supabaseAnonKey) &&
+  assertG20u36cDiscographyDryRunEndpointSafe(discographyDryRunEndpoint) &&
+  assertG20u36eAdminProbeSupabaseHostSafe(supabaseUrl) &&
+  isG11c4aSupabaseAuthConfigured(import.meta.env);
 const pageConfig = resolveG15a2DiscographyPageServerConfig(import.meta.env);
 const savePageConfig = resolveG15bDiscographySavePageServerConfig(import.meta.env);
 const g15dSavePageConfig = resolveG15dDiscographySavePageServerConfig(import.meta.env);
@@ -237,7 +260,7 @@ const operationalAlbums = binding.rows.map((row) => ({
     releaseCount={binding.releaseCount}
     trackCount={binding.rows.reduce((n, row) => n + row.tracks.length, 0)}
     publicDiscographyUrl={previewDiscographyUrl}
-    dryRunEndpointConfigured={false}
+    dryRunEndpointConfigured={dryRunEndpointConfigured}
   />
 
   <details class="admin-gosaki-dev-tools" data-gosaki-admin-dev-details="true">
@@ -638,6 +661,7 @@ const operationalAlbums = binding.rows.map((row) => ({
 
 <script>
   import "../../../../../../src/lib/admin/staging-data/gosaki-staging-discography-admin-ui.ts";
+  import { getStagingSupabaseClient } from "../../../../../../src/lib/admin/staging-auth/supabase-staging-auth-client";
   import {
     validateDiscographyTrackListDryRun,
     buildDiscographyDryRunEndpointRequest,
@@ -652,11 +676,30 @@ const operationalAlbums = binding.rows.map((row) => ({
     G20U41_DISCOGRAPHY_SAVE_APPROVAL_ID,
     G20U41_DISCOGRAPHY_CONFLICT_MESSAGE,
     G20U36C_PRODUCTION_PROJECT_REF_STOP,
-  } from "../../../../site-extensions/gosaki-piano/gosaki-staging-read-only-admin";
-  import { initGosakiDiscographyOperationalEdit } from "../../../../site-extensions/gosaki-piano/gosaki-staging-discography-operational-edit";
+  } from "../../../site-extensions/gosaki-piano/gosaki-staging-read-only-admin";
+  import { initGosakiDiscographyOperationalEdit } from "../../../site-extensions/gosaki-piano/gosaki-staging-discography-operational-edit";
+
+  function resolveDiscographyAccessToken(): Promise<string | null> {
+    const body = document.body;
+    const supabaseUrl = (body?.dataset.gosakiSupabaseUrl || "").trim();
+    const supabaseAnonKey = (body?.dataset.gosakiSupabaseAnonKey || "").trim();
+    const configured = body?.dataset.gosakiSupabaseAuthConfigured === "true";
+    if (!configured || !supabaseUrl || !supabaseAnonKey) {
+      return Promise.resolve(null);
+    }
+    try {
+      const client = getStagingSupabaseClient(supabaseUrl, supabaseAnonKey);
+      return client.auth
+        .getSession()
+        .then((res) => res.data?.session?.access_token ?? null);
+    } catch {
+      return Promise.resolve(null);
+    }
+  }
 
   const discRoot = document.getElementById("gosaki-discography-content");
   if (discRoot instanceof HTMLElement) {
+    const body = document.body;
     initGosakiDiscographyOperationalEdit(discRoot, {
       validateTrackListDryRun: validateDiscographyTrackListDryRun,
       buildDryRunEndpointRequest: buildDiscographyDryRunEndpointRequest,
@@ -669,9 +712,10 @@ const operationalAlbums = binding.rows.map((row) => ({
       dryRunOperation: G20U36C_DISCOGRAPHY_DRY_RUN_OPERATION,
       saveOperation: G20U41_DISCOGRAPHY_SAVE_OPERATION,
       expectedSaveApprovalId: G20U41_DISCOGRAPHY_SAVE_APPROVAL_ID,
-      saveArmed: false,
+      saveArmed: body?.dataset.gosakiDiscographySaveArmed === "true",
       conflictMessage: G20U41_DISCOGRAPHY_CONFLICT_MESSAGE,
       productionProjectRefStop: G20U36C_PRODUCTION_PROJECT_REF_STOP,
+      getAccessToken: resolveDiscographyAccessToken,
     });
   }
 </script>

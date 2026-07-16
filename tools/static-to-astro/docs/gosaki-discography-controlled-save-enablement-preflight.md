@@ -299,3 +299,21 @@ Minimum:
 cd ~/sariswing-astro/tools/static-to-astro
 npm run verify:g20u42-gosaki-discography-controlled-save-enablement-preflight
 ```
+
+---
+
+## G-20u44a follow-up (local operator wiring — complete)
+
+G-20u44 identified local musician-basic Discography route wiring gaps. **G-20u44a** fixed by mirroring `GosakiStagingReadOnlyAdminPage` body datasets on `AdminGosakiStagingShellLayout` + `getAccessToken` / `saveArmed` on `AdminGosakiStagingDiscographyOperatorPage`.
+
+| Item | Status |
+| --- | --- |
+| EXECUTION_SURFACE_RECOMMENDED | `local_shell` (unchanged) |
+| LOCAL_OPERATOR_SAVE_ARM_WIRED | **true** |
+| CONTROLLED_SAVE_EXECUTION_READY | **true** (local shell + Edge v9 · operator Save manual) |
+| CONTROLLED_SAVE_PREFLIGHT_READY | **false** (historical preflight phase gate — unchanged) |
+| STG package default disarmed | **true** (unchanged) |
+| SAVE_REQUEST_EXECUTED | **false** |
+| DB_WRITE_EXECUTED | **false** |
+
+**Next:** ChatGPT controlled Save operator procedure → operator manual execution.

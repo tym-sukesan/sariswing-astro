@@ -40,6 +40,12 @@ const EDIT_TS_REL =
   "tools/static-to-astro/templates/site-extensions/gosaki-piano/gosaki-staging-discography-operational-edit.ts";
 const PANEL_REL =
   "tools/static-to-astro/templates/admin-cms/gosaki/components/AdminGosakiStagingDiscographyContentPanel.astro";
+const OPERATOR_PAGE_REL =
+  "tools/static-to-astro/templates/admin-cms/gosaki/components/AdminGosakiStagingDiscographyOperatorPage.astro";
+const SHELL_LAYOUT_REL =
+  "tools/static-to-astro/templates/admin-cms/gosaki/components/AdminGosakiStagingShellLayout.astro";
+const DISCOGRAPHY_PAGE_REL =
+  "tools/static-to-astro/templates/admin-cms/gosaki/pages/GosakiStagingAdminDiscographyPage.astro";
 
 const LOCK = "2026-07-10T05:59:35.138671+00:00";
 
@@ -143,6 +149,9 @@ const handler = read(HANDLER_REL);
 const adminTs = read(ADMIN_TS_REL);
 const editTs = read(EDIT_TS_REL);
 const panel = read(PANEL_REL);
+const operatorPage = read(OPERATOR_PAGE_REL);
+const shellLayout = read(SHELL_LAYOUT_REL);
+const discographyPage = read(DISCOGRAPHY_PAGE_REL);
 const packageJson = read("tools/static-to-astro/package.json");
 const currentState = read(`${AI_DIR}/00-current-state.md`);
 const nextActions = read(`${AI_DIR}/03-next-actions.md`);
@@ -224,6 +233,62 @@ assert("UI arm exact true", adminTs.includes('=== "true"') && adminTs.includes("
 assert("UI evaluateG20u43LabelSliceEligibility", adminTs.includes("evaluateG20u43LabelSliceEligibility"));
 assert("edit runtime passes g20u43LabelSlice", editTs.includes("g20u43LabelSlice"));
 assert("panel label-only hint", panel.includes("label 単一変更") || panel.includes("G-20u43"));
+
+assert(
+  "local OperatorPage no saveArmed false hardcode",
+  !operatorPage.includes("saveArmed: false"),
+);
+assert(
+  "local OperatorPage saveArmed from body dataset",
+  operatorPage.includes("saveArmed: body?.dataset.gosakiDiscographySaveArmed === \"true\""),
+);
+assert(
+  "local OperatorPage getAccessToken wired",
+  operatorPage.includes("getAccessToken: resolveDiscographyAccessToken") &&
+    operatorPage.includes("getStagingSupabaseClient") &&
+    operatorPage.includes("getSession()") &&
+    operatorPage.includes("access_token ?? null"),
+);
+assert(
+  "local OperatorPage getAccessToken no token log",
+  !operatorPage.includes("console.log") &&
+    !operatorPage.match(/access_token[\s\S]{0,80}textContent/),
+);
+assert(
+  "local OperatorPage dryRunEndpointConfigured uses env helpers",
+  operatorPage.includes("dryRunEndpointConfigured") &&
+    operatorPage.includes("assertG20u36cDiscographyDryRunEndpointSafe") &&
+    operatorPage.includes("assertG20u36eAdminProbeSupabaseHostSafe") &&
+    !operatorPage.includes("dryRunEndpointConfigured={false}"),
+);
+assert(
+  "local shell layout wires discography body datasets",
+  shellLayout.includes("wireDiscographyOperationalRuntime") &&
+    shellLayout.includes("data-gosaki-discography-dry-run-endpoint") &&
+    shellLayout.includes("data-gosaki-discography-save-endpoint") &&
+    shellLayout.includes("data-g20u41-discography-save-approval-id") &&
+    shellLayout.includes("data-gosaki-supabase-anon-key") &&
+    shellLayout.includes("isG20u41DiscographyOperationalSaveArmed"),
+);
+assert(
+  "local discography page enables runtime wiring",
+  discographyPage.includes("wireDiscographyOperationalRuntime={true}"),
+);
+assert(
+  "local shell Save approval candidate G-20u43",
+  shellLayout.includes("G20U41_DISCOGRAPHY_SAVE_APPROVAL_ID") &&
+    shellLayout.includes("data-g20u41-discography-save-approval-id"),
+);
+assert(
+  "local shell dry-run approval G-20u31",
+  shellLayout.includes("G20U36C_DISCOGRAPHY_DRY_RUN_APPROVAL_ID") &&
+    shellLayout.includes("data-g20u36c-discography-dry-run-approval-id"),
+);
+assert("panel Save button type=button", panel.includes('type="button"') && panel.includes("data-gosaki-disc-save"));
+assert(
+  "edit runtime no fetch on input alone",
+  !/addEventListener\("input"[\s\S]{0,200}fetch\(/.test(editTs),
+);
 
 assert("G-20u42 preflight still false", preflight42.includes("CONTROLLED_SAVE_PREFLIGHT_READY: false"));
 

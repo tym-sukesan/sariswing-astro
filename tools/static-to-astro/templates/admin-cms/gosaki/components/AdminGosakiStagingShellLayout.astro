@@ -6,16 +6,69 @@ import {
   getStagingShellServerGateSnapshot,
   STAGING_SHELL_SERVER_GATES_ELEMENT_ID,
 } from "../../../../../../src/lib/admin/staging-shell/staging-shell-server-gates";
+import {
+  assertG20u36cDiscographyDryRunEndpointSafe,
+  assertG20u36eAdminProbeSupabaseHostSafe,
+  G20U36C_DISCOGRAPHY_DRY_RUN_APPROVAL_ID,
+  G20U36C_DISCOGRAPHY_DRY_RUN_OPERATION,
+  G20U41_DISCOGRAPHY_SAVE_APPROVAL_ID,
+  G20U41_DISCOGRAPHY_SAVE_OPERATION,
+  isG11c4aSupabaseAuthConfigured,
+  isG20u41DiscographyOperationalSaveArmed,
+  resolveG11c4aSupabaseAnonKey,
+  resolveG11c4aSupabaseUrl,
+  resolveG20u36cDiscographyDryRunEndpoint,
+  resolveG20u41DiscographySaveEndpoint,
+} from "../../../site-extensions/gosaki-piano/gosaki-staging-read-only-admin";
 
 interface Props {
   title: string;
   brandHref?: string;
+  /** G-20u44a — mirror GosakiStagingReadOnlyAdminPage body datasets for local Discography Save wiring. */
+  wireDiscographyOperationalRuntime?: boolean;
 }
 
-const { title, brandHref = GOSAKI_STAGING_ADMIN_BASE } = Astro.props;
+const {
+  title,
+  brandHref = GOSAKI_STAGING_ADMIN_BASE,
+  wireDiscographyOperationalRuntime = false,
+} = Astro.props;
 
 const stagingServerGates = getStagingShellServerGateSnapshot(import.meta.env);
 const stagingServerGatesJson = JSON.stringify(stagingServerGates);
+
+let bodyDataAttributes: Record<string, string> = {};
+
+if (wireDiscographyOperationalRuntime) {
+  const discographyDryRunEndpoint = resolveG20u36cDiscographyDryRunEndpoint(import.meta.env);
+  const discographySaveEndpoint = resolveG20u41DiscographySaveEndpoint(import.meta.env);
+  const discographySaveArmed = isG20u41DiscographyOperationalSaveArmed(import.meta.env);
+  const supabaseUrl = resolveG11c4aSupabaseUrl(import.meta.env);
+  const supabaseAnonKey = resolveG11c4aSupabaseAnonKey(import.meta.env);
+  const supabaseAuthConfigured = isG11c4aSupabaseAuthConfigured(import.meta.env);
+  const endpointSafe = assertG20u36cDiscographyDryRunEndpointSafe(discographyDryRunEndpoint);
+  const supabaseHostSafe = assertG20u36eAdminProbeSupabaseHostSafe(supabaseUrl);
+  const safeEndpoint =
+    endpointSafe && supabaseHostSafe ? discographyDryRunEndpoint : "";
+  const safeSaveEndpoint =
+    endpointSafe && supabaseHostSafe ? discographySaveEndpoint : "";
+  const safeSupabaseUrl = supabaseHostSafe ? supabaseUrl : "";
+  const safeAnonKey = supabaseHostSafe && supabaseAnonKey ? supabaseAnonKey : "";
+
+  bodyDataAttributes = {
+    "data-gosaki-discography-dry-run-endpoint": safeEndpoint,
+    "data-gosaki-discography-save-endpoint": safeSaveEndpoint,
+    "data-g20u41-discography-save-operation": G20U41_DISCOGRAPHY_SAVE_OPERATION,
+    "data-g20u41-discography-save-approval-id": G20U41_DISCOGRAPHY_SAVE_APPROVAL_ID,
+    "data-gosaki-discography-save-armed": discographySaveArmed ? "true" : "false",
+    "data-g20u36c-discography-dry-run-operation": G20U36C_DISCOGRAPHY_DRY_RUN_OPERATION,
+    "data-g20u36c-discography-dry-run-approval-id": G20U36C_DISCOGRAPHY_DRY_RUN_APPROVAL_ID,
+    "data-gosaki-supabase-url": safeSupabaseUrl,
+    "data-gosaki-supabase-anon-key": safeAnonKey,
+    "data-gosaki-supabase-auth-configured":
+      supabaseAuthConfigured && supabaseHostSafe ? "true" : "false",
+  };
+}
 ---
 
 <script
@@ -29,6 +82,7 @@ const stagingServerGatesJson = JSON.stringify(stagingServerGates);
   siteName="Gosaki Piano"
   brandHref={brandHref}
   stagingLabel="Gosaki Piano CMS（テスト環境）"
+  bodyDataAttributes={bodyDataAttributes}
 >
   <div class="admin-gosaki-global-status" slot="status" role="status">
     <AdminGosakiStagingSafetyChips showSaveDisabled={false} />

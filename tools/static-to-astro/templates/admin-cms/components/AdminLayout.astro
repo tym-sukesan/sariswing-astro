@@ -11,6 +11,8 @@ interface Props {
   currentSection?: string;
   stagingLabel?: string;
   brandHref?: string;
+  /** Optional body data-* attributes (e.g. Gosaki Discography operational runtime wiring). */
+  bodyDataAttributes?: Record<string, string>;
 }
 
 const {
@@ -19,6 +21,7 @@ const {
   currentSection = "",
   stagingLabel = "Scaffold only",
   brandHref = "#",
+  bodyDataAttributes = {},
 } = Astro.props;
 
 const fullTitle = currentSection ? `${title} | ${siteName}` : `${siteName} | ${title}`;
@@ -32,7 +35,7 @@ const fullTitle = currentSection ? `${title} | ${siteName}` : `${siteName} | ${t
     <meta name="robots" content="noindex, nofollow" />
     <title>{fullTitle}</title>
   </head>
-  <body class="admin-body">
+  <body class="admin-body" {...bodyDataAttributes}>
     <div class="admin-shell">
       <header class="admin-header">
         <a class="admin-header__brand" href={brandHref}>{siteName}</a>

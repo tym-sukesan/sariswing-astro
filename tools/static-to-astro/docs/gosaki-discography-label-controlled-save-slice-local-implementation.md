@@ -116,14 +116,33 @@ Unknown own keys → `nested_payload_invalid` (400). `clientDryRun.wouldWrite` m
 - `tools/static-to-astro/templates/site-extensions/gosaki-piano/gosaki-staging-read-only-admin.ts`
 - `tools/static-to-astro/templates/site-extensions/gosaki-piano/gosaki-staging-discography-operational-edit.ts`
 - `tools/static-to-astro/templates/admin-cms/gosaki/components/AdminGosakiStagingDiscographyContentPanel.astro`
+- `tools/static-to-astro/templates/admin-cms/gosaki/components/AdminGosakiStagingDiscographyOperatorPage.astro` (G-20u44a local shell wiring)
+- `tools/static-to-astro/templates/admin-cms/gosaki/components/AdminGosakiStagingShellLayout.astro` (G-20u44a body datasets)
+- `tools/static-to-astro/templates/admin-cms/gosaki/pages/GosakiStagingAdminDiscographyPage.astro` (`wireDiscographyOperationalRuntime`)
 
 ### Behavior
 
 - Env arm: `PUBLIC_GOSAKI_DISCOGRAPHY_SAVE_UI_ARMED === "true"` only; unset/false/other → disarmed.
 - Local shell is **not** unconditionally armed.
+- **G-20u44a:** local musician-basic Discography route mirrors `GosakiStagingReadOnlyAdminPage` body datasets + `getAccessToken` (staging session) + `saveArmed` from `data-gosaki-discography-save-armed`.
 - Save gate requires G-20u43 approval match + `g20u43LabelSlice` eligibility (004 · label-only · two-way).
 - Candidate approval from `data-g20u41-discography-save-approval-id`; expected from formal constant (separated).
 - `saveInFlight` · no conflict auto-retry · dry-run re-lock on edit.
+
+### G-20u44a local operator wiring (complete)
+
+| Gate | Status |
+| --- | --- |
+| LOCAL_OPERATOR_SAVE_ARM_WIRED | **true** |
+| LOCAL_OPERATOR_ENDPOINT_WIRED | **true** |
+| LOCAL_OPERATOR_GET_ACCESS_TOKEN_WIRED | **true** |
+| DRY_RUN_ENDPOINT_CONFIGURED_CORRECTLY | **true** (when staging env + providers match) |
+| SAVE_APPROVAL_G20U43_WIRED | **true** |
+| UNARMED_DEFAULT_FAILS_CLOSED | **true** |
+| STAGING_PACKAGE_DEFAULT_DISARMED | **true** (unchanged) |
+| CONTROLLED_SAVE_EXECUTION_READY | **true** (local shell + Edge v9 · operator Save still manual) |
+| SAVE_REQUEST_EXECUTED | **false** |
+| DB_WRITE_EXECUTED | **false** |
 
 ---
 
@@ -137,6 +156,4 @@ Pure Node-runnable mirror of allowlist rules — **no fetch / no Save**.
 
 ## Recommended next
 
-`G-20u43a-gosaki-discography-label-save-edge-deploy-preflight`
-
-Do **not** treat this phase as permission to deploy Edge, arm STG package, or execute Save.
+ChatGPT controlled Save operator procedure → operator manual Save execution (one-off).

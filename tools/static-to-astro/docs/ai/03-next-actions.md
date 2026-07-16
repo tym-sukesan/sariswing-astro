@@ -1,6 +1,29 @@
 Last updated: 2026-07-17
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u44a-gosaki-discography-local-controlled-save-wiring-fix — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u44a-gosaki-discography-local-controlled-save-wiring-fix` |
+| LOCAL_OPERATOR_SAVE_ARM_WIRED | **true** |
+| LOCAL_OPERATOR_ENDPOINT_WIRED | **true** |
+| LOCAL_OPERATOR_GET_ACCESS_TOKEN_WIRED | **true** |
+| SAVE_APPROVAL_G20U43_WIRED | **true** |
+| UNARMED_DEFAULT_FAILS_CLOSED | **true** |
+| STAGING_PACKAGE_DEFAULT_DISARMED | **true** (unchanged) |
+| CONTROLLED_SAVE_EXECUTION_READY | **true** |
+| SAVE_REQUEST_EXECUTED | **false** |
+| DB_WRITE_EXECUTED | **false** |
+| Next | Commit/Push → ChatGPT controlled Save operator procedure |
+
+```txt
+LOCAL_OPERATOR_SAVE_ARM_WIRED: true
+CONTROLLED_SAVE_EXECUTION_READY: true
+SAVE_REQUEST_EXECUTED: false
+DB_WRITE_EXECUTED: false
+```
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u43a-gosaki-discography-label-save-edge-deploy-preflight — complete (post-deploy smoke)
 
 | Item | Value |

@@ -382,6 +382,12 @@ const saveDisabledStatusSrc = read(
 const discographyOpEditSrc = read(
   "tools/static-to-astro/templates/site-extensions/gosaki-piano/gosaki-staging-discography-operational-edit.ts",
 );
+const discographyOperatorPageSrc = read(
+  "tools/static-to-astro/templates/admin-cms/gosaki/components/AdminGosakiStagingDiscographyOperatorPage.astro",
+);
+const discographyShellLayoutSrc = read(
+  "tools/static-to-astro/templates/admin-cms/gosaki/components/AdminGosakiStagingShellLayout.astro",
+);
 assert(
   "discography panel view/edit mode markers",
   discographyPanelSrc.includes("data-gosaki-disc-view-mode") &&
@@ -499,6 +505,27 @@ assert(
   readOnlyAdminTs.includes("G20U41_DISCOGRAPHY_SAVE_UI_ARMED_ENV") &&
     readOnlyAdminTs.includes("isG20u41DiscographyOperationalSaveArmed") &&
     discographyOpEditSrc.includes("envArmed: deps.saveArmed"),
+);
+assert(
+  "local discography operator page wires saveArmed from body dataset",
+  !discographyOperatorPageSrc.includes("saveArmed: false") &&
+    discographyOperatorPageSrc.includes(
+      'saveArmed: body?.dataset.gosakiDiscographySaveArmed === "true"',
+    ),
+);
+assert(
+  "local discography operator page wires getAccessToken from session",
+  discographyOperatorPageSrc.includes("getAccessToken: resolveDiscographyAccessToken") &&
+    discographyOperatorPageSrc.includes("getStagingSupabaseClient") &&
+    discographyOperatorPageSrc.includes("getSession()"),
+);
+assert(
+  "local discography shell layout mirrors read-only admin body datasets",
+  discographyShellLayoutSrc.includes("wireDiscographyOperationalRuntime") &&
+    discographyShellLayoutSrc.includes("data-gosaki-discography-dry-run-endpoint") &&
+    discographyShellLayoutSrc.includes("data-g20u41-discography-save-approval-id") &&
+    discographyShellLayoutSrc.includes("data-gosaki-supabase-anon-key") &&
+    discographyShellLayoutSrc.includes("isG20u41DiscographyOperationalSaveArmed"),
 );
 assert(
   "discography Save approval gate uses separate candidate and expected",

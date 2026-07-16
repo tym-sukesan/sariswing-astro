@@ -5,11 +5,21 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u44a-gosaki-discography-local-controlled-save-wiring-fix — complete.
-LOCAL_OPERATOR_SAVE_ARM_WIRED: true · CONTROLLED_SAVE_EXECUTION_READY: true.
-Edge v9 active · STG package default disarmed (unchanged).
-SAVE_REQUEST_EXECUTED: false · DB_WRITE_EXECUTED: false.
-Next: Commit/Push → ChatGPT controlled Save operator procedure.```
+Current phase: G-20u44c-gosaki-discography-label-permission-enablement-prep — complete.
+PERMISSION_PREFLIGHT_SQL_READY: true · PERMISSION_APPLY_SQL_READY: true.
+G-20u43 Save blocked by Class B (no label UPDATE grant) — SQL prep fixed, not applied.
+SQL_EXECUTED: false · DB_WRITE_EXECUTED: false · SAVE_REQUEST_EXECUTED: false.
+Next: Commit/Push → operator preflight SELECT only (G-20u44d).```
+
+## G-20u44c-gosaki-discography-label-permission-enablement-prep — complete
+
+- **Doc:** `gosaki-discography-label-permission-enablement-prep.md` (§A preflight · §B apply · §C post-apply · §D rollback · §E post-rollback)
+- **Verifier:** `verify:g20u44c-gosaki-discography-label-permission-enablement-prep`
+- **Root cause:** G-20u44b Class **B** — `authenticated` lacks `UPDATE(label)` on `public.discography`; secondary RESTRICTIVE policy needed
+- **Policy:** `discography_g20u43_label_update_restrict` · `gosaki-piano` / `discography-004` / two allowlisted labels
+- **Staging only:** `kmjqppxjdnwwrtaeqjta` · production `vsbvndwuajjhnzpohghh` STOP
+- **Not done:** SQL execution · GRANT/REVOKE · CREATE/DROP POLICY · Save retry
+- **Next:** Commit/Push → operator runs §A preflight SELECT → ChatGPT review → (later) apply
 
 ## G-20u44a-gosaki-discography-local-controlled-save-wiring-fix — complete
 

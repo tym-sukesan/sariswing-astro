@@ -144,6 +144,18 @@ Unknown own keys → `nested_payload_invalid` (400). `clientDryRun.wouldWrite` m
 | SAVE_REQUEST_EXECUTED | **false** |
 | DB_WRITE_EXECUTED | **false** |
 
+### G-20u44b / G-20u44c (403 diagnosis + permission prep)
+
+| Gate | Status |
+| --- | --- |
+| ROOT_CAUSE_CLASS | **B** — no `UPDATE(label)` grant on `public.discography` |
+| PERMISSION_APPLY_SQL_READY | **true** (doc prepared · **not executed**) |
+| Policy (when applied) | `discography_g20u43_label_update_restrict` |
+| SQL_EXECUTED | **false** |
+| SAVE blocked until | operator applies §B SQL on staging after preflight PASS |
+
+Doc: `gosaki-discography-label-permission-enablement-prep.md` · verifier: `verify:g20u44c-…`
+
 ---
 
 ## Gate lib (verifier fixtures)
@@ -156,4 +168,4 @@ Pure Node-runnable mirror of allowlist rules — **no fetch / no Save**.
 
 ## Recommended next
 
-ChatGPT controlled Save operator procedure → operator manual Save execution (one-off).
+~~ChatGPT controlled Save operator procedure~~ **G-20u44c permission SQL prep complete** → Commit/Push → operator preflight SELECT (`G-20u44d`) → apply → controlled Save retry.

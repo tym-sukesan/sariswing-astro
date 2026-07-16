@@ -316,4 +316,22 @@ G-20u44 identified local musician-basic Discography route wiring gaps. **G-20u44
 | SAVE_REQUEST_EXECUTED | **false** |
 | DB_WRITE_EXECUTED | **false** |
 
-**Next:** ChatGPT controlled Save operator procedure → operator manual execution.
+**Next:** ~~ChatGPT controlled Save operator procedure~~ **G-20u44b 403** → **G-20u44c permission SQL prep** (complete) → operator preflight SELECT.
+
+---
+
+## G-20u44c follow-up (label permission SQL prep — complete)
+
+G-20u44b diagnosed controlled Save **403** as Class **B**: `authenticated` lacks `UPDATE(label)` on `public.discography` (G-20u36a revoke; G-20u36e reopened `discography_tracks.title` only).
+
+| Item | Status |
+| --- | --- |
+| Doc | `gosaki-discography-label-permission-enablement-prep.md` |
+| PERMISSION_PREFLIGHT_SQL_READY | **true** |
+| PERMISSION_APPLY_SQL_READY | **true** |
+| Policy | `discography_g20u43_label_update_restrict` |
+| SQL_EXECUTED | **false** |
+| DB_WRITE_EXECUTED | **false** |
+| SAVE_REQUEST_EXECUTED | **false** |
+
+**Next:** Commit/Push → operator runs §A preflight SELECT on staging `kmjqppxjdnwwrtaeqjta` only.

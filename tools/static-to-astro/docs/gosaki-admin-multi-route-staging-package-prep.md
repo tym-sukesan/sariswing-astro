@@ -12,6 +12,32 @@ Implement staging **static package generation wiring** so convert/apply emits mu
 - Dry-run / module verification only
 - **No** real package generation · public-dist · FTP · STG upload · Save enable · SQL · Edge · `src/pages/admin/**` (repo production tree)
 
+## STG browser QA follow-up (content UI restore)
+
+STG QA after G-20u39b5 package: multi-route pages existed but content UI was incomplete (summary-only / auth-first).
+
+Fix (source + dry-run only — no fresh package in this step):
+
+- Shared panels under `templates/admin-cms/gosaki/components/`:
+  - `AdminGosakiStagingScheduleContentPanel` (event list by month)
+  - `AdminGosakiStagingAboutContentPanel` (Profile + Bands HTML preview)
+  - `AdminGosakiStagingCompactAuthBar` (login compact · probe in details)
+- `apply()` writes `gosaki-read-only-admin-schedule-events.json` and copies panels into package `gosaki-admin/`
+- Discography / YouTube: content first, compact auth after (no 「YouTube dry-run用」 heading)
+- Portal remains portal-only
+
+```txt
+STG_MULTI_ROUTE_UI_QA_PREVIOUS_RESULT: FAIL
+SCHEDULE_CONTENT_UI_RESTORED: true
+DISCOGRAPHY_CONTENT_UI_RESTORED: true
+YOUTUBE_CONTENT_UI_RESTORED: true
+ABOUT_CONTENT_UI_RESTORED: true
+AUTH_UI_DEEMPHASIZED: true
+DEVELOPER_DIAGNOSTICS_COLLAPSED: true
+SAVE_REMAINS_DISABLED: true
+FRESH_PACKAGE_REUPLOAD_REQUIRED: true
+```
+
 ## Routes prepared (generated under Astro outDir)
 
 | Generated Astro page | Public route (with deployBase) |
@@ -27,26 +53,23 @@ Contact / Link / Settings: **not** generated.
 ## Reuse (no UI duplication)
 
 - `AdminGosakiStagingOperatorHome` · `AdminGosakiStagingNav` · `AdminGosakiStagingSafetyChips` copied into package outDir as `src/components/gosaki-admin/*`
+- Content panels above shared from the same `templates/admin-cms/gosaki/components/` tree
 - Path imports rewritten to `gosaki-package-admin-paths.ts` (`BASE_URL` + `admin/…`)
 - Shared chrome CSS: `templates/admin-cms/gosaki/styles/gosaki-admin-shell-chrome.css`
 
 ## Generation source
 
-- `applyGosakiStagingReadOnlyAdmin()` writes component + 5 thin pages + chrome + paths + CSS + dashboard JSON
-- `GosakiStagingReadOnlyAdminPage.astro` is now a multi-route component (`page` prop)
+- `applyGosakiStagingReadOnlyAdmin()` writes component + 5 thin pages + chrome + content panels + paths + CSS + dashboard / discography / schedule-events JSON
+- `GosakiStagingReadOnlyAdminPage.astro` is a multi-route component (`page` prop)
 
 ## Build-failure fix (multi-route anon allowlist)
 
-`scanSupabaseKeyExposure` previously allowlisted JWT only on `admin/index.html`. Multi-route pages also embed `data-gosaki-supabase-anon-key`, which made `build:gosaki:staging` stop with `safeForStaticFtp: false`.
+`scanSupabaseKeyExposure` allowlists known staging anon only when:
 
-Allowlist is now **attribute + value scoped** (all required):
-
-1. Gosaki staging package marker: `data-gosaki-read-only-admin="true"`
-2. Path: `admin/index.html` or `admin/**/index.html`
-3. Token only in `data-gosaki-supabase-anon-key="…"`
-4. Value exact match to configured known staging anon key
-
-Still blocked: unknown JWT · service_role · public HTML · JS/JSON leaks · non-Gosaki packages · path-only admin allow · scanner disable.
+1. `data-gosaki-read-only-admin="true"`
+2. Path `admin/index.html` or `admin/**/index.html`
+3. Exact `data-gosaki-supabase-anon-key="…"`
+4. JWT payload `role === "anon"` (fail-closed)
 
 ## Gates
 
@@ -57,9 +80,17 @@ MULTI_ROUTE_ANON_ALLOWLIST_FIXED: true
 ALLOWLIST_IS_ATTRIBUTE_AND_VALUE_SCOPED: true
 SERVICE_ROLE_REMAINS_BLOCKED: true
 PUBLIC_HTML_KEY_EXPOSURE_REMAINS_BLOCKED: true
+STG_MULTI_ROUTE_UI_QA_PREVIOUS_RESULT: FAIL
+SCHEDULE_CONTENT_UI_RESTORED: true
+DISCOGRAPHY_CONTENT_UI_RESTORED: true
+YOUTUBE_CONTENT_UI_RESTORED: true
+ABOUT_CONTENT_UI_RESTORED: true
+AUTH_UI_DEEMPHASIZED: true
+DEVELOPER_DIAGNOSTICS_COLLAPSED: true
 SAVE_REMAINS_DISABLED: true
 PRODUCTION_ADMIN_EXCLUSION_PRESERVED: true
 FRESH_PACKAGE_GENERATION_REQUIRED_AFTER_COMMIT: true
+FRESH_PACKAGE_REUPLOAD_REQUIRED: true
 packageGenerationExecuted: false
 ftpUploadExecuted: false
 saveEnabled: false
@@ -73,8 +104,7 @@ serviceRoleUsed: false
 npm run verify:g20u39b4-gosaki-admin-multi-route-staging-package-prep
 ```
 
-Includes fixture PASS/FAIL cases for multi-route anon allowlist.
-
 ## Recommended next
 
-`G-20u39b5-gosaki-admin-multi-route-staging-package-generation-at-head`
+Commit / Push後に fresh staging package 生成 · manual FTP · STG browser 再確認
+(`G-20u39b5-gosaki-admin-multi-route-staging-package-generation-at-head`)

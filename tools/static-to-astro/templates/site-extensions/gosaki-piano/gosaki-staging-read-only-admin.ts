@@ -632,9 +632,11 @@ export interface GosakiReadOnlyAdminViewModel {
     profileLabel: string;
     profileSummary: string;
     profileCharCount: number;
+    profileHtml: string;
     bandsLabel: string;
     bandsSummary: string;
     bandsCharCount: number;
+    bandsHtml: string;
     bandImages: GosakiReadOnlyAdminBandImage[];
   };
   contact: {
@@ -742,9 +744,11 @@ export function buildGosakiReadOnlyAdminViewModel(input: {
       profileLabel: String(profileBlock?.label ?? "About profile"),
       profileSummary: htmlToPlainSummary(profileHtml),
       profileCharCount: profileHtml.length,
+      profileHtml,
       bandsLabel: String(bandsBlock?.label ?? "Bands / Projects"),
       bandsSummary: htmlToPlainSummary(bandsHtml),
       bandsCharCount: bandsHtml.length,
+      bandsHtml,
       bandImages: extractBandImagesWithNames(bandsHtml),
     },
     contact: {
@@ -756,7 +760,7 @@ export function buildGosakiReadOnlyAdminViewModel(input: {
     },
     schedule: {
       status: "read-only",
-      note: "スケジュールは build 時の Supabase 読み取り結果を公開ページに反映します。管理画面からの編集 UI は別フェーズで追加予定です。",
+      note: "build 時スナップショットの公演一覧です。保存は無効です。公開ページへの反映は管理者が行います。",
     },
   };
 }

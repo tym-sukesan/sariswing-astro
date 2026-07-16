@@ -5,40 +5,32 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u39b4-gosaki-admin-multi-route-staging-package-and-manual-upload-prep — complete.
-STAGING_ADMIN_MULTI_ROUTE_GENERATION_IMPLEMENTED: true.
-STAGING_ADMIN_MULTI_ROUTE_DRY_RUN_PASSED: true.
-MULTI_ROUTE_ANON_ALLOWLIST_FIXED: true.
-ALLOWLIST_IS_ATTRIBUTE_AND_VALUE_SCOPED: true.
-SERVICE_ROLE_REMAINS_BLOCKED: true.
-PUBLIC_HTML_KEY_EXPOSURE_REMAINS_BLOCKED: true.
+Current phase: G-20u39b4-gosaki-admin-multi-route-staging-package-and-manual-upload-prep — complete (content UI restore after STG QA FAIL).
+STG_MULTI_ROUTE_UI_QA_PREVIOUS_RESULT: FAIL.
+SCHEDULE_CONTENT_UI_RESTORED: true.
+DISCOGRAPHY_CONTENT_UI_RESTORED: true.
+YOUTUBE_CONTENT_UI_RESTORED: true.
+ABOUT_CONTENT_UI_RESTORED: true.
+AUTH_UI_DEEMPHASIZED: true.
+DEVELOPER_DIAGNOSTICS_COLLAPSED: true.
 SAVE_REMAINS_DISABLED: true.
-PRODUCTION_ADMIN_EXCLUSION_PRESERVED: true.
-FRESH_PACKAGE_GENERATION_REQUIRED_AFTER_COMMIT: true.
+FRESH_PACKAGE_REUPLOAD_REQUIRED: true.
+MULTI_ROUTE_ANON_ALLOWLIST_FIXED: true.
 P1-CON1: resolved. P1-ADM-MOB1: resolved.
 HOSTING_READY: false. GO_LIVE_READY: false. PRODUCTION_UPLOAD_READY: false.
 PUBLIC_READY: CONDITIONAL.
-Next: G-20u39b5-gosaki-admin-multi-route-staging-package-generation-at-head.
-```
+Next: Commit/Push → G-20u39b5-gosaki-admin-multi-route-staging-package-generation-at-head.```
 
 ## G-20u39b4-gosaki-admin-multi-route-staging-package-and-manual-upload-prep — complete
 
 - **Gate:** `gosakiAdminMultiRouteStagingPackagePrepComplete: true`
-- **STAGING_ADMIN_MULTI_ROUTE_GENERATION_IMPLEMENTED:** **true**
-- **STAGING_ADMIN_MULTI_ROUTE_DRY_RUN_PASSED:** **true**
-- **MULTI_ROUTE_ANON_ALLOWLIST_FIXED:** **true**
-- **ALLOWLIST_IS_ATTRIBUTE_AND_VALUE_SCOPED:** **true**
-- **SERVICE_ROLE_REMAINS_BLOCKED:** **true**
-- **PUBLIC_HTML_KEY_EXPOSURE_REMAINS_BLOCKED:** **true**
-- **SAVE_REMAINS_DISABLED:** **true**
-- **PRODUCTION_ADMIN_EXCLUSION_PRESERVED:** **true**
-- **FRESH_PACKAGE_GENERATION_REQUIRED_AFTER_COMMIT:** **true**
-- **Generation:** apply() emits `/admin/` portal + schedule/discography/youtube/about
-- **Security:** `scanSupabaseKeyExposure` allowlists known staging anon only in `data-gosaki-supabase-anon-key` on `admin/**/index.html` with read-only marker
-- **Reuse:** b3 OperatorHome / Nav / SafetyChips via package paths (`BASE_URL`)
-- **Not done:** real package generation · FTP · STG browser QA · Save enable
-- **Next:** **G-20u39b5-gosaki-admin-multi-route-staging-package-generation-at-head**
-
+- **STG_MULTI_ROUTE_UI_QA_PREVIOUS_RESULT:** **FAIL** (content incomplete on first package)
+- **SCHEDULE / DISCOGRAPHY / YOUTUBE / ABOUT_CONTENT_UI_RESTORED:** **true**
+- **AUTH_UI_DEEMPHASIZED / DEVELOPER_DIAGNOSTICS_COLLAPSED:** **true**
+- **Shared panels:** ScheduleContentPanel · AboutContentPanel · CompactAuthBar (`templates/admin-cms/gosaki/components/`)
+- **Security:** anon JWT allowlist remains attribute+value+`role===anon` scoped
+- **Not done this step:** fresh package · FTP · STG browser recheck
+- **Next:** Commit / Push → **G-20u39b5-gosaki-admin-multi-route-staging-package-generation-at-head**
 ## G-20u39b3-gosaki-admin-portal-and-content-routes-local-implementation — complete
 
 - **Gate:** `gosakiAdminPortalAndContentRoutesLocalImplemented: true`

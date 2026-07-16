@@ -172,7 +172,35 @@ assert("package paths schedule", packagePaths.includes("schedule/"));
 assert("chrome css exists", chromeCss.includes("admin-gosaki-staging-nav"));
 assert("apply lists multi routes", applySrc.includes("GOSAKI_ADMIN_MULTI_ROUTE_PAGES"));
 assert("apply copies chrome components", applySrc.includes("AdminGosakiStagingOperatorHome.astro"));
+assert(
+  "apply copies content panels",
+  applySrc.includes("AdminGosakiStagingScheduleContentPanel.astro") &&
+    applySrc.includes("AdminGosakiStagingAboutContentPanel.astro") &&
+    applySrc.includes("AdminGosakiStagingCompactAuthBar.astro") &&
+    applySrc.includes("buildScheduleAdminEventsSnapshot"),
+);
 assert("apply multiRoute true", applySrc.includes("multiRoute: true"));
+
+assert(
+  "STG_MULTI_ROUTE_UI_QA_PREVIOUS_RESULT FAIL recorded",
+  /STG_MULTI_ROUTE_UI_QA_PREVIOUS_RESULT:\s*FAIL/i.test(doc),
+);
+assert("SCHEDULE_CONTENT_UI_RESTORED true", /SCHEDULE_CONTENT_UI_RESTORED:\s*true/i.test(doc));
+assert(
+  "DISCOGRAPHY_CONTENT_UI_RESTORED true",
+  /DISCOGRAPHY_CONTENT_UI_RESTORED:\s*true/i.test(doc),
+);
+assert("YOUTUBE_CONTENT_UI_RESTORED true", /YOUTUBE_CONTENT_UI_RESTORED:\s*true/i.test(doc));
+assert("ABOUT_CONTENT_UI_RESTORED true", /ABOUT_CONTENT_UI_RESTORED:\s*true/i.test(doc));
+assert("AUTH_UI_DEEMPHASIZED true", /AUTH_UI_DEEMPHASIZED:\s*true/i.test(doc));
+assert(
+  "DEVELOPER_DIAGNOSTICS_COLLAPSED true",
+  /DEVELOPER_DIAGNOSTICS_COLLAPSED:\s*true/i.test(doc),
+);
+assert(
+  "FRESH_PACKAGE_REUPLOAD_REQUIRED true",
+  /FRESH_PACKAGE_REUPLOAD_REQUIRED:\s*true/i.test(doc),
+);
 assert(
   "scanner multi-route admin path helper",
   scannerSrc.includes("isGosakiStagingAdminHtmlRelPath") &&
@@ -194,10 +222,79 @@ assert("component portal mode", adminComponent.includes('page === "portal"'));
 assert("component uses OperatorHome", adminComponent.includes("AdminGosakiStagingOperatorHome"));
 assert("component uses Nav", adminComponent.includes("AdminGosakiStagingNav"));
 assert("component uses chips", adminComponent.includes("AdminGosakiStagingSafetyChips"));
+assert(
+  "component uses ScheduleContentPanel",
+  adminComponent.includes("AdminGosakiStagingScheduleContentPanel"),
+);
+assert(
+  "component uses AboutContentPanel",
+  adminComponent.includes("AdminGosakiStagingAboutContentPanel"),
+);
+assert(
+  "component uses CompactAuthBar",
+  adminComponent.includes("AdminGosakiStagingCompactAuthBar"),
+);
 assert("component schedule route", adminComponent.includes('page === "schedule"'));
 assert("component discography route", adminComponent.includes('page === "discography"'));
 assert("component youtube route", adminComponent.includes('page === "youtube"'));
 assert("component about route", adminComponent.includes('page === "about"'));
+assert(
+  "schedule not summary-only in component",
+  adminComponent.includes("AdminGosakiStagingScheduleContentPanel") &&
+    !/page === "schedule"[\s\S]{0,400}dashboard\.schedule\.totalEvents[\s\S]{0,80}<\/>/.test(
+      adminComponent,
+    ),
+);
+assert(
+  "discography has content marker + dry-run",
+  adminComponent.includes('data-gosaki-discography-content="true"') &&
+    adminComponent.includes("Dry-run validation（保存なし）"),
+);
+assert(
+  "discography has no YouTube dry-run用 heading",
+  !adminComponent.includes("Staging Auth（YouTube dry-run 用）"),
+);
+assert(
+  "youtube has content marker + dry-run",
+  adminComponent.includes('data-gosaki-youtube-content="true"') &&
+    adminComponent.includes('id="gra-youtube-dry-run"'),
+);
+assert(
+  "about uses content panel not char-count-only",
+  adminComponent.includes("AdminGosakiStagingAboutContentPanel") &&
+    adminComponent.includes("profileHtml={view.about.profileHtml}"),
+);
+const compactAuthSrc = read(
+  "tools/static-to-astro/templates/admin-cms/gosaki/components/AdminGosakiStagingCompactAuthBar.astro",
+);
+const schedulePanelSrc = read(
+  "tools/static-to-astro/templates/admin-cms/gosaki/components/AdminGosakiStagingScheduleContentPanel.astro",
+);
+const aboutPanelSrc = read(
+  "tools/static-to-astro/templates/admin-cms/gosaki/components/AdminGosakiStagingAboutContentPanel.astro",
+);
+
+assert(
+  "auth credentials form marked for gated display",
+  compactAuthSrc.includes('data-gosaki-auth-credentials-form="true"') &&
+    adminComponent.includes("AdminGosakiStagingCompactAuthBar"),
+);
+assert(
+  "DB probe collapsed in details",
+  compactAuthSrc.includes("開発者情報（DB probe / 診断）") &&
+    compactAuthSrc.includes('id="gra-admin-probe"') &&
+    compactAuthSrc.includes("data-gosaki-admin-dev-details"),
+);
+assert(
+  "schedule panel lists events",
+  schedulePanelSrc.includes('data-gosaki-schedule-content="true"') &&
+    schedulePanelSrc.includes("data-schedule-event"),
+);
+assert(
+  "about panel has profile + bands",
+  aboutPanelSrc.includes('data-about-block="profile"') &&
+    aboutPanelSrc.includes('data-about-block="bands"'),
+);
 assert(
   "portal has no dashboard grid",
   !/page === "portal"[\s\S]{0,200}gra-dashboard/.test(adminComponent) &&
@@ -212,6 +309,23 @@ assert(
 
 const tmpOut = fs.mkdtempSync(path.join(os.tmpdir(), "g20u39b4-admin-"));
 const applyResult = applyGosakiStagingReadOnlyAdmin(tmpOut, TOOL_ROOT, {
+  scheduleBundle: {
+    scheduleDataSource: "supabase",
+    months: [{ month: "2026-07" }],
+    schedules: [
+      {
+        legacy_id: "schedule-2026-07-verify",
+        date: "2026-07-10",
+        year: 2026,
+        month: 7,
+        title: "Verifier Schedule Event",
+        venue: "Tokyo",
+        open_time: "18:00",
+        start_time: "19:00",
+        published: true,
+      },
+    ],
+  },
   discographyBundle: {
     discographyDataSource: "supabase",
     rowCount: 1,
@@ -227,6 +341,17 @@ assert(
   "apply adminRoutes length 5",
   Array.isArray(applyResult.adminRoutes) && applyResult.adminRoutes.length === 5,
 );
+assert(
+  "apply wrote schedule events snapshot",
+  fs.existsSync(path.join(tmpOut, "src/data/gosaki-read-only-admin-schedule-events.json")),
+);
+const scheduleSnap = JSON.parse(
+  fs.readFileSync(path.join(tmpOut, "src/data/gosaki-read-only-admin-schedule-events.json"), "utf8"),
+);
+assert(
+  "schedule snapshot has events",
+  Array.isArray(scheduleSnap.events) && scheduleSnap.events.length >= 1,
+);
 
 for (const route of GOSAKI_ADMIN_MULTI_ROUTE_PAGES) {
   const pagePath = path.join(tmpOut, route.rel);
@@ -239,6 +364,24 @@ for (const route of GOSAKI_ADMIN_MULTI_ROUTE_PAGES) {
   );
 }
 
+assert(
+  "tmp schedule content panel copied",
+  fs.existsSync(
+    path.join(tmpOut, "src/components/gosaki-admin/AdminGosakiStagingScheduleContentPanel.astro"),
+  ),
+);
+assert(
+  "tmp about content panel copied",
+  fs.existsSync(
+    path.join(tmpOut, "src/components/gosaki-admin/AdminGosakiStagingAboutContentPanel.astro"),
+  ),
+);
+assert(
+  "tmp compact auth copied",
+  fs.existsSync(
+    path.join(tmpOut, "src/components/gosaki-admin/AdminGosakiStagingCompactAuthBar.astro"),
+  ),
+);
 const chromeNav = path.join(tmpOut, "src/components/gosaki-admin/AdminGosakiStagingNav.astro");
 const chromeHome = path.join(
   tmpOut,
@@ -268,6 +411,18 @@ assert(
   "tmp component portal-only (no dashboard)",
   appliedComponent.includes('page === "portal"') &&
     !appliedComponent.includes('aria-labelledby="gra-dashboard"'),
+);
+assert(
+  "tmp component schedule content panel",
+  appliedComponent.includes("AdminGosakiStagingScheduleContentPanel"),
+);
+assert(
+  "tmp component about content panel",
+  appliedComponent.includes("AdminGosakiStagingAboutContentPanel"),
+);
+assert(
+  "tmp component no YouTube dry-run用 on discography path",
+  !appliedComponent.includes("Staging Auth（YouTube dry-run 用）"),
 );
 
 try {

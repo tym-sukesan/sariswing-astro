@@ -1,0 +1,105 @@
+---
+/**
+ * Shared About content panel (local shell + STG package).
+ * Read-only Profile + Bands / Projects preview — no Save.
+ */
+interface BandImage {
+  fileName?: string;
+  name?: string;
+}
+
+interface Props {
+  profileLabel?: string;
+  bandsLabel?: string;
+  profileHtml?: string;
+  bandsHtml?: string;
+  bandImages?: BandImage[];
+  publicAboutUrl?: string;
+}
+
+const {
+  profileLabel = "Profile",
+  bandsLabel = "Bands / Projects",
+  profileHtml = "",
+  bandsHtml = "",
+  bandImages = [],
+  publicAboutUrl = "",
+} = Astro.props as Props;
+
+const hasProfile = String(profileHtml).trim().length > 0;
+const hasBands = String(bandsHtml).trim().length > 0;
+---
+
+<section
+  id="gosaki-about-content"
+  class="gosaki-admin-content-panel gosaki-about-content-panel"
+  data-section="admin-about-content"
+  data-gosaki-about-content="true"
+  aria-label="プロフィール管理内容"
+>
+  <header class="gosaki-admin-content-panel__header">
+    <h1 class="gosaki-admin-content-panel__title">プロフィール・バンド</h1>
+    <p class="gosaki-admin-content-panel__subtitle">
+      About ページの Profile と Bands / Projects を確認できます（閲覧のみ · Save 無効）。
+    </p>
+    {
+      publicAboutUrl ? (
+        <p class="gosaki-admin-content-panel__meta">
+          <a
+            class="gosaki-read-only-admin__link"
+            href={publicAboutUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            公開 About を見る
+          </a>
+        </p>
+      ) : null
+    }
+  </header>
+
+  <section
+    class="gosaki-about-content-panel__block"
+    aria-labelledby="gosaki-about-profile-heading"
+    data-about-block="profile"
+  >
+    <h2 id="gosaki-about-profile-heading" class="gosaki-about-content-panel__block-title">
+      {profileLabel}
+    </h2>
+    {
+      hasProfile ? (
+        <div class="gosaki-about-content-panel__preview" data-about-preview="profile" set:html={profileHtml} />
+      ) : (
+        <p class="gosaki-admin-content-panel__empty">Profile 内容がありません。</p>
+      )
+    }
+  </section>
+
+  <section
+    class="gosaki-about-content-panel__block"
+    aria-labelledby="gosaki-about-bands-heading"
+    data-about-block="bands"
+  >
+    <h2 id="gosaki-about-bands-heading" class="gosaki-about-content-panel__block-title">
+      {bandsLabel}
+    </h2>
+    {
+      bandImages.length > 0 ? (
+        <ul class="gosaki-about-content-panel__images" aria-label="バンド画像">
+          {bandImages.map((img) => (
+            <li data-band-image={img.fileName ?? ""}>
+              {img.name || img.fileName || "image"}
+            </li>
+          ))}
+        </ul>
+      ) : null
+    }
+    {
+      hasBands ? (
+        <div class="gosaki-about-content-panel__preview" data-about-preview="bands" set:html={bandsHtml} />
+      ) : (
+        <p class="gosaki-admin-content-panel__empty">Bands / Projects 内容がありません。</p>
+      )
+    }
+  </section>
+</section>

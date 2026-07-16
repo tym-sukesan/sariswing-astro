@@ -1,0 +1,132 @@
+---
+/**
+ * Shared schedule content panel (local shell + STG package).
+ * Read-only event list from build-time / binding snapshot — no Save.
+ */
+interface ScheduleEventRow {
+  id?: string | null;
+  legacyId?: string | null;
+  date?: string | null;
+  yearMonth?: string | null;
+  title?: string | null;
+  venue?: string | null;
+  openTime?: string | null;
+  startTime?: string | null;
+  price?: string | null;
+  published?: boolean;
+}
+
+interface Props {
+  events: ScheduleEventRow[];
+  dataSource?: string;
+  publicScheduleUrl?: string;
+  note?: string;
+}
+
+const {
+  events = [],
+  dataSource = "build-snapshot",
+  publicScheduleUrl = "",
+  note = "build 時スナップショットの公演一覧です。保存は無効です。",
+} = Astro.props as Props;
+
+/** @type {Map<string, ScheduleEventRow[]>} */
+const byMonth = new Map();
+for (const event of events) {
+  const ym =
+    String(event.yearMonth || "").trim() ||
+    (String(event.date || "").match(/^(\d{4}-\d{2})/) || [])[1] ||
+    "未設定";
+  if (!byMonth.has(ym)) byMonth.set(ym, []);
+  byMonth.get(ym).push(event);
+}
+const months = [...byMonth.keys()].sort((a, b) => b.localeCompare(a));
+
+function display(value: string | null | undefined): string {
+  const t = String(value ?? "").trim();
+  return t || "—";
+}
+---
+
+<section
+  id="gosaki-schedule-content"
+  class="gosaki-admin-content-panel gosaki-schedule-content-panel"
+  data-section="admin-schedule-content"
+  data-gosaki-schedule-content="true"
+  aria-label="スケジュール公演一覧"
+>
+  <header class="gosaki-admin-content-panel__header">
+    <h1 class="gosaki-admin-content-panel__title">スケジュール</h1>
+    <p class="gosaki-admin-content-panel__subtitle">{note}</p>
+    <p class="gosaki-admin-content-panel__meta" role="status">
+      <strong>{events.length}</strong> 件 · source: {dataSource}
+      {
+        publicScheduleUrl ? (
+          <>
+            {" · "}
+            <a
+              class="gosaki-read-only-admin__link"
+              href={publicScheduleUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              公開 Schedule を見る
+            </a>
+          </>
+        ) : null
+      }
+    </p>
+  </header>
+
+  {
+    events.length === 0 ? (
+      <p class="gosaki-admin-content-panel__empty" role="status">
+        表示できる公演がありません（build 時の Schedule 読み取り結果が空です）。
+      </p>
+    ) : (
+      <div class="gosaki-schedule-content-panel__months">
+        {months.map((ym) => (
+          <section
+            class="gosaki-schedule-content-panel__month"
+            data-schedule-month={ym}
+            aria-labelledby={`gosaki-schedule-month-${ym}`}
+          >
+            <h2 class="gosaki-schedule-content-panel__month-title" id={`gosaki-schedule-month-${ym}`}>
+              {ym}
+            </h2>
+            <ul class="gosaki-schedule-content-panel__list">
+              {(byMonth.get(ym) ?? []).map((event) => (
+                <li
+                  class="gosaki-schedule-content-panel__card"
+                  data-schedule-event="true"
+                  data-legacy-id={event.legacyId ?? ""}
+                  data-published={event.published === false ? "false" : "true"}
+                >
+                  <div class="gosaki-schedule-content-panel__card-main">
+                    <p class="gosaki-schedule-content-panel__date">{display(event.date)}</p>
+                    <h3 class="gosaki-schedule-content-panel__event-title">{display(event.title)}</h3>
+                    <p class="gosaki-schedule-content-panel__venue">{display(event.venue)}</p>
+                    <p class="gosaki-schedule-content-panel__times">
+                      open {display(event.openTime)} · start {display(event.startTime)}
+                      {event.price ? ` · ${display(event.price)}` : ""}
+                    </p>
+                  </div>
+                  <div class="gosaki-schedule-content-panel__card-meta">
+                    {event.published === false ? (
+                      <span class="gosaki-admin-content-panel__badge gosaki-admin-content-panel__badge--warn">
+                        非公開
+                      </span>
+                    ) : (
+                      <span class="gosaki-admin-content-panel__badge">公開</span>
+                    )}
+                    <code class="gosaki-schedule-content-panel__legacy">{display(event.legacyId)}</code>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ))}
+      </div>
+    )
+  }
+</section>

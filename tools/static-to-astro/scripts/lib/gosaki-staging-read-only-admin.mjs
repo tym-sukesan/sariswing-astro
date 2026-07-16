@@ -23,6 +23,15 @@ export const GOSAKI_ADMIN_CHROME_COMPONENT_DIR_REL = "src/components/gosaki-admi
 export const GOSAKI_READ_ONLY_ADMIN_DASHBOARD_DATA_REL = "src/data/gosaki-read-only-admin-dashboard.json";
 export const GOSAKI_READ_ONLY_ADMIN_DISCOGRAPHY_EDITOR_DATA_REL =
   "src/data/gosaki-read-only-admin-discography-editor.json";
+export const GOSAKI_READ_ONLY_ADMIN_SCHEDULE_EVENTS_DATA_REL =
+  "src/data/gosaki-read-only-admin-schedule-events.json";
+
+/** Shared content / auth panels copied into package gosaki-admin/ */
+export const GOSAKI_ADMIN_CONTENT_PANEL_COMPONENTS = [
+  "AdminGosakiStagingScheduleContentPanel.astro",
+  "AdminGosakiStagingAboutContentPanel.astro",
+  "AdminGosakiStagingCompactAuthBar.astro",
+];
 
 /** @type {ReadonlyArray<{ page: string, rel: string }>} */
 export const GOSAKI_ADMIN_MULTI_ROUTE_PAGES = [
@@ -112,6 +121,62 @@ export function countAugust2026ScheduleEvents(schedules) {
     const date = String(row?.date ?? "");
     return /^2026-08/.test(date);
   }).length;
+}
+
+/**
+ * Build schedule events snapshot for STG admin schedule content panel.
+ *
+ * @param {{
+ *   scheduleDataSource?: string,
+ *   schedules?: unknown[],
+ *   months?: unknown[],
+ * } | null | undefined} scheduleBundle
+ */
+export function buildScheduleAdminEventsSnapshot(scheduleBundle = null) {
+  const schedules = Array.isArray(scheduleBundle?.schedules) ? scheduleBundle.schedules : [];
+  /** @type {Array<Record<string, unknown>>} */
+  const events = schedules
+    .map((row) => {
+      const r = /** @type {Record<string, unknown>} */ (row ?? {});
+      const date = String(r.date ?? "").trim();
+      const yearMonth =
+        date.match(/^(\d{4}-\d{2})/)?.[1] ??
+        (r.year != null && r.month != null
+          ? `${String(r.year).padStart(4, "0")}-${String(r.month).padStart(2, "0")}`
+          : "");
+      return {
+        id: r.id ?? null,
+        legacyId: r.legacy_id ?? null,
+        date: date || null,
+        yearMonth: yearMonth || null,
+        title: r.title ?? "",
+        venue: r.venue ?? "",
+        openTime: r.open_time ?? "",
+        startTime: r.start_time ?? "",
+        price: r.price ?? "",
+        published: r.published !== false,
+      };
+    })
+    .sort((a, b) => {
+      const da = String(a.date ?? "");
+      const db = String(b.date ?? "");
+      if (da !== db) return db.localeCompare(da);
+      return String(a.legacyId ?? "").localeCompare(String(b.legacyId ?? ""));
+    });
+
+  const months = [
+    ...new Set(events.map((e) => String(e.yearMonth || "").trim()).filter(Boolean)),
+  ].sort((a, b) => b.localeCompare(a));
+
+  return {
+    phase: "G-20u39b5-gosaki-admin-multi-route-content-ui-restore",
+    dataSource: scheduleBundle?.scheduleDataSource ?? "unknown",
+    totalEvents: events.length,
+    monthCount: months.length,
+    months,
+    events,
+    saveEnabled: false,
+  };
 }
 
 /**
@@ -388,6 +453,7 @@ export function applyGosakiStagingReadOnlyAdmin(outDir, toolRoot, options = {}) 
     "AdminGosakiStagingNav.astro",
     "AdminGosakiStagingSafetyChips.astro",
     "AdminGosakiStagingOperatorHome.astro",
+    ...GOSAKI_ADMIN_CONTENT_PANEL_COMPONENTS,
   ];
 
   for (const src of [componentSrc, libSrc, packagePathsSrc, cssSrc, chromeCssSrc]) {
@@ -456,19 +522,28 @@ import GosakiStagingReadOnlyAdminPage from "${ups}/GosakiStagingReadOnlyAdminPag
   }
 
   const discographyBundle = /** @type {any} */ (options.discographyBundle);
+  const scheduleBundle = /** @type {any} */ (options.scheduleBundle);
   const dashboardSnapshot = buildReadOnlyAdminDashboardSnapshot({
-    scheduleBundle: /** @type {any} */ (options.scheduleBundle),
+    scheduleBundle,
     discographyBundle,
   });
   const discographyEditorSnapshot = buildDiscographyEditorPrototypeSnapshot(discographyBundle);
+  const scheduleEventsSnapshot = buildScheduleAdminEventsSnapshot(scheduleBundle);
   const dashboardDest = path.join(outDir, GOSAKI_READ_ONLY_ADMIN_DASHBOARD_DATA_REL);
   const discographyEditorDest = path.join(outDir, GOSAKI_READ_ONLY_ADMIN_DISCOGRAPHY_EDITOR_DATA_REL);
+  const scheduleEventsDest = path.join(outDir, GOSAKI_READ_ONLY_ADMIN_SCHEDULE_EVENTS_DATA_REL);
   fs.mkdirSync(path.dirname(dashboardDest), { recursive: true });
   fs.mkdirSync(path.dirname(discographyEditorDest), { recursive: true });
+  fs.mkdirSync(path.dirname(scheduleEventsDest), { recursive: true });
   fs.writeFileSync(dashboardDest, `${JSON.stringify(dashboardSnapshot, null, 2)}\n`, "utf8");
   fs.writeFileSync(
     discographyEditorDest,
     `${JSON.stringify(discographyEditorSnapshot, null, 2)}\n`,
+    "utf8",
+  );
+  fs.writeFileSync(
+    scheduleEventsDest,
+    `${JSON.stringify(scheduleEventsSnapshot, null, 2)}\n`,
     "utf8",
   );
 
@@ -490,8 +565,10 @@ import GosakiStagingReadOnlyAdminPage from "${ups}/GosakiStagingReadOnlyAdminPag
     chromeComponentDir: GOSAKI_ADMIN_CHROME_COMPONENT_DIR_REL,
     dashboardPath: GOSAKI_READ_ONLY_ADMIN_DASHBOARD_DATA_REL,
     discographyEditorPath: GOSAKI_READ_ONLY_ADMIN_DISCOGRAPHY_EDITOR_DATA_REL,
+    scheduleEventsPath: GOSAKI_READ_ONLY_ADMIN_SCHEDULE_EVENTS_DATA_REL,
     dashboardSnapshot,
     discographyEditorSnapshot,
+    scheduleEventsSnapshot,
     bandImageCount: bandImages.length,
     bandImageFiles: bandImages,
     contactPortalId: contact.config.portalId ?? null,

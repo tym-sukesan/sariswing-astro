@@ -1,0 +1,115 @@
+---
+/**
+ * Compact auth + collapsed developer diagnostics for STG package content routes.
+ * Keeps login usable for dry-run without dominating the page.
+ */
+interface Props {
+  supabaseAuthConfigured?: boolean;
+  probePhase?: string;
+  probeNote?: string;
+  probeButtonLabel?: string;
+  purposeNote?: string;
+}
+
+const {
+  supabaseAuthConfigured = false,
+  probePhase = "",
+  probeNote = "",
+  probeButtonLabel = "DB admin probe (read-only)",
+  purposeNote = "dry-run 実行時のみログインが必要です。",
+} = Astro.props as Props;
+---
+
+<section
+  class="gosaki-read-only-admin__section gosaki-admin-compact-auth"
+  aria-labelledby="gra-auth"
+  data-gosaki-compact-auth="true"
+>
+  <h2 id="gra-auth" class="gosaki-admin-compact-auth__title">ログイン状態</h2>
+  <p class="gosaki-read-only-admin__meta gosaki-admin-compact-auth__purpose">{purposeNote}</p>
+  <div class="gosaki-read-only-admin__auth gosaki-admin-compact-auth__panel" id="gra-auth-panel">
+    <p class="gosaki-read-only-admin__meta" id="gra-auth-status" aria-live="polite">
+      ログイン状態を確認しています…
+    </p>
+    {
+      supabaseAuthConfigured ? (
+        <p class="gosaki-read-only-admin__meta gosaki-read-only-admin__meta--ok" id="gra-auth-config-status" hidden>
+          Auth configured
+        </p>
+      ) : (
+        <p class="gosaki-read-only-admin__meta gosaki-read-only-admin__meta--warn">
+          Supabase Auth 未設定 — dry-run には PUBLIC_SUPABASE_URL / PUBLIC_SUPABASE_ANON_KEY が必要です。
+        </p>
+      )
+    }
+    <div id="gra-auth-signed-in" class="gosaki-read-only-admin__auth-actions gosaki-admin-compact-auth__signed-in" hidden>
+      <span class="gosaki-admin-compact-auth__signed-badge" id="gra-auth-signed-badge">ログイン済み</span>
+      <button type="button" id="gra-auth-sign-out-btn" class="gosaki-read-only-admin__btn" disabled>
+        ログアウト
+      </button>
+    </div>
+    <form
+      id="gra-auth-login-form"
+      class="gosaki-read-only-admin__auth-form gosaki-admin-compact-auth__form"
+      hidden={!supabaseAuthConfigured}
+      data-gosaki-auth-credentials-form="true"
+    >
+      <p class="gosaki-read-only-admin__meta">dry-run の前にログインしてください。</p>
+      <div class="gosaki-read-only-admin__field">
+        <label for="gra-auth-email">メールアドレス</label>
+        <input id="gra-auth-email" type="email" autocomplete="username" />
+      </div>
+      <div class="gosaki-read-only-admin__field">
+        <label for="gra-auth-password">パスワード</label>
+        <input id="gra-auth-password" type="password" autocomplete="current-password" />
+      </div>
+      <div class="gosaki-read-only-admin__auth-actions">
+        <button
+          type="submit"
+          id="gra-auth-sign-in-btn"
+          class="gosaki-read-only-admin__btn gosaki-read-only-admin__btn--primary"
+          disabled={!supabaseAuthConfigured}
+        >
+          ログイン
+        </button>
+      </div>
+    </form>
+
+    <details class="gosaki-read-only-admin__dev-details" data-gosaki-admin-dev-details="true">
+      <summary>開発者情報（DB probe / 診断）</summary>
+      <div
+        class="gosaki-read-only-admin__admin-probe"
+        id="gra-admin-probe"
+        data-section="g20u36e-admin-probe"
+        data-g20u36e-admin-probe-phase={probePhase}
+      >
+        <h3 class="gosaki-read-only-admin__meta">DB admin probe (read-only)</h3>
+        <p class="gosaki-read-only-admin__meta">{probeNote}</p>
+        <p class="gosaki-read-only-admin__meta gosaki-read-only-admin__meta--warn">
+          Manual only · no auto-run · probe PASS does not enable Save · operation=save not sent
+        </p>
+        <div class="gosaki-read-only-admin__auth-actions">
+          <button
+            type="button"
+            id="gra-admin-probe-btn"
+            class="gosaki-read-only-admin__btn"
+            disabled={!supabaseAuthConfigured}
+          >
+            {probeButtonLabel}
+          </button>
+        </div>
+        <pre
+          class="gosaki-read-only-admin__result"
+          id="gra-admin-probe-result"
+          aria-live="polite"
+        >{`{
+  "adminProbeStatus": "not_run",
+  "isAdmin": null,
+  "reasonCode": "not_run",
+  "saveEnabled": false,
+  "diagnosticOnly": true
+}`}</pre>
+      </div>
+    </details>
+  </div>
+</section>

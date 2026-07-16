@@ -8,6 +8,9 @@ import "../styles/gosaki-admin-shell-chrome.css";
 import AdminGosakiStagingOperatorHome from "./gosaki-admin/AdminGosakiStagingOperatorHome.astro";
 import AdminGosakiStagingNav from "./gosaki-admin/AdminGosakiStagingNav.astro";
 import AdminGosakiStagingSafetyChips from "./gosaki-admin/AdminGosakiStagingSafetyChips.astro";
+import AdminGosakiStagingScheduleContentPanel from "./gosaki-admin/AdminGosakiStagingScheduleContentPanel.astro";
+import AdminGosakiStagingAboutContentPanel from "./gosaki-admin/AdminGosakiStagingAboutContentPanel.astro";
+import AdminGosakiStagingCompactAuthBar from "./gosaki-admin/AdminGosakiStagingCompactAuthBar.astro";
 import {
   GOSAKI_STAGING_ADMIN_BASE,
   GOSAKI_STAGING_ADMIN_SCHEDULE_PATH,
@@ -18,6 +21,7 @@ import aboutConfig from "../data/gosaki-about-content.json";
 import contactConfig from "../data/gosaki-contact-hubspot.json";
 import dashboardSnapshot from "../data/gosaki-read-only-admin-dashboard.json";
 import discographyEditorSnapshot from "../data/gosaki-read-only-admin-discography-editor.json";
+import scheduleEventsSnapshot from "../data/gosaki-read-only-admin-schedule-events.json";
 import {
   G11C6A_PHASE,
   G11C4A_STAGING_DRY_RUN_ENDPOINT,
@@ -75,6 +79,7 @@ const view = buildGosakiReadOnlyAdminViewModel({
 
 const dashboard = dashboardSnapshot;
 const discographyEditor = discographyEditorSnapshot;
+const scheduleEvents = scheduleEventsSnapshot;
 const stagingSiteBase = String(import.meta.env.SITE ?? GOSAKI_STAGING_PREVIEW_URL).replace(/\/?$/, "/");
 const pagePathSuffix =
   page === "portal" ? "admin/" : `admin/${page}/`;
@@ -85,6 +90,7 @@ const publicAugustUrl = new URL("schedule/2026-08/", stagingSiteBase).href;
 const publicDiscographyUrl = new URL("discography/", stagingSiteBase).href;
 const publicContactUrl = new URL("contact/", stagingSiteBase).href;
 const publicLinkUrl = new URL("link/", stagingSiteBase).href;
+const publicAboutUrl = new URL("about/", stagingSiteBase).href;
 const robotsContent = "noindex,nofollow,noarchive";
 const pageTitleByRoute = {
   portal: "Gosaki Piano CMS（テスト環境）",
@@ -223,118 +229,34 @@ const showClientScript = page !== "portal";
 
         {page === "schedule" ? (
           <>
-            <section class="gosaki-read-only-admin__section" aria-labelledby="gra-schedule">
-          <h2 id="gra-schedule">Schedule</h2>
-          <p class="gosaki-read-only-admin__meta"><strong>status:</strong> {view.schedule.status}</p>
-          <p class="gosaki-read-only-admin__meta">{view.schedule.note}</p>
-          <details class="gosaki-read-only-admin__dev-details">
-            <summary>開発者向け — build snapshot</summary>
-            <p class="gosaki-read-only-admin__meta">
-              build snapshot: {dashboard.schedule.totalEvents} events · {dashboard.schedule.monthCount} months · August 2026: {dashboard.schedule.august2026Events} cards
-            </p>
-          </details>
-        </section>
-
-
+            <AdminGosakiStagingScheduleContentPanel
+              events={scheduleEvents.events ?? []}
+              dataSource={scheduleEvents.dataSource ?? dashboard.schedule.dataSource}
+              publicScheduleUrl={publicScheduleUrl}
+              note={view.schedule.note}
+            />
+            <details class="gosaki-read-only-admin__dev-details" data-gosaki-admin-dev-details="true">
+              <summary>開発者向け — build snapshot</summary>
+              <p class="gosaki-read-only-admin__meta">
+                build snapshot: {dashboard.schedule.totalEvents} events · {dashboard.schedule.monthCount} months · August 2026: {dashboard.schedule.august2026Events} cards
+              </p>
+            </details>
             <p class="gosaki-read-only-admin__meta" role="note" data-gosaki-save-disabled-note="true">
-          Save は無効です。公開反映は管理者が行います。
-        </p>
-
+              Save は無効です。公開反映は管理者が行います。
+            </p>
           </>
         ) : null}
 
         {page === "discography" ? (
           <>
-            <section class="gosaki-read-only-admin__section" aria-labelledby="gra-auth">
-          <h2 id="gra-auth">Staging Auth（YouTube dry-run 用）</h2>
-          <div class="gosaki-read-only-admin__auth" id="gra-auth-panel">
-            <p class="gosaki-read-only-admin__meta" id="gra-auth-status" aria-live="polite">
-              ログイン状態を確認しています…
-            </p>
-            {
-              supabaseAuthConfigured ? (
-                <p class="gosaki-read-only-admin__meta gosaki-read-only-admin__meta--ok" id="gra-auth-config-status">
-                  Supabase Auth: configured — ログインして dry-run を実行できます（保存されません）
-                </p>
-              ) : (
-                <p class="gosaki-read-only-admin__meta gosaki-read-only-admin__meta--warn">
-                  Supabase Auth 未設定 — build 時に PUBLIC_SUPABASE_URL と PUBLIC_SUPABASE_ANON_KEY（staging anon）が必要です。
-                </p>
-              )
-            }
-            <div id="gra-auth-signed-in" class="gosaki-read-only-admin__auth-actions" hidden>
-              <button type="button" id="gra-auth-sign-out-btn" class="gosaki-read-only-admin__btn" disabled>
-                ログアウト
-              </button>
-            </div>
-            <form
-              id="gra-auth-login-form"
-              class="gosaki-read-only-admin__auth-form"
-              hidden={!supabaseAuthConfigured}
-            >
-              <div class="gosaki-read-only-admin__field">
-                <label for="gra-auth-email">メールアドレス</label>
-                <input id="gra-auth-email" type="email" autocomplete="username" />
-              </div>
-              <div class="gosaki-read-only-admin__field">
-                <label for="gra-auth-password">パスワード</label>
-                <input id="gra-auth-password" type="password" autocomplete="current-password" />
-              </div>
-              <div class="gosaki-read-only-admin__auth-actions">
-                <button
-                  type="submit"
-                  id="gra-auth-sign-in-btn"
-                  class="gosaki-read-only-admin__btn gosaki-read-only-admin__btn--primary"
-                  disabled={!supabaseAuthConfigured}
-                >
-                  ログイン
-                </button>
-              </div>
-            </form>
-            <div
-              class="gosaki-read-only-admin__admin-probe"
-              id="gra-admin-probe"
-              data-section="g20u36e-admin-probe"
-              data-g20u36e-admin-probe-phase={G20U36E_ADMIN_PROBE_UI_TOOLS_DRAFT_PHASE}
-            >
-              <h3 class="gosaki-read-only-admin__meta">DB admin probe (read-only)</h3>
-              <p class="gosaki-read-only-admin__meta">{G20U36E_ADMIN_PROBE_NOTE}</p>
-              <p class="gosaki-read-only-admin__meta gosaki-read-only-admin__meta--warn">
-                Manual only · no auto-run · probe PASS does not enable Save · operation=save not sent
-              </p>
-              <div class="gosaki-read-only-admin__auth-actions">
-                <button
-                  type="button"
-                  id="gra-admin-probe-btn"
-                  class="gosaki-read-only-admin__btn"
-                  disabled={!supabaseAuthConfigured}
-                >
-                  {G20U36E_ADMIN_PROBE_BUTTON_LABEL}
-                </button>
-              </div>
-              <pre
-                class="gosaki-read-only-admin__result"
-                id="gra-admin-probe-result"
-                aria-live="polite"
-              >{`{
-  "adminProbeStatus": "not_run",
-  "isAdmin": null,
-  "reasonCode": "not_run",
-  "saveEnabled": false,
-  "diagnosticOnly": true
-}`}</pre>
-            </div>
-          </div>
-        </section>
-
-
-            <section
+<section
           class="gosaki-read-only-admin__section gosaki-read-only-admin__section--discography-editor"
           id="gra-discography-editor"
           aria-labelledby="gra-discography-editor-heading"
           data-section="discography-editor-prototype"
+          data-gosaki-discography-content="true"
         >
-          <h2 id="gra-discography-editor-heading">Discography Editor Prototype</h2>
+          <h2 id="gra-discography-editor-heading">Discography</h2>
           <div class="gosaki-read-only-admin__banner gosaki-read-only-admin__banner--compact" role="status">
             <div class="gosaki-read-only-admin__dashboard-badges">
               <span class="gosaki-read-only-admin__pill gosaki-read-only-admin__pill--ok">dry-run可能</span>
@@ -579,7 +501,15 @@ const showClientScript = page !== "portal";
         </section>
 
 
-            <p class="gosaki-read-only-admin__meta" role="note" data-gosaki-save-disabled-note="true">
+                        <AdminGosakiStagingCompactAuthBar
+              supabaseAuthConfigured={supabaseAuthConfigured}
+              probePhase={G20U36E_ADMIN_PROBE_UI_TOOLS_DRAFT_PHASE}
+              probeNote={G20U36E_ADMIN_PROBE_NOTE}
+              probeButtonLabel={G20U36E_ADMIN_PROBE_BUTTON_LABEL}
+              purposeNote="Endpoint dry-run 実行時のみログインが必要です。"
+            />
+
+<p class="gosaki-read-only-admin__meta" role="note" data-gosaki-save-disabled-note="true">
           Save は無効です。公開反映は管理者が行います。
         </p>
 
@@ -588,90 +518,7 @@ const showClientScript = page !== "portal";
 
         {page === "youtube" ? (
           <>
-            <section class="gosaki-read-only-admin__section" aria-labelledby="gra-auth">
-          <h2 id="gra-auth">Staging Auth（YouTube dry-run 用）</h2>
-          <div class="gosaki-read-only-admin__auth" id="gra-auth-panel">
-            <p class="gosaki-read-only-admin__meta" id="gra-auth-status" aria-live="polite">
-              ログイン状態を確認しています…
-            </p>
-            {
-              supabaseAuthConfigured ? (
-                <p class="gosaki-read-only-admin__meta gosaki-read-only-admin__meta--ok" id="gra-auth-config-status">
-                  Supabase Auth: configured — ログインして dry-run を実行できます（保存されません）
-                </p>
-              ) : (
-                <p class="gosaki-read-only-admin__meta gosaki-read-only-admin__meta--warn">
-                  Supabase Auth 未設定 — build 時に PUBLIC_SUPABASE_URL と PUBLIC_SUPABASE_ANON_KEY（staging anon）が必要です。
-                </p>
-              )
-            }
-            <div id="gra-auth-signed-in" class="gosaki-read-only-admin__auth-actions" hidden>
-              <button type="button" id="gra-auth-sign-out-btn" class="gosaki-read-only-admin__btn" disabled>
-                ログアウト
-              </button>
-            </div>
-            <form
-              id="gra-auth-login-form"
-              class="gosaki-read-only-admin__auth-form"
-              hidden={!supabaseAuthConfigured}
-            >
-              <div class="gosaki-read-only-admin__field">
-                <label for="gra-auth-email">メールアドレス</label>
-                <input id="gra-auth-email" type="email" autocomplete="username" />
-              </div>
-              <div class="gosaki-read-only-admin__field">
-                <label for="gra-auth-password">パスワード</label>
-                <input id="gra-auth-password" type="password" autocomplete="current-password" />
-              </div>
-              <div class="gosaki-read-only-admin__auth-actions">
-                <button
-                  type="submit"
-                  id="gra-auth-sign-in-btn"
-                  class="gosaki-read-only-admin__btn gosaki-read-only-admin__btn--primary"
-                  disabled={!supabaseAuthConfigured}
-                >
-                  ログイン
-                </button>
-              </div>
-            </form>
-            <div
-              class="gosaki-read-only-admin__admin-probe"
-              id="gra-admin-probe"
-              data-section="g20u36e-admin-probe"
-              data-g20u36e-admin-probe-phase={G20U36E_ADMIN_PROBE_UI_TOOLS_DRAFT_PHASE}
-            >
-              <h3 class="gosaki-read-only-admin__meta">DB admin probe (read-only)</h3>
-              <p class="gosaki-read-only-admin__meta">{G20U36E_ADMIN_PROBE_NOTE}</p>
-              <p class="gosaki-read-only-admin__meta gosaki-read-only-admin__meta--warn">
-                Manual only · no auto-run · probe PASS does not enable Save · operation=save not sent
-              </p>
-              <div class="gosaki-read-only-admin__auth-actions">
-                <button
-                  type="button"
-                  id="gra-admin-probe-btn"
-                  class="gosaki-read-only-admin__btn"
-                  disabled={!supabaseAuthConfigured}
-                >
-                  {G20U36E_ADMIN_PROBE_BUTTON_LABEL}
-                </button>
-              </div>
-              <pre
-                class="gosaki-read-only-admin__result"
-                id="gra-admin-probe-result"
-                aria-live="polite"
-              >{`{
-  "adminProbeStatus": "not_run",
-  "isAdmin": null,
-  "reasonCode": "not_run",
-  "saveEnabled": false,
-  "diagnosticOnly": true
-}`}</pre>
-            </div>
-          </div>
-        </section>
-
-
-            <section class="gosaki-read-only-admin__section" aria-labelledby="gra-youtube">
+<section class="gosaki-read-only-admin__section" aria-labelledby="gra-youtube" data-gosaki-youtube-content="true">
           <h2 id="gra-youtube">YouTube Embed</h2>
           <div class="gosaki-read-only-admin__field">
             <label for="gra-youtube-url">YouTube URL / embedCode</label>
@@ -684,6 +531,17 @@ const showClientScript = page !== "portal";
           <p class="gosaki-read-only-admin__meta">
             published: {view.youtube.published ? "true" : "false"}
           </p>
+          {view.youtube.videoId ? (
+            <div class="gosaki-youtube-content-preview" data-gosaki-youtube-preview="true">
+              <iframe
+                title="YouTube preview"
+                src={`https://www.youtube-nocookie.com/embed/${view.youtube.videoId}`}
+                loading="lazy"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen
+              />
+            </div>
+          ) : null}
 
           <div class="gosaki-read-only-admin__dry-run" id="gra-youtube-dry-run" data-section="youtube-dry-run">
             <h3 class="gosaki-read-only-admin__meta">Dry-run（保存前チェック — JSON は書き換えません）</h3>
@@ -749,7 +607,15 @@ const showClientScript = page !== "portal";
         </section>
 
 
-            <p class="gosaki-read-only-admin__meta" role="note" data-gosaki-save-disabled-note="true">
+                        <AdminGosakiStagingCompactAuthBar
+              supabaseAuthConfigured={supabaseAuthConfigured}
+              probePhase={G20U36E_ADMIN_PROBE_UI_TOOLS_DRAFT_PHASE}
+              probeNote={G20U36E_ADMIN_PROBE_NOTE}
+              probeButtonLabel={G20U36E_ADMIN_PROBE_BUTTON_LABEL}
+              purposeNote="YouTube dry-run 実行時のみログインが必要です。"
+            />
+
+<p class="gosaki-read-only-admin__meta" role="note" data-gosaki-save-disabled-note="true">
           Save は無効です。公開反映は管理者が行います。
         </p>
 
@@ -758,22 +624,23 @@ const showClientScript = page !== "portal";
 
         {page === "about" ? (
           <>
-            <section class="gosaki-read-only-admin__section" aria-labelledby="gra-about">
-          <h2 id="gra-about">About</h2>
-          <p class="gosaki-read-only-admin__meta">
-            <strong>{view.about.profileLabel}</strong> — {view.about.profileCharCount} chars
-          </p>
-          <p class="gosaki-read-only-admin__meta">{view.about.profileSummary || "（内容なし）"}</p>
-          <p class="gosaki-read-only-admin__meta">
-            <strong>{view.about.bandsLabel}</strong> — {view.about.bandsCharCount} chars · {view.about.bandImages.length} images
-          </p>
-        </section>
-
-
+            <AdminGosakiStagingAboutContentPanel
+              profileLabel={view.about.profileLabel}
+              bandsLabel={view.about.bandsLabel}
+              profileHtml={view.about.profileHtml}
+              bandsHtml={view.about.bandsHtml}
+              bandImages={view.about.bandImages}
+              publicAboutUrl={publicAboutUrl}
+            />
+            <details class="gosaki-read-only-admin__dev-details" data-gosaki-admin-dev-details="true">
+              <summary>開発者向け — About summary</summary>
+              <p class="gosaki-read-only-admin__meta">
+                {view.about.profileLabel}: {view.about.profileCharCount} chars · {view.about.bandsLabel}: {view.about.bandsCharCount} chars · {view.about.bandImages.length} images
+              </p>
+            </details>
             <p class="gosaki-read-only-admin__meta" role="note" data-gosaki-save-disabled-note="true">
-          Save は無効です。公開反映は管理者が行います。
-        </p>
-
+              Save は無効です。公開反映は管理者が行います。
+            </p>
           </>
         ) : null}
       </main>
@@ -860,7 +727,9 @@ const showClientScript = page !== "portal";
         function setAuthUiSignedIn(email) {
           signedIn = true;
           if (authStatus) {
-            authStatus.textContent = "ログイン済み — " + (email || "（emailなし）") + "（dry-run 可能）";
+            authStatus.textContent = "ログイン済み" + (email ? " — " + email : "");
+            var badge = document.getElementById("gra-auth-signed-badge");
+            if (badge) badge.textContent = "ログイン済み";
           }
           if (authLoginForm) authLoginForm.hidden = true;
           if (authSignedIn) authSignedIn.hidden = false;

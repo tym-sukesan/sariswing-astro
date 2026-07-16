@@ -116,7 +116,30 @@ DISCOGRAPHY_DB_WRITE_EXECUTED: false
 FRESH_PACKAGE_REUPLOAD_REQUIRED: true
 ```
 
-Recommended next: Commit / Push後に fresh package 生成 · manual FTP · Discography STG 再確認
+## Discography form layout + gated Save STG browser QA (G-20u41 operator final)
+
+Operator manual FTP + STG browser QA on package `sourceCommit: 930a2fb9569d510e185813e91631ab6512854c82`.
+
+STG URL: `https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/admin/discography/`
+
+- **desktop:** PASS · **mobile:** PASS
+- Form groups: 基本情報 / リンク・説明 / 収録曲 headings OK · section + heading（fieldset/legend 崩れなし）
+- Controls full-width: タイトル · 購入URL · 説明文 · 曲名（1行=1曲）· 巨大空白なし · 右端潰れなし · 横スクロールなし
+- Save: card ×1 · button ×1 · **disabled** · Save request **not** executed · DB write **not** executed · obvious UI error: none
+
+```txt
+DISCOGRAPHY_STG_FORM_LAYOUT_QA_PASSED: true
+DISCOGRAPHY_FIELD_GROUP_LAYOUT_REGRESSION_RESOLVED: true
+DISCOGRAPHY_GATED_SAVE_UI_STG_QA_PASSED: true
+DISCOGRAPHY_SAVE_REMAINS_DISABLED: true
+SAVE_NETWORK_REQUEST_EXECUTED: false
+DB_WRITE_EXECUTED: false
+G-20u41: completed
+operatorManualFtpUpload: true
+uploadedPackageSourceCommit: 930a2fb9569d510e185813e91631ab6512854c82
+```
+
+**No** Save enablement · **no** Save click · **no** DB write · **no** Cursor FTP in this recording phase.
 
 ## About admin form + mobile preview follow-up (G-20u39b5 STG QA)
 
@@ -205,7 +228,13 @@ DISCOGRAPHY_POST_DRY_RUN_MUTATION_RELOCKS_SAVE: true
 DISCOGRAPHY_OPTIMISTIC_LOCK_SAVE_PRESERVED: true
 DISCOGRAPHY_SAVE_IN_FLIGHT_GUARD: true
 DISCOGRAPHY_CONFLICT_UI_IMPLEMENTED: true
+DISCOGRAPHY_STG_FORM_LAYOUT_QA_PASSED: true
+DISCOGRAPHY_FIELD_GROUP_LAYOUT_REGRESSION_RESOLVED: true
+DISCOGRAPHY_GATED_SAVE_UI_STG_QA_PASSED: true
+DISCOGRAPHY_SAVE_REMAINS_DISABLED: true
+SAVE_NETWORK_REQUEST_EXECUTED: false
 DISCOGRAPHY_DB_WRITE_EXECUTED: false
+G-20u41: completed
 FRESH_PACKAGE_REUPLOAD_REQUIRED: true
 packageGenerationExecuted: false
 ftpUploadExecuted: false
@@ -222,4 +251,4 @@ npm run verify:g20u39b4-gosaki-admin-multi-route-staging-package-prep
 
 ## Recommended next
 
-Commit / Push後に fresh package 生成 · manual FTP · Discography STG 再確認
+G-20u42-gosaki-discography-controlled-save-enablement-preflight

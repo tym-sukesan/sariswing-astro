@@ -33,7 +33,7 @@ const PHASE =
   "G-20u39b4-gosaki-admin-multi-route-staging-package-and-manual-upload-prep";
 const GATE = "gosakiAdminMultiRouteStagingPackagePrepComplete: true";
 const RECOMMENDED_NEXT =
-  "Commit / Push後に fresh package 生成 · manual FTP · Discography STG 再確認";
+  "G-20u42-gosaki-discography-controlled-save-enablement-preflight";
 
 /** Fixture-only known anon (not a real project key). payload.role=anon */
 const KNOWN_ANON =
@@ -225,6 +225,30 @@ assert(
 assert(
   "DISCOGRAPHY_FIELD_GROUP_LAYOUT_REGRESSION_FIXED true",
   /DISCOGRAPHY_FIELD_GROUP_LAYOUT_REGRESSION_FIXED:\s*true/i.test(doc),
+);
+assert(
+  "DISCOGRAPHY_STG_FORM_LAYOUT_QA_PASSED true",
+  /DISCOGRAPHY_STG_FORM_LAYOUT_QA_PASSED:\s*true/i.test(doc),
+);
+assert(
+  "DISCOGRAPHY_FIELD_GROUP_LAYOUT_REGRESSION_RESOLVED true",
+  /DISCOGRAPHY_FIELD_GROUP_LAYOUT_REGRESSION_RESOLVED:\s*true/i.test(doc),
+);
+assert(
+  "DISCOGRAPHY_GATED_SAVE_UI_STG_QA_PASSED true",
+  /DISCOGRAPHY_GATED_SAVE_UI_STG_QA_PASSED:\s*true/i.test(doc),
+);
+assert(
+  "G-20u41 completed",
+  /G-20u41:\s*completed/i.test(doc),
+);
+assert(
+  "G-20u41 uploaded sourceCommit 930a2fb",
+  /uploadedPackageSourceCommit:\s*930a2fb9569d510e185813e91631ab6512854c82/i.test(doc),
+);
+assert(
+  "SAVE_NETWORK_REQUEST_EXECUTED false",
+  /SAVE_NETWORK_REQUEST_EXECUTED:\s*false/i.test(doc),
 );
 assert(
   "DISCOGRAPHY_FIELDSET_HEADING_MOBILE_FIXED true",
@@ -1092,6 +1116,19 @@ assert(
 assert(
   "AI DISCOGRAPHY_GATED_SAVE_UI_WIRED",
   /DISCOGRAPHY_GATED_SAVE_UI_WIRED:\s*true/i.test(currentState + nextActions + handoff),
+);
+assert(
+  "AI DISCOGRAPHY_STG_FORM_LAYOUT_QA_PASSED",
+  /DISCOGRAPHY_STG_FORM_LAYOUT_QA_PASSED:\s*true/i.test(currentState + nextActions + handoff),
+);
+assert(
+  "AI DISCOGRAPHY_GATED_SAVE_UI_STG_QA_PASSED",
+  /DISCOGRAPHY_GATED_SAVE_UI_STG_QA_PASSED:\s*true/i.test(currentState + nextActions + handoff),
+);
+assert(
+  "AI G-20u41 completed",
+  /G-20u41:\s*completed/i.test(currentState + nextActions + handoff) ||
+    /G-20u41[\s\S]{0,80}completed/i.test(currentState + nextActions + handoff),
 );
 
 console.log("");

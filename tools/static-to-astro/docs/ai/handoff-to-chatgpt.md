@@ -5,22 +5,23 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u41-gosaki-discography-operational-save-ui-gated-local-wiring — complete (gated Save wired · default disabled).
-DISCOGRAPHY_GATED_SAVE_UI_WIRED: true.
-DISCOGRAPHY_SAVE_DEFAULT_DISABLED: true.
-DISCOGRAPHY_DB_WRITE_EXECUTED: false.
-FRESH_PACKAGE_REUPLOAD_REQUIRED: true.
-Previous: G-20u40 Discography view/edit/dry-run + STG browser QA.
-Next: Commit / Push後に fresh package 生成 · manual FTP · Discography STG 再確認.```
+Current phase: G-20u41-gosaki-discography-operational-save-ui-gated-local-wiring — completed (STG form layout + gated Save QA PASS).
+DISCOGRAPHY_STG_FORM_LAYOUT_QA_PASSED: true.
+DISCOGRAPHY_GATED_SAVE_UI_STG_QA_PASSED: true.
+DISCOGRAPHY_SAVE_REMAINS_DISABLED: true.
+SAVE_NETWORK_REQUEST_EXECUTED: false.
+DB_WRITE_EXECUTED: false.
+G-20u41: completed.
+Previous: G-20u40 Discography view/edit/dry-run STG QA.
+Next: G-20u42-gosaki-discography-controlled-save-enablement-preflight.```
 
-## G-20u41-gosaki-discography-operational-save-ui-gated-local-wiring — complete
+## G-20u41-gosaki-discography-operational-save-ui-gated-local-wiring — completed
 
-- **Save endpoint:** same staging Edge URL as dry-run (`gosaki-discography-save-dry-run`) · `operation=save`
-- **Approval:** `G-20u36-gosaki-discography-tracklist-save-non-dry-run-slice`
-- **Gates:** auth · dry-run ok · no post-dry-run mutation · optimistic lock · env arm · approval · saveInFlight
-- **UI:** Save disabled reason · conflict message (no auto-retry) · success/validation regions
-- **Not done:** Save click · DB write · package · FTP
-- **Next:** Commit / Push → fresh package → STG browser QA (Save disabled + gate labels only)
+- **STG browser QA:** desktop/mobile **PASS** @ `…/admin/discography/` · uploaded `sourceCommit: 930a2fb9569d510e185813e91631ab6512854c82`
+- **Form layout:** section + heading · full-width controls · no fieldset/legend crush · no horizontal scroll
+- **Save:** card×1 · button×1 · **disabled** · request **not** executed · DB write **not** executed
+- **Gates:** `DISCOGRAPHY_STG_FORM_LAYOUT_QA_PASSED` · `DISCOGRAPHY_FIELD_GROUP_LAYOUT_REGRESSION_RESOLVED` · `DISCOGRAPHY_GATED_SAVE_UI_STG_QA_PASSED`
+- **Next:** **G-20u42-gosaki-discography-controlled-save-enablement-preflight** (preflight only · no Save enablement yet)
 
 ## G-20u40-gosaki-discography-operational-edit-ui — complete
 

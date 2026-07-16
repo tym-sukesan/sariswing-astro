@@ -1,11 +1,14 @@
 ---
 /**
  * Shared About content panel (local shell + STG package).
- * Read-only Profile + Bands / Projects preview — no Save.
+ * Order: edit forms (readonly) → public preview (iframe srcdoc) → Save disabled note.
+ * No Save handler · public About CSS unchanged (admin preview wrapper / srcdoc only).
  */
+
 interface BandImage {
   fileName?: string;
   name?: string;
+  bandName?: string | null;
 }
 
 interface Props {
@@ -17,6 +20,26 @@ interface Props {
   publicAboutUrl?: string;
 }
 
+interface ImgAttrs {
+  src: string;
+  alt: string;
+  width: string;
+  height: string;
+}
+
+interface ProfileFormFields {
+  heading: string;
+  body: string;
+  image: ImgAttrs | null;
+}
+
+interface BandFormFields {
+  id: string;
+  name: string;
+  body: string;
+  image: ImgAttrs | null;
+}
+
 const {
   profileLabel = "Profile",
   bandsLabel = "Bands / Projects",
@@ -26,8 +49,184 @@ const {
   publicAboutUrl = "",
 } = Astro.props as Props;
 
+function stripTags(html: string): string {
+  return String(html ?? "")
+    .replace(/<!--[\s\S]*?-->/g, " ")
+    .replace(/<style[\s\S]*?<\/style>/gi, " ")
+    .replace(/<script[\s\S]*?<\/script>/gi, " ")
+    .replace(/<br\s*\/?>/gi, "\n")
+    .replace(/<\/p>/gi, "\n\n")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/&nbsp;/gi, " ")
+    .replace(/&amp;/gi, "&")
+    .replace(/&lt;/gi, "<")
+    .replace(/&gt;/gi, ">")
+    .replace(/&quot;/gi, '"')
+    .replace(/\u00a0/g, " ")
+    .replace(/[ \t]+\n/g, "\n")
+    .replace(/\n{3,}/g, "\n\n")
+    .replace(/[ \t]{2,}/g, " ")
+    .trim();
+}
+
+function parseImgAttrs(tag: string): ImgAttrs | null {
+  if (!tag) return null;
+  const src = tag.match(/\bsrc="([^"]*)"/i)?.[1]?.trim() ?? "";
+  if (!src) return null;
+  return {
+    src,
+    alt: tag.match(/\balt="([^"]*)"/i)?.[1]?.trim() ?? "",
+    width: tag.match(/\bwidth="([^"]*)"/i)?.[1]?.trim() ?? "",
+    height: tag.match(/\bheight="([^"]*)"/i)?.[1]?.trim() ?? "",
+  };
+}
+
+function parseProfileForm(html: string): ProfileFormFields {
+  const raw = String(html ?? "");
+  const headingMatch = raw.match(/<h[1-6][^>]*>([\s\S]*?)<\/h[1-6]>/i);
+  const heading = headingMatch ? stripTags(headingMatch[1]) : "";
+  const paragraphs = [...raw.matchAll(/<p\b[^>]*>([\s\S]*?)<\/p>/gi)]
+    .map((m) => stripTags(m[1]))
+    .filter(Boolean);
+  const body = paragraphs.join("\n\n");
+  const imgTag = raw.match(/<img\b[^>]*>/i)?.[0] ?? "";
+  return { heading, body, image: parseImgAttrs(imgTag) };
+}
+
+function parseBandForms(html: string): BandFormFields[] {
+  const raw = String(html ?? "");
+  const articles = [
+    ...raw.matchAll(
+      /<article\b([^>]*)class="([^"]*\bband-profile\b[^"]*)"([^>]*)>([\s\S]*?)<\/article>/gi,
+    ),
+  ];
+  return articles.map((match, index) => {
+    const openAttrs = `${match[1] ?? ""}${match[3] ?? ""}`;
+    const inner = match[4] ?? "";
+    const id =
+      openAttrs.match(/\bid="([^"]*)"/i)?.[1]?.trim() ||
+      `band-${index + 1}`;
+    const name = stripTags(
+      (inner.match(/band-profile__name[^>]*>([\s\S]*?)<\/h3>/i) || [])[1] || "",
+    );
+    const descInner =
+      (inner.match(/band-profile__description[^>]*>([\s\S]*?)<\/div>/i) || [])[1] ||
+      "";
+    const body = stripTags(descInner);
+    const imgTag = inner.match(/<img\b[^>]*>/i)?.[0] ?? "";
+    return { id, name, body, image: parseImgAttrs(imgTag) };
+  });
+}
+
+function absolutizeAssetUrl(src: string, baseUrl: string): string {
+  const value = String(src ?? "").trim();
+  if (!value) return "";
+  if (/^(https?:|data:|blob:)/i.test(value)) return value;
+  if (!baseUrl) return value;
+  try {
+    return new URL(value, baseUrl).href;
+  } catch {
+    return value;
+  }
+}
+
+/** Admin-only preview document — does not alter public About CSS. */
+function buildAboutPreviewSrcdoc(profile: string, bands: string, baseUrl: string): string {
+  const rewriteHtml = (html: string) =>
+    String(html ?? "").replace(
+      /\bsrc=(["'])([^"']+)\1/gi,
+      (_m, q, src) => `src=${q}${absolutizeAssetUrl(src, baseUrl)}${q}`,
+    );
+  const previewCss = `
+html, body {
+  margin: 0;
+  padding: 0.75rem;
+  max-width: 100%;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  overflow-x: visible;
+  font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
+  color: #3d342c;
+  background: #fff;
+}
+*, *::before, *::after { box-sizing: border-box; }
+img, svg, video, iframe {
+  max-width: 100% !important;
+  height: auto !important;
+}
+[width] { max-width: 100% !important; }
+div, section, article, p, span, h1, h2, h3, h4, h5, h6 {
+  max-width: 100%;
+  min-width: 0 !important;
+}
+.wixui-rich-text, .wixui-image, .ih2JY1, .BprtEa, .N8MGzv, .PO9MfV {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  left: auto !important;
+  right: auto !important;
+}
+.band-profiles, .band-profiles__inner, .band-profile, .band-profile__media, .band-profile__body {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  box-sizing: border-box;
+}
+.band-profile {
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: 1rem !important;
+}
+.band-profile__image {
+  width: min(100%, 280px) !important;
+  max-width: 100% !important;
+  margin-inline: auto !important;
+  display: block !important;
+}
+`.trim();
+
+  return `<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>About preview</title>
+<style>${previewCss}</style>
+</head>
+<body data-gosaki-about-admin-preview-doc="true">
+<div data-about-preview-section="profile">${rewriteHtml(profile)}</div>
+<div data-about-preview-section="bands">${rewriteHtml(bands)}</div>
+</body>
+</html>`;
+}
+
+const profileForm = parseProfileForm(profileHtml);
+const bandForms = parseBandForms(bandsHtml).map((band) =>
+  band.image
+    ? {
+        ...band,
+        image: {
+          ...band.image,
+          src: absolutizeAssetUrl(band.image.src, publicAboutUrl),
+        },
+      }
+    : band,
+);
+if (profileForm.image) {
+  profileForm.image = {
+    ...profileForm.image,
+    src: absolutizeAssetUrl(profileForm.image.src, publicAboutUrl),
+  };
+}
 const hasProfile = String(profileHtml).trim().length > 0;
 const hasBands = String(bandsHtml).trim().length > 0;
+const previewSrcdoc = buildAboutPreviewSrcdoc(profileHtml, bandsHtml, publicAboutUrl);
+
+const bandImageLabels = bandImages.map((img) => ({
+  fileName: img.fileName ?? "",
+  label: img.bandName || img.name || img.fileName || "image",
+}));
 ---
 
 <section
@@ -35,12 +234,13 @@ const hasBands = String(bandsHtml).trim().length > 0;
   class="gosaki-admin-content-panel gosaki-about-content-panel"
   data-section="admin-about-content"
   data-gosaki-about-content="true"
+  data-gosaki-about-form-affordance="true"
   aria-label="プロフィール管理内容"
 >
   <header class="gosaki-admin-content-panel__header">
     <h1 class="gosaki-admin-content-panel__title">プロフィール・バンド</h1>
-    <p class="gosaki-admin-content-panel__subtitle">
-      About ページの Profile と Bands / Projects を確認できます（閲覧のみ · Save 無効）。
+    <p class="gosaki-admin-content-panel__subtitle" data-gosaki-about-status="true">
+      About 編集内容（閲覧のみ）· Save 無効 · 公開反映は管理者が行います
     </p>
     {
       publicAboutUrl ? (
@@ -59,47 +259,418 @@ const hasBands = String(bandsHtml).trim().length > 0;
   </header>
 
   <section
-    class="gosaki-about-content-panel__block"
-    aria-labelledby="gosaki-about-profile-heading"
-    data-about-block="profile"
+    class="gosaki-about-content-panel__edit"
+    data-gosaki-about-edit-section="true"
+    aria-labelledby="gosaki-about-edit-heading"
   >
-    <h2 id="gosaki-about-profile-heading" class="gosaki-about-content-panel__block-title">
-      {profileLabel}
+    <h2 id="gosaki-about-edit-heading" class="gosaki-about-content-panel__section-title">
+      About編集内容
     </h2>
-    {
-      hasProfile ? (
-        <div class="gosaki-about-content-panel__preview" data-about-preview="profile" set:html={profileHtml} />
-      ) : (
-        <p class="gosaki-admin-content-panel__empty">Profile 内容がありません。</p>
-      )
-    }
+    <p class="gosaki-about-content-panel__readonly-note" role="note">
+      現在は閲覧のみ。保存機能は準備中です。内容の選択・コピーはできます。
+    </p>
+
+    <section
+      class="gosaki-about-content-panel__block gosaki-about-admin-form"
+      aria-labelledby="gosaki-about-profile-heading"
+      data-about-block="profile"
+      data-gosaki-about-form="profile"
+    >
+      <h3 id="gosaki-about-profile-heading" class="gosaki-about-content-panel__block-title">
+        {profileLabel}
+      </h3>
+      {
+        hasProfile ? (
+          <div class="gosaki-about-admin-form__fields">
+            <label class="gosaki-about-admin-form__field">
+              <span class="gosaki-about-admin-form__label">セクション見出し</span>
+              <input
+                class="gosaki-about-admin-form__control"
+                type="text"
+                value={profileForm.heading}
+                readonly
+                aria-readonly="true"
+                data-gosaki-about-field="profile-heading"
+              />
+            </label>
+            <label class="gosaki-about-admin-form__field">
+              <span class="gosaki-about-admin-form__label">プロフィール本文</span>
+              <textarea
+                class="gosaki-about-admin-form__control gosaki-about-admin-form__control--textarea"
+                rows="10"
+                readonly
+                aria-readonly="true"
+                data-gosaki-about-field="profile-body"
+              >{profileForm.body}</textarea>
+            </label>
+            {
+              profileForm.image ? (
+                <>
+                  <div class="gosaki-about-admin-form__field" data-gosaki-about-field="profile-image">
+                    <span class="gosaki-about-admin-form__label">ポートレート画像</span>
+                    <div class="gosaki-about-admin-form__image-preview">
+                      <img
+                        src={profileForm.image.src}
+                        alt={profileForm.image.alt || "ポートレート"}
+                        width={profileForm.image.width || undefined}
+                        height={profileForm.image.height || undefined}
+                        loading="lazy"
+                        decoding="async"
+                      />
+                    </div>
+                    <p class="gosaki-about-admin-form__hint" data-gosaki-about-field="profile-image-src">
+                      {profileForm.image.src}
+                    </p>
+                  </div>
+                  <label class="gosaki-about-admin-form__field">
+                    <span class="gosaki-about-admin-form__label">画像代替テキスト</span>
+                    <input
+                      class="gosaki-about-admin-form__control"
+                      type="text"
+                      value={profileForm.image.alt}
+                      readonly
+                      aria-readonly="true"
+                      data-gosaki-about-field="profile-image-alt"
+                    />
+                  </label>
+                </>
+              ) : null
+            }
+          </div>
+        ) : (
+          <p class="gosaki-admin-content-panel__empty">Profile 内容がありません。</p>
+        )
+      }
+    </section>
+
+    <section
+      class="gosaki-about-content-panel__block gosaki-about-admin-form"
+      aria-labelledby="gosaki-about-bands-heading"
+      data-about-block="bands"
+      data-gosaki-about-form="bands"
+    >
+      <h3 id="gosaki-about-bands-heading" class="gosaki-about-content-panel__block-title">
+        {bandsLabel}
+      </h3>
+      {
+        bandForms.length > 0 ? (
+          <ul class="gosaki-about-admin-form__band-list">
+            {bandForms.map((band, index) => (
+              <li
+                class="gosaki-about-admin-form__band-item"
+                data-gosaki-about-band={band.id}
+                data-band-index={String(index)}
+              >
+                <h4 class="gosaki-about-admin-form__band-title">
+                  バンド／プロジェクト {index + 1}
+                </h4>
+                <div class="gosaki-about-admin-form__fields">
+                  <label class="gosaki-about-admin-form__field">
+                    <span class="gosaki-about-admin-form__label">バンド／プロジェクト名</span>
+                    <input
+                      class="gosaki-about-admin-form__control"
+                      type="text"
+                      value={band.name}
+                      readonly
+                      aria-readonly="true"
+                      data-gosaki-about-field="band-name"
+                    />
+                  </label>
+                  <label class="gosaki-about-admin-form__field">
+                    <span class="gosaki-about-admin-form__label">紹介文</span>
+                    <textarea
+                      class="gosaki-about-admin-form__control gosaki-about-admin-form__control--textarea"
+                      rows="8"
+                      readonly
+                      aria-readonly="true"
+                      data-gosaki-about-field="band-body"
+                    >{band.body}</textarea>
+                  </label>
+                  {
+                    band.image ? (
+                      <>
+                        <div
+                          class="gosaki-about-admin-form__field"
+                          data-gosaki-about-field="band-image"
+                        >
+                          <span class="gosaki-about-admin-form__label">画像</span>
+                          <div class="gosaki-about-admin-form__image-preview">
+                            <img
+                              src={band.image.src}
+                              alt={band.image.alt || band.name || "バンド画像"}
+                              width={band.image.width || undefined}
+                              height={band.image.height || undefined}
+                              loading="lazy"
+                              decoding="async"
+                            />
+                          </div>
+                          <p class="gosaki-about-admin-form__hint">{band.image.src}</p>
+                        </div>
+                        <label class="gosaki-about-admin-form__field">
+                          <span class="gosaki-about-admin-form__label">画像代替テキスト</span>
+                          <input
+                            class="gosaki-about-admin-form__control"
+                            type="text"
+                            value={band.image.alt}
+                            readonly
+                            aria-readonly="true"
+                            data-gosaki-about-field="band-image-alt"
+                          />
+                        </label>
+                      </>
+                    ) : null
+                  }
+                </div>
+              </li>
+            ))}
+          </ul>
+        ) : hasBands ? (
+          <p class="gosaki-admin-content-panel__empty">
+            Bands / Projects の HTML はありますが、記事構造を解析できませんでした。
+          </p>
+        ) : (
+          <p class="gosaki-admin-content-panel__empty">Bands / Projects 内容がありません。</p>
+        )
+      }
+      {
+        bandImageLabels.length > 0 ? (
+          <ul class="gosaki-about-content-panel__images" aria-label="バンド画像ファイル一覧">
+            {bandImageLabels.map((img) => (
+              <li data-band-image={img.fileName}>{img.label}</li>
+            ))}
+          </ul>
+        ) : null
+      }
+    </section>
   </section>
 
   <section
-    class="gosaki-about-content-panel__block"
-    aria-labelledby="gosaki-about-bands-heading"
-    data-about-block="bands"
+    class="gosaki-about-content-panel__public-preview"
+    data-gosaki-about-public-preview="true"
+    aria-labelledby="gosaki-about-public-preview-heading"
   >
-    <h2 id="gosaki-about-bands-heading" class="gosaki-about-content-panel__block-title">
-      {bandsLabel}
+    <h2 id="gosaki-about-public-preview-heading" class="gosaki-about-content-panel__section-title">
+      公開時プレビュー
     </h2>
-    {
-      bandImages.length > 0 ? (
-        <ul class="gosaki-about-content-panel__images" aria-label="バンド画像">
-          {bandImages.map((img) => (
-            <li data-band-image={img.fileName ?? ""}>
-              {img.name || img.fileName || "image"}
-            </li>
-          ))}
-        </ul>
-      ) : null
-    }
-    {
-      hasBands ? (
-        <div class="gosaki-about-content-panel__preview" data-about-preview="bands" set:html={bandsHtml} />
-      ) : (
-        <p class="gosaki-admin-content-panel__empty">Bands / Projects 内容がありません。</p>
-      )
-    }
+    <div
+      class="gosaki-about-admin-preview-frame"
+      data-gosaki-about-preview-frame="true"
+      data-gosaki-about-preview-responsive="true"
+    >
+      <iframe
+        class="gosaki-about-admin-preview-frame__iframe"
+        title="About 公開時プレビュー"
+        srcdoc={previewSrcdoc}
+        loading="lazy"
+        referrerpolicy="no-referrer"
+        data-gosaki-about-preview-iframe="true"
+      />
+    </div>
   </section>
+
+  <p
+    class="gosaki-about-content-panel__save-note"
+    role="note"
+    data-gosaki-save-disabled-note="true"
+    data-gosaki-about-save-disabled="true"
+  >
+    保存は無効です。現在は閲覧のみで、保存機能は準備中です。
+  </p>
+  <p class="gosaki-about-content-panel__save-actions">
+    <button
+      type="button"
+      class="gosaki-about-admin-form__save"
+      disabled
+      aria-disabled="true"
+      data-gosaki-about-save-disabled
+    >
+      保存する（現在は無効）
+    </button>
+  </p>
 </section>
+
+<style>
+  .gosaki-about-content-panel {
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .gosaki-about-content-panel__section-title {
+    margin: 0 0 0.65rem;
+    font-size: 1.15rem;
+  }
+
+  .gosaki-about-content-panel__edit {
+    margin: 0 0 1.75rem;
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .gosaki-about-content-panel__readonly-note {
+    margin: 0 0 1rem;
+    color: #6b7280;
+    font-size: 0.9rem;
+  }
+
+  .gosaki-about-content-panel__block {
+    margin: 0 0 1.25rem;
+    padding: 1rem;
+    background: #f8fafc;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .gosaki-about-content-panel__block-title {
+    margin: 0 0 0.75rem;
+    font-size: 1.05rem;
+  }
+
+  .gosaki-about-admin-form__fields {
+    display: grid;
+    gap: 0.85rem;
+    min-width: 0;
+  }
+
+  .gosaki-about-admin-form__field {
+    display: grid;
+    gap: 0.35rem;
+    min-width: 0;
+  }
+
+  .gosaki-about-admin-form__label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #1f2937;
+  }
+
+  .gosaki-about-admin-form__control {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    padding: 0.55rem 0.7rem;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    background: #fff;
+    color: #1f2937;
+    font: inherit;
+    line-height: 1.45;
+  }
+
+  .gosaki-about-admin-form__control[readonly] {
+    background: #f8fafc;
+    color: #1f2937;
+    opacity: 1;
+    cursor: text;
+  }
+
+  .gosaki-about-admin-form__control--textarea {
+    resize: vertical;
+    min-height: 8rem;
+    white-space: pre-wrap;
+  }
+
+  .gosaki-about-admin-form__image-preview {
+    width: 100%;
+    max-width: 220px;
+    min-width: 0;
+    box-sizing: border-box;
+  }
+
+  .gosaki-about-admin-form__image-preview img {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    border-radius: 4px;
+    border: 1px solid #e5e7eb;
+  }
+
+  .gosaki-about-admin-form__hint {
+    margin: 0.35rem 0 0;
+    font-size: 0.75rem;
+    color: #6b7280;
+    word-break: break-all;
+  }
+
+  .gosaki-about-admin-form__band-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 1rem;
+    min-width: 0;
+  }
+
+  .gosaki-about-admin-form__band-item {
+    padding: 0.85rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    background: #fff;
+    min-width: 0;
+    box-sizing: border-box;
+  }
+
+  .gosaki-about-admin-form__band-title {
+    margin: 0 0 0.75rem;
+    font-size: 0.95rem;
+  }
+
+  .gosaki-about-content-panel__images {
+    margin: 0.85rem 0 0;
+    padding-left: 1.1rem;
+    color: #6b7280;
+    font-size: 0.85rem;
+  }
+
+  .gosaki-about-content-panel__public-preview {
+    margin: 0 0 1.25rem;
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .gosaki-about-admin-preview-frame {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    background: #fff;
+  }
+
+  .gosaki-about-admin-preview-frame__iframe {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    height: min(70vh, 880px);
+    border: 0;
+    box-sizing: border-box;
+  }
+
+  .gosaki-about-content-panel__save-note {
+    margin: 0 0 0.5rem;
+    color: #6b7280;
+    font-size: 0.9rem;
+  }
+
+  .gosaki-about-content-panel__save-actions {
+    margin: 0 0 0.5rem;
+  }
+
+  .gosaki-about-admin-form__save {
+    padding: 0.5rem 0.9rem;
+    border-radius: 6px;
+    border: 1px solid #d1d5db;
+    background: #e5e7eb;
+    color: #6b7280;
+    font: inherit;
+    cursor: not-allowed;
+  }
+</style>

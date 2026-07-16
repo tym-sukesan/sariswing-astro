@@ -296,11 +296,108 @@ assert(
     aboutPanelSrc.includes('data-about-block="bands"'),
 );
 assert(
+  "about panel form affordance markers",
+  aboutPanelSrc.includes('data-gosaki-about-form-affordance="true"') &&
+    aboutPanelSrc.includes('data-gosaki-about-edit-section="true"') &&
+    aboutPanelSrc.includes('data-gosaki-about-form="profile"') &&
+    aboutPanelSrc.includes('data-gosaki-about-form="bands"'),
+);
+assert(
+  "about panel profile readonly form controls",
+  aboutPanelSrc.includes('data-gosaki-about-field="profile-heading"') &&
+    aboutPanelSrc.includes('data-gosaki-about-field="profile-body"') &&
+    aboutPanelSrc.includes('data-gosaki-about-field="profile-image"') &&
+    aboutPanelSrc.includes('data-gosaki-about-field="profile-image-alt"') &&
+    aboutPanelSrc.includes('readonly') &&
+    aboutPanelSrc.includes('aria-readonly="true"') &&
+    !/data-gosaki-about-field="profile-body"[\s\S]{0,120}\bdisabled\b/.test(aboutPanelSrc),
+);
+assert(
+  "about panel bands readonly form controls",
+  aboutPanelSrc.includes('data-gosaki-about-field="band-name"') &&
+    aboutPanelSrc.includes('data-gosaki-about-field="band-body"') &&
+    aboutPanelSrc.includes('data-gosaki-about-field="band-image"') &&
+    aboutPanelSrc.includes('data-gosaki-about-field="band-image-alt"') &&
+    aboutPanelSrc.includes("parseBandForms") &&
+    aboutPanelSrc.includes("band-profile"),
+);
+assert(
+  "about edit section before public preview",
+  aboutPanelSrc.indexOf('data-gosaki-about-edit-section="true"') <
+    aboutPanelSrc.indexOf('data-gosaki-about-public-preview="true"') &&
+    aboutPanelSrc.indexOf('id="gosaki-about-edit-heading"') <
+      aboutPanelSrc.indexOf('id="gosaki-about-public-preview-heading"'),
+);
+assert(
+  "about preview responsive iframe + viewport",
+  aboutPanelSrc.includes('data-gosaki-about-preview-frame="true"') &&
+    aboutPanelSrc.includes('data-gosaki-about-preview-responsive="true"') &&
+    aboutPanelSrc.includes('data-gosaki-about-preview-iframe="true"') &&
+    aboutPanelSrc.includes('name="viewport"') &&
+    aboutPanelSrc.includes("width=device-width") &&
+    aboutPanelSrc.includes("buildAboutPreviewSrcdoc") &&
+    aboutPanelSrc.includes("max-width: 100%") &&
+    aboutPanelSrc.includes("min-width: 0") &&
+    aboutPanelSrc.includes("box-sizing: border-box") &&
+    !aboutPanelSrc.includes("overflow-x: hidden") &&
+    !aboutPanelSrc.includes("transform: scale"),
+);
+assert(
+  "about save remains disabled in panel",
+  aboutPanelSrc.includes('data-gosaki-about-save-disabled="true"') &&
+    aboutPanelSrc.includes("data-gosaki-about-save-disabled") &&
+    aboutPanelSrc.includes("disabled") &&
+    !aboutPanelSrc.includes("executeAbout") &&
+    !aboutPanelSrc.includes("onSubmit"),
+);
+assert(
+  "about panel no fixed min-width overflow trap",
+  !/min-width:\s*(9[6-9]0|1\d{3})px/.test(aboutPanelSrc) &&
+    !aboutPanelSrc.includes("overflow-x: hidden"),
+);
+const aboutAdminCss = read(
+  "tools/static-to-astro/templates/site-extensions/gosaki-piano/gosaki-staging-read-only-admin.css",
+);
+assert(
+  "about admin preview CSS is responsive (not clip-only)",
+  aboutAdminCss.includes(".gosaki-about-admin-preview-frame") &&
+    aboutAdminCss.includes(".gosaki-about-admin-preview-frame__iframe") &&
+    aboutAdminCss.includes("max-width: 100%") &&
+    aboutAdminCss.includes("min-width: 0") &&
+    !/\.gosaki-about-admin-preview-frame[^{]*\{[^}]*overflow-x:\s*hidden/.test(aboutAdminCss) &&
+    !aboutAdminCss.includes("transform: scale("),
+);
+assert(
+  "STG about route order: content panel then developer details",
+  /page === "about"[\s\S]*AdminGosakiStagingAboutContentPanel[\s\S]*data-gosaki-admin-dev-details/.test(
+    adminComponent,
+  ) &&
+    adminComponent.includes("<summary>開発者情報</summary>") &&
+    !/page === "about"[\s\S]*data-gosaki-admin-dev-details[\s\S]{0,80}AdminGosakiStagingAboutContentPanel/.test(
+      adminComponent,
+    ),
+);
+assert(
+  "local shell About operator embeds shared ContentPanel",
+  read(
+    "tools/static-to-astro/templates/admin-cms/gosaki/components/AdminGosakiStagingAboutOperatorPage.astro",
+  ).includes("AdminGosakiStagingAboutContentPanel"),
+);
+assert(
+  "public About CSS source not modified by this panel path",
+  !aboutPanelSrc.includes("wix-staging-visual-overrides") &&
+    !aboutPanelSrc.includes("gosaki-piano-overrides"),
+);
+assert(
   "portal has no dashboard grid",
   !/page === "portal"[\s\S]{0,200}gra-dashboard/.test(adminComponent) &&
     !adminComponent.includes('aria-labelledby="gra-dashboard"'),
 );
-assert("Save disabled note retained", adminComponent.includes("data-gosaki-save-disabled-note"));
+assert(
+  "Save disabled note retained",
+  adminComponent.includes("data-gosaki-save-disabled-note") ||
+    aboutPanelSrc.includes("data-gosaki-save-disabled-note"),
+);
 assert("discography dry-run retained", adminComponent.includes("Dry-run validation（保存なし）"));
 assert(
   "no global Publish/Deploy/FTP disabled row restored",

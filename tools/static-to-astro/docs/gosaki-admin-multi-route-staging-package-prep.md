@@ -20,7 +20,7 @@ Fix (source + dry-run only — no fresh package in this step):
 
 - Shared panels under `templates/admin-cms/gosaki/components/`:
   - `AdminGosakiStagingScheduleContentPanel` (event list by month)
-  - `AdminGosakiStagingAboutContentPanel` (Profile + Bands HTML preview)
+  - `AdminGosakiStagingAboutContentPanel` (Profile + Bands — see About form follow-up below)
   - `AdminGosakiStagingCompactAuthBar` (login compact · probe in details)
 - `apply()` writes `gosaki-read-only-admin-schedule-events.json` and copies panels into package `gosaki-admin/`
 - Discography / YouTube: content first, compact auth after (no 「YouTube dry-run用」 heading)
@@ -35,6 +35,29 @@ ABOUT_CONTENT_UI_RESTORED: true
 AUTH_UI_DEEMPHASIZED: true
 DEVELOPER_DIAGNOSTICS_COLLAPSED: true
 SAVE_REMAINS_DISABLED: true
+FRESH_PACKAGE_REUPLOAD_REQUIRED: true
+```
+
+## About admin form + mobile preview follow-up (G-20u39b5 STG QA)
+
+STG About QA: preview-only feel · Profile/Bands edit location unclear · iPhone SE 375px horizontal overflow / clipped right edge.
+
+Fix (source + dry-run / local verify only — **no** fresh package / FTP / commit in this step):
+
+- `AdminGosakiStagingAboutContentPanel` order: **About編集内容** (readonly labeled forms) → **公開時プレビュー** (responsive iframe `srcdoc`) → Save disabled note
+- Profile / each Bands article: heading·body·image·alt from real snapshot HTML (no invented fields)
+- `input`/`textarea` **readonly** + `aria-readonly` (not disabled-faded); Save button stays disabled
+- Preview: iframe `width/max-width:100%` · `min-width:0` · viewport meta · srcdoc CSS resets fixed/min widths · **no** `overflow-x:hidden` / `transform:scale` clip hacks
+- Public About CSS **unchanged**; admin preview wrapper / srcdoc only
+- Local shell: `AdminGosakiStagingAboutOperatorPage` embeds the same ContentPanel; HTML dry-run stays in `<details>開発者情報`
+- Verifier: `verify-g20u39b4-…` strengthened for form structure + preview CSS
+
+```txt
+ABOUT_ADMIN_FORM_AFFORDANCE_ADDED: true
+ABOUT_PREVIEW_MOBILE_RESPONSIVE: true
+ABOUT_FORM_BEFORE_PREVIEW: true
+ABOUT_SAVE_REMAINS_DISABLED: true
+PUBLIC_ABOUT_UNCHANGED: true
 FRESH_PACKAGE_REUPLOAD_REQUIRED: true
 ```
 

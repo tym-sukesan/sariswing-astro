@@ -5,8 +5,13 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u39b4-gosaki-admin-multi-route-staging-package-and-manual-upload-prep — complete (content UI restore after STG QA FAIL).
+Current phase: G-20u39b4-gosaki-admin-multi-route-staging-package-and-manual-upload-prep — complete (content UI restore + About form/mobile preview follow-up).
 STG_MULTI_ROUTE_UI_QA_PREVIOUS_RESULT: FAIL.
+ABOUT_ADMIN_FORM_AFFORDANCE_ADDED: true.
+ABOUT_PREVIEW_MOBILE_RESPONSIVE: true.
+ABOUT_FORM_BEFORE_PREVIEW: true.
+ABOUT_SAVE_REMAINS_DISABLED: true.
+PUBLIC_ABOUT_UNCHANGED: true.
 SCHEDULE_CONTENT_UI_RESTORED: true.
 DISCOGRAPHY_CONTENT_UI_RESTORED: true.
 YOUTUBE_CONTENT_UI_RESTORED: true.
@@ -19,19 +24,20 @@ MULTI_ROUTE_ANON_ALLOWLIST_FIXED: true.
 P1-CON1: resolved. P1-ADM-MOB1: resolved.
 HOSTING_READY: false. GO_LIVE_READY: false. PRODUCTION_UPLOAD_READY: false.
 PUBLIC_READY: CONDITIONAL.
-Next: Commit/Push → G-20u39b5-gosaki-admin-multi-route-staging-package-generation-at-head.```
+Next: Commit/Push → G-20u39b5-gosaki-admin-multi-route-staging-package-generation-at-head → manual FTP → About STG recheck.```
 
 ## G-20u39b4-gosaki-admin-multi-route-staging-package-and-manual-upload-prep — complete
 
 - **Gate:** `gosakiAdminMultiRouteStagingPackagePrepComplete: true`
-- **STG_MULTI_ROUTE_UI_QA_PREVIOUS_RESULT:** **FAIL** (content incomplete on first package)
+- **STG_MULTI_ROUTE_UI_QA_PREVIOUS_RESULT:** **FAIL** (content incomplete on first package; About form/preview follow-up applied in source)
+- **ABOUT_ADMIN_FORM_AFFORDANCE_ADDED / ABOUT_PREVIEW_MOBILE_RESPONSIVE / ABOUT_FORM_BEFORE_PREVIEW:** **true**
+- **ABOUT_SAVE_REMAINS_DISABLED / PUBLIC_ABOUT_UNCHANGED:** **true**
 - **SCHEDULE / DISCOGRAPHY / YOUTUBE / ABOUT_CONTENT_UI_RESTORED:** **true**
 - **AUTH_UI_DEEMPHASIZED / DEVELOPER_DIAGNOSTICS_COLLAPSED:** **true**
-- **Shared panels:** ScheduleContentPanel · AboutContentPanel · CompactAuthBar (`templates/admin-cms/gosaki/components/`)
+- **Shared panels:** ScheduleContentPanel · AboutContentPanel (readonly forms → iframe preview) · CompactAuthBar
 - **Security:** anon JWT allowlist remains attribute+value+`role===anon` scoped
 - **Not done this step:** fresh package · FTP · STG browser recheck
-- **Next:** Commit / Push → **G-20u39b5-gosaki-admin-multi-route-staging-package-generation-at-head**
-## G-20u39b3-gosaki-admin-portal-and-content-routes-local-implementation — complete
+- **Next:** Commit / Push → **G-20u39b5-gosaki-admin-multi-route-staging-package-generation-at-head** → manual FTP → About STG recheck
 
 - **Gate:** `gosakiAdminPortalAndContentRoutesLocalImplemented: true`
 - **ADMIN_PORTAL_LOCAL_IMPLEMENTED:** **true**

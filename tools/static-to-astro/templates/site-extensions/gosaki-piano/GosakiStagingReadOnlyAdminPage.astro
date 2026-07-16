@@ -633,14 +633,14 @@ const showClientScript = page !== "portal";
               publicAboutUrl={publicAboutUrl}
             />
             <details class="gosaki-read-only-admin__dev-details" data-gosaki-admin-dev-details="true">
-              <summary>開発者向け — About summary</summary>
+              <summary>開発者情報</summary>
               <p class="gosaki-read-only-admin__meta">
                 {view.about.profileLabel}: {view.about.profileCharCount} chars · {view.about.bandsLabel}: {view.about.bandsCharCount} chars · {view.about.bandImages.length} images
               </p>
+              <p class="gosaki-read-only-admin__meta">
+                About UI: AdminGosakiStagingAboutContentPanel（編集フォーム → 公開時プレビュー · Save disabled）
+              </p>
             </details>
-            <p class="gosaki-read-only-admin__meta" role="note" data-gosaki-save-disabled-note="true">
-              Save は無効です。公開反映は管理者が行います。
-            </p>
           </>
         ) : null}
       </main>

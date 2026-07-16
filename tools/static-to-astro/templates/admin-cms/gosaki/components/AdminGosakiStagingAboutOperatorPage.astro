@@ -26,6 +26,7 @@ import {
 } from "../../../../../../src/lib/admin/staging-write/gosaki-about-bands-html-static-json-write-types";
 import AdminGosakiStagingNav from "./AdminGosakiStagingNav.astro";
 import AdminGosakiStagingSafetyChips from "./AdminGosakiStagingSafetyChips.astro";
+import AdminGosakiStagingAboutContentPanel from "./AdminGosakiStagingAboutContentPanel.astro";
 import {
   GOSAKI_STAGING_ADMIN_BASE,
   GOSAKI_STAGING_PREVIEW_URL,
@@ -99,10 +100,6 @@ const bandsSaveNoteDefault =
 
   <AdminGosakiStagingNav current="about" />
 
-  <p class="admin-form__hint admin-static-notice" role="note">
-    プロフィールとバンド紹介の2つのブロックがあります。それぞれ HTML を編集し、「変更を確認」でプレビューできます。
-  </p>
-
   <p class="admin-gosaki-status-bar admin-gosaki-status-bar--soft" role="status">
     {aboutStatusMessage}
   </p>
@@ -113,8 +110,18 @@ const bandsSaveNoteDefault =
     ) : null
   }
 
-  <details class="admin-gosaki-dev-tools">
-    <summary>開発者向け詳細 — 設定ファイル（通常は開かないでください）</summary>
+  <AdminGosakiStagingAboutContentPanel
+    profileLabel={profileView?.block.label ?? "Profile"}
+    bandsLabel={bandsView?.block.label ?? "Bands / Projects"}
+    profileHtml={profileView?.block.html ?? ""}
+    bandsHtml={bandsView?.block.html ?? ""}
+    publicAboutUrl={previewAboutUrl}
+  />
+
+  <details class="admin-gosaki-dev-tools" data-gosaki-admin-dev-details="true">
+    <summary>開発者情報（HTML ソース / dry-run · 通常は開かないでください）</summary>
+  <details class="admin-gosaki-dev-tools admin-gosaki-dev-tools--nested">
+    <summary>設定ファイルメタデータ</summary>
   <section class="admin-card admin-gosaki-card">
     <h2 class="admin-gosaki-card__title">設定ファイル</h2>
     <dl class="gosaki-about-admin-meta">
@@ -167,7 +174,7 @@ const bandsSaveNoteDefault =
   </details>
 
   <section class="admin-card admin-gosaki-card">
-    <h2 class="admin-gosaki-card__title">公開前ページ</h2>
+    <h2 class="admin-gosaki-card__title">公開前ページ（開発者）</h2>
     <a
       class="admin-button admin-button--menu admin-button--menu-secondary"
       href={previewAboutUrl}
@@ -403,6 +410,7 @@ const bandsSaveNoteDefault =
       </section>
     ) : null
   }
+  </details>
 </section>
 
 <style>

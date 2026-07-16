@@ -13,9 +13,14 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | DISCOGRAPHY_OPTIMISTIC_LOCK_SAVE_PRESERVED | **true** |
 | DISCOGRAPHY_SAVE_IN_FLIGHT_GUARD | **true** |
 | DISCOGRAPHY_CONFLICT_UI_IMPLEMENTED | **true** |
+| DISCOGRAPHY_FIELDSET_HEADING_MOBILE_FIXED | **true** |
+| DISCOGRAPHY_SAVE_UI_DEDUPLICATED | **true** |
+| DISCOGRAPHY_SAVE_BUTTON_COUNT | **1** |
+| DISCOGRAPHY_SAVE_REMAINS_DISABLED | **true** |
+| SAVE_GATE_LOGIC_UNCHANGED | **true** |
 | DISCOGRAPHY_DB_WRITE_EXECUTED | **false** |
 | FRESH_PACKAGE_REUPLOAD_REQUIRED | **true** |
-| Next | Commit / Push後に fresh staging package 生成 · STG browser で Save disabled と gate 表示のみ確認 |
+| Next | Commit / Push後に fresh package 生成 · manual FTP · Discography mobile 再確認 |
 
 ```txt
 DISCOGRAPHY_GATED_SAVE_UI_WIRED: true
@@ -46,7 +51,7 @@ FRESH_PACKAGE_REUPLOAD_REQUIRED: true
 | DISCOGRAPHY_DB_WRITE_EXECUTED | **false** |
 | P1-DISCOGRAPHY-EDIT-UI | **resolved** |
 | uploadedPackageSourceCommit | `82cec1508a793c0d4367358960b39c0a1c865a96` |
-| Next | Commit / Push後に fresh staging package 生成 · STG browser で Save disabled と gate 表示のみ確認 |
+| Next | Commit / Push後に fresh package 生成 · manual FTP · Discography mobile 再確認 |
 
 ```txt
 DISCOGRAPHY_VIEW_EDIT_MODE_IMPLEMENTED: true

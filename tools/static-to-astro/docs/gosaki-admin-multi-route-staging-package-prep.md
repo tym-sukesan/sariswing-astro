@@ -94,8 +94,9 @@ Operational edit UI now wires **gated Save** to the existing staging Edge Functi
 - **Save:** same endpoint URL · `operation=save` · approval `G-20u36-gosaki-discography-tracklist-save-non-dry-run-slice`
 - **Payload:** same field values as dry-run (`release` · `tracksText` · `expectedBeforeUpdatedAt` from snapshot)
 - **Gates (all required):** authenticated · dry-run success · no post-dry-run mutation · `expectedBeforeUpdatedAt` present · env arm `PUBLIC_GOSAKI_DISCOGRAPHY_SAVE_UI_ARMED` · approval match (candidate from `data-g20u41-discography-save-approval-id` vs expected `G-20u36-gosaki-discography-tracklist-save-non-dry-run-slice` — not the same binding) · not `saveInFlight`
-- **UI:** dry-run ok banner · Save disabled reason · Save in-flight · success · validation · conflict (no auto-retry)
+- **UI:** dry-run ok banner · **single** Save card（disabled reason / env arm / dry-run 必須）· Save in-flight · success · validation · conflict (no auto-retry)
 - **Default STG package:** Save button **disabled** (`PUBLIC_GOSAKI_DISCOGRAPHY_SAVE_UI_ARMED` unset/false)
+- **G-20u41 STG QA follow-up (UI only):** fieldset `legend` mobile overlap fixed · duplicate Save disabled status removed · toolbar flex-wrap · **Save gate logic unchanged**
 
 ```txt
 DISCOGRAPHY_GATED_SAVE_UI_WIRED: true
@@ -105,9 +106,16 @@ DISCOGRAPHY_POST_DRY_RUN_MUTATION_RELOCKS_SAVE: true
 DISCOGRAPHY_OPTIMISTIC_LOCK_SAVE_PRESERVED: true
 DISCOGRAPHY_SAVE_IN_FLIGHT_GUARD: true
 DISCOGRAPHY_CONFLICT_UI_IMPLEMENTED: true
+DISCOGRAPHY_FIELDSET_HEADING_MOBILE_FIXED: true
+DISCOGRAPHY_SAVE_UI_DEDUPLICATED: true
+DISCOGRAPHY_SAVE_BUTTON_COUNT: 1
+DISCOGRAPHY_SAVE_REMAINS_DISABLED: true
+SAVE_GATE_LOGIC_UNCHANGED: true
 DISCOGRAPHY_DB_WRITE_EXECUTED: false
 FRESH_PACKAGE_REUPLOAD_REQUIRED: true
 ```
+
+Recommended next: Commit / Push後に fresh package 生成 · manual FTP · Discography mobile 再確認
 
 ## About admin form + mobile preview follow-up (G-20u39b5 STG QA)
 
@@ -213,4 +221,4 @@ npm run verify:g20u39b4-gosaki-admin-multi-route-staging-package-prep
 
 ## Recommended next
 
-Commit / Push後に fresh staging package 生成 · STG browser で Save disabled と gate 表示のみ確認
+Commit / Push後に fresh package 生成 · manual FTP · Discography mobile 再確認

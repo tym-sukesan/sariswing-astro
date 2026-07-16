@@ -57,3 +57,44 @@ const {
     )
   }
 </div>
+
+<style>
+  .gosaki-admin-edit-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .gosaki-admin-edit-toolbar__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    min-width: 44px;
+    padding: 0.55rem 0.85rem;
+    border-radius: 6px;
+    border: 1px solid #d1d5db;
+    background: #fff;
+    font: inherit;
+    line-height: 1.3;
+    white-space: normal;
+    text-align: center;
+    box-sizing: border-box;
+    cursor: pointer;
+  }
+
+  .gosaki-admin-edit-toolbar__btn--primary {
+    border-color: #1d4ed8;
+    background: #1d4ed8;
+    color: #fff;
+  }
+
+  .gosaki-admin-edit-toolbar__btn:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+</style>

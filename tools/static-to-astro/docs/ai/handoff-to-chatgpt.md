@@ -11,7 +11,7 @@ DISCOGRAPHY_SAVE_DEFAULT_DISABLED: true.
 DISCOGRAPHY_DB_WRITE_EXECUTED: false.
 FRESH_PACKAGE_REUPLOAD_REQUIRED: true.
 Previous: G-20u40 Discography view/edit/dry-run + STG browser QA.
-Next: Commit / Push後に fresh staging package 生成 · STG browser で Save disabled と gate 表示のみ確認.```
+Next: Commit / Push後に fresh package 生成 · manual FTP · Discography mobile 再確認.```
 
 ## G-20u41-gosaki-discography-operational-save-ui-gated-local-wiring — complete
 

@@ -1,10 +1,9 @@
 ---
 /**
  * Shared Discography operational panel (local shell + STG package).
- * View mode → Edit mode (1 album) · dry-run · Save disabled · no image edit.
+ * View mode → Edit mode (1 album) · dry-run · gated Save (single Save card) · no image edit.
  */
 import AdminGosakiStagingEditToolbar from "./AdminGosakiStagingEditToolbar.astro";
-import AdminGosakiStagingSaveDisabledStatus from "./AdminGosakiStagingSaveDisabledStatus.astro";
 
 export interface DiscographyAlbumView {
   legacyId: string;
@@ -132,7 +131,6 @@ function display(value: string | null | undefined): string {
         </ul>
       )
     }
-    <AdminGosakiStagingSaveDisabledStatus />
   </div>
 
   {/* —— Edit mode (single album) —— */}
@@ -156,7 +154,7 @@ function display(value: string | null | undefined): string {
       <input type="hidden" name="cover_image_url" data-gosaki-disc-field="cover_image_url" value="" />
 
       <fieldset class="gosaki-discography-content-panel__fieldset">
-        <legend>基本情報</legend>
+        <legend class="gosaki-discography-content-panel__legend">基本情報</legend>
         <label class="gosaki-discography-content-panel__field">
           <span class="gosaki-discography-content-panel__label">タイトル</span>
           <input
@@ -200,7 +198,7 @@ function display(value: string | null | undefined): string {
       </fieldset>
 
       <fieldset class="gosaki-discography-content-panel__fieldset">
-        <legend>リンク・説明</legend>
+        <legend class="gosaki-discography-content-panel__legend">リンク・説明</legend>
         <label class="gosaki-discography-content-panel__field">
           <span class="gosaki-discography-content-panel__label">購入URL</span>
           <input
@@ -223,7 +221,7 @@ function display(value: string | null | undefined): string {
       </fieldset>
 
       <fieldset class="gosaki-discography-content-panel__fieldset">
-        <legend>収録曲</legend>
+        <legend class="gosaki-discography-content-panel__legend">収録曲</legend>
         <label class="gosaki-discography-content-panel__field">
           <span class="gosaki-discography-content-panel__label">曲名（1行 = 1曲）</span>
           <textarea
@@ -241,7 +239,7 @@ function display(value: string | null | undefined): string {
       </fieldset>
 
       <fieldset class="gosaki-discography-content-panel__fieldset gosaki-discography-content-panel__fieldset--cover">
-        <legend>ジャケット画像</legend>
+        <legend class="gosaki-discography-content-panel__legend">ジャケット画像</legend>
         <div class="gosaki-discography-content-panel__cover" data-gosaki-disc-cover-preview>
           <p class="gosaki-discography-content-panel__hint">画像変更は後続フェーズです。</p>
         </div>
@@ -276,12 +274,13 @@ function display(value: string | null | undefined): string {
     <div
       class="gosaki-discography-content-panel__save"
       data-gosaki-disc-save-panel="true"
+      data-gosaki-save-disabled-note="true"
       role="region"
       aria-label="保存"
     >
       <h2 class="gosaki-discography-content-panel__section-title">保存</h2>
       <p class="gosaki-discography-content-panel__hint" role="note">
-        gated Save — 既定では無効。dry-run 成功・ログイン・env arm が必要です。
+        保存機能は現在無効です（既定）。「変更を確認」（dry-run）成功・ログイン・env arm（PUBLIC_GOSAKI_DISCOGRAPHY_SAVE_UI_ARMED）が揃うまで実行できません。
       </p>
       <p
         class="gosaki-discography-content-panel__save-reason"
@@ -318,10 +317,10 @@ function display(value: string | null | undefined): string {
       >
         他の場所で更新された可能性があります。再読み込みしてください。
       </p>
-      <p class="gosaki-admin-save-disabled-status__actions">
+      <p class="gosaki-discography-content-panel__save-actions">
         <button
           type="button"
-          class="gosaki-admin-save-disabled-status__save gosaki-discography-content-panel__save-btn"
+          class="gosaki-discography-content-panel__save-btn"
           disabled
           aria-disabled="true"
           data-gosaki-disc-save
@@ -330,8 +329,6 @@ function display(value: string | null | undefined): string {
         </button>
       </p>
     </div>
-
-    <AdminGosakiStagingSaveDisabledStatus />
   </div>
 
   {/* Album data for client (JSON) */}
@@ -441,13 +438,36 @@ function display(value: string | null | undefined): string {
 
   .gosaki-discography-content-panel__fieldset {
     margin: 0;
-    padding: 0.85rem;
+    padding: 0.75rem 0.85rem 0.85rem;
     border: 1px solid #e5e7eb;
     border-radius: 8px;
     background: #f8fafc;
     min-width: 0;
     max-width: 100%;
     box-sizing: border-box;
+  }
+
+  .gosaki-discography-content-panel__fieldset::after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+
+  /* Float legend above border so native legend mid-border cut does not clip text on narrow viewports. */
+  .gosaki-discography-content-panel__legend {
+    float: left;
+    width: 100%;
+    max-width: 100%;
+    margin: 0 0 0.55rem;
+    padding: 0.15rem 0.35rem 0.35rem;
+    box-sizing: border-box;
+    background: #f8fafc;
+    color: #111827;
+    font-size: 0.95rem;
+    font-weight: 700;
+    line-height: 1.35;
+    overflow-wrap: anywhere;
+    word-break: break-word;
   }
 
   .gosaki-discography-content-panel__field {
@@ -594,11 +614,32 @@ function display(value: string | null | undefined): string {
     font-weight: 600;
   }
 
+  .gosaki-discography-content-panel__save-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    min-width: 44px;
+    padding: 0.55rem 0.95rem;
+    border-radius: 6px;
+    border: 1px solid #d1d5db;
+    background: #e5e7eb;
+    color: #6b7280;
+    font: inherit;
+    line-height: 1.3;
+    box-sizing: border-box;
+    cursor: not-allowed;
+  }
+
   .gosaki-discography-content-panel__save-btn:not(:disabled) {
     border-color: #15803d;
     background: #16a34a;
     color: #fff;
     cursor: pointer;
+  }
+
+  .gosaki-discography-content-panel__save-actions {
+    margin: 0.5rem 0 0;
   }
 
   .gosaki-discography-content-panel__dev-list {
@@ -608,19 +649,36 @@ function display(value: string | null | undefined): string {
     word-break: break-all;
   }
 
+  .gosaki-discography-content-panel__edit-toolbar-row {
+    min-width: 0;
+    max-width: 100%;
+    margin: 0 0 0.85rem;
+  }
+
   .gosaki-admin-edit-toolbar {
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
     align-items: center;
+    min-width: 0;
+    max-width: 100%;
   }
 
   .gosaki-admin-edit-toolbar__btn {
-    padding: 0.45rem 0.8rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    min-width: 44px;
+    padding: 0.55rem 0.85rem;
     border-radius: 6px;
     border: 1px solid #d1d5db;
     background: #fff;
     font: inherit;
+    line-height: 1.3;
+    white-space: normal;
+    text-align: center;
+    box-sizing: border-box;
     cursor: pointer;
   }
 
@@ -632,35 +690,6 @@ function display(value: string | null | undefined): string {
 
   .gosaki-admin-edit-toolbar__btn:disabled {
     opacity: 0.55;
-    cursor: not-allowed;
-  }
-
-  .gosaki-admin-save-disabled-status {
-    margin: 1rem 0 0;
-    padding: 0.75rem;
-    border: 1px dashed #d1d5db;
-    border-radius: 8px;
-    background: #f8fafc;
-  }
-
-  .gosaki-admin-save-disabled-status__message {
-    margin: 0 0 0.25rem;
-    font-weight: 600;
-  }
-
-  .gosaki-admin-save-disabled-status__hint {
-    margin: 0 0 0.65rem;
-    color: #6b7280;
-    font-size: 0.9rem;
-  }
-
-  .gosaki-admin-save-disabled-status__save {
-    padding: 0.45rem 0.85rem;
-    border-radius: 6px;
-    border: 1px solid #d1d5db;
-    background: #e5e7eb;
-    color: #6b7280;
-    font: inherit;
     cursor: not-allowed;
   }
 

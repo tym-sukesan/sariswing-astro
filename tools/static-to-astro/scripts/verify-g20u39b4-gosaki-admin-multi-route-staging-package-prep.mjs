@@ -33,7 +33,7 @@ const PHASE =
   "G-20u39b4-gosaki-admin-multi-route-staging-package-and-manual-upload-prep";
 const GATE = "gosakiAdminMultiRouteStagingPackagePrepComplete: true";
 const RECOMMENDED_NEXT =
-  "Commit / Push後に fresh staging package 生成 · STG browser で Save disabled と gate 表示のみ確認";
+  "Commit / Push後に fresh package 生成 · manual FTP · Discography mobile 再確認";
 
 /** Fixture-only known anon (not a real project key). payload.role=anon */
 const KNOWN_ANON =
@@ -223,6 +223,22 @@ assert(
   /DISCOGRAPHY_GATED_SAVE_UI_WIRED:\s*true/i.test(doc),
 );
 assert(
+  "DISCOGRAPHY_FIELDSET_HEADING_MOBILE_FIXED true",
+  /DISCOGRAPHY_FIELDSET_HEADING_MOBILE_FIXED:\s*true/i.test(doc),
+);
+assert(
+  "DISCOGRAPHY_SAVE_UI_DEDUPLICATED true",
+  /DISCOGRAPHY_SAVE_UI_DEDUPLICATED:\s*true/i.test(doc),
+);
+assert(
+  "DISCOGRAPHY_SAVE_BUTTON_COUNT 1",
+  /DISCOGRAPHY_SAVE_BUTTON_COUNT:\s*1\b/i.test(doc),
+);
+assert(
+  "SAVE_GATE_LOGIC_UNCHANGED true",
+  /SAVE_GATE_LOGIC_UNCHANGED:\s*true/i.test(doc),
+);
+assert(
   "DISCOGRAPHY_SAVE_DEFAULT_DISABLED true",
   /DISCOGRAPHY_SAVE_DEFAULT_DISABLED:\s*true/i.test(doc),
 );
@@ -393,6 +409,32 @@ assert(
     discographyPanelSrc.includes("data-gosaki-disc-save-conflict") &&
     editToolbarSrc.includes("data-gosaki-edit-dry-run") &&
     saveDisabledStatusSrc.includes("data-gosaki-save-disabled"),
+);
+assert(
+  "discography Save UI deduplicated to single disabled button",
+  (discographyPanelSrc.match(/data-gosaki-disc-save(?!-)/g) || []).length === 1 &&
+    discographyPanelSrc.includes('disabled') &&
+    discographyPanelSrc.includes('data-gosaki-disc-save-disabled-reason') &&
+    discographyPanelSrc.includes('data-gosaki-save-disabled-note="true"') &&
+    !discographyPanelSrc.includes("AdminGosakiStagingSaveDisabledStatus") &&
+    !discographyPanelSrc.includes("data-gosaki-save-disabled-status") &&
+    !discographyPanelSrc.includes("data-gosaki-save-disabled\n") &&
+    !discographyPanelSrc.includes('data-gosaki-save-disabled"'),
+);
+assert(
+  "discography fieldset legend mobile-safe (no clip/overflow hide)",
+  discographyPanelSrc.includes("gosaki-discography-content-panel__legend") &&
+    discographyPanelSrc.includes("float: left") &&
+    discographyPanelSrc.includes("overflow-wrap: anywhere") &&
+    discographyPanelSrc.includes("max-width: 100%") &&
+    !/__fieldset[\s\S]{0,200}overflow-x:\s*hidden/.test(discographyPanelSrc) &&
+    !/__legend[\s\S]{0,200}transform:\s*scale/.test(discographyPanelSrc),
+);
+assert(
+  "discography edit toolbar wraps on narrow viewports",
+  editToolbarSrc.includes("flex-wrap: wrap") &&
+    editToolbarSrc.includes("min-height: 44px") &&
+    discographyPanelSrc.includes("flex-wrap: wrap"),
 );
 const readOnlyAdminTs = read(
   "tools/static-to-astro/templates/site-extensions/gosaki-piano/gosaki-staging-read-only-admin.ts",

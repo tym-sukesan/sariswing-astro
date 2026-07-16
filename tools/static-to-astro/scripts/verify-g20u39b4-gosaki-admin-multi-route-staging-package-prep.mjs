@@ -33,7 +33,7 @@ const PHASE =
   "G-20u39b4-gosaki-admin-multi-route-staging-package-and-manual-upload-prep";
 const GATE = "gosakiAdminMultiRouteStagingPackagePrepComplete: true";
 const RECOMMENDED_NEXT =
-  "G-20u39b5-gosaki-admin-multi-route-staging-package-generation-at-head";
+  "G-20u41-gosaki-discography-operational-save-ui-gated-local-wiring";
 
 /** Fixture-only known anon (not a real project key). payload.role=anon */
 const KNOWN_ANON =
@@ -201,6 +201,22 @@ assert(
 assert(
   "FRESH_PACKAGE_REUPLOAD_REQUIRED true",
   /FRESH_PACKAGE_REUPLOAD_REQUIRED:\s*true/i.test(doc),
+);
+assert(
+  "DISCOGRAPHY_STG_BROWSER_QA_PASSED true",
+  /DISCOGRAPHY_STG_BROWSER_QA_PASSED:\s*true/i.test(doc),
+);
+assert(
+  "DISCOGRAPHY_OPERATIONAL_EDIT_UI_STG_READY true",
+  /DISCOGRAPHY_OPERATIONAL_EDIT_UI_STG_READY:\s*true/i.test(doc),
+);
+assert(
+  "P1-DISCOGRAPHY-EDIT-UI resolved",
+  /P1-DISCOGRAPHY-EDIT-UI:\s*resolved/i.test(doc),
+);
+assert(
+  "DISCOGRAPHY_DB_WRITE_EXECUTED false",
+  /DISCOGRAPHY_DB_WRITE_EXECUTED:\s*false/i.test(doc),
 );
 assert(
   "scanner multi-route admin path helper",
@@ -851,6 +867,14 @@ assert(
 assert(
   "AI recommended next",
   (cs + na + ho + nextActions + handoff).includes(RECOMMENDED_NEXT),
+);
+assert(
+  "AI DISCOGRAPHY_STG_BROWSER_QA_PASSED",
+  /DISCOGRAPHY_STG_BROWSER_QA_PASSED:\s*true/i.test(currentState + nextActions + handoff),
+);
+assert(
+  "AI P1-DISCOGRAPHY-EDIT-UI resolved",
+  /P1-DISCOGRAPHY-EDIT-UI:\s*resolved/i.test(currentState + nextActions + handoff),
 );
 
 console.log("");

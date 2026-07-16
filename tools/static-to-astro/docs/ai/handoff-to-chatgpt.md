@@ -5,24 +5,24 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u40-gosaki-discography-operational-edit-ui-local-implementation — complete (Edit UI + dry-run · Save disabled).
-DISCOGRAPHY_VIEW_EDIT_MODE_IMPLEMENTED: true.
-DISCOGRAPHY_TRACKLIST_MULTILINE_IMPLEMENTED: true.
-DISCOGRAPHY_UNSAVED_GUARD_IMPLEMENTED: true.
-DISCOGRAPHY_DRY_RUN_CONNECTED: true.
-DISCOGRAPHY_OPTIMISTIC_LOCK_PRESERVED: true.
+Current phase: G-20u40-gosaki-discography-operational-edit-ui — complete (local + package + STG browser QA · Save disabled).
+DISCOGRAPHY_STG_BROWSER_QA_PASSED: true.
+DISCOGRAPHY_OPERATIONAL_EDIT_UI_STG_READY: true.
 DISCOGRAPHY_SAVE_REMAINS_DISABLED: true.
-DISCOGRAPHY_IMAGE_EDIT_DEFERRED: true.
-FRESH_PACKAGE_REUPLOAD_REQUIRED: true.
+DISCOGRAPHY_DB_WRITE_EXECUTED: false.
+P1-DISCOGRAPHY-EDIT-UI: resolved.
+uploadedPackageSourceCommit: 82cec1508a793c0d4367358960b39c0a1c865a96.
 Previous: G-20u39b4/b5 multi-route + About form/preview.
-Next: Commit/Push → fresh package → manual FTP → Discography STG browser QA.```
+Next: G-20u41-gosaki-discography-operational-save-ui-gated-local-wiring.```
 
-## G-20u40-gosaki-discography-operational-edit-ui-local-implementation — complete
+## G-20u40-gosaki-discography-operational-edit-ui — complete
 
-- **DISCOGRAPHY_VIEW_EDIT_MODE / TRACKLIST / UNSAVED / DRY_RUN / LOCK / SAVE_DISABLED / IMAGE_DEFERRED:** **true**
+- **STG browser QA:** **PASS** @ `…/admin/discography/` (operator manual FTP · sourceCommit `82cec15`)
+- **DISCOGRAPHY_STG_BROWSER_QA_PASSED / OPERATIONAL_EDIT_UI_STG_READY / P1-DISCOGRAPHY-EDIT-UI:** **true / true / resolved**
+- **DISCOGRAPHY_SAVE_REMAINS_DISABLED / DISCOGRAPHY_DB_WRITE_EXECUTED:** **true / false**
 - **Shared:** DiscographyContentPanel · EditToolbar · SaveDisabledStatus · operational-edit client
-- **Not done:** Save · DB write · package · FTP · jacket upload
-- **Next:** Commit / Push → fresh package → manual FTP → Discography STG browser QA
+- **Not done:** Save enable · DB write · jacket upload
+- **Next:** **G-20u41-gosaki-discography-operational-save-ui-gated-local-wiring** (local gated Save wiring only)
 
 ## G-20u39b4-gosaki-admin-multi-route-staging-package-and-manual-upload-prep — complete
 

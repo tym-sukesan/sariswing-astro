@@ -63,6 +63,29 @@ DISCOGRAPHY_IMAGE_EDIT_DEFERRED: true
 FRESH_PACKAGE_REUPLOAD_REQUIRED: true
 ```
 
+## Discography STG browser QA (G-20u40 operator)
+
+Operator manual FTP + STG browser QA on package `sourceCommit: 82cec1508a793c0d4367358960b39c0a1c865a96`.
+
+STG URL: `https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/admin/discography/`
+
+- View mode: 4 albums · thumbnails/meta · 編集する · public Discography link · Save disabled · forms collapsed by default
+- Edit mode: 1 album · scalar fields · tracklist textarea (1 line = 1 track)
+- Unsaved guards · dry-run UI · Save disabled
+- Mobile / desktop layout OK · no obvious UI errors
+
+```txt
+DISCOGRAPHY_STG_BROWSER_QA_PASSED: true
+DISCOGRAPHY_OPERATIONAL_EDIT_UI_STG_READY: true
+DISCOGRAPHY_SAVE_REMAINS_DISABLED: true
+DISCOGRAPHY_DB_WRITE_EXECUTED: false
+P1-DISCOGRAPHY-EDIT-UI: resolved
+operatorManualFtpUpload: true
+uploadedPackageSourceCommit: 82cec1508a793c0d4367358960b39c0a1c865a96
+```
+
+**No** Save · **no** DB write · **no** Cursor FTP in this recording phase.
+
 ## About admin form + mobile preview follow-up (G-20u39b5 STG QA)
 
 STG About QA: preview-only feel · Profile/Bands edit location unclear · iPhone SE 375px horizontal overflow / clipped right edge.
@@ -139,6 +162,10 @@ SAVE_REMAINS_DISABLED: true
 PRODUCTION_ADMIN_EXCLUSION_PRESERVED: true
 FRESH_PACKAGE_GENERATION_REQUIRED_AFTER_COMMIT: true
 FRESH_PACKAGE_REUPLOAD_REQUIRED: true
+DISCOGRAPHY_STG_BROWSER_QA_PASSED: true
+DISCOGRAPHY_OPERATIONAL_EDIT_UI_STG_READY: true
+DISCOGRAPHY_DB_WRITE_EXECUTED: false
+P1-DISCOGRAPHY-EDIT-UI: resolved
 packageGenerationExecuted: false
 ftpUploadExecuted: false
 saveEnabled: false
@@ -154,5 +181,4 @@ npm run verify:g20u39b4-gosaki-admin-multi-route-staging-package-prep
 
 ## Recommended next
 
-Commit / Push後に fresh staging package 生成 · manual FTP · STG browser 再確認
-(`G-20u39b5-gosaki-admin-multi-route-staging-package-generation-at-head`)
+`G-20u41-gosaki-discography-operational-save-ui-gated-local-wiring` — wire gated Save endpoint + optimistic lock into operational UI locally; **no** actual Save / DB write yet.

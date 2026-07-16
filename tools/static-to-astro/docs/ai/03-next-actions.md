@@ -1,11 +1,27 @@
 Last updated: 2026-07-16
 Project: Static-to-Astro CMS / Musician CMS Kit
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u40-gosaki-discography-operational-edit-ui-local-implementation — complete
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u41-gosaki-discography-operational-save-ui-gated-local-wiring — next
 
 | Item | Value |
 | --- | --- |
-| Phase | `G-20u40-gosaki-discography-operational-edit-ui-local-implementation` |
+| Phase | `G-20u41-gosaki-discography-operational-save-ui-gated-local-wiring` |
+| Goal | Wire existing gated Save endpoint + optimistic lock into operational Discography UI |
+| DISCOGRAPHY_SAVE_REMAINS_DISABLED | **true** (until explicit future slice) |
+| Scope | Local wiring / dry-run verify only |
+| Next | Implementation — **no** actual Save / DB write |
+
+```txt
+DISCOGRAPHY_OPERATIONAL_EDIT_UI_STG_READY: true
+DISCOGRAPHY_SAVE_REMAINS_DISABLED: true
+DISCOGRAPHY_DB_WRITE_EXECUTED: false
+```
+
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u40-gosaki-discography-operational-edit-ui — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u40-gosaki-discography-operational-edit-ui` (local + package + STG QA) |
 | DISCOGRAPHY_VIEW_EDIT_MODE_IMPLEMENTED | **true** |
 | DISCOGRAPHY_TRACKLIST_MULTILINE_IMPLEMENTED | **true** |
 | DISCOGRAPHY_UNSAVED_GUARD_IMPLEMENTED | **true** |
@@ -13,8 +29,12 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | DISCOGRAPHY_OPTIMISTIC_LOCK_PRESERVED | **true** |
 | DISCOGRAPHY_SAVE_REMAINS_DISABLED | **true** |
 | DISCOGRAPHY_IMAGE_EDIT_DEFERRED | **true** |
-| FRESH_PACKAGE_REUPLOAD_REQUIRED | **true** |
-| Next | Commit/Push → fresh package → manual FTP → Discography STG browser QA |
+| DISCOGRAPHY_STG_BROWSER_QA_PASSED | **true** |
+| DISCOGRAPHY_OPERATIONAL_EDIT_UI_STG_READY | **true** |
+| DISCOGRAPHY_DB_WRITE_EXECUTED | **false** |
+| P1-DISCOGRAPHY-EDIT-UI | **resolved** |
+| uploadedPackageSourceCommit | `82cec1508a793c0d4367358960b39c0a1c865a96` |
+| Next | **G-20u41-gosaki-discography-operational-save-ui-gated-local-wiring** |
 
 ```txt
 DISCOGRAPHY_VIEW_EDIT_MODE_IMPLEMENTED: true
@@ -24,7 +44,10 @@ DISCOGRAPHY_DRY_RUN_CONNECTED: true
 DISCOGRAPHY_OPTIMISTIC_LOCK_PRESERVED: true
 DISCOGRAPHY_SAVE_REMAINS_DISABLED: true
 DISCOGRAPHY_IMAGE_EDIT_DEFERRED: true
-FRESH_PACKAGE_REUPLOAD_REQUIRED: true
+DISCOGRAPHY_STG_BROWSER_QA_PASSED: true
+DISCOGRAPHY_OPERATIONAL_EDIT_UI_STG_READY: true
+DISCOGRAPHY_DB_WRITE_EXECUTED: false
+P1-DISCOGRAPHY-EDIT-UI: resolved
 ```
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u39b4-gosaki-admin-multi-route-staging-package-and-manual-upload-prep — complete

@@ -5,16 +5,24 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u43-gosaki-discography-label-controlled-save-slice-local-implementation — complete (NOT execution-ready).
-LABEL_CONTROLLED_SAVE_SLICE_IMPLEMENTED: true.
-NESTED_PAYLOAD_ALLOWLIST_FAILS_CLOSED: true.
-ATOMIC_LABEL_WHERE_VERIFIED: true.
-Approval: G-20u43-gosaki-discography-label-controlled-save-slice.
-Target: discography-004.label original↔temporary.
-EDGE_DEPLOY / SAVE / DB_WRITE: false.
-CONTROLLED_SAVE_PREFLIGHT_READY: false (Edge undeployed).
-Previous: G-20u42 preflight.
-Next: G-20u43a-gosaki-discography-label-save-edge-deploy-preflight.```
+Current phase: G-20u43a-gosaki-discography-label-save-edge-deploy-preflight — complete (read-only).
+EDGE_DEPLOY_PREFLIGHT_READY: true.
+TARGET: static-to-astro-cms-staging / kmjqppxjdnwwrtaeqjta / gosaki-discography-save-dry-run only.
+NEW_SECRETS_REQUIRED: false.
+ROLLBACK_BASELINE: 4c2e589 · deploy source: 5c0d892.
+EDGE_DEPLOY / SAVE / DB_WRITE: false (this phase).
+CONTROLLED_SAVE_PREFLIGHT_READY: false.
+Next: ChatGPT Edge deploy execution judgment + operator procedure (not in repo doc).```
+
+## G-20u43a-gosaki-discography-label-save-edge-deploy-preflight — complete
+
+- **Doc:** `gosaki-discography-label-save-edge-deploy-preflight.md`
+- **Verifier:** `verify:g20u43a-gosaki-discography-label-save-edge-deploy-preflight`
+- **Deploy scope:** single function `gosaki-discography-save-dry-run` · staging ref only · no new Secrets
+- **Rollback:** redeploy from commit `4c2e589` via worktree — no main reset · no DB rollback
+- **Smoke plan:** non-write only — no authenticated G-20u43 Save in smoke phase
+- **Do not:** deploy · Save · DB write · paste operator commands into repo doc
+- **Next:** ChatGPT presents deploy + smoke operator steps
 
 ## G-20u43-gosaki-discography-label-controlled-save-slice-local-implementation — complete (not execution-ready)
 
@@ -23,7 +31,7 @@ Next: G-20u43a-gosaki-discography-label-save-edge-deploy-preflight.```
 - **Edge (local):** `handleControlledG20u43LabelSaveHttp` · `validateG20u43NestedSavePayload` · `classifyG20u43LabelUpdateOutcome` · router by approval ID · track-title path preserved
 - **UI:** Save approval → G-20u43 · label-only gate · env arm fail-closed · STG default disarmed
 - **Do not:** Edge deploy · Save · DB write · arm STG package · claim 実行可能
-- **Next:** **G-20u43a-gosaki-discography-label-save-edge-deploy-preflight**
+- **Next:** ~~G-20u43a~~ **complete** → ChatGPT deploy execution
 
 ## G-20u42-gosaki-discography-controlled-save-enablement-preflight — complete (not execution-ready)
 

@@ -575,7 +575,9 @@ assert(
       youtubeOpEditSrc.indexOf("fetchImpl(endpoint") &&
     youtubeOpEditSrc.includes("dryRunInFlight") &&
     youtubeOpEditSrc.includes("saveInFlight") &&
-    youtubeOpEditSrc.includes("dryRunFingerprint") &&
+    youtubeOpEditSrc.includes("dryRunServerFingerprint") &&
+    youtubeOpEditSrc.includes("dryRunFormFingerprint") &&
+    youtubeOpEditSrc.includes("dryRunFileSha") &&
     !youtubeOpEditSrc.includes("retrySave") &&
     !youtubeOpEditSrc.includes("service_role"),
 );
@@ -601,9 +603,11 @@ assert(
 assert(
   "youtube Save gate requires arm + dry-run + fingerprint + approval",
   readOnlyAdminTs.includes("formMatchesDryRunSnapshot") &&
+    readOnlyAdminTs.includes("fingerprintPresent") &&
     readOnlyAdminTs.includes("expectedBeforeEmbed") &&
     readOnlyAdminTs.includes("G11C6_SAVE_UI_ARMED_ENV") &&
-    readOnlyAdminTs.includes("expectedApprovalId !== G11C6_APPROVAL_ID"),
+    readOnlyAdminTs.includes("expectedApprovalId !== G11C6_APPROVAL_ID") &&
+    readOnlyAdminTs.includes("fingerprint: String(input.fingerprint"),
 );
 assert(
   "youtube endpoints production STOP",
@@ -1487,12 +1491,14 @@ assert(
     /G-20u41[\s\S]{0,80}completed/i.test(currentState + nextActions + handoff),
 );
 
-// --- YouTube operational mock / contract checks (no live HTTP / DB) ---
+// --- YouTube operational mock / contract checks (no live HTTP / DB / GitHub) ---
 const {
+  assertExactObjectKeys,
   assertG11c1NextValueAllowed,
   handleG11c1YoutubeUrlDryRunRequest,
   parseG11c1DryRunRequest,
   parseYoutubeVideoId: parseYtIdMock,
+  G11C1_DRY_RUN_ALLOWED_KEYS,
 } = await import("./lib/gosaki-youtube-url-dry-run-validation.mjs");
 const {
   G11C1_APPROVAL_ID: YT_DRY_APPROVAL,
@@ -1502,11 +1508,20 @@ const {
   G11C6_APPROVAL_ID: YT_SAVE_APPROVAL,
   G11C6_OPERATION_ID: YT_SAVE_OP,
 } = await import("./lib/gosaki-youtube-url-save-constants.mjs");
+const {
+  G11C8_CONFIG_REL,
+  G11C8_TARGET_ITEM_ID,
+  planG11c8EmbedCodePatch,
+  findG11c8TargetItem,
+} = await import("./lib/gosaki-youtube-url-save-workflow-json-patch-lib.mjs");
 
 const ytCurrent = {
   embedCode: "https://youtu.be/I-eY9YMq9GI",
   videoId: "I-eY9YMq9GI",
 };
+
+const YT_FILE_PATH = "tools/static-to-astro/config/sites/gosaki-piano-youtube-embed.json";
+const YT_BRANCH = "main";
 
 function ytDryPayload(nextValue, extra = {}) {
   return {
@@ -1521,28 +1536,293 @@ function ytDryPayload(nextValue, extra = {}) {
   };
 }
 
-const validDry = handleG11c1YoutubeUrlDryRunRequest(
+function ytSavePayload(nextValue, expectedBefore, fingerprint, extra = {}) {
+  return {
+    siteSlug: "gosaki-piano",
+    module: "youtube-embed",
+    field: "embedCode",
+    nextValue,
+    dryRun: false,
+    saveEnabled: true,
+    operationId: YT_SAVE_OP,
+    approvalId: YT_SAVE_APPROVAL,
+    fingerprint,
+    requestId: "mock-request-1",
+    expectedBefore,
+    ...extra,
+  };
+}
+
+function buildFingerprint(fileSha, before, after) {
+  return JSON.stringify({
+    branch: YT_BRANCH,
+    targetFilePath: YT_FILE_PATH,
+    targetItemId: G11C8_TARGET_ITEM_ID,
+    githubFileSha: fileSha,
+    beforeEmbedCode: before.embedCode,
+    beforeVideoId: before.videoId,
+    afterEmbedCode: after.embedCode,
+    afterVideoId: after.videoId,
+  });
+}
+
+function baseConfig(embedCode = ytCurrent.embedCode) {
+  return {
+    siteSlug: "gosaki-piano",
+    sectionTitle: "YouTube",
+    items: [
+      {
+        id: G11C8_TARGET_ITEM_ID,
+        published: true,
+        sortOrder: 10,
+        embedCode,
+      },
+    ],
+  };
+}
+
+/** Node mock of GitHub Contents GET + dry-run plan (no network). */
+function mockGithubDryRun(body, state) {
+  const parsed = parseG11c1DryRunRequest(body);
+  if (!parsed.ok) {
+    return { ok: false, httpStatus: 422, error: parsed.error, didWrite: false, dbWrite: false, networkWrite: false };
+  }
+  const valueError = assertG11c1NextValueAllowed(String(parsed.body.nextValue));
+  if (valueError) {
+    return { ok: false, httpStatus: 422, error: valueError, didWrite: false, dbWrite: false, networkWrite: false };
+  }
+  if (state.readFail) {
+    return {
+      ok: false,
+      httpStatus: 502,
+      error: "GitHub Contents GET failed",
+      didWrite: false,
+      dbWrite: false,
+      networkWrite: false,
+    };
+  }
+  const matches = (state.config.items || []).filter((i) => i && i.id === G11C8_TARGET_ITEM_ID);
+  if (matches.length === 0) {
+    return { ok: false, httpStatus: 404, error: "target item not found", didWrite: false };
+  }
+  if (matches.length > 1) {
+    return { ok: false, httpStatus: 409, error: "target item matched multiple", didWrite: false };
+  }
+  const preview = handleG11c1YoutubeUrlDryRunRequest(body, {
+    embedCode: matches[0].embedCode,
+    videoId: parseYtIdMock(matches[0].embedCode),
+  });
+  const fingerprint = buildFingerprint(
+    state.sha,
+    preview.current,
+    preview.next,
+  );
+  return {
+    ...preview,
+    operation: "dryRun",
+    currentFileSha: state.sha,
+    fingerprint,
+    before: preview.current,
+    after: preview.next,
+    didWrite: false,
+    dbWrite: false,
+    networkWrite: false,
+    errors: [],
+    httpStatus: 200,
+  };
+}
+
+/** Node mock of Save via Contents PUT (no workflow_dispatch, no network). */
+function mockGithubSave(body, state, opts = {}) {
+  const allowed = [
+    "siteSlug",
+    "module",
+    "field",
+    "nextValue",
+    "dryRun",
+    "saveEnabled",
+    "operationId",
+    "approvalId",
+    "expectedBefore",
+    "fingerprint",
+    "requestId",
+  ];
+  const keyError = assertExactObjectKeys(body, allowed);
+  if (keyError) {
+    return { ok: false, httpStatus: 422, error: keyError, didWrite: false, workflowDispatchExecuted: false };
+  }
+  const record = body;
+  if (opts.auth === false) {
+    return { ok: false, httpStatus: 401, error: "auth_required", didWrite: false, workflowDispatchExecuted: false };
+  }
+  if (opts.admin === false) {
+    return { ok: false, httpStatus: 403, error: "forbidden", didWrite: false, workflowDispatchExecuted: false };
+  }
+  if (record.approvalId !== YT_SAVE_APPROVAL) {
+    return { ok: false, httpStatus: 403, error: "approval mismatch", didWrite: false, workflowDispatchExecuted: false };
+  }
+  if (opts.armed !== true) {
+    return { ok: false, httpStatus: 403, error: "not armed", didWrite: false, workflowDispatchExecuted: false };
+  }
+  if (state.readFail) {
+    return { ok: false, httpStatus: 502, error: "GitHub read failed", didWrite: false, workflowDispatchExecuted: false };
+  }
+  let fp;
+  try {
+    fp = JSON.parse(String(record.fingerprint));
+  } catch {
+    return { ok: false, httpStatus: 422, error: "invalid fingerprint", didWrite: false, workflowDispatchExecuted: false };
+  }
+  if (fp.githubFileSha !== state.sha) {
+    return {
+      ok: false,
+      httpStatus: 409,
+      error: "file SHA conflict",
+      didWrite: false,
+      workflowDispatchExecuted: false,
+      saveReadiness: "conflict",
+    };
+  }
+  const plan = planG11c8EmbedCodePatch(
+    {
+      siteSlug: "gosaki-piano",
+      module: "youtube-embed",
+      itemId: G11C8_TARGET_ITEM_ID,
+      youtubeUrl: String(record.nextValue),
+      expectedBeforeEmbedCode: String(record.expectedBefore.embedCode),
+      expectedBeforeVideoId: String(record.expectedBefore.videoId ?? ""),
+      approvalId: YT_SAVE_APPROVAL,
+      operationId: YT_SAVE_OP,
+    },
+    state.config,
+  );
+  if (!plan.ok) {
+    return {
+      ok: false,
+      httpStatus: plan.saveReadiness === "conflict" ? 409 : 422,
+      error: plan.error,
+      didWrite: false,
+      workflowDispatchExecuted: false,
+      saveReadiness: plan.saveReadiness,
+    };
+  }
+  if (plan.saveReadiness === "no_change") {
+    return {
+      ok: true,
+      httpStatus: 200,
+      noChange: true,
+      didWrite: false,
+      networkWrite: false,
+      workflowDispatchExecuted: false,
+      changedFields: [],
+    };
+  }
+  const expectedFp = buildFingerprint(state.sha, plan.current, plan.next);
+  if (expectedFp !== String(record.fingerprint)) {
+    return {
+      ok: false,
+      httpStatus: 409,
+      error: "fingerprint mismatch",
+      didWrite: false,
+      workflowDispatchExecuted: false,
+    };
+  }
+  if (opts.putFail) {
+    return {
+      ok: false,
+      httpStatus: 502,
+      error: "GitHub PUT failed",
+      didWrite: false,
+      workflowDispatchExecuted: false,
+    };
+  }
+  if (opts.timeout) {
+    return {
+      ok: false,
+      httpStatus: 502,
+      error: "indeterminate",
+      indeterminate: true,
+      saveReadiness: "verification_required",
+      didWrite: false,
+      workflowDispatchExecuted: false,
+    };
+  }
+  if (opts.missingCommitSha) {
+    return {
+      ok: false,
+      httpStatus: 502,
+      error: "commit response missing SHA",
+      indeterminate: true,
+      saveReadiness: "verification_required",
+      didWrite: false,
+      workflowDispatchExecuted: false,
+    };
+  }
+  const previousFileSha = state.sha;
+  const newFileSha = `sha-after-${previousFileSha}`;
+  const commitSha = `commit-${previousFileSha}`;
+  state.sha = newFileSha;
+  state.config = plan.patchedConfig;
+  state.puts = (state.puts || 0) + 1;
+  state.dispatches = state.dispatches || 0;
+  return {
+    ok: true,
+    operation: "save",
+    didWrite: true,
+    dbWrite: false,
+    networkWrite: true,
+    saveReadiness: "committed",
+    workflowDispatchExecuted: false,
+    targetFilePath: YT_FILE_PATH,
+    targetItemId: G11C8_TARGET_ITEM_ID,
+    previousFileSha,
+    newFileSha,
+    commitSha,
+    commitUrl: `https://github.com/tym-sukesan/sariswing-astro/commit/${commitSha}`,
+    before: plan.current,
+    after: plan.next,
+    changedFields: ["embedCode"],
+    errors: [],
+    httpStatus: 200,
+  };
+}
+
+const validDry = mockGithubDryRun(
   ytDryPayload("https://www.youtube.com/watch?v=dQw4w9WgXcQ"),
-  ytCurrent,
+  { sha: "sha-abc", config: baseConfig() },
 );
-assert("mock valid URL dry-run ok", validDry.ok === true && validDry.dryRun === true && validDry.wouldWrite === false);
 assert(
-  "mock valid URL next videoId",
-  validDry.next?.videoId === "dQw4w9WgXcQ",
+  "mock GitHub GET success dry-run ok",
+  validDry.ok === true &&
+    validDry.dryRun === true &&
+    validDry.wouldWrite === false &&
+    validDry.didWrite === false &&
+    validDry.networkWrite === false &&
+    typeof validDry.fingerprint === "string" &&
+    validDry.currentFileSha === "sha-abc" &&
+    validDry.next?.videoId === "dQw4w9WgXcQ",
 );
 assert(
   "mock invalid URL rejected",
   assertG11c1NextValueAllowed("https://example.com/not-youtube") != null &&
-    handleG11c1YoutubeUrlDryRunRequest(ytDryPayload("https://example.com/x"), ytCurrent).ok === false,
+    mockGithubDryRun(ytDryPayload("https://example.com/x"), {
+      sha: "sha-abc",
+      config: baseConfig(),
+    }).ok === false,
 );
 assert(
   "mock shorts URL not expanded (unsupported)",
   parseYtIdMock("https://www.youtube.com/shorts/dQw4w9WgXcQ") == null,
 );
 assert(
-  "mock unexpected field rejected",
-  parseG11c1DryRunRequest(ytDryPayload("https://youtu.be/dQw4w9WgXcQ", { field: "title" })).ok ===
-    false,
+  "mock unexpected field rejected (exact allowlist)",
+  parseG11c1DryRunRequest(
+    ytDryPayload("https://youtu.be/dQw4w9WgXcQ", { unexpected: true }),
+  ).ok === false &&
+    assertExactObjectKeys(
+      ytDryPayload("https://youtu.be/dQw4w9WgXcQ", { unexpected: true }),
+      G11C1_DRY_RUN_ALLOWED_KEYS,
+    ) != null,
 );
 assert(
   "mock approval mismatch rejected",
@@ -1550,12 +1830,231 @@ assert(
     ytDryPayload("https://youtu.be/dQw4w9WgXcQ", { approvalId: "wrong-approval" }),
   ).ok === false,
 );
+assert(
+  "mock target 0件 fail-closed",
+  mockGithubDryRun(ytDryPayload("https://youtu.be/dQw4w9WgXcQ"), {
+    sha: "sha-abc",
+    config: { siteSlug: "gosaki-piano", items: [] },
+  }).httpStatus === 404,
+);
+assert(
+  "mock target 複数件 fail-closed",
+  mockGithubDryRun(ytDryPayload("https://youtu.be/dQw4w9WgXcQ"), {
+    sha: "sha-abc",
+    config: {
+      siteSlug: "gosaki-piano",
+      items: [
+        { id: G11C8_TARGET_ITEM_ID, embedCode: ytCurrent.embedCode },
+        { id: G11C8_TARGET_ITEM_ID, embedCode: ytCurrent.embedCode },
+      ],
+    },
+  }).httpStatus === 409,
+);
+assert(
+  "mock GitHub read failure",
+  mockGithubDryRun(ytDryPayload("https://youtu.be/dQw4w9WgXcQ"), {
+    sha: "sha-abc",
+    config: baseConfig(),
+    readFail: true,
+  }).httpStatus === 502,
+);
+
+const saveState = { sha: "sha-before", config: baseConfig(), puts: 0, dispatches: 0 };
+const dryForSave = mockGithubDryRun(
+  ytDryPayload("https://www.youtube.com/watch?v=Ke4F8JAQz-I"),
+  saveState,
+);
+const saveOk = mockGithubSave(
+  ytSavePayload(
+    "https://www.youtube.com/watch?v=Ke4F8JAQz-I",
+    { embedCode: ytCurrent.embedCode, videoId: ytCurrent.videoId },
+    dryForSave.fingerprint,
+  ),
+  saveState,
+  { armed: true },
+);
+assert(
+  "mock Save GET+PUT commit success",
+  saveOk.ok === true &&
+    saveOk.didWrite === true &&
+    saveOk.networkWrite === true &&
+    saveOk.dbWrite === false &&
+    saveOk.saveReadiness === "committed" &&
+    saveOk.workflowDispatchExecuted === false &&
+    saveOk.changedFields?.join(",") === "embedCode" &&
+    saveOk.commitSha &&
+    saveOk.newFileSha &&
+    saveState.puts === 1 &&
+    saveState.dispatches === 0 &&
+    findG11c8TargetItem(saveState.config)?.embedCode ===
+      "https://www.youtube.com/watch?v=Ke4F8JAQz-I",
+);
+assert(
+  "mock file SHA conflict",
+  mockGithubSave(
+    ytSavePayload(
+      "https://www.youtube.com/watch?v=Ke4F8JAQz-I",
+      { embedCode: ytCurrent.embedCode, videoId: ytCurrent.videoId },
+      dryForSave.fingerprint,
+    ),
+    { sha: "sha-other", config: baseConfig() },
+    { armed: true },
+  ).httpStatus === 409,
+);
+assert(
+  "mock expectedBefore conflict",
+  mockGithubSave(
+    ytSavePayload(
+      "https://www.youtube.com/watch?v=Ke4F8JAQz-I",
+      { embedCode: "https://youtu.be/AAAAAAAAAAA", videoId: "AAAAAAAAAAA" },
+      buildFingerprint(
+        "sha-x",
+        { embedCode: "https://youtu.be/AAAAAAAAAAA", videoId: "AAAAAAAAAAA" },
+        {
+          embedCode: "https://www.youtube.com/watch?v=Ke4F8JAQz-I",
+          videoId: "Ke4F8JAQz-I",
+        },
+      ),
+    ),
+    { sha: "sha-x", config: baseConfig() },
+    { armed: true },
+  ).httpStatus === 409,
+);
+const noChangeDry = mockGithubDryRun(ytDryPayload(ytCurrent.embedCode), {
+  sha: "sha-nc",
+  config: baseConfig(),
+});
+assert(
+  "mock no-change dry-run",
+  noChangeDry.ok === true && noChangeDry.noChange === true && noChangeDry.changedFields?.length === 0,
+);
+assert(
+  "mock no-change Save does not commit",
+  mockGithubSave(
+    ytSavePayload(
+      ytCurrent.embedCode,
+      { embedCode: ytCurrent.embedCode, videoId: ytCurrent.videoId },
+      noChangeDry.fingerprint,
+    ),
+    { sha: "sha-nc", config: baseConfig(), puts: 0 },
+    { armed: true },
+  ).didWrite === false,
+);
+assert(
+  "mock Save unexpected field rejected",
+  mockGithubSave(
+    ytSavePayload(
+      "https://youtu.be/dQw4w9WgXcQ",
+      { embedCode: ytCurrent.embedCode, videoId: ytCurrent.videoId },
+      "x",
+      { bonus: 1 },
+    ),
+    { sha: "sha", config: baseConfig() },
+    { armed: true },
+  ).httpStatus === 422,
+);
+assert(
+  "mock Save approval mismatch",
+  mockGithubSave(
+    ytSavePayload(
+      "https://youtu.be/dQw4w9WgXcQ",
+      { embedCode: ytCurrent.embedCode, videoId: ytCurrent.videoId },
+      dryForSave.fingerprint,
+      { approvalId: "wrong" },
+    ),
+    { sha: saveState.sha, config: baseConfig() },
+    { armed: true },
+  ).httpStatus === 403,
+);
+assert(
+  "mock Save arm false",
+  mockGithubSave(
+    ytSavePayload(
+      "https://youtu.be/dQw4w9WgXcQ",
+      { embedCode: ytCurrent.embedCode, videoId: ytCurrent.videoId },
+      dryForSave.fingerprint,
+    ),
+    { sha: "sha-before", config: baseConfig() },
+    { armed: false },
+  ).httpStatus === 403,
+);
+assert(
+  "mock Save authなし",
+  mockGithubSave(
+    ytSavePayload(
+      "https://youtu.be/dQw4w9WgXcQ",
+      { embedCode: ytCurrent.embedCode, videoId: ytCurrent.videoId },
+      dryForSave.fingerprint,
+    ),
+    { sha: "sha-before", config: baseConfig() },
+    { armed: true, auth: false },
+  ).httpStatus === 401,
+);
+assert(
+  "mock Save non-admin",
+  mockGithubSave(
+    ytSavePayload(
+      "https://youtu.be/dQw4w9WgXcQ",
+      { embedCode: ytCurrent.embedCode, videoId: ytCurrent.videoId },
+      dryForSave.fingerprint,
+    ),
+    { sha: "sha-before", config: baseConfig() },
+    { armed: true, admin: false },
+  ).httpStatus === 403,
+);
+assert(
+  "mock GitHub PUT failure",
+  mockGithubSave(
+    ytSavePayload(
+      "https://www.youtube.com/watch?v=Ke4F8JAQz-I",
+      { embedCode: ytCurrent.embedCode, videoId: ytCurrent.videoId },
+      mockGithubDryRun(ytDryPayload("https://www.youtube.com/watch?v=Ke4F8JAQz-I"), {
+        sha: "sha-put",
+        config: baseConfig(),
+      }).fingerprint,
+    ),
+    { sha: "sha-put", config: baseConfig() },
+    { armed: true, putFail: true },
+  ).didWrite === false,
+);
+assert(
+  "mock timeout / indeterminate",
+  mockGithubSave(
+    ytSavePayload(
+      "https://www.youtube.com/watch?v=Ke4F8JAQz-I",
+      { embedCode: ytCurrent.embedCode, videoId: ytCurrent.videoId },
+      mockGithubDryRun(ytDryPayload("https://www.youtube.com/watch?v=Ke4F8JAQz-I"), {
+        sha: "sha-to",
+        config: baseConfig(),
+      }).fingerprint,
+    ),
+    { sha: "sha-to", config: baseConfig() },
+    { armed: true, timeout: true },
+  ).indeterminate === true,
+);
+assert(
+  "mock commit response missing SHA",
+  mockGithubSave(
+    ytSavePayload(
+      "https://www.youtube.com/watch?v=Ke4F8JAQz-I",
+      { embedCode: ytCurrent.embedCode, videoId: ytCurrent.videoId },
+      mockGithubDryRun(ytDryPayload("https://www.youtube.com/watch?v=Ke4F8JAQz-I"), {
+        sha: "sha-miss",
+        config: baseConfig(),
+      }).fingerprint,
+    ),
+    { sha: "sha-miss", config: baseConfig() },
+    { armed: true, missingCommitSha: true },
+  ).indeterminate === true,
+);
 
 function evaluateYoutubeGateMock(input) {
   if (input.saveInFlight) return { enabled: false, reason: "in-flight" };
   if (!input.authenticated) return { enabled: false, reason: "auth" };
   if (!input.dryRunSucceeded) return { enabled: false, reason: "dry-run" };
+  if (input.noChange) return { enabled: false, reason: "no_change" };
   if (!input.formMatchesDryRunSnapshot) return { enabled: false, reason: "fingerprint" };
+  if (!input.fingerprintPresent) return { enabled: false, reason: "fingerprint-missing" };
   if (!String(input.expectedBeforeEmbed ?? "").trim()) return { enabled: false, reason: "lock" };
   if (!input.saveEndpointConfigured || !input.saveEndpointSafe) {
     return { enabled: false, reason: "endpoint" };
@@ -1570,6 +2069,7 @@ const gateBase = {
   authenticated: true,
   dryRunSucceeded: true,
   formMatchesDryRunSnapshot: true,
+  fingerprintPresent: true,
   expectedBeforeEmbed: ytCurrent.embedCode,
   expectedBeforeVideoId: ytCurrent.videoId,
   saveEndpointConfigured: true,
@@ -1578,6 +2078,7 @@ const gateBase = {
   approvalId: YT_SAVE_APPROVAL,
   expectedApprovalId: YT_SAVE_APPROVAL,
   saveInFlight: false,
+  noChange: false,
 };
 assert("mock normal package Save disabled", evaluateYoutubeGateMock({ ...gateBase, envArmed: false }).enabled === false);
 assert("mock controlled arm enables when all gates pass", evaluateYoutubeGateMock(gateBase).enabled === true);
@@ -1586,25 +2087,94 @@ assert(
   "mock fingerprint変更で disabled",
   evaluateYoutubeGateMock({ ...gateBase, formMatchesDryRunSnapshot: false }).enabled === false,
 );
+assert(
+  "mock file SHA / fingerprint missing disabled",
+  evaluateYoutubeGateMock({ ...gateBase, fingerprintPresent: false }).enabled === false,
+);
 assert("mock authなし Save disabled", evaluateYoutubeGateMock({ ...gateBase, authenticated: false }).enabled === false);
 assert(
   "mock approval不一致 Save disabled",
   evaluateYoutubeGateMock({ ...gateBase, approvalId: "nope" }).enabled === false,
 );
 assert(
+  "mock restore dry-run possible after Save (gate re-arms only after new dry-run)",
+  evaluateYoutubeGateMock({ ...gateBase, dryRunSucceeded: false }).enabled === false &&
+    evaluateYoutubeGateMock(gateBase).enabled === true,
+);
+assert(
   "mock unsafe response rejected by sanitize",
-  readOnlyAdminTs.includes("youtubeUnsafeWriteFlags") &&
+  readOnlyAdminTs.includes("youtubeUnsafeDryRunFlags") &&
+    readOnlyAdminTs.includes("youtubeUnsafeSaveFlags") &&
     readOnlyAdminTs.includes("wouldWrite === true") &&
-    readOnlyAdminTs.includes("workflowDispatchExecuted === true"),
+    readOnlyAdminTs.includes("workflowDispatchExecuted === true") &&
+    readOnlyAdminTs.includes("indeterminate"),
 );
 const edgeSaveShared = read("supabase/functions/_shared/gosaki-youtube-url-save.ts");
+const edgeDryShared = read("supabase/functions/_shared/gosaki-youtube-url-dry-run.ts");
+const edgeGithubJson = read("supabase/functions/_shared/gosaki-youtube-github-json.ts");
+const edgeGithubTs = read("supabase/functions/_shared/github.ts");
+const edgeDryIndex = read("supabase/functions/gosaki-youtube-url-dry-run/index.ts");
+const edgeSaveIndex = read("supabase/functions/gosaki-youtube-url-save/index.ts");
+assert(
+  "runtime GitHub read (dry-run + save)",
+  edgeDryShared.includes("loadYoutubeEmbedJsonFromGithub") &&
+    edgeSaveShared.includes("loadYoutubeEmbedJsonFromGithub") &&
+    edgeGithubJson.includes("getGithubContentsFile") &&
+    !edgeDryShared.includes("gosaki-youtube-staging-current") &&
+    !edgeSaveShared.includes("gosaki-youtube-staging-current"),
+);
+assert(
+  "Save uses GitHub Contents API write + SHA lock",
+  edgeSaveShared.includes("commitYoutubeEmbedCodePatch") &&
+    edgeSaveShared.includes("updateGithubContentsFile") === false &&
+    edgeGithubJson.includes("updateGithubContentsFile") &&
+    edgeSaveShared.includes("GitHub file SHA does not match") &&
+    edgeSaveShared.includes("G11C6_SAVE_READINESS_COMMITTED") &&
+    edgeSaveShared.includes("workflowDispatchExecuted: false"),
+);
+assert(
+  "dry-run GitHub writeなし",
+  edgeDryShared.includes("networkWrite: false") &&
+    !edgeDryShared.includes("updateGithubContentsFile") &&
+    !edgeDryShared.includes("commitYoutubeEmbedCodePatch") &&
+    !edgeDryShared.includes("dispatchWorkflow") &&
+    !edgeDryIndex.includes("workflow_dispatch"),
+);
+assert(
+  "Save no workflow_dispatch from Edge",
+  !edgeSaveShared.includes("dispatchWorkflow") &&
+    !edgeSaveShared.includes("actions/workflows") &&
+    edgeSaveIndex.includes("No workflow_dispatch") &&
+    edgeSaveShared.includes("workflowDispatchExecuted: false") &&
+    edgeGithubTs.includes("getGithubContentsFile") &&
+    edgeGithubTs.includes("updateGithubContentsFile") &&
+    edgeGithubTs.includes('Deno.env.get("GITHUB_TOKEN")') &&
+    edgeGithubTs.includes('Deno.env.get("GITHUB_REPO")'),
+);
+assert(
+  "exact target file + item + embedCode only",
+  edgeGithubJson.includes(YT_FILE_PATH) &&
+    edgeGithubJson.includes(G11C8_TARGET_ITEM_ID) &&
+    edgeGithubJson.includes('GOSAKI_YOUTUBE_PATCH_FIELD = "embedCode"') &&
+    edgeGithubJson.includes("planYoutubeEmbedCodePatch"),
+);
+assert(
+  "unexpected field拒否 (exact allowlist)",
+  edgeDryShared.includes("G11C1_DRY_RUN_ALLOWED_KEYS") &&
+    edgeSaveShared.includes("G11C6_SAVE_ALLOWED_KEYS") &&
+    edgeGithubJson.includes("assertExactObjectKeys"),
+);
 assert(
   "mock Save success response shape (source)",
   edgeSaveShared.includes("ok: true") &&
     edgeSaveShared.includes("dryRun: false") &&
-    edgeSaveShared.includes("httpStatus: 409") &&
+    edgeSaveShared.includes("saveReadiness: \"conflict\"") &&
     edgeSaveShared.includes("expectedBefore") &&
-    !/service_role/i.test(edgeSaveShared),
+    edgeSaveShared.includes("didWrite: true") &&
+    edgeSaveShared.includes("networkWrite: true") &&
+    edgeSaveShared.includes("G11C6_SAVE_READINESS_COMMITTED") &&
+    !/service_role/i.test(edgeSaveShared) &&
+    !/dispatch_deferred/i.test(edgeSaveShared),
 );
 assert(
   "mock form submit does not Save (preventDefault)",
@@ -1621,10 +2191,40 @@ assert(
   !youtubeOpEditSrc.includes("retrySave") &&
     !youtubeOpEditSrc.includes("setInterval("),
 );
+assert(
+  "client reflects Save after / newFileSha (not build-time snapshot alone)",
+  youtubeOpEditSrc.includes("applyLiveCurrent") &&
+    youtubeOpEditSrc.includes("display.after?.embedCode") &&
+    youtubeOpEditSrc.includes("dryRunServerFingerprint") &&
+    youtubeOpEditSrc.includes("conflictMessage"),
+);
+assert(
+  "workflow file retained as manual fallback (unchanged by this Edge Save path)",
+  fs.existsSync(
+    path.join(REPO_ROOT, ".github/workflows/gosaki-youtube-url-save-staging.yml"),
+  ),
+);
+assert(
+  "Edge Save does not call workflow file",
+  !edgeSaveShared.includes("dispatchGithubWorkflow") &&
+    !edgeSaveShared.includes("actions/workflows") &&
+    !edgeSaveShared.includes("dispatchWorkflow") &&
+    edgeSaveShared.includes("workflowDispatchExecuted: false"),
+);
 const stagingCurrentSrc = read("supabase/functions/_shared/gosaki-youtube-staging-current.ts");
 assert(
-  "staging-current mirrors package JSON videoId",
-  stagingCurrentSrc.includes("I-eY9YMq9GI") && !stagingCurrentSrc.includes("Ke4F8JAQz-I"),
+  "staging-current file may remain but is unused by dry-run/Save runtime",
+  stagingCurrentSrc.includes("I-eY9YMq9GI") &&
+    !edgeDryShared.includes("gosaki-youtube-staging-current") &&
+    !edgeSaveShared.includes("gosaki-youtube-staging-current") &&
+    !edgeDryIndex.includes("staging-current") &&
+    !edgeSaveIndex.includes("staging-current"),
+);
+assert(
+  "package JSON target path matches Edge SoT",
+  fs.existsSync(path.join(REPO_ROOT, G11C8_CONFIG_REL)) &&
+    read(G11C8_CONFIG_REL).includes("I-eY9YMq9GI") &&
+    read(G11C8_CONFIG_REL).includes(G11C8_TARGET_ITEM_ID),
 );
 
 console.log("");

@@ -1,6 +1,6 @@
 /**
- * G-11c6a — Gosaki YouTube URL web-save non-dry-run (staging only).
- * Deploy: not executed in G-11c6a local-only phase.
+ * G-11c6 — Gosaki YouTube URL web-save (GitHub Contents commit · staging only).
+ * No workflow_dispatch from this function.
  */
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { corsHeaders, jsonResponse, requireAdminUser } from "../_shared/admin-auth.ts";
@@ -25,7 +25,7 @@ Deno.serve(async (req) => {
     return jsonResponse({ error: "Invalid JSON body" }, 400);
   }
 
-  const result = handleG11c6YoutubeUrlSaveBody(body);
+  const result = await handleG11c6YoutubeUrlSaveBody(body);
   const status = typeof result.httpStatus === "number" ? result.httpStatus : result.ok ? 200 : 400;
   const { httpStatus: _drop, ...payload } = result as Record<string, unknown>;
   return jsonResponse(payload, status);

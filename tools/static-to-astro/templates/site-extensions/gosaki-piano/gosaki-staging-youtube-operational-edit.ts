@@ -1,6 +1,7 @@
 /**
  * Gosaki YouTube operational edit — dry-run click-only · gated Save (default disarmed).
  * Reuses gosaki-youtube-url-dry-run / gosaki-youtube-url-save contracts (G-11c1 / G-11c6).
+ * Runtime lock: GitHub Contents fingerprint (file SHA + before/after), not build-time snapshot.
  */
 
 export type YoutubeOperationalEditDeps = {
@@ -16,6 +17,8 @@ export type YoutubeOperationalEditDeps = {
   buildSaveEndpointRequest?: (input: {
     nextValue: string;
     expectedBefore: { embedCode: string; videoId?: string | null };
+    fingerprint: string;
+    requestId?: string;
   }) => Record<string, unknown>;
   sanitizeDryRunDisplay?: (
     body: unknown,
@@ -28,6 +31,11 @@ export type YoutubeOperationalEditDeps = {
     changedFields?: string[];
     current?: { embedCode?: string; videoId?: string | null };
     next?: { embedCode?: string; videoId?: string | null };
+    before?: { embedCode?: string; videoId?: string | null };
+    after?: { embedCode?: string; videoId?: string | null };
+    fingerprint?: string;
+    currentFileSha?: string;
+    newFileSha?: string;
     error?: string;
     errors: string[];
     didWrite: boolean;
@@ -39,12 +47,23 @@ export type YoutubeOperationalEditDeps = {
     fetchError?: string;
     noChange?: boolean;
     saveReadiness?: string;
+    indeterminate?: boolean;
   };
-  sanitizeSaveDisplay?: YoutubeOperationalEditDeps["sanitizeDryRunDisplay"];
+  sanitizeSaveDisplay?: YoutubeOperationalEditDeps["sanitizeDryRunDisplay"] &
+    ((
+      body: unknown,
+      httpStatus?: number,
+    ) => {
+      commitSha?: string;
+      commitUrl?: string | null;
+      newFileSha?: string;
+      indeterminate?: boolean;
+    });
   evaluateSaveGate?: (input: {
     authenticated: boolean;
     dryRunSucceeded: boolean;
     formMatchesDryRunSnapshot: boolean;
+    fingerprintPresent: boolean;
     expectedBeforeEmbed: string | null;
     expectedBeforeVideoId: string | null;
     saveEndpointConfigured: boolean;
@@ -53,6 +72,7 @@ export type YoutubeOperationalEditDeps = {
     approvalId: string;
     expectedApprovalId: string;
     saveInFlight: boolean;
+    noChange?: boolean;
   }) => { enabled: boolean; reason: string };
   isSaveConflictResponse?: (body: unknown) => boolean;
   expectedSaveApprovalId?: string;
@@ -111,8 +131,16 @@ export function initGosakiYoutubeOperationalEdit(
       "",
   ).trim();
 
+  let liveCurrentEmbed = baselineEmbed;
+  let liveCurrentVideoId = baselineVideoId;
+
   let dryRunOk = false;
-  let dryRunFingerprint: string | null = null;
+  let dryRunNoChange = false;
+  /** Form value fingerprint (next URL) — must match for Save. */
+  let dryRunFormFingerprint: string | null = null;
+  /** Server GitHub lock fingerprint from dry-run — must be sent on Save. */
+  let dryRunServerFingerprint: string | null = null;
+  let dryRunFileSha: string | null = null;
   let dryRunExpectedEmbed: string | null = null;
   let dryRunExpectedVideoId: string | null = null;
   let saveInFlight = false;
@@ -123,7 +151,7 @@ export function initGosakiYoutubeOperationalEdit(
   const expectedSaveApprovalId = String(deps.expectedSaveApprovalId ?? "").trim();
   const conflictMessage =
     deps.conflictMessage ??
-    "他の場所で更新された可能性があります。再読み込みしてください。";
+    "GitHub 上の current が変わりました。再度「変更を確認」（dry-run）で GitHub current を取得してください。";
   const productionStop = deps.productionProjectRefStop ?? "vsbvndwuajjhnzpohghh";
   const fetchImpl = deps.fetchImpl ?? fetch;
   const parseVideoId =
@@ -160,16 +188,34 @@ export function initGosakiYoutubeOperationalEdit(
     return String(nextInput.value || "").trim();
   }
 
-  function fingerprint(value: string): string {
+  function formFingerprint(value: string): string {
     return value;
   }
 
   function invalidateDryRun() {
     dryRunOk = false;
-    dryRunFingerprint = null;
+    dryRunNoChange = false;
+    dryRunFormFingerprint = null;
+    dryRunServerFingerprint = null;
+    dryRunFileSha = null;
     dryRunExpectedEmbed = null;
     dryRunExpectedVideoId = null;
     void refreshSaveGate();
+  }
+
+  function applyLiveCurrent(embed: string, videoId: string | null | undefined) {
+    const nextEmbed = String(embed ?? "").trim();
+    const nextVid = String(videoId ?? parseVideoId(nextEmbed) ?? "").trim();
+    liveCurrentEmbed = nextEmbed;
+    liveCurrentVideoId = nextVid;
+    if (currentDisplay instanceof HTMLElement) currentDisplay.textContent = nextEmbed;
+    if (currentVideoIdEl instanceof HTMLInputElement) {
+      currentVideoIdEl.value = nextVid || "—";
+    }
+    if (body?.dataset) {
+      body.dataset.gosakiYoutubeCurrentEmbed = nextEmbed;
+      body.dataset.gosakiYoutubeCurrentVideoid = nextVid;
+    }
   }
 
   function setLocalValidation(message: string, ok: boolean | null) {
@@ -249,7 +295,11 @@ export function initGosakiYoutubeOperationalEdit(
     }
     const nextValue = readNextValue();
     const formMatches =
-      dryRunOk && dryRunFingerprint != null && fingerprint(nextValue) === dryRunFingerprint;
+      dryRunOk &&
+      dryRunFormFingerprint != null &&
+      formFingerprint(nextValue) === dryRunFormFingerprint &&
+      dryRunServerFingerprint != null &&
+      dryRunFileSha != null;
     const saveEndpoint = String(deps.saveEndpoint ?? "").trim();
     const saveSafe =
       Boolean(deps.assertSaveEndpointSafe?.(saveEndpoint)) &&
@@ -259,6 +309,7 @@ export function initGosakiYoutubeOperationalEdit(
         authenticated: auth,
         dryRunSucceeded: dryRunOk,
         formMatchesDryRunSnapshot: formMatches,
+        fingerprintPresent: Boolean(dryRunServerFingerprint && dryRunFileSha),
         expectedBeforeEmbed: dryRunExpectedEmbed,
         expectedBeforeVideoId: dryRunExpectedVideoId,
         saveEndpointConfigured: Boolean(saveEndpoint),
@@ -267,6 +318,7 @@ export function initGosakiYoutubeOperationalEdit(
         approvalId: expectedSaveApprovalId,
         expectedApprovalId: expectedSaveApprovalId,
         saveInFlight,
+        noChange: dryRunNoChange,
       }) ?? {
         enabled: false,
         reason: "Save gate 未配線",
@@ -274,19 +326,31 @@ export function initGosakiYoutubeOperationalEdit(
     applySaveButtonUi(gate.enabled, gate.reason);
   }
 
-  function renderDryRunSuccess(display: NonNullable<
-    ReturnType<NonNullable<YoutubeOperationalEditDeps["sanitizeDryRunDisplay"]>>
-  >) {
-    const beforeEmbed = escapeHtml(String(display.current?.embedCode ?? baselineEmbed));
-    const afterEmbed = escapeHtml(String(display.next?.embedCode ?? readNextValue()));
-    const beforeVid = escapeHtml(String(display.current?.videoId ?? baselineVideoId ?? "—"));
-    const afterVid = escapeHtml(String(display.next?.videoId ?? "—"));
+  function renderDryRunSuccess(
+    display: NonNullable<
+      ReturnType<NonNullable<YoutubeOperationalEditDeps["sanitizeDryRunDisplay"]>>
+    >,
+  ) {
+    const beforeEmbed = escapeHtml(
+      String(display.before?.embedCode ?? display.current?.embedCode ?? liveCurrentEmbed),
+    );
+    const afterEmbed = escapeHtml(
+      String(display.after?.embedCode ?? display.next?.embedCode ?? readNextValue()),
+    );
+    const beforeVid = escapeHtml(
+      String(display.before?.videoId ?? display.current?.videoId ?? liveCurrentVideoId ?? "—"),
+    );
+    const afterVid = escapeHtml(
+      String(display.after?.videoId ?? display.next?.videoId ?? "—"),
+    );
     const fields = (display.changedFields ?? []).map(escapeHtml).join(", ") || "（なし）";
+    const sha = escapeHtml(String(display.currentFileSha ?? dryRunFileSha ?? "—"));
     showResultHtml(
       `<div class="gosaki-youtube-dry-run-card">` +
         `<p><strong>dry-run OK</strong> · didWrite=false · dbWrite=false · networkWrite=false</p>` +
         `<p>changedFields: ${fields}</p>` +
-        `<p><strong>現在値</strong><br><code class="gosaki-youtube-url-break">${beforeEmbed}</code><br>videoId: ${beforeVid}</p>` +
+        `<p>currentFileSha: <code>${sha}</code></p>` +
+        `<p><strong>現在値（GitHub）</strong><br><code class="gosaki-youtube-url-break">${beforeEmbed}</code><br>videoId: ${beforeVid}</p>` +
         `<p><strong>変更後</strong><br><code class="gosaki-youtube-url-break">${afterEmbed}</code><br>videoId: ${afterVid}</p>` +
         `<p>Save: ${saveArmed ? "controlled arm 時のみ有効化候補" : "通常 package では無効のまま"}</p>` +
         `</div>`,
@@ -363,7 +427,7 @@ export function initGosakiYoutubeOperationalEdit(
     void refreshSaveGate();
     if (resultEl instanceof HTMLElement) {
       resultEl.hidden = false;
-      resultEl.textContent = "Dry-run リクエスト送信中…（保存されません）";
+      resultEl.textContent = "Dry-run リクエスト送信中…（GitHub GET のみ · 保存されません）";
     }
 
     try {
@@ -386,24 +450,59 @@ export function initGosakiYoutubeOperationalEdit(
         bodyData = { error: "non-JSON response" };
       }
       const display = deps.sanitizeDryRunDisplay(bodyData, res.status);
-      if (
+
+      if (display.noChange) {
+        dryRunOk = false;
+        dryRunNoChange = true;
+        dryRunFormFingerprint = null;
+        dryRunServerFingerprint = null;
+        dryRunFileSha = null;
+        dryRunExpectedEmbed = null;
+        dryRunExpectedVideoId = null;
+        showResultJson({
+          ...display,
+          ok: false,
+          message: "no_change — Save は有効化されません。別の URL を入力して再度 dry-run してください",
+          didWrite: false,
+          dbWrite: false,
+          networkWrite: false,
+        });
+      } else if (
         display.ok &&
         display.dryRun === true &&
         display.wouldWrite !== true &&
         !display.unsafeWriteFlags &&
-        display.errors.length === 0
+        display.errors.length === 0 &&
+        typeof display.fingerprint === "string" &&
+        display.fingerprint.trim() !== "" &&
+        typeof display.currentFileSha === "string" &&
+        display.currentFileSha.trim() !== ""
       ) {
         dryRunOk = true;
-        dryRunFingerprint = fingerprint(nextValue);
-        dryRunExpectedEmbed = String(display.current?.embedCode ?? baselineEmbed).trim();
+        dryRunNoChange = false;
+        dryRunFormFingerprint = formFingerprint(nextValue);
+        dryRunServerFingerprint = display.fingerprint.trim();
+        dryRunFileSha = display.currentFileSha.trim();
+        dryRunExpectedEmbed = String(
+          display.before?.embedCode ?? display.current?.embedCode ?? liveCurrentEmbed,
+        ).trim();
         dryRunExpectedVideoId =
-          display.current?.videoId == null
-            ? baselineVideoId || null
-            : String(display.current.videoId).trim() || null;
+          display.before?.videoId != null
+            ? String(display.before.videoId).trim() || null
+            : display.current?.videoId == null
+              ? liveCurrentVideoId || null
+              : String(display.current.videoId).trim() || null;
+        // Reflect GitHub-read current into UI (not build-time snapshot alone).
+        if (dryRunExpectedEmbed) {
+          applyLiveCurrent(dryRunExpectedEmbed, dryRunExpectedVideoId);
+        }
         renderDryRunSuccess(display);
       } else {
         dryRunOk = false;
-        dryRunFingerprint = null;
+        dryRunNoChange = false;
+        dryRunFormFingerprint = null;
+        dryRunServerFingerprint = null;
+        dryRunFileSha = null;
         dryRunExpectedEmbed = null;
         dryRunExpectedVideoId = null;
         showResultJson({
@@ -415,7 +514,10 @@ export function initGosakiYoutubeOperationalEdit(
       }
     } catch {
       dryRunOk = false;
-      dryRunFingerprint = null;
+      dryRunNoChange = false;
+      dryRunFormFingerprint = null;
+      dryRunServerFingerprint = null;
+      dryRunFileSha = null;
       showResultJson({
         ok: false,
         error: "dry_run_request_failed",
@@ -435,8 +537,12 @@ export function initGosakiYoutubeOperationalEdit(
 
     const nextValue = readNextValue();
     const formMatches =
-      dryRunOk && dryRunFingerprint != null && fingerprint(nextValue) === dryRunFingerprint;
-    if (!formMatches || !dryRunExpectedEmbed) {
+      dryRunOk &&
+      dryRunFormFingerprint != null &&
+      formFingerprint(nextValue) === dryRunFormFingerprint &&
+      dryRunServerFingerprint != null &&
+      dryRunFileSha != null;
+    if (!formMatches || !dryRunExpectedEmbed || !dryRunServerFingerprint) {
       invalidateDryRun();
       return;
     }
@@ -466,7 +572,7 @@ export function initGosakiYoutubeOperationalEdit(
     void refreshSaveGate();
     if (resultEl instanceof HTMLElement) {
       resultEl.hidden = false;
-      resultEl.textContent = "Save リクエスト送信中…";
+      resultEl.textContent = "Save リクエスト送信中…（GitHub Contents commit）";
     }
 
     try {
@@ -487,6 +593,8 @@ export function initGosakiYoutubeOperationalEdit(
               embedCode: dryRunExpectedEmbed,
               videoId: dryRunExpectedVideoId,
             },
+            fingerprint: dryRunServerFingerprint,
+            requestId: `ui-${Date.now()}`,
           }),
         ),
       });
@@ -504,6 +612,7 @@ export function initGosakiYoutubeOperationalEdit(
           error: "conflict",
           message: conflictMessage,
           body: bodyData,
+          hint: "再度 dry-run で GitHub current を取得してください",
         });
         invalidateDryRun();
         applySaveButtonUi(false, conflictMessage);
@@ -511,24 +620,44 @@ export function initGosakiYoutubeOperationalEdit(
       }
 
       const display = deps.sanitizeSaveDisplay(bodyData, res.status);
-      if (display.ok && !display.unsafeWriteFlags) {
-        const nextEmbed = String(display.next?.embedCode ?? nextValue).trim();
-        const nextVid = String(display.next?.videoId ?? parseVideoId(nextEmbed) ?? "").trim();
-        if (currentDisplay instanceof HTMLElement) currentDisplay.textContent = nextEmbed;
-        if (currentVideoIdEl instanceof HTMLInputElement) currentVideoIdEl.value = nextVid || "—";
-        if (body?.dataset) {
-          body.dataset.gosakiYoutubeCurrentEmbed = nextEmbed;
-          body.dataset.gosakiYoutubeCurrentVideoid = nextVid;
-        }
+      if (display.indeterminate) {
         showResultJson({
           ...display,
-          message: "Save response accepted（再disabled）",
+          ok: false,
+          didWrite: false,
+          dbWrite: false,
+          networkWrite: false,
+          message:
+            "indeterminate / verification_required — 成功扱いしません。GitHub current を dry-run で再確認してください（自動再送しません）",
         });
+        invalidateDryRun();
+        return;
+      }
+
+      if (display.ok && display.didWrite === true && !display.unsafeWriteFlags) {
+        const nextEmbed = String(
+          display.after?.embedCode ?? display.next?.embedCode ?? nextValue,
+        ).trim();
+        const nextVid = String(
+          display.after?.videoId ??
+            display.next?.videoId ??
+            parseVideoId(nextEmbed) ??
+            "",
+        ).trim();
+        applyLiveCurrent(nextEmbed, nextVid);
         if (nextInput instanceof HTMLInputElement || nextInput instanceof HTMLTextAreaElement) {
           nextInput.value = nextEmbed;
         }
+        showResultJson({
+          ...display,
+          message:
+            "Save committed（GitHub Contents）· 再disabled。restore する場合は original URL で再度 dry-run → Save",
+        });
         invalidateDryRun();
-        applySaveButtonUi(false, "Save 成功後は再disabledです。続けて変更する場合は再度「変更を確認」してください");
+        applySaveButtonUi(
+          false,
+          "Save 成功後は再disabledです。続けて変更 / restore する場合は再度「変更を確認」してください",
+        );
       } else {
         showResultJson({
           ...display,
@@ -545,6 +674,8 @@ export function initGosakiYoutubeOperationalEdit(
         didWrite: false,
         dbWrite: false,
         networkWrite: false,
+        message:
+          "Save 応答が不明瞭です。成功扱いしません。GitHub current を dry-run で再確認してください（自動再送しません）",
       });
       invalidateDryRun();
     } finally {
@@ -578,7 +709,11 @@ export function initGosakiYoutubeOperationalEdit(
     ["input", "change"].forEach((evt) => {
       nextInput.addEventListener(evt, () => {
         updateLocalValidationFromInput();
-        if (dryRunOk && dryRunFingerprint != null && fingerprint(readNextValue()) !== dryRunFingerprint) {
+        if (
+          dryRunOk &&
+          dryRunFormFingerprint != null &&
+          formFingerprint(readNextValue()) !== dryRunFormFingerprint
+        ) {
           invalidateDryRun();
         }
         void refreshSaveGate();

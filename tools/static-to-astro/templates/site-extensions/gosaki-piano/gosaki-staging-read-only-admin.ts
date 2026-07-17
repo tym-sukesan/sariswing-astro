@@ -1180,6 +1180,8 @@ export function buildYoutubeDryRunEndpointRequest(nextValue: string): Record<str
 export function buildYoutubeSaveEndpointRequest(input: {
   nextValue: string;
   expectedBefore: { embedCode: string; videoId?: string | null };
+  fingerprint: string;
+  requestId?: string;
 }): Record<string, unknown> {
   return {
     siteSlug: GOSAKI_STAGING_SITE_SLUG,
@@ -1190,6 +1192,8 @@ export function buildYoutubeSaveEndpointRequest(input: {
     saveEnabled: true,
     operationId: G11C6_OPERATION_ID,
     approvalId: G11C6_APPROVAL_ID,
+    fingerprint: String(input.fingerprint ?? "").trim(),
+    requestId: String(input.requestId ?? `ui-${Date.now()}`).trim(),
     expectedBefore: {
       embedCode: String(input.expectedBefore.embedCode ?? "").trim(),
       videoId:
@@ -1204,6 +1208,7 @@ export type YoutubeOperationalSaveGateInput = {
   authenticated: boolean;
   dryRunSucceeded: boolean;
   formMatchesDryRunSnapshot: boolean;
+  fingerprintPresent: boolean;
   expectedBeforeEmbed: string | null;
   expectedBeforeVideoId: string | null;
   saveEndpointConfigured: boolean;
@@ -1212,6 +1217,7 @@ export type YoutubeOperationalSaveGateInput = {
   approvalId: string;
   expectedApprovalId: string;
   saveInFlight: boolean;
+  noChange?: boolean;
 };
 
 export function evaluateYoutubeOperationalSaveGate(
@@ -1226,11 +1232,17 @@ export function evaluateYoutubeOperationalSaveGate(
   if (!input.dryRunSucceeded) {
     return { enabled: false, reason: "先に「変更を確認」（dry-run）を成功させてください" };
   }
+  if (input.noChange) {
+    return { enabled: false, reason: "変更がありません（no_change）" };
+  }
   if (!input.formMatchesDryRunSnapshot) {
     return {
       enabled: false,
       reason: "dry-run 後に内容が変わりました。再度「変更を確認」してください",
     };
+  }
+  if (!input.fingerprintPresent) {
+    return { enabled: false, reason: "GitHub fingerprint がありません。再度「変更を確認」してください" };
   }
   const embed = String(input.expectedBeforeEmbed ?? "").trim();
   if (!embed) {
@@ -1269,7 +1281,7 @@ export function isYoutubeSaveConflictResponse(body: unknown): boolean {
   const message = String(data.message ?? "").toLowerCase();
   return (
     readiness === "conflict" ||
-    /expectedbefore|conflict|stale|already changed/.test(`${error} ${message}`)
+    /expectedbefore|conflict|stale|already changed|file sha/.test(`${error} ${message}`)
   );
 }
 
@@ -1281,6 +1293,13 @@ export type YoutubeEndpointDisplay = {
   changedFields?: string[];
   current?: { embedCode?: string; videoId?: string | null };
   next?: { embedCode?: string; videoId?: string | null };
+  before?: { embedCode?: string; videoId?: string | null };
+  after?: { embedCode?: string; videoId?: string | null };
+  fingerprint?: string;
+  currentFileSha?: string;
+  newFileSha?: string;
+  commitSha?: string;
+  commitUrl?: string | null;
   error?: string;
   errors: string[];
   saveReadiness?: string;
@@ -1292,9 +1311,10 @@ export type YoutubeEndpointDisplay = {
   unsafeWriteFlags?: boolean;
   fetchError?: string;
   noChange?: boolean;
+  indeterminate?: boolean;
 };
 
-function youtubeUnsafeWriteFlags(data: Record<string, unknown>): boolean {
+function youtubeUnsafeDryRunFlags(data: Record<string, unknown>): boolean {
   return (
     data.wouldWrite === true ||
     data.didWrite === true ||
@@ -1304,18 +1324,96 @@ function youtubeUnsafeWriteFlags(data: Record<string, unknown>): boolean {
   );
 }
 
+function youtubeUnsafeSaveFlags(data: Record<string, unknown>): boolean {
+  if (data.workflowDispatchExecuted === true) return true;
+  if (data.dbWrite === true) return true;
+  if (data.ok === true && data.didWrite === true && !data.commitSha) return true;
+  return false;
+}
+
 export function sanitizeYoutubeDryRunEndpointDisplay(
   body: unknown,
   httpStatus?: number,
 ): YoutubeEndpointDisplay {
   const data = (body && typeof body === "object" ? body : {}) as Record<string, unknown>;
   const error = typeof data.error === "string" ? data.error : undefined;
-  const errors = error ? [error] : [];
-  const unsafe = youtubeUnsafeWriteFlags(data);
+  const errorsFromArray = Array.isArray(data.errors) ? data.errors.map(String) : [];
+  const errors = error ? Array.from(new Set([error, ...errorsFromArray])) : errorsFromArray;
+  const unsafe = youtubeUnsafeDryRunFlags(data);
+  const fingerprint = typeof data.fingerprint === "string" ? data.fingerprint : undefined;
+  const noChange = data.noChange === true || data.saveReadiness === "no_change";
+  const ok =
+    data.ok === true &&
+    !unsafe &&
+    errors.length === 0 &&
+    data.dryRun === true &&
+    Boolean(fingerprint) &&
+    !noChange;
   return {
     httpStatus,
-    ok: data.ok === true && !unsafe && errors.length === 0,
+    ok,
     dryRun: data.dryRun === true,
+    wouldWrite: data.wouldWrite === true,
+    changedFields: Array.isArray(data.changedFields) ? data.changedFields.map(String) : [],
+    current:
+      data.current && typeof data.current === "object"
+        ? (data.current as YoutubeEndpointDisplay["current"])
+        : data.before && typeof data.before === "object"
+          ? (data.before as YoutubeEndpointDisplay["current"])
+          : undefined,
+    next:
+      data.next && typeof data.next === "object"
+        ? (data.next as YoutubeEndpointDisplay["next"])
+        : data.after && typeof data.after === "object"
+          ? (data.after as YoutubeEndpointDisplay["next"])
+          : undefined,
+    before:
+      data.before && typeof data.before === "object"
+        ? (data.before as YoutubeEndpointDisplay["before"])
+        : undefined,
+    after:
+      data.after && typeof data.after === "object"
+        ? (data.after as YoutubeEndpointDisplay["after"])
+        : undefined,
+    fingerprint,
+    currentFileSha:
+      typeof data.currentFileSha === "string" ? data.currentFileSha : undefined,
+    error,
+    errors,
+    saveReadiness: typeof data.saveReadiness === "string" ? data.saveReadiness : undefined,
+    didWrite: false,
+    dbWrite: false,
+    networkWrite: false,
+    saveEnabled: false,
+    authIssue: httpStatus === 401 || httpStatus === 403,
+    unsafeWriteFlags: unsafe,
+    noChange,
+  };
+}
+
+export function sanitizeYoutubeSaveEndpointDisplay(
+  body: unknown,
+  httpStatus?: number,
+): YoutubeEndpointDisplay {
+  const data = (body && typeof body === "object" ? body : {}) as Record<string, unknown>;
+  const error = typeof data.error === "string" ? data.error : undefined;
+  const errorsFromArray = Array.isArray(data.errors) ? data.errors.map(String) : [];
+  const errors = error ? Array.from(new Set([error, ...errorsFromArray])) : errorsFromArray;
+  const unsafe = youtubeUnsafeSaveFlags(data);
+  const indeterminate =
+    data.indeterminate === true || String(data.saveReadiness ?? "") === "verification_required";
+  const committed =
+    data.ok === true &&
+    data.didWrite === true &&
+    typeof data.commitSha === "string" &&
+    String(data.commitSha).trim() !== "" &&
+    !unsafe &&
+    !indeterminate &&
+    errors.length === 0;
+  return {
+    httpStatus,
+    ok: committed,
+    dryRun: data.dryRun === false ? false : data.dryRun === true,
     wouldWrite: data.wouldWrite === true,
     changedFields: Array.isArray(data.changedFields) ? data.changedFields.map(String) : [],
     current:
@@ -1326,29 +1424,35 @@ export function sanitizeYoutubeDryRunEndpointDisplay(
       data.next && typeof data.next === "object"
         ? (data.next as YoutubeEndpointDisplay["next"])
         : undefined,
+    before:
+      data.before && typeof data.before === "object"
+        ? (data.before as YoutubeEndpointDisplay["before"])
+        : undefined,
+    after:
+      data.after && typeof data.after === "object"
+        ? (data.after as YoutubeEndpointDisplay["after"])
+        : undefined,
+    fingerprint: typeof data.fingerprint === "string" ? data.fingerprint : undefined,
+    currentFileSha:
+      typeof data.currentFileSha === "string"
+        ? data.currentFileSha
+        : typeof data.newFileSha === "string"
+          ? data.newFileSha
+          : undefined,
+    newFileSha: typeof data.newFileSha === "string" ? data.newFileSha : undefined,
+    commitSha: typeof data.commitSha === "string" ? data.commitSha : undefined,
+    commitUrl: typeof data.commitUrl === "string" ? data.commitUrl : null,
     error,
     errors,
     saveReadiness: typeof data.saveReadiness === "string" ? data.saveReadiness : undefined,
-    didWrite: false,
+    didWrite: data.didWrite === true,
     dbWrite: false,
-    networkWrite: false,
+    networkWrite: data.networkWrite === true,
     saveEnabled: false,
     authIssue: httpStatus === 401 || httpStatus === 403,
     unsafeWriteFlags: unsafe,
     noChange: data.noChange === true,
-  };
-}
-
-export function sanitizeYoutubeSaveEndpointDisplay(
-  body: unknown,
-  httpStatus?: number,
-): YoutubeEndpointDisplay {
-  const base = sanitizeYoutubeDryRunEndpointDisplay(body, httpStatus);
-  const data = (body && typeof body === "object" ? body : {}) as Record<string, unknown>;
-  return {
-    ...base,
-    dryRun: data.dryRun === false ? false : base.dryRun,
-    ok: data.ok === true && !base.unsafeWriteFlags && base.errors.length === 0,
+    indeterminate,
   };
 }
 

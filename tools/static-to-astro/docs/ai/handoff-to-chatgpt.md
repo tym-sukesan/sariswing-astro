@@ -5,16 +5,18 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: Gosaki YouTube operational edit UI — source/mock/full-build complete (no live Save).
+Current phase: Gosaki YouTube operational Save path — GitHub Contents API (source/mock/full-build; no live Save/deploy).
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP.
 YOUTUBE_ROUTE: /cms-kit-staging/gosaki-piano/admin/youtube/
-CURRENT: https://youtu.be/I-eY9YMq9GI (videoId I-eY9YMq9GI) · build-time JSON (not site_embeds).
-DRY_RUN: gosaki-youtube-url-dry-run · approval G-11c1-youtube-url-dry-run · click-only.
-SAVE_UI: gated · arm PUBLIC_ADMIN_GOSAKI_YOUTUBE_URL_WEB_SAVE_NON_DRY_RUN_ARMED · approval G-11c6-gosaki-youtube-url-web-save-non-dry-run-slice.
-NORMAL_STG_SAVE_DISABLED: true · PAGE_LOAD_FETCH: false · SAVE_REQUEST_EXECUTED: false.
-YOUTUBE_DB_PERMISSION_READY: false · LIVE_PERMISSION_PREFLIGHT_REQUIRED: false.
+RUNTIME_SOT: GitHub tym-sukesan/sariswing-astro main · gosaki-piano-youtube-embed.json · yt-placeholder-01 · embedCode only.
+DRY_RUN: gosaki-youtube-url-dry-run · GitHub GET + fingerprint (file SHA) · approval G-11c1-youtube-url-dry-run.
+SAVE: gosaki-youtube-url-save · Contents PUT commit · NO workflow_dispatch · approval G-11c6-gosaki-youtube-url-web-save-non-dry-run-slice.
+ARMS: server GOSAKI_YOUTUBE_URL_SAVE_ARMED · client PUBLIC_ADMIN_GOSAKI_YOUTUBE_URL_WEB_SAVE_NON_DRY_RUN_ARMED.
+SHARED_CURRENT_RUNTIME_DEPENDENCY_REMOVED: true · NORMAL_STG_SAVE_DISABLED: true.
+SAVE_REQUEST_EXECUTED: false · GITHUB_WRITE_EXECUTED: false · EDGE_DEPLOY_EXECUTED: false · FTP_EXECUTED: false.
+GITHUB_SECRET_LIVE_PREFLIGHT_REQUIRED: true (GITHUB_TOKEN · GITHUB_REPO).
 Schedule: operational Save round-trip complete · unarmed browser confirmed · total 79.
-Next: Commit/Push → staging Edge deploy (YouTube current sync) → fresh package → YouTube controlled Save round-trip.
+Next: Commit/Push → secret readiness → staging Edge deploy both Functions → unarmed dry-run QA → controlled temporary/restore Save.
 ```
 
 ## G-20u45 Schedule operational Save — final result

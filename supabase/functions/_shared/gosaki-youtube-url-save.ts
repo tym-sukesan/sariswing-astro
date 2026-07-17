@@ -1,17 +1,28 @@
 /**
- * G-11c6a — Gosaki YouTube URL web-save non-dry-run (Edge Function shared).
- * Reuses G-11c1 validation; no workflow_dispatch in G-11c6a local-only phase.
+ * G-11c6 — Gosaki YouTube URL web-save (GitHub Contents API commit · no workflow_dispatch).
  */
 
 import {
+  assertG11c1NextValueAllowed,
   G11C1_FIELD,
   G11C1_MODULE,
   G11C1_SITE_SLUG,
-  assertG11c1NextValueAllowed,
-  executeG11c1YoutubeUrlDryRun,
-  parseYoutubeVideoId,
-  resolveGosakiYoutubeStagingCurrent,
+  type YoutubeGithubRuntimeDeps,
 } from "./gosaki-youtube-url-dry-run.ts";
+import {
+  assertExactObjectKeys,
+  assertGosakiYoutubeStagingSupabaseHost,
+  buildYoutubeCommitMessage,
+  buildYoutubeSaveFingerprint,
+  commitYoutubeEmbedCodePatch,
+  fingerprintsEqual,
+  loadYoutubeEmbedJsonFromGithub,
+  parseYoutubeSaveFingerprint,
+  planYoutubeEmbedCodePatch,
+  serializeYoutubeSaveFingerprint,
+  GOSAKI_YOUTUBE_GITHUB_FILE_PATH,
+  GOSAKI_YOUTUBE_TARGET_ITEM_ID,
+} from "./gosaki-youtube-github-json.ts";
 
 export const G11C6_OPERATION_ID = "G-11c6-gosaki-youtube-url-web-save-non-dry-run-slice";
 export const G11C6_APPROVAL_ID = "G-11c6-gosaki-youtube-url-web-save-non-dry-run-slice";
@@ -21,7 +32,21 @@ export const G11C6_SAVE_ARMED_ENV = "GOSAKI_YOUTUBE_URL_SAVE_ARMED";
 export const G11C6_WORKFLOW_FILE = "gosaki-youtube-url-save-staging.yml";
 export const G11C6_SAVE_READINESS_DISABLED = "save_disabled";
 export const G11C6_SAVE_READINESS_NOT_ARMED = "save_not_armed";
-export const G11C6_SAVE_READINESS_DISPATCH_DEFERRED = "dispatch_deferred_g11c6a";
+export const G11C6_SAVE_READINESS_COMMITTED = "committed";
+
+export const G11C6_SAVE_ALLOWED_KEYS = [
+  "siteSlug",
+  "module",
+  "field",
+  "nextValue",
+  "dryRun",
+  "saveEnabled",
+  "operationId",
+  "approvalId",
+  "expectedBefore",
+  "fingerprint",
+  "requestId",
+] as const;
 
 export type G11c6SaveRequest = {
   siteSlug?: string;
@@ -32,6 +57,8 @@ export type G11c6SaveRequest = {
   saveEnabled?: boolean;
   operationId?: string;
   approvalId?: string;
+  fingerprint?: string;
+  requestId?: string;
   expectedBefore?: {
     embedCode?: string;
     videoId?: string | null;
@@ -39,15 +66,7 @@ export type G11c6SaveRequest = {
 };
 
 export function assertG11c6StagingSupabaseHost(): string | null {
-  const url = Deno.env.get("SUPABASE_URL") ?? "";
-  if (!url) return "SUPABASE_URL is not configured";
-  if (url.includes(G11C6_PRODUCTION_PROJECT_REF)) {
-    return "production Supabase project blocked";
-  }
-  if (!url.includes(G11C6_STAGING_PROJECT_REF)) {
-    return `staging project ref ${G11C6_STAGING_PROJECT_REF} required`;
-  }
-  return null;
+  return assertGosakiYoutubeStagingSupabaseHost();
 }
 
 export function isG11c6SaveArmed(): boolean {
@@ -56,214 +75,310 @@ export function isG11c6SaveArmed(): boolean {
 
 export function parseG11c6SaveRequest(
   body: unknown,
-): { ok: true; request: Required<Pick<G11c6SaveRequest, "nextValue">> & G11c6SaveRequest } | { ok: false; error: string } {
-  if (!body || typeof body !== "object") {
-    return { ok: false, error: "request body must be a JSON object" };
+):
+  | {
+      ok: true;
+      request: {
+        nextValue: string;
+        fingerprint: string;
+        requestId: string;
+        expectedBefore: { embedCode: string; videoId: string | null };
+      };
+    }
+  | { ok: false; error: string; httpStatus: number } {
+  const keyError = assertExactObjectKeys(body, G11C6_SAVE_ALLOWED_KEYS);
+  if (keyError) {
+    return { ok: false, error: keyError, httpStatus: 422 };
   }
   const record = body as G11c6SaveRequest;
 
   if (record.siteSlug !== G11C1_SITE_SLUG) {
-    return { ok: false, error: `siteSlug must be ${G11C1_SITE_SLUG}` };
+    return { ok: false, error: `siteSlug must be ${G11C1_SITE_SLUG}`, httpStatus: 422 };
   }
   if (record.module !== G11C1_MODULE) {
-    return { ok: false, error: `module must be ${G11C1_MODULE}` };
+    return { ok: false, error: `module must be ${G11C1_MODULE}`, httpStatus: 422 };
   }
   if (record.field !== G11C1_FIELD) {
-    return { ok: false, error: `field must be ${G11C1_FIELD}` };
+    return { ok: false, error: `field must be ${G11C1_FIELD}`, httpStatus: 422 };
   }
   if (record.dryRun !== false) {
-    return { ok: false, error: "dryRun must be false for save" };
+    return { ok: false, error: "dryRun must be false for save", httpStatus: 422 };
   }
   if (record.saveEnabled !== true) {
-    return { ok: false, error: "saveEnabled must be true" };
+    return { ok: false, error: "saveEnabled must be true", httpStatus: 422 };
   }
   if (record.operationId !== G11C6_OPERATION_ID) {
-    return { ok: false, error: `operationId must be ${G11C6_OPERATION_ID}` };
+    return { ok: false, error: `operationId must be ${G11C6_OPERATION_ID}`, httpStatus: 403 };
   }
   if (record.approvalId !== G11C6_APPROVAL_ID) {
-    return { ok: false, error: `approvalId must be ${G11C6_APPROVAL_ID}` };
+    return { ok: false, error: `approvalId must be ${G11C6_APPROVAL_ID}`, httpStatus: 403 };
   }
   if (typeof record.nextValue !== "string") {
-    return { ok: false, error: "nextValue must be a string" };
+    return { ok: false, error: "nextValue must be a string", httpStatus: 422 };
+  }
+  if (typeof record.fingerprint !== "string" || !record.fingerprint.trim()) {
+    return { ok: false, error: "fingerprint is required", httpStatus: 422 };
   }
   if (!record.expectedBefore || typeof record.expectedBefore !== "object") {
-    return { ok: false, error: "expectedBefore is required" };
+    return { ok: false, error: "expectedBefore is required", httpStatus: 422 };
+  }
+  const expectedKeys = Object.keys(record.expectedBefore).sort();
+  const allowedExpected = ["embedCode", "videoId"];
+  if (
+    expectedKeys.length !== 2 ||
+    expectedKeys[0] !== "embedCode" ||
+    expectedKeys[1] !== "videoId"
+  ) {
+    // allow embedCode-only? User said expectedBefore.embedCode and videoId — require both keys
+    if (!(expectedKeys.length === 2 && expectedKeys.includes("embedCode") && expectedKeys.includes("videoId"))) {
+      return {
+        ok: false,
+        error: "expectedBefore must contain exact keys embedCode, videoId",
+        httpStatus: 422,
+      };
+    }
   }
   if (typeof record.expectedBefore.embedCode !== "string") {
-    return { ok: false, error: "expectedBefore.embedCode must be a string" };
+    return { ok: false, error: "expectedBefore.embedCode must be a string", httpStatus: 422 };
+  }
+  if (
+    record.expectedBefore.videoId != null &&
+    typeof record.expectedBefore.videoId !== "string"
+  ) {
+    return { ok: false, error: "expectedBefore.videoId must be string or null", httpStatus: 422 };
   }
 
-  return { ok: true, request: record as Required<Pick<G11c6SaveRequest, "nextValue">> & G11c6SaveRequest };
-}
+  const requestId =
+    typeof record.requestId === "string" && record.requestId.trim()
+      ? record.requestId.trim()
+      : `g11c6-${crypto.randomUUID()}`;
 
-function normalizeVideoId(value: string | null | undefined): string | null {
-  if (value == null) return null;
-  const trimmed = String(value).trim();
-  if (!trimmed) return null;
-  return parseYoutubeVideoId(trimmed) ?? ( /^[a-zA-Z0-9_-]{11}$/.test(trimmed) ? trimmed : null );
-}
-
-export function assertExpectedBeforeMatchesCurrent(input: {
-  expectedBefore: { embedCode: string; videoId?: string | null };
-  current: { embedCode: string; videoId: string | null };
-}): string | null {
-  const expectedEmbed = String(input.expectedBefore.embedCode ?? "").trim();
-  const currentEmbed = String(input.current.embedCode ?? "").trim();
-  if (expectedEmbed !== currentEmbed) {
-    return "expectedBefore.embedCode does not match server current";
-  }
-
-  const expectedVid = normalizeVideoId(input.expectedBefore.videoId);
-  const currentVid = normalizeVideoId(input.current.videoId);
-  if (expectedVid !== currentVid) {
-    return "expectedBefore.videoId does not match server current";
-  }
-
-  return null;
-}
-
-export function executeG11c6YoutubeUrlSave(input: {
-  nextValue: string;
-  expectedBefore: { embedCode: string; videoId?: string | null };
-  saveArmed: boolean;
-}) {
-  const hostError = assertG11c6StagingSupabaseHost();
-  if (hostError) {
-    return {
-      ok: false,
-      dryRun: false as const,
-      wouldWrite: false as const,
-      siteSlug: G11C1_SITE_SLUG,
-      module: G11C1_MODULE,
-      error: hostError,
-      saveReadiness: "forbidden_host",
-      httpStatus: 403,
-    };
-  }
-
-  const currentSnapshot = resolveGosakiYoutubeStagingCurrent();
-  const current = {
-    embedCode: String(currentSnapshot.embedCode ?? "").trim(),
-    videoId: currentSnapshot.videoId ?? parseYoutubeVideoId(currentSnapshot.embedCode),
+  return {
+    ok: true,
+    request: {
+      nextValue: record.nextValue,
+      fingerprint: record.fingerprint.trim(),
+      requestId,
+      expectedBefore: {
+        embedCode: record.expectedBefore.embedCode,
+        videoId:
+          record.expectedBefore.videoId == null
+            ? null
+            : String(record.expectedBefore.videoId).trim() || null,
+      },
+    },
   };
+}
 
-  const conflictError = assertExpectedBeforeMatchesCurrent({
-    expectedBefore: input.expectedBefore,
-    current,
-  });
-  if (conflictError) {
-    return {
-      ok: false,
-      dryRun: false as const,
-      wouldWrite: false as const,
-      siteSlug: G11C1_SITE_SLUG,
-      module: G11C1_MODULE,
-      changedFields: [] as string[],
-      error: conflictError,
-      saveReadiness: "conflict",
-      current,
-      httpStatus: 409,
-    };
+function failBase(error: string, httpStatus: number, extra: Record<string, unknown> = {}) {
+  return {
+    ok: false,
+    dryRun: false as const,
+    operation: "save" as const,
+    wouldWrite: false as const,
+    siteSlug: G11C1_SITE_SLUG,
+    module: G11C1_MODULE,
+    error,
+    errors: [error],
+    didWrite: false as const,
+    dbWrite: false as const,
+    networkWrite: false as const,
+    workflowDispatchExecuted: false as const,
+    httpStatus,
+    ...extra,
+  };
+}
+
+export async function executeG11c6YoutubeUrlSave(
+  input: {
+    nextValue: string;
+    expectedBefore: { embedCode: string; videoId?: string | null };
+    fingerprint: string;
+    requestId: string;
+    saveArmed: boolean;
+  },
+  deps: YoutubeGithubRuntimeDeps = {},
+) {
+  const hostError = (deps.stagingHostCheck ?? assertG11c6StagingSupabaseHost)();
+  if (hostError) {
+    return failBase(hostError, 403, { saveReadiness: "forbidden_host" });
+  }
+
+  if (!input.saveArmed) {
+    return failBase("Save is not armed on server (GOSAKI_YOUTUBE_URL_SAVE_ARMED=false)", 403, {
+      saveReadiness: G11C6_SAVE_READINESS_NOT_ARMED,
+    });
+  }
+
+  const fpParsed = parseYoutubeSaveFingerprint(input.fingerprint);
+  if (!fpParsed.ok) {
+    return failBase(fpParsed.error, 422, { saveReadiness: "invalid_fingerprint" });
   }
 
   const valueError = assertG11c1NextValueAllowed(input.nextValue);
   if (valueError) {
-    return {
-      ok: false,
-      dryRun: false as const,
-      wouldWrite: false as const,
-      siteSlug: G11C1_SITE_SLUG,
-      module: G11C1_MODULE,
-      changedFields: [] as string[],
-      error: valueError,
-      saveReadiness: "invalid_input",
-      httpStatus: 400,
-    };
+    return failBase(valueError, 422, { saveReadiness: "invalid_input" });
   }
 
-  const preview = executeG11c1YoutubeUrlDryRun({
-    nextValue: input.nextValue,
-    current,
+  const loaded = await loadYoutubeEmbedJsonFromGithub({
+    fetchImpl: deps.fetchImpl,
+    auth: deps.auth,
   });
-
-  if (!preview.ok) {
-    return {
-      ...preview,
-      dryRun: false as const,
-      saveReadiness: preview.saveReadiness ?? "invalid_input",
-      httpStatus: 400,
-    };
+  if (!loaded.ok) {
+    return failBase(loaded.error, loaded.httpStatus === 404 || loaded.httpStatus === 409
+      ? loaded.httpStatus
+      : 502, {
+      saveReadiness: "github_read_failed",
+    });
   }
 
-  if (preview.noChange) {
+  if (loaded.file.sha !== fpParsed.fingerprint.githubFileSha) {
+    return failBase("GitHub file SHA does not match dry-run fingerprint", 409, {
+      saveReadiness: "conflict",
+      currentFileSha: loaded.file.sha,
+      expectedFileSha: fpParsed.fingerprint.githubFileSha,
+      current: loaded.snapshot,
+    });
+  }
+
+  const plan = planYoutubeEmbedCodePatch({
+    config: loaded.config,
+    nextEmbedCode: input.nextValue,
+    expectedBeforeEmbedCode: input.expectedBefore.embedCode,
+    expectedBeforeVideoId: input.expectedBefore.videoId,
+    enforceExpectedBefore: true,
+  });
+  if (!plan.ok) {
+    return failBase(plan.error, plan.httpStatus, {
+      saveReadiness: plan.httpStatus === 409 ? "conflict" : "invalid_input",
+      current: plan.current,
+      currentFileSha: loaded.file.sha,
+    });
+  }
+
+  const expectedFp = serializeYoutubeSaveFingerprint(
+    buildYoutubeSaveFingerprint({
+      githubFileSha: loaded.file.sha,
+      before: plan.current,
+      after: plan.next,
+    }),
+  );
+  if (!fingerprintsEqual(expectedFp, fpParsed.serialized)) {
+    return failBase("dry-run fingerprint does not match current GitHub state / nextValue", 409, {
+      saveReadiness: "conflict",
+      currentFileSha: loaded.file.sha,
+      current: plan.current,
+      next: plan.next,
+    });
+  }
+
+  if (plan.saveReadiness === "no_change" || !plan.patchedContentText) {
     return {
       ok: true,
       dryRun: false as const,
+      operation: "save" as const,
       wouldWrite: false as const,
       siteSlug: G11C1_SITE_SLUG,
       module: G11C1_MODULE,
       changedFields: [] as string[],
       noChange: true,
-      current: preview.current,
-      next: preview.next,
+      current: plan.current,
+      next: plan.next,
+      before: plan.current,
+      after: plan.next,
+      currentFileSha: loaded.file.sha,
+      previousFileSha: loaded.file.sha,
+      targetFilePath: GOSAKI_YOUTUBE_GITHUB_FILE_PATH,
+      targetItemId: GOSAKI_YOUTUBE_TARGET_ITEM_ID,
       saveReadiness: "no_change",
-      workflowDispatchExecuted: false,
+      workflowDispatchExecuted: false as const,
+      didWrite: false as const,
+      dbWrite: false as const,
+      networkWrite: false as const,
+      errors: [] as string[],
       httpStatus: 200,
     };
   }
 
-  if (!input.saveArmed) {
-    return {
-      ok: false,
-      dryRun: false as const,
-      wouldWrite: false as const,
-      siteSlug: G11C1_SITE_SLUG,
-      module: G11C1_MODULE,
-      changedFields: preview.changedFields,
-      current: preview.current,
-      next: preview.next,
-      error: "Save is not armed on server (GOSAKI_YOUTUBE_URL_SAVE_ARMED=false)",
-      saveReadiness: G11C6_SAVE_READINESS_NOT_ARMED,
-      httpStatus: 403,
-    };
+  const message = buildYoutubeCommitMessage({
+    requestId: input.requestId,
+    approvalId: G11C6_APPROVAL_ID,
+    operationId: G11C6_OPERATION_ID,
+  });
+
+  const committed = await commitYoutubeEmbedCodePatch({
+    patchedContentText: plan.patchedContentText,
+    previousFileSha: loaded.file.sha,
+    message,
+    fetchImpl: deps.fetchImpl,
+    auth: deps.auth,
+  });
+
+  if (!committed.ok) {
+    return failBase(committed.error, committed.httpStatus, {
+      saveReadiness: committed.indeterminate
+        ? "verification_required"
+        : committed.conflict
+          ? "conflict"
+          : "github_write_failed",
+      indeterminate: committed.indeterminate === true,
+      currentFileSha: loaded.file.sha,
+      current: plan.current,
+      next: plan.next,
+      message: committed.indeterminate
+        ? "GitHub write outcome unclear — re-run dry-run to verify current JSON; do not auto-retry"
+        : undefined,
+    });
   }
 
-  // G-11c6a: dispatch path stubbed — workflow_dispatch deferred to G-11c7+ execution phase.
   return {
     ok: true,
     dryRun: false as const,
-    wouldWrite: false as const,
+    operation: "save" as const,
+    wouldWrite: true as const,
     siteSlug: G11C1_SITE_SLUG,
     module: G11C1_MODULE,
-    changedFields: preview.changedFields,
-    current: preview.current,
-    next: preview.next,
-    saveReadiness: G11C6_SAVE_READINESS_DISPATCH_DEFERRED,
-    workflowDispatchExecuted: false,
-    workflowFile: G11C6_WORKFLOW_FILE,
+    changedFields: plan.changedFields,
+    current: plan.current,
+    next: plan.next,
+    before: plan.current,
+    after: plan.next,
+    targetFilePath: GOSAKI_YOUTUBE_GITHUB_FILE_PATH,
+    targetItemId: GOSAKI_YOUTUBE_TARGET_ITEM_ID,
+    previousFileSha: committed.previousFileSha,
+    newFileSha: committed.newFileSha,
+    currentFileSha: committed.newFileSha,
+    commitSha: committed.commitSha,
+    commitUrl: committed.commitUrl,
+    saveReadiness: G11C6_SAVE_READINESS_COMMITTED,
+    workflowDispatchExecuted: false as const,
+    didWrite: true as const,
+    dbWrite: false as const,
+    networkWrite: true as const,
+    errors: [] as string[],
     httpStatus: 200,
   };
 }
 
-export function handleG11c6YoutubeUrlSaveBody(body: unknown) {
+export async function handleG11c6YoutubeUrlSaveBody(
+  body: unknown,
+  deps: YoutubeGithubRuntimeDeps = {},
+) {
   const parsed = parseG11c6SaveRequest(body);
   if (!parsed.ok) {
-    return {
-      ok: false,
-      dryRun: false,
-      wouldWrite: false,
-      error: parsed.error,
+    return failBase(parsed.error, parsed.httpStatus, {
       saveReadiness: G11C6_SAVE_READINESS_DISABLED,
-      httpStatus: 400,
-    };
+    });
   }
 
-  return executeG11c6YoutubeUrlSave({
-    nextValue: parsed.request.nextValue,
-    expectedBefore: {
-      embedCode: String(parsed.request.expectedBefore!.embedCode ?? ""),
-      videoId: parsed.request.expectedBefore!.videoId ?? null,
+  return executeG11c6YoutubeUrlSave(
+    {
+      nextValue: parsed.request.nextValue,
+      expectedBefore: parsed.request.expectedBefore,
+      fingerprint: parsed.request.fingerprint,
+      requestId: parsed.request.requestId,
+      saveArmed: isG11c6SaveArmed(),
     },
-    saveArmed: isG11c6SaveArmed(),
-  });
+    deps,
+  );
 }

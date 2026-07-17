@@ -1,6 +1,5 @@
 /**
- * G-11c1 — Gosaki YouTube URL web-save dry-run (no writes, no GitHub, no FTP).
- * Deploy: not executed in G-11c1 local-prep phase.
+ * G-11c1 — Gosaki YouTube URL web-save dry-run (GitHub Contents GET · no writes).
  */
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { corsHeaders, jsonResponse, requireAdminUser } from "../_shared/admin-auth.ts";
@@ -25,7 +24,8 @@ Deno.serve(async (req) => {
     return jsonResponse({ error: "Invalid JSON body" }, 400);
   }
 
-  const result = handleG11c1YoutubeUrlDryRunBody(body);
-  const status = result.ok ? 200 : 400;
-  return jsonResponse(result, status);
+  const result = await handleG11c1YoutubeUrlDryRunBody(body);
+  const status = typeof result.httpStatus === "number" ? result.httpStatus : result.ok ? 200 : 400;
+  const { httpStatus: _drop, ...payload } = result as Record<string, unknown>;
+  return jsonResponse(payload, status);
 });

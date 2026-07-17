@@ -82,13 +82,47 @@ export function assertG11c1NextValueAllowed(nextValue) {
   return null;
 }
 
+export const G11C1_DRY_RUN_ALLOWED_KEYS = [
+  "siteSlug",
+  "module",
+  "field",
+  "nextValue",
+  "dryRun",
+  "operationId",
+  "approvalId",
+];
+
+/**
+ * Exact allowlist — any extra key → reject (mirrors Edge assertExactObjectKeys).
+ * @param {unknown} body
+ * @param {readonly string[]} allowed
+ * @returns {string | null}
+ */
+export function assertExactObjectKeys(body, allowed) {
+  if (!body || typeof body !== "object" || Array.isArray(body)) {
+    return "request body must be a JSON object";
+  }
+  const keys = Object.keys(/** @type {Record<string, unknown>} */ (body)).sort();
+  const expected = [...allowed].sort();
+  if (keys.length !== expected.length) {
+    return `unexpected fields: allowed exact keys [${expected.join(", ")}]`;
+  }
+  for (let i = 0; i < keys.length; i += 1) {
+    if (keys[i] !== expected[i]) {
+      return `unexpected fields: allowed exact keys [${expected.join(", ")}]`;
+    }
+  }
+  return null;
+}
+
 /**
  * @param {unknown} body
  * @returns {{ ok: true, body: Record<string, unknown> } | { ok: false, error: string }}
  */
 export function parseG11c1DryRunRequest(body) {
-  if (!body || typeof body !== "object") {
-    return { ok: false, error: "request body must be a JSON object" };
+  const keyError = assertExactObjectKeys(body, G11C1_DRY_RUN_ALLOWED_KEYS);
+  if (keyError) {
+    return { ok: false, error: keyError };
   }
   const record = /** @type {Record<string, unknown>} */ (body);
 

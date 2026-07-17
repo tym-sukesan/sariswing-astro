@@ -33,7 +33,7 @@ const PHASE =
   "G-20u39b4-gosaki-admin-multi-route-staging-package-and-manual-upload-prep";
 const GATE = "gosakiAdminMultiRouteStagingPackagePrepComplete: true";
 const RECOMMENDED_NEXT =
-  "Schedule STG recheck";
+  "staging Edge deploy";
 
 /** Fixture-only known anon (not a real project key). payload.role=anon */
 const KNOWN_ANON =
@@ -727,13 +727,22 @@ assert(
     scheduleOpEditSrc.includes("expectedBeforeUpdatedAt") &&
     scheduleOpEditSrc.includes("saveInFlight") &&
     scheduleOpEditSrc.includes("dryRunFingerprint") &&
+    scheduleOpEditSrc.includes("dryRunInFlight") &&
     scheduleOpEditSrc.includes("saveAllowed: false") &&
     scheduleOpEditSrc.includes('saveBtn.disabled = true') &&
     scheduleOpEditSrc.includes("UNSAVED_LEAVE") &&
     scheduleOpEditSrc.includes("beforeunload") &&
-    !scheduleOpEditSrc.includes("service_role") &&
-    !scheduleOpEditSrc.includes("vsbvndwuajjhnzpohghh") &&
-    !scheduleOpEditSrc.includes("fetch("),
+    scheduleOpEditSrc.includes("[data-gosaki-edit-dry-run]") &&
+    !scheduleOpEditSrc.includes("service_role"),
+);
+assert(
+  "schedule page load does not auto-fetch (click-only dry-run)",
+  scheduleOpEditSrc.includes("[data-gosaki-edit-dry-run]") &&
+    scheduleOpEditSrc.includes("fetchImpl") &&
+    scheduleOpEditSrc.indexOf("function showView") <
+      scheduleOpEditSrc.indexOf("fetchImpl(endpoint") &&
+    scheduleOpEditSrc.indexOf("[data-gosaki-edit-dry-run]") <
+      scheduleOpEditSrc.indexOf("fetchImpl(endpoint"),
 );
 assert(
   "schedule page wires operational edit with Save disarmed",
@@ -771,8 +780,7 @@ assert(
     scheduleOpEditSrc.includes("新規作成のため対象外") &&
     scheduleOpEditSrc.includes('saveBtn.disabled = true') &&
     !scheduleOpEditSrc.includes("service_role") &&
-    !scheduleOpEditSrc.includes("vsbvndwuajjhnzpohghh") &&
-    !scheduleOpEditSrc.includes("fetch("),
+    scheduleOpEditSrc.includes("expectedBeforeUpdatedAt missing — edit network dry-run not sent"),
 );
 assert(
   "schedule create does not reuse existing updated_at lock",
@@ -788,8 +796,66 @@ assert(
     scheduleOpEditSrc.includes("date is required for create") &&
     scheduleOpEditSrc.includes("date must be YYYY-MM-DD") &&
     scheduleOpEditSrc.includes('field === "published"') &&
-    /CREATE_PREVIEW_FIELDS[\s\S]*?"date"/.test(scheduleOpEditSrc) &&
-    !scheduleOpEditSrc.includes("fetch("),
+    /CREATE_PREVIEW_FIELDS[\s\S]*?"date"/.test(scheduleOpEditSrc),
+);
+assert(
+  "schedule network dry-run Edge + client wiring (dryRun only)",
+  (() => {
+    const edgeHandler = read(
+      "tools/static-to-astro/scripts/edge-functions/gosaki-schedule-save-dry-run/handler.ts",
+    );
+    const edgeIndex = read(
+      "tools/static-to-astro/scripts/edge-functions/gosaki-schedule-save-dry-run/index.ts",
+    );
+    const supabaseEdge = read(
+      "supabase/functions/gosaki-schedule-save-dry-run/handler.ts",
+    );
+    const adminTs = read(
+      "tools/static-to-astro/templates/site-extensions/gosaki-piano/gosaki-staging-read-only-admin.ts",
+    );
+    const pageSrc = read(
+      "tools/static-to-astro/templates/site-extensions/gosaki-piano/GosakiStagingReadOnlyAdminPage.astro",
+    );
+    return (
+      edgeHandler.includes('ENDPOINT_NAME = "gosaki-schedule-save-dry-run"') &&
+      edgeHandler.includes('DRY_RUN_OPERATION = "dryRun"') &&
+      edgeHandler.includes('SAVE_OPERATION = "save"') &&
+      edgeHandler.includes("operation=save is rejected") &&
+      edgeHandler.includes("SUPABASE_SERVICE_ROLE_CONNECTED = false") &&
+      !/createServiceClient|SERVICE_ROLE_KEY/.test(edgeHandler) &&
+      edgeHandler.includes("kmjqppxjdnwwrtaeqjta") &&
+      edgeHandler.includes("vsbvndwuajjhnzpohghh") &&
+      edgeHandler.includes("expectedBeforeUpdatedAt is required for edit") &&
+      edgeHandler.includes("create published must be false") &&
+      edgeHandler.includes("create must not reuse id / legacyId") &&
+      edgeHandler.includes('rpc("is_admin")') &&
+      edgeIndex.includes("handleScheduleEdgeDryRunHttpAsync") &&
+      !edgeIndex.includes("skipAdminProbe") &&
+      supabaseEdge.includes('ENDPOINT_NAME = "gosaki-schedule-save-dry-run"') &&
+      read("supabase/config.toml").includes("[functions.gosaki-schedule-save-dry-run]") &&
+      /\[functions\.gosaki-schedule-save-dry-run\]\s*\nverify_jwt\s*=\s*true/.test(
+        read("supabase/config.toml"),
+      ) &&
+      adminTs.includes("PUBLIC_GOSAKI_SCHEDULE_DRY_RUN_ENDPOINT") &&
+      adminTs.includes("buildScheduleDryRunEndpointRequest") &&
+      adminTs.includes("sanitizeScheduleDryRunEndpointDisplay") &&
+      adminTs.includes('operation: G20U45_SCHEDULE_DRY_RUN_OPERATION') &&
+      !adminTs.includes("G-20u45-schedule") &&
+      pageSrc.includes("data-gosaki-schedule-dry-run-endpoint") &&
+      pageSrc.includes("buildScheduleDryRunEndpointRequest") &&
+      scheduleOpEditSrc.includes("dryRunInFlight") &&
+      scheduleOpEditSrc.includes("access token required") &&
+      scheduleOpEditSrc.includes("expectedBeforeUpdatedAt missing") &&
+      scheduleOpEditSrc.includes("operation must be dryRun only") &&
+      scheduleOpEditSrc.includes("Unsafe response") === false &&
+      scheduleOpEditSrc.includes("didWrite") &&
+      scheduleOpEditSrc.includes("dbWrite") &&
+      scheduleOpEditSrc.includes("networkWrite") &&
+      scheduleOpEditSrc.includes('saveBtn.disabled = true') &&
+      !scheduleOpEditSrc.includes('operation: "save"') &&
+      !scheduleOpEditSrc.includes("operation: 'save'")
+    );
+  })(),
 );
 assert(
   "about panel form affordance markers",

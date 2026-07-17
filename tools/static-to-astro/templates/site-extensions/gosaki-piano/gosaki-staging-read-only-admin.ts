@@ -52,6 +52,20 @@ export const G20U36C_DISCOGRAPHY_DRY_RUN_NOTE =
   "G-20u36c: Dry-run only — POST to staging Edge Function. No DB write. Save is still disabled. This checks the request and endpoint response only.";
 export const G20U36C_PRODUCTION_PROJECT_REF_STOP = "vsbvndwuajjhnzpohghh";
 
+/** G-20u45 — Schedule HTTP dry-run Edge (dryRun only · Save not implemented). */
+export const G20U45_SCHEDULE_DRY_RUN_ENDPOINT_NAME = "gosaki-schedule-save-dry-run";
+export const G20U45_SCHEDULE_DRY_RUN_ENDPOINT = `${G11C4A_STAGING_SUPABASE_URL}/functions/v1/${G20U45_SCHEDULE_DRY_RUN_ENDPOINT_NAME}`;
+export const G20U45_SCHEDULE_DRY_RUN_ENDPOINT_ENV = "PUBLIC_GOSAKI_SCHEDULE_DRY_RUN_ENDPOINT";
+export const G20U45_SCHEDULE_DRY_RUN_OPERATION = "dryRun" as const;
+export const G20U45_SCHEDULE_EDIT_SAFE_FIELDS = [
+  "title",
+  "venue",
+  "open_time",
+  "start_time",
+  "price",
+  "description",
+] as const;
+
 /** G-20u41 — Discography operational Save gated wiring (same Edge endpoint · default disabled). */
 export const G20U41_DISCOGRAPHY_OPERATIONAL_SAVE_PHASE =
   "G-20u41-gosaki-discography-operational-save-ui-gated-local-wiring";
@@ -302,6 +316,159 @@ export function resolveG20u36cDiscographyDryRunEndpoint(env: ImportMetaEnv): str
   const fromEnv = String(env.PUBLIC_GOSAKI_DISCOGRAPHY_SAVE_DRY_RUN_ENDPOINT ?? "").trim();
   if (fromEnv) return fromEnv;
   return G20U36C_DISCOGRAPHY_DRY_RUN_ENDPOINT;
+}
+
+export function resolveGosakiScheduleDryRunEndpoint(env: ImportMetaEnv): string {
+  const fromEnv = String(env[G20U45_SCHEDULE_DRY_RUN_ENDPOINT_ENV as keyof ImportMetaEnv] ?? "").trim();
+  if (fromEnv) return fromEnv;
+  return G20U45_SCHEDULE_DRY_RUN_ENDPOINT;
+}
+
+export function assertGosakiScheduleDryRunEndpointSafe(endpoint: string): boolean {
+  const trimmed = String(endpoint ?? "").trim();
+  if (!trimmed) return false;
+  if (trimmed.includes(G20U36C_PRODUCTION_PROJECT_REF_STOP)) return false;
+  return trimmed.includes(G11C4A_STAGING_PROJECT_REF);
+}
+
+export type ScheduleDryRunEndpointRequestInput = {
+  mode: "edit" | "create";
+  id?: string | null;
+  legacyId?: string | null;
+  expectedBeforeUpdatedAt?: string | null;
+  fields: {
+    date?: string;
+    open_time?: string;
+    start_time?: string;
+    title?: string;
+    venue?: string;
+    price?: string;
+    description?: string;
+    published?: boolean;
+  };
+};
+
+/**
+ * Build Schedule Edge dry-run POST body — operation=dryRun only · never save.
+ * Edit uses G-9k safe fields only; create forces published=false.
+ */
+export function buildScheduleDryRunEndpointRequest(
+  input: ScheduleDryRunEndpointRequestInput,
+): Record<string, unknown> {
+  if (input.mode === "edit") {
+    const payload: Record<string, unknown> = {
+      expectedBeforeUpdatedAt: String(input.expectedBeforeUpdatedAt ?? "").trim(),
+    };
+    const id = String(input.id ?? "").trim();
+    const legacyId = String(input.legacyId ?? "").trim();
+    if (id) payload.id = id;
+    if (legacyId) payload.legacyId = legacyId;
+    for (const field of G20U45_SCHEDULE_EDIT_SAFE_FIELDS) {
+      payload[field] = String(input.fields[field] ?? "").trim();
+    }
+    return {
+      operation: G20U45_SCHEDULE_DRY_RUN_OPERATION,
+      mode: "edit",
+      siteSlug: GOSAKI_STAGING_SITE_SLUG,
+      payload,
+    };
+  }
+
+  return {
+    operation: G20U45_SCHEDULE_DRY_RUN_OPERATION,
+    mode: "create",
+    siteSlug: GOSAKI_STAGING_SITE_SLUG,
+    payload: {
+      date: String(input.fields.date ?? "").trim(),
+      title: String(input.fields.title ?? "").trim(),
+      venue: String(input.fields.venue ?? "").trim(),
+      open_time: String(input.fields.open_time ?? "").trim(),
+      start_time: String(input.fields.start_time ?? "").trim(),
+      price: String(input.fields.price ?? "").trim(),
+      description: String(input.fields.description ?? "").trim(),
+      published: false,
+    },
+  };
+}
+
+export type ScheduleDryRunEndpointDisplay = {
+  httpStatus?: number;
+  ok?: boolean;
+  operation?: string;
+  mode?: string;
+  dryRun?: boolean;
+  wouldWrite?: boolean;
+  changedFields?: string[];
+  diffSummary?: unknown;
+  expectedBeforeUpdatedAt?: string | null;
+  target?: unknown;
+  errors?: string[];
+  warnings?: string[];
+  didWrite: false;
+  dbWrite: false;
+  networkWrite: false;
+  saveEnabled: false;
+  authIssue?: boolean;
+  unsafeWriteFlags?: boolean;
+  fetchError?: string;
+  sensitiveResponseBlocked?: boolean;
+};
+
+/**
+ * Sanitize Schedule dry-run response for UI.
+ * Forces write flags false; marks unsafe if server claimed a write.
+ */
+export function sanitizeScheduleDryRunEndpointDisplay(
+  body: unknown,
+  httpStatus?: number,
+): ScheduleDryRunEndpointDisplay {
+  const rawText = JSON.stringify(body ?? {});
+  if (DISCOGRAPHY_DRY_RUN_FORBIDDEN_RESPONSE_PATTERNS.some((re) => re.test(rawText))) {
+    return {
+      httpStatus,
+      ok: false,
+      didWrite: false,
+      dbWrite: false,
+      networkWrite: false,
+      saveEnabled: false,
+      sensitiveResponseBlocked: true,
+      errors: ["Response contained forbidden content — not displayed"],
+    };
+  }
+
+  const data = (body && typeof body === "object" ? body : {}) as Record<string, unknown>;
+  const claimedWrite =
+    data.didWrite === true ||
+    data.dbWrite === true ||
+    data.networkWrite === true ||
+    data.saveEnabled === true;
+  const authIssue = httpStatus === 401 || httpStatus === 403;
+  const baseOk = data.ok === true && !claimedWrite && (httpStatus == null || (httpStatus >= 200 && httpStatus < 300));
+
+  return {
+    httpStatus,
+    ok: baseOk,
+    operation: typeof data.operation === "string" ? data.operation : undefined,
+    mode: typeof data.mode === "string" ? data.mode : undefined,
+    dryRun: data.dryRun === true || data.operation === "dryRun",
+    wouldWrite: typeof data.wouldWrite === "boolean" ? data.wouldWrite : undefined,
+    changedFields: Array.isArray(data.changedFields) ? (data.changedFields as string[]) : undefined,
+    diffSummary: data.diffSummary ?? null,
+    expectedBeforeUpdatedAt:
+      data.expectedBeforeUpdatedAt == null ? null : String(data.expectedBeforeUpdatedAt),
+    target: data.target ?? null,
+    errors: [
+      ...(Array.isArray(data.errors) ? (data.errors as string[]) : []),
+      ...(claimedWrite ? ["Unsafe response: write flag claimed true (FAIL)"] : []),
+    ],
+    warnings: Array.isArray(data.warnings) ? (data.warnings as string[]) : undefined,
+    didWrite: false,
+    dbWrite: false,
+    networkWrite: false,
+    saveEnabled: false,
+    authIssue,
+    unsafeWriteFlags: claimedWrite,
+  };
 }
 
 export function resolveG20u41DiscographySaveEndpoint(env: ImportMetaEnv): string {

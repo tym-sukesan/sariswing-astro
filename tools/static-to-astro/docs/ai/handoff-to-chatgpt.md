@@ -5,11 +5,12 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u45 Schedule operational edit — create dry-run date/published display fix (source; uncommitted).
-EXISTING_EDIT_LOCK_FIXED: true · CREATE_LOCK_BEHAVIOR_CORRECT: true.
-Root cause: SCHEDULE_SELECT/normalize omitted updated_at → snapshot updatedAt null.
+Current phase: G-20u45 Schedule HTTP dry-run Edge + STG client — source complete (not deployed).
+EDGE: gosaki-schedule-save-dry-run · dryRun only · save→403 · user JWT · staging-only.
+NETWORK_DRY_RUN_CLIENT_WIRED: true · SCHEDULE_SAVE_DEFAULT_DISABLED: true.
+REAL_EDGE_DEPLOY_EXECUTED: false · REAL_DRY_RUN_REQUEST_EXECUTED: false.
 SAVE_REQUEST_EXECUTED: false · DB_WRITE_EXECUTED: false.
-Next: Commit/Push → fresh STG package再生成 → manual FTP overwrite → Schedule STG recheck.
+Next: Commit/Push → staging Edge deploy ×1 → fresh package · FTP → operator edit/create dry-run ×1.
 ```
 
 ## G-20u45-gosaki-schedule-operational-edit-ui-wiring — complete (+ lock fix)

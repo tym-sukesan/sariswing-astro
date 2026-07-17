@@ -1,14 +1,15 @@
 Last updated: 2026-07-17
 Project: Static-to-Astro CMS / Musician CMS Kit
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u45 create dry-run date/published — source fix pending Commit
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u45 Schedule HTTP dry-run Edge + client — source done (deploy pending)
 
 | Item | Value |
 |------|-------|
-| Fix | Create local dry-run used edit `SAFE_FIELDS` → omitted `date`/`published` from changedFields |
-| Source | `gosaki-staging-schedule-operational-edit.ts` · `SCHEDULE_OPERATIONAL_CREATE_PREVIEW_FIELDS` · `published: false` forced |
-| Verifier | existing `verify:g20u39b4-…` assertion added |
-| Next | Commit/Push → STG local create dry-run recheck → package regen if STG upload needed |
+| Endpoint | `gosaki-schedule-save-dry-run` (edit+create) |
+| NETWORK_DRY_RUN_CLIENT_WIRED | **true** |
+| REAL_EDGE_DEPLOY_EXECUTED | **false** |
+| REAL_DRY_RUN_REQUEST_EXECUTED | **false** |
+| Next | Commit/Push → staging Edge deploy ×1 → package · FTP → operator dry-run ×1 each |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u45-gosaki-schedule-operational-edit-ui-wiring — complete (source)
 

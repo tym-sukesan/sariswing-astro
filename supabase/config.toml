@@ -24,3 +24,6 @@ verify_jwt = true
 
 [functions.gosaki-youtube-url-save]
 verify_jwt = true
+
+[functions.gosaki-schedule-save-dry-run]
+verify_jwt = true

@@ -62,6 +62,11 @@ import {
   resolveG11c4aSupabaseUrl,
   resolveG11c6aSaveEndpoint,
   resolveG20u36cDiscographyDryRunEndpoint,
+  resolveGosakiScheduleDryRunEndpoint,
+  assertGosakiScheduleDryRunEndpointSafe,
+  buildScheduleDryRunEndpointRequest,
+  sanitizeScheduleDryRunEndpointDisplay,
+  G20U45_SCHEDULE_DRY_RUN_OPERATION,
 } from "../lib/gosaki-staging-read-only-admin";
 
 interface Props {
@@ -75,6 +80,10 @@ const saveEndpoint = resolveG11c6aSaveEndpoint(import.meta.env);
 const discographyDryRunEndpoint = resolveG20u36cDiscographyDryRunEndpoint(import.meta.env);
 const discographySaveEndpoint = resolveG20u41DiscographySaveEndpoint(import.meta.env);
 const discographySaveArmed = isG20u41DiscographyOperationalSaveArmed(import.meta.env);
+const scheduleDryRunEndpointRaw = resolveGosakiScheduleDryRunEndpoint(import.meta.env);
+const scheduleDryRunEndpoint = assertGosakiScheduleDryRunEndpointSafe(scheduleDryRunEndpointRaw)
+  ? scheduleDryRunEndpointRaw
+  : "";
 const supabaseUrl = resolveG11c4aSupabaseUrl(import.meta.env);
 const supabaseAnonKey = resolveG11c4aSupabaseAnonKey(import.meta.env);
 const supabaseAuthConfigured = isG11c4aSupabaseAuthConfigured(import.meta.env);
@@ -144,6 +153,8 @@ const showClientScript = page !== "portal";
     data-gosaki-youtube-save-endpoint={saveEndpoint}
     data-gosaki-discography-dry-run-endpoint={discographyDryRunEndpoint}
     data-gosaki-discography-save-endpoint={discographySaveEndpoint}
+    data-gosaki-schedule-dry-run-endpoint={scheduleDryRunEndpoint}
+    data-g20u45-schedule-dry-run-operation={G20U45_SCHEDULE_DRY_RUN_OPERATION}
     data-g20u41-discography-operational-save-phase={G20U41_DISCOGRAPHY_OPERATIONAL_SAVE_PHASE}
     data-g20u41-discography-save-operation={G20U41_DISCOGRAPHY_SAVE_OPERATION}
     data-g20u41-discography-save-approval-id={G20U41_DISCOGRAPHY_SAVE_APPROVAL_ID}
@@ -763,6 +774,10 @@ const showClientScript = page !== "portal";
         G20U41_DISCOGRAPHY_SAVE_APPROVAL_ID,
         G20U41_DISCOGRAPHY_CONFLICT_MESSAGE,
         G20U36C_PRODUCTION_PROJECT_REF_STOP,
+        G20U45_SCHEDULE_DRY_RUN_OPERATION,
+        assertGosakiScheduleDryRunEndpointSafe,
+        buildScheduleDryRunEndpointRequest,
+        sanitizeScheduleDryRunEndpointDisplay,
         G20U36E_ADMIN_PROBE_RPC_NAME,
         assertG20u36eAdminProbeSupabaseHostSafe,
         buildG20u36eAdminProbeDisplay,
@@ -930,9 +945,17 @@ const showClientScript = page !== "portal";
 
       const scheduleRoot = document.getElementById("gosaki-schedule-content");
       if (scheduleRoot instanceof HTMLElement) {
+        const body = document.body;
         initGosakiScheduleOperationalEdit(scheduleRoot, {
           saveArmed: false,
           getAccessToken: resolveDiscographyAccessToken,
+          dryRunEndpoint: (body?.dataset.gosakiScheduleDryRunEndpoint || "").trim(),
+          anonKey: (body?.dataset.gosakiSupabaseAnonKey || "").trim(),
+          assertDryRunEndpointSafe: assertGosakiScheduleDryRunEndpointSafe,
+          buildDryRunEndpointRequest: buildScheduleDryRunEndpointRequest,
+          sanitizeEndpointDisplay: sanitizeScheduleDryRunEndpointDisplay,
+          dryRunOperation: G20U45_SCHEDULE_DRY_RUN_OPERATION,
+          productionProjectRefStop: G20U36C_PRODUCTION_PROJECT_REF_STOP,
         });
       }
     </script>

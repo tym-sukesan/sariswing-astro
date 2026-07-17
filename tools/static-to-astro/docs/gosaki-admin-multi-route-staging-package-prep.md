@@ -305,6 +305,31 @@ SAVE_REQUEST_EXECUTED: false
 DB_WRITE_EXECUTED: false
 ```
 
+### G-20u45 follow-up — Schedule HTTP dry-run Edge + STG client wiring (source · not deployed)
+
+Single endpoint: `gosaki-schedule-save-dry-run` (edit+create) · `operation=dryRun` only · `operation=save` → 403.
+
+| Item | Value |
+|------|-------|
+| Edge | `supabase/functions/gosaki-schedule-save-dry-run/` (+ tools mirror) |
+| Env | `PUBLIC_GOSAKI_SCHEDULE_DRY_RUN_ENDPOINT` (default staging URL) |
+| Auth | user JWT Bearer + anon `apikey` · `rpc('is_admin')` · **no service_role** |
+| Edit | G-9k safe fields · `expectedBeforeUpdatedAt` · SELECT 1 row · 409 on lock mismatch |
+| Create | G-22e · `date` YYYY-MM-DD · `published=false` · no id/legacyId/lock |
+| Staging | `kmjqppxjdnwwrtaeqjta` allow · `vsbvndwuajjhnzpohghh` STOP |
+| Client | click-only fetch · fail-closed auth/lock · Save stays disabled |
+| Deploy | **not executed** · real HTTP dry-run **not executed** |
+
+```txt
+NETWORK_DRY_RUN_CLIENT_WIRED: true
+EDIT_DRY_RUN_IMPLEMENTED: true
+CREATE_DRY_RUN_IMPLEMENTED: true
+SAVE_OPERATION_REJECTED: true
+REAL_EDGE_DEPLOY_EXECUTED: false
+REAL_DRY_RUN_REQUEST_EXECUTED: false
+SCHEDULE_SAVE_DEFAULT_DISABLED: true
+```
+
 ## Recommended next
 
-Commit / Push → fresh staging package再生成 → manual FTP overwrite → Schedule STG recheck（updated_at ISO）
+Commit / Push → ChatGPT review → staging Edge deploy（`gosaki-schedule-save-dry-run` ×1）→ fresh package · manual FTP → operator が edit/create network dry-run を各1回.

@@ -80,6 +80,53 @@ export type ScheduleOperationalEditDeps = {
   /** Exact "true" only — default false / unset keeps Save disabled. */
   saveArmed?: boolean;
   getAccessToken?: () => Promise<string | null>;
+  /** Staging schedule dry-run Edge URL (empty = local preview only). */
+  dryRunEndpoint?: string;
+  anonKey?: string;
+  assertDryRunEndpointSafe?: (endpoint: string) => boolean;
+  buildDryRunEndpointRequest?: (input: {
+    mode: "edit" | "create";
+    id?: string | null;
+    legacyId?: string | null;
+    expectedBeforeUpdatedAt?: string | null;
+    fields: {
+      date?: string;
+      open_time?: string;
+      start_time?: string;
+      title?: string;
+      venue?: string;
+      price?: string;
+      description?: string;
+      published?: boolean;
+    };
+  }) => Record<string, unknown>;
+  sanitizeEndpointDisplay?: (
+    body: unknown,
+    httpStatus?: number,
+  ) => {
+    httpStatus?: number;
+    ok?: boolean;
+    operation?: string;
+    mode?: string;
+    dryRun?: boolean;
+    wouldWrite?: boolean;
+    changedFields?: string[];
+    diffSummary?: unknown;
+    expectedBeforeUpdatedAt?: string | null;
+    target?: unknown;
+    errors?: string[];
+    warnings?: string[];
+    didWrite: false;
+    dbWrite: false;
+    networkWrite: false;
+    saveEnabled: false;
+    authIssue?: boolean;
+    unsafeWriteFlags?: boolean;
+    fetchError?: string;
+  };
+  dryRunOperation?: "dryRun";
+  productionProjectRefStop?: string;
+  fetchImpl?: typeof fetch;
 };
 
 const UNSAVED_LEAVE = "未保存の変更があります。一覧へ戻ると破棄されます。続けますか？";
@@ -354,8 +401,12 @@ export function initGosakiScheduleOperationalEdit(
   let dryRunFingerprint: string | null = null;
   let dryRunOk = false;
   let saveInFlight = false;
+  let dryRunInFlight = false;
 
   const saveArmed = deps.saveArmed === true;
+  const dryRunOperation = deps.dryRunOperation ?? "dryRun";
+  const productionStop = deps.productionProjectRefStop ?? "vsbvndwuajjhnzpohghh";
+  const fetchImpl = deps.fetchImpl ?? fetch;
 
   function setUnsaved(visible: boolean) {
     if (!(unsavedBanner instanceof HTMLElement)) return;
@@ -410,6 +461,7 @@ export function initGosakiScheduleOperationalEdit(
     if (viewToolbar instanceof HTMLElement) viewToolbar.hidden = true;
     writeForm(root, snap);
     baseline = { ...snap };
+    invalidateDryRun();
     if (lockValue) {
       if (next === "create") {
         lockValue.textContent = "新規作成のため対象外";
@@ -479,47 +531,265 @@ export function initGosakiScheduleOperationalEdit(
     }
 
     if (t.closest("[data-gosaki-edit-dry-run]")) {
+      if (dryRunInFlight) return;
       const after = readForm(root);
       const before = baseline ?? after;
-      void (deps.getAccessToken?.() ?? Promise.resolve(null)).then((token) => {
-        const result = buildScheduleOperationalLocalDryRun({
-          mode: after.mode === "create" ? "create" : "edit",
+      const runMode: "edit" | "create" = after.mode === "create" ? "create" : "edit";
+
+      void (async () => {
+        const token = (await (deps.getAccessToken?.() ?? Promise.resolve(null))) || null;
+        const local = buildScheduleOperationalLocalDryRun({
+          mode: runMode,
           before,
           after,
           authenticated: Boolean(token),
         });
-        dryRunOk = result.ok && result.saveReadiness !== "guard_error";
-        dryRunFingerprint = fingerprint(after);
-        if (dryRunResult instanceof HTMLElement) {
+
+        const renderCard = (opts: {
+          title: string;
+          source: string;
+          httpStatus?: number | string;
+          endpoint?: Record<string, unknown> | null;
+          preflightErrors?: string[];
+        }) => {
+          if (!(dryRunResult instanceof HTMLElement)) return;
           dryRunResult.hidden = false;
-          const rows = result.diffs
+          const rows = local.diffs
             .map(
               (d) =>
                 `<tr><th>${escapeHtml(d.field)}</th><td>${escapeHtml(d.before || "—")}</td><td>${escapeHtml(d.after || "—")}</td></tr>`,
             )
             .join("");
+          const endpoint = opts.endpoint;
+          const endpointErrors = Array.isArray(endpoint?.errors)
+            ? (endpoint.errors as string[])
+            : [];
+          const endpointWarnings = Array.isArray(endpoint?.warnings)
+            ? (endpoint.warnings as string[])
+            : [];
+          const allErrors = [...(opts.preflightErrors ?? []), ...local.errors, ...endpointErrors];
           const createNote =
-            result.mode === "create" && result.createPayloadPreview
-              ? `<p>create payload preview · date=<code>${escapeHtml(result.createPayloadPreview.date || "—")}</code> · published=<code>false</code>（G-22e 契約・非公開作成）</p>`
+            local.mode === "create" && local.createPayloadPreview
+              ? `<p>create payload preview · date=<code>${escapeHtml(local.createPayloadPreview.date || "—")}</code> · published=<code>false</code>（G-22e）</p>`
               : "";
+          const target =
+            endpoint?.target && typeof endpoint.target === "object"
+              ? (endpoint.target as Record<string, unknown>)
+              : null;
           dryRunResult.innerHTML = `
-            <h3>変更を確認（ローカル dry-run）</h3>
-            <p>ok=${result.ok} · wouldWrite=false · saveAllowed=false · readiness=${escapeHtml(result.saveReadiness)}</p>
-            <p>expectedBeforeUpdatedAt: <code>${escapeHtml(result.expectedBeforeUpdatedAt || "—")}</code></p>
-            <p>changedFields: ${escapeHtml(result.changedFields.join(", ") || "なし")}</p>
+            <h3>${escapeHtml(opts.title)}</h3>
+            <p>source=<code>${escapeHtml(opts.source)}</code> · mode=<code>${escapeHtml(runMode)}</code> · httpStatus=<code>${escapeHtml(String(opts.httpStatus ?? "—"))}</code></p>
+            <p>target id=<code>${escapeHtml(String(target?.id ?? after.id || "—"))}</code> · legacyId=<code>${escapeHtml(String(target?.legacyId ?? after.legacy_id || "—"))}</code></p>
+            <p>expectedBeforeUpdatedAt: <code>${escapeHtml(String(endpoint?.expectedBeforeUpdatedAt ?? local.expectedBeforeUpdatedAt || "—"))}</code></p>
+            <p>changedFields: ${escapeHtml(
+              (Array.isArray(endpoint?.changedFields)
+                ? (endpoint.changedFields as string[])
+                : local.changedFields
+              ).join(", ") || "なし",
+            )}</p>
+            <p>didWrite=<code>false</code> · dbWrite=<code>false</code> · networkWrite=<code>false</code> · saveEnabled=<code>false</code></p>
             ${createNote}
             ${
-              result.errors.length
-                ? `<ul>${result.errors.map((e) => `<li>${escapeHtml(e)}</li>`).join("")}</ul>`
+              allErrors.length
+                ? `<ul>${allErrors.map((e) => `<li>${escapeHtml(e)}</li>`).join("")}</ul>`
+                : ""
+            }
+            ${
+              endpointWarnings.length
+                ? `<ul>${endpointWarnings.map((e) => `<li>warning: ${escapeHtml(e)}</li>`).join("")}</ul>`
                 : ""
             }
             <table><thead><tr><th>field</th><th>before</th><th>after</th></tr></thead><tbody>${rows || "<tr><td colspan=3>差分なし</td></tr>"}</tbody></table>
-            <p role="note">この確認ではネットワーク／DB 書き込みは行いません。Save は無効のままです。</p>
+            <p role="note">Save は無効のままです。operation=save は送信しません。</p>
           `;
+        };
+
+        const endpoint = String(deps.dryRunEndpoint ?? "").trim();
+        const anonKey = String(deps.anonKey ?? "").trim();
+        const endpointConfigured = Boolean(endpoint && anonKey);
+
+        if (!endpointConfigured) {
+          dryRunOk = local.ok && local.saveReadiness !== "guard_error";
+          dryRunFingerprint = fingerprint(after);
+          renderCard({
+            title: "変更を確認（ローカル dry-run）",
+            source: "local",
+            preflightErrors: ["network dry-run未設定（Endpoint URL / anon key）— local preview のみ"],
+          });
+          setUnsaved(currentDirty());
+          refreshSaveGate();
+          return;
         }
-        setUnsaved(currentDirty());
+
+        if (endpoint.includes(productionStop) || deps.assertDryRunEndpointSafe?.(endpoint) === false) {
+          dryRunOk = false;
+          dryRunFingerprint = null;
+          renderCard({
+            title: "変更を確認（network dry-run blocked）",
+            source: "endpoint",
+            preflightErrors: ["Production endpoint blocked — staging only"],
+          });
+          setUnsaved(currentDirty());
+          refreshSaveGate();
+          return;
+        }
+
+        if (!token) {
+          dryRunOk = false;
+          dryRunFingerprint = null;
+          renderCard({
+            title: "変更を確認（auth required）",
+            source: "endpoint",
+            preflightErrors: ["access token required — network dry-run not sent"],
+          });
+          setUnsaved(currentDirty());
+          refreshSaveGate();
+          return;
+        }
+
+        if (runMode === "edit" && !local.expectedBeforeUpdatedAt) {
+          dryRunOk = false;
+          dryRunFingerprint = null;
+          renderCard({
+            title: "変更を確認（lock required）",
+            source: "endpoint",
+            preflightErrors: ["expectedBeforeUpdatedAt missing — edit network dry-run not sent"],
+          });
+          setUnsaved(currentDirty());
+          refreshSaveGate();
+          return;
+        }
+
+        if (runMode === "create") {
+          const date = String(after.date ?? "").trim();
+          if (!date || !CREATE_DATE_RE.test(date)) {
+            dryRunOk = false;
+            dryRunFingerprint = null;
+            renderCard({
+              title: "変更を確認（create validation）",
+              source: "endpoint",
+              preflightErrors: ["create requires date YYYY-MM-DD — network dry-run not sent"],
+            });
+            setUnsaved(currentDirty());
+            refreshSaveGate();
+            return;
+          }
+        }
+
+        if (!deps.buildDryRunEndpointRequest || !deps.sanitizeEndpointDisplay) {
+          dryRunOk = false;
+          renderCard({
+            title: "変更を確認（wiring incomplete）",
+            source: "endpoint",
+            preflightErrors: ["dry-run request builder not wired"],
+          });
+          setUnsaved(currentDirty());
+          refreshSaveGate();
+          return;
+        }
+
+        const payload = deps.buildDryRunEndpointRequest({
+          mode: runMode,
+          id: after.id,
+          legacyId: after.legacy_id,
+          expectedBeforeUpdatedAt: local.expectedBeforeUpdatedAt,
+          fields: {
+            date: after.date,
+            open_time: after.open_time,
+            start_time: after.start_time,
+            title: after.title,
+            venue: after.venue,
+            price: after.price,
+            description: after.description,
+            published: false,
+          },
+        });
+
+        if (payload.operation !== dryRunOperation) {
+          dryRunOk = false;
+          renderCard({
+            title: "変更を確認（operation rejected）",
+            source: "endpoint",
+            preflightErrors: ["operation must be dryRun only — request not sent"],
+          });
+          setUnsaved(currentDirty());
+          refreshSaveGate();
+          return;
+        }
+
+        dryRunInFlight = true;
+        if (dryRunResult instanceof HTMLElement) {
+          dryRunResult.hidden = false;
+          dryRunResult.innerHTML = "<p>Endpoint dry-run 送信中…（DB write なし · Save disabled）</p>";
+        }
         refreshSaveGate();
-      });
+
+        try {
+          const controller = new AbortController();
+          const timeoutId = window.setTimeout(() => controller.abort(), 20000);
+          const res = await fetchImpl(endpoint, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: "Bearer " + token,
+              apikey: anonKey,
+            },
+            body: JSON.stringify(payload),
+            signal: controller.signal,
+          });
+          window.clearTimeout(timeoutId);
+          let data: unknown = {};
+          try {
+            data = await res.json();
+          } catch {
+            data = { ok: false, errors: ["non-JSON response"] };
+          }
+          const display = deps.sanitizeEndpointDisplay(data, res.status);
+          const endpointOk =
+            display.ok === true &&
+            display.didWrite === false &&
+            display.dbWrite === false &&
+            display.networkWrite === false &&
+            display.saveEnabled === false &&
+            !display.unsafeWriteFlags;
+          dryRunOk = endpointOk;
+          dryRunFingerprint = endpointOk ? fingerprint(after) : null;
+          renderCard({
+            title: endpointOk
+              ? "変更を確認（endpoint dry-run）"
+              : "変更を確認（endpoint dry-run FAIL）",
+            source: "endpoint",
+            httpStatus: display.httpStatus ?? res.status,
+            endpoint: display as unknown as Record<string, unknown>,
+          });
+        } catch (err) {
+          const message =
+            err instanceof Error
+              ? err.name === "AbortError"
+                ? "timeout / aborted"
+                : err.message
+              : String(err);
+          dryRunOk = false;
+          dryRunFingerprint = null;
+          renderCard({
+            title: "変更を確認（network error）",
+            source: "endpoint",
+            preflightErrors: [`network error: ${message}`],
+            endpoint: {
+              ok: false,
+              fetchError: message,
+              didWrite: false,
+              dbWrite: false,
+              networkWrite: false,
+              saveEnabled: false,
+            },
+          });
+        } finally {
+          dryRunInFlight = false;
+          setUnsaved(currentDirty());
+          refreshSaveGate();
+        }
+      })();
       return;
     }
 

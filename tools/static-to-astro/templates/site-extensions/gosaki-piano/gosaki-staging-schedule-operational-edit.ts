@@ -204,7 +204,10 @@ export function buildScheduleOperationalLocalDryRun(input: {
   if (input.mode === "edit" && !input.after.id && !input.after.legacy_id) {
     errors.push("edit target id / legacy_id missing");
   }
-  const expectedBeforeUpdatedAt = String(input.after.updated_at ?? "").trim() || null;
+  const expectedBeforeUpdatedAt =
+    input.mode === "create"
+      ? null
+      : String(input.after.updated_at ?? "").trim() || null;
   const optimisticLockRequired = input.mode === "edit";
   if (optimisticLockRequired && !expectedBeforeUpdatedAt) {
     errors.push("expectedBeforeUpdatedAt is required for existing-event edit");
@@ -333,7 +336,13 @@ export function initGosakiScheduleOperationalEdit(
     if (viewToolbar instanceof HTMLElement) viewToolbar.hidden = true;
     writeForm(root, snap);
     baseline = { ...snap };
-    if (lockValue) lockValue.textContent = snap.updated_at || "—";
+    if (lockValue) {
+      if (next === "create") {
+        lockValue.textContent = "新規作成のため対象外";
+      } else {
+        lockValue.textContent = snap.updated_at || "—";
+      }
+    }
     if (editLead) editLead.textContent = lead;
     setUnsaved(false);
     invalidateDryRun();

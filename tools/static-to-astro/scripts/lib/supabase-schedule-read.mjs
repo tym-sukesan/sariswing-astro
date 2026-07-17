@@ -21,7 +21,7 @@ const DEFAULT_TOOL_ROOT = path.resolve(__dirname, "../..");
 
 /** @deprecated use SCHEDULE_SELECT */
 export const GOSAKI_SCHEDULE_SELECT =
-  "legacy_id,site_slug,date,year,month,title,venue,open_time,start_time,price,description,image_url,source_file,source_route,show_on_home,home_order,published,sort_order";
+  "id,legacy_id,site_slug,date,year,month,title,venue,open_time,start_time,price,description,image_url,source_file,source_route,show_on_home,home_order,published,sort_order,updated_at";
 
 export const SCHEDULE_SELECT = GOSAKI_SCHEDULE_SELECT;
 
@@ -56,6 +56,7 @@ export function normalizeScheduleRecord(row) {
   const month = String(row.month ?? "");
   const [yearStr, monthNum] = month.split("-");
   return {
+    id: row.id ?? null,
     legacy_id: row.legacy_id ?? null,
     site_slug: row.site_slug ?? null,
     date: row.date ?? null,
@@ -75,6 +76,7 @@ export function normalizeScheduleRecord(row) {
     home_order: row.home_order ?? null,
     published: row.published !== false,
     sort_order: row.sort_order ?? 0,
+    updated_at: row.updated_at ?? null,
     label: yearStr && monthNum ? scheduleMonthDisplayLabel(yearStr, monthNum) : month,
   };
 }

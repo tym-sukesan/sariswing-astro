@@ -281,6 +281,30 @@ Local browser (OperatorPage behind auth-gate reveal for layout QA; no dry-run/Sa
 - desktop / 375 / 320: list · edit · create · Save disabled · full-width inputs · no horizontal overflow
 - dry-run network: 0 · Save network: 0
 
+### G-20u45 follow-up — optimistic lock `updated_at` display fix
+
+STG QA found existing-edit lock displayed as `—`.
+
+**Root cause:** build-time `SCHEDULE_SELECT` / `normalizeScheduleRecord` omitted `id` + `updated_at`, so admin snapshot `updatedAt` was always null even though DTO mapping existed.
+
+**Fix (source only · no invented timestamps):**
+
+- `supabase-schedule-read.mjs`: SELECT + normalize retain `id`, `updated_at`
+- operational edit client: create shows `新規作成のため対象外` · create does not carry edit lock · blank edit lock fail-closed
+- published checkbox row layout (flex)
+
+Gates after fix:
+
+```txt
+EXISTING_EDIT_LOCK_FIXED: true
+CREATE_LOCK_BEHAVIOR_CORRECT: true
+PUBLISHED_CHECKBOX_LAYOUT_FIXED: true
+SAVE_DEFAULT_DISABLED: true
+DRY_RUN_REQUEST_EXECUTED: false
+SAVE_REQUEST_EXECUTED: false
+DB_WRITE_EXECUTED: false
+```
+
 ## Recommended next
 
-Commit / Push → fresh staging package generation → manual FTP → Schedule STG browser QA
+Commit / Push → fresh staging package再生成 → manual FTP overwrite → Schedule STG recheck（updated_at ISO）

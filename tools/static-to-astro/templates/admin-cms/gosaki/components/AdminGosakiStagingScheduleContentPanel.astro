@@ -425,6 +425,27 @@ const eventsJson = JSON.stringify(events);
     font-size: 0.85rem;
   }
 
+  .gosaki-schedule-content-panel__form .admin-form__field--checkbox {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .gosaki-schedule-content-panel__form .admin-form__field--checkbox input[type="checkbox"] {
+    width: auto;
+    max-width: none;
+    min-width: 1rem;
+    margin: 0;
+    flex: 0 0 auto;
+  }
+
+  .gosaki-schedule-content-panel__form .admin-form__field--checkbox > span {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
   @media (max-width: 375px) {
     .gosaki-schedule-content-panel__card,
     .gosaki-schedule-content-panel__save-card,

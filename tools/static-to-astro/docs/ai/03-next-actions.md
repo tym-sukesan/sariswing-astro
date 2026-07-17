@@ -17,7 +17,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | SCHEDULE_MOBILE_LAYOUT_PASSED | **true** |
 | SAVE_REQUEST_EXECUTED | **false** |
 | DB_WRITE_EXECUTED | **false** |
-| Next | Commit/Push → fresh STG package → manual FTP → Schedule STG browser QA |
+| Next | Commit/Push → fresh STG package再生成 → manual FTP overwrite → Schedule STG recheck（updated_at ISO） |
 
 ```txt
 SCHEDULE_LIST_UI_READY: true
@@ -29,6 +29,9 @@ SCHEDULE_AUTH_WIRED: true
 SCHEDULE_SAVE_DEFAULT_DISABLED: true
 SCHEDULE_LOCAL_BROWSER_PASSED: true
 SCHEDULE_MOBILE_LAYOUT_PASSED: true
+EXISTING_EDIT_LOCK_FIXED: true
+CREATE_LOCK_BEHAVIOR_CORRECT: true
+PUBLISHED_CHECKBOX_LAYOUT_FIXED: true
 SAVE_REQUEST_EXECUTED: false
 DB_WRITE_EXECUTED: false
 ```

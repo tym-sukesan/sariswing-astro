@@ -33,7 +33,7 @@ const PHASE =
   "G-20u39b4-gosaki-admin-multi-route-staging-package-and-manual-upload-prep";
 const GATE = "gosakiAdminMultiRouteStagingPackagePrepComplete: true";
 const RECOMMENDED_NEXT =
-  "Schedule STG browser QA";
+  "Schedule STG recheck";
 
 /** Fixture-only known anon (not a real project key). payload.role=anon */
 const KNOWN_ANON =
@@ -747,6 +747,38 @@ assert(
   "schedule snapshot includes description + updatedAt for lock",
   applySrc.includes("description: r.description") &&
     applySrc.includes("updatedAt: r.updated_at"),
+);
+const scheduleReadSrc = read(
+  "tools/static-to-astro/scripts/lib/supabase-schedule-read.mjs",
+);
+assert(
+  "schedule SELECT includes id + updated_at for operational lock",
+  scheduleReadSrc.includes("SCHEDULE_SELECT") &&
+    /GOSAKI_SCHEDULE_SELECT\s*=\s*[\s\S]{0,200}updated_at/.test(scheduleReadSrc) &&
+    (scheduleReadSrc.includes('"id,legacy_id') ||
+      scheduleReadSrc.includes("id,legacy_id,site_slug")),
+);
+assert(
+  "schedule normalize retains id + updated_at (no drop)",
+  scheduleReadSrc.includes("id: row.id ?? null") &&
+    scheduleReadSrc.includes("updated_at: row.updated_at ?? null"),
+);
+assert(
+  "schedule existing edit requires expectedBeforeUpdatedAt / blank lock fail-closed",
+  scheduleOpEditSrc.includes("expectedBeforeUpdatedAt is required for existing-event edit") &&
+    scheduleOpEditSrc.includes('input.mode === "create"') &&
+    scheduleOpEditSrc.includes("? null") &&
+    scheduleOpEditSrc.includes("新規作成のため対象外") &&
+    scheduleOpEditSrc.includes('saveBtn.disabled = true') &&
+    !scheduleOpEditSrc.includes("service_role") &&
+    !scheduleOpEditSrc.includes("vsbvndwuajjhnzpohghh") &&
+    !scheduleOpEditSrc.includes("fetch("),
+);
+assert(
+  "schedule create does not reuse existing updated_at lock",
+  scheduleOpEditSrc.includes("emptyCreateForm") &&
+    /updated_at:\s*""/.test(scheduleOpEditSrc) &&
+    scheduleOpEditSrc.includes("新規作成のため対象外"),
 );
 assert(
   "about panel form affordance markers",

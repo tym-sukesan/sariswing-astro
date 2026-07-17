@@ -5,21 +5,21 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u45-gosaki-schedule-operational-edit-ui-wiring — complete (source + non-write verify).
-SCHEDULE_*_UI_READY / DRY_RUN / LOCK / AUTH / SAVE_DEFAULT_DISABLED: true.
+Current phase: G-20u45 Schedule operational edit — lock display fix complete (source).
+EXISTING_EDIT_LOCK_FIXED: true · CREATE_LOCK_BEHAVIOR_CORRECT: true.
+Root cause: SCHEDULE_SELECT/normalize omitted updated_at → snapshot updatedAt null.
 SAVE_REQUEST_EXECUTED: false · DB_WRITE_EXECUTED: false.
-Next: Commit/Push → fresh STG package → manual FTP → Schedule STG browser QA.
+Next: Commit/Push → fresh STG package再生成 → manual FTP overwrite → Schedule STG recheck.
 ```
 
-## G-20u45-gosaki-schedule-operational-edit-ui-wiring — complete
+## G-20u45-gosaki-schedule-operational-edit-ui-wiring — complete (+ lock fix)
 
-- **Doc:** `gosaki-admin-multi-route-staging-package-prep.md` (§ G-20u45)
+- **Doc:** `gosaki-admin-multi-route-staging-package-prep.md` (§ G-20u45 + lock follow-up)
 - **STG ContentPanel:** list / edit / create / cancel / unsaved / local dry-run / Save disabled
-- **Client:** `gosaki-staging-schedule-operational-edit.ts` (no fetch · saveArmed false)
-- **Schema:** date, open_time, start_time, title, venue, price, description, published + updated_at lock
-- **Local OperatorPage:** 一覧へ戻る · unsaved banner · mobile form CSS
+- **Lock fix:** `supabase-schedule-read.mjs` SELECT+normalize retain `id`,`updated_at`
+- **Create:** lock display `新規作成のため対象外` · no reused edit updated_at
 - **Verifier:** `verify:g20u39b4-gosaki-admin-multi-route-staging-package-prep`
-- **Next:** Commit/Push → fresh package → manual FTP → Schedule STG browser QA
+- **Next:** Commit/Push → fresh package再生成 → manual FTP overwrite → Schedule STG recheck
 
 ## G-20u44-gosaki-discography-controlled-save-round-trip — complete
 

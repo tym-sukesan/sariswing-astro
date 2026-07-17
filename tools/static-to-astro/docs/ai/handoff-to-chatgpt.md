@@ -5,26 +5,28 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u45 Schedule HTTP dry-run + Save — source complete (Edge Save not deployed).
-EDGE: gosaki-schedule-save-dry-run · dryRun STG verified · operation=save edit+create implemented.
+Current phase: G-20u45 Schedule operational Save STG round-trip — complete; DB baseline restored.
+STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP.
+EDGE: gosaki-schedule-save-dry-run v2 · edit/create Save verified.
 APPROVAL: gosaki-schedule-operational-save · user JWT + is_admin · no service_role.
-EDIT: safe fields + published · date forbidden (UI disabled + Edge reject) · optimistic lock.
-CREATE: published=false + Edge legacy_id · unique collision fail-closed.
-Publish path: create unpublished → later edit published=true.
-STG Save default disabled · local arm PUBLIC_GOSAKI_SCHEDULE_SAVE_UI_ARMED exact true.
-DB permission: unconfirmed · live SELECT preflight required · repo history indicates ready.
-EDGE_DEPLOY_EXECUTED: false · SAVE_REQUEST_EXECUTED: false · DB_WRITE_EXECUTED: false.
-Next: Commit/Push → permission SELECT preflight → staging Edge deploy ×1 → package/FTP → controlled Save ×1 each.
+SOURCE/PACKAGE: e47ee6b19bffd4f8a75523a5a535cc4e5f99f9a4.
+PERMISSION: live preflight PASS; apply unnecessary.
+EDIT: temporary venue Save + restore Save both HTTP 200; original venue restored.
+CREATE: unpublished schedule-2026-12-001 Save HTTP 200; exact cleanup DELETE 1.
+POST-CLEANUP: created id/legacy/title-date 0; Gosaki Schedule total 79.
+UI: Save button 1; initial disabled; safe dry-run only enables; Save/mutation/conflict disables; no retry/double-submit.
+CONTROLLED_PACKAGE_STILL_DEPLOYED: true.
+Next: Commit/Push → unarmed fresh package → staging FileZilla upload-only → Gosaki全体の次タスク。
 ```
 
-## G-20u45-gosaki-schedule-operational-edit-ui-wiring — complete (+ lock fix)
+## G-20u45 Schedule operational Save — final result
 
-- **Doc:** `gosaki-admin-multi-route-staging-package-prep.md` (§ G-20u45 + lock follow-up)
-- **STG ContentPanel:** list / edit / create / cancel / unsaved / local dry-run / Save disabled
-- **Lock fix:** `supabase-schedule-read.mjs` SELECT+normalize retain `id`,`updated_at`
-- **Create:** lock display `新規作成のため対象外` · no reused edit updated_at
+- **Doc:** `gosaki-admin-multi-route-staging-package-prep.md` (§ G-20u45)
+- **Edit final:** `schedule-2026-08-019` · venue `浅草　HUB` · updated_at `2026-07-17T14:04:08.074895+00:00`
+- **Create/cleanup:** id `dcd7af06-67aa-463e-8e3f-09bf164ef97b` · legacyId `schedule-2026-12-001` · `published=false` · cleanup PASS
+- **Gates:** EDIT_SAVE_ROUND_TRIP_PASSED · CREATE_SAVE_ROUND_TRIP_PASSED · CREATE_CLEANUP_PASSED · DATABASE_RESTORED_TO_BASELINE = **true**
 - **Verifier:** `verify:g20u39b4-gosaki-admin-multi-route-staging-package-prep`
-- **Next:** Commit/Push → fresh package再生成 → manual FTP overwrite → Schedule STG recheck
+- **Next:** Commit/Push → unarmed fresh package → staging upload-only
 
 ## G-20u44-gosaki-discography-controlled-save-round-trip — complete
 

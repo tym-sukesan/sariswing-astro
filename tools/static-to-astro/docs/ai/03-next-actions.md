@@ -1,55 +1,15 @@
 Last updated: 2026-07-17
 Project: Static-to-Astro CMS / Musician CMS Kit
 
-## 0. G-20u45 Schedule HTTP dry-run + Save — source done (deploy pending)
+## 0. Current next actions（直近）
 
-| Item | Value |
-|------|-------|
-| Endpoint | `gosaki-schedule-save-dry-run` (dryRun STG verified · Save source ready) |
-| SAVE_APPROVAL_ID | `gosaki-schedule-operational-save` |
-| EDIT_SAVE_IMPLEMENTED | **true** (optimistic lock UPDATE · **published** included · **date** excluded) |
-| CREATE_SAVE_IMPLEMENTED | **true** (published=false · Edge legacy_id) |
-| EDIT_DB_PERMISSION_READY | **unconfirmed** (live SELECT required) |
-| CREATE_DB_PERMISSION_READY | **unconfirmed** (live SELECT required) |
-| NORMAL_STG_SAVE_DISABLED | **true** |
-| LOCAL_ARM | `PUBLIC_GOSAKI_SCHEDULE_SAVE_UI_ARMED` exact true |
-| EDGE_DEPLOY_EXECUTED | **false** |
-| Next | Commit/Push → permission SELECT preflight → staging Edge deploy ×1 → package/FTP → controlled Save ×1 each |
+1. **この記録を Commit / Push**（source変更なし）。
+2. cleanな最新HEADから `PUBLIC_GOSAKI_SCHEDULE_SAVE_UI_ARMED` を設定せず `npm run build:gosaki:staging`。
+3. fresh packageで `data-gosaki-schedule-save-armed="false"` · Save button 1 · Save常時disabled · endpoint dry-run利用可 · production pathなしを確認。
+4. operatorがFileZillaで `/cms-kit-staging/gosaki-piano/` へupload-only。
+5. controlled arm解除後、Schedule以外を含むGosaki全体の次タスクを選定。
 
-## 0. G-20u45-gosaki-schedule-operational-edit-ui-wiring — complete (source)
-
-| Item | Value |
-| --- | --- |
-| Phase | `G-20u45-gosaki-schedule-operational-edit-ui-wiring` |
-| SCHEDULE_LIST_UI_READY | **true** |
-| SCHEDULE_EDIT_UI_READY | **true** |
-| SCHEDULE_CREATE_UI_READY | **true** |
-| SCHEDULE_DRY_RUN_WIRED | **true** (local preview · no network) |
-| SCHEDULE_OPTIMISTIC_LOCK_WIRED | **true** |
-| SCHEDULE_AUTH_WIRED | **true** |
-| SCHEDULE_SAVE_DEFAULT_DISABLED | **true** |
-| SCHEDULE_LOCAL_BROWSER_PASSED | **true** (desktop/375/320) |
-| SCHEDULE_MOBILE_LAYOUT_PASSED | **true** |
-| SAVE_REQUEST_EXECUTED | **false** |
-| DB_WRITE_EXECUTED | **false** |
-| Next | Commit/Push → fresh STG package再生成 → manual FTP overwrite → Schedule STG recheck（updated_at ISO） |
-
-```txt
-SCHEDULE_LIST_UI_READY: true
-SCHEDULE_EDIT_UI_READY: true
-SCHEDULE_CREATE_UI_READY: true
-SCHEDULE_DRY_RUN_WIRED: true
-SCHEDULE_OPTIMISTIC_LOCK_WIRED: true
-SCHEDULE_AUTH_WIRED: true
-SCHEDULE_SAVE_DEFAULT_DISABLED: true
-SCHEDULE_LOCAL_BROWSER_PASSED: true
-SCHEDULE_MOBILE_LAYOUT_PASSED: true
-EXISTING_EDIT_LOCK_FIXED: true
-CREATE_LOCK_BEHAVIOR_CORRECT: true
-PUBLISHED_CHECKBOX_LAYOUT_FIXED: true
-SAVE_REQUEST_EXECUTED: false
-DB_WRITE_EXECUTED: false
-```
+Schedule operational Saveは完了済み：staging Edge deploy completed（v2）· live permission PASS · edit round-trip/restoration PASS · create unpublished PASS · exact cleanup PASS · DB total **79** restored。Edge `gosaki-schedule-save-dry-run` v2、approval `gosaki-schedule-operational-save`、source/package `e47ee6b`。通常packageの `SCHEDULE_SAVE_DEFAULT_DISABLED: true` 契約は維持。
 
 ## 0. G-20u44 / G-20u44c controlled Save round-trip + permission rollback — complete and closed
 

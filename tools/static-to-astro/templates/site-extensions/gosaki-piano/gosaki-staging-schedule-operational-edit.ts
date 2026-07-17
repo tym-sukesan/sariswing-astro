@@ -579,8 +579,8 @@ export function initGosakiScheduleOperationalEdit(
           dryRunResult.innerHTML = `
             <h3>${escapeHtml(opts.title)}</h3>
             <p>source=<code>${escapeHtml(opts.source)}</code> · mode=<code>${escapeHtml(runMode)}</code> · httpStatus=<code>${escapeHtml(String(opts.httpStatus ?? "—"))}</code></p>
-            <p>target id=<code>${escapeHtml(String(target?.id ?? after.id || "—"))}</code> · legacyId=<code>${escapeHtml(String(target?.legacyId ?? after.legacy_id || "—"))}</code></p>
-            <p>expectedBeforeUpdatedAt: <code>${escapeHtml(String(endpoint?.expectedBeforeUpdatedAt ?? local.expectedBeforeUpdatedAt || "—"))}</code></p>
+            <p>target id=<code>${escapeHtml(String((target?.id ?? after.id) || "—"))}</code> · legacyId=<code>${escapeHtml(String((target?.legacyId ?? after.legacy_id) || "—"))}</code></p>
+            <p>expectedBeforeUpdatedAt: <code>${escapeHtml(String((endpoint?.expectedBeforeUpdatedAt ?? local.expectedBeforeUpdatedAt) || "—"))}</code></p>
             <p>changedFields: ${escapeHtml(
               (Array.isArray(endpoint?.changedFields)
                 ? (endpoint.changedFields as string[])

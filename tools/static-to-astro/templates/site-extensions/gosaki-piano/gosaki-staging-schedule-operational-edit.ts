@@ -28,8 +28,53 @@ export const SCHEDULE_OPERATIONAL_SAFE_FIELDS = [
   "description",
 ] as const;
 
+/**
+ * Create local dry-run preview fields (G-22e new-event contract).
+ * Includes date + published — not limited to existing-update safe fields.
+ */
+export const SCHEDULE_OPERATIONAL_CREATE_PREVIEW_FIELDS = [
+  "date",
+  "title",
+  "venue",
+  "open_time",
+  "start_time",
+  "price",
+  "description",
+  "published",
+] as const;
+
 export type ScheduleOperationalSafeField =
   (typeof SCHEDULE_OPERATIONAL_SAFE_FIELDS)[number];
+
+const CREATE_DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+
+/** Local create payload preview — matches G-22e published=false guarantee. */
+export function buildScheduleOperationalCreatePayloadPreview(
+  after: Pick<
+    FormSnapshot,
+    "date" | "title" | "venue" | "open_time" | "start_time" | "price" | "description"
+  >,
+): {
+  date: string;
+  title: string;
+  venue: string;
+  open_time: string;
+  start_time: string;
+  price: string;
+  description: string;
+  published: false;
+} {
+  return {
+    date: String(after.date ?? "").trim(),
+    title: String(after.title ?? "").trim(),
+    venue: String(after.venue ?? "").trim(),
+    open_time: String(after.open_time ?? "").trim(),
+    start_time: String(after.start_time ?? "").trim(),
+    price: String(after.price ?? "").trim(),
+    description: String(after.description ?? "").trim(),
+    published: false,
+  };
+}
 
 export type ScheduleOperationalEditDeps = {
   /** Exact "true" only — default false / unset keeps Save disabled. */
@@ -180,6 +225,7 @@ function diffSafeFields(
 /**
  * Local dry-run preview — no fetch / no DB write.
  * Existing edit requires expectedBeforeUpdatedAt when updated_at is present.
+ * Create preview includes date + published=false (G-22e); does not invent fields.
  */
 export function buildScheduleOperationalLocalDryRun(input: {
   mode: Mode;
@@ -198,6 +244,9 @@ export function buildScheduleOperationalLocalDryRun(input: {
   saveAllowed: false;
   saveReadiness: "no_changes" | "guard_error" | "ready_but_save_disabled";
   diffs: Array<{ field: string; before: string; after: string }>;
+  createPayloadPreview: ReturnType<
+    typeof buildScheduleOperationalCreatePayloadPreview
+  > | null;
   errors: string[];
 } {
   const errors: string[] = [];
@@ -216,13 +265,30 @@ export function buildScheduleOperationalLocalDryRun(input: {
     errors.push("authenticated session required before Save (dry-run preview still available)");
   }
 
-  const diffs =
+  const createPayloadPreview =
     input.mode === "create"
-      ? SCHEDULE_OPERATIONAL_SAFE_FIELDS.map((field) => ({
+      ? buildScheduleOperationalCreatePayloadPreview(input.after)
+      : null;
+
+  if (input.mode === "create") {
+    const date = createPayloadPreview?.date ?? "";
+    if (!date) {
+      errors.push("date is required for create");
+    } else if (!CREATE_DATE_RE.test(date)) {
+      errors.push("date must be YYYY-MM-DD");
+    }
+  }
+
+  const diffs =
+    input.mode === "create" && createPayloadPreview
+      ? SCHEDULE_OPERATIONAL_CREATE_PREVIEW_FIELDS.map((field) => ({
           field,
           before: "",
-          after: String(input.after[field] ?? ""),
-        })).filter((d) => d.after)
+          after:
+            field === "published"
+              ? "false"
+              : String(createPayloadPreview[field] ?? ""),
+        })).filter((d) => d.field === "published" || Boolean(d.after))
       : diffSafeFields(input.before, input.after);
 
   const changedFields = diffs.map((d) => d.field);
@@ -239,11 +305,18 @@ export function buildScheduleOperationalLocalDryRun(input: {
       saveAllowed: false,
       saveReadiness: "no_changes",
       diffs: [],
+      createPayloadPreview: null,
       errors,
     };
   }
 
-  const guardError = errors.some((e) => e.includes("expectedBeforeUpdatedAt") || e.includes("target"));
+  const guardError = errors.some(
+    (e) =>
+      e.includes("expectedBeforeUpdatedAt") ||
+      e.includes("target") ||
+      e.includes("date is required") ||
+      e.includes("date must be YYYY-MM-DD"),
+  );
   return {
     ok: !guardError,
     dryRun: true,
@@ -256,6 +329,7 @@ export function buildScheduleOperationalLocalDryRun(input: {
     saveAllowed: false,
     saveReadiness: guardError ? "guard_error" : "ready_but_save_disabled",
     diffs,
+    createPayloadPreview,
     errors,
   };
 }
@@ -424,11 +498,16 @@ export function initGosakiScheduleOperationalEdit(
                 `<tr><th>${escapeHtml(d.field)}</th><td>${escapeHtml(d.before || "—")}</td><td>${escapeHtml(d.after || "—")}</td></tr>`,
             )
             .join("");
+          const createNote =
+            result.mode === "create" && result.createPayloadPreview
+              ? `<p>create payload preview · date=<code>${escapeHtml(result.createPayloadPreview.date || "—")}</code> · published=<code>false</code>（G-22e 契約・非公開作成）</p>`
+              : "";
           dryRunResult.innerHTML = `
             <h3>変更を確認（ローカル dry-run）</h3>
             <p>ok=${result.ok} · wouldWrite=false · saveAllowed=false · readiness=${escapeHtml(result.saveReadiness)}</p>
             <p>expectedBeforeUpdatedAt: <code>${escapeHtml(result.expectedBeforeUpdatedAt || "—")}</code></p>
             <p>changedFields: ${escapeHtml(result.changedFields.join(", ") || "なし")}</p>
+            ${createNote}
             ${
               result.errors.length
                 ? `<ul>${result.errors.map((e) => `<li>${escapeHtml(e)}</li>`).join("")}</ul>`

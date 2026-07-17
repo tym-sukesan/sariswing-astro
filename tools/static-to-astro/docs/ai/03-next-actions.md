@@ -1,6 +1,15 @@
 Last updated: 2026-07-17
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u45 create dry-run date/published — source fix pending Commit
+
+| Item | Value |
+|------|-------|
+| Fix | Create local dry-run used edit `SAFE_FIELDS` → omitted `date`/`published` from changedFields |
+| Source | `gosaki-staging-schedule-operational-edit.ts` · `SCHEDULE_OPERATIONAL_CREATE_PREVIEW_FIELDS` · `published: false` forced |
+| Verifier | existing `verify:g20u39b4-…` assertion added |
+| Next | Commit/Push → STG local create dry-run recheck → package regen if STG upload needed |
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u45-gosaki-schedule-operational-edit-ui-wiring — complete (source)
 
 | Item | Value |

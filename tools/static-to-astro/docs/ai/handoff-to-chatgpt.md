@@ -5,7 +5,7 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u45 Schedule operational edit — lock display fix complete (source).
+Current phase: G-20u45 Schedule operational edit — create dry-run date/published display fix (source; uncommitted).
 EXISTING_EDIT_LOCK_FIXED: true · CREATE_LOCK_BEHAVIOR_CORRECT: true.
 Root cause: SCHEDULE_SELECT/normalize omitted updated_at → snapshot updatedAt null.
 SAVE_REQUEST_EXECUTED: false · DB_WRITE_EXECUTED: false.

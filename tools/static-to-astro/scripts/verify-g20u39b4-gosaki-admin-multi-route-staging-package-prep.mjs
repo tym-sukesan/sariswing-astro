@@ -781,6 +781,17 @@ assert(
     scheduleOpEditSrc.includes("新規作成のため対象外"),
 );
 assert(
+  "schedule create local dry-run includes date + published=false (G-22e)",
+  scheduleOpEditSrc.includes("SCHEDULE_OPERATIONAL_CREATE_PREVIEW_FIELDS") &&
+    scheduleOpEditSrc.includes("buildScheduleOperationalCreatePayloadPreview") &&
+    scheduleOpEditSrc.includes("published: false") &&
+    scheduleOpEditSrc.includes("date is required for create") &&
+    scheduleOpEditSrc.includes("date must be YYYY-MM-DD") &&
+    scheduleOpEditSrc.includes('field === "published"') &&
+    /CREATE_PREVIEW_FIELDS[\s\S]*?"date"/.test(scheduleOpEditSrc) &&
+    !scheduleOpEditSrc.includes("fetch("),
+);
+assert(
   "about panel form affordance markers",
   aboutPanelSrc.includes('data-gosaki-about-form-affordance="true"') &&
     aboutPanelSrc.includes('data-gosaki-about-edit-section="true"') &&

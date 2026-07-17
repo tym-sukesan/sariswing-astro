@@ -1,7 +1,7 @@
 Last updated: 2026-07-17
 Project: Static-to-Astro CMS / Musician CMS Kit
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u44-gosaki-discography-controlled-save-round-trip — complete
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u44 / G-20u44c controlled Save round-trip + permission rollback — complete and closed
 
 | Item | Value |
 | --- | --- |
@@ -12,14 +12,24 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | OTHER_DATA_UNCHANGED | **true** |
 | LOCAL_ARM_TERMINATED | **true** |
 | CONTROLLED_SAVE_ROUND_TRIP_COMPLETED | **true** |
+| PERMISSION_ROLLBACK_COMPLETED | **true** |
+| AUTHENTICATED_LABEL_UPDATE_REVOKED | **true** |
+| AUTHENTICATED_TABLE_UPDATE_REMAINS_DENIED | **true** |
+| ANON_UPDATE_REMAINS_DENIED | **true** |
+| RESTRICTIVE_POLICY_REMOVED | **true** |
+| VERIFICATION_PERMISSION_CLOSED | **true** |
 | post-restore updated_at | `2026-07-16T18:35:15.236693+00:00` |
 | releases / tracks | **4** / **34** |
-| Next | Commit/Push → G-20u44c §D/E permission rollback (operator) |
+| rollback data write / Save | **false** / **false** |
+| production changed | **false** |
+| Next | Commit/Push → next CMS feature development |
 
 ```txt
 CONTROLLED_SAVE_ROUND_TRIP_COMPLETED: true
 FINAL_LABEL_RESTORED: true
 LOCAL_ARM_TERMINATED: true
+PERMISSION_ROLLBACK_COMPLETED: true
+VERIFICATION_PERMISSION_CLOSED: true
 ```
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u44c-gosaki-discography-label-permission-enablement-prep — complete
@@ -34,17 +44,17 @@ LOCAL_ARM_TERMINATED: true
 | COLUMN_LEVEL_GRANT_ONLY | **true** |
 | RESTRICTIVE_POLICY_READY | **true** (`discography_g20u43_label_update_restrict`) |
 | ROOT_CAUSE_CLASS | **B** (authenticated lacks `UPDATE` on `public.discography.label`) |
-| SQL_EXECUTED | **false** |
-| DB_WRITE_EXECUTED | **false** |
-| SAVE_REQUEST_EXECUTED | **false** |
-| Next | Commit/Push → operator preflight SELECT only (`G-20u44d`) |
+| PERMISSION_ROLLBACK_COMPLETED | **true** |
+| VERIFICATION_PERMISSION_CLOSED | **true** |
+| DB_DATA_WRITE_EXECUTED_DURING_ROLLBACK | **false** |
+| SAVE_REQUEST_EXECUTED_DURING_ROLLBACK | **false** |
+| Next | Commit/Push → next CMS feature development |
 
 ```txt
-PERMISSION_PREFLIGHT_SQL_READY: true
-PERMISSION_APPLY_SQL_READY: true
-SQL_EXECUTED: false
-DB_WRITE_EXECUTED: false
-SAVE_REQUEST_EXECUTED: false
+PERMISSION_ROLLBACK_COMPLETED: true
+AUTHENTICATED_LABEL_UPDATE_REVOKED: true
+RESTRICTIVE_POLICY_REMOVED: true
+VERIFICATION_PERMISSION_CLOSED: true
 ```
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u44a-gosaki-discography-local-controlled-save-wiring-fix — complete

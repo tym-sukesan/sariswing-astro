@@ -598,6 +598,32 @@ assert(
   "handoff G-20u44 round-trip",
   handoff.includes("G-20u44-gosaki-discography-controlled-save-round-trip"),
 );
+assert(
+  "doc permission rollback completed",
+  doc.includes("PERMISSION_ROLLBACK_COMPLETED: true"),
+);
+assert(
+  "doc authenticated label UPDATE revoked",
+  doc.includes("AUTHENTICATED_LABEL_UPDATE_REVOKED: true"),
+);
+assert(
+  "doc restrictive policy removed",
+  doc.includes("RESTRICTIVE_POLICY_REMOVED: true"),
+);
+assert(
+  "doc verification permission closed",
+  doc.includes("VERIFICATION_PERMISSION_CLOSED: true"),
+);
+assert(
+  "doc rollback final updated_at",
+  doc.includes("2026-07-16T18:35:15.236693+00:00"),
+);
+assert(
+  "AI verification permission closed",
+  currentState.includes("VERIFICATION_PERMISSION_CLOSED: true") &&
+    nextActions.includes("VERIFICATION_PERMISSION_CLOSED: true") &&
+    handoff.includes("VERIFICATION_PERMISSION_CLOSED: true"),
+);
 
 console.log("");
 console.log(`Passed: ${passed}`);

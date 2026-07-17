@@ -5,11 +5,12 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u44-gosaki-discography-controlled-save-round-trip — complete.
-CONTROLLED_SAVE_ROUND_TRIP_COMPLETED: true · FINAL_LABEL_RESTORED: true.
+Current phase: G-20u44 / G-20u44c controlled Save round-trip + permission rollback — complete and closed.
+CONTROLLED_SAVE_ROUND_TRIP_COMPLETED: true · VERIFICATION_PERMISSION_CLOSED: true.
 discography-004.label restored · updated_at 2026-07-16T18:35:15.236693+00:00.
 LOCAL_ARM_TERMINATED: true · STG package disarmed.
-Next: Commit/Push → G-20u44c §D Rollback SQL + §E verify (operator).```
+PERMISSION_ROLLBACK_COMPLETED: true · production changed: false.
+Next: Commit/Push → next CMS feature development.```
 
 ## G-20u44-gosaki-discography-controlled-save-round-trip — complete
 
@@ -20,7 +21,10 @@ Next: Commit/Push → G-20u44c §D Rollback SQL + §E verify (operator).```
 - **Termination:** local dev stopped · no env arm · STG disarmed
 - **Gates:** CONTROLLED_SAVE_* all **true** · LOCAL_ARM_TERMINATED **true**
 - **Not done by Cursor:** Save clicks · SQL · rollback
-- **Next:** Commit/Push → G-20u44c §D/E permission rollback
+- **Permission closure:** §D rollback success · corrected §E PASS · authenticated label/table UPDATE 0 · anon writes 0 · restrictive policy 0
+- **Gates:** PERMISSION_ROLLBACK_COMPLETED **true** · VERIFICATION_PERMISSION_CLOSED **true**
+- **Rollback side effects:** DB data write **false** · Save request **false** · production changed **false**
+- **Next:** Commit/Push → next CMS feature development
 
 ## G-20u44c-gosaki-discography-label-permission-enablement-prep — complete
 
@@ -29,8 +33,11 @@ Next: Commit/Push → G-20u44c §D Rollback SQL + §E verify (operator).```
 - **Root cause:** G-20u44b Class **B** — `authenticated` lacks `UPDATE(label)` on `public.discography`; secondary RESTRICTIVE policy needed
 - **Policy:** `discography_g20u43_label_update_restrict` · `gosaki-piano` / `discography-004` / two allowlisted labels
 - **Staging only:** `kmjqppxjdnwwrtaeqjta` · production `vsbvndwuajjhnzpohghh` STOP
-- **Not done:** SQL execution · GRANT/REVOKE · CREATE/DROP POLICY · Save retry
-- **Next:** Commit/Push → operator runs §A preflight SELECT → ChatGPT review → (later) apply
+- **Operator lifecycle:** apply completed for round-trip; §D rollback success; corrected §E verification PASS
+- **Final grants/policy:** authenticated label UPDATE 0 · authenticated table UPDATE 0 · anon table/label write 0 · restrictive policy 0
+- **Final data:** label restored · `updated_at` `2026-07-16T18:35:15.236693+00:00` · 4 releases · 34 tracks
+- **VERIFICATION_PERMISSION_CLOSED:** **true**
+- **Next:** Commit/Push → next CMS feature development
 
 ## G-20u44a-gosaki-discography-local-controlled-save-wiring-fix — complete
 

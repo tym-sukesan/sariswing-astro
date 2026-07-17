@@ -27,6 +27,7 @@ const TARGET_LEGACY_ID = "discography-004";
 const BASELINE_LABEL = "Mardi Gras JAPAN Records";
 const TEMPORARY_LABEL = "[CMS Kit staging] G-20u42 label PoC";
 const BASELINE_UPDATED_AT = "2026-07-10T05:59:35.138671+00:00";
+const FINAL_UPDATED_AT = "2026-07-16T18:35:15.236693+00:00";
 
 let passed = 0;
 let failed = 0;
@@ -293,6 +294,23 @@ assert(
     rollbackSqlExec,
   ),
 );
+assert(
+  "post-rollback SQL uses round-trip final updated_at",
+  postRollbackSql.includes(FINAL_UPDATED_AT) &&
+    !postRollbackSql.includes(BASELINE_UPDATED_AT),
+);
+assert(
+  "post-rollback SQL verifies corrected grant metrics",
+  postRollbackSql.includes("authenticated_label_update_count") &&
+    postRollbackSql.includes("authenticated_table_update_count") &&
+    postRollbackSql.includes("anon_table_write_count") &&
+    postRollbackSql.includes("anon_label_update_count"),
+);
+assert(
+  "post-rollback SQL verifies final counts",
+  postRollbackSql.includes("release_count") &&
+    postRollbackSql.includes("track_count"),
+);
 
 assert(
   "package.json verify script",
@@ -342,6 +360,33 @@ assert(
 assert(
   "handoff G-20u44 round-trip",
   handoff.includes("G-20u44-gosaki-discography-controlled-save-round-trip"),
+);
+assert(
+  "doc PERMISSION_ROLLBACK_COMPLETED true",
+  doc.includes("PERMISSION_ROLLBACK_COMPLETED: true"),
+);
+assert(
+  "doc VERIFICATION_PERMISSION_CLOSED true",
+  doc.includes("VERIFICATION_PERMISSION_CLOSED: true"),
+);
+assert(
+  "doc rollback final metrics",
+  doc.includes("AUTHENTICATED_LABEL_UPDATE_REVOKED: true") &&
+    doc.includes("AUTHENTICATED_TABLE_UPDATE_REMAINS_DENIED: true") &&
+    doc.includes("ANON_UPDATE_REMAINS_DENIED: true") &&
+    doc.includes("RESTRICTIVE_POLICY_REMOVED: true"),
+);
+assert(
+  "doc rollback no data write or Save",
+  doc.includes("DB_DATA_WRITE_EXECUTED_DURING_ROLLBACK: false") &&
+    doc.includes("SAVE_REQUEST_EXECUTED_DURING_ROLLBACK: false"),
+);
+assert("doc production unchanged", doc.includes("PRODUCTION_CHANGED: false"));
+assert(
+  "AI context verification permission closed",
+  currentState.includes("VERIFICATION_PERMISSION_CLOSED: true") &&
+    nextActions.includes("VERIFICATION_PERMISSION_CLOSED: true") &&
+    handoff.includes("VERIFICATION_PERMISSION_CLOSED: true"),
 );
 
 assert(

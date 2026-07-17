@@ -609,7 +609,7 @@ COMMIT;
 
 ## E. Post-rollback verification SELECT-only SQL
 
-**Status:** prepared · **未実行**
+**Status:** operator executed · **PASS** (corrected verification)
 
 ```sql
 -- G-20u44c label permission POST-ROLLBACK verify (SELECT-ONLY) — NOT EXECUTED in sql-prep phase
@@ -621,7 +621,7 @@ WITH params AS (
     'gosaki-piano'::text AS target_site_slug,
     'discography-004'::text AS target_legacy_id,
     'Mardi Gras JAPAN Records'::text AS baseline_label,
-    '2026-07-10T05:59:35.138671+00:00'::timestamptz AS baseline_updated_at,
+    '2026-07-16T18:35:15.236693+00:00'::timestamptz AS final_updated_at,
     4::int AS expected_release_count,
     34::int AS expected_track_count,
     (now() AT TIME ZONE 'utc')::timestamptz AS captured_at
@@ -651,24 +651,41 @@ target_release AS (
 checks AS (
   SELECT
     coalesce((SELECT grant_count FROM column_grants WHERE grantee = 'authenticated'), 0) AS auth_label_grant,
+    coalesce((SELECT grant_count FROM table_grants
+      WHERE grantee = 'authenticated' AND privilege_type = 'UPDATE'), 0) AS auth_table_update,
     coalesce((SELECT sum(grant_count) FROM table_grants WHERE grantee = 'anon'), 0) AS anon_write,
+    coalesce((SELECT grant_count FROM column_grants WHERE grantee = 'anon'), 0) AS anon_label_update,
     (SELECT count(*) FROM pg_policies pol CROSS JOIN params p
       WHERE pol.schemaname = 'public' AND pol.tablename = 'discography'
         AND pol.policyname = p.restrictive_policy_name) AS policy_count,
     (SELECT label FROM target_release) AS label,
-    (SELECT updated_at FROM target_release) AS updated_at
+    (SELECT updated_at FROM target_release) AS updated_at,
+    (SELECT count(*)::int FROM public.discography d CROSS JOIN params p
+      WHERE d.site_slug = p.target_site_slug) AS release_count,
+    (SELECT count(*)::int FROM public.discography_tracks t CROSS JOIN params p
+      WHERE t.site_slug = p.target_site_slug) AS track_count
 )
 SELECT
   (SELECT phase FROM params) AS phase,
   (SELECT captured_at FROM params) AS captured_at,
-  c.auth_label_grant AS authenticated_label_update_column_grants_count,
-  c.anon_write AS anon_write_grants_count,
+  c.auth_label_grant AS authenticated_label_update_count,
+  c.auth_table_update AS authenticated_table_update_count,
+  c.anon_write AS anon_table_write_count,
+  c.anon_label_update AS anon_label_update_count,
   c.policy_count AS restrictive_policy_count,
   c.label AS target_label,
   c.updated_at AS target_updated_at,
-  CASE WHEN c.auth_label_grant = 0 AND c.anon_write = 0 AND c.policy_count = 0
+  c.release_count,
+  c.track_count,
+  CASE WHEN c.auth_label_grant = 0
+    AND c.auth_table_update = 0
+    AND c.anon_write = 0
+    AND c.anon_label_update = 0
+    AND c.policy_count = 0
     AND c.label = (SELECT baseline_label FROM params)
-    AND c.updated_at = (SELECT baseline_updated_at FROM params)
+    AND c.updated_at = (SELECT final_updated_at FROM params)
+    AND c.release_count = (SELECT expected_release_count FROM params)
+    AND c.track_count = (SELECT expected_track_count FROM params)
     THEN 'PASS' ELSE 'FAIL' END AS post_rollback_status
 FROM checks c;
 ```
@@ -769,4 +786,40 @@ LOCAL_ARM_TERMINATED: true
 CONTROLLED_SAVE_ROUND_TRIP_COMPLETED: true
 ```
 
-**Next:** Commit/Push → operator runs **§D Rollback SQL** + **§E Post-rollback verification** to close verification-only permission.
+**Next:** Commit/Push → next CMS feature development.
+
+---
+
+## G-20u44c permission rollback result (operator — complete)
+
+**Target:** `static-to-astro-cms-staging` · `kmjqppxjdnwwrtaeqjta`
+**§D Rollback SQL:** success · no rows returned
+**§E corrected post-rollback verification:** **PASS**
+
+| Metric | Result |
+| --- | --- |
+| authenticated label UPDATE | **0** |
+| authenticated table UPDATE | **0** |
+| anon table write | **0** |
+| anon label UPDATE | **0** |
+| restrictive policy count | **0** |
+| final label | `Mardi Gras JAPAN Records` |
+| final `updated_at` | `2026-07-16T18:35:15.236693+00:00` |
+| releases / tracks | **4** / **34** |
+| post-rollback status | **PASS** |
+
+```txt
+PERMISSION_ROLLBACK_COMPLETED: true
+AUTHENTICATED_LABEL_UPDATE_REVOKED: true
+AUTHENTICATED_TABLE_UPDATE_REMAINS_DENIED: true
+ANON_UPDATE_REMAINS_DENIED: true
+RESTRICTIVE_POLICY_REMOVED: true
+FINAL_LABEL_RESTORED: true
+FINAL_UPDATED_AT_VERIFIED: true
+OTHER_DATA_UNCHANGED: true
+CONTROLLED_SAVE_ROUND_TRIP_COMPLETED: true
+VERIFICATION_PERMISSION_CLOSED: true
+DB_DATA_WRITE_EXECUTED_DURING_ROLLBACK: false
+SAVE_REQUEST_EXECUTED_DURING_ROLLBACK: false
+PRODUCTION_CHANGED: false
+```

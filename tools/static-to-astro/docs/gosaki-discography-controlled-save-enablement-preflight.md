@@ -400,4 +400,27 @@ LOCAL_ARM_TERMINATED: true
 CONTROLLED_SAVE_ROUND_TRIP_COMPLETED: true
 ```
 
-**Next:** Commit/Push → operator runs G-20u44c §D Rollback SQL + §E post-rollback verification.
+### Permission rollback closure (operator)
+
+G-20u44c §D rollback succeeded on staging; corrected §E verification returned **PASS**.
+
+```txt
+PERMISSION_ROLLBACK_COMPLETED: true
+AUTHENTICATED_LABEL_UPDATE_REVOKED: true
+AUTHENTICATED_TABLE_UPDATE_REMAINS_DENIED: true
+ANON_UPDATE_REMAINS_DENIED: true
+RESTRICTIVE_POLICY_REMOVED: true
+FINAL_LABEL_RESTORED: true
+FINAL_UPDATED_AT_VERIFIED: true
+OTHER_DATA_UNCHANGED: true
+CONTROLLED_SAVE_ROUND_TRIP_COMPLETED: true
+VERIFICATION_PERMISSION_CLOSED: true
+DB_DATA_WRITE_EXECUTED_DURING_ROLLBACK: false
+SAVE_REQUEST_EXECUTED_DURING_ROLLBACK: false
+PRODUCTION_CHANGED: false
+```
+
+Final post-rollback state: label `Mardi Gras JAPAN Records` · `updated_at`
+`2026-07-16T18:35:15.236693+00:00` · releases **4** · tracks **34**.
+
+**Next:** Commit/Push → next CMS feature development.

@@ -187,4 +187,23 @@ LOCAL_ARM_TERMINATED: true
 CONTROLLED_SAVE_ROUND_TRIP_COMPLETED: true
 ```
 
-**Next:** Commit/Push → G-20u44c §D Rollback SQL + §E post-rollback verification (operator).
+### G-20u44c permission rollback closure (operator)
+
+§D rollback succeeded; corrected §E verification returned **PASS**. The
+`authenticated` label UPDATE grant and G-20u43 RESTRICTIVE policy are removed;
+table-wide authenticated UPDATE and anon UPDATE remain denied.
+
+```txt
+PERMISSION_ROLLBACK_COMPLETED: true
+AUTHENTICATED_LABEL_UPDATE_REVOKED: true
+RESTRICTIVE_POLICY_REMOVED: true
+VERIFICATION_PERMISSION_CLOSED: true
+FINAL_LABEL_RESTORED: true
+FINAL_UPDATED_AT_VERIFIED: true
+CONTROLLED_SAVE_ROUND_TRIP_COMPLETED: true
+PRODUCTION_CHANGED: false
+```
+
+Final `updated_at`: `2026-07-16T18:35:15.236693+00:00`.
+
+**Next:** Commit/Push → next CMS feature development.

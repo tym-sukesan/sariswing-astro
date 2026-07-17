@@ -5,12 +5,13 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u45 Schedule HTTP dry-run Edge + STG client — source complete (not deployed).
-EDGE: gosaki-schedule-save-dry-run · dryRun only · save→403 · user JWT · staging-only.
-NETWORK_DRY_RUN_CLIENT_WIRED: true · SCHEDULE_SAVE_DEFAULT_DISABLED: true.
-REAL_EDGE_DEPLOY_EXECUTED: false · REAL_DRY_RUN_REQUEST_EXECUTED: false.
-SAVE_REQUEST_EXECUTED: false · DB_WRITE_EXECUTED: false.
-Next: Commit/Push → staging Edge deploy ×1 → fresh package · FTP → operator edit/create dry-run ×1.
+Current phase: G-20u45 Schedule HTTP dry-run Edge + STG client — STG edit/create verified.
+EDGE: gosaki-schedule-save-dry-run ACTIVE v1 · package ceba4828317098b57f752c7483a949111d210a02.
+EDIT_DRY_RUN: HTTP 200 · exact lock verified · changedFields venue.
+CREATE_DRY_RUN: HTTP 200 · no id/legacyId/lock · 8 fields · published=false.
+AUTH: user JWT + is_admin verified · didWrite/dbWrite/networkWrite=false · Save disabled.
+SAVE_REQUEST_EXECUTED: false · DB_WRITE_EXECUTED: false · PRODUCTION_CHANGED: false.
+Next: Commit/Push → edit/create Saveを単一実装単位で実装+mock検証 → staging Edge deploy+controlled round-trip ×1.
 ```
 
 ## G-20u45-gosaki-schedule-operational-edit-ui-wiring — complete (+ lock fix)

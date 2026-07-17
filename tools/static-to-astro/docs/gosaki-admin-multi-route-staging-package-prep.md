@@ -305,7 +305,7 @@ SAVE_REQUEST_EXECUTED: false
 DB_WRITE_EXECUTED: false
 ```
 
-### G-20u45 follow-up — Schedule HTTP dry-run Edge + STG client wiring (source · not deployed)
+### G-20u45 follow-up — Schedule HTTP dry-run Edge + STG client wiring (STG verified)
 
 Single endpoint: `gosaki-schedule-save-dry-run` (edit+create) · `operation=dryRun` only · `operation=save` → 403.
 
@@ -318,18 +318,28 @@ Single endpoint: `gosaki-schedule-save-dry-run` (edit+create) · `operation=dryR
 | Create | G-22e · `date` YYYY-MM-DD · `published=false` · no id/legacyId/lock |
 | Staging | `kmjqppxjdnwwrtaeqjta` allow · `vsbvndwuajjhnzpohghh` STOP |
 | Client | click-only fetch · fail-closed auth/lock · Save stays disabled |
-| Deploy | **not executed** · real HTTP dry-run **not executed** |
+| STG | `gosaki-schedule-save-dry-run` **ACTIVE v1** · package `ceba4828317098b57f752c7483a949111d210a02` |
+| Edit dry-run | HTTP 200 · target `55a30b3c-1cde-4738-bf94-ebd3ac2f9ee8` / `schedule-2026-08-019` · lock `2026-07-09T05:38:52.999274+00:00` · changedFields `venue` |
+| Create dry-run | HTTP 200 · no id/legacyId/lock · changedFields `date,title,venue,open_time,start_time,price,description,published` · `date=2026-12-31` · `published=false` |
+| Write safety | edit/create both `didWrite=false` · `dbWrite=false` · `networkWrite=false` · `saveEnabled=false` |
 
 ```txt
 NETWORK_DRY_RUN_CLIENT_WIRED: true
 EDIT_DRY_RUN_IMPLEMENTED: true
 CREATE_DRY_RUN_IMPLEMENTED: true
 SAVE_OPERATION_REJECTED: true
-REAL_EDGE_DEPLOY_EXECUTED: false
-REAL_DRY_RUN_REQUEST_EXECUTED: false
+SCHEDULE_EDIT_ENDPOINT_DRY_RUN_PASSED: true
+SCHEDULE_CREATE_ENDPOINT_DRY_RUN_PASSED: true
+SCHEDULE_EDIT_LOCK_VERIFIED: true
+SCHEDULE_CREATE_PAYLOAD_VERIFIED: true
+SCHEDULE_USER_JWT_AUTH_VERIFIED: true
+SCHEDULE_ADMIN_GATE_VERIFIED: true
 SCHEDULE_SAVE_DEFAULT_DISABLED: true
+SAVE_REQUEST_EXECUTED: false
+DB_WRITE_EXECUTED: false
+PRODUCTION_CHANGED: false
 ```
 
 ## Recommended next
 
-Commit / Push → ChatGPT review → staging Edge deploy（`gosaki-schedule-save-dry-run` ×1）→ fresh package · manual FTP → operator が edit/create network dry-run を各1回.
+Commit / Push → Schedule edit/create Save を1実装単位で進める。現在の単一 endpoint に exact-gated `operation=save` を追加し、user JWT + `is_admin()`・service_role 不使用を維持する。edit は optimistic lock 付き UPDATE、create は `published=false` 固定 INSERT、Save UI は通常 disabled・local arm 時のみ有効。実装+mock 検証を1回、staging Edge deploy+controlled round-trip を1回行う。フィールド別・edit/create別には分割しない。

@@ -1,15 +1,17 @@
 Last updated: 2026-07-17
 Project: Static-to-Astro CMS / Musician CMS Kit
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u45 Schedule HTTP dry-run Edge + client — source done (deploy pending)
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u45 Schedule HTTP dry-run Edge + client — STG verified
 
 | Item | Value |
 |------|-------|
-| Endpoint | `gosaki-schedule-save-dry-run` (edit+create) |
+| Endpoint | `gosaki-schedule-save-dry-run` ACTIVE v1 (edit+create dry-run) |
+| Package | `ceba4828317098b57f752c7483a949111d210a02` |
 | NETWORK_DRY_RUN_CLIENT_WIRED | **true** |
-| REAL_EDGE_DEPLOY_EXECUTED | **false** |
-| REAL_DRY_RUN_REQUEST_EXECUTED | **false** |
-| Next | Commit/Push → staging Edge deploy ×1 → package · FTP → operator dry-run ×1 each |
+| SCHEDULE_EDIT_ENDPOINT_DRY_RUN_PASSED | **true** (HTTP 200 · lock verified · changedFields `venue`) |
+| SCHEDULE_CREATE_ENDPOINT_DRY_RUN_PASSED | **true** (HTTP 200 · no lock · 8 fields · `published=false`) |
+| Write safety | `didWrite/dbWrite/networkWrite=false` · Save disabled · no DB write/production change |
+| Next | Commit/Push → edit/create Saveを単一実装単位で実装+mock検証 → staging Edge deploy+controlled round-trip ×1 |
 
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u45-gosaki-schedule-operational-edit-ui-wiring — complete (source)
 

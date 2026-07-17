@@ -5,6 +5,6 @@
 
 export const GOSAKI_YOUTUBE_STAGING_CURRENT = {
   itemId: "yt-placeholder-01",
-  embedCode: "https://www.youtube.com/watch?v=Ke4F8JAQz-I",
-  videoId: "Ke4F8JAQz-I",
+  embedCode: "https://youtu.be/I-eY9YMq9GI",
+  videoId: "I-eY9YMq9GI",
 } as const;

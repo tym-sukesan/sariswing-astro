@@ -23,11 +23,20 @@ export const G11C4A_STAGING_PROJECT_REF = "kmjqppxjdnwwrtaeqjta";
 export const G11C4A_STAGING_SUPABASE_URL = `https://${G11C4A_STAGING_PROJECT_REF}.supabase.co`;
 export const G11C4A_STAGING_DRY_RUN_ENDPOINT = `${G11C4A_STAGING_SUPABASE_URL}/functions/v1/gosaki-youtube-url-dry-run`;
 export const G11C6A_STAGING_SAVE_ENDPOINT = `${G11C4A_STAGING_SUPABASE_URL}/functions/v1/gosaki-youtube-url-save`;
+/** G-11c1 dry-run approval / operation (exact — do not alias). */
+export const G11C1_OPERATION_ID = "G-11c1-gosaki-youtube-url-web-save-dry-run-poc";
+export const G11C1_APPROVAL_ID = "G-11c1-youtube-url-dry-run";
+export const G11C1_MODULE = "youtube-embed";
+export const G11C1_FIELD = "embedCode";
+
 export const G11C6_OPERATION_ID = "G-11c6-gosaki-youtube-url-web-save-non-dry-run-slice";
 export const G11C6_APPROVAL_ID = "G-11c6-gosaki-youtube-url-web-save-non-dry-run-slice";
 export const G11C6_SAVE_ENABLED_DEFAULT = false as const;
+export const G11C6_SAVE_UI_ARMED_ENV = "PUBLIC_ADMIN_GOSAKI_YOUTUBE_URL_WEB_SAVE_NON_DRY_RUN_ARMED";
 export const G11C6_SAVE_DISABLED_REASON =
-  "G-11c6a: Save は無効です。dry-run 成功後も env arm / operator approval / Edge deploy が必要です。";
+  "Save は無効です。通常 STG package では常に無効。controlled arm · dry-run 成功 · fingerprint 一致が必要です。";
+export const G11C6_CONFLICT_MESSAGE =
+  "他の場所で更新された可能性があります。再読み込みしてください。";
 
 /** G-20u28 — staging read-only admin dashboard foundation polish. */
 export const G20U28_ADMIN_UI_PHASE = "G-20u28-gosaki-admin-ui-foundation-polish";
@@ -1138,6 +1147,209 @@ export function resolveG11c6aSaveEndpoint(env: ImportMetaEnv): string {
 
 export function isG11c6aSaveEnabled(env: ImportMetaEnv): boolean {
   return String(env.PUBLIC_ADMIN_GOSAKI_YOUTUBE_URL_WEB_SAVE_NON_DRY_RUN_ARMED ?? "").trim() === "true";
+}
+
+export function assertGosakiYoutubeDryRunEndpointSafe(endpoint: string): boolean {
+  const trimmed = String(endpoint ?? "").trim();
+  if (!trimmed) return false;
+  if (trimmed.includes(G20U36C_PRODUCTION_PROJECT_REF_STOP)) return false;
+  if (!trimmed.includes(G11C4A_STAGING_PROJECT_REF)) return false;
+  return trimmed.includes("/functions/v1/gosaki-youtube-url-dry-run");
+}
+
+export function assertGosakiYoutubeSaveEndpointSafe(endpoint: string): boolean {
+  const trimmed = String(endpoint ?? "").trim();
+  if (!trimmed) return false;
+  if (trimmed.includes(G20U36C_PRODUCTION_PROJECT_REF_STOP)) return false;
+  if (!trimmed.includes(G11C4A_STAGING_PROJECT_REF)) return false;
+  return trimmed.includes("/functions/v1/gosaki-youtube-url-save");
+}
+
+export function buildYoutubeDryRunEndpointRequest(nextValue: string): Record<string, unknown> {
+  return {
+    siteSlug: GOSAKI_STAGING_SITE_SLUG,
+    module: G11C1_MODULE,
+    field: G11C1_FIELD,
+    nextValue: String(nextValue ?? "").trim(),
+    dryRun: true,
+    operationId: G11C1_OPERATION_ID,
+    approvalId: G11C1_APPROVAL_ID,
+  };
+}
+
+export function buildYoutubeSaveEndpointRequest(input: {
+  nextValue: string;
+  expectedBefore: { embedCode: string; videoId?: string | null };
+}): Record<string, unknown> {
+  return {
+    siteSlug: GOSAKI_STAGING_SITE_SLUG,
+    module: G11C1_MODULE,
+    field: G11C1_FIELD,
+    nextValue: String(input.nextValue ?? "").trim(),
+    dryRun: false,
+    saveEnabled: true,
+    operationId: G11C6_OPERATION_ID,
+    approvalId: G11C6_APPROVAL_ID,
+    expectedBefore: {
+      embedCode: String(input.expectedBefore.embedCode ?? "").trim(),
+      videoId:
+        input.expectedBefore.videoId == null
+          ? null
+          : String(input.expectedBefore.videoId).trim() || null,
+    },
+  };
+}
+
+export type YoutubeOperationalSaveGateInput = {
+  authenticated: boolean;
+  dryRunSucceeded: boolean;
+  formMatchesDryRunSnapshot: boolean;
+  expectedBeforeEmbed: string | null;
+  expectedBeforeVideoId: string | null;
+  saveEndpointConfigured: boolean;
+  saveEndpointSafe: boolean;
+  envArmed: boolean;
+  approvalId: string;
+  expectedApprovalId: string;
+  saveInFlight: boolean;
+};
+
+export function evaluateYoutubeOperationalSaveGate(
+  input: YoutubeOperationalSaveGateInput,
+): { enabled: boolean; reason: string } {
+  if (input.saveInFlight) {
+    return { enabled: false, reason: "保存処理中です…" };
+  }
+  if (!input.authenticated) {
+    return { enabled: false, reason: "ログインが必要です" };
+  }
+  if (!input.dryRunSucceeded) {
+    return { enabled: false, reason: "先に「変更を確認」（dry-run）を成功させてください" };
+  }
+  if (!input.formMatchesDryRunSnapshot) {
+    return {
+      enabled: false,
+      reason: "dry-run 後に内容が変わりました。再度「変更を確認」してください",
+    };
+  }
+  const embed = String(input.expectedBeforeEmbed ?? "").trim();
+  if (!embed) {
+    return { enabled: false, reason: "content lock（expectedBefore.embedCode）がありません" };
+  }
+  if (!input.saveEndpointConfigured || !input.saveEndpointSafe) {
+    return { enabled: false, reason: "Save endpoint が未設定またはブロックされています" };
+  }
+  if (!input.envArmed) {
+    return {
+      enabled: false,
+      reason: `env arm（${G11C6_SAVE_UI_ARMED_ENV}）が無効です`,
+    };
+  }
+  const candidateApprovalId = String(input.approvalId ?? "").trim();
+  const expectedApprovalId = String(input.expectedApprovalId ?? "").trim();
+  if (!candidateApprovalId) {
+    return { enabled: false, reason: "approval ID が空です" };
+  }
+  if (!expectedApprovalId) {
+    return { enabled: false, reason: "expected approval ID が未設定です" };
+  }
+  if (candidateApprovalId !== expectedApprovalId) {
+    return { enabled: false, reason: "approval ID が一致しません" };
+  }
+  if (expectedApprovalId !== G11C6_APPROVAL_ID) {
+    return { enabled: false, reason: "expected approval ID が不正です" };
+  }
+  return { enabled: true, reason: "保存できます（operator 明示操作のみ）" };
+}
+
+export function isYoutubeSaveConflictResponse(body: unknown): boolean {
+  const data = (body && typeof body === "object" ? body : {}) as Record<string, unknown>;
+  const readiness = String(data.saveReadiness ?? "").toLowerCase();
+  const error = String(data.error ?? "").toLowerCase();
+  const message = String(data.message ?? "").toLowerCase();
+  return (
+    readiness === "conflict" ||
+    /expectedbefore|conflict|stale|already changed/.test(`${error} ${message}`)
+  );
+}
+
+export type YoutubeEndpointDisplay = {
+  httpStatus?: number;
+  ok?: boolean;
+  dryRun?: boolean;
+  wouldWrite?: boolean;
+  changedFields?: string[];
+  current?: { embedCode?: string; videoId?: string | null };
+  next?: { embedCode?: string; videoId?: string | null };
+  error?: string;
+  errors: string[];
+  saveReadiness?: string;
+  didWrite: boolean;
+  dbWrite: boolean;
+  networkWrite: boolean;
+  saveEnabled: boolean;
+  authIssue?: boolean;
+  unsafeWriteFlags?: boolean;
+  fetchError?: string;
+  noChange?: boolean;
+};
+
+function youtubeUnsafeWriteFlags(data: Record<string, unknown>): boolean {
+  return (
+    data.wouldWrite === true ||
+    data.didWrite === true ||
+    data.dbWrite === true ||
+    data.networkWrite === true ||
+    data.workflowDispatchExecuted === true
+  );
+}
+
+export function sanitizeYoutubeDryRunEndpointDisplay(
+  body: unknown,
+  httpStatus?: number,
+): YoutubeEndpointDisplay {
+  const data = (body && typeof body === "object" ? body : {}) as Record<string, unknown>;
+  const error = typeof data.error === "string" ? data.error : undefined;
+  const errors = error ? [error] : [];
+  const unsafe = youtubeUnsafeWriteFlags(data);
+  return {
+    httpStatus,
+    ok: data.ok === true && !unsafe && errors.length === 0,
+    dryRun: data.dryRun === true,
+    wouldWrite: data.wouldWrite === true,
+    changedFields: Array.isArray(data.changedFields) ? data.changedFields.map(String) : [],
+    current:
+      data.current && typeof data.current === "object"
+        ? (data.current as YoutubeEndpointDisplay["current"])
+        : undefined,
+    next:
+      data.next && typeof data.next === "object"
+        ? (data.next as YoutubeEndpointDisplay["next"])
+        : undefined,
+    error,
+    errors,
+    saveReadiness: typeof data.saveReadiness === "string" ? data.saveReadiness : undefined,
+    didWrite: false,
+    dbWrite: false,
+    networkWrite: false,
+    saveEnabled: false,
+    authIssue: httpStatus === 401 || httpStatus === 403,
+    unsafeWriteFlags: unsafe,
+    noChange: data.noChange === true,
+  };
+}
+
+export function sanitizeYoutubeSaveEndpointDisplay(
+  body: unknown,
+  httpStatus?: number,
+): YoutubeEndpointDisplay {
+  const base = sanitizeYoutubeDryRunEndpointDisplay(body, httpStatus);
+  const data = (body && typeof body === "object" ? body : {}) as Record<string, unknown>;
+  return {
+    ...base,
+    dryRun: data.dryRun === false ? false : base.dryRun,
+    ok: data.ok === true && !base.unsafeWriteFlags && base.errors.length === 0,
+  };
 }
 
 export function resolveG11c4aSupabaseUrl(env: ImportMetaEnv): string {

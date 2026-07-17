@@ -184,6 +184,7 @@ const showClientScript = page !== "portal";
     data-g11c6-operation-id={G11C6_OPERATION_ID}
     data-g11c6-approval-id={G11C6_APPROVAL_ID}
     data-g11c6-save-enabled={saveEnabled ? "true" : "false"}
+    data-gosaki-youtube-save-armed={saveEnabled ? "true" : "false"}
   >
         <div class="gosaki-read-only-admin__shell">
       <header class="gosaki-read-only-admin__header">
@@ -318,107 +319,151 @@ const showClientScript = page !== "portal";
 
         {page === "youtube" ? (
           <>
-<section class="gosaki-read-only-admin__section" aria-labelledby="gra-youtube" data-gosaki-youtube-content="true">
-          <h2 id="gra-youtube">YouTube Embed</h2>
-          <div class="gosaki-read-only-admin__field">
-            <label for="gra-youtube-url">YouTube URL / embedCode</label>
-            <textarea id="gra-youtube-url" readonly>{view.youtube.sourceUrl}</textarea>
-          </div>
-          <div class="gosaki-read-only-admin__field">
-            <label for="gra-youtube-videoid">videoId</label>
-            <input id="gra-youtube-videoid" type="text" readonly value={view.youtube.videoId ?? "—"} />
-          </div>
-          <p class="gosaki-read-only-admin__meta">
-            published: {view.youtube.published ? "true" : "false"}
-          </p>
-          {view.youtube.videoId ? (
-            <div class="gosaki-youtube-content-preview" data-gosaki-youtube-preview="true">
-              <iframe
-                title="YouTube preview"
-                src={`https://www.youtube-nocookie.com/embed/${view.youtube.videoId}`}
-                loading="lazy"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowfullscreen
-              />
-            </div>
-          ) : null}
-
-          <div class="gosaki-read-only-admin__dry-run" id="gra-youtube-dry-run" data-section="youtube-dry-run">
-            <h3 class="gosaki-read-only-admin__meta">Dry-run（保存前チェック — JSON は書き換えません）</h3>
-            <p
-              class:list={[
-                "gosaki-read-only-admin__meta",
-                endpointConfigured
-                  ? "gosaki-read-only-admin__meta--ok"
-                  : "gosaki-read-only-admin__meta--warn",
-              ]}
-              id="gra-youtube-endpoint-status"
+            <section
+              class="gosaki-read-only-admin__section"
+              aria-labelledby="gra-youtube"
+              data-gosaki-youtube-content="true"
+              data-gosaki-youtube-operational-edit="true"
+              id="gosaki-youtube-content"
             >
-              {
-                endpointConfigured
-                  ? `dry-run endpoint: configured (${dryRunEndpoint})`
-                  : "dry-run endpoint: not configured"
-              }
-            </p>
-            <div class="gosaki-read-only-admin__field">
-              <label for="gra-youtube-next-url">next YouTube URL</label>
-              <input
-                id="gra-youtube-next-url"
-                type="url"
-                inputmode="url"
-                autocomplete="off"
-                placeholder="https://www.youtube.com/watch?v=..."
-              />
-            </div>
-            <div class="gosaki-read-only-admin__actions">
-              <button
-                type="button"
-                id="gra-youtube-dry-run-btn"
-                class="gosaki-read-only-admin__btn gosaki-read-only-admin__btn--primary"
-                disabled
+              <h2 id="gra-youtube">YouTube Embed</h2>
+              <p class="gosaki-read-only-admin__meta" data-gosaki-youtube-status>
+                現在値を表示中 · 未保存変更なし
+              </p>
+              <div class="gosaki-read-only-admin__field">
+                <label>現在登録中の YouTube URL</label>
+                <p
+                  class="gosaki-youtube-url-break gosaki-read-only-admin__current-url"
+                  data-gosaki-youtube-current-display
+                >
+                  {view.youtube.sourceUrl}
+                </p>
+              </div>
+              <div class="gosaki-read-only-admin__field">
+                <label for="gra-youtube-videoid">videoId</label>
+                <input
+                  id="gra-youtube-videoid"
+                  type="text"
+                  readonly
+                  data-gosaki-youtube-current-videoid
+                  value={view.youtube.videoId ?? "—"}
+                />
+              </div>
+              <p class="gosaki-read-only-admin__meta">
+                published: {view.youtube.published ? "true" : "false"}
+              </p>
+              {view.youtube.videoId ? (
+                <div class="gosaki-youtube-content-preview" data-gosaki-youtube-preview="true">
+                  <iframe
+                    title="YouTube preview"
+                    src={`https://www.youtube-nocookie.com/embed/${view.youtube.videoId}`}
+                    loading="lazy"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen
+                  />
+                </div>
+              ) : null}
+
+              <form
+                class="gosaki-read-only-admin__dry-run"
+                id="gra-youtube-dry-run"
+                data-section="youtube-dry-run"
+                data-gosaki-youtube-operational-form
               >
-                Dry-run（保存前チェック）
-              </button>
-            </div>
-            <pre
-              id="gra-youtube-dry-run-result"
-              class="gosaki-read-only-admin__dry-run-result"
-              aria-live="polite"
-            >（Dry-run 結果はここに表示されます — ok / dryRun / wouldWrite / changedFields / next.videoId）</pre>
-          </div>
+                <h3 class="gosaki-read-only-admin__meta">変更を確認 / Save（通常 package では Save 無効）</h3>
+                <p
+                  class:list={[
+                    "gosaki-read-only-admin__meta",
+                    endpointConfigured
+                      ? "gosaki-read-only-admin__meta--ok"
+                      : "gosaki-read-only-admin__meta--warn",
+                  ]}
+                  id="gra-youtube-endpoint-status"
+                >
+                  {
+                    endpointConfigured
+                      ? `dry-run endpoint: configured (${dryRunEndpoint})`
+                      : "dry-run endpoint: not configured"
+                  }
+                </p>
+                <div class="gosaki-read-only-admin__field">
+                  <label for="gra-youtube-next-url">新しい YouTube URL</label>
+                  <input
+                    id="gra-youtube-next-url"
+                    data-gosaki-youtube-next-url
+                    type="url"
+                    inputmode="url"
+                    autocomplete="off"
+                    placeholder="https://www.youtube.com/watch?v=... または https://youtu.be/..."
+                  />
+                </div>
+                <p
+                  class="gosaki-read-only-admin__meta"
+                  data-gosaki-youtube-local-validation
+                  aria-live="polite"
+                >
+                  URL を入力してください
+                </p>
+                <div class="gosaki-read-only-admin__actions">
+                  <button
+                    type="button"
+                    id="gra-youtube-dry-run-btn"
+                    data-gosaki-youtube-dry-run
+                    class="gosaki-read-only-admin__btn gosaki-read-only-admin__btn--primary"
+                    disabled
+                  >
+                    変更を確認
+                  </button>
+                  <button
+                    type="button"
+                    data-gosaki-youtube-cancel
+                    class="gosaki-read-only-admin__btn"
+                  >
+                    キャンセル（未保存を破棄）
+                  </button>
+                </div>
+                <div
+                  id="gra-youtube-dry-run-result"
+                  class="gosaki-read-only-admin__dry-run-result"
+                  data-gosaki-youtube-dry-run-result
+                  aria-live="polite"
+                  hidden
+                />
 
-          <div class="gosaki-read-only-admin__save" id="gra-youtube-save" data-section="youtube-save">
-            <h3 class="gosaki-read-only-admin__meta">Save（G-11c6a — 現在は無効）</h3>
-            <p class="gosaki-read-only-admin__meta gosaki-read-only-admin__meta--warn" id="gra-youtube-save-disabled-reason">
-              {G11C6_SAVE_DISABLED_REASON}
-            </p>
-            <div class="gosaki-read-only-admin__actions">
-              <button
-                type="button"
-                id="gra-youtube-save-btn"
-                class="gosaki-read-only-admin__btn"
-                disabled
-                title={G11C6_SAVE_DISABLED_REASON}
-              >
-                Save（無効 — G-11c6a）
-              </button>
-            </div>
-          </div>
-        </section>
+                <div class="gosaki-read-only-admin__save" id="gra-youtube-save" data-section="youtube-save">
+                  <h3 class="gosaki-read-only-admin__meta">Save</h3>
+                  <p
+                    class="gosaki-read-only-admin__meta gosaki-read-only-admin__meta--warn"
+                    id="gra-youtube-save-disabled-reason"
+                    data-gosaki-youtube-save-reason
+                  >
+                    {G11C6_SAVE_DISABLED_REASON}
+                  </p>
+                  <div class="gosaki-read-only-admin__actions">
+                    <button
+                      type="button"
+                      id="gra-youtube-save-btn"
+                      data-gosaki-youtube-save
+                      class="gosaki-read-only-admin__btn"
+                      disabled
+                      aria-disabled="true"
+                      data-gosaki-save-allowed="false"
+                      title={G11C6_SAVE_DISABLED_REASON}
+                    >
+                      更新する（無効）
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </section>
 
-
-                        <AdminGosakiStagingCompactAuthBar
+            <AdminGosakiStagingCompactAuthBar
               supabaseAuthConfigured={supabaseAuthConfigured}
               probePhase={G20U36E_ADMIN_PROBE_UI_TOOLS_DRAFT_PHASE}
               probeNote={G20U36E_ADMIN_PROBE_NOTE}
               probeButtonLabel={G20U36E_ADMIN_PROBE_BUTTON_LABEL}
-              purposeNote="YouTube dry-run 実行時のみログインが必要です。"
+              purposeNote="YouTube dry-run / Save 実行時のみログインが必要です。"
             />
-
-<p class="gosaki-read-only-admin__meta" role="note" data-gosaki-save-disabled-note="true">
-          Save は無効です。公開反映は管理者が行います。
-        </p>
-
           </>
         ) : null}
 
@@ -458,9 +503,6 @@ const showClientScript = page !== "portal";
         // Auth wiring must not depend on YouTube dry-run DOM (G-20u36e login-blocked tools-draft)
         if (!body) return;
 
-        var btn = document.getElementById("gra-youtube-dry-run-btn");
-        var input = document.getElementById("gra-youtube-next-url");
-        var result = document.getElementById("gra-youtube-dry-run-result");
         var authStatus = document.getElementById("gra-auth-status");
         var authLoginForm = document.getElementById("gra-auth-login-form");
         var authSignedIn = document.getElementById("gra-auth-signed-in");
@@ -474,11 +516,6 @@ const showClientScript = page !== "portal";
         var supabaseAuthConfigured = body.dataset.gosakiSupabaseAuthConfigured === "true";
         var supabaseClient = null;
         var signedIn = false;
-
-        function showResult(obj) {
-          if (!result) return;
-          result.textContent = JSON.stringify(obj, null, 2);
-        }
 
         function resolveCreateClient() {
           var lib = window.supabase;
@@ -502,11 +539,6 @@ const showClientScript = page !== "portal";
             });
           }
           return supabaseClient;
-        }
-
-        function updateDryRunButton() {
-          if (!btn) return;
-          btn.disabled = !signedIn;
         }
 
         function updateLoginButton() {
@@ -535,7 +567,9 @@ const showClientScript = page !== "portal";
           if (authSignedIn) authSignedIn.hidden = false;
           updateLoginButton();
           updateSignOutButton();
-          updateDryRunButton();
+          try {
+            window.dispatchEvent(new CustomEvent("gosaki-admin-auth-changed", { detail: { signedIn: true } }));
+          } catch (_e) {}
         }
 
         function setAuthUiSignedOut(message) {
@@ -554,7 +588,9 @@ const showClientScript = page !== "portal";
           if (authSignedIn) authSignedIn.hidden = true;
           updateLoginButton();
           updateSignOutButton();
-          updateDryRunButton();
+          try {
+            window.dispatchEvent(new CustomEvent("gosaki-admin-auth-changed", { detail: { signedIn: false } }));
+          } catch (_e) {}
         }
 
         function waitForSupabaseClient(maxAttempts, delayMs) {
@@ -662,112 +698,7 @@ const showClientScript = page !== "portal";
         setTimeout(updateLoginButton, 1000);
 
         refreshAuthStatus();
-
-        if (btn && input && result) {
-          btn.addEventListener("click", function () {
-          if (!signedIn) {
-            showResult({
-              ok: false,
-              error: "auth_required",
-              message: "未ログイン — staging 管理者でログインしてから dry-run してください",
-            });
-            return;
-          }
-
-          var endpoint = (body.dataset.gosakiYoutubeDryRunEndpoint || "").trim();
-          var nextValue = String(input.value || "").trim();
-          if (!endpoint) {
-            showResult({
-              ok: false,
-              error: "dry-run endpoint not configured",
-              hint: "PUBLIC_GOSAKI_YOUTUBE_URL_DRY_RUN_ENDPOINT or G-11c4a staging default",
-            });
-            return;
-          }
-          if (!nextValue) {
-            showResult({ ok: false, error: "next YouTube URL is required" });
-            return;
-          }
-
-          var payload = {
-            siteSlug: "gosaki-piano",
-            module: "youtube-embed",
-            field: "embedCode",
-            nextValue: nextValue,
-            dryRun: true,
-            operationId: body.dataset.g11c1OperationId || "",
-            approvalId: body.dataset.g11c1ApprovalId || "",
-          };
-
-          var client = getSupabaseClient();
-          if (!client) {
-            showResult({
-              ok: false,
-              error: "auth_client_unavailable",
-              message: "Supabase JS の読み込みに失敗しました",
-            });
-            return;
-          }
-
-          btn.disabled = true;
-          result.textContent = "Dry-run リクエスト送信中…（保存されません）";
-
-          client.auth.getSession().then(function (sessionRes) {
-            var token = sessionRes.data && sessionRes.data.session && sessionRes.data.session.access_token;
-            if (!token) {
-              showResult({
-                ok: false,
-                error: "auth_required",
-                message: "未ログイン — staging 管理者でログインしてから dry-run してください",
-                httpStatus: 401,
-              });
-              setAuthUiSignedOut();
-              btn.disabled = true;
-              return;
-            }
-
-            var headers = { "Content-Type": "application/json", apikey: supabaseAnonKey };
-            headers.Authorization = "Bearer " + token;
-
-            fetch(endpoint, {
-              method: "POST",
-              headers: headers,
-              body: JSON.stringify(payload),
-            })
-              .then(function (res) {
-                return res
-                  .json()
-                  .then(function (data) {
-                    return { status: res.status, data: data };
-                  })
-                  .catch(function () {
-                    return { status: res.status, data: { error: "non-JSON response" } };
-                  });
-              })
-              .then(function (out) {
-                var bodyData = out.data || {};
-                showResult({
-                  httpStatus: out.status,
-                  ok: bodyData.ok,
-                  dryRun: bodyData.dryRun,
-                  wouldWrite: bodyData.wouldWrite,
-                  changedFields: bodyData.changedFields,
-                  next: bodyData.next,
-                  body: bodyData,
-                });
-              })
-              .catch(function (err) {
-                showResult({
-                  ok: false,
-                  error: "dry_run_request_failed",
-                });
-              })
-              .finally(function () {
-                updateDryRunButton();
-              });
-          });
-          });
-        }
+        // YouTube dry-run / Save: gosaki-staging-youtube-operational-edit (click-only · no page-load fetch)
       })();
     </script>
       </>
@@ -805,9 +736,20 @@ const showClientScript = page !== "portal";
         createG20u36eAdminProbeIdleDisplay,
         createG20u36eAdminProbeRunningDisplay,
         formatG20u36eAdminProbeDisplay,
+        G11C6_APPROVAL_ID,
+        G11C6_CONFLICT_MESSAGE,
+        assertGosakiYoutubeDryRunEndpointSafe,
+        assertGosakiYoutubeSaveEndpointSafe,
+        buildYoutubeDryRunEndpointRequest,
+        buildYoutubeSaveEndpointRequest,
+        sanitizeYoutubeDryRunEndpointDisplay,
+        sanitizeYoutubeSaveEndpointDisplay,
+        evaluateYoutubeOperationalSaveGate,
+        isYoutubeSaveConflictResponse,
       } from "../lib/gosaki-staging-read-only-admin";
       import { initGosakiDiscographyOperationalEdit } from "../lib/gosaki-staging-discography-operational-edit";
       import { initGosakiScheduleOperationalEdit } from "../lib/gosaki-staging-schedule-operational-edit";
+      import { initGosakiYoutubeOperationalEdit } from "../lib/gosaki-staging-youtube-operational-edit";
 
       function resolveDiscographyAccessToken() {
         const body = document.body;
@@ -986,6 +928,30 @@ const showClientScript = page !== "portal";
             (body?.dataset.g20u45ScheduleSaveApprovalId || "").trim() ||
             G20U45_SCHEDULE_SAVE_APPROVAL_ID,
           conflictMessage: G20U45_SCHEDULE_CONFLICT_MESSAGE,
+          productionProjectRefStop: G20U36C_PRODUCTION_PROJECT_REF_STOP,
+        });
+      }
+
+      const youtubeRoot = document.getElementById("gosaki-youtube-content");
+      if (youtubeRoot instanceof HTMLElement) {
+        const body = document.body;
+        initGosakiYoutubeOperationalEdit(youtubeRoot, {
+          saveArmed: body?.dataset.gosakiYoutubeSaveArmed === "true",
+          getAccessToken: resolveDiscographyAccessToken,
+          dryRunEndpoint: (body?.dataset.gosakiYoutubeDryRunEndpoint || "").trim(),
+          saveEndpoint: (body?.dataset.gosakiYoutubeSaveEndpoint || "").trim(),
+          anonKey: (body?.dataset.gosakiSupabaseAnonKey || "").trim(),
+          assertDryRunEndpointSafe: assertGosakiYoutubeDryRunEndpointSafe,
+          assertSaveEndpointSafe: assertGosakiYoutubeSaveEndpointSafe,
+          buildDryRunEndpointRequest: buildYoutubeDryRunEndpointRequest,
+          buildSaveEndpointRequest: buildYoutubeSaveEndpointRequest,
+          sanitizeDryRunDisplay: sanitizeYoutubeDryRunEndpointDisplay,
+          sanitizeSaveDisplay: sanitizeYoutubeSaveEndpointDisplay,
+          evaluateSaveGate: evaluateYoutubeOperationalSaveGate,
+          isSaveConflictResponse: isYoutubeSaveConflictResponse,
+          expectedSaveApprovalId:
+            (body?.dataset.g11c6ApprovalId || "").trim() || G11C6_APPROVAL_ID,
+          conflictMessage: G11C6_CONFLICT_MESSAGE,
           productionProjectRefStop: G20U36C_PRODUCTION_PROJECT_REF_STOP,
         });
       }

@@ -439,6 +439,9 @@ const discographyOpEditSrc = read(
 const scheduleOpEditSrc = read(
   "tools/static-to-astro/templates/site-extensions/gosaki-piano/gosaki-staging-schedule-operational-edit.ts",
 );
+const youtubeOpEditSrc = read(
+  "tools/static-to-astro/templates/site-extensions/gosaki-piano/gosaki-staging-youtube-operational-edit.ts",
+);
 const discographyOperatorPageSrc = read(
   "tools/static-to-astro/templates/admin-cms/gosaki/components/AdminGosakiStagingDiscographyOperatorPage.astro",
 );
@@ -544,6 +547,74 @@ assert(
 );
 const readOnlyAdminTs = read(
   "tools/static-to-astro/templates/site-extensions/gosaki-piano/gosaki-staging-read-only-admin.ts",
+);
+assert(
+  "youtube operational edit markers",
+  adminComponent.includes('data-gosaki-youtube-operational-edit="true"') &&
+    adminComponent.includes("data-gosaki-youtube-operational-form") &&
+    adminComponent.includes("data-gosaki-youtube-dry-run") &&
+    adminComponent.includes("data-gosaki-youtube-save") &&
+    adminComponent.includes("data-gosaki-youtube-cancel") &&
+    adminComponent.includes("initGosakiYoutubeOperationalEdit") &&
+    adminComponent.includes('dataset.gosakiYoutubeSaveArmed === "true"') &&
+    adminComponent.includes("data-gosaki-youtube-save-armed"),
+);
+assert(
+  "youtube Save button single + type=button + default disabled",
+  (adminComponent.match(/id="gra-youtube-save-btn"/g) || []).length === 1 &&
+    /type="button"[\s\S]{0,120}id="gra-youtube-save-btn"|id="gra-youtube-save-btn"[\s\S]{0,120}type="button"/.test(
+      adminComponent,
+    ) &&
+    /id="gra-youtube-save-btn"[\s\S]{0,320}\bdisabled\b/.test(adminComponent),
+);
+assert(
+  "youtube page-load has no auto fetch for dry-run/save",
+  youtubeOpEditSrc.includes("initGosakiYoutubeOperationalEdit") &&
+    youtubeOpEditSrc.includes("[data-gosaki-youtube-dry-run]") &&
+    youtubeOpEditSrc.indexOf("async function runDryRun") <
+      youtubeOpEditSrc.indexOf("fetchImpl(endpoint") &&
+    youtubeOpEditSrc.includes("dryRunInFlight") &&
+    youtubeOpEditSrc.includes("saveInFlight") &&
+    youtubeOpEditSrc.includes("dryRunFingerprint") &&
+    !youtubeOpEditSrc.includes("retrySave") &&
+    !youtubeOpEditSrc.includes("service_role"),
+);
+assert(
+  "youtube reuses G-11c1/G-11c6 approval ids (no new alias)",
+  readOnlyAdminTs.includes('G11C1_APPROVAL_ID = "G-11c1-youtube-url-dry-run"') &&
+    readOnlyAdminTs.includes(
+      'G11C6_APPROVAL_ID = "G-11c6-gosaki-youtube-url-web-save-non-dry-run-slice"',
+    ) &&
+    readOnlyAdminTs.includes("PUBLIC_ADMIN_GOSAKI_YOUTUBE_URL_WEB_SAVE_NON_DRY_RUN_ARMED") &&
+    readOnlyAdminTs.includes("evaluateYoutubeOperationalSaveGate") &&
+    readOnlyAdminTs.includes("buildYoutubeDryRunEndpointRequest") &&
+    readOnlyAdminTs.includes("buildYoutubeSaveEndpointRequest"),
+);
+assert(
+  "youtube does not reuse Schedule arm env for YouTube Save",
+  adminComponent.includes("PUBLIC_ADMIN_GOSAKI_YOUTUBE_URL_WEB_SAVE_NON_DRY_RUN_ARMED") === false &&
+    readOnlyAdminTs.includes("G11C6_SAVE_UI_ARMED_ENV") &&
+    readOnlyAdminTs.includes("PUBLIC_ADMIN_GOSAKI_YOUTUBE_URL_WEB_SAVE_NON_DRY_RUN_ARMED") &&
+    youtubeOpEditSrc.includes("saveArmed") &&
+    !youtubeOpEditSrc.includes("PUBLIC_GOSAKI_SCHEDULE_SAVE_UI_ARMED"),
+);
+assert(
+  "youtube Save gate requires arm + dry-run + fingerprint + approval",
+  readOnlyAdminTs.includes("formMatchesDryRunSnapshot") &&
+    readOnlyAdminTs.includes("expectedBeforeEmbed") &&
+    readOnlyAdminTs.includes("G11C6_SAVE_UI_ARMED_ENV") &&
+    readOnlyAdminTs.includes("expectedApprovalId !== G11C6_APPROVAL_ID"),
+);
+assert(
+  "youtube endpoints production STOP",
+  readOnlyAdminTs.includes("assertGosakiYoutubeDryRunEndpointSafe") &&
+    readOnlyAdminTs.includes("assertGosakiYoutubeSaveEndpointSafe") &&
+    readOnlyAdminTs.includes("/functions/v1/gosaki-youtube-url-dry-run") &&
+    readOnlyAdminTs.includes("/functions/v1/gosaki-youtube-url-save"),
+);
+assert(
+  "apply copies youtube operational edit client",
+  applySrc.includes("gosaki-staging-youtube-operational-edit.ts"),
 );
 assert(
   "discography Save endpoint reuses formal Edge URL",
@@ -1107,6 +1178,12 @@ assert(
   ),
 );
 assert(
+  "tmp youtube operational edit lib copied",
+  fs.existsSync(
+    path.join(tmpOut, "src/lib/gosaki-staging-youtube-operational-edit.ts"),
+  ),
+);
+assert(
   "tmp compact auth copied",
   fs.existsSync(
     path.join(tmpOut, "src/components/gosaki-admin/AdminGosakiStagingCompactAuthBar.astro"),
@@ -1408,6 +1485,146 @@ assert(
   "AI G-20u41 completed",
   /G-20u41:\s*completed/i.test(currentState + nextActions + handoff) ||
     /G-20u41[\s\S]{0,80}completed/i.test(currentState + nextActions + handoff),
+);
+
+// --- YouTube operational mock / contract checks (no live HTTP / DB) ---
+const {
+  assertG11c1NextValueAllowed,
+  handleG11c1YoutubeUrlDryRunRequest,
+  parseG11c1DryRunRequest,
+  parseYoutubeVideoId: parseYtIdMock,
+} = await import("./lib/gosaki-youtube-url-dry-run-validation.mjs");
+const {
+  G11C1_APPROVAL_ID: YT_DRY_APPROVAL,
+  G11C1_OPERATION_ID: YT_DRY_OP,
+} = await import("./lib/gosaki-youtube-url-dry-run-constants.mjs");
+const {
+  G11C6_APPROVAL_ID: YT_SAVE_APPROVAL,
+  G11C6_OPERATION_ID: YT_SAVE_OP,
+} = await import("./lib/gosaki-youtube-url-save-constants.mjs");
+
+const ytCurrent = {
+  embedCode: "https://youtu.be/I-eY9YMq9GI",
+  videoId: "I-eY9YMq9GI",
+};
+
+function ytDryPayload(nextValue, extra = {}) {
+  return {
+    siteSlug: "gosaki-piano",
+    module: "youtube-embed",
+    field: "embedCode",
+    nextValue,
+    dryRun: true,
+    operationId: YT_DRY_OP,
+    approvalId: YT_DRY_APPROVAL,
+    ...extra,
+  };
+}
+
+const validDry = handleG11c1YoutubeUrlDryRunRequest(
+  ytDryPayload("https://www.youtube.com/watch?v=dQw4w9WgXcQ"),
+  ytCurrent,
+);
+assert("mock valid URL dry-run ok", validDry.ok === true && validDry.dryRun === true && validDry.wouldWrite === false);
+assert(
+  "mock valid URL next videoId",
+  validDry.next?.videoId === "dQw4w9WgXcQ",
+);
+assert(
+  "mock invalid URL rejected",
+  assertG11c1NextValueAllowed("https://example.com/not-youtube") != null &&
+    handleG11c1YoutubeUrlDryRunRequest(ytDryPayload("https://example.com/x"), ytCurrent).ok === false,
+);
+assert(
+  "mock shorts URL not expanded (unsupported)",
+  parseYtIdMock("https://www.youtube.com/shorts/dQw4w9WgXcQ") == null,
+);
+assert(
+  "mock unexpected field rejected",
+  parseG11c1DryRunRequest(ytDryPayload("https://youtu.be/dQw4w9WgXcQ", { field: "title" })).ok ===
+    false,
+);
+assert(
+  "mock approval mismatch rejected",
+  parseG11c1DryRunRequest(
+    ytDryPayload("https://youtu.be/dQw4w9WgXcQ", { approvalId: "wrong-approval" }),
+  ).ok === false,
+);
+
+function evaluateYoutubeGateMock(input) {
+  if (input.saveInFlight) return { enabled: false, reason: "in-flight" };
+  if (!input.authenticated) return { enabled: false, reason: "auth" };
+  if (!input.dryRunSucceeded) return { enabled: false, reason: "dry-run" };
+  if (!input.formMatchesDryRunSnapshot) return { enabled: false, reason: "fingerprint" };
+  if (!String(input.expectedBeforeEmbed ?? "").trim()) return { enabled: false, reason: "lock" };
+  if (!input.saveEndpointConfigured || !input.saveEndpointSafe) {
+    return { enabled: false, reason: "endpoint" };
+  }
+  if (!input.envArmed) return { enabled: false, reason: "arm" };
+  if (input.approvalId !== input.expectedApprovalId) return { enabled: false, reason: "approval" };
+  if (input.expectedApprovalId !== YT_SAVE_APPROVAL) return { enabled: false, reason: "approval-exact" };
+  return { enabled: true, reason: "ok" };
+}
+
+const gateBase = {
+  authenticated: true,
+  dryRunSucceeded: true,
+  formMatchesDryRunSnapshot: true,
+  expectedBeforeEmbed: ytCurrent.embedCode,
+  expectedBeforeVideoId: ytCurrent.videoId,
+  saveEndpointConfigured: true,
+  saveEndpointSafe: true,
+  envArmed: true,
+  approvalId: YT_SAVE_APPROVAL,
+  expectedApprovalId: YT_SAVE_APPROVAL,
+  saveInFlight: false,
+};
+assert("mock normal package Save disabled", evaluateYoutubeGateMock({ ...gateBase, envArmed: false }).enabled === false);
+assert("mock controlled arm enables when all gates pass", evaluateYoutubeGateMock(gateBase).enabled === true);
+assert("mock dry-run前 Save disabled", evaluateYoutubeGateMock({ ...gateBase, dryRunSucceeded: false }).enabled === false);
+assert(
+  "mock fingerprint変更で disabled",
+  evaluateYoutubeGateMock({ ...gateBase, formMatchesDryRunSnapshot: false }).enabled === false,
+);
+assert("mock authなし Save disabled", evaluateYoutubeGateMock({ ...gateBase, authenticated: false }).enabled === false);
+assert(
+  "mock approval不一致 Save disabled",
+  evaluateYoutubeGateMock({ ...gateBase, approvalId: "nope" }).enabled === false,
+);
+assert(
+  "mock unsafe response rejected by sanitize",
+  readOnlyAdminTs.includes("youtubeUnsafeWriteFlags") &&
+    readOnlyAdminTs.includes("wouldWrite === true") &&
+    readOnlyAdminTs.includes("workflowDispatchExecuted === true"),
+);
+const edgeSaveShared = read("supabase/functions/_shared/gosaki-youtube-url-save.ts");
+assert(
+  "mock Save success response shape (source)",
+  edgeSaveShared.includes("ok: true") &&
+    edgeSaveShared.includes("dryRun: false") &&
+    edgeSaveShared.includes("httpStatus: 409") &&
+    edgeSaveShared.includes("expectedBefore") &&
+    !/service_role/i.test(edgeSaveShared),
+);
+assert(
+  "mock form submit does not Save (preventDefault)",
+  youtubeOpEditSrc.includes('form.addEventListener("submit"') &&
+    youtubeOpEditSrc.includes("ev.preventDefault()"),
+);
+assert(
+  "mock double-submit prevented",
+  youtubeOpEditSrc.includes("if (saveInFlight || dryRunInFlight) return") &&
+    youtubeOpEditSrc.includes("saveInFlight = true"),
+);
+assert(
+  "mock no auto retry",
+  !youtubeOpEditSrc.includes("retrySave") &&
+    !youtubeOpEditSrc.includes("setInterval("),
+);
+const stagingCurrentSrc = read("supabase/functions/_shared/gosaki-youtube-staging-current.ts");
+assert(
+  "staging-current mirrors package JSON videoId",
+  stagingCurrentSrc.includes("I-eY9YMq9GI") && !stagingCurrentSrc.includes("Ke4F8JAQz-I"),
 );
 
 console.log("");

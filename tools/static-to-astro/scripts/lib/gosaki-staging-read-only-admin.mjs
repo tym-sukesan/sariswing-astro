@@ -461,6 +461,10 @@ export function applyGosakiStagingReadOnlyAdmin(outDir, toolRoot, options = {}) 
     templateRoot,
     "gosaki-staging-schedule-operational-edit.ts",
   );
+  const youtubeEditSrc = path.join(
+    templateRoot,
+    "gosaki-staging-youtube-operational-edit.ts",
+  );
   const packagePathsSrc = path.join(templateRoot, "gosaki-package-admin-paths.ts");
   const cssSrc = path.join(templateRoot, "gosaki-staging-read-only-admin.css");
   const chromeComponents = [
@@ -475,6 +479,7 @@ export function applyGosakiStagingReadOnlyAdmin(outDir, toolRoot, options = {}) 
     libSrc,
     discographyEditSrc,
     scheduleEditSrc,
+    youtubeEditSrc,
     packagePathsSrc,
     cssSrc,
     chromeCssSrc,
@@ -510,6 +515,10 @@ export function applyGosakiStagingReadOnlyAdmin(outDir, toolRoot, options = {}) 
   fs.copyFileSync(
     scheduleEditSrc,
     path.join(path.dirname(libDest), "gosaki-staging-schedule-operational-edit.ts"),
+  );
+  fs.copyFileSync(
+    youtubeEditSrc,
+    path.join(path.dirname(libDest), "gosaki-staging-youtube-operational-edit.ts"),
   );
   fs.copyFileSync(packagePathsSrc, packagePathsDest);
   fs.copyFileSync(cssSrc, cssDest);

@@ -334,6 +334,28 @@ CONTROLLED_PACKAGE_STILL_DEPLOYED: true
 PRODUCTION_CHANGED: false
 ```
 
+## YouTube operational edit UI (source + local mock)
+
+- Route: STG `/admin/youtube/` · package `GosakiStagingReadOnlyAdminPage` `page="youtube"`
+- Data: build-time `gosaki-piano-youtube-embed.json` → `https://youtu.be/I-eY9YMq9GI`（`site_embeds` 未作成 · DB write なし）
+- Dry-run: `gosaki-youtube-url-dry-run` ACTIVE v3 · approval `G-11c1-youtube-url-dry-run` · click「変更を確認」のみ（page-load fetch なし）
+- Save UI: single `#gra-youtube-save-btn` · 通常 package `data-gosaki-youtube-save-armed="false"` · arm env `PUBLIC_ADMIN_GOSAKI_YOUTUBE_URL_WEB_SAVE_NON_DRY_RUN_ARMED`（Schedule arm 流用なし）
+- Save Endpoint: `gosaki-youtube-url-save` ACTIVE v2 · approval `G-11c6-gosaki-youtube-url-web-save-non-dry-run-slice` · content lock `expectedBefore.embedCode/videoId` · 409 conflict
+- Client: `gosaki-staging-youtube-operational-edit.ts` · fingerprint invalidate · form submit preventDefault · double-submit guard
+- Source: `gosaki-youtube-staging-current.ts` を JSON 現在値 `I-eY9YMq9GI` に同期（**staging Edge deploy** が live dry-run/Save lock 一致に必要）
+- **SAVE_REQUEST_EXECUTED: false** · **DB_WRITE_EXECUTED: false** · **EDGE_DEPLOY_EXECUTED: false**
+
+```txt
+YOUTUBE_OPERATIONAL_UI_IMPLEMENTED: true
+DRY_RUN_IMPLEMENTED: true
+SAVE_UI_IMPLEMENTED: true
+NORMAL_STG_SAVE_DISABLED: true
+CONTROLLED_ARM_GATE_READY: true
+PAGE_LOAD_FETCH: false
+YOUTUBE_DB_PERMISSION_READY: false
+LIVE_PERMISSION_PREFLIGHT_REQUIRED: false
+```
+
 ## Recommended next
 
-Commit / Push → cleanな最新HEADから `PUBLIC_GOSAKI_SCHEDULE_SAVE_UI_ARMED` なしで fresh staging package生成 → `armed=false` / Save button 1 / Save disabled / production pathなしを確認 → operatorがFileZillaで stagingへupload-only。その後、Gosaki全体の次タスクへ進む。
+Commit / Push → 必要なら YouTube dry-run/Save の **staging Edge deploy**（staging-current 同期）→ fresh package（通常 unarmed）→ controlled arm package → YouTube controlled Save round-trip（operator）。FTP handoff には未commit package を使わない。

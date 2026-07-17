@@ -837,3 +837,21 @@ body.gosaki-read-only-admin {
     max-width: 100%;
   }
 }
+
+.gosaki-youtube-url-break,
+.gosaki-read-only-admin__current-url {
+  word-break: break-all;
+  overflow-wrap: anywhere;
+  max-width: 100%;
+}
+
+.gosaki-youtube-dry-run-card {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.gosaki-youtube-dry-run-card code {
+  display: inline-block;
+  max-width: 100%;
+  word-break: break-all;
+}

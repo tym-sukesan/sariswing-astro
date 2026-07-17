@@ -5,18 +5,16 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u45 Schedule operational Save STG round-trip — complete; DB baseline restored.
+Current phase: Gosaki YouTube operational edit UI — source/mock/full-build complete (no live Save).
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP.
-EDGE: gosaki-schedule-save-dry-run v2 · edit/create Save verified.
-APPROVAL: gosaki-schedule-operational-save · user JWT + is_admin · no service_role.
-SOURCE/PACKAGE: e47ee6b19bffd4f8a75523a5a535cc4e5f99f9a4.
-PERMISSION: live preflight PASS; apply unnecessary.
-EDIT: temporary venue Save + restore Save both HTTP 200; original venue restored.
-CREATE: unpublished schedule-2026-12-001 Save HTTP 200; exact cleanup DELETE 1.
-POST-CLEANUP: created id/legacy/title-date 0; Gosaki Schedule total 79.
-UI: Save button 1; initial disabled; safe dry-run only enables; Save/mutation/conflict disables; no retry/double-submit.
-CONTROLLED_PACKAGE_STILL_DEPLOYED: true.
-Next: Commit/Push → unarmed fresh package → staging FileZilla upload-only → Gosaki全体の次タスク。
+YOUTUBE_ROUTE: /cms-kit-staging/gosaki-piano/admin/youtube/
+CURRENT: https://youtu.be/I-eY9YMq9GI (videoId I-eY9YMq9GI) · build-time JSON (not site_embeds).
+DRY_RUN: gosaki-youtube-url-dry-run · approval G-11c1-youtube-url-dry-run · click-only.
+SAVE_UI: gated · arm PUBLIC_ADMIN_GOSAKI_YOUTUBE_URL_WEB_SAVE_NON_DRY_RUN_ARMED · approval G-11c6-gosaki-youtube-url-web-save-non-dry-run-slice.
+NORMAL_STG_SAVE_DISABLED: true · PAGE_LOAD_FETCH: false · SAVE_REQUEST_EXECUTED: false.
+YOUTUBE_DB_PERMISSION_READY: false · LIVE_PERMISSION_PREFLIGHT_REQUIRED: false.
+Schedule: operational Save round-trip complete · unarmed browser confirmed · total 79.
+Next: Commit/Push → staging Edge deploy (YouTube current sync) → fresh package → YouTube controlled Save round-trip.
 ```
 
 ## G-20u45 Schedule operational Save — final result
@@ -26,7 +24,7 @@ Next: Commit/Push → unarmed fresh package → staging FileZilla upload-only �
 - **Create/cleanup:** id `dcd7af06-67aa-463e-8e3f-09bf164ef97b` · legacyId `schedule-2026-12-001` · `published=false` · cleanup PASS
 - **Gates:** EDIT_SAVE_ROUND_TRIP_PASSED · CREATE_SAVE_ROUND_TRIP_PASSED · CREATE_CLEANUP_PASSED · DATABASE_RESTORED_TO_BASELINE = **true**
 - **Verifier:** `verify:g20u39b4-gosaki-admin-multi-route-staging-package-prep`
-- **Next:** Commit/Push → unarmed fresh package → staging upload-only
+- **Next:** superseded by YouTube operational UI track
 
 ## G-20u44-gosaki-discography-controlled-save-round-trip — complete
 

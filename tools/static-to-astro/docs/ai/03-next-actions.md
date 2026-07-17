@@ -3,13 +3,13 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **この記録を Commit / Push**（source変更なし）。
-2. cleanな最新HEADから `PUBLIC_GOSAKI_SCHEDULE_SAVE_UI_ARMED` を設定せず `npm run build:gosaki:staging`。
-3. fresh packageで `data-gosaki-schedule-save-armed="false"` · Save button 1 · Save常時disabled · endpoint dry-run利用可 · production pathなしを確認。
-4. operatorがFileZillaで `/cms-kit-staging/gosaki-piano/` へupload-only。
-5. controlled arm解除後、Schedule以外を含むGosaki全体の次タスクを選定。
+1. **この YouTube operational UI 実装を Commit / Push**（未commit package は FTP に使わない）。
+2. 必要なら YouTube dry-run/Save の **staging Edge deploy**（`gosaki-youtube-staging-current` = `I-eY9YMq9GI` 同期）。
+3. 通常 unarmed で `npm run build:gosaki:staging` → `data-gosaki-youtube-save-armed="false"` 確認。
+4. controlled arm（`PUBLIC_ADMIN_GOSAKI_YOUTUBE_URL_WEB_SAVE_NON_DRY_RUN_ARMED=true`）package → YouTube controlled Save round-trip。
+5. Schedule は unarmed 復帰済み · Save round-trip 完了（次の主戦場は YouTube）。
 
-Schedule operational Saveは完了済み：staging Edge deploy completed（v2）· live permission PASS · edit round-trip/restoration PASS · create unpublished PASS · exact cleanup PASS · DB total **79** restored。Edge `gosaki-schedule-save-dry-run` v2、approval `gosaki-schedule-operational-save`、source/package `e47ee6b`。通常packageの `SCHEDULE_SAVE_DEFAULT_DISABLED: true` 契約は維持。
+Schedule operational Saveは完了済み：staging Edge deploy completed（v2）· live permission PASS · edit/create/cleanup PASS · DB total **79** · 通常 package `SCHEDULE_SAVE_DEFAULT_DISABLED: true`。
 
 ## 0. G-20u44 / G-20u44c controlled Save round-trip + permission rollback — complete and closed
 

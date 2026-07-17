@@ -5,13 +5,16 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u45 Schedule HTTP dry-run Edge + STG client — STG edit/create verified.
-EDGE: gosaki-schedule-save-dry-run ACTIVE v1 · package ceba4828317098b57f752c7483a949111d210a02.
-EDIT_DRY_RUN: HTTP 200 · exact lock verified · changedFields venue.
-CREATE_DRY_RUN: HTTP 200 · no id/legacyId/lock · 8 fields · published=false.
-AUTH: user JWT + is_admin verified · didWrite/dbWrite/networkWrite=false · Save disabled.
-SAVE_REQUEST_EXECUTED: false · DB_WRITE_EXECUTED: false · PRODUCTION_CHANGED: false.
-Next: Commit/Push → edit/create Saveを単一実装単位で実装+mock検証 → staging Edge deploy+controlled round-trip ×1.
+Current phase: G-20u45 Schedule HTTP dry-run + Save — source complete (Edge Save not deployed).
+EDGE: gosaki-schedule-save-dry-run · dryRun STG verified · operation=save edit+create implemented.
+APPROVAL: gosaki-schedule-operational-save · user JWT + is_admin · no service_role.
+EDIT: safe fields + published · date forbidden (UI disabled + Edge reject) · optimistic lock.
+CREATE: published=false + Edge legacy_id · unique collision fail-closed.
+Publish path: create unpublished → later edit published=true.
+STG Save default disabled · local arm PUBLIC_GOSAKI_SCHEDULE_SAVE_UI_ARMED exact true.
+DB permission: unconfirmed · live SELECT preflight required · repo history indicates ready.
+EDGE_DEPLOY_EXECUTED: false · SAVE_REQUEST_EXECUTED: false · DB_WRITE_EXECUTED: false.
+Next: Commit/Push → permission SELECT preflight → staging Edge deploy ×1 → package/FTP → controlled Save ×1 each.
 ```
 
 ## G-20u45-gosaki-schedule-operational-edit-ui-wiring — complete (+ lock fix)

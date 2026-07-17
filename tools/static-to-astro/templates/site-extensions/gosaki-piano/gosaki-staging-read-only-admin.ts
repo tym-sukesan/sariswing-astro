@@ -52,11 +52,19 @@ export const G20U36C_DISCOGRAPHY_DRY_RUN_NOTE =
   "G-20u36c: Dry-run only — POST to staging Edge Function. No DB write. Save is still disabled. This checks the request and endpoint response only.";
 export const G20U36C_PRODUCTION_PROJECT_REF_STOP = "vsbvndwuajjhnzpohghh";
 
-/** G-20u45 — Schedule HTTP dry-run Edge (dryRun only · Save not implemented). */
+/** G-20u45 — Schedule HTTP dry-run + Save Edge (same URL · operation differs). */
 export const G20U45_SCHEDULE_DRY_RUN_ENDPOINT_NAME = "gosaki-schedule-save-dry-run";
 export const G20U45_SCHEDULE_DRY_RUN_ENDPOINT = `${G11C4A_STAGING_SUPABASE_URL}/functions/v1/${G20U45_SCHEDULE_DRY_RUN_ENDPOINT_NAME}`;
 export const G20U45_SCHEDULE_DRY_RUN_ENDPOINT_ENV = "PUBLIC_GOSAKI_SCHEDULE_DRY_RUN_ENDPOINT";
 export const G20U45_SCHEDULE_DRY_RUN_OPERATION = "dryRun" as const;
+export const G20U45_SCHEDULE_SAVE_OPERATION = "save" as const;
+/** Capability-stable Save approval (edit+create). Not a G-9k / G-22e phase alias. */
+export const G20U45_SCHEDULE_SAVE_APPROVAL_ID = "gosaki-schedule-operational-save";
+/** Discography-style local arm (exact "true" only · STG package default false). */
+export const G20U45_SCHEDULE_SAVE_UI_ARMED_ENV = "PUBLIC_GOSAKI_SCHEDULE_SAVE_UI_ARMED";
+export const G20U45_SCHEDULE_SAVE_ENDPOINT = G20U45_SCHEDULE_DRY_RUN_ENDPOINT;
+export const G20U45_SCHEDULE_CONFLICT_MESSAGE =
+  "他の場所で更新された可能性があります。再読み込みしてください。";
 export const G20U45_SCHEDULE_EDIT_SAFE_FIELDS = [
   "title",
   "venue",
@@ -64,6 +72,7 @@ export const G20U45_SCHEDULE_EDIT_SAFE_FIELDS = [
   "start_time",
   "price",
   "description",
+  "published",
 ] as const;
 
 /** G-20u41 — Discography operational Save gated wiring (same Edge endpoint · default disabled). */
@@ -348,13 +357,7 @@ export type ScheduleDryRunEndpointRequestInput = {
   };
 };
 
-/**
- * Build Schedule Edge dry-run POST body — operation=dryRun only · never save.
- * Edit uses G-9k safe fields only; create forces published=false.
- */
-export function buildScheduleDryRunEndpointRequest(
-  input: ScheduleDryRunEndpointRequestInput,
-): Record<string, unknown> {
+function buildScheduleEndpointPayload(input: ScheduleDryRunEndpointRequestInput): Record<string, unknown> {
   if (input.mode === "edit") {
     const payload: Record<string, unknown> = {
       expectedBeforeUpdatedAt: String(input.expectedBeforeUpdatedAt ?? "").trim(),
@@ -364,30 +367,225 @@ export function buildScheduleDryRunEndpointRequest(
     if (id) payload.id = id;
     if (legacyId) payload.legacyId = legacyId;
     for (const field of G20U45_SCHEDULE_EDIT_SAFE_FIELDS) {
-      payload[field] = String(input.fields[field] ?? "").trim();
+      if (field === "published") {
+        payload.published = input.fields.published === true;
+      } else {
+        payload[field] = String(input.fields[field as keyof typeof input.fields] ?? "").trim();
+      }
     }
+    return payload;
+  }
+  return {
+    date: String(input.fields.date ?? "").trim(),
+    title: String(input.fields.title ?? "").trim(),
+    venue: String(input.fields.venue ?? "").trim(),
+    open_time: String(input.fields.open_time ?? "").trim(),
+    start_time: String(input.fields.start_time ?? "").trim(),
+    price: String(input.fields.price ?? "").trim(),
+    description: String(input.fields.description ?? "").trim(),
+    published: false,
+  };
+}
+
+/**
+ * Build Schedule Edge dry-run POST body — operation=dryRun only · never save.
+ * Edit: safe fields + published boolean · no date. Create: published=false.
+ */
+export function buildScheduleDryRunEndpointRequest(
+  input: ScheduleDryRunEndpointRequestInput,
+): Record<string, unknown> {
+  return {
+    operation: G20U45_SCHEDULE_DRY_RUN_OPERATION,
+    mode: input.mode,
+    siteSlug: GOSAKI_STAGING_SITE_SLUG,
+    payload: buildScheduleEndpointPayload(input),
+  };
+}
+
+/**
+ * Build Schedule Edge Save POST body — operation=save · exact approval ID.
+ * Payload shape matches dry-run (edit + published · create published=false · no edit date).
+ */
+export function buildScheduleSaveEndpointRequest(
+  input: ScheduleDryRunEndpointRequestInput,
+): Record<string, unknown> {
+  return {
+    operation: G20U45_SCHEDULE_SAVE_OPERATION,
+    approvalId: G20U45_SCHEDULE_SAVE_APPROVAL_ID,
+    mode: input.mode,
+    siteSlug: GOSAKI_STAGING_SITE_SLUG,
+    payload: buildScheduleEndpointPayload(input),
+  };
+}
+
+export function isG20u45ScheduleOperationalSaveArmed(env: ImportMetaEnv): boolean {
+  return String(env[G20U45_SCHEDULE_SAVE_UI_ARMED_ENV as keyof ImportMetaEnv] ?? "").trim() === "true";
+}
+
+export function assertGosakiScheduleSaveEndpointSafe(endpoint: string): boolean {
+  return assertGosakiScheduleDryRunEndpointSafe(endpoint);
+}
+
+export type ScheduleOperationalSaveGateInput = {
+  authenticated: boolean;
+  dryRunSucceeded: boolean;
+  formMatchesDryRunSnapshot: boolean;
+  mode: "edit" | "create";
+  expectedBeforeUpdatedAt: string | null;
+  saveEndpointConfigured: boolean;
+  saveEndpointSafe: boolean;
+  envArmed: boolean;
+  approvalId: string;
+  expectedApprovalId: string;
+  saveInFlight: boolean;
+};
+
+export function evaluateScheduleOperationalSaveGate(
+  input: ScheduleOperationalSaveGateInput,
+): { enabled: boolean; reason: string } {
+  if (input.saveInFlight) {
+    return { enabled: false, reason: "保存処理中です…" };
+  }
+  if (!input.authenticated) {
+    return { enabled: false, reason: "ログインが必要です" };
+  }
+  if (!input.dryRunSucceeded) {
+    return { enabled: false, reason: "先に「変更を確認」（dry-run）を成功させてください" };
+  }
+  if (!input.formMatchesDryRunSnapshot) {
     return {
-      operation: G20U45_SCHEDULE_DRY_RUN_OPERATION,
-      mode: "edit",
-      siteSlug: GOSAKI_STAGING_SITE_SLUG,
-      payload,
+      enabled: false,
+      reason: "dry-run 後に内容が変わりました。再度「変更を確認」してください",
+    };
+  }
+  if (input.mode === "edit") {
+    const lock = String(input.expectedBeforeUpdatedAt ?? "").trim();
+    if (!lock) {
+      return { enabled: false, reason: "optimistic lock（updated_at）がありません" };
+    }
+  } else if (String(input.expectedBeforeUpdatedAt ?? "").trim()) {
+    return { enabled: false, reason: "create は lock を流用できません" };
+  }
+  if (!input.saveEndpointConfigured || !input.saveEndpointSafe) {
+    return { enabled: false, reason: "Save endpoint が未設定またはブロックされています" };
+  }
+  if (!input.envArmed) {
+    return {
+      enabled: false,
+      reason: `env arm（${G20U45_SCHEDULE_SAVE_UI_ARMED_ENV}）が無効です`,
+    };
+  }
+  const candidateApprovalId = String(input.approvalId ?? "").trim();
+  const expectedApprovalId = String(input.expectedApprovalId ?? "").trim();
+  if (!candidateApprovalId) {
+    return { enabled: false, reason: "approval ID が空です" };
+  }
+  if (!expectedApprovalId) {
+    return { enabled: false, reason: "expected approval ID が未設定です" };
+  }
+  if (candidateApprovalId !== expectedApprovalId) {
+    return { enabled: false, reason: "approval ID が一致しません" };
+  }
+  if (expectedApprovalId !== G20U45_SCHEDULE_SAVE_APPROVAL_ID) {
+    return { enabled: false, reason: "expected approval ID が不正です" };
+  }
+  return { enabled: true, reason: "保存できます（operator 明示操作のみ）" };
+}
+
+export function isScheduleSaveConflictResponse(body: unknown): boolean {
+  const data = (body && typeof body === "object" ? body : {}) as Record<string, unknown>;
+  const errors = Array.isArray(data.errors) ? data.errors.map(String) : [];
+  const haystack = [String(data.message ?? ""), ...errors].join(" ").toLowerCase();
+  return /stale|conflict|optimistic|updated_at|0 rows|already changed/.test(haystack);
+}
+
+export type ScheduleSaveEndpointDisplay = {
+  httpStatus?: number;
+  ok?: boolean;
+  operation?: string;
+  mode?: string;
+  dryRun?: boolean;
+  wouldWrite?: boolean;
+  changedFields?: string[];
+  expectedBeforeUpdatedAt?: string | null;
+  target?: unknown;
+  errors?: string[];
+  warnings?: string[];
+  didWrite: boolean;
+  dbWrite: boolean;
+  networkWrite: boolean;
+  saveEnabled: boolean;
+  authIssue?: boolean;
+  unsafeWriteFlags?: boolean;
+  fetchError?: string;
+  sensitiveResponseBlocked?: boolean;
+};
+
+/**
+ * Sanitize Schedule Save response for UI.
+ * Success requires didWrite/dbWrite/networkWrite true together; partial write is FAIL.
+ */
+export function sanitizeScheduleSaveEndpointDisplay(
+  body: unknown,
+  httpStatus?: number,
+): ScheduleSaveEndpointDisplay {
+  const rawText = JSON.stringify(body ?? {});
+  if (DISCOGRAPHY_DRY_RUN_FORBIDDEN_RESPONSE_PATTERNS.some((re) => re.test(rawText))) {
+    return {
+      httpStatus,
+      ok: false,
+      didWrite: false,
+      dbWrite: false,
+      networkWrite: false,
+      saveEnabled: false,
+      sensitiveResponseBlocked: true,
+      errors: ["Response contained forbidden content — not displayed"],
     };
   }
 
+  const data = (body && typeof body === "object" ? body : {}) as Record<string, unknown>;
+  const didWrite = data.didWrite === true;
+  const dbWrite = data.dbWrite === true;
+  const networkWrite = data.networkWrite === true;
+  const writeFlagsConsistent = didWrite === dbWrite && dbWrite === networkWrite;
+  const successWrite = didWrite && dbWrite && networkWrite && writeFlagsConsistent;
+  const failureClean = !didWrite && !dbWrite && !networkWrite;
+  const authIssue = httpStatus === 401 || httpStatus === 403;
+  const httpOk = httpStatus == null || (httpStatus >= 200 && httpStatus < 300);
+  const baseOk =
+    data.ok === true &&
+    data.operation === G20U45_SCHEDULE_SAVE_OPERATION &&
+    data.dryRun === false &&
+    successWrite &&
+    httpOk &&
+    writeFlagsConsistent;
+
+  const errors = [
+    ...(Array.isArray(data.errors) ? (data.errors as string[]) : []),
+    ...(!writeFlagsConsistent || (!successWrite && !failureClean)
+      ? ["Unsafe response: write flags inconsistent (FAIL)"]
+      : []),
+  ];
+
   return {
-    operation: G20U45_SCHEDULE_DRY_RUN_OPERATION,
-    mode: "create",
-    siteSlug: GOSAKI_STAGING_SITE_SLUG,
-    payload: {
-      date: String(input.fields.date ?? "").trim(),
-      title: String(input.fields.title ?? "").trim(),
-      venue: String(input.fields.venue ?? "").trim(),
-      open_time: String(input.fields.open_time ?? "").trim(),
-      start_time: String(input.fields.start_time ?? "").trim(),
-      price: String(input.fields.price ?? "").trim(),
-      description: String(input.fields.description ?? "").trim(),
-      published: false,
-    },
+    httpStatus,
+    ok: baseOk,
+    operation: typeof data.operation === "string" ? data.operation : undefined,
+    mode: typeof data.mode === "string" ? data.mode : undefined,
+    dryRun: data.dryRun === true,
+    wouldWrite: typeof data.wouldWrite === "boolean" ? data.wouldWrite : undefined,
+    changedFields: Array.isArray(data.changedFields) ? (data.changedFields as string[]) : undefined,
+    expectedBeforeUpdatedAt:
+      data.expectedBeforeUpdatedAt == null ? null : String(data.expectedBeforeUpdatedAt),
+    target: data.target ?? null,
+    errors,
+    warnings: Array.isArray(data.warnings) ? (data.warnings as string[]) : undefined,
+    didWrite: successWrite,
+    dbWrite: successWrite,
+    networkWrite: successWrite,
+    saveEnabled: data.saveEnabled === true && successWrite,
+    authIssue,
+    unsafeWriteFlags: !writeFlagsConsistent || (!successWrite && !failureClean && data.ok === true),
   };
 }
 

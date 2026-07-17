@@ -64,9 +64,18 @@ import {
   resolveG20u36cDiscographyDryRunEndpoint,
   resolveGosakiScheduleDryRunEndpoint,
   assertGosakiScheduleDryRunEndpointSafe,
+  assertGosakiScheduleSaveEndpointSafe,
   buildScheduleDryRunEndpointRequest,
+  buildScheduleSaveEndpointRequest,
   sanitizeScheduleDryRunEndpointDisplay,
+  sanitizeScheduleSaveEndpointDisplay,
+  evaluateScheduleOperationalSaveGate,
+  isScheduleSaveConflictResponse,
+  isG20u45ScheduleOperationalSaveArmed,
   G20U45_SCHEDULE_DRY_RUN_OPERATION,
+  G20U45_SCHEDULE_SAVE_OPERATION,
+  G20U45_SCHEDULE_SAVE_APPROVAL_ID,
+  G20U45_SCHEDULE_CONFLICT_MESSAGE,
 } from "../lib/gosaki-staging-read-only-admin";
 
 interface Props {
@@ -80,6 +89,7 @@ const saveEndpoint = resolveG11c6aSaveEndpoint(import.meta.env);
 const discographyDryRunEndpoint = resolveG20u36cDiscographyDryRunEndpoint(import.meta.env);
 const discographySaveEndpoint = resolveG20u41DiscographySaveEndpoint(import.meta.env);
 const discographySaveArmed = isG20u41DiscographyOperationalSaveArmed(import.meta.env);
+const scheduleSaveArmed = isG20u45ScheduleOperationalSaveArmed(import.meta.env);
 const scheduleDryRunEndpointRaw = resolveGosakiScheduleDryRunEndpoint(import.meta.env);
 const scheduleDryRunEndpoint = assertGosakiScheduleDryRunEndpointSafe(scheduleDryRunEndpointRaw)
   ? scheduleDryRunEndpointRaw
@@ -155,6 +165,9 @@ const showClientScript = page !== "portal";
     data-gosaki-discography-save-endpoint={discographySaveEndpoint}
     data-gosaki-schedule-dry-run-endpoint={scheduleDryRunEndpoint}
     data-g20u45-schedule-dry-run-operation={G20U45_SCHEDULE_DRY_RUN_OPERATION}
+    data-g20u45-schedule-save-operation={G20U45_SCHEDULE_SAVE_OPERATION}
+    data-g20u45-schedule-save-approval-id={G20U45_SCHEDULE_SAVE_APPROVAL_ID}
+    data-gosaki-schedule-save-armed={scheduleSaveArmed ? "true" : "false"}
     data-g20u41-discography-operational-save-phase={G20U41_DISCOGRAPHY_OPERATIONAL_SAVE_PHASE}
     data-g20u41-discography-save-operation={G20U41_DISCOGRAPHY_SAVE_OPERATION}
     data-g20u41-discography-save-approval-id={G20U41_DISCOGRAPHY_SAVE_APPROVAL_ID}
@@ -775,9 +788,17 @@ const showClientScript = page !== "portal";
         G20U41_DISCOGRAPHY_CONFLICT_MESSAGE,
         G20U36C_PRODUCTION_PROJECT_REF_STOP,
         G20U45_SCHEDULE_DRY_RUN_OPERATION,
+        G20U45_SCHEDULE_SAVE_OPERATION,
+        G20U45_SCHEDULE_SAVE_APPROVAL_ID,
+        G20U45_SCHEDULE_CONFLICT_MESSAGE,
         assertGosakiScheduleDryRunEndpointSafe,
+        assertGosakiScheduleSaveEndpointSafe,
         buildScheduleDryRunEndpointRequest,
+        buildScheduleSaveEndpointRequest,
         sanitizeScheduleDryRunEndpointDisplay,
+        sanitizeScheduleSaveEndpointDisplay,
+        evaluateScheduleOperationalSaveGate,
+        isScheduleSaveConflictResponse,
         G20U36E_ADMIN_PROBE_RPC_NAME,
         assertG20u36eAdminProbeSupabaseHostSafe,
         buildG20u36eAdminProbeDisplay,
@@ -947,14 +968,24 @@ const showClientScript = page !== "portal";
       if (scheduleRoot instanceof HTMLElement) {
         const body = document.body;
         initGosakiScheduleOperationalEdit(scheduleRoot, {
-          saveArmed: false,
+          saveArmed: body?.dataset.gosakiScheduleSaveArmed === "true",
           getAccessToken: resolveDiscographyAccessToken,
           dryRunEndpoint: (body?.dataset.gosakiScheduleDryRunEndpoint || "").trim(),
           anonKey: (body?.dataset.gosakiSupabaseAnonKey || "").trim(),
           assertDryRunEndpointSafe: assertGosakiScheduleDryRunEndpointSafe,
+          assertSaveEndpointSafe: assertGosakiScheduleSaveEndpointSafe,
           buildDryRunEndpointRequest: buildScheduleDryRunEndpointRequest,
+          buildSaveEndpointRequest: buildScheduleSaveEndpointRequest,
           sanitizeEndpointDisplay: sanitizeScheduleDryRunEndpointDisplay,
+          sanitizeSaveEndpointDisplay: sanitizeScheduleSaveEndpointDisplay,
+          evaluateSaveGate: evaluateScheduleOperationalSaveGate,
+          isSaveConflictResponse: isScheduleSaveConflictResponse,
           dryRunOperation: G20U45_SCHEDULE_DRY_RUN_OPERATION,
+          saveOperation: G20U45_SCHEDULE_SAVE_OPERATION,
+          expectedSaveApprovalId:
+            (body?.dataset.g20u45ScheduleSaveApprovalId || "").trim() ||
+            G20U45_SCHEDULE_SAVE_APPROVAL_ID,
+          conflictMessage: G20U45_SCHEDULE_CONFLICT_MESSAGE,
           productionProjectRefStop: G20U36C_PRODUCTION_PROJECT_REF_STOP,
         });
       }

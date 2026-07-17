@@ -394,6 +394,9 @@ assert(
     schedulePanelSrc.includes('data-field="description"') &&
     schedulePanelSrc.includes('data-field="published"') &&
     schedulePanelSrc.includes("data-gosaki-schedule-lock-value") &&
+    schedulePanelSrc.includes("data-gosaki-schedule-date-edit-note") &&
+    schedulePanelSrc.includes("既存予定の日付変更は現在未対応") &&
+    schedulePanelSrc.includes("data-gosaki-schedule-published-label") &&
     !schedulePanelSrc.includes('data-field="end_time"') &&
     !schedulePanelSrc.includes('data-field="address"') &&
     !schedulePanelSrc.includes('data-field="url"'),
@@ -745,9 +748,11 @@ assert(
       scheduleOpEditSrc.indexOf("fetchImpl(endpoint"),
 );
 assert(
-  "schedule page wires operational edit with Save disarmed",
+  "schedule page wires operational edit with Save default disarmed",
   adminComponent.includes("initGosakiScheduleOperationalEdit") &&
-    adminComponent.includes("saveArmed: false") &&
+    adminComponent.includes("dataset.gosakiScheduleSaveArmed === \"true\"") &&
+    adminComponent.includes("data-gosaki-schedule-save-armed") &&
+    adminComponent.includes("isG20u45ScheduleOperationalSaveArmed") &&
     adminComponent.includes('page === "schedule"') &&
     (adminComponent.includes("showAuth") &&
       /showAuth[\s\S]{0,120}schedule/.test(adminComponent)),
@@ -799,7 +804,7 @@ assert(
     /CREATE_PREVIEW_FIELDS[\s\S]*?"date"/.test(scheduleOpEditSrc),
 );
 assert(
-  "schedule network dry-run Edge + client wiring (dryRun only)",
+  "schedule network dry-run + Save Edge + client wiring",
   (() => {
     const edgeHandler = read(
       "tools/static-to-astro/scripts/edge-functions/gosaki-schedule-save-dry-run/handler.ts",
@@ -820,40 +825,68 @@ assert(
       edgeHandler.includes('ENDPOINT_NAME = "gosaki-schedule-save-dry-run"') &&
       edgeHandler.includes('DRY_RUN_OPERATION = "dryRun"') &&
       edgeHandler.includes('SAVE_OPERATION = "save"') &&
-      edgeHandler.includes("operation=save is rejected") &&
+      edgeHandler.includes('SAVE_APPROVAL_ID = "gosaki-schedule-operational-save"') &&
+      edgeHandler.includes("approvalId is required for operation=save") &&
+      edgeHandler.includes("approvalId must be") &&
       edgeHandler.includes("SUPABASE_SERVICE_ROLE_CONNECTED = false") &&
       !/createServiceClient|SERVICE_ROLE_KEY/.test(edgeHandler) &&
       edgeHandler.includes("kmjqppxjdnwwrtaeqjta") &&
       edgeHandler.includes("vsbvndwuajjhnzpohghh") &&
       edgeHandler.includes("expectedBeforeUpdatedAt is required for edit") &&
       edgeHandler.includes("create published must be false") &&
+      edgeHandler.includes("edit published must be boolean") &&
+      edgeHandler.includes("edit payload must not include date") &&
+      edgeHandler.includes('"published"') &&
+      /EDIT_SAFE_FIELDS[\s\S]*?"published"/.test(edgeHandler) &&
+      edgeHandler.includes("legacy_id collision — create Save rejected") &&
       edgeHandler.includes("create must not reuse id / legacyId") &&
+      edgeHandler.includes("no changed fields — Save rejected") &&
+      edgeHandler.includes("buildCreateInsertRow") &&
+      edgeHandler.includes("createDefaultUpdateAdapter") &&
+      edgeHandler.includes("createDefaultInsertAdapter") &&
       edgeHandler.includes('rpc("is_admin")') &&
       edgeIndex.includes("handleScheduleEdgeDryRunHttpAsync") &&
       !edgeIndex.includes("skipAdminProbe") &&
       supabaseEdge.includes('ENDPOINT_NAME = "gosaki-schedule-save-dry-run"') &&
+      supabaseEdge.includes('SAVE_APPROVAL_ID = "gosaki-schedule-operational-save"') &&
+      supabaseEdge.includes("edit published must be boolean") &&
       read("supabase/config.toml").includes("[functions.gosaki-schedule-save-dry-run]") &&
       /\[functions\.gosaki-schedule-save-dry-run\]\s*\nverify_jwt\s*=\s*true/.test(
         read("supabase/config.toml"),
       ) &&
       adminTs.includes("PUBLIC_GOSAKI_SCHEDULE_DRY_RUN_ENDPOINT") &&
+      adminTs.includes("PUBLIC_GOSAKI_SCHEDULE_SAVE_UI_ARMED") &&
+      adminTs.includes('G20U45_SCHEDULE_SAVE_APPROVAL_ID = "gosaki-schedule-operational-save"') &&
       adminTs.includes("buildScheduleDryRunEndpointRequest") &&
+      adminTs.includes("buildScheduleSaveEndpointRequest") &&
       adminTs.includes("sanitizeScheduleDryRunEndpointDisplay") &&
+      adminTs.includes("sanitizeScheduleSaveEndpointDisplay") &&
+      adminTs.includes("evaluateScheduleOperationalSaveGate") &&
       adminTs.includes('operation: G20U45_SCHEDULE_DRY_RUN_OPERATION') &&
+      adminTs.includes('operation: G20U45_SCHEDULE_SAVE_OPERATION') &&
+      /G20U45_SCHEDULE_EDIT_SAFE_FIELDS[\s\S]*?"published"/.test(adminTs) &&
       !adminTs.includes("G-20u45-schedule") &&
       pageSrc.includes("data-gosaki-schedule-dry-run-endpoint") &&
+      pageSrc.includes("data-gosaki-schedule-save-armed") &&
       pageSrc.includes("buildScheduleDryRunEndpointRequest") &&
+      pageSrc.includes("buildScheduleSaveEndpointRequest") &&
+      pageSrc.includes("dataset.gosakiScheduleSaveArmed === \"true\"") &&
       scheduleOpEditSrc.includes("dryRunInFlight") &&
+      scheduleOpEditSrc.includes("saveInFlight") &&
       scheduleOpEditSrc.includes("access token required") &&
       scheduleOpEditSrc.includes("expectedBeforeUpdatedAt missing") &&
       scheduleOpEditSrc.includes("operation must be dryRun only") &&
-      scheduleOpEditSrc.includes("Unsafe response") === false &&
+      scheduleOpEditSrc.includes("evaluateSaveGate") &&
+      scheduleOpEditSrc.includes("buildSaveEndpointRequest") &&
       scheduleOpEditSrc.includes("didWrite") &&
       scheduleOpEditSrc.includes("dbWrite") &&
       scheduleOpEditSrc.includes("networkWrite") &&
-      scheduleOpEditSrc.includes('saveBtn.disabled = true') &&
-      !scheduleOpEditSrc.includes('operation: "save"') &&
-      !scheduleOpEditSrc.includes("operation: 'save'")
+      scheduleOpEditSrc.includes("saveArmed === true && gate.enabled === true") &&
+      scheduleOpEditSrc.includes('saveOperation ?? "save"') &&
+      scheduleOpEditSrc.includes("既存予定の日付変更は現在未対応") &&
+      scheduleOpEditSrc.includes("applyModeFieldLocks") &&
+      scheduleOpEditSrc.includes("非公開で作成") &&
+      /SCHEDULE_OPERATIONAL_SAFE_FIELDS[\s\S]*?"published"/.test(scheduleOpEditSrc)
     );
   })(),
 );

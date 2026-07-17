@@ -1,19 +1,22 @@
 Last updated: 2026-07-17
 Project: Static-to-Astro CMS / Musician CMS Kit
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u45 Schedule HTTP dry-run Edge + client — STG verified
+## 0. G-20u45 Schedule HTTP dry-run + Save — source done (deploy pending)
 
 | Item | Value |
 |------|-------|
-| Endpoint | `gosaki-schedule-save-dry-run` ACTIVE v1 (edit+create dry-run) |
-| Package | `ceba4828317098b57f752c7483a949111d210a02` |
-| NETWORK_DRY_RUN_CLIENT_WIRED | **true** |
-| SCHEDULE_EDIT_ENDPOINT_DRY_RUN_PASSED | **true** (HTTP 200 · lock verified · changedFields `venue`) |
-| SCHEDULE_CREATE_ENDPOINT_DRY_RUN_PASSED | **true** (HTTP 200 · no lock · 8 fields · `published=false`) |
-| Write safety | `didWrite/dbWrite/networkWrite=false` · Save disabled · no DB write/production change |
-| Next | Commit/Push → edit/create Saveを単一実装単位で実装+mock検証 → staging Edge deploy+controlled round-trip ×1 |
+| Endpoint | `gosaki-schedule-save-dry-run` (dryRun STG verified · Save source ready) |
+| SAVE_APPROVAL_ID | `gosaki-schedule-operational-save` |
+| EDIT_SAVE_IMPLEMENTED | **true** (optimistic lock UPDATE · **published** included · **date** excluded) |
+| CREATE_SAVE_IMPLEMENTED | **true** (published=false · Edge legacy_id) |
+| EDIT_DB_PERMISSION_READY | **unconfirmed** (live SELECT required) |
+| CREATE_DB_PERMISSION_READY | **unconfirmed** (live SELECT required) |
+| NORMAL_STG_SAVE_DISABLED | **true** |
+| LOCAL_ARM | `PUBLIC_GOSAKI_SCHEDULE_SAVE_UI_ARMED` exact true |
+| EDGE_DEPLOY_EXECUTED | **false** |
+| Next | Commit/Push → permission SELECT preflight → staging Edge deploy ×1 → package/FTP → controlled Save ×1 each |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u45-gosaki-schedule-operational-edit-ui-wiring — complete (source)
+## 0. G-20u45-gosaki-schedule-operational-edit-ui-wiring — complete (source)
 
 | Item | Value |
 | --- | --- |
@@ -48,7 +51,7 @@ SAVE_REQUEST_EXECUTED: false
 DB_WRITE_EXECUTED: false
 ```
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u44 / G-20u44c controlled Save round-trip + permission rollback — complete and closed
+## 0. G-20u44 / G-20u44c controlled Save round-trip + permission rollback — complete and closed
 
 | Item | Value |
 | --- | --- |
@@ -79,7 +82,7 @@ PERMISSION_ROLLBACK_COMPLETED: true
 VERIFICATION_PERMISSION_CLOSED: true
 ```
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u44c-gosaki-discography-label-permission-enablement-prep — complete
+## 0. G-20u44c-gosaki-discography-label-permission-enablement-prep — complete
 
 | Item | Value |
 | --- | --- |
@@ -104,7 +107,7 @@ RESTRICTIVE_POLICY_REMOVED: true
 VERIFICATION_PERMISSION_CLOSED: true
 ```
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u44a-gosaki-discography-local-controlled-save-wiring-fix — complete
+## 0. G-20u44a-gosaki-discography-local-controlled-save-wiring-fix — complete
 
 | Item | Value |
 | --- | --- |
@@ -127,7 +130,7 @@ SAVE_REQUEST_EXECUTED: false
 DB_WRITE_EXECUTED: false
 ```
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u43a-gosaki-discography-label-save-edge-deploy-preflight — complete (post-deploy smoke)
+## 0. G-20u43a-gosaki-discography-label-save-edge-deploy-preflight — complete (post-deploy smoke)
 
 | Item | Value |
 | --- | --- |
@@ -164,7 +167,7 @@ DB_WRITE_EXECUTED: false
 CONTROLLED_SAVE_PREFLIGHT_READY: false
 ```
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u43-gosaki-discography-label-controlled-save-slice-local-implementation — complete (not execution-ready)
+## 0. G-20u43-gosaki-discography-label-controlled-save-slice-local-implementation — complete (not execution-ready)
 
 | Item | Value |
 | --- | --- |
@@ -201,7 +204,7 @@ DB_WRITE_EXECUTED: false
 CONTROLLED_SAVE_PREFLIGHT_READY: false
 ```
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u42-gosaki-discography-controlled-save-enablement-preflight — complete (not execution-ready)
+## 0. G-20u42-gosaki-discography-controlled-save-enablement-preflight — complete (not execution-ready)
 
 | Item | Value |
 | --- | --- |
@@ -234,7 +237,7 @@ PACKAGE_GENERATED: false
 FTP_EXECUTED: false
 ```
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u41-gosaki-discography-operational-save-ui-gated-local-wiring — completed
+## 0. G-20u41-gosaki-discography-operational-save-ui-gated-local-wiring — completed
 
 | Item | Value |
 | --- | --- |
@@ -260,7 +263,7 @@ DB_WRITE_EXECUTED: false
 G-20u41: completed
 ```
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u40-gosaki-discography-operational-edit-ui — complete
+## 0. G-20u40-gosaki-discography-operational-edit-ui — complete
 
 | Item | Value |
 | --- | --- |
@@ -293,7 +296,7 @@ DISCOGRAPHY_DB_WRITE_EXECUTED: false
 P1-DISCOGRAPHY-EDIT-UI: resolved
 ```
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u39b4-gosaki-admin-multi-route-staging-package-and-manual-upload-prep — complete
+## 0. G-20u39b4-gosaki-admin-multi-route-staging-package-and-manual-upload-prep — complete
 
 | Item | Value |
 | --- | --- |
@@ -338,7 +341,7 @@ SAVE_REMAINS_DISABLED: true
 FRESH_PACKAGE_REUPLOAD_REQUIRED: true
 ```
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u39b3-gosaki-admin-portal-and-content-routes-local-implementation — complete
+## 0. G-20u39b3-gosaki-admin-portal-and-content-routes-local-implementation — complete
 
 | Item | Value |
 | --- | --- |
@@ -359,7 +362,7 @@ SAVE_REMAINS_DISABLED: true
 STG_PACKAGE_AND_BROWSER_QA_REQUIRED: true
 ```
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u39b2-gosaki-admin-operational-ui-information-architecture-planning — complete
+## 0. G-20u39b2-gosaki-admin-operational-ui-information-architecture-planning — complete
 
 | Item | Value |
 | --- | --- |
@@ -379,7 +382,7 @@ INDIVIDUAL_CONTENT_ADMIN_ROUTES_PLANNED: true
 IMPLEMENTATION_EXECUTED: false
 ```
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u39b-gosaki-staging-p1-admin-mobile-left-align-polish — complete
+## 0. G-20u39b-gosaki-staging-p1-admin-mobile-left-align-polish — complete
 
 | Item | Value |
 | --- | --- |
@@ -400,7 +403,7 @@ STG_BROWSER_RECHECK_REQUIRED: false
 P1-CON1: resolved
 ```
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u39a2-gosaki-staging-p1-contact-hubspot-submit-e2e-result-record — complete
+## 0. G-20u39a2-gosaki-staging-p1-contact-hubspot-submit-e2e-result-record — complete
 
 | Item | Value |
 | --- | --- |
@@ -432,7 +435,7 @@ PRODUCTION_UPLOAD_READY: false
 PUBLIC_READY: CONDITIONAL
 ```
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u39a1b-gosaki-staging-p1-contact-hubspot-submit-e2e-preflight-gap-resolution — complete
+## 0. G-20u39a1b-gosaki-staging-p1-contact-hubspot-submit-e2e-preflight-gap-resolution — complete
 
 | Item | Value |
 | --- | --- |
@@ -453,7 +456,7 @@ CONTACT_SUBMISSION_EXECUTED: false
 CONTACT_E2E_STATUS: PREFLIGHT_ONLY_NOT_EXECUTED
 ```
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u39a1-gosaki-staging-p1-contact-hubspot-submit-e2e-preflight — complete
+## 0. G-20u39a1-gosaki-staging-p1-contact-hubspot-submit-e2e-preflight — complete
 
 | Item | Value |
 | --- | --- |
@@ -486,7 +489,7 @@ CONTACT_E2E_STATUS: PREFLIGHT_ONLY_NOT_EXECUTED
 CONTACT_E2E_EXECUTION_READY: true
 ```
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u39a-gosaki-staging-p1-contact-hubspot-submit-e2e-planning — complete
+## 0. G-20u39a-gosaki-staging-p1-contact-hubspot-submit-e2e-planning — complete
 
 | Item | Value |
 | --- | --- |
@@ -517,7 +520,7 @@ CONTACT_SUBMISSION_EXECUTED: false
 CONTACT_E2E_STATUS: PLANNED_NOT_EXECUTED
 ```
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u39-gosaki-staging-p1-review-planning — complete
+## 0. G-20u39-gosaki-staging-p1-review-planning — complete
 
 | Item | Value |
 | --- | --- |
@@ -543,7 +546,7 @@ PRODUCTION_UPLOAD_READY: false
 PUBLIC_READY: CONDITIONAL
 ```
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u38d-gosaki-production-hosting-not-ready-and-return-to-staging-p1-record — complete
+## 0. G-20u38d-gosaki-production-hosting-not-ready-and-return-to-staging-p1-record — complete
 
 | Item | Value |
 | --- | --- |
@@ -558,7 +561,7 @@ PUBLIC_READY: CONDITIONAL
 | Production FTP prep | **paused** |
 | Next | — (superseded by G-20u39) |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u38c-gosaki-production-package-verification-review — complete
+## 0. G-20u38c-gosaki-production-package-verification-review — complete
 
 | Item | Value |
 | --- | --- |
@@ -567,7 +570,7 @@ PUBLIC_READY: CONDITIONAL
 | Upload track | **paused** (G-20u38d — hosting not ready) |
 | Next | — (superseded by G-20u38d) |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u38b2-gosaki-production-package-regeneration-at-current-head — complete
+## 0. G-20u38b2-gosaki-production-package-regeneration-at-current-head — complete
 
 | Item | Value |
 | --- | --- |
@@ -576,7 +579,7 @@ PUBLIC_READY: CONDITIONAL
 | Package at | `1c1fb97` (**stale** vs HEAD `2831629`) |
 | Next | — (superseded by G-20u38c review) |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20i3-gosaki-production-manual-upload-verifier-drift-review — complete
+## 0. G-20i3-gosaki-production-manual-upload-verifier-drift-review — complete
 
 | Item | Value |
 | --- | --- |
@@ -585,7 +588,7 @@ PUBLIC_READY: CONDITIONAL
 | G20I3_VERIFIER_DRIFT_RESOLVED | **true** |
 | Next | — (superseded by G-20u38b2) |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u38b-gosaki-production-package-generation-at-head — complete
+## 0. G-20u38b-gosaki-production-package-generation-at-head — complete
 
 | Item | Value |
 | --- | --- |
@@ -594,7 +597,7 @@ PUBLIC_READY: CONDITIONAL
 | Package at | `4259c8c` (**superseded** by G-20u38b2) |
 | Next | — (superseded by G-20u38b2) |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u38a-gosaki-production-profile-static-preflight — complete
+## 0. G-20u38a-gosaki-production-profile-static-preflight — complete
 
 | Item | Value |
 | --- | --- |
@@ -602,7 +605,7 @@ PUBLIC_READY: CONDITIONAL
 | Gate | `gosakiProductionProfileStaticPreflightCompleted: true` |
 | Next | **G-20u38c-gosaki-production-package-verification-review** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u38-gosaki-production-package-prep-planning — complete
+## 0. G-20u38-gosaki-production-package-prep-planning — complete
 
 | Item | Value |
 | --- | --- |
@@ -610,7 +613,7 @@ PUBLIC_READY: CONDITIONAL
 | Gate | `gosakiProductionPackagePrepPlanned: true` |
 | Next | **G-20u38b-gosaki-production-package-generation-at-head** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u37c-gosaki-public-readiness-final-p0-review — complete
+## 0. G-20u37c-gosaki-public-readiness-final-p0-review — complete
 
 | Item | Value |
 | --- | --- |
@@ -619,7 +622,7 @@ PUBLIC_READY: CONDITIONAL
 | PUBLIC_READY | **CONDITIONAL** |
 | Next | **G-20u38a-gosaki-production-profile-static-preflight** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u37b-gosaki-public-readiness-manual-browser-qa-result — complete
+## 0. G-20u37b-gosaki-public-readiness-manual-browser-qa-result — complete
 
 | Item | Value |
 | --- | --- |
@@ -631,7 +634,7 @@ PUBLIC_READY: CONDITIONAL
 | STAGING_BROWSER_QA_READY | **YES** |
 | Next | **G-20u38-gosaki-production-package-prep-planning** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u37a-gosaki-public-readiness-static-inspection — complete
+## 0. G-20u37a-gosaki-public-readiness-static-inspection — complete
 
 | Item | Value |
 | --- | --- |
@@ -644,7 +647,7 @@ PUBLIC_READY: CONDITIONAL
 | Artifact | sourceCommit `e3616a3` · 31 files |
 | Next | **G-20u37c-gosaki-public-readiness-final-p0-review** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u37-gosaki-public-readiness-qa-planning — complete
+## 0. G-20u37-gosaki-public-readiness-qa-planning — complete
 
 | Item | Value |
 | --- | --- |
@@ -654,7 +657,7 @@ PUBLIC_READY: CONDITIONAL
 | STAGING_QA_READY | **YES** |
 | Next | G-20u37b manual-browser-qa |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36f-discography-marker-title-restore-slice-complete — COMPLETE
+## 0. G-20u36f-discography-marker-title-restore-slice-complete — COMPLETE
 
 | Item | Value |
 | --- | --- |
@@ -664,7 +667,7 @@ PUBLIC_READY: CONDITIONAL
 | Regression | **23/23 PASS** · commit **`f4265b9`** |
 | Next | Gosaki public-readiness QA · Discography Save UI · Schedule/YouTube/About/Contact/Link/Home |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36f-discography-marker-title-restore-manual-upload-ui-pass-result — complete
+## 0. G-20u36f-discography-marker-title-restore-manual-upload-ui-pass-result — complete
 
 | Item | Value |
 | --- | --- |
@@ -674,7 +677,7 @@ PUBLIC_READY: CONDITIONAL
 | Title | marker **removed** · `On a Clear Day` **restored** |
 | Next | G-20u36f-discography-marker-title-restore-slice-complete |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36f-discography-marker-title-restore-save-result-record — complete
+## 0. G-20u36f-discography-marker-title-restore-save-result-record — complete
 
 | Item | Value |
 | --- | --- |
@@ -685,7 +688,7 @@ PUBLIC_READY: CONDITIONAL
 | Package / FTP | **not done** · STG UI may lag |
 | Next | G-20u36f-discography-marker-title-restore-static-package-regeneration-prep |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36f-discography-marker-title-restore-edge-deploy-result-record — complete
+## 0. G-20u36f-discography-marker-title-restore-edge-deploy-result-record — complete
 
 | Item | Value |
 | --- | --- |
@@ -696,7 +699,7 @@ PUBLIC_READY: CONDITIONAL
 | dryRun restore-shaped | safe FAIL · no DB write |
 | Next | G-20u36f-discography-marker-title-restore-preflight-select |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36f-discography-marker-title-restore-edge-deploy-prep — complete
+## 0. G-20u36f-discography-marker-title-restore-edge-deploy-prep — complete
 
 | Item | Value |
 | --- | --- |
@@ -705,7 +708,7 @@ PUBLIC_READY: CONDITIONAL
 | Follow-on | deploy + smoke — **recorded** |
 | Next | preflight-select |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36f-discography-marker-title-restore-handler-implementation — complete
+## 0. G-20u36f-discography-marker-title-restore-handler-implementation — complete
 
 | Item | Value |
 | --- | --- |
@@ -714,7 +717,7 @@ PUBLIC_READY: CONDITIONAL
 | Follow-on | edge deploy prep — **complete** |
 | Next | edge-deploy-execution |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36f-discography-marker-title-restore-planning — complete
+## 0. G-20u36f-discography-marker-title-restore-planning — complete
 
 | Item | Value |
 | --- | --- |
@@ -723,7 +726,7 @@ PUBLIC_READY: CONDITIONAL
 | Follow-on | handler implementation — **complete** |
 | Next | edge-deploy-prep |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-slice-complete — complete
+## 0. G-20u36e-controlled-save-slice-complete — complete
 
 | Item | Value |
 | --- | --- |
@@ -732,7 +735,7 @@ PUBLIC_READY: CONDITIONAL
 | Follow-on | marker restore planning — **complete** |
 | Next | G-20u36f handler implementation |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-manual-upload-ui-pass-result-record — complete
+## 0. G-20u36e-controlled-save-manual-upload-ui-pass-result-record — complete
 
 | Item | Value |
 | --- | --- |
@@ -741,7 +744,7 @@ PUBLIC_READY: CONDITIONAL
 | Follow-on | slice complete — **recorded** |
 | Next | slice-complete — **done** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-static-package-regeneration-prep — complete
+## 0. G-20u36e-controlled-save-static-package-regeneration-prep — complete
 
 | Item | Value |
 | --- | --- |
@@ -750,7 +753,7 @@ PUBLIC_READY: CONDITIONAL
 | Follow-on | package regen + manual FTP + UI pass — **recorded** |
 | Next | manual-upload-ui-pass — **complete** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-ui-visible-verification-result-record — complete
+## 0. G-20u36e-controlled-save-ui-visible-verification-result-record — complete
 
 | Item | Value |
 | --- | --- |
@@ -759,7 +762,7 @@ PUBLIC_READY: CONDITIONAL
 | Follow-on | regen + upload resolved UI |
 | Next | manual-upload-ui-pass — **complete** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-ui-visible-verification — complete
+## 0. G-20u36e-controlled-save-ui-visible-verification — complete
 
 | Item | Value |
 | --- | --- |
@@ -768,7 +771,7 @@ PUBLIC_READY: CONDITIONAL
 | Follow-on | result — **recorded** |
 | Next | static-package-regeneration-prep |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-post-close-result-record — complete
+## 0. G-20u36e-controlled-save-post-close-result-record — complete
 
 | Item | Value |
 | --- | --- |
@@ -777,7 +780,7 @@ PUBLIC_READY: CONDITIONAL
 | Follow-on | UI-visible verification prep — **complete** |
 | Next | ui-visible-verification-result-record |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-execution-result-and-post-save-select-prep — complete
+## 0. G-20u36e-controlled-save-execution-result-and-post-save-select-prep — complete
 
 | Item | Value |
 | --- | --- |
@@ -786,7 +789,7 @@ PUBLIC_READY: CONDITIONAL
 | Follow-on | permission close + post-close — **PASS recorded** |
 | Next | ui-visible-verification |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-pre-save-result-and-save-execution-prep — complete
+## 0. G-20u36e-controlled-save-pre-save-result-and-save-execution-prep — complete
 
 | Item | Value |
 | --- | --- |
@@ -795,7 +798,7 @@ PUBLIC_READY: CONDITIONAL
 | Follow-on | First Save — **PASS** · post-save SELECT prep — **complete** |
 | Next | post-save-select-execution |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-pre-save-select-prep-and-extract — complete
+## 0. G-20u36e-controlled-save-pre-save-select-prep-and-extract — complete
 
 | Item | Value |
 | --- | --- |
@@ -804,7 +807,7 @@ PUBLIC_READY: CONDITIONAL
 | Follow-on | Pre-save SELECT — **PASS** · execution prep — **complete** |
 | Next | controlled-save-execution |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-smoke-readonly-check-result-record — complete
+## 0. G-20u36e-controlled-save-smoke-readonly-check-result-record — complete
 
 | Item | Value |
 | --- | --- |
@@ -814,7 +817,7 @@ PUBLIC_READY: CONDITIONAL
 | Follow-on | pre-save SELECT prep — **complete** |
 | Next | pre-save-select-execution |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-edge-deploy-result-and-smoke-prep — complete
+## 0. G-20u36e-controlled-save-edge-deploy-result-and-smoke-prep — complete
 
 | Item | Value |
 | --- | --- |
@@ -823,7 +826,7 @@ PUBLIC_READY: CONDITIONAL
 | Follow-on | smoke execution — **PASS recorded** |
 | Next | pre-save-select-prep |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-edge-deploy-prep — complete
+## 0. G-20u36e-controlled-save-edge-deploy-prep — complete
 
 | Item | Value |
 | --- | --- |
@@ -832,7 +835,7 @@ PUBLIC_READY: CONDITIONAL
 | Follow-on | deploy + smoke — **PASS recorded** |
 | Next | pre-save-select-prep |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-handler-permission-aware-local-verification — complete
+## 0. G-20u36e-controlled-save-handler-permission-aware-local-verification — complete
 
 | Item | Value |
 | --- | --- |
@@ -842,7 +845,7 @@ PUBLIC_READY: CONDITIONAL
 | Follow-on | edge deploy prep — **complete** |
 | Next | edge-deploy-execution |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-handler-permission-aware-local-implementation — complete
+## 0. G-20u36e-controlled-save-handler-permission-aware-local-implementation — complete
 
 | Item | Value |
 | --- | --- |
@@ -852,7 +855,7 @@ PUBLIC_READY: CONDITIONAL
 | Follow-on | local verification — **complete** |
 | Next | edge-deploy-prep |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-handler-permission-aware-planning — complete
+## 0. G-20u36e-controlled-save-handler-permission-aware-planning — complete
 
 | Item | Value |
 | --- | --- |
@@ -862,7 +865,7 @@ PUBLIC_READY: CONDITIONAL
 | Follow-on | local implementation — **complete** |
 | Next | local-verification |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-rollback-name-adjustment-prep — complete
+## 0. G-20u36e-controlled-save-rollback-name-adjustment-prep — complete
 
 | Item | Value |
 | --- | --- |
@@ -872,7 +875,7 @@ PUBLIC_READY: CONDITIONAL
 | Rollback / Save | **not executed** |
 | Next | handler planning — **complete** → implementation-prep |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-permission-change-post-apply-result-record — complete
+## 0. G-20u36e-controlled-save-permission-change-post-apply-result-record — complete
 
 | Item | Value |
 | --- | --- |
@@ -883,7 +886,7 @@ PUBLIC_READY: CONDITIONAL
 | Save / Rollback | **not executed** |
 | Next | rollback name adjustment — **complete** → handler planning |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-permission-change-preflight-select-result-record — complete
+## 0. G-20u36e-controlled-save-permission-change-preflight-select-result-record — complete
 
 | Item | Value |
 | --- | --- |
@@ -893,7 +896,7 @@ PUBLIC_READY: CONDITIONAL
 | Apply | **executed** · post-apply recorded |
 | Next | post-apply result — **complete** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-permission-change-sql-prep — complete
+## 0. G-20u36e-controlled-save-permission-change-sql-prep — complete
 
 | Item | Value |
 | --- | --- |
@@ -903,7 +906,7 @@ PUBLIC_READY: CONDITIONAL
 | Preflight SELECT | **PASS recorded** |
 | Next | apply-sql-extract |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-permission-change-planning — complete
+## 0. G-20u36e-controlled-save-permission-change-planning — complete
 
 | Item | Value |
 | --- | --- |
@@ -913,7 +916,7 @@ PUBLIC_READY: CONDITIONAL
 | Not done | SQL · GRANT · POLICY · Save |
 | Next | SQL prep — **complete** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-auth-jwt-admin-probe-ui-stg-readonly-probe-execution-result-record — complete
+## 0. G-20u36e-controlled-save-auth-jwt-admin-probe-ui-stg-readonly-probe-execution-result-record — complete
 
 | Item | Value |
 | --- | --- |
@@ -924,7 +927,7 @@ PUBLIC_READY: CONDITIONAL
 | Save / permission | **still blocked** (UPDATE grant 0) |
 | Next | permission-change planning — **complete** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-auth-ui-login-blocked-stg-login-check-result-record — complete
+## 0. G-20u36e-controlled-save-auth-ui-login-blocked-stg-login-check-result-record — complete
 
 | Item | Value |
 | --- | --- |
@@ -935,7 +938,7 @@ PUBLIC_READY: CONDITIONAL
 | Not done | permission change · Save |
 | Next | readonly probe execution — **complete** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-auth-ui-login-blocked-manual-ftp-reupload-result-record — complete
+## 0. G-20u36e-controlled-save-auth-ui-login-blocked-manual-ftp-reupload-result-record — complete
 
 | Item | Value |
 | --- | --- |
@@ -946,7 +949,7 @@ PUBLIC_READY: CONDITIONAL
 | Not done | probe · RPC · Save |
 | Next | stg-login-check — **complete** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-auth-ui-login-blocked-local-verify — complete
+## 0. G-20u36e-controlled-save-auth-ui-login-blocked-local-verify — complete
 
 | Item | Value |
 | --- | --- |
@@ -958,7 +961,7 @@ PUBLIC_READY: CONDITIONAL
 | Not done | login · probe · Save |
 | Next | package-generate → manual FTP reupload — **complete** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-auth-ui-login-blocked-tools-draft — complete
+## 0. G-20u36e-controlled-save-auth-ui-login-blocked-tools-draft — complete
 
 | Item | Value |
 | --- | --- |
@@ -968,7 +971,7 @@ PUBLIC_READY: CONDITIONAL
 | Not done | package · FTP · browser · probe · Save |
 | Next | local-verify — **complete** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-auth-ui-login-blocked-diagnosis-planning — complete
+## 0. G-20u36e-controlled-save-auth-ui-login-blocked-diagnosis-planning — complete
 
 | Item | Value |
 | --- | --- |
@@ -978,7 +981,7 @@ PUBLIC_READY: CONDITIONAL
 | Not done | UI fix · package · FTP · probe · RPC · Save |
 | Next | tools-draft — **complete** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-auth-jwt-admin-probe-ui-stg-login-blocked-result-record — complete
+## 0. G-20u36e-controlled-save-auth-jwt-admin-probe-ui-stg-login-blocked-result-record — complete
 
 | Item | Value |
 | --- | --- |
@@ -988,7 +991,7 @@ PUBLIC_READY: CONDITIONAL
 | Probe click | **not done** |
 | Next | diagnosis planning — **complete** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-auth-jwt-admin-probe-ui-stg-readonly-probe-preflight — complete
+## 0. G-20u36e-controlled-save-auth-jwt-admin-probe-ui-stg-readonly-probe-preflight — complete
 
 | Item | Value |
 | --- | --- |
@@ -997,7 +1000,7 @@ PUBLIC_READY: CONDITIONAL
 | Prep | one-click STG `rpc('is_admin')` checklist · probe **not** clicked |
 | Next | probe execution **deferred** — login blocked (diagnosis next) |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-auth-jwt-admin-probe-ui-manual-ftp-upload-result-record — complete
+## 0. G-20u36e-controlled-save-auth-jwt-admin-probe-ui-manual-ftp-upload-result-record — complete
 
 | Item | Value |
 | --- | --- |
@@ -1008,7 +1011,7 @@ PUBLIC_READY: CONDITIONAL
 | Probe click | **not done** |
 | Next | stg-readonly-probe-preflight — **complete** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-auth-jwt-admin-probe-ui-package-preflight-prep — complete
+## 0. G-20u36e-controlled-save-auth-jwt-admin-probe-ui-package-preflight-prep — complete
 
 | Item | Value |
 | --- | --- |
@@ -1017,7 +1020,7 @@ PUBLIC_READY: CONDITIONAL
 | Prep | command · freshness · upload target · STOP — **no package gen in prep** |
 | Next | generate-freshness → manual FTP — **upload result recorded** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-auth-jwt-admin-probe-ui-local-verify — complete
+## 0. G-20u36e-controlled-save-auth-jwt-admin-probe-ui-local-verify — complete
 
 | Item | Value |
 | --- | --- |
@@ -1027,7 +1030,7 @@ PUBLIC_READY: CONDITIONAL
 | STG reflect | **not yet** |
 | Next | G-20u36e-controlled-save-auth-jwt-admin-probe-ui-package-preflight-prep — **complete** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-auth-jwt-admin-probe-ui-tools-draft — complete
+## 0. G-20u36e-controlled-save-auth-jwt-admin-probe-ui-tools-draft — complete
 
 | Item | Value |
 | --- | --- |
@@ -1037,7 +1040,7 @@ PUBLIC_READY: CONDITIONAL
 | Not done | browser RPC · HTTP · SQL · Save · Edge |
 | Next | G-20u36e-controlled-save-auth-jwt-admin-probe-ui-local-verify — **complete** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-auth-jwt-admin-probe-ui-planning — complete
+## 0. G-20u36e-controlled-save-auth-jwt-admin-probe-ui-planning — complete
 
 | Item | Value |
 | --- | --- |
@@ -1046,7 +1049,7 @@ PUBLIC_READY: CONDITIONAL
 | Design | Manual `#gra-auth` `rpc('is_admin')` · reasonCode · Save decoupled |
 | Next | G-20u36e-controlled-save-auth-jwt-admin-probe-ui-tools-draft — **complete** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-auth-jwt-admin-probe-planning — complete
+## 0. G-20u36e-controlled-save-auth-jwt-admin-probe-planning — complete
 
 | Item | Value |
 | --- | --- |
@@ -1057,7 +1060,7 @@ PUBLIC_READY: CONDITIONAL
 | Rejected | Option D SQL Editor · Option E service_role dump |
 | Next | G-20u36e-controlled-save-auth-jwt-admin-probe-ui-planning — **complete** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-auth-admin-rls-select-result — complete
+## 0. G-20u36e-controlled-save-auth-admin-rls-select-result — complete
 
 | Item | Value |
 | --- | --- |
@@ -1069,7 +1072,7 @@ PUBLIC_READY: CONDITIONAL
 | Restrictive policy | **0** |
 | Next | G-20u36e-controlled-save-auth-jwt-admin-probe-planning — **complete** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-auth-admin-rls-select-prep — complete
+## 0. G-20u36e-controlled-save-auth-admin-rls-select-prep — complete
 
 | Item | Value |
 | --- | --- |
@@ -1079,7 +1082,7 @@ PUBLIC_READY: CONDITIONAL
 | Output column | `g20u36e_auth_admin_rls_snapshot` |
 | Next | G-20u36e-controlled-save-auth-admin-rls-select-execution — **complete** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-auth-jwt-feasibility-preflight — complete
+## 0. G-20u36e-controlled-save-auth-jwt-feasibility-preflight — complete
 
 | Item | Value |
 | --- | --- |
@@ -1090,7 +1093,7 @@ PUBLIC_READY: CONDITIONAL
 | DB gap | `is_admin()` · operator admin · RLS composition unverified |
 | Next | G-20u36e-controlled-save-auth-admin-rls-select-prep — **complete** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-auth-jwt-feasibility-planning — complete
+## 0. G-20u36e-controlled-save-auth-jwt-feasibility-planning — complete
 
 | Item | Value |
 | --- | --- |
@@ -1099,7 +1102,7 @@ PUBLIC_READY: CONDITIONAL
 | Verdict | **FEASIBLE** |
 | Next | G-20u36e-controlled-save-auth-jwt-feasibility-preflight — **complete** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-permission-model-decision — complete
+## 0. G-20u36e-controlled-save-permission-model-decision — complete
 
 | Item | Value |
 | --- | --- |
@@ -1108,7 +1111,7 @@ PUBLIC_READY: CONDITIONAL
 | Selected | Option A — authenticated UPDATE(title) + restrictive RLS + operator JWT |
 | Next | G-20u36e-controlled-save-auth-jwt-feasibility-planning — **complete** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-permission-snapshot-select-result — complete
+## 0. G-20u36e-controlled-save-permission-snapshot-select-result — complete
 
 | Item | Value |
 | --- | --- |
@@ -1118,7 +1121,7 @@ PUBLIC_READY: CONDITIONAL
 | Save | **not executable** — DB write likely blocked |
 | Next | G-20u36e-controlled-save-permission-model-decision — **complete** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-permission-snapshot-select-prep — complete
+## 0. G-20u36e-controlled-save-permission-snapshot-select-prep — complete
 
 | Item | Value |
 | --- | --- |
@@ -1128,7 +1131,7 @@ PUBLIC_READY: CONDITIONAL
 | SQL executed | **no** |
 | Next | G-20u36e-controlled-save-permission-snapshot-select-execution — **complete** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-permission-preflight-planning — complete
+## 0. G-20u36e-controlled-save-permission-preflight-planning — complete
 
 | Item | Value |
 | --- | --- |
@@ -1139,7 +1142,7 @@ PUBLIC_READY: CONDITIONAL
 | SQL / GRANT / RLS change | **none** |
 | Next | G-20u36e-controlled-save-permission-snapshot-select-prep — **complete** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-edge-save-path-planning — complete
+## 0. G-20u36e-controlled-save-edge-save-path-planning — complete
 
 | Item | Value |
 | --- | --- |
@@ -1150,7 +1153,7 @@ PUBLIC_READY: CONDITIONAL
 | Save / SQL / DB write / deploy | **none** |
 | Next | G-20u36e-controlled-save-permission-preflight-planning — **complete** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-dryrun-payload-live-verify — complete
+## 0. G-20u36e-controlled-save-dryrun-payload-live-verify — complete
 
 | Item | Value |
 | --- | --- |
@@ -1161,7 +1164,7 @@ PUBLIC_READY: CONDITIONAL
 | Save / SQL / DB write | **none** |
 | Next | G-20u36e-controlled-save-edge-save-path-planning — **complete** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-canonical-track-fixture-audit — complete
+## 0. G-20u36e-controlled-save-canonical-track-fixture-audit — complete
 
 | Item | Value |
 | --- | --- |
@@ -1172,7 +1175,7 @@ PUBLIC_READY: CONDITIONAL
 | Doc | `gosaki-discography-g20u36e-controlled-save-canonical-track-fixture-audit.md` |
 | Next | G-20u36e-controlled-save-dryrun-payload-live-verify — **complete** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-snapshot-select-result — complete
+## 0. G-20u36e-controlled-save-snapshot-select-result — complete
 
 | Item | Value |
 | --- | --- |
@@ -1184,7 +1187,7 @@ PUBLIC_READY: CONDITIONAL
 | Doc | `gosaki-discography-g20u36e-controlled-save-snapshot-select-result.md` |
 | Next | G-20u36e-controlled-save-canonical-track-fixture-audit — **complete** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-preflight — complete
+## 0. G-20u36e-controlled-save-preflight — complete
 
 | Item | Value |
 | --- | --- |
@@ -1196,7 +1199,7 @@ PUBLIC_READY: CONDITIONAL
 | Doc | `gosaki-discography-g20u36e-controlled-save-preflight.md` |
 | Next | G-20u36e-controlled-save-snapshot-select-result — **complete** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36e-controlled-save-planning — complete
+## 0. G-20u36e-controlled-save-planning — complete
 
 | Item | Value |
 | --- | --- |
@@ -1208,7 +1211,7 @@ PUBLIC_READY: CONDITIONAL
 | Doc | `gosaki-discography-g20u36e-controlled-save-plan.md` |
 | Next | G-20u36e-controlled-save-preflight — **complete** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36d-readback-live-verify-retry-3 — complete (PASS)
+## 0. G-20u36d-readback-live-verify-retry-3 — complete (PASS)
 
 | Item | Value |
 | --- | --- |
@@ -1220,7 +1223,7 @@ PUBLIC_READY: CONDITIONAL
 | Doc | `gosaki-discography-g20u36d-readback-live-verify-retry-3.md` |
 | Next | G-20u36e-controlled-save-planning — **complete** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36d-readback-tracks-relation-filter-fix-edge-deploy-result-record — complete
+## 0. G-20u36d-readback-tracks-relation-filter-fix-edge-deploy-result-record — complete
 
 | Item | Value |
 | --- | --- |
@@ -1232,7 +1235,7 @@ PUBLIC_READY: CONDITIONAL
 | Doc | `gosaki-discography-g20u36d-readback-tracks-relation-filter-fix-edge-deploy-result.md` |
 | Next | G-20u36d-readback-live-verify-retry-3 — **complete (PASS)** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36d-readback-tracks-relation-filter-fix-edge-deploy-preflight — complete
+## 0. G-20u36d-readback-tracks-relation-filter-fix-edge-deploy-preflight — complete
 
 | Item | Value |
 | --- | --- |
@@ -1245,7 +1248,7 @@ PUBLIC_READY: CONDITIONAL
 | Doc | `gosaki-discography-g20u36d-readback-tracks-relation-filter-fix-edge-deploy-preflight.md` |
 | Next | G-20u36d-readback-tracks-relation-filter-fix-edge-deploy (operator) — **complete** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36d-readback-tracks-relation-filter-fix-root-placement — complete
+## 0. G-20u36d-readback-tracks-relation-filter-fix-root-placement — complete
 
 | Item | Value |
 | --- | --- |
@@ -1258,7 +1261,7 @@ PUBLIC_READY: CONDITIONAL
 | Doc | `gosaki-discography-g20u36d-readback-tracks-relation-filter-fix-root-placement.md` |
 | Next | G-20u36d-readback-tracks-relation-filter-fix-edge-deploy-preflight — **complete** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36d-readback-tracks-relation-filter-fix-tools-draft — complete
+## 0. G-20u36d-readback-tracks-relation-filter-fix-tools-draft — complete
 
 | Item | Value |
 | --- | --- |
@@ -1271,7 +1274,7 @@ PUBLIC_READY: CONDITIONAL
 | Doc | `gosaki-discography-g20u36d-readback-tracks-relation-filter-fix-tools-draft.md` |
 | Next | G-20u36d-readback-tracks-relation-filter-fix-root-placement — **complete** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36d-readback-tracks-relation-filter-fix-planning — complete
+## 0. G-20u36d-readback-tracks-relation-filter-fix-planning — complete
 
 | Item | Value |
 | --- | --- |
@@ -1282,7 +1285,7 @@ PUBLIC_READY: CONDITIONAL
 | Doc | `gosaki-discography-g20u36d-readback-tracks-relation-filter-fix-plan.md` |
 | Next | G-20u36d-readback-tracks-relation-filter-fix-tools-draft — **complete** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36d-readback-tracks-relation-column-inspection-result-record — complete
+## 0. G-20u36d-readback-tracks-relation-column-inspection-result-record — complete
 
 | Item | Value |
 | --- | --- |
@@ -1294,7 +1297,7 @@ PUBLIC_READY: CONDITIONAL
 | Doc | `gosaki-discography-g20u36d-readback-tracks-relation-column-inspection-result.md` |
 | Next | G-20u36d-readback-tracks-relation-filter-fix-planning — **complete** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36d-readback-tracks-relation-column-inspection-preflight — complete
+## 0. G-20u36d-readback-tracks-relation-column-inspection-preflight — complete
 
 | Item | Value |
 | --- | --- |
@@ -1306,7 +1309,7 @@ PUBLIC_READY: CONDITIONAL
 | Doc | `gosaki-discography-g20u36d-readback-tracks-relation-column-inspection-preflight.md` |
 | Next | operator manual SELECT-only execution → G-20u36d-readback-tracks-relation-column-inspection-result-record — **complete** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36d-readback-tracks-relation-column-inspection-planning — complete
+## 0. G-20u36d-readback-tracks-relation-column-inspection-planning — complete
 
 | Item | Value |
 | --- | --- |
@@ -1318,7 +1321,7 @@ PUBLIC_READY: CONDITIONAL
 | Doc | `gosaki-discography-g20u36d-readback-tracks-relation-column-inspection-plan.md` |
 | Next | G-20u36d-readback-tracks-relation-column-inspection-preflight — **complete** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36d-readback-live-verify-retry-2 — complete (PARTIAL STOP)
+## 0. G-20u36d-readback-live-verify-retry-2 — complete (PARTIAL STOP)
 
 | Item | Value |
 | --- | --- |
@@ -1331,7 +1334,7 @@ PUBLIC_READY: CONDITIONAL
 | Doc | `gosaki-discography-g20u36d-readback-live-verify-retry-2.md` |
 | Next | tracks relation column inspection planning — **complete** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36d-readback-tracks-select-fields-fix-edge-deploy-result-record — complete
+## 0. G-20u36d-readback-tracks-select-fields-fix-edge-deploy-result-record — complete
 
 | Item | Value |
 | --- | --- |
@@ -1343,7 +1346,7 @@ PUBLIC_READY: CONDITIONAL
 | Doc | `gosaki-discography-g20u36d-readback-tracks-select-fields-fix-edge-deploy-result.md` |
 | Next | G-20u36d-readback-live-verify-retry-2 — **complete (PARTIAL STOP)** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36d-readback-tracks-select-fields-fix-edge-deploy-preflight — complete
+## 0. G-20u36d-readback-tracks-select-fields-fix-edge-deploy-preflight — complete
 
 | Item | Value |
 | --- | --- |
@@ -1355,7 +1358,7 @@ PUBLIC_READY: CONDITIONAL
 | Doc | `gosaki-discography-g20u36d-readback-tracks-select-fields-fix-edge-deploy-preflight.md` |
 | Next | G-20u36d-readback-tracks-select-fields-fix-edge-deploy — **complete (operator)** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36d-readback-tracks-select-fields-fix-root-placement — complete
+## 0. G-20u36d-readback-tracks-select-fields-fix-root-placement — complete
 
 | Item | Value |
 | --- | --- |
@@ -1367,7 +1370,7 @@ PUBLIC_READY: CONDITIONAL
 | Doc | `gosaki-discography-g20u36d-readback-tracks-select-fields-fix-root-placement.md` |
 | Next | G-20u36d-readback-tracks-select-fields-fix-edge-deploy-preflight — **complete** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36d-readback-tracks-select-fields-fix-tools-draft — complete
+## 0. G-20u36d-readback-tracks-select-fields-fix-tools-draft — complete
 
 | Item | Value |
 | --- | --- |
@@ -1378,7 +1381,7 @@ PUBLIC_READY: CONDITIONAL
 | Doc | `gosaki-discography-g20u36d-readback-tracks-select-fields-fix-tools-draft.md` |
 | Next | G-20u36d-readback-tracks-select-fields-fix-root-placement — **complete** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36d-readback-tracks-select-fields-fix-planning — complete
+## 0. G-20u36d-readback-tracks-select-fields-fix-planning — complete
 
 | Item | Value |
 | --- | --- |
@@ -1388,7 +1391,7 @@ PUBLIC_READY: CONDITIONAL
 | Doc | `gosaki-discography-g20u36d-readback-tracks-select-fields-fix-plan.md` |
 | Next | G-20u36d-readback-tracks-select-fields-fix-tools-draft — **complete** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36d-readback-live-verify-retry — complete (PARTIAL STOP)
+## 0. G-20u36d-readback-live-verify-retry — complete (PARTIAL STOP)
 
 | Item | Value |
 | --- | --- |
@@ -1400,7 +1403,7 @@ PUBLIC_READY: CONDITIONAL
 | Doc | `gosaki-discography-g20u36d-readback-live-verify-retry.md` |
 | Next | tracks SELECT fields fix planning — **complete** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36d-readback-release-id-select-fix-edge-deploy-result-record — complete
+## 0. G-20u36d-readback-release-id-select-fix-edge-deploy-result-record — complete
 
 | Item | Value |
 | --- | --- |
@@ -1410,7 +1413,7 @@ PUBLIC_READY: CONDITIONAL
 | Doc | `gosaki-discography-g20u36d-readback-release-id-select-fix-edge-deploy-result.md` |
 | Next | G-20u36d-readback-live-verify-retry — **complete (PARTIAL STOP)** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36d-readback-release-id-select-fix-edge-deploy-preflight — complete
+## 0. G-20u36d-readback-release-id-select-fix-edge-deploy-preflight — complete
 
 | Item | Value |
 | --- | --- |
@@ -1420,7 +1423,7 @@ PUBLIC_READY: CONDITIONAL
 | Doc | `gosaki-discography-g20u36d-readback-release-id-select-fix-edge-deploy-preflight.md` |
 | Next | G-20u36d-readback-release-id-select-fix-edge-deploy — **complete (operator)** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36d-readback-release-id-select-fix-root-placement — complete
+## 0. G-20u36d-readback-release-id-select-fix-root-placement — complete
 
 | Item | Value |
 | --- | --- |
@@ -1430,7 +1433,7 @@ PUBLIC_READY: CONDITIONAL
 | Doc | `gosaki-discography-g20u36d-readback-release-id-select-fix-root-placement.md` |
 | Next | G-20u36d-readback-release-id-select-fix-edge-deploy-preflight — **complete** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36d-readback-release-id-select-fix-tools-draft — complete
+## 0. G-20u36d-readback-release-id-select-fix-tools-draft — complete
 
 | Item | Value |
 | --- | --- |
@@ -1440,7 +1443,7 @@ PUBLIC_READY: CONDITIONAL
 | Doc | `gosaki-discography-g20u36d-readback-release-id-select-fix-tools-draft.md` |
 | Next | G-20u36d-readback-release-id-select-fix-root-placement — **complete** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36d-readback-release-id-select-fix-planning — complete
+## 0. G-20u36d-readback-release-id-select-fix-planning — complete
 
 | Item | Value |
 | --- | --- |
@@ -1450,7 +1453,7 @@ PUBLIC_READY: CONDITIONAL
 | Doc | `gosaki-discography-g20u36d-readback-release-id-select-fix-plan.md` |
 | Next | release-id select fix tools-draft — **complete** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36d-readback-live-verify — complete (PARTIAL STOP)
+## 0. G-20u36d-readback-live-verify — complete (PARTIAL STOP)
 
 | Item | Value |
 | --- | --- |
@@ -1461,7 +1464,7 @@ PUBLIC_READY: CONDITIONAL
 | Doc | `gosaki-discography-g20u36d-readback-live-verify.md` |
 | Next | release-id select fix planning — **complete** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36d-readback-edge-deploy-result-record — complete
+## 0. G-20u36d-readback-edge-deploy-result-record — complete
 
 | Item | Value |
 | --- | --- |
@@ -1471,7 +1474,7 @@ PUBLIC_READY: CONDITIONAL
 | Doc | `gosaki-discography-g20u36d-readback-edge-deploy-result.md` |
 | Next | G-20u36d-readback-live-verify — **complete (PARTIAL STOP)** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36d-readback-env-secret-setting-result-record — complete
+## 0. G-20u36d-readback-env-secret-setting-result-record — complete
 
 | Item | Value |
 | --- | --- |
@@ -1481,7 +1484,7 @@ PUBLIC_READY: CONDITIONAL
 | Doc | `gosaki-discography-g20u36d-readback-env-secret-setting-result.md` |
 | Next | G-20u36d-readback-edge-deploy — **complete** · edge-deploy-result-record — **complete** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36d-readback-env-secret-setting-plan — complete
+## 0. G-20u36d-readback-env-secret-setting-plan — complete
 
 | Item | Value |
 | --- | --- |
@@ -1491,7 +1494,7 @@ PUBLIC_READY: CONDITIONAL
 | Doc | `gosaki-discography-g20u36d-readback-env-secret-setting-plan.md` |
 | Next | G-20u36d-readback-env-secret-setting-result-record — **complete** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36d-readback-edge-deploy-preflight — complete
+## 0. G-20u36d-readback-edge-deploy-preflight — complete
 
 | Item | Value |
 | --- | --- |
@@ -1501,7 +1504,7 @@ PUBLIC_READY: CONDITIONAL
 | Doc | `gosaki-discography-g20u36d-readback-edge-deploy-preflight.md` |
 | Next | G-20u36d-readback-env-secret-setting-plan — **complete** · then edge-deploy after secret setting |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36d-readback-edge-deploy-plan — complete
+## 0. G-20u36d-readback-edge-deploy-plan — complete
 
 | Item | Value |
 | --- | --- |
@@ -1511,7 +1514,7 @@ PUBLIC_READY: CONDITIONAL
 | Doc | `gosaki-discography-g20u36d-readback-edge-deploy-plan.md` |
 | Next | G-20u36d-readback-edge-deploy-preflight — **complete** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36d-readback-root-placement — complete
+## 0. G-20u36d-readback-root-placement — complete
 
 | Item | Value |
 | --- | --- |
@@ -1521,7 +1524,7 @@ PUBLIC_READY: CONDITIONAL
 | Doc | `gosaki-discography-g20u36d-readback-root-placement.md` |
 | Next | G-20u36d-readback-edge-deploy-plan — **complete** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36d-readback-root-placement-plan — complete
+## 0. G-20u36d-readback-root-placement-plan — complete
 
 | Item | Value |
 | --- | --- |
@@ -1531,7 +1534,7 @@ PUBLIC_READY: CONDITIONAL
 | Doc | `gosaki-discography-g20u36d-readback-root-placement-plan.md` |
 | Next | G-20u36d-readback-root-placement — **complete** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36d-readback-implementation-in-tools-draft — complete
+## 0. G-20u36d-readback-implementation-in-tools-draft — complete
 
 | Item | Value |
 | --- | --- |
@@ -1541,7 +1544,7 @@ PUBLIC_READY: CONDITIONAL
 | Doc | `gosaki-discography-g20u36d-readback-implementation-in-tools-draft.md` |
 | Next | G-20u36d-readback-root-placement-plan — **complete** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36d-discography-edge-dry-run-readback-enhancement-planning — complete
+## 0. G-20u36d-discography-edge-dry-run-readback-enhancement-planning — complete
 
 | Item | Value |
 | --- | --- |
@@ -1551,7 +1554,7 @@ PUBLIC_READY: CONDITIONAL
 | Doc | `gosaki-discography-g20u36d-discography-edge-dry-run-readback-enhancement-plan.md` |
 | Next | G-20u36d-readback-implementation-in-tools-draft — **complete** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36c-admin-discography-dry-run-stg-browser-qa-result-record — complete
+## 0. G-20u36c-admin-discography-dry-run-stg-browser-qa-result-record — complete
 
 | Item | Value |
 | --- | --- |
@@ -1562,7 +1565,7 @@ PUBLIC_READY: CONDITIONAL
 | Doc | `gosaki-discography-g20u36c-admin-discography-dry-run-stg-browser-qa-result.md` |
 | Next | G-20u36d planning |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36c-admin-discography-endpoint-dry-run-clientDryRun-contract-fix — complete
+## 0. G-20u36c-admin-discography-endpoint-dry-run-clientDryRun-contract-fix — complete
 
 | Item | Value |
 | --- | --- |
@@ -1572,7 +1575,7 @@ PUBLIC_READY: CONDITIONAL
 | Package regen | **deferred** |
 | Next | regen + FTP re-upload + STG QA retry |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36c-admin-discography-dry-run-staging-package-rebuild-preflight — complete (prior)
+## 0. G-20u36c-admin-discography-dry-run-staging-package-rebuild-preflight — complete (prior)
 
 | Item | Value |
 | --- | --- |
@@ -1584,7 +1587,7 @@ PUBLIC_READY: CONDITIONAL
 | Doc | `gosaki-discography-g20u36c-admin-discography-dry-run-staging-package-rebuild-preflight.md` |
 | Next | manual FTP upload + STG browser QA |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36c-admin-discography-dry-run-fetch-post-wiring — complete
+## 0. G-20u36c-admin-discography-dry-run-fetch-post-wiring — complete
 
 | Item | Value |
 | --- | --- |
@@ -1596,7 +1599,7 @@ PUBLIC_READY: CONDITIONAL
 | Doc | `gosaki-discography-g20u36c-admin-discography-dry-run-fetch-post-wiring.md` |
 | Next | STG package rebuild · manual FTP · UI dry-run QA |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36b-edge-dry-run-endpoint-live-verify — complete
+## 0. G-20u36b-edge-dry-run-endpoint-live-verify — complete
 
 | Item | Value |
 | --- | --- |
@@ -1608,7 +1611,7 @@ PUBLIC_READY: CONDITIONAL
 | Doc | `gosaki-discography-g20u36b-edge-dry-run-endpoint-live-verify.md` |
 | Next | G-20u36c admin fetch POST wiring (no Save) |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36b-edge-dry-run-endpoint-deploy-manual-result-record — complete
+## 0. G-20u36b-edge-dry-run-endpoint-deploy-manual-result-record — complete
 
 | Item | Value |
 | --- | --- |
@@ -1621,7 +1624,7 @@ PUBLIC_READY: CONDITIONAL
 | Doc | `gosaki-discography-g20u36b-edge-dry-run-endpoint-deploy-manual-result.md` |
 | Next | G-20u36b-edge-dry-run-endpoint-live-verify |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36b-edge-dry-run-endpoint-root-placement-verifier-postcommit-fix — complete
+## 0. G-20u36b-edge-dry-run-endpoint-root-placement-verifier-postcommit-fix — complete
 
 | Item | Value |
 | --- | --- |
@@ -1631,7 +1634,7 @@ PUBLIC_READY: CONDITIONAL
 | Root supabase/functions | **not edited in this phase** |
 | Next | deploy-manual (separate approval) |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36b-edge-dry-run-endpoint-root-placement — complete
+## 0. G-20u36b-edge-dry-run-endpoint-root-placement — complete
 
 | Item | Value |
 | --- | --- |
@@ -1643,7 +1646,7 @@ PUBLIC_READY: CONDITIONAL
 | Doc | `gosaki-discography-g20u36b-edge-dry-run-endpoint-root-placement.md` |
 | Next | G-20u36b-edge-dry-run-endpoint-deploy-manual (separate approval) |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36b-edge-dry-run-endpoint-root-placement-plan — complete
+## 0. G-20u36b-edge-dry-run-endpoint-root-placement-plan — complete
 
 | Item | Value |
 | --- | --- |
@@ -1654,7 +1657,7 @@ PUBLIC_READY: CONDITIONAL
 | Doc | `gosaki-discography-g20u36b-edge-dry-run-endpoint-root-placement-plan.md` |
 | Next | **root-placement** — **complete** · **deploy-manual** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36b-edge-dry-run-endpoint-function-source-staging — complete
+## 0. G-20u36b-edge-dry-run-endpoint-function-source-staging — complete
 
 | Item | Value |
 | --- | --- |
@@ -1666,7 +1669,7 @@ PUBLIC_READY: CONDITIONAL
 | Doc | `gosaki-discography-g20u36b-edge-dry-run-endpoint-function-source-staging.md` |
 | Next | **root-placement-plan** — **complete** · **root-placement** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36b-edge-dry-run-endpoint-deploy-manual-plan — complete
+## 0. G-20u36b-edge-dry-run-endpoint-deploy-manual-plan — complete
 
 | Item | Value |
 | --- | --- |
@@ -1677,7 +1680,7 @@ PUBLIC_READY: CONDITIONAL
 | Doc | `gosaki-discography-g20u36b-edge-dry-run-endpoint-deploy-manual-plan.md` |
 | Next | **function-source-staging** — **complete** · **root-placement-plan** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36b-edge-dry-run-endpoint-deploy-preflight-result — complete
+## 0. G-20u36b-edge-dry-run-endpoint-deploy-preflight-result — complete
 
 | Item | Value |
 | --- | --- |
@@ -1688,7 +1691,7 @@ PUBLIC_READY: CONDITIONAL
 | Doc | `gosaki-discography-g20u36b-edge-dry-run-endpoint-deploy-preflight-result.md` |
 | Next | **deploy-manual-plan** — **complete** · **function-source-staging** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36b-edge-dry-run-endpoint-deploy-preflight — complete
+## 0. G-20u36b-edge-dry-run-endpoint-deploy-preflight — complete
 
 | Item | Value |
 | --- | --- |
@@ -1699,7 +1702,7 @@ PUBLIC_READY: CONDITIONAL
 | Doc | `gosaki-discography-g20u36b-edge-dry-run-endpoint-deploy-preflight.md` |
 | Next | **deploy-preflight-result-record** — **complete** · **deploy-manual** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36b-edge-dry-run-endpoint-inert-implementation — complete
+## 0. G-20u36b-edge-dry-run-endpoint-inert-implementation — complete
 
 | Item | Value |
 | --- | --- |
@@ -1711,7 +1714,7 @@ PUBLIC_READY: CONDITIONAL
 | Doc | `gosaki-discography-g20u36b-edge-dry-run-endpoint-inert-implementation.md` |
 | Next | **deploy-preflight** — **complete** · **preflight-result-record** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36b-edge-dry-run-endpoint-implementation-plan — complete
+## 0. G-20u36b-edge-dry-run-endpoint-implementation-plan — complete
 
 | Item | Value |
 | --- | --- |
@@ -1722,7 +1725,7 @@ PUBLIC_READY: CONDITIONAL
 | Doc | `gosaki-discography-g20u36b-edge-dry-run-endpoint-implementation-plan.md` |
 | Next | **inert-implementation** — **complete** · **deploy-preflight** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36b-edge-dry-run-endpoint-deploy-plan — complete
+## 0. G-20u36b-edge-dry-run-endpoint-deploy-plan — complete
 
 | Item | Value |
 | --- | --- |
@@ -1734,7 +1737,7 @@ PUBLIC_READY: CONDITIONAL
 | Doc | `gosaki-discography-g20u36b-edge-dry-run-endpoint-deploy-plan.md` |
 | Next | **implementation-plan** — **complete** · **inert-implementation** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36a-permissions-remediation-after-verification-result — complete
+## 0. G-20u36a-permissions-remediation-after-verification-result — complete
 
 | Item | Value |
 | --- | --- |
@@ -1748,7 +1751,7 @@ PUBLIC_READY: CONDITIONAL
 | Doc | `gosaki-discography-g20u36a-permissions-remediation-after-verification-result.md` |
 | Next | G-20u36b Edge dry-run deploy plan |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36a-permissions-remediation-after-verification — complete
+## 0. G-20u36a-permissions-remediation-after-verification — complete
 
 | Item | Value |
 | --- | --- |
@@ -1761,7 +1764,7 @@ PUBLIC_READY: CONDITIONAL
 | Doc | `gosaki-discography-g20u36a-permissions-remediation-after-verification.md` |
 | Next | **after-verification-result-record** — **complete** · **G-20u36b** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36a-permissions-remediation-apply-manual-result — complete
+## 0. G-20u36a-permissions-remediation-apply-manual-result — complete
 
 | Item | Value |
 | --- | --- |
@@ -1774,7 +1777,7 @@ PUBLIC_READY: CONDITIONAL
 | Doc | `gosaki-discography-g20u36a-permissions-remediation-apply-manual-result.md` |
 | Next | **after-verification** — **complete** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36a-permissions-remediation-apply-plan — complete
+## 0. G-20u36a-permissions-remediation-apply-plan — complete
 
 | Item | Value |
 | --- | --- |
@@ -1786,7 +1789,7 @@ PUBLIC_READY: CONDITIONAL
 | Doc | `gosaki-discography-g20u36a-permissions-remediation-apply-plan.md` |
 | Next | **apply-manual** — **complete** · **after-verification** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36a-permissions-remediation-preflight-result — complete
+## 0. G-20u36a-permissions-remediation-preflight-result — complete
 
 | Item | Value |
 | --- | --- |
@@ -1799,7 +1802,7 @@ PUBLIC_READY: CONDITIONAL
 | Doc | `gosaki-discography-g20u36a-permissions-remediation-preflight-result.md` |
 | Next | **G-20u36a-permissions-remediation-apply-plan** — **complete** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36a-permissions-remediation-preflight-select-only — complete
+## 0. G-20u36a-permissions-remediation-preflight-select-only — complete
 
 | Item | Value |
 | --- | --- |
@@ -1812,7 +1815,7 @@ PUBLIC_READY: CONDITIONAL
 | Doc | `gosaki-discography-g20u36a-permissions-remediation-preflight-select-only.md` |
 | Next | **G-20u36a-permissions-remediation-preflight-result-record** — **complete** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36a-permissions-remediation-plan Gosaki Discography permissions remediation plan — complete
+## 0. G-20u36a-permissions-remediation-plan Gosaki Discography permissions remediation plan — complete
 
 | Item | Value |
 | --- | --- |
@@ -1823,7 +1826,7 @@ PUBLIC_READY: CONDITIONAL
 | Doc | `gosaki-discography-g20u36a-permissions-remediation-plan.md` |
 | Next | **G-20u36a-permissions-remediation-preflight-select-only** — **complete** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36a-permissions-rls-deep-dive-result Gosaki Discography permissions / RLS deep-dive result — complete
+## 0. G-20u36a-permissions-rls-deep-dive-result Gosaki Discography permissions / RLS deep-dive result — complete
 
 | Item | Value |
 | --- | --- |
@@ -1836,7 +1839,7 @@ PUBLIC_READY: CONDITIONAL
 | Doc | `gosaki-discography-g20u36a-permissions-rls-deep-dive-result.md` |
 | Next | **G-20u36a-permissions-remediation-plan** — **complete** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36a-permissions-rls-deep-dive Gosaki Discography permissions / RLS deep-dive — complete
+## 0. G-20u36a-permissions-rls-deep-dive Gosaki Discography permissions / RLS deep-dive — complete
 
 | Item | Value |
 | --- | --- |
@@ -1849,7 +1852,7 @@ PUBLIC_READY: CONDITIONAL
 | Doc | `gosaki-discography-g20u36a-permissions-rls-deep-dive.md` |
 | Next | **G-20u36a-permissions-rls-deep-dive-result-record** — **complete** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36a-result Gosaki Discography SELECT-only before verification result — complete
+## 0. G-20u36a-result Gosaki Discography SELECT-only before verification result — complete
 
 | Item | Value |
 | --- | --- |
@@ -1862,7 +1865,7 @@ PUBLIC_READY: CONDITIONAL
 | Doc | `gosaki-discography-g20u36a-select-only-before-verification-result.md` |
 | Next | **G-20u36a-permissions-rls-deep-dive** — **complete** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u36a Gosaki Discography SELECT-only before verification — complete
+## 0. G-20u36a Gosaki Discography SELECT-only before verification — complete
 
 | Item | Value |
 | --- | --- |
@@ -1876,7 +1879,7 @@ PUBLIC_READY: CONDITIONAL
 | Verifier | `verify-g20u36a-gosaki-discography-select-only-before-verification.mjs` (historical) |
 | Next | **G-20u36a-result** execution record — **complete** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u35 Gosaki Discography staging DB write test plan & rollback drill — complete
+## 0. G-20u35 Gosaki Discography staging DB write test plan & rollback drill — complete
 
 | Item | Value |
 | --- | --- |
@@ -1889,7 +1892,7 @@ PUBLIC_READY: CONDITIONAL
 | Verifier | `verify-g20u35-gosaki-discography-staging-db-write-test-plan-rollback-drill.mjs` (historical) |
 | Next | G-20u36a SELECT-only verify · G-20u36e first controlled Save (operator) |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u34 Gosaki Discography Save UI arm design — complete
+## 0. G-20u34 Gosaki Discography Save UI arm design — complete
 
 | Item | Value |
 | --- | --- |
@@ -1904,7 +1907,7 @@ PUBLIC_READY: CONDITIONAL
 | Verifier | `verify-g20u34-gosaki-discography-save-ui-arm-design.mjs` (historical) |
 | Next | G-20u35 write test plan · G-20u36 first album Save pilot |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u33 Gosaki Discography Save dry-run endpoint draft — complete
+## 0. G-20u33 Gosaki Discography Save dry-run endpoint draft — complete
 
 | Item | Value |
 | --- | --- |
@@ -1920,7 +1923,7 @@ PUBLIC_READY: CONDITIONAL
 | Verifier | `verify-g20u33-gosaki-discography-save-dry-run-endpoint-draft.mjs` (historical) |
 | Next | G-20u34 Save UI arm · G-20u35 write test plan · G-20u36 first album Save pilot |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u32 Gosaki Discography Save API schema & approval registry — complete
+## 0. G-20u32 Gosaki Discography Save API schema & approval registry — complete
 
 | Item | Value |
 | --- | --- |
@@ -1935,7 +1938,7 @@ PUBLIC_READY: CONDITIONAL
 | Verifier | `verify-g20u32-gosaki-discography-save-api-schema-approval-registry.mjs` (historical) |
 | Next | **G-20u36a** SELECT-only before verification — **complete** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u31 Gosaki Discography Save design — complete
+## 0. G-20u31 Gosaki Discography Save design — complete
 
 | Item | Value |
 | --- | --- |
@@ -1949,7 +1952,7 @@ PUBLIC_READY: CONDITIONAL
 | Verifier | `verify-g20u31-gosaki-discography-save-design.mjs` (historical) |
 | Next | **G-20u32** Save API schema — **complete** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u30b Gosaki Discography dry-run staging reflection record — complete
+## 0. G-20u30b Gosaki Discography dry-run staging reflection record — complete
 
 | Item | Value |
 | --- | --- |
@@ -1967,7 +1970,7 @@ PUBLIC_READY: CONDITIONAL
 | Verifier | `verify-g20u30b-gosaki-discography-dry-run-staging-reflection-record.mjs` (historical) |
 | Next | **G-20u31** Save design — **complete** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u30 Gosaki Discography dry-run validation — complete
+## 0. G-20u30 Gosaki Discography dry-run validation — complete
 
 | Item | Value |
 | --- | --- |
@@ -1982,7 +1985,7 @@ PUBLIC_READY: CONDITIONAL
 | Verifier | `verify-g20u30-gosaki-discography-dry-run-validation.mjs` (historical) |
 | Next | **G-20u30b** STG reflection — **complete** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u29b Gosaki Discography editor staging reflection record — complete
+## 0. G-20u29b Gosaki Discography editor staging reflection record — complete
 
 | Item | Value |
 | --- | --- |
@@ -2001,7 +2004,7 @@ PUBLIC_READY: CONDITIONAL
 | Verifier | `verify-g20u29b-gosaki-discography-editor-staging-reflection-record.mjs` (historical) |
 | Next | **G-20u30** dry-run validation — **complete** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u29 Gosaki Discography edit UI prototype — complete
+## 0. G-20u29 Gosaki Discography edit UI prototype — complete
 
 | Item | Value |
 | --- | --- |
@@ -2016,7 +2019,7 @@ PUBLIC_READY: CONDITIONAL
 | Verifier | `verify-g20u29-gosaki-discography-edit-ui-prototype.mjs` (historical) |
 | Next | **G-20u29b** STG reflection — **complete** · **G-20u30** dry-run validation — **complete** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u28b Gosaki admin UI staging reflection record — complete
+## 0. G-20u28b Gosaki admin UI staging reflection record — complete
 
 | Item | Value |
 | --- | --- |
@@ -2033,7 +2036,7 @@ PUBLIC_READY: CONDITIONAL
 | Verifier | `verify-g20u28b-gosaki-admin-ui-staging-reflection-record.mjs` (historical) |
 | Next | **G-20u29** Discography edit UI prototype — **complete** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u28 Gosaki admin UI foundation polish — complete
+## 0. G-20u28 Gosaki admin UI foundation polish — complete
 
 | Item | Value |
 | --- | --- |
@@ -2048,7 +2051,7 @@ PUBLIC_READY: CONDITIONAL
 | Verifier | `verify-g20u28-gosaki-admin-ui-foundation-polish.mjs` |
 | Next | **G-20u28b** STG reflection — **complete** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u27 Gosaki staging post-upload final verification — complete
+## 0. G-20u27 Gosaki staging post-upload final verification — complete
 
 | Item | Value |
 | --- | --- |
@@ -2064,7 +2067,7 @@ PUBLIC_READY: CONDITIONAL
 | Verifier | `verify-g20u27-staging-post-upload-final-verification.mjs` (historical) |
 | Next (recommended) | **G-20u28** admin UI foundation polish — **complete** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u26b Gosaki staging FTP upload HTTP verification record — complete
+## 0. G-20u26b Gosaki staging FTP upload HTTP verification record — complete
 
 | Item | Value |
 | --- | --- |
@@ -2080,7 +2083,7 @@ PUBLIC_READY: CONDITIONAL
 | Verifier | `verify-g20u26b-staging-ftp-upload-http-verification-record.mjs` (historical doc-only) |
 | Next | ~~client preview feedback~~ · **G-20u27 final verification complete** · admin UI improvement (recommended) |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u26 Gosaki staging package regen after discography filtered read — complete
+## 0. G-20u26 Gosaki staging package regen after discography filtered read — complete
 | Base | `3287219` |
 | Build | `npm run build:gosaki:staging` **PASS** |
 | Preflight | `npm run preflight:gosaki:staging` **PASS** (fresh) |
@@ -2094,7 +2097,7 @@ PUBLIC_READY: CONDITIONAL
 | Verifier | `verify-g20u26-gosaki-staging-package-regen-after-discography-filtered-read.mjs` (historical) |
 | Next | ~~operator manual FTP upload~~ (G-20u26b recorded) · client preview feedback |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u25 Discography filtered read enablement — complete
+## 0. G-20u25 Discography filtered read enablement — complete
 
 | Item | Value |
 | --- | --- |
@@ -2111,7 +2114,7 @@ PUBLIC_READY: CONDITIONAL
 | Regression | G-20u2–u14 + G-20u17–u25 (**23** verifiers) |
 | Next | ~~package regen + preflight~~ (G-20u26 complete) · operator manual FTP upload (optional) |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u24d Discography site_slug migration execution record — complete
+## 0. G-20u24d Discography site_slug migration execution record — complete
 
 | Item | Value |
 | --- | --- |
@@ -2130,7 +2133,7 @@ PUBLIC_READY: CONDITIONAL
 | Regression | G-20u2–u14 + G-20u17–u25 (**23** verifiers) |
 | Next | ~~loader column-ready enablement~~ (G-20u25 complete) · package regen + preflight |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u23 Discography site_slug migration planning — complete
+## 0. G-20u23 Discography site_slug migration planning — complete
 
 | Item | Value |
 | --- | --- |
@@ -2147,7 +2150,7 @@ PUBLIC_READY: CONDITIONAL
 | Regression | G-20u2–u14 + G-20u17–u23 (**21** verifiers) |
 | Next | ~~G-20u24 migration execution~~ (G-20u24d recorded) · loader `DISCOGRAPHY_SITE_SLUG_COLUMN_READY` enablement (deferred) |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u22 Discography loader multi-site readiness — complete
+## 0. G-20u22 Discography loader multi-site readiness — complete
 
 | Item | Value |
 | --- | --- |
@@ -2164,7 +2167,7 @@ PUBLIC_READY: CONDITIONAL
 | Regression | G-20u2–u14 + G-20u17–u22 (**20** verifiers) |
 | Next | TBD (discography site_slug migration — high-risk separate phase) |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u21 Generic read-only admin flag — complete
+## 0. G-20u21 Generic read-only admin flag — complete
 
 | Item | Value |
 | --- | --- |
@@ -2185,7 +2188,7 @@ PUBLIC_READY: CONDITIONAL
 | Regression | G-20u2–u14 + G-20u17–u21 (**19** verifiers) |
 | Next | ~~G-20u22 discography loader~~ (complete) · G-20u24 migration execution (deferred) |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u20 Supabase CMS features generalization — complete
+## 0. G-20u20 Supabase CMS features generalization — complete
 
 | Item | Value |
 | --- | --- |
@@ -2203,7 +2206,7 @@ PUBLIC_READY: CONDITIONAL
 | Regression | G-20u2–u14 + G-20u17–u20 (**18** verifiers) |
 | Next | ~~G-20u21 read-only admin flag~~ (complete) |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u19 Generator option naming and fixture registry — complete
+## 0. G-20u19 Generator option naming and fixture registry — complete
 
 | Item | Value |
 | --- | --- |
@@ -2220,7 +2223,7 @@ PUBLIC_READY: CONDITIONAL
 | Regression | G-20u2–u14 + G-20u17–u20 (**18** verifiers) |
 | Next | ~~G-20u20 Supabase CMS features~~ (complete) |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u17 Post-build verifier registry — complete
+## 0. G-20u17 Post-build verifier registry — complete
 
 | Item | Value |
 | --- | --- |
@@ -2237,7 +2240,7 @@ PUBLIC_READY: CONDITIONAL
 | Regression | G-20u2–u14 + G-20u17–u19 (**17** verifiers) |
 | Next | ~~G-20u19 option naming~~ (complete) |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u18 package.json / CLI default decoupling — complete
+## 0. G-20u18 package.json / CLI default decoupling — complete
 
 | Item | Value |
 | --- | --- |
@@ -2251,7 +2254,7 @@ PUBLIC_READY: CONDITIONAL
 | Verifier | `verify-g20u18-package-json-cli-default-decoupling.mjs` |
 | Next | ~~G-20u17 post-build verifier registry~~ (complete) |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u16 Remaining site-specific coupling audit — complete
+## 0. G-20u16 Remaining site-specific coupling audit — complete
 
 | Item | Value |
 | --- | --- |
@@ -2263,7 +2266,7 @@ PUBLIC_READY: CONDITIONAL
 | Doc | `remaining-site-specific-coupling-audit.md` |
 | Verifier | `verify-g20u16-remaining-site-specific-coupling-audit.mjs` |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u15 Current active regression suite — complete
+## 0. G-20u15 Current active regression suite — complete
 
 | Item | Value |
 | --- | --- |
@@ -2278,7 +2281,7 @@ PUBLIC_READY: CONDITIONAL
 | Doc | `current-active-regression-suite.md` |
 | Verifier | `verify-current-active-regression-suite.mjs` |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u14 URL-to-staging pipeline site-aware — complete
+## 0. G-20u14 URL-to-staging pipeline site-aware — complete
 
 | Item | Value |
 | --- | --- |
@@ -2295,7 +2298,7 @@ PUBLIC_READY: CONDITIONAL
 | Legacy verifier | `verify-url-to-staging-pipeline.mjs` — G-9c0b/G-9d historical source-location drift fixed; **0 failed** |
 | Manual steps | `buildNextManualSteps` includes `--site` in convert hint |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u13 Site-aware Supabase loaders — complete
+## 0. G-20u13 Site-aware Supabase loaders — complete
 
 | Item | Value |
 | --- | --- |
@@ -2309,7 +2312,7 @@ PUBLIC_READY: CONDITIONAL
 | Doc | `site-aware-supabase-loaders.md` |
 | Verifier | `verify-g20u13-site-aware-supabase-loaders.mjs` |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u12 Manual-upload README/CHECKLIST preflight integration — complete
+## 0. G-20u12 Manual-upload README/CHECKLIST preflight integration — complete
 
 | Item | Value |
 | --- | --- |
@@ -2325,7 +2328,7 @@ PUBLIC_READY: CONDITIONAL
 | Doc | `manual-upload-readme-checklist-preflight-integration.md` |
 | Verifier | `verify-g20u12-manual-upload-readme-checklist-preflight-integration.mjs` |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u11 Site-aware preflight scripts — complete
+## 0. G-20u11 Site-aware preflight scripts — complete
 
 | Item | Value |
 | --- | --- |
@@ -2339,7 +2342,7 @@ PUBLIC_READY: CONDITIONAL
 | Doc | `site-aware-preflight-scripts.md` |
 | Verifier | `verify-g20u11-site-aware-preflight-scripts.mjs` |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u10 Site-aware package freshness CLI — complete
+## 0. G-20u10 Site-aware package freshness CLI — complete
 
 | Item | Value |
 | --- | --- |
@@ -2353,7 +2356,7 @@ PUBLIC_READY: CONDITIONAL
 | Doc | `site-aware-package-freshness-cli.md` |
 | Verifier | `verify-g20u10-site-aware-package-freshness-cli.mjs` |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u9 Pilot full package build + verify — complete
+## 0. G-20u9 Pilot full package build + verify — complete
 
 | Item | Value |
 | --- | --- |
@@ -2367,7 +2370,7 @@ PUBLIC_READY: CONDITIONAL
 | Doc | `pilot-sample-static-full-package-build-verify.md` |
 | Verifier | `verify-g20u9-pilot-sample-static-full-package-build-verify.mjs` |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u8 Second-site noop hooks pilot dry-run — complete
+## 0. G-20u8 Second-site noop hooks pilot dry-run — complete
 
 | Item | Value |
 | --- | --- |
@@ -2383,7 +2386,7 @@ PUBLIC_READY: CONDITIONAL
 | Doc | `second-site-noop-hooks-pilot-dry-run.md` |
 | Verifier | `verify-g20u8-second-site-noop-hooks-pilot-dry-run.mjs` |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u7 Convert pipeline siteKey propagation — complete
+## 0. G-20u7 Convert pipeline siteKey propagation — complete
 
 | Item | Value |
 | --- | --- |
@@ -2400,7 +2403,7 @@ PUBLIC_READY: CONDITIONAL
 | Doc | `gosaki-convert-pipeline-sitekey-propagation.md` |
 | Verifier | `verify-g20u7-convert-pipeline-sitekey-propagation.mjs` |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u6 Astro generator hook registry — complete
+## 0. G-20u6 Astro generator hook registry — complete
 
 | Item | Value |
 | --- | --- |
@@ -2419,7 +2422,7 @@ PUBLIC_READY: CONDITIONAL
 | Doc | `gosaki-astro-generator-hook-registry.md` |
 | Verifier | `verify-g20u6-astro-generator-hook-registry.mjs` |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u5 Site package npm convenience & freshness flow — complete
+## 0. G-20u5 Site package npm convenience & freshness flow — complete
 
 | Item | Value |
 | --- | --- |
@@ -2432,7 +2435,7 @@ PUBLIC_READY: CONDITIONAL
 | Doc | `gosaki-site-package-npm-convenience-and-freshness-flow.md` |
 | Verifier | `verify-g20u5-site-package-npm-convenience-and-freshness-flow.mjs` |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u4 Verify site package generic CLI — complete
+## 0. G-20u4 Verify site package generic CLI — complete
 
 | Item | Value |
 | --- | --- |
@@ -2446,7 +2449,7 @@ PUBLIC_READY: CONDITIONAL
 | Doc | `gosaki-verify-site-package-generic-cli.md` |
 | Verifier | `verify-g20u4-verify-site-package-generic-cli.mjs` |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u3 Build site package generic CLI — complete
+## 0. G-20u3 Build site package generic CLI — complete
 
 | Item | Value |
 | --- | --- |
@@ -2461,7 +2464,7 @@ PUBLIC_READY: CONDITIONAL
 | Doc | `gosaki-build-site-package-generic-cli.md` |
 | Verifier | `verify-g20u3-build-site-package-generic-cli.mjs` |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u2 Site registry & build profile foundation — complete
+## 0. G-20u2 Site registry & build profile foundation — complete
 
 | Item | Value |
 | --- | --- |
@@ -2475,7 +2478,7 @@ PUBLIC_READY: CONDITIONAL
 | Doc | `gosaki-site-registry-build-profile-foundation.md` |
 | Verifier | `verify-g20u2-site-registry-build-profile-foundation.mjs` |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u1 Gosaki hardcode generalization audit — complete
+## 0. G-20u1 Gosaki hardcode generalization audit — complete
 
 | Item | Value |
 | --- | --- |
@@ -2488,7 +2491,7 @@ PUBLIC_READY: CONDITIONAL
 | Doc | `gosaki-hardcode-generalization-audit.md` |
 | Verifier | `verify-g20u1-gosaki-hardcode-generalization-audit.mjs` |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20t6 Gosaki package freshness gate — complete
+## 0. G-20t6 Gosaki package freshness gate — complete
 
 | Item | Value |
 | --- | --- |
@@ -2502,7 +2505,7 @@ PUBLIC_READY: CONDITIONAL
 | Doc | `gosaki-package-freshness-gate.md` |
 | Verifier | `verify-g20t6-package-freshness-gate.mjs` |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20t5 Gosaki staging profile current-head regen dry-run — complete
+## 0. G-20t5 Gosaki staging profile current-head regen dry-run — complete
 
 | Item | Value |
 | --- | --- |
@@ -2515,7 +2518,7 @@ PUBLIC_READY: CONDITIONAL
 | Doc | `gosaki-staging-profile-current-head-regen-dry-run.md` |
 | Verifier | `verify-g20t5-gosaki-staging-profile-current-head-regen-dry-run.mjs` |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20t4 Gosaki production profile full regen dry-run — complete
+## 0. G-20t4 Gosaki production profile full regen dry-run — complete
 
 | Item | Value |
 | --- | --- |
@@ -2530,7 +2533,7 @@ PUBLIC_READY: CONDITIONAL
 | Doc | `gosaki-production-profile-full-regen-dry-run.md` |
 | Verifier | `verify-g20t4-gosaki-production-profile-full-regen-dry-run.mjs` |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20t3 Gosaki package upload safety hardening — complete
+## 0. G-20t3 Gosaki package upload safety hardening — complete
 
 | Item | Value |
 | --- | --- |
@@ -2543,7 +2546,7 @@ PUBLIC_READY: CONDITIONAL
 | Doc | `gosaki-package-upload-safety-hardening.md` |
 | Verifier | `verify-g20t3-staging-prod-package-upload-safety-hardening.mjs` |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20t2 Gosaki schedule month discovery generalization — complete
+## 0. G-20t2 Gosaki schedule month discovery generalization — complete
 
 | Item | Value |
 | --- | --- |
@@ -2556,7 +2559,7 @@ PUBLIC_READY: CONDITIONAL
 | FTP / DB write | **forbidden** |
 | Verifier cleanup | HEAD exact pins → NOTE · historical stale → NOTE |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20t1 Gosaki sitemap admin exclusion hardening — complete
+## 0. G-20t1 Gosaki sitemap admin exclusion hardening — complete
 
 | Item | Value |
 | --- | --- |
@@ -2567,7 +2570,7 @@ PUBLIC_READY: CONDITIONAL
 | `/schedule/2026-08/` | **retained** |
 | Package regen | **yes** (local) |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20s2b Gosaki Contact HubSpot E2E execution closure — complete
+## 0. G-20s2b Gosaki Contact HubSpot E2E execution closure — complete
 
 | Item | Value |
 | --- | --- |
@@ -2579,7 +2582,7 @@ PUBLIC_READY: CONDITIONAL
 | Notes | spam classification · free form branding (non-P0) |
 | **Next** | staging client preview share · optional G-20s3 |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20s2 Gosaki Contact HubSpot E2E verify — complete
+## 0. G-20s2 Gosaki Contact HubSpot E2E verify — complete
 
 | Item | Value |
 | --- | --- |
@@ -2590,7 +2593,7 @@ PUBLIC_READY: CONDITIONAL
 | Inbox confirm | **pending** (operator G-20s2b) |
 | **Next** | **G-20s2b-contact-hubspot-e2e-execution-closure** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20s1 Gosaki mobile device QA — complete
+## 0. G-20s1 Gosaki mobile device QA — complete
 
 | Item | Value |
 | --- | --- |
@@ -2601,7 +2604,7 @@ PUBLIC_READY: CONDITIONAL
 | Client preview | **NOT_READY** — P0-C1 Contact E2E |
 | **Next** | **G-20s2-contact-hubspot-e2e-verify** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20r4e Gosaki schedule August manual upload execution closure — complete
+## 0. G-20r4e Gosaki schedule August manual upload execution closure — complete
 
 | Item | Value |
 | --- | --- |
@@ -2612,9 +2615,9 @@ PUBLIC_READY: CONDITIONAL
 | FTP re-execution | **forbidden** |
 | **Next** | optional G-20r4 staging closure doc · G-20r4f · client preview |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20r4d Gosaki schedule August upload preflight — complete
+## 0. G-20r4d Gosaki schedule August upload preflight — complete
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20r4c Gosaki schedule public output review — complete
+## 0. G-20r4c Gosaki schedule public output review — complete
 
 | Item | Value |
 | --- | --- |
@@ -2625,7 +2628,7 @@ PUBLIC_READY: CONDITIONAL
 | Conclusion | upload-needed (live stale) |
 | **Next** | **G-20r4d-upload-preflight** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20r4b Gosaki schedule local regen dry-run — complete
+## 0. G-20r4b Gosaki schedule local regen dry-run — complete
 
 | Item | Value |
 | --- | --- |
@@ -2637,7 +2640,7 @@ PUBLIC_READY: CONDITIONAL
 | Live staging | **stale** (no FTP) |
 | **Next** | **G-20r4c-public-output-review** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20r4a Gosaki schedule August generation path enablement — complete
+## 0. G-20r4a Gosaki schedule August generation path enablement — complete
 
 | Item | Value |
 | --- | --- |
@@ -2648,7 +2651,7 @@ PUBLIC_READY: CONDITIONAL
 | Build / regen | **not executed** |
 | **Next** | **G-20r4b-local-regen-dry-run** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20r4 Gosaki schedule August public reflection plan — complete
+## 0. G-20r4 Gosaki schedule August public reflection plan — complete
 
 | Item | Value |
 | --- | --- |
@@ -2660,7 +2663,7 @@ PUBLIC_READY: CONDITIONAL
 | FTP | **operator manual only** · AI/Cursor 実行禁止 · checklist（承認文言不要） |
 | **Next** | **G-20r4a-expected-months-code-gate** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20r3a Gosaki schedule August DB INSERT execution closure — complete
+## 0. G-20r3a Gosaki schedule August DB INSERT execution closure — complete
 
 | Item | Value |
 | --- | --- |
@@ -2676,56 +2679,56 @@ PUBLIC_READY: CONDITIONAL
 | Local package | **stale** (no regen) |
 | **Next** | **G-20r4-schedule-public-reflection-plan** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20r3 Gosaki schedule August DB INSERT preflight — complete
+## 0. G-20r3 Gosaki schedule August DB INSERT preflight — complete
 
 | Item | Value |
 | --- | --- |
 | Phase | `G-20r3-gosaki-schedule-august-db-insert-preflight` |
 | Execution | **closed in G-20r3a** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20s Gosaki whole-site product quality audit — complete
+## 0. G-20s Gosaki whole-site product quality audit — complete
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20r2b Gosaki schedule product quality policy — complete
+## 0. G-20r2b Gosaki schedule product quality policy — complete
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20r2a Gosaki client confirmation question list — complete
+## 0. G-20r2a Gosaki client confirmation question list — complete
 
 | Item | Value |
 | --- | --- |
 | **Superseded for blocking by** | G-20r2b |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20r2 Gosaki schedule August seed planning — complete
+## 0. G-20r2 Gosaki schedule August seed planning — complete
 
 | Item | Value |
 | --- | --- |
 | **Superseded for client Q by** | G-20r2a |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20r1b Gosaki limited public URL capture — complete
+## 0. G-20r1b Gosaki limited public URL capture — complete
 
 | Item | Value |
 | --- | --- |
 | **Superseded for seed by** | G-20r2 |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20r1 Gosaki schedule source capture plan — complete
+## 0. G-20r1 Gosaki schedule source capture plan — complete
 
 | Item | Value |
 | --- | --- |
 | **Superseded for capture by** | G-20r1b |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20r Gosaki schedule source freshness audit — complete
+## 0. G-20r Gosaki schedule source freshness audit — complete
 
 | Item | Value |
 | --- | --- |
 | Gap | source freshness CONFIRMED |
 | **Superseded for capture by** | G-20r1 |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20q Gosaki internal preview readiness gap audit — complete
+## 0. G-20q Gosaki internal preview readiness gap audit — complete
 
 | Item | Value |
 | --- | --- |
 | clientPreviewVerdict | **NOT_READY** |
 | **Superseded for freshness by** | G-20r |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20j Gosaki production upload preflight refresh — complete
+## 0. G-20j Gosaki production upload preflight refresh — complete
 
 | Item | Value |
 | --- | --- |
@@ -2733,7 +2736,7 @@ PUBLIC_READY: CONDITIONAL
 | G-20j FTP | **HOLD** — DNS/SSL/MX/sign-off |
 | Client outreach | **deferred** — internal QA first (G-20q) |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20p Gosaki production package staleness review — complete
+## 0. G-20p Gosaki production package staleness review — complete
 
 | Item | Value |
 | --- | --- |
@@ -2742,7 +2745,7 @@ PUBLIC_READY: CONDITIONAL
 | Upload content | **GO** · regen **not required** |
 | **Superseded for preflight by** | G-20j refresh |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. Gosaki production-cutover gap refresh — complete
+## 0. Gosaki production-cutover gap refresh — complete
 
 | Item | Value |
 | --- | --- |
@@ -2751,7 +2754,7 @@ PUBLIC_READY: CONDITIONAL
 | Scope | Read-only refresh — G-20j STOP + G-22j post-state · pre-launch checklists |
 | **Superseded for staleness by** | G-20p |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. Gosaki completion audit — complete
+## 0. Gosaki completion audit — complete
 
 | Item | Value |
 | --- | --- |
@@ -2763,7 +2766,7 @@ PUBLIC_READY: CONDITIONAL
 | Doc | `gosaki-completion-audit.md` |
 | **Superseded by** | gap refresh doc for cutover checklists |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-23 series — paused at d7a7250
+## 0. G-23 series — paused at d7a7250
 
 | Item | Value |
 | --- | --- |
@@ -2772,7 +2775,7 @@ PUBLIC_READY: CONDITIONAL
 | seiichijazz.com | **deferred** |
 | **Priority** | **Gosaki-piano completion** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-23n live crawl allowlist config — complete
+## 0. G-23n live crawl allowlist config — complete
 
 | Item | Value |
 | --- | --- |
@@ -2780,7 +2783,7 @@ PUBLIC_READY: CONDITIONAL
 | Base | `76eab7e` |
 | **Next** | **Paused** — resume after Gosaki completion milestones |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-23m sample full dry-run report artifact review — complete
+## 0. G-23m sample full dry-run report artifact review — complete
 
 | Item | Value |
 | --- | --- |
@@ -2788,7 +2791,7 @@ PUBLIC_READY: CONDITIONAL
 | Base | `b1f7dcb` |
 | **Next** | **Superseded for allowlist by G-23n** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-23l onboarding report output — complete
+## 0. G-23l onboarding report output — complete
 
 | Item | Value |
 | --- | --- |
@@ -2796,7 +2799,7 @@ PUBLIC_READY: CONDITIONAL
 | Base | `5b9ceb0` |
 | **Next** | **Superseded for artifact review by G-23m** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-23k crawl-dry-run safety planning — complete
+## 0. G-23k crawl-dry-run safety planning — complete
 
 | Item | Value |
 | --- | --- |
@@ -2805,7 +2808,7 @@ PUBLIC_READY: CONDITIONAL
 | Scope | Planning only — live crawl-dry-run safety design |
 | **Next** | **Superseded for report output by G-23l** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-23j first non-network sample full dry-run — complete
+## 0. G-23j first non-network sample full dry-run — complete
 
 | Item | Value |
 | --- | --- |
@@ -2821,7 +2824,7 @@ PUBLIC_READY: CONDITIONAL
 | Verifier | `verify-g23j-static-to-astro-first-non-network-sample-full-dry-run.mjs` |
 | **Next** | **Superseded for crawl safety by G-23k** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-23i fixture mode orchestrator integration — complete
+## 0. G-23i fixture mode orchestrator integration — complete
 
 | Item | Value |
 | --- | --- |
@@ -2833,7 +2836,7 @@ PUBLIC_READY: CONDITIONAL
 | Verifier | `verify-g23i-static-to-astro-fixture-mode-orchestrator-integration.mjs` |
 | **Next** | **Superseded by G-23j** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-23h orchestrator skeleton — complete
+## 0. G-23h orchestrator skeleton — complete
 
 | Item | Value |
 | --- | --- |
@@ -2848,7 +2851,7 @@ PUBLIC_READY: CONDITIONAL
 | Verifier | `verify-g23h-static-to-astro-onboarding-orchestrator-skeleton.mjs` |
 | **Next** | **Superseded by G-23i** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-23g seed extractor standardization — complete
+## 0. G-23g seed extractor standardization — complete
 
 | Item | Value |
 | --- | --- |
@@ -2863,7 +2866,7 @@ PUBLIC_READY: CONDITIONAL
 | Verifier | `verify-g23g-static-to-astro-seed-extractor-standardization.mjs` |
 | **Next** | **Superseded by G-23h** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-23f CMS preset registry — complete
+## 0. G-23f CMS preset registry — complete
 
 | Item | Value |
 | --- | --- |
@@ -2879,7 +2882,7 @@ PUBLIC_READY: CONDITIONAL
 | Verifier | `verify-g23f-static-to-astro-cms-preset-registry.mjs` |
 | **Next** | **Superseded by G-23g** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-23e onboarding orchestrator planning — complete
+## 0. G-23e onboarding orchestrator planning — complete
 
 | Item | Value |
 | --- | --- |
@@ -2894,7 +2897,7 @@ PUBLIC_READY: CONDITIONAL
 | Verifier | `verify-g23e-static-to-astro-onboarding-orchestrator-planning.mjs` |
 | **Next** | **Superseded by G-23f** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-23d onboarding sample site dry-run — complete
+## 0. G-23d onboarding sample site dry-run — complete
 
 | Item | Value |
 | --- | --- |
@@ -2912,7 +2915,7 @@ PUBLIC_READY: CONDITIONAL
 | Verifier | `verify-g23d-static-to-astro-onboarding-sample-site-dry-run.mjs` |
 | **Next** | **Superseded by G-23e** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-23c onboarding config validator — complete
+## 0. G-23c onboarding config validator — complete
 
 | Item | Value |
 | --- | --- |
@@ -2929,7 +2932,7 @@ PUBLIC_READY: CONDITIONAL
 | Verifier | `verify-g23c-static-to-astro-onboarding-config-validator.mjs` (77 PASS) |
 | **Next** | **Superseded by G-23d** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-23b onboarding config schema planning — complete
+## 0. G-23b onboarding config schema planning — complete
 
 | Item | Value |
 | --- | --- |
@@ -2946,7 +2949,7 @@ PUBLIC_READY: CONDITIONAL
 | Verifier | `verify-g23b-static-to-astro-onboarding-config-schema-planning.mjs` |
 | **Next** | **Superseded by G-23c** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22h4b Schedule republish UI wording cleanup — complete
+## 0. G-22h4b Schedule republish UI wording cleanup — complete
 
 | Item | Value |
 | --- | --- |
@@ -2965,7 +2968,7 @@ PUBLIC_READY: CONDITIONAL
 | Verifier | `verify-g22h4b-gosaki-schedule-republish-ui-wording-cleanup.mjs` |
 | **Next** | **G-22h5** republish target preflight |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-23a 30-minute onboarding flow planning — complete
+## 0. G-23a 30-minute onboarding flow planning — complete
 
 | Item | Value |
 | --- | --- |
@@ -2981,7 +2984,7 @@ PUBLIC_READY: CONDITIONAL
 | Verifier | `verify-g23a-static-to-astro-30-minute-onboarding-flow-planning.mjs` |
 | **Next** | **G-23b** onboarding config schema · sample site dry-run |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22j2 Schedule CMS P0 release note — complete
+## 0. G-22j2 Schedule CMS P0 release note — complete
 
 | Item | Value |
 | --- | --- |
@@ -2995,7 +2998,7 @@ PUBLIC_READY: CONDITIONAL
 | Verifier | `verify-g22j2-gosaki-schedule-cms-p0-release-note.mjs` |
 | **Next** | **Superseded by G-23a** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22j1 Schedule P0 overall closure — complete
+## 0. G-22j1 Schedule P0 overall closure — complete
 
 | Item | Value |
 | --- | --- |
@@ -3013,7 +3016,7 @@ PUBLIC_READY: CONDITIONAL
 | Verifier | `verify-g22j1-gosaki-schedule-p0-overall-closure.mjs` |
 | **Next** | **Superseded by G-22j2** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22i5skip Schedule republish public reflection closure — complete
+## 0. G-22i5skip Schedule republish public reflection closure — complete
 
 | Item | Value |
 | --- | --- |
@@ -3030,7 +3033,7 @@ PUBLIC_READY: CONDITIONAL
 | Verifier | `verify-g22i5skip-gosaki-schedule-republish-public-reflection-closure.mjs` |
 | **Next** | **Superseded by G-22j1** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22i4 Schedule public output review — complete
+## 0. G-22i4 Schedule public output review — complete
 
 | Item | Value |
 | --- | --- |
@@ -3046,7 +3049,7 @@ PUBLIC_READY: CONDITIONAL
 | Verifier | `verify-g22i4-gosaki-schedule-public-output-review-result.mjs` |
 | **Next** | **Superseded by G-22i5skip** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22i3 Schedule package/diff dry-run — complete
+## 0. G-22i3 Schedule package/diff dry-run — complete
 
 | Item | Value |
 | --- | --- |
@@ -3063,7 +3066,7 @@ PUBLIC_READY: CONDITIONAL
 | Verifier | `verify-g22i3-gosaki-schedule-package-diff-dry-run-result.mjs` |
 | **Next** | **Superseded by G-22i4** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22i2 Schedule public reflection planning — complete
+## 0. G-22i2 Schedule public reflection planning — complete
 
 | Item | Value |
 | --- | --- |
@@ -3079,7 +3082,7 @@ PUBLIC_READY: CONDITIONAL
 | Verifier | `verify-g22i2-gosaki-schedule-public-reflection-planning.mjs` |
 | **Next** | **Superseded by G-22i3** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22i1 Schedule P0 release readiness review — complete
+## 0. G-22i1 Schedule P0 release readiness review — complete
 
 | Item | Value |
 | --- | --- |
@@ -3096,7 +3099,7 @@ PUBLIC_READY: CONDITIONAL
 | Verifier | `verify-g22i1-gosaki-schedule-p0-release-readiness-review.mjs` |
 | **Next** | **Superseded by G-22i2** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22h7 Schedule republish UPDATE result closure — complete
+## 0. G-22h7 Schedule republish UPDATE result closure — complete
 
 | Item | Value |
 | --- | --- |
@@ -3115,7 +3118,7 @@ PUBLIC_READY: CONDITIONAL
 | Verifier | `verify-g22h7-gosaki-schedule-republish-update-result-closure.mjs` |
 | **Next** | public reflection planning · Schedule P0 release readiness review |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22h6b retry2 blocker Save still disabled — complete
+## 0. G-22h6b retry2 blocker Save still disabled — complete
 
 | Item | Value |
 | --- | --- |
@@ -3130,7 +3133,7 @@ PUBLIC_READY: CONDITIONAL
 | Verifier | `verify-g22h6b-gosaki-schedule-republish-save-still-disabled-blocker.mjs` |
 | **Next** | **G-22h6b retry3** operator Save once |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22h6b blocker Save disabled / session gate — complete
+## 0. G-22h6b blocker Save disabled / session gate — complete
 
 | Item | Value |
 | --- | --- |
@@ -3149,7 +3152,7 @@ PUBLIC_READY: CONDITIONAL
 | Verifier | `verify-g22h6b-gosaki-schedule-republish-save-disabled-blocker.mjs` |
 | **Next** | **G-22h6b-retry** operator Save once |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22h6a Schedule republish UPDATE implementation — complete
+## 0. G-22h6a Schedule republish UPDATE implementation — complete
 
 | Item | Value |
 | --- | --- |
@@ -3167,7 +3170,7 @@ PUBLIC_READY: CONDITIONAL
 | Verifier | `verify-g22h6a-gosaki-schedule-republish-update-implementation.mjs` |
 | **Next** | **G-22h6b** operator Save once |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22h5 Schedule republish target preflight — complete
+## 0. G-22h5 Schedule republish target preflight — complete
 
 | Item | Value |
 | --- | --- |
@@ -3177,7 +3180,7 @@ PUBLIC_READY: CONDITIONAL
 | G-22h6 first candidate | **`schedule-2026-07-008`** |
 | **Next** | **Superseded by G-22h6a implementation** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22h4b Schedule republish UI wording cleanup — complete
+## 0. G-22h4b Schedule republish UI wording cleanup — complete
 
 | Item | Value |
 | --- | --- |
@@ -3190,7 +3193,7 @@ PUBLIC_READY: CONDITIONAL
 | Verifier | `verify-g22h4b-gosaki-schedule-republish-ui-wording-cleanup.mjs` |
 | **Next** | **Superseded by G-22h5 preflight** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22h3 Schedule republish dry-run UI implementation — complete
+## 0. G-22h3 Schedule republish dry-run UI implementation — complete
 
 | Item | Value |
 | --- | --- |
@@ -3213,7 +3216,7 @@ PUBLIC_READY: CONDITIONAL
 | Verifier | `verify-g22h3-gosaki-schedule-republish-dry-run-implementation.mjs` |
 | **Next** | **Superseded by G-22h4 read-only QA** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22h2 Schedule republish dry-run UI planning — complete
+## 0. G-22h2 Schedule republish dry-run UI planning — complete
 
 | Item | Value |
 | --- | --- |
@@ -3235,7 +3238,7 @@ PUBLIC_READY: CONDITIONAL
 | Verifier | `verify-g22h2-gosaki-schedule-republish-dry-run-ui-planning.mjs` |
 | **Next** | **Superseded by G-22h3 implementation** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22h1 Schedule republish planning — complete
+## 0. G-22h1 Schedule republish planning — complete
 
 | Item | Value |
 | --- | --- |
@@ -3256,7 +3259,7 @@ PUBLIC_READY: CONDITIONAL
 | Verifier | `verify-g22h1-gosaki-schedule-republish-planning.mjs` |
 | **Next** | **Superseded by G-22h2 dry-run UI planning** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22g2b Schedule P0 UX summary / closure — complete
+## 0. G-22g2b Schedule P0 UX summary / closure — complete
 
 | Item | Value |
 | --- | --- |
@@ -3274,7 +3277,7 @@ PUBLIC_READY: CONDITIONAL
 | Verifier | `verify-g22g2b-gosaki-schedule-p0-ux-summary.mjs` |
 | **Next** | **Superseded by G-22h1 republish planning** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22g2a Schedule P0 UX read-only QA — complete
+## 0. G-22g2a Schedule P0 UX read-only QA — complete
 
 | Item | Value |
 | --- | --- |
@@ -3291,7 +3294,7 @@ PUBLIC_READY: CONDITIONAL
 | Verifier | `verify-g22g2a-gosaki-schedule-p0-ux-readonly-qa.mjs` |
 | **Next** | **Superseded by G-22g2b closure** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22g2 Schedule operator procedure hints — complete
+## 0. G-22g2 Schedule operator procedure hints — complete
 
 | Item | Value |
 | --- | --- |
@@ -3308,7 +3311,7 @@ PUBLIC_READY: CONDITIONAL
 | Verifier | `verify-g22g2-gosaki-schedule-operator-procedure-hints.mjs` |
 | **Next** | **Schedule P0 UX まとめ** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22g1f3 Schedule authenticated admin read closure — complete
+## 0. G-22g1f3 Schedule authenticated admin read closure — complete
 
 | Item | Value |
 | --- | --- |
@@ -3324,7 +3327,7 @@ PUBLIC_READY: CONDITIONAL
 | Verifier | `verify-g22g1f3-gosaki-schedule-authenticated-admin-read-closure.mjs` |
 | **Next** | **Schedule P0 UX QA** · **Schedule P0 UX summary** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22g1f2c Schedule operator login smoke result — complete
+## 0. G-22g1f2c Schedule operator login smoke result — complete
 
 | Item | Value |
 | --- | --- |
@@ -3336,7 +3339,7 @@ PUBLIC_READY: CONDITIONAL
 | `schedule-2026-07-008` | **visible** |
 | **Next** | **G-22g1f3** closure |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22g1f2 Schedule authenticated admin read QA — complete
+## 0. G-22g1f2 Schedule authenticated admin read QA — complete
 
 | Item | Value |
 | --- | --- |
@@ -3349,7 +3352,7 @@ PUBLIC_READY: CONDITIONAL
 | Verifier | `verify-g22g1f2-gosaki-schedule-authenticated-admin-read-qa.mjs` |
 | **Next** | **G-22g1f2c** operator smoke · **G-22g1f3** closure |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22g1f1 Schedule authenticated admin read implementation — complete
+## 0. G-22g1f1 Schedule authenticated admin read implementation — complete
 
 | Item | Value |
 | --- | --- |
@@ -3364,7 +3367,7 @@ PUBLIC_READY: CONDITIONAL
 | Verifier | `verify-g22g1f1-gosaki-schedule-authenticated-admin-read-implementation.mjs` |
 | **Next** | **G-22g1f2** read-only QA |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22g1f Schedule authenticated admin read planning — complete
+## 0. G-22g1f Schedule authenticated admin read planning — complete
 
 | Item | Value |
 | --- | --- |
@@ -3379,7 +3382,7 @@ PUBLIC_READY: CONDITIONAL
 | Verifier | `verify-g22g1f-gosaki-schedule-authenticated-admin-read-plan.mjs` |
 | **Next** | **G-22g1f2** read-only QA |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22g1e Schedule admin read / unpublished visibility — complete
+## 0. G-22g1e Schedule admin read / unpublished visibility — complete
 
 | Item | Value |
 | --- | --- |
@@ -3394,7 +3397,7 @@ PUBLIC_READY: CONDITIONAL
 | Verifier | `verify-g22g1e-gosaki-schedule-admin-read-unpublished-visibility.mjs` |
 | **Next** | **G-22g1f** authenticated admin read planning |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22g1d Schedule P0 UX QA — complete
+## 0. G-22g1d Schedule P0 UX QA — complete
 
 | Item | Value |
 | --- | --- |
@@ -3410,7 +3413,7 @@ PUBLIC_READY: CONDITIONAL
 | Verifier | `verify-g22g1d-gosaki-schedule-p0-ux-qa.mjs` |
 | **Next** | **G-22g1e** read investigation · **G-22g2** operator procedure |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22g1c Schedule save preview / target confirmation — complete
+## 0. G-22g1c Schedule save preview / target confirmation — complete
 
 | Item | Value |
 | --- | --- |
@@ -3424,7 +3427,7 @@ PUBLIC_READY: CONDITIONAL
 | Verifier | `verify-g22g1c-gosaki-schedule-save-preview-target-confirmation.mjs` |
 | **Next** | **G-22g1d** P0 UX QA · **G-22g2** operator procedure |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22g1b Schedule dev/mock section isolation — complete
+## 0. G-22g1b Schedule dev/mock section isolation — complete
 
 | Item | Value |
 | --- | --- |
@@ -3438,7 +3441,7 @@ PUBLIC_READY: CONDITIONAL
 | Verifier | `verify-g22g1b-gosaki-schedule-dev-mock-section-isolation.mjs` |
 | **Next** | **G-22g1c** pre-save panel · **G-22g2** operator procedure |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22g1a Schedule list UX legacy_id — complete
+## 0. G-22g1a Schedule list UX legacy_id — complete
 
 | Item | Value |
 | --- | --- |
@@ -3451,7 +3454,7 @@ PUBLIC_READY: CONDITIONAL
 | Verifier | `verify-g22g1a-gosaki-schedule-list-ux-legacy-id.mjs` |
 | **Next** | **G-22g1b** dev/mock isolation · **G-22g1c** pre-save panel |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22g Schedule P0 CRUD next plan — complete
+## 0. G-22g Schedule P0 CRUD next plan — complete
 
 | Item | Value |
 | --- | --- |
@@ -3470,7 +3473,7 @@ PUBLIC_READY: CONDITIONAL
 | Save / DB write / FTP (G-22g) | **not executed** |
 | **Next** | **G-22g1** list UX · then G-22g2 operator procedure |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22f7 unpublish UPDATE chain closure — complete
+## 0. G-22f7 unpublish UPDATE chain closure — complete
 
 | Item | Value |
 | --- | --- |
@@ -3487,7 +3490,7 @@ PUBLIC_READY: CONDITIONAL
 | Cursor Save / DB write (G-22f7) | **not executed** |
 | **Next** | Schedule P0 inventory · list UX · physical DELETE planning |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22f6 unpublish UPDATE execution result — complete
+## 0. G-22f6 unpublish UPDATE execution result — complete
 
 | Item | Value |
 | --- | --- |
@@ -3508,7 +3511,7 @@ PUBLIC_READY: CONDITIONAL
 | Cursor Save / DB write (G-22f6) | **not executed** |
 | **Next** | **G-22f7** chain closure — **done** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22f4b unpublish UPDATE target fixed / beforeVerification — complete
+## 0. G-22f4b unpublish UPDATE target fixed / beforeVerification — complete
 
 | Item | Value |
 | --- | --- |
@@ -3527,7 +3530,7 @@ PUBLIC_READY: CONDITIONAL
 | Save / DB write / SQL mutation (G-22f4b) | **not executed** |
 | **Next** | **G-22f5** operator Save once — **done** → **G-22f6** result — **done** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22f4 unpublish UPDATE final preflight — complete
+## 0. G-22f4 unpublish UPDATE final preflight — complete
 
 | Item | Value |
 | --- | --- |
@@ -3543,7 +3546,7 @@ PUBLIC_READY: CONDITIONAL
 | Save / DB write / SQL mutation (G-22f4) | **not executed** |
 | **Next** | **G-22f4b** target fixed — **done** → **G-22f5** Save once |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22f3 unpublish UPDATE implementation — complete
+## 0. G-22f3 unpublish UPDATE implementation — complete
 
 | Item | Value |
 | --- | --- |
@@ -3560,7 +3563,7 @@ PUBLIC_READY: CONDITIONAL
 | Save / DB write (G-22f3) | **not executed** |
 | **Next** | **G-22f4** final preflight — **done** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22f2 unpublish UPDATE planning — complete
+## 0. G-22f2 unpublish UPDATE planning — complete
 
 | Item | Value |
 | --- | --- |
@@ -3577,7 +3580,7 @@ PUBLIC_READY: CONDITIONAL
 | Save / DB write / GRANT (G-22f2) | **not executed** |
 | **Next** | **G-22f3** implementation only — **done** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22f1 unpublish dry-run local QA — complete
+## 0. G-22f1 unpublish dry-run local QA — complete
 
 | Item | Value |
 | --- | --- |
@@ -3592,7 +3595,7 @@ PUBLIC_READY: CONDITIONAL
 | Verifier | `verify-g22f1-gosaki-schedule-unpublish-dry-run-local-qa.mjs` |
 | **Next** | **G-22f2** unpublish UPDATE planning — **done** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22f unpublish dry-run UI — complete
+## 0. G-22f unpublish dry-run UI — complete
 
 | Item | Value |
 | --- | --- |
@@ -3606,7 +3609,7 @@ PUBLIC_READY: CONDITIONAL
 | Save / DB write (G-22f) | **not executed** |
 | **Next** | **G-22f1** local QA — **done** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22e7 new event INSERT chain closure — complete
+## 0. G-22e7 new event INSERT chain closure — complete
 
 | Item | Value |
 | --- | --- |
@@ -3624,7 +3627,7 @@ PUBLIC_READY: CONDITIONAL
 | Save / DB write / GRANT (G-22e7) | **not executed** |
 | **Next** | **G-22f** Schedule delete/unpublish planning |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22e6 new event INSERT execution result — complete
+## 0. G-22e6 new event INSERT execution result — complete
 
 | Item | Value |
 | --- | --- |
@@ -3644,7 +3647,7 @@ PUBLIC_READY: CONDITIONAL
 | Save re-exec / DB write (G-22e6) | **not executed** |
 | **Next** | routine dry-run dev; future publish or general new-event slice |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22e5-blocker new event「変更を確認」button — resolved
+## 0. G-22e5-blocker new event「変更を確認」button — resolved
 
 | Item | Value |
 | --- | --- |
@@ -3658,7 +3661,7 @@ PUBLIC_READY: CONDITIONAL
 | Save / DB write / SQL mutation | **not executed** |
 | **Next** | operator re-verify in dry-run safe env → resume **G-22e5** operator Save once |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22e4 new event INSERT final preflight — complete
+## 0. G-22e4 new event INSERT final preflight — complete
 
 | Item | Value |
 | --- | --- |
@@ -3673,7 +3676,7 @@ PUBLIC_READY: CONDITIONAL
 | Save / DB write | **not executed** |
 | **Next** | **G-22e5** operator Save once |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22e3 new event INSERT implementation — complete
+## 0. G-22e3 new event INSERT implementation — complete
 
 | Item | Value |
 | --- | --- |
@@ -3683,7 +3686,7 @@ PUBLIC_READY: CONDITIONAL
 | Doc | `gosaki-schedule-new-event-insert-implementation.md` |
 | **Next** | — (superseded by G-22e4) |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22e1 new event dry-run local QA — complete
+## 0. G-22e1 new event dry-run local QA — complete
 
 | Item | Value |
 | --- | --- |
@@ -3695,7 +3698,7 @@ PUBLIC_READY: CONDITIONAL
 | Save / INSERT | **not executed** |
 | **Next** | — (superseded by G-22e2 planning) |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22e new event dry-run UI — complete
+## 0. G-22e new event dry-run UI — complete
 
 | Item | Value |
 | --- | --- |
@@ -3703,7 +3706,7 @@ PUBLIC_READY: CONDITIONAL
 | Commit | `c716891` |
 | **Next** | — (superseded by G-22e1 QA) |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22d3d duplicate INSERT chain closure — complete
+## 0. G-22d3d duplicate INSERT chain closure — complete
 
 | Item | Value |
 | --- | --- |
@@ -3711,7 +3714,7 @@ PUBLIC_READY: CONDITIONAL
 | Commit | `2ed6122` |
 | **Next** | — (superseded by G-22e) |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22d3c duplicate INSERT execution result — complete
+## 0. G-22d3c duplicate INSERT execution result — complete
 
 | Item | Value |
 | --- | --- |
@@ -3722,7 +3725,7 @@ PUBLIC_READY: CONDITIONAL
 | Doc | `gosaki-schedule-duplicate-insert-execution-result.md` |
 | **Next** | — (superseded by G-22d3d closure) |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22d3b2–b4 INSERT grant + duplicate Save — complete
+## 0. G-22d3b2–b4 INSERT grant + duplicate Save — complete
 
 | Item | Value |
 | --- | --- |
@@ -3730,7 +3733,7 @@ PUBLIC_READY: CONDITIONAL
 | Commit | `a3c8f7c` |
 | **Next** | — (superseded by G-22d3c) |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22d2b preflight drift fix — complete
+## 0. G-22d2b preflight drift fix — complete
 
 | Item | Value |
 | --- | --- |
@@ -3738,7 +3741,7 @@ PUBLIC_READY: CONDITIONAL
 | Commit | `974738c` |
 | **Next** | — (superseded by G-22d3b-blocker) |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22d3a Gosaki Schedule duplicate INSERT beforeVerification — complete
+## 0. G-22d3a Gosaki Schedule duplicate INSERT beforeVerification — complete
 
 | Item | Value |
 | --- | --- |
@@ -3747,7 +3750,7 @@ PUBLIC_READY: CONDITIONAL
 | Doc | `gosaki-schedule-duplicate-insert-beforeverification.md` |
 | **Next** | — (drift → G-22d2b) |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22d2 Gosaki Schedule duplicate INSERT final preflight — complete
+## 0. G-22d2 Gosaki Schedule duplicate INSERT final preflight — complete
 
 | Item | Value |
 | --- | --- |
@@ -3757,7 +3760,7 @@ PUBLIC_READY: CONDITIONAL
 | Verifier | `verify-g22d2-gosaki-schedule-duplicate-insert-final-preflight.mjs` |
 | **Next** | — (payload updated by G-22d2b) |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22d1 Gosaki Schedule duplicate INSERT implementation — complete
+## 0. G-22d1 Gosaki Schedule duplicate INSERT implementation — complete
 
 | Item | Value |
 | --- | --- |
@@ -3768,7 +3771,7 @@ PUBLIC_READY: CONDITIONAL
 | Verifier | `verify-g22d1-gosaki-schedule-duplicate-insert-implementation.mjs` |
 | **Next** | — (superseded by G-22d2) |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22d Gosaki Schedule duplicate INSERT planning — complete
+## 0. G-22d Gosaki Schedule duplicate INSERT planning — complete
 
 | Item | Value |
 | --- | --- |
@@ -3779,7 +3782,7 @@ PUBLIC_READY: CONDITIONAL
 | Verifier | `verify-g22d-gosaki-schedule-duplicate-insert-planning.mjs` |
 | **Next** | — (superseded by G-22d1) |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22c Gosaki Schedule duplicate dry-run local QA — complete
+## 0. G-22c Gosaki Schedule duplicate dry-run local QA — complete
 
 | Item | Value |
 | --- | --- |
@@ -3790,7 +3793,7 @@ PUBLIC_READY: CONDITIONAL
 | Verifier | `verify-g22c-gosaki-schedule-duplicate-dry-run-local-qa.mjs` |
 | **Next** | — (superseded by G-22d) |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22b Gosaki Schedule duplicate dry-run UI — complete
+## 0. G-22b Gosaki Schedule duplicate dry-run UI — complete
 
 | Item | Value |
 | --- | --- |
@@ -3803,7 +3806,7 @@ PUBLIC_READY: CONDITIONAL
 | Verifier | `verify-g22b-gosaki-schedule-duplicate-dry-run-ui-implementation.mjs` |
 | **Next** | — (superseded by G-22c QA) |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-22a Sariswing parity gap inventory — complete
+## 0. G-22a Sariswing parity gap inventory — complete
 
 | Item | Value |
 | --- | --- |
@@ -3815,7 +3818,7 @@ PUBLIC_READY: CONDITIONAL
 | Verifier | `verify-g22a-gosaki-sariswing-parity-gap-inventory.mjs` |
 | **Next** | — (superseded by G-22b) |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20ui3-QA Gosaki admin UI minor polish local QA — complete
+## 0. G-20ui3-QA Gosaki admin UI minor polish local QA — complete
 
 | Item | Value |
 | --- | --- |
@@ -3823,7 +3826,7 @@ PUBLIC_READY: CONDITIONAL
 | Base | `d404ce3` |
 | **Next** | — (superseded by G-22a) |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20ui3 Gosaki admin UI minor polish — complete
+## 0. G-20ui3 Gosaki admin UI minor polish — complete
 
 | Item | Value |
 | --- | --- |
@@ -3831,7 +3834,7 @@ PUBLIC_READY: CONDITIONAL
 | Base | `75e2bc1` |
 | **Next** | — (superseded by G-20ui3-QA) |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20ui2-QA Gosaki admin UI polish local visual QA — complete
+## 0. G-20ui2-QA Gosaki admin UI polish local visual QA — complete
 
 | Item | Value |
 | --- | --- |
@@ -3839,7 +3842,7 @@ PUBLIC_READY: CONDITIONAL
 | Base | `8b4cf83` |
 | **Next** | — (superseded by G-20ui3) |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20ui2 Gosaki admin UI polish implementation — complete
+## 0. G-20ui2 Gosaki admin UI polish implementation — complete
 
 | Item | Value |
 | --- | --- |
@@ -3847,7 +3850,7 @@ PUBLIC_READY: CONDITIONAL
 | Base | `afcbdcf` |
 | **Next** | — (superseded by G-20ui2-QA) |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20ui1 Gosaki admin UI polish inventory — complete
+## 0. G-20ui1 Gosaki admin UI polish inventory — complete
 
 | Item | Value |
 | --- | --- |
@@ -3855,7 +3858,7 @@ PUBLIC_READY: CONDITIONAL
 | Base | `6d02ce1` |
 | **Next** | — (superseded by G-20ui2) |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20i3 Gosaki production package admin exclusion — complete
+## 0. G-20i3 Gosaki production package admin exclusion — complete
 
 | Item | Value |
 | --- | --- |
@@ -3863,7 +3866,7 @@ PUBLIC_READY: CONDITIONAL
 | Base | `4a91061` |
 | **Next** | — (superseded by G-20ui1 for parallel work) |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20i2 Gosaki production upload finalization — complete
+## 0. G-20i2 Gosaki production upload finalization — complete
 
 | Item | Value |
 | --- | --- |
@@ -3871,7 +3874,7 @@ PUBLIC_READY: CONDITIONAL
 | Base | `d34646d` |
 | **Next** | — (superseded by G-20i3) |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20i Gosaki production upload preflight — complete
+## 0. G-20i Gosaki production upload preflight — complete
 
 | Item | Value |
 | --- | --- |
@@ -3879,7 +3882,7 @@ PUBLIC_READY: CONDITIONAL
 | Base | `69d538e` |
 | **Next** | — (superseded by G-20i2) |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20h2 Gosaki initial local production package build — complete
+## 0. G-20h2 Gosaki initial local production package build — complete
 
 | Item | Value |
 | --- | --- |
@@ -3887,7 +3890,7 @@ PUBLIC_READY: CONDITIONAL
 | Base | `adfe27d` |
 | **Next** | — (superseded by G-20i) |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20h1 Gosaki production config implementation — complete
+## 0. G-20h1 Gosaki production config implementation — complete
 
 | Item | Value |
 | --- | --- |
@@ -3896,7 +3899,7 @@ PUBLIC_READY: CONDITIONAL
 | Production build | **executed in G-20h2** |
 | **Next** | — (superseded by G-20h2) |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20g Gosaki production config implementation planning — complete
+## 0. G-20g Gosaki production config implementation planning — complete
 
 | Item | Value |
 | --- | --- |
@@ -3905,7 +3908,7 @@ PUBLIC_READY: CONDITIONAL
 | Doc | `gosaki-production-config-implementation-planning.md` |
 | **Next** | — (superseded by G-20h1) |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20f Gosaki production release config / cutover preflight — complete
+## 0. G-20f Gosaki production release config / cutover preflight — complete
 
 | Item | Value |
 | --- | --- |
@@ -3914,7 +3917,7 @@ PUBLIC_READY: CONDITIONAL
 | Doc | `gosaki-production-release-config-and-cutover-preflight.md` |
 | **Next** | — (superseded by G-20g) |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20e-closure Gosaki production test text cleanup chain closure — complete
+## 0. G-20e-closure Gosaki production test text cleanup chain closure — complete
 
 | Item | Value |
 | --- | --- |
@@ -3924,7 +3927,7 @@ PUBLIC_READY: CONDITIONAL
 | Doc | `gosaki-production-test-text-cleanup-closure.md` |
 | **Next** | — (superseded by G-20f) |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20d/G-20e Gosaki production test text cleanup upload + HTTP verify — complete
+## 0. G-20d/G-20e Gosaki production test text cleanup upload + HTTP verify — complete
 
 | Item | Value |
 | --- | --- |
@@ -3935,7 +3938,7 @@ PUBLIC_READY: CONDITIONAL
 | Verifier | `verify-g20de-gosaki-production-test-text-cleanup-public-reflection-upload-result.mjs` |
 | **Next** | — (superseded by G-20e-closure) |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20c Gosaki production test text cleanup public reflection local regen + upload preflight — complete
+## 0. G-20c Gosaki production test text cleanup public reflection local regen + upload preflight — complete
 
 | Item | Value |
 | --- | --- |
@@ -3947,7 +3950,7 @@ PUBLIC_READY: CONDITIONAL
 | Verifier | `verify-g20c-gosaki-production-test-text-cleanup-public-reflection-local-regen-and-upload-preflight.mjs` |
 | **Next** | — (superseded by G-20d/G-20e) |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20b-execution Gosaki production test text cleanup execution result — complete
+## 0. G-20b-execution Gosaki production test text cleanup execution result — complete
 
 | Item | Value |
 | --- | --- |
@@ -3960,7 +3963,7 @@ PUBLIC_READY: CONDITIONAL
 | Verifier | `verify-g20b-gosaki-production-test-text-cleanup-execution-result.mjs` |
 | **Next** | — (superseded by G-20c) |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20b Gosaki production pre-release test text cleanup final preflight — complete
+## 0. G-20b Gosaki production pre-release test text cleanup final preflight — complete
 
 | Item | Value |
 | --- | --- |
@@ -3973,7 +3976,7 @@ PUBLIC_READY: CONDITIONAL
 | Verifier | `verify-g20b-gosaki-production-test-text-cleanup-final-preflight.mjs` |
 | **Next** | — (superseded by G-20b-execution) |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20a Gosaki production release readiness inventory — complete
+## 0. G-20a Gosaki production release readiness inventory — complete
 
 | Item | Value |
 | --- | --- |
@@ -3986,7 +3989,7 @@ PUBLIC_READY: CONDITIONAL
 | Verifier | `verify-g20a-gosaki-production-release-readiness-inventory.mjs` |
 | **Next** | — (superseded by G-20b) |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-19e Discography G-19b1 tracklist Save / public reflection closure — complete
+## 0. G-19e Discography G-19b1 tracklist Save / public reflection closure — complete
 
 | Item | Value |
 | --- | --- |
@@ -4000,7 +4003,7 @@ PUBLIC_READY: CONDITIONAL
 | Verifier | `verify-g19e-gosaki-discography-g19b1-tracklist-save-public-reflection-closure.mjs` |
 | **Next** | G-19f UX cleanup **or** G-19g next tracklist Save slice planning **or** Discography CMS next domain planning |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-19d Discography G-19b1 tracklist public reflection upload result — complete
+## 0. G-19d Discography G-19b1 tracklist public reflection upload result — complete
 
 | Item | Value |
 | --- | --- |
@@ -4013,7 +4016,7 @@ PUBLIC_READY: CONDITIONAL
 | Verifier | `verify-g19d-gosaki-discography-tracklist-public-reflection-upload-result.mjs` |
 | **Next** | — (superseded by G-19e) |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-19c Discography G-19b1 tracklist public reflection local regen / upload preflight — complete
+## 0. G-19c Discography G-19b1 tracklist public reflection local regen / upload preflight — complete
 
 | Item | Value |
 | --- | --- |
@@ -4026,7 +4029,7 @@ PUBLIC_READY: CONDITIONAL
 | Doc | `gosaki-discography-g19c-tracklist-public-reflection-local-regen-and-upload-preflight.md` |
 | **Next** | — (superseded by G-19d) |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-19b1-execution Discography tracklist generic single-title Save execution result — complete
+## 0. G-19b1-execution Discography tracklist generic single-title Save execution result — complete
 
 | Item | Value |
 | --- | --- |
@@ -4041,7 +4044,7 @@ PUBLIC_READY: CONDITIONAL
 | Doc | `gosaki-discography-g19b1-tracklist-single-title-save-execution-result.md` |
 | **Next** | — (superseded by G-19c) |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-19b1-execution-readiness Discography tracklist generic single-title Save execution readiness — complete
+## 0. G-19b1-execution-readiness Discography tracklist generic single-title Save execution readiness — complete
 
 | Item | Value |
 | --- | --- |
@@ -4055,7 +4058,7 @@ PUBLIC_READY: CONDITIONAL
 | Verifier | `verify-g19b1-gosaki-discography-tracklist-single-title-save-execution-readiness.mjs` |
 | **Next** | — (superseded by G-19b1-execution) |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-19b1-preflight Discography tracklist generic single-title Save final preflight — complete
+## 0. G-19b1-preflight Discography tracklist generic single-title Save final preflight — complete
 
 | Item | Value |
 | --- | --- |
@@ -4070,7 +4073,7 @@ PUBLIC_READY: CONDITIONAL
 | Verifier | `verify-g19b1-gosaki-discography-tracklist-single-title-save-final-preflight.mjs` |
 | **Next** | — (superseded by G-19b1-execution-readiness) |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-19b1-result Discography tracklist generic single-title Save local dry-run QA — complete
+## 0. G-19b1-result Discography tracklist generic single-title Save local dry-run QA — complete
 
 | Item | Value |
 | --- | --- |
@@ -4082,7 +4085,7 @@ PUBLIC_READY: CONDITIONAL
 | DB write / Save | **not executed** |
 | **Next** | — (superseded by G-19b1-preflight) |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-19b1 Discography tracklist generic single-title Save implementation — complete
+## 0. G-19b1 Discography tracklist generic single-title Save implementation — complete
 
 | Item | Value |
 | --- | --- |
@@ -4099,7 +4102,7 @@ PUBLIC_READY: CONDITIONAL
 | Verifier | `verify-g19b1-gosaki-discography-tracklist-single-title-save-implementation.mjs` |
 | **Next** | — (superseded by G-19b1-result QA) |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-19b Discography tracklist Save slice planning — complete
+## 0. G-19b Discography tracklist Save slice planning — complete
 
 | Item | Value |
 | --- | --- |
@@ -4115,7 +4118,7 @@ PUBLIC_READY: CONDITIONAL
 | Verifier | `verify-g19b-gosaki-discography-tracklist-save-slice-planning.mjs` |
 | **Next** | — (superseded by G-19b1 implementation) |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-19a Discography tracklist generic textarea dry-run — complete
+## 0. G-19a Discography tracklist generic textarea dry-run — complete
 
 | Item | Value |
 | --- | --- |
@@ -4132,7 +4135,7 @@ PUBLIC_READY: CONDITIONAL
 | Verifier | `verify-g19a-gosaki-discography-tracklist-generic-textarea-dry-run.mjs` |
 | **Next** | — (superseded by G-19b) |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-18h-upload-result Discography tracklist reflection upload result — complete
+## 0. G-18h-upload-result Discography tracklist reflection upload result — complete
 
 | Item | Value |
 | --- | --- |
@@ -4147,7 +4150,7 @@ PUBLIC_READY: CONDITIONAL
 | **Chain** | G-18g2 Save + G-18h public reflection **closed** |
 | **Do not** | Re-upload / re-Save track 7 without new approval |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-18h-upload Discography tracklist reflection manual upload final preflight — complete
+## 0. G-18h-upload Discography tracklist reflection manual upload final preflight — complete
 
 | Item | Value |
 | --- | --- |
@@ -4162,7 +4165,7 @@ PUBLIC_READY: CONDITIONAL
 | **Next** | G-18h-upload-result — **done** |
 | **Do not** | mirror/sync/delete / FTP root / re-Save track 7 |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-18h Discography public tracks reflection preflight — complete
+## 0. G-18h Discography public tracks reflection preflight — complete
 
 | Item | Value |
 | --- | --- |
@@ -4170,7 +4173,7 @@ PUBLIC_READY: CONDITIONAL
 | Base | `7cad34c` |
 | **Next** | G-18h-upload final preflight — **done** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-18g2-execution Discography tracklist single-title Save result — complete
+## 0. G-18g2-execution Discography tracklist single-title Save result — complete
 
 | Item | Value |
 | --- | --- |
@@ -4184,70 +4187,70 @@ PUBLIC_READY: CONDITIONAL
 | **Next** | G-18h — **done** |
 | **Do not** | Re-Save track 7 / rollback without new approval |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-18g2-execution-wiring Discography tracklist Save UI wiring — complete
+## 0. G-18g2-execution-wiring Discography tracklist Save UI wiring — complete
 
 | Item | Value |
 | --- | --- |
 | Commit | `8fd2ff7` |
 | **Next** | G-18g2-execution — **done** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-18g2-preflight Discography tracklist Save final preflight — complete
+## 0. G-18g2-preflight Discography tracklist Save final preflight — complete
 
 | Item | Value |
 | --- | --- |
 | Commit | `2c92bb3` |
 | **Next** | G-18g2-execution-wiring — **done** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-18g2-result Discography tracklist local UI dry-run preview — complete
+## 0. G-18g2-result Discography tracklist local UI dry-run preview — complete
 
 | Item | Value |
 | --- | --- |
 | Commit | `9236faf` |
 | **Next** | G-18g2-preflight — **done** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-18g2 Discography tracklist single-title Save adapter dry-run — complete
+## 0. G-18g2 Discography tracklist single-title Save adapter dry-run — complete
 
 | Item | Value |
 | --- | --- |
 | Commit | `1041646` |
 | **Next** | G-18g2-result — **done** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-18g1-apply-result Discography tracks UPDATE grant apply result — complete
+## 0. G-18g1-apply-result Discography tracks UPDATE grant apply result — complete
 
 | Item | Value |
 | --- | --- |
 | Commit | `cf4d571` |
 | **Next** | G-18g2 dry-run — **done** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-18g1-apply Discography tracks UPDATE grant apply preflight — complete
+## 0. G-18g1-apply Discography tracks UPDATE grant apply preflight — complete
 
 | Item | Value |
 | --- | --- |
 | Commit | `88fab3c` |
 | **Next** | G-18g1-apply-result — **done** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-18g1 Discography tracks GRANT / RLS read-only check — complete
+## 0. G-18g1 Discography tracks GRANT / RLS read-only check — complete
 
 | Item | Value |
 | --- | --- |
 | Commit | `418c2bd` |
 | **Next** | G-18g1-apply-preflight — **done** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-18g Discography tracklist textarea Save adapter planning — complete
+## 0. G-18g Discography tracklist textarea Save adapter planning — complete
 
 | Item | Value |
 | --- | --- |
 | Commit | `065539b` |
 | **Next** | G-18g1 — **done** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-18f-result Discography tracklist local UI dry-run preview — complete
+## 0. G-18f-result Discography tracklist local UI dry-run preview — complete
 
 | Item | Value |
 | --- | --- |
 | Commit | `8a23191` |
 | **Next** | G-18g — **done** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-18f Discography tracklist textarea diff dry-run — complete
+## 0. G-18f Discography tracklist textarea diff dry-run — complete
 
 | Item | Value |
 | --- | --- |
@@ -4257,7 +4260,7 @@ PUBLIC_READY: CONDITIONAL
 | Doc | `gosaki-discography-g18f-tracklist-textarea-diff-dry-run.md` |
 | **Next** | G-18f-result — **done** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-18e Discography tracks title-edit Save slice planning — complete (+ refinement)
+## 0. G-18e Discography tracks title-edit Save slice planning — complete (+ refinement)
 
 | Item | Value |
 | --- | --- |
@@ -4270,7 +4273,7 @@ PUBLIC_READY: CONDITIONAL
 | **Next** | G-18f — **done** |
 | **Do not** | Guess typo fixes; re-open scalar Save chains |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-18d-result Discography tracks SQL execution result — complete
+## 0. G-18d-result Discography tracks SQL execution result — complete
 
 | Item | Value |
 | --- | --- |
@@ -4279,7 +4282,7 @@ PUBLIC_READY: CONDITIONAL
 | Doc | `gosaki-discography-g18d-tracks-sql-execution-result.md` |
 | **Next** | G-18e — **done** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-18d Discography tracks manual SQL execution readiness — complete
+## 0. G-18d Discography tracks manual SQL execution readiness — complete
 
 | Item | Value |
 | --- | --- |
@@ -4288,7 +4291,7 @@ PUBLIC_READY: CONDITIONAL
 | Doc | `gosaki-discography-g18d-tracks-manual-sql-execution-readiness.md` |
 | **Next** | G-18d-result — **done** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-18c-f Discography tracks renumber UPDATE preflight — complete
+## 0. G-18c-f Discography tracks renumber UPDATE preflight — complete
 
 | Item | Value |
 | --- | --- |
@@ -4297,7 +4300,7 @@ PUBLIC_READY: CONDITIONAL
 | Doc | `gosaki-discography-g18c-f-tracks-renumber-update-preflight.md` |
 | **Next** | G-18d — **done** (readiness) |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-18c Discography tracks gap backfill preflight — complete
+## 0. G-18c Discography tracks gap backfill preflight — complete
 
 | Item | Value |
 | --- | --- |
@@ -4306,7 +4309,7 @@ PUBLIC_READY: CONDITIONAL
 | Doc | `gosaki-discography-g18c-tracks-gap-backfill-preflight.md` |
 | **Next** | G-18c-f — **done** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-18b Discography tracks / personnel / price design — complete
+## 0. G-18b Discography tracks / personnel / price design — complete
 
 | Item | Value |
 | --- | --- |
@@ -4315,7 +4318,7 @@ PUBLIC_READY: CONDITIONAL
 | Doc | `gosaki-discography-g18b-tracks-personnel-price-design.md` |
 | **Next** | G-18c — **done** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-18a Discography next scalar field selection — complete
+## 0. G-18a Discography next scalar field selection — complete
 
 | Item | Value |
 | --- | --- |
@@ -4327,7 +4330,7 @@ PUBLIC_READY: CONDITIONAL
 | **Next** | G-18b — **done** |
 | **Do not** | Re-open scalar Save on closed chains |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-17e-f Discography label Save / public reflection closure — complete
+## 0. G-17e-f Discography label Save / public reflection closure — complete
 
 | Item | Value |
 | --- | --- |
@@ -4336,7 +4339,7 @@ PUBLIC_READY: CONDITIONAL
 | Doc | `gosaki-discography-g17e-label-public-reflection-closure.md` |
 | **Next** | G-18a — **done** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-17e-upload Discography label public reflection upload + HTTP verify — complete
+## 0. G-17e-upload Discography label public reflection upload + HTTP verify — complete
 
 | Item | Value |
 | --- | --- |
@@ -4345,7 +4348,7 @@ PUBLIC_READY: CONDITIONAL
 | Doc | `gosaki-discography-g17e-label-public-reflection-upload-result.md` |
 | **Next** | G-17e-f — **done** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-17e Discography label public reflection local regen + upload preflight — complete
+## 0. G-17e Discography label public reflection local regen + upload preflight — complete
 
 | Item | Value |
 | --- | --- |
@@ -4354,7 +4357,7 @@ PUBLIC_READY: CONDITIONAL
 | Doc | `gosaki-discography-g17e-label-public-reflection-local-regen-and-upload-preflight.md` |
 | **Next** | G-17e-upload — **done** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-17d-execution Discography label Save result + unexpected state investigation — complete
+## 0. G-17d-execution Discography label Save result + unexpected state investigation — complete
 
 | Item | Value |
 | --- | --- |
@@ -4368,7 +4371,7 @@ PUBLIC_READY: CONDITIONAL
 
 Post-Save admin header may show stale `Save: disabled` / `DB write: disabled` while DB is correct. Small UI status refresh follow-up — see execution result doc §7.
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-17d Discography label Save readiness fix — complete
+## 0. G-17d Discography label Save readiness fix — complete
 
 | Item | Value |
 | --- | --- |
@@ -4376,7 +4379,7 @@ Post-Save admin header may show stale `Save: disabled` / `DB write: disabled` wh
 | Doc | `gosaki-discography-g17d-label-save-readiness-investigation.md` |
 | **Next** | G-17d-execution — **done** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-17d Discography label Save path enablement — complete
+## 0. G-17d Discography label Save path enablement — complete
 
 | Item | Value |
 | --- | --- |
@@ -4385,7 +4388,7 @@ Post-Save admin header may show stale `Save: disabled` / `DB write: disabled` wh
 | Doc | `gosaki-discography-g17d-label-save-path-enablement.md` |
 | **Next** | Re-Preview after readiness fix — **done** (fix) |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-17c-d2 / G-17d-d3 Discography label dry-run result + Save final preflight — complete
+## 0. G-17c-d2 / G-17d-d3 Discography label dry-run result + Save final preflight — complete
 
 | Item | Value |
 | --- | --- |
@@ -4394,7 +4397,7 @@ Post-Save admin header may show stale `Save: disabled` / `DB write: disabled` wh
 | Doc | `gosaki-discography-g17c-label-dry-run-result-and-g17d-save-final-preflight.md` |
 | **Next** | G-17d-implementation — **done** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-17c Discography registry next field slice preflight — complete
+## 0. G-17c Discography registry next field slice preflight — complete
 
 | Item | Value |
 | --- | --- |
@@ -4405,7 +4408,7 @@ Post-Save admin header may show stale `Save: disabled` / `DB write: disabled` wh
 | **Next** | G-17c-d2 — **done** |
 | **Do not** | Re-Save closed chains |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-17b Discography scalar field commonization — complete
+## 0. G-17b Discography scalar field commonization — complete
 
 | Item | Value |
 | --- | --- |
@@ -4417,7 +4420,7 @@ Post-Save admin header may show stale `Save: disabled` / `DB write: disabled` wh
 | **Next** | G-17c — **done** |
 | **Do not** | Re-Save closed chains |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-17a Discography CMS commonization audit — complete
+## 0. G-17a Discography CMS commonization audit — complete
 
 | Item | Value |
 | --- | --- |
@@ -4426,7 +4429,7 @@ Post-Save admin header may show stale `Save: disabled` / `DB write: disabled` wh
 | Doc | `gosaki-discography-g17a-commonization-audit.md` |
 | **Next** | G-17b — **done** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-16b-f Discography G-16a artist public reflection closure — complete
+## 0. G-16b-f Discography G-16a artist public reflection closure — complete
 
 | Item | Value |
 | --- | --- |
@@ -4436,7 +4439,7 @@ Post-Save admin header may show stale `Save: disabled` / `DB write: disabled` wh
 | **Next** | G-17a — **done** |
 | **Do not** | Re-Save `discography-001`; re-upload discography HTML |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-16b-upload Discography G-16a artist public reflection upload + HTTP verify — complete
+## 0. G-16b-upload Discography G-16a artist public reflection upload + HTTP verify — complete
 
 | Item | Value |
 | --- | --- |
@@ -4449,7 +4452,7 @@ Post-Save admin header may show stale `Save: disabled` / `DB write: disabled` wh
 | **Next** | G-16b-f — **done** |
 | **Do not** | Re-upload discography HTML; Re-Save `001` |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-16b Discography G-16a artist public reflection local regen + upload preflight — complete
+## 0. G-16b Discography G-16a artist public reflection local regen + upload preflight — complete
 
 | Item | Value |
 | --- | --- |
@@ -4458,7 +4461,7 @@ Post-Save admin header may show stale `Save: disabled` / `DB write: disabled` wh
 | Doc | `gosaki-discography-g16b-artist-public-reflection-local-regen-and-upload-preflight.md` |
 | **Next** | G-16b-upload — **done** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-16a-execution Discography artist Save result — complete
+## 0. G-16a-execution Discography artist Save result — complete
 
 | Item | Value |
 | --- | --- |
@@ -4467,7 +4470,7 @@ Post-Save admin header may show stale `Save: disabled` / `DB write: disabled` wh
 | Doc | `gosaki-discography-g16a-artist-save-result.md` |
 | **Next** | G-16b — **done** (preflight) |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-16a-d2/d3 Discography artist local dry-run + Save final preflight — complete
+## 0. G-16a-d2/d3 Discography artist local dry-run + Save final preflight — complete
 
 | Item | Value |
 | --- | --- |
@@ -4476,7 +4479,7 @@ Post-Save admin header may show stale `Save: disabled` / `DB write: disabled` wh
 | Doc | `gosaki-discography-g16a-local-dry-run-result-and-save-final-preflight.md` |
 | **Next** | G-16a-execution — **done** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-16a Discography next-field Save preflight — complete
+## 0. G-16a Discography next-field Save preflight — complete
 
 | Item | Value |
 | --- | --- |
@@ -4486,7 +4489,7 @@ Post-Save admin header may show stale `Save: disabled` / `DB write: disabled` wh
 | Target | `discography-001` / Continuous / `artist` |
 | **Next** | G-16a-d2/d3 — **done** |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-16 CMS Kit Save / Reflection playbook — complete
+## 0. G-16 CMS Kit Save / Reflection playbook — complete
 
 | Item | Value |
 | --- | --- |
@@ -4495,7 +4498,7 @@ Post-Save admin header may show stale `Save: disabled` / `DB write: disabled` wh
 | Doc | `cms-kit-save-reflection-playbook.md` |
 | **Next** | G-16a — **done** (preflight) |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-15e-f Discography artist public reflection closure — complete
+## 0. G-15e-f Discography artist public reflection closure — complete
 
 | Item | Value |
 | --- | --- |
@@ -4505,7 +4508,7 @@ Post-Save admin header may show stale `Save: disabled` / `DB write: disabled` wh
 | **Next** | G-16 — **done** |
 | **Do not** | Re-Save `discography-003`; re-upload discography HTML |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-15e-upload Discography artist public reflection upload + HTTP verify — complete
+## 0. G-15e-upload Discography artist public reflection upload + HTTP verify — complete
 
 | Item | Value |
 | --- | --- |
@@ -4515,7 +4518,7 @@ Post-Save admin header may show stale `Save: disabled` / `DB write: disabled` wh
 | **Next** | G-15e-f — **done** |
 | **Do not** | Re-upload `discography/index.html` |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzzz. G-15e Discography artist public reflection local regen + upload preflight — complete
+## 0. G-15e Discography artist public reflection local regen + upload preflight — complete
 
 | Item | Value |
 | --- | --- |
@@ -4527,7 +4530,7 @@ Post-Save admin header may show stale `Save: disabled` / `DB write: disabled` wh
 | **Next** | G-15e-upload — **done** |
 | **Do not** | Re-Save `discography-003`; FTP auto-apply |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzzz. G-15d-execution Discography artist Save result — complete
+## 0. G-15d-execution Discography artist Save result — complete
 
 | Item | Value |
 | --- | --- |
@@ -4538,7 +4541,7 @@ Post-Save admin header may show stale `Save: disabled` / `DB write: disabled` wh
 | **Next** | G-15e — **done** |
 | **Do not** | Re-Save `discography-003` |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzzz. G-15d-d2/d3 Discography artist local dry-run + Save final preflight — complete
+## 0. G-15d-d2/d3 Discography artist local dry-run + Save final preflight — complete
 
 | Item | Value |
 | --- | --- |
@@ -4548,7 +4551,7 @@ Post-Save admin header may show stale `Save: disabled` / `DB write: disabled` wh
 | **Next** | G-15d-execution — **done** |
 | **Do not** | Re-Save `discography-002` |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzzz. G-15d Discography next-field Save preflight — complete
+## 0. G-15d Discography next-field Save preflight — complete
 
 | Item | Value |
 | --- | --- |
@@ -4561,7 +4564,7 @@ Post-Save admin header may show stale `Save: disabled` / `DB write: disabled` wh
 | **Next** | G-15d-d2/d3 — **done** |
 | **Do not** | Re-Save `discography-002`; FTP/upload |
 
-## 0zzzzzzzzzzzzzzzzzzzzzzz. G-15c-f Discography public reflection closure — complete
+## 0. G-15c-f Discography public reflection closure — complete
 
 | Item | Value |
 | --- | --- |
@@ -4574,7 +4577,7 @@ Post-Save admin header may show stale `Save: disabled` / `DB write: disabled` wh
 | **Next (recommended)** | **G-15d-execution** — artist Save on `discography-003` + `updated_at` proof |
 | **Do not** | Re-Save `discography-002`; re-upload `discography/index.html` |
 
-## 0zzzzzzzzzzzzzzzzzzzzzz. G-15c-upload Discography public reflection upload + HTTP verify — complete
+## 0. G-15c-upload Discography public reflection upload + HTTP verify — complete
 
 | Item | Value |
 | --- | --- |
@@ -4587,7 +4590,7 @@ Post-Save admin header may show stale `Save: disabled` / `DB write: disabled` wh
 | **Next** | G-15c-f — **done** |
 | **Do not** | Re-upload `discography/index.html`; re-Save same row |
 
-## 0zzzzzzzzzzzzzzzzzzzzz. G-15c Discography public reflection local regen + upload preflight — complete
+## 0. G-15c Discography public reflection local regen + upload preflight — complete
 
 | Item | Value |
 | --- | --- |
@@ -4602,7 +4605,7 @@ Post-Save admin header may show stale `Save: disabled` / `DB write: disabled` wh
 | **Next** | G-15c-upload — **done** |
 | **Do not** | FTP auto-apply; re-Save; full `public-dist/` upload |
 
-## 0zzzzzzzzzzzzzzzzzzzz. G-15b-f8-execution Discography updated_at trigger apply — complete
+## 0. G-15b-f8-execution Discography updated_at trigger apply — complete
 
 | Item | Value |
 | --- | --- |
@@ -4614,7 +4617,7 @@ Post-Save admin header may show stale `Save: disabled` / `DB write: disabled` wh
 | **Next (recommended)** | **G-15c** — public reflection planning |
 | **Do not** | Re-Save for trigger proof without new approval |
 
-## 0zzzzzzzzzzzzzzzzzzz. G-15b-f8 Discography updated_at trigger final preflight — complete
+## 0. G-15b-f8 Discography updated_at trigger final preflight — complete
 
 | Item | Value |
 | --- | --- |
@@ -4622,7 +4625,7 @@ Post-Save admin header may show stale `Save: disabled` / `DB write: disabled` wh
 | Doc | `gosaki-discography-updated-at-trigger-final-preflight.md` |
 | **Next** | G-15b-f8-execution — done |
 
-## 0zzzzzzzzzzzzzzzzzz. G-15b-retry Discography Save retry — complete
+## 0. G-15b-retry Discography Save retry — complete
 
 | Item | Value |
 | --- | --- |
@@ -4632,7 +4635,7 @@ Post-Save admin header may show stale `Save: disabled` / `DB write: disabled` wh
 | `updated_at` | **unchanged** — trigger gap |
 | **Next** | G-15b-f8 — done (preflight) |
 
-## 0zzzzzzzzzzzzzzzzz. G-15b-grant-apply Discography UPDATE grant — complete
+## 0. G-15b-grant-apply Discography UPDATE grant — complete
 
 | Item | Value |
 | --- | --- |
@@ -4640,7 +4643,7 @@ Post-Save admin header may show stale `Save: disabled` / `DB write: disabled` wh
 | Doc | `gosaki-discography-update-grant-apply-result.md` |
 | **Next** | G-15b-retry — done |
 
-## 0zzzzzzzzzzzzzzz. G-15b Discography Save slice — complete (Save failed safely)
+## 0. G-15b Discography Save slice — complete (Save failed safely)
 
 | Item | Value |
 | --- | --- |
@@ -4652,7 +4655,7 @@ Post-Save admin header may show stale `Save: disabled` / `DB write: disabled` wh
 | **Next** | G-15b-fail — done |
 | **Do not** | Re-Save without grant fix |
 
-## 0zzzzzzzzzzzzzz. G-15a2 Discography dry-run Preview implementation and preflight — complete
+## 0. G-15a2 Discography dry-run Preview implementation and preflight — complete
 
 | Item | Value |
 | --- | --- |
@@ -4664,7 +4667,7 @@ Post-Save admin header may show stale `Save: disabled` / `DB write: disabled` wh
 | **Next (recommended)** | **G-15b** — done |
 | **Do not** | Reuse G-15a2 approval for Save |
 
-## 0zzzzzzzzzzzzz. G-15a Discography admin Supabase read binding — complete
+## 0. G-15a Discography admin Supabase read binding — complete
 
 | Item | Value |
 | --- | --- |
@@ -4677,7 +4680,7 @@ Post-Save admin header may show stale `Save: disabled` / `DB write: disabled` wh
 | **Next (recommended)** | **G-15a2** — dry-run Preview preflight |
 | **Do not** | Save / DB write / migration in G-15a |
 
-## 0zzzzzzzzzzzz. G-15 Discography CMS MVP inventory and plan — complete
+## 0. G-15 Discography CMS MVP inventory and plan — complete
 
 | Item | Value |
 | --- | --- |
@@ -4689,7 +4692,7 @@ Post-Save admin header may show stale `Save: disabled` / `DB write: disabled` wh
 | **Next (recommended)** | **G-15a** — admin Supabase read binding + list UI |
 | **Do not** | DB write / migration / Save / FTP in G-15 |
 
-## 0zzzzzzzzzzz. G-14b1f Schedule CMS routine edit reflection closure — complete
+## 0. G-14b1f Schedule CMS routine edit reflection closure — complete
 
 | Item | Value |
 | --- | --- |
@@ -4703,7 +4706,7 @@ Post-Save admin header may show stale `Save: disabled` / `DB write: disabled` wh
 | **Next (recommended)** | **G-14b2** — second routine edit planning (new target + new approval) **or** G-9l YouTube embed CMS planning |
 | **Do not** | Re-Save `schedule-2026-04-005`; re-upload `schedule/2026-04/index.html` |
 
-## 0zzzzzzzzzz. G-14b1e-upload Schedule CMS routine edit public reflection upload + HTTP verify — complete
+## 0. G-14b1e-upload Schedule CMS routine edit public reflection upload + HTTP verify — complete
 
 | Item | Value |
 | --- | --- |
@@ -4714,7 +4717,7 @@ Post-Save admin header may show stale `Save: disabled` / `DB write: disabled` wh
 | **Next (recommended)** | **G-14b1f** — reflection closure (historical; **done**) |
 | **Do not** | Re-upload April HTML |
 
-## 0zzzzzzzzz. G-14b1e Schedule CMS routine edit public reflection local regen + upload preflight — complete
+## 0. G-14b1e Schedule CMS routine edit public reflection local regen + upload preflight — complete
 
 | Item | Value |
 | --- | --- |
@@ -4727,7 +4730,7 @@ Post-Save admin header may show stale `Save: disabled` / `DB write: disabled` wh
 | **Next (recommended)** | **G-14b1e-upload** — upload + HTTP verify (historical; **done**) |
 | **Do not** | Re-upload April HTML |
 
-## 0zzzzzzzz. G-14b1d Schedule CMS routine edit Save execution result — complete
+## 0. G-14b1d Schedule CMS routine edit Save execution result — complete
 
 | Item | Value |
 | --- | --- |
@@ -4740,7 +4743,7 @@ Post-Save admin header may show stale `Save: disabled` / `DB write: disabled` wh
 | **Next (recommended)** | **G-14b1f** — reflection closure (G-14b1e-upload **done**) |
 | **Do not** | Re-click G-14b1 Save |
 
-## 0zzzzzzz. G-14b1c Schedule CMS routine edit final preflight — complete
+## 0. G-14b1c Schedule CMS routine edit final preflight — complete
 
 | Item | Value |
 | --- | --- |
@@ -4753,7 +4756,7 @@ Post-Save admin header may show stale `Save: disabled` / `DB write: disabled` wh
 | **Next (recommended)** | **G-14b1f** — reflection closure (G-14b1e-upload **done**) |
 | **Do not** | Re-click G-14b1 Save |
 
-## 0zzzzzz. G-14b1b-result Schedule CMS routine edit local dry-run Preview result — complete
+## 0. G-14b1b-result Schedule CMS routine edit local dry-run Preview result — complete
 
 | Item | Value |
 | --- | --- |
@@ -4766,7 +4769,7 @@ Post-Save admin header may show stale `Save: disabled` / `DB write: disabled` wh
 | **Next (recommended)** | **G-14b1c** — final preflight (historical; **done**) |
 | **Do not** | Re-click G-14b1 Save |
 
-## 0zzzzz. G-14b1b Schedule CMS routine edit local dry-run Preview preflight — complete
+## 0. G-14b1b Schedule CMS routine edit local dry-run Preview preflight — complete
 
 | Item | Value |
 | --- | --- |
@@ -4778,7 +4781,7 @@ Post-Save admin header may show stale `Save: disabled` / `DB write: disabled` wh
 | **Next (recommended)** | **G-14b1b-result** — operator Preview once (Save off) |
 | **Do not** | Cursor Preview / Save in G-14b1b |
 
-## 0zzzz. G-14b1a Schedule CMS routine edit practical Save enablement — complete
+## 0. G-14b1a Schedule CMS routine edit practical Save enablement — complete
 
 | Item | Value |
 | --- | --- |
@@ -4791,7 +4794,7 @@ Post-Save admin header may show stale `Save: disabled` / `DB write: disabled` wh
 | **Next (recommended)** | **G-14b1b** — local dry-run Preview preflight |
 | **Do not** | Save / Preview / DB / FTP in G-14b1a |
 
-## 0zzz. G-14b1 Schedule CMS routine edit flow next PoC planning — complete
+## 0. G-14b1 Schedule CMS routine edit flow next PoC planning — complete
 
 | Item | Value |
 | --- | --- |
@@ -4803,7 +4806,7 @@ Post-Save admin header may show stale `Save: disabled` / `DB write: disabled` wh
 | **Next (recommended)** | **G-14b1a** — practical Save enablement implementation |
 | **Do not** | Save / Preview / DB / FTP / regen in planning phase |
 
-## 0zz. G-13c2e Event B PoC cleanup public reflection closure — complete
+## 0. G-13c2e Event B PoC cleanup public reflection closure — complete
 
 | Item | Value |
 | --- | --- |
@@ -5428,7 +5431,7 @@ Post-Save admin header may show stale `Save: disabled` / `DB write: disabled` wh
 | **Next** | G-10f or G-10g (see 0zb) |
 | **Do not** | re-click G-10c Save; Cursor FTP |
 
-## 0z. G-10d2a YouTube embed staging upload QA — complete
+## 0. G-10d2a YouTube embed staging upload QA — complete
 
 | Item | Value |
 | --- | --- |

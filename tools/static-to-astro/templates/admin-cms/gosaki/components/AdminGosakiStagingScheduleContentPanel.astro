@@ -211,6 +211,11 @@ const eventsJson = JSON.stringify(events);
       <label class="admin-form__field admin-form__field--full">
         <span class="admin-form__label">日付</span>
         <input type="date" data-field="date" autocomplete="off" />
+        <span
+          class="gosaki-schedule-content-panel__field-note"
+          data-gosaki-schedule-date-edit-note
+          hidden
+        >既存予定の日付変更は現在未対応</span>
       </label>
 
       <label class="admin-form__field">
@@ -244,7 +249,7 @@ const eventsJson = JSON.stringify(events);
 
       <label class="admin-form__field admin-form__field--checkbox admin-form__field--full">
         <input type="checkbox" data-field="published" />
-        <span>公開する</span>
+        <span data-gosaki-schedule-published-label>公開する</span>
       </label>
 
       <p class="gosaki-schedule-content-panel__lock admin-form__field--full" role="status">
@@ -423,6 +428,13 @@ const eventsJson = JSON.stringify(events);
   .gosaki-schedule-content-panel__lock {
     margin: 0;
     font-size: 0.85rem;
+  }
+
+  .gosaki-schedule-content-panel__field-note {
+    display: block;
+    margin-top: 0.35rem;
+    font-size: 0.8rem;
+    color: #6b7280;
   }
 
   .gosaki-schedule-content-panel__form .admin-form__field--checkbox {

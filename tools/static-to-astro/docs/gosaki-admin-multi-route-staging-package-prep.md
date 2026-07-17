@@ -307,39 +307,119 @@ DB_WRITE_EXECUTED: false
 
 ### G-20u45 follow-up — Schedule HTTP dry-run Edge + STG client wiring (STG verified)
 
-Single endpoint: `gosaki-schedule-save-dry-run` (edit+create) · `operation=dryRun` only · `operation=save` → 403.
+Single endpoint: `gosaki-schedule-save-dry-run` (edit+create) · `operation=dryRun` verified on STG · `operation=save` **implemented in source (not deployed)**.
 
 | Item | Value |
 |------|-------|
 | Edge | `supabase/functions/gosaki-schedule-save-dry-run/` (+ tools mirror) |
-| Env | `PUBLIC_GOSAKI_SCHEDULE_DRY_RUN_ENDPOINT` (default staging URL) |
+| Env | `PUBLIC_GOSAKI_SCHEDULE_DRY_RUN_ENDPOINT` · local arm `PUBLIC_GOSAKI_SCHEDULE_SAVE_UI_ARMED` (exact `true`) |
 | Auth | user JWT Bearer + anon `apikey` · `rpc('is_admin')` · **no service_role** |
-| Edit | G-9k safe fields · `expectedBeforeUpdatedAt` · SELECT 1 row · 409 on lock mismatch |
-| Create | G-22e · `date` YYYY-MM-DD · `published=false` · no id/legacyId/lock |
+| Save approval | `gosaki-schedule-operational-save` (capability ID · not G-9k/G-22e alias) |
+| Edit Save | safe fields + **published** · **date forbidden** · optimistic lock UPDATE · 0/multi fail-closed |
+| Create Save | G-22e · `published=false` · Edge `legacy_id` · id = DB default · unique collision fail-closed |
+| Publish path | create unpublished → later edit `published=true` |
 | Staging | `kmjqppxjdnwwrtaeqjta` allow · `vsbvndwuajjhnzpohghh` STOP |
-| Client | click-only fetch · fail-closed auth/lock · Save stays disabled |
-| STG | `gosaki-schedule-save-dry-run` **ACTIVE v1** · package `ceba4828317098b57f752c7483a949111d210a02` |
-| Edit dry-run | HTTP 200 · target `55a30b3c-1cde-4738-bf94-ebd3ac2f9ee8` / `schedule-2026-08-019` · lock `2026-07-09T05:38:52.999274+00:00` · changedFields `venue` |
-| Create dry-run | HTTP 200 · no id/legacyId/lock · changedFields `date,title,venue,open_time,start_time,price,description,published` · `date=2026-12-31` · `published=false` |
-| Write safety | edit/create both `didWrite=false` · `dbWrite=false` · `networkWrite=false` · `saveEnabled=false` |
+| Client | edit date disabled + note · create published locked false · Save default disabled · local arm |
+| STG dry-run QA | ACTIVE v1 · package `ceba482…` · edit/create dry-run HTTP 200 · write flags false |
+| Permission | repo history indicates ready · **live SELECT preflight required** · status **unconfirmed** |
 
 ```txt
 NETWORK_DRY_RUN_CLIENT_WIRED: true
 EDIT_DRY_RUN_IMPLEMENTED: true
 CREATE_DRY_RUN_IMPLEMENTED: true
-SAVE_OPERATION_REJECTED: true
+EDIT_SAVE_IMPLEMENTED: true
+CREATE_SAVE_IMPLEMENTED: true
+EDIT_PUBLISHED_SAVE_IMPLEMENTED: true
+NEW_EVENT_CAN_BE_PUBLISHED_LATER: true
+EDIT_DATE_DISABLED_IN_UI: true
+EDIT_DATE_REJECTED_BY_ENDPOINT: true
+SAVE_APPROVAL_ID: gosaki-schedule-operational-save
+APPROVAL_ID_REUSED: false
+NEW_APPROVAL_ALIAS_COUNT: 0
 SCHEDULE_EDIT_ENDPOINT_DRY_RUN_PASSED: true
 SCHEDULE_CREATE_ENDPOINT_DRY_RUN_PASSED: true
-SCHEDULE_EDIT_LOCK_VERIFIED: true
-SCHEDULE_CREATE_PAYLOAD_VERIFIED: true
-SCHEDULE_USER_JWT_AUTH_VERIFIED: true
-SCHEDULE_ADMIN_GATE_VERIFIED: true
 SCHEDULE_SAVE_DEFAULT_DISABLED: true
+LOCAL_ARM_GATE_READY: true
+EDIT_DB_PERMISSION_READY: unconfirmed
+CREATE_DB_PERMISSION_READY: unconfirmed
+REPO_PERMISSION_HISTORY_INDICATES_READY: true
+LIVE_PERMISSION_PREFLIGHT_REQUIRED: true
+EDGE_DEPLOY_EXECUTED: false
 SAVE_REQUEST_EXECUTED: false
 DB_WRITE_EXECUTED: false
 PRODUCTION_CHANGED: false
 ```
 
+### Schedule Save permission verification SQL (SELECT-only · not executed)
+
+Staging only (`kmjqppxjdnwwrtaeqjta`). Do not GRANT/REVOKE here unless operator explicitly approves a separate apply. Target table is **`public.schedules`** (not `releases` / discography).
+
+```sql
+-- Preflight (SELECT only) — public.schedules · staging
+-- 1) table grants (authenticated INSERT/UPDATE · anon write must be absent)
+select grantee, privilege_type
+from information_schema.role_table_grants
+where table_schema = 'public'
+  and table_name = 'schedules'
+  and grantee in ('authenticated', 'anon')
+  and privilege_type in ('INSERT', 'UPDATE', 'SELECT')
+order by grantee, privilege_type;
+
+-- 2) column grants — confirm published UPDATE is available to authenticated (or covered by table UPDATE)
+select grantee, column_name, privilege_type
+from information_schema.column_privileges
+where table_schema = 'public'
+  and table_name = 'schedules'
+  and grantee in ('authenticated', 'anon')
+  and privilege_type in ('INSERT', 'UPDATE', 'SELECT')
+  and column_name in (
+    'title', 'venue', 'open_time', 'start_time', 'price', 'description', 'published',
+    'date', 'legacy_id', 'site_slug', 'id', 'updated_at'
+  )
+order by grantee, column_name, privilege_type;
+
+-- 3) RLS enabled on public.schedules
+select c.relname as table_name, c.relrowsecurity as rls_enabled, c.relforcerowsecurity as rls_forced
+from pg_class c
+join pg_namespace n on n.oid = c.relnamespace
+where n.nspname = 'public' and c.relname = 'schedules';
+
+-- 4) admin / write policies on schedules
+select policyname, cmd, roles, permissive, qual, with_check
+from pg_policies
+where schemaname = 'public' and tablename = 'schedules'
+order by policyname;
+
+-- 5) public.is_admin() exists (SECURITY DEFINER expected)
+select p.proname, p.prosecdef as security_definer,
+       pg_get_function_identity_arguments(p.oid) as args
+from pg_proc p
+join pg_namespace n on n.oid = p.pronamespace
+where n.nspname = 'public' and p.proname = 'is_admin';
+
+-- Expected (repo history only · not live-verified this phase):
+-- authenticated INSERT yes · authenticated UPDATE yes (incl. published) · anon write no · RLS on · is_admin present
+-- production project must not be used
+```
+
+If grants are missing, minimal apply (operator-only · staging · not executed by Cursor):
+
+```sql
+-- Apply (operator explicit approval required; staging only · public.schedules)
+grant insert on table public.schedules to authenticated;
+grant update (title, venue, open_time, start_time, price, description, published)
+  on table public.schedules to authenticated;
+-- Do not grant to anon; do not disable RLS; do not use service_role.
+```
+
+```sql
+-- Post-apply (SELECT only) — re-run preflight queries above
+-- Rollback (operator only):
+-- revoke insert on table public.schedules from authenticated;
+-- revoke update (title, venue, open_time, start_time, price, description, published)
+--   on table public.schedules from authenticated;
+```
+
 ## Recommended next
 
-Commit / Push → Schedule edit/create Save を1実装単位で進める。現在の単一 endpoint に exact-gated `operation=save` を追加し、user JWT + `is_admin()`・service_role 不使用を維持する。edit は optimistic lock 付き UPDATE、create は `published=false` 固定 INSERT、Save UI は通常 disabled・local arm 時のみ有効。実装+mock 検証を1回、staging Edge deploy+controlled round-trip を1回行う。フィールド別・edit/create別には分割しない。
+Commit / Push → operator permission preflight（SELECT）→ staging Edge deploy（`gosaki-schedule-save-dry-run` ×1）→ fresh package · manual FTP → edit/create controlled Saveを各1回（local arm）。フィールド別・edit/create別には分割しない。

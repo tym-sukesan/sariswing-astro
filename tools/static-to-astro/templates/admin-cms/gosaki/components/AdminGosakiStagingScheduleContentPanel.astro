@@ -6,7 +6,6 @@
  * No end_time / address / URL (not in public.schedules authoring set).
  */
 import AdminGosakiStagingEditToolbar from "./AdminGosakiStagingEditToolbar.astro";
-import AdminGosakiStagingSaveDisabledStatus from "./AdminGosakiStagingSaveDisabledStatus.astro";
 
 export interface ScheduleEventRow {
   id?: string | null;
@@ -265,17 +264,31 @@ const eventsJson = JSON.stringify(events);
       aria-live="polite"
     ></div>
 
-    <div class="gosaki-schedule-content-panel__save-card" data-gosaki-schedule-save-card>
+    <div
+      class="gosaki-schedule-content-panel__save-card"
+      data-gosaki-schedule-save-card
+      data-gosaki-save-disabled-note="true"
+      role="region"
+      aria-label="保存"
+    >
       <h3 class="gosaki-schedule-content-panel__save-title">Save</h3>
-      <AdminGosakiStagingSaveDisabledStatus
-        message="Save は無効です。変更を確認（dry-run）まではローカル検証のみです。公開反映は管理者が行います。"
-      />
+      <p class="gosaki-schedule-content-panel__save-hint" role="note">
+        「変更を確認」（dry-run）成功後のみ「更新する」が有効になります。通常 STG package は Save 無効のままです。
+      </p>
+      <p
+        class="gosaki-schedule-content-panel__save-reason"
+        data-gosaki-schedule-save-reason
+        role="status"
+      >
+        Save は無効です。先に「変更を確認」してください
+      </p>
       <button
         type="button"
-        class="gosaki-admin-edit-toolbar__btn"
+        class="gosaki-admin-edit-toolbar__btn gosaki-admin-edit-toolbar__btn--primary"
         data-gosaki-schedule-save
         data-gosaki-save-allowed="false"
         disabled
+        aria-disabled="true"
         title="Save は現在無効です"
       >
         更新する（無効）
@@ -423,6 +436,18 @@ const eventsJson = JSON.stringify(events);
   .gosaki-schedule-content-panel__save-title {
     margin: 0;
     font-size: 1rem;
+  }
+
+  .gosaki-schedule-content-panel__save-hint,
+  .gosaki-schedule-content-panel__save-reason {
+    margin: 0;
+    font-size: 0.875rem;
+    line-height: 1.45;
+    color: #4b5563;
+  }
+
+  .gosaki-schedule-content-panel__save-reason {
+    color: #9a3412;
   }
 
   .gosaki-schedule-content-panel__lock {

@@ -445,6 +445,7 @@ export function initGosakiScheduleOperationalEdit(
   const lockValue = root.querySelector("[data-gosaki-schedule-lock-value]");
   const editLead = root.querySelector("[data-gosaki-schedule-edit-lead]");
   const saveBtn = root.querySelector("[data-gosaki-schedule-save]");
+  const saveReasonEl = root.querySelector("[data-gosaki-schedule-save-reason]");
   const statusEl = root.querySelector("[data-gosaki-schedule-status]");
 
   let mode: Mode = "view";
@@ -452,6 +453,7 @@ export function initGosakiScheduleOperationalEdit(
   let dryRunFingerprint: string | null = null;
   let dryRunOk = false;
   let dryRunExpectedLock: string | null = null;
+  let dryRunMode: "edit" | "create" | null = null;
   let saveInFlight = false;
   let dryRunInFlight = false;
 
@@ -464,6 +466,8 @@ export function initGosakiScheduleOperationalEdit(
     "他の場所で更新された可能性があります。再読み込みしてください。";
   const productionStop = deps.productionProjectRefStop ?? "vsbvndwuajjhnzpohghh";
   const fetchImpl = deps.fetchImpl ?? fetch;
+  const SAVE_LABEL_ENABLED = "更新する";
+  const SAVE_LABEL_DISABLED = "更新する（無効）";
 
   function setUnsaved(visible: boolean) {
     if (!(unsavedBanner instanceof HTMLElement)) return;
@@ -479,11 +483,40 @@ export function initGosakiScheduleOperationalEdit(
     dryRunOk = false;
     dryRunFingerprint = null;
     dryRunExpectedLock = null;
+    dryRunMode = null;
     if (dryRunResult instanceof HTMLElement) {
       dryRunResult.hidden = true;
       dryRunResult.innerHTML = "";
     }
     void refreshSaveGate();
+  }
+
+  function applySaveButtonUi(enabled: boolean, reason: string) {
+    if (!(saveBtn instanceof HTMLButtonElement)) return;
+    // Fail-closed: disable first, then enable only when arm + gate both pass.
+    // Endpoint dry-run saveEnabled=false is a response contract — NOT a UI gate.
+    saveBtn.disabled = true;
+    if (enabled) saveBtn.disabled = false;
+    saveBtn.setAttribute("data-gosaki-save-allowed", enabled ? "true" : "false");
+    saveBtn.setAttribute("aria-disabled", enabled ? "false" : "true");
+    saveBtn.textContent = enabled ? SAVE_LABEL_ENABLED : SAVE_LABEL_DISABLED;
+    saveBtn.title = enabled
+      ? "保存できます（operator 明示操作のみ）"
+      : reason || "Save は無効です（通常 STG package）";
+    if (saveReasonEl instanceof HTMLElement) {
+      saveReasonEl.textContent = enabled
+        ? "保存できます（operator 明示操作のみ）"
+        : reason || "Save は無効です";
+    }
+    if (statusEl instanceof HTMLElement && mode !== "view") {
+      statusEl.textContent = enabled
+        ? mode === "create"
+          ? "新規予定 · Save 可能"
+          : "公演を編集中 · Save 可能"
+        : mode === "create"
+          ? "新規予定を入力中 · Save 無効"
+          : "公演を編集中 · Save 無効";
+    }
   }
 
   async function refreshSaveGate() {
@@ -497,7 +530,8 @@ export function initGosakiScheduleOperationalEdit(
       dryRunOk &&
       dryRunFingerprint != null &&
       after != null &&
-      dryRunFingerprint === fingerprint(after);
+      dryRunFingerprint === fingerprint(after) &&
+      (dryRunMode == null || dryRunMode === runMode);
     const gate = deps.evaluateSaveGate
       ? deps.evaluateSaveGate({
           authenticated: Boolean(token),
@@ -521,15 +555,9 @@ export function initGosakiScheduleOperationalEdit(
       : { enabled: false, reason: "Save gate not wired" };
 
     // Normal STG: saveArmed false → always disabled. Local arm + all gates → enable.
+    // Do NOT require endpoint response saveEnabled===true (dry-run contract keeps it false).
     const enabled = saveArmed === true && gate.enabled === true;
-    // Fail-closed: disable first, then enable only when arm + gate both pass.
-    saveBtn.disabled = true;
-    if (enabled) saveBtn.disabled = false;
-    saveBtn.setAttribute("data-gosaki-save-allowed", enabled ? "true" : "false");
-    saveBtn.setAttribute("aria-disabled", enabled ? "false" : "true");
-    saveBtn.title = enabled
-      ? "保存できます（operator 明示操作のみ）"
-      : gate.reason || "Save は無効です（通常 STG package）";
+    applySaveButtonUi(enabled, gate.reason || "Save は無効です（通常 STG package）");
   }
 
   function showView() {
@@ -672,6 +700,7 @@ export function initGosakiScheduleOperationalEdit(
           httpStatus?: number | string;
           endpoint?: Record<string, unknown> | null;
           preflightErrors?: string[];
+          saveUiNote?: string;
         }) => {
           if (!(dryRunResult instanceof HTMLElement)) return;
           dryRunResult.hidden = false;
@@ -708,7 +737,7 @@ export function initGosakiScheduleOperationalEdit(
                 : local.changedFields
               ).join(", ") || "なし",
             )}</p>
-            <p>didWrite=<code>false</code> · dbWrite=<code>false</code> · networkWrite=<code>false</code> · saveEnabled=<code>false</code></p>
+            <p>didWrite=<code>false</code> · dbWrite=<code>false</code> · networkWrite=<code>false</code> · saveEnabled=<code>false</code>（Endpoint 契約 · UI gate ではない）</p>
             ${createNote}
             ${
               allErrors.length
@@ -721,7 +750,14 @@ export function initGosakiScheduleOperationalEdit(
                 : ""
             }
             <table><thead><tr><th>field</th><th>before</th><th>after</th></tr></thead><tbody>${rows || "<tr><td colspan=3>差分なし</td></tr>"}</tbody></table>
-            <p role="note">Save は無効のままです。operation=save は送信しません。</p>
+            <p role="note">${escapeHtml(
+              opts.saveUiNote ??
+                (opts.source === "endpoint" && !allErrors.length
+                  ? saveArmed
+                    ? "dry-run 成功。フォームが一致する間「更新する」が有効になります（operation=save は未送信）。"
+                    : "dry-run 成功。通常 package では Save は無効のままです（env arm なし）。"
+                  : "Save は無効です。operation=save は送信しません。"),
+            )}</p>
           `;
         };
 
@@ -732,6 +768,7 @@ export function initGosakiScheduleOperationalEdit(
         if (!endpointConfigured) {
           dryRunOk = local.ok && local.saveReadiness !== "guard_error";
           dryRunFingerprint = fingerprint(after);
+          dryRunMode = dryRunOk ? runMode : null;
           dryRunExpectedLock =
             dryRunOk && runMode === "edit"
               ? String(local.expectedBeforeUpdatedAt ?? "").trim() || null
@@ -740,6 +777,11 @@ export function initGosakiScheduleOperationalEdit(
             title: "変更を確認（ローカル dry-run）",
             source: "local",
             preflightErrors: ["network dry-run未設定（Endpoint URL / anon key）— local preview のみ"],
+            saveUiNote: dryRunOk
+              ? saveArmed
+                ? "ローカル dry-run 成功。ただし network dry-run 未設定のため Save は有効化しません。"
+                : "ローカル dry-run 成功。通常 package では Save は無効のままです。"
+              : "Save は無効です。operation=save は送信しません。",
           });
           setUnsaved(currentDirty());
           void refreshSaveGate();
@@ -749,10 +791,12 @@ export function initGosakiScheduleOperationalEdit(
         if (endpoint.includes(productionStop) || deps.assertDryRunEndpointSafe?.(endpoint) === false) {
           dryRunOk = false;
           dryRunFingerprint = null;
+          dryRunMode = null;
           renderCard({
             title: "変更を確認（network dry-run blocked）",
             source: "endpoint",
             preflightErrors: ["Production endpoint blocked — staging only"],
+            saveUiNote: "Save は無効です。operation=save は送信しません。",
           });
           setUnsaved(currentDirty());
           void refreshSaveGate();
@@ -762,10 +806,12 @@ export function initGosakiScheduleOperationalEdit(
         if (!token) {
           dryRunOk = false;
           dryRunFingerprint = null;
+          dryRunMode = null;
           renderCard({
             title: "変更を確認（auth required）",
             source: "endpoint",
             preflightErrors: ["access token required — network dry-run not sent"],
+            saveUiNote: "Save は無効です。operation=save は送信しません。",
           });
           setUnsaved(currentDirty());
           void refreshSaveGate();
@@ -775,10 +821,12 @@ export function initGosakiScheduleOperationalEdit(
         if (runMode === "edit" && !local.expectedBeforeUpdatedAt) {
           dryRunOk = false;
           dryRunFingerprint = null;
+          dryRunMode = null;
           renderCard({
             title: "変更を確認（lock required）",
             source: "endpoint",
             preflightErrors: ["expectedBeforeUpdatedAt missing — edit network dry-run not sent"],
+            saveUiNote: "Save は無効です。operation=save は送信しません。",
           });
           setUnsaved(currentDirty());
           void refreshSaveGate();
@@ -790,10 +838,12 @@ export function initGosakiScheduleOperationalEdit(
           if (!date || !CREATE_DATE_RE.test(date)) {
             dryRunOk = false;
             dryRunFingerprint = null;
+            dryRunMode = null;
             renderCard({
               title: "変更を確認（create validation）",
               source: "endpoint",
               preflightErrors: ["create requires date YYYY-MM-DD — network dry-run not sent"],
+              saveUiNote: "Save は無効です。operation=save は送信しません。",
             });
             setUnsaved(currentDirty());
             void refreshSaveGate();
@@ -803,10 +853,12 @@ export function initGosakiScheduleOperationalEdit(
 
         if (!deps.buildDryRunEndpointRequest || !deps.sanitizeEndpointDisplay) {
           dryRunOk = false;
+          dryRunMode = null;
           renderCard({
             title: "変更を確認（wiring incomplete）",
             source: "endpoint",
             preflightErrors: ["dry-run request builder not wired"],
+            saveUiNote: "Save は無効です。operation=save は送信しません。",
           });
           setUnsaved(currentDirty());
           void refreshSaveGate();
@@ -832,10 +884,12 @@ export function initGosakiScheduleOperationalEdit(
 
         if (payload.operation !== dryRunOperation) {
           dryRunOk = false;
+          dryRunMode = null;
           renderCard({
             title: "変更を確認（operation rejected）",
             source: "endpoint",
             preflightErrors: ["operation must be dryRun only — request not sent"],
+            saveUiNote: "Save は無効です。operation=save は送信しません。",
           });
           setUnsaved(currentDirty());
           void refreshSaveGate();
@@ -843,9 +897,12 @@ export function initGosakiScheduleOperationalEdit(
         }
 
         dryRunInFlight = true;
+        dryRunOk = false;
+        dryRunFingerprint = null;
+        dryRunMode = null;
         if (dryRunResult instanceof HTMLElement) {
           dryRunResult.hidden = false;
-          dryRunResult.innerHTML = "<p>Endpoint dry-run 送信中…（DB write なし · Save disabled）</p>";
+          dryRunResult.innerHTML = "<p>Endpoint dry-run 送信中…（DB write なし · Save 一時無効）</p>";
         }
         void refreshSaveGate();
 
@@ -870,6 +927,23 @@ export function initGosakiScheduleOperationalEdit(
             data = { ok: false, errors: ["non-JSON response"] };
           }
           const display = deps.sanitizeEndpointDisplay(data, res.status);
+          const endpointErrors = Array.isArray(display.errors) ? display.errors : [];
+          const changedFields = Array.isArray(display.changedFields)
+            ? display.changedFields
+            : [];
+          const changedFieldsSafe =
+            changedFields.length === 0 ||
+            changedFields.every(
+              (field) =>
+                (SCHEDULE_OPERATIONAL_SAFE_FIELDS as readonly string[]).includes(field) ||
+                (runMode === "create" &&
+                  (SCHEDULE_OPERATIONAL_CREATE_PREVIEW_FIELDS as readonly string[]).includes(
+                    field,
+                  )),
+            );
+          const modeMatches = !display.mode || display.mode === runMode;
+          // saveEnabled=false is the dry-run response contract. Never require
+          // saveEnabled=true to arm UI Save (that would treat a write claim as readiness).
           const endpointOk =
             display.ok === true &&
             display.didWrite === false &&
@@ -877,9 +951,13 @@ export function initGosakiScheduleOperationalEdit(
             display.networkWrite === false &&
             display.saveEnabled === false &&
             !display.unsafeWriteFlags &&
+            endpointErrors.length === 0 &&
+            changedFieldsSafe &&
+            modeMatches &&
             (display.operation === dryRunOperation || display.dryRun === true);
           dryRunOk = endpointOk;
           dryRunFingerprint = endpointOk ? fingerprint(after) : null;
+          dryRunMode = endpointOk ? runMode : null;
           dryRunExpectedLock =
             endpointOk && runMode === "edit"
               ? String(
@@ -893,6 +971,11 @@ export function initGosakiScheduleOperationalEdit(
             source: "endpoint",
             httpStatus: display.httpStatus ?? res.status,
             endpoint: display as unknown as Record<string, unknown>,
+            saveUiNote: endpointOk
+              ? saveArmed
+                ? "dry-run 成功。フォームが一致する間「更新する」が有効になります（operation=save は未送信）。"
+                : "dry-run 成功。通常 package では Save は無効のままです（env arm なし）。"
+              : "Save は無効です。operation=save は送信しません。",
           });
         } catch (err) {
           const message =
@@ -904,6 +987,7 @@ export function initGosakiScheduleOperationalEdit(
           dryRunOk = false;
           dryRunFingerprint = null;
           dryRunExpectedLock = null;
+          dryRunMode = null;
           renderCard({
             title: "変更を確認（network error）",
             source: "endpoint",
@@ -916,6 +1000,7 @@ export function initGosakiScheduleOperationalEdit(
               networkWrite: false,
               saveEnabled: false,
             },
+            saveUiNote: "Save は無効です。operation=save は送信しません。",
           });
         } finally {
           dryRunInFlight = false;
@@ -1107,14 +1192,28 @@ export function initGosakiScheduleOperationalEdit(
     }
   });
 
+  const onFormEdited = () => {
+    if (mode === "view") return;
+    setUnsaved(currentDirty());
+    if (dryRunFingerprint && dryRunFingerprint !== fingerprint(readForm(root))) {
+      invalidateDryRun();
+      return;
+    }
+    void refreshSaveGate();
+  };
+
   root.addEventListener("input", (ev) => {
     const t = ev.target;
     if (!(t instanceof HTMLElement)) return;
     if (!t.closest("[data-gosaki-schedule-operational-form]")) return;
-    setUnsaved(currentDirty());
-    if (dryRunFingerprint && dryRunFingerprint !== fingerprint(readForm(root))) {
-      invalidateDryRun();
-    }
+    onFormEdited();
+  });
+
+  root.addEventListener("change", (ev) => {
+    const t = ev.target;
+    if (!(t instanceof HTMLElement)) return;
+    if (!t.closest("[data-gosaki-schedule-operational-form]")) return;
+    onFormEdited();
   });
 
   root.addEventListener("submit", (ev) => {

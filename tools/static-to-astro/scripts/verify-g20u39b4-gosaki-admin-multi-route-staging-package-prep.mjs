@@ -415,7 +415,12 @@ assert(
   schedulePanelSrc.includes('data-gosaki-schedule-save') &&
     /type="button"[\s\S]{0,280}data-gosaki-schedule-save/.test(schedulePanelSrc) &&
     /data-gosaki-schedule-save[\s\S]{0,280}\bdisabled\b/.test(schedulePanelSrc) &&
-    schedulePanelSrc.includes('data-gosaki-save-allowed="false"'),
+    schedulePanelSrc.includes('data-gosaki-save-allowed="false"') &&
+    schedulePanelSrc.includes("更新する（無効）") &&
+    schedulePanelSrc.includes("data-gosaki-schedule-save-reason") &&
+    !schedulePanelSrc.includes("AdminGosakiStagingSaveDisabledStatus") &&
+    !schedulePanelSrc.includes("保存する（現在は無効）") &&
+    (schedulePanelSrc.match(/\bdata-gosaki-schedule-save(?:\s|=|>)/g) || []).length === 1,
 );
 assert(
   "about panel has profile + bands",
@@ -886,6 +891,10 @@ assert(
       scheduleOpEditSrc.includes("既存予定の日付変更は現在未対応") &&
       scheduleOpEditSrc.includes("applyModeFieldLocks") &&
       scheduleOpEditSrc.includes("非公開で作成") &&
+      scheduleOpEditSrc.includes("SAVE_LABEL_ENABLED") &&
+      scheduleOpEditSrc.includes("applySaveButtonUi") &&
+      scheduleOpEditSrc.includes("Endpoint 契約 · UI gate ではない") &&
+      !scheduleOpEditSrc.includes("Save は無効のままです。operation=save は送信しません。") &&
       /SCHEDULE_OPERATIONAL_SAFE_FIELDS[\s\S]*?"published"/.test(scheduleOpEditSrc)
     );
   })(),

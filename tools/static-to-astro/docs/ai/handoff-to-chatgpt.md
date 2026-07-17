@@ -5,12 +5,21 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: G-20u44 / G-20u44c controlled Save round-trip + permission rollback — complete and closed.
-CONTROLLED_SAVE_ROUND_TRIP_COMPLETED: true · VERIFICATION_PERMISSION_CLOSED: true.
-discography-004.label restored · updated_at 2026-07-16T18:35:15.236693+00:00.
-LOCAL_ARM_TERMINATED: true · STG package disarmed.
-PERMISSION_ROLLBACK_COMPLETED: true · production changed: false.
-Next: Commit/Push → next CMS feature development.```
+Current phase: G-20u45-gosaki-schedule-operational-edit-ui-wiring — complete (source + non-write verify).
+SCHEDULE_*_UI_READY / DRY_RUN / LOCK / AUTH / SAVE_DEFAULT_DISABLED: true.
+SAVE_REQUEST_EXECUTED: false · DB_WRITE_EXECUTED: false.
+Next: Commit/Push → fresh STG package → manual FTP → Schedule STG browser QA.
+```
+
+## G-20u45-gosaki-schedule-operational-edit-ui-wiring — complete
+
+- **Doc:** `gosaki-admin-multi-route-staging-package-prep.md` (§ G-20u45)
+- **STG ContentPanel:** list / edit / create / cancel / unsaved / local dry-run / Save disabled
+- **Client:** `gosaki-staging-schedule-operational-edit.ts` (no fetch · saveArmed false)
+- **Schema:** date, open_time, start_time, title, venue, price, description, published + updated_at lock
+- **Local OperatorPage:** 一覧へ戻る · unsaved banner · mobile form CSS
+- **Verifier:** `verify:g20u39b4-gosaki-admin-multi-route-staging-package-prep`
+- **Next:** Commit/Push → fresh package → manual FTP → Schedule STG browser QA
 
 ## G-20u44-gosaki-discography-controlled-save-round-trip — complete
 

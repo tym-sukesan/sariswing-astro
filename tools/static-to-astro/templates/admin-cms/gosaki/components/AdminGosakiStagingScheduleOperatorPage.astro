@@ -398,6 +398,14 @@ function displayValue(value: string | null | undefined): string {
     >
       <h2 class="admin-gosaki-card__title">選択中の公演を編集</h2>
       <p class="admin-gosaki-card__lead">一覧で選んだ公演の内容を変更します。</p>
+      <p
+        id="gosaki-schedule-operator-unsaved-banner"
+        class="gosaki-schedule-operator-unsaved-banner"
+        hidden
+        role="status"
+      >
+        未保存の変更があります
+      </p>
       <div
         id="gosaki-schedule-operator-selected-summary"
         class="gosaki-schedule-operator-selected-summary"
@@ -599,6 +607,14 @@ function displayValue(value: string | null | undefined): string {
         <div class="admin-actions gosaki-schedule-admin-edit-actions">
           <button
             type="button"
+            class="admin-button admin-button-secondary"
+            id="gosaki-schedule-edit-cancel-btn"
+            data-gosaki-schedule-edit-cancel
+          >
+            一覧へ戻る
+          </button>
+          <button
+            type="button"
             class="admin-button"
             id="gosaki-schedule-update-btn"
             data-gosaki-schedule-action-disabled
@@ -792,3 +808,44 @@ function displayValue(value: string | null | undefined): string {
   import "../../../../../../src/lib/admin/staging-data/gosaki-schedule-event-a-poc-cleanup-ui.ts";
   import "../../../../../../src/lib/admin/staging-data/gosaki-schedule-event-b-poc-cleanup-ui.ts";
 </script>
+
+<style>
+  .gosaki-schedule-operator-unsaved-banner {
+    margin: 0.5rem 0 0.75rem;
+    padding: 0.55rem 0.75rem;
+    border-radius: 6px;
+    background: #fff7ed;
+    border: 1px solid #fdba74;
+    color: #9a3412;
+    font-size: 0.9rem;
+  }
+
+  .gosaki-schedule-admin-form {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+  }
+
+  .gosaki-schedule-admin-form input,
+  .gosaki-schedule-admin-form textarea,
+  .gosaki-schedule-admin-form select {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+  }
+
+  .gosaki-schedule-admin-edit-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    min-width: 0;
+  }
+
+  @media (max-width: 375px) {
+    .gosaki-schedule-admin-edit-actions .admin-button {
+      flex: 1 1 auto;
+    }
+  }
+</style>

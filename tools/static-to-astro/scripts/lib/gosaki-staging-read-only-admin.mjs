@@ -157,7 +157,9 @@ export function buildScheduleAdminEventsSnapshot(scheduleBundle = null) {
         openTime: r.open_time ?? "",
         startTime: r.start_time ?? "",
         price: r.price ?? "",
+        description: r.description ?? "",
         published: r.published !== false,
+        updatedAt: r.updated_at ?? null,
       };
     })
     .sort((a, b) => {
@@ -455,6 +457,10 @@ export function applyGosakiStagingReadOnlyAdmin(outDir, toolRoot, options = {}) 
     templateRoot,
     "gosaki-staging-discography-operational-edit.ts",
   );
+  const scheduleEditSrc = path.join(
+    templateRoot,
+    "gosaki-staging-schedule-operational-edit.ts",
+  );
   const packagePathsSrc = path.join(templateRoot, "gosaki-package-admin-paths.ts");
   const cssSrc = path.join(templateRoot, "gosaki-staging-read-only-admin.css");
   const chromeComponents = [
@@ -464,7 +470,15 @@ export function applyGosakiStagingReadOnlyAdmin(outDir, toolRoot, options = {}) 
     ...GOSAKI_ADMIN_CONTENT_PANEL_COMPONENTS,
   ];
 
-  for (const src of [componentSrc, libSrc, discographyEditSrc, packagePathsSrc, cssSrc, chromeCssSrc]) {
+  for (const src of [
+    componentSrc,
+    libSrc,
+    discographyEditSrc,
+    scheduleEditSrc,
+    packagePathsSrc,
+    cssSrc,
+    chromeCssSrc,
+  ]) {
     if (!fs.existsSync(src)) {
       return { applied: false, reason: `template missing: ${path.basename(src)}` };
     }
@@ -492,6 +506,10 @@ export function applyGosakiStagingReadOnlyAdmin(outDir, toolRoot, options = {}) 
   fs.copyFileSync(
     discographyEditSrc,
     path.join(path.dirname(libDest), "gosaki-staging-discography-operational-edit.ts"),
+  );
+  fs.copyFileSync(
+    scheduleEditSrc,
+    path.join(path.dirname(libDest), "gosaki-staging-schedule-operational-edit.ts"),
   );
   fs.copyFileSync(packagePathsSrc, packagePathsDest);
   fs.copyFileSync(cssSrc, cssDest);

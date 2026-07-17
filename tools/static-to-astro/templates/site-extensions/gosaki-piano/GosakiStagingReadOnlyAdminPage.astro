@@ -114,7 +114,7 @@ const pageTitleByRoute = {
 } as const;
 const pageTitle = pageTitleByRoute[page];
 const navCurrent = page === "portal" ? "home" : page;
-const showAuth = page === "youtube" || page === "discography";
+const showAuth = page === "youtube" || page === "discography" || page === "schedule";
 const showClientScript = page !== "portal";
 ---
 
@@ -251,7 +251,14 @@ const showClientScript = page !== "portal";
               events={scheduleEvents.events ?? []}
               dataSource={scheduleEvents.dataSource ?? dashboard.schedule.dataSource}
               publicScheduleUrl={publicScheduleUrl}
-              note={view.schedule.note}
+              note="公演一覧の確認と編集（閲覧／編集）· Save 無効"
+            />
+            <AdminGosakiStagingCompactAuthBar
+              supabaseAuthConfigured={supabaseAuthConfigured}
+              probePhase={G20U36E_ADMIN_PROBE_UI_TOOLS_DRAFT_PHASE}
+              probeNote={G20U36E_ADMIN_PROBE_NOTE}
+              probeButtonLabel={G20U36E_ADMIN_PROBE_BUTTON_LABEL}
+              purposeNote="Schedule 編集の dry-run / 将来 Save 時のみログインが必要です。"
             />
             <details class="gosaki-read-only-admin__dev-details" data-gosaki-admin-dev-details="true">
               <summary>開発者向け — build snapshot</summary>
@@ -764,6 +771,7 @@ const showClientScript = page !== "portal";
         formatG20u36eAdminProbeDisplay,
       } from "../lib/gosaki-staging-read-only-admin";
       import { initGosakiDiscographyOperationalEdit } from "../lib/gosaki-staging-discography-operational-edit";
+      import { initGosakiScheduleOperationalEdit } from "../lib/gosaki-staging-schedule-operational-edit";
 
       function resolveDiscographyAccessToken() {
         const body = document.body;
@@ -916,6 +924,14 @@ const showClientScript = page !== "portal";
           saveArmed: body?.dataset.gosakiDiscographySaveArmed === "true",
           conflictMessage: G20U41_DISCOGRAPHY_CONFLICT_MESSAGE,
           productionProjectRefStop: G20U36C_PRODUCTION_PROJECT_REF_STOP,
+          getAccessToken: resolveDiscographyAccessToken,
+        });
+      }
+
+      const scheduleRoot = document.getElementById("gosaki-schedule-content");
+      if (scheduleRoot instanceof HTMLElement) {
+        initGosakiScheduleOperationalEdit(scheduleRoot, {
+          saveArmed: false,
           getAccessToken: resolveDiscographyAccessToken,
         });
       }

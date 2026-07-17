@@ -1,9 +1,14 @@
 ---
 /**
- * Shared schedule content panel (local shell + STG package).
- * Read-only event list from build-time / binding snapshot — no Save.
+ * Shared Schedule content panel (local shell + STG package).
+ * G-20u45 — view list → edit / create · local dry-run preview · Save default disabled.
+ * Schema fields only: date, open_time, start_time, title, venue, price, description, published.
+ * No end_time / address / URL (not in public.schedules authoring set).
  */
-interface ScheduleEventRow {
+import AdminGosakiStagingEditToolbar from "./AdminGosakiStagingEditToolbar.astro";
+import AdminGosakiStagingSaveDisabledStatus from "./AdminGosakiStagingSaveDisabledStatus.astro";
+
+export interface ScheduleEventRow {
   id?: string | null;
   legacyId?: string | null;
   date?: string | null;
@@ -13,11 +18,13 @@ interface ScheduleEventRow {
   openTime?: string | null;
   startTime?: string | null;
   price?: string | null;
+  description?: string | null;
   published?: boolean;
+  updatedAt?: string | null;
 }
 
 interface Props {
-  events: ScheduleEventRow[];
+  events?: ScheduleEventRow[];
   dataSource?: string;
   publicScheduleUrl?: string;
   note?: string;
@@ -27,7 +34,7 @@ const {
   events = [],
   dataSource = "build-snapshot",
   publicScheduleUrl = "",
-  note = "build 時スナップショットの公演一覧です。保存は無効です。",
+  note = "公演一覧の確認と編集（閲覧／編集）· Save 無効",
 } = Astro.props as Props;
 
 /** @type {Map<string, ScheduleEventRow[]>} */
@@ -46,6 +53,8 @@ function display(value: string | null | undefined): string {
   const t = String(value ?? "").trim();
   return t || "—";
 }
+
+const eventsJson = JSON.stringify(events);
 ---
 
 <section
@@ -53,11 +62,20 @@ function display(value: string | null | undefined): string {
   class="gosaki-admin-content-panel gosaki-schedule-content-panel"
   data-section="admin-schedule-content"
   data-gosaki-schedule-content="true"
-  aria-label="スケジュール公演一覧"
+  data-gosaki-schedule-operational-edit="true"
+  data-mode="view"
+  aria-label="スケジュール管理"
 >
+  <script
+    type="application/json"
+    id="gosaki-schedule-events-json"
+    data-gosaki-schedule-events-json
+    set:html={eventsJson}
+  />
+
   <header class="gosaki-admin-content-panel__header">
     <h1 class="gosaki-admin-content-panel__title">スケジュール</h1>
-    <p class="gosaki-admin-content-panel__subtitle">{note}</p>
+    <p class="gosaki-admin-content-panel__subtitle" data-gosaki-schedule-status>{note}</p>
     <p class="gosaki-admin-content-panel__meta" role="status">
       <strong>{events.length}</strong> 件 · source: {dataSource}
       {
@@ -69,6 +87,7 @@ function display(value: string | null | undefined): string {
               href={publicScheduleUrl}
               target="_blank"
               rel="noopener noreferrer"
+              data-gosaki-schedule-public-link
             >
               公開 Schedule を見る
             </a>
@@ -78,55 +97,339 @@ function display(value: string | null | undefined): string {
     </p>
   </header>
 
-  {
-    events.length === 0 ? (
-      <p class="gosaki-admin-content-panel__empty" role="status">
-        表示できる公演がありません（build 時の Schedule 読み取り結果が空です）。
+  <p
+    class="gosaki-schedule-content-panel__unsaved"
+    data-gosaki-schedule-unsaved-banner
+    hidden
+    role="status"
+  >
+    未保存の変更があります
+  </p>
+
+  <div class="gosaki-schedule-content-panel__toolbar-row" data-gosaki-schedule-view-toolbar>
+    <AdminGosakiStagingEditToolbar mode="view" editLabel="編集する" />
+    <button
+      type="button"
+      class="gosaki-admin-edit-toolbar__btn gosaki-admin-edit-toolbar__btn--primary"
+      data-gosaki-schedule-create-start
+    >
+      新しい予定を追加
+    </button>
+  </div>
+
+  {/* —— View mode —— */}
+  <div class="gosaki-schedule-content-panel__view" data-gosaki-schedule-view-mode>
+    {
+      events.length === 0 ? (
+        <p class="gosaki-admin-content-panel__empty" role="status">
+          表示できる公演がありません（build 時の Schedule 読み取り結果が空です）。
+        </p>
+      ) : (
+        <div class="gosaki-schedule-content-panel__months">
+          {months.map((ym) => (
+            <section
+              class="gosaki-schedule-content-panel__month"
+              data-schedule-month={ym}
+              aria-labelledby={`gosaki-schedule-month-${ym}`}
+            >
+              <h2 class="gosaki-schedule-content-panel__month-title" id={`gosaki-schedule-month-${ym}`}>
+                {ym}
+              </h2>
+              <ul class="gosaki-schedule-content-panel__list">
+                {(byMonth.get(ym) ?? []).map((event) => (
+                  <li
+                    class="gosaki-schedule-content-panel__card"
+                    data-schedule-event="true"
+                    data-event-id={event.id ?? ""}
+                    data-legacy-id={event.legacyId ?? ""}
+                    data-published={event.published === false ? "false" : "true"}
+                  >
+                    <div class="gosaki-schedule-content-panel__card-main">
+                      <p class="gosaki-schedule-content-panel__date">{display(event.date)}</p>
+                      <h3 class="gosaki-schedule-content-panel__event-title">{display(event.title)}</h3>
+                      <p class="gosaki-schedule-content-panel__venue">{display(event.venue)}</p>
+                      <p class="gosaki-schedule-content-panel__times">
+                        open {display(event.openTime)} · start {display(event.startTime)}
+                        {event.price ? ` · ${display(event.price)}` : ""}
+                      </p>
+                    </div>
+                    <div class="gosaki-schedule-content-panel__card-meta">
+                      {event.published === false ? (
+                        <span class="gosaki-admin-content-panel__badge gosaki-admin-content-panel__badge--warn">
+                          非公開
+                        </span>
+                      ) : (
+                        <span class="gosaki-admin-content-panel__badge">公開</span>
+                      )}
+                      <code class="gosaki-schedule-content-panel__legacy">{display(event.legacyId)}</code>
+                      <button
+                        type="button"
+                        class="gosaki-schedule-content-panel__edit-btn"
+                        data-gosaki-schedule-edit-event
+                        data-event-id={event.id ?? ""}
+                        data-legacy-id={event.legacyId ?? ""}
+                      >
+                        編集する
+                      </button>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ))}
+        </div>
+      )
+    }
+  </div>
+
+  {/* —— Edit / create mode —— */}
+  <div class="gosaki-schedule-content-panel__edit" data-gosaki-schedule-edit-mode hidden>
+    <div class="gosaki-schedule-content-panel__edit-toolbar">
+      <AdminGosakiStagingEditToolbar
+        mode="edit"
+        cancelLabel="一覧へ戻る"
+        dryRunLabel="変更を確認"
+        showDryRun={true}
+      />
+    </div>
+
+    <p class="gosaki-schedule-content-panel__edit-lead" data-gosaki-schedule-edit-lead>
+      公演を編集しています
+    </p>
+
+    <form
+      id="gosaki-schedule-operational-form"
+      class="admin-form admin-form--grid gosaki-schedule-admin-form gosaki-schedule-content-panel__form"
+      data-gosaki-schedule-operational-form
+      novalidate
+    >
+      <input type="hidden" data-field="id" value="" />
+      <input type="hidden" data-field="legacy_id" value="" />
+      <input type="hidden" data-field="updated_at" value="" />
+      <input type="hidden" data-field="mode" value="edit" />
+
+      <label class="admin-form__field admin-form__field--full">
+        <span class="admin-form__label">日付</span>
+        <input type="date" data-field="date" autocomplete="off" />
+      </label>
+
+      <label class="admin-form__field">
+        <span class="admin-form__label">開場</span>
+        <input type="text" data-field="open_time" placeholder="例: 18:00" autocomplete="off" />
+      </label>
+      <label class="admin-form__field">
+        <span class="admin-form__label">開演</span>
+        <input type="text" data-field="start_time" placeholder="例: 19:00" autocomplete="off" />
+      </label>
+
+      <label class="admin-form__field admin-form__field--full">
+        <span class="admin-form__label">タイトル</span>
+        <input type="text" data-field="title" autocomplete="off" />
+      </label>
+
+      <label class="admin-form__field admin-form__field--full">
+        <span class="admin-form__label">会場</span>
+        <input type="text" data-field="venue" autocomplete="off" />
+      </label>
+
+      <label class="admin-form__field admin-form__field--full">
+        <span class="admin-form__label">料金</span>
+        <input type="text" data-field="price" placeholder="例: 3,500 (tax in)" autocomplete="off" />
+      </label>
+
+      <label class="admin-form__field admin-form__field--full">
+        <span class="admin-form__label">説明</span>
+        <textarea data-field="description" rows="4"></textarea>
+      </label>
+
+      <label class="admin-form__field admin-form__field--checkbox admin-form__field--full">
+        <input type="checkbox" data-field="published" />
+        <span>公開する</span>
+      </label>
+
+      <p class="gosaki-schedule-content-panel__lock admin-form__field--full" role="status">
+        <span class="admin-form__label">optimistic lock（updated_at）</span>
+        <code data-gosaki-schedule-lock-value>—</code>
       </p>
-    ) : (
-      <div class="gosaki-schedule-content-panel__months">
-        {months.map((ym) => (
-          <section
-            class="gosaki-schedule-content-panel__month"
-            data-schedule-month={ym}
-            aria-labelledby={`gosaki-schedule-month-${ym}`}
-          >
-            <h2 class="gosaki-schedule-content-panel__month-title" id={`gosaki-schedule-month-${ym}`}>
-              {ym}
-            </h2>
-            <ul class="gosaki-schedule-content-panel__list">
-              {(byMonth.get(ym) ?? []).map((event) => (
-                <li
-                  class="gosaki-schedule-content-panel__card"
-                  data-schedule-event="true"
-                  data-legacy-id={event.legacyId ?? ""}
-                  data-published={event.published === false ? "false" : "true"}
-                >
-                  <div class="gosaki-schedule-content-panel__card-main">
-                    <p class="gosaki-schedule-content-panel__date">{display(event.date)}</p>
-                    <h3 class="gosaki-schedule-content-panel__event-title">{display(event.title)}</h3>
-                    <p class="gosaki-schedule-content-panel__venue">{display(event.venue)}</p>
-                    <p class="gosaki-schedule-content-panel__times">
-                      open {display(event.openTime)} · start {display(event.startTime)}
-                      {event.price ? ` · ${display(event.price)}` : ""}
-                    </p>
-                  </div>
-                  <div class="gosaki-schedule-content-panel__card-meta">
-                    {event.published === false ? (
-                      <span class="gosaki-admin-content-panel__badge gosaki-admin-content-panel__badge--warn">
-                        非公開
-                      </span>
-                    ) : (
-                      <span class="gosaki-admin-content-panel__badge">公開</span>
-                    )}
-                    <code class="gosaki-schedule-content-panel__legacy">{display(event.legacyId)}</code>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          </section>
-        ))}
-      </div>
-    )
-  }
+    </form>
+
+    <div
+      class="gosaki-schedule-content-panel__dry-run"
+      data-gosaki-schedule-dry-run-result
+      hidden
+      aria-live="polite"
+    ></div>
+
+    <div class="gosaki-schedule-content-panel__save-card" data-gosaki-schedule-save-card>
+      <h3 class="gosaki-schedule-content-panel__save-title">Save</h3>
+      <AdminGosakiStagingSaveDisabledStatus
+        message="Save は無効です。変更を確認（dry-run）まではローカル検証のみです。公開反映は管理者が行います。"
+      />
+      <button
+        type="button"
+        class="gosaki-admin-edit-toolbar__btn"
+        data-gosaki-schedule-save
+        data-gosaki-save-allowed="false"
+        disabled
+        title="Save は現在無効です"
+      >
+        更新する（無効）
+      </button>
+    </div>
+  </div>
 </section>
+
+<style>
+  .gosaki-schedule-content-panel {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+  }
+
+  .gosaki-schedule-content-panel__unsaved {
+    margin: 0.5rem 0 0.75rem;
+    padding: 0.55rem 0.75rem;
+    border-radius: 6px;
+    background: #fff7ed;
+    border: 1px solid #fdba74;
+    color: #9a3412;
+    font-size: 0.9rem;
+  }
+
+  .gosaki-schedule-content-panel__toolbar-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+    margin: 0.75rem 0 1rem;
+    min-width: 0;
+  }
+
+  .gosaki-schedule-content-panel__months {
+    display: grid;
+    gap: 1.25rem;
+    min-width: 0;
+  }
+
+  .gosaki-schedule-content-panel__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .gosaki-schedule-content-panel__card {
+    display: grid;
+    gap: 0.75rem;
+    padding: 0.85rem 1rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    background: #fff;
+    min-width: 0;
+    box-sizing: border-box;
+  }
+
+  @media (min-width: 640px) {
+    .gosaki-schedule-content-panel__card {
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: start;
+    }
+  }
+
+  .gosaki-schedule-content-panel__card-main,
+  .gosaki-schedule-content-panel__card-meta {
+    min-width: 0;
+  }
+
+  .gosaki-schedule-content-panel__card-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    align-items: center;
+  }
+
+  .gosaki-schedule-content-panel__date,
+  .gosaki-schedule-content-panel__venue,
+  .gosaki-schedule-content-panel__times {
+    margin: 0.15rem 0 0;
+    font-size: 0.9rem;
+    color: #4b5563;
+    overflow-wrap: anywhere;
+  }
+
+  .gosaki-schedule-content-panel__event-title {
+    margin: 0.2rem 0 0;
+    font-size: 1.05rem;
+    overflow-wrap: anywhere;
+  }
+
+  .gosaki-schedule-content-panel__legacy {
+    font-size: 0.75rem;
+    word-break: break-all;
+  }
+
+  .gosaki-schedule-content-panel__edit-btn {
+    min-height: 44px;
+    padding: 0.45rem 0.75rem;
+    border-radius: 6px;
+    border: 1px solid #d1d5db;
+    background: #f9fafb;
+    cursor: pointer;
+  }
+
+  .gosaki-schedule-content-panel__form {
+    margin-top: 0.75rem;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+  }
+
+  .gosaki-schedule-content-panel__form input,
+  .gosaki-schedule-content-panel__form textarea,
+  .gosaki-schedule-content-panel__form select {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+  }
+
+  .gosaki-schedule-content-panel__dry-run {
+    margin-top: 1rem;
+    padding: 0.85rem 1rem;
+    border-radius: 8px;
+    border: 1px solid #dbeafe;
+    background: #eff6ff;
+    overflow-wrap: anywhere;
+  }
+
+  .gosaki-schedule-content-panel__save-card {
+    margin-top: 1rem;
+    padding: 0.85rem 1rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    display: grid;
+    gap: 0.65rem;
+    min-width: 0;
+  }
+
+  .gosaki-schedule-content-panel__save-title {
+    margin: 0;
+    font-size: 1rem;
+  }
+
+  .gosaki-schedule-content-panel__lock {
+    margin: 0;
+    font-size: 0.85rem;
+  }
+
+  @media (max-width: 375px) {
+    .gosaki-schedule-content-panel__card,
+    .gosaki-schedule-content-panel__save-card,
+    .gosaki-schedule-content-panel__dry-run {
+      padding: 0.7rem 0.75rem;
+    }
+  }
+</style>

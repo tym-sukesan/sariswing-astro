@@ -1,6 +1,38 @@
 Last updated: 2026-07-17
 Project: Static-to-Astro CMS / Musician CMS Kit
 
+## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u45-gosaki-schedule-operational-edit-ui-wiring — complete (source)
+
+| Item | Value |
+| --- | --- |
+| Phase | `G-20u45-gosaki-schedule-operational-edit-ui-wiring` |
+| SCHEDULE_LIST_UI_READY | **true** |
+| SCHEDULE_EDIT_UI_READY | **true** |
+| SCHEDULE_CREATE_UI_READY | **true** |
+| SCHEDULE_DRY_RUN_WIRED | **true** (local preview · no network) |
+| SCHEDULE_OPTIMISTIC_LOCK_WIRED | **true** |
+| SCHEDULE_AUTH_WIRED | **true** |
+| SCHEDULE_SAVE_DEFAULT_DISABLED | **true** |
+| SCHEDULE_LOCAL_BROWSER_PASSED | **true** (desktop/375/320) |
+| SCHEDULE_MOBILE_LAYOUT_PASSED | **true** |
+| SAVE_REQUEST_EXECUTED | **false** |
+| DB_WRITE_EXECUTED | **false** |
+| Next | Commit/Push → fresh STG package → manual FTP → Schedule STG browser QA |
+
+```txt
+SCHEDULE_LIST_UI_READY: true
+SCHEDULE_EDIT_UI_READY: true
+SCHEDULE_CREATE_UI_READY: true
+SCHEDULE_DRY_RUN_WIRED: true
+SCHEDULE_OPTIMISTIC_LOCK_WIRED: true
+SCHEDULE_AUTH_WIRED: true
+SCHEDULE_SAVE_DEFAULT_DISABLED: true
+SCHEDULE_LOCAL_BROWSER_PASSED: true
+SCHEDULE_MOBILE_LAYOUT_PASSED: true
+SAVE_REQUEST_EXECUTED: false
+DB_WRITE_EXECUTED: false
+```
+
 ## 0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz. G-20u44 / G-20u44c controlled Save round-trip + permission rollback — complete and closed
 
 | Item | Value |

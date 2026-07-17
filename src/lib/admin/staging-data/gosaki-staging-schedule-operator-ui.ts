@@ -1707,6 +1707,7 @@ function renderEditForm(
 
   emptyEl.hidden = true;
   formEl.hidden = false;
+  updateOperatorUnsavedBanner(false);
 
   const date = row.date ?? "";
   const month = monthFromDate(date);
@@ -3668,6 +3669,50 @@ function wireAddForm(): void {
   syncAddDateDerived();
 }
 
+function updateOperatorUnsavedBanner(visible: boolean): void {
+  const banner = document.getElementById("gosaki-schedule-operator-unsaved-banner");
+  if (!(banner instanceof HTMLElement)) return;
+  banner.hidden = !visible;
+}
+
+function clearEditToList(): void {
+  const banner = document.getElementById("gosaki-schedule-operator-unsaved-banner");
+  const hasUnsaved =
+    (banner instanceof HTMLElement && !banner.hidden) ||
+    isNewEventDraftMode() ||
+    isDuplicateDraftMode() ||
+    isUnpublishDraftMode() ||
+    isRepublishDraftMode() ||
+    Boolean(selectedRowId);
+  if (hasUnsaved) {
+    if (
+      !window.confirm(
+        "未保存の変更があります。一覧へ戻ると破棄されます。続けますか？",
+      )
+    ) {
+      return;
+    }
+  }
+  selectedRowId = null;
+  selectedRowSnapshot = null;
+  resetNewEventDraftMode();
+  resetDuplicateDraftMode();
+  resetUnpublishDraftMode();
+  resetRepublishDraftMode();
+  lastDryRunResult = null;
+  lastDuplicateDryRunResult = null;
+  lastNewEventDryRunResult = null;
+  clearSaveResult();
+  clearDryRunResult();
+  updateOperatorUnsavedBanner(false);
+  renderScheduleList();
+  renderEditForm(null);
+  updateSaveButtonState(null);
+  updateUnpublishButtonState();
+  updateRepublishButtonState();
+  updateSaveTargetPanel();
+}
+
 function wireEditForm(): void {
   const dateInput = document.getElementById("gosaki-edit-date") as HTMLInputElement | null;
   const syncEditDateDerived = () => {
@@ -3676,6 +3721,7 @@ function wireEditForm(): void {
     setMonthHint("gosaki-edit-month-hint", date);
     setPreviewLink("gosaki-edit-preview-link", month);
     markDryRunStale();
+    updateOperatorUnsavedBanner(true);
   };
   dateInput?.addEventListener("change", syncEditDateDerived);
   dateInput?.addEventListener("input", syncEditDateDerived);
@@ -3686,13 +3732,31 @@ function wireEditForm(): void {
       void runEditDryRunPreview();
     });
 
+  document
+    .getElementById("gosaki-schedule-edit-cancel-btn")
+    ?.addEventListener("click", (event) => {
+      event.preventDefault();
+      clearEditToList();
+    });
+
   for (const field of G9K_EXISTING_EVENT_SAVE_BUTTON_SAFE_FIELDS) {
     const el = document.getElementById(G9K2_EDIT_DRY_RUN_FIELD_IDS[field]);
-    el?.addEventListener("input", () => markDryRunStale());
+    el?.addEventListener("input", () => {
+      markDryRunStale();
+      updateOperatorUnsavedBanner(true);
+    });
   }
 
   document.getElementById("gosaki-edit-published")?.addEventListener("change", () => {
     markDryRunStale();
+    updateOperatorUnsavedBanner(true);
+  });
+
+  window.addEventListener("beforeunload", (ev) => {
+    const banner = document.getElementById("gosaki-schedule-operator-unsaved-banner");
+    if (!(banner instanceof HTMLElement) || banner.hidden) return;
+    ev.preventDefault();
+    ev.returnValue = "未保存の変更があります";
   });
 }
 

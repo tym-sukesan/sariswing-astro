@@ -249,6 +249,38 @@ serviceRoleUsed: false
 npm run verify:g20u39b4-gosaki-admin-multi-route-staging-package-prep
 ```
 
+## G-20u45 Schedule operational edit UI wiring (local + package source)
+
+Phase: `G-20u45-gosaki-schedule-operational-edit-ui-wiring`
+
+- STG `/admin/schedule/` ContentPanel: list · per-card「編集する」·「新しい予定を追加」· form · 一覧へ戻る · 変更を確認（local dry-run）· Save card **disabled**
+- Schema fields only: `date`, `open_time`, `start_time`, `title`, `venue`, `price`, `description`, `published` + lock `updated_at` (no end_time / address / URL)
+- Client: `gosaki-staging-schedule-operational-edit.ts` — fingerprint invalidate · unsaved/beforeunload · `expectedBeforeUpdatedAt` · `saveInFlight` · **no fetch** · Save always disabled (`saveArmed: false`)
+- Package apply copies schedule operational-edit + snapshot `description` / `updatedAt`
+- Local shell OperatorPage: cancel「一覧へ戻る」· unsaved banner · mobile-safe form CSS (existing G-9k dry-run/Save path unchanged; default Save disarmed)
+- **SAVE_REQUEST_EXECUTED: false** · **DB_WRITE_EXECUTED: false** · service_role **not used** · production STOP maintained
+
+Gates:
+
+```txt
+SCHEDULE_LIST_UI_READY: true
+SCHEDULE_EDIT_UI_READY: true
+SCHEDULE_CREATE_UI_READY: true
+SCHEDULE_DRY_RUN_WIRED: true
+SCHEDULE_OPTIMISTIC_LOCK_WIRED: true
+SCHEDULE_AUTH_WIRED: true
+SCHEDULE_SAVE_DEFAULT_DISABLED: true
+SCHEDULE_LOCAL_BROWSER_PASSED: true
+SCHEDULE_MOBILE_LAYOUT_PASSED: true
+SAVE_REQUEST_EXECUTED: false
+DB_WRITE_EXECUTED: false
+```
+
+Local browser (OperatorPage behind auth-gate reveal for layout QA; no dry-run/Save network):
+
+- desktop / 375 / 320: list · edit · create · Save disabled · full-width inputs · no horizontal overflow
+- dry-run network: 0 · Save network: 0
+
 ## Recommended next
 
-G-20u42-gosaki-discography-controlled-save-enablement-preflight
+Commit / Push → fresh staging package generation → manual FTP → Schedule STG browser QA

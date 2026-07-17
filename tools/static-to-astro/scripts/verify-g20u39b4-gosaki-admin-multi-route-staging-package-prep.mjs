@@ -33,7 +33,7 @@ const PHASE =
   "G-20u39b4-gosaki-admin-multi-route-staging-package-and-manual-upload-prep";
 const GATE = "gosakiAdminMultiRouteStagingPackagePrepComplete: true";
 const RECOMMENDED_NEXT =
-  "G-20u42-gosaki-discography-controlled-save-enablement-preflight";
+  "Schedule STG browser QA";
 
 /** Fixture-only known anon (not a real project key). payload.role=anon */
 const KNOWN_ANON =
@@ -369,6 +369,52 @@ assert(
     schedulePanelSrc.includes("data-schedule-event"),
 );
 assert(
+  "schedule operational edit markers",
+  schedulePanelSrc.includes('data-gosaki-schedule-operational-edit="true"') &&
+    schedulePanelSrc.includes("data-gosaki-schedule-view-mode") &&
+    schedulePanelSrc.includes("data-gosaki-schedule-edit-mode") &&
+    schedulePanelSrc.includes("data-gosaki-schedule-create-start") &&
+    schedulePanelSrc.includes("data-gosaki-schedule-edit-event") &&
+    schedulePanelSrc.includes("data-gosaki-schedule-operational-form") &&
+    schedulePanelSrc.includes("data-gosaki-schedule-save") &&
+    schedulePanelSrc.includes('data-gosaki-save-allowed="false"') &&
+    schedulePanelSrc.includes("AdminGosakiStagingEditToolbar") &&
+    schedulePanelSrc.includes("showDryRun={true}") &&
+    schedulePanelSrc.includes("一覧へ戻る") &&
+    schedulePanelSrc.includes("新しい予定を追加"),
+);
+assert(
+  "schedule schema fields only (no invented end_time/address/url)",
+  schedulePanelSrc.includes('data-field="date"') &&
+    schedulePanelSrc.includes('data-field="open_time"') &&
+    schedulePanelSrc.includes('data-field="start_time"') &&
+    schedulePanelSrc.includes('data-field="title"') &&
+    schedulePanelSrc.includes('data-field="venue"') &&
+    schedulePanelSrc.includes('data-field="price"') &&
+    schedulePanelSrc.includes('data-field="description"') &&
+    schedulePanelSrc.includes('data-field="published"') &&
+    schedulePanelSrc.includes("data-gosaki-schedule-lock-value") &&
+    !schedulePanelSrc.includes('data-field="end_time"') &&
+    !schedulePanelSrc.includes('data-field="address"') &&
+    !schedulePanelSrc.includes('data-field="url"'),
+);
+assert(
+  "schedule mobile-safe form CSS",
+  schedulePanelSrc.includes("width: 100%") &&
+    schedulePanelSrc.includes("min-width: 0") &&
+    schedulePanelSrc.includes("box-sizing: border-box") &&
+    schedulePanelSrc.includes("overflow-wrap: anywhere") &&
+    !schedulePanelSrc.includes("overflow-x: hidden") &&
+    !schedulePanelSrc.includes("transform: scale"),
+);
+assert(
+  "schedule Save button type=button disabled default",
+  schedulePanelSrc.includes('data-gosaki-schedule-save') &&
+    /type="button"[\s\S]{0,280}data-gosaki-schedule-save/.test(schedulePanelSrc) &&
+    /data-gosaki-schedule-save[\s\S]{0,280}\bdisabled\b/.test(schedulePanelSrc) &&
+    schedulePanelSrc.includes('data-gosaki-save-allowed="false"'),
+);
+assert(
   "about panel has profile + bands",
   aboutPanelSrc.includes('data-about-block="profile"') &&
     aboutPanelSrc.includes('data-about-block="bands"'),
@@ -381,6 +427,9 @@ const saveDisabledStatusSrc = read(
 );
 const discographyOpEditSrc = read(
   "tools/static-to-astro/templates/site-extensions/gosaki-piano/gosaki-staging-discography-operational-edit.ts",
+);
+const scheduleOpEditSrc = read(
+  "tools/static-to-astro/templates/site-extensions/gosaki-piano/gosaki-staging-schedule-operational-edit.ts",
 );
 const discographyOperatorPageSrc = read(
   "tools/static-to-astro/templates/admin-cms/gosaki/components/AdminGosakiStagingDiscographyOperatorPage.astro",
@@ -667,6 +716,39 @@ assert(
     applySrc.includes("gosaki-staging-discography-operational-edit.ts"),
 );
 assert(
+  "apply copies schedule operational edit client",
+  applySrc.includes("gosaki-staging-schedule-operational-edit.ts") &&
+    applySrc.includes("AdminGosakiStagingScheduleContentPanel.astro"),
+);
+assert(
+  "schedule operational edit client gates",
+  scheduleOpEditSrc.includes("initGosakiScheduleOperationalEdit") &&
+    scheduleOpEditSrc.includes("buildScheduleOperationalLocalDryRun") &&
+    scheduleOpEditSrc.includes("expectedBeforeUpdatedAt") &&
+    scheduleOpEditSrc.includes("saveInFlight") &&
+    scheduleOpEditSrc.includes("dryRunFingerprint") &&
+    scheduleOpEditSrc.includes("saveAllowed: false") &&
+    scheduleOpEditSrc.includes('saveBtn.disabled = true') &&
+    scheduleOpEditSrc.includes("UNSAVED_LEAVE") &&
+    scheduleOpEditSrc.includes("beforeunload") &&
+    !scheduleOpEditSrc.includes("service_role") &&
+    !scheduleOpEditSrc.includes("vsbvndwuajjhnzpohghh") &&
+    !scheduleOpEditSrc.includes("fetch("),
+);
+assert(
+  "schedule page wires operational edit with Save disarmed",
+  adminComponent.includes("initGosakiScheduleOperationalEdit") &&
+    adminComponent.includes("saveArmed: false") &&
+    adminComponent.includes('page === "schedule"') &&
+    (adminComponent.includes("showAuth") &&
+      /showAuth[\s\S]{0,120}schedule/.test(adminComponent)),
+);
+assert(
+  "schedule snapshot includes description + updatedAt for lock",
+  applySrc.includes("description: r.description") &&
+    applySrc.includes("updatedAt: r.updated_at"),
+);
+assert(
   "about panel form affordance markers",
   aboutPanelSrc.includes('data-gosaki-about-form-affordance="true"') &&
     aboutPanelSrc.includes('data-gosaki-about-edit-section="true"') &&
@@ -794,7 +876,9 @@ const applyResult = applyGosakiStagingReadOnlyAdmin(tmpOut, TOOL_ROOT, {
         venue: "Tokyo",
         open_time: "18:00",
         start_time: "19:00",
+        description: "Verifier description",
         published: true,
+        updated_at: "2026-07-10T00:00:00.000Z",
       },
     ],
   },
@@ -823,6 +907,11 @@ const scheduleSnap = JSON.parse(
 assert(
   "schedule snapshot has events",
   Array.isArray(scheduleSnap.events) && scheduleSnap.events.length >= 1,
+);
+assert(
+  "schedule snapshot carries description + updatedAt",
+  scheduleSnap.events[0]?.description === "Verifier description" &&
+    scheduleSnap.events[0]?.updatedAt === "2026-07-10T00:00:00.000Z",
 );
 
 for (const route of GOSAKI_ADMIN_MULTI_ROUTE_PAGES) {
@@ -858,6 +947,12 @@ assert(
   "tmp discography operational edit lib copied",
   fs.existsSync(
     path.join(tmpOut, "src/lib/gosaki-staging-discography-operational-edit.ts"),
+  ),
+);
+assert(
+  "tmp schedule operational edit lib copied",
+  fs.existsSync(
+    path.join(tmpOut, "src/lib/gosaki-staging-schedule-operational-edit.ts"),
   ),
 );
 assert(

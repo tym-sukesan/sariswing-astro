@@ -1,15 +1,17 @@
-Last updated: 2026-07-18
+Last updated: 2026-07-20
 Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **この YouTube GitHub Contents Save path 実装を Commit / Push**（未commit package は FTP に使わない）。
-2. Supabase staging secrets readiness: `GITHUB_TOKEN`（contents read/write）· `GITHUB_REPO=tym-sukesan/sariswing-astro`（Actions/workflow 権限不要）· live 値は表示しない。
-3. `gosaki-youtube-url-dry-run` + `gosaki-youtube-url-save` を **staging Edge deploy**。
-4. 通常 unarmed package で dry-run QA → controlled arm で temporary（`Ke4F8JAQz-I`）/ restore（`I-eY9YMq9GI`）Save → `git pull --ff-only` → unarmed 復帰。
-5. Schedule は unarmed 復帰済み · Save round-trip 完了（主戦場は YouTube）。
+1. **YouTube controlled Save verification は完了・閉鎖**（temporary `0ac09de` · restore `7d4bca5` · final `https://youtu.be/I-eY9YMq9GI` · arms false · unarmed Save disabled browser confirmed）。
+2. この完了記録 docs を Commit / Push（未commit package は FTP に使わない）。
+3. 次の CMS 機能開発へ（Schedule / Discography / YouTube Save path はいずれも round-trip closed）。
+4. staging Edge deploy 済み Function は通常 unarmed のまま運用（再 arm は明示承認時のみ）。
+5. production deploy / auto FTP は引き続き禁止ゲート。
 
 Schedule operational Saveは完了済み：staging Edge deploy completed（v2）· live permission PASS · edit/create/cleanup PASS · DB total **79** · 通常 package `SCHEDULE_SAVE_DEFAULT_DISABLED: true`。
+
+YouTube operational Saveは完了済み：staging Edge deploy completed · Contents API temporary/restore PASS · HEAD `7d4bca5` · `YOUTUBE_SAVE_DEFAULT_DISABLED: true`。
 
 ## 0. G-20u44 / G-20u44c controlled Save round-trip + permission rollback — complete and closed
 

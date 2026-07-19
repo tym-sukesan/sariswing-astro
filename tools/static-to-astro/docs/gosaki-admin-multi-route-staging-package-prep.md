@@ -344,8 +344,24 @@ PRODUCTION_CHANGED: false
 - Save write: **GitHub Contents API PUT**（SHA lock · commit message `cms-kit(gosaki-youtube): patch embedCode […]`）· **`workflow_dispatch` しない** · workflow YAML は manual fallback として未変更
 - Lock: dry-run fingerprint exact · current file SHA · expectedBefore embedCode/videoId · no fixed `gosaki-youtube-staging-current` runtime dependency
 - Client: fingerprint / file SHA invalidate · Save 成功後は response after + newFileSha を current に反映 · restore dry-run 可能 · form submit preventDefault · double-submit / auto-retry なし
-- Secrets（既存のみ）: `GITHUB_TOKEN` · `GITHUB_REPO`（live secret 確認は次工程）
-- **SAVE_REQUEST_EXECUTED: false** · **GITHUB_WRITE_EXECUTED: false** · **EDGE_DEPLOY_EXECUTED: false** · **FTP_EXECUTED: false**
+- Secrets（既存のみ）: `GITHUB_TOKEN` · `GITHUB_REPO`（staging 登録済み）
+
+### YouTube controlled Save verification (complete)
+
+Operator-driven staging round-trip closed (2026-07-19/20).
+
+| Item | Value |
+| --- | --- |
+| Temporary commit | `0ac09de` |
+| Restore commit | `7d4bca5` (= HEAD / `origin/main`) |
+| Final URL | `https://youtu.be/I-eY9YMq9GI` |
+| Temporary URL residual | **none** |
+| Dry-run / temporary Save / restore Save | **PASS** |
+| Client arm | **false** |
+| Server arm `GOSAKI_YOUTUBE_URL_SAVE_ARMED` | **false** |
+| Unarmed STG Save disabled (browser) | **confirmed** |
+| Production deploy / auto FTP / DB write | **false** |
+| staging Edge deploy (Functions) | **completed** (earlier) |
 
 ```txt
 YOUTUBE_OPERATIONAL_UI_IMPLEMENTED: true
@@ -355,10 +371,18 @@ SAVE_DISPATCHES_WORKFLOW: false
 SHARED_CURRENT_RUNTIME_DEPENDENCY_REMOVED: true
 NORMAL_STG_SAVE_DISABLED: true
 CONTROLLED_ROUND_TRIP_READY: true
+YOUTUBE_CONTROLLED_SAVE_VERIFICATION_PASSED: true
+YOUTUBE_FINAL_URL_RESTORED: true
+YOUTUBE_TEMPORARY_URL_RESIDUAL: false
+YOUTUBE_CLIENT_ARM: false
+YOUTUBE_SERVER_ARM: false
+UNARMED_STG_SAVE_DISABLED_BROWSER_CONFIRMED: true
 PAGE_LOAD_FETCH: false
-GITHUB_SECRET_LIVE_PREFLIGHT_REQUIRED: true
+PRODUCTION_DEPLOY_EXECUTED: false
+AUTO_FTP_EXECUTED: false
+DB_WRITE_EXECUTED: false
 ```
 
 ## Recommended next
 
-Commit / Push → GitHub secret names/readiness 確認（`GITHUB_TOKEN` contents:read/write · `GITHUB_REPO` · Actions/workflow 権限不要）→ 両 Function **staging Edge deploy** → unarmed dry-run QA → controlled package → temporary Save（`Ke4F8JAQz-I`）/ restore（`I-eY9YMq9GI`）→ `git pull --ff-only` → unarmed package 復帰。FTP handoff には未commit package を使わない。
+YouTube controlled Save verification **closed**. Commit / Push this completion record → next CMS feature development. Re-arm / Save / production deploy / auto FTP は明示承認時のみ。staging Edge deploy 済み Function は通常 unarmed 運用。

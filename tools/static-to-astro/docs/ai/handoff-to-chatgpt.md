@@ -5,19 +5,32 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: Gosaki YouTube operational Save path — GitHub Contents API (source/mock/full-build; no live Save/deploy).
+Current phase: Gosaki YouTube controlled Save verification — COMPLETE AND CLOSED.
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP.
+HEAD / origin/main: 7d4bca5
 YOUTUBE_ROUTE: /cms-kit-staging/gosaki-piano/admin/youtube/
-RUNTIME_SOT: GitHub tym-sukesan/sariswing-astro main · gosaki-piano-youtube-embed.json · yt-placeholder-01 · embedCode only.
-DRY_RUN: gosaki-youtube-url-dry-run · GitHub GET + fingerprint (file SHA) · approval G-11c1-youtube-url-dry-run.
-SAVE: gosaki-youtube-url-save · Contents PUT commit · NO workflow_dispatch · approval G-11c6-gosaki-youtube-url-web-save-non-dry-run-slice.
-ARMS: server GOSAKI_YOUTUBE_URL_SAVE_ARMED · client PUBLIC_ADMIN_GOSAKI_YOUTUBE_URL_WEB_SAVE_NON_DRY_RUN_ARMED.
-SHARED_CURRENT_RUNTIME_DEPENDENCY_REMOVED: true · NORMAL_STG_SAVE_DISABLED: true.
-SAVE_REQUEST_EXECUTED: false · GITHUB_WRITE_EXECUTED: false · EDGE_DEPLOY_EXECUTED: false · FTP_EXECUTED: false.
-GITHUB_SECRET_LIVE_PREFLIGHT_REQUIRED: true (GITHUB_TOKEN · GITHUB_REPO).
-Schedule: operational Save round-trip complete · unarmed browser confirmed · total 79.
-Next: Commit/Push → secret readiness → staging Edge deploy both Functions → unarmed dry-run QA → controlled temporary/restore Save.
+RUNTIME_SOT: GitHub Contents · gosaki-piano-youtube-embed.json · yt-placeholder-01 · embedCode only.
+FINAL_URL: https://youtu.be/I-eY9YMq9GI · temporary URL residual: none
+TEMPORARY_COMMIT: 0ac09de · RESTORE_COMMIT: 7d4bca5
+DRY_RUN / TEMPORARY_SAVE / RESTORE_SAVE: PASS
+CLIENT_ARM: false · SERVER_ARM GOSAKI_YOUTUBE_URL_SAVE_ARMED: false
+UNARMED_STG_SAVE_DISABLED_BROWSER_CONFIRMED: true
+PRODUCTION_DEPLOY / AUTO_FTP / DB_WRITE: false
+staging Edge deploy (YouTube dry-run/save Functions): completed earlier in path
+Schedule: operational Save round-trip complete · unarmed · total 79
+Next: Commit/Push this completion record → next CMS feature development
 ```
+
+## Gosaki YouTube controlled Save verification — final result
+
+- **Doc:** `gosaki-admin-multi-route-staging-package-prep.md` (§ YouTube controlled Save verification)
+- **Temporary:** commit `0ac09de`
+- **Restore:** commit `7d4bca5` (= current HEAD)
+- **Final embed:** `https://youtu.be/I-eY9YMq9GI`
+- **Arms returned:** client false · server false
+- **Gates:** dry-run PASS · temporary Save PASS · restore Save PASS · unarmed Save disabled browser confirmed
+- **Not executed this closure:** production deploy · auto FTP · DB write · workflow_dispatch from Edge
+- **Next:** next CMS feature development
 
 ## G-20u45 Schedule operational Save — final result
 

@@ -3,18 +3,17 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **About dry-run CSS/gate fix 完了（local browser PASS · unarmed package regenerated）** — Commit → operator re-upload → STG recheck（dirty で「変更を確認」enabled）。
-2. **About operational edit (G-12a)** — live HTTP Save / Edge deploy は未実施。STG dry-run UX 確認後に staging Edge deploy preflight → controlled Save（明示承認）。
-3. YouTube controlled Save verification は完了・閉鎖（temporary `0ac09de` · restore `7d4bca5` · arms false）。
-4. Schedule / Discography / YouTube Save path はいずれも round-trip closed。
-5. staging Edge Function は通常 unarmed のまま運用（再 arm は明示承認時のみ）。
-6. production deploy / auto FTP は引き続き禁止ゲート。
+1. **About operational edit (G-12a) 完了・閉鎖** — dry-run / controlled Save / restore round-trip PASS · temporary `0ae0759` · restore `577d463` · baseline fix `bbb34b7` · final heading `About` · arms false · unarmed STG Save disabled browser confirmed → **次の主要タスクへ進む**。
+2. YouTube controlled Save verification は完了・閉鎖（temporary `0ac09de` · restore `7d4bca5` · arms false）。
+3. Schedule / Discography / YouTube / About Save path はいずれも round-trip closed。
+4. staging Edge Function は通常 unarmed のまま運用（再 arm は明示承認時のみ）。
+5. production deploy / auto FTP は引き続き禁止ゲート。
 
 Schedule operational Saveは完了済み：staging Edge deploy completed（v2）· live permission PASS · edit/create/cleanup PASS · DB total **79** · 通常 package `SCHEDULE_SAVE_DEFAULT_DISABLED: true`。
 
-YouTube operational Saveは完了済み：staging Edge deploy completed · Contents API temporary/restore PASS · HEAD `7d4bca5` · `YOUTUBE_SAVE_DEFAULT_DISABLED: true`。
+YouTube operational Saveは完了済み：staging Edge deploy completed · Contents API temporary/restore PASS · `YOUTUBE_SAVE_DEFAULT_DISABLED: true`。
 
-About operational Save path（実装のみ）: dry-run `gosaki-about-content-dry-run` · Save `gosaki-about-content-save` · client arm `PUBLIC_ADMIN_GOSAKI_ABOUT_CONTENT_WEB_SAVE_NON_DRY_RUN_ARMED` · server arm `GOSAKI_ABOUT_CONTENT_SAVE_ARMED` · **ABOUT_SAVE_DEFAULT_DISABLED: true** · **EXTERNAL_WRITE_EXECUTED: false**。
+About operational Saveは完了済み：Contents API temporary `0ae0759` / restore `577d463` PASS · post-Save baseline fix `bbb34b7` · HEAD `577d463` · final heading `About` · client/server arm **false** · `ABOUT_SAVE_DEFAULT_DISABLED: true`。
 
 ## 0. G-20u44 / G-20u44c controlled Save round-trip + permission rollback — complete and closed
 

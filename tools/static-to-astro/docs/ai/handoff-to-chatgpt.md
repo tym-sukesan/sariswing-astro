@@ -5,41 +5,40 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: Gosaki About dry-run button CSS/gate fix COMPLETE (local browser PASS · unarmed package regenerated · no FTP).
-Prior: About operational edit (G-12a) source + mock + build · STG residual: dry-run looked disabled after dirty.
-Root cause: .gosaki-about-admin-form__save permanently cursor:not-allowed (JS dirty gate was already correct).
-Fix: __dry-run / __action classes + :not(:disabled) styles · auth never disables dry-run button.
+Current phase: Gosaki About operational edit (G-12a) COMPLETE AND CLOSED — dry-run / controlled Save / restore round-trip PASS.
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP.
 ABOUT_ROUTE: /cms-kit-staging/gosaki-piano/admin/about/
-DRY_RUN enable: dirty && !dryRunInFlight && !saveInFlight
-ABOUT_SAVE_DEFAULT_DISABLED: true · EXTERNAL_WRITE_EXECUTED: false · COMMIT_READY: true
-Next: Commit → operator re-upload unarmed package → STG recheck → then Edge deploy preflight（明示承認）
+Temporary Save commit: 0ae0759
+Restore Save commit: 577d463 (= HEAD / origin/main)
+Post-Save baseline fix: bbb34b7 (Save後 dirty=false · Aboutへ戻すと dry-run有効 — browser confirmed)
+Final heading: About
+client arm=false · server arm=false · unarmed package FTP’d · Save disabled browser confirmed
+no workflow_dispatch · no DB write · no production change · no auto FTP
+Next: next major CMS task（About closed · Schedule/Discography/YouTube also closed）
 ```
 
-## Gosaki About dry-run CSS/gate fix — result
-
-- Dirty → 「変更を確認」enabled（attr + cursor:pointer）; cancel restores; Save stays disabled when client arm=false
-- auth-changed / focus do not re-disable dry-run
-- Built package contract: `const W=$()&&!I&&!A;n.disabled=!W`
-
-## Gosaki About operational edit (G-12a) — implementation result
+## Gosaki About operational edit (G-12a) — final result
 
 - **Doc:** `gosaki-admin-multi-route-staging-package-prep.md` (§ About operational edit + GitHub Contents Save)
-- **Saveable:** profile.heading/body/imageAlt · bands[].name/body/imageAlt（id immutable）
-- **Not saveable:** image upload · raw HTML · CSS · DB
-- **Reuse:** `_shared/github.ts` Contents GET/PUT（YouTube と同系統）
-- **Not executed:** Edge deploy · live HTTP Save · FTP · commit/push · secrets change
+- **Temporary:** commit `0ae0759`
+- **Restore:** commit `577d463` (= current HEAD)
+- **Final heading:** `About`
+- **Baseline fix:** `bbb34b7` — Save response `after` becomes new dirty/cancel baseline
+- **Arms returned:** client false · server false
+- **Gates:** dry-run PASS · temporary Save PASS · restore Save PASS · post-Save dirty=false browser confirmed · unarmed Save disabled browser confirmed
+- **Not executed / not used on closure path:** workflow_dispatch · DB write · production change · auto FTP · service_role
+- **Next:** next major CMS task
 
 ## Gosaki YouTube controlled Save verification — final result
 
 - **Doc:** `gosaki-admin-multi-route-staging-package-prep.md` (§ YouTube controlled Save verification)
 - **Temporary:** commit `0ac09de`
-- **Restore:** commit `7d4bca5` (= current HEAD)
+- **Restore:** commit `7d4bca5`
 - **Final embed:** `https://youtu.be/I-eY9YMq9GI`
 - **Arms returned:** client false · server false
 - **Gates:** dry-run PASS · temporary Save PASS · restore Save PASS · unarmed Save disabled browser confirmed
 - **Not executed this closure:** production deploy · auto FTP · DB write · workflow_dispatch from Edge
-- **Next:** next CMS feature development
+- **Status:** complete and closed
 
 ## G-20u45 Schedule operational Save — final result
 

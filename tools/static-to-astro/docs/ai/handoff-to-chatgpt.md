@@ -5,21 +5,27 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: Gosaki YouTube controlled Save verification — COMPLETE AND CLOSED.
+Current phase: Gosaki About operational edit (G-12a) — source + mock + full build COMPLETE (no live Save).
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP.
-HEAD / origin/main: 7d4bca5
-YOUTUBE_ROUTE: /cms-kit-staging/gosaki-piano/admin/youtube/
-RUNTIME_SOT: GitHub Contents · gosaki-piano-youtube-embed.json · yt-placeholder-01 · embedCode only.
-FINAL_URL: https://youtu.be/I-eY9YMq9GI · temporary URL residual: none
-TEMPORARY_COMMIT: 0ac09de · RESTORE_COMMIT: 7d4bca5
-DRY_RUN / TEMPORARY_SAVE / RESTORE_SAVE: PASS
-CLIENT_ARM: false · SERVER_ARM GOSAKI_YOUTUBE_URL_SAVE_ARMED: false
-UNARMED_STG_SAVE_DISABLED_BROWSER_CONFIRMED: true
-PRODUCTION_DEPLOY / AUTO_FTP / DB_WRITE: false
-staging Edge deploy (YouTube dry-run/save Functions): completed earlier in path
+ABOUT_ROUTE: /cms-kit-staging/gosaki-piano/admin/about/
+RUNTIME_SOT: GitHub Contents · gosaki-piano-about-content.json · surgical HTML patch
+DRY_RUN: gosaki-about-content-dry-run · G-12a-gosaki-about-content-dry-run
+SAVE: gosaki-about-content-save · G-12a-gosaki-about-content-web-save-non-dry-run-slice
+CLIENT_ARM: PUBLIC_ADMIN_GOSAKI_ABOUT_CONTENT_WEB_SAVE_NON_DRY_RUN_ARMED (default false)
+SERVER_ARM: GOSAKI_ABOUT_CONTENT_SAVE_ARMED (default false)
+ABOUT_SAVE_DEFAULT_DISABLED: true · EXTERNAL_WRITE_EXECUTED: false
+YouTube controlled Save: COMPLETE AND CLOSED (7d4bca5 restore)
 Schedule: operational Save round-trip complete · unarmed · total 79
-Next: Commit/Push this completion record → next CMS feature development
+Next: staging Edge deploy preflight for About functions → controlled Save（明示承認）
 ```
+
+## Gosaki About operational edit (G-12a) — implementation result
+
+- **Doc:** `gosaki-admin-multi-route-staging-package-prep.md` (§ About operational edit + GitHub Contents Save)
+- **Saveable:** profile.heading/body/imageAlt · bands[].name/body/imageAlt（id immutable）
+- **Not saveable:** image upload · raw HTML · CSS · DB
+- **Reuse:** `_shared/github.ts` Contents GET/PUT（YouTube と同系統）
+- **Not executed:** Edge deploy · live HTTP Save · FTP · commit/push · secrets change
 
 ## Gosaki YouTube controlled Save verification — final result
 

@@ -621,6 +621,10 @@ assert(
   applySrc.includes("gosaki-staging-youtube-operational-edit.ts"),
 );
 assert(
+  "apply copies about operational edit client",
+  applySrc.includes("gosaki-staging-about-operational-edit.ts"),
+);
+assert(
   "discography Save endpoint reuses formal Edge URL",
   readOnlyAdminTs.includes("G20U41_DISCOGRAPHY_SAVE_ENDPOINT = G20U36C_DISCOGRAPHY_DRY_RUN_ENDPOINT") &&
     readOnlyAdminTs.includes("buildDiscographySaveEndpointRequest") &&
@@ -982,17 +986,15 @@ assert(
     aboutPanelSrc.includes('data-gosaki-about-form="bands"'),
 );
 assert(
-  "about panel profile readonly form controls",
+  "about panel profile editable form controls",
   aboutPanelSrc.includes('data-gosaki-about-field="profile-heading"') &&
     aboutPanelSrc.includes('data-gosaki-about-field="profile-body"') &&
     aboutPanelSrc.includes('data-gosaki-about-field="profile-image"') &&
     aboutPanelSrc.includes('data-gosaki-about-field="profile-image-alt"') &&
-    aboutPanelSrc.includes('readonly') &&
-    aboutPanelSrc.includes('aria-readonly="true"') &&
     !/data-gosaki-about-field="profile-body"[\s\S]{0,120}\bdisabled\b/.test(aboutPanelSrc),
 );
 assert(
-  "about panel bands readonly form controls",
+  "about panel bands editable form controls",
   aboutPanelSrc.includes('data-gosaki-about-field="band-name"') &&
     aboutPanelSrc.includes('data-gosaki-about-field="band-body"') &&
     aboutPanelSrc.includes('data-gosaki-about-field="band-image"') &&
@@ -1022,12 +1024,17 @@ assert(
     !aboutPanelSrc.includes("transform: scale"),
 );
 assert(
-  "about save remains disabled in panel",
-  aboutPanelSrc.includes('data-gosaki-about-save-disabled="true"') &&
-    aboutPanelSrc.includes("data-gosaki-about-save-disabled") &&
-    aboutPanelSrc.includes("disabled") &&
-    !aboutPanelSrc.includes("executeAbout") &&
-    !aboutPanelSrc.includes("onSubmit"),
+  "about operational edit + Save default disabled",
+  aboutPanelSrc.includes('data-gosaki-about-operational-edit="true"') &&
+    aboutPanelSrc.includes("data-gosaki-about-operational-form") &&
+    aboutPanelSrc.includes("data-gosaki-about-dry-run") &&
+    aboutPanelSrc.includes('id="gosaki-about-save-btn"') &&
+    aboutPanelSrc.includes("data-gosaki-about-save") &&
+    (aboutPanelSrc.match(/id="gosaki-about-save-btn"/g) || []).length === 1 &&
+    /id="gosaki-about-save-btn"[\s\S]{0,320}\bdisabled\b/.test(aboutPanelSrc) &&
+    aboutPanelSrc.includes('data-gosaki-about-save-disabled="true"') &&
+    !aboutPanelSrc.includes("onSubmit") &&
+    !aboutPanelSrc.includes("service_role"),
 );
 assert(
   "about panel no fixed min-width overflow trap",
@@ -1185,6 +1192,12 @@ assert(
   "tmp youtube operational edit lib copied",
   fs.existsSync(
     path.join(tmpOut, "src/lib/gosaki-staging-youtube-operational-edit.ts"),
+  ),
+);
+assert(
+  "tmp about operational edit lib copied",
+  fs.existsSync(
+    path.join(tmpOut, "src/lib/gosaki-staging-about-operational-edit.ts"),
   ),
 );
 assert(
@@ -2225,6 +2238,365 @@ assert(
   fs.existsSync(path.join(REPO_ROOT, G11C8_CONFIG_REL)) &&
     read(G11C8_CONFIG_REL).includes("I-eY9YMq9GI") &&
     read(G11C8_CONFIG_REL).includes(G11C8_TARGET_ITEM_ID),
+);
+
+// --- About operational mock / contract checks (no live HTTP / DB / GitHub) ---
+const aboutOpEditSrc = read(
+  "tools/static-to-astro/templates/site-extensions/gosaki-piano/gosaki-staging-about-operational-edit.ts",
+);
+const {
+  planAboutContentPatch,
+  readAboutSnapshotFromConfig,
+  normalizeAboutNext,
+} = await import("./lib/gosaki-about-content-html-patch.mjs");
+
+const ABOUT_FILE_PATH =
+  "tools/static-to-astro/config/sites/gosaki-piano-about-content.json";
+const ABOUT_DRY_APPROVAL = "G-12a-gosaki-about-content-dry-run";
+const ABOUT_SAVE_APPROVAL = "G-12a-gosaki-about-content-web-save-non-dry-run-slice";
+const aboutConfigLive = JSON.parse(read(ABOUT_FILE_PATH));
+const aboutSnapRes = readAboutSnapshotFromConfig(aboutConfigLive);
+assert("about JSON snapshot readable", aboutSnapRes.ok === true);
+const aboutCurrent = aboutSnapRes.snapshot;
+
+assert(
+  "about operational edit markers + click-only",
+  adminComponent.includes('data-gosaki-about-dry-run-endpoint') &&
+    adminComponent.includes('data-gosaki-about-save-armed') &&
+    adminComponent.includes("initGosakiAboutOperationalEdit") &&
+    aboutOpEditSrc.includes("initGosakiAboutOperationalEdit") &&
+    aboutOpEditSrc.includes("dryRunInFlight") &&
+    aboutOpEditSrc.includes("saveInFlight") &&
+    aboutOpEditSrc.includes("dryRunServerFingerprint") &&
+    aboutOpEditSrc.includes("verification_required") &&
+    !aboutOpEditSrc.includes("retrySave") &&
+    !aboutOpEditSrc.includes("service_role") &&
+    aboutOpEditSrc.indexOf("async function runDryRun") <
+      aboutOpEditSrc.indexOf("fetchImpl(endpoint"),
+);
+assert(
+  "about reuses GitHub Contents helpers (shared github.ts)",
+  read("supabase/functions/_shared/gosaki-about-github-json.ts").includes(
+    "getGithubContentsFile",
+  ) &&
+    read("supabase/functions/_shared/gosaki-about-github-json.ts").includes(
+      "updateGithubContentsFile",
+    ) &&
+    read("supabase/functions/_shared/gosaki-about-content-save.ts").includes(
+      "commitAboutContentPatch",
+    ) &&
+    !read("supabase/functions/_shared/gosaki-about-content-save.ts").includes(
+      "dispatchWorkflow",
+    ) &&
+    read("supabase/functions/gosaki-about-content-save/index.ts").includes(
+      "No workflow_dispatch",
+    ),
+);
+assert(
+  "about approval / arm / endpoints",
+  readOnlyAdminTs.includes(`G12A_ABOUT_DRY_RUN_APPROVAL_ID = "${ABOUT_DRY_APPROVAL}"`) &&
+    readOnlyAdminTs.includes(`G12A_ABOUT_SAVE_APPROVAL_ID = "${ABOUT_SAVE_APPROVAL}"`) &&
+    readOnlyAdminTs.includes(
+      "PUBLIC_ADMIN_GOSAKI_ABOUT_CONTENT_WEB_SAVE_NON_DRY_RUN_ARMED",
+    ) &&
+    readOnlyAdminTs.includes("/functions/v1/gosaki-about-content-dry-run") &&
+    readOnlyAdminTs.includes("/functions/v1/gosaki-about-content-save") &&
+    read("supabase/functions/_shared/gosaki-about-content-save.ts").includes(
+      'GOSAKI_ABOUT_CONTENT_SAVE_ARMED',
+    ),
+);
+assert(
+  "about Save gate requires arm + dry-run + fingerprint",
+  readOnlyAdminTs.includes("evaluateAboutOperationalSaveGate") &&
+    readOnlyAdminTs.includes("expectedBeforePresent") &&
+    aboutOpEditSrc.includes("envArmed: saveArmed") &&
+    aboutOpEditSrc.includes("saveArmed === true"),
+);
+
+function aboutDryPayload(next, extra = {}) {
+  return {
+    siteSlug: "gosaki-piano",
+    module: "about-content",
+    next,
+    dryRun: true,
+    operationId: ABOUT_DRY_APPROVAL,
+    approvalId: ABOUT_DRY_APPROVAL,
+    ...extra,
+  };
+}
+
+function buildAboutFingerprint(fileSha, before, after) {
+  return JSON.stringify({
+    branch: "main",
+    targetFilePath: ABOUT_FILE_PATH,
+    githubFileSha: fileSha,
+    before,
+    after,
+  });
+}
+
+function mockAboutDryRun(body, state) {
+  const keys = Object.keys(body).sort();
+  const expected = ["approvalId", "dryRun", "module", "next", "operationId", "siteSlug"];
+  if (keys.join(",") !== expected.join(",")) {
+    return { ok: false, httpStatus: 422, error: "unexpected fields", didWrite: false };
+  }
+  if (body.approvalId !== ABOUT_DRY_APPROVAL || body.dryRun !== true) {
+    return { ok: false, httpStatus: 422, error: "approval/dryRun", didWrite: false };
+  }
+  const norm = normalizeAboutNext(body.next);
+  if (!norm.ok) return { ok: false, httpStatus: 422, error: norm.error, didWrite: false };
+  if (state.readFail) {
+    return { ok: false, httpStatus: 502, error: "GitHub GET failed", didWrite: false };
+  }
+  const plan = planAboutContentPatch({
+    config: state.config,
+    next: norm.next,
+    enforceExpectedBefore: false,
+  });
+  if (!plan.ok) {
+    return { ok: false, httpStatus: plan.httpStatus, error: plan.error, didWrite: false };
+  }
+  const fingerprint = buildAboutFingerprint(state.sha, plan.current, plan.next);
+  return {
+    ok: true,
+    dryRun: true,
+    wouldWrite: false,
+    changedFields: plan.changedFields,
+    noChange: plan.saveReadiness === "no_change",
+    current: plan.current,
+    next: plan.next,
+    currentFileSha: state.sha,
+    fingerprint,
+    didWrite: false,
+    dbWrite: false,
+    networkWrite: false,
+    workflowDispatchExecuted: false,
+    httpStatus: 200,
+  };
+}
+
+function mockAboutSave(body, state, opts = {}) {
+  if (opts.auth === false) return { ok: false, httpStatus: 401, didWrite: false };
+  if (opts.admin === false) return { ok: false, httpStatus: 403, didWrite: false };
+  if (!opts.armed) {
+    return {
+      ok: false,
+      httpStatus: 403,
+      saveReadiness: "save_not_armed",
+      didWrite: false,
+      networkWrite: false,
+    };
+  }
+  const keys = Object.keys(body).sort();
+  const expected = [
+    "approvalId",
+    "dryRun",
+    "expectedBefore",
+    "fingerprint",
+    "module",
+    "next",
+    "operationId",
+    "requestId",
+    "saveEnabled",
+    "siteSlug",
+  ];
+  if (keys.join(",") !== expected.join(",")) {
+    return { ok: false, httpStatus: 422, error: "unexpected fields", didWrite: false };
+  }
+  if (body.approvalId !== ABOUT_SAVE_APPROVAL || body.dryRun !== false) {
+    return { ok: false, httpStatus: 403, error: "approval", didWrite: false };
+  }
+  const plan = planAboutContentPatch({
+    config: state.config,
+    next: body.next,
+    expectedBefore: body.expectedBefore,
+    enforceExpectedBefore: true,
+  });
+  if (!plan.ok) {
+    return {
+      ok: false,
+      httpStatus: plan.httpStatus,
+      error: plan.error,
+      didWrite: false,
+      saveReadiness: plan.httpStatus === 409 ? "conflict" : "invalid_input",
+    };
+  }
+  const expectedFp = buildAboutFingerprint(state.sha, plan.current, plan.next);
+  if (expectedFp !== body.fingerprint) {
+    return { ok: false, httpStatus: 409, saveReadiness: "conflict", didWrite: false };
+  }
+  if (opts.timeout) {
+    return {
+      ok: false,
+      httpStatus: 504,
+      indeterminate: true,
+      saveReadiness: "verification_required",
+      didWrite: false,
+      retryForbidden: true,
+    };
+  }
+  if (opts.putFail) {
+    return { ok: false, httpStatus: 502, didWrite: false, networkWrite: false };
+  }
+  if (plan.saveReadiness === "no_change") {
+    return {
+      ok: true,
+      didWrite: false,
+      noChange: true,
+      saveReadiness: "no_change",
+      httpStatus: 200,
+    };
+  }
+  return {
+    ok: true,
+    dryRun: false,
+    didWrite: true,
+    networkWrite: true,
+    dbWrite: false,
+    workflowDispatchExecuted: false,
+    commitSha: opts.missingCommitSha ? "" : "abc123commit",
+    newFileSha: "sha-after",
+    saveReadiness: opts.missingCommitSha ? "verification_required" : "committed",
+    indeterminate: Boolean(opts.missingCommitSha),
+    changedFields: plan.changedFields,
+    httpStatus: opts.missingCommitSha ? 504 : 200,
+  };
+}
+
+const aboutNext = structuredClone(aboutCurrent);
+aboutNext.profile.heading = "About Staging PoC";
+const aboutDryOk = mockAboutDryRun(aboutDryPayload(aboutNext), {
+  sha: "about-sha-1",
+  config: aboutConfigLive,
+});
+assert(
+  "mock About dry-run success",
+  aboutDryOk.ok === true &&
+    aboutDryOk.wouldWrite === false &&
+    aboutDryOk.didWrite === false &&
+    aboutDryOk.fingerprint.includes("about-sha-1") &&
+    aboutDryOk.changedFields.includes("profile.heading"),
+);
+assert(
+  "mock About dry-run no_change",
+  mockAboutDryRun(aboutDryPayload(aboutCurrent), {
+    sha: "about-sha-1",
+    config: aboutConfigLive,
+  }).noChange === true,
+);
+assert(
+  "mock About dry-run HTML reject",
+  mockAboutDryRun(
+    aboutDryPayload({
+      ...aboutNext,
+      profile: { ...aboutNext.profile, heading: "<script>x</script>" },
+    }),
+    { sha: "about-sha-1", config: aboutConfigLive },
+  ).ok === false,
+);
+assert(
+  "mock About Save unarmed",
+  mockAboutSave(
+    {
+      siteSlug: "gosaki-piano",
+      module: "about-content",
+      next: aboutNext,
+      dryRun: false,
+      saveEnabled: true,
+      operationId: ABOUT_SAVE_APPROVAL,
+      approvalId: ABOUT_SAVE_APPROVAL,
+      fingerprint: aboutDryOk.fingerprint,
+      requestId: "mock-1",
+      expectedBefore: aboutCurrent,
+    },
+    { sha: "about-sha-1", config: aboutConfigLive },
+    { armed: false },
+  ).saveReadiness === "save_not_armed",
+);
+const aboutSaveOk = mockAboutSave(
+  {
+    siteSlug: "gosaki-piano",
+    module: "about-content",
+    next: aboutNext,
+    dryRun: false,
+    saveEnabled: true,
+    operationId: ABOUT_SAVE_APPROVAL,
+    approvalId: ABOUT_SAVE_APPROVAL,
+    fingerprint: aboutDryOk.fingerprint,
+    requestId: "mock-1",
+    expectedBefore: aboutCurrent,
+  },
+  { sha: "about-sha-1", config: aboutConfigLive },
+  { armed: true },
+);
+assert(
+  "mock About Save success",
+  aboutSaveOk.ok === true &&
+    aboutSaveOk.didWrite === true &&
+    aboutSaveOk.commitSha === "abc123commit" &&
+    aboutSaveOk.workflowDispatchExecuted === false,
+);
+assert(
+  "mock About Save indeterminate",
+  mockAboutSave(
+    {
+      siteSlug: "gosaki-piano",
+      module: "about-content",
+      next: aboutNext,
+      dryRun: false,
+      saveEnabled: true,
+      operationId: ABOUT_SAVE_APPROVAL,
+      approvalId: ABOUT_SAVE_APPROVAL,
+      fingerprint: aboutDryOk.fingerprint,
+      requestId: "mock-1",
+      expectedBefore: aboutCurrent,
+    },
+    { sha: "about-sha-1", config: aboutConfigLive },
+    { armed: true, timeout: true },
+  ).indeterminate === true,
+);
+
+function evaluateAboutGateMock(input) {
+  if (input.saveInFlight) return { enabled: false, reason: "in-flight" };
+  if (!input.authenticated) return { enabled: false, reason: "auth" };
+  if (!input.dryRunSucceeded) return { enabled: false, reason: "dry-run" };
+  if (input.noChange) return { enabled: false, reason: "no_change" };
+  if (!input.formMatchesDryRunSnapshot) return { enabled: false, reason: "fingerprint" };
+  if (!input.fingerprintPresent) return { enabled: false, reason: "fingerprint-missing" };
+  if (!input.expectedBeforePresent) return { enabled: false, reason: "lock" };
+  if (!input.saveEndpointConfigured || !input.saveEndpointSafe) {
+    return { enabled: false, reason: "endpoint" };
+  }
+  if (!input.envArmed) return { enabled: false, reason: "arm" };
+  if (input.approvalId !== input.expectedApprovalId) return { enabled: false, reason: "approval" };
+  if (input.expectedApprovalId !== ABOUT_SAVE_APPROVAL) {
+    return { enabled: false, reason: "approval-exact" };
+  }
+  return { enabled: true, reason: "ok" };
+}
+
+const aboutGateBase = {
+  authenticated: true,
+  dryRunSucceeded: true,
+  formMatchesDryRunSnapshot: true,
+  fingerprintPresent: true,
+  expectedBeforePresent: true,
+  saveEndpointConfigured: true,
+  saveEndpointSafe: true,
+  envArmed: true,
+  approvalId: ABOUT_SAVE_APPROVAL,
+  expectedApprovalId: ABOUT_SAVE_APPROVAL,
+  saveInFlight: false,
+  noChange: false,
+};
+assert(
+  "mock About normal package Save disabled",
+  evaluateAboutGateMock({ ...aboutGateBase, envArmed: false }).enabled === false,
+);
+assert(
+  "mock About controlled arm enables when all gates pass",
+  evaluateAboutGateMock(aboutGateBase).enabled === true,
 );
 
 console.log("");

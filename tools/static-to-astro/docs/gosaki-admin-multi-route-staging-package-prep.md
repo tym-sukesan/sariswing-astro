@@ -164,6 +164,29 @@ PUBLIC_ABOUT_UNCHANGED: true
 FRESH_PACKAGE_REUPLOAD_REQUIRED: true
 ```
 
+## About operational edit + GitHub Contents Save (G-12a · 2026-07-20)
+
+Source + mock + full build only — **no** live HTTP Save · **no** Edge deploy · **no** commit/push · **no** FTP.
+
+- SoT: `tools/static-to-astro/config/sites/gosaki-piano-about-content.json`（GitHub Contents · `main`）
+- Saveable fields: `profile.heading` / `profile.body` / `profile.imageAlt` · each band `name` / `body` / `imageAlt`（`id` immutable）
+- Out of scope: image upload · raw HTML · CSS · new DB · workflow_dispatch · FTP automation
+- HTML surgical patch（preserve wrappers / img src / bands `<style>`）
+- Dry-run: `gosaki-about-content-dry-run` · approval `G-12a-gosaki-about-content-dry-run` · GitHub GET only · SHA fingerprint
+- Save: `gosaki-about-content-save` · approval `G-12a-gosaki-about-content-web-save-non-dry-run-slice` · Contents PUT · optimistic lock on file SHA
+- Client arm: `PUBLIC_ADMIN_GOSAKI_ABOUT_CONTENT_WEB_SAVE_NON_DRY_RUN_ARMED`（通常 package **false**）
+- Server arm: `GOSAKI_ABOUT_CONTENT_SAVE_ARMED`（通常 **false**）
+- Reuses `_shared/github.ts` Contents helpers（YouTube と同系統）
+- Save 後 re-disabled · indeterminate → `verification_required` · 再試行禁止
+
+```txt
+ABOUT_OPERATIONAL_EDIT_IMPLEMENTED: true
+ABOUT_GITHUB_CONTENTS_SAVE_PATH: true
+ABOUT_SAVE_DEFAULT_DISABLED: true
+ABOUT_NORMAL_PACKAGE_CLIENT_ARM: false
+EXTERNAL_WRITE_EXECUTED: false
+```
+
 ## Routes prepared (generated under Astro outDir)
 
 | Generated Astro page | Public route (with deployBase) |

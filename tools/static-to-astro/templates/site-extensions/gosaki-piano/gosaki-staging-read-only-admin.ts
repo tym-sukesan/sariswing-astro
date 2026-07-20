@@ -1642,3 +1642,296 @@ export function buildGosakiReadOnlyAdminViewModel(input: {
     },
   };
 }
+
+/** G-12a — About content GitHub Contents dry-run / Save (staging only · default disarmed). */
+export const G12A_ABOUT_DRY_RUN_OPERATION_ID = "G-12a-gosaki-about-content-dry-run";
+export const G12A_ABOUT_DRY_RUN_APPROVAL_ID = "G-12a-gosaki-about-content-dry-run";
+export const G12A_ABOUT_SAVE_OPERATION_ID = "G-12a-gosaki-about-content-web-save-non-dry-run-slice";
+export const G12A_ABOUT_SAVE_APPROVAL_ID = "G-12a-gosaki-about-content-web-save-non-dry-run-slice";
+export const G12A_ABOUT_MODULE = "about-content";
+export const G12A_ABOUT_SAVE_UI_ARMED_ENV =
+  "PUBLIC_ADMIN_GOSAKI_ABOUT_CONTENT_WEB_SAVE_NON_DRY_RUN_ARMED";
+export const G12A_ABOUT_DRY_RUN_ENDPOINT = `${G11C4A_STAGING_SUPABASE_URL}/functions/v1/gosaki-about-content-dry-run`;
+export const G12A_ABOUT_SAVE_ENDPOINT = `${G11C4A_STAGING_SUPABASE_URL}/functions/v1/gosaki-about-content-save`;
+export const G12A_ABOUT_SAVE_DISABLED_REASON =
+  "Save は無効です。通常 STG package では常に無効。controlled arm · dry-run 成功 · fingerprint 一致が必要です。";
+export const G12A_ABOUT_CONFLICT_MESSAGE =
+  "他の場所で更新された可能性があります。再読み込みしてください。";
+
+export type AboutContentFormSnapshot = {
+  profile: { heading: string; body: string; imageAlt: string };
+  bands: Array<{ id: string; name: string; body: string; imageAlt: string }>;
+};
+
+export function resolveG12aAboutDryRunEndpoint(env: ImportMetaEnv): string {
+  const fromEnv = String(env.PUBLIC_GOSAKI_ABOUT_CONTENT_DRY_RUN_ENDPOINT ?? "").trim();
+  if (fromEnv) return fromEnv;
+  return G12A_ABOUT_DRY_RUN_ENDPOINT;
+}
+
+export function resolveG12aAboutSaveEndpoint(env: ImportMetaEnv): string {
+  const fromEnv = String(env.PUBLIC_GOSAKI_ABOUT_CONTENT_SAVE_ENDPOINT ?? "").trim();
+  if (fromEnv) return fromEnv;
+  return G12A_ABOUT_SAVE_ENDPOINT;
+}
+
+export function isG12aAboutSaveEnabled(env: ImportMetaEnv): boolean {
+  return String(env.PUBLIC_ADMIN_GOSAKI_ABOUT_CONTENT_WEB_SAVE_NON_DRY_RUN_ARMED ?? "").trim() ===
+    "true";
+}
+
+export function assertGosakiAboutDryRunEndpointSafe(endpoint: string): boolean {
+  const trimmed = String(endpoint ?? "").trim();
+  if (!trimmed) return false;
+  if (trimmed.includes(G20U36C_PRODUCTION_PROJECT_REF_STOP)) return false;
+  if (!trimmed.includes(G11C4A_STAGING_PROJECT_REF)) return false;
+  return trimmed.includes("/functions/v1/gosaki-about-content-dry-run");
+}
+
+export function assertGosakiAboutSaveEndpointSafe(endpoint: string): boolean {
+  const trimmed = String(endpoint ?? "").trim();
+  if (!trimmed) return false;
+  if (trimmed.includes(G20U36C_PRODUCTION_PROJECT_REF_STOP)) return false;
+  if (!trimmed.includes(G11C4A_STAGING_PROJECT_REF)) return false;
+  return trimmed.includes("/functions/v1/gosaki-about-content-save");
+}
+
+export function buildAboutDryRunEndpointRequest(
+  next: AboutContentFormSnapshot,
+): Record<string, unknown> {
+  return {
+    siteSlug: GOSAKI_STAGING_SITE_SLUG,
+    module: G12A_ABOUT_MODULE,
+    next,
+    dryRun: true,
+    operationId: G12A_ABOUT_DRY_RUN_OPERATION_ID,
+    approvalId: G12A_ABOUT_DRY_RUN_APPROVAL_ID,
+  };
+}
+
+export function buildAboutSaveEndpointRequest(input: {
+  next: AboutContentFormSnapshot;
+  expectedBefore: AboutContentFormSnapshot;
+  fingerprint: string;
+  requestId?: string;
+}): Record<string, unknown> {
+  return {
+    siteSlug: GOSAKI_STAGING_SITE_SLUG,
+    module: G12A_ABOUT_MODULE,
+    next: input.next,
+    dryRun: false,
+    saveEnabled: true,
+    operationId: G12A_ABOUT_SAVE_OPERATION_ID,
+    approvalId: G12A_ABOUT_SAVE_APPROVAL_ID,
+    fingerprint: String(input.fingerprint ?? "").trim(),
+    requestId: String(input.requestId ?? `ui-${Date.now()}`).trim(),
+    expectedBefore: input.expectedBefore,
+  };
+}
+
+export type AboutOperationalSaveGateInput = {
+  authenticated: boolean;
+  dryRunSucceeded: boolean;
+  formMatchesDryRunSnapshot: boolean;
+  fingerprintPresent: boolean;
+  expectedBeforePresent: boolean;
+  saveEndpointConfigured: boolean;
+  saveEndpointSafe: boolean;
+  envArmed: boolean;
+  approvalId: string;
+  expectedApprovalId: string;
+  saveInFlight: boolean;
+  noChange?: boolean;
+};
+
+export function evaluateAboutOperationalSaveGate(
+  input: AboutOperationalSaveGateInput,
+): { enabled: boolean; reason: string } {
+  if (input.saveInFlight) return { enabled: false, reason: "保存処理中です…" };
+  if (!input.authenticated) return { enabled: false, reason: "ログインが必要です" };
+  if (!input.dryRunSucceeded) {
+    return { enabled: false, reason: "先に「変更を確認」（dry-run）を成功させてください" };
+  }
+  if (input.noChange) return { enabled: false, reason: "変更がありません（no_change）" };
+  if (!input.formMatchesDryRunSnapshot) {
+    return {
+      enabled: false,
+      reason: "dry-run 後に内容が変わりました。再度「変更を確認」してください",
+    };
+  }
+  if (!input.fingerprintPresent) {
+    return { enabled: false, reason: "GitHub fingerprint がありません。再度「変更を確認」してください" };
+  }
+  if (!input.expectedBeforePresent) {
+    return { enabled: false, reason: "content lock（expectedBefore）がありません" };
+  }
+  if (!input.saveEndpointConfigured || !input.saveEndpointSafe) {
+    return { enabled: false, reason: "Save endpoint が未設定またはブロックされています" };
+  }
+  if (!input.envArmed) {
+    return { enabled: false, reason: `env arm（${G12A_ABOUT_SAVE_UI_ARMED_ENV}）が無効です` };
+  }
+  const candidateApprovalId = String(input.approvalId ?? "").trim();
+  const expectedApprovalId = String(input.expectedApprovalId ?? "").trim();
+  if (!candidateApprovalId) return { enabled: false, reason: "approval ID が空です" };
+  if (!expectedApprovalId) return { enabled: false, reason: "expected approval ID が未設定です" };
+  if (candidateApprovalId !== expectedApprovalId) {
+    return { enabled: false, reason: "approval ID が一致しません" };
+  }
+  if (expectedApprovalId !== G12A_ABOUT_SAVE_APPROVAL_ID) {
+    return { enabled: false, reason: "expected approval ID が不正です" };
+  }
+  return { enabled: true, reason: "Save 可能（gated）" };
+}
+
+export function isAboutSaveConflictResponse(body: unknown): boolean {
+  const data = (body && typeof body === "object" ? body : {}) as Record<string, unknown>;
+  const readiness = String(data.saveReadiness ?? "").toLowerCase();
+  const error = String(data.error ?? "").toLowerCase();
+  const message = String(data.message ?? "").toLowerCase();
+  return (
+    readiness === "conflict" ||
+    /expectedbefore|conflict|stale|already changed|file sha/.test(`${error} ${message}`)
+  );
+}
+
+export type AboutEndpointDisplay = {
+  httpStatus?: number;
+  ok?: boolean;
+  dryRun?: boolean;
+  wouldWrite?: boolean;
+  changedFields?: string[];
+  current?: AboutContentFormSnapshot;
+  next?: AboutContentFormSnapshot;
+  before?: AboutContentFormSnapshot;
+  after?: AboutContentFormSnapshot;
+  fingerprint?: string;
+  currentFileSha?: string;
+  newFileSha?: string;
+  commitSha?: string;
+  commitUrl?: string | null;
+  error?: string;
+  errors: string[];
+  saveReadiness?: string;
+  didWrite: boolean;
+  dbWrite: boolean;
+  networkWrite: boolean;
+  saveEnabled: boolean;
+  authIssue?: boolean;
+  unsafeWriteFlags?: boolean;
+  fetchError?: string;
+  noChange?: boolean;
+  indeterminate?: boolean;
+};
+
+function aboutUnsafeDryRunFlags(data: Record<string, unknown>): boolean {
+  return (
+    data.wouldWrite === true ||
+    data.didWrite === true ||
+    data.dbWrite === true ||
+    data.networkWrite === true ||
+    data.workflowDispatchExecuted === true
+  );
+}
+
+function aboutUnsafeSaveFlags(data: Record<string, unknown>): boolean {
+  if (data.workflowDispatchExecuted === true) return true;
+  if (data.dbWrite === true) return true;
+  if (data.ok === true && data.didWrite === true && !data.commitSha) return true;
+  return false;
+}
+
+function asAboutSnapshot(value: unknown): AboutContentFormSnapshot | undefined {
+  if (!value || typeof value !== "object") return undefined;
+  return value as AboutContentFormSnapshot;
+}
+
+export function sanitizeAboutDryRunEndpointDisplay(
+  body: unknown,
+  httpStatus?: number,
+): AboutEndpointDisplay {
+  const data = (body && typeof body === "object" ? body : {}) as Record<string, unknown>;
+  const error = typeof data.error === "string" ? data.error : undefined;
+  const errorsFromArray = Array.isArray(data.errors) ? data.errors.map(String) : [];
+  const errors = error ? Array.from(new Set([error, ...errorsFromArray])) : errorsFromArray;
+  const unsafe = aboutUnsafeDryRunFlags(data);
+  const fingerprint = typeof data.fingerprint === "string" ? data.fingerprint : undefined;
+  const noChange = data.noChange === true || data.saveReadiness === "no_change";
+  const ok =
+    data.ok === true &&
+    !unsafe &&
+    errors.length === 0 &&
+    data.dryRun === true &&
+    Boolean(fingerprint) &&
+    !noChange;
+  return {
+    httpStatus,
+    ok,
+    dryRun: data.dryRun === true,
+    wouldWrite: data.wouldWrite === true,
+    changedFields: Array.isArray(data.changedFields) ? data.changedFields.map(String) : [],
+    current: asAboutSnapshot(data.current) ?? asAboutSnapshot(data.before),
+    next: asAboutSnapshot(data.next) ?? asAboutSnapshot(data.after),
+    before: asAboutSnapshot(data.before),
+    after: asAboutSnapshot(data.after),
+    fingerprint,
+    currentFileSha: typeof data.currentFileSha === "string" ? data.currentFileSha : undefined,
+    error,
+    errors,
+    saveReadiness: typeof data.saveReadiness === "string" ? data.saveReadiness : undefined,
+    didWrite: false,
+    dbWrite: false,
+    networkWrite: false,
+    saveEnabled: false,
+    authIssue: httpStatus === 401 || httpStatus === 403,
+    unsafeWriteFlags: unsafe,
+    noChange,
+  };
+}
+
+export function sanitizeAboutSaveEndpointDisplay(
+  body: unknown,
+  httpStatus?: number,
+): AboutEndpointDisplay {
+  const data = (body && typeof body === "object" ? body : {}) as Record<string, unknown>;
+  const error = typeof data.error === "string" ? data.error : undefined;
+  const errorsFromArray = Array.isArray(data.errors) ? data.errors.map(String) : [];
+  const errors = error ? Array.from(new Set([error, ...errorsFromArray])) : errorsFromArray;
+  const unsafe = aboutUnsafeSaveFlags(data);
+  const indeterminate =
+    data.indeterminate === true || String(data.saveReadiness ?? "") === "verification_required";
+  const committed =
+    data.ok === true &&
+    data.didWrite === true &&
+    typeof data.commitSha === "string" &&
+    String(data.commitSha).trim() !== "" &&
+    !unsafe &&
+    !indeterminate &&
+    errors.length === 0;
+  return {
+    httpStatus,
+    ok: committed,
+    dryRun: data.dryRun === false ? false : data.dryRun === true,
+    wouldWrite: data.wouldWrite === true,
+    changedFields: Array.isArray(data.changedFields) ? data.changedFields.map(String) : [],
+    current: asAboutSnapshot(data.current),
+    next: asAboutSnapshot(data.next),
+    before: asAboutSnapshot(data.before),
+    after: asAboutSnapshot(data.after),
+    fingerprint: typeof data.fingerprint === "string" ? data.fingerprint : undefined,
+    currentFileSha: typeof data.currentFileSha === "string" ? data.currentFileSha : undefined,
+    newFileSha: typeof data.newFileSha === "string" ? data.newFileSha : undefined,
+    commitSha: typeof data.commitSha === "string" ? data.commitSha : undefined,
+    commitUrl: typeof data.commitUrl === "string" ? data.commitUrl : null,
+    error,
+    errors,
+    saveReadiness: typeof data.saveReadiness === "string" ? data.saveReadiness : undefined,
+    didWrite: committed,
+    dbWrite: false,
+    networkWrite: committed,
+    saveEnabled: false,
+    authIssue: httpStatus === 401 || httpStatus === 403,
+    unsafeWriteFlags: unsafe,
+    indeterminate,
+  };
+}

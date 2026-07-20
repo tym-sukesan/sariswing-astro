@@ -1,8 +1,8 @@
 ---
 /**
  * Shared About content panel (local shell + STG package).
- * Order: edit forms (readonly) → public preview (iframe srcdoc) → Save disabled note.
- * No Save handler · public About CSS unchanged (admin preview wrapper / srcdoc only).
+ * Order: edit forms → dry-run / Save (gated) → public preview (iframe srcdoc).
+ * Image upload out of scope · Save default disarmed (G-12a).
  */
 
 interface BandImage {
@@ -235,12 +235,13 @@ const bandImageLabels = bandImages.map((img) => ({
   data-section="admin-about-content"
   data-gosaki-about-content="true"
   data-gosaki-about-form-affordance="true"
+  data-gosaki-about-operational-edit="true"
   aria-label="プロフィール管理内容"
 >
   <header class="gosaki-admin-content-panel__header">
     <h1 class="gosaki-admin-content-panel__title">プロフィール・バンド</h1>
     <p class="gosaki-admin-content-panel__subtitle" data-gosaki-about-status="true">
-      About 編集内容（閲覧のみ）· Save 無効 · 公開反映は管理者が行います
+      About 編集 · Save は通常無効（controlled arm 時のみ）
     </p>
     {
       publicAboutUrl ? (
@@ -267,7 +268,8 @@ const bandImageLabels = bandImages.map((img) => ({
       About編集内容
     </h2>
     <p class="gosaki-about-content-panel__readonly-note" role="note">
-      現在は閲覧のみ。保存機能は準備中です。内容の選択・コピーはできます。
+      テキスト項目を編集できます。画像の差し替えは対象外です。「変更を確認」後、controlled arm
+      時のみ保存できます。公開ページ反映は package 再アップロードが必要です。
     </p>
 
     <section
@@ -288,8 +290,6 @@ const bandImageLabels = bandImages.map((img) => ({
                 class="gosaki-about-admin-form__control"
                 type="text"
                 value={profileForm.heading}
-                readonly
-                aria-readonly="true"
                 data-gosaki-about-field="profile-heading"
               />
             </label>
@@ -298,8 +298,6 @@ const bandImageLabels = bandImages.map((img) => ({
               <textarea
                 class="gosaki-about-admin-form__control gosaki-about-admin-form__control--textarea"
                 rows="10"
-                readonly
-                aria-readonly="true"
                 data-gosaki-about-field="profile-body"
               >{profileForm.body}</textarea>
             </label>
@@ -328,8 +326,6 @@ const bandImageLabels = bandImages.map((img) => ({
                       class="gosaki-about-admin-form__control"
                       type="text"
                       value={profileForm.image.alt}
-                      readonly
-                      aria-readonly="true"
                       data-gosaki-about-field="profile-image-alt"
                     />
                   </label>
@@ -371,8 +367,6 @@ const bandImageLabels = bandImages.map((img) => ({
                       class="gosaki-about-admin-form__control"
                       type="text"
                       value={band.name}
-                      readonly
-                      aria-readonly="true"
                       data-gosaki-about-field="band-name"
                     />
                   </label>
@@ -381,8 +375,6 @@ const bandImageLabels = bandImages.map((img) => ({
                     <textarea
                       class="gosaki-about-admin-form__control gosaki-about-admin-form__control--textarea"
                       rows="8"
-                      readonly
-                      aria-readonly="true"
                       data-gosaki-about-field="band-body"
                     >{band.body}</textarea>
                   </label>
@@ -412,8 +404,6 @@ const bandImageLabels = bandImages.map((img) => ({
                             class="gosaki-about-admin-form__control"
                             type="text"
                             value={band.image.alt}
-                            readonly
-                            aria-readonly="true"
                             data-gosaki-about-field="band-image-alt"
                           />
                         </label>
@@ -445,6 +435,78 @@ const bandImageLabels = bandImages.map((img) => ({
   </section>
 
   <section
+    class="gosaki-about-content-panel__ops"
+    data-gosaki-about-operational-form
+    data-section="about-dry-run"
+    aria-labelledby="gosaki-about-ops-heading"
+  >
+    <h2 id="gosaki-about-ops-heading" class="gosaki-about-content-panel__section-title">
+      変更確認 / 保存
+    </h2>
+    <p class="gosaki-about-content-panel__readonly-note" role="note">
+      dry-run は GitHub GET のみ。Save は Contents PUT（workflow_dispatch / FTP / DB なし）。通常
+      package では Save 無効です。
+    </p>
+    <p
+      class="gosaki-read-only-admin__meta"
+      data-gosaki-about-local-validation
+      id="gosaki-about-local-validation"
+    >
+      編集後に「変更を確認」を実行してください
+    </p>
+    <div class="gosaki-about-content-panel__ops-actions">
+      <button
+        type="button"
+        class="gosaki-about-admin-form__save"
+        id="gosaki-about-dry-run-btn"
+        data-gosaki-about-dry-run
+      >
+        変更を確認
+      </button>
+      <button type="button" data-gosaki-about-cancel>
+        キャンセル
+      </button>
+    </div>
+    <pre
+      id="gosaki-about-dry-run-result"
+      class="gosaki-read-only-admin__result"
+      data-gosaki-about-dry-run-result
+      hidden
+    ></pre>
+    <div class="gosaki-about-content-panel__save" data-section="about-save">
+      <p
+        id="gosaki-about-save-disabled-reason"
+        class="gosaki-read-only-admin__meta gosaki-read-only-admin__meta--warn"
+        data-gosaki-about-save-reason
+        role="status"
+      >
+        Save は無効です。通常 STG package では常に無効です。
+      </p>
+      <p
+        class="gosaki-about-content-panel__save-note"
+        role="note"
+        data-gosaki-save-disabled-note="true"
+        data-gosaki-about-save-disabled="true"
+      >
+        通常 package では client arm=false · Save 再無効化済み。
+      </p>
+      <p class="gosaki-about-content-panel__save-actions">
+        <button
+          type="button"
+          class="gosaki-about-admin-form__save"
+          id="gosaki-about-save-btn"
+          disabled
+          aria-disabled="true"
+          data-gosaki-about-save
+          data-gosaki-about-save-disabled
+        >
+          保存する（無効）
+        </button>
+      </p>
+    </div>
+  </section>
+
+  <section
     class="gosaki-about-content-panel__public-preview"
     data-gosaki-about-public-preview="true"
     aria-labelledby="gosaki-about-public-preview-heading"
@@ -467,26 +529,6 @@ const bandImageLabels = bandImages.map((img) => ({
       />
     </div>
   </section>
-
-  <p
-    class="gosaki-about-content-panel__save-note"
-    role="note"
-    data-gosaki-save-disabled-note="true"
-    data-gosaki-about-save-disabled="true"
-  >
-    保存は無効です。現在は閲覧のみで、保存機能は準備中です。
-  </p>
-  <p class="gosaki-about-content-panel__save-actions">
-    <button
-      type="button"
-      class="gosaki-about-admin-form__save"
-      disabled
-      aria-disabled="true"
-      data-gosaki-about-save-disabled
-    >
-      保存する（現在は無効）
-    </button>
-  </p>
 </section>
 
 <style>
@@ -494,6 +536,21 @@ const bandImageLabels = bandImages.map((img) => ({
     min-width: 0;
     max-width: 100%;
     box-sizing: border-box;
+  }
+
+  .gosaki-about-content-panel__ops {
+    margin: 0 0 1.75rem;
+    padding: 1rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    background: #f8fafc;
+  }
+
+  .gosaki-about-content-panel__ops-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin: 0.75rem 0;
   }
 
   .gosaki-about-content-panel__section-title {

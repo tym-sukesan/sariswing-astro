@@ -76,6 +76,15 @@ import {
   G20U45_SCHEDULE_SAVE_OPERATION,
   G20U45_SCHEDULE_SAVE_APPROVAL_ID,
   G20U45_SCHEDULE_CONFLICT_MESSAGE,
+  G12A_ABOUT_SAVE_APPROVAL_ID,
+  G12A_ABOUT_SAVE_OPERATION_ID,
+  G12A_ABOUT_DRY_RUN_APPROVAL_ID,
+  G12A_ABOUT_CONFLICT_MESSAGE,
+  resolveG12aAboutDryRunEndpoint,
+  resolveG12aAboutSaveEndpoint,
+  isG12aAboutSaveEnabled,
+  assertGosakiAboutDryRunEndpointSafe,
+  assertGosakiAboutSaveEndpointSafe,
 } from "../lib/gosaki-staging-read-only-admin";
 
 interface Props {
@@ -94,6 +103,15 @@ const scheduleDryRunEndpointRaw = resolveGosakiScheduleDryRunEndpoint(import.met
 const scheduleDryRunEndpoint = assertGosakiScheduleDryRunEndpointSafe(scheduleDryRunEndpointRaw)
   ? scheduleDryRunEndpointRaw
   : "";
+const aboutDryRunEndpointRaw = resolveG12aAboutDryRunEndpoint(import.meta.env);
+const aboutDryRunEndpoint = assertGosakiAboutDryRunEndpointSafe(aboutDryRunEndpointRaw)
+  ? aboutDryRunEndpointRaw
+  : "";
+const aboutSaveEndpointRaw = resolveG12aAboutSaveEndpoint(import.meta.env);
+const aboutSaveEndpoint = assertGosakiAboutSaveEndpointSafe(aboutSaveEndpointRaw)
+  ? aboutSaveEndpointRaw
+  : "";
+const aboutSaveArmed = isG12aAboutSaveEnabled(import.meta.env);
 const supabaseUrl = resolveG11c4aSupabaseUrl(import.meta.env);
 const supabaseAnonKey = resolveG11c4aSupabaseAnonKey(import.meta.env);
 const supabaseAuthConfigured = isG11c4aSupabaseAuthConfigured(import.meta.env);
@@ -133,7 +151,7 @@ const pageTitleByRoute = {
 } as const;
 const pageTitle = pageTitleByRoute[page];
 const navCurrent = page === "portal" ? "home" : page;
-const showAuth = page === "youtube" || page === "discography" || page === "schedule";
+const showAuth = page === "youtube" || page === "discography" || page === "schedule" || page === "about";
 const showClientScript = page !== "portal";
 ---
 
@@ -185,6 +203,12 @@ const showClientScript = page !== "portal";
     data-g11c6-approval-id={G11C6_APPROVAL_ID}
     data-g11c6-save-enabled={saveEnabled ? "true" : "false"}
     data-gosaki-youtube-save-armed={saveEnabled ? "true" : "false"}
+    data-gosaki-about-dry-run-endpoint={aboutDryRunEndpoint}
+    data-gosaki-about-save-endpoint={aboutSaveEndpoint}
+    data-gosaki-about-save-armed={aboutSaveArmed ? "true" : "false"}
+    data-g12a-about-dry-run-approval-id={G12A_ABOUT_DRY_RUN_APPROVAL_ID}
+    data-g12a-about-save-operation-id={G12A_ABOUT_SAVE_OPERATION_ID}
+    data-g12a-about-save-approval-id={G12A_ABOUT_SAVE_APPROVAL_ID}
   >
         <div class="gosaki-read-only-admin__shell">
       <header class="gosaki-read-only-admin__header">
@@ -483,7 +507,7 @@ const showClientScript = page !== "portal";
                 {view.about.profileLabel}: {view.about.profileCharCount} chars · {view.about.bandsLabel}: {view.about.bandsCharCount} chars · {view.about.bandImages.length} images
               </p>
               <p class="gosaki-read-only-admin__meta">
-                About UI: AdminGosakiStagingAboutContentPanel（編集フォーム → 公開時プレビュー · Save disabled）
+                About UI: AdminGosakiStagingAboutContentPanel（編集フォーム → dry-run/Save gated · 公開時プレビュー）
               </p>
             </details>
           </>
@@ -746,10 +770,21 @@ const showClientScript = page !== "portal";
         sanitizeYoutubeSaveEndpointDisplay,
         evaluateYoutubeOperationalSaveGate,
         isYoutubeSaveConflictResponse,
+        G12A_ABOUT_SAVE_APPROVAL_ID,
+        G12A_ABOUT_CONFLICT_MESSAGE,
+        assertGosakiAboutDryRunEndpointSafe,
+        assertGosakiAboutSaveEndpointSafe,
+        buildAboutDryRunEndpointRequest,
+        buildAboutSaveEndpointRequest,
+        sanitizeAboutDryRunEndpointDisplay,
+        sanitizeAboutSaveEndpointDisplay,
+        evaluateAboutOperationalSaveGate,
+        isAboutSaveConflictResponse,
       } from "../lib/gosaki-staging-read-only-admin";
       import { initGosakiDiscographyOperationalEdit } from "../lib/gosaki-staging-discography-operational-edit";
       import { initGosakiScheduleOperationalEdit } from "../lib/gosaki-staging-schedule-operational-edit";
       import { initGosakiYoutubeOperationalEdit } from "../lib/gosaki-staging-youtube-operational-edit";
+      import { initGosakiAboutOperationalEdit } from "../lib/gosaki-staging-about-operational-edit";
 
       function resolveDiscographyAccessToken() {
         const body = document.body;
@@ -952,6 +987,30 @@ const showClientScript = page !== "portal";
           expectedSaveApprovalId:
             (body?.dataset.g11c6ApprovalId || "").trim() || G11C6_APPROVAL_ID,
           conflictMessage: G11C6_CONFLICT_MESSAGE,
+          productionProjectRefStop: G20U36C_PRODUCTION_PROJECT_REF_STOP,
+        });
+      }
+
+      const aboutRoot = document.getElementById("gosaki-about-content");
+      if (aboutRoot instanceof HTMLElement) {
+        const body = document.body;
+        initGosakiAboutOperationalEdit(aboutRoot, {
+          saveArmed: body?.dataset.gosakiAboutSaveArmed === "true",
+          getAccessToken: resolveDiscographyAccessToken,
+          dryRunEndpoint: (body?.dataset.gosakiAboutDryRunEndpoint || "").trim(),
+          saveEndpoint: (body?.dataset.gosakiAboutSaveEndpoint || "").trim(),
+          anonKey: (body?.dataset.gosakiSupabaseAnonKey || "").trim(),
+          assertDryRunEndpointSafe: assertGosakiAboutDryRunEndpointSafe,
+          assertSaveEndpointSafe: assertGosakiAboutSaveEndpointSafe,
+          buildDryRunEndpointRequest: buildAboutDryRunEndpointRequest,
+          buildSaveEndpointRequest: buildAboutSaveEndpointRequest,
+          sanitizeDryRunDisplay: sanitizeAboutDryRunEndpointDisplay,
+          sanitizeSaveDisplay: sanitizeAboutSaveEndpointDisplay,
+          evaluateSaveGate: evaluateAboutOperationalSaveGate,
+          isSaveConflictResponse: isAboutSaveConflictResponse,
+          expectedSaveApprovalId:
+            (body?.dataset.g12aAboutSaveApprovalId || "").trim() || G12A_ABOUT_SAVE_APPROVAL_ID,
+          conflictMessage: G12A_ABOUT_CONFLICT_MESSAGE,
           productionProjectRefStop: G20U36C_PRODUCTION_PROJECT_REF_STOP,
         });
       }

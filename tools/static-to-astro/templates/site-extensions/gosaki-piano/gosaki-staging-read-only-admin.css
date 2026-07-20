@@ -773,13 +773,44 @@ body.gosaki-read-only-admin {
   margin: 0 0 0.5rem;
 }
 
-.gosaki-about-admin-form__save {
+/* About ops: dry-run must look/click enabled when not :disabled (Save stays gated). */
+.gosaki-about-admin-form__action {
   padding: 0.5rem 0.9rem;
   border-radius: 6px;
   border: 1px solid var(--gra-border);
+  font: inherit;
+  line-height: 1.3;
+}
+
+.gosaki-about-admin-form__action:disabled {
   background: #e5e7eb;
   color: #6b7280;
-  font: inherit;
+  cursor: not-allowed;
+}
+
+.gosaki-about-admin-form__dry-run:not(:disabled) {
+  border-color: #1d4ed8;
+  background: #1d4ed8;
+  color: #fff;
+  cursor: pointer;
+}
+
+.gosaki-about-admin-form__cancel:not(:disabled) {
+  background: #fff;
+  color: var(--gra-text);
+  cursor: pointer;
+}
+
+.gosaki-about-admin-form__save:not(:disabled) {
+  border-color: #15803d;
+  background: #16a34a;
+  color: #fff;
+  cursor: pointer;
+}
+
+.gosaki-about-admin-form__save:disabled {
+  background: #e5e7eb;
+  color: #6b7280;
   cursor: not-allowed;
 }
 

@@ -2284,8 +2284,12 @@ assert(
   "about dry-run enabled by dirty not by client arm",
   aboutOpEditSrc.includes("Client arm must NOT gate dry-run") &&
     aboutOpEditSrc.includes("enabled = dirty && !dryRunInFlight && !saveInFlight") &&
+    aboutOpEditSrc.includes("Auth / CompactAuthBar must never disable this button") &&
     /dryRunBtn\.disabled\s*=\s*dryRunInFlight\s*\|\|\s*!auth/.test(aboutOpEditSrc) === false &&
     aboutPanelSrc.includes('id="gosaki-about-dry-run-btn"') &&
+    aboutPanelSrc.includes("gosaki-about-admin-form__dry-run") &&
+    aboutPanelSrc.includes(".gosaki-about-admin-form__dry-run:not(:disabled)") &&
+    /gosaki-about-admin-form__save\s*\{[^}]*cursor:\s*not-allowed/.test(aboutPanelSrc) === false &&
     /id="gosaki-about-dry-run-btn"[\s\S]{0,200}\bdisabled\b/.test(aboutPanelSrc) &&
     adminComponent.includes("About の「変更を確認」"),
 );

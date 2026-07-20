@@ -457,7 +457,7 @@ const bandImageLabels = bandImages.map((img) => ({
     <div class="gosaki-about-content-panel__ops-actions">
       <button
         type="button"
-        class="gosaki-about-admin-form__save"
+        class="gosaki-about-admin-form__action gosaki-about-admin-form__dry-run"
         id="gosaki-about-dry-run-btn"
         data-gosaki-about-dry-run
         disabled
@@ -466,7 +466,11 @@ const bandImageLabels = bandImages.map((img) => ({
       >
         変更を確認
       </button>
-      <button type="button" data-gosaki-about-cancel>
+      <button
+        type="button"
+        class="gosaki-about-admin-form__action gosaki-about-admin-form__cancel"
+        data-gosaki-about-cancel
+      >
         キャンセル
       </button>
     </div>
@@ -496,7 +500,7 @@ const bandImageLabels = bandImages.map((img) => ({
       <p class="gosaki-about-content-panel__save-actions">
         <button
           type="button"
-          class="gosaki-about-admin-form__save"
+          class="gosaki-about-admin-form__action gosaki-about-admin-form__save"
           id="gosaki-about-save-btn"
           disabled
           aria-disabled="true"
@@ -724,13 +728,44 @@ const bandImageLabels = bandImages.map((img) => ({
     margin: 0 0 0.5rem;
   }
 
-  .gosaki-about-admin-form__save {
+  /* Action buttons: disabled look only when :disabled — never permanently not-allowed. */
+  .gosaki-about-admin-form__action {
     padding: 0.5rem 0.9rem;
     border-radius: 6px;
     border: 1px solid #d1d5db;
+    font: inherit;
+    line-height: 1.3;
+  }
+
+  .gosaki-about-admin-form__action:disabled {
     background: #e5e7eb;
     color: #6b7280;
-    font: inherit;
+    cursor: not-allowed;
+  }
+
+  .gosaki-about-admin-form__dry-run:not(:disabled) {
+    border-color: #1d4ed8;
+    background: #1d4ed8;
+    color: #fff;
+    cursor: pointer;
+  }
+
+  .gosaki-about-admin-form__cancel:not(:disabled) {
+    background: #fff;
+    color: #1f2937;
+    cursor: pointer;
+  }
+
+  .gosaki-about-admin-form__save:not(:disabled) {
+    border-color: #15803d;
+    background: #16a34a;
+    color: #fff;
+    cursor: pointer;
+  }
+
+  .gosaki-about-admin-form__save:disabled {
+    background: #e5e7eb;
+    color: #6b7280;
     cursor: not-allowed;
   }
 </style>

@@ -3,11 +3,12 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **About operational edit (G-12a) 実装完了（source + mock + build）** — live HTTP Save / Edge deploy は未実施。次は staging Edge deploy preflight → controlled Save（明示承認）。
-2. YouTube controlled Save verification は完了・閉鎖（temporary `0ac09de` · restore `7d4bca5` · arms false）。
-3. Schedule / Discography / YouTube Save path はいずれも round-trip closed。
-4. staging Edge Function は通常 unarmed のまま運用（再 arm は明示承認時のみ）。
-5. production deploy / auto FTP は引き続き禁止ゲート。
+1. **About dry-run CSS/gate fix 完了（local browser PASS · unarmed package regenerated）** — Commit → operator re-upload → STG recheck（dirty で「変更を確認」enabled）。
+2. **About operational edit (G-12a)** — live HTTP Save / Edge deploy は未実施。STG dry-run UX 確認後に staging Edge deploy preflight → controlled Save（明示承認）。
+3. YouTube controlled Save verification は完了・閉鎖（temporary `0ac09de` · restore `7d4bca5` · arms false）。
+4. Schedule / Discography / YouTube Save path はいずれも round-trip closed。
+5. staging Edge Function は通常 unarmed のまま運用（再 arm は明示承認時のみ）。
+6. production deploy / auto FTP は引き続き禁止ゲート。
 
 Schedule operational Saveは完了済み：staging Edge deploy completed（v2）· live permission PASS · edit/create/cleanup PASS · DB total **79** · 通常 package `SCHEDULE_SAVE_DEFAULT_DISABLED: true`。
 

@@ -236,7 +236,7 @@ export function initGosakiAboutOperationalEdit(
   function applyDryRunButtonUi() {
     if (!(dryRunBtn instanceof HTMLButtonElement)) return;
     // Client arm must NOT gate dry-run — only Save. Enable when dirty and not in-flight.
-    // Auth is checked on click (login required to POST); missing auth must not look like Save arm.
+    // Auth / CompactAuthBar must never disable this button; auth is checked on click only.
     const dirty = isFormDirty();
     const enabled = dirty && !dryRunInFlight && !saveInFlight;
     dryRunBtn.disabled = !enabled;
@@ -306,6 +306,9 @@ export function initGosakiAboutOperationalEdit(
   }
 
   async function refreshSaveGate() {
+    // Sync dry-run UI before auth await so focus/visibility/auth-changed cannot leave
+    // a dirty form with dry-run stuck disabled while token refresh is in flight.
+    applyDryRunButtonUi();
     const auth = await refreshAuthFlag();
     applyDryRunButtonUi();
     const snapshot = readFormSnapshot();

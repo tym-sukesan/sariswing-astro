@@ -5,19 +5,22 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: Gosaki About operational edit (G-12a) — source + mock + full build COMPLETE (no live Save).
+Current phase: Gosaki About dry-run button CSS/gate fix COMPLETE (local browser PASS · unarmed package regenerated · no FTP).
+Prior: About operational edit (G-12a) source + mock + build · STG residual: dry-run looked disabled after dirty.
+Root cause: .gosaki-about-admin-form__save permanently cursor:not-allowed (JS dirty gate was already correct).
+Fix: __dry-run / __action classes + :not(:disabled) styles · auth never disables dry-run button.
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP.
 ABOUT_ROUTE: /cms-kit-staging/gosaki-piano/admin/about/
-RUNTIME_SOT: GitHub Contents · gosaki-piano-about-content.json · surgical HTML patch
-DRY_RUN: gosaki-about-content-dry-run · G-12a-gosaki-about-content-dry-run
-SAVE: gosaki-about-content-save · G-12a-gosaki-about-content-web-save-non-dry-run-slice
-CLIENT_ARM: PUBLIC_ADMIN_GOSAKI_ABOUT_CONTENT_WEB_SAVE_NON_DRY_RUN_ARMED (default false)
-SERVER_ARM: GOSAKI_ABOUT_CONTENT_SAVE_ARMED (default false)
-ABOUT_SAVE_DEFAULT_DISABLED: true · EXTERNAL_WRITE_EXECUTED: false
-YouTube controlled Save: COMPLETE AND CLOSED (7d4bca5 restore)
-Schedule: operational Save round-trip complete · unarmed · total 79
-Next: staging Edge deploy preflight for About functions → controlled Save（明示承認）
+DRY_RUN enable: dirty && !dryRunInFlight && !saveInFlight
+ABOUT_SAVE_DEFAULT_DISABLED: true · EXTERNAL_WRITE_EXECUTED: false · COMMIT_READY: true
+Next: Commit → operator re-upload unarmed package → STG recheck → then Edge deploy preflight（明示承認）
 ```
+
+## Gosaki About dry-run CSS/gate fix — result
+
+- Dirty → 「変更を確認」enabled（attr + cursor:pointer）; cancel restores; Save stays disabled when client arm=false
+- auth-changed / focus do not re-disable dry-run
+- Built package contract: `const W=$()&&!I&&!A;n.disabled=!W`
 
 ## Gosaki About operational edit (G-12a) — implementation result
 

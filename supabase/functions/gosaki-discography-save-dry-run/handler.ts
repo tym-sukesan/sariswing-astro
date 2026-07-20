@@ -25,6 +25,51 @@ export const DRY_RUN_OPERATION = "dryRun";
 export const DRY_RUN_APPROVAL_ID = "G-20u31-gosaki-discography-save-dry-run-endpoint";
 export const SAVE_APPROVAL_ID = "G-20u36-gosaki-discography-tracklist-save-non-dry-run-slice";
 
+/** Exact "true" required — unset/false rejects Save; dry-run stays available. */
+export const SAVE_ARMED_ENV = "GOSAKI_DISCOGRAPHY_SAVE_ARMED";
+export const SAVE_READINESS_NOT_ARMED = "save_not_armed";
+
+/** Operational UI Save — form editable fields (any gosaki-piano album). */
+export const OPERATIONAL_SAVE_APPROVAL_ID = "gosaki-discography-operational-save";
+export const OPERATIONAL_EDITABLE_RELEASE_FIELDS = [
+  "title",
+  "artist",
+  "release_date",
+  "label",
+  "purchase_url",
+  "description",
+] as const;
+export const OPERATIONAL_FROZEN_RELEASE_FIELDS = [
+  "catalog_number",
+  "published",
+  "cover_image_url",
+  "streaming_url",
+] as const;
+export const OPERATIONAL_ALLOWED_TOP_LEVEL_KEYS = [
+  "operation",
+  "siteSlug",
+  "legacyId",
+  "discographyLegacyId",
+  "approvalId",
+  "expectedBeforeUpdatedAt",
+  "release",
+  "tracksText",
+  "trackPolicy",
+  "clientDryRun",
+] as const;
+export const OPERATIONAL_TITLE_MAX = 200;
+export const OPERATIONAL_TEXT_MAX = 200;
+export const OPERATIONAL_DESCRIPTION_MAX = 5000;
+export const OPERATIONAL_URL_MAX = 2000;
+export const OPERATIONAL_TRACK_LINE_MAX = 200;
+export const OPERATIONAL_TRACK_COUNT_MAX = 100;
+
+export function isDiscographySaveArmed(
+  getEnv: (key: string) => string | undefined = (key) => Deno.env.get(key),
+): boolean {
+  return getEnv(SAVE_ARMED_ENV) === "true";
+}
+
 /** G-20u36e — one-off controlled Save slice (local implementation · not deployed in this phase). */
 export const CONTROLLED_SAVE_OPERATION = "save";
 export const CONTROLLED_SAVE_SLICE_ID =
@@ -171,6 +216,7 @@ const SAVE_APPROVAL_REGISTRY = [
   { approvalId: DRY_RUN_APPROVAL_ID, operation: "dryRun" as const },
   { approvalId: SAVE_APPROVAL_ID, operation: "save" as const },
   { approvalId: G20U43_LABEL_SAVE_APPROVAL_ID, operation: "save" as const },
+  { approvalId: OPERATIONAL_SAVE_APPROVAL_ID, operation: "save" as const },
 ];
 
 export type CurrentSnapshot = {
@@ -885,6 +931,7 @@ function buildControlledSaveFailure(input: {
   legacyId?: string;
   approvalId?: string;
   sliceId?: string;
+  saveReadiness?: string;
 }): DryRunHandlerResult {
   return {
     ok: false,
@@ -907,6 +954,7 @@ function buildControlledSaveFailure(input: {
     updatedRows: 0,
     status: input.status,
     serverTime: new Date().toISOString(),
+    ...(input.saveReadiness ? { saveReadiness: input.saveReadiness } : {}),
   };
 }
 
@@ -1391,10 +1439,24 @@ export async function handleControlledG20u43LabelSaveHttp(input: {
   authorizationHeader?: string | null;
   supabaseUrl?: string;
   anonKey?: string;
+  isSaveArmed?: () => boolean;
 }): Promise<DryRunHandlerResult> {
   const request = input.request ?? {};
   const approvalId = String(request.approvalId ?? "").trim();
   const legacyId = resolveControlledLegacyId(request);
+
+  const armed =
+    typeof input.isSaveArmed === "function" ? input.isSaveArmed() : isDiscographySaveArmed();
+  if (!armed) {
+    return buildControlledSaveFailure({
+      reasonCode: SAVE_READINESS_NOT_ARMED,
+      message: `Save is not armed on server (${SAVE_ARMED_ENV}=false)`,
+      status: 403,
+      legacyId,
+      approvalId,
+      saveReadiness: SAVE_READINESS_NOT_ARMED,
+    });
+  }
 
   const serviceRoleErrors = assertNoServiceRoleInPayload(request);
   if (serviceRoleErrors.length > 0) {
@@ -1542,9 +1604,9 @@ export async function handleControlledG20u43LabelSaveHttp(input: {
     });
   }
 
-  const currentRelease = mapReleaseRowToCurrentSnapshotRelease(releaseRow as Record<string, unknown>);
+  const currentRelease = mapReleaseRowToCurrentSnapshotRelease(releaseRow as unknown as Record<string, unknown>);
   const currentUpdatedAt = String(
-    (releaseRow as Record<string, unknown>).updated_at ?? "",
+    (releaseRow as unknown as Record<string, unknown>).updated_at ?? "",
   ).trim();
   currentRelease.updated_at = currentUpdatedAt;
 
@@ -1739,6 +1801,7 @@ export async function handleControlledG20u36eSaveHttp(input: {
   authorizationHeader?: string | null;
   supabaseUrl?: string;
   anonKey?: string;
+  isSaveArmed?: () => boolean;
 }): Promise<DryRunHandlerResult> {
   const gates = resolveControlledSaveSlice(input.request);
   if (!gates.ok || !gates.slice) {
@@ -1749,6 +1812,20 @@ export async function handleControlledG20u36eSaveHttp(input: {
       legacyId: gates.legacyId,
       approvalId: gates.approvalId,
       sliceId: gates.sliceId,
+    });
+  }
+
+  const armed =
+    typeof input.isSaveArmed === "function" ? input.isSaveArmed() : isDiscographySaveArmed();
+  if (!armed) {
+    return buildControlledSaveFailure({
+      reasonCode: SAVE_READINESS_NOT_ARMED,
+      message: `Save is not armed on server (${SAVE_ARMED_ENV}=false)`,
+      status: 403,
+      legacyId: gates.legacyId,
+      approvalId: gates.approvalId,
+      sliceId: gates.sliceId,
+      saveReadiness: SAVE_READINESS_NOT_ARMED,
     });
   }
 
@@ -1871,7 +1948,7 @@ export async function handleControlledG20u36eSaveHttp(input: {
         sliceId: gates.sliceId,
       });
     }
-    const currentRelease = mapReleaseRowToCurrentSnapshotRelease(releaseRow as Record<string, unknown>);
+    const currentRelease = mapReleaseRowToCurrentSnapshotRelease(releaseRow as unknown as Record<string, unknown>);
     const releaseFieldsChanged = diffReleaseFields(
       currentRelease,
       input.request.release as Record<string, unknown>,
@@ -2031,6 +2108,580 @@ export async function handleControlledG20u36eSaveHttp(input: {
   };
 }
 
+function operationalRejectHtml(value: string): boolean {
+  return /[<>]/.test(value);
+}
+
+function operationalNullableString(value: unknown): value is string | null {
+  return value === null || typeof value === "string";
+}
+
+function validateOperationalPurchaseUrl(raw: string): string | null {
+  const v = raw.trim();
+  if (!v) return null;
+  if (v.length > OPERATIONAL_URL_MAX) return `purchase_url exceeds ${OPERATIONAL_URL_MAX} chars`;
+  if (/javascript:/i.test(v)) return "purchase_url javascript: is forbidden";
+  try {
+    const u = new URL(v);
+    if (u.protocol !== "http:" && u.protocol !== "https:") {
+      return "purchase_url must be http(s)";
+    }
+  } catch {
+    return "purchase_url must be a valid URL";
+  }
+  return null;
+}
+
+function validateOperationalReleaseFields(release: Record<string, unknown>): string[] {
+  const errors: string[] = [];
+  const title = String(release.title ?? "").trim();
+  if (!title) errors.push("release.title is required");
+  if (title.length > OPERATIONAL_TITLE_MAX) {
+    errors.push(`release.title exceeds ${OPERATIONAL_TITLE_MAX} chars`);
+  }
+  if (operationalRejectHtml(title)) errors.push("release.title must not contain HTML markup");
+
+  for (const key of ["artist", "label"] as const) {
+    if (!operationalNullableString(release[key])) {
+      errors.push(`release.${key} must be string or null`);
+      continue;
+    }
+    const s = String(release[key] ?? "");
+    if (s.length > OPERATIONAL_TEXT_MAX) errors.push(`release.${key} exceeds ${OPERATIONAL_TEXT_MAX} chars`);
+    if (operationalRejectHtml(s)) errors.push(`release.${key} must not contain HTML markup`);
+  }
+
+  if (!operationalNullableString(release.description)) {
+    errors.push("release.description must be string or null");
+  } else {
+    const d = String(release.description ?? "");
+    if (d.length > OPERATIONAL_DESCRIPTION_MAX) {
+      errors.push(`release.description exceeds ${OPERATIONAL_DESCRIPTION_MAX} chars`);
+    }
+    if (operationalRejectHtml(d)) errors.push("release.description must not contain HTML markup");
+  }
+
+  if (!operationalNullableString(release.release_date)) {
+    errors.push("release.release_date must be string or null");
+  } else {
+    const rd = String(release.release_date ?? "").trim();
+    if (rd && !/^\d{4}-\d{2}-\d{2}$/.test(rd)) {
+      errors.push("release.release_date must be YYYY-MM-DD or empty");
+    }
+  }
+
+  if (!operationalNullableString(release.purchase_url)) {
+    errors.push("release.purchase_url must be string or null");
+  } else {
+    const urlErr = validateOperationalPurchaseUrl(String(release.purchase_url ?? ""));
+    if (urlErr) errors.push(urlErr);
+  }
+
+  return errors;
+}
+
+function validateOperationalTracksText(tracksText: string): { ok: true; lines: string[] } | { ok: false; errors: string[] } {
+  const lines = parseDiscographyTrackListLines(tracksText);
+  const errors: string[] = [];
+  if (lines.length > OPERATIONAL_TRACK_COUNT_MAX) {
+    errors.push(`tracksText exceeds ${OPERATIONAL_TRACK_COUNT_MAX} tracks`);
+  }
+  for (const line of lines) {
+    if (line.length > OPERATIONAL_TRACK_LINE_MAX) {
+      errors.push(`track line exceeds ${OPERATIONAL_TRACK_LINE_MAX} chars`);
+      break;
+    }
+    if (operationalRejectHtml(line)) {
+      errors.push("track titles must not contain HTML markup");
+      break;
+    }
+  }
+  if (errors.length) return { ok: false, errors };
+  return { ok: true, lines };
+}
+
+function assertOperationalNoUnexpectedPayloadKeys(request: DryRunRequest): string[] {
+  const keys = g20u43OwnKeys(request);
+  if (!keys) return ["request must be a non-null object"];
+  const unexpected = keys.filter((k) => !(OPERATIONAL_ALLOWED_TOP_LEVEL_KEYS as readonly string[]).includes(k));
+  if (unexpected.length > 0) {
+    return [`unexpected payload keys: ${unexpected.join(", ")}`];
+  }
+  return [];
+}
+
+/**
+ * Operational Discography Save — editable form fields + track list for any gosaki-piano album.
+ * Requires GOSAKI_DISCOGRAPHY_SAVE_ARMED=true · JWT · is_admin · optimistic lock.
+ */
+export async function handleOperationalDiscographySaveHttp(input: {
+  request: DryRunRequest;
+  authorizationHeader?: string | null;
+  supabaseUrl?: string;
+  anonKey?: string;
+  isSaveArmed?: () => boolean;
+}): Promise<DryRunHandlerResult> {
+  const request = input.request ?? {};
+  const approvalId = String(request.approvalId ?? "").trim();
+  const legacyId = resolveControlledLegacyId(request);
+
+  const armed =
+    typeof input.isSaveArmed === "function" ? input.isSaveArmed() : isDiscographySaveArmed();
+  if (!armed) {
+    return buildControlledSaveFailure({
+      reasonCode: SAVE_READINESS_NOT_ARMED,
+      message: `Save is not armed on server (${SAVE_ARMED_ENV}=false)`,
+      status: 403,
+      legacyId,
+      approvalId,
+      saveReadiness: SAVE_READINESS_NOT_ARMED,
+    });
+  }
+
+  const serviceRoleErrors = assertNoServiceRoleInPayload(request);
+  if (serviceRoleErrors.length > 0) {
+    return buildControlledSaveFailure({
+      reasonCode: "service_role_forbidden",
+      message: serviceRoleErrors[0],
+      status: 400,
+      legacyId,
+      approvalId,
+    });
+  }
+
+  const unexpectedKeyErrors = assertOperationalNoUnexpectedPayloadKeys(request);
+  if (unexpectedKeyErrors.length > 0) {
+    return buildControlledSaveFailure({
+      reasonCode: "unexpected_payload_key",
+      message: unexpectedKeyErrors[0],
+      status: 400,
+      legacyId,
+      approvalId,
+    });
+  }
+
+  if (String(request.operation ?? "") !== CONTROLLED_SAVE_OPERATION) {
+    return buildControlledSaveFailure({
+      reasonCode: "operation_mismatch",
+      message: 'operation must be "save"',
+      status: 400,
+      legacyId,
+      approvalId,
+    });
+  }
+
+  if (approvalId !== OPERATIONAL_SAVE_APPROVAL_ID) {
+    return buildControlledSaveFailure({
+      reasonCode: "approval_id_mismatch",
+      message: `approvalId must be ${OPERATIONAL_SAVE_APPROVAL_ID}`,
+      status: 400,
+      legacyId,
+      approvalId,
+    });
+  }
+
+  const siteSlug = String(request.siteSlug ?? "").trim();
+  if (siteSlug !== SITE_SLUG) {
+    return buildControlledSaveFailure({
+      reasonCode: "site_mismatch",
+      message: `siteSlug must be "${SITE_SLUG}"`,
+      status: 400,
+      legacyId,
+      approvalId,
+    });
+  }
+
+  if (!/^discography-\d{3}$/.test(legacyId)) {
+    return buildControlledSaveFailure({
+      reasonCode: "legacy_id_mismatch",
+      message: "legacyId must match discography-NNN",
+      status: 400,
+      legacyId,
+      approvalId,
+    });
+  }
+
+  const expectedBeforeUpdatedAt = String(request.expectedBeforeUpdatedAt ?? "").trim();
+  if (!expectedBeforeUpdatedAt) {
+    return buildControlledSaveFailure({
+      reasonCode: "optimistic_lock_missing",
+      message: "expectedBeforeUpdatedAt is required",
+      status: 400,
+      legacyId,
+      approvalId,
+    });
+  }
+
+  if (!request.release || typeof request.release !== "object" || Array.isArray(request.release)) {
+    return buildControlledSaveFailure({
+      reasonCode: "release_required",
+      message: "release object is required",
+      status: 400,
+      legacyId,
+      approvalId,
+    });
+  }
+
+  const release = request.release as Record<string, unknown>;
+  const releaseKeys = g20u43OwnKeys(release);
+  if (!releaseKeys) {
+    return buildControlledSaveFailure({
+      reasonCode: "release_required",
+      message: "release object is required",
+      status: 400,
+      legacyId,
+      approvalId,
+    });
+  }
+  const unexpectedRelease = releaseKeys.filter(
+    (k) => !(G20U43_RELEASE_ALLOWED_KEYS as readonly string[]).includes(k),
+  );
+  if (unexpectedRelease.length > 0) {
+    return buildControlledSaveFailure({
+      reasonCode: "unexpected_payload_key",
+      message: `unexpected release keys: ${unexpectedRelease.join(", ")}`,
+      status: 400,
+      legacyId,
+      approvalId,
+    });
+  }
+
+  const fieldErrors = validateOperationalReleaseFields(release);
+  if (fieldErrors.length > 0) {
+    return buildControlledSaveFailure({
+      reasonCode: "field_validation_failed",
+      message: fieldErrors[0],
+      status: 400,
+      legacyId,
+      approvalId,
+    });
+  }
+
+  if (typeof request.tracksText !== "string") {
+    return buildControlledSaveFailure({
+      reasonCode: "tracks_required",
+      message: "tracksText must be a string",
+      status: 400,
+      legacyId,
+      approvalId,
+    });
+  }
+
+  const tracksParsed = validateOperationalTracksText(request.tracksText);
+  if (!tracksParsed.ok) {
+    return buildControlledSaveFailure({
+      reasonCode: "tracks_validation_failed",
+      message: tracksParsed.errors[0],
+      status: 400,
+      legacyId,
+      approvalId,
+    });
+  }
+
+  const bearer = extractBearerToken(input.authorizationHeader);
+  if (!bearer) {
+    return buildControlledSaveFailure({
+      reasonCode: "missing_authorization",
+      message: "Authorization Bearer token is required",
+      status: 401,
+      legacyId,
+      approvalId,
+    });
+  }
+
+  let client: SupabaseClient;
+  try {
+    client = createUserJwtSupabaseClient({
+      supabaseUrl: input.supabaseUrl ?? "",
+      anonKey: input.anonKey ?? "",
+      authorizationHeader: `Bearer ${bearer}`,
+    });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    const production = /production/i.test(message);
+    return buildControlledSaveFailure({
+      reasonCode: production ? "production_ref_blocked" : "config_error",
+      message: production ? "production Supabase ref is blocked" : "operational Save config error",
+      status: production ? 403 : 500,
+      legacyId,
+      approvalId,
+    });
+  }
+
+  const admin = await assertOperatorIsAdmin(client);
+  if (!admin.ok) {
+    return buildControlledSaveFailure({
+      reasonCode: admin.reasonCode,
+      message: admin.message,
+      status: admin.status,
+      legacyId,
+      approvalId,
+    });
+  }
+
+  const { data: releaseRow, error: releaseError } = await client
+    .from("discography")
+    .select(RELEASE_SELECT_FIELDS_WITH_UPDATED_AT)
+    .eq("site_slug", SITE_SLUG)
+    .eq("legacy_id", legacyId)
+    .limit(1)
+    .maybeSingle();
+
+  if (releaseError || !releaseRow) {
+    return buildControlledSaveFailure({
+      reasonCode: "release_read_failed",
+      message: "failed to read discography row for operational Save",
+      status: 403,
+      legacyId,
+      approvalId,
+    });
+  }
+
+  const currentRelease = mapReleaseRowToCurrentSnapshotRelease(releaseRow as unknown as Record<string, unknown>);
+  const currentUpdatedAt = String(
+    (releaseRow as unknown as Record<string, unknown>).updated_at ?? "",
+  ).trim();
+  currentRelease.updated_at = currentUpdatedAt;
+
+  if (!currentUpdatedAt) {
+    return buildControlledSaveFailure({
+      reasonCode: "optimistic_lock_unavailable",
+      message: "current updated_at is unavailable",
+      status: 409,
+      legacyId,
+      approvalId,
+    });
+  }
+
+  if (expectedBeforeUpdatedAt !== currentUpdatedAt) {
+    return buildControlledSaveFailure({
+      reasonCode: "optimistic_lock_conflict",
+      message: "expectedBeforeUpdatedAt does not match current updated_at",
+      status: 409,
+      legacyId,
+      approvalId,
+    });
+  }
+
+  for (const field of OPERATIONAL_FROZEN_RELEASE_FIELDS) {
+    const before = currentRelease[field] ?? null;
+    const after = release[field] ?? null;
+    if (String(before ?? "") !== String(after ?? "")) {
+      return buildControlledSaveFailure({
+        reasonCode: "frozen_field_change_forbidden",
+        message: `field ${field} is not editable in this phase`,
+        status: 400,
+        legacyId,
+        approvalId,
+      });
+    }
+  }
+
+  const releaseFieldsChanged = diffReleaseFields(currentRelease, release).filter((f) =>
+    (OPERATIONAL_EDITABLE_RELEASE_FIELDS as readonly string[]).includes(f),
+  );
+  const forbiddenReleaseChanges = diffReleaseFields(currentRelease, release).filter(
+    (f) => !(OPERATIONAL_EDITABLE_RELEASE_FIELDS as readonly string[]).includes(f),
+  );
+  if (forbiddenReleaseChanges.length > 0) {
+    return buildControlledSaveFailure({
+      reasonCode: "field_not_allowlisted",
+      message: `non-editable release fields changed: ${forbiddenReleaseChanges.join(", ")}`,
+      status: 400,
+      legacyId,
+      approvalId,
+    });
+  }
+
+  const { data: trackRows, error: tracksError } = await client
+    .from("discography_tracks")
+    .select(CONTROLLED_TRACK_SELECT)
+    .eq("site_slug", SITE_SLUG)
+    .eq("discography_legacy_id", legacyId)
+    .order("track_number", { ascending: true });
+
+  if (tracksError) {
+    return buildControlledSaveFailure({
+      reasonCode: "rls_or_permission_denied",
+      message: "failed to read tracks for operational Save",
+      status: 403,
+      legacyId,
+      approvalId,
+    });
+  }
+
+  const beforeTitles = sortTrackRows((trackRows ?? []) as Array<Record<string, unknown>>).map(
+    (row) => String(row.title ?? "").trim(),
+  );
+  const afterTitles = tracksParsed.lines;
+  const tracksChanged = beforeTitles.join("\n") !== afterTitles.join("\n");
+
+  if (releaseFieldsChanged.length === 0 && !tracksChanged) {
+    return buildControlledSaveFailure({
+      reasonCode: "no_change",
+      message: "no editable field or tracklist change detected",
+      status: 422,
+      legacyId,
+      approvalId,
+    });
+  }
+
+  if (releaseFieldsChanged.length > 0) {
+    const patch: Record<string, unknown> = {};
+    for (const field of releaseFieldsChanged) {
+      if (field === "published") {
+        patch.published = release.published === true;
+      } else {
+        const raw = release[field];
+        patch[field] = raw === null || raw === undefined ? null : String(raw);
+      }
+    }
+    const { data: updatedRows, error: updateError } = await client
+      .from("discography")
+      .update(patch)
+      .eq("site_slug", SITE_SLUG)
+      .eq("legacy_id", legacyId)
+      .eq("updated_at", expectedBeforeUpdatedAt)
+      .select("id,legacy_id,updated_at");
+
+    if (updateError) {
+      return buildControlledSaveFailure({
+        reasonCode: "rls_or_permission_denied",
+        message: "operational release UPDATE denied by RLS or grants",
+        status: 403,
+        legacyId,
+        approvalId,
+      });
+    }
+    const count = Array.isArray(updatedRows) ? updatedRows.length : 0;
+    if (count === 0) {
+      return buildControlledSaveFailure({
+        reasonCode: "optimistic_lock_conflict",
+        message: "UPDATE matched 0 rows — conflict / already changed / STOP",
+        status: 409,
+        legacyId,
+        approvalId,
+      });
+    }
+    if (count !== 1) {
+      return buildControlledSaveFailure({
+        reasonCode: "update_multiple_rows",
+        message: "UPDATE matched multiple rows — STOP",
+        status: 500,
+        legacyId,
+        approvalId,
+      });
+    }
+  }
+
+  if (tracksChanged) {
+    const { error: deleteError } = await client
+      .from("discography_tracks")
+      .delete()
+      .eq("site_slug", SITE_SLUG)
+      .eq("discography_legacy_id", legacyId);
+
+    if (deleteError) {
+      return buildControlledSaveFailure({
+        reasonCode: "rls_or_permission_denied",
+        message: "operational track DELETE denied by RLS or grants",
+        status: 403,
+        legacyId,
+        approvalId,
+      });
+    }
+
+    if (afterTitles.length > 0) {
+      const insertRows = afterTitles.map((title, index) => ({
+        site_slug: SITE_SLUG,
+        discography_legacy_id: legacyId,
+        track_number: index + 1,
+        sort_order: index + 1,
+        title,
+      }));
+      const { error: insertError } = await client.from("discography_tracks").insert(insertRows);
+      if (insertError) {
+        return buildControlledSaveFailure({
+          reasonCode: "rls_or_permission_denied",
+          message: "operational track INSERT denied by RLS or grants",
+          status: 403,
+          legacyId,
+          approvalId,
+        });
+      }
+    }
+
+    // Touch release when only tracks changed so optimistic lock advances.
+    if (releaseFieldsChanged.length === 0) {
+      const { data: touchRows, error: touchError } = await client
+        .from("discography")
+        .update({ title: String(currentRelease.title ?? "") })
+        .eq("site_slug", SITE_SLUG)
+        .eq("legacy_id", legacyId)
+        .eq("updated_at", expectedBeforeUpdatedAt)
+        .select("id,updated_at");
+      if (touchError || !Array.isArray(touchRows) || touchRows.length !== 1) {
+        return buildControlledSaveFailure({
+          reasonCode: "optimistic_lock_conflict",
+          message: "track Save succeeded but release lock touch failed — STOP and verify",
+          status: 409,
+          legacyId,
+          approvalId,
+        });
+      }
+    }
+  }
+
+  const { data: afterRow, error: afterError } = await client
+    .from("discography")
+    .select("updated_at")
+    .eq("site_slug", SITE_SLUG)
+    .eq("legacy_id", legacyId)
+    .limit(1)
+    .maybeSingle();
+
+  if (afterError || !afterRow) {
+    return buildControlledSaveFailure({
+      reasonCode: "post_save_readback_failed",
+      message: "Save succeeded but post-save readBack failed",
+      status: 500,
+      legacyId,
+      approvalId,
+    });
+  }
+
+  const nextUpdatedAt = String((afterRow as unknown as Record<string, unknown>).updated_at ?? "").trim();
+  const changedFields = [
+    ...releaseFieldsChanged,
+    ...(tracksChanged ? ["tracks"] : []),
+  ];
+
+  return {
+    ok: true,
+    operation: CONTROLLED_SAVE_OPERATION,
+    controlledSave: true,
+    operationalSave: true,
+    endpoint: ENDPOINT_NAME,
+    siteSlug: SITE_SLUG,
+    legacyId,
+    discographyLegacyId: legacyId,
+    approvalId,
+    changedFields,
+    updatedRows: 1,
+    updated_at: nextUpdatedAt,
+    updatedAt: nextUpdatedAt,
+    errors: [],
+    warnings: [],
+    wouldWrite: true,
+    didWrite: true,
+    dbWrite: true,
+    networkWrite: true,
+    saveEnabled: true,
+    status: 200,
+    serverTime: new Date().toISOString(),
+  };
+}
+
 /**
  * HTTP handler entry — POST/json · dryRun (sync) · controlled save deferred to async path.
  * Sync path: schema-only baseline (readBack null) when readBack disabled.
@@ -2085,6 +2736,7 @@ export async function handleDiscographyEdgeDryRunHttpAsync(
     readBackAdapter?: ReadBackQueryAdapter | null;
     supabaseUrl?: string;
     anonKey?: string;
+    isSaveArmed?: () => boolean;
   } = {},
 ): Promise<DryRunHandlerResult> {
   const envelope = validateHttpEnvelope(input);
@@ -2101,12 +2753,22 @@ export async function handleDiscographyEdgeDryRunHttpAsync(
 
   if (request.operation === CONTROLLED_SAVE_OPERATION) {
     const approvalId = String(request.approvalId ?? "").trim();
+    if (approvalId === OPERATIONAL_SAVE_APPROVAL_ID) {
+      return handleOperationalDiscographySaveHttp({
+        request,
+        authorizationHeader: input.authorizationHeader ?? null,
+        supabaseUrl: options.supabaseUrl,
+        anonKey: options.anonKey,
+        isSaveArmed: options.isSaveArmed,
+      });
+    }
     if (approvalId === G20U43_LABEL_SAVE_APPROVAL_ID) {
       return handleControlledG20u43LabelSaveHttp({
         request,
         authorizationHeader: input.authorizationHeader ?? null,
         supabaseUrl: options.supabaseUrl,
         anonKey: options.anonKey,
+        isSaveArmed: options.isSaveArmed,
       });
     }
     return handleControlledG20u36eSaveHttp({
@@ -2114,6 +2776,7 @@ export async function handleDiscographyEdgeDryRunHttpAsync(
       authorizationHeader: input.authorizationHeader ?? null,
       supabaseUrl: options.supabaseUrl,
       anonKey: options.anonKey,
+      isSaveArmed: options.isSaveArmed,
     });
   }
 

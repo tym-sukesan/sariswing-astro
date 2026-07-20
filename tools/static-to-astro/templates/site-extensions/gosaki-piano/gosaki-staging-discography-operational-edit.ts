@@ -53,12 +53,6 @@ export type DiscographyOperationalEditDeps = {
     approvalId: string;
     expectedApprovalId: string;
     saveInFlight: boolean;
-    g20u43LabelSlice?: {
-      legacyId: string;
-      originalLabel: string;
-      currentLabel: string;
-      changedFields: string[];
-    } | null;
   }) => { enabled: boolean; reason: string };
   assertDryRunEndpointSafe: (endpoint: string) => boolean;
   assertSaveEndpointSafe: (endpoint: string) => boolean;
@@ -277,6 +271,12 @@ export function initGosakiDiscographyOperationalEdit(
   let dryRunSucceeded = false;
   let dryRunLockedFingerprint = "";
   let authenticated = false;
+  let pendingOneClickSave = false;
+  let indeterminateLocked = false;
+
+  const setUserSaveMessage = (message: string) => {
+    if (saveReasonEl instanceof HTMLElement) saveReasonEl.textContent = message;
+  };
 
   const clearDryRunLock = () => {
     dryRunSucceeded = false;
@@ -316,16 +316,7 @@ export function initGosakiDiscographyOperationalEdit(
       dryRunSucceeded &&
       dryRunLockedFingerprint !== "" &&
       currentFingerprint === dryRunLockedFingerprint;
-    // Candidate from page attr; expected from formal constant dep — never the same binding.
     const candidateApprovalId = String(body?.dataset.g20u41DiscographySaveApprovalId ?? "").trim();
-    const current = readFormSnapshot(form);
-    let originalLabel = "";
-    try {
-      const original = JSON.parse(form.dataset.originalSnapshot || "{}") as { label?: string };
-      originalLabel = String(original.label ?? "");
-    } catch {
-      originalLabel = "";
-    }
 
     const gate = deps.evaluateSaveGate({
       authenticated,
@@ -337,33 +328,34 @@ export function initGosakiDiscographyOperationalEdit(
       envArmed: deps.saveArmed,
       approvalId: candidateApprovalId,
       expectedApprovalId: deps.expectedSaveApprovalId,
-      saveInFlight,
-      g20u43LabelSlice: {
-        legacyId: current.legacyId,
-        originalLabel,
-        currentLabel: current.label,
-        changedFields: changedEditableFields(form),
-      },
+      saveInFlight: saveInFlight || dryRunInFlight,
     });
 
     if (saveReasonEl instanceof HTMLElement) {
       const dirty = isDirty(form);
-      if (!authenticated) {
+      if (indeterminateLocked) {
+        saveReasonEl.textContent = "結果が確認できません。自動では再試行しません。";
+      } else if (!authenticated) {
         saveReasonEl.textContent = "ログインが必要です";
       } else if (!dirty) {
         saveReasonEl.textContent = "変更がありません";
-      } else if (!deps.saveArmed && gate.enabled) {
+      } else if (saveInFlight) {
+        saveReasonEl.textContent = "保存中…";
+      } else if (dryRunInFlight) {
+        saveReasonEl.textContent = "確認中…";
+      } else if (!deps.saveArmed && dirty && authenticated) {
         saveReasonEl.textContent =
-          "保存の準備ができました。現在のテスト環境では保存は無効です。";
+          "変更があります。保存の準備ができました。現在のテスト環境では保存は無効です。";
       } else {
         saveReasonEl.textContent = gate.enabled
-          ? "保存"
+          ? "保存できます"
           : gate.reason || "変更があると保存できます";
       }
     }
     if (saveBtn instanceof HTMLButtonElement) {
       const dirty = isDirty(form);
-      const canClick = authenticated && dirty && !saveInFlight;
+      const canClick =
+        authenticated && dirty && !saveInFlight && !dryRunInFlight && !indeterminateLocked;
       saveBtn.disabled = !canClick;
       saveBtn.setAttribute("aria-disabled", canClick ? "false" : "true");
       saveBtn.textContent = "保存";
@@ -431,160 +423,320 @@ export function initGosakiDiscographyOperationalEdit(
   form.addEventListener("input", refreshDirty);
   form.addEventListener("change", refreshDirty);
 
+  const runInternalDryRun = async (): Promise<boolean> => {
+    if (dryRunInFlight || saveInFlight || indeterminateLocked) return false;
+    clearDryRunLock();
+
+    const current = readFormSnapshot(form);
+    const originalTracks = field(form, "tracks")?.getAttribute("data-original-track-list") ?? "";
+    const localDryRun = deps.validateTrackListDryRun(originalTracks, current.tracks, {
+      legacyId: current.legacyId,
+      title: current.title,
+    });
+    if (localDryRun.ok === false) {
+      setUserSaveMessage("入力内容を確認してください");
+      if (saveValidationEl instanceof HTMLElement) {
+        saveValidationEl.hidden = false;
+        saveValidationEl.textContent = "トラックリストの形式を確認してください";
+      }
+      return false;
+    }
+
+    const release = buildReleasePayload(current);
+    const expectedBeforeUpdatedAt = form.dataset.expectedBeforeUpdatedAt || null;
+    const body = document.body;
+    const endpoint = (body?.dataset.gosakiDiscographyDryRunEndpoint || "").trim();
+    const anonKey = (body?.dataset.gosakiSupabaseAnonKey || "").trim();
+
+    if (!endpoint || !anonKey) {
+      setUserSaveMessage("保存の準備に失敗しました");
+      return false;
+    }
+    if (endpoint.includes(deps.productionProjectRefStop) || !deps.assertDryRunEndpointSafe(endpoint)) {
+      setUserSaveMessage("保存先が不正です");
+      return false;
+    }
+
+    const payload = deps.buildDryRunEndpointRequest({
+      legacyId: current.legacyId,
+      tracksText: current.tracks,
+      release,
+      expectedBeforeUpdatedAt,
+      localDryRun: {
+        totalBefore: Number(localDryRun.totalBefore ?? 0),
+        totalAfter: Number(localDryRun.totalAfter ?? 0),
+        added: (localDryRun.added as string[]) ?? [],
+        removed: (localDryRun.removed as string[]) ?? [],
+        reordered: Boolean(localDryRun.reordered),
+      },
+    });
+
+    if (payload.operation !== deps.dryRunOperation) {
+      setUserSaveMessage("保存の準備に失敗しました");
+      return false;
+    }
+
+    dryRunInFlight = true;
+    void refreshSaveUi();
+
+    const controller = new AbortController();
+    const timeoutId = window.setTimeout(() => controller.abort(), 20000);
+    try {
+      const res = await fetch(endpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + anonKey,
+          apikey: anonKey,
+        },
+        body: JSON.stringify(payload),
+        signal: controller.signal,
+      });
+      let data: unknown = {};
+      try {
+        data = await res.json();
+      } catch {
+        data = { ok: false, errors: ["non-JSON response"] };
+      }
+      const display = deps.sanitizeEndpointDisplay(data, res.status);
+      const endpointOk = display.ok === true;
+      if (endpointOk) {
+        dryRunSucceeded = true;
+        dryRunLockedFingerprint = editableFingerprint(current);
+        form.dataset.dryRunLockedSnapshot = dryRunLockedFingerprint;
+        if (dryRunOkEl instanceof HTMLElement) dryRunOkEl.hidden = true;
+        resultEl.textContent = "";
+        return true;
+      }
+      setUserSaveMessage("入力内容を確認してください");
+      return false;
+    } catch (err) {
+      if (err instanceof Error && err.name === "AbortError") {
+        indeterminateLocked = true;
+        setUserSaveMessage("時間切れです。自動では再試行しません。");
+      } else {
+        setUserSaveMessage("確認に失敗しました。自動では再試行しません。");
+      }
+      return false;
+    } finally {
+      window.clearTimeout(timeoutId);
+      dryRunInFlight = false;
+      void refreshSaveUi();
+    }
+  };
+
+  const executeSaveAfterDryRun = async (): Promise<void> => {
+    if (saveInFlight || dryRunInFlight || indeterminateLocked) return;
+
+    const current = readFormSnapshot(form);
+    const currentFingerprint = editableFingerprint(current);
+    const formMatches =
+      dryRunSucceeded &&
+      dryRunLockedFingerprint !== "" &&
+      currentFingerprint === dryRunLockedFingerprint;
+
+    if (!formMatches) {
+      setUserSaveMessage("入力内容を確認してください");
+      return;
+    }
+
+    if (!deps.saveArmed) {
+      setUserSaveMessage(
+        "保存の準備ができました。現在のテスト環境では保存は無効です。",
+      );
+      return;
+    }
+
+    const originalTracks = field(form, "tracks")?.getAttribute("data-original-track-list") ?? "";
+    const localDryRun = deps.validateTrackListDryRun(originalTracks, current.tracks, {
+      legacyId: current.legacyId,
+      title: current.title,
+    });
+    const release = buildReleasePayload(current);
+    const expectedBeforeUpdatedAt = form.dataset.expectedBeforeUpdatedAt || null;
+    const body = document.body;
+    const saveEndpoint = (
+      body?.dataset.gosakiDiscographySaveEndpoint ||
+      body?.dataset.gosakiDiscographyDryRunEndpoint ||
+      ""
+    ).trim();
+    const anonKey = (body?.dataset.gosakiSupabaseAnonKey || "").trim();
+
+    if (!saveEndpoint || !anonKey || !deps.getAccessToken) {
+      setUserSaveMessage("いまは保存できません");
+      return;
+    }
+
+    const token = await deps.getAccessToken();
+    if (!token) {
+      setUserSaveMessage("ログインが必要です");
+      void refreshSaveUi();
+      return;
+    }
+
+    const savePayload = deps.buildSaveEndpointRequest({
+      legacyId: current.legacyId,
+      tracksText: current.tracks,
+      release,
+      expectedBeforeUpdatedAt,
+      localDryRun: {
+        totalBefore: Number(localDryRun.totalBefore ?? 0),
+        totalAfter: Number(localDryRun.totalAfter ?? 0),
+        added: (localDryRun.added as string[]) ?? [],
+        removed: (localDryRun.removed as string[]) ?? [],
+        reordered: Boolean(localDryRun.reordered),
+      },
+    });
+
+    if (savePayload.operation !== deps.saveOperation) {
+      setUserSaveMessage("保存設定が不正です");
+      return;
+    }
+    if (savePayload.approvalId !== deps.expectedSaveApprovalId) {
+      setUserSaveMessage("保存設定が一致しません");
+      return;
+    }
+
+    saveInFlight = true;
+    if (saveConflictEl instanceof HTMLElement) saveConflictEl.hidden = true;
+    if (saveValidationEl instanceof HTMLElement) {
+      saveValidationEl.hidden = true;
+      saveValidationEl.textContent = "";
+    }
+    setUserSaveMessage("保存中…");
+    void refreshSaveUi();
+
+    const controller = new AbortController();
+    const timeoutId = window.setTimeout(() => controller.abort(), 20000);
+    try {
+      const res = await fetch(saveEndpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + token,
+          apikey: anonKey,
+        },
+        body: JSON.stringify(savePayload),
+        signal: controller.signal,
+      });
+      let data: unknown = {};
+      try {
+        data = await res.json();
+      } catch {
+        indeterminateLocked = true;
+        setUserSaveMessage("結果が確認できません。自動では再試行しません。");
+        if (saveValidationEl instanceof HTMLElement) {
+          saveValidationEl.hidden = false;
+          saveValidationEl.textContent = "通信結果不明 — 再試行禁止";
+        }
+        return;
+      }
+
+      if (
+        data &&
+        typeof data === "object" &&
+        (data as Record<string, unknown>).indeterminate === true
+      ) {
+        indeterminateLocked = true;
+        setUserSaveMessage("結果が確認できません。自動では再試行しません。");
+        return;
+      }
+
+      if (deps.isSaveConflictResponse(data)) {
+        if (saveConflictEl instanceof HTMLElement) {
+          saveConflictEl.hidden = false;
+          saveConflictEl.textContent = deps.conflictMessage;
+        }
+        setUserSaveMessage(deps.conflictMessage);
+        clearDryRunLock();
+        return;
+      }
+
+      const display = deps.sanitizeEndpointDisplay(data, res.status);
+      if (display.ok === true) {
+        const nextUpdatedAt =
+          typeof (data as Record<string, unknown>).updatedAt === "string"
+            ? String((data as Record<string, unknown>).updatedAt)
+            : typeof (data as Record<string, unknown>).updated_at === "string"
+              ? String((data as Record<string, unknown>).updated_at)
+              : "";
+        if (nextUpdatedAt) {
+          form.dataset.expectedBeforeUpdatedAt = nextUpdatedAt;
+          const snap = readFormSnapshot(form);
+          snap.updatedAt = nextUpdatedAt;
+          form.dataset.originalSnapshot = JSON.stringify(snap);
+          const tracksField = field(form, "tracks");
+          if (tracksField) tracksField.setAttribute("data-original-track-list", snap.tracks);
+          updateAlbumCacheUpdatedAt(albums, current.legacyId, nextUpdatedAt);
+        }
+        if (saveSuccessEl instanceof HTMLElement) {
+          saveSuccessEl.hidden = false;
+          saveSuccessEl.textContent = "保存しました";
+        }
+        setUserSaveMessage("保存しました");
+        clearDryRunLock();
+        setUnsaved(root, false);
+      } else {
+        setUserSaveMessage("保存に失敗しました");
+        if (saveValidationEl instanceof HTMLElement) {
+          saveValidationEl.hidden = false;
+          saveValidationEl.textContent = "保存に失敗しました";
+        }
+      }
+    } catch (err) {
+      if (err instanceof Error && err.name === "AbortError") {
+        indeterminateLocked = true;
+        setUserSaveMessage("時間切れです。自動では再試行しません。");
+      } else {
+        setUserSaveMessage("保存に失敗しました。自動では再試行しません。");
+      }
+    } finally {
+      window.clearTimeout(timeoutId);
+      saveInFlight = false;
+      void refreshSaveUi();
+    }
+  };
+
   const dryRunBtns = root.querySelectorAll("[data-gosaki-edit-dry-run]");
   dryRunBtns.forEach((btn) => {
     btn.addEventListener("click", async () => {
-      if (dryRunInFlight || saveInFlight) return;
-      clearDryRunLock();
-
-      const current = readFormSnapshot(form);
-      const originalTracks = field(form, "tracks")?.getAttribute("data-original-track-list") ?? "";
-      const localDryRun = deps.validateTrackListDryRun(originalTracks, current.tracks, {
-        legacyId: current.legacyId,
-        title: current.title,
-      });
-      const release = buildReleasePayload(current);
-      const expectedBeforeUpdatedAt = form.dataset.expectedBeforeUpdatedAt || null;
-
-      const localOnly = {
-        ok: localDryRun.ok !== false,
-        mode: "local+endpoint",
-        legacyId: current.legacyId,
-        expectedBeforeUpdatedAt,
-        trackListDryRun: localDryRun,
-        didWrite: false,
-        dbWrite: false,
-        saveEnabled: false,
-      };
-
-      const body = document.body;
-      const endpoint = (body?.dataset.gosakiDiscographyDryRunEndpoint || "").trim();
-      const anonKey = (body?.dataset.gosakiSupabaseAnonKey || "").trim();
-
-      if (!endpoint || !anonKey) {
-        resultEl.textContent = JSON.stringify(
-          { ...localOnly, endpoint: { ok: false, errors: ["Endpoint or anon key not configured"] } },
-          null,
-          2,
-        );
-        void refreshSaveUi();
-        return;
-      }
-
-      if (endpoint.includes(deps.productionProjectRefStop) || !deps.assertDryRunEndpointSafe(endpoint)) {
-        resultEl.textContent = JSON.stringify(
-          { ...localOnly, endpoint: { ok: false, errors: ["Production endpoint blocked — staging only"] } },
-          null,
-          2,
-        );
-        void refreshSaveUi();
-        return;
-      }
-
-      const payload = deps.buildDryRunEndpointRequest({
-        legacyId: current.legacyId,
-        tracksText: current.tracks,
-        release,
-        expectedBeforeUpdatedAt,
-        localDryRun: {
-          totalBefore: Number(localDryRun.totalBefore ?? 0),
-          totalAfter: Number(localDryRun.totalAfter ?? 0),
-          added: (localDryRun.added as string[]) ?? [],
-          removed: (localDryRun.removed as string[]) ?? [],
-          reordered: Boolean(localDryRun.reordered),
-        },
-      });
-
-      if (payload.operation !== deps.dryRunOperation) {
-        resultEl.textContent = JSON.stringify(
-          { ...localOnly, endpoint: { ok: false, errors: ["operation must be dryRun only"] } },
-          null,
-          2,
-        );
-        void refreshSaveUi();
-        return;
-      }
-
-      dryRunInFlight = true;
-      dryRunBtns.forEach((b) => {
-        if (b instanceof HTMLButtonElement) b.disabled = true;
-      });
-      resultEl.textContent = "Endpoint dry-run 送信中…（DB write なし · Save disabled）";
-      void refreshSaveUi();
-
-      try {
-        const res = await fetch(endpoint, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: "Bearer " + anonKey,
-            apikey: anonKey,
-          },
-          body: JSON.stringify(payload),
-        });
-        let data: unknown = {};
-        try {
-          data = await res.json();
-        } catch {
-          data = { ok: false, errors: ["non-JSON response"] };
+      const ok = await runInternalDryRun();
+      if (pendingOneClickSave) {
+        pendingOneClickSave = false;
+        if (!ok) {
+          setUserSaveMessage("入力内容を確認してください");
+          return;
         }
-        const display = deps.sanitizeEndpointDisplay(data, res.status);
-        const endpointOk = display.ok === true;
-        if (endpointOk) {
-          dryRunSucceeded = true;
-          dryRunLockedFingerprint = editableFingerprint(current);
-          form.dataset.dryRunLockedSnapshot = dryRunLockedFingerprint;
-          if (dryRunOkEl instanceof HTMLElement) dryRunOkEl.hidden = false;
+        const after = readFormSnapshot(form);
+        const matched =
+          dryRunSucceeded &&
+          dryRunLockedFingerprint != null &&
+          dryRunLockedFingerprint === editableFingerprint(after);
+        if (!matched) {
+          setUserSaveMessage("入力内容を確認してください");
+          return;
         }
-        resultEl.textContent = JSON.stringify(
-          {
-            ...localOnly,
-            endpoint: display,
-            requestEcho: {
-              expectedBeforeUpdatedAt: payload.expectedBeforeUpdatedAt ?? null,
-              operation: payload.operation,
-              wouldWriteClient: false,
-            },
-          },
-          null,
-          2,
-        );
-      } catch (err) {
-        const message = err instanceof Error ? err.message : String(err);
-        resultEl.textContent = JSON.stringify(
-          {
-            ...localOnly,
-            endpoint: {
-              ok: false,
-              fetchError: message,
-              didWrite: false,
-              dbWrite: false,
-              saveEnabled: false,
-            },
-          },
-          null,
-          2,
-        );
-      } finally {
-        dryRunInFlight = false;
-        dryRunBtns.forEach((b) => {
-          if (b instanceof HTMLButtonElement) b.disabled = false;
-        });
-        void refreshSaveUi();
+        if (!deps.saveArmed) {
+          setUserSaveMessage(
+            "保存の準備ができました。現在のテスト環境では保存は無効です。",
+          );
+          return;
+        }
+        await executeSaveAfterDryRun();
       }
     });
   });
 
   if (saveBtn instanceof HTMLButtonElement) {
     saveBtn.addEventListener("click", async () => {
-      if (saveInFlight || dryRunInFlight) return;
+      if (saveInFlight || dryRunInFlight || indeterminateLocked) return;
       await refreshSaveUi();
       if (!authenticated) {
-        if (saveReasonEl instanceof HTMLElement) saveReasonEl.textContent = "ログインが必要です";
+        setUserSaveMessage("ログインが必要です");
         return;
       }
       if (!isDirty(form)) {
-        if (saveReasonEl instanceof HTMLElement) saveReasonEl.textContent = "変更がありません";
+        setUserSaveMessage("変更がありません");
         return;
       }
 
@@ -595,157 +747,19 @@ export function initGosakiDiscographyOperationalEdit(
         currentFingerprint === dryRunLockedFingerprint;
 
       if (!formMatches) {
-        if (saveReasonEl instanceof HTMLElement) saveReasonEl.textContent = "確認中…";
+        pendingOneClickSave = true;
+        setUserSaveMessage("確認中…");
         const internalDry = root.querySelector("[data-gosaki-internal-dry-run]");
         if (internalDry instanceof HTMLElement) {
           internalDry.click();
-        }
-        // After dry-run, user can click 保存 again — or if unarmed, message via refreshSaveUi
-        return;
-      }
-
-      if (!deps.saveArmed) {
-        if (saveReasonEl instanceof HTMLElement) {
-          saveReasonEl.textContent =
-            "保存の準備ができました。現在のテスト環境では保存は無効です。";
+        } else {
+          pendingOneClickSave = false;
+          setUserSaveMessage("保存の準備に失敗しました");
         }
         return;
       }
 
-      if (saveBtn.disabled) return;
-
-      const current = readFormSnapshot(form);
-      const originalTracks = field(form, "tracks")?.getAttribute("data-original-track-list") ?? "";
-      const localDryRun = deps.validateTrackListDryRun(originalTracks, current.tracks, {
-        legacyId: current.legacyId,
-        title: current.title,
-      });
-      const release = buildReleasePayload(current);
-      const expectedBeforeUpdatedAt = form.dataset.expectedBeforeUpdatedAt || null;
-
-      const body = document.body;
-      const saveEndpoint = (
-        body?.dataset.gosakiDiscographySaveEndpoint ||
-        body?.dataset.gosakiDiscographyDryRunEndpoint ||
-        ""
-      ).trim();
-      const anonKey = (body?.dataset.gosakiSupabaseAnonKey || "").trim();
-
-      if (!saveEndpoint || !anonKey || !deps.getAccessToken) {
-        if (saveValidationEl instanceof HTMLElement) {
-          saveValidationEl.hidden = false;
-          saveValidationEl.textContent = "いまは保存できません";
-        }
-        return;
-      }
-
-      const token = await deps.getAccessToken();
-      if (!token) {
-        if (saveValidationEl instanceof HTMLElement) {
-          saveValidationEl.hidden = false;
-          saveValidationEl.textContent = "ログインが必要です";
-        }
-        void refreshSaveUi();
-        return;
-      }
-
-      const savePayload = deps.buildSaveEndpointRequest({
-        legacyId: current.legacyId,
-        tracksText: current.tracks,
-        release,
-        expectedBeforeUpdatedAt,
-        localDryRun: {
-          totalBefore: Number(localDryRun.totalBefore ?? 0),
-          totalAfter: Number(localDryRun.totalAfter ?? 0),
-          added: (localDryRun.added as string[]) ?? [],
-          removed: (localDryRun.removed as string[]) ?? [],
-          reordered: Boolean(localDryRun.reordered),
-        },
-      });
-
-      if (savePayload.operation !== deps.saveOperation) {
-        if (saveValidationEl instanceof HTMLElement) {
-          saveValidationEl.hidden = false;
-          saveValidationEl.textContent = "Save payload operation が不正です";
-        }
-        return;
-      }
-      if (savePayload.approvalId !== deps.expectedSaveApprovalId) {
-        if (saveValidationEl instanceof HTMLElement) {
-          saveValidationEl.hidden = false;
-          saveValidationEl.textContent = "approval ID が一致しません";
-        }
-        return;
-      }
-
-      saveInFlight = true;
-      if (saveConflictEl instanceof HTMLElement) saveConflictEl.hidden = true;
-      if (saveValidationEl instanceof HTMLElement) {
-        saveValidationEl.hidden = true;
-        saveValidationEl.textContent = "";
-      }
-      void refreshSaveUi();
-
-      try {
-        const res = await fetch(saveEndpoint, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: "Bearer " + token,
-            apikey: anonKey,
-          },
-          body: JSON.stringify(savePayload),
-        });
-        let data: unknown = {};
-        try {
-          data = await res.json();
-        } catch {
-          data = { ok: false, errors: ["non-JSON response"] };
-        }
-
-        if (deps.isSaveConflictResponse(data)) {
-          if (saveConflictEl instanceof HTMLElement) {
-            saveConflictEl.hidden = false;
-            saveConflictEl.textContent = deps.conflictMessage;
-          }
-          clearDryRunLock();
-          return;
-        }
-
-        const display = deps.sanitizeEndpointDisplay(data, res.status);
-        if (display.ok === true) {
-          const nextUpdatedAt =
-            typeof (data as Record<string, unknown>).updatedAt === "string"
-              ? String((data as Record<string, unknown>).updatedAt)
-              : typeof (data as Record<string, unknown>).updated_at === "string"
-                ? String((data as Record<string, unknown>).updated_at)
-                : "";
-          if (nextUpdatedAt) {
-            form.dataset.expectedBeforeUpdatedAt = nextUpdatedAt;
-            const snap = readFormSnapshot(form);
-            snap.updatedAt = nextUpdatedAt;
-            form.dataset.originalSnapshot = JSON.stringify(snap);
-            updateAlbumCacheUpdatedAt(albums, current.legacyId, nextUpdatedAt);
-          }
-          if (saveSuccessEl instanceof HTMLElement) {
-            saveSuccessEl.hidden = false;
-            saveSuccessEl.textContent = "保存に成功しました（staging）";
-          }
-          clearDryRunLock();
-        } else if (saveValidationEl instanceof HTMLElement) {
-          saveValidationEl.hidden = false;
-          saveValidationEl.textContent = JSON.stringify(display, null, 2);
-        }
-      } catch (err) {
-        const message = err instanceof Error ? err.message : String(err);
-        if (saveValidationEl instanceof HTMLElement) {
-          saveValidationEl.hidden = false;
-          saveValidationEl.textContent = message;
-        }
-      } finally {
-        saveInFlight = false;
-        void refreshSaveUi();
-      }
+      await executeSaveAfterDryRun();
     });
   }
 

@@ -17,7 +17,16 @@ export const PRODUCTION_REF_STOP = "vsbvndwuajjhnzpohghh";
 export const DRY_RUN_OPERATION = "dryRun";
 export const SAVE_OPERATION = "save";
 export const SAVE_APPROVAL_ID = "gosaki-schedule-operational-save";
+/** Exact "true" required — unset/false rejects Save; dry-run stays available. */
+export const SAVE_ARMED_ENV = "GOSAKI_SCHEDULE_SAVE_ARMED";
+export const SAVE_READINESS_NOT_ARMED = "save_not_armed";
 export const SUPABASE_SERVICE_ROLE_CONNECTED = false;
+
+export function isScheduleSaveArmed(
+  getEnv: (key: string) => string | undefined = (key) => Deno.env.get(key),
+): boolean {
+  return getEnv(SAVE_ARMED_ENV) === "true";
+}
 
 /** Existing-event UPDATE safe fields (published allowed · date forbidden). */
 export const EDIT_SAFE_FIELDS = [
@@ -398,6 +407,7 @@ function errorResult(input: {
   mode?: string | null;
   operation?: string;
   expectedBeforeUpdatedAt?: string | null;
+  saveReadiness?: string;
 }): ScheduleDryRunHandlerResult {
   const operation = input.operation ?? DRY_RUN_OPERATION;
   return {
@@ -413,6 +423,7 @@ function errorResult(input: {
     errors: input.errors,
     warnings: input.warnings ?? [],
     status: input.status,
+    ...(input.saveReadiness ? { saveReadiness: input.saveReadiness } : {}),
   };
 }
 
@@ -551,6 +562,8 @@ export async function handleScheduleEdgeDryRunHttpAsync(
     updateAdapter?: ScheduleUpdateAdapter | null;
     insertAdapter?: ScheduleInsertAdapter | null;
     skipAdminProbe?: boolean;
+    /** Injected for tests — default reads Deno.env GOSAKI_SCHEDULE_SAVE_ARMED. */
+    isSaveArmed?: () => boolean;
   },
 ): Promise<ScheduleDryRunHandlerResult> {
   if (String(input.method ?? "").toUpperCase() !== "POST") {
@@ -611,6 +624,22 @@ export async function handleScheduleEdgeDryRunHttpAsync(
 
   const payload = validated.payload;
   const isSave = validated.operation === SAVE_OPERATION;
+
+  if (isSave) {
+    const armed =
+      typeof deps.isSaveArmed === "function" ? deps.isSaveArmed() : isScheduleSaveArmed();
+    if (!armed) {
+      return errorResult({
+        status: 403,
+        errors: [`Save is not armed on server (${SAVE_ARMED_ENV}=false)`],
+        mode: validated.mode ?? null,
+        operation: SAVE_OPERATION,
+        expectedBeforeUpdatedAt: norm(payload.expectedBeforeUpdatedAt) || null,
+        saveReadiness: SAVE_READINESS_NOT_ARMED,
+        warnings: validated.warnings,
+      });
+    }
+  }
 
   if (validated.mode === "create") {
     if (!isSave) {

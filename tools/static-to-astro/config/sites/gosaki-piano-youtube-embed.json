@@ -1,5 +1,5 @@
 {
-  "$comment": "G-9j — Gosaki home YouTube embeds (embedCode only). Set published:true + valid embed iframe to show on home.",
+  "$comment": "Gosaki home YouTube embeds (ordered items[]). published:true + valid embed shows on home.",
   "siteSlug": "gosaki-piano",
   "sectionTitle": "YouTube",
   "items": [

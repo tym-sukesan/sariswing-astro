@@ -38,6 +38,17 @@ export const G11C6_SAVE_DISABLED_REASON =
 export const G11C6_CONFLICT_MESSAGE =
   "他の場所で更新された可能性があります。再読み込みしてください。";
 
+/** G-11c7 — ordered items[] dry-run / Save (same Edge functions · dual contract). */
+export const G11C7_ITEMS_FIELD = "items";
+export const G11C7_ITEMS_DRY_RUN_OPERATION_ID = "G-11c7-gosaki-youtube-items-dry-run";
+export const G11C7_ITEMS_DRY_RUN_APPROVAL_ID = "G-11c7-gosaki-youtube-items-dry-run";
+export const G11C7_ITEMS_SAVE_OPERATION_ID =
+  "G-11c7-gosaki-youtube-items-web-save-non-dry-run-slice";
+export const G11C7_ITEMS_SAVE_APPROVAL_ID =
+  "G-11c7-gosaki-youtube-items-web-save-non-dry-run-slice";
+export const G11C7_ITEMS_SAVE_DISABLED_REASON =
+  "複数動画 Save は無効です。通常 STG package では常に無効。server arm · client arm · dry-run fingerprint · SHA lock が必要です。";
+
 /** G-20u28 — staging read-only admin dashboard foundation polish. */
 export const G20U28_ADMIN_UI_PHASE = "G-20u28-gosaki-admin-ui-foundation-polish";
 
@@ -1204,6 +1215,63 @@ export function buildYoutubeSaveEndpointRequest(input: {
   };
 }
 
+export type YoutubeItemsEndpointItem = {
+  id: string;
+  published: boolean;
+  sortOrder: number;
+  embedCode: string;
+};
+
+export function buildYoutubeItemsDryRunEndpointRequest(
+  items: YoutubeItemsEndpointItem[],
+): Record<string, unknown> {
+  return {
+    siteSlug: GOSAKI_STAGING_SITE_SLUG,
+    module: G11C1_MODULE,
+    field: G11C7_ITEMS_FIELD,
+    items: items.map((item) => ({
+      id: String(item.id ?? "").trim(),
+      published: item.published === true,
+      sortOrder: Number(item.sortOrder),
+      embedCode: String(item.embedCode ?? "").trim(),
+    })),
+    dryRun: true,
+    operationId: G11C7_ITEMS_DRY_RUN_OPERATION_ID,
+    approvalId: G11C7_ITEMS_DRY_RUN_APPROVAL_ID,
+  };
+}
+
+export function buildYoutubeItemsSaveEndpointRequest(input: {
+  items: YoutubeItemsEndpointItem[];
+  expectedBeforeItems: YoutubeItemsEndpointItem[];
+  fingerprint: string;
+  requestId?: string;
+}): Record<string, unknown> {
+  return {
+    siteSlug: GOSAKI_STAGING_SITE_SLUG,
+    module: G11C1_MODULE,
+    field: G11C7_ITEMS_FIELD,
+    items: input.items.map((item) => ({
+      id: String(item.id ?? "").trim(),
+      published: item.published === true,
+      sortOrder: Number(item.sortOrder),
+      embedCode: String(item.embedCode ?? "").trim(),
+    })),
+    dryRun: false,
+    saveEnabled: true,
+    operationId: G11C7_ITEMS_SAVE_OPERATION_ID,
+    approvalId: G11C7_ITEMS_SAVE_APPROVAL_ID,
+    fingerprint: String(input.fingerprint ?? "").trim(),
+    requestId: String(input.requestId ?? `ui-items-${Date.now()}`).trim(),
+    expectedBeforeItems: input.expectedBeforeItems.map((item) => ({
+      id: String(item.id ?? "").trim(),
+      published: item.published === true,
+      sortOrder: Number(item.sortOrder),
+      embedCode: String(item.embedCode ?? "").trim(),
+    })),
+  };
+}
+
 export type YoutubeOperationalSaveGateInput = {
   authenticated: boolean;
   dryRunSucceeded: boolean;
@@ -1211,6 +1279,8 @@ export type YoutubeOperationalSaveGateInput = {
   fingerprintPresent: boolean;
   expectedBeforeEmbed: string | null;
   expectedBeforeVideoId: string | null;
+  /** Default embed — items[] Save uses fingerprint + expectedBeforeItems instead. */
+  contentLockMode?: "embed" | "items";
   saveEndpointConfigured: boolean;
   saveEndpointSafe: boolean;
   envArmed: boolean;
@@ -1244,9 +1314,12 @@ export function evaluateYoutubeOperationalSaveGate(
   if (!input.fingerprintPresent) {
     return { enabled: false, reason: "GitHub fingerprint がありません。再度「変更を確認」してください" };
   }
-  const embed = String(input.expectedBeforeEmbed ?? "").trim();
-  if (!embed) {
-    return { enabled: false, reason: "content lock（expectedBefore.embedCode）がありません" };
+  const lockMode = input.contentLockMode === "items" ? "items" : "embed";
+  if (lockMode === "embed") {
+    const embed = String(input.expectedBeforeEmbed ?? "").trim();
+    if (!embed) {
+      return { enabled: false, reason: "content lock（expectedBefore.embedCode）がありません" };
+    }
   }
   if (!input.saveEndpointConfigured || !input.saveEndpointSafe) {
     return { enabled: false, reason: "Save endpoint が未設定またはブロックされています" };

@@ -1,10 +1,10 @@
 ---
 /**
- * Gosaki staging shell operator portal (G-20u39b3).
- * Portal only — no content lists / forms on the home route.
+ * Gosaki staging shell operator portal.
+ * Cards are the primary nav — no horizontal tabs on the home route.
  */
-import AdminGosakiStagingNav from "./AdminGosakiStagingNav.astro";
 import AdminGosakiStagingSafetyChips from "./AdminGosakiStagingSafetyChips.astro";
+import AdminGosakiStagingCompactAuthBar from "./AdminGosakiStagingCompactAuthBar.astro";
 import {
   GOSAKI_STAGING_ADMIN_ABOUT_PATH,
   GOSAKI_STAGING_ADMIN_DISCOGRAPHY_PATH,
@@ -16,53 +16,42 @@ import {
 interface Props {
   previewUrl?: string;
   schedulePath?: string;
+  supabaseAuthConfigured?: boolean;
+  /** STG package portal needs inline auth; local shell AuthGate already handles it. */
+  showAuthBar?: boolean;
 }
 
 const {
   previewUrl = GOSAKI_STAGING_PREVIEW_URL,
   schedulePath = GOSAKI_STAGING_ADMIN_SCHEDULE_PATH,
+  supabaseAuthConfigured = false,
+  showAuthBar = true,
 } = Astro.props;
 
 const portalCards = [
   {
     id: "schedule",
-    title: "スケジュール",
+    title: "Schedule",
     href: schedulePath,
-    statuses: [
-      { label: "閲覧可能", tone: "ok" },
-      { label: "dry-run可能", tone: "ok" },
-    ],
-    blurb: "公演の確認・入力と変更プレビュー",
+    blurb: "公演スケジュールの確認・追加・編集",
   },
   {
     id: "discography",
-    title: "ディスコグラフィ",
+    title: "Discography",
     href: GOSAKI_STAGING_ADMIN_DISCOGRAPHY_PATH,
-    statuses: [
-      { label: "閲覧可能", tone: "ok" },
-      { label: "dry-run可能", tone: "ok" },
-    ],
-    blurb: "作品情報の確認・入力と変更プレビュー",
+    blurb: "作品情報の確認・編集",
   },
   {
     id: "youtube",
     title: "YouTube",
     href: GOSAKI_STAGING_ADMIN_YOUTUBE_PATH,
-    statuses: [
-      { label: "閲覧可能", tone: "ok" },
-      { label: "dry-run可能", tone: "ok" },
-    ],
-    blurb: "トップ埋め込みの確認・入力",
+    blurb: "トップページの動画一覧",
   },
   {
     id: "about",
-    title: "プロフィール・バンド",
+    title: "Profile",
     href: GOSAKI_STAGING_ADMIN_ABOUT_PATH,
-    statuses: [
-      { label: "閲覧可能", tone: "ok" },
-      { label: "dry-run可能", tone: "ok" },
-    ],
-    blurb: "About 本文の確認・入力",
+    blurb: "プロフィール・バンド紹介",
   },
 ];
 ---
@@ -74,29 +63,25 @@ const portalCards = [
   data-gosaki-admin-portal="true"
   aria-label="Gosaki Piano 管理画面トップ"
 >
-  <header class="admin-gosaki-page-header admin-gosaki-page-header--with-actions">
+  <header class="admin-gosaki-page-header">
     <div>
       <h1 class="admin-gosaki-page-header__title">Gosaki Piano CMS</h1>
       <p class="admin-gosaki-page-header__subtitle">
-        管理トップです。各機能の画面へ移動して内容を確認・入力できます。
+        管理したい項目を選んでください。
       </p>
-      <AdminGosakiStagingSafetyChips showSaveDisabled={false} />
+      <AdminGosakiStagingSafetyChips />
     </div>
-    <button
-      type="button"
-      class="admin-button admin-button-secondary admin-gosaki-logout-btn"
-      data-staging-sign-out
-      hidden
-    >
-      ログアウト
-    </button>
   </header>
 
-  <AdminGosakiStagingNav current="home" />
-
-  <p class="admin-gosaki-status-bar admin-gosaki-status-bar--soft" role="status">
-    内容の確認・入力はできます。公開サイトへの反映は管理者が行います。
-  </p>
+  {
+    showAuthBar ? (
+      <AdminGosakiStagingCompactAuthBar
+        supabaseAuthConfigured={supabaseAuthConfigured}
+        purposeNote="変更の確認・保存にはログインが必要です（HTTP Basic 認証とは別です）。"
+        showDeveloperTools={false}
+      />
+    ) : null
+  }
 
   <section
     class="admin-gosaki-portal-cards"
@@ -104,7 +89,7 @@ const portalCards = [
     data-gosaki-portal-cards="true"
   >
     <h2 class="admin-gosaki-card__title--visually-quiet" id="gosaki-portal-cards-title">
-      管理画面メニュー
+      管理メニュー
     </h2>
     <ul class="admin-gosaki-portal-cards__list">
       {
@@ -113,32 +98,10 @@ const portalCards = [
             <a class="admin-gosaki-portal-card__link" href={card.href} data-portal-card={card.id}>
               <span class="admin-gosaki-portal-card__title">{card.title}</span>
               <span class="admin-gosaki-portal-card__blurb">{card.blurb}</span>
-              <span class="admin-gosaki-portal-card__statuses" aria-label="機能の状態">
-                {card.statuses.map((status) => (
-                  <span
-                    class:list={[
-                      "admin-gosaki-portal-status",
-                      status.tone === "ok" && "admin-gosaki-portal-status--ok",
-                      status.tone === "pending" && "admin-gosaki-portal-status--pending",
-                    ]}
-                  >
-                    {status.label}
-                  </span>
-                ))}
-              </span>
             </a>
           </li>
         ))
       }
-      <li class="admin-gosaki-portal-card admin-gosaki-portal-card--muted">
-        <div class="admin-gosaki-portal-card__static" data-portal-card="publish-self">
-          <span class="admin-gosaki-portal-card__title">本番反映（ご本人操作）</span>
-          <span class="admin-gosaki-portal-card__blurb">公開操作のセルフサービス</span>
-          <span class="admin-gosaki-portal-card__statuses">
-            <span class="admin-gosaki-portal-status admin-gosaki-portal-status--pending">準備中</span>
-          </span>
-        </div>
-      </li>
     </ul>
   </section>
 
@@ -153,17 +116,4 @@ const portalCards = [
       公開サイトを確認する
     </a>
   </p>
-
-  <p class="admin-gosaki-field-hint admin-gosaki-portal-hint" role="note">
-    「変更を確認」まではデータベースは変わりません。保存が必要な場合は管理者が確認のうえ反映します。
-  </p>
-
-  <details class="admin-gosaki-dev-tools admin-gosaki-home-supplement">
-    <summary>開発者向け詳細（通常は開かないでください）</summary>
-    <p class="admin-gosaki-dev-tools__note" role="note">
-      STG パッケージでも同じ portal / nav / chips を使います（G-20u39b4）。
-      siteSlug / build snapshot / phase ID / approval ID / PoC / dry-run JSON
-      などの技術情報は各コンテンツ画面の開発者向け詳細にあります。
-    </p>
-  </details>
 </section>

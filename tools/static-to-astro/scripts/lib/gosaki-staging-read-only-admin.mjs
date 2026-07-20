@@ -31,6 +31,7 @@ export const GOSAKI_ADMIN_CONTENT_PANEL_COMPONENTS = [
   "AdminGosakiStagingScheduleContentPanel.astro",
   "AdminGosakiStagingAboutContentPanel.astro",
   "AdminGosakiStagingDiscographyContentPanel.astro",
+  "AdminGosakiStagingYoutubeContentPanel.astro",
   "AdminGosakiStagingEditToolbar.astro",
   "AdminGosakiStagingSaveDisabledStatus.astro",
   "AdminGosakiStagingCompactAuthBar.astro",
@@ -465,6 +466,10 @@ export function applyGosakiStagingReadOnlyAdmin(outDir, toolRoot, options = {}) 
     templateRoot,
     "gosaki-staging-youtube-operational-edit.ts",
   );
+  const youtubeMultiEditSrc = path.join(
+    templateRoot,
+    "gosaki-staging-youtube-multi-operational-edit.ts",
+  );
   const aboutEditSrc = path.join(
     templateRoot,
     "gosaki-staging-about-operational-edit.ts",
@@ -484,6 +489,7 @@ export function applyGosakiStagingReadOnlyAdmin(outDir, toolRoot, options = {}) 
     discographyEditSrc,
     scheduleEditSrc,
     youtubeEditSrc,
+    youtubeMultiEditSrc,
     aboutEditSrc,
     packagePathsSrc,
     cssSrc,
@@ -524,6 +530,10 @@ export function applyGosakiStagingReadOnlyAdmin(outDir, toolRoot, options = {}) 
   fs.copyFileSync(
     youtubeEditSrc,
     path.join(path.dirname(libDest), "gosaki-staging-youtube-operational-edit.ts"),
+  );
+  fs.copyFileSync(
+    youtubeMultiEditSrc,
+    path.join(path.dirname(libDest), "gosaki-staging-youtube-multi-operational-edit.ts"),
   );
   fs.copyFileSync(
     aboutEditSrc,

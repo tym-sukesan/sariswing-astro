@@ -13,6 +13,18 @@ import {
   GOSAKI_YOUTUBE_GITHUB_FILE_PATH,
   GOSAKI_YOUTUBE_TARGET_ITEM_ID,
 } from "./gosaki-youtube-github-json.ts";
+import {
+  buildYoutubeItemsSaveFingerprint,
+  G11C7_ITEMS_DRY_RUN_ALLOWED_KEYS,
+  G11C7_ITEMS_DRY_RUN_APPROVAL_ID,
+  G11C7_ITEMS_DRY_RUN_OPERATION_ID,
+  G11C7_ITEMS_FIELD,
+  isYoutubeItemsRequestBody,
+  loadYoutubeEmbedConfigFromGithub,
+  parseYoutubeItemsPayload,
+  planYoutubeItemsPatch,
+  serializeYoutubeItemsSaveFingerprint,
+} from "./gosaki-youtube-items.ts";
 
 export const G11C1_OPERATION_ID = "G-11c1-gosaki-youtube-url-web-save-dry-run-poc";
 export const G11C1_APPROVAL_ID = "G-11c1-youtube-url-dry-run";
@@ -220,10 +232,230 @@ export function executeG11c1YoutubeUrlDryRun(input: {
   };
 }
 
+export async function handleG11c7YoutubeItemsDryRunBody(
+  body: unknown,
+  deps: YoutubeGithubRuntimeDeps = {},
+) {
+  const hostError = (deps.stagingHostCheck ?? assertGosakiYoutubeStagingSupabaseHost)();
+  if (hostError) {
+    return {
+      ok: false,
+      dryRun: true as const,
+      wouldWrite: false as const,
+      error: hostError,
+      errors: [hostError],
+      didWrite: false as const,
+      dbWrite: false as const,
+      networkWrite: false as const,
+      saveReadiness: "forbidden_host",
+      httpStatus: 403,
+    };
+  }
+
+  const keyError = assertExactObjectKeys(body, G11C7_ITEMS_DRY_RUN_ALLOWED_KEYS);
+  if (keyError) {
+    return {
+      ok: false,
+      dryRun: true as const,
+      wouldWrite: false as const,
+      error: keyError,
+      errors: [keyError],
+      didWrite: false as const,
+      dbWrite: false as const,
+      networkWrite: false as const,
+      saveReadiness: "invalid_input",
+      httpStatus: 422,
+    };
+  }
+  const record = body as Record<string, unknown>;
+  if (record.siteSlug !== G11C1_SITE_SLUG) {
+    return {
+      ok: false,
+      dryRun: true as const,
+      wouldWrite: false as const,
+      error: `siteSlug must be ${G11C1_SITE_SLUG}`,
+      errors: [`siteSlug must be ${G11C1_SITE_SLUG}`],
+      didWrite: false as const,
+      dbWrite: false as const,
+      networkWrite: false as const,
+      saveReadiness: "invalid_input",
+      httpStatus: 422,
+    };
+  }
+  if (record.module !== G11C1_MODULE) {
+    return {
+      ok: false,
+      dryRun: true as const,
+      wouldWrite: false as const,
+      error: `module must be ${G11C1_MODULE}`,
+      errors: [`module must be ${G11C1_MODULE}`],
+      didWrite: false as const,
+      dbWrite: false as const,
+      networkWrite: false as const,
+      saveReadiness: "invalid_input",
+      httpStatus: 422,
+    };
+  }
+  if (record.field !== G11C7_ITEMS_FIELD) {
+    return {
+      ok: false,
+      dryRun: true as const,
+      wouldWrite: false as const,
+      error: `field must be ${G11C7_ITEMS_FIELD}`,
+      errors: [`field must be ${G11C7_ITEMS_FIELD}`],
+      didWrite: false as const,
+      dbWrite: false as const,
+      networkWrite: false as const,
+      saveReadiness: "invalid_input",
+      httpStatus: 422,
+    };
+  }
+  if (record.dryRun !== true) {
+    return {
+      ok: false,
+      dryRun: true as const,
+      wouldWrite: false as const,
+      error: "dryRun must be true",
+      errors: ["dryRun must be true"],
+      didWrite: false as const,
+      dbWrite: false as const,
+      networkWrite: false as const,
+      saveReadiness: "invalid_input",
+      httpStatus: 422,
+    };
+  }
+  if (record.operationId !== G11C7_ITEMS_DRY_RUN_OPERATION_ID) {
+    return {
+      ok: false,
+      dryRun: true as const,
+      wouldWrite: false as const,
+      error: `operationId must be ${G11C7_ITEMS_DRY_RUN_OPERATION_ID}`,
+      errors: [`operationId must be ${G11C7_ITEMS_DRY_RUN_OPERATION_ID}`],
+      didWrite: false as const,
+      dbWrite: false as const,
+      networkWrite: false as const,
+      saveReadiness: "invalid_input",
+      httpStatus: 422,
+    };
+  }
+  if (record.approvalId !== G11C7_ITEMS_DRY_RUN_APPROVAL_ID) {
+    return {
+      ok: false,
+      dryRun: true as const,
+      wouldWrite: false as const,
+      error: `approvalId must be ${G11C7_ITEMS_DRY_RUN_APPROVAL_ID}`,
+      errors: [`approvalId must be ${G11C7_ITEMS_DRY_RUN_APPROVAL_ID}`],
+      didWrite: false as const,
+      dbWrite: false as const,
+      networkWrite: false as const,
+      saveReadiness: "invalid_input",
+      httpStatus: 422,
+    };
+  }
+
+  const itemsParsed = parseYoutubeItemsPayload(record.items);
+  if (!itemsParsed.ok) {
+    return {
+      ok: false,
+      dryRun: true as const,
+      wouldWrite: false as const,
+      error: itemsParsed.error,
+      errors: [itemsParsed.error],
+      didWrite: false as const,
+      dbWrite: false as const,
+      networkWrite: false as const,
+      saveReadiness: "invalid_input",
+      httpStatus: 422,
+    };
+  }
+
+  const loaded = await loadYoutubeEmbedConfigFromGithub({
+    fetchImpl: deps.fetchImpl,
+    auth: deps.auth,
+  });
+  if (!loaded.ok) {
+    return {
+      ok: false,
+      dryRun: true as const,
+      wouldWrite: false as const,
+      error: loaded.error,
+      errors: [loaded.error],
+      didWrite: false as const,
+      dbWrite: false as const,
+      networkWrite: false as const,
+      saveReadiness: "github_read_failed",
+      httpStatus: loaded.httpStatus,
+    };
+  }
+
+  const plan = planYoutubeItemsPatch({
+    config: loaded.config,
+    nextItems: itemsParsed.items,
+    enforceExpectedBefore: false,
+  });
+  if (!plan.ok) {
+    return {
+      ok: false,
+      dryRun: true as const,
+      wouldWrite: false as const,
+      error: plan.error,
+      errors: [plan.error],
+      didWrite: false as const,
+      dbWrite: false as const,
+      networkWrite: false as const,
+      saveReadiness: "guard_error",
+      httpStatus: plan.httpStatus,
+      currentItems: plan.currentItems,
+      beforeItems: plan.currentItems,
+    };
+  }
+
+  const fingerprintObj = buildYoutubeItemsSaveFingerprint({
+    githubFileSha: loaded.file.sha,
+    beforeItems: plan.currentItems,
+    afterItems: plan.nextItems,
+  });
+  const fingerprint = serializeYoutubeItemsSaveFingerprint(fingerprintObj);
+  const noChange = plan.saveReadiness === "no_change";
+
+  return {
+    ok: true,
+    dryRun: true as const,
+    operation: "dryRun" as const,
+    wouldWrite: false as const,
+    siteSlug: G11C1_SITE_SLUG,
+    module: G11C1_MODULE,
+    field: G11C7_ITEMS_FIELD,
+    changedFields: plan.changedFields,
+    changedItemIds: plan.changedItemIds,
+    noChange,
+    currentItems: plan.currentItems,
+    nextItems: plan.nextItems,
+    beforeItems: plan.currentItems,
+    afterItems: plan.nextItems,
+    currentFileSha: loaded.file.sha,
+    targetFilePath: GOSAKI_YOUTUBE_GITHUB_FILE_PATH,
+    branch: GOSAKI_YOUTUBE_GITHUB_BRANCH,
+    fingerprint,
+    fingerprintObject: fingerprintObj,
+    saveReadiness: noChange ? "no_change" : G11C1_SAVE_READINESS,
+    saveEnabled: false as const,
+    didWrite: false as const,
+    dbWrite: false as const,
+    networkWrite: false as const,
+    errors: [] as string[],
+    httpStatus: 200,
+  };
+}
+
 export async function handleG11c1YoutubeUrlDryRunBody(
   body: unknown,
   deps: YoutubeGithubRuntimeDeps = {},
 ) {
+  if (isYoutubeItemsRequestBody(body)) {
+    return handleG11c7YoutubeItemsDryRunBody(body, deps);
+  }
+
   const hostError = (deps.stagingHostCheck ?? assertGosakiYoutubeStagingSupabaseHost)();
   if (hostError) {
     return {

@@ -1,0 +1,304 @@
+---
+/**
+ * Shared YouTube multi-item content panel (STG package + local shell).
+ * Local list / add / edit / duplicate / reorder / hide + local dry-run.
+ * External Save stays disabled (Edge still single-target).
+ */
+
+interface YoutubeEmbedConfigLike {
+  siteSlug?: string;
+  sectionTitle?: string;
+  items?: Array<Record<string, unknown>>;
+}
+
+interface Props {
+  config: YoutubeEmbedConfigLike;
+  publicHomeUrl?: string;
+}
+
+const { config, publicHomeUrl = "" } = Astro.props as Props;
+const configJson = JSON.stringify(config);
+const itemCount = Array.isArray(config.items) ? config.items.length : 0;
+---
+
+<section
+  id="gosaki-youtube-content"
+  class="gosaki-admin-content-panel gosaki-youtube-content-panel"
+  data-section="admin-youtube-content"
+  data-gosaki-youtube-content="true"
+  data-gosaki-youtube-multi="true"
+  data-gosaki-youtube-operational-edit="true"
+  aria-label="YouTube管理"
+>
+  <script
+    type="application/json"
+    id="gosaki-youtube-config-json"
+    data-gosaki-youtube-config-json
+    set:html={configJson}
+  />
+
+  <header class="gosaki-admin-content-panel__header">
+    <h1 class="gosaki-admin-content-panel__title">YouTube</h1>
+    <p class="gosaki-admin-content-panel__subtitle" data-gosaki-youtube-status>
+      トップページに表示する動画を管理します（{itemCount} 件）
+    </p>
+    {
+      publicHomeUrl ? (
+        <p class="gosaki-admin-content-panel__meta">
+          <a
+            class="gosaki-read-only-admin__link"
+            href={publicHomeUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            公開トップを見る
+          </a>
+        </p>
+      ) : null
+    }
+  </header>
+
+  <section class="admin-card admin-gosaki-card gosaki-youtube-admin-add-card">
+    <h2 class="admin-gosaki-card__title">動画を追加</h2>
+    <div class="admin-form gosaki-youtube-admin-form">
+      <label class="admin-form__field admin-form__field--full">
+        <span class="admin-form__label">YouTube URL / 埋め込みコード</span>
+        <textarea
+          class="gosaki-youtube-admin-embed-code gosaki-youtube-admin-embed-code--large"
+          rows="4"
+          data-gosaki-youtube-add-url
+          placeholder="https://youtu.be/... または iframe 埋め込み"
+        ></textarea>
+      </label>
+      <label class="admin-form__field admin-form__field--checkbox">
+        <input type="checkbox" data-gosaki-youtube-add-published />
+        <span>公開する</span>
+      </label>
+    </div>
+    <div class="admin-actions">
+      <button
+        type="button"
+        class="gosaki-admin-edit-toolbar__btn gosaki-admin-edit-toolbar__btn--primary"
+        data-gosaki-youtube-add
+      >
+        追加
+      </button>
+    </div>
+  </section>
+
+  <section class="admin-card admin-gosaki-card">
+    <h2 class="admin-gosaki-card__title">登録済みの動画</h2>
+    <p class="admin-gosaki-card__lead">
+      ↑↓ で並び替え、公開チェック OFF で非表示にできます。複製は元の動画を変更しません。
+    </p>
+    <ul
+      class="admin-list gosaki-youtube-admin-list"
+      data-gosaki-youtube-multi-list
+      id="gosaki-yt-item-list"
+    ></ul>
+  </section>
+
+  <div class="gosaki-schedule-edit-dry-run-actions">
+    <button
+      type="button"
+      class="gosaki-admin-edit-toolbar__btn gosaki-admin-edit-toolbar__btn--primary"
+      data-gosaki-youtube-multi-dry-run
+    >
+      変更を確認
+    </button>
+    <button type="button" class="gosaki-admin-edit-toolbar__btn" data-gosaki-youtube-multi-cancel>
+      変更を破棄
+    </button>
+  </div>
+
+  <div
+    class="gosaki-schedule-content-panel__dry-run"
+    data-gosaki-youtube-multi-dry-run-result
+    hidden
+    aria-live="polite"
+  ></div>
+
+  <div class="gosaki-schedule-content-panel__save-card" role="region" aria-label="保存">
+    <h3 class="gosaki-schedule-content-panel__save-title">Save</h3>
+    <p
+      class="gosaki-schedule-content-panel__save-reason"
+      data-gosaki-youtube-multi-save-reason
+      role="status"
+    >
+      Save は無効です（外部更新なし）
+    </p>
+    <button
+      type="button"
+      class="gosaki-admin-edit-toolbar__btn gosaki-admin-edit-toolbar__btn--primary"
+      data-gosaki-youtube-multi-save
+      data-gosaki-save-allowed="false"
+      disabled
+      aria-disabled="true"
+    >
+      更新する（無効）
+    </button>
+  </div>
+</section>
+
+<style>
+  .gosaki-youtube-content-panel {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+  }
+
+  .gosaki-youtube-admin-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 1rem;
+  }
+
+  .gosaki-youtube-admin-item {
+    display: grid;
+    gap: 0.75rem;
+    padding: 0.85rem 1rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    background: #fff;
+    min-width: 0;
+    box-sizing: border-box;
+  }
+
+  .gosaki-youtube-admin-item__sort-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .gosaki-youtube-admin-item__sort-bar-start {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    align-items: center;
+    min-width: 0;
+  }
+
+  .gosaki-youtube-admin-item__id {
+    font-size: 0.75rem;
+    word-break: break-all;
+  }
+
+  .gosaki-youtube-admin-item__status {
+    display: inline-block;
+    padding: 0.15rem 0.45rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    background: #e2e8f0;
+  }
+
+  .gosaki-youtube-admin-item__status--published {
+    background: #dcfce7;
+    color: #166534;
+  }
+
+  .gosaki-youtube-admin-item__status--draft {
+    background: #ffedd5;
+    color: #9a3412;
+  }
+
+  .gosaki-youtube-admin-item__move-controls {
+    display: flex;
+    gap: 0.35rem;
+  }
+
+  .gosaki-youtube-admin-preview__media {
+    position: relative;
+    width: 100%;
+    max-width: 420px;
+    aspect-ratio: 16 / 9;
+    background: #111;
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  .gosaki-youtube-admin-preview__media iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+
+  .gosaki-youtube-admin-form {
+    display: grid;
+    gap: 0.75rem;
+    min-width: 0;
+  }
+
+  .gosaki-youtube-admin-form .admin-form__field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    min-width: 0;
+  }
+
+  .gosaki-youtube-admin-form .admin-form__field--checkbox {
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .gosaki-youtube-admin-form .admin-form__label {
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+
+  .gosaki-youtube-admin-embed-code,
+  .gosaki-youtube-admin-form textarea,
+  .gosaki-youtube-admin-form input[type="text"],
+  .gosaki-youtube-admin-form input[type="url"] {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    padding: 0.6rem 0.75rem;
+    font: inherit;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+  }
+
+  .gosaki-schedule-edit-dry-run-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: 1rem 0;
+  }
+
+  .admin-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+  }
+
+  .admin-button,
+  .admin-button--small {
+    min-height: 40px;
+    padding: 0.4rem 0.7rem;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    background: #fff;
+    cursor: pointer;
+    font: inherit;
+  }
+
+  .admin-button--small {
+    min-width: 44px;
+  }
+
+  @media (max-width: 390px) {
+    .gosaki-youtube-admin-item {
+      padding: 0.7rem 0.75rem;
+    }
+  }
+</style>

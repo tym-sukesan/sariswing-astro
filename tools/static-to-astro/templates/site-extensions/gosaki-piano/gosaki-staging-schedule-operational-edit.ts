@@ -288,6 +288,24 @@ function emptyCreateForm(): FormSnapshot {
   };
 }
 
+/** Duplicate opens create form with content copied; never mutates the source row. */
+function duplicateToCreateForm(event: ScheduleOperationalEvent): FormSnapshot {
+  return {
+    id: "",
+    legacy_id: "",
+    updated_at: "",
+    mode: "create",
+    date: String(event.date ?? ""),
+    open_time: String(event.openTime ?? ""),
+    start_time: String(event.startTime ?? ""),
+    title: String(event.title ?? ""),
+    venue: String(event.venue ?? ""),
+    price: String(event.price ?? ""),
+    description: String(event.description ?? ""),
+    published: false,
+  };
+}
+
 function fingerprint(snap: FormSnapshot): string {
   return JSON.stringify({
     date: snap.date,
@@ -569,7 +587,7 @@ export function initGosakiScheduleOperationalEdit(
     baseline = null;
     setUnsaved(false);
     invalidateDryRun();
-    if (statusEl) statusEl.textContent = "公演一覧の確認と編集（閲覧／編集）· Save 無効";
+    if (statusEl) statusEl.textContent = "公演の確認・追加・編集ができます";
   }
 
   function applyModeFieldLocks(next: Mode) {
@@ -644,6 +662,42 @@ export function initGosakiScheduleOperationalEdit(
     return window.confirm(UNSAVED_LEAVE);
   }
 
+  function applyScheduleSearch(rawQuery: string) {
+    const query = String(rawQuery ?? "").trim().toLowerCase();
+    const cards = root.querySelectorAll<HTMLElement>("[data-schedule-event]");
+    const months = root.querySelectorAll<HTMLElement>("[data-schedule-month]");
+    const countEl = root.querySelector("[data-gosaki-schedule-search-count]");
+    const clearBtn = root.querySelector("[data-gosaki-schedule-search-clear]");
+    const emptyEl = root.querySelector("[data-gosaki-schedule-search-empty]");
+    let visible = 0;
+
+    cards.forEach((card) => {
+      const hay = String(card.getAttribute("data-search-text") || "").toLowerCase();
+      const match = !query || hay.includes(query);
+      card.hidden = !match;
+      if (match) visible += 1;
+    });
+
+    months.forEach((month) => {
+      const anyVisible = Array.from(
+        month.querySelectorAll<HTMLElement>("[data-schedule-event]"),
+      ).some((card) => !card.hidden);
+      month.hidden = !anyVisible;
+    });
+
+    if (countEl) {
+      countEl.textContent = query
+        ? `${visible} / ${cards.length} 件（検索中）`
+        : `全 ${cards.length} 件`;
+    }
+    if (clearBtn instanceof HTMLElement) {
+      clearBtn.hidden = !query;
+    }
+    if (emptyEl instanceof HTMLElement) {
+      emptyEl.hidden = !(query && visible === 0);
+    }
+  }
+
   root.addEventListener("click", (ev) => {
     const t = ev.target;
     if (!(t instanceof Element)) return;
@@ -659,16 +713,32 @@ export function initGosakiScheduleOperationalEdit(
       return;
     }
 
+    const dupEventBtn = t.closest("[data-gosaki-schedule-duplicate-event]");
+    if (dupEventBtn instanceof HTMLElement) {
+      if (!confirmLeaveIfDirty()) return;
+      const id = dupEventBtn.getAttribute("data-event-id") || "";
+      const legacyId = dupEventBtn.getAttribute("data-legacy-id") || "";
+      const event = findEvent(id, legacyId);
+      if (!event) return;
+      showEditor(
+        "create",
+        duplicateToCreateForm(event),
+        `複製して追加: ${event.title || event.legacyId || "公演"}`,
+      );
+      return;
+    }
+
     if (t.closest("[data-gosaki-schedule-create-start]")) {
       if (!confirmLeaveIfDirty()) return;
       showEditor("create", emptyCreateForm(), "新しい予定を追加");
       return;
     }
 
-    if (t.closest("[data-gosaki-edit-start]")) {
-      // Toolbar "編集する" without a card — prompt to pick from list
-      if (statusEl) {
-        statusEl.textContent = "一覧の「編集する」から公演を選んでください";
+    if (t.closest("[data-gosaki-schedule-search-clear]")) {
+      const searchInput = root.querySelector("[data-gosaki-schedule-search-input]");
+      if (searchInput instanceof HTMLInputElement) {
+        searchInput.value = "";
+        applyScheduleSearch("");
       }
       return;
     }
@@ -1205,6 +1275,10 @@ export function initGosakiScheduleOperationalEdit(
   root.addEventListener("input", (ev) => {
     const t = ev.target;
     if (!(t instanceof HTMLElement)) return;
+    if (t.matches("[data-gosaki-schedule-search-input]")) {
+      applyScheduleSearch((t as HTMLInputElement).value);
+      return;
+    }
     if (!t.closest("[data-gosaki-schedule-operational-form]")) return;
     onFormEdited();
   });
@@ -1212,6 +1286,10 @@ export function initGosakiScheduleOperationalEdit(
   root.addEventListener("change", (ev) => {
     const t = ev.target;
     if (!(t instanceof HTMLElement)) return;
+    if (t.matches("[data-gosaki-schedule-search-input]")) {
+      applyScheduleSearch((t as HTMLInputElement).value);
+      return;
+    }
     if (!t.closest("[data-gosaki-schedule-operational-form]")) return;
     onFormEdited();
   });
@@ -1228,6 +1306,7 @@ export function initGosakiScheduleOperationalEdit(
     ev.returnValue = UNSAVED_LEAVE;
   });
 
+  applyScheduleSearch("");
   showView();
   void refreshSaveGate();
 }

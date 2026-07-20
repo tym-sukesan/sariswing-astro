@@ -33,7 +33,7 @@ const {
   events = [],
   dataSource = "build-snapshot",
   publicScheduleUrl = "",
-  note = "公演一覧の確認と編集（閲覧／編集）· Save 無効",
+  note = "公演の確認・追加・編集ができます",
 } = Astro.props as Props;
 
 /** @type {Map<string, ScheduleEventRow[]>} */
@@ -105,15 +105,45 @@ const eventsJson = JSON.stringify(events);
     未保存の変更があります
   </p>
 
-  <div class="gosaki-schedule-content-panel__toolbar-row" data-gosaki-schedule-view-toolbar>
-    <AdminGosakiStagingEditToolbar mode="view" editLabel="編集する" />
-    <button
-      type="button"
-      class="gosaki-admin-edit-toolbar__btn gosaki-admin-edit-toolbar__btn--primary"
-      data-gosaki-schedule-create-start
+  <div data-gosaki-schedule-view-toolbar>
+    <div class="gosaki-schedule-content-panel__toolbar-row">
+      <button
+        type="button"
+        class="gosaki-admin-edit-toolbar__btn gosaki-admin-edit-toolbar__btn--primary"
+        data-gosaki-schedule-create-start
+      >
+        新しい予定を追加
+      </button>
+    </div>
+
+    <div
+      class="gosaki-schedule-content-panel__search admin-form"
+      data-gosaki-schedule-search
     >
-      新しい予定を追加
-    </button>
+      <label class="admin-form__field admin-form__field--full">
+        <span class="admin-form__label">キーワード検索</span>
+        <input
+          type="search"
+          data-gosaki-schedule-search-input
+          placeholder="日付 / タイトル / 会場 / 説明 / ID"
+          autocomplete="off"
+          enterkeyhint="search"
+        />
+      </label>
+      <div class="gosaki-schedule-content-panel__search-meta">
+        <p class="gosaki-schedule-content-panel__search-count" data-gosaki-schedule-search-count role="status">
+          全 {events.length} 件
+        </p>
+        <button
+          type="button"
+          class="gosaki-admin-edit-toolbar__btn"
+          data-gosaki-schedule-search-clear
+          hidden
+        >
+          クリア
+        </button>
+      </div>
+    </div>
   </div>
 
   {/* —— View mode —— */}
@@ -142,6 +172,16 @@ const eventsJson = JSON.stringify(events);
                     data-event-id={event.id ?? ""}
                     data-legacy-id={event.legacyId ?? ""}
                     data-published={event.published === false ? "false" : "true"}
+                    data-search-text={[
+                      event.date,
+                      event.title,
+                      event.venue,
+                      event.description,
+                      event.id,
+                      event.legacyId,
+                    ]
+                      .map((v) => String(v ?? "").toLowerCase())
+                      .join(" ")}
                   >
                     <div class="gosaki-schedule-content-panel__card-main">
                       <p class="gosaki-schedule-content-panel__date">{display(event.date)}</p>
@@ -161,21 +201,40 @@ const eventsJson = JSON.stringify(events);
                         <span class="gosaki-admin-content-panel__badge">公開</span>
                       )}
                       <code class="gosaki-schedule-content-panel__legacy">{display(event.legacyId)}</code>
-                      <button
-                        type="button"
-                        class="gosaki-schedule-content-panel__edit-btn"
-                        data-gosaki-schedule-edit-event
-                        data-event-id={event.id ?? ""}
-                        data-legacy-id={event.legacyId ?? ""}
-                      >
-                        編集する
-                      </button>
+                      <div class="gosaki-schedule-content-panel__card-actions">
+                        <button
+                          type="button"
+                          class="gosaki-schedule-content-panel__edit-btn"
+                          data-gosaki-schedule-edit-event
+                          data-event-id={event.id ?? ""}
+                          data-legacy-id={event.legacyId ?? ""}
+                        >
+                          編集
+                        </button>
+                        <button
+                          type="button"
+                          class="gosaki-schedule-content-panel__edit-btn"
+                          data-gosaki-schedule-duplicate-event
+                          data-event-id={event.id ?? ""}
+                          data-legacy-id={event.legacyId ?? ""}
+                        >
+                          複製
+                        </button>
+                      </div>
                     </div>
                   </li>
                 ))}
               </ul>
             </section>
           ))}
+          <p
+            class="gosaki-admin-content-panel__empty"
+            data-gosaki-schedule-search-empty
+            hidden
+            role="status"
+          >
+            検索条件に一致する予定がありません。
+          </p>
         </div>
       )
     }
@@ -322,6 +381,128 @@ const eventsJson = JSON.stringify(events);
     align-items: center;
     margin: 0.75rem 0 1rem;
     min-width: 0;
+  }
+
+  .gosaki-schedule-content-panel__search {
+    display: grid;
+    gap: 0.5rem;
+    margin: 0 0 1rem;
+    padding: 0.85rem 1rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    background: #f8fafc;
+    min-width: 0;
+    box-sizing: border-box;
+  }
+
+  .gosaki-schedule-content-panel__search-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .gosaki-schedule-content-panel__search-count {
+    margin: 0;
+    font-size: 0.875rem;
+    color: #4b5563;
+  }
+
+  .gosaki-schedule-content-panel__card-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .gosaki-schedule-content-panel__form.admin-form,
+  .gosaki-schedule-content-panel__form.admin-form--grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+  }
+
+  .gosaki-schedule-content-panel__form .admin-form__field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    min-width: 0;
+  }
+
+  .gosaki-schedule-content-panel__form .admin-form__field--full {
+    grid-column: 1 / -1;
+  }
+
+  .gosaki-schedule-content-panel__form .admin-form__label {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #334155;
+  }
+
+  .gosaki-schedule-content-panel__form input[type="date"],
+  .gosaki-schedule-content-panel__form input[type="text"],
+  .gosaki-schedule-content-panel__form input[type="search"],
+  .gosaki-schedule-content-panel__form input[type="url"],
+  .gosaki-schedule-content-panel__form input[type="time"],
+  .gosaki-schedule-content-panel__form textarea {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    padding: 0.6rem 0.75rem;
+    font: inherit;
+    font-size: 0.92rem;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    background: #fff;
+  }
+
+  .gosaki-schedule-content-panel__form textarea {
+    min-height: 6rem;
+    resize: vertical;
+  }
+
+  .gosaki-schedule-content-panel__form input:focus,
+  .gosaki-schedule-content-panel__form textarea:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.12);
+  }
+
+  .gosaki-schedule-content-panel__search .admin-form__field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    min-width: 0;
+  }
+
+  .gosaki-schedule-content-panel__search .admin-form__label {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #334155;
+  }
+
+  .gosaki-schedule-content-panel__search input[type="search"] {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    padding: 0.6rem 0.75rem;
+    font: inherit;
+    font-size: 0.92rem;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    background: #fff;
+  }
+
+  @media (max-width: 639px) {
+    .gosaki-schedule-content-panel__form.admin-form--grid {
+      grid-template-columns: 1fr;
+    }
   }
 
   .gosaki-schedule-content-panel__months {

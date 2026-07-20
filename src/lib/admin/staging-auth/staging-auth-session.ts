@@ -104,8 +104,9 @@ export async function signOutStagingAuth(
   anonKey: string,
 ): Promise<void> {
   const client = getStagingSupabaseClient(url, anonKey);
-  const { error } = await client.auth.signOut();
+  const { error } = await client.auth.signOut({ scope: "local" });
   if (error) {
+    // Local scope should clear storage; still surface unexpected errors
     throw new Error(formatStagingAuthError(error.message));
   }
 }

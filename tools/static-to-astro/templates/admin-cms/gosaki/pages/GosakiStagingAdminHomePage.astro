@@ -2,14 +2,10 @@
 import AdminGosakiStagingShellLayout from "../components/AdminGosakiStagingShellLayout.astro";
 import AdminGosakiStagingOperatorHome from "../components/AdminGosakiStagingOperatorHome.astro";
 import AdminGosakiStagingAuthGate from "../components/AdminGosakiStagingAuthGate.astro";
-import AdminAuthAdapterStatusPanel from "../../components/AdminAuthAdapterStatusPanel.astro";
-import { getStagingAuthConfig } from "../../../../../../src/lib/admin/staging-auth/staging-auth-config";
 import {
   GOSAKI_STAGING_ADMIN_SCHEDULE_PATH,
   GOSAKI_STAGING_PREVIEW_URL,
 } from "../gosaki-staging-admin-paths";
-
-const stagingAuthConfig = getStagingAuthConfig();
 ---
 
 <AdminGosakiStagingShellLayout title="管理画面">
@@ -18,12 +14,8 @@ const stagingAuthConfig = getStagingAuthConfig();
       <AdminGosakiStagingOperatorHome
         previewUrl={GOSAKI_STAGING_PREVIEW_URL}
         schedulePath={GOSAKI_STAGING_ADMIN_SCHEDULE_PATH}
+        showAuthBar={false}
       />
-
-      <details class="admin-gosaki-dev-tools">
-        <summary>開発者向け詳細</summary>
-        <AdminAuthAdapterStatusPanel phase="G-5y-e-a" authConfig={stagingAuthConfig} />
-      </details>
     </div>
   </AdminGosakiStagingAuthGate>
 </AdminGosakiStagingShellLayout>

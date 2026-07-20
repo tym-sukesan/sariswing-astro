@@ -35,6 +35,7 @@ export type AboutOperationalEditDeps = {
     current?: AboutFormSnapshot;
     next?: AboutFormSnapshot;
     before?: AboutFormSnapshot;
+    after?: AboutFormSnapshot;
     errors: string[];
     noChange?: boolean;
     authIssue?: boolean;
@@ -114,7 +115,7 @@ export function initGosakiAboutOperationalEdit(
   let saveInFlight = false;
   let dryRunInFlight = false;
   let authenticated = false;
-  /** Build-time / cancel restore baseline — dry-run enables only when form differs. */
+  /** Cancel/dirty baseline — updated to Save response.after on successful Save. */
   let baselineFingerprint: string | null = null;
 
   const saveArmed = deps.saveArmed === true;
@@ -603,7 +604,14 @@ export function initGosakiAboutOperationalEdit(
         return;
       }
 
+      // Save success: response.after becomes the new dirty/cancel baseline.
+      // Form keeps saved values; dirty=false until the operator edits again.
+      const savedAfter = display.after ?? display.next ?? next;
+      writeFormSnapshot(savedAfter);
+      baselineFingerprint = formFingerprint(savedAfter);
+
       invalidateDryRun();
+      applyDryRunButtonUi();
       setLocalValidation(
         `Save 成功 · commit ${String((display as { commitSha?: string }).commitSha ?? "").slice(0, 8)}`,
         true,

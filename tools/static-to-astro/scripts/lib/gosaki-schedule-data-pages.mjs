@@ -43,6 +43,23 @@ function formatBaseLayoutOpen(props) {
 
 export const GOSAKI_SCHEDULE_LIST_ASTRO = `---
 const { events = [] } = Astro.props;
+
+/** Linkify 会場website values only when they are absolute http(s) URLs. */
+function linkifyVenueWebsiteLine(line) {
+  const m = String(line).match(/^(会場website\\s*[:：]\\s*)(.*)$/);
+  if (!m) return { kind: "text", line };
+  const prefix = m[1];
+  const raw = String(m[2] || "").trim();
+  if (!raw) return { kind: "text", line };
+  if (!/^https?:\\/\\//i.test(raw)) return { kind: "text", line };
+  try {
+    const u = new URL(raw);
+    if (u.protocol !== "http:" && u.protocol !== "https:") return { kind: "text", line };
+  } catch {
+    return { kind: "text", line };
+  }
+  return { kind: "link", prefix, href: raw, text: raw };
+}
 ---
 
 <div class="gosaki-schedule-month-repeater">
@@ -74,6 +91,12 @@ const { events = [] } = Astro.props;
             {ev.price && <p>料金：{ev.price}</p>}
             {descLines.map((line) => {
               if (skipDesc.has(line)) return null;
+              const linked = linkifyVenueWebsiteLine(line);
+              if (linked.kind === "link") {
+                return (
+                  <p>{linked.prefix}<a href={linked.href} target="_blank" rel="noopener noreferrer">{linked.text}</a></p>
+                );
+              }
               return <p>{line}</p>;
             })}
           </div>

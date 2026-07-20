@@ -347,13 +347,26 @@ export function initGosakiDiscographyOperationalEdit(
     });
 
     if (saveReasonEl instanceof HTMLElement) {
-      saveReasonEl.textContent = gate.enabled
-        ? "保存できます（operator 明示操作のみ）"
-        : gate.reason || "Save は無効です";
+      const dirty = isDirty(form);
+      if (!authenticated) {
+        saveReasonEl.textContent = "ログインが必要です";
+      } else if (!dirty) {
+        saveReasonEl.textContent = "変更がありません";
+      } else if (!deps.saveArmed && gate.enabled) {
+        saveReasonEl.textContent =
+          "保存の準備ができました。現在のテスト環境では保存は無効です。";
+      } else {
+        saveReasonEl.textContent = gate.enabled
+          ? "保存"
+          : gate.reason || "変更があると保存できます";
+      }
     }
     if (saveBtn instanceof HTMLButtonElement) {
-      saveBtn.disabled = !gate.enabled;
-      saveBtn.setAttribute("aria-disabled", gate.enabled ? "false" : "true");
+      const dirty = isDirty(form);
+      const canClick = authenticated && dirty && !saveInFlight;
+      saveBtn.disabled = !canClick;
+      saveBtn.setAttribute("aria-disabled", canClick ? "false" : "true");
+      saveBtn.textContent = "保存";
     }
     if (saveInFlightEl instanceof HTMLElement) saveInFlightEl.hidden = !saveInFlight;
   };
@@ -566,6 +579,39 @@ export function initGosakiDiscographyOperationalEdit(
     saveBtn.addEventListener("click", async () => {
       if (saveInFlight || dryRunInFlight) return;
       await refreshSaveUi();
+      if (!authenticated) {
+        if (saveReasonEl instanceof HTMLElement) saveReasonEl.textContent = "ログインが必要です";
+        return;
+      }
+      if (!isDirty(form)) {
+        if (saveReasonEl instanceof HTMLElement) saveReasonEl.textContent = "変更がありません";
+        return;
+      }
+
+      const currentFingerprint = editableFingerprint(readFormSnapshot(form));
+      const formMatches =
+        dryRunSucceeded &&
+        dryRunLockedFingerprint !== "" &&
+        currentFingerprint === dryRunLockedFingerprint;
+
+      if (!formMatches) {
+        if (saveReasonEl instanceof HTMLElement) saveReasonEl.textContent = "確認中…";
+        const internalDry = root.querySelector("[data-gosaki-internal-dry-run]");
+        if (internalDry instanceof HTMLElement) {
+          internalDry.click();
+        }
+        // After dry-run, user can click 保存 again — or if unarmed, message via refreshSaveUi
+        return;
+      }
+
+      if (!deps.saveArmed) {
+        if (saveReasonEl instanceof HTMLElement) {
+          saveReasonEl.textContent =
+            "保存の準備ができました。現在のテスト環境では保存は無効です。";
+        }
+        return;
+      }
+
       if (saveBtn.disabled) return;
 
       const current = readFormSnapshot(form);
@@ -588,7 +634,7 @@ export function initGosakiDiscographyOperationalEdit(
       if (!saveEndpoint || !anonKey || !deps.getAccessToken) {
         if (saveValidationEl instanceof HTMLElement) {
           saveValidationEl.hidden = false;
-          saveValidationEl.textContent = "Save endpoint または認証が未設定です";
+          saveValidationEl.textContent = "いまは保存できません";
         }
         return;
       }

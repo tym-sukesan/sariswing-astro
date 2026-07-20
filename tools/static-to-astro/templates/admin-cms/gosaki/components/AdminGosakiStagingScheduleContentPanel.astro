@@ -246,9 +246,19 @@ const eventsJson = JSON.stringify(events);
       <AdminGosakiStagingEditToolbar
         mode="edit"
         cancelLabel="一覧へ戻る"
-        dryRunLabel="変更を確認"
-        showDryRun={true}
+        showDryRun={false}
       />
+      {/* Hidden: one-click Save runs this dry-run path internally. */}
+      <button
+        type="button"
+        hidden
+        data-gosaki-edit-dry-run
+        data-gosaki-internal-dry-run="true"
+        tabindex="-1"
+        aria-hidden="true"
+      >
+        internal-dry-run
+      </button>
     </div>
 
     <p class="gosaki-schedule-content-panel__edit-lead" data-gosaki-schedule-edit-lead>
@@ -310,7 +320,7 @@ const eventsJson = JSON.stringify(events);
         <span data-gosaki-schedule-published-label>公開する</span>
       </label>
 
-      <p class="gosaki-schedule-content-panel__lock admin-form__field--full" role="status">
+      <p class="gosaki-schedule-content-panel__lock admin-form__field--full" role="status" hidden>
         <span class="admin-form__label">optimistic lock（updated_at）</span>
         <code data-gosaki-schedule-lock-value>—</code>
       </p>
@@ -326,20 +336,15 @@ const eventsJson = JSON.stringify(events);
     <div
       class="gosaki-schedule-content-panel__save-card"
       data-gosaki-schedule-save-card
-      data-gosaki-save-disabled-note="true"
       role="region"
       aria-label="保存"
     >
-      <h3 class="gosaki-schedule-content-panel__save-title">Save</h3>
-      <p class="gosaki-schedule-content-panel__save-hint" role="note">
-        「変更を確認」（dry-run）成功後のみ「更新する」が有効になります。通常 STG package は Save 無効のままです。
-      </p>
       <p
         class="gosaki-schedule-content-panel__save-reason"
         data-gosaki-schedule-save-reason
         role="status"
       >
-        Save は無効です。先に「変更を確認」してください
+        変更があると保存できます
       </p>
       <button
         type="button"
@@ -348,9 +353,8 @@ const eventsJson = JSON.stringify(events);
         data-gosaki-save-allowed="false"
         disabled
         aria-disabled="true"
-        title="Save は現在無効です"
       >
-        更新する（無効）
+        保存
       </button>
     </div>
   </div>
@@ -528,6 +532,14 @@ const eventsJson = JSON.stringify(events);
     background: #fff;
     min-width: 0;
     box-sizing: border-box;
+  }
+
+  /* Author display:grid must not override [hidden] (search filter). */
+  .gosaki-schedule-content-panel__card[hidden],
+  .gosaki-schedule-content-panel__month[hidden],
+  .gosaki-schedule-content-panel [hidden],
+  .gosaki-schedule-content-panel .is-search-hidden {
+    display: none !important;
   }
 
   @media (min-width: 640px) {

@@ -244,7 +244,8 @@ export function initGosakiYoutubeMultiOperationalEdit(
     options.expectedSaveApprovalId ||
     "G-11c7-gosaki-youtube-items-web-save-non-dry-run-slice";
   const SAVE_DISABLED =
-    "複数動画 Save は無効です。通常 STG package では常に無効（client arm=false）。";
+    "保存の準備ができました。現在のテスト環境では保存は無効です。";
+  let pendingOneClickSave = false;
 
   let dryRunOk = false;
   let dryRunFingerprint: string | null = null;
@@ -266,50 +267,39 @@ export function initGosakiYoutubeMultiOperationalEdit(
     );
   }
 
+  function isDirty(): boolean {
+    return itemsFingerprint(items) !== itemsFingerprint(baseline);
+  }
+
   function applySaveButtonUi(enabled: boolean, reason: string) {
     if (saveBtn instanceof HTMLButtonElement) {
       saveBtn.disabled = !enabled;
       saveBtn.setAttribute("aria-disabled", enabled ? "false" : "true");
       saveBtn.setAttribute("data-gosaki-save-allowed", enabled ? "true" : "false");
-      saveBtn.textContent = enabled ? "更新する" : "更新する（無効）";
+      saveBtn.textContent = "保存";
     }
     if (saveReasonEl) saveReasonEl.textContent = reason;
   }
 
   async function refreshSaveGate() {
     const token = (await (options.getAccessToken?.() ?? Promise.resolve(null))) || null;
-    const endpoint = String(options.saveEndpoint ?? "").trim();
-    const formMatches =
-      dryRunOk &&
-      dryRunAfterFingerprint != null &&
-      dryRunAfterFingerprint === itemsFingerprint(items);
-    const gate = options.evaluateSaveGate
-      ? options.evaluateSaveGate({
-          authenticated: Boolean(token),
-          dryRunSucceeded: dryRunOk,
-          formMatchesDryRunSnapshot: formMatches,
-          fingerprintPresent: Boolean(dryRunFingerprint),
-          expectedBeforeEmbed: null,
-          expectedBeforeVideoId: null,
-          contentLockMode: "items",
-          saveEndpointConfigured: Boolean(endpoint && options.anonKey),
-          saveEndpointSafe: endpoint
-            ? options.assertSaveEndpointSafe?.(endpoint) !== false
-            : false,
-          envArmed: saveArmed,
-          approvalId: expectedSaveApprovalId,
-          expectedApprovalId: expectedSaveApprovalId,
-          saveInFlight,
-          noChange: dryRunNoChange,
-        })
-      : { enabled: false, reason: SAVE_DISABLED };
-
     if (indeterminateLocked) {
-      applySaveButtonUi(false, "結果不明のため再試行禁止 — dry-run で現状を確認してください");
+      applySaveButtonUi(false, "結果不明のため自動では再試行しません");
       return;
     }
-    const enabled = saveArmed === true && gate.enabled === true;
-    applySaveButtonUi(enabled, gate.reason || SAVE_DISABLED);
+    if (saveInFlight || dryRunInFlight) {
+      applySaveButtonUi(false, saveInFlight ? "保存中…" : "確認中…");
+      return;
+    }
+    if (!isDirty()) {
+      applySaveButtonUi(false, "変更がありません");
+      return;
+    }
+    if (!token) {
+      applySaveButtonUi(false, "ログインが必要です");
+      return;
+    }
+    applySaveButtonUi(true, "保存");
   }
 
   function setSaveDisabled(reason = SAVE_DISABLED) {
@@ -523,6 +513,26 @@ export function initGosakiYoutubeMultiOperationalEdit(
     } finally {
       dryRunInFlight = false;
       void refreshSaveGate();
+      if (pendingOneClickSave) {
+        const matched =
+          dryRunOk &&
+          dryRunAfterFingerprint != null &&
+          dryRunAfterFingerprint === itemsFingerprint(items);
+        if (!matched) {
+          pendingOneClickSave = false;
+          applySaveButtonUi(true, "入力内容を確認してください");
+          if (dryRunResult instanceof HTMLElement) dryRunResult.hidden = true;
+          return;
+        }
+        if (!saveArmed) {
+          pendingOneClickSave = false;
+          applySaveButtonUi(false, SAVE_DISABLED);
+          if (dryRunResult instanceof HTMLElement) dryRunResult.hidden = true;
+          return;
+        }
+        pendingOneClickSave = false;
+        if (saveBtn instanceof HTMLElement) saveBtn.click();
+      }
     }
   }
 
@@ -611,34 +621,56 @@ export function initGosakiYoutubeMultiOperationalEdit(
     }
 
     if (t.closest("[data-gosaki-youtube-multi-save]")) {
-      if (!(saveBtn instanceof HTMLButtonElement) || saveBtn.disabled || indeterminateLocked) {
+      if (!(saveBtn instanceof HTMLButtonElement) || indeterminateLocked) {
         return;
       }
-      if (!saveArmed) {
-        setSaveDisabled(SAVE_DISABLED);
+      if (saveInFlight || dryRunInFlight) return;
+      syncFromDom();
+      if (!isDirty()) {
+        applySaveButtonUi(false, "変更がありません");
         return;
       }
-      // Armed path exists for contract parity — still requires operator arm.
-      // No auto-retry; this phase keeps arm false so this branch is not used in normal STG.
       void (async () => {
-        if (saveInFlight) return;
-        syncFromDom();
         const token = (await (options.getAccessToken?.() ?? Promise.resolve(null))) || null;
-        const endpoint = String(options.saveEndpoint ?? "").trim();
+        if (!token) {
+          applySaveButtonUi(false, "ログインが必要です");
+          return;
+        }
+        const formMatches =
+          dryRunOk &&
+          dryRunAfterFingerprint != null &&
+          dryRunAfterFingerprint === itemsFingerprint(items);
+        if (!formMatches) {
+          pendingOneClickSave = true;
+          applySaveButtonUi(false, "確認中…");
+          const internalDry = root.querySelector("[data-gosaki-internal-dry-run]");
+          if (internalDry instanceof HTMLElement) internalDry.click();
+          else {
+            pendingOneClickSave = false;
+            applySaveButtonUi(true, "保存");
+          }
+          return;
+        }
+        if (!saveArmed) {
+          applySaveButtonUi(false, SAVE_DISABLED);
+          return;
+        }
+        // Armed path: existing Save POST below
         if (
           !token ||
-          !endpoint ||
+          !String(options.saveEndpoint ?? "").trim() ||
           !dryRunFingerprint ||
           !dryRunBeforeItems ||
           !options.buildSaveEndpointRequest
         ) {
-          setSaveDisabled("Save 前提条件不足");
+          applySaveButtonUi(false, "いまは保存できません");
           return;
         }
         saveInFlight = true;
         void refreshSaveGate();
         try {
           const fetchImpl = options.fetchImpl ?? fetch;
+          const endpoint = String(options.saveEndpoint ?? "").trim();
           const body = options.buildSaveEndpointRequest({
             items,
             expectedBeforeItems: dryRunBeforeItems,
@@ -661,32 +693,25 @@ export function initGosakiYoutubeMultiOperationalEdit(
           const json = (await res.json().catch(() => ({}))) as Record<string, unknown>;
           if (json.indeterminate === true) {
             indeterminateLocked = true;
-            setSaveDisabled(
-              "結果不明のため再試行禁止 — dry-run で現状を確認してください",
-            );
+            applySaveButtonUi(false, "結果不明のため自動では再試行しません");
             return;
           }
           if (json.ok === true && res.ok) {
             baseline = items.map((i) => ({ ...i }));
             dryRunOk = false;
             dryRunFingerprint = null;
-            if (statusEl) statusEl.textContent = "Save 成功";
-            if (dryRunResult instanceof HTMLElement) {
-              dryRunResult.hidden = false;
-              dryRunResult.innerHTML = `<h3>Save 成功</h3><p>commitSha=<code>${escapeHtml(String(json.commitSha ?? "—"))}</code></p>`;
-            }
+            if (statusEl) statusEl.textContent = "保存しました";
+            applySaveButtonUi(false, "保存しました");
           } else {
-            setSaveDisabled(
-              String(json.error ?? options.conflictMessage ?? "Save 失敗"),
-            );
+            applySaveButtonUi(false, "保存に失敗しました");
           }
         } catch (err) {
-          if (err instanceof Error && err.name === "AbortError") {
-            indeterminateLocked = true;
-            setSaveDisabled("timeout — 再試行禁止。dry-run で現状確認");
-          } else {
-            setSaveDisabled(err instanceof Error ? err.message : String(err));
-          }
+          applySaveButtonUi(
+            false,
+            err instanceof Error && err.name === "AbortError"
+              ? "時間切れです。自動では再試行しません。"
+              : "保存に失敗しました",
+          );
         } finally {
           saveInFlight = false;
           void refreshSaveGate();

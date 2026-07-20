@@ -136,7 +136,7 @@ function display(value: string | null | undefined): string {
   {/* —— Edit mode (single album) —— */}
   <div class="gosaki-discography-content-panel__edit" data-gosaki-disc-edit-mode hidden>
     <div class="gosaki-discography-content-panel__edit-toolbar-row">
-      <AdminGosakiStagingEditToolbar mode="edit" showDryRun={true} />
+      <AdminGosakiStagingEditToolbar mode="edit" showDryRun={false} />
     </div>
 
     <form
@@ -266,44 +266,35 @@ function display(value: string | null | undefined): string {
       class="gosaki-discography-content-panel__dry-run"
       data-gosaki-disc-dry-run-panel
       data-gosaki-edit-dry-run-result
+      hidden
     >
-      <h2 class="gosaki-discography-content-panel__section-title">変更確認（dry-run）</h2>
-      <p class="gosaki-discography-content-panel__hint">
-        既存 STG Discography dry-run endpoint へ接続します。DB には書き込みません。
-      </p>
       <p
         class="gosaki-discography-content-panel__dry-run-ok"
         data-gosaki-disc-dry-run-ok
         hidden
         role="status"
-      >
-        dry-run 成功 — 内容を確認済み
-      </p>
+      ></p>
       <pre
         class="gosaki-discography-content-panel__dry-run-result"
         data-disc-endpoint-dry-run-result="album"
         data-gosaki-disc-dry-run-result
         aria-live="polite"
-      >（まだ確認していません）</pre>
+        hidden
+      ></pre>
     </div>
 
     <div
       class="gosaki-discography-content-panel__save"
       data-gosaki-disc-save-panel="true"
-      data-gosaki-save-disabled-note="true"
       role="region"
       aria-label="保存"
     >
-      <h2 class="gosaki-discography-content-panel__section-title">保存</h2>
-      <p class="gosaki-discography-content-panel__hint" role="note">
-        初回 controlled Save（G-20u43）は discography-004 の label 単一変更（original↔temporary）のみ対応。他フィールド変更を含む場合は Save 不可。通常は無効（env arm PUBLIC_GOSAKI_DISCOGRAPHY_SAVE_UI_ARMED=true かつ dry-run 成功・ログインが必要）。通常 STG package は armed にしない。
-      </p>
       <p
         class="gosaki-discography-content-panel__save-reason"
         data-gosaki-disc-save-disabled-reason
         role="status"
       >
-        Save は無効です
+        変更があると保存できます
       </p>
       <p
         class="gosaki-discography-content-panel__save-in-flight"
@@ -333,17 +324,26 @@ function display(value: string | null | undefined): string {
       >
         他の場所で更新された可能性があります。再読み込みしてください。
       </p>
-      <p class="gosaki-discography-content-panel__save-actions">
-        <button
-          type="button"
-          class="gosaki-discography-content-panel__save-btn"
-          disabled
-          aria-disabled="true"
-          data-gosaki-disc-save
-        >
-          保存する
-        </button>
-      </p>
+      <button
+        type="button"
+        class="gosaki-admin-edit-toolbar__btn gosaki-admin-edit-toolbar__btn--primary gosaki-discography-content-panel__save-btn"
+        data-gosaki-disc-save
+        data-gosaki-save-allowed="false"
+        disabled
+        aria-disabled="true"
+      >
+        保存
+      </button>
+      <button
+        type="button"
+        hidden
+        data-gosaki-edit-dry-run
+        data-gosaki-internal-dry-run="true"
+        tabindex="-1"
+        aria-hidden="true"
+      >
+        internal-dry-run
+      </button>
     </div>
   </div>
 
@@ -355,7 +355,7 @@ function display(value: string | null | undefined): string {
     set:html={JSON.stringify(albums)}
   />
 
-  <details class="gosaki-read-only-admin__dev-details" data-gosaki-admin-dev-details="true">
+  <details class="gosaki-read-only-admin__dev-details" data-gosaki-admin-dev-details="true" hidden>
     <summary>開発者情報</summary>
     <p class="gosaki-admin-content-panel__meta">
       operational edit · dry-run + gated Save wiring · Save default disabled · image edit deferred

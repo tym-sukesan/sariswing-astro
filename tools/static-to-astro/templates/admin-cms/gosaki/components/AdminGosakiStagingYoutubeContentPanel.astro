@@ -99,15 +99,18 @@ const itemCount = Array.isArray(config.items) ? config.items.length : 0;
   </section>
 
   <div class="gosaki-schedule-edit-dry-run-actions">
-    <button
-      type="button"
-      class="gosaki-admin-edit-toolbar__btn gosaki-admin-edit-toolbar__btn--primary"
-      data-gosaki-youtube-multi-dry-run
-    >
-      変更を確認
-    </button>
     <button type="button" class="gosaki-admin-edit-toolbar__btn" data-gosaki-youtube-multi-cancel>
       変更を破棄
+    </button>
+    <button
+      type="button"
+      hidden
+      data-gosaki-youtube-multi-dry-run
+      data-gosaki-internal-dry-run="true"
+      tabindex="-1"
+      aria-hidden="true"
+    >
+      internal-dry-run
     </button>
   </div>
 
@@ -119,13 +122,12 @@ const itemCount = Array.isArray(config.items) ? config.items.length : 0;
   ></div>
 
   <div class="gosaki-schedule-content-panel__save-card" role="region" aria-label="保存">
-    <h3 class="gosaki-schedule-content-panel__save-title">Save</h3>
     <p
       class="gosaki-schedule-content-panel__save-reason"
       data-gosaki-youtube-multi-save-reason
       role="status"
     >
-      Save は無効です（外部更新なし）
+      変更があると保存できます
     </p>
     <button
       type="button"
@@ -135,7 +137,7 @@ const itemCount = Array.isArray(config.items) ? config.items.length : 0;
       disabled
       aria-disabled="true"
     >
-      更新する（無効）
+      保存
     </button>
   </div>
 </section>

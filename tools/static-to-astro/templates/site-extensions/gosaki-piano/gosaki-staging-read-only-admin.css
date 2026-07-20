@@ -312,11 +312,21 @@ body.gosaki-read-only-admin {
   max-width: 24rem;
 }
 
+/* Author display must not beat the hidden attribute (auth / search / months). */
+.gosaki-read-only-admin [hidden],
+.gosaki-read-only-admin [hidden] * {
+  display: none !important;
+}
+
 .gosaki-read-only-admin__auth-actions {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
   margin-top: 0.25rem;
+}
+
+.gosaki-read-only-admin__auth-actions[hidden] {
+  display: none !important;
 }
 
 .gosaki-read-only-admin__admin-probe {

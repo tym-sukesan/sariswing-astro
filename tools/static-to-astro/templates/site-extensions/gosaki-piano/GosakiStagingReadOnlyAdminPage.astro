@@ -41,9 +41,6 @@ import {
   G20U36C_DISCOGRAPHY_DRY_RUN_NOTE,
   G20U36C_DISCOGRAPHY_DRY_RUN_APPROVAL_ID,
   G20U36C_DISCOGRAPHY_DRY_RUN_OPERATION,
-  G20U36E_ADMIN_PROBE_UI_TOOLS_DRAFT_PHASE,
-  G20U36E_ADMIN_PROBE_BUTTON_LABEL,
-  G20U36E_ADMIN_PROBE_NOTE,
   G20U41_DISCOGRAPHY_OPERATIONAL_SAVE_PHASE,
   G20U41_DISCOGRAPHY_SAVE_OPERATION,
   G20U41_DISCOGRAPHY_SAVE_APPROVAL_ID,
@@ -218,44 +215,46 @@ const showClientScript = true;
       </header>
 
       <main class="gosaki-read-only-admin__main" data-gosaki-multi-route-main="true">
-        {
-          page === "portal" ? (
-            <AdminGosakiStagingOperatorHome
-              previewUrl={GOSAKI_PACKAGE_PREVIEW_URL || publicHomeUrl}
-              schedulePath={GOSAKI_STAGING_ADMIN_SCHEDULE_PATH}
-              supabaseAuthConfigured={supabaseAuthConfigured}
-            />
-          ) : (
-            <>
-              <p class="gosaki-read-only-admin__meta">
-                <a class="admin-gosaki-back-link" href={GOSAKI_STAGING_ADMIN_BASE}>← 管理トップへ</a>
-              </p>
-              <AdminGosakiStagingNav current={navCurrent} />
-            </>
-          )
-        }
+        <AdminGosakiStagingCompactAuthBar
+          supabaseAuthConfigured={supabaseAuthConfigured}
+          purposeNote="ログインすると管理メニューを利用できます。"
+          showDeveloperTools={false}
+        />
 
-        {page === "schedule" ? (
-          <>
+        {/* Hidden until Supabase Auth session is confirmed signed-in. */}
+        <div
+          data-gosaki-admin-gated
+          hidden
+          aria-hidden="true"
+        >
+          {
+            page === "portal" ? (
+              <AdminGosakiStagingOperatorHome
+                previewUrl={GOSAKI_PACKAGE_PREVIEW_URL || publicHomeUrl}
+                schedulePath={GOSAKI_STAGING_ADMIN_SCHEDULE_PATH}
+                supabaseAuthConfigured={supabaseAuthConfigured}
+                showAuthBar={false}
+              />
+            ) : (
+              <>
+                <p class="gosaki-read-only-admin__meta">
+                  <a class="admin-gosaki-back-link" href={GOSAKI_STAGING_ADMIN_BASE}>← 管理トップへ</a>
+                </p>
+                <AdminGosakiStagingNav current={navCurrent} />
+              </>
+            )
+          }
+
+          {page === "schedule" ? (
             <AdminGosakiStagingScheduleContentPanel
               events={scheduleEvents.events ?? []}
               dataSource={scheduleEvents.dataSource ?? dashboard.schedule.dataSource}
               publicScheduleUrl={publicScheduleUrl}
               note="公演の確認・追加・編集ができます"
             />
-            <AdminGosakiStagingCompactAuthBar
-              supabaseAuthConfigured={supabaseAuthConfigured}
-              probePhase={G20U36E_ADMIN_PROBE_UI_TOOLS_DRAFT_PHASE}
-              probeNote={G20U36E_ADMIN_PROBE_NOTE}
-              probeButtonLabel={G20U36E_ADMIN_PROBE_BUTTON_LABEL}
-              purposeNote="変更の確認・保存にはログインが必要です（HTTP Basic 認証とは別です）。"
-              showDeveloperTools={false}
-            />
-          </>
-        ) : null}
+          ) : null}
 
-        {page === "discography" ? (
-          <>
+          {page === "discography" ? (
             <AdminGosakiStagingDiscographyContentPanel
               albums={discographyEditor.albums ?? []}
               dataSource={discographyEditor.dataSource ?? "build-snapshot"}
@@ -264,36 +263,16 @@ const showClientScript = true;
               publicDiscographyUrl={publicDiscographyUrl}
               dryRunEndpointConfigured={Boolean(discographyDryRunEndpoint)}
             />
-            <AdminGosakiStagingCompactAuthBar
-              supabaseAuthConfigured={supabaseAuthConfigured}
-              probePhase={G20U36E_ADMIN_PROBE_UI_TOOLS_DRAFT_PHASE}
-              probeNote={G20U36E_ADMIN_PROBE_NOTE}
-              probeButtonLabel={G20U36E_ADMIN_PROBE_BUTTON_LABEL}
-              purposeNote="変更の確認・保存にはログインが必要です（HTTP Basic 認証とは別です）。"
-              showDeveloperTools={false}
-            />
-          </>
-        ) : null}
+          ) : null}
 
-        {page === "youtube" ? (
-          <>
+          {page === "youtube" ? (
             <AdminGosakiStagingYoutubeContentPanel
               config={youtubeConfig}
               publicHomeUrl={publicHomeUrl}
             />
-            <AdminGosakiStagingCompactAuthBar
-              supabaseAuthConfigured={supabaseAuthConfigured}
-              probePhase={G20U36E_ADMIN_PROBE_UI_TOOLS_DRAFT_PHASE}
-              probeNote={G20U36E_ADMIN_PROBE_NOTE}
-              probeButtonLabel={G20U36E_ADMIN_PROBE_BUTTON_LABEL}
-              purposeNote="変更の確認・保存にはログインが必要です（HTTP Basic 認証とは別です）。"
-              showDeveloperTools={false}
-            />
-          </>
-        ) : null}
+          ) : null}
 
-        {page === "about" ? (
-          <>
+          {page === "about" ? (
             <AdminGosakiStagingAboutContentPanel
               profileLabel={view.about.profileLabel}
               bandsLabel={view.about.bandsLabel}
@@ -302,16 +281,8 @@ const showClientScript = true;
               bandImages={view.about.bandImages}
               publicAboutUrl={publicAboutUrl}
             />
-            <AdminGosakiStagingCompactAuthBar
-              supabaseAuthConfigured={supabaseAuthConfigured}
-              probePhase={G20U36E_ADMIN_PROBE_UI_TOOLS_DRAFT_PHASE}
-              probeNote={G20U36E_ADMIN_PROBE_NOTE}
-              probeButtonLabel={G20U36E_ADMIN_PROBE_BUTTON_LABEL}
-              purposeNote="変更の確認・保存にはログインが必要です（HTTP Basic 認証とは別です）。"
-              showDeveloperTools={false}
-            />
-          </>
-        ) : null}
+          ) : null}
+        </div>
       </main>
 
       <footer class="gosaki-read-only-admin__footer">
@@ -334,12 +305,21 @@ const showClientScript = true;
         var authSignOutBtn = document.getElementById("gra-auth-sign-out-btn");
         var authEmail = document.getElementById("gra-auth-email");
         var authPassword = document.getElementById("gra-auth-password");
+        var authPurpose = document.querySelector("[data-gosaki-auth-purpose]");
+        var gated = document.querySelector("[data-gosaki-admin-gated]");
+        var adminPage = (body.dataset.gosakiAdminPage || "portal").trim();
+        var adminHomeHref = body.querySelector(".gosaki-read-only-admin__brand");
+        var adminHomeUrl =
+          (adminHomeHref && adminHomeHref.getAttribute("href")) ||
+          "/cms-kit-staging/gosaki-piano/admin/";
 
         var supabaseUrl = (body.dataset.gosakiSupabaseUrl || "").trim();
         var supabaseAnonKey = (body.dataset.gosakiSupabaseAnonKey || "").trim();
         var supabaseAuthConfigured = body.dataset.gosakiSupabaseAuthConfigured === "true";
         var supabaseClient = null;
         var signedIn = false;
+        var authResolved = false;
+        var authListenerBound = false;
 
         function resolveCreateClient() {
           var lib = window.supabase;
@@ -349,25 +329,24 @@ const showClientScript = true;
           return null;
         }
 
-        function getSupabaseClient() {
-          if (!supabaseAuthConfigured || !supabaseUrl || !supabaseAnonKey) return null;
-          var createClient = resolveCreateClient();
-          if (!createClient) return null;
-          if (!supabaseClient) {
-            supabaseClient = createClient(supabaseUrl, supabaseAnonKey, {
-              auth: {
-                persistSession: true,
-                autoRefreshToken: true,
-                detectSessionInUrl: false,
-              },
-            });
-          }
-          return supabaseClient;
+        function setGatedVisible(visible) {
+          if (!(gated instanceof HTMLElement)) return;
+          gated.hidden = !visible;
+          gated.setAttribute("aria-hidden", visible ? "false" : "true");
+        }
+
+        function redirectToAdminHomeIfNeeded() {
+          if (adminPage === "portal") return;
+          try {
+            var target = adminHomeUrl;
+            if (window.location.pathname.indexOf("/admin/") !== -1) {
+              window.location.replace(target);
+            }
+          } catch (_e) {}
         }
 
         function updateLoginButton() {
           if (!authSignInBtn) return;
-          // Enable only when Auth configured and signed out — no Save / probe coupling
           if (!supabaseAuthConfigured || signedIn) {
             authSignInBtn.disabled = true;
             return;
@@ -380,45 +359,67 @@ const showClientScript = true;
           authSignOutBtn.disabled = !signedIn;
         }
 
+        function clearPasswordField() {
+          if (authPassword) authPassword.value = "";
+        }
+
         function setAuthUiSignedIn(email) {
           signedIn = true;
+          authResolved = true;
           var label = email ? "ログイン中: " + email : "ログイン中";
+          // Signed-in chrome only — never keep a separate status that duplicates "ログイン中"
           if (authStatus) {
-            authStatus.textContent = label;
+            authStatus.hidden = true;
+            authStatus.textContent = "";
           }
           var badge = document.getElementById("gra-auth-signed-badge");
           if (badge) badge.textContent = label;
+          if (authPurpose) authPurpose.hidden = true;
           if (authLoginForm) authLoginForm.hidden = true;
           if (authSignedIn) authSignedIn.hidden = false;
+          clearPasswordField();
+          if (authEmail) authEmail.value = "";
+          setGatedVisible(true);
           updateLoginButton();
           updateSignOutButton();
           try {
-            window.dispatchEvent(new CustomEvent("gosaki-admin-auth-changed", { detail: { signedIn: true } }));
+            window.dispatchEvent(
+              new CustomEvent("gosaki-admin-auth-changed", {
+                detail: { signedIn: true, email: email || "" },
+              }),
+            );
           } catch (_e) {}
         }
 
-        function setAuthUiSignedOut(message) {
+        function setAuthUiSignedOut(message, opts) {
+          opts = opts || {};
           signedIn = false;
+          authResolved = true;
+          setGatedVisible(false);
           if (authStatus) {
+            authStatus.hidden = false;
             if (!supabaseAuthConfigured) {
               authStatus.textContent =
-                message ||
-                "Supabase Auth 未設定 — PUBLIC_SUPABASE_URL / PUBLIC_SUPABASE_ANON_KEY が build に必要です";
+                message || "ログイン設定が未完了です。管理者にお問い合わせください。";
             } else {
-              authStatus.textContent = message || "未ログイン";
+              authStatus.textContent = message || "ログインしてください";
             }
           }
           var badge = document.getElementById("gra-auth-signed-badge");
-          if (badge) badge.textContent = "ログイン中";
+          if (badge) badge.textContent = "";
+          if (authPurpose) authPurpose.hidden = false;
           if (authLoginForm) authLoginForm.hidden = !supabaseAuthConfigured;
           if (authSignedIn) authSignedIn.hidden = true;
           if (authEmail) authEmail.value = "";
-          if (authPassword) authPassword.value = "";
+          clearPasswordField();
           updateLoginButton();
           updateSignOutButton();
           try {
-            window.dispatchEvent(new CustomEvent("gosaki-admin-auth-changed", { detail: { signedIn: false } }));
+            window.dispatchEvent(
+              new CustomEvent("gosaki-admin-auth-changed", { detail: { signedIn: false } }),
+            );
           } catch (_e) {}
+          if (opts.redirectHome) redirectToAdminHomeIfNeeded();
         }
 
         function waitForSupabaseClient(maxAttempts, delayMs) {
@@ -440,6 +441,36 @@ const showClientScript = true;
           });
         }
 
+        function getSupabaseClient() {
+          if (!supabaseAuthConfigured || !supabaseUrl || !supabaseAnonKey) return null;
+          var createClient = resolveCreateClient();
+          if (!createClient) return null;
+          if (!supabaseClient) {
+            supabaseClient = createClient(supabaseUrl, supabaseAnonKey, {
+              auth: {
+                persistSession: true,
+                autoRefreshToken: true,
+                detectSessionInUrl: false,
+              },
+            });
+          }
+          return supabaseClient;
+        }
+
+        function bindAuthStateListener(client) {
+          if (!client || authListenerBound) return;
+          authListenerBound = true;
+          try {
+            client.auth.onAuthStateChange(function (_event, session) {
+              if (session && session.access_token) {
+                setAuthUiSignedIn(session.user && session.user.email);
+              } else if (authResolved) {
+                setAuthUiSignedOut(undefined, { redirectHome: adminPage !== "portal" });
+              }
+            });
+          } catch (_e) {}
+        }
+
         function refreshAuthStatus() {
           if (!supabaseAuthConfigured) {
             setAuthUiSignedOut();
@@ -447,32 +478,30 @@ const showClientScript = true;
           }
 
           if (authStatus) {
+            authStatus.hidden = false;
             authStatus.textContent = "ログイン状態を確認しています…";
           }
+          setGatedVisible(false);
           updateLoginButton();
 
           return waitForSupabaseClient(40, 100).then(function (client) {
             if (!client) {
-              setAuthUiSignedOut("Supabase JS の読み込みに失敗しました — ページを再読み込みしてください");
+              setAuthUiSignedOut("ログイン機能の読み込みに失敗しました。ページを再読み込みしてください。");
               return;
             }
+            bindAuthStateListener(client);
             return client.auth.getSession().then(function (sessionRes) {
               var session = sessionRes.data && sessionRes.data.session;
               if (session && session.access_token) {
                 setAuthUiSignedIn(session.user && session.user.email);
               } else {
-                setAuthUiSignedOut();
+                setAuthUiSignedOut(undefined, { redirectHome: adminPage !== "portal" });
               }
             });
           });
         }
 
         if (authLoginForm && authEmail && authPassword) {
-          ["input", "change", "keyup"].forEach(function (evtName) {
-            authEmail.addEventListener(evtName, updateLoginButton);
-            authPassword.addEventListener(evtName, updateLoginButton);
-          });
-
           authLoginForm.addEventListener("submit", function (ev) {
             ev.preventDefault();
             if (!supabaseAuthConfigured) {
@@ -487,15 +516,15 @@ const showClientScript = true;
             }
             var client = getSupabaseClient();
             if (!client) {
-              setAuthUiSignedOut("Supabase JS の読み込みに失敗しました — ページを再読み込みしてください");
+              setAuthUiSignedOut("ログイン機能の読み込みに失敗しました。ページを再読み込みしてください。");
               return;
             }
             if (authSignInBtn) authSignInBtn.disabled = true;
             client.auth
               .signInWithPassword({ email: email, password: password })
               .then(function (res) {
+                clearPasswordField();
                 if (res.error) {
-                  // Do not dump raw provider error.message (may include sensitive hints)
                   setAuthUiSignedOut("ログイン失敗 — 認証情報を確認してください");
                   return;
                 }
@@ -510,13 +539,29 @@ const showClientScript = true;
         if (authSignOutBtn) {
           authSignOutBtn.addEventListener("click", function () {
             authSignOutBtn.disabled = true;
-            var finish = function (message) {
-              setAuthUiSignedOut(message || "ログアウトしました");
-              updateSignOutButton();
-            };
             waitForSupabaseClient(40, 100).then(function (client) {
+              var afterSignOut = function () {
+                return (client
+                  ? client.auth.getSession()
+                  : Promise.resolve({ data: { session: null } })
+                ).then(function (sessionRes) {
+                  var session = sessionRes.data && sessionRes.data.session;
+                  if (session && session.access_token) {
+                    setAuthUiSignedOut("ログアウトに失敗しました。もう一度お試しください。");
+                    return;
+                  }
+                  setAuthUiSignedOut("ログアウトしました", { redirectHome: true });
+                  if (adminPage === "portal") {
+                    setGatedVisible(false);
+                  } else {
+                    try {
+                      window.location.replace(adminHomeUrl);
+                    } catch (_e) {}
+                  }
+                });
+              };
+
               if (!client) {
-                // Always clear local UI even if client failed to load
                 try {
                   Object.keys(localStorage)
                     .filter(function (k) {
@@ -528,30 +573,25 @@ const showClientScript = true;
                       } catch (_e) {}
                     });
                 } catch (_e2) {}
-                finish("ログアウトしました（ローカルセッションをクリア）");
-                return;
+                return afterSignOut();
               }
-              // scope:local clears persisted session even if network signOut fails
+
               return client.auth
                 .signOut({ scope: "local" })
                 .then(function () {
-                  finish("ログアウトしました");
+                  return afterSignOut();
                 })
                 .catch(function () {
-                  finish("ログアウトしました");
+                  return afterSignOut();
                 });
             });
           });
         }
 
-        // After auth config read: ensure login button state is applied (and autofill-safe re-eval)
+        // Gate stays hidden until auth resolves (no flash of admin content).
+        setGatedVisible(false);
         updateLoginButton();
-        setTimeout(updateLoginButton, 0);
-        setTimeout(updateLoginButton, 250);
-        setTimeout(updateLoginButton, 1000);
-
         refreshAuthStatus();
-        // YouTube dry-run / Save: gosaki-staging-youtube-operational-edit (click-only · no page-load fetch)
       })();
     </script>
       </>

@@ -77,8 +77,11 @@ export type AboutOperationalEditDeps = {
   fetchImpl?: typeof fetch;
 };
 
-const SAVE_LABEL_ENABLED = "保存する";
-const SAVE_LABEL_DISABLED = "保存する（無効）";
+const SAVE_LABEL_ENABLED = "保存";
+const SAVE_LABEL_DISABLED = "保存";
+const SAVE_UNARMED_MSG =
+  "保存の準備ができました。現在のテスト環境では保存は無効です。";
+let pendingOneClickSave = false;
 
 function escapeHtml(value: string): string {
   return String(value)
@@ -275,24 +278,14 @@ export function initGosakiAboutOperationalEdit(
     saveBtn.setAttribute("data-gosaki-save-allowed", enabled ? "true" : "false");
     saveBtn.setAttribute("aria-disabled", enabled ? "false" : "true");
     saveBtn.textContent = enabled ? SAVE_LABEL_ENABLED : SAVE_LABEL_DISABLED;
-    saveBtn.title = enabled
-      ? "保存できます（operator 明示操作のみ）"
-      : reason || "Save は無効です（通常 STG package）";
+    saveBtn.title = reason || "保存";
     if (saveReasonEl instanceof HTMLElement) {
-      saveReasonEl.textContent = enabled
-        ? "保存できます（operator 明示操作のみ）"
-        : reason || "Save は無効です";
+      saveReasonEl.textContent = reason || (enabled ? "保存" : "変更があると保存できます");
       saveReasonEl.classList.toggle("gosaki-read-only-admin__meta--ok", enabled);
-      saveReasonEl.classList.toggle("gosaki-read-only-admin__meta--warn", !enabled);
+      saveReasonEl.classList.toggle("gosaki-read-only-admin__meta--warn", false);
     }
     if (statusEl instanceof HTMLElement) {
-      statusEl.textContent = enabled
-        ? "About 編集中 · Save 可能"
-        : "About 編集中 · Save 無効（通常 package）";
-    }
-    const note = root.querySelector("[data-gosaki-about-save-disabled]");
-    if (note instanceof HTMLElement) {
-      note.setAttribute("data-gosaki-about-save-disabled", enabled ? "false" : "true");
+      statusEl.textContent = reason || "プロフィールを編集中";
     }
   }
 
@@ -307,40 +300,22 @@ export function initGosakiAboutOperationalEdit(
   }
 
   async function refreshSaveGate() {
-    // Sync dry-run UI before auth await so focus/visibility/auth-changed cannot leave
-    // a dirty form with dry-run stuck disabled while token refresh is in flight.
     applyDryRunButtonUi();
     const auth = await refreshAuthFlag();
     applyDryRunButtonUi();
-    const snapshot = readFormSnapshot();
-    const formMatches =
-      dryRunOk &&
-      dryRunFormFingerprint != null &&
-      formFingerprint(snapshot) === dryRunFormFingerprint &&
-      dryRunServerFingerprint != null &&
-      dryRunFileSha != null;
-    const saveEndpoint = String(deps.saveEndpoint ?? "").trim();
-    const saveSafe =
-      Boolean(deps.assertSaveEndpointSafe?.(saveEndpoint)) &&
-      !saveEndpoint.includes(productionStop);
-    const gate =
-      deps.evaluateSaveGate?.({
-        authenticated: auth,
-        dryRunSucceeded: dryRunOk,
-        formMatchesDryRunSnapshot: Boolean(formMatches),
-        fingerprintPresent: Boolean(dryRunServerFingerprint && dryRunFileSha),
-        expectedBeforePresent: Boolean(dryRunExpectedBefore),
-        saveEndpointConfigured: Boolean(saveEndpoint),
-        saveEndpointSafe: saveSafe,
-        envArmed: saveArmed,
-        approvalId: expectedSaveApprovalId,
-        expectedApprovalId: expectedSaveApprovalId,
-        saveInFlight,
-        noChange: dryRunNoChange,
-      }) ?? { enabled: false, reason: "Save gate 未配線" };
-
-    // Save only — client arm=false keeps Save disabled; never use arm to disable dry-run.
-    applySaveButtonUi(gate.enabled === true && saveArmed === true, gate.reason);
+    if (saveInFlight || dryRunInFlight) {
+      applySaveButtonUi(false, saveInFlight ? "保存中…" : "確認中…");
+      return;
+    }
+    if (!isFormDirty()) {
+      applySaveButtonUi(false, "変更がありません");
+      return;
+    }
+    if (!auth) {
+      applySaveButtonUi(false, "ログインが必要です");
+      return;
+    }
+    applySaveButtonUi(true, "保存");
   }
 
   function wireFormInvalidate() {
@@ -472,16 +447,39 @@ export function initGosakiAboutOperationalEdit(
     } finally {
       dryRunInFlight = false;
       void refreshSaveGate();
+      if (pendingOneClickSave) {
+        const next = readFormSnapshot();
+        const matched =
+          dryRunOk &&
+          dryRunFormFingerprint != null &&
+          formFingerprint(next) === dryRunFormFingerprint;
+        if (!matched) {
+          pendingOneClickSave = false;
+          applySaveButtonUi(true, "入力内容を確認してください");
+          return;
+        }
+        if (!saveArmed) {
+          pendingOneClickSave = false;
+          applySaveButtonUi(false, SAVE_UNARMED_MSG);
+          return;
+        }
+        pendingOneClickSave = false;
+        void runSave();
+      }
     }
   }
 
   async function runSave() {
     if (saveInFlight || dryRunInFlight) return;
-    if (!saveArmed) {
-      applySaveButtonUi(false, "client arm が無効です");
+    const auth = await refreshAuthFlag();
+    if (!auth) {
+      applySaveButtonUi(false, "ログインが必要です");
       return;
     }
-    const auth = await refreshAuthFlag();
+    if (!isFormDirty()) {
+      applySaveButtonUi(false, "変更がありません");
+      return;
+    }
     const next = readFormSnapshot();
     const formMatches =
       dryRunOk &&
@@ -490,6 +488,19 @@ export function initGosakiAboutOperationalEdit(
       dryRunServerFingerprint != null &&
       dryRunFileSha != null &&
       dryRunExpectedBefore != null;
+
+    if (!formMatches) {
+      pendingOneClickSave = true;
+      applySaveButtonUi(false, "確認中…");
+      await runDryRun();
+      return;
+    }
+
+    if (!saveArmed) {
+      applySaveButtonUi(false, SAVE_UNARMED_MSG);
+      return;
+    }
+
     const saveEndpoint = String(deps.saveEndpoint ?? "").trim();
     const saveSafe =
       Boolean(deps.assertSaveEndpointSafe?.(saveEndpoint)) &&
@@ -508,14 +519,14 @@ export function initGosakiAboutOperationalEdit(
         expectedApprovalId: expectedSaveApprovalId,
         saveInFlight: false,
         noChange: dryRunNoChange,
-      }) ?? { enabled: false, reason: "Save gate 未配線" };
+      }) ?? { enabled: false, reason: "いまは保存できません" };
 
     if (!gate.enabled) {
       applySaveButtonUi(false, gate.reason);
       return;
     }
     if (!deps.buildSaveEndpointRequest || !dryRunExpectedBefore || !dryRunServerFingerprint) {
-      applySaveButtonUi(false, "Save request 未準備");
+      applySaveButtonUi(false, "いまは保存できません");
       return;
     }
 

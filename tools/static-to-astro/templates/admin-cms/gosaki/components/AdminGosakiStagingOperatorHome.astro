@@ -77,7 +77,7 @@ const portalCards = [
     showAuthBar ? (
       <AdminGosakiStagingCompactAuthBar
         supabaseAuthConfigured={supabaseAuthConfigured}
-        purposeNote="変更の確認・保存にはログインが必要です（HTTP Basic 認証とは別です）。"
+        purposeNote="ログインすると管理メニューを利用できます。"
         showDeveloperTools={false}
       />
     ) : null
@@ -87,6 +87,7 @@ const portalCards = [
     class="admin-gosaki-portal-cards"
     aria-labelledby="gosaki-portal-cards-title"
     data-gosaki-portal-cards="true"
+    data-gosaki-admin-gated-fragment="portal-cards"
   >
     <h2 class="admin-gosaki-card__title--visually-quiet" id="gosaki-portal-cards-title">
       管理メニュー

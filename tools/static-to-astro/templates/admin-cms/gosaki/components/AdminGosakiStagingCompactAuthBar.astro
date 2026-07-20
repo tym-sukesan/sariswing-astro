@@ -2,25 +2,25 @@
 /**
  * Compact Supabase Auth bar for Gosaki STG package / operator routes.
  * Logged-in: email + logout only. Login form only when signed out.
- * HTTP Basic auth is separate and must not be confused with this.
+ * Staging uses Supabase Auth only (HTTP Basic is for future production /admin/).
  */
 interface Props {
   supabaseAuthConfigured?: boolean;
+  purposeNote?: string;
+  /** When false, hide developer probe details (default false for package). */
+  showDeveloperTools?: boolean;
   probePhase?: string;
   probeNote?: string;
   probeButtonLabel?: string;
-  purposeNote?: string;
-  /** When false, hide developer probe details (default true for content routes). */
-  showDeveloperTools?: boolean;
 }
 
 const {
   supabaseAuthConfigured = false,
+  purposeNote = "ログインすると管理メニューを利用できます。",
+  showDeveloperTools = false,
   probePhase = "",
   probeNote = "",
   probeButtonLabel = "DB admin probe (read-only)",
-  purposeNote = "変更の確認・保存にはログインが必要です。",
-  showDeveloperTools = true,
 } = Astro.props as Props;
 ---
 
@@ -30,7 +30,9 @@ const {
   data-gosaki-compact-auth="true"
 >
   <h2 id="gra-auth" class="gosaki-admin-compact-auth__title">ログイン</h2>
-  <p class="gosaki-read-only-admin__meta gosaki-admin-compact-auth__purpose">{purposeNote}</p>
+  <p class="gosaki-read-only-admin__meta gosaki-admin-compact-auth__purpose" data-gosaki-auth-purpose>
+    {purposeNote}
+  </p>
   <div class="gosaki-read-only-admin__auth gosaki-admin-compact-auth__panel" id="gra-auth-panel">
     <p class="gosaki-read-only-admin__meta" id="gra-auth-status" aria-live="polite">
       ログイン状態を確認しています…
@@ -38,7 +40,7 @@ const {
     {
       !supabaseAuthConfigured ? (
         <p class="gosaki-read-only-admin__meta gosaki-read-only-admin__meta--warn">
-          Supabase Auth 未設定 — ログインには PUBLIC_SUPABASE_URL / PUBLIC_SUPABASE_ANON_KEY が必要です。
+          ログイン設定が未完了です。管理者にお問い合わせください。
         </p>
       ) : null
     }
@@ -47,9 +49,7 @@ const {
       class="gosaki-read-only-admin__auth-actions gosaki-admin-compact-auth__signed-in"
       hidden
     >
-      <span class="gosaki-admin-compact-auth__signed-badge" id="gra-auth-signed-badge"
-        >ログイン中</span
-      >
+      <span class="gosaki-admin-compact-auth__signed-badge" id="gra-auth-signed-badge"></span>
       <button type="button" id="gra-auth-sign-out-btn" class="gosaki-read-only-admin__btn" disabled>
         ログアウト
       </button>
@@ -57,7 +57,7 @@ const {
     <form
       id="gra-auth-login-form"
       class="gosaki-read-only-admin__auth-form gosaki-admin-compact-auth__form"
-      hidden={!supabaseAuthConfigured}
+      hidden
       data-gosaki-auth-credentials-form="true"
     >
       <div class="gosaki-read-only-admin__field">

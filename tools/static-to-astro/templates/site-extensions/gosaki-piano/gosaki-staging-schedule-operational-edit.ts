@@ -484,8 +484,18 @@ export function initGosakiScheduleOperationalEdit(
     "他の場所で更新された可能性があります。再読み込みしてください。";
   const productionStop = deps.productionProjectRefStop ?? "vsbvndwuajjhnzpohghh";
   const fetchImpl = deps.fetchImpl ?? fetch;
-  const SAVE_LABEL_ENABLED = "更新する";
-  const SAVE_LABEL_DISABLED = "更新する（無効）";
+  const SAVE_LABEL_ENABLED = "保存";
+  const SAVE_LABEL_DISABLED = "保存";
+  let pendingOneClickSave = false;
+
+  function setUserSaveMessage(message: string) {
+    if (saveReasonEl instanceof HTMLElement) {
+      saveReasonEl.textContent = message;
+    }
+    if (statusEl instanceof HTMLElement && mode !== "view") {
+      statusEl.textContent = message;
+    }
+  }
 
   function setUnsaved(visible: boolean) {
     if (!(unsavedBanner instanceof HTMLElement)) return;
@@ -511,71 +521,37 @@ export function initGosakiScheduleOperationalEdit(
 
   function applySaveButtonUi(enabled: boolean, reason: string) {
     if (!(saveBtn instanceof HTMLButtonElement)) return;
-    // Fail-closed: disable first, then enable only when arm + gate both pass.
-    // Endpoint dry-run saveEnabled=false is a response contract — NOT a UI gate.
     saveBtn.disabled = true;
     if (enabled) saveBtn.disabled = false;
     saveBtn.setAttribute("data-gosaki-save-allowed", enabled ? "true" : "false");
     saveBtn.setAttribute("aria-disabled", enabled ? "false" : "true");
     saveBtn.textContent = enabled ? SAVE_LABEL_ENABLED : SAVE_LABEL_DISABLED;
-    saveBtn.title = enabled
-      ? "保存できます（operator 明示操作のみ）"
-      : reason || "Save は無効です（通常 STG package）";
-    if (saveReasonEl instanceof HTMLElement) {
-      saveReasonEl.textContent = enabled
-        ? "保存できます（operator 明示操作のみ）"
-        : reason || "Save は無効です";
-    }
-    if (statusEl instanceof HTMLElement && mode !== "view") {
-      statusEl.textContent = enabled
-        ? mode === "create"
-          ? "新規予定 · Save 可能"
-          : "公演を編集中 · Save 可能"
-        : mode === "create"
-          ? "新規予定を入力中 · Save 無効"
-          : "公演を編集中 · Save 無効";
-    }
+    saveBtn.title = reason || "保存";
+    setUserSaveMessage(reason || (enabled ? "保存できます" : "変更があると保存できます"));
   }
 
   async function refreshSaveGate() {
     if (!(saveBtn instanceof HTMLButtonElement)) return;
-    const after = mode === "view" ? null : readForm(root);
-    const runMode: "edit" | "create" =
-      after?.mode === "create" ? "create" : "edit";
+    if (mode === "view") {
+      applySaveButtonUi(false, "変更があると保存できます");
+      return;
+    }
     const token = (await (deps.getAccessToken?.() ?? Promise.resolve(null))) || null;
-    const endpoint = String(deps.dryRunEndpoint ?? "").trim();
-    const formMatches =
-      dryRunOk &&
-      dryRunFingerprint != null &&
-      after != null &&
-      dryRunFingerprint === fingerprint(after) &&
-      (dryRunMode == null || dryRunMode === runMode);
-    const gate = deps.evaluateSaveGate
-      ? deps.evaluateSaveGate({
-          authenticated: Boolean(token),
-          dryRunSucceeded: dryRunOk,
-          formMatchesDryRunSnapshot: formMatches,
-          mode: runMode,
-          expectedBeforeUpdatedAt:
-            runMode === "edit"
-              ? dryRunExpectedLock || after?.updated_at || null
-              : null,
-          saveEndpointConfigured: Boolean(endpoint && deps.anonKey),
-          saveEndpointSafe: endpoint
-            ? (deps.assertSaveEndpointSafe ?? deps.assertDryRunEndpointSafe)?.(endpoint) !==
-              false
-            : false,
-          envArmed: saveArmed,
-          approvalId: expectedSaveApprovalId,
-          expectedApprovalId: expectedSaveApprovalId,
-          saveInFlight,
-        })
-      : { enabled: false, reason: "Save gate not wired" };
-
-    // Normal STG: saveArmed false → always disabled. Local arm + all gates → enable.
-    // Do NOT require endpoint response saveEnabled===true (dry-run contract keeps it false).
-    const enabled = saveArmed === true && gate.enabled === true;
-    applySaveButtonUi(enabled, gate.reason || "Save は無効です（通常 STG package）");
+    const dirty = currentDirty();
+    if (saveInFlight || dryRunInFlight) {
+      applySaveButtonUi(false, saveInFlight ? "保存中…" : "確認中…");
+      return;
+    }
+    if (!dirty) {
+      applySaveButtonUi(false, "変更がありません");
+      return;
+    }
+    if (!token) {
+      applySaveButtonUi(false, "ログインが必要です");
+      return;
+    }
+    // Enable when dirty + signed in. Click runs internal dry-run then Save (if armed).
+    applySaveButtonUi(true, "保存");
   }
 
   function showView() {
@@ -640,9 +616,7 @@ export function initGosakiScheduleOperationalEdit(
     invalidateDryRun();
     if (statusEl) {
       statusEl.textContent =
-        next === "create"
-          ? "新規予定を入力中 · Save 無効"
-          : "公演を編集中 · Save 無効";
+        next === "create" ? "新しい予定を入力中" : "公演を編集中";
     }
     void refreshSaveGate();
   }
@@ -675,20 +649,25 @@ export function initGosakiScheduleOperationalEdit(
       const hay = String(card.getAttribute("data-search-text") || "").toLowerCase();
       const match = !query || hay.includes(query);
       card.hidden = !match;
+      card.classList.toggle("is-search-hidden", !match);
+      card.setAttribute("aria-hidden", match ? "false" : "true");
       if (match) visible += 1;
     });
 
     months.forEach((month) => {
       const anyVisible = Array.from(
         month.querySelectorAll<HTMLElement>("[data-schedule-event]"),
-      ).some((card) => !card.hidden);
+      ).some((card) => !card.hidden && !card.classList.contains("is-search-hidden"));
       month.hidden = !anyVisible;
+      month.classList.toggle("is-search-hidden", !anyVisible);
+      month.setAttribute("aria-hidden", anyVisible ? "false" : "true");
     });
 
+    const total = cards.length;
     if (countEl) {
-      countEl.textContent = query
-        ? `${visible} / ${cards.length} 件（検索中）`
-        : `全 ${cards.length} 件`;
+      countEl.textContent = query ? `${visible} / ${total} 件` : `全 ${total} 件`;
+      countEl.setAttribute("data-visible-count", String(visible));
+      countEl.setAttribute("data-total-count", String(total));
     }
     if (clearBtn instanceof HTMLElement) {
       clearBtn.hidden = !query;
@@ -1076,6 +1055,36 @@ export function initGosakiScheduleOperationalEdit(
           dryRunInFlight = false;
           setUnsaved(currentDirty());
           void refreshSaveGate();
+          if (pendingOneClickSave) {
+            const afterDry = readForm(root);
+            const matched =
+              dryRunOk &&
+              dryRunFingerprint != null &&
+              dryRunFingerprint === fingerprint(afterDry);
+            if (!matched) {
+              pendingOneClickSave = false;
+              setUserSaveMessage("入力内容を確認してください");
+              if (dryRunResult instanceof HTMLElement) {
+                dryRunResult.hidden = true;
+              }
+              return;
+            }
+            if (!saveArmed) {
+              pendingOneClickSave = false;
+              setUserSaveMessage(
+                "保存の準備ができました。現在のテスト環境では保存は無効です。",
+              );
+              if (dryRunResult instanceof HTMLElement) {
+                dryRunResult.hidden = true;
+              }
+              return;
+            }
+            pendingOneClickSave = false;
+            const saveEl = root.querySelector("[data-gosaki-schedule-save]");
+            if (saveEl instanceof HTMLElement) {
+              saveEl.click();
+            }
+          }
         }
       })();
       return;
@@ -1083,7 +1092,7 @@ export function initGosakiScheduleOperationalEdit(
 
     if (t.closest("[data-gosaki-schedule-save]")) {
       if (saveInFlight || dryRunInFlight) return;
-      if (!(saveBtn instanceof HTMLButtonElement) || saveBtn.disabled) return;
+      if (!(saveBtn instanceof HTMLButtonElement)) return;
 
       void (async () => {
         const after = readForm(root);
@@ -1092,10 +1101,34 @@ export function initGosakiScheduleOperationalEdit(
         const endpoint = String(deps.dryRunEndpoint ?? "").trim();
         const anonKey = String(deps.anonKey ?? "").trim();
 
+        if (!currentDirty()) {
+          setUserSaveMessage("変更がありません");
+          return;
+        }
+        if (!token) {
+          setUserSaveMessage("ログインが必要です");
+          return;
+        }
+
         const formMatches =
           dryRunOk &&
           dryRunFingerprint != null &&
-          dryRunFingerprint === fingerprint(after);
+          dryRunFingerprint === fingerprint(after) &&
+          (dryRunMode == null || dryRunMode === runMode);
+
+        if (!formMatches) {
+          pendingOneClickSave = true;
+          setUserSaveMessage("確認中…");
+          const internalDry = root.querySelector("[data-gosaki-internal-dry-run]");
+          if (internalDry instanceof HTMLElement) {
+            internalDry.click();
+          } else {
+            pendingOneClickSave = false;
+            setUserSaveMessage("保存の準備に失敗しました");
+          }
+          return;
+        }
+
         const gate = deps.evaluateSaveGate?.({
           authenticated: Boolean(token),
           dryRunSucceeded: dryRunOk,
@@ -1116,16 +1149,21 @@ export function initGosakiScheduleOperationalEdit(
           saveInFlight: false,
         });
 
-        if (!saveArmed || !gate?.enabled || !token || !deps.buildSaveEndpointRequest) {
+        if (!saveArmed) {
+          setUserSaveMessage(
+            "保存の準備ができました。現在のテスト環境では保存は無効です。",
+          );
+          return;
+        }
+
+        if (!gate?.enabled || !deps.buildSaveEndpointRequest) {
+          setUserSaveMessage(gate?.reason || "いまは保存できません");
           void refreshSaveGate();
           return;
         }
 
         if (endpoint.includes(productionStop)) {
-          if (dryRunResult instanceof HTMLElement) {
-            dryRunResult.hidden = false;
-            dryRunResult.innerHTML = `<p role="alert">Production endpoint blocked — Save not sent</p>`;
-          }
+          setUserSaveMessage("保存先が無効です");
           return;
         }
 
@@ -1150,14 +1188,12 @@ export function initGosakiScheduleOperationalEdit(
         });
 
         if (String(requestBody.operation ?? "") !== saveOperation) {
-          if (dryRunResult instanceof HTMLElement) {
-            dryRunResult.hidden = false;
-            dryRunResult.innerHTML = `<p role="alert">Save blocked — operation must be ${escapeHtml(saveOperation)}</p>`;
-          }
+          setUserSaveMessage("保存リクエストが無効です");
           return;
         }
 
         saveInFlight = true;
+        setUserSaveMessage("保存中…");
         void refreshSaveGate();
         const controller = new AbortController();
         const timeoutId = window.setTimeout(() => controller.abort(), 20000);
@@ -1182,10 +1218,7 @@ export function initGosakiScheduleOperationalEdit(
 
           if (deps.isSaveConflictResponse?.(data) || res.status === 409) {
             invalidateDryRun();
-            if (dryRunResult instanceof HTMLElement) {
-              dryRunResult.hidden = false;
-              dryRunResult.innerHTML = `<p role="alert">${escapeHtml(conflictMessage)}</p>`;
-            }
+            setUserSaveMessage(conflictMessage);
             return;
           }
 
@@ -1201,46 +1234,27 @@ export function initGosakiScheduleOperationalEdit(
                 httpStatus: res.status,
               };
 
-          if (dryRunResult instanceof HTMLElement) {
-            dryRunResult.hidden = false;
+          if (display.ok === true && display.didWrite === true) {
             const target =
               display.target && typeof display.target === "object"
                 ? (display.target as Record<string, unknown>)
                 : null;
-            const errList = Array.isArray(display.errors) ? display.errors : [];
-            if (display.ok === true && display.didWrite === true) {
-              const newUpdatedAt = String(target?.updatedAt ?? "").trim();
-              if (runMode === "edit" && newUpdatedAt) {
-                after.updated_at = newUpdatedAt;
-                writeForm(root, after);
-                baseline = { ...after };
-                if (lockValue) lockValue.textContent = newUpdatedAt;
-              }
-              dryRunResult.innerHTML = `
-                <h3>保存成功（endpoint Save）</h3>
-                <p>mode=<code>${escapeHtml(runMode)}</code> · httpStatus=<code>${escapeHtml(String(display.httpStatus ?? res.status))}</code></p>
-                <p>target id=<code>${escapeHtml(String(target?.id || "—"))}</code> · legacyId=<code>${escapeHtml(String(target?.legacyId || "—"))}</code></p>
-                <p>updatedAt=<code>${escapeHtml(String(target?.updatedAt || "—"))}</code></p>
-                <p>changedFields: ${escapeHtml((display.changedFields ?? []).join(", ") || "なし")}</p>
-                <p>didWrite=<code>true</code> · dbWrite=<code>true</code> · networkWrite=<code>true</code></p>
-              `;
-              dryRunOk = false;
-              dryRunFingerprint = null;
-              dryRunExpectedLock = null;
-              setUnsaved(false);
-            } else {
-              dryRunResult.innerHTML = `
-                <h3>保存失敗</h3>
-                <p>httpStatus=<code>${escapeHtml(String(display.httpStatus ?? res.status))}</code></p>
-                <p>didWrite=<code>false</code> · dbWrite=<code>false</code> · networkWrite=<code>false</code></p>
-                ${
-                  errList.length
-                    ? `<ul>${errList.map((e) => `<li>${escapeHtml(String(e))}</li>`).join("")}</ul>`
-                    : ""
-                }
-                ${display.unsafeWriteFlags ? `<p role="alert">Unsafe response — treated as FAIL</p>` : ""}
-              `;
+            const newUpdatedAt = String(target?.updatedAt ?? "").trim();
+            if (runMode === "edit" && newUpdatedAt) {
+              after.updated_at = newUpdatedAt;
+              writeForm(root, after);
+              baseline = { ...after };
+              if (lockValue) lockValue.textContent = newUpdatedAt;
+            } else if (runMode === "create") {
+              baseline = { ...after };
             }
+            dryRunOk = false;
+            dryRunFingerprint = null;
+            dryRunExpectedLock = null;
+            setUnsaved(false);
+            setUserSaveMessage("保存しました");
+          } else {
+            setUserSaveMessage("保存に失敗しました");
           }
         } catch (err) {
           const message =
@@ -1249,10 +1263,11 @@ export function initGosakiScheduleOperationalEdit(
                 ? "timeout / aborted"
                 : err.message
               : String(err);
-          if (dryRunResult instanceof HTMLElement) {
-            dryRunResult.hidden = false;
-            dryRunResult.innerHTML = `<p role="alert">Save network error: ${escapeHtml(message)}</p>`;
-          }
+          setUserSaveMessage(
+            err instanceof Error && err.name === "AbortError"
+              ? "時間切れです。自動では再試行しません。"
+              : `保存に失敗しました（${message}）`,
+          );
         } finally {
           saveInFlight = false;
           void refreshSaveGate();

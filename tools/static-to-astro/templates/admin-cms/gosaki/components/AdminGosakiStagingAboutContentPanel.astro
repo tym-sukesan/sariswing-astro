@@ -441,18 +441,14 @@ const bandImageLabels = bandImages.map((img) => ({
     aria-labelledby="gosaki-about-ops-heading"
   >
     <h2 id="gosaki-about-ops-heading" class="gosaki-about-content-panel__section-title">
-      変更確認 / 保存
+      保存
     </h2>
-    <p class="gosaki-about-content-panel__readonly-note" role="note">
-      dry-run は GitHub GET のみ。Save は Contents PUT（workflow_dispatch / FTP / DB なし）。通常
-      package では Save 無効です。
-    </p>
     <p
       class="gosaki-read-only-admin__meta"
       data-gosaki-about-local-validation
       id="gosaki-about-local-validation"
     >
-      編集後に「変更を確認」を実行してください
+      変更があると保存できます
     </p>
     <div class="gosaki-about-content-panel__ops-actions">
       <button
@@ -460,11 +456,12 @@ const bandImageLabels = bandImages.map((img) => ({
         class="gosaki-about-admin-form__action gosaki-about-admin-form__dry-run"
         id="gosaki-about-dry-run-btn"
         data-gosaki-about-dry-run
-        disabled
-        aria-disabled="true"
-        title="編集後に有効になります"
+        data-gosaki-internal-dry-run="true"
+        hidden
+        tabindex="-1"
+        aria-hidden="true"
       >
-        変更を確認
+        internal-dry-run
       </button>
       <button
         type="button"
@@ -483,19 +480,11 @@ const bandImageLabels = bandImages.map((img) => ({
     <div class="gosaki-about-content-panel__save" data-section="about-save">
       <p
         id="gosaki-about-save-disabled-reason"
-        class="gosaki-read-only-admin__meta gosaki-read-only-admin__meta--warn"
+        class="gosaki-read-only-admin__meta"
         data-gosaki-about-save-reason
         role="status"
       >
-        Save は無効です。通常 STG package では常に無効です。
-      </p>
-      <p
-        class="gosaki-about-content-panel__save-note"
-        role="note"
-        data-gosaki-save-disabled-note="true"
-        data-gosaki-about-save-disabled="true"
-      >
-        通常 package では client arm=false · Save 再無効化済み。
+        変更があると保存できます
       </p>
       <p class="gosaki-about-content-panel__save-actions">
         <button
@@ -505,9 +494,8 @@ const bandImageLabels = bandImages.map((img) => ({
           disabled
           aria-disabled="true"
           data-gosaki-about-save
-          data-gosaki-about-save-disabled
         >
-          保存する（無効）
+          保存
         </button>
       </p>
     </div>

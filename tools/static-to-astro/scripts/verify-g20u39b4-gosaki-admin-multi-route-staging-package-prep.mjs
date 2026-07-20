@@ -2264,15 +2264,30 @@ assert(
   adminComponent.includes('data-gosaki-about-dry-run-endpoint') &&
     adminComponent.includes('data-gosaki-about-save-armed') &&
     adminComponent.includes("initGosakiAboutOperationalEdit") &&
+    adminComponent.includes("AdminGosakiStagingCompactAuthBar") &&
     aboutOpEditSrc.includes("initGosakiAboutOperationalEdit") &&
     aboutOpEditSrc.includes("dryRunInFlight") &&
     aboutOpEditSrc.includes("saveInFlight") &&
     aboutOpEditSrc.includes("dryRunServerFingerprint") &&
     aboutOpEditSrc.includes("verification_required") &&
+    aboutOpEditSrc.includes("isFormDirty") &&
+    aboutOpEditSrc.includes("applyDryRunButtonUi") &&
+    aboutOpEditSrc.includes("baselineFingerprint") &&
+    aboutOpEditSrc.includes("writeFormSnapshot") &&
+    aboutOpEditSrc.includes("gosaki-admin-auth-changed") &&
     !aboutOpEditSrc.includes("retrySave") &&
     !aboutOpEditSrc.includes("service_role") &&
     aboutOpEditSrc.indexOf("async function runDryRun") <
       aboutOpEditSrc.indexOf("fetchImpl(endpoint"),
+);
+assert(
+  "about dry-run enabled by dirty not by client arm",
+  aboutOpEditSrc.includes("Client arm must NOT gate dry-run") &&
+    aboutOpEditSrc.includes("enabled = dirty && !dryRunInFlight && !saveInFlight") &&
+    /dryRunBtn\.disabled\s*=\s*dryRunInFlight\s*\|\|\s*!auth/.test(aboutOpEditSrc) === false &&
+    aboutPanelSrc.includes('id="gosaki-about-dry-run-btn"') &&
+    /id="gosaki-about-dry-run-btn"[\s\S]{0,200}\bdisabled\b/.test(aboutPanelSrc) &&
+    adminComponent.includes("About の「変更を確認」"),
 );
 assert(
   "about reuses GitHub Contents helpers (shared github.ts)",
@@ -2597,6 +2612,53 @@ assert(
 assert(
   "mock About controlled arm enables when all gates pass",
   evaluateAboutGateMock(aboutGateBase).enabled === true,
+);
+
+/** Local DOM contract: dirty enables dry-run; cancel restores; Save stays arm-gated. */
+function evaluateAboutDryRunButtonMock(input) {
+  const dirty = input.formFingerprint !== input.baselineFingerprint;
+  const enabled = dirty && !input.dryRunInFlight && !input.saveInFlight;
+  return { enabled, dirty };
+}
+const aboutBaselineFp = JSON.stringify(aboutCurrent);
+const aboutDirtyFp = JSON.stringify({
+  ...aboutCurrent,
+  profile: { ...aboutCurrent.profile, heading: "About [STG dry-run]" },
+});
+assert(
+  "mock About dry-run disabled when clean (no dirty)",
+  evaluateAboutDryRunButtonMock({
+    baselineFingerprint: aboutBaselineFp,
+    formFingerprint: aboutBaselineFp,
+    dryRunInFlight: false,
+    saveInFlight: false,
+  }).enabled === false,
+);
+assert(
+  "mock About dry-run enabled after heading edit (client arm irrelevant)",
+  evaluateAboutDryRunButtonMock({
+    baselineFingerprint: aboutBaselineFp,
+    formFingerprint: aboutDirtyFp,
+    dryRunInFlight: false,
+    saveInFlight: false,
+  }).enabled === true,
+);
+assert(
+  "mock About cancel restore re-disables dry-run",
+  evaluateAboutDryRunButtonMock({
+    baselineFingerprint: aboutBaselineFp,
+    formFingerprint: aboutBaselineFp,
+    dryRunInFlight: false,
+    saveInFlight: false,
+  }).enabled === false,
+);
+assert(
+  "mock About Save remains disabled when client arm false even if dirty dry-run ready",
+  evaluateAboutGateMock({
+    ...aboutGateBase,
+    envArmed: false,
+    dryRunSucceeded: true,
+  }).enabled === false,
 );
 
 console.log("");

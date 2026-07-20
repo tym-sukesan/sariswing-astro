@@ -501,6 +501,13 @@ const showClientScript = page !== "portal";
               bandImages={view.about.bandImages}
               publicAboutUrl={publicAboutUrl}
             />
+            <AdminGosakiStagingCompactAuthBar
+              supabaseAuthConfigured={supabaseAuthConfigured}
+              probePhase={G20U36E_ADMIN_PROBE_UI_TOOLS_DRAFT_PHASE}
+              probeNote={G20U36E_ADMIN_PROBE_NOTE}
+              probeButtonLabel={G20U36E_ADMIN_PROBE_BUTTON_LABEL}
+              purposeNote="About の「変更を確認」（dry-run）実行時のみログインが必要です。Save は通常無効です。"
+            />
             <details class="gosaki-read-only-admin__dev-details" data-gosaki-admin-dev-details="true">
               <summary>開発者情報</summary>
               <p class="gosaki-read-only-admin__meta">

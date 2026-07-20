@@ -114,6 +114,8 @@ export function initGosakiAboutOperationalEdit(
   let saveInFlight = false;
   let dryRunInFlight = false;
   let authenticated = false;
+  /** Build-time / cancel restore baseline — dry-run enables only when form differs. */
+  let baselineFingerprint: string | null = null;
 
   const saveArmed = deps.saveArmed === true;
   const expectedSaveApprovalId = String(deps.expectedSaveApprovalId ?? "").trim();
@@ -183,6 +185,44 @@ export function initGosakiAboutOperationalEdit(
     return JSON.stringify(snapshot);
   }
 
+  function isFormDirty(): boolean {
+    if (baselineFingerprint == null) return false;
+    return formFingerprint(readFormSnapshot()) !== baselineFingerprint;
+  }
+
+  function writeFormSnapshot(snapshot: AboutFormSnapshot): void {
+    const heading = root.querySelector(
+      '[data-gosaki-about-field="profile-heading"]',
+    ) as HTMLInputElement | null;
+    const body = root.querySelector(
+      '[data-gosaki-about-field="profile-body"]',
+    ) as HTMLTextAreaElement | null;
+    const imageAlt = root.querySelector(
+      '[data-gosaki-about-field="profile-image-alt"]',
+    ) as HTMLInputElement | null;
+    if (heading) heading.value = snapshot.profile.heading;
+    if (body) body.value = snapshot.profile.body;
+    if (imageAlt) imageAlt.value = snapshot.profile.imageAlt;
+
+    root.querySelectorAll("[data-gosaki-about-band]").forEach((el) => {
+      const id = String((el as HTMLElement).dataset.gosakiAboutBand || "").trim();
+      const band = snapshot.bands.find((b) => b.id === id);
+      if (!band) return;
+      const name = el.querySelector(
+        '[data-gosaki-about-field="band-name"]',
+      ) as HTMLInputElement | null;
+      const bandBody = el.querySelector(
+        '[data-gosaki-about-field="band-body"]',
+      ) as HTMLTextAreaElement | null;
+      const bandAlt = el.querySelector(
+        '[data-gosaki-about-field="band-image-alt"]',
+      ) as HTMLInputElement | null;
+      if (name) name.value = band.name;
+      if (bandBody) bandBody.value = band.body;
+      if (bandAlt) bandAlt.value = band.imageAlt;
+    });
+  }
+
   function invalidateDryRun() {
     dryRunOk = false;
     dryRunNoChange = false;
@@ -191,6 +231,21 @@ export function initGosakiAboutOperationalEdit(
     dryRunFileSha = null;
     dryRunExpectedBefore = null;
     void refreshSaveGate();
+  }
+
+  function applyDryRunButtonUi() {
+    if (!(dryRunBtn instanceof HTMLButtonElement)) return;
+    // Client arm must NOT gate dry-run — only Save. Enable when dirty and not in-flight.
+    // Auth is checked on click (login required to POST); missing auth must not look like Save arm.
+    const dirty = isFormDirty();
+    const enabled = dirty && !dryRunInFlight && !saveInFlight;
+    dryRunBtn.disabled = !enabled;
+    dryRunBtn.setAttribute("aria-disabled", enabled ? "false" : "true");
+    dryRunBtn.title = enabled
+      ? "変更内容を dry-run で確認（GitHub GET · write なし）"
+      : dryRunInFlight
+        ? "dry-run 実行中…"
+        : "編集後に有効になります";
   }
 
   function setLocalValidation(message: string, ok: boolean | null) {
@@ -252,9 +307,7 @@ export function initGosakiAboutOperationalEdit(
 
   async function refreshSaveGate() {
     const auth = await refreshAuthFlag();
-    if (dryRunBtn instanceof HTMLButtonElement) {
-      dryRunBtn.disabled = dryRunInFlight || !auth;
-    }
+    applyDryRunButtonUi();
     const snapshot = readFormSnapshot();
     const formMatches =
       dryRunOk &&
@@ -282,13 +335,20 @@ export function initGosakiAboutOperationalEdit(
         noChange: dryRunNoChange,
       }) ?? { enabled: false, reason: "Save gate 未配線" };
 
+    // Save only — client arm=false keeps Save disabled; never use arm to disable dry-run.
     applySaveButtonUi(gate.enabled === true && saveArmed === true, gate.reason);
   }
 
   function wireFormInvalidate() {
     root.querySelectorAll("input, textarea").forEach((el) => {
-      el.addEventListener("input", () => invalidateDryRun());
-      el.addEventListener("change", () => invalidateDryRun());
+      el.addEventListener("input", () => {
+        invalidateDryRun();
+        applyDryRunButtonUi();
+      });
+      el.addEventListener("change", () => {
+        invalidateDryRun();
+        applyDryRunButtonUi();
+      });
     });
   }
 
@@ -568,12 +628,20 @@ export function initGosakiAboutOperationalEdit(
   if (cancelBtn instanceof HTMLButtonElement) {
     cancelBtn.addEventListener("click", (ev) => {
       ev.preventDefault();
+      if (baselineFingerprint) {
+        try {
+          writeFormSnapshot(JSON.parse(baselineFingerprint) as AboutFormSnapshot);
+        } catch {
+          // keep current fields if baseline parse fails
+        }
+      }
       invalidateDryRun();
       if (resultEl instanceof HTMLElement) {
         resultEl.hidden = true;
         resultEl.textContent = "";
       }
-      setLocalValidation("キャンセルしました", null);
+      setLocalValidation("キャンセルしました — 編集前に戻しました", null);
+      applyDryRunButtonUi();
     });
   }
   if (saveBtn instanceof HTMLButtonElement) {
@@ -584,6 +652,17 @@ export function initGosakiAboutOperationalEdit(
   }
 
   wireFormInvalidate();
+  baselineFingerprint = formFingerprint(readFormSnapshot());
   applySaveButtonUi(false, saveArmed ? "先に dry-run を実行してください" : "通常 package · client arm=false");
+  applyDryRunButtonUi();
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible") void refreshSaveGate();
+  });
+  window.addEventListener("focus", () => {
+    void refreshSaveGate();
+  });
+  window.addEventListener("gosaki-admin-auth-changed", () => {
+    void refreshSaveGate();
+  });
   void refreshSaveGate();
 }

@@ -5,29 +5,37 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: Gosaki About operational edit (G-12a) COMPLETE AND CLOSED — dry-run / controlled Save / restore round-trip PASS.
+Current phase: Gosaki staging public mobile / visual P1 review + Schedule venue URL links COMPLETE AND CLOSED.
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP.
-ABOUT_ROUTE: /cms-kit-staging/gosaki-piano/admin/about/
-Temporary Save commit: 0ae0759
-Restore Save commit: 577d463 (= HEAD / origin/main)
-Post-Save baseline fix: bbb34b7 (Save後 dirty=false · Aboutへ戻すと dry-run有効 — browser confirmed)
-Final heading: About
-client arm=false · server arm=false · unarmed package FTP’d · Save disabled browser confirmed
-no workflow_dispatch · no DB write · no production change · no auto FTP
-Next: next major CMS task（About closed · Schedule/Discography/YouTube also closed）
+Public mobile P1 review: PASS (390×844) · Home/About/Discography/Contact/Link/Schedule hub/representative month · P1: none
+P2 fix: Schedule 会場website http(s) → external <a> · commit 6085cdb (= HEAD / origin/main)
+build PASS · unarmed package FTP’d · browser link + no horizontal overflow confirmed
+client/server Save arms: false
+no production / DB / Secret / auto FTP change
+Next: next major CMS task（hosting still not contracted → GO_LIVE blocked）
 ```
+
+## Gosaki staging public mobile P1 review + venue URL links — final result
+
+- **Routes reviewed:** Home / About / Discography / Contact / Link / Schedule一覧 / 代表月
+- **P1:** none
+- **P2 fixed:** 会場website plain-text URLs → clickable http(s) only (`target="_blank"` `rel="noopener noreferrer"`)
+- **Implementation commit:** `6085cdb`
+- **Gates:** build PASS · unarmed FTP · browser navigation PASS · no horizontal overflow · arms false
+- **Not changed:** production · DB · Secrets · auto FTP
+- **Status:** complete and closed
 
 ## Gosaki About operational edit (G-12a) — final result
 
 - **Doc:** `gosaki-admin-multi-route-staging-package-prep.md` (§ About operational edit + GitHub Contents Save)
 - **Temporary:** commit `0ae0759`
-- **Restore:** commit `577d463` (= current HEAD)
+- **Restore:** commit `577d463`
 - **Final heading:** `About`
 - **Baseline fix:** `bbb34b7` — Save response `after` becomes new dirty/cancel baseline
 - **Arms returned:** client false · server false
 - **Gates:** dry-run PASS · temporary Save PASS · restore Save PASS · post-Save dirty=false browser confirmed · unarmed Save disabled browser confirmed
 - **Not executed / not used on closure path:** workflow_dispatch · DB write · production change · auto FTP · service_role
-- **Next:** next major CMS task
+- **Status:** complete and closed
 
 ## Gosaki YouTube controlled Save verification — final result
 

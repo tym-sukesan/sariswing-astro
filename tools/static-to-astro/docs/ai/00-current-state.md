@@ -1,9 +1,11 @@
-Last updated: 2026-07-20
+Last updated: 2026-07-21
 Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**Gosaki About operational edit (G-12a) controlled Save round-trip (2026-07-20):** **complete and closed** — STG `/admin/about/` · GitHub Contents · dry-run / temporary Save / restore **all PASS** · temporary commit **`0ae0759`** · restore commit **`577d463`** (= HEAD / `origin/main`) · final heading **`About`** · post-Save baseline bug fixed in **`bbb34b7`** · browser confirmed after Save: dirty=false · edit back to About enables dry-run · client arm **false** · server arm **false** · unarmed package FTP’d to staging · Save disabled **browser confirmed** · **no** workflow_dispatch · **no** DB write · **no** production change · **no** auto FTP · service_role **not used**. Doc: `gosaki-admin-multi-route-staging-package-prep.md`. **Next:** next major CMS task（About operational edit closed）.
+**Gosaki staging public mobile / visual P1 review + Schedule venue URL links (2026-07-21):** **complete and closed** — STG public mobile review **PASS**（390×844）· routes Home / About / Discography / Contact / Link / Schedule hub / representative month · **P1: none** · P2（会場website 非リンク）→ fix commit **`6085cdb`** · http(s) only · `target=_blank` `rel=noopener noreferrer` · build **PASS** · unarmed package FTP’d to staging · browser: link navigation OK · no horizontal overflow · client/server Save arms **false** · **no** production / DB / Secret / auto FTP change · service_role **not used**. **Next:** next major CMS task（or hosting/go-live when contracted）.
+
+**Gosaki About operational edit (G-12a) controlled Save round-trip (2026-07-20):** **complete and closed** — STG `/admin/about/` · GitHub Contents · dry-run / temporary Save / restore **all PASS** · temporary commit **`0ae0759`** · restore commit **`577d463`** · final heading **`About`** · post-Save baseline bug fixed in **`bbb34b7`** · client/server arm **false** · unarmed Save disabled browser confirmed · **no** workflow_dispatch / DB / production / auto FTP · service_role **not used**.
 
 **Gosaki About dry-run button CSS/gate fix (2026-07-20):** **complete** (superseded by round-trip closure) — residual STG bug after `055af17`: `.gosaki-about-admin-form__save` permanently `cursor: not-allowed` · fixed with `__dry-run` / `:not(:disabled)` · auth never gates dry-run button.
 

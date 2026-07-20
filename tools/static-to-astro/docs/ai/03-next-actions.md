@@ -1,19 +1,20 @@
-Last updated: 2026-07-20
+Last updated: 2026-07-21
 Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **About operational edit (G-12a) 完了・閉鎖** — dry-run / controlled Save / restore round-trip PASS · temporary `0ae0759` · restore `577d463` · baseline fix `bbb34b7` · final heading `About` · arms false · unarmed STG Save disabled browser confirmed → **次の主要タスクへ進む**。
-2. YouTube controlled Save verification は完了・閉鎖（temporary `0ac09de` · restore `7d4bca5` · arms false）。
-3. Schedule / Discography / YouTube / About Save path はいずれも round-trip closed。
-4. staging Edge Function は通常 unarmed のまま運用（再 arm は明示承認時のみ）。
-5. production deploy / auto FTP は引き続き禁止ゲート。
+1. **Staging 公開ページ mobile / visual P1 レビュー + Schedule 会場URLリンク化 完了・閉鎖** — P1なし · fix `6085cdb` · unarmed FTP + browser PASS · arms false → **次の主要タスクへ**（hosting 未契約のまま production go-live は不可）。
+2. About / YouTube / Schedule / Discography Save path はいずれも round-trip closed · arms false。
+3. staging Edge Function は通常 unarmed のまま運用（再 arm は明示承認時のみ）。
+4. production deploy / auto FTP は引き続き禁止ゲート · `HOSTING_READY: false`。
 
 Schedule operational Saveは完了済み：staging Edge deploy completed（v2）· live permission PASS · edit/create/cleanup PASS · DB total **79** · 通常 package `SCHEDULE_SAVE_DEFAULT_DISABLED: true`。
 
-YouTube operational Saveは完了済み：staging Edge deploy completed · Contents API temporary/restore PASS · `YOUTUBE_SAVE_DEFAULT_DISABLED: true`。
+YouTube operational Saveは完了済み：Contents API temporary/restore PASS · `YOUTUBE_SAVE_DEFAULT_DISABLED: true`。
 
-About operational Saveは完了済み：Contents API temporary `0ae0759` / restore `577d463` PASS · post-Save baseline fix `bbb34b7` · HEAD `577d463` · final heading `About` · client/server arm **false** · `ABOUT_SAVE_DEFAULT_DISABLED: true`。
+About operational Saveは完了済み：Contents API temporary `0ae0759` / restore `577d463` PASS · baseline fix `bbb34b7` · `ABOUT_SAVE_DEFAULT_DISABLED: true`。
+
+Public mobile P1 reviewは完了済み：P1なし · Schedule 会場website http(s) リンク化 `6085cdb` · HEAD `6085cdb`。
 
 ## 0. G-20u44 / G-20u44c controlled Save round-trip + permission rollback — complete and closed
 

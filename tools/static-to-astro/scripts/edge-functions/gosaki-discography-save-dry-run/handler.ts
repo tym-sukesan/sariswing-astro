@@ -31,6 +31,8 @@ export const SAVE_READINESS_NOT_ARMED = "save_not_armed";
 
 /** Operational UI Save — form editable fields (any gosaki-piano album). */
 export const OPERATIONAL_SAVE_APPROVAL_ID = "gosaki-discography-operational-save";
+/** Staging atomic Save RPC (migration: 20260721100000_gosaki_discography_operational_save_rpc.sql). */
+export const OPERATIONAL_SAVE_RPC_NAME = "gosaki_discography_operational_save";
 export const OPERATIONAL_EDITABLE_RELEASE_FIELDS = [
   "title",
   "artist",
@@ -2180,6 +2182,25 @@ function validateOperationalReleaseFields(release: Record<string, unknown>): str
   return errors;
 }
 
+/**
+ * Map release.release_date → RPC p_release_date (Postgres date | null).
+ * Empty / null → null; non-empty must be YYYY-MM-DD (validated here before RPC).
+ */
+function resolveOperationalReleaseDateForRpc(
+  value: unknown,
+): { ok: true; value: string | null } | { ok: false; message: string } {
+  if (value == null) return { ok: true, value: null };
+  if (typeof value !== "string") {
+    return { ok: false, message: "release.release_date must be string or null" };
+  }
+  const trimmed = value.trim();
+  if (trimmed === "") return { ok: true, value: null };
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) {
+    return { ok: false, message: "release.release_date must be YYYY-MM-DD or empty" };
+  }
+  return { ok: true, value: trimmed };
+}
+
 function validateOperationalTracksText(tracksText: string): { ok: true; lines: string[] } | { ok: false; errors: string[] } {
   const lines = parseDiscographyTrackListLines(tracksText);
   const errors: string[] = [];
@@ -2419,6 +2440,7 @@ export async function handleOperationalDiscographySaveHttp(input: {
     });
   }
 
+  // Pre-RPC read: frozen-field guard + local no-change short-circuit (write itself is one RPC TX).
   const { data: releaseRow, error: releaseError } = await client
     .from("discography")
     .select(RELEASE_SELECT_FIELDS_WITH_UPDATED_AT)
@@ -2437,7 +2459,9 @@ export async function handleOperationalDiscographySaveHttp(input: {
     });
   }
 
-  const currentRelease = mapReleaseRowToCurrentSnapshotRelease(releaseRow as unknown as Record<string, unknown>);
+  const currentRelease = mapReleaseRowToCurrentSnapshotRelease(
+    releaseRow as unknown as Record<string, unknown>,
+  );
   const currentUpdatedAt = String(
     (releaseRow as unknown as Record<string, unknown>).updated_at ?? "",
   ).trim();
@@ -2526,141 +2550,86 @@ export async function handleOperationalDiscographySaveHttp(input: {
     });
   }
 
-  if (releaseFieldsChanged.length > 0) {
-    const patch: Record<string, unknown> = {};
-    for (const field of releaseFieldsChanged) {
-      if (field === "published") {
-        patch.published = release.published === true;
-      } else {
-        const raw = release[field];
-        patch[field] = raw === null || raw === undefined ? null : String(raw);
-      }
-    }
-    const { data: updatedRows, error: updateError } = await client
-      .from("discography")
-      .update(patch)
-      .eq("site_slug", SITE_SLUG)
-      .eq("legacy_id", legacyId)
-      .eq("updated_at", expectedBeforeUpdatedAt)
-      .select("id,legacy_id,updated_at");
-
-    if (updateError) {
-      return buildControlledSaveFailure({
-        reasonCode: "rls_or_permission_denied",
-        message: "operational release UPDATE denied by RLS or grants",
-        status: 403,
-        legacyId,
-        approvalId,
-      });
-    }
-    const count = Array.isArray(updatedRows) ? updatedRows.length : 0;
-    if (count === 0) {
-      return buildControlledSaveFailure({
-        reasonCode: "optimistic_lock_conflict",
-        message: "UPDATE matched 0 rows — conflict / already changed / STOP",
-        status: 409,
-        legacyId,
-        approvalId,
-      });
-    }
-    if (count !== 1) {
-      return buildControlledSaveFailure({
-        reasonCode: "update_multiple_rows",
-        message: "UPDATE matched multiple rows — STOP",
-        status: 500,
-        legacyId,
-        approvalId,
-      });
-    }
+  const releaseDateForRpc = resolveOperationalReleaseDateForRpc(release.release_date);
+  if (!releaseDateForRpc.ok) {
+    return buildControlledSaveFailure({
+      reasonCode: "field_validation_failed",
+      message: releaseDateForRpc.message,
+      status: 400,
+      legacyId,
+      approvalId,
+    });
   }
 
-  if (tracksChanged) {
-    const { error: deleteError } = await client
-      .from("discography_tracks")
-      .delete()
-      .eq("site_slug", SITE_SLUG)
-      .eq("discography_legacy_id", legacyId);
+  // Single atomic write: SECURITY DEFINER RPC (release update + tracks replace in one TX).
+  const { data: rpcData, error: rpcError } = await client.rpc(OPERATIONAL_SAVE_RPC_NAME, {
+    p_site_slug: SITE_SLUG,
+    p_legacy_id: legacyId,
+    p_expected_before_updated_at: expectedBeforeUpdatedAt,
+    p_title: String(release.title ?? "").trim(),
+    p_artist: release.artist == null ? "" : String(release.artist),
+    p_release_date: releaseDateForRpc.value,
+    p_label: release.label == null ? "" : String(release.label),
+    p_purchase_url: release.purchase_url == null ? "" : String(release.purchase_url),
+    p_description: release.description == null ? "" : String(release.description),
+    p_track_titles: afterTitles,
+  });
 
-    if (deleteError) {
-      return buildControlledSaveFailure({
-        reasonCode: "rls_or_permission_denied",
-        message: "operational track DELETE denied by RLS or grants",
-        status: 403,
-        legacyId,
-        approvalId,
-      });
-    }
-
-    if (afterTitles.length > 0) {
-      const insertRows = afterTitles.map((title, index) => ({
-        site_slug: SITE_SLUG,
-        discography_legacy_id: legacyId,
-        track_number: index + 1,
-        sort_order: index + 1,
-        title,
-      }));
-      const { error: insertError } = await client.from("discography_tracks").insert(insertRows);
-      if (insertError) {
-        return buildControlledSaveFailure({
-          reasonCode: "rls_or_permission_denied",
-          message: "operational track INSERT denied by RLS or grants",
-          status: 403,
-          legacyId,
-          approvalId,
-        });
-      }
-    }
-
-    // Touch release when only tracks changed so optimistic lock advances.
-    if (releaseFieldsChanged.length === 0) {
-      const { data: touchRows, error: touchError } = await client
-        .from("discography")
-        .update({ title: String(currentRelease.title ?? "") })
-        .eq("site_slug", SITE_SLUG)
-        .eq("legacy_id", legacyId)
-        .eq("updated_at", expectedBeforeUpdatedAt)
-        .select("id,updated_at");
-      if (touchError || !Array.isArray(touchRows) || touchRows.length !== 1) {
-        return buildControlledSaveFailure({
-          reasonCode: "optimistic_lock_conflict",
-          message: "track Save succeeded but release lock touch failed — STOP and verify",
-          status: 409,
-          legacyId,
-          approvalId,
-        });
-      }
-    }
+  if (rpcError) {
+    const message = String(rpcError.message ?? "operational Save RPC failed");
+    return buildControlledSaveFailure({
+      reasonCode: /permission|rls|denied|42501/i.test(message)
+        ? "rls_or_permission_denied"
+        : "rpc_error",
+      message,
+      status: /permission|rls|denied|42501/i.test(message) ? 403 : 500,
+      legacyId,
+      approvalId,
+    });
   }
 
-  const { data: afterRow, error: afterError } = await client
-    .from("discography")
-    .select("updated_at")
-    .eq("site_slug", SITE_SLUG)
-    .eq("legacy_id", legacyId)
-    .limit(1)
-    .maybeSingle();
+  const rpc =
+    rpcData && typeof rpcData === "object" && !Array.isArray(rpcData)
+      ? (rpcData as Record<string, unknown>)
+      : {};
+  const rpcOk = rpc.ok === true;
+  const reasonCode = String(rpc.reason_code ?? rpc.reasonCode ?? "rpc_rejected");
+  const rpcMessage = String(rpc.message ?? "operational Save rejected");
+  const httpStatus = Number(rpc.http_status ?? rpc.httpStatus ?? (rpcOk ? 200 : 400));
 
-  if (afterError || !afterRow) {
+  if (!rpcOk) {
+    return buildControlledSaveFailure({
+      reasonCode,
+      message: rpcMessage,
+      status: Number.isFinite(httpStatus) ? httpStatus : 400,
+      legacyId,
+      approvalId,
+    });
+  }
+
+  const nextUpdatedAt = String(rpc.updated_at ?? rpc.updatedAt ?? "").trim();
+  const changedFieldsRaw = rpc.changed_fields ?? rpc.changedFields;
+  const changedFields = Array.isArray(changedFieldsRaw)
+    ? changedFieldsRaw.map((v) => String(v))
+    : [...releaseFieldsChanged, ...(tracksChanged ? ["tracks"] : [])];
+
+  if (!nextUpdatedAt) {
     return buildControlledSaveFailure({
       reasonCode: "post_save_readback_failed",
-      message: "Save succeeded but post-save readBack failed",
+      message: "Save RPC ok but updated_at missing — STOP and verify",
       status: 500,
       legacyId,
       approvalId,
     });
   }
 
-  const nextUpdatedAt = String((afterRow as unknown as Record<string, unknown>).updated_at ?? "").trim();
-  const changedFields = [
-    ...releaseFieldsChanged,
-    ...(tracksChanged ? ["tracks"] : []),
-  ];
-
   return {
     ok: true,
     operation: CONTROLLED_SAVE_OPERATION,
     controlledSave: true,
     operationalSave: true,
+    atomicRpc: true,
+    rpc: OPERATIONAL_SAVE_RPC_NAME,
     endpoint: ENDPOINT_NAME,
     siteSlug: SITE_SLUG,
     legacyId,

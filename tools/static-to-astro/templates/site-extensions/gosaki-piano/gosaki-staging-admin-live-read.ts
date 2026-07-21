@@ -292,3 +292,137 @@ export function preferLiveSourceOverBuildSnapshot<T>(input: {
     error: "live source unavailable — build snapshot is not editable SoT",
   };
 }
+
+/** idle → loading → ready|error. ready/error never auto-return to loading for the same auth session. */
+export type GosakiAdminLiveReadPhase = "idle" | "loading" | "ready" | "error";
+
+export function gosakiAdminLiveReadAuthFingerprint(input: {
+  signedIn?: boolean;
+  userId?: string | null;
+  email?: string | null;
+}): string {
+  if (!input?.signedIn) return "signed-out";
+  const userId = String(input.userId ?? "").trim();
+  if (userId) return `user:${userId}`;
+  const email = String(input.email ?? "").trim();
+  if (email) return `email:${email}`;
+  return "signed-in:session";
+}
+
+function isSignedInLiveReadFingerprint(fp: string): boolean {
+  return Boolean(fp) && fp !== "signed-out";
+}
+
+/**
+ * Same browser auth session (no logout between) — seed `signed-in:session` and later `user:…`
+ * must not trigger a second live-read.
+ */
+export function sameGosakiAdminLiveReadAuthSession(
+  a: string | null | undefined,
+  b: string,
+): boolean {
+  if (!a) return false;
+  if (a === b) return true;
+  if (!isSignedInLiveReadFingerprint(a) || !isSignedInLiveReadFingerprint(b)) return false;
+  if (a.startsWith("user:") && b.startsWith("user:")) return a === b;
+  return true;
+}
+
+/**
+ * Deterministic live-read controller: one fetch per auth session (single-flight).
+ * Does not use debounce/timeouts to hide loops.
+ */
+export function createGosakiAdminLiveReadSession(handlers: {
+  onPhaseChange: (phase: GosakiAdminLiveReadPhase, error?: string) => void;
+  fetchLive: () => Promise<{ ok: true } | { ok: false; error: string }>;
+  /** When true, skip starting a fetch without changing phase (e.g. dirty edit form). */
+  shouldDefer?: () => boolean;
+}): {
+  notifyAuth: (fingerprint: string) => Promise<void>;
+  requestManualReload: () => Promise<void>;
+  getPhase: () => GosakiAdminLiveReadPhase;
+  getBoundAuthFingerprint: () => string | null;
+  getFetchCount: () => number;
+} {
+  let phase: GosakiAdminLiveReadPhase = "idle";
+  let boundAuthFp: string | null = null;
+  let inFlight: Promise<void> | null = null;
+  let fetchCount = 0;
+  let generation = 0;
+
+  function setPhase(next: GosakiAdminLiveReadPhase, error?: string) {
+    phase = next;
+    handlers.onPhaseChange(next, error);
+  }
+
+  async function runOnce(authFp: string, force: boolean): Promise<void> {
+    if (authFp === "signed-out") {
+      generation += 1;
+      boundAuthFp = null;
+      inFlight = null;
+      setPhase("idle");
+      return;
+    }
+
+    if (!force) {
+      if (
+        (phase === "ready" || phase === "error") &&
+        sameGosakiAdminLiveReadAuthSession(boundAuthFp, authFp)
+      ) {
+        return;
+      }
+      if (
+        phase === "loading" &&
+        sameGosakiAdminLiveReadAuthSession(boundAuthFp, authFp) &&
+        inFlight
+      ) {
+        return inFlight;
+      }
+    }
+
+    if (!force && handlers.shouldDefer?.()) {
+      return;
+    }
+
+    if (inFlight && !force) {
+      await inFlight;
+      if (
+        (phase === "ready" || phase === "error") &&
+        sameGosakiAdminLiveReadAuthSession(boundAuthFp, authFp)
+      ) {
+        return;
+      }
+    }
+
+    const myGen = ++generation;
+    boundAuthFp = authFp;
+    setPhase("loading");
+    const work = (async () => {
+      fetchCount += 1;
+      try {
+        const result = await handlers.fetchLive();
+        if (myGen !== generation) return;
+        if (result.ok) setPhase("ready");
+        else setPhase("error", result.error || GOSAKI_ADMIN_LIVE_READ_ERROR_MESSAGE);
+      } catch {
+        if (myGen !== generation) return;
+        setPhase("error", GOSAKI_ADMIN_LIVE_READ_ERROR_MESSAGE);
+      } finally {
+        if (myGen === generation) inFlight = null;
+      }
+    })();
+    inFlight = work;
+    await work;
+  }
+
+  return {
+    notifyAuth: (fingerprint) => runOnce(String(fingerprint || "signed-out"), false),
+    requestManualReload: () =>
+      runOnce(boundAuthFp && isSignedInLiveReadFingerprint(boundAuthFp)
+        ? boundAuthFp
+        : "signed-in:session", true),
+    getPhase: () => phase,
+    getBoundAuthFingerprint: () => boundAuthFp,
+    getFetchCount: () => fetchCount,
+  };
+}

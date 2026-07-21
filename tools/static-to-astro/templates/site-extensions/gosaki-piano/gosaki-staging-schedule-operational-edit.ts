@@ -7,7 +7,9 @@ import {
   GOSAKI_ADMIN_LIVE_READ_ERROR_MESSAGE,
   GOSAKI_ADMIN_LIVE_READ_PENDING_MESSAGE,
   GOSAKI_ADMIN_LIVE_SITE_SLUG,
+  createGosakiAdminLiveReadSession,
   fetchGosakiSchedulesAuthenticatedLive,
+  gosakiAdminLiveReadAuthFingerprint,
 } from "./gosaki-staging-admin-live-read";
 import {
   GOSAKI_CLIENT_SAVE_DISARMED_REASON,
@@ -559,6 +561,9 @@ export function initGosakiScheduleOperationalEdit(
   root: HTMLElement,
   deps: ScheduleOperationalEditDeps = {},
 ): void {
+  if (root.dataset.gosakiScheduleEditInitialized === "true") return;
+  root.dataset.gosakiScheduleEditInitialized = "true";
+
   let events = readEventsJson(root);
   const viewMode = root.querySelector("[data-gosaki-schedule-view-mode]");
   const editMode = root.querySelector("[data-gosaki-schedule-edit-mode]");
@@ -631,41 +636,42 @@ export function initGosakiScheduleOperationalEdit(
     }
   }
 
-  async function refreshLiveSourceFromSupabase(): Promise<void> {
-    const token = (await (deps.getAccessToken?.() ?? Promise.resolve(null))) || null;
-    const supabaseUrl = String(deps.supabaseUrl ?? "").trim();
-    const anonKey = String(deps.anonKey ?? "").trim();
-    if (!token || !supabaseUrl || !anonKey) {
-      setLiveReadUi("pending");
-      return;
-    }
-    if (mode !== "view" && currentDirty()) {
-      // Do not clobber an in-progress edit mid-session.
-      return;
-    }
-    setLiveReadUi("pending");
-    const result = await fetchGosakiSchedulesAuthenticatedLive({
-      supabaseUrl,
-      anonKey,
-      accessToken: token,
-      siteSlug: String(deps.siteSlug ?? GOSAKI_ADMIN_LIVE_SITE_SLUG).trim(),
-      fetchImpl,
-    });
-    if (!result.ok) {
-      setLiveReadUi("error", result.error || GOSAKI_ADMIN_LIVE_READ_ERROR_MESSAGE);
-      return;
-    }
-    events = result.events;
-    writeEventsJson(root, events);
-    if (mode === "view") {
-      renderScheduleOperationalList(root, events);
-      applyScheduleSearch(
-        (root.querySelector("[data-gosaki-schedule-search-input]") as HTMLInputElement | null)
-          ?.value ?? "",
-      );
-    }
-    setLiveReadUi("ready");
-  }
+  const liveSession = createGosakiAdminLiveReadSession({
+    onPhaseChange: (phase, error) => {
+      if (phase === "idle" || phase === "loading") setLiveReadUi("pending");
+      else if (phase === "ready") setLiveReadUi("ready");
+      else setLiveReadUi("error", error || GOSAKI_ADMIN_LIVE_READ_ERROR_MESSAGE);
+    },
+    shouldDefer: () => mode !== "view" && currentDirty(),
+    fetchLive: async () => {
+      const token = (await (deps.getAccessToken?.() ?? Promise.resolve(null))) || null;
+      const supabaseUrl = String(deps.supabaseUrl ?? "").trim();
+      const anonKey = String(deps.anonKey ?? "").trim();
+      if (!token || !supabaseUrl || !anonKey) {
+        return { ok: false, error: GOSAKI_ADMIN_LIVE_READ_ERROR_MESSAGE };
+      }
+      const result = await fetchGosakiSchedulesAuthenticatedLive({
+        supabaseUrl,
+        anonKey,
+        accessToken: token,
+        siteSlug: String(deps.siteSlug ?? GOSAKI_ADMIN_LIVE_SITE_SLUG).trim(),
+        fetchImpl,
+      });
+      if (!result.ok) {
+        return { ok: false, error: result.error || GOSAKI_ADMIN_LIVE_READ_ERROR_MESSAGE };
+      }
+      events = result.events;
+      writeEventsJson(root, events);
+      if (mode === "view") {
+        renderScheduleOperationalList(root, events);
+        applyScheduleSearch(
+          (root.querySelector("[data-gosaki-schedule-search-input]") as HTMLInputElement | null)
+            ?.value ?? "",
+        );
+      }
+      return { ok: true };
+    },
+  });
 
   function setUnsaved(visible: boolean) {
     if (!(unsavedBanner instanceof HTMLElement)) return;
@@ -1544,16 +1550,21 @@ export function initGosakiScheduleOperationalEdit(
   void refreshSaveGate();
 
   window.addEventListener("gosaki-admin-auth-changed", ((ev: Event) => {
-    const detail = (ev as CustomEvent<{ signedIn?: boolean }>).detail;
-    if (detail?.signedIn) {
-      void refreshLiveSourceFromSupabase();
-    } else {
-      setLiveReadUi("pending");
-    }
+    const detail = (ev as CustomEvent<{
+      signedIn?: boolean;
+      userId?: string;
+      email?: string;
+    }>).detail;
+    void liveSession.notifyAuth(gosakiAdminLiveReadAuthFingerprint(detail ?? {}));
   }) as EventListener);
 
+  // Seed if auth-changed already fired before this listener registered.
   void (async () => {
     const token = (await (deps.getAccessToken?.() ?? Promise.resolve(null))) || null;
-    if (token) void refreshLiveSourceFromSupabase();
+    if (!token) return;
+    if (liveSession.getPhase() !== "idle") return;
+    void liveSession.notifyAuth(
+      gosakiAdminLiveReadAuthFingerprint({ signedIn: true }),
+    );
   })();
 }

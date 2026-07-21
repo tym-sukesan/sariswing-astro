@@ -7,7 +7,9 @@ import {
   GOSAKI_ADMIN_LIVE_READ_ERROR_MESSAGE,
   GOSAKI_ADMIN_LIVE_READ_PENDING_MESSAGE,
   GOSAKI_ADMIN_LIVE_SITE_SLUG,
+  createGosakiAdminLiveReadSession,
   fetchGosakiDiscographyAuthenticatedLive,
+  gosakiAdminLiveReadAuthFingerprint,
   type GosakiAdminLiveDiscographyAlbum,
 } from "./gosaki-staging-admin-live-read";
 import {
@@ -387,30 +389,34 @@ export function initGosakiDiscographyOperationalEdit(
     }
   };
 
-  const refreshLiveSourceFromSupabase = async () => {
-    const token = (await (deps.getAccessToken?.() ?? Promise.resolve(null))) || null;
-    const supabaseUrl = String(deps.supabaseUrl ?? "").trim();
-    const anonKey = String(deps.anonKey ?? "").trim();
-    if (!token || !supabaseUrl || !anonKey) {
-      setLiveReadUi("pending");
-      return;
-    }
-    if (root.dataset.mode === "edit" && isDirty(form)) return;
-    setLiveReadUi("pending");
-    const result = await fetchGosakiDiscographyAuthenticatedLive({
-      supabaseUrl,
-      anonKey,
-      accessToken: token,
-      siteSlug: String(deps.siteSlug ?? GOSAKI_ADMIN_LIVE_SITE_SLUG).trim(),
-      fetchImpl: deps.fetchImpl ?? fetch,
-    });
-    if (!result.ok) {
-      setLiveReadUi("error", result.error || GOSAKI_ADMIN_LIVE_READ_ERROR_MESSAGE);
-      return;
-    }
-    applyAlbums(result.albums as GosakiAdminLiveDiscographyAlbum[]);
-    setLiveReadUi("ready");
-  };
+  const liveSession = createGosakiAdminLiveReadSession({
+    onPhaseChange: (phase, error) => {
+      if (phase === "idle" || phase === "loading") setLiveReadUi("pending");
+      else if (phase === "ready") setLiveReadUi("ready");
+      else setLiveReadUi("error", error || GOSAKI_ADMIN_LIVE_READ_ERROR_MESSAGE);
+    },
+    shouldDefer: () => root.dataset.mode === "edit" && isDirty(form),
+    fetchLive: async () => {
+      const token = (await (deps.getAccessToken?.() ?? Promise.resolve(null))) || null;
+      const supabaseUrl = String(deps.supabaseUrl ?? "").trim();
+      const anonKey = String(deps.anonKey ?? "").trim();
+      if (!token || !supabaseUrl || !anonKey) {
+        return { ok: false, error: GOSAKI_ADMIN_LIVE_READ_ERROR_MESSAGE };
+      }
+      const result = await fetchGosakiDiscographyAuthenticatedLive({
+        supabaseUrl,
+        anonKey,
+        accessToken: token,
+        siteSlug: String(deps.siteSlug ?? GOSAKI_ADMIN_LIVE_SITE_SLUG).trim(),
+        fetchImpl: deps.fetchImpl ?? fetch,
+      });
+      if (!result.ok) {
+        return { ok: false, error: result.error || GOSAKI_ADMIN_LIVE_READ_ERROR_MESSAGE };
+      }
+      applyAlbums(result.albums as GosakiAdminLiveDiscographyAlbum[]);
+      return { ok: true };
+    },
+  });
 
   const clearDryRunLock = () => {
     dryRunSucceeded = false;
@@ -936,13 +942,18 @@ export function initGosakiDiscographyOperationalEdit(
   setLiveReadUi("pending");
 
   window.addEventListener("gosaki-admin-auth-changed", ((ev: Event) => {
-    const detail = (ev as CustomEvent<{ signedIn?: boolean }>).detail;
-    if (detail?.signedIn) void refreshLiveSourceFromSupabase();
-    else setLiveReadUi("pending");
+    const detail = (ev as CustomEvent<{
+      signedIn?: boolean;
+      userId?: string;
+      email?: string;
+    }>).detail;
+    void liveSession.notifyAuth(gosakiAdminLiveReadAuthFingerprint(detail ?? {}));
   }) as EventListener);
 
   void (async () => {
     const token = (await (deps.getAccessToken?.() ?? Promise.resolve(null))) || null;
-    if (token) void refreshLiveSourceFromSupabase();
+    if (!token) return;
+    if (liveSession.getPhase() !== "idle") return;
+    void liveSession.notifyAuth(gosakiAdminLiveReadAuthFingerprint({ signedIn: true }));
   })();
 }

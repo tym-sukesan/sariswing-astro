@@ -320,6 +320,15 @@ const showClientScript = true;
         var signedIn = false;
         var authResolved = false;
         var authListenerBound = false;
+        var lastAuthDispatchFp = "";
+
+        function authFingerprint(userId, email) {
+          var id = String(userId || "").trim();
+          if (id) return "user:" + id;
+          var em = String(email || "").trim();
+          if (em) return "email:" + em;
+          return "signed-in:session";
+        }
 
         function resolveCreateClient() {
           var lib = window.supabase;
@@ -363,7 +372,9 @@ const showClientScript = true;
           if (authPassword) authPassword.value = "";
         }
 
-        function setAuthUiSignedIn(email) {
+        function setAuthUiSignedIn(email, userId) {
+          var fp = authFingerprint(userId, email);
+          var skipEvent = signedIn && lastAuthDispatchFp === fp;
           signedIn = true;
           authResolved = true;
           var label = email ? "ログイン中: " + email : "ログイン中";
@@ -382,10 +393,16 @@ const showClientScript = true;
           setGatedVisible(true);
           updateLoginButton();
           updateSignOutButton();
+          if (skipEvent) return;
+          lastAuthDispatchFp = fp;
           try {
             window.dispatchEvent(
               new CustomEvent("gosaki-admin-auth-changed", {
-                detail: { signedIn: true, email: email || "" },
+                detail: {
+                  signedIn: true,
+                  email: email || "",
+                  userId: userId || "",
+                },
               }),
             );
           } catch (_e) {}
@@ -395,6 +412,7 @@ const showClientScript = true;
           opts = opts || {};
           signedIn = false;
           authResolved = true;
+          lastAuthDispatchFp = "";
           setGatedVisible(false);
           if (authStatus) {
             authStatus.hidden = false;
@@ -453,6 +471,9 @@ const showClientScript = true;
                 detectSessionInUrl: false,
               },
             });
+            try {
+              window.__gosakiAdminSupabaseClient = supabaseClient;
+            } catch (_e) {}
           }
           return supabaseClient;
         }
@@ -461,10 +482,14 @@ const showClientScript = true;
           if (!client || authListenerBound) return;
           authListenerBound = true;
           try {
-            client.auth.onAuthStateChange(function (_event, session) {
+            client.auth.onAuthStateChange(function (event, session) {
+              // TOKEN_REFRESHED must not re-dispatch live-read (dedupe also covers this).
               if (session && session.access_token) {
-                setAuthUiSignedIn(session.user && session.user.email);
-              } else if (authResolved) {
+                setAuthUiSignedIn(
+                  session.user && session.user.email,
+                  session.user && session.user.id,
+                );
+              } else if (authResolved && event !== "INITIAL_SESSION") {
                 setAuthUiSignedOut(undefined, { redirectHome: adminPage !== "portal" });
               }
             });
@@ -493,7 +518,10 @@ const showClientScript = true;
             return client.auth.getSession().then(function (sessionRes) {
               var session = sessionRes.data && sessionRes.data.session;
               if (session && session.access_token) {
-                setAuthUiSignedIn(session.user && session.user.email);
+                setAuthUiSignedIn(
+                  session.user && session.user.email,
+                  session.user && session.user.id,
+                );
               } else {
                 setAuthUiSignedOut(undefined, { redirectHome: adminPage !== "portal" });
               }
@@ -528,7 +556,10 @@ const showClientScript = true;
                   setAuthUiSignedOut("ログイン失敗 — 認証情報を確認してください");
                   return;
                 }
-                setAuthUiSignedIn(res.data.user && res.data.user.email);
+                setAuthUiSignedIn(
+                  res.data.user && res.data.user.email,
+                  res.data.user && res.data.user.id,
+                );
               })
               .finally(function () {
                 updateLoginButton();
@@ -667,7 +698,21 @@ const showClientScript = true;
         if (!configured || !supabaseUrl || !supabaseAnonKey) {
           return Promise.resolve(null);
         }
-        const lib = window.supabase;
+        const w = window as Window & {
+          __gosakiAdminSupabaseClient?: {
+            auth: { getSession: () => Promise<{ data?: { session?: { access_token?: string } } }> };
+          };
+          supabase?: {
+            createClient?: (...args: unknown[]) => unknown;
+            default?: { createClient?: (...args: unknown[]) => unknown };
+          };
+        };
+        if (w.__gosakiAdminSupabaseClient) {
+          return w.__gosakiAdminSupabaseClient.auth
+            .getSession()
+            .then((res) => res.data?.session?.access_token ?? null);
+        }
+        const lib = w.supabase;
         const createClient =
           lib && typeof lib.createClient === "function"
             ? lib.createClient
@@ -677,7 +722,10 @@ const showClientScript = true;
         if (!createClient) return Promise.resolve(null);
         const client = createClient(supabaseUrl, supabaseAnonKey, {
           auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: false },
-        });
+        }) as {
+          auth: { getSession: () => Promise<{ data?: { session?: { access_token?: string } } }> };
+        };
+        w.__gosakiAdminSupabaseClient = client;
         return client.auth.getSession().then((res) => res.data?.session?.access_token ?? null);
       }
 

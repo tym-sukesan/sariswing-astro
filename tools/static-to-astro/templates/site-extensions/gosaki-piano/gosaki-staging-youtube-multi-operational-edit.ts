@@ -19,6 +19,8 @@ import {
 import {
   GOSAKI_ADMIN_LIVE_READ_ERROR_MESSAGE,
   GOSAKI_ADMIN_LIVE_READ_PENDING_MESSAGE,
+  createGosakiAdminLiveReadSession,
+  gosakiAdminLiveReadAuthFingerprint,
 } from "./gosaki-staging-admin-live-read";
 import {
   GOSAKI_CLIENT_SAVE_DISARMED_REASON,
@@ -275,6 +277,9 @@ export function initGosakiYoutubeMultiOperationalEdit(
     saveArmed?: boolean;
   } & YoutubeMultiOperationalEditDeps,
 ): void {
+  if (root.dataset.gosakiYoutubeMultiEditInitialized === "true") return;
+  root.dataset.gosakiYoutubeMultiEditInitialized = "true";
+
   const listEl = root.querySelector("[data-gosaki-youtube-multi-list]");
   const statusEl = root.querySelector("[data-gosaki-youtube-status]");
   const dryRunResult = root.querySelector("[data-gosaki-youtube-multi-dry-run-result]");
@@ -380,18 +385,18 @@ export function initGosakiYoutubeMultiOperationalEdit(
     applySaveButtonUi(true, GOSAKI_SAVE_DIRTY_USER_MESSAGE);
   }
 
-  async function hydrateFromGithubDryRun(): Promise<void> {
+  async function hydrateFromGithubDryRun(): Promise<{ ok: true } | { ok: false; error: string }> {
     const token = (await (options.getAccessToken?.() ?? Promise.resolve(null))) || null;
     const endpoint = String(options.dryRunEndpoint ?? "").trim();
     const endpointSafe = endpoint
       ? options.assertDryRunEndpointSafe?.(endpoint) !== false
       : false;
     if (!token || !endpoint || !endpointSafe || !options.buildDryRunEndpointRequest) {
-      setLiveReadUi("pending");
-      return;
+      return { ok: false, error: GOSAKI_ADMIN_LIVE_READ_ERROR_MESSAGE };
     }
-    if (isDirty()) return;
-    setLiveReadUi("pending");
+    if (isDirty()) {
+      return { ok: true };
+    }
     try {
       const fetchImpl = options.fetchImpl ?? fetch;
       const body = options.buildDryRunEndpointRequest(items);
@@ -411,11 +416,10 @@ export function initGosakiYoutubeMultiOperationalEdit(
           ? json.beforeItems
           : null;
       if (json.ok !== true || json.didWrite === true || !currentItems) {
-        setLiveReadUi(
-          "error",
-          String(json.error ?? GOSAKI_ADMIN_LIVE_READ_ERROR_MESSAGE),
-        );
-        return;
+        return {
+          ok: false,
+          error: String(json.error ?? GOSAKI_ADMIN_LIVE_READ_ERROR_MESSAGE),
+        };
       }
       const mapped = currentItems.map((raw) => {
         const row = (raw && typeof raw === "object" ? raw : {}) as Record<string, unknown>;
@@ -431,12 +435,23 @@ export function initGosakiYoutubeMultiOperationalEdit(
       dryRunOk = false;
       dryRunFingerprint = null;
       renderList();
-      setLiveReadUi("ready");
       void refreshSaveGate();
+      return { ok: true };
     } catch {
-      setLiveReadUi("error", GOSAKI_ADMIN_LIVE_READ_ERROR_MESSAGE);
+      return { ok: false, error: GOSAKI_ADMIN_LIVE_READ_ERROR_MESSAGE };
     }
   }
+
+  const liveSession = createGosakiAdminLiveReadSession({
+    onPhaseChange: (phase, error) => {
+      if (phase === "idle" || phase === "loading") setLiveReadUi("pending");
+      else if (phase === "ready") setLiveReadUi("ready");
+      else setLiveReadUi("error", error || GOSAKI_ADMIN_LIVE_READ_ERROR_MESSAGE);
+      if (phase === "idle") void refreshSaveGate();
+    },
+    shouldDefer: () => isDirty(),
+    fetchLive: () => hydrateFromGithubDryRun(),
+  });
 
   function setSaveDisabled(reason = SAVE_STOPPED) {
     dryRunOk = false;
@@ -887,12 +902,12 @@ export function initGosakiYoutubeMultiOperationalEdit(
   root.addEventListener("change", onItemFieldEdited);
 
   window.addEventListener("gosaki-admin-auth-changed", ((ev: Event) => {
-    const detail = (ev as CustomEvent<{ signedIn?: boolean }>).detail;
-    if (detail?.signedIn) void hydrateFromGithubDryRun();
-    else {
-      setLiveReadUi("pending");
-      void refreshSaveGate();
-    }
+    const detail = (ev as CustomEvent<{
+      signedIn?: boolean;
+      userId?: string;
+      email?: string;
+    }>).detail;
+    void liveSession.notifyAuth(gosakiAdminLiveReadAuthFingerprint(detail ?? {}));
   }) as EventListener);
 
   renderList();
@@ -902,7 +917,9 @@ export function initGosakiYoutubeMultiOperationalEdit(
 
   void (async () => {
     const token = (await (options.getAccessToken?.() ?? Promise.resolve(null))) || null;
-    if (token) void hydrateFromGithubDryRun();
+    if (!token) return;
+    if (liveSession.getPhase() !== "idle") return;
+    void liveSession.notifyAuth(gosakiAdminLiveReadAuthFingerprint({ signedIn: true }));
   })();
 }
 

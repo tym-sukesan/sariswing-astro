@@ -7,6 +7,8 @@
 import {
   GOSAKI_ADMIN_LIVE_READ_ERROR_MESSAGE,
   GOSAKI_ADMIN_LIVE_READ_PENDING_MESSAGE,
+  createGosakiAdminLiveReadSession,
+  gosakiAdminLiveReadAuthFingerprint,
 } from "./gosaki-staging-admin-live-read";
 import {
   GOSAKI_CLIENT_SAVE_DISARMED_REASON,
@@ -108,6 +110,9 @@ export function initGosakiAboutOperationalEdit(
   root: HTMLElement,
   deps: AboutOperationalEditDeps = {},
 ): void {
+  if (root.dataset.gosakiAboutEditInitialized === "true") return;
+  root.dataset.gosakiAboutEditInitialized = "true";
+
   const dryRunBtn = root.querySelector(
     "#gosaki-about-dry-run-btn, [data-gosaki-about-dry-run]",
   );
@@ -421,7 +426,7 @@ export function initGosakiAboutOperationalEdit(
     });
   }
 
-  async function hydrateFromGithubDryRun(): Promise<void> {
+  async function hydrateFromGithubDryRun(): Promise<{ ok: true } | { ok: false; error: string }> {
     const auth = await refreshAuthFlag();
     const endpoint = String(deps.dryRunEndpoint ?? "").trim();
     if (
@@ -431,11 +436,11 @@ export function initGosakiAboutOperationalEdit(
       endpoint.includes(productionStop) ||
       !deps.buildDryRunEndpointRequest
     ) {
-      setLiveReadUi("pending");
-      return;
+      return { ok: false, error: GOSAKI_ADMIN_LIVE_READ_ERROR_MESSAGE };
     }
-    if (isFormDirty()) return;
-    setLiveReadUi("pending");
+    if (isFormDirty()) {
+      return { ok: true };
+    }
     try {
       const next = readFormSnapshot();
       const payload = deps.buildDryRunEndpointRequest(next);
@@ -458,23 +463,33 @@ export function initGosakiAboutOperationalEdit(
           ? (body.before as AboutFormSnapshot)
           : null);
       if (body.ok !== true || body.didWrite === true || !current) {
-        setLiveReadUi(
-          "error",
-          String(body.error ?? GOSAKI_ADMIN_LIVE_READ_ERROR_MESSAGE),
-        );
-        return;
+        return {
+          ok: false,
+          error: String(body.error ?? GOSAKI_ADMIN_LIVE_READ_ERROR_MESSAGE),
+        };
       }
       writeFormSnapshot(current);
       baselineFingerprint = formFingerprint(current);
       dryRunOk = false;
       dryRunFormFingerprint = null;
       dryRunServerFingerprint = null;
-      setLiveReadUi("ready");
       void refreshSaveGate();
+      return { ok: true };
     } catch {
-      setLiveReadUi("error", GOSAKI_ADMIN_LIVE_READ_ERROR_MESSAGE);
+      return { ok: false, error: GOSAKI_ADMIN_LIVE_READ_ERROR_MESSAGE };
     }
   }
+
+  const liveSession = createGosakiAdminLiveReadSession({
+    onPhaseChange: (phase, error) => {
+      if (phase === "idle" || phase === "loading") setLiveReadUi("pending");
+      else if (phase === "ready") setLiveReadUi("ready");
+      else setLiveReadUi("error", error || GOSAKI_ADMIN_LIVE_READ_ERROR_MESSAGE);
+      if (phase === "idle") void refreshSaveGate();
+    },
+    shouldDefer: () => isFormDirty(),
+    fetchLive: () => hydrateFromGithubDryRun(),
+  });
 
   async function runDryRun() {
     if (dryRunInFlight || saveInFlight) return;
@@ -836,16 +851,18 @@ export function initGosakiAboutOperationalEdit(
     void refreshSaveGate();
   });
   window.addEventListener("gosaki-admin-auth-changed", ((ev: Event) => {
-    const detail = (ev as CustomEvent<{ signedIn?: boolean }>).detail;
-    if (detail?.signedIn) void hydrateFromGithubDryRun();
-    else {
-      setLiveReadUi("pending");
-      void refreshSaveGate();
-    }
+    const detail = (ev as CustomEvent<{
+      signedIn?: boolean;
+      userId?: string;
+      email?: string;
+    }>).detail;
+    void liveSession.notifyAuth(gosakiAdminLiveReadAuthFingerprint(detail ?? {}));
   }) as EventListener);
   void refreshSaveGate();
   void (async () => {
     const token = (await (deps.getAccessToken?.() ?? Promise.resolve(null))) || null;
-    if (token) void hydrateFromGithubDryRun();
+    if (!token) return;
+    if (liveSession.getPhase() !== "idle") return;
+    void liveSession.notifyAuth(gosakiAdminLiveReadAuthFingerprint({ signedIn: true }));
   })();
 }

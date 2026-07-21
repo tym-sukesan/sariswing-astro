@@ -536,13 +536,13 @@ export function initGosakiScheduleOperationalEdit(
     saveBtn.setAttribute("aria-disabled", enabled ? "false" : "true");
     saveBtn.textContent = enabled ? SAVE_LABEL_ENABLED : SAVE_LABEL_DISABLED;
     saveBtn.title = reason || "保存";
-    setUserSaveMessage(reason || (enabled ? "保存できます" : "変更があると保存できます"));
+    setUserSaveMessage(reason || (enabled ? "未保存の変更があります" : "変更がありません"));
   }
 
   async function refreshSaveGate() {
     if (!(saveBtn instanceof HTMLButtonElement)) return;
     if (mode === "view") {
-      applySaveButtonUi(false, "変更があると保存できます");
+      applySaveButtonUi(false, "変更がありません");
       return;
     }
     const token = (await (deps.getAccessToken?.() ?? Promise.resolve(null))) || null;
@@ -568,7 +568,7 @@ export function initGosakiScheduleOperationalEdit(
       return;
     }
     // Client-armed: enable when dirty + signed in. Click runs internal dry-run then Save.
-    applySaveButtonUi(true, "保存");
+    applySaveButtonUi(true, "未保存の変更があります");
   }
 
   function showView() {

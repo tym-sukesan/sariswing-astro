@@ -101,5 +101,5 @@ export function evaluateOneClickSaveStartGate(input: {
   if (!input.dirty) {
     return { canStart: false, buttonEnabled: false, reason: "変更がありません" };
   }
-  return { canStart: true, buttonEnabled: true, reason: "保存" };
+  return { canStart: true, buttonEnabled: true, reason: "未保存の変更があります" };
 }

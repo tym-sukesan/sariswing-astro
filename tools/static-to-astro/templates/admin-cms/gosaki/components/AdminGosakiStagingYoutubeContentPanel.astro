@@ -78,10 +78,10 @@ const itemCount = Array.isArray(config.items) ? config.items.length : 0;
     <div class="admin-actions">
       <button
         type="button"
-        class="gosaki-admin-edit-toolbar__btn gosaki-admin-edit-toolbar__btn--primary"
+        class="gosaki-admin-btn gosaki-admin-btn--primary gosaki-admin-edit-toolbar__btn gosaki-admin-edit-toolbar__btn--primary"
         data-gosaki-youtube-add
       >
-        追加
+        動画を追加
       </button>
     </div>
   </section>
@@ -98,22 +98,6 @@ const itemCount = Array.isArray(config.items) ? config.items.length : 0;
     ></ul>
   </section>
 
-  <div class="gosaki-schedule-edit-dry-run-actions">
-    <button type="button" class="gosaki-admin-edit-toolbar__btn" data-gosaki-youtube-multi-cancel>
-      変更を破棄
-    </button>
-    <button
-      type="button"
-      hidden
-      data-gosaki-youtube-multi-dry-run
-      data-gosaki-internal-dry-run="true"
-      tabindex="-1"
-      aria-hidden="true"
-    >
-      internal-dry-run
-    </button>
-  </div>
-
   <div
     class="gosaki-schedule-content-panel__dry-run"
     data-gosaki-youtube-multi-dry-run-result
@@ -121,24 +105,48 @@ const itemCount = Array.isArray(config.items) ? config.items.length : 0;
     aria-live="polite"
   ></div>
 
-  <div class="gosaki-schedule-content-panel__save-card" role="region" aria-label="保存">
+  <div
+    class="gosaki-admin-save-area gosaki-schedule-content-panel__save-card"
+    role="region"
+    aria-labelledby="gosaki-youtube-save-heading"
+  >
+    <h2 id="gosaki-youtube-save-heading" class="gosaki-admin-save-area__title">保存</h2>
     <p
-      class="gosaki-schedule-content-panel__save-reason"
+      class="gosaki-admin-save-area__status gosaki-schedule-content-panel__save-reason"
       data-gosaki-youtube-multi-save-reason
       role="status"
     >
-      変更があると保存できます
+      変更がありません
     </p>
-    <button
-      type="button"
-      class="gosaki-admin-edit-toolbar__btn gosaki-admin-edit-toolbar__btn--primary"
-      data-gosaki-youtube-multi-save
-      data-gosaki-save-allowed="false"
-      disabled
-      aria-disabled="true"
-    >
-      保存
-    </button>
+    <div class="gosaki-admin-save-area__actions">
+      <button
+        type="button"
+        class="gosaki-admin-btn gosaki-admin-btn--secondary gosaki-admin-edit-toolbar__btn"
+        data-gosaki-youtube-multi-cancel
+      >
+        変更を破棄
+      </button>
+      <button
+        type="button"
+        hidden
+        data-gosaki-youtube-multi-dry-run
+        data-gosaki-internal-dry-run="true"
+        tabindex="-1"
+        aria-hidden="true"
+      >
+        internal-dry-run
+      </button>
+      <button
+        type="button"
+        class="gosaki-admin-btn gosaki-admin-btn--primary gosaki-admin-edit-toolbar__btn gosaki-admin-edit-toolbar__btn--primary"
+        data-gosaki-youtube-multi-save
+        data-gosaki-save-allowed="false"
+        disabled
+        aria-disabled="true"
+      >
+        保存
+      </button>
+    </div>
   </div>
 </section>
 
@@ -281,21 +289,6 @@ const itemCount = Array.isArray(config.items) ? config.items.length : 0;
     flex-wrap: wrap;
     gap: 0.5rem;
     margin-top: 0.75rem;
-  }
-
-  .admin-button,
-  .admin-button--small {
-    min-height: 40px;
-    padding: 0.4rem 0.7rem;
-    border: 1px solid #d1d5db;
-    border-radius: 6px;
-    background: #fff;
-    cursor: pointer;
-    font: inherit;
-  }
-
-  .admin-button--small {
-    min-width: 44px;
   }
 
   @media (max-width: 390px) {

@@ -241,7 +241,7 @@ const bandImageLabels = bandImages.map((img) => ({
   <header class="gosaki-admin-content-panel__header">
     <h1 class="gosaki-admin-content-panel__title">プロフィール・バンド</h1>
     <p class="gosaki-admin-content-panel__subtitle" data-gosaki-about-status="true">
-      About 編集 · Save は通常無効（controlled arm 時のみ）
+      プロフィールとバンド紹介を編集できます
     </p>
     {
       publicAboutUrl ? (
@@ -268,8 +268,7 @@ const bandImageLabels = bandImages.map((img) => ({
       About編集内容
     </h2>
     <p class="gosaki-about-content-panel__readonly-note" role="note">
-      テキスト項目を編集できます。画像の差し替えは対象外です。「変更を確認」後、controlled arm
-      時のみ保存できます。公開ページ反映は package 再アップロードが必要です。
+      プロフィールとバンド紹介のテキストを編集できます。画像の変更には現在対応していません。
     </p>
 
     <section
@@ -435,22 +434,30 @@ const bandImageLabels = bandImages.map((img) => ({
   </section>
 
   <section
-    class="gosaki-about-content-panel__ops"
+    class="gosaki-admin-save-area gosaki-about-content-panel__ops"
     data-gosaki-about-operational-form
     data-section="about-dry-run"
     aria-labelledby="gosaki-about-ops-heading"
   >
-    <h2 id="gosaki-about-ops-heading" class="gosaki-about-content-panel__section-title">
+    <h2 id="gosaki-about-ops-heading" class="gosaki-admin-save-area__title gosaki-about-content-panel__section-title">
       保存
     </h2>
     <p
       class="gosaki-read-only-admin__meta"
       data-gosaki-about-local-validation
       id="gosaki-about-local-validation"
+      hidden
+      aria-hidden="true"
+    ></p>
+    <p
+      id="gosaki-about-save-disabled-reason"
+      class="gosaki-admin-save-area__status gosaki-read-only-admin__meta"
+      data-gosaki-about-save-reason
+      role="status"
     >
-      変更があると保存できます
+      変更がありません
     </p>
-    <div class="gosaki-about-content-panel__ops-actions">
+    <div class="gosaki-admin-save-area__actions gosaki-about-content-panel__save-actions gosaki-about-content-panel__ops-actions">
       <button
         type="button"
         class="gosaki-about-admin-form__action gosaki-about-admin-form__dry-run"
@@ -465,10 +472,20 @@ const bandImageLabels = bandImages.map((img) => ({
       </button>
       <button
         type="button"
-        class="gosaki-about-admin-form__action gosaki-about-admin-form__cancel"
+        class="gosaki-admin-btn gosaki-admin-btn--secondary gosaki-about-admin-form__action gosaki-about-admin-form__cancel"
         data-gosaki-about-cancel
       >
         キャンセル
+      </button>
+      <button
+        type="button"
+        class="gosaki-admin-btn gosaki-admin-btn--primary gosaki-about-admin-form__action gosaki-about-admin-form__save"
+        id="gosaki-about-save-btn"
+        disabled
+        aria-disabled="true"
+        data-gosaki-about-save
+      >
+        保存
       </button>
     </div>
     <pre
@@ -477,28 +494,6 @@ const bandImageLabels = bandImages.map((img) => ({
       data-gosaki-about-dry-run-result
       hidden
     ></pre>
-    <div class="gosaki-about-content-panel__save" data-section="about-save">
-      <p
-        id="gosaki-about-save-disabled-reason"
-        class="gosaki-read-only-admin__meta"
-        data-gosaki-about-save-reason
-        role="status"
-      >
-        変更があると保存できます
-      </p>
-      <p class="gosaki-about-content-panel__save-actions">
-        <button
-          type="button"
-          class="gosaki-about-admin-form__action gosaki-about-admin-form__save"
-          id="gosaki-about-save-btn"
-          disabled
-          aria-disabled="true"
-          data-gosaki-about-save
-        >
-          保存
-        </button>
-      </p>
-    </div>
   </section>
 
   <section
@@ -732,8 +727,8 @@ const bandImageLabels = bandImages.map((img) => ({
   }
 
   .gosaki-about-admin-form__dry-run:not(:disabled) {
-    border-color: #1d4ed8;
-    background: #1d4ed8;
+    border-color: #1e293b;
+    background: #1e293b;
     color: #fff;
     cursor: pointer;
   }
@@ -745,8 +740,8 @@ const bandImageLabels = bandImages.map((img) => ({
   }
 
   .gosaki-about-admin-form__save:not(:disabled) {
-    border-color: #15803d;
-    background: #16a34a;
+    border-color: #1e293b;
+    background: #1e293b;
     color: #fff;
     cursor: pointer;
   }

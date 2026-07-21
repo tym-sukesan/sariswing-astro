@@ -113,7 +113,6 @@ export function initGosakiAboutOperationalEdit(
   const resultEl = root.querySelector(
     "#gosaki-about-dry-run-result, [data-gosaki-about-dry-run-result]",
   );
-  const statusEl = root.querySelector("[data-gosaki-about-status]");
   const localValidationEl = root.querySelector("[data-gosaki-about-local-validation]");
 
   let dryRunOk = false;
@@ -133,7 +132,7 @@ export function initGosakiAboutOperationalEdit(
   const expectedSaveApprovalId = String(deps.expectedSaveApprovalId ?? "").trim();
   const conflictMessage =
     deps.conflictMessage ??
-    "GitHub 上の current が変わりました。再度「変更を確認」（dry-run）してください。";
+    "他の場所で内容が更新された可能性があります。ページを再読み込みしてから再度お試しください。";
   const productionStop = deps.productionProjectRefStop ?? "vsbvndwuajjhnzpohghh";
   const fetchImpl = deps.fetchImpl ?? fetch;
 
@@ -261,10 +260,35 @@ export function initGosakiAboutOperationalEdit(
   }
 
   function setLocalValidation(message: string, ok: boolean | null) {
-    if (!(localValidationEl instanceof HTMLElement)) return;
-    localValidationEl.textContent = message;
-    localValidationEl.classList.toggle("gosaki-read-only-admin__meta--ok", ok === true);
-    localValidationEl.classList.toggle("gosaki-read-only-admin__meta--warn", ok === false);
+    // Keep legacy local-validation node empty/hidden — user-facing copy lives only in save-reason.
+    if (localValidationEl instanceof HTMLElement) {
+      localValidationEl.textContent = "";
+      localValidationEl.hidden = true;
+      localValidationEl.setAttribute("aria-hidden", "true");
+    }
+    if (!(saveReasonEl instanceof HTMLElement)) return;
+    if (!message) {
+      saveReasonEl.classList.remove(
+        "gosaki-read-only-admin__meta--ok",
+        "gosaki-read-only-admin__meta--warn",
+      );
+      return;
+    }
+    // Soften leftover internal dry-run strings if they still call this helper.
+    let normalized = message;
+    if (message === "dry-run 実行中…" || message === "確認中…") {
+      normalized = "確認中…";
+    } else if (message === "変更なし（no_change）") {
+      normalized = "変更がありません";
+    } else if (/dry-run|endpoint|wiring|fingerprint|verification_required|unsafe/i.test(message)) {
+      normalized =
+        /失敗|FAIL|error|不明/i.test(message)
+          ? "確認に失敗しました"
+          : "入力内容を確認してください";
+    }
+    saveReasonEl.textContent = normalized;
+    saveReasonEl.classList.toggle("gosaki-read-only-admin__meta--ok", ok === true);
+    saveReasonEl.classList.toggle("gosaki-read-only-admin__meta--warn", ok === false);
   }
 
   function showResultHtml(html: string) {
@@ -295,13 +319,19 @@ export function initGosakiAboutOperationalEdit(
     saveBtn.setAttribute("aria-disabled", enabled ? "false" : "true");
     saveBtn.textContent = enabled ? SAVE_LABEL_ENABLED : SAVE_LABEL_DISABLED;
     saveBtn.title = reason || "保存";
+    // Single user-facing save message surface (do not also write status / local-validation).
     if (saveReasonEl instanceof HTMLElement) {
-      saveReasonEl.textContent = reason || (enabled ? "保存" : "変更があると保存できます");
+      saveReasonEl.textContent = reason || (enabled ? "未保存の変更があります" : "変更がありません");
       saveReasonEl.classList.toggle("gosaki-read-only-admin__meta--ok", enabled);
-      saveReasonEl.classList.toggle("gosaki-read-only-admin__meta--warn", false);
+      saveReasonEl.classList.toggle(
+        "gosaki-read-only-admin__meta--warn",
+        !enabled && reason === SAVE_STOPPED_MSG,
+      );
     }
-    if (statusEl instanceof HTMLElement) {
-      statusEl.textContent = reason || "プロフィールを編集中";
+    if (localValidationEl instanceof HTMLElement) {
+      localValidationEl.textContent = "";
+      localValidationEl.hidden = true;
+      localValidationEl.setAttribute("aria-hidden", "true");
     }
   }
 
@@ -339,7 +369,7 @@ export function initGosakiAboutOperationalEdit(
       applySaveButtonUi(false, "ログインが必要です");
       return;
     }
-    applySaveButtonUi(true, "保存");
+    applySaveButtonUi(true, "未保存の変更があります");
   }
 
   function wireFormInvalidate() {
@@ -637,7 +667,6 @@ export function initGosakiAboutOperationalEdit(
         saveNotArmedLocked = true;
         invalidateDryRun();
         applySaveButtonUi(false, SAVE_STOPPED_MSG);
-        setLocalValidation(SAVE_STOPPED_MSG, false);
         return;
       }
       if (!display.ok) {
@@ -657,12 +686,8 @@ export function initGosakiAboutOperationalEdit(
 
       invalidateDryRun();
       applyDryRunButtonUi();
-      setLocalValidation("保存しました", true);
       applySaveButtonUi(false, "保存しました");
       showResultHtml(`<p class="gosaki-read-only-admin__meta--ok">保存しました</p>`);
-      if (statusEl instanceof HTMLElement) {
-        statusEl.textContent = "保存しました";
-      }
     } finally {
       saveInFlight = false;
       void refreshSaveGate();
@@ -699,7 +724,6 @@ export function initGosakiAboutOperationalEdit(
       ev.preventDefault();
       if (saveNotArmedLocked) {
         applySaveButtonUi(false, SAVE_STOPPED_MSG);
-        setLocalValidation(SAVE_STOPPED_MSG, false);
         return;
       }
       if (!saveArmed) {
@@ -712,7 +736,7 @@ export function initGosakiAboutOperationalEdit(
 
   wireFormInvalidate();
   baselineFingerprint = formFingerprint(readFormSnapshot());
-  applySaveButtonUi(false, saveArmed ? "変更があると保存できます" : GOSAKI_CLIENT_SAVE_DISARMED_REASON);
+  applySaveButtonUi(false, saveArmed ? "変更がありません" : GOSAKI_CLIENT_SAVE_DISARMED_REASON);
   applyDryRunButtonUi();
   document.addEventListener("visibilitychange", () => {
     if (document.visibilityState === "visible") void refreshSaveGate();

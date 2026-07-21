@@ -1,6 +1,6 @@
 ---
 /**
- * Minimal shared edit toolbar (Discography now · reusable later for Schedule).
+ * Minimal shared edit toolbar (Discography / Schedule).
  */
 interface Props {
   mode?: "view" | "edit";
@@ -28,7 +28,7 @@ const {
     mode === "view" ? (
       <button
         type="button"
-        class="gosaki-admin-edit-toolbar__btn gosaki-admin-edit-toolbar__btn--primary"
+        class="gosaki-admin-btn gosaki-admin-btn--primary gosaki-admin-edit-toolbar__btn gosaki-admin-edit-toolbar__btn--primary"
         data-gosaki-edit-start
       >
         {editLabel}
@@ -37,7 +37,7 @@ const {
       <>
         <button
           type="button"
-          class="gosaki-admin-edit-toolbar__btn"
+          class="gosaki-admin-btn gosaki-admin-btn--secondary gosaki-admin-edit-toolbar__btn"
           data-gosaki-edit-cancel
         >
           {cancelLabel}
@@ -46,7 +46,7 @@ const {
           showDryRun ? (
             <button
               type="button"
-              class="gosaki-admin-edit-toolbar__btn gosaki-admin-edit-toolbar__btn--primary"
+              class="gosaki-admin-btn gosaki-admin-btn--secondary gosaki-admin-edit-toolbar__btn"
               data-gosaki-edit-dry-run
             >
               {dryRunLabel}
@@ -67,34 +67,5 @@ const {
     min-width: 0;
     max-width: 100%;
     box-sizing: border-box;
-  }
-
-  .gosaki-admin-edit-toolbar__btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 44px;
-    min-width: 44px;
-    padding: 0.55rem 0.85rem;
-    border-radius: 6px;
-    border: 1px solid #d1d5db;
-    background: #fff;
-    font: inherit;
-    line-height: 1.3;
-    white-space: normal;
-    text-align: center;
-    box-sizing: border-box;
-    cursor: pointer;
-  }
-
-  .gosaki-admin-edit-toolbar__btn--primary {
-    border-color: #1d4ed8;
-    background: #1d4ed8;
-    color: #fff;
-  }
-
-  .gosaki-admin-edit-toolbar__btn:disabled {
-    opacity: 0.55;
-    cursor: not-allowed;
   }
 </style>

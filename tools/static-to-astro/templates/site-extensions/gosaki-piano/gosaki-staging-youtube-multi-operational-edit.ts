@@ -343,7 +343,7 @@ export function initGosakiYoutubeMultiOperationalEdit(
       applySaveButtonUi(false, "ログインが必要です");
       return;
     }
-    applySaveButtonUi(true, "保存");
+    applySaveButtonUi(true, "未保存の変更があります");
   }
 
   function setSaveDisabled(reason = SAVE_STOPPED) {
@@ -383,8 +383,8 @@ export function initGosakiYoutubeMultiOperationalEdit(
       <code class="gosaki-youtube-admin-item__id">${escapeHtml(item.id)}</code>
     </div>
     <div class="gosaki-youtube-admin-item__move-controls">
-      <button type="button" class="admin-button admin-button--small" data-yt-move="up" data-index="${index}" ${index === 0 ? "disabled" : ""} aria-label="上へ">↑</button>
-      <button type="button" class="admin-button admin-button--small" data-yt-move="down" data-index="${index}" ${index === items.length - 1 ? "disabled" : ""} aria-label="下へ">↓</button>
+      <button type="button" class="gosaki-admin-btn gosaki-admin-btn--small admin-button admin-button--small" data-yt-move="up" data-index="${index}" ${index === 0 ? "disabled" : ""} aria-label="上へ">↑</button>
+      <button type="button" class="gosaki-admin-btn gosaki-admin-btn--small admin-button admin-button--small" data-yt-move="down" data-index="${index}" ${index === items.length - 1 ? "disabled" : ""} aria-label="下へ">↓</button>
     </div>
   </div>
   <div class="gosaki-youtube-admin-item__preview">${previewHtmlForEmbed(item.embedCode)}</div>
@@ -401,7 +401,7 @@ export function initGosakiYoutubeMultiOperationalEdit(
       </label>
     </div>
     <div class="admin-actions">
-      <button type="button" class="admin-button admin-button-secondary" data-yt-duplicate data-index="${index}">複製</button>
+      <button type="button" class="gosaki-admin-btn gosaki-admin-btn--small admin-button admin-button-secondary" data-yt-duplicate data-index="${index}">複製</button>
     </div>
   </div>
 </li>`;
@@ -436,8 +436,8 @@ export function initGosakiYoutubeMultiOperationalEdit(
       dryRunResult.hidden = true;
       dryRunResult.innerHTML = "";
     }
-    setSaveDisabled("変更後は再度「変更を確認」してください");
-    if (statusEl) statusEl.textContent = "未保存の変更がある可能性があります";
+    setSaveDisabled("未保存の変更があります");
+    if (statusEl) statusEl.textContent = "未保存の変更があります";
     void refreshSaveGate();
   }
 
@@ -760,7 +760,7 @@ export function initGosakiYoutubeMultiOperationalEdit(
           if (internalDry instanceof HTMLElement) internalDry.click();
           else {
             pendingOneClickSave = false;
-            applySaveButtonUi(true, "保存");
+            applySaveButtonUi(true, "未保存の変更があります");
           }
           return;
         }

@@ -51,7 +51,7 @@ function evaluateSaveGate({ clientArmed, authenticated, dirty, saveNotArmedLocke
   if (!clientArmed) return { buttonEnabled: false, reason: "保存は現在無効です" };
   if (!dirty) return { buttonEnabled: false, reason: "変更がありません" };
   if (!authenticated) return { buttonEnabled: false, reason: "ログインが必要です" };
-  return { buttonEnabled: true, reason: "保存" };
+  return { canStart: true, buttonEnabled: true, reason: "未保存の変更があります" };
 }
 
 function renumberSortOrders(next) {

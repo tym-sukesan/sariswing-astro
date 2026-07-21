@@ -783,24 +783,17 @@ body.gosaki-read-only-admin {
   margin: 0 0 0.5rem;
 }
 
-/* About ops: dry-run must look/click enabled when not :disabled (Save stays gated). */
-.gosaki-about-admin-form__action {
-  padding: 0.5rem 0.9rem;
-  border-radius: 6px;
-  border: 1px solid var(--gra-border);
-  font: inherit;
-  line-height: 1.3;
-}
-
+/* About ops: actions use shared .gosaki-admin-btn kit (navy primary). */
 .gosaki-about-admin-form__action:disabled {
-  background: #e5e7eb;
-  color: #6b7280;
+  background: #e2e8f0;
+  color: #94a3b8;
   cursor: not-allowed;
 }
 
-.gosaki-about-admin-form__dry-run:not(:disabled) {
-  border-color: #1d4ed8;
-  background: #1d4ed8;
+.gosaki-about-admin-form__dry-run:not(:disabled),
+.gosaki-about-admin-form__save:not(:disabled) {
+  border-color: #1e293b;
+  background: #1e293b;
   color: #fff;
   cursor: pointer;
 }
@@ -811,16 +804,9 @@ body.gosaki-read-only-admin {
   cursor: pointer;
 }
 
-.gosaki-about-admin-form__save:not(:disabled) {
-  border-color: #15803d;
-  background: #16a34a;
-  color: #fff;
-  cursor: pointer;
-}
-
 .gosaki-about-admin-form__save:disabled {
-  background: #e5e7eb;
-  color: #6b7280;
+  background: #e2e8f0;
+  color: #94a3b8;
   cursor: not-allowed;
 }
 
@@ -895,4 +881,315 @@ body.gosaki-read-only-admin {
   display: inline-block;
   max-width: 100%;
   word-break: break-all;
+}
+
+/* ==========================================================================
+   Gosaki Admin UI kit — shared buttons, save area, forms (visual only)
+   Primary = navy (--gra-header). Green save buttons removed.
+   ========================================================================== */
+
+:root {
+  --gosaki-admin-primary: #1e293b;
+  --gosaki-admin-primary-hover: #0f172a;
+  --gosaki-admin-secondary-bg: #ffffff;
+  --gosaki-admin-secondary-border: #cbd5e1;
+  --gosaki-admin-disabled-bg: #e2e8f0;
+  --gosaki-admin-disabled-text: #94a3b8;
+  --gosaki-admin-radius: 8px;
+  --gosaki-admin-control-radius: 6px;
+  --gosaki-admin-btn-min-height: 2.75rem;
+  --gosaki-admin-btn-pad-y: 0.55rem;
+  --gosaki-admin-btn-pad-x: 1rem;
+  --gosaki-admin-btn-font: 0.9rem;
+  --gosaki-admin-section-pad: 1rem 1.1rem;
+  --gosaki-admin-section-gap: 0.75rem;
+}
+
+/* —— Buttons —— */
+.gosaki-admin-btn,
+.gosaki-admin-edit-toolbar__btn,
+.gosaki-about-admin-form__action,
+.admin-button,
+.admin-button-secondary,
+.admin-button--small,
+.gosaki-discography-content-panel__save-btn,
+.gosaki-read-only-admin__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  min-height: var(--gosaki-admin-btn-min-height);
+  padding: var(--gosaki-admin-btn-pad-y) var(--gosaki-admin-btn-pad-x);
+  border: 1px solid var(--gosaki-admin-secondary-border);
+  border-radius: var(--gosaki-admin-control-radius);
+  background: var(--gosaki-admin-secondary-bg);
+  color: var(--gra-text);
+  font: inherit;
+  font-size: var(--gosaki-admin-btn-font);
+  font-weight: 600;
+  line-height: 1.3;
+  text-decoration: none;
+  text-align: center;
+  white-space: normal;
+  cursor: pointer;
+  box-sizing: border-box;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.gosaki-admin-btn:hover:not(:disabled):not([aria-disabled="true"]),
+.gosaki-admin-edit-toolbar__btn:hover:not(:disabled),
+.gosaki-about-admin-form__action:hover:not(:disabled),
+.admin-button:hover:not(:disabled),
+.gosaki-read-only-admin__btn:hover:not(:disabled) {
+  border-color: #94a3b8;
+  background: #f8fafc;
+}
+
+.gosaki-admin-btn:focus-visible,
+.gosaki-admin-edit-toolbar__btn:focus-visible,
+.gosaki-about-admin-form__action:focus-visible,
+.admin-button:focus-visible,
+.gosaki-read-only-admin__btn:focus-visible {
+  outline: 2px solid var(--gosaki-admin-primary);
+  outline-offset: 2px;
+}
+
+/* Primary — navy (Save / Add) */
+.gosaki-admin-btn--primary,
+.gosaki-admin-edit-toolbar__btn--primary,
+.gosaki-about-admin-form__save,
+.gosaki-about-admin-form__dry-run:not(:disabled),
+.gosaki-discography-content-panel__save-btn:not(:disabled),
+.gosaki-read-only-admin__btn--primary:not(:disabled),
+.admin-button--primary {
+  border-color: var(--gosaki-admin-primary);
+  background: var(--gosaki-admin-primary);
+  color: #f8fafc;
+}
+
+.gosaki-admin-btn--primary:hover:not(:disabled):not([aria-disabled="true"]),
+.gosaki-admin-edit-toolbar__btn--primary:hover:not(:disabled),
+.gosaki-about-admin-form__save:hover:not(:disabled),
+.gosaki-discography-content-panel__save-btn:hover:not(:disabled),
+.gosaki-read-only-admin__btn--primary:hover:not(:disabled) {
+  border-color: var(--gosaki-admin-primary-hover);
+  background: var(--gosaki-admin-primary-hover);
+  color: #f8fafc;
+}
+
+/* Secondary — Cancel / discard / back */
+.gosaki-admin-btn--secondary,
+.admin-button-secondary,
+.gosaki-about-admin-form__cancel {
+  border-color: var(--gosaki-admin-secondary-border);
+  background: #fff;
+  color: var(--gra-text);
+}
+
+/* Small — edit / duplicate / reorder */
+.gosaki-admin-btn--small,
+.admin-button--small,
+.admin-button.admin-button--small {
+  min-height: 2.25rem;
+  padding: 0.35rem 0.65rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+/* Disabled — same grey everywhere */
+.gosaki-admin-btn:disabled,
+.gosaki-admin-btn[aria-disabled="true"],
+.gosaki-admin-edit-toolbar__btn:disabled,
+.gosaki-about-admin-form__action:disabled,
+.gosaki-about-admin-form__save:disabled,
+.gosaki-discography-content-panel__save-btn:disabled,
+.admin-button:disabled,
+.gosaki-read-only-admin__btn:disabled,
+button.gosaki-admin-btn--primary:disabled,
+button.gosaki-admin-edit-toolbar__btn--primary:disabled {
+  border-color: #d1d5db !important;
+  background: var(--gosaki-admin-disabled-bg) !important;
+  color: var(--gosaki-admin-disabled-text) !important;
+  opacity: 1;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* —— Save area (shared structure) —— */
+.gosaki-admin-save-area,
+.gosaki-schedule-content-panel__save-card,
+.gosaki-discography-content-panel__save,
+.gosaki-about-content-panel__ops {
+  display: grid;
+  gap: var(--gosaki-admin-section-gap);
+  margin: 1rem 0 0;
+  padding: var(--gosaki-admin-section-pad);
+  border: 1px solid var(--gra-border);
+  border-radius: var(--gosaki-admin-radius);
+  background: #f8fafc;
+  box-sizing: border-box;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.gosaki-admin-save-area__title,
+.gosaki-about-content-panel__ops > .gosaki-about-content-panel__section-title,
+.gosaki-admin-save-area h2 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 650;
+  color: var(--gosaki-admin-primary);
+  line-height: 1.35;
+}
+
+.gosaki-admin-save-area__status,
+.gosaki-admin-save-reason,
+.gosaki-schedule-content-panel__save-reason,
+.gosaki-discography-content-panel__save-reason,
+[data-gosaki-about-save-reason] {
+  margin: 0;
+  color: var(--gra-muted);
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.gosaki-admin-save-area__actions,
+.gosaki-about-content-panel__save-actions,
+.gosaki-discography-content-panel__save-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  align-items: center;
+  margin: 0;
+}
+
+/* Discography: single status line — hide parallel status nodes */
+.gosaki-discography-content-panel__save-in-flight,
+.gosaki-discography-content-panel__save-success,
+.gosaki-discography-content-panel__save-validation,
+.gosaki-discography-content-panel__save-conflict {
+  display: none !important;
+}
+
+/* Kill green Save overrides if any remain in scoped styles */
+.gosaki-about-admin-form__save:not(:disabled),
+.gosaki-discography-content-panel__save-btn:not(:disabled) {
+  border-color: var(--gosaki-admin-primary) !important;
+  background: var(--gosaki-admin-primary) !important;
+  color: #f8fafc !important;
+}
+
+/* —— Forms / sections —— */
+.gosaki-read-only-admin .admin-form__label,
+.gosaki-admin-content-panel .admin-form__label,
+.gosaki-about-admin-form__label {
+  display: block;
+  margin: 0 0 0.3rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #334155;
+}
+
+.gosaki-read-only-admin input[type="text"],
+.gosaki-read-only-admin input[type="date"],
+.gosaki-read-only-admin input[type="url"],
+.gosaki-read-only-admin input[type="email"],
+.gosaki-read-only-admin input[type="password"],
+.gosaki-read-only-admin textarea,
+.gosaki-read-only-admin select,
+.gosaki-admin-content-panel input[type="text"],
+.gosaki-admin-content-panel input[type="date"],
+.gosaki-admin-content-panel input[type="url"],
+.gosaki-admin-content-panel textarea,
+.gosaki-admin-content-panel select,
+.gosaki-about-admin-form__control,
+.gosaki-youtube-admin-embed-code {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid var(--gra-border);
+  border-radius: var(--gosaki-admin-control-radius);
+  background: #fff;
+  color: var(--gra-text);
+  font: inherit;
+  font-size: 0.95rem;
+  line-height: 1.45;
+}
+
+.gosaki-read-only-admin input:focus-visible,
+.gosaki-read-only-admin textarea:focus-visible,
+.gosaki-admin-content-panel input:focus-visible,
+.gosaki-admin-content-panel textarea:focus-visible,
+.gosaki-about-admin-form__control:focus-visible,
+.gosaki-youtube-admin-embed-code:focus-visible {
+  outline: 2px solid var(--gosaki-admin-primary);
+  outline-offset: 1px;
+  border-color: #94a3b8;
+}
+
+.gosaki-admin-content-panel__section,
+.admin-card.admin-gosaki-card,
+.gosaki-about-content-panel__block,
+.gosaki-youtube-admin-item,
+.gosaki-schedule-content-panel__card,
+.gosaki-discography-content-panel__album-summary {
+  border: 1px solid var(--gra-border);
+  border-radius: var(--gosaki-admin-radius);
+  background: var(--gra-surface);
+  box-sizing: border-box;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.gosaki-admin-content-panel .admin-gosaki-card,
+.gosaki-youtube-admin-add-card {
+  padding: var(--gosaki-admin-section-pad);
+  margin: 0 0 1rem;
+}
+
+.gosaki-admin-content-panel__hint,
+.gosaki-about-content-panel__readonly-note,
+.gosaki-about-admin-form__hint,
+.gosaki-schedule-content-panel__field-note {
+  margin: 0.35rem 0 0;
+  color: var(--gra-muted);
+  font-size: 0.85rem;
+  line-height: 1.45;
+}
+
+/* Hide technical lock / dry-run dumps from normal UI */
+.gosaki-schedule-content-panel__lock,
+[data-gosaki-schedule-dry-run-result],
+[data-gosaki-youtube-multi-dry-run-result],
+[data-gosaki-disc-dry-run-result],
+[data-gosaki-about-dry-run-result],
+[data-gosaki-about-local-validation] {
+  display: none !important;
+}
+
+@media (max-width: 390px) {
+  .gosaki-admin-save-area__actions > .gosaki-admin-btn--primary,
+  .gosaki-admin-save-area__actions > .gosaki-admin-edit-toolbar__btn--primary,
+  .gosaki-admin-save-area__actions > .gosaki-about-admin-form__save,
+  .gosaki-discography-content-panel__save > .gosaki-admin-edit-toolbar__btn--primary,
+  .gosaki-schedule-content-panel__save-card > .gosaki-admin-edit-toolbar__btn--primary,
+  .gosaki-schedule-content-panel__save-card .gosaki-admin-btn--primary,
+  .gosaki-about-content-panel__save-actions > .gosaki-about-admin-form__save,
+  .gosaki-about-content-panel__save-actions > .gosaki-admin-btn--primary {
+    width: 100%;
+  }
+
+  .gosaki-admin-save-area__actions > .gosaki-admin-btn--secondary,
+  .gosaki-admin-save-area__actions > .gosaki-about-admin-form__cancel,
+  .gosaki-about-content-panel__ops-actions > .gosaki-about-admin-form__cancel {
+    width: 100%;
+  }
+
+  body.gosaki-read-only-admin,
+  .gosaki-admin-content-panel {
+    overflow-x: hidden;
+  }
 }

@@ -76,7 +76,7 @@ const eventsJson = JSON.stringify(events);
     <h1 class="gosaki-admin-content-panel__title">スケジュール</h1>
     <p class="gosaki-admin-content-panel__subtitle" data-gosaki-schedule-status>{note}</p>
     <p class="gosaki-admin-content-panel__meta" role="status">
-      <strong>{events.length}</strong> 件 · source: {dataSource}
+      <strong>{events.length}</strong> 件
       {
         publicScheduleUrl ? (
           <>
@@ -109,7 +109,7 @@ const eventsJson = JSON.stringify(events);
     <div class="gosaki-schedule-content-panel__toolbar-row">
       <button
         type="button"
-        class="gosaki-admin-edit-toolbar__btn gosaki-admin-edit-toolbar__btn--primary"
+        class="gosaki-admin-btn gosaki-admin-btn--primary gosaki-admin-edit-toolbar__btn gosaki-admin-edit-toolbar__btn--primary"
         data-gosaki-schedule-create-start
       >
         新しい予定を追加
@@ -136,7 +136,7 @@ const eventsJson = JSON.stringify(events);
         </p>
         <button
           type="button"
-          class="gosaki-admin-edit-toolbar__btn"
+          class="gosaki-admin-btn gosaki-admin-btn--secondary gosaki-admin-edit-toolbar__btn"
           data-gosaki-schedule-search-clear
           hidden
         >
@@ -204,7 +204,7 @@ const eventsJson = JSON.stringify(events);
                       <div class="gosaki-schedule-content-panel__card-actions">
                         <button
                           type="button"
-                          class="gosaki-schedule-content-panel__edit-btn"
+                          class="gosaki-admin-btn gosaki-admin-btn--small gosaki-schedule-content-panel__edit-btn"
                           data-gosaki-schedule-edit-event
                           data-event-id={event.id ?? ""}
                           data-legacy-id={event.legacyId ?? ""}
@@ -213,7 +213,7 @@ const eventsJson = JSON.stringify(events);
                         </button>
                         <button
                           type="button"
-                          class="gosaki-schedule-content-panel__edit-btn"
+                          class="gosaki-admin-btn gosaki-admin-btn--small gosaki-schedule-content-panel__edit-btn"
                           data-gosaki-schedule-duplicate-event
                           data-event-id={event.id ?? ""}
                           data-legacy-id={event.legacyId ?? ""}
@@ -334,28 +334,31 @@ const eventsJson = JSON.stringify(events);
     ></div>
 
     <div
-      class="gosaki-schedule-content-panel__save-card"
+      class="gosaki-admin-save-area gosaki-schedule-content-panel__save-card"
       data-gosaki-schedule-save-card
       role="region"
-      aria-label="保存"
+      aria-labelledby="gosaki-schedule-save-heading"
     >
+      <h2 id="gosaki-schedule-save-heading" class="gosaki-admin-save-area__title">保存</h2>
       <p
-        class="gosaki-schedule-content-panel__save-reason"
+        class="gosaki-admin-save-area__status gosaki-schedule-content-panel__save-reason"
         data-gosaki-schedule-save-reason
         role="status"
       >
-        変更があると保存できます
+        変更がありません
       </p>
-      <button
-        type="button"
-        class="gosaki-admin-edit-toolbar__btn gosaki-admin-edit-toolbar__btn--primary"
-        data-gosaki-schedule-save
-        data-gosaki-save-allowed="false"
-        disabled
-        aria-disabled="true"
-      >
-        保存
-      </button>
+      <div class="gosaki-admin-save-area__actions">
+        <button
+          type="button"
+          class="gosaki-admin-btn gosaki-admin-btn--primary gosaki-admin-edit-toolbar__btn gosaki-admin-edit-toolbar__btn--primary"
+          data-gosaki-schedule-save
+          data-gosaki-save-allowed="false"
+          disabled
+          aria-disabled="true"
+        >
+          保存
+        </button>
+      </div>
     </div>
   </div>
 </section>
@@ -579,15 +582,6 @@ const eventsJson = JSON.stringify(events);
   .gosaki-schedule-content-panel__legacy {
     font-size: 0.75rem;
     word-break: break-all;
-  }
-
-  .gosaki-schedule-content-panel__edit-btn {
-    min-height: 44px;
-    padding: 0.45rem 0.75rem;
-    border-radius: 6px;
-    border: 1px solid #d1d5db;
-    background: #f9fafb;
-    cursor: pointer;
   }
 
   .gosaki-schedule-content-panel__form {

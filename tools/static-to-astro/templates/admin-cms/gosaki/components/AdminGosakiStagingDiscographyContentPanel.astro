@@ -284,17 +284,18 @@ function display(value: string | null | undefined): string {
     </div>
 
     <div
-      class="gosaki-discography-content-panel__save"
+      class="gosaki-admin-save-area gosaki-discography-content-panel__save"
       data-gosaki-disc-save-panel="true"
       role="region"
-      aria-label="保存"
+      aria-labelledby="gosaki-disc-save-heading"
     >
+      <h2 id="gosaki-disc-save-heading" class="gosaki-admin-save-area__title">保存</h2>
       <p
-        class="gosaki-discography-content-panel__save-reason"
+        class="gosaki-admin-save-area__status gosaki-discography-content-panel__save-reason"
         data-gosaki-disc-save-disabled-reason
         role="status"
       >
-        変更があると保存できます
+        変更がありません
       </p>
       <p
         class="gosaki-discography-content-panel__save-in-flight"
@@ -324,16 +325,18 @@ function display(value: string | null | undefined): string {
       >
         他の場所で更新された可能性があります。再読み込みしてください。
       </p>
-      <button
-        type="button"
-        class="gosaki-admin-edit-toolbar__btn gosaki-admin-edit-toolbar__btn--primary gosaki-discography-content-panel__save-btn"
-        data-gosaki-disc-save
-        data-gosaki-save-allowed="false"
-        disabled
-        aria-disabled="true"
-      >
-        保存
-      </button>
+      <div class="gosaki-admin-save-area__actions gosaki-discography-content-panel__save-actions">
+        <button
+          type="button"
+          class="gosaki-admin-btn gosaki-admin-btn--primary gosaki-admin-edit-toolbar__btn gosaki-admin-edit-toolbar__btn--primary gosaki-discography-content-panel__save-btn"
+          data-gosaki-disc-save
+          data-gosaki-save-allowed="false"
+          disabled
+          aria-disabled="true"
+        >
+          保存
+        </button>
+      </div>
       <button
         type="button"
         hidden
@@ -657,8 +660,8 @@ function display(value: string | null | undefined): string {
   }
 
   .gosaki-discography-content-panel__save-btn:not(:disabled) {
-    border-color: #15803d;
-    background: #16a34a;
+    border-color: #1e293b;
+    background: #1e293b;
     color: #fff;
     cursor: pointer;
   }
@@ -708,8 +711,8 @@ function display(value: string | null | undefined): string {
   }
 
   .gosaki-admin-edit-toolbar__btn--primary {
-    border-color: #1d4ed8;
-    background: #1d4ed8;
+    border-color: #1e293b;
+    background: #1e293b;
     color: #fff;
   }
 

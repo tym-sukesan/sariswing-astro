@@ -34,7 +34,7 @@ export const G11C6_APPROVAL_ID = "G-11c6-gosaki-youtube-url-web-save-non-dry-run
 export const G11C6_SAVE_ENABLED_DEFAULT = false as const;
 export const G11C6_SAVE_UI_ARMED_ENV = "PUBLIC_ADMIN_GOSAKI_YOUTUBE_URL_WEB_SAVE_NON_DRY_RUN_ARMED";
 export const G11C6_SAVE_DISABLED_REASON =
-  "Save は無効です。通常 STG package では常に無効。controlled arm · dry-run 成功 · fingerprint 一致が必要です。";
+  "保存は現在無効です";
 export const G11C6_CONFLICT_MESSAGE =
   "他の場所で更新された可能性があります。再読み込みしてください。";
 
@@ -470,12 +470,12 @@ export function evaluateScheduleOperationalSaveGate(
     return { enabled: false, reason: "ログインが必要です" };
   }
   if (!input.dryRunSucceeded) {
-    return { enabled: false, reason: "先に「変更を確認」（dry-run）を成功させてください" };
+    return { enabled: false, reason: "入力内容を確認してください" };
   }
   if (!input.formMatchesDryRunSnapshot) {
     return {
       enabled: false,
-      reason: "dry-run 後に内容が変わりました。再度「変更を確認」してください",
+      reason: "内容が変わりました。もう一度保存してください",
     };
   }
   if (input.mode === "edit") {
@@ -805,7 +805,7 @@ export function evaluateDiscographyOperationalSaveGate(
     return { enabled: false, reason: "ログインが必要です" };
   }
   if (!input.dryRunSucceeded) {
-    return { enabled: false, reason: "先に変更確認が必要です" };
+    return { enabled: false, reason: "入力内容を確認してください" };
   }
   if (!input.formMatchesDryRunSnapshot) {
     return {
@@ -1231,7 +1231,7 @@ export function evaluateYoutubeOperationalSaveGate(
     return { enabled: false, reason: "ログインが必要です" };
   }
   if (!input.dryRunSucceeded) {
-    return { enabled: false, reason: "先に「変更を確認」（dry-run）を成功させてください" };
+    return { enabled: false, reason: "入力内容を確認してください" };
   }
   if (input.noChange) {
     return { enabled: false, reason: "変更がありません（no_change）" };
@@ -1239,11 +1239,11 @@ export function evaluateYoutubeOperationalSaveGate(
   if (!input.formMatchesDryRunSnapshot) {
     return {
       enabled: false,
-      reason: "dry-run 後に内容が変わりました。再度「変更を確認」してください",
+      reason: "内容が変わりました。もう一度保存してください",
     };
   }
   if (!input.fingerprintPresent) {
-    return { enabled: false, reason: "GitHub fingerprint がありません。再度「変更を確認」してください" };
+    return { enabled: false, reason: "確認情報の取得に失敗しました。もう一度お試しください" };
   }
   const lockMode = input.contentLockMode === "items" ? "items" : "embed";
   if (lockMode === "embed") {
@@ -1658,7 +1658,7 @@ export const G12A_ABOUT_SAVE_UI_ARMED_ENV =
 export const G12A_ABOUT_DRY_RUN_ENDPOINT = `${G11C4A_STAGING_SUPABASE_URL}/functions/v1/gosaki-about-content-dry-run`;
 export const G12A_ABOUT_SAVE_ENDPOINT = `${G11C4A_STAGING_SUPABASE_URL}/functions/v1/gosaki-about-content-save`;
 export const G12A_ABOUT_SAVE_DISABLED_REASON =
-  "Save は無効です。通常 STG package では常に無効。controlled arm · dry-run 成功 · fingerprint 一致が必要です。";
+  "保存は現在無効です";
 export const G12A_ABOUT_CONFLICT_MESSAGE =
   "他の場所で更新された可能性があります。再読み込みしてください。";
 
@@ -1754,17 +1754,17 @@ export function evaluateAboutOperationalSaveGate(
   if (input.saveInFlight) return { enabled: false, reason: "保存処理中です…" };
   if (!input.authenticated) return { enabled: false, reason: "ログインが必要です" };
   if (!input.dryRunSucceeded) {
-    return { enabled: false, reason: "先に「変更を確認」（dry-run）を成功させてください" };
+    return { enabled: false, reason: "入力内容を確認してください" };
   }
   if (input.noChange) return { enabled: false, reason: "変更がありません（no_change）" };
   if (!input.formMatchesDryRunSnapshot) {
     return {
       enabled: false,
-      reason: "dry-run 後に内容が変わりました。再度「変更を確認」してください",
+      reason: "内容が変わりました。もう一度保存してください",
     };
   }
   if (!input.fingerprintPresent) {
-    return { enabled: false, reason: "GitHub fingerprint がありません。再度「変更を確認」してください" };
+    return { enabled: false, reason: "確認情報の取得に失敗しました。もう一度お試しください" };
   }
   if (!input.expectedBeforePresent) {
     return { enabled: false, reason: "content lock（expectedBefore）がありません" };

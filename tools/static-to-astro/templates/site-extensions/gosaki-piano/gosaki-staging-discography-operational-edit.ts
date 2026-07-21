@@ -356,10 +356,12 @@ export function initGosakiDiscographyOperationalEdit(
         saveReasonEl.textContent = "確認中…";
       } else if (!deps.saveArmed && dirty && authenticated) {
         saveReasonEl.textContent = GOSAKI_CLIENT_SAVE_DISARMED_REASON;
+      } else if (dirty && authenticated && isClientSaveArmed(deps.saveArmed)) {
+        saveReasonEl.textContent = "未保存の変更があります";
       } else {
         saveReasonEl.textContent = gate.enabled
-          ? "保存できます"
-          : gate.reason || "変更があると保存できます";
+          ? "未保存の変更があります"
+          : gate.reason || "変更がありません";
       }
     }
     if (saveBtn instanceof HTMLButtonElement) {

@@ -1,7 +1,15 @@
 /**
  * G-20u45 — Gosaki Schedule operational view/edit/create client (package-safe).
- * Local dry-run preview only · Save default disabled · no network on display/input.
+ * One-click Save: internal dry-run → Save POST (same lock). Client arm does not skip Save.
  */
+
+import {
+  GOSAKI_CLIENT_SAVE_DISARMED_REASON,
+  GOSAKI_SAVE_FEATURE_STOPPED_USER_MESSAGE,
+  isClientSaveArmed,
+  isGosakiSaveNotArmedResponse,
+  userMessageForSaveFailure,
+} from "./gosaki-staging-one-click-save";
 
 export type ScheduleOperationalEvent = {
   id?: string | null;
@@ -475,7 +483,7 @@ export function initGosakiScheduleOperationalEdit(
   let saveInFlight = false;
   let dryRunInFlight = false;
 
-  const saveArmed = deps.saveArmed === true;
+  const saveArmed = isClientSaveArmed(deps.saveArmed);
   const dryRunOperation = deps.dryRunOperation ?? "dryRun";
   const saveOperation = deps.saveOperation ?? "save";
   const expectedSaveApprovalId = String(deps.expectedSaveApprovalId ?? "").trim();
@@ -542,6 +550,10 @@ export function initGosakiScheduleOperationalEdit(
       applySaveButtonUi(false, saveInFlight ? "保存中…" : "確認中…");
       return;
     }
+    if (!saveArmed) {
+      applySaveButtonUi(false, GOSAKI_CLIENT_SAVE_DISARMED_REASON);
+      return;
+    }
     if (!dirty) {
       applySaveButtonUi(false, "変更がありません");
       return;
@@ -550,7 +562,7 @@ export function initGosakiScheduleOperationalEdit(
       applySaveButtonUi(false, "ログインが必要です");
       return;
     }
-    // Enable when dirty + signed in. Click runs internal dry-run then Save (if armed).
+    // Client-armed: enable when dirty + signed in. Click runs internal dry-run then Save.
     applySaveButtonUi(true, "保存");
   }
 
@@ -751,63 +763,40 @@ export function initGosakiScheduleOperationalEdit(
           preflightErrors?: string[];
           saveUiNote?: string;
         }) => {
-          if (!(dryRunResult instanceof HTMLElement)) return;
-          dryRunResult.hidden = false;
-          const rows = local.diffs
-            .map(
-              (d) =>
-                `<tr><th>${escapeHtml(d.field)}</th><td>${escapeHtml(d.before || "—")}</td><td>${escapeHtml(d.after || "—")}</td></tr>`,
-            )
-            .join("");
+          // One-click UX: never show endpoint / lock / didWrite tech panel in the main UI.
+          if (dryRunResult instanceof HTMLElement) {
+            dryRunResult.hidden = true;
+            dryRunResult.innerHTML = "";
+          }
+          const details = root.querySelector("[data-gosaki-admin-dev-details]");
+          if (!(details instanceof HTMLDetailsElement)) return;
           const endpoint = opts.endpoint;
           const endpointErrors = Array.isArray(endpoint?.errors)
             ? (endpoint.errors as string[])
             : [];
-          const endpointWarnings = Array.isArray(endpoint?.warnings)
-            ? (endpoint.warnings as string[])
-            : [];
           const allErrors = [...(opts.preflightErrors ?? []), ...local.errors, ...endpointErrors];
-          const createNote =
-            local.mode === "create" && local.createPayloadPreview
-              ? `<p>create payload preview · date=<code>${escapeHtml(local.createPayloadPreview.date || "—")}</code> · published=<code>false</code>（G-22e）</p>`
-              : "";
-          const target =
-            endpoint?.target && typeof endpoint.target === "object"
-              ? (endpoint.target as Record<string, unknown>)
-              : null;
-          dryRunResult.innerHTML = `
-            <h3>${escapeHtml(opts.title)}</h3>
-            <p>source=<code>${escapeHtml(opts.source)}</code> · mode=<code>${escapeHtml(runMode)}</code> · httpStatus=<code>${escapeHtml(String(opts.httpStatus ?? "—"))}</code></p>
-            <p>target id=<code>${escapeHtml(String((target?.id ?? after.id) || "—"))}</code> · legacyId=<code>${escapeHtml(String((target?.legacyId ?? after.legacy_id) || "—"))}</code></p>
-            <p>expectedBeforeUpdatedAt: <code>${escapeHtml(String((endpoint?.expectedBeforeUpdatedAt ?? local.expectedBeforeUpdatedAt) || "—"))}</code></p>
-            <p>changedFields: ${escapeHtml(
-              (Array.isArray(endpoint?.changedFields)
-                ? (endpoint.changedFields as string[])
-                : local.changedFields
-              ).join(", ") || "なし",
-            )}</p>
-            <p>didWrite=<code>false</code> · dbWrite=<code>false</code> · networkWrite=<code>false</code> · saveEnabled=<code>false</code>（Endpoint 契約 · UI gate ではない）</p>
-            ${createNote}
-            ${
-              allErrors.length
-                ? `<ul>${allErrors.map((e) => `<li>${escapeHtml(e)}</li>`).join("")}</ul>`
-                : ""
-            }
-            ${
-              endpointWarnings.length
-                ? `<ul>${endpointWarnings.map((e) => `<li>warning: ${escapeHtml(e)}</li>`).join("")}</ul>`
-                : ""
-            }
-            <table><thead><tr><th>field</th><th>before</th><th>after</th></tr></thead><tbody>${rows || "<tr><td colspan=3>差分なし</td></tr>"}</tbody></table>
-            <p role="note">${escapeHtml(
-              opts.saveUiNote ??
-                (opts.source === "endpoint" && !allErrors.length
-                  ? saveArmed
-                    ? "dry-run 成功。フォームが一致する間「更新する」が有効になります（operation=save は未送信）。"
-                    : "dry-run 成功。通常 package では Save は無効のままです（env arm なし）。"
-                  : "Save は無効です。operation=save は送信しません。"),
-            )}</p>
-          `;
+          let body = details.querySelector("[data-gosaki-admin-dev-details-body]");
+          if (!(body instanceof HTMLElement)) {
+            body = document.createElement("pre");
+            body.setAttribute("data-gosaki-admin-dev-details-body", "true");
+            details.appendChild(body);
+          }
+          body.textContent = JSON.stringify(
+            {
+              title: opts.title,
+              source: opts.source,
+              mode: runMode,
+              httpStatus: opts.httpStatus ?? null,
+              expectedBeforeUpdatedAt:
+                endpoint?.expectedBeforeUpdatedAt ?? local.expectedBeforeUpdatedAt ?? null,
+              changedFields: endpoint?.changedFields ?? local.changedFields,
+              didWrite: false,
+              errors: allErrors,
+              saveUiNote: opts.saveUiNote ?? null,
+            },
+            null,
+            2,
+          );
         };
 
         const endpoint = String(deps.dryRunEndpoint ?? "").trim();
@@ -827,10 +816,8 @@ export function initGosakiScheduleOperationalEdit(
             source: "local",
             preflightErrors: ["network dry-run未設定（Endpoint URL / anon key）— local preview のみ"],
             saveUiNote: dryRunOk
-              ? saveArmed
-                ? "ローカル dry-run 成功。ただし network dry-run 未設定のため Save は有効化しません。"
-                : "ローカル dry-run 成功。通常 package では Save は無効のままです。"
-              : "Save は無効です。operation=save は送信しません。",
+              ? "ローカル dry-run 成功。network dry-run 未設定のため Save は続行できません。"
+              : "dry-run failed",
           });
           setUnsaved(currentDirty());
           void refreshSaveGate();
@@ -845,7 +832,7 @@ export function initGosakiScheduleOperationalEdit(
             title: "変更を確認（network dry-run blocked）",
             source: "endpoint",
             preflightErrors: ["Production endpoint blocked — staging only"],
-            saveUiNote: "Save は無効です。operation=save は送信しません。",
+            saveUiNote: "dry-run blocked",
           });
           setUnsaved(currentDirty());
           void refreshSaveGate();
@@ -950,8 +937,8 @@ export function initGosakiScheduleOperationalEdit(
         dryRunFingerprint = null;
         dryRunMode = null;
         if (dryRunResult instanceof HTMLElement) {
-          dryRunResult.hidden = false;
-          dryRunResult.innerHTML = "<p>Endpoint dry-run 送信中…（DB write なし · Save 一時無効）</p>";
+          dryRunResult.hidden = true;
+          dryRunResult.innerHTML = "";
         }
         void refreshSaveGate();
 
@@ -1021,10 +1008,8 @@ export function initGosakiScheduleOperationalEdit(
             httpStatus: display.httpStatus ?? res.status,
             endpoint: display as unknown as Record<string, unknown>,
             saveUiNote: endpointOk
-              ? saveArmed
-                ? "dry-run 成功。フォームが一致する間「更新する」が有効になります（operation=save は未送信）。"
-                : "dry-run 成功。通常 package では Save は無効のままです（env arm なし）。"
-              : "Save は無効です。operation=save は送信しません。",
+              ? "dry-run OK · one-click will continue to Save"
+              : "dry-run failed",
           });
         } catch (err) {
           const message =
@@ -1049,41 +1034,33 @@ export function initGosakiScheduleOperationalEdit(
               networkWrite: false,
               saveEnabled: false,
             },
-            saveUiNote: "Save は無効です。operation=save は送信しません。",
+            saveUiNote: "dry-run network error",
           });
         } finally {
           dryRunInFlight = false;
           setUnsaved(currentDirty());
-          void refreshSaveGate();
           if (pendingOneClickSave) {
             const afterDry = readForm(root);
             const matched =
               dryRunOk &&
               dryRunFingerprint != null &&
               dryRunFingerprint === fingerprint(afterDry);
+            pendingOneClickSave = false;
             if (!matched) {
-              pendingOneClickSave = false;
               setUserSaveMessage("入力内容を確認してください");
-              if (dryRunResult instanceof HTMLElement) {
-                dryRunResult.hidden = true;
-              }
+              void refreshSaveGate();
               return;
             }
             if (!saveArmed) {
-              pendingOneClickSave = false;
-              setUserSaveMessage(
-                "保存の準備ができました。現在のテスト環境では保存は無効です。",
-              );
-              if (dryRunResult instanceof HTMLElement) {
-                dryRunResult.hidden = true;
-              }
+              setUserSaveMessage(GOSAKI_CLIENT_SAVE_DISARMED_REASON);
+              void refreshSaveGate();
               return;
             }
-            pendingOneClickSave = false;
-            const saveEl = root.querySelector("[data-gosaki-schedule-save]");
-            if (saveEl instanceof HTMLElement) {
-              saveEl.click();
-            }
+            // Direct Save — never synthesize a click on the Save button
+            // (disabled buttons swallow programmatic click events).
+            await runScheduleSaveRequest();
+          } else {
+            void refreshSaveGate();
           }
         }
       })();
@@ -1093,13 +1070,16 @@ export function initGosakiScheduleOperationalEdit(
     if (t.closest("[data-gosaki-schedule-save]")) {
       if (saveInFlight || dryRunInFlight) return;
       if (!(saveBtn instanceof HTMLButtonElement)) return;
+      if (!saveArmed) {
+        setUserSaveMessage(GOSAKI_CLIENT_SAVE_DISARMED_REASON);
+        void refreshSaveGate();
+        return;
+      }
 
       void (async () => {
         const after = readForm(root);
         const runMode: "edit" | "create" = after.mode === "create" ? "create" : "edit";
         const token = (await (deps.getAccessToken?.() ?? Promise.resolve(null))) || null;
-        const endpoint = String(deps.dryRunEndpoint ?? "").trim();
-        const anonKey = String(deps.anonKey ?? "").trim();
 
         if (!currentDirty()) {
           setUserSaveMessage("変更がありません");
@@ -1129,153 +1109,204 @@ export function initGosakiScheduleOperationalEdit(
           return;
         }
 
-        const gate = deps.evaluateSaveGate?.({
-          authenticated: Boolean(token),
-          dryRunSucceeded: dryRunOk,
-          formMatchesDryRunSnapshot: formMatches,
-          mode: runMode,
-          expectedBeforeUpdatedAt:
-            runMode === "edit"
-              ? dryRunExpectedLock || after.updated_at || null
-              : null,
-          saveEndpointConfigured: Boolean(endpoint && anonKey),
-          saveEndpointSafe: endpoint
-            ? (deps.assertSaveEndpointSafe ?? deps.assertDryRunEndpointSafe)?.(endpoint) !==
-              false
-            : false,
-          envArmed: saveArmed,
-          approvalId: expectedSaveApprovalId,
-          expectedApprovalId: expectedSaveApprovalId,
-          saveInFlight: false,
-        });
-
-        if (!saveArmed) {
-          setUserSaveMessage(
-            "保存の準備ができました。現在のテスト環境では保存は無効です。",
-          );
-          return;
-        }
-
-        if (!gate?.enabled || !deps.buildSaveEndpointRequest) {
-          setUserSaveMessage(gate?.reason || "いまは保存できません");
-          void refreshSaveGate();
-          return;
-        }
-
-        if (endpoint.includes(productionStop)) {
-          setUserSaveMessage("保存先が無効です");
-          return;
-        }
-
-        const requestBody = deps.buildSaveEndpointRequest({
-          mode: runMode,
-          id: after.id,
-          legacyId: after.legacy_id,
-          expectedBeforeUpdatedAt:
-            runMode === "edit"
-              ? dryRunExpectedLock || after.updated_at || null
-              : null,
-          fields: {
-            ...(runMode === "create" ? { date: after.date } : {}),
-            open_time: after.open_time,
-            start_time: after.start_time,
-            title: after.title,
-            venue: after.venue,
-            price: after.price,
-            description: after.description,
-            published: runMode === "create" ? false : after.published === true,
-          },
-        });
-
-        if (String(requestBody.operation ?? "") !== saveOperation) {
-          setUserSaveMessage("保存リクエストが無効です");
-          return;
-        }
-
-        saveInFlight = true;
-        setUserSaveMessage("保存中…");
-        void refreshSaveGate();
-        const controller = new AbortController();
-        const timeoutId = window.setTimeout(() => controller.abort(), 20000);
-        try {
-          const res = await fetchImpl(endpoint, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              apikey: anonKey,
-              Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify(requestBody),
-            signal: controller.signal,
-          });
-          window.clearTimeout(timeoutId);
-          let data: unknown = {};
-          try {
-            data = await res.json();
-          } catch {
-            data = { ok: false, errors: ["non-JSON response"] };
-          }
-
-          if (deps.isSaveConflictResponse?.(data) || res.status === 409) {
-            invalidateDryRun();
-            setUserSaveMessage(conflictMessage);
-            return;
-          }
-
-          const display = deps.sanitizeSaveEndpointDisplay
-            ? deps.sanitizeSaveEndpointDisplay(data, res.status)
-            : {
-                ok: false,
-                didWrite: false,
-                dbWrite: false,
-                networkWrite: false,
-                saveEnabled: false,
-                errors: ["Save display sanitizer not wired"],
-                httpStatus: res.status,
-              };
-
-          if (display.ok === true && display.didWrite === true) {
-            const target =
-              display.target && typeof display.target === "object"
-                ? (display.target as Record<string, unknown>)
-                : null;
-            const newUpdatedAt = String(target?.updatedAt ?? "").trim();
-            if (runMode === "edit" && newUpdatedAt) {
-              after.updated_at = newUpdatedAt;
-              writeForm(root, after);
-              baseline = { ...after };
-              if (lockValue) lockValue.textContent = newUpdatedAt;
-            } else if (runMode === "create") {
-              baseline = { ...after };
-            }
-            dryRunOk = false;
-            dryRunFingerprint = null;
-            dryRunExpectedLock = null;
-            setUnsaved(false);
-            setUserSaveMessage("保存しました");
-          } else {
-            setUserSaveMessage("保存に失敗しました");
-          }
-        } catch (err) {
-          const message =
-            err instanceof Error
-              ? err.name === "AbortError"
-                ? "timeout / aborted"
-                : err.message
-              : String(err);
-          setUserSaveMessage(
-            err instanceof Error && err.name === "AbortError"
-              ? "時間切れです。自動では再試行しません。"
-              : `保存に失敗しました（${message}）`,
-          );
-        } finally {
-          saveInFlight = false;
-          void refreshSaveGate();
-        }
+        await runScheduleSaveRequest();
       })();
       return;
     }
   });
+
+  /**
+   * Save POST after a successful dry-run lock.
+   * Requires client arm. Server arm=false → 403 save_not_armed → stopped message.
+   */
+  async function runScheduleSaveRequest(): Promise<void> {
+    if (saveInFlight || dryRunInFlight) return;
+    if (!saveArmed) {
+      setUserSaveMessage(GOSAKI_CLIENT_SAVE_DISARMED_REASON);
+      return;
+    }
+    const after = readForm(root);
+    const runMode: "edit" | "create" = after.mode === "create" ? "create" : "edit";
+    const token = (await (deps.getAccessToken?.() ?? Promise.resolve(null))) || null;
+    const endpoint = String(deps.dryRunEndpoint ?? "").trim();
+    const anonKey = String(deps.anonKey ?? "").trim();
+    const fetchImpl = deps.fetchImpl ?? fetch;
+
+    if (!token) {
+      setUserSaveMessage("ログインが必要です");
+      return;
+    }
+    const formMatches =
+      dryRunOk &&
+      dryRunFingerprint != null &&
+      dryRunFingerprint === fingerprint(after) &&
+      (dryRunMode == null || dryRunMode === runMode);
+    if (!formMatches) {
+      setUserSaveMessage("入力内容を確認してください");
+      return;
+    }
+
+    // Validate lock / approval / endpoint — ignore client envArmed for the POST itself.
+    const gate = deps.evaluateSaveGate?.({
+      authenticated: Boolean(token),
+      dryRunSucceeded: dryRunOk,
+      formMatchesDryRunSnapshot: formMatches,
+      mode: runMode,
+      expectedBeforeUpdatedAt:
+        runMode === "edit" ? dryRunExpectedLock || after.updated_at || null : null,
+      saveEndpointConfigured: Boolean(endpoint && anonKey),
+      saveEndpointSafe: endpoint
+        ? (deps.assertSaveEndpointSafe ?? deps.assertDryRunEndpointSafe)?.(endpoint) !== false
+        : false,
+      envArmed: true,
+      approvalId: expectedSaveApprovalId,
+      expectedApprovalId: expectedSaveApprovalId,
+      saveInFlight: false,
+    });
+
+    if (!gate?.enabled || !deps.buildSaveEndpointRequest) {
+      // If the only blocker was historically client arm, still attempt when other checks pass.
+      if (!deps.buildSaveEndpointRequest) {
+        setUserSaveMessage("いまは保存できません");
+        void refreshSaveGate();
+        return;
+      }
+      if (!endpoint || !anonKey) {
+        setUserSaveMessage("いまは保存できません");
+        void refreshSaveGate();
+        return;
+      }
+      if (
+        runMode === "edit" &&
+        !String(dryRunExpectedLock || after.updated_at || "").trim()
+      ) {
+        setUserSaveMessage("いまは保存できません");
+        void refreshSaveGate();
+        return;
+      }
+    }
+
+    if (endpoint.includes(productionStop)) {
+      setUserSaveMessage("保存先が無効です");
+      return;
+    }
+
+    const requestBody = deps.buildSaveEndpointRequest({
+      mode: runMode,
+      id: after.id,
+      legacyId: after.legacy_id,
+      expectedBeforeUpdatedAt:
+        runMode === "edit" ? dryRunExpectedLock || after.updated_at || null : null,
+      fields: {
+        ...(runMode === "create" ? { date: after.date } : {}),
+        open_time: after.open_time,
+        start_time: after.start_time,
+        title: after.title,
+        venue: after.venue,
+        price: after.price,
+        description: after.description,
+        published: runMode === "create" ? false : after.published === true,
+      },
+    });
+
+    if (String(requestBody.operation ?? "") !== saveOperation) {
+      setUserSaveMessage("保存リクエストが無効です");
+      return;
+    }
+
+    saveInFlight = true;
+    setUserSaveMessage("保存中…");
+    void refreshSaveGate();
+    const controller = new AbortController();
+    const timeoutId = window.setTimeout(() => controller.abort(), 20000);
+    try {
+      const res = await fetchImpl(endpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          apikey: anonKey,
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(requestBody),
+        signal: controller.signal,
+      });
+      window.clearTimeout(timeoutId);
+      let data: unknown = {};
+      try {
+        data = await res.json();
+      } catch {
+        data = { ok: false, errors: ["non-JSON response"] };
+      }
+
+      if (isGosakiSaveNotArmedResponse(data, res.status)) {
+        setUserSaveMessage(GOSAKI_SAVE_FEATURE_STOPPED_USER_MESSAGE);
+        return;
+      }
+
+      if (deps.isSaveConflictResponse?.(data) || res.status === 409) {
+        invalidateDryRun();
+        setUserSaveMessage(conflictMessage);
+        return;
+      }
+
+      const display = deps.sanitizeSaveEndpointDisplay
+        ? deps.sanitizeSaveEndpointDisplay(data, res.status)
+        : {
+            ok: false,
+            didWrite: false,
+            dbWrite: false,
+            networkWrite: false,
+            saveEnabled: false,
+            errors: ["Save display sanitizer not wired"],
+            httpStatus: res.status,
+          };
+
+      if (display.didWrite === true && display.ok !== true) {
+        setUserSaveMessage("保存に失敗しました");
+        return;
+      }
+
+      if (display.ok === true && display.didWrite === true) {
+        const target =
+          display.target && typeof display.target === "object"
+            ? (display.target as Record<string, unknown>)
+            : null;
+        const newUpdatedAt = String(target?.updatedAt ?? "").trim();
+        if (runMode === "edit" && newUpdatedAt) {
+          after.updated_at = newUpdatedAt;
+          writeForm(root, after);
+          baseline = { ...after };
+          if (lockValue) lockValue.textContent = newUpdatedAt;
+        } else if (runMode === "create") {
+          baseline = { ...after };
+        }
+        dryRunOk = false;
+        dryRunFingerprint = null;
+        dryRunExpectedLock = null;
+        setUnsaved(false);
+        setUserSaveMessage("保存しました");
+      } else {
+        setUserSaveMessage(
+          userMessageForSaveFailure(data, res.status, "保存に失敗しました"),
+        );
+      }
+    } catch (err) {
+      const message =
+        err instanceof Error
+          ? err.name === "AbortError"
+            ? "timeout / aborted"
+            : err.message
+          : String(err);
+      setUserSaveMessage(
+        err instanceof Error && err.name === "AbortError"
+          ? "時間切れです。自動では再試行しません。"
+          : `保存に失敗しました（${message}）`,
+      );
+    } finally {
+      saveInFlight = false;
+      void refreshSaveGate();
+    }
+  }
 
   const onFormEdited = () => {
     if (mode === "view") return;

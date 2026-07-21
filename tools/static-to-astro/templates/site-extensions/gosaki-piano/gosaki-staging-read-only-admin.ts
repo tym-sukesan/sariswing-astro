@@ -823,7 +823,7 @@ export function evaluateDiscographyOperationalSaveGate(
   if (!input.envArmed) {
     return {
       enabled: false,
-      reason: "保存の準備ができました。現在のテスト環境では保存は無効です。",
+      reason: "保存は現在無効です",
     };
   }
   const candidateApprovalId = String(input.approvalId ?? "").trim();

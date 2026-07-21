@@ -1,7 +1,15 @@
 /**
  * G-20u40 / G-20u41 — Discography operational view/edit client.
- * Dry-run + gated Save wiring (Save default disabled · no auto-save).
+ * One-click Save: internal dry-run → Save POST (same lock). Client arm does not skip Save.
  */
+
+import {
+  GOSAKI_CLIENT_SAVE_DISARMED_REASON,
+  GOSAKI_SAVE_FEATURE_STOPPED_USER_MESSAGE,
+  isClientSaveArmed,
+  isGosakiSaveNotArmedResponse,
+  userMessageForSaveFailure,
+} from "./gosaki-staging-one-click-save";
 
 export type DiscographyOperationalAlbum = {
   legacyId: string;
@@ -344,8 +352,7 @@ export function initGosakiDiscographyOperationalEdit(
       } else if (dryRunInFlight) {
         saveReasonEl.textContent = "確認中…";
       } else if (!deps.saveArmed && dirty && authenticated) {
-        saveReasonEl.textContent =
-          "変更があります。保存の準備ができました。現在のテスト環境では保存は無効です。";
+        saveReasonEl.textContent = GOSAKI_CLIENT_SAVE_DISARMED_REASON;
       } else {
         saveReasonEl.textContent = gate.enabled
           ? "保存できます"
@@ -355,7 +362,12 @@ export function initGosakiDiscographyOperationalEdit(
     if (saveBtn instanceof HTMLButtonElement) {
       const dirty = isDirty(form);
       const canClick =
-        authenticated && dirty && !saveInFlight && !dryRunInFlight && !indeterminateLocked;
+        isClientSaveArmed(deps.saveArmed) &&
+        authenticated &&
+        dirty &&
+        !saveInFlight &&
+        !dryRunInFlight &&
+        !indeterminateLocked;
       saveBtn.disabled = !canClick;
       saveBtn.setAttribute("aria-disabled", canClick ? "false" : "true");
       saveBtn.textContent = "保存";
@@ -527,6 +539,10 @@ export function initGosakiDiscographyOperationalEdit(
 
   const executeSaveAfterDryRun = async (): Promise<void> => {
     if (saveInFlight || dryRunInFlight || indeterminateLocked) return;
+    if (!isClientSaveArmed(deps.saveArmed)) {
+      setUserSaveMessage(GOSAKI_CLIENT_SAVE_DISARMED_REASON);
+      return;
+    }
 
     const current = readFormSnapshot(form);
     const currentFingerprint = editableFingerprint(current);
@@ -540,12 +556,8 @@ export function initGosakiDiscographyOperationalEdit(
       return;
     }
 
-    if (!deps.saveArmed) {
-      setUserSaveMessage(
-        "保存の準備ができました。現在のテスト環境では保存は無効です。",
-      );
-      return;
-    }
+    // Always POST Save after successful dry-run — client arm must not skip.
+    // Server arm=false returns 403 save_not_armed.
 
     const originalTracks = field(form, "tracks")?.getAttribute("data-original-track-list") ?? "";
     const localDryRun = deps.validateTrackListDryRun(originalTracks, current.tracks, {
@@ -652,6 +664,11 @@ export function initGosakiDiscographyOperationalEdit(
         return;
       }
 
+      if (isGosakiSaveNotArmedResponse(data, res.status)) {
+        setUserSaveMessage(GOSAKI_SAVE_FEATURE_STOPPED_USER_MESSAGE);
+        return;
+      }
+
       const display = deps.sanitizeEndpointDisplay(data, res.status);
       if (display.ok === true) {
         const nextUpdatedAt =
@@ -677,7 +694,9 @@ export function initGosakiDiscographyOperationalEdit(
         clearDryRunLock();
         setUnsaved(root, false);
       } else {
-        setUserSaveMessage("保存に失敗しました");
+        setUserSaveMessage(
+          userMessageForSaveFailure(data, res.status, "保存に失敗しました"),
+        );
         if (saveValidationEl instanceof HTMLElement) {
           saveValidationEl.hidden = false;
           saveValidationEl.textContent = "保存に失敗しました";
@@ -716,10 +735,8 @@ export function initGosakiDiscographyOperationalEdit(
           setUserSaveMessage("入力内容を確認してください");
           return;
         }
-        if (!deps.saveArmed) {
-          setUserSaveMessage(
-            "保存の準備ができました。現在のテスト環境では保存は無効です。",
-          );
+        if (!isClientSaveArmed(deps.saveArmed)) {
+          setUserSaveMessage(GOSAKI_CLIENT_SAVE_DISARMED_REASON);
           return;
         }
         await executeSaveAfterDryRun();
@@ -730,6 +747,11 @@ export function initGosakiDiscographyOperationalEdit(
   if (saveBtn instanceof HTMLButtonElement) {
     saveBtn.addEventListener("click", async () => {
       if (saveInFlight || dryRunInFlight || indeterminateLocked) return;
+      if (!isClientSaveArmed(deps.saveArmed)) {
+        setUserSaveMessage(GOSAKI_CLIENT_SAVE_DISARMED_REASON);
+        void refreshSaveUi();
+        return;
+      }
       await refreshSaveUi();
       if (!authenticated) {
         setUserSaveMessage("ログインが必要です");

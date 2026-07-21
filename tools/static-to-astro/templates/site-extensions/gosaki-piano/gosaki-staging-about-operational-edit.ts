@@ -1,8 +1,16 @@
 /**
- * Gosaki About operational edit — dry-run click-only · gated Save (default disarmed).
+ * Gosaki About operational edit — one-click Save (internal dry-run → Save).
  * Reuses gosaki-about-content-dry-run / gosaki-about-content-save (G-12a).
  * Runtime lock: GitHub Contents fingerprint (file SHA + before/after snapshot).
  */
+
+import {
+  GOSAKI_CLIENT_SAVE_DISARMED_REASON,
+  GOSAKI_SAVE_FEATURE_STOPPED_USER_MESSAGE,
+  isClientSaveArmed,
+  isGosakiSaveNotArmedResponse,
+  userMessageForSaveFailure,
+} from "./gosaki-staging-one-click-save";
 
 export type AboutFormSnapshot = {
   profile: { heading: string; body: string; imageAlt: string };
@@ -79,8 +87,7 @@ export type AboutOperationalEditDeps = {
 
 const SAVE_LABEL_ENABLED = "保存";
 const SAVE_LABEL_DISABLED = "保存";
-const SAVE_UNARMED_MSG =
-  "保存の準備ができました。現在のテスト環境では保存は無効です。";
+const SAVE_STOPPED_MSG = GOSAKI_SAVE_FEATURE_STOPPED_USER_MESSAGE;
 let pendingOneClickSave = false;
 
 function escapeHtml(value: string): string {
@@ -121,7 +128,7 @@ export function initGosakiAboutOperationalEdit(
   /** Cancel/dirty baseline — updated to Save response.after on successful Save. */
   let baselineFingerprint: string | null = null;
 
-  const saveArmed = deps.saveArmed === true;
+  const saveArmed = isClientSaveArmed(deps.saveArmed);
   const expectedSaveApprovalId = String(deps.expectedSaveApprovalId ?? "").trim();
   const conflictMessage =
     deps.conflictMessage ??
@@ -261,14 +268,22 @@ export function initGosakiAboutOperationalEdit(
 
   function showResultHtml(html: string) {
     if (!(resultEl instanceof HTMLElement)) return;
-    resultEl.hidden = false;
-    resultEl.innerHTML = html;
+    resultEl.hidden = true;
+    resultEl.innerHTML = "";
+    const details = root.querySelector("[data-gosaki-admin-dev-details]");
+    if (details instanceof HTMLElement) {
+      let body = details.querySelector("[data-gosaki-admin-dev-details-body]");
+      if (!(body instanceof HTMLElement)) {
+        body = document.createElement("div");
+        body.setAttribute("data-gosaki-admin-dev-details-body", "true");
+        details.appendChild(body);
+      }
+      body.innerHTML = html;
+    }
   }
 
   function showResultJson(obj: unknown) {
-    if (!(resultEl instanceof HTMLElement)) return;
-    resultEl.hidden = false;
-    resultEl.textContent = JSON.stringify(obj, null, 2);
+    showResultHtml(`<pre>${escapeHtml(JSON.stringify(obj, null, 2))}</pre>`);
   }
 
   function applySaveButtonUi(enabled: boolean, reason: string) {
@@ -305,6 +320,10 @@ export function initGosakiAboutOperationalEdit(
     applyDryRunButtonUi();
     if (saveInFlight || dryRunInFlight) {
       applySaveButtonUi(false, saveInFlight ? "保存中…" : "確認中…");
+      return;
+    }
+    if (!saveArmed) {
+      applySaveButtonUi(false, GOSAKI_CLIENT_SAVE_DISARMED_REASON);
       return;
     }
     if (!isFormDirty()) {
@@ -426,19 +445,12 @@ export function initGosakiAboutOperationalEdit(
       dryRunServerFingerprint = display.fingerprint;
       dryRunFileSha = display.currentFileSha;
       dryRunExpectedBefore = display.current ?? display.before ?? null;
-      setLocalValidation(
-        `dry-run OK · ${(display.changedFields || []).join(", ") || "changed"}`,
-        true,
-      );
-      showResultHtml(
-        `<p class="gosaki-read-only-admin__meta--ok">dry-run 成功（GitHub GET only · write なし）</p><pre>${escapeHtml(
-          JSON.stringify(display, null, 2),
-        )}</pre>`,
-      );
+      setLocalValidation(pendingOneClickSave ? "確認中…" : "確認完了", true);
+      showResultHtml(`<p class="gosaki-read-only-admin__meta--ok">確認完了</p>`);
       void refreshSaveGate();
     } catch (err) {
       invalidateDryRun();
-      setLocalValidation("dry-run 通信エラー", false);
+      setLocalValidation("確認に失敗しました", false);
       showResultJson({
         ok: false,
         fetchError: err instanceof Error ? err.message : String(err),
@@ -453,17 +465,15 @@ export function initGosakiAboutOperationalEdit(
           dryRunOk &&
           dryRunFormFingerprint != null &&
           formFingerprint(next) === dryRunFormFingerprint;
+        pendingOneClickSave = false;
         if (!matched) {
-          pendingOneClickSave = false;
           applySaveButtonUi(true, "入力内容を確認してください");
           return;
         }
         if (!saveArmed) {
-          pendingOneClickSave = false;
-          applySaveButtonUi(false, SAVE_UNARMED_MSG);
+          applySaveButtonUi(false, GOSAKI_CLIENT_SAVE_DISARMED_REASON);
           return;
         }
-        pendingOneClickSave = false;
         void runSave();
       }
     }
@@ -471,6 +481,10 @@ export function initGosakiAboutOperationalEdit(
 
   async function runSave() {
     if (saveInFlight || dryRunInFlight) return;
+    if (!saveArmed) {
+      applySaveButtonUi(false, GOSAKI_CLIENT_SAVE_DISARMED_REASON);
+      return;
+    }
     const auth = await refreshAuthFlag();
     if (!auth) {
       applySaveButtonUi(false, "ログインが必要です");
@@ -496,15 +510,13 @@ export function initGosakiAboutOperationalEdit(
       return;
     }
 
-    if (!saveArmed) {
-      applySaveButtonUi(false, SAVE_UNARMED_MSG);
-      return;
-    }
+    // Client-armed: POST Save after dry-run lock. Server arm may reject.
 
     const saveEndpoint = String(deps.saveEndpoint ?? "").trim();
     const saveSafe =
       Boolean(deps.assertSaveEndpointSafe?.(saveEndpoint)) &&
       !saveEndpoint.includes(productionStop);
+    // Validate fingerprint/endpoint; ignore client envArmed for the POST itself.
     const gate =
       deps.evaluateSaveGate?.({
         authenticated: auth,
@@ -514,7 +526,7 @@ export function initGosakiAboutOperationalEdit(
         expectedBeforePresent: Boolean(dryRunExpectedBefore),
         saveEndpointConfigured: Boolean(saveEndpoint),
         saveEndpointSafe: saveSafe,
-        envArmed: saveArmed,
+        envArmed: true,
         approvalId: expectedSaveApprovalId,
         expectedApprovalId: expectedSaveApprovalId,
         saveInFlight: false,
@@ -522,8 +534,15 @@ export function initGosakiAboutOperationalEdit(
       }) ?? { enabled: false, reason: "いまは保存できません" };
 
     if (!gate.enabled) {
-      applySaveButtonUi(false, gate.reason);
-      return;
+      // Soft-fail only when structural gates fail (not client arm).
+      if (!dryRunServerFingerprint || !dryRunFileSha || !dryRunExpectedBefore) {
+        applySaveButtonUi(false, "いまは保存できません");
+        return;
+      }
+      if (!saveEndpoint || !saveSafe) {
+        applySaveButtonUi(false, "いまは保存できません");
+        return;
+      }
     }
     if (!deps.buildSaveEndpointRequest || !dryRunExpectedBefore || !dryRunServerFingerprint) {
       applySaveButtonUi(false, "いまは保存できません");
@@ -531,8 +550,8 @@ export function initGosakiAboutOperationalEdit(
     }
 
     saveInFlight = true;
-    applySaveButtonUi(false, "保存処理中です…");
-    setLocalValidation("Save 実行中…（再試行禁止）", null);
+    applySaveButtonUi(false, "保存中…");
+    setLocalValidation("", null);
 
     try {
       const token = await deps.getAccessToken?.();
@@ -601,16 +620,23 @@ export function initGosakiAboutOperationalEdit(
       if (deps.isSaveConflictResponse?.(body) || response.status === 409) {
         invalidateDryRun();
         setLocalValidation(conflictMessage, false);
+        applySaveButtonUi(false, conflictMessage);
         showResultHtml(
-          `<p class="gosaki-read-only-admin__meta--warn">${escapeHtml(conflictMessage)}</p><pre>${escapeHtml(
-            JSON.stringify(display, null, 2),
-          )}</pre>`,
+          `<p class="gosaki-read-only-admin__meta--warn">${escapeHtml(conflictMessage)}</p>`,
         );
+        return;
+      }
+      if (isGosakiSaveNotArmedResponse(body, response.status)) {
+        invalidateDryRun();
+        applySaveButtonUi(false, SAVE_STOPPED_MSG);
+        setLocalValidation(SAVE_STOPPED_MSG, false);
         return;
       }
       if (!display.ok) {
         invalidateDryRun();
-        setLocalValidation(display.errors?.[0] || "Save 失敗", false);
+        const msg = userMessageForSaveFailure(body, response.status, "保存に失敗しました");
+        setLocalValidation(msg, false);
+        applySaveButtonUi(false, msg);
         showResultJson(display);
         return;
       }
@@ -623,17 +649,11 @@ export function initGosakiAboutOperationalEdit(
 
       invalidateDryRun();
       applyDryRunButtonUi();
-      setLocalValidation(
-        `Save 成功 · commit ${String((display as { commitSha?: string }).commitSha ?? "").slice(0, 8)}`,
-        true,
-      );
-      showResultHtml(
-        `<p class="gosaki-read-only-admin__meta--ok">Save 成功（GitHub Contents · workflow_dispatch なし）</p><pre>${escapeHtml(
-          JSON.stringify(display, null, 2),
-        )}</pre>`,
-      );
+      setLocalValidation("保存しました", true);
+      applySaveButtonUi(false, "保存しました");
+      showResultHtml(`<p class="gosaki-read-only-admin__meta--ok">保存しました</p>`);
       if (statusEl instanceof HTMLElement) {
-        statusEl.textContent = "About Save 完了 · Save 再無効化済み";
+        statusEl.textContent = "保存しました";
       }
     } finally {
       saveInFlight = false;
@@ -669,13 +689,17 @@ export function initGosakiAboutOperationalEdit(
   if (saveBtn instanceof HTMLButtonElement) {
     saveBtn.addEventListener("click", (ev) => {
       ev.preventDefault();
+      if (!saveArmed) {
+        applySaveButtonUi(false, GOSAKI_CLIENT_SAVE_DISARMED_REASON);
+        return;
+      }
       void runSave();
     });
   }
 
   wireFormInvalidate();
   baselineFingerprint = formFingerprint(readFormSnapshot());
-  applySaveButtonUi(false, saveArmed ? "先に dry-run を実行してください" : "通常 package · client arm=false");
+  applySaveButtonUi(false, saveArmed ? "変更があると保存できます" : GOSAKI_CLIENT_SAVE_DISARMED_REASON);
   applyDryRunButtonUi();
   document.addEventListener("visibilitychange", () => {
     if (document.visibilityState === "visible") void refreshSaveGate();

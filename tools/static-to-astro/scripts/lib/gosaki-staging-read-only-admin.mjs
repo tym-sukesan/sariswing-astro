@@ -474,6 +474,10 @@ export function applyGosakiStagingReadOnlyAdmin(outDir, toolRoot, options = {}) 
     templateRoot,
     "gosaki-staging-about-operational-edit.ts",
   );
+  const oneClickSaveSrc = path.join(
+    templateRoot,
+    "gosaki-staging-one-click-save.ts",
+  );
   const packagePathsSrc = path.join(templateRoot, "gosaki-package-admin-paths.ts");
   const cssSrc = path.join(templateRoot, "gosaki-staging-read-only-admin.css");
   const chromeComponents = [
@@ -491,6 +495,7 @@ export function applyGosakiStagingReadOnlyAdmin(outDir, toolRoot, options = {}) 
     youtubeEditSrc,
     youtubeMultiEditSrc,
     aboutEditSrc,
+    oneClickSaveSrc,
     packagePathsSrc,
     cssSrc,
     chromeCssSrc,
@@ -538,6 +543,10 @@ export function applyGosakiStagingReadOnlyAdmin(outDir, toolRoot, options = {}) 
   fs.copyFileSync(
     aboutEditSrc,
     path.join(path.dirname(libDest), "gosaki-staging-about-operational-edit.ts"),
+  );
+  fs.copyFileSync(
+    oneClickSaveSrc,
+    path.join(path.dirname(libDest), "gosaki-staging-one-click-save.ts"),
   );
   fs.copyFileSync(packagePathsSrc, packagePathsDest);
   fs.copyFileSync(cssSrc, cssDest);

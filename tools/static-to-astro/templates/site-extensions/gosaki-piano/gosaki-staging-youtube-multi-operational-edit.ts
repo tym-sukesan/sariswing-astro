@@ -16,6 +16,13 @@ import {
   normalizeGosakiYoutubeConfig,
   parseYoutubeVideoId,
 } from "./gosaki-youtube-embed";
+import {
+  GOSAKI_CLIENT_SAVE_DISARMED_REASON,
+  GOSAKI_SAVE_FEATURE_STOPPED_USER_MESSAGE,
+  isClientSaveArmed,
+  isGosakiSaveNotArmedResponse,
+  userMessageForSaveFailure,
+} from "./gosaki-staging-one-click-save";
 
 export type YoutubeMultiDraftItem = {
   id: string;
@@ -239,12 +246,11 @@ export function initGosakiYoutubeMultiOperationalEdit(
   const normalized = normalizeGosakiYoutubeConfig(options.config);
   let baseline = draftItemsFromConfig(options.config);
   let items = baseline.map((i) => ({ ...i }));
-  const saveArmed = options.saveArmed === true;
+  const saveArmed = isClientSaveArmed(options.saveArmed);
   const expectedSaveApprovalId =
     options.expectedSaveApprovalId ||
     "G-11c7-gosaki-youtube-items-web-save-non-dry-run-slice";
-  const SAVE_DISABLED =
-    "保存の準備ができました。現在のテスト環境では保存は無効です。";
+  const SAVE_STOPPED = GOSAKI_SAVE_FEATURE_STOPPED_USER_MESSAGE;
   let pendingOneClickSave = false;
 
   let dryRunOk = false;
@@ -291,6 +297,10 @@ export function initGosakiYoutubeMultiOperationalEdit(
       applySaveButtonUi(false, saveInFlight ? "保存中…" : "確認中…");
       return;
     }
+    if (!saveArmed) {
+      applySaveButtonUi(false, GOSAKI_CLIENT_SAVE_DISARMED_REASON);
+      return;
+    }
     if (!isDirty()) {
       applySaveButtonUi(false, "変更がありません");
       return;
@@ -302,7 +312,7 @@ export function initGosakiYoutubeMultiOperationalEdit(
     applySaveButtonUi(true, "保存");
   }
 
-  function setSaveDisabled(reason = SAVE_DISABLED) {
+  function setSaveDisabled(reason = SAVE_STOPPED) {
     dryRunOk = false;
     dryRunFingerprint = null;
     dryRunBeforeItems = null;
@@ -407,12 +417,10 @@ export function initGosakiYoutubeMultiOperationalEdit(
     });
     if (!local.ok) {
       if (dryRunResult instanceof HTMLElement) {
-        dryRunResult.hidden = false;
-        dryRunResult.innerHTML = `<h3>ローカル検証エラー</h3><ul>${local.errors
-          .map((e) => `<li>${escapeHtml(e)}</li>`)
-          .join("")}</ul>`;
+        dryRunResult.hidden = true;
+        dryRunResult.innerHTML = "";
       }
-      setSaveDisabled("dry-run 前のローカル検証に失敗");
+      setSaveDisabled("入力内容を確認してください");
       return;
     }
 
@@ -424,18 +432,12 @@ export function initGosakiYoutubeMultiOperationalEdit(
 
     if (!endpoint || !endpointSafe || !token || !options.buildDryRunEndpointRequest) {
       if (dryRunResult instanceof HTMLElement) {
-        dryRunResult.hidden = false;
-        dryRunResult.innerHTML = `
-          <h3>変更確認（ローカル dry-run · Edge 未接続）</h3>
-          <p>ok=<code>true</code> · items=<code>${local.itemCount}</code> · published=<code>${local.publishedCount}</code></p>
-          <p>changedItemIds: ${escapeHtml(local.changedItemIds.join(", ") || "なし")}</p>
-          <p>Edge dry-run にはログインと endpoint 設定が必要です。Save は無効のままです。</p>
-          <pre>${escapeHtml(JSON.stringify(local.savePayloadPreview, null, 2))}</pre>
-        `;
+        dryRunResult.hidden = true;
+        dryRunResult.innerHTML = "";
       }
       dryRunOk = false;
-      setSaveDisabled("Edge dry-run 未実行のため Save 不可");
-      if (statusEl) statusEl.textContent = "ローカル dry-run OK · Edge 未実行 · Save 無効";
+      setSaveDisabled("いまは保存できません");
+      if (statusEl) statusEl.textContent = "確認先が未設定です";
       return;
     }
 
@@ -460,23 +462,9 @@ export function initGosakiYoutubeMultiOperationalEdit(
       const ok = json.ok === true && res.ok;
       const fingerprint = typeof json.fingerprint === "string" ? json.fingerprint : "";
       const noChange = json.noChange === true;
-      const changedItemIds = Array.isArray(json.changedItemIds)
-        ? (json.changedItemIds as string[])
-        : local.changedItemIds;
       if (dryRunResult instanceof HTMLElement) {
-        dryRunResult.hidden = false;
-        dryRunResult.innerHTML = `
-          <h3>変更確認（Edge items dry-run · 外部書き込みなし）</h3>
-          <p>ok=<code>${escapeHtml(String(ok))}</code> · httpStatus=<code>${escapeHtml(String(res.status))}</code> · noChange=<code>${escapeHtml(String(noChange))}</code></p>
-          <p>changedItemIds: ${escapeHtml(changedItemIds.join(", ") || "なし")}</p>
-          <p>currentFileSha: <code>${escapeHtml(String(json.currentFileSha ?? "—"))}</code></p>
-          <p>didWrite=<code>false</code> · networkWrite=<code>false</code></p>
-          ${
-            Array.isArray(json.errors) && json.errors.length
-              ? `<ul>${(json.errors as string[]).map((e) => `<li>${escapeHtml(String(e))}</li>`).join("")}</ul>`
-              : ""
-          }
-        `;
+        dryRunResult.hidden = true;
+        dryRunResult.innerHTML = "";
       }
       if (ok && fingerprint) {
         dryRunOk = true;
@@ -484,21 +472,19 @@ export function initGosakiYoutubeMultiOperationalEdit(
         dryRunBeforeItems = baseline.map((i) => ({ ...i }));
         dryRunAfterFingerprint = itemsFingerprint(items);
         dryRunNoChange = noChange;
-        if (statusEl) {
-          statusEl.textContent = noChange
-            ? "Edge dry-run OK（変更なし）· Save 無効"
-            : "Edge dry-run OK · Save は arm 時のみ有効";
+        if (statusEl && !pendingOneClickSave) {
+          statusEl.textContent = noChange ? "確認完了（変更なし）" : "確認完了";
         }
       } else {
         dryRunOk = false;
-        setSaveDisabled(String(json.error ?? "Edge dry-run 失敗"));
-        if (statusEl) statusEl.textContent = "Edge dry-run 失敗";
+        setSaveDisabled(String(json.error ?? "確認に失敗しました"));
+        if (statusEl) statusEl.textContent = "確認に失敗しました";
       }
     } catch (err) {
       const message =
         err instanceof Error
           ? err.name === "AbortError"
-            ? "timeout — 再試行禁止。dry-run で現状確認"
+            ? "時間切れです。自動では再試行しません。"
             : err.message
           : String(err);
       if (err instanceof Error && err.name === "AbortError") {
@@ -507,32 +493,114 @@ export function initGosakiYoutubeMultiOperationalEdit(
       dryRunOk = false;
       setSaveDisabled(message);
       if (dryRunResult instanceof HTMLElement) {
-        dryRunResult.hidden = false;
-        dryRunResult.innerHTML = `<p role="alert">${escapeHtml(message)}</p>`;
+        dryRunResult.hidden = true;
+        dryRunResult.innerHTML = "";
       }
     } finally {
       dryRunInFlight = false;
-      void refreshSaveGate();
       if (pendingOneClickSave) {
         const matched =
           dryRunOk &&
           dryRunAfterFingerprint != null &&
           dryRunAfterFingerprint === itemsFingerprint(items);
+        pendingOneClickSave = false;
         if (!matched) {
-          pendingOneClickSave = false;
           applySaveButtonUi(true, "入力内容を確認してください");
-          if (dryRunResult instanceof HTMLElement) dryRunResult.hidden = true;
+          void refreshSaveGate();
           return;
         }
         if (!saveArmed) {
-          pendingOneClickSave = false;
-          applySaveButtonUi(false, SAVE_DISABLED);
-          if (dryRunResult instanceof HTMLElement) dryRunResult.hidden = true;
+          applySaveButtonUi(false, GOSAKI_CLIENT_SAVE_DISARMED_REASON);
+          void refreshSaveGate();
           return;
         }
-        pendingOneClickSave = false;
-        if (saveBtn instanceof HTMLElement) saveBtn.click();
+        await runYoutubeMultiSaveRequest();
+      } else {
+        void refreshSaveGate();
       }
+    }
+  }
+
+  async function runYoutubeMultiSaveRequest(): Promise<void> {
+    if (saveInFlight || dryRunInFlight || indeterminateLocked) return;
+    if (!saveArmed) {
+      applySaveButtonUi(false, GOSAKI_CLIENT_SAVE_DISARMED_REASON);
+      return;
+    }
+    const token = (await (options.getAccessToken?.() ?? Promise.resolve(null))) || null;
+    if (!token) {
+      applySaveButtonUi(false, "ログインが必要です");
+      return;
+    }
+    const formMatches =
+      dryRunOk &&
+      dryRunAfterFingerprint != null &&
+      dryRunAfterFingerprint === itemsFingerprint(items);
+    if (!formMatches || !dryRunFingerprint || !dryRunBeforeItems || !options.buildSaveEndpointRequest) {
+      applySaveButtonUi(false, "いまは保存できません");
+      return;
+    }
+    const endpoint = String(options.saveEndpoint ?? "").trim();
+    if (!endpoint) {
+      applySaveButtonUi(false, "いまは保存できません");
+      return;
+    }
+
+    saveInFlight = true;
+    applySaveButtonUi(false, "保存中…");
+    try {
+      const fetchImpl = options.fetchImpl ?? fetch;
+      const body = options.buildSaveEndpointRequest({
+        items,
+        expectedBeforeItems: dryRunBeforeItems,
+        fingerprint: dryRunFingerprint,
+        requestId: `ui-items-${Date.now()}`,
+      });
+      const controller = new AbortController();
+      const timer = window.setTimeout(() => controller.abort(), 25000);
+      const res = await fetchImpl(endpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+          apikey: String(options.anonKey ?? ""),
+        },
+        body: JSON.stringify(body),
+        signal: controller.signal,
+      });
+      window.clearTimeout(timer);
+      const json = (await res.json().catch(() => ({}))) as Record<string, unknown>;
+      if (json.indeterminate === true) {
+        indeterminateLocked = true;
+        applySaveButtonUi(false, "結果不明のため自動では再試行しません");
+        return;
+      }
+      if (isGosakiSaveNotArmedResponse(json, res.status)) {
+        applySaveButtonUi(false, SAVE_STOPPED);
+        if (statusEl) statusEl.textContent = SAVE_STOPPED;
+        return;
+      }
+      if (json.ok === true && res.ok) {
+        baseline = items.map((i) => ({ ...i }));
+        dryRunOk = false;
+        dryRunFingerprint = null;
+        if (statusEl) statusEl.textContent = "保存しました";
+        applySaveButtonUi(false, "保存しました");
+      } else {
+        const msg = userMessageForSaveFailure(json, res.status, "保存に失敗しました");
+        applySaveButtonUi(false, msg);
+        if (statusEl) statusEl.textContent = msg;
+      }
+    } catch (err) {
+      applySaveButtonUi(
+        false,
+        err instanceof Error && err.name === "AbortError"
+          ? "時間切れです。自動では再試行しません。"
+          : "保存に失敗しました",
+      );
+    } finally {
+      saveInFlight = false;
+      void refreshSaveGate();
     }
   }
 
@@ -625,6 +693,10 @@ export function initGosakiYoutubeMultiOperationalEdit(
         return;
       }
       if (saveInFlight || dryRunInFlight) return;
+      if (!saveArmed) {
+        applySaveButtonUi(false, GOSAKI_CLIENT_SAVE_DISARMED_REASON);
+        return;
+      }
       syncFromDom();
       if (!isDirty()) {
         applySaveButtonUi(false, "変更がありません");
@@ -651,71 +723,7 @@ export function initGosakiYoutubeMultiOperationalEdit(
           }
           return;
         }
-        if (!saveArmed) {
-          applySaveButtonUi(false, SAVE_DISABLED);
-          return;
-        }
-        // Armed path: existing Save POST below
-        if (
-          !token ||
-          !String(options.saveEndpoint ?? "").trim() ||
-          !dryRunFingerprint ||
-          !dryRunBeforeItems ||
-          !options.buildSaveEndpointRequest
-        ) {
-          applySaveButtonUi(false, "いまは保存できません");
-          return;
-        }
-        saveInFlight = true;
-        void refreshSaveGate();
-        try {
-          const fetchImpl = options.fetchImpl ?? fetch;
-          const endpoint = String(options.saveEndpoint ?? "").trim();
-          const body = options.buildSaveEndpointRequest({
-            items,
-            expectedBeforeItems: dryRunBeforeItems,
-            fingerprint: dryRunFingerprint,
-            requestId: `ui-items-${Date.now()}`,
-          });
-          const controller = new AbortController();
-          const timer = window.setTimeout(() => controller.abort(), 25000);
-          const res = await fetchImpl(endpoint, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-              apikey: String(options.anonKey ?? ""),
-            },
-            body: JSON.stringify(body),
-            signal: controller.signal,
-          });
-          window.clearTimeout(timer);
-          const json = (await res.json().catch(() => ({}))) as Record<string, unknown>;
-          if (json.indeterminate === true) {
-            indeterminateLocked = true;
-            applySaveButtonUi(false, "結果不明のため自動では再試行しません");
-            return;
-          }
-          if (json.ok === true && res.ok) {
-            baseline = items.map((i) => ({ ...i }));
-            dryRunOk = false;
-            dryRunFingerprint = null;
-            if (statusEl) statusEl.textContent = "保存しました";
-            applySaveButtonUi(false, "保存しました");
-          } else {
-            applySaveButtonUi(false, "保存に失敗しました");
-          }
-        } catch (err) {
-          applySaveButtonUi(
-            false,
-            err instanceof Error && err.name === "AbortError"
-              ? "時間切れです。自動では再試行しません。"
-              : "保存に失敗しました",
-          );
-        } finally {
-          saveInFlight = false;
-          void refreshSaveGate();
-        }
+        await runYoutubeMultiSaveRequest();
       })();
       return;
     }

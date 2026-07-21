@@ -1,21 +1,66 @@
-Last updated: 2026-07-21
+Last updated: 2026-07-22
 Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **Staging 公開ページ mobile / visual P1 レビュー + Schedule 会場URLリンク化 完了・閉鎖** — P1なし · fix `6085cdb` · unarmed FTP + browser PASS · arms false → **次の主要タスクへ**（hosting 未契約のまま production go-live は不可）。
-2. About / YouTube / Schedule / Discography Save path はいずれも round-trip closed · arms false。
-3. staging Edge Function は通常 unarmed のまま運用（再 arm は明示承認時のみ）。
-4. production deploy / auto FTP は引き続き禁止ゲート · `HOSTING_READY: false`。
+1. **STAGING_READY_FOR_CLIENT_SHARE = true** — remote `f284332` unarmed · smoke PASS · クライアントへ staging URL 共有可（`https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/`）。
+2. **次フェーズ（選択）:** クライアント共有準備 **または** production hosting planning（`HOSTING_READY: false` · go-live は別 blocking）。
+3. staging Edge は **server arms すべて false** のまま運用（再 arm は明示承認時のみ・1機能ずつ）。
+4. production deploy / Wix 変更 / auto FTP / production ref `vsbvndwuajjhnzpohghh` は禁止。
 
-Schedule operational Saveは完了済み：staging Edge deploy completed（v2）· live permission PASS · edit/create/cleanup PASS · DB total **79** · 通常 package `SCHEDULE_SAVE_DEFAULT_DISABLED: true`。
+## 0. Gosaki staging client-share READY (2026-07-22) — complete and closed
 
-YouTube operational Saveは完了済み：Contents API temporary/restore PASS · `YOUTUBE_SAVE_DEFAULT_DISABLED: true`。
+| Item | Value |
+| --- | --- |
+| Phase | `gosaki-staging-client-share-ready` |
+| HEAD / origin/main | **`f284332`** |
+| working tree before docs update | **clean** |
+| STAGING_READY_FOR_CLIENT_SHARE | **true** |
+| remote sourceCommit | **`f284332`** @ `/cms-kit-staging/gosaki-piano/` |
+| manual FTP | **done** (operator) |
+| browser smoke | **PASS** |
+| client / server arms (4 each) | **false** / **false** |
+| production ref / Wix | **STOP / unchanged** |
+| HOSTING_READY (production go-live) | **false**（別フェーズ blocking） |
+| Next | client share prep **or** production hosting planning |
 
-About operational Saveは完了済み：Contents API temporary `0ae0759` / restore `577d463` PASS · baseline fix `bbb34b7` · `ABOUT_SAVE_DEFAULT_DISABLED: true`。
+```txt
+STAGING_READY_FOR_CLIENT_SHARE: true
+CLIENT_STAGING_PREVIEW_READY: true
+CMS_SAVE_ROUND_TRIPS_CLOSED: true
+SERVER_ARMS_FALSE: true
+CLIENT_ARMS_FALSE: true
+REMOTE_PACKAGE_F284332_UNARMED: true
+BROWSER_SMOKE_PASS: true
+HOSTING_READY: false
+PRODUCTION_GO_LIVE_BLOCKED: true
+```
 
-Public mobile P1 reviewは完了済み：P1なし · Schedule 会場website http(s) リンク化 `6085cdb` · HEAD `6085cdb`。
+### 実ブラウザ smoke（operator · PASS）
 
+login/logout · live-read安定（点滅なし）· Schedule admin **79** / public **74** · G-22e非公開は公開されない · Discography **4/34** desktop+375px · YouTube · About+5バンド · Contact · 全admin Save disabled · 公開各ページ · 375px重大崩れなし · noindex
+
+### 4実Save証跡（確定）
+
+| Surface | Result |
+| --- | --- |
+| Schedule | Save / 復元 / DB検証 **PASS** · **79** |
+| Discography | atomic RPC / fingerprint復元 **PASS** · **4/34** |
+| YouTube | 公開 OFF→ON 復元 **PASS** |
+| About | before/after blob完全一致 **PASS** |
+
+### Classification（残課題）
+
+| Item | Class |
+| --- | --- |
+| `【G-22eテスト】新規追加テストイベント` (`published=false`) | **staging verification keep**（公開に出ない） |
+| `yt-placeholder-01` id rename | **non-blocking UX** |
+| About admin「プロフィール・バンド」vs public「About」 | **non-blocking UX** |
+| production hosting / go-live | **別フェーズ blocking**（`HOSTING_READY: false`） |
+
+Schedule / YouTube / About / Discography Save paths は round-trip closed · 通常 package client/server Save **disabled**。
+
+Public mobile P1 · Contact HubSpot E2E は完了済み。
 ## 0. G-20u44 / G-20u44c controlled Save round-trip + permission rollback — complete and closed
 
 | Item | Value |

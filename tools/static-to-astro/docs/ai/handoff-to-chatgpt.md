@@ -5,15 +5,38 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: Gosaki staging public mobile / visual P1 review + Schedule venue URL links COMPLETE AND CLOSED.
-STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP.
-Public mobile P1 review: PASS (390×844) · Home/About/Discography/Contact/Link/Schedule hub/representative month · P1: none
-P2 fix: Schedule 会場website http(s) → external <a> · commit 6085cdb (= HEAD / origin/main)
-build PASS · unarmed package FTP’d · browser link + no horizontal overflow confirmed
-client/server Save arms: false
-no production / DB / Secret / auto FTP change
-Next: next major CMS task（hosting still not contracted → GO_LIVE blocked）
+Current phase: Gosaki staging CLIENT-SHARE READY · STAGING_READY_FOR_CLIENT_SHARE=true
+HEAD / origin/main: f284332 · working tree was clean before this docs update
+STG: kmjqppxjdnwwrtaeqjta · remote package sourceCommit=f284332 @ /cms-kit-staging/gosaki-piano/
+operator manual FTP + browser smoke: PASS
+4 client arms: false · 4 server arms: false
+production vsbvndwuajjhnzpohghh STOP / untouched · Wix production unchanged
+HOSTING_READY: false → production go-live is a separate phase
+Next: client share prep OR production hosting planning
+no Cursor FTP / DB / Secret / Edge / implementation in this docs update
+EXTERNAL_WRITE_EXECUTED: false
 ```
+
+## Gosaki staging client-share READY (2026-07-22)
+
+- **Verdict:** `STAGING_READY_FOR_CLIENT_SHARE: true` · `CLIENT_STAGING_PREVIEW_READY: true`
+- **Remote:** `sourceCommit=f284332` · unarmed · `/cms-kit-staging/gosaki-piano/`
+- **Operator:** manual FTP **done** · 実ブラウザ smoke **PASS**
+- **Smoke:** login/logout · live-read安定（点滅なし）· Schedule admin **79** / public **74** · G-22e非公開は公開されない · Discography **4/34** desktop+375px · YouTube · About+5バンド · Contact · 全admin Save disabled · 公開各ページ · 375px重大崩れなし · noindex
+- **CMS:** 4機能実Save往復 **closed**（Schedule / Discography atomic / YouTube OFF→ON / About blob一致）
+- **Safety:** client+server arms false · production ref STOP · Wix unchanged
+- **Keep:** G-22e unpublished test event = staging verification record
+- **Non-blocking UX:** `yt-placeholder-01` rename · About/プロフィール名称
+- **Separate blocking:** production hosting / go-live（`HOSTING_READY: false`）
+- **Docs updated:** `00-current-state.md` · `03-next-actions.md` · this file
+- **COMMIT_READY:** docs-only（user が commit 指示したとき）
+
+### 4実Save証跡（確定）
+
+1. **Schedule** — Save / 復元 / DB検証 PASS · 79
+2. **Discography** — atomic RPC / fingerprint復元 PASS · 4/34
+3. **YouTube** — 公開 OFF→ON 復元 PASS
+4. **About** — before/after blob完全一致 PASS
 
 ## Gosaki staging public mobile P1 review + venue URL links — final result
 
@@ -23,7 +46,7 @@ Next: next major CMS task（hosting still not contracted → GO_LIVE blocked）
 - **Implementation commit:** `6085cdb`
 - **Gates:** build PASS · unarmed FTP · browser navigation PASS · no horizontal overflow · arms false
 - **Not changed:** production · DB · Secrets · auto FTP
-- **Status:** complete and closed
+- **Status:** complete and closed（next-action superseded by 2026-07-22 readiness review）
 
 ## Gosaki About operational edit (G-12a) — final result
 

@@ -85,6 +85,40 @@ export function draftItemsFromConfig(
     .sort((a, b) => a.sortOrder - b.sortOrder || a.id.localeCompare(b.id, "ja"));
 }
 
+/** Deep-clone draft items so baseline and edit state never share object/array refs. */
+export function cloneYoutubeDraftItems(
+  list: YoutubeMultiDraftItem[] | null | undefined,
+): YoutubeMultiDraftItem[] {
+  return (list ?? []).map((item) => ({
+    id: String(item.id ?? ""),
+    published: item.published === true,
+    sortOrder: Number(item.sortOrder) || 0,
+    embedCode: String(item.embedCode ?? ""),
+    ...(item.title != null ? { title: String(item.title) } : {}),
+  }));
+}
+
+/** Fingerprint used for dirty detection (id / published / sortOrder / embedCode). */
+export function youtubeDraftItemsFingerprint(
+  list: YoutubeMultiDraftItem[] | null | undefined,
+): string {
+  return JSON.stringify(
+    (list ?? []).map((i) => ({
+      id: i.id,
+      published: i.published === true,
+      sortOrder: Number(i.sortOrder) || 0,
+      embedCode: String(i.embedCode ?? ""),
+    })),
+  );
+}
+
+export function isYoutubeDraftDirty(
+  baseline: YoutubeMultiDraftItem[] | null | undefined,
+  current: YoutubeMultiDraftItem[] | null | undefined,
+): boolean {
+  return youtubeDraftItemsFingerprint(current) !== youtubeDraftItemsFingerprint(baseline);
+}
+
 export function validateYoutubeEmbedInput(raw: string): {
   ok: boolean;
   videoId: string | null;
@@ -244,8 +278,10 @@ export function initGosakiYoutubeMultiOperationalEdit(
   const addPublishedInput = root.querySelector("[data-gosaki-youtube-add-published]");
 
   const normalized = normalizeGosakiYoutubeConfig(options.config);
-  let baseline = draftItemsFromConfig(options.config);
-  let items = baseline.map((i) => ({ ...i }));
+  // Fix baseline at load with an independent deep clone. Edit `items` must never
+  // share array/object refs with baseline (or mutate baseline via shared items).
+  let baseline = cloneYoutubeDraftItems(draftItemsFromConfig(options.config));
+  let items = cloneYoutubeDraftItems(baseline);
   const saveArmed = isClientSaveArmed(options.saveArmed);
   const expectedSaveApprovalId =
     options.expectedSaveApprovalId ||
@@ -264,18 +300,11 @@ export function initGosakiYoutubeMultiOperationalEdit(
   let saveNotArmedLocked = false;
 
   function itemsFingerprint(list: YoutubeMultiDraftItem[]): string {
-    return JSON.stringify(
-      list.map((i) => ({
-        id: i.id,
-        published: i.published,
-        sortOrder: i.sortOrder,
-        embedCode: i.embedCode,
-      })),
-    );
+    return youtubeDraftItemsFingerprint(list);
   }
 
   function isDirty(): boolean {
-    return itemsFingerprint(items) !== itemsFingerprint(baseline);
+    return isYoutubeDraftDirty(baseline, items);
   }
 
   function applySaveButtonUi(enabled: boolean, reason: string) {
@@ -475,7 +504,7 @@ export function initGosakiYoutubeMultiOperationalEdit(
       if (ok && fingerprint) {
         dryRunOk = true;
         dryRunFingerprint = fingerprint;
-        dryRunBeforeItems = baseline.map((i) => ({ ...i }));
+        dryRunBeforeItems = cloneYoutubeDraftItems(baseline);
         dryRunAfterFingerprint = itemsFingerprint(items);
         dryRunNoChange = noChange;
         if (statusEl && !pendingOneClickSave) {
@@ -588,7 +617,7 @@ export function initGosakiYoutubeMultiOperationalEdit(
         return;
       }
       if (json.ok === true && res.ok) {
-        baseline = items.map((i) => ({ ...i }));
+        baseline = cloneYoutubeDraftItems(items);
         dryRunOk = false;
         dryRunFingerprint = null;
         if (statusEl) statusEl.textContent = "保存しました";
@@ -688,7 +717,7 @@ export function initGosakiYoutubeMultiOperationalEdit(
     }
 
     if (t.closest("[data-gosaki-youtube-multi-cancel]")) {
-      items = baseline.map((i) => ({ ...i }));
+      items = cloneYoutubeDraftItems(baseline);
       renderList();
       invalidateDryRunUi();
       if (statusEl) statusEl.textContent = "変更を破棄しました";
@@ -741,10 +770,13 @@ export function initGosakiYoutubeMultiOperationalEdit(
     }
   });
 
-  root.addEventListener("input", (ev) => {
+  function onItemFieldEdited(ev: Event) {
     const t = ev.target;
     if (!(t instanceof HTMLElement)) return;
     if (!t.closest("[data-youtube-item-id]")) return;
+    // Sync DOM → items before dirty / save-gate evaluation. Preview alone must not
+    // leave `items` stale (otherwise isDirty stays false → 「変更がありません」).
+    syncFromDom();
     invalidateDryRunUi();
     const li = t.closest("[data-youtube-item-id]");
     if (li && t.matches('[data-yt-field="embedCode"]')) {
@@ -754,7 +786,10 @@ export function initGosakiYoutubeMultiOperationalEdit(
       const preview = li.querySelector(".gosaki-youtube-admin-item__preview");
       if (preview) preview.innerHTML = previewHtmlForEmbed((t as HTMLTextAreaElement).value);
     }
-  });
+  }
+
+  root.addEventListener("input", onItemFieldEdited);
+  root.addEventListener("change", onItemFieldEdited);
 
   window.addEventListener("gosaki-admin-auth-changed", () => {
     void refreshSaveGate();

@@ -5,12 +5,19 @@
  * - client arm=false → Save button disabled; no dry-run / Save POST (user or programmatic)
  * - client arm=true  → one-click may run dry-run → Save; server arm may still reject
  * - server arm=false → Save POST still sent; UI shows stopped message; didWrite=false
+ * - after Save success → sticky 「保存しました」 until the operator edits again
  */
 
 export const GOSAKI_SAVE_FEATURE_STOPPED_USER_MESSAGE =
   "現在、保存機能は停止しています";
 
 export const GOSAKI_CLIENT_SAVE_DISARMED_REASON = "保存は現在無効です";
+
+export const GOSAKI_SAVE_SUCCESS_USER_MESSAGE = "保存しました";
+
+export const GOSAKI_SAVE_DIRTY_USER_MESSAGE = "未保存の変更があります";
+
+export const GOSAKI_SAVE_CLEAN_USER_MESSAGE = "変更がありません";
 
 /** Client arm is the hard UI/programmatic gate for starting Save (and its internal dry-run). */
 export function isClientSaveArmed(saveArmed: boolean | undefined | null): boolean {
@@ -55,6 +62,21 @@ export function userMessageForSaveFailure(
 }
 
 /**
+ * When refreshSaveGate / refreshSaveUi runs after a successful Save,
+ * keep 「保存しました」 while dirty=false. Cleared on next form edit.
+ */
+export function resolveSaveGateDisplayReason(input: {
+  saveSuccessSticky: boolean;
+  dirty: boolean;
+  gateReason: string;
+}): string {
+  if (input.saveSuccessSticky && !input.dirty) {
+    return GOSAKI_SAVE_SUCCESS_USER_MESSAGE;
+  }
+  return input.gateReason;
+}
+
+/**
  * Pure one-click arm contract (for mock asserts without browser/HTTP).
  * Returns whether dry-run / Save POSTs may start from a Save click.
  */
@@ -67,6 +89,8 @@ export function evaluateOneClickSaveStartGate(input: {
   indeterminateLocked?: boolean;
   /** Set after server save_not_armed until the operator edits the form again. */
   saveNotArmedLocked?: boolean;
+  /** Set after successful Save until the operator edits again. */
+  saveSuccessSticky?: boolean;
 }): { canStart: boolean; buttonEnabled: boolean; reason: string } {
   if (input.saveInFlight) {
     return { canStart: false, buttonEnabled: false, reason: "保存中…" };
@@ -99,7 +123,17 @@ export function evaluateOneClickSaveStartGate(input: {
     return { canStart: false, buttonEnabled: false, reason: "ログインが必要です" };
   }
   if (!input.dirty) {
-    return { canStart: false, buttonEnabled: false, reason: "変更がありません" };
+    return {
+      canStart: false,
+      buttonEnabled: false,
+      reason: input.saveSuccessSticky
+        ? GOSAKI_SAVE_SUCCESS_USER_MESSAGE
+        : GOSAKI_SAVE_CLEAN_USER_MESSAGE,
+    };
   }
-  return { canStart: true, buttonEnabled: true, reason: "未保存の変更があります" };
+  return {
+    canStart: true,
+    buttonEnabled: true,
+    reason: GOSAKI_SAVE_DIRTY_USER_MESSAGE,
+  };
 }

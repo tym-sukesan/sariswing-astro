@@ -17,8 +17,14 @@ import {
   parseYoutubeVideoId,
 } from "./gosaki-youtube-embed";
 import {
+  GOSAKI_ADMIN_LIVE_READ_ERROR_MESSAGE,
+  GOSAKI_ADMIN_LIVE_READ_PENDING_MESSAGE,
+} from "./gosaki-staging-admin-live-read";
+import {
   GOSAKI_CLIENT_SAVE_DISARMED_REASON,
+  GOSAKI_SAVE_DIRTY_USER_MESSAGE,
   GOSAKI_SAVE_FEATURE_STOPPED_USER_MESSAGE,
+  GOSAKI_SAVE_SUCCESS_USER_MESSAGE,
   isClientSaveArmed,
   isGosakiSaveNotArmedResponse,
   userMessageForSaveFailure,
@@ -298,6 +304,8 @@ export function initGosakiYoutubeMultiOperationalEdit(
   let saveInFlight = false;
   let indeterminateLocked = false;
   let saveNotArmedLocked = false;
+  let saveSuccessSticky = false;
+  let liveReadState: "pending" | "ready" | "error" = "pending";
 
   function itemsFingerprint(list: YoutubeMultiDraftItem[]): string {
     return youtubeDraftItemsFingerprint(list);
@@ -305,6 +313,29 @@ export function initGosakiYoutubeMultiOperationalEdit(
 
   function isDirty(): boolean {
     return isYoutubeDraftDirty(baseline, items);
+  }
+
+  function setLiveReadUi(state: "pending" | "ready" | "error", error = "") {
+    liveReadState = state;
+    root.dataset.liveSource = state;
+    root.dataset.liveSourceLocked = state === "ready" ? "false" : "true";
+    const formControls = root.querySelectorAll(
+      "textarea, input, button[data-yt-move], button[data-yt-remove], [data-gosaki-youtube-add]",
+    );
+    formControls.forEach((el) => {
+      if (el instanceof HTMLButtonElement || el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement) {
+        if (el.matches("[data-gosaki-youtube-multi-save]")) return;
+        el.disabled = state !== "ready";
+      }
+    });
+    if (statusEl instanceof HTMLElement) {
+      if (state === "pending") statusEl.textContent = GOSAKI_ADMIN_LIVE_READ_PENDING_MESSAGE;
+      else if (state === "error") {
+        statusEl.textContent = error || GOSAKI_ADMIN_LIVE_READ_ERROR_MESSAGE;
+      } else if (!saveSuccessSticky) {
+        statusEl.textContent = "動画の確認と編集ができます";
+      }
+    }
   }
 
   function applySaveButtonUi(enabled: boolean, reason: string) {
@@ -336,14 +367,75 @@ export function initGosakiYoutubeMultiOperationalEdit(
       return;
     }
     if (!isDirty()) {
-      applySaveButtonUi(false, "変更がありません");
+      applySaveButtonUi(
+        false,
+        saveSuccessSticky ? GOSAKI_SAVE_SUCCESS_USER_MESSAGE : "変更がありません",
+      );
       return;
     }
     if (!token) {
       applySaveButtonUi(false, "ログインが必要です");
       return;
     }
-    applySaveButtonUi(true, "未保存の変更があります");
+    applySaveButtonUi(true, GOSAKI_SAVE_DIRTY_USER_MESSAGE);
+  }
+
+  async function hydrateFromGithubDryRun(): Promise<void> {
+    const token = (await (options.getAccessToken?.() ?? Promise.resolve(null))) || null;
+    const endpoint = String(options.dryRunEndpoint ?? "").trim();
+    const endpointSafe = endpoint
+      ? options.assertDryRunEndpointSafe?.(endpoint) !== false
+      : false;
+    if (!token || !endpoint || !endpointSafe || !options.buildDryRunEndpointRequest) {
+      setLiveReadUi("pending");
+      return;
+    }
+    if (isDirty()) return;
+    setLiveReadUi("pending");
+    try {
+      const fetchImpl = options.fetchImpl ?? fetch;
+      const body = options.buildDryRunEndpointRequest(items);
+      const res = await fetchImpl(endpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+          apikey: String(options.anonKey ?? ""),
+        },
+        body: JSON.stringify(body),
+      });
+      const json = (await res.json().catch(() => ({}))) as Record<string, unknown>;
+      const currentItems = Array.isArray(json.currentItems)
+        ? json.currentItems
+        : Array.isArray(json.beforeItems)
+          ? json.beforeItems
+          : null;
+      if (json.ok !== true || json.didWrite === true || !currentItems) {
+        setLiveReadUi(
+          "error",
+          String(json.error ?? GOSAKI_ADMIN_LIVE_READ_ERROR_MESSAGE),
+        );
+        return;
+      }
+      const mapped = currentItems.map((raw) => {
+        const row = (raw && typeof raw === "object" ? raw : {}) as Record<string, unknown>;
+        return {
+          id: String(row.id ?? ""),
+          published: row.published === true,
+          sortOrder: Number(row.sortOrder ?? row.sort_order ?? 0),
+          embedCode: String(row.embedCode ?? row.embed_code ?? ""),
+        } as YoutubeMultiDraftItem;
+      });
+      baseline = cloneYoutubeDraftItems(mapped);
+      items = cloneYoutubeDraftItems(mapped);
+      dryRunOk = false;
+      dryRunFingerprint = null;
+      renderList();
+      setLiveReadUi("ready");
+      void refreshSaveGate();
+    } catch {
+      setLiveReadUi("error", GOSAKI_ADMIN_LIVE_READ_ERROR_MESSAGE);
+    }
   }
 
   function setSaveDisabled(reason = SAVE_STOPPED) {
@@ -432,6 +524,7 @@ export function initGosakiYoutubeMultiOperationalEdit(
 
   function invalidateDryRunUi() {
     saveNotArmedLocked = false;
+    saveSuccessSticky = false;
     if (dryRunResult instanceof HTMLElement) {
       dryRunResult.hidden = true;
       dryRunResult.innerHTML = "";
@@ -620,8 +713,9 @@ export function initGosakiYoutubeMultiOperationalEdit(
         baseline = cloneYoutubeDraftItems(items);
         dryRunOk = false;
         dryRunFingerprint = null;
-        if (statusEl) statusEl.textContent = "保存しました";
-        applySaveButtonUi(false, "保存しました");
+        saveSuccessSticky = true;
+        if (statusEl) statusEl.textContent = GOSAKI_SAVE_SUCCESS_USER_MESSAGE;
+        applySaveButtonUi(false, GOSAKI_SAVE_SUCCESS_USER_MESSAGE);
       } else {
         const msg = userMessageForSaveFailure(json, res.status, "保存に失敗しました");
         applySaveButtonUi(false, msg);
@@ -774,6 +868,7 @@ export function initGosakiYoutubeMultiOperationalEdit(
     const t = ev.target;
     if (!(t instanceof HTMLElement)) return;
     if (!t.closest("[data-youtube-item-id]")) return;
+    saveSuccessSticky = false;
     // Sync DOM → items before dirty / save-gate evaluation. Preview alone must not
     // leave `items` stale (otherwise isDirty stays false → 「変更がありません」).
     syncFromDom();
@@ -791,16 +886,24 @@ export function initGosakiYoutubeMultiOperationalEdit(
   root.addEventListener("input", onItemFieldEdited);
   root.addEventListener("change", onItemFieldEdited);
 
-  window.addEventListener("gosaki-admin-auth-changed", () => {
-    void refreshSaveGate();
-  });
+  window.addEventListener("gosaki-admin-auth-changed", ((ev: Event) => {
+    const detail = (ev as CustomEvent<{ signedIn?: boolean }>).detail;
+    if (detail?.signedIn) void hydrateFromGithubDryRun();
+    else {
+      setLiveReadUi("pending");
+      void refreshSaveGate();
+    }
+  }) as EventListener);
 
   renderList();
   setSaveDisabled();
+  setLiveReadUi("pending");
   void refreshSaveGate();
-  if (statusEl) {
-    statusEl.textContent = `${items.length} 件登録 · 公開 ${items.filter((i) => i.published).length} 件`;
-  }
+
+  void (async () => {
+    const token = (await (options.getAccessToken?.() ?? Promise.resolve(null))) || null;
+    if (token) void hydrateFromGithubDryRun();
+  })();
 }
 
 /** Re-export item type for callers that only need drafts. */

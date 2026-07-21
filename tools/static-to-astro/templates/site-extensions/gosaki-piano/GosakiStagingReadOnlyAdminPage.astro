@@ -811,6 +811,9 @@ const showClientScript = true;
           conflictMessage: G20U41_DISCOGRAPHY_CONFLICT_MESSAGE,
           productionProjectRefStop: G20U36C_PRODUCTION_PROJECT_REF_STOP,
           getAccessToken: resolveDiscographyAccessToken,
+          supabaseUrl: (body?.dataset.gosakiSupabaseUrl || "").trim(),
+          anonKey: (body?.dataset.gosakiSupabaseAnonKey || "").trim(),
+          siteSlug: "gosaki-piano",
         });
       }
 
@@ -820,8 +823,10 @@ const showClientScript = true;
         initGosakiScheduleOperationalEdit(scheduleRoot, {
           saveArmed: body?.dataset.gosakiScheduleSaveArmed === "true",
           getAccessToken: resolveDiscographyAccessToken,
-          dryRunEndpoint: (body?.dataset.gosakiScheduleDryRunEndpoint || "").trim(),
+          supabaseUrl: (body?.dataset.gosakiSupabaseUrl || "").trim(),
           anonKey: (body?.dataset.gosakiSupabaseAnonKey || "").trim(),
+          siteSlug: "gosaki-piano",
+          dryRunEndpoint: (body?.dataset.gosakiScheduleDryRunEndpoint || "").trim(),
           assertDryRunEndpointSafe: assertGosakiScheduleDryRunEndpointSafe,
           assertSaveEndpointSafe: assertGosakiScheduleSaveEndpointSafe,
           buildDryRunEndpointRequest: buildScheduleDryRunEndpointRequest,

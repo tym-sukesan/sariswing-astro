@@ -15,6 +15,9 @@ const TEMPLATE = path.join(
 
 const GOSAKI_SAVE_FEATURE_STOPPED_USER_MESSAGE = "現在、保存機能は停止しています";
 const GOSAKI_CLIENT_SAVE_DISARMED_REASON = "保存は現在無効です";
+const GOSAKI_SAVE_SUCCESS_USER_MESSAGE = "保存しました";
+const GOSAKI_SAVE_CLEAN_USER_MESSAGE = "変更がありません";
+const GOSAKI_SAVE_DIRTY_USER_MESSAGE = "未保存の変更があります";
 
 function isClientSaveArmed(saveArmed) {
   return saveArmed === true;
@@ -56,9 +59,15 @@ function evaluateOneClickSaveStartGate(input) {
     return { canStart: false, buttonEnabled: false, reason: "ログインが必要です" };
   }
   if (!input.dirty) {
-    return { canStart: false, buttonEnabled: false, reason: "変更がありません" };
+    return {
+      canStart: false,
+      buttonEnabled: false,
+      reason: input.saveSuccessSticky
+        ? GOSAKI_SAVE_SUCCESS_USER_MESSAGE
+        : GOSAKI_SAVE_CLEAN_USER_MESSAGE,
+    };
   }
-  return { canStart: true, buttonEnabled: true, reason: "未保存の変更があります" };
+  return { canStart: true, buttonEnabled: true, reason: GOSAKI_SAVE_DIRTY_USER_MESSAGE };
 }
 
 /**
@@ -260,7 +269,7 @@ function simulateOneClick(opts) {
   if (notArmed) {
     userMessage = GOSAKI_SAVE_FEATURE_STOPPED_USER_MESSAGE;
   } else if (didWrite) {
-    userMessage = "保存しました";
+    userMessage = GOSAKI_SAVE_SUCCESS_USER_MESSAGE;
     baseline = {
       fingerprint: saveJson.fingerprint ?? fingerprint,
       lock: saveJson.updatedAt ?? lock,
@@ -270,16 +279,20 @@ function simulateOneClick(opts) {
     userMessage = "保存に失敗しました";
   }
 
+  const afterSuccessGate = evaluateOneClickSaveStartGate({
+    clientArmed: opts.clientArmed,
+    authenticated: true,
+    dirty: baseline.dirty,
+    saveInFlight: false,
+    dryRunInFlight: false,
+    saveSuccessSticky: didWrite && !notArmed,
+    saveNotArmedLocked: notArmed,
+  });
+
   return {
-    buttonEnabled: evaluateOneClickSaveStartGate({
-      clientArmed: opts.clientArmed,
-      authenticated: true,
-      dirty: baseline.dirty,
-      saveInFlight: false,
-      dryRunInFlight: false,
-    }).buttonEnabled,
+    buttonEnabled: afterSuccessGate.buttonEnabled,
     posts,
-    userMessage,
+    userMessage: didWrite && !notArmed ? afterSuccessGate.reason : userMessage,
     didWrite,
     secondClickNeeded: false,
     baselineUpdated: didWrite,
@@ -287,6 +300,7 @@ function simulateOneClick(opts) {
     fingerprintMatched:
       posts.length === 2 &&
       (posts[0].fingerprint == null || posts[0].fingerprint === posts[1].fingerprint),
+    successSticky: didWrite && !notArmed ? afterSuccessGate.reason === GOSAKI_SAVE_SUCCESS_USER_MESSAGE : null,
   };
 }
 
@@ -429,8 +443,9 @@ function simulateOneClickSync(opts) {
   const notArmed = isGosakiSaveNotArmedResponse(save.json, save.status);
   const didWrite = save.json.didWrite === true;
   let saveNotArmedLocked = false;
+  let saveSuccessSticky = false;
   let userMessage = didWrite
-    ? "保存しました"
+    ? GOSAKI_SAVE_SUCCESS_USER_MESSAGE
     : notArmed
       ? GOSAKI_SAVE_FEATURE_STOPPED_USER_MESSAGE
       : "保存に失敗しました";
@@ -441,6 +456,7 @@ function simulateOneClickSync(opts) {
       lock: save.json.updatedAt,
       dirty: false,
     };
+    saveSuccessSticky = true;
   } else if (notArmed) {
     saveNotArmedLocked = true;
   }
@@ -452,6 +468,7 @@ function simulateOneClickSync(opts) {
     saveInFlight: false,
     dryRunInFlight: false,
     saveNotArmedLocked,
+    saveSuccessSticky,
   });
 
   const reclickGate = evaluateOneClickSaveStartGate({
@@ -531,6 +548,9 @@ for (const module of MODULES) {
   assert(c.didWrite === true && c.baselineUpdated === true, `${module} C: success`);
   assert(c.duplicateBlocked === true, `${module} C: duplicate save blocked`);
   assert(c.lockMatched && c.fingerprintMatched, `${module} C: lock/fp`);
+  assert(c.finalReason === GOSAKI_SAVE_SUCCESS_USER_MESSAGE, `${module} C: sticky success reason`);
+  assert(c.userMessage === GOSAKI_SAVE_SUCCESS_USER_MESSAGE, `${module} C: sticky success message`);
+  assert(c.buttonEnabledAfter === false, `${module} C: button disabled after success`);
 
   // D
   const d = simulateOneClickSync({
@@ -559,6 +579,8 @@ for (const [key, name] of Object.entries(files)) {
     assert(src.includes("isClientSaveArmed"), "helper isClientSaveArmed");
     assert(src.includes("evaluateOneClickSaveStartGate"), "helper start gate");
     assert(src.includes("saveNotArmedLocked"), "helper saveNotArmedLocked");
+    assert(src.includes("saveSuccessSticky"), "helper saveSuccessSticky");
+    assert(src.includes("resolveSaveGateDisplayReason"), "helper resolveSaveGateDisplayReason");
     continue;
   }
   assert(src.includes("isClientSaveArmed") || src.includes("saveArmed"), `${key}: arm check`);
@@ -566,6 +588,7 @@ for (const [key, name] of Object.entries(files)) {
   assert(!/saveBtn\.click\s*\(/.test(src), `${key}: no saveBtn.click()`);
   assert(src.includes("GOSAKI_CLIENT_SAVE_DISARMED_REASON") || src.includes("保存は現在無効です"), `${key}: disarmed reason`);
   assert(src.includes("saveNotArmedLocked"), `${key}: saveNotArmedLocked latch`);
+  assert(src.includes("saveSuccessSticky"), `${key}: saveSuccessSticky latch`);
   // UI must not dump tech in normal path labels
   assert(!/didWrite=<code>/.test(src), `${key}: no didWrite UI`);
 }

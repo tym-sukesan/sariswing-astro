@@ -5,8 +5,14 @@
  */
 
 import {
+  GOSAKI_ADMIN_LIVE_READ_ERROR_MESSAGE,
+  GOSAKI_ADMIN_LIVE_READ_PENDING_MESSAGE,
+} from "./gosaki-staging-admin-live-read";
+import {
   GOSAKI_CLIENT_SAVE_DISARMED_REASON,
+  GOSAKI_SAVE_DIRTY_USER_MESSAGE,
   GOSAKI_SAVE_FEATURE_STOPPED_USER_MESSAGE,
+  GOSAKI_SAVE_SUCCESS_USER_MESSAGE,
   isClientSaveArmed,
   isGosakiSaveNotArmedResponse,
   userMessageForSaveFailure,
@@ -124,6 +130,8 @@ export function initGosakiAboutOperationalEdit(
   let saveInFlight = false;
   let dryRunInFlight = false;
   let saveNotArmedLocked = false;
+  let saveSuccessSticky = false;
+  let liveReadState: "pending" | "ready" | "error" = "pending";
   let authenticated = false;
   /** Cancel/dirty baseline — updated to Save response.after on successful Save. */
   let baselineFingerprint: string | null = null;
@@ -135,6 +143,27 @@ export function initGosakiAboutOperationalEdit(
     "他の場所で内容が更新された可能性があります。ページを再読み込みしてから再度お試しください。";
   const productionStop = deps.productionProjectRefStop ?? "vsbvndwuajjhnzpohghh";
   const fetchImpl = deps.fetchImpl ?? fetch;
+  const statusEl = root.querySelector("[data-gosaki-about-status]");
+
+  function setLiveReadUi(state: "pending" | "ready" | "error", error = "") {
+    liveReadState = state;
+    root.dataset.liveSource = state;
+    root.dataset.liveSourceLocked = state === "ready" ? "false" : "true";
+    root.querySelectorAll("input, textarea").forEach((el) => {
+      if (el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement) {
+        el.readOnly = state !== "ready";
+        el.disabled = state !== "ready";
+      }
+    });
+    if (statusEl instanceof HTMLElement) {
+      if (state === "pending") statusEl.textContent = GOSAKI_ADMIN_LIVE_READ_PENDING_MESSAGE;
+      else if (state === "error") {
+        statusEl.textContent = error || GOSAKI_ADMIN_LIVE_READ_ERROR_MESSAGE;
+      } else if (!saveSuccessSticky) {
+        statusEl.textContent = "About の確認と編集ができます";
+      }
+    }
+  }
 
   function readFormSnapshot(): AboutFormSnapshot {
     const heading =
@@ -362,29 +391,89 @@ export function initGosakiAboutOperationalEdit(
       return;
     }
     if (!isFormDirty()) {
-      applySaveButtonUi(false, "変更がありません");
+      applySaveButtonUi(
+        false,
+        saveSuccessSticky ? GOSAKI_SAVE_SUCCESS_USER_MESSAGE : "変更がありません",
+      );
       return;
     }
     if (!auth) {
       applySaveButtonUi(false, "ログインが必要です");
       return;
     }
-    applySaveButtonUi(true, "未保存の変更があります");
+    applySaveButtonUi(true, GOSAKI_SAVE_DIRTY_USER_MESSAGE);
   }
 
   function wireFormInvalidate() {
     root.querySelectorAll("input, textarea").forEach((el) => {
       el.addEventListener("input", () => {
         saveNotArmedLocked = false;
+        saveSuccessSticky = false;
         invalidateDryRun();
         applyDryRunButtonUi();
       });
       el.addEventListener("change", () => {
         saveNotArmedLocked = false;
+        saveSuccessSticky = false;
         invalidateDryRun();
         applyDryRunButtonUi();
       });
     });
+  }
+
+  async function hydrateFromGithubDryRun(): Promise<void> {
+    const auth = await refreshAuthFlag();
+    const endpoint = String(deps.dryRunEndpoint ?? "").trim();
+    if (
+      !auth ||
+      !endpoint ||
+      !deps.assertDryRunEndpointSafe?.(endpoint) ||
+      endpoint.includes(productionStop) ||
+      !deps.buildDryRunEndpointRequest
+    ) {
+      setLiveReadUi("pending");
+      return;
+    }
+    if (isFormDirty()) return;
+    setLiveReadUi("pending");
+    try {
+      const next = readFormSnapshot();
+      const payload = deps.buildDryRunEndpointRequest(next);
+      const hydrateUrl = endpoint;
+      const res = await fetchImpl(hydrateUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${(await deps.getAccessToken?.()) || ""}`,
+          apikey: String(deps.anonKey ?? ""),
+        },
+        body: JSON.stringify(payload),
+      });
+      const body = (await res.json().catch(() => ({}))) as Record<string, unknown>;
+      const current =
+        (body.current && typeof body.current === "object"
+          ? (body.current as AboutFormSnapshot)
+          : null) ||
+        (body.before && typeof body.before === "object"
+          ? (body.before as AboutFormSnapshot)
+          : null);
+      if (body.ok !== true || body.didWrite === true || !current) {
+        setLiveReadUi(
+          "error",
+          String(body.error ?? GOSAKI_ADMIN_LIVE_READ_ERROR_MESSAGE),
+        );
+        return;
+      }
+      writeFormSnapshot(current);
+      baselineFingerprint = formFingerprint(current);
+      dryRunOk = false;
+      dryRunFormFingerprint = null;
+      dryRunServerFingerprint = null;
+      setLiveReadUi("ready");
+      void refreshSaveGate();
+    } catch {
+      setLiveReadUi("error", GOSAKI_ADMIN_LIVE_READ_ERROR_MESSAGE);
+    }
   }
 
   async function runDryRun() {
@@ -686,8 +775,9 @@ export function initGosakiAboutOperationalEdit(
 
       invalidateDryRun();
       applyDryRunButtonUi();
-      applySaveButtonUi(false, "保存しました");
-      showResultHtml(`<p class="gosaki-read-only-admin__meta--ok">保存しました</p>`);
+      saveSuccessSticky = true;
+      applySaveButtonUi(false, GOSAKI_SAVE_SUCCESS_USER_MESSAGE);
+      showResultHtml(`<p class="gosaki-read-only-admin__meta--ok">${GOSAKI_SAVE_SUCCESS_USER_MESSAGE}</p>`);
     } finally {
       saveInFlight = false;
       void refreshSaveGate();
@@ -738,14 +828,24 @@ export function initGosakiAboutOperationalEdit(
   baselineFingerprint = formFingerprint(readFormSnapshot());
   applySaveButtonUi(false, saveArmed ? "変更がありません" : GOSAKI_CLIENT_SAVE_DISARMED_REASON);
   applyDryRunButtonUi();
+  setLiveReadUi("pending");
   document.addEventListener("visibilitychange", () => {
     if (document.visibilityState === "visible") void refreshSaveGate();
   });
   window.addEventListener("focus", () => {
     void refreshSaveGate();
   });
-  window.addEventListener("gosaki-admin-auth-changed", () => {
-    void refreshSaveGate();
-  });
+  window.addEventListener("gosaki-admin-auth-changed", ((ev: Event) => {
+    const detail = (ev as CustomEvent<{ signedIn?: boolean }>).detail;
+    if (detail?.signedIn) void hydrateFromGithubDryRun();
+    else {
+      setLiveReadUi("pending");
+      void refreshSaveGate();
+    }
+  }) as EventListener);
   void refreshSaveGate();
+  void (async () => {
+    const token = (await (deps.getAccessToken?.() ?? Promise.resolve(null))) || null;
+    if (token) void hydrateFromGithubDryRun();
+  })();
 }

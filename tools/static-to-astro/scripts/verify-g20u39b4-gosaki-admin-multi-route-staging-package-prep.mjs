@@ -325,8 +325,18 @@ assert(
 );
 assert(
   "youtube has content marker + dry-run",
-  adminComponent.includes('data-gosaki-youtube-content="true"') &&
-    adminComponent.includes('id="gra-youtube-dry-run"'),
+  (() => {
+    const youtubePanelSrc = read(
+      "tools/static-to-astro/templates/admin-cms/gosaki/components/AdminGosakiStagingYoutubeContentPanel.astro",
+    );
+    return (
+      adminComponent.includes("AdminGosakiStagingYoutubeContentPanel") &&
+      youtubePanelSrc.includes('data-gosaki-youtube-content="true"') &&
+      youtubePanelSrc.includes('data-gosaki-youtube-multi="true"') &&
+      youtubePanelSrc.includes("data-gosaki-youtube-multi-dry-run") &&
+      youtubePanelSrc.includes('data-gosaki-internal-dry-run="true"')
+    );
+  })(),
 );
 assert(
   "about uses content panel not char-count-only",
@@ -359,9 +369,12 @@ assert(
 );
 assert(
   "DB probe collapsed in details",
-  compactAuthSrc.includes("開発者情報（DB probe / 診断）") &&
+  compactAuthSrc.includes("開発者情報（通常は不要）") &&
     compactAuthSrc.includes('id="gra-admin-probe"') &&
-    compactAuthSrc.includes("data-gosaki-admin-dev-details"),
+    compactAuthSrc.includes("data-gosaki-admin-dev-details") &&
+    compactAuthSrc.includes("showDeveloperTools") &&
+    // Default package surface keeps developer tools off (auth bar still hosts the collapsed probe).
+    adminComponent.includes("showDeveloperTools={false}"),
 );
 assert(
   "schedule panel lists events",
@@ -379,7 +392,9 @@ assert(
     schedulePanelSrc.includes("data-gosaki-schedule-save") &&
     schedulePanelSrc.includes('data-gosaki-save-allowed="false"') &&
     schedulePanelSrc.includes("AdminGosakiStagingEditToolbar") &&
-    schedulePanelSrc.includes("showDryRun={true}") &&
+    // One-click Save: visible dry-run off; internal dry-run retained.
+    schedulePanelSrc.includes("showDryRun={false}") &&
+    schedulePanelSrc.includes('data-gosaki-internal-dry-run="true"') &&
     schedulePanelSrc.includes("一覧へ戻る") &&
     schedulePanelSrc.includes("新しい予定を追加"),
 );
@@ -416,10 +431,12 @@ assert(
     /type="button"[\s\S]{0,280}data-gosaki-schedule-save/.test(schedulePanelSrc) &&
     /data-gosaki-schedule-save[\s\S]{0,280}\bdisabled\b/.test(schedulePanelSrc) &&
     schedulePanelSrc.includes('data-gosaki-save-allowed="false"') &&
-    schedulePanelSrc.includes("更新する（無効）") &&
+    // Shared admin Save label (no longer 「更新する（無効）」).
+    /data-gosaki-schedule-save[\s\S]{0,200}>\s*保存\s*</.test(schedulePanelSrc) &&
     schedulePanelSrc.includes("data-gosaki-schedule-save-reason") &&
     !schedulePanelSrc.includes("AdminGosakiStagingSaveDisabledStatus") &&
     !schedulePanelSrc.includes("保存する（現在は無効）") &&
+    !schedulePanelSrc.includes("更新する（無効）") &&
     (schedulePanelSrc.match(/\bdata-gosaki-schedule-save(?:\s|=|>)/g) || []).length === 1,
 );
 assert(
@@ -497,20 +514,26 @@ assert(
     discographyOpEditSrc.includes("dryRunLockedFingerprint") &&
     discographyOpEditSrc.includes("evaluateSaveGate") &&
     discographyOpEditSrc.includes("isSaveConflictResponse") &&
-    discographyPanelSrc.includes("showDryRun={true}") &&
+    // One-click: visible dry-run off; internal dry-run + Save panel retained.
+    discographyPanelSrc.includes("showDryRun={false}") &&
+    discographyPanelSrc.includes('data-gosaki-internal-dry-run="true"') &&
     discographyPanelSrc.includes('data-gosaki-disc-save-panel="true"') &&
     discographyPanelSrc.includes("data-gosaki-disc-save") &&
     discographyPanelSrc.includes("data-gosaki-disc-save-disabled-reason") &&
     discographyPanelSrc.includes("data-gosaki-disc-save-conflict") &&
     editToolbarSrc.includes("data-gosaki-edit-dry-run") &&
-    saveDisabledStatusSrc.includes("data-gosaki-save-disabled"),
+    // Legacy SaveDisabledStatus component retained in repo but not mounted on panel.
+    saveDisabledStatusSrc.includes("data-gosaki-save-disabled") &&
+    !discographyPanelSrc.includes("AdminGosakiStagingSaveDisabledStatus"),
 );
 assert(
   "discography Save UI deduplicated to single disabled button",
   (discographyPanelSrc.match(/data-gosaki-disc-save(?!-)/g) || []).length === 1 &&
-    discographyPanelSrc.includes('disabled') &&
-    discographyPanelSrc.includes('data-gosaki-disc-save-disabled-reason') &&
-    discographyPanelSrc.includes('data-gosaki-save-disabled-note="true"') &&
+    discographyPanelSrc.includes("disabled") &&
+    discographyPanelSrc.includes("data-gosaki-disc-save-disabled-reason") &&
+    // Shared save-area status replaces legacy data-gosaki-save-disabled-note.
+    discographyPanelSrc.includes("gosaki-admin-save-area__status") &&
+    !discographyPanelSrc.includes('data-gosaki-save-disabled-note="true"') &&
     !discographyPanelSrc.includes("AdminGosakiStagingSaveDisabledStatus") &&
     !discographyPanelSrc.includes("data-gosaki-save-disabled-status") &&
     !discographyPanelSrc.includes("data-gosaki-save-disabled\n") &&
@@ -541,31 +564,65 @@ assert(
 );
 assert(
   "discography edit toolbar wraps on narrow viewports",
-  editToolbarSrc.includes("flex-wrap: wrap") &&
-    editToolbarSrc.includes("min-height: 44px") &&
-    discographyPanelSrc.includes("flex-wrap: wrap"),
+  (() => {
+    const adminCss = read(
+      "tools/static-to-astro/templates/site-extensions/gosaki-piano/gosaki-staging-read-only-admin.css",
+    );
+    return (
+      editToolbarSrc.includes("flex-wrap: wrap") &&
+      editToolbarSrc.includes("gosaki-admin-btn") &&
+      discographyPanelSrc.includes("flex-wrap: wrap") &&
+      // Touch target height lives in shared .gosaki-admin-btn kit (not toolbar-local 44px).
+      adminCss.includes("--gosaki-admin-btn-min-height") &&
+      adminCss.includes("min-height: var(--gosaki-admin-btn-min-height)")
+    );
+  })(),
 );
 const readOnlyAdminTs = read(
   "tools/static-to-astro/templates/site-extensions/gosaki-piano/gosaki-staging-read-only-admin.ts",
 );
 assert(
   "youtube operational edit markers",
-  adminComponent.includes('data-gosaki-youtube-operational-edit="true"') &&
-    adminComponent.includes("data-gosaki-youtube-operational-form") &&
-    adminComponent.includes("data-gosaki-youtube-dry-run") &&
-    adminComponent.includes("data-gosaki-youtube-save") &&
-    adminComponent.includes("data-gosaki-youtube-cancel") &&
-    adminComponent.includes("initGosakiYoutubeOperationalEdit") &&
-    adminComponent.includes('dataset.gosakiYoutubeSaveArmed === "true"') &&
-    adminComponent.includes("data-gosaki-youtube-save-armed"),
+  (() => {
+    const youtubePanel = read(
+      "tools/static-to-astro/templates/admin-cms/gosaki/components/AdminGosakiStagingYoutubeContentPanel.astro",
+    );
+    const youtubeMultiSrc = read(
+      "tools/static-to-astro/templates/site-extensions/gosaki-piano/gosaki-staging-youtube-multi-operational-edit.ts",
+    );
+    return (
+      adminComponent.includes("AdminGosakiStagingYoutubeContentPanel") &&
+      adminComponent.includes("initGosakiYoutubeMultiOperationalEdit") &&
+      adminComponent.includes("data-gosaki-youtube-save-armed") &&
+      adminComponent.includes('dataset.gosakiYoutubeSaveArmed === "true"') &&
+      youtubePanel.includes('data-gosaki-youtube-multi="true"') &&
+      youtubePanel.includes("data-gosaki-youtube-multi-dry-run") &&
+      youtubePanel.includes("data-gosaki-youtube-multi-save") &&
+      youtubePanel.includes("data-gosaki-youtube-multi-cancel") &&
+      youtubePanel.includes('data-gosaki-save-allowed="false"') &&
+      youtubeMultiSrc.includes("initGosakiYoutubeMultiOperationalEdit") &&
+      youtubeMultiSrc.includes("isClientSaveArmed") &&
+      !youtubeMultiSrc.includes("service_role")
+    );
+  })(),
 );
 assert(
   "youtube Save button single + type=button + default disabled",
-  (adminComponent.match(/id="gra-youtube-save-btn"/g) || []).length === 1 &&
-    /type="button"[\s\S]{0,120}id="gra-youtube-save-btn"|id="gra-youtube-save-btn"[\s\S]{0,120}type="button"/.test(
-      adminComponent,
-    ) &&
-    /id="gra-youtube-save-btn"[\s\S]{0,320}\bdisabled\b/.test(adminComponent),
+  (() => {
+    const youtubePanel = read(
+      "tools/static-to-astro/templates/admin-cms/gosaki/components/AdminGosakiStagingYoutubeContentPanel.astro",
+    );
+    return (
+      (youtubePanel.match(/data-gosaki-youtube-multi-save(?!-)/g) || []).length === 1 &&
+      /type="button"[\s\S]{0,200}data-gosaki-youtube-multi-save|data-gosaki-youtube-multi-save[\s\S]{0,200}type="button"/.test(
+        youtubePanel,
+      ) &&
+      /data-gosaki-youtube-multi-save[\s\S]{0,320}\bdisabled\b/.test(youtubePanel) &&
+      youtubePanel.includes('data-gosaki-save-allowed="false"') &&
+      /data-gosaki-youtube-multi-save[\s\S]{0,200}>\s*保存\s*</.test(youtubePanel) &&
+      !youtubePanel.includes('id="gra-youtube-save-btn"')
+    );
+  })(),
 );
 assert(
   "youtube page-load has no auto fetch for dry-run/save",
@@ -834,12 +891,15 @@ assert(
 assert(
   "schedule page wires operational edit with Save default disarmed",
   adminComponent.includes("initGosakiScheduleOperationalEdit") &&
-    adminComponent.includes("dataset.gosakiScheduleSaveArmed === \"true\"") &&
+    adminComponent.includes('dataset.gosakiScheduleSaveArmed === "true"') &&
     adminComponent.includes("data-gosaki-schedule-save-armed") &&
     adminComponent.includes("isG20u45ScheduleOperationalSaveArmed") &&
     adminComponent.includes('page === "schedule"') &&
-    (adminComponent.includes("showAuth") &&
-      /showAuth[\s\S]{0,120}schedule/.test(adminComponent)),
+    // Content routes sit behind auth gate (stronger than per-section showAuth).
+    adminComponent.includes("data-gosaki-admin-gated") &&
+    /page === "schedule"[\s\S]{0,400}AdminGosakiStagingScheduleContentPanel/.test(
+      adminComponent,
+    ),
 );
 assert(
   "schedule snapshot includes description + updatedAt for lock",
@@ -965,14 +1025,16 @@ assert(
       scheduleOpEditSrc.includes("didWrite") &&
       scheduleOpEditSrc.includes("dbWrite") &&
       scheduleOpEditSrc.includes("networkWrite") &&
-      scheduleOpEditSrc.includes("saveArmed === true && gate.enabled === true") &&
+      // One-click Save: client arm via isClientSaveArmed; pendingOneClickSave after dry-run.
+      scheduleOpEditSrc.includes("isClientSaveArmed") &&
+      scheduleOpEditSrc.includes("pendingOneClickSave") &&
       scheduleOpEditSrc.includes('saveOperation ?? "save"') &&
       scheduleOpEditSrc.includes("既存予定の日付変更は現在未対応") &&
       scheduleOpEditSrc.includes("applyModeFieldLocks") &&
       scheduleOpEditSrc.includes("非公開で作成") &&
       scheduleOpEditSrc.includes("SAVE_LABEL_ENABLED") &&
       scheduleOpEditSrc.includes("applySaveButtonUi") &&
-      scheduleOpEditSrc.includes("Endpoint 契約 · UI gate ではない") &&
+      scheduleOpEditSrc.includes("GOSAKI_CLIENT_SAVE_DISARMED_REASON") &&
       !scheduleOpEditSrc.includes("Save は無効のままです。operation=save は送信しません。") &&
       /SCHEDULE_OPERATIONAL_SAFE_FIELDS[\s\S]*?"published"/.test(scheduleOpEditSrc)
     );
@@ -1032,7 +1094,9 @@ assert(
     aboutPanelSrc.includes("data-gosaki-about-save") &&
     (aboutPanelSrc.match(/id="gosaki-about-save-btn"/g) || []).length === 1 &&
     /id="gosaki-about-save-btn"[\s\S]{0,320}\bdisabled\b/.test(aboutPanelSrc) &&
-    aboutPanelSrc.includes('data-gosaki-about-save-disabled="true"') &&
+    // Legacy permanent save-disabled attr removed; Save stays disabled by default.
+    !aboutPanelSrc.includes('data-gosaki-about-save-disabled="true"') &&
+    aboutPanelSrc.includes("data-gosaki-about-save-reason") &&
     !aboutPanelSrc.includes("onSubmit") &&
     !aboutPanelSrc.includes("service_role"),
 );
@@ -1055,10 +1119,17 @@ assert(
 );
 assert(
   "STG about route order: content panel then developer details",
-  /page === "about"[\s\S]*AdminGosakiStagingAboutContentPanel[\s\S]*data-gosaki-admin-dev-details/.test(
-    adminComponent,
-  ) &&
-    adminComponent.includes("<summary>開発者情報</summary>") &&
+  // Auth bar (with collapsed developer probe) precedes gated content routes.
+  adminComponent.indexOf("AdminGosakiStagingCompactAuthBar") <
+    adminComponent.indexOf("data-gosaki-admin-gated") &&
+    /page === "about"[\s\S]{0,500}AdminGosakiStagingAboutContentPanel/.test(
+      adminComponent,
+    ) &&
+    compactAuthSrc.includes("data-gosaki-admin-dev-details") &&
+    compactAuthSrc.includes("開発者情報（通常は不要）") &&
+    adminComponent.includes("showDeveloperTools={false}") &&
+    // Per-route developer <summary> removed from about page markup.
+    !adminComponent.includes("<summary>開発者情報</summary>") &&
     !/page === "about"[\s\S]*data-gosaki-admin-dev-details[\s\S]{0,80}AdminGosakiStagingAboutContentPanel/.test(
       adminComponent,
     ),
@@ -1081,8 +1152,16 @@ assert(
 );
 assert(
   "Save disabled note retained",
-  adminComponent.includes("data-gosaki-save-disabled-note") ||
-    aboutPanelSrc.includes("data-gosaki-save-disabled-note"),
+  // Shared save-area status / per-module save-reason replaces legacy save-disabled-note.
+  (schedulePanelSrc.includes("data-gosaki-schedule-save-reason") &&
+    discographyPanelSrc.includes("data-gosaki-disc-save-disabled-reason") &&
+    aboutPanelSrc.includes("data-gosaki-about-save-reason") &&
+    schedulePanelSrc.includes("gosaki-admin-save-area__status") &&
+    discographyPanelSrc.includes("gosaki-admin-save-area__status") &&
+    aboutPanelSrc.includes("gosaki-admin-save-area__status") &&
+    !schedulePanelSrc.includes('data-gosaki-save-disabled-note="true"') &&
+    !discographyPanelSrc.includes('data-gosaki-save-disabled-note="true"') &&
+    !aboutPanelSrc.includes('data-gosaki-save-disabled-note="true"')),
 );
 assert(
   "discography dry-run retained",
@@ -2285,13 +2364,17 @@ assert(
   aboutOpEditSrc.includes("Client arm must NOT gate dry-run") &&
     aboutOpEditSrc.includes("enabled = dirty && !dryRunInFlight && !saveInFlight") &&
     aboutOpEditSrc.includes("Auth / CompactAuthBar must never disable this button") &&
+    aboutOpEditSrc.includes("applyDryRunButtonUi") &&
+    aboutOpEditSrc.includes("dryRunBtn.disabled = !enabled") &&
     /dryRunBtn\.disabled\s*=\s*dryRunInFlight\s*\|\|\s*!auth/.test(aboutOpEditSrc) === false &&
     aboutPanelSrc.includes('id="gosaki-about-dry-run-btn"') &&
     aboutPanelSrc.includes("gosaki-about-admin-form__dry-run") &&
     aboutPanelSrc.includes(".gosaki-about-admin-form__dry-run:not(:disabled)") &&
     /gosaki-about-admin-form__save\s*\{[^}]*cursor:\s*not-allowed/.test(aboutPanelSrc) === false &&
-    /id="gosaki-about-dry-run-btn"[\s\S]{0,200}\bdisabled\b/.test(aboutPanelSrc) &&
-    adminComponent.includes("About の「変更を確認」"),
+    // Visible 「変更を確認」 copy removed; dry-run is hidden internal (one-click).
+    aboutPanelSrc.includes('data-gosaki-internal-dry-run="true"') &&
+    /id="gosaki-about-dry-run-btn"[\s\S]{0,200}\bhidden\b/.test(aboutPanelSrc) &&
+    !adminComponent.includes("About の「変更を確認」"),
 );
 assert(
   "about reuses GitHub Contents helpers (shared github.ts)",
@@ -2328,8 +2411,11 @@ assert(
   "about Save gate requires arm + dry-run + fingerprint",
   readOnlyAdminTs.includes("evaluateAboutOperationalSaveGate") &&
     readOnlyAdminTs.includes("expectedBeforePresent") &&
-    aboutOpEditSrc.includes("envArmed: saveArmed") &&
-    aboutOpEditSrc.includes("saveArmed === true"),
+    aboutOpEditSrc.includes("isClientSaveArmed") &&
+    // POST gate uses envArmed: true; client arm checked separately via isClientSaveArmed.
+    aboutOpEditSrc.includes("envArmed: true") &&
+    aboutOpEditSrc.includes("if (!saveArmed)") &&
+    !aboutOpEditSrc.includes("envArmed: saveArmed"),
 );
 
 function aboutDryPayload(next, extra = {}) {

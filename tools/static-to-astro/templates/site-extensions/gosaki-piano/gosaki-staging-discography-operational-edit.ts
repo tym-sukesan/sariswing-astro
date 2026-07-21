@@ -4,8 +4,17 @@
  */
 
 import {
+  GOSAKI_ADMIN_LIVE_READ_ERROR_MESSAGE,
+  GOSAKI_ADMIN_LIVE_READ_PENDING_MESSAGE,
+  GOSAKI_ADMIN_LIVE_SITE_SLUG,
+  fetchGosakiDiscographyAuthenticatedLive,
+  type GosakiAdminLiveDiscographyAlbum,
+} from "./gosaki-staging-admin-live-read";
+import {
   GOSAKI_CLIENT_SAVE_DISARMED_REASON,
+  GOSAKI_SAVE_DIRTY_USER_MESSAGE,
   GOSAKI_SAVE_FEATURE_STOPPED_USER_MESSAGE,
+  GOSAKI_SAVE_SUCCESS_USER_MESSAGE,
   isClientSaveArmed,
   isGosakiSaveNotArmedResponse,
   userMessageForSaveFailure,
@@ -72,6 +81,10 @@ export type DiscographyOperationalEditDeps = {
   conflictMessage: string;
   productionProjectRefStop: string;
   getAccessToken?: () => Promise<string | null>;
+  supabaseUrl?: string;
+  siteSlug?: string;
+  anonKey?: string;
+  fetchImpl?: typeof fetch;
 };
 
 const UNSAVED_LEAVE =
@@ -250,6 +263,59 @@ function updateAlbumCacheUpdatedAt(
   if (jsonEl) jsonEl.textContent = JSON.stringify(albums);
 }
 
+function escapeDiscHtml(value: string): string {
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;");
+}
+
+function displayDisc(value: string | null | undefined): string {
+  const t = String(value ?? "").trim();
+  return t || "—";
+}
+
+export function renderDiscographyOperationalAlbumList(
+  root: HTMLElement,
+  albums: DiscographyOperationalAlbum[],
+): void {
+  const list = root.querySelector("[data-gosaki-disc-album-list]");
+  if (!(list instanceof HTMLElement)) return;
+  if (albums.length === 0) {
+    list.innerHTML = `<p class="gosaki-admin-content-panel__empty">Discography データがありません。</p>`;
+    return;
+  }
+  list.innerHTML = albums
+    .map((album) => {
+      const thumb = album.coverImageUrl
+        ? `<img class="gosaki-discography-content-panel__thumb" src="${escapeDiscHtml(album.coverImageUrl)}" alt="" loading="lazy" decoding="async" />`
+        : `<div class="gosaki-discography-content-panel__thumb gosaki-discography-content-panel__thumb--empty" aria-hidden="true"></div>`;
+      return `<li class="gosaki-discography-content-panel__album-item" data-gosaki-disc-album-summary="${escapeDiscHtml(album.legacyId)}">
+  <div class="gosaki-discography-content-panel__album-summary">
+    ${thumb}
+    <div class="gosaki-discography-content-panel__album-meta">
+      <h2 class="gosaki-discography-content-panel__album-title">${escapeDiscHtml(album.title)}</h2>
+      <p class="gosaki-admin-content-panel__meta">${escapeDiscHtml(displayDisc(album.artist))} · ${escapeDiscHtml(displayDisc(album.releaseDate))} · ${album.trackCount ?? 0} tracks</p>
+      <p class="gosaki-admin-content-panel__meta">${escapeDiscHtml(displayDisc(album.label))}</p>
+    </div>
+    <div class="gosaki-admin-edit-toolbar" data-gosaki-edit-toolbar="view">
+      <button type="button" class="gosaki-admin-btn gosaki-admin-btn--primary gosaki-admin-edit-toolbar__btn gosaki-admin-edit-toolbar__btn--primary" data-gosaki-edit-start>編集</button>
+    </div>
+  </div>
+</li>`;
+    })
+    .join("");
+
+  const meta = root.querySelector(".gosaki-admin-content-panel__meta");
+  if (meta) {
+    const trackTotal = albums.reduce((n, a) => n + (a.trackCount ?? 0), 0);
+    const strongs = meta.querySelectorAll("strong");
+    if (strongs[0]) strongs[0].textContent = String(albums.length);
+    if (strongs[1]) strongs[1].textContent = String(trackTotal);
+  }
+}
+
 /**
  * Initialize Discography operational edit UI on a ContentPanel root.
  */
@@ -260,8 +326,8 @@ export function initGosakiDiscographyOperationalEdit(
   if (root.dataset.gosakiDiscEditInitialized === "true") return;
   root.dataset.gosakiDiscEditInitialized = "true";
 
-  const albums = readAlbumsJson(root);
-  const albumById = new Map(albums.map((a) => [a.legacyId, a]));
+  let albums: DiscographyOperationalAlbum[] = readAlbumsJson(root);
+  let albumById = new Map(albums.map((a) => [a.legacyId, a]));
   const form = root.querySelector("[data-gosaki-disc-edit-form]");
   const resultEl = root.querySelector("[data-gosaki-disc-dry-run-result]");
   const saveBtn = root.querySelector("[data-gosaki-disc-save]");
@@ -271,6 +337,7 @@ export function initGosakiDiscographyOperationalEdit(
   const saveValidationEl = root.querySelector("[data-gosaki-disc-save-validation]");
   const saveConflictEl = root.querySelector("[data-gosaki-disc-save-conflict]");
   const dryRunOkEl = root.querySelector("[data-gosaki-disc-dry-run-ok]");
+  const statusEl = root.querySelector("[data-gosaki-disc-status]");
 
   if (!(form instanceof HTMLFormElement) || !(resultEl instanceof HTMLElement)) return;
 
@@ -282,9 +349,67 @@ export function initGosakiDiscographyOperationalEdit(
   let pendingOneClickSave = false;
   let indeterminateLocked = false;
   let saveNotArmedLocked = false;
+  let saveSuccessSticky = false;
+  let liveReadState: "pending" | "ready" | "error" = "pending";
 
   const setUserSaveMessage = (message: string) => {
     if (saveReasonEl instanceof HTMLElement) saveReasonEl.textContent = message;
+  };
+
+  const setLiveReadUi = (state: "pending" | "ready" | "error", error = "") => {
+    liveReadState = state;
+    root.dataset.liveSource = state;
+    root.dataset.liveSourceLocked = state === "ready" ? "false" : "true";
+    root.querySelectorAll("[data-gosaki-edit-start]").forEach((el) => {
+      if (el instanceof HTMLButtonElement) {
+        el.disabled = state !== "ready";
+        el.setAttribute("aria-disabled", state === "ready" ? "false" : "true");
+      }
+    });
+    if (statusEl instanceof HTMLElement && root.dataset.mode !== "edit") {
+      if (state === "pending") statusEl.textContent = GOSAKI_ADMIN_LIVE_READ_PENDING_MESSAGE;
+      else if (state === "error") {
+        statusEl.textContent = error || GOSAKI_ADMIN_LIVE_READ_ERROR_MESSAGE;
+      } else {
+        statusEl.textContent = "アルバムの確認と編集ができます";
+      }
+    }
+  };
+
+  const applyAlbums = (next: DiscographyOperationalAlbum[]) => {
+    albums = next;
+    albumById = new Map(albums.map((a) => [a.legacyId, a]));
+    const jsonEl = root.querySelector("#gosaki-disc-albums-json, [data-gosaki-disc-albums-json]");
+    if (jsonEl) jsonEl.textContent = JSON.stringify(albums);
+    if (root.dataset.mode !== "edit") {
+      renderDiscographyOperationalAlbumList(root, albums);
+      setLiveReadUi(liveReadState);
+    }
+  };
+
+  const refreshLiveSourceFromSupabase = async () => {
+    const token = (await (deps.getAccessToken?.() ?? Promise.resolve(null))) || null;
+    const supabaseUrl = String(deps.supabaseUrl ?? "").trim();
+    const anonKey = String(deps.anonKey ?? "").trim();
+    if (!token || !supabaseUrl || !anonKey) {
+      setLiveReadUi("pending");
+      return;
+    }
+    if (root.dataset.mode === "edit" && isDirty(form)) return;
+    setLiveReadUi("pending");
+    const result = await fetchGosakiDiscographyAuthenticatedLive({
+      supabaseUrl,
+      anonKey,
+      accessToken: token,
+      siteSlug: String(deps.siteSlug ?? GOSAKI_ADMIN_LIVE_SITE_SLUG).trim(),
+      fetchImpl: deps.fetchImpl ?? fetch,
+    });
+    if (!result.ok) {
+      setLiveReadUi("error", result.error || GOSAKI_ADMIN_LIVE_READ_ERROR_MESSAGE);
+      return;
+    }
+    applyAlbums(result.albums as GosakiAdminLiveDiscographyAlbum[]);
+    setLiveReadUi("ready");
   };
 
   const clearDryRunLock = () => {
@@ -349,7 +474,9 @@ export function initGosakiDiscographyOperationalEdit(
       } else if (!authenticated) {
         saveReasonEl.textContent = "ログインが必要です";
       } else if (!dirty) {
-        saveReasonEl.textContent = "変更がありません";
+        saveReasonEl.textContent = saveSuccessSticky
+          ? GOSAKI_SAVE_SUCCESS_USER_MESSAGE
+          : "変更がありません";
       } else if (saveInFlight) {
         saveReasonEl.textContent = "保存中…";
       } else if (dryRunInFlight) {
@@ -357,10 +484,10 @@ export function initGosakiDiscographyOperationalEdit(
       } else if (!deps.saveArmed && dirty && authenticated) {
         saveReasonEl.textContent = GOSAKI_CLIENT_SAVE_DISARMED_REASON;
       } else if (dirty && authenticated && isClientSaveArmed(deps.saveArmed)) {
-        saveReasonEl.textContent = "未保存の変更があります";
+        saveReasonEl.textContent = GOSAKI_SAVE_DIRTY_USER_MESSAGE;
       } else {
         saveReasonEl.textContent = gate.enabled
-          ? "未保存の変更があります"
+          ? GOSAKI_SAVE_DIRTY_USER_MESSAGE
           : gate.reason || "変更がありません";
       }
     }
@@ -383,6 +510,7 @@ export function initGosakiDiscographyOperationalEdit(
 
   const refreshDirty = () => {
     saveNotArmedLocked = false;
+    saveSuccessSticky = false;
     const dirty = isDirty(form);
     setUnsaved(root, dirty);
     if (dirty || (dryRunLockedFingerprint && editableFingerprint(readFormSnapshot(form)) !== dryRunLockedFingerprint)) {
@@ -392,6 +520,7 @@ export function initGosakiDiscographyOperationalEdit(
   };
 
   const enterEdit = (legacyId: string) => {
+    if (liveReadState !== "ready") return;
     const album = albumById.get(legacyId);
     if (!album) return;
     const snap = snapshotFromAlbum(album);
@@ -412,16 +541,20 @@ export function initGosakiDiscographyOperationalEdit(
     void refreshSaveUi();
   };
 
-  root.querySelectorAll("[data-gosaki-disc-album-summary]").forEach((item) => {
-    const legacyId = item.getAttribute("data-gosaki-disc-album-summary") || "";
-    item.querySelectorAll("[data-gosaki-edit-start]").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        if (root.dataset.mode === "edit" && isDirty(form)) {
-          if (!window.confirm(UNSAVED_SWITCH)) return;
-        }
-        enterEdit(legacyId);
-      });
-    });
+  root.addEventListener("click", (ev) => {
+    const t = ev.target;
+    if (!(t instanceof Element)) return;
+    const startBtn = t.closest("[data-gosaki-edit-start]");
+    if (startBtn instanceof HTMLElement) {
+      if (liveReadState !== "ready") return;
+      const item = startBtn.closest("[data-gosaki-disc-album-summary]");
+      const legacyId = item?.getAttribute("data-gosaki-disc-album-summary") || "";
+      if (!legacyId) return;
+      if (root.dataset.mode === "edit" && isDirty(form)) {
+        if (!window.confirm(UNSAVED_SWITCH)) return;
+      }
+      enterEdit(legacyId);
+    }
   });
 
   root.querySelectorAll("[data-gosaki-edit-cancel]").forEach((btn) => {
@@ -696,9 +829,10 @@ export function initGosakiDiscographyOperationalEdit(
         }
         if (saveSuccessEl instanceof HTMLElement) {
           saveSuccessEl.hidden = false;
-          saveSuccessEl.textContent = "保存しました";
+          saveSuccessEl.textContent = GOSAKI_SAVE_SUCCESS_USER_MESSAGE;
         }
-        setUserSaveMessage("保存しました");
+        saveSuccessSticky = true;
+        setUserSaveMessage(GOSAKI_SAVE_SUCCESS_USER_MESSAGE);
         clearDryRunLock();
         setUnsaved(root, false);
       } else {
@@ -799,4 +933,16 @@ export function initGosakiDiscographyOperationalEdit(
   }
 
   void refreshSaveUi();
+  setLiveReadUi("pending");
+
+  window.addEventListener("gosaki-admin-auth-changed", ((ev: Event) => {
+    const detail = (ev as CustomEvent<{ signedIn?: boolean }>).detail;
+    if (detail?.signedIn) void refreshLiveSourceFromSupabase();
+    else setLiveReadUi("pending");
+  }) as EventListener);
+
+  void (async () => {
+    const token = (await (deps.getAccessToken?.() ?? Promise.resolve(null))) || null;
+    if (token) void refreshLiveSourceFromSupabase();
+  })();
 }

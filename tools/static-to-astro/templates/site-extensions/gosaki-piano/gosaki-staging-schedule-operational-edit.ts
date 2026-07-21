@@ -4,10 +4,19 @@
  */
 
 import {
+  GOSAKI_ADMIN_LIVE_READ_ERROR_MESSAGE,
+  GOSAKI_ADMIN_LIVE_READ_PENDING_MESSAGE,
+  GOSAKI_ADMIN_LIVE_SITE_SLUG,
+  fetchGosakiSchedulesAuthenticatedLive,
+} from "./gosaki-staging-admin-live-read";
+import {
   GOSAKI_CLIENT_SAVE_DISARMED_REASON,
+  GOSAKI_SAVE_DIRTY_USER_MESSAGE,
   GOSAKI_SAVE_FEATURE_STOPPED_USER_MESSAGE,
+  GOSAKI_SAVE_SUCCESS_USER_MESSAGE,
   isClientSaveArmed,
   isGosakiSaveNotArmedResponse,
+  resolveSaveGateDisplayReason,
   userMessageForSaveFailure,
 } from "./gosaki-staging-one-click-save";
 
@@ -106,6 +115,9 @@ export type ScheduleOperationalEditDeps = {
   /** Exact "true" only — default false / unset keeps Save disabled. */
   saveArmed?: boolean;
   getAccessToken?: () => Promise<string | null>;
+  /** Staging Supabase URL for authenticated live SELECT (post-auth SoT). */
+  supabaseUrl?: string;
+  siteSlug?: string;
   /** Staging schedule dry-run/Save Edge URL (empty = local preview only). */
   dryRunEndpoint?: string;
   anonKey?: string;
@@ -212,12 +224,97 @@ function readEventsJson(root: HTMLElement): ScheduleOperationalEvent[] {
   }
 }
 
+function writeEventsJson(root: HTMLElement, events: ScheduleOperationalEvent[]): void {
+  const el = root.querySelector("#gosaki-schedule-events-json, [data-gosaki-schedule-events-json]");
+  if (!el) return;
+  el.textContent = JSON.stringify(events);
+}
+
 function escapeHtml(value: string): string {
   return String(value)
     .replaceAll("&", "&amp;")
     .replaceAll("<", "&lt;")
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;");
+}
+
+function displayOrDash(value: string | null | undefined): string {
+  const t = String(value ?? "").trim();
+  return t || "—";
+}
+
+/** Rebuild view list from live events (replaces build-snapshot HTML). */
+export function renderScheduleOperationalList(
+  root: HTMLElement,
+  events: ScheduleOperationalEvent[],
+): void {
+  const view = root.querySelector("[data-gosaki-schedule-view-mode]");
+  if (!(view instanceof HTMLElement)) return;
+
+  if (events.length === 0) {
+    view.innerHTML =
+      '<p class="gosaki-admin-content-panel__empty" role="status">表示できる公演がありません。</p>';
+    return;
+  }
+
+  const byMonth = new Map<string, ScheduleOperationalEvent[]>();
+  for (const event of events) {
+    const ym =
+      String(event.yearMonth || "").trim() ||
+      (String(event.date || "").match(/^(\d{4}-\d{2})/) || [])[1] ||
+      "未設定";
+    if (!byMonth.has(ym)) byMonth.set(ym, []);
+    byMonth.get(ym)!.push(event);
+  }
+  const months = [...byMonth.keys()].sort((a, b) => b.localeCompare(a));
+
+  const monthsHtml = months
+    .map((ym) => {
+      const cards = (byMonth.get(ym) ?? [])
+        .map((event) => {
+          const searchText = [
+            event.date,
+            event.title,
+            event.venue,
+            event.description,
+            event.id,
+            event.legacyId,
+          ]
+            .map((v) => String(v ?? "").toLowerCase())
+            .join(" ");
+          const publishedBadge =
+            event.published === false
+              ? '<span class="gosaki-admin-content-panel__badge gosaki-admin-content-panel__badge--warn">非公開</span>'
+              : '<span class="gosaki-admin-content-panel__badge">公開</span>';
+          return `<li class="gosaki-schedule-content-panel__card" data-schedule-event="true" data-event-id="${escapeHtml(String(event.id ?? ""))}" data-legacy-id="${escapeHtml(String(event.legacyId ?? ""))}" data-published="${event.published === false ? "false" : "true"}" data-search-text="${escapeHtml(searchText)}">
+  <div class="gosaki-schedule-content-panel__card-main">
+    <p class="gosaki-schedule-content-panel__date">${escapeHtml(displayOrDash(event.date))}</p>
+    <h3 class="gosaki-schedule-content-panel__event-title">${escapeHtml(displayOrDash(event.title))}</h3>
+    <p class="gosaki-schedule-content-panel__venue">${escapeHtml(displayOrDash(event.venue))}</p>
+    <p class="gosaki-schedule-content-panel__times">open ${escapeHtml(displayOrDash(event.openTime))} · start ${escapeHtml(displayOrDash(event.startTime))}${event.price ? ` · ${escapeHtml(displayOrDash(event.price))}` : ""}</p>
+  </div>
+  <div class="gosaki-schedule-content-panel__card-meta">
+    ${publishedBadge}
+    <code class="gosaki-schedule-content-panel__legacy">${escapeHtml(displayOrDash(event.legacyId))}</code>
+    <div class="gosaki-schedule-content-panel__card-actions">
+      <button type="button" class="gosaki-admin-btn gosaki-admin-btn--small gosaki-schedule-content-panel__edit-btn" data-gosaki-schedule-edit-event data-event-id="${escapeHtml(String(event.id ?? ""))}" data-legacy-id="${escapeHtml(String(event.legacyId ?? ""))}">編集</button>
+      <button type="button" class="gosaki-admin-btn gosaki-admin-btn--small gosaki-schedule-content-panel__edit-btn" data-gosaki-schedule-duplicate-event data-event-id="${escapeHtml(String(event.id ?? ""))}" data-legacy-id="${escapeHtml(String(event.legacyId ?? ""))}">複製</button>
+    </div>
+  </div>
+</li>`;
+        })
+        .join("");
+      return `<section class="gosaki-schedule-content-panel__month" data-schedule-month="${escapeHtml(ym)}" aria-labelledby="gosaki-schedule-month-${escapeHtml(ym)}">
+  <h2 class="gosaki-schedule-content-panel__month-title" id="gosaki-schedule-month-${escapeHtml(ym)}">${escapeHtml(ym)}</h2>
+  <ul class="gosaki-schedule-content-panel__list">${cards}</ul>
+</section>`;
+    })
+    .join("");
+
+  view.innerHTML = `<div class="gosaki-schedule-content-panel__months">${monthsHtml}<p class="gosaki-admin-content-panel__empty" data-gosaki-schedule-search-empty hidden role="status">検索条件に一致する予定がありません。</p></div>`;
+
+  const metaStrong = root.querySelector(".gosaki-admin-content-panel__meta strong");
+  if (metaStrong) metaStrong.textContent = String(events.length);
 }
 
 function fieldEl(root: HTMLElement, name: string): HTMLElement | null {
@@ -462,7 +559,7 @@ export function initGosakiScheduleOperationalEdit(
   root: HTMLElement,
   deps: ScheduleOperationalEditDeps = {},
 ): void {
-  const events = readEventsJson(root);
+  let events = readEventsJson(root);
   const viewMode = root.querySelector("[data-gosaki-schedule-view-mode]");
   const editMode = root.querySelector("[data-gosaki-schedule-edit-mode]");
   const viewToolbar = root.querySelector("[data-gosaki-schedule-view-toolbar]");
@@ -483,6 +580,10 @@ export function initGosakiScheduleOperationalEdit(
   let saveInFlight = false;
   let dryRunInFlight = false;
   let saveNotArmedLocked = false;
+  let saveSuccessSticky = false;
+  /** pending → locked · ready → editable · error → locked (build snapshot not editable SoT). */
+  let liveReadState: "pending" | "ready" | "error" = "pending";
+  let liveReadError = "";
 
   const saveArmed = isClientSaveArmed(deps.saveArmed);
   const dryRunOperation = deps.dryRunOperation ?? "dryRun";
@@ -504,6 +605,66 @@ export function initGosakiScheduleOperationalEdit(
     if (statusEl instanceof HTMLElement && mode !== "view") {
       statusEl.textContent = message;
     }
+  }
+
+  function setLiveReadUi(state: "pending" | "ready" | "error", error = "") {
+    liveReadState = state;
+    liveReadError = error;
+    const locked = state !== "ready";
+    root.dataset.liveSource = state;
+    root.dataset.liveSourceLocked = locked ? "true" : "false";
+    root.querySelectorAll(
+      "[data-gosaki-schedule-edit-event], [data-gosaki-schedule-duplicate-event], [data-gosaki-schedule-create-start]",
+    ).forEach((el) => {
+      if (el instanceof HTMLButtonElement) {
+        el.disabled = locked;
+        el.setAttribute("aria-disabled", locked ? "true" : "false");
+      }
+    });
+    if (statusEl instanceof HTMLElement && mode === "view") {
+      if (state === "pending") statusEl.textContent = GOSAKI_ADMIN_LIVE_READ_PENDING_MESSAGE;
+      else if (state === "error") {
+        statusEl.textContent = error || GOSAKI_ADMIN_LIVE_READ_ERROR_MESSAGE;
+      } else {
+        statusEl.textContent = "公演の確認・追加・編集ができます";
+      }
+    }
+  }
+
+  async function refreshLiveSourceFromSupabase(): Promise<void> {
+    const token = (await (deps.getAccessToken?.() ?? Promise.resolve(null))) || null;
+    const supabaseUrl = String(deps.supabaseUrl ?? "").trim();
+    const anonKey = String(deps.anonKey ?? "").trim();
+    if (!token || !supabaseUrl || !anonKey) {
+      setLiveReadUi("pending");
+      return;
+    }
+    if (mode !== "view" && currentDirty()) {
+      // Do not clobber an in-progress edit mid-session.
+      return;
+    }
+    setLiveReadUi("pending");
+    const result = await fetchGosakiSchedulesAuthenticatedLive({
+      supabaseUrl,
+      anonKey,
+      accessToken: token,
+      siteSlug: String(deps.siteSlug ?? GOSAKI_ADMIN_LIVE_SITE_SLUG).trim(),
+      fetchImpl,
+    });
+    if (!result.ok) {
+      setLiveReadUi("error", result.error || GOSAKI_ADMIN_LIVE_READ_ERROR_MESSAGE);
+      return;
+    }
+    events = result.events;
+    writeEventsJson(root, events);
+    if (mode === "view") {
+      renderScheduleOperationalList(root, events);
+      applyScheduleSearch(
+        (root.querySelector("[data-gosaki-schedule-search-input]") as HTMLInputElement | null)
+          ?.value ?? "",
+      );
+    }
+    setLiveReadUi("ready");
   }
 
   function setUnsaved(visible: boolean) {
@@ -536,7 +697,12 @@ export function initGosakiScheduleOperationalEdit(
     saveBtn.setAttribute("aria-disabled", enabled ? "false" : "true");
     saveBtn.textContent = enabled ? SAVE_LABEL_ENABLED : SAVE_LABEL_DISABLED;
     saveBtn.title = reason || "保存";
-    setUserSaveMessage(reason || (enabled ? "未保存の変更があります" : "変更がありません"));
+    const displayReason = resolveSaveGateDisplayReason({
+      saveSuccessSticky,
+      dirty: currentDirty(),
+      gateReason: reason || (enabled ? GOSAKI_SAVE_DIRTY_USER_MESSAGE : "変更がありません"),
+    });
+    setUserSaveMessage(displayReason);
   }
 
   async function refreshSaveGate() {
@@ -560,7 +726,10 @@ export function initGosakiScheduleOperationalEdit(
       return;
     }
     if (!dirty) {
-      applySaveButtonUi(false, "変更がありません");
+      applySaveButtonUi(
+        false,
+        saveSuccessSticky ? GOSAKI_SAVE_SUCCESS_USER_MESSAGE : "変更がありません",
+      );
       return;
     }
     if (!token) {
@@ -568,7 +737,7 @@ export function initGosakiScheduleOperationalEdit(
       return;
     }
     // Client-armed: enable when dirty + signed in. Click runs internal dry-run then Save.
-    applySaveButtonUi(true, "未保存の変更があります");
+    applySaveButtonUi(true, GOSAKI_SAVE_DIRTY_USER_MESSAGE);
   }
 
   function showView() {
@@ -700,6 +869,7 @@ export function initGosakiScheduleOperationalEdit(
 
     const editEventBtn = t.closest("[data-gosaki-schedule-edit-event]");
     if (editEventBtn instanceof HTMLElement) {
+      if (liveReadState !== "ready") return;
       if (!confirmLeaveIfDirty()) return;
       const id = editEventBtn.getAttribute("data-event-id") || "";
       const legacyId = editEventBtn.getAttribute("data-legacy-id") || "";
@@ -711,6 +881,7 @@ export function initGosakiScheduleOperationalEdit(
 
     const dupEventBtn = t.closest("[data-gosaki-schedule-duplicate-event]");
     if (dupEventBtn instanceof HTMLElement) {
+      if (liveReadState !== "ready") return;
       if (!confirmLeaveIfDirty()) return;
       const id = dupEventBtn.getAttribute("data-event-id") || "";
       const legacyId = dupEventBtn.getAttribute("data-legacy-id") || "";
@@ -725,6 +896,7 @@ export function initGosakiScheduleOperationalEdit(
     }
 
     if (t.closest("[data-gosaki-schedule-create-start]")) {
+      if (liveReadState !== "ready") return;
       if (!confirmLeaveIfDirty()) return;
       showEditor("create", emptyCreateForm(), "新しい予定を追加");
       return;
@@ -1295,7 +1467,8 @@ export function initGosakiScheduleOperationalEdit(
         dryRunFingerprint = null;
         dryRunExpectedLock = null;
         setUnsaved(false);
-        setUserSaveMessage("保存しました");
+        saveSuccessSticky = true;
+        setUserSaveMessage(GOSAKI_SAVE_SUCCESS_USER_MESSAGE);
       } else {
         setUserSaveMessage(
           userMessageForSaveFailure(data, res.status, "保存に失敗しました"),
@@ -1322,6 +1495,7 @@ export function initGosakiScheduleOperationalEdit(
   const onFormEdited = () => {
     if (mode === "view") return;
     saveNotArmedLocked = false;
+    saveSuccessSticky = false;
     setUnsaved(currentDirty());
     if (dryRunFingerprint && dryRunFingerprint !== fingerprint(readForm(root))) {
       invalidateDryRun();
@@ -1366,5 +1540,20 @@ export function initGosakiScheduleOperationalEdit(
 
   applyScheduleSearch("");
   showView();
+  setLiveReadUi("pending");
   void refreshSaveGate();
+
+  window.addEventListener("gosaki-admin-auth-changed", ((ev: Event) => {
+    const detail = (ev as CustomEvent<{ signedIn?: boolean }>).detail;
+    if (detail?.signedIn) {
+      void refreshLiveSourceFromSupabase();
+    } else {
+      setLiveReadUi("pending");
+    }
+  }) as EventListener);
+
+  void (async () => {
+    const token = (await (deps.getAccessToken?.() ?? Promise.resolve(null))) || null;
+    if (token) void refreshLiveSourceFromSupabase();
+  })();
 }

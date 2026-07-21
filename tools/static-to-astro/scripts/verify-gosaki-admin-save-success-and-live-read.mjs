@@ -119,6 +119,48 @@ const applySrc = fs.readFileSync(
 );
 assert(applySrc.includes("gosaki-staging-admin-live-read.ts"), "apply copies live-read");
 
+const discPanelSrc = fs.readFileSync(
+  path.join(
+    TOOL_ROOT,
+    "templates/admin-cms/gosaki/components/AdminGosakiStagingDiscographyContentPanel.astro",
+  ),
+  "utf8",
+);
+assert(
+  discPanelSrc.includes(":global(.gosaki-discography-content-panel__album-summary)"),
+  "disc panel album-summary CSS is global for hydrate",
+);
+assert(
+  discPanelSrc.includes(":global(.gosaki-discography-content-panel__thumb)"),
+  "disc panel thumb CSS is global for hydrate",
+);
+assert(discPanelSrc.includes("grid-template-columns: 72px"), "disc thumb column 72px");
+assert(discPanelSrc.includes("width: 72px"), "disc thumb width 72px");
+assert(discPanelSrc.includes("grid-template-columns: 56px"), "disc mobile 56px");
+
+const discOpSrc = fs.readFileSync(
+  path.join(TEMPLATE, "gosaki-staging-discography-operational-edit.ts"),
+  "utf8",
+);
+assert(discOpSrc.includes("updateDiscographyAlbumCardElement"), "disc in-place card update");
+assert(discOpSrc.includes("ensureDiscographyAlbumList"), "disc list ensure");
+assert(
+  !/list\.innerHTML\s*=\s*albums/.test(discOpSrc),
+  "disc hydrate must not full-replace via albums.map innerHTML",
+);
+
+const ytPanelSrc = fs.readFileSync(
+  path.join(
+    TOOL_ROOT,
+    "templates/admin-cms/gosaki/components/AdminGosakiStagingYoutubeContentPanel.astro",
+  ),
+  "utf8",
+);
+assert(
+  ytPanelSrc.includes(":global(.gosaki-youtube-admin-item)"),
+  "youtube item CSS global for hydrate borders",
+);
+
 // --- Behavioral: success sticky ---
 {
   const afterSave = evaluateOneClickSaveStartGate({

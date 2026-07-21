@@ -278,22 +278,24 @@ function displayDisc(value: string | null | undefined): string {
   return t || "—";
 }
 
-export function renderDiscographyOperationalAlbumList(
-  root: HTMLElement,
-  albums: DiscographyOperationalAlbum[],
-): void {
-  const list = root.querySelector("[data-gosaki-disc-album-list]");
-  if (!(list instanceof HTMLElement)) return;
-  if (albums.length === 0) {
-    list.innerHTML = `<p class="gosaki-admin-content-panel__empty">Discography データがありません。</p>`;
-    return;
-  }
-  list.innerHTML = albums
-    .map((album) => {
-      const thumb = album.coverImageUrl
-        ? `<img class="gosaki-discography-content-panel__thumb" src="${escapeDiscHtml(album.coverImageUrl)}" alt="" loading="lazy" decoding="async" />`
-        : `<div class="gosaki-discography-content-panel__thumb gosaki-discography-content-panel__thumb--empty" aria-hidden="true"></div>`;
-      return `<li class="gosaki-discography-content-panel__album-item" data-gosaki-disc-album-summary="${escapeDiscHtml(album.legacyId)}">
+function ensureDiscographyAlbumList(root: HTMLElement): HTMLElement | null {
+  let list = root.querySelector("[data-gosaki-disc-album-list]");
+  if (list instanceof HTMLElement) return list;
+  const view = root.querySelector("[data-gosaki-disc-view-mode]");
+  if (!(view instanceof HTMLElement)) return null;
+  view.querySelectorAll(".gosaki-admin-content-panel__empty").forEach((el) => el.remove());
+  const ul = document.createElement("ul");
+  ul.className = "gosaki-discography-content-panel__album-list";
+  ul.setAttribute("data-gosaki-disc-album-list", "");
+  view.appendChild(ul);
+  return ul;
+}
+
+function buildDiscographyAlbumCardHtml(album: DiscographyOperationalAlbum): string {
+  const thumb = album.coverImageUrl
+    ? `<img class="gosaki-discography-content-panel__thumb" src="${escapeDiscHtml(album.coverImageUrl)}" alt="" loading="lazy" decoding="async" />`
+    : `<div class="gosaki-discography-content-panel__thumb gosaki-discography-content-panel__thumb--empty" aria-hidden="true"></div>`;
+  return `<li class="gosaki-discography-content-panel__album-item" data-gosaki-disc-album-summary="${escapeDiscHtml(album.legacyId)}">
   <div class="gosaki-discography-content-panel__album-summary">
     ${thumb}
     <div class="gosaki-discography-content-panel__album-meta">
@@ -306,13 +308,139 @@ export function renderDiscographyOperationalAlbumList(
     </div>
   </div>
 </li>`;
-    })
-    .join("");
+}
 
-  const meta = root.querySelector(".gosaki-admin-content-panel__meta");
-  if (meta) {
+function updateDiscographyAlbumCardElement(
+  item: HTMLElement,
+  album: DiscographyOperationalAlbum,
+): void {
+  item.setAttribute("data-gosaki-disc-album-summary", album.legacyId);
+  const summary = item.querySelector(".gosaki-discography-content-panel__album-summary");
+  if (!(summary instanceof HTMLElement)) return;
+
+  const existingThumb = summary.querySelector(".gosaki-discography-content-panel__thumb");
+  if (album.coverImageUrl) {
+    if (existingThumb instanceof HTMLImageElement) {
+      if (existingThumb.getAttribute("src") !== album.coverImageUrl) {
+        existingThumb.setAttribute("src", album.coverImageUrl);
+      }
+      existingThumb.classList.remove("gosaki-discography-content-panel__thumb--empty");
+    } else {
+      const img = document.createElement("img");
+      img.className = "gosaki-discography-content-panel__thumb";
+      img.src = album.coverImageUrl;
+      img.alt = "";
+      img.loading = "lazy";
+      img.decoding = "async";
+      // Preserve Astro scoped attrs from prior thumb/placeholder when present.
+      if (existingThumb instanceof HTMLElement) {
+        for (const attr of Array.from(existingThumb.attributes)) {
+          if (attr.name.startsWith("data-astro-cid-")) {
+            img.setAttribute(attr.name, attr.value);
+          }
+        }
+        existingThumb.replaceWith(img);
+      } else {
+        summary.insertBefore(img, summary.firstChild);
+      }
+    }
+  } else if (existingThumb instanceof HTMLImageElement) {
+    const placeholder = document.createElement("div");
+    placeholder.className =
+      "gosaki-discography-content-panel__thumb gosaki-discography-content-panel__thumb--empty";
+    placeholder.setAttribute("aria-hidden", "true");
+    for (const attr of Array.from(existingThumb.attributes)) {
+      if (attr.name.startsWith("data-astro-cid-")) {
+        placeholder.setAttribute(attr.name, attr.value);
+      }
+    }
+    existingThumb.replaceWith(placeholder);
+  } else if (!(existingThumb instanceof HTMLElement)) {
+    const placeholder = document.createElement("div");
+    placeholder.className =
+      "gosaki-discography-content-panel__thumb gosaki-discography-content-panel__thumb--empty";
+    placeholder.setAttribute("aria-hidden", "true");
+    summary.insertBefore(placeholder, summary.firstChild);
+  }
+
+  const title = summary.querySelector(".gosaki-discography-content-panel__album-title");
+  if (title) title.textContent = album.title;
+
+  const metas = summary.querySelectorAll(".gosaki-discography-content-panel__album-meta .gosaki-admin-content-panel__meta");
+  if (metas[0]) {
+    metas[0].textContent = `${displayDisc(album.artist)} · ${displayDisc(album.releaseDate)} · ${album.trackCount ?? 0} tracks`;
+  }
+  if (metas[1]) {
+    metas[1].textContent = displayDisc(album.label);
+  }
+
+  // Keep edit affordance if build markup omitted it for any reason.
+  if (!summary.querySelector("[data-gosaki-edit-start]")) {
+    const toolbar = document.createElement("div");
+    toolbar.className = "gosaki-admin-edit-toolbar";
+    toolbar.setAttribute("data-gosaki-edit-toolbar", "view");
+    toolbar.innerHTML =
+      '<button type="button" class="gosaki-admin-btn gosaki-admin-btn--primary gosaki-admin-edit-toolbar__btn gosaki-admin-edit-toolbar__btn--primary" data-gosaki-edit-start>編集</button>';
+    summary.appendChild(toolbar);
+  }
+}
+
+/**
+ * Sync album list UI to live albums.
+ * Prefer updating existing release cards in place (preserve Astro cid / structure)
+ * instead of full innerHTML replacement with a different simplified markup tree.
+ */
+export function renderDiscographyOperationalAlbumList(
+  root: HTMLElement,
+  albums: DiscographyOperationalAlbum[],
+): void {
+  const list = ensureDiscographyAlbumList(root);
+  if (!(list instanceof HTMLElement)) return;
+
+  if (albums.length === 0) {
+    list.replaceChildren();
+    const empty = document.createElement("p");
+    empty.className = "gosaki-admin-content-panel__empty";
+    empty.textContent = "Discography データがありません。";
+    list.replaceWith(empty);
+    return;
+  }
+
+  const existing = Array.from(
+    list.querySelectorAll<HTMLElement>("[data-gosaki-disc-album-summary]"),
+  );
+  const byId = new Map(
+    existing.map((el) => [el.getAttribute("data-gosaki-disc-album-summary") || "", el]),
+  );
+  const template = existing[0] ?? null;
+  const nextItems: HTMLElement[] = [];
+
+  for (const album of albums) {
+    const id = String(album.legacyId ?? "").trim();
+    let item = id ? byId.get(id) : undefined;
+    if (item) {
+      byId.delete(id);
+      updateDiscographyAlbumCardElement(item, album);
+    } else if (template) {
+      item = template.cloneNode(true) as HTMLElement;
+      updateDiscographyAlbumCardElement(item, album);
+    } else {
+      const wrap = document.createElement("ul");
+      wrap.innerHTML = buildDiscographyAlbumCardHtml(album);
+      item = wrap.firstElementChild as HTMLElement;
+    }
+    nextItems.push(item);
+  }
+
+  for (const leftover of byId.values()) leftover.remove();
+  list.replaceChildren(...nextItems);
+
+  const countMeta = Array.from(
+    root.querySelectorAll<HTMLElement>(".gosaki-admin-content-panel__meta"),
+  ).find((el) => el.querySelectorAll("strong").length >= 2);
+  if (countMeta) {
     const trackTotal = albums.reduce((n, a) => n + (a.trackCount ?? 0), 0);
-    const strongs = meta.querySelectorAll("strong");
+    const strongs = countMeta.querySelectorAll("strong");
     if (strongs[0]) strongs[0].textContent = String(albums.length);
     if (strongs[1]) strongs[1].textContent = String(trackTotal);
   }

@@ -42,6 +42,13 @@ function evaluateOneClickSaveStartGate(input) {
   if (input.indeterminateLocked) {
     return { canStart: false, buttonEnabled: false, reason: "結果が確認できません。自動では再試行しません。" };
   }
+  if (input.saveNotArmedLocked) {
+    return {
+      canStart: false,
+      buttonEnabled: false,
+      reason: GOSAKI_SAVE_FEATURE_STOPPED_USER_MESSAGE,
+    };
+  }
   if (!input.clientArmed) {
     return { canStart: false, buttonEnabled: false, reason: GOSAKI_CLIENT_SAVE_DISARMED_REASON };
   }
@@ -421,6 +428,7 @@ function simulateOneClickSync(opts) {
 
   const notArmed = isGosakiSaveNotArmedResponse(save.json, save.status);
   const didWrite = save.json.didWrite === true;
+  let saveNotArmedLocked = false;
   let userMessage = didWrite
     ? "保存しました"
     : notArmed
@@ -433,6 +441,8 @@ function simulateOneClickSync(opts) {
       lock: save.json.updatedAt,
       dirty: false,
     };
+  } else if (notArmed) {
+    saveNotArmedLocked = true;
   }
 
   const afterGate = evaluateOneClickSaveStartGate({
@@ -441,11 +451,36 @@ function simulateOneClickSync(opts) {
     dirty: baseline.dirty,
     saveInFlight: false,
     dryRunInFlight: false,
+    saveNotArmedLocked,
   });
+
+  const reclickGate = evaluateOneClickSaveStartGate({
+    clientArmed: true,
+    authenticated: true,
+    dirty: true,
+    saveInFlight: false,
+    dryRunInFlight: false,
+    saveNotArmedLocked: notArmed,
+  });
+
+  const reeditGate = notArmed
+    ? evaluateOneClickSaveStartGate({
+        clientArmed: true,
+        authenticated: true,
+        dirty: true,
+        saveInFlight: false,
+        dryRunInFlight: false,
+        saveNotArmedLocked: false,
+      })
+    : null;
 
   return {
     scenario: opts.serverArmed ? "C" : "B",
     buttonEnabledAfter: afterGate.buttonEnabled,
+    canStartAfter: afterGate.canStart,
+    finalReason: afterGate.reason,
+    reclickBlocked: notArmed ? !reclickGate.canStart && !reclickGate.buttonEnabled : null,
+    reeditReenables: notArmed ? reeditGate?.buttonEnabled === true : null,
     posts,
     postCount: posts.length,
     kinds: posts.map((p) => p.kind),
@@ -481,6 +516,11 @@ for (const module of MODULES) {
   assert(b.kinds.join(",") === "dryRun,save", `${module} B: kinds ${b.kinds}`);
   assert(b.lockMatched && b.fingerprintMatched, `${module} B: lock/fingerprint mismatch`);
   assert(b.userMessage === GOSAKI_SAVE_FEATURE_STOPPED_USER_MESSAGE, `${module} B: stopped msg`);
+  assert(b.finalReason === GOSAKI_SAVE_FEATURE_STOPPED_USER_MESSAGE, `${module} B: final reason`);
+  assert(b.buttonEnabledAfter === false, `${module} B: button must stay disabled after save_not_armed`);
+  assert(b.canStartAfter === false, `${module} B: canStart false after save_not_armed`);
+  assert(b.reclickBlocked === true, `${module} B: re-click blocked while latched`);
+  assert(b.reeditReenables === true, `${module} B: re-edit re-enables save`);
   assert(b.didWrite === false, `${module} B: didWrite`);
   assert(b.secondClickNeeded === false, `${module} B: second click`);
 
@@ -518,12 +558,14 @@ for (const [key, name] of Object.entries(files)) {
   if (key === "helper") {
     assert(src.includes("isClientSaveArmed"), "helper isClientSaveArmed");
     assert(src.includes("evaluateOneClickSaveStartGate"), "helper start gate");
+    assert(src.includes("saveNotArmedLocked"), "helper saveNotArmedLocked");
     continue;
   }
   assert(src.includes("isClientSaveArmed") || src.includes("saveArmed"), `${key}: arm check`);
   assert(!src.includes("saveEl.click"), `${key}: no saveEl.click`);
   assert(!/saveBtn\.click\s*\(/.test(src), `${key}: no saveBtn.click()`);
   assert(src.includes("GOSAKI_CLIENT_SAVE_DISARMED_REASON") || src.includes("保存は現在無効です"), `${key}: disarmed reason`);
+  assert(src.includes("saveNotArmedLocked"), `${key}: saveNotArmedLocked latch`);
   // UI must not dump tech in normal path labels
   assert(!/didWrite=<code>/.test(src), `${key}: no didWrite UI`);
 }

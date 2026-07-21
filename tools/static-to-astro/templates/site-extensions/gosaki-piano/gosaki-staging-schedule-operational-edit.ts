@@ -482,6 +482,7 @@ export function initGosakiScheduleOperationalEdit(
   let dryRunMode: "edit" | "create" | null = null;
   let saveInFlight = false;
   let dryRunInFlight = false;
+  let saveNotArmedLocked = false;
 
   const saveArmed = isClientSaveArmed(deps.saveArmed);
   const dryRunOperation = deps.dryRunOperation ?? "dryRun";
@@ -548,6 +549,10 @@ export function initGosakiScheduleOperationalEdit(
     const dirty = currentDirty();
     if (saveInFlight || dryRunInFlight) {
       applySaveButtonUi(false, saveInFlight ? "保存中…" : "確認中…");
+      return;
+    }
+    if (saveNotArmedLocked) {
+      applySaveButtonUi(false, GOSAKI_SAVE_FEATURE_STOPPED_USER_MESSAGE);
       return;
     }
     if (!saveArmed) {
@@ -1069,6 +1074,11 @@ export function initGosakiScheduleOperationalEdit(
 
     if (t.closest("[data-gosaki-schedule-save]")) {
       if (saveInFlight || dryRunInFlight) return;
+      if (saveNotArmedLocked) {
+        setUserSaveMessage(GOSAKI_SAVE_FEATURE_STOPPED_USER_MESSAGE);
+        void refreshSaveGate();
+        return;
+      }
       if (!(saveBtn instanceof HTMLButtonElement)) return;
       if (!saveArmed) {
         setUserSaveMessage(GOSAKI_CLIENT_SAVE_DISARMED_REASON);
@@ -1239,6 +1249,7 @@ export function initGosakiScheduleOperationalEdit(
       }
 
       if (isGosakiSaveNotArmedResponse(data, res.status)) {
+        saveNotArmedLocked = true;
         setUserSaveMessage(GOSAKI_SAVE_FEATURE_STOPPED_USER_MESSAGE);
         return;
       }
@@ -1310,6 +1321,7 @@ export function initGosakiScheduleOperationalEdit(
 
   const onFormEdited = () => {
     if (mode === "view") return;
+    saveNotArmedLocked = false;
     setUnsaved(currentDirty());
     if (dryRunFingerprint && dryRunFingerprint !== fingerprint(readForm(root))) {
       invalidateDryRun();

@@ -261,6 +261,7 @@ export function initGosakiYoutubeMultiOperationalEdit(
   let dryRunInFlight = false;
   let saveInFlight = false;
   let indeterminateLocked = false;
+  let saveNotArmedLocked = false;
 
   function itemsFingerprint(list: YoutubeMultiDraftItem[]): string {
     return JSON.stringify(
@@ -295,6 +296,10 @@ export function initGosakiYoutubeMultiOperationalEdit(
     }
     if (saveInFlight || dryRunInFlight) {
       applySaveButtonUi(false, saveInFlight ? "保存中…" : "確認中…");
+      return;
+    }
+    if (saveNotArmedLocked) {
+      applySaveButtonUi(false, GOSAKI_SAVE_FEATURE_STOPPED_USER_MESSAGE);
       return;
     }
     if (!saveArmed) {
@@ -397,6 +402,7 @@ export function initGosakiYoutubeMultiOperationalEdit(
   }
 
   function invalidateDryRunUi() {
+    saveNotArmedLocked = false;
     if (dryRunResult instanceof HTMLElement) {
       dryRunResult.hidden = true;
       dryRunResult.innerHTML = "";
@@ -576,6 +582,7 @@ export function initGosakiYoutubeMultiOperationalEdit(
         return;
       }
       if (isGosakiSaveNotArmedResponse(json, res.status)) {
+        saveNotArmedLocked = true;
         applySaveButtonUi(false, SAVE_STOPPED);
         if (statusEl) statusEl.textContent = SAVE_STOPPED;
         return;
@@ -693,6 +700,11 @@ export function initGosakiYoutubeMultiOperationalEdit(
         return;
       }
       if (saveInFlight || dryRunInFlight) return;
+      if (saveNotArmedLocked) {
+        applySaveButtonUi(false, SAVE_STOPPED);
+        if (statusEl) statusEl.textContent = SAVE_STOPPED;
+        return;
+      }
       if (!saveArmed) {
         applySaveButtonUi(false, GOSAKI_CLIENT_SAVE_DISARMED_REASON);
         return;

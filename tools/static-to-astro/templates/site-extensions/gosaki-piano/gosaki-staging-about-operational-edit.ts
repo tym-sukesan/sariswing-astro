@@ -124,6 +124,7 @@ export function initGosakiAboutOperationalEdit(
   let dryRunExpectedBefore: AboutFormSnapshot | null = null;
   let saveInFlight = false;
   let dryRunInFlight = false;
+  let saveNotArmedLocked = false;
   let authenticated = false;
   /** Cancel/dirty baseline — updated to Save response.after on successful Save. */
   let baselineFingerprint: string | null = null;
@@ -322,6 +323,10 @@ export function initGosakiAboutOperationalEdit(
       applySaveButtonUi(false, saveInFlight ? "保存中…" : "確認中…");
       return;
     }
+    if (saveNotArmedLocked) {
+      applySaveButtonUi(false, SAVE_STOPPED_MSG);
+      return;
+    }
     if (!saveArmed) {
       applySaveButtonUi(false, GOSAKI_CLIENT_SAVE_DISARMED_REASON);
       return;
@@ -340,10 +345,12 @@ export function initGosakiAboutOperationalEdit(
   function wireFormInvalidate() {
     root.querySelectorAll("input, textarea").forEach((el) => {
       el.addEventListener("input", () => {
+        saveNotArmedLocked = false;
         invalidateDryRun();
         applyDryRunButtonUi();
       });
       el.addEventListener("change", () => {
+        saveNotArmedLocked = false;
         invalidateDryRun();
         applyDryRunButtonUi();
       });
@@ -627,6 +634,7 @@ export function initGosakiAboutOperationalEdit(
         return;
       }
       if (isGosakiSaveNotArmedResponse(body, response.status)) {
+        saveNotArmedLocked = true;
         invalidateDryRun();
         applySaveButtonUi(false, SAVE_STOPPED_MSG);
         setLocalValidation(SAVE_STOPPED_MSG, false);
@@ -689,6 +697,11 @@ export function initGosakiAboutOperationalEdit(
   if (saveBtn instanceof HTMLButtonElement) {
     saveBtn.addEventListener("click", (ev) => {
       ev.preventDefault();
+      if (saveNotArmedLocked) {
+        applySaveButtonUi(false, SAVE_STOPPED_MSG);
+        setLocalValidation(SAVE_STOPPED_MSG, false);
+        return;
+      }
       if (!saveArmed) {
         applySaveButtonUi(false, GOSAKI_CLIENT_SAVE_DISARMED_REASON);
         return;

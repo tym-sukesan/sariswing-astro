@@ -281,6 +281,7 @@ export function initGosakiDiscographyOperationalEdit(
   let authenticated = false;
   let pendingOneClickSave = false;
   let indeterminateLocked = false;
+  let saveNotArmedLocked = false;
 
   const setUserSaveMessage = (message: string) => {
     if (saveReasonEl instanceof HTMLElement) saveReasonEl.textContent = message;
@@ -343,6 +344,8 @@ export function initGosakiDiscographyOperationalEdit(
       const dirty = isDirty(form);
       if (indeterminateLocked) {
         saveReasonEl.textContent = "結果が確認できません。自動では再試行しません。";
+      } else if (saveNotArmedLocked) {
+        saveReasonEl.textContent = GOSAKI_SAVE_FEATURE_STOPPED_USER_MESSAGE;
       } else if (!authenticated) {
         saveReasonEl.textContent = "ログインが必要です";
       } else if (!dirty) {
@@ -367,7 +370,8 @@ export function initGosakiDiscographyOperationalEdit(
         dirty &&
         !saveInFlight &&
         !dryRunInFlight &&
-        !indeterminateLocked;
+        !indeterminateLocked &&
+        !saveNotArmedLocked;
       saveBtn.disabled = !canClick;
       saveBtn.setAttribute("aria-disabled", canClick ? "false" : "true");
       saveBtn.textContent = "保存";
@@ -376,6 +380,7 @@ export function initGosakiDiscographyOperationalEdit(
   };
 
   const refreshDirty = () => {
+    saveNotArmedLocked = false;
     const dirty = isDirty(form);
     setUnsaved(root, dirty);
     if (dirty || (dryRunLockedFingerprint && editableFingerprint(readFormSnapshot(form)) !== dryRunLockedFingerprint)) {
@@ -665,6 +670,7 @@ export function initGosakiDiscographyOperationalEdit(
       }
 
       if (isGosakiSaveNotArmedResponse(data, res.status)) {
+        saveNotArmedLocked = true;
         setUserSaveMessage(GOSAKI_SAVE_FEATURE_STOPPED_USER_MESSAGE);
         return;
       }
@@ -747,6 +753,11 @@ export function initGosakiDiscographyOperationalEdit(
   if (saveBtn instanceof HTMLButtonElement) {
     saveBtn.addEventListener("click", async () => {
       if (saveInFlight || dryRunInFlight || indeterminateLocked) return;
+      if (saveNotArmedLocked) {
+        setUserSaveMessage(GOSAKI_SAVE_FEATURE_STOPPED_USER_MESSAGE);
+        void refreshSaveUi();
+        return;
+      }
       if (!isClientSaveArmed(deps.saveArmed)) {
         setUserSaveMessage(GOSAKI_CLIENT_SAVE_DISARMED_REASON);
         void refreshSaveUi();

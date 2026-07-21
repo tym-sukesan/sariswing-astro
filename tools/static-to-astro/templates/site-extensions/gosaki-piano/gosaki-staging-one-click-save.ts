@@ -65,6 +65,8 @@ export function evaluateOneClickSaveStartGate(input: {
   saveInFlight: boolean;
   dryRunInFlight: boolean;
   indeterminateLocked?: boolean;
+  /** Set after server save_not_armed until the operator edits the form again. */
+  saveNotArmedLocked?: boolean;
 }): { canStart: boolean; buttonEnabled: boolean; reason: string } {
   if (input.saveInFlight) {
     return { canStart: false, buttonEnabled: false, reason: "保存中…" };
@@ -77,6 +79,13 @@ export function evaluateOneClickSaveStartGate(input: {
       canStart: false,
       buttonEnabled: false,
       reason: "結果が確認できません。自動では再試行しません。",
+    };
+  }
+  if (input.saveNotArmedLocked) {
+    return {
+      canStart: false,
+      buttonEnabled: false,
+      reason: GOSAKI_SAVE_FEATURE_STOPPED_USER_MESSAGE,
     };
   }
   if (!input.clientArmed) {

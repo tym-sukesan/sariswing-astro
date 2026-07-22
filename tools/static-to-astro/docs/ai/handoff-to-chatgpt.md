@@ -5,23 +5,28 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: CMS Core v2 Phase 2 FINAL SQL HARDEN COMPLETE → operator SELECT next
+Current phase: CMS Core v2 Phase 2 STAGING DB APPLY COMPLETE → Edge deploy preflight next
 Phase2 doc: tools/static-to-astro/docs/cms-core-v2-youtube-supabase-vertical-slice.md
-cmsCoreV2YoutubeSupabaseFinalSqlHardenComplete: true
-readyForOperatorMigrationApply: false
-site_embeds: column-level INSERT/UPDATE GRANTs · audit trigger auth.uid()
-Access: first-time fail-closed · owner≠platform_admin UUID · no ON CONFLICT
-Apply order: migration → RLS → content seed → access assignment
-STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
-EXTERNAL_WRITE_EXECUTED: false
+cmsCoreV2YoutubeSupabaseStagingDbApplyComplete: true
+readyForOperatorMigrationApply: applied
+dbMigrationExecuted: true · rlsApplied: true · seedExecuted: true · accessAssignmentExecuted: true
+edgeDeployExecuted: false · browserRoundtripExecuted: false · rollbackExecuted: false
+STG: kmjqppxjdnwwrtaeqjta · counts sites=1 site_embeds=1 site_members=1 platform_admins=1
+owner ≠ platform_admin (no emails/UUIDs in docs)
+production vsbvndwuajjhnzpohghh: UNCHANGED
+Next Kit: Edge deploy preflight → staging Edge deploy (arms false) → optional dry-run/Save
+Contents YouTube path: still default until cutover
+EXTERNAL_WRITE_EXECUTED: false (this docs-only record; operator staging SQL already applied)
 ```
 
-## CMS Core v2 YouTube Supabase — final SQL harden (2026-07-22)
+## CMS Core v2 YouTube Supabase — staging DB apply (2026-07-23)
 
-- **Column GRANTs** on `site_embeds`; `created_by`/`updated_by` via DB trigger; Edge payload aligned
-- **Access** assignment/rollback fail-closed; distinct UUIDs required
-- **Gate:** `readyForOperatorMigrationApply: false`
-- **Not done:** staging SQL apply / Edge deploy / DB write
+- **Project:** `static-to-astro-cms-staging` / `kmjqppxjdnwwrtaeqjta`
+- **PASS:** migration · RLS/GRANT · content seed · access assignment
+- **Counts:** sites=1 · site_embeds=1 · site_members=1 · platform_admins=1
+- **Not done:** Edge deploy · browser round-trip · rollback (not needed)
+- **Gate:** `readyForOperatorMigrationApply: applied`
+- **Next:** Edge deploy preflight
 
 ## CMS Core v2 YouTube Supabase Vertical Slice — local implementation (2026-07-22)
 

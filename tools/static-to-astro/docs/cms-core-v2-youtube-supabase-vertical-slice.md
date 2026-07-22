@@ -1,11 +1,10 @@
 # CMS Core v2 Phase 2 — YouTube Supabase Vertical Slice (local implementation)
 
-- **Phase:** `cms-core-v2-youtube-supabase-vertical-slice-local-implementation` (+ staging preflight + SQL template harden)
-- **Status:** **SQL templates hardened for first staging apply** — apply **not** started; `readyForOperatorMigrationApply` remains **false**
-- **Date:** 2026-07-22
-- **Baseline commit (preflight):** `338428d` — working tree may include post-preflight SQL harden diffs
-- **Target:** staging Supabase `kmjqppxjdnwwrtaeqjta` only
-- **STOP:** production `vsbvndwuajjhnzpohghh` — do not open, query, or mutate
+- **Phase:** `cms-core-v2-youtube-supabase-vertical-slice-staging-db-apply` (builds on `cms-core-v2-youtube-supabase-vertical-slice-local-implementation`)
+- **Status:** **staging DB apply complete** (migration · RLS/GRANT · content seed · access) — Edge deploy / browser round-trip **not** done
+- **Date:** 2026-07-23
+- **Staging project:** `static-to-astro-cms-staging` / `kmjqppxjdnwwrtaeqjta`
+- **STOP:** production `vsbvndwuajjhnzpohghh` — **unchanged / not touched**
 - **ADR:** [cms-core-v2-minimal-architecture-decision.md](./cms-core-v2-minimal-architecture-decision.md)
 
 ## Gates
@@ -17,20 +16,42 @@ cmsCoreV2YoutubeSupabaseReAuditPass: true
 cmsCoreV2YoutubeSupabaseStagingMigrationPreflightComplete: true
 cmsCoreV2YoutubeSupabaseSqlTemplateHardenComplete: true
 cmsCoreV2YoutubeSupabaseFinalSqlHardenComplete: true
-readyForOperatorMigrationApply: false
+cmsCoreV2YoutubeSupabaseStagingDbApplyComplete: true
+readyForOperatorMigrationApply: applied
+operatorMigrationApplyCompleted: true
 edgeDeployExecuted: false
-dbMigrationExecuted: false
-dbWriteExecuted: false
-rlsApplied: false
-seedExecuted: false
-accessAssignmentExecuted: false
-liveDbSelectConfirmationPendingOperator: true
+dbMigrationExecuted: true
+dbWriteExecuted: true
+rlsApplied: true
+seedExecuted: true
+accessAssignmentExecuted: true
+rollbackExecuted: false
+browserRoundtripExecuted: false
+liveDbSelectConfirmationPendingOperator: false
 contentsApiPathUnchangedDefault: true
 scheduleDiscographyAboutUnchanged: true
 readyForAnyFutureFtpApply: false
 ```
 
-`readyForOperatorMigrationApply` stays **false**. Flip only after operator (1) runs SELECT-only preflight on staging, (2) confirms compatible DB state, (3) prepares access UUID placeholders locally, (4) issues the AGENTS destructive-ops approval form for apply.
+`readyForOperatorMigrationApply: applied` — staging Core DDL/RLS/seed/access **already applied**; do not re-run first-time access assignment without a new approved plan.
+
+## Staging DB apply result (2026-07-23 · operator)
+
+| Step | Result |
+| --- | --- |
+| migration | **PASS** |
+| RLS / minimal GRANT | **PASS** |
+| Gosaki content seed | **PASS** |
+| access assignment | **PASS** |
+| production `vsbvndwuajjhnzpohghh` | **unchanged** |
+| Edge deploy | **not executed** |
+| browser round-trip | **not executed** |
+| rollback | **not executed** (not needed) |
+
+**Row counts (staging, post-apply):** `sites=1` · `site_embeds=1` · `site_members=1` · `platform_admins=1`
+**Access:** owner and platform_admin are **distinct** staging Auth users (emails/UUIDs **not** recorded in git).
+
+**Next:** Edge deploy preflight → staging deploy of `gosaki-youtube-supabase-save-dry-run` (arms false) → optional dry-run / Save round-trip under explicit approval. Contents YouTube path remains default until cutover.
 
 ## What was implemented (local only)
 
@@ -326,8 +347,10 @@ If tables already exist with divergent schema → **STOP** and reconcile before 
 
 ### Operator next steps after SELECT review
 
+> **Historical (pre-apply).** Staging DB apply completed 2026-07-23 — see top gates. Do not re-apply first-time access assignment.
+
 1. Paste SELECT results into the apply chat (redact email if needed; UUID OK).
-2. Set `readyForOperatorMigrationApply: true` only when SELECT is compatible **and** membership UUIDs are ready.
+2. Proceed only with AGENTS approval form when SELECT is compatible **and** membership UUIDs are ready (`readyForOperatorMigrationApply` is now **`applied`**).
 3. Apply with AGENTS approval form, **one template at a time**, same order as above.
 4. Edge deploy / Save round-trip = **later** phases (arms stay false).
 

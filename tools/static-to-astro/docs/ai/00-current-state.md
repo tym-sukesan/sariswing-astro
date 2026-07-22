@@ -1,13 +1,11 @@
-Last updated: 2026-07-22
+Last updated: 2026-07-23
 Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**CMS Core v2 YouTube Supabase final SQL harden (2026-07-22):** **complete (local only · not applied)** — `site_embeds` column-level INSERT/UPDATE GRANTs · audit trigger `auth.uid()` for created_by/updated_by · Edge payload aligned · access assignment/rollback fail-closed first-time only · **`readyForOperatorMigrationApply: false`** · Doc: `cms-core-v2-youtube-supabase-vertical-slice.md`.
+**CMS Core v2 YouTube Supabase staging DB apply (2026-07-23):** **complete** — staging `kmjqppxjdnwwrtaeqjta` · production `vsbvndwuajjhnzpohghh` **unchanged** · migration **PASS** · RLS/GRANT **PASS** · content seed **PASS** · access assignment **PASS** · counts `sites=1` `site_embeds=1` `site_members=1` `platform_admins=1` · owner≠platform_admin (UUIDs/emails not recorded) · Edge deploy **false** · browser round-trip **false** · rollback **not needed** · Gate: `readyForOperatorMigrationApply: applied` · `cmsCoreV2YoutubeSupabaseStagingDbApplyComplete: true` · Doc: `cms-core-v2-youtube-supabase-vertical-slice.md` · **Next:** Edge deploy preflight → staging Edge deploy (arms false) → optional dry-run/Save round-trip.
 
-**CMS Core v2 YouTube Supabase SQL template harden (2026-07-22):** **complete (local only · not applied)** — fail-closed Core table `REVOKE ALL` · composite FK · `ON DELETE RESTRICT` · DDL rollback no `CASCADE` · access/content split · ADR suspended note · superseded in part by final SQL harden above.
-
-**CMS Core v2 YouTube Supabase staging migration preflight (2026-07-22):** **complete (read-only)** — baseline commit **`338428d`** · staging `kmjqppxjdnwwrtaeqjta` · production `vsbvndwuajjhnzpohghh` STOP · apply order migration→RLS/GRANT→content seed→access · SELECT-only SQL in Phase2 doc · **`readyForOperatorMigrationApply: false`** · live DB SELECT confirmation **pending operator**.
+**CMS Core v2 YouTube Supabase final SQL harden (2026-07-22):** **complete (templates)** — column-level GRANTs · audit trigger · access fail-closed · applied on staging 2026-07-23 (see above).
 
 **CMS Core v2 YouTube Supabase Vertical Slice local implementation (2026-07-22):** **complete (local only)** — Doc: `cms-core-v2-youtube-supabase-vertical-slice.md` · SQL drafts (tenancy+site_embeds+RLS+seed) · Edge undeployed `gosaki-youtube-supabase-save-dry-run` · JWT+`can_write_site` · optimistic lock · dual path (Contents default; Supabase opt-in env) · build DB-prefer+JSON fallback · sticky/dirty retained · verifier `verify-cms-core-v2-youtube-supabase-vertical-slice.mjs` · **Gates:** localImplemented true · migration/RLS/Edge/DB write/Contents change/FTP **false** · superseded readiness: wait re-audit after hardening.
 

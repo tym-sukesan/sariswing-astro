@@ -1,29 +1,32 @@
-Last updated: 2026-07-22
+Last updated: 2026-07-23
 Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **Kit Core 第一候補:** Phase 2 YouTube Supabase — **final SQL harden complete**（列単位 GRANT · audit trigger · access fail-closed）· `readyForOperatorMigrationApply: false`。オペレータ SELECT → 2つの**異なる** Auth UUID を access template にローカル置換 → 明示承認後に migration→RLS→content→access。Doc: `cms-core-v2-youtube-supabase-vertical-slice.md`。
-
+1. **Kit Core 第一候補:** Phase 2 YouTube Supabase — **staging DB apply complete**（`readyForOperatorMigrationApply: applied`）。**Next:** Edge deploy preflight → staging deploy `gosaki-youtube-supabase-save-dry-run`（arms false）→ 明示承認後の dry-run / Save round-trip。Contents YouTube 経路は切替まで既定維持。Doc: `cms-core-v2-youtube-supabase-vertical-slice.md`。
 2. **並行可（Gosaki ops）:** クライアントへ staging 共有・feedback（`STAGING_READY_FOR_CLIENT_SHARE=true` · URL `https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/`）。
 3. **並行可:** production hosting **read-only planning**（契約・deploy·DNS はまだ行わない）。
 4. staging Edge は **server arms すべて false**（再 arm は明示承認時のみ・1機能ずつ）。
 5. production deploy / Wix 変更 / auto FTP / production ref `vsbvndwuajjhnzpohghh` は禁止。
 
-## 0. CMS Core v2 YouTube Supabase — final SQL harden (2026-07-22)
+## 0. CMS Core v2 YouTube Supabase — staging DB apply (2026-07-23)
 
 | Item | Value |
 | --- | --- |
-| Gate | `cmsCoreV2YoutubeSupabaseFinalSqlHardenComplete: true` |
-| `readyForOperatorMigrationApply` | **false** |
-| Column GRANTs | INSERT/UPDATE column-level on `site_embeds` |
-| Audit | `tg_site_embeds_set_audit_actors` ← `auth.uid()` |
-| Access | first-time fail-closed · distinct owner/admin UUIDs |
-| DB / Edge deploy / apply | **false** |
+| Project | `static-to-astro-cms-staging` / `kmjqppxjdnwwrtaeqjta` |
+| Production | `vsbvndwuajjhnzpohghh` **unchanged** |
+| migration / RLS / content seed / access | **PASS** |
+| Counts | sites=1 · site_embeds=1 · site_members=1 · platform_admins=1 |
+| Access | owner ≠ platform_admin (no emails/UUIDs in git) |
+| `readyForOperatorMigrationApply` | **applied** |
+| Edge deploy / browser round-trip / rollback | **false** / **false** / not needed |
+| Next | Edge deploy preflight |
 
 ```txt
-CMS_CORE_V2_YOUTUBE_SUPABASE_FINAL_SQL_HARDEN_COMPLETE: true
-READY_FOR_OPERATOR_MIGRATION_APPLY: false
+CMS_CORE_V2_YOUTUBE_SUPABASE_STAGING_DB_APPLY_COMPLETE: true
+READY_FOR_OPERATOR_MIGRATION_APPLY: applied
+EDGE_DEPLOY_EXECUTED: false
+BROWSER_ROUNDTRIP_EXECUTED: false
 ```
 
 ## 0. CMS Core v2 Minimal Architecture Planning (2026-07-22) — complete

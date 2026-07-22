@@ -6,37 +6,41 @@ Paste this file at the start of a new ChatGPT thread.
 
 ```txt
 Current phase: Gosaki staging CLIENT-SHARE READY · STAGING_READY_FOR_CLIENT_SHARE=true
-HEAD / origin/main: f284332 · working tree was clean before this docs update
-STG: kmjqppxjdnwwrtaeqjta · remote package sourceCommit=f284332 @ /cms-kit-staging/gosaki-piano/
-operator manual FTP + browser smoke: PASS
+verified impl/content baseline commit: 7797ece (no impl/content changes after)
+deployed staging package sourceCommit: f284332 @ /cms-kit-staging/gosaki-piano/
+current repo HEAD / origin/main: DO NOT PIN — run git rev-parse --short HEAD and origin/main
+next commit: docs-only (AGENTS.md + AI docs) · after that still no package regen / FTP
+package freshness: judge f284332 impl/content baseline vs later docs-only drift separately
+STG: kmjqppxjdnwwrtaeqjta · operator manual FTP + browser smoke PASS
 4 client arms: false · 4 server arms: false
-production vsbvndwuajjhnzpohghh STOP / untouched · Wix production unchanged
-HOSTING_READY: false → production go-live is a separate phase
-Next: client share prep OR production hosting planning
-no Cursor FTP / DB / Secret / Edge / implementation in this docs update
+production vsbvndwuajjhnzpohghh STOP / untouched · Wix unchanged
+HOSTING_READY: false · leading blocker: replacement hosting not contracted
+After contract planning: DNS/SSL/MX/FTP path/Basic Auth/prod env+Secrets/noindex off/backup/rollback/Wix cutover sign-off
+YouTube/About Save → GitHub Contents API commit on repo main · then fetch/pull · regen package from new HEAD
+Next primary: client staging share + feedback
+Parallel OK: production hosting read-only planning
+Do NOT yet: production contract / deploy / DNS
 EXTERNAL_WRITE_EXECUTED: false
 ```
 
-## Gosaki staging client-share READY (2026-07-22)
+## Gosaki staging client-share READY (2026-07-22 · audit-hardened)
 
-- **Verdict:** `STAGING_READY_FOR_CLIENT_SHARE: true` · `CLIENT_STAGING_PREVIEW_READY: true`
-- **Remote:** `sourceCommit=f284332` · unarmed · `/cms-kit-staging/gosaki-piano/`
-- **Operator:** manual FTP **done** · 実ブラウザ smoke **PASS**
-- **Smoke:** login/logout · live-read安定（点滅なし）· Schedule admin **79** / public **74** · G-22e非公開は公開されない · Discography **4/34** desktop+375px · YouTube · About+5バンド · Contact · 全admin Save disabled · 公開各ページ · 375px重大崩れなし · noindex
-- **CMS:** 4機能実Save往復 **closed**（Schedule / Discography atomic / YouTube OFF→ON / About blob一致）
-- **Safety:** client+server arms false · production ref STOP · Wix unchanged
-- **Keep:** G-22e unpublished test event = staging verification record
-- **Non-blocking UX:** `yt-placeholder-01` rename · About/プロフィール名称
-- **Separate blocking:** production hosting / go-live（`HOSTING_READY: false`）
-- **Docs updated:** `00-current-state.md` · `03-next-actions.md` · this file
-- **COMMIT_READY:** docs-only（user が commit 指示したとき）
+- **Verdict:** `STAGING_READY_FOR_CLIENT_SHARE: true`
+- **Separate clearly:** verified baseline **`7797ece`** · deployed package **`f284332`** · current HEAD = `git rev-parse`（文書固定しない）· docs-only 後も regen **not** needed
+- **Remote:** unarmed `f284332` @ `/cms-kit-staging/gosaki-piano/`
+- **Browser evidence:** sticky「保存しました」+ dirty復帰（4機能）· live-read点滅解消 · Discography/YouTube hydrate layout · desktop/375px · Schedule 79/74 · G-22e hidden on public · Save disabled · noindex
+- **CMS Save:** Schedule DB · Discography atomic RPC · YouTube/About **Contents API → `main`**
+- **HOSTING_READY=false:** leading blocker = **replacement hosting 未契約**（go-live は別フェーズ）
+- **Keep / UX:** G-22e staging record · `yt-placeholder-01` rename · About/プロフィール名称 = non-blocking
+- **Next:** client share + feedback **(1st)** · hosting read-only planning **(parallel)**
+- **Docs:** `AGENTS.md` Contents API safety · `00` · `03` · this file
 
 ### 4実Save証跡（確定）
 
 1. **Schedule** — Save / 復元 / DB検証 PASS · 79
 2. **Discography** — atomic RPC / fingerprint復元 PASS · 4/34
-3. **YouTube** — 公開 OFF→ON 復元 PASS
-4. **About** — before/after blob完全一致 PASS
+3. **YouTube** — 公開 OFF→ON 復元 PASS · Contents → `main`
+4. **About** — before/after blob完全一致 PASS · Contents → `main`
 
 ## Gosaki staging public mobile P1 review + venue URL links — final result
 

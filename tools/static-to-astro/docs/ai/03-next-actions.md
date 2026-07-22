@@ -3,42 +3,62 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **STAGING_READY_FOR_CLIENT_SHARE = true** — remote `f284332` unarmed · smoke PASS · クライアントへ staging URL 共有可（`https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/`）。
-2. **次フェーズ（選択）:** クライアント共有準備 **または** production hosting planning（`HOSTING_READY: false` · go-live は別 blocking）。
-3. staging Edge は **server arms すべて false** のまま運用（再 arm は明示承認時のみ・1機能ずつ）。
+1. **第一候補:** クライアントへ staging 共有・feedback 収集（`STAGING_READY_FOR_CLIENT_SHARE=true` · URL `https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/`）。
+2. **並行可:** production hosting **read-only planning**（契約・deploy・DNS はまだ行わない）。
+3. staging Edge は **server arms すべて false**（再 arm は明示承認時のみ・1機能ずつ）。
 4. production deploy / Wix 変更 / auto FTP / production ref `vsbvndwuajjhnzpohghh` は禁止。
+
+### 検証基準 / package / 現在HEAD（混同禁止）
+
+| | Value |
+| --- | --- |
+| 検証済み実装・コンテンツ基準commit | **`7797ece`**（以降実装・コンテンツ変更なし） |
+| deployed staging package `sourceCommit` | **`f284332`** @ `/cms-kit-staging/gosaki-piano/` |
+| 現在の repo HEAD / origin/main | **文書に固定しない** · 都度 `git rev-parse --short HEAD` / `git rev-parse --short origin/main` |
+| 次commit | AGENTS.md + AI docs のみの **docs-only** |
+| package再生成 / FTP | docs-only 後も **不要** · freshness は `f284332` 実装基準と docs-only 差を区別 |
+
+### HOSTING_READY=false — 先頭blocker（統一）
+
+- **現在の先頭blocker:** replacement hosting **未契約**
+- **契約後 planning 項目:** DNS / SSL / MX / FTP remote path / Basic Auth / production env・Secrets / noindex解除 / backup / rollback / Wix切替 sign-off
 
 ## 0. Gosaki staging client-share READY (2026-07-22) — complete and closed
 
 | Item | Value |
 | --- | --- |
 | Phase | `gosaki-staging-client-share-ready` |
-| HEAD / origin/main | **`f284332`** |
-| working tree before docs update | **clean** |
+| 検証済み実装・コンテンツ基準commit | **`7797ece`** |
+| deployed package sourceCommit | **`f284332`** |
+| 現在HEAD | 都度 `git rev-parse`（文書固定しない） |
+| package regen needed | **false**（docs-only 差 · 実装基準は `f284332`/`7797ece`） |
 | STAGING_READY_FOR_CLIENT_SHARE | **true** |
-| remote sourceCommit | **`f284332`** @ `/cms-kit-staging/gosaki-piano/` |
-| manual FTP | **done** (operator) |
-| browser smoke | **PASS** |
+| manual FTP + browser smoke | **done / PASS** |
 | client / server arms (4 each) | **false** / **false** |
 | production ref / Wix | **STOP / unchanged** |
-| HOSTING_READY (production go-live) | **false**（別フェーズ blocking） |
-| Next | client share prep **or** production hosting planning |
+| HOSTING_READY 先頭blocker | replacement hosting **未契約** |
+| YouTube / About SoT | repo **`main`** via Contents API · Save後 fetch/pull → 新HEADから package 再生成 |
+| Next | client share + feedback **(primary)** · hosting read-only planning **(parallel)** |
 
 ```txt
 STAGING_READY_FOR_CLIENT_SHARE: true
-CLIENT_STAGING_PREVIEW_READY: true
-CMS_SAVE_ROUND_TRIPS_CLOSED: true
+VERIFIED_IMPL_CONTENT_BASELINE: 7797ece
+DEPLOYED_PACKAGE_SOURCE_COMMIT: f284332
+CURRENT_REPO_HEAD: check_with_git_rev_parse_do_not_pin_in_docs
+PACKAGE_REGEN_REQUIRED: false
 SERVER_ARMS_FALSE: true
 CLIENT_ARMS_FALSE: true
-REMOTE_PACKAGE_F284332_UNARMED: true
 BROWSER_SMOKE_PASS: true
 HOSTING_READY: false
+HOSTING_BLOCKER: replacement_hosting_not_contracted
 PRODUCTION_GO_LIVE_BLOCKED: true
 ```
 
-### 実ブラウザ smoke（operator · PASS）
+### 実ブラウザ証跡（operator · PASS）
 
-login/logout · live-read安定（点滅なし）· Schedule admin **79** / public **74** · G-22e非公開は公開されない · Discography **4/34** desktop+375px · YouTube · About+5バンド · Contact · 全admin Save disabled · 公開各ページ · 375px重大崩れなし · noindex
+- login/logout · live-read点滅解消 · sticky「保存しました」+ dirty復帰（4機能）PASS
+- Discography / YouTube hydrate後レイアウト PASS · desktop / 375px PASS
+- Schedule admin **79** / public **74** · G-22e非公開は公開されない · Discography **4/34** · About+5バンド · Contact · 全admin Save disabled · noindex
 
 ### 4実Save証跡（確定）
 
@@ -46,17 +66,17 @@ login/logout · live-read安定（点滅なし）· Schedule admin **79** / publ
 | --- | --- |
 | Schedule | Save / 復元 / DB検証 **PASS** · **79** |
 | Discography | atomic RPC / fingerprint復元 **PASS** · **4/34** |
-| YouTube | 公開 OFF→ON 復元 **PASS** |
-| About | before/after blob完全一致 **PASS** |
+| YouTube | 公開 OFF→ON 復元 **PASS** · Contents → `main` |
+| About | before/after blob完全一致 **PASS** · Contents → `main` |
 
 ### Classification（残課題）
 
 | Item | Class |
 | --- | --- |
-| `【G-22eテスト】新規追加テストイベント` (`published=false`) | **staging verification keep**（公開に出ない） |
+| `【G-22eテスト】新規追加テストイベント` (`published=false`) | **staging verification keep** |
 | `yt-placeholder-01` id rename | **non-blocking UX** |
-| About admin「プロフィール・バンド」vs public「About」 | **non-blocking UX** |
-| production hosting / go-live | **別フェーズ blocking**（`HOSTING_READY: false`） |
+| About / プロフィール名称 | **non-blocking UX** |
+| production hosting / go-live | **別フェーズ** · 先頭blocker = hosting 未契約 |
 
 Schedule / YouTube / About / Discography Save paths は round-trip closed · 通常 package client/server Save **disabled**。
 

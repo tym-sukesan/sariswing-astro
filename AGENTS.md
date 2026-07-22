@@ -55,6 +55,7 @@ The following are **destructive operations** in this project:
 - FTP upload / FTP sync / `mirror` / `mirror --delete`
 - Remote cleanup / `rm` / delete on remote hosts
 - GitHub `workflow_dispatch`
+- GitHub Contents API write / commit（YouTube · About 等の JSON SoT 更新）
 - Production deploy
 - DB write / Supabase SQL mutation
 - `service_role` usage
@@ -105,6 +106,43 @@ ask human
 - **All FTP `--apply` is suspended** until operator explicitly re-approves after G-7f1 hardening.
 - `readyForAnyFutureFtpApply: false` until new preflight + explicit approval.
 - See `tools/static-to-astro/docs/ftp-deploy-root-delete-incident-and-safety-hardening.md`.
+
+## GitHub Contents API write safety (YouTube / About — permanent)
+
+YouTube embed JSON and About content JSON Save write to the **repository `main` branch** via GitHub Contents API (creates commits). Treat as a **high-risk external write / commit-creating** operation — same approval bar as other destructive ops.
+
+### Preflight (required)
+
+- Confirm **staging vs production** Supabase / host gate (staging only for routine CMS Save).
+- Confirm **repo**, **branch** (`main`), and **current file SHA** (fingerprint / dry-run lock).
+- Confirm **client arm** and **server arm** both explicitly armed for the one intended surface.
+- Confirm approval ID / operation ID match the Save path.
+- Production Contents write requires a **separate explicit gate** (not staging Save approval).
+
+### Failure / ambiguity
+
+If Save times out, returns non-JSON, or outcome is unclear:
+
+```txt
+stop immediately
+do not retry
+do not cleanup
+do not run alternative commands
+record incident
+ask human
+```
+
+### After a successful Contents write
+
+- Verify **commit SHA**, **blob**, and **file content** match the intended patch.
+- Operator **fetch/pull** so local HEAD includes the Contents commit.
+- Regenerate staging package from the **new HEAD** when public static pages must reflect the JSON change (admin live-read may already show GitHub SoT).
+
+### Do not
+
+- Re-arm other surfaces while one Contents Save is in flight.
+- Treat Contents Save as “docs-only” or low risk.
+- Write production / wrong repo / wrong branch without explicit production gate.
 
 ## Schedule non-dry-run PoC status
 

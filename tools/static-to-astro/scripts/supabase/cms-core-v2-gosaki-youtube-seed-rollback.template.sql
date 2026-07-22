@@ -1,10 +1,11 @@
 -- =============================================================================
 -- CMS Core v2 rollback — seed only (DO NOT EXECUTE without explicit approval)
 -- Staging: kmjqppxjdnwwrtaeqjta · STOP: vsbvndwuajjhnzpohghh
--- Order: run AFTER deciding to undo YouTube seed; BEFORE dropping membership/sites
+-- Order: AFTER access-assignment rollback (if used); BEFORE RLS/DDL rollback
 -- Scope: remove ONLY the known Phase 2 seed embed row for gosaki-piano
 -- Does NOT delete sites / site_members / platform_admins
 -- Does NOT wipe arbitrary client data
+-- Access undo: cms-core-v2-gosaki-access-assignment-rollback.template.sql
 -- =============================================================================
 
 begin;

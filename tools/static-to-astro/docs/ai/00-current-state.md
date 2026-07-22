@@ -3,7 +3,11 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**CMS Core v2 YouTube Supabase local security hardening (2026-07-22):** **complete (local only)** — DEFINER `auth.uid()`-only signatures · PUBLIC/anon EXECUTE revoked · table GRANT draft in RLS template · Edge staging-ref allowlist + site_slug mismatch + dry-run approval required · rollback SQL templates · ADR `platform_admins.active` · deploy SoT = `supabase/functions/…` · **`readyForOperatorMigrationApply: false`** · Doc: `cms-core-v2-youtube-supabase-vertical-slice.md` · **Next:** re-audit (do not apply migration until PASS).
+**CMS Core v2 YouTube Supabase final SQL harden (2026-07-22):** **complete (local only · not applied)** — `site_embeds` column-level INSERT/UPDATE GRANTs · audit trigger `auth.uid()` for created_by/updated_by · Edge payload aligned · access assignment/rollback fail-closed first-time only · **`readyForOperatorMigrationApply: false`** · Doc: `cms-core-v2-youtube-supabase-vertical-slice.md`.
+
+**CMS Core v2 YouTube Supabase SQL template harden (2026-07-22):** **complete (local only · not applied)** — fail-closed Core table `REVOKE ALL` · composite FK · `ON DELETE RESTRICT` · DDL rollback no `CASCADE` · access/content split · ADR suspended note · superseded in part by final SQL harden above.
+
+**CMS Core v2 YouTube Supabase staging migration preflight (2026-07-22):** **complete (read-only)** — baseline commit **`338428d`** · staging `kmjqppxjdnwwrtaeqjta` · production `vsbvndwuajjhnzpohghh` STOP · apply order migration→RLS/GRANT→content seed→access · SELECT-only SQL in Phase2 doc · **`readyForOperatorMigrationApply: false`** · live DB SELECT confirmation **pending operator**.
 
 **CMS Core v2 YouTube Supabase Vertical Slice local implementation (2026-07-22):** **complete (local only)** — Doc: `cms-core-v2-youtube-supabase-vertical-slice.md` · SQL drafts (tenancy+site_embeds+RLS+seed) · Edge undeployed `gosaki-youtube-supabase-save-dry-run` · JWT+`can_write_site` · optimistic lock · dual path (Contents default; Supabase opt-in env) · build DB-prefer+JSON fallback · sticky/dirty retained · verifier `verify-cms-core-v2-youtube-supabase-vertical-slice.mjs` · **Gates:** localImplemented true · migration/RLS/Edge/DB write/Contents change/FTP **false** · superseded readiness: wait re-audit after hardening.
 

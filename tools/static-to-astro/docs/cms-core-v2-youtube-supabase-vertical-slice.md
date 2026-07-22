@@ -1,8 +1,11 @@
 # CMS Core v2 Phase 2 — YouTube Supabase Vertical Slice (local implementation)
 
-- **Phase:** `cms-core-v2-youtube-supabase-vertical-slice-local-implementation`
-- **Status:** **local security hardening complete** — re-audit next; staging execution **not** started
+- **Phase:** `cms-core-v2-youtube-supabase-vertical-slice-local-implementation` (+ staging preflight + SQL template harden)
+- **Status:** **SQL templates hardened for first staging apply** — apply **not** started; `readyForOperatorMigrationApply` remains **false**
 - **Date:** 2026-07-22
+- **Baseline commit (preflight):** `338428d` — working tree may include post-preflight SQL harden diffs
+- **Target:** staging Supabase `kmjqppxjdnwwrtaeqjta` only
+- **STOP:** production `vsbvndwuajjhnzpohghh` — do not open, query, or mutate
 - **ADR:** [cms-core-v2-minimal-architecture-decision.md](./cms-core-v2-minimal-architecture-decision.md)
 
 ## Gates
@@ -10,17 +13,24 @@
 ```txt
 cmsCoreV2YoutubeSupabaseVerticalSliceLocalImplemented: true
 cmsCoreV2YoutubeSupabaseLocalSecurityHardeningComplete: true
+cmsCoreV2YoutubeSupabaseReAuditPass: true
+cmsCoreV2YoutubeSupabaseStagingMigrationPreflightComplete: true
+cmsCoreV2YoutubeSupabaseSqlTemplateHardenComplete: true
+cmsCoreV2YoutubeSupabaseFinalSqlHardenComplete: true
 readyForOperatorMigrationApply: false
 edgeDeployExecuted: false
 dbMigrationExecuted: false
 dbWriteExecuted: false
 rlsApplied: false
+seedExecuted: false
+accessAssignmentExecuted: false
+liveDbSelectConfirmationPendingOperator: true
 contentsApiPathUnchangedDefault: true
 scheduleDiscographyAboutUnchanged: true
 readyForAnyFutureFtpApply: false
 ```
 
-`readyForOperatorMigrationApply` stays **false** until a dedicated re-audit PASSes. Do not flip true from this hardening alone.
+`readyForOperatorMigrationApply` stays **false**. Flip only after operator (1) runs SELECT-only preflight on staging, (2) confirms compatible DB state, (3) prepares access UUID placeholders locally, (4) issues the AGENTS destructive-ops approval form for apply.
 
 ## What was implemented (local only)
 
@@ -28,8 +38,9 @@ readyForAnyFutureFtpApply: false
 | --- | --- |
 | Tenancy + `site_embeds` DDL | `scripts/supabase/cms-core-v2-tenancy-and-site-embeds-migration.template.sql` |
 | RLS + minimal GRANT/REVOKE | `scripts/supabase/cms-core-v2-site-embeds-rls.template.sql` |
-| Gosaki seed draft | `scripts/supabase/cms-core-v2-gosaki-youtube-seed.template.sql` |
-| Rollback templates | `…-rollback.template.sql` (seed / RLS / DDL) |
+| Gosaki content seed (site + youtube) | `scripts/supabase/cms-core-v2-gosaki-youtube-seed.template.sql` |
+| Gosaki access assignment (owner / platform_admin placeholders) | `scripts/supabase/cms-core-v2-gosaki-access-assignment.template.sql` |
+| Rollback templates | content seed / access / RLS / DDL (no `DROP TABLE CASCADE`) |
 | Pure contract | `scripts/lib/cms-core-v2-youtube-supabase-contract.mjs` |
 | Edge (undeployed) | `supabase/functions/gosaki-youtube-supabase-save-dry-run/` (+ tools mirror) |
 | Build prefer-DB + JSON fallback | `site-cms-features.mjs` · `gosaki-home-youtube-embed.mjs` · convert/hooks threading |
@@ -40,7 +51,17 @@ readyForAnyFutureFtpApply: false
 ## Schema / authz (summary)
 
 - Tables: `sites`, `site_members` (`owner`\|`editor`), `platform_admins` (`active`), `site_embeds`
-- `site_embeds`: `site_id` + denormalized `site_slug`, `provider`, `legacy_item_id`, `source_url`, `embed_url`, `published`, `sort_order`, `created_by`, `updated_by`, `updated_at` trigger
+- `site_embeds`: composite FK `(site_id, site_slug) → sites(id, site_slug)` · **`ON DELETE RESTRICT`** · `ON UPDATE CASCADE`
+- `site_members` → `sites`: **`ON DELETE CASCADE`** (unchanged)
+- **`sites.status=suspended`:** ignored by Phase 2 DEFINER helpers; Edge Save path may still reject suspended (see ADR)
+- Fail-closed privileges: migration ends with `REVOKE ALL` on Core 4 tables from `PUBLIC`/`anon`/`authenticated`; RLS template revokes again then re-GRANTs minimal privileges
+- `site_embeds` write GRANTs are **column-level** (not table INSERT/UPDATE):
+  - INSERT: `site_id`, `site_slug`, `provider`, `legacy_item_id`, `title`, `source_url`, `embed_url`, `published`, `sort_order`
+  - UPDATE: `title`, `source_url`, `embed_url`, `published`, `sort_order`
+  - Client cannot UPDATE identity/audit columns (`id`, `site_id`, `site_slug`, `provider`, `legacy_item_id`, `created_at`, `created_by`, `updated_at`, `updated_by`)
+  - `created_by` / `updated_by` set only by `tg_site_embeds_set_audit_actors` from `auth.uid()`; `updated_at` via existing trigger; FK to `auth.users` is **`ON DELETE SET NULL`**
+- Access assignment is **separate** from YouTube content seed — **first-time fail-closed** (STOP on unreplaced placeholders, missing site/Auth user, same UUID pair, existing target rows); no `ON CONFLICT` / upsert
+- Access rollback deletes **only** the exact assignment-created rows; STOP if placeholders unreplaced or targets missing
 - Authz helpers (final signatures — **no client uid args**):
   - `is_platform_admin()`
   - `is_site_member(p_site_id uuid)`
@@ -51,7 +72,7 @@ readyForAnyFutureFtpApply: false
 - Dual defense: RLS + Edge allowlist / approval / arm / optimistic lock
 - Save arm default **false**: client `PUBLIC_ADMIN_GOSAKI_YOUTUBE_SUPABASE_SAVE_ARMED` · server `GOSAKI_YOUTUBE_SUPABASE_SAVE_ARMED`
 - Approvals: `G-cms-v2-youtube-supabase-items-dry-run` · `G-cms-v2-youtube-supabase-items-web-save-non-dry-run-slice` (**required for dry-run and save**)
-- Edge: staging ref allowlist `kmjqppxjdnwwrtaeqjta` · production `vsbvndwuajjhnzpohghh` STOP · site_slug mismatch reject · `updated_by` from JWT only · lock `id`+`site_id`+`updated_at`
+- Edge: staging ref allowlist `kmjqppxjdnwwrtaeqjta` · production `vsbvndwuajjhnzpohghh` STOP · site_slug mismatch reject · Save payload omits `created_by`/`updated_by`/`site_slug` on update · lock `id`+`site_id`+`updated_at`
 - **No `service_role`**
 
 ## Edge dual placement (sync policy)
@@ -73,30 +94,255 @@ Edit **deploy SoT first**, then copy to tools mirror in the same change. Do not 
 
 `registry.supabaseFeatures.siteEmbeds` remains **false** until operator cutover.
 
-## Operator next steps (human — not executed by Cursor)
+## Staging migration preflight (2026-07-22 · read-only)
 
-Blocked until re-audit sets `readyForOperatorMigrationApply: true`.
+### Git / project lock
 
-1. **Preflight** staging project `kmjqppxjdnwwrtaeqjta` (STOP `vsbvndwuajjhnzpohghh`)
-2. Apply migration template (explicit approval form)
-3. Apply RLS template + GRANT/REVOKE (same or separate approval)
-4. Seed `gosaki-piano` site + membership + youtube row
-5. Deploy Edge from **deploy SoT** (staging only; arms false)
-6. Local/STG package with path env + dry-run once
-7. One armed Save round-trip → disarm
-8. Cutover public read / drop Contents YouTube Save only after sign-off
+| Item | Value |
+| --- | --- |
+| Baseline commit | `338428d7228e802cf4521d395db05c9a5f63fbf3` |
+| Working tree at preflight authoring | clean @ `338428d` / `main` |
+| Staging project ref | `kmjqppxjdnwwrtaeqjta` |
+| Production ref | `vsbvndwuajjhnzpohghh` — **STOP** (do not open SQL Editor there) |
+| Cursor DB / apply | **none** this phase — operator runs SELECT only |
 
-## Rollback
+### Apply order (fixed — do not reorder)
+
+| # | File | Purpose |
+| --- | --- | --- |
+| 1 | `scripts/supabase/cms-core-v2-tenancy-and-site-embeds-migration.template.sql` | DDL + DEFINER helpers + EXECUTE GRANT/REVOKE + fail-closed table `REVOKE ALL` + `site_embeds` trigger |
+| 2 | `scripts/supabase/cms-core-v2-site-embeds-rls.template.sql` | RLS policies + fail-closed `REVOKE ALL` then minimal table GRANT |
+| 3 | `scripts/supabase/cms-core-v2-gosaki-youtube-seed.template.sql` | `gosaki-piano` **site + YouTube content** only |
+| 4 | `scripts/supabase/cms-core-v2-gosaki-access-assignment.template.sql` | owner / platform_admin (**replace UUID placeholders locally**; never commit real ids) |
+
+Dependencies: RLS assumes tables + `can_write_site` exist. Content seed assumes `sites` / `site_embeds` (+ composite FK). Access assignment assumes `sites.gosaki-piano` exists.
+
+### Rollback order (fixed — reverse of apply; explicit approval each step)
+
+| # | File | Scope |
+| --- | --- | --- |
+| 1 | (ops) | Disarm client/server Save arms; keep Contents path default |
+| 2 | `cms-core-v2-gosaki-access-assignment-rollback.template.sql` | DELETE **only** placeholder-targeted owner / platform_admin rows |
+| 3 | `cms-core-v2-gosaki-youtube-seed-rollback.template.sql` | DELETE **only** `yt-placeholder-01` + exact URLs — not arbitrary client rows; does **not** remove `sites` |
+| 4 | `cms-core-v2-site-embeds-rls-rollback.template.sql` | Drop policies + revoke table grants — **no row delete** |
+| 5 | `cms-core-v2-tenancy-and-site-embeds-rollback.template.sql` | Fail-closed DDL drop (**no `CASCADE`**); aborts if unexpected FKs reference Core tables |
+
+**When to roll back:** wrong project, failed mid-apply, incompatible pre-existing objects, or operator abort. If outcome unclear → stop, do not retry, ask human (AGENTS destructive failure rule).
+
+### SQL template safety scan (local @ `338428d`)
+
+| Check | Result |
+| --- | --- |
+| Staging ref on all 6 templates | present |
+| Production ref only as STOP comment | yes — no production DSN/apply target |
+| Unconditional `DELETE` / `TRUNCATE` in apply path | **none** (content seed upsert; access uses placeholder UUIDs; scoped DELETEs only in rollbacks) |
+| `DROP TABLE … CASCADE` in DDL rollback | **removed** — fail-closed on unexpected dependents |
+| `site_embeds` site delete | **`ON DELETE RESTRICT`** (not CASCADE) |
+| `service_role` grant/use | **none** |
+| Migration re-run | `CREATE TABLE IF NOT EXISTS` + `CREATE OR REPLACE` helpers + `DROP FUNCTION IF EXISTS` legacy — generally idempotent (**first staging apply expected empty**) |
+| Content seed re-run | `ON CONFLICT` upsert for site + embed — safe overwrite of **this** seed key only |
+
+### Values the human must fill before access assignment
+
+Access is **not** in the YouTube content seed. Use `cms-core-v2-gosaki-access-assignment.template.sql` (**first-time only**, fail-closed).
+
+| Placeholder (in template) | Replace with | Notes |
+| --- | --- | --- |
+| `00000000-0000-4000-8000-000000000001` | staging Auth UUID for site **owner** | Must exist in `auth.users` |
+| `00000000-0000-4000-8000-000000000002` | staging Auth UUID for **platform_admin** | **Must differ** from owner UUID (template STOPs if equal) |
+
+Lookup: Dashboard → Authentication → Users, or SELECT in preflight block H. **Do not commit** email or real UUID. Edit a local working copy only.
+
+Assignment STOPs (whole transaction) if: placeholders unreplaced · `gosaki-piano` site missing · Auth user missing · owner==admin UUID · target `site_members` / `platform_admins` row already exists. No `ON CONFLICT` / upsert.
+
+Rollback (`…-access-assignment-rollback.template.sql`): deletes **only** those two assignment-created rows for the same UUIDs; STOPs if placeholders unreplaced or targets missing / wrong delete counts.
+
+### Template safety note (2026-07-22 SQL harden)
+
+Before first staging apply: fail-closed Core table `REVOKE ALL` · composite FK · `ON DELETE RESTRICT` · column-level `site_embeds` GRANTs + audit trigger · fail-closed DDL/access · content/access split. `readyForOperatorMigrationApply` remains **false**.
+### Seed YouTube row (expected / conflict)
+
+| Field | Expected (JSON SoT `gosaki-piano-youtube-embed.json`) |
+| --- | --- |
+| `legacy_item_id` | `yt-placeholder-01` |
+| `source_url` | `https://youtu.be/I-eY9YMq9GI` |
+| `embed_url` | `https://www.youtube-nocookie.com/embed/I-eY9YMq9GI` |
+| `published` | `true` |
+| `sort_order` | `10` |
+
+**Duplicate behavior:** unique `(site_id, provider, legacy_item_id)` → seed `ON CONFLICT DO UPDATE` refreshes URLs/published/sort. If a row exists with same key but **different** URLs, upsert **overwrites** to SoT values — confirm with SELECT first. Other `legacy_item_id` rows are untouched.
+
+### Success conditions (after future apply — not this phase)
+
+1. Dashboard project ref = `kmjqppxjdnwwrtaeqjta` only.
+2. Tables `sites`, `site_members`, `platform_admins`, `site_embeds` exist.
+3. Functions exactly: `is_platform_admin()`, `is_site_member(uuid)`, `can_write_site(uuid)` — no legacy `(uuid)` / `(uuid,uuid)` uid-arg variants.
+4. RLS enabled; policies from RLS template present; no DELETE privilege on `site_embeds` for anon/authenticated.
+5. Row `gosaki-piano` in `sites`; membership row for filled owner UUID; optional `platform_admins.active=true`.
+6. Embed row `yt-placeholder-01` matches SoT URLs above.
+7. Contents YouTube path still default; Supabase path/Save arms still **false**.
+8. Edge still **undeployed** until a separate deploy preflight.
+
+### STOP conditions (abort apply / do not continue)
+
+- SQL Editor / CLI project is **not** `kmjqppxjdnwwrtaeqjta`
+- Any touch of production `vsbvndwuajjhnzpohghh`
+- `service_role` key offered or required
+- SELECT shows incompatible existing Core v2 objects (wrong columns/signatures) and operator cannot reconcile
+- Unclear mid-apply error / hang → stop, no retry, no cleanup without new approval
+- Approval form missing (vague “OK” insufficient)
+- Attempt to run rollback as “cleanup” without explicit rollback approval
+
+### Operator SELECT-only preflight SQL (1 paste · staging SQL Editor)
+
+**Run this first.** Do **not** run migration / RLS / seed / rollback in the same session until results are reviewed and a separate apply approval is recorded.
+
+```sql
+-- =============================================================================
+-- CMS Core v2 Phase 2 — SELECT-ONLY staging preflight
+-- Project MUST be: kmjqppxjdnwwrtaeqjta
+-- STOP: vsbvndwuajjhnzpohghh (do not run this there)
+-- No INSERT/UPDATE/DELETE/DDL. Paste once in Supabase SQL Editor.
+-- Replace :admin_email below before section H (Auth lookup).
+-- =============================================================================
+
+-- A) Core tables present?
+select
+  c.relname as table_name,
+  c.relkind,
+  obj_description(c.oid, 'pg_class') as comment
+from pg_class c
+join pg_namespace n on n.oid = c.relnamespace
+where n.nspname = 'public'
+  and c.relname in ('sites', 'site_members', 'platform_admins', 'site_embeds')
+order by 1;
+
+-- B) Authz helper signatures (expect empty before first apply; after apply: 3 rows, no uid-arg variants)
+select
+  p.proname as function_name,
+  pg_get_function_identity_arguments(p.oid) as args,
+  p.prosecdef as security_definer,
+  pg_get_functiondef(p.oid) as definition_preview
+from pg_proc p
+join pg_namespace n on n.oid = p.pronamespace
+where n.nspname = 'public'
+  and p.proname in ('is_platform_admin', 'is_site_member', 'can_write_site')
+order by 1, 2;
+
+-- C) Legacy / unsafe signatures still present? (expect 0 rows always after safe apply)
+select
+  p.proname,
+  pg_get_function_identity_arguments(p.oid) as args
+from pg_proc p
+join pg_namespace n on n.oid = p.pronamespace
+where n.nspname = 'public'
+  and (
+    (p.proname = 'is_platform_admin' and pg_get_function_identity_arguments(p.oid) = 'uuid')
+    or (p.proname = 'is_site_member' and pg_get_function_identity_arguments(p.oid) = 'uuid, uuid')
+    or (p.proname = 'can_write_site' and pg_get_function_identity_arguments(p.oid) = 'uuid, uuid')
+  );
+
+-- D) site_embeds trigger
+select t.tgname, p.proname as function_name, t.tgenabled
+from pg_trigger t
+join pg_class c on c.oid = t.tgrelid
+join pg_namespace n on n.oid = c.relnamespace
+join pg_proc p on p.oid = t.tgfoid
+where n.nspname = 'public'
+  and c.relname = 'site_embeds'
+  and not t.tgisinternal;
+
+-- E) RLS enabled?
+select c.relname as table_name, c.relrowsecurity as rls_enabled, c.relforcerowsecurity as rls_forced
+from pg_class c
+join pg_namespace n on n.oid = c.relnamespace
+where n.nspname = 'public'
+  and c.relname in ('sites', 'site_members', 'platform_admins', 'site_embeds')
+order by 1;
+
+-- F) Policies on Core tables
+select schemaname, tablename, policyname, roles, cmd, qual, with_check
+from pg_policies
+where schemaname = 'public'
+  and tablename in ('sites', 'site_members', 'platform_admins', 'site_embeds')
+order by tablename, policyname;
+
+-- G) Table privileges (anon / authenticated / public)
+select
+  grantee,
+  table_name,
+  string_agg(privilege_type, ', ' order by privilege_type) as privileges
+from information_schema.role_table_grants
+where table_schema = 'public'
+  and table_name in ('sites', 'site_members', 'platform_admins', 'site_embeds')
+  and grantee in ('anon', 'authenticated', 'PUBLIC', 'public')
+group by grantee, table_name
+order by table_name, grantee;
+
+-- H) Auth user lookup for seed membership (EDIT email; do not commit result)
+-- select id, email, created_at
+-- from auth.users
+-- where email = ':admin_email'
+-- limit 5;
+
+-- I) Catalog presence map (safe when tables missing — no row scan yet)
+select t.table_name,
+  (to_regclass('public.' || t.table_name) is not null) as exists_now
+from (values
+  ('sites'),
+  ('site_members'),
+  ('platform_admins'),
+  ('site_embeds')
+) as t(table_name)
+order by 1;
+
+-- J) Row probes — uncomment ONLY after A/I show the table exists
+-- select * from public.sites where site_slug = 'gosaki-piano';
+-- select sm.* from public.site_members sm
+--   join public.sites s on s.id = sm.site_id where s.site_slug = 'gosaki-piano';
+-- select * from public.platform_admins;
+-- select id, site_slug, provider, legacy_item_id, source_url, embed_url, published, sort_order, updated_at
+-- from public.site_embeds
+-- where site_slug = 'gosaki-piano' and provider = 'youtube';
+-- select id, legacy_item_id, source_url, embed_url, published, sort_order, updated_at
+-- from public.site_embeds
+-- where site_slug = 'gosaki-piano'
+--   and provider = 'youtube'
+--   and legacy_item_id = 'yt-placeholder-01';
+```
+
+**How to interpret (before first apply):**
+
+| Section | Prefer |
+| --- | --- |
+| A / I | tables absent (`exists_now = false`) **or** compatible existing Core v2 tables |
+| B | 0 rows **or** exactly the 3 safe signatures |
+| C | **0 rows** (no legacy uid-arg signatures) |
+| D–G | empty OK before apply |
+| H | exactly one Auth user for the staging admin email |
+| J (after tables exist) | no `gosaki-piano` / seed row **or** same SoT URLs |
+
+If tables already exist with divergent schema → **STOP** and reconcile before apply.
+
+### Operator next steps after SELECT review
+
+1. Paste SELECT results into the apply chat (redact email if needed; UUID OK).
+2. Set `readyForOperatorMigrationApply: true` only when SELECT is compatible **and** membership UUIDs are ready.
+3. Apply with AGENTS approval form, **one template at a time**, same order as above.
+4. Edge deploy / Save round-trip = **later** phases (arms stay false).
+
+## Rollback (summary)
 
 | Step | Template | Scope |
 | --- | --- | --- |
 | 1 | (ops) | Disarm client/server arms; path env false → Contents/JSON |
-| 2 | `cms-core-v2-gosaki-youtube-seed-rollback.template.sql` | Deletes **only** known seed row `yt-placeholder-01` + exact URL match — not arbitrary client rows |
-| 3 | `cms-core-v2-site-embeds-rls-rollback.template.sql` | Drop policies + revoke table grants — **no data delete** |
-| 4 | `cms-core-v2-tenancy-and-site-embeds-rollback.template.sql` | Drop helpers + Core tables — **last**; does not touch Schedule/Discography/About |
+| 2 | `cms-core-v2-gosaki-access-assignment-rollback.template.sql` | Placeholder-targeted owner / platform_admin only |
+| 3 | `cms-core-v2-gosaki-youtube-seed-rollback.template.sql` | Deletes **only** known seed row `yt-placeholder-01` + exact URL match |
+| 4 | `cms-core-v2-site-embeds-rls-rollback.template.sql` | Drop policies + revoke table grants — **no data delete** |
+| 5 | `cms-core-v2-tenancy-and-site-embeds-rollback.template.sql` | Fail-closed drop helpers + Core tables — **no CASCADE**; unexpected FKs → STOP |
 
-Do not run rollbacks without explicit approval. Do not use seed rollback as a generic wipe.
+Do not run rollbacks without explicit approval. Do not use seed/access rollback as a generic wipe.
 
-## Out of scope / not executed
+## Out of scope / not executed (this preflight)
 
-DB write · migration apply · RLS/GRANT apply · Edge deploy · Secret change · Contents API write · FTP · production · Schedule/Discography/About edits · staging CLI against live project · commit/push
+DB write · migration apply · RLS/GRANT apply · seed · rollback · Edge deploy · Secret change · Contents API write · FTP · production · Schedule/Discography/About edits · live staging CLI mutation · commit/push · flipping `readyForOperatorMigrationApply` to true

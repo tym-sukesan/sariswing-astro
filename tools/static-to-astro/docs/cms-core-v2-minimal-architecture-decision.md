@@ -45,6 +45,8 @@ Core v2 SoT for tenancy + authz is **Postgres tables + RLS**, with **Edge Functi
 | `site_slug` | `text` UNIQUE NOT NULL | Human / config / URL id (`gosaki-piano`) |
 | `display_name` | `text` | Operator label |
 | `status` | `text` | `active` \| `suspended` (MVP: `active` only) |
+
+**`sites.status` / Phase 2 authz:** `is_platform_admin()`, `is_site_member()`, and `can_write_site()` **do not** read `sites.status`. A `suspended` site still passes those helpers if membership/`platform_admins.active` allows it. Edge `gosaki-youtube-supabase-save-dry-run` separately rejects `status ≠ active`. Incorporating `status` into DEFINER helpers is a future approved change (new approval + verifier assertions) — **not** done in the initial staging apply templates.
 | `created_at` / `updated_at` | `timestamptz` | Standard |
 
 One row per customer site. ~10 sites share one staging Supabase project (`kmjqppxjdnwwrtaeqjta` today). Production Sariswing project remains **out of scope**.
@@ -83,7 +85,9 @@ Cross-site break-glass for staging Kit work. **Not** a substitute for per-site `
 
 **Why both:** Gosaki already filters on `site_slug='gosaki-piano'`. Renaming every query before YouTube slice would expand risk. UUID FK is the long-term isolation key; slug stays the operator-facing key.
 
-**Invariant:** `content.site_slug` must equal `sites.site_slug` for `content.site_id`. Edge rejects mismatch.
+**Invariant:** `content.site_slug` must equal `sites.site_slug` for `content.site_id`. Enforced in DB by composite FK `site_embeds (site_id, site_slug) → sites (id, site_slug)` (`ON DELETE RESTRICT`, `ON UPDATE CASCADE`). Edge also rejects mismatch.
+
+**Column privileges (Phase 2 `site_embeds`):** authenticated clients receive column-level `INSERT`/`UPDATE` only (see RLS template). `created_by` / `updated_by` are set by `tg_site_embeds_set_audit_actors` from `auth.uid()` — not from client payloads. `updated_at` remains trigger-owned.
 
 ---
 

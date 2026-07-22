@@ -5,33 +5,23 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: CMS Core v2 Phase 2 LOCAL SECURITY HARDENING COMPLETE → re-audit next
-ADR: tools/static-to-astro/docs/cms-core-v2-minimal-architecture-decision.md
+Current phase: CMS Core v2 Phase 2 FINAL SQL HARDEN COMPLETE → operator SELECT next
 Phase2 doc: tools/static-to-astro/docs/cms-core-v2-youtube-supabase-vertical-slice.md
-cmsCoreV2YoutubeSupabaseVerticalSliceLocalImplemented: true
-cmsCoreV2YoutubeSupabaseLocalSecurityHardeningComplete: true
+cmsCoreV2YoutubeSupabaseFinalSqlHardenComplete: true
 readyForOperatorMigrationApply: false
-edgeDeployExecuted: false · dbMigrationExecuted: false · dbWriteExecuted: false
-DEFINER helpers: is_platform_admin() / is_site_member(uuid) / can_write_site(uuid) — auth.uid() only
-YouTube default admin path: GitHub Contents (G-11c*) — unchanged
-Supabase path opt-in: PUBLIC_ADMIN_GOSAKI_YOUTUBE_SUPABASE_PATH_ENABLED=true
-Save arms (Contents + Supabase): false by default
-Edge deploy SoT: supabase/functions/gosaki-youtube-supabase-save-dry-run/
+site_embeds: column-level INSERT/UPDATE GRANTs · audit trigger auth.uid()
+Access: first-time fail-closed · owner≠platform_admin UUID · no ON CONFLICT
+Apply order: migration → RLS → content seed → access assignment
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
-Next Kit: re-audit (do NOT migrate until readyForOperatorMigrationApply true)
-Parallel OK: client staging share + hosting read-only planning
-Do NOT: migration/RLS/Edge/FTP/production/Contents write without approval
 EXTERNAL_WRITE_EXECUTED: false
 ```
 
-## CMS Core v2 YouTube Supabase — local security hardening (2026-07-22)
+## CMS Core v2 YouTube Supabase — final SQL harden (2026-07-22)
 
-- **Doc:** `cms-core-v2-youtube-supabase-vertical-slice.md`
-- **Fixed:** DEFINER uid args removed · EXECUTE revoke PUBLIC/anon · table GRANT draft · Edge staging allowlist · site_slug mismatch · dry-run approval required · rollback templates · ADR active
-- **Gate:** `readyForOperatorMigrationApply: false` until re-audit PASS
-- **Not done:** migration apply · RLS/GRANT apply · Edge deploy · DB write · Contents cutover · FTP · commit
-- **Next:** re-audit
-- **Status:** hardening complete; staging execution still blocked
+- **Column GRANTs** on `site_embeds`; `created_by`/`updated_by` via DB trigger; Edge payload aligned
+- **Access** assignment/rollback fail-closed; distinct UUIDs required
+- **Gate:** `readyForOperatorMigrationApply: false`
+- **Not done:** staging SQL apply / Edge deploy / DB write
 
 ## CMS Core v2 YouTube Supabase Vertical Slice — local implementation (2026-07-22)
 

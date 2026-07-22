@@ -59,6 +59,7 @@ const sqlFiles = [
   "tools/static-to-astro/scripts/supabase/cms-core-v2-tenancy-and-site-embeds-migration.template.sql",
   "tools/static-to-astro/scripts/supabase/cms-core-v2-site-embeds-rls.template.sql",
   "tools/static-to-astro/scripts/supabase/cms-core-v2-gosaki-youtube-seed.template.sql",
+  "tools/static-to-astro/scripts/supabase/cms-core-v2-gosaki-access-assignment.template.sql",
 ];
 for (const rel of sqlFiles) {
   assert(`sql exists ${path.basename(rel)}`, exists(rel));
@@ -75,6 +76,14 @@ assert("platform_admins table", migration.includes("create table if not exists p
 assert("site_embeds table", migration.includes("create table if not exists public.site_embeds"));
 assert("created_by column", migration.includes("created_by"));
 assert("updated_by column", migration.includes("updated_by"));
+assert(
+  "created_by on delete set null",
+  /created_by uuid references auth\.users \(id\) on delete set null/i.test(migration),
+);
+assert(
+  "updated_by on delete set null",
+  /updated_by uuid references auth\.users \(id\) on delete set null/i.test(migration),
+);
 assert("can_write_site helper", migration.includes("can_write_site"));
 assert(
   "safe is_platform_admin() signature",
@@ -110,6 +119,20 @@ assert("revoke execute anon is_platform_admin", /revoke all on function public\.
 assert("revoke execute public can_write_site", /revoke all on function public\.can_write_site\(uuid\) from public/i.test(migration));
 assert("revoke execute anon can_write_site", /revoke all on function public\.can_write_site\(uuid\) from anon/i.test(migration));
 assert("grant execute authenticated can_write_site", /grant execute on function public\.can_write_site\(uuid\) to authenticated/i.test(migration));
+assert("migration composite sites unique", migration.includes("sites_id_site_slug_key"));
+assert("migration composite FK", migration.includes("site_embeds_site_id_slug_fkey"));
+assert("migration site_embeds on delete restrict", /site_embeds_site_id_slug_fkey[\s\S]*?on delete restrict/i.test(migration));
+assert(
+  "migration no site_embeds fkey cascade",
+  /foreign key \(site_id, site_slug\)\s+references public\.sites \(id, site_slug\)\s+on delete restrict/i.test(migration),
+);
+assert("migration site_members on delete cascade", /create table if not exists public\.site_members \([\s\S]*?on delete cascade/i.test(migration));
+assert("migration revoke all authenticated sites", /revoke all on table public\.sites from authenticated/i.test(migration));
+assert("migration revoke all authenticated site_embeds", /revoke all on table public\.site_embeds from authenticated/i.test(migration));
+assert("migration notes suspended ignored", /status.*suspended/i.test(migration) && /Ignores sites\.status|ignore this column|NOT checked here/i.test(migration));
+assert("migration audit actors trigger", migration.includes("tg_site_embeds_set_audit_actors"));
+assert("migration audit actors auth.uid", /tg_site_embeds_set_audit_actors[\s\S]*auth\.uid\(\)/.test(migration));
+assert("migration updated_at trigger retained", migration.includes("tg_site_embeds_set_updated_at"));
 
 const rls = read(sqlFiles[1]);
 assert("RLS enable site_embeds", rls.includes("alter table public.site_embeds enable row level security"));
@@ -117,14 +140,52 @@ assert("published select policy", rls.includes("site_embeds_public_select_publis
 assert("admin update policy", rls.includes("site_embeds_admin_update"));
 assert("RLS uses can_write_site(site_id) no uid", rls.includes("can_write_site(site_id)"));
 assert("RLS no can_write_site(site_id, auth.uid())", !rls.includes("can_write_site(site_id, auth.uid())"));
+assert("RLS revoke all authenticated sites", /revoke all on table public\.sites from authenticated/i.test(rls));
+assert("RLS revoke all authenticated site_embeds", /revoke all on table public\.site_embeds from authenticated/i.test(rls));
 assert("table revoke anon site_embeds", /revoke all on table public\.site_embeds from anon/i.test(rls));
 assert("table grant select anon site_embeds", /grant select on table public\.site_embeds to anon/i.test(rls));
-assert("table grant authenticated write site_embeds", /grant select, insert, update on table public\.site_embeds to authenticated/i.test(rls));
+assert("table grant select authenticated site_embeds", /grant select on table public\.site_embeds to authenticated/i.test(rls));
+assert(
+  "column grant insert site_embeds",
+  /grant insert\s*\(\s*site_id[\s\S]*?sort_order\s*\)\s*on table public\.site_embeds to authenticated/i.test(rls),
+);
+assert(
+  "column grant update site_embeds",
+  /grant update\s*\(\s*title[\s\S]*?sort_order\s*\)\s*on table public\.site_embeds to authenticated/i.test(rls),
+);
+assert(
+  "no table-level insert/update grant site_embeds",
+  !/grant select,\s*insert,\s*update on table public\.site_embeds to authenticated/i.test(rls),
+);
+assert("update grant omits site_id", !/grant update\s*\([^)]*site_id/i.test(rls));
+assert("update grant omits updated_by", !/grant update\s*\([^)]*updated_by/i.test(rls));
+assert("insert grant omits created_by", !/grant insert\s*\([^)]*created_by/i.test(rls));
 const rlsNoComments = rls.replace(/--[^\n]*/g, "");
 assert("no service_role grant", !/\bgrant\b[\s\S]*?\bto\s+service_role\b/i.test(rlsNoComments));
 
+const contentSeed = read(sqlFiles[2]);
+assert("content seed has youtube row", contentSeed.includes("yt-placeholder-01"));
+assert("content seed no site_members insert", !/insert into public\.site_members/i.test(contentSeed));
+assert("content seed no platform_admins insert", !/insert into public\.platform_admins/i.test(contentSeed));
+assert("content seed uses sites.site_slug for embed", contentSeed.includes("s.site_slug"));
+
+const accessSeed = read(sqlFiles[3]);
+assert("access assignment has site_members", /insert into public\.site_members/i.test(accessSeed));
+assert("access assignment has platform_admins", /insert into public\.platform_admins/i.test(accessSeed));
+assert("access assignment placeholder owner uuid", accessSeed.includes("00000000-0000-4000-8000-000000000001"));
+assert("access assignment placeholder admin uuid", accessSeed.includes("00000000-0000-4000-8000-000000000002"));
+assert("access assignment never commits real email", !/@/.test(accessSeed.replace(/--[^\n]*/g, "")));
+assert("access assignment fail-closed placeholder", /placeholders not replaced/i.test(accessSeed));
+assert("access assignment fail-closed site missing", /sites row missing/i.test(accessSeed));
+assert("access assignment fail-closed auth missing", /Auth user not found/i.test(accessSeed));
+assert("access assignment fail-closed same uuid", /must be distinct UUIDs/i.test(accessSeed));
+assert("access assignment fail-closed existing member", /site_members row already exists/i.test(accessSeed));
+assert("access assignment fail-closed existing admin", /platform_admins row already exists/i.test(accessSeed));
+assert("access assignment no on conflict upsert", !/on conflict\s*\(/i.test(accessSeed.replace(/--[^\n]*/g, "")));
+
 const rollbackFiles = [
   "tools/static-to-astro/scripts/supabase/cms-core-v2-gosaki-youtube-seed-rollback.template.sql",
+  "tools/static-to-astro/scripts/supabase/cms-core-v2-gosaki-access-assignment-rollback.template.sql",
   "tools/static-to-astro/scripts/supabase/cms-core-v2-site-embeds-rls-rollback.template.sql",
   "tools/static-to-astro/scripts/supabase/cms-core-v2-tenancy-and-site-embeds-rollback.template.sql",
 ];
@@ -138,6 +199,19 @@ assert(
   "seed rollback scoped to yt-placeholder-01",
   read(rollbackFiles[0]).includes("legacy_item_id = 'yt-placeholder-01'"),
 );
+assert(
+  "access rollback scoped placeholders",
+  read(rollbackFiles[1]).includes("00000000-0000-4000-8000-000000000001"),
+);
+assert("access rollback stop unreplaced", /placeholders not replaced/i.test(read(rollbackFiles[1])));
+assert("access rollback premise assignment rows", /first-time run|exact rows created/i.test(read(rollbackFiles[1])));
+assert("access rollback stop missing target", /target site_members owner row not found/i.test(read(rollbackFiles[1])));
+assert("access rollback no on conflict", !/on conflict/i.test(read(rollbackFiles[1])));
+const ddlRollback = read(rollbackFiles[3]);
+assert("ddl rollback no drop table cascade", !/drop table if exists public\.\w+\s+cascade/i.test(ddlRollback));
+assert("ddl rollback unexpected FK stop", /unexpected FKs reference Core v2 tables/i.test(ddlRollback));
+assert("ddl rollback drops audit trigger", ddlRollback.includes("drop trigger if exists site_embeds_set_audit_actors"));
+assert("ddl rollback drops audit function", ddlRollback.includes("drop function if exists public.tg_site_embeds_set_audit_actors()"));
 
 assert(
   "edge handler exists",
@@ -169,7 +243,15 @@ assert("handler site_slug_mismatch", handler.includes("site_slug_mismatch"));
 assert("handler dry-run approval required", handler.includes("dry-run requires exact approvalId"));
 assert("handler lock eq site_id", handler.includes('.eq("site_id", siteRow.id)'));
 assert("handler lock eq updated_at", handler.includes('.eq("updated_at", prev.updatedAt)'));
-assert("handler updated_by from JWT", handler.includes("updated_by: auth.user.id"));
+assert("handler omits client updated_by", !handler.includes("updated_by: auth.user.id"));
+assert("handler omits client created_by", !handler.includes("created_by: auth.user.id"));
+assert("handler documents audit trigger", handler.includes("tg_site_embeds_set_audit_actors") || handler.includes("auth.uid()"));
+const updatePayload = handler.match(/\.from\("site_embeds"\)\s*\.update\(\{([\s\S]*?)\}\)/);
+assert(
+  "handler update omits site_slug payload",
+  Boolean(updatePayload) &&
+    !/site_slug\s*:/.test(String(updatePayload?.[1] ?? "").replace(/\/\/[^\n]*/g, "")),
+);
 assert(
   "handler mirror in sync",
   handler ===
@@ -270,10 +352,18 @@ assert("doc no Contents break", doc.includes("Contents"));
 assert("doc readyForOperatorMigrationApply false", /readyForOperatorMigrationApply:\s*false/.test(doc));
 assert("doc deploy SoT", doc.includes("Deploy SoT"));
 assert("doc hardening complete gate", doc.includes("cmsCoreV2YoutubeSupabaseLocalSecurityHardeningComplete: true"));
+assert("doc sql harden gate", doc.includes("cmsCoreV2YoutubeSupabaseSqlTemplateHardenComplete: true"));
+assert("doc final sql harden gate", doc.includes("cmsCoreV2YoutubeSupabaseFinalSqlHardenComplete: true"));
+assert("doc access assignment template", doc.includes("cms-core-v2-gosaki-access-assignment.template.sql"));
+assert("doc suspended authz note", /status\s*=\s*suspended/i.test(doc) && /ignored by Phase 2 DEFINER|DEFINER helpers/i.test(doc));
+assert("doc column-level grants", /column-level/i.test(doc) && /tg_site_embeds_set_audit_actors/.test(doc));
+assert("doc access fail-closed", /first-time fail-closed|first-time only/i.test(doc));
 
 const adr = read("tools/static-to-astro/docs/cms-core-v2-minimal-architecture-decision.md");
 assert("ADR platform_admins.active", adr.includes("`active`"));
 assert("ADR immediate revoke", /active\s*=\s*false/i.test(adr) && adr.includes("immediately"));
+assert("ADR suspended not in helpers", /do not.*read `sites\.status`|Do not.*sites\.status/i.test(adr));
+assert("ADR composite FK", adr.includes("composite FK") || adr.includes("site_embeds (site_id, site_slug)"));
 
 const registry = JSON.parse(read("tools/static-to-astro/config/sites/registry.json"));
 assert(

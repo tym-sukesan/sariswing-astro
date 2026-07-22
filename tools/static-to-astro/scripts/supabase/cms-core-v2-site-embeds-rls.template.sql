@@ -5,6 +5,7 @@
 -- Requires: cms-core-v2-tenancy-and-site-embeds-migration.template.sql applied first
 -- Authz helpers: is_platform_admin() / is_site_member(uuid) / can_write_site(uuid)
 -- service_role: not used / not granted by this draft
+-- Fail-closed: REVOKE ALL from PUBLIC/anon/authenticated, then minimal re-GRANT
 -- =============================================================================
 
 begin;
@@ -79,31 +80,58 @@ create policy site_embeds_admin_update
 -- DELETE deferred (Phase 2 Save uses published=false soft-hide; no DELETE policy)
 
 -- ---------------------------------------------------------------------------
--- Minimal table GRANT / REVOKE (staging apply draft — not executed here)
+-- Fail-closed then minimal re-GRANT (staging apply draft — not executed here)
 -- service_role intentionally omitted from grants in this Kit path
 -- ---------------------------------------------------------------------------
 
--- Deny broad defaults first
 revoke all on table public.sites from public;
 revoke all on table public.sites from anon;
+revoke all on table public.sites from authenticated;
+
 revoke all on table public.site_members from public;
 revoke all on table public.site_members from anon;
+revoke all on table public.site_members from authenticated;
+
 revoke all on table public.platform_admins from public;
 revoke all on table public.platform_admins from anon;
+revoke all on table public.platform_admins from authenticated;
+
 revoke all on table public.site_embeds from public;
 revoke all on table public.site_embeds from anon;
+revoke all on table public.site_embeds from authenticated;
 
 -- authenticated: SELECT on tenancy tables (RLS still filters)
 grant select on table public.sites to authenticated;
 grant select on table public.site_members to authenticated;
 grant select on table public.platform_admins to authenticated;
 
--- site_embeds: anon may SELECT (RLS → published only); authenticated SELECT/INSERT/UPDATE
+-- site_embeds: anon SELECT (RLS → published); authenticated SELECT + column-level write
+-- INSERT columns (client): site_id, site_slug, provider, legacy_item_id,
+--   title, source_url, embed_url, published, sort_order
+-- UPDATE columns (client): title, source_url, embed_url, published, sort_order
+-- NOT client-writable: id, site_id(on update), site_slug(on update), provider(on update),
+--   legacy_item_id(on update), created_at, created_by, updated_at, updated_by
+-- created_by/updated_by: tg_site_embeds_set_audit_actors (auth.uid())
+-- updated_at: tg_site_embeds_set_updated_at
 grant select on table public.site_embeds to anon;
-grant select, insert, update on table public.site_embeds to authenticated;
-
--- Explicitly do NOT grant delete on site_embeds in Phase 2
-revoke delete on table public.site_embeds from anon;
-revoke delete on table public.site_embeds from authenticated;
+grant select on table public.site_embeds to authenticated;
+grant insert (
+  site_id,
+  site_slug,
+  provider,
+  legacy_item_id,
+  title,
+  source_url,
+  embed_url,
+  published,
+  sort_order
+) on table public.site_embeds to authenticated;
+grant update (
+  title,
+  source_url,
+  embed_url,
+  published,
+  sort_order
+) on table public.site_embeds to authenticated;
 
 commit;

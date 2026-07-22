@@ -3,6 +3,7 @@
  * Endpoint name: gosaki-youtube-supabase-save-dry-run
  * Staging only: kmjqppxjdnwwrtaeqjta · STOP: vsbvndwuajjhnzpohghh
  * Auth: user JWT + anon key · site_members / platform_admins · no service_role
+ * Writes: column-level GRANTs; created_by/updated_by via DB trigger auth.uid() (not client payload)
  * Contents API path is NOT used here — parallel to gosaki-youtube-url-* until cutover.
  *
  * LOCAL IMPLEMENTATION — Edge deploy is a later operator-approved phase.
@@ -461,8 +462,7 @@ export async function handleYoutubeSupabaseSaveDryRunHttp(input: {
           embed_url: embedUrl,
           published: item.published,
           sort_order: item.sortOrder,
-          site_slug: SITE_SLUG,
-          updated_by: auth.user.id,
+          // site_slug / updated_by / updated_at: not client-updatable (column GRANTs + triggers)
         })
         .eq("id", prev.rowId)
         .eq("site_id", siteRow.id)
@@ -499,8 +499,7 @@ export async function handleYoutubeSupabaseSaveDryRunHttp(input: {
           embed_url: embedUrl,
           published: item.published,
           sort_order: item.sortOrder,
-          created_by: auth.user.id,
-          updated_by: auth.user.id,
+          // created_by / updated_by: set by tg_site_embeds_set_audit_actors from auth.uid()
         })
         .select("id");
       if (insErr || !inserted?.length) {

@@ -5,24 +5,41 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: CMS Core v2 Phase 1 COMPLETE → ready for Phase 2 YouTube Supabase Vertical Slice
+Current phase: CMS Core v2 Phase 2 LOCAL SECURITY HARDENING COMPLETE → re-audit next
 ADR: tools/static-to-astro/docs/cms-core-v2-minimal-architecture-decision.md
-cmsCoreV2MinimalArchitecturePlanned: true
-readyForPhase2YoutubeSupabaseVerticalSlice: true
-Gosaki staging CLIENT-SHARE READY remains true (parallel ops track)
-verified impl/content baseline commit: 7797ece (no impl/content changes after)
-deployed staging package sourceCommit: f284332 @ /cms-kit-staging/gosaki-piano/
-current repo HEAD / origin/main: DO NOT PIN — run git rev-parse --short HEAD and origin/main
-YouTube/About Save SoT today: GitHub Contents API on main (unchanged in Phase 1)
-Phase 2 will add Supabase site_embeds Save path; Contents path stays until cutover
-Schedule/Discography/About admin: reference — do not break
-STG: kmjqppxjdnwwrtaeqjta · 4 client arms false · 4 server arms false
-production vsbvndwuajjhnzpohghh STOP · Wix unchanged · FTP auto-apply suspended
-Next Kit: Phase 2 YouTube Supabase Vertical Slice
+Phase2 doc: tools/static-to-astro/docs/cms-core-v2-youtube-supabase-vertical-slice.md
+cmsCoreV2YoutubeSupabaseVerticalSliceLocalImplemented: true
+cmsCoreV2YoutubeSupabaseLocalSecurityHardeningComplete: true
+readyForOperatorMigrationApply: false
+edgeDeployExecuted: false · dbMigrationExecuted: false · dbWriteExecuted: false
+DEFINER helpers: is_platform_admin() / is_site_member(uuid) / can_write_site(uuid) — auth.uid() only
+YouTube default admin path: GitHub Contents (G-11c*) — unchanged
+Supabase path opt-in: PUBLIC_ADMIN_GOSAKI_YOUTUBE_SUPABASE_PATH_ENABLED=true
+Save arms (Contents + Supabase): false by default
+Edge deploy SoT: supabase/functions/gosaki-youtube-supabase-save-dry-run/
+STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
+Next Kit: re-audit (do NOT migrate until readyForOperatorMigrationApply true)
 Parallel OK: client staging share + hosting read-only planning
-Do NOT: DB migration without approval · RLS apply · Edge deploy · FTP · production · Contents write in Phase 1 leftover
+Do NOT: migration/RLS/Edge/FTP/production/Contents write without approval
 EXTERNAL_WRITE_EXECUTED: false
 ```
+
+## CMS Core v2 YouTube Supabase — local security hardening (2026-07-22)
+
+- **Doc:** `cms-core-v2-youtube-supabase-vertical-slice.md`
+- **Fixed:** DEFINER uid args removed · EXECUTE revoke PUBLIC/anon · table GRANT draft · Edge staging allowlist · site_slug mismatch · dry-run approval required · rollback templates · ADR active
+- **Gate:** `readyForOperatorMigrationApply: false` until re-audit PASS
+- **Not done:** migration apply · RLS/GRANT apply · Edge deploy · DB write · Contents cutover · FTP · commit
+- **Next:** re-audit
+- **Status:** hardening complete; staging execution still blocked
+
+## CMS Core v2 YouTube Supabase Vertical Slice — local implementation (2026-07-22)
+
+- **Doc:** `cms-core-v2-youtube-supabase-vertical-slice.md`
+- **Delivered:** SQL drafts · undeployed Edge · dual-path admin · build DB-prefer+JSON fallback · verifier
+- **Not done:** migration apply · RLS/GRANT · Edge deploy · DB write · Contents cutover · FTP
+- **Next:** human migration → Edge deploy → Save round-trip
+- **Status:** local complete; staging execution pending
 
 ## CMS Core v2 Minimal Architecture Planning (2026-07-22) — complete
 

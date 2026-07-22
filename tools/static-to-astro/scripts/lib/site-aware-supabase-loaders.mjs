@@ -103,6 +103,7 @@ export async function loadSiteSupabaseDataForBuild(opts) {
   const embeds = await loadSiteEmbedsDataForBuild({
     siteKey: opts.siteKey,
     toolRoot: opts.toolRoot,
+    env: opts.env,
   });
   return {
     schedule,

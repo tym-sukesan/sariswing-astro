@@ -858,7 +858,7 @@ export function generateAstroProject(inputDir, outputDir, options = {}) {
   const scheduleMonthPages = detectScheduleMonthPages(analysis.pages);
   const scheduleHub = scheduleMonthPages.length > 0;
 
-  const { scheduleBundle, discographyBundle } = normalizeSiteDataBundles(options);
+  const { scheduleBundle, discographyBundle, embedsBundle } = normalizeSiteDataBundles(options);
   const hookContextBase = {
     siteDir,
     siteKey: siteHooks.siteKey,
@@ -867,8 +867,11 @@ export function generateAstroProject(inputDir, outputDir, options = {}) {
     linkTransformContext,
     scheduleBundle,
     discographyBundle,
+    embedsBundle,
+    siteEmbedsBundle: embedsBundle,
     gosakiScheduleBundle: scheduleBundle,
     gosakiDiscographyBundle: discographyBundle,
+    gosakiEmbedsBundle: embedsBundle,
     scheduleMonthPages,
     outDir,
     toolRoot: TOOL_ROOT,

@@ -248,6 +248,7 @@ export type YoutubeMultiOperationalEditDeps = {
     expectedBeforeItems: YoutubeMultiDraftItem[];
     fingerprint: string;
     requestId?: string;
+    expectedBeforeUpdatedAtById?: Record<string, string>;
   }) => Record<string, unknown>;
   evaluateSaveGate?: (input: {
     authenticated: boolean;
@@ -305,6 +306,7 @@ export function initGosakiYoutubeMultiOperationalEdit(
   let dryRunBeforeItems: YoutubeMultiDraftItem[] | null = null;
   let dryRunAfterFingerprint: string | null = null;
   let dryRunNoChange = false;
+  let dryRunExpectedBeforeUpdatedAtById: Record<string, string> | null = null;
   let dryRunInFlight = false;
   let saveInFlight = false;
   let indeterminateLocked = false;
@@ -615,6 +617,16 @@ export function initGosakiYoutubeMultiOperationalEdit(
         dryRunBeforeItems = cloneYoutubeDraftItems(baseline);
         dryRunAfterFingerprint = itemsFingerprint(items);
         dryRunNoChange = noChange;
+        const lockRaw = json.expectedBeforeUpdatedAtById;
+        dryRunExpectedBeforeUpdatedAtById =
+          lockRaw && typeof lockRaw === "object" && !Array.isArray(lockRaw)
+            ? Object.fromEntries(
+                Object.entries(lockRaw as Record<string, unknown>).map(([k, v]) => [
+                  k,
+                  String(v ?? ""),
+                ]),
+              )
+            : null;
         if (statusEl && !pendingOneClickSave) {
           statusEl.textContent = noChange ? "確認完了（変更なし）" : "確認完了";
         }
@@ -698,6 +710,7 @@ export function initGosakiYoutubeMultiOperationalEdit(
         expectedBeforeItems: dryRunBeforeItems,
         fingerprint: dryRunFingerprint,
         requestId: `ui-items-${Date.now()}`,
+        expectedBeforeUpdatedAtById: dryRunExpectedBeforeUpdatedAtById ?? undefined,
       });
       const controller = new AbortController();
       const timer = window.setTimeout(() => controller.abort(), 25000);

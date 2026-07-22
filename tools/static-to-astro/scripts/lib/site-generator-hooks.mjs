@@ -274,7 +274,9 @@ function createGosakiPianoHookMethods() {
 
       const gosakiYoutubeEmbedSummary =
         siteKey && isCmsFeatureEnabled(siteKey, "youtube", toolRoot)
-          ? applyGosakiHomeYouTubeEmbed(outDir, toolRoot)
+          ? applyGosakiHomeYouTubeEmbed(outDir, toolRoot, {
+              siteEmbedsBundle: ctx.siteEmbedsBundle ?? ctx.embedsBundle ?? ctx.gosakiEmbedsBundle,
+            })
           : { applied: false, reason: "cms_feature_youtube_disabled" };
       if (gosakiYoutubeEmbedSummary.applied) {
         writtenPaths.push(

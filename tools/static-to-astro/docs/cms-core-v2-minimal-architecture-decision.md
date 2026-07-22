@@ -64,8 +64,11 @@ One row per customer site. ~10 sites share one staging Supabase project (`kmjqpp
 | --- | --- | --- |
 | `user_id` | `uuid` PK → `auth.users` | Kit operator / YSK |
 | `created_at` | `timestamptz` | Audit |
+| `active` | `boolean NOT NULL default true` | Soft revoke without deleting the row |
 
 Cross-site break-glass for staging Kit work. **Not** a substitute for per-site `owner`.
+
+**Immediate revoke contract:** `active = false` makes `is_platform_admin()` return false on the next call (no JWT refresh required). The user loses all-site assist rights immediately while site `owner`/`editor` membership (if any) is unchanged.
 
 ---
 

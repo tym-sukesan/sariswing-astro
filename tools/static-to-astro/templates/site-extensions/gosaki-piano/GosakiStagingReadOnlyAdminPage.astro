@@ -83,6 +83,12 @@ import {
   isG12aAboutSaveEnabled,
   assertGosakiAboutDryRunEndpointSafe,
   assertGosakiAboutSaveEndpointSafe,
+  isGosakiYoutubeSupabasePathEnabled,
+  isGosakiYoutubeSupabaseSaveEnabled,
+  resolveGosakiYoutubeSupabaseEndpoint,
+  assertGosakiYoutubeDryRunEndpointSafe,
+  YOUTUBE_SUPABASE_SAVE_APPROVAL_ID,
+  YOUTUBE_SUPABASE_PATH_PHASE,
 } from "../lib/gosaki-staging-read-only-admin";
 
 interface Props {
@@ -91,8 +97,17 @@ interface Props {
 
 const { page = "portal" } = Astro.props as Props;
 
-const dryRunEndpoint = resolveG11c4aDryRunEndpoint(import.meta.env);
-const saveEndpoint = resolveG11c6aSaveEndpoint(import.meta.env);
+const youtubeSupabasePathEnabled = isGosakiYoutubeSupabasePathEnabled(import.meta.env);
+const youtubeSupabaseEndpointRaw = resolveGosakiYoutubeSupabaseEndpoint(import.meta.env);
+const youtubeSupabaseEndpoint = assertGosakiYoutubeDryRunEndpointSafe(youtubeSupabaseEndpointRaw)
+  ? youtubeSupabaseEndpointRaw
+  : "";
+const dryRunEndpoint = youtubeSupabasePathEnabled
+  ? youtubeSupabaseEndpoint
+  : resolveG11c4aDryRunEndpoint(import.meta.env);
+const saveEndpoint = youtubeSupabasePathEnabled
+  ? youtubeSupabaseEndpoint
+  : resolveG11c6aSaveEndpoint(import.meta.env);
 const discographyDryRunEndpoint = resolveG20u36cDiscographyDryRunEndpoint(import.meta.env);
 const discographySaveEndpoint = resolveG20u41DiscographySaveEndpoint(import.meta.env);
 const discographySaveArmed = isG20u41DiscographyOperationalSaveArmed(import.meta.env);
@@ -115,7 +130,9 @@ const supabaseAnonKey = resolveG11c4aSupabaseAnonKey(import.meta.env);
 const supabaseAuthConfigured = isG11c4aSupabaseAuthConfigured(import.meta.env);
 const endpointConfigured = Boolean(dryRunEndpoint);
 const saveEndpointConfigured = Boolean(saveEndpoint);
-const saveEnabled = isG11c6aSaveEnabled(import.meta.env);
+const saveEnabled = youtubeSupabasePathEnabled
+  ? isGosakiYoutubeSupabaseSaveEnabled(import.meta.env)
+  : isG11c6aSaveEnabled(import.meta.env);
 const g11c1OperationId = "G-11c1-gosaki-youtube-url-web-save-dry-run-poc";
 const g11c1ApprovalId = "G-11c1-youtube-url-dry-run";
 
@@ -177,6 +194,9 @@ const showClientScript = true;
     data-g11c6a-phase={G11C6A_PHASE}
     data-gosaki-youtube-dry-run-endpoint={dryRunEndpoint}
     data-gosaki-youtube-save-endpoint={saveEndpoint}
+    data-gosaki-youtube-write-backend={youtubeSupabasePathEnabled ? "supabase" : "contents"}
+    data-gosaki-youtube-supabase-path-phase={YOUTUBE_SUPABASE_PATH_PHASE}
+    data-gosaki-youtube-supabase-save-approval-id={YOUTUBE_SUPABASE_SAVE_APPROVAL_ID}
     data-gosaki-discography-dry-run-endpoint={discographyDryRunEndpoint}
     data-gosaki-discography-save-endpoint={discographySaveEndpoint}
     data-gosaki-schedule-dry-run-endpoint={scheduleDryRunEndpoint}
@@ -663,12 +683,15 @@ const showClientScript = true;
         G11C6_APPROVAL_ID,
         G11C6_CONFLICT_MESSAGE,
         G11C7_ITEMS_SAVE_APPROVAL_ID,
+        YOUTUBE_SUPABASE_SAVE_APPROVAL_ID,
         assertGosakiYoutubeDryRunEndpointSafe,
         assertGosakiYoutubeSaveEndpointSafe,
         buildYoutubeDryRunEndpointRequest,
         buildYoutubeSaveEndpointRequest,
         buildYoutubeItemsDryRunEndpointRequest,
         buildYoutubeItemsSaveEndpointRequest,
+        buildYoutubeSupabaseItemsDryRunEndpointRequest,
+        buildYoutubeSupabaseItemsSaveEndpointRequest,
         sanitizeYoutubeDryRunEndpointDisplay,
         sanitizeYoutubeSaveEndpointDisplay,
         evaluateYoutubeOperationalSaveGate,
@@ -904,6 +927,8 @@ const showClientScript = true;
           } catch (_e) {
             config = {};
           }
+          const writeBackend = (body?.dataset.gosakiYoutubeWriteBackend || "contents").trim();
+          const useSupabase = writeBackend === "supabase";
           initGosakiYoutubeMultiOperationalEdit(youtubeRoot, {
             config,
             saveArmed: body?.dataset.gosakiYoutubeSaveArmed === "true",
@@ -913,10 +938,17 @@ const showClientScript = true;
             anonKey: (body?.dataset.gosakiSupabaseAnonKey || "").trim(),
             assertDryRunEndpointSafe: assertGosakiYoutubeDryRunEndpointSafe,
             assertSaveEndpointSafe: assertGosakiYoutubeSaveEndpointSafe,
-            buildDryRunEndpointRequest: buildYoutubeItemsDryRunEndpointRequest,
-            buildSaveEndpointRequest: buildYoutubeItemsSaveEndpointRequest,
+            buildDryRunEndpointRequest: useSupabase
+              ? buildYoutubeSupabaseItemsDryRunEndpointRequest
+              : buildYoutubeItemsDryRunEndpointRequest,
+            buildSaveEndpointRequest: useSupabase
+              ? buildYoutubeSupabaseItemsSaveEndpointRequest
+              : buildYoutubeItemsSaveEndpointRequest,
             evaluateSaveGate: evaluateYoutubeOperationalSaveGate,
-            expectedSaveApprovalId: G11C7_ITEMS_SAVE_APPROVAL_ID,
+            expectedSaveApprovalId: useSupabase
+              ? (body?.dataset.gosakiYoutubeSupabaseSaveApprovalId || "").trim() ||
+                YOUTUBE_SUPABASE_SAVE_APPROVAL_ID
+              : G11C7_ITEMS_SAVE_APPROVAL_ID,
             conflictMessage: G11C6_CONFLICT_MESSAGE,
           });
         } else {

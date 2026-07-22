@@ -7,6 +7,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { isGosakiPianoFixture } from "./gosaki-about-band-profiles.mjs";
+import { mapSiteEmbedRowsToYoutubeConfig } from "./cms-core-v2-youtube-supabase-contract.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const require = createRequire(path.join(__dirname, "../../package.json"));
@@ -135,6 +136,23 @@ export function applyGosakiHomeYouTubeEmbed(outDir, toolRoot, options = {}) {
     return { applied: false, reason: `Home page not found: ${homeRel}`, publishedCount: 0 };
   }
 
+  /** Prefer Supabase site_embeds when convert loaded published rows; else JSON SoT. */
+  let config = loaded.config;
+  let embedDataSource = "json";
+  const embedsBundle = options.siteEmbedsBundle ?? options.embedsBundle ?? null;
+  if (
+    embedsBundle &&
+    embedsBundle.embedDataSource === "supabase" &&
+    Array.isArray(embedsBundle.embeds) &&
+    embedsBundle.embeds.length > 0
+  ) {
+    config = mapSiteEmbedRowsToYoutubeConfig(embedsBundle.embeds, {
+      siteSlug: embedsBundle.siteSlug,
+      sectionTitle: loaded.config?.sectionTitle,
+    });
+    embedDataSource = "supabase";
+  }
+
   const componentDest = path.join(outDir, "src/components/YouTubeEmbedSection.astro");
   const dataDest = path.join(outDir, "src/data/gosaki-youtube-embed.json");
   const libDest = path.join(outDir, "src/lib/gosaki-youtube-embed.ts");
@@ -143,14 +161,14 @@ export function applyGosakiHomeYouTubeEmbed(outDir, toolRoot, options = {}) {
   fs.mkdirSync(path.dirname(libDest), { recursive: true });
   fs.copyFileSync(templatePath, componentDest);
   fs.copyFileSync(libPath, libDest);
-  fs.writeFileSync(dataDest, `${JSON.stringify(loaded.config, null, 2)}\n`, "utf8");
+  fs.writeFileSync(dataDest, `${JSON.stringify(config, null, 2)}\n`, "utf8");
 
   const homeContent = fs.readFileSync(homePath, "utf8");
   fs.writeFileSync(homePath, injectYouTubeEmbedIntoHomePage(homeContent), "utf8");
 
-  const publishedCount = Array.isArray(loaded.config.items)
-    ? loaded.config.items.filter((item) => item?.published === true).length
-    : loaded.config.published === true
+  const publishedCount = Array.isArray(config.items)
+    ? config.items.filter((item) => item?.published === true).length
+    : config.published === true
       ? 1
       : 0;
 
@@ -158,6 +176,7 @@ export function applyGosakiHomeYouTubeEmbed(outDir, toolRoot, options = {}) {
     applied: true,
     reason: null,
     publishedCount,
+    embedDataSource,
     homePagePath: homeRel,
     componentPath: "src/components/YouTubeEmbedSection.astro",
     dataPath: "src/data/gosaki-youtube-embed.json",

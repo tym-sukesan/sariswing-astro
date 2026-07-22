@@ -8,6 +8,7 @@
  * @typedef {object} SiteDataBundles
  * @property {unknown} scheduleBundle
  * @property {unknown} discographyBundle
+ * @property {unknown} embedsBundle
  */
 
 /**
@@ -19,7 +20,9 @@ export function normalizeSiteDataBundles(options = {}) {
     options.scheduleBundle ?? options.gosakiScheduleBundle ?? null;
   const discographyBundle =
     options.discographyBundle ?? options.gosakiDiscographyBundle ?? null;
-  return { scheduleBundle, discographyBundle };
+  const embedsBundle =
+    options.embedsBundle ?? options.siteEmbedsBundle ?? options.gosakiEmbedsBundle ?? null;
+  return { scheduleBundle, discographyBundle, embedsBundle };
 }
 
 /**
@@ -29,12 +32,15 @@ export function normalizeSiteDataBundles(options = {}) {
  * @returns {Record<string, unknown>}
  */
 export function withNormalizedSiteDataBundles(options = {}) {
-  const { scheduleBundle, discographyBundle } = normalizeSiteDataBundles(options);
+  const { scheduleBundle, discographyBundle, embedsBundle } = normalizeSiteDataBundles(options);
   return {
     ...options,
     scheduleBundle,
     discographyBundle,
+    embedsBundle,
+    siteEmbedsBundle: embedsBundle,
     gosakiScheduleBundle: scheduleBundle,
     gosakiDiscographyBundle: discographyBundle,
+    gosakiEmbedsBundle: embedsBundle,
   };
 }

@@ -49,6 +49,23 @@ export const G11C7_ITEMS_SAVE_APPROVAL_ID =
 export const G11C7_ITEMS_SAVE_DISABLED_REASON =
   "複数動画 Save は無効です。通常 STG package では常に無効。server arm · client arm · dry-run fingerprint · SHA lock が必要です。";
 
+/** CMS Core v2 Phase 2 — YouTube Supabase path (parallel to Contents; default off). */
+export const YOUTUBE_SUPABASE_PATH_PHASE =
+  "cms-core-v2-youtube-supabase-vertical-slice-local-implementation";
+export const YOUTUBE_SUPABASE_ENDPOINT_NAME = "gosaki-youtube-supabase-save-dry-run";
+export const YOUTUBE_SUPABASE_DRY_RUN_ENDPOINT = `${G11C4A_STAGING_SUPABASE_URL}/functions/v1/${YOUTUBE_SUPABASE_ENDPOINT_NAME}`;
+export const YOUTUBE_SUPABASE_SAVE_ENDPOINT = YOUTUBE_SUPABASE_DRY_RUN_ENDPOINT;
+export const YOUTUBE_SUPABASE_PATH_ENABLED_ENV =
+  "PUBLIC_ADMIN_GOSAKI_YOUTUBE_SUPABASE_PATH_ENABLED";
+export const YOUTUBE_SUPABASE_SAVE_UI_ARMED_ENV =
+  "PUBLIC_ADMIN_GOSAKI_YOUTUBE_SUPABASE_SAVE_ARMED";
+export const YOUTUBE_SUPABASE_DRY_RUN_APPROVAL_ID =
+  "G-cms-v2-youtube-supabase-items-dry-run";
+export const YOUTUBE_SUPABASE_SAVE_APPROVAL_ID =
+  "G-cms-v2-youtube-supabase-items-web-save-non-dry-run-slice";
+export const YOUTUBE_SUPABASE_DRY_RUN_OPERATION = "dryRun" as const;
+export const YOUTUBE_SUPABASE_SAVE_OPERATION = "save" as const;
+
 /** G-20u28 — staging read-only admin dashboard foundation polish. */
 export const G20U28_ADMIN_UI_PHASE = "G-20u28-gosaki-admin-ui-foundation-polish";
 
@@ -1091,12 +1108,21 @@ export function isG11c6aSaveEnabled(env: ImportMetaEnv): boolean {
   return String(env.PUBLIC_ADMIN_GOSAKI_YOUTUBE_URL_WEB_SAVE_NON_DRY_RUN_ARMED ?? "").trim() === "true";
 }
 
-export function assertGosakiYoutubeDryRunEndpointSafe(endpoint: string): boolean {
-  const trimmed = String(endpoint ?? "").trim();
-  if (!trimmed) return false;
-  if (trimmed.includes(G20U36C_PRODUCTION_PROJECT_REF_STOP)) return false;
-  if (!trimmed.includes(G11C4A_STAGING_PROJECT_REF)) return false;
-  return trimmed.includes("/functions/v1/gosaki-youtube-url-dry-run");
+/** Opt-in Supabase YouTube path. Default false — Contents G-11c* path unchanged. */
+export function isGosakiYoutubeSupabasePathEnabled(env: ImportMetaEnv | Record<string, unknown>): boolean {
+  return String((env as Record<string, unknown>)[YOUTUBE_SUPABASE_PATH_ENABLED_ENV] ?? "").trim() === "true";
+}
+
+export function isGosakiYoutubeSupabaseSaveEnabled(env: ImportMetaEnv | Record<string, unknown>): boolean {
+  return String((env as Record<string, unknown>)[YOUTUBE_SUPABASE_SAVE_UI_ARMED_ENV] ?? "").trim() === "true";
+}
+
+export function resolveGosakiYoutubeSupabaseEndpoint(env: ImportMetaEnv): string {
+  const fromEnv = String(
+    (env as Record<string, unknown>).PUBLIC_GOSAKI_YOUTUBE_SUPABASE_ENDPOINT ?? "",
+  ).trim();
+  if (fromEnv) return fromEnv;
+  return YOUTUBE_SUPABASE_DRY_RUN_ENDPOINT;
 }
 
 export function assertGosakiYoutubeSaveEndpointSafe(endpoint: string): boolean {
@@ -1104,7 +1130,21 @@ export function assertGosakiYoutubeSaveEndpointSafe(endpoint: string): boolean {
   if (!trimmed) return false;
   if (trimmed.includes(G20U36C_PRODUCTION_PROJECT_REF_STOP)) return false;
   if (!trimmed.includes(G11C4A_STAGING_PROJECT_REF)) return false;
-  return trimmed.includes("/functions/v1/gosaki-youtube-url-save");
+  return (
+    trimmed.includes("/functions/v1/gosaki-youtube-url-save") ||
+    trimmed.includes(`/functions/v1/${YOUTUBE_SUPABASE_ENDPOINT_NAME}`)
+  );
+}
+
+export function assertGosakiYoutubeDryRunEndpointSafe(endpoint: string): boolean {
+  const trimmed = String(endpoint ?? "").trim();
+  if (!trimmed) return false;
+  if (trimmed.includes(G20U36C_PRODUCTION_PROJECT_REF_STOP)) return false;
+  if (!trimmed.includes(G11C4A_STAGING_PROJECT_REF)) return false;
+  return (
+    trimmed.includes("/functions/v1/gosaki-youtube-url-dry-run") ||
+    trimmed.includes(`/functions/v1/${YOUTUBE_SUPABASE_ENDPOINT_NAME}`)
+  );
 }
 
 export function buildYoutubeDryRunEndpointRequest(nextValue: string): Record<string, unknown> {
@@ -1177,6 +1217,7 @@ export function buildYoutubeItemsSaveEndpointRequest(input: {
   expectedBeforeItems: YoutubeItemsEndpointItem[];
   fingerprint: string;
   requestId?: string;
+  expectedBeforeUpdatedAtById?: Record<string, string>;
 }): Record<string, unknown> {
   return {
     siteSlug: GOSAKI_STAGING_SITE_SLUG,
@@ -1194,6 +1235,58 @@ export function buildYoutubeItemsSaveEndpointRequest(input: {
     approvalId: G11C7_ITEMS_SAVE_APPROVAL_ID,
     fingerprint: String(input.fingerprint ?? "").trim(),
     requestId: String(input.requestId ?? `ui-items-${Date.now()}`).trim(),
+    expectedBeforeItems: input.expectedBeforeItems.map((item) => ({
+      id: String(item.id ?? "").trim(),
+      published: item.published === true,
+      sortOrder: Number(item.sortOrder),
+      embedCode: String(item.embedCode ?? "").trim(),
+    })),
+  };
+}
+
+export function buildYoutubeSupabaseItemsDryRunEndpointRequest(
+  items: YoutubeItemsEndpointItem[],
+): Record<string, unknown> {
+  return {
+    siteSlug: GOSAKI_STAGING_SITE_SLUG,
+    module: "youtube-embed",
+    field: "items",
+    operation: YOUTUBE_SUPABASE_DRY_RUN_OPERATION,
+    dryRun: true,
+    approvalId: YOUTUBE_SUPABASE_DRY_RUN_APPROVAL_ID,
+    items: items.map((item) => ({
+      id: String(item.id ?? "").trim(),
+      published: item.published === true,
+      sortOrder: Number(item.sortOrder),
+      embedCode: String(item.embedCode ?? "").trim(),
+    })),
+  };
+}
+
+export function buildYoutubeSupabaseItemsSaveEndpointRequest(input: {
+  items: YoutubeItemsEndpointItem[];
+  expectedBeforeItems: YoutubeItemsEndpointItem[];
+  fingerprint: string;
+  requestId?: string;
+  expectedBeforeUpdatedAtById?: Record<string, string>;
+}): Record<string, unknown> {
+  return {
+    siteSlug: GOSAKI_STAGING_SITE_SLUG,
+    module: "youtube-embed",
+    field: "items",
+    operation: YOUTUBE_SUPABASE_SAVE_OPERATION,
+    dryRun: false,
+    saveEnabled: true,
+    approvalId: YOUTUBE_SUPABASE_SAVE_APPROVAL_ID,
+    fingerprint: String(input.fingerprint ?? "").trim(),
+    requestId: String(input.requestId ?? `ui-yt-supabase-${Date.now()}`).trim(),
+    expectedBeforeUpdatedAtById: input.expectedBeforeUpdatedAtById ?? {},
+    items: input.items.map((item) => ({
+      id: String(item.id ?? "").trim(),
+      published: item.published === true,
+      sortOrder: Number(item.sortOrder),
+      embedCode: String(item.embedCode ?? "").trim(),
+    })),
     expectedBeforeItems: input.expectedBeforeItems.map((item) => ({
       id: String(item.id ?? "").trim(),
       published: item.published === true,

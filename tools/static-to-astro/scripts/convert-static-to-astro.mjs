@@ -149,6 +149,7 @@ async function main() {
   try {
     let scheduleBundle = null;
     let discographyBundle = null;
+    let embedsBundle = null;
     if (!dryRun && effectiveSiteKey) {
       const supabaseData = await loadSiteSupabaseDataForBuild({
         siteKey: effectiveSiteKey,
@@ -157,6 +158,7 @@ async function main() {
       });
       scheduleBundle = supabaseData.schedule;
       discographyBundle = supabaseData.discography;
+      embedsBundle = supabaseData.embeds;
     }
 
     const result = generateAstroProject(inputAbs, outputAbs, {
@@ -169,6 +171,8 @@ async function main() {
       siteKey: effectiveSiteKey,
       scheduleBundle,
       discographyBundle,
+      embedsBundle,
+      siteEmbedsBundle: embedsBundle,
     });
     if (dryRun) {
       console.log("static-to-astro convert (dry-run)");

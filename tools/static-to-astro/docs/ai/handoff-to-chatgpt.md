@@ -5,23 +5,32 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: Gosaki staging CLIENT-SHARE READY · STAGING_READY_FOR_CLIENT_SHARE=true
+Current phase: CMS Core v2 Phase 1 COMPLETE → ready for Phase 2 YouTube Supabase Vertical Slice
+ADR: tools/static-to-astro/docs/cms-core-v2-minimal-architecture-decision.md
+cmsCoreV2MinimalArchitecturePlanned: true
+readyForPhase2YoutubeSupabaseVerticalSlice: true
+Gosaki staging CLIENT-SHARE READY remains true (parallel ops track)
 verified impl/content baseline commit: 7797ece (no impl/content changes after)
 deployed staging package sourceCommit: f284332 @ /cms-kit-staging/gosaki-piano/
 current repo HEAD / origin/main: DO NOT PIN — run git rev-parse --short HEAD and origin/main
-next commit: docs-only (AGENTS.md + AI docs) · after that still no package regen / FTP
-package freshness: judge f284332 impl/content baseline vs later docs-only drift separately
-STG: kmjqppxjdnwwrtaeqjta · operator manual FTP + browser smoke PASS
-4 client arms: false · 4 server arms: false
-production vsbvndwuajjhnzpohghh STOP / untouched · Wix unchanged
-HOSTING_READY: false · leading blocker: replacement hosting not contracted
-After contract planning: DNS/SSL/MX/FTP path/Basic Auth/prod env+Secrets/noindex off/backup/rollback/Wix cutover sign-off
-YouTube/About Save → GitHub Contents API commit on repo main · then fetch/pull · regen package from new HEAD
-Next primary: client staging share + feedback
-Parallel OK: production hosting read-only planning
-Do NOT yet: production contract / deploy / DNS
+YouTube/About Save SoT today: GitHub Contents API on main (unchanged in Phase 1)
+Phase 2 will add Supabase site_embeds Save path; Contents path stays until cutover
+Schedule/Discography/About admin: reference — do not break
+STG: kmjqppxjdnwwrtaeqjta · 4 client arms false · 4 server arms false
+production vsbvndwuajjhnzpohghh STOP · Wix unchanged · FTP auto-apply suspended
+Next Kit: Phase 2 YouTube Supabase Vertical Slice
+Parallel OK: client staging share + hosting read-only planning
+Do NOT: DB migration without approval · RLS apply · Edge deploy · FTP · production · Contents write in Phase 1 leftover
 EXTERNAL_WRITE_EXECUTED: false
 ```
+
+## CMS Core v2 Minimal Architecture Planning (2026-07-22) — complete
+
+- **Doc:** `cms-core-v2-minimal-architecture-decision.md`
+- **Decisions:** `sites` / `site_members` / `platform_admins`; `site_id`+`site_slug`; owner/editor/platform_admin; table SoT over JWT claims; RLS+Edge dual defense; `updated_by`; optimistic lock; Save≠build≠deploy; content common columns; media=URL-only; Gosaki preserve; Phase 2 YouTube scope+rollback
+- **Not done:** implementation · migration · DB write · RLS · Edge · FTP · production · Contents API change
+- **Next:** Phase 2 YouTube Supabase Vertical Slice
+- **Status:** complete and closed for Phase 1
 
 ## Gosaki staging client-share READY (2026-07-22 · audit-hardened)
 

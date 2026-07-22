@@ -3,10 +3,30 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **第一候補:** クライアントへ staging 共有・feedback 収集（`STAGING_READY_FOR_CLIENT_SHARE=true` · URL `https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/`）。
-2. **並行可:** production hosting **read-only planning**（契約・deploy・DNS はまだ行わない）。
-3. staging Edge は **server arms すべて false**（再 arm は明示承認時のみ・1機能ずつ）。
-4. production deploy / Wix 変更 / auto FTP / production ref `vsbvndwuajjhnzpohghh` は禁止。
+1. **Kit Core 第一候補:** Phase 2 **YouTube Supabase Vertical Slice**（ADR: `cms-core-v2-minimal-architecture-decision.md` · `readyForPhase2YoutubeSupabaseVerticalSlice: true`）。Contents API YouTube path は切替まで維持。
+2. **並行可（Gosaki ops）:** クライアントへ staging 共有・feedback（`STAGING_READY_FOR_CLIENT_SHARE=true` · URL `https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/`）。
+3. **並行可:** production hosting **read-only planning**（契約・deploy・DNS はまだ行わない）。
+4. staging Edge は **server arms すべて false**（再 arm は明示承認時のみ・1機能ずつ）。
+5. production deploy / Wix 変更 / auto FTP / production ref `vsbvndwuajjhnzpohghh` は禁止。
+
+## 0. CMS Core v2 Minimal Architecture Planning (2026-07-22) — complete
+
+| Item | Value |
+| --- | --- |
+| Phase | `cms-core-v2-minimal-architecture-planning` |
+| Doc | `cms-core-v2-minimal-architecture-decision.md` |
+| `cmsCoreV2MinimalArchitecturePlanned` | **true** |
+| `readyForPhase2YoutubeSupabaseVerticalSlice` | **true** |
+| YouTube/About Contents API | **unchanged** |
+| Schedule/Discography/About | reference preserved |
+| Implementation / DB / RLS / Edge / FTP | **false** |
+| Next | Phase 2 YouTube Supabase Vertical Slice |
+
+```txt
+CMS_CORE_V2_MINIMAL_ARCHITECTURE_PLANNED: true
+READY_FOR_PHASE_2_YOUTUBE_SUPABASE_VERTICAL_SLICE: true
+IMPLEMENTATION_EXECUTED: false
+```
 
 ### 検証基準 / package / 現在HEAD（混同禁止）
 

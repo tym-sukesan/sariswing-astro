@@ -23,7 +23,7 @@ Before G-20u20:
 | --- | --- | --- | --- |
 | `schedule` | `true` | `false` | `public.schedules` via site-aware loader |
 | `discography` | `true` | `false` | Gosaki wrapper; generic stub for other sites |
-| `siteEmbeds` | `false` | `false` | **TODO** — `public.site_embeds` migration (G-9f); no DB call yet |
+| `siteEmbeds` | **`true`** (Gosaki · CMS Core v2 registry persistence 2026-07-24) | `false` | Prefer published `public.site_embeds` at convert/build; empty/error → JSON fallback |
 
 **`cmsFeatures`** — static JSON / post-generate hooks (no Supabase in G-20u20):
 

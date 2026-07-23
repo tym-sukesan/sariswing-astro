@@ -184,7 +184,7 @@ export function resolveSiteCmsFeaturePlan(siteKey, toolRoot = TOOL_ROOT) {
  * Default: null when registry.siteEmbeds=false and CMS_KIT_SITE_EMBEDS_BUILD_READ≠true
  * (JSON YouTube SoT remains convert fallback — no blank home).
  * When enabled: anon SELECT published youtube rows; empty/error → caller keeps JSON.
- * Never uses service_role. Production ref STOP.
+ * Never uses the service role key. Production ref STOP.
  *
  * @param {{ siteKey: string, toolRoot?: string, env?: NodeJS.ProcessEnv }} opts
  */

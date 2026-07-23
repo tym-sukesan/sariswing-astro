@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**CMS Core v2 YouTube public staging Supabase build-read QA (2026-07-24):** **COMPLETE** — operator manual FTP full `public-dist/` → `/cms-kit-staging/gosaki-piano/` · public home YouTube OK (`I-eY9YMq9GI`) · primary pages OK · `/admin/youtube/` OK · Admin path retained · Save **disabled** · JSON/Contents fallback retained · production **unchanged** · Save/Secret/SQL/Edge **not** run · Gates: `cmsCoreV2YoutubePublicStagingSupabaseBuildReadQaComplete: true` · `publicSiteEmbedsBuildReadLive: true` · `adminStagingSupabasePathLive: true` · `saveArmEnabled: false` · `contentsYoutubeCutoverExecuted: false` · Doc: `cms-core-v2-youtube-supabase-public-build-read-package-prep.md` · **Next:** optional `registry.siteEmbeds=true` lasting flip（別承認）· or Contents YouTube retire planning · Save arm は false 維持。
+**CMS Core v2 YouTube registry siteEmbeds persistence (2026-07-24):** **complete (local)** — Gosaki `registry.siteEmbeds` **false→true** · package rebuilt **without** `CMS_KIT_SITE_EMBEDS_BUILD_READ` → `embedDataSource=supabase` · baked === mapped `site_embeds` · Admin path ON · Save arm false · pilot unchanged · JSON/Contents fallback retained · FTP **not** executed · Gates: `cmsCoreV2YoutubeRegistrySiteEmbedsPersistenceComplete: true` · `readyForOperatorRegistrySiteEmbedsFtpUpload: true` · Doc: `cms-core-v2-youtube-supabase-registry-siteembeds-persistence.md` · **Next:** operator manual FTP → smoke QA.
+
+**CMS Core v2 YouTube public staging Supabase build-read QA (2026-07-24):** **COMPLETE** — public home live from prior env bake · Admin path live · Save disabled · production unchanged.
 
 **CMS Core v2 YouTube cutover stage 2 — public build-read package prep (2026-07-24):** **complete** — superseded by FTP+QA COMPLETE above · package `sourceCommit` `b3bbae65`.
 

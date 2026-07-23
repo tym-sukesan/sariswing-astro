@@ -3,33 +3,32 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **Kit Core:** Phase 2 YouTube staging cutover **Admin + public build-read QA COMPLETE**（Save arm false · `registry.siteEmbeds=false` · Contents/JSON fallback 維持）。**Next（任意・別承認）:** `registry.siteEmbeds=true` 永続化、または Contents YouTube 退役 planning。Save arm **false** 維持。`contentsYoutubeCutoverExecuted: false`。Doc: `cms-core-v2-youtube-supabase-public-build-read-package-prep.md`。
+1. **Kit Core:** Phase 2 YouTube **registry siteEmbeds persistence READY**（Gosaki `siteEmbeds=true` · envなしで supabase bake 確認済 · FTP未実施）。**Next（人間・別ゲート）:** manual FTP `public-dist/` → `/cms-kit-staging/gosaki-piano/` → smoke QA。Doc: `cms-core-v2-youtube-supabase-registry-siteembeds-persistence.md`。
 2. **並行可（Gosaki ops）:** クライアントへ staging 共有・feedback。
-3. **並行可:** production hosting **read-only planning**。
-4. Save / Secret / auto FTP / production `vsbvndwuajjhnzpohghh` 禁止。
-5. `readyForAnyFutureFtpApply: false` 維持。
+3. **並行可:** production hosting **read-only planning** · Contents YouTube 退役 planning（任意）。
+4. Save arm **false** 維持。
+5. production / Wix / auto FTP / `vsbvndwuajjhnzpohghh` 禁止。
 
-## 0. CMS Core v2 YouTube — public staging Supabase build-read QA COMPLETE (2026-07-24)
+## 0. CMS Core v2 YouTube — registry siteEmbeds persistence (2026-07-24)
 
 | Item | Value |
 | --- | --- |
-| Gate | `cmsCoreV2YoutubePublicStagingSupabaseBuildReadQaComplete: true` |
-| `publicSiteEmbedsBuildReadLive` | **true** |
-| `adminStagingSupabasePathLive` | **true** |
-| Public home videoId | `I-eY9YMq9GI` |
+| Gate | `cmsCoreV2YoutubeRegistrySiteEmbedsPersistenceComplete: true` |
+| Registry | Gosaki `siteEmbeds: true` · pilot unchanged `false` |
+| Env | `CMS_KIT_SITE_EMBEDS_BUILD_READ` **UNSET** still supabase |
+| Package | `sourceCommit` `443d1e5` |
 | `saveArmEnabled` | **false** |
-| `contentsYoutubeCutoverExecuted` | **false** |
-| production | **unchanged** |
-| Next | optional registry `siteEmbeds=true` or Contents retire planning |
+| FTP | **not** executed |
+| Next | operator manual FTP + smoke QA |
 
 ```txt
-CMS_CORE_V2_YOUTUBE_PUBLIC_STAGING_SUPABASE_BUILD_READ_QA_COMPLETE: true
-PUBLIC_SITE_EMBEDS_BUILD_READ_LIVE: true
-ADMIN_STAGING_SUPABASE_PATH_LIVE: true
+CMS_CORE_V2_YOUTUBE_REGISTRY_SITE_EMBEDS_PERSISTENCE_COMPLETE: true
+REGISTRY_GOSAKI_SITE_EMBEDS_TRUE: true
+REGISTRY_PILOT_SITE_EMBEDS_FALSE: true
+PUBLIC_BUILD_READ_WORKS_WITHOUT_CMS_KIT_ENV: true
 SAVE_ARM_ENABLED: false
+READY_FOR_OPERATOR_REGISTRY_SITE_EMBEDS_FTP_UPLOAD: true
 CONTENTS_YOUTUBE_CUTOVER_EXECUTED: false
-REGISTRY_SITE_EMBEDS_STILL_FALSE: true
-JSON_YOUTUBE_FALLBACK_RETAINED: true
 READY_FOR_ANY_FUTURE_FTP_APPLY: false
 ```
 

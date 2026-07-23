@@ -311,12 +311,24 @@ assert(
   plan.expectedBeforeUpdatedAtById["yt-placeholder-01"] === "2026-07-20T00:00:00.000Z",
 );
 
-const embedsDisabled = await loadSiteEmbedsDataForBuild({
+const embedsViaRegistry = await loadSiteEmbedsDataForBuild({
   siteKey: GOSAKI_SITE_KEY,
   toolRoot: TOOL_ROOT,
   env: {},
 });
-assert("embeds null by default", embedsDisabled === null);
+assert("embeds not null with registry siteEmbeds true", embedsViaRegistry != null);
+assert(
+  "embeds supabase via registry without CMS_KIT env",
+  embedsViaRegistry.embedDataSource === "supabase",
+);
+assert("embeds registry row present", embedsViaRegistry.rowCount >= 1);
+
+const pilotEmbedsNull = await loadSiteEmbedsDataForBuild({
+  siteKey: "pilot-sample-static",
+  toolRoot: TOOL_ROOT,
+  env: {},
+});
+assert("pilot embeds still null (siteEmbeds false)", pilotEmbedsNull === null);
 
 const adminTs = read(
   "tools/static-to-astro/templates/site-extensions/gosaki-piano/gosaki-staging-read-only-admin.ts",
@@ -373,10 +385,15 @@ assert("doc public build-read package prepared", doc.includes("cmsCoreV2YoutubeS
 assert("doc public build-read in package", /publicSiteEmbedsBuildReadEnabledInPackage:\s*true/.test(doc));
 assert("doc public build-read live", /publicSiteEmbedsBuildReadLive:\s*true/.test(doc));
 assert("doc public build-read QA complete", doc.includes("cmsCoreV2YoutubePublicStagingSupabaseBuildReadQaComplete: true"));
-assert("doc registry siteEmbeds still false", /registrySiteEmbedsStillFalse:\s*true/.test(doc));
+assert("doc registry persistence complete", doc.includes("cmsCoreV2YoutubeRegistrySiteEmbedsPersistenceComplete: true"));
+assert("doc registry gosaki siteEmbeds true", /registryGosakiSiteEmbedsTrue:\s*true/.test(doc));
+assert("doc registry pilot siteEmbeds false", /registryPilotSiteEmbedsFalse:\s*true/.test(doc));
+assert("doc build-read without cms kit env", /publicBuildReadWorksWithoutCmsKitEnv:\s*true/.test(doc));
+assert("doc registry still-false gate cleared", /registrySiteEmbedsStillFalse:\s*false/.test(doc));
 assert("doc json fallback retained gate", /jsonYoutubeFallbackRetained:\s*true/.test(doc));
 assert("doc public build-read FTP readiness closed", /readyForOperatorPublicBuildReadFtpUpload:\s*false/.test(doc));
 assert("doc public build-read FTP done", /publicBuildReadFtpUploadExecuted:\s*true/.test(doc));
+assert("doc ready for registry FTP", /readyForOperatorRegistrySiteEmbedsFtpUpload:\s*true/.test(doc));
 assert("doc admin path cutover QA complete", doc.includes("cmsCoreV2YoutubeAdminStagingSupabasePathCutoverQaComplete: true"));
 assert("doc admin staging path live", /adminStagingSupabasePathLive:\s*true/.test(doc));
 assert("doc ftp upload executed (manual)", /ftpUploadExecuted:\s*true/.test(doc));
@@ -407,13 +424,23 @@ assert("build-read pkg QA complete", buildReadDoc.includes("cmsCoreV2YoutubePubl
 assert("build-read pkg env", buildReadDoc.includes("CMS_KIT_SITE_EMBEDS_BUILD_READ=true"));
 assert("build-read pkg admin path on", buildReadDoc.includes("PUBLIC_ADMIN_GOSAKI_YOUTUBE_SUPABASE_PATH_ENABLED=true"));
 assert("build-read pkg mapped evidence", /mapSiteEmbedRowsToYoutubeConfig/i.test(buildReadDoc));
-assert("build-read pkg registry false", /registrySiteEmbedsStillFalse:\s*true/.test(buildReadDoc));
 assert("build-read pkg json fallback", /jsonYoutubeFallbackRetained:\s*true/.test(buildReadDoc));
 assert("build-read pkg FTP executed", /ftpUploadExecuted:\s*true/.test(buildReadDoc));
 assert("build-read pkg live true", /publicSiteEmbedsBuildReadLive:\s*true/.test(buildReadDoc));
 assert("build-read pkg save arm false", /saveArmEnabled:\s*false/.test(buildReadDoc));
 assert("build-read pkg videoId", buildReadDoc.includes("I-eY9YMq9GI"));
 assert("build-read pkg sourceCommit", buildReadDoc.includes("b3bbae653c14ae5bf872b0261641c4fbf01bcf10"));
+
+const registryPersistDoc = read(
+  "tools/static-to-astro/docs/cms-core-v2-youtube-supabase-registry-siteembeds-persistence.md",
+);
+assert("registry persist doc complete", registryPersistDoc.includes("cmsCoreV2YoutubeRegistrySiteEmbedsPersistenceComplete: true"));
+assert("registry persist gosaki true", /registryGosakiSiteEmbedsTrue:\s*true/.test(registryPersistDoc));
+assert("registry persist pilot false", /registryPilotSiteEmbedsFalse:\s*true/.test(registryPersistDoc));
+assert("registry persist without env", /publicBuildReadWorksWithoutCmsKitEnv:\s*true/.test(registryPersistDoc));
+assert("registry persist FTP pending", /ftpUploadExecuted:\s*false/.test(registryPersistDoc));
+assert("registry persist sourceCommit", registryPersistDoc.includes("443d1e5bb6ea6b720b1700a60e7fbd4c01e2d420"));
+assert("registry persist embedDataSource supabase", /embedDataSource:\s*"supabase"/.test(registryPersistDoc));
 assert("doc save approval id", doc.includes(YOUTUBE_SUPABASE_SAVE_APPROVAL_ID));
 assert("doc sortOrder round-trip plan", /sortOrder.*10.*11|sort_order.*10.*11/i.test(doc));
 assert("doc production stop ref", doc.includes(PRODUCTION_REF_STOP));
@@ -436,8 +463,12 @@ assert("ADR composite FK", adr.includes("composite FK") || adr.includes("site_em
 
 const registry = JSON.parse(read("tools/static-to-astro/config/sites/registry.json"));
 assert(
-  "registry siteEmbeds still false (opt-in via env)",
-  registry.sites["gosaki-piano"].supabaseFeatures?.siteEmbeds === false,
+  "registry gosaki siteEmbeds true (persisted)",
+  registry.sites["gosaki-piano"].supabaseFeatures?.siteEmbeds === true,
+);
+assert(
+  "registry pilot siteEmbeds still false",
+  registry.sites["pilot-sample-static"].supabaseFeatures?.siteEmbeds === false,
 );
 
 console.log(`\n${passed} passed, ${failed} failed`);

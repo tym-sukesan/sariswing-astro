@@ -22,7 +22,7 @@
       "supabaseFeatures": {
         "schedule": true,
         "discography": true,
-        "siteEmbeds": false
+        "siteEmbeds": true
       },
       "cmsFeatures": {
         "youtube": true,

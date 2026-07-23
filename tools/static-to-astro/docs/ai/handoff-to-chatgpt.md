@@ -5,36 +5,34 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: CMS Core v2 YouTube public staging Supabase build-read QA COMPLETE
+Current phase: CMS Core v2 YouTube registry siteEmbeds persistence COMPLETE (FTP pending)
 Phase2 doc: tools/static-to-astro/docs/cms-core-v2-youtube-supabase-vertical-slice.md
-Stage2 doc: tools/static-to-astro/docs/cms-core-v2-youtube-supabase-public-build-read-package-prep.md
+Registry doc: tools/static-to-astro/docs/cms-core-v2-youtube-supabase-registry-siteembeds-persistence.md
+cmsCoreV2YoutubeRegistrySiteEmbedsPersistenceComplete: true
+registryGosakiSiteEmbedsTrue: true
+registryPilotSiteEmbedsFalse: true
+publicBuildReadWorksWithoutCmsKitEnv: true
 cmsCoreV2YoutubePublicStagingSupabaseBuildReadQaComplete: true
-cmsCoreV2YoutubeSupabasePublicBuildReadPackagePrepared: true
 publicSiteEmbedsBuildReadLive: true
-publicSiteEmbedsBuildReadEnabledInPackage: true
-cmsCoreV2YoutubeAdminStagingSupabasePathCutoverQaComplete: true
 adminStagingSupabasePathLive: true
 saveArmEnabled: false
 contentsYoutubeCutoverExecuted: false
-registrySiteEmbedsStillFalse: true
 jsonYoutubeFallbackRetained: true
-publicBuildReadFtpUploadExecuted: true
-readyForOperatorPublicBuildReadFtpUpload: false
+readyForOperatorRegistrySiteEmbedsFtpUpload: true
 readyForAnyFutureFtpApply: false
-sourceCommit (package): b3bbae653c14ae5bf872b0261641c4fbf01bcf10
+Package sourceCommit: 443d1e5bb6ea6b720b1700a60e7fbd4c01e2d420
 Remote: /cms-kit-staging/gosaki-piano/
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh UNCHANGED
-Public home videoId: I-eY9YMq9GI
-Next Kit (optional): registry.siteEmbeds=true lasting flip OR Contents YouTube retire planning
-EXTERNAL_WRITE_EXECUTED: false (this docs-only record)
+Next: operator manual FTP → smoke QA (NO Save)
+EXTERNAL_WRITE_EXECUTED: false
 ```
 
-## CMS Core v2 YouTube — public staging Supabase build-read QA (2026-07-24)
+## CMS Core v2 YouTube — registry siteEmbeds persistence (2026-07-24)
 
-- **PASS:** manual FTP · public home YouTube · primary pages · `/admin/youtube/` · Save disabled
-- **Live:** Admin Supabase path + public build-read bake from `site_embeds`
-- **Retained:** JSON / Contents fallback · `registry.siteEmbeds=false`
-- **Next:** optional registry lasting flip or Contents retire (separate approval)
+- **PASS:** Gosaki `siteEmbeds=true` · package without `CMS_KIT_SITE_EMBEDS_BUILD_READ` → supabase bake
+- **Unchanged:** pilot registry · Admin path · Save arm false · JSON/Contents fallback
+- **FTP:** not executed
+- **Next:** human FTP + smoke QA
 
 ## CMS Core v2 YouTube Supabase Vertical Slice — local implementation (2026-07-22)
 

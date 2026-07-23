@@ -101,15 +101,16 @@ for (const pattern of WRITE_PATTERNS) {
 const registry = JSON.parse(read("tools/static-to-astro/config/sites/registry.json"));
 assert("gosaki cmsFeatures youtube", registry.sites["gosaki-piano"].cmsFeatures?.youtube === true);
 assert("gosaki cmsFeatures contact", registry.sites["gosaki-piano"].cmsFeatures?.contact === true);
-assert("gosaki supabase siteEmbeds false", registry.sites["gosaki-piano"].supabaseFeatures?.siteEmbeds === false);
+assert("gosaki supabase siteEmbeds true", registry.sites["gosaki-piano"].supabaseFeatures?.siteEmbeds === true);
 assert("pilot cmsFeatures all off", registry.sites["pilot-sample-static"].cmsFeatures?.youtube === false);
 assert("pilot supabase schedule off", registry.sites["pilot-sample-static"].supabaseFeatures?.schedule === false);
+assert("pilot supabase siteEmbeds off", registry.sites["pilot-sample-static"].supabaseFeatures?.siteEmbeds === false);
 
 const gosakiSupabase = resolveSupabaseFeatures(GOSAKI_SITE_KEY);
 const pilotSupabase = resolveSupabaseFeatures(PILOT_SAMPLE_STATIC_SITE_KEY);
 assert("gosaki schedule enabled", gosakiSupabase.schedule === true);
 assert("gosaki discography enabled", gosakiSupabase.discography === true);
-assert("gosaki siteEmbeds disabled", gosakiSupabase.siteEmbeds === false);
+assert("gosaki siteEmbeds enabled", gosakiSupabase.siteEmbeds === true);
 assert("pilot schedule disabled", pilotSupabase.schedule === false);
 assert("pilot discography disabled", pilotSupabase.discography === false);
 
@@ -138,11 +139,20 @@ assert("pilot discography null", pilotData.discography === null);
 assert("pilot embeds null", pilotData.embeds === null);
 assert("pilot plan cmsFeatures off", pilotData.plan.cmsFeatures.youtube === false);
 
-const gosakiEmbedsDisabled = await loadSiteEmbedsDataForBuild({
+const gosakiEmbedsWithRegistry = await loadSiteEmbedsDataForBuild({
   siteKey: GOSAKI_SITE_KEY,
   toolRoot: TOOL_ROOT,
+  env: { ...process.env, CMS_KIT_SITE_EMBEDS_BUILD_READ: "false" },
 });
-assert("gosaki embeds null when siteEmbeds false", gosakiEmbedsDisabled === null);
+assert(
+  "gosaki embeds loads via registry without CMS_KIT env",
+  gosakiEmbedsWithRegistry?.embedDataSource === "supabase" ||
+    gosakiEmbedsWithRegistry?.embedDataSource === "supabase-empty" ||
+    gosakiEmbedsWithRegistry?.embedDataSource === "not-configured" ||
+    gosakiEmbedsWithRegistry?.embedDataSource === "error" ||
+    gosakiEmbedsWithRegistry?.embedDataSource === "blocked",
+);
+assert("gosaki embeds not null when siteEmbeds true", gosakiEmbedsWithRegistry != null);
 
 const hooksSrc = read("tools/static-to-astro/scripts/lib/site-generator-hooks.mjs");
 assert("hooks isCmsFeatureEnabled", hooksSrc.includes("isCmsFeatureEnabled"));

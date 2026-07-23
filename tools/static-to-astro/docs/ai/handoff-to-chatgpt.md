@@ -5,13 +5,18 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: CMS Core v2 next Kit feature comparison COMPLETE
-Comparison doc: tools/static-to-astro/docs/cms-core-v2-next-kit-feature-comparison.md
-Verifier: tools/static-to-astro/scripts/verify-cms-core-v2-next-kit-feature-comparison.mjs
-cmsCoreV2NextKitFeatureComparisonComplete: true
-recommendedNextKitFeature: about-supabase
-readyForAboutSupabaseSlicePreflight: true
+Current phase: CMS Core v2 About Supabase vertical slice preflight COMPLETE
+Preflight doc: tools/static-to-astro/docs/cms-core-v2-about-supabase-vertical-slice-preflight.md
+Verifier: tools/static-to-astro/scripts/verify-cms-core-v2-about-supabase-vertical-slice-preflight.mjs
+cmsCoreV2AboutSupabaseVerticalSlicePreflightComplete: true
+recommendedAboutSchema: site_page_fields
+aboutFirstFieldKey: about/profile.lede
+opaqueHtmlPrimaryModel: false
+readyForOperatorAboutMigrationApply: false
 aboutSupabaseImplementationExecuted: false
+contentsAboutPathUnchanged: true
+sqlApplyExecuted: false
+serviceRoleUsed: false
 YouTube baseline still live:
   cmsCoreV2YoutubeRegistrySiteEmbedsPersistenceQaComplete: true
   publicSiteEmbedsBuildReadLive: true
@@ -21,18 +26,24 @@ YouTube baseline still live:
 Deployed sourceCommit: 83868e0814d2f70af6e4307f0ec73462528a1e5d
 Remote: /cms-kit-staging/gosaki-piano/
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh UNCHANGED
-Next Kit gate: cms-core-v2-about-supabase-vertical-slice-preflight
+Next Kit gate: operator accept preflight → apply-readiness phase (still no auto-apply)
 Parallel optional: Contents YouTube retire planning
 EXTERNAL_WRITE_EXECUTED: false (this docs-only record)
 readyForAnyFutureFtpApply: false
 ```
 
+## CMS Core v2 About Supabase vertical slice preflight (2026-07-24)
+
+- **Schema:** `site_page_fields` (keyed plain-text scalars; not opaque HTML; not About-only singleton)
+- **First field:** `about` / `profile.lede` = JSON SoT first biography paragraph
+- **Reuse:** `sites` / `site_members` / `platform_admins` / `can_write_site` (YouTube membership — no new access INSERT)
+- **Templates:** migration · RLS · seed · 3 rollbacks (apply **not** executed)
+- **Approvals (reserved):** `G-cms-v2-about-supabase-profile-lede-dry-run` / `…-web-save-non-dry-run-slice`
+- **Next:** apply-gate docs → SELECT-only → approved staging apply → then Edge/admin dual-path implementation
+
 ## CMS Core v2 — next Kit feature comparison (2026-07-24)
 
-- **Recommended:** About → Supabase (last Contents SoT; reuse Core tenancy + YouTube dual-path)
-- **Not “new feature” first:** Schedule / Discography (already Supabase) — later `site_id`/membership harden
-- **Minimal slice:** one About scalar/block · dual-path · gated Save · JSON fallback
-- **Next:** About Supabase vertical-slice **preflight** (no implementation yet)
+- **Recommended:** About → Supabase — preflight now complete (see above)
 
 ## CMS Core v2 YouTube — registry siteEmbeds persistence QA (2026-07-24)
 

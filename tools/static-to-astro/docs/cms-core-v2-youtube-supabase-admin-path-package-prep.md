@@ -2,7 +2,9 @@
 
 - **Phase:** `cms-core-v2-youtube-supabase-admin-path-package-prep`
 - **Date:** 2026-07-24
-- **Scope:** Local package regenerate + verify only · **no FTP** · **no Save** · **no Secret / Edge / SQL**
+- **Status:** package prepared → **operator manual FTP + browser QA COMPLETE**
+- **Scope at prep:** Local package regenerate · no Cursor FTP/Save/Secret/Edge/SQL
+- **Live now:** staging Admin YouTube path = Supabase · Save arm false · public JSON unchanged
 
 ## Goal
 
@@ -69,9 +71,9 @@ From `public-dist/admin/youtube/index.html`:
 | --- | --- |
 | `PUBLIC_ADMIN_GOSAKI_YOUTUBE_SUPABASE_SAVE_ARMED` | **false** (build env) |
 | `PUBLIC_ADMIN_GOSAKI_YOUTUBE_URL_WEB_SAVE_NON_DRY_RUN_ARMED` | **false** (build env) |
-| Server `GOSAKI_YOUTUBE_SUPABASE_SAVE_ARMED` | **not changed** this phase (must remain false; no Secret edit) |
+| Server `GOSAKI_YOUTUBE_SUPABASE_SAVE_ARMED` | **not changed** (remains false; no Secret edit) |
 
-## FTP procedure (operator · separate gate — **not executed by Cursor**)
+## FTP procedure (operator)
 
 **STOP:** no auto FTP · no `mirror --delete` · not account root `/` · not production.
 
@@ -84,30 +86,40 @@ From `public-dist/admin/youtube/index.html`:
 | Also overwritten (full package) | public HTML / CSS / schedule / robots / sitemap — expected for full regen |
 | Do **not** | delete-sync · upload nested `public-dist/` folder · touch production |
 
-Preflight before upload: open `MANIFEST.json` · confirm staging · `sourceCommit` matches this prep · `npm run preflight:gosaki:staging` if available.
+## Operator manual FTP + browser QA result (2026-07-24)
 
-See also package `README-UPLOAD.md` / `CHECKLIST.md` (gitignored output).
+| Item | Result |
+| --- | --- |
+| FTP | **PASS** — human manual overwrite of **entire** `public-dist/` → `/cms-kit-staging/gosaki-piano/` |
+| production `vsbvndwuajjhnzpohghh` | **unchanged** |
+| `/admin/` · `/admin/youtube/` | normal display |
+| Owner login | **success** |
+| YouTube admin display | **normal** (Supabase path) |
+| Save button | **disabled** (unchanged) |
+| No-change dry-run | **PASS** — see table below |
+| Public home YouTube | **unchanged** (JSON SoT) |
+| Other primary pages | **OK** |
+| Save / Secret / SQL / Edge deploy | **not executed** |
 
-## Post-upload browser QA (operator · after FTP)
+### No-change dry-run (operator)
 
-Base: `https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/`
+| Field | Value |
+| --- | --- |
+| `invokeError` | `null` |
+| `ok` | `true` |
+| `operation` | `dryRun` |
+| `didWrite` | `false` |
+| `dbWrite` | `false` |
+| `noChange` | `true` |
+| `changedItemIds` | `[]` |
 
-1. Owner で `/admin/` ログイン
-2. `/admin/youtube/` を開く
-3. **Live-read:** 一覧が Supabase `site_embeds` 由来で表示される（点滅解消後）
-4. DevTools / Network: dry-run 先が `gosaki-youtube-supabase-save-dry-run`（Contents `gosaki-youtube-url-dry-run` ではない）
-5. **No-change dry-run:** 「変更を確認」→ `didWrite=false` · `dbWrite=false` · Save は disabled のまま
-6. **Do not** click Save / do not arm Save
-7. Public home `/` YouTube 埋め込みが従来どおり（JSON）であること — Contents/`main` JSON と見た目変化なし
-8. production Supabase / Wix に触れていないこと
-
-## Rollback (if QA fails)
+## Rollback (if needed later)
 
 Rebuild **without** `PUBLIC_ADMIN_GOSAKI_YOUTUBE_SUPABASE_PATH_ENABLED` (or `=false`) → manual re-upload same remote path → Contents admin path restored. Public JSON path already unchanged.
 
-## Not executed
+## Not executed (this record phase / still forbidden without new approval)
 
-- FTP upload
+- Cursor FTP / auto FTP apply
 - Secret / arm change
 - SQL / DB
 - Edge deploy
@@ -120,11 +132,14 @@ Rebuild **without** `PUBLIC_ADMIN_GOSAKI_YOUTUBE_SUPABASE_PATH_ENABLED` (or `=fa
 
 ```txt
 cmsCoreV2YoutubeSupabaseAdminPathPackagePrepared: true
+cmsCoreV2YoutubeAdminStagingSupabasePathCutoverQaComplete: true
 adminSupabasePathEnabledInPackage: true
+adminStagingSupabasePathLive: true
 publicSiteEmbedsBuildReadEnabled: false
 saveArmEnabled: false
-ftpUploadExecuted: false
+ftpUploadExecuted: true
+operatorManualFtpOnly: true
 contentsYoutubeCutoverExecuted: false
-readyForOperatorAdminPathFtpUpload: true
+readyForOperatorAdminPathFtpUpload: false
 readyForAnyFutureFtpApply: false
 ```

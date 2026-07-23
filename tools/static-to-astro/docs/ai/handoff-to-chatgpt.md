@@ -5,29 +5,33 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: CMS Core v2 YouTube CUTOVER STAGE 1 — Admin path package READY (FTP pending)
+Current phase: CMS Core v2 YouTube Admin staging Supabase path cutover QA COMPLETE
 Phase2 doc: tools/static-to-astro/docs/cms-core-v2-youtube-supabase-vertical-slice.md
 Stage1 doc: tools/static-to-astro/docs/cms-core-v2-youtube-supabase-admin-path-package-prep.md
+cmsCoreV2YoutubeAdminStagingSupabasePathCutoverQaComplete: true
 cmsCoreV2YoutubeSupabaseAdminPathPackagePrepared: true
+adminStagingSupabasePathLive: true
 adminSupabasePathEnabledInPackage: true
 publicSiteEmbedsBuildReadEnabled: false
 saveArmEnabled: false
-ftpUploadExecuted: false
-readyForOperatorAdminPathFtpUpload: true
+ftpUploadExecuted: true
+operatorManualFtpOnly: true
 contentsYoutubeCutoverExecuted: false
-Package: tools/static-to-astro/output/manual-upload/gosaki-piano/
-sourceCommit: 8c3e79ffb065717c15ac536a8439fbe6c957fd31
+contentsApiPathUnchangedDefault: false
+readyForAnyFutureFtpApply: false
 Remote: /cms-kit-staging/gosaki-piano/
+sourceCommit (package): 8c3e79ffb065717c15ac536a8439fbe6c957fd31
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh UNCHANGED
-Next: operator manual FTP → browser QA (live-read + no-change dry-run · NO Save)
-EXTERNAL_WRITE_EXECUTED: false
+Dry-run QA: ok=true · didWrite=false · dbWrite=false · noChange=true
+Next Kit: optional public build-read package (CMS_KIT_SITE_EMBEDS_BUILD_READ) — separate approval
+EXTERNAL_WRITE_EXECUTED: false (this docs-only record)
 ```
 
-## CMS Core v2 YouTube — cutover stage 1 admin path package (2026-07-24)
+## CMS Core v2 YouTube — Admin staging Supabase path cutover QA (2026-07-24)
 
-- **PASS:** local package with Admin Supabase path ON · Save arm false · public JSON unchanged
-- **FTP:** not executed (`readyForAnyFutureFtpApply: false`)
-- **Next:** human FTP + QA per `cms-core-v2-youtube-supabase-admin-path-package-prep.md`
+- **PASS:** manual FTP · owner login · YouTube live-read · no-change dry-run · Save disabled · public JSON unchanged
+- **Not done:** public build-read cutover · Contents Edge retire · Save arm · production
+- **Next:** optional `CMS_KIT_SITE_EMBEDS_BUILD_READ` public package (approval)
 
 ## CMS Core v2 YouTube Supabase Vertical Slice — local implementation (2026-07-22)
 

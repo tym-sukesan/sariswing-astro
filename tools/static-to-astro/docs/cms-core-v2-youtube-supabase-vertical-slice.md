@@ -1,12 +1,13 @@
 # CMS Core v2 Phase 2 — YouTube Supabase Vertical Slice (local implementation)
 
 - **Phase:** `cms-core-v2-youtube-supabase-vertical-slice-staging-save-round-trip-complete` (builds on `cms-core-v2-youtube-supabase-vertical-slice-local-implementation`)
-- **Status:** cutover **stage 1 Admin staging Supabase path QA COMPLETE** · Save arm **false** · public JSON 未変更 · production **unchanged**
+- **Status:** cutover **stage 2 public build-read package PREPARED** (FTP未実施) · stage 1 Admin path **live QA COMPLETE** · Save arm **false** · production **unchanged**
 - **Date:** 2026-07-24
 - **Staging project:** `static-to-astro-cms-staging` / `kmjqppxjdnwwrtaeqjta`
 - **STOP:** production `vsbvndwuajjhnzpohghh` — **unchanged / not touched**
 - **ADR:** [cms-core-v2-minimal-architecture-decision.md](./cms-core-v2-minimal-architecture-decision.md)
-- **Stage-1 package + FTP/QA:** [cms-core-v2-youtube-supabase-admin-path-package-prep.md](./cms-core-v2-youtube-supabase-admin-path-package-prep.md)
+- **Stage-1 Admin path FTP/QA:** [cms-core-v2-youtube-supabase-admin-path-package-prep.md](./cms-core-v2-youtube-supabase-admin-path-package-prep.md)
+- **Stage-2 public build-read package:** [cms-core-v2-youtube-supabase-public-build-read-package-prep.md](./cms-core-v2-youtube-supabase-public-build-read-package-prep.md)
 
 ## Gates
 
@@ -25,10 +26,16 @@ cmsCoreV2YoutubeSupabaseStagingSaveRoundTripComplete: true
 cmsCoreV2YoutubeSupabaseCutoverPlanningComplete: true
 cmsCoreV2YoutubeSupabaseAdminPathPackagePrepared: true
 cmsCoreV2YoutubeAdminStagingSupabasePathCutoverQaComplete: true
+cmsCoreV2YoutubeSupabasePublicBuildReadPackagePrepared: true
 adminSupabasePathEnabledInPackage: true
 adminStagingSupabasePathLive: true
-publicSiteEmbedsBuildReadEnabled: false
+publicSiteEmbedsBuildReadEnabledInPackage: true
+publicSiteEmbedsBuildReadLive: false
+registrySiteEmbedsStillFalse: true
+jsonYoutubeFallbackRetained: true
 readyForOperatorAdminPathFtpUpload: false
+readyForOperatorPublicBuildReadFtpUpload: true
+publicBuildReadFtpUploadExecuted: false
 readyForOperatorMigrationApply: applied
 operatorMigrationApplyCompleted: true
 edgeDeployExecuted: true
@@ -53,7 +60,20 @@ readyForAnyFutureFtpApply: false
 ```
 
 `readyForOperatorMigrationApply: applied` — Core DDL/RLS/seed/access already applied.
-Staging **admin** YouTube path is live on Supabase (manual FTP + browser QA). Public/build remains JSON. Contents Edges remain as rollback. Server Save arm is **false**.
+Staging **admin** YouTube path is live on Supabase. Local package now also bakes public home from `site_embeds` via `CMS_KIT_SITE_EMBEDS_BUILD_READ` (registry `siteEmbeds` still false). Live public until operator FTP may still be prior JSON package. Server Save arm is **false**.
+
+## Public build-read package prep (2026-07-24 · local)
+
+| Item | Result |
+| --- | --- |
+| Env | `CMS_KIT_SITE_EMBEDS_BUILD_READ=true` + Admin path ON · Save arms false |
+| Package | `output/manual-upload/gosaki-piano/` · `sourceCommit` `b3bbae65…` |
+| Bake evidence | baked JSON **===** `mapSiteEmbedRowsToYoutubeConfig(site_embeds)` · no `$comment` (config file keeps `$comment`) |
+| `registry.siteEmbeds` | **false** |
+| JSON fallback | retained in code + config file |
+| FTP | **not** executed |
+
+Detail: [cms-core-v2-youtube-supabase-public-build-read-package-prep.md](./cms-core-v2-youtube-supabase-public-build-read-package-prep.md).
 
 ## Admin staging Supabase path cutover QA (2026-07-24 · operator)
 
@@ -110,7 +130,9 @@ recommendedCutoverMode: staged-admin-then-build
 
 **Proven on staging:** Core DDL/RLS/seed/access · Edge deploy · owner dry-run · Save round-trip (sort_order poke) · arm returned false.
 
-**Cutover stage 1 (live):** Admin Supabase path ON package prepared + **operator manual FTP + browser QA COMPLETE** — see [cms-core-v2-youtube-supabase-admin-path-package-prep.md](./cms-core-v2-youtube-supabase-admin-path-package-prep.md) · `sourceCommit` `8c3e79f` · public JSON SoT unchanged · Contents Edges remain in repo as rollback.
+**Cutover stage 1 (live):** Admin Supabase path ON · operator manual FTP + browser QA COMPLETE — [admin-path-package-prep](./cms-core-v2-youtube-supabase-admin-path-package-prep.md).
+
+**Cutover stage 2 (local package):** Public build-read ON package prepared — [public-build-read-package-prep](./cms-core-v2-youtube-supabase-public-build-read-package-prep.md) · `sourceCommit` `b3bbae65` · FTP **not** executed · `registry.siteEmbeds=false` · JSON fallback retained · Contents Edges retained.
 
 ### Dual-path vs cutover
 

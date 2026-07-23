@@ -5,33 +5,34 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: CMS Core v2 YouTube Admin staging Supabase path cutover QA COMPLETE
+Current phase: CMS Core v2 YouTube CUTOVER STAGE 2 — public build-read package READY (FTP pending)
 Phase2 doc: tools/static-to-astro/docs/cms-core-v2-youtube-supabase-vertical-slice.md
-Stage1 doc: tools/static-to-astro/docs/cms-core-v2-youtube-supabase-admin-path-package-prep.md
+Stage2 doc: tools/static-to-astro/docs/cms-core-v2-youtube-supabase-public-build-read-package-prep.md
+cmsCoreV2YoutubeSupabasePublicBuildReadPackagePrepared: true
+publicSiteEmbedsBuildReadEnabledInPackage: true
+publicSiteEmbedsBuildReadLive: false
+registrySiteEmbedsStillFalse: true
+jsonYoutubeFallbackRetained: true
 cmsCoreV2YoutubeAdminStagingSupabasePathCutoverQaComplete: true
-cmsCoreV2YoutubeSupabaseAdminPathPackagePrepared: true
 adminStagingSupabasePathLive: true
-adminSupabasePathEnabledInPackage: true
-publicSiteEmbedsBuildReadEnabled: false
 saveArmEnabled: false
-ftpUploadExecuted: true
-operatorManualFtpOnly: true
+publicBuildReadFtpUploadExecuted: false
+readyForOperatorPublicBuildReadFtpUpload: true
 contentsYoutubeCutoverExecuted: false
-contentsApiPathUnchangedDefault: false
-readyForAnyFutureFtpApply: false
+Package: tools/static-to-astro/output/manual-upload/gosaki-piano/
+sourceCommit: b3bbae653c14ae5bf872b0261641c4fbf01bcf10
 Remote: /cms-kit-staging/gosaki-piano/
-sourceCommit (package): 8c3e79ffb065717c15ac536a8439fbe6c957fd31
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh UNCHANGED
-Dry-run QA: ok=true · didWrite=false · dbWrite=false · noChange=true
-Next Kit: optional public build-read package (CMS_KIT_SITE_EMBEDS_BUILD_READ) — separate approval
-EXTERNAL_WRITE_EXECUTED: false (this docs-only record)
+Next: operator manual FTP → public home YouTube QA (site_embeds bake) · NO Save
+EXTERNAL_WRITE_EXECUTED: false
 ```
 
-## CMS Core v2 YouTube — Admin staging Supabase path cutover QA (2026-07-24)
+## CMS Core v2 YouTube — cutover stage 2 public build-read package (2026-07-24)
 
-- **PASS:** manual FTP · owner login · YouTube live-read · no-change dry-run · Save disabled · public JSON unchanged
-- **Not done:** public build-read cutover · Contents Edge retire · Save arm · production
-- **Next:** optional `CMS_KIT_SITE_EMBEDS_BUILD_READ` public package (approval)
+- **PASS:** local package with `CMS_KIT_SITE_EMBEDS_BUILD_READ=true` · Admin path ON · Save arm false
+- **Evidence:** baked JSON === mapped `site_embeds` · registry `siteEmbeds=false` · JSON fallback retained
+- **FTP:** not executed (`readyForAnyFutureFtpApply: false`)
+- **Next:** human FTP + public QA per stage2 doc
 
 ## CMS Core v2 YouTube Supabase Vertical Slice — local implementation (2026-07-22)
 

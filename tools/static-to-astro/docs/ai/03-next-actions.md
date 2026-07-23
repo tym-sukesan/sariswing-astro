@@ -3,11 +3,35 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **Kit Core:** Phase 2 YouTube **registry siteEmbeds persistence QA COMPLETE**（Admin+public Supabase live · Save arm false · Contents/JSON fallback 維持）。**Next（任意）:** Contents YouTube 退役 planning、または次の Kit feature。`contentsYoutubeCutoverExecuted: false`。Doc: `cms-core-v2-youtube-supabase-registry-siteembeds-persistence.md`。
-2. **並行可（Gosaki ops）:** クライアントへ staging 共有・feedback。
-3. **並行可:** production hosting **read-only planning**。
-4. Save arm **false** 維持。
-5. production / Wix / auto FTP / `vsbvndwuajjhnzpohghh` 禁止 · `readyForAnyFutureFtpApply: false`。
+1. **Kit Core:** Next feature comparison **COMPLETE** → recommend **About → Supabase**. **Next gate:** `cms-core-v2-about-supabase-vertical-slice-preflight`（docs/SQL templates only · no apply）。Doc: `cms-core-v2-next-kit-feature-comparison.md`。
+2. **並行可:** Contents YouTube 退役 planning（`contentsYoutubeCutoverExecuted: false`）。YouTube Admin+public Supabase live · Save arm **false**。
+3. **並行可（Gosaki ops）:** クライアントへ staging 共有・feedback。
+4. **並行可:** production hosting **read-only planning**。
+5. Save arm **false** 維持。
+6. production / Wix / auto FTP / `vsbvndwuajjhnzpohghh` 禁止 · `readyForAnyFutureFtpApply: false`。
+
+## 0. CMS Core v2 — next Kit feature comparison COMPLETE (2026-07-24)
+
+| Item | Value |
+| --- | --- |
+| Gate | `cmsCoreV2NextKitFeatureComparisonComplete: true` |
+| Recommended | **About → Supabase** (`recommendedNextKitFeature: about-supabase`) |
+| Why | Last Contents SoT; max reuse of Core tenancy + YouTube dual-path |
+| Deferred as “new feature” | Schedule / Discography (already `supabaseFeatures: true`) |
+| Next | `readyForAboutSupabaseSlicePreflight: true` → About slice preflight |
+| Implementation | **false** |
+| Doc | `cms-core-v2-next-kit-feature-comparison.md` |
+| Verifier | `verify-cms-core-v2-next-kit-feature-comparison.mjs` |
+
+```txt
+CMS_CORE_V2_NEXT_KIT_FEATURE_COMPARISON_COMPLETE: true
+RECOMMENDED_NEXT_KIT_FEATURE: about-supabase
+READY_FOR_ABOUT_SUPABASE_SLICE_PREFLIGHT: true
+ABOUT_SUPABASE_IMPLEMENTATION_EXECUTED: false
+CONTENTS_YOUTUBE_CUTOVER_EXECUTED: false
+SAVE_ARM_ENABLED: false
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+```
 
 ## 0. CMS Core v2 YouTube — registry siteEmbeds persistence QA COMPLETE (2026-07-24)
 

@@ -5,34 +5,41 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: CMS Core v2 YouTube registry siteEmbeds persistence QA COMPLETE
-Phase2 doc: tools/static-to-astro/docs/cms-core-v2-youtube-supabase-vertical-slice.md
-Registry doc: tools/static-to-astro/docs/cms-core-v2-youtube-supabase-registry-siteembeds-persistence.md
-cmsCoreV2YoutubeRegistrySiteEmbedsPersistenceQaComplete: true
-cmsCoreV2YoutubeRegistrySiteEmbedsPersistenceComplete: true
-registryGosakiSiteEmbedsTrue: true
-publicBuildReadWorksWithoutCmsKitEnv: true
-publicSiteEmbedsBuildReadLive: true
-adminStagingSupabasePathLive: true
-saveArmEnabled: false
-contentsYoutubeCutoverExecuted: false
-jsonYoutubeFallbackRetained: true
-readyForOperatorRegistrySiteEmbedsFtpUpload: false
-readyForAnyFutureFtpApply: false
+Current phase: CMS Core v2 next Kit feature comparison COMPLETE
+Comparison doc: tools/static-to-astro/docs/cms-core-v2-next-kit-feature-comparison.md
+Verifier: tools/static-to-astro/scripts/verify-cms-core-v2-next-kit-feature-comparison.mjs
+cmsCoreV2NextKitFeatureComparisonComplete: true
+recommendedNextKitFeature: about-supabase
+readyForAboutSupabaseSlicePreflight: true
+aboutSupabaseImplementationExecuted: false
+YouTube baseline still live:
+  cmsCoreV2YoutubeRegistrySiteEmbedsPersistenceQaComplete: true
+  publicSiteEmbedsBuildReadLive: true
+  adminStagingSupabasePathLive: true
+  saveArmEnabled: false
+  contentsYoutubeCutoverExecuted: false
 Deployed sourceCommit: 83868e0814d2f70af6e4307f0ec73462528a1e5d
 Remote: /cms-kit-staging/gosaki-piano/
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh UNCHANGED
-Public home videoId: I-eY9YMq9GI
-Next Kit (optional): Contents YouTube retire planning OR next feature
+Next Kit gate: cms-core-v2-about-supabase-vertical-slice-preflight
+Parallel optional: Contents YouTube retire planning
 EXTERNAL_WRITE_EXECUTED: false (this docs-only record)
+readyForAnyFutureFtpApply: false
 ```
+
+## CMS Core v2 — next Kit feature comparison (2026-07-24)
+
+- **Recommended:** About → Supabase (last Contents SoT; reuse Core tenancy + YouTube dual-path)
+- **Not “new feature” first:** Schedule / Discography (already Supabase) — later `site_id`/membership harden
+- **Minimal slice:** one About scalar/block · dual-path · gated Save · JSON fallback
+- **Next:** About Supabase vertical-slice **preflight** (no implementation yet)
 
 ## CMS Core v2 YouTube — registry siteEmbeds persistence QA (2026-07-24)
 
 - **PASS:** manual FTP @ `83868e08…` · public home · primary pages · `/admin/youtube/` · Save disabled
 - **Live:** Admin Supabase path + public registry-driven `site_embeds` bake
 - **Retained:** JSON / Contents fallback · Save arm false
-- **Next:** optional Contents retire planning
+- **Next:** Kit feature → About comparison above; optional Contents retire planning parallel
 
 ## CMS Core v2 YouTube Supabase Vertical Slice — local implementation (2026-07-22)
 

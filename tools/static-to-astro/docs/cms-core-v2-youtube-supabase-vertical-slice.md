@@ -38,6 +38,7 @@ saveArmEnabled: false
 liveDbSelectConfirmationPendingOperator: false
 contentsApiPathUnchangedDefault: true
 contentsYoutubeCutoverExecuted: false
+cmsCoreV2YoutubeSupabaseCutoverPlanningComplete: true
 scheduleDiscographyAboutUnchanged: true
 readyForAnyFutureFtpApply: false
 ```
@@ -62,7 +63,97 @@ Contents YouTube path remains **default** until explicit cutover. Server Save ar
 | Operator PAT | unset from shell |
 | Contents path | **default maintained** (cutover not executed) |
 
-**Next (optional Kit):** Contents→Supabase YouTube cutover planning (separate approval) · or leave dual-path as-is. Do **not** re-arm Save without a new approval ID / plan.
+**Next:** Contents→Supabase YouTube **cutover planning** below (execution not started). Do **not** re-arm Save without a new approval ID / plan.
+
+## Contents → Supabase YouTube cutover planning (2026-07-24 · docs-only)
+
+```txt
+cmsCoreV2YoutubeSupabaseCutoverPlanningComplete: true
+contentsYoutubeCutoverExecuted: false
+recommendedCutoverMode: staged-admin-then-build
+```
+
+### Current SoT and routes (as implemented)
+
+| Surface | Default today | Supabase opt-in | Fallback |
+| --- | --- | --- | --- |
+| Admin live-read / dry-run / Save | **GitHub Contents** Edges `gosaki-youtube-url-dry-run` / `gosaki-youtube-url-save` (G-11c*) | `PUBLIC_ADMIN_GOSAKI_YOUTUBE_SUPABASE_PATH_ENABLED=true` → same UI hits `gosaki-youtube-supabase-save-dry-run` | Unset path env → Contents again |
+| Admin Save arm (Contents) | `PUBLIC_ADMIN_GOSAKI_YOUTUBE_URL_WEB_SAVE_NON_DRY_RUN_ARMED` + server `GOSAKI_YOUTUBE_URL_SAVE_ARMED` | Supabase: `PUBLIC_ADMIN_GOSAKI_YOUTUBE_SUPABASE_SAVE_ARMED` + server `GOSAKI_YOUTUBE_SUPABASE_SAVE_ARMED` | Both default **false** |
+| Public home embed (build/convert) | **JSON** `config/sites/gosaki-piano-youtube-embed.json` → baked `src/data/gosaki-youtube-embed.json` | `CMS_KIT_SITE_EMBEDS_BUILD_READ=true` **or** `registry.supabaseFeatures.siteEmbeds=true` → anon read `site_embeds` | Empty/error/blocked → **keep JSON** (no blank home) |
+| Runtime public HTML | Static package only (no live Supabase on page) | Rebuild + upload after DB prefer | Re-upload package from JSON HEAD |
+
+**Proven on staging:** Core DDL/RLS/seed/access · Edge deploy · owner dry-run · Save round-trip (sort_order poke) · arm returned false.
+
+**Not cut over:** admin package still Contents-default · public package still JSON SoT · Contents Edges remain available.
+
+### Dual-path vs cutover
+
+| Option | Pros | Cons | Verdict |
+| --- | --- | --- | --- |
+| **Keep dual-path** (status quo) | Zero public risk · Contents remains operator-familiar | Two SoTs can drift (JSON/`main` vs `site_embeds`) | OK short-term |
+| **Big-bang** (admin+build+registry same day) | One story | High blast radius · hard rollback if package+admin disagree | **Reject** for first cutover |
+| **Staged cutover** (admin env → staging build prefer-DB → optional registry) | Reversible per layer · JSON/Contents stay as fallback | Multi-step approvals | **Recommended** |
+
+### Recommended cutover mode: staged-admin-then-build
+
+1. **Admin staging package only** — build/upload with `PUBLIC_ADMIN_GOSAKI_YOUTUBE_SUPABASE_PATH_ENABLED=true` (Save arm **false**). Verify live-read + dry-run against Supabase; Contents Edges untouched.
+2. **Public staging package** — convert/build with `CMS_KIT_SITE_EMBEDS_BUILD_READ=true` (registry `siteEmbeds` may stay **false**). Confirm home embed matches DB published rows; empty DB → JSON fallback still works.
+3. **Optional lasting config** — set `registry.sites.gosaki-piano.supabaseFeatures.siteEmbeds=true` in a dedicated commit (after staging visual QA). Until then env-only prefer-DB is enough for experiments.
+4. **Do not** disable Contents Edges or delete JSON until a later “retire Contents YouTube” phase (separate approval).
+5. **Production** — out of scope until hosting cutover; never use production Supabase ref.
+
+### Flags / env / config (no secrets in git)
+
+| Knob | Role |
+| --- | --- |
+| `PUBLIC_ADMIN_GOSAKI_YOUTUBE_SUPABASE_PATH_ENABLED` | Admin dry-run/Save/live-read → Supabase Edge |
+| `PUBLIC_ADMIN_GOSAKI_YOUTUBE_SUPABASE_SAVE_ARMED` | Client Save UI (Console invoke only needs server arm) |
+| `GOSAKI_YOUTUBE_SUPABASE_SAVE_ARMED` | Server Save arm (staging secret) — keep **false** except approved edits |
+| `CMS_KIT_SITE_EMBEDS_BUILD_READ` | Convert prefers published `site_embeds` |
+| `registry.supabaseFeatures.siteEmbeds` | Lasting feature gate (currently **false**) |
+| Contents arms / Edges | Rollback path for admin writes to `main` JSON |
+
+### Code / deploy targets for cutover execution (later · not this phase)
+
+| Change | Needed? |
+| --- | --- |
+| New application code | **No** for staged env cutover (wiring exists) |
+| Staging admin package rebuild + manual upload | **Yes** (path env true) |
+| Staging public package rebuild + manual upload | **Yes** (build-read env true) |
+| Edge redeploy | **No** (already deployed) unless code changes |
+| DB / SQL / migration | **No** |
+| FTP auto-apply | **No** (manual upload only; `readyForAnyFutureFtpApply: false`) |
+| Contents API / workflow | **No** for Supabase path; keep as rollback |
+
+### Staging verification checklist (before calling cutover “done”)
+
+- [ ] Admin: path env on · Contents endpoints still reachable if env off
+- [ ] Admin: login owner · live-read shows DB items · dry-run `didWrite=false`
+- [ ] Admin: Save remains disabled unless separately armed
+- [ ] Public: home embed URL/published match `site_embeds` when build-read on
+- [ ] Public: force empty/error path → JSON fallback still renders (no blank section)
+- [ ] production ref never in build env / Edge URL
+- [ ] `GOSAKI_YOUTUBE_SUPABASE_SAVE_ARMED=false` after any test Save
+
+### Rollback
+
+| Layer | Action |
+| --- | --- |
+| Admin | Rebuild/upload with `PUBLIC_ADMIN_GOSAKI_YOUTUBE_SUPABASE_PATH_ENABLED` unset/false → Contents path |
+| Public build | Rebuild **without** `CMS_KIT_SITE_EMBEDS_BUILD_READ` (and `siteEmbeds=false`) → JSON SoT |
+| Registry | Revert `siteEmbeds: true` commit if used |
+| Save arm | Ensure `GOSAKI_YOUTUBE_SUPABASE_SAVE_ARMED=false` |
+| Data | DB rows remain; Contents JSON on `main` unchanged by Supabase Saves — no Contents restore required for sort_order-only tests |
+
+### High-risk gates still required for execution
+
+1. Explicit approval to rebuild/upload **admin** package with Supabase path env
+2. Explicit approval to rebuild/upload **public** package with build-read env
+3. Any Save during cutover QA → separate arm approval (same Save arm rules as Phase 2)
+4. Registry `siteEmbeds=true` commit + push (only if lasting cutover chosen)
+5. Later: retire Contents YouTube Edges / stop dual SoT (not in first cutover)
+
+**This planning phase does not execute** rebuild, upload, arm, registry flip, or production work.
 
 ## Owner remote dry-run result (2026-07-24 · operator)
 

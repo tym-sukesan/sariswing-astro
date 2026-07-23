@@ -5,26 +5,26 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: CMS Core v2 Phase 2 STAGING SAVE ROUND-TRIP COMPLETE
-Phase2 doc: tools/static-to-astro/docs/cms-core-v2-youtube-supabase-vertical-slice.md
+Current phase: CMS Core v2 Phase 2 CUTOVER PLANNING COMPLETE → staged admin package next (approval)
+Phase2 doc: tools/static-to-astro/docs/cms-core-v2-youtube-supabase-vertical-slice.md (§ cutover)
+cmsCoreV2YoutubeSupabaseCutoverPlanningComplete: true
 cmsCoreV2YoutubeSupabaseStagingSaveRoundTripComplete: true
-browserRoundtripExecuted: true
-actualSaveExecuted: true · restoreSaveExecuted: true
+contentsYoutubeCutoverExecuted: false
 saveArmEnabled: false
-contentsApiPathUnchangedDefault: true · contentsYoutubeCutoverExecuted: false
+recommendedCutoverMode: staged-admin-then-build
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh UNCHANGED
-Final DB: sort_order=10 · published=true · source_url unchanged · updated_at=2026-07-23 15:38:35.562674+00
-Next Kit (optional): Contents→Supabase YouTube cutover planning (separate approval) OR keep dual-path
-Do NOT re-arm Save without new plan
-EXTERNAL_WRITE_EXECUTED: false (this docs-only record phase)
+Admin default: Contents · Public default: JSON
+Supabase admin: PUBLIC_ADMIN_GOSAKI_YOUTUBE_SUPABASE_PATH_ENABLED
+Supabase build: CMS_KIT_SITE_EMBEDS_BUILD_READ (JSON fallback on empty/error)
+Next Kit: approved staging admin package with path env (Save arm false) → QA → public build-read package
+EXTERNAL_WRITE_EXECUTED: false (docs-only planning)
 ```
 
-## CMS Core v2 YouTube Supabase — staging Save round-trip COMPLETE (2026-07-24)
+## CMS Core v2 YouTube Supabase — cutover planning (2026-07-24)
 
-- **PASS:** forward dry-run/Save · restore dry-run/Save · final SELECT
-- **Poke:** `sort_order` 10→11→10 restored
-- **Arm:** false · production unchanged · Contents cutover not done
-- **Next:** optional cutover planning
+- **Recommended:** staged-admin-then-build · keep Contents/JSON fallback
+- **Not executed:** package rebuild/upload · registry flip · arm · production
+- **Next:** admin path-env package approval
 
 ## CMS Core v2 YouTube Supabase Vertical Slice — local implementation (2026-07-22)
 

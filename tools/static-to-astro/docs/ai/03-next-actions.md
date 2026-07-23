@@ -3,26 +3,27 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **Kit Core:** Phase 2 YouTube Supabase — **staging Save round-trip COMPLETE**（`cmsCoreV2YoutubeSupabaseStagingSaveRoundTripComplete: true` · `saveArmEnabled: false` · Contents 既定）。**Next（任意・別承認）:** Contents→Supabase YouTube cutover planning、または dual-path 維持。再 arm 禁止（新計画なし）。Doc: `cms-core-v2-youtube-supabase-vertical-slice.md`。
+1. **Kit Core:** Phase 2 YouTube — Save round-trip **COMPLETE** · cutover **planning complete**. **Next（承認後）:** staging admin package with `PUBLIC_ADMIN_GOSAKI_YOUTUBE_SUPABASE_PATH_ENABLED=true`（Save arm false）→ QA → public package with `CMS_KIT_SITE_EMBEDS_BUILD_READ=true` → QA。Contents/JSON は fallback 維持。`contentsYoutubeCutoverExecuted: false`。Doc: `cms-core-v2-youtube-supabase-vertical-slice.md` § cutover。
 2. **並行可（Gosaki ops）:** クライアントへ staging 共有・feedback。
 3. **並行可:** production hosting **read-only planning**。
-4. staging Edge Save arm は **false** 維持。
+4. Save arm **false** 維持（編集 QA 時のみ別承認）。
 5. production / Wix / auto FTP / `vsbvndwuajjhnzpohghh` 禁止。
 
-## 0. CMS Core v2 YouTube Supabase — staging Save round-trip COMPLETE (2026-07-24)
+## 0. CMS Core v2 YouTube Supabase — cutover planning (2026-07-24)
 
 | Item | Value |
 | --- | --- |
-| Forward / Restore Save | **PASS** (10→11→10) |
-| Final | `sort_order=10` · published true · source_url unchanged |
-| `updated_at` | `2026-07-23 15:38:35.562674+00` |
-| `saveArmEnabled` | **false** |
-| production / Contents cutover | unchanged / **not executed** |
+| Gate | `cmsCoreV2YoutubeSupabaseCutoverPlanningComplete: true` |
+| `contentsYoutubeCutoverExecuted` | **false** |
+| Recommended | **staged-admin-then-build** |
+| Fallback | Contents admin + JSON public |
+| Code change for env staging | **not required** |
+| Next | approved admin package path-env cutover |
 
 ```txt
-CMS_CORE_V2_YOUTUBE_SUPABASE_STAGING_SAVE_ROUND_TRIP_COMPLETE: true
-SAVE_ARM_ENABLED: false
+CMS_CORE_V2_YOUTUBE_SUPABASE_CUTOVER_PLANNING_COMPLETE: true
 CONTENTS_YOUTUBE_CUTOVER_EXECUTED: false
+RECOMMENDED_CUTOVER_MODE: staged-admin-then-build
 ```
 
 ## 0. CMS Core v2 Minimal Architecture Planning (2026-07-22) — complete

@@ -1,11 +1,12 @@
 # CMS Core v2 Phase 2 — YouTube Supabase Vertical Slice (local implementation)
 
 - **Phase:** `cms-core-v2-youtube-supabase-vertical-slice-staging-save-round-trip-complete` (builds on `cms-core-v2-youtube-supabase-vertical-slice-local-implementation`)
-- **Status:** **staging Save round-trip COMPLETE** · Save arm **false** · Contents path **default** · production **unchanged**
+- **Status:** cutover **stage 1 admin package prepared** (path ON · Save arm false · FTP未実施) · public JSON 未変更 · production **unchanged**
 - **Date:** 2026-07-24
 - **Staging project:** `static-to-astro-cms-staging` / `kmjqppxjdnwwrtaeqjta`
 - **STOP:** production `vsbvndwuajjhnzpohghh` — **unchanged / not touched**
 - **ADR:** [cms-core-v2-minimal-architecture-decision.md](./cms-core-v2-minimal-architecture-decision.md)
+- **Stage-1 package prep:** [cms-core-v2-youtube-supabase-admin-path-package-prep.md](./cms-core-v2-youtube-supabase-admin-path-package-prep.md)
 
 ## Gates
 
@@ -21,6 +22,11 @@ cmsCoreV2YoutubeSupabaseOwnerRemoteDryRunPass: true
 cmsCoreV2YoutubeSupabaseBrowserDryRunComplete: true
 cmsCoreV2YoutubeSupabaseSaveRoundTripPreflightComplete: true
 cmsCoreV2YoutubeSupabaseStagingSaveRoundTripComplete: true
+cmsCoreV2YoutubeSupabaseCutoverPlanningComplete: true
+cmsCoreV2YoutubeSupabaseAdminPathPackagePrepared: true
+adminSupabasePathEnabledInPackage: true
+publicSiteEmbedsBuildReadEnabled: false
+readyForOperatorAdminPathFtpUpload: true
 readyForOperatorMigrationApply: applied
 operatorMigrationApplyCompleted: true
 edgeDeployExecuted: true
@@ -38,13 +44,13 @@ saveArmEnabled: false
 liveDbSelectConfirmationPendingOperator: false
 contentsApiPathUnchangedDefault: true
 contentsYoutubeCutoverExecuted: false
-cmsCoreV2YoutubeSupabaseCutoverPlanningComplete: true
+ftpUploadExecuted: false
 scheduleDiscographyAboutUnchanged: true
 readyForAnyFutureFtpApply: false
 ```
 
 `readyForOperatorMigrationApply: applied` — Core DDL/RLS/seed/access already applied.
-Contents YouTube path remains **default** until explicit cutover. Server Save arm is **false** after round-trip.
+Local admin package now bakes Supabase path ON; live staging until operator FTP still may be Contents. Server Save arm is **false**.
 
 ## Staging Save round-trip result (2026-07-24 · operator)
 
@@ -84,7 +90,7 @@ recommendedCutoverMode: staged-admin-then-build
 
 **Proven on staging:** Core DDL/RLS/seed/access · Edge deploy · owner dry-run · Save round-trip (sort_order poke) · arm returned false.
 
-**Not cut over:** admin package still Contents-default · public package still JSON SoT · Contents Edges remain available.
+**Cutover stage 1 (local package):** Admin Supabase path ON package prepared — see [cms-core-v2-youtube-supabase-admin-path-package-prep.md](./cms-core-v2-youtube-supabase-admin-path-package-prep.md) · `sourceCommit` `8c3e79f` · FTP **not** executed · public JSON SoT unchanged · Contents Edges remain in repo.
 
 ### Dual-path vs cutover
 

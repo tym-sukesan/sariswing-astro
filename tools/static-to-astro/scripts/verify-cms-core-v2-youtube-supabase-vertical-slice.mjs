@@ -368,6 +368,22 @@ assert("doc staged cutover recommended", /staged-admin-then-build/.test(doc));
 assert("doc path env flag", doc.includes("PUBLIC_ADMIN_GOSAKI_YOUTUBE_SUPABASE_PATH_ENABLED"));
 assert("doc build read flag", doc.includes("CMS_KIT_SITE_EMBEDS_BUILD_READ"));
 assert("doc json fallback retained", /keep JSON|JSON fallback/i.test(doc));
+assert("doc admin path package prepared", doc.includes("cmsCoreV2YoutubeSupabaseAdminPathPackagePrepared: true"));
+assert("doc admin path enabled in package", /adminSupabasePathEnabledInPackage:\s*true/.test(doc));
+assert("doc public build-read still false", /publicSiteEmbedsBuildReadEnabled:\s*false/.test(doc));
+assert("doc ftp upload not executed", /ftpUploadExecuted:\s*false/.test(doc));
+assert("doc ready for operator admin FTP", /readyForOperatorAdminPathFtpUpload:\s*true/.test(doc));
+
+const adminPkgDoc = read(
+  "tools/static-to-astro/docs/cms-core-v2-youtube-supabase-admin-path-package-prep.md",
+);
+assert("admin pkg doc exists", adminPkgDoc.includes("cmsCoreV2YoutubeSupabaseAdminPathPackagePrepared: true"));
+assert("admin pkg doc write-backend supabase", adminPkgDoc.includes('data-gosaki-youtube-write-backend="supabase"'));
+assert("admin pkg doc save arm false", /saveArmEnabled:\s*false/.test(adminPkgDoc));
+assert("admin pkg doc no FTP", /ftpUploadExecuted:\s*false/.test(adminPkgDoc));
+assert("admin pkg doc public build-read false", /publicSiteEmbedsBuildReadEnabled:\s*false/.test(adminPkgDoc));
+assert("admin pkg doc remote path", adminPkgDoc.includes("/cms-kit-staging/gosaki-piano/"));
+assert("admin pkg doc post-upload QA", /Post-upload browser QA/i.test(adminPkgDoc));
 assert("doc save approval id", doc.includes(YOUTUBE_SUPABASE_SAVE_APPROVAL_ID));
 assert("doc sortOrder round-trip plan", /sortOrder.*10.*11|sort_order.*10.*11/i.test(doc));
 assert("doc production stop ref", doc.includes(PRODUCTION_REF_STOP));

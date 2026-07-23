@@ -3,27 +3,32 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **Kit Core:** Phase 2 YouTube — Save round-trip **COMPLETE** · cutover **planning complete**. **Next（承認後）:** staging admin package with `PUBLIC_ADMIN_GOSAKI_YOUTUBE_SUPABASE_PATH_ENABLED=true`（Save arm false）→ QA → public package with `CMS_KIT_SITE_EMBEDS_BUILD_READ=true` → QA。Contents/JSON は fallback 維持。`contentsYoutubeCutoverExecuted: false`。Doc: `cms-core-v2-youtube-supabase-vertical-slice.md` § cutover。
-2. **並行可（Gosaki ops）:** クライアントへ staging 共有・feedback。
-3. **並行可:** production hosting **read-only planning**。
-4. Save arm **false** 維持（編集 QA 時のみ別承認）。
+1. **Kit Core:** Phase 2 YouTube cutover **stage 1 package READY**（Admin path ON · Save arm false · FTP未実施）。**Next（人間・別ゲート）:** manual FTP `public-dist/` → `/cms-kit-staging/gosaki-piano/` → browser QA（owner login · YouTube live-read · no-change dry-run · **Save禁止**）。Doc: `cms-core-v2-youtube-supabase-admin-path-package-prep.md`。
+2. **その後（別承認）:** public package with `CMS_KIT_SITE_EMBEDS_BUILD_READ=true` → QA。Contents/JSON fallback 維持。`contentsYoutubeCutoverExecuted: false`。
+3. **並行可（Gosaki ops）:** クライアントへ staging 共有・feedback。
+4. Save arm **false** 維持。
 5. production / Wix / auto FTP / `vsbvndwuajjhnzpohghh` 禁止。
 
-## 0. CMS Core v2 YouTube Supabase — cutover planning (2026-07-24)
+## 0. CMS Core v2 YouTube — cutover stage 1 admin path package (2026-07-24)
 
 | Item | Value |
 | --- | --- |
-| Gate | `cmsCoreV2YoutubeSupabaseCutoverPlanningComplete: true` |
-| `contentsYoutubeCutoverExecuted` | **false** |
-| Recommended | **staged-admin-then-build** |
-| Fallback | Contents admin + JSON public |
-| Code change for env staging | **not required** |
-| Next | approved admin package path-env cutover |
+| Gate | `cmsCoreV2YoutubeSupabaseAdminPathPackagePrepared: true` |
+| Package | `output/manual-upload/gosaki-piano/` · `sourceCommit` `8c3e79f` |
+| Admin path | **supabase** (`PUBLIC_ADMIN_GOSAKI_YOUTUBE_SUPABASE_PATH_ENABLED=true`) |
+| Public build-read | **false** (JSON SoT) |
+| `saveArmEnabled` | **false** |
+| `ftpUploadExecuted` | **false** |
+| Next | operator manual FTP + browser QA (no Save) |
 
 ```txt
-CMS_CORE_V2_YOUTUBE_SUPABASE_CUTOVER_PLANNING_COMPLETE: true
+CMS_CORE_V2_YOUTUBE_SUPABASE_ADMIN_PATH_PACKAGE_PREPARED: true
+ADMIN_SUPABASE_PATH_ENABLED_IN_PACKAGE: true
+PUBLIC_SITE_EMBEDS_BUILD_READ_ENABLED: false
+SAVE_ARM_ENABLED: false
+FTP_UPLOAD_EXECUTED: false
+READY_FOR_OPERATOR_ADMIN_PATH_FTP_UPLOAD: true
 CONTENTS_YOUTUBE_CUTOVER_EXECUTED: false
-RECOMMENDED_CUTOVER_MODE: staged-admin-then-build
 ```
 
 ## 0. CMS Core v2 Minimal Architecture Planning (2026-07-22) — complete

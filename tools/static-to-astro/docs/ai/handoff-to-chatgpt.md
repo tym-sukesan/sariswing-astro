@@ -5,26 +5,29 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: CMS Core v2 Phase 2 CUTOVER PLANNING COMPLETE → staged admin package next (approval)
-Phase2 doc: tools/static-to-astro/docs/cms-core-v2-youtube-supabase-vertical-slice.md (§ cutover)
-cmsCoreV2YoutubeSupabaseCutoverPlanningComplete: true
-cmsCoreV2YoutubeSupabaseStagingSaveRoundTripComplete: true
-contentsYoutubeCutoverExecuted: false
+Current phase: CMS Core v2 YouTube CUTOVER STAGE 1 — Admin path package READY (FTP pending)
+Phase2 doc: tools/static-to-astro/docs/cms-core-v2-youtube-supabase-vertical-slice.md
+Stage1 doc: tools/static-to-astro/docs/cms-core-v2-youtube-supabase-admin-path-package-prep.md
+cmsCoreV2YoutubeSupabaseAdminPathPackagePrepared: true
+adminSupabasePathEnabledInPackage: true
+publicSiteEmbedsBuildReadEnabled: false
 saveArmEnabled: false
-recommendedCutoverMode: staged-admin-then-build
+ftpUploadExecuted: false
+readyForOperatorAdminPathFtpUpload: true
+contentsYoutubeCutoverExecuted: false
+Package: tools/static-to-astro/output/manual-upload/gosaki-piano/
+sourceCommit: 8c3e79ffb065717c15ac536a8439fbe6c957fd31
+Remote: /cms-kit-staging/gosaki-piano/
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh UNCHANGED
-Admin default: Contents · Public default: JSON
-Supabase admin: PUBLIC_ADMIN_GOSAKI_YOUTUBE_SUPABASE_PATH_ENABLED
-Supabase build: CMS_KIT_SITE_EMBEDS_BUILD_READ (JSON fallback on empty/error)
-Next Kit: approved staging admin package with path env (Save arm false) → QA → public build-read package
-EXTERNAL_WRITE_EXECUTED: false (docs-only planning)
+Next: operator manual FTP → browser QA (live-read + no-change dry-run · NO Save)
+EXTERNAL_WRITE_EXECUTED: false
 ```
 
-## CMS Core v2 YouTube Supabase — cutover planning (2026-07-24)
+## CMS Core v2 YouTube — cutover stage 1 admin path package (2026-07-24)
 
-- **Recommended:** staged-admin-then-build · keep Contents/JSON fallback
-- **Not executed:** package rebuild/upload · registry flip · arm · production
-- **Next:** admin path-env package approval
+- **PASS:** local package with Admin Supabase path ON · Save arm false · public JSON unchanged
+- **FTP:** not executed (`readyForAnyFutureFtpApply: false`)
+- **Next:** human FTP + QA per `cms-core-v2-youtube-supabase-admin-path-package-prep.md`
 
 ## CMS Core v2 YouTube Supabase Vertical Slice — local implementation (2026-07-22)
 

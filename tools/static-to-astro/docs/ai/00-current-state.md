@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**CMS Core v2 YouTube Supabase cutover planning (2026-07-24):** **complete (docs-only)** — recommended **staged-admin-then-build** · Contents/JSON remain fallback · `contentsYoutubeCutoverExecuted: false` · Gate: `cmsCoreV2YoutubeSupabaseCutoverPlanningComplete: true` · Doc: `cms-core-v2-youtube-supabase-vertical-slice.md` § cutover · **Next:** approved staging admin package with path env · then public build-read package · no code change required for env staging.
+**CMS Core v2 YouTube cutover stage 1 — Admin path package prep (2026-07-24):** **complete (local package)** — `PUBLIC_ADMIN_GOSAKI_YOUTUBE_SUPABASE_PATH_ENABLED=true` · Save arms **false** · `CMS_KIT_SITE_EMBEDS_BUILD_READ` unset · package `output/manual-upload/gosaki-piano/` · `sourceCommit` `8c3e79f` · admin HTML `data-gosaki-youtube-write-backend="supabase"` · public JSON SoT unchanged · FTP **not** executed · Gates: `cmsCoreV2YoutubeSupabaseAdminPathPackagePrepared: true` · `readyForOperatorAdminPathFtpUpload: true` · `readyForAnyFutureFtpApply: false` · Doc: `cms-core-v2-youtube-supabase-admin-path-package-prep.md` · **Next:** operator manual FTP → browser QA (live-read + no-change dry-run · **no Save**).
+
+**CMS Core v2 YouTube Supabase cutover planning (2026-07-24):** **complete** — recommended **staged-admin-then-build** · Contents/JSON fallback · `contentsYoutubeCutoverExecuted: false` · Gate: `cmsCoreV2YoutubeSupabaseCutoverPlanningComplete: true`.
 
 **CMS Core v2 YouTube Supabase staging Save round-trip (2026-07-24):** **COMPLETE** — 10→11→10 · arm false · Contents default · production unchanged.
 

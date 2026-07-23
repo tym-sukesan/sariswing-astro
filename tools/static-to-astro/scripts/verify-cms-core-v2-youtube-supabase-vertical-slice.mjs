@@ -386,6 +386,7 @@ assert("doc public build-read in package", /publicSiteEmbedsBuildReadEnabledInPa
 assert("doc public build-read live", /publicSiteEmbedsBuildReadLive:\s*true/.test(doc));
 assert("doc public build-read QA complete", doc.includes("cmsCoreV2YoutubePublicStagingSupabaseBuildReadQaComplete: true"));
 assert("doc registry persistence complete", doc.includes("cmsCoreV2YoutubeRegistrySiteEmbedsPersistenceComplete: true"));
+assert("doc registry persistence QA complete", doc.includes("cmsCoreV2YoutubeRegistrySiteEmbedsPersistenceQaComplete: true"));
 assert("doc registry gosaki siteEmbeds true", /registryGosakiSiteEmbedsTrue:\s*true/.test(doc));
 assert("doc registry pilot siteEmbeds false", /registryPilotSiteEmbedsFalse:\s*true/.test(doc));
 assert("doc build-read without cms kit env", /publicBuildReadWorksWithoutCmsKitEnv:\s*true/.test(doc));
@@ -393,15 +394,17 @@ assert("doc registry still-false gate cleared", /registrySiteEmbedsStillFalse:\s
 assert("doc json fallback retained gate", /jsonYoutubeFallbackRetained:\s*true/.test(doc));
 assert("doc public build-read FTP readiness closed", /readyForOperatorPublicBuildReadFtpUpload:\s*false/.test(doc));
 assert("doc public build-read FTP done", /publicBuildReadFtpUploadExecuted:\s*true/.test(doc));
-assert("doc ready for registry FTP", /readyForOperatorRegistrySiteEmbedsFtpUpload:\s*true/.test(doc));
+assert("doc registry FTP readiness closed", /readyForOperatorRegistrySiteEmbedsFtpUpload:\s*false/.test(doc));
 assert("doc admin path cutover QA complete", doc.includes("cmsCoreV2YoutubeAdminStagingSupabasePathCutoverQaComplete: true"));
 assert("doc admin staging path live", /adminStagingSupabasePathLive:\s*true/.test(doc));
+assert("doc public build-read live", /publicSiteEmbedsBuildReadLive:\s*true/.test(doc));
 assert("doc ftp upload executed (manual)", /ftpUploadExecuted:\s*true/.test(doc));
 assert("doc operator manual ftp only", /operatorManualFtpOnly:\s*true/.test(doc));
 assert("doc admin FTP readiness closed", /readyForOperatorAdminPathFtpUpload:\s*false/.test(doc));
 assert("doc contents default no longer", /contentsApiPathUnchangedDefault:\s*false/.test(doc));
 assert("doc no-change dry-run qa", /noChange=true/.test(doc) && /didWrite=false/.test(doc) && /dbWrite=false/.test(doc));
 assert("doc public home videoId", doc.includes("I-eY9YMq9GI"));
+assert("doc deployed sourceCommit", doc.includes("83868e0814d2f70af6e4307f0ec73462528a1e5d"));
 
 const adminPkgDoc = read(
   "tools/static-to-astro/docs/cms-core-v2-youtube-supabase-admin-path-package-prep.md",
@@ -435,12 +438,17 @@ const registryPersistDoc = read(
   "tools/static-to-astro/docs/cms-core-v2-youtube-supabase-registry-siteembeds-persistence.md",
 );
 assert("registry persist doc complete", registryPersistDoc.includes("cmsCoreV2YoutubeRegistrySiteEmbedsPersistenceComplete: true"));
+assert("registry persist QA complete", registryPersistDoc.includes("cmsCoreV2YoutubeRegistrySiteEmbedsPersistenceQaComplete: true"));
 assert("registry persist gosaki true", /registryGosakiSiteEmbedsTrue:\s*true/.test(registryPersistDoc));
 assert("registry persist pilot false", /registryPilotSiteEmbedsFalse:\s*true/.test(registryPersistDoc));
 assert("registry persist without env", /publicBuildReadWorksWithoutCmsKitEnv:\s*true/.test(registryPersistDoc));
-assert("registry persist FTP pending", /ftpUploadExecuted:\s*false/.test(registryPersistDoc));
-assert("registry persist sourceCommit", registryPersistDoc.includes("443d1e5bb6ea6b720b1700a60e7fbd4c01e2d420"));
+assert("registry persist FTP executed", /ftpUploadExecuted:\s*true/.test(registryPersistDoc));
+assert("registry persist FTP closed", /readyForOperatorRegistrySiteEmbedsFtpUpload:\s*false/.test(registryPersistDoc));
+assert("registry persist live gates", /publicSiteEmbedsBuildReadLive:\s*true/.test(registryPersistDoc) && /adminStagingSupabasePathLive:\s*true/.test(registryPersistDoc));
+assert("registry persist deployed sourceCommit", registryPersistDoc.includes("83868e0814d2f70af6e4307f0ec73462528a1e5d"));
 assert("registry persist embedDataSource supabase", /embedDataSource:\s*"supabase"/.test(registryPersistDoc));
+assert("registry persist videoId", registryPersistDoc.includes("I-eY9YMq9GI"));
+assert("registry persist save arm false", /saveArmEnabled:\s*false/.test(registryPersistDoc));
 assert("doc save approval id", doc.includes(YOUTUBE_SUPABASE_SAVE_APPROVAL_ID));
 assert("doc sortOrder round-trip plan", /sortOrder.*10.*11|sort_order.*10.*11/i.test(doc));
 assert("doc production stop ref", doc.includes(PRODUCTION_REF_STOP));

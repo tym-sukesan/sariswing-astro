@@ -2,8 +2,9 @@
 
 - **Phase:** `cms-core-v2-youtube-supabase-registry-siteembeds-persistence`
 - **Date:** 2026-07-24
-- **Status:** local registry flip + package verify COMPLETE · **FTP not executed**
+- **Status:** local registry flip + package verify → **operator manual FTP + smoke QA COMPLETE**
 - **Depends on:** public staging Supabase build-read QA COMPLETE
+- **Deployed package `sourceCommit`:** `83868e0814d2f70af6e4307f0ec73462528a1e5d`
 
 ## Goal
 
@@ -34,10 +35,11 @@ node tools/static-to-astro/scripts/build-gosaki-staging-admin-package.mjs
 | Item | Value |
 | --- | --- |
 | Output | `tools/static-to-astro/output/manual-upload/gosaki-piano/` |
-| `sourceCommit` | `443d1e5bb6ea6b720b1700a60e7fbd4c01e2d420` |
-| `generatedAt` | `2026-07-23T17:13:59.367Z` |
+| First local package (pre-commit) | `sourceCommit` `443d1e5bb6ea6b720b1700a60e7fbd4c01e2d420` |
+| Deployed / HEAD regen package | **`sourceCommit` `83868e0814d2f70af6e4307f0ec73462528a1e5d`** |
 | Build / verify:manual-upload | **PASS** |
 | `CMS_KIT_SITE_EMBEDS_BUILD_READ` | **UNSET** during build |
+| `registry.siteEmbeds` (Gosaki) | **true** |
 
 ## Evidence — registry-driven Supabase read (no env)
 
@@ -58,7 +60,7 @@ node tools/static-to-astro/scripts/build-gosaki-staging-admin-package.mjs
 | Empty/error path | convert still keeps JSON when Supabase empty/error (`gosaki-home-youtube-embed.mjs`) |
 | Env override | `CMS_KIT_SITE_EMBEDS_BUILD_READ` still optional for sites with registry false |
 
-## FTP target (operator · separate gate — not executed)
+## FTP target (operator)
 
 | Item | Value |
 | --- | --- |
@@ -66,29 +68,47 @@ node tools/static-to-astro/scripts/build-gosaki-staging-admin-package.mjs
 | Remote | `/cms-kit-staging/gosaki-piano/` |
 | Note | Full overwrite OK · no mirror/--delete · not production |
 
-## Post-upload browser QA (operator)
+## Operator manual FTP + smoke QA result (2026-07-24)
 
-1. Public `/` YouTube = `I-eY9YMq9GI`
-2. Primary pages spot-check
-3. `/admin/youtube/` Supabase path · Save disabled
-4. No Save / no Secret / production untouched
+| Item | Result |
+| --- | --- |
+| `sourceCommit` | `83868e0814d2f70af6e4307f0ec73462528a1e5d` |
+| FTP | **PASS** — human manual overwrite of **entire** `public-dist/` → `/cms-kit-staging/gosaki-piano/` |
+| production `vsbvndwuajjhnzpohghh` | **unchanged** |
+| Public home YouTube | **normal** · videoId `I-eY9YMq9GI` |
+| Schedule / Discography / About etc. | visual OK |
+| `/admin/` · `/admin/youtube/` | **normal** · Admin Supabase path **retained** |
+| Save button | **disabled** |
+| `saveArmEnabled` | **false** |
+| `CMS_KIT_SITE_EMBEDS_BUILD_READ` | **unset** (registry `siteEmbeds=true` drives build-read) |
+| JSON / Contents fallback | **retained** |
+| Save / Secret / SQL / Edge deploy | **not executed** |
 
-## Not executed
+## Not executed (this record phase / still forbidden without new approval)
 
-- FTP · Save · Secret · SQL · Edge · production · Contents/JSON delete · commit/push
+- Cursor FTP / auto FTP apply
+- Save / Secret change
+- SQL / DB / Edge deploy
+- Contents / JSON deletion
+- production
+- commit / push
 
 ## Gates
 
 ```txt
 cmsCoreV2YoutubeRegistrySiteEmbedsPersistenceComplete: true
+cmsCoreV2YoutubeRegistrySiteEmbedsPersistenceQaComplete: true
 registryGosakiSiteEmbedsTrue: true
 registryPilotSiteEmbedsFalse: true
 publicBuildReadWorksWithoutCmsKitEnv: true
+publicSiteEmbedsBuildReadLive: true
+adminStagingSupabasePathLive: true
 jsonYoutubeFallbackRetained: true
 adminSupabasePathEnabledInPackage: true
 saveArmEnabled: false
-ftpUploadExecuted: false
-readyForOperatorRegistrySiteEmbedsFtpUpload: true
+ftpUploadExecuted: true
+operatorManualFtpOnly: true
+readyForOperatorRegistrySiteEmbedsFtpUpload: false
 readyForAnyFutureFtpApply: false
 contentsYoutubeCutoverExecuted: false
 ```

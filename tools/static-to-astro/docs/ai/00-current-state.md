@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**CMS Core v2 YouTube registry siteEmbeds persistence (2026-07-24):** **complete (local)** — Gosaki `registry.siteEmbeds` **false→true** · package rebuilt **without** `CMS_KIT_SITE_EMBEDS_BUILD_READ` → `embedDataSource=supabase` · baked === mapped `site_embeds` · Admin path ON · Save arm false · pilot unchanged · JSON/Contents fallback retained · FTP **not** executed · Gates: `cmsCoreV2YoutubeRegistrySiteEmbedsPersistenceComplete: true` · `readyForOperatorRegistrySiteEmbedsFtpUpload: true` · Doc: `cms-core-v2-youtube-supabase-registry-siteembeds-persistence.md` · **Next:** operator manual FTP → smoke QA.
+**CMS Core v2 YouTube registry siteEmbeds persistence QA (2026-07-24):** **COMPLETE** — deployed `sourceCommit` `83868e08…` · operator manual FTP full `public-dist/` → `/cms-kit-staging/gosaki-piano/` · public home YouTube OK (`I-eY9YMq9GI`) · Schedule/Discography/About OK · `/admin/`·`/admin/youtube/` OK · Admin path retained · Save **disabled** · `CMS_KIT_SITE_EMBEDS_BUILD_READ` unset · `registry.siteEmbeds=true` · JSON/Contents fallback retained · production **unchanged** · Save/Secret/SQL/Edge **not** run · Gates: `cmsCoreV2YoutubeRegistrySiteEmbedsPersistenceQaComplete: true` · `publicSiteEmbedsBuildReadLive: true` · `adminStagingSupabasePathLive: true` · `saveArmEnabled: false` · `contentsYoutubeCutoverExecuted: false` · Doc: `cms-core-v2-youtube-supabase-registry-siteembeds-persistence.md` · **Next:** optional Contents YouTube retire planning · or next Kit feature · Save arm false 維持。
+
+**CMS Core v2 YouTube registry siteEmbeds persistence (2026-07-24):** **complete** — superseded by FTP+smoke QA COMPLETE above.
 
 **CMS Core v2 YouTube public staging Supabase build-read QA (2026-07-24):** **COMPLETE** — public home live from prior env bake · Admin path live · Save disabled · production unchanged.
 

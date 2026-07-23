@@ -5,34 +5,34 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: CMS Core v2 YouTube registry siteEmbeds persistence COMPLETE (FTP pending)
+Current phase: CMS Core v2 YouTube registry siteEmbeds persistence QA COMPLETE
 Phase2 doc: tools/static-to-astro/docs/cms-core-v2-youtube-supabase-vertical-slice.md
 Registry doc: tools/static-to-astro/docs/cms-core-v2-youtube-supabase-registry-siteembeds-persistence.md
+cmsCoreV2YoutubeRegistrySiteEmbedsPersistenceQaComplete: true
 cmsCoreV2YoutubeRegistrySiteEmbedsPersistenceComplete: true
 registryGosakiSiteEmbedsTrue: true
-registryPilotSiteEmbedsFalse: true
 publicBuildReadWorksWithoutCmsKitEnv: true
-cmsCoreV2YoutubePublicStagingSupabaseBuildReadQaComplete: true
 publicSiteEmbedsBuildReadLive: true
 adminStagingSupabasePathLive: true
 saveArmEnabled: false
 contentsYoutubeCutoverExecuted: false
 jsonYoutubeFallbackRetained: true
-readyForOperatorRegistrySiteEmbedsFtpUpload: true
+readyForOperatorRegistrySiteEmbedsFtpUpload: false
 readyForAnyFutureFtpApply: false
-Package sourceCommit: 443d1e5bb6ea6b720b1700a60e7fbd4c01e2d420
+Deployed sourceCommit: 83868e0814d2f70af6e4307f0ec73462528a1e5d
 Remote: /cms-kit-staging/gosaki-piano/
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh UNCHANGED
-Next: operator manual FTP → smoke QA (NO Save)
-EXTERNAL_WRITE_EXECUTED: false
+Public home videoId: I-eY9YMq9GI
+Next Kit (optional): Contents YouTube retire planning OR next feature
+EXTERNAL_WRITE_EXECUTED: false (this docs-only record)
 ```
 
-## CMS Core v2 YouTube — registry siteEmbeds persistence (2026-07-24)
+## CMS Core v2 YouTube — registry siteEmbeds persistence QA (2026-07-24)
 
-- **PASS:** Gosaki `siteEmbeds=true` · package without `CMS_KIT_SITE_EMBEDS_BUILD_READ` → supabase bake
-- **Unchanged:** pilot registry · Admin path · Save arm false · JSON/Contents fallback
-- **FTP:** not executed
-- **Next:** human FTP + smoke QA
+- **PASS:** manual FTP @ `83868e08…` · public home · primary pages · `/admin/youtube/` · Save disabled
+- **Live:** Admin Supabase path + public registry-driven `site_embeds` bake
+- **Retained:** JSON / Contents fallback · Save arm false
+- **Next:** optional Contents retire planning
 
 ## CMS Core v2 YouTube Supabase Vertical Slice — local implementation (2026-07-22)
 

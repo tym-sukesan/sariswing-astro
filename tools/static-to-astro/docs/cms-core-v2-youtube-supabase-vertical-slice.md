@@ -1,14 +1,14 @@
 # CMS Core v2 Phase 2 — YouTube Supabase Vertical Slice (local implementation)
 
 - **Phase:** `cms-core-v2-youtube-supabase-vertical-slice-staging-save-round-trip-complete` (builds on `cms-core-v2-youtube-supabase-vertical-slice-local-implementation`)
-- **Status:** cutover **registry siteEmbeds persistence COMPLETE** (local) · Admin+public build-read **live QA** · Save arm **false** · production **unchanged** · FTP for registry package **pending**
+- **Status:** cutover **registry siteEmbeds persistence QA COMPLETE** (live) · Admin+public Supabase path **live** · Save arm **false** · production **unchanged**
 - **Date:** 2026-07-24
 - **Staging project:** `static-to-astro-cms-staging` / `kmjqppxjdnwwrtaeqjta`
 - **STOP:** production `vsbvndwuajjhnzpohghh` — **unchanged / not touched**
 - **ADR:** [cms-core-v2-minimal-architecture-decision.md](./cms-core-v2-minimal-architecture-decision.md)
 - **Stage-1 Admin path FTP/QA:** [cms-core-v2-youtube-supabase-admin-path-package-prep.md](./cms-core-v2-youtube-supabase-admin-path-package-prep.md)
 - **Stage-2 public build-read FTP/QA:** [cms-core-v2-youtube-supabase-public-build-read-package-prep.md](./cms-core-v2-youtube-supabase-public-build-read-package-prep.md)
-- **Registry siteEmbeds persistence:** [cms-core-v2-youtube-supabase-registry-siteembeds-persistence.md](./cms-core-v2-youtube-supabase-registry-siteembeds-persistence.md)
+- **Registry siteEmbeds persistence FTP/QA:** [cms-core-v2-youtube-supabase-registry-siteembeds-persistence.md](./cms-core-v2-youtube-supabase-registry-siteembeds-persistence.md)
 
 ## Gates
 
@@ -30,6 +30,7 @@ cmsCoreV2YoutubeAdminStagingSupabasePathCutoverQaComplete: true
 cmsCoreV2YoutubeSupabasePublicBuildReadPackagePrepared: true
 cmsCoreV2YoutubePublicStagingSupabaseBuildReadQaComplete: true
 cmsCoreV2YoutubeRegistrySiteEmbedsPersistenceComplete: true
+cmsCoreV2YoutubeRegistrySiteEmbedsPersistenceQaComplete: true
 adminSupabasePathEnabledInPackage: true
 adminStagingSupabasePathLive: true
 publicSiteEmbedsBuildReadEnabledInPackage: true
@@ -41,7 +42,7 @@ registrySiteEmbedsStillFalse: false
 jsonYoutubeFallbackRetained: true
 readyForOperatorAdminPathFtpUpload: false
 readyForOperatorPublicBuildReadFtpUpload: false
-readyForOperatorRegistrySiteEmbedsFtpUpload: true
+readyForOperatorRegistrySiteEmbedsFtpUpload: false
 publicBuildReadFtpUploadExecuted: true
 readyForOperatorMigrationApply: applied
 operatorMigrationApplyCompleted: true
@@ -67,7 +68,23 @@ readyForAnyFutureFtpApply: false
 ```
 
 `readyForOperatorMigrationApply: applied` — Core DDL/RLS/seed/access already applied.
-Staging Admin + public build-read are live. Gosaki `registry.siteEmbeds=true` persists prefer-DB without `CMS_KIT_SITE_EMBEDS_BUILD_READ`. JSON / Contents remain as fallback. Server Save arm is **false**. Fresh registry package FTP pending.
+Staging Admin + public YouTube (registry `siteEmbeds=true`, no `CMS_KIT_SITE_EMBEDS_BUILD_READ`) are live at `sourceCommit` `83868e08…`. JSON / Contents remain as fallback. Server Save arm is **false**.
+
+## Registry siteEmbeds persistence QA (2026-07-24 · operator)
+
+| Item | Result |
+| --- | --- |
+| `sourceCommit` | `83868e0814d2f70af6e4307f0ec73462528a1e5d` |
+| FTP | human manual full `public-dist/` overwrite → `/cms-kit-staging/gosaki-piano/` |
+| production | **unchanged** |
+| Public home YouTube | OK · videoId `I-eY9YMq9GI` |
+| Schedule / Discography / About etc. | OK |
+| `/admin/` · `/admin/youtube/` | OK · Admin Supabase path retained · Save **disabled** |
+| `CMS_KIT_SITE_EMBEDS_BUILD_READ` | unset · registry drives build-read |
+| JSON / Contents fallback | retained |
+| Save / Secret / SQL / Edge | **not executed** |
+
+Detail: [cms-core-v2-youtube-supabase-registry-siteembeds-persistence.md](./cms-core-v2-youtube-supabase-registry-siteembeds-persistence.md).
 
 ## Registry siteEmbeds persistence (2026-07-24 · local)
 
@@ -77,8 +94,8 @@ Staging Admin + public build-read are live. Gosaki `registry.siteEmbeds=true` pe
 | Other sites | `pilot-sample-static.siteEmbeds` **false** (unchanged) |
 | Build | `CMS_KIT_SITE_EMBEDS_BUILD_READ` **UNSET** · Admin path ON · Save arms false |
 | Evidence | `embedDataSource: "supabase"` · baked === mapped `site_embeds` |
-| Package | `sourceCommit` `443d1e5…` · verify:manual-upload **PASS** |
-| FTP | **not** executed |
+| Package | first `443d1e5…` · deployed HEAD regen `83868e08…` · verify:manual-upload **PASS** |
+| FTP / smoke QA | **COMPLETE** (see section above) |
 
 Detail: [cms-core-v2-youtube-supabase-registry-siteembeds-persistence.md](./cms-core-v2-youtube-supabase-registry-siteembeds-persistence.md).
 
@@ -168,7 +185,7 @@ recommendedCutoverMode: staged-admin-then-build
 
 **Cutover stage 2 (live):** Public build-read ON · operator manual FTP + browser QA COMPLETE — [public-build-read-package-prep](./cms-core-v2-youtube-supabase-public-build-read-package-prep.md).
 
-**Registry persistence (local):** Gosaki `siteEmbeds=true` · package without `CMS_KIT_SITE_EMBEDS_BUILD_READ` still `embedDataSource=supabase` — [registry-siteembeds-persistence](./cms-core-v2-youtube-supabase-registry-siteembeds-persistence.md) · `sourceCommit` `443d1e5` · FTP pending · JSON/Contents fallback retained · pilot unchanged.
+**Registry persistence (live):** Gosaki `siteEmbeds=true` · no `CMS_KIT_SITE_EMBEDS_BUILD_READ` · operator FTP + smoke QA COMPLETE at `sourceCommit` `83868e08…` — [registry-siteembeds-persistence](./cms-core-v2-youtube-supabase-registry-siteembeds-persistence.md) · JSON/Contents fallback retained · pilot unchanged · Save arm false.
 
 ### Dual-path vs cutover
 

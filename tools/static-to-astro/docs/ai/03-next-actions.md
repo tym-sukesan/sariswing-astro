@@ -3,31 +3,32 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **Kit Core:** Phase 2 YouTube **registry siteEmbeds persistence READY**（Gosaki `siteEmbeds=true` · envなしで supabase bake 確認済 · FTP未実施）。**Next（人間・別ゲート）:** manual FTP `public-dist/` → `/cms-kit-staging/gosaki-piano/` → smoke QA。Doc: `cms-core-v2-youtube-supabase-registry-siteembeds-persistence.md`。
+1. **Kit Core:** Phase 2 YouTube **registry siteEmbeds persistence QA COMPLETE**（Admin+public Supabase live · Save arm false · Contents/JSON fallback 維持）。**Next（任意）:** Contents YouTube 退役 planning、または次の Kit feature。`contentsYoutubeCutoverExecuted: false`。Doc: `cms-core-v2-youtube-supabase-registry-siteembeds-persistence.md`。
 2. **並行可（Gosaki ops）:** クライアントへ staging 共有・feedback。
-3. **並行可:** production hosting **read-only planning** · Contents YouTube 退役 planning（任意）。
+3. **並行可:** production hosting **read-only planning**。
 4. Save arm **false** 維持。
-5. production / Wix / auto FTP / `vsbvndwuajjhnzpohghh` 禁止。
+5. production / Wix / auto FTP / `vsbvndwuajjhnzpohghh` 禁止 · `readyForAnyFutureFtpApply: false`。
 
-## 0. CMS Core v2 YouTube — registry siteEmbeds persistence (2026-07-24)
+## 0. CMS Core v2 YouTube — registry siteEmbeds persistence QA COMPLETE (2026-07-24)
 
 | Item | Value |
 | --- | --- |
-| Gate | `cmsCoreV2YoutubeRegistrySiteEmbedsPersistenceComplete: true` |
-| Registry | Gosaki `siteEmbeds: true` · pilot unchanged `false` |
-| Env | `CMS_KIT_SITE_EMBEDS_BUILD_READ` **UNSET** still supabase |
-| Package | `sourceCommit` `443d1e5` |
+| Gate | `cmsCoreV2YoutubeRegistrySiteEmbedsPersistenceQaComplete: true` |
+| Deployed `sourceCommit` | `83868e0814d2f70af6e4307f0ec73462528a1e5d` |
+| `publicSiteEmbedsBuildReadLive` | **true** |
+| `adminStagingSupabasePathLive` | **true** |
+| Registry | Gosaki `siteEmbeds: true` (no `CMS_KIT_SITE_EMBEDS_BUILD_READ`) |
 | `saveArmEnabled` | **false** |
-| FTP | **not** executed |
-| Next | operator manual FTP + smoke QA |
+| `contentsYoutubeCutoverExecuted` | **false** |
+| production | **unchanged** |
+| Next | optional Contents YouTube retire planning |
 
 ```txt
-CMS_CORE_V2_YOUTUBE_REGISTRY_SITE_EMBEDS_PERSISTENCE_COMPLETE: true
+CMS_CORE_V2_YOUTUBE_REGISTRY_SITE_EMBEDS_PERSISTENCE_QA_COMPLETE: true
+PUBLIC_SITE_EMBEDS_BUILD_READ_LIVE: true
+ADMIN_STAGING_SUPABASE_PATH_LIVE: true
 REGISTRY_GOSAKI_SITE_EMBEDS_TRUE: true
-REGISTRY_PILOT_SITE_EMBEDS_FALSE: true
-PUBLIC_BUILD_READ_WORKS_WITHOUT_CMS_KIT_ENV: true
 SAVE_ARM_ENABLED: false
-READY_FOR_OPERATOR_REGISTRY_SITE_EMBEDS_FTP_UPLOAD: true
 CONTENTS_YOUTUBE_CUTOVER_EXECUTED: false
 READY_FOR_ANY_FUTURE_FTP_APPLY: false
 ```

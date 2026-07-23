@@ -1,7 +1,7 @@
 # CMS Core v2 Phase 2 — YouTube Supabase Vertical Slice (local implementation)
 
-- **Phase:** `cms-core-v2-youtube-supabase-vertical-slice-owner-dry-run-pass-and-save-preflight` (builds on `cms-core-v2-youtube-supabase-vertical-slice-local-implementation`)
-- **Status:** **owner remote dry-run PASS** · Save round-trip **preflight only** (not executed)
+- **Phase:** `cms-core-v2-youtube-supabase-vertical-slice-staging-save-round-trip-complete` (builds on `cms-core-v2-youtube-supabase-vertical-slice-local-implementation`)
+- **Status:** **staging Save round-trip COMPLETE** · Save arm **false** · Contents path **default** · production **unchanged**
 - **Date:** 2026-07-24
 - **Staging project:** `static-to-astro-cms-staging` / `kmjqppxjdnwwrtaeqjta`
 - **STOP:** production `vsbvndwuajjhnzpohghh` — **unchanged / not touched**
@@ -20,6 +20,7 @@ cmsCoreV2YoutubeSupabaseStagingDbApplyComplete: true
 cmsCoreV2YoutubeSupabaseOwnerRemoteDryRunPass: true
 cmsCoreV2YoutubeSupabaseBrowserDryRunComplete: true
 cmsCoreV2YoutubeSupabaseSaveRoundTripPreflightComplete: true
+cmsCoreV2YoutubeSupabaseStagingSaveRoundTripComplete: true
 readyForOperatorMigrationApply: applied
 operatorMigrationApplyCompleted: true
 edgeDeployExecuted: true
@@ -29,19 +30,39 @@ rlsApplied: true
 seedExecuted: true
 accessAssignmentExecuted: true
 rollbackExecuted: false
-browserRoundtripExecuted: false
+browserRoundtripExecuted: true
 browserDryRunComplete: true
-actualSaveExecuted: false
+actualSaveExecuted: true
+restoreSaveExecuted: true
 saveArmEnabled: false
-restoreSaveExecuted: false
 liveDbSelectConfirmationPendingOperator: false
 contentsApiPathUnchangedDefault: true
+contentsYoutubeCutoverExecuted: false
 scheduleDiscographyAboutUnchanged: true
 readyForAnyFutureFtpApply: false
 ```
 
 `readyForOperatorMigrationApply: applied` — Core DDL/RLS/seed/access already applied.
-Contents YouTube path remains **default** until explicit cutover. Server Save arm stays **false** until approved Save round-trip.
+Contents YouTube path remains **default** until explicit cutover. Server Save arm is **false** after round-trip.
+
+## Staging Save round-trip result (2026-07-24 · operator)
+
+| Step | Result |
+| --- | --- |
+| Project | `kmjqppxjdnwwrtaeqjta` |
+| production `vsbvndwuajjhnzpohghh` | **unchanged** |
+| Actor | **owner** (email/UUID not recorded) |
+| Forward dry-run | **PASS** |
+| Forward Save | **PASS** — `sort_order` 10→11 · `didWrite=true` · `dbWrite=true` · `rowsAffected=1` |
+| Post-Save SELECT | **PASS** |
+| Restore dry-run | **PASS** |
+| Restore Save | **PASS** — `sort_order` 11→10 · `didWrite=true` · `dbWrite=true` · `rowsAffected=1` |
+| Final SELECT | `row_count=1` · `sort_order=10` · `published=true` · `source_url` unchanged · `updated_at=2026-07-23 15:38:35.562674+00` |
+| Save arm | returned **false** |
+| Operator PAT | unset from shell |
+| Contents path | **default maintained** (cutover not executed) |
+
+**Next (optional Kit):** Contents→Supabase YouTube cutover planning (separate approval) · or leave dual-path as-is. Do **not** re-arm Save without a new approval ID / plan.
 
 ## Owner remote dry-run result (2026-07-24 · operator)
 

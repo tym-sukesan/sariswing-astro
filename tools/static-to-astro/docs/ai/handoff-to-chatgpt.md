@@ -5,27 +5,26 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: CMS Core v2 Phase 2 OWNER DRY-RUN PASS → Save round-trip preflight ready
+Current phase: CMS Core v2 Phase 2 STAGING SAVE ROUND-TRIP COMPLETE
 Phase2 doc: tools/static-to-astro/docs/cms-core-v2-youtube-supabase-vertical-slice.md
-cmsCoreV2YoutubeSupabaseOwnerRemoteDryRunPass: true
-browserDryRunComplete: true
-cmsCoreV2YoutubeSupabaseSaveRoundTripPreflightComplete: true
-actualSaveExecuted: false · saveArmEnabled: false · restoreSaveExecuted: false
-edgeDeployExecuted: true
-readyForOperatorMigrationApply: applied
+cmsCoreV2YoutubeSupabaseStagingSaveRoundTripComplete: true
+browserRoundtripExecuted: true
+actualSaveExecuted: true · restoreSaveExecuted: true
+saveArmEnabled: false
+contentsApiPathUnchangedDefault: true · contentsYoutubeCutoverExecuted: false
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh UNCHANGED
-Contents YouTube path: default until cutover
-Recommended Save poke: sortOrder 10→11→10
-Next Kit: operator-approved Save round-trip (arm ON → Save → restore → arm OFF)
-EXTERNAL_WRITE_EXECUTED: false (this docs-only phase)
+Final DB: sort_order=10 · published=true · source_url unchanged · updated_at=2026-07-23 15:38:35.562674+00
+Next Kit (optional): Contents→Supabase YouTube cutover planning (separate approval) OR keep dual-path
+Do NOT re-arm Save without new plan
+EXTERNAL_WRITE_EXECUTED: false (this docs-only record phase)
 ```
 
-## CMS Core v2 YouTube Supabase — owner dry-run PASS + Save preflight (2026-07-24)
+## CMS Core v2 YouTube Supabase — staging Save round-trip COMPLETE (2026-07-24)
 
-- **Dry-run:** PASS · owner · HTTP 200 · didWrite false · noChange true
-- **Save:** preflight only · not executed · arm remains false
-- **Public impact:** none while Contents/JSON default (DB sort_order only)
-- **Next:** approved Save round-trip
+- **PASS:** forward dry-run/Save · restore dry-run/Save · final SELECT
+- **Poke:** `sort_order` 10→11→10 restored
+- **Arm:** false · production unchanged · Contents cutover not done
+- **Next:** optional cutover planning
 
 ## CMS Core v2 YouTube Supabase Vertical Slice — local implementation (2026-07-22)
 

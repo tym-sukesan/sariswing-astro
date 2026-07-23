@@ -3,29 +3,26 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **Kit Core 第一候補:** Phase 2 YouTube Supabase — **owner remote dry-run PASS** · Save round-trip **preflight ready**. Next high-risk（明示承認）: staging `GOSAKI_YOUTUBE_SUPABASE_SAVE_ARMED=true` → Save `sortOrder` 10→11 → restore 11→10 → arm OFF。Contents YouTube 経路は cutover まで既定。Doc: `cms-core-v2-youtube-supabase-vertical-slice.md`。
+1. **Kit Core:** Phase 2 YouTube Supabase — **staging Save round-trip COMPLETE**（`cmsCoreV2YoutubeSupabaseStagingSaveRoundTripComplete: true` · `saveArmEnabled: false` · Contents 既定）。**Next（任意・別承認）:** Contents→Supabase YouTube cutover planning、または dual-path 維持。再 arm 禁止（新計画なし）。Doc: `cms-core-v2-youtube-supabase-vertical-slice.md`。
 2. **並行可（Gosaki ops）:** クライアントへ staging 共有・feedback。
 3. **並行可:** production hosting **read-only planning**。
-4. staging Edge Save arms は **false** 維持（Save 往復時のみ一時 ON）。
+4. staging Edge Save arm は **false** 維持。
 5. production / Wix / auto FTP / `vsbvndwuajjhnzpohghh` 禁止。
 
-## 0. CMS Core v2 YouTube Supabase — owner dry-run PASS + Save preflight (2026-07-24)
+## 0. CMS Core v2 YouTube Supabase — staging Save round-trip COMPLETE (2026-07-24)
 
 | Item | Value |
 | --- | --- |
-| Dry-run | **PASS** (owner · HTTP 200 · didWrite false · noChange true) |
-| `browserDryRunComplete` | **true** |
-| `actualSaveExecuted` / `saveArmEnabled` | **false** / **false** |
-| Save preflight | **complete** (sortOrder 10→11→10) |
-| Contents path | default unchanged |
-| Next | approved Save round-trip |
+| Forward / Restore Save | **PASS** (10→11→10) |
+| Final | `sort_order=10` · published true · source_url unchanged |
+| `updated_at` | `2026-07-23 15:38:35.562674+00` |
+| `saveArmEnabled` | **false** |
+| production / Contents cutover | unchanged / **not executed** |
 
 ```txt
-CMS_CORE_V2_YOUTUBE_SUPABASE_OWNER_REMOTE_DRY_RUN_PASS: true
-BROWSER_DRY_RUN_COMPLETE: true
-SAVE_ROUND_TRIP_PREFLIGHT_COMPLETE: true
-ACTUAL_SAVE_EXECUTED: false
+CMS_CORE_V2_YOUTUBE_SUPABASE_STAGING_SAVE_ROUND_TRIP_COMPLETE: true
 SAVE_ARM_ENABLED: false
+CONTENTS_YOUTUBE_CUTOVER_EXECUTED: false
 ```
 
 ## 0. CMS Core v2 Minimal Architecture Planning (2026-07-22) — complete

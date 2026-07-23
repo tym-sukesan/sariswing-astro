@@ -5,28 +5,27 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: CMS Core v2 Phase 2 STAGING DB APPLY COMPLETE → Edge deploy preflight next
+Current phase: CMS Core v2 Phase 2 OWNER DRY-RUN PASS → Save round-trip preflight ready
 Phase2 doc: tools/static-to-astro/docs/cms-core-v2-youtube-supabase-vertical-slice.md
-cmsCoreV2YoutubeSupabaseStagingDbApplyComplete: true
+cmsCoreV2YoutubeSupabaseOwnerRemoteDryRunPass: true
+browserDryRunComplete: true
+cmsCoreV2YoutubeSupabaseSaveRoundTripPreflightComplete: true
+actualSaveExecuted: false · saveArmEnabled: false · restoreSaveExecuted: false
+edgeDeployExecuted: true
 readyForOperatorMigrationApply: applied
-dbMigrationExecuted: true · rlsApplied: true · seedExecuted: true · accessAssignmentExecuted: true
-edgeDeployExecuted: false · browserRoundtripExecuted: false · rollbackExecuted: false
-STG: kmjqppxjdnwwrtaeqjta · counts sites=1 site_embeds=1 site_members=1 platform_admins=1
-owner ≠ platform_admin (no emails/UUIDs in docs)
-production vsbvndwuajjhnzpohghh: UNCHANGED
-Next Kit: Edge deploy preflight → staging Edge deploy (arms false) → optional dry-run/Save
-Contents YouTube path: still default until cutover
-EXTERNAL_WRITE_EXECUTED: false (this docs-only record; operator staging SQL already applied)
+STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh UNCHANGED
+Contents YouTube path: default until cutover
+Recommended Save poke: sortOrder 10→11→10
+Next Kit: operator-approved Save round-trip (arm ON → Save → restore → arm OFF)
+EXTERNAL_WRITE_EXECUTED: false (this docs-only phase)
 ```
 
-## CMS Core v2 YouTube Supabase — staging DB apply (2026-07-23)
+## CMS Core v2 YouTube Supabase — owner dry-run PASS + Save preflight (2026-07-24)
 
-- **Project:** `static-to-astro-cms-staging` / `kmjqppxjdnwwrtaeqjta`
-- **PASS:** migration · RLS/GRANT · content seed · access assignment
-- **Counts:** sites=1 · site_embeds=1 · site_members=1 · platform_admins=1
-- **Not done:** Edge deploy · browser round-trip · rollback (not needed)
-- **Gate:** `readyForOperatorMigrationApply: applied`
-- **Next:** Edge deploy preflight
+- **Dry-run:** PASS · owner · HTTP 200 · didWrite false · noChange true
+- **Save:** preflight only · not executed · arm remains false
+- **Public impact:** none while Contents/JSON default (DB sort_order only)
+- **Next:** approved Save round-trip
 
 ## CMS Core v2 YouTube Supabase Vertical Slice — local implementation (2026-07-22)
 

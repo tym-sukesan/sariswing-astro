@@ -1,11 +1,11 @@
-Last updated: 2026-07-23
+Last updated: 2026-07-24
 Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**CMS Core v2 YouTube Supabase staging DB apply (2026-07-23):** **complete** — staging `kmjqppxjdnwwrtaeqjta` · production `vsbvndwuajjhnzpohghh` **unchanged** · migration **PASS** · RLS/GRANT **PASS** · content seed **PASS** · access assignment **PASS** · counts `sites=1` `site_embeds=1` `site_members=1` `platform_admins=1` · owner≠platform_admin (UUIDs/emails not recorded) · Edge deploy **false** · browser round-trip **false** · rollback **not needed** · Gate: `readyForOperatorMigrationApply: applied` · `cmsCoreV2YoutubeSupabaseStagingDbApplyComplete: true` · Doc: `cms-core-v2-youtube-supabase-vertical-slice.md` · **Next:** Edge deploy preflight → staging Edge deploy (arms false) → optional dry-run/Save round-trip.
+**CMS Core v2 YouTube Supabase owner remote dry-run PASS + Save round-trip preflight (2026-07-24):** **dry-run PASS recorded** · Save preflight **complete (not executed)** — staging `kmjqppxjdnwwrtaeqjta` · Function `gosaki-youtube-supabase-save-dry-run` · owner · HTTP 200 · `ok/didWrite=false/noChange=true` · production unchanged · Gates: `cmsCoreV2YoutubeSupabaseOwnerRemoteDryRunPass: true` · `browserDryRunComplete: true` · `actualSaveExecuted: false` · `saveArmEnabled: false` · Contents path default · Recommended reversible poke: `sortOrder` 10→11→10 · Doc: `cms-core-v2-youtube-supabase-vertical-slice.md` · **Next:** operator-approved Save round-trip (arm ON → Save → restore → arm OFF).
 
-**CMS Core v2 YouTube Supabase final SQL harden (2026-07-22):** **complete (templates)** — column-level GRANTs · audit trigger · access fail-closed · applied on staging 2026-07-23 (see above).
+**CMS Core v2 YouTube Supabase staging DB apply (2026-07-23):** **complete** — migration/RLS/seed/access PASS · counts 1/1/1/1 · `readyForOperatorMigrationApply: applied` · Edge later used for dry-run PASS.
 
 **CMS Core v2 YouTube Supabase Vertical Slice local implementation (2026-07-22):** **complete (local only)** — Doc: `cms-core-v2-youtube-supabase-vertical-slice.md` · SQL drafts (tenancy+site_embeds+RLS+seed) · Edge undeployed `gosaki-youtube-supabase-save-dry-run` · JWT+`can_write_site` · optimistic lock · dual path (Contents default; Supabase opt-in env) · build DB-prefer+JSON fallback · sticky/dirty retained · verifier `verify-cms-core-v2-youtube-supabase-vertical-slice.mjs` · **Gates:** localImplemented true · migration/RLS/Edge/DB write/Contents change/FTP **false** · superseded readiness: wait re-audit after hardening.
 

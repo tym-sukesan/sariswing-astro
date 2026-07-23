@@ -1,32 +1,31 @@
-Last updated: 2026-07-23
+Last updated: 2026-07-24
 Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **Kit Core 第一候補:** Phase 2 YouTube Supabase — **staging DB apply complete**（`readyForOperatorMigrationApply: applied`）。**Next:** Edge deploy preflight → staging deploy `gosaki-youtube-supabase-save-dry-run`（arms false）→ 明示承認後の dry-run / Save round-trip。Contents YouTube 経路は切替まで既定維持。Doc: `cms-core-v2-youtube-supabase-vertical-slice.md`。
-2. **並行可（Gosaki ops）:** クライアントへ staging 共有・feedback（`STAGING_READY_FOR_CLIENT_SHARE=true` · URL `https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/`）。
-3. **並行可:** production hosting **read-only planning**（契約・deploy·DNS はまだ行わない）。
-4. staging Edge は **server arms すべて false**（再 arm は明示承認時のみ・1機能ずつ）。
-5. production deploy / Wix 変更 / auto FTP / production ref `vsbvndwuajjhnzpohghh` は禁止。
+1. **Kit Core 第一候補:** Phase 2 YouTube Supabase — **owner remote dry-run PASS** · Save round-trip **preflight ready**. Next high-risk（明示承認）: staging `GOSAKI_YOUTUBE_SUPABASE_SAVE_ARMED=true` → Save `sortOrder` 10→11 → restore 11→10 → arm OFF。Contents YouTube 経路は cutover まで既定。Doc: `cms-core-v2-youtube-supabase-vertical-slice.md`。
+2. **並行可（Gosaki ops）:** クライアントへ staging 共有・feedback。
+3. **並行可:** production hosting **read-only planning**。
+4. staging Edge Save arms は **false** 維持（Save 往復時のみ一時 ON）。
+5. production / Wix / auto FTP / `vsbvndwuajjhnzpohghh` 禁止。
 
-## 0. CMS Core v2 YouTube Supabase — staging DB apply (2026-07-23)
+## 0. CMS Core v2 YouTube Supabase — owner dry-run PASS + Save preflight (2026-07-24)
 
 | Item | Value |
 | --- | --- |
-| Project | `static-to-astro-cms-staging` / `kmjqppxjdnwwrtaeqjta` |
-| Production | `vsbvndwuajjhnzpohghh` **unchanged** |
-| migration / RLS / content seed / access | **PASS** |
-| Counts | sites=1 · site_embeds=1 · site_members=1 · platform_admins=1 |
-| Access | owner ≠ platform_admin (no emails/UUIDs in git) |
-| `readyForOperatorMigrationApply` | **applied** |
-| Edge deploy / browser round-trip / rollback | **false** / **false** / not needed |
-| Next | Edge deploy preflight |
+| Dry-run | **PASS** (owner · HTTP 200 · didWrite false · noChange true) |
+| `browserDryRunComplete` | **true** |
+| `actualSaveExecuted` / `saveArmEnabled` | **false** / **false** |
+| Save preflight | **complete** (sortOrder 10→11→10) |
+| Contents path | default unchanged |
+| Next | approved Save round-trip |
 
 ```txt
-CMS_CORE_V2_YOUTUBE_SUPABASE_STAGING_DB_APPLY_COMPLETE: true
-READY_FOR_OPERATOR_MIGRATION_APPLY: applied
-EDGE_DEPLOY_EXECUTED: false
-BROWSER_ROUNDTRIP_EXECUTED: false
+CMS_CORE_V2_YOUTUBE_SUPABASE_OWNER_REMOTE_DRY_RUN_PASS: true
+BROWSER_DRY_RUN_COMPLETE: true
+SAVE_ROUND_TRIP_PREFLIGHT_COMPLETE: true
+ACTUAL_SAVE_EXECUTED: false
+SAVE_ARM_ENABLED: false
 ```
 
 ## 0. CMS Core v2 Minimal Architecture Planning (2026-07-22) — complete

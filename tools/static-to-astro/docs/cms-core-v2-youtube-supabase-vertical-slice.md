@@ -1,8 +1,8 @@
 # CMS Core v2 Phase 2 — YouTube Supabase Vertical Slice (local implementation)
 
-- **Phase:** `cms-core-v2-youtube-supabase-vertical-slice-staging-db-apply` (builds on `cms-core-v2-youtube-supabase-vertical-slice-local-implementation`)
-- **Status:** **staging DB apply complete** (migration · RLS/GRANT · content seed · access) — Edge deploy / browser round-trip **not** done
-- **Date:** 2026-07-23
+- **Phase:** `cms-core-v2-youtube-supabase-vertical-slice-owner-dry-run-pass-and-save-preflight` (builds on `cms-core-v2-youtube-supabase-vertical-slice-local-implementation`)
+- **Status:** **owner remote dry-run PASS** · Save round-trip **preflight only** (not executed)
+- **Date:** 2026-07-24
 - **Staging project:** `static-to-astro-cms-staging` / `kmjqppxjdnwwrtaeqjta`
 - **STOP:** production `vsbvndwuajjhnzpohghh` — **unchanged / not touched**
 - **ADR:** [cms-core-v2-minimal-architecture-decision.md](./cms-core-v2-minimal-architecture-decision.md)
@@ -17,9 +17,12 @@ cmsCoreV2YoutubeSupabaseStagingMigrationPreflightComplete: true
 cmsCoreV2YoutubeSupabaseSqlTemplateHardenComplete: true
 cmsCoreV2YoutubeSupabaseFinalSqlHardenComplete: true
 cmsCoreV2YoutubeSupabaseStagingDbApplyComplete: true
+cmsCoreV2YoutubeSupabaseOwnerRemoteDryRunPass: true
+cmsCoreV2YoutubeSupabaseBrowserDryRunComplete: true
+cmsCoreV2YoutubeSupabaseSaveRoundTripPreflightComplete: true
 readyForOperatorMigrationApply: applied
 operatorMigrationApplyCompleted: true
-edgeDeployExecuted: false
+edgeDeployExecuted: true
 dbMigrationExecuted: true
 dbWriteExecuted: true
 rlsApplied: true
@@ -27,13 +30,36 @@ seedExecuted: true
 accessAssignmentExecuted: true
 rollbackExecuted: false
 browserRoundtripExecuted: false
+browserDryRunComplete: true
+actualSaveExecuted: false
+saveArmEnabled: false
+restoreSaveExecuted: false
 liveDbSelectConfirmationPendingOperator: false
 contentsApiPathUnchangedDefault: true
 scheduleDiscographyAboutUnchanged: true
 readyForAnyFutureFtpApply: false
 ```
 
-`readyForOperatorMigrationApply: applied` — staging Core DDL/RLS/seed/access **already applied**; do not re-run first-time access assignment without a new approved plan.
+`readyForOperatorMigrationApply: applied` — Core DDL/RLS/seed/access already applied.
+Contents YouTube path remains **default** until explicit cutover. Server Save arm stays **false** until approved Save round-trip.
+
+## Owner remote dry-run result (2026-07-24 · operator)
+
+| Item | Result |
+| --- | --- |
+| Project | `kmjqppxjdnwwrtaeqjta` |
+| Function | `gosaki-youtube-supabase-save-dry-run` |
+| Actor | **owner** staging Auth user (email/UUID not recorded) |
+| HTTP | **200** |
+| `ok` | **true** |
+| `operation` | `dryRun` |
+| `didWrite` / `dbWrite` | **false** / **false** |
+| `noChange` | **true** |
+| `changedItemIds` | `[]` |
+| `saveEnabled` | **false** |
+| `invokeError` | **null** |
+| production | **unchanged** |
+| actual Save / arm / restore | **not executed** |
 
 ## Staging DB apply result (2026-07-23 · operator)
 
@@ -44,14 +70,169 @@ readyForAnyFutureFtpApply: false
 | Gosaki content seed | **PASS** |
 | access assignment | **PASS** |
 | production `vsbvndwuajjhnzpohghh` | **unchanged** |
-| Edge deploy | **not executed** |
-| browser round-trip | **not executed** |
+| Edge deploy | **executed** (prerequisite for dry-run PASS) |
+| browser Save round-trip | **not executed** |
 | rollback | **not executed** (not needed) |
 
 **Row counts (staging, post-apply):** `sites=1` · `site_embeds=1` · `site_members=1` · `platform_admins=1`
 **Access:** owner and platform_admin are **distinct** staging Auth users (emails/UUIDs **not** recorded in git).
 
-**Next:** Edge deploy preflight → staging deploy of `gosaki-youtube-supabase-save-dry-run` (arms false) → optional dry-run / Save round-trip under explicit approval. Contents YouTube path remains default until cutover.
+## Save round-trip operator preflight (2026-07-24 · read-only · not executed)
+
+### Why `sortOrder` 10 → 11 → 10
+
+| Candidate | Risk | Verdict |
+| --- | --- | --- |
+| `embedCode` / URL change | Public JSON SoT + Contents path still default, but changes visible identity | avoid for first Save |
+| `published` flip | Can hide embed from DB-prefer builds | avoid |
+| **`sortOrder` only** | UPDATE-grant column; no URL/published change; single-item site → display order unchanged | **recommended** |
+
+Public/staging **HTML package** uses Contents/JSON by default (`registry.siteEmbeds=false`, path env off) → this DB-only `sort_order` poke does **not** change public pages until cutover / `CMS_KIT_SITE_EMBEDS_BUILD_READ`. Admin Supabase live-read (if path enabled) would see sortOrder.
+
+### Contract (Save)
+
+| Field | Value |
+| --- | --- |
+| `operation` | `"save"` |
+| `approvalId` | `G-cms-v2-youtube-supabase-items-web-save-non-dry-run-slice` |
+| `siteSlug` | `"gosaki-piano"` |
+| `fingerprint` | **exact** string from latest **dry-run** response (`fingerprint` of current DB before) |
+| `expectedBeforeUpdatedAtById` | from dry-run; for `yt-placeholder-01` must match DB `updated_at` |
+| `items[]` | intended after-state (e.g. sortOrder **11** then restore **10**) |
+| Server arm | `GOSAKI_YOUTUBE_SUPABASE_SAVE_ARMED=true` (Edge secret) |
+| Client UI arm | not required for Console `functions.invoke` |
+| Production | handler rejects URL containing `vsbvndwuajjhnzpohghh` |
+
+Dry-run returns before any INSERT/UPDATE. Save writes only after arm + approval + fingerprint + per-id `updated_at` lock.
+
+### Strict order (operator · one approval cycle)
+
+1. **Pre-check (SELECT-only):** confirm `legacy_item_id=yt-placeholder-01` · `sort_order=10` · note `updated_at` (no emails/UUIDs in chat/git).
+2. **Dry-run (baseline)** — noChange expected with sortOrder 10; capture `fingerprint` + `expectedBeforeUpdatedAtById`.
+3. **Dry-run (delta)** — same body but `sortOrder: 11`; expect `noChange: false`, `changedItemIds: ["yt-placeholder-01"]`; reuse **baseline** fingerprint/lock from step 2 for Save (Save locks against **current DB before**, not after-items fingerprint).
+4. **Arm ON** (CLI below) — staging ref only.
+5. **Save once** — body uses step-2 fingerprint/lock + items with sortOrder **11**.
+6. **DB confirm (SELECT-only):** `sort_order=11`; new `updated_at`.
+7. **Restore dry-run** — items sortOrder **10**; capture **new** fingerprint/lock from this response.
+8. **Restore Save once** — sortOrder **10** + step-7 fingerprint/lock.
+9. **Final SELECT:** `sort_order=10`; URL/published unchanged.
+10. **Arm OFF** immediately.
+
+### Arm CLI (**do not run in this docs phase**)
+
+```bash
+# ON — staging only
+supabase secrets set GOSAKI_YOUTUBE_SUPABASE_SAVE_ARMED=true --project-ref kmjqppxjdnwwrtaeqjta
+
+# OFF after round-trip (prefer explicit false)
+supabase secrets set GOSAKI_YOUTUBE_SUPABASE_SAVE_ARMED=false --project-ref kmjqppxjdnwwrtaeqjta
+```
+
+STOP if `--project-ref` is not `kmjqppxjdnwwrtaeqjta` or equals production `vsbvndwuajjhnzpohghh`.
+
+### Console scripts (owner logged-in admin · no token logging)
+
+**A — dry-run helper** (returns summary; keep last dry-run payload in memory as `window.__ytSbLastDry`):
+
+```js
+(async () => {
+  const client = window.__gosakiAdminSupabaseClient;
+  if (!client) throw new Error("login first");
+  const items = [{
+    id: "yt-placeholder-01",
+    published: true,
+    sortOrder: 10, // change to 11 for delta dry-run / save-forward
+    embedCode: "https://youtu.be/I-eY9YMq9GI",
+  }];
+  const { data, error } = await client.functions.invoke(
+    "gosaki-youtube-supabase-save-dry-run",
+    {
+      body: {
+        siteSlug: "gosaki-piano",
+        operation: "dryRun",
+        dryRun: true,
+        approvalId: "G-cms-v2-youtube-supabase-items-dry-run",
+        items,
+      },
+    },
+  );
+  window.__ytSbLastDry = { data, items };
+  console.log({
+    invokeError: error ? { message: error.message, status: error.context?.status } : null,
+    ok: data?.ok,
+    didWrite: data?.didWrite,
+    noChange: data?.noChange,
+    changedItemIds: data?.changedItemIds,
+    hasFingerprint: Boolean(data?.fingerprint),
+    lockKeys: data?.expectedBeforeUpdatedAtById
+      ? Object.keys(data.expectedBeforeUpdatedAtById)
+      : [],
+  });
+})();
+```
+
+**B — Save once** (only after arm ON · uses **prior dry-run before-lock**, not the delta dry-run’s afterItems as fingerprint source — fingerprint must be from dry-run against current DB):
+
+```js
+(async () => {
+  const client = window.__gosakiAdminSupabaseClient;
+  const dry = window.__ytSbLastDry?.data;
+  if (!client || !dry?.fingerprint) throw new Error("run matching dry-run first");
+  const items = [{
+    id: "yt-placeholder-01",
+    published: true,
+    sortOrder: 11, // restore Save: use 10
+    embedCode: "https://youtu.be/I-eY9YMq9GI",
+  }];
+  const { data, error } = await client.functions.invoke(
+    "gosaki-youtube-supabase-save-dry-run",
+    {
+      body: {
+        siteSlug: "gosaki-piano",
+        operation: "save",
+        dryRun: false,
+        approvalId: "G-cms-v2-youtube-supabase-items-web-save-non-dry-run-slice",
+        fingerprint: dry.fingerprint,
+        expectedBeforeUpdatedAtById: dry.expectedBeforeUpdatedAtById,
+        items,
+      },
+    },
+  );
+  console.log({
+    invokeError: error ? { message: error.message, status: error.context?.status } : null,
+    ok: data?.ok,
+    didWrite: data?.didWrite,
+    rowsAffected: data?.rowsAffected,
+    error: data?.error,
+  });
+})();
+```
+
+**Lock rule:** Before each Save, run a fresh dry-run whose `items` reflect the **intended after-state** is OK for `changedItemIds`, but `fingerprint` / `expectedBeforeUpdatedAtById` must come from a dry-run computed against **current DB** (handler fingerprints `before` rows). Practical pattern: dry-run with intended items → if `ok` and `changedItemIds` correct, Save immediately with **that same response’s** `fingerprint` + `expectedBeforeUpdatedAtById` (they are before-state). Do not reuse an older dry-run after any write.
+
+### Success / STOP
+
+| Stage | Success | STOP |
+| --- | --- | --- |
+| Dry-run | `ok` · `didWrite:false` · correct `changedItemIds` | production ref · wrong approval · token printed |
+| Arm ON | secret set on **staging** only | wrong `--project-ref` |
+| Save | `ok` · `didWrite:true` · `rowsAffected:1` | `save_not_armed` · lock 409 · `didWrite` ambiguity |
+| Restore | `sort_order=10` again · arm OFF | restore Save fails with arm still ON → see recovery |
+
+### Restore failure recovery
+
+1. **Stop** further Saves. Confirm arm state.
+2. Fresh dry-run with intended restore items (`sortOrder: 10`); use **new** fingerprint/lock.
+3. One restore Save. Re-SELECT.
+4. If still stuck: approved **SELECT-only** then optional scoped SQL `UPDATE … SET sort_order=10 WHERE legacy_item_id='yt-placeholder-01' AND site_slug='gosaki-piano'` (separate approval — not this preflight). Prefer Edge restore Save over SQL.
+5. Always **arm OFF** before leaving the session.
+
+### High-risk ops still pending (human)
+
+1. `secrets set` Save arm ON (staging)
+2. Forward Save (`sortOrder` 11)
+3. Restore Save (`sortOrder` 10)
+4. Arm OFF
 
 ## What was implemented (local only)
 
@@ -63,7 +244,8 @@ readyForAnyFutureFtpApply: false
 | Gosaki access assignment (owner / platform_admin placeholders) | `scripts/supabase/cms-core-v2-gosaki-access-assignment.template.sql` |
 | Rollback templates | content seed / access / RLS / DDL (no `DROP TABLE CASCADE`) |
 | Pure contract | `scripts/lib/cms-core-v2-youtube-supabase-contract.mjs` |
-| Edge (undeployed) | `supabase/functions/gosaki-youtube-supabase-save-dry-run/` (+ tools mirror) |
+| Edge | `supabase/functions/gosaki-youtube-supabase-save-dry-run/` (+ tools mirror) — **staging deployed**; Save arm default false |
+
 | Build prefer-DB + JSON fallback | `site-cms-features.mjs` · `gosaki-home-youtube-embed.mjs` · convert/hooks threading |
 | Admin dual path | default **Contents**; opt-in `PUBLIC_ADMIN_GOSAKI_YOUTUBE_SUPABASE_PATH_ENABLED=true` |
 | Sticky / dirty | existing multi-item UI retained; Supabase Save passes `expectedBeforeUpdatedAtById` |

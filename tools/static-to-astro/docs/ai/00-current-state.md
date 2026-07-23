@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**CMS Core v2 YouTube cutover stage 2 — public build-read package prep (2026-07-24):** **complete (local package)** — `CMS_KIT_SITE_EMBEDS_BUILD_READ=true` + Admin path ON · Save arms **false** · baked home YouTube === `mapSiteEmbedRowsToYoutubeConfig(site_embeds)` · `registry.siteEmbeds=false` · JSON fallback retained · package `sourceCommit` `b3bbae65` · FTP **not** executed · Gates: `cmsCoreV2YoutubeSupabasePublicBuildReadPackagePrepared: true` · `readyForOperatorPublicBuildReadFtpUpload: true` · `publicSiteEmbedsBuildReadLive: false` · Doc: `cms-core-v2-youtube-supabase-public-build-read-package-prep.md` · **Next:** operator manual FTP → public home QA.
+**CMS Core v2 YouTube public staging Supabase build-read QA (2026-07-24):** **COMPLETE** — operator manual FTP full `public-dist/` → `/cms-kit-staging/gosaki-piano/` · public home YouTube OK (`I-eY9YMq9GI`) · primary pages OK · `/admin/youtube/` OK · Admin path retained · Save **disabled** · JSON/Contents fallback retained · production **unchanged** · Save/Secret/SQL/Edge **not** run · Gates: `cmsCoreV2YoutubePublicStagingSupabaseBuildReadQaComplete: true` · `publicSiteEmbedsBuildReadLive: true` · `adminStagingSupabasePathLive: true` · `saveArmEnabled: false` · `contentsYoutubeCutoverExecuted: false` · Doc: `cms-core-v2-youtube-supabase-public-build-read-package-prep.md` · **Next:** optional `registry.siteEmbeds=true` lasting flip（別承認）· or Contents YouTube retire planning · Save arm は false 維持。
+
+**CMS Core v2 YouTube cutover stage 2 — public build-read package prep (2026-07-24):** **complete** — superseded by FTP+QA COMPLETE above · package `sourceCommit` `b3bbae65`.
 
 **CMS Core v2 YouTube Admin staging Supabase path cutover QA (2026-07-24):** **COMPLETE** — Admin path live · Save disabled · no-change dry-run PASS · production unchanged.
 

@@ -371,11 +371,12 @@ assert("doc admin path package prepared", doc.includes("cmsCoreV2YoutubeSupabase
 assert("doc admin path enabled in package", /adminSupabasePathEnabledInPackage:\s*true/.test(doc));
 assert("doc public build-read package prepared", doc.includes("cmsCoreV2YoutubeSupabasePublicBuildReadPackagePrepared: true"));
 assert("doc public build-read in package", /publicSiteEmbedsBuildReadEnabledInPackage:\s*true/.test(doc));
-assert("doc public build-read not live yet", /publicSiteEmbedsBuildReadLive:\s*false/.test(doc));
+assert("doc public build-read live", /publicSiteEmbedsBuildReadLive:\s*true/.test(doc));
+assert("doc public build-read QA complete", doc.includes("cmsCoreV2YoutubePublicStagingSupabaseBuildReadQaComplete: true"));
 assert("doc registry siteEmbeds still false", /registrySiteEmbedsStillFalse:\s*true/.test(doc));
 assert("doc json fallback retained gate", /jsonYoutubeFallbackRetained:\s*true/.test(doc));
-assert("doc ready for public build-read FTP", /readyForOperatorPublicBuildReadFtpUpload:\s*true/.test(doc));
-assert("doc public build-read FTP not done", /publicBuildReadFtpUploadExecuted:\s*false/.test(doc));
+assert("doc public build-read FTP readiness closed", /readyForOperatorPublicBuildReadFtpUpload:\s*false/.test(doc));
+assert("doc public build-read FTP done", /publicBuildReadFtpUploadExecuted:\s*true/.test(doc));
 assert("doc admin path cutover QA complete", doc.includes("cmsCoreV2YoutubeAdminStagingSupabasePathCutoverQaComplete: true"));
 assert("doc admin staging path live", /adminStagingSupabasePathLive:\s*true/.test(doc));
 assert("doc ftp upload executed (manual)", /ftpUploadExecuted:\s*true/.test(doc));
@@ -383,6 +384,7 @@ assert("doc operator manual ftp only", /operatorManualFtpOnly:\s*true/.test(doc)
 assert("doc admin FTP readiness closed", /readyForOperatorAdminPathFtpUpload:\s*false/.test(doc));
 assert("doc contents default no longer", /contentsApiPathUnchangedDefault:\s*false/.test(doc));
 assert("doc no-change dry-run qa", /noChange=true/.test(doc) && /didWrite=false/.test(doc) && /dbWrite=false/.test(doc));
+assert("doc public home videoId", doc.includes("I-eY9YMq9GI"));
 
 const adminPkgDoc = read(
   "tools/static-to-astro/docs/cms-core-v2-youtube-supabase-admin-path-package-prep.md",
@@ -401,13 +403,16 @@ const buildReadDoc = read(
   "tools/static-to-astro/docs/cms-core-v2-youtube-supabase-public-build-read-package-prep.md",
 );
 assert("build-read pkg doc prepared", buildReadDoc.includes("cmsCoreV2YoutubeSupabasePublicBuildReadPackagePrepared: true"));
+assert("build-read pkg QA complete", buildReadDoc.includes("cmsCoreV2YoutubePublicStagingSupabaseBuildReadQaComplete: true"));
 assert("build-read pkg env", buildReadDoc.includes("CMS_KIT_SITE_EMBEDS_BUILD_READ=true"));
 assert("build-read pkg admin path on", buildReadDoc.includes("PUBLIC_ADMIN_GOSAKI_YOUTUBE_SUPABASE_PATH_ENABLED=true"));
 assert("build-read pkg mapped evidence", /mapSiteEmbedRowsToYoutubeConfig/i.test(buildReadDoc));
 assert("build-read pkg registry false", /registrySiteEmbedsStillFalse:\s*true/.test(buildReadDoc));
 assert("build-read pkg json fallback", /jsonYoutubeFallbackRetained:\s*true/.test(buildReadDoc));
-assert("build-read pkg FTP false", /ftpUploadExecuted:\s*false/.test(buildReadDoc));
+assert("build-read pkg FTP executed", /ftpUploadExecuted:\s*true/.test(buildReadDoc));
+assert("build-read pkg live true", /publicSiteEmbedsBuildReadLive:\s*true/.test(buildReadDoc));
 assert("build-read pkg save arm false", /saveArmEnabled:\s*false/.test(buildReadDoc));
+assert("build-read pkg videoId", buildReadDoc.includes("I-eY9YMq9GI"));
 assert("build-read pkg sourceCommit", buildReadDoc.includes("b3bbae653c14ae5bf872b0261641c4fbf01bcf10"));
 assert("doc save approval id", doc.includes(YOUTUBE_SUPABASE_SAVE_APPROVAL_ID));
 assert("doc sortOrder round-trip plan", /sortOrder.*10.*11|sort_order.*10.*11/i.test(doc));

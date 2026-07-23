@@ -2,8 +2,9 @@
 
 - **Phase:** `cms-core-v2-youtube-supabase-public-build-read-package-prep`
 - **Date:** 2026-07-24
-- **Status:** local package prepared · **FTP not executed** · browser QA pending operator
+- **Status:** package prepared → **operator manual FTP + browser QA COMPLETE**
 - **Depends on:** Admin staging Supabase path cutover QA COMPLETE
+- **Live now:** public home YouTube baked from staging `site_embeds` · Admin Supabase path retained · Save arm false
 
 ## Goal
 
@@ -92,13 +93,27 @@ Base: `https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/`
 5. Confirm production / Wix untouched
 6. Do **not** arm Save · do **not** flip `registry.siteEmbeds` in this QA
 
-## Rollback
+## Operator manual FTP + browser QA result (2026-07-24)
+
+| Item | Result |
+| --- | --- |
+| FTP | **PASS** — human manual overwrite of **entire** `public-dist/` → `/cms-kit-staging/gosaki-piano/` |
+| production `vsbvndwuajjhnzpohghh` | **unchanged** |
+| Public home YouTube | **normal** · videoId `I-eY9YMq9GI` |
+| Other primary pages | visual OK |
+| `/admin/youtube/` | **normal** · Admin Supabase path **retained** |
+| Save button | **disabled** |
+| `saveArmEnabled` | **false** |
+| JSON / Contents fallback | **retained** |
+| Save / Secret / SQL / Edge deploy | **not executed** |
+
+## Rollback (if needed later)
 
 Rebuild with `CMS_KIT_SITE_EMBEDS_BUILD_READ` unset/false (keep Admin path ON if desired) → manual re-upload → public returns to JSON bake. Config JSON + Contents Edges remain.
 
-## Not executed
+## Not executed (this record phase / still forbidden without new approval)
 
-- FTP upload
+- Cursor FTP / auto FTP apply
 - Save / Secret change
 - SQL / DB / Edge deploy
 - `registry.siteEmbeds=true` commit
@@ -110,13 +125,18 @@ Rebuild with `CMS_KIT_SITE_EMBEDS_BUILD_READ` unset/false (keep Admin path ON if
 
 ```txt
 cmsCoreV2YoutubeSupabasePublicBuildReadPackagePrepared: true
+cmsCoreV2YoutubePublicStagingSupabaseBuildReadQaComplete: true
 publicSiteEmbedsBuildReadEnabledInPackage: true
+publicSiteEmbedsBuildReadLive: true
 registrySiteEmbedsStillFalse: true
 jsonYoutubeFallbackRetained: true
 adminSupabasePathEnabledInPackage: true
+adminStagingSupabasePathLive: true
 saveArmEnabled: false
-ftpUploadExecuted: false
-readyForOperatorPublicBuildReadFtpUpload: true
+ftpUploadExecuted: true
+operatorManualFtpOnly: true
+publicBuildReadFtpUploadExecuted: true
+readyForOperatorPublicBuildReadFtpUpload: false
 readyForAnyFutureFtpApply: false
 contentsYoutubeCutoverExecuted: false
 ```

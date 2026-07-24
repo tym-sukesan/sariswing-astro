@@ -3,13 +3,34 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **Kit Core:** About Supabase vertical slice **preflight COMPLETE**. Schema `site_page_fields` · first field `profile.lede`. **`readyForOperatorAboutMigrationApply: false`** — do **not** apply SQL until separate apply-gate + AGENTS approval. Doc: `cms-core-v2-about-supabase-vertical-slice-preflight.md`。
-2. **Next gate:** operator accepts preflight → flip apply readiness (docs-only) → staging SELECT-only → migration → RLS → seed（各1回承認）。
-3. **並行可:** Contents YouTube 退役 planning（`contentsYoutubeCutoverExecuted: false`）。YouTube Admin+public Supabase live · Save arm **false**。
+1. **Kit Core:** About apply-readiness **COMPLETE** · **`readyForOperatorAboutMigrationApply: true`**. **Next:** operator が staging `kmjqppxjdnwwrtaeqjta` で SELECT-only PASS → AGENTS 承認付きで migration → RLS → seed（各1回）。Cursor/agent は SQL 実行しない。Doc: `cms-core-v2-about-supabase-vertical-slice-apply-readiness.md`。
+2. Apply 後: apply-result 記録 → Edge/admin dual-path 実装（arms false）。
+3. **並行可:** Contents YouTube 退役 planning（`contentsYoutubeCutoverExecuted: false`）。
 4. **並行可（Gosaki ops）:** クライアントへ staging 共有・feedback。
 5. **並行可:** production hosting **read-only planning**。
-6. Save arm **false** 維持 · About Contents path **unchanged**。
-7. production / Wix / auto FTP / `vsbvndwuajjhnzpohghh` 禁止 · `readyForAnyFutureFtpApply: false` · `service_role` 禁止。
+6. Save arm **false** · About Contents / G-12a **unchanged**。
+7. production / Wix / auto FTP / `vsbvndwuajjhnzpohghh` 禁止 · `service_role` 禁止 · `readyForAnyFutureFtpApply: false`。
+
+## 0. CMS Core v2 About Supabase apply-readiness COMPLETE (2026-07-24)
+
+| Item | Value |
+| --- | --- |
+| Gate | `cmsCoreV2AboutSupabaseVerticalSliceApplyReadinessComplete: true` |
+| `readyForOperatorAboutMigrationApply` | **true** |
+| `sqlTemplatesChangeRequired` | **false** |
+| `sqlApplyExecuted` | **false** |
+| Doc | `cms-core-v2-about-supabase-vertical-slice-apply-readiness.md` |
+| Verifier | `verify-cms-core-v2-about-supabase-vertical-slice-apply-readiness.mjs` |
+
+```txt
+CMS_CORE_V2_ABOUT_SUPABASE_VERTICAL_SLICE_APPLY_READINESS_COMPLETE: true
+READY_FOR_OPERATOR_ABOUT_MIGRATION_APPLY: true
+SQL_TEMPLATES_CHANGE_REQUIRED: false
+SQL_APPLY_EXECUTED: false
+CONTENTS_ABOUT_PATH_UNCHANGED: true
+SERVICE_ROLE_USED: false
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+```
 
 ## 0. CMS Core v2 About Supabase vertical slice preflight COMPLETE (2026-07-24)
 
@@ -20,7 +41,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | First field | `about` / `profile.lede` |
 | Opaque HTML primary | **false** |
 | Tenancy | reuse existing (YouTube) |
-| Apply | **`readyForOperatorAboutMigrationApply: false`** |
+| Apply | **`readyForOperatorAboutMigrationApply: true`** (see apply-readiness; SQL not executed) |
 | Implementation | **false** |
 | Doc | `cms-core-v2-about-supabase-vertical-slice-preflight.md` |
 | Verifier | `verify-cms-core-v2-about-supabase-vertical-slice-preflight.mjs` |
@@ -29,7 +50,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 CMS_CORE_V2_ABOUT_SUPABASE_VERTICAL_SLICE_PREFLIGHT_COMPLETE: true
 RECOMMENDED_ABOUT_SCHEMA: site_page_fields
 ABOUT_FIRST_FIELD_KEY: about/profile.lede
-READY_FOR_OPERATOR_ABOUT_MIGRATION_APPLY: false
+READY_FOR_OPERATOR_ABOUT_MIGRATION_APPLY: true
 ABOUT_SUPABASE_IMPLEMENTATION_EXECUTED: false
 CONTENTS_ABOUT_PATH_UNCHANGED: true
 SQL_APPLY_EXECUTED: false

@@ -5,32 +5,38 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: CMS Core v2 About Supabase vertical slice preflight COMPLETE
-Preflight doc: tools/static-to-astro/docs/cms-core-v2-about-supabase-vertical-slice-preflight.md
-Verifier: tools/static-to-astro/scripts/verify-cms-core-v2-about-supabase-vertical-slice-preflight.mjs
-cmsCoreV2AboutSupabaseVerticalSlicePreflightComplete: true
-recommendedAboutSchema: site_page_fields
-aboutFirstFieldKey: about/profile.lede
-opaqueHtmlPrimaryModel: false
-readyForOperatorAboutMigrationApply: false
+Current phase: CMS Core v2 About Supabase apply-readiness COMPLETE
+Apply-readiness doc: tools/static-to-astro/docs/cms-core-v2-about-supabase-vertical-slice-apply-readiness.md
+Verifier: tools/static-to-astro/scripts/verify-cms-core-v2-about-supabase-vertical-slice-apply-readiness.mjs
+cmsCoreV2AboutSupabaseVerticalSliceApplyReadinessComplete: true
+readyForOperatorAboutMigrationApply: true
+sqlTemplatesChangeRequired: false
+sqlApplyExecuted: false
 aboutSupabaseImplementationExecuted: false
 contentsAboutPathUnchanged: true
-sqlApplyExecuted: false
 serviceRoleUsed: false
+Preflight: cmsCoreV2AboutSupabaseVerticalSlicePreflightComplete: true
+recommendedAboutSchema: site_page_fields
+aboutFirstFieldKey: about/profile.lede
 YouTube baseline still live:
-  cmsCoreV2YoutubeRegistrySiteEmbedsPersistenceQaComplete: true
   publicSiteEmbedsBuildReadLive: true
   adminStagingSupabasePathLive: true
   saveArmEnabled: false
   contentsYoutubeCutoverExecuted: false
-Deployed sourceCommit: 83868e0814d2f70af6e4307f0ec73462528a1e5d
-Remote: /cms-kit-staging/gosaki-piano/
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh UNCHANGED
-Next Kit gate: operator accept preflight → apply-readiness phase (still no auto-apply)
-Parallel optional: Contents YouTube retire planning
+Next: operator SELECT-only PASS → AGENTS-approved migration → RLS → seed (Cursor does not apply)
 EXTERNAL_WRITE_EXECUTED: false (this docs-only record)
 readyForAnyFutureFtpApply: false
 ```
+
+## CMS Core v2 About Supabase apply-readiness (2026-07-24)
+
+- **Apply可否:** YES (staging only) after SELECT PASS + per-file approval
+- **Templates change required:** false
+- **Order:** migration → RLS/GRANT → seed
+- **Access INSERT:** not required (reuse YouTube membership)
+- **Contents / G-12a:** unaffected by SQL apply
+- **Next:** operator staging apply (not Cursor)
 
 ## CMS Core v2 About Supabase vertical slice preflight (2026-07-24)
 
@@ -39,7 +45,7 @@ readyForAnyFutureFtpApply: false
 - **Reuse:** `sites` / `site_members` / `platform_admins` / `can_write_site` (YouTube membership — no new access INSERT)
 - **Templates:** migration · RLS · seed · 3 rollbacks (apply **not** executed)
 - **Approvals (reserved):** `G-cms-v2-about-supabase-profile-lede-dry-run` / `…-web-save-non-dry-run-slice`
-- **Next:** apply-gate docs → SELECT-only → approved staging apply → then Edge/admin dual-path implementation
+- **Apply gate:** true via apply-readiness (SQL still not executed)
 
 ## CMS Core v2 — next Kit feature comparison (2026-07-24)
 

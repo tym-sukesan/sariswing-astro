@@ -160,7 +160,7 @@ readyForAnyDbWrite: false
 readyForAnyFutureFtpApply: false
 ```
 
-**Next safe gate:** `cms-core-v2-about-supabase-vertical-slice-preflight` — **COMPLETE** (`cms-core-v2-about-supabase-vertical-slice-preflight.md`). Schema locked to `site_page_fields` / `profile.lede`. Apply still gated (`readyForOperatorAboutMigrationApply: false`).
+**Next safe gate:** apply-readiness **COMPLETE** — `readyForOperatorAboutMigrationApply: true` · Doc: `cms-core-v2-about-supabase-vertical-slice-apply-readiness.md`. Operator SELECT → migration → RLS → seed (not Cursor).
 
 ---
 

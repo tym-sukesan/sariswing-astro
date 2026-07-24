@@ -10,7 +10,7 @@
 ```txt
 CMS_CORE_V2_ABOUT_SUPABASE_VERTICAL_SLICE_PREFLIGHT_COMPLETE: true
 ABOUT_SUPABASE_IMPLEMENTATION_EXECUTED: false
-READY_FOR_OPERATOR_ABOUT_MIGRATION_APPLY: false
+READY_FOR_OPERATOR_ABOUT_MIGRATION_APPLY: true
 SQL_APPLY_EXECUTED: false
 DB_WRITE_EXECUTED: false
 EDGE_DEPLOY_EXECUTED: false
@@ -18,6 +18,8 @@ CONTENTS_ABOUT_PATH_UNCHANGED: true
 SERVICE_ROLE_USED: false
 READY_FOR_ANY_FUTURE_FTP_APPLY: false
 ```
+
+**Apply-readiness:** see [cms-core-v2-about-supabase-vertical-slice-apply-readiness.md](./cms-core-v2-about-supabase-vertical-slice-apply-readiness.md) (`readyForOperatorAboutMigrationApply: true`; SQL apply still not executed).
 
 ---
 
@@ -158,7 +160,7 @@ If tenancy missing → **STOP**. Apply YouTube Core templates first under a **se
 
 Vague “OK” is insufficient. One file per approval preferred.
 
-`readyForOperatorAboutMigrationApply` stays **false** until a separate apply-gate phase flips it after this preflight is accepted.
+`readyForOperatorAboutMigrationApply` is flipped **true** in apply-readiness ([cms-core-v2-about-supabase-vertical-slice-apply-readiness.md](./cms-core-v2-about-supabase-vertical-slice-apply-readiness.md)). SQL apply still requires per-file AGENTS approval + SELECT PASS.
 
 ---
 
@@ -286,7 +288,7 @@ Rollback DELETE requires matching `site_slug` + `page_key` + `field_key` + exact
 - Approval IDs reserved and distinct from G-12a / YouTube
 - Dual-path + fallback + arms documented
 - Access = reuse existing tenancy (no new membership INSERT template)
-- `readyForOperatorAboutMigrationApply: false`
+- Preflight authoring left apply gate false; **apply-readiness** later sets `readyForOperatorAboutMigrationApply: true`
 - Verifier PASS · `git diff --check` clean
 
 ### Always STOP
@@ -324,7 +326,7 @@ aboutFirstFieldKey: about/profile.lede
 opaqueHtmlPrimaryModel: false
 tenancyReuseSitesSiteMembersPlatformAdmins: true
 aboutAccessAssignmentReusesYoutubeMembership: true
-readyForOperatorAboutMigrationApply: false
+readyForOperatorAboutMigrationApply: true
 aboutSupabaseImplementationExecuted: false
 contentsAboutPathUnchanged: true
 sqlApplyExecuted: false
@@ -334,4 +336,4 @@ serviceRoleUsed: false
 readyForAnyFutureFtpApply: false
 ```
 
-**Next gate:** operator accepts preflight → separate phase flips `readyForOperatorAboutMigrationApply` (still one-file apply approvals) → then local Edge/admin implementation planning.
+**Next gate:** [apply-readiness](./cms-core-v2-about-supabase-vertical-slice-apply-readiness.md) complete · operator SELECT-only → approved staging apply (migration → RLS → seed).

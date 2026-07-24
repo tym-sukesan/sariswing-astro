@@ -18,28 +18,30 @@ EDGE_DEPLOY_EXECUTED: false
 CONTENTS_ABOUT_PATH_UNCHANGED: true
 SERVICE_ROLE_USED: false
 READY_FOR_ANY_FUTURE_FTP_APPLY: false
+MIGRATION_SERVICE_ROLE_REVOKE_HARDEN: true
+OPERATOR_REACCEPTED_AFTER_SERVICE_ROLE_REVOKE: true
 ```
 
-**Apply可否:** **YES（staging only）** — after §3 SELECT-only PASS + AGENTS one-file approval form.
+**Apply可否:** **YES（staging only）** — operator re-accepted after migration `service_role` revoke harden · after §3 SELECT-only PASS + AGENTS one-file approval form.
 
 **Cursor / agent must not apply.** Operator pastes templates in Supabase SQL Editor on `kmjqppxjdnwwrtaeqjta` only.
 
 ---
 
-## 1. Template audit verdict (no SQL change)
+## 1. Template audit verdict
 
 | File | Re-run / unexpected state | Verdict |
 | --- | --- | --- |
-| Migration | `CREATE TABLE IF NOT EXISTS` + recreate triggers; **STOP if table already exists with wrong shape** (IF NOT EXISTS will not alter columns) | **OK for first apply** when pre-SELECT shows table **absent** |
-| RLS | `DROP POLICY IF EXISTS` + recreate; fail-closed `REVOKE ALL` then column GRANT; fails if `can_write_site` missing | **OK** (idempotent) |
+| Migration | `CREATE TABLE IF NOT EXISTS` + recreate triggers; fail-closed `REVOKE ALL` from **PUBLIC / anon / authenticated / service_role**; **STOP if table already exists with wrong shape** | **OK for first apply** when pre-SELECT shows table **absent** (re-accept gate after service_role revoke harden) |
+| RLS | `DROP POLICY IF EXISTS` + recreate; fail-closed `REVOKE ALL` then column GRANT; fails if `can_write_site` missing; does **not** GRANT `service_role` | **OK** (idempotent) |
 | Seed | Upserts **only** `(gosaki-piano, about, profile.lede)`; STOPs if site/table missing; re-run refreshes **this key only** to seed baseline | **OK** |
 | Seed rollback | DELETE only if exact seed `value_text` matches | **OK** (fail-safe if value drifted → 0 rows deleted → STOP/ask) |
 | RLS rollback | Drop 4 policies + revoke; no row delete | **OK** |
 | DDL rollback | Drop triggers/fns + `DROP TABLE` **without CASCADE**; does not touch tenancy/`site_embeds` | **OK** |
 
-**`SQL_TEMPLATES_CHANGE_REQUIRED: false`** for first staging apply under the operational STOP rules below.
+**`SQL_TEMPLATES_CHANGE_REQUIRED: false`** after migration `service_role` revoke harden (schema unchanged). **`readyForOperatorAboutMigrationApply: true`** — operator re-accepted 2026-07-24; SQL templates frozen (no further change before apply).
 
-**Residual (documented, not blocking first apply):** migration does not auto-validate an *existing* wrong-shaped `site_page_fields`. Pre-apply SELECT must prove table **absent** (preferred) or columns match §4.
+**Residual (documented, not blocking first apply after re-accept):** migration does not auto-validate an *existing* wrong-shaped `site_page_fields`. Pre-apply SELECT must prove table **absent** (preferred) or columns match §4.
 
 ---
 
@@ -218,11 +220,22 @@ join pg_class rel on rel.oid = c.conrelid
 join pg_namespace n on n.oid = rel.relnamespace
 where n.nspname = 'public' and rel.relname = 'site_page_fields'
 order by 1;
+
+-- Fail-closed privileges: expect 0 rows for PUBLIC / anon / authenticated / service_role
+select grantee, privilege_type
+from information_schema.role_table_grants
+where table_schema = 'public'
+  and table_name = 'site_page_fields'
+  and (
+    grantee in ('PUBLIC', 'anon', 'authenticated', 'service_role')
+    or grantee ilike '%service%'
+  )
+order by 1, 2;
 ```
 
-**PASS:** expected columns present · triggers `site_page_fields_set_updated_at` + `site_page_fields_set_audit_actors` · FK + unique exist · grants still revoked (fail-closed until RLS).
+**PASS:** expected columns present · triggers `site_page_fields_set_updated_at` + `site_page_fields_set_audit_actors` · FK + unique exist · privilege SELECT returns **0 rows** for PUBLIC / anon / authenticated / service_role (fail-closed until RLS re-GRANTs anon/authenticated only).
 
-**STOP:** missing columns/triggers/FK · unclear error → no RLS apply yet.
+**STOP:** missing columns/triggers/FK · any privilege row for PUBLIC/anon/authenticated/service_role · unclear error → no RLS apply yet.
 
 ### 5.2 After RLS
 
@@ -293,14 +306,15 @@ Rollback approval form (same AGENTS bar):
 | Item | Value |
 | --- | --- |
 | Preflight complete | true |
-| Templates audited · change required | **false** |
+| Migration `service_role` revoke harden | **true** (operator re-accepted) |
+| Templates change required (further) | **false** — SQL frozen |
 | Apply order + SELECT + STOP locked | this doc |
 | Contents / G-12a impact | **none** from SQL apply |
 | **`readyForOperatorAboutMigrationApply`** | **`true`** |
 
 **Still false / forbidden until separate phases:** Edge deploy · admin dual-path code · Save arm · FTP · production · Contents About cutover · `aboutSupabaseImplementationExecuted`.
 
-**Next after successful operator apply:** record apply result doc → local Edge/admin dual-path implementation (arms false).
+**Next:** operator SELECT-only PASS (§3) → approved staging apply (migration → RLS → seed). After successful apply: record apply result → local Edge/admin dual-path (arms false).
 
 ---
 
@@ -310,6 +324,8 @@ Rollback approval form (same AGENTS bar):
 cmsCoreV2AboutSupabaseVerticalSliceApplyReadinessComplete: true
 readyForOperatorAboutMigrationApply: true
 sqlTemplatesChangeRequired: false
+migrationServiceRoleRevokeHarden: true
+operatorReacceptedAfterServiceRoleRevoke: true
 aboutSupabaseImplementationExecuted: false
 sqlApplyExecuted: false
 dbWriteExecuted: false

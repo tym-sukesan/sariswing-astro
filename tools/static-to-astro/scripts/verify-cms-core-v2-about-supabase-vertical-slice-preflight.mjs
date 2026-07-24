@@ -49,7 +49,7 @@ assert("first field profile.lede", /aboutFirstFieldKey:\s*about\/profile\.lede/.
 assert("opaque html false", /opaqueHtmlPrimaryModel:\s*false/.test(doc));
 assert("tenancy reuse", /tenancyReuseSitesSiteMembersPlatformAdmins:\s*true/.test(doc));
 assert("access reuses youtube", /aboutAccessAssignmentReusesYoutubeMembership:\s*true/.test(doc));
-assert("apply gate true (apply-readiness)", /readyForOperatorAboutMigrationApply:\s*true/.test(doc));
+assert("apply gate true (operator re-accepted)", /readyForOperatorAboutMigrationApply:\s*true/.test(doc));
 assert(
   "banner apply ready true",
   /READY_FOR_OPERATOR_ABOUT_MIGRATION_APPLY:\s*true/.test(doc),
@@ -59,6 +59,7 @@ assert(
   "apply-readiness linked",
   doc.includes("cms-core-v2-about-supabase-vertical-slice-apply-readiness.md"),
 );
+assert("migration fail-closed includes service_role", /service_role/i.test(doc) && /REVOKE ALL/i.test(doc));
 assert("implementation false", /aboutSupabaseImplementationExecuted:\s*false/.test(doc));
 assert("contents unchanged", /contentsAboutPathUnchanged:\s*true/.test(doc));
 assert("db write false", /dbWriteExecuted:\s*false/.test(doc));
@@ -110,6 +111,10 @@ assert("migration audit trigger", migration.includes("tg_site_page_fields_set_au
 assert("migration auth.uid audit", migration.includes("auth.uid()"));
 assert("migration requires sites", /sites missing|public\.sites/i.test(migration));
 assert("migration fail-closed revoke", /revoke all on table public\.site_page_fields/i.test(migration));
+assert(
+  "migration revoke service_role",
+  /revoke all on table public\.site_page_fields from service_role/i.test(migration),
+);
 assert("migration no tenancy create", !/create table if not exists public\.sites/i.test(migration));
 assert("migration no html column", !/\bhtml\b/.test(migration.split("\n").filter((l) => !l.trim().startsWith("--")).join("\n").match(/create table[\s\S]*?;/)?.[0] ?? ""));
 

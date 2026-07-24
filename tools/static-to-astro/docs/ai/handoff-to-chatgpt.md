@@ -5,10 +5,12 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: CMS Core v2 About Supabase apply-readiness COMPLETE
+Current phase: CMS Core v2 About apply-readiness operator re-accept COMPLETE
 Apply-readiness doc: tools/static-to-astro/docs/cms-core-v2-about-supabase-vertical-slice-apply-readiness.md
 Verifier: tools/static-to-astro/scripts/verify-cms-core-v2-about-supabase-vertical-slice-apply-readiness.mjs
 cmsCoreV2AboutSupabaseVerticalSliceApplyReadinessComplete: true
+migrationServiceRoleRevokeHarden: true
+operatorReacceptedAfterServiceRoleRevoke: true
 readyForOperatorAboutMigrationApply: true
 sqlTemplatesChangeRequired: false
 sqlApplyExecuted: false
@@ -18,34 +20,33 @@ serviceRoleUsed: false
 Preflight: cmsCoreV2AboutSupabaseVerticalSlicePreflightComplete: true
 recommendedAboutSchema: site_page_fields
 aboutFirstFieldKey: about/profile.lede
-YouTube baseline still live:
-  publicSiteEmbedsBuildReadLive: true
-  adminStagingSupabasePathLive: true
-  saveArmEnabled: false
-  contentsYoutubeCutoverExecuted: false
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh UNCHANGED
 Next: operator SELECT-only PASS → AGENTS-approved migration → RLS → seed (Cursor does not apply)
 EXTERNAL_WRITE_EXECUTED: false (this docs-only record)
 readyForAnyFutureFtpApply: false
 ```
 
+## CMS Core v2 About apply-readiness operator re-accept (2026-07-24)
+
+- Confirmed: migration `service_role` REVOKE + post-migration privilege SELECT
+- Schema / FK / trigger / RLS / seed unchanged
+- Apply可否: **YES（staging only）**
+- Apply gate: **true** · SQL templates frozen · SQL apply not executed
+
+## CMS Core v2 About migration service_role revoke harden (2026-07-24)
+
+- Migration fail-closed includes `service_role` · retained after re-accept
+
 ## CMS Core v2 About Supabase apply-readiness (2026-07-24)
 
-- **Apply可否:** YES (staging only) after SELECT PASS + per-file approval
-- **Templates change required:** false
-- **Order:** migration → RLS/GRANT → seed
-- **Access INSERT:** not required (reuse YouTube membership)
-- **Contents / G-12a:** unaffected by SQL apply
-- **Next:** operator staging apply (not Cursor)
+- Order: migration → RLS/GRANT → seed
+- Access INSERT: not required
+- Contents / G-12a: unaffected
 
 ## CMS Core v2 About Supabase vertical slice preflight (2026-07-24)
 
-- **Schema:** `site_page_fields` (keyed plain-text scalars; not opaque HTML; not About-only singleton)
-- **First field:** `about` / `profile.lede` = JSON SoT first biography paragraph
-- **Reuse:** `sites` / `site_members` / `platform_admins` / `can_write_site` (YouTube membership — no new access INSERT)
-- **Templates:** migration · RLS · seed · 3 rollbacks (apply **not** executed)
-- **Approvals (reserved):** `G-cms-v2-about-supabase-profile-lede-dry-run` / `…-web-save-non-dry-run-slice`
-- **Apply gate:** true via apply-readiness (SQL still not executed)
+- Schema: `site_page_fields` · first field `about` / `profile.lede`
+- Apply gate: true (operator re-accepted)
 
 ## CMS Core v2 — next Kit feature comparison (2026-07-24)
 

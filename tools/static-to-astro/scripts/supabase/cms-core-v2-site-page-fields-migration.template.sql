@@ -7,7 +7,8 @@
 -- Prerequisite: public.sites (+ sites_id_site_slug_key) and can_write_site() already exist
 -- Does NOT create tenancy tables / authz helpers / site_embeds
 -- service_role: not used
--- Fail-closed: REVOKE ALL on site_page_fields at end (RLS template re-GRANTs)
+-- Fail-closed: REVOKE ALL on site_page_fields at end (PUBLIC/anon/authenticated/service_role;
+--   RLS template re-GRANTs anon/authenticated only — never service_role)
 -- =============================================================================
 
 begin;
@@ -126,13 +127,25 @@ create trigger site_page_fields_set_audit_actors
   execute function public.tg_site_page_fields_set_audit_actors();
 
 -- Fail-closed table privileges until RLS template re-GRANTs
+-- Include service_role: Kit path never uses it; post-migration SELECT must show 0 grants
 revoke all on table public.site_page_fields from public;
 revoke all on table public.site_page_fields from anon;
 revoke all on table public.site_page_fields from authenticated;
+revoke all on table public.site_page_fields from service_role;
 
 commit;
 
--- Verify (SELECT only):
+-- Verify (SELECT only) — expect 0 table privileges for public/anon/authenticated/service_role:
+-- select grantee, privilege_type
+-- from information_schema.role_table_grants
+-- where table_schema = 'public'
+--   and table_name = 'site_page_fields'
+--   and (
+--     grantee in ('PUBLIC', 'anon', 'authenticated', 'service_role')
+--     or grantee ilike '%service%'
+--   )
+-- order by 1, 2;
+-- Also:
 -- select column_name, data_type
 -- from information_schema.columns
 -- where table_schema='public' and table_name='site_page_fields'

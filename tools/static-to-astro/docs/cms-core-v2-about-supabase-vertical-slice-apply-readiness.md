@@ -20,7 +20,8 @@ SERVICE_ROLE_USED: false
 READY_FOR_ANY_FUTURE_FTP_APPLY: false
 ```
 
-**Apply可否:** **YES（staging only）** — after §3 SELECT-only PASS + AGENTS one-file approval form.  
+**Apply可否:** **YES（staging only）** — after §3 SELECT-only PASS + AGENTS one-file approval form.
+
 **Cursor / agent must not apply.** Operator pastes templates in Supabase SQL Editor on `kmjqppxjdnwwrtaeqjta` only.
 
 ---
@@ -219,7 +220,8 @@ where n.nspname = 'public' and rel.relname = 'site_page_fields'
 order by 1;
 ```
 
-**PASS:** expected columns present · triggers `site_page_fields_set_updated_at` + `site_page_fields_set_audit_actors` · FK + unique exist · grants still revoked (fail-closed until RLS).  
+**PASS:** expected columns present · triggers `site_page_fields_set_updated_at` + `site_page_fields_set_audit_actors` · FK + unique exist · grants still revoked (fail-closed until RLS).
+
 **STOP:** missing columns/triggers/FK · unclear error → no RLS apply yet.
 
 ### 5.2 After RLS
@@ -245,7 +247,8 @@ where table_schema = 'public'
   and grantee ilike '%service%';
 ```
 
-**PASS:** 4 policies (public select + admin select/insert/update) · anon/authenticated SELECT · authenticated column INSERT/UPDATE · **0** service_role rows.  
+**PASS:** 4 policies (public select + admin select/insert/update) · anon/authenticated SELECT · authenticated column INSERT/UPDATE · **0** service_role rows.
+
 **STOP:** missing policy · unexpected DELETE privilege · service_role grant appears.
 
 ### 5.3 After seed
@@ -260,7 +263,8 @@ from public.site_page_fields
 where site_slug = 'gosaki-piano';
 ```
 
-**PASS:** exactly **1** gosaki row · keys `about` / `profile.lede` · exact seed `value_text` · `published=true` · `sort_order=10`.  
+**PASS:** exactly **1** gosaki row · keys `about` / `profile.lede` · exact seed `value_text` · `published=true` · `sort_order=10`.
+
 **STOP:** 0 rows · >1 unexpected fields for this apply · value mismatch.
 
 ---

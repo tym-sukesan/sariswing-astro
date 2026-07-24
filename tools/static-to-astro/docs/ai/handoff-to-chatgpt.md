@@ -5,34 +5,40 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: CMS Core v2 About RLS apply operator re-accept COMPLETE
+Current phase: CMS Core v2 About seed fail-closed harden COMPLETE (re-accept wait)
 Apply-readiness doc: tools/static-to-astro/docs/cms-core-v2-about-supabase-vertical-slice-apply-readiness.md
 Verifier: tools/static-to-astro/scripts/verify-cms-core-v2-about-supabase-vertical-slice-apply-readiness.mjs
 cmsCoreV2AboutSupabaseVerticalSliceApplyReadinessComplete: true
 migrationServiceRoleRevokeHarden: true
 rlsServiceRoleRevokeHarden: true
 operatorReacceptedAfterRlsServiceRoleRevoke: true
+seedFailClosedHarden: true
+operatorReacceptedAfterSeedFailClosed: false
 migrationAppliedStagingPostcheckPass: true
 readyForOperatorAboutMigrationApply: false
 readyForOperatorAboutRlsApply: true
+readyForOperatorAboutSeedApply: false
 sqlTemplatesChangeRequired: false
 sqlApplyExecuted: false
 aboutSupabaseImplementationExecuted: false
 contentsAboutPathUnchanged: true
 serviceRoleUsed: false
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh UNCHANGED
-Next: AGENTS-approved RLS apply → post-RLS SELECT → seed (do not re-run migration)
+Next: operator re-accept seed fail-closed → AGENTS-approved seed once (do not re-run migration/RLS)
 EXTERNAL_WRITE_EXECUTED: false (this docs-only record)
 readyForAnyFutureFtpApply: false
 ```
 
+## CMS Core v2 About seed fail-closed harden (2026-07-24)
+
+- Removed `ON CONFLICT DO UPDATE` · plain INSERT · STOP if `(gosaki-piano, about, profile.lede)` already exists
+- Apply可否: **Seed apply: HOLD（再受理待ち）**
+- `readyForOperatorAboutSeedApply: false`
+- `readyForOperatorAboutRlsApply: true` · `readyForOperatorAboutMigrationApply: false` (applied state retained)
+
 ## CMS Core v2 About RLS apply operator re-accept (2026-07-24)
 
-- Confirmed: RLS `service_role` REVOKE only · policies/GRANTs unchanged
-- Apply可否: **RLS apply: YES（staging only）**
-- `readyForOperatorAboutRlsApply: true`
-- `readyForOperatorAboutMigrationApply: false` (migration applied + post-check PASS)
-- SQL templates frozen · RLS/seed not yet executed
+- Retained · Apply可否 superseded by Seed HOLD above
 
 ## CMS Core v2 About RLS service_role revoke harden (2026-07-24)
 
@@ -41,7 +47,7 @@ readyForAnyFutureFtpApply: false
 ## CMS Core v2 About Supabase vertical slice preflight (2026-07-24)
 
 - Schema: `site_page_fields` · first field `about` / `profile.lede`
-- RLS apply ready; migration gate false
+- Seed fail-closed; migration/RLS gates retained; seed gate false
 
 ## CMS Core v2 — next Kit feature comparison (2026-07-24)
 

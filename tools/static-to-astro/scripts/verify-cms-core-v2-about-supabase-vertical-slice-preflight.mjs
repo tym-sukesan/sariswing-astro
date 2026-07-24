@@ -138,7 +138,9 @@ assert("seed page_key about", seed.includes("'about'"));
 assert("seed field_key profile.lede", seed.includes("'profile.lede'"));
 assert("seed lede text", seed.includes(LEDE));
 assert("seed published true", /true,\s*\n\s*10/.test(seed) || seed.includes("true,\n  10"));
-assert("seed on conflict", /on conflict \(site_id, page_key, field_key\)/i.test(seed));
+assert("seed no on conflict upsert", !/on conflict/i.test(sqlActive(seed)));
+assert("seed fail-closed refuse exists", /already exists/i.test(seed));
+assert("seed plain insert", /insert into public\.site_page_fields/i.test(sqlActive(seed)));
 assert("seed no access insert", !/insert into public\.site_members/i.test(seed) && !/insert into public\.platform_admins/i.test(seed));
 
 const seedRb = read(templates[5]);
@@ -196,6 +198,8 @@ assert("ai03 mentions about preflight", /about-supabase-vertical-slice-preflight
 assert("handoff mentions about preflight", /about-supabase-vertical-slice-preflight|About Supabase.*preflight/i.test(handoff));
 assert("ai03 migration gate false", /readyForOperatorAboutMigrationApply:\s*false|READY_FOR_OPERATOR_ABOUT_MIGRATION_APPLY:\s*false/i.test(ai03));
 assert("ai03 rls gate true", /readyForOperatorAboutRlsApply:\s*true|READY_FOR_OPERATOR_ABOUT_RLS_APPLY:\s*true/i.test(ai03));
+assert("ai03 seed gate false", /readyForOperatorAboutSeedApply:\s*false|READY_FOR_OPERATOR_ABOUT_SEED_APPLY:\s*false/i.test(ai03));
+assert("preflight seed gate false", /readyForOperatorAboutSeedApply:\s*false/.test(doc));
 
 console.log(`\n${passed} passed, ${failed} failed`);
 process.exit(failed > 0 ? 1 : 0);

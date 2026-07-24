@@ -19,7 +19,7 @@ SERVICE_ROLE_USED: false
 READY_FOR_ANY_FUTURE_FTP_APPLY: false
 ```
 
-**Apply-readiness:** see [cms-core-v2-about-supabase-vertical-slice-apply-readiness.md](./cms-core-v2-about-supabase-vertical-slice-apply-readiness.md). RLS fail-closed includes **service_role** · operator re-accepted · **`readyForOperatorAboutRlsApply: true`** · **`readyForOperatorAboutMigrationApply: false`** (migration already applied — do not re-run).
+**Apply-readiness:** see [cms-core-v2-about-supabase-vertical-slice-apply-readiness.md](./cms-core-v2-about-supabase-vertical-slice-apply-readiness.md). Migration/RLS applied state retained · **`readyForOperatorAboutRlsApply: true`** · **`readyForOperatorAboutMigrationApply: false`** · seed fail-closed harden · **`readyForOperatorAboutSeedApply: false`** (re-accept wait).
 
 ---
 
@@ -150,7 +150,7 @@ If tenancy missing → **STOP**. Apply YouTube Core templates first under a **se
 | 0 | (ops) | Confirm project `kmjqppxjdnwwrtaeqjta` + §9 SELECT PASS |
 | 1 | `cms-core-v2-site-page-fields-migration.template.sql` | DDL + triggers for `site_page_fields` only |
 | 2 | `cms-core-v2-site-page-fields-rls.template.sql` | RLS + fail-closed GRANT on `site_page_fields` |
-| 3 | `cms-core-v2-gosaki-about-profile-lede-seed.template.sql` | Upsert `about` / `profile.lede` for `gosaki-piano` |
+| 3 | `cms-core-v2-gosaki-about-profile-lede-seed.template.sql` | Fail-closed plain INSERT `about` / `profile.lede` for `gosaki-piano` (STOP if row exists) |
 
 **Required approval form (apply):**
 
@@ -160,7 +160,7 @@ If tenancy missing → **STOP**. Apply YouTube Core templates first under a **se
 
 Vague “OK” is insufficient. One file per approval preferred.
 
-`readyForOperatorAboutRlsApply` is **true** after operator re-accept of RLS `service_role` revoke harden. `readyForOperatorAboutMigrationApply` stays **false** (migration already applied on staging). RLS/seed still require per-file AGENTS approval + SELECT PASS.
+`readyForOperatorAboutRlsApply` is **true** (migration/RLS applied state retained). `readyForOperatorAboutMigrationApply` stays **false**. `readyForOperatorAboutSeedApply` is **false** after seed fail-closed harden — operator re-accept required before seed. Seed requires per-file AGENTS approval + SELECT PASS.
 
 ---
 
@@ -257,7 +257,7 @@ where table_schema = 'public' and table_name = 'site_page_fields';
 | `published` | `true` |
 | `sort_order` | `10` |
 
-Seed uses `ON CONFLICT (site_id, page_key, field_key) DO UPDATE` for **this key only**.
+Seed is **fail-closed**: requires exactly 1 `gosaki-piano` site row and **0** existing target rows; plain `INSERT` one row; **no** `ON CONFLICT DO UPDATE`. Pre-commit verifies exact `value_text` / `published=true` / `sort_order=10`. If target already exists → `RAISE EXCEPTION` STOP. `created_by` / `updated_by` may be null in SQL Editor — acceptable.
 
 Rollback DELETE requires matching `site_slug` + `page_key` + `field_key` + exact `value_text` (seed baseline).
 
@@ -327,6 +327,8 @@ opaqueHtmlPrimaryModel: false
 tenancyReuseSitesSiteMembersPlatformAdmins: true
 aboutAccessAssignmentReusesYoutubeMembership: true
 readyForOperatorAboutMigrationApply: false
+readyForOperatorAboutRlsApply: true
+readyForOperatorAboutSeedApply: false
 aboutSupabaseImplementationExecuted: false
 contentsAboutPathUnchanged: true
 sqlApplyExecuted: false
@@ -336,4 +338,4 @@ serviceRoleUsed: false
 readyForAnyFutureFtpApply: false
 ```
 
-**Next gate:** AGENTS-approved RLS apply → post-RLS SELECT → seed. Migration already applied — do not re-run.
+**Next gate:** operator re-accept seed fail-closed harden → AGENTS-approved seed apply. Migration/RLS applied — do not re-run.

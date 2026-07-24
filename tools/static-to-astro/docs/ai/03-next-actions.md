@@ -3,13 +3,37 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **Kit Core:** About RLS apply **operator re-accepted** · **`readyForOperatorAboutRlsApply: true`** · **`readyForOperatorAboutMigrationApply: false`**（migration 済・再実行禁止）。**Next:** AGENTS 承認付き RLS → post-RLS SELECT → seed。Cursor は SQL 実行しない。Doc: `cms-core-v2-about-supabase-vertical-slice-apply-readiness.md`。
-2. Apply 後: apply-result 記録 → Edge/admin dual-path 実装（arms false）。
+1. **Kit Core:** About seed **fail-closed harden** · **`readyForOperatorAboutSeedApply: false`**（再受理待ち）· **`readyForOperatorAboutRlsApply: true`** · **`readyForOperatorAboutMigrationApply: false`**（migration/RLS 適用済・再実行禁止）。**Next:** operator re-accept → AGENTS 承認付き seed 1回。Cursor は SQL 実行しない。Doc: `cms-core-v2-about-supabase-vertical-slice-apply-readiness.md`。
+2. Seed 後: apply-result 記録 → Edge/admin dual-path 実装（arms false）。
 3. **並行可:** Contents YouTube 退役 planning（`contentsYoutubeCutoverExecuted: false`）。
 4. **並行可（Gosaki ops）:** クライアントへ staging 共有・feedback。
 5. **並行可:** production hosting **read-only planning**。
 6. Save arm **false** · About Contents / G-12a **unchanged**。
 7. production / Wix / auto FTP / `vsbvndwuajjhnzpohghh` 禁止 · `service_role` 禁止 · `readyForAnyFutureFtpApply: false`。
+
+## 0. CMS Core v2 About seed fail-closed harden COMPLETE (2026-07-24)
+
+| Item | Value |
+| --- | --- |
+| Gate | `seedFailClosedHarden: true` |
+| `readyForOperatorAboutSeedApply` | **false** (re-accept wait) |
+| `readyForOperatorAboutRlsApply` | **true** (applied state retained) |
+| `readyForOperatorAboutMigrationApply` | **false** (already applied) |
+| Apply可否 | **Seed apply: HOLD（再受理待ち）** |
+| Change | No `ON CONFLICT DO UPDATE` · plain INSERT · STOP if row exists |
+| Doc | `cms-core-v2-about-supabase-vertical-slice-apply-readiness.md` |
+
+```txt
+SEED_FAIL_CLOSED_HARDEN: true
+OPERATOR_REACCEPTED_AFTER_SEED_FAIL_CLOSED: false
+READY_FOR_OPERATOR_ABOUT_SEED_APPLY: false
+READY_FOR_OPERATOR_ABOUT_RLS_APPLY: true
+READY_FOR_OPERATOR_ABOUT_MIGRATION_APPLY: false
+MIGRATION_APPLIED_STAGING_POSTCHECK_PASS: true
+SQL_APPLY_EXECUTED: false
+SERVICE_ROLE_USED: false
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+```
 
 ## 0. CMS Core v2 About RLS apply operator re-accept COMPLETE (2026-07-24)
 
@@ -18,9 +42,8 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Gate | `operatorReacceptedAfterRlsServiceRoleRevoke: true` |
 | `readyForOperatorAboutRlsApply` | **true** |
 | `readyForOperatorAboutMigrationApply` | **false** (already applied) |
-| Apply可否 | **RLS apply: YES（staging only）** |
+| Apply可否 | superseded by Seed HOLD above |
 | `migrationAppliedStagingPostcheckPass` | **true** |
-| `sqlApplyExecuted` | **false** (RLS/seed not yet) |
 | Doc | `cms-core-v2-about-supabase-vertical-slice-apply-readiness.md` |
 
 ```txt
@@ -28,9 +51,6 @@ OPERATOR_REACCEPTED_AFTER_RLS_SERVICE_ROLE_REVOKE: true
 READY_FOR_OPERATOR_ABOUT_RLS_APPLY: true
 READY_FOR_OPERATOR_ABOUT_MIGRATION_APPLY: false
 MIGRATION_APPLIED_STAGING_POSTCHECK_PASS: true
-SQL_APPLY_EXECUTED: false
-SERVICE_ROLE_USED: false
-READY_FOR_ANY_FUTURE_FTP_APPLY: false
 ```
 
 ## 0. CMS Core v2 About RLS service_role revoke harden (2026-07-24)

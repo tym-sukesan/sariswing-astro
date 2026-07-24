@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**CMS Core v2 About RLS apply-readiness operator re-accept (2026-07-24):** **COMPLETE** — confirmed RLS `service_role` REVOKE only · policies/GRANTs unchanged · **`readyForOperatorAboutRlsApply: true`** · **`readyForOperatorAboutMigrationApply: false`**（migration 適用済・再実行禁止）· Apply可否 **RLS apply: YES（staging only）** · SQL templates **frozen** · Doc: `cms-core-v2-about-supabase-vertical-slice-apply-readiness.md` · **Next:** AGENTS 承認で RLS → post-check → seed（Cursor は実行しない）。
+**CMS Core v2 About seed fail-closed harden (2026-07-24):** **COMPLETE (docs + seed template only)** — removed `ON CONFLICT DO UPDATE` · plain INSERT + STOP if target exists · **`readyForOperatorAboutSeedApply: false`**（再受理待ち）· migration/RLS applied state **retained** · **`readyForOperatorAboutMigrationApply: false`** · **`readyForOperatorAboutRlsApply: true`** · Apply可否 **Seed apply: HOLD** · Doc: `cms-core-v2-about-supabase-vertical-slice-apply-readiness.md` · **Next:** operator re-accept seed → AGENTS 承認で seed 1回（Cursor は実行しない）。
+
+**CMS Core v2 About RLS apply-readiness operator re-accept (2026-07-24):** **COMPLETE** — superseded for Apply可否 by seed fail-closed HOLD above · RLS gate retained true · migration gate false.
 
 **CMS Core v2 About RLS service_role revoke harden (2026-07-24):** **COMPLETE** — superseded HOLD by operator re-accept above.
 

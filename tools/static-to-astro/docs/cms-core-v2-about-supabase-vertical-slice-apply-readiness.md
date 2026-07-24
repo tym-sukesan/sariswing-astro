@@ -11,6 +11,7 @@
 CMS_CORE_V2_ABOUT_SUPABASE_VERTICAL_SLICE_APPLY_READINESS_COMPLETE: true
 READY_FOR_OPERATOR_ABOUT_MIGRATION_APPLY: false
 READY_FOR_OPERATOR_ABOUT_RLS_APPLY: true
+READY_FOR_OPERATOR_ABOUT_SEED_APPLY: false
 SQL_TEMPLATES_CHANGE_REQUIRED: false
 ABOUT_SUPABASE_IMPLEMENTATION_EXECUTED: false
 SQL_APPLY_EXECUTED: false
@@ -23,10 +24,12 @@ MIGRATION_SERVICE_ROLE_REVOKE_HARDEN: true
 OPERATOR_REACCEPTED_AFTER_SERVICE_ROLE_REVOKE: true
 RLS_SERVICE_ROLE_REVOKE_HARDEN: true
 OPERATOR_REACCEPTED_AFTER_RLS_SERVICE_ROLE_REVOKE: true
+SEED_FAIL_CLOSED_HARDEN: true
+OPERATOR_REACCEPTED_AFTER_SEED_FAIL_CLOSED: false
 MIGRATION_APPLIED_STAGING_POSTCHECK_PASS: true
 ```
 
-**Apply可否:** **RLS apply: YES（staging only）** — operator re-accepted after RLS `service_role` revoke harden · migration already applied on staging (post-check PASS) — **do not** re-run migration · proceed RLS → seed with per-file AGENTS approval.
+**Apply可否:** **Seed apply: HOLD（再受理待ち）** — seed fail-closed harden（`ON CONFLICT DO UPDATE` removed）· **`readyForOperatorAboutSeedApply: false`** · migration + RLS applied state **retained** — **do not** re-run migration/RLS · seed requires operator re-accept after harden.
 
 **Cursor / agent must not apply.** Operator pastes templates in Supabase SQL Editor on `kmjqppxjdnwwrtaeqjta` only.
 
@@ -38,12 +41,12 @@ MIGRATION_APPLIED_STAGING_POSTCHECK_PASS: true
 | --- | --- | --- |
 | Migration | `CREATE TABLE IF NOT EXISTS` + recreate triggers; fail-closed `REVOKE ALL` from **PUBLIC / anon / authenticated / service_role**; **STOP if table already exists with wrong shape** | **OK for first apply** when pre-SELECT shows table **absent** (re-accept gate after service_role revoke harden) |
 | RLS | `DROP POLICY IF EXISTS` + recreate; fail-closed `REVOKE ALL` from **PUBLIC / anon / authenticated / service_role** then column GRANT to anon/authenticated only; fails if `can_write_site` missing; **never GRANT service_role** | **OK** (idempotent) — re-accept gate after RLS service_role revoke harden |
-| Seed | Upserts **only** `(gosaki-piano, about, profile.lede)`; STOPs if site/table missing; re-run refreshes **this key only** to seed baseline | **OK** |
+| Seed | Fail-closed plain **INSERT** only for `(gosaki-piano, about, profile.lede)`; STOPs if `gosaki-piano` ≠ 1 site row, target already ≥1 row, or post-INSERT verification mismatch; **no** `ON CONFLICT` upsert | **OK** (re-accept gate) |
 | Seed rollback | DELETE only if exact seed `value_text` matches | **OK** (fail-safe if value drifted → 0 rows deleted → STOP/ask) |
 | RLS rollback | Drop 4 policies + revoke; no row delete | **OK** |
 | DDL rollback | Drop triggers/fns + `DROP TABLE` **without CASCADE**; does not touch tenancy/`site_embeds` | **OK** |
 
-**`SQL_TEMPLATES_CHANGE_REQUIRED: false`** after RLS `service_role` revoke harden. **`readyForOperatorAboutMigrationApply: false`** (migration already applied — do not re-run) · **`readyForOperatorAboutRlsApply: true`** — operator re-accepted 2026-07-24.
+**`SQL_TEMPLATES_CHANGE_REQUIRED: false`** after seed fail-closed harden. **`readyForOperatorAboutMigrationApply: false`** · **`readyForOperatorAboutRlsApply: true`** (migration/RLS applied state retained) · **`readyForOperatorAboutSeedApply: false`** — re-accept wait after seed fail-closed harden.
 
 **Residual (documented, not blocking first apply after re-accept):** migration does not auto-validate an *existing* wrong-shaped `site_page_fields`. Pre-apply SELECT must prove table **absent** (preferred) or columns match §4.
 
@@ -176,16 +179,21 @@ where table_schema = 'public' and table_name = 'site_page_fields';
 | `service_role` | **not granted / not used** |
 | Scope | `site_page_fields` only — does not alter `sites` / `site_embeds` RLS |
 
-### Seed (exactly one logical row)
+### Seed (exactly one logical row · fail-closed INSERT)
 
 | Key | Value |
 | --- | --- |
-| site | `gosaki-piano` |
+| site | `gosaki-piano` (exactly 1 `sites` row required) |
 | page_key | `about` |
 | field_key | `profile.lede` |
 | value_text | `後藤 沙紀 1990年7月9日 A型 岡山県岡山市生まれ。` |
 | published | `true` |
 | sort_order | `10` |
+
+- Pre-INSERT: target `(site_slug, page_key, field_key)` must be **0** rows; if ≥1 → `RAISE EXCEPTION` STOP (no overwrite)
+- Write: plain `INSERT` **one** row — **no** `ON CONFLICT DO UPDATE`
+- Pre-commit: exactly **1** target row with exact `value_text` / `published=true` / `sort_order=10`
+- `created_by` / `updated_by`: may be **null** when run in SQL Editor (`auth.uid()` often null) — **acceptable** for this seed
 
 ### Tenancy / access
 
@@ -275,7 +283,8 @@ order by 1, 2;
 ### 5.3 After seed
 
 ```sql
-select site_slug, page_key, field_key, value_text, published, sort_order, updated_at
+select site_slug, page_key, field_key, value_text, published, sort_order,
+       created_by, updated_by, updated_at
 from public.site_page_fields
 where site_slug = 'gosaki-piano';
 
@@ -285,8 +294,9 @@ where site_slug = 'gosaki-piano';
 ```
 
 **PASS:** exactly **1** gosaki row · keys `about` / `profile.lede` · exact seed `value_text` · `published=true` · `sort_order=10`.
+**Note:** `created_by` / `updated_by` may be **null** (SQL Editor) — still PASS if value/published/sort_order match.
 
-**STOP:** 0 rows · >1 unexpected fields for this apply · value mismatch.
+**STOP:** 0 rows · >1 unexpected fields for this apply · value mismatch · accidental overwrite attempt (template should have stopped before commit).
 
 ---
 
@@ -309,22 +319,25 @@ Rollback approval form (same AGENTS bar):
 
 ---
 
-## 7. Gate: RLS apply ready (migration held)
+## 7. Gate: Seed HOLD (migration/RLS applied retained)
 
 | Item | Value |
 | --- | --- |
 | Preflight complete | true |
 | Migration applied on staging + post-check | **PASS** (do **not** re-run) |
+| RLS applied state | **retained** (do **not** re-run) |
 | Migration `service_role` revoke harden | **true** |
 | RLS `service_role` revoke harden | **true** (operator re-accepted) |
-| Templates change required (further) | **false** — SQL frozen for RLS |
+| Seed fail-closed harden | **true** (no upsert; plain INSERT + STOP if exists) |
+| Templates change required (further) | **false** — SQL frozen after seed harden |
 | Contents / G-12a impact | **none** from SQL apply |
 | **`readyForOperatorAboutMigrationApply`** | **`false`** (already applied; no re-apply) |
-| **`readyForOperatorAboutRlsApply`** | **`true`** |
+| **`readyForOperatorAboutRlsApply`** | **`true`** (prior re-accept retained) |
+| **`readyForOperatorAboutSeedApply`** | **`false`** (re-accept wait) |
 
 **Still false / forbidden until separate phases:** Edge deploy · admin dual-path code · Save arm · FTP · production · Contents About cutover · `aboutSupabaseImplementationExecuted`.
 
-**Next:** AGENTS-approved RLS apply → post-RLS SELECT (§5.2) → seed (separate approval). Do **not** re-run migration.
+**Next:** operator re-accept seed fail-closed harden → AGENTS-approved seed apply (once) → post-seed SELECT (§5.3). Do **not** re-run migration/RLS.
 
 ---
 
@@ -334,11 +347,14 @@ Rollback approval form (same AGENTS bar):
 cmsCoreV2AboutSupabaseVerticalSliceApplyReadinessComplete: true
 readyForOperatorAboutMigrationApply: false
 readyForOperatorAboutRlsApply: true
+readyForOperatorAboutSeedApply: false
 sqlTemplatesChangeRequired: false
 migrationServiceRoleRevokeHarden: true
 operatorReacceptedAfterServiceRoleRevoke: true
 rlsServiceRoleRevokeHarden: true
 operatorReacceptedAfterRlsServiceRoleRevoke: true
+seedFailClosedHarden: true
+operatorReacceptedAfterSeedFailClosed: false
 migrationAppliedStagingPostcheckPass: true
 aboutSupabaseImplementationExecuted: false
 sqlApplyExecuted: false

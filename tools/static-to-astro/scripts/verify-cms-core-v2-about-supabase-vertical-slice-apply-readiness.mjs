@@ -57,12 +57,16 @@ assert("ready migration apply false (already applied)", /readyForOperatorAboutMi
 assert("banner migration ready false", /READY_FOR_OPERATOR_ABOUT_MIGRATION_APPLY:\s*false/.test(doc));
 assert("rls apply gate true (operator re-accepted)", /readyForOperatorAboutRlsApply:\s*true/.test(doc));
 assert("banner rls ready true", /READY_FOR_OPERATOR_ABOUT_RLS_APPLY:\s*true/.test(doc));
+assert("seed apply gate false (re-accept wait)", /readyForOperatorAboutSeedApply:\s*false/.test(doc));
+assert("banner seed ready false", /READY_FOR_OPERATOR_ABOUT_SEED_APPLY:\s*false/.test(doc));
 assert("templates change false", /sqlTemplatesChangeRequired:\s*false/.test(doc));
 assert("migration service_role revoke harden", /migrationServiceRoleRevokeHarden:\s*true|MIGRATION_SERVICE_ROLE_REVOKE_HARDEN:\s*true/.test(doc));
 assert("rls service_role revoke harden", /rlsServiceRoleRevokeHarden:\s*true|RLS_SERVICE_ROLE_REVOKE_HARDEN:\s*true/.test(doc));
 assert("operator reaccepted rls", /operatorReacceptedAfterRlsServiceRoleRevoke:\s*true|OPERATOR_REACCEPTED_AFTER_RLS_SERVICE_ROLE_REVOKE:\s*true/.test(doc));
+assert("seed fail-closed harden", /seedFailClosedHarden:\s*true|SEED_FAIL_CLOSED_HARDEN:\s*true/.test(doc));
+assert("seed not yet reaccepted", /operatorReacceptedAfterSeedFailClosed:\s*false|OPERATOR_REACCEPTED_AFTER_SEED_FAIL_CLOSED:\s*false/.test(doc));
 assert("migration staging postcheck pass", /migrationAppliedStagingPostcheckPass:\s*true|MIGRATION_APPLIED_STAGING_POSTCHECK_PASS:\s*true/.test(doc));
-assert("apply rls yes", /RLS apply:\s*\*\*YES|RLS apply: YES|Apply可否:\*\* \*\*RLS apply: YES/i.test(doc) || doc.includes("RLS apply: YES（staging only）"));
+assert("apply seed hold", /Seed apply:\s*HOLD|Seed apply: HOLD|readyForOperatorAboutSeedApply:\s*false/i.test(doc));
 assert("implementation false", /aboutSupabaseImplementationExecuted:\s*false/.test(doc));
 assert("sql apply false", /sqlApplyExecuted:\s*false/.test(doc));
 assert("db write false", /dbWriteExecuted:\s*false/.test(doc));
@@ -138,7 +142,11 @@ const seedA = sqlActive(seed);
 assert("seed only about profile.lede", seedA.includes("'about'") && seedA.includes("'profile.lede'"));
 assert("seed lede value", seed.includes(LEDE));
 assert("seed no access insert", !/insert into public\.site_members/i.test(seedA) && !/insert into public\.platform_admins/i.test(seedA));
-assert("seed on conflict scoped", /on conflict \(site_id, page_key, field_key\)/i.test(seedA));
+assert("seed no on conflict upsert", !/on conflict/i.test(seedA));
+assert("seed refuse if exists", /already exists/i.test(seed) && /raise exception/i.test(seedA));
+assert("seed plain insert", /insert into public\.site_page_fields/i.test(seedA));
+assert("seed post-insert verify", /seed verification mismatch|exactly 1 about\/profile\.lede row after INSERT/i.test(seed));
+assert("seed notes null audit cols", /created_by|updated_by/i.test(seed) && /null/i.test(seed));
 
 const seedRb = read(templates[5]);
 assert("seed rollback exact value", seedRb.includes(LEDE));
@@ -154,10 +162,11 @@ assert("preflight notes apply gate or readiness", /readyForOperatorAboutMigratio
 const ai00 = read("tools/static-to-astro/docs/ai/00-current-state.md");
 const ai03 = read("tools/static-to-astro/docs/ai/03-next-actions.md");
 const handoff = read("tools/static-to-astro/docs/ai/handoff-to-chatgpt.md");
-assert("ai00 apply-readiness", /readyForOperatorAboutRlsApply:\s*true|RLS apply: YES|operator re-accept.*RLS/i.test(ai00));
-assert("ai03 apply-readiness", /READY_FOR_OPERATOR_ABOUT_RLS_APPLY:\s*true|readyForOperatorAboutRlsApply:\s*true/i.test(ai03));
-assert("handoff apply-readiness", /readyForOperatorAboutRlsApply:\s*true/i.test(handoff));
+assert("ai00 apply-readiness", /readyForOperatorAboutSeedApply:\s*false|Seed apply: HOLD|seed fail-closed/i.test(ai00));
+assert("ai03 apply-readiness", /READY_FOR_OPERATOR_ABOUT_SEED_APPLY:\s*false|readyForOperatorAboutSeedApply:\s*false/i.test(ai03));
+assert("handoff apply-readiness", /readyForOperatorAboutSeedApply:\s*false/i.test(handoff));
 assert("ai03 migration gate still false", /readyForOperatorAboutMigrationApply:\s*false|READY_FOR_OPERATOR_ABOUT_MIGRATION_APPLY:\s*false/i.test(ai03));
+assert("ai03 rls gate retained true", /readyForOperatorAboutRlsApply:\s*true|READY_FOR_OPERATOR_ABOUT_RLS_APPLY:\s*true/i.test(ai03));
 
 console.log(`\n${passed} passed, ${failed} failed`);
 process.exit(failed > 0 ? 1 : 0);

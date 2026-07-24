@@ -75,7 +75,7 @@ assert("rls postcheck passed", /rlsPostcheckPassed:\s*true|RLS_POSTCHECK_PASSED:
 assert("seed applied staging", /seedAppliedStaging:\s*true|SEED_APPLIED_STAGING:\s*true/.test(doc));
 assert("seed postcheck passed", /seedPostcheckPassed:\s*true|SEED_POSTCHECK_PASSED:\s*true/.test(doc));
 assert("apply staging complete", /Staging SQL apply:\s*COMPLETE|Staging SQL apply: COMPLETE/i.test(doc));
-assert("implementation false", /aboutSupabaseImplementationExecuted:\s*false/.test(doc));
+assert("implementation true (local dual-path)", /aboutSupabaseImplementationExecuted:\s*true/.test(doc));
 assert("sql apply true (operator staging)", /sqlApplyExecuted:\s*true/.test(doc));
 assert("db write true (operator staging)", /dbWriteExecuted:\s*true/.test(doc));
 assert("edge false", /edgeDeployExecuted:\s*false/.test(doc));

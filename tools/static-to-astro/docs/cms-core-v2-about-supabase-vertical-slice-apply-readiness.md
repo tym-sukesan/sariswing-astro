@@ -13,8 +13,8 @@ CMS_CORE_V2_ABOUT_SUPABASE_VERTICAL_SLICE_APPLY_READINESS_COMPLETE: true
 READY_FOR_OPERATOR_ABOUT_MIGRATION_APPLY: false
 READY_FOR_OPERATOR_ABOUT_RLS_APPLY: false
 READY_FOR_OPERATOR_ABOUT_SEED_APPLY: false
+ABOUT_SUPABASE_IMPLEMENTATION_EXECUTED: true
 SQL_TEMPLATES_CHANGE_REQUIRED: false
-ABOUT_SUPABASE_IMPLEMENTATION_EXECUTED: false
 SQL_APPLY_EXECUTED: true
 DB_WRITE_EXECUTED: true
 EDGE_DEPLOY_EXECUTED: false
@@ -347,7 +347,7 @@ Rollback approval form (same AGENTS bar):
 | **`readyForOperatorAboutSeedApply`** | **`false`** |
 | Production | **unchanged** |
 
-**Still false / forbidden until separate phases:** Edge deploy · admin dual-path code · Save arm · FTP · production · Contents About cutover · `aboutSupabaseImplementationExecuted`.
+**Still false / forbidden until separate phases:** Edge deploy · Admin/build cutover packages · Save arm · FTP · production · Contents About cutover. Local dual-path code: **done** (`aboutSupabaseImplementationExecuted: true`).
 
 **Next:** About admin + build dual-path planning/implementation (Contents default; Supabase opt-in; arms false). Do **not** re-run migration/RLS/seed. Detail: [staging-apply-result](./cms-core-v2-about-supabase-vertical-slice-staging-apply-result.md).
 
@@ -374,7 +374,7 @@ rlsAppliedStaging: true
 rlsPostcheckPassed: true
 seedAppliedStaging: true
 seedPostcheckPassed: true
-aboutSupabaseImplementationExecuted: false
+aboutSupabaseImplementationExecuted: true
 sqlApplyExecuted: true
 dbWriteExecuted: true
 edgeDeployExecuted: false

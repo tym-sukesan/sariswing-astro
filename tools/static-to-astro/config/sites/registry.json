@@ -22,7 +22,8 @@
       "supabaseFeatures": {
         "schedule": true,
         "discography": true,
-        "siteEmbeds": true
+        "siteEmbeds": true,
+        "sitePageFields": false
       },
       "cmsFeatures": {
         "youtube": true,
@@ -85,7 +86,8 @@
       "supabaseFeatures": {
         "schedule": false,
         "discography": false,
-        "siteEmbeds": false
+        "siteEmbeds": false,
+        "sitePageFields": false
       },
       "cmsFeatures": {
         "youtube": false,

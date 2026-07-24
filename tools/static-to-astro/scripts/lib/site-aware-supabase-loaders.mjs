@@ -9,7 +9,7 @@ import {
   TOOL_ROOT,
   resolveSiteCmsFeaturePlan,
 } from "./site-registry.mjs";
-import { loadSiteEmbedsDataForBuild } from "./site-cms-features.mjs";
+import { loadSiteEmbedsDataForBuild, loadSitePageFieldsDataForBuild } from "./site-cms-features.mjs";
 import { loadSiteDiscographyBundleForBuild } from "./site-discography-loader.mjs";
 import {
   GOSAKI_SCHEDULE_SITE_CONFIG,
@@ -21,7 +21,7 @@ import {
  * @typedef {object} SiteSupabaseLoadPlan
  * @property {string} siteKey
  * @property {string} supabaseSiteSlug
- * @property {{ schedule: boolean, discography: boolean, siteEmbeds: boolean }} features
+ * @property {{ schedule: boolean, discography: boolean, siteEmbeds: boolean, sitePageFields: boolean }} features
  * @property {import('./site-cms-features.mjs').CmsFeatures} cmsFeatures
  */
 
@@ -105,10 +105,16 @@ export async function loadSiteSupabaseDataForBuild(opts) {
     toolRoot: opts.toolRoot,
     env: opts.env,
   });
+  const pageFields = await loadSitePageFieldsDataForBuild({
+    siteKey: opts.siteKey,
+    toolRoot: opts.toolRoot,
+    env: opts.env,
+  });
   return {
     schedule,
     discography,
     embeds,
+    pageFields,
     plan: resolveSiteSupabaseLoadPlan(opts.siteKey, opts.toolRoot),
   };
 }

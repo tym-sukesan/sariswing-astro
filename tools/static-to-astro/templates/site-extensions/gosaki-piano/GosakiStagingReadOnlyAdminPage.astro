@@ -89,6 +89,14 @@ import {
   assertGosakiYoutubeDryRunEndpointSafe,
   YOUTUBE_SUPABASE_SAVE_APPROVAL_ID,
   YOUTUBE_SUPABASE_PATH_PHASE,
+  isGosakiAboutSupabasePathEnabled,
+  isAboutOperationalSaveEnabled,
+  resolveAboutOperationalDryRunEndpoint,
+  resolveAboutOperationalSaveEndpoint,
+  ABOUT_SUPABASE_SAVE_APPROVAL_ID,
+  ABOUT_SUPABASE_DRY_RUN_APPROVAL_ID,
+  ABOUT_SUPABASE_PATH_PHASE,
+  ABOUT_SUPABASE_FIELD_KEY,
 } from "../lib/gosaki-staging-read-only-admin";
 
 interface Props {
@@ -116,15 +124,16 @@ const scheduleDryRunEndpointRaw = resolveGosakiScheduleDryRunEndpoint(import.met
 const scheduleDryRunEndpoint = assertGosakiScheduleDryRunEndpointSafe(scheduleDryRunEndpointRaw)
   ? scheduleDryRunEndpointRaw
   : "";
-const aboutDryRunEndpointRaw = resolveG12aAboutDryRunEndpoint(import.meta.env);
+const aboutSupabasePathEnabled = isGosakiAboutSupabasePathEnabled(import.meta.env);
+const aboutDryRunEndpointRaw = resolveAboutOperationalDryRunEndpoint(import.meta.env);
 const aboutDryRunEndpoint = assertGosakiAboutDryRunEndpointSafe(aboutDryRunEndpointRaw)
   ? aboutDryRunEndpointRaw
   : "";
-const aboutSaveEndpointRaw = resolveG12aAboutSaveEndpoint(import.meta.env);
+const aboutSaveEndpointRaw = resolveAboutOperationalSaveEndpoint(import.meta.env);
 const aboutSaveEndpoint = assertGosakiAboutSaveEndpointSafe(aboutSaveEndpointRaw)
   ? aboutSaveEndpointRaw
   : "";
-const aboutSaveArmed = isG12aAboutSaveEnabled(import.meta.env);
+const aboutSaveArmed = isAboutOperationalSaveEnabled(import.meta.env);
 const supabaseUrl = resolveG11c4aSupabaseUrl(import.meta.env);
 const supabaseAnonKey = resolveG11c4aSupabaseAnonKey(import.meta.env);
 const supabaseAuthConfigured = isG11c4aSupabaseAuthConfigured(import.meta.env);
@@ -224,6 +233,11 @@ const showClientScript = true;
     data-gosaki-about-dry-run-endpoint={aboutDryRunEndpoint}
     data-gosaki-about-save-endpoint={aboutSaveEndpoint}
     data-gosaki-about-save-armed={aboutSaveArmed ? "true" : "false"}
+    data-gosaki-about-write-backend={aboutSupabasePathEnabled ? "supabase" : "contents"}
+    data-gosaki-about-supabase-path-phase={ABOUT_SUPABASE_PATH_PHASE}
+    data-gosaki-about-supabase-field-key={ABOUT_SUPABASE_FIELD_KEY}
+    data-gosaki-about-supabase-dry-run-approval-id={ABOUT_SUPABASE_DRY_RUN_APPROVAL_ID}
+    data-gosaki-about-supabase-save-approval-id={ABOUT_SUPABASE_SAVE_APPROVAL_ID}
     data-g12a-about-dry-run-approval-id={G12A_ABOUT_DRY_RUN_APPROVAL_ID}
     data-g12a-about-save-operation-id={G12A_ABOUT_SAVE_OPERATION_ID}
     data-g12a-about-save-approval-id={G12A_ABOUT_SAVE_APPROVAL_ID}

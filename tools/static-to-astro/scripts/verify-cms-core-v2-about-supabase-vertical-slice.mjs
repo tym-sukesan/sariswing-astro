@@ -1,0 +1,174 @@
+/**
+ * CMS Core v2 — About Supabase vertical slice local implementation verifier.
+ * Static checks only — no DB / Edge deploy / FTP / Contents write / Save arm.
+ *
+ * Run: node tools/static-to-astro/scripts/verify-cms-core-v2-about-supabase-vertical-slice.mjs
+ */
+
+import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import {
+  ABOUT_FIELD_KEY_PROFILE_LEDE,
+  ABOUT_PAGE_KEY,
+  ABOUT_SITE_PAGE_FIELDS_BUILD_READ_ENV,
+  ABOUT_SUPABASE_DRY_RUN_APPROVAL_ID,
+  ABOUT_SUPABASE_ENDPOINT_NAME,
+  ABOUT_SUPABASE_PATH_ENABLED_ENV,
+  ABOUT_SUPABASE_SAVE_APPROVAL_ID,
+  ABOUT_SUPABASE_SAVE_ARMED_ENV,
+  ABOUT_SUPABASE_SAVE_UI_ARMED_ENV,
+  CMS_CORE_V2_ABOUT_PHASE,
+  PRODUCTION_REF_STOP,
+  STAGING_PROJECT_REF,
+  extractProfileLedeFromBody,
+  overlayProfileLedeInHtml,
+  planAboutProfileLedeDryRun,
+} from "./lib/cms-core-v2-about-supabase-contract.mjs";
+import { loadSitePageFieldsDataForBuild } from "./lib/site-cms-features.mjs";
+import { GOSAKI_SITE_KEY, TOOL_ROOT } from "./lib/site-registry.mjs";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const REPO_ROOT = path.resolve(TOOL_ROOT, "../..");
+const LEDE = "後藤 沙紀 1990年7月9日 A型 岡山県岡山市生まれ。";
+
+let passed = 0;
+let failed = 0;
+
+function assert(label, condition, detail = "") {
+  if (condition) {
+    console.log(`PASS ${label}`);
+    passed += 1;
+  } else {
+    console.error(`FAIL ${label}${detail ? ` — ${detail}` : ""}`);
+    failed += 1;
+  }
+}
+
+function read(rel) {
+  return fs.readFileSync(path.join(REPO_ROOT, rel), "utf8");
+}
+
+function exists(rel) {
+  return fs.existsSync(path.join(REPO_ROOT, rel));
+}
+
+assert("phase id", CMS_CORE_V2_ABOUT_PHASE.includes("about-supabase"));
+assert("staging ref", STAGING_PROJECT_REF === "kmjqppxjdnwwrtaeqjta");
+assert("production stop", PRODUCTION_REF_STOP === "vsbvndwuajjhnzpohghh");
+assert("page/field keys", ABOUT_PAGE_KEY === "about" && ABOUT_FIELD_KEY_PROFILE_LEDE === "profile.lede");
+assert("path env", ABOUT_SUPABASE_PATH_ENABLED_ENV.includes("ABOUT_SUPABASE_PATH"));
+assert("save ui arm env", ABOUT_SUPABASE_SAVE_UI_ARMED_ENV.includes("SAVE_UI_ARMED"));
+assert("server arm env", ABOUT_SUPABASE_SAVE_ARMED_ENV === "GOSAKI_ABOUT_SUPABASE_SAVE_ARMED");
+assert("build-read env", ABOUT_SITE_PAGE_FIELDS_BUILD_READ_ENV === "CMS_KIT_SITE_PAGE_FIELDS_BUILD_READ");
+assert("dry-run approval", ABOUT_SUPABASE_DRY_RUN_APPROVAL_ID.includes("profile-lede-dry-run"));
+assert("save approval", ABOUT_SUPABASE_SAVE_APPROVAL_ID.includes("web-save-non-dry-run"));
+assert("no G-12a reuse in approvals", !ABOUT_SUPABASE_DRY_RUN_APPROVAL_ID.includes("G-12a"));
+
+const overlay = overlayProfileLedeInHtml(
+  `<p class="x">old lede</p>\n<p class="x">second</p>`,
+  LEDE,
+);
+assert("overlay replaces first p only", overlay.includes(LEDE) && overlay.includes("second"));
+assert("extract lede from body", extractProfileLedeFromBody(`${LEDE}\n\nmore`) === LEDE);
+
+const plan = planAboutProfileLedeDryRun({
+  before: { valueText: LEDE, updatedAt: "2026-07-24T00:00:00Z", published: true, sortOrder: 10 },
+  after: { valueText: LEDE, published: true, sortOrder: 10 },
+});
+assert("dry-run plan noChange", plan.ok && plan.noChange === true);
+
+const planChange = planAboutProfileLedeDryRun({
+  before: { valueText: LEDE, updatedAt: "2026-07-24T00:00:00Z" },
+  after: { valueText: `${LEDE}x` },
+});
+assert("dry-run plan change", planChange.ok && planChange.changedFields.includes("value_text"));
+
+const off = await loadSitePageFieldsDataForBuild({
+  siteKey: GOSAKI_SITE_KEY,
+  toolRoot: TOOL_ROOT,
+  env: {},
+});
+assert("build loader default null (feature+env off)", off === null);
+
+const registry = JSON.parse(read("tools/static-to-astro/config/sites/registry.json"));
+assert(
+  "registry sitePageFields default false",
+  registry.sites["gosaki-piano"].supabaseFeatures.sitePageFields === false,
+);
+
+const features = read("tools/static-to-astro/scripts/lib/site-cms-features.mjs");
+assert("loader exported", features.includes("loadSitePageFieldsDataForBuild"));
+assert("sitePageFields feature id", features.includes("sitePageFields"));
+
+const aboutContent = read("tools/static-to-astro/scripts/lib/gosaki-about-content.mjs");
+assert("about overlay helper", aboutContent.includes("applySitePageFieldsLedeToAboutConfig"));
+assert("about accepts pageFieldsBundle", aboutContent.includes("pageFieldsBundle"));
+
+const hooks = read("tools/static-to-astro/scripts/lib/site-generator-hooks.mjs");
+assert("hooks pass pageFieldsBundle", hooks.includes("pageFieldsBundle"));
+
+const convert = read("tools/static-to-astro/scripts/convert-static-to-astro.mjs");
+assert("convert loads pageFields", convert.includes("pageFieldsBundle"));
+
+const loaders = read("tools/static-to-astro/scripts/lib/site-aware-supabase-loaders.mjs");
+assert("loaders include pageFields", loaders.includes("pageFields"));
+
+const adminLib = read(
+  "tools/static-to-astro/templates/site-extensions/gosaki-piano/gosaki-staging-read-only-admin.ts",
+);
+assert("admin path env wired", adminLib.includes(ABOUT_SUPABASE_PATH_ENABLED_ENV));
+assert("admin save ui arm wired", adminLib.includes(ABOUT_SUPABASE_SAVE_UI_ARMED_ENV));
+assert("admin path helper", adminLib.includes("isGosakiAboutSupabasePathEnabled"));
+assert("admin resolve operational endpoints", adminLib.includes("resolveAboutOperationalDryRunEndpoint"));
+assert("admin G-12a retained", adminLib.includes("G-12a-gosaki-about-content-dry-run"));
+assert("admin single-arm note via separate arms", adminLib.includes("ABOUT_SUPABASE_SAVE_UI_ARMED_ENV"));
+
+const adminPage = read(
+  "tools/static-to-astro/templates/site-extensions/gosaki-piano/GosakiStagingReadOnlyAdminPage.astro",
+);
+assert("admin page write-backend attr", adminPage.includes("data-gosaki-about-write-backend"));
+assert("admin page uses operational resolve", adminPage.includes("resolveAboutOperationalDryRunEndpoint"));
+assert("admin page supabase path phase", adminPage.includes("ABOUT_SUPABASE_PATH_PHASE"));
+
+const edgeHandler = read("supabase/functions/gosaki-about-supabase-save-dry-run/handler.ts");
+const edgeIndex = read("supabase/functions/gosaki-about-supabase-save-dry-run/index.ts");
+assert("edge endpoint name", edgeHandler.includes(ABOUT_SUPABASE_ENDPOINT_NAME));
+assert("edge save arm check", edgeHandler.includes(ABOUT_SUPABASE_SAVE_ARMED_ENV));
+assert("edge save disarmed by default path", edgeHandler.includes("save_not_armed"));
+assert("edge optimistic lock", edgeHandler.includes("expectedBeforeUpdatedAt"));
+assert("edge can_write_site", edgeHandler.includes("can_write_site"));
+assert("edge profile.lede only", edgeHandler.includes("profile.lede"));
+assert("edge service_role connected false", /SUPABASE_SERVICE_ROLE_CONNECTED\s*=\s*false/.test(edgeHandler));
+assert("edge no service_role grant/use", !/service_role\s*key|grant\s+.*service_role|createClient\([^)]*service/i.test(edgeHandler));
+assert("edge local banner", /LOCAL IMPLEMENTATION/i.test(edgeIndex));
+assert("edge tools mirror", exists("tools/static-to-astro/scripts/edge-functions/gosaki-about-supabase-save-dry-run/handler.ts"));
+
+const contentsDryRun = read("supabase/functions/gosaki-about-content-dry-run/index.ts");
+const contentsSave = read("supabase/functions/gosaki-about-content-save/index.ts");
+assert("contents dry-run retained", contentsDryRun.length > 100);
+assert("contents save retained", contentsSave.length > 100);
+
+const aboutJson = read("tools/static-to-astro/config/sites/gosaki-piano-about-content.json");
+assert("json sot lede retained", aboutJson.includes(LEDE));
+
+const doc = "tools/static-to-astro/docs/cms-core-v2-about-supabase-vertical-slice-local-implementation.md";
+assert("implementation doc exists", exists(doc));
+const docText = read(doc);
+assert("doc flags", docText.includes(ABOUT_SUPABASE_PATH_ENABLED_ENV));
+assert("doc fallback", /fallback|Contents/i.test(docText));
+assert("doc save arm false", /SAVE_ARMED|arms?\s*false/i.test(docText));
+assert("doc no FTP apply", /readyForAnyFutureFtpApply:\s*false|FTP.*false/i.test(docText));
+
+const qaDoc = "tools/static-to-astro/docs/cms-core-v2-about-supabase-ftp-post-qa.md";
+assert("ftp qa doc exists", exists(qaDoc));
+
+const ai00 = read("tools/static-to-astro/docs/ai/00-current-state.md");
+const ai03 = read("tools/static-to-astro/docs/ai/03-next-actions.md");
+const handoff = read("tools/static-to-astro/docs/ai/handoff-to-chatgpt.md");
+assert("ai00 about local impl", /about-supabase-vertical-slice-local|About.*dual-path|About.*local implementation/i.test(ai00));
+assert("ai03 about local impl", /aboutSupabaseLocalImplementation|ABOUT_SUPABASE|dual-path/i.test(ai03));
+assert("handoff about local impl", /aboutSupabaseLocalImplementation|About.*dual-path|local implementation/i.test(handoff));
+
+console.log(`\n${passed} passed, ${failed} failed`);
+process.exit(failed > 0 ? 1 : 0);

@@ -19,7 +19,7 @@ SEED_POSTCHECK_PASSED: true
 READY_FOR_OPERATOR_ABOUT_MIGRATION_APPLY: false
 READY_FOR_OPERATOR_ABOUT_RLS_APPLY: false
 READY_FOR_OPERATOR_ABOUT_SEED_APPLY: false
-ABOUT_SUPABASE_IMPLEMENTATION_EXECUTED: false
+ABOUT_SUPABASE_IMPLEMENTATION_EXECUTED: true
 CONTENTS_ABOUT_PATH_UNCHANGED: true
 ADMIN_ABOUT_SUPABASE_CUTOVER_EXECUTED: false
 BUILD_ABOUT_SUPABASE_CUTOVER_EXECUTED: false
@@ -122,7 +122,7 @@ seedPostcheckPassed: true
 readyForOperatorAboutMigrationApply: false
 readyForOperatorAboutRlsApply: false
 readyForOperatorAboutSeedApply: false
-aboutSupabaseImplementationExecuted: false
+aboutSupabaseImplementationExecuted: true
 contentsAboutPathUnchanged: true
 adminAboutSupabaseCutoverExecuted: false
 buildAboutSupabaseCutoverExecuted: false
@@ -131,4 +131,4 @@ readyForAnyFutureFtpApply: false
 productionUnchanged: true
 ```
 
-**Next:** plan/implement About admin + build dual-path (Contents default; Supabase opt-in; arms false). Do **not** re-run migration / RLS / seed.
+**Next:** About dual-path local implementation is complete — see [local-implementation](./cms-core-v2-about-supabase-vertical-slice-local-implementation.md). Edge deploy + Admin/build cutover packages remain separate gates. Do **not** re-run migration/RLS/seed.

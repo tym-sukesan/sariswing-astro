@@ -10,7 +10,7 @@ import {
   resolveSupabaseSiteSlug,
 } from "./site-registry.mjs";
 
-/** @typedef {'schedule' | 'discography' | 'siteEmbeds'} SupabaseFeatureId */
+/** @typedef {'schedule' | 'discography' | 'siteEmbeds' | 'sitePageFields'} SupabaseFeatureId */
 /** @typedef {'youtube' | 'contact' | 'aboutBandProfiles' | 'aboutContent' | 'readOnlyAdmin'} CmsFeatureId */
 
 /**
@@ -18,6 +18,7 @@ import {
  * @property {boolean} schedule
  * @property {boolean} discography
  * @property {boolean} siteEmbeds
+ * @property {boolean} sitePageFields
  */
 
 /**
@@ -38,7 +39,12 @@ import {
  * @property {CmsFeatures} cmsFeatures
  */
 
-export const SUPABASE_FEATURE_IDS = /** @type {const} */ (["schedule", "discography", "siteEmbeds"]);
+export const SUPABASE_FEATURE_IDS = /** @type {const} */ ([
+  "schedule",
+  "discography",
+  "siteEmbeds",
+  "sitePageFields",
+]);
 export const CMS_FEATURE_IDS = /** @type {const} */ ([
   "youtube",
   "contact",
@@ -48,9 +54,19 @@ export const CMS_FEATURE_IDS = /** @type {const} */ ([
 ]);
 
 /** @type {SupabaseFeatures} */
-const GOSAKI_SUPABASE_DEFAULTS = { schedule: true, discography: true, siteEmbeds: false };
+const GOSAKI_SUPABASE_DEFAULTS = {
+  schedule: true,
+  discography: true,
+  siteEmbeds: false,
+  sitePageFields: false,
+};
 /** @type {SupabaseFeatures} */
-const PILOT_SUPABASE_DEFAULTS = { schedule: false, discography: false, siteEmbeds: false };
+const PILOT_SUPABASE_DEFAULTS = {
+  schedule: false,
+  discography: false,
+  siteEmbeds: false,
+  sitePageFields: false,
+};
 /** @type {CmsFeatures} */
 const GOSAKI_CMS_DEFAULTS = {
   youtube: true,
@@ -101,6 +117,7 @@ export function normalizeSupabaseFeatures(raw, siteKey) {
     schedule: obj.schedule === true,
     discography: obj.discography === true,
     siteEmbeds: obj.siteEmbeds === true,
+    sitePageFields: obj.sitePageFields === true,
   };
 }
 
@@ -264,6 +281,118 @@ export async function loadSiteEmbedsDataForBuild(opts) {
       embedDataSource: "error",
       fallbackReason: err instanceof Error ? err.message : String(err),
       embeds: [],
+      siteSlug,
+      rowCount: 0,
+    };
+  }
+}
+
+/**
+ * Read-only site_page_fields loader for build/convert (CMS Core v2 About slice).
+ * Default: null when registry.sitePageFields=false and CMS_KIT_SITE_PAGE_FIELDS_BUILD_READ≠true
+ * (JSON About SoT remains convert fallback — no blank About).
+ * When enabled: anon SELECT published about/profile.lede; empty/error → caller keeps JSON.
+ * Never uses the service role key. Production ref STOP.
+ *
+ * @param {{ siteKey: string, toolRoot?: string, env?: NodeJS.ProcessEnv }} opts
+ */
+export async function loadSitePageFieldsDataForBuild(opts) {
+  const { siteKey, toolRoot = TOOL_ROOT, env = process.env } = opts;
+  const featureOn = isSupabaseFeatureEnabled(siteKey, "sitePageFields", toolRoot);
+  const envOn = String(env.CMS_KIT_SITE_PAGE_FIELDS_BUILD_READ ?? "").trim() === "true";
+  if (!featureOn && !envOn) {
+    return null;
+  }
+
+  const siteSlug = resolveSupabaseSiteSlug(siteKey, toolRoot);
+  const { resolveSupabaseAnonReadEnv } = await import("./supabase-schedule-read.mjs");
+  const {
+    ABOUT_PAGE_KEY,
+    ABOUT_FIELD_KEY_PROFILE_LEDE,
+    SITE_PAGE_FIELDS_SELECT,
+    mapSitePageFieldRowToLedeDraft,
+  } = await import("./cms-core-v2-about-supabase-contract.mjs");
+  const readEnv = resolveSupabaseAnonReadEnv(env, toolRoot);
+  if (!readEnv) {
+    return {
+      pageFieldDataSource: "not-configured",
+      fallbackReason: "supabase_anon_read_env_missing",
+      fields: [],
+      profileLede: null,
+      siteSlug,
+      rowCount: 0,
+    };
+  }
+  if (readEnv.supabaseUrl.includes("vsbvndwuajjhnzpohghh")) {
+    return {
+      pageFieldDataSource: "blocked",
+      fallbackReason: "production_ref_stop",
+      fields: [],
+      profileLede: null,
+      siteSlug,
+      rowCount: 0,
+    };
+  }
+
+  try {
+    const { createClient } = await import("@supabase/supabase-js");
+    const client = createClient(readEnv.supabaseUrl, readEnv.anonKey, {
+      auth: { persistSession: false, autoRefreshToken: false },
+    });
+    const { data, error } = await client
+      .from("site_page_fields")
+      .select(SITE_PAGE_FIELDS_SELECT)
+      .eq("site_slug", siteSlug)
+      .eq("page_key", ABOUT_PAGE_KEY)
+      .eq("field_key", ABOUT_FIELD_KEY_PROFILE_LEDE)
+      .eq("published", true)
+      .limit(2);
+    if (error) {
+      return {
+        pageFieldDataSource: "error",
+        fallbackReason: error.message,
+        fields: [],
+        profileLede: null,
+        siteSlug,
+        rowCount: 0,
+      };
+    }
+    const fields = Array.isArray(data) ? data : [];
+    if (fields.length === 0) {
+      return {
+        pageFieldDataSource: "supabase-empty",
+        fallbackReason: "no_published_site_page_fields_rows",
+        fields: [],
+        profileLede: null,
+        siteSlug,
+        rowCount: 0,
+      };
+    }
+    const profileLede = mapSitePageFieldRowToLedeDraft(fields[0]);
+    if (!profileLede.valueText) {
+      return {
+        pageFieldDataSource: "supabase-empty",
+        fallbackReason: "empty_profile_lede_value_text",
+        fields,
+        profileLede: null,
+        siteSlug,
+        rowCount: fields.length,
+      };
+    }
+    return {
+      pageFieldDataSource: "supabase",
+      fallbackReason: null,
+      fields,
+      profileLede,
+      siteSlug,
+      rowCount: fields.length,
+    };
+  } catch (err) {
+    return {
+      pageFieldDataSource: "error",
+      fallbackReason: err instanceof Error ? err.message : String(err),
+      fields: [],
+      profileLede: null,
       siteSlug,
       rowCount: 0,
     };

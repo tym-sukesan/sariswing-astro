@@ -22,7 +22,12 @@ export function normalizeSiteDataBundles(options = {}) {
     options.discographyBundle ?? options.gosakiDiscographyBundle ?? null;
   const embedsBundle =
     options.embedsBundle ?? options.siteEmbedsBundle ?? options.gosakiEmbedsBundle ?? null;
-  return { scheduleBundle, discographyBundle, embedsBundle };
+  const pageFieldsBundle =
+    options.pageFieldsBundle ??
+    options.sitePageFieldsBundle ??
+    options.gosakiPageFieldsBundle ??
+    null;
+  return { scheduleBundle, discographyBundle, embedsBundle, pageFieldsBundle };
 }
 
 /**
@@ -32,15 +37,19 @@ export function normalizeSiteDataBundles(options = {}) {
  * @returns {Record<string, unknown>}
  */
 export function withNormalizedSiteDataBundles(options = {}) {
-  const { scheduleBundle, discographyBundle, embedsBundle } = normalizeSiteDataBundles(options);
+  const { scheduleBundle, discographyBundle, embedsBundle, pageFieldsBundle } =
+    normalizeSiteDataBundles(options);
   return {
     ...options,
     scheduleBundle,
     discographyBundle,
     embedsBundle,
     siteEmbedsBundle: embedsBundle,
+    pageFieldsBundle,
+    sitePageFieldsBundle: pageFieldsBundle,
     gosakiScheduleBundle: scheduleBundle,
     gosakiDiscographyBundle: discographyBundle,
     gosakiEmbedsBundle: embedsBundle,
+    gosakiPageFieldsBundle: pageFieldsBundle,
   };
 }

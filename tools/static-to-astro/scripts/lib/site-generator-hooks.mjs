@@ -266,7 +266,10 @@ function createGosakiPianoHookMethods() {
 
       const gosakiAboutContentSummary =
         siteKey && isCmsFeatureEnabled(siteKey, "aboutContent", toolRoot)
-          ? applyGosakiAboutContent(outDir, toolRoot)
+          ? applyGosakiAboutContent(outDir, toolRoot, {
+              pageFieldsBundle:
+                ctx.pageFieldsBundle ?? ctx.sitePageFieldsBundle ?? ctx.gosakiPageFieldsBundle,
+            })
           : { applied: false, reason: "cms_feature_aboutContent_disabled" };
       if (gosakiAboutContentSummary.applied) {
         writtenPaths.push(path.join(outDir, gosakiAboutContentSummary.dataPath));

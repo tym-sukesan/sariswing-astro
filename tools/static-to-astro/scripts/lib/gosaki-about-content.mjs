@@ -8,6 +8,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { isGosakiPianoFixture } from "./gosaki-about-band-profiles.mjs";
 import { splitBaseLayoutOpenAndInner } from "./gosaki-home-youtube-embed.mjs";
+import { overlayProfileLedeInHtml } from "./cms-core-v2-about-supabase-contract.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const require = createRequire(path.join(__dirname, "../../package.json"));
@@ -175,9 +176,42 @@ export function verifyAboutContentHtml(aboutHtml, expected) {
 }
 
 /**
+ * Prefer Supabase profile.lede over JSON first <p> when build-read returns a non-empty value.
+ * Empty/error bundles leave config unchanged (Contents/JSON fallback).
+ *
+ * @param {{ blocks?: Array<{ id?: string, enabled?: boolean, html?: string }> }} config
+ * @param {{ pageFieldDataSource?: string, profileLede?: { valueText?: string } | null } | null | undefined} pageFieldsBundle
+ */
+export function applySitePageFieldsLedeToAboutConfig(config, pageFieldsBundle) {
+  if (!pageFieldsBundle || pageFieldsBundle.pageFieldDataSource !== "supabase") {
+    return { config, ledeOverlaid: false, reason: "page_fields_not_supabase" };
+  }
+  const lede = String(pageFieldsBundle.profileLede?.valueText ?? "").trim();
+  if (!lede) {
+    return { config, ledeOverlaid: false, reason: "empty_profile_lede" };
+  }
+  const blocks = Array.isArray(config.blocks) ? config.blocks.map((b) => ({ ...b })) : [];
+  const idx = blocks.findIndex((b) => b?.id === BLOCK_PROFILE_ID);
+  if (idx < 0) {
+    return { config, ledeOverlaid: false, reason: "profile_block_missing" };
+  }
+  const prevHtml = String(blocks[idx].html ?? "");
+  const nextHtml = overlayProfileLedeInHtml(prevHtml, lede);
+  if (nextHtml === prevHtml) {
+    return { config, ledeOverlaid: false, reason: "overlay_noop" };
+  }
+  blocks[idx] = { ...blocks[idx], html: nextHtml };
+  return {
+    config: { ...config, blocks },
+    ledeOverlaid: true,
+    reason: null,
+  };
+}
+
+/**
  * @param {string} outDir
  * @param {string} toolRoot
- * @param {{ aboutPagePath?: string }} [options]
+ * @param {{ aboutPagePath?: string, pageFieldsBundle?: object | null }} [options]
  */
 export function applyGosakiAboutContent(outDir, toolRoot, options = {}) {
   const loaded = loadGosakiAboutContentConfig(toolRoot);
@@ -187,6 +221,7 @@ export function applyGosakiAboutContent(outDir, toolRoot, options = {}) {
       reason: loaded.error,
       profileApplied: false,
       bandsApplied: false,
+      ledeOverlaid: false,
     };
   }
 
@@ -198,15 +233,19 @@ export function applyGosakiAboutContent(outDir, toolRoot, options = {}) {
       reason: `About page not found: ${aboutRel}`,
       profileApplied: false,
       bandsApplied: false,
+      ledeOverlaid: false,
     };
   }
 
+  const overlay = applySitePageFieldsLedeToAboutConfig(loaded.config, options.pageFieldsBundle);
+  const effectiveConfig = overlay.config;
+
   const dataDest = path.join(outDir, GOSAKI_ABOUT_CONTENT_DATA_REL);
   fs.mkdirSync(path.dirname(dataDest), { recursive: true });
-  fs.writeFileSync(dataDest, `${JSON.stringify(loaded.config, null, 2)}\n`, "utf8");
+  fs.writeFileSync(dataDest, `${JSON.stringify(effectiveConfig, null, 2)}\n`, "utf8");
 
   const aboutContent = fs.readFileSync(aboutPath, "utf8");
-  const result = applyAboutContentToPage(aboutContent, loaded.config);
+  const result = applyAboutContentToPage(aboutContent, effectiveConfig);
   fs.writeFileSync(aboutPath, result.content, "utf8");
 
   return {
@@ -215,6 +254,9 @@ export function applyGosakiAboutContent(outDir, toolRoot, options = {}) {
     profileApplied: result.profileApplied,
     bandsApplied: result.bandsApplied,
     bandsImportRemoved: result.bandsImportRemoved,
+    ledeOverlaid: overlay.ledeOverlaid === true,
+    ledeOverlayReason: overlay.reason,
+    pageFieldDataSource: options.pageFieldsBundle?.pageFieldDataSource ?? null,
     aboutPagePath: aboutRel,
     dataPath: GOSAKI_ABOUT_CONTENT_DATA_REL,
     configPath: GOSAKI_ABOUT_CONTENT_CONFIG_REL,

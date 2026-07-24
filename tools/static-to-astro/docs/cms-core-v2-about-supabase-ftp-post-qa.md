@@ -1,0 +1,60 @@
+# CMS Core v2 — About Supabase FTP post QA (operator)
+
+- **Phase:** post-manual-FTP QA checklist for About dual-path packages
+- **Staging URL base:** `https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/`
+- **FTP:** operator manual upload only · `readyForAnyFutureFtpApply: false`
+- **Cursor:** do not FTP / do not click Save / do not deploy Edge
+
+---
+
+## A. Default package (Contents / JSON — no About Supabase cutover)
+
+After uploading `public-dist/` to `/cms-kit-staging/gosaki-piano/`:
+
+### Admin QA
+
+1. Open `/admin/about/` — login works
+2. Confirm write backend is Contents (path flag off): dry-run uses `gosaki-about-content-dry-run`
+3. Save button remains disabled (Contents arm false)
+4. Live-read / preview still works (G-12a path)
+5. Schedule / Discography / YouTube admin still OK
+
+### Public QA
+
+1. `/about/` HTTP 200
+2. Profile lede text visible: `後藤 沙紀 1990年7月9日 A型 岡山県岡山市生まれ。`
+3. Bands / Projects section OK
+4. noindex / robots / canonical still PASS
+5. Home YouTube / Schedule / Discography unchanged
+
+**PASS:** Contents About path intact · no blank About · Save disabled
+
+---
+
+## B. After Edge deploy + Admin path package (future)
+
+Prerequisites: Edge `gosaki-about-supabase-save-dry-run` deployed · package baked with `PUBLIC_ADMIN_GOSAKI_ABOUT_SUPABASE_PATH_ENABLED=true` · Save arms **false**
+
+1. `/admin/about/` shows `data-gosaki-about-write-backend=supabase`
+2. Dry-run against Supabase endpoint returns plan for `profile.lede` only (no DB write)
+3. Save still disabled (`save_not_armed` / UI armed false)
+4. Toggle path flag off package → Contents path still works (rollback)
+
+**STOP:** Edge 404 / CORS / auth errors → leave Contents default package live
+
+---
+
+## C. After build-read package (future)
+
+Prerequisites: `CMS_KIT_SITE_PAGE_FIELDS_BUILD_READ=true` **or** `registry.sitePageFields=true` · anon read env for staging
+
+1. Public `/about/` first profile paragraph matches staged `site_page_fields` lede
+2. If DB empty/error simulated → JSON fallback still shows About (no blank)
+
+---
+
+## Rollback
+
+- Re-upload prior package without About Supabase flags
+- Keep Contents G-12a Edges
+- Do not run SQL rollback unless separate AGENTS approval

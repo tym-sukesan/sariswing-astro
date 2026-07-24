@@ -66,6 +66,25 @@ export const YOUTUBE_SUPABASE_SAVE_APPROVAL_ID =
 export const YOUTUBE_SUPABASE_DRY_RUN_OPERATION = "dryRun" as const;
 export const YOUTUBE_SUPABASE_SAVE_OPERATION = "save" as const;
 
+/** CMS Core v2 — About Supabase path (parallel to Contents G-12a; default off). */
+export const ABOUT_SUPABASE_PATH_PHASE =
+  "cms-core-v2-about-supabase-vertical-slice-local-implementation";
+export const ABOUT_SUPABASE_ENDPOINT_NAME = "gosaki-about-supabase-save-dry-run";
+export const ABOUT_SUPABASE_DRY_RUN_ENDPOINT = `${G11C4A_STAGING_SUPABASE_URL}/functions/v1/${ABOUT_SUPABASE_ENDPOINT_NAME}`;
+export const ABOUT_SUPABASE_SAVE_ENDPOINT = ABOUT_SUPABASE_DRY_RUN_ENDPOINT;
+export const ABOUT_SUPABASE_PATH_ENABLED_ENV =
+  "PUBLIC_ADMIN_GOSAKI_ABOUT_SUPABASE_PATH_ENABLED";
+export const ABOUT_SUPABASE_SAVE_UI_ARMED_ENV =
+  "PUBLIC_ADMIN_GOSAKI_ABOUT_SUPABASE_SAVE_UI_ARMED";
+export const ABOUT_SUPABASE_DRY_RUN_APPROVAL_ID =
+  "G-cms-v2-about-supabase-profile-lede-dry-run";
+export const ABOUT_SUPABASE_SAVE_APPROVAL_ID =
+  "G-cms-v2-about-supabase-profile-lede-web-save-non-dry-run-slice";
+export const ABOUT_SUPABASE_DRY_RUN_OPERATION = "dryRun" as const;
+export const ABOUT_SUPABASE_SAVE_OPERATION = "save" as const;
+export const ABOUT_SUPABASE_PAGE_KEY = "about";
+export const ABOUT_SUPABASE_FIELD_KEY = "profile.lede";
+
 /** G-20u28 — staging read-only admin dashboard foundation polish. */
 export const G20U28_ADMIN_UI_PHASE = "G-20u28-gosaki-admin-ui-foundation-polish";
 
@@ -1777,12 +1796,124 @@ export function isG12aAboutSaveEnabled(env: ImportMetaEnv): boolean {
     "true";
 }
 
+/** Opt-in Supabase About path. Default false — Contents G-12a path unchanged. */
+export function isGosakiAboutSupabasePathEnabled(
+  env: ImportMetaEnv | Record<string, unknown>,
+): boolean {
+  return (
+    String((env as Record<string, unknown>)[ABOUT_SUPABASE_PATH_ENABLED_ENV] ?? "").trim() ===
+    "true"
+  );
+}
+
+export function isGosakiAboutSupabaseSaveEnabled(
+  env: ImportMetaEnv | Record<string, unknown>,
+): boolean {
+  return (
+    String((env as Record<string, unknown>)[ABOUT_SUPABASE_SAVE_UI_ARMED_ENV] ?? "").trim() ===
+    "true"
+  );
+}
+
+export function resolveGosakiAboutSupabaseEndpoint(env: ImportMetaEnv): string {
+  const fromEnv = String(
+    (env as Record<string, unknown>).PUBLIC_GOSAKI_ABOUT_SUPABASE_ENDPOINT ?? "",
+  ).trim();
+  if (fromEnv) return fromEnv;
+  return ABOUT_SUPABASE_DRY_RUN_ENDPOINT;
+}
+
+/**
+ * Resolve About dry-run endpoint: Supabase when path enabled, else Contents G-12a.
+ */
+export function resolveAboutOperationalDryRunEndpoint(env: ImportMetaEnv): string {
+  if (isGosakiAboutSupabasePathEnabled(env)) {
+    return resolveGosakiAboutSupabaseEndpoint(env);
+  }
+  return resolveG12aAboutDryRunEndpoint(env);
+}
+
+/**
+ * Resolve About Save endpoint: Supabase when path enabled, else Contents G-12a.
+ */
+export function resolveAboutOperationalSaveEndpoint(env: ImportMetaEnv): string {
+  if (isGosakiAboutSupabasePathEnabled(env)) {
+    return resolveGosakiAboutSupabaseEndpoint(env);
+  }
+  return resolveG12aAboutSaveEndpoint(env);
+}
+
+export function isAboutOperationalSaveEnabled(env: ImportMetaEnv): boolean {
+  if (isGosakiAboutSupabasePathEnabled(env)) {
+    return isGosakiAboutSupabaseSaveEnabled(env);
+  }
+  return isG12aAboutSaveEnabled(env);
+}
+
+/** Extract first paragraph plain text from About body (for profile.lede slice). */
+export function extractAboutProfileLedeFromBody(body: string): string {
+  const raw = String(body ?? "").trim();
+  if (!raw) return "";
+  if (raw.includes("<p")) {
+    const m = raw.match(/<p\b[^>]*>([\s\S]*?)<\/p>/i);
+    if (m) {
+      return m[1]
+        .replace(/<[^>]+>/g, "")
+        .replace(/&nbsp;/g, " ")
+        .replace(/&amp;/g, "&")
+        .replace(/&lt;/g, "<")
+        .replace(/&gt;/g, ">")
+        .trim();
+    }
+  }
+  return raw.split(/\n\s*\n/)[0]?.trim() || raw.split("\n")[0]?.trim() || raw;
+}
+
+export function buildAboutSupabaseDryRunEndpointRequest(input: {
+  nextValueText: string;
+  expectedBeforeUpdatedAt?: string | null;
+}): Record<string, unknown> {
+  return {
+    siteSlug: GOSAKI_STAGING_SITE_SLUG,
+    pageKey: ABOUT_SUPABASE_PAGE_KEY,
+    fieldKey: ABOUT_SUPABASE_FIELD_KEY,
+    nextValueText: String(input.nextValueText ?? "").trim(),
+    expectedBeforeUpdatedAt: input.expectedBeforeUpdatedAt ?? null,
+    dryRun: true,
+    operation: ABOUT_SUPABASE_DRY_RUN_OPERATION,
+    approvalId: ABOUT_SUPABASE_DRY_RUN_APPROVAL_ID,
+  };
+}
+
+export function buildAboutSupabaseSaveEndpointRequest(input: {
+  nextValueText: string;
+  expectedBeforeUpdatedAt: string;
+  fingerprint?: string;
+  requestId?: string;
+}): Record<string, unknown> {
+  return {
+    siteSlug: GOSAKI_STAGING_SITE_SLUG,
+    pageKey: ABOUT_SUPABASE_PAGE_KEY,
+    fieldKey: ABOUT_SUPABASE_FIELD_KEY,
+    nextValueText: String(input.nextValueText ?? "").trim(),
+    expectedBeforeUpdatedAt: String(input.expectedBeforeUpdatedAt ?? "").trim(),
+    dryRun: false,
+    operation: ABOUT_SUPABASE_SAVE_OPERATION,
+    approvalId: ABOUT_SUPABASE_SAVE_APPROVAL_ID,
+    fingerprint: String(input.fingerprint ?? "").trim(),
+    requestId: String(input.requestId ?? `ui-${Date.now()}`).trim(),
+  };
+}
+
 export function assertGosakiAboutDryRunEndpointSafe(endpoint: string): boolean {
   const trimmed = String(endpoint ?? "").trim();
   if (!trimmed) return false;
   if (trimmed.includes(G20U36C_PRODUCTION_PROJECT_REF_STOP)) return false;
   if (!trimmed.includes(G11C4A_STAGING_PROJECT_REF)) return false;
-  return trimmed.includes("/functions/v1/gosaki-about-content-dry-run");
+  return (
+    trimmed.includes("/functions/v1/gosaki-about-content-dry-run") ||
+    trimmed.includes(`/functions/v1/${ABOUT_SUPABASE_ENDPOINT_NAME}`)
+  );
 }
 
 export function assertGosakiAboutSaveEndpointSafe(endpoint: string): boolean {
@@ -1790,7 +1921,10 @@ export function assertGosakiAboutSaveEndpointSafe(endpoint: string): boolean {
   if (!trimmed) return false;
   if (trimmed.includes(G20U36C_PRODUCTION_PROJECT_REF_STOP)) return false;
   if (!trimmed.includes(G11C4A_STAGING_PROJECT_REF)) return false;
-  return trimmed.includes("/functions/v1/gosaki-about-content-save");
+  return (
+    trimmed.includes("/functions/v1/gosaki-about-content-save") ||
+    trimmed.includes(`/functions/v1/${ABOUT_SUPABASE_ENDPOINT_NAME}`)
+  );
 }
 
 export function buildAboutDryRunEndpointRequest(

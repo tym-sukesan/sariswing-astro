@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**CMS Core v2 About Supabase staging SQL apply result (2026-07-24):** **COMPLETE** — staging `kmjqppxjdnwwrtaeqjta` · migration + RLS + seed **PASS** · `site_page_fields` live · seed `about`/`profile.lede` = `後藤 沙紀 1990年7月9日 A型 岡山県岡山市生まれ。` · `migrationAppliedStaging/rlsAppliedStaging/seedAppliedStaging: true` · all post-checks PASS · all `readyForOperatorAbout*Apply: false` · Contents About **default** · Admin/build cutover **false** · production `vsbvndwuajjhnzpohghh` **UNCHANGED** · Doc: `cms-core-v2-about-supabase-vertical-slice-staging-apply-result.md` · **Next:** About admin + build dual-path（Contents default / Supabase opt-in / arms false）。**Do not** re-run migration/RLS/seed。
+**CMS Core v2 About Supabase dual-path local implementation (2026-07-24):** **COMPLETE (local only)** — Admin opt-in `PUBLIC_ADMIN_GOSAKI_ABOUT_SUPABASE_PATH_ENABLED` · build-read `CMS_KIT_SITE_PAGE_FIELDS_BUILD_READ` / `registry.sitePageFields=false` · Edge stub `gosaki-about-supabase-save-dry-run` **undeployed** · Save arms **false** · Contents G-12a **retained** · profile.lede only · `seedAppliedStaging: true` · Staging SQL apply COMPLETE · Doc: `cms-core-v2-about-supabase-vertical-slice-local-implementation.md` · FTP QA: `cms-core-v2-about-supabase-ftp-post-qa.md` · Verifier: `verify-cms-core-v2-about-supabase-vertical-slice.mjs` · **Next:** Edge deploy gate → Admin-path package → manual FTP QA。migration/RLS/seed **再実行禁止** · production **STOP**。
+
+**CMS Core v2 About Supabase staging SQL apply result (2026-07-24):** **COMPLETE** — staging `kmjqppxjdnwwrtaeqjta` · migration + RLS + seed **PASS** · `seedAppliedStaging: true` · Staging SQL apply: COMPLETE · superseded next action by dual-path local implementation above · Doc: `cms-core-v2-about-supabase-vertical-slice-staging-apply-result.md`.
 
 **CMS Core v2 About seed fail-closed operator re-accept (2026-07-24):** **COMPLETE** — superseded by staging apply result above.
 

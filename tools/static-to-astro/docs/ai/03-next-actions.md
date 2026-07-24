@@ -3,12 +3,40 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **Kit Core:** About staging SQL apply **COMPLETE** · `migrationAppliedStaging` / `rlsAppliedStaging` / `seedAppliedStaging: true` · all `readyForOperatorAbout*Apply: false` · Contents About **default** · Admin/build cutover **false**。**Next:** About admin + build dual-path（Contents default / Supabase opt-in / arms false）。migration/RLS/seed **再実行禁止**。Doc: `cms-core-v2-about-supabase-vertical-slice-staging-apply-result.md`。
+1. **Kit Core:** About Supabase **dual-path local implementation COMPLETE** · Contents default · Save arms **false** · Edge **undeployed** · `registry.sitePageFields=false`。**Next:** AGENTS 承認で Edge deploy → Admin-path package → operator manual FTP + QA（`cms-core-v2-about-supabase-ftp-post-qa.md`）。migration/RLS/seed **再実行禁止**。Doc: `cms-core-v2-about-supabase-vertical-slice-local-implementation.md`。
 2. **並行可:** Contents YouTube 退役 planning（`contentsYoutubeCutoverExecuted: false`）。
 3. **並行可（Gosaki ops）:** クライアントへ staging 共有・feedback。
 4. **並行可:** production hosting **read-only planning**。
 5. Save arm **false** · About Contents / G-12a **unchanged**。
 6. production / Wix / auto FTP / `vsbvndwuajjhnzpohghh` 禁止 · `service_role` 禁止 · `readyForAnyFutureFtpApply: false`。
+
+## 0. CMS Core v2 About Supabase dual-path local implementation COMPLETE (2026-07-24)
+
+| Item | Value |
+| --- | --- |
+| Gate | `aboutSupabaseLocalImplementation: true` |
+| Admin path flag | `PUBLIC_ADMIN_GOSAKI_ABOUT_SUPABASE_PATH_ENABLED` (default false) |
+| Build-read | `CMS_KIT_SITE_PAGE_FIELDS_BUILD_READ` / `registry.sitePageFields=false` |
+| Edge | `gosaki-about-supabase-save-dry-run` local stub · **undeployed** |
+| Save arms | client/server **false** |
+| Contents About | **retained** (G-12a) |
+| Field | `about` / `profile.lede` only |
+| Doc | `cms-core-v2-about-supabase-vertical-slice-local-implementation.md` |
+
+```txt
+ABOUT_SUPABASE_LOCAL_IMPLEMENTATION: true
+EDGE_DEPLOY_EXECUTED: false
+SAVE_ARM_ENABLED: false
+CONTENTS_ABOUT_PATH_UNCHANGED: true
+REGISTRY_SITE_PAGE_FIELDS: false
+SEED_APPLIED_STAGING: true
+READY_FOR_OPERATOR_ABOUT_SEED_APPLY: false
+READY_FOR_OPERATOR_ABOUT_RLS_APPLY: false
+READY_FOR_OPERATOR_ABOUT_MIGRATION_APPLY: false
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+SERVICE_ROLE_USED: false
+PRODUCTION_UNCHANGED: true
+```
 
 ## 0. CMS Core v2 About staging SQL apply result COMPLETE (2026-07-24)
 
@@ -16,33 +44,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | --- | --- |
 | Staging | `kmjqppxjdnwwrtaeqjta` |
 | Production | `vsbvndwuajjhnzpohghh` **UNCHANGED** |
-| `migrationAppliedStaging` / postcheck | **true** / **PASS** |
-| `rlsAppliedStaging` / postcheck | **true** / **PASS** |
-| `seedAppliedStaging` / postcheck | **true** / **PASS** |
-| Seed | `about` / `profile.lede` · exact lede · published=true · sort_order=10 · count=1 |
-| `readyForOperatorAbout*Apply` | all **false** |
-| Contents About | **default** (unchanged) |
-| Admin / build cutover | **false** |
-| Apply可否 | **Staging SQL apply: COMPLETE** |
+| `migrationAppliedStaging` / `rlsAppliedStaging` / `seedAppliedStaging` | **true** |
+| Status | DB ready · dual-path local implemented above |
 | Doc | `cms-core-v2-about-supabase-vertical-slice-staging-apply-result.md` |
-
-```txt
-MIGRATION_APPLIED_STAGING: true
-MIGRATION_POSTCHECK_PASSED: true
-RLS_APPLIED_STAGING: true
-RLS_POSTCHECK_PASSED: true
-SEED_APPLIED_STAGING: true
-SEED_POSTCHECK_PASSED: true
-READY_FOR_OPERATOR_ABOUT_MIGRATION_APPLY: false
-READY_FOR_OPERATOR_ABOUT_RLS_APPLY: false
-READY_FOR_OPERATOR_ABOUT_SEED_APPLY: false
-CONTENTS_ABOUT_PATH_UNCHANGED: true
-ADMIN_ABOUT_SUPABASE_CUTOVER_EXECUTED: false
-BUILD_ABOUT_SUPABASE_CUTOVER_EXECUTED: false
-PRODUCTION_UNCHANGED: true
-SERVICE_ROLE_USED: false
-READY_FOR_ANY_FUTURE_FTP_APPLY: false
-```
 
 ## 0. CMS Core v2 About seed fail-closed operator re-accept COMPLETE (2026-07-24)
 

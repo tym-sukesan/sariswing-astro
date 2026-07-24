@@ -5,41 +5,35 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: CMS Core v2 About staging SQL apply result COMPLETE
-Result doc: tools/static-to-astro/docs/cms-core-v2-about-supabase-vertical-slice-staging-apply-result.md
-Apply-readiness doc: tools/static-to-astro/docs/cms-core-v2-about-supabase-vertical-slice-apply-readiness.md
-Verifier: tools/static-to-astro/scripts/verify-cms-core-v2-about-supabase-vertical-slice-apply-readiness.mjs
-cmsCoreV2AboutSupabaseVerticalSliceStagingApplyResultComplete: true
-migrationAppliedStaging: true
-migrationPostcheckPassed: true
-rlsAppliedStaging: true
-rlsPostcheckPassed: true
-seedAppliedStaging: true
-seedPostcheckPassed: true
-readyForOperatorAboutMigrationApply: false
-readyForOperatorAboutRlsApply: false
-readyForOperatorAboutSeedApply: false
-aboutSupabaseImplementationExecuted: false
+Current phase: CMS Core v2 About Supabase dual-path local implementation COMPLETE
+Implementation doc: tools/static-to-astro/docs/cms-core-v2-about-supabase-vertical-slice-local-implementation.md
+FTP QA doc: tools/static-to-astro/docs/cms-core-v2-about-supabase-ftp-post-qa.md
+Verifier: tools/static-to-astro/scripts/verify-cms-core-v2-about-supabase-vertical-slice.mjs
+aboutSupabaseLocalImplementation: true
+edgeDeployExecuted: false
+saveArmEnabled: false
 contentsAboutPathUnchanged: true
+registrySitePageFields: false
 adminAboutSupabaseCutoverExecuted: false
 buildAboutSupabaseCutoverExecuted: false
-sqlApplyExecuted: true
-dbWriteExecuted: true
-serviceRoleUsed: false
+migrationAppliedStaging: true
+rlsAppliedStaging: true
+seedAppliedStaging: true
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh UNCHANGED
-Next: About admin + build dual-path (Contents default; Supabase opt-in; arms false) — do not re-run migration/RLS/seed
-EXTERNAL_WRITE_EXECUTED: false (this docs-only record; operator already applied staging SQL)
+Next: Edge deploy (AGENTS) → Admin-path package → operator manual FTP + QA
+EXTERNAL_WRITE_EXECUTED: false (this local-impl record; no FTP/Edge/SQL)
 readyForAnyFutureFtpApply: false
 ```
 
+## CMS Core v2 About Supabase dual-path local implementation (2026-07-24)
+
+- Admin opt-in + build-read loader + Edge stub (undeployed)
+- Field: `about` / `profile.lede` only · Contents G-12a retained · Save arms false
+- `registry.sitePageFields=false` (JSON build default)
+
 ## CMS Core v2 About staging SQL apply result (2026-07-24)
 
-- Staging `kmjqppxjdnwwrtaeqjta`: migration + RLS + seed **PASS**
-- Seed: `gosaki-piano` / `about` / `profile.lede` · exact lede · published=true · sort_order=10 · row count=1
-- `created_by`/`updated_by` null (SQL Editor) acceptable; timestamps non-null
-- Apply可否: **Staging SQL apply: COMPLETE**
-- All `readyForOperatorAbout*Apply: false` · do not re-run
-- Contents About default · Admin/build cutover false · production unchanged
+- Staging migration + RLS + seed PASS · do not re-run
 
 ## CMS Core v2 About seed fail-closed operator re-accept (2026-07-24)
 

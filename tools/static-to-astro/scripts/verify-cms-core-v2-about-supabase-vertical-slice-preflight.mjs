@@ -63,7 +63,7 @@ assert(
 );
 assert("staging result linked", doc.includes("cms-core-v2-about-supabase-vertical-slice-staging-apply-result.md"));
 assert("migration fail-closed includes service_role", /service_role/i.test(doc) && /REVOKE ALL/i.test(doc));
-assert("implementation false", /aboutSupabaseImplementationExecuted:\s*false/.test(doc));
+assert("implementation true (local dual-path)", /aboutSupabaseImplementationExecuted:\s*true/.test(doc));
 assert("contents unchanged", /contentsAboutPathUnchanged:\s*true/.test(doc));
 assert("db write recorded true", /dbWriteExecuted:\s*true/.test(doc) || /DB_WRITE_EXECUTED:\s*true/.test(doc));
 assert("edge deploy false", /edgeDeployExecuted:\s*false/.test(doc));

@@ -9,7 +9,7 @@
 
 ```txt
 CMS_CORE_V2_ABOUT_SUPABASE_VERTICAL_SLICE_PREFLIGHT_COMPLETE: true
-ABOUT_SUPABASE_IMPLEMENTATION_EXECUTED: false
+ABOUT_SUPABASE_IMPLEMENTATION_EXECUTED: true
 READY_FOR_OPERATOR_ABOUT_MIGRATION_APPLY: false
 READY_FOR_OPERATOR_ABOUT_RLS_APPLY: false
 READY_FOR_OPERATOR_ABOUT_SEED_APPLY: false
@@ -24,7 +24,7 @@ RLS_APPLIED_STAGING: true
 SEED_APPLIED_STAGING: true
 ```
 
-**Apply-readiness / staging result:** see [apply-readiness](./cms-core-v2-about-supabase-vertical-slice-apply-readiness.md) · [staging-apply-result](./cms-core-v2-about-supabase-vertical-slice-staging-apply-result.md). Staging migration + RLS + seed **COMPLETE** · all `readyForOperatorAbout*Apply: false` · Contents About remains default · Admin/build cutover **not** executed.
+**Apply-readiness / staging result / local impl:** see [apply-readiness](./cms-core-v2-about-supabase-vertical-slice-apply-readiness.md) · [staging-apply-result](./cms-core-v2-about-supabase-vertical-slice-staging-apply-result.md) · [local-implementation](./cms-core-v2-about-supabase-vertical-slice-local-implementation.md). Staging SQL **COMPLETE** · dual-path **local implemented** · Edge deploy / FTP cutover **not** executed · Contents About remains default.
 
 ---
 
@@ -340,7 +340,7 @@ rlsAppliedStaging: true
 rlsPostcheckPassed: true
 seedAppliedStaging: true
 seedPostcheckPassed: true
-aboutSupabaseImplementationExecuted: false
+aboutSupabaseImplementationExecuted: true
 contentsAboutPathUnchanged: true
 sqlApplyExecuted: true
 dbWriteExecuted: true
@@ -350,4 +350,4 @@ readyForAnyFutureFtpApply: false
 productionUnchanged: true
 ```
 
-**Next gate:** About admin + build dual-path (Contents default; Supabase opt-in; arms false). Do **not** re-run migration / RLS / seed.
+**Next gate:** Edge deploy of `gosaki-about-supabase-save-dry-run` (AGENTS) → Admin-path package → FTP QA. Do **not** re-run migration / RLS / seed.

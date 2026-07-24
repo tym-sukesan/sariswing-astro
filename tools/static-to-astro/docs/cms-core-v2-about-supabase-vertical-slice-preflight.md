@@ -19,7 +19,7 @@ SERVICE_ROLE_USED: false
 READY_FOR_ANY_FUTURE_FTP_APPLY: false
 ```
 
-**Apply-readiness:** see [cms-core-v2-about-supabase-vertical-slice-apply-readiness.md](./cms-core-v2-about-supabase-vertical-slice-apply-readiness.md). Migration/RLS applied state retained · **`readyForOperatorAboutRlsApply: true`** · **`readyForOperatorAboutMigrationApply: false`** · seed fail-closed harden · **`readyForOperatorAboutSeedApply: false`** (re-accept wait).
+**Apply-readiness:** see [cms-core-v2-about-supabase-vertical-slice-apply-readiness.md](./cms-core-v2-about-supabase-vertical-slice-apply-readiness.md). Migration/RLS applied state retained · **`readyForOperatorAboutRlsApply: false`** · **`readyForOperatorAboutMigrationApply: false`** · seed fail-closed operator re-accepted · **`readyForOperatorAboutSeedApply: true`** · **`seedAppliedStaging: false`**.
 
 ---
 
@@ -160,7 +160,7 @@ If tenancy missing → **STOP**. Apply YouTube Core templates first under a **se
 
 Vague “OK” is insufficient. One file per approval preferred.
 
-`readyForOperatorAboutRlsApply` is **true** (migration/RLS applied state retained). `readyForOperatorAboutMigrationApply` stays **false**. `readyForOperatorAboutSeedApply` is **false** after seed fail-closed harden — operator re-accept required before seed. Seed requires per-file AGENTS approval + SELECT PASS.
+`readyForOperatorAboutRlsApply` is **false** (already applied — do not re-run). `readyForOperatorAboutMigrationApply` stays **false**. `readyForOperatorAboutSeedApply` is **true** after operator re-accept of seed fail-closed harden. `seedAppliedStaging` stays **false** until seed is applied. Seed requires per-file AGENTS approval + SELECT PASS.
 
 ---
 
@@ -288,7 +288,7 @@ Rollback DELETE requires matching `site_slug` + `page_key` + `field_key` + exact
 - Approval IDs reserved and distinct from G-12a / YouTube
 - Dual-path + fallback + arms documented
 - Access = reuse existing tenancy (no new membership INSERT template)
-- Preflight → apply-readiness → migration applied (post-check PASS) → RLS service_role harden → **operator re-accept** → `readyForOperatorAboutRlsApply: true` · migration gate stays false
+- Preflight → apply-readiness → migration applied (post-check PASS) → RLS applied → seed fail-closed harden → **operator re-accept seed** → `readyForOperatorAboutSeedApply: true` · migration/RLS apply gates stay false · `seedAppliedStaging: false`
 - Verifier PASS · `git diff --check` clean
 
 ### Always STOP
@@ -327,8 +327,9 @@ opaqueHtmlPrimaryModel: false
 tenancyReuseSitesSiteMembersPlatformAdmins: true
 aboutAccessAssignmentReusesYoutubeMembership: true
 readyForOperatorAboutMigrationApply: false
-readyForOperatorAboutRlsApply: true
-readyForOperatorAboutSeedApply: false
+readyForOperatorAboutRlsApply: false
+readyForOperatorAboutSeedApply: true
+seedAppliedStaging: false
 aboutSupabaseImplementationExecuted: false
 contentsAboutPathUnchanged: true
 sqlApplyExecuted: false
@@ -338,4 +339,4 @@ serviceRoleUsed: false
 readyForAnyFutureFtpApply: false
 ```
 
-**Next gate:** operator re-accept seed fail-closed harden → AGENTS-approved seed apply. Migration/RLS applied — do not re-run.
+**Next gate:** AGENTS-approved seed apply (once) → post-seed SELECT. Migration/RLS applied — do not re-run.

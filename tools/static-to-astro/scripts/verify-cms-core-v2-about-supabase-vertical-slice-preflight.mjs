@@ -54,7 +54,8 @@ assert(
   "banner apply ready false",
   /READY_FOR_OPERATOR_ABOUT_MIGRATION_APPLY:\s*false/.test(doc),
 );
-assert("preflight notes rls apply true", /readyForOperatorAboutRlsApply:\s*true/.test(doc));
+assert("preflight notes rls apply false", /readyForOperatorAboutRlsApply:\s*false/.test(doc));
+assert("preflight notes seed apply true", /readyForOperatorAboutSeedApply:\s*true/.test(doc));
 assert("sql apply still false", /sqlApplyExecuted:\s*false/.test(doc) || /SQL_APPLY_EXECUTED:\s*false/.test(doc));
 assert(
   "apply-readiness linked",
@@ -197,9 +198,10 @@ assert("ai00 mentions about preflight", /about-supabase-vertical-slice-preflight
 assert("ai03 mentions about preflight", /about-supabase-vertical-slice-preflight|About Supabase.*preflight/i.test(ai03));
 assert("handoff mentions about preflight", /about-supabase-vertical-slice-preflight|About Supabase.*preflight/i.test(handoff));
 assert("ai03 migration gate false", /readyForOperatorAboutMigrationApply:\s*false|READY_FOR_OPERATOR_ABOUT_MIGRATION_APPLY:\s*false/i.test(ai03));
-assert("ai03 rls gate true", /readyForOperatorAboutRlsApply:\s*true|READY_FOR_OPERATOR_ABOUT_RLS_APPLY:\s*true/i.test(ai03));
-assert("ai03 seed gate false", /readyForOperatorAboutSeedApply:\s*false|READY_FOR_OPERATOR_ABOUT_SEED_APPLY:\s*false/i.test(ai03));
-assert("preflight seed gate false", /readyForOperatorAboutSeedApply:\s*false/.test(doc));
+assert("ai03 rls gate false", /readyForOperatorAboutRlsApply:\s*false|READY_FOR_OPERATOR_ABOUT_RLS_APPLY:\s*false/i.test(ai03));
+assert("ai03 seed gate true", /readyForOperatorAboutSeedApply:\s*true|READY_FOR_OPERATOR_ABOUT_SEED_APPLY:\s*true/i.test(ai03));
+assert("preflight seed gate true", /readyForOperatorAboutSeedApply:\s*true/.test(doc));
+assert("preflight seed not applied", /seedAppliedStaging:\s*false/.test(doc));
 
 console.log(`\n${passed} passed, ${failed} failed`);
 process.exit(failed > 0 ? 1 : 0);

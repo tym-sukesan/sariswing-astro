@@ -33,3 +33,6 @@ verify_jwt = true
 
 [functions.gosaki-schedule-save-dry-run]
 verify_jwt = true
+
+[functions.gosaki-about-supabase-save-dry-run]
+verify_jwt = true

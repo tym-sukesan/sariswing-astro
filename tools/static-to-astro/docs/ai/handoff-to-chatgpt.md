@@ -5,13 +5,18 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: CMS Core v2 About Supabase dual-path local implementation COMPLETE
+Current phase: CMS Core v2 About Supabase Edge deploy preflight COMPLETE
+Preflight doc: tools/static-to-astro/docs/cms-core-v2-about-supabase-save-dry-run-edge-deploy-preflight.md
+Verifier: tools/static-to-astro/scripts/verify-cms-core-v2-about-supabase-save-dry-run-edge-deploy-preflight.mjs
 Implementation doc: tools/static-to-astro/docs/cms-core-v2-about-supabase-vertical-slice-local-implementation.md
 FTP QA doc: tools/static-to-astro/docs/cms-core-v2-about-supabase-ftp-post-qa.md
-Verifier: tools/static-to-astro/scripts/verify-cms-core-v2-about-supabase-vertical-slice.mjs
-aboutSupabaseLocalImplementation: true
+ABOUT_SUPABASE_EDGE_DEPLOY_PREFLIGHT_COMPLETE: true
+EDGE_DEPLOY_PREFLIGHT_READY: true
+readyForAboutSupabaseEdgeDeployExecution: true
 edgeDeployExecuted: false
 saveArmEnabled: false
+GOSAKI_ABOUT_SUPABASE_SAVE_ARMED_SET: false
+aboutSupabaseLocalImplementation: true
 contentsAboutPathUnchanged: true
 registrySitePageFields: false
 adminAboutSupabaseCutoverExecuted: false
@@ -19,11 +24,19 @@ buildAboutSupabaseCutoverExecuted: false
 migrationAppliedStaging: true
 rlsAppliedStaging: true
 seedAppliedStaging: true
-STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh UNCHANGED
-Next: Edge deploy (AGENTS) → Admin-path package → operator manual FTP + QA
-EXTERNAL_WRITE_EXECUTED: false (this local-impl record; no FTP/Edge/SQL)
+STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh UNCHANGED / STOP
+Deploy command (NOT run): supabase functions deploy gosaki-about-supabase-save-dry-run --project-ref kmjqppxjdnwwrtaeqjta
+Next: AGENTS承認 → staging Edge deploy → remote dry-run QA → Admin-path package → manual FTP
+EXTERNAL_WRITE_EXECUTED: false
 readyForAnyFutureFtpApply: false
 ```
+
+## CMS Core v2 About Supabase Edge deploy preflight (2026-07-24)
+
+- Target: `gosaki-about-supabase-save-dry-run` @ staging only
+- Root ↔ mirror identical · JWT + can_write_site · about/profile.lede only
+- Dry-run no DB write · Save gated by GOSAKI_ABOUT_SUPABASE_SAVE_ARMED (unset/false)
+- No deploy / Secret / remote invoke in this phase
 
 ## CMS Core v2 About Supabase dual-path local implementation (2026-07-24)
 

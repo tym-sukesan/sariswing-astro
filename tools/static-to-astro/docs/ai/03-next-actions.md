@@ -3,12 +3,39 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **Kit Core:** About Supabase **dual-path local implementation COMPLETE** · Contents default · Save arms **false** · Edge **undeployed** · `registry.sitePageFields=false`。**Next:** AGENTS 承認で Edge deploy → Admin-path package → operator manual FTP + QA（`cms-core-v2-about-supabase-ftp-post-qa.md`）。migration/RLS/seed **再実行禁止**。Doc: `cms-core-v2-about-supabase-vertical-slice-local-implementation.md`。
+1. **Kit Core:** About Supabase **Edge deploy preflight COMPLETE** · `readyForAboutSupabaseEdgeDeployExecution: true` · Edge **undeployed** · Save arm **false**。**Next:** AGENTS 承認で `supabase functions deploy gosaki-about-supabase-save-dry-run --project-ref kmjqppxjdnwwrtaeqjta` → remote dry-run QA → Admin-path package → operator manual FTP + QA。Doc: `cms-core-v2-about-supabase-save-dry-run-edge-deploy-preflight.md`。
 2. **並行可:** Contents YouTube 退役 planning（`contentsYoutubeCutoverExecuted: false`）。
 3. **並行可（Gosaki ops）:** クライアントへ staging 共有・feedback。
 4. **並行可:** production hosting **read-only planning**。
-5. Save arm **false** · About Contents / G-12a **unchanged**。
+5. Save arm **false** · About Contents / G-12a **unchanged** · migration/RLS/seed **再実行禁止**。
 6. production / Wix / auto FTP / `vsbvndwuajjhnzpohghh` 禁止 · `service_role` 禁止 · `readyForAnyFutureFtpApply: false`。
+
+## 0. CMS Core v2 About Supabase Edge deploy preflight COMPLETE (2026-07-24)
+
+| Item | Value |
+| --- | --- |
+| Gate | `ABOUT_SUPABASE_EDGE_DEPLOY_PREFLIGHT_COMPLETE: true` |
+| Deploy readiness | `EDGE_DEPLOY_PREFLIGHT_READY: true` · `readyForAboutSupabaseEdgeDeployExecution: true` |
+| Function | `gosaki-about-supabase-save-dry-run` |
+| Staging | `kmjqppxjdnwwrtaeqjta` |
+| Production | `vsbvndwuajjhnzpohghh` **STOP** |
+| Save arm | `GOSAKI_ABOUT_SUPABASE_SAVE_ARMED` **unset/false** |
+| Deploy executed | **false** |
+| Doc | `cms-core-v2-about-supabase-save-dry-run-edge-deploy-preflight.md` |
+| Verifier | `verify-cms-core-v2-about-supabase-save-dry-run-edge-deploy-preflight.mjs` |
+
+```txt
+ABOUT_SUPABASE_EDGE_DEPLOY_PREFLIGHT_COMPLETE: true
+EDGE_DEPLOY_PREFLIGHT_READY: true
+readyForAboutSupabaseEdgeDeployExecution: true
+EDGE_DEPLOY_EXECUTED: false
+SAVE_ARM_ENABLED: false
+GOSAKI_ABOUT_SUPABASE_SAVE_ARMED_SET: false
+NEW_SECRETS_REQUIRED: false
+SERVICE_ROLE_USED: false
+PRODUCTION_UNCHANGED: true
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+```
 
 ## 0. CMS Core v2 About Supabase dual-path local implementation COMPLETE (2026-07-24)
 

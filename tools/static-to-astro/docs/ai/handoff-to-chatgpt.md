@@ -5,46 +5,53 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: CMS Core v2 About seed fail-closed operator re-accept COMPLETE
+Current phase: CMS Core v2 About staging SQL apply result COMPLETE
+Result doc: tools/static-to-astro/docs/cms-core-v2-about-supabase-vertical-slice-staging-apply-result.md
 Apply-readiness doc: tools/static-to-astro/docs/cms-core-v2-about-supabase-vertical-slice-apply-readiness.md
 Verifier: tools/static-to-astro/scripts/verify-cms-core-v2-about-supabase-vertical-slice-apply-readiness.mjs
-cmsCoreV2AboutSupabaseVerticalSliceApplyReadinessComplete: true
-migrationServiceRoleRevokeHarden: true
-rlsServiceRoleRevokeHarden: true
-operatorReacceptedAfterRlsServiceRoleRevoke: true
-seedFailClosedHarden: true
-operatorReacceptedAfterSeedFailClosed: true
-migrationAppliedStagingPostcheckPass: true
-seedAppliedStaging: false
+cmsCoreV2AboutSupabaseVerticalSliceStagingApplyResultComplete: true
+migrationAppliedStaging: true
+migrationPostcheckPassed: true
+rlsAppliedStaging: true
+rlsPostcheckPassed: true
+seedAppliedStaging: true
+seedPostcheckPassed: true
 readyForOperatorAboutMigrationApply: false
 readyForOperatorAboutRlsApply: false
-readyForOperatorAboutSeedApply: true
-sqlTemplatesChangeRequired: false
-sqlApplyExecuted: false
+readyForOperatorAboutSeedApply: false
 aboutSupabaseImplementationExecuted: false
 contentsAboutPathUnchanged: true
+adminAboutSupabaseCutoverExecuted: false
+buildAboutSupabaseCutoverExecuted: false
+sqlApplyExecuted: true
+dbWriteExecuted: true
 serviceRoleUsed: false
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh UNCHANGED
-Next: AGENTS-approved seed apply once → post-seed SELECT (do not re-run migration/RLS)
-EXTERNAL_WRITE_EXECUTED: false (this docs-only record)
+Next: About admin + build dual-path (Contents default; Supabase opt-in; arms false) — do not re-run migration/RLS/seed
+EXTERNAL_WRITE_EXECUTED: false (this docs-only record; operator already applied staging SQL)
 readyForAnyFutureFtpApply: false
 ```
 
+## CMS Core v2 About staging SQL apply result (2026-07-24)
+
+- Staging `kmjqppxjdnwwrtaeqjta`: migration + RLS + seed **PASS**
+- Seed: `gosaki-piano` / `about` / `profile.lede` · exact lede · published=true · sort_order=10 · row count=1
+- `created_by`/`updated_by` null (SQL Editor) acceptable; timestamps non-null
+- Apply可否: **Staging SQL apply: COMPLETE**
+- All `readyForOperatorAbout*Apply: false` · do not re-run
+- Contents About default · Admin/build cutover false · production unchanged
+
 ## CMS Core v2 About seed fail-closed operator re-accept (2026-07-24)
 
-- Confirmed fail-closed seed template (no ON CONFLICT / UPDATE; plain INSERT; STOP if exists)
-- Apply可否: **Seed apply: YES（staging only）**
-- `readyForOperatorAboutSeedApply: true`
-- `readyForOperatorAboutRlsApply: false` · `readyForOperatorAboutMigrationApply: false` (applied; do not re-run)
-- `seedAppliedStaging: false`
+- Superseded by staging apply result above
 
 ## CMS Core v2 About seed fail-closed harden (2026-07-24)
 
-- Retained · HOLD superseded by re-accept above
+- Retained · seed applied once
 
 ## CMS Core v2 About RLS apply operator re-accept (2026-07-24)
 
-- Retained · RLS apply gate now false (already applied)
+- Retained · RLS apply gate false (already applied)
 
 ## CMS Core v2 About RLS service_role revoke harden (2026-07-24)
 
@@ -53,7 +60,7 @@ readyForAnyFutureFtpApply: false
 ## CMS Core v2 About Supabase vertical slice preflight (2026-07-24)
 
 - Schema: `site_page_fields` · first field `about` / `profile.lede`
-- Seed apply ready; migration/RLS apply gates false; seedAppliedStaging false
+- Staging apply complete; all apply gates false; `*AppliedStaging: true`
 
 ## CMS Core v2 — next Kit feature comparison (2026-07-24)
 

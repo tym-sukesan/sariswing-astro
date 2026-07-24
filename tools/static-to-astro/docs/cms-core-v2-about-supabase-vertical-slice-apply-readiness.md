@@ -1,21 +1,22 @@
 # CMS Core v2 — About Supabase Vertical Slice Apply Readiness
 
 - **Phase:** `cms-core-v2-about-supabase-vertical-slice-apply-readiness`
-- **Status:** **complete** — final audit of existing SQL templates; **no SQL apply / DB write / implementation**
+- **Status:** **complete** — templates audited; **staging SQL apply recorded** in [cms-core-v2-about-supabase-vertical-slice-staging-apply-result.md](./cms-core-v2-about-supabase-vertical-slice-staging-apply-result.md)
 - **Date:** 2026-07-24
 - **Baseline HEAD (authoring):** `f32b112` (confirm with `git rev-parse --short HEAD` at apply time)
 - **Prior:** [cms-core-v2-about-supabase-vertical-slice-preflight.md](./cms-core-v2-about-supabase-vertical-slice-preflight.md)
+- **Result:** [cms-core-v2-about-supabase-vertical-slice-staging-apply-result.md](./cms-core-v2-about-supabase-vertical-slice-staging-apply-result.md)
 - **Verifier:** `scripts/verify-cms-core-v2-about-supabase-vertical-slice-apply-readiness.mjs`
 
 ```txt
 CMS_CORE_V2_ABOUT_SUPABASE_VERTICAL_SLICE_APPLY_READINESS_COMPLETE: true
 READY_FOR_OPERATOR_ABOUT_MIGRATION_APPLY: false
 READY_FOR_OPERATOR_ABOUT_RLS_APPLY: false
-READY_FOR_OPERATOR_ABOUT_SEED_APPLY: true
+READY_FOR_OPERATOR_ABOUT_SEED_APPLY: false
 SQL_TEMPLATES_CHANGE_REQUIRED: false
 ABOUT_SUPABASE_IMPLEMENTATION_EXECUTED: false
-SQL_APPLY_EXECUTED: false
-DB_WRITE_EXECUTED: false
+SQL_APPLY_EXECUTED: true
+DB_WRITE_EXECUTED: true
 EDGE_DEPLOY_EXECUTED: false
 CONTENTS_ABOUT_PATH_UNCHANGED: true
 SERVICE_ROLE_USED: false
@@ -26,13 +27,21 @@ RLS_SERVICE_ROLE_REVOKE_HARDEN: true
 OPERATOR_REACCEPTED_AFTER_RLS_SERVICE_ROLE_REVOKE: true
 SEED_FAIL_CLOSED_HARDEN: true
 OPERATOR_REACCEPTED_AFTER_SEED_FAIL_CLOSED: true
+MIGRATION_APPLIED_STAGING: true
+MIGRATION_POSTCHECK_PASSED: true
 MIGRATION_APPLIED_STAGING_POSTCHECK_PASS: true
-SEED_APPLIED_STAGING: false
+RLS_APPLIED_STAGING: true
+RLS_POSTCHECK_PASSED: true
+SEED_APPLIED_STAGING: true
+SEED_POSTCHECK_PASSED: true
+ADMIN_ABOUT_SUPABASE_CUTOVER_EXECUTED: false
+BUILD_ABOUT_SUPABASE_CUTOVER_EXECUTED: false
+PRODUCTION_UNCHANGED: true
 ```
 
-**Apply可否:** **Seed apply: YES（staging only）** — operator re-accepted seed fail-closed template · **`readyForOperatorAboutSeedApply: true`** · **`readyForOperatorAboutMigrationApply: false`** · **`readyForOperatorAboutRlsApply: false`** · migration + RLS applied state **retained** — **do not** re-run migration/RLS · **`seedAppliedStaging: false`** until operator applies seed once.
+**Apply可否:** **Staging SQL apply: COMPLETE** — migration + RLS + seed applied on `kmjqppxjdnwwrtaeqjta` · all post-checks **PASS** · **`readyForOperatorAboutMigrationApply/RlsApply/SeedApply: false`** — **do not** re-run · Contents About remains default · Admin/build cutover **not** executed · production **unchanged**.
 
-**Cursor / agent must not apply.** Operator pastes templates in Supabase SQL Editor on `kmjqppxjdnwwrtaeqjta` only.
+**Cursor / agent must not re-apply.** See staging apply result for operator post-check evidence.
 
 ---
 
@@ -47,7 +56,7 @@ SEED_APPLIED_STAGING: false
 | RLS rollback | Drop 4 policies + revoke; no row delete | **OK** |
 | DDL rollback | Drop triggers/fns + `DROP TABLE` **without CASCADE**; does not touch tenancy/`site_embeds` | **OK** |
 
-**`SQL_TEMPLATES_CHANGE_REQUIRED: false`** after seed fail-closed harden. **`readyForOperatorAboutMigrationApply: false`** · **`readyForOperatorAboutRlsApply: false`** (migration/RLS already applied — do not re-run) · **`readyForOperatorAboutSeedApply: true`** — operator re-accepted 2026-07-24 · **`seedAppliedStaging: false`**.
+**`SQL_TEMPLATES_CHANGE_REQUIRED: false`**. **`readyForOperatorAboutMigrationApply: false`** · **`readyForOperatorAboutRlsApply: false`** · **`readyForOperatorAboutSeedApply: false`** — staging apply **COMPLETE** · **`migrationAppliedStaging` / `rlsAppliedStaging` / `seedAppliedStaging: true`** with post-checks PASS · do **not** re-run.
 
 **Residual (documented, not blocking first apply after re-accept):** migration does not auto-validate an *existing* wrong-shaped `site_page_fields`. Pre-apply SELECT must prove table **absent** (preferred) or columns match §4.
 
@@ -320,27 +329,27 @@ Rollback approval form (same AGENTS bar):
 
 ---
 
-## 7. Gate: Seed apply ready (migration/RLS applied retained)
+## 7. Gate: Staging SQL apply COMPLETE (do not re-run)
 
 | Item | Value |
 | --- | --- |
 | Preflight complete | true |
-| Migration applied on staging + post-check | **PASS** (do **not** re-run) |
-| RLS applied state | **retained** (do **not** re-run) |
-| Migration `service_role` revoke harden | **true** |
-| RLS `service_role` revoke harden | **true** (operator re-accepted) |
-| Seed fail-closed harden | **true** (no upsert; plain INSERT + STOP if exists) |
-| Operator re-accepted after seed fail-closed | **true** |
-| Templates change required (further) | **false** — SQL frozen after seed harden |
-| Contents / G-12a impact | **none** from SQL apply |
-| **`readyForOperatorAboutMigrationApply`** | **`false`** (already applied; no re-apply) |
-| **`readyForOperatorAboutRlsApply`** | **`false`** (already applied; no re-apply) |
-| **`readyForOperatorAboutSeedApply`** | **`true`** |
-| **`seedAppliedStaging`** | **`false`** (not yet applied) |
+| Migration applied + post-check | **PASS** · `migrationAppliedStaging: true` · `migrationPostcheckPassed: true` |
+| RLS applied + post-check | **PASS** · `rlsAppliedStaging: true` · `rlsPostcheckPassed: true` |
+| Seed applied + post-check | **PASS** · `seedAppliedStaging: true` · `seedPostcheckPassed: true` |
+| Seed row | `gosaki-piano` / `about` / `profile.lede` · exact lede · `published=true` · `sort_order=10` · count=1 |
+| `created_by` / `updated_by` | **null** (SQL Editor — acceptable) |
+| Templates change required | **false** |
+| Contents / G-12a | **unchanged** (default path) |
+| Admin / build cutover | **not executed** |
+| **`readyForOperatorAboutMigrationApply`** | **`false`** |
+| **`readyForOperatorAboutRlsApply`** | **`false`** |
+| **`readyForOperatorAboutSeedApply`** | **`false`** |
+| Production | **unchanged** |
 
 **Still false / forbidden until separate phases:** Edge deploy · admin dual-path code · Save arm · FTP · production · Contents About cutover · `aboutSupabaseImplementationExecuted`.
 
-**Next:** AGENTS-approved seed apply (once) → post-seed SELECT (§5.3). Do **not** re-run migration/RLS. Cursor must not apply.
+**Next:** About admin + build dual-path planning/implementation (Contents default; Supabase opt-in; arms false). Do **not** re-run migration/RLS/seed. Detail: [staging-apply-result](./cms-core-v2-about-supabase-vertical-slice-staging-apply-result.md).
 
 ---
 
@@ -350,7 +359,7 @@ Rollback approval form (same AGENTS bar):
 cmsCoreV2AboutSupabaseVerticalSliceApplyReadinessComplete: true
 readyForOperatorAboutMigrationApply: false
 readyForOperatorAboutRlsApply: false
-readyForOperatorAboutSeedApply: true
+readyForOperatorAboutSeedApply: false
 sqlTemplatesChangeRequired: false
 migrationServiceRoleRevokeHarden: true
 operatorReacceptedAfterServiceRoleRevoke: true
@@ -358,14 +367,22 @@ rlsServiceRoleRevokeHarden: true
 operatorReacceptedAfterRlsServiceRoleRevoke: true
 seedFailClosedHarden: true
 operatorReacceptedAfterSeedFailClosed: true
+migrationAppliedStaging: true
+migrationPostcheckPassed: true
 migrationAppliedStagingPostcheckPass: true
-seedAppliedStaging: false
+rlsAppliedStaging: true
+rlsPostcheckPassed: true
+seedAppliedStaging: true
+seedPostcheckPassed: true
 aboutSupabaseImplementationExecuted: false
-sqlApplyExecuted: false
-dbWriteExecuted: false
+sqlApplyExecuted: true
+dbWriteExecuted: true
 edgeDeployExecuted: false
 contentsAboutPathUnchanged: true
+adminAboutSupabaseCutoverExecuted: false
+buildAboutSupabaseCutoverExecuted: false
 aboutAccessAssignmentReusesYoutubeMembership: true
 serviceRoleUsed: false
 readyForAnyFutureFtpApply: false
+productionUnchanged: true
 ```

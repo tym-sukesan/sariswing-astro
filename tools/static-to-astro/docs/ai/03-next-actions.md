@@ -3,46 +3,60 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **Kit Core:** About seed **operator re-accepted** · **`readyForOperatorAboutSeedApply: true`** · **`readyForOperatorAboutRlsApply: false`** · **`readyForOperatorAboutMigrationApply: false`**（migration/RLS 適用済・再実行禁止）· **`seedAppliedStaging: false`**。**Next:** AGENTS 承認付き seed 1回。Cursor は SQL 実行しない。Doc: `cms-core-v2-about-supabase-vertical-slice-apply-readiness.md`。
-2. Seed 後: apply-result 記録 → Edge/admin dual-path 実装（arms false）。
-3. **並行可:** Contents YouTube 退役 planning（`contentsYoutubeCutoverExecuted: false`）。
-4. **並行可（Gosaki ops）:** クライアントへ staging 共有・feedback。
-5. **並行可:** production hosting **read-only planning**。
-6. Save arm **false** · About Contents / G-12a **unchanged**。
-7. production / Wix / auto FTP / `vsbvndwuajjhnzpohghh` 禁止 · `service_role` 禁止 · `readyForAnyFutureFtpApply: false`。
+1. **Kit Core:** About staging SQL apply **COMPLETE** · `migrationAppliedStaging` / `rlsAppliedStaging` / `seedAppliedStaging: true` · all `readyForOperatorAbout*Apply: false` · Contents About **default** · Admin/build cutover **false**。**Next:** About admin + build dual-path（Contents default / Supabase opt-in / arms false）。migration/RLS/seed **再実行禁止**。Doc: `cms-core-v2-about-supabase-vertical-slice-staging-apply-result.md`。
+2. **並行可:** Contents YouTube 退役 planning（`contentsYoutubeCutoverExecuted: false`）。
+3. **並行可（Gosaki ops）:** クライアントへ staging 共有・feedback。
+4. **並行可:** production hosting **read-only planning**。
+5. Save arm **false** · About Contents / G-12a **unchanged**。
+6. production / Wix / auto FTP / `vsbvndwuajjhnzpohghh` 禁止 · `service_role` 禁止 · `readyForAnyFutureFtpApply: false`。
+
+## 0. CMS Core v2 About staging SQL apply result COMPLETE (2026-07-24)
+
+| Item | Value |
+| --- | --- |
+| Staging | `kmjqppxjdnwwrtaeqjta` |
+| Production | `vsbvndwuajjhnzpohghh` **UNCHANGED** |
+| `migrationAppliedStaging` / postcheck | **true** / **PASS** |
+| `rlsAppliedStaging` / postcheck | **true** / **PASS** |
+| `seedAppliedStaging` / postcheck | **true** / **PASS** |
+| Seed | `about` / `profile.lede` · exact lede · published=true · sort_order=10 · count=1 |
+| `readyForOperatorAbout*Apply` | all **false** |
+| Contents About | **default** (unchanged) |
+| Admin / build cutover | **false** |
+| Apply可否 | **Staging SQL apply: COMPLETE** |
+| Doc | `cms-core-v2-about-supabase-vertical-slice-staging-apply-result.md` |
+
+```txt
+MIGRATION_APPLIED_STAGING: true
+MIGRATION_POSTCHECK_PASSED: true
+RLS_APPLIED_STAGING: true
+RLS_POSTCHECK_PASSED: true
+SEED_APPLIED_STAGING: true
+SEED_POSTCHECK_PASSED: true
+READY_FOR_OPERATOR_ABOUT_MIGRATION_APPLY: false
+READY_FOR_OPERATOR_ABOUT_RLS_APPLY: false
+READY_FOR_OPERATOR_ABOUT_SEED_APPLY: false
+CONTENTS_ABOUT_PATH_UNCHANGED: true
+ADMIN_ABOUT_SUPABASE_CUTOVER_EXECUTED: false
+BUILD_ABOUT_SUPABASE_CUTOVER_EXECUTED: false
+PRODUCTION_UNCHANGED: true
+SERVICE_ROLE_USED: false
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+```
 
 ## 0. CMS Core v2 About seed fail-closed operator re-accept COMPLETE (2026-07-24)
 
 | Item | Value |
 | --- | --- |
-| Gate | `operatorReacceptedAfterSeedFailClosed: true` |
-| `readyForOperatorAboutSeedApply` | **true** |
-| `readyForOperatorAboutRlsApply` | **false** (already applied; no re-run) |
-| `readyForOperatorAboutMigrationApply` | **false** (already applied) |
-| `seedAppliedStaging` | **false** |
-| Apply可否 | **Seed apply: YES（staging only）** |
+| Status | superseded by staging apply result above |
 | Doc | `cms-core-v2-about-supabase-vertical-slice-apply-readiness.md` |
-
-```txt
-OPERATOR_REACCEPTED_AFTER_SEED_FAIL_CLOSED: true
-SEED_FAIL_CLOSED_HARDEN: true
-READY_FOR_OPERATOR_ABOUT_SEED_APPLY: true
-READY_FOR_OPERATOR_ABOUT_RLS_APPLY: false
-READY_FOR_OPERATOR_ABOUT_MIGRATION_APPLY: false
-SEED_APPLIED_STAGING: false
-MIGRATION_APPLIED_STAGING_POSTCHECK_PASS: true
-SQL_APPLY_EXECUTED: false
-SERVICE_ROLE_USED: false
-READY_FOR_ANY_FUTURE_FTP_APPLY: false
-```
 
 ## 0. CMS Core v2 About seed fail-closed harden COMPLETE (2026-07-24)
 
 | Item | Value |
 | --- | --- |
 | Gate | `seedFailClosedHarden: true` |
-| Status | superseded by operator re-accept above |
-| Change | No `ON CONFLICT DO UPDATE` · plain INSERT · STOP if row exists |
+| Status | retained; seed applied once |
 | Doc | `cms-core-v2-about-supabase-vertical-slice-apply-readiness.md` |
 
 ## 0. CMS Core v2 About RLS apply operator re-accept COMPLETE (2026-07-24)
@@ -50,7 +64,7 @@ READY_FOR_ANY_FUTURE_FTP_APPLY: false
 | Item | Value |
 | --- | --- |
 | Gate | `operatorReacceptedAfterRlsServiceRoleRevoke: true` |
-| `readyForOperatorAboutRlsApply` | **false** (already applied; no re-run) |
+| `readyForOperatorAboutRlsApply` | **false** (applied; no re-run) |
 | `readyForOperatorAboutMigrationApply` | **false** (already applied) |
 | Doc | `cms-core-v2-about-supabase-vertical-slice-apply-readiness.md` |
 
@@ -58,7 +72,7 @@ READY_FOR_ANY_FUTURE_FTP_APPLY: false
 OPERATOR_REACCEPTED_AFTER_RLS_SERVICE_ROLE_REVOKE: true
 READY_FOR_OPERATOR_ABOUT_RLS_APPLY: false
 READY_FOR_OPERATOR_ABOUT_MIGRATION_APPLY: false
-MIGRATION_APPLIED_STAGING_POSTCHECK_PASS: true
+MIGRATION_APPLIED_STAGING: true
 ```
 
 ## 0. CMS Core v2 About RLS service_role revoke harden (2026-07-24)

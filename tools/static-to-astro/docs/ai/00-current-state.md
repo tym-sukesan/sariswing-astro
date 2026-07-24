@@ -3,11 +3,13 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**CMS Core v2 About seed fail-closed operator re-accept (2026-07-24):** **COMPLETE** — confirmed fail-closed seed template · **`readyForOperatorAboutSeedApply: true`** · **`readyForOperatorAboutMigrationApply: false`** · **`readyForOperatorAboutRlsApply: false`**（migration/RLS 適用済・再実行禁止）· **`seedAppliedStaging: false`** · Apply可否 **Seed apply: YES（staging only）** · SQL templates **unchanged** · Doc: `cms-core-v2-about-supabase-vertical-slice-apply-readiness.md` · **Next:** AGENTS 承認で seed 1回（Cursor は実行しない）。
+**CMS Core v2 About Supabase staging SQL apply result (2026-07-24):** **COMPLETE** — staging `kmjqppxjdnwwrtaeqjta` · migration + RLS + seed **PASS** · `site_page_fields` live · seed `about`/`profile.lede` = `後藤 沙紀 1990年7月9日 A型 岡山県岡山市生まれ。` · `migrationAppliedStaging/rlsAppliedStaging/seedAppliedStaging: true` · all post-checks PASS · all `readyForOperatorAbout*Apply: false` · Contents About **default** · Admin/build cutover **false** · production `vsbvndwuajjhnzpohghh` **UNCHANGED** · Doc: `cms-core-v2-about-supabase-vertical-slice-staging-apply-result.md` · **Next:** About admin + build dual-path（Contents default / Supabase opt-in / arms false）。**Do not** re-run migration/RLS/seed。
 
-**CMS Core v2 About seed fail-closed harden (2026-07-24):** **COMPLETE** — superseded HOLD by operator re-accept above.
+**CMS Core v2 About seed fail-closed operator re-accept (2026-07-24):** **COMPLETE** — superseded by staging apply result above.
 
-**CMS Core v2 About RLS apply-readiness operator re-accept (2026-07-24):** **COMPLETE** — RLS applied; apply gate now **false** (no re-run) · migration gate false.
+**CMS Core v2 About seed fail-closed harden (2026-07-24):** **COMPLETE** — retained; seed applied once.
+
+**CMS Core v2 About RLS apply-readiness operator re-accept (2026-07-24):** **COMPLETE** — RLS applied; re-run forbidden.
 
 **CMS Core v2 About RLS service_role revoke harden (2026-07-24):** **COMPLETE** — superseded HOLD by operator re-accept above.
 

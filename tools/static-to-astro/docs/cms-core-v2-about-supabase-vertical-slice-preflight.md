@@ -11,15 +11,20 @@
 CMS_CORE_V2_ABOUT_SUPABASE_VERTICAL_SLICE_PREFLIGHT_COMPLETE: true
 ABOUT_SUPABASE_IMPLEMENTATION_EXECUTED: false
 READY_FOR_OPERATOR_ABOUT_MIGRATION_APPLY: false
-SQL_APPLY_EXECUTED: false
-DB_WRITE_EXECUTED: false
+READY_FOR_OPERATOR_ABOUT_RLS_APPLY: false
+READY_FOR_OPERATOR_ABOUT_SEED_APPLY: false
+SQL_APPLY_EXECUTED: true
+DB_WRITE_EXECUTED: true
 EDGE_DEPLOY_EXECUTED: false
 CONTENTS_ABOUT_PATH_UNCHANGED: true
 SERVICE_ROLE_USED: false
 READY_FOR_ANY_FUTURE_FTP_APPLY: false
+MIGRATION_APPLIED_STAGING: true
+RLS_APPLIED_STAGING: true
+SEED_APPLIED_STAGING: true
 ```
 
-**Apply-readiness:** see [cms-core-v2-about-supabase-vertical-slice-apply-readiness.md](./cms-core-v2-about-supabase-vertical-slice-apply-readiness.md). Migration/RLS applied state retained · **`readyForOperatorAboutRlsApply: false`** · **`readyForOperatorAboutMigrationApply: false`** · seed fail-closed operator re-accepted · **`readyForOperatorAboutSeedApply: true`** · **`seedAppliedStaging: false`**.
+**Apply-readiness / staging result:** see [apply-readiness](./cms-core-v2-about-supabase-vertical-slice-apply-readiness.md) · [staging-apply-result](./cms-core-v2-about-supabase-vertical-slice-staging-apply-result.md). Staging migration + RLS + seed **COMPLETE** · all `readyForOperatorAbout*Apply: false` · Contents About remains default · Admin/build cutover **not** executed.
 
 ---
 
@@ -160,7 +165,7 @@ If tenancy missing → **STOP**. Apply YouTube Core templates first under a **se
 
 Vague “OK” is insufficient. One file per approval preferred.
 
-`readyForOperatorAboutRlsApply` is **false** (already applied — do not re-run). `readyForOperatorAboutMigrationApply` stays **false**. `readyForOperatorAboutSeedApply` is **true** after operator re-accept of seed fail-closed harden. `seedAppliedStaging` stays **false** until seed is applied. Seed requires per-file AGENTS approval + SELECT PASS.
+`readyForOperatorAboutRlsApply` / `readyForOperatorAboutMigrationApply` / `readyForOperatorAboutSeedApply` are all **false** — staging SQL apply **COMPLETE** (do not re-run). See staging apply result.
 
 ---
 
@@ -288,7 +293,7 @@ Rollback DELETE requires matching `site_slug` + `page_key` + `field_key` + exact
 - Approval IDs reserved and distinct from G-12a / YouTube
 - Dual-path + fallback + arms documented
 - Access = reuse existing tenancy (no new membership INSERT template)
-- Preflight → apply-readiness → migration applied (post-check PASS) → RLS applied → seed fail-closed harden → **operator re-accept seed** → `readyForOperatorAboutSeedApply: true` · migration/RLS apply gates stay false · `seedAppliedStaging: false`
+- Preflight → apply-readiness → migration + RLS + seed applied on staging (all post-checks PASS) → `readyForOperatorAbout*Apply: false` · `*AppliedStaging: true` · Contents default · Admin/build cutover not executed
 - Verifier PASS · `git diff --check` clean
 
 ### Always STOP
@@ -328,15 +333,21 @@ tenancyReuseSitesSiteMembersPlatformAdmins: true
 aboutAccessAssignmentReusesYoutubeMembership: true
 readyForOperatorAboutMigrationApply: false
 readyForOperatorAboutRlsApply: false
-readyForOperatorAboutSeedApply: true
-seedAppliedStaging: false
+readyForOperatorAboutSeedApply: false
+migrationAppliedStaging: true
+migrationPostcheckPassed: true
+rlsAppliedStaging: true
+rlsPostcheckPassed: true
+seedAppliedStaging: true
+seedPostcheckPassed: true
 aboutSupabaseImplementationExecuted: false
 contentsAboutPathUnchanged: true
-sqlApplyExecuted: false
-dbWriteExecuted: false
+sqlApplyExecuted: true
+dbWriteExecuted: true
 edgeDeployExecuted: false
 serviceRoleUsed: false
 readyForAnyFutureFtpApply: false
+productionUnchanged: true
 ```
 
-**Next gate:** AGENTS-approved seed apply (once) → post-seed SELECT. Migration/RLS applied — do not re-run.
+**Next gate:** About admin + build dual-path (Contents default; Supabase opt-in; arms false). Do **not** re-run migration / RLS / seed.

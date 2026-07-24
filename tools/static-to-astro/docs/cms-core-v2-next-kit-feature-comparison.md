@@ -160,7 +160,7 @@ readyForAnyDbWrite: false
 readyForAnyFutureFtpApply: false
 ```
 
-**Next safe gate:** operator re-accepted · **`readyForOperatorAboutMigrationApply: true`** · SELECT → migration → RLS → seed · Doc: `cms-core-v2-about-supabase-vertical-slice-apply-readiness.md`.
+**Next safe gate:** operator re-accepted RLS · **`readyForOperatorAboutRlsApply: true`** · migration gate **false** · RLS → seed · Doc: `cms-core-v2-about-supabase-vertical-slice-apply-readiness.md`.
 
 ---
 

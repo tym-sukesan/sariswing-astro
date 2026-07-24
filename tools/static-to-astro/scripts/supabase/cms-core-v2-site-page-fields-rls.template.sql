@@ -6,7 +6,8 @@
 -- Authz: can_write_site(uuid) (existing Core helpers — not redefined here)
 -- service_role: not used / not granted
 -- Scope: public.site_page_fields ONLY (does not re-touch sites / site_embeds RLS)
--- Fail-closed: REVOKE ALL then minimal re-GRANT
+-- Fail-closed: REVOKE ALL then minimal re-GRANT (PUBLIC/anon/authenticated/service_role;
+--   re-GRANT anon/authenticated only — never service_role)
 -- =============================================================================
 
 begin;
@@ -54,6 +55,7 @@ create policy site_page_fields_admin_update
 revoke all on table public.site_page_fields from public;
 revoke all on table public.site_page_fields from anon;
 revoke all on table public.site_page_fields from authenticated;
+revoke all on table public.site_page_fields from service_role;
 
 -- INSERT columns (client): site_id, site_slug, page_key, field_key,
 --   value_text, published, sort_order
@@ -62,6 +64,7 @@ revoke all on table public.site_page_fields from authenticated;
 -- Identity freeze on UPDATE: site_id, site_slug, page_key, field_key (audit trigger)
 -- created_by/updated_by: tg_site_page_fields_set_audit_actors (auth.uid())
 -- updated_at: tg_site_page_fields_set_updated_at
+-- service_role: REVOKE only — never GRANT (Kit path)
 grant select on table public.site_page_fields to anon;
 grant select on table public.site_page_fields to authenticated;
 grant insert (
@@ -80,3 +83,11 @@ grant update (
 ) on table public.site_page_fields to authenticated;
 
 commit;
+
+-- Verify (SELECT only) — service_role explicit table privileges must be 0:
+-- select grantee, privilege_type
+-- from information_schema.role_table_grants
+-- where table_schema = 'public'
+--   and table_name = 'site_page_fields'
+--   and (grantee = 'service_role' or grantee ilike '%service%')
+-- order by 1, 2;

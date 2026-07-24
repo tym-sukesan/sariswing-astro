@@ -53,12 +53,16 @@ const preflight = read(PREFLIGHT);
 
 assert("phase id", doc.includes("cms-core-v2-about-supabase-vertical-slice-apply-readiness"));
 assert("gate apply-readiness complete", /cmsCoreV2AboutSupabaseVerticalSliceApplyReadinessComplete:\s*true/.test(doc));
-assert("ready apply true (operator re-accepted)", /readyForOperatorAboutMigrationApply:\s*true/.test(doc));
-assert("banner ready true", /READY_FOR_OPERATOR_ABOUT_MIGRATION_APPLY:\s*true/.test(doc));
+assert("ready migration apply false (already applied)", /readyForOperatorAboutMigrationApply:\s*false/.test(doc));
+assert("banner migration ready false", /READY_FOR_OPERATOR_ABOUT_MIGRATION_APPLY:\s*false/.test(doc));
+assert("rls apply gate true (operator re-accepted)", /readyForOperatorAboutRlsApply:\s*true/.test(doc));
+assert("banner rls ready true", /READY_FOR_OPERATOR_ABOUT_RLS_APPLY:\s*true/.test(doc));
 assert("templates change false", /sqlTemplatesChangeRequired:\s*false/.test(doc));
 assert("migration service_role revoke harden", /migrationServiceRoleRevokeHarden:\s*true|MIGRATION_SERVICE_ROLE_REVOKE_HARDEN:\s*true/.test(doc));
-assert("operator reaccepted", /operatorReacceptedAfterServiceRoleRevoke:\s*true|OPERATOR_REACCEPTED_AFTER_SERVICE_ROLE_REVOKE:\s*true/.test(doc));
-assert("apply yes", /Apply可否:\s*\*\*YES/i.test(doc) || doc.includes("**YES（staging only）**"));
+assert("rls service_role revoke harden", /rlsServiceRoleRevokeHarden:\s*true|RLS_SERVICE_ROLE_REVOKE_HARDEN:\s*true/.test(doc));
+assert("operator reaccepted rls", /operatorReacceptedAfterRlsServiceRoleRevoke:\s*true|OPERATOR_REACCEPTED_AFTER_RLS_SERVICE_ROLE_REVOKE:\s*true/.test(doc));
+assert("migration staging postcheck pass", /migrationAppliedStagingPostcheckPass:\s*true|MIGRATION_APPLIED_STAGING_POSTCHECK_PASS:\s*true/.test(doc));
+assert("apply rls yes", /RLS apply:\s*\*\*YES|RLS apply: YES|Apply可否:\*\* \*\*RLS apply: YES/i.test(doc) || doc.includes("RLS apply: YES（staging only）"));
 assert("implementation false", /aboutSupabaseImplementationExecuted:\s*false/.test(doc));
 assert("sql apply false", /sqlApplyExecuted:\s*false/.test(doc));
 assert("db write false", /dbWriteExecuted:\s*false/.test(doc));
@@ -70,6 +74,7 @@ assert("ftp false", /readyForAnyFutureFtpApply:\s*false/.test(doc));
 assert("staging ref", doc.includes(STAGING));
 assert("production stop", doc.includes(PRODUCTION_STOP));
 assert("post-migration privilege check", /grantee in \('PUBLIC', 'anon', 'authenticated', 'service_role'\)/.test(doc) || doc.includes("PUBLIC / anon / authenticated / service_role"));
+assert("post-rls service_role zero", /service_role privilege SELECT returns 0|Expect 0 explicit table privileges for service_role/i.test(doc));
 assert("order migration then rls then seed", /migration[\s\S]*RLS[\s\S]*seed/i.test(doc));
 assert("pre-apply select section", doc.includes("First SELECT-only") || doc.includes("SELECT-ONLY apply readiness"));
 assert("post migration select", doc.includes("5.1 After migration"));
@@ -82,7 +87,7 @@ assert("g-12a isolation", /G-12a/i.test(doc) && /none|do \*\*not\*\* touch|uncha
 assert("seed lede", doc.includes(LEDE));
 assert("site_page_fields", doc.includes("site_page_fields"));
 assert("can_write_site", doc.includes("can_write_site"));
-assert("first apply table absent", /site_page_fields.*ABSENT|must be ABSENT|absent \(first apply\)/i.test(doc));
+assert("do not re-run migration", /do \*\*not\*\* re-run migration|do not re-run migration/i.test(doc));
 
 const templates = [
   "tools/static-to-astro/scripts/supabase/cms-core-v2-site-page-fields-migration.template.sql",
@@ -124,6 +129,9 @@ assert("rls no delete policy", !/for delete/i.test(rlsA));
 assert("rls no sites policy", !/on public\.sites/i.test(rlsA));
 assert("rls no site_embeds", !/site_embeds/i.test(rlsA));
 assert("rls column grants", /grant insert\s*\(/i.test(rlsA) && /grant update\s*\(/i.test(rlsA));
+assert("rls revoke service_role", /revoke all on table public\.site_page_fields from service_role/i.test(rlsA));
+assert("rls no grant service_role", !/grant\s+.*\bon table public\.site_page_fields to service_role/i.test(rlsA));
+assert("rls verify comment service_role zero", /service_role/i.test(rls) && /role_table_grants/i.test(rls));
 
 const seed = read(templates[2]);
 const seedA = sqlActive(seed);
@@ -146,9 +154,10 @@ assert("preflight notes apply gate or readiness", /readyForOperatorAboutMigratio
 const ai00 = read("tools/static-to-astro/docs/ai/00-current-state.md");
 const ai03 = read("tools/static-to-astro/docs/ai/03-next-actions.md");
 const handoff = read("tools/static-to-astro/docs/ai/handoff-to-chatgpt.md");
-assert("ai00 apply-readiness", /apply-readiness|About.*MigrationApply|readyForOperatorAboutMigrationApply:\s*true|operator re-accept/i.test(ai00));
-assert("ai03 apply-readiness", /READY_FOR_OPERATOR_ABOUT_MIGRATION_APPLY:\s*true|readyForOperatorAboutMigrationApply:\s*true/i.test(ai03));
-assert("handoff apply-readiness", /readyForOperatorAboutMigrationApply:\s*true/i.test(handoff));
+assert("ai00 apply-readiness", /readyForOperatorAboutRlsApply:\s*true|RLS apply: YES|operator re-accept.*RLS/i.test(ai00));
+assert("ai03 apply-readiness", /READY_FOR_OPERATOR_ABOUT_RLS_APPLY:\s*true|readyForOperatorAboutRlsApply:\s*true/i.test(ai03));
+assert("handoff apply-readiness", /readyForOperatorAboutRlsApply:\s*true/i.test(handoff));
+assert("ai03 migration gate still false", /readyForOperatorAboutMigrationApply:\s*false|READY_FOR_OPERATOR_ABOUT_MIGRATION_APPLY:\s*false/i.test(ai03));
 
 console.log(`\n${passed} passed, ${failed} failed`);
 process.exit(failed > 0 ? 1 : 0);

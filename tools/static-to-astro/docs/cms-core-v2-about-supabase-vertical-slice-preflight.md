@@ -10,7 +10,7 @@
 ```txt
 CMS_CORE_V2_ABOUT_SUPABASE_VERTICAL_SLICE_PREFLIGHT_COMPLETE: true
 ABOUT_SUPABASE_IMPLEMENTATION_EXECUTED: false
-READY_FOR_OPERATOR_ABOUT_MIGRATION_APPLY: true
+READY_FOR_OPERATOR_ABOUT_MIGRATION_APPLY: false
 SQL_APPLY_EXECUTED: false
 DB_WRITE_EXECUTED: false
 EDGE_DEPLOY_EXECUTED: false
@@ -19,7 +19,7 @@ SERVICE_ROLE_USED: false
 READY_FOR_ANY_FUTURE_FTP_APPLY: false
 ```
 
-**Apply-readiness:** see [cms-core-v2-about-supabase-vertical-slice-apply-readiness.md](./cms-core-v2-about-supabase-vertical-slice-apply-readiness.md). Migration fail-closed includes **service_role** revoke · operator re-accepted · **`readyForOperatorAboutMigrationApply: true`** · SQL apply still not executed.
+**Apply-readiness:** see [cms-core-v2-about-supabase-vertical-slice-apply-readiness.md](./cms-core-v2-about-supabase-vertical-slice-apply-readiness.md). RLS fail-closed includes **service_role** · operator re-accepted · **`readyForOperatorAboutRlsApply: true`** · **`readyForOperatorAboutMigrationApply: false`** (migration already applied — do not re-run).
 
 ---
 
@@ -119,7 +119,7 @@ Lock schema / RLS / grants / dual-path / seed / rollback **before** any staging 
 
 ### Fail-closed sequence
 
-1. `REVOKE ALL` on `site_page_fields` from `PUBLIC` / `anon` / `authenticated` / **`service_role`** (migration end; Kit never uses service_role)
+1. `REVOKE ALL` on `site_page_fields` from `PUBLIC` / `anon` / `authenticated` / **`service_role`** (migration end **and** RLS fail-closed; Kit never uses service_role)
 2. Minimal re-GRANT SELECT (+ column writes) in RLS template for anon/authenticated only
 3. `service_role`: **not granted / not used** (must remain 0 after migration and after RLS)
 
@@ -160,7 +160,7 @@ If tenancy missing → **STOP**. Apply YouTube Core templates first under a **se
 
 Vague “OK” is insufficient. One file per approval preferred.
 
-`readyForOperatorAboutMigrationApply` is **true** after operator re-accept of apply-readiness (post–`service_role` revoke harden). SQL apply still requires per-file AGENTS approval + SELECT PASS.
+`readyForOperatorAboutRlsApply` is **true** after operator re-accept of RLS `service_role` revoke harden. `readyForOperatorAboutMigrationApply` stays **false** (migration already applied on staging). RLS/seed still require per-file AGENTS approval + SELECT PASS.
 
 ---
 
@@ -288,7 +288,7 @@ Rollback DELETE requires matching `site_slug` + `page_key` + `field_key` + exact
 - Approval IDs reserved and distinct from G-12a / YouTube
 - Dual-path + fallback + arms documented
 - Access = reuse existing tenancy (no new membership INSERT template)
-- Preflight → apply-readiness → service_role revoke harden → **operator re-accept** → `readyForOperatorAboutMigrationApply: true`
+- Preflight → apply-readiness → migration applied (post-check PASS) → RLS service_role harden → **operator re-accept** → `readyForOperatorAboutRlsApply: true` · migration gate stays false
 - Verifier PASS · `git diff --check` clean
 
 ### Always STOP
@@ -326,7 +326,7 @@ aboutFirstFieldKey: about/profile.lede
 opaqueHtmlPrimaryModel: false
 tenancyReuseSitesSiteMembersPlatformAdmins: true
 aboutAccessAssignmentReusesYoutubeMembership: true
-readyForOperatorAboutMigrationApply: true
+readyForOperatorAboutMigrationApply: false
 aboutSupabaseImplementationExecuted: false
 contentsAboutPathUnchanged: true
 sqlApplyExecuted: false
@@ -336,4 +336,4 @@ serviceRoleUsed: false
 readyForAnyFutureFtpApply: false
 ```
 
-**Next gate:** operator SELECT-only (§3 apply-readiness) → approved staging apply (migration → RLS → seed). SQL templates frozen.
+**Next gate:** AGENTS-approved RLS apply → post-RLS SELECT → seed. Migration already applied — do not re-run.

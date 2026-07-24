@@ -5,48 +5,43 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: CMS Core v2 About apply-readiness operator re-accept COMPLETE
+Current phase: CMS Core v2 About RLS apply operator re-accept COMPLETE
 Apply-readiness doc: tools/static-to-astro/docs/cms-core-v2-about-supabase-vertical-slice-apply-readiness.md
 Verifier: tools/static-to-astro/scripts/verify-cms-core-v2-about-supabase-vertical-slice-apply-readiness.mjs
 cmsCoreV2AboutSupabaseVerticalSliceApplyReadinessComplete: true
 migrationServiceRoleRevokeHarden: true
-operatorReacceptedAfterServiceRoleRevoke: true
-readyForOperatorAboutMigrationApply: true
+rlsServiceRoleRevokeHarden: true
+operatorReacceptedAfterRlsServiceRoleRevoke: true
+migrationAppliedStagingPostcheckPass: true
+readyForOperatorAboutMigrationApply: false
+readyForOperatorAboutRlsApply: true
 sqlTemplatesChangeRequired: false
 sqlApplyExecuted: false
 aboutSupabaseImplementationExecuted: false
 contentsAboutPathUnchanged: true
 serviceRoleUsed: false
-Preflight: cmsCoreV2AboutSupabaseVerticalSlicePreflightComplete: true
-recommendedAboutSchema: site_page_fields
-aboutFirstFieldKey: about/profile.lede
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh UNCHANGED
-Next: operator SELECT-only PASS → AGENTS-approved migration → RLS → seed (Cursor does not apply)
+Next: AGENTS-approved RLS apply → post-RLS SELECT → seed (do not re-run migration)
 EXTERNAL_WRITE_EXECUTED: false (this docs-only record)
 readyForAnyFutureFtpApply: false
 ```
 
-## CMS Core v2 About apply-readiness operator re-accept (2026-07-24)
+## CMS Core v2 About RLS apply operator re-accept (2026-07-24)
 
-- Confirmed: migration `service_role` REVOKE + post-migration privilege SELECT
-- Schema / FK / trigger / RLS / seed unchanged
-- Apply可否: **YES（staging only）**
-- Apply gate: **true** · SQL templates frozen · SQL apply not executed
+- Confirmed: RLS `service_role` REVOKE only · policies/GRANTs unchanged
+- Apply可否: **RLS apply: YES（staging only）**
+- `readyForOperatorAboutRlsApply: true`
+- `readyForOperatorAboutMigrationApply: false` (migration applied + post-check PASS)
+- SQL templates frozen · RLS/seed not yet executed
 
-## CMS Core v2 About migration service_role revoke harden (2026-07-24)
+## CMS Core v2 About RLS service_role revoke harden (2026-07-24)
 
-- Migration fail-closed includes `service_role` · retained after re-accept
-
-## CMS Core v2 About Supabase apply-readiness (2026-07-24)
-
-- Order: migration → RLS/GRANT → seed
-- Access INSERT: not required
-- Contents / G-12a: unaffected
+- Retained after re-accept
 
 ## CMS Core v2 About Supabase vertical slice preflight (2026-07-24)
 
 - Schema: `site_page_fields` · first field `about` / `profile.lede`
-- Apply gate: true (operator re-accepted)
+- RLS apply ready; migration gate false
 
 ## CMS Core v2 — next Kit feature comparison (2026-07-24)
 

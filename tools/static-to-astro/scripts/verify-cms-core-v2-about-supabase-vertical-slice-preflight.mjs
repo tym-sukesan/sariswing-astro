@@ -49,11 +49,12 @@ assert("first field profile.lede", /aboutFirstFieldKey:\s*about\/profile\.lede/.
 assert("opaque html false", /opaqueHtmlPrimaryModel:\s*false/.test(doc));
 assert("tenancy reuse", /tenancyReuseSitesSiteMembersPlatformAdmins:\s*true/.test(doc));
 assert("access reuses youtube", /aboutAccessAssignmentReusesYoutubeMembership:\s*true/.test(doc));
-assert("apply gate true (operator re-accepted)", /readyForOperatorAboutMigrationApply:\s*true/.test(doc));
+assert("apply gate migration false", /readyForOperatorAboutMigrationApply:\s*false/.test(doc));
 assert(
-  "banner apply ready true",
-  /READY_FOR_OPERATOR_ABOUT_MIGRATION_APPLY:\s*true/.test(doc),
+  "banner apply ready false",
+  /READY_FOR_OPERATOR_ABOUT_MIGRATION_APPLY:\s*false/.test(doc),
 );
+assert("preflight notes rls apply true", /readyForOperatorAboutRlsApply:\s*true/.test(doc));
 assert("sql apply still false", /sqlApplyExecuted:\s*false/.test(doc) || /SQL_APPLY_EXECUTED:\s*false/.test(doc));
 assert(
   "apply-readiness linked",
@@ -96,7 +97,7 @@ for (const rel of templates) {
   assert(`${path.basename(rel)} DO NOT EXECUTE`, /DO NOT EXECUTE/i.test(sql));
   assert(`${path.basename(rel)} staging ref`, sql.includes(STAGING));
   assert(`${path.basename(rel)} production STOP`, sql.includes(PRODUCTION_STOP));
-  assert(`${path.basename(rel)} no service_role grant`, !/grant\s+.*service_role/i.test(sql));
+  assert(`${path.basename(rel)} no service_role grant`, !/grant[\s\S]{0,200}\bto\s+service_role\b/i.test(sqlActive(sql)) && !/grant\s+all[^\n]*service_role/i.test(sqlActive(sql)));
   assert(`${path.basename(rel)} no service_role use`, !/auth\.service_role|service_role\s+key/i.test(sql));
 }
 
@@ -127,6 +128,10 @@ assert("rls column insert grant", /grant insert\s*\([\s\S]*value_text/i.test(rls
 assert("rls column update grant", /grant update\s*\([\s\S]*value_text/i.test(rls));
 assert("rls no update created_by", !/grant update\s*\([^)]*created_by/i.test(rls));
 assert("rls scope only site_page_fields", !/on public\.site_embeds/i.test(rls) && !/on public\.sites/i.test(rls));
+assert(
+  "rls revoke service_role",
+  /revoke all on table public\.site_page_fields from service_role/i.test(rls),
+);
 
 const seed = read(templates[2]);
 assert("seed page_key about", seed.includes("'about'"));
@@ -189,7 +194,8 @@ const handoff = read("tools/static-to-astro/docs/ai/handoff-to-chatgpt.md");
 assert("ai00 mentions about preflight", /about-supabase-vertical-slice-preflight|About Supabase.*preflight/i.test(ai00));
 assert("ai03 mentions about preflight", /about-supabase-vertical-slice-preflight|About Supabase.*preflight/i.test(ai03));
 assert("handoff mentions about preflight", /about-supabase-vertical-slice-preflight|About Supabase.*preflight/i.test(handoff));
-assert("ai03 apply gate true", /readyForOperatorAboutMigrationApply:\s*true|READY_FOR_OPERATOR_ABOUT_MIGRATION_APPLY:\s*true/i.test(ai03));
+assert("ai03 migration gate false", /readyForOperatorAboutMigrationApply:\s*false|READY_FOR_OPERATOR_ABOUT_MIGRATION_APPLY:\s*false/i.test(ai03));
+assert("ai03 rls gate true", /readyForOperatorAboutRlsApply:\s*true|READY_FOR_OPERATOR_ABOUT_RLS_APPLY:\s*true/i.test(ai03));
 
 console.log(`\n${passed} passed, ${failed} failed`);
 process.exit(failed > 0 ? 1 : 0);

@@ -3,7 +3,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **Kit Core:** About apply-readiness **operator re-accepted** · **`readyForOperatorAboutMigrationApply: true`**. **Next:** staging `kmjqppxjdnwwrtaeqjta` で SELECT-only PASS → AGENTS 承認付き migration → RLS → seed（各1回）。Cursor/agent は SQL 実行しない。SQL templates **frozen**。Doc: `cms-core-v2-about-supabase-vertical-slice-apply-readiness.md`。
+1. **Kit Core:** About RLS apply **operator re-accepted** · **`readyForOperatorAboutRlsApply: true`** · **`readyForOperatorAboutMigrationApply: false`**（migration 済・再実行禁止）。**Next:** AGENTS 承認付き RLS → post-RLS SELECT → seed。Cursor は SQL 実行しない。Doc: `cms-core-v2-about-supabase-vertical-slice-apply-readiness.md`。
 2. Apply 後: apply-result 記録 → Edge/admin dual-path 実装（arms false）。
 3. **並行可:** Contents YouTube 退役 planning（`contentsYoutubeCutoverExecuted: false`）。
 4. **並行可（Gosaki ops）:** クライアントへ staging 共有・feedback。
@@ -11,21 +11,64 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 6. Save arm **false** · About Contents / G-12a **unchanged**。
 7. production / Wix / auto FTP / `vsbvndwuajjhnzpohghh` 禁止 · `service_role` 禁止 · `readyForAnyFutureFtpApply: false`。
 
+## 0. CMS Core v2 About RLS apply operator re-accept COMPLETE (2026-07-24)
+
+| Item | Value |
+| --- | --- |
+| Gate | `operatorReacceptedAfterRlsServiceRoleRevoke: true` |
+| `readyForOperatorAboutRlsApply` | **true** |
+| `readyForOperatorAboutMigrationApply` | **false** (already applied) |
+| Apply可否 | **RLS apply: YES（staging only）** |
+| `migrationAppliedStagingPostcheckPass` | **true** |
+| `sqlApplyExecuted` | **false** (RLS/seed not yet) |
+| Doc | `cms-core-v2-about-supabase-vertical-slice-apply-readiness.md` |
+
+```txt
+OPERATOR_REACCEPTED_AFTER_RLS_SERVICE_ROLE_REVOKE: true
+READY_FOR_OPERATOR_ABOUT_RLS_APPLY: true
+READY_FOR_OPERATOR_ABOUT_MIGRATION_APPLY: false
+MIGRATION_APPLIED_STAGING_POSTCHECK_PASS: true
+SQL_APPLY_EXECUTED: false
+SERVICE_ROLE_USED: false
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+```
+
+## 0. CMS Core v2 About RLS service_role revoke harden (2026-07-24)
+
+| Item | Value |
+| --- | --- |
+| Gate | `rlsServiceRoleRevokeHarden: true` |
+| `readyForOperatorAboutRlsApply` | **true** (operator re-accepted; harden retained) |
+| `readyForOperatorAboutMigrationApply` | **false** (HOLD / already applied) |
+| Change | RLS `REVOKE ALL … FROM service_role` + post-RLS privilege SELECT |
+| Policies / anon·auth GRANTs | **unchanged** |
+| Doc | `cms-core-v2-about-supabase-vertical-slice-apply-readiness.md` |
+
+```txt
+RLS_SERVICE_ROLE_REVOKE_HARDEN: true
+READY_FOR_OPERATOR_ABOUT_RLS_APPLY: true
+READY_FOR_OPERATOR_ABOUT_MIGRATION_APPLY: false
+SQL_APPLY_EXECUTED: false
+SERVICE_ROLE_USED: false
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+```
+
 ## 0. CMS Core v2 About apply-readiness operator re-accept COMPLETE (2026-07-24)
 
 | Item | Value |
 | --- | --- |
 | Gate | `operatorReacceptedAfterServiceRoleRevoke: true` |
-| `readyForOperatorAboutMigrationApply` | **true** |
-| Apply可否 | **YES（staging only）** |
+| `readyForOperatorAboutMigrationApply` | **false** (migration applied; RLS path) |
+| Apply可否 | **RLS apply: YES（staging only）** |
 | `migrationServiceRoleRevokeHarden` | **true** |
-| `sqlTemplatesChangeRequired` | **false** (frozen) |
+| `sqlTemplatesChangeRequired` | **false** |
 | `sqlApplyExecuted` | **false** |
 | Doc | `cms-core-v2-about-supabase-vertical-slice-apply-readiness.md` |
 
 ```txt
 OPERATOR_REACCEPTED_AFTER_SERVICE_ROLE_REVOKE: true
-READY_FOR_OPERATOR_ABOUT_MIGRATION_APPLY: true
+READY_FOR_OPERATOR_ABOUT_MIGRATION_APPLY: false
+READY_FOR_OPERATOR_ABOUT_RLS_APPLY: true
 SQL_TEMPLATES_CHANGE_REQUIRED: false
 SQL_APPLY_EXECUTED: false
 SERVICE_ROLE_USED: false
@@ -37,14 +80,14 @@ READY_FOR_ANY_FUTURE_FTP_APPLY: false
 | Item | Value |
 | --- | --- |
 | Gate | `migrationServiceRoleRevokeHarden: true` |
-| `readyForOperatorAboutMigrationApply` | **true** (operator re-accepted; harden retained) |
+| `readyForOperatorAboutMigrationApply` | **false** (RLS HOLD; harden retained) |
 | `sqlTemplatesChangeRequired` | **false** (harden done) |
 | Change | migration `REVOKE ALL … FROM service_role` + post-migration privilege SELECT |
 | Doc | `cms-core-v2-about-supabase-vertical-slice-apply-readiness.md` |
 
 ```txt
 MIGRATION_SERVICE_ROLE_REVOKE_HARDEN: true
-READY_FOR_OPERATOR_ABOUT_MIGRATION_APPLY: true
+READY_FOR_OPERATOR_ABOUT_MIGRATION_APPLY: false
 SQL_TEMPLATES_CHANGE_REQUIRED: false
 SQL_APPLY_EXECUTED: false
 SERVICE_ROLE_USED: false
@@ -56,7 +99,7 @@ READY_FOR_ANY_FUTURE_FTP_APPLY: false
 | Item | Value |
 | --- | --- |
 | Gate | `cmsCoreV2AboutSupabaseVerticalSliceApplyReadinessComplete: true` |
-| `readyForOperatorAboutMigrationApply` | **true** (operator re-accepted) |
+| `readyForOperatorAboutMigrationApply` | **false** (already applied) |
 | `sqlTemplatesChangeRequired` | **false** |
 | `sqlApplyExecuted` | **false** |
 | Doc | `cms-core-v2-about-supabase-vertical-slice-apply-readiness.md` |
@@ -64,7 +107,8 @@ READY_FOR_ANY_FUTURE_FTP_APPLY: false
 
 ```txt
 CMS_CORE_V2_ABOUT_SUPABASE_VERTICAL_SLICE_APPLY_READINESS_COMPLETE: true
-READY_FOR_OPERATOR_ABOUT_MIGRATION_APPLY: true
+READY_FOR_OPERATOR_ABOUT_MIGRATION_APPLY: false
+READY_FOR_OPERATOR_ABOUT_RLS_APPLY: true
 SQL_TEMPLATES_CHANGE_REQUIRED: false
 SQL_APPLY_EXECUTED: false
 CONTENTS_ABOUT_PATH_UNCHANGED: true
@@ -81,7 +125,7 @@ READY_FOR_ANY_FUTURE_FTP_APPLY: false
 | First field | `about` / `profile.lede` |
 | Opaque HTML primary | **false** |
 | Tenancy | reuse existing (YouTube) |
-| Apply | **`readyForOperatorAboutMigrationApply: true`** (operator re-accepted; SQL not executed) |
+| Apply | **`readyForOperatorAboutRlsApply: true`** · **`readyForOperatorAboutMigrationApply: false`** (migration applied; RLS ready) |
 | Implementation | **false** |
 | Doc | `cms-core-v2-about-supabase-vertical-slice-preflight.md` |
 | Verifier | `verify-cms-core-v2-about-supabase-vertical-slice-preflight.mjs` |
@@ -90,7 +134,7 @@ READY_FOR_ANY_FUTURE_FTP_APPLY: false
 CMS_CORE_V2_ABOUT_SUPABASE_VERTICAL_SLICE_PREFLIGHT_COMPLETE: true
 RECOMMENDED_ABOUT_SCHEMA: site_page_fields
 ABOUT_FIRST_FIELD_KEY: about/profile.lede
-READY_FOR_OPERATOR_ABOUT_MIGRATION_APPLY: true
+READY_FOR_OPERATOR_ABOUT_MIGRATION_APPLY: false
 ABOUT_SUPABASE_IMPLEMENTATION_EXECUTED: false
 CONTENTS_ABOUT_PATH_UNCHANGED: true
 SQL_APPLY_EXECUTED: false

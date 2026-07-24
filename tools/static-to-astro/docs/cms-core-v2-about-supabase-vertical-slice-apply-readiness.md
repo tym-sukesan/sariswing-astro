@@ -9,7 +9,8 @@
 
 ```txt
 CMS_CORE_V2_ABOUT_SUPABASE_VERTICAL_SLICE_APPLY_READINESS_COMPLETE: true
-READY_FOR_OPERATOR_ABOUT_MIGRATION_APPLY: true
+READY_FOR_OPERATOR_ABOUT_MIGRATION_APPLY: false
+READY_FOR_OPERATOR_ABOUT_RLS_APPLY: true
 SQL_TEMPLATES_CHANGE_REQUIRED: false
 ABOUT_SUPABASE_IMPLEMENTATION_EXECUTED: false
 SQL_APPLY_EXECUTED: false
@@ -20,9 +21,12 @@ SERVICE_ROLE_USED: false
 READY_FOR_ANY_FUTURE_FTP_APPLY: false
 MIGRATION_SERVICE_ROLE_REVOKE_HARDEN: true
 OPERATOR_REACCEPTED_AFTER_SERVICE_ROLE_REVOKE: true
+RLS_SERVICE_ROLE_REVOKE_HARDEN: true
+OPERATOR_REACCEPTED_AFTER_RLS_SERVICE_ROLE_REVOKE: true
+MIGRATION_APPLIED_STAGING_POSTCHECK_PASS: true
 ```
 
-**Apply可否:** **YES（staging only）** — operator re-accepted after migration `service_role` revoke harden · after §3 SELECT-only PASS + AGENTS one-file approval form.
+**Apply可否:** **RLS apply: YES（staging only）** — operator re-accepted after RLS `service_role` revoke harden · migration already applied on staging (post-check PASS) — **do not** re-run migration · proceed RLS → seed with per-file AGENTS approval.
 
 **Cursor / agent must not apply.** Operator pastes templates in Supabase SQL Editor on `kmjqppxjdnwwrtaeqjta` only.
 
@@ -33,13 +37,13 @@ OPERATOR_REACCEPTED_AFTER_SERVICE_ROLE_REVOKE: true
 | File | Re-run / unexpected state | Verdict |
 | --- | --- | --- |
 | Migration | `CREATE TABLE IF NOT EXISTS` + recreate triggers; fail-closed `REVOKE ALL` from **PUBLIC / anon / authenticated / service_role**; **STOP if table already exists with wrong shape** | **OK for first apply** when pre-SELECT shows table **absent** (re-accept gate after service_role revoke harden) |
-| RLS | `DROP POLICY IF EXISTS` + recreate; fail-closed `REVOKE ALL` then column GRANT; fails if `can_write_site` missing; does **not** GRANT `service_role` | **OK** (idempotent) |
+| RLS | `DROP POLICY IF EXISTS` + recreate; fail-closed `REVOKE ALL` from **PUBLIC / anon / authenticated / service_role** then column GRANT to anon/authenticated only; fails if `can_write_site` missing; **never GRANT service_role** | **OK** (idempotent) — re-accept gate after RLS service_role revoke harden |
 | Seed | Upserts **only** `(gosaki-piano, about, profile.lede)`; STOPs if site/table missing; re-run refreshes **this key only** to seed baseline | **OK** |
 | Seed rollback | DELETE only if exact seed `value_text` matches | **OK** (fail-safe if value drifted → 0 rows deleted → STOP/ask) |
 | RLS rollback | Drop 4 policies + revoke; no row delete | **OK** |
 | DDL rollback | Drop triggers/fns + `DROP TABLE` **without CASCADE**; does not touch tenancy/`site_embeds` | **OK** |
 
-**`SQL_TEMPLATES_CHANGE_REQUIRED: false`** after migration `service_role` revoke harden (schema unchanged). **`readyForOperatorAboutMigrationApply: true`** — operator re-accepted 2026-07-24; SQL templates frozen (no further change before apply).
+**`SQL_TEMPLATES_CHANGE_REQUIRED: false`** after RLS `service_role` revoke harden. **`readyForOperatorAboutMigrationApply: false`** (migration already applied — do not re-run) · **`readyForOperatorAboutRlsApply: true`** — operator re-accepted 2026-07-24.
 
 **Residual (documented, not blocking first apply after re-accept):** migration does not auto-validate an *existing* wrong-shaped `site_page_fields`. Pre-apply SELECT must prove table **absent** (preferred) or columns match §4.
 
@@ -252,17 +256,21 @@ from information_schema.role_table_grants
 where table_schema = 'public' and table_name = 'site_page_fields'
 order by 1, 2;
 
--- Expect no service_role grants on this table:
+-- Expect 0 explicit table privileges for service_role:
 select grantee, privilege_type
 from information_schema.role_table_grants
 where table_schema = 'public'
   and table_name = 'site_page_fields'
-  and grantee ilike '%service%';
+  and (
+    grantee = 'service_role'
+    or grantee ilike '%service%'
+  )
+order by 1, 2;
 ```
 
-**PASS:** 4 policies (public select + admin select/insert/update) · anon/authenticated SELECT · authenticated column INSERT/UPDATE · **0** service_role rows.
+**PASS:** 4 policies (public select + admin select/insert/update) · anon/authenticated SELECT · authenticated column INSERT/UPDATE · no DELETE privilege · **service_role privilege SELECT returns 0 rows**.
 
-**STOP:** missing policy · unexpected DELETE privilege · service_role grant appears.
+**STOP:** missing policy · unexpected DELETE privilege · any service_role (or `%service%`) table privilege · unclear error.
 
 ### 5.3 After seed
 
@@ -301,20 +309,22 @@ Rollback approval form (same AGENTS bar):
 
 ---
 
-## 7. Gate: `readyForOperatorAboutMigrationApply`
+## 7. Gate: RLS apply ready (migration held)
 
 | Item | Value |
 | --- | --- |
 | Preflight complete | true |
-| Migration `service_role` revoke harden | **true** (operator re-accepted) |
-| Templates change required (further) | **false** — SQL frozen |
-| Apply order + SELECT + STOP locked | this doc |
+| Migration applied on staging + post-check | **PASS** (do **not** re-run) |
+| Migration `service_role` revoke harden | **true** |
+| RLS `service_role` revoke harden | **true** (operator re-accepted) |
+| Templates change required (further) | **false** — SQL frozen for RLS |
 | Contents / G-12a impact | **none** from SQL apply |
-| **`readyForOperatorAboutMigrationApply`** | **`true`** |
+| **`readyForOperatorAboutMigrationApply`** | **`false`** (already applied; no re-apply) |
+| **`readyForOperatorAboutRlsApply`** | **`true`** |
 
 **Still false / forbidden until separate phases:** Edge deploy · admin dual-path code · Save arm · FTP · production · Contents About cutover · `aboutSupabaseImplementationExecuted`.
 
-**Next:** operator SELECT-only PASS (§3) → approved staging apply (migration → RLS → seed). After successful apply: record apply result → local Edge/admin dual-path (arms false).
+**Next:** AGENTS-approved RLS apply → post-RLS SELECT (§5.2) → seed (separate approval). Do **not** re-run migration.
 
 ---
 
@@ -322,10 +332,14 @@ Rollback approval form (same AGENTS bar):
 
 ```txt
 cmsCoreV2AboutSupabaseVerticalSliceApplyReadinessComplete: true
-readyForOperatorAboutMigrationApply: true
+readyForOperatorAboutMigrationApply: false
+readyForOperatorAboutRlsApply: true
 sqlTemplatesChangeRequired: false
 migrationServiceRoleRevokeHarden: true
 operatorReacceptedAfterServiceRoleRevoke: true
+rlsServiceRoleRevokeHarden: true
+operatorReacceptedAfterRlsServiceRoleRevoke: true
+migrationAppliedStagingPostcheckPass: true
 aboutSupabaseImplementationExecuted: false
 sqlApplyExecuted: false
 dbWriteExecuted: false

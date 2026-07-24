@@ -3,9 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**CMS Core v2 About apply-readiness operator re-accept (2026-07-24):** **COMPLETE** — confirmed migration `service_role` REVOKE + post-migration privilege SELECT · schema/FK/trigger/RLS/seed unchanged · **`readyForOperatorAboutMigrationApply: true`** · Apply可否 **YES（staging only）** · SQL templates **frozen** · `sqlApplyExecuted: false` · Doc: `cms-core-v2-about-supabase-vertical-slice-apply-readiness.md` · **Next:** operator SELECT-only PASS → AGENTS 承認で migration→RLS→seed（Cursor は実行しない）。
+**CMS Core v2 About RLS apply-readiness operator re-accept (2026-07-24):** **COMPLETE** — confirmed RLS `service_role` REVOKE only · policies/GRANTs unchanged · **`readyForOperatorAboutRlsApply: true`** · **`readyForOperatorAboutMigrationApply: false`**（migration 適用済・再実行禁止）· Apply可否 **RLS apply: YES（staging only）** · SQL templates **frozen** · Doc: `cms-core-v2-about-supabase-vertical-slice-apply-readiness.md` · **Next:** AGENTS 承認で RLS → post-check → seed（Cursor は実行しない）。
 
-**CMS Core v2 About migration service_role revoke harden (2026-07-24):** **COMPLETE** — superseded gate by operator re-accept above.
+**CMS Core v2 About RLS service_role revoke harden (2026-07-24):** **COMPLETE** — superseded HOLD by operator re-accept above.
 
 **CMS Core v2 About Supabase vertical slice preflight (2026-07-24):** **COMPLETE (docs + SQL templates only)** — schema **`site_page_fields`** · first field `about`/`profile.lede` · Doc: `cms-core-v2-about-supabase-vertical-slice-preflight.md` · apply gate superseded by apply-readiness above (`readyForOperatorAboutMigrationApply: true`).
 

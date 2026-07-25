@@ -5,38 +5,30 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: CMS Core v2 About Supabase Edge deploy preflight COMPLETE
+Current phase: CMS Core v2 About Supabase Edge post-deploy QA runbook READY
+Runbook: tools/static-to-astro/docs/cms-core-v2-about-supabase-save-dry-run-edge-post-deploy-qa-runbook.md
 Preflight doc: tools/static-to-astro/docs/cms-core-v2-about-supabase-save-dry-run-edge-deploy-preflight.md
-Verifier: tools/static-to-astro/scripts/verify-cms-core-v2-about-supabase-save-dry-run-edge-deploy-preflight.mjs
-Implementation doc: tools/static-to-astro/docs/cms-core-v2-about-supabase-vertical-slice-local-implementation.md
-FTP QA doc: tools/static-to-astro/docs/cms-core-v2-about-supabase-ftp-post-qa.md
-ABOUT_SUPABASE_EDGE_DEPLOY_PREFLIGHT_COMPLETE: true
-EDGE_DEPLOY_PREFLIGHT_READY: true
-readyForAboutSupabaseEdgeDeployExecution: true
-edgeDeployExecuted: false
+ABOUT_SUPABASE_EDGE_POST_DEPLOY_QA_RUNBOOK_READY: true
+POST_DEPLOY_QA_EXECUTED: false
+edgeDeployExecuted: true (operator · prior)
 saveArmEnabled: false
 GOSAKI_ABOUT_SUPABASE_SAVE_ARMED_SET: false
-aboutSupabaseLocalImplementation: true
-contentsAboutPathUnchanged: true
-registrySitePageFields: false
-adminAboutSupabaseCutoverExecuted: false
-buildAboutSupabaseCutoverExecuted: false
-migrationAppliedStaging: true
-rlsAppliedStaging: true
-seedAppliedStaging: true
-STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh UNCHANGED / STOP
-Deploy command (NOT run): supabase functions deploy gosaki-about-supabase-save-dry-run --project-ref kmjqppxjdnwwrtaeqjta
-Next: AGENTS承認 → staging Edge deploy → remote dry-run QA → Admin-path package → manual FTP
-EXTERNAL_WRITE_EXECUTED: false
+STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
+Next: operator manual post-deploy QA (Cursor no remote invoke) → Admin-path package → manual FTP
 readyForAnyFutureFtpApply: false
 ```
+
+## CMS Core v2 About Supabase Edge post-deploy QA runbook (2026-07-26)
+
+- Manual steps: OPTIONS · unauth 401 · owner dry-run 200 · didWrite false · save_not_armed 403 · allowlist 400 · seed unchanged
+- No Save arm · no Secret · no SQL write · no token/UUID/email logging
 
 ## CMS Core v2 About Supabase Edge deploy preflight (2026-07-24)
 
 - Target: `gosaki-about-supabase-save-dry-run` @ staging only
 - Root ↔ mirror identical · JWT + can_write_site · about/profile.lede only
 - Dry-run no DB write · Save gated by GOSAKI_ABOUT_SUPABASE_SAVE_ARMED (unset/false)
-- No deploy / Secret / remote invoke in this phase
+- Deploy executed by operator after preflight (see post-deploy QA runbook)
 
 ## CMS Core v2 About Supabase dual-path local implementation (2026-07-24)
 

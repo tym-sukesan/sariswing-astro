@@ -1,14 +1,62 @@
-Last updated: 2026-07-27
+Last updated: 2026-07-28
 Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **Kit Core:** About Admin `value_text_required` UI leak **fixed**（supabase path で Contents hydrate しない · raw code→日本語）· Package stale-backup + external `PACKAGE_RUN` **local COMPLETE**。**Next:** About Admin-path package generate（path env true · Save UI arm false · server arm unset）→ `_package-runs/…/PACKAGE_RUN.json` + `verify:manual-upload` → operator FTP（`gosaki-piano/` のみ）+ ftp-post-qa §B。
+1. **Kit Core:** About Admin-path staging FTP post-QA **PASS**（`sourceCommit` `a876e1eb…` · writeBackend supabase · Save disabled · value_text_required 非表示）。Read/hydrate **planning COMPLETE**。**Next (ask operator):** `cms-core-v2-about-supabase-admin-read-hydrate-local-implementation`（local only · Edge deploy / FTP / Save arm / DB write は別承認）。
 2. **並行可:** Contents YouTube 退役 planning（`contentsYoutubeCutoverExecuted: false`）。
 3. **並行可（Gosaki ops）:** クライアントへ staging 共有・feedback。
 4. **並行可:** production hosting **read-only planning**。
-5. Save arm **false** · Secret 変更禁止 · About Contents / G-12a **retained** · migration/RLS/seed **再実行禁止** · build-read **未**。
+5. Save arm **false** · Secret 変更禁止 · About Contents / G-12a **retained** · migration/RLS/seed **再実行禁止** · public About build-read **未**。
 6. production / Wix / auto FTP / `vsbvndwuajjhnzpohghh` 禁止 · `service_role` 禁止 · `readyForAnyFutureFtpApply: false`。
+
+## 0. About Supabase Admin read/hydrate planning COMPLETE (2026-07-28)
+
+| Item | Value |
+| --- | --- |
+| Gate | `ABOUT_SUPABASE_ADMIN_READ_HYDRATE_PLANNING_COMPLETE: true` |
+| Implementation readiness | `readyForAboutSupabaseAdminReadHydrateImplementation: true` |
+| Implementation | **not started** |
+| Doc | `cms-core-v2-about-supabase-admin-read-hydrate-planning.md` |
+| Recommended | Edge `operation=read` · surgical lede overlay · JSON fallback |
+| Save / public About | arms false · JSON SoT unchanged |
+
+```txt
+ABOUT_SUPABASE_ADMIN_READ_HYDRATE_PLANNING_COMPLETE: true
+readyForAboutSupabaseAdminReadHydrateImplementation: true
+IMPLEMENTATION_EXECUTED: false
+SAVE_ARM_ENABLED: false
+GOSAKI_ABOUT_SUPABASE_SAVE_ARMED_SET: false
+CMS_KIT_SITE_PAGE_FIELDS_BUILD_READ: false
+REGISTRY_SITE_PAGE_FIELDS: false
+PRODUCTION_UNCHANGED: true
+```
+
+## 0. About Supabase Admin-path staging FTP post-QA PASS (2026-07-28)
+
+| Item | Value |
+| --- | --- |
+| Gate | `ABOUT_SUPABASE_ADMIN_PATH_STAGING_FTP_POST_QA_PASSED: true` |
+| sourceCommit | `a876e1ebd4523d96b09d1ea46fd35748de27977e` |
+| writeBackend | supabase |
+| saveDisabled | true |
+| valueTextRequiredVisible | false |
+| Stale/marker | relocate + external PACKAGE_RUN + HEAD verify **worked** |
+| Doc | `cms-core-v2-about-supabase-admin-path-staging-ftp-post-qa-result.md` |
+| Checklist | `cms-core-v2-about-supabase-ftp-post-qa.md` §B **PASS** |
+
+```txt
+ABOUT_SUPABASE_ADMIN_PATH_STAGING_FTP_POST_QA_COMPLETE: true
+ABOUT_SUPABASE_ADMIN_PATH_STAGING_FTP_POST_QA_PASSED: true
+ADMIN_ABOUT_SUPABASE_PATH_LIVE: true
+PACKAGE_GENERATE_EXECUTED: true
+FTP_EXECUTED: true
+DB_WRITE_EXECUTED: false
+PUBLIC_ABOUT_JSON_SOT: true
+packageStaleBackupAndRunMarkerWorkedThisGenerate: true
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+PRODUCTION_UNCHANGED: true
+```
 
 ## 0. Package stale-backup + PACKAGE_RUN fail-closed local COMPLETE (2026-07-27)
 

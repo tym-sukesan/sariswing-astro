@@ -37,12 +37,19 @@ Prerequisites: Edge `gosaki-about-supabase-save-dry-run` deployed · post-deploy
 
 See [admin-path-package-preflight](./cms-core-v2-about-supabase-admin-path-package-preflight.md) · [post-deploy QA result](./cms-core-v2-about-supabase-save-dry-run-edge-post-deploy-qa-result.md).
 
-1. `/admin/about/` shows `data-gosaki-about-write-backend=supabase`
-2. Dry-run against Supabase endpoint returns plan for `profile.lede` only (no DB write)
-3. Save still disabled (`save_not_armed` / UI armed false · expect `ok:false` on Save probe)
-4. Toggle path flag off package → Contents path still works (rollback)
-5. Schedule / Discography / YouTube admin still OK
-6. Public `/about/` lede visible (JSON SoT until build-read phase)
+**Result (2026-07-28):** **PASS** — [admin-path staging FTP post-QA result](./cms-core-v2-about-supabase-admin-path-staging-ftp-post-qa-result.md)
+
+| # | Check | Result |
+| --- | --- | --- |
+| 1 | `/admin/about/` shows `data-gosaki-about-write-backend=supabase` | **PASS** (`writeBackend: "supabase"`) |
+| 2 | Dry-run against Supabase endpoint returns plan for `profile.lede` only (no DB write) | **PASS** (Edge post-deploy QA prior · this FTP QA: **DB writeなし**) |
+| 3 | Save still disabled (`save_not_armed` / UI armed false · expect `ok:false` on Save probe) | **PASS** (`saveDisabled: true` · remote arm **unset**) |
+| 3b | `value_text_required` not visible in normal UI | **PASS** (`valueTextRequiredVisible: false`) |
+| 4 | Toggle path flag off package → Contents path still works (rollback) | retained in code · not re-tested this FTP |
+| 5 | Schedule / Discography / YouTube admin still OK | public pages overall **PASS** · route-by-route not blocking |
+| 6 | Public `/about/` lede visible (JSON SoT until build-read phase) | **PASS** (JSON · build-read **false**) |
+
+Package: `sourceCommit` **`a876e1ebd4523d96b09d1ea46fd35748de27977e`** · operator FileZilla full `public-dist/` overwrite · stale-backup + external `PACKAGE_RUN` marker **worked** · production **unchanged**.
 
 **STOP:** Edge 404 / CORS / auth errors → leave Contents default package live
 

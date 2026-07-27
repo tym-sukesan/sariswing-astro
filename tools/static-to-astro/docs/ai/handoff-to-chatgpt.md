@@ -5,21 +5,34 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: About Admin value_text_required UI leak fix COMPLETE + package stale/external PACKAGE_RUN ready
-aboutValueTextRequiredUiLeakFixComplete: true
-Fix: skip Contents hydrate on writeBackend=supabase · userFacingAboutErrorMessage maps raw codes
-Marker path: output/manual-upload/_package-runs/gosaki-piano/PACKAGE_RUN.json (outside FTP payload)
-packageStaleBackupAndRunMarkerLocalImplComplete: true
-ABOUT_SUPABASE_ADMIN_PATH_PACKAGE_PREFLIGHT_COMPLETE: true
-readyForAboutSupabaseAdminPathPackageGenerate: true
-PACKAGE_GENERATE_EXECUTED: false
-FTP_EXECUTED: false
-POST_DEPLOY_QA_PASSED: true
+Current phase: About Supabase Admin read/hydrate planning COMPLETE
+FTP post-QA: PASS · sourceCommit a876e1ebd4523d96b09d1ea46fd35748de27977e
+writeBackend: supabase · saveDisabled: true · valueTextRequiredVisible: false
+ABOUT_SUPABASE_ADMIN_PATH_STAGING_FTP_POST_QA_PASSED: true
+ABOUT_SUPABASE_ADMIN_READ_HYDRATE_PLANNING_COMPLETE: true
+readyForAboutSupabaseAdminReadHydrateImplementation: true
+IMPLEMENTATION_EXECUTED: false
+packageStaleBackupAndRunMarkerWorkedThisGenerate: true
+PUBLIC_ABOUT_JSON_SOT: true
 saveArmEnabled: false
+GOSAKI_ABOUT_SUPABASE_SAVE_ARMED_SET: false
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
-Next: package generate with PATH_ENABLED=true · SAVE_UI_ARMED=false · no server arm · external marker PASS → operator FTP (gosaki-piano/ only)
+Next: ask operator → cms-core-v2-about-supabase-admin-read-hydrate-local-implementation
 readyForAnyFutureFtpApply: false
 ```
+
+## About Supabase Admin read/hydrate planning (2026-07-28)
+
+- Dedicated Edge `operation=read` for `about`/`profile.lede` · JWT + `can_write_site`
+- Surgical lede overlay into Admin form · baked JSON fallback
+- Save arms false · public About JSON unchanged · Contents retained
+- Doc: `cms-core-v2-about-supabase-admin-read-hydrate-planning.md`
+
+## About Supabase Admin-path staging FTP post-QA (2026-07-28)
+
+- PASS: package `a876e1eb…` · FileZilla full public-dist · supabase writeBackend · Save disabled · no value_text_required leak
+- Stale relocate + external PACKAGE_RUN + HEAD verify worked
+- Doc: `cms-core-v2-about-supabase-admin-path-staging-ftp-post-qa-result.md` · ftp-post-qa §B PASS
 
 ## About Admin value_text_required UI leak fix (2026-07-28)
 

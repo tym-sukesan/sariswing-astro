@@ -31,14 +31,18 @@ After uploading `public-dist/` to `/cms-kit-staging/gosaki-piano/`:
 
 ---
 
-## B. After Edge deploy + Admin path package (future)
+## B. After Edge deploy + Admin path package
 
-Prerequisites: Edge `gosaki-about-supabase-save-dry-run` deployed · package baked with `PUBLIC_ADMIN_GOSAKI_ABOUT_SUPABASE_PATH_ENABLED=true` · Save arms **false**
+Prerequisites: Edge `gosaki-about-supabase-save-dry-run` deployed · post-deploy QA **PASS** · package baked with `PUBLIC_ADMIN_GOSAKI_ABOUT_SUPABASE_PATH_ENABLED=true` · Save arms **false** · server `GOSAKI_ABOUT_SUPABASE_SAVE_ARMED` **unset**
+
+See [admin-path-package-preflight](./cms-core-v2-about-supabase-admin-path-package-preflight.md) · [post-deploy QA result](./cms-core-v2-about-supabase-save-dry-run-edge-post-deploy-qa-result.md).
 
 1. `/admin/about/` shows `data-gosaki-about-write-backend=supabase`
 2. Dry-run against Supabase endpoint returns plan for `profile.lede` only (no DB write)
-3. Save still disabled (`save_not_armed` / UI armed false)
+3. Save still disabled (`save_not_armed` / UI armed false · expect `ok:false` on Save probe)
 4. Toggle path flag off package → Contents path still works (rollback)
+5. Schedule / Discography / YouTube admin still OK
+6. Public `/about/` lede visible (JSON SoT until build-read phase)
 
 **STOP:** Edge 404 / CORS / auth errors → leave Contents default package live
 

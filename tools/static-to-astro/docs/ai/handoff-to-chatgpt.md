@@ -5,29 +5,40 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: CMS Core v2 About Supabase save_not_armed ok contract fix COMPLETE (local)
-Fix: ...plan then ok:false on gosaki-about-supabase-save-dry-run handler (root+mirror)
-ABOUT_SUPABASE_SAVE_NOT_ARMED_OK_CONTRACT_FIXED: true
-EDGE_REDEPLOY_REQUIRED: true
-edgeDeployExecuted: false (this fix undeployed)
+Current phase: CMS Core v2 About Supabase Admin-path staging package preflight COMPLETE
+Preflight doc: tools/static-to-astro/docs/cms-core-v2-about-supabase-admin-path-package-preflight.md
+QA result: tools/static-to-astro/docs/cms-core-v2-about-supabase-save-dry-run-edge-post-deploy-qa-result.md
+Verifier: tools/static-to-astro/scripts/verify-cms-core-v2-about-supabase-admin-path-package-preflight.mjs
+ABOUT_SUPABASE_ADMIN_PATH_PACKAGE_PREFLIGHT_COMPLETE: true
+readyForAboutSupabaseAdminPathPackageGenerate: true
+PACKAGE_GENERATE_EXECUTED: false
+FTP_EXECUTED: false
+POST_DEPLOY_QA_PASSED: true
 saveArmEnabled: false
-Runbook: tools/static-to-astro/docs/cms-core-v2-about-supabase-save-dry-run-edge-post-deploy-qa-runbook.md
+GOSAKI_ABOUT_SUPABASE_SAVE_ARMED_SET: false
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
-Next: AGENTS staging redeploy → re-check Step 5 ok:false → Admin-path package
+Next: package generate with PATH_ENABLED=true · SAVE_UI_ARMED=false · no server arm · verify:manual-upload → operator FTP
 readyForAnyFutureFtpApply: false
 ```
 
+## CMS Core v2 About Supabase Admin-path package preflight (2026-07-27)
+
+- Bake About admin to Supabase Edge; Save arms false; public JSON unchanged
+- Command: build-gosaki-staging-admin-package.mjs (not run in preflight)
+
+## CMS Core v2 About Supabase Edge post-deploy QA result (2026-07-27)
+
+- PASS: OPTIONS/401/dryRun/save_not_armed ok:false/allowlist/seed unchanged
+- No production · no Save arm · no DB write
+
 ## CMS Core v2 About Supabase save_not_armed ok contract fix (2026-07-27)
 
-- Bug: plan.ok overwrote rejection ok:true on save_not_armed
-- Fix: spread plan first, then ok:false / error / WRITE_FALSE
-- Other non-2xx in this Function: no same overwrite pattern
+- Bug: plan.ok overwrote rejection ok
+- Fix: spread plan first, then ok:false — confirmed on remote QA
 
 ## CMS Core v2 About Supabase Edge post-deploy QA runbook (2026-07-26)
 
-- Manual steps: OPTIONS · unauth 401 · owner dry-run 200 · didWrite false · save_not_armed 403 · allowlist 400 · seed unchanged
-- No Save arm · no Secret · no SQL write · no token/UUID/email logging
-- Step 5 success now requires body ok:false (after redeploy of contract fix)
+- Manual steps recorded as PASS in result doc
 
 ## CMS Core v2 About Supabase Edge deploy preflight (2026-07-24)
 

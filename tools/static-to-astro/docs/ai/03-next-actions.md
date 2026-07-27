@@ -1,28 +1,67 @@
-Last updated: 2026-07-26
+Last updated: 2026-07-27
 Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **Kit Core:** About Supabase **`save_not_armed` ok:false 契約修正 COMPLETE（local）** · staging は **再 deploy 待ち** · Save arm **unset**。**Next:** AGENTS 承認で `gosaki-about-supabase-save-dry-run` staging redeploy → post-deploy Step 5 再確認（`ok:false`）→ Admin-path package。
+1. **Kit Core:** About Supabase **Admin-path package preflight COMPLETE** · Edge post-deploy QA **PASS** · Save arms **false**。**Next:** `PUBLIC_ADMIN_GOSAKI_ABOUT_SUPABASE_PATH_ENABLED=true` で staging package generate（`build-gosaki-staging-admin-package.mjs`）→ `verify:manual-upload` → operator manual FTP + ftp-post-qa §B。Doc: `cms-core-v2-about-supabase-admin-path-package-preflight.md`。
 2. **並行可:** Contents YouTube 退役 planning（`contentsYoutubeCutoverExecuted: false`）。
 3. **並行可（Gosaki ops）:** クライアントへ staging 共有・feedback。
 4. **並行可:** production hosting **read-only planning**。
-5. Save arm **false** · Secret 変更禁止 · About Contents / G-12a **unchanged** · migration/RLS/seed **再実行禁止**。
+5. Save arm **false** · Secret 変更禁止 · About Contents / G-12a **retained** · migration/RLS/seed **再実行禁止** · build-read **未**。
 6. production / Wix / auto FTP / `vsbvndwuajjhnzpohghh` 禁止 · `service_role` 禁止 · `readyForAnyFutureFtpApply: false`。
+
+## 0. CMS Core v2 About Supabase Admin-path package preflight COMPLETE (2026-07-27)
+
+| Item | Value |
+| --- | --- |
+| Gate | `ABOUT_SUPABASE_ADMIN_PATH_PACKAGE_PREFLIGHT_COMPLETE: true` |
+| Generate readiness | `readyForAboutSupabaseAdminPathPackageGenerate: true` |
+| Package / FTP | **not executed** |
+| Path env | `PUBLIC_ADMIN_GOSAKI_ABOUT_SUPABASE_PATH_ENABLED=true` (bake) |
+| UI Save arm | `PUBLIC_ADMIN_GOSAKI_ABOUT_SUPABASE_SAVE_UI_ARMED=false` |
+| Server Save arm | unset |
+| Doc | `cms-core-v2-about-supabase-admin-path-package-preflight.md` |
+| Verifier | `verify-cms-core-v2-about-supabase-admin-path-package-preflight.mjs` |
+
+```txt
+ABOUT_SUPABASE_ADMIN_PATH_PACKAGE_PREFLIGHT_COMPLETE: true
+readyForAboutSupabaseAdminPathPackageGenerate: true
+PACKAGE_GENERATE_EXECUTED: false
+FTP_EXECUTED: false
+SAVE_ARM_ENABLED: false
+GOSAKI_ABOUT_SUPABASE_SAVE_ARMED_SET: false
+REGISTRY_SITE_PAGE_FIELDS: false
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+SERVICE_ROLE_USED: false
+PRODUCTION_UNCHANGED: true
+```
+
+## 0. CMS Core v2 About Supabase Edge post-deploy QA COMPLETE (2026-07-27)
+
+| Item | Value |
+| --- | --- |
+| Gate | `POST_DEPLOY_QA_PASSED: true` |
+| Doc | `cms-core-v2-about-supabase-save-dry-run-edge-post-deploy-qa-result.md` |
+
+```txt
+POST_DEPLOY_QA_EXECUTED: true
+POST_DEPLOY_QA_PASSED: true
+SAVE_ARM_ENABLED: false
+DB_WRITE_EXECUTED: false
+PRODUCTION_UNCHANGED: true
+```
 
 ## 0. CMS Core v2 About Supabase save_not_armed ok contract fix COMPLETE (2026-07-27)
 
 | Item | Value |
 | --- | --- |
 | Fix | `...plan` then `ok: false` (was overwritten by `plan.ok`) |
-| Status | local only · **EDGE_REDEPLOY_REQUIRED: true** |
+| Status | confirmed by remote QA (`ok:false`) |
 | Contract | 403 · `ok:false` · `save_not_armed` · write flags false |
 | Root/mirror | byte match |
 
 ```txt
 ABOUT_SUPABASE_SAVE_NOT_ARMED_OK_CONTRACT_FIXED: true
-EDGE_REDEPLOY_REQUIRED: true
-EDGE_DEPLOY_EXECUTED: false
 SAVE_ARM_ENABLED: false
 SERVICE_ROLE_USED: false
 PRODUCTION_UNCHANGED: true

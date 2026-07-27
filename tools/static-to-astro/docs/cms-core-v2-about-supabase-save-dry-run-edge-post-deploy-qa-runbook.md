@@ -1,8 +1,8 @@
 # CMS Core v2 — About Supabase Edge post-deploy QA runbook (manual)
 
 **Phase:** `cms-core-v2-about-supabase-save-dry-run-edge-post-deploy-qa-runbook`
-**Status:** **runbook ready** — operator executes manually; **Cursor does not** invoke Edge / SQL / Secrets / FTP
-**Date:** 2026-07-26
+**Status:** **runbook + result COMPLETE** — operator QA **PASS** · see [result](./cms-core-v2-about-supabase-save-dry-run-edge-post-deploy-qa-result.md)
+**Date:** 2026-07-26 (runbook) · **QA recorded:** 2026-07-27
 **Staging:** `kmjqppxjdnwwrtaeqjta`
 **Production STOP:** `vsbvndwuajjhnzpohghh`
 **Function:** `gosaki-about-supabase-save-dry-run` (deployed)
@@ -12,7 +12,8 @@
 ```txt
 ABOUT_SUPABASE_EDGE_POST_DEPLOY_QA_RUNBOOK_READY: true
 EDGE_DEPLOY_EXECUTED: true
-POST_DEPLOY_QA_EXECUTED: false
+POST_DEPLOY_QA_EXECUTED: true
+POST_DEPLOY_QA_PASSED: true
 SAVE_ARM_ENABLED: false
 GOSAKI_ABOUT_SUPABASE_SAVE_ARMED_SET: false
 SERVICE_ROLE_USED: false
@@ -356,16 +357,19 @@ SELECT again into a **separate** object. Do **not** overwrite `window.__aboutSbB
 ## Pass / fail record (safe fields only)
 
 ```txt
-Step1 OPTIONS: PASS|FAIL
-Step2 unauth 401: PASS|FAIL
-Step3 dry-run 200: PASS|FAIL
-Step4 didWrite false: PASS|FAIL
-Step5 save_not_armed 403: PASS|FAIL
-Step6 allowlist 400: PASS|FAIL
-Step7 seed unchanged: PASS|FAIL
-Step8 no production / no arm: PASS|FAIL
-POST_DEPLOY_QA_EXECUTED: true|false
+Step1 OPTIONS: PASS
+Step2 unauth 401: PASS
+Step3 dry-run 200: PASS
+Step4 didWrite false: PASS
+Step5 save_not_armed 403: PASS (ok:false)
+Step6 allowlist 400: PASS
+Step7 seed unchanged: PASS
+Step8 no production / no arm: PASS
+POST_DEPLOY_QA_EXECUTED: true
+POST_DEPLOY_QA_PASSED: true
 ```
+
+Full record: [edge-post-deploy-qa-result](./cms-core-v2-about-supabase-save-dry-run-edge-post-deploy-qa-result.md).
 
 Do not attach JWT, UUID, email, or token dumps.
 
@@ -373,5 +377,5 @@ Do not attach JWT, UUID, email, or token dumps.
 
 ## After all PASS
 
-Next gate (separate phase): Admin-path package bake (`PUBLIC_ADMIN_GOSAKI_ABOUT_SUPABASE_PATH_ENABLED`) → operator manual FTP + [ftp-post-qa](./cms-core-v2-about-supabase-ftp-post-qa.md).
+**Next:** [Admin-path package preflight](./cms-core-v2-about-supabase-admin-path-package-preflight.md) · then package generate (separate) · operator manual FTP + [ftp-post-qa](./cms-core-v2-about-supabase-ftp-post-qa.md) §B.
 Keep Save arms **false**.

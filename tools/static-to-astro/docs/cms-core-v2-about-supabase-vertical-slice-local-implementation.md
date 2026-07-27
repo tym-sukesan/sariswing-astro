@@ -103,10 +103,12 @@ Optional build-read package prep (later): `CMS_KIT_SITE_PAGE_FIELDS_BUILD_READ=t
 
 ## 7. Next gates
 
-1. ~~Edge deploy preflight~~ → **COMPLETE** — [save-dry-run-edge-deploy-preflight](./cms-core-v2-about-supabase-save-dry-run-edge-deploy-preflight.md) · `readyForAboutSupabaseEdgeDeployExecution: true`
-2. Operator Edge deploy of `gosaki-about-supabase-save-dry-run` (explicit AGENTS approval · staging only)
-3. Admin-path package + manual FTP + browser QA (Contents still default until path flag)
-4. Build-read package + public About QA
-5. Keep Save arms **false** until controlled Save round-trip phase
+1. ~~Edge deploy preflight~~ → **COMPLETE**
+2. ~~Edge post-deploy QA~~ → **PASS** ([result](./cms-core-v2-about-supabase-save-dry-run-edge-post-deploy-qa-result.md))
+3. ~~Admin-path package preflight~~ → **COMPLETE** ([preflight](./cms-core-v2-about-supabase-admin-path-package-preflight.md))
+4. Admin-path package generate (`PUBLIC_ADMIN_GOSAKI_ABOUT_SUPABASE_PATH_ENABLED=true` · Save arms false) — **not executed**
+5. Operator manual FTP + browser QA ([ftp-post-qa](./cms-core-v2-about-supabase-ftp-post-qa.md) §B)
+6. Build-read package + public About QA (later)
+7. Keep Save arms **false** until controlled Save round-trip phase
 
 **Do not:** re-run migration/RLS/seed · production · auto FTP · Secret change · arm Save without approval

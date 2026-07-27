@@ -24,6 +24,14 @@ import {
   buildPostBuildVerifierArgs,
   resolvePostBuildVerifier,
 } from "./post-build-verifier-registry.mjs";
+import {
+  buildPackageRunMarker,
+  relocateExistingManualUploadPackageToStaleBackup,
+  resolveAboutAdminPathBakeFromEnv,
+  writePackageRunMarker,
+} from "./package-run-marker.mjs";
+import { resolveSourceCommit } from "./package-upload-safety.mjs";
+import { randomUUID } from "node:crypto";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 export const REPO_ROOT = path.resolve(TOOL_ROOT, "../..");
@@ -192,6 +200,25 @@ export function runSitePackageBuild(options) {
     console.log("Gosaki staging admin env: skipped (non-gosaki site)");
   }
 
+  // Fail-closed stale relocate: move existing package aside before convert/build.
+  // On later failure we do NOT restore — normal path stays empty until a successful package write.
+  try {
+    const relocated = relocateExistingManualUploadPackageToStaleBackup(packageDir, {
+      repoRoot: REPO_ROOT,
+      siteKey,
+    });
+    if (relocated.relocated) {
+      console.log(`[package-stale] relocated existing package`);
+      console.log(`  from: ${relocated.from}`);
+      console.log(`  to:   ${relocated.to}`);
+    } else {
+      console.log(`[package-stale] no existing package to relocate (${relocated.reason ?? "ok"})`);
+    }
+  } catch (err) {
+    console.error(`[package-stale] relocate failed: ${err instanceof Error ? err.message : String(err)}`);
+    process.exit(1);
+  }
+
   run(
     "node",
     buildConvertCliArgs(siteKey, profileName, { toolRoot }),
@@ -234,6 +261,26 @@ export function runSitePackageBuild(options) {
     for (const err of packageResult.errors) console.error(`ERROR: ${err}`);
     process.exit(1);
   }
+
+  const sourceCommit = String(
+    packageResult.manifest?.sourceCommit ?? resolveSourceCommit(REPO_ROOT) ?? "",
+  ).trim();
+  const generatedAt = String(
+    packageResult.manifest?.generatedAt ?? new Date().toISOString(),
+  ).trim();
+  const bake = resolveAboutAdminPathBakeFromEnv(buildEnv);
+  const marker = buildPackageRunMarker({
+    runId: randomUUID(),
+    generatedAt,
+    sourceCommit,
+    siteKey,
+    profile: profileName,
+    bake,
+  });
+  const markerPath = writePackageRunMarker(packageDir, marker);
+  console.log(
+    `[package-run] wrote external PACKAGE_RUN.json · runId=${marker.runId} · path=${markerPath}`,
+  );
 
   const verifierArgs = buildPostBuildVerifierArgs(siteKey, profileName, profile, toolRoot);
   run("node", verifierArgs, buildEnv);

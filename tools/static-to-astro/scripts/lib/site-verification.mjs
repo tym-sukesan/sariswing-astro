@@ -60,10 +60,12 @@ export function findSitemapFilesInDist(distDir) {
 export function runBuildVerification(outputDir, { installDependencies = true } = {}) {
   const distDir = path.join(outputDir, "dist");
   const distScheduleIndex = path.join(distDir, "schedule/index.html");
+  const installTimeoutMs = 600_000;
+  const buildTimeoutMs = 300_000;
   const result = {
     buildSuccess: false,
     buildCommand: "npm run build",
-    installCommand: installDependencies ? "npm install" : null,
+    installCommand: installDependencies ? "npm install --no-audit --no-fund" : null,
     buildOutput: "",
     distScheduleIndexExists: false,
     robotsTxtInPublic: fs.existsSync(path.join(outputDir, "public/robots.txt")),
@@ -72,34 +74,73 @@ export function runBuildVerification(outputDir, { installDependencies = true } =
   };
 
   if (installDependencies && fs.existsSync(path.join(outputDir, "package.json"))) {
+    const installStartedAt = Date.now();
+    console.log(
+      `[verify-build] npm install start · cmd=npm install --no-audit --no-fund · cwd=${outputDir} · timeoutMs=${installTimeoutMs}`,
+    );
     try {
-      execSync("npm install", {
+      execSync("npm install --no-audit --no-fund", {
         cwd: outputDir,
         encoding: "utf8",
         stdio: ["ignore", "pipe", "pipe"],
-        timeout: 180_000,
+        // Cold registry resolution of Astro peers can exceed 3 minutes.
+        timeout: installTimeoutMs,
       });
+      console.log(
+        `[verify-build] npm install end · ok · elapsedMs=${Date.now() - installStartedAt}`,
+      );
     } catch (err) {
       const stdout = err.stdout?.toString?.() ?? "";
       const stderr = err.stderr?.toString?.() ?? "";
-      result.buildOutput = `npm install failed:\n${stdout}\n${stderr}`.slice(-4000);
+      const meta = [
+        err.code ? `code=${err.code}` : null,
+        err.signal ? `signal=${err.signal}` : null,
+        err.message ? `message=${err.message}` : null,
+      ]
+        .filter(Boolean)
+        .join(" · ");
+      console.error(
+        `[verify-build] npm install end · FAILED · elapsedMs=${Date.now() - installStartedAt}` +
+          (meta ? ` · ${meta}` : ""),
+      );
+      result.buildOutput = `npm install failed${meta ? ` (${meta})` : ""}:\n${stdout}\n${stderr}`.slice(
+        -4000,
+      );
       return result;
     }
   }
 
+  const buildStartedAt = Date.now();
+  console.log(
+    `[verify-build] npm run build start · cwd=${outputDir} · timeoutMs=${buildTimeoutMs}`,
+  );
   try {
     const out = execSync("npm run build", {
       cwd: outputDir,
       encoding: "utf8",
       stdio: ["ignore", "pipe", "pipe"],
-      timeout: 120_000,
+      timeout: buildTimeoutMs,
     });
     result.buildSuccess = true;
     result.buildOutput = out.slice(-2000);
+    console.log(
+      `[verify-build] npm run build end · ok · elapsedMs=${Date.now() - buildStartedAt}`,
+    );
   } catch (err) {
     const stdout = err.stdout?.toString?.() ?? "";
     const stderr = err.stderr?.toString?.() ?? "";
-    result.buildOutput = `${stdout}\n${stderr}`.slice(-4000);
+    const meta = [
+      err.code ? `code=${err.code}` : null,
+      err.signal ? `signal=${err.signal}` : null,
+      err.message ? `message=${err.message}` : null,
+    ]
+      .filter(Boolean)
+      .join(" · ");
+    console.error(
+      `[verify-build] npm run build end · FAILED · elapsedMs=${Date.now() - buildStartedAt}` +
+        (meta ? ` · ${meta}` : ""),
+    );
+    result.buildOutput = `${meta ? `${meta}\n` : ""}${stdout}\n${stderr}`.slice(-4000);
   }
 
   result.distScheduleIndexExists = fs.existsSync(distScheduleIndex);

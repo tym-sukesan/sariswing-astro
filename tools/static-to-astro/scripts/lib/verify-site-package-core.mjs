@@ -23,6 +23,11 @@ import {
   verifyGosakiProductionContentExtensions,
   verifyGosakiStagingContentExtensions,
 } from "./verify-site-package-gosaki-extensions.mjs";
+import {
+  EXPECTED_ABOUT_ADMIN_PATH_BAKE,
+  isManualUploadMetaPath,
+  validatePackageRunMarker,
+} from "./package-run-marker.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 export const TOOL_ROOT = path.resolve(__dirname, "../..");
@@ -69,6 +74,27 @@ export function verifySitePackage(options) {
   const pkg = resolveSitePackageDir(siteKey, profileName, { toolRoot, packageDir: packageDirOpt });
   const publicDist = path.join(pkg, "public-dist");
   const zipName = resolvePackageZipName(meta.siteSlug, meta.packageProfileName);
+
+  if (isManualUploadMetaPath(pkg)) {
+    errors.push("_stale-backup/_package-runs must not be used as verify/FTP package path");
+  }
+
+  if (!fs.existsSync(pkg) || !fs.statSync(pkg).isDirectory()) {
+    errors.push("package dir missing");
+  }
+
+  // Fail-closed: live package + external _package-runs marker (not inside FTP payload).
+  if (siteKey === GOSAKI_SITE_KEY && profileName === "staging") {
+    errors.push(
+      ...validatePackageRunMarker({
+        packageDir: pkg,
+        repoRoot: REPO_ROOT,
+        siteKey,
+        profile: profileName,
+        expectedBake: EXPECTED_ABOUT_ADMIN_PATH_BAKE,
+      }),
+    );
+  }
 
   const required = [
     "public-dist/index.html",

@@ -5,21 +5,31 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: CMS Core v2 About Supabase Admin-path staging package preflight COMPLETE
-Preflight doc: tools/static-to-astro/docs/cms-core-v2-about-supabase-admin-path-package-preflight.md
-QA result: tools/static-to-astro/docs/cms-core-v2-about-supabase-save-dry-run-edge-post-deploy-qa-result.md
-Verifier: tools/static-to-astro/scripts/verify-cms-core-v2-about-supabase-admin-path-package-preflight.mjs
+Current phase: Package stale-backup + external PACKAGE_RUN fail-closed local COMPLETE
+Module: tools/static-to-astro/scripts/lib/package-run-marker.mjs
+Marker path: output/manual-upload/_package-runs/gosaki-piano/PACKAGE_RUN.json (outside FTP payload)
+Fixture: verify-package-stale-backup-and-run-marker.mjs
+packageStaleBackupAndRunMarkerLocalImplComplete: true
+Live gosaki-piano package NOT relocated this phase
+Live verify:manual-upload FAILs until successful regenerate (missing external PACKAGE_RUN)
 ABOUT_SUPABASE_ADMIN_PATH_PACKAGE_PREFLIGHT_COMPLETE: true
 readyForAboutSupabaseAdminPathPackageGenerate: true
 PACKAGE_GENERATE_EXECUTED: false
 FTP_EXECUTED: false
 POST_DEPLOY_QA_PASSED: true
 saveArmEnabled: false
-GOSAKI_ABOUT_SUPABASE_SAVE_ARMED_SET: false
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
-Next: package generate with PATH_ENABLED=true · SAVE_UI_ARMED=false · no server arm · verify:manual-upload → operator FTP
+Next: package generate with PATH_ENABLED=true · SAVE_UI_ARMED=false · no server arm · external marker PASS → operator FTP (gosaki-piano/ only)
 readyForAnyFutureFtpApply: false
 ```
+
+## Package stale-backup + PACKAGE_RUN (2026-07-27)
+
+- Rename live package → `_stale-backup/gosaki-piano/<timestamp>-<short-head>/` before generate; no restore on failure
+- Success marker **external** `output/manual-upload/_package-runs/gosaki-piano/PACKAGE_RUN.json` (not in FTP payload)
+- verify fail-closed on marker/HEAD/bake · rejects in-package PACKAGE_RUN.json
+- `_package-runs` + `_stale-backup` excluded from verify/FTP/fileCount
+- install 600s / build 300s · `npm install --no-audit --no-fund` · verify-build fail → exit 1
 
 ## CMS Core v2 About Supabase Admin-path package preflight (2026-07-27)
 

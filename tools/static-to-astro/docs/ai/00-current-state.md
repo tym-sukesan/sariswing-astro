@@ -1,7 +1,9 @@
-Last updated: 2026-07-24
+Last updated: 2026-07-27
 Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
+
+**Manual-upload package stale-backup + PACKAGE_RUN fail-closed (2026-07-27):** **COMPLETE (local impl · fixture-only · external marker)** — before package write: rename live → `_stale-backup/gosaki-piano/<timestamp>-<short-head>/` · failure does **not** restore · success writes **external** `output/manual-upload/_package-runs/gosaki-piano/PACKAGE_RUN.json` (not inside FTP payload) · `verify:manual-upload` fail-closed on missing/HEAD/bake + rejects in-package marker · `_package-runs` + `_stale-backup` excluded from verify/FTP/fileCount · live package **not relocated** · install 600s / build 300s · `npm install --no-audit --no-fund` · verify-build fail → exit 1 · Fixture: `verify-package-stale-backup-and-run-marker.mjs` · Gates: `packageStaleBackupAndRunMarkerLocalImplComplete: true` · `PACKAGE_GENERATE_EXECUTED: false` · **Next:** About Admin-path package generate → external marker PASS → operator FTP.
 
 **CMS Core v2 About Supabase Admin-path staging package preflight (2026-07-27):** **COMPLETE (docs only · no package/FTP)** — path env `PUBLIC_ADMIN_GOSAKI_ABOUT_SUPABASE_PATH_ENABLED=true` · UI Save arm **false** · server Save arm **unset** · build-read **unset** · Contents/JSON retained · other admin routes out of scope · Gates: `ABOUT_SUPABASE_ADMIN_PATH_PACKAGE_PREFLIGHT_COMPLETE: true` · `readyForAboutSupabaseAdminPathPackageGenerate: true` · `PACKAGE_GENERATE_EXECUTED: false` · Doc: `cms-core-v2-about-supabase-admin-path-package-preflight.md` · Verifier: `verify-cms-core-v2-about-supabase-admin-path-package-preflight.mjs` · **Next:** Admin-path package generate (env stack) → verify:manual-upload → operator manual FTP + ftp-post-qa §B.
 

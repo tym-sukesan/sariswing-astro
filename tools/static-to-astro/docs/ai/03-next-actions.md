@@ -3,12 +3,32 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **Kit Core:** About Supabase **Admin-path package preflight COMPLETE** · Edge post-deploy QA **PASS** · Save arms **false**。**Next:** `PUBLIC_ADMIN_GOSAKI_ABOUT_SUPABASE_PATH_ENABLED=true` で staging package generate（`build-gosaki-staging-admin-package.mjs`）→ `verify:manual-upload` → operator manual FTP + ftp-post-qa §B。Doc: `cms-core-v2-about-supabase-admin-path-package-preflight.md`。
+1. **Kit Core:** Package stale-backup + **external** `PACKAGE_RUN` fail-closed **local COMPLETE**（fixture PASS · 実 package 未移動 · marker は `_package-runs/` のみ）。**Next:** About Admin-path package generate（`PUBLIC_ADMIN_GOSAKI_ABOUT_SUPABASE_PATH_ENABLED=true` · Save UI arm false · server arm unset）→ live package + `_package-runs/gosaki-piano/PACKAGE_RUN.json` → `verify:manual-upload` PASS → operator manual FTP（`gosaki-piano/` のみ）+ ftp-post-qa §B。現行 live は外部 marker 欠落で verify FAIL（意図的）。
 2. **並行可:** Contents YouTube 退役 planning（`contentsYoutubeCutoverExecuted: false`）。
 3. **並行可（Gosaki ops）:** クライアントへ staging 共有・feedback。
 4. **並行可:** production hosting **read-only planning**。
 5. Save arm **false** · Secret 変更禁止 · About Contents / G-12a **retained** · migration/RLS/seed **再実行禁止** · build-read **未**。
 6. production / Wix / auto FTP / `vsbvndwuajjhnzpohghh` 禁止 · `service_role` 禁止 · `readyForAnyFutureFtpApply: false`。
+
+## 0. Package stale-backup + PACKAGE_RUN fail-closed local COMPLETE (2026-07-27)
+
+| Item | Value |
+| --- | --- |
+| Gate | `packageStaleBackupAndRunMarkerLocalImplComplete: true` |
+| Module | `scripts/lib/package-run-marker.mjs` |
+| Marker | `output/manual-upload/_package-runs/<site>/PACKAGE_RUN.json` (outside FTP) |
+| Fixture verifier | `verify-package-stale-backup-and-run-marker.mjs` (38 PASS) |
+| Live package relocated | **false** (this phase) |
+| Live verify | FAILs until next successful generate (`missing PACKAGE_RUN.json`) |
+| Package / FTP / npm install | **not executed** |
+
+```txt
+packageStaleBackupAndRunMarkerLocalImplComplete: true
+PACKAGE_GENERATE_EXECUTED: false
+FTP_EXECUTED: false
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+PRODUCTION_UNCHANGED: true
+```
 
 ## 0. CMS Core v2 About Supabase Admin-path package preflight COMPLETE (2026-07-27)
 

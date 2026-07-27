@@ -187,6 +187,13 @@ async function main() {
       process.exit(0);
     }
     printGenerationSummary(result);
+    if (verifyBuild && result.buildVerification && !result.buildVerification.buildSuccess) {
+      console.error("Error: --verify-build failed (npm install / npm run build). Refuse success exit.");
+      if (result.buildVerification.buildOutput) {
+        console.error(String(result.buildVerification.buildOutput).slice(-2000));
+      }
+      process.exit(1);
+    }
   } catch (err) {
     console.error(`Error: ${err.message}`);
     if (process.env.DEBUG) console.error(err);

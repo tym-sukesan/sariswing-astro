@@ -73,4 +73,10 @@ Function: `gosaki-about-supabase-save-dry-run` (root + tools mirror **byte-ident
 
 ## 4. Next
 
-`cms-core-v2-about-supabase-admin-read-hydrate-edge-deploy-preflight` (docs + operator deploy later)
+`cms-core-v2-about-supabase-admin-read-hydrate-edge-deploy-preflight` — **COMPLETE**
+See [edge re-deploy preflight](./cms-core-v2-about-supabase-admin-read-hydrate-edge-deploy-preflight.md).
+
+```txt
+Next: operator approval → one-shot staging re-deploy of gosaki-about-supabase-save-dry-run
+Mode: Edge deploy execution separate · Save arm unset · then post-deploy read QA
+```

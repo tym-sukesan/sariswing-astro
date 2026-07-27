@@ -3,12 +3,36 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **Kit Core:** About Admin read/hydrate **local COMPLETE**（`operation=read` · lede overlay · JSON fallback · Edge **未 deploy**）。**Next:** `cms-core-v2-about-supabase-admin-read-hydrate-edge-deploy-preflight` → operator Edge deploy → package regenerate + FTP QA。Save arm / public About build-read **触らない**。
+1. **Kit Core:** About Admin read/hydrate Edge **re-deploy preflight COMPLETE**（deploy **未実行**）。**Next:** 明示承認後に staging 1件 re-deploy → post-deploy read QA（401/200/allowlist/save_not_armed/updated_at不変）→ package + FTP。Save arm / public About build-read **触らない**。
 2. **並行可:** Contents YouTube 退役 planning（`contentsYoutubeCutoverExecuted: false`）。
 3. **並行可（Gosaki ops）:** クライアントへ staging 共有・feedback。
 4. **並行可:** production hosting **read-only planning**。
 5. Save arm **false** · Secret 変更禁止 · About Contents / G-12a **retained** · migration/RLS/seed **再実行禁止** · public About build-read **未**。
 6. production / Wix / auto FTP / `vsbvndwuajjhnzpohghh` 禁止 · `service_role` 禁止 · `readyForAnyFutureFtpApply: false`。
+
+## 0. About Supabase Admin read/hydrate Edge re-deploy preflight COMPLETE (2026-07-28)
+
+| Item | Value |
+| --- | --- |
+| Gate | `ABOUT_SUPABASE_ADMIN_READ_HYDRATE_EDGE_DEPLOY_PREFLIGHT_COMPLETE: true` |
+| Redeploy readiness | `readyForAboutSupabaseAdminReadHydrateEdgeRedeployExecution: true` |
+| Redeploy executed | **false** |
+| Baseline HEAD | `c93f9e862150ab11d0eeaa69e647cb6aea31777f` |
+| Function | `gosaki-about-supabase-save-dry-run` (staging only) |
+| Doc | `cms-core-v2-about-supabase-admin-read-hydrate-edge-deploy-preflight.md` |
+| Verifier | `verify-cms-core-v2-about-supabase-admin-read-hydrate-edge-deploy-preflight.mjs` |
+
+```txt
+ABOUT_SUPABASE_ADMIN_READ_HYDRATE_EDGE_DEPLOY_PREFLIGHT_COMPLETE: true
+EDGE_REDEPLOY_PREFLIGHT_READY: true
+readyForAboutSupabaseAdminReadHydrateEdgeRedeployExecution: true
+EDGE_REDEPLOY_EXECUTED: false
+SAVE_ARM_ENABLED: false
+GOSAKI_ABOUT_SUPABASE_SAVE_ARMED_SET: false
+NEW_SECRETS_REQUIRED: false
+SERVICE_ROLE_USED: false
+PRODUCTION_UNCHANGED: true
+```
 
 ## 0. About Supabase Admin read/hydrate local implementation COMPLETE (2026-07-28)
 

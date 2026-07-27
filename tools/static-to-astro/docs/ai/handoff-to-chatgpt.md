@@ -5,21 +5,28 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: About Supabase Admin read/hydrate local implementation COMPLETE
-ABOUT_SUPABASE_ADMIN_READ_HYDRATE_LOCAL_IMPLEMENTATION_COMPLETE: true
-EDGE_DEPLOY_EXECUTED: false
-readyForAboutSupabaseAdminReadHydrateEdgeDeployPreflight: true
-Baseline HEAD: 3e7daae5a33d48cf56bc7ad4db645a596665b9be
-operation=read · JWT+can_write_site · profile.lede overlay · JSON fallback
-FTP post-QA: PASS · sourceCommit a876e1ebd4523d96b09d1ea46fd35748de27977e
-writeBackend: supabase · saveDisabled: true
-PUBLIC_ABOUT_JSON_SOT: true
+Current phase: About Supabase Admin read/hydrate Edge re-deploy preflight COMPLETE
+ABOUT_SUPABASE_ADMIN_READ_HYDRATE_EDGE_DEPLOY_PREFLIGHT_COMPLETE: true
+EDGE_REDEPLOY_PREFLIGHT_READY: true
+readyForAboutSupabaseAdminReadHydrateEdgeRedeployExecution: true
+EDGE_REDEPLOY_EXECUTED: false
+Baseline HEAD: c93f9e862150ab11d0eeaa69e647cb6aea31777f
+Function: gosaki-about-supabase-save-dry-run · staging kmjqppxjdnwwrtaeqjta only
+operation=read locked · Save arm unset · service_role unused
+Deploy command locked (NOT executed):
+  supabase functions deploy gosaki-about-supabase-save-dry-run --project-ref kmjqppxjdnwwrtaeqjta
 saveArmEnabled: false
 GOSAKI_ABOUT_SUPABASE_SAVE_ARMED_SET: false
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
-Next: cms-core-v2-about-supabase-admin-read-hydrate-edge-deploy-preflight
+Next: explicit approval → one-shot staging re-deploy → post-deploy read QA
 readyForAnyFutureFtpApply: false
 ```
+
+## About Supabase Admin read/hydrate Edge re-deploy preflight (2026-07-28)
+
+- Re-deploy preflight for `operation:read` · docs + verifier only · no deploy
+- Post-deploy QA: unauth 401 · owner read 200 · write flags false · allowlist 400 · save_not_armed 403 ok:false · updated_at unchanged
+- Doc: `cms-core-v2-about-supabase-admin-read-hydrate-edge-deploy-preflight.md`
 
 ## About Supabase Admin read/hydrate local implementation (2026-07-28)
 

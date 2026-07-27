@@ -3,24 +3,68 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **Kit Core:** About Admin read/hydrate Edge **re-deploy preflight COMPLETE**（deploy **未実行**）。**Next:** 明示承認後に staging 1件 re-deploy → post-deploy read QA（401/200/allowlist/save_not_armed/updated_at不変）→ package + FTP。Save arm / public About build-read **触らない**。
+1. **Kit Core:** About Admin read/hydrate **Admin-path package preflight COMPLETE**（generate/FTP **未実行**）。**Next:** `cms-core-v2-about-supabase-admin-read-hydrate-admin-path-package-generate`（env stack locked · `verify:manual-upload`）→ operator manual FTP → ftp-post-qa §D。Save arm / public About build-read **触らない**。
 2. **並行可:** Contents YouTube 退役 planning（`contentsYoutubeCutoverExecuted: false`）。
 3. **並行可（Gosaki ops）:** クライアントへ staging 共有・feedback。
 4. **並行可:** production hosting **read-only planning**。
 5. Save arm **false** · Secret 変更禁止 · About Contents / G-12a **retained** · migration/RLS/seed **再実行禁止** · public About build-read **未**。
 6. production / Wix / auto FTP / `vsbvndwuajjhnzpohghh` 禁止 · `service_role` 禁止 · `readyForAnyFutureFtpApply: false`。
 
-## 0. About Supabase Admin read/hydrate Edge re-deploy preflight COMPLETE (2026-07-28)
+## 0. About Supabase Admin read/hydrate Admin-path package preflight COMPLETE (2026-07-28)
+
+| Item | Value |
+| --- | --- |
+| Gate | `ABOUT_SUPABASE_ADMIN_READ_HYDRATE_ADMIN_PATH_PACKAGE_PREFLIGHT_COMPLETE: true` |
+| Generate readiness | `readyForAboutSupabaseAdminReadHydrateAdminPathPackageGenerate: true` |
+| Package / FTP | **false** / **false** |
+| Path env | `PUBLIC_ADMIN_GOSAKI_ABOUT_SUPABASE_PATH_ENABLED=true` |
+| Save UI / Contents Save | **false** / **false** |
+| Server Save arm | **unset** |
+| Doc | `cms-core-v2-about-supabase-admin-read-hydrate-admin-path-package-preflight.md` |
+| Verifier | `verify-cms-core-v2-about-supabase-admin-read-hydrate-admin-path-package-preflight.mjs` |
+| FTP QA | `cms-core-v2-about-supabase-ftp-post-qa.md` §D |
+
+```txt
+ABOUT_SUPABASE_ADMIN_READ_HYDRATE_ADMIN_PATH_PACKAGE_PREFLIGHT_COMPLETE: true
+readyForAboutSupabaseAdminReadHydrateAdminPathPackageGenerate: true
+PACKAGE_GENERATE_EXECUTED: false
+FTP_EXECUTED: false
+SAVE_ARM_ENABLED: false
+GOSAKI_ABOUT_SUPABASE_SAVE_ARMED_SET: false
+CMS_KIT_SITE_PAGE_FIELDS_BUILD_READ: unset
+PUBLIC_ABOUT_JSON_SOT: true
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+PRODUCTION_UNCHANGED: true
+```
+
+## 0. About Supabase Admin read/hydrate Edge post-redeploy QA PASS (2026-07-28)
+
+| Item | Value |
+| --- | --- |
+| Gate | `ABOUT_SUPABASE_ADMIN_READ_HYDRATE_EDGE_POST_DEPLOY_QA_COMPLETE: true` |
+| Redeploy | **executed** · `operation:"read"` live |
+| QA | JWT 401 · owner 200 · allowlist 400 · save_not_armed 403 ok:false · updatedAtUnchanged |
+| Doc | `cms-core-v2-about-supabase-admin-read-hydrate-edge-post-deploy-qa-result.md` |
+
+```txt
+POST_REDEPLOY_QA_PASSED: true
+EDGE_REDEPLOY_EXECUTED: true
+operationReadLive: true
+SAVE_ARM_ENABLED: false
+DB_WRITE_EXECUTED: false
+readyForAboutSupabaseAdminReadHydrateAdminPathPackagePreflight: true
+PRODUCTION_UNCHANGED: true
+```
+
+## 0. About Supabase Admin read/hydrate Edge re-deploy preflight COMPLETE (2026-07-28 · historical)
 
 | Item | Value |
 | --- | --- |
 | Gate | `ABOUT_SUPABASE_ADMIN_READ_HYDRATE_EDGE_DEPLOY_PREFLIGHT_COMPLETE: true` |
-| Redeploy readiness | `readyForAboutSupabaseAdminReadHydrateEdgeRedeployExecution: true` |
-| Redeploy executed | **false** |
-| Baseline HEAD | `c93f9e862150ab11d0eeaa69e647cb6aea31777f` |
-| Function | `gosaki-about-supabase-save-dry-run` (staging only) |
+| Redeploy executed (preflight-time) | **false** (historical) |
 | Doc | `cms-core-v2-about-supabase-admin-read-hydrate-edge-deploy-preflight.md` |
 | Verifier | `verify-cms-core-v2-about-supabase-admin-read-hydrate-edge-deploy-preflight.mjs` |
+| Superseded by | post-redeploy QA PASS above |
 
 ```txt
 ABOUT_SUPABASE_ADMIN_READ_HYDRATE_EDGE_DEPLOY_PREFLIGHT_COMPLETE: true

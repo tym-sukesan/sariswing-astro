@@ -273,4 +273,6 @@ node tools/static-to-astro/scripts/verify-cms-core-v2-about-supabase-admin-read-
 git diff --check
 ```
 
-**Not run:** `supabase functions deploy` · remote invoke · Secret CLI · SQL mutation · package · FTP.
+**Not run (this preflight phase):** `supabase functions deploy` · remote invoke · Secret CLI · SQL mutation · package · FTP.
+
+> **Superseded for next action:** operator re-deploy + post-redeploy QA **PASS** — see [post-deploy QA result](./cms-core-v2-about-supabase-admin-read-hydrate-edge-post-deploy-qa-result.md). Historical gates above keep `EDGE_REDEPLOY_EXECUTED: false` as the preflight-time record.

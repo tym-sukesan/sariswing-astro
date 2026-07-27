@@ -64,6 +64,29 @@ Prerequisites: `CMS_KIT_SITE_PAGE_FIELDS_BUILD_READ=true` **or** `registry.siteP
 
 ---
 
+## D. After Admin read/hydrate package (planned — not executed yet)
+
+Prerequisites: Edge `operation:"read"` post-redeploy QA **PASS** · package bake with
+`PUBLIC_ADMIN_GOSAKI_ABOUT_SUPABASE_PATH_ENABLED=true` · Save UI **false** ·
+Contents Save **false** · build-read **unset** · remote Save arm **unset**.
+
+See [admin-read-hydrate package preflight](./cms-core-v2-about-supabase-admin-read-hydrate-admin-path-package-preflight.md).
+
+| # | Check | Expect |
+| --- | --- | --- |
+| 1 | Admin login on `/admin/about/` | OK |
+| 2 | `writeBackend` | `"supabase"` |
+| 3 | After login | `operation:"read"` runs |
+| 4 | Form overlay | **only** `profile.lede` from Supabase |
+| 5 | Heading / bands / images | baked JSON unchanged |
+| 6 | Read failure (optional) | JSON fallback · no raw error codes |
+| 7 | Save | `saveDisabled: true` |
+| 8 | Public `/about/` | JSON SoT · unchanged |
+| 9 | Other Admin routes | no regression |
+| 10 | production | untouched |
+
+---
+
 ## Rollback
 
 - Re-upload prior package without About Supabase flags

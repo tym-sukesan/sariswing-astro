@@ -5,27 +5,38 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: About Supabase Admin read/hydrate Edge re-deploy preflight COMPLETE
-ABOUT_SUPABASE_ADMIN_READ_HYDRATE_EDGE_DEPLOY_PREFLIGHT_COMPLETE: true
-EDGE_REDEPLOY_PREFLIGHT_READY: true
-readyForAboutSupabaseAdminReadHydrateEdgeRedeployExecution: true
-EDGE_REDEPLOY_EXECUTED: false
-Baseline HEAD: c93f9e862150ab11d0eeaa69e647cb6aea31777f
-Function: gosaki-about-supabase-save-dry-run · staging kmjqppxjdnwwrtaeqjta only
-operation=read locked · Save arm unset · service_role unused
-Deploy command locked (NOT executed):
-  supabase functions deploy gosaki-about-supabase-save-dry-run --project-ref kmjqppxjdnwwrtaeqjta
+Current phase: About Supabase Admin read/hydrate Admin-path package preflight COMPLETE
+ABOUT_SUPABASE_ADMIN_READ_HYDRATE_ADMIN_PATH_PACKAGE_PREFLIGHT_COMPLETE: true
+readyForAboutSupabaseAdminReadHydrateAdminPathPackageGenerate: true
+PACKAGE_GENERATE_EXECUTED: false
+FTP_EXECUTED: false
+POST_REDEPLOY_QA_PASSED: true
+EDGE_REDEPLOY_EXECUTED: true
+operationReadLive: true
+Function: gosaki-about-supabase-save-dry-run · staging kmjqppxjdnwwrtaeqjta
+Package env: PATH_ENABLED=true · SAVE_UI=false · Contents Save=false · server arm unset · build-read unset
+PUBLIC_ABOUT_JSON_SOT: true
 saveArmEnabled: false
-GOSAKI_ABOUT_SUPABASE_SAVE_ARMED_SET: false
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
-Next: explicit approval → one-shot staging re-deploy → post-deploy read QA
+Next: package generate → verify:manual-upload → operator FTP → ftp-post-qa §D
 readyForAnyFutureFtpApply: false
 ```
 
-## About Supabase Admin read/hydrate Edge re-deploy preflight (2026-07-28)
+## About Supabase Admin read/hydrate Admin-path package preflight (2026-07-28)
 
-- Re-deploy preflight for `operation:read` · docs + verifier only · no deploy
-- Post-deploy QA: unauth 401 · owner read 200 · write flags false · allowlist 400 · save_not_armed 403 ok:false · updated_at unchanged
+- Bake Admin About with read/hydrate client · Save arms false · public JSON unchanged
+- Command documented (not run): `build-gosaki-staging-admin-package.mjs` + `verify:manual-upload`
+- Doc: `cms-core-v2-about-supabase-admin-read-hydrate-admin-path-package-preflight.md`
+- Verifier: `verify-cms-core-v2-about-supabase-admin-read-hydrate-admin-path-package-preflight.mjs`
+
+## About Supabase Admin read/hydrate Edge post-redeploy QA (2026-07-28)
+
+- PASS: JWT 401 · owner read 200 · allowlist 400 · save_not_armed 403 ok:false · updatedAtUnchanged · no DB write
+- Doc: `cms-core-v2-about-supabase-admin-read-hydrate-edge-post-deploy-qa-result.md`
+
+## About Supabase Admin read/hydrate Edge re-deploy preflight (2026-07-28 · historical)
+
+- Re-deploy preflight for `operation:read` · docs + verifier · deploy later done by operator
 - Doc: `cms-core-v2-about-supabase-admin-read-hydrate-edge-deploy-preflight.md`
 
 ## About Supabase Admin read/hydrate local implementation (2026-07-28)

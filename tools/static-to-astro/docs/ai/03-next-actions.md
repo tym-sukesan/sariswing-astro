@@ -3,12 +3,33 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **Kit Core:** About Admin-path staging FTP post-QA **PASS**（`sourceCommit` `a876e1eb…` · writeBackend supabase · Save disabled · value_text_required 非表示）。Read/hydrate **planning COMPLETE**。**Next (ask operator):** `cms-core-v2-about-supabase-admin-read-hydrate-local-implementation`（local only · Edge deploy / FTP / Save arm / DB write は別承認）。
+1. **Kit Core:** About Admin read/hydrate **local COMPLETE**（`operation=read` · lede overlay · JSON fallback · Edge **未 deploy**）。**Next:** `cms-core-v2-about-supabase-admin-read-hydrate-edge-deploy-preflight` → operator Edge deploy → package regenerate + FTP QA。Save arm / public About build-read **触らない**。
 2. **並行可:** Contents YouTube 退役 planning（`contentsYoutubeCutoverExecuted: false`）。
 3. **並行可（Gosaki ops）:** クライアントへ staging 共有・feedback。
 4. **並行可:** production hosting **read-only planning**。
 5. Save arm **false** · Secret 変更禁止 · About Contents / G-12a **retained** · migration/RLS/seed **再実行禁止** · public About build-read **未**。
 6. production / Wix / auto FTP / `vsbvndwuajjhnzpohghh` 禁止 · `service_role` 禁止 · `readyForAnyFutureFtpApply: false`。
+
+## 0. About Supabase Admin read/hydrate local implementation COMPLETE (2026-07-28)
+
+| Item | Value |
+| --- | --- |
+| Gate | `ABOUT_SUPABASE_ADMIN_READ_HYDRATE_LOCAL_IMPLEMENTATION_COMPLETE: true` |
+| Edge deploy | **false** |
+| Next readiness | `readyForAboutSupabaseAdminReadHydrateEdgeDeployPreflight: true` |
+| Doc | `cms-core-v2-about-supabase-admin-read-hydrate-local-implementation.md` |
+| Baseline | `3e7daae5a33d48cf56bc7ad4db645a596665b9be` |
+
+```txt
+ABOUT_SUPABASE_ADMIN_READ_HYDRATE_LOCAL_IMPLEMENTATION_COMPLETE: true
+IMPLEMENTATION_EXECUTED: true
+EDGE_DEPLOY_EXECUTED: false
+readyForAboutSupabaseAdminReadHydrateEdgeDeployPreflight: true
+SAVE_ARM_ENABLED: false
+GOSAKI_ABOUT_SUPABASE_SAVE_ARMED_SET: false
+PUBLIC_ABOUT_JSON_SOT: true
+PRODUCTION_UNCHANGED: true
+```
 
 ## 0. About Supabase Admin read/hydrate planning COMPLETE (2026-07-28)
 

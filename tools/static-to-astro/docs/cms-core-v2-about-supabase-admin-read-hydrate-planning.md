@@ -1,9 +1,10 @@
 # CMS Core v2 — About Supabase Admin read/hydrate planning
 
 - **Phase:** `cms-core-v2-about-supabase-admin-read-hydrate-planning`
-- **Status:** **COMPLETE (docs / planning only — no implementation)**
+- **Status:** **COMPLETE (docs / planning only — local implementation followed)**
 - **Date:** 2026-07-28
 - **Depends on:** Admin-path staging FTP post-QA **PASS** ([result](./cms-core-v2-about-supabase-admin-path-staging-ftp-post-qa-result.md))
+- **Implementation:** [local implementation](./cms-core-v2-about-supabase-admin-read-hydrate-local-implementation.md)
 - **Staging:** `kmjqppxjdnwwrtaeqjta`
 - **Production:** `vsbvndwuajjhnzpohghh` **STOP**
 - **Cursor this phase:** planning only · no code · no Edge · no DB · no FTP · no package · no commit
@@ -194,7 +195,7 @@ Stop and ask human if:
 ## 8. Next action
 
 ```txt
-Next: cms-core-v2-about-supabase-admin-read-hydrate-local-implementation
-Mode: local code + tests only · no Edge deploy · no FTP · no Save arm · no DB write
-Ask operator before starting implementation.
+Next: cms-core-v2-about-supabase-admin-read-hydrate-edge-deploy-preflight
+Mode: docs preflight only first · Edge deploy requires separate operator approval
+Local implementation: COMPLETE · EDGE_DEPLOY_EXECUTED: false
 ```

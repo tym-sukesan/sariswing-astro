@@ -82,6 +82,7 @@ export const ABOUT_SUPABASE_SAVE_APPROVAL_ID =
   "G-cms-v2-about-supabase-profile-lede-web-save-non-dry-run-slice";
 export const ABOUT_SUPABASE_DRY_RUN_OPERATION = "dryRun" as const;
 export const ABOUT_SUPABASE_SAVE_OPERATION = "save" as const;
+export const ABOUT_SUPABASE_READ_OPERATION = "read" as const;
 export const ABOUT_SUPABASE_PAGE_KEY = "about";
 export const ABOUT_SUPABASE_FIELD_KEY = "profile.lede";
 
@@ -1867,6 +1868,106 @@ export function extractAboutProfileLedeFromBody(body: string): string {
     }
   }
   return raw.split(/\n\s*\n/)[0]?.trim() || raw.split("\n")[0]?.trim() || raw;
+}
+
+/**
+ * Overlay profile.lede into Admin form body (plain-text paragraphs or HTML).
+ * Replaces first paragraph only — heading / bands / images untouched.
+ */
+export function overlayAboutProfileLedeInBody(body: string, ledeText: string): string {
+  const next = String(ledeText ?? "").trim();
+  if (!next) return String(body ?? "");
+  const raw = String(body ?? "");
+  if (!raw.trim()) return next;
+  if (raw.includes("<p")) {
+    const escaped = next
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
+    const replaced = raw.replace(
+      /(<p\b[^>]*>)([\s\S]*?)(<\/p>)/i,
+      (_m, open, _inner, close) => `${open}${escaped}${close}`,
+    );
+    return replaced === raw ? next : replaced;
+  }
+  if (/\n\s*\n/.test(raw)) {
+    const parts = raw.split(/\n\s*\n/);
+    parts[0] = next;
+    return parts.join("\n\n");
+  }
+  const lines = raw.split("\n");
+  if (lines.length > 1) {
+    lines[0] = next;
+    return lines.join("\n");
+  }
+  return next;
+}
+
+export function buildAboutSupabaseReadEndpointRequest(): Record<string, unknown> {
+  return {
+    siteSlug: GOSAKI_STAGING_SITE_SLUG,
+    pageKey: ABOUT_SUPABASE_PAGE_KEY,
+    fieldKey: ABOUT_SUPABASE_FIELD_KEY,
+    operation: ABOUT_SUPABASE_READ_OPERATION,
+  };
+}
+
+export type AboutSupabaseReadDisplay = {
+  ok: boolean;
+  operation?: string;
+  pageKey?: string;
+  fieldKey?: string;
+  valueText?: string;
+  updatedAt?: string | null;
+  didWrite: boolean;
+  dbWrite: boolean;
+  networkWrite?: boolean;
+  error?: string;
+  errors: string[];
+  authIssue?: boolean;
+  unsafeWriteFlags?: boolean;
+};
+
+/** Sanitize About Supabase read response — reject any write flags. */
+export function sanitizeAboutSupabaseReadDisplay(
+  body: unknown,
+  httpStatus?: number,
+): AboutSupabaseReadDisplay {
+  const data = (body && typeof body === "object" ? body : {}) as Record<string, unknown>;
+  const error = typeof data.error === "string" ? data.error : undefined;
+  const errorsFromArray = Array.isArray(data.errors) ? data.errors.map(String) : [];
+  const errors = error ? Array.from(new Set([error, ...errorsFromArray])) : errorsFromArray;
+  const didWrite = data.didWrite === true;
+  const dbWrite = data.dbWrite === true;
+  const networkWrite = data.networkWrite === true;
+  const unsafeWriteFlags = didWrite || dbWrite || networkWrite;
+  const valueText = typeof data.valueText === "string" ? data.valueText.trim() : "";
+  const ok =
+    data.ok === true &&
+    String(data.operation ?? "") === ABOUT_SUPABASE_READ_OPERATION &&
+    !unsafeWriteFlags &&
+    errors.length === 0 &&
+    valueText.length > 0;
+  return {
+    ok,
+    operation: typeof data.operation === "string" ? data.operation : undefined,
+    pageKey: typeof data.pageKey === "string" ? data.pageKey : undefined,
+    fieldKey: typeof data.fieldKey === "string" ? data.fieldKey : undefined,
+    valueText: valueText || undefined,
+    updatedAt:
+      data.updatedAt == null
+        ? null
+        : typeof data.updatedAt === "string"
+          ? data.updatedAt
+          : String(data.updatedAt),
+    didWrite: false,
+    dbWrite: false,
+    networkWrite: false,
+    error,
+    errors,
+    authIssue: httpStatus === 401 || httpStatus === 403,
+    unsafeWriteFlags,
+  };
 }
 
 export function buildAboutSupabaseDryRunEndpointRequest(input: {

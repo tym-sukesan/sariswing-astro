@@ -19,6 +19,11 @@ import {
   isGosakiSaveNotArmedResponse,
   userMessageForSaveFailure,
 } from "./gosaki-staging-one-click-save";
+import {
+  buildAboutSupabaseReadEndpointRequest,
+  overlayAboutProfileLedeInBody,
+  sanitizeAboutSupabaseReadDisplay,
+} from "./gosaki-staging-read-only-admin";
 
 export type AboutFormSnapshot = {
   profile: { heading: string; body: string; imageAlt: string };
@@ -163,6 +168,8 @@ export function initGosakiAboutOperationalEdit(
   let authenticated = false;
   /** Cancel/dirty baseline — updated to Save response.after on successful Save. */
   let baselineFingerprint: string | null = null;
+  /** Supabase profile.lede updatedAt baseline for future optimistic lock (internal only). */
+  let supabaseLedeUpdatedAtBaseline: string | null = null;
 
   const saveArmed = isClientSaveArmed(deps.saveArmed);
   const expectedSaveApprovalId = String(deps.expectedSaveApprovalId ?? "").trim();
@@ -456,19 +463,66 @@ export function initGosakiAboutOperationalEdit(
     const auth = await refreshAuthFlag();
     const endpoint = String(deps.dryRunEndpoint ?? "").trim();
     const writeBackend = deps.writeBackend === "supabase" ? "supabase" : "contents";
-    // Supabase Admin path: full About form stays JSON/Contents-baked.
-    // Do not Contents-hydrate against gosaki-about-supabase-save-dry-run
-    // (wrong payload shape → Edge returns value_text_required and polluted the status UI).
+
+    // Supabase Admin path: read-only hydrate of profile.lede from site_page_fields.
+    // Fail closed to baked JSON (never block the form · never show raw Edge codes).
     if (writeBackend === "supabase") {
-      if (!isFormDirty()) {
-        baselineFingerprint = formFingerprint(readFormSnapshot());
+      if (isFormDirty()) {
+        return { ok: true };
       }
-      dryRunOk = false;
-      dryRunFormFingerprint = null;
-      dryRunServerFingerprint = null;
-      void refreshSaveGate();
-      return { ok: true };
+      const finishWithBakedJson = () => {
+        baselineFingerprint = formFingerprint(readFormSnapshot());
+        dryRunOk = false;
+        dryRunFormFingerprint = null;
+        dryRunServerFingerprint = null;
+        void refreshSaveGate();
+        return { ok: true as const };
+      };
+      if (
+        !auth ||
+        !endpoint ||
+        !deps.assertDryRunEndpointSafe?.(endpoint) ||
+        endpoint.includes(productionStop)
+      ) {
+        return finishWithBakedJson();
+      }
+      try {
+        const token = (await deps.getAccessToken?.()) || "";
+        if (!token) return finishWithBakedJson();
+        const res = await fetchImpl(endpoint, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+            apikey: String(deps.anonKey ?? ""),
+          },
+          body: JSON.stringify(buildAboutSupabaseReadEndpointRequest()),
+        });
+        const body = (await res.json().catch(() => ({}))) as Record<string, unknown>;
+        const display = sanitizeAboutSupabaseReadDisplay(body, res.status);
+        if (display.ok && display.valueText && !display.unsafeWriteFlags) {
+          const snap = readFormSnapshot();
+          snap.profile.body = overlayAboutProfileLedeInBody(snap.profile.body, display.valueText);
+          writeFormSnapshot(snap);
+          supabaseLedeUpdatedAtBaseline =
+            display.updatedAt != null && String(display.updatedAt).trim()
+              ? String(display.updatedAt)
+              : null;
+          // Keep baseline for future Save lock (not shown in UI).
+          root.dataset.gosakiAboutLedeUpdatedAt = supabaseLedeUpdatedAtBaseline ?? "";
+          baselineFingerprint = formFingerprint(snap);
+          dryRunOk = false;
+          dryRunFormFingerprint = null;
+          dryRunServerFingerprint = null;
+          void refreshSaveGate();
+          return { ok: true };
+        }
+        return finishWithBakedJson();
+      } catch {
+        return finishWithBakedJson();
+      }
     }
+
     if (
       !auth ||
       !endpoint ||

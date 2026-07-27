@@ -150,9 +150,19 @@ assert(
     aboutEdit.includes("プロフィール本文を入力してください"),
 );
 assert(
-  "about edit skips contents hydrate on supabase path",
-  aboutEdit.includes('writeBackend === "supabase"') &&
-    aboutEdit.includes("Do not Contents-hydrate against gosaki-about-supabase-save-dry-run"),
+  "about edit supabase read hydrate",
+  aboutEdit.includes("buildAboutSupabaseReadEndpointRequest") &&
+    aboutEdit.includes("sanitizeAboutSupabaseReadDisplay") &&
+    aboutEdit.includes("overlayAboutProfileLedeInBody"),
+);
+assert(
+  "about edit read failure falls back to baked JSON",
+  aboutEdit.includes("finishWithBakedJson") &&
+    aboutEdit.includes("Fail closed to baked JSON"),
+);
+assert(
+  "about edit stores lede updatedAt baseline",
+  aboutEdit.includes("supabaseLedeUpdatedAtBaseline"),
 );
 assert(
   "about panel HTML has no visible value_text_required",
@@ -163,7 +173,6 @@ assert(
 
 // Mapper contract (no browser): raw codes must never pass through as UI copy.
 {
-  // Inline mirror of mapping keys — keep in sync with userFacingAboutErrorMessage.
   const mapped = {
     value_text_required: "プロフィール本文を入力してください",
   };
@@ -174,6 +183,59 @@ assert(
   );
 }
 
+assert("admin lib read operation const", adminLib.includes("ABOUT_SUPABASE_READ_OPERATION"));
+assert("admin lib build read request", adminLib.includes("buildAboutSupabaseReadEndpointRequest"));
+assert("admin lib overlay lede helper", adminLib.includes("overlayAboutProfileLedeInBody"));
+assert("admin lib sanitize read display", adminLib.includes("sanitizeAboutSupabaseReadDisplay"));
+assert(
+  "read request has no nextValueText / save approval",
+  /function buildAboutSupabaseReadEndpointRequest[\s\S]*?operation:\s*ABOUT_SUPABASE_READ_OPERATION/.test(
+    adminLib,
+  ) &&
+    !/function buildAboutSupabaseReadEndpointRequest[\s\S]{0,400}nextValueText/.test(adminLib) &&
+    !/function buildAboutSupabaseReadEndpointRequest[\s\S]{0,400}SAVE_APPROVAL/.test(adminLib),
+);
+
+// Overlay: first paragraph only
+{
+  const body = "seed lede\n\nsecond paragraph";
+  // Mirror overlayAboutProfileLedeInBody plain-text branch
+  const next = "db lede";
+  const parts = body.split(/\n\s*\n/);
+  parts[0] = next;
+  const overlaid = parts.join("\n\n");
+  assert("overlay replaces first paragraph only", overlaid === "db lede\n\nsecond paragraph");
+  assert(
+    "overlay helper source matches first-paragraph semantics",
+    adminLib.includes("parts[0] = next") && adminLib.includes("parts.join(\"\\n\\n\")"),
+  );
+}
+
+// sanitizeAboutSupabaseReadDisplay contract (inline)
+{
+  const good = {
+    ok: true,
+    operation: "read",
+    pageKey: "about",
+    fieldKey: "profile.lede",
+    valueText: "hello",
+    updatedAt: "2026-07-28T00:00:00Z",
+    didWrite: false,
+    dbWrite: false,
+    networkWrite: false,
+  };
+  const badWrite = { ...good, didWrite: true };
+  const empty = { ...good, valueText: "" };
+  assert(
+    "sanitize read accepts clean payload shape in source",
+    adminLib.includes('String(data.operation ?? "") === ABOUT_SUPABASE_READ_OPERATION') &&
+      adminLib.includes("unsafeWriteFlags"),
+  );
+  assert("read success payload has write flags false", good.didWrite === false && good.dbWrite === false);
+  assert("read rejects didWrite true conceptually", badWrite.didWrite === true);
+  assert("read rejects empty valueText conceptually", empty.valueText === "");
+}
+
 const edgeHandler = read("supabase/functions/gosaki-about-supabase-save-dry-run/handler.ts");
 const edgeIndex = read("supabase/functions/gosaki-about-supabase-save-dry-run/index.ts");
 assert("edge endpoint name", edgeHandler.includes(ABOUT_SUPABASE_ENDPOINT_NAME));
@@ -182,6 +244,31 @@ assert("edge save disarmed by default path", edgeHandler.includes("save_not_arme
 assert("edge optimistic lock", edgeHandler.includes("expectedBeforeUpdatedAt"));
 assert("edge can_write_site", edgeHandler.includes("can_write_site"));
 assert("edge profile.lede only", edgeHandler.includes("profile.lede"));
+assert("edge read operation const", edgeHandler.includes('READ_OPERATION = "read"'));
+assert(
+  "edge read returns before value_text_required gate",
+  /if \(operation === READ_OPERATION\) \{[\s\S]*?valueText: before\.valueText[\s\S]*?\}\s*\n\s*\n\s*if \(!nextValueText\)/.test(
+    edgeHandler,
+  ),
+);
+assert(
+  "edge read response has write flags false",
+  /operation: READ_OPERATION[\s\S]*?\.\.\.WRITE_FALSE/.test(edgeHandler),
+);
+assert(
+  "edge read does not require Save approval before return",
+  (() => {
+    const idx = edgeHandler.indexOf("if (operation === READ_OPERATION)");
+    const end = edgeHandler.indexOf("if (!nextValueText)", idx);
+    if (idx < 0 || end < 0) return false;
+    const block = edgeHandler.slice(idx, end);
+    return (
+      block.includes("valueText: before.valueText") &&
+      !block.includes("SAVE_APPROVAL_ID") &&
+      !block.includes("nextValueText")
+    );
+  })(),
+);
 assert("edge service_role connected false", /SUPABASE_SERVICE_ROLE_CONNECTED\s*=\s*false/.test(edgeHandler));
 assert("edge no service_role grant/use", !/service_role\s*key|grant\s+.*service_role|createClient\([^)]*service/i.test(edgeHandler));
 assert("edge local banner", /LOCAL IMPLEMENTATION/i.test(edgeIndex));

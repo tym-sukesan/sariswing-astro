@@ -1,9 +1,10 @@
 /**
- * Gosaki About Supabase dry-run + gated Save (CMS Core v2).
+ * Gosaki About Supabase dry-run + gated Save + read (CMS Core v2).
  * Endpoint name: gosaki-about-supabase-save-dry-run
  * Staging only: kmjqppxjdnwwrtaeqjta · STOP: vsbvndwuajjhnzpohghh
  * Auth: user JWT + anon key · can_write_site · no service_role
  * Slice: page_key=about field_key=profile.lede only
+ * operation=read: SELECT-only hydrate (no nextValueText · no Save approval)
  * Contents API path (G-12a) is NOT used here — parallel until cutover.
  *
  * LOCAL IMPLEMENTATION — Edge deploy is a later operator-approved phase.
@@ -17,6 +18,7 @@ export const STAGING_PROJECT_REF = "kmjqppxjdnwwrtaeqjta";
 export const PRODUCTION_REF_STOP = "vsbvndwuajjhnzpohghh";
 export const PAGE_KEY = "about";
 export const FIELD_KEY = "profile.lede";
+export const READ_OPERATION = "read";
 export const DRY_RUN_OPERATION = "dryRun";
 export const SAVE_OPERATION = "save";
 export const DRY_RUN_APPROVAL_ID = "G-cms-v2-about-supabase-profile-lede-dry-run";
@@ -227,6 +229,20 @@ export async function handleAboutSupabaseSaveDryRun(
     updatedAt: row.updated_at != null ? String(row.updated_at) : null,
     rowId: String(row.id),
   };
+
+  // Read-only hydrate: SELECT already done · no nextValueText · no Save approval · no write.
+  if (operation === READ_OPERATION) {
+    return {
+      status: 200,
+      ok: true,
+      operation: READ_OPERATION,
+      pageKey: PAGE_KEY,
+      fieldKey: FIELD_KEY,
+      valueText: before.valueText,
+      updatedAt: before.updatedAt,
+      ...WRITE_FALSE,
+    };
+  }
 
   if (!nextValueText) {
     return {

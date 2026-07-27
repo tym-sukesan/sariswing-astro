@@ -19,6 +19,7 @@ export const ABOUT_FIELD_KEY_PROFILE_LEDE = "profile.lede";
 
 export const ABOUT_SUPABASE_DRY_RUN_OPERATION = "dryRun";
 export const ABOUT_SUPABASE_SAVE_OPERATION = "save";
+export const ABOUT_SUPABASE_READ_OPERATION = "read";
 
 export const ABOUT_SUPABASE_DRY_RUN_APPROVAL_ID =
   "G-cms-v2-about-supabase-profile-lede-dry-run";

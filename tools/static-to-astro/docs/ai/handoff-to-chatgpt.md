@@ -5,21 +5,28 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: About Supabase Admin read/hydrate planning COMPLETE
+Current phase: About Supabase Admin read/hydrate local implementation COMPLETE
+ABOUT_SUPABASE_ADMIN_READ_HYDRATE_LOCAL_IMPLEMENTATION_COMPLETE: true
+EDGE_DEPLOY_EXECUTED: false
+readyForAboutSupabaseAdminReadHydrateEdgeDeployPreflight: true
+Baseline HEAD: 3e7daae5a33d48cf56bc7ad4db645a596665b9be
+operation=read · JWT+can_write_site · profile.lede overlay · JSON fallback
 FTP post-QA: PASS · sourceCommit a876e1ebd4523d96b09d1ea46fd35748de27977e
-writeBackend: supabase · saveDisabled: true · valueTextRequiredVisible: false
-ABOUT_SUPABASE_ADMIN_PATH_STAGING_FTP_POST_QA_PASSED: true
-ABOUT_SUPABASE_ADMIN_READ_HYDRATE_PLANNING_COMPLETE: true
-readyForAboutSupabaseAdminReadHydrateImplementation: true
-IMPLEMENTATION_EXECUTED: false
-packageStaleBackupAndRunMarkerWorkedThisGenerate: true
+writeBackend: supabase · saveDisabled: true
 PUBLIC_ABOUT_JSON_SOT: true
 saveArmEnabled: false
 GOSAKI_ABOUT_SUPABASE_SAVE_ARMED_SET: false
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
-Next: ask operator → cms-core-v2-about-supabase-admin-read-hydrate-local-implementation
+Next: cms-core-v2-about-supabase-admin-read-hydrate-edge-deploy-preflight
 readyForAnyFutureFtpApply: false
 ```
+
+## About Supabase Admin read/hydrate local implementation (2026-07-28)
+
+- Edge `operation=read` SELECT-only · no nextValueText / Save approval
+- Admin: supabase path hydrates lede after auth · fallback baked JSON
+- root↔mirror byte match · Edge **not** deployed
+- Doc: `cms-core-v2-about-supabase-admin-read-hydrate-local-implementation.md`
 
 ## About Supabase Admin read/hydrate planning (2026-07-28)
 

@@ -5,13 +5,11 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: Package stale-backup + external PACKAGE_RUN fail-closed local COMPLETE
-Module: tools/static-to-astro/scripts/lib/package-run-marker.mjs
+Current phase: About Admin value_text_required UI leak fix COMPLETE + package stale/external PACKAGE_RUN ready
+aboutValueTextRequiredUiLeakFixComplete: true
+Fix: skip Contents hydrate on writeBackend=supabase · userFacingAboutErrorMessage maps raw codes
 Marker path: output/manual-upload/_package-runs/gosaki-piano/PACKAGE_RUN.json (outside FTP payload)
-Fixture: verify-package-stale-backup-and-run-marker.mjs
 packageStaleBackupAndRunMarkerLocalImplComplete: true
-Live gosaki-piano package NOT relocated this phase
-Live verify:manual-upload FAILs until successful regenerate (missing external PACKAGE_RUN)
 ABOUT_SUPABASE_ADMIN_PATH_PACKAGE_PREFLIGHT_COMPLETE: true
 readyForAboutSupabaseAdminPathPackageGenerate: true
 PACKAGE_GENERATE_EXECUTED: false
@@ -22,6 +20,12 @@ STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
 Next: package generate with PATH_ENABLED=true · SAVE_UI_ARMED=false · no server arm · external marker PASS → operator FTP (gosaki-piano/ only)
 readyForAnyFutureFtpApply: false
 ```
+
+## About Admin value_text_required UI leak fix (2026-07-28)
+
+- Supabase Admin path no longer Contents-hydrates against Supabase Edge (false `value_text_required` in status)
+- `userFacingAboutErrorMessage` maps validation codes to Japanese when real input errors occur
+- writeBackend=supabase · Save UI armed=false retained · no Edge/FTP/DB
 
 ## Package stale-backup + PACKAGE_RUN (2026-07-27)
 

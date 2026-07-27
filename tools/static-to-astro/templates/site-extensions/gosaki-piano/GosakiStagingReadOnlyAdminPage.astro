@@ -712,10 +712,14 @@ const showClientScript = true;
         isYoutubeSaveConflictResponse,
         G12A_ABOUT_SAVE_APPROVAL_ID,
         G12A_ABOUT_CONFLICT_MESSAGE,
+        ABOUT_SUPABASE_SAVE_APPROVAL_ID,
         assertGosakiAboutDryRunEndpointSafe,
         assertGosakiAboutSaveEndpointSafe,
         buildAboutDryRunEndpointRequest,
         buildAboutSaveEndpointRequest,
+        buildAboutSupabaseDryRunEndpointRequest,
+        buildAboutSupabaseSaveEndpointRequest,
+        extractAboutProfileLedeFromBody,
         sanitizeAboutDryRunEndpointDisplay,
         sanitizeAboutSaveEndpointDisplay,
         evaluateAboutOperationalSaveGate,
@@ -991,22 +995,42 @@ const showClientScript = true;
       const aboutRoot = document.getElementById("gosaki-about-content");
       if (aboutRoot instanceof HTMLElement) {
         const body = document.body;
+        const aboutWriteBackend = (body?.dataset.gosakiAboutWriteBackend || "contents").trim();
+        const aboutUseSupabase = aboutWriteBackend === "supabase";
         initGosakiAboutOperationalEdit(aboutRoot, {
           saveArmed: body?.dataset.gosakiAboutSaveArmed === "true",
+          writeBackend: aboutUseSupabase ? "supabase" : "contents",
           getAccessToken: resolveDiscographyAccessToken,
           dryRunEndpoint: (body?.dataset.gosakiAboutDryRunEndpoint || "").trim(),
           saveEndpoint: (body?.dataset.gosakiAboutSaveEndpoint || "").trim(),
           anonKey: (body?.dataset.gosakiSupabaseAnonKey || "").trim(),
           assertDryRunEndpointSafe: assertGosakiAboutDryRunEndpointSafe,
           assertSaveEndpointSafe: assertGosakiAboutSaveEndpointSafe,
-          buildDryRunEndpointRequest: buildAboutDryRunEndpointRequest,
-          buildSaveEndpointRequest: buildAboutSaveEndpointRequest,
+          buildDryRunEndpointRequest: aboutUseSupabase
+            ? (next) =>
+                buildAboutSupabaseDryRunEndpointRequest({
+                  nextValueText: extractAboutProfileLedeFromBody(next.profile.body),
+                })
+            : buildAboutDryRunEndpointRequest,
+          buildSaveEndpointRequest: aboutUseSupabase
+            ? ({ next, expectedBefore, fingerprint, requestId }) =>
+                buildAboutSupabaseSaveEndpointRequest({
+                  nextValueText: extractAboutProfileLedeFromBody(next.profile.body),
+                  expectedBeforeUpdatedAt: String(
+                    (expectedBefore as { updatedAt?: string } | null)?.updatedAt ?? "",
+                  ).trim(),
+                  fingerprint,
+                  requestId,
+                })
+            : buildAboutSaveEndpointRequest,
           sanitizeDryRunDisplay: sanitizeAboutDryRunEndpointDisplay,
           sanitizeSaveDisplay: sanitizeAboutSaveEndpointDisplay,
           evaluateSaveGate: evaluateAboutOperationalSaveGate,
           isSaveConflictResponse: isAboutSaveConflictResponse,
-          expectedSaveApprovalId:
-            (body?.dataset.g12aAboutSaveApprovalId || "").trim() || G12A_ABOUT_SAVE_APPROVAL_ID,
+          expectedSaveApprovalId: aboutUseSupabase
+            ? (body?.dataset.gosakiAboutSupabaseSaveApprovalId || "").trim() ||
+              ABOUT_SUPABASE_SAVE_APPROVAL_ID
+            : (body?.dataset.g12aAboutSaveApprovalId || "").trim() || G12A_ABOUT_SAVE_APPROVAL_ID,
           conflictMessage: G12A_ABOUT_CONFLICT_MESSAGE,
           productionProjectRefStop: G20U36C_PRODUCTION_PROJECT_REF_STOP,
         });

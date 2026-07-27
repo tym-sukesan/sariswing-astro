@@ -130,6 +130,49 @@ const adminPage = read(
 assert("admin page write-backend attr", adminPage.includes("data-gosaki-about-write-backend"));
 assert("admin page uses operational resolve", adminPage.includes("resolveAboutOperationalDryRunEndpoint"));
 assert("admin page supabase path phase", adminPage.includes("ABOUT_SUPABASE_PATH_PHASE"));
+assert(
+  "admin page wires supabase about builders",
+  adminPage.includes("buildAboutSupabaseDryRunEndpointRequest") &&
+    adminPage.includes('aboutWriteBackend === "supabase"'),
+);
+assert(
+  "admin page passes writeBackend to about edit",
+  adminPage.includes("writeBackend: aboutUseSupabase"),
+);
+
+const aboutEdit = read(
+  "tools/static-to-astro/templates/site-extensions/gosaki-piano/gosaki-staging-about-operational-edit.ts",
+);
+assert("about edit maps value_text_required", aboutEdit.includes("value_text_required"));
+assert(
+  "about edit user-facing mapper",
+  aboutEdit.includes("userFacingAboutErrorMessage") &&
+    aboutEdit.includes("プロフィール本文を入力してください"),
+);
+assert(
+  "about edit skips contents hydrate on supabase path",
+  aboutEdit.includes('writeBackend === "supabase"') &&
+    aboutEdit.includes("Do not Contents-hydrate against gosaki-about-supabase-save-dry-run"),
+);
+assert(
+  "about panel HTML has no visible value_text_required",
+  !read(
+    "tools/static-to-astro/templates/admin-cms/gosaki/components/AdminGosakiStagingAboutContentPanel.astro",
+  ).includes("value_text_required"),
+);
+
+// Mapper contract (no browser): raw codes must never pass through as UI copy.
+{
+  // Inline mirror of mapping keys — keep in sync with userFacingAboutErrorMessage.
+  const mapped = {
+    value_text_required: "プロフィール本文を入力してください",
+  };
+  assert(
+    "mapper turns value_text_required into Japanese",
+    mapped.value_text_required === "プロフィール本文を入力してください" &&
+      aboutEdit.includes(`value_text_required: "${mapped.value_text_required}"`),
+  );
+}
 
 const edgeHandler = read("supabase/functions/gosaki-about-supabase-save-dry-run/handler.ts");
 const edgeIndex = read("supabase/functions/gosaki-about-supabase-save-dry-run/index.ts");

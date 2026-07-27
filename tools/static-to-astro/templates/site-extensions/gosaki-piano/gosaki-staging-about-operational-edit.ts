@@ -25,8 +25,31 @@ export type AboutFormSnapshot = {
   bands: Array<{ id: string; name: string; body: string; imageAlt: string }>;
 };
 
+/** Map Edge/API error codes to short Japanese — never show snake_case codes in normal UI. */
+export function userFacingAboutErrorMessage(
+  raw: string | undefined | null,
+  fallback = "入力内容を確認してください",
+): string {
+  const code = String(raw ?? "").trim();
+  if (!code) return fallback;
+  const mapped: Record<string, string> = {
+    value_text_required: "プロフィール本文を入力してください",
+    row_not_found: "データが見つかりません。ページを再読み込みしてください",
+    load_failed: "読み込みに失敗しました。しばらくしてから再試行してください",
+    save_not_armed: GOSAKI_SAVE_FEATURE_STOPPED_USER_MESSAGE,
+    approval_id_mismatch: "確認に失敗しました。ページを再読み込みしてください",
+    invalid_json: "確認に失敗しました",
+  };
+  if (mapped[code]) return mapped[code];
+  // Bare machine codes (snake_case) must not surface as visible UI copy.
+  if (/^[a-z][a-z0-9]*(?:_[a-z0-9]+)+$/.test(code)) return fallback;
+  return code;
+}
+
 export type AboutOperationalEditDeps = {
   saveArmed?: boolean;
+  /** Admin write path bake — supabase live-read must not Contents-hydrate against Supabase Edge. */
+  writeBackend?: "contents" | "supabase";
   getAccessToken?: () => Promise<string | null>;
   dryRunEndpoint?: string;
   saveEndpoint?: string;
@@ -163,7 +186,10 @@ export function initGosakiAboutOperationalEdit(
     if (statusEl instanceof HTMLElement) {
       if (state === "pending") statusEl.textContent = GOSAKI_ADMIN_LIVE_READ_PENDING_MESSAGE;
       else if (state === "error") {
-        statusEl.textContent = error || GOSAKI_ADMIN_LIVE_READ_ERROR_MESSAGE;
+        statusEl.textContent = userFacingAboutErrorMessage(
+          error,
+          GOSAKI_ADMIN_LIVE_READ_ERROR_MESSAGE,
+        );
       } else if (!saveSuccessSticky) {
         statusEl.textContent = "About の確認と編集ができます";
       }
@@ -308,8 +334,8 @@ export function initGosakiAboutOperationalEdit(
       );
       return;
     }
-    // Soften leftover internal dry-run strings if they still call this helper.
-    let normalized = message;
+    // Soften leftover internal dry-run strings / raw Edge codes if they still call this helper.
+    let normalized = userFacingAboutErrorMessage(message, message);
     if (message === "dry-run 実行中…" || message === "確認中…") {
       normalized = "確認中…";
     } else if (message === "変更なし（no_change）") {
@@ -429,6 +455,20 @@ export function initGosakiAboutOperationalEdit(
   async function hydrateFromGithubDryRun(): Promise<{ ok: true } | { ok: false; error: string }> {
     const auth = await refreshAuthFlag();
     const endpoint = String(deps.dryRunEndpoint ?? "").trim();
+    const writeBackend = deps.writeBackend === "supabase" ? "supabase" : "contents";
+    // Supabase Admin path: full About form stays JSON/Contents-baked.
+    // Do not Contents-hydrate against gosaki-about-supabase-save-dry-run
+    // (wrong payload shape → Edge returns value_text_required and polluted the status UI).
+    if (writeBackend === "supabase") {
+      if (!isFormDirty()) {
+        baselineFingerprint = formFingerprint(readFormSnapshot());
+      }
+      dryRunOk = false;
+      dryRunFormFingerprint = null;
+      dryRunServerFingerprint = null;
+      void refreshSaveGate();
+      return { ok: true };
+    }
     if (
       !auth ||
       !endpoint ||
@@ -459,13 +499,19 @@ export function initGosakiAboutOperationalEdit(
         (body.current && typeof body.current === "object"
           ? (body.current as AboutFormSnapshot)
           : null) ||
-        (body.before && typeof body.before === "object"
+        (body.before &&
+        typeof body.before === "object" &&
+        body.before !== null &&
+        "profile" in (body.before as object)
           ? (body.before as AboutFormSnapshot)
           : null);
       if (body.ok !== true || body.didWrite === true || !current) {
         return {
           ok: false,
-          error: String(body.error ?? GOSAKI_ADMIN_LIVE_READ_ERROR_MESSAGE),
+          error: userFacingAboutErrorMessage(
+            typeof body.error === "string" ? body.error : "",
+            GOSAKI_ADMIN_LIVE_READ_ERROR_MESSAGE,
+          ),
         };
       }
       writeFormSnapshot(current);
@@ -575,7 +621,10 @@ export function initGosakiAboutOperationalEdit(
       }
       if (!display.ok || !display.fingerprint || !display.currentFileSha) {
         invalidateDryRun();
-        setLocalValidation(display.errors?.[0] || "dry-run 失敗", false);
+        setLocalValidation(
+          userFacingAboutErrorMessage(display.errors?.[0] || display.error, "確認に失敗しました"),
+          false,
+        );
         showResultJson(display);
         return;
       }

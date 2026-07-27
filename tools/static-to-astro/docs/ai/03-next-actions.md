@@ -3,7 +3,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **Kit Core:** Package stale-backup + **external** `PACKAGE_RUN` fail-closed **local COMPLETE**（fixture PASS · 実 package 未移動 · marker は `_package-runs/` のみ）。**Next:** About Admin-path package generate（`PUBLIC_ADMIN_GOSAKI_ABOUT_SUPABASE_PATH_ENABLED=true` · Save UI arm false · server arm unset）→ live package + `_package-runs/gosaki-piano/PACKAGE_RUN.json` → `verify:manual-upload` PASS → operator manual FTP（`gosaki-piano/` のみ）+ ftp-post-qa §B。現行 live は外部 marker 欠落で verify FAIL（意図的）。
+1. **Kit Core:** About Admin `value_text_required` UI leak **fixed**（supabase path で Contents hydrate しない · raw code→日本語）· Package stale-backup + external `PACKAGE_RUN` **local COMPLETE**。**Next:** About Admin-path package generate（path env true · Save UI arm false · server arm unset）→ `_package-runs/…/PACKAGE_RUN.json` + `verify:manual-upload` → operator FTP（`gosaki-piano/` のみ）+ ftp-post-qa §B。
 2. **並行可:** Contents YouTube 退役 planning（`contentsYoutubeCutoverExecuted: false`）。
 3. **並行可（Gosaki ops）:** クライアントへ staging 共有・feedback。
 4. **並行可:** production hosting **read-only planning**。

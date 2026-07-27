@@ -161,7 +161,7 @@ Content-Type: application/json (POST responses)
 | Local repo `.env` / `.env.local` | **unset** (no match) |
 | Intended remote Function secret at deploy | **unset or not `true`** — do **not** set during deploy |
 | Client UI arm | `PUBLIC_ADMIN_GOSAKI_ABOUT_SUPABASE_SAVE_UI_ARMED` default **false** (package/bake separate) |
-| Handler behavior if Save called while disarmed | **403** `save_not_armed` · `didWrite=false` |
+| Handler behavior if Save called while disarmed | **403** `save_not_armed` · **`ok:false`** · `didWrite=false` · `saveArmed=false` (plan diagnostics kept; `plan.ok` must not overwrite) |
 
 **Deploy phase must leave Save disarmed.** Controlled Save is a later phase with its own approval ID `G-cms-v2-about-supabase-profile-lede-web-save-non-dry-run-slice`.
 
@@ -195,7 +195,7 @@ After operator deploy (separate phase), non-write / dry-run QA criteria:
 | POST without `Authorization` | **401** · no DB write |
 | POST `operation=dryRun` + valid JWT + `can_write_site` + approval `G-cms-v2-about-supabase-profile-lede-dry-run` + `about`/`profile.lede` | **200** · `didWrite=false` · `dbWrite=false` · plan with before/after |
 | POST wrong `pageKey`/`fieldKey` | **400** |
-| POST `operation=save` while arm unset | **403** `save_not_armed` · **no** row change |
+| POST `operation=save` while arm unset | **403** `save_not_armed` · **`ok:false`** · **no** row change |
 | POST `operation=save` + wrong approval | **400** · no write |
 | Seeded `value_text` / `updated_at` baseline | **unchanged** after dry-run / disarmed Save probes |
 | Other Edge endpoints | smoke optional · must remain reachable (no redeploy) |

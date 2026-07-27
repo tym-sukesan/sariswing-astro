@@ -294,13 +294,14 @@ export async function handleAboutSupabaseSaveDryRun(
   }
 
   if (!isAboutSupabaseSaveArmed(getEnv)) {
+    // Spread plan first; ok/error/write flags must win over plan.ok === true.
     return {
       status: 403,
+      ...plan,
       ok: false,
       error: "save_not_armed",
       detail: `${SAVE_ARMED_ENV} must be true`,
       saveArmed: false,
-      ...plan,
       ...WRITE_FALSE,
     };
   }

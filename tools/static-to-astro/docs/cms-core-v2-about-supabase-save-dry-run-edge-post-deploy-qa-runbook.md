@@ -258,7 +258,7 @@ Use Step 3 summary (no extra call).
 
 | Success | STOP |
 | --- | --- |
-| `status: 403` · `error: "save_not_armed"` · `didWrite: false` · `saveArmed: false` | 200 · `didWrite: true` · urge to set Secret |
+| `status: 403` · `ok: false` · `error: "save_not_armed"` · `didWrite: false` · `saveArmed: false` | 200 · `ok: true` · `didWrite: true` · urge to set Secret |
 
 **Forbidden:** `supabase secrets set GOSAKI_ABOUT_SUPABASE_SAVE_ARMED=…`
 

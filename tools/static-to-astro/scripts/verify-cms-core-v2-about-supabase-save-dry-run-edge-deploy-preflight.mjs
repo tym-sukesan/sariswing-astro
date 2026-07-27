@@ -110,6 +110,19 @@ assert("handler can_write_site", handler.includes('rpc("can_write_site"'));
 assert("handler JWT getUser", handler.includes("auth.getUser()"));
 assert("handler Save arm env", handler.includes(SAVE_ARM));
 assert("handler save_not_armed", handler.includes("save_not_armed"));
+{
+  const block = handler.match(
+    /if\s*\(!isAboutSupabaseSaveArmed\([\s\S]*?return\s*\{([\s\S]*?)\};\s*\n\s*\}\s*\n\s*\n\s*if\s*\(!expectedBeforeUpdatedAt/,
+  );
+  const sn = block?.[1] ?? "";
+  const planIdx = sn.indexOf("...plan");
+  const okFalseIdx = sn.search(/ok:\s*false/);
+  assert(
+    "handler save_not_armed ok:false after ...plan",
+    planIdx >= 0 && okFalseIdx > planIdx,
+  );
+  assert("handler save_not_armed status 403", /status:\s*403/.test(sn));
+}
 assert("handler service_role flag false", handler.includes("SUPABASE_SERVICE_ROLE_CONNECTED = false"));
 assert("handler no SERVICE_ROLE_KEY", !/SERVICE_ROLE_KEY/.test(handler + indexTs));
 assert("handler optimistic lock", handler.includes("expectedBeforeUpdatedAt"));

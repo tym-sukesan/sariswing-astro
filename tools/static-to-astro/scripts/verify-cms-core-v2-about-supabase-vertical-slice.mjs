@@ -144,6 +144,64 @@ assert("edge no service_role grant/use", !/service_role\s*key|grant\s+.*service_
 assert("edge local banner", /LOCAL IMPLEMENTATION/i.test(edgeIndex));
 assert("edge tools mirror", exists("tools/static-to-astro/scripts/edge-functions/gosaki-about-supabase-save-dry-run/handler.ts"));
 
+const mirrorHandler = read(
+  "tools/static-to-astro/scripts/edge-functions/gosaki-about-supabase-save-dry-run/handler.ts",
+);
+assert("root/mirror handler byte match", edgeHandler === mirrorHandler);
+
+const saveNotArmedBlock = edgeHandler.match(
+  /if\s*\(!isAboutSupabaseSaveArmed\([\s\S]*?return\s*\{([\s\S]*?)\};\s*\n\s*\}\s*\n\s*\n\s*if\s*\(!expectedBeforeUpdatedAt/,
+);
+assert("save_not_armed return block found", Boolean(saveNotArmedBlock));
+const snBody = saveNotArmedBlock?.[1] ?? "";
+const planIdx = snBody.indexOf("...plan");
+const okFalseIdx = snBody.search(/ok:\s*false/);
+assert(
+  "save_not_armed spreads plan before ok:false",
+  planIdx >= 0 && okFalseIdx > planIdx,
+  `plan@${planIdx} ok:false@${okFalseIdx}`,
+);
+assert("save_not_armed status 403", /status:\s*403/.test(snBody));
+assert("save_not_armed error literal", snBody.includes('error: "save_not_armed"'));
+assert("save_not_armed saveArmed false", /saveArmed:\s*false/.test(snBody));
+assert("save_not_armed WRITE_FALSE after plan", snBody.includes("...WRITE_FALSE"));
+
+// Contract regression: plan.ok must not win over rejection ok
+{
+  const planLike = {
+    ok: true,
+    dryRun: false,
+    pageKey: "about",
+    fieldKey: "profile.lede",
+    didWrite: false,
+  };
+  const writeFalse = { didWrite: false, dbWrite: false, networkWrite: false };
+  const body = {
+    status: 403,
+    ...planLike,
+    ok: false,
+    error: "save_not_armed",
+    saveArmed: false,
+    ...writeFalse,
+  };
+  assert("save_not_armed contract ok false", body.ok === false);
+  assert("save_not_armed contract status 403", body.status === 403);
+  assert("save_not_armed contract error", body.error === "save_not_armed");
+  assert("save_not_armed contract didWrite false", body.didWrite === false);
+  assert("save_not_armed contract dbWrite false", body.dbWrite === false);
+  assert("save_not_armed contract saveArmed false", body.saveArmed === false);
+  assert("save_not_armed contract keeps plan pageKey", body.pageKey === "about");
+}
+
+const otherPlanAfterOkFalse = [
+  ...edgeHandler.matchAll(/ok:\s*false[\s\S]{0,120}\.\.\.plan/g),
+];
+assert(
+  "no other ok:false then ...plan overwrite pattern",
+  otherPlanAfterOkFalse.length === 0,
+  `found ${otherPlanAfterOkFalse.length}`,
+);
+
 const contentsDryRun = read("supabase/functions/gosaki-about-content-dry-run/index.ts");
 const contentsSave = read("supabase/functions/gosaki-about-content-save/index.ts");
 assert("contents dry-run retained", contentsDryRun.length > 100);

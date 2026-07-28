@@ -1,11 +1,12 @@
 # CMS Core v2 — About Supabase public build-read local implementation
 
 - **Phase:** `cms-core-v2-about-supabase-public-build-read-local-implementation`
-- **Status:** **COMPLETE (local only)** — no package / FTP / DB write / Secret / Save arm / Edge
+- **Status:** **COMPLETE (local only at implementation time)** — package/FTP later executed · see [staging FTP post-QA PASS](./cms-core-v2-about-supabase-public-build-read-staging-ftp-post-qa-result.md)
 - **Date:** 2026-07-28
 - **Planning:** [public build-read planning](./cms-core-v2-about-supabase-public-build-read-planning.md)
 - **Verifier:** `scripts/verify-cms-core-v2-about-supabase-public-build-read-local-implementation.mjs`
 - **Staging:** `kmjqppxjdnwwrtaeqjta` · **Production:** `vsbvndwuajjhnzpohghh` **STOP**
+- **Executed package `sourceCommit` (post-impl):** `95ada81c8a408125370f089fb653660c702589ff` · `overlayOutcome=noop_equal` · FTP post-QA **PASS**
 
 ```txt
 phase: cms-core-v2-about-supabase-public-build-read-local-implementation
@@ -24,6 +25,8 @@ SERVICE_ROLE_USED: false
 READY_FOR_ANY_FUTURE_FTP_APPLY: false
 PRODUCTION_UNCHANGED: true
 ```
+
+Historical gates above remain the **implementation-phase snapshot** (`PACKAGE_GENERATE_EXECUTED: false` etc.). Operator package/FTP/QA outcome is recorded only in the staging FTP post-QA result doc.
 
 ---
 

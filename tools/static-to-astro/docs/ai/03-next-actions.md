@@ -3,12 +3,50 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **Kit Core:** About public build-read **local impl COMPLETE**（noop_equal 成功扱い · clean-tree gate）。**Next:** **commit** して clean tree にした後、env-only package（`CMS_KIT_SITE_PAGE_FIELDS_BUILD_READ=true`）→ `npm run verify:manual-upload:public-about-build-read` → FileZilla → ftp-post-qa §C。dirty tree からの package 生成は **拒否**。
+1. **Primary (Gosaki ops):** **staging client-ready audit** — Home / Schedule / Discography / YouTube / About / Contact / **mobile** / **admin routes**（Schedule 偏重にしない）。About vertical slice は **COMPLETE / PASS**（`95ada81…`）。
 2. **並行可:** Contents YouTube 退役 planning（`contentsYoutubeCutoverExecuted: false`）。
-3. **並行可（Gosaki ops）:** クライアントへ staging 共有・feedback。
-4. **並行可:** production hosting **read-only planning**。
-5. Save arm **false** · Save UI **disarmed** · build-read **unset until approved bake** · `registry.sitePageFields=false` · JSON SoT · Secret 変更禁止 · migration/RLS/seed **再実行禁止**。
+3. **並行可:** production hosting **read-only planning**。
+4. **並行可:** クライアントへ staging 共有は audit PASS 後を推奨。
+5. Save arm **false** · Save UI **false** · remote `GOSAKI_ABOUT_SUPABASE_SAVE_ARMED=false` · public About build-read **live**（`noop_equal`）· Contents/JSON retained · Secret 変更禁止 · migration/RLS/seed **再実行禁止**。
 6. production / Wix / auto FTP / `vsbvndwuajjhnzpohghh` 禁止 · `service_role` 禁止 · `readyForAnyFutureFtpApply: false`。
+
+## 0. About Supabase vertical slice COMPLETE / PASS (2026-07-28)
+
+| Item | Value |
+| --- | --- |
+| Gate | `ABOUT_SUPABASE_VERTICAL_SLICE_PASSED: true` |
+| Package / HEAD | `95ada81c8a408125370f089fb653660c702589ff` |
+| Admin read/hydrate | **PASS** |
+| dry-run / forward Save / restore | **PASS** · DB baseline |
+| Public build-read | `supabase` · `fieldCount=1` · `overlayOutcome=noop_equal` |
+| FTP + public visual QA | **PASS** |
+| Next readiness | `readyForGosakiStagingClientReadyAudit: true` |
+| Doc | `cms-core-v2-about-supabase-public-build-read-staging-ftp-post-qa-result.md` |
+
+```txt
+ABOUT_SUPABASE_VERTICAL_SLICE_COMPLETE: true
+ABOUT_SUPABASE_VERTICAL_SLICE_PASSED: true
+ABOUT_SUPABASE_PUBLIC_BUILD_READ_STAGING_FTP_POST_QA_PASSED: true
+sourceCommit: 95ada81c8a408125370f089fb653660c702589ff
+SAVE_ARM_ENABLED: false
+GOSAKI_ABOUT_SUPABASE_SAVE_ARMED: false
+DB_BASELINE: true
+PUBLIC_ABOUT_BUILD_READ_LIVE: true
+readyForGosakiStagingClientReadyAudit: true
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+PRODUCTION_UNCHANGED: true
+```
+
+## 0. About Supabase public build-read staging FTP post-QA PASS (2026-07-28)
+
+| Item | Value |
+| --- | --- |
+| Gate | `ABOUT_SUPABASE_PUBLIC_BUILD_READ_STAGING_FTP_POST_QA_PASSED: true` |
+| sourceCommit | `95ada81c8a408125370f089fb653660c702589ff` |
+| overlayOutcome | `noop_equal` |
+| Visual | forced reload · baseline lede · Bands/images/layout/nav **PASS** |
+| Checklist | ftp-post-qa §C **PASS** |
+| Doc | `cms-core-v2-about-supabase-public-build-read-staging-ftp-post-qa-result.md` |
 
 ## 0. About Supabase public build-read local implementation COMPLETE (2026-07-28)
 

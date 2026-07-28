@@ -55,12 +55,24 @@ Package: `sourceCommit` **`a876e1ebd4523d96b09d1ea46fd35748de27977e`** · operat
 
 ---
 
-## C. After build-read package (future)
+## C. After build-read package
 
 Prerequisites: `CMS_KIT_SITE_PAGE_FIELDS_BUILD_READ=true` **or** `registry.sitePageFields=true` · anon read env for staging
 
 1. Public `/about/` first profile paragraph matches staged `site_page_fields` lede
 2. If DB empty/error simulated → JSON fallback still shows About (no blank)
+
+**Result (2026-07-28):** **PASS** — [public build-read staging FTP post-QA result](./cms-core-v2-about-supabase-public-build-read-staging-ftp-post-qa-result.md)
+
+| # | Check | Result |
+| --- | --- | --- |
+| 1 | Public `/about/` lede matches DB baseline | **PASS** (`overlayOutcome=noop_equal` · forced reload) |
+| 2 | Profile / images / Bands / layout / nav | **PASS** (operator visual) |
+| 3 | Package | `sourceCommit` **`95ada81…`** · dedicated verify **PASS** · `sourceTreeClean:true` |
+| 4 | FTP | FileZilla full `public-dist/` · production **unchanged** |
+| 5 | Save arms | UI false · remote `GOSAKI_ABOUT_SUPABASE_SAVE_ARMED=false` |
+
+**About Supabase vertical slice:** **COMPLETE / PASS** (see result doc).
 
 ---
 

@@ -288,14 +288,14 @@ ask human
 ## 8. Next phases (ordered · single plan)
 
 1. ~~`cms-core-v2-about-supabase-public-build-read-local-implementation`~~ — **COMPLETE**
-2. Operator-approved **env-only** build-read package generate + `verify:manual-upload:public-about-build-read`
-3. Operator FileZilla + browser QA (§C) + result doc
-4. Optional: registry `sitePageFields=true` persistence (after QA · marker sync)
-5. Later / separate: production hosting gate (not this Kit Core slice)
+2. ~~Operator-approved **env-only** build-read package generate + verify~~ — **COMPLETE** (`sourceCommit` `95ada81…`)
+3. ~~Operator FileZilla + browser QA (§C) + result doc~~ — **COMPLETE / PASS** — [result](./cms-core-v2-about-supabase-public-build-read-staging-ftp-post-qa-result.md)
+4. Optional later: registry `sitePageFields=true` persistence (not required for vertical-slice close)
+5. **Primary next (ops):** Gosaki staging **client-ready audit** (Home / Schedule / Discography / YouTube / About / Contact / mobile / admin routes)
 
-No extra planning subdivision. No Save arm change for this track.
+No extra planning subdivision. About vertical slice **CLOSED COMPLETE / PASS**.
 
-**LOCAL_IMPLEMENTATION note:** multi-row harden · bake report · `--expect-public-about-build-read` landed; `readyForAboutSupabasePublicBuildReadPackageGenerate: true`.
+**LOCAL_IMPLEMENTATION note:** multi-row harden · bake report · `--expect-public-about-build-read` · noop_equal · clean-tree gate landed.
 
 ---
 

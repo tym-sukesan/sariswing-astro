@@ -3,11 +3,16 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**CMS Core v2 About Supabase public build-read local implementation (2026-07-28):** **COMPLETE (local only)** — exactly-1-row anon SELECT · `overlayOutcome` `applied`/`noop_equal` both success · JSON fallback on load failures · clean-tree gate (`sourceTreeClean`) · `ABOUT_PUBLIC_BUILD_READ_REPORT.json` · `--expect-public-about-build-read` · registry `sitePageFields=false` · Doc: `cms-core-v2-about-supabase-public-build-read-local-implementation.md` · `readyForAboutSupabasePublicBuildReadPackageGenerate: true` (requires **clean** git tree) · **Next:** commit then env-only package generate.
+**CMS Core v2 About Supabase vertical slice (2026-07-28):** **COMPLETE / PASS** — Admin read/hydrate · dry-run · forward/restore Save · public build-read (`noop_equal`) · clean-tree package `sourceCommit` **`95ada81c8a408125370f089fb653660c702589ff`** · FileZilla FTP · public `/about/` visual QA PASS · DB baseline · Save arms false · `writeBackend=supabase` · production 未操作 · Doc: `cms-core-v2-about-supabase-public-build-read-staging-ftp-post-qa-result.md` · Gates: `ABOUT_SUPABASE_VERTICAL_SLICE_PASSED: true` · `readyForGosakiStagingClientReadyAudit: true` · **Next Primary:** Gosaki staging client-ready audit (Home / Schedule / Discography / YouTube / About / Contact / mobile / admin).
 
-**CMS Core v2 About Supabase public build-read planning (2026-07-28):** **COMPLETE** — Doc: `cms-core-v2-about-supabase-public-build-read-planning.md` · superseded next by local implementation above.
+**CMS Core v2 About Supabase public build-read staging FTP post-QA (2026-07-28):** **COMPLETE / PASS** — package `95ada81…` · dedicated verify PASS · `pageFieldDataSource=supabase` · `fieldCount=1` · `overlayOutcome=noop_equal` · forced reload visual PASS · Doc: `cms-core-v2-about-supabase-public-build-read-staging-ftp-post-qa-result.md` · ftp-post-qa §C **PASS**.
 
-**CMS Core v2 About Supabase profile.lede Save roundtrip result (2026-07-28):** **COMPLETE / PASS** — impl `359a04a…` · verifier/package `fe4732b…` · arms false · DB baseline · public About JSON SoT · Doc: `cms-core-v2-about-supabase-profile-lede-save-roundtrip-result.md` · superseded next by public build-read planning above.
+**CMS Core v2 About Supabase public build-read local implementation (2026-07-28):** **COMPLETE** — noop_equal · clean-tree gate · Doc: `cms-core-v2-about-supabase-public-build-read-local-implementation.md` · superseded next by FTP post-QA above.
+
+**CMS Core v2 About Supabase public build-read planning (2026-07-28):** **COMPLETE** — Doc: `cms-core-v2-about-supabase-public-build-read-planning.md`.
+
+**CMS Core v2 About Supabase profile.lede Save roundtrip result (2026-07-28):** **COMPLETE / PASS** — Doc: `cms-core-v2-about-supabase-profile-lede-save-roundtrip-result.md`.
+
 
 **CMS Core v2 About Save UI armed package verify mode (2026-07-28):** **COMPLETE** — default `verify:manual-upload` expects `aboutSaveUiArmed=false` · armed via `--expect-about-save-ui-armed` · used in roundtrip; current live package is **disarmed** (`fe4732b…`).
 

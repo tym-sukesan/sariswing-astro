@@ -5,17 +5,29 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: About Supabase public build-read local implementation COMPLETE
-readyForAboutSupabasePublicBuildReadPackageGenerate: true
-CMS_KIT_SITE_PAGE_FIELDS_BUILD_READ: unset (until approved bake)
-REGISTRY_SITE_PAGE_FIELDS: false
-PUBLIC_ABOUT_JSON_SOT: true
-GOSAKI_ABOUT_SUPABASE_SAVE_ARMED: false
-saveUiArmed=false · writeBackend=supabase · saveDisabled=true
+Current phase: About Supabase vertical slice COMPLETE / PASS
+HEAD / package sourceCommit: 95ada81c8a408125370f089fb653660c702589ff
+public build-read: supabase · fieldCount=1 · overlayOutcome=noop_equal
+Save UI=false · writeBackend=supabase · GOSAKI_ABOUT_SUPABASE_SAVE_ARMED=false
+DB_BASELINE: true · public /about/ visual QA PASS · FTP done
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
-Next: commit (clean tree) → env-only build-read package generate + verify:manual-upload:public-about-build-read
+Next Primary: Gosaki staging client-ready audit
+  (Home / Schedule / Discography / YouTube / About / Contact / mobile / admin routes)
+readyForGosakiStagingClientReadyAudit: true
 readyForAnyFutureFtpApply: false
 ```
+
+## About Supabase vertical slice CLOSED (2026-07-28)
+
+- Admin read/hydrate · dry-run · forward/restore Save · public build-read FTP QA — all PASS
+- Doc: `cms-core-v2-about-supabase-public-build-read-staging-ftp-post-qa-result.md`
+- Gate: `ABOUT_SUPABASE_VERTICAL_SLICE_PASSED: true`
+
+## About Supabase public build-read staging FTP post-QA (2026-07-28)
+
+- Package `95ada81…` · dedicated verify PASS · FileZilla full public-dist
+- Public `/about/` forced reload · baseline lede · Bands/images/layout/nav PASS
+- ftp-post-qa §C PASS
 
 ## About Supabase public build-read local implementation (2026-07-28)
 

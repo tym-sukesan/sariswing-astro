@@ -2356,8 +2356,13 @@ assert(
     aboutOpEditSrc.includes("gosaki-admin-auth-changed") &&
     !aboutOpEditSrc.includes("retrySave") &&
     !aboutOpEditSrc.includes("service_role") &&
-    aboutOpEditSrc.indexOf("async function runDryRun") <
-      aboutOpEditSrc.indexOf("fetchImpl(endpoint"),
+    // dry-run POST uses fetchImpl; read/hydrate may also fetch earlier on supabase path.
+    (() => {
+      const runDryIdx = aboutOpEditSrc.indexOf("async function runDryRun");
+      if (runDryIdx < 0) return false;
+      const fetchInDryRun = aboutOpEditSrc.indexOf("fetchImpl(endpoint", runDryIdx);
+      return fetchInDryRun > runDryIdx;
+    })(),
 );
 assert(
   "about dry-run enabled by dirty not by client arm",

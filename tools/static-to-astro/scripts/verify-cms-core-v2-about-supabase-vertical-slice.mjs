@@ -139,6 +139,13 @@ assert(
   "admin page passes writeBackend to about edit",
   adminPage.includes("writeBackend: aboutUseSupabase"),
 );
+assert(
+  "admin page wires supabase About sanitizers",
+  adminPage.includes("sanitizeAboutSupabaseDryRunEndpointDisplay") &&
+    adminPage.includes("sanitizeAboutSupabaseSaveEndpointDisplay") &&
+    /sanitizeDryRunDisplay:\s*aboutUseSupabase/.test(adminPage) &&
+    /sanitizeSaveDisplay:\s*aboutUseSupabase/.test(adminPage),
+);
 
 const aboutEdit = read(
   "tools/static-to-astro/templates/site-extensions/gosaki-piano/gosaki-staging-about-operational-edit.ts",
@@ -165,6 +172,23 @@ assert(
   aboutEdit.includes("supabaseLedeUpdatedAtBaseline"),
 );
 assert(
+  "about edit supabase dry-run lock without fileSha",
+  aboutEdit.includes("dryRunExpectedBeforeUpdatedAt") &&
+    aboutEdit.includes("hasDryRunLockReady") &&
+    aboutEdit.includes("dryRunFormMatchesForSave") &&
+    aboutEdit.includes("fingerprintPresentForGate"),
+);
+assert(
+  "about edit supabase Save overlays lede only",
+  aboutEdit.includes("isSupabasePath") &&
+    aboutEdit.includes("afterValueText") &&
+    aboutEdit.includes("overlayAboutProfileLedeInBody"),
+);
+assert(
+  "about edit maps stale_optimistic_lock",
+  aboutEdit.includes("stale_optimistic_lock"),
+);
+assert(
   "about panel HTML has no visible value_text_required",
   !read(
     "tools/static-to-astro/templates/admin-cms/gosaki/components/AdminGosakiStagingAboutContentPanel.astro",
@@ -187,6 +211,46 @@ assert("admin lib read operation const", adminLib.includes("ABOUT_SUPABASE_READ_
 assert("admin lib build read request", adminLib.includes("buildAboutSupabaseReadEndpointRequest"));
 assert("admin lib overlay lede helper", adminLib.includes("overlayAboutProfileLedeInBody"));
 assert("admin lib sanitize read display", adminLib.includes("sanitizeAboutSupabaseReadDisplay"));
+assert(
+  "admin lib supabase dry-run sanitize",
+  adminLib.includes("sanitizeAboutSupabaseDryRunEndpointDisplay"),
+);
+assert(
+  "admin lib supabase Save sanitize",
+  adminLib.includes("sanitizeAboutSupabaseSaveEndpointDisplay"),
+);
+assert(
+  "admin lib Contents dry-run sanitize retained",
+  adminLib.includes("export function sanitizeAboutDryRunEndpointDisplay"),
+);
+assert(
+  "admin lib Contents Save sanitize retained",
+  adminLib.includes("export function sanitizeAboutSaveEndpointDisplay"),
+);
+assert(
+  "admin lib Save gate accepts supabase approval",
+  adminLib.includes("ABOUT_SUPABASE_SAVE_APPROVAL_ID") &&
+    /expectedApprovalId !== G12A_ABOUT_SAVE_APPROVAL_ID[\s\S]*?ABOUT_SUPABASE_SAVE_APPROVAL_ID/.test(
+      adminLib,
+    ),
+);
+assert(
+  "supabase dry-run sanitize requires updatedAt not fileSha",
+  /function sanitizeAboutSupabaseDryRunEndpointDisplay[\s\S]*?expectedBeforeUpdatedAt[\s\S]*?Intentionally omit currentFileSha/.test(
+    adminLib,
+  ),
+);
+assert(
+  "supabase Save sanitize requires didWrite dbWrite after fields",
+  /function sanitizeAboutSupabaseSaveEndpointDisplay[\s\S]*?data\.didWrite === true[\s\S]*?data\.dbWrite === true[\s\S]*?afterValueText[\s\S]*?afterUpdatedAt/.test(
+    adminLib,
+  ),
+);
+assert(
+  "Contents Save still requires commitSha",
+  /function sanitizeAboutSaveEndpointDisplay[\s\S]*?commitSha[\s\S]*?committed/.test(adminLib) &&
+    /aboutUnsafeContentsSaveFlags[\s\S]*?commitSha/.test(adminLib),
+);
 assert(
   "read request has no nextValueText / save approval",
   /function buildAboutSupabaseReadEndpointRequest[\s\S]*?operation:\s*ABOUT_SUPABASE_READ_OPERATION/.test(

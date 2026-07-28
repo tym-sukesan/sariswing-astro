@@ -43,6 +43,9 @@ export function userFacingAboutErrorMessage(
     load_failed: "読み込みに失敗しました。しばらくしてから再試行してください",
     save_not_armed: GOSAKI_SAVE_FEATURE_STOPPED_USER_MESSAGE,
     approval_id_mismatch: "確認に失敗しました。ページを再読み込みしてください",
+    stale_optimistic_lock:
+      "他の場所で内容が更新された可能性があります。ページを再読み込みしてから再度お試しください。",
+    update_failed: "保存に失敗しました。しばらくしてから再試行してください",
     invalid_json: "確認に失敗しました",
   };
   if (mapped[code]) return mapped[code];
@@ -76,11 +79,13 @@ export type AboutOperationalEditDeps = {
     dryRun?: boolean;
     fingerprint?: string;
     currentFileSha?: string;
+    expectedBeforeUpdatedAt?: string | null;
     current?: AboutFormSnapshot;
     next?: AboutFormSnapshot;
     before?: AboutFormSnapshot;
     after?: AboutFormSnapshot;
     errors: string[];
+    error?: string;
     noChange?: boolean;
     authIssue?: boolean;
     unsafeWriteFlags?: boolean;
@@ -99,6 +104,9 @@ export type AboutOperationalEditDeps = {
       newFileSha?: string;
       indeterminate?: boolean;
       didWrite?: boolean;
+      dbWrite?: boolean;
+      afterValueText?: string;
+      afterUpdatedAt?: string | null;
     });
   evaluateSaveGate?: (input: {
     authenticated: boolean;
@@ -160,6 +168,8 @@ export function initGosakiAboutOperationalEdit(
   let dryRunServerFingerprint: string | null = null;
   let dryRunFileSha: string | null = null;
   let dryRunExpectedBefore: AboutFormSnapshot | null = null;
+  /** Supabase optimistic lock from dry-run before.updatedAt (Contents unused). */
+  let dryRunExpectedBeforeUpdatedAt: string | null = null;
   let saveInFlight = false;
   let dryRunInFlight = false;
   let saveNotArmedLocked = false;
@@ -172,6 +182,8 @@ export function initGosakiAboutOperationalEdit(
   let supabaseLedeUpdatedAtBaseline: string | null = null;
 
   const saveArmed = isClientSaveArmed(deps.saveArmed);
+  const writeBackend = deps.writeBackend === "supabase" ? "supabase" : "contents";
+  const isSupabasePath = writeBackend === "supabase";
   const expectedSaveApprovalId = String(deps.expectedSaveApprovalId ?? "").trim();
   const conflictMessage =
     deps.conflictMessage ??
@@ -180,6 +192,47 @@ export function initGosakiAboutOperationalEdit(
   const fetchImpl = deps.fetchImpl ?? fetch;
   const statusEl = root.querySelector("[data-gosaki-about-status]");
 
+  function resolveDryRunLockUpdatedAt(display: {
+    expectedBeforeUpdatedAt?: string | null;
+    before?: AboutFormSnapshot | null;
+  }): string | null {
+    const fromField = String(display.expectedBeforeUpdatedAt ?? "").trim();
+    if (fromField) return fromField;
+    const fromBefore = String(
+      (display.before as { updatedAt?: string } | null | undefined)?.updatedAt ?? "",
+    ).trim();
+    return fromBefore || null;
+  }
+
+  function hasDryRunLockReady(display: {
+    ok?: boolean;
+    fingerprint?: string;
+    currentFileSha?: string;
+    expectedBeforeUpdatedAt?: string | null;
+    before?: AboutFormSnapshot | null;
+  }): boolean {
+    if (!display.ok || !display.fingerprint) return false;
+    if (isSupabasePath) return Boolean(resolveDryRunLockUpdatedAt(display));
+    return Boolean(display.currentFileSha);
+  }
+
+  function dryRunFormMatchesForSave(next: AboutFormSnapshot): boolean {
+    const base =
+      dryRunOk &&
+      dryRunFormFingerprint != null &&
+      formFingerprint(next) === dryRunFormFingerprint &&
+      dryRunServerFingerprint != null &&
+      dryRunExpectedBefore != null;
+    if (!base) return false;
+    if (isSupabasePath) return Boolean(String(dryRunExpectedBeforeUpdatedAt ?? "").trim());
+    return dryRunFileSha != null;
+  }
+
+  function fingerprintPresentForGate(): boolean {
+    if (!dryRunServerFingerprint) return false;
+    if (isSupabasePath) return Boolean(String(dryRunExpectedBeforeUpdatedAt ?? "").trim());
+    return dryRunFileSha != null;
+  }
   function setLiveReadUi(state: "pending" | "ready" | "error", error = "") {
     liveReadState = state;
     root.dataset.liveSource = state;
@@ -308,6 +361,7 @@ export function initGosakiAboutOperationalEdit(
     dryRunServerFingerprint = null;
     dryRunFileSha = null;
     dryRunExpectedBefore = null;
+    dryRunExpectedBeforeUpdatedAt = null;
     void refreshSaveGate();
   }
 
@@ -462,11 +516,11 @@ export function initGosakiAboutOperationalEdit(
   async function hydrateFromGithubDryRun(): Promise<{ ok: true } | { ok: false; error: string }> {
     const auth = await refreshAuthFlag();
     const endpoint = String(deps.dryRunEndpoint ?? "").trim();
-    const writeBackend = deps.writeBackend === "supabase" ? "supabase" : "contents";
+    const writeBackendHydrate = deps.writeBackend === "supabase" ? "supabase" : "contents";
 
     // Supabase Admin path: read-only hydrate of profile.lede from site_page_fields.
     // Fail closed to baked JSON (never block the form · never show raw Edge codes).
-    if (writeBackend === "supabase") {
+    if (writeBackendHydrate === "supabase") {
       if (isFormDirty()) {
         return { ok: true };
       }
@@ -664,6 +718,7 @@ export function initGosakiAboutOperationalEdit(
         dryRunServerFingerprint = display.fingerprint ?? null;
         dryRunFileSha = display.currentFileSha ?? null;
         dryRunExpectedBefore = display.current ?? display.before ?? null;
+        dryRunExpectedBeforeUpdatedAt = resolveDryRunLockUpdatedAt(display);
         setLocalValidation("変更なし（no_change）", null);
         showResultHtml(
           `<p>no_change · changedFields: none</p><pre>${escapeHtml(
@@ -673,7 +728,7 @@ export function initGosakiAboutOperationalEdit(
         void refreshSaveGate();
         return;
       }
-      if (!display.ok || !display.fingerprint || !display.currentFileSha) {
+      if (!hasDryRunLockReady(display)) {
         invalidateDryRun();
         setLocalValidation(
           userFacingAboutErrorMessage(display.errors?.[0] || display.error, "確認に失敗しました"),
@@ -686,13 +741,20 @@ export function initGosakiAboutOperationalEdit(
       dryRunOk = true;
       dryRunNoChange = false;
       dryRunFormFingerprint = formFingerprint(next);
-      dryRunServerFingerprint = display.fingerprint;
-      dryRunFileSha = display.currentFileSha;
+      dryRunServerFingerprint = display.fingerprint ?? null;
+      dryRunFileSha = display.currentFileSha ?? null;
       dryRunExpectedBefore = display.current ?? display.before ?? null;
+      dryRunExpectedBeforeUpdatedAt = resolveDryRunLockUpdatedAt(display);
+      if (isSupabasePath && dryRunExpectedBeforeUpdatedAt) {
+        // Ensure Save builder can read updatedAt from expectedBefore object.
+        (dryRunExpectedBefore as { updatedAt?: string }).updatedAt =
+          dryRunExpectedBeforeUpdatedAt;
+        supabaseLedeUpdatedAtBaseline = dryRunExpectedBeforeUpdatedAt;
+        root.dataset.gosakiAboutLedeUpdatedAt = dryRunExpectedBeforeUpdatedAt;
+      }
       setLocalValidation(pendingOneClickSave ? "確認中…" : "確認完了", true);
       showResultHtml(`<p class="gosaki-read-only-admin__meta--ok">確認完了</p>`);
-      void refreshSaveGate();
-    } catch (err) {
+      void refreshSaveGate();    } catch (err) {
       invalidateDryRun();
       setLocalValidation("確認に失敗しました", false);
       showResultJson({
@@ -739,13 +801,7 @@ export function initGosakiAboutOperationalEdit(
       return;
     }
     const next = readFormSnapshot();
-    const formMatches =
-      dryRunOk &&
-      dryRunFormFingerprint != null &&
-      formFingerprint(next) === dryRunFormFingerprint &&
-      dryRunServerFingerprint != null &&
-      dryRunFileSha != null &&
-      dryRunExpectedBefore != null;
+    const formMatches = dryRunFormMatchesForSave(next);
 
     if (!formMatches) {
       pendingOneClickSave = true;
@@ -766,7 +822,7 @@ export function initGosakiAboutOperationalEdit(
         authenticated: auth,
         dryRunSucceeded: dryRunOk,
         formMatchesDryRunSnapshot: Boolean(formMatches),
-        fingerprintPresent: Boolean(dryRunServerFingerprint && dryRunFileSha),
+        fingerprintPresent: fingerprintPresentForGate(),
         expectedBeforePresent: Boolean(dryRunExpectedBefore),
         saveEndpointConfigured: Boolean(saveEndpoint),
         saveEndpointSafe: saveSafe,
@@ -779,7 +835,7 @@ export function initGosakiAboutOperationalEdit(
 
     if (!gate.enabled) {
       // Soft-fail only when structural gates fail (not client arm).
-      if (!dryRunServerFingerprint || !dryRunFileSha || !dryRunExpectedBefore) {
+      if (!dryRunServerFingerprint || !dryRunExpectedBefore || !fingerprintPresentForGate()) {
         applySaveButtonUi(false, "いまは保存できません");
         return;
       }
@@ -789,6 +845,10 @@ export function initGosakiAboutOperationalEdit(
       }
     }
     if (!deps.buildSaveEndpointRequest || !dryRunExpectedBefore || !dryRunServerFingerprint) {
+      applySaveButtonUi(false, "いまは保存できません");
+      return;
+    }
+    if (isSupabasePath && !String(dryRunExpectedBeforeUpdatedAt ?? "").trim()) {
       applySaveButtonUi(false, "いまは保存できません");
       return;
     }
@@ -887,9 +947,28 @@ export function initGosakiAboutOperationalEdit(
 
       // Save success: response.after becomes the new dirty/cancel baseline.
       // Form keeps saved values; dirty=false until the operator edits again.
-      const savedAfter = display.after ?? display.next ?? next;
-      writeFormSnapshot(savedAfter);
-      baselineFingerprint = formFingerprint(savedAfter);
+      if (isSupabasePath) {
+        // Edge after is { valueText, updatedAt, … } — overlay lede only; keep bands/images.
+        const lede =
+          String(display.afterValueText ?? "").trim() ||
+          String((display.after as { valueText?: string } | undefined)?.valueText ?? "").trim();
+        const snap = readFormSnapshot();
+        if (lede) {
+          snap.profile.body = overlayAboutProfileLedeInBody(snap.profile.body, lede);
+        }
+        writeFormSnapshot(snap);
+        baselineFingerprint = formFingerprint(snap);
+        const nextUpdatedAt =
+          String(display.afterUpdatedAt ?? "").trim() ||
+          String((display.after as { updatedAt?: string } | undefined)?.updatedAt ?? "").trim() ||
+          null;
+        supabaseLedeUpdatedAtBaseline = nextUpdatedAt;
+        root.dataset.gosakiAboutLedeUpdatedAt = nextUpdatedAt ?? "";
+      } else {
+        const savedAfter = display.after ?? display.next ?? next;
+        writeFormSnapshot(savedAfter);
+        baselineFingerprint = formFingerprint(savedAfter);
+      }
 
       invalidateDryRun();
       applyDryRunButtonUi();

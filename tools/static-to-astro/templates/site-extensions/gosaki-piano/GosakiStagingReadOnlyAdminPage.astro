@@ -722,6 +722,8 @@ const showClientScript = true;
         extractAboutProfileLedeFromBody,
         sanitizeAboutDryRunEndpointDisplay,
         sanitizeAboutSaveEndpointDisplay,
+        sanitizeAboutSupabaseDryRunEndpointDisplay,
+        sanitizeAboutSupabaseSaveEndpointDisplay,
         evaluateAboutOperationalSaveGate,
         isAboutSaveConflictResponse,
       } from "../lib/gosaki-staging-read-only-admin";
@@ -1023,8 +1025,12 @@ const showClientScript = true;
                   requestId,
                 })
             : buildAboutSaveEndpointRequest,
-          sanitizeDryRunDisplay: sanitizeAboutDryRunEndpointDisplay,
-          sanitizeSaveDisplay: sanitizeAboutSaveEndpointDisplay,
+          sanitizeDryRunDisplay: aboutUseSupabase
+            ? sanitizeAboutSupabaseDryRunEndpointDisplay
+            : sanitizeAboutDryRunEndpointDisplay,
+          sanitizeSaveDisplay: aboutUseSupabase
+            ? sanitizeAboutSupabaseSaveEndpointDisplay
+            : sanitizeAboutSaveEndpointDisplay,
           evaluateSaveGate: evaluateAboutOperationalSaveGate,
           isSaveConflictResponse: isAboutSaveConflictResponse,
           expectedSaveApprovalId: aboutUseSupabase

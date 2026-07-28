@@ -3,12 +3,64 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **Kit Core:** About Admin read/hydrate **staging FTP post-QA PASS**（`sourceCommit` `84929cf0…` · §D）。**Next（推奨）:** `cms-core-v2-about-supabase-profile-lede-save-roundtrip-planning`（docs only · Save arm **触らない**）。build-read / public About SoT flip は後続。
+1. **Kit Core:** About `profile.lede` Save **client adapter COMPLETE**。**Next:** operator-approved **armed package generate**（`SAVE_UI_ARMED=true` · remote arm **unset**）→ FTP → Save roundtrip execution。Save arm / build-read **触らない** until execution approval。
 2. **並行可:** Contents YouTube 退役 planning（`contentsYoutubeCutoverExecuted: false`）。
 3. **並行可（Gosaki ops）:** クライアントへ staging 共有・feedback。
 4. **並行可:** production hosting **read-only planning**。
 5. Save arm **false** · Secret 変更禁止 · About Contents / G-12a **retained** · migration/RLS/seed **再実行禁止** · public About build-read **未**。
 6. production / Wix / auto FTP / `vsbvndwuajjhnzpohghh` 禁止 · `service_role` 禁止 · `readyForAnyFutureFtpApply: false`。
+
+## 0. About Supabase profile.lede Save client adapter COMPLETE (2026-07-28)
+
+| Item | Value |
+| --- | --- |
+| Gate | `ABOUT_SUPABASE_PROFILE_LEDE_SAVE_CLIENT_ADAPTER_IMPLEMENTATION_COMPLETE: true` |
+| Armed package readiness | `readyForAboutSupabaseProfileLedeSaveArmedPackageGenerate: true` |
+| Save arm / DB write / package / FTP | **false** |
+| Doc | `cms-core-v2-about-supabase-profile-lede-save-client-adapter-implementation.md` |
+| Verifier | `verify-cms-core-v2-about-supabase-save-client-adapter.mjs` |
+
+```txt
+ABOUT_SUPABASE_PROFILE_LEDE_SAVE_CLIENT_ADAPTER_IMPLEMENTATION_COMPLETE: true
+IMPLEMENTATION_EXECUTED: true
+readyForAboutSupabaseProfileLedeSaveArmedPackageGenerate: true
+SAVE_ARM_ENABLED: false
+GOSAKI_ABOUT_SUPABASE_SAVE_ARMED_SET: false
+DB_WRITE_EXECUTED: false
+PACKAGE_GENERATE_EXECUTED: false
+FTP_EXECUTED: false
+PUBLIC_ABOUT_JSON_SOT: true
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+PRODUCTION_UNCHANGED: true
+```
+
+## 0. About Supabase profile.lede Save roundtrip planning COMPLETE (2026-07-28)
+
+| Item | Value |
+| --- | --- |
+| Gate | `ABOUT_SUPABASE_PROFILE_LEDE_SAVE_ROUNDTRIP_PLANNING_COMPLETE: true` |
+| Implementation | **COMPLETE** (client adapter) |
+| Armed package readiness | `readyForAboutSupabaseProfileLedeSaveArmedPackageGenerate: true` |
+| Save arm / Save execution | **false** / **not executed** |
+| Baseline HEAD | `eeae89018c3791a14634c1b48a49324ed90ed3a2` |
+| Doc | `cms-core-v2-about-supabase-profile-lede-save-roundtrip-planning.md` |
+| Verifier | `verify-cms-core-v2-about-supabase-profile-lede-save-roundtrip-planning.mjs` |
+| Values | baseline seed ↔ temp PoC string ↔ restore |
+
+```txt
+ABOUT_SUPABASE_PROFILE_LEDE_SAVE_ROUNDTRIP_PLANNING_COMPLETE: true
+readyForAboutSupabaseProfileLedeSaveRoundtripImplementation: true
+IMPLEMENTATION_EXECUTED: true
+readyForAboutSupabaseProfileLedeSaveArmedPackageGenerate: true
+SAVE_ARM_ENABLED: false
+GOSAKI_ABOUT_SUPABASE_SAVE_ARMED_SET: false
+DB_WRITE_EXECUTED: false
+PACKAGE_GENERATE_EXECUTED: false
+FTP_EXECUTED: false
+PUBLIC_ABOUT_JSON_SOT: true
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+PRODUCTION_UNCHANGED: true
+```
 
 ## 0. About Supabase Admin read/hydrate staging FTP post-QA PASS (2026-07-28)
 

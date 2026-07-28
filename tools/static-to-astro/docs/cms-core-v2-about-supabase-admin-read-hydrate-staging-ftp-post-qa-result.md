@@ -103,4 +103,6 @@ readyForAboutSupabaseProfileLedeSaveRoundtripPlanning: true
 **Recommended:** **A** — `cms-core-v2-about-supabase-profile-lede-save-roundtrip-planning`
 Docs/planning only · **do not** set `GOSAKI_ABOUT_SUPABASE_SAVE_ARMED` · **do not** flip Save UI arm · public About JSON unchanged.
 
+**Planning COMPLETE (2026-07-28):** [profile.lede Save roundtrip planning](./cms-core-v2-about-supabase-profile-lede-save-roundtrip-planning.md) · `readyForAboutSupabaseProfileLedeSaveRoundtripImplementation: true` · implementation/arm/Save **not** started.
+
 Parallel OK: client staging share · Contents YouTube retire planning · production hosting read-only planning.

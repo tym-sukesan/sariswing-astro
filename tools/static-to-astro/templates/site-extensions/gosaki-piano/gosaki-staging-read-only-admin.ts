@@ -2100,17 +2100,25 @@ export function evaluateAboutOperationalSaveGate(
   if (!input.saveEndpointConfigured || !input.saveEndpointSafe) {
     return { enabled: false, reason: "Save endpoint が未設定またはブロックされています" };
   }
-  if (!input.envArmed) {
-    return { enabled: false, reason: `env arm（${G12A_ABOUT_SAVE_UI_ARMED_ENV}）が無効です` };
-  }
   const candidateApprovalId = String(input.approvalId ?? "").trim();
   const expectedApprovalId = String(input.expectedApprovalId ?? "").trim();
+  if (!input.envArmed) {
+    const armEnv =
+      expectedApprovalId === ABOUT_SUPABASE_SAVE_APPROVAL_ID
+        ? ABOUT_SUPABASE_SAVE_UI_ARMED_ENV
+        : G12A_ABOUT_SAVE_UI_ARMED_ENV;
+    return { enabled: false, reason: `env arm（${armEnv}）が無効です` };
+  }
   if (!candidateApprovalId) return { enabled: false, reason: "approval ID が空です" };
   if (!expectedApprovalId) return { enabled: false, reason: "expected approval ID が未設定です" };
   if (candidateApprovalId !== expectedApprovalId) {
     return { enabled: false, reason: "approval ID が一致しません" };
   }
-  if (expectedApprovalId !== G12A_ABOUT_SAVE_APPROVAL_ID) {
+  // Contents G-12a or About Supabase profile.lede Save — reject anything else.
+  if (
+    expectedApprovalId !== G12A_ABOUT_SAVE_APPROVAL_ID &&
+    expectedApprovalId !== ABOUT_SUPABASE_SAVE_APPROVAL_ID
+  ) {
     return { enabled: false, reason: "expected approval ID が不正です" };
   }
   return { enabled: true, reason: "Save 可能（gated）" };
@@ -2142,6 +2150,10 @@ export type AboutEndpointDisplay = {
   newFileSha?: string;
   commitSha?: string;
   commitUrl?: string | null;
+  /** Supabase site_page_fields lock (dry-run / Save) — Contents path unused. */
+  expectedBeforeUpdatedAt?: string | null;
+  afterValueText?: string;
+  afterUpdatedAt?: string | null;
   error?: string;
   errors: string[];
   saveReadiness?: string;
@@ -2166,10 +2178,17 @@ function aboutUnsafeDryRunFlags(data: Record<string, unknown>): boolean {
   );
 }
 
-function aboutUnsafeSaveFlags(data: Record<string, unknown>): boolean {
+/** Contents Save only — supabase success uses didWrite+dbWrite without commitSha. */
+function aboutUnsafeContentsSaveFlags(data: Record<string, unknown>): boolean {
   if (data.workflowDispatchExecuted === true) return true;
   if (data.dbWrite === true) return true;
   if (data.ok === true && data.didWrite === true && !data.commitSha) return true;
+  return false;
+}
+
+function aboutUnsafeSupabaseSaveFlags(data: Record<string, unknown>): boolean {
+  if (data.workflowDispatchExecuted === true) return true;
+  if (data.networkWrite === true) return true;
   return false;
 }
 
@@ -2178,6 +2197,22 @@ function asAboutSnapshot(value: unknown): AboutContentFormSnapshot | undefined {
   return value as AboutContentFormSnapshot;
 }
 
+function readUpdatedAtFromUnknown(value: unknown): string | null {
+  if (!value || typeof value !== "object") return null;
+  const raw = (value as Record<string, unknown>).updatedAt;
+  const trimmed = raw == null ? "" : String(raw).trim();
+  return trimmed || null;
+}
+
+function readValueTextFromUnknown(value: unknown): string {
+  if (!value || typeof value !== "object") return "";
+  return String((value as Record<string, unknown>).valueText ?? "").trim();
+}
+
+/**
+ * Contents G-12a dry-run sanitize — requires fingerprint (fileSha optional for ok=true
+ * historically; Edit UI still requires currentFileSha separately).
+ */
 export function sanitizeAboutDryRunEndpointDisplay(
   body: unknown,
   httpStatus?: number,
@@ -2221,6 +2256,62 @@ export function sanitizeAboutDryRunEndpointDisplay(
   };
 }
 
+/**
+ * Supabase About dry-run sanitize — fingerprint + before.updatedAt required.
+ * Does **not** require Contents currentFileSha / commitSha.
+ */
+export function sanitizeAboutSupabaseDryRunEndpointDisplay(
+  body: unknown,
+  httpStatus?: number,
+): AboutEndpointDisplay {
+  const data = (body && typeof body === "object" ? body : {}) as Record<string, unknown>;
+  const error = typeof data.error === "string" ? data.error : undefined;
+  const errorsFromArray = Array.isArray(data.errors) ? data.errors.map(String) : [];
+  const errors = error ? Array.from(new Set([error, ...errorsFromArray])) : errorsFromArray;
+  const unsafe = aboutUnsafeDryRunFlags(data);
+  const fingerprint = typeof data.fingerprint === "string" ? data.fingerprint : undefined;
+  const noChange = data.noChange === true || data.saveReadiness === "no_change";
+  const beforeSnap = asAboutSnapshot(data.before);
+  const expectedBeforeUpdatedAt =
+    (typeof data.expectedBeforeUpdatedAt === "string" &&
+    String(data.expectedBeforeUpdatedAt).trim()
+      ? String(data.expectedBeforeUpdatedAt).trim()
+      : null) || readUpdatedAtFromUnknown(data.before);
+  const ok =
+    data.ok === true &&
+    !unsafe &&
+    errors.length === 0 &&
+    data.dryRun === true &&
+    Boolean(fingerprint) &&
+    Boolean(expectedBeforeUpdatedAt) &&
+    !noChange;
+  return {
+    httpStatus,
+    ok,
+    dryRun: data.dryRun === true,
+    wouldWrite: data.wouldWrite === true,
+    changedFields: Array.isArray(data.changedFields) ? data.changedFields.map(String) : [],
+    current: asAboutSnapshot(data.current) ?? beforeSnap,
+    next: asAboutSnapshot(data.next) ?? asAboutSnapshot(data.after),
+    before: beforeSnap,
+    after: asAboutSnapshot(data.after),
+    fingerprint,
+    expectedBeforeUpdatedAt,
+    // Intentionally omit currentFileSha — Supabase Edit must not require it.
+    error,
+    errors,
+    saveReadiness: typeof data.saveReadiness === "string" ? data.saveReadiness : undefined,
+    didWrite: false,
+    dbWrite: false,
+    networkWrite: false,
+    saveEnabled: false,
+    authIssue: httpStatus === 401 || httpStatus === 403,
+    unsafeWriteFlags: unsafe,
+    noChange,
+  };
+}
+
+/** Contents G-12a Save sanitize — requires commitSha. */
 export function sanitizeAboutSaveEndpointDisplay(
   body: unknown,
   httpStatus?: number,
@@ -2229,7 +2320,7 @@ export function sanitizeAboutSaveEndpointDisplay(
   const error = typeof data.error === "string" ? data.error : undefined;
   const errorsFromArray = Array.isArray(data.errors) ? data.errors.map(String) : [];
   const errors = error ? Array.from(new Set([error, ...errorsFromArray])) : errorsFromArray;
-  const unsafe = aboutUnsafeSaveFlags(data);
+  const unsafe = aboutUnsafeContentsSaveFlags(data);
   const indeterminate =
     data.indeterminate === true || String(data.saveReadiness ?? "") === "verification_required";
   const committed =
@@ -2261,6 +2352,64 @@ export function sanitizeAboutSaveEndpointDisplay(
     didWrite: committed,
     dbWrite: false,
     networkWrite: committed,
+    saveEnabled: false,
+    authIssue: httpStatus === 401 || httpStatus === 403,
+    unsafeWriteFlags: unsafe,
+    indeterminate,
+  };
+}
+
+/**
+ * Supabase About Save sanitize — didWrite + dbWrite + after.valueText + after.updatedAt.
+ * Does **not** require Contents commitSha.
+ */
+export function sanitizeAboutSupabaseSaveEndpointDisplay(
+  body: unknown,
+  httpStatus?: number,
+): AboutEndpointDisplay {
+  const data = (body && typeof body === "object" ? body : {}) as Record<string, unknown>;
+  const error = typeof data.error === "string" ? data.error : undefined;
+  const errorsFromArray = Array.isArray(data.errors) ? data.errors.map(String) : [];
+  const errors = error ? Array.from(new Set([error, ...errorsFromArray])) : errorsFromArray;
+  const unsafe = aboutUnsafeSupabaseSaveFlags(data);
+  const indeterminate =
+    data.indeterminate === true || String(data.saveReadiness ?? "") === "verification_required";
+  const afterValueText = readValueTextFromUnknown(data.after);
+  const afterUpdatedAt = readUpdatedAtFromUnknown(data.after);
+  const expectedBeforeUpdatedAt =
+    (typeof data.expectedBeforeUpdatedAt === "string" &&
+    String(data.expectedBeforeUpdatedAt).trim()
+      ? String(data.expectedBeforeUpdatedAt).trim()
+      : null) || readUpdatedAtFromUnknown(data.before);
+  const committed =
+    data.ok === true &&
+    data.didWrite === true &&
+    data.dbWrite === true &&
+    Boolean(afterValueText) &&
+    Boolean(afterUpdatedAt) &&
+    !unsafe &&
+    !indeterminate &&
+    errors.length === 0;
+  return {
+    httpStatus,
+    ok: committed,
+    dryRun: data.dryRun === false ? false : data.dryRun === true,
+    wouldWrite: data.wouldWrite === true,
+    changedFields: Array.isArray(data.changedFields) ? data.changedFields.map(String) : [],
+    current: asAboutSnapshot(data.current),
+    next: asAboutSnapshot(data.next),
+    before: asAboutSnapshot(data.before),
+    after: asAboutSnapshot(data.after),
+    fingerprint: typeof data.fingerprint === "string" ? data.fingerprint : undefined,
+    expectedBeforeUpdatedAt,
+    afterValueText: afterValueText || undefined,
+    afterUpdatedAt,
+    error,
+    errors,
+    saveReadiness: typeof data.saveReadiness === "string" ? data.saveReadiness : undefined,
+    didWrite: committed,
+    dbWrite: committed,
+    networkWrite: false,
     saveEnabled: false,
     authIssue: httpStatus === 401 || httpStatus === 403,
     unsafeWriteFlags: unsafe,

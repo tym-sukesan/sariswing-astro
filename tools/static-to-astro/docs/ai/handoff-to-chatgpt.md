@@ -5,21 +5,36 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: About Supabase Admin read/hydrate staging FTP post-QA PASS
-ABOUT_SUPABASE_ADMIN_READ_HYDRATE_STAGING_FTP_POST_QA_PASSED: true
-ADMIN_ABOUT_SUPABASE_READ_HYDRATE_LIVE: true
-sourceCommit: 84929cf0c52c86cc1bc36aef3f3e571d3970d2fb
-verifyManualUpload: PASS
-operation:"read" live on /admin/about/ · writeBackend supabase · saveDisabled true
-PUBLIC_ABOUT_JSON_SOT: true
-saveArmEnabled: false
+Current phase: About Supabase profile.lede Save client adapter COMPLETE
+ABOUT_SUPABASE_PROFILE_LEDE_SAVE_CLIENT_ADAPTER_IMPLEMENTATION_COMPLETE: true
+readyForAboutSupabaseProfileLedeSaveArmedPackageGenerate: true
+IMPLEMENTATION_EXECUTED: true
+SAVE_ARM_ENABLED: false
 GOSAKI_ABOUT_SUPABASE_SAVE_ARMED_SET: false
-DB_WRITE_EXECUTED: false
+PUBLIC_ADMIN_GOSAKI_ABOUT_SUPABASE_SAVE_UI_ARMED: false
+ADMIN_ABOUT_SUPABASE_READ_HYDRATE_LIVE: true
+PUBLIC_ABOUT_JSON_SOT: true
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
-Next (recommended): cms-core-v2-about-supabase-profile-lede-save-roundtrip-planning (docs only · no Save arm)
-readyForAboutSupabaseProfileLedeSaveRoundtripPlanning: true
+Next: operator-approved armed package generate (Save UI true · remote arm unset) → FTP → Save roundtrip
 readyForAnyFutureFtpApply: false
 ```
+
+## About Supabase profile.lede Save client adapter (2026-07-28)
+
+- Local: supabase dry-run/Save sanitize · gate accepts supabase approval · no fileSha/commitSha on supabase path
+- Contents G-12a sanitize/gate retained · Save UI env default false
+- Doc: `cms-core-v2-about-supabase-profile-lede-save-client-adapter-implementation.md`
+- Verifier: `verify-cms-core-v2-about-supabase-save-client-adapter.mjs`
+
+## About Supabase profile.lede Save roundtrip planning (2026-07-28)
+
+- Planning + adapter complete · Edge Save contract ready
+- Order: armed package+FTP → arm ON → forward → SELECT → restore → arm OFF → disarm package+FTP
+- Doc: `cms-core-v2-about-supabase-profile-lede-save-roundtrip-planning.md`
+
+## Historical G-20u39b4 note
+
+- At multi-route package-prep time, recommended next was: staging Edge deploy (superseded by later Schedule/YouTube/About work).
 
 ## About Supabase Admin read/hydrate staging FTP post-QA (2026-07-28)
 

@@ -3,26 +3,52 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **Kit Core:** About Admin read/hydrate **Admin-path package preflight COMPLETE**（generate/FTP **未実行**）。**Next:** `cms-core-v2-about-supabase-admin-read-hydrate-admin-path-package-generate`（env stack locked · `verify:manual-upload`）→ operator manual FTP → ftp-post-qa §D。Save arm / public About build-read **触らない**。
+1. **Kit Core:** About Admin read/hydrate **staging FTP post-QA PASS**（`sourceCommit` `84929cf0…` · §D）。**Next（推奨）:** `cms-core-v2-about-supabase-profile-lede-save-roundtrip-planning`（docs only · Save arm **触らない**）。build-read / public About SoT flip は後続。
 2. **並行可:** Contents YouTube 退役 planning（`contentsYoutubeCutoverExecuted: false`）。
 3. **並行可（Gosaki ops）:** クライアントへ staging 共有・feedback。
 4. **並行可:** production hosting **read-only planning**。
 5. Save arm **false** · Secret 変更禁止 · About Contents / G-12a **retained** · migration/RLS/seed **再実行禁止** · public About build-read **未**。
 6. production / Wix / auto FTP / `vsbvndwuajjhnzpohghh` 禁止 · `service_role` 禁止 · `readyForAnyFutureFtpApply: false`。
 
-## 0. About Supabase Admin read/hydrate Admin-path package preflight COMPLETE (2026-07-28)
+## 0. About Supabase Admin read/hydrate staging FTP post-QA PASS (2026-07-28)
+
+| Item | Value |
+| --- | --- |
+| Gate | `ABOUT_SUPABASE_ADMIN_READ_HYDRATE_STAGING_FTP_POST_QA_PASSED: true` |
+| sourceCommit | `84929cf0c52c86cc1bc36aef3f3e571d3970d2fb` |
+| verify:manual-upload | **PASS** |
+| Network | `operation:"read"` · 200 · ok · about/`profile.lede` · write flags false |
+| Console | writeBackend supabase · saveDisabled true · rawErrorVisible false |
+| Public About | JSON unchanged |
+| Next readiness | `readyForAboutSupabaseProfileLedeSaveRoundtripPlanning: true` |
+| Doc | `cms-core-v2-about-supabase-admin-read-hydrate-staging-ftp-post-qa-result.md` |
+| Checklist | ftp-post-qa §D **PASS** |
+
+```txt
+ABOUT_SUPABASE_ADMIN_READ_HYDRATE_STAGING_FTP_POST_QA_COMPLETE: true
+ABOUT_SUPABASE_ADMIN_READ_HYDRATE_STAGING_FTP_POST_QA_PASSED: true
+ADMIN_ABOUT_SUPABASE_READ_HYDRATE_LIVE: true
+PACKAGE_GENERATE_EXECUTED: true
+FTP_EXECUTED: true
+SAVE_ARM_ENABLED: false
+GOSAKI_ABOUT_SUPABASE_SAVE_ARMED_SET: false
+DB_WRITE_EXECUTED: false
+PUBLIC_ABOUT_JSON_SOT: true
+readyForAboutSupabaseProfileLedeSaveRoundtripPlanning: true
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+PRODUCTION_UNCHANGED: true
+```
+
+## 0. About Supabase Admin read/hydrate Admin-path package preflight COMPLETE (2026-07-28 · historical)
 
 | Item | Value |
 | --- | --- |
 | Gate | `ABOUT_SUPABASE_ADMIN_READ_HYDRATE_ADMIN_PATH_PACKAGE_PREFLIGHT_COMPLETE: true` |
-| Generate readiness | `readyForAboutSupabaseAdminReadHydrateAdminPathPackageGenerate: true` |
-| Package / FTP | **false** / **false** |
-| Path env | `PUBLIC_ADMIN_GOSAKI_ABOUT_SUPABASE_PATH_ENABLED=true` |
-| Save UI / Contents Save | **false** / **false** |
-| Server Save arm | **unset** |
+| Generate readiness (preflight-time) | `readyForAboutSupabaseAdminReadHydrateAdminPathPackageGenerate: true` |
+| Package / FTP (preflight-time) | **false** / **false** (historical) |
 | Doc | `cms-core-v2-about-supabase-admin-read-hydrate-admin-path-package-preflight.md` |
 | Verifier | `verify-cms-core-v2-about-supabase-admin-read-hydrate-admin-path-package-preflight.mjs` |
-| FTP QA | `cms-core-v2-about-supabase-ftp-post-qa.md` §D |
+| Superseded by | staging FTP post-QA PASS above |
 
 ```txt
 ABOUT_SUPABASE_ADMIN_READ_HYDRATE_ADMIN_PATH_PACKAGE_PREFLIGHT_COMPLETE: true

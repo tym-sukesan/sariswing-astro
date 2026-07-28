@@ -64,7 +64,7 @@ Prerequisites: `CMS_KIT_SITE_PAGE_FIELDS_BUILD_READ=true` **or** `registry.siteP
 
 ---
 
-## D. After Admin read/hydrate package (planned — not executed yet)
+## D. After Admin read/hydrate package
 
 Prerequisites: Edge `operation:"read"` post-redeploy QA **PASS** · package bake with
 `PUBLIC_ADMIN_GOSAKI_ABOUT_SUPABASE_PATH_ENABLED=true` · Save UI **false** ·
@@ -72,18 +72,22 @@ Contents Save **false** · build-read **unset** · remote Save arm **unset**.
 
 See [admin-read-hydrate package preflight](./cms-core-v2-about-supabase-admin-read-hydrate-admin-path-package-preflight.md).
 
-| # | Check | Expect |
+**Result (2026-07-28):** **PASS** — [read/hydrate staging FTP post-QA result](./cms-core-v2-about-supabase-admin-read-hydrate-staging-ftp-post-qa-result.md)
+
+| # | Check | Result |
 | --- | --- | --- |
-| 1 | Admin login on `/admin/about/` | OK |
-| 2 | `writeBackend` | `"supabase"` |
-| 3 | After login | `operation:"read"` runs |
-| 4 | Form overlay | **only** `profile.lede` from Supabase |
-| 5 | Heading / bands / images | baked JSON unchanged |
-| 6 | Read failure (optional) | JSON fallback · no raw error codes |
-| 7 | Save | `saveDisabled: true` |
-| 8 | Public `/about/` | JSON SoT · unchanged |
-| 9 | Other Admin routes | no regression |
-| 10 | production | untouched |
+| 1 | Admin login on `/admin/about/` | **PASS** |
+| 2 | `writeBackend` | **PASS** (`"supabase"`) |
+| 3 | After login | **PASS** (`operation:"read"` · status 200 · `ok:true`) |
+| 4 | Form overlay | **PASS** (`pageKey:"about"` · `fieldKey:"profile.lede"` · seed `valueText`) |
+| 5 | Write flags | **PASS** (`didWrite/dbWrite/networkWrite:false`) |
+| 6 | Console | **PASS** (`saveDisabled:true` · `rawErrorVisible:false`) |
+| 7 | Save | **PASS** (`saveDisabled: true` · remote arm unset) |
+| 8 | Public `/about/` | **PASS** (JSON SoT · unchanged) |
+| 9 | Other Admin routes | not blocking this slice |
+| 10 | production | **PASS** (untouched) |
+
+Package: `sourceCommit` **`84929cf0c52c86cc1bc36aef3f3e571d3970d2fb`** · `verify:manual-upload` **PASS** · FileZilla full `public-dist/` overwrite · DB write **なし**.
 
 ---
 

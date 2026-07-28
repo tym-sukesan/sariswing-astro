@@ -162,4 +162,6 @@ PACKAGE_GENERATE_EXECUTED: false
 FTP_EXECUTED: false
 ```
 
-**Next:** `cms-core-v2-about-supabase-admin-read-hydrate-admin-path-package-generate` (env stack above · `verify:manual-upload` · operator FTP later).
+> **Superseded for next action:** operator package generate + FTP + §D QA **PASS** — see [staging FTP post-QA result](./cms-core-v2-about-supabase-admin-read-hydrate-staging-ftp-post-qa-result.md). Historical gates above keep generate/FTP **false** as the preflight-time record.
+
+**Next (recommended):** `cms-core-v2-about-supabase-profile-lede-save-roundtrip-planning` (docs only · **no** Save arm).

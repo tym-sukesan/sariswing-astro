@@ -5,27 +5,31 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: About Supabase Admin read/hydrate Admin-path package preflight COMPLETE
-ABOUT_SUPABASE_ADMIN_READ_HYDRATE_ADMIN_PATH_PACKAGE_PREFLIGHT_COMPLETE: true
-readyForAboutSupabaseAdminReadHydrateAdminPathPackageGenerate: true
-PACKAGE_GENERATE_EXECUTED: false
-FTP_EXECUTED: false
-POST_REDEPLOY_QA_PASSED: true
-EDGE_REDEPLOY_EXECUTED: true
-operationReadLive: true
-Function: gosaki-about-supabase-save-dry-run · staging kmjqppxjdnwwrtaeqjta
-Package env: PATH_ENABLED=true · SAVE_UI=false · Contents Save=false · server arm unset · build-read unset
+Current phase: About Supabase Admin read/hydrate staging FTP post-QA PASS
+ABOUT_SUPABASE_ADMIN_READ_HYDRATE_STAGING_FTP_POST_QA_PASSED: true
+ADMIN_ABOUT_SUPABASE_READ_HYDRATE_LIVE: true
+sourceCommit: 84929cf0c52c86cc1bc36aef3f3e571d3970d2fb
+verifyManualUpload: PASS
+operation:"read" live on /admin/about/ · writeBackend supabase · saveDisabled true
 PUBLIC_ABOUT_JSON_SOT: true
 saveArmEnabled: false
+GOSAKI_ABOUT_SUPABASE_SAVE_ARMED_SET: false
+DB_WRITE_EXECUTED: false
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
-Next: package generate → verify:manual-upload → operator FTP → ftp-post-qa §D
+Next (recommended): cms-core-v2-about-supabase-profile-lede-save-roundtrip-planning (docs only · no Save arm)
+readyForAboutSupabaseProfileLedeSaveRoundtripPlanning: true
 readyForAnyFutureFtpApply: false
 ```
 
-## About Supabase Admin read/hydrate Admin-path package preflight (2026-07-28)
+## About Supabase Admin read/hydrate staging FTP post-QA (2026-07-28)
+
+- PASS: package `84929cf0…` · FileZilla full public-dist · read 200 ok · saveDisabled · public About unchanged
+- Doc: `cms-core-v2-about-supabase-admin-read-hydrate-staging-ftp-post-qa-result.md` · ftp-post-qa §D PASS
+
+## About Supabase Admin read/hydrate Admin-path package preflight (2026-07-28 · historical)
 
 - Bake Admin About with read/hydrate client · Save arms false · public JSON unchanged
-- Command documented (not run): `build-gosaki-staging-admin-package.mjs` + `verify:manual-upload`
+- Preflight-time generate/FTP false retained · later executed by operator
 - Doc: `cms-core-v2-about-supabase-admin-read-hydrate-admin-path-package-preflight.md`
 - Verifier: `verify-cms-core-v2-about-supabase-admin-read-hydrate-admin-path-package-preflight.mjs`
 

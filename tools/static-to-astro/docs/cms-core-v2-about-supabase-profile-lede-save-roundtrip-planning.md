@@ -1,12 +1,13 @@
 # CMS Core v2 — About Supabase profile.lede Save roundtrip planning
 
 **Phase:** `cms-core-v2-about-supabase-profile-lede-save-roundtrip-planning`
-**Status:** **COMPLETE (planning)** · **client adapter implementation COMPLETE** — see [implementation](./cms-core-v2-about-supabase-profile-lede-save-client-adapter-implementation.md)
+**Status:** **COMPLETE (planning)** · **client adapter implementation COMPLETE** · **execution PASS** — see [roundtrip result](./cms-core-v2-about-supabase-profile-lede-save-roundtrip-result.md)
 **Date:** 2026-07-28
 **Baseline HEAD (planning):** `eeae89018c3791a14634c1b48a49324ed90ed3a2`
 **Prior:** [read/hydrate staging FTP post-QA PASS](./cms-core-v2-about-supabase-admin-read-hydrate-staging-ftp-post-qa-result.md)
 **Verifier (planning):** `scripts/verify-cms-core-v2-about-supabase-profile-lede-save-roundtrip-planning.mjs`
 **Verifier (adapter):** `scripts/verify-cms-core-v2-about-supabase-save-client-adapter.mjs`
+**Execution result:** [cms-core-v2-about-supabase-profile-lede-save-roundtrip-result.md](./cms-core-v2-about-supabase-profile-lede-save-roundtrip-result.md) · impl `359a04a…` · verifier/package `fe4732b…` · arms restored false · DB baseline
 
 | Check | Status |
 | --- | --- |
@@ -342,11 +343,11 @@ Current staging read/hydrate package for reference: `84929cf0c52c86cc1bc36aef3f3
 ## 14. Next phases (ordered)
 
 1. ~~`cms-core-v2-about-supabase-profile-lede-save-client-adapter-implementation`~~ — **COMPLETE**
-2. Operator-approved **armed package generate** + FTP (Save UI true · remote arm still unset)
-3. Operator-approved Save roundtrip execution (arm ON → forward → SELECT → restore → arm OFF → disarm package → FTP)
-4. Later / separate: public About build-read planning (**after** Save roundtrip PASS)
+2. ~~Operator-approved **armed package generate** + FTP~~ — **COMPLETE** (execution result)
+3. ~~Operator-approved Save roundtrip execution~~ — **COMPLETE / PASS** — [result](./cms-core-v2-about-supabase-profile-lede-save-roundtrip-result.md)
+4. **Next:** public About build-read planning (`cms-core-v2-about-supabase-public-build-read-planning`)
 
-No extra final-preflight phase required unless operator requests one before arming.
+Historical planning gates above remain as planning-time snapshot (`DB_WRITE_EXECUTED: false` etc.). Final post-execution state is recorded only in the result doc.
 ---
 
 ## 15. This phase verification

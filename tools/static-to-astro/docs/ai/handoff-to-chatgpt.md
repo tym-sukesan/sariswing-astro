@@ -5,35 +5,44 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: About Save UI armed package verify mode COMPLETE (local)
-verify:manual-upload default: aboutSaveUiArmed=false required
-verify:manual-upload:about-save-ui-armed: explicit --expect-about-save-ui-armed
-Live package sourceCommit: 359a04a3e960d23fe4948ee53cab7580b924f86f (Save UI armed bake)
-GOSAKI_ABOUT_SUPABASE_SAVE_ARMED_SET: false
-SAVE_ARM_ENABLED: false
-PUBLIC_ABOUT_JSON_SOT: true
+Current phase: About profile.lede Supabase Save roundtrip COMPLETE / PASS
+Impl: 359a04a3e960d23fe4948ee53cab7580b924f86f
+Verifier/package: fe4732b1552934f83ebd7cbbb2b49ef98da95aaa
+Live package: disarmed · verify:manual-upload PASS · FTP done
+GOSAKI_ABOUT_SUPABASE_SAVE_ARMED: false
+saveUiArmed=false · writeBackend=supabase · saveDisabled=true
+FINAL_DB_BASELINE: true · PUBLIC_ABOUT_JSON_SOT: true
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
-Next: npm run verify:manual-upload:about-save-ui-armed → operator FTP when approved → Save roundtrip
+Next: cms-core-v2-about-supabase-public-build-read-planning
 readyForAnyFutureFtpApply: false
 ```
+
+## About Supabase profile.lede Save roundtrip result (2026-07-28)
+
+- PASS: dry-run · unarmed 403 save_not_armed · forward Save · restore Save · arm restored false
+- Disarmed package `fe4732b…` · Console saveDisabled · DB baseline · production untouched
+- Doc: `cms-core-v2-about-supabase-profile-lede-save-roundtrip-result.md`
+- Gate: `readyForAboutSupabasePublicBuildReadPlanning: true`
 
 ## About Save UI armed package verify mode (2026-07-28)
 
 - Default `verify:manual-upload` still expects disarmed bake
 - Armed: `npm run verify:manual-upload:about-save-ui-armed` or `--expect-about-save-ui-armed`
 - Cross-checks PACKAGE_RUN + admin about HTML (staging ref · supabase endpoints · other Save arms false)
+- Used during roundtrip; live package is now disarmed
 
 ## About Supabase profile.lede Save client adapter (2026-07-28)
 
 - Local: supabase dry-run/Save sanitize · gate accepts supabase approval · no fileSha/commitSha on supabase path
 - Contents G-12a sanitize/gate retained · Save UI env default false
+- Commit: `359a04a…`
 - Doc: `cms-core-v2-about-supabase-profile-lede-save-client-adapter-implementation.md`
 - Verifier: `verify-cms-core-v2-about-supabase-save-client-adapter.mjs`
 
 ## About Supabase profile.lede Save roundtrip planning (2026-07-28)
 
-- Planning + adapter complete · Edge Save contract ready
-- Order: armed package+FTP → arm ON → forward → SELECT → restore → arm OFF → disarm package+FTP
+- Planning + adapter complete · execution PASS recorded in result doc
+- Order executed: armed package+FTP → arm ON → forward → restore → arm OFF → disarm package+FTP
 - Doc: `cms-core-v2-about-supabase-profile-lede-save-roundtrip-planning.md`
 
 ## Historical G-20u39b4 note

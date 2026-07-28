@@ -12,6 +12,7 @@ import { fileURLToPath } from "node:url";
 import { spawnSync } from "node:child_process";
 import {
   EXPECTED_ABOUT_ADMIN_PATH_BAKE,
+  EXPECTED_ABOUT_ADMIN_PATH_BAKE_SAVE_UI_ARMED,
   PACKAGE_RUN_MARKER_NAME,
   PACKAGE_RUNS_DIR_NAME,
   STALE_BACKUP_DIR_NAME,
@@ -20,6 +21,7 @@ import {
   isStaleBackupPath,
   relocateExistingManualUploadPackageToStaleBackup,
   resolvePackageRunMarkerPath,
+  validateGosakiAboutAdminPathPackageArtifacts,
   validatePackageRunMarker,
   writePackageRunMarker,
 } from "./lib/package-run-marker.mjs";
@@ -64,6 +66,13 @@ function headSha() {
 const realBefore = fs.existsSync(REAL_PACKAGE);
 const realMtimeBefore = realBefore ? fs.statSync(REAL_PACKAGE).mtimeMs : null;
 const realMarkerBefore = fs.existsSync(REAL_MARKER);
+const REAL_STALE_BACKUP = path.join(
+  TOOL_ROOT,
+  "output/manual-upload",
+  STALE_BACKUP_DIR_NAME,
+  "gosaki-piano",
+);
+const realStaleBackupBefore = fs.existsSync(REAL_STALE_BACKUP);
 
 assert("real gosaki-piano package not required for this test", true);
 assert(
@@ -247,6 +256,130 @@ assert(
   );
 }
 
+// --- armed bake PASS when explicitly expected ---
+{
+  const root = mkTempRoot();
+  const live = path.join(root, "manual-upload", "gosaki-piano");
+  fs.mkdirSync(path.join(live, "public-dist", "admin", "about"), { recursive: true });
+  fs.mkdirSync(path.join(live, "public-dist", "about"), { recursive: true });
+  const head = headSha();
+  writePackageRunMarker(
+    live,
+    buildPackageRunMarker({
+      runId: "fixture-run-armed",
+      generatedAt: "2026-07-28T12:00:00.000Z",
+      sourceCommit: head,
+      siteKey: "gosaki-piano",
+      profile: "staging",
+      bake: EXPECTED_ABOUT_ADMIN_PATH_BAKE_SAVE_UI_ARMED,
+    }),
+  );
+  fs.writeFileSync(
+    path.join(live, "public-dist", "admin", "about", "index.html"),
+    `<!doctype html><html><body
+      data-gosaki-about-write-backend="supabase"
+      data-gosaki-about-save-armed="true"
+      data-gosaki-about-dry-run-endpoint="https://kmjqppxjdnwwrtaeqjta.supabase.co/functions/v1/gosaki-about-supabase-save-dry-run"
+      data-gosaki-about-save-endpoint="https://kmjqppxjdnwwrtaeqjta.supabase.co/functions/v1/gosaki-about-supabase-save-dry-run"
+      data-gosaki-supabase-url="https://kmjqppxjdnwwrtaeqjta.supabase.co"
+      data-gosaki-youtube-save-armed="false"
+      data-gosaki-schedule-save-armed="false"
+      data-gosaki-discography-save-armed="false"
+    ></body></html>`,
+    "utf8",
+  );
+  fs.writeFileSync(path.join(live, "public-dist", "about", "index.html"), "<html></html>", "utf8");
+  const markerErrs = validatePackageRunMarker({
+    packageDir: live,
+    repoRoot: REPO_ROOT,
+    siteKey: "gosaki-piano",
+    profile: "staging",
+    expectedBake: EXPECTED_ABOUT_ADMIN_PATH_BAKE_SAVE_UI_ARMED,
+    currentHead: head,
+  });
+  const htmlErrs = validateGosakiAboutAdminPathPackageArtifacts({
+    packageDir: live,
+    expectedBake: EXPECTED_ABOUT_ADMIN_PATH_BAKE_SAVE_UI_ARMED,
+  });
+  assert("armed bake marker PASS", markerErrs.length === 0, markerErrs.join(" | "));
+  assert("armed bake HTML PASS", htmlErrs.length === 0, htmlErrs.join(" | "));
+}
+
+// --- armed marker with disarmed HTML FAIL (do not trust PACKAGE_RUN alone) ---
+{
+  const root = mkTempRoot();
+  const live = path.join(root, "manual-upload", "gosaki-piano");
+  fs.mkdirSync(path.join(live, "public-dist", "admin", "about"), { recursive: true });
+  fs.mkdirSync(path.join(live, "public-dist", "about"), { recursive: true });
+  const head = headSha();
+  writePackageRunMarker(
+    live,
+    buildPackageRunMarker({
+      runId: "fixture-run-armed-html-mismatch",
+      generatedAt: "2026-07-28T12:00:00.000Z",
+      sourceCommit: head,
+      siteKey: "gosaki-piano",
+      profile: "staging",
+      bake: EXPECTED_ABOUT_ADMIN_PATH_BAKE_SAVE_UI_ARMED,
+    }),
+  );
+  fs.writeFileSync(
+    path.join(live, "public-dist", "admin", "about", "index.html"),
+    `<!doctype html><html><body
+      data-gosaki-about-write-backend="supabase"
+      data-gosaki-about-save-armed="false"
+      data-gosaki-about-dry-run-endpoint="https://kmjqppxjdnwwrtaeqjta.supabase.co/functions/v1/gosaki-about-supabase-save-dry-run"
+      data-gosaki-about-save-endpoint="https://kmjqppxjdnwwrtaeqjta.supabase.co/functions/v1/gosaki-about-supabase-save-dry-run"
+      data-gosaki-supabase-url="https://kmjqppxjdnwwrtaeqjta.supabase.co"
+      data-gosaki-youtube-save-armed="false"
+      data-gosaki-schedule-save-armed="false"
+      data-gosaki-discography-save-armed="false"
+    ></body></html>`,
+    "utf8",
+  );
+  fs.writeFileSync(path.join(live, "public-dist", "about", "index.html"), "<html></html>", "utf8");
+  const htmlErrs = validateGosakiAboutAdminPathPackageArtifacts({
+    packageDir: live,
+    expectedBake: EXPECTED_ABOUT_ADMIN_PATH_BAKE_SAVE_UI_ARMED,
+  });
+  assert(
+    "armed expected vs disarmed HTML FAIL",
+    htmlErrs.some((e) => /save-armed/.test(e)),
+    htmlErrs.join(" | "),
+  );
+}
+
+// --- default expectedBake still rejects armed marker ---
+{
+  const root = mkTempRoot();
+  const live = path.join(root, "manual-upload", "gosaki-piano");
+  fs.mkdirSync(live, { recursive: true });
+  const head = headSha();
+  writePackageRunMarker(
+    live,
+    buildPackageRunMarker({
+      runId: "fixture-run-armed-default-reject",
+      generatedAt: "2026-07-28T12:00:00.000Z",
+      sourceCommit: head,
+      siteKey: "gosaki-piano",
+      profile: "staging",
+      bake: EXPECTED_ABOUT_ADMIN_PATH_BAKE_SAVE_UI_ARMED,
+    }),
+  );
+  const errs = validatePackageRunMarker({
+    packageDir: live,
+    repoRoot: REPO_ROOT,
+    siteKey: "gosaki-piano",
+    profile: "staging",
+    expectedBake: EXPECTED_ABOUT_ADMIN_PATH_BAKE,
+    currentHead: head,
+  });
+  assert(
+    "default verify rejects armed PACKAGE_RUN",
+    errs.some((e) => /aboutSaveUiArmed expected false/.test(e)),
+  );
+}
+
 // --- convert exit 1 on verify-build failure (static source check) ---
 {
   const convertSrc = fs.readFileSync(
@@ -298,6 +431,15 @@ assert(
     "utf8",
   );
   assert("verify calls validatePackageRunMarker", ver.includes("validatePackageRunMarker"));
+  assert(
+    "verify calls About HTML cross-check",
+    ver.includes("validateGosakiAboutAdminPathPackageArtifacts"),
+  );
+  assert(
+    "verify supports expectAboutSaveUiArmed",
+    ver.includes("expectAboutSaveUiArmed") &&
+      ver.includes("EXPECTED_ABOUT_ADMIN_PATH_BAKE_SAVE_UI_ARMED"),
+  );
   assert("verify rejects meta paths", ver.includes("isManualUploadMetaPath"));
 }
 
@@ -325,10 +467,9 @@ assert(
   "real _package-runs marker not created by this fixture",
   fs.existsSync(REAL_MARKER) === realMarkerBefore,
 );
-const realBackup = path.join(TOOL_ROOT, "output/manual-upload", STALE_BACKUP_DIR_NAME, "gosaki-piano");
 assert(
   "real _stale-backup/gosaki-piano not created by this fixture run",
-  !fs.existsSync(realBackup),
+  fs.existsSync(REAL_STALE_BACKUP) === realStaleBackupBefore,
 );
 
 console.log("");

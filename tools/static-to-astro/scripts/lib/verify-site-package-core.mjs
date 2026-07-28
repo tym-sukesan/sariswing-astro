@@ -25,7 +25,9 @@ import {
 } from "./verify-site-package-gosaki-extensions.mjs";
 import {
   EXPECTED_ABOUT_ADMIN_PATH_BAKE,
+  EXPECTED_ABOUT_ADMIN_PATH_BAKE_SAVE_UI_ARMED,
   isManualUploadMetaPath,
+  validateGosakiAboutAdminPathPackageArtifacts,
   validatePackageRunMarker,
 } from "./package-run-marker.mjs";
 
@@ -56,6 +58,7 @@ export function resolveSitePackageDir(siteKey, profileName, options = {}) {
  *   packageDir?: string,
  *   toolRoot?: string,
  *   includeGosakiExtensions?: boolean,
+ *   expectAboutSaveUiArmed?: boolean,
  * }} options
  */
 export function verifySitePackage(options) {
@@ -65,6 +68,7 @@ export function verifySitePackage(options) {
     packageDir: packageDirOpt,
     toolRoot = TOOL_ROOT,
     includeGosakiExtensions = siteKey === GOSAKI_SITE_KEY,
+    expectAboutSaveUiArmed = false,
   } = options;
 
   /** @type {string[]} */
@@ -84,14 +88,25 @@ export function verifySitePackage(options) {
   }
 
   // Fail-closed: live package + external _package-runs marker (not inside FTP payload).
+  // Default expects Save UI disarmed; armed mode only when operator passes expectAboutSaveUiArmed.
   if (siteKey === GOSAKI_SITE_KEY && profileName === "staging") {
+    const expectedBake = expectAboutSaveUiArmed
+      ? EXPECTED_ABOUT_ADMIN_PATH_BAKE_SAVE_UI_ARMED
+      : EXPECTED_ABOUT_ADMIN_PATH_BAKE;
     errors.push(
       ...validatePackageRunMarker({
         packageDir: pkg,
         repoRoot: REPO_ROOT,
         siteKey,
         profile: profileName,
-        expectedBake: EXPECTED_ABOUT_ADMIN_PATH_BAKE,
+        expectedBake,
+      }),
+    );
+    // Independent HTML cross-check — do not auto-PASS from PACKAGE_RUN alone.
+    errors.push(
+      ...validateGosakiAboutAdminPathPackageArtifacts({
+        packageDir: pkg,
+        expectedBake,
       }),
     );
   }

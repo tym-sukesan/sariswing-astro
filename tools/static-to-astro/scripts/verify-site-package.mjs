@@ -29,6 +29,8 @@ Options:
   --site SITE_KEY       Registry site key (e.g. gosaki-piano)
   --profile PROFILE     staging | production
   --package-dir PATH    Override package directory (default from registry)
+  --expect-about-save-ui-armed
+                        Gosaki staging only: expect temporary About Save UI armed bake
   --help, -h
 
 Registered sites: ${listSiteKeys().join(", ")}
@@ -48,6 +50,7 @@ function parseArgs(argv) {
     profile: null,
     packageDir: null,
     help: false,
+    expectAboutSaveUiArmed: false,
   };
 
   for (let i = 2; i < argv.length; i++) {
@@ -56,6 +59,7 @@ function parseArgs(argv) {
     else if (arg === "--site") opts.site = argv[++i];
     else if (arg === "--profile") opts.profile = argv[++i];
     else if (arg === "--package-dir") opts.packageDir = argv[++i];
+    else if (arg === "--expect-about-save-ui-armed") opts.expectAboutSaveUiArmed = true;
     else throw new Error(`Unknown argument: ${arg}`);
   }
 
@@ -101,9 +105,16 @@ function main() {
     profileName: opts.profile,
     packageDir: opts.packageDir ?? undefined,
     toolRoot: TOOL_ROOT,
+    expectAboutSaveUiArmed: opts.expectAboutSaveUiArmed,
   });
 
-  console.log(`\n=== verify:site-package (${opts.site} / ${opts.profile}): ${result.ok ? "PASS" : "FAIL"} ===`);
+  const mode =
+    opts.expectAboutSaveUiArmed && opts.site === "gosaki-piano" && opts.profile === "staging"
+      ? "about-save-ui-armed"
+      : "default";
+  console.log(
+    `\n=== verify:site-package (${opts.site} / ${opts.profile} / ${mode}): ${result.ok ? "PASS" : "FAIL"} ===`,
+  );
 
   if (!result.ok) {
     for (const e of result.errors) console.error(`  - ${e}`);

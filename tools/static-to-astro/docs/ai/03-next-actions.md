@@ -3,11 +3,11 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **Kit Core:** About `profile.lede` Save **client adapter COMPLETE**。**Next:** operator-approved **armed package generate**（`SAVE_UI_ARMED=true` · remote arm **unset**）→ FTP → Save roundtrip execution。Save arm / build-read **触らない** until execution approval。
+1. **Kit Core:** About Save-UI-armed package **verify mode ready**。現packageは Save UI=true · `npm run verify:manual-upload:about-save-ui-armed` で検証。通常 `verify:manual-upload` は disarmed 期待のまま。**Next:** armed verify PASS確認 → 明示承認後 FTP → Save roundtrip。remote arm はまだ unset。
 2. **並行可:** Contents YouTube 退役 planning（`contentsYoutubeCutoverExecuted: false`）。
 3. **並行可（Gosaki ops）:** クライアントへ staging 共有・feedback。
 4. **並行可:** production hosting **read-only planning**。
-5. Save arm **false** · Secret 変更禁止 · About Contents / G-12a **retained** · migration/RLS/seed **再実行禁止** · public About build-read **未**。
+5. Save arm **false**（remote）· Secret 変更禁止 · About Contents / G-12a **retained** · migration/RLS/seed **再実行禁止** · public About build-read **未**。
 6. production / Wix / auto FTP / `vsbvndwuajjhnzpohghh` 禁止 · `service_role` 禁止 · `readyForAnyFutureFtpApply: false`。
 
 ## 0. About Supabase profile.lede Save client adapter COMPLETE (2026-07-28)

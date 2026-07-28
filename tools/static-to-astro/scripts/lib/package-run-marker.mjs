@@ -13,12 +13,28 @@ export const STALE_BACKUP_DIR_NAME = "_stale-backup";
 /** Sibling of live package dirs under manual-upload/ — not part of FTP payload. */
 export const PACKAGE_RUNS_DIR_NAME = "_package-runs";
 
-/** Expected bake for About Admin-path staging packages (fail-closed). */
+/** Expected bake for About Admin-path staging packages (fail-closed · Save UI disarmed). */
 export const EXPECTED_ABOUT_ADMIN_PATH_BAKE = Object.freeze({
   aboutWriteBackend: "supabase",
   aboutSaveUiArmed: false,
   publicAboutBuildRead: false,
 });
+
+/**
+ * Temporary Save-UI-armed About Admin-path bake (operator-declared verify only).
+ * Never the default for `npm run verify:manual-upload`.
+ */
+export const EXPECTED_ABOUT_ADMIN_PATH_BAKE_SAVE_UI_ARMED = Object.freeze({
+  aboutWriteBackend: "supabase",
+  aboutSaveUiArmed: true,
+  publicAboutBuildRead: false,
+});
+
+export const GOSAKI_STAGING_SUPABASE_REF = "kmjqppxjdnwwrtaeqjta";
+export const GOSAKI_PRODUCTION_SUPABASE_REF_STOP = "vsbvndwuajjhnzpohghh";
+export const ABOUT_SUPABASE_ENDPOINT_NAME = "gosaki-about-supabase-save-dry-run";
+export const ABOUT_CONTENTS_DRY_RUN_ENDPOINT_NAME = "gosaki-about-content-dry-run";
+export const ABOUT_CONTENTS_SAVE_ENDPOINT_NAME = "gosaki-about-content-save";
 
 /**
  * @param {NodeJS.ProcessEnv | Record<string, unknown>} [env]
@@ -248,4 +264,128 @@ export function validatePackageRunMarker(opts) {
   }
 
   return errors;
+}
+
+/**
+ * Independent HTML / public-dist checks for About Admin-path bake.
+ * Does **not** trust PACKAGE_RUN alone — attrs must match the operator-declared expectedBake.
+ *
+ * @param {{
+ *   packageDir: string,
+ *   expectedBake?: typeof EXPECTED_ABOUT_ADMIN_PATH_BAKE,
+ *   stagingRef?: string,
+ *   productionRefStop?: string,
+ * }} opts
+ * @returns {string[]}
+ */
+export function validateGosakiAboutAdminPathPackageArtifacts(opts) {
+  /** @type {string[]} */
+  const errors = [];
+  const expected = opts.expectedBake ?? EXPECTED_ABOUT_ADMIN_PATH_BAKE;
+  const stagingRef = opts.stagingRef ?? GOSAKI_STAGING_SUPABASE_REF;
+  const productionStop = opts.productionRefStop ?? GOSAKI_PRODUCTION_SUPABASE_REF_STOP;
+  const abs = path.resolve(opts.packageDir);
+  const aboutHtmlPath = path.join(abs, "public-dist", "admin", "about", "index.html");
+  const publicAboutPath = path.join(abs, "public-dist", "about", "index.html");
+
+  if (!fs.existsSync(path.join(abs, "public-dist")) || !fs.statSync(path.join(abs, "public-dist")).isDirectory()) {
+    errors.push("public-dist/ missing");
+    return errors;
+  }
+  if (!fs.existsSync(aboutHtmlPath)) {
+    errors.push("public-dist/admin/about/index.html missing");
+    return errors;
+  }
+
+  const html = fs.readFileSync(aboutHtmlPath, "utf8");
+  if (html.includes(productionStop)) {
+    errors.push(`admin about HTML must not contain production ref ${productionStop}`);
+  }
+
+  const writeBackend = matchDataAttr(html, "data-gosaki-about-write-backend");
+  const saveArmed = matchDataAttr(html, "data-gosaki-about-save-armed");
+  const dryRunEndpoint = matchDataAttr(html, "data-gosaki-about-dry-run-endpoint");
+  const saveEndpoint = matchDataAttr(html, "data-gosaki-about-save-endpoint");
+  const supabaseUrl = matchDataAttr(html, "data-gosaki-supabase-url");
+
+  if (writeBackend !== expected.aboutWriteBackend) {
+    errors.push(
+      `HTML data-gosaki-about-write-backend expected "${expected.aboutWriteBackend}", got "${writeBackend}"`,
+    );
+  }
+  const expectedArmedAttr = expected.aboutSaveUiArmed === true ? "true" : "false";
+  if (saveArmed !== expectedArmedAttr) {
+    errors.push(
+      `HTML data-gosaki-about-save-armed expected "${expectedArmedAttr}", got "${saveArmed}" (must match declared verify mode; do not trust PACKAGE_RUN alone)`,
+    );
+  }
+
+  // Supabase path: About endpoints must be staging supabase function (not Contents G-12a).
+  // This also enforces Contents non-dry-run write path is not the live About backend.
+  if (expected.aboutWriteBackend === "supabase") {
+    for (const [label, endpoint] of [
+      ["dry-run", dryRunEndpoint],
+      ["save", saveEndpoint],
+    ]) {
+      if (!endpoint) {
+        errors.push(`HTML data-gosaki-about-${label}-endpoint missing`);
+        continue;
+      }
+      if (!endpoint.includes(stagingRef)) {
+        errors.push(`About ${label} endpoint must target staging ref ${stagingRef}`);
+      }
+      if (endpoint.includes(productionStop)) {
+        errors.push(`About ${label} endpoint must not target production ref`);
+      }
+      if (!endpoint.includes(`/functions/v1/${ABOUT_SUPABASE_ENDPOINT_NAME}`)) {
+        errors.push(
+          `About ${label} endpoint must use ${ABOUT_SUPABASE_ENDPOINT_NAME} (Contents path not allowed for this bake)`,
+        );
+      }
+      if (
+        endpoint.includes(ABOUT_CONTENTS_DRY_RUN_ENDPOINT_NAME) ||
+        endpoint.includes(ABOUT_CONTENTS_SAVE_ENDPOINT_NAME)
+      ) {
+        errors.push(`About ${label} endpoint must not use Contents G-12a endpoints`);
+      }
+    }
+    if (supabaseUrl && !supabaseUrl.includes(stagingRef)) {
+      errors.push(`data-gosaki-supabase-url must include staging ref ${stagingRef}`);
+    }
+    if (supabaseUrl && supabaseUrl.includes(productionStop)) {
+      errors.push("data-gosaki-supabase-url must not include production ref");
+    }
+  }
+
+  // build-read=false: public About page must exist (JSON SoT path); no site_page_fields build-read marker required.
+  if (expected.publicAboutBuildRead === false) {
+    if (!fs.existsSync(publicAboutPath)) {
+      errors.push("public-dist/about/index.html missing (JSON SoT public About)");
+    }
+  }
+
+  // Cross-check: other CMS Save UI arms stay false on this About-armed package.
+  for (const [attr, label] of [
+    ["data-gosaki-youtube-save-armed", "YouTube"],
+    ["data-gosaki-schedule-save-armed", "Schedule"],
+    ["data-gosaki-discography-save-armed", "Discography"],
+  ]) {
+    const v = matchDataAttr(html, attr);
+    if (v != null && v !== "false") {
+      errors.push(`${label} Save UI must stay false (got ${attr}="${v}")`);
+    }
+  }
+
+  return errors;
+}
+
+/**
+ * @param {string} html
+ * @param {string} attr
+ * @returns {string | null}
+ */
+function matchDataAttr(html, attr) {
+  const re = new RegExp(`${attr}="([^"]*)"`, "i");
+  const m = html.match(re);
+  return m ? m[1] : null;
 }

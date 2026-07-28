@@ -5,19 +5,23 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: About Supabase profile.lede Save client adapter COMPLETE
-ABOUT_SUPABASE_PROFILE_LEDE_SAVE_CLIENT_ADAPTER_IMPLEMENTATION_COMPLETE: true
-readyForAboutSupabaseProfileLedeSaveArmedPackageGenerate: true
-IMPLEMENTATION_EXECUTED: true
-SAVE_ARM_ENABLED: false
+Current phase: About Save UI armed package verify mode COMPLETE (local)
+verify:manual-upload default: aboutSaveUiArmed=false required
+verify:manual-upload:about-save-ui-armed: explicit --expect-about-save-ui-armed
+Live package sourceCommit: 359a04a3e960d23fe4948ee53cab7580b924f86f (Save UI armed bake)
 GOSAKI_ABOUT_SUPABASE_SAVE_ARMED_SET: false
-PUBLIC_ADMIN_GOSAKI_ABOUT_SUPABASE_SAVE_UI_ARMED: false
-ADMIN_ABOUT_SUPABASE_READ_HYDRATE_LIVE: true
+SAVE_ARM_ENABLED: false
 PUBLIC_ABOUT_JSON_SOT: true
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
-Next: operator-approved armed package generate (Save UI true · remote arm unset) → FTP → Save roundtrip
+Next: npm run verify:manual-upload:about-save-ui-armed → operator FTP when approved → Save roundtrip
 readyForAnyFutureFtpApply: false
 ```
+
+## About Save UI armed package verify mode (2026-07-28)
+
+- Default `verify:manual-upload` still expects disarmed bake
+- Armed: `npm run verify:manual-upload:about-save-ui-armed` or `--expect-about-save-ui-armed`
+- Cross-checks PACKAGE_RUN + admin about HTML (staging ref · supabase endpoints · other Save arms false)
 
 ## About Supabase profile.lede Save client adapter (2026-07-28)
 

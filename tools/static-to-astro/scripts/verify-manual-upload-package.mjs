@@ -2,6 +2,9 @@
 /**
  * Verify manual upload package structure (G-7g — no FTP).
  * G-20u4 — delegates to generic verify-site-package core (backward-compatible wrapper).
+ *
+ * Default: About Save UI must be disarmed (aboutSaveUiArmed=false).
+ * Armed temporary package: pass --expect-about-save-ui-armed (explicit only).
  */
 
 import path from "node:path";
@@ -15,11 +18,16 @@ const TOOL_ROOT = path.resolve(__dirname, "..");
 const DEFAULT_PACKAGE = path.join(TOOL_ROOT, "output/manual-upload/gosaki-piano");
 
 function parseArgs(argv) {
-  const opts = { packageDir: DEFAULT_PACKAGE, help: false };
+  const opts = {
+    packageDir: DEFAULT_PACKAGE,
+    help: false,
+    expectAboutSaveUiArmed: false,
+  };
   for (let i = 2; i < argv.length; i++) {
     const arg = argv[i];
     if (arg === "--help" || arg === "-h") opts.help = true;
     else if (arg === "--package-dir") opts.packageDir = argv[++i];
+    else if (arg === "--expect-about-save-ui-armed") opts.expectAboutSaveUiArmed = true;
     else throw new Error(`Unknown argument: ${arg}`);
   }
   return opts;
@@ -28,10 +36,14 @@ function parseArgs(argv) {
 function main() {
   const opts = parseArgs(process.argv);
   if (opts.help) {
-    console.log(`Usage: node scripts/verify-manual-upload-package.mjs [--package-dir PATH]
+    console.log(`Usage: node scripts/verify-manual-upload-package.mjs [--package-dir PATH] [--expect-about-save-ui-armed]
 
 Legacy Gosaki staging package verifier (G-7g wrapper).
+Default expects About Save UI disarmed (PACKAGE_RUN.aboutSaveUiArmed=false).
+Temporary Save-UI-armed packages require explicit --expect-about-save-ui-armed.
+
 Prefer: npm run verify:gosaki:staging  or  npm run verify:site-package -- --site gosaki-piano --profile staging
+Armed:  npm run verify:manual-upload:about-save-ui-armed
 `);
     process.exit(0);
   }
@@ -41,9 +53,11 @@ Prefer: npm run verify:gosaki:staging  or  npm run verify:site-package -- --site
     profileName: "staging",
     packageDir: opts.packageDir,
     toolRoot: TOOL_ROOT,
+    expectAboutSaveUiArmed: opts.expectAboutSaveUiArmed,
   });
 
-  console.log(`\n=== verify:manual-upload: ${result.ok ? "PASS" : "FAIL"} ===`);
+  const mode = opts.expectAboutSaveUiArmed ? "about-save-ui-armed" : "default-disarmed";
+  console.log(`\n=== verify:manual-upload (${mode}): ${result.ok ? "PASS" : "FAIL"} ===`);
   if (!result.ok) {
     for (const e of result.errors) console.error(`  - ${e}`);
     process.exit(1);
@@ -52,6 +66,7 @@ Prefer: npm run verify:gosaki:staging  or  npm run verify:site-package -- --site
   console.log(`package: ${path.relative(REPO_ROOT, result.packageDir)}`);
   console.log(`fileCount: ${result.manifest?.fileCount}`);
   console.log(`safeForStaticFtp: ${result.manifest?.safeForStaticFtp}`);
+  console.log(`expectAboutSaveUiArmed: ${opts.expectAboutSaveUiArmed}`);
 }
 
 main();

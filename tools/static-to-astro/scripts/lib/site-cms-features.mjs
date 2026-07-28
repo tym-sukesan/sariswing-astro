@@ -321,6 +321,7 @@ export async function loadSitePageFieldsDataForBuild(opts) {
       profileLede: null,
       siteSlug,
       rowCount: 0,
+      fieldCount: 0,
     };
   }
   if (readEnv.supabaseUrl.includes("vsbvndwuajjhnzpohghh")) {
@@ -331,6 +332,7 @@ export async function loadSitePageFieldsDataForBuild(opts) {
       profileLede: null,
       siteSlug,
       rowCount: 0,
+      fieldCount: 0,
     };
   }
 
@@ -355,38 +357,11 @@ export async function loadSitePageFieldsDataForBuild(opts) {
         profileLede: null,
         siteSlug,
         rowCount: 0,
+        fieldCount: 0,
       };
     }
     const fields = Array.isArray(data) ? data : [];
-    if (fields.length === 0) {
-      return {
-        pageFieldDataSource: "supabase-empty",
-        fallbackReason: "no_published_site_page_fields_rows",
-        fields: [],
-        profileLede: null,
-        siteSlug,
-        rowCount: 0,
-      };
-    }
-    const profileLede = mapSitePageFieldRowToLedeDraft(fields[0]);
-    if (!profileLede.valueText) {
-      return {
-        pageFieldDataSource: "supabase-empty",
-        fallbackReason: "empty_profile_lede_value_text",
-        fields,
-        profileLede: null,
-        siteSlug,
-        rowCount: fields.length,
-      };
-    }
-    return {
-      pageFieldDataSource: "supabase",
-      fallbackReason: null,
-      fields,
-      profileLede,
-      siteSlug,
-      rowCount: fields.length,
-    };
+    return finalizeSitePageFieldsLoadResult({ fields, siteSlug, mapSitePageFieldRowToLedeDraft });
   } catch (err) {
     return {
       pageFieldDataSource: "error",
@@ -395,6 +370,66 @@ export async function loadSitePageFieldsDataForBuild(opts) {
       profileLede: null,
       siteSlug,
       rowCount: 0,
+      fieldCount: 0,
     };
   }
+}
+
+/**
+ * Pure post-fetch normalize: adopt only when exactly one published row with non-empty value_text.
+ * Exported for fixture verifiers (no network).
+ *
+ * @param {{
+ *   fields: unknown[],
+ *   siteSlug: string,
+ *   mapSitePageFieldRowToLedeDraft: (row: unknown) => { valueText?: string },
+ * }} input
+ */
+export function finalizeSitePageFieldsLoadResult(input) {
+  const fields = Array.isArray(input.fields) ? input.fields : [];
+  const siteSlug = String(input.siteSlug ?? "");
+  const mapRow = input.mapSitePageFieldRowToLedeDraft;
+  if (fields.length === 0) {
+    return {
+      pageFieldDataSource: "supabase-empty",
+      fallbackReason: "no_published_site_page_fields_rows",
+      fields: [],
+      profileLede: null,
+      siteSlug,
+      rowCount: 0,
+      fieldCount: 0,
+    };
+  }
+  if (fields.length !== 1) {
+    return {
+      pageFieldDataSource: "error",
+      fallbackReason: "multiple_profile_lede_rows",
+      fields,
+      profileLede: null,
+      siteSlug,
+      rowCount: fields.length,
+      fieldCount: fields.length,
+    };
+  }
+  const profileLede = mapRow(fields[0]);
+  if (!String(profileLede?.valueText ?? "").trim()) {
+    return {
+      pageFieldDataSource: "supabase-empty",
+      fallbackReason: "empty_profile_lede_value_text",
+      fields,
+      profileLede: null,
+      siteSlug,
+      rowCount: 1,
+      fieldCount: 1,
+    };
+  }
+  return {
+    pageFieldDataSource: "supabase",
+    fallbackReason: null,
+    fields,
+    profileLede,
+    siteSlug,
+    rowCount: 1,
+    fieldCount: 1,
+  };
 }

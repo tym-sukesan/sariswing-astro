@@ -5,17 +5,34 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: About profile.lede Supabase Save roundtrip COMPLETE / PASS
-Impl: 359a04a3e960d23fe4948ee53cab7580b924f86f
-Verifier/package: fe4732b1552934f83ebd7cbbb2b49ef98da95aaa
-Live package: disarmed · verify:manual-upload PASS · FTP done
+Current phase: About Supabase public build-read local implementation COMPLETE
+readyForAboutSupabasePublicBuildReadPackageGenerate: true
+CMS_KIT_SITE_PAGE_FIELDS_BUILD_READ: unset (until approved bake)
+REGISTRY_SITE_PAGE_FIELDS: false
+PUBLIC_ABOUT_JSON_SOT: true
 GOSAKI_ABOUT_SUPABASE_SAVE_ARMED: false
 saveUiArmed=false · writeBackend=supabase · saveDisabled=true
-FINAL_DB_BASELINE: true · PUBLIC_ABOUT_JSON_SOT: true
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
-Next: cms-core-v2-about-supabase-public-build-read-planning
+Next: commit (clean tree) → env-only build-read package generate + verify:manual-upload:public-about-build-read
 readyForAnyFutureFtpApply: false
 ```
+
+## About Supabase public build-read local implementation (2026-07-28)
+
+- Exactly 1 published row via anon · `overlayOutcome` **applied** or **noop_equal** (equal DB/JSON is success, not fallback)
+- Evidence: report + PACKAGE_RUN · HTML cross-check · `sourceTreeClean=true` required
+- Package generate **fails** if git working tree dirty (no FTP dirty override)
+- `npm run verify:manual-upload:public-about-build-read`
+- Doc: `cms-core-v2-about-supabase-public-build-read-local-implementation.md`
+
+## About Supabase public build-read planning (2026-07-28)
+
+- Prefer DB `about`/`profile.lede` at convert via existing anon loader + first-`<p>` overlay
+- JSON fallback on 0-row / multi-row / empty / error / production-ref block
+- First cutover: env-only `CMS_KIT_SITE_PAGE_FIELDS_BUILD_READ=true` · registry stays false
+- Verifier: default still expects `publicAboutBuildRead=false`; explicit `--expect-public-about-build-read` in impl
+- Doc: `cms-core-v2-about-supabase-public-build-read-planning.md`
+- Verifier: `verify-cms-core-v2-about-supabase-public-build-read-planning.mjs`
 
 ## About Supabase profile.lede Save roundtrip result (2026-07-28)
 

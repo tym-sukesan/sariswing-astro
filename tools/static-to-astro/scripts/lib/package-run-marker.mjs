@@ -30,6 +30,21 @@ export const EXPECTED_ABOUT_ADMIN_PATH_BAKE_SAVE_UI_ARMED = Object.freeze({
   publicAboutBuildRead: false,
 });
 
+/**
+ * Temporary public About build-read bake (operator-declared verify only).
+ * Never the default for `npm run verify:manual-upload`. Save UI stays disarmed.
+ */
+export const EXPECTED_ABOUT_ADMIN_PATH_BAKE_PUBLIC_BUILD_READ = Object.freeze({
+  aboutWriteBackend: "supabase",
+  aboutSaveUiArmed: false,
+  publicAboutBuildRead: true,
+});
+
+export const ABOUT_PUBLIC_BUILD_READ_REPORT_NAME = "ABOUT_PUBLIC_BUILD_READ_REPORT.json";
+/** Staging seed / JSON baseline lede — HTML cross-check when build-read success. */
+export const GOSAKI_ABOUT_PROFILE_LEDE_BASELINE =
+  "後藤 沙紀 1990年7月9日 A型 岡山県岡山市生まれ。";
+
 export const GOSAKI_STAGING_SUPABASE_REF = "kmjqppxjdnwwrtaeqjta";
 export const GOSAKI_PRODUCTION_SUPABASE_REF_STOP = "vsbvndwuajjhnzpohghh";
 export const ABOUT_SUPABASE_ENDPOINT_NAME = "gosaki-about-supabase-save-dry-run";
@@ -131,21 +146,64 @@ export function relocateExistingManualUploadPackageToStaleBackup(packageDir, opt
  *     aboutSaveUiArmed: boolean,
  *     publicAboutBuildRead: boolean,
  *   },
+ *   buildReadEvidence?: {
+ *     pageFieldDataSource?: string,
+ *     profileLedeOverlayApplied?: boolean,
+ *     overlayOutcome?: string,
+ *     fieldCount?: number,
+ *     fallbackReason?: string | null,
+ *   } | null,
+ *   sourceTreeClean?: boolean,
  * }} input
  */
 export function buildPackageRunMarker(input) {
   const bake = input.bake ?? EXPECTED_ABOUT_ADMIN_PATH_BAKE;
-  return {
+  /** @type {Record<string, unknown>} */
+  const marker = {
     runId: String(input.runId),
     generatedAt: String(input.generatedAt),
     sourceCommit: String(input.sourceCommit),
     siteKey: String(input.siteKey),
     profile: String(input.profile),
     completed: true,
+    sourceTreeClean: input.sourceTreeClean !== false,
     aboutWriteBackend: bake.aboutWriteBackend,
     aboutSaveUiArmed: bake.aboutSaveUiArmed === true,
     publicAboutBuildRead: bake.publicAboutBuildRead === true,
   };
+  const ev = input.buildReadEvidence;
+  if (ev && typeof ev === "object") {
+    marker.pageFieldDataSource = String(ev.pageFieldDataSource ?? "");
+    marker.profileLedeOverlayApplied = ev.profileLedeOverlayApplied === true;
+    if (ev.overlayOutcome != null) marker.overlayOutcome = String(ev.overlayOutcome);
+    marker.fieldCount = Number(ev.fieldCount ?? 0);
+    if (ev.fallbackReason != null && String(ev.fallbackReason).trim()) {
+      marker.fallbackReason = String(ev.fallbackReason);
+    }
+  }
+  return marker;
+}
+
+/**
+ * @param {string} packageDir
+ * @returns {string}
+ */
+export function resolveAboutPublicBuildReadReportPath(packageDir) {
+  return path.join(path.resolve(packageDir), ABOUT_PUBLIC_BUILD_READ_REPORT_NAME);
+}
+
+/**
+ * @param {string} packageDir
+ * @returns {Record<string, unknown> | null}
+ */
+export function readAboutPublicBuildReadReport(packageDir) {
+  const target = resolveAboutPublicBuildReadReportPath(packageDir);
+  if (!fs.existsSync(target)) return null;
+  try {
+    return JSON.parse(fs.readFileSync(target, "utf8"));
+  } catch {
+    return null;
+  }
 }
 
 /**
@@ -224,6 +282,9 @@ export function validatePackageRunMarker(opts) {
   }
 
   if (marker.completed !== true) errors.push("PACKAGE_RUN.completed must be true");
+  if (marker.sourceTreeClean !== true) {
+    errors.push("PACKAGE_RUN.sourceTreeClean must be true (clean-tree gate at package generate)");
+  }
   if (!marker.runId) errors.push("PACKAGE_RUN.runId missing");
   if (!marker.generatedAt) errors.push("PACKAGE_RUN.generatedAt missing");
   if (!marker.sourceCommit) errors.push("PACKAGE_RUN.sourceCommit missing");
@@ -275,6 +336,7 @@ export function validatePackageRunMarker(opts) {
  *   expectedBake?: typeof EXPECTED_ABOUT_ADMIN_PATH_BAKE,
  *   stagingRef?: string,
  *   productionRefStop?: string,
+ *   expectedLede?: string,
  * }} opts
  * @returns {string[]}
  */
@@ -357,11 +419,21 @@ export function validateGosakiAboutAdminPathPackageArtifacts(opts) {
     }
   }
 
-  // build-read=false: public About page must exist (JSON SoT path); no site_page_fields build-read marker required.
+  // build-read=false: public About page must exist (JSON SoT path).
+  // build-read=true: require report + HTML lede cross-check (do not trust PACKAGE_RUN alone).
   if (expected.publicAboutBuildRead === false) {
     if (!fs.existsSync(publicAboutPath)) {
       errors.push("public-dist/about/index.html missing (JSON SoT public About)");
     }
+  } else {
+    errors.push(
+      ...validateGosakiAboutPublicBuildReadArtifacts({
+        packageDir: abs,
+        stagingRef,
+        productionRefStop: productionStop,
+        expectedLede: opts.expectedLede ?? GOSAKI_ABOUT_PROFILE_LEDE_BASELINE,
+      }),
+    );
   }
 
   // Cross-check: other CMS Save UI arms stay false on this About-armed package.
@@ -374,6 +446,126 @@ export function validateGosakiAboutAdminPathPackageArtifacts(opts) {
     if (v != null && v !== "false") {
       errors.push(`${label} Save UI must stay false (got ${attr}="${v}")`);
     }
+  }
+
+  return errors;
+}
+
+/**
+ * Cross-check PACKAGE_RUN ↔ ABOUT_PUBLIC_BUILD_READ_REPORT ↔ public About HTML.
+ * Fail-closed: PACKAGE_RUN alone cannot PASS build-read mode.
+ *
+ * @param {{
+ *   packageDir: string,
+ *   stagingRef?: string,
+ *   productionRefStop?: string,
+ *   expectedLede?: string,
+ * }} opts
+ * @returns {string[]}
+ */
+export function validateGosakiAboutPublicBuildReadArtifacts(opts) {
+  /** @type {string[]} */
+  const errors = [];
+  const abs = path.resolve(opts.packageDir);
+  const stagingRef = opts.stagingRef ?? GOSAKI_STAGING_SUPABASE_REF;
+  const productionStop = opts.productionRefStop ?? GOSAKI_PRODUCTION_SUPABASE_REF_STOP;
+  const expectedLede = String(opts.expectedLede ?? GOSAKI_ABOUT_PROFILE_LEDE_BASELINE).trim();
+  const publicAboutPath = path.join(abs, "public-dist", "about", "index.html");
+  const report = readAboutPublicBuildReadReport(abs);
+  const marker = readPackageRunMarker(abs);
+
+  if (!fs.existsSync(publicAboutPath)) {
+    errors.push("public-dist/about/index.html missing (public About build-read)");
+    return errors;
+  }
+  if (!report || typeof report !== "object") {
+    errors.push(
+      `missing ${ABOUT_PUBLIC_BUILD_READ_REPORT_NAME} (build report required; do not trust PACKAGE_RUN alone)`,
+    );
+    return errors;
+  }
+  if (!marker || typeof marker !== "object") {
+    errors.push("PACKAGE_RUN missing for build-read cross-check");
+    return errors;
+  }
+
+  if (report.pageFieldDataSource !== "supabase") {
+    errors.push(
+      `build report pageFieldDataSource expected "supabase", got ${JSON.stringify(report.pageFieldDataSource)}`,
+    );
+  }
+  const reportOutcome = String(report.overlayOutcome ?? "");
+  if (reportOutcome !== "applied" && reportOutcome !== "noop_equal") {
+    errors.push(
+      `build report overlayOutcome expected "applied"|"noop_equal", got ${JSON.stringify(report.overlayOutcome)}`,
+    );
+  }
+  const expectApplied = reportOutcome === "applied";
+  if (report.profileLedeOverlayApplied !== expectApplied) {
+    errors.push(
+      `build report profileLedeOverlayApplied expected ${expectApplied} for overlayOutcome=${reportOutcome}, got ${JSON.stringify(report.profileLedeOverlayApplied)}`,
+    );
+  }
+  if (Number(report.fieldCount) !== 1) {
+    errors.push(`build report fieldCount expected 1, got ${JSON.stringify(report.fieldCount)}`);
+  }
+  if (report.fallbackReason != null && String(report.fallbackReason).trim()) {
+    errors.push(
+      `build report fallbackReason must be absent on supabase success (applied|noop_equal), got ${JSON.stringify(report.fallbackReason)}`,
+    );
+  }
+
+  // PACKAGE_RUN must mirror report (honesty) — not sufficient alone.
+  if (marker.publicAboutBuildRead !== true) {
+    errors.push("PACKAGE_RUN.publicAboutBuildRead expected true for build-read package");
+  }
+  if (marker.sourceTreeClean !== true) {
+    errors.push("PACKAGE_RUN.sourceTreeClean must be true");
+  }
+  if (marker.pageFieldDataSource !== "supabase") {
+    errors.push(
+      `PACKAGE_RUN.pageFieldDataSource expected "supabase" (must match report), got ${JSON.stringify(marker.pageFieldDataSource)}`,
+    );
+  }
+  if (String(marker.overlayOutcome ?? "") !== reportOutcome) {
+    errors.push(
+      `PACKAGE_RUN.overlayOutcome expected ${JSON.stringify(reportOutcome)} (must match report), got ${JSON.stringify(marker.overlayOutcome)}`,
+    );
+  }
+  if (marker.profileLedeOverlayApplied !== expectApplied) {
+    errors.push(
+      `PACKAGE_RUN.profileLedeOverlayApplied expected ${expectApplied} (must match report), got ${JSON.stringify(marker.profileLedeOverlayApplied)}`,
+    );
+  }
+  if (Number(marker.fieldCount) !== 1) {
+    errors.push(
+      `PACKAGE_RUN.fieldCount expected 1 (must match report), got ${JSON.stringify(marker.fieldCount)}`,
+    );
+  }
+  if (marker.fallbackReason != null && String(marker.fallbackReason).trim()) {
+    errors.push(
+      `PACKAGE_RUN.fallbackReason must be absent on success, got ${JSON.stringify(marker.fallbackReason)}`,
+    );
+  }
+
+  const publicHtml = fs.readFileSync(publicAboutPath, "utf8");
+  if (publicHtml.includes(productionStop)) {
+    errors.push(`public About HTML must not contain production ref ${productionStop}`);
+  }
+  if (expectedLede && !publicHtml.includes(expectedLede)) {
+    errors.push(
+      `public About HTML missing expected profile.lede text (build-read overlay / baseline cross-check)`,
+    );
+  }
+  // Prefer report lede when present (proves bake used supabase value even if equal to JSON).
+  const reportLede = String(report.profileLedeValueText ?? "").trim();
+  if (reportLede && !publicHtml.includes(reportLede)) {
+    errors.push("public About HTML missing build report profileLedeValueText");
+  }
+  // Staging ref may appear in admin only; public static About should not require it,
+  // but must not point Contents/production. Soft-check: if supabase URL present, staging only.
+  if (publicHtml.includes("supabase.co") && !publicHtml.includes(stagingRef)) {
+    errors.push(`public About HTML supabase URL must use staging ref ${stagingRef}`);
   }
 
   return errors;

@@ -18,6 +18,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { createManualUploadPackage } from "./lib/manual-upload-package.mjs";
 import { listSiteKeys, resolvePackageManifestMetaFromRegistry } from "./lib/site-registry.mjs";
+import { assertGitWorkingTreeCleanForManualUploadPackage } from "./lib/package-upload-safety.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const TOOL_ROOT = path.resolve(__dirname, "..");
@@ -210,6 +211,14 @@ function main() {
   console.log(`Target: ${opts.targetEnvironment}`);
   console.log(`Source: ${opts.publicDir}`);
   console.log(`Out: ${opts.out}`);
+
+  try {
+    assertGitWorkingTreeCleanForManualUploadPackage(REPO_ROOT);
+    console.log("[package-git] source tree clean");
+  } catch (err) {
+    console.error(`[package-git] ${err instanceof Error ? err.message : String(err)}`);
+    process.exit(1);
+  }
 
   const result = createManualUploadPackage({
     publicDistDir: path.isAbsolute(opts.publicDir)

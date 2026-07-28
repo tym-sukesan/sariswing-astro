@@ -24,6 +24,7 @@
     "manual-upload:package:gosaki-production": "npm run manual-upload:package:gosaki:production",
     "verify:manual-upload": "node scripts/verify-manual-upload-package.mjs",
     "verify:manual-upload:about-save-ui-armed": "node scripts/verify-manual-upload-package.mjs --expect-about-save-ui-armed",
+    "verify:manual-upload:public-about-build-read": "node scripts/verify-manual-upload-package.mjs --expect-public-about-build-read",
     "build:site-package": "node scripts/build-site-package.mjs",
     "build:gosaki:staging": "node scripts/build-site-package.mjs --site gosaki-piano --profile staging",
     "build:gosaki:production": "node scripts/build-site-package.mjs --site gosaki-piano --profile production",

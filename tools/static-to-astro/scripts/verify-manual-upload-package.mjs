@@ -3,8 +3,9 @@
  * Verify manual upload package structure (G-7g — no FTP).
  * G-20u4 — delegates to generic verify-site-package core (backward-compatible wrapper).
  *
- * Default: About Save UI must be disarmed (aboutSaveUiArmed=false).
- * Armed temporary package: pass --expect-about-save-ui-armed (explicit only).
+ * Default: About Save UI disarmed + publicAboutBuildRead=false.
+ * Temporary Save-UI-armed: --expect-about-save-ui-armed
+ * Temporary public build-read: --expect-public-about-build-read
  */
 
 import path from "node:path";
@@ -22,12 +23,14 @@ function parseArgs(argv) {
     packageDir: DEFAULT_PACKAGE,
     help: false,
     expectAboutSaveUiArmed: false,
+    expectPublicAboutBuildRead: false,
   };
   for (let i = 2; i < argv.length; i++) {
     const arg = argv[i];
     if (arg === "--help" || arg === "-h") opts.help = true;
     else if (arg === "--package-dir") opts.packageDir = argv[++i];
     else if (arg === "--expect-about-save-ui-armed") opts.expectAboutSaveUiArmed = true;
+    else if (arg === "--expect-public-about-build-read") opts.expectPublicAboutBuildRead = true;
     else throw new Error(`Unknown argument: ${arg}`);
   }
   return opts;
@@ -36,14 +39,16 @@ function parseArgs(argv) {
 function main() {
   const opts = parseArgs(process.argv);
   if (opts.help) {
-    console.log(`Usage: node scripts/verify-manual-upload-package.mjs [--package-dir PATH] [--expect-about-save-ui-armed]
+    console.log(`Usage: node scripts/verify-manual-upload-package.mjs [--package-dir PATH] [--expect-about-save-ui-armed | --expect-public-about-build-read]
 
 Legacy Gosaki staging package verifier (G-7g wrapper).
-Default expects About Save UI disarmed (PACKAGE_RUN.aboutSaveUiArmed=false).
+Default expects About Save UI disarmed and publicAboutBuildRead=false.
 Temporary Save-UI-armed packages require explicit --expect-about-save-ui-armed.
+Temporary public build-read packages require explicit --expect-public-about-build-read.
 
 Prefer: npm run verify:gosaki:staging  or  npm run verify:site-package -- --site gosaki-piano --profile staging
-Armed:  npm run verify:manual-upload:about-save-ui-armed
+Armed Save UI:  npm run verify:manual-upload:about-save-ui-armed
+Build-read:     npm run verify:manual-upload:public-about-build-read
 `);
     process.exit(0);
   }
@@ -54,9 +59,14 @@ Armed:  npm run verify:manual-upload:about-save-ui-armed
     packageDir: opts.packageDir,
     toolRoot: TOOL_ROOT,
     expectAboutSaveUiArmed: opts.expectAboutSaveUiArmed,
+    expectPublicAboutBuildRead: opts.expectPublicAboutBuildRead,
   });
 
-  const mode = opts.expectAboutSaveUiArmed ? "about-save-ui-armed" : "default-disarmed";
+  const mode = opts.expectPublicAboutBuildRead
+    ? "public-about-build-read"
+    : opts.expectAboutSaveUiArmed
+      ? "about-save-ui-armed"
+      : "default-disarmed";
   console.log(`\n=== verify:manual-upload (${mode}): ${result.ok ? "PASS" : "FAIL"} ===`);
   if (!result.ok) {
     for (const e of result.errors) console.error(`  - ${e}`);
@@ -67,6 +77,7 @@ Armed:  npm run verify:manual-upload:about-save-ui-armed
   console.log(`fileCount: ${result.manifest?.fileCount}`);
   console.log(`safeForStaticFtp: ${result.manifest?.safeForStaticFtp}`);
   console.log(`expectAboutSaveUiArmed: ${opts.expectAboutSaveUiArmed}`);
+  console.log(`expectPublicAboutBuildRead: ${opts.expectPublicAboutBuildRead}`);
 }
 
 main();

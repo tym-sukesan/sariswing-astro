@@ -1117,6 +1117,10 @@ export function generateAstroProject(inputDir, outputDir, options = {}) {
     adminCmsSummary,
     siteProfileSummary,
     gosakiBandProfilesSummary,
+    gosakiAboutContentSummary,
+    gosakiYoutubeEmbedSummary,
+    gosakiContactHubspotSummary,
+    gosakiReadOnlyAdminSummary,
     gosakiScheduleDataSummary,
     scheduleBundle,
     gosakiScheduleBundle: scheduleBundle,
@@ -1171,6 +1175,26 @@ export function printGenerationSummary(result) {
     const bundle = result.discographyBundle ?? result.gosakiDiscographyBundle;
     console.log(
       `  Discography data: discographyDataSource=wix-html (${bundle.fallbackReason ?? "no supabase data"})`,
+    );
+  }
+  if (result.gosakiYoutubeEmbedSummary?.applied) {
+    console.log(
+      `  YouTube: embedDataSource=${result.gosakiYoutubeEmbedSummary.embedDataSource ?? "json"}`,
+    );
+  }
+  if (result.gosakiAboutContentSummary) {
+    const about = result.gosakiAboutContentSummary;
+    const src = about.pageFieldDataSource ?? about.buildReadEvidence?.pageFieldDataSource ?? "json";
+    const overlay =
+      about.profileLedeOverlayApplied === true || about.ledeOverlaid === true ? "true" : "false";
+    const fieldCount = about.fieldCount ?? about.buildReadEvidence?.fieldCount ?? 0;
+    const fb = about.fallbackReason ?? about.buildReadEvidence?.fallbackReason;
+    console.log(
+      `  About build-read: pageFieldDataSource=${src} · overlayOutcome=${
+        about.overlayOutcome ?? about.buildReadEvidence?.overlayOutcome ?? "n/a"
+      } · profileLedeOverlayApplied=${overlay} · fieldCount=${fieldCount}${
+        fb ? ` · fallbackReason=${fb}` : ""
+      }`,
     );
   }
   if (result.seoPublishReadiness?.sitemapIntegrationEnabled) {

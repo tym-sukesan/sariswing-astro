@@ -31,6 +31,8 @@ Options:
   --package-dir PATH    Override package directory (default from registry)
   --expect-about-save-ui-armed
                         Gosaki staging only: expect temporary About Save UI armed bake
+  --expect-public-about-build-read
+                        Gosaki staging only: expect temporary public About build-read bake
   --help, -h
 
 Registered sites: ${listSiteKeys().join(", ")}
@@ -51,6 +53,7 @@ function parseArgs(argv) {
     packageDir: null,
     help: false,
     expectAboutSaveUiArmed: false,
+    expectPublicAboutBuildRead: false,
   };
 
   for (let i = 2; i < argv.length; i++) {
@@ -60,6 +63,7 @@ function parseArgs(argv) {
     else if (arg === "--profile") opts.profile = argv[++i];
     else if (arg === "--package-dir") opts.packageDir = argv[++i];
     else if (arg === "--expect-about-save-ui-armed") opts.expectAboutSaveUiArmed = true;
+    else if (arg === "--expect-public-about-build-read") opts.expectPublicAboutBuildRead = true;
     else throw new Error(`Unknown argument: ${arg}`);
   }
 
@@ -106,12 +110,15 @@ function main() {
     packageDir: opts.packageDir ?? undefined,
     toolRoot: TOOL_ROOT,
     expectAboutSaveUiArmed: opts.expectAboutSaveUiArmed,
+    expectPublicAboutBuildRead: opts.expectPublicAboutBuildRead,
   });
 
   const mode =
-    opts.expectAboutSaveUiArmed && opts.site === "gosaki-piano" && opts.profile === "staging"
-      ? "about-save-ui-armed"
-      : "default";
+    opts.expectPublicAboutBuildRead && opts.site === "gosaki-piano" && opts.profile === "staging"
+      ? "public-about-build-read"
+      : opts.expectAboutSaveUiArmed && opts.site === "gosaki-piano" && opts.profile === "staging"
+        ? "about-save-ui-armed"
+        : "default";
   console.log(
     `\n=== verify:site-package (${opts.site} / ${opts.profile} / ${mode}): ${result.ok ? "PASS" : "FAIL"} ===`,
   );

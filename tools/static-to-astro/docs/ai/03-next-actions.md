@@ -3,12 +3,66 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **Kit Core:** About profile.lede Supabase Save roundtrip **PASS**。**Next:** `cms-core-v2-about-supabase-public-build-read-planning`（public About prefer DB + JSON fallback）。
+1. **Kit Core:** About public build-read **local impl COMPLETE**（noop_equal 成功扱い · clean-tree gate）。**Next:** **commit** して clean tree にした後、env-only package（`CMS_KIT_SITE_PAGE_FIELDS_BUILD_READ=true`）→ `npm run verify:manual-upload:public-about-build-read` → FileZilla → ftp-post-qa §C。dirty tree からの package 生成は **拒否**。
 2. **並行可:** Contents YouTube 退役 planning（`contentsYoutubeCutoverExecuted: false`）。
 3. **並行可（Gosaki ops）:** クライアントへ staging 共有・feedback。
 4. **並行可:** production hosting **read-only planning**。
-5. Save arm **false**（remote）· Save UI **disarmed** package live (`fe4732b…`) · Secret 変更禁止 · About Contents / G-12a **retained** · migration/RLS/seed **再実行禁止** · public About build-read **未**。
+5. Save arm **false** · Save UI **disarmed** · build-read **unset until approved bake** · `registry.sitePageFields=false` · JSON SoT · Secret 変更禁止 · migration/RLS/seed **再実行禁止**。
 6. production / Wix / auto FTP / `vsbvndwuajjhnzpohghh` 禁止 · `service_role` 禁止 · `readyForAnyFutureFtpApply: false`。
+
+## 0. About Supabase public build-read local implementation COMPLETE (2026-07-28)
+
+| Item | Value |
+| --- | --- |
+| Gate | `ABOUT_SUPABASE_PUBLIC_BUILD_READ_LOCAL_IMPLEMENTATION_COMPLETE: true` |
+| Ready | `readyForAboutSupabasePublicBuildReadPackageGenerate: true` |
+| Auth | anon SELECT · service_role forbidden |
+| Exactly 1 row | required · multi-row → JSON fallback |
+| Evidence | `ABOUT_PUBLIC_BUILD_READ_REPORT.json` + PACKAGE_RUN mirror |
+| Verifier | default `publicAboutBuildRead=false` · `--expect-public-about-build-read` |
+| Doc | `cms-core-v2-about-supabase-public-build-read-local-implementation.md` |
+
+```txt
+ABOUT_SUPABASE_PUBLIC_BUILD_READ_LOCAL_IMPLEMENTATION_COMPLETE: true
+IMPLEMENTATION_EXECUTED: true
+readyForAboutSupabasePublicBuildReadPackageGenerate: true
+PACKAGE_GENERATE_EXECUTED: false
+FTP_EXECUTED: false
+REGISTRY_SITE_PAGE_FIELDS: false
+CMS_KIT_SITE_PAGE_FIELDS_BUILD_READ: unset
+PUBLIC_ABOUT_JSON_SOT: true
+SAVE_ARM_ENABLED: false
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+PRODUCTION_UNCHANGED: true
+```
+
+## 0. About Supabase public build-read planning COMPLETE (2026-07-28)
+
+| Item | Value |
+| --- | --- |
+| Gate | `ABOUT_SUPABASE_PUBLIC_BUILD_READ_PLANNING_COMPLETE: true` |
+| Ready | `readyForAboutSupabasePublicBuildReadLocalImplementation: true` |
+| Blocking | **false** |
+| Auth | anon SELECT published only · service_role forbidden |
+| First cutover | env `CMS_KIT_SITE_PAGE_FIELDS_BUILD_READ=true` (registry stays false) |
+| Fallback | 0-row / multi-row / empty / error / blocked → JSON keep |
+| Doc | `cms-core-v2-about-supabase-public-build-read-planning.md` |
+| Verifier | `verify-cms-core-v2-about-supabase-public-build-read-planning.mjs` |
+
+```txt
+ABOUT_SUPABASE_PUBLIC_BUILD_READ_PLANNING_COMPLETE: true
+readyForAboutSupabasePublicBuildReadLocalImplementation: true
+BLOCKING_ISSUE: false
+IMPLEMENTATION_EXECUTED: false
+PACKAGE_GENERATE_EXECUTED: false
+FTP_EXECUTED: false
+REGISTRY_SITE_PAGE_FIELDS: false
+CMS_KIT_SITE_PAGE_FIELDS_BUILD_READ: unset
+PUBLIC_ABOUT_JSON_SOT: true
+SAVE_ARM_ENABLED: false
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+PRODUCTION_UNCHANGED: true
+```
 
 ## 0. About Supabase profile.lede Save roundtrip result COMPLETE / PASS (2026-07-28)
 

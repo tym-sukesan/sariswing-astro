@@ -29,9 +29,11 @@ import {
   relocateExistingManualUploadPackageToStaleBackup,
   resolveAboutAdminPathBakeFromEnv,
   writePackageRunMarker,
+  ABOUT_PUBLIC_BUILD_READ_REPORT_NAME,
 } from "./package-run-marker.mjs";
-import { resolveSourceCommit } from "./package-upload-safety.mjs";
+import { resolveSourceCommit, assertGitWorkingTreeCleanForManualUploadPackage } from "./package-upload-safety.mjs";
 import { randomUUID } from "node:crypto";
+import fs from "node:fs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 export const REPO_ROOT = path.resolve(TOOL_ROOT, "../..");
@@ -200,6 +202,15 @@ export function runSitePackageBuild(options) {
     console.log("Gosaki staging admin env: skipped (non-gosaki site)");
   }
 
+  // Fail-closed: refuse package generate on dirty git tree (no dirty override for FTP packages).
+  try {
+    assertGitWorkingTreeCleanForManualUploadPackage(REPO_ROOT);
+    console.log("[package-git] source tree clean · sourceTreeClean=true");
+  } catch (err) {
+    console.error(`[package-git] ${err instanceof Error ? err.message : String(err)}`);
+    process.exit(1);
+  }
+
   // Fail-closed stale relocate: move existing package aside before convert/build.
   // On later failure we do NOT restore — normal path stays empty until a successful package write.
   try {
@@ -269,6 +280,27 @@ export function runSitePackageBuild(options) {
     packageResult.manifest?.generatedAt ?? new Date().toISOString(),
   ).trim();
   const bake = resolveAboutAdminPathBakeFromEnv(buildEnv);
+  const astroOutAbs = path.join(toolRoot, profile.astroOut);
+  const convertReportPath = path.join(astroOutAbs, ABOUT_PUBLIC_BUILD_READ_REPORT_NAME);
+  /** @type {Record<string, unknown> | null} */
+  let buildReadEvidence = null;
+  if (fs.existsSync(convertReportPath)) {
+    try {
+      buildReadEvidence = JSON.parse(fs.readFileSync(convertReportPath, "utf8"));
+    } catch {
+      buildReadEvidence = null;
+    }
+    const packageReportPath = path.join(packageDir, ABOUT_PUBLIC_BUILD_READ_REPORT_NAME);
+    fs.copyFileSync(convertReportPath, packageReportPath);
+    console.log(
+      `[about-build-read] copied ${ABOUT_PUBLIC_BUILD_READ_REPORT_NAME} → package root (not public-dist)`,
+    );
+  } else if (bake.publicAboutBuildRead === true) {
+    console.error(
+      `ERROR: CMS_KIT_SITE_PAGE_FIELDS_BUILD_READ=true but missing ${ABOUT_PUBLIC_BUILD_READ_REPORT_NAME} under ${astroOutAbs}`,
+    );
+    process.exit(1);
+  }
   const marker = buildPackageRunMarker({
     runId: randomUUID(),
     generatedAt,
@@ -276,11 +308,22 @@ export function runSitePackageBuild(options) {
     siteKey,
     profile: profileName,
     bake,
+    buildReadEvidence,
+    sourceTreeClean: true,
   });
   const markerPath = writePackageRunMarker(packageDir, marker);
   console.log(
     `[package-run] wrote external PACKAGE_RUN.json · runId=${marker.runId} · path=${markerPath}`,
   );
+  if (buildReadEvidence) {
+    console.log(
+      `[about-build-read] pageFieldDataSource=${buildReadEvidence.pageFieldDataSource} · profileLedeOverlayApplied=${buildReadEvidence.profileLedeOverlayApplied} · fieldCount=${buildReadEvidence.fieldCount}${
+        buildReadEvidence.fallbackReason
+          ? ` · fallbackReason=${buildReadEvidence.fallbackReason}`
+          : ""
+      }`,
+    );
+  }
 
   const verifierArgs = buildPostBuildVerifierArgs(siteKey, profileName, profile, toolRoot);
   run("node", verifierArgs, buildEnv);

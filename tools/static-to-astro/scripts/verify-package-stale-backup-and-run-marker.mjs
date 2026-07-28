@@ -13,6 +13,8 @@ import { spawnSync } from "node:child_process";
 import {
   EXPECTED_ABOUT_ADMIN_PATH_BAKE,
   EXPECTED_ABOUT_ADMIN_PATH_BAKE_SAVE_UI_ARMED,
+  EXPECTED_ABOUT_ADMIN_PATH_BAKE_PUBLIC_BUILD_READ,
+  ABOUT_PUBLIC_BUILD_READ_REPORT_NAME,
   PACKAGE_RUN_MARKER_NAME,
   PACKAGE_RUNS_DIR_NAME,
   STALE_BACKUP_DIR_NAME,
@@ -380,6 +382,252 @@ assert(
   );
 }
 
+// --- public build-read success: applied (DB ≠ JSON) ---
+{
+  const root = mkTempRoot();
+  const live = path.join(root, "manual-upload", "gosaki-piano");
+  fs.mkdirSync(path.join(live, "public-dist", "admin", "about"), { recursive: true });
+  fs.mkdirSync(path.join(live, "public-dist", "about"), { recursive: true });
+  const head = headSha();
+  const lede = "[CMS Kit staging] About profile.lede build-read applied PoC";
+  const evidence = {
+    pageFieldDataSource: "supabase",
+    profileLedeOverlayApplied: true,
+    overlayOutcome: "applied",
+    fieldCount: 1,
+    profileLedeValueText: lede,
+  };
+  writePackageRunMarker(
+    live,
+    buildPackageRunMarker({
+      runId: "fixture-run-build-read-applied",
+      generatedAt: "2026-07-28T12:00:00.000Z",
+      sourceCommit: head,
+      siteKey: "gosaki-piano",
+      profile: "staging",
+      bake: EXPECTED_ABOUT_ADMIN_PATH_BAKE_PUBLIC_BUILD_READ,
+      buildReadEvidence: evidence,
+      sourceTreeClean: true,
+    }),
+  );
+  fs.writeFileSync(
+    path.join(live, ABOUT_PUBLIC_BUILD_READ_REPORT_NAME),
+    `${JSON.stringify(evidence, null, 2)}\n`,
+    "utf8",
+  );
+  fs.writeFileSync(
+    path.join(live, "public-dist", "admin", "about", "index.html"),
+    `<!doctype html><html><body
+      data-gosaki-about-write-backend="supabase"
+      data-gosaki-about-save-armed="false"
+      data-gosaki-about-dry-run-endpoint="https://kmjqppxjdnwwrtaeqjta.supabase.co/functions/v1/gosaki-about-supabase-save-dry-run"
+      data-gosaki-about-save-endpoint="https://kmjqppxjdnwwrtaeqjta.supabase.co/functions/v1/gosaki-about-supabase-save-dry-run"
+      data-gosaki-supabase-url="https://kmjqppxjdnwwrtaeqjta.supabase.co"
+      data-gosaki-youtube-save-armed="false"
+      data-gosaki-schedule-save-armed="false"
+      data-gosaki-discography-save-armed="false"
+    ></body></html>`,
+    "utf8",
+  );
+  fs.writeFileSync(
+    path.join(live, "public-dist", "about", "index.html"),
+    `<html><body><p>${lede}</p></body></html>`,
+    "utf8",
+  );
+  const markerErrs = validatePackageRunMarker({
+    packageDir: live,
+    repoRoot: REPO_ROOT,
+    siteKey: "gosaki-piano",
+    profile: "staging",
+    expectedBake: EXPECTED_ABOUT_ADMIN_PATH_BAKE_PUBLIC_BUILD_READ,
+    currentHead: head,
+  });
+  const htmlErrs = validateGosakiAboutAdminPathPackageArtifacts({
+    packageDir: live,
+    expectedBake: EXPECTED_ABOUT_ADMIN_PATH_BAKE_PUBLIC_BUILD_READ,
+    expectedLede: lede,
+  });
+  assert("build-read applied marker PASS", markerErrs.length === 0, markerErrs.join(" | "));
+  assert("build-read applied HTML+report PASS", htmlErrs.length === 0, htmlErrs.join(" | "));
+}
+
+// --- public build-read success: noop_equal (DB === JSON) ---
+{
+  const root = mkTempRoot();
+  const live = path.join(root, "manual-upload", "gosaki-piano");
+  fs.mkdirSync(path.join(live, "public-dist", "admin", "about"), { recursive: true });
+  fs.mkdirSync(path.join(live, "public-dist", "about"), { recursive: true });
+  const head = headSha();
+  const lede = "後藤 沙紀 1990年7月9日 A型 岡山県岡山市生まれ。";
+  const evidence = {
+    pageFieldDataSource: "supabase",
+    profileLedeOverlayApplied: false,
+    overlayOutcome: "noop_equal",
+    fieldCount: 1,
+    profileLedeValueText: lede,
+  };
+  writePackageRunMarker(
+    live,
+    buildPackageRunMarker({
+      runId: "fixture-run-build-read-noop-equal",
+      generatedAt: "2026-07-28T12:00:00.000Z",
+      sourceCommit: head,
+      siteKey: "gosaki-piano",
+      profile: "staging",
+      bake: EXPECTED_ABOUT_ADMIN_PATH_BAKE_PUBLIC_BUILD_READ,
+      buildReadEvidence: evidence,
+      sourceTreeClean: true,
+    }),
+  );
+  fs.writeFileSync(
+    path.join(live, ABOUT_PUBLIC_BUILD_READ_REPORT_NAME),
+    `${JSON.stringify(evidence, null, 2)}\n`,
+    "utf8",
+  );
+  fs.writeFileSync(
+    path.join(live, "public-dist", "admin", "about", "index.html"),
+    `<!doctype html><html><body
+      data-gosaki-about-write-backend="supabase"
+      data-gosaki-about-save-armed="false"
+      data-gosaki-about-dry-run-endpoint="https://kmjqppxjdnwwrtaeqjta.supabase.co/functions/v1/gosaki-about-supabase-save-dry-run"
+      data-gosaki-about-save-endpoint="https://kmjqppxjdnwwrtaeqjta.supabase.co/functions/v1/gosaki-about-supabase-save-dry-run"
+      data-gosaki-supabase-url="https://kmjqppxjdnwwrtaeqjta.supabase.co"
+      data-gosaki-youtube-save-armed="false"
+      data-gosaki-schedule-save-armed="false"
+      data-gosaki-discography-save-armed="false"
+    ></body></html>`,
+    "utf8",
+  );
+  fs.writeFileSync(
+    path.join(live, "public-dist", "about", "index.html"),
+    `<html><body><p>${lede}</p></body></html>`,
+    "utf8",
+  );
+  const htmlErrs = validateGosakiAboutAdminPathPackageArtifacts({
+    packageDir: live,
+    expectedBake: EXPECTED_ABOUT_ADMIN_PATH_BAKE_PUBLIC_BUILD_READ,
+  });
+  assert("build-read noop_equal PASS", htmlErrs.length === 0, htmlErrs.join(" | "));
+}
+
+// --- sourceTreeClean=false rejected ---
+{
+  const root = mkTempRoot();
+  const live = path.join(root, "manual-upload", "gosaki-piano");
+  fs.mkdirSync(live, { recursive: true });
+  const head = headSha();
+  writePackageRunMarker(
+    live,
+    buildPackageRunMarker({
+      runId: "fixture-run-dirty-tree",
+      generatedAt: "2026-07-28T12:00:00.000Z",
+      sourceCommit: head,
+      siteKey: "gosaki-piano",
+      profile: "staging",
+      bake: EXPECTED_ABOUT_ADMIN_PATH_BAKE,
+      sourceTreeClean: false,
+    }),
+  );
+  const errs = validatePackageRunMarker({
+    packageDir: live,
+    repoRoot: REPO_ROOT,
+    siteKey: "gosaki-piano",
+    profile: "staging",
+    expectedBake: EXPECTED_ABOUT_ADMIN_PATH_BAKE,
+    currentHead: head,
+  });
+  assert(
+    "sourceTreeClean false FAIL",
+    errs.some((e) => /sourceTreeClean/.test(e)),
+  );
+}
+
+// --- build-read PACKAGE_RUN alone insufficient (missing report) ---
+{
+  const root = mkTempRoot();
+  const live = path.join(root, "manual-upload", "gosaki-piano");
+  fs.mkdirSync(path.join(live, "public-dist", "admin", "about"), { recursive: true });
+  fs.mkdirSync(path.join(live, "public-dist", "about"), { recursive: true });
+  const head = headSha();
+  const lede = "後藤 沙紀 1990年7月9日 A型 岡山県岡山市生まれ。";
+  writePackageRunMarker(
+    live,
+    buildPackageRunMarker({
+      runId: "fixture-run-build-read-no-report",
+      generatedAt: "2026-07-28T12:00:00.000Z",
+      sourceCommit: head,
+      siteKey: "gosaki-piano",
+      profile: "staging",
+      bake: EXPECTED_ABOUT_ADMIN_PATH_BAKE_PUBLIC_BUILD_READ,
+      buildReadEvidence: {
+        pageFieldDataSource: "supabase",
+        profileLedeOverlayApplied: true,
+        overlayOutcome: "applied",
+        fieldCount: 1,
+      },
+    }),
+  );
+  fs.writeFileSync(
+    path.join(live, "public-dist", "admin", "about", "index.html"),
+    `<!doctype html><html><body
+      data-gosaki-about-write-backend="supabase"
+      data-gosaki-about-save-armed="false"
+      data-gosaki-about-dry-run-endpoint="https://kmjqppxjdnwwrtaeqjta.supabase.co/functions/v1/gosaki-about-supabase-save-dry-run"
+      data-gosaki-about-save-endpoint="https://kmjqppxjdnwwrtaeqjta.supabase.co/functions/v1/gosaki-about-supabase-save-dry-run"
+      data-gosaki-supabase-url="https://kmjqppxjdnwwrtaeqjta.supabase.co"
+      data-gosaki-youtube-save-armed="false"
+      data-gosaki-schedule-save-armed="false"
+      data-gosaki-discography-save-armed="false"
+    ></body></html>`,
+    "utf8",
+  );
+  fs.writeFileSync(
+    path.join(live, "public-dist", "about", "index.html"),
+    `<html><body><p>${lede}</p></body></html>`,
+    "utf8",
+  );
+  const htmlErrs = validateGosakiAboutAdminPathPackageArtifacts({
+    packageDir: live,
+    expectedBake: EXPECTED_ABOUT_ADMIN_PATH_BAKE_PUBLIC_BUILD_READ,
+  });
+  assert(
+    "build-read without report FAIL",
+    htmlErrs.some((e) => /ABOUT_PUBLIC_BUILD_READ_REPORT|build report required/i.test(e)),
+    htmlErrs.join(" | "),
+  );
+}
+
+// --- default expectedBake still rejects build-read marker ---
+{
+  const root = mkTempRoot();
+  const live = path.join(root, "manual-upload", "gosaki-piano");
+  fs.mkdirSync(live, { recursive: true });
+  const head = headSha();
+  writePackageRunMarker(
+    live,
+    buildPackageRunMarker({
+      runId: "fixture-run-build-read-default-reject",
+      generatedAt: "2026-07-28T12:00:00.000Z",
+      sourceCommit: head,
+      siteKey: "gosaki-piano",
+      profile: "staging",
+      bake: EXPECTED_ABOUT_ADMIN_PATH_BAKE_PUBLIC_BUILD_READ,
+    }),
+  );
+  const errs = validatePackageRunMarker({
+    packageDir: live,
+    repoRoot: REPO_ROOT,
+    siteKey: "gosaki-piano",
+    profile: "staging",
+    expectedBake: EXPECTED_ABOUT_ADMIN_PATH_BAKE,
+    currentHead: head,
+  });
+  assert(
+    "default verify rejects build-read PACKAGE_RUN",
+    errs.some((e) => /publicAboutBuildRead expected false/.test(e)),
+  );
+}
+
 // --- convert exit 1 on verify-build failure (static source check) ---
 {
   const convertSrc = fs.readFileSync(
@@ -416,6 +664,10 @@ assert(
   assert("build writes PACKAGE_RUN", core.includes("writePackageRunMarker"));
   assert("build logs external PACKAGE_RUN", /external PACKAGE_RUN\.json/.test(core));
   assert(
+    "build clean-tree gate",
+    core.includes("assertGitWorkingTreeCleanForManualUploadPackage"),
+  );
+  assert(
     "build does not restore on failure",
     /do NOT restore/i.test(core) &&
       !/renameSync\(\s*relocated\.to/.test(core) &&
@@ -439,6 +691,11 @@ assert(
     "verify supports expectAboutSaveUiArmed",
     ver.includes("expectAboutSaveUiArmed") &&
       ver.includes("EXPECTED_ABOUT_ADMIN_PATH_BAKE_SAVE_UI_ARMED"),
+  );
+  assert(
+    "verify supports expectPublicAboutBuildRead",
+    ver.includes("expectPublicAboutBuildRead") &&
+      ver.includes("EXPECTED_ABOUT_ADMIN_PATH_BAKE_PUBLIC_BUILD_READ"),
   );
   assert("verify rejects meta paths", ver.includes("isManualUploadMetaPath"));
 }

@@ -8,7 +8,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { isGosakiPianoFixture } from "./gosaki-about-band-profiles.mjs";
 import { splitBaseLayoutOpenAndInner } from "./gosaki-home-youtube-embed.mjs";
-import { overlayProfileLedeInHtml } from "./cms-core-v2-about-supabase-contract.mjs";
+import { overlayProfileLedeInHtml, extractProfileLedeFromBody } from "./cms-core-v2-about-supabase-contract.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const require = createRequire(path.join(__dirname, "../../package.json"));
@@ -16,11 +16,97 @@ const cheerio = require("cheerio");
 
 export const GOSAKI_ABOUT_CONTENT_CONFIG_REL = "config/sites/gosaki-piano-about-content.json";
 export const GOSAKI_ABOUT_CONTENT_DATA_REL = "src/data/gosaki-about-content.json";
+/** Convert/package evidence — not FTP public-dist payload (lives at package / astro root). */
+export const ABOUT_PUBLIC_BUILD_READ_REPORT_NAME = "ABOUT_PUBLIC_BUILD_READ_REPORT.json";
 export const PROFILE_GRID_SELECTOR = '[data-mesh-id="comp-lol1i5l0inlineContent-gridContainer"]';
 export const BLOCK_PROFILE_ID = "about-profile-html";
 export const BLOCK_BANDS_ID = "about-bands-html";
 
 export { isGosakiPianoFixture };
+
+/**
+ * Build-read evidence for PACKAGE_RUN / verifier cross-check.
+ *
+ * Supabase success (not fallback):
+ * - overlayOutcome "applied" — DB text differed · first <p> rewritten
+ * - overlayOutcome "noop_equal" — DB text already equal to JSON first <p>
+ * fallbackReason only for load/overlay failures (0-row, multi-row, empty, network, true overlay_noop, …).
+ *
+ * @param {{
+ *   pageFieldsBundle?: {
+ *     pageFieldDataSource?: string | null,
+ *     fallbackReason?: string | null,
+ *     fieldCount?: number,
+ *     rowCount?: number,
+ *     profileLede?: { valueText?: string } | null,
+ *   } | null,
+ *   ledeOverlaid?: boolean,
+ *   overlayOutcome?: "applied" | "noop_equal" | "failed" | "skipped" | null,
+ *   overlayReason?: string | null,
+ * }} input
+ */
+export function buildAboutPublicBuildReadEvidence(input = {}) {
+  const bundle = input.pageFieldsBundle ?? null;
+  const source =
+    bundle == null ? "json" : String(bundle.pageFieldDataSource ?? "json");
+  const fieldCount = Number(bundle?.fieldCount ?? bundle?.rowCount ?? 0);
+  /** @type {"applied" | "noop_equal" | "failed" | "skipped"} */
+  let overlayOutcome = "skipped";
+  if (input.overlayOutcome === "applied" || input.overlayOutcome === "noop_equal") {
+    overlayOutcome = input.overlayOutcome;
+  } else if (input.overlayOutcome === "failed") {
+    overlayOutcome = "failed";
+  } else if (input.ledeOverlaid === true) {
+    overlayOutcome = "applied";
+  } else if (source === "supabase") {
+    overlayOutcome = "failed";
+  }
+
+  const supabaseSuccess =
+    source === "supabase" &&
+    Number(fieldCount) === 1 &&
+    (overlayOutcome === "applied" || overlayOutcome === "noop_equal");
+
+  /** @type {string | null} */
+  let fallbackReason = null;
+  if (!supabaseSuccess) {
+    if (bundle?.fallbackReason != null && String(bundle.fallbackReason).trim()) {
+      fallbackReason = String(bundle.fallbackReason);
+    } else if (input.overlayReason != null && String(input.overlayReason).trim()) {
+      // Do not treat noop_equal reason as fallback (reason is null for that path).
+      fallbackReason = String(input.overlayReason);
+    } else if (bundle == null || source === "json") {
+      // Intentional JSON SoT when build-read off — not a failure fallback field.
+      fallbackReason = null;
+    } else {
+      fallbackReason = "about_lede_not_overlaid_from_supabase";
+    }
+  }
+
+  /** @type {Record<string, unknown>} */
+  const evidence = {
+    pageFieldDataSource: source,
+    profileLedeOverlayApplied: overlayOutcome === "applied",
+    overlayOutcome,
+    fieldCount: Number.isFinite(fieldCount) ? fieldCount : 0,
+  };
+  if (fallbackReason) evidence.fallbackReason = fallbackReason;
+  if (supabaseSuccess) {
+    const lede = String(bundle?.profileLede?.valueText ?? "").trim();
+    if (lede) evidence.profileLedeValueText = lede;
+  }
+  return evidence;
+}
+
+/**
+ * @param {string} outDir
+ * @param {Record<string, unknown>} evidence
+ */
+export function writeAboutPublicBuildReadReport(outDir, evidence) {
+  const target = path.join(outDir, ABOUT_PUBLIC_BUILD_READ_REPORT_NAME);
+  fs.writeFileSync(target, `${JSON.stringify(evidence, null, 2)}\n`, "utf8");
+  return target;
+}
 
 /**
  * @param {string} toolRoot
@@ -178,33 +264,64 @@ export function verifyAboutContentHtml(aboutHtml, expected) {
 /**
  * Prefer Supabase profile.lede over JSON first <p> when build-read returns a non-empty value.
  * Empty/error bundles leave config unchanged (Contents/JSON fallback).
+ * When DB text already equals JSON first <p>, outcome is noop_equal (success, not fallback).
  *
  * @param {{ blocks?: Array<{ id?: string, enabled?: boolean, html?: string }> }} config
  * @param {{ pageFieldDataSource?: string, profileLede?: { valueText?: string } | null } | null | undefined} pageFieldsBundle
  */
 export function applySitePageFieldsLedeToAboutConfig(config, pageFieldsBundle) {
   if (!pageFieldsBundle || pageFieldsBundle.pageFieldDataSource !== "supabase") {
-    return { config, ledeOverlaid: false, reason: "page_fields_not_supabase" };
+    return {
+      config,
+      ledeOverlaid: false,
+      reason: "page_fields_not_supabase",
+      overlayOutcome: "failed",
+    };
   }
   const lede = String(pageFieldsBundle.profileLede?.valueText ?? "").trim();
   if (!lede) {
-    return { config, ledeOverlaid: false, reason: "empty_profile_lede" };
+    return {
+      config,
+      ledeOverlaid: false,
+      reason: "empty_profile_lede",
+      overlayOutcome: "failed",
+    };
   }
   const blocks = Array.isArray(config.blocks) ? config.blocks.map((b) => ({ ...b })) : [];
   const idx = blocks.findIndex((b) => b?.id === BLOCK_PROFILE_ID);
   if (idx < 0) {
-    return { config, ledeOverlaid: false, reason: "profile_block_missing" };
+    return {
+      config,
+      ledeOverlaid: false,
+      reason: "profile_block_missing",
+      overlayOutcome: "failed",
+    };
   }
   const prevHtml = String(blocks[idx].html ?? "");
+  const existingLede = extractProfileLedeFromBody(prevHtml);
   const nextHtml = overlayProfileLedeInHtml(prevHtml, lede);
   if (nextHtml === prevHtml) {
-    return { config, ledeOverlaid: false, reason: "overlay_noop" };
+    if (existingLede === lede) {
+      return {
+        config,
+        ledeOverlaid: false,
+        reason: null,
+        overlayOutcome: "noop_equal",
+      };
+    }
+    return {
+      config,
+      ledeOverlaid: false,
+      reason: "overlay_noop",
+      overlayOutcome: "failed",
+    };
   }
   blocks[idx] = { ...blocks[idx], html: nextHtml };
   return {
     config: { ...config, blocks },
     ledeOverlaid: true,
     reason: null,
+    overlayOutcome: "applied",
   };
 }
 
@@ -216,29 +333,60 @@ export function applySitePageFieldsLedeToAboutConfig(config, pageFieldsBundle) {
 export function applyGosakiAboutContent(outDir, toolRoot, options = {}) {
   const loaded = loadGosakiAboutContentConfig(toolRoot);
   if (!loaded.ok) {
+    const evidence = buildAboutPublicBuildReadEvidence({
+      pageFieldsBundle: options.pageFieldsBundle ?? null,
+      ledeOverlaid: false,
+      overlayReason: loaded.error,
+    });
+    writeAboutPublicBuildReadReport(outDir, evidence);
     return {
       applied: false,
       reason: loaded.error,
       profileApplied: false,
       bandsApplied: false,
       ledeOverlaid: false,
+      profileLedeOverlayApplied: false,
+      pageFieldDataSource: evidence.pageFieldDataSource,
+      fieldCount: evidence.fieldCount,
+      fallbackReason: evidence.fallbackReason ?? null,
+      buildReadEvidence: evidence,
+      buildReadReportPath: ABOUT_PUBLIC_BUILD_READ_REPORT_NAME,
     };
   }
 
   const aboutRel = options.aboutPagePath ?? "src/pages/about/index.astro";
   const aboutPath = path.join(outDir, aboutRel);
   if (!fs.existsSync(aboutPath)) {
+    const evidence = buildAboutPublicBuildReadEvidence({
+      pageFieldsBundle: options.pageFieldsBundle ?? null,
+      ledeOverlaid: false,
+      overlayReason: `About page not found: ${aboutRel}`,
+    });
+    writeAboutPublicBuildReadReport(outDir, evidence);
     return {
       applied: false,
       reason: `About page not found: ${aboutRel}`,
       profileApplied: false,
       bandsApplied: false,
       ledeOverlaid: false,
+      profileLedeOverlayApplied: false,
+      pageFieldDataSource: evidence.pageFieldDataSource,
+      fieldCount: evidence.fieldCount,
+      fallbackReason: evidence.fallbackReason ?? null,
+      buildReadEvidence: evidence,
+      buildReadReportPath: ABOUT_PUBLIC_BUILD_READ_REPORT_NAME,
     };
   }
 
   const overlay = applySitePageFieldsLedeToAboutConfig(loaded.config, options.pageFieldsBundle);
   const effectiveConfig = overlay.config;
+  const evidence = buildAboutPublicBuildReadEvidence({
+    pageFieldsBundle: options.pageFieldsBundle ?? null,
+    ledeOverlaid: overlay.ledeOverlaid === true,
+    overlayOutcome: overlay.overlayOutcome,
+    overlayReason: overlay.reason,
+  });
+  writeAboutPublicBuildReadReport(outDir, evidence);
 
   const dataDest = path.join(outDir, GOSAKI_ABOUT_CONTENT_DATA_REL);
   fs.mkdirSync(path.dirname(dataDest), { recursive: true });
@@ -255,8 +403,14 @@ export function applyGosakiAboutContent(outDir, toolRoot, options = {}) {
     bandsApplied: result.bandsApplied,
     bandsImportRemoved: result.bandsImportRemoved,
     ledeOverlaid: overlay.ledeOverlaid === true,
+    profileLedeOverlayApplied: evidence.profileLedeOverlayApplied === true,
+    overlayOutcome: evidence.overlayOutcome,
     ledeOverlayReason: overlay.reason,
-    pageFieldDataSource: options.pageFieldsBundle?.pageFieldDataSource ?? null,
+    pageFieldDataSource: evidence.pageFieldDataSource,
+    fieldCount: evidence.fieldCount,
+    fallbackReason: evidence.fallbackReason ?? null,
+    buildReadEvidence: evidence,
+    buildReadReportPath: ABOUT_PUBLIC_BUILD_READ_REPORT_NAME,
     aboutPagePath: aboutRel,
     dataPath: GOSAKI_ABOUT_CONTENT_DATA_REL,
     configPath: GOSAKI_ABOUT_CONTENT_CONFIG_REL,

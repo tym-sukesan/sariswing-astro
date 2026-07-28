@@ -182,12 +182,13 @@ Public `/about/`: still **JSON SoT** · `CMS_KIT_SITE_PAGE_FIELDS_BUILD_READ` **
 
 ## 12. Recommended next phases
 
-1. **Primary (Kit Core):** `cms-core-v2-about-supabase-public-build-read-planning` — public About prefer `site_page_fields` + JSON fallback（Save roundtrip PASS 後の次）
+1. **Primary (Kit Core):** `cms-core-v2-about-supabase-public-build-read-planning` — **COMPLETE** → next local implementation
 2. **並行可:** Contents YouTube 退役 planning（`contentsYoutubeCutoverExecuted: false`）
 3. **並行可（Gosaki ops）:** クライアント staging 共有・feedback
 4. **並行可:** production hosting **read-only planning**
 5. **まだしない:** remote Save arm 再 ON · Save UI armed package 再 bake · production · auto FTP · migration/RLS/seed 再実行
 
+See: [public build-read planning](./cms-core-v2-about-supabase-public-build-read-planning.md)
 ---
 
 ## 13. This record phase verification

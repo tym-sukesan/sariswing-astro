@@ -55,6 +55,55 @@ export function resolveSourceCommit(repoRoot) {
 }
 
 /**
+ * Inspect git working tree for manual-upload package gate.
+ * Uses `git status --porcelain` (respects .gitignore — output/ etc. not listed).
+ * Detects tracked modifications and untracked non-ignored files.
+ *
+ * @param {string} repoRoot
+ * @returns {{ clean: boolean, dirtyEntries: string[] }}
+ */
+export function inspectGitWorkingTreeForManualUploadPackage(repoRoot) {
+  const result = spawnSync("git", ["status", "--porcelain"], {
+    cwd: repoRoot,
+    encoding: "utf8",
+  });
+  if (result.status !== 0) {
+    return {
+      clean: false,
+      dirtyEntries: [
+        `git status failed: ${String(result.stderr || result.stdout || "unknown").trim()}`,
+      ],
+    };
+  }
+  const dirtyEntries = String(result.stdout || "")
+    .split("\n")
+    .map((l) => l.trimEnd())
+    .filter((l) => l.length > 0);
+  return { clean: dirtyEntries.length === 0, dirtyEntries };
+}
+
+/**
+ * Fail-closed: refuse manual-upload package start when working tree is dirty.
+ * No dirty override for FTP packages.
+ *
+ * @param {string} repoRoot
+ * @returns {{ sourceTreeClean: true }}
+ */
+export function assertGitWorkingTreeCleanForManualUploadPackage(repoRoot) {
+  const { clean, dirtyEntries } = inspectGitWorkingTreeForManualUploadPackage(repoRoot);
+  if (!clean) {
+    const preview = dirtyEntries.slice(0, 30).join("\n");
+    const more =
+      dirtyEntries.length > 30 ? `\n… and ${dirtyEntries.length - 30} more` : "";
+    throw new Error(
+      `manual-upload package refused: git working tree is dirty (${dirtyEntries.length} path(s)). ` +
+        `Commit or stash tracked/untracked changes first. No dirty override for FTP packages.\n${preview}${more}`,
+    );
+  }
+  return { sourceTreeClean: true };
+}
+
+/**
  * @param {string} dir
  * @param {string} [base]
  */

@@ -26,6 +26,7 @@ import {
 import {
   EXPECTED_ABOUT_ADMIN_PATH_BAKE,
   EXPECTED_ABOUT_ADMIN_PATH_BAKE_SAVE_UI_ARMED,
+  EXPECTED_ABOUT_ADMIN_PATH_BAKE_PUBLIC_BUILD_READ,
   isManualUploadMetaPath,
   validateGosakiAboutAdminPathPackageArtifacts,
   validatePackageRunMarker,
@@ -59,6 +60,7 @@ export function resolveSitePackageDir(siteKey, profileName, options = {}) {
  *   toolRoot?: string,
  *   includeGosakiExtensions?: boolean,
  *   expectAboutSaveUiArmed?: boolean,
+ *   expectPublicAboutBuildRead?: boolean,
  * }} options
  */
 export function verifySitePackage(options) {
@@ -69,10 +71,16 @@ export function verifySitePackage(options) {
     toolRoot = TOOL_ROOT,
     includeGosakiExtensions = siteKey === GOSAKI_SITE_KEY,
     expectAboutSaveUiArmed = false,
+    expectPublicAboutBuildRead = false,
   } = options;
 
   /** @type {string[]} */
   const errors = [];
+  if (expectAboutSaveUiArmed && expectPublicAboutBuildRead) {
+    errors.push(
+      "cannot combine --expect-about-save-ui-armed and --expect-public-about-build-read (single-arm)",
+    );
+  }
   const meta = resolvePackageManifestMetaFromRegistry(siteKey, profileName, { toolRoot });
   const profile = resolveSitePackageBuildProfile(siteKey, profileName, { toolRoot });
   const pkg = resolveSitePackageDir(siteKey, profileName, { toolRoot, packageDir: packageDirOpt });
@@ -88,11 +96,14 @@ export function verifySitePackage(options) {
   }
 
   // Fail-closed: live package + external _package-runs marker (not inside FTP payload).
-  // Default expects Save UI disarmed; armed mode only when operator passes expectAboutSaveUiArmed.
+  // Default expects Save UI disarmed + publicAboutBuildRead false.
+  // Armed / build-read modes only when operator passes explicit expect flags.
   if (siteKey === GOSAKI_SITE_KEY && profileName === "staging") {
-    const expectedBake = expectAboutSaveUiArmed
-      ? EXPECTED_ABOUT_ADMIN_PATH_BAKE_SAVE_UI_ARMED
-      : EXPECTED_ABOUT_ADMIN_PATH_BAKE;
+    const expectedBake = expectPublicAboutBuildRead
+      ? EXPECTED_ABOUT_ADMIN_PATH_BAKE_PUBLIC_BUILD_READ
+      : expectAboutSaveUiArmed
+        ? EXPECTED_ABOUT_ADMIN_PATH_BAKE_SAVE_UI_ARMED
+        : EXPECTED_ABOUT_ADMIN_PATH_BAKE;
     errors.push(
       ...validatePackageRunMarker({
         packageDir: pkg,
@@ -102,7 +113,7 @@ export function verifySitePackage(options) {
         expectedBake,
       }),
     );
-    // Independent HTML cross-check — do not auto-PASS from PACKAGE_RUN alone.
+    // Independent HTML (+ build-read report) cross-check — do not auto-PASS from PACKAGE_RUN alone.
     errors.push(
       ...validateGosakiAboutAdminPathPackageArtifacts({
         packageDir: pkg,
@@ -237,5 +248,7 @@ export function verifySitePackage(options) {
     packageDir: pkg,
     publicDist,
     zipName,
+    expectAboutSaveUiArmed,
+    expectPublicAboutBuildRead,
   };
 }

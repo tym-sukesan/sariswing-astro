@@ -5,27 +5,28 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: Gosaki staging client-ready audit FINAL PASS
-CLIENT_SHARE_READY: true
-P1 blockers: none
-deployed package sourceCommit: dc1c5b62a58d0462ad6629db4847256d316d4a38
-About mobile order P2: RESOLVED (375px title→photo→text PASS)
-Home YouTube: 1 item PASS · Admin read + Save disabled PASS · noindex PASS
-YouTube multi capability: local PASS
-YouTube multi persist Save: NON_BLOCKING ops (not live)
-STG URL: https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/
-Next Primary: share staging with client
-  Parallel OK: Contents YouTube retire · hosting read-only planning · multi Save (separate approval)
-HOSTING_READY: false · GO_LIVE_READY: false
+Current phase: CMS Core v2 generalization boundary + first safe extraction COMPLETE
+First extraction: Node YouTube URL parse → youtube-url-utils.mjs Core SoT (contract/dry-run direct import; gosaki-embed-utils re-export)
+Gosaki CLIENT_SHARE_READY: true (maintained)
+deployed package: dc1c5b62a58d0462ad6629db4847256d316d4a38 (unchanged; no regen)
+No Edge/UI/SoT/package/FTP/Contents retire
+Next Primary (ops): share staging with client
+Next (Kit Core): admin staging-ref assert helper (optional)
+  Parallel: Contents YouTube retire planning · hosting read-only · multi Save (separate approval)
 readyForAnyFutureFtpApply: false
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
-Doc: gosaki-staging-client-ready-audit.md §12
+Doc: cms-core-v2-generalization-boundary-and-first-extraction.md
 ```
+
+## CMS Core v2 generalization boundary (2026-07-29)
+
+- 4-feature layer map + comparison recorded
+- Safe extraction #1 executed (Node parse helpers only)
+- Doc: `cms-core-v2-generalization-boundary-and-first-extraction.md`
 
 ## Gosaki staging client-ready audit FINAL (2026-07-29)
 
-- Operator FileZilla + FTP後 QA PASS recorded
-- CLIENT_SHARE_READY **true**
+- CLIENT_SHARE_READY **true** · package `dc1c5b6…`
 - Doc: `gosaki-staging-client-ready-audit.md`
 
 ## About mobile + YouTube multi follow-up (2026-07-29)

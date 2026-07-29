@@ -3,12 +3,34 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **Primary (Gosaki ops):** クライアントへ **staging 共有**（`CLIENT_SHARE_READY: true` · package `dc1c5b6…` @ `/cms-kit-staging/gosaki-piano/`）。本番 cutover はしない。
-2. **並行可:** Contents YouTube 退役 planning（`write-backend=contents` 残存）。
+1. **Primary (Gosaki ops):** クライアントへ **staging 共有**（`CLIENT_SHARE_READY: true` · package `dc1c5b6…`）。本番 cutover はしない。
+2. **並行可 (Kit Core):** CMS Core v2 一般化 next — Admin staging-ref base assert helper（任意）· Edge `requireUser` shared は OPTIONS 契約揃え後 · Contents YouTube 退役は **別 phase**。
 3. **並行可:** production hosting **read-only planning**（`HOSTING_READY: false`）。
-4. **並行可 / 別承認:** YouTube 複数件 **永続 Save**（NON_BLOCKING · G-11c7 Contents items または Supabase INSERT）。
-5. Save arm **false** · `readyForAnyFutureFtpApply: false` · production / Wix / auto FTP / `vsbvndwuajjhnzpohghh` 禁止 · `service_role` 禁止。
-6. 2026-07-22 `STAGING_READY_FOR_CLIENT_SHARE: true` は **歴史のみ**（現行判定は `dc1c5b6` FINAL）。
+4. **並行可 / 別承認:** YouTube 複数件 **永続 Save**（NON_BLOCKING）。
+5. Save arm **false** · `readyForAnyFutureFtpApply: false` · production STOP · `service_role` 禁止 · **deployed package 固定**（一般化で regen 不要）。
+
+## 0. CMS Core v2 generalization boundary + first extraction (2026-07-29)
+
+| Item | Value |
+| --- | --- |
+| Gate | `CMS_CORE_V2_GENERALIZATION_BOUNDARY_AUDIT_COMPLETE: true` |
+| First extraction | Node YouTube URL parse → `youtube-url-utils.mjs` (Core SoT) |
+| CLIENT_SHARE_READY | **true**（維持） |
+| Deployed package | `dc1c5b6…` **unchanged** |
+| Doc | `cms-core-v2-generalization-boundary-and-first-extraction.md` |
+
+```txt
+CMS_CORE_V2_GENERALIZATION_BOUNDARY_AUDIT_COMPLETE: true
+FIRST_SAFE_EXTRACTION_EXECUTED: true
+FIRST_SAFE_EXTRACTION: node-youtube-url-parse-dedupe
+GOSAKI_CLIENT_SHARE_READY_MAINTAINED: true
+deployedPackageSourceCommitUnchanged: dc1c5b62a58d0462ad6629db4847256d316d4a38
+PACKAGE_GENERATE_EXECUTED: false
+FTP_EXECUTED: false
+CONTENTS_YOUTUBE_CUTOVER_EXECUTED: false
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+PRODUCTION_UNCHANGED: true
+```
 
 ## 0. Gosaki staging client-ready audit FINAL PASS (2026-07-29)
 

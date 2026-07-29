@@ -1,7 +1,18 @@
 /**
  * CMS Core v2 — YouTube Supabase vertical slice contract (pure helpers).
  * No network / DB / secrets. Shared by verifier + build mapper + docs.
+ *
+ * YouTube URL parse helpers: Node SoT in `youtube-url-utils.mjs` (re-exported for
+ * stable contract import paths). Edge / Astro template copies intentionally retained
+ * until a separate Deno/package-graph phase.
  */
+
+import {
+  buildYoutubeNocookieEmbedUrl,
+  parseYoutubeVideoId,
+} from "./youtube-url-utils.mjs";
+
+export { buildYoutubeNocookieEmbedUrl, parseYoutubeVideoId };
 
 export const CMS_CORE_V2_YOUTUBE_PHASE =
   "cms-core-v2-youtube-supabase-vertical-slice-local-implementation";
@@ -36,47 +47,6 @@ export const SITE_EMBEDS_SELECT =
   "id,site_id,site_slug,provider,legacy_item_id,title,source_url,embed_url,published,sort_order,created_at,updated_at,created_by,updated_by";
 
 /**
- * @param {string} input
- * @returns {string | null}
- */
-export function parseYoutubeVideoId(input) {
-  const raw = String(input ?? "").trim();
-  if (!raw) return null;
-  if (/^[a-zA-Z0-9_-]{11}$/.test(raw)) return raw;
-  const embedSrc = raw.match(/src=["']([^"']+)["']/i)?.[1];
-  if (embedSrc) {
-    const fromEmbed = parseYoutubeVideoId(embedSrc);
-    if (fromEmbed) return fromEmbed;
-  }
-  try {
-    const url = new URL(raw);
-    const host = url.hostname.replace(/^www\./, "");
-    if (host === "youtu.be") {
-      const id = url.pathname.replace(/^\//, "").split("/")[0];
-      return id && /^[a-zA-Z0-9_-]{11}$/.test(id) ? id : null;
-    }
-    if (host === "youtube.com" || host === "m.youtube.com" || host === "youtube-nocookie.com") {
-      if (url.pathname.startsWith("/embed/")) {
-        const id = url.pathname.split("/")[2];
-        return id && /^[a-zA-Z0-9_-]{11}$/.test(id) ? id : null;
-      }
-      const v = url.searchParams.get("v");
-      return v && /^[a-zA-Z0-9_-]{11}$/.test(v) ? v : null;
-    }
-  } catch {
-    return null;
-  }
-  return null;
-}
-
-/**
- * @param {string} videoId
- */
-export function buildYoutubeNocookieEmbedUrl(videoId) {
-  return `https://www.youtube-nocookie.com/embed/${videoId}`;
-}
-
-/**
  * @param {Record<string, unknown>} row
  */
 export function mapSiteEmbedRowToDraftItem(row) {
@@ -90,6 +60,7 @@ export function mapSiteEmbedRowToDraftItem(row) {
     updatedAt: row.updated_at != null ? String(row.updated_at) : null,
   };
 }
+
 
 /**
  * @param {Array<Record<string, unknown>>} rows

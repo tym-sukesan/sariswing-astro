@@ -255,36 +255,37 @@ body.wix-static-export #SITE_HEADER .global-nav a.is-current {
     margin-right: auto !important;
   }
 
-  /* About page */
+  /* About page — mobile order: title → photo → text (PC unchanged) */
   body.wix-static-export #comp-lol1i5l0 [data-mesh-id$="inlineContent-gridContainer"] {
     padding: 0 1rem 2rem !important;
     gap: 1.25rem !important;
   }
 
-  body.wix-static-export #WRchTxt16 {
+  body.wix-static-export #comp-lol1i5l0 #WRchTxt16 {
     width: 100% !important;
     text-align: center !important;
     margin: 2rem 0 1rem !important;
     padding: 0 0.5rem !important;
+    order: 1 !important;
   }
 
-  body.wix-static-export #WRchTxt16 h4,
-  body.wix-static-export #WRchTxt16 .font_4 {
+  body.wix-static-export #comp-lol1i5l0 #WRchTxt16 h4,
+  body.wix-static-export #comp-lol1i5l0 #WRchTxt16 .font_4 {
     font-size: clamp(28px, 7vw, 35px) !important;
   }
 
-  body.wix-static-export #comp-jrqh3smr {
+  body.wix-static-export #comp-lol1i5l0 #comp-jrtenw0n {
     width: 100% !important;
-    order: 2;
-  }
-
-  body.wix-static-export #comp-jrtenw0n {
-    width: 100% !important;
-    order: 3;
+    order: 2 !important;
     text-align: center;
   }
 
-  body.wix-static-export #comp-jrtenw0n img {
+  body.wix-static-export #comp-lol1i5l0 #comp-jrqh3smr {
+    width: 100% !important;
+    order: 3 !important;
+  }
+
+  body.wix-static-export #comp-lol1i5l0 #comp-jrtenw0n img {
     width: min(85vw, 320px) !important;
     max-width: 90% !important;
     height: auto !important;

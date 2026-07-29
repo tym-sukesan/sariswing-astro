@@ -3,13 +3,59 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **Primary (Gosaki ops):** **staging client-ready audit** — Home / Schedule / Discography / YouTube / About / Contact / **mobile** / **admin routes**。**Schedule 偏重禁止**（全 primary surfaces を均等に見る）。About vertical slice は **CLOSED / COMPLETE / PASS**（Claude audit **READY WITH NON-BLOCKING ITEMS** · BLOCKERなし · `95ada81…` package / `6cbffda…` close HEAD）。
-2. **並行可:** Contents YouTube 退役 planning（`contentsYoutubeCutoverExecuted: false`）。
-3. **並行可:** production hosting **read-only planning**。
-4. **並行可:** クライアントへ staging 共有は client-ready audit PASS 後を推奨。
-5. Save arm **false** · Save UI **false** · remote `GOSAKI_ABOUT_SUPABASE_SAVE_ARMED=false` · public About build-read **live**（`noop_equal`）· Contents/JSON retained · Secret 変更禁止 · migration/RLS/seed **再実行禁止**。
-6. production / Wix / auto FTP / `vsbvndwuajjhnzpohghh` 禁止 · `service_role` 禁止 · `readyForAnyFutureFtpApply: false`。
-7. Claude NON_BLOCKING（実装しない／独立フェーズにしない）: `can_write_site`×`sites.status=suspended`（将来 multi-client 前）· `overlay_noop` コメント/fixture（次 field/一般化時）· FileZilla 人的リスク（staging 許容）· live RLS/GRANT は client-ready 内の **SELECT-only** 候補のみ。
+1. **Primary (Gosaki ops):** 戸山さんが **commit**（About CSS + YouTube multi fixture/verifier + audit docs）→ **package 再生成 + FileZilla**（About mobile order 反映）→ **§5 人間ブラウザ QA**（375 About 含む）。**CLIENT_SHARE_READY: false** のまま。
+2. YouTube multi: 能力ゲート **local PASS** · live SoT **1 件のまま共有可** · 2 件目永続 Save は **別承認**（G-11c7 Contents items または Supabase INSERT）· 本フェーズで DB/Edge 拡張しない。
+3. **並行可:** Contents YouTube 退役 planning（`write-backend=contents` 残存）。
+4. **並行可:** production hosting **read-only planning**。
+5. Save arm **false** · package/FTP は About CSS 反映時のみオペレータ手動 · `readyForAnyFutureFtpApply: false`。
+6. production / Wix / auto FTP / `vsbvndwuajjhnzpohghh` 禁止 · `service_role` 禁止。
+7. 2026-07-22 `STAGING_READY_FOR_CLIENT_SHARE: true` は **歴史のみ**。
+
+## 0. About mobile + YouTube multi follow-up (2026-07-29)
+
+| Item | Value |
+| --- | --- |
+| About mobile order | **local fixed** title→photo→text @≤768px |
+| YouTube multi gate | **verified local** · live SoT 1 item |
+| Verifier | `npm run verify:gosaki-youtube-public-multi` |
+| CLIENT_SHARE_READY | **false** |
+| Doc | `gosaki-staging-client-ready-audit.md` §11 |
+
+```txt
+ABOUT_MOBILE_TITLE_PHOTO_TEXT_ORDER_LOCAL_FIXED: true
+YOUTUBE_MULTI_ITEM_CAPABILITY_GATE_VERIFIED_LOCAL: true
+YOUTUBE_LIVE_SOT_ITEM_COUNT: 1
+YOUTUBE_MULTI_SAVE_LIVE: false
+CLIENT_SHARE_READY: false
+PACKAGE_GENERATE_EXECUTED: false
+FTP_EXECUTED: false
+readyForAboutMobileStagingPackageAfterCommit: true
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+PRODUCTION_UNCHANGED: true
+```
+
+## 0. Gosaki staging client-ready audit pass-1 read-only (2026-07-29)
+
+| Item | Value |
+| --- | --- |
+| Gate | `GOSAKI_STAGING_CLIENT_READY_AUDIT_PASS1_READ_ONLY_COMPLETE: true` |
+| CLIENT_SHARE_READY | **false** |
+| Package | `95ada81c8a408125370f089fb653660c702589ff` |
+| HEAD / origin/main | `ebb78fd63f8d1546864ad884a10a09368fb17e9c` |
+| Continue | **YES** → minimal human browser QA |
+| Doc | `gosaki-staging-client-ready-audit.md` |
+
+```txt
+GOSAKI_STAGING_CLIENT_READY_AUDIT_PASS1_READ_ONLY_COMPLETE: true
+CLIENT_SHARE_READY: false
+readyForMinimalHumanBrowserQa: true
+P1_BLOCKERS: 0
+auditPackageSourceCommit: 95ada81c8a408125370f089fb653660c702589ff
+PACKAGE_GENERATE_EXECUTED: false
+FTP_EXECUTED: false
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+PRODUCTION_UNCHANGED: true
+```
 
 ## 0. About Supabase vertical slice Claude audit READY WITH NON-BLOCKING (2026-07-29)
 

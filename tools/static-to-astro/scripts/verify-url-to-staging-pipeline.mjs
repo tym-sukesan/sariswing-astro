@@ -455,6 +455,12 @@ assert(
   gosakiOverrides.includes("#WRchTxt16") && gosakiOverrides.includes("#comp-jrtenw0n"),
 );
 assert(
+  "gosaki About mobile order title→photo→text",
+  /#comp-lol1i5l0 #WRchTxt16[\s\S]*?order:\s*1\s*!important/.test(gosakiOverrides) &&
+    /#comp-lol1i5l0 #comp-jrtenw0n[\s\S]*?order:\s*2\s*!important/.test(gosakiOverrides) &&
+    /#comp-lol1i5l0 #comp-jrqh3smr[\s\S]*?order:\s*3\s*!important/.test(gosakiOverrides),
+);
+assert(
   "gosaki G-8d contact mobile override",
   gosakiOverrides.includes("#WRchTxt4") && gosakiOverrides.includes("#comp-jqbwo704"),
 );

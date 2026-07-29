@@ -5,22 +5,34 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: About Supabase Claude audit COMPLETE → Next Primary = client-ready audit
-Claude verdict: READY WITH NON-BLOCKING ITEMS · BLOCKER none
-About vertical slice: CLOSED / COMPLETE / PASS (unchanged)
-package sourceCommit: 95ada81c8a408125370f089fb653660c702589ff
-aboutCloseHead: 6cbffda8556434aa17761c474f1a3f78d0dbed92
-Finding1: RESOLVED (95ada81→6cbffda docs-only 8 files · non-docs 0)
-public build-read: supabase · fieldCount=1 · overlayOutcome=noop_equal
-Save UI=false · writeBackend=supabase · GOSAKI_ABOUT_SUPABASE_SAVE_ARMED=false
-DB_BASELINE: true · STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
-Next Primary: Gosaki staging client-ready audit
-  Home / Schedule / Discography / YouTube / About / Contact / mobile / admin routes
-  (DO NOT Schedule-bias)
-readyForGosakiStagingClientReadyAudit: true
+Current phase: client-ready follow-up LOCAL COMPLETE
+  About mobile order fixed (title→photo→text @≤768px)
+  YouTube multi capability gate verified local
+CLIENT_SHARE_READY: false
+P1 blockers: none
+Next: operator commit → package+FTP (About CSS) → human browser QA §5
+  (About 375px order check required after upload)
+YouTube live SoT: still 1 item (multi Save not live — OK for 1-item share)
+audit package was: 95ada81… (About CSS not on staging until regen)
+Doc: gosaki-staging-client-ready-audit.md §11
+verify: npm run verify:gosaki-youtube-public-multi
+readyForAboutMobileStagingPackageAfterCommit: true
 readyForAnyFutureFtpApply: false
+STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
 ```
 
+## About mobile + YouTube multi follow-up (2026-07-29)
+
+- About: CSS `order` only under `#comp-lol1i5l0` @ max-width 768px
+- YouTube: schema/build/UI/Admin multi YES · live SoT 1 · Save multi not armed
+- Fixture verifier 35 PASS · url-staging PASS · font-safety PASS
+- No package/FTP/DB/Save/commit by Cursor
+
+## Gosaki staging client-ready audit pass-1 (2026-07-29)
+
+- Auto/static inventory + HTTP + verifiers recorded
+- Continue **YES** · share ready **not yet**
+- Doc: `gosaki-staging-client-ready-audit.md`
 ## About Supabase Claude audit (2026-07-29)
 
 - Verdict: **READY WITH NON-BLOCKING ITEMS** · BLOCKER **none**

@@ -1,0 +1,19 @@
+{
+  "$comment": "Local fixture only — 2 published items for public multi-item layout smoke.",
+  "siteSlug": "gosaki-piano",
+  "sectionTitle": "YouTube",
+  "items": [
+    {
+      "id": "yt-fixture-01",
+      "published": true,
+      "sortOrder": 10,
+      "embedCode": "https://youtu.be/I-eY9YMq9GI"
+    },
+    {
+      "id": "yt-fixture-02",
+      "published": true,
+      "sortOrder": 20,
+      "embedCode": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+    }
+  ]
+}

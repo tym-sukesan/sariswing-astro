@@ -1,0 +1,13 @@
+{
+  "$comment": "Local fixture only — mirrors live SoT shape (1 published). Do not use as staging Save target.",
+  "siteSlug": "gosaki-piano",
+  "sectionTitle": "YouTube",
+  "items": [
+    {
+      "id": "yt-placeholder-01",
+      "published": true,
+      "sortOrder": 10,
+      "embedCode": "https://youtu.be/I-eY9YMq9GI"
+    }
+  ]
+}

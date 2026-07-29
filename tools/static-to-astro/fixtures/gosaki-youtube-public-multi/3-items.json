@@ -1,0 +1,31 @@
+{
+  "$comment": "Local fixture only — 3 rows with 1 unpublished to prove public filter + sortOrder.",
+  "siteSlug": "gosaki-piano",
+  "sectionTitle": "YouTube",
+  "items": [
+    {
+      "id": "yt-fixture-01",
+      "published": true,
+      "sortOrder": 30,
+      "embedCode": "https://youtu.be/I-eY9YMq9GI"
+    },
+    {
+      "id": "yt-fixture-draft",
+      "published": false,
+      "sortOrder": 15,
+      "embedCode": "https://youtu.be/bbbbbbbbbbb"
+    },
+    {
+      "id": "yt-fixture-02",
+      "published": true,
+      "sortOrder": 10,
+      "embedCode": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+    },
+    {
+      "id": "yt-fixture-03",
+      "published": true,
+      "sortOrder": 20,
+      "embedCode": "https://www.youtube-nocookie.com/embed/jNQXAC9IVRw"
+    }
+  ]
+}

@@ -9,15 +9,19 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import {
   ARM_PARSE_FIXTURE_MATRIX,
+  CLIENT_TRIM_DIVERGENCE_COUNT,
+  GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED,
   HTML_SAVE_ARM_ATTRS,
-  KNOWN_DIVERGENCE_REASON,
   NON_SAVE_ARM_ENVS,
+  PARSE_POLICY_FULLY_IMPLEMENTED,
   POLICY_FULLY_IMPLEMENTED,
   SAVE_ARM_INVENTORY,
   currentBooleanHardGate,
+  currentClientArmed,
   currentClientTrimArmed,
   currentDatasetArmed,
   currentServerExactArmed,
+  historicalClientTrimArmed,
   isSaveArmExactTrue,
   policyArmedExactTrue,
 } from "./lib/cms-core-v2-save-arm-parse-policy-fixtures.mjs";
@@ -157,8 +161,13 @@ const HISTORICAL_OR_OUT_OF_SCOPE_ARM_ENVS = new Set([
 assert("policy doc exists", exists(POLICY_DOC));
 const policyDoc = read(POLICY_DOC);
 assert("policy target exact true", /raw\s*===\s*"true"|armed\s*⇔\s*raw\s*===\s*"true"/.test(policyDoc));
-assert("policy records R1 client trim", /R1|trim/.test(policyDoc));
 assert("policy production STOP independent", /production STOP independent|production.*arm/i.test(policyDoc));
+assert(
+  "policy records client wiring complete",
+  /cms-core-v2-save-arm-client-exact-true-wiring|CLIENT.*exact|PARSE_POLICY_FULLY_IMPLEMENTED:\s*true/i.test(
+    policyDoc,
+  ),
+);
 
 // --- Fixture matrix ---
 for (const row of ARM_PARSE_FIXTURE_MATRIX) {
@@ -167,29 +176,44 @@ for (const row of ARM_PARSE_FIXTURE_MATRIX) {
     policyArmedExactTrue(row.raw) === row.policy,
   );
   assert(
-    `fixture clientA[${row.label}]`,
-    currentClientTrimArmed(row.raw) === row.clientA,
+    `fixture client bake[${row.label}]`,
+    currentClientArmed(row.raw) === row.clientA,
   );
   assert(
     `fixture serverB[${row.label}]`,
     currentServerExactArmed(row.raw) === row.serverB,
   );
+  assert(
+    `client===server===policy[${row.label}]`,
+    currentClientArmed(row.raw) === row.policy &&
+      currentServerExactArmed(row.raw) === row.policy,
+  );
+  if (row.historicalTrim !== undefined) {
+    assert(
+      `historical trim fixture[${row.label}]`,
+      historicalClientTrimArmed(row.raw) === row.historicalTrim,
+    );
+  }
 }
 
 assert(
-  "padded-true diverges client vs policy",
-  currentClientTrimArmed(" true ") === true && policyArmedExactTrue(" true ") === false,
+  "padded-true now disarmed on client (wired)",
+  currentClientArmed(" true ") === false &&
+    policyArmedExactTrue(" true ") === false &&
+    currentServerExactArmed(" true ") === false,
 );
 assert(
-  "padded-true diverges client vs server",
-  currentClientTrimArmed(" true ") === true && currentServerExactArmed(" true ") === false,
+  "padded-true historically armed (regression memory)",
+  historicalClientTrimArmed(" true ") === true,
 );
 assert(
-  "True-padded disarmed on client (trim does not case-fold)",
-  currentClientTrimArmed(" True ") === false && currentServerExactArmed(" True ") === false,
+  "True-padded disarmed everywhere",
+  currentClientArmed(" True ") === false && currentServerExactArmed(" True ") === false,
 );
-assert("TRUE disarmed all families", !currentClientTrimArmed("TRUE") && !currentServerExactArmed("TRUE"));
-assert("True disarmed all families", !currentClientTrimArmed("True") && !currentServerExactArmed("True"));
+assert("TRUE disarmed all families", !currentClientArmed("TRUE") && !currentServerExactArmed("TRUE"));
+assert("True disarmed all families", !currentClientArmed("True") && !currentServerExactArmed("True"));
+// alias still works
+assert("currentClientTrimArmed alias is exact", currentClientTrimArmed(" true ") === false);
 
 assert("boolean gate true", currentBooleanHardGate(true) === true);
 assert("boolean gate false", currentBooleanHardGate(false) === false);
@@ -217,22 +241,57 @@ for (const env of NON_SAVE_ARM_ENVS) {
   assert(`non-save not in save inventory ${env}`, !inventoryEnvs.has(env));
 }
 
-// --- Client trim divergence (expected present) ---
+// --- Client bake exact wiring (R1 resolved) ---
 assert("admin ts exists", exists(ADMIN_TS));
 const adminTs = read(ADMIN_TS);
 for (const arm of SAVE_ARM_INVENTORY.filter((a) => a.layer === "client")) {
   assert(`client env in admin ts ${arm.env}`, adminTs.includes(arm.env));
 }
+assert("admin imports isSaveArmExactTrue", /isSaveArmExactTrue/.test(adminTs));
+assert("admin imports save-arm-utils", /from ["']\.\/save-arm-utils["']/.test(adminTs));
+
+const saveArmFns = [
+  "isG20u45ScheduleOperationalSaveArmed",
+  "isG20u41DiscographyOperationalSaveArmed",
+  "isG11c6aSaveEnabled",
+  "isGosakiYoutubeSupabaseSaveEnabled",
+  "isG12aAboutSaveEnabled",
+  "isGosakiAboutSupabaseSaveEnabled",
+];
+for (const fn of saveArmFns) {
+  const m = adminTs.match(
+    new RegExp(`export function ${fn}\\([\\s\\S]*?\\n\\}`, "m"),
+  );
+  const body = m ? m[0] : "";
+  assert(`${fn} uses isSaveArmExactTrue`, /isSaveArmExactTrue\(/.test(body));
+  assert(`${fn} has no trim===true`, !/\.trim\(\)\s*===\s*"true"/.test(body));
+}
+
+// Path-enable may still use trim (not Save arms)
 assert(
-  "client known trim divergence present",
-  /\.trim\(\)\s*===\s*"true"/.test(adminTs),
-  "expected Family A trim in read-only-admin",
+  "path-enable may retain trim (non-save)",
+  /isGosakiYoutubeSupabasePathEnabled[\s\S]*?\.trim\(\)\s*===\s*"true"/.test(adminTs) ||
+    /YOUTUBE_SUPABASE_PATH_ENABLED[\s\S]{0,200}\.trim\(\)\s*===\s*"true"/.test(adminTs),
 );
+
+assert("PARSE_POLICY_FULLY_IMPLEMENTED true", PARSE_POLICY_FULLY_IMPLEMENTED === true);
+assert("POLICY_FULLY_IMPLEMENTED true (parse)", POLICY_FULLY_IMPLEMENTED === true);
+assert("CLIENT_TRIM_DIVERGENCE_COUNT 0", CLIENT_TRIM_DIVERGENCE_COUNT === 0);
 assert(
-  "policyFullyImplemented is false",
-  POLICY_FULLY_IMPLEMENTED === false,
+  "GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED false",
+  GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED === false,
 );
-assert("known divergence reason recorded", KNOWN_DIVERGENCE_REASON.includes("trim"));
+
+const templateHelper = path.join(
+  TOOL_ROOT,
+  "templates/site-extensions/gosaki-piano/save-arm-utils.ts",
+);
+assert("template save-arm-utils mirror exists", exists(templateHelper));
+const templateHelperSrc = read(templateHelper);
+assert(
+  "template mirror is raw === \"true\"",
+  /return raw === "true"/.test(templateHelperSrc) && !/\.trim\(/.test(templateHelperSrc),
+);
 
 // --- Server exact ---
 for (const [env, files] of Object.entries(SERVER_HANDLER_FILES)) {
@@ -325,11 +384,14 @@ assert(
   /Save UI must stay false/.test(marker),
 );
 assert(
-  "package bake uses trim for About UI arm (known A)",
-  /PUBLIC_ADMIN_GOSAKI_ABOUT_SUPABASE_SAVE_UI_ARMED[\s\S]{0,80}\.trim\(\)\s*===\s*"true"/.test(
-    marker,
-  ) ||
-    /SAVE_UI_ARMED[\s\S]{0,120}\.trim\(\)\s*===\s*"true"/.test(marker),
+  "package bake uses isSaveArmExactTrue for About UI arm",
+  /isSaveArmExactTrue\(\s*e\.PUBLIC_ADMIN_GOSAKI_ABOUT_SUPABASE_SAVE_UI_ARMED\s*\)/.test(marker) ||
+    /aboutSaveUiArmed:\s*isSaveArmExactTrue/.test(marker),
+);
+assert(
+  "package path/build-read may still trim (non-save)",
+  /PATH_ENABLED[\s\S]{0,80}\.trim\(\)\s*===\s*"true"/.test(marker) ||
+    /SITE_PAGE_FIELDS_BUILD_READ[\s\S]{0,80}\.trim\(\)\s*===\s*"true"/.test(marker),
 );
 
 // Multi-arm gap (explicit — do not pretend full mutex)
@@ -435,22 +497,23 @@ for (const env of inventoryEnvs) {
 }
 
 // --- Overall compliance flag (must NOT claim full compliance) ---
-const clientNonCompliant = SAVE_ARM_INVENTORY.filter(
-  (a) => a.layer === "client" && a.policyCompliant === false,
+const clientCompliant = SAVE_ARM_INVENTORY.filter(
+  (a) => a.layer === "client" && a.policyCompliant === true,
 );
 const serverCompliant = SAVE_ARM_INVENTORY.filter(
   (a) => a.layer === "server" && a.policyCompliant === true,
 );
-assert("all 6 clients marked non-compliant (trim)", clientNonCompliant.length === 6);
+assert("all 6 clients marked compliant (exact)", clientCompliant.length === 6);
 assert("all 6 servers marked compliant (exact)", serverCompliant.length === 6);
 assert(
-  "verifier does not claim full policy implementation",
-  POLICY_FULLY_IMPLEMENTED === false &&
-    clientNonCompliant.length > 0 &&
-    /trim/.test(KNOWN_DIVERGENCE_REASON),
+  "parse policy fully implemented; multi-arm mutex still separate",
+  PARSE_POLICY_FULLY_IMPLEMENTED === true &&
+    POLICY_FULLY_IMPLEMENTED === true &&
+    GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED === false &&
+    CLIENT_TRIM_DIVERGENCE_COUNT === 0,
 );
 
-// --- Exact-true helper present but unwired ---
+// --- Exact-true helper present; client bake wired; Edge still separate ---
 const SAVE_ARM_UTILS = path.join(TOOL_ROOT, "scripts/lib/save-arm-utils.mjs");
 assert("save-arm-utils helper exists", exists(SAVE_ARM_UTILS));
 assert(
@@ -465,16 +528,19 @@ assert(
     isSaveArmExactTrueDirect(" true ") === false,
 );
 assert(
-  "admin runtime still does not import save-arm-utils",
-  !/save-arm-utils|isSaveArmExactTrue/.test(adminTs),
+  "admin runtime uses isSaveArmExactTrue",
+  /isSaveArmExactTrue/.test(adminTs),
 );
 assert(
-  "package-run-marker still does not import save-arm-utils",
-  !/save-arm-utils|isSaveArmExactTrue/.test(marker),
+  "package-run-marker imports save-arm-utils",
+  /from ["']\.\/save-arm-utils\.mjs["']/.test(marker),
 );
 
-console.log(`\nPOLICY_FULLY_IMPLEMENTED: ${POLICY_FULLY_IMPLEMENTED}`);
-console.log(`KNOWN_DIVERGENCE: ${KNOWN_DIVERGENCE_REASON}`);
+console.log(`\nPARSE_POLICY_FULLY_IMPLEMENTED: ${PARSE_POLICY_FULLY_IMPLEMENTED}`);
+console.log(`POLICY_FULLY_IMPLEMENTED: ${POLICY_FULLY_IMPLEMENTED}`);
+console.log(`CLIENT_TRIM_DIVERGENCE_COUNT: ${CLIENT_TRIM_DIVERGENCE_COUNT}`);
+console.log(`GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED: ${GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED}`);
+console.log(`KNOWN_DIVERGENCE: (none for parse policy)`);
 console.log(`inventory: ${SAVE_ARM_INVENTORY.length} arms`);
 console.log(`discovered arm-like literals: ${discovered.size}`);
 console.log(`\n${passed} passed, ${failed} failed`);

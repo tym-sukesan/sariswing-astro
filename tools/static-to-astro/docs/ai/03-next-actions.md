@@ -4,10 +4,41 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 ## 0. Current next actions（直近）
 
 1. **Primary (Gosaki ops):** クライアントへ **staging 共有**（`CLIENT_SHARE_READY: true` · package `dc1c5b6…`）。本番 cutover はしない。
-2. **並行可 (Kit Core):** CMS Core v2 一般化 next — Save arm client bake no-trim wiring（**別承認** · R1）· Edge `requireUser` / staging-ref は OPTIONS 契約揃え後の **別 phase** · Contents YouTube 退役は **別 phase**。
+2. **並行可 (Kit Core):** optional Edge shared Save-arm helper / global multi-arm mutex（**別承認** · parse policy は完了）· Contents YouTube 退役は **別 phase**。
 3. **並行可:** production hosting **read-only planning**（`HOSTING_READY: false`）。
 4. **並行可 / 別承認:** YouTube 複数件 **永続 Save**（NON_BLOCKING）。
 5. Save arm **false** · `readyForAnyFutureFtpApply: false` · production STOP · `service_role` 禁止 · **deployed package 固定**（一般化で regen 不要）。
+
+## 0. CMS Core v2 Save arm client exact-true wiring (2026-07-29)
+
+| Item | Value |
+| --- | --- |
+| Gate | `CMS_CORE_V2_SAVE_ARM_CLIENT_EXACT_TRUE_WIRING_COMPLETE: true` |
+| Phase | `cms-core-v2-save-arm-client-exact-true-wiring` |
+| Client Save arms | exact `"true"` via `isSaveArmExactTrue` (6 features) |
+| Package bake | `aboutSaveUiArmed` via helper |
+| PARSE_POLICY_FULLY_IMPLEMENTED | **true** |
+| CLIENT_TRIM_DIVERGENCE_COUNT | **0** |
+| GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED | **false** (separate) |
+| Edge | **unchanged** |
+| Doc | `cms-core-v2-save-arm-parse-policy.md` §13 |
+
+```txt
+CMS_CORE_V2_SAVE_ARM_CLIENT_EXACT_TRUE_WIRING_COMPLETE: true
+PARSE_POLICY_FULLY_IMPLEMENTED: true
+POLICY_FULLY_IMPLEMENTED: true
+CLIENT_TRIM_DIVERGENCE_COUNT: 0
+GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED: false
+HELPER_WIRED_TO_CLIENT_BAKE: true
+HELPER_WIRED_TO_EDGE: false
+SAVE_ARM_LIVE_VALUES_UNCHANGED: true
+PACKAGE_GENERATE_EXECUTED: false
+FTP_EXECUTED: false
+GOSAKI_CLIENT_SHARE_READY_MAINTAINED: true
+deployedPackageSourceCommitUnchanged: dc1c5b62a58d0462ad6629db4847256d316d4a38
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+PRODUCTION_UNCHANGED: true
+```
 
 ## 0. CMS Core v2 Save arm exact-true helper (2026-07-29)
 
@@ -16,17 +47,15 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Gate | `CMS_CORE_V2_SAVE_ARM_EXACT_TRUE_HELPER_COMPLETE: true` |
 | Helper | `scripts/lib/save-arm-utils.mjs` · `isSaveArmExactTrue` |
 | npm | `verify:cms-core-v2-save-arm-exact-true` |
-| HELPER_WIRED_TO_RUNTIME | **false** |
-| POLICY_FULLY_IMPLEMENTED | **false** (client trim retained) |
-| Doc | `cms-core-v2-save-arm-parse-policy.md` §12 |
+| Wiring status | **superseded by client exact-true wiring** |
+| Doc | `cms-core-v2-save-arm-parse-policy.md` §12–§13 |
 
 ```txt
 CMS_CORE_V2_SAVE_ARM_EXACT_TRUE_HELPER_COMPLETE: true
 HELPER_IMPLEMENTED: true
-HELPER_WIRED_TO_RUNTIME: false
-POLICY_FULLY_IMPLEMENTED: false
-PARSER_CODE_CHANGED: false
-CLIENT_TRIM_RETAINED: true
+HELPER_WIRED_TO_CLIENT_BAKE: true
+HELPER_WIRED_TO_EDGE: false
+PARSE_POLICY_FULLY_IMPLEMENTED: true
 PACKAGE_GENERATE_EXECUTED: false
 FTP_EXECUTED: false
 GOSAKI_CLIENT_SHARE_READY_MAINTAINED: true
@@ -41,15 +70,13 @@ PRODUCTION_UNCHANGED: true
 | --- | --- |
 | Gate | `CMS_CORE_V2_SAVE_ARM_PARSE_POLICY_VERIFIER_COMPLETE: true` |
 | npm | `verify:cms-core-v2-save-arm-parse-policy` |
-| POLICY_FULLY_IMPLEMENTED | **false** (expected · R1 client trim) |
-| Parser / Edge / arm code | **unchanged** |
-| Doc | `cms-core-v2-save-arm-parse-policy.md` §11 |
+| PARSE_POLICY_FULLY_IMPLEMENTED | **true** (post client wiring) |
+| Doc | `cms-core-v2-save-arm-parse-policy.md` §11 / §13 |
 
 ```txt
 CMS_CORE_V2_SAVE_ARM_PARSE_POLICY_VERIFIER_COMPLETE: true
-POLICY_FULLY_IMPLEMENTED: false
-PARSER_CODE_CHANGED: false
-HELPER_WIRED_TO_RUNTIME: false
+PARSE_POLICY_FULLY_IMPLEMENTED: true
+GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED: false
 PACKAGE_GENERATE_EXECUTED: false
 FTP_EXECUTED: false
 GOSAKI_CLIENT_SHARE_READY_MAINTAINED: true
@@ -63,17 +90,15 @@ PRODUCTION_UNCHANGED: true
 | Item | Value |
 | --- | --- |
 | Gate | `CMS_CORE_V2_SAVE_ARM_PARSE_POLICY_COMPLETE: true` |
-| Code / helper | **false** (docs-only) |
-| Recommended SoT | exact `"true"` · no trim (Edge family) |
-| Known divergence | Client bake uses `.trim() === "true"` (R1) |
+| Recommended SoT | exact `"true"` · no trim |
+| R1 client trim | **RESOLVED** (§13) |
 | CLIENT_SHARE_READY | **true**（維持） |
 | Deployed package | `dc1c5b6…` **unchanged** |
 | Doc | `cms-core-v2-save-arm-parse-policy.md` |
 
 ```txt
 CMS_CORE_V2_SAVE_ARM_PARSE_POLICY_COMPLETE: true
-CODE_CHANGED: false
-HELPER_IMPLEMENTED: false
+PARSE_POLICY_FULLY_IMPLEMENTED: true
 SAVE_ARM_CHANGED: false
 PACKAGE_GENERATE_EXECUTED: false
 FTP_EXECUTED: false

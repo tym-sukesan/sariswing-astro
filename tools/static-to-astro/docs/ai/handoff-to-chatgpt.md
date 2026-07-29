@@ -5,33 +5,43 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: CMS Core v2 Save arm exact-true helper COMPLETE (unwired)
-Helper: scripts/lib/save-arm-utils.mjs · isSaveArmExactTrue(raw === "true")
-HELPER_WIRED_TO_RUNTIME: false · client trim retained · POLICY_FULLY_IMPLEMENTED: false
+Current phase: CMS Core v2 Save arm client exact-true wiring COMPLETE
+Phase: cms-core-v2-save-arm-client-exact-true-wiring
+Client Save arms + About package bake → isSaveArmExactTrue (exact "true")
+PARSE_POLICY_FULLY_IMPLEMENTED: true · CLIENT_TRIM_DIVERGENCE_COUNT: 0
+GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED: false (separate · not confused with parse)
+HELPER_WIRED_TO_CLIENT_BAKE: true · HELPER_WIRED_TO_EDGE: false
 npm: verify:cms-core-v2-save-arm-exact-true · verify:cms-core-v2-save-arm-parse-policy
 Gosaki CLIENT_SHARE_READY: true (maintained)
 deployed package: dc1c5b62a58d0462ad6629db4847256d316d4a38 (unchanged; no regen)
 Next Primary (ops): share staging with client
-Next (Kit Core): client bake no-trim wiring (explicit approval) · Edge shared arm later
-  Parallel: Edge staging-ref / requireUser · Contents YouTube retire separate
+Next (Kit Core): optional Edge shared arm helper / global multi-arm mutex (explicit approval)
+  Parallel: Contents YouTube retire separate
 readyForAnyFutureFtpApply: false
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
-Doc: cms-core-v2-save-arm-parse-policy.md §12
+Doc: cms-core-v2-save-arm-parse-policy.md §13
 ```
+
+## CMS Core v2 Save arm client exact-true wiring (2026-07-29)
+
+- 6 client Save arms + package-run-marker About UI arm → exact `"true"`
+- Template mirror: `templates/site-extensions/gosaki-piano/save-arm-utils.ts`
+- R1 (`" true "` client/server mismatch) **RESOLVED**
+- Doc: `cms-core-v2-save-arm-parse-policy.md` §13
 
 ## CMS Core v2 Save arm exact-true helper (2026-07-29)
 
-- Core `isSaveArmExactTrue` added · runtime unwired
-- Doc: `cms-core-v2-save-arm-parse-policy.md` §12
+- Core `isSaveArmExactTrue` · client bake now wired (§13)
+- Doc: `cms-core-v2-save-arm-parse-policy.md` §12–§13
 
 ## CMS Core v2 Save arm parse policy verifier (2026-07-29)
 
-- Read-only verifier + fixtures · known client trim divergence expected
-- Doc: `cms-core-v2-save-arm-parse-policy.md` §11
+- Post-wiring: parse policy fully implemented; multi-arm mutex still false
+- Doc: `cms-core-v2-save-arm-parse-policy.md` §11 / §13
 
 ## CMS Core v2 Save arm parse policy (2026-07-29)
 
-- Inventory + unified policy · helper now exists but unwired
+- Inventory + unified policy · R1 resolved in wiring phase
 - Doc: `cms-core-v2-save-arm-parse-policy.md`
 
 ## CMS Core v2 admin staging-ref assert helper (2026-07-29)

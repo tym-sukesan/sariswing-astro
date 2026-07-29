@@ -158,7 +158,7 @@ PRODUCTION_UNCHANGED: true
 
 | ID | Issue | Severity | Notes |
 | --- | --- | --- | --- |
-| R1 | Client trim vs Edge no-trim (`" true "` mismatch) | **P2** | UI can look armed while server rejects; `" True "` is disarmed on both |
+| R1 | Client trim vs Edge no-trim (`" true "` mismatch) | **RESOLVED** (§13) | Client Save arms now exact `"true"`; path/build-read may still trim |
 | R2 | `isExactTrue` name vs trim implementation | P3 | Misleading for future Core helper |
 | R3 | Operational multi-feature arms: no hard fail if several PUBLIC_* are true at once | P2 | About **package** verifier enforces other attrs false; bake-time does not globally mutex Schedule∩YouTube∩Discography∩About |
 | R4 | Path env + Save UI env both true possible; path selects one | P3 | Not dual-write, but operator confusion |
@@ -260,8 +260,8 @@ Stop and ask the operator if a follow-up phase would:
 | Option | Recommendation |
 | --- | --- |
 | `cms-core-v2-save-arm-parse-policy-verifier` | **Done** — `npm run verify:cms-core-v2-save-arm-parse-policy` |
-| `cms-core-v2-save-arm-exact-true-helper` | **Done** — `scripts/lib/save-arm-utils.mjs` · **runtime unwired** |
-| Client bake no-trim alignment | **Next** — separate explicit approval (R1 fix: `" true "` only) |
+| `cms-core-v2-save-arm-exact-true-helper` | **Done** — `scripts/lib/save-arm-utils.mjs` · client bake wired (§13) |
+| Client bake no-trim alignment | **Done** — `cms-core-v2-save-arm-client-exact-true-wiring` |
 | Edge shared arm helper | After Deno OPTIONS / staging-ref phases as needed |
 | Contents YouTube retire | Unrelated · separate |
 
@@ -303,9 +303,9 @@ HELPER_WIRED_TO_RUNTIME: false
 - **Verifier:** `scripts/verify-cms-core-v2-save-arm-exact-true-helper.mjs`
 - **npm:** `verify:cms-core-v2-save-arm-exact-true`
 - **Fixtures:** `policyArmedExactTrue` delegates to helper (verifier SoT alignment)
-- **Runtime wiring:** **false** — Admin / Edge / package-run-marker / operational edit **未 import**
-- **Client `.trim() === "true"`:** **retained** (R1 still open)
-- **POLICY_FULLY_IMPLEMENTED:** **false** (unchanged)
+- **Runtime wiring (historical):** false at helper-only phase — **superseded by §13** (client bake + package-run-marker wired; Edge still unwired)
+- **Client `.trim() === "true"` (historical):** retained at helper-only phase — **superseded by §13**
+- **POLICY_FULLY_IMPLEMENTED (historical):** false at helper-only phase — **superseded by §13** (`PARSE_POLICY_FULLY_IMPLEMENTED: true`)
 
 ```txt
 CMS_CORE_V2_SAVE_ARM_EXACT_TRUE_HELPER_COMPLETE: true
@@ -328,13 +328,56 @@ no trim · no case-fold · no throw
 
 ---
 
-## 13. Safety (policy + verifier + helper phases)
+## 13. Client bake exact-true wiring (`cms-core-v2-save-arm-client-exact-true-wiring`)
+
+- **Status:** **COMPLETE**
+- **Phase:** `cms-core-v2-save-arm-client-exact-true-wiring`
+- **Change:** Client Save-arm parsers + About package bake flag → `isSaveArmExactTrue(raw)` (exact `"true"`)
+- **Template mirror:** `templates/site-extensions/gosaki-piano/save-arm-utils.ts` (Astro cannot import `scripts/lib`)
+- **Wired surfaces:**
+  - Schedule / Discography / YouTube Contents / YouTube Supabase / About Contents / About Supabase (admin bake)
+  - `package-run-marker.mjs` → `aboutSaveUiArmed`
+- **Not changed:** Edge / Deno / server arms · path-enable / build-read trim · dual-arm · production STOP · Save arm live values · UI layout
+- **R1 resolved:** `" true "` now **disarmed** on client (matches server)
+- **Parse policy:** `PARSE_POLICY_FULLY_IMPLEMENTED: true` · `CLIENT_TRIM_DIVERGENCE_COUNT: 0`
+- **Multi-arm mutex:** still **unimplemented** (`GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED: false`) — separate from parse policy
+
+### Matrix (post wiring)
+
+| Input | Client bake | Server / Edge | Policy |
+| --- | --- | --- | --- |
+| `"true"` | armed | armed | armed |
+| unset / `""` / `"false"` / junk | disarmed | disarmed | disarmed |
+| `" true "` / `"True"` / `"TRUE"` | disarmed | disarmed | disarmed |
+| boolean `true` | disarmed | disarmed | disarmed |
+
+```txt
+CMS_CORE_V2_SAVE_ARM_CLIENT_EXACT_TRUE_WIRING_COMPLETE: true
+PARSE_POLICY_FULLY_IMPLEMENTED: true
+POLICY_FULLY_IMPLEMENTED: true
+CLIENT_TRIM_DIVERGENCE_COUNT: 0
+GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED: false
+HELPER_WIRED_TO_CLIENT_BAKE: true
+HELPER_WIRED_TO_EDGE: false
+SAVE_ARM_LIVE_VALUES_UNCHANGED: true
+PACKAGE_GENERATE_EXECUTED: false
+FTP_EXECUTED: false
+GOSAKI_CLIENT_SHARE_READY_MAINTAINED: true
+deployedPackageSourceCommitUnchanged: dc1c5b62a58d0462ad6629db4847256d316d4a38
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+PRODUCTION_UNCHANGED: true
+```
+
+---
+
+## 14. Safety (policy + verifier + helper + client wiring)
 
 | Check | Result |
 | --- | --- |
-| 実装変更なし | **true** |
-| Save arm 未変更 | **true** |
-| package / FTP / DB / Edge なし | **true** |
+| client Save-arm exact wiring | **true** |
+| Edge / Deno 未変更 | **true** |
+| Save arm live 値 未変更 | **true** |
+| package / FTP / DB なし | **true** |
 | production 未操作 | **true** |
 | CLIENT_SHARE_READY 維持 | **true** |
 | commit / push なし（Cursor） | **true** |

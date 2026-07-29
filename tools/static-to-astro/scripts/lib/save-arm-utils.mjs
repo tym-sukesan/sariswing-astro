@@ -4,9 +4,9 @@
  *
  * No trim · no case-fold · never throws (invalid → disarmed).
  *
- * Runtime wiring (Admin bake / Edge / package) is intentionally deferred —
- * see cms-core-v2-save-arm-parse-policy.md. Do not import from Gosaki feature
- * parsers until an explicit wiring phase.
+ * Client bake / package-run-marker Save UI arms are wired (see
+ * cms-core-v2-save-arm-client-exact-true-wiring). Edge / Deno remain exact
+ * `"true"` locally and do not import this module yet.
  */
 
 /**

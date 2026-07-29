@@ -1,6 +1,6 @@
 /**
  * CMS Core v2 — Save arm exact-true helper verifier.
- * Confirms helper contract + unwired status. Does not change runtime parsers.
+ * Confirms helper contract + client bake wiring (Edge remains unwired).
  */
 
 import fs from "node:fs";
@@ -9,6 +9,9 @@ import { fileURLToPath } from "node:url";
 import { isSaveArmExactTrue } from "./lib/save-arm-utils.mjs";
 import {
   ARM_PARSE_FIXTURE_MATRIX,
+  CLIENT_TRIM_DIVERGENCE_COUNT,
+  GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED,
+  PARSE_POLICY_FULLY_IMPLEMENTED,
   POLICY_FULLY_IMPLEMENTED,
   policyArmedExactTrue,
 } from "./lib/cms-core-v2-save-arm-parse-policy-fixtures.mjs";
@@ -18,6 +21,15 @@ const TOOL_ROOT = path.resolve(__dirname, "..");
 const REPO_ROOT = path.resolve(TOOL_ROOT, "../..");
 const HELPER = path.join(TOOL_ROOT, "scripts/lib/save-arm-utils.mjs");
 const POLICY_DOC = path.join(TOOL_ROOT, "docs/cms-core-v2-save-arm-parse-policy.md");
+const ADMIN_TS = path.join(
+  TOOL_ROOT,
+  "templates/site-extensions/gosaki-piano/gosaki-staging-read-only-admin.ts",
+);
+const TEMPLATE_HELPER = path.join(
+  TOOL_ROOT,
+  "templates/site-extensions/gosaki-piano/save-arm-utils.ts",
+);
+const PACKAGE_MARKER = path.join(TOOL_ROOT, "scripts/lib/package-run-marker.mjs");
 
 let passed = 0;
 let failed = 0;
@@ -78,28 +90,31 @@ for (const [label, raw, expected] of EXTRA) {
   assert(`helper extra[${label}]`, isSaveArmExactTrue(raw) === expected);
 }
 
-assert("POLICY_FULLY_IMPLEMENTED still false", POLICY_FULLY_IMPLEMENTED === false);
+assert("PARSE_POLICY_FULLY_IMPLEMENTED true", PARSE_POLICY_FULLY_IMPLEMENTED === true);
+assert("POLICY_FULLY_IMPLEMENTED true", POLICY_FULLY_IMPLEMENTED === true);
+assert("CLIENT_TRIM_DIVERGENCE_COUNT 0", CLIENT_TRIM_DIVERGENCE_COUNT === 0);
+assert(
+  "GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED false",
+  GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED === false,
+);
 
-// Unwired: runtime / feature paths must not import save-arm-utils
-const runtimeRoots = [
-  path.join(TOOL_ROOT, "templates/site-extensions/gosaki-piano"),
+// Client bake wired; Edge / supabase functions must NOT import save-arm-utils
+const edgeRoots = [
   path.join(TOOL_ROOT, "scripts/edge-functions"),
   path.join(REPO_ROOT, "supabase/functions"),
 ];
-const runtimeFiles = runtimeRoots.flatMap((root) =>
-  walkFiles(root, [".ts", ".mjs", ".js", ".astro"]),
-);
-const runtimeHits = runtimeFiles.filter((f) => {
+const edgeFiles = edgeRoots.flatMap((root) => walkFiles(root, [".ts", ".mjs", ".js"]));
+const edgeHits = edgeFiles.filter((f) => {
   const text = fs.readFileSync(f, "utf8");
   return /save-arm-utils/.test(text) || /isSaveArmExactTrue/.test(text);
 });
 assert(
-  "helper unwired from Admin/Edge/supabase runtime",
-  runtimeHits.length === 0,
-  runtimeHits.map((f) => path.relative(REPO_ROOT, f)).join(", "),
+  "helper unwired from Edge/supabase",
+  edgeHits.length === 0,
+  edgeHits.map((f) => path.relative(REPO_ROOT, f)).join(", "),
 );
 
-// package-run-marker + operational libs (except fixtures/verifiers) unwired
+// Allowed Node wiring: package-run-marker + fixtures (and this verifier)
 const libDir = path.join(TOOL_ROOT, "scripts/lib");
 const libFiles = walkFiles(libDir, [".mjs"]).filter((f) => {
   const base = path.basename(f);
@@ -112,34 +127,74 @@ const libHits = libFiles.filter((f) => {
   const text = fs.readFileSync(f, "utf8");
   return /save-arm-utils|isSaveArmExactTrue/.test(text);
 });
+const allowedLib = new Set(["package-run-marker.mjs"]);
+const unexpectedLib = libHits.filter((f) => !allowedLib.has(path.basename(f)));
 assert(
-  "helper unwired from scripts/lib consumers (except fixtures)",
-  libHits.length === 0,
-  libHits.map((f) => path.basename(f)).join(", "),
+  "helper lib wiring limited to package-run-marker (+ fixtures)",
+  unexpectedLib.length === 0,
+  unexpectedLib.map((f) => path.basename(f)).join(", "),
+);
+assert(
+  "package-run-marker imports isSaveArmExactTrue",
+  /isSaveArmExactTrue/.test(fs.readFileSync(PACKAGE_MARKER, "utf8")),
 );
 
-// Client trim still present (must not have been removed this phase)
-const adminTs = path.join(
-  TOOL_ROOT,
-  "templates/site-extensions/gosaki-piano/gosaki-staging-read-only-admin.ts",
-);
-assert("admin ts exists", fs.existsSync(adminTs));
+assert("admin ts exists", fs.existsSync(ADMIN_TS));
+const adminTs = fs.readFileSync(ADMIN_TS, "utf8");
+assert("admin imports isSaveArmExactTrue", /isSaveArmExactTrue/.test(adminTs));
+assert("admin imports ./save-arm-utils", /from ["']\.\/save-arm-utils["']/.test(adminTs));
+
+const saveArmFns = [
+  "isG20u45ScheduleOperationalSaveArmed",
+  "isG20u41DiscographyOperationalSaveArmed",
+  "isG11c6aSaveEnabled",
+  "isGosakiYoutubeSupabaseSaveEnabled",
+  "isG12aAboutSaveEnabled",
+  "isGosakiAboutSupabaseSaveEnabled",
+];
+for (const fn of saveArmFns) {
+  const m = adminTs.match(new RegExp(`export function ${fn}\\([\\s\\S]*?\\n\\}`, "m"));
+  const body = m ? m[0] : "";
+  assert(`${fn} uses isSaveArmExactTrue`, /isSaveArmExactTrue\(/.test(body));
+  assert(`${fn} has no trim===true`, !/\.trim\(\)\s*===\s*"true"/.test(body));
+}
+
+assert("template mirror exists", fs.existsSync(TEMPLATE_HELPER));
+const templateSrc = fs.readFileSync(TEMPLATE_HELPER, "utf8");
 assert(
-  "client trim divergence retained",
-  /\.trim\(\)\s*===\s*"true"/.test(fs.readFileSync(adminTs, "utf8")),
+  "template mirror raw === \"true\"",
+  /return raw === "true"/.test(templateSrc) && !/\.trim\(/.test(templateSrc),
+);
+
+// Path-enable may still trim (non-save)
+assert(
+  "path-enable may retain trim (non-save)",
+  /isGosakiYoutubeSupabasePathEnabled[\s\S]*?\.trim\(\)\s*===\s*"true"/.test(adminTs) ||
+    /YOUTUBE_SUPABASE_PATH_ENABLED[\s\S]{0,200}\.trim\(\)\s*===\s*"true"/.test(adminTs),
 );
 
 assert("policy doc exists", fs.existsSync(POLICY_DOC));
 const doc = fs.readFileSync(POLICY_DOC, "utf8");
 assert("doc mentions save-arm-utils", /save-arm-utils\.mjs/.test(doc));
-assert("doc helper unwired gate", /HELPER_WIRED_TO_RUNTIME:\s*false/.test(doc));
 assert(
-  "doc exact-true helper phase",
-  /cms-core-v2-save-arm-exact-true-helper/.test(doc),
+  "doc client wiring phase",
+  /cms-core-v2-save-arm-client-exact-true-wiring/.test(doc),
+);
+assert(
+  "doc PARSE_POLICY_FULLY_IMPLEMENTED true",
+  /PARSE_POLICY_FULLY_IMPLEMENTED:\s*true/.test(doc),
+);
+assert(
+  "doc GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED false",
+  /GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED:\s*false/.test(doc),
 );
 
-console.log(`\nHELPER_WIRED_TO_RUNTIME: false`);
+console.log(`\nHELPER_WIRED_TO_CLIENT_BAKE: true`);
+console.log(`HELPER_WIRED_TO_EDGE: false`);
+console.log(`PARSE_POLICY_FULLY_IMPLEMENTED: ${PARSE_POLICY_FULLY_IMPLEMENTED}`);
 console.log(`POLICY_FULLY_IMPLEMENTED: ${POLICY_FULLY_IMPLEMENTED}`);
+console.log(`CLIENT_TRIM_DIVERGENCE_COUNT: ${CLIENT_TRIM_DIVERGENCE_COUNT}`);
+console.log(`GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED: ${GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED}`);
 console.log(`\n${passed} passed, ${failed} failed`);
 if (failed > 0) process.exit(1);
 console.log("OK cms-core-v2-save-arm-exact-true-helper");

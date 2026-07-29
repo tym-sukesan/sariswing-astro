@@ -11,6 +11,7 @@ import {
   PRODUCTION_REF_STOP,
   STAGING_PROJECT_REF,
 } from "./supabase-staging-ref-utils.mjs";
+import { isSaveArmExactTrue } from "./save-arm-utils.mjs";
 
 export const PACKAGE_RUN_MARKER_NAME = "PACKAGE_RUN.json";
 export const STALE_BACKUP_DIR_NAME = "_stale-backup";
@@ -65,8 +66,7 @@ export function resolveAboutAdminPathBakeFromEnv(env = process.env) {
       String(e.PUBLIC_ADMIN_GOSAKI_ABOUT_SUPABASE_PATH_ENABLED ?? "").trim() === "true"
         ? "supabase"
         : "contents",
-    aboutSaveUiArmed:
-      String(e.PUBLIC_ADMIN_GOSAKI_ABOUT_SUPABASE_SAVE_UI_ARMED ?? "").trim() === "true",
+    aboutSaveUiArmed: isSaveArmExactTrue(e.PUBLIC_ADMIN_GOSAKI_ABOUT_SUPABASE_SAVE_UI_ARMED),
     publicAboutBuildRead:
       String(e.CMS_KIT_SITE_PAGE_FIELDS_BUILD_READ ?? "").trim() === "true",
   };

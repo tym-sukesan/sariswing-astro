@@ -5,6 +5,7 @@
 
 import type { GosakiYoutubeEmbedConfig } from "./gosaki-youtube-embed";
 import { parseYoutubeVideoId, resolvePublishedGosakiYoutubeItems } from "./gosaki-youtube-embed";
+import { isSaveArmExactTrue } from "./save-arm-utils";
 
 export const GOSAKI_READ_ONLY_ADMIN_MARKER = "gosaki-read-only-admin";
 export const GOSAKI_STAGING_SITE_SLUG = "gosaki-piano";
@@ -476,7 +477,7 @@ export function buildScheduleSaveEndpointRequest(
 }
 
 export function isG20u45ScheduleOperationalSaveArmed(env: ImportMetaEnv): boolean {
-  return String(env[G20U45_SCHEDULE_SAVE_UI_ARMED_ENV as keyof ImportMetaEnv] ?? "").trim() === "true";
+  return isSaveArmExactTrue(env[G20U45_SCHEDULE_SAVE_UI_ARMED_ENV as keyof ImportMetaEnv]);
 }
 
 export function assertGosakiScheduleSaveEndpointSafe(endpoint: string): boolean {
@@ -731,7 +732,7 @@ export function resolveG20u41DiscographySaveEndpoint(env: ImportMetaEnv): string
 }
 
 export function isG20u41DiscographyOperationalSaveArmed(env: ImportMetaEnv): boolean {
-  return String(env[G20U41_DISCOGRAPHY_SAVE_UI_ARMED_ENV as keyof ImportMetaEnv] ?? "").trim() === "true";
+  return isSaveArmExactTrue(env[G20U41_DISCOGRAPHY_SAVE_UI_ARMED_ENV as keyof ImportMetaEnv]);
 }
 
 export function assertG20u41DiscographySaveEndpointSafe(endpoint: string): boolean {
@@ -1125,7 +1126,7 @@ export function resolveG11c6aSaveEndpoint(env: ImportMetaEnv): string {
 }
 
 export function isG11c6aSaveEnabled(env: ImportMetaEnv): boolean {
-  return String(env.PUBLIC_ADMIN_GOSAKI_YOUTUBE_URL_WEB_SAVE_NON_DRY_RUN_ARMED ?? "").trim() === "true";
+  return isSaveArmExactTrue(env.PUBLIC_ADMIN_GOSAKI_YOUTUBE_URL_WEB_SAVE_NON_DRY_RUN_ARMED);
 }
 
 /** Opt-in Supabase YouTube path. Default false — Contents G-11c* path unchanged. */
@@ -1134,7 +1135,7 @@ export function isGosakiYoutubeSupabasePathEnabled(env: ImportMetaEnv | Record<s
 }
 
 export function isGosakiYoutubeSupabaseSaveEnabled(env: ImportMetaEnv | Record<string, unknown>): boolean {
-  return String((env as Record<string, unknown>)[YOUTUBE_SUPABASE_SAVE_UI_ARMED_ENV] ?? "").trim() === "true";
+  return isSaveArmExactTrue((env as Record<string, unknown>)[YOUTUBE_SUPABASE_SAVE_UI_ARMED_ENV]);
 }
 
 export function resolveGosakiYoutubeSupabaseEndpoint(env: ImportMetaEnv): string {
@@ -1793,8 +1794,7 @@ export function resolveG12aAboutSaveEndpoint(env: ImportMetaEnv): string {
 }
 
 export function isG12aAboutSaveEnabled(env: ImportMetaEnv): boolean {
-  return String(env.PUBLIC_ADMIN_GOSAKI_ABOUT_CONTENT_WEB_SAVE_NON_DRY_RUN_ARMED ?? "").trim() ===
-    "true";
+  return isSaveArmExactTrue(env.PUBLIC_ADMIN_GOSAKI_ABOUT_CONTENT_WEB_SAVE_NON_DRY_RUN_ARMED);
 }
 
 /** Opt-in Supabase About path. Default false — Contents G-12a path unchanged. */
@@ -1810,10 +1810,7 @@ export function isGosakiAboutSupabasePathEnabled(
 export function isGosakiAboutSupabaseSaveEnabled(
   env: ImportMetaEnv | Record<string, unknown>,
 ): boolean {
-  return (
-    String((env as Record<string, unknown>)[ABOUT_SUPABASE_SAVE_UI_ARMED_ENV] ?? "").trim() ===
-    "true"
-  );
+  return isSaveArmExactTrue((env as Record<string, unknown>)[ABOUT_SUPABASE_SAVE_UI_ARMED_ENV]);
 }
 
 export function resolveGosakiAboutSupabaseEndpoint(env: ImportMetaEnv): string {

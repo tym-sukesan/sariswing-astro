@@ -3,11 +3,13 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**CMS Core v2 Save arm exact-true helper (2026-07-29):** **COMPLETE (unwired)** — `scripts/lib/save-arm-utils.mjs` · `isSaveArmExactTrue` · `npm run verify:cms-core-v2-save-arm-exact-true` · **HELPER_WIRED_TO_RUNTIME: false** · client trim **retained** · **POLICY_FULLY_IMPLEMENTED: false** · Doc: `cms-core-v2-save-arm-parse-policy.md` §12 · Gate: `CMS_CORE_V2_SAVE_ARM_EXACT_TRUE_HELPER_COMPLETE: true` · **Next:** client bake no-trim wiring（**別承認**）· 並行: client staging share.
+**CMS Core v2 Save arm client exact-true wiring (2026-07-29):** **COMPLETE** — Phase `cms-core-v2-save-arm-client-exact-true-wiring` · 6 feature client Save arms + About package bake → `isSaveArmExactTrue` · template mirror `save-arm-utils.ts` · **PARSE_POLICY_FULLY_IMPLEMENTED: true** · **CLIENT_TRIM_DIVERGENCE_COUNT: 0** · **GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED: false** · Edge **未変更** · Save arm live **未変更** · Doc: `cms-core-v2-save-arm-parse-policy.md` §13 · Gate: `CMS_CORE_V2_SAVE_ARM_CLIENT_EXACT_TRUE_WIRING_COMPLETE: true` · **Next:** optional Edge shared arm helper / global multi-arm mutex（**別承認**）· 並行: client staging share.
 
-**CMS Core v2 Save arm parse policy verifier (2026-07-29):** **COMPLETE** — `npm run verify:cms-core-v2-save-arm-parse-policy` · fixtures inventory 12 arms · **POLICY_FULLY_IMPLEMENTED: false** (client trim R1 expected) · server exact `"true"` PASS · package other-arm false evidence recorded · multi-arm global mutex **不足**明示 · **no parser/helper/Edge/arm change** · Gate: `CMS_CORE_V2_SAVE_ARM_PARSE_POLICY_VERIFIER_COMPLETE: true` · **Next:** superseded by exact-true helper above.
+**CMS Core v2 Save arm exact-true helper (2026-07-29):** **COMPLETE** — superseded for wiring status by client exact-true wiring above · helper SoT retained.
 
-**CMS Core v2 Save arm parse policy (2026-07-29):** **COMPLETE (docs-only)** — Doc: `cms-core-v2-save-arm-parse-policy.md` · inventory client trim vs Edge exact `"true"` · recommended SoT: no-trim exact `"true"` · unset/junk→disarmed · production STOP independent · multi-arm 原則禁止 · **no code/helper** · **CLIENT_SHARE_READY maintained** · package **`dc1c5b6…` unchanged** · Gate: `CMS_CORE_V2_SAVE_ARM_PARSE_POLICY_COMPLETE: true` · **Next:** superseded by policy verifier above.
+**CMS Core v2 Save arm parse policy verifier (2026-07-29):** **COMPLETE** — updated for post-wiring expectations (`PARSE_POLICY_FULLY_IMPLEMENTED: true`).
+
+**CMS Core v2 Save arm parse policy (2026-07-29):** **COMPLETE** — Doc: `cms-core-v2-save-arm-parse-policy.md` · R1 resolved in §13.
 
 **CMS Core v2 admin staging-ref assert helper (2026-07-29):** **COMPLETE** — Doc: `cms-core-v2-admin-staging-ref-assert-helper.md` · Core SoT `supabase-staging-ref-utils.mjs` · YouTube/About/Schedule/Discography Node wrappers + package/admin-env constants · **Edge/Deno/Admin UI not wired** · **CLIENT_SHARE_READY maintained** · package **`dc1c5b6…` unchanged** · Gate: `CMS_CORE_V2_ADMIN_STAGING_REF_ASSERT_HELPER_COMPLETE: true` · **Next:** superseded by Save arm parse policy above.
 

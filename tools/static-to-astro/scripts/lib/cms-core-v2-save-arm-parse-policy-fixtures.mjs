@@ -1,21 +1,30 @@
 /**
  * CMS Core v2 — Save arm parse policy fixtures (verifier-only).
- * Mirrors current Family A / B semantics for matrix tests.
- * NOT wired into Admin / Edge / package runtime. Do not import from production Save paths.
+ * Policy SoT + current client/server exact-"true" semantics after client wiring.
  */
 
 import { isSaveArmExactTrue } from "./save-arm-utils.mjs";
 
-/** Policy target SoT — delegates to Core helper (still unwired to runtime). */
+/** Policy target SoT — Core helper. */
 export function policyArmedExactTrue(raw) {
   return isSaveArmExactTrue(raw);
 }
 
 export { isSaveArmExactTrue };
 
-/** Current client / bake Family A. */
-export function currentClientTrimArmed(raw) {
+/** Current client / bake Save-arm parser (post wiring — exact true). */
+export function currentClientArmed(raw) {
+  return isSaveArmExactTrue(raw);
+}
+
+/** Historical Family A (trim) — retained for divergence regression tests only. */
+export function historicalClientTrimArmed(raw) {
   return String(raw ?? "").trim() === "true";
+}
+
+/** @deprecated use currentClientArmed — alias during transition */
+export function currentClientTrimArmed(raw) {
+  return currentClientArmed(raw);
 }
 
 /** Current Edge / Deno Family B. */
@@ -43,8 +52,8 @@ export const SAVE_ARM_INVENTORY = Object.freeze([
     feature: "Schedule",
     layer: "client",
     env: "PUBLIC_GOSAKI_SCHEDULE_SAVE_UI_ARMED",
-    parserFamily: "A",
-    policyCompliant: false,
+    parserFamily: "B",
+    policyCompliant: true,
     sourceHints: ["gosaki-staging-read-only-admin.ts"],
   },
   {
@@ -61,8 +70,8 @@ export const SAVE_ARM_INVENTORY = Object.freeze([
     feature: "Discography",
     layer: "client",
     env: "PUBLIC_GOSAKI_DISCOGRAPHY_SAVE_UI_ARMED",
-    parserFamily: "A",
-    policyCompliant: false,
+    parserFamily: "B",
+    policyCompliant: true,
     sourceHints: ["gosaki-staging-read-only-admin.ts"],
   },
   {
@@ -79,8 +88,8 @@ export const SAVE_ARM_INVENTORY = Object.freeze([
     feature: "YouTube Contents",
     layer: "client",
     env: "PUBLIC_ADMIN_GOSAKI_YOUTUBE_URL_WEB_SAVE_NON_DRY_RUN_ARMED",
-    parserFamily: "A",
-    policyCompliant: false,
+    parserFamily: "B",
+    policyCompliant: true,
     sourceHints: ["gosaki-staging-read-only-admin.ts"],
   },
   {
@@ -97,8 +106,8 @@ export const SAVE_ARM_INVENTORY = Object.freeze([
     feature: "YouTube Supabase",
     layer: "client",
     env: "PUBLIC_ADMIN_GOSAKI_YOUTUBE_SUPABASE_SAVE_ARMED",
-    parserFamily: "A",
-    policyCompliant: false,
+    parserFamily: "B",
+    policyCompliant: true,
     sourceHints: ["gosaki-staging-read-only-admin.ts"],
   },
   {
@@ -115,8 +124,8 @@ export const SAVE_ARM_INVENTORY = Object.freeze([
     feature: "About Contents",
     layer: "client",
     env: "PUBLIC_ADMIN_GOSAKI_ABOUT_CONTENT_WEB_SAVE_NON_DRY_RUN_ARMED",
-    parserFamily: "A",
-    policyCompliant: false,
+    parserFamily: "B",
+    policyCompliant: true,
     sourceHints: ["gosaki-staging-read-only-admin.ts"],
   },
   {
@@ -133,8 +142,8 @@ export const SAVE_ARM_INVENTORY = Object.freeze([
     feature: "About Supabase",
     layer: "client",
     env: "PUBLIC_ADMIN_GOSAKI_ABOUT_SUPABASE_SAVE_UI_ARMED",
-    parserFamily: "A",
-    policyCompliant: false,
+    parserFamily: "B",
+    policyCompliant: true,
     sourceHints: ["gosaki-staging-read-only-admin.ts", "package-run-marker.mjs"],
   },
   {
@@ -164,23 +173,26 @@ export const HTML_SAVE_ARM_ATTRS = Object.freeze([
 ]);
 
 /**
- * Fixture matrix rows: [label, rawInput, policyArmed, clientA, serverB]
- * undefined raw simulated as missing env.
+ * Fixture matrix: policy / current client bake / server (all exact after wiring).
+ * `historicalTrim` documents pre-wiring Family A for regression.
  */
 export const ARM_PARSE_FIXTURE_MATRIX = Object.freeze([
-  { label: "unset", raw: undefined, policy: false, clientA: false, serverB: false },
-  { label: "empty", raw: "", policy: false, clientA: false, serverB: false },
-  { label: "false", raw: "false", policy: false, clientA: false, serverB: false },
-  { label: "true", raw: "true", policy: true, clientA: true, serverB: true },
-  { label: "TRUE", raw: "TRUE", policy: false, clientA: false, serverB: false },
-  { label: "True", raw: "True", policy: false, clientA: false, serverB: false },
-  { label: "padded-true", raw: " true ", policy: false, clientA: true, serverB: false },
-  { label: "True-padded", raw: " True ", policy: false, clientA: false, serverB: false },
-  { label: "true-tab-padded", raw: "\ttrue\t", policy: false, clientA: true, serverB: false },
-  { label: "junk-1", raw: "1", policy: false, clientA: false, serverB: false },
-  { label: "junk-yes", raw: "yes", policy: false, clientA: false, serverB: false },
+  { label: "unset", raw: undefined, policy: false, clientA: false, serverB: false, historicalTrim: false },
+  { label: "empty", raw: "", policy: false, clientA: false, serverB: false, historicalTrim: false },
+  { label: "false", raw: "false", policy: false, clientA: false, serverB: false, historicalTrim: false },
+  { label: "true", raw: "true", policy: true, clientA: true, serverB: true, historicalTrim: true },
+  { label: "TRUE", raw: "TRUE", policy: false, clientA: false, serverB: false, historicalTrim: false },
+  { label: "True", raw: "True", policy: false, clientA: false, serverB: false, historicalTrim: false },
+  { label: "padded-true", raw: " true ", policy: false, clientA: false, serverB: false, historicalTrim: true },
+  { label: "True-padded", raw: " True ", policy: false, clientA: false, serverB: false, historicalTrim: false },
+  { label: "true-tab-padded", raw: "\ttrue\t", policy: false, clientA: false, serverB: false, historicalTrim: true },
+  { label: "junk-1", raw: "1", policy: false, clientA: false, serverB: false, historicalTrim: false },
+  { label: "junk-yes", raw: "yes", policy: false, clientA: false, serverB: false, historicalTrim: false },
 ]);
 
-export const POLICY_FULLY_IMPLEMENTED = false;
-export const KNOWN_DIVERGENCE_REASON =
-  "client bake uses String(...).trim() === \"true\" while policy/server require raw === \"true\"";
+/** Parse policy (exact true client+server) fully implemented. Multi-arm mutex is separate. */
+export const POLICY_FULLY_IMPLEMENTED = true;
+export const PARSE_POLICY_FULLY_IMPLEMENTED = true;
+export const GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED = false;
+export const KNOWN_DIVERGENCE_REASON = "";
+export const CLIENT_TRIM_DIVERGENCE_COUNT = 0;

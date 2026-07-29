@@ -5,33 +5,37 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: client-ready follow-up LOCAL COMPLETE
-  About mobile order fixed (title→photo→text @≤768px)
-  YouTube multi capability gate verified local
-CLIENT_SHARE_READY: false
+Current phase: Gosaki staging client-ready audit FINAL PASS
+CLIENT_SHARE_READY: true
 P1 blockers: none
-Next: operator commit → package+FTP (About CSS) → human browser QA §5
-  (About 375px order check required after upload)
-YouTube live SoT: still 1 item (multi Save not live — OK for 1-item share)
-audit package was: 95ada81… (About CSS not on staging until regen)
-Doc: gosaki-staging-client-ready-audit.md §11
-verify: npm run verify:gosaki-youtube-public-multi
-readyForAboutMobileStagingPackageAfterCommit: true
+deployed package sourceCommit: dc1c5b62a58d0462ad6629db4847256d316d4a38
+About mobile order P2: RESOLVED (375px title→photo→text PASS)
+Home YouTube: 1 item PASS · Admin read + Save disabled PASS · noindex PASS
+YouTube multi capability: local PASS
+YouTube multi persist Save: NON_BLOCKING ops (not live)
+STG URL: https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/
+Next Primary: share staging with client
+  Parallel OK: Contents YouTube retire · hosting read-only planning · multi Save (separate approval)
+HOSTING_READY: false · GO_LIVE_READY: false
 readyForAnyFutureFtpApply: false
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
+Doc: gosaki-staging-client-ready-audit.md §12
 ```
+
+## Gosaki staging client-ready audit FINAL (2026-07-29)
+
+- Operator FileZilla + FTP後 QA PASS recorded
+- CLIENT_SHARE_READY **true**
+- Doc: `gosaki-staging-client-ready-audit.md`
 
 ## About mobile + YouTube multi follow-up (2026-07-29)
 
-- About: CSS `order` only under `#comp-lol1i5l0` @ max-width 768px
-- YouTube: schema/build/UI/Admin multi YES · live SoT 1 · Save multi not armed
-- Fixture verifier 35 PASS · url-staging PASS · font-safety PASS
-- No package/FTP/DB/Save/commit by Cursor
+- Superseded by FINAL · About CSS order + multi gate local PASS
+- Multi persist Save remains non-blocking ops
 
 ## Gosaki staging client-ready audit pass-1 (2026-07-29)
 
-- Auto/static inventory + HTTP + verifiers recorded
-- Continue **YES** · share ready **not yet**
+- Auto/static inventory recorded · historical
 - Doc: `gosaki-staging-client-ready-audit.md`
 ## About Supabase Claude audit (2026-07-29)
 

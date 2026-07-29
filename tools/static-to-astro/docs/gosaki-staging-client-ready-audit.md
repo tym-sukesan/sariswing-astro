@@ -1,58 +1,44 @@
-# Gosaki staging client-ready audit（初回 read-only）
+# Gosaki staging client-ready audit（初回 read-only → 最終判定）
 
-- **Phase:** `gosaki-staging-client-ready-audit-pass-1-read-only`
+- **Phase:** `gosaki-staging-client-ready-audit-final`
 - **Date:** 2026-07-29
-- **Status:** **IN PROGRESS** — pass-1 auto/static COMPLETE · About mobile order **local fixed** · YouTube multi gate **local verified** · **CLIENT_SHARE_READY = false**（package/FTP + 人間 QA 待ち）
-- **Verdict (this pass):** **CONTINUE = YES** · **CLIENT_SHARE_READY = not yet**
-- **Follow-up:** §11 About mobile + YouTube multi（2026-07-29）
-- **Scope:** Home / Schedule / Discography / YouTube / About / Contact / Link / mobile / admin routes（**Schedule 偏重禁止**）
-- **Audit package (SoT):** `sourceCommit` **`95ada81c8a408125370f089fb653660c702589ff`**
-- **Repo HEAD at audit:** `ebb78fd63f8d1546864ad884a10a09368fb17e9c` (= `origin/main`)
-- **About close HEAD:** `6cbffda8556434aa17761c474f1a3f78d0dbed92`（`95ada81`→`6cbffda` docs-only · non-docs **0** · Claude Finding 1 RESOLVED）
+- **Status:** **COMPLETE / PASS**
+- **Verdict:** **CLIENT_SHARE_READY = true** · **P1 blockers = none**
+- **Deployed staging package:** `sourceCommit` **`dc1c5b62a58d0462ad6629db4847256d316d4a38`**
+- **Repo HEAD / origin/main at close:** `dc1c5b62a58d0462ad6629db4847256d316d4a38`
 - **Staging URL:** `https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/`
 - **Staging Supabase:** `kmjqppxjdnwwrtaeqjta`
 - **Production:** `vsbvndwuajjhnzpohghh` **STOP / 未操作**
-- **This phase (Cursor):** read-only inventory · static/HTTP · single audit doc · AI context · **no** implementation / package / FTP / DB / Save / commit / push
+- **Prior:** pass-1 read-only · About mobile + YouTube multi follow-up · package regen @ `dc1c5b6` · operator FileZilla · FTP後 QA（戸山）
+- **This close phase (Cursor):** docs + AI context only · **no** implementation / package / FTP / DB / Save / commit / push
 
 ---
 
 ## Gates
 
 ```txt
-phase: gosaki-staging-client-ready-audit-pass-1-read-only
+phase: gosaki-staging-client-ready-audit-final
+GOSAKI_STAGING_CLIENT_READY_AUDIT_COMPLETE: true
 GOSAKI_STAGING_CLIENT_READY_AUDIT_PASS1_READ_ONLY_COMPLETE: true
-CLIENT_SHARE_READY: false
+CLIENT_SHARE_READY: true
 STAGING_READY_FOR_CLIENT_SHARE_2026_07_22: historical_only_do_not_reuse
-auditPackageSourceCommit: 95ada81c8a408125370f089fb653660c702589ff
-repoHeadAtAudit: ebb78fd63f8d1546864ad884a10a09368fb17e9c
-originMainAtAudit: ebb78fd63f8d1546864ad884a10a09368fb17e9c
-workingTreeCleanAtAudit: true
-docsOnly95ada81To6cbffda: true
-docsOnly95ada81ToHead: true
-nonDocsDiffCount95ada81ToHead: 0
-remotePublicRoutesHttp200: true
-remoteAdminRoutesHttp200: true
-packageNoindexAllHtml: true
-packageRobotsDisallowAll: true
-packageGosakiPianoComHtmlHits: 0
-packageSaveArmsFalse: true
-aboutWriteBackend: supabase
-youtubeWriteBackend: contents
-publicAboutBuildReadLive: true
-verifyManualUploadPublicAboutBuildRead: FAIL_EXPECTED_HEAD_STALE
-verifyPackageFreshnessStaging: STOP_EXPECTED_HEAD_STALE
-verifyGosakiFontSafety: PASS
-verifyFtpDeployerSafety: PASS
-remoteSupabaseSelectNotRun: true
-readyForMinimalHumanBrowserQa: true
+deployedPackageSourceCommit: dc1c5b62a58d0462ad6629db4847256d316d4a38
+aboutMobileOrderP2: RESOLVED
+youtubeMultiCapabilityGateLocal: PASS
+youtubeMultiPersistSaveLive: false
+youtubeMultiPersistSave: NON_BLOCKING_OPS
+P1_BLOCKERS: 0
+operatorFtpPostQa: PASS
 READY_FOR_ANY_FUTURE_FTP_APPLY: false
 PRODUCTION_UNCHANGED: true
 SERVICE_ROLE_USED: false
-PACKAGE_GENERATE_EXECUTED: false
-FTP_EXECUTED: false
-COMMIT_EXECUTED: false
-PUSH_EXECUTED: false
 ```
+
+---
+
+## Historical note (pass-1 package baseline)
+
+Pass-1 read-only used then-current deployed package `95ada81…` and repo HEAD `ebb78fd…`. Later About mobile CSS + verifier landed in `dc1c5b6…`, which is the **current** client-share package after operator regen + FileZilla.
 
 ---
 
@@ -261,15 +247,15 @@ npm run verify:ftp-deployer-safety
 
 ---
 
-## 7. client-ready audit を続行できるか
+## 7. client-ready audit を続行できるか（pass-1 時点 · 歴史）
 
 | Item | Value |
 | --- | --- |
-| Continue? | **YES** |
-| CLIENT_SHARE_READY? | **false**（人間 QA 完了まで） |
-| HOLD? | **no**（ブロッカーなし · 次は人間 QA） |
-| 次に行う具体確認 | §5 最小ブラウザ QA（desktop + mobile + admin Save disabled）→ 結果を本 doc に追記 → READY 再判定 |
-| まだしない | package 再生成 · FTP · Save arm · DB · commit/push · 実装修正 · Contact 再 submit |
+| Continue? | **YES**（当時） |
+| CLIENT_SHARE_READY? | 当時 **false** → **最終は §12 で true** |
+| HOLD? | **no** |
+| 次に行う具体確認（当時） | §5 人間 QA → package/FTP → §12 |
+| 最終判定 | **§12 CLIENT_SHARE_READY: true** |
 
 ---
 
@@ -345,10 +331,10 @@ order by tablename, policyname;
 ## 11. Follow-up — About mobile order + YouTube multi-item (2026-07-29)
 
 - **Phase:** `gosaki-staging-client-ready-audit-about-mobile-and-youtube-multi`
-- **Status:** **LOCAL COMPLETE**（staging package 未再生成 · FTP 未実行）
-- **CLIENT_SHARE_READY:** **false**（保留）
+- **Status:** **COMPLETE**（local fix → package `dc1c5b6` → FileZilla → FTP後 QA PASS）— see §12
+- **CLIENT_SHARE_READY:** **true**（§12）
 
-### 11.1 About mobile image order — **P2（local fixed）**
+### 11.1 About mobile image order — **P2 RESOLVED**
 
 | Item | Value |
 | --- | --- |
@@ -357,9 +343,9 @@ order by tablename, policyname;
 | PC | `@media (max-width: 768px)` のみ · desktop 変更なし |
 | Markup | 変更なし（CSS order のみ） |
 | Verifier | `verify:url-staging` + `verify:gosaki-youtube-public-multi` About order asserts **PASS** |
-| Staging reflection | **要** package regen + FileZilla（CSS `_astro/*.css` 含む）後の 375px 目視 |
+| Staging reflection | package `dc1c5b6` + FileZilla · 戸山 QA @375px **PASS** → **RESOLVED** |
 
-### 11.2 YouTube multi-item capability — **必須検証ゲート**
+### 11.2 YouTube multi-item capability — **必須検証ゲート · local PASS**
 
 | # | Question | Answer |
 | --- | --- | --- |
@@ -370,78 +356,83 @@ order by tablename, policyname;
 | 5 | Admin から 2 件目を追加できるか | **UI local YES** · **persist live NO**（Save disarmed · Contents single-URL は `yt-placeholder-01` 固定 · multi Save は G-11c7 / Supabase INSERT があるが未武装） |
 | 6 | 順序変更・公開切替 | **YES**（UI + schema）· Soft-hide = `published=false`（DELETE なし） |
 
-**Live SoT:** `config/sites/gosaki-piano-youtube-embed.json` は引き続き **1 件**（fixture のみ multi · SoT 未変更）。
+**Live SoT:** `config/sites/gosaki-piano-youtube-embed.json` は引き続き **1 件**（fixture のみ multi · SoT 未変更）。FTP後 Home も **1 件維持 PASS**。
 
-**Local fixture verify:** `npm run verify:gosaki-youtube-public-multi` → **35 PASS**（1/2/3 件 HTML smoke · unpublished filter · mapper · Admin add source · live SoT 1 件維持）。
+**Local fixture verify:** `npm run verify:gosaki-youtube-public-multi` → **35 PASS**。
 
-**Admin dirty verify:** `verify-gosaki-youtube-multi-dirty-state.mjs` → **PASS**（add / reorder / published / Save not-armed）。
+**Admin dirty verify:** `verify-gosaki-youtube-multi-dirty-state.mjs` → **PASS**。
 
-### 11.3 P1 / P2 / P3（更新）
+**運用課題（non-blocking）:** 複数件の **永続 Save** は live 未武装 — client-share ブロッカーにしない（現状 1 件運用）。
+
+### 11.3 P1 / P2 / P3（最終）
 
 | ID | Sev | Item | Notes |
 | --- | --- | --- | --- |
-| — | P1 | **なし（local）** | multi-add Save 未ライブは client-share ブロッカーにしない（現状 1 件運用） |
-| CR-P2-ABOUT-MOBILE | P2 | About SP photo/text order | **local fixed** · staging 反映待ち |
-| CR-P2-1 | P2 | freshness HEAD stale | docs/実装差の誤読リスク（継続） |
-| CR-P2-2 | P2 | YouTube `write-backend=contents` | dual-path 残存 · Contents 退役は並行可 |
-| CR-P2-YT-MULTI-SAVE | P2 | 2 件目の **永続 Save** 未ライブ | 最小実装範囲: armed G-11c7 Contents `items[]` **または** Supabase path + INSERT · **別承認** · 本 audit では拡張しない |
-| CR-P3-1 | P3 | orphan CSS in package | 継続 |
-| CR-P3-2 | P3 | Claude NB items | 継続 |
-| CR-P3-YT-SEED | P3 | seed / live JSON が 1 件のまま | multi 運用開始時に seed/JSON 追加 |
+| — | P1 | **なし** | |
+| CR-P2-ABOUT-MOBILE | P2 | About SP photo/text order | **RESOLVED**（FTP後 375px PASS） |
+| CR-P2-1 | P2 | freshness HEAD stale | **RESOLVED** for deployed `dc1c5b6`（freshness PASS at regen） |
+| CR-P2-2 | P2 | YouTube `write-backend=contents` | dual-path 残存 · Contents 退役は並行可 · **non-blocking** |
+| CR-P2-YT-MULTI-SAVE | P2 → ops NB | 2 件目の **永続 Save** 未ライブ | **NON_BLOCKING** · 別承認（G-11c7 Contents `items[]` または Supabase INSERT） |
+| CR-P3-1 | P3 | orphan CSS in package | 継続可 |
+| CR-P3-2 | P3 | Claude NB items | 継続可 |
+| CR-P3-YT-SEED | P3 | seed / live JSON が 1 件のまま | multi 運用開始時 |
 
-### 11.4 client-share 判定
+### 11.4 client-share 判定（superseded by §12）
+
+Historical hold lifted after package `dc1c5b6` FTP + operator QA — see §12.
+
+### 11.5–11.8
+
+Historical follow-up notes retained above; package/FTP for About CSS **executed by operator**; final gates in §12.
+
+---
+
+## 12. Final — package regen + FileZilla + FTP後 QA（2026-07-29）
+
+- **Phase:** `gosaki-staging-client-ready-audit-final`
+- **Status:** **COMPLETE / PASS**
+- **Package:** `sourceCommit` **`dc1c5b62a58d0462ad6629db4847256d316d4a38`** · `fileCount: 35` · `sourceTreeClean: true` · About build-read `supabase` / `noop_equal` / baseline lede
+- **FTP:** operator **manual FileZilla** · `public-dist/` contents → `/cms-kit-staging/gosaki-piano/` · auto FTP **not** used
+- **Cursor this close:** docs only · **no** package/FTP/DB/Save/commit
+
+### 12.1 Operator FTP後 QA（戸山）
+
+| Check | Result |
+| --- | --- |
+| About mobile @375px: タイトル → 写真 → 文章 | **PASS** |
+| About desktop: 既存レイアウト維持 | **PASS** |
+| Home YouTube: 1 件表示維持 | **PASS** |
+| Admin About / YouTube: データ読込 | **PASS** |
+| Admin About / YouTube: Save disabled | **PASS** |
+| noindex 維持 | **PASS** |
+
+### 12.2 Final client-share judgment
 
 ```txt
-CLIENT_SHARE_READY: false
-reason: About mobile CSS not yet on staging package; human browser QA incomplete;
-        YouTube multi public capability verified locally but live SoT remains 1 item (OK for share if 1-item is intended)
+CLIENT_SHARE_READY: true
+P1_BLOCKERS: 0
+aboutMobileOrderP2: RESOLVED
+youtubeMultiCapabilityLocal: PASS
+youtubeMultiPersistSave: NON_BLOCKING_OPS (live SoT remains 1 item)
+deployedPackageSourceCommit: dc1c5b62a58d0462ad6629db4847256d316d4a38
+STAGING_URL: https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/
+HOSTING_READY: false
+GO_LIVE_READY: false
+PRODUCTION_UNCHANGED: true
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
 ```
 
-**共有可能になる条件（最小）:**
+**判定:** staging をクライアントへ共有してよい（preview）。本番 cutover / hosting 契約は別ゲート。
 
-1. About mobile CSS を含む package 再生成 + FileZilla + 375px About 目視 PASS
-2. §5 最小人間ブラウザ QA（pass-1）PASS
-3. YouTube は **現状 1 件のまま共有可**（multi は能力ゲート PASS · 2 件運用は別フェーズ）
+**残 non-blocking:** YouTube 複数件永続 Save · Contents YouTube 退役 · production hosting · Claude NB。
 
-### 11.5 staging で必要な追加 QA
+### 12.3 Safety this close
 
-| QA | When |
+| Check | Result |
 | --- | --- |
-| About `/about/` @375px: title → photo → text | After package+FTP of this CSS |
-| About desktop unchanged | Same upload |
-| Home YouTube 1 件見た目維持 | Same or current package |
-| Admin YouTube Save disabled | Human QA（pass-1） |
-| 2〜3 件 public on staging | **Not required for share** unless operator seeds/publishes multi |
-
-### 11.6 package / FTP が必要になる条件
-
-| Condition | Need package+FTP? |
-| --- | --- |
-| About mobile order を staging に反映 | **YES**（CSS 変更） |
-| YouTube multi fixture のみ（repo local） | **NO** |
-| live SoT を 2〜3 件に増やす | **YES**（JSON/build-read 反映）+ 別承認 |
-| docs / verifier のみ | **NO** |
-
-### 11.7 この follow-up の変更ファイル
-
-- `scripts/lib/site-specific-overrides/gosaki-piano-overrides.mjs` — About mobile order
-- `scripts/lib/gosaki-youtube-embed-utils.mjs` — multi resolve + HTML smoke helper
-- `scripts/verify-gosaki-youtube-public-multi-item.mjs` + fixtures `fixtures/gosaki-youtube-public-multi/*`
-- `scripts/verify-url-to-staging-pipeline.mjs` — About order assert
-- `package.json` — `verify:gosaki-youtube-public-multi`
-- 本 audit doc + AI context 3
-
-### 11.8 Gates（follow-up）
-
-```txt
-ABOUT_MOBILE_TITLE_PHOTO_TEXT_ORDER_LOCAL_FIXED: true
-YOUTUBE_MULTI_ITEM_CAPABILITY_GATE_VERIFIED_LOCAL: true
-YOUTUBE_LIVE_SOT_ITEM_COUNT: 1
-YOUTUBE_MULTI_SAVE_LIVE: false
-CLIENT_SHARE_READY: false
-PACKAGE_GENERATE_EXECUTED: false
-FTP_EXECUTED: false
-DB_WRITE: false
-SAVE_ARM_CHANGED: false
-readyForAboutMobileStagingPackageAfterCommit: true
-```
+| production 未操作 | **true** |
+| DB write なし | **true** |
+| Save arm 変更なし | **true** |
+| Cursor package / FTP なし（本 close） | **true** |
+| commit / push なし（本 close） | **true** |
+| 実装変更なし（本 close） | **true** |

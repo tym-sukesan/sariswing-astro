@@ -3,35 +3,36 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **Primary (Gosaki ops):** 戸山さんが **commit**（About CSS + YouTube multi fixture/verifier + audit docs）→ **package 再生成 + FileZilla**（About mobile order 反映）→ **§5 人間ブラウザ QA**（375 About 含む）。**CLIENT_SHARE_READY: false** のまま。
-2. YouTube multi: 能力ゲート **local PASS** · live SoT **1 件のまま共有可** · 2 件目永続 Save は **別承認**（G-11c7 Contents items または Supabase INSERT）· 本フェーズで DB/Edge 拡張しない。
-3. **並行可:** Contents YouTube 退役 planning（`write-backend=contents` 残存）。
-4. **並行可:** production hosting **read-only planning**。
-5. Save arm **false** · package/FTP は About CSS 反映時のみオペレータ手動 · `readyForAnyFutureFtpApply: false`。
-6. production / Wix / auto FTP / `vsbvndwuajjhnzpohghh` 禁止 · `service_role` 禁止。
-7. 2026-07-22 `STAGING_READY_FOR_CLIENT_SHARE: true` は **歴史のみ**。
+1. **Primary (Gosaki ops):** クライアントへ **staging 共有**（`CLIENT_SHARE_READY: true` · package `dc1c5b6…` @ `/cms-kit-staging/gosaki-piano/`）。本番 cutover はしない。
+2. **並行可:** Contents YouTube 退役 planning（`write-backend=contents` 残存）。
+3. **並行可:** production hosting **read-only planning**（`HOSTING_READY: false`）。
+4. **並行可 / 別承認:** YouTube 複数件 **永続 Save**（NON_BLOCKING · G-11c7 Contents items または Supabase INSERT）。
+5. Save arm **false** · `readyForAnyFutureFtpApply: false` · production / Wix / auto FTP / `vsbvndwuajjhnzpohghh` 禁止 · `service_role` 禁止。
+6. 2026-07-22 `STAGING_READY_FOR_CLIENT_SHARE: true` は **歴史のみ**（現行判定は `dc1c5b6` FINAL）。
 
-## 0. About mobile + YouTube multi follow-up (2026-07-29)
+## 0. Gosaki staging client-ready audit FINAL PASS (2026-07-29)
 
 | Item | Value |
 | --- | --- |
-| About mobile order | **local fixed** title→photo→text @≤768px |
-| YouTube multi gate | **verified local** · live SoT 1 item |
-| Verifier | `npm run verify:gosaki-youtube-public-multi` |
-| CLIENT_SHARE_READY | **false** |
-| Doc | `gosaki-staging-client-ready-audit.md` §11 |
+| Gate | `GOSAKI_STAGING_CLIENT_READY_AUDIT_COMPLETE: true` |
+| CLIENT_SHARE_READY | **true** |
+| P1 | **none** |
+| Package | `dc1c5b62a58d0462ad6629db4847256d316d4a38` |
+| About mobile P2 | **RESOLVED** |
+| YouTube multi persist Save | **NON_BLOCKING ops** |
+| Doc | `gosaki-staging-client-ready-audit.md` §12 |
 
 ```txt
-ABOUT_MOBILE_TITLE_PHOTO_TEXT_ORDER_LOCAL_FIXED: true
-YOUTUBE_MULTI_ITEM_CAPABILITY_GATE_VERIFIED_LOCAL: true
-YOUTUBE_LIVE_SOT_ITEM_COUNT: 1
-YOUTUBE_MULTI_SAVE_LIVE: false
-CLIENT_SHARE_READY: false
-PACKAGE_GENERATE_EXECUTED: false
-FTP_EXECUTED: false
-readyForAboutMobileStagingPackageAfterCommit: true
+GOSAKI_STAGING_CLIENT_READY_AUDIT_COMPLETE: true
+CLIENT_SHARE_READY: true
+P1_BLOCKERS: 0
+deployedPackageSourceCommit: dc1c5b62a58d0462ad6629db4847256d316d4a38
+aboutMobileOrderP2: RESOLVED
+youtubeMultiPersistSave: NON_BLOCKING_OPS
 READY_FOR_ANY_FUTURE_FTP_APPLY: false
 PRODUCTION_UNCHANGED: true
+HOSTING_READY: false
+GO_LIVE_READY: false
 ```
 
 ## 0. Gosaki staging client-ready audit pass-1 read-only (2026-07-29)

@@ -50,11 +50,12 @@ PRODUCTION_UNCHANGED: true
 | `"false"` | disarmed | disarmed | disarmed | disarmed |
 | `"true"` | **armed** | **armed** | n/a | **armed** |
 | `"TRUE"` | disarmed | disarmed | n/a | disarmed |
-| `" True "` | **armed** | **disarmed** | n/a | disarmed |
+| `" True "` | disarmed | disarmed | n/a | disarmed |
+| `" true "` | **armed** | **disarmed** | n/a | disarmed |
 | `"1"` / other junk | disarmed | disarmed | disarmed | disarmed |
 | boolean `true` | (stringifies to `"true"` if coerced) | n/a | **armed** | n/a |
 
-**Critical existing mismatch:** Family A can arm the **client UI** on `" True "` while Family B keeps the **server** disarmed → UI looks armed, Save returns `save_not_armed` / 403.
+**Critical existing mismatch:** Family A can arm the **client UI** on whitespace-padded lowercase `" true "` while Family B keeps the **server** disarmed → UI looks armed, Save returns `save_not_armed` / 403. (`" True "` stays disarmed on both — trim does not case-fold.)
 
 ---
 
@@ -157,7 +158,7 @@ PRODUCTION_UNCHANGED: true
 
 | ID | Issue | Severity | Notes |
 | --- | --- | --- | --- |
-| R1 | Client trim vs Edge no-trim (`" True "` mismatch) | **P2** | UI can look armed while server rejects |
+| R1 | Client trim vs Edge no-trim (`" true "` mismatch) | **P2** | UI can look armed while server rejects; `" True "` is disarmed on both |
 | R2 | `isExactTrue` name vs trim implementation | P3 | Misleading for future Core helper |
 | R3 | Operational multi-feature arms: no hard fail if several PUBLIC_* are true at once | P2 | About **package** verifier enforces other attrs false; bake-time does not globally mutex Schedule∩YouTube∩Discography∩About |
 | R4 | Path env + Save UI env both true possible; path selects one | P3 | Not dual-write, but operator confusion |
@@ -258,15 +259,44 @@ Stop and ask the operator if a follow-up phase would:
 
 | Option | Recommendation |
 | --- | --- |
-| `cms-core-v2-save-arm-parse-policy-verifier` | **Next** — docs/fixture only |
-| `cms-core-v2-save-arm-exact-true-helper` | After verifier; Core helper + optional unused export |
-| Client bake no-trim alignment | Separate explicit approval (R1 fix) |
+| `cms-core-v2-save-arm-parse-policy-verifier` | **Done** — `npm run verify:cms-core-v2-save-arm-parse-policy` |
+| `cms-core-v2-save-arm-exact-true-helper` | **Next** — Core helper + optional unused export |
+| Client bake no-trim alignment | Separate explicit approval (R1 fix: `" true "` only) |
 | Edge shared arm helper | After Deno OPTIONS / staging-ref phases as needed |
 | Contents YouTube retire | Unrelated · separate |
 
 ---
 
-## 11. Safety (this phase)
+## 11. Verifier phase (`cms-core-v2-save-arm-parse-policy-verifier`)
+
+- **Status:** **COMPLETE**
+- **Verifier:** `scripts/verify-cms-core-v2-save-arm-parse-policy.mjs`
+- **Fixtures:** `scripts/lib/cms-core-v2-save-arm-parse-policy-fixtures.mjs` (verifier-only · not wired to runtime)
+- **npm:** `verify:cms-core-v2-save-arm-parse-policy`
+- **Parser / Edge / Save arm code:** **unchanged**
+- **POLICY_FULLY_IMPLEMENTED:** **false** (expected — client trim divergence R1)
+- **PASS condition:** inventory + server exact + client trim *detected as known divergence* + fixture matrix + package false evidence + no unregistered operational arms
+
+```txt
+CMS_CORE_V2_SAVE_ARM_PARSE_POLICY_VERIFIER_COMPLETE: true
+POLICY_FULLY_IMPLEMENTED: false
+KNOWN_DIVERGENCE_R1: client-trim-padded-lowercase-true
+PARSER_CODE_CHANGED: false
+HELPER_WIRED_TO_RUNTIME: false
+```
+
+### Matrix correction (verifier-proven)
+
+| Input | Family A (trim) | Family B (exact) |
+| --- | --- | --- |
+| `" true "` | armed | disarmed |
+| `" True "` | disarmed | disarmed |
+
+(Original policy draft incorrectly marked `" True "` as Family A armed; trim does not case-fold.)
+
+---
+
+## 12. Safety (policy + verifier phases)
 
 | Check | Result |
 | --- | --- |

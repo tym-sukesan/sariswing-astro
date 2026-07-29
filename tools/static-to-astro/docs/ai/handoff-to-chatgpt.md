@@ -5,22 +5,28 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: CMS Core v2 Save arm parse policy COMPLETE (docs-only)
-Recommended: armed ⇔ raw === "true" (no trim); unset/junk → disarmed
-Known divergence: client bake trim vs Edge exact (R1) — do not unify without approval
+Current phase: CMS Core v2 Save arm parse policy verifier COMPLETE
+npm: verify:cms-core-v2-save-arm-parse-policy
+POLICY_FULLY_IMPLEMENTED: false (client trim R1 expected; do not claim full compliance)
+Parser/Edge/Save arm code: unchanged
 Gosaki CLIENT_SHARE_READY: true (maintained)
 deployed package: dc1c5b62a58d0462ad6629db4847256d316d4a38 (unchanged; no regen)
 Next Primary (ops): share staging with client
-Next (Kit Core): save-arm policy verifier → optional exact-true helper (unwired)
+Next (Kit Core): save-arm exact-true helper (unwired) · client no-trim needs approval
   Parallel: Edge staging-ref / requireUser later · Contents YouTube retire separate
 readyForAnyFutureFtpApply: false
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
 Doc: cms-core-v2-save-arm-parse-policy.md
 ```
 
+## CMS Core v2 Save arm parse policy verifier (2026-07-29)
+
+- Read-only verifier + fixtures · known client trim divergence expected
+- Doc: `cms-core-v2-save-arm-parse-policy.md` §11
+
 ## CMS Core v2 Save arm parse policy (2026-07-29)
 
-- Inventory + unified policy · no code/helper
+- Inventory + unified policy · no runtime helper
 - Doc: `cms-core-v2-save-arm-parse-policy.md`
 
 ## CMS Core v2 admin staging-ref assert helper (2026-07-29)

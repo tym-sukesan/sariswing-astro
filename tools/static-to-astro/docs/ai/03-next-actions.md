@@ -4,10 +4,33 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 ## 0. Current next actions（直近）
 
 1. **Primary (Gosaki ops):** クライアントへ **staging 共有**（`CLIENT_SHARE_READY: true` · package `dc1c5b6…`）。本番 cutover はしない。
-2. **並行可 (Kit Core):** CMS Core v2 一般化 next — Save arm policy fixture verifier → optional exact-true helper（未配線）· Edge `requireUser` / staging-ref は OPTIONS 契約揃え後の **別 phase** · Contents YouTube 退役は **別 phase**。
+2. **並行可 (Kit Core):** CMS Core v2 一般化 next — Save arm exact-true helper（未配線）· client bake no-trim は **別承認** · Edge `requireUser` / staging-ref は OPTIONS 契約揃え後の **別 phase** · Contents YouTube 退役は **別 phase**。
 3. **並行可:** production hosting **read-only planning**（`HOSTING_READY: false`）。
 4. **並行可 / 別承認:** YouTube 複数件 **永続 Save**（NON_BLOCKING）。
 5. Save arm **false** · `readyForAnyFutureFtpApply: false` · production STOP · `service_role` 禁止 · **deployed package 固定**（一般化で regen 不要）。
+
+## 0. CMS Core v2 Save arm parse policy verifier (2026-07-29)
+
+| Item | Value |
+| --- | --- |
+| Gate | `CMS_CORE_V2_SAVE_ARM_PARSE_POLICY_VERIFIER_COMPLETE: true` |
+| npm | `verify:cms-core-v2-save-arm-parse-policy` |
+| POLICY_FULLY_IMPLEMENTED | **false** (expected · R1 client trim) |
+| Parser / Edge / arm code | **unchanged** |
+| Doc | `cms-core-v2-save-arm-parse-policy.md` §11 |
+
+```txt
+CMS_CORE_V2_SAVE_ARM_PARSE_POLICY_VERIFIER_COMPLETE: true
+POLICY_FULLY_IMPLEMENTED: false
+PARSER_CODE_CHANGED: false
+HELPER_WIRED_TO_RUNTIME: false
+PACKAGE_GENERATE_EXECUTED: false
+FTP_EXECUTED: false
+GOSAKI_CLIENT_SHARE_READY_MAINTAINED: true
+deployedPackageSourceCommitUnchanged: dc1c5b62a58d0462ad6629db4847256d316d4a38
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+PRODUCTION_UNCHANGED: true
+```
 
 ## 0. CMS Core v2 Save arm parse policy (2026-07-29)
 

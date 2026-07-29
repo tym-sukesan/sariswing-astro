@@ -16,6 +16,7 @@
     "verify:gosaki-font-safety": "node scripts/verify-gosaki-font-safety.mjs",
     "verify:gosaki-youtube-public-multi": "node scripts/verify-gosaki-youtube-public-multi-item.mjs",
     "verify:cms-core-v2-admin-staging-ref": "node scripts/verify-cms-core-v2-admin-staging-ref-assert-helper.mjs",
+    "verify:cms-core-v2-save-arm-parse-policy": "node scripts/verify-cms-core-v2-save-arm-parse-policy.mjs",
     "extract:gosaki-schedule-seed": "node scripts/extract-gosaki-schedule-seed.mjs",
     "generate:gosaki-schedule-seed-sql": "node scripts/generate-gosaki-schedules-seed-sql.mjs --out scripts/supabase/gosaki-schedules-seed.template.sql",
     "verify:ftp-deployer-safety": "node scripts/verify-public-dist-ftp-deployer-safety.mjs",

@@ -301,7 +301,7 @@ Stop and ask before implementation if:
 
 Recommended order after this docs phase:
 
-1. **`cms-core-v2-global-save-arm-mutex-inventory-verifier`** — fixtures + discovery coverage; still `GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED: false`
+1. **`cms-core-v2-global-save-arm-mutex-inventory-verifier`** — **Done** (§14)
 2. **`cms-core-v2-global-save-arm-mutex-helper`** — Core evaluate helper, unwired
 3. **`cms-core-v2-global-save-arm-mutex-package-gate`** — wire generate + verifier (explicit approval; no forced client-ready regen)
 
@@ -313,11 +313,55 @@ Parallel (unrelated): Edge shared `isSaveArmExactTrue` mirror · Contents YouTub
 
 | Check | Result |
 | --- | --- |
-| docs-only | **true** |
-| helper / verifier / runtime 未変更 | **true** |
+| docs-only (policy phase) | **true** |
+| helper / runtime 未変更 | **true** |
 | Save arm / Secret 未変更 | **true** |
 | package / FTP / DB なし | **true** |
 | production 未操作 | **true** |
 | CLIENT_SHARE_READY 維持 | **true** |
 | deployed package 未再生成 | **true** |
 | commit / push なし（Cursor） | **true** |
+
+---
+
+## 14. Inventory verifier phase (`cms-core-v2-global-save-arm-mutex-inventory-verifier`)
+
+- **Status:** **COMPLETE**
+- **Date:** 2026-07-29
+- **Gosaki inventory (site adapter):** `scripts/lib/gosaki-operational-save-ui-arm-inventory.mjs`
+- **Verifier:** `scripts/verify-cms-core-v2-global-save-arm-mutex-inventory.mjs`
+- **npm:** `verify:cms-core-v2-global-save-arm-mutex-inventory`
+- **Dependency direction:** verifier → Gosaki inventory · **no** Core←Gosaki reverse for evaluation · **no** mutex evaluate helper
+- **Operational client arms locked:** **6** (Schedule / Discography / YouTube Contents+Supabase / About Contents+Supabase)
+- **HTML attrs:** unique across families; Contents+Supabase share within family
+- **Discovery:** source literals cross-checked vs inventory + **explicit legacy allowlist** (Save-arm-like PUBLIC names: **no** broad `PUBLIC_ADMIN_GOSAKI_SCHEDULE_*` / `DISCOGRAPHY_*` / `G\d` prefix heuristics)
+- **Negative fixtures:** unregistered `…NEW_SAVE_UI_ARMED` / `…BULK_SAVE_ARMED` etc. must classify as `unregistered-operational-candidate` (FAIL if present in source)
+- **Mutex runtime / package gate:** **unwired**
+- **GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED:** **false**
+- **Deployed package regen:** **not required** (`dc1c5b6…` maintained)
+
+```txt
+CMS_CORE_V2_GLOBAL_SAVE_ARM_MUTEX_INVENTORY_VERIFIER_COMPLETE: true
+GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED: false
+MUTEX_EVALUATOR_WIRED: false
+PACKAGE_GENERATE_GATE_WIRED: false
+OPERATIONAL_CLIENT_SAVE_UI_ARM_COUNT: 6
+PACKAGE_GENERATE_EXECUTED: false
+FTP_EXECUTED: false
+GOSAKI_CLIENT_SHARE_READY_MAINTAINED: true
+deployedPackageSourceCommitUnchanged: dc1c5b62a58d0462ad6629db4847256d316d4a38
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+PRODUCTION_UNCHANGED: true
+```
+
+### Verifier PASS summary (this phase)
+
+| Check | Result |
+| --- | --- |
+| inventory count 6 | **PASS** |
+| env / featureId / serverArm unique | **PASS** |
+| YouTube/About Contents+Supabase pairs | **PASS** |
+| path/build-read non-mutex | **PASS** |
+| unregistered PUBLIC candidate | **0** |
+| mutex unwired | **PASS** |
+| package regen not required | **PASS** |

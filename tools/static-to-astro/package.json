@@ -18,6 +18,7 @@
     "verify:cms-core-v2-admin-staging-ref": "node scripts/verify-cms-core-v2-admin-staging-ref-assert-helper.mjs",
     "verify:cms-core-v2-save-arm-parse-policy": "node scripts/verify-cms-core-v2-save-arm-parse-policy.mjs",
     "verify:cms-core-v2-save-arm-exact-true": "node scripts/verify-cms-core-v2-save-arm-exact-true-helper.mjs",
+    "verify:cms-core-v2-global-save-arm-mutex-inventory": "node scripts/verify-cms-core-v2-global-save-arm-mutex-inventory.mjs",
     "extract:gosaki-schedule-seed": "node scripts/extract-gosaki-schedule-seed.mjs",
     "generate:gosaki-schedule-seed-sql": "node scripts/generate-gosaki-schedules-seed-sql.mjs --out scripts/supabase/gosaki-schedules-seed.template.sql",
     "verify:ftp-deployer-safety": "node scripts/verify-public-dist-ftp-deployer-safety.mjs",

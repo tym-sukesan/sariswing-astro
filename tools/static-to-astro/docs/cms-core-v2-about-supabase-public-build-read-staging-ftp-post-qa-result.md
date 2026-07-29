@@ -119,6 +119,15 @@ Optional later (not blocking client-ready audit): registry `sitePageFields=true`
 
 ---
 
+## 5b. Claude audit follow-up (2026-07-29) — recorded
+
+- Verdict: **READY WITH NON-BLOCKING ITEMS** · BLOCKER **none**
+- Vertical slice remains **CLOSED / COMPLETE / PASS**
+- Finding 1 (`sourceCommit` `95ada81…` vs close HEAD `6cbffda…`): **RESOLVED** — docs-only delta (8 files under `tools/static-to-astro/docs/`)
+- Full record: [Claude audit result](./cms-core-v2-about-supabase-vertical-slice-claude-audit-result.md)
+
+---
+
 ## 6. This record phase verification
 
 ```bash

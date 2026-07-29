@@ -1,14 +1,39 @@
-Last updated: 2026-07-28
+Last updated: 2026-07-29
 Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
-1. **Primary (Gosaki ops):** **staging client-ready audit** — Home / Schedule / Discography / YouTube / About / Contact / **mobile** / **admin routes**（Schedule 偏重にしない）。About vertical slice は **COMPLETE / PASS**（`95ada81…`）。
+1. **Primary (Gosaki ops):** **staging client-ready audit** — Home / Schedule / Discography / YouTube / About / Contact / **mobile** / **admin routes**。**Schedule 偏重禁止**（全 primary surfaces を均等に見る）。About vertical slice は **CLOSED / COMPLETE / PASS**（Claude audit **READY WITH NON-BLOCKING ITEMS** · BLOCKERなし · `95ada81…` package / `6cbffda…` close HEAD）。
 2. **並行可:** Contents YouTube 退役 planning（`contentsYoutubeCutoverExecuted: false`）。
 3. **並行可:** production hosting **read-only planning**。
-4. **並行可:** クライアントへ staging 共有は audit PASS 後を推奨。
+4. **並行可:** クライアントへ staging 共有は client-ready audit PASS 後を推奨。
 5. Save arm **false** · Save UI **false** · remote `GOSAKI_ABOUT_SUPABASE_SAVE_ARMED=false` · public About build-read **live**（`noop_equal`）· Contents/JSON retained · Secret 変更禁止 · migration/RLS/seed **再実行禁止**。
 6. production / Wix / auto FTP / `vsbvndwuajjhnzpohghh` 禁止 · `service_role` 禁止 · `readyForAnyFutureFtpApply: false`。
+7. Claude NON_BLOCKING（実装しない／独立フェーズにしない）: `can_write_site`×`sites.status=suspended`（将来 multi-client 前）· `overlay_noop` コメント/fixture（次 field/一般化時）· FileZilla 人的リスク（staging 許容）· live RLS/GRANT は client-ready 内の **SELECT-only** 候補のみ。
+
+## 0. About Supabase vertical slice Claude audit READY WITH NON-BLOCKING (2026-07-29)
+
+| Item | Value |
+| --- | --- |
+| Verdict | **READY WITH NON-BLOCKING ITEMS** |
+| BLOCKER | **none** |
+| Slice | **CLOSED / COMPLETE / PASS**（維持） |
+| Finding 1 | **RESOLVED** — `95ada81`→`6cbffda` docs-only（8 files）· non-docs **0** |
+| Package `sourceCommit` | `95ada81c8a408125370f089fb653660c702589ff` |
+| Close HEAD | `6cbffda8556434aa17761c474f1a3f78d0dbed92` |
+| Next | **staging client-ready audit**（Schedule 偏重禁止） |
+| Doc | `cms-core-v2-about-supabase-vertical-slice-claude-audit-result.md` |
+
+```txt
+ABOUT_SUPABASE_VERTICAL_SLICE_CLAUDE_AUDIT_COMPLETE: true
+ABOUT_SUPABASE_VERTICAL_SLICE_CLAUDE_AUDIT_VERDICT: READY_WITH_NON_BLOCKING_ITEMS
+ABOUT_SUPABASE_VERTICAL_SLICE_CLAUDE_AUDIT_BLOCKERS: 0
+CLAUDE_FINDING_1_SOURCECOMMIT_RESOLVED: true
+ABOUT_SUPABASE_VERTICAL_SLICE_PASSED: true
+readyForGosakiStagingClientReadyAudit: true
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+PRODUCTION_UNCHANGED: true
+```
 
 ## 0. About Supabase vertical slice COMPLETE / PASS (2026-07-28)
 

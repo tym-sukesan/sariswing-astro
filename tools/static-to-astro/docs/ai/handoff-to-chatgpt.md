@@ -5,23 +5,36 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: About Supabase vertical slice COMPLETE / PASS
-HEAD / package sourceCommit: 95ada81c8a408125370f089fb653660c702589ff
+Current phase: About Supabase Claude audit COMPLETE → Next Primary = client-ready audit
+Claude verdict: READY WITH NON-BLOCKING ITEMS · BLOCKER none
+About vertical slice: CLOSED / COMPLETE / PASS (unchanged)
+package sourceCommit: 95ada81c8a408125370f089fb653660c702589ff
+aboutCloseHead: 6cbffda8556434aa17761c474f1a3f78d0dbed92
+Finding1: RESOLVED (95ada81→6cbffda docs-only 8 files · non-docs 0)
 public build-read: supabase · fieldCount=1 · overlayOutcome=noop_equal
 Save UI=false · writeBackend=supabase · GOSAKI_ABOUT_SUPABASE_SAVE_ARMED=false
-DB_BASELINE: true · public /about/ visual QA PASS · FTP done
-STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
+DB_BASELINE: true · STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
 Next Primary: Gosaki staging client-ready audit
-  (Home / Schedule / Discography / YouTube / About / Contact / mobile / admin routes)
+  Home / Schedule / Discography / YouTube / About / Contact / mobile / admin routes
+  (DO NOT Schedule-bias)
 readyForGosakiStagingClientReadyAudit: true
 readyForAnyFutureFtpApply: false
 ```
+
+## About Supabase Claude audit (2026-07-29)
+
+- Verdict: **READY WITH NON-BLOCKING ITEMS** · BLOCKER **none**
+- Finding 1 sourceCommit vs close HEAD: **RESOLVED** (docs-only)
+- NON_BLOCKING: suspended status · overlay_noop · FileZilla human risk · live RLS SELECT-only inside client-ready (not a new phase)
+- Doc: `cms-core-v2-about-supabase-vertical-slice-claude-audit-result.md`
+- Desktop bundle (not in repo): `~/Desktop/gosaki-about-claude-audit-bundle.md`
 
 ## About Supabase vertical slice CLOSED (2026-07-28)
 
 - Admin read/hydrate · dry-run · forward/restore Save · public build-read FTP QA — all PASS
 - Doc: `cms-core-v2-about-supabase-public-build-read-staging-ftp-post-qa-result.md`
 - Gate: `ABOUT_SUPABASE_VERTICAL_SLICE_PASSED: true`
+- Claude audit follow-up: READY WITH NON-BLOCKING · proceed to client-ready audit
 
 ## About Supabase public build-read staging FTP post-QA (2026-07-28)
 

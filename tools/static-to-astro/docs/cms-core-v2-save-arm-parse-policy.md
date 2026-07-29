@@ -260,8 +260,8 @@ Stop and ask the operator if a follow-up phase would:
 | Option | Recommendation |
 | --- | --- |
 | `cms-core-v2-save-arm-parse-policy-verifier` | **Done** — `npm run verify:cms-core-v2-save-arm-parse-policy` |
-| `cms-core-v2-save-arm-exact-true-helper` | **Next** — Core helper + optional unused export |
-| Client bake no-trim alignment | Separate explicit approval (R1 fix: `" true "` only) |
+| `cms-core-v2-save-arm-exact-true-helper` | **Done** — `scripts/lib/save-arm-utils.mjs` · **runtime unwired** |
+| Client bake no-trim alignment | **Next** — separate explicit approval (R1 fix: `" true "` only) |
 | Edge shared arm helper | After Deno OPTIONS / staging-ref phases as needed |
 | Contents YouTube retire | Unrelated · separate |
 
@@ -296,7 +296,39 @@ HELPER_WIRED_TO_RUNTIME: false
 
 ---
 
-## 12. Safety (policy + verifier phases)
+## 12. Exact-true helper phase (`cms-core-v2-save-arm-exact-true-helper`)
+
+- **Status:** **COMPLETE**
+- **Helper:** `scripts/lib/save-arm-utils.mjs` — `isSaveArmExactTrue(raw)` → `raw === "true"`
+- **Verifier:** `scripts/verify-cms-core-v2-save-arm-exact-true-helper.mjs`
+- **npm:** `verify:cms-core-v2-save-arm-exact-true`
+- **Fixtures:** `policyArmedExactTrue` delegates to helper (verifier SoT alignment)
+- **Runtime wiring:** **false** — Admin / Edge / package-run-marker / operational edit **未 import**
+- **Client `.trim() === "true"`:** **retained** (R1 still open)
+- **POLICY_FULLY_IMPLEMENTED:** **false** (unchanged)
+
+```txt
+CMS_CORE_V2_SAVE_ARM_EXACT_TRUE_HELPER_COMPLETE: true
+HELPER_IMPLEMENTED: true
+HELPER_WIRED_TO_RUNTIME: false
+POLICY_FULLY_IMPLEMENTED: false
+PARSER_CODE_CHANGED: false
+CLIENT_TRIM_RETAINED: true
+```
+
+### Helper contract
+
+```txt
+"true"                         → true
+undefined | null | "" | false  → false
+" true " | "True" | "TRUE"     → false
+boolean true | 1 | object      → false
+no trim · no case-fold · no throw
+```
+
+---
+
+## 13. Safety (policy + verifier + helper phases)
 
 | Check | Result |
 | --- | --- |

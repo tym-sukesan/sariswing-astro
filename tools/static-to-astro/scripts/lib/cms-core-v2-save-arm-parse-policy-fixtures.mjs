@@ -4,10 +4,14 @@
  * NOT wired into Admin / Edge / package runtime. Do not import from production Save paths.
  */
 
-/** Policy target (desired SoT): raw === "true" only. */
+import { isSaveArmExactTrue } from "./save-arm-utils.mjs";
+
+/** Policy target SoT — delegates to Core helper (still unwired to runtime). */
 export function policyArmedExactTrue(raw) {
-  return raw === "true";
+  return isSaveArmExactTrue(raw);
 }
+
+export { isSaveArmExactTrue };
 
 /** Current client / bake Family A. */
 export function currentClientTrimArmed(raw) {

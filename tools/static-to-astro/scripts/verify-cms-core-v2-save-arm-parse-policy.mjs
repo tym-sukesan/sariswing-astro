@@ -18,8 +18,10 @@ import {
   currentClientTrimArmed,
   currentDatasetArmed,
   currentServerExactArmed,
+  isSaveArmExactTrue,
   policyArmedExactTrue,
 } from "./lib/cms-core-v2-save-arm-parse-policy-fixtures.mjs";
+import { isSaveArmExactTrue as isSaveArmExactTrueDirect } from "./lib/save-arm-utils.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const TOOL_ROOT = path.resolve(__dirname, "..");
@@ -446,6 +448,29 @@ assert(
   POLICY_FULLY_IMPLEMENTED === false &&
     clientNonCompliant.length > 0 &&
     /trim/.test(KNOWN_DIVERGENCE_REASON),
+);
+
+// --- Exact-true helper present but unwired ---
+const SAVE_ARM_UTILS = path.join(TOOL_ROOT, "scripts/lib/save-arm-utils.mjs");
+assert("save-arm-utils helper exists", exists(SAVE_ARM_UTILS));
+assert(
+  "helper matches policyArmedExactTrue for true",
+  isSaveArmExactTrue("true") === true &&
+    isSaveArmExactTrueDirect("true") === true &&
+    policyArmedExactTrue("true") === true,
+);
+assert(
+  "helper rejects padded true (policy)",
+  isSaveArmExactTrue(" true ") === false &&
+    isSaveArmExactTrueDirect(" true ") === false,
+);
+assert(
+  "admin runtime still does not import save-arm-utils",
+  !/save-arm-utils|isSaveArmExactTrue/.test(adminTs),
+);
+assert(
+  "package-run-marker still does not import save-arm-utils",
+  !/save-arm-utils|isSaveArmExactTrue/.test(marker),
 );
 
 console.log(`\nPOLICY_FULLY_IMPLEMENTED: ${POLICY_FULLY_IMPLEMENTED}`);

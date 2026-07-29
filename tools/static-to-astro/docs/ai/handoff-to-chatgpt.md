@@ -5,16 +5,23 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: CMS Core v2 admin staging-ref assert helper COMPLETE
-Core SoT: supabase-staging-ref-utils.mjs (Node only; Edge/Deno/Admin UI not wired)
+Current phase: CMS Core v2 Save arm parse policy COMPLETE (docs-only)
+Recommended: armed ⇔ raw === "true" (no trim); unset/junk → disarmed
+Known divergence: client bake trim vs Edge exact (R1) — do not unify without approval
 Gosaki CLIENT_SHARE_READY: true (maintained)
 deployed package: dc1c5b62a58d0462ad6629db4847256d316d4a38 (unchanged; no regen)
 Next Primary (ops): share staging with client
-Next (Kit Core): arm-parse policy note (docs) · Edge staging-ref later · Contents YouTube retire separate
+Next (Kit Core): save-arm policy verifier → optional exact-true helper (unwired)
+  Parallel: Edge staging-ref / requireUser later · Contents YouTube retire separate
 readyForAnyFutureFtpApply: false
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
-Doc: cms-core-v2-admin-staging-ref-assert-helper.md
+Doc: cms-core-v2-save-arm-parse-policy.md
 ```
+
+## CMS Core v2 Save arm parse policy (2026-07-29)
+
+- Inventory + unified policy · no code/helper
+- Doc: `cms-core-v2-save-arm-parse-policy.md`
 
 ## CMS Core v2 admin staging-ref assert helper (2026-07-29)
 

@@ -4,10 +4,38 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 ## 0. Current next actions（直近）
 
 1. **Primary (Gosaki ops):** クライアントへ **staging 共有**（`CLIENT_SHARE_READY: true` · package `dc1c5b6…`）。本番 cutover はしない。
-2. **並行可 (Kit Core):** optional Edge shared Save-arm helper / global multi-arm mutex（**別承認** · parse policy は完了）· Contents YouTube 退役は **別 phase**。
+2. **並行可 (Kit Core):** global Save arm mutex **inventory/fixture verifier**（**別承認** · policy docs 完了 · `IMPLEMENTED: false`）· optional Edge shared Save-arm helper · Contents YouTube 退役は **別 phase**。
 3. **並行可:** production hosting **read-only planning**（`HOSTING_READY: false`）。
 4. **並行可 / 別承認:** YouTube 複数件 **永続 Save**（NON_BLOCKING）。
-5. Save arm **false** · `readyForAnyFutureFtpApply: false` · production STOP · `service_role` 禁止 · **deployed package 固定**（一般化で regen 不要）。
+5. Save arm **false** · `readyForAnyFutureFtpApply: false` · production STOP · `service_role` 禁止 · **deployed package 固定**（mutex 実装でも client-ready regen 強制しない）。
+
+## 0. CMS Core v2 global Save arm mutex policy (2026-07-29)
+
+| Item | Value |
+| --- | --- |
+| Gate | `CMS_CORE_V2_GLOBAL_SAVE_ARM_MUTEX_POLICY_COMPLETE: true` |
+| Phase | `cms-core-v2-global-save-arm-mutex-policy` |
+| Code / helper / verifier | **false** (docs-only) |
+| Contract | operational client Save UI ≤1 · 0 OK · Contents+Supabase dual **禁止** |
+| Out of mutex | path-enable · build-read · dry-run · server Secrets (v1) |
+| GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED | **false** |
+| Deployed package | `dc1c5b6…` **unchanged** |
+| Doc | `cms-core-v2-global-save-arm-mutex-policy.md` |
+
+```txt
+CMS_CORE_V2_GLOBAL_SAVE_ARM_MUTEX_POLICY_COMPLETE: true
+CODE_CHANGED: false
+HELPER_IMPLEMENTED: false
+VERIFIER_ADDED: false
+GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED: false
+SAVE_ARM_CHANGED: false
+PACKAGE_GENERATE_EXECUTED: false
+FTP_EXECUTED: false
+GOSAKI_CLIENT_SHARE_READY_MAINTAINED: true
+deployedPackageSourceCommitUnchanged: dc1c5b62a58d0462ad6629db4847256d316d4a38
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+PRODUCTION_UNCHANGED: true
+```
 
 ## 0. CMS Core v2 Save arm client exact-true wiring (2026-07-29)
 

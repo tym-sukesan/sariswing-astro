@@ -3,19 +3,21 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**CMS Core v2 Save arm client exact-true wiring (2026-07-29):** **COMPLETE** — Phase `cms-core-v2-save-arm-client-exact-true-wiring` · 6 feature client Save arms + About package bake → `isSaveArmExactTrue` · template mirror `save-arm-utils.ts` · **PARSE_POLICY_FULLY_IMPLEMENTED: true** · **CLIENT_TRIM_DIVERGENCE_COUNT: 0** · **GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED: false** · Edge **未変更** · Save arm live **未変更** · Doc: `cms-core-v2-save-arm-parse-policy.md` §13 · Gate: `CMS_CORE_V2_SAVE_ARM_CLIENT_EXACT_TRUE_WIRING_COMPLETE: true` · **Next:** optional Edge shared arm helper / global multi-arm mutex（**別承認**）· 並行: client staging share.
+**CMS Core v2 global Save arm mutex policy (2026-07-29):** **COMPLETE (docs-only)** — Phase `cms-core-v2-global-save-arm-mutex-policy` · operational client Save UI ≤1 · 0 OK · Contents+Supabase dual client arm **禁止** · path/build-read/dry-run **対象外** · server mutex **別policy** · package generate前 fail-closed（実装は後）· **GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED: false** · deployed package **`dc1c5b6…` 維持** · Doc: `cms-core-v2-global-save-arm-mutex-policy.md` · Gate: `CMS_CORE_V2_GLOBAL_SAVE_ARM_MUTEX_POLICY_COMPLETE: true` · **Next:** inventory/fixture verifier（**別承認**）· 並行: client staging share.
 
-**CMS Core v2 Save arm exact-true helper (2026-07-29):** **COMPLETE** — superseded for wiring status by client exact-true wiring above · helper SoT retained.
+**CMS Core v2 Save arm client exact-true wiring (2026-07-29):** **COMPLETE** — Phase `cms-core-v2-save-arm-client-exact-true-wiring` · 6 feature client Save arms + About package bake → `isSaveArmExactTrue` · **PARSE_POLICY_FULLY_IMPLEMENTED: true** · **CLIENT_TRIM_DIVERGENCE_COUNT: 0** · **GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED: false** · Doc: `cms-core-v2-save-arm-parse-policy.md` §13 · Gate: `CMS_CORE_V2_SAVE_ARM_CLIENT_EXACT_TRUE_WIRING_COMPLETE: true` · **Next:** superseded by global mutex policy above for Kit Core mutex track.
 
-**CMS Core v2 Save arm parse policy verifier (2026-07-29):** **COMPLETE** — updated for post-wiring expectations (`PARSE_POLICY_FULLY_IMPLEMENTED: true`).
+**CMS Core v2 Save arm exact-true helper (2026-07-29):** **COMPLETE** — helper SoT retained · client bake wired.
 
-**CMS Core v2 Save arm parse policy (2026-07-29):** **COMPLETE** — Doc: `cms-core-v2-save-arm-parse-policy.md` · R1 resolved in §13.
+**CMS Core v2 Save arm parse policy verifier (2026-07-29):** **COMPLETE** — `PARSE_POLICY_FULLY_IMPLEMENTED: true`.
 
-**CMS Core v2 admin staging-ref assert helper (2026-07-29):** **COMPLETE** — Doc: `cms-core-v2-admin-staging-ref-assert-helper.md` · Core SoT `supabase-staging-ref-utils.mjs` · YouTube/About/Schedule/Discography Node wrappers + package/admin-env constants · **Edge/Deno/Admin UI not wired** · **CLIENT_SHARE_READY maintained** · package **`dc1c5b6…` unchanged** · Gate: `CMS_CORE_V2_ADMIN_STAGING_REF_ASSERT_HELPER_COMPLETE: true` · **Next:** superseded by Save arm parse policy above.
+**CMS Core v2 Save arm parse policy (2026-07-29):** **COMPLETE** — Doc: `cms-core-v2-save-arm-parse-policy.md` · R1 resolved in §13 · R3 addressed by mutex policy doc (design only).
 
-**CMS Core v2 generalization boundary + first safe extraction (2026-07-29):** **COMPLETE** — Doc: `cms-core-v2-generalization-boundary-and-first-extraction.md` · 4-feature boundary map · first extraction: Node YouTube URL parse → Core SoT `youtube-url-utils.mjs`（contract / dry-run 直 import · `gosaki-youtube-embed-utils.mjs` は re-export + resolve/render のみ）· **no** Edge/UI/SoT/package/FTP · **CLIENT_SHARE_READY maintained** · deployed package **`dc1c5b6…` unchanged** · Gates: `CMS_CORE_V2_GENERALIZATION_BOUNDARY_AUDIT_COMPLETE: true` · `FIRST_SAFE_EXTRACTION_EXECUTED: true` · **Next:** superseded by admin staging-ref assert helper above.
+**CMS Core v2 admin staging-ref assert helper (2026-07-29):** **COMPLETE** — Doc: `cms-core-v2-admin-staging-ref-assert-helper.md`.
 
-**Gosaki staging client-ready audit FINAL (2026-07-29):** **COMPLETE / PASS** — **CLIENT_SHARE_READY: true** · P1 **none** · deployed package `sourceCommit` **`dc1c5b6…`** · About mobile order P2 **RESOLVED** · YouTube multi capability **local PASS** · multi **persist Save** = **NON_BLOCKING ops** · Doc: `gosaki-staging-client-ready-audit.md` §12 · **Next Primary:** クライアントへ staging 共有（Kit Core 一般化は並行可）。
+**CMS Core v2 generalization boundary + first safe extraction (2026-07-29):** **COMPLETE** — Doc: `cms-core-v2-generalization-boundary-and-first-extraction.md`.
+
+**Gosaki staging client-ready audit FINAL (2026-07-29):** **COMPLETE / PASS** — **CLIENT_SHARE_READY: true** · deployed package `sourceCommit` **`dc1c5b6…`** · **Next Primary:** クライアントへ staging 共有（Kit Core 一般化は並行可）。
 
 **Gosaki client-ready follow-up — About mobile order + YouTube multi gate (2026-07-29):** **superseded by FINAL above** — local fix + package `dc1c5b6` + FileZilla + FTP後 QA recorded in §12.
 

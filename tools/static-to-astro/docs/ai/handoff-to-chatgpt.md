@@ -5,22 +5,27 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: CMS Core v2 Save arm client exact-true wiring COMPLETE
-Phase: cms-core-v2-save-arm-client-exact-true-wiring
-Client Save arms + About package bake → isSaveArmExactTrue (exact "true")
-PARSE_POLICY_FULLY_IMPLEMENTED: true · CLIENT_TRIM_DIVERGENCE_COUNT: 0
-GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED: false (separate · not confused with parse)
-HELPER_WIRED_TO_CLIENT_BAKE: true · HELPER_WIRED_TO_EDGE: false
-npm: verify:cms-core-v2-save-arm-exact-true · verify:cms-core-v2-save-arm-parse-policy
+Current phase: CMS Core v2 global Save arm mutex policy COMPLETE (docs-only)
+Phase: cms-core-v2-global-save-arm-mutex-policy
+Contract: operational client Save UI ≤1 · 0 OK · Contents+Supabase dual forbidden
+path/build-read/dry-run out of mutex · server mutex deferred
+GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED: false (design only)
+PARSE_POLICY_FULLY_IMPLEMENTED: true (separate · exact-true already wired)
 Gosaki CLIENT_SHARE_READY: true (maintained)
 deployed package: dc1c5b62a58d0462ad6629db4847256d316d4a38 (unchanged; no regen)
 Next Primary (ops): share staging with client
-Next (Kit Core): optional Edge shared arm helper / global multi-arm mutex (explicit approval)
-  Parallel: Contents YouTube retire separate
+Next (Kit Core): mutex inventory/fixture verifier (explicit approval) · then helper unwired
+  Parallel: Edge shared arm helper · Contents YouTube retire separate
 readyForAnyFutureFtpApply: false
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
-Doc: cms-core-v2-save-arm-parse-policy.md §13
+Doc: cms-core-v2-global-save-arm-mutex-policy.md
 ```
+
+## CMS Core v2 global Save arm mutex policy (2026-07-29)
+
+- Docs-only mutex contract for 6 operational client Save UI arms
+- Partial existing check: About package other-attr false only
+- Doc: `cms-core-v2-global-save-arm-mutex-policy.md`
 
 ## CMS Core v2 Save arm client exact-true wiring (2026-07-29)
 
@@ -41,7 +46,7 @@ Doc: cms-core-v2-save-arm-parse-policy.md §13
 
 ## CMS Core v2 Save arm parse policy (2026-07-29)
 
-- Inventory + unified policy · R1 resolved in wiring phase
+- Inventory + unified policy · R1 resolved · R3 → mutex policy doc
 - Doc: `cms-core-v2-save-arm-parse-policy.md`
 
 ## CMS Core v2 admin staging-ref assert helper (2026-07-29)

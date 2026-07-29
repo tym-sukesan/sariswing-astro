@@ -18,8 +18,10 @@ export const CMS_CORE_V2_YOUTUBE_PHASE =
   "cms-core-v2-youtube-supabase-vertical-slice-local-implementation";
 
 export const GOSAKI_YOUTUBE_SITE_SLUG = "gosaki-piano";
-export const STAGING_PROJECT_REF = "kmjqppxjdnwwrtaeqjta";
-export const PRODUCTION_REF_STOP = "vsbvndwuajjhnzpohghh";
+export {
+  PRODUCTION_REF_STOP,
+  STAGING_PROJECT_REF,
+} from "./supabase-staging-ref-utils.mjs";
 
 export const YOUTUBE_SUPABASE_ENDPOINT_NAME = "gosaki-youtube-supabase-save-dry-run";
 export const YOUTUBE_SUPABASE_PROVIDER = "youtube";

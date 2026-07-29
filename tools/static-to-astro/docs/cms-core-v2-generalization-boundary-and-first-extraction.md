@@ -157,7 +157,7 @@ Core **must not** import Gosaki files.
 ## 8. Next generalization order
 
 1. **Done:** Node YouTube URL parse → Core `youtube-url-utils.mjs`（Gosaki 依存なし）
-2. Admin staging-ref base assert helper (shared 4-liner; keep feature wrappers)
+2. **Done:** Admin staging-ref assert helper → Core `supabase-staging-ref-utils.mjs`（Edge/UI 未配線）
 3. Document-only arm-parse policy note (Edge vs client) — no code unify yet
 4. Deno `_shared` `requireUser` after OPTIONS contract alignment
 5. Build-read envelope skeleton (embeds vs page_fields still feature-specific returns)

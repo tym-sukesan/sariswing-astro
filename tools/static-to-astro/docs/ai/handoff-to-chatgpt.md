@@ -5,23 +5,26 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: CMS Core v2 generalization boundary + first safe extraction COMPLETE
-First extraction: Node YouTube URL parse → youtube-url-utils.mjs Core SoT (contract/dry-run direct import; gosaki-embed-utils re-export)
+Current phase: CMS Core v2 admin staging-ref assert helper COMPLETE
+Core SoT: supabase-staging-ref-utils.mjs (Node only; Edge/Deno/Admin UI not wired)
 Gosaki CLIENT_SHARE_READY: true (maintained)
 deployed package: dc1c5b62a58d0462ad6629db4847256d316d4a38 (unchanged; no regen)
-No Edge/UI/SoT/package/FTP/Contents retire
 Next Primary (ops): share staging with client
-Next (Kit Core): admin staging-ref assert helper (optional)
-  Parallel: Contents YouTube retire planning · hosting read-only · multi Save (separate approval)
+Next (Kit Core): arm-parse policy note (docs) · Edge staging-ref later · Contents YouTube retire separate
 readyForAnyFutureFtpApply: false
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
-Doc: cms-core-v2-generalization-boundary-and-first-extraction.md
+Doc: cms-core-v2-admin-staging-ref-assert-helper.md
 ```
+
+## CMS Core v2 admin staging-ref assert helper (2026-07-29)
+
+- Node Core staging-ref evaluate/assert + feature wrappers (messages preserved)
+- Doc: `cms-core-v2-admin-staging-ref-assert-helper.md`
 
 ## CMS Core v2 generalization boundary (2026-07-29)
 
 - 4-feature layer map + comparison recorded
-- Safe extraction #1 executed (Node parse helpers only)
+- Safe extraction #1: Node YouTube URL parse → `youtube-url-utils.mjs`
 - Doc: `cms-core-v2-generalization-boundary-and-first-extraction.md`
 
 ## Gosaki staging client-ready audit FINAL (2026-07-29)

@@ -4,10 +4,16 @@
  * No service_role · single capability Save approval ID (not phase aliases).
  */
 
+import {
+  PRODUCTION_REF_STOP,
+  STAGING_PROJECT_REF,
+  assertStagingOnlySupabaseTarget,
+} from "./supabase-staging-ref-utils.mjs";
+
 export const SCHEDULE_DRY_RUN_ENDPOINT_NAME = "gosaki-schedule-save-dry-run";
 export const SCHEDULE_DRY_RUN_SITE_SLUG = "gosaki-piano";
-export const SCHEDULE_DRY_RUN_STAGING_REF = "kmjqppxjdnwwrtaeqjta";
-export const SCHEDULE_DRY_RUN_PRODUCTION_REF_STOP = "vsbvndwuajjhnzpohghh";
+export const SCHEDULE_DRY_RUN_STAGING_REF = STAGING_PROJECT_REF;
+export const SCHEDULE_DRY_RUN_PRODUCTION_REF_STOP = PRODUCTION_REF_STOP;
 export const SCHEDULE_DRY_RUN_OPERATION = "dryRun";
 export const SCHEDULE_SAVE_OPERATION = "save";
 
@@ -52,14 +58,11 @@ const WRITE_FALSE = {
 };
 
 export function assertScheduleDryRunStagingUrl(supabaseUrl) {
-  const url = String(supabaseUrl ?? "");
-  if (!url) throw new Error("SUPABASE_URL is required");
-  if (url.includes(SCHEDULE_DRY_RUN_PRODUCTION_REF_STOP)) {
-    throw new Error("production Supabase ref is blocked");
-  }
-  if (!url.includes(SCHEDULE_DRY_RUN_STAGING_REF)) {
-    throw new Error("Schedule dry-run Edge is staging-only");
-  }
+  assertStagingOnlySupabaseTarget(supabaseUrl, {
+    empty: "SUPABASE_URL is required",
+    production: "production Supabase ref is blocked",
+    nonStaging: "Schedule dry-run Edge is staging-only",
+  });
 }
 
 export function normalizeScheduleFieldValue(value) {

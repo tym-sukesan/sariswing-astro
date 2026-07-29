@@ -10,8 +10,10 @@ export const CMS_CORE_V2_ABOUT_PHASE =
   "cms-core-v2-about-supabase-vertical-slice-local-implementation";
 
 export const GOSAKI_ABOUT_SITE_SLUG = "gosaki-piano";
-export const STAGING_PROJECT_REF = "kmjqppxjdnwwrtaeqjta";
-export const PRODUCTION_REF_STOP = "vsbvndwuajjhnzpohghh";
+export {
+  PRODUCTION_REF_STOP,
+  STAGING_PROJECT_REF,
+} from "./supabase-staging-ref-utils.mjs";
 
 export const ABOUT_SUPABASE_ENDPOINT_NAME = "gosaki-about-supabase-save-dry-run";
 export const ABOUT_PAGE_KEY = "about";

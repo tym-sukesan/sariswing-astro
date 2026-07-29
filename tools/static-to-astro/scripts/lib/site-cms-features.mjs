@@ -9,6 +9,7 @@ import {
   getSiteRegistryEntry,
   resolveSupabaseSiteSlug,
 } from "./site-registry.mjs";
+import { stringContainsProductionRef } from "./supabase-staging-ref-utils.mjs";
 
 /** @typedef {'schedule' | 'discography' | 'siteEmbeds' | 'sitePageFields'} SupabaseFeatureId */
 /** @typedef {'youtube' | 'contact' | 'aboutBandProfiles' | 'aboutContent' | 'readOnlyAdmin'} CmsFeatureId */
@@ -226,7 +227,7 @@ export async function loadSiteEmbedsDataForBuild(opts) {
       rowCount: 0,
     };
   }
-  if (readEnv.supabaseUrl.includes("vsbvndwuajjhnzpohghh")) {
+  if (stringContainsProductionRef(readEnv.supabaseUrl)) {
     return {
       embedDataSource: "blocked",
       fallbackReason: "production_ref_stop",
@@ -324,7 +325,7 @@ export async function loadSitePageFieldsDataForBuild(opts) {
       fieldCount: 0,
     };
   }
-  if (readEnv.supabaseUrl.includes("vsbvndwuajjhnzpohghh")) {
+  if (stringContainsProductionRef(readEnv.supabaseUrl)) {
     return {
       pageFieldDataSource: "blocked",
       fallbackReason: "production_ref_stop",

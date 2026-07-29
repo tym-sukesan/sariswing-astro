@@ -6,14 +6,21 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import {
+  PRODUCTION_REF_STOP,
+  STAGING_PROJECT_REF,
+  STAGING_SUPABASE_URL,
+  isExactStagingSupabaseHostname,
+  stringContainsProductionRef,
+} from "./supabase-staging-ref-utils.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 export const TOOL_ROOT = path.resolve(__dirname, "../..");
 export const REPO_ROOT = path.resolve(TOOL_ROOT, "../..");
 
-export const STAGING_PROJECT_REF = "kmjqppxjdnwwrtaeqjta";
-export const PRODUCTION_PROJECT_REF = "vsbvndwuajjhnzpohghh";
-export const STAGING_SUPABASE_URL = `https://${STAGING_PROJECT_REF}.supabase.co`;
+export { STAGING_PROJECT_REF };
+export const PRODUCTION_PROJECT_REF = PRODUCTION_REF_STOP;
+export { STAGING_SUPABASE_URL };
 export const STAGING_DRY_RUN_ENDPOINT = `${STAGING_SUPABASE_URL}/functions/v1/gosaki-youtube-url-dry-run`;
 
 const PUBLIC_ENV_KEYS = [
@@ -91,14 +98,14 @@ export function validateGosakiStagingAdminPublicEnv(env) {
     errors.push("PUBLIC_SUPABASE_URL is not a valid URL");
   }
 
-  if (host.includes(PRODUCTION_PROJECT_REF)) {
+  if (stringContainsProductionRef(host)) {
     errors.push("PUBLIC_SUPABASE_URL must not target production Supabase");
   }
-  if (host && host !== `${STAGING_PROJECT_REF}.supabase.co`) {
+  if (host && !isExactStagingSupabaseHostname(host)) {
     errors.push("PUBLIC_SUPABASE_URL host must be staging project only");
   }
 
-  if (env.PUBLIC_GOSAKI_YOUTUBE_URL_DRY_RUN_ENDPOINT?.includes(PRODUCTION_PROJECT_REF)) {
+  if (stringContainsProductionRef(env.PUBLIC_GOSAKI_YOUTUBE_URL_DRY_RUN_ENDPOINT)) {
     errors.push("PUBLIC_GOSAKI_YOUTUBE_URL_DRY_RUN_ENDPOINT must not target production");
   }
 

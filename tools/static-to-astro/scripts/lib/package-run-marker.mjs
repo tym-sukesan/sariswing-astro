@@ -7,6 +7,10 @@
 import fs from "node:fs";
 import path from "node:path";
 import { resolveSourceCommit } from "./package-upload-safety.mjs";
+import {
+  PRODUCTION_REF_STOP,
+  STAGING_PROJECT_REF,
+} from "./supabase-staging-ref-utils.mjs";
 
 export const PACKAGE_RUN_MARKER_NAME = "PACKAGE_RUN.json";
 export const STALE_BACKUP_DIR_NAME = "_stale-backup";
@@ -45,8 +49,8 @@ export const ABOUT_PUBLIC_BUILD_READ_REPORT_NAME = "ABOUT_PUBLIC_BUILD_READ_REPO
 export const GOSAKI_ABOUT_PROFILE_LEDE_BASELINE =
   "後藤 沙紀 1990年7月9日 A型 岡山県岡山市生まれ。";
 
-export const GOSAKI_STAGING_SUPABASE_REF = "kmjqppxjdnwwrtaeqjta";
-export const GOSAKI_PRODUCTION_SUPABASE_REF_STOP = "vsbvndwuajjhnzpohghh";
+export const GOSAKI_STAGING_SUPABASE_REF = STAGING_PROJECT_REF;
+export const GOSAKI_PRODUCTION_SUPABASE_REF_STOP = PRODUCTION_REF_STOP;
 export const ABOUT_SUPABASE_ENDPOINT_NAME = "gosaki-about-supabase-save-dry-run";
 export const ABOUT_CONTENTS_DRY_RUN_ENDPOINT_NAME = "gosaki-about-content-dry-run";
 export const ABOUT_CONTENTS_SAVE_ENDPOINT_NAME = "gosaki-about-content-save";

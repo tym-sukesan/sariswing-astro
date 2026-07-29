@@ -4,10 +4,36 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 ## 0. Current next actions（直近）
 
 1. **Primary (Gosaki ops):** クライアントへ **staging 共有**（`CLIENT_SHARE_READY: true` · package `dc1c5b6…`）。本番 cutover はしない。
-2. **並行可 (Kit Core):** CMS Core v2 一般化 next — Admin staging-ref base assert helper（任意）· Edge `requireUser` shared は OPTIONS 契約揃え後 · Contents YouTube 退役は **別 phase**。
+2. **並行可 (Kit Core):** CMS Core v2 一般化 next — arm-parse policy note（docs）· Edge `requireUser` / staging-ref は OPTIONS 契約揃え後の **別 phase** · Contents YouTube 退役は **別 phase**。
 3. **並行可:** production hosting **read-only planning**（`HOSTING_READY: false`）。
 4. **並行可 / 別承認:** YouTube 複数件 **永続 Save**（NON_BLOCKING）。
 5. Save arm **false** · `readyForAnyFutureFtpApply: false` · production STOP · `service_role` 禁止 · **deployed package 固定**（一般化で regen 不要）。
+
+## 0. CMS Core v2 admin staging-ref assert helper (2026-07-29)
+
+| Item | Value |
+| --- | --- |
+| Gate | `CMS_CORE_V2_ADMIN_STAGING_REF_ASSERT_HELPER_COMPLETE: true` |
+| Core SoT | `scripts/lib/supabase-staging-ref-utils.mjs` |
+| Edge/Deno wired | **false** |
+| Admin UI changed | **false** |
+| CLIENT_SHARE_READY | **true**（維持） |
+| Deployed package | `dc1c5b6…` **unchanged** |
+| Doc | `cms-core-v2-admin-staging-ref-assert-helper.md` |
+| Verifier | `npm run verify:cms-core-v2-admin-staging-ref` |
+
+```txt
+CMS_CORE_V2_ADMIN_STAGING_REF_ASSERT_HELPER_COMPLETE: true
+EDGE_DENO_WIRED: false
+ADMIN_UI_CHANGED: false
+PACKAGE_GENERATE_EXECUTED: false
+FTP_EXECUTED: false
+CONTENTS_YOUTUBE_CUTOVER_EXECUTED: false
+GOSAKI_CLIENT_SHARE_READY_MAINTAINED: true
+deployedPackageSourceCommitUnchanged: dc1c5b62a58d0462ad6629db4847256d316d4a38
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+PRODUCTION_UNCHANGED: true
+```
 
 ## 0. CMS Core v2 generalization boundary + first extraction (2026-07-29)
 

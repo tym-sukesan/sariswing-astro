@@ -4,6 +4,11 @@
  */
 
 import { SKYLARK_TRACKS_CURRENT } from "./discography-g19a-generic-dry-run-lib.mjs";
+import {
+  PRODUCTION_REF_STOP,
+  STAGING_PROJECT_REF,
+  assertStagingOnlySupabaseTarget,
+} from "./supabase-staging-ref-utils.mjs";
 
 export const G20U36D_READBACK_PHASE = "G-20u36d-readback-implementation-in-tools-draft";
 export const G20U36D_RELEASE_ID_SELECT_FIX_PHASE = "G-20u36d-readback-release-id-select-fix-tools-draft";
@@ -13,8 +18,7 @@ export const G20U36D_TRACKS_RELATION_FILTER_FIX_PHASE =
   "G-20u36d-readback-tracks-relation-filter-fix-tools-draft";
 export const READBACK_SOURCE = "supabase-select";
 export const READBACK_SITE_SLUG = "gosaki-piano";
-export const STAGING_PROJECT_REF = "kmjqppxjdnwwrtaeqjta";
-export const PRODUCTION_REF_STOP = "vsbvndwuajjhnzpohghh";
+export { STAGING_PROJECT_REF, PRODUCTION_REF_STOP };
 
 /** PostgREST release SELECT — may include internal `id` (not used for tracks relation · not in readBack summary). */
 const RELEASE_SELECT_FIELDS = [
@@ -99,16 +103,11 @@ export function buildAnonSelectDiscographyTracksPath(siteSlug, legacyId) {
  * @returns {void}
  */
 export function assertStagingSupabaseUrl(supabaseUrl) {
-  const url = String(supabaseUrl ?? "");
-  if (!url) {
-    throw new Error("SUPABASE_URL is required for anon SELECT readBack");
-  }
-  if (url.includes(PRODUCTION_REF_STOP)) {
-    throw new Error("production Supabase ref is blocked for readBack");
-  }
-  if (!url.includes(STAGING_PROJECT_REF)) {
-    throw new Error("readBack anon SELECT is staging-only");
-  }
+  assertStagingOnlySupabaseTarget(supabaseUrl, {
+    empty: "SUPABASE_URL is required for anon SELECT readBack",
+    production: "production Supabase ref is blocked for readBack",
+    nonStaging: "readBack anon SELECT is staging-only",
+  });
 }
 
 /**

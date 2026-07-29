@@ -302,7 +302,7 @@ Stop and ask before implementation if:
 Recommended order after this docs phase:
 
 1. **`cms-core-v2-global-save-arm-mutex-inventory-verifier`** — **Done** (§14)
-2. **`cms-core-v2-global-save-arm-mutex-helper`** — Core evaluate helper, unwired
+2. **`cms-core-v2-global-save-arm-mutex-helper`** — **Done** (§15) · Core evaluate helper, **unwired**
 3. **`cms-core-v2-global-save-arm-mutex-package-gate`** — wire generate + verifier (explicit approval; no forced client-ready regen)
 
 Parallel (unrelated): Edge shared `isSaveArmExactTrue` mirror · Contents YouTube retire · client staging share ops.
@@ -365,3 +365,45 @@ PRODUCTION_UNCHANGED: true
 | unregistered PUBLIC candidate | **0** |
 | mutex unwired | **PASS** |
 | package regen not required | **PASS** |
+
+---
+
+## 15. Mutex evaluate helper phase (`cms-core-v2-global-save-arm-mutex-helper`)
+
+- **Status:** **COMPLETE**
+- **Date:** 2026-07-30
+- **Helper (Core, site-agnostic):** `scripts/lib/save-arm-mutex-utils.mjs` · `evaluateOperationalClientSaveUiMutex(entries)`
+- **Fixtures:** `scripts/lib/cms-core-v2-save-arm-mutex-eval-fixtures.mjs`
+- **Verifier:** `scripts/verify-cms-core-v2-global-save-arm-mutex-helper.mjs`
+- **npm:** `verify:cms-core-v2-global-save-arm-mutex-helper`
+- **Input:** normalized `{ featureId: string, armed: boolean }[]` only · no env parse · no production gate · no Gosaki names
+- **Contract:** 0 armed OK · 1 OK · ≥2 fail · invalid input fail-closed (no throw)
+- **Dependency:** Core helper ← verifier · Gosaki inventory used only in verifier fixtures · **helper does not import Gosaki** · inventory / package / Admin **do not import** helper yet
+- **Flags (do not confuse availability with wiring):**
+
+```txt
+CMS_CORE_V2_GLOBAL_SAVE_ARM_MUTEX_HELPER_COMPLETE: true
+MUTEX_EVALUATOR_AVAILABLE: true
+MUTEX_EVALUATOR_WIRED: false
+PACKAGE_GENERATE_GATE_WIRED: false
+GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED: false
+PACKAGE_GENERATE_EXECUTED: false
+FTP_EXECUTED: false
+GOSAKI_CLIENT_SHARE_READY_MAINTAINED: true
+deployedPackageSourceCommitUnchanged: dc1c5b62a58d0462ad6629db4847256d316d4a38
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+PRODUCTION_UNCHANGED: true
+```
+
+### Reason codes
+
+| reason | Meaning |
+| --- | --- |
+| `no_operational_save_arm` | ok · armedCount 0 |
+| `single_operational_save_arm` | ok · armedCount 1 |
+| `multiple_operational_save_arms` | fail · armedCount ≥ 2 |
+| `invalid_operational_save_arm_input` | fail · bad shape / non-boolean armed / empty or duplicate featureId |
+
+### Next
+
+Wire into **package generate / verifier** only with explicit approval (`cms-core-v2-global-save-arm-mutex-package-gate`). Do not force client-ready package regen.

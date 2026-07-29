@@ -407,12 +407,16 @@ const mutexWireHits = runtimeFiles.filter((f) => {
   const base = path.basename(f);
   if (base === "gosaki-operational-save-ui-arm-inventory.mjs") return false;
   if (base === "verify-cms-core-v2-global-save-arm-mutex-inventory.mjs") return false;
+  // Helper exists (available) but must not count as runtime wiring
+  if (base === "save-arm-mutex-utils.mjs") return false;
+  if (base === "cms-core-v2-save-arm-mutex-eval-fixtures.mjs") return false;
+  if (base === "verify-cms-core-v2-global-save-arm-mutex-helper.mjs") return false;
   const text = read(f);
   return (
     /evaluateOperationalClientSaveUiMutex/.test(text) ||
     /forbidMultipleSaveUiArms/.test(text) ||
     /assertSingleOperationalSaveArm/.test(text) ||
-    /save-arm-mutex-utils/.test(text) ||
+    /from ["'].*save-arm-mutex-utils/.test(text) ||
     /operationalSaveUiArmedCount/.test(text)
   );
 });

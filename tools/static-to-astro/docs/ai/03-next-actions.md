@@ -4,10 +4,38 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 ## 0. Current next actions（直近）
 
 1. **Primary (Gosaki ops):** クライアントへ **staging 共有**（`CLIENT_SHARE_READY: true` · package `dc1c5b6…`）。本番 cutover はしない。
-2. **並行可 (Kit Core):** global Save arm mutex **evaluate helper unwired**（**別承認** · inventory verifier 完了 · `IMPLEMENTED: false`）· optional Edge shared Save-arm helper · Contents YouTube 退役は **別 phase**。
+2. **並行可 (Kit Core):** global Save arm mutex **package generate gate**（**別承認** · helper available · `WIRED: false` · `IMPLEMENTED: false`）· optional Edge shared Save-arm helper · Contents YouTube 退役は **別 phase**。
 3. **並行可:** production hosting **read-only planning**（`HOSTING_READY: false`）。
 4. **並行可 / 別承認:** YouTube 複数件 **永続 Save**（NON_BLOCKING）。
-5. Save arm **false** · `readyForAnyFutureFtpApply: false` · production STOP · `service_role` 禁止 · **deployed package 固定**（mutex 実装でも client-ready regen 強制しない）。
+5. Save arm **false** · `readyForAnyFutureFtpApply: false` · production STOP · `service_role` 禁止 · **deployed package 固定**（mutex wiring でも client-ready regen 強制しない）。
+
+## 0. CMS Core v2 global Save arm mutex helper (2026-07-30)
+
+| Item | Value |
+| --- | --- |
+| Gate | `CMS_CORE_V2_GLOBAL_SAVE_ARM_MUTEX_HELPER_COMPLETE: true` |
+| Phase | `cms-core-v2-global-save-arm-mutex-helper` |
+| Helper | `scripts/lib/save-arm-mutex-utils.mjs` · `evaluateOperationalClientSaveUiMutex` |
+| npm | `verify:cms-core-v2-global-save-arm-mutex-helper` |
+| MUTEX_EVALUATOR_AVAILABLE | **true** |
+| MUTEX_EVALUATOR_WIRED | **false** |
+| PACKAGE_GENERATE_GATE_WIRED | **false** |
+| GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED | **false** |
+| Doc | `cms-core-v2-global-save-arm-mutex-policy.md` §15 |
+
+```txt
+CMS_CORE_V2_GLOBAL_SAVE_ARM_MUTEX_HELPER_COMPLETE: true
+MUTEX_EVALUATOR_AVAILABLE: true
+MUTEX_EVALUATOR_WIRED: false
+PACKAGE_GENERATE_GATE_WIRED: false
+GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED: false
+PACKAGE_GENERATE_EXECUTED: false
+FTP_EXECUTED: false
+GOSAKI_CLIENT_SHARE_READY_MAINTAINED: true
+deployedPackageSourceCommitUnchanged: dc1c5b62a58d0462ad6629db4847256d316d4a38
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+PRODUCTION_UNCHANGED: true
+```
 
 ## 0. CMS Core v2 global Save arm mutex inventory verifier (2026-07-29)
 
@@ -19,12 +47,13 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | npm | `verify:cms-core-v2-global-save-arm-mutex-inventory` |
 | Operational client arms | **6** |
 | GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED | **false** |
-| Evaluator / package gate | **unwired** |
+| Evaluator / package gate | **unwired** (helper now available · still unwired) |
 | Doc | `cms-core-v2-global-save-arm-mutex-policy.md` §14 |
 
 ```txt
 CMS_CORE_V2_GLOBAL_SAVE_ARM_MUTEX_INVENTORY_VERIFIER_COMPLETE: true
 GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED: false
+MUTEX_EVALUATOR_AVAILABLE: true
 MUTEX_EVALUATOR_WIRED: false
 PACKAGE_GENERATE_GATE_WIRED: false
 OPERATIONAL_CLIENT_SAVE_UI_ARM_COUNT: 6
@@ -42,7 +71,7 @@ PRODUCTION_UNCHANGED: true
 | --- | --- |
 | Gate | `CMS_CORE_V2_GLOBAL_SAVE_ARM_MUTEX_POLICY_COMPLETE: true` |
 | Phase | `cms-core-v2-global-save-arm-mutex-policy` |
-| Code / helper / verifier (policy phase) | docs-only at policy time · inventory verifier now landed (§14) |
+| Code / helper / verifier (policy phase) | docs-only at policy time · inventory + helper now landed (§14–§15) |
 | Contract | operational client Save UI ≤1 · 0 OK · Contents+Supabase dual **禁止** |
 | Out of mutex | path-enable · build-read · dry-run · server Secrets (v1) |
 | GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED | **false** |

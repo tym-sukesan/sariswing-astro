@@ -1,13 +1,15 @@
-Last updated: 2026-07-29
+Last updated: 2026-07-30
 Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**CMS Core v2 global Save arm mutex inventory verifier (2026-07-29):** **COMPLETE** — Phase `cms-core-v2-global-save-arm-mutex-inventory-verifier` · Gosaki adapter `gosaki-operational-save-ui-arm-inventory.mjs` · 6 operational client Save UI arms locked · discovery cross-check · **GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED: false** · evaluator/gate **unwired** · npm `verify:cms-core-v2-global-save-arm-mutex-inventory` · Doc: `cms-core-v2-global-save-arm-mutex-policy.md` §14 · Gate: `CMS_CORE_V2_GLOBAL_SAVE_ARM_MUTEX_INVENTORY_VERIFIER_COMPLETE: true` · **Next:** mutex evaluate helper unwired（**別承認**）· 並行: client staging share.
+**CMS Core v2 global Save arm mutex helper (2026-07-30):** **COMPLETE (unwired)** — Phase `cms-core-v2-global-save-arm-mutex-helper` · Core `scripts/lib/save-arm-mutex-utils.mjs` · `evaluateOperationalClientSaveUiMutex` · **MUTEX_EVALUATOR_AVAILABLE: true** · **MUTEX_EVALUATOR_WIRED: false** · **PACKAGE_GENERATE_GATE_WIRED: false** · **GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED: false** · npm `verify:cms-core-v2-global-save-arm-mutex-helper` · Doc: `cms-core-v2-global-save-arm-mutex-policy.md` §15 · Gate: `CMS_CORE_V2_GLOBAL_SAVE_ARM_MUTEX_HELPER_COMPLETE: true` · **Next:** package generate gate wiring（**別承認**）· 並行: client staging share.
 
-**CMS Core v2 global Save arm mutex policy (2026-07-29):** **COMPLETE (docs-only)** — Phase `cms-core-v2-global-save-arm-mutex-policy` · operational client Save UI ≤1 · Doc: `cms-core-v2-global-save-arm-mutex-policy.md` · Gate: `CMS_CORE_V2_GLOBAL_SAVE_ARM_MUTEX_POLICY_COMPLETE: true` · **Next:** superseded by inventory verifier above.
+**CMS Core v2 global Save arm mutex inventory verifier (2026-07-29):** **COMPLETE** — Gosaki adapter 6 arms · discovery cross-check · Doc: `cms-core-v2-global-save-arm-mutex-policy.md` §14 · Gate: `CMS_CORE_V2_GLOBAL_SAVE_ARM_MUTEX_INVENTORY_VERIFIER_COMPLETE: true`.
 
-**CMS Core v2 Save arm client exact-true wiring (2026-07-29):** **COMPLETE** — Phase `cms-core-v2-save-arm-client-exact-true-wiring` · **PARSE_POLICY_FULLY_IMPLEMENTED: true** · Doc: `cms-core-v2-save-arm-parse-policy.md` §13.
+**CMS Core v2 global Save arm mutex policy (2026-07-29):** **COMPLETE (docs-only)** — Doc: `cms-core-v2-global-save-arm-mutex-policy.md` · Gate: `CMS_CORE_V2_GLOBAL_SAVE_ARM_MUTEX_POLICY_COMPLETE: true`.
+
+**CMS Core v2 Save arm client exact-true wiring (2026-07-29):** **COMPLETE** — **PARSE_POLICY_FULLY_IMPLEMENTED: true** · Doc: `cms-core-v2-save-arm-parse-policy.md` §13.
 
 **CMS Core v2 Save arm exact-true helper (2026-07-29):** **COMPLETE** — helper SoT retained · client bake wired.
 

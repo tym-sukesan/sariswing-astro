@@ -22,9 +22,9 @@ import {
 } from "./lib/site-aware-supabase-loaders.mjs";
 import {
   GOSAKI_SCHEDULE_SITE_CONFIG,
-  loadGosakiScheduleDataForBuild,
   resolveSupabaseAnonReadEnv,
 } from "./lib/supabase-schedule-read.mjs";
+import { loadGosakiScheduleDataForBuild } from "./lib/gosaki-schedule-read-adapter.mjs";
 import { loadGosakiDiscographyDataForBuild } from "./lib/supabase-discography-read.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -92,6 +92,9 @@ assert("site-aware loaders exists", exists("tools/static-to-astro/scripts/lib/si
 const doc = read(DOC_REL);
 const registry = JSON.parse(read("tools/static-to-astro/config/sites/registry.json"));
 const scheduleLib = read("tools/static-to-astro/scripts/lib/supabase-schedule-read.mjs");
+const gosakiScheduleAdapterLib = read(
+  "tools/static-to-astro/scripts/lib/gosaki-schedule-read-adapter.mjs",
+);
 const discographyLib = read("tools/static-to-astro/scripts/lib/supabase-discography-read.mjs");
 const siteAwareLib = read("tools/static-to-astro/scripts/lib/site-aware-supabase-loaders.mjs");
 const convertCli = read("tools/static-to-astro/scripts/convert-static-to-astro.mjs");
@@ -127,7 +130,14 @@ assert("site-aware loadGosakiScheduleDataForBuild", siteAwareLib.includes("loadG
 assert("site-aware loadSiteDiscographyBundleForBuild", siteAwareLib.includes("loadSiteDiscographyBundleForBuild"));
 assert("site-discography-loader module exists", exists("tools/static-to-astro/scripts/lib/site-discography-loader.mjs"));
 assert("schedule lib site_slug filter", scheduleLib.includes('.eq("site_slug", siteSlug)'));
-assert("Gosaki wrapper preserved", scheduleLib.includes("export async function loadGosakiScheduleDataForBuild"));
+assert(
+  "schedule Core has no gosaki-wix extractor import",
+  !/from ["']\.\/gosaki-wix-schedule-extractor/.test(scheduleLib),
+);
+assert(
+  "Gosaki wrapper preserved in adapter",
+  gosakiScheduleAdapterLib.includes("export async function loadGosakiScheduleDataForBuild"),
+);
 assert("discography wrapper preserved", discographyLib.includes("export async function loadGosakiDiscographyDataForBuild"));
 
 for (const lib of [

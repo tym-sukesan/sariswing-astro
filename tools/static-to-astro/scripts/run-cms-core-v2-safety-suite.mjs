@@ -51,6 +51,11 @@ const STEPS = [
     script: "verify-cms-core-v2-package-public-env-site-adapter.mjs",
   },
   {
+    id: "schedule-read-extractor-decoupling",
+    kind: "node",
+    script: "verify-cms-core-v2-schedule-read-extractor-decoupling.mjs",
+  },
+  {
     id: "youtube-offline-vertical",
     kind: "node",
     script: "verify-cms-core-v2-youtube-supabase-vertical-slice.mjs",
@@ -105,6 +110,8 @@ const IMPORT_CYCLE_MODULES = [
   "supabase-staging-ref-utils.mjs",
   "save-arm-mutex-utils.mjs",
   "gosaki-operational-save-ui-arm-mutex-gate.mjs",
+  "gosaki-schedule-read-adapter.mjs",
+  "supabase-schedule-read.mjs",
   "site-cms-features.mjs",
 ];
 

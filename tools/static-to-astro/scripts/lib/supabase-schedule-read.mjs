@@ -9,10 +9,7 @@ import {
   cmsKitScheduleMonthRoute,
   scheduleMonthDisplayLabel,
 } from "./schedule-pages.mjs";
-import {
-  extractAllGosakiScheduleSeeds,
-  GOSAKI_SITE_SLUG,
-} from "./gosaki-wix-schedule-extractor.mjs";
+import { GOSAKI_SITE_KEY } from "./site-registry.mjs";
 import { resolveScheduleMonthsForBuild } from "./schedule-month-discovery.mjs";
 import { resolveSupabaseAnonReadEnv } from "./supabase-anon-read-env-utils.mjs";
 
@@ -29,9 +26,12 @@ export const SCHEDULE_SELECT = GOSAKI_SCHEDULE_SELECT;
 
 export const DEFAULT_CANONICAL_ROUTE_PREFIX = "/schedule/";
 
-/** Gosaki pilot — site_slug read config (G-9e / G-20t2) */
+/**
+ * Gosaki pilot — site_slug read config (G-9e / G-20t2).
+ * Slug from site-registry (not gosaki-wix extractor).
+ */
 export const GOSAKI_SCHEDULE_SITE_CONFIG = {
-  siteSlug: GOSAKI_SITE_SLUG,
+  siteSlug: GOSAKI_SITE_KEY,
   canonicalRoutePrefix: DEFAULT_CANONICAL_ROUTE_PREFIX,
   /**
    * Optional YYYY-MM keys to include on hub/month routes even when no published rows exist.
@@ -206,7 +206,10 @@ export async function loadScheduleRowsFromSupabase({
 /**
  * @deprecated use loadScheduleRowsFromSupabase
  */
-export async function fetchGosakiSchedulesFromSupabase(env, siteSlug = GOSAKI_SITE_SLUG) {
+export async function fetchGosakiSchedulesFromSupabase(
+  env,
+  siteSlug = GOSAKI_SCHEDULE_SITE_CONFIG.siteSlug,
+) {
   return loadScheduleRowsFromSupabase({
     env,
     siteSlug,
@@ -307,30 +310,4 @@ export async function loadScheduleDataForBuild({
     siteSlug,
     rowCount: 0,
   };
-}
-
-/**
- * Gosaki pilot wrapper — uses generic loadScheduleDataForBuild (G-9e).
- * @param {{ inputDir: string, siteSlug?: string, env?: NodeJS.ProcessEnv, toolRoot?: string }} opts
- */
-export async function loadGosakiScheduleDataForBuild({
-  inputDir,
-  siteSlug = GOSAKI_SCHEDULE_SITE_CONFIG.siteSlug,
-  env = process.env,
-  toolRoot = DEFAULT_TOOL_ROOT,
-}) {
-  return loadScheduleDataForBuild({
-    siteSlug,
-    inputDir,
-    env,
-    toolRoot,
-    canonicalRoutePrefix: GOSAKI_SCHEDULE_SITE_CONFIG.canonicalRoutePrefix,
-    months: null,
-    optionalMonthOverride: GOSAKI_SCHEDULE_SITE_CONFIG.optionalMonthOverride,
-    logPrefix: "gosaki-schedule",
-    staticFallback: async (inputAbs) => {
-      const extracted = extractAllGosakiScheduleSeeds(inputAbs);
-      return extracted.schedules.map((row) => normalizeScheduleRecord(row));
-    },
-  });
 }

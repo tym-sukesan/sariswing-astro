@@ -21,10 +21,10 @@ import {
   deriveScheduleMonthsFromSchedules,
   GOSAKI_SCHEDULE_SITE_CONFIG,
   isCanonicalScheduleSourceRoute,
-  loadGosakiScheduleDataForBuild,
   loadScheduleDataForBuild,
   normalizeScheduleRecord,
 } from "./lib/supabase-schedule-read.mjs";
+import { loadGosakiScheduleDataForBuild } from "./lib/gosaki-schedule-read-adapter.mjs";
 import { resolveScheduleMonthsForBuild } from "./lib/schedule-month-discovery.mjs";
 import { extractSchedulesFromHtmlFile } from "./lib/schedule-seed-extractor.mjs";
 import fs from "node:fs";

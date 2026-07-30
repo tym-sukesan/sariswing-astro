@@ -11,9 +11,9 @@ import {
 } from "./site-registry.mjs";
 import { loadSiteEmbedsDataForBuild, loadSitePageFieldsDataForBuild } from "./site-cms-features.mjs";
 import { loadSiteDiscographyBundleForBuild } from "./site-discography-loader.mjs";
+import { loadGosakiScheduleDataForBuild } from "./gosaki-schedule-read-adapter.mjs";
 import {
   GOSAKI_SCHEDULE_SITE_CONFIG,
-  loadGosakiScheduleDataForBuild,
   loadScheduleDataForBuild,
 } from "./supabase-schedule-read.mjs";
 

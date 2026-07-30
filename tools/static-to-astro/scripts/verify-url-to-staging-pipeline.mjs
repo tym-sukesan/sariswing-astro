@@ -979,14 +979,23 @@ assert(
 );
 
 const supabaseScheduleReadPath = path.join(TOOL_ROOT, "scripts/lib/supabase-schedule-read.mjs");
+const gosakiScheduleReadAdapterPath = path.join(
+  TOOL_ROOT,
+  "scripts/lib/gosaki-schedule-read-adapter.mjs",
+);
 const gosakiScheduleDataPagesPath = path.join(
   TOOL_ROOT,
   "scripts/lib/gosaki-schedule-data-pages.mjs",
 );
 assert("G-9d supabase schedule read module exists", fs.existsSync(supabaseScheduleReadPath));
+assert(
+  "G-9d gosaki schedule read adapter exists",
+  fs.existsSync(gosakiScheduleReadAdapterPath),
+);
 assert("G-9d gosaki schedule data pages module exists", fs.existsSync(gosakiScheduleDataPagesPath));
 
 const supabaseScheduleReadSrc = fs.readFileSync(supabaseScheduleReadPath, "utf8");
+const gosakiScheduleReadAdapterSrc = fs.readFileSync(gosakiScheduleReadAdapterPath, "utf8");
 assert(
   "G-9d read uses site_slug and published filters",
   supabaseScheduleReadSrc.includes(".eq(\"site_slug\", siteSlug)") &&
@@ -998,9 +1007,10 @@ assert(
     !supabaseScheduleReadSrc.includes("serviceRoleKey"),
 );
 assert(
-  "G-9d static fallback via extractor",
-  supabaseScheduleReadSrc.includes("extractAllGosakiScheduleSeeds") &&
-    supabaseScheduleReadSrc.includes("scheduleDataSource"),
+  "G-9d static fallback via Gosaki adapter + extractor",
+  gosakiScheduleReadAdapterSrc.includes("extractAllGosakiScheduleSeeds") &&
+    supabaseScheduleReadSrc.includes("scheduleDataSource") &&
+    !/from ["']\.\/gosaki-wix-schedule-extractor/.test(supabaseScheduleReadSrc),
 );
 assert(
   "G-9d astro generator wires data pages",
@@ -1024,7 +1034,8 @@ assert(
 assert(
   "G-9e gosaki wrapper delegates to generic loader",
   supabaseScheduleReadSrc.includes("GOSAKI_SCHEDULE_SITE_CONFIG") &&
-    supabaseScheduleReadSrc.includes("loadGosakiScheduleDataForBuild"),
+    gosakiScheduleReadAdapterSrc.includes("loadGosakiScheduleDataForBuild") &&
+    gosakiScheduleReadAdapterSrc.includes("loadScheduleDataForBuild"),
 );
 assert(
   "G-9e canonical source_route filter helper",

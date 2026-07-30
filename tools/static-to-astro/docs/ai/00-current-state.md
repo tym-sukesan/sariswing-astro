@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**CMS Core v2 residual Core→site dependency audit (2026-07-30):** **COMPLETE** — Phase `cms-core-v2-residual-core-to-site-dependency-audit` · selected fix: `package-freshness-target` drops `gosaki-package-build-profile` import → site-registry only · legacy `--profile` still Gosaki via registry · Doc: `cms-core-v2-residual-core-to-site-dependency-audit.md` · **Next:** client staging share · next reverse dep = schedule-read extractor split.
+**CMS Core v2 schedule-read extractor decoupling (2026-07-30):** **COMPLETE** — Phase `cms-core-v2-schedule-read-extractor-decoupling` · Core `supabase-schedule-read` drops `gosaki-wix-schedule-extractor` import · adapter `gosaki-schedule-read-adapter.mjs` owns Wix fallback · deep-eq fixtures · npm `verify:cms-core-v2-schedule-read-extractor-decoupling` · **behavior unchanged** · Doc: `cms-core-v2-schedule-read-extractor-decoupling.md` · **Next:** client staging share · next reverse dep = `verify-site-package-core` / static-public-env.
+
+**CMS Core v2 residual Core→site dependency audit (2026-07-30):** **COMPLETE** — Phase `cms-core-v2-residual-core-to-site-dependency-audit` · selected fix: `package-freshness-target` drops `gosaki-package-build-profile` import → site-registry only · legacy `--profile` still Gosaki via registry · Doc: `cms-core-v2-residual-core-to-site-dependency-audit.md` · **Next:** schedule-read extractor decoupling (done above).
 
 **CMS Core v2 package public-env site-adapter decoupling (2026-07-30):** **COMPLETE** — Phase `cms-core-v2-package-public-env-site-adapter-decoupling` · Core `resolveBuildEnv` + `site-package-build-preflight.mjs` · Gosaki adapter `gosaki-package-build-env-preflight.mjs` · Core **no** `gosaki-*` public-env import · order: env STOP → git clean → mutex → FS · npm `verify:cms-core-v2-package-public-env-adapter` · **実package未実行** · **Next:** residual Core→site audit (done above).
 

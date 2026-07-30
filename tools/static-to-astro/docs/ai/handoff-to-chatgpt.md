@@ -5,11 +5,11 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: CMS Core v2 residual Core→site dependency audit COMPLETE
-Phase: cms-core-v2-residual-core-to-site-dependency-audit
-Selected fix: package-freshness-target drops gosaki-package-build-profile import
-Legacy --profile-only: still GOSAKI_SITE_KEY via site-registry
-npm: verify:g20u10-package-freshness · verify:cms-core-v2-safety-suite
+Current phase: CMS Core v2 schedule-read extractor decoupling COMPLETE
+Phase: cms-core-v2-schedule-read-extractor-decoupling
+Core: supabase-schedule-read (no gosaki-wix-schedule-extractor)
+Adapter: gosaki-schedule-read-adapter.mjs (loadGosakiScheduleDataForBuild)
+npm: verify:cms-core-v2-schedule-read-extractor-decoupling · verify:cms-core-v2-safety-suite
 RUNTIME_BEHAVIOR_CHANGED: false
 PACKAGE_GENERATE_EXECUTED: false
 Gosaki CLIENT_SHARE_READY: true (maintained)
@@ -17,10 +17,16 @@ deployed package: dc1c5b62a58d0462ad6629db4847256d316d4a38 (unchanged; no regen)
 seedAppliedStaging: true
 readyForOperatorAboutSeedApply: false
 Next Primary (ops): share staging with client
-Next reverse dep: supabase-schedule-read extractor split · Admin runtime mutex (explicit approval)
+Next reverse dep: verify-site-package-core / static-public-env · Admin runtime mutex (explicit approval)
 readyForAnyFutureFtpApply: false
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
 ```
+
+## CMS Core v2 schedule-read extractor decoupling (2026-07-30)
+
+- Core drops `gosaki-wix-schedule-extractor` import
+- Adapter owns Wix static fallback + `loadGosakiScheduleDataForBuild`
+- Doc: `cms-core-v2-schedule-read-extractor-decoupling.md`
 
 ## CMS Core v2 residual Core→site dependency audit (2026-07-30)
 

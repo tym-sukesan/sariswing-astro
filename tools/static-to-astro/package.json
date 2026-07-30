@@ -23,6 +23,7 @@
     "verify:cms-core-v2-schedule-read-extractor-decoupling": "node scripts/verify-cms-core-v2-schedule-read-extractor-decoupling.mjs",
     "verify:cms-core-v2-static-public-artifact-verifier-adapter": "node scripts/verify-cms-core-v2-static-public-artifact-verifier-site-adapter.mjs",
     "verify:cms-core-v2-site-package-verifier-extension-decoupling": "node scripts/verify-cms-core-v2-site-package-verifier-extension-decoupling.mjs",
+    "verify:cms-core-v2-gosaki-site-generator-hooks-html-baseline": "node scripts/verify-cms-core-v2-gosaki-site-generator-hooks-html-baseline.mjs",
     "verify:cms-core-v2-save-arm-parse-policy": "node scripts/verify-cms-core-v2-save-arm-parse-policy.mjs",
     "verify:cms-core-v2-save-arm-exact-true": "node scripts/verify-cms-core-v2-save-arm-exact-true-helper.mjs",
     "verify:cms-core-v2-global-save-arm-mutex-inventory": "node scripts/verify-cms-core-v2-global-save-arm-mutex-inventory.mjs",

@@ -1,0 +1,31 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import GosakiScheduleList from "../../../components/GosakiScheduleList.astro";
+import schedules from "../../../data/gosaki-schedules.json";
+
+const MONTH = "2026-08";
+const events = schedules
+  .filter((s) => s.month === MONTH)
+  .sort((a, b) => {
+    const da = a.date || "";
+    const db = b.date || "";
+    if (da !== db) return da.localeCompare(db);
+    return (a.sort_order ?? 0) - (b.sort_order ?? 0);
+  });
+---
+
+<BaseLayout
+  title="Schedule 2026.08 | saki-goto"
+  canonical="https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/schedule/2026-08/"
+  ogTitle="Schedule 2026.08 | saki-goto"
+  ogType="website"
+  ogUrl="https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/schedule/2026-08/"
+  twitterCard="summary_large_image"
+  lang="ja"
+>
+  <section class="gosaki-schedule-month">
+    <h2 class="font_2">Schedule 2026.08</h2>
+    <!-- CMS_TARGET: SCHEDULE_MONTH_LIST scheduleDataSource=supabase -->
+    <GosakiScheduleList events={events} />
+  </section>
+</BaseLayout>

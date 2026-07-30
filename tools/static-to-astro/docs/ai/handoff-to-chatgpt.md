@@ -5,12 +5,13 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: CMS Core v2 site-generator-hooks boundary audit COMPLETE (audit-only)
-Phase: cms-core-v2-site-generator-hooks-boundary-audit
-CODE_EXTRACT_EXECUTED: false
-Reason: no pure helper both cuts Core→gosaki-* and avoids HTML/presentation risk
-Doc: cms-core-v2-site-generator-hooks-boundary-audit.md
-npm: verify:cms-core-v2-safety-suite
+Current phase: CMS Core v2 Gosaki site-generator-hooks HTML baseline COMPLETE
+Phase: cms-core-v2-gosaki-site-generator-hooks-html-baseline
+FACTORY_MOVED: false
+IMPORT_GRAPH_CHANGED: false
+HTML_GENERATION_CHANGED: false
+Doc: cms-core-v2-gosaki-site-generator-hooks-html-baseline.md
+npm: verify:cms-core-v2-gosaki-site-generator-hooks-html-baseline · verify:cms-core-v2-safety-suite
 RUNTIME_BEHAVIOR_CHANGED: false
 PACKAGE_GENERATE_EXECUTED: false
 Gosaki CLIENT_SHARE_READY: true (maintained)
@@ -18,10 +19,17 @@ deployed package: dc1c5b62a58d0462ad6629db4847256d316d4a38 (unchanged; no regen)
 seedAppliedStaging: true
 readyForOperatorAboutSeedApply: false
 Next Primary (ops): share staging with client
-Next Kit: deferred gosaki-site-generator-hooks-adapter (dedicated + HTML fixtures) · Admin runtime mutex (explicit approval)
+Next Kit: gosaki-site-generator-hooks-adapter (only after HTML baseline green) · Admin runtime mutex (explicit approval)
 readyForAnyFutureFtpApply: false
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
 ```
+
+## CMS Core v2 Gosaki site-generator-hooks HTML baseline (2026-07-30)
+
+- Locked deterministic hook/inject HTML + return shapes before factory move
+- Surfaces: Schedule transform/hub/month, Footer SNS, YouTube, About, Contact HubSpot, Discography, legacy stubs, Admin postGenerate keys/portal stub
+- Factory **not** moved; import graph unchanged
+- Doc: `cms-core-v2-gosaki-site-generator-hooks-html-baseline.md`
 
 ## CMS Core v2 site-generator-hooks boundary audit (2026-07-30)
 

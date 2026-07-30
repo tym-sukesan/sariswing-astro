@@ -1,0 +1,22 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { withBase } from "../../lib/with-base.ts";
+---
+
+<BaseLayout
+  title="Schedule | saki-goto"
+  canonical="https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/schedule/"
+  ogTitle="Schedule | saki-goto"
+  ogType="website"
+  ogUrl="https://yskcreate.weblike.jp/cms-kit-staging/gosaki-piano/schedule/"
+  twitterCard="summary_large_image"
+  lang="ja"
+>
+  <section class="gosaki-schedule-hub">
+    <h1 class="gosaki-schedule-hub__title">Schedule</h1>
+    <div class="gosaki-schedule-months">
+      <!-- CMS_TARGET: SCHEDULE_INDEX scheduleDataSource=supabase -->
+      <a href={withBase('/schedule/2026-08/')} class="gosaki-schedule-month-link">2026.08</a>
+    </div>
+  </section>
+</BaseLayout>

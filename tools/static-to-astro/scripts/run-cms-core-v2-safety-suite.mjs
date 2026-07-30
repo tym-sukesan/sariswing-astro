@@ -66,6 +66,11 @@ const STEPS = [
     script: "verify-cms-core-v2-site-package-verifier-extension-decoupling.mjs",
   },
   {
+    id: "gosaki-site-generator-hooks-html-baseline",
+    kind: "node",
+    script: "verify-cms-core-v2-gosaki-site-generator-hooks-html-baseline.mjs",
+  },
+  {
     id: "youtube-offline-vertical",
     kind: "node",
     script: "verify-cms-core-v2-youtube-supabase-vertical-slice.mjs",
@@ -126,6 +131,8 @@ const IMPORT_CYCLE_MODULES = [
   "static-public-artifact-verifier.mjs",
   "verify-site-package-core.mjs",
   "gosaki-site-package-verifier-adapter.mjs",
+  "cms-core-v2-gosaki-site-generator-hooks-html-baseline-fixtures.mjs",
+  "site-generator-hooks.mjs",
   "site-cms-features.mjs",
 ];
 

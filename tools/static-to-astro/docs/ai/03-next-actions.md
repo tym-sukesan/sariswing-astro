@@ -4,10 +4,35 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 ## 0. Current next actions（直近）
 
 1. **Primary (Gosaki ops):** クライアントへ **staging 共有**（`CLIENT_SHARE_READY: true` · package `dc1c5b6…`）。本番 cutover はしない。
-2. **並行可 (Kit Core):** Admin runtime Save arm mutex（**別承認** · `ADMIN_RUNTIME_MUTEX_WIRED: false`）· optional Edge shared Save-arm helper · Contents YouTube 退役は **別 phase**。
+2. **並行可 (Kit Core):** `gosaki-site-generator-hooks-adapter`（**HTML baseline green 後・別承認**）· Admin runtime Save arm mutex（**別承認** · `ADMIN_RUNTIME_MUTEX_WIRED: false`）· optional Edge shared Save-arm helper · Contents YouTube 退役は **別 phase**。
 3. **並行可:** production hosting **read-only planning**（`HOSTING_READY: false`）。
 4. **並行可 / 別承認:** YouTube 複数件 **永続 Save**（NON_BLOCKING）。
 5. Save arm **false** · `readyForAnyFutureFtpApply: false` · production STOP · `service_role` 禁止 · **deployed package 固定**.
+
+## 0. CMS Core v2 Gosaki site-generator-hooks HTML baseline (2026-07-30)
+
+| Item | Value |
+| --- | --- |
+| Gate | `CMS_CORE_V2_GOSAKI_SITE_GENERATOR_HOOKS_HTML_BASELINE_COMPLETE: true` |
+| Phase | `cms-core-v2-gosaki-site-generator-hooks-html-baseline` |
+| Factory moved | **false** |
+| Doc | `cms-core-v2-gosaki-site-generator-hooks-html-baseline.md` |
+| npm | `verify:cms-core-v2-gosaki-site-generator-hooks-html-baseline` |
+| Next | `gosaki-site-generator-hooks-adapter` (separate approval; baseline must stay green) |
+
+```txt
+CMS_CORE_V2_GOSAKI_SITE_GENERATOR_HOOKS_HTML_BASELINE_COMPLETE: true
+FACTORY_MOVED: false
+IMPORT_GRAPH_CHANGED: false
+HTML_GENERATION_CHANGED: false
+RUNTIME_BEHAVIOR_CHANGED: false
+PACKAGE_GENERATE_EXECUTED: false
+FTP_EXECUTED: false
+GOSAKI_CLIENT_SHARE_READY_MAINTAINED: true
+deployedPackageSourceCommitUnchanged: dc1c5b62a58d0462ad6629db4847256d316d4a38
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+PRODUCTION_UNCHANGED: true
+```
 
 ## 0. CMS Core v2 site-generator-hooks boundary audit (2026-07-30)
 
@@ -17,7 +42,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Phase | `cms-core-v2-site-generator-hooks-boundary-audit` |
 | Extract | **false** (audit-only) |
 | Doc | `cms-core-v2-site-generator-hooks-boundary-audit.md` |
-| Defer | move `createGosakiPianoHookMethods` → site adapter (HTML fixtures required) |
+| Defer | move `createGosakiPianoHookMethods` → site adapter (HTML baseline now complete) |
 
 ```txt
 CMS_CORE_V2_SITE_GENERATOR_HOOKS_BOUNDARY_AUDIT_COMPLETE: true

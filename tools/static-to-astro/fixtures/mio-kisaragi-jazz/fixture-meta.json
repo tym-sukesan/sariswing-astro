@@ -1,0 +1,12 @@
+{
+  "siteKey": "mio-kisaragi-jazz",
+  "displayName": "Mio Kisaragi Jazz Vocal",
+  "phase": "cms-core-v2-mio-static-fixture-scaffold",
+  "fictional": true,
+  "unpublished": {
+    "scheduleDraftIds": ["evt-draft-2026-08-private-rehearsal", "evt-pending-2026-09-tbd-club"],
+    "discographyUnreleasedIds": ["rel-unreleased-session-tape"],
+    "videosPrivateOrInvalidIds": ["vid-private-unlisted-session", "vid-invalid-not-a-url"]
+  },
+  "notes": "Draft/pending/unreleased items are identified here and in HTML comments only — not rendered in public page bodies."
+}

@@ -1,8 +1,8 @@
 # CMS Core v2 — Second musician site fixture planning
 
-- **Phase:** `cms-core-v2-second-musician-site-fixture-planning`
-- **Date:** 2026-07-31
-- **Status:** **COMPLETE (planning / read-only — no implementation)**
+- **Phase (planning):** `cms-core-v2-second-musician-site-fixture-planning` — **COMPLETE**
+- **Phase (scaffold):** `cms-core-v2-mio-static-fixture-scaffold` — **COMPLETE** (2026-07-31)
+- **Status:** Planning + static fixture scaffold done · registry / adapter / package **not** started
 - **Package generate / FTP / DB / runtime code:** **not executed**
 
 ---
@@ -10,9 +10,13 @@
 ## Gates
 
 ```txt
-phase: cms-core-v2-second-musician-site-fixture-planning
+phase: cms-core-v2-mio-static-fixture-scaffold
 CMS_CORE_V2_SECOND_MUSICIAN_SITE_FIXTURE_PLANNING_COMPLETE: true
-IMPLEMENTATION_EXECUTED: false
+CMS_CORE_V2_MIO_STATIC_FIXTURE_SCAFFOLD_COMPLETE: true
+IMPLEMENTATION_EXECUTED: true
+FIXTURE_SCAFFOLD_ONLY: true
+REGISTRY_CHANGED: false
+ADAPTER_CREATED: false
 PACKAGE_GENERATE_EXECUTED: false
 FTP_EXECUTED: false
 DB_WRITE_EXECUTED: false
@@ -22,6 +26,19 @@ deployedPackageSourceCommitUnchanged: dc1c5b62a58d0462ad6629db4847256d316d4a38
 READY_FOR_ANY_FUTURE_FTP_APPLY: false
 PRODUCTION_UNCHANGED: true
 ```
+
+### Scaffold result (step 1)
+
+| Item | Value |
+| --- | --- |
+| Fixture root | `tools/static-to-astro/fixtures/mio-kisaragi-jazz/` |
+| Pages | `index` · `about` · `schedule` · `schedule-2026-08` · `schedule-2026-09` · `discography` · `videos` · `contact` |
+| Assets | `css/site.css` · local SVG placeholders under `images/` |
+| Meta | `fixture-meta.json` (draft / unreleased / private video ids) |
+| Design | Editorial jazz-club · hand-authored · **not** Wix / Gosaki copy |
+| Out of scope still | registry · Core · adapter · package · Supabase · FTP |
+
+**Next:** `cms-core-v2-mio-registry-noop-pilot` (registry entry like pilot; no adapter).
 
 ---
 
@@ -276,10 +293,10 @@ Phase 1 can mirror **pilot**: register `mio-kisaragi-jazz`, point `fixtureDir`, 
 - [x] Phased implementation plan + STOP conditions
 - [x] Docs-only; no runtime/package/FTP
 
-### Future implementation gates (not this phase)
+### Future implementation gates
 
-1. **M1 — Static fixture lands:** convert with `--site mio-kisaragi-jazz` dry-run PASS; no Gosaki artifacts; noop hooks.
-2. **M2 — Registry + staging profile:** package dry-run / verify-site-package PASS (staging only).
+1. **M1 — Static fixture lands:** **DONE** (`fixtures/mio-kisaragi-jazz/` scaffold; convert/registry still later).
+2. **M2 — Registry + staging profile (noop pilot):** next — package dry-run / verify-site-package PASS (staging only).
 3. **M3 — Schedule/Disco JSON read overlay (optional):** published filtering matches matrix; draft hidden.
 4. **M4 — Thin Mio adapter (optional):** Videos embed + footer SNS without HubSpot/Gosaki selectors.
 5. **M5 — Verifier:** dedicated `verify-mio-kisaragi-jazz-…` locks routes + matrices offline.
@@ -290,7 +307,7 @@ Phase 1 can mirror **pilot**: register `mio-kisaragi-jazz`, point `fixtureDir`, 
 
 | Step | Phase id (candidate) | Scope | Touch files (minimal candidates) |
 | --- | --- | --- | --- |
-| **1** | `…-mio-static-fixture-scaffold` | Create `fixtures/mio-kisaragi-jazz/**` HTML/CSS/images + manifest; **no** registry yet or registry stub only | `fixtures/mio-kisaragi-jazz/**` |
+| **1** | `…-mio-static-fixture-scaffold` | **DONE** — `fixtures/mio-kisaragi-jazz/**` HTML/CSS/images + `fixture-meta.json`; **no** registry | `fixtures/mio-kisaragi-jazz/**` |
 | **2** | `…-mio-registry-noop-pilot` | Add registry entry like pilot (features false, no adapter); deploy-profiles staging; g20u8-style verifier | `config/sites/registry.json`, `config/sites/mio-kisaragi-jazz.deploy-profiles.json`, `scripts/verify-…mjs` |
 | **3** | `…-mio-data-fixtures` | Add `config/sites/mio-kisaragi-jazz-*.json` for schedule/disco/videos matrices (read-only) | `config/sites/mio-kisaragi-jazz-*.json` |
 | **4** | `…-mio-hooks-adapter-thin` | Optional adapter: Videos + footer only; register `generatorHooksAdapter` | `scripts/lib/mio-…-adapter.mjs`, registry field |
@@ -315,18 +332,19 @@ Stop and ask human if:
 
 ---
 
-## 13. Explicit non-goals (this planning phase)
+## 13. Explicit non-goals (scaffold phase)
 
-- No code/runtime changes beyond this doc + AI context
+- No registry.json / Core / adapter
 - No package / public-dist / output
 - No DB / FTP / Edge
 - No commit/push unless operator requests later
 
 ---
 
-## Verify (planning)
+## Verify (scaffold)
 
 ```bash
+# fixture + docs only; no runtime verifier committed
 git diff --check
-# Changes must be docs (+ AI context) only
+rg -i gosaki tools/static-to-astro/fixtures/mio-kisaragi-jazz || true
 ```

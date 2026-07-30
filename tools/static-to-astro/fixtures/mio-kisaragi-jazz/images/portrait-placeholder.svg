@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="400" viewBox="0 0 320 400" role="img" aria-label="Portrait placeholder">
+  <rect width="320" height="400" fill="#2a241e"/>
+  <ellipse cx="160" cy="150" rx="58" ry="70" fill="#3d342c"/>
+  <path d="M70 400c20-90 60-140 90-140s70 50 90 140" fill="#3d342c"/>
+  <text x="160" y="330" text-anchor="middle" fill="#b8893d" font-family="Georgia, serif" font-size="16">portrait placeholder</text>
+</svg>

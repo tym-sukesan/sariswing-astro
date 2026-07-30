@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mio Kisaragi Jazz Vocal — Contact</title>
+  <meta name="description" content="お問い合わせ（送信不能な fixture フォーム）。">
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="stylesheet" href="css/site.css">
+</head>
+<body>
+  <header class="site-top">
+    <div class="wrap brand-row">
+      <a class="brand" href="index.html">
+        <img src="images/logo.svg" width="120" height="40" alt="Mio Kisaragi">
+        <span>
+          <strong>Mio Kisaragi</strong>
+          <span>Jazz Vocal</span>
+        </span>
+      </a>
+      <nav class="site-nav" aria-label="Main">
+        <ul class="nav-desktop">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="schedule.html">Schedule</a></li>
+          <li><a href="discography.html">Discography</a></li>
+          <li><a href="videos.html">Videos</a></li>
+          <li><a href="contact.html" aria-current="page">Contact</a></li>
+        </ul>
+        <details class="nav-mobile">
+          <summary>
+            <span class="nav-mobile-icon" aria-hidden="true"></span>
+            <span class="nav-mobile-label">Menu</span>
+          </summary>
+          <ul class="nav-mobile-list">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="schedule.html">Schedule</a></li>
+          <li><a href="discography.html">Discography</a></li>
+          <li><a href="videos.html">Videos</a></li>
+          <li><a href="contact.html" aria-current="page">Contact</a></li>
+          </ul>
+        </details>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <p class="eyebrow">Contact</p>
+    <h1 class="page-title">Contact</h1>
+    <p class="lede">出演・取材のご相談（架空）。実送信先はありません。</p>
+
+    <p class="contact-note" role="status">
+      このフォームは CMS Kit fixture 用です。<strong>送信できません</strong>。
+      <code>action</code> 未設定 · Submit は disabled · HubSpot 専用構造は使いません。
+    </p>
+
+    <!-- Generic form placeholder — not HubSpot, not a live endpoint -->
+    <form class="contact-form" id="mio-contact-form">
+      <label>
+        お名前
+        <input type="text" name="name" autocomplete="name" placeholder="例: 山田">
+      </label>
+      <label>
+        メール（参考表示のみ）
+        <input type="email" name="email" autocomplete="email" placeholder="you@example.invalid">
+      </label>
+      <label>
+        内容
+        <textarea name="message" rows="6" placeholder="送信されないデモ入力欄です"></textarea>
+      </label>
+      <button type="button" disabled>送信（無効）</button>
+    </form>
+
+    <section class="section" aria-labelledby="iframe-ph">
+      <div class="section-head">
+        <h2 id="iframe-ph">Iframe placeholder</h2>
+      </div>
+      <div class="embed-placeholder" data-mio-contact="iframe-placeholder">
+        contact embed / iframe slot<br>
+        no src · no third-party form
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="sns-contact">
+      <div class="section-head">
+        <h2 id="sns-contact">SNS</h2>
+      </div>
+      <ul class="sns-row">
+        <li><a href="https://www.instagram.com/mio.kisaragi.fixture/" rel="noopener noreferrer">Instagram</a></li>
+        <li><a href="https://www.youtube.com/@mio-kisaragi-fixture" rel="noopener noreferrer">YouTube</a></li>
+      </ul>
+      <p class="meta">X アカウントなし（意図的欠落ケース）。</p>
+    </section>
+  </main>
+
+  <footer class="site-foot">
+    <div class="wrap">
+      <ul class="sns-row" aria-label="Social">
+        <li><a href="https://www.instagram.com/mio.kisaragi.fixture/" rel="noopener noreferrer">Instagram</a></li>
+        <li><a href="https://www.youtube.com/@mio-kisaragi-fixture" rel="noopener noreferrer">YouTube</a></li>
+      </ul>
+      <p>© 2026 Mio Kisaragi Jazz Vocal (fictional fixture)</p>
+    </div>
+  </footer>
+</body>
+</html>

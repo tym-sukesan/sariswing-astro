@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="240" height="240" viewBox="0 0 240 240" role="img" aria-label="Album cover placeholder">
+  <rect width="240" height="240" fill="#1c1712"/>
+  <circle cx="120" cy="120" r="70" fill="none" stroke="#b8893d" stroke-width="2"/>
+  <circle cx="120" cy="120" r="12" fill="#b8893d"/>
+  <text x="120" y="210" text-anchor="middle" fill="#f2ebe0" font-family="Georgia, serif" font-size="12">album art</text>
+</svg>

@@ -26,7 +26,7 @@ PRODUCTION_UNCHANGED: true
 
 ## Separation
 
-**Before:** `supabase-schedule-read.mjs` → `gosaki-wix-schedule-extractor.mjs`  
+**Before:** `supabase-schedule-read.mjs` → `gosaki-wix-schedule-extractor.mjs`
 **After:**
 - Core `supabase-schedule-read.mjs` → `site-registry` only (`GOSAKI_SITE_KEY` for pilot config)
 - Adapter `gosaki-schedule-read-adapter.mjs` → extractor + Core (`loadGosakiScheduleDataForBuild`, `gosakiScheduleStaticFallback`)

@@ -31,6 +31,11 @@ function offlineChildEnv() {
 /** @type {SuiteStep[]} */
 const STEPS = [
   {
+    id: "supabase-anon-read-env",
+    kind: "node",
+    script: "verify-cms-core-v2-supabase-anon-read-env-helper.mjs",
+  },
+  {
     id: "youtube-offline-vertical",
     kind: "node",
     script: "verify-cms-core-v2-youtube-supabase-vertical-slice.mjs",
@@ -76,6 +81,7 @@ const STEPS = [
 
 const IMPORT_CYCLE_MODULES = [
   "cms-core-v2-offline-supabase-env-fixture.mjs",
+  "supabase-anon-read-env-utils.mjs",
   "cms-core-v2-youtube-supabase-contract.mjs",
   "cms-core-v2-about-supabase-contract.mjs",
   "supabase-staging-ref-utils.mjs",

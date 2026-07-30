@@ -215,7 +215,7 @@ export async function loadSiteEmbedsDataForBuild(opts) {
   }
 
   const siteSlug = resolveSupabaseSiteSlug(siteKey, toolRoot);
-  const { resolveSupabaseAnonReadEnv } = await import("./supabase-schedule-read.mjs");
+  const { resolveSupabaseAnonReadEnv } = await import("./supabase-anon-read-env-utils.mjs");
   const readEnv = resolveSupabaseAnonReadEnv(env, toolRoot);
   if (!readEnv) {
     // Historical G-20u20 stub reason retained until migration+env wired.
@@ -306,7 +306,7 @@ export async function loadSitePageFieldsDataForBuild(opts) {
   }
 
   const siteSlug = resolveSupabaseSiteSlug(siteKey, toolRoot);
-  const { resolveSupabaseAnonReadEnv } = await import("./supabase-schedule-read.mjs");
+  const { resolveSupabaseAnonReadEnv } = await import("./supabase-anon-read-env-utils.mjs");
   const {
     ABOUT_PAGE_KEY,
     ABOUT_FIELD_KEY_PROFILE_LEDE,

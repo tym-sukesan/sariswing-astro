@@ -3,7 +3,6 @@
  * Generic site_slug loader + Gosaki thin wrapper. No DB writes.
  */
 
-import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import {
@@ -15,6 +14,9 @@ import {
   GOSAKI_SITE_SLUG,
 } from "./gosaki-wix-schedule-extractor.mjs";
 import { resolveScheduleMonthsForBuild } from "./schedule-month-discovery.mjs";
+import { resolveSupabaseAnonReadEnv } from "./supabase-anon-read-env-utils.mjs";
+
+export { resolveSupabaseAnonReadEnv } from "./supabase-anon-read-env-utils.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const DEFAULT_TOOL_ROOT = path.resolve(__dirname, "../..");
@@ -149,49 +151,6 @@ export function deriveScheduleMonthsFromSchedules(schedules) {
         heading: `Schedule ${year}.${monthNum}`,
       };
     });
-}
-
-/**
- * @param {string} toolRoot
- */
-function loadDotEnvLocal(toolRoot) {
-  const envPath = path.join(toolRoot, ".env.local");
-  if (!fs.existsSync(envPath)) return {};
-  /** @type {Record<string, string>} */
-  const out = {};
-  for (const line of fs.readFileSync(envPath, "utf8").split("\n")) {
-    const trimmed = line.trim();
-    if (!trimmed || trimmed.startsWith("#")) continue;
-    const eq = trimmed.indexOf("=");
-    if (eq < 0) continue;
-    const key = trimmed.slice(0, eq).trim();
-    let value = trimmed.slice(eq + 1).trim();
-    if (
-      (value.startsWith('"') && value.endsWith('"')) ||
-      (value.startsWith("'") && value.endsWith("'"))
-    ) {
-      value = value.slice(1, -1);
-    }
-    out[key] = value;
-  }
-  return out;
-}
-
-/**
- * Resolve anon read env (no service_role).
- * @param {NodeJS.ProcessEnv} processEnv
- * @param {string | null} toolRoot
- */
-export function resolveSupabaseAnonReadEnv(processEnv = process.env, toolRoot = DEFAULT_TOOL_ROOT) {
-  const local = toolRoot ? loadDotEnvLocal(toolRoot) : {};
-  const merged = { ...local, ...processEnv };
-  const supabaseUrl = String(merged.PUBLIC_SUPABASE_URL || merged.SUPABASE_URL || "").trim();
-  const anonKey = String(
-    merged.PUBLIC_SUPABASE_ANON_KEY || merged.SUPABASE_ANON_KEY || "",
-  ).trim();
-  if (!supabaseUrl || !anonKey) return null;
-  if (/service[_-]?role/i.test(anonKey)) return null;
-  return { supabaseUrl, anonKey };
 }
 
 /**

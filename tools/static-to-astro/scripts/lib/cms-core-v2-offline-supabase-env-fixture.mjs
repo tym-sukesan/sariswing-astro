@@ -2,8 +2,8 @@
  * Offline Supabase anon env fixture for CMS Core verifier hardening.
  *
  * Passing these keys overrides `.env.local` via resolveSupabaseAnonReadEnv merge
- * (`{ ...local, ...processEnv }`) so loaders return `not-configured` without
- * attempting live fetch.
+ * (`{ ...local, ...processEnv }` in `supabase-anon-read-env-utils.mjs`) so loaders
+ * return `not-configured` without attempting live fetch.
  *
  * Soft live checks are opt-in via `CMS_CORE_V2_VERIFIER_LIVE_SOFT=true`
  * (avoids accidental remote SELECT in default offline runs).

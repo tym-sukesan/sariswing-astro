@@ -5,26 +5,32 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: CMS Core v2 offline safety suite COMPLETE
-Phase: cms-core-v2-offline-safety-suite
-npm: verify:cms-core-v2-safety-suite (fail-fast runner)
-Includes: YouTube offline · About apply-readiness · exact-true · parse-policy · mutex×3 · url-staging · import-cycle · git diff --check
-LIVE_SOFT_FORCED_FALSE: true
-RUNTIME_CHANGED: false
+Current phase: CMS Core v2 next high-value safe extraction COMPLETE
+Phase: cms-core-v2-next-high-value-safe-extraction
+Extraction: supabase-anon-read-env-utils.mjs (resolveSupabaseAnonReadEnv + loadDotEnvLocal)
+npm: verify:cms-core-v2-supabase-anon-read-env · verify:cms-core-v2-safety-suite
+RUNTIME_BEHAVIOR_CHANGED: false
 Gosaki CLIENT_SHARE_READY: true (maintained)
 deployed package: dc1c5b62a58d0462ad6629db4847256d316d4a38 (unchanged; no regen)
 seedAppliedStaging: true
 readyForOperatorAboutSeedApply: false
 Next Primary (ops): share staging with client
-Next (Kit Core): Admin runtime mutex (explicit approval) · Edge shared arm helper · Contents YouTube retire separate
+Next (Kit Core): build-read envelope skeleton (deferred) · Admin runtime mutex (explicit approval)
 readyForAnyFutureFtpApply: false
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
 ```
+
+## CMS Core v2 next high-value safe extraction (2026-07-30)
+
+- Core SoT: `scripts/lib/supabase-anon-read-env-utils.mjs`
+- Consumers: schedule-read re-export · discography-read · site-cms-features embeds/page_fields
+- Doc: `cms-core-v2-supabase-anon-read-env-helper.md`
 
 ## CMS Core v2 offline safety suite (2026-07-30)
 
 - One-command offline Core safety: `npm run verify:cms-core-v2-safety-suite`
 - Does not call live-soft / live-verify / package generate
+- Includes anon-read-env helper verifier step
 
 ## CMS Core v2 verifier network-dependency audit + hardening (2026-07-30)
 

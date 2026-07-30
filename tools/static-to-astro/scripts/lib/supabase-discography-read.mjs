@@ -6,7 +6,7 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { GOSAKI_SITE_KEY } from "./site-registry.mjs";
-import { resolveSupabaseAnonReadEnv } from "./supabase-schedule-read.mjs";
+import { resolveSupabaseAnonReadEnv } from "./supabase-anon-read-env-utils.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const DEFAULT_TOOL_ROOT = path.resolve(__dirname, "../..");

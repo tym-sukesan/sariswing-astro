@@ -3,9 +3,11 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**CMS Core v2 Mio hooks adapter thin (2026-07-31):** **COMPLETE** — Phase `cms-core-v2-mio-hooks-adapter-thin` · `mio-site-generator-hooks-adapter.mjs` (+ footer/videos helpers) · registry `generatorHooksAdapter` · Videos ×3 nocookie via injected `embedsBundle` · footer Instagram/YouTube (no X) · lazy load / idempotent ensure · Gosaki HTML baseline 80 PASS · npm `verify:cms-core-v2-mio-hooks-adapter-thin` (+ safety-suite) · **no Schedule/Disco/About/Contact/Admin/Save/package/FTP/DB** · **Next:** `cms-core-v2-mio-schedule-read-render` · Gosaki client staging share.
+**CMS Core v2 Mio schedule read-render (2026-07-31):** **COMPLETE** — Phase `cms-core-v2-mio-schedule-read-render` · `mio-schedule-data-pages.mjs` · inject `scheduleBundle` · public 14 · Aug7/Sep6 month pages · Jul1 hub-archive only (no new month page) · Mio markup · Videos/footer retained · npm `verify:cms-core-v2-mio-schedule-read-render` (+ safety-suite) · Gosaki baseline 80 PASS · **no Disco/About/Contact/Admin/Save/package/FTP/DB** · **Next:** `cms-core-v2-mio-discography-read-render` · Gosaki client staging share.
 
-**CMS Core v2 Mio data fixtures (2026-07-31):** **COMPLETE** — Phase `cms-core-v2-mio-data-fixtures` · `fixtures/mio-kisaragi-jazz-data/` · Schedule 16 / Discography 5 / Videos 6 / About · expected JSON locked · npm `verify:cms-core-v2-mio-data-fixtures` (+ safety-suite) · thin adapter done above.
+**CMS Core v2 Mio hooks adapter thin (2026-07-31):** **COMPLETE** — Phase `cms-core-v2-mio-hooks-adapter-thin` · `mio-site-generator-hooks-adapter.mjs` (+ footer/videos helpers) · registry `generatorHooksAdapter` · Videos ×3 nocookie via injected `embedsBundle` · footer Instagram/YouTube (no X) · schedule read-render done above.
+
+**CMS Core v2 Mio data fixtures (2026-07-31):** **COMPLETE** — Phase `cms-core-v2-mio-data-fixtures` · `fixtures/mio-kisaragi-jazz-data/` · Schedule 16 / Discography 5 / Videos 6 / About · expected JSON locked · npm `verify:cms-core-v2-mio-data-fixtures` (+ safety-suite) · schedule render done above.
 
 **CMS Core v2 Mio registry noop pilot (2026-07-31):** **COMPLETE** — Phase `cms-core-v2-mio-registry-noop-pilot` · later thin adapter registered; verifier updated for active Mio hooks · Gosaki still unloaded during Mio convert · `/gosaki/i` **0** · data + thin adapter done above.
 

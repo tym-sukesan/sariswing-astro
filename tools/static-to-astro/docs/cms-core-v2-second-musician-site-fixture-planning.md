@@ -4,8 +4,9 @@
 - **Phase (scaffold):** `cms-core-v2-mio-static-fixture-scaffold` — **COMPLETE**
 - **Phase (registry noop):** `cms-core-v2-mio-registry-noop-pilot` — **COMPLETE**
 - **Phase (data fixtures):** `cms-core-v2-mio-data-fixtures` — **COMPLETE**
-- **Phase (thin adapter):** `cms-core-v2-mio-hooks-adapter-thin` — **COMPLETE** (2026-07-31)
-- **Status:** Fixture + data + thin Videos/footer adapter · Schedule/Disco/About/Contact/Admin **not** started · package **not** started
+- **Phase (thin adapter):** `cms-core-v2-mio-hooks-adapter-thin` — **COMPLETE**
+- **Phase (schedule read-render):** `cms-core-v2-mio-schedule-read-render` — **COMPLETE** (2026-07-31)
+- **Status:** Fixture + data + Videos/footer + Schedule read-render · Disco/About/Contact/Admin **not** started · package **not** started
 - **Package generate / FTP / DB:** **not executed**
 
 ---
@@ -13,14 +14,15 @@
 ## Gates
 
 ```txt
-phase: cms-core-v2-mio-hooks-adapter-thin
+phase: cms-core-v2-mio-schedule-read-render
 CMS_CORE_V2_SECOND_MUSICIAN_SITE_FIXTURE_PLANNING_COMPLETE: true
 CMS_CORE_V2_MIO_STATIC_FIXTURE_SCAFFOLD_COMPLETE: true
 CMS_CORE_V2_MIO_REGISTRY_NOOP_PILOT_COMPLETE: true
 CMS_CORE_V2_MIO_DATA_FIXTURES_COMPLETE: true
 CMS_CORE_V2_MIO_HOOKS_ADAPTER_THIN_COMPLETE: true
+CMS_CORE_V2_MIO_SCHEDULE_READ_RENDER_COMPLETE: true
 ADAPTER_CREATED: true
-ADAPTER_SCOPE: videos+footer_sns
+ADAPTER_SCOPE: videos+footer_sns+schedule_read
 PACKAGE_GENERATE_EXECUTED: false
 FTP_EXECUTED: false
 DB_WRITE_EXECUTED: false
@@ -31,21 +33,32 @@ READY_FOR_ANY_FUTURE_FTP_APPLY: false
 PRODUCTION_UNCHANGED: true
 ```
 
+### Schedule read-render result (step 5)
+
+| Item | Value |
+| --- | --- |
+| Helper | `scripts/lib/mio-schedule-data-pages.mjs` |
+| Inject | `scheduleBundle` via convert options (`buildMioInjectScheduleBundle`) |
+| Public | 14 events · draft/pending hidden |
+| Months | Aug 7 / Sep 6 on `schedule-2026-0{8,9}/` · Jul 1 on hub only |
+| Jul decision | No `schedule-2026-07` fixture page → hub archive section (no new month page) |
+| Markup | `mio-schedule-*` only · `/gosaki/i` 0 |
+| Verifier | `verify:cms-core-v2-mio-schedule-read-render` (+ safety-suite) |
+
+**Next:** `cms-core-v2-mio-discography-read-render`
+
 ### Thin hooks adapter result (step 4)
 
 | Item | Value |
 | --- | --- |
 | Adapter | `scripts/lib/mio-site-generator-hooks-adapter.mjs` |
-| Helpers | `mio-footer-social.mjs` · `mio-videos-page-embed.mjs` |
-| Registry | `generatorHooksAdapter` → Mio thin adapter |
+| Helpers | `mio-footer-social.mjs` · `mio-videos-page-embed.mjs` (+ schedule helper above) |
+| Registry | `generatorHooksAdapter` → Mio adapter |
 | Videos | published watch/youtu.be/embed ×3 · nocookie · shorts/invalid/unpublished omitted |
 | Footer | Instagram + YouTube · X omitted · `mio-footer-social-links` |
 | Data inject | verifier/convert `embedsBundle` (no Core fixture import; no adapter hardcoded data path) |
 | Verifier | `verify:cms-core-v2-mio-hooks-adapter-thin` (+ safety-suite) |
 | Gosaki HTML baseline | 80 PASS |
-
-**Next:** `cms-core-v2-mio-schedule-read-render`
-
 ### Data fixtures result (step 3)
 
 | Item | Value |
@@ -340,7 +353,8 @@ Phase 1 can mirror **pilot**: register `mio-kisaragi-jazz`, point `fixtureDir`, 
 | **2** | `…-mio-registry-noop-pilot` | **DONE** — registry + staging deploy-profiles; noop hooks; offline verifier; no package | `registry.json`, `mio-kisaragi-jazz.deploy-profiles.json`, `verify-cms-core-v2-mio-registry-noop-pilot.mjs` |
 | **3** | `…-mio-data-fixtures` | Add `fixtures/mio-kisaragi-jazz-data/` for schedule/disco/videos/about matrices (read-only) | **DONE** |
 | **4** | `…-mio-hooks-adapter-thin` | Optional adapter: Videos + footer only; register `generatorHooksAdapter` | **DONE** |
-| **5** | `…-mio-schedule-read-render` | Schedule read overlay from data fixtures (next) | pending |
+| **5** | `…-mio-schedule-read-render` | Schedule read overlay from data fixtures | **DONE** |
+| **6** | `…-mio-discography-read-render` | Discography read overlay (next) | pending |
 
 **First implementation phase should touch the smallest set:** fixture HTML under `fixtures/mio-kisaragi-jazz/` only (step 1). Registry can wait for step 2 so Core stays untouched.
 

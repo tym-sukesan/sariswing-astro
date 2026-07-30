@@ -5,10 +5,11 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: CMS Core v2 Mio hooks adapter thin COMPLETE
-Phase: cms-core-v2-mio-hooks-adapter-thin
+Current phase: CMS Core v2 Mio schedule read-render COMPLETE
+Phase: cms-core-v2-mio-schedule-read-render
+Helper: tools/static-to-astro/scripts/lib/mio-schedule-data-pages.mjs
 Adapter: tools/static-to-astro/scripts/lib/mio-site-generator-hooks-adapter.mjs
-Scope: Videos page + footer SNS only
+Scope: Videos + footer SNS + Schedule read-render
 Data: tools/static-to-astro/fixtures/mio-kisaragi-jazz-data/
 HTML fixture: tools/static-to-astro/fixtures/mio-kisaragi-jazz/
 ADAPTER_CREATED: true
@@ -16,12 +17,22 @@ PACKAGE_GENERATE_EXECUTED: false
 Gosaki CLIENT_SHARE_READY: true (maintained)
 deployed package: dc1c5b62a58d0462ad6629db4847256d316d4a38 (unchanged; no regen)
 Next Primary (ops): share staging with client
-Next Kit: cms-core-v2-mio-schedule-read-render (separate approval) · Admin runtime mutex (explicit approval)
+Next Kit: cms-core-v2-mio-discography-read-render (separate approval) · Admin runtime mutex (explicit approval)
 seedAppliedStaging: true
 readyForOperatorAboutSeedApply: false
 readyForAnyFutureFtpApply: false
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
 ```
+
+## CMS Core v2 Mio schedule read-render (2026-07-31)
+
+- `mio-schedule-data-pages.mjs` + adapter hooks (`resolveScheduleDataUsage` / `applyScheduleDataPages`)
+- Inject `scheduleBundle` via convert options (`buildMioInjectScheduleBundle`); no fixture-path implicit read
+- Public 14 only; Aug/Sep month pages; Jul 1 event on hub archive (no new month page — fixture has no July HTML)
+- Mio markup (`mio-schedule-*`); performers / booking / priceKind / dateStatus / image / dual-show / long title; HTML escape
+- Videos ×3 + footer SNS retained; Gosaki HTML baseline 80 PASS
+- Verifier `verify-cms-core-v2-mio-schedule-read-render` (+ safety-suite)
+- No Discography/About/Contact/Admin/Save/package/FTP/DB; Core has no Mio hardcode
 
 ## CMS Core v2 Mio hooks adapter thin (2026-07-31)
 
@@ -29,8 +40,7 @@ STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
 - Registry `generatorHooksAdapter` for `mio-kisaragi-jazz`; lazy load / double-ensure idempotent
 - Videos: inject `embedsBundle` → 3 nocookie embeds; shorts/invalid/unpublished omitted; Home featured untouched
 - Footer: Instagram + YouTube only (`mio-footer-social-links`); no X; no Gosaki footer reuse
-- Verifier `verify-cms-core-v2-mio-hooks-adapter-thin` (+ safety-suite); Gosaki HTML baseline 80 PASS
-- No Schedule/Disco/About/Contact/Admin/Save/package/FTP/DB; Core has no Mio hardcode
+- Schedule read-render done above
 
 ## CMS Core v2 Mio data fixtures (2026-07-31)
 

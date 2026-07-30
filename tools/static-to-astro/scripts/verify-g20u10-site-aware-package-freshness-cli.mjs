@@ -83,6 +83,15 @@ if (origin.stdout.trim() === BASE_COMMIT) {
 assert("doc exists", exists(DOC_REL));
 assert("CLI exists", exists(CLI_REL));
 assert("package-freshness-target exists", exists("tools/static-to-astro/scripts/lib/package-freshness-target.mjs"));
+const freshnessLibSrc = read("tools/static-to-astro/scripts/lib/package-freshness-target.mjs");
+assert(
+  "freshness target has no gosaki-* module import",
+  !/from ["']\.\/gosaki-/.test(freshnessLibSrc),
+);
+assert(
+  "freshness target uses site-registry",
+  /from ["']\.\/site-registry\.mjs["']/.test(freshnessLibSrc),
+);
 
 const doc = read(DOC_REL);
 const cliSrc = read(CLI_REL);

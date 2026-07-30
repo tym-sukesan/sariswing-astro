@@ -5,22 +5,27 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: CMS Core v2 package public-env site-adapter decoupling COMPLETE
-Phase: cms-core-v2-package-public-env-site-adapter-decoupling
-Core: resolveBuildEnv + site-package-build-preflight (no gosaki-* import)
-Adapter: gosaki-package-build-env-preflight.mjs
-Order: resolveBuildEnv → git clean → mutex → FS
-npm: verify:cms-core-v2-package-public-env-adapter · verify:cms-core-v2-safety-suite
+Current phase: CMS Core v2 residual Core→site dependency audit COMPLETE
+Phase: cms-core-v2-residual-core-to-site-dependency-audit
+Selected fix: package-freshness-target drops gosaki-package-build-profile import
+Legacy --profile-only: still GOSAKI_SITE_KEY via site-registry
+npm: verify:g20u10-package-freshness · verify:cms-core-v2-safety-suite
+RUNTIME_BEHAVIOR_CHANGED: false
 PACKAGE_GENERATE_EXECUTED: false
 Gosaki CLIENT_SHARE_READY: true (maintained)
 deployed package: dc1c5b62a58d0462ad6629db4847256d316d4a38 (unchanged; no regen)
 seedAppliedStaging: true
 readyForOperatorAboutSeedApply: false
 Next Primary (ops): share staging with client
-Next (Kit Core): Admin runtime mutex (explicit approval)
+Next reverse dep: supabase-schedule-read extractor split · Admin runtime mutex (explicit approval)
 readyForAnyFutureFtpApply: false
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
 ```
+
+## CMS Core v2 residual Core→site dependency audit (2026-07-30)
+
+- Selected: `package-freshness-target.mjs` → registry only
+- Doc: `cms-core-v2-residual-core-to-site-dependency-audit.md`
 
 ## CMS Core v2 package public-env site-adapter decoupling (2026-07-30)
 

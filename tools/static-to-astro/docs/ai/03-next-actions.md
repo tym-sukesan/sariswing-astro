@@ -9,6 +9,29 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 4. **並行可 / 別承認:** YouTube 複数件 **永続 Save**（NON_BLOCKING）。
 5. Save arm **false** · `readyForAnyFutureFtpApply: false` · production STOP · `service_role` 禁止 · **deployed package 固定**.
 
+## 0. CMS Core v2 residual Core→site dependency audit (2026-07-30)
+
+| Item | Value |
+| --- | --- |
+| Gate | `CMS_CORE_V2_RESIDUAL_CORE_TO_SITE_DEPENDENCY_AUDIT_COMPLETE: true` |
+| Phase | `cms-core-v2-residual-core-to-site-dependency-audit` |
+| Selected fix | `package-freshness-target` → site-registry only (no `gosaki-package-build-profile`) |
+| Doc | `cms-core-v2-residual-core-to-site-dependency-audit.md` |
+| Behavior | **unchanged** (legacy path still Gosaki via registry) |
+| Next reverse dep | `supabase-schedule-read` extractor split |
+
+```txt
+CMS_CORE_V2_RESIDUAL_CORE_TO_SITE_DEPENDENCY_AUDIT_COMPLETE: true
+SELECTED_FIX: package-freshness-target-gosaki-profile-import
+RUNTIME_BEHAVIOR_CHANGED: false
+PACKAGE_GENERATE_EXECUTED: false
+FTP_EXECUTED: false
+GOSAKI_CLIENT_SHARE_READY_MAINTAINED: true
+deployedPackageSourceCommitUnchanged: dc1c5b62a58d0462ad6629db4847256d316d4a38
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+PRODUCTION_UNCHANGED: true
+```
+
 ## 0. CMS Core v2 package public-env site-adapter decoupling (2026-07-30)
 
 | Item | Value |

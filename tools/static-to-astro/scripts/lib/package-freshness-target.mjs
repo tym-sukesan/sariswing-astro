@@ -1,10 +1,12 @@
 /**
  * G-20u10 — Resolve package directory for freshness preflight.
  * Registry-driven (--site/--profile) with legacy Gosaki --profile-only compat.
+ *
+ * Core uses site-registry only — no gosaki-* module imports.
+ * Legacy no-`--site` path still defaults to GOSAKI_SITE_KEY via registry.
  */
 
 import path from "node:path";
-import { resolveGosakiPackageBuildProfile } from "./gosaki-package-build-profile.mjs";
 import {
   ALLOWED_PROFILE_NAMES,
   GOSAKI_SITE_KEY,
@@ -70,12 +72,14 @@ export function resolvePackageFreshnessTarget(options = {}) {
     };
   }
 
-  const profile = resolveGosakiPackageBuildProfile(profileName);
+  // Legacy --profile-only: default site is GOSAKI_SITE_KEY via registry (no gosaki-* import).
+  getSiteRegistryEntry(GOSAKI_SITE_KEY, toolRoot);
+  const meta = resolvePackageManifestMetaFromRegistry(GOSAKI_SITE_KEY, profileName, { toolRoot });
   return {
-    packageDir: path.join(toolRoot, profile.manualUploadOut),
+    packageDir: path.join(toolRoot, meta.manualUploadOut),
     siteKey: GOSAKI_SITE_KEY,
     profileName,
     resolution: "legacy-gosaki-profile",
-    manualUploadOut: profile.manualUploadOut,
+    manualUploadOut: meta.manualUploadOut,
   };
 }

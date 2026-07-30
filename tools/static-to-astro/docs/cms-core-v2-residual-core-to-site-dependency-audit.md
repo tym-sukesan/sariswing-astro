@@ -27,8 +27,8 @@ PRODUCTION_UNCHANGED: true
 
 ## Selected fix
 
-**Before:** `package-freshness-target.mjs` → `gosaki-package-build-profile.mjs`  
-**After:** `package-freshness-target.mjs` → `site-registry.mjs` only  
+**Before:** `package-freshness-target.mjs` → `gosaki-package-build-profile.mjs`
+**After:** `package-freshness-target.mjs` → `site-registry.mjs` only
 Legacy `--profile`-only still defaults to `GOSAKI_SITE_KEY` via registry (`resolution: "legacy-gosaki-profile"`).
 
 ---

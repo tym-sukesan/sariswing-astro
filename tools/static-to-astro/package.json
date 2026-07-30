@@ -22,6 +22,7 @@
     "verify:cms-core-v2-global-save-arm-mutex-helper": "node scripts/verify-cms-core-v2-global-save-arm-mutex-helper.mjs",
     "verify:cms-core-v2-global-save-arm-mutex-package-gate": "node scripts/verify-cms-core-v2-global-save-arm-mutex-package-gate.mjs",
     "verify:cms-core-v2-offline": "node scripts/verify-cms-core-v2-youtube-supabase-vertical-slice.mjs && node scripts/verify-cms-core-v2-about-supabase-vertical-slice.mjs && node scripts/verify-cms-core-v2-about-supabase-vertical-slice-apply-readiness.mjs && node scripts/verify-cms-core-v2-global-save-arm-mutex-package-gate.mjs && node scripts/verify-cms-core-v2-global-save-arm-mutex-helper.mjs && node scripts/verify-cms-core-v2-global-save-arm-mutex-inventory.mjs && node scripts/verify-cms-core-v2-save-arm-exact-true-helper.mjs && node scripts/verify-cms-core-v2-save-arm-parse-policy.mjs && node scripts/verify-g20u20-supabase-cms-features-generalization.mjs",
+    "verify:cms-core-v2-safety-suite": "node scripts/run-cms-core-v2-safety-suite.mjs",
     "verify:cms-core-v2-youtube-live-soft": "CMS_CORE_V2_VERIFIER_LIVE_SOFT=true node scripts/verify-cms-core-v2-youtube-supabase-vertical-slice.mjs",
     "extract:gosaki-schedule-seed": "node scripts/extract-gosaki-schedule-seed.mjs",
     "generate:gosaki-schedule-seed-sql": "node scripts/generate-gosaki-schedules-seed-sql.mjs --out scripts/supabase/gosaki-schedules-seed.template.sql",

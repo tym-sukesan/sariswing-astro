@@ -3,6 +3,8 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
+**CMS Core v2 offline safety suite (2026-07-30):** **COMPLETE** — Phase `cms-core-v2-offline-safety-suite` · npm `verify:cms-core-v2-safety-suite` · fail-fast runner `run-cms-core-v2-safety-suite.mjs` · YouTube offline · About apply-readiness · exact-true · parse-policy · mutex helper/inventory/package-gate · url-staging · import cycle · `git diff --check` · LIVE_SOFT forced false · **no live-verify / package / runtime** · **Next:** client staging share.
+
 **CMS Core v2 verifier network-dependency audit + hardening (2026-07-30):** **COMPLETE** — Phase `cms-core-v2-verifier-network-dependency-audit-and-hardening` · Core contract verifiers offline-stable · fixture `cms-core-v2-offline-supabase-env-fixture.mjs` · YouTube + G-20u20 embeds primary path = blank anon → `not-configured` · soft live = `CMS_CORE_V2_VERIFIER_LIVE_SOFT=true` · npm `verify:cms-core-v2-offline` · intentional live E2E (`*-live-verify*`) retained as class C · **runtime unchanged** · **Next:** client staging share.
 
 **CMS Core v2 YouTube vertical registry FAIL resolution (2026-07-30):** **COMPLETE** — superseded/extended by network-hardening above · verifier-only · runtime unchanged.

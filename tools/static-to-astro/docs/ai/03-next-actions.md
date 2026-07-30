@@ -9,6 +9,30 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 4. **並行可 / 別承認:** YouTube 複数件 **永続 Save**（NON_BLOCKING）。
 5. Save arm **false** · `readyForAnyFutureFtpApply: false` · production STOP · `service_role` 禁止 · **deployed package 固定**.
 
+## 0. CMS Core v2 offline safety suite (2026-07-30)
+
+| Item | Value |
+| --- | --- |
+| Gate | `CMS_CORE_V2_OFFLINE_SAFETY_SUITE_COMPLETE: true` |
+| Phase | `cms-core-v2-offline-safety-suite` |
+| npm | `verify:cms-core-v2-safety-suite` |
+| Runner | `scripts/run-cms-core-v2-safety-suite.mjs` (fail-fast) |
+| Includes | YouTube offline · About apply-readiness · exact-true · parse-policy · mutex×3 · url-staging · import-cycle · `git diff --check` |
+| Excludes | live-soft · live-verify · package generate · About full vertical · g20u20 (use `verify:cms-core-v2-offline`) |
+| Runtime | **unchanged** |
+
+```txt
+CMS_CORE_V2_OFFLINE_SAFETY_SUITE_COMPLETE: true
+RUNTIME_CHANGED: false
+LIVE_SOFT_FORCED_FALSE: true
+PACKAGE_GENERATE_EXECUTED: false
+FTP_EXECUTED: false
+GOSAKI_CLIENT_SHARE_READY_MAINTAINED: true
+deployedPackageSourceCommitUnchanged: dc1c5b62a58d0462ad6629db4847256d316d4a38
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+PRODUCTION_UNCHANGED: true
+```
+
 ## 0. CMS Core v2 verifier network-dependency audit + hardening (2026-07-30)
 
 | Item | Value |

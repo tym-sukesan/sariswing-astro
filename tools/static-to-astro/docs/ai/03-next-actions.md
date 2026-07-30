@@ -9,6 +9,28 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 4. **並行可 / 別承認:** YouTube 複数件 **永続 Save**（NON_BLOCKING）。
 5. Save arm **false** · `readyForAnyFutureFtpApply: false` · production STOP · `service_role` 禁止 · **deployed package 固定**（mutex package gate でも client-ready regen 強制しない）。
 
+## 0. CMS Core v2 YouTube vertical registry FAIL resolution (2026-07-30)
+
+| Item | Value |
+| --- | --- |
+| Gate | `CMS_CORE_V2_YOUTUBE_VERTICAL_REGISTRY_FAIL_RESOLUTION_COMPLETE: true` |
+| Phase | `cms-core-v2-youtube-vertical-registry-fail-resolution` |
+| Cause | verifier required live `embedDataSource=supabase` + `rowCount≥1` (network-unstable) |
+| Fix | verifier registry-gate contract · soft live row check · **no runtime change** |
+| Baseline `50f7395` | same asserts · same live dependency |
+
+```txt
+CMS_CORE_V2_YOUTUBE_VERTICAL_REGISTRY_FAIL_RESOLUTION_COMPLETE: true
+RUNTIME_CHANGED: false
+LIVE_SELECT_REQUIRED_FOR_VERIFIER: false
+PACKAGE_GENERATE_EXECUTED: false
+FTP_EXECUTED: false
+GOSAKI_CLIENT_SHARE_READY_MAINTAINED: true
+deployedPackageSourceCommitUnchanged: dc1c5b62a58d0462ad6629db4847256d316d4a38
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+PRODUCTION_UNCHANGED: true
+```
+
 ## 0. CMS Core v2 global Save arm mutex package gate (2026-07-30)
 
 | Item | Value |

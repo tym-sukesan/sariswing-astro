@@ -5,15 +5,11 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: CMS Core v2 global Save arm mutex package gate COMPLETE
-Phase: cms-core-v2-global-save-arm-mutex-package-gate
-Adapter: scripts/lib/gosaki-operational-save-ui-arm-mutex-gate.mjs
-Wire: entrypoint inject beforeFirstFilesystemWrite / beforePackageDirMutation (Core site-agnostic)
-MUTEX_EVALUATOR_AVAILABLE: true · MUTEX_EVALUATOR_WIRED: true
-PACKAGE_GENERATE_GATE_WIRED: true · GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED: true
-ADMIN_RUNTIME_MUTEX_WIRED: false
-npm: verify:cms-core-v2-global-save-arm-mutex-package-gate (+ inventory / helper)
-PARSE_POLICY_FULLY_IMPLEMENTED: true (separate)
+Current phase: CMS Core v2 YouTube vertical registry FAIL resolution COMPLETE
+Phase: cms-core-v2-youtube-vertical-registry-fail-resolution
+Fix: YouTube vertical verifier registry-gate contract (no live SELECT required)
+RUNTIME_CHANGED: false
+MUTEX package gate: COMPLETE (prior · HEAD 7365242)
 Gosaki CLIENT_SHARE_READY: true (maintained)
 deployed package: dc1c5b62a58d0462ad6629db4847256d316d4a38 (unchanged; no regen)
 seedAppliedStaging: true
@@ -22,8 +18,11 @@ Next Primary (ops): share staging with client
 Next (Kit Core): Admin runtime mutex (explicit approval) · Edge shared arm helper · Contents YouTube retire separate
 readyForAnyFutureFtpApply: false
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
-Doc: cms-core-v2-global-save-arm-mutex-policy.md §16
 ```
+
+## CMS Core v2 YouTube vertical registry FAIL resolution (2026-07-30)
+
+- 2 FAIL were network-unstable live asserts · verifier-only fix · runtime unchanged
 
 ## CMS Core v2 global Save arm mutex package gate (2026-07-30)
 

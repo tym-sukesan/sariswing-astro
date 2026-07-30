@@ -115,6 +115,54 @@
           }
         }
       }
+    },
+    "mio-kisaragi-jazz": {
+      "siteKey": "mio-kisaragi-jazz",
+      "displayName": "Mio Kisaragi Jazz Vocal (noop hooks pilot)",
+      "cmsPreset": "musician-basic",
+      "convertSiteProfile": "musician",
+      "slugSemantics": {
+        "siteKey": "mio-kisaragi-jazz",
+        "packageKey": "mio-kisaragi-jazz",
+        "filesystemSlug": "mio-kisaragi-jazz",
+        "cmsSiteSlug": "mio-kisaragi-jazz",
+        "supabaseSiteSlug": "mio-kisaragi-jazz",
+        "legacyAliases": [],
+        "slugMismatchNotes": "CMS Core v2 Mio registry noop pilot — fictional fixture; no Gosaki aliases; no production profile; generatorHooksAdapter omitted (noop hooks)."
+      },
+      "fixtureDir": "fixtures/mio-kisaragi-jazz",
+      "deployProfilesFile": "config/sites/mio-kisaragi-jazz.deploy-profiles.json",
+      "supabaseFeatures": {
+        "schedule": false,
+        "discography": false,
+        "siteEmbeds": false,
+        "sitePageFields": false
+      },
+      "cmsFeatures": {
+        "youtube": false,
+        "contact": false,
+        "aboutBandProfiles": false,
+        "aboutContent": false,
+        "readOnlyAdmin": false
+      },
+      "packageProfiles": {
+        "staging": {
+          "profileName": "staging",
+          "packageKey": "mio-kisaragi-jazz",
+          "targetEnvironment": "staging",
+          "publicBaseUrl": "https://yskcreate.weblike.jp/cms-kit-staging/mio-kisaragi-jazz/",
+          "stagingBaseUrl": "https://yskcreate.weblike.jp/cms-kit-staging/mio-kisaragi-jazz",
+          "deployBase": "/cms-kit-staging/mio-kisaragi-jazz/",
+          "intendedRemotePath": "/cms-kit-staging/mio-kisaragi-jazz/",
+          "includesAdmin": false,
+          "includeReadOnlyAdmin": false,
+          "includeGosakiReadOnlyAdmin": false,
+          "postBuildVerifier": {
+            "script": "scripts/verify-site-package.mjs",
+            "argsMode": "site-package"
+          }
+        }
+      }
     }
   }
 }

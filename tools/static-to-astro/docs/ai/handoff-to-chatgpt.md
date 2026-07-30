@@ -5,28 +5,37 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: CMS Core v2 Mio static fixture scaffold COMPLETE
-Phase: cms-core-v2-mio-static-fixture-scaffold
+Current phase: CMS Core v2 Mio registry noop pilot COMPLETE
+Phase: cms-core-v2-mio-registry-noop-pilot
+siteKey: mio-kisaragi-jazz (registry · staging only · no generatorHooksAdapter)
 Fixture: tools/static-to-astro/fixtures/mio-kisaragi-jazz/
-Site: Mio Kisaragi Jazz Vocal · siteKey mio-kisaragi-jazz (not in registry yet)
-REGISTRY_CHANGED: false
 ADAPTER_CREATED: false
 PACKAGE_GENERATE_EXECUTED: false
 Gosaki CLIENT_SHARE_READY: true (maintained)
 deployed package: dc1c5b62a58d0462ad6629db4847256d316d4a38 (unchanged; no regen)
 Next Primary (ops): share staging with client
-Next Kit: cms-core-v2-mio-registry-noop-pilot (separate approval) · Admin runtime mutex (explicit approval)
+Next Kit: cms-core-v2-mio-data-fixtures (separate approval) · Admin runtime mutex (explicit approval)
+seedAppliedStaging: true
+readyForOperatorAboutSeedApply: false
 readyForAnyFutureFtpApply: false
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
 ```
+
+## CMS Core v2 Mio registry noop pilot (2026-07-31)
+
+- Registered `mio-kisaragi-jazz` with staging deploy-profiles; noop hooks (no Mio adapter)
+- Shared convert path + offline verifier `verify-cms-core-v2-mio-registry-noop-pilot`
+- Gosaki adapter not loaded during Mio convert; lazy-loads afterward
+- Core schedule markup uses neutral `schedule-*`; Gosaki adapter sets `scheduleClassPrefix: "gosaki-schedule"`
+- Mio + generic pilot generated output: zero `/gosaki/i`; g20u19 updated for lazy adapter
+- No package / FTP / DB / Supabase Save
 
 ## CMS Core v2 Mio static fixture scaffold (2026-07-31)
 
 - Hand-authored static HTML/CSS/SVG under `fixtures/mio-kisaragi-jazz/`
 - Pages: Home / About / Schedule (+ 2026-08, 2026-09) / Discography / Videos / Contact
 - noindex · Contact non-submitting · draft/unreleased in comments + fixture-meta.json
-- No registry / Core / adapter / package
-- Planning doc updated: `cms-core-v2-second-musician-site-fixture-planning.md`
+- Planning doc: `cms-core-v2-second-musician-site-fixture-planning.md` · registry noop done above
 
 ## CMS Core v2 second musician site fixture planning (2026-07-31)
 

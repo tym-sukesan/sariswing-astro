@@ -87,25 +87,28 @@ export function imageSrcToPublic(src, pageRelPath) {
 }
 
 /**
- * Expose Wix schedule repeater SSR markup and add gosaki month-page hooks (G-8g4).
+ * Expose schedule repeater SSR markup and add month-page hooks (G-8g4).
+ * Class prefix is site-neutral by default (`schedule`); Gosaki passes `gosaki-schedule`.
  * @param {import("cheerio").CheerioAPI} $
  * @param {import("cheerio").Cheerio<import("domhandler").Element>} root
+ * @param {string} [scheduleClassPrefix]
  */
-function transformScheduleMonthFragment($, root) {
+function transformScheduleMonthFragment($, root, scheduleClassPrefix = "schedule") {
+  const prefix = scheduleClassPrefix || "schedule";
   root.find("fluid-columns-repeater").each((_, el) => {
     const $el = $(el);
     const style = $el.attr("style") || "";
     const cleaned = style.replace(/visibility\s*:\s*hidden\s*;?/gi, "").trim();
     if (cleaned) $el.attr("style", cleaned);
     else $el.removeAttr("style");
-    $el.addClass("gosaki-schedule-month-repeater");
+    $el.addClass(`${prefix}-month-repeater`);
   });
 
   root.find(".wixui-repeater__item").each((_, el) => {
     const $item = $(el);
-    $item.addClass("gosaki-schedule-event-card");
-    $item.find("h1").first().addClass("gosaki-schedule-event-date");
-    $item.find(".wixui-rich-text").not(".gosaki-schedule-event-date").addClass("gosaki-schedule-event-body");
+    $item.addClass(`${prefix}-event-card`);
+    $item.find("h1").first().addClass(`${prefix}-event-date`);
+    $item.find(".wixui-rich-text").not(`.${prefix}-event-date`).addClass(`${prefix}-event-body`);
   });
 }
 
@@ -113,13 +116,14 @@ function transformScheduleMonthFragment($, root) {
  * Rewrite HTML fragment paths for Astro output.
  * @param {string} htmlFragment
  * @param {string} pageRelPath
- * @param {{ htmlFiles: string[] }} context
+ * @param {{ htmlFiles?: string[], productionOrigin?: string | null, scheduleClassPrefix?: string }} context
  */
 export function transformHtmlFragment(htmlFragment, pageRelPath, context = {}) {
   if (!htmlFragment?.trim()) return "";
 
   const $ = cheerio.load(`<div id="__wrap">${htmlFragment}</div>`, { decodeEntities: false });
   const root = $("#__wrap");
+  const scheduleClassPrefix = context.scheduleClassPrefix || "schedule";
 
   root.find("a[href]").each((_, el) => {
     const href = $(el).attr("href");
@@ -137,9 +141,9 @@ export function transformHtmlFragment(htmlFragment, pageRelPath, context = {}) {
   root.find("script").remove();
 
   if (isScheduleMonthSourcePath(pageRelPath)) {
-    transformScheduleMonthFragment($, root);
+    transformScheduleMonthFragment($, root, scheduleClassPrefix);
     return sanitizeWixFontHtml(
-      `<div class="gosaki-schedule-month">${root.html() ?? ""}</div>`,
+      `<div class="${scheduleClassPrefix}-month">${root.html() ?? ""}</div>`,
     );
   }
 

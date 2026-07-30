@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**CMS Core v2 Mio static fixture scaffold (2026-07-31):** **COMPLETE** — Phase `cms-core-v2-mio-static-fixture-scaffold` · hand-authored `fixtures/mio-kisaragi-jazz/` (8 HTML + CSS + SVG + `fixture-meta.json`) · editorial jazz-club · noindex · Contact non-submitting · no registry/Core/adapter/package · Doc update: `cms-core-v2-second-musician-site-fixture-planning.md` · **Next:** `cms-core-v2-mio-registry-noop-pilot` · Gosaki client staging share.
+**CMS Core v2 Mio registry noop pilot (2026-07-31):** **COMPLETE** — Phase `cms-core-v2-mio-registry-noop-pilot` · `mio-kisaragi-jazz` in registry (staging only; no `generatorHooksAdapter`) · temp convert via shared `generateAstroProject` · Gosaki adapter **not** loaded · Core schedule classes site-neutral (`schedule-*`); Gosaki adapter `scheduleClassPrefix: "gosaki-schedule"` · Mio/pilot generated output `/gosaki/i` **0** · npm `verify:cms-core-v2-mio-registry-noop-pilot` · g20u19 assertions updated for lazy adapter · **no package / FTP / DB / Mio adapter** · **Next:** `cms-core-v2-mio-data-fixtures` · Gosaki client staging share.
+
+**CMS Core v2 Mio static fixture scaffold (2026-07-31):** **COMPLETE** — Phase `cms-core-v2-mio-static-fixture-scaffold` · `fixtures/mio-kisaragi-jazz/` · registry noop pilot done above.
 
 **CMS Core v2 second musician site fixture planning (2026-07-31):** **COMPLETE (planning)** — Phase `cms-core-v2-second-musician-site-fixture-planning` · **Mio Kisaragi Jazz Vocal** · `siteKey` `mio-kisaragi-jazz` · Doc: `cms-core-v2-second-musician-site-fixture-planning.md` · scaffold step 1 done above.
 

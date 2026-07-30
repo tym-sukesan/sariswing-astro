@@ -40,6 +40,7 @@ export const TOOL_ROOT = path.resolve(__dirname, "../..");
  * @typedef {object} SiteGeneratorHooks
  * @property {string | null} siteKey
  * @property {boolean} active
+ * @property {string} [scheduleClassPrefix] CSS class prefix for schedule markup (default: "schedule"; Gosaki: "gosaki-schedule")
  * @property {(siteDir: string, basename?: string) => boolean} matchFixture
  * @property {(siteDir: string, basename: string) => string | null} resolveVisualOverrideSiteSlug
  * @property {(pages: object[], ctx: SiteGeneratorHookContext) => object[]} transformAnalysisPages
@@ -56,6 +57,8 @@ export const TOOL_ROOT = path.resolve(__dirname, "../..");
 export const DEFAULT_SITE_GENERATOR_HOOKS = {
   siteKey: null,
   active: false,
+  /** Site-neutral schedule class prefix — never "gosaki-*". */
+  scheduleClassPrefix: "schedule",
   matchFixture() {
     return false;
   },

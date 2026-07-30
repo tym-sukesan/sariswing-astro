@@ -1,0 +1,25 @@
+{
+  "$comment": "CMS Core v2 — Mio Kisaragi Jazz Vocal deploy profiles (staging noop pilot only). No secrets. No production profile.",
+  "siteSlug": "mio-kisaragi-jazz",
+  "fixtureDir": "fixtures/mio-kisaragi-jazz",
+  "profiles": {
+    "staging": {
+      "origin": "https://yskcreate.weblike.jp",
+      "baseUrl": "https://yskcreate.weblike.jp/cms-kit-staging/mio-kisaragi-jazz",
+      "publicUrl": "https://yskcreate.weblike.jp/cms-kit-staging/mio-kisaragi-jazz/",
+      "deployBase": "/cms-kit-staging/mio-kisaragi-jazz/",
+      "outputName": "mio-kisaragi-jazz",
+      "astroOut": "output/mio-kisaragi-jazz-astro",
+      "staticPublicOut": "output/static-public/mio-kisaragi-jazz",
+      "manualUploadOut": "output/manual-upload/mio-kisaragi-jazz",
+      "remotePath": "/cms-kit-staging/mio-kisaragi-jazz/",
+      "supabaseProjectRef": "kmjqppxjdnwwrtaeqjta",
+      "includeGosakiReadOnlyAdmin": false,
+      "seo": {
+        "stagingNoindex": true,
+        "robotsDisallowAll": true,
+        "productionIndexable": false
+      }
+    }
+  }
+}

@@ -67,6 +67,8 @@ function toCanonicalScheduleMonthPage(page, baseUrl, deployBase) {
  */
 export function createGosakiPianoHookMethods() {
   return {
+    /** Preserve legacy Gosaki CSS / package verifiers that select gosaki-schedule-*. */
+    scheduleClassPrefix: "gosaki-schedule",
     matchFixture(siteDir) {
       return matchRegistryFixtureDir(siteDir, GOSAKI_SITE_KEY);
     },

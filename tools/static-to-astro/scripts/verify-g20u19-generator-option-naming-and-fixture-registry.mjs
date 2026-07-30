@@ -103,10 +103,32 @@ assert("pipeline scheduleBundle", pipelineSrc.includes("scheduleBundle"));
 assert("pipeline no gosakiScheduleBundle key", !pipelineSrc.includes("gosakiScheduleBundle:"));
 
 const hooksSrc = read("tools/static-to-astro/scripts/lib/site-generator-hooks.mjs");
-assert("hooks matchRegistryFixtureDir", hooksSrc.includes("matchRegistryFixtureDir"));
+assert(
+  "hooks Core does not import matchRegistryFixtureDir (adapter-owned)",
+  !hooksSrc.includes("matchRegistryFixtureDir"),
+);
 assert("hooks no isGosakiPianoFixture import", !hooksSrc.includes("isGosakiPianoFixture"));
-assert("hooks scheduleBundle ctx", hooksSrc.includes("ctx.scheduleBundle"));
-assert("hooks legacy bundle fallback", hooksSrc.includes("ctx.gosakiScheduleBundle"));
+assert("hooks lazy ensureSiteGeneratorHookAdapter", hooksSrc.includes("ensureSiteGeneratorHookAdapter"));
+assert(
+  "hooks registry generatorHooksAdapter field",
+  hooksSrc.includes("generatorHooksAdapter"),
+);
+assert("hooks resolveSiteGeneratorHooksAsync", hooksSrc.includes("resolveSiteGeneratorHooksAsync"));
+assert(
+  "hooks default scheduleClassPrefix is site-neutral",
+  hooksSrc.includes('scheduleClassPrefix: "schedule"'),
+);
+
+const gosakiAdapterSrc = read(
+  "tools/static-to-astro/scripts/lib/gosaki-site-generator-hooks-adapter.mjs",
+);
+assert("adapter matchRegistryFixtureDir", gosakiAdapterSrc.includes("matchRegistryFixtureDir"));
+assert("adapter scheduleBundle ctx", gosakiAdapterSrc.includes("ctx.scheduleBundle"));
+assert("adapter legacy bundle fallback", gosakiAdapterSrc.includes("ctx.gosakiScheduleBundle"));
+assert(
+  "adapter scheduleClassPrefix gosaki-schedule",
+  gosakiAdapterSrc.includes('scheduleClassPrefix: "gosaki-schedule"'),
+);
 
 const legacyNorm = normalizeSiteDataBundles({
   gosakiScheduleBundle: { scheduleDataSource: "supabase", schedules: [{ id: 1 }] },
@@ -130,6 +152,10 @@ assert("pilot key from fixture dir", resolveRegisteredSiteKeyFromFixtureDir(PILO
 const gosakiHooksExplicit = await resolveSiteGeneratorHooksAsync(GOSAKI_FIXTURE, { siteKey: GOSAKI_SITE_KEY });
 assert("gosaki hooks active explicit siteKey", gosakiHooksExplicit.active === true);
 assert("gosaki hooks siteKey", gosakiHooksExplicit.siteKey === GOSAKI_SITE_KEY);
+assert(
+  "gosaki hooks scheduleClassPrefix legacy",
+  gosakiHooksExplicit.scheduleClassPrefix === "gosaki-schedule",
+);
 
 const gosakiHooksRegistry = await resolveSiteGeneratorHooksAsync(GOSAKI_FIXTURE);
 assert("gosaki hooks active registry basename", gosakiHooksRegistry.active === true);
@@ -137,6 +163,10 @@ assert("gosaki hooks active registry basename", gosakiHooksRegistry.active === t
 const pilotHooks = await resolveSiteGeneratorHooksAsync(PILOT_FIXTURE, { siteKey: PILOT_SAMPLE_STATIC_SITE_KEY });
 assert("pilot hooks inactive", pilotHooks.active === false);
 assert("pilot hooks default noop matchFixture", pilotHooks.matchFixture(PILOT_FIXTURE) === false);
+assert(
+  "pilot hooks scheduleClassPrefix neutral",
+  pilotHooks.scheduleClassPrefix === "schedule",
+);
 
 const pilotData = await loadSiteSupabaseDataForBuild({
   siteKey: PILOT_SAMPLE_STATIC_SITE_KEY,

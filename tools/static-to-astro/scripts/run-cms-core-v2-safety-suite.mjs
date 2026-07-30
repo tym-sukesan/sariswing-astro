@@ -71,6 +71,11 @@ const STEPS = [
     script: "verify-cms-core-v2-gosaki-site-generator-hooks-html-baseline.mjs",
   },
   {
+    id: "mio-registry-noop-pilot",
+    kind: "node",
+    script: "verify-cms-core-v2-mio-registry-noop-pilot.mjs",
+  },
+  {
     id: "youtube-offline-vertical",
     kind: "node",
     script: "verify-cms-core-v2-youtube-supabase-vertical-slice.mjs",

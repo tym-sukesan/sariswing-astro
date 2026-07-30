@@ -731,7 +731,8 @@ assert(
 );
 assert(
   "schedule index generator uses withBase for month links",
-  astroGeneratorSrc.includes("gosaki-schedule-hub") &&
+  astroGeneratorSrc.includes("scheduleClassPrefix") &&
+    astroGeneratorSrc.includes("${prefix}-hub") &&
     astroGeneratorSrc.includes("withBase('${escapeHtmlText(m.route)}')") &&
     !astroGeneratorSrc.includes('href="${escapeHtmlText(m.route)}"'),
 );
@@ -758,7 +759,8 @@ assert(
 assert(
   "path transform exposes schedule month repeater markup",
   pathTransformSrc.includes("transformScheduleMonthFragment") &&
-    pathTransformSrc.includes("gosaki-schedule-month") &&
+    pathTransformSrc.includes("scheduleClassPrefix") &&
+    pathTransformSrc.includes("${scheduleClassPrefix}-month") &&
     pathTransformSrc.includes("visibility\\s*:\\s*hidden"),
 );
 assert(
@@ -904,7 +906,8 @@ assert(
 assert(
   "gosaki G-9c0b legacy stub generator present",
   astroGeneratorSrc.includes("generateScheduleLegacyMonthStubPage") &&
-    astroGeneratorSrc.includes("gosaki-schedule-legacy-stub"),
+    astroGeneratorSrc.includes("${prefix}-legacy-stub") &&
+    gosakiSiteGeneratorHooksAdapterSrc.includes('scheduleClassPrefix: "gosaki-schedule"'),
 );
 assert(
   "gosaki G-9c0b legacy stub uses noindex robots",

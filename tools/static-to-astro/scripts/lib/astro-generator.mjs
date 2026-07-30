@@ -458,8 +458,15 @@ function escapeHtmlText(text) {
  * @param {ReturnType<typeof detectScheduleMonthPages>} scheduleMonths
  * @param {string | null} baseUrl
  * @param {string} deployBase
+ * @param {string} [scheduleClassPrefix]
  */
-function generateScheduleIndexPage(scheduleMonths, baseUrl, deployBase) {
+function generateScheduleIndexPage(
+  scheduleMonths,
+  baseUrl,
+  deployBase,
+  scheduleClassPrefix = "schedule",
+) {
+  const prefix = scheduleClassPrefix || "schedule";
   const layoutImport = layoutImportFromPagePath("schedule/index.astro");
   const route = SCHEDULE_INDEX_ROUTE;
   const seo = applyBaseUrlToSeo(
@@ -486,13 +493,13 @@ function generateScheduleIndexPage(scheduleMonths, baseUrl, deployBase) {
   const listItems = scheduleMonths
     .map(
       (m) =>
-        `      <a href={withBase('${escapeHtmlText(m.route)}')} class="gosaki-schedule-month-link">${escapeHtmlText(m.label)}</a>`,
+        `      <a href={withBase('${escapeHtmlText(m.route)}')} class="${prefix}-month-link">${escapeHtmlText(m.label)}</a>`,
     )
     .join("\n");
 
-  const content = `  <section class="gosaki-schedule-hub">
-    <h1 class="gosaki-schedule-hub__title">Schedule</h1>
-    <div class="gosaki-schedule-months">
+  const content = `  <section class="${prefix}-hub">
+    <h1 class="${prefix}-hub__title">Schedule</h1>
+    <div class="${prefix}-months">
       <!-- CMS_TARGET: SCHEDULE_INDEX -->
 ${listItems}
     </div>
@@ -514,8 +521,15 @@ ${content}
  * @param {{ route: string, year: string, month: string, label: string }} monthEntry
  * @param {string | null} baseUrl
  * @param {string} deployBase
+ * @param {string} [scheduleClassPrefix]
  */
-function generateScheduleLegacyMonthStubPage(monthEntry, baseUrl, deployBase) {
+function generateScheduleLegacyMonthStubPage(
+  monthEntry,
+  baseUrl,
+  deployBase,
+  scheduleClassPrefix = "schedule",
+) {
+  const prefix = scheduleClassPrefix || "schedule";
   const { year, month, label, route: canonicalRoute } = monthEntry;
   const legacyPagePath = `${year}-${month}/index.astro`;
   const layoutImport = layoutImportFromPagePath(legacyPagePath);
@@ -547,10 +561,10 @@ function generateScheduleLegacyMonthStubPage(monthEntry, baseUrl, deployBase) {
   };
   const layoutOpen = formatBaseLayoutOpen(layoutProps);
 
-  const content = `  <section class="gosaki-schedule-legacy-stub">
-    <h1 class="gosaki-schedule-legacy-stub__title">Schedule page moved</h1>
-    <p class="gosaki-schedule-legacy-stub__message">This schedule page has moved to a new location.</p>
-    <p><a href={withBase('${escapeHtmlText(canonicalRoute)}')} class="gosaki-schedule-legacy-stub__link">Go to ${escapeHtmlText(label)} schedule</a></p>
+  const content = `  <section class="${prefix}-legacy-stub">
+    <h1 class="${prefix}-legacy-stub__title">Schedule page moved</h1>
+    <p class="${prefix}-legacy-stub__message">This schedule page has moved to a new location.</p>
+    <p><a href={withBase('${escapeHtmlText(canonicalRoute)}')} class="${prefix}-legacy-stub__link">Go to ${escapeHtmlText(label)} schedule</a></p>
   </section>`;
 
   return `---
@@ -854,8 +868,9 @@ export async function generateAstroProject(inputDir, outputDir, options = {}) {
   ensureDir(path.join(outDir, "public/assets"));
 
   const productionOrigin = resolveProductionOrigin(siteDir, options);
-  /** @type {{ productionOrigin: string | null }} */
-  const linkTransformContext = { productionOrigin };
+  const scheduleClassPrefix = siteHooks.scheduleClassPrefix || "schedule";
+  /** @type {{ productionOrigin: string | null, scheduleClassPrefix: string }} */
+  const linkTransformContext = { productionOrigin, scheduleClassPrefix };
 
   const headerHtml = analysis.common.header.html;
   const footerHtml = analysis.common.footer.html;
@@ -884,7 +899,13 @@ export async function generateAstroProject(inputDir, outputDir, options = {}) {
     outDir,
     toolRoot: TOOL_ROOT,
     writeFile,
-    generateScheduleLegacyMonthStubPage,
+    generateScheduleLegacyMonthStubPage: (monthEntry, stubBaseUrl, stubDeployBase) =>
+      generateScheduleLegacyMonthStubPage(
+        monthEntry,
+        stubBaseUrl,
+        stubDeployBase,
+        scheduleClassPrefix,
+      ),
   };
   const scheduleDataUsage = siteHooks.resolveScheduleDataUsage(hookContextBase);
   const useScheduleData = scheduleDataUsage.useScheduleData;
@@ -947,7 +968,10 @@ export async function generateAstroProject(inputDir, outputDir, options = {}) {
       scheduleIndexGenerated = true;
     } else {
       const scheduleIndexPath = path.join(outDir, "src/pages/schedule/index.astro");
-      writeFile(scheduleIndexPath, generateScheduleIndexPage(scheduleMonthPages, baseUrl, deployBase));
+      writeFile(
+        scheduleIndexPath,
+        generateScheduleIndexPage(scheduleMonthPages, baseUrl, deployBase, scheduleClassPrefix),
+      );
       writtenPages.push(scheduleIndexPath);
       scheduleIndexGenerated = true;
     }

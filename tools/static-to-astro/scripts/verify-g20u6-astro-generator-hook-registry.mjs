@@ -120,7 +120,10 @@ assert("generator no direct gosaki-about import", !generatorSrc.includes('from "
 assert("generator no direct gosaki-footer import", !generatorSrc.includes('from "./gosaki-footer-social.mjs"'));
 assert("generator delegates footer", generatorSrc.includes("siteHooks.generateFooter"));
 assert("generator delegates post-generate", generatorSrc.includes("siteHooks.applyPostGenerate"));
-assert("generator keeps schedule hub markup", generatorSrc.includes("gosaki-schedule-hub"));
+assert(
+  "generator keeps schedule hub markup via class prefix",
+  generatorSrc.includes("scheduleClassPrefix") && generatorSrc.includes("${prefix}-hub"),
+);
 
 assert("npm verify:g20u6 script", packageJson.includes("verify:g20u6-astro-generator-hooks"));
 

@@ -14,6 +14,7 @@ import {
   createBuildReadFallbackEnvelope,
   createBuildReadSuccessEnvelope,
 } from "./build-read-envelope-utils.mjs";
+import { isFeatureFlagTrimTrue } from "./feature-flag-trim-true-utils.mjs";
 
 /** @typedef {'schedule' | 'discography' | 'siteEmbeds' | 'sitePageFields'} SupabaseFeatureId */
 /** @typedef {'youtube' | 'contact' | 'aboutBandProfiles' | 'aboutContent' | 'readOnlyAdmin'} CmsFeatureId */
@@ -213,7 +214,7 @@ export function resolveSiteCmsFeaturePlan(siteKey, toolRoot = TOOL_ROOT) {
 export async function loadSiteEmbedsDataForBuild(opts) {
   const { siteKey, toolRoot = TOOL_ROOT, env = process.env } = opts;
   const featureOn = isSupabaseFeatureEnabled(siteKey, "siteEmbeds", toolRoot);
-  const envOn = String(env.CMS_KIT_SITE_EMBEDS_BUILD_READ ?? "").trim() === "true";
+  const envOn = isFeatureFlagTrimTrue(env.CMS_KIT_SITE_EMBEDS_BUILD_READ);
   if (!featureOn && !envOn) {
     return null;
   }
@@ -308,7 +309,7 @@ export async function loadSiteEmbedsDataForBuild(opts) {
 export async function loadSitePageFieldsDataForBuild(opts) {
   const { siteKey, toolRoot = TOOL_ROOT, env = process.env } = opts;
   const featureOn = isSupabaseFeatureEnabled(siteKey, "sitePageFields", toolRoot);
-  const envOn = String(env.CMS_KIT_SITE_PAGE_FIELDS_BUILD_READ ?? "").trim() === "true";
+  const envOn = isFeatureFlagTrimTrue(env.CMS_KIT_SITE_PAGE_FIELDS_BUILD_READ);
   if (!featureOn && !envOn) {
     return null;
   }

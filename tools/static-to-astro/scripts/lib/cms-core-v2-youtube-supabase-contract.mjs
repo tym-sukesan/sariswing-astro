@@ -11,6 +11,7 @@ import {
   buildYoutubeNocookieEmbedUrl,
   parseYoutubeVideoId,
 } from "./youtube-url-utils.mjs";
+import { isFeatureFlagTrimTrue } from "./feature-flag-trim-true-utils.mjs";
 
 export { buildYoutubeNocookieEmbedUrl, parseYoutubeVideoId };
 
@@ -202,8 +203,10 @@ export function planYoutubeSupabaseItemsDryRun(input) {
 }
 
 /**
- * @param {string | undefined | null} value
+ * PATH_ENABLED / BUILD_READ-style trim-true (NOT Save arm exact-true).
+ * Delegates to Core `isFeatureFlagTrimTrue` — historical export name retained.
+ * @param {string | undefined | null | unknown} value
  */
 export function isExactTrue(value) {
-  return String(value ?? "").trim() === "true";
+  return isFeatureFlagTrimTrue(value);
 }

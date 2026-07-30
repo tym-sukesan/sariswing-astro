@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**CMS Core v2 build-read envelope skeleton (2026-07-30):** **COMPLETE** — Phase `cms-core-v2-build-read-envelope-skeleton` · SoT `build-read-envelope-utils.mjs` · YouTube embeds + About page_fields wired · deep-equality fixtures · npm `verify:cms-core-v2-build-read-envelope` · **public return shape unchanged** · **Next:** client staging share.
+**CMS Core v2 trim-true feature-flag helper (2026-07-30):** **COMPLETE** — Phase `cms-core-v2-trim-true-feature-flag-helper` · SoT `feature-flag-trim-true-utils.mjs` (`isFeatureFlagTrimTrue`) · ≠ Save arm `isSaveArmExactTrue` · wired BUILD_READ / About PATH bake / youtube `isExactTrue` delegate · Admin PATH inline retained · npm `verify:cms-core-v2-feature-flag-trim-true` · **behavior unchanged** · **Next:** client staging share.
+
+**CMS Core v2 build-read envelope skeleton (2026-07-30):** **COMPLETE** — Phase `cms-core-v2-build-read-envelope-skeleton` · SoT `build-read-envelope-utils.mjs` · YouTube embeds + About page_fields wired · deep-equality fixtures · npm `verify:cms-core-v2-build-read-envelope` · **public return shape unchanged** · **Next:** trim-true helper (done above).
 
 **CMS Core v2 next high-value safe extraction (2026-07-30):** **COMPLETE** — Phase `cms-core-v2-next-high-value-safe-extraction` · SoT `supabase-anon-read-env-utils.mjs` · Schedule re-export · Discography + site-cms-features (embeds/page_fields) wired to Core · npm `verify:cms-core-v2-supabase-anon-read-env` · safety suite step added · **behavior unchanged** · **Next:** build-read envelope (done above).
 

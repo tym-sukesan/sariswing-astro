@@ -389,9 +389,10 @@ assert(
     /aboutSaveUiArmed:\s*isSaveArmExactTrue/.test(marker),
 );
 assert(
-  "package path/build-read may still trim (non-save)",
-  /PATH_ENABLED[\s\S]{0,80}\.trim\(\)\s*===\s*"true"/.test(marker) ||
-    /SITE_PAGE_FIELDS_BUILD_READ[\s\S]{0,80}\.trim\(\)\s*===\s*"true"/.test(marker),
+  "PATH/BUILD_READ bake uses feature-flag trim-true helper",
+  marker.includes("isFeatureFlagTrimTrue") &&
+    marker.includes("feature-flag-trim-true-utils.mjs") &&
+    marker.includes("PUBLIC_ADMIN_GOSAKI_ABOUT_SUPABASE_PATH_ENABLED"),
 );
 
 // Multi-arm gap (explicit — do not pretend full mutex)
@@ -433,12 +434,13 @@ if (exists(aboutEdge)) {
   );
 }
 
-// --- isExactTrue naming trap (R2) ---
+// --- isExactTrue naming trap (R2) — PATH/BUILD_READ trim-true, not Save arm ---
 assert("youtube contract exists", exists(YT_CONTRACT));
 const ytContract = read(YT_CONTRACT);
 assert(
-  "isExactTrue currently trims (known R2)",
-  /function isExactTrue[\s\S]*?\.trim\(\)\s*===\s*"true"/.test(ytContract),
+  "isExactTrue delegates to isFeatureFlagTrimTrue (trim-true · not Save arm)",
+  /function isExactTrue[\s\S]*?isFeatureFlagTrimTrue/.test(ytContract) &&
+    ytContract.includes("feature-flag-trim-true-utils.mjs"),
 );
 
 // --- Discover unknown Save arms ---

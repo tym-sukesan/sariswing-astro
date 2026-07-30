@@ -1,3 +1,5 @@
+import { isFeatureFlagTrimTrue } from "./feature-flag-trim-true-utils.mjs";
+
 /**
  * Offline Supabase anon env fixture for CMS Core verifier hardening.
  *
@@ -28,5 +30,5 @@ export const CMS_CORE_V2_SITE_EMBEDS_LOADER_OUTCOMES = Object.freeze([
 
 /** Opt-in soft live SELECT checks for Core verifiers. */
 export function isCmsCoreV2VerifierLiveSoftEnabled(env = process.env) {
-  return String(env.CMS_CORE_V2_VERIFIER_LIVE_SOFT ?? "").trim() === "true";
+  return isFeatureFlagTrimTrue(env.CMS_CORE_V2_VERIFIER_LIVE_SOFT);
 }

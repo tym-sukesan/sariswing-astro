@@ -41,6 +41,11 @@ const STEPS = [
     script: "verify-cms-core-v2-build-read-envelope-helper.mjs",
   },
   {
+    id: "feature-flag-trim-true",
+    kind: "node",
+    script: "verify-cms-core-v2-feature-flag-trim-true-helper.mjs",
+  },
+  {
     id: "youtube-offline-vertical",
     kind: "node",
     script: "verify-cms-core-v2-youtube-supabase-vertical-slice.mjs",
@@ -88,6 +93,7 @@ const IMPORT_CYCLE_MODULES = [
   "cms-core-v2-offline-supabase-env-fixture.mjs",
   "supabase-anon-read-env-utils.mjs",
   "build-read-envelope-utils.mjs",
+  "feature-flag-trim-true-utils.mjs",
   "cms-core-v2-youtube-supabase-contract.mjs",
   "cms-core-v2-about-supabase-contract.mjs",
   "supabase-staging-ref-utils.mjs",

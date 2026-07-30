@@ -12,6 +12,7 @@ import {
   STAGING_PROJECT_REF,
 } from "./supabase-staging-ref-utils.mjs";
 import { isSaveArmExactTrue } from "./save-arm-utils.mjs";
+import { isFeatureFlagTrimTrue } from "./feature-flag-trim-true-utils.mjs";
 
 export const PACKAGE_RUN_MARKER_NAME = "PACKAGE_RUN.json";
 export const STALE_BACKUP_DIR_NAME = "_stale-backup";
@@ -62,13 +63,13 @@ export const ABOUT_CONTENTS_SAVE_ENDPOINT_NAME = "gosaki-about-content-save";
 export function resolveAboutAdminPathBakeFromEnv(env = process.env) {
   const e = env ?? {};
   return {
-    aboutWriteBackend:
-      String(e.PUBLIC_ADMIN_GOSAKI_ABOUT_SUPABASE_PATH_ENABLED ?? "").trim() === "true"
-        ? "supabase"
-        : "contents",
+    aboutWriteBackend: isFeatureFlagTrimTrue(
+      e.PUBLIC_ADMIN_GOSAKI_ABOUT_SUPABASE_PATH_ENABLED,
+    )
+      ? "supabase"
+      : "contents",
     aboutSaveUiArmed: isSaveArmExactTrue(e.PUBLIC_ADMIN_GOSAKI_ABOUT_SUPABASE_SAVE_UI_ARMED),
-    publicAboutBuildRead:
-      String(e.CMS_KIT_SITE_PAGE_FIELDS_BUILD_READ ?? "").trim() === "true",
+    publicAboutBuildRead: isFeatureFlagTrimTrue(e.CMS_KIT_SITE_PAGE_FIELDS_BUILD_READ),
   };
 }
 

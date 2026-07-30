@@ -12,6 +12,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { REPO_ROOT, verifySitePackage } from "./lib/verify-site-package-core.mjs";
 import { GOSAKI_SITE_KEY } from "./lib/site-registry.mjs";
+import { createGosakiSitePackageExtensionVerifier } from "./lib/gosaki-site-package-verifier-adapter.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const TOOL_ROOT = path.resolve(__dirname, "..");
@@ -60,6 +61,7 @@ Build-read:     npm run verify:manual-upload:public-about-build-read
     toolRoot: TOOL_ROOT,
     expectAboutSaveUiArmed: opts.expectAboutSaveUiArmed,
     expectPublicAboutBuildRead: opts.expectPublicAboutBuildRead,
+    siteExtensionVerifier: createGosakiSitePackageExtensionVerifier(),
   });
 
   const mode = opts.expectPublicAboutBuildRead

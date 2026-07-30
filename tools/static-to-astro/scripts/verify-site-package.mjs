@@ -17,6 +17,7 @@ import {
   verifySitePackage,
 } from "./lib/verify-site-package-core.mjs";
 import { ALLOWED_PROFILE_NAMES, listSiteKeys } from "./lib/site-registry.mjs";
+import { resolveSitePackageExtensionVerifierForSite } from "./lib/gosaki-site-package-verifier-adapter.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -111,6 +112,7 @@ function main() {
     toolRoot: TOOL_ROOT,
     expectAboutSaveUiArmed: opts.expectAboutSaveUiArmed,
     expectPublicAboutBuildRead: opts.expectPublicAboutBuildRead,
+    siteExtensionVerifier: resolveSitePackageExtensionVerifierForSite(opts.site),
   });
 
   const mode =

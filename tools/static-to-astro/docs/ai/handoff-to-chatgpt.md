@@ -5,12 +5,12 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: CMS Core v2 static-public artifact verifier site-adapter decoupling COMPLETE
-Phase: cms-core-v2-static-public-artifact-verifier-site-adapter-decoupling
-Core: static-public-artifact-verifier (no gosaki-staging-admin-public-env)
-Adapter: gosaki-static-public-anon-key-resolver.mjs (resolveEnvAnonKey)
-Entrypoints inject: verify-static-public-artifact · ftp-deployer · url-to-staging (Gosaki)
-npm: verify:cms-core-v2-static-public-artifact-verifier-adapter · verify:cms-core-v2-safety-suite
+Current phase: CMS Core v2 site-package verifier extension decoupling COMPLETE
+Phase: cms-core-v2-site-package-verifier-extension-decoupling
+Core: verify-site-package-core (optional siteExtensionVerifier; no gosaki-* import)
+Adapter: gosaki-site-package-verifier-adapter.mjs
+Entrypoints inject: verify-site-package · verify-manual-upload · g20i3/g20u4
+npm: verify:cms-core-v2-site-package-verifier-extension-decoupling · verify:cms-core-v2-safety-suite
 RUNTIME_BEHAVIOR_CHANGED: false
 PACKAGE_GENERATE_EXECUTED: false
 Gosaki CLIENT_SHARE_READY: true (maintained)
@@ -18,10 +18,17 @@ deployed package: dc1c5b62a58d0462ad6629db4847256d316d4a38 (unchanged; no regen)
 seedAppliedStaging: true
 readyForOperatorAboutSeedApply: false
 Next Primary (ops): share staging with client
-Next reverse dep: verify-site-package-core gosaki extensions · Admin runtime mutex (explicit approval)
+Next reverse dep: site-generator-hooks gosaki-* (high risk) · Admin runtime mutex (explicit approval)
 readyForAnyFutureFtpApply: false
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
 ```
+
+## CMS Core v2 site-package verifier extension decoupling (2026-07-30)
+
+- Core drops Gosaki extensions import + `GOSAKI_SITE_KEY` branches
+- Optional `siteExtensionVerifier` (invoked at most once when provided); fail-closed on bad return/throw
+- Callback call count is asserted only in the dedicated verifier via closure counter (not a Core return field)
+- Doc: `cms-core-v2-site-package-verifier-extension-decoupling.md`
 
 ## CMS Core v2 static-public artifact verifier site-adapter decoupling (2026-07-30)
 

@@ -15,6 +15,7 @@ import {
 } from "./lib/gosaki-package-build-profile.mjs";
 import { GOSAKI_SITE_KEY } from "./lib/site-registry.mjs";
 import { verifySitePackage } from "./lib/verify-site-package-core.mjs";
+import { createGosakiSitePackageExtensionVerifier } from "./lib/gosaki-site-package-verifier-adapter.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = path.resolve(__dirname, "../../..");
@@ -180,6 +181,7 @@ assert("public-dist exists", exists(publicDistRel));
 const genericVerify = verifySitePackage({
   siteKey: GOSAKI_SITE_KEY,
   profileName: "production",
+  siteExtensionVerifier: createGosakiSitePackageExtensionVerifier(),
 });
 if (genericVerify.ok) {
   assert("generic verifySitePackage production", true);

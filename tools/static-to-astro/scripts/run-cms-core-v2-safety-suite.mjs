@@ -61,6 +61,11 @@ const STEPS = [
     script: "verify-cms-core-v2-static-public-artifact-verifier-site-adapter.mjs",
   },
   {
+    id: "site-package-verifier-extension-decoupling",
+    kind: "node",
+    script: "verify-cms-core-v2-site-package-verifier-extension-decoupling.mjs",
+  },
+  {
     id: "youtube-offline-vertical",
     kind: "node",
     script: "verify-cms-core-v2-youtube-supabase-vertical-slice.mjs",
@@ -119,6 +124,8 @@ const IMPORT_CYCLE_MODULES = [
   "gosaki-static-public-anon-key-resolver.mjs",
   "supabase-schedule-read.mjs",
   "static-public-artifact-verifier.mjs",
+  "verify-site-package-core.mjs",
+  "gosaki-site-package-verifier-adapter.mjs",
   "site-cms-features.mjs",
 ];
 

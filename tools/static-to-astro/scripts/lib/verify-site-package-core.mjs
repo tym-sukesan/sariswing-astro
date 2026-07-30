@@ -1,5 +1,6 @@
 /**
  * G-20u4 — Shared site package verification (registry-driven).
+ * Site-agnostic Core — Gosaki extensions via optional siteExtensionVerifier.
  * No FTP · no DB writes.
  */
 
@@ -15,22 +16,10 @@ import {
   walkRelativeFiles,
 } from "./package-upload-safety.mjs";
 import {
-  GOSAKI_SITE_KEY,
   resolvePackageManifestMetaFromRegistry,
   resolveSitePackageBuildProfile,
 } from "./site-registry.mjs";
-import {
-  verifyGosakiProductionContentExtensions,
-  verifyGosakiStagingContentExtensions,
-} from "./verify-site-package-gosaki-extensions.mjs";
-import {
-  EXPECTED_ABOUT_ADMIN_PATH_BAKE,
-  EXPECTED_ABOUT_ADMIN_PATH_BAKE_SAVE_UI_ARMED,
-  EXPECTED_ABOUT_ADMIN_PATH_BAKE_PUBLIC_BUILD_READ,
-  isManualUploadMetaPath,
-  validateGosakiAboutAdminPathPackageArtifacts,
-  validatePackageRunMarker,
-} from "./package-run-marker.mjs";
+import { isManualUploadMetaPath } from "./package-run-marker.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 export const TOOL_ROOT = path.resolve(__dirname, "../..");
@@ -53,12 +42,42 @@ export function resolveSitePackageDir(siteKey, profileName, options = {}) {
 }
 
 /**
+ * Normalize extension verifier return to error strings (fail-closed).
+ * @param {unknown} extResult
+ * @returns {{ errors: string[], invalid: boolean }}
+ */
+export function normalizeSiteExtensionVerifierResult(extResult) {
+  if (extResult == null) {
+    return { errors: [], invalid: false };
+  }
+  if (Array.isArray(extResult)) {
+    return {
+      errors: extResult.map((e) => String(e)),
+      invalid: false,
+    };
+  }
+  if (
+    typeof extResult === "object" &&
+    Array.isArray(/** @type {{ errors?: unknown }} */ (extResult).errors)
+  ) {
+    return {
+      errors: /** @type {{ errors: unknown[] }} */ (extResult).errors.map((e) => String(e)),
+      invalid: false,
+    };
+  }
+  return {
+    errors: ["siteExtensionVerifier must return string[] or { errors: string[] }"],
+    invalid: true,
+  };
+}
+
+/**
  * @param {{
  *   siteKey: string,
  *   profileName: string,
  *   packageDir?: string,
  *   toolRoot?: string,
- *   includeGosakiExtensions?: boolean,
+ *   siteExtensionVerifier?: ((ctx: object) => unknown) | null,
  *   expectAboutSaveUiArmed?: boolean,
  *   expectPublicAboutBuildRead?: boolean,
  * }} options
@@ -69,18 +88,13 @@ export function verifySitePackage(options) {
     profileName,
     packageDir: packageDirOpt,
     toolRoot = TOOL_ROOT,
-    includeGosakiExtensions = siteKey === GOSAKI_SITE_KEY,
+    siteExtensionVerifier = null,
     expectAboutSaveUiArmed = false,
     expectPublicAboutBuildRead = false,
   } = options;
 
   /** @type {string[]} */
   const errors = [];
-  if (expectAboutSaveUiArmed && expectPublicAboutBuildRead) {
-    errors.push(
-      "cannot combine --expect-about-save-ui-armed and --expect-public-about-build-read (single-arm)",
-    );
-  }
   const meta = resolvePackageManifestMetaFromRegistry(siteKey, profileName, { toolRoot });
   const profile = resolveSitePackageBuildProfile(siteKey, profileName, { toolRoot });
   const pkg = resolveSitePackageDir(siteKey, profileName, { toolRoot, packageDir: packageDirOpt });
@@ -93,33 +107,6 @@ export function verifySitePackage(options) {
 
   if (!fs.existsSync(pkg) || !fs.statSync(pkg).isDirectory()) {
     errors.push("package dir missing");
-  }
-
-  // Fail-closed: live package + external _package-runs marker (not inside FTP payload).
-  // Default expects Save UI disarmed + publicAboutBuildRead false.
-  // Armed / build-read modes only when operator passes explicit expect flags.
-  if (siteKey === GOSAKI_SITE_KEY && profileName === "staging") {
-    const expectedBake = expectPublicAboutBuildRead
-      ? EXPECTED_ABOUT_ADMIN_PATH_BAKE_PUBLIC_BUILD_READ
-      : expectAboutSaveUiArmed
-        ? EXPECTED_ABOUT_ADMIN_PATH_BAKE_SAVE_UI_ARMED
-        : EXPECTED_ABOUT_ADMIN_PATH_BAKE;
-    errors.push(
-      ...validatePackageRunMarker({
-        packageDir: pkg,
-        repoRoot: REPO_ROOT,
-        siteKey,
-        profile: profileName,
-        expectedBake,
-      }),
-    );
-    // Independent HTML (+ build-read report) cross-check — do not auto-PASS from PACKAGE_RUN alone.
-    errors.push(
-      ...validateGosakiAboutAdminPathPackageArtifacts({
-        packageDir: pkg,
-        expectedBake,
-      }),
-    );
   }
 
   const required = [
@@ -214,9 +201,6 @@ export function verifySitePackage(options) {
     if (meta.targetEnvironment === "staging" && sitemap.includes("/admin/")) {
       errors.push("staging sitemap must not include /admin/");
     }
-    if (siteKey === GOSAKI_SITE_KEY && !sitemap.includes("/schedule/2026-08/")) {
-      errors.push("sitemap missing canonical /schedule/2026-08/");
-    }
     for (const violation of findSitemapSafetyViolations(sitemap)) {
       errors.push(`sitemap safety: ${violation}`);
     }
@@ -224,18 +208,26 @@ export function verifySitePackage(options) {
     errors.push("missing sitemap-0.xml");
   }
 
-  if (siteKey === GOSAKI_SITE_KEY) {
-    const augustCanonical = path.join(publicDist, "schedule/2026-08/index.html");
-    if (!fs.existsSync(augustCanonical)) {
-      errors.push("missing canonical month page: public-dist/schedule/2026-08/index.html");
-    }
-  }
-
-  if (includeGosakiExtensions && siteKey === GOSAKI_SITE_KEY) {
-    if (profileName === "staging") {
-      errors.push(...verifyGosakiStagingContentExtensions(pkg, meta.deployBase));
-    } else if (profileName === "production") {
-      errors.push(...verifyGosakiProductionContentExtensions(pkg));
+  if (typeof siteExtensionVerifier === "function") {
+    try {
+      const extResult = siteExtensionVerifier({
+        siteKey,
+        profileName,
+        packageDir: pkg,
+        publicDist,
+        repoRoot: REPO_ROOT,
+        toolRoot,
+        meta,
+        profile,
+        expectAboutSaveUiArmed,
+        expectPublicAboutBuildRead,
+      });
+      const normalized = normalizeSiteExtensionVerifierResult(extResult);
+      errors.push(...normalized.errors);
+    } catch (err) {
+      errors.push(
+        `siteExtensionVerifier threw: ${err instanceof Error ? err.message : String(err)}`,
+      );
     }
   }
 

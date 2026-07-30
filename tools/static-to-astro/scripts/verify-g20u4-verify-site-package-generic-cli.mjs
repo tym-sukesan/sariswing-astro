@@ -9,6 +9,7 @@ import { fileURLToPath } from "node:url";
 import { spawnSync } from "node:child_process";
 import { verifySitePackage } from "./lib/verify-site-package-core.mjs";
 import { GOSAKI_SITE_KEY } from "./lib/site-registry.mjs";
+import { createGosakiSitePackageExtensionVerifier } from "./lib/gosaki-site-package-verifier-adapter.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const TOOL_ROOT = path.resolve(__dirname, "..");
@@ -107,14 +108,32 @@ assert("CLI --site", cli.includes("--site"));
 assert("CLI --profile", cli.includes("--profile"));
 assert("core verifySitePackage", core.includes("export function verifySitePackage"));
 assert("core registry meta", core.includes("resolvePackageManifestMetaFromRegistry"));
-assert("core schedule 2026-08", core.includes("schedule/2026-08"));
+assert("core has no gosaki-* import", !/from ["']\.\/gosaki-/.test(core));
+assert(
+  "core has no verify-site-package-gosaki-extensions import",
+  !/verify-site-package-gosaki-extensions/.test(core),
+);
+assert("core siteExtensionVerifier hook", core.includes("siteExtensionVerifier"));
 assert("core sitemap safety", core.includes("findSitemapSafetyViolations"));
+const adapterRel = "tools/static-to-astro/scripts/lib/gosaki-site-package-verifier-adapter.mjs";
+assert("gosaki package verifier adapter exists", exists(adapterRel));
+const adapter = read(adapterRel);
+assert("adapter schedule 2026-08", adapter.includes("schedule/2026-08"));
 assert("manual verifier delegates", manualVerify.includes("verifySitePackage"));
 assert("g20i3 uses generic verify", g20i3.includes("verifySitePackage"));
 assert("legacy verifier not removed", exists(MANUAL_VERIFY_REL) && exists(G20I3_REL));
 
-const stagingPlan = verifySitePackage({ siteKey: GOSAKI_SITE_KEY, profileName: "staging" });
-const productionPlan = verifySitePackage({ siteKey: GOSAKI_SITE_KEY, profileName: "production" });
+const gosakiExt = createGosakiSitePackageExtensionVerifier();
+const stagingPlan = verifySitePackage({
+  siteKey: GOSAKI_SITE_KEY,
+  profileName: "staging",
+  siteExtensionVerifier: gosakiExt,
+});
+const productionPlan = verifySitePackage({
+  siteKey: GOSAKI_SITE_KEY,
+  profileName: "production",
+  siteExtensionVerifier: createGosakiSitePackageExtensionVerifier(),
+});
 
 assert("staging package on disk evaluated", stagingPlan.manifest != null || stagingPlan.errors.length > 0);
 assert("production package on disk evaluated", productionPlan.manifest != null || productionPlan.errors.length > 0);

@@ -28,7 +28,7 @@ PRODUCTION_UNCHANGED: true
 
 ## Separation
 
-**Before:** `verify-site-package-core` → `verify-site-package-gosaki-extensions` + inline `GOSAKI_SITE_KEY` branches  
+**Before:** `verify-site-package-core` → `verify-site-package-gosaki-extensions` + inline `GOSAKI_SITE_KEY` branches
 **After:**
 - Core: common package/manifest/sitemap/admin safety + optional `siteExtensionVerifier` (at most once when provided; call count not part of return object)
 - Adapter: `gosaki-site-package-verifier-adapter.mjs` (PACKAGE_RUN / About bake / schedule months / content extensions)

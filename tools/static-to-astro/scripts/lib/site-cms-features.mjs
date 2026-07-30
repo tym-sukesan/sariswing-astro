@@ -10,6 +10,10 @@ import {
   resolveSupabaseSiteSlug,
 } from "./site-registry.mjs";
 import { stringContainsProductionRef } from "./supabase-staging-ref-utils.mjs";
+import {
+  createBuildReadFallbackEnvelope,
+  createBuildReadSuccessEnvelope,
+} from "./build-read-envelope-utils.mjs";
 
 /** @typedef {'schedule' | 'discography' | 'siteEmbeds' | 'sitePageFields'} SupabaseFeatureId */
 /** @typedef {'youtube' | 'contact' | 'aboutBandProfiles' | 'aboutContent' | 'readOnlyAdmin'} CmsFeatureId */
@@ -219,22 +223,24 @@ export async function loadSiteEmbedsDataForBuild(opts) {
   const readEnv = resolveSupabaseAnonReadEnv(env, toolRoot);
   if (!readEnv) {
     // Historical G-20u20 stub reason retained until migration+env wired.
-    return {
-      embedDataSource: "not-configured",
+    return createBuildReadFallbackEnvelope({
+      dataSourceKey: "embedDataSource",
+      dataSource: "not-configured",
       fallbackReason: "site_embeds_table_migration_pending_G-9f",
-      embeds: [],
+      rowsKey: "embeds",
+      rows: [],
       siteSlug,
-      rowCount: 0,
-    };
+    });
   }
   if (stringContainsProductionRef(readEnv.supabaseUrl)) {
-    return {
-      embedDataSource: "blocked",
+    return createBuildReadFallbackEnvelope({
+      dataSourceKey: "embedDataSource",
+      dataSource: "blocked",
       fallbackReason: "production_ref_stop",
-      embeds: [],
+      rowsKey: "embeds",
+      rows: [],
       siteSlug,
-      rowCount: 0,
-    };
+    });
   }
 
   try {
@@ -252,39 +258,41 @@ export async function loadSiteEmbedsDataForBuild(opts) {
       .eq("published", true)
       .order("sort_order", { ascending: true });
     if (error) {
-      return {
-        embedDataSource: "error",
+      return createBuildReadFallbackEnvelope({
+        dataSourceKey: "embedDataSource",
+        dataSource: "error",
         fallbackReason: error.message,
-        embeds: [],
+        rowsKey: "embeds",
+        rows: [],
         siteSlug,
-        rowCount: 0,
-      };
+      });
     }
     const embeds = Array.isArray(data) ? data : [];
     if (embeds.length === 0) {
-      return {
-        embedDataSource: "supabase-empty",
+      return createBuildReadFallbackEnvelope({
+        dataSourceKey: "embedDataSource",
+        dataSource: "supabase-empty",
         fallbackReason: "no_published_site_embeds_rows",
-        embeds: [],
+        rowsKey: "embeds",
+        rows: [],
         siteSlug,
-        rowCount: 0,
-      };
+      });
     }
-    return {
-      embedDataSource: "supabase",
-      fallbackReason: null,
-      embeds,
+    return createBuildReadSuccessEnvelope({
+      dataSourceKey: "embedDataSource",
+      rowsKey: "embeds",
+      rows: embeds,
       siteSlug,
-      rowCount: embeds.length,
-    };
+    });
   } catch (err) {
-    return {
-      embedDataSource: "error",
+    return createBuildReadFallbackEnvelope({
+      dataSourceKey: "embedDataSource",
+      dataSource: "error",
       fallbackReason: err instanceof Error ? err.message : String(err),
-      embeds: [],
+      rowsKey: "embeds",
+      rows: [],
       siteSlug,
-      rowCount: 0,
-    };
+    });
   }
 }
 
@@ -315,26 +323,26 @@ export async function loadSitePageFieldsDataForBuild(opts) {
   } = await import("./cms-core-v2-about-supabase-contract.mjs");
   const readEnv = resolveSupabaseAnonReadEnv(env, toolRoot);
   if (!readEnv) {
-    return {
-      pageFieldDataSource: "not-configured",
+    return createBuildReadFallbackEnvelope({
+      dataSourceKey: "pageFieldDataSource",
+      dataSource: "not-configured",
       fallbackReason: "supabase_anon_read_env_missing",
-      fields: [],
-      profileLede: null,
+      rowsKey: "fields",
+      rows: [],
       siteSlug,
-      rowCount: 0,
-      fieldCount: 0,
-    };
+      extra: { profileLede: null, fieldCount: 0 },
+    });
   }
   if (stringContainsProductionRef(readEnv.supabaseUrl)) {
-    return {
-      pageFieldDataSource: "blocked",
+    return createBuildReadFallbackEnvelope({
+      dataSourceKey: "pageFieldDataSource",
+      dataSource: "blocked",
       fallbackReason: "production_ref_stop",
-      fields: [],
-      profileLede: null,
+      rowsKey: "fields",
+      rows: [],
       siteSlug,
-      rowCount: 0,
-      fieldCount: 0,
-    };
+      extra: { profileLede: null, fieldCount: 0 },
+    });
   }
 
   try {
@@ -351,28 +359,28 @@ export async function loadSitePageFieldsDataForBuild(opts) {
       .eq("published", true)
       .limit(2);
     if (error) {
-      return {
-        pageFieldDataSource: "error",
+      return createBuildReadFallbackEnvelope({
+        dataSourceKey: "pageFieldDataSource",
+        dataSource: "error",
         fallbackReason: error.message,
-        fields: [],
-        profileLede: null,
+        rowsKey: "fields",
+        rows: [],
         siteSlug,
-        rowCount: 0,
-        fieldCount: 0,
-      };
+        extra: { profileLede: null, fieldCount: 0 },
+      });
     }
     const fields = Array.isArray(data) ? data : [];
     return finalizeSitePageFieldsLoadResult({ fields, siteSlug, mapSitePageFieldRowToLedeDraft });
   } catch (err) {
-    return {
-      pageFieldDataSource: "error",
+    return createBuildReadFallbackEnvelope({
+      dataSourceKey: "pageFieldDataSource",
+      dataSource: "error",
       fallbackReason: err instanceof Error ? err.message : String(err),
-      fields: [],
-      profileLede: null,
+      rowsKey: "fields",
+      rows: [],
       siteSlug,
-      rowCount: 0,
-      fieldCount: 0,
-    };
+      extra: { profileLede: null, fieldCount: 0 },
+    });
   }
 }
 
@@ -391,46 +399,44 @@ export function finalizeSitePageFieldsLoadResult(input) {
   const siteSlug = String(input.siteSlug ?? "");
   const mapRow = input.mapSitePageFieldRowToLedeDraft;
   if (fields.length === 0) {
-    return {
-      pageFieldDataSource: "supabase-empty",
+    return createBuildReadFallbackEnvelope({
+      dataSourceKey: "pageFieldDataSource",
+      dataSource: "supabase-empty",
       fallbackReason: "no_published_site_page_fields_rows",
-      fields: [],
-      profileLede: null,
+      rowsKey: "fields",
+      rows: [],
       siteSlug,
-      rowCount: 0,
-      fieldCount: 0,
-    };
+      extra: { profileLede: null, fieldCount: 0 },
+    });
   }
   if (fields.length !== 1) {
-    return {
-      pageFieldDataSource: "error",
+    return createBuildReadFallbackEnvelope({
+      dataSourceKey: "pageFieldDataSource",
+      dataSource: "error",
       fallbackReason: "multiple_profile_lede_rows",
-      fields,
-      profileLede: null,
+      rowsKey: "fields",
+      rows: fields,
       siteSlug,
-      rowCount: fields.length,
-      fieldCount: fields.length,
-    };
+      extra: { profileLede: null, fieldCount: fields.length },
+    });
   }
   const profileLede = mapRow(fields[0]);
   if (!String(profileLede?.valueText ?? "").trim()) {
-    return {
-      pageFieldDataSource: "supabase-empty",
+    return createBuildReadFallbackEnvelope({
+      dataSourceKey: "pageFieldDataSource",
+      dataSource: "supabase-empty",
       fallbackReason: "empty_profile_lede_value_text",
-      fields,
-      profileLede: null,
+      rowsKey: "fields",
+      rows: fields,
       siteSlug,
-      rowCount: 1,
-      fieldCount: 1,
-    };
+      extra: { profileLede: null, fieldCount: 1 },
+    });
   }
-  return {
-    pageFieldDataSource: "supabase",
-    fallbackReason: null,
-    fields,
-    profileLede,
+  return createBuildReadSuccessEnvelope({
+    dataSourceKey: "pageFieldDataSource",
+    rowsKey: "fields",
+    rows: fields,
     siteSlug,
-    rowCount: 1,
-    fieldCount: 1,
-  };
+    extra: { profileLede, fieldCount: 1 },
+  });
 }

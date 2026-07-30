@@ -3,11 +3,13 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**CMS Core v2 Mio data fixtures (2026-07-31):** **COMPLETE** — Phase `cms-core-v2-mio-data-fixtures` · `fixtures/mio-kisaragi-jazz-data/` · Schedule 16 / Discography 5 / Videos 6 / About · expected JSON locked · npm `verify:cms-core-v2-mio-data-fixtures` (+ safety-suite) · Core envelope + Mio `extensions` · Shorts/invalid fail-closed · **no adapter / runtime / HTML / registry / package / FTP / DB** · **Next:** `cms-core-v2-mio-hooks-adapter-thin` · Gosaki client staging share.
+**CMS Core v2 Mio hooks adapter thin (2026-07-31):** **COMPLETE** — Phase `cms-core-v2-mio-hooks-adapter-thin` · `mio-site-generator-hooks-adapter.mjs` (+ footer/videos helpers) · registry `generatorHooksAdapter` · Videos ×3 nocookie via injected `embedsBundle` · footer Instagram/YouTube (no X) · lazy load / idempotent ensure · Gosaki HTML baseline 80 PASS · npm `verify:cms-core-v2-mio-hooks-adapter-thin` (+ safety-suite) · **no Schedule/Disco/About/Contact/Admin/Save/package/FTP/DB** · **Next:** `cms-core-v2-mio-schedule-read-render` · Gosaki client staging share.
 
-**CMS Core v2 Mio registry noop pilot (2026-07-31):** **COMPLETE** — Phase `cms-core-v2-mio-registry-noop-pilot` · `mio-kisaragi-jazz` in registry (staging only; no `generatorHooksAdapter`) · temp convert via shared `generateAstroProject` · Gosaki adapter **not** loaded · Core schedule classes site-neutral (`schedule-*`); Gosaki adapter `scheduleClassPrefix: "gosaki-schedule"` · Mio/pilot generated output `/gosaki/i` **0** · npm `verify:cms-core-v2-mio-registry-noop-pilot` · g20u19 assertions updated for lazy adapter · **no package / FTP / DB / Mio adapter** · data fixtures done above.
+**CMS Core v2 Mio data fixtures (2026-07-31):** **COMPLETE** — Phase `cms-core-v2-mio-data-fixtures` · `fixtures/mio-kisaragi-jazz-data/` · Schedule 16 / Discography 5 / Videos 6 / About · expected JSON locked · npm `verify:cms-core-v2-mio-data-fixtures` (+ safety-suite) · thin adapter done above.
 
-**CMS Core v2 Mio static fixture scaffold (2026-07-31):** **COMPLETE** — Phase `cms-core-v2-mio-static-fixture-scaffold` · `fixtures/mio-kisaragi-jazz/` · registry noop + data fixtures done above.
+**CMS Core v2 Mio registry noop pilot (2026-07-31):** **COMPLETE** — Phase `cms-core-v2-mio-registry-noop-pilot` · later thin adapter registered; verifier updated for active Mio hooks · Gosaki still unloaded during Mio convert · `/gosaki/i` **0** · data + thin adapter done above.
+
+**CMS Core v2 Mio static fixture scaffold (2026-07-31):** **COMPLETE** — Phase `cms-core-v2-mio-static-fixture-scaffold` · `fixtures/mio-kisaragi-jazz/` · registry + data + thin adapter done above.
 
 **CMS Core v2 second musician site fixture planning (2026-07-31):** **COMPLETE (planning)** — Phase `cms-core-v2-second-musician-site-fixture-planning` · **Mio Kisaragi Jazz Vocal** · `siteKey` `mio-kisaragi-jazz` · Doc: `cms-core-v2-second-musician-site-fixture-planning.md` · scaffold step 1 done above.
 

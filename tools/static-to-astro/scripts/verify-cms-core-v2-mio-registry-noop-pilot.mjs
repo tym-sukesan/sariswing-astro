@@ -1,6 +1,7 @@
 /**
- * CMS Core v2 — Mio registry noop pilot verifier.
- * Registers mio-kisaragi-jazz through shared convert path with noop hooks (no Gosaki adapter).
+ * CMS Core v2 — Mio registry convert pilot verifier (historical name: noop-pilot).
+ * After thin-adapter phase: Mio loads its own generatorHooksAdapter; Gosaki stays unloaded.
+ * Without embedsBundle inject, Videos page stays scaffold placeholders (inject covered by thin verifier).
  *
  * npm: verify:cms-core-v2-mio-registry-noop-pilot
  * Run: node tools/static-to-astro/scripts/verify-cms-core-v2-mio-registry-noop-pilot.mjs
@@ -36,6 +37,7 @@ const MIO_FIXTURE = path.join(TOOL_ROOT, "fixtures/mio-kisaragi-jazz");
 const GOSAKI_FIXTURE = path.join(TOOL_ROOT, "fixtures/gosaki-piano");
 const PILOT_FIXTURE = path.join(TOOL_ROOT, "fixtures/sample-static-site");
 const GOSAKI_ADAPTER_REL = "scripts/lib/gosaki-site-generator-hooks-adapter.mjs";
+const MIO_ADAPTER_REL = "scripts/lib/mio-site-generator-hooks-adapter.mjs";
 const TEMP_OUT_REL = "output/_cms-core-v2-mio-registry-noop-pilot-tmp";
 
 const EXPECTED_HTML = [
@@ -133,16 +135,12 @@ assert("registry still lists pilot", keys.includes(PILOT_SAMPLE_STATIC_SITE_KEY)
 const mioEntry = getSiteRegistryEntry(MIO_KISARAGI_JAZZ_SITE_KEY, TOOL_ROOT);
 assert("mio fixtureDir", mioEntry.fixtureDir === "fixtures/mio-kisaragi-jazz");
 assert(
-  "mio generatorHooksAdapter absent",
-  !Object.prototype.hasOwnProperty.call(mioEntry, "generatorHooksAdapter") ||
-    mioEntry.generatorHooksAdapter == null,
+  "mio generatorHooksAdapter is thin mio adapter",
+  mioEntry.generatorHooksAdapter === MIO_ADAPTER_REL,
 );
 assert(
-  "mio registry JSON omits generatorHooksAdapter",
-  !Object.prototype.hasOwnProperty.call(
-    registry.sites[MIO_KISARAGI_JAZZ_SITE_KEY],
-    "generatorHooksAdapter",
-  ),
+  "mio registry JSON lists generatorHooksAdapter",
+  registry.sites[MIO_KISARAGI_JAZZ_SITE_KEY].generatorHooksAdapter === MIO_ADAPTER_REL,
 );
 assert("mio no production packageProfile", !mioEntry.packageProfiles?.production);
 assert("mio staging packageProfile exists", Boolean(mioEntry.packageProfiles?.staging));
@@ -180,23 +178,35 @@ const mioHooks = await resolveSiteGeneratorHooksAsync(MIO_FIXTURE, {
   toolRoot: TOOL_ROOT,
 });
 assert("mio hooks siteKey", mioHooks.siteKey === MIO_KISARAGI_JAZZ_SITE_KEY);
-assert("mio hooks active false (noop)", mioHooks.active === false);
-assert("mio hooks noop footer", mioHooks.generateFooter("<footer/>", {}) === null);
+assert("mio hooks active true (thin adapter)", mioHooks.active === true);
 assert(
-  "mio hooks noop postGenerate band",
+  "mio footer is mio markup (not null)",
+  typeof mioHooks.generateFooter(
+    `<footer><ul class="sns-row"><li><a href="https://www.instagram.com/mio.kisaragi.fixture/">Instagram</a></li></ul></footer>`,
+    { linkTransformContext: {} },
+  ) === "string" &&
+    /mio-footer-social-links/.test(
+      mioHooks.generateFooter(
+        `<footer><ul class="sns-row"><li><a href="https://www.instagram.com/mio.kisaragi.fixture/">Instagram</a></li></ul></footer>`,
+        { linkTransformContext: {} },
+      ),
+    ),
+);
+assert(
+  "mio hooks skip gosaki band profiles",
   mioHooks.applyPostGenerate("/tmp", {}).gosakiBandProfilesSummary?.applied === false,
 );
 assert(
-  "mio not in hook factories",
-  !Object.hasOwn(SITE_GENERATOR_HOOK_FACTORIES, MIO_KISARAGI_JAZZ_SITE_KEY),
+  "mio in hook factories",
+  Object.hasOwn(SITE_GENERATOR_HOOK_FACTORIES, MIO_KISARAGI_JAZZ_SITE_KEY),
 );
 assert(
   "gosaki factory not loaded after mio resolve",
   !Object.hasOwn(SITE_GENERATOR_HOOK_FACTORIES, GOSAKI_SITE_KEY),
 );
 assert(
-  "factories still empty after mio resolve",
-  Object.keys(SITE_GENERATOR_HOOK_FACTORIES).length === 0,
+  "factories only mio after mio resolve",
+  Object.keys(SITE_GENERATOR_HOOK_FACTORIES).length === 1,
 );
 
 for (const name of EXPECTED_HTML) {
@@ -221,8 +231,9 @@ assert(
   !Object.hasOwn(SITE_GENERATOR_HOOK_FACTORIES, GOSAKI_SITE_KEY),
 );
 assert(
-  "factories empty after mio convert",
-  Object.keys(SITE_GENERATOR_HOOK_FACTORIES).length === 0,
+  "factories only mio after mio convert",
+  Object.keys(SITE_GENERATOR_HOOK_FACTORIES).length === 1 &&
+    Object.hasOwn(SITE_GENERATOR_HOOK_FACTORIES, MIO_KISARAGI_JAZZ_SITE_KEY),
 );
 
 const writtenRel = walkFiles(tempOut);
@@ -379,10 +390,11 @@ const hooks = await resolveSiteGeneratorHooksAsync(fixture, {
 });
 const factoryKeys = Object.keys(SITE_GENERATOR_HOOK_FACTORIES);
 const ok =
-  hooks.active === false &&
+  hooks.active === true &&
   hooks.siteKey === MIO_KISARAGI_JAZZ_SITE_KEY &&
   !factoryKeys.includes(GOSAKI_SITE_KEY) &&
-  factoryKeys.length === 0;
+  factoryKeys.length === 1 &&
+  factoryKeys[0] === MIO_KISARAGI_JAZZ_SITE_KEY;
 console.log(JSON.stringify({ ok, active: hooks.active, siteKey: hooks.siteKey, factoryKeys }));
 process.exit(ok ? 0 : 1);
 `,
@@ -391,7 +403,7 @@ process.exit(ok ? 0 : 1);
 );
 
 assert(
-  "isolated subprocess mio noop / no gosaki factory",
+  "isolated subprocess mio thin / no gosaki factory",
   isolated.status === 0,
   (isolated.stderr || isolated.stdout || "").slice(0, 400),
 );

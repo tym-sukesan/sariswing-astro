@@ -5,50 +5,60 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: CMS Core v2 Mio data fixtures COMPLETE
-Phase: cms-core-v2-mio-data-fixtures
+Current phase: CMS Core v2 Mio hooks adapter thin COMPLETE
+Phase: cms-core-v2-mio-hooks-adapter-thin
+Adapter: tools/static-to-astro/scripts/lib/mio-site-generator-hooks-adapter.mjs
+Scope: Videos page + footer SNS only
 Data: tools/static-to-astro/fixtures/mio-kisaragi-jazz-data/
 HTML fixture: tools/static-to-astro/fixtures/mio-kisaragi-jazz/
-ADAPTER_CREATED: false
+ADAPTER_CREATED: true
 PACKAGE_GENERATE_EXECUTED: false
 Gosaki CLIENT_SHARE_READY: true (maintained)
 deployed package: dc1c5b62a58d0462ad6629db4847256d316d4a38 (unchanged; no regen)
 Next Primary (ops): share staging with client
-Next Kit: cms-core-v2-mio-hooks-adapter-thin (separate approval) · Admin runtime mutex (explicit approval)
+Next Kit: cms-core-v2-mio-schedule-read-render (separate approval) · Admin runtime mutex (explicit approval)
 seedAppliedStaging: true
 readyForOperatorAboutSeedApply: false
 readyForAnyFutureFtpApply: false
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
 ```
 
+## CMS Core v2 Mio hooks adapter thin (2026-07-31)
+
+- `mio-site-generator-hooks-adapter.mjs` + `mio-footer-social.mjs` + `mio-videos-page-embed.mjs`
+- Registry `generatorHooksAdapter` for `mio-kisaragi-jazz`; lazy load / double-ensure idempotent
+- Videos: inject `embedsBundle` → 3 nocookie embeds; shorts/invalid/unpublished omitted; Home featured untouched
+- Footer: Instagram + YouTube only (`mio-footer-social-links`); no X; no Gosaki footer reuse
+- Verifier `verify-cms-core-v2-mio-hooks-adapter-thin` (+ safety-suite); Gosaki HTML baseline 80 PASS
+- No Schedule/Disco/About/Contact/Admin/Save/package/FTP/DB; Core has no Mio hardcode
+
 ## CMS Core v2 Mio data fixtures (2026-07-31)
 
 - Read-only JSON under `fixtures/mio-kisaragi-jazz-data/` (Schedule 16 / Discography 5 / Videos 6 / About)
 - Expected results in `expected/*.json`; offline verifier `verify-cms-core-v2-mio-data-fixtures` (+ safety-suite)
 - Core envelope fields + Mio `extensions`; Shorts + invalid URL fail-closed; draft/pending excluded from public
-- No Mio adapter / Core runtime / HTML / registry / package / FTP / DB / Save
+- Thin adapter done above
 
 ## CMS Core v2 Mio registry noop pilot (2026-07-31)
 
-- Registered `mio-kisaragi-jazz` with staging deploy-profiles; noop hooks (no Mio adapter)
-- Shared convert path + offline verifier `verify-cms-core-v2-mio-registry-noop-pilot`
-- Gosaki adapter not loaded during Mio convert; lazy-loads afterward
+- Registered `mio-kisaragi-jazz` with staging deploy-profiles; thin adapter now set (verifier updated)
+- Shared convert path; Gosaki adapter not loaded during Mio convert; lazy-loads afterward
 - Core schedule markup uses neutral `schedule-*`; Gosaki adapter sets `scheduleClassPrefix: "gosaki-schedule"`
-- Mio + generic pilot generated output: zero `/gosaki/i`; g20u19 updated for lazy adapter
-- No package / FTP / DB / Supabase Save · data fixtures done above
+- Mio + generic pilot generated output: zero `/gosaki/i`
+- No package / FTP / DB / Supabase Save
 
 ## CMS Core v2 Mio static fixture scaffold (2026-07-31)
 
 - Hand-authored static HTML/CSS/SVG under `fixtures/mio-kisaragi-jazz/`
 - Pages: Home / About / Schedule (+ 2026-08, 2026-09) / Discography / Videos / Contact
 - noindex · Contact non-submitting · draft/unreleased in comments + fixture-meta.json
-- Planning doc: `cms-core-v2-second-musician-site-fixture-planning.md` · registry noop + data fixtures done
+- Planning doc: `cms-core-v2-second-musician-site-fixture-planning.md` · registry + data + thin adapter done
 
 ## CMS Core v2 second musician site fixture planning (2026-07-31)
 
 - Fictional second jazz-vocalist fixture spec (not Gosaki HTML copy; not production)
-- Phase 1: static fixture + read-only / noop; HubSpot not required; Videos page vs Gosaki Home-YT
-- Doc: `cms-core-v2-second-musician-site-fixture-planning.md` · scaffold + noop + data fixtures done
+- Phase 1: static fixture + read-only / thin Videos+footer; HubSpot not required; Videos page vs Gosaki Home-YT
+- Doc: `cms-core-v2-second-musician-site-fixture-planning.md` · scaffold + noop + data + thin adapter done
 
 ## CMS Core v2 Gosaki site-generator-hooks adapter (2026-07-30)
 

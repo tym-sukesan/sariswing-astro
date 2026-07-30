@@ -118,7 +118,7 @@
     },
     "mio-kisaragi-jazz": {
       "siteKey": "mio-kisaragi-jazz",
-      "displayName": "Mio Kisaragi Jazz Vocal (noop hooks pilot)",
+      "displayName": "Mio Kisaragi Jazz Vocal (thin hooks: Videos + footer)",
       "cmsPreset": "musician-basic",
       "convertSiteProfile": "musician",
       "slugSemantics": {
@@ -128,9 +128,10 @@
         "cmsSiteSlug": "mio-kisaragi-jazz",
         "supabaseSiteSlug": "mio-kisaragi-jazz",
         "legacyAliases": [],
-        "slugMismatchNotes": "CMS Core v2 Mio registry noop pilot — fictional fixture; no Gosaki aliases; no production profile; generatorHooksAdapter omitted (noop hooks)."
+        "slugMismatchNotes": "CMS Core v2 Mio thin hooks adapter — Videos + footer SNS only; fictional fixture; no Gosaki aliases; no production profile; Schedule/Disco/About/Contact/Admin deferred."
       },
       "fixtureDir": "fixtures/mio-kisaragi-jazz",
+      "generatorHooksAdapter": "scripts/lib/mio-site-generator-hooks-adapter.mjs",
       "deployProfilesFile": "config/sites/mio-kisaragi-jazz.deploy-profiles.json",
       "supabaseFeatures": {
         "schedule": false,

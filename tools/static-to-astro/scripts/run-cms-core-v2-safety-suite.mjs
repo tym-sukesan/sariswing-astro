@@ -81,6 +81,11 @@ const STEPS = [
     script: "verify-cms-core-v2-mio-data-fixtures.mjs",
   },
   {
+    id: "mio-hooks-adapter-thin",
+    kind: "node",
+    script: "verify-cms-core-v2-mio-hooks-adapter-thin.mjs",
+  },
+  {
     id: "youtube-offline-vertical",
     kind: "node",
     script: "verify-cms-core-v2-youtube-supabase-vertical-slice.mjs",
@@ -144,6 +149,7 @@ const IMPORT_CYCLE_MODULES = [
   "cms-core-v2-gosaki-site-generator-hooks-html-baseline-fixtures.mjs",
   "site-generator-hooks.mjs",
   "gosaki-site-generator-hooks-adapter.mjs",
+  "mio-site-generator-hooks-adapter.mjs",
   "site-cms-features.mjs",
 ];
 

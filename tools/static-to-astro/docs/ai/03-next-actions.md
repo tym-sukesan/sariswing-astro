@@ -4,10 +4,39 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 ## 0. Current next actions（直近）
 
 1. **Primary (Gosaki ops):** クライアントへ **staging 共有**（`CLIENT_SHARE_READY: true` · package `dc1c5b6…`）。本番 cutover はしない。
-2. **並行可 (Kit Core):** **Next Kit** `cms-core-v2-mio-hooks-adapter-thin`（別承認）· Admin runtime Save arm mutex（**別承認** · `ADMIN_RUNTIME_MUTEX_WIRED: false`）· optional Edge shared Save-arm helper · Contents YouTube 退役は **別 phase**。
+2. **並行可 (Kit Core):** **Next Kit** `cms-core-v2-mio-schedule-read-render`（別承認）· Admin runtime Save arm mutex（**別承認** · `ADMIN_RUNTIME_MUTEX_WIRED: false`）· optional Edge shared Save-arm helper · Contents YouTube 退役は **別 phase**。
 3. **並行可:** production hosting **read-only planning**（`HOSTING_READY: false`）。
 4. **並行可 / 別承認:** YouTube 複数件 **永続 Save**（NON_BLOCKING）。
 5. Save arm **false** · `readyForAnyFutureFtpApply: false` · production STOP · `service_role` 禁止 · **deployed package 固定**.
+
+## 0. CMS Core v2 Mio hooks adapter thin (2026-07-31)
+
+| Item | Value |
+| --- | --- |
+| Gate | `CMS_CORE_V2_MIO_HOOKS_ADAPTER_THIN_COMPLETE: true` |
+| Phase | `cms-core-v2-mio-hooks-adapter-thin` |
+| Adapter | `scripts/lib/mio-site-generator-hooks-adapter.mjs` |
+| Scope | Videos page + footer SNS only |
+| Verifier | `verify:cms-core-v2-mio-hooks-adapter-thin` (+ safety-suite) |
+| Schedule / Disco / About / Contact / Admin / Save / package / FTP / DB | **false** |
+| Next | `cms-core-v2-mio-schedule-read-render` |
+
+```txt
+CMS_CORE_V2_MIO_HOOKS_ADAPTER_THIN_COMPLETE: true
+CMS_CORE_V2_MIO_DATA_FIXTURES_COMPLETE: true
+CMS_CORE_V2_MIO_REGISTRY_NOOP_PILOT_COMPLETE: true
+CMS_CORE_V2_MIO_STATIC_FIXTURE_SCAFFOLD_COMPLETE: true
+ADAPTER_CREATED: true
+ADAPTER_SCOPE: videos+footer_sns
+PACKAGE_GENERATE_EXECUTED: false
+FTP_EXECUTED: false
+DB_WRITE_EXECUTED: false
+CORE_MIO_HARDCODE_ADDED: false
+GOSAKI_CLIENT_SHARE_READY_MAINTAINED: true
+deployedPackageSourceCommitUnchanged: dc1c5b62a58d0462ad6629db4847256d316d4a38
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+PRODUCTION_UNCHANGED: true
+```
 
 ## 0. CMS Core v2 Mio data fixtures (2026-07-31)
 
@@ -18,18 +47,16 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Root | `fixtures/mio-kisaragi-jazz-data/` |
 | Counts | Schedule 16 · Discography 5 · Videos 6 · About 1 |
 | Verifier | `verify:cms-core-v2-mio-data-fixtures` (+ safety-suite) |
-| Adapter / runtime / HTML / registry / package / FTP / DB | **false** |
-| Next | `cms-core-v2-mio-hooks-adapter-thin` |
+| Next | `cms-core-v2-mio-schedule-read-render` (thin adapter done) |
 
 ```txt
 CMS_CORE_V2_MIO_DATA_FIXTURES_COMPLETE: true
+CMS_CORE_V2_MIO_HOOKS_ADAPTER_THIN_COMPLETE: true
 CMS_CORE_V2_MIO_REGISTRY_NOOP_PILOT_COMPLETE: true
 CMS_CORE_V2_MIO_STATIC_FIXTURE_SCAFFOLD_COMPLETE: true
-ADAPTER_CREATED: false
 PACKAGE_GENERATE_EXECUTED: false
 FTP_EXECUTED: false
 DB_WRITE_EXECUTED: false
-RUNTIME_CODE_CHANGED: false
 GOSAKI_CLIENT_SHARE_READY_MAINTAINED: true
 deployedPackageSourceCommitUnchanged: dc1c5b62a58d0462ad6629db4847256d316d4a38
 READY_FOR_ANY_FUTURE_FTP_APPLY: false
@@ -43,20 +70,19 @@ PRODUCTION_UNCHANGED: true
 | Gate | `CMS_CORE_V2_MIO_REGISTRY_NOOP_PILOT_COMPLETE: true` |
 | Phase | `cms-core-v2-mio-registry-noop-pilot` |
 | siteKey | `mio-kisaragi-jazz` |
-| generatorHooksAdapter | **omitted** (noop) |
+| generatorHooksAdapter | thin Mio adapter (post thin-adapter phase) |
 | Verifier | `verify:cms-core-v2-mio-registry-noop-pilot` |
-| Package / FTP / DB / Mio adapter | **false** |
-| Next | `cms-core-v2-mio-hooks-adapter-thin` (data fixtures done) |
+| Package / FTP / DB | **false** |
+| Next | `cms-core-v2-mio-schedule-read-render` |
 
 ```txt
 CMS_CORE_V2_MIO_REGISTRY_NOOP_PILOT_COMPLETE: true
 CMS_CORE_V2_MIO_STATIC_FIXTURE_SCAFFOLD_COMPLETE: true
 CMS_CORE_V2_MIO_DATA_FIXTURES_COMPLETE: true
-ADAPTER_CREATED: false
+CMS_CORE_V2_MIO_HOOKS_ADAPTER_THIN_COMPLETE: true
 PACKAGE_GENERATE_EXECUTED: false
 FTP_EXECUTED: false
 DB_WRITE_EXECUTED: false
-RUNTIME_BEHAVIOR_CHANGED: false
 GOSAKI_CLIENT_SHARE_READY_MAINTAINED: true
 deployedPackageSourceCommitUnchanged: dc1c5b62a58d0462ad6629db4847256d316d4a38
 READY_FOR_ANY_FUTURE_FTP_APPLY: false
@@ -70,14 +96,14 @@ PRODUCTION_UNCHANGED: true
 | Gate | `CMS_CORE_V2_MIO_STATIC_FIXTURE_SCAFFOLD_COMPLETE: true` |
 | Phase | `cms-core-v2-mio-static-fixture-scaffold` |
 | Fixture | `fixtures/mio-kisaragi-jazz/` |
-| Registry noop + data fixtures | **complete** |
-| Next | `cms-core-v2-mio-hooks-adapter-thin` |
+| Registry + data + thin adapter | **complete** |
+| Next | `cms-core-v2-mio-schedule-read-render` |
 
 ```txt
 CMS_CORE_V2_MIO_STATIC_FIXTURE_SCAFFOLD_COMPLETE: true
 CMS_CORE_V2_MIO_REGISTRY_NOOP_PILOT_COMPLETE: true
 CMS_CORE_V2_MIO_DATA_FIXTURES_COMPLETE: true
-ADAPTER_CREATED: false
+CMS_CORE_V2_MIO_HOOKS_ADAPTER_THIN_COMPLETE: true
 PACKAGE_GENERATE_EXECUTED: false
 FTP_EXECUTED: false
 DB_WRITE_EXECUTED: false

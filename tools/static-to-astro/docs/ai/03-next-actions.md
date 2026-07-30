@@ -9,6 +9,29 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 4. **並行可 / 別承認:** YouTube 複数件 **永続 Save**（NON_BLOCKING）。
 5. Save arm **false** · `readyForAnyFutureFtpApply: false` · production STOP · `service_role` 禁止 · **deployed package 固定**.
 
+## 0. CMS Core v2 site-generator-hooks boundary audit (2026-07-30)
+
+| Item | Value |
+| --- | --- |
+| Gate | `CMS_CORE_V2_SITE_GENERATOR_HOOKS_BOUNDARY_AUDIT_COMPLETE: true` |
+| Phase | `cms-core-v2-site-generator-hooks-boundary-audit` |
+| Extract | **false** (audit-only) |
+| Doc | `cms-core-v2-site-generator-hooks-boundary-audit.md` |
+| Defer | move `createGosakiPianoHookMethods` → site adapter (HTML fixtures required) |
+
+```txt
+CMS_CORE_V2_SITE_GENERATOR_HOOKS_BOUNDARY_AUDIT_COMPLETE: true
+CODE_EXTRACT_EXECUTED: false
+SELECTED_PURE_HELPER_EXTRACTED: false
+RUNTIME_BEHAVIOR_CHANGED: false
+PACKAGE_GENERATE_EXECUTED: false
+FTP_EXECUTED: false
+GOSAKI_CLIENT_SHARE_READY_MAINTAINED: true
+deployedPackageSourceCommitUnchanged: dc1c5b62a58d0462ad6629db4847256d316d4a38
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+PRODUCTION_UNCHANGED: true
+```
+
 ## 0. CMS Core v2 site-package verifier extension decoupling (2026-07-30)
 
 | Item | Value |

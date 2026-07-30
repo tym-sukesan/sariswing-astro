@@ -5,12 +5,12 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: CMS Core v2 site-package verifier extension decoupling COMPLETE
-Phase: cms-core-v2-site-package-verifier-extension-decoupling
-Core: verify-site-package-core (optional siteExtensionVerifier; no gosaki-* import)
-Adapter: gosaki-site-package-verifier-adapter.mjs
-Entrypoints inject: verify-site-package · verify-manual-upload · g20i3/g20u4
-npm: verify:cms-core-v2-site-package-verifier-extension-decoupling · verify:cms-core-v2-safety-suite
+Current phase: CMS Core v2 site-generator-hooks boundary audit COMPLETE (audit-only)
+Phase: cms-core-v2-site-generator-hooks-boundary-audit
+CODE_EXTRACT_EXECUTED: false
+Reason: no pure helper both cuts Core→gosaki-* and avoids HTML/presentation risk
+Doc: cms-core-v2-site-generator-hooks-boundary-audit.md
+npm: verify:cms-core-v2-safety-suite
 RUNTIME_BEHAVIOR_CHANGED: false
 PACKAGE_GENERATE_EXECUTED: false
 Gosaki CLIENT_SHARE_READY: true (maintained)
@@ -18,10 +18,16 @@ deployed package: dc1c5b62a58d0462ad6629db4847256d316d4a38 (unchanged; no regen)
 seedAppliedStaging: true
 readyForOperatorAboutSeedApply: false
 Next Primary (ops): share staging with client
-Next reverse dep: site-generator-hooks gosaki-* (high risk) · Admin runtime mutex (explicit approval)
+Next Kit: deferred gosaki-site-generator-hooks-adapter (dedicated + HTML fixtures) · Admin runtime mutex (explicit approval)
 readyForAnyFutureFtpApply: false
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
 ```
+
+## CMS Core v2 site-generator-hooks boundary audit (2026-07-30)
+
+- Audit-only: 7 direct `gosaki-*` imports remain in `site-generator-hooks.mjs`
+- Pure helper candidates do not reduce reverse deps; factory move deferred (HTML risk)
+- Doc: `cms-core-v2-site-generator-hooks-boundary-audit.md`
 
 ## CMS Core v2 site-package verifier extension decoupling (2026-07-30)
 

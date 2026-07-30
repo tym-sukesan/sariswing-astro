@@ -1,0 +1,101 @@
+{
+  "$comment": "Mio discography releases + tracks. Fictional only. unpublished live tape excluded from public expected.",
+  "siteSlug": "mio-kisaragi-jazz",
+  "releases": [
+    {
+      "legacy_id": "mio-disco-album-01",
+      "title": "Paper Lanterns",
+      "artist": "Mio Kisaragi",
+      "label": "Fictional Room Records",
+      "catalog_number": "FRR-001",
+      "purchase_url": "https://example.invalid/buy/paper-lanterns",
+      "streaming_url": "https://example.invalid/stream/paper-lanterns",
+      "release_date": "2025-11-02",
+      "description": "夜の室内楽とボーカルのための架空フルアルバム。",
+      "cover_image_url": "images/album-placeholder.svg",
+      "sort_order": 10,
+      "published": true
+    },
+    {
+      "legacy_id": "mio-disco-album-02",
+      "title": "Two Songs for Late Trains",
+      "artist": "Mio Kisaragi",
+      "label": "Fictional Room Records",
+      "catalog_number": "FRR-002",
+      "purchase_url": "https://example.invalid/buy/two-songs",
+      "streaming_url": null,
+      "release_date": "2024-06-18",
+      "description": "track 少数のシングル。配信なし・購入リンクのみ。",
+      "cover_image_url": "images/album-placeholder.svg",
+      "sort_order": 20,
+      "published": true
+    },
+    {
+      "legacy_id": "mio-disco-single-01",
+      "title": "Harbor Sketch (teaser single)",
+      "artist": "Mio Kisaragi",
+      "label": null,
+      "catalog_number": null,
+      "purchase_url": null,
+      "streaming_url": "https://example.invalid/stream/harbor-sketch",
+      "release_date": "2024-01-10",
+      "description": "1 track · streaming only。",
+      "cover_image_url": "images/album-placeholder.svg",
+      "sort_order": 30,
+      "published": true
+    },
+    {
+      "legacy_id": "mio-disco-album-03",
+      "title": "Harbor Sketch (EP announcement card)",
+      "artist": "Mio Kisaragi",
+      "label": "Fictional Room Records",
+      "catalog_number": null,
+      "purchase_url": null,
+      "streaming_url": null,
+      "release_date": null,
+      "description": "トラック情報なし・ジャケット画像なし・配信リンクなし・発売日不明。Credits: Produced by fictional producer H. Nori. Recorded at Imaginary Room Studio. Mixed by A. Kabe. Mastered by L. Tone. Artwork concept by Studio Fable. Special thanks to Harbor Note Club staff and volunteer listeners. Additional liner notes reserved for CMS long-credit layout tests.",
+      "cover_image_url": null,
+      "sort_order": 40,
+      "published": true,
+      "extensions": {
+        "longCredit": true,
+        "releaseDateUnknown": true,
+        "trackListEmpty": true
+      }
+    },
+    {
+      "legacy_id": "mio-disco-live-01",
+      "title": "Basement Tape Vol.0 (unreleased)",
+      "artist": "Mio Kisaragi",
+      "label": null,
+      "catalog_number": null,
+      "purchase_url": null,
+      "streaming_url": null,
+      "release_date": null,
+      "description": "未公開セッション。公開期待値から除外。fixture-meta rel-unreleased-session-tape と対応。",
+      "cover_image_url": null,
+      "sort_order": 90,
+      "published": false,
+      "extensions": {
+        "editorialStatus": "unpublished",
+        "htmlCommentId": "rel-unreleased-session-tape"
+      }
+    }
+  ],
+  "tracks": [
+    { "id": "mio-tr-01-01", "discography_legacy_id": "mio-disco-album-01", "track_number": 1, "title": "Opening Curtain", "sort_order": 1 },
+    { "id": "mio-tr-01-02", "discography_legacy_id": "mio-disco-album-01", "track_number": 2, "title": "Mist Over Sumida", "sort_order": 2 },
+    { "id": "mio-tr-01-03", "discography_legacy_id": "mio-disco-album-01", "track_number": 3, "title": "Blue Ticket", "sort_order": 3 },
+    { "id": "mio-tr-01-04", "discography_legacy_id": "mio-disco-album-01", "track_number": 4, "title": "Quiet Platform", "sort_order": 4 },
+    { "id": "mio-tr-01-05", "discography_legacy_id": "mio-disco-album-01", "track_number": 5, "title": "Paper Lanterns", "sort_order": 5 },
+    { "id": "mio-tr-01-06", "discography_legacy_id": "mio-disco-album-01", "track_number": 6, "title": "Guest Chair", "sort_order": 6 },
+    { "id": "mio-tr-01-07", "discography_legacy_id": "mio-disco-album-01", "track_number": 7, "title": "Midnight Transfer", "sort_order": 7 },
+    { "id": "mio-tr-01-08", "discography_legacy_id": "mio-disco-album-01", "track_number": 8, "title": "Rain on the Awning", "sort_order": 8 },
+    { "id": "mio-tr-01-09", "discography_legacy_id": "mio-disco-album-01", "track_number": 9, "title": "Last Call Waltz", "sort_order": 9 },
+    { "id": "mio-tr-01-10", "discography_legacy_id": "mio-disco-album-01", "track_number": 10, "title": "Closing Light", "sort_order": 10 },
+    { "id": "mio-tr-02-01", "discography_legacy_id": "mio-disco-album-02", "track_number": 1, "title": "Late Train Home", "sort_order": 1 },
+    { "id": "mio-tr-02-02", "discography_legacy_id": "mio-disco-album-02", "track_number": 2, "title": "Platform Lullaby", "sort_order": 2 },
+    { "id": "mio-tr-03-01", "discography_legacy_id": "mio-disco-single-01", "track_number": 1, "title": "Harbor Sketch", "sort_order": 1 },
+    { "id": "mio-tr-live-01", "discography_legacy_id": "mio-disco-live-01", "track_number": 1, "title": "Warm-up Hum (unreleased)", "sort_order": 1 }
+  ]
+}

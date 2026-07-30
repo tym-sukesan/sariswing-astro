@@ -1,0 +1,65 @@
+{
+  "siteSlug": "mio-kisaragi-jazz",
+  "items": [
+    {
+      "id": "mio-yt-01",
+      "urlKind": "watch",
+      "published": true,
+      "embedCode": "https://www.youtube.com/watch?v=mioWatch001",
+      "parsedVideoId": "mioWatch001",
+      "outcome": "embed",
+      "reason": null,
+      "nocookieEmbedUrl": "https://www.youtube-nocookie.com/embed/mioWatch001"
+    },
+    {
+      "id": "mio-yt-02",
+      "urlKind": "youtu.be",
+      "published": true,
+      "embedCode": "https://youtu.be/mioYtBe0001",
+      "parsedVideoId": "mioYtBe0001",
+      "outcome": "embed",
+      "reason": null,
+      "nocookieEmbedUrl": "https://www.youtube-nocookie.com/embed/mioYtBe0001"
+    },
+    {
+      "id": "mio-yt-03",
+      "urlKind": "embed",
+      "published": true,
+      "embedCode": "https://www.youtube.com/embed/mioEmbed001",
+      "parsedVideoId": "mioEmbed001",
+      "outcome": "embed",
+      "reason": null,
+      "nocookieEmbedUrl": "https://www.youtube-nocookie.com/embed/mioEmbed001"
+    },
+    {
+      "id": "mio-yt-04",
+      "urlKind": "shorts",
+      "published": true,
+      "embedCode": "https://www.youtube.com/shorts/mioShort001",
+      "parsedVideoId": null,
+      "outcome": "fail-closed",
+      "reason": "shorts_unsupported_by_parseYoutubeVideoId",
+      "nocookieEmbedUrl": null
+    },
+    {
+      "id": "mio-yt-05",
+      "urlKind": "watch",
+      "published": false,
+      "embedCode": "https://www.youtube.com/watch?v=mioHidden01",
+      "parsedVideoId": "mioHidden01",
+      "outcome": "hidden",
+      "reason": "unpublished",
+      "nocookieEmbedUrl": null
+    },
+    {
+      "id": "mio-yt-06",
+      "urlKind": "invalid",
+      "published": true,
+      "embedCode": "not-a-youtube-url",
+      "parsedVideoId": null,
+      "outcome": "fail-closed",
+      "reason": "invalid_or_unparsable_youtube_url",
+      "nocookieEmbedUrl": null
+    }
+  ]
+}

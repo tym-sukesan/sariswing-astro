@@ -2,8 +2,9 @@
 
 - **Phase (planning):** `cms-core-v2-second-musician-site-fixture-planning` — **COMPLETE**
 - **Phase (scaffold):** `cms-core-v2-mio-static-fixture-scaffold` — **COMPLETE**
-- **Phase (registry noop):** `cms-core-v2-mio-registry-noop-pilot` — **COMPLETE** (2026-07-31)
-- **Status:** Fixture + registry noop convert proven · data fixtures / Mio adapter / package **not** started
+- **Phase (registry noop):** `cms-core-v2-mio-registry-noop-pilot` — **COMPLETE**
+- **Phase (data fixtures):** `cms-core-v2-mio-data-fixtures` — **COMPLETE** (2026-07-31)
+- **Status:** Fixture + registry noop + read-only data matrices locked · Mio adapter / package **not** started
 - **Package generate / FTP / DB:** **not executed**
 
 ---
@@ -11,21 +12,35 @@
 ## Gates
 
 ```txt
-phase: cms-core-v2-mio-registry-noop-pilot
+phase: cms-core-v2-mio-data-fixtures
 CMS_CORE_V2_SECOND_MUSICIAN_SITE_FIXTURE_PLANNING_COMPLETE: true
 CMS_CORE_V2_MIO_STATIC_FIXTURE_SCAFFOLD_COMPLETE: true
 CMS_CORE_V2_MIO_REGISTRY_NOOP_PILOT_COMPLETE: true
-REGISTRY_CHANGED: true
+CMS_CORE_V2_MIO_DATA_FIXTURES_COMPLETE: true
 ADAPTER_CREATED: false
 PACKAGE_GENERATE_EXECUTED: false
 FTP_EXECUTED: false
 DB_WRITE_EXECUTED: false
-RUNTIME_BEHAVIOR_CHANGED: false
+RUNTIME_CODE_CHANGED: false
 GOSAKI_CLIENT_SHARE_READY_MAINTAINED: true
 deployedPackageSourceCommitUnchanged: dc1c5b62a58d0462ad6629db4847256d316d4a38
 READY_FOR_ANY_FUTURE_FTP_APPLY: false
 PRODUCTION_UNCHANGED: true
 ```
+
+### Data fixtures result (step 3)
+
+| Item | Value |
+| --- | --- |
+| Root | `fixtures/mio-kisaragi-jazz-data/` |
+| Schedule | 16 rows (14 public) |
+| Discography | 5 releases (4 public) + tracks |
+| Videos | 6 items (3 embed / 1 shorts fail-closed / 1 hidden / 1 invalid fail-closed) |
+| About | JA short+long / EN / photo / no-photo / collaborators×3 + `profile.lede` |
+| Expected | `expected/*.json` deep-eq locked |
+| Verifier | `verify:cms-core-v2-mio-data-fixtures` (+ safety-suite) |
+
+**Next:** `cms-core-v2-mio-hooks-adapter-thin` (Videos + footer only; no HubSpot).
 
 ### Registry noop pilot result (step 2)
 
@@ -38,10 +53,7 @@ PRODUCTION_UNCHANGED: true
 | staging deployBase | `/cms-kit-staging/mio-kisaragi-jazz/` |
 | production profile | **none** |
 | verifier | `verify-cms-core-v2-mio-registry-noop-pilot` (+ safety-suite step) |
-| Known Core note | Schedule markup uses site-neutral `schedule-*` classes; Gosaki adapter sets `scheduleClassPrefix: "gosaki-schedule"` |
-
-**Next:** `cms-core-v2-mio-data-fixtures` (read-only JSON matrices; no adapter / Save / package).
-
+| Known Core note | Schedule markup uses site-neutral `schedule-*` classes; first-customer adapter sets `scheduleClassPrefix: "gosaki-schedule"` |
 ---
 
 ## 1. Purpose
@@ -299,7 +311,7 @@ Phase 1 can mirror **pilot**: register `mio-kisaragi-jazz`, point `fixtureDir`, 
 
 1. **M1 — Static fixture lands:** **DONE**
 2. **M2 — Registry + staging profile (noop pilot):** **DONE** (`mio-kisaragi-jazz` registered; convert + offline verifier PASS).
-3. **M3 — Schedule/Disco JSON read overlay (optional):** published filtering matches matrix; draft hidden. **Next**
+3. **M3 — Schedule/Disco JSON read overlay (optional):** published filtering matches matrix; draft hidden. **DONE** (`fixtures/mio-kisaragi-jazz-data/` + offline verifier)
 4. **M4 — Thin Mio adapter (optional):** Videos embed + footer SNS without HubSpot/Gosaki selectors.
 5. **M5 — Verifier:** dedicated `verify-mio-kisaragi-jazz-…` locks routes + matrices offline.
 
@@ -311,7 +323,7 @@ Phase 1 can mirror **pilot**: register `mio-kisaragi-jazz`, point `fixtureDir`, 
 | --- | --- | --- | --- |
 | **1** | `…-mio-static-fixture-scaffold` | **DONE** — `fixtures/mio-kisaragi-jazz/**` HTML/CSS/images + `fixture-meta.json`; **no** registry | `fixtures/mio-kisaragi-jazz/**` |
 | **2** | `…-mio-registry-noop-pilot` | **DONE** — registry + staging deploy-profiles; noop hooks; offline verifier; no package | `registry.json`, `mio-kisaragi-jazz.deploy-profiles.json`, `verify-cms-core-v2-mio-registry-noop-pilot.mjs` |
-| **3** | `…-mio-data-fixtures` | Add `config/sites/mio-kisaragi-jazz-*.json` for schedule/disco/videos matrices (read-only) | `config/sites/mio-kisaragi-jazz-*.json` |
+| **3** | `…-mio-data-fixtures` | Add `fixtures/mio-kisaragi-jazz-data/` for schedule/disco/videos/about matrices (read-only) | **DONE** |
 | **4** | `…-mio-hooks-adapter-thin` | Optional adapter: Videos + footer only; register `generatorHooksAdapter` | `scripts/lib/mio-…-adapter.mjs`, registry field |
 | **5** | `…-mio-offline-verifier` | Lock expected routes + published filters; safety-suite optional | `scripts/verify-cms-core-v2-mio-…mjs` |
 

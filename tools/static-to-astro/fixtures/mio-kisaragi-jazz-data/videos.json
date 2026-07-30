@@ -1,0 +1,67 @@
+{
+  "$comment": "Mio Videos page embeds. Fictional 11-char IDs only. Shorts + invalid are fail-closed by Core parseYoutubeVideoId.",
+  "siteSlug": "mio-kisaragi-jazz",
+  "sectionTitle": "Videos",
+  "items": [
+    {
+      "id": "mio-yt-01",
+      "published": true,
+      "sortOrder": 10,
+      "urlKind": "watch",
+      "title": "Mist Over Sumida (live clip)",
+      "embedCode": "https://www.youtube.com/watch?v=mioWatch001"
+    },
+    {
+      "id": "mio-yt-02",
+      "published": true,
+      "sortOrder": 20,
+      "urlKind": "youtu.be",
+      "title": "Soundcheck vignette",
+      "embedCode": "https://youtu.be/mioYtBe0001"
+    },
+    {
+      "id": "mio-yt-03",
+      "published": true,
+      "sortOrder": 30,
+      "urlKind": "embed",
+      "title": "Paper Lanterns — studio teaser",
+      "embedCode": "https://www.youtube.com/embed/mioEmbed001"
+    },
+    {
+      "id": "mio-yt-04",
+      "published": true,
+      "sortOrder": 40,
+      "urlKind": "shorts",
+      "title": "30-second brush intro",
+      "embedCode": "https://www.youtube.com/shorts/mioShort001",
+      "extensions": {
+        "coreSupport": "unsupported",
+        "expectedOutcome": "fail-closed"
+      }
+    },
+    {
+      "id": "mio-yt-05",
+      "published": false,
+      "sortOrder": 50,
+      "urlKind": "watch",
+      "title": "Unlisted session (not public)",
+      "embedCode": "https://www.youtube.com/watch?v=mioHidden01",
+      "extensions": {
+        "editorialStatus": "unpublished",
+        "htmlCommentId": "vid-private-unlisted-session"
+      }
+    },
+    {
+      "id": "mio-yt-06",
+      "published": true,
+      "sortOrder": 60,
+      "urlKind": "invalid",
+      "title": "Malformed URL item",
+      "embedCode": "not-a-youtube-url",
+      "extensions": {
+        "expectedOutcome": "fail-closed",
+        "htmlCommentId": "vid-invalid-not-a-url"
+      }
+    }
+  ]
+}

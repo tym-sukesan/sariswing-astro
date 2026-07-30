@@ -1,0 +1,18 @@
+{
+  "siteSlug": "mio-kisaragi-jazz",
+  "required": {
+    "jaShort": true,
+    "jaLong": true,
+    "en": true,
+    "photoPresent": true,
+    "noPhotoBlock": true,
+    "collaboratorsCount": true,
+    "corePageFieldLede": true
+  },
+  "profileLede": "小さなクラブの灯りを好む架空のボーカリスト。言葉の間と息の長さを大切に歌います。",
+  "collaboratorIds": [
+    "mio-collab-ren-aoba",
+    "mio-collab-toru-kurose",
+    "mio-collab-kozue-minami"
+  ]
+}

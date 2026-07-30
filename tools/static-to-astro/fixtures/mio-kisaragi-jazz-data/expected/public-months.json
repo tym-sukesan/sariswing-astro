@@ -1,0 +1,35 @@
+{
+  "siteSlug": "mio-kisaragi-jazz",
+  "months": [
+    {
+      "month": "2026-09",
+      "year": 2026,
+      "label": "2026.09",
+      "route": "/schedule/2026-09/",
+      "count": 6,
+      "sort_order": 1,
+      "published": true,
+      "heading": "Schedule 2026.09"
+    },
+    {
+      "month": "2026-08",
+      "year": 2026,
+      "label": "2026.08",
+      "route": "/schedule/2026-08/",
+      "count": 7,
+      "sort_order": 2,
+      "published": true,
+      "heading": "Schedule 2026.08"
+    },
+    {
+      "month": "2026-07",
+      "year": 2026,
+      "label": "2026.07",
+      "route": "/schedule/2026-07/",
+      "count": 1,
+      "sort_order": 3,
+      "published": true,
+      "heading": "Schedule 2026.07"
+    }
+  ]
+}

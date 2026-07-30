@@ -1,0 +1,61 @@
+{
+  "$comment": "Mio About structured content. Collaborators are not the first-customer band-profiles schema.",
+  "siteSlug": "mio-kisaragi-jazz",
+  "page": "about",
+  "version": 1,
+  "profile": {
+    "jaShort": "小さなクラブの灯りを好む架空のボーカリスト。言葉の間と息の長さを大切に歌います。",
+    "jaLong": "如月澪（きさらぎ・みお）は、架空の設定で生まれたジャズボーカリストです。学生時代に合唱と演劇を経験したのち、都内のセッションバーでスタンダードを歌い始めました。オリジナルでは都市の夜景と川の湿度をモチーフにした歌詞を書き、トリオからクインテットまで編成を変えて公演しています。活動の中心は、客席との距離が近いクラブ公演です。セットリストはスタンダードを骨格に、オリジナルを数曲挿入する構成が多いです。共演はピアノ、ベース、ドラムを基本とし、ゲストにサックスやギターを迎えることもあります。録音では残響を控え、声の輪郭が残るミックスを好みます。ライブでは逆に、部屋の空気を含んだ音を大切にしています。ワークショップや公開リハーサルも不定期で行い、歌の運び方について短いトークを交えることがあります。この段落はレイアウト用の長文サンプルです。改行や段落分割が CMS 側で保持されるかを確認するためのダミー文章を続けます。架空の賞歴や実在フェスティバル名は意図的に記載していません。本テキストは CMS Kit の About 読み取り・多言語ブロック試験用であり、実在の経歴ではありません。",
+    "en": "Mio Kisaragi is a fictional jazz vocalist created for Musician CMS Kit verification. Her repertoire mixes standards with original songs about city nights and riverside air. She performs mainly in intimate clubs with piano trio settings, occasionally expanding to larger ensembles. This English block is intentional bilingual content for future About adapters — not a translation of a real biography.",
+    "photo": {
+      "present": true,
+      "src": "images/portrait-placeholder.svg",
+      "alt": "如月澪のポートレート（プレースホルダー）"
+    },
+    "noPhotoBlock": {
+      "present": true,
+      "text": "写真スロットを持たない紹介文の例です。画像欠落時でも見出しと本文だけで成立する markup を想定しています。"
+    }
+  },
+  "collaborators": [
+    {
+      "id": "mio-collab-ren-aoba",
+      "name": "青葉 蓮",
+      "role": "Piano",
+      "hasPhoto": true,
+      "photoSrc": "images/portrait-placeholder.svg",
+      "bio": "架空のピアニスト。ハーモニーの余白を残す伴奏を得意とします。"
+    },
+    {
+      "id": "mio-collab-toru-kurose",
+      "name": "黒瀬 透",
+      "role": "Bass",
+      "hasPhoto": false,
+      "photoSrc": null,
+      "bio": "写真スロットのない共演者カード。テキストのみで成立するパターン。"
+    },
+    {
+      "id": "mio-collab-kozue-minami",
+      "name": "南 梢",
+      "role": "Drums",
+      "hasPhoto": true,
+      "photoSrc": "images/portrait-placeholder.svg",
+      "bio": "ブラシワークを中心にした架空ドラマー。"
+    }
+  ],
+  "pageFieldsCoreCompatible": [
+    {
+      "id": "mio-field-profile-lede",
+      "site_slug": "mio-kisaragi-jazz",
+      "page_key": "about",
+      "field_key": "profile.lede",
+      "value_text": "小さなクラブの灯りを好む架空のボーカリスト。言葉の間と息の長さを大切に歌います。",
+      "published": true
+    }
+  ],
+  "extensions": {
+    "profile.jaLong": "mapped from profile.jaLong — Core page_fields key not yet standardized",
+    "profile.en": "mapped from profile.en — Core page_fields key not yet standardized",
+    "collaborators": "Mio-specific list; not first-customer band-profiles JSON"
+  }
+}

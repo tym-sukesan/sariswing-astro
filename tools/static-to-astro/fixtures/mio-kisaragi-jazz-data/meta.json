@@ -1,0 +1,16 @@
+{
+  "$comment": "CMS Core v2 Mio data fixtures — fictional read-only companion data for mio-kisaragi-jazz. No secrets.",
+  "phase": "cms-core-v2-mio-data-fixtures",
+  "siteKey": "mio-kisaragi-jazz",
+  "siteSlug": "mio-kisaragi-jazz",
+  "fictional": true,
+  "sourceHtmlFixture": "fixtures/mio-kisaragi-jazz",
+  "files": {
+    "schedules": "schedules.json",
+    "discography": "discography.json",
+    "videos": "videos.json",
+    "about": "about.json",
+    "schemaNotes": "schema-notes.json",
+    "expected": "expected/"
+  }
+}

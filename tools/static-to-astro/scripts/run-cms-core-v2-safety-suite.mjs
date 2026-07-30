@@ -76,6 +76,11 @@ const STEPS = [
     script: "verify-cms-core-v2-mio-registry-noop-pilot.mjs",
   },
   {
+    id: "mio-data-fixtures",
+    kind: "node",
+    script: "verify-cms-core-v2-mio-data-fixtures.mjs",
+  },
+  {
     id: "youtube-offline-vertical",
     kind: "node",
     script: "verify-cms-core-v2-youtube-supabase-vertical-slice.mjs",

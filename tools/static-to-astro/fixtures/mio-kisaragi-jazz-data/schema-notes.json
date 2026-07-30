@@ -1,0 +1,105 @@
+{
+  "$comment": "Core vs Mio extension field inventory for cms-core-v2-mio-data-fixtures.",
+  "siteSlug": "mio-kisaragi-jazz",
+  "schedule": {
+    "coreFields": [
+      "id",
+      "legacy_id",
+      "site_slug",
+      "date",
+      "year",
+      "month",
+      "title",
+      "venue",
+      "open_time",
+      "start_time",
+      "price",
+      "description",
+      "image_url",
+      "source_file",
+      "source_route",
+      "show_on_home",
+      "home_order",
+      "published",
+      "sort_order",
+      "updated_at"
+    ],
+    "extensionFields": [
+      "extensions.performers",
+      "extensions.bookingUrl",
+      "extensions.venueWebsite",
+      "extensions.address",
+      "extensions.priceKind",
+      "extensions.hasImage",
+      "extensions.dateStatus",
+      "extensions.editorialStatus",
+      "extensions.dualShowPair",
+      "extensions.longTitle",
+      "extensions.crossMonthHub",
+      "extensions.externalBookingOnly",
+      "extensions.homeCandidate",
+      "extensions.temporal",
+      "extensions.htmlCommentId"
+    ],
+    "notes": [
+      "published=false covers both draft and pending (Core has no pending enum).",
+      "date=null + month retained + extensions.dateStatus=tbd represents 日付未定.",
+      "normalizeScheduleRecord ignores extensions; they travel only in companion JSON."
+    ]
+  },
+  "discography": {
+    "coreFields": [
+      "legacy_id",
+      "title",
+      "artist",
+      "label",
+      "catalog_number",
+      "purchase_url",
+      "streaming_url",
+      "release_date",
+      "description",
+      "cover_image_url",
+      "sort_order",
+      "published"
+    ],
+    "trackCoreFields": [
+      "id",
+      "discography_legacy_id",
+      "track_number",
+      "title",
+      "sort_order"
+    ],
+    "extensionFields": [
+      "extensions.longCredit",
+      "extensions.releaseDateUnknown",
+      "extensions.trackListEmpty",
+      "extensions.editorialStatus",
+      "extensions.htmlCommentId"
+    ]
+  },
+  "videos": {
+    "coreCompatibleItemFields": ["id", "published", "sortOrder", "embedCode"],
+    "extensionFields": ["urlKind", "title", "extensions.coreSupport", "extensions.expectedOutcome", "extensions.editorialStatus", "extensions.htmlCommentId"],
+    "notes": [
+      "parseYoutubeVideoId supports watch / youtu.be / embed / bare 11-char id.",
+      "shorts path is unsupported → fail-closed (parsedVideoId null).",
+      "invalid URL → fail-closed.",
+      "unpublished → hidden from public expected embeds."
+    ]
+  },
+  "about": {
+    "coreCompatible": ["pageFieldsCoreCompatible[] with field_key profile.lede"],
+    "extensionFields": [
+      "profile.jaShort",
+      "profile.jaLong",
+      "profile.en",
+      "profile.photo",
+      "profile.noPhotoBlock",
+      "collaborators[]"
+    ],
+    "notes": [
+      "Collaborators are not first-customer band-profiles schema.",
+      "jaLong / en / photo / collaborators remain extensions until a future About adapter."
+    ]
+  }
+}

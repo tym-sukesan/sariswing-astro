@@ -5,21 +5,28 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: CMS Core v2 trim-true feature-flag helper COMPLETE
-Phase: cms-core-v2-trim-true-feature-flag-helper
-SoT: feature-flag-trim-true-utils.mjs (isFeatureFlagTrimTrue)
-Boundary: ≠ isSaveArmExactTrue (Save arm unchanged)
-npm: verify:cms-core-v2-feature-flag-trim-true · verify:cms-core-v2-safety-suite
-RUNTIME_BEHAVIOR_CHANGED: false
+Current phase: CMS Core v2 package public-env site-adapter decoupling COMPLETE
+Phase: cms-core-v2-package-public-env-site-adapter-decoupling
+Core: resolveBuildEnv + site-package-build-preflight (no gosaki-* import)
+Adapter: gosaki-package-build-env-preflight.mjs
+Order: resolveBuildEnv → git clean → mutex → FS
+npm: verify:cms-core-v2-package-public-env-adapter · verify:cms-core-v2-safety-suite
+PACKAGE_GENERATE_EXECUTED: false
 Gosaki CLIENT_SHARE_READY: true (maintained)
 deployed package: dc1c5b62a58d0462ad6629db4847256d316d4a38 (unchanged; no regen)
 seedAppliedStaging: true
 readyForOperatorAboutSeedApply: false
 Next Primary (ops): share staging with client
-Next (Kit Core): Admin PATH helper wiring optional · Admin runtime mutex (explicit approval)
+Next (Kit Core): Admin runtime mutex (explicit approval)
 readyForAnyFutureFtpApply: false
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
 ```
+
+## CMS Core v2 package public-env site-adapter decoupling (2026-07-30)
+
+- Removed Core → `gosaki-staging-admin-public-env` direct import
+- Entrypoints inject `createGosakiResolveBuildEnv` + mutex callback
+- Doc: `cms-core-v2-package-public-env-site-adapter-decoupling.md`
 
 ## CMS Core v2 trim-true feature-flag helper (2026-07-30)
 
@@ -45,7 +52,7 @@ STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
 
 - One-command offline Core safety: `npm run verify:cms-core-v2-safety-suite`
 - Does not call live-soft / live-verify / package generate
-- Includes anon-read-env + build-read-envelope + feature-flag-trim-true verifiers
+- Includes anon-read-env + build-read-envelope + feature-flag-trim-true + package-public-env-adapter verifiers
 
 ## CMS Core v2 verifier network-dependency audit + hardening (2026-07-30)
 

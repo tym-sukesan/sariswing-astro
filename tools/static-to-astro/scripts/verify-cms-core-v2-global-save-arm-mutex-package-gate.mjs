@@ -406,12 +406,22 @@ assert(
   !/gosaki-operational-save-ui-arm-mutex-gate/.test(buildSrc),
 );
 assert(
+  "build-site-package-core does NOT import gosaki public-env",
+  !/gosaki-staging-admin-public-env/.test(buildSrc) &&
+    !/gosaki-package-build-env-preflight/.test(buildSrc) &&
+    !/from ["']\.\/gosaki-/.test(buildSrc),
+);
+assert(
+  "build-site-package-core accepts resolveBuildEnv",
+  /resolveBuildEnv/.test(buildSrc),
+);
+assert(
   "build-site-package-core accepts beforeFirstFilesystemWrite",
   /beforeFirstFilesystemWrite/.test(buildSrc),
 );
 assert(
-  "build-site-package-core runs callback before relocate",
-  /beforeFirstFilesystemWrite[\s\S]*relocateExistingManualUploadPackageToStaleBackup/.test(
+  "build-site-package-core runs prefights before relocate",
+  /executeSitePackageBuildPrefights[\s\S]*relocateExistingManualUploadPackageToStaleBackup/.test(
     buildSrc,
   ),
 );
@@ -452,6 +462,10 @@ for (const ep of entrypoints) {
     assert(
       `${base} injects beforeFirstFilesystemWrite`,
       /createGosakiBeforeFirstFilesystemWrite/.test(src),
+    );
+    assert(
+      `${base} injects resolveBuildEnv`,
+      /createGosakiResolveBuildEnv/.test(src),
     );
   }
 }

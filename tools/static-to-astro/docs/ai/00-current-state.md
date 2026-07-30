@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**CMS Core v2 trim-true feature-flag helper (2026-07-30):** **COMPLETE** — Phase `cms-core-v2-trim-true-feature-flag-helper` · SoT `feature-flag-trim-true-utils.mjs` (`isFeatureFlagTrimTrue`) · ≠ Save arm `isSaveArmExactTrue` · wired BUILD_READ / About PATH bake / youtube `isExactTrue` delegate · Admin PATH inline retained · npm `verify:cms-core-v2-feature-flag-trim-true` · **behavior unchanged** · **Next:** client staging share.
+**CMS Core v2 package public-env site-adapter decoupling (2026-07-30):** **COMPLETE** — Phase `cms-core-v2-package-public-env-site-adapter-decoupling` · Core `resolveBuildEnv` + `site-package-build-preflight.mjs` · Gosaki adapter `gosaki-package-build-env-preflight.mjs` · Core **no** `gosaki-*` public-env import · order: env STOP → git clean → mutex → FS · npm `verify:cms-core-v2-package-public-env-adapter` · **実package未実行** · **Next:** client staging share.
+
+**CMS Core v2 trim-true feature-flag helper (2026-07-30):** **COMPLETE** — Phase `cms-core-v2-trim-true-feature-flag-helper` · SoT `feature-flag-trim-true-utils.mjs` (`isFeatureFlagTrimTrue`) · ≠ Save arm `isSaveArmExactTrue` · wired BUILD_READ / About PATH bake / youtube `isExactTrue` delegate · Admin PATH inline retained · npm `verify:cms-core-v2-feature-flag-trim-true` · **behavior unchanged** · **Next:** package public-env decoupling (done above).
 
 **CMS Core v2 build-read envelope skeleton (2026-07-30):** **COMPLETE** — Phase `cms-core-v2-build-read-envelope-skeleton` · SoT `build-read-envelope-utils.mjs` · YouTube embeds + About page_fields wired · deep-equality fixtures · npm `verify:cms-core-v2-build-read-envelope` · **public return shape unchanged** · **Next:** trim-true helper (done above).
 

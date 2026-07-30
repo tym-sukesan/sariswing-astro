@@ -13,6 +13,7 @@
 import { runSitePackageBuild } from "./lib/build-site-package-core.mjs";
 import { ALLOWED_PROFILE_NAMES, listSiteKeys } from "./lib/site-registry.mjs";
 import { createGosakiBeforeFirstFilesystemWrite } from "./lib/gosaki-operational-save-ui-arm-mutex-gate.mjs";
+import { createGosakiResolveBuildEnv } from "./lib/gosaki-package-build-env-preflight.mjs";
 
 function printHelp() {
   console.log(`Usage: node scripts/build-site-package.mjs --site SITE_KEY --profile PROFILE [options]
@@ -92,6 +93,7 @@ function main() {
     profileName: opts.profile,
     dryRun: opts.dryRun,
     label: `G-20u3 build-site-package (${opts.site} / ${opts.profile})`,
+    resolveBuildEnv: createGosakiResolveBuildEnv(opts.site),
     beforeFirstFilesystemWrite: createGosakiBeforeFirstFilesystemWrite(opts.site),
   });
 }

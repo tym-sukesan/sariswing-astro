@@ -9,16 +9,10 @@ import { fileURLToPath } from "node:url";
 import { createManualUploadPackage } from "./manual-upload-package.mjs";
 import {
   TOOL_ROOT,
-  GOSAKI_SITE_KEY,
   getSiteRegistryEntry,
   resolvePackageManifestMetaFromRegistry,
   resolveSitePackageBuildProfile,
 } from "./site-registry.mjs";
-import {
-  loadGosakiStagingAdminPublicEnv,
-  reportGosakiStagingAdminPublicEnvPresence,
-  validateGosakiStagingAdminPublicEnv,
-} from "./gosaki-staging-admin-public-env.mjs";
 
 import {
   buildPostBuildVerifierArgs,
@@ -32,6 +26,7 @@ import {
   ABOUT_PUBLIC_BUILD_READ_REPORT_NAME,
 } from "./package-run-marker.mjs";
 import { resolveSourceCommit, assertGitWorkingTreeCleanForManualUploadPackage } from "./package-upload-safety.mjs";
+import { executeSitePackageBuildPrefights } from "./site-package-build-preflight.mjs";
 import { randomUUID } from "node:crypto";
 import fs from "node:fs";
 
@@ -125,6 +120,10 @@ export function buildConvertCliArgs(siteKey, profileName, options = {}) {
  *   dryRun?: boolean,
  *   label?: string,
  *   toolRoot?: string,
+ *   resolveBuildEnv?: (ctx: {
+ *     env: NodeJS.ProcessEnv,
+ *     siteKey: string,
+ *   }) => { buildEnv: NodeJS.ProcessEnv } | void | null | undefined,
  *   beforeFirstFilesystemWrite?: (ctx: {
  *     env: NodeJS.ProcessEnv,
  *     siteKey: string,
@@ -143,6 +142,7 @@ export function runSitePackageBuild(options) {
     dryRun = false,
     label,
     toolRoot = TOOL_ROOT,
+    resolveBuildEnv,
     beforeFirstFilesystemWrite,
   } = options;
   const plan = planSitePackageBuild(siteKey, profileName, { toolRoot });
@@ -175,74 +175,40 @@ export function runSitePackageBuild(options) {
     return { ok: true, dryRun: true, plan, manifestMeta };
   }
 
-  const isGosakiSite = siteKey === GOSAKI_SITE_KEY;
+  // Prefights: resolveBuildEnv (prod/staging STOP) → git clean → mutex → then FS.
+  // Site adapters inject callbacks; Core stays site-agnostic (no gosaki-* imports).
   /** @type {NodeJS.ProcessEnv} */
-  let buildEnv = { ...process.env };
-
-  if (isGosakiSite) {
-    const report = reportGosakiStagingAdminPublicEnvPresence();
-    const env = loadGosakiStagingAdminPublicEnv();
-    const validation = validateGosakiStagingAdminPublicEnv(env);
-
-    console.log("PUBLIC_SUPABASE_URL:", report.presence.PUBLIC_SUPABASE_URL ? "SET" : "UNSET");
-    console.log(
-      "PUBLIC_SUPABASE_ANON_KEY:",
-      report.presence.PUBLIC_SUPABASE_ANON_KEY ? "SET" : "UNSET",
-    );
-    console.log(
-      "PUBLIC_GOSAKI_YOUTUBE_URL_DRY_RUN_ENDPOINT:",
-      report.presence.PUBLIC_GOSAKI_YOUTUBE_URL_DRY_RUN_ENDPOINT
-        ? "SET"
-        : "UNSET (using staging default)",
-    );
-
-    if (!validation.ok) {
-      if (validation.missing.length) {
-        console.error("Missing required public env:");
-        for (const key of validation.missing) console.error(`  - ${key}`);
-      }
-      if (validation.errors.length) {
-        console.error("Env validation errors:");
-        for (const msg of validation.errors) console.error(`  - ${msg}`);
-      }
-      process.exit(1);
-    }
-
-    buildEnv = {
-      ...process.env,
-      PUBLIC_SUPABASE_URL: env.PUBLIC_SUPABASE_URL,
-      PUBLIC_SUPABASE_ANON_KEY: env.PUBLIC_SUPABASE_ANON_KEY,
-      PUBLIC_GOSAKI_YOUTUBE_URL_DRY_RUN_ENDPOINT: env.PUBLIC_GOSAKI_YOUTUBE_URL_DRY_RUN_ENDPOINT,
-    };
-  } else {
-    console.log("Gosaki staging admin env: skipped (non-gosaki site)");
-  }
-
-  // Fail-closed: refuse package generate on dirty git tree (no dirty override for FTP packages).
-  try {
-    assertGitWorkingTreeCleanForManualUploadPackage(REPO_ROOT);
-    console.log("[package-git] source tree clean · sourceTreeClean=true");
-  } catch (err) {
-    console.error(`[package-git] ${err instanceof Error ? err.message : String(err)}`);
-    process.exit(1);
-  }
-
-  // Optional site adapter preflight (e.g. Gosaki Save UI arm mutex) — BEFORE any package FS mutation.
-  // Injected by entrypoints; Core stays site-agnostic (no gosaki-* mutex/inventory import).
+  let buildEnv;
   /** @type {{ mutexChecked?: boolean, mutexReason?: string, armedCount?: number, armedFeatureIds?: string[] } | null} */
   let mutexEvidence = null;
-  if (typeof beforeFirstFilesystemWrite === "function") {
-    try {
-      const preflightOut = beforeFirstFilesystemWrite({ env: buildEnv, siteKey });
-      if (preflightOut && typeof preflightOut === "object" && preflightOut.mutex) {
-        mutexEvidence = preflightOut.mutex;
-      }
-    } catch (err) {
-      console.error(
-        `ERROR: ${err instanceof Error ? err.message : String(err)}`,
-      );
-      process.exit(1);
+  try {
+    const pref = executeSitePackageBuildPrefights({
+      siteKey,
+      processEnv: process.env,
+      resolveBuildEnv,
+      beforeFirstFilesystemWrite,
+      assertGitWorkingTreeClean: () => {
+        try {
+          assertGitWorkingTreeCleanForManualUploadPackage(REPO_ROOT);
+          console.log("[package-git] source tree clean · sourceTreeClean=true");
+        } catch (err) {
+          console.error(
+            `[package-git] ${err instanceof Error ? err.message : String(err)}`,
+          );
+          throw err;
+        }
+      },
+    });
+    buildEnv = /** @type {NodeJS.ProcessEnv} */ (pref.buildEnv);
+    mutexEvidence = pref.mutexEvidence;
+    if (typeof resolveBuildEnv !== "function") {
+      console.log("site resolveBuildEnv: skipped (no adapter injection)");
     }
+  } catch (err) {
+    console.error(
+      `ERROR: ${err instanceof Error ? err.message : String(err)}`,
+    );
+    process.exit(1);
   }
 
   // Fail-closed stale relocate: move existing package aside before convert/build.

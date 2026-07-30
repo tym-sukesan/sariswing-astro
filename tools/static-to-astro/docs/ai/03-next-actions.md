@@ -9,6 +9,30 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 4. **並行可 / 別承認:** YouTube 複数件 **永続 Save**（NON_BLOCKING）。
 5. Save arm **false** · `readyForAnyFutureFtpApply: false` · production STOP · `service_role` 禁止 · **deployed package 固定**.
 
+## 0. CMS Core v2 package public-env site-adapter decoupling (2026-07-30)
+
+| Item | Value |
+| --- | --- |
+| Gate | `CMS_CORE_V2_PACKAGE_PUBLIC_ENV_SITE_ADAPTER_DECOUPLING_COMPLETE: true` |
+| Phase | `cms-core-v2-package-public-env-site-adapter-decoupling` |
+| Core | `resolveBuildEnv` + `site-package-build-preflight.mjs` |
+| Adapter | `gosaki-package-build-env-preflight.mjs` |
+| Doc | `cms-core-v2-package-public-env-site-adapter-decoupling.md` |
+| npm | `verify:cms-core-v2-package-public-env-adapter` |
+| Prefight order | resolveBuildEnv → git clean → mutex → FS |
+| Package generate | **false** |
+
+```txt
+CMS_CORE_V2_PACKAGE_PUBLIC_ENV_SITE_ADAPTER_DECOUPLING_COMPLETE: true
+CORE_GOSAKI_PUBLIC_ENV_IMPORT_REMOVED: true
+PACKAGE_GENERATE_EXECUTED: false
+FTP_EXECUTED: false
+GOSAKI_CLIENT_SHARE_READY_MAINTAINED: true
+deployedPackageSourceCommitUnchanged: dc1c5b62a58d0462ad6629db4847256d316d4a38
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+PRODUCTION_UNCHANGED: true
+```
+
 ## 0. CMS Core v2 trim-true feature-flag helper (2026-07-30)
 
 | Item | Value |
@@ -20,7 +44,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | npm | `verify:cms-core-v2-feature-flag-trim-true` |
 | Boundary | ≠ `isSaveArmExactTrue` (no trim) |
 | Behavior | **unchanged** |
-| Next candidate | Admin PATH helper wiring（別 phase · UI bake）· Admin runtime mutex（別承認） |
+| Next candidate | package public-env decoupling — **done** |
 
 ```txt
 CMS_CORE_V2_TRIM_TRUE_FEATURE_FLAG_HELPER_COMPLETE: true
@@ -90,7 +114,7 @@ PRODUCTION_UNCHANGED: true
 | Phase | `cms-core-v2-offline-safety-suite` |
 | npm | `verify:cms-core-v2-safety-suite` |
 | Runner | `scripts/run-cms-core-v2-safety-suite.mjs` (fail-fast) |
-| Includes | anon-read-env · build-read-envelope · feature-flag-trim-true · YouTube offline · About apply-readiness · exact-true · parse-policy · mutex×3 · url-staging · import-cycle · `git diff --check` |
+| Includes | anon-read-env · build-read-envelope · feature-flag-trim-true · package-public-env-adapter · YouTube offline · About apply-readiness · exact-true · parse-policy · mutex×3 · url-staging · import-cycle · `git diff --check` |
 | Excludes | live-soft · live-verify · package generate · About full vertical · g20u20 (use `verify:cms-core-v2-offline`) |
 | Runtime | **unchanged** |
 

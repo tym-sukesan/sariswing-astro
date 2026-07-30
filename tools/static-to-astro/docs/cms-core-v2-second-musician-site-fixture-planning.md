@@ -73,7 +73,7 @@ This is **not** a production customer site. It is a Kit verification asset: rich
 | Videos | `videos.html` | `/videos/` | **New vs Gosaki** — dedicated page (Gosaki uses Home YouTube only) |
 | Contact | `contact.html` | `/contact/` | Generic form / iframe placeholder — **not** HubSpot allowlist |
 
-Deploy base (future staging only, not in this phase):  
+Deploy base (future staging only, not in this phase):
 `/cms-kit-staging/mio-kisaragi-jazz/`
 
 ---

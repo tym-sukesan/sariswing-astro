@@ -23,7 +23,7 @@ import {
   isCmsKitSitemapExcludedPath,
   shouldIncludePageInSitemap,
 } from "./lib/sitemap-exclusions.mjs";
-import { resolveSiteGeneratorHooks } from "./lib/site-generator-hooks.mjs";
+import { resolveSiteGeneratorHooksAsync } from "./lib/site-generator-hooks.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = path.resolve(TOOL_ROOT, "../..");
@@ -167,8 +167,11 @@ assert(
   shouldIncludePageInSitemap("https://www.gosaki-piano.com/schedule/2026-08/") === true,
 );
 
-const gosakiHooks = resolveSiteGeneratorHooks(GOSAKI_SITE_KEY, TOOL_ROOT);
-const pilotHooks = resolveSiteGeneratorHooks(PILOT_SAMPLE_STATIC_SITE_KEY, TOOL_ROOT);
+const gosakiHooks = await resolveSiteGeneratorHooksAsync(GOSAKI_SITE_KEY, { toolRoot: TOOL_ROOT, siteKey: GOSAKI_SITE_KEY });
+const pilotHooks = await resolveSiteGeneratorHooksAsync(PILOT_SAMPLE_STATIC_SITE_KEY, {
+  toolRoot: TOOL_ROOT,
+  siteKey: PILOT_SAMPLE_STATIC_SITE_KEY,
+});
 assert("gosaki hooks registered", typeof gosakiHooks.applyPostGenerate === "function");
 assert("pilot hooks noop", typeof pilotHooks.applyPostGenerate === "function");
 

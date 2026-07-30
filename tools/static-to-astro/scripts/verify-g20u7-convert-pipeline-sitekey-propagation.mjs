@@ -14,7 +14,7 @@ import {
 import { generateAstroProject } from "./lib/astro-generator.mjs";
 import {
   DEFAULT_SITE_GENERATOR_HOOKS,
-  resolveSiteGeneratorHooks,
+  resolveSiteGeneratorHooksAsync,
 } from "./lib/site-generator-hooks.mjs";
 import {
   GOSAKI_SITE_KEY,
@@ -150,17 +150,17 @@ try {
 }
 assert("unknown siteKey throws", unknownSiteThrew);
 
-const explicitHooks = resolveSiteGeneratorHooks(UNKNOWN_FIXTURE, {
+const explicitHooks = await resolveSiteGeneratorHooksAsync(UNKNOWN_FIXTURE, {
   siteKey: GOSAKI_SITE_KEY,
   toolRoot: TOOL_ROOT,
 });
 assert("hooks explicit siteKey on unknown fixture", explicitHooks.siteKey === GOSAKI_SITE_KEY);
 assert("hooks explicit siteKey active", explicitHooks.active === true);
 
-const fallbackHooks = resolveSiteGeneratorHooks(GOSAKI_FIXTURE, { toolRoot: TOOL_ROOT });
+const fallbackHooks = await resolveSiteGeneratorHooksAsync(GOSAKI_FIXTURE, { toolRoot: TOOL_ROOT });
 assert("hooks fixture fallback gosaki", fallbackHooks.siteKey === GOSAKI_SITE_KEY);
 
-const noopHooks = resolveSiteGeneratorHooks(UNKNOWN_FIXTURE, { toolRoot: TOOL_ROOT });
+const noopHooks = await resolveSiteGeneratorHooksAsync(UNKNOWN_FIXTURE, { toolRoot: TOOL_ROOT });
 assert("hooks unknown fixture noop", noopHooks.siteKey === null);
 assert("hooks unknown fixture inactive", noopHooks.active === false);
 assert(
@@ -191,7 +191,7 @@ const convertDryRunCli = spawnSync(
 assert("convert dry-run exit 0", convertDryRunCli.status === 0, convertDryRunCli.stderr?.slice(0, 300));
 assert("convert dry-run prints siteKey", convertDryRunCli.stdout.includes("siteKey: gosaki-piano"));
 
-const convertDryRun = generateAstroProject(GOSAKI_FIXTURE, path.join(TOOL_ROOT, "output/_g20u7-gen-smoke"), {
+const convertDryRun = await generateAstroProject(GOSAKI_FIXTURE, path.join(TOOL_ROOT, "output/_g20u7-gen-smoke"), {
   dryRun: true,
   siteKey: GOSAKI_SITE_KEY,
 });

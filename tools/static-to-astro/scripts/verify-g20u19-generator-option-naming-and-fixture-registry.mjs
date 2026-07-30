@@ -14,7 +14,7 @@ import {
 } from "./lib/site-fixture-match.mjs";
 import {
   DEFAULT_SITE_GENERATOR_HOOKS,
-  resolveSiteGeneratorHooks,
+  resolveSiteGeneratorHooksAsync,
 } from "./lib/site-generator-hooks.mjs";
 import {
   GOSAKI_SITE_KEY,
@@ -127,14 +127,14 @@ assert("pilot registry fixture match", matchRegistryFixtureDir(PILOT_FIXTURE, PI
 assert("gosaki key from fixture dir", resolveRegisteredSiteKeyFromFixtureDir(GOSAKI_FIXTURE) === GOSAKI_SITE_KEY);
 assert("pilot key from fixture dir", resolveRegisteredSiteKeyFromFixtureDir(PILOT_FIXTURE) === PILOT_SAMPLE_STATIC_SITE_KEY);
 
-const gosakiHooksExplicit = resolveSiteGeneratorHooks(GOSAKI_FIXTURE, { siteKey: GOSAKI_SITE_KEY });
+const gosakiHooksExplicit = await resolveSiteGeneratorHooksAsync(GOSAKI_FIXTURE, { siteKey: GOSAKI_SITE_KEY });
 assert("gosaki hooks active explicit siteKey", gosakiHooksExplicit.active === true);
 assert("gosaki hooks siteKey", gosakiHooksExplicit.siteKey === GOSAKI_SITE_KEY);
 
-const gosakiHooksRegistry = resolveSiteGeneratorHooks(GOSAKI_FIXTURE);
+const gosakiHooksRegistry = await resolveSiteGeneratorHooksAsync(GOSAKI_FIXTURE);
 assert("gosaki hooks active registry basename", gosakiHooksRegistry.active === true);
 
-const pilotHooks = resolveSiteGeneratorHooks(PILOT_FIXTURE, { siteKey: PILOT_SAMPLE_STATIC_SITE_KEY });
+const pilotHooks = await resolveSiteGeneratorHooksAsync(PILOT_FIXTURE, { siteKey: PILOT_SAMPLE_STATIC_SITE_KEY });
 assert("pilot hooks inactive", pilotHooks.active === false);
 assert("pilot hooks default noop matchFixture", pilotHooks.matchFixture(PILOT_FIXTURE) === false);
 

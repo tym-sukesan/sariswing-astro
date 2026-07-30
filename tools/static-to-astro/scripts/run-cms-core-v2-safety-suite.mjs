@@ -133,6 +133,7 @@ const IMPORT_CYCLE_MODULES = [
   "gosaki-site-package-verifier-adapter.mjs",
   "cms-core-v2-gosaki-site-generator-hooks-html-baseline-fixtures.mjs",
   "site-generator-hooks.mjs",
+  "gosaki-site-generator-hooks-adapter.mjs",
   "site-cms-features.mjs",
 ];
 

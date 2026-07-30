@@ -56,7 +56,7 @@ import {
   applyScheduleDataViews,
   scheduleMonthsFromDetected,
 } from "./schedule-seed-extractor.mjs";
-import { resolveSiteGeneratorHooks } from "./site-generator-hooks.mjs";
+import { ensureSiteGeneratorHookAdaptersForResolve, resolveSiteGeneratorHooks } from "./site-generator-hooks.mjs";
 import { normalizeSiteDataBundles } from "./site-generator-options.mjs";
 import { removeGeneratedOutputDir } from "./safe-output-cleanup.mjs";
 
@@ -767,7 +767,7 @@ function resolveProductionOrigin(siteDir, options) {
   return null;
 }
 
-export function generateAstroProject(inputDir, outputDir, options = {}) {
+export async function generateAstroProject(inputDir, outputDir, options = {}) {
   const siteDir = path.resolve(inputDir);
   const outDir = path.resolve(outputDir);
   const baseUrl = normalizeBaseUrl(options.baseUrl ?? null);
@@ -780,6 +780,10 @@ export function generateAstroProject(inputDir, outputDir, options = {}) {
   });
   const siteProfileSummary = buildSiteProfileSummary(siteProfileResolved.profile, {
     source: siteProfileResolved.source,
+  });
+  await ensureSiteGeneratorHookAdaptersForResolve(siteDir, {
+    siteKey: options.siteKey ?? null,
+    toolRoot: TOOL_ROOT,
   });
   const siteHooks = resolveSiteGeneratorHooks(siteDir, {
     siteKey: options.siteKey ?? null,

@@ -2,7 +2,7 @@
 
 - **Phase:** `cms-core-v2-gosaki-site-generator-hooks-html-baseline`
 - **Date:** 2026-07-30
-- **Status:** **COMPLETE (baseline only — factory not moved)**
+- **Status:** **COMPLETE (baseline locked; factory later moved in adapter phase)**
 - **Package generate / FTP:** **not executed**
 
 ---
@@ -12,8 +12,8 @@
 ```txt
 phase: cms-core-v2-gosaki-site-generator-hooks-html-baseline
 CMS_CORE_V2_GOSAKI_SITE_GENERATOR_HOOKS_HTML_BASELINE_COMPLETE: true
-FACTORY_MOVED: false
-IMPORT_GRAPH_CHANGED: false
+FACTORY_MOVED: true (follow-up: cms-core-v2-gosaki-site-generator-hooks-adapter)
+IMPORT_GRAPH_CHANGED: true (adapter phase only — baseline fixtures unchanged)
 HTML_GENERATION_CHANGED: false
 RUNTIME_BEHAVIOR_CHANGED: false
 PACKAGE_GENERATE_EXECUTED: false
@@ -69,6 +69,6 @@ git diff --check
 
 ---
 
-## Next (separate approval)
+## Next
 
-`gosaki-site-generator-hooks-adapter` — move `createGosakiPianoHookMethods` only after this baseline stays green.
+Factory move complete: `cms-core-v2-gosaki-site-generator-hooks-adapter`. Keep this baseline green on every further Core/adapter change.

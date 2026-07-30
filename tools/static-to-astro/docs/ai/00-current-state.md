@@ -3,9 +3,11 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**CMS Core v2 Gosaki site-generator-hooks HTML baseline (2026-07-30):** **COMPLETE (baseline only)** — Phase `cms-core-v2-gosaki-site-generator-hooks-html-baseline` · surface fixtures + verifier · factory **not** moved · npm `verify:cms-core-v2-gosaki-site-generator-hooks-html-baseline` · Doc: `cms-core-v2-gosaki-site-generator-hooks-html-baseline.md` · **Next:** `gosaki-site-generator-hooks-adapter` (after baseline green) · client staging share.
+**CMS Core v2 Gosaki site-generator-hooks adapter (2026-07-30):** **COMPLETE** — Phase `cms-core-v2-gosaki-site-generator-hooks-adapter` · `createGosakiPianoHookMethods` → `gosaki-site-generator-hooks-adapter.mjs` · Core + `astro-generator` have **no** `gosaki-*` imports · lazy load via registry `generatorHooksAdapter` + `ensureSiteGeneratorHookAdapter` · HTML baseline deep-eq PASS · **behavior unchanged** · **Next:** client staging share · Admin runtime mutex (別承認).
 
-**CMS Core v2 site-generator-hooks boundary audit (2026-07-30):** **COMPLETE (audit-only)** — Phase `cms-core-v2-site-generator-hooks-boundary-audit` · 7 direct `gosaki-*` imports in `site-generator-hooks.mjs` · no pure helper both reduces reverse deps and avoids HTML risk · **code extract: false** · Doc: `cms-core-v2-site-generator-hooks-boundary-audit.md` · **Next:** HTML baseline (done above) · deferred factory → adapter.
+**CMS Core v2 Gosaki site-generator-hooks HTML baseline (2026-07-30):** **COMPLETE** — Phase `cms-core-v2-gosaki-site-generator-hooks-html-baseline` · surface fixtures + verifier · factory moved in adapter phase above · npm `verify:cms-core-v2-gosaki-site-generator-hooks-html-baseline` · Doc: `cms-core-v2-gosaki-site-generator-hooks-html-baseline.md`.
+
+**CMS Core v2 site-generator-hooks boundary audit (2026-07-30):** **COMPLETE** — Phase `cms-core-v2-site-generator-hooks-boundary-audit` · follow-up adapter move done · Doc: `cms-core-v2-site-generator-hooks-boundary-audit.md`.
 
 **CMS Core v2 site-package verifier extension decoupling (2026-07-30):** **COMPLETE** — Phase `cms-core-v2-site-package-verifier-extension-decoupling` · Core drops `verify-site-package-gosaki-extensions` + `GOSAKI_SITE_KEY` · optional `siteExtensionVerifier` (once; call count via verifier closure only) · adapter `gosaki-site-package-verifier-adapter.mjs` · npm `verify:cms-core-v2-site-package-verifier-extension-decoupling` · **behavior unchanged** · Doc: `cms-core-v2-site-package-verifier-extension-decoupling.md` · **Next:** site-generator-hooks audit (done above).
 

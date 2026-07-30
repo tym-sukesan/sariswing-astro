@@ -1,16 +1,18 @@
 /**
- * CMS Core v2 — Gosaki site-generator-hooks HTML baseline (pre-adapter move).
- * Offline: synthetic fixtures · no package · no FTP · no factory move.
+ * CMS Core v2 — Gosaki site-generator-hooks HTML baseline (+ post-adapter compatibility).
+ * Offline: synthetic fixtures · no package · no FTP.
+ * Fixture expected HTML must not be rewritten to pass.
  *
  * Run: node scripts/verify-cms-core-v2-gosaki-site-generator-hooks-html-baseline.mjs
  * npm: verify:cms-core-v2-gosaki-site-generator-hooks-html-baseline
  */
 
 import assertNode from "node:assert/strict";
+import { spawnSync } from "node:child_process";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import {
   BASELINE_ABOUT_CONFIG,
   BASELINE_ABOUT_IN,
@@ -41,8 +43,13 @@ import {
 } from "./lib/gosaki-contact-hubspot-embed.mjs";
 import { injectYouTubeEmbedIntoHomePage } from "./lib/gosaki-home-youtube-embed.mjs";
 import { GOSAKI_READ_ONLY_ADMIN_DATA_ATTR } from "./lib/gosaki-staging-read-only-admin.mjs";
-import { resolveSiteGeneratorHooks } from "./lib/site-generator-hooks.mjs";
-import { GOSAKI_SITE_KEY } from "./lib/site-registry.mjs";
+import {
+  ensureSiteGeneratorHookAdapter,
+  resolveSiteGeneratorHooks,
+  resolveSiteGeneratorHooksAsync,
+  SITE_GENERATOR_HOOK_FACTORIES,
+} from "./lib/site-generator-hooks.mjs";
+import { GOSAKI_SITE_KEY, PILOT_SAMPLE_STATIC_SITE_KEY } from "./lib/site-registry.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const TOOL_ROOT = path.resolve(__dirname, "..");
@@ -114,26 +121,200 @@ assert("fixtures module exists", fs.existsSync(FIXTURES_MOD));
 assert("fixture dir exists", fs.existsSync(FIXTURE_DIR));
 assert("doc exists", fs.existsSync(DOC));
 
+const ADAPTER = path.join(__dirname, "lib/gosaki-site-generator-hooks-adapter.mjs");
+assert("adapter module exists", fs.existsSync(ADAPTER));
+
 const hooksSrc = fs.readFileSync(HOOKS, "utf8");
+const adapterSrc = fs.readFileSync(ADAPTER, "utf8");
 assert(
-  "factory still in site-generator-hooks (not moved)",
-  /function createGosakiPianoHookMethods\(/.test(hooksSrc),
+  "Core has no gosaki-* direct import",
+  !/from ["']\.\/gosaki-[^"']+["']/.test(hooksSrc),
 );
 assert(
-  "factory still registered on SITE_GENERATOR_HOOK_FACTORIES",
-  /\[GOSAKI_SITE_KEY\]:\s*createGosakiPianoHookMethods/.test(hooksSrc),
+  "Core has no createGosakiPianoHookMethods factory body",
+  !/function createGosakiPianoHookMethods\(/.test(hooksSrc),
 );
 assert(
-  "no gosaki-site-generator-hooks-adapter import yet",
-  !/gosaki-site-generator-hooks-adapter/.test(hooksSrc),
+  "Core exports ensureSiteGeneratorHookAdapter",
+  /export async function ensureSiteGeneratorHookAdapter/.test(hooksSrc),
+);
+assert(
+  "adapter exports createGosakiPianoHookMethods",
+  /export function createGosakiPianoHookMethods\(/.test(adapterSrc),
+);
+assert(
+  "adapter ensure registers into Core",
+  /ensureGosakiSiteGeneratorHooksRegistered/.test(adapterSrc) &&
+    /registerSiteGeneratorHookFactory\(\s*GOSAKI_SITE_KEY\s*,\s*createGosakiPianoHookMethods\s*\)/.test(
+      adapterSrc,
+    ),
+);
+assert(
+  "adapter imports Core register API only (not reverse Core→adapter)",
+  /from ["']\.\/site-generator-hooks\.mjs["']/.test(adapterSrc),
 );
 
-const hooks = resolveSiteGeneratorHooks(TOOL_ROOT, {
+const astroGeneratorSrc = fs.readFileSync(
+  path.join(__dirname, "lib/astro-generator.mjs"),
+  "utf8",
+);
+assert(
+  "astro-generator has no gosaki-* direct import",
+  !/from ["']\.\/gosaki-[^"']+["']/.test(astroGeneratorSrc) &&
+    !/gosaki-site-generator-hooks-adapter/.test(astroGeneratorSrc),
+);
+assert(
+  "astro-generator lazy-ensures adapters before resolve",
+  /ensureSiteGeneratorHookAdaptersForResolve/.test(astroGeneratorSrc),
+);
+
+const registryJson = fs.readFileSync(
+  path.join(TOOL_ROOT, "config/sites/registry.json"),
+  "utf8",
+);
+assert(
+  "registry lists generatorHooksAdapter for gosaki-piano",
+  /"gosaki-piano"[\s\S]*?"generatorHooksAdapter"\s*:\s*"scripts\/lib\/gosaki-site-generator-hooks-adapter\.mjs"/.test(
+    registryJson,
+  ),
+);
+
+{
+  // generic / Core-only process must not load Gosaki adapter
+  const probe = spawnSync(
+    process.execPath,
+    [
+      "--input-type=module",
+      "-e",
+      `import { SITE_GENERATOR_HOOK_FACTORIES } from ${JSON.stringify(
+        pathToFileURL(HOOKS).href,
+      )};` +
+        `const keys = Object.keys(SITE_GENERATOR_HOOK_FACTORIES);` +
+        `if (keys.length !== 0) { console.error(keys.join(",")); process.exit(1); }`,
+    ],
+    { encoding: "utf8", cwd: TOOL_ROOT },
+  );
+  assert(
+    "generic Core-only import does not register Gosaki factory",
+    probe.status === 0,
+    probe.stderr || probe.stdout,
+  );
+}
+
+{
+  // generic astro-generator + pilot siteKey must not load Gosaki adapter
+  const generatorHref = pathToFileURL(
+    path.join(__dirname, "lib/astro-generator.mjs"),
+  ).href;
+  const hooksHref = pathToFileURL(HOOKS).href;
+  const pilotFixture = path.join(TOOL_ROOT, "fixtures/sample-static-site");
+  const probe = spawnSync(
+    process.execPath,
+    [
+      "--input-type=module",
+      "-e",
+      `
+        import { generateAstroProject } from ${JSON.stringify(generatorHref)};
+        import { SITE_GENERATOR_HOOK_FACTORIES } from ${JSON.stringify(hooksHref)};
+        const out = await generateAstroProject(
+          ${JSON.stringify(pilotFixture)},
+          ${JSON.stringify(path.join(os.tmpdir(), "gosaki-hooks-pilot-probe"))},
+          { dryRun: true, siteKey: ${JSON.stringify(PILOT_SAMPLE_STATIC_SITE_KEY)} },
+        );
+        if (!out?.dryRun) { console.error("expected dryRun"); process.exit(2); }
+        if (Object.hasOwn(SITE_GENERATOR_HOOK_FACTORIES, ${JSON.stringify(GOSAKI_SITE_KEY)})) {
+          console.error("gosaki factory loaded on pilot path");
+          process.exit(1);
+        }
+      `,
+    ],
+    { encoding: "utf8", cwd: TOOL_ROOT },
+  );
+  assert(
+    "generic astro-generator pilot path does not load Gosaki adapter",
+    probe.status === 0,
+    probe.stderr || probe.stdout,
+  );
+}
+
+{
+  // Gosaki path loads adapter exactly once (factory map key present; double ensure idempotent)
+  const hooksHref = pathToFileURL(HOOKS).href;
+  const adapterHref = pathToFileURL(ADAPTER).href;
+  const probe = spawnSync(
+    process.execPath,
+    [
+      "--input-type=module",
+      "-e",
+      `
+        import {
+          ensureSiteGeneratorHookAdapter,
+          SITE_GENERATOR_HOOK_FACTORIES,
+          isRegisteredSiteGeneratorHook,
+        } from ${JSON.stringify(hooksHref)};
+        const a = await ensureSiteGeneratorHookAdapter(${JSON.stringify(GOSAKI_SITE_KEY)}, {
+          toolRoot: ${JSON.stringify(TOOL_ROOT)},
+        });
+        const b = await ensureSiteGeneratorHookAdapter(${JSON.stringify(GOSAKI_SITE_KEY)}, {
+          toolRoot: ${JSON.stringify(TOOL_ROOT)},
+        });
+        const { ensureGosakiSiteGeneratorHooksRegistered } = await import(${JSON.stringify(adapterHref)});
+        const c = ensureGosakiSiteGeneratorHooksRegistered();
+        const d = ensureGosakiSiteGeneratorHooksRegistered();
+        if (!a.registered || a.already) {
+          console.error("first ensure expected fresh register", JSON.stringify(a));
+          process.exit(1);
+        }
+        if (!b.already) {
+          console.error("second ensure expected already", JSON.stringify(b));
+          process.exit(2);
+        }
+        if (c.reason !== "already-registered" || d.reason !== "already-registered") {
+          console.error(JSON.stringify({ c, d }));
+          process.exit(3);
+        }
+        if (!isRegisteredSiteGeneratorHook(${JSON.stringify(GOSAKI_SITE_KEY)})) process.exit(4);
+        if (Object.keys(SITE_GENERATOR_HOOK_FACTORIES).length !== 1) {
+          console.error(Object.keys(SITE_GENERATOR_HOOK_FACTORIES).join(","));
+          process.exit(5);
+        }
+      `,
+    ],
+    { encoding: "utf8", cwd: TOOL_ROOT },
+  );
+  assert(
+    "Gosaki adapter registers once and double-ensure is idempotent",
+    probe.status === 0,
+    probe.stderr || probe.stdout,
+  );
+}
+
+// Lazy registry path — does not statically import gosaki-* in this verifier.
+const hooks = await resolveSiteGeneratorHooksAsync(TOOL_ROOT, {
   siteKey: GOSAKI_SITE_KEY,
   toolRoot: TOOL_ROOT,
 });
+assert(
+  "Gosaki factory registered after ensure/resolve",
+  Object.hasOwn(SITE_GENERATOR_HOOK_FACTORIES, GOSAKI_SITE_KEY),
+);
+
+let factoryCallCount = 0;
+const originalFactory = SITE_GENERATOR_HOOK_FACTORIES[GOSAKI_SITE_KEY];
+SITE_GENERATOR_HOOK_FACTORIES[GOSAKI_SITE_KEY] = () => {
+  factoryCallCount += 1;
+  return originalFactory();
+};
+resolveSiteGeneratorHooks(TOOL_ROOT, {
+  siteKey: GOSAKI_SITE_KEY,
+  toolRoot: TOOL_ROOT,
+});
+assert("factory invoked once per resolve", factoryCallCount === 1);
+SITE_GENERATOR_HOOK_FACTORIES[GOSAKI_SITE_KEY] = originalFactory;
+
 assert("hooks siteKey gosaki-piano", hooks.siteKey === GOSAKI_SITE_KEY);
 assert("hooks active", hooks.active === true);
+void ensureSiteGeneratorHookAdapter;
 
 const methodNames = BASELINE_HOOK_METHOD_NAMES.filter((name) => typeof hooks[name] === "function");
 deepEqual("hook method names present", methodNames, [...BASELINE_HOOK_METHOD_NAMES]);

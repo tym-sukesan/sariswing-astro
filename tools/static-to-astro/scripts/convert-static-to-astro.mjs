@@ -163,7 +163,7 @@ async function main() {
       pageFieldsBundle = supabaseData.pageFields;
     }
 
-    const result = generateAstroProject(inputAbs, outputAbs, {
+    const result = await generateAstroProject(inputAbs, outputAbs, {
       dryRun,
       baseUrl,
       deployBase,

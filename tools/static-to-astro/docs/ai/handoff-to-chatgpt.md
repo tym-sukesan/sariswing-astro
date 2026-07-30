@@ -5,12 +5,12 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: CMS Core v2 Gosaki site-generator-hooks HTML baseline COMPLETE
-Phase: cms-core-v2-gosaki-site-generator-hooks-html-baseline
-FACTORY_MOVED: false
-IMPORT_GRAPH_CHANGED: false
+Current phase: CMS Core v2 Gosaki site-generator-hooks adapter COMPLETE
+Phase: cms-core-v2-gosaki-site-generator-hooks-adapter
+FACTORY_MOVED: true
+CORE_GOSAKI_DIRECT_IMPORTS: false
 HTML_GENERATION_CHANGED: false
-Doc: cms-core-v2-gosaki-site-generator-hooks-html-baseline.md
+Adapter: gosaki-site-generator-hooks-adapter.mjs
 npm: verify:cms-core-v2-gosaki-site-generator-hooks-html-baseline · verify:cms-core-v2-safety-suite
 RUNTIME_BEHAVIOR_CHANGED: false
 PACKAGE_GENERATE_EXECUTED: false
@@ -19,22 +19,29 @@ deployed package: dc1c5b62a58d0462ad6629db4847256d316d4a38 (unchanged; no regen)
 seedAppliedStaging: true
 readyForOperatorAboutSeedApply: false
 Next Primary (ops): share staging with client
-Next Kit: gosaki-site-generator-hooks-adapter (only after HTML baseline green) · Admin runtime mutex (explicit approval)
+Next Kit: Admin runtime mutex (explicit approval)
 readyForAnyFutureFtpApply: false
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
 ```
+
+## CMS Core v2 Gosaki site-generator-hooks adapter (2026-07-30)
+
+- Moved `createGosakiPianoHookMethods` → `gosaki-site-generator-hooks-adapter.mjs`
+- Core + `astro-generator` have no `gosaki-*` / adapter static imports
+- Lazy load: registry `generatorHooksAdapter` + `ensureSiteGeneratorHookAdapter` (idempotent; pilot/generic unload)
+- HTML baseline fixtures unchanged · deep-eq PASS
+- Doc updates: boundary audit + html-baseline gates
 
 ## CMS Core v2 Gosaki site-generator-hooks HTML baseline (2026-07-30)
 
 - Locked deterministic hook/inject HTML + return shapes before factory move
 - Surfaces: Schedule transform/hub/month, Footer SNS, YouTube, About, Contact HubSpot, Discography, legacy stubs, Admin postGenerate keys/portal stub
-- Factory **not** moved; import graph unchanged
+- Factory later moved in adapter phase; fixtures not rewritten
 - Doc: `cms-core-v2-gosaki-site-generator-hooks-html-baseline.md`
 
 ## CMS Core v2 site-generator-hooks boundary audit (2026-07-30)
 
-- Audit-only: 7 direct `gosaki-*` imports remain in `site-generator-hooks.mjs`
-- Pure helper candidates do not reduce reverse deps; factory move deferred (HTML risk)
+- Audit then adapter follow-up: Core free of presentation `gosaki-*` imports
 - Doc: `cms-core-v2-site-generator-hooks-boundary-audit.md`
 
 ## CMS Core v2 site-package verifier extension decoupling (2026-07-30)

@@ -16,7 +16,7 @@ import { generateAstroProject } from "./lib/astro-generator.mjs";
 import {
   DEFAULT_SITE_GENERATOR_HOOKS,
   SITE_GENERATOR_HOOK_FACTORIES,
-  resolveSiteGeneratorHooks,
+  resolveSiteGeneratorHooksAsync,
 } from "./lib/site-generator-hooks.mjs";
 import {
   GOSAKI_SITE_KEY,
@@ -144,7 +144,7 @@ const verifierArgs = buildPostBuildVerifierArgs(PILOT_SAMPLE_STATIC_SITE_KEY, "s
 assert("pilot verifier verify-site-package", verifierArgs[0].endsWith("verify-site-package.mjs"));
 assert("pilot verifier --site", verifierArgs.includes("--site"));
 
-const pilotHooks = resolveSiteGeneratorHooks(PILOT_FIXTURE, {
+const pilotHooks = await resolveSiteGeneratorHooksAsync(PILOT_FIXTURE, {
   siteKey: PILOT_SAMPLE_STATIC_SITE_KEY,
   toolRoot: TOOL_ROOT,
 });
@@ -153,17 +153,46 @@ assert("pilot hooks active false", pilotHooks.active === false);
 assert("pilot hooks noop footer", pilotHooks.generateFooter("<footer/>", {}) === null);
 assert("pilot hooks noop post-generate", pilotHooks.applyPostGenerate("/tmp", {}).gosakiBandProfilesSummary?.applied === false);
 assert("pilot not in hook factories", !Object.hasOwn(SITE_GENERATOR_HOOK_FACTORIES, PILOT_SAMPLE_STATIC_SITE_KEY));
+assert(
+  "pilot resolve does not load Gosaki factory",
+  !Object.hasOwn(SITE_GENERATOR_HOOK_FACTORIES, GOSAKI_SITE_KEY),
+);
 
-const gosakiOnPilotFixture = resolveSiteGeneratorHooks(PILOT_FIXTURE, { toolRoot: TOOL_ROOT });
+const gosakiOnPilotFixture = await resolveSiteGeneratorHooksAsync(PILOT_FIXTURE, { toolRoot: TOOL_ROOT });
 assert("pilot fixture implicit noop", gosakiOnPilotFixture.siteKey === null);
 assert("pilot fixture not gosaki hooks", gosakiOnPilotFixture.active === false);
+assert(
+  "pilot fixture path still does not load Gosaki factory",
+  !Object.hasOwn(SITE_GENERATOR_HOOK_FACTORIES, GOSAKI_SITE_KEY),
+);
 
-const gosakiHooks = resolveSiteGeneratorHooks(GOSAKI_FIXTURE, {
+if (fs.existsSync(PILOT_ASTRO_OUT)) {
+  fs.rmSync(PILOT_ASTRO_OUT, { recursive: true, force: true });
+}
+const pilotConvert = await generateAstroProject(PILOT_FIXTURE, PILOT_ASTRO_OUT, {
+  siteKey: PILOT_SAMPLE_STATIC_SITE_KEY,
+  baseUrl: "https://yskcreate.weblike.jp/cms-kit-staging/pilot-sample-static",
+  deployBase: "/cms-kit-staging/pilot-sample-static/",
+});
+assert(
+  "pilot generateAstroProject does not load Gosaki adapter",
+  !Object.hasOwn(SITE_GENERATOR_HOOK_FACTORIES, GOSAKI_SITE_KEY),
+);
+const writtenRel = walkFiles(PILOT_ASTRO_OUT);
+const gosakiArtifacts = writtenRel.filter((f) =>
+  /gosaki|BandProfiles|YouTubeEmbed|hubspot|admin\/index/i.test(f),
+);
+assert("pilot local convert pages", (pilotConvert?.writtenPages?.length ?? 0) > 0);
+assert("pilot no gosaki artifacts", gosakiArtifacts.length === 0, gosakiArtifacts.join(", "));
+assert("pilot no admin page", !writtenRel.some((f) => f === "src/pages/admin/index.astro"));
+
+const gosakiHooks = await resolveSiteGeneratorHooksAsync(GOSAKI_FIXTURE, {
   siteKey: GOSAKI_SITE_KEY,
   toolRoot: TOOL_ROOT,
 });
 assert("gosaki hooks still active", gosakiHooks.active === true);
 assert("gosaki hooks siteKey", gosakiHooks.siteKey === GOSAKI_SITE_KEY);
+assert("gosaki factory registered after Gosaki resolve", Object.hasOwn(SITE_GENERATOR_HOOK_FACTORIES, GOSAKI_SITE_KEY));
 
 assert(
   "default hooks unchanged",
@@ -208,22 +237,6 @@ const convertDryRunCli = spawnSync(
 );
 assert("pilot convert dry-run exit 0", convertDryRunCli.status === 0, convertDryRunCli.stderr?.slice(0, 300));
 assert("pilot convert dry-run siteKey", convertDryRunCli.stdout.includes("siteKey: pilot-sample-static"));
-
-if (fs.existsSync(PILOT_ASTRO_OUT)) {
-  fs.rmSync(PILOT_ASTRO_OUT, { recursive: true, force: true });
-}
-const pilotConvert = generateAstroProject(PILOT_FIXTURE, PILOT_ASTRO_OUT, {
-  siteKey: PILOT_SAMPLE_STATIC_SITE_KEY,
-  baseUrl: "https://yskcreate.weblike.jp/cms-kit-staging/pilot-sample-static",
-  deployBase: "/cms-kit-staging/pilot-sample-static/",
-});
-const writtenRel = walkFiles(PILOT_ASTRO_OUT);
-const gosakiArtifacts = writtenRel.filter((f) =>
-  /gosaki|BandProfiles|YouTubeEmbed|hubspot|admin\/index/i.test(f),
-);
-assert("pilot local convert pages", (pilotConvert?.writtenPages?.length ?? 0) > 0);
-assert("pilot no gosaki artifacts", gosakiArtifacts.length === 0, gosakiArtifacts.join(", "));
-assert("pilot no admin page", !writtenRel.some((f) => f === "src/pages/admin/index.astro"));
 
 assert("npm verify:g20u8 script", packageJson.includes("verify:g20u8-pilot-noop"));
 assert("AI current-state G-20u8", currentState.includes("G-20u8"));

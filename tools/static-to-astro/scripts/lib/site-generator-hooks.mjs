@@ -1,32 +1,15 @@
 /**
- * G-20u6 — Site generator hook registry.
+ * G-20u6 — Site generator hook registry (Core).
  * Resolves per-site hooks for astro-generator.mjs. Unregistered sites use safe default/noop hooks.
+ *
+ * Site adapters register factories via registerSiteGeneratorHookFactory.
+ * Adapter modules are loaded lazily from registry `generatorHooksAdapter` when siteKey/fixture matches.
+ * Core must not import gosaki-* modules.
  */
 
 import path from "node:path";
-import { fileURLToPath } from "node:url";
-import { applyBaseUrlToSeo } from "./base-url.mjs";
-import {
-  cmsKitScheduleMonthRoute,
-  parseScheduleMonthSourcePath,
-  LIVE_CRAWL_MONTH_FILENAME,
-} from "./schedule-pages.mjs";
-import {
-  applyGosakiAboutBandProfiles,
-} from "./gosaki-about-band-profiles.mjs";
-import { matchRegistryFixtureDir } from "./site-fixture-match.mjs";
-import { applyGosakiAboutContent } from "./gosaki-about-content.mjs";
-import { applyGosakiHomeYouTubeEmbed } from "./gosaki-home-youtube-embed.mjs";
-import { applyGosakiContactHubspotEmbed } from "./gosaki-contact-hubspot-embed.mjs";
-import { applyGosakiScheduleDataPages } from "./gosaki-schedule-data-pages.mjs";
-import {
-  injectDiscographyDataSourceMarker,
-  patchGosakiDiscographySupabaseFields,
-} from "./supabase-discography-read.mjs";
-import { applyGosakiStagingReadOnlyAdmin } from "./gosaki-staging-read-only-admin.mjs";
-import { generateGosakiFooterAstro } from "./gosaki-footer-social.mjs";
-import { GOSAKI_SITE_KEY, loadSiteRegistry } from "./site-registry.mjs";
-import { isCmsFeatureEnabled } from "./site-cms-features.mjs";
+import { fileURLToPath, pathToFileURL } from "node:url";
+import { getSiteRegistryEntry, loadSiteRegistry } from "./site-registry.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 export const TOOL_ROOT = path.resolve(__dirname, "../..");
@@ -68,24 +51,6 @@ export const TOOL_ROOT = path.resolve(__dirname, "../..");
  * @property {(ctx: SiteGeneratorHookContext) => { count: number, paths: string[] }} applyLegacyMonthStubs
  * @property {(outDir: string, ctx: SiteGeneratorHookContext) => object} applyPostGenerate
  */
-
-/**
- * @param {object} page
- * @param {string | null} baseUrl
- * @param {string} deployBase
- */
-function toCanonicalScheduleMonthPage(page, baseUrl, deployBase) {
-  const parsed = parseScheduleMonthSourcePath(page.sourcePath);
-  if (!parsed) return page;
-  const route = cmsKitScheduleMonthRoute(parsed.year, parsed.month);
-  return {
-    ...page,
-    route,
-    astroRoute: route,
-    pagePath: `schedule/${parsed.year}-${parsed.month}/index.astro`,
-    seo: applyBaseUrlToSeo(page.seo, route, baseUrl, deployBase),
-  };
-}
 
 /** @type {SiteGeneratorHooks} */
 export const DEFAULT_SITE_GENERATOR_HOOKS = {
@@ -130,205 +95,103 @@ export const DEFAULT_SITE_GENERATOR_HOOKS = {
   },
 };
 
-/** @returns {Omit<SiteGeneratorHooks, 'siteKey' | 'active'>} */
-function createGosakiPianoHookMethods() {
+/**
+ * Mutable factory registry. Adapters call registerSiteGeneratorHookFactory.
+ * @type {Record<string, () => Omit<SiteGeneratorHooks, 'siteKey' | 'active'>>}
+ */
+export const SITE_GENERATOR_HOOK_FACTORIES = {};
+
+/** @type {Map<string, Promise<void>>} */
+const adapterImportPromises = new Map();
+
+/**
+ * Idempotent factory registration. Same siteKey re-register is a no-op
+ * (does not replace; import-order safe).
+ *
+ * @param {string} siteKey
+ * @param {() => Omit<SiteGeneratorHooks, 'siteKey' | 'active'>} factory
+ * @returns {{ registered: boolean, reason: 'new' | 'already-registered' }}
+ */
+export function registerSiteGeneratorHookFactory(siteKey, factory) {
+  if (!siteKey || typeof factory !== "function") {
+    throw new Error("registerSiteGeneratorHookFactory requires siteKey and factory");
+  }
+  if (Object.hasOwn(SITE_GENERATOR_HOOK_FACTORIES, siteKey)) {
+    return { registered: false, reason: "already-registered" };
+  }
+  SITE_GENERATOR_HOOK_FACTORIES[siteKey] = factory;
+  return { registered: true, reason: "new" };
+}
+
+/**
+ * Lazy-load registry `generatorHooksAdapter` for one siteKey (same-process import).
+ * Concurrent callers share one import promise; module cache + idempotent register.
+ *
+ * @param {string | null | undefined} siteKey
+ * @param {{ toolRoot?: string }} [options]
+ * @returns {Promise<{ loaded: boolean, registered: boolean, already?: boolean }>}
+ */
+export async function ensureSiteGeneratorHookAdapter(siteKey, options = {}) {
+  if (!siteKey) return { loaded: false, registered: false };
+  if (Object.hasOwn(SITE_GENERATOR_HOOK_FACTORIES, siteKey)) {
+    return { loaded: true, registered: true, already: true };
+  }
+
+  const toolRoot = options.toolRoot ?? TOOL_ROOT;
+  let entry;
+  try {
+    entry = getSiteRegistryEntry(siteKey, toolRoot);
+  } catch {
+    return { loaded: false, registered: false };
+  }
+  const rel = entry?.generatorHooksAdapter;
+  if (!rel) return { loaded: false, registered: false };
+
+  const href = pathToFileURL(path.resolve(toolRoot, String(rel))).href;
+  let pending = adapterImportPromises.get(siteKey);
+  if (!pending) {
+    pending = import(href).then(() => undefined);
+    adapterImportPromises.set(siteKey, pending);
+  }
+  await pending;
+
   return {
-    matchFixture(siteDir) {
-      return matchRegistryFixtureDir(siteDir, GOSAKI_SITE_KEY);
-    },
-    resolveVisualOverrideSiteSlug(_siteDir, basename) {
-      if (basename === "gosaki-static-site") return "gosaki-static-site";
-      return basename;
-    },
-    transformAnalysisPages(pages, ctx) {
-      return pages.map((page) => toCanonicalScheduleMonthPage(page, ctx.baseUrl, ctx.deployBase));
-    },
-    generateFooter(footerHtml, ctx) {
-      return generateGosakiFooterAstro(footerHtml, ctx.linkTransformContext);
-    },
-    resolveScheduleDataUsage(ctx) {
-      const bundle = /** @type {any} */ (ctx.scheduleBundle ?? ctx.gosakiScheduleBundle);
-      const useScheduleData = Boolean(
-        bundle &&
-          (bundle.scheduleDataSource === "supabase" || bundle.scheduleDataSource === "static-fallback") &&
-          bundle.schedules?.length > 0,
-      );
-      const monthRoutes = useScheduleData
-        ? new Set(bundle.months.map((/** @type {{ route: string }} */ m) => m.route))
-        : null;
-      return { useScheduleData, monthRoutes };
-    },
-    shouldSkipScheduleMonthPage(page, ctx) {
-      return Boolean(ctx.useScheduleData && ctx.monthRoutes?.has(page.route));
-    },
-    patchDiscographyPageMainHtml(mainHtml, page, ctx) {
-      const bundle = /** @type {any} */ (ctx.discographyBundle ?? ctx.gosakiDiscographyBundle);
-      if (
-        page.route !== "/discography/" ||
-        bundle?.discographyDataSource !== "supabase" ||
-        !bundle?.releases?.length
-      ) {
-        return null;
-      }
-      const patched = patchGosakiDiscographySupabaseFields(
-        mainHtml,
-        bundle.releases,
-        bundle.tracksByLegacyId,
-      );
-      const html = injectDiscographyDataSourceMarker(patched.html, "supabase");
-      return {
-        html,
-        summary: {
-          discographyDataSource: "supabase",
-          rowCount: bundle.releases.length,
-          patchCount: patched.patches.length,
-          purchasePatchCount: patched.purchasePatches.length,
-          artistPatchCount: patched.artistPatches.length,
-          labelPatchCount: patched.labelPatches?.length ?? 0,
-          trackPatchCount: patched.trackPatches?.length ?? 0,
-          trackRowCount: bundle.trackRowCount ?? 0,
-        },
-      };
-    },
-    applyScheduleDataPages(ctx) {
-      const bundle = /** @type {any} */ (ctx.scheduleBundle ?? ctx.gosakiScheduleBundle);
-      return applyGosakiScheduleDataPages(ctx.outDir, bundle, {
-        baseUrl: ctx.baseUrl,
-        deployBase: ctx.deployBase,
-      });
-    },
-    applyLegacyMonthStubs(ctx) {
-      const bundle = /** @type {any} */ (ctx.scheduleBundle ?? ctx.gosakiScheduleBundle);
-      const scheduleMonthPages = ctx.scheduleMonthPages ?? [];
-      const writeFile = ctx.writeFile;
-      const generateScheduleLegacyMonthStubPage = ctx.generateScheduleLegacyMonthStubPage;
-      if (!writeFile || !generateScheduleLegacyMonthStubPage) {
-        return { count: 0, paths: [] };
-      }
-
-      const paths = [];
-      let count = 0;
-
-      if (ctx.useScheduleData && bundle?.months?.length) {
-        for (const monthMeta of bundle.months) {
-          const [year, month] = String(monthMeta.month ?? "").split("-");
-          if (!year || !month) continue;
-          const legacyPagePath = `${year}-${month}/index.astro`;
-          const legacyFile = path.join(ctx.outDir, "src/pages", legacyPagePath);
-          writeFile(
-            legacyFile,
-            generateScheduleLegacyMonthStubPage(
-              {
-                route: monthMeta.route,
-                year,
-                month,
-                label: monthMeta.label,
-              },
-              ctx.baseUrl,
-              ctx.deployBase,
-            ),
-          );
-          paths.push(legacyFile);
-          count += 1;
-        }
-        return { count, paths };
-      }
-
-      for (const monthEntry of scheduleMonthPages) {
-        const parsed = parseScheduleMonthSourcePath(monthEntry.sourcePath);
-        if (!parsed || !LIVE_CRAWL_MONTH_FILENAME.test(parsed.basename)) continue;
-        const legacyPagePath = `${parsed.year}-${parsed.month}/index.astro`;
-        const legacyFile = path.join(ctx.outDir, "src/pages", legacyPagePath);
-        writeFile(
-          legacyFile,
-          generateScheduleLegacyMonthStubPage(monthEntry, ctx.baseUrl, ctx.deployBase),
-        );
-        paths.push(legacyFile);
-        count += 1;
-      }
-      return { count, paths };
-    },
-    applyPostGenerate(outDir, ctx) {
-      const toolRoot = ctx.toolRoot ?? TOOL_ROOT;
-      const siteKey = ctx.siteKey ?? GOSAKI_SITE_KEY;
-      const writtenPaths = [];
-
-      const gosakiBandProfilesSummary =
-        siteKey && isCmsFeatureEnabled(siteKey, "aboutBandProfiles", toolRoot)
-          ? applyGosakiAboutBandProfiles(outDir, toolRoot)
-          : { applied: false, reason: "cms_feature_aboutBandProfiles_disabled" };
-      if (gosakiBandProfilesSummary.applied) {
-        writtenPaths.push(
-          path.join(outDir, gosakiBandProfilesSummary.componentPath),
-          path.join(outDir, gosakiBandProfilesSummary.dataPath),
-        );
-      }
-
-      const gosakiAboutContentSummary =
-        siteKey && isCmsFeatureEnabled(siteKey, "aboutContent", toolRoot)
-          ? applyGosakiAboutContent(outDir, toolRoot, {
-              pageFieldsBundle:
-                ctx.pageFieldsBundle ?? ctx.sitePageFieldsBundle ?? ctx.gosakiPageFieldsBundle,
-            })
-          : { applied: false, reason: "cms_feature_aboutContent_disabled" };
-      if (gosakiAboutContentSummary.applied) {
-        writtenPaths.push(path.join(outDir, gosakiAboutContentSummary.dataPath));
-      }
-
-      const gosakiYoutubeEmbedSummary =
-        siteKey && isCmsFeatureEnabled(siteKey, "youtube", toolRoot)
-          ? applyGosakiHomeYouTubeEmbed(outDir, toolRoot, {
-              siteEmbedsBundle: ctx.siteEmbedsBundle ?? ctx.embedsBundle ?? ctx.gosakiEmbedsBundle,
-            })
-          : { applied: false, reason: "cms_feature_youtube_disabled" };
-      if (gosakiYoutubeEmbedSummary.applied) {
-        writtenPaths.push(
-          path.join(outDir, gosakiYoutubeEmbedSummary.componentPath),
-          path.join(outDir, gosakiYoutubeEmbedSummary.dataPath),
-          path.join(outDir, gosakiYoutubeEmbedSummary.libPath),
-        );
-      }
-
-      const gosakiContactHubspotSummary =
-        siteKey && isCmsFeatureEnabled(siteKey, "contact", toolRoot)
-          ? applyGosakiContactHubspotEmbed(outDir, toolRoot)
-          : { applied: false, reason: "cms_feature_contact_disabled" };
-      if (gosakiContactHubspotSummary.applied) {
-        writtenPaths.push(path.join(outDir, gosakiContactHubspotSummary.dataPath));
-      }
-
-      const gosakiReadOnlyAdminSummary =
-        siteKey && isCmsFeatureEnabled(siteKey, "readOnlyAdmin", toolRoot)
-          ? applyGosakiStagingReadOnlyAdmin(outDir, toolRoot, {
-              scheduleBundle: ctx.scheduleBundle ?? ctx.gosakiScheduleBundle,
-              discographyBundle: ctx.discographyBundle ?? ctx.gosakiDiscographyBundle,
-            })
-          : { applied: false, reason: "cms_feature_readOnlyAdmin_disabled" };
-      if (gosakiReadOnlyAdminSummary.applied) {
-        writtenPaths.push(
-          path.join(outDir, gosakiReadOnlyAdminSummary.pagePath),
-          path.join(outDir, gosakiReadOnlyAdminSummary.libPath),
-          path.join(outDir, gosakiReadOnlyAdminSummary.dashboardPath),
-          path.join(outDir, gosakiReadOnlyAdminSummary.discographyEditorPath),
-        );
-      }
-
-      return {
-        gosakiBandProfilesSummary,
-        gosakiAboutContentSummary,
-        gosakiYoutubeEmbedSummary,
-        gosakiContactHubspotSummary,
-        gosakiReadOnlyAdminSummary,
-        writtenPaths,
-      };
-    },
+    loaded: true,
+    registered: Object.hasOwn(SITE_GENERATOR_HOOK_FACTORIES, siteKey),
   };
 }
 
-/** @type {Record<string, () => Omit<SiteGeneratorHooks, 'siteKey' | 'active'>>} */
-export const SITE_GENERATOR_HOOK_FACTORIES = {
-  [GOSAKI_SITE_KEY]: createGosakiPianoHookMethods,
-};
+/**
+ * Ensure adapters needed for a resolve/generate call.
+ * - explicit siteKey → that adapter only
+ * - else fixtureDir basename match → that site's adapter only
+ * - never eager-loads all adapters (generic/pilot stay unload)
+ *
+ * @param {string} siteDir
+ * @param {{ siteKey?: string | null, toolRoot?: string }} [options]
+ */
+export async function ensureSiteGeneratorHookAdaptersForResolve(siteDir, options = {}) {
+  const toolRoot = options.toolRoot ?? TOOL_ROOT;
+  if (options.siteKey) {
+    return ensureSiteGeneratorHookAdapter(options.siteKey, { toolRoot });
+  }
+
+  const basename = path.basename(path.resolve(siteDir));
+  try {
+    const registry = loadSiteRegistry(toolRoot);
+    for (const [siteKey, entry] of Object.entries(registry.sites ?? {})) {
+      const fixtureBase = path.basename(String(entry.fixtureDir ?? ""));
+      if (!fixtureBase || basename !== fixtureBase) continue;
+      if (!entry.generatorHooksAdapter) {
+        return { loaded: false, registered: false };
+      }
+      return ensureSiteGeneratorHookAdapter(siteKey, { toolRoot });
+    }
+  } catch {
+    /* registry unavailable */
+  }
+  return { loaded: false, registered: false };
+}
 
 /**
  * @param {string | null} siteKey
@@ -345,12 +208,13 @@ export function mergeSiteGeneratorHooks(siteKey, methods) {
 }
 
 /**
- * Resolve per-site generator hooks.
+ * Resolve per-site generator hooks (sync).
+ * Call ensureSiteGeneratorHookAdaptersForResolve first when adapters may be needed.
  *
  * Resolution order:
  * 1. options.siteKey when a hook factory is registered (explicit — preferred)
  * 2. registry fixtureDir basename match
- * 3. per-site matchFixture() fallback
+ * 3. per-site matchFixture() fallback (only already-loaded factories)
  * 4. DEFAULT_SITE_GENERATOR_HOOKS (noop)
  *
  * @param {string} siteDir
@@ -396,6 +260,18 @@ export function resolveSiteGeneratorHooks(siteDir, options = {}) {
   }
 
   return { ...DEFAULT_SITE_GENERATOR_HOOKS };
+}
+
+/**
+ * Ensure adapters then resolve (preferred for Gosaki / registry fixture paths).
+ *
+ * @param {string} siteDir
+ * @param {{ siteKey?: string | null, toolRoot?: string }} [options]
+ * @returns {Promise<SiteGeneratorHooks>}
+ */
+export async function resolveSiteGeneratorHooksAsync(siteDir, options = {}) {
+  await ensureSiteGeneratorHookAdaptersForResolve(siteDir, options);
+  return resolveSiteGeneratorHooks(siteDir, options);
 }
 
 /**

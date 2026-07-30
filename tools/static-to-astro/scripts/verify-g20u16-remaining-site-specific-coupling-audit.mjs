@@ -85,10 +85,14 @@ assert("registry pilot-sample-static", registry.includes('"pilot-sample-static"'
 assert("registry supabaseFeatures", registry.includes("supabaseFeatures"));
 
 const hooksSrc = read("tools/static-to-astro/scripts/lib/site-generator-hooks.mjs");
+const hooksAdapterSrc = read(
+  "tools/static-to-astro/scripts/lib/gosaki-site-generator-hooks-adapter.mjs",
+);
 assert("hooks registry resolveSiteGeneratorHooks", hooksSrc.includes("resolveSiteGeneratorHooks"));
-assert("hooks gosaki factory retained", hooksSrc.includes("createGosakiPianoHookMethods"));
-assert("hooks matchRegistryFixtureDir", hooksSrc.includes("matchRegistryFixtureDir"));
-assert("hooks no isGosakiPianoFixture in matchFixture", !/matchFixture[\s\S]{0,80}isGosakiPianoFixture/.test(hooksSrc));
+assert("hooks gosaki factory retained", hooksAdapterSrc.includes("createGosakiPianoHookMethods"));
+assert("hooks matchRegistryFixtureDir", hooksAdapterSrc.includes("matchRegistryFixtureDir"));
+assert("hooks Core has no gosaki-* import", !/from ["']\.\/gosaki-[^"']+["']/.test(hooksSrc));
+assert("hooks no isGosakiPianoFixture in matchFixture", !/matchFixture[\s\S]{0,80}isGosakiPianoFixture/.test(hooksAdapterSrc));
 assert("fixture registry module exists", exists("tools/static-to-astro/scripts/lib/site-fixture-match.mjs"));
 
 const buildCore = read("tools/static-to-astro/scripts/lib/build-site-package-core.mjs");

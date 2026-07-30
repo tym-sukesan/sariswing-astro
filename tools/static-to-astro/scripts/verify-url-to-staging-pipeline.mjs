@@ -719,8 +719,8 @@ const sitemapExclusionsSrc = fs.readFileSync(
   path.join(TOOL_ROOT, "scripts/lib/sitemap-exclusions.mjs"),
   "utf8",
 );
-const siteGeneratorHooksSrc = fs.readFileSync(
-  path.join(TOOL_ROOT, "scripts/lib/site-generator-hooks.mjs"),
+const gosakiSiteGeneratorHooksAdapterSrc = fs.readFileSync(
+  path.join(TOOL_ROOT, "scripts/lib/gosaki-site-generator-hooks-adapter.mjs"),
   "utf8",
 );
 assert(
@@ -1014,7 +1014,7 @@ assert(
 );
 assert(
   "G-9d astro generator wires data pages",
-  siteGeneratorHooksSrc.includes("applyGosakiScheduleDataPages") &&
+  gosakiSiteGeneratorHooksAdapterSrc.includes("applyGosakiScheduleDataPages") &&
     astroGeneratorSrc.includes("gosakiScheduleBundle"),
 );
 assert(

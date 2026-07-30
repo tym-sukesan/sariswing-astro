@@ -22,7 +22,7 @@ import {
 } from "./lib/site-cms-features.mjs";
 import { loadSiteSupabaseDataForBuild } from "./lib/site-aware-supabase-loaders.mjs";
 import { resolveSupabaseAnonReadEnv } from "./lib/supabase-schedule-read.mjs";
-import { resolveSiteGeneratorHooks } from "./lib/site-generator-hooks.mjs";
+import { resolveSiteGeneratorHooksAsync } from "./lib/site-generator-hooks.mjs";
 import {
   CMS_CORE_V2_OFFLINE_SUPABASE_ANON_ENV,
   CMS_CORE_V2_SITE_EMBEDS_LOADER_OUTCOMES,
@@ -192,11 +192,15 @@ if (isCmsCoreV2VerifierLiveSoftEnabled()) {
 }
 
 const hooksSrc = read("tools/static-to-astro/scripts/lib/site-generator-hooks.mjs");
-assert("hooks isCmsFeatureEnabled", hooksSrc.includes("isCmsFeatureEnabled"));
-assert("hooks aboutBandProfiles gate", hooksSrc.includes('"aboutBandProfiles"'));
-assert("hooks youtube gate", hooksSrc.includes('"youtube"'));
+const hooksAdapterSrc = read(
+  "tools/static-to-astro/scripts/lib/gosaki-site-generator-hooks-adapter.mjs",
+);
+assert("hooks Core has no isCmsFeatureEnabled", !hooksSrc.includes("isCmsFeatureEnabled"));
+assert("hooks adapter isCmsFeatureEnabled", hooksAdapterSrc.includes("isCmsFeatureEnabled"));
+assert("hooks aboutBandProfiles gate", hooksAdapterSrc.includes('"aboutBandProfiles"'));
+assert("hooks youtube gate", hooksAdapterSrc.includes('"youtube"'));
 
-const pilotHooks = resolveSiteGeneratorHooks(PILOT_FIXTURE, { siteKey: PILOT_SAMPLE_STATIC_SITE_KEY });
+const pilotHooks = await resolveSiteGeneratorHooksAsync(PILOT_FIXTURE, { siteKey: PILOT_SAMPLE_STATIC_SITE_KEY });
 assert("pilot hooks inactive", pilotHooks.active === false);
 
 const gosakiDry = runNode([

@@ -18,6 +18,7 @@
         "slugMismatchNotes": "Legacy gosaki.site-config.example.json uses cmsSiteSlug 'gosaki'. Supabase public.schedules.site_slug and deploy-profiles siteSlug use 'gosaki-piano'. DB values must not change without explicit migration."
       },
       "fixtureDir": "fixtures/gosaki-piano",
+      "generatorHooksAdapter": "scripts/lib/gosaki-site-generator-hooks-adapter.mjs",
       "deployProfilesFile": "config/sites/gosaki-piano.deploy-profiles.json",
       "supabaseFeatures": {
         "schedule": true,

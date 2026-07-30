@@ -157,7 +157,7 @@ export async function runUrlToStagingPipeline(opts) {
         inputDir: config.fixtureOut,
         toolRoot,
       });
-      const result = generateAstroProject(config.fixtureOut, config.projectOut, {
+      const result = await generateAstroProject(config.fixtureOut, config.projectOut, {
         dryRun: false,
         baseUrl: config.stagingBaseUrl ?? null,
         deployBase: config.deployBase,

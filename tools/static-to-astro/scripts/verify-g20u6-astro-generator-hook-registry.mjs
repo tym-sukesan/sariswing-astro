@@ -11,7 +11,7 @@ import {
   DEFAULT_SITE_GENERATOR_HOOKS,
   SITE_GENERATOR_HOOK_FACTORIES,
   isRegisteredSiteGeneratorHook,
-  resolveSiteGeneratorHooks,
+  resolveSiteGeneratorHooksAsync,
 } from "./lib/site-generator-hooks.mjs";
 import { GOSAKI_SITE_KEY } from "./lib/site-registry.mjs";
 import { generateAstroProject } from "./lib/astro-generator.mjs";
@@ -96,11 +96,25 @@ assert("doc package stale note", doc.includes("package stale") || doc.includes("
 
 assert("registry exports resolveSiteGeneratorHooks", hooksSrc.includes("export function resolveSiteGeneratorHooks"));
 assert("registry exports DEFAULT_SITE_GENERATOR_HOOKS", hooksSrc.includes("export const DEFAULT_SITE_GENERATOR_HOOKS"));
-assert("registry gosaki factory", hooksSrc.includes(`[GOSAKI_SITE_KEY]: createGosakiPianoHookMethods`));
-assert("gosaki hooks call applyGosakiScheduleDataPages", hooksSrc.includes("applyGosakiScheduleDataPages"));
-assert("gosaki hooks call generateGosakiFooterAstro", hooksSrc.includes("generateGosakiFooterAstro"));
+assert("registry exports registerSiteGeneratorHookFactory", hooksSrc.includes("export function registerSiteGeneratorHookFactory"));
+assert("registry exports ensureSiteGeneratorHookAdapter", hooksSrc.includes("export async function ensureSiteGeneratorHookAdapter"));
+assert("Core has no gosaki-* direct import", !/from ["']\.\/gosaki-[^"']+["']/.test(hooksSrc));
+assert("adapter createGosakiPianoHookMethods", exists("tools/static-to-astro/scripts/lib/gosaki-site-generator-hooks-adapter.mjs"));
+const adapterSrc = read("tools/static-to-astro/scripts/lib/gosaki-site-generator-hooks-adapter.mjs");
+assert("adapter exports createGosakiPianoHookMethods", adapterSrc.includes("export function createGosakiPianoHookMethods"));
+assert("adapter registers Gosaki factory", adapterSrc.includes("registerSiteGeneratorHookFactory(GOSAKI_SITE_KEY, createGosakiPianoHookMethods)"));
+assert("gosaki hooks call applyGosakiScheduleDataPages", adapterSrc.includes("applyGosakiScheduleDataPages"));
+assert("gosaki hooks call generateGosakiFooterAstro", adapterSrc.includes("generateGosakiFooterAstro"));
 
 assert("generator imports hook registry", generatorSrc.includes('from "./site-generator-hooks.mjs"'));
+assert(
+  "generator has no gosaki hooks adapter direct import",
+  !generatorSrc.includes("gosaki-site-generator-hooks-adapter.mjs"),
+);
+assert(
+  "generator lazy-ensures adapters",
+  generatorSrc.includes("ensureSiteGeneratorHookAdaptersForResolve"),
+);
 assert("generator resolves hooks", generatorSrc.includes("resolveSiteGeneratorHooks(siteDir"));
 assert("generator no direct gosaki-about import", !generatorSrc.includes('from "./gosaki-about-band-profiles.mjs"'));
 assert("generator no direct gosaki-footer import", !generatorSrc.includes('from "./gosaki-footer-social.mjs"'));
@@ -110,15 +124,19 @@ assert("generator keeps schedule hub markup", generatorSrc.includes("gosaki-sche
 
 assert("npm verify:g20u6 script", packageJson.includes("verify:g20u6-astro-generator-hooks"));
 
-assert("registered gosaki-piano", isRegisteredSiteGeneratorHook(GOSAKI_SITE_KEY));
-assert("gosaki factory present", Object.hasOwn(SITE_GENERATOR_HOOK_FACTORIES, GOSAKI_SITE_KEY));
+assert(
+  "gosaki not registered before ensure",
+  !Object.hasOwn(SITE_GENERATOR_HOOK_FACTORIES, GOSAKI_SITE_KEY),
+);
 
-const gosakiHooks = resolveSiteGeneratorHooks(GOSAKI_FIXTURE, { toolRoot: TOOL_ROOT });
+const gosakiHooks = await resolveSiteGeneratorHooksAsync(GOSAKI_FIXTURE, { toolRoot: TOOL_ROOT });
+assert("registered gosaki-piano after ensure", isRegisteredSiteGeneratorHook(GOSAKI_SITE_KEY));
+assert("gosaki factory present", Object.hasOwn(SITE_GENERATOR_HOOK_FACTORIES, GOSAKI_SITE_KEY));
 assert("gosaki fixture resolves siteKey", gosakiHooks.siteKey === GOSAKI_SITE_KEY);
 assert("gosaki fixture active", gosakiHooks.active === true);
 assert("gosaki matchFixture true", gosakiHooks.matchFixture(GOSAKI_FIXTURE) === true);
 
-const unknownHooks = resolveSiteGeneratorHooks(UNKNOWN_FIXTURE, { toolRoot: TOOL_ROOT });
+const unknownHooks = await resolveSiteGeneratorHooksAsync(UNKNOWN_FIXTURE, { toolRoot: TOOL_ROOT });
 assert("unknown fixture inactive", unknownHooks.active === false);
 assert("unknown fixture siteKey null", unknownHooks.siteKey === null);
 assert("unknown transform noop", unknownHooks.transformAnalysisPages([{ route: "/x/" }]).length === 1);
@@ -163,12 +181,17 @@ assert(
   /dry[- ]run|DRY RUN|plan/i.test(`${dryRun.stdout}\n${dryRun.stderr}`),
 );
 
-const convertDryRun = generateAstroProject(GOSAKI_FIXTURE, path.join(TOOL_ROOT, "output/_g20u6-hook-smoke"), {
-  dryRun: true,
-});
+const convertDryRun = await generateAstroProject(
+  GOSAKI_FIXTURE,
+  path.join(TOOL_ROOT, "output/_g20u6-hook-smoke"),
+  {
+    dryRun: true,
+    siteKey: GOSAKI_SITE_KEY,
+  },
+);
 assert("astro-generator dry-run smoke", convertDryRun?.dryRun === true);
 assert("astro-generator dry-run pages", (convertDryRun?.analysis?.pages?.length ?? 0) > 0);
 
 console.log("");
 console.log(`G-20u6 verifier: ${passed} passed, ${failed} failed`);
-process.exit(failed > 0 ? 1 : 0);
+process.exit(failed === 0 ? 0 : 1);

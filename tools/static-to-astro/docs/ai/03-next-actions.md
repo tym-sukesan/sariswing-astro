@@ -7,7 +7,30 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 2. **並行可 (Kit Core):** Admin runtime Save arm mutex（**別承認** · `ADMIN_RUNTIME_MUTEX_WIRED: false`）· optional Edge shared Save-arm helper · Contents YouTube 退役は **別 phase**。
 3. **並行可:** production hosting **read-only planning**（`HOSTING_READY: false`）。
 4. **並行可 / 別承認:** YouTube 複数件 **永続 Save**（NON_BLOCKING）。
-5. Save arm **false** · `readyForAnyFutureFtpApply: false` · production STOP · `service_role` 禁止 · **deployed package 固定**（mutex package gate でも client-ready regen 強制しない）。
+5. Save arm **false** · `readyForAnyFutureFtpApply: false` · production STOP · `service_role` 禁止 · **deployed package 固定**.
+
+## 0. CMS Core v2 verifier network-dependency audit + hardening (2026-07-30)
+
+| Item | Value |
+| --- | --- |
+| Gate | `CMS_CORE_V2_VERIFIER_NETWORK_DEPENDENCY_AUDIT_HARDENING_COMPLETE: true` |
+| Phase | `cms-core-v2-verifier-network-dependency-audit-and-hardening` |
+| Fixture | `scripts/lib/cms-core-v2-offline-supabase-env-fixture.mjs` |
+| Offline npm | `verify:cms-core-v2-offline` |
+| Soft live env | `CMS_CORE_V2_VERIFIER_LIVE_SOFT=true` · npm `verify:cms-core-v2-youtube-live-soft` |
+| Runtime | **unchanged** |
+
+```txt
+CMS_CORE_V2_VERIFIER_NETWORK_DEPENDENCY_AUDIT_HARDENING_COMPLETE: true
+RUNTIME_CHANGED: false
+LIVE_SELECT_REQUIRED_FOR_CORE_VERIFIERS: false
+PACKAGE_GENERATE_EXECUTED: false
+FTP_EXECUTED: false
+GOSAKI_CLIENT_SHARE_READY_MAINTAINED: true
+deployedPackageSourceCommitUnchanged: dc1c5b62a58d0462ad6629db4847256d316d4a38
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+PRODUCTION_UNCHANGED: true
+```
 
 ## 0. CMS Core v2 YouTube vertical registry FAIL resolution (2026-07-30)
 

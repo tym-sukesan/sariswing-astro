@@ -5,11 +5,12 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: CMS Core v2 YouTube vertical registry FAIL resolution COMPLETE
-Phase: cms-core-v2-youtube-vertical-registry-fail-resolution
-Fix: YouTube vertical verifier registry-gate contract (no live SELECT required)
+Current phase: CMS Core v2 verifier network-dependency audit + hardening COMPLETE
+Phase: cms-core-v2-verifier-network-dependency-audit-and-hardening
+Fixture: cms-core-v2-offline-supabase-env-fixture.mjs
+npm: verify:cms-core-v2-offline · verify:cms-core-v2-youtube-live-soft (opt-in)
+LIVE_SELECT_REQUIRED_FOR_CORE_VERIFIERS: false
 RUNTIME_CHANGED: false
-MUTEX package gate: COMPLETE (prior · HEAD 7365242)
 Gosaki CLIENT_SHARE_READY: true (maintained)
 deployed package: dc1c5b62a58d0462ad6629db4847256d316d4a38 (unchanged; no regen)
 seedAppliedStaging: true
@@ -20,9 +21,14 @@ readyForAnyFutureFtpApply: false
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
 ```
 
+## CMS Core v2 verifier network-dependency audit + hardening (2026-07-30)
+
+- Core contract verifiers offline-stable; intentional `*-live-verify*` remain class C
+- Soft live SELECT only with `CMS_CORE_V2_VERIFIER_LIVE_SOFT=true`
+
 ## CMS Core v2 YouTube vertical registry FAIL resolution (2026-07-30)
 
-- 2 FAIL were network-unstable live asserts · verifier-only fix · runtime unchanged
+- Extended by network-hardening · verifier-only · runtime unchanged
 
 ## CMS Core v2 global Save arm mutex package gate (2026-07-30)
 

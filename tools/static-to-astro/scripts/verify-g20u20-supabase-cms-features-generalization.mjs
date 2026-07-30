@@ -23,6 +23,11 @@ import {
 import { loadSiteSupabaseDataForBuild } from "./lib/site-aware-supabase-loaders.mjs";
 import { resolveSupabaseAnonReadEnv } from "./lib/supabase-schedule-read.mjs";
 import { resolveSiteGeneratorHooks } from "./lib/site-generator-hooks.mjs";
+import {
+  CMS_CORE_V2_OFFLINE_SUPABASE_ANON_ENV,
+  CMS_CORE_V2_SITE_EMBEDS_LOADER_OUTCOMES,
+  isCmsCoreV2VerifierLiveSoftEnabled,
+} from "./lib/cms-core-v2-offline-supabase-env-fixture.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = path.resolve(TOOL_ROOT, "../..");
@@ -139,20 +144,52 @@ assert("pilot discography null", pilotData.discography === null);
 assert("pilot embeds null", pilotData.embeds === null);
 assert("pilot plan cmsFeatures off", pilotData.plan.cmsFeatures.youtube === false);
 
-const gosakiEmbedsWithRegistry = await loadSiteEmbedsDataForBuild({
+const gosakiEmbedsOffline = await loadSiteEmbedsDataForBuild({
   siteKey: GOSAKI_SITE_KEY,
   toolRoot: TOOL_ROOT,
-  env: { ...process.env, CMS_KIT_SITE_EMBEDS_BUILD_READ: "false" },
+  env: {
+    ...CMS_CORE_V2_OFFLINE_SUPABASE_ANON_ENV,
+    CMS_KIT_SITE_EMBEDS_BUILD_READ: "false",
+  },
 });
+assert("gosaki embeds not null when siteEmbeds true (offline)", gosakiEmbedsOffline != null);
 assert(
-  "gosaki embeds loads via registry without CMS_KIT env",
-  gosakiEmbedsWithRegistry?.embedDataSource === "supabase" ||
-    gosakiEmbedsWithRegistry?.embedDataSource === "supabase-empty" ||
-    gosakiEmbedsWithRegistry?.embedDataSource === "not-configured" ||
-    gosakiEmbedsWithRegistry?.embedDataSource === "error" ||
-    gosakiEmbedsWithRegistry?.embedDataSource === "blocked",
+  "gosaki embeds offline via registry without CMS_KIT → not-configured",
+  gosakiEmbedsOffline?.embedDataSource === "not-configured",
 );
-assert("gosaki embeds not null when siteEmbeds true", gosakiEmbedsWithRegistry != null);
+assert(
+  "gosaki embeds offline outcome catalog",
+  CMS_CORE_V2_SITE_EMBEDS_LOADER_OUTCOMES.includes(
+    String(gosakiEmbedsOffline?.embedDataSource ?? ""),
+  ),
+);
+
+// Soft live path (opt-in): CMS_CORE_V2_VERIFIER_LIVE_SOFT=true
+if (isCmsCoreV2VerifierLiveSoftEnabled()) {
+  const gosakiEmbedsLiveSoft = await loadSiteEmbedsDataForBuild({
+    siteKey: GOSAKI_SITE_KEY,
+    toolRoot: TOOL_ROOT,
+    env: { ...process.env, CMS_KIT_SITE_EMBEDS_BUILD_READ: "false" },
+  });
+  assert(
+    "gosaki embeds live soft path engaged",
+    gosakiEmbedsLiveSoft != null &&
+      CMS_CORE_V2_SITE_EMBEDS_LOADER_OUTCOMES.includes(
+        String(gosakiEmbedsLiveSoft.embedDataSource ?? ""),
+      ),
+  );
+  if (gosakiEmbedsLiveSoft?.embedDataSource === "supabase") {
+    assert(
+      "gosaki embeds live soft row when supabase",
+      Number(gosakiEmbedsLiveSoft.rowCount ?? 0) >= 1,
+    );
+  }
+} else {
+  assert(
+    "gosaki embeds live soft skipped (set CMS_CORE_V2_VERIFIER_LIVE_SOFT=true)",
+    true,
+  );
+}
 
 const hooksSrc = read("tools/static-to-astro/scripts/lib/site-generator-hooks.mjs");
 assert("hooks isCmsFeatureEnabled", hooksSrc.includes("isCmsFeatureEnabled"));

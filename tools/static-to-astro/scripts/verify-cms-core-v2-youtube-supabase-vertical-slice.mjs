@@ -25,6 +25,11 @@ import {
   planYoutubeSupabaseItemsDryRun,
 } from "./lib/cms-core-v2-youtube-supabase-contract.mjs";
 import { loadSiteEmbedsDataForBuild } from "./lib/site-cms-features.mjs";
+import {
+  CMS_CORE_V2_OFFLINE_SUPABASE_ANON_ENV,
+  CMS_CORE_V2_SITE_EMBEDS_LOADER_OUTCOMES,
+  isCmsCoreV2VerifierLiveSoftEnabled,
+} from "./lib/cms-core-v2-offline-supabase-env-fixture.mjs";
 import { GOSAKI_SITE_KEY, TOOL_ROOT } from "./lib/site-registry.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -311,48 +316,72 @@ assert(
   plan.expectedBeforeUpdatedAtById["yt-placeholder-01"] === "2026-07-20T00:00:00.000Z",
 );
 
-const embedsViaRegistry = await loadSiteEmbedsDataForBuild({
+// Offline-stable registry gate: blank anon overrides .env.local → not-configured
+// (no live fetch). CMS_KIT_SITE_EMBEDS_BUILD_READ not required.
+const embedsOffline = await loadSiteEmbedsDataForBuild({
   siteKey: GOSAKI_SITE_KEY,
   toolRoot: TOOL_ROOT,
-  // Empty env: proves registry.siteEmbeds=true alone engages the loader
-  // (CMS_KIT_SITE_EMBEDS_BUILD_READ not required).
-  env: {},
+  env: {
+    ...CMS_CORE_V2_OFFLINE_SUPABASE_ANON_ENV,
+    CMS_KIT_SITE_EMBEDS_BUILD_READ: "false",
+  },
 });
-assert("embeds not null with registry siteEmbeds true", embedsViaRegistry != null);
-// Registry gate contract (offline-stable): siteEmbeds=true engages the loader.
-// Live SELECT success is optional — convert keeps JSON fallback on
-// error / empty / not-configured / blocked (e.g. sandbox without network).
-const EMBED_LOADER_OUTCOMES = new Set([
-  "supabase",
-  "supabase-empty",
-  "error",
-  "not-configured",
-  "blocked",
-]);
+assert("embeds not null with registry siteEmbeds true (offline)", embedsOffline != null);
 assert(
-  "embeds loader engaged via registry without CMS_KIT env",
-  embedsViaRegistry != null &&
-    EMBED_LOADER_OUTCOMES.has(String(embedsViaRegistry.embedDataSource ?? "")),
+  "embeds offline via registry without CMS_KIT → not-configured",
+  embedsOffline?.embedDataSource === "not-configured",
 );
-// Soft live check: only when anon SELECT actually returned rows.
-if (embedsViaRegistry?.embedDataSource === "supabase") {
-  assert(
-    "embeds registry row present when live supabase read succeeds",
-    Number(embedsViaRegistry.rowCount ?? 0) >= 1,
-  );
-} else {
-  assert(
-    "embeds live SELECT not required for registry gate (fallback outcome ok)",
-    EMBED_LOADER_OUTCOMES.has(String(embedsViaRegistry?.embedDataSource ?? "")),
-  );
-}
+assert(
+  "embeds offline rowCount 0",
+  Number(embedsOffline?.rowCount ?? -1) === 0,
+);
+assert(
+  "embeds offline outcome catalog includes result",
+  CMS_CORE_V2_SITE_EMBEDS_LOADER_OUTCOMES.includes(
+    String(embedsOffline?.embedDataSource ?? ""),
+  ),
+);
 
 const pilotEmbedsNull = await loadSiteEmbedsDataForBuild({
   siteKey: "pilot-sample-static",
   toolRoot: TOOL_ROOT,
-  env: {},
+  env: {
+    ...CMS_CORE_V2_OFFLINE_SUPABASE_ANON_ENV,
+    CMS_KIT_SITE_EMBEDS_BUILD_READ: "false",
+  },
 });
-assert("pilot embeds still null (siteEmbeds false)", pilotEmbedsNull === null);
+assert(
+  "pilot embeds null when siteEmbeds false and CMS_KIT false",
+  pilotEmbedsNull === null,
+);
+
+// Soft live check (opt-in): CMS_CORE_V2_VERIFIER_LIVE_SOFT=true
+if (isCmsCoreV2VerifierLiveSoftEnabled()) {
+  const embedsLiveSoft = await loadSiteEmbedsDataForBuild({
+    siteKey: GOSAKI_SITE_KEY,
+    toolRoot: TOOL_ROOT,
+    env: {},
+  });
+  if (embedsLiveSoft?.embedDataSource === "supabase") {
+    assert(
+      "embeds registry row present when live supabase read succeeds",
+      Number(embedsLiveSoft.rowCount ?? 0) >= 1,
+    );
+  } else {
+    assert(
+      "embeds live soft path accepts fail-closed outcome",
+      embedsLiveSoft != null &&
+        CMS_CORE_V2_SITE_EMBEDS_LOADER_OUTCOMES.includes(
+          String(embedsLiveSoft.embedDataSource ?? ""),
+        ),
+    );
+  }
+} else {
+  assert(
+    "embeds live soft skipped (set CMS_CORE_V2_VERIFIER_LIVE_SOFT=true)",
+    true,
+  );
+}
 
 const adminTs = read(
   "tools/static-to-astro/templates/site-extensions/gosaki-piano/gosaki-staging-read-only-admin.ts",

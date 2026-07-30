@@ -219,12 +219,19 @@ export async function runUrlToStagingPipeline(opts) {
       const { runStaticPublicArtifactVerification } = await import(
         "./static-public-artifact-verifier.mjs"
       );
+      const { resolveGosakiEnvAnonKeyForStaticPublicScan } = await import(
+        "./gosaki-static-public-anon-key-resolver.mjs"
+      );
+      const { GOSAKI_SITE_KEY } = await import("./site-registry.mjs");
+      const siteKey = config.siteKey ?? config.siteSlug;
       pubResult = runStaticPublicArtifactVerification({
         astroDir: config.projectOut,
         toolRoot,
         publicDirCli: null,
         manifestOutDir: config.staticPublicOut,
-        siteKey: config.siteKey ?? config.siteSlug,
+        siteKey,
+        resolveEnvAnonKey:
+          siteKey === GOSAKI_SITE_KEY ? resolveGosakiEnvAnonKeyForStaticPublicScan : null,
       });
       artifacts.staticPublic = pubResult.staticPublicCopy?.dest ?? config.staticPublicOut;
       if (publicStep) {

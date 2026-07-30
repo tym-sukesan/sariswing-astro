@@ -15,11 +15,11 @@ import {
 import {
   listPublicFiles,
   loadOptionalSecretsForScan,
-  resolveKnownGosakiStagingAnonKeyForScan,
   scanAdminApiContamination,
   scanPublicDirForSecrets,
   scanSupabaseKeyExposure,
 } from "./static-public-artifact-verifier.mjs";
+import { resolveKnownGosakiStagingAnonKeyForScanWithEnv } from "./gosaki-static-public-anon-key-resolver.mjs";
 
 export const ALLOWED_DEPLOY_ENV = "staging";
 export const REJECTED_ENVS = new Set(["production", "prod", "live", "www"]);
@@ -205,7 +205,7 @@ export function validatePublicDirForDeploy(publicDir, toolRoot) {
   const secrets = loadOptionalSecretsForScan(toolRoot);
   const secretValues = [secrets.serviceRoleKey, secrets.adminPassword, secrets.anonKey].filter(Boolean);
   const secretScan = scanPublicDirForSecrets(abs, secretValues);
-  const knownAnonKey = resolveKnownGosakiStagingAnonKeyForScan({
+  const knownAnonKey = resolveKnownGosakiStagingAnonKeyForScanWithEnv({
     secretsAnonKey: secrets.anonKey,
   });
   const supabaseScan = scanSupabaseKeyExposure(abs, { knownAnonKey });

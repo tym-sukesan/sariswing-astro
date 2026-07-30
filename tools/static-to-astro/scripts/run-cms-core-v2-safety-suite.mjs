@@ -56,6 +56,11 @@ const STEPS = [
     script: "verify-cms-core-v2-schedule-read-extractor-decoupling.mjs",
   },
   {
+    id: "static-public-artifact-verifier-adapter",
+    kind: "node",
+    script: "verify-cms-core-v2-static-public-artifact-verifier-site-adapter.mjs",
+  },
+  {
     id: "youtube-offline-vertical",
     kind: "node",
     script: "verify-cms-core-v2-youtube-supabase-vertical-slice.mjs",
@@ -111,7 +116,9 @@ const IMPORT_CYCLE_MODULES = [
   "save-arm-mutex-utils.mjs",
   "gosaki-operational-save-ui-arm-mutex-gate.mjs",
   "gosaki-schedule-read-adapter.mjs",
+  "gosaki-static-public-anon-key-resolver.mjs",
   "supabase-schedule-read.mjs",
+  "static-public-artifact-verifier.mjs",
   "site-cms-features.mjs",
 ];
 

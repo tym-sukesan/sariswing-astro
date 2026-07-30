@@ -14,7 +14,6 @@ import {
   verifyPublicDistSeoFlags,
   verifyStagingPreviewHtml,
 } from "./deploy-base.mjs";
-import { loadGosakiStagingAdminPublicEnv } from "./gosaki-staging-admin-public-env.mjs";
 import { loadExportEnv } from "./supabase-json-exporter.mjs";
 import { resolveStaticPublicVerifyOptions } from "./static-public-site-expectations.mjs";
 import { resolveIncludeReadOnlyAdminOption } from "./site-admin-features.mjs";
@@ -181,12 +180,17 @@ export function acceptSupabaseAnonJwtForAllowlist(token) {
 }
 
 /**
- * Resolve known Gosaki staging anon key for attribute-scoped allowlist.
- * Prefer explicit option / secrets; fall back to PUBLIC_SUPABASE_ANON_KEY.
+ * Resolve known staging anon key for attribute-scoped allowlist.
+ * Prefer explicit option / secrets; optional {@link resolveEnvAnonKey} for site adapters.
  * Every candidate is validated via {@link acceptSupabaseAnonJwtForAllowlist}.
  * If an explicit candidate is provided but rejected, do not fall through (fail closed).
+ * Without keys / callback → null (fail closed). Core does not load site env modules.
  *
- * @param {{ knownAnonKey?: string | null, secretsAnonKey?: string | null }} [opts]
+ * @param {{
+ *   knownAnonKey?: string | null,
+ *   secretsAnonKey?: string | null,
+ *   resolveEnvAnonKey?: (() => string | null | undefined) | null,
+ * }} [opts]
  */
 export function resolveKnownGosakiStagingAnonKeyForScan(opts = {}) {
   const knownRaw = String(opts.knownAnonKey ?? "").trim();
@@ -197,11 +201,12 @@ export function resolveKnownGosakiStagingAnonKeyForScan(opts = {}) {
   if (secretsRaw) {
     return acceptSupabaseAnonJwtForAllowlist(secretsRaw);
   }
-  try {
-    const env = loadGosakiStagingAdminPublicEnv();
-    return acceptSupabaseAnonJwtForAllowlist(env.PUBLIC_SUPABASE_ANON_KEY);
-  } catch {
-    // ignore — fail closed without a known key
+  if (typeof opts.resolveEnvAnonKey === "function") {
+    try {
+      return acceptSupabaseAnonJwtForAllowlist(opts.resolveEnvAnonKey());
+    } catch {
+      // ignore — fail closed without a known key
+    }
   }
   return null;
 }
@@ -422,11 +427,12 @@ export function scanPublicDirForSecrets(dir, secretValues) {
  * createClient inline keys, JS/JSON leaks outside the attribute.
  *
  * @param {string} dir
- * @param {{ knownAnonKey?: string | null }} [options]
+ * @param {{ knownAnonKey?: string | null, resolveEnvAnonKey?: (() => string | null | undefined) | null }} [options]
  */
 export function scanSupabaseKeyExposure(dir, options = {}) {
   const knownAnonKey = resolveKnownGosakiStagingAnonKeyForScan({
     knownAnonKey: options.knownAnonKey,
+    resolveEnvAnonKey: options.resolveEnvAnonKey,
   });
   const files = listPublicFiles(dir);
   /** @type {Array<{ file: string, kind: string }>} */
@@ -521,7 +527,16 @@ export function loadOptionalSecretsForScan(toolRoot) {
 }
 
 /**
- * @param {{ astroDir: string, toolRoot: string, publicDirCli?: string | null, manifestOutDir?: string | null, includeReadOnlyAdmin?: boolean, includeGosakiReadOnlyAdmin?: boolean, siteKey?: string | null }} opts
+ * @param {{
+ *   astroDir: string,
+ *   toolRoot: string,
+ *   publicDirCli?: string | null,
+ *   manifestOutDir?: string | null,
+ *   includeReadOnlyAdmin?: boolean,
+ *   includeGosakiReadOnlyAdmin?: boolean,
+ *   siteKey?: string | null,
+ *   resolveEnvAnonKey?: (() => string | null | undefined) | null,
+ * }} opts
  */
 export function runStaticPublicArtifactVerification({
   astroDir,
@@ -531,6 +546,7 @@ export function runStaticPublicArtifactVerification({
   includeReadOnlyAdmin: includeReadOnlyAdminOverride = undefined,
   includeGosakiReadOnlyAdmin: includeGosakiLegacyOverride = undefined,
   siteKey = null,
+  resolveEnvAnonKey = null,
 }) {
   const astroAbs = path.resolve(astroDir);
   const publicDir = detectPublicDir(astroAbs, publicDirCli);
@@ -590,6 +606,7 @@ export function runStaticPublicArtifactVerification({
 
   const knownAnonKey = resolveKnownGosakiStagingAnonKeyForScan({
     secretsAnonKey: secrets.anonKey,
+    resolveEnvAnonKey,
   });
   result.supabaseKeyScanRaw = scanSupabaseKeyExposure(publicDir, { knownAnonKey });
 

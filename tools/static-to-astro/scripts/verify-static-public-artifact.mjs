@@ -15,6 +15,7 @@ import {
   formatStaticPublicArtifactReport,
   runStaticPublicArtifactVerification,
 } from "./lib/static-public-artifact-verifier.mjs";
+import { resolveGosakiEnvAnonKeyForStaticPublicScan } from "./lib/gosaki-static-public-anon-key-resolver.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const TOOL_ROOT = path.resolve(__dirname, "..");
@@ -155,6 +156,7 @@ async function main() {
     includeReadOnlyAdmin: opts.includeReadOnlyAdmin,
     includeGosakiReadOnlyAdmin: opts.includeGosakiReadOnlyAdmin,
     siteKey: opts.siteKey,
+    resolveEnvAnonKey: resolveGosakiEnvAnonKeyForStaticPublicScan,
   });
 
   fs.mkdirSync(path.dirname(reportPath), { recursive: true });

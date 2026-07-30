@@ -9,6 +9,31 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 4. **並行可 / 別承認:** YouTube 複数件 **永続 Save**（NON_BLOCKING）。
 5. Save arm **false** · `readyForAnyFutureFtpApply: false` · production STOP · `service_role` 禁止 · **deployed package 固定**.
 
+## 0. CMS Core v2 static-public artifact verifier site-adapter decoupling (2026-07-30)
+
+| Item | Value |
+| --- | --- |
+| Gate | `CMS_CORE_V2_STATIC_PUBLIC_ARTIFACT_VERIFIER_SITE_ADAPTER_DECOUPLING_COMPLETE: true` |
+| Phase | `cms-core-v2-static-public-artifact-verifier-site-adapter-decoupling` |
+| Core | `static-public-artifact-verifier` — no `gosaki-staging-admin-public-env` |
+| Adapter | `gosaki-static-public-anon-key-resolver.mjs` |
+| Doc | `cms-core-v2-static-public-artifact-verifier-site-adapter-decoupling.md` |
+| npm | `verify:cms-core-v2-static-public-artifact-verifier-adapter` |
+| Behavior | **unchanged** (Gosaki entrypoints inject env resolver) |
+
+```txt
+CMS_CORE_V2_STATIC_PUBLIC_ARTIFACT_VERIFIER_SITE_ADAPTER_DECOUPLING_COMPLETE: true
+CORE_GOSAKI_ADMIN_PUBLIC_ENV_IMPORT_REMOVED: true
+STAGING_REF_STOP_UNCHANGED: true
+RUNTIME_BEHAVIOR_CHANGED: false
+PACKAGE_GENERATE_EXECUTED: false
+FTP_EXECUTED: false
+GOSAKI_CLIENT_SHARE_READY_MAINTAINED: true
+deployedPackageSourceCommitUnchanged: dc1c5b62a58d0462ad6629db4847256d316d4a38
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+PRODUCTION_UNCHANGED: true
+```
+
 ## 0. CMS Core v2 schedule-read extractor decoupling (2026-07-30)
 
 | Item | Value |

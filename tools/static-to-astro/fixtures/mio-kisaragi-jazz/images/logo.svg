@@ -1,6 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="120" height="40" viewBox="0 0 120 40" role="img" aria-label="Mio Kisaragi mark">
-  <rect width="120" height="40" fill="#1c1712"/>
-  <circle cx="18" cy="20" r="7" fill="none" stroke="#b8893d" stroke-width="1.5"/>
-  <path d="M18 13v14M11 20h14" stroke="#b8893d" stroke-width="1.2"/>
-  <text x="34" y="24" fill="#f2ebe0" font-family="Georgia, serif" font-size="14">MIO</text>
-</svg>

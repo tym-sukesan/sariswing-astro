@@ -5,31 +5,40 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: CMS Core v2 global Save arm mutex helper COMPLETE (unwired)
-Phase: cms-core-v2-global-save-arm-mutex-helper
-Helper: scripts/lib/save-arm-mutex-utils.mjs · evaluateOperationalClientSaveUiMutex
-MUTEX_EVALUATOR_AVAILABLE: true · MUTEX_EVALUATOR_WIRED: false
-PACKAGE_GENERATE_GATE_WIRED: false · GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED: false
-npm: verify:cms-core-v2-global-save-arm-mutex-helper · verify:cms-core-v2-global-save-arm-mutex-inventory
+Current phase: CMS Core v2 global Save arm mutex package gate COMPLETE
+Phase: cms-core-v2-global-save-arm-mutex-package-gate
+Adapter: scripts/lib/gosaki-operational-save-ui-arm-mutex-gate.mjs
+Wire: entrypoint inject beforeFirstFilesystemWrite / beforePackageDirMutation (Core site-agnostic)
+MUTEX_EVALUATOR_AVAILABLE: true · MUTEX_EVALUATOR_WIRED: true
+PACKAGE_GENERATE_GATE_WIRED: true · GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED: true
+ADMIN_RUNTIME_MUTEX_WIRED: false
+npm: verify:cms-core-v2-global-save-arm-mutex-package-gate (+ inventory / helper)
 PARSE_POLICY_FULLY_IMPLEMENTED: true (separate)
 Gosaki CLIENT_SHARE_READY: true (maintained)
 deployed package: dc1c5b62a58d0462ad6629db4847256d316d4a38 (unchanged; no regen)
+seedAppliedStaging: true
+readyForOperatorAboutSeedApply: false
 Next Primary (ops): share staging with client
-Next (Kit Core): mutex package generate gate (explicit approval)
-  Parallel: Edge shared arm helper · Contents YouTube retire separate
+Next (Kit Core): Admin runtime mutex (explicit approval) · Edge shared arm helper · Contents YouTube retire separate
 readyForAnyFutureFtpApply: false
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
-Doc: cms-core-v2-global-save-arm-mutex-policy.md §15
+Doc: cms-core-v2-global-save-arm-mutex-policy.md §16
 ```
+
+## CMS Core v2 global Save arm mutex package gate (2026-07-30)
+
+- Gosaki inventory 6 → exact-true → Core evaluate · fail-closed before package FS writes
+- Optional PACKAGE_RUN mutex evidence · no Secrets · Admin runtime unwired
+- Doc: `cms-core-v2-global-save-arm-mutex-policy.md` §16
 
 ## CMS Core v2 global Save arm mutex helper (2026-07-30)
 
-- Site-agnostic evaluate helper · unwired from package/Admin/Edge
+- Site-agnostic evaluate helper · wired via package gate (§16)
 - Doc: `cms-core-v2-global-save-arm-mutex-policy.md` §15
 
 ## CMS Core v2 global Save arm mutex inventory verifier (2026-07-29)
 
-- Locked 6 operational client Save UI arms · discovery cross-check · mutex still unimplemented as gate
+- Locked 6 operational client Save UI arms · discovery cross-check
 - Doc: `cms-core-v2-global-save-arm-mutex-policy.md` §14
 
 ## CMS Core v2 global Save arm mutex policy (2026-07-29)

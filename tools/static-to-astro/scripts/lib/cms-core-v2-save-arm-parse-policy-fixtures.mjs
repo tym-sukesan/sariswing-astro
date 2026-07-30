@@ -190,9 +190,10 @@ export const ARM_PARSE_FIXTURE_MATRIX = Object.freeze([
   { label: "junk-yes", raw: "yes", policy: false, clientA: false, serverB: false, historicalTrim: false },
 ]);
 
-/** Parse policy (exact true client+server) fully implemented. Multi-arm mutex is separate. */
+/** Parse policy (exact true client+server) fully implemented. Multi-arm mutex: see save-arm-mutex-utils. */
 export const POLICY_FULLY_IMPLEMENTED = true;
 export const PARSE_POLICY_FULLY_IMPLEMENTED = true;
-export const GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED = false;
+/** Re-export Core mutex flag (package generate gate wired · Admin runtime still false). */
+export { GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED } from "./save-arm-mutex-utils.mjs";
 export const KNOWN_DIVERGENCE_REASON = "";
 export const CLIENT_TRIM_DIVERGENCE_COUNT = 0;

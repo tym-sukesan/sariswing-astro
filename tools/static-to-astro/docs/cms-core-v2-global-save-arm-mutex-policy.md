@@ -6,7 +6,7 @@
 - **Repo HEAD:** `e508acf34a270b3db678301fa2812f0783f93817`
 - **Gosaki deployed staging package (fixed):** `dc1c5b62a58d0462ad6629db4847256d316d4a38`
 - **CLIENT_SHARE_READY:** **true**（維持 · regen 不要）
-- **Related:** parse policy `cms-core-v2-save-arm-parse-policy.md` · `GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED: false`（実装未）
+- **Related:** parse policy `cms-core-v2-save-arm-parse-policy.md` · `GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED: true`（package generate gate · Admin runtime still unwired）
 - **This phase:** unified mutex contract for operational Save UI arms · **no** Save / package / FTP / Edge / commit
 
 ---
@@ -303,7 +303,7 @@ Recommended order after this docs phase:
 
 1. **`cms-core-v2-global-save-arm-mutex-inventory-verifier`** — **Done** (§14)
 2. **`cms-core-v2-global-save-arm-mutex-helper`** — **Done** (§15) · Core evaluate helper, **unwired**
-3. **`cms-core-v2-global-save-arm-mutex-package-gate`** — wire generate + verifier (explicit approval; no forced client-ready regen)
+3. **`cms-core-v2-global-save-arm-mutex-package-gate`** — **Done** (§16) · Gosaki package generate fail-closed gate · Admin runtime still unwired
 
 Parallel (unrelated): Edge shared `isSaveArmExactTrue` mirror · Contents YouTube retire · client staging share ops.
 
@@ -406,4 +406,62 @@ PRODUCTION_UNCHANGED: true
 
 ### Next
 
-Wire into **package generate / verifier** only with explicit approval (`cms-core-v2-global-save-arm-mutex-package-gate`). Do not force client-ready package regen.
+~~Wire into package generate~~ → **Done** (§16). Admin runtime mutex remains deferred (`ADMIN_RUNTIME_MUTEX_WIRED: false`).
+
+---
+
+## 16. Package generate gate (`cms-core-v2-global-save-arm-mutex-package-gate`)
+
+- **Status:** **COMPLETE**
+- **Date:** 2026-07-30
+- **Gosaki adapter:** `scripts/lib/gosaki-operational-save-ui-arm-mutex-gate.mjs`
+- **Core evaluate:** `evaluateOperationalClientSaveUiMutex` (unchanged contract)
+- **Exact-true:** `isSaveArmExactTrue` on inventory 6 client envs
+- **Wire points (before first FS mutation · injection, not Core←Gosaki import):**
+  1. Gosaki / generic entrypoints inject `createGosakiBeforeFirstFilesystemWrite` → `runSitePackageBuild({ beforeFirstFilesystemWrite })` — **before** `relocateExistingManualUploadPackageToStaleBackup`
+  2. Standalone `create-manual-upload-package.mjs` injects `createGosakiBeforePackageDirMutation` → `createManualUploadPackage({ beforePackageDirMutation })` — **before** `fs.rmSync` / `mkdirSync`
+  3. `runSitePackageBuild` → `createManualUploadPackage` does **not** re-inject (authoritative gate once per pipeline)
+- **Core** (`build-site-package-core` / `manual-upload-package`): optional callbacks only · **no** `gosaki-operational-save-ui-arm-mutex-*` import
+- **PASS:** armedCount 0 or 1 → continue
+- **FAIL (stop, no package FS update):** armedCount ≥ 2 · invalid input · Contents+Supabase dual both `"true"`
+- **Out of scope:** path-enable / build-read / dry-run · server Secrets · Admin runtime
+- **Marker evidence (optional, no secrets):** `mutexChecked` · `mutexReason` · `armedCount` · `armedFeatureIds` on new PACKAGE_RUN only (legacy markers without fields remain valid)
+- **Deployed client-ready package:** **not regenerated** (`dc1c5b6…` maintained)
+- **Verifier:** `scripts/verify-cms-core-v2-global-save-arm-mutex-package-gate.mjs` · npm `verify:cms-core-v2-global-save-arm-mutex-package-gate` · tempdir fixtures only
+
+```txt
+CMS_CORE_V2_GLOBAL_SAVE_ARM_MUTEX_PACKAGE_GATE_COMPLETE: true
+MUTEX_EVALUATOR_AVAILABLE: true
+MUTEX_EVALUATOR_WIRED: true
+PACKAGE_GENERATE_GATE_WIRED: true
+GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED: true
+ADMIN_RUNTIME_MUTEX_WIRED: false
+PACKAGE_GENERATE_EXECUTED: false
+FTP_EXECUTED: false
+GOSAKI_CLIENT_SHARE_READY_MAINTAINED: true
+deployedPackageSourceCommitUnchanged: dc1c5b62a58d0462ad6629db4847256d316d4a38
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+PRODUCTION_UNCHANGED: true
+```
+
+### PASS / FAIL matrix (fixture)
+
+| Case | Result |
+| --- | --- |
+| all false | PASS |
+| 1 arm `"true"` | PASS |
+| Schedule + About `"true"` | FAIL `multiple_operational_save_arms` |
+| YouTube Contents + Supabase `"true"` | FAIL |
+| About Contents + Supabase `"true"` | FAIL |
+| `" true "` | disarmed → PASS (0) |
+| invalid entries | FAIL `invalid_operational_save_arm_input` |
+| FAIL | no probe / package dir / marker write |
+| PASS | onPass / subsequent generate may proceed |
+
+### Order vs other gates
+
+`staging-ref / PUBLIC env validate` → `git clean` → **mutex** → relocate / mkdir → convert → package → marker
+
+### Next
+
+Admin runtime mutex wiring only with explicit approval (`ADMIN_RUNTIME_MUTEX_WIRED` stays false). Do not force client-ready regen.

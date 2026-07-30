@@ -5,20 +5,24 @@
  * Does NOT parse env strings, touch Secrets, or gate production.
  * Does NOT import Gosaki (or any site) inventory.
  *
- * Runtime / package / Admin wiring is intentionally deferred —
- * see cms-core-v2-global-save-arm-mutex-policy.md.
+ * Package generate gate is wired (Gosaki adapter). Admin runtime remains unwired —
+ * see cms-core-v2-global-save-arm-mutex-policy.md §16.
  *
  * Flags:
  * - MUTEX_EVALUATOR_AVAILABLE: true (this module exists)
- * - MUTEX_EVALUATOR_WIRED: false until an explicit wiring phase
- * - GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED: false until package/runtime gate lands
+ * - MUTEX_EVALUATOR_WIRED: true (package generate gate uses this evaluator)
+ * - PACKAGE_GENERATE_GATE_WIRED: true
+ * - GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED: true (package generate gate)
+ * - ADMIN_RUNTIME_MUTEX_WIRED: false (do not confuse with package gate)
  */
 
 export const MUTEX_EVALUATOR_AVAILABLE = true;
-export const MUTEX_EVALUATOR_WIRED = false;
-export const PACKAGE_GENERATE_GATE_WIRED = false;
-/** Full mutex gate (package generate / runtime) still unimplemented. */
-export const GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED = false;
+export const MUTEX_EVALUATOR_WIRED = true;
+export const PACKAGE_GENERATE_GATE_WIRED = true;
+/** Package generate gate landed; Admin runtime still unwired. */
+export const GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED = true;
+/** Admin / browser runtime mutex still unwired — not package generate. */
+export const ADMIN_RUNTIME_MUTEX_WIRED = false;
 
 export const MUTEX_REASON = Object.freeze({
   NO_OPERATIONAL_SAVE_ARM: "no_operational_save_arm",

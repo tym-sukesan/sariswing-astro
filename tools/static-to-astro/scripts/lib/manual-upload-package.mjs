@@ -527,6 +527,10 @@ export function resolvePackageZipName(siteSlug, packageProfileName) {
 
 /**
  * @param {object} opts
+ * @param {(() => void)=} opts.beforePackageDirMutation
+ *   Optional site-adapter preflight (throws on FAIL). Injected by standalone
+ *   entrypoints only — do not pass when `runSitePackageBuild` already ran the
+ *   authoritative `beforeFirstFilesystemWrite` gate (avoids double eval).
  */
 export function createManualUploadPackage(opts) {
   const {
@@ -547,6 +551,7 @@ export function createManualUploadPackage(opts) {
     cmsSiteSlug,
     supabaseSiteSlug,
     packageKey,
+    beforePackageDirMutation,
   } = opts;
 
   const profileName =
@@ -573,6 +578,19 @@ export function createManualUploadPackage(opts) {
   const manifestPath = path.join(packageDir, "MANIFEST.json");
   const zipName = resolvePackageZipName(siteSlug, profileName);
   const zipPath = path.join(packageDir, zipName);
+
+  // Optional injected preflight — BEFORE rm/mkdir/copy (standalone entry only).
+  if (typeof beforePackageDirMutation === "function") {
+    try {
+      beforePackageDirMutation();
+    } catch (err) {
+      return {
+        ok: false,
+        errors: [err instanceof Error ? err.message : String(err)],
+        packageDir: null,
+      };
+    }
+  }
 
   if (fs.existsSync(packageDir)) {
     fs.rmSync(packageDir, { recursive: true, force: true });

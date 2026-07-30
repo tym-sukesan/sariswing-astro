@@ -340,7 +340,7 @@ no trim · no case-fold · no throw
 - **Not changed:** Edge / Deno / server arms · path-enable / build-read trim · dual-arm · production STOP · Save arm live values · UI layout
 - **R1 resolved:** `" true "` now **disarmed** on client (matches server)
 - **Parse policy:** `PARSE_POLICY_FULLY_IMPLEMENTED: true` · `CLIENT_TRIM_DIVERGENCE_COUNT: 0`
-- **Multi-arm mutex:** still **unimplemented** (`GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED: false`) — separate from parse policy
+- **Multi-arm mutex:** package generate gate **wired** (`GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED: true`) — see `cms-core-v2-global-save-arm-mutex-policy.md` §16 · Admin runtime still unwired
 
 ### Matrix (post wiring)
 
@@ -356,7 +356,7 @@ CMS_CORE_V2_SAVE_ARM_CLIENT_EXACT_TRUE_WIRING_COMPLETE: true
 PARSE_POLICY_FULLY_IMPLEMENTED: true
 POLICY_FULLY_IMPLEMENTED: true
 CLIENT_TRIM_DIVERGENCE_COUNT: 0
-GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED: false
+GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED: true
 HELPER_WIRED_TO_CLIENT_BAKE: true
 HELPER_WIRED_TO_EDGE: false
 SAVE_ARM_LIVE_VALUES_UNCHANGED: true

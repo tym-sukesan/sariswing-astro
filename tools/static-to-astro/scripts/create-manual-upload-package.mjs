@@ -19,6 +19,7 @@ import { fileURLToPath } from "node:url";
 import { createManualUploadPackage } from "./lib/manual-upload-package.mjs";
 import { listSiteKeys, resolvePackageManifestMetaFromRegistry } from "./lib/site-registry.mjs";
 import { assertGitWorkingTreeCleanForManualUploadPackage } from "./lib/package-upload-safety.mjs";
+import { createGosakiBeforePackageDirMutation } from "./lib/gosaki-operational-save-ui-arm-mutex-gate.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const TOOL_ROOT = path.resolve(__dirname, "..");
@@ -220,6 +221,7 @@ function main() {
     process.exit(1);
   }
 
+  const resolvedSiteKey = opts.registryMeta?.siteKey ?? opts.siteKey ?? null;
   const result = createManualUploadPackage({
     publicDistDir: path.isAbsolute(opts.publicDir)
       ? opts.publicDir
@@ -236,10 +238,12 @@ function main() {
     repoRoot: REPO_ROOT,
     includeReadOnlyAdmin: opts.includeReadOnlyAdmin,
     includeGosakiReadOnlyAdmin: opts.includeGosakiReadOnlyAdmin ?? opts.includeReadOnlyAdmin,
-    siteKey: opts.registryMeta?.siteKey ?? opts.siteKey ?? null,
+    siteKey: resolvedSiteKey,
     cmsSiteSlug: opts.registryMeta?.cmsSiteSlug ?? null,
     supabaseSiteSlug: opts.registryMeta?.supabaseSiteSlug ?? opts.siteSlug,
     packageKey: opts.registryMeta?.packageKey ?? null,
+    // Standalone entry only — runSitePackageBuild must NOT pass this (authoritative gate already ran).
+    beforePackageDirMutation: createGosakiBeforePackageDirMutation(resolvedSiteKey),
   });
 
   if (!result.ok) {

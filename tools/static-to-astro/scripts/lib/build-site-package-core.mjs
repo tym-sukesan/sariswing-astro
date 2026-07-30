@@ -125,10 +125,26 @@ export function buildConvertCliArgs(siteKey, profileName, options = {}) {
  *   dryRun?: boolean,
  *   label?: string,
  *   toolRoot?: string,
+ *   beforeFirstFilesystemWrite?: (ctx: {
+ *     env: NodeJS.ProcessEnv,
+ *     siteKey: string,
+ *   }) => { mutex?: {
+ *     mutexChecked?: boolean,
+ *     mutexReason?: string,
+ *     armedCount?: number,
+ *     armedFeatureIds?: string[],
+ *   } | null } | void,
  * }} options
  */
 export function runSitePackageBuild(options) {
-  const { siteKey, profileName, dryRun = false, label, toolRoot = TOOL_ROOT } = options;
+  const {
+    siteKey,
+    profileName,
+    dryRun = false,
+    label,
+    toolRoot = TOOL_ROOT,
+    beforeFirstFilesystemWrite,
+  } = options;
   const plan = planSitePackageBuild(siteKey, profileName, { toolRoot });
   const { profile, manifestMeta, convertSiteProfile, publicDistDir, packageDir, verifierRel } =
     plan;
@@ -209,6 +225,24 @@ export function runSitePackageBuild(options) {
   } catch (err) {
     console.error(`[package-git] ${err instanceof Error ? err.message : String(err)}`);
     process.exit(1);
+  }
+
+  // Optional site adapter preflight (e.g. Gosaki Save UI arm mutex) — BEFORE any package FS mutation.
+  // Injected by entrypoints; Core stays site-agnostic (no gosaki-* mutex/inventory import).
+  /** @type {{ mutexChecked?: boolean, mutexReason?: string, armedCount?: number, armedFeatureIds?: string[] } | null} */
+  let mutexEvidence = null;
+  if (typeof beforeFirstFilesystemWrite === "function") {
+    try {
+      const preflightOut = beforeFirstFilesystemWrite({ env: buildEnv, siteKey });
+      if (preflightOut && typeof preflightOut === "object" && preflightOut.mutex) {
+        mutexEvidence = preflightOut.mutex;
+      }
+    } catch (err) {
+      console.error(
+        `ERROR: ${err instanceof Error ? err.message : String(err)}`,
+      );
+      process.exit(1);
+    }
   }
 
   // Fail-closed stale relocate: move existing package aside before convert/build.
@@ -310,6 +344,7 @@ export function runSitePackageBuild(options) {
     bake,
     buildReadEvidence,
     sourceTreeClean: true,
+    mutex: mutexEvidence,
   });
   const markerPath = writePackageRunMarker(packageDir, marker);
   console.log(

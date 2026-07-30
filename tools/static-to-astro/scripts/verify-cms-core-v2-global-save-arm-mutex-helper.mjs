@@ -14,6 +14,7 @@ import { fileURLToPath } from "node:url";
 import { MUTEX_EVAL_FIXTURE_MATRIX } from "./lib/cms-core-v2-save-arm-mutex-eval-fixtures.mjs";
 import { GOSAKI_OPERATIONAL_CLIENT_SAVE_UI_ARMS } from "./lib/gosaki-operational-save-ui-arm-inventory.mjs";
 import {
+  ADMIN_RUNTIME_MUTEX_WIRED,
   GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED,
   MUTEX_EVALUATOR_AVAILABLE,
   MUTEX_EVALUATOR_WIRED,
@@ -74,12 +75,13 @@ assert("helper has no gosaki import", !/from ["'].*gosaki-/i.test(helperSrc));
 assert("helper has no env parse", !/isSaveArmExactTrue|process\.env|Deno\.env/.test(helperSrc));
 assert("helper has no production ref", !/vsbvndwuajjhnzpohghh|PRODUCTION_REF/.test(helperSrc));
 assert("MUTEX_EVALUATOR_AVAILABLE true", MUTEX_EVALUATOR_AVAILABLE === true);
-assert("MUTEX_EVALUATOR_WIRED false", MUTEX_EVALUATOR_WIRED === false);
-assert("PACKAGE_GENERATE_GATE_WIRED false", PACKAGE_GENERATE_GATE_WIRED === false);
+assert("MUTEX_EVALUATOR_WIRED true", MUTEX_EVALUATOR_WIRED === true);
+assert("PACKAGE_GENERATE_GATE_WIRED true", PACKAGE_GENERATE_GATE_WIRED === true);
 assert(
-  "GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED false",
-  GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED === false,
+  "GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED true",
+  GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED === true,
 );
+assert("ADMIN_RUNTIME_MUTEX_WIRED false", ADMIN_RUNTIME_MUTEX_WIRED === false);
 
 // --- Fixture matrix ---
 for (const row of MUTEX_EVAL_FIXTURE_MATRIX) {
@@ -167,12 +169,18 @@ assert(
   ytPairResult.reason === MUTEX_REASON.MULTIPLE_OPERATIONAL_SAVE_ARMS,
 );
 
-// --- Unwired from runtime / package / Admin ---
+// --- Wired to package gate only; Admin / Edge remain unwired ---
 const allowBase = new Set([
   "save-arm-mutex-utils.mjs",
   "cms-core-v2-save-arm-mutex-eval-fixtures.mjs",
   "verify-cms-core-v2-global-save-arm-mutex-helper.mjs",
   "verify-cms-core-v2-global-save-arm-mutex-inventory.mjs",
+  "verify-cms-core-v2-global-save-arm-mutex-package-gate.mjs",
+  "gosaki-operational-save-ui-arm-mutex-gate.mjs",
+  "gosaki-operational-save-ui-arm-inventory.mjs",
+  "build-site-package-core.mjs",
+  "manual-upload-package.mjs",
+  "cms-core-v2-save-arm-parse-policy-fixtures.mjs",
 ]);
 const wireRoots = [
   path.join(TOOL_ROOT, "templates/site-extensions/gosaki-piano"),
@@ -191,7 +199,7 @@ const wireHits = wireFiles.filter((f) => {
   );
 });
 assert(
-  "helper unwired from package/Admin/Edge runtime",
+  "helper not wired to Admin/Edge (package gate allowlisted)",
   wireHits.length === 0,
   wireHits.map((f) => path.relative(REPO_ROOT, f)).join(", "),
 );
@@ -204,7 +212,7 @@ assert(
   ),
 );
 
-// Gosaki inventory must not import Core mutex helper yet (adapter → Core reverse for eval deferred)
+// Gosaki inventory must not import Core mutex helper (gate adapter does)
 const invSrc = fs.readFileSync(
   path.join(TOOL_ROOT, "scripts/lib/gosaki-operational-save-ui-arm-inventory.mjs"),
   "utf8",
@@ -225,18 +233,19 @@ assert(
   /MUTEX_EVALUATOR_AVAILABLE:\s*true/.test(doc),
 );
 assert(
-  "policy MUTEX_EVALUATOR_WIRED false",
-  /MUTEX_EVALUATOR_WIRED:\s*false/.test(doc),
+  "policy §16 MUTEX_EVALUATOR_WIRED true",
+  /## 16[\s\S]*MUTEX_EVALUATOR_WIRED:\s*true/.test(doc),
 );
 assert(
-  "policy GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED false",
-  /GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED:\s*false/.test(doc),
+  "policy §16 GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED true",
+  /## 16[\s\S]*GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED:\s*true/.test(doc),
 );
 
 console.log(`\nMUTEX_EVALUATOR_AVAILABLE: ${MUTEX_EVALUATOR_AVAILABLE}`);
 console.log(`MUTEX_EVALUATOR_WIRED: ${MUTEX_EVALUATOR_WIRED}`);
 console.log(`PACKAGE_GENERATE_GATE_WIRED: ${PACKAGE_GENERATE_GATE_WIRED}`);
 console.log(`GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED: ${GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED}`);
+console.log(`ADMIN_RUNTIME_MUTEX_WIRED: ${ADMIN_RUNTIME_MUTEX_WIRED}`);
 console.log(`\n${passed} passed, ${failed} failed`);
 if (failed > 0) process.exit(1);
 console.log("OK cms-core-v2-global-save-arm-mutex-helper");

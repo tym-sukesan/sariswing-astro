@@ -9,9 +9,11 @@
 
 import { runSitePackageBuild } from "./lib/build-site-package-core.mjs";
 import { GOSAKI_SITE_KEY } from "./lib/site-registry.mjs";
+import { createGosakiBeforeFirstFilesystemWrite } from "./lib/gosaki-operational-save-ui-arm-mutex-gate.mjs";
 
 runSitePackageBuild({
   siteKey: GOSAKI_SITE_KEY,
   profileName: "production",
   label: "G-20i3 Gosaki production package build",
+  beforeFirstFilesystemWrite: createGosakiBeforeFirstFilesystemWrite(GOSAKI_SITE_KEY),
 });

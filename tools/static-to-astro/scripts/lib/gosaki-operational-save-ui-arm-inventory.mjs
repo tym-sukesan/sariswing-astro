@@ -1,7 +1,8 @@
 /**
  * Gosaki site adapter — operational client Save UI arm inventory (mutex v1).
  *
- * Site-specific registration only. Does NOT evaluate mutex (unimplemented).
+ * Site-specific registration only. Does NOT evaluate mutex
+ * (evaluation lives in Core mutex utils + Gosaki package gate adapter).
  * Core helpers must not import this file for generic Kit logic.
  *
  * Policy: tools/static-to-astro/docs/cms-core-v2-global-save-arm-mutex-policy.md
@@ -30,8 +31,8 @@
  * @property {boolean} mutexTargetV1
  */
 
-/** Mutex still unimplemented — inventory / verifier only. */
-export const GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED = false;
+/** Package generate gate implements mutex; inventory remains registration-only. */
+export const GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED = true;
 
 export const GOSAKI_MUTEX_INVENTORY_SITE_KEY = "gosaki-piano";
 

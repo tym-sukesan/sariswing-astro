@@ -278,8 +278,8 @@ assert("PARSE_POLICY_FULLY_IMPLEMENTED true", PARSE_POLICY_FULLY_IMPLEMENTED ===
 assert("POLICY_FULLY_IMPLEMENTED true (parse)", POLICY_FULLY_IMPLEMENTED === true);
 assert("CLIENT_TRIM_DIVERGENCE_COUNT 0", CLIENT_TRIM_DIVERGENCE_COUNT === 0);
 assert(
-  "GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED false",
-  GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED === false,
+  "GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED true",
+  GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED === true,
 );
 
 const templateHelper = path.join(
@@ -506,10 +506,10 @@ const serverCompliant = SAVE_ARM_INVENTORY.filter(
 assert("all 6 clients marked compliant (exact)", clientCompliant.length === 6);
 assert("all 6 servers marked compliant (exact)", serverCompliant.length === 6);
 assert(
-  "parse policy fully implemented; multi-arm mutex still separate",
+  "parse policy fully implemented; multi-arm mutex package gate separate but implemented",
   PARSE_POLICY_FULLY_IMPLEMENTED === true &&
     POLICY_FULLY_IMPLEMENTED === true &&
-    GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED === false &&
+    GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED === true &&
     CLIENT_TRIM_DIVERGENCE_COUNT === 0,
 );
 

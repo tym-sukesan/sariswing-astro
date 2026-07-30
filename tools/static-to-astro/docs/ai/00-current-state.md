@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**CMS Core v2 global Save arm mutex helper (2026-07-30):** **COMPLETE (unwired)** — Phase `cms-core-v2-global-save-arm-mutex-helper` · Core `scripts/lib/save-arm-mutex-utils.mjs` · `evaluateOperationalClientSaveUiMutex` · **MUTEX_EVALUATOR_AVAILABLE: true** · **MUTEX_EVALUATOR_WIRED: false** · **PACKAGE_GENERATE_GATE_WIRED: false** · **GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED: false** · npm `verify:cms-core-v2-global-save-arm-mutex-helper` · Doc: `cms-core-v2-global-save-arm-mutex-policy.md` §15 · Gate: `CMS_CORE_V2_GLOBAL_SAVE_ARM_MUTEX_HELPER_COMPLETE: true` · **Next:** package generate gate wiring（**別承認**）· 並行: client staging share.
+**CMS Core v2 global Save arm mutex package gate (2026-07-30):** **COMPLETE** — Phase `cms-core-v2-global-save-arm-mutex-package-gate` · Gosaki adapter `gosaki-operational-save-ui-arm-mutex-gate.mjs` · wired in `runSitePackageBuild` (before relocate) + `createManualUploadPackage` (before rm/mkdir) · **MUTEX_EVALUATOR_AVAILABLE: true** · **MUTEX_EVALUATOR_WIRED: true** · **PACKAGE_GENERATE_GATE_WIRED: true** · **GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED: true** · **ADMIN_RUNTIME_MUTEX_WIRED: false** · npm `verify:cms-core-v2-global-save-arm-mutex-package-gate` · Doc: `cms-core-v2-global-save-arm-mutex-policy.md` §16 · Gate: `CMS_CORE_V2_GLOBAL_SAVE_ARM_MUTEX_PACKAGE_GATE_COMPLETE: true` · **実package未実行** · deployed `dc1c5b6…` 未再生成 · **Next:** client staging share · Admin runtime mutex は別承認.
+
+**CMS Core v2 global Save arm mutex helper (2026-07-30):** **COMPLETE** — Core evaluate helper · now wired via package gate (§16) · Doc: `cms-core-v2-global-save-arm-mutex-policy.md` §15.
 
 **CMS Core v2 global Save arm mutex inventory verifier (2026-07-29):** **COMPLETE** — Gosaki adapter 6 arms · discovery cross-check · Doc: `cms-core-v2-global-save-arm-mutex-policy.md` §14 · Gate: `CMS_CORE_V2_GLOBAL_SAVE_ARM_MUTEX_INVENTORY_VERIFIER_COMPLETE: true`.
 

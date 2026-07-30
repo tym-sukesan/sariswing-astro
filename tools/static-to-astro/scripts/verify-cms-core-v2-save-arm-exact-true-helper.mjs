@@ -94,8 +94,8 @@ assert("PARSE_POLICY_FULLY_IMPLEMENTED true", PARSE_POLICY_FULLY_IMPLEMENTED ===
 assert("POLICY_FULLY_IMPLEMENTED true", POLICY_FULLY_IMPLEMENTED === true);
 assert("CLIENT_TRIM_DIVERGENCE_COUNT 0", CLIENT_TRIM_DIVERGENCE_COUNT === 0);
 assert(
-  "GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED false",
-  GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED === false,
+  "GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED true",
+  GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED === true,
 );
 
 // Client bake wired; Edge / supabase functions must NOT import save-arm-utils
@@ -127,10 +127,13 @@ const libHits = libFiles.filter((f) => {
   const text = fs.readFileSync(f, "utf8");
   return /save-arm-utils|isSaveArmExactTrue/.test(text);
 });
-const allowedLib = new Set(["package-run-marker.mjs"]);
+const allowedLib = new Set([
+  "package-run-marker.mjs",
+  "gosaki-operational-save-ui-arm-mutex-gate.mjs",
+]);
 const unexpectedLib = libHits.filter((f) => !allowedLib.has(path.basename(f)));
 assert(
-  "helper lib wiring limited to package-run-marker (+ fixtures)",
+  "helper lib wiring limited to package-run-marker + mutex package gate (+ fixtures)",
   unexpectedLib.length === 0,
   unexpectedLib.map((f) => path.basename(f)).join(", "),
 );
@@ -185,8 +188,9 @@ assert(
   /PARSE_POLICY_FULLY_IMPLEMENTED:\s*true/.test(doc),
 );
 assert(
-  "doc GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED false",
-  /GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED:\s*false/.test(doc),
+  "doc GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED true (post package-gate)",
+  /GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED:\s*true/.test(doc) ||
+    /GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED:\s*\*\*true\*\*/.test(doc),
 );
 
 console.log(`\nHELPER_WIRED_TO_CLIENT_BAKE: true`);

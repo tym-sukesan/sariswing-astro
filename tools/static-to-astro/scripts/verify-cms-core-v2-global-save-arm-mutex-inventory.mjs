@@ -108,12 +108,12 @@ assert("inventory file exists", exists(INVENTORY_FILE));
 assert("site key gosaki-piano", GOSAKI_MUTEX_INVENTORY_SITE_KEY === "gosaki-piano");
 assert("exactly 6 operational client arms", arms.length === 6);
 assert(
-  "GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED false (inventory)",
-  GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED === false,
+  "GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED true (inventory)",
+  GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED === true,
 );
 assert(
-  "parse-policy fixture mutex flag still false",
-  PARSE_FIXTURE_MUTEX_FLAG === false,
+  "parse-policy fixture mutex flag true",
+  PARSE_FIXTURE_MUTEX_FLAG === true,
 );
 
 const invSrc = read(INVENTORY_FILE);
@@ -128,7 +128,7 @@ assert(
   ),
 );
 assert(
-  "inventory does not import Core mutex helper (none yet)",
+  "inventory does not import Core mutex helper",
   !/save-arm-mutex-utils/.test(invSrc),
 );
 
@@ -388,10 +388,10 @@ assert(
   ),
 );
 
-// --- Mutex still unimplemented / unwired ---
+// --- Mutex package gate implemented; Admin runtime remains unwired ---
 assert(
-  "GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED remains false",
-  GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED === false,
+  "GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED true",
+  GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED === true,
 );
 
 const runtimeRoots = [
@@ -407,10 +407,14 @@ const mutexWireHits = runtimeFiles.filter((f) => {
   const base = path.basename(f);
   if (base === "gosaki-operational-save-ui-arm-inventory.mjs") return false;
   if (base === "verify-cms-core-v2-global-save-arm-mutex-inventory.mjs") return false;
-  // Helper exists (available) but must not count as runtime wiring
   if (base === "save-arm-mutex-utils.mjs") return false;
   if (base === "cms-core-v2-save-arm-mutex-eval-fixtures.mjs") return false;
   if (base === "verify-cms-core-v2-global-save-arm-mutex-helper.mjs") return false;
+  if (base === "verify-cms-core-v2-global-save-arm-mutex-package-gate.mjs") return false;
+  if (base === "gosaki-operational-save-ui-arm-mutex-gate.mjs") return false;
+  if (base === "build-site-package-core.mjs") return false;
+  if (base === "manual-upload-package.mjs") return false;
+  if (base === "cms-core-v2-save-arm-parse-policy-fixtures.mjs") return false;
   const text = read(f);
   return (
     /evaluateOperationalClientSaveUiMutex/.test(text) ||
@@ -421,15 +425,15 @@ const mutexWireHits = runtimeFiles.filter((f) => {
   );
 });
 assert(
-  "mutex evaluator/gate unwired from runtime",
+  "mutex not wired to Admin/Edge (package gate allowlisted)",
   mutexWireHits.length === 0,
   mutexWireHits.map((f) => path.relative(REPO_ROOT, f)).join(", "),
 );
 
-// Package generate gate not present
+// Package marker may store optional mutex evidence fields but must not import evaluator
 assert(
-  "package-run-marker has no mutex gate",
-  !/evaluateOperationalClientSaveUiMutex|multi_operational_save_ui_armed|operationalSaveUiArmedCount/.test(
+  "package-run-marker does not import mutex evaluator",
+  !/evaluateOperationalClientSaveUiMutex|from ["'].*save-arm-mutex-utils|gosaki-operational-save-ui-arm-mutex-gate/.test(
     marker,
   ),
 );
@@ -444,8 +448,8 @@ assert(
   ),
 );
 assert(
-  "policy keeps GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED false",
-  /GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED:\s*false/.test(policyDoc),
+  "policy §16 GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED true",
+  /## 16[\s\S]*GLOBAL_MULTI_ARM_MUTEX_IMPLEMENTED:\s*true/.test(policyDoc),
 );
 assert(
   "policy does not require package regen for inventory",

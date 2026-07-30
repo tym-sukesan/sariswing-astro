@@ -158,6 +158,12 @@ export function relocateExistingManualUploadPackageToStaleBackup(packageDir, opt
  *     fallbackReason?: string | null,
  *   } | null,
  *   sourceTreeClean?: boolean,
+ *   mutex?: {
+ *     mutexChecked?: boolean,
+ *     mutexReason?: string,
+ *     armedCount?: number,
+ *     armedFeatureIds?: string[],
+ *   } | null,
  * }} input
  */
 export function buildPackageRunMarker(input) {
@@ -183,6 +189,16 @@ export function buildPackageRunMarker(input) {
     marker.fieldCount = Number(ev.fieldCount ?? 0);
     if (ev.fallbackReason != null && String(ev.fallbackReason).trim()) {
       marker.fallbackReason = String(ev.fallbackReason);
+    }
+  }
+  // Optional mutex evidence (package generate gate · no secrets · not required for legacy markers)
+  const mutex = input.mutex;
+  if (mutex && typeof mutex === "object") {
+    marker.mutexChecked = mutex.mutexChecked === true;
+    if (mutex.mutexReason != null) marker.mutexReason = String(mutex.mutexReason);
+    if (mutex.armedCount != null) marker.armedCount = Number(mutex.armedCount);
+    if (Array.isArray(mutex.armedFeatureIds)) {
+      marker.armedFeatureIds = mutex.armedFeatureIds.map(String);
     }
   }
   return marker;

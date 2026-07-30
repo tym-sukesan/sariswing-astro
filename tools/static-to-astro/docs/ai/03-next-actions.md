@@ -4,10 +4,34 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 ## 0. Current next actions（直近）
 
 1. **Primary (Gosaki ops):** クライアントへ **staging 共有**（`CLIENT_SHARE_READY: true` · package `dc1c5b6…`）。本番 cutover はしない。
-2. **並行可 (Kit Core):** Admin runtime Save arm mutex（**別承認** · `ADMIN_RUNTIME_MUTEX_WIRED: false`）· optional Edge shared Save-arm helper · Contents YouTube 退役は **別 phase**。
+2. **並行可 (Kit Core):** 第2 musician fixture 実装開始は **別承認**（planning: `cms-core-v2-second-musician-site-fixture-planning` · first impl: static fixture scaffold）· Admin runtime Save arm mutex（**別承認** · `ADMIN_RUNTIME_MUTEX_WIRED: false`）· optional Edge shared Save-arm helper · Contents YouTube 退役は **別 phase**。
 3. **並行可:** production hosting **read-only planning**（`HOSTING_READY: false`）。
 4. **並行可 / 別承認:** YouTube 複数件 **永続 Save**（NON_BLOCKING）。
 5. Save arm **false** · `readyForAnyFutureFtpApply: false` · production STOP · `service_role` 禁止 · **deployed package 固定**.
+
+## 0. CMS Core v2 second musician site fixture planning (2026-07-31)
+
+| Item | Value |
+| --- | --- |
+| Gate | `CMS_CORE_V2_SECOND_MUSICIAN_SITE_FIXTURE_PLANNING_COMPLETE: true` |
+| Phase | `cms-core-v2-second-musician-site-fixture-planning` |
+| Site | Mio Kisaragi Jazz Vocal · `mio-kisaragi-jazz` |
+| Doc | `cms-core-v2-second-musician-site-fixture-planning.md` |
+| Impl | **false** (docs-only) |
+| Next | `…-mio-static-fixture-scaffold` (separate approval) |
+
+```txt
+CMS_CORE_V2_SECOND_MUSICIAN_SITE_FIXTURE_PLANNING_COMPLETE: true
+IMPLEMENTATION_EXECUTED: false
+PACKAGE_GENERATE_EXECUTED: false
+FTP_EXECUTED: false
+DB_WRITE_EXECUTED: false
+RUNTIME_CODE_CHANGED: false
+GOSAKI_CLIENT_SHARE_READY_MAINTAINED: true
+deployedPackageSourceCommitUnchanged: dc1c5b62a58d0462ad6629db4847256d316d4a38
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+PRODUCTION_UNCHANGED: true
+```
 
 ## 0. CMS Core v2 Gosaki site-generator-hooks adapter (2026-07-30)
 

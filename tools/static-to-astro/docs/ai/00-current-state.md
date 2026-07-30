@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**CMS Core v2 Gosaki site-generator-hooks adapter (2026-07-30):** **COMPLETE** — Phase `cms-core-v2-gosaki-site-generator-hooks-adapter` · `createGosakiPianoHookMethods` → `gosaki-site-generator-hooks-adapter.mjs` · Core + `astro-generator` have **no** `gosaki-*` imports · lazy load via registry `generatorHooksAdapter` + `ensureSiteGeneratorHookAdapter` · HTML baseline deep-eq PASS · **behavior unchanged** · **Next:** client staging share · Admin runtime mutex (別承認).
+**CMS Core v2 second musician site fixture planning (2026-07-31):** **COMPLETE (planning / docs-only)** — Phase `cms-core-v2-second-musician-site-fixture-planning` · fictional site **Mio Kisaragi Jazz Vocal** · `siteKey` `mio-kisaragi-jazz` · static fixture + read-only first · no Gosaki HTML copy · Doc: `cms-core-v2-second-musician-site-fixture-planning.md` · **Next:** `…-mio-static-fixture-scaffold` (separate approval) · Gosaki client staging share.
+
+**CMS Core v2 Gosaki site-generator-hooks adapter (2026-07-30):** **COMPLETE** — Phase `cms-core-v2-gosaki-site-generator-hooks-adapter` · `createGosakiPianoHookMethods` → `gosaki-site-generator-hooks-adapter.mjs` · Core + `astro-generator` have **no** `gosaki-*` imports · lazy load via registry `generatorHooksAdapter` + `ensureSiteGeneratorHookAdapter` · HTML baseline deep-eq PASS · **behavior unchanged** · **Next:** client staging share · Admin runtime mutex (別承認) · second-musician fixture planning (done above).
 
 **CMS Core v2 Gosaki site-generator-hooks HTML baseline (2026-07-30):** **COMPLETE** — Phase `cms-core-v2-gosaki-site-generator-hooks-html-baseline` · surface fixtures + verifier · factory moved in adapter phase above · npm `verify:cms-core-v2-gosaki-site-generator-hooks-html-baseline` · Doc: `cms-core-v2-gosaki-site-generator-hooks-html-baseline.md`.
 

@@ -5,24 +5,25 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: CMS Core v2 Gosaki site-generator-hooks adapter COMPLETE
-Phase: cms-core-v2-gosaki-site-generator-hooks-adapter
-FACTORY_MOVED: true
-CORE_GOSAKI_DIRECT_IMPORTS: false
-HTML_GENERATION_CHANGED: false
-Adapter: gosaki-site-generator-hooks-adapter.mjs
-npm: verify:cms-core-v2-gosaki-site-generator-hooks-html-baseline · verify:cms-core-v2-safety-suite
-RUNTIME_BEHAVIOR_CHANGED: false
+Current phase: CMS Core v2 second musician site fixture planning COMPLETE (docs-only)
+Phase: cms-core-v2-second-musician-site-fixture-planning
+Site: Mio Kisaragi Jazz Vocal · siteKey mio-kisaragi-jazz
+Doc: cms-core-v2-second-musician-site-fixture-planning.md
+IMPLEMENTATION_EXECUTED: false
 PACKAGE_GENERATE_EXECUTED: false
 Gosaki CLIENT_SHARE_READY: true (maintained)
 deployed package: dc1c5b62a58d0462ad6629db4847256d316d4a38 (unchanged; no regen)
-seedAppliedStaging: true
-readyForOperatorAboutSeedApply: false
 Next Primary (ops): share staging with client
-Next Kit: Admin runtime mutex (explicit approval)
+Next Kit: mio-static-fixture-scaffold (separate approval) · Admin runtime mutex (explicit approval)
 readyForAnyFutureFtpApply: false
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
 ```
+
+## CMS Core v2 second musician site fixture planning (2026-07-31)
+
+- Fictional second jazz-vocalist fixture spec (not Gosaki HTML copy; not production)
+- Phase 1: static fixture + read-only / noop; HubSpot not required; Videos page vs Gosaki Home-YT
+- Doc: `cms-core-v2-second-musician-site-fixture-planning.md`
 
 ## CMS Core v2 Gosaki site-generator-hooks adapter (2026-07-30)
 

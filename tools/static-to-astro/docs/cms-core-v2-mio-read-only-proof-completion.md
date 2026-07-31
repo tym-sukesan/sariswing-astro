@@ -98,12 +98,12 @@ Contact remains non-submitting (fixture intentional). That does **not** block re
 
 | Rank | Candidate phase | Purpose | Benefit | Risk | Size | Priority now |
 | --- | --- | --- | --- | --- | --- | --- |
-| **1** | `cms-core-v2-external-form-provider-contract-planning` | Define allowlisted Contact providers + URL/ID contract | Unblocks real-world Contact without write stack; fits “external service only” policy | Low if docs/planning first | S–M | **Highest** |
-| **2** | `cms-core-v2-mio-supabase-live-read-pilot` (name TBD) | Fixture inject → staging SELECT for Mio | Proves multi-site data path beyond fixtures | Medium (staging gate, slug isolation) | M | After form contract or parallel if needed |
+| **1** | `cms-core-v2-external-form-provider-contract-planning` | Define allowlisted Contact providers + URL/ID contract | Unblocks real-world Contact without write stack; fits “external service only” policy | Low if docs/planning first | S–M | **DONE (planning)** |
+| **2** | `cms-core-v2-mio-supabase-live-read-pilot` (name TBD) | Fixture inject → staging SELECT for Mio | Proves multi-site data path beyond fixtures | Medium (staging gate, slug isolation) | M | After form validator / link provider or parallel if needed |
 | **3** | `cms-core-v2-generic-readonly-admin-planning` | Site-agnostic admin chrome for Mio | Enables operator preview of CMS fields | Medium (must not touch `/admin` without gate) | M | After read surfaces stabilize |
 
-**Recommendation:** start with **`cms-core-v2-external-form-provider-contract-planning`**.  
-No residual Core→Mio hardcode blocker was found that would outrank it; Contact is the only PARTIAL item inside the read-only public surface set.
+**Recommendation (updated):** planning complete — next Kit implement **`cms-core-v2-external-form-provider-contract-validator`**, then `external-link` provider. See `cms-core-v2-external-form-provider-contract-planning.md`.
+No residual Core→Mio hardcode blocker was found that would outrank Contact; Contact remains the only PARTIAL public-surface item until runtime providers land.
 
 Ops parallel (unchanged): Gosaki **client staging share** (`CLIENT_SHARE_READY: true`).
 
@@ -141,7 +141,8 @@ phase: cms-core-v2-mio-read-only-proof-completion
 CMS_CORE_V2_MIO_READ_ONLY_PROOF_COMPLETE: true
 CMS_CORE_V2_MIO_READ_ONLY_PROOF_PASS: true
 CMS_CORE_V2_MIO_READ_RENDER_BROWSER_BASELINE_PASS: true
-CONTACT_EXTERNAL_FORM: NOT_STARTED
+CONTACT_EXTERNAL_FORM: PLANNING_COMPLETE
+CONTACT_EXTERNAL_FORM_DOC: cms-core-v2-external-form-provider-contract-planning.md
 SUPABASE_LIVE_READ_MIO: NOT_STARTED
 MIO_ADMIN_UI: NOT_STARTED
 SAVE_DB_WRITE: NOT_STARTED
@@ -149,8 +150,10 @@ PACKAGE_GENERATE_EXECUTED: false
 FTP_EXECUTED: false
 PRODUCTION_UNCHANGED: true
 READY_FOR_ANY_FUTURE_FTP_APPLY: false
-NEXT_RECOMMENDED: cms-core-v2-external-form-provider-contract-planning
+NEXT_RECOMMENDED: cms-core-v2-external-form-provider-contract-validator
 ```
+
+Follow-up (2026-07-31): Phase `cms-core-v2-external-form-provider-contract-planning` completed (docs-only). See `cms-core-v2-external-form-provider-contract-planning.md`. Runtime Contact still NOT_STARTED.
 
 ---
 

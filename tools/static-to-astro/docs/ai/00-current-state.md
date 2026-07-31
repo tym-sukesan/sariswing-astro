@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**CMS Core v2 Mio read-only proof completion (2026-07-31):** **COMPLETE / PASS** — Phase `cms-core-v2-mio-read-only-proof-completion` · Doc: `cms-core-v2-mio-read-only-proof-completion.md` · Second-site read-only convert proven (fixture→registry→lazy adapter→Schedule/Disco/Videos/About/footer + browser baseline) · Contact **PARTIAL** (no external form) · live Supabase / Admin / Save / package **NOT_STARTED** · **Next Kit:** `cms-core-v2-external-form-provider-contract-planning` · Ops: Gosaki client staging share.
+**CMS Core v2 external form provider contract planning (2026-07-31):** **COMPLETE (docs-only)** — Phase `cms-core-v2-external-form-provider-contract-planning` · Doc: `cms-core-v2-external-form-provider-contract-planning.md` · Providers: `disabled` · `external-link` · `google-forms` · `hubspot` · no arbitrary HTML/JS · fail-closed URL/ID rules · static config first · Gosaki HubSpot compat path · Mio pilot via link/Forms later · **Next Kit:** `cms-core-v2-external-form-provider-contract-validator` · runtime Contact **NOT_STARTED** · Ops: Gosaki client staging share.
+
+**CMS Core v2 Mio read-only proof completion (2026-07-31):** **COMPLETE / PASS** — Phase `cms-core-v2-mio-read-only-proof-completion` · Doc: `cms-core-v2-mio-read-only-proof-completion.md` · Second-site read-only convert proven (fixture→registry→lazy adapter→Schedule/Disco/Videos/About/footer + browser baseline) · Contact **PARTIAL** (external form **PLANNING_COMPLETE**; runtime NOT_STARTED) · live Supabase / Admin / Save / package **NOT_STARTED** · **Next Kit:** external-form validator (above) · Ops: Gosaki client staging share.
 
 **CMS Core v2 Mio read-render browser-baseline (2026-07-31):** **PASS / COMPLETE** — dual-nav · main.wrap · About `withBase('/images/…')` · Schedule fixture CSS · NON_BLOCKING evening-set hero · folded into read-only proof above.
 

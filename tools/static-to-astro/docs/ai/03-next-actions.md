@@ -4,10 +4,34 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 ## 0. Current next actions（直近）
 
 1. **Primary (Gosaki ops):** クライアントへ **staging 共有**（`CLIENT_SHARE_READY: true` · package `dc1c5b6…`）。本番 cutover はしない。
-2. **並行可 (Kit Core):** **Next Kit** `cms-core-v2-external-form-provider-contract-planning`（別承認）· then Supabase live-read / generic read-only Admin · Admin runtime Save arm mutex（**別承認**）· evening-set hero（**NON_BLOCKING**）。
+2. **並行可 (Kit Core):** **Next Kit** `cms-core-v2-external-form-provider-contract-validator`（別承認）· then `external-link` provider · google-forms · HubSpot generalization · Admin config UI · Supabase live-read / generic read-only Admin · Admin runtime Save arm mutex（**別承認**）· evening-set hero（**NON_BLOCKING**）。
 3. **並行可:** production hosting **read-only planning**（`HOSTING_READY: false`）。
 4. **並行可 / 別承認:** YouTube 複数件 **永続 Save**（NON_BLOCKING）。
 5. Save arm **false** · `readyForAnyFutureFtpApply: false` · production STOP · `service_role` 禁止 · **deployed package 固定**.
+
+## 0. CMS Core v2 external form provider contract planning (2026-07-31)
+
+| Item | Value |
+| --- | --- |
+| Gate | `CMS_CORE_V2_EXTERNAL_FORM_PROVIDER_CONTRACT_PLANNING_COMPLETE: true` |
+| Phase | `cms-core-v2-external-form-provider-contract-planning` |
+| Verdict | **COMPLETE (docs-only)** |
+| Doc | `cms-core-v2-external-form-provider-contract-planning.md` |
+| Providers | `disabled` · `external-link` · `google-forms` · `hubspot` |
+| Runtime | **NOT_STARTED** |
+| Next Kit | `cms-core-v2-external-form-provider-contract-validator` |
+
+```txt
+CMS_CORE_V2_EXTERNAL_FORM_PROVIDER_CONTRACT_PLANNING_COMPLETE: true
+CONTACT_EXTERNAL_FORM: PLANNING_COMPLETE
+CONTACT_EXTERNAL_FORM_RUNTIME: NOT_STARTED
+NEXT_RECOMMENDED: cms-core-v2-external-form-provider-contract-validator
+PACKAGE_GENERATE_EXECUTED: false
+FTP_EXECUTED: false
+DB_WRITE_EXECUTED: false
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+PRODUCTION_UNCHANGED: true
+```
 
 ## 0. CMS Core v2 Mio read-only proof completion (2026-07-31)
 
@@ -17,21 +41,21 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Phase | `cms-core-v2-mio-read-only-proof-completion` |
 | Verdict | **COMPLETE / PASS** (read-only multi-site convert) |
 | Doc | `cms-core-v2-mio-read-only-proof-completion.md` |
-| Contact | **PARTIAL** — external form NOT_STARTED |
-| Next Kit | `cms-core-v2-external-form-provider-contract-planning` |
+| Contact | **PARTIAL** — external form PLANNING_COMPLETE; runtime NOT_STARTED |
+| Next Kit | `cms-core-v2-external-form-provider-contract-validator` |
 
 ```txt
 CMS_CORE_V2_MIO_READ_ONLY_PROOF_COMPLETE: true
 CMS_CORE_V2_MIO_READ_ONLY_PROOF_PASS: true
 CMS_CORE_V2_MIO_READ_RENDER_BROWSER_BASELINE_PASS: true
-CONTACT_EXTERNAL_FORM: NOT_STARTED
+CONTACT_EXTERNAL_FORM: PLANNING_COMPLETE
 SUPABASE_LIVE_READ_MIO: NOT_STARTED
 MIO_ADMIN_UI: NOT_STARTED
 PACKAGE_GENERATE_EXECUTED: false
 FTP_EXECUTED: false
 READY_FOR_ANY_FUTURE_FTP_APPLY: false
 PRODUCTION_UNCHANGED: true
-NEXT_RECOMMENDED: cms-core-v2-external-form-provider-contract-planning
+NEXT_RECOMMENDED: cms-core-v2-external-form-provider-contract-validator
 ```
 
 ## 0. CMS Core v2 Mio read-render browser-baseline (2026-07-31)

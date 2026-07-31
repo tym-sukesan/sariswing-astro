@@ -4,10 +4,40 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 ## 0. Current next actions（直近）
 
 1. **Primary (Gosaki ops):** クライアントへ **staging 共有**（`CLIENT_SHARE_READY: true` · package `dc1c5b6…`）。本番 cutover はしない。
-2. **並行可 (Kit Core):** **Next Kit** `cms-core-v2-external-form-provider-hubspot-adapter-switch`（別承認）· then legacy audit · Admin config UI · Supabase live-read / generic read-only Admin · Admin runtime Save arm mutex（**別承認**）· evening-set hero（**NON_BLOCKING**）。
+2. **並行可 (Kit Core):** **Next Kit** `cms-core-v2-external-form-provider-hubspot-legacy-cleanup-audit`（別承認）· then Admin config UI · Supabase live-read / generic read-only Admin · Admin runtime Save arm mutex（**別承認**）· evening-set hero（**NON_BLOCKING**）。
 3. **並行可:** production hosting **read-only planning**（`HOSTING_READY: false`）。
 4. **並行可 / 別承認:** YouTube 複数件 **永続 Save**（NON_BLOCKING）。
 5. Save arm **false** · `readyForAnyFutureFtpApply: false` · production STOP · `service_role` 禁止 · **deployed package 固定**.
+
+## 0. CMS Core v2 external form HubSpot adapter switch (2026-08-01)
+
+| Item | Value |
+| --- | --- |
+| Gate | `CMS_CORE_V2_EXTERNAL_FORM_PROVIDER_HUBSPOT_ADAPTER_SWITCH_COMPLETE: true` |
+| Phase | `cms-core-v2-external-form-provider-hubspot-adapter-switch` |
+| Verdict | **COMPLETE** |
+| Embed source | `core-renderHubspotConfigHtml` via `buildGosakiContactHubspotEmbedHtmlViaCore` |
+| Legacy builder | **retained** (not used by apply) |
+| Verifier | `verify:cms-core-v2-external-form-provider-hubspot-adapter-switch` |
+| Browser preview | `output/_cms-core-v2-hubspot-adapter-switch-browser/` |
+| HubSpot JSON / IDs | **unchanged** |
+| Next Kit | `cms-core-v2-external-form-provider-hubspot-legacy-cleanup-audit` |
+
+```txt
+CMS_CORE_V2_EXTERNAL_FORM_PROVIDER_HUBSPOT_ADAPTER_SWITCH_COMPLETE: true
+CONTACT_HUBSPOT_GOSAKI_ADAPTER_SWITCH: COMPLETE
+EMBED_SOURCE: core-renderHubspotConfigHtml
+LEGACY_BUILDER_RETAINED: true
+BYTE_FOR_BYTE_EQUALITY: true
+EXACT_ID_GATE_PRESERVED: true
+NEXT_RECOMMENDED: cms-core-v2-external-form-provider-hubspot-legacy-cleanup-audit
+HUBSPOT_CONFIG_UNCHANGED: true
+PACKAGE_GENERATE_EXECUTED: false
+FTP_EXECUTED: false
+DB_WRITE_EXECUTED: false
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+PRODUCTION_UNCHANGED: true
+```
 
 ## 0. CMS Core v2 external form HubSpot shadow compare (2026-07-31)
 
@@ -19,18 +49,16 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Equality | legacy === Core === baseline fixture (byte) |
 | Exact ID gate | **preserved** |
 | Verifier | `verify:cms-core-v2-external-form-provider-hubspot-shadow-compare` |
-| Gosaki adapter / HubSpot JSON | **unchanged** |
-| Next Kit | `cms-core-v2-external-form-provider-hubspot-adapter-switch` |
+| Next Kit | `cms-core-v2-external-form-provider-hubspot-legacy-cleanup-audit` |
 
 ```txt
 CMS_CORE_V2_EXTERNAL_FORM_PROVIDER_HUBSPOT_SHADOW_COMPARE_COMPLETE: true
 CONTACT_HUBSPOT_GOSAKI_SHADOW_COMPARE: COMPLETE
 BYTE_FOR_BYTE_EQUALITY: true
 EXACT_ID_GATE_PRESERVED: true
-CONTACT_HUBSPOT_GOSAKI_ADAPTER_SWITCH: NOT_STARTED
-NEXT_RECOMMENDED: cms-core-v2-external-form-provider-hubspot-adapter-switch
+CONTACT_HUBSPOT_GOSAKI_ADAPTER_SWITCH: COMPLETE
+NEXT_RECOMMENDED: cms-core-v2-external-form-provider-hubspot-legacy-cleanup-audit
 HUBSPOT_CONFIG_UNCHANGED: true
-GOSAKI_ADAPTER_UNCHANGED: true
 PACKAGE_GENERATE_EXECUTED: false
 FTP_EXECUTED: false
 DB_WRITE_EXECUTED: false

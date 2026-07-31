@@ -35,6 +35,7 @@
     "verify:cms-core-v2-external-form-provider-google-forms": "node scripts/verify-cms-core-v2-external-form-provider-google-forms.mjs",
     "verify:cms-core-v2-external-form-provider-hubspot-renderer": "node scripts/verify-cms-core-v2-external-form-provider-hubspot-renderer.mjs",
     "verify:cms-core-v2-external-form-provider-hubspot-shadow-compare": "node scripts/verify-cms-core-v2-external-form-provider-hubspot-shadow-compare.mjs",
+    "verify:cms-core-v2-external-form-provider-hubspot-adapter-switch": "node scripts/verify-cms-core-v2-external-form-provider-hubspot-adapter-switch.mjs",
     "verify:cms-core-v2-save-arm-parse-policy": "node scripts/verify-cms-core-v2-save-arm-parse-policy.mjs",
     "verify:cms-core-v2-save-arm-exact-true": "node scripts/verify-cms-core-v2-save-arm-exact-true-helper.mjs",
     "verify:cms-core-v2-global-save-arm-mutex-inventory": "node scripts/verify-cms-core-v2-global-save-arm-mutex-inventory.mjs",

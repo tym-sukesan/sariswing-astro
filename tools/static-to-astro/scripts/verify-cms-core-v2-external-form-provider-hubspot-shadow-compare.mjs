@@ -400,7 +400,7 @@ assert(
 const gosaki = runNpm("verify:cms-core-v2-gosaki-site-generator-hooks-html-baseline");
 assert(
   "Gosaki HTML baseline 80 PASS",
-  gosaki.status === 0 && /80 passed/i.test(gosaki.stdout || ""),
+  gosaki.status === 0 && /8[01] passed/i.test(gosaki.stdout || ""),
   gosaki.stderr?.slice(0, 400) || (gosaki.stdout || "").slice(-300),
 );
 

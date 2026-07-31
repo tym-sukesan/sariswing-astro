@@ -38,6 +38,7 @@ import {
 import { applyAboutContentToPage } from "./lib/gosaki-about-content.mjs";
 import {
   buildGosakiContactHubspotEmbedHtml,
+  buildGosakiContactHubspotEmbedHtmlViaCore,
   injectHubspotEmbedIntoContactPage,
   loadGosakiContactHubspotConfig,
 } from "./lib/gosaki-contact-hubspot-embed.mjs";
@@ -450,8 +451,13 @@ assert(
 {
   const loaded = loadGosakiContactHubspotConfig(TOOL_ROOT);
   assert("contact hubspot config loads", loaded.ok === true);
-  const embed = buildGosakiContactHubspotEmbedHtml(loaded.config);
-  assertExact("contact hubspot embed exact", embed, readFix("contact-hubspot-embed.html"));
+  const embed = buildGosakiContactHubspotEmbedHtmlViaCore(loaded.config);
+  assertExact("contact hubspot embed exact (Core path)", embed, readFix("contact-hubspot-embed.html"));
+  assertExact(
+    "contact hubspot Core === legacy builder",
+    embed,
+    buildGosakiContactHubspotEmbedHtml(loaded.config),
+  );
   const page = injectHubspotEmbedIntoContactPage(BASELINE_CONTACT_PAGE_IN, embed);
   assertExact("contact page inject exact", page, readFix("contact-page.astro"));
   assert(

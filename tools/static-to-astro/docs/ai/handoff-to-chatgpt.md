@@ -5,14 +5,16 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: CMS Core v2 external form HubSpot shadow compare COMPLETE
-Phase: cms-core-v2-external-form-provider-hubspot-shadow-compare
-Equality: legacy buildGosakiContactHubspotEmbedHtml === Core renderHubspotConfigHtml === baseline fixture (byte)
-Exact ID gate: PRESERVED (portalId/formId/region/scriptSrc)
-Verifier: verify:cms-core-v2-external-form-provider-hubspot-shadow-compare (+ Safety Suite)
-Gosaki adapter / Contact HTML / HubSpot JSON: UNCHANGED
-Next Kit: cms-core-v2-external-form-provider-hubspot-adapter-switch
-Prior: hubspot-renderer + generalization planning + google-forms + external-link + validator COMPLETE
+Current phase: CMS Core v2 external form HubSpot adapter switch COMPLETE
+Phase: cms-core-v2-external-form-provider-hubspot-adapter-switch
+Apply: exact ID gate → map → Core validate → renderHubspotConfigHtml → Gosaki wrapper/selector
+Legacy builder: RETAINED (not used by apply)
+Verifier: verify:cms-core-v2-external-form-provider-hubspot-adapter-switch (+ Safety Suite)
+Browser preview: tools/static-to-astro/output/_cms-core-v2-hubspot-adapter-switch-browser/
+Contact URL (astro dev): http://localhost:4321/contact/
+HubSpot JSON / IDs / CSS: UNCHANGED
+Next Kit: cms-core-v2-external-form-provider-hubspot-legacy-cleanup-audit
+Prior: shadow-compare + hubspot-renderer + google-forms + external-link + validator COMPLETE
 Gosaki CLIENT_SHARE_READY: true (maintained)
 deployed package: dc1c5b62a58d0462ad6629db4847256d316d4a38 (unchanged; no regen)
 Next Primary (ops): share staging with client
@@ -22,23 +24,29 @@ readyForAnyFutureFtpApply: false
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
 ```
 
+## CMS Core v2 external form HubSpot adapter switch (2026-08-01)
+
+- Gosaki Contact apply uses Core `renderHubspotConfigHtml` via `buildGosakiContactHubspotEmbedHtmlViaCore`
+- Exact ID gate + `#comp-jqbwo704` / `#gosaki-contact-hubspot-embed` / CSS retained
+- Legacy `buildGosakiContactHubspotEmbedHtml` kept for audit; not called by apply
+- Local browser preview prepared; no package / FTP / production
+- Next: legacy cleanup audit (delete/thin decision)
+
 ## CMS Core v2 external form HubSpot shadow compare (2026-07-31)
 
 - Offline: Gosaki exact gate → legacy inner HTML vs Core mapped validator → renderHubspotConfigHtml
-- Byte-for-byte PASS; invalid mutations do not reach Core render (or Core fail-closed)
-- No adapter switch · no config/ID edits · no network
-- Next: adapter switch (keep Gosaki wrapper/insert helper + exact gate)
+- Byte-for-byte PASS; adapter switch: **COMPLETE** (above)
 
 ## CMS Core v2 external form HubSpot pure renderer (2026-07-31)
 
 - Core `renderHubspotConfigHtml` + dispatcher wiring; synthetic IDs in renderer verifier
 - Fail-closed: invalid/disabled/other providers emit no script/frame
-- Shadow-compare: **COMPLETE** (above)
+- Now used by Gosaki apply path
 
 ## CMS Core v2 external form HubSpot generalization planning (2026-07-31)
 
 - Docs-only: map Gosaki HubSpot to Core contract; keep selectors site-specific
-- Pure HubSpot renderer + shadow-compare: **COMPLETE**
+- Renderer + shadow-compare + adapter switch: **COMPLETE**
 - Do not weaken Gosaki exact-ID gate until explicit later decision
 
 ## CMS Core v2 external form provider google-forms (2026-07-31)

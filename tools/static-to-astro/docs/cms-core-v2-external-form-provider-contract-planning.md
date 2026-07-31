@@ -393,10 +393,11 @@ Add step to `verify:cms-core-v2-safety-suite` when implementation lands — **do
 | **4** | `cms-core-v2-external-form-provider-hubspot-generalization-planning` | Shared HubSpot renderer planning; Gosaki adapter delegates | Medium — **COMPLETE** |
 | **4b** | `cms-core-v2-external-form-provider-hubspot-renderer` | Pure HubSpot inner HTML + offline verifier | Low — **COMPLETE** |
 | **4c** | `cms-core-v2-external-form-provider-hubspot-shadow-compare` | Map Gosaki JSON→Core; deep-eq old vs new inner HTML | Medium — **COMPLETE** |
-| **4d** | `cms-core-v2-external-form-provider-hubspot-adapter-switch` | Adapter calls Core renderer + keep Gosaki insert helper | Medium |
+| **4d** | `cms-core-v2-external-form-provider-hubspot-adapter-switch` | Adapter calls Core renderer + keep Gosaki insert helper | Medium — **COMPLETE** |
+| **4e** | `cms-core-v2-external-form-provider-hubspot-legacy-cleanup-audit` | Decide keep/thin/delete legacy builder vs thin wrapper | Low–Med |
 | **5** | `cms-core-v2-external-form-admin-config-ui` | Staging Admin: provider select + fields; **no** code paste; Save gated separately | Higher (Admin + optional DB) |
 
-**Next after HubSpot shadow-compare:** Phase 4d (`cms-core-v2-external-form-provider-hubspot-adapter-switch`).
+**Next after HubSpot adapter switch:** Phase 4e (`cms-core-v2-external-form-provider-hubspot-legacy-cleanup-audit`).
 
 ---
 
@@ -423,8 +424,9 @@ CONTACT_GOOGLE_FORMS_PROVIDER: COMPLETE
 CONTACT_HUBSPOT_GENERALIZATION: PLANNING_COMPLETE
 CONTACT_HUBSPOT_RENDERER: COMPLETE
 CONTACT_HUBSPOT_GOSAKI_SHADOW_COMPARE: COMPLETE
+CONTACT_HUBSPOT_GOSAKI_ADAPTER_SWITCH: COMPLETE
 CONTACT_ADMIN_CONFIG_UI: NOT_STARTED
-NEXT_RECOMMENDED: cms-core-v2-external-form-provider-hubspot-adapter-switch
+NEXT_RECOMMENDED: cms-core-v2-external-form-provider-hubspot-legacy-cleanup-audit
 PACKAGE_GENERATE_EXECUTED: false
 FTP_EXECUTED: false
 DB_WRITE_EXECUTED: false
@@ -501,4 +503,19 @@ READY_FOR_ANY_FUTURE_FTP_APPLY: false
 - **Gate:** portal/form/region/scriptSrc mutations fail Gosaki gate; Core html not produced
 - **Not done:** adapter switch · Contact HTML · config ID changes · network
 - **Verifier:** `verify:cms-core-v2-external-form-provider-hubspot-shadow-compare` (Safety Suite)
-- **Next:** `cms-core-v2-external-form-provider-hubspot-adapter-switch`
+- **Next:** `cms-core-v2-external-form-provider-hubspot-adapter-switch` → **COMPLETE** (see §20)
+
+---
+
+## 20. HubSpot Gosaki adapter switch (2026-08-01)
+
+- **Phase:** `cms-core-v2-external-form-provider-hubspot-adapter-switch` — **COMPLETE**
+- **Apply path:** exact ID gate → `mapGosakiContactHubspotConfigToCore` → Core validate → `renderHubspotConfigHtml` → existing wrapper/selector inject
+- **Legacy builder:** retained (`buildGosakiContactHubspotEmbedHtml`) — not used by apply
+- **ViaCore:** `buildGosakiContactHubspotEmbedHtmlViaCore`
+- **Equality:** ViaCore === legacy === embed fixture; inject === contact-page fixture
+- **Fail-closed:** exact gate / Core failure / ambiguous `#comp-jqbwo704` → no Contact write
+- **Not done:** legacy deletion · package · FTP · HubSpot ID changes
+- **Verifier:** `verify:cms-core-v2-external-form-provider-hubspot-adapter-switch` (Safety Suite)
+- **Browser preview:** `output/_cms-core-v2-hubspot-adapter-switch-browser/` → `astro dev` → `/contact/`
+- **Next:** `cms-core-v2-external-form-provider-hubspot-legacy-cleanup-audit`

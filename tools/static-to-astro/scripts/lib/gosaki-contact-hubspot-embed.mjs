@@ -1,11 +1,20 @@
 /**
  * G-10g1 — Inject gosaki Contact page HubSpot form embed from static JSON config.
+ *
+ * Generation path (cms-core-v2-external-form-provider-hubspot-adapter-switch):
+ * exact ID gate → Core contract map → getExternalFormProviderResult →
+ * renderHubspotConfigHtml → existing wrapper/selector inject.
+ *
+ * `buildGosakiContactHubspotEmbedHtml` remains as frozen legacy builder (shadow-compare /
+ * audit); apply path must not call it.
  */
 
 import { createRequire } from "node:module";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { getExternalFormProviderResult } from "./external-form-provider-contract.mjs";
+import { renderHubspotConfigHtml } from "./external-form-provider-renderer.mjs";
 import { isGosakiPianoFixture } from "./gosaki-about-band-profiles.mjs";
 import { splitBaseLayoutOpenAndInner } from "./gosaki-home-youtube-embed.mjs";
 
@@ -19,6 +28,9 @@ export const GOSAKI_CONTACT_HUBSPOT_DATA_REL = "src/data/gosaki-contact-hubspot.
 export const CONTACT_FORM_WRAPPER_SELECTOR = "#comp-jqbwo704";
 export const GOSAKI_CONTACT_HUBSPOT_SLOT = "<!--GOSAKI_CONTACT_HUBSPOT_SLOT-->";
 
+/** Apply / generation embed source marker (not written into page HTML). */
+export const GOSAKI_CONTACT_HUBSPOT_EMBED_SOURCE_CORE = "core-renderHubspotConfigHtml";
+
 export const GOSAKI_CONTACT_HUBSPOT_ALLOWLIST = {
   provider: "hubspot",
   scriptSrc: "https://js.hsforms.net/forms/embed/21392032.js",
@@ -26,6 +38,9 @@ export const GOSAKI_CONTACT_HUBSPOT_ALLOWLIST = {
   formId: "57909d0c-9b9f-470a-8a18-e176d1d1a459",
   region: "na1",
 };
+
+/** Staging is the routine convert environment for Gosaki Contact HubSpot. */
+export const GOSAKI_CONTACT_HUBSPOT_CORE_ENVIRONMENT = "staging";
 
 export { isGosakiPianoFixture };
 
@@ -97,6 +112,9 @@ export function loadGosakiContactHubspotConfig(toolRoot) {
 }
 
 /**
+ * Frozen legacy builder (allowlist string concat). Kept for shadow-compare / audit.
+ * Generation / apply path must use `buildGosakiContactHubspotEmbedHtmlViaCore`.
+ *
  * @param {Record<string, unknown>} config
  */
 export function buildGosakiContactHubspotEmbedHtml(config) {
@@ -113,6 +131,67 @@ export function buildGosakiContactHubspotEmbedHtml(config) {
 }
 
 /**
+ * Map Gosaki Contact HubSpot JSON → Core flat hubspot config.
+ * Strips enabled/page/version/scriptSrc (scriptSrc verified by exact gate only).
+ *
+ * @param {Record<string, unknown>} gosakiConfig
+ * @param {{ environment?: "staging" | "production" }} [opts]
+ */
+export function mapGosakiContactHubspotConfigToCore(gosakiConfig, opts = {}) {
+  const environment =
+    opts.environment === "production" ? "production" : GOSAKI_CONTACT_HUBSPOT_CORE_ENVIRONMENT;
+  return {
+    provider: "hubspot",
+    siteSlug: String(gosakiConfig.siteSlug ?? ""),
+    environment,
+    portalId: String(gosakiConfig.portalId ?? ""),
+    formId: String(gosakiConfig.formId ?? ""),
+    region: String(gosakiConfig.region ?? ""),
+  };
+}
+
+/**
+ * Generation path: exact ID gate → Core validate → `renderHubspotConfigHtml`.
+ * Does not bypass Core. Never accepts operator scriptSrc into Core input.
+ *
+ * @param {Record<string, unknown>} config
+ * @param {{ environment?: "staging" | "production" }} [opts]
+ * @returns {string}
+ */
+export function buildGosakiContactHubspotEmbedHtmlViaCore(config, opts = {}) {
+  const validation = validateGosakiContactHubspotConfig(config);
+  if (!validation.ok) {
+    throw new Error(validation.errors.join("; "));
+  }
+
+  const environment =
+    opts.environment === "production" ? "production" : GOSAKI_CONTACT_HUBSPOT_CORE_ENVIRONMENT;
+  const coreRaw = mapGosakiContactHubspotConfigToCore(config, { environment });
+  if ("scriptSrc" in coreRaw) {
+    throw new Error("Core HubSpot map must not include scriptSrc");
+  }
+
+  const validated = getExternalFormProviderResult(coreRaw, {
+    expectedSiteSlug: "gosaki-piano",
+    expectedEnvironment: environment,
+  });
+  if (!validated.ok || validated.provider !== "hubspot") {
+    throw new Error(
+      `Core HubSpot validation failed: ${validated.reasonCode ?? "VALIDATION_FAILED"}`,
+    );
+  }
+
+  const rendered = renderHubspotConfigHtml(validated);
+  if (!rendered.ok || typeof rendered.html !== "string" || !rendered.html) {
+    throw new Error(
+      `Core HubSpot render failed: ${rendered.reasonCode ?? "RENDER_FAILED"}`,
+    );
+  }
+
+  return rendered.html;
+}
+
+/**
  * @param {string} innerHtml
  * @param {string} embedHtml
  */
@@ -124,8 +203,13 @@ export function replaceContactFormWithHubspotEmbed(innerHtml, embedHtml) {
   $(GOSAKI_CONTACT_HUBSPOT_SLOT).remove();
 
   const formWrapper = $(CONTACT_FORM_WRAPPER_SELECTOR);
-  if (!formWrapper.length) {
+  if (formWrapper.length === 0) {
     throw new Error(`Contact form wrapper not found: ${CONTACT_FORM_WRAPPER_SELECTOR}`);
+  }
+  if (formWrapper.length !== 1) {
+    throw new Error(
+      `Contact form wrapper ambiguous (${formWrapper.length} matches): ${CONTACT_FORM_WRAPPER_SELECTOR}`,
+    );
   }
 
   formWrapper.replaceWith(
@@ -178,17 +262,33 @@ export function applyGosakiContactHubspotEmbed(outDir, toolRoot, options = {}) {
     return { applied: false, reason: `Contact page not found: ${contactRel}` };
   }
 
+  let embedHtml;
+  try {
+    embedHtml = buildGosakiContactHubspotEmbedHtmlViaCore(loaded.config, {
+      environment: GOSAKI_CONTACT_HUBSPOT_CORE_ENVIRONMENT,
+    });
+  } catch (err) {
+    return {
+      applied: false,
+      reason: err instanceof Error ? err.message : String(err),
+    };
+  }
+
+  const contactContent = fs.readFileSync(contactPath, "utf8");
+  let nextContent;
+  try {
+    nextContent = injectHubspotEmbedIntoContactPage(contactContent, embedHtml);
+  } catch (err) {
+    return {
+      applied: false,
+      reason: err instanceof Error ? err.message : String(err),
+    };
+  }
+
   const dataDest = path.join(outDir, GOSAKI_CONTACT_HUBSPOT_DATA_REL);
   fs.mkdirSync(path.dirname(dataDest), { recursive: true });
   fs.writeFileSync(dataDest, `${JSON.stringify(loaded.config, null, 2)}\n`, "utf8");
-
-  const embedHtml = buildGosakiContactHubspotEmbedHtml(loaded.config);
-  const contactContent = fs.readFileSync(contactPath, "utf8");
-  fs.writeFileSync(
-    contactPath,
-    injectHubspotEmbedIntoContactPage(contactContent, embedHtml),
-    "utf8",
-  );
+  fs.writeFileSync(contactPath, nextContent, "utf8");
 
   return {
     applied: true,
@@ -199,5 +299,7 @@ export function applyGosakiContactHubspotEmbed(outDir, toolRoot, options = {}) {
     provider: loaded.config.provider,
     portalId: loaded.config.portalId,
     formId: loaded.config.formId,
+    embedSource: GOSAKI_CONTACT_HUBSPOT_EMBED_SOURCE_CORE,
+    environment: GOSAKI_CONTACT_HUBSPOT_CORE_ENVIRONMENT,
   };
 }

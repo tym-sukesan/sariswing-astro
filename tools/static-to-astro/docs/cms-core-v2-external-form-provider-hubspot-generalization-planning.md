@@ -75,12 +75,15 @@ Validation is **exact equality** to this allowlist (site-locked production Conta
 ```txt
 config/sites/gosaki-piano-contact-hubspot.json
   → validateGosakiContactHubspotConfig (exact allowlist)
-  → buildGosakiContactHubspotEmbedHtml (script + hs-form-frame)
-  → inject into contact/index.astro (#comp-jqbwo704)
+  → mapGosakiContactHubspotConfigToCore (strip scriptSrc; environment: staging)
+  → getExternalFormProviderResult → renderHubspotConfigHtml
+  → inject into contact/index.astro (#comp-jqbwo704 → #gosaki-contact-hubspot-embed)
   → copy JSON → src/data/gosaki-contact-hubspot.json
 ```
 
 Triggered only from Gosaki adapter when `cmsFeatures.contact`.
+
+Legacy `buildGosakiContactHubspotEmbedHtml` retained for shadow-compare / audit (not used by apply).
 
 HTML baseline: `fixtures/.../contact-hubspot-embed.html` deep-eq + contact page wrapper checks (`verify-cms-core-v2-gosaki-site-generator-hooks-html-baseline`).
 
@@ -246,9 +249,9 @@ Deep equality / locked checks (Gosaki):
 | --- | --- | --- | --- | --- |
 | **1** | `cms-core-v2-external-form-provider-hubspot-renderer` | `renderHubspotConfigHtml` + offline verifier (synthetic IDs) | Low — **COMPLETE** | Markup drifts from legacy inner baseline pattern; Core gains site selectors |
 | **2** | `cms-core-v2-external-form-provider-hubspot-shadow-compare` | Map Gosaki JSON→Core; deep-eq old vs new inner HTML | Medium — **COMPLETE** | Any inequality vs `contact-hubspot-embed.html`; temptation to change live IDs |
-| **3** | `cms-core-v2-external-form-provider-hubspot-adapter-switch` | Adapter calls Core renderer + keep Gosaki insert helper | Medium | HTML baseline fail; double loader; missing wrapper |
-| **4** | `cms-core-v2-external-form-hubspot-browser-baseline` | Operator PC/SP Contact check on staging package or local preview | Medium | Visual/layout regression; package/FTP without approval |
-| **5** | `cms-core-v2-external-form-hubspot-legacy-deletion-audit` | Decide keep/thin/delete `validateGosakiContactHubspotConfig` vs thin wrapper | Low–Med | Deleting before shadow+switch PASS |
+| **3** | `cms-core-v2-external-form-provider-hubspot-adapter-switch` | Adapter calls Core renderer + keep Gosaki insert helper | Medium — **COMPLETE** | HTML baseline fail; double loader; missing wrapper |
+| **4** | `cms-core-v2-external-form-provider-hubspot-browser-baseline` | Operator PC/SP Contact check on staging package or local preview | Medium | Visual/layout regression; package/FTP without approval |
+| **5** | `cms-core-v2-external-form-provider-hubspot-legacy-cleanup-audit` | Decide keep/thin/delete `validateGosakiContactHubspotConfig` vs thin wrapper | Low–Med | Deleting before shadow+switch PASS |
 | **6** | `cms-core-v2-external-form-provider-hubspot-completion-audit` | Docs/gates; provider completion scorecard | Low | Claiming COMPLETE while Gosaki still on dual path |
 
 **First implementation phase after this planning:** **Phase 1 (pure HubSpot renderer + offline verifier)** — no adapter switch, no config ID edits.
@@ -303,8 +306,8 @@ CMS_CORE_V2_EXTERNAL_FORM_HUBSPOT_GENERALIZATION_PLANNING_COMPLETE: true
 CONTACT_HUBSPOT_GENERALIZATION: PLANNING_COMPLETE
 CONTACT_HUBSPOT_RENDERER: COMPLETE
 CONTACT_HUBSPOT_GOSAKI_SHADOW_COMPARE: COMPLETE
-CONTACT_HUBSPOT_GOSAKI_ADAPTER_SWITCH: NOT_STARTED
-NEXT_RECOMMENDED: cms-core-v2-external-form-provider-hubspot-adapter-switch
+CONTACT_HUBSPOT_GOSAKI_ADAPTER_SWITCH: COMPLETE
+NEXT_RECOMMENDED: cms-core-v2-external-form-provider-hubspot-legacy-cleanup-audit
 PACKAGE_GENERATE_EXECUTED: false
 FTP_EXECUTED: false
 DB_WRITE_EXECUTED: false
@@ -331,9 +334,9 @@ READY_FOR_ANY_FUTURE_FTP_APPLY: false
 ```txt
 CMS_CORE_V2_EXTERNAL_FORM_PROVIDER_HUBSPOT_RENDERER_COMPLETE: true
 CONTACT_HUBSPOT_RENDERER: COMPLETE
-NEXT_RECOMMENDED: cms-core-v2-external-form-provider-hubspot-adapter-switch
+NEXT_RECOMMENDED: cms-core-v2-external-form-provider-hubspot-legacy-cleanup-audit
 HUBSPOT_CONFIG_UNCHANGED: true
-GOSAKI_ADAPTER_UNCHANGED: true
+GOSAKI_ADAPTER_SWITCHED_TO_CORE_RENDERER: true
 PACKAGE_GENERATE_EXECUTED: false
 FTP_EXECUTED: false
 DB_WRITE_EXECUTED: false
@@ -360,12 +363,46 @@ PRODUCTION_UNCHANGED: true
 ```txt
 CMS_CORE_V2_EXTERNAL_FORM_PROVIDER_HUBSPOT_SHADOW_COMPARE_COMPLETE: true
 CONTACT_HUBSPOT_GOSAKI_SHADOW_COMPARE: COMPLETE
-CONTACT_HUBSPOT_GOSAKI_ADAPTER_SWITCH: NOT_STARTED
+CONTACT_HUBSPOT_GOSAKI_ADAPTER_SWITCH: COMPLETE
 BYTE_FOR_BYTE_EQUALITY: true
 EXACT_ID_GATE_PRESERVED: true
-NEXT_RECOMMENDED: cms-core-v2-external-form-provider-hubspot-adapter-switch
+NEXT_RECOMMENDED: cms-core-v2-external-form-provider-hubspot-legacy-cleanup-audit
 HUBSPOT_CONFIG_UNCHANGED: true
-GOSAKI_ADAPTER_UNCHANGED: true
+GOSAKI_ADAPTER_SWITCHED_TO_CORE_RENDERER: true
+LEGACY_BUILDER_RETAINED: true
+PACKAGE_GENERATE_EXECUTED: false
+FTP_EXECUTED: false
+DB_WRITE_EXECUTED: false
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+PRODUCTION_UNCHANGED: true
+```
+
+---
+
+## 13. Phase result — HubSpot adapter switch (2026-08-01)
+
+**Phase:** `cms-core-v2-external-form-provider-hubspot-adapter-switch` — **COMPLETE**
+
+| Item | Value |
+| --- | --- |
+| Apply path | exact ID gate → `mapGosakiContactHubspotConfigToCore` → Core validate → `renderHubspotConfigHtml` → existing `#comp-jqbwo704` / `#gosaki-contact-hubspot-embed` inject |
+| Legacy builder | `buildGosakiContactHubspotEmbedHtml` **retained** (not used by apply) |
+| ViaCore | `buildGosakiContactHubspotEmbedHtmlViaCore` |
+| Equality | ViaCore === legacy === `contact-hubspot-embed.html`; inject === `contact-page.astro` |
+| Verifier | `verify:cms-core-v2-external-form-provider-hubspot-adapter-switch` (+ Safety Suite) |
+| Browser preview | `output/_cms-core-v2-hubspot-adapter-switch-browser/` (gitignored; repo `node_modules` symlink) |
+| HubSpot JSON / IDs / CSS | **unchanged** |
+| Next | `cms-core-v2-external-form-provider-hubspot-legacy-cleanup-audit` |
+
+```txt
+CMS_CORE_V2_EXTERNAL_FORM_PROVIDER_HUBSPOT_ADAPTER_SWITCH_COMPLETE: true
+CONTACT_HUBSPOT_GOSAKI_ADAPTER_SWITCH: COMPLETE
+EMBED_SOURCE: core-renderHubspotConfigHtml
+LEGACY_BUILDER_RETAINED: true
+BYTE_FOR_BYTE_EQUALITY: true
+EXACT_ID_GATE_PRESERVED: true
+NEXT_RECOMMENDED: cms-core-v2-external-form-provider-hubspot-legacy-cleanup-audit
+HUBSPOT_CONFIG_UNCHANGED: true
 PACKAGE_GENERATE_EXECUTED: false
 FTP_EXECUTED: false
 DB_WRITE_EXECUTED: false

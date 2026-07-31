@@ -126,6 +126,11 @@ const STEPS = [
     script: "verify-cms-core-v2-external-form-provider-hubspot-shadow-compare.mjs",
   },
   {
+    id: "external-form-provider-hubspot-adapter-switch",
+    kind: "node",
+    script: "verify-cms-core-v2-external-form-provider-hubspot-adapter-switch.mjs",
+  },
+  {
     id: "youtube-offline-vertical",
     kind: "node",
     script: "verify-cms-core-v2-youtube-supabase-vertical-slice.mjs",

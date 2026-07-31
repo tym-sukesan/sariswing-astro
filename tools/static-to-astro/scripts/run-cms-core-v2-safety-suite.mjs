@@ -106,6 +106,11 @@ const STEPS = [
     script: "verify-cms-core-v2-external-form-provider-contract-validator.mjs",
   },
   {
+    id: "external-form-provider-external-link",
+    kind: "node",
+    script: "verify-cms-core-v2-external-form-provider-external-link.mjs",
+  },
+  {
     id: "youtube-offline-vertical",
     kind: "node",
     script: "verify-cms-core-v2-youtube-supabase-vertical-slice.mjs",
@@ -175,6 +180,8 @@ const IMPORT_CYCLE_MODULES = [
   "mio-about-data-page.mjs",
   "mio-local-asset-url.mjs",
   "external-form-provider-contract.mjs",
+  "external-form-provider-renderer.mjs",
+  "mio-contact-form-page.mjs",
   "site-cms-features.mjs",
 ];
 

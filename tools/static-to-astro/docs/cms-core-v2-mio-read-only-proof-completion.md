@@ -14,7 +14,7 @@
 
 The Kit can convert a second, hand-authored static site (not Gosaki / not Wix crawl copy) through the shared convert path, resolve it from the site registry, lazy-load a Mio adapter, and render Schedule / Discography / Videos / About / footer from **explicitly injected** read-only bundles — with fail-closed unpublished / invalid handling, PC/SP visual baseline PASS, zero Gosaki leakage in Mio output, and stable offline Safety Suite — **without** DB write, Save, package, FTP, or production.
 
-Contact remains non-submitting (fixture intentional). That does **not** block read-only conversion proof; external form integration is a tracked remaining workstream.
+Contact remains PARTIAL overall (Google Forms / HubSpot / Admin not done), but **external-link** provider is implemented for Mio via injected `formConfigBundle` (synthetic HTTPS only). That does **not** complete full Contact productization; see `cms-core-v2-external-form-provider-contract-planning.md` §15.
 
 ---
 
@@ -34,7 +34,7 @@ Contact remains non-submitting (fixture intentional). That does **not** block re
 | 10 | PC / SP browser baseline | **PASS** | operator visual PASS after fix (dual-nav · wrap · assets · event-card CSS) |
 | 11 | Isolation vs Gosaki / generic / pilot | **PASS** | `/gosaki/i` 0 in Mio output · pilot zero mio markers |
 | 12 | Offline verifiers + Safety Suite | **PASS** | dedicated Mio verifiers in suite · baseline 80 · ALL PASS |
-| 13 | Contact | **PARTIAL** | page exists · submit disabled · **no** external form provider |
+| 13 | Contact | **PARTIAL→external-link** | `formConfigBundle` + external-link render (synthetic `forms.example.invalid`); Google Forms / HubSpot / live submit still open |
 | 14 | Supabase live read | **NOT_STARTED** | fixture inject only for Mio |
 | 15 | Admin UI | **NOT_STARTED** | staging shell / Mio admin not wired |
 | 16 | Save / DB write | **NOT_STARTED** | out of read-only proof |
@@ -143,6 +143,8 @@ CMS_CORE_V2_MIO_READ_ONLY_PROOF_PASS: true
 CMS_CORE_V2_MIO_READ_RENDER_BROWSER_BASELINE_PASS: true
 CONTACT_EXTERNAL_FORM: PLANNING_COMPLETE
 CONTACT_EXTERNAL_FORM_DOC: cms-core-v2-external-form-provider-contract-planning.md
+CONTACT_EXTERNAL_LINK_PROVIDER: COMPLETE
+CONTACT_GOOGLE_FORMS_PROVIDER: NOT_STARTED
 SUPABASE_LIVE_READ_MIO: NOT_STARTED
 MIO_ADMIN_UI: NOT_STARTED
 SAVE_DB_WRITE: NOT_STARTED
@@ -150,10 +152,10 @@ PACKAGE_GENERATE_EXECUTED: false
 FTP_EXECUTED: false
 PRODUCTION_UNCHANGED: true
 READY_FOR_ANY_FUTURE_FTP_APPLY: false
-NEXT_RECOMMENDED: cms-core-v2-external-form-provider-contract-validator
+NEXT_RECOMMENDED: cms-core-v2-external-form-provider-google-forms
 ```
 
-Follow-up (2026-07-31): Phase `cms-core-v2-external-form-provider-contract-planning` completed (docs-only). See `cms-core-v2-external-form-provider-contract-planning.md`. Runtime Contact still NOT_STARTED.
+Follow-up: external-form planning + validator + **external-link** render for Mio (synthetic `forms.example.invalid`). Google Forms / HubSpot / Admin still open.
 
 ---
 

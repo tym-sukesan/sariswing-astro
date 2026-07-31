@@ -4,10 +4,35 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 ## 0. Current next actions（直近）
 
 1. **Primary (Gosaki ops):** クライアントへ **staging 共有**（`CLIENT_SHARE_READY: true` · package `dc1c5b6…`）。本番 cutover はしない。
-2. **並行可 (Kit Core):** **Next Kit** `cms-core-v2-external-form-provider-external-link`（別承認）· then google-forms · HubSpot generalization · Admin config UI · Supabase live-read / generic read-only Admin · Admin runtime Save arm mutex（**別承認**）· evening-set hero（**NON_BLOCKING**）。
+2. **並行可 (Kit Core):** **Next Kit** `cms-core-v2-external-form-provider-google-forms`（別承認）· then HubSpot generalization · Admin config UI · Supabase live-read / generic read-only Admin · Admin runtime Save arm mutex（**別承認**）· evening-set hero（**NON_BLOCKING**）。
 3. **並行可:** production hosting **read-only planning**（`HOSTING_READY: false`）。
 4. **並行可 / 別承認:** YouTube 複数件 **永続 Save**（NON_BLOCKING）。
 5. Save arm **false** · `readyForAnyFutureFtpApply: false` · production STOP · `service_role` 禁止 · **deployed package 固定**.
+
+## 0. CMS Core v2 external form provider external-link (2026-07-31)
+
+| Item | Value |
+| --- | --- |
+| Gate | `CMS_CORE_V2_EXTERNAL_FORM_PROVIDER_EXTERNAL_LINK_COMPLETE: true` |
+| Phase | `cms-core-v2-external-form-provider-external-link` |
+| Renderer | `scripts/lib/external-form-provider-renderer.mjs` |
+| Mio helper | `scripts/lib/mio-contact-form-page.mjs` |
+| Inject | `formConfigBundle` (synthetic `forms.example.invalid`) |
+| Verifier | `verify:cms-core-v2-external-form-provider-external-link` |
+| Next Kit | `cms-core-v2-external-form-provider-google-forms` |
+
+```txt
+CMS_CORE_V2_EXTERNAL_FORM_PROVIDER_EXTERNAL_LINK_COMPLETE: true
+CONTACT_EXTERNAL_LINK_PROVIDER: COMPLETE
+CONTACT_GOOGLE_FORMS_PROVIDER: NOT_STARTED
+CONTACT_HUBSPOT_GENERALIZATION: NOT_STARTED
+NEXT_RECOMMENDED: cms-core-v2-external-form-provider-google-forms
+PACKAGE_GENERATE_EXECUTED: false
+FTP_EXECUTED: false
+DB_WRITE_EXECUTED: false
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+PRODUCTION_UNCHANGED: true
+```
 
 ## 0. CMS Core v2 external form provider contract validator (2026-07-31)
 
@@ -17,14 +42,14 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Phase | `cms-core-v2-external-form-provider-contract-validator` |
 | SoT | `scripts/lib/external-form-provider-contract.mjs` |
 | Verifier | `verify:cms-core-v2-external-form-provider-contract-validator` |
-| Contact HTML / registry | **not wired** |
-| Next Kit | `cms-core-v2-external-form-provider-external-link` |
+| External-link render | **COMPLETE** (above) |
+| Next Kit | `cms-core-v2-external-form-provider-google-forms` |
 
 ```txt
 CMS_CORE_V2_EXTERNAL_FORM_PROVIDER_CONTRACT_VALIDATOR_COMPLETE: true
 CONTACT_PROVIDER_VALIDATOR: COMPLETE
-CONTACT_EXTERNAL_FORM_RUNTIME: NOT_STARTED
-NEXT_RECOMMENDED: cms-core-v2-external-form-provider-external-link
+CONTACT_EXTERNAL_LINK_PROVIDER: COMPLETE
+NEXT_RECOMMENDED: cms-core-v2-external-form-provider-google-forms
 PACKAGE_GENERATE_EXECUTED: false
 FTP_EXECUTED: false
 DB_WRITE_EXECUTED: false
@@ -41,15 +66,17 @@ PRODUCTION_UNCHANGED: true
 | Verdict | **COMPLETE (docs-only)** |
 | Doc | `cms-core-v2-external-form-provider-contract-planning.md` |
 | Providers | `disabled` · `external-link` · `google-forms` · `hubspot` |
-| Validator | **COMPLETE** (above) |
-| Next Kit | `cms-core-v2-external-form-provider-external-link` |
+| Validator | **COMPLETE** |
+| External-link | **COMPLETE** |
+| Next Kit | `cms-core-v2-external-form-provider-google-forms` |
 
 ```txt
 CMS_CORE_V2_EXTERNAL_FORM_PROVIDER_CONTRACT_PLANNING_COMPLETE: true
 CONTACT_EXTERNAL_FORM: PLANNING_COMPLETE
 CONTACT_PROVIDER_VALIDATOR: COMPLETE
-CONTACT_EXTERNAL_FORM_RUNTIME: NOT_STARTED
-NEXT_RECOMMENDED: cms-core-v2-external-form-provider-external-link
+CONTACT_EXTERNAL_LINK_PROVIDER: COMPLETE
+CONTACT_EXTERNAL_FORM_RUNTIME: EXTERNAL_LINK_COMPLETE
+NEXT_RECOMMENDED: cms-core-v2-external-form-provider-google-forms
 PACKAGE_GENERATE_EXECUTED: false
 FTP_EXECUTED: false
 DB_WRITE_EXECUTED: false
@@ -65,8 +92,8 @@ PRODUCTION_UNCHANGED: true
 | Phase | `cms-core-v2-mio-read-only-proof-completion` |
 | Verdict | **COMPLETE / PASS** (read-only multi-site convert) |
 | Doc | `cms-core-v2-mio-read-only-proof-completion.md` |
-| Contact | **PARTIAL** — external form PLANNING_COMPLETE; runtime NOT_STARTED |
-| Next Kit | `cms-core-v2-external-form-provider-contract-validator` |
+| Contact | **PARTIAL** — external-link COMPLETE; Google Forms / HubSpot open |
+| Next Kit | `cms-core-v2-external-form-provider-google-forms` |
 
 ```txt
 CMS_CORE_V2_MIO_READ_ONLY_PROOF_COMPLETE: true

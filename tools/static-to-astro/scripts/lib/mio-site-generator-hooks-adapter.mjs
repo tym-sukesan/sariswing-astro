@@ -1,8 +1,8 @@
 /**
  * Mio Kisaragi Jazz site adapter — generator hooks
- * (Videos + footer SNS + Schedule + Discography + About read-render).
+ * (Videos + footer SNS + Schedule + Discography + About + Contact external-link).
  *
- * Does not implement Contact / Admin / Save.
+ * Does not implement Admin / Save / Google Forms / HubSpot.
  * Loaded lazily via registry `generatorHooksAdapter` (ensureSiteGeneratorHookAdapter).
  * Bundles must be injected (no implicit fixture path).
  */
@@ -10,6 +10,7 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { applyMioAboutPage } from "./mio-about-data-page.mjs";
+import { applyMioContactFormPage } from "./mio-contact-form-page.mjs";
 import { patchMioDiscographyMainHtml } from "./mio-discography-data-page.mjs";
 import { generateMioFooterAstro } from "./mio-footer-social.mjs";
 import {
@@ -33,7 +34,7 @@ export function ensureMioSiteGeneratorHooksRegistered() {
 }
 
 /**
- * Mio hook methods — Videos + footer + Schedule + Discography + About.
+ * Mio hook methods — Videos + footer + Schedule + Discography + About + Contact.
  * @returns {Omit<import('./site-generator-hooks.mjs').SiteGeneratorHooks, 'siteKey' | 'active'>}
  */
 export function createMioKisaragiJazzHookMethods() {
@@ -81,9 +82,12 @@ export function createMioKisaragiJazzHookMethods() {
       const mioVideosEmbedSummary = applyMioVideosPageEmbeds(outDir, embedsBundle);
       const aboutBundle = ctx?.aboutBundle ?? ctx?.siteAboutBundle ?? null;
       const mioAboutSummary = applyMioAboutPage(outDir, aboutBundle);
+      const formConfigBundle = ctx?.formConfigBundle ?? ctx?.siteFormConfigBundle ?? null;
+      const mioContactSummary = applyMioContactFormPage(outDir, formConfigBundle);
       const writtenPaths = [
         ...(mioVideosEmbedSummary.paths ?? []),
         ...(mioAboutSummary.paths ?? []),
+        ...(mioContactSummary.paths ?? []),
       ];
 
       return {
@@ -94,6 +98,7 @@ export function createMioKisaragiJazzHookMethods() {
         gosakiReadOnlyAdminSummary: { applied: false, reason: "mio_adapter_skip" },
         mioVideosEmbedSummary,
         mioAboutSummary,
+        mioContactSummary,
         writtenPaths,
       };
     },

@@ -11,6 +11,7 @@
  * @property {unknown} embedsBundle
  * @property {unknown} pageFieldsBundle
  * @property {unknown} aboutBundle
+ * @property {unknown} formConfigBundle
  */
 
 /**
@@ -30,12 +31,15 @@ export function normalizeSiteDataBundles(options = {}) {
     options.gosakiPageFieldsBundle ??
     null;
   const aboutBundle = options.aboutBundle ?? options.siteAboutBundle ?? null;
+  const formConfigBundle =
+    options.formConfigBundle ?? options.siteFormConfigBundle ?? null;
   return {
     scheduleBundle,
     discographyBundle,
     embedsBundle,
     pageFieldsBundle,
     aboutBundle,
+    formConfigBundle,
   };
 }
 
@@ -46,8 +50,14 @@ export function normalizeSiteDataBundles(options = {}) {
  * @returns {Record<string, unknown>}
  */
 export function withNormalizedSiteDataBundles(options = {}) {
-  const { scheduleBundle, discographyBundle, embedsBundle, pageFieldsBundle, aboutBundle } =
-    normalizeSiteDataBundles(options);
+  const {
+    scheduleBundle,
+    discographyBundle,
+    embedsBundle,
+    pageFieldsBundle,
+    aboutBundle,
+    formConfigBundle,
+  } = normalizeSiteDataBundles(options);
   return {
     ...options,
     scheduleBundle,
@@ -58,6 +68,8 @@ export function withNormalizedSiteDataBundles(options = {}) {
     sitePageFieldsBundle: pageFieldsBundle,
     aboutBundle,
     siteAboutBundle: aboutBundle,
+    formConfigBundle,
+    siteFormConfigBundle: formConfigBundle,
     gosakiScheduleBundle: scheduleBundle,
     gosakiDiscographyBundle: discographyBundle,
     gosakiEmbedsBundle: embedsBundle,

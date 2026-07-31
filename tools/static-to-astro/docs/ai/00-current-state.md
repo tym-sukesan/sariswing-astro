@@ -3,11 +3,13 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**CMS Core v2 external form provider contract validator (2026-07-31):** **COMPLETE** — Phase `cms-core-v2-external-form-provider-contract-validator` · SoT `scripts/lib/external-form-provider-contract.mjs` · offline verifier + Safety Suite · fail-closed reasonCodes · flat provider fields · **no** Contact HTML / registry / network · **Next Kit:** `cms-core-v2-external-form-provider-external-link` · Ops: Gosaki client staging share.
+**CMS Core v2 external form provider external-link (2026-07-31):** **COMPLETE** — Phase `cms-core-v2-external-form-provider-external-link` · Renderer `external-form-provider-renderer.mjs` · Mio `mio-contact-form-page.mjs` + `formConfigBundle` inject · synthetic `forms.example.invalid` · verifier + Safety Suite · **no** Google Forms / HubSpot / Admin / Save / package · **Next Kit:** `cms-core-v2-external-form-provider-google-forms` · Ops: Gosaki client staging share.
 
-**CMS Core v2 external form provider contract planning (2026-07-31):** **COMPLETE (docs-only)** — Phase `cms-core-v2-external-form-provider-contract-planning` · Doc: `cms-core-v2-external-form-provider-contract-planning.md` · Providers: `disabled` · `external-link` · `google-forms` · `hubspot` · validator phase done above · runtime Contact render **NOT_STARTED**.
+**CMS Core v2 external form provider contract validator (2026-07-31):** **COMPLETE** — SoT `external-form-provider-contract.mjs` · external-link render done above.
 
-**CMS Core v2 Mio read-only proof completion (2026-07-31):** **COMPLETE / PASS** — Phase `cms-core-v2-mio-read-only-proof-completion` · Doc: `cms-core-v2-mio-read-only-proof-completion.md` · Second-site read-only convert proven · Contact **PARTIAL** (validator COMPLETE; render NOT_STARTED) · **Next Kit:** external-link provider (above).
+**CMS Core v2 external form provider contract planning (2026-07-31):** **COMPLETE (docs-only)** — Doc: `cms-core-v2-external-form-provider-contract-planning.md` · §15 external-link.
+
+**CMS Core v2 Mio read-only proof completion (2026-07-31):** **COMPLETE / PASS** — Contact scorecard updated for external-link; Google Forms / HubSpot still open.
 
 **CMS Core v2 Mio read-render browser-baseline (2026-07-31):** **PASS / COMPLETE** — dual-nav · main.wrap · About `withBase('/images/…')` · Schedule fixture CSS · NON_BLOCKING evening-set hero · folded into read-only proof above.
 

@@ -413,13 +413,13 @@ Add step to `verify:cms-core-v2-safety-suite` when implementation lands — **do
 phase: cms-core-v2-external-form-provider-contract-planning
 CMS_CORE_V2_EXTERNAL_FORM_PROVIDER_CONTRACT_PLANNING_COMPLETE: true
 CONTACT_EXTERNAL_FORM: PLANNING_COMPLETE
-CONTACT_EXTERNAL_FORM_RUNTIME: NOT_STARTED
+CONTACT_EXTERNAL_FORM_RUNTIME: EXTERNAL_LINK_COMPLETE
 CONTACT_PROVIDER_VALIDATOR: COMPLETE
-CONTACT_EXTERNAL_LINK_PROVIDER: NOT_STARTED
+CONTACT_EXTERNAL_LINK_PROVIDER: COMPLETE
 CONTACT_GOOGLE_FORMS_PROVIDER: NOT_STARTED
 CONTACT_HUBSPOT_GENERALIZATION: NOT_STARTED
 CONTACT_ADMIN_CONFIG_UI: NOT_STARTED
-NEXT_RECOMMENDED: cms-core-v2-external-form-provider-external-link
+NEXT_RECOMMENDED: cms-core-v2-external-form-provider-google-forms
 PACKAGE_GENERATE_EXECUTED: false
 FTP_EXECUTED: false
 DB_WRITE_EXECUTED: false
@@ -437,4 +437,15 @@ READY_FOR_ANY_FUTURE_FTP_APPLY: false
 - **Shape:** flat fields (`url`/`label`, `formUrl`/`title`, `portalId`/`formId`/`region`) — nested planning JSON maps later at adapter boundary
 - **Verifier:** `verify:cms-core-v2-external-form-provider-contract-validator` (Safety Suite step)
 - **Policies locked:** HTTPS-only · exact host · fragment allowed only for `external-link` · Google path `/forms/d/e/…/viewform` · `forms.gle` rejected · HubSpot `scriptSrc` input forbidden · loader metadata derived · unknown fields fail-closed · no input mutation · no HTML generation
-- **Next:** `cms-core-v2-external-form-provider-external-link`
+
+---
+
+## 15. External-link provider implementation (2026-07-31)
+
+- **Phase:** `cms-core-v2-external-form-provider-external-link` — **COMPLETE**
+- **Renderer (site-neutral):** `scripts/lib/external-form-provider-renderer.mjs` — validator result only; HTML-escape; `rel="noopener noreferrer"`; `target="_blank"` iff `openInNewTab`
+- **Mio helper:** `scripts/lib/mio-contact-form-page.mjs` — inject `formConfigBundle`; replaces `#mio-contact-form` + iframe placeholder; synthetic URL `https://forms.example.invalid/mio-kisaragi-jazz-booking`
+- **Core forward:** `formConfigBundle` / `siteFormConfigBundle` via `site-generator-options` + `astro-generator` (no Mio selectors in Core)
+- **Verifier:** `verify:cms-core-v2-external-form-provider-external-link` (Safety Suite)
+- **Not done:** Google Forms iframe · HubSpot generalization · Admin · Save · registry real URLs · package/FTP
+- **Next:** `cms-core-v2-external-form-provider-google-forms`

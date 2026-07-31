@@ -4,10 +4,41 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 ## 0. Current next actions（直近）
 
 1. **Primary (Gosaki ops):** クライアントへ **staging 共有**（`CLIENT_SHARE_READY: true` · package `dc1c5b6…`）。本番 cutover はしない。
-2. **並行可 (Kit Core):** **Next Primary** `cms-core-v2-mio-supabase-live-select-only-pilot`（別承認）· then generic read-only Admin · form onboarding contract · Admin runtime Save arm mutex（**別承認**）· evening-set hero（**NON_BLOCKING**）。
+2. **並行可 (Kit Core):** **Next Primary** `cms-core-v2-mio-supabase-live-select-only-seed-write-gate`（DB write · 明示承認）→ その後 Branch A `cms-core-v2-mio-supabase-live-select-only-pilot` · then generic read-only Admin · form onboarding · Admin runtime Save arm mutex（**別承認**）· evening-set hero（**NON_BLOCKING**）。
 3. **並行可:** production hosting **read-only planning**（`HOSTING_READY: false`）。
 4. **並行可 / 別承認:** YouTube 複数件 **永続 Save**（NON_BLOCKING）。
 5. Save arm **false** · `readyForAnyFutureFtpApply: false` · production STOP · `service_role` 禁止 · **deployed package 固定**.
+
+## 0. CMS Core v2 Mio Supabase live SELECT-only preflight (2026-08-01)
+
+| Item | Value |
+| --- | --- |
+| Gate | `CMS_CORE_V2_MIO_SUPABASE_LIVE_SELECT_ONLY_PREFLIGHT_COMPLETE: true` |
+| Attempted pilot | `cms-core-v2-mio-supabase-live-select-only-pilot` |
+| Branch | **B** (no Mio staging data) |
+| Live pilot COMPLETE | **false** |
+| Staging | `kmjqppxjdnwwrtaeqjta` · production STOP |
+| Mio counts | schedules/disco/tracks/embeds/page_fields = **0** |
+| Docs | `cms-core-v2-mio-supabase-live-select-only-preflight.md` · seed planning |
+| Verifier | `verify:cms-core-v2-mio-supabase-live-select-only-preflight` |
+| Next | seed write gate (human) → Branch A pilot |
+
+```txt
+CMS_CORE_V2_MIO_SUPABASE_LIVE_SELECT_ONLY_PREFLIGHT_COMPLETE: true
+CMS_CORE_V2_MIO_SUPABASE_LIVE_SELECT_ONLY_PILOT_COMPLETE: false
+CMS_CORE_V2_MIO_SUPABASE_LIVE_SELECT_ONLY_SEED_WRITE_PLANNING_COMPLETE: true
+MIO_STAGING_DATA_PRESENT: false
+BRANCH: B
+DB_WRITE_EXECUTED: false
+SQL_EXECUTED: false
+RUNTIME_CHANGED: false
+GOSAKI_UNCHANGED: true
+CONTACT_PROVIDER_UNCHANGED: true
+READY_FOR_MIO_SEED_APPLY: false
+NEXT_PRIMARY_RECOMMENDED: cms-core-v2-mio-supabase-live-select-only-seed-write-gate
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+PRODUCTION_UNCHANGED: true
+```
 
 ## 0. CMS Core v2 external form HubSpot completion audit (2026-08-01)
 
@@ -21,7 +52,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Non-blocking ops | Core切替後 HubSpot submit E2E 再実施 only |
 | Doc | `cms-core-v2-external-form-provider-hubspot-completion-audit.md` |
 | Verifier | `verify:cms-core-v2-external-form-provider-hubspot-completion-audit` |
-| Next Primary | `cms-core-v2-mio-supabase-live-select-only-pilot` |
+| Next Primary | superseded → Mio seed write gate (see § Mio live SELECT preflight) |
 
 ```txt
 CMS_CORE_V2_EXTERNAL_FORM_HUBSPOT_COMPLETION_AUDIT_COMPLETE: true
@@ -29,7 +60,7 @@ CONTACT_HUBSPOT_PROVIDER_CORE: COMPLETE_WITH_NON_BLOCKING
 CONTACT_HUBSPOT_GENUINE_BLOCKER: none
 CONTACT_HUBSPOT_PC375_BROWSER_BASELINE: PASS
 CONTACT_HUBSPOT_NON_BLOCKING_OPS: submit-e2e-recheck-after-core-switch
-NEXT_PRIMARY_RECOMMENDED: cms-core-v2-mio-supabase-live-select-only-pilot
+NEXT_PRIMARY_RECOMMENDED: cms-core-v2-mio-supabase-live-select-only-seed-write-gate
 RUNTIME_CHANGED: false
 HUBSPOT_CONFIG_UNCHANGED: true
 FORM_SUBMIT_EXECUTED: false

@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**CMS Core v2 external form HubSpot completion audit (2026-08-01):** **COMPLETE** (read-only) — Phase `cms-core-v2-external-form-provider-hubspot-completion-audit` · Doc: `cms-core-v2-external-form-provider-hubspot-completion-audit.md` · HubSpot **COMPLETE WITH NON-BLOCKING** · PC/375 browser **PASS** · non-blocking ops = submit E2E recheck only · genuine blockers none · npm `verify:cms-core-v2-external-form-provider-hubspot-completion-audit` (+ Safety Suite) · **Next Primary:** `cms-core-v2-mio-supabase-live-select-only-pilot` · Ops: Gosaki client staging share.
+**CMS Core v2 Mio Supabase live SELECT-only preflight (2026-08-01):** **COMPLETE (Branch B / STOP)** — Phase `cms-core-v2-mio-supabase-live-select-only-preflight` · Attempted pilot `cms-core-v2-mio-supabase-live-select-only-pilot` · staging `kmjqppxjdnwwrtaeqjta` anon SELECT-only · `site_slug=mio-kisaragi-jazz` counts **0** on schedules/discography/tracks/embeds/page_fields · Gosaki anon sanity OK (schedules pub 74) · **live pilot NOT COMPLETE** · empty SELECT ≠ COMPLETE · Docs: `cms-core-v2-mio-supabase-live-select-only-preflight.md` + `cms-core-v2-mio-supabase-live-select-only-seed-write-planning.md` · SQL template DO NOT EXECUTE · npm `verify:cms-core-v2-mio-supabase-live-select-only-preflight` (+ Safety Suite offline) · **no DB write / runtime / Contact / Gosaki / package / FTP** · **Next Primary:** `cms-core-v2-mio-supabase-live-select-only-seed-write-gate` (human approval) → then Branch A pilot.
+
+**CMS Core v2 external form HubSpot completion audit (2026-08-01):** **COMPLETE** (read-only) — Phase `cms-core-v2-external-form-provider-hubspot-completion-audit` · Doc: `cms-core-v2-external-form-provider-hubspot-completion-audit.md` · HubSpot **COMPLETE WITH NON-BLOCKING** · PC/375 browser **PASS** · non-blocking ops = submit E2E recheck only · genuine blockers none · npm `verify:cms-core-v2-external-form-provider-hubspot-completion-audit` (+ Safety Suite) · Next Kit Primary superseded by Mio live SELECT seed gate above · Ops: Gosaki client staging share.
 
 **CMS Core v2 external form HubSpot legacy cleanup audit (2026-08-01):** **COMPLETE** — KEEP_AS_TEST_ORACLE; completion audit above.
 
@@ -23,7 +25,7 @@ Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト�
 
 **CMS Core v2 external form provider contract planning (2026-07-31):** **COMPLETE** — Doc §22 HubSpot completion audit.
 
-**CMS Core v2 Mio read-only proof completion (2026-07-31):** **COMPLETE / PASS** — Contact Kit providers advanced; Mio live HubSpot/Admin still open; next Primary = Mio Supabase live SELECT.
+**CMS Core v2 Mio read-only proof completion (2026-07-31):** **COMPLETE / PASS** — Contact Kit providers advanced; Mio live HubSpot/Admin still open; Mio Supabase live SELECT preflight = Branch B (no staging rows; seed gate next).
 
 **CMS Core v2 Mio read-render browser-baseline (2026-07-31):** **PASS / COMPLETE** — dual-nav · main.wrap · About `withBase('/images/…')` · Schedule fixture CSS · NON_BLOCKING evening-set hero · folded into read-only proof above.
 

@@ -101,6 +101,11 @@ const STEPS = [
     script: "verify-cms-core-v2-mio-about-read-render.mjs",
   },
   {
+    id: "mio-supabase-live-select-only-preflight",
+    kind: "node",
+    script: "verify-cms-core-v2-mio-supabase-live-select-only-preflight.mjs",
+  },
+  {
     id: "external-form-provider-contract-validator",
     kind: "node",
     script: "verify-cms-core-v2-external-form-provider-contract-validator.mjs",

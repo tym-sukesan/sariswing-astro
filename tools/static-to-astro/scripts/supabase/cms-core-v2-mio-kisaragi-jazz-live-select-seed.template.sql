@@ -1,0 +1,38 @@
+-- =============================================================================
+-- Mio Kisaragi Jazz — live SELECT-only CONTENT seed — TEMPLATE
+-- Phase planning: cms-core-v2-mio-supabase-live-select-only-seed-write-planning
+-- Status: DO NOT EXECUTE in preflight / this commit series
+-- Staging only: kmjqppxjdnwwrtaeqjta
+-- STOP production: vsbvndwuajjhnzpohghh
+-- Source: fixtures/mio-kisaragi-jazz-data/{schedules,discography,videos,about}.json
+-- Scope: sites + schedules + discography + discography_tracks + site_embeds + site_page_fields
+-- site_slug: mio-kisaragi-jazz ONLY
+-- Access / RLS / grants: out of scope (reuse existing staging policies)
+-- =============================================================================
+-- Before apply: regenerate VALUES from fixture · run SELECT-only pre-counts
+-- After apply: SELECT-only post-counts · anon published re-check
+-- Rollback: DELETE … WHERE site_slug = 'mio-kisaragi-jazz' (child→parent)
+-- =============================================================================
+
+-- begin;
+--
+-- insert into public.sites (site_slug, display_name, status)
+-- values ('mio-kisaragi-jazz', 'Mio Kisaragi Jazz', 'active')
+-- on conflict (site_slug) do update
+--   set display_name = excluded.display_name,
+--       status = 'active',
+--       updated_at = now();
+--
+-- -- schedules / discography / tracks / site_embeds / site_page_fields:
+-- -- insert Core columns only; omit fixture fake ids; set site_slug on tracks;
+-- -- about: page_key='about', field_key='profile.lede', value_text from fixture
+--
+-- commit;
+
+-- SELECT-only verify (operator):
+-- select count(*) from public.schedules where site_slug = 'mio-kisaragi-jazz';
+-- select count(*) from public.discography where site_slug = 'mio-kisaragi-jazz';
+-- select count(*) from public.discography_tracks where site_slug = 'mio-kisaragi-jazz';
+-- select count(*) from public.site_embeds where site_slug = 'mio-kisaragi-jazz';
+-- select count(*) from public.site_page_fields
+--   where site_slug = 'mio-kisaragi-jazz' and page_key = 'about' and field_key = 'profile.lede';

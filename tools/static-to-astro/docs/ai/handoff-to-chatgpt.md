@@ -5,18 +5,17 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: CMS Core v2 external form HubSpot completion audit COMPLETE
-Phase: cms-core-v2-external-form-provider-hubspot-completion-audit
-Doc: tools/static-to-astro/docs/cms-core-v2-external-form-provider-hubspot-completion-audit.md
-HubSpot verdict: COMPLETE WITH NON-BLOCKING ITEMS
-Genuine blockers: none
-PC/375 browser baseline: PASS (form display; wrapper/frame/loader 1; no submit)
-Non-blocking ops: Core-switch HubSpot submit E2E recheck only
-Contact: disabled/external-link COMPLETE · google-forms offline COMPLETE · hubspot Core COMPLETE_WITH_NON_BLOCKING
-Kit policy: hubspot CRM candidate · google-forms lightweight · external-link fallback · disabled default
-Next Primary: cms-core-v2-mio-supabase-live-select-only-pilot
-Verifier: verify:cms-core-v2-external-form-provider-hubspot-completion-audit (+ Safety Suite)
-Prior: legacy-cleanup KEEP_AS_TEST_ORACLE · adapter-switch · shadow · renderer COMPLETE
+Current phase: CMS Core v2 Mio Supabase live SELECT-only preflight COMPLETE (Branch B STOP)
+Phase: cms-core-v2-mio-supabase-live-select-only-preflight
+Attempted pilot: cms-core-v2-mio-supabase-live-select-only-pilot → NOT COMPLETE (no Mio staging rows)
+Docs: mio-supabase-live-select-only-preflight.md · seed-write-planning.md
+Mio site_slug counts: schedules/disco/tracks/embeds/page_fields = 0
+Gosaki anon sanity: schedules published 74 (staging OK)
+DB_WRITE_EXECUTED: false · SQL template DO NOT EXECUTE
+Next Primary: cms-core-v2-mio-supabase-live-select-only-seed-write-gate (human approval)
+Then: Branch A live SELECT pilot
+Verifier: verify:cms-core-v2-mio-supabase-live-select-only-preflight (+ Safety Suite offline)
+HubSpot: COMPLETE WITH NON-BLOCKING (prior) · PC/375 PASS · submit E2E recheck only
 Gosaki CLIENT_SHARE_READY: true (maintained)
 deployed package: dc1c5b62a58d0462ad6629db4847256d316d4a38 (unchanged; no regen)
 Next Primary (ops): share staging with client
@@ -26,6 +25,13 @@ readyForAnyFutureFtpApply: false
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
 ```
 
+## CMS Core v2 Mio Supabase live SELECT-only preflight (2026-08-01)
+
+- Branch **B**: Mio staging data absent → seed planning only · live pilot **NOT COMPLETE**
+- Empty anon SELECT success ≠ multi-site live-read COMPLETE
+- Seed write requires explicit approval; SQL not executed
+- Runtime / Contact / Gosaki / package / FTP unchanged
+
 ## CMS Core v2 external form HubSpot completion audit (2026-08-01)
 
 - Read-only scorecard: HubSpot provider core COMPLETE WITH NON-BLOCKING
@@ -33,7 +39,7 @@ STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
 - Non-blocking ops retained: Core切替後 HubSpot submit E2E 再実施 only
 - Package/FTP = staging deployment/release task (not in this verdict)
 - No genuine blockers; onboarding / production cutover / Admin / oracle retirement remain classified separately
-- Recommended Kit Primary next: Mio Supabase live SELECT-only pilot (second-site CMS proof)
+- Kit Primary next superseded by Mio seed write gate (preflight Branch B)
 - No runtime change · no form submit · no HubSpot ID edits
 
 ## CMS Core v2 external form HubSpot legacy cleanup audit (2026-08-01)

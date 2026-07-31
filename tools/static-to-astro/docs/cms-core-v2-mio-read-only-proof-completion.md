@@ -40,7 +40,7 @@ Admin / live Forms submit / Mio HubSpot onboarding remain open.
 | 11 | Isolation vs Gosaki / generic / pilot | **PASS** | `/gosaki/i` 0 in Mio output · pilot zero mio markers |
 | 12 | Offline verifiers + Safety Suite | **PASS** | dedicated Mio verifiers in suite · baseline 80 · ALL PASS |
 | 13 | Contact | **PARTIAL (Mio)** · Kit providers advanced | Mio: link + Forms offline; Gosaki HubSpot Core **COMPLETE_WITH_NON_BLOCKING**; Admin / live Forms / Mio HubSpot open |
-| 14 | Supabase live read | **NOT_STARTED** | fixture inject only for Mio |
+| 14 | Supabase live read | **PREFLIGHT STOP (Branch B)** | staging anon SELECT: Mio rows **0** · seed write gate required · see `cms-core-v2-mio-supabase-live-select-only-preflight.md` |
 | 15 | Admin UI | **NOT_STARTED** | staging shell / Mio admin not wired |
 | 16 | Save / DB write | **NOT_STARTED** | out of read-only proof |
 | 17 | Package / staging deploy | **NOT_STARTED** | profiles exist; generate/FTP not executed |
@@ -66,7 +66,7 @@ Admin / live Forms submit / Mio HubSpot onboarding remain open.
 | Area | Note |
 | --- | --- |
 | External Contact form | Kit: external-link / google-forms / hubspot Core done; Mio HubSpot onboarding · Forms live · Admin still open |
-| Mio Supabase live SELECT | **Recommended next Primary** — `cms-core-v2-mio-supabase-live-select-only-pilot` |
+| Mio Supabase live SELECT | Preflight **Branch B** (no rows) · next = seed write gate → then Branch A pilot |
 | Generic read-only Admin for Mio | Feature registry; Save stays disabled |
 | Any Save / Edge / RLS / Secrets | Separate high-risk gates |
 | Mio package + staging FTP | Separate approval; FTP `--apply` still suspended |

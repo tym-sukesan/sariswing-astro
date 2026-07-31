@@ -1,9 +1,8 @@
 /**
- * Mio Kisaragi Jazz — Contact page external-link inject from formConfigBundle.
+ * Mio Kisaragi Jazz — Contact page form inject from formConfigBundle.
  *
- * Validates via Core contract, renders via site-neutral external-link renderer,
- * then replaces Mio Contact scaffold (disabled form + iframe placeholder).
- * No implicit fixture/config file read. No form POST / script / iframe emit.
+ * Supports external-link + google-forms via Core validator + site-neutral renderer.
+ * No implicit fixture/config file read. No form POST / operator script.
  */
 
 import fs from "node:fs";
@@ -26,6 +25,19 @@ export const MIO_CONTACT_EXTERNAL_LINK_FIXTURE_CONFIG = Object.freeze({
   label: "予約・お問い合わせフォームを開く",
   allowedHosts: Object.freeze(["forms.example.invalid"]),
   openInNewTab: true,
+});
+
+/**
+ * Offline-only synthetic Google Forms URL (docs.google.com shape).
+ * Not a live customer form · network not required for convert/verify.
+ */
+export const MIO_CONTACT_GOOGLE_FORMS_FIXTURE_CONFIG = Object.freeze({
+  provider: "google-forms",
+  siteSlug: MIO_CONTACT_EXPECTED_SITE_SLUG,
+  environment: MIO_CONTACT_EXPECTED_ENVIRONMENT,
+  formUrl:
+    "https://docs.google.com/forms/d/e/1FAIpQLSdMioOfflinePilotFakeFormOnly/viewform?embedded=true",
+  title: "お問い合わせ（架空フォーム）",
 });
 
 /**
@@ -60,18 +72,26 @@ export function resolveMioContactPagePath(outDir) {
 
 /**
  * @param {string} innerHtml markup from site-neutral renderer
- * @param {{ mode: "external-link" | "notice", reasonCode?: string | null }} meta
+ * @param {{ mode: "external-link" | "google-forms" | "notice", reasonCode?: string | null }} meta
  */
 export function wrapMioContactExternalMarkup(innerHtml, meta) {
-  const mode = meta.mode === "external-link" ? "external-link" : "notice";
+  const mode =
+    meta.mode === "external-link" || meta.mode === "google-forms" ? meta.mode : "notice";
   const reasonAttr =
     meta.reasonCode != null && String(meta.reasonCode)
       ? ` data-mio-contact-reason="${String(meta.reasonCode).replace(/"/g, "")}"`
       : "";
-  const note =
-    mode === "external-link"
-      ? `<p class="contact-note" role="status">外部の予約・お問い合わせフォームへ移動します（架空 HTTPS · 実送信なし）。</p>`
-      : `<p class="contact-note" role="status">お問い合わせフォームは現在ご利用いただけません。</p>`;
+  let note;
+  if (mode === "external-link") {
+    note =
+      `<p class="contact-note" role="status">外部の予約・お問い合わせフォームへ移動します（架空 HTTPS · 実送信なし）。</p>`;
+  } else if (mode === "google-forms") {
+    note =
+      `<p class="contact-note" role="status">Google Forms 埋め込み（offline pilot · 実在フォームなし · ブラウザでは読み込みエラーになり得ます）。</p>`;
+  } else {
+    note =
+      `<p class="contact-note" role="status">お問い合わせフォームは現在ご利用いただけません。</p>`;
+  }
   return [
     `<div class="mio-contact-external" data-mio-contact="${mode}"${reasonAttr}>`,
     note,
@@ -81,14 +101,13 @@ export function wrapMioContactExternalMarkup(innerHtml, meta) {
 }
 
 /**
- * Replace disabled form + iframe placeholder with external-link (or notice) block.
+ * Replace disabled form + iframe placeholder with provider block (or notice).
  * @param {string} pageHtml
  * @param {string} replacementBlock
  */
 export function patchMioContactPageHtml(pageHtml, replacementBlock) {
   let next = pageHtml;
 
-  // Remove legacy contact-note that describes the disabled scaffold (best-effort).
   next = next.replace(
     /<p class="contact-note"[^>]*>[\s\S]*?<\/p>\s*/i,
     "",
@@ -110,7 +129,6 @@ export function patchMioContactPageHtml(pageHtml, replacementBlock) {
     return { ok: false, html: pageHtml, reason: "contact_anchor_not_found" };
   }
 
-  // Drop leftover iframe placeholder section when form replacement already inserted block.
   next = next.replace(
     /<section class="section"[^>]*aria-labelledby=["']iframe-ph["'][^>]*>[\s\S]*?<\/section>\s*/i,
     "",
@@ -149,7 +167,11 @@ export function applyMioContactFormPage(outDir, formConfigBundle) {
   });
 
   const rendered = renderExternalFormProviderHtml(validated);
-  const mode = rendered.rendered === "external-link" ? "external-link" : "notice";
+  /** @type {"external-link" | "google-forms" | "notice"} */
+  const mode =
+    rendered.rendered === "external-link" || rendered.rendered === "google-forms"
+      ? rendered.rendered
+      : "notice";
   const block = wrapMioContactExternalMarkup(rendered.html, {
     mode,
     reasonCode: rendered.reasonCode,
@@ -158,7 +180,6 @@ export function applyMioContactFormPage(outDir, formConfigBundle) {
   const original = fs.readFileSync(pagePath, "utf8");
   const patched = patchMioContactPageHtml(original, block);
   if (!patched.ok) {
-    // Still write fail-closed notice after lede if possible — else abort.
     const noticeOnly = wrapMioContactExternalMarkup(
       renderExternalFormFailClosedNoticeHtml({ reasonCode: patched.reason }),
       { mode: "notice", reasonCode: patched.reason },
@@ -186,20 +207,32 @@ export function applyMioContactFormPage(outDir, formConfigBundle) {
 
   fs.writeFileSync(pagePath, patched.html, "utf8");
 
+  const success =
+    rendered.ok &&
+    (rendered.rendered === "external-link" || rendered.rendered === "google-forms");
+
   return {
     applied: true,
     paths: [pagePath],
     provider: rendered.provider,
     rendered: rendered.rendered,
     reasonCode: rendered.reasonCode,
-    ok: rendered.ok && rendered.rendered === "external-link",
+    ok: success,
     url:
       validated.ok && validated.provider === "external-link"
         ? String(validated.config?.url ?? "")
         : null,
+    formUrl:
+      validated.ok && validated.provider === "google-forms"
+        ? String(validated.config?.formUrl ?? "")
+        : null,
     label:
       validated.ok && validated.provider === "external-link"
         ? String(validated.config?.label ?? "")
+        : null,
+    title:
+      validated.ok && validated.provider === "google-forms"
+        ? String(validated.config?.title ?? "")
         : null,
   };
 }

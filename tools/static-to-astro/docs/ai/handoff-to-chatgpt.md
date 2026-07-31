@@ -5,15 +5,15 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: CMS Core v2 external form provider external-link COMPLETE
-Phase: cms-core-v2-external-form-provider-external-link
-Renderer: tools/static-to-astro/scripts/lib/external-form-provider-renderer.mjs
-Mio helper: tools/static-to-astro/scripts/lib/mio-contact-form-page.mjs
-Inject: formConfigBundle (synthetic forms.example.invalid)
-Verifier: verify:cms-core-v2-external-form-provider-external-link (+ Safety Suite)
-No Google Forms iframe · no HubSpot change · no Admin / Save / package / FTP
-Next Kit: cms-core-v2-external-form-provider-google-forms
-Prior: validator + planning COMPLETE
+Current phase: CMS Core v2 external form provider google-forms COMPLETE (offline pilot)
+Phase: cms-core-v2-external-form-provider-google-forms
+Renderer: renderGoogleFormsConfigHtml in external-form-provider-renderer.mjs
+Mio: MIO_CONTACT_GOOGLE_FORMS_FIXTURE_CONFIG (synthetic docs.google.com URL)
+Verifier: verify:cms-core-v2-external-form-provider-google-forms (+ Safety Suite)
+iframe: sandbox allow-scripts allow-forms allow-same-origin allow-popups · lazy · strict-origin-when-cross-origin · height 720
+No live Form · no HubSpot change · no Admin / Save / package / FTP · no npm install in-phase
+Next Kit: cms-core-v2-external-form-provider-hubspot-generalization-planning
+Prior: external-link + validator + planning COMPLETE
 Gosaki CLIENT_SHARE_READY: true (maintained)
 deployed package: dc1c5b62a58d0462ad6629db4847256d316d4a38 (unchanged; no regen)
 Next Primary (ops): share staging with client
@@ -23,21 +23,34 @@ readyForAnyFutureFtpApply: false
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
 ```
 
+## CMS Core v2 external form provider google-forms (2026-07-31)
+
+- Kit-fixed iframe from validator-normalized formUrl only
+- Offline Mio pilot; browser may show iframe load error (expected — fake form id)
+- external-link regression retained; HubSpot still notice-only in renderer
+- Browser preview: `output/_cms-core-v2-mio-contact-google-forms-browser/` (gitignored)
+
 ## CMS Core v2 external form provider external-link (2026-07-31)
 
 - Site-neutral renderer consumes validator result only; HTML-escapes url/label
 - Mio Contact replaces disabled form scaffold when formConfigBundle injected
-- Fail-closed notice for invalid / disabled / non-external-link providers
 - Schedule 14 / Disco 4 / Videos 3 / About / footer retained; `/gosaki/i` 0
-- Browser preview tree: `output/_cms-core-v2-mio-contact-external-link-browser/` (gitignored)
 
 ## CMS Core v2 external form provider contract validator (2026-07-31)
 
 - Site-neutral pure validator; fail-closed reasonCodes; flat field contract
-- HubSpot loader scriptSrc derived only (input forbidden)
-- Synthetic fixture IDs / example.invalid only — no customer form URLs in tests
+- google-forms normalize always sets `embedded=true`
 
 ## CMS Core v2 external form provider contract planning (2026-07-31)
+
+- Docs §16 records google-forms implementation
+- Next: HubSpot generalization planning
+
+## CMS Core v2 Mio read-only proof completion (2026-07-31)
+
+- Verdict COMPLETE / PASS for second-site **read-only** convert proof
+- Contact: external-link + google-forms pilots; HubSpot / Admin still open
+- Write/package/FTP/production remain separate high-risk gates
 
 - Docs-only contract; §15 records external-link implementation
 - Next after external-link: google-forms provider

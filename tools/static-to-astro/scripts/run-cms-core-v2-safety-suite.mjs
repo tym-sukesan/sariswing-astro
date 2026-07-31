@@ -111,6 +111,11 @@ const STEPS = [
     script: "verify-cms-core-v2-external-form-provider-external-link.mjs",
   },
   {
+    id: "external-form-provider-google-forms",
+    kind: "node",
+    script: "verify-cms-core-v2-external-form-provider-google-forms.mjs",
+  },
+  {
     id: "youtube-offline-vertical",
     kind: "node",
     script: "verify-cms-core-v2-youtube-supabase-vertical-slice.mjs",

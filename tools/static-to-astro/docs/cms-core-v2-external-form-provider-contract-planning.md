@@ -388,12 +388,12 @@ Add step to `verify:cms-core-v2-safety-suite` when implementation lands — **do
 | # | Phase (candidate id) | Deliverable | Risk |
 | --- | --- | --- | --- |
 | **1** | `cms-core-v2-external-form-provider-contract-validator` | Pure schema + URL/ID validators + offline verifier | Low — **COMPLETE** |
-| **2** | `cms-core-v2-external-form-provider-external-link` | Contact inject for external-link (Mio-friendly) | Low |
-| **3** | `cms-core-v2-external-form-google-forms-provider` | iframe renderer + sandbox attrs | Medium (third-party frame) |
-| **4** | `cms-core-v2-external-form-hubspot-generalization` | Shared HubSpot renderer; Gosaki adapter delegates | Medium (preserve Gosaki E2E) |
+| **2** | `cms-core-v2-external-form-provider-external-link` | Contact inject for external-link (Mio-friendly) | Low — **COMPLETE** |
+| **3** | `cms-core-v2-external-form-provider-google-forms` | iframe renderer + sandbox attrs | Medium — **COMPLETE** (offline) |
+| **4** | `cms-core-v2-external-form-provider-hubspot-generalization-planning` | Shared HubSpot renderer planning; Gosaki adapter delegates | Medium |
 | **5** | `cms-core-v2-external-form-admin-config-ui` | Staging Admin: provider select + fields; **no** code paste; Save gated separately | Higher (Admin + optional DB) |
 
-**Next after validator:** Phase 2 (`cms-core-v2-external-form-provider-external-link`).
+**Next after google-forms:** HubSpot generalization **planning**.
 
 ---
 
@@ -413,13 +413,13 @@ Add step to `verify:cms-core-v2-safety-suite` when implementation lands — **do
 phase: cms-core-v2-external-form-provider-contract-planning
 CMS_CORE_V2_EXTERNAL_FORM_PROVIDER_CONTRACT_PLANNING_COMPLETE: true
 CONTACT_EXTERNAL_FORM: PLANNING_COMPLETE
-CONTACT_EXTERNAL_FORM_RUNTIME: EXTERNAL_LINK_COMPLETE
+CONTACT_EXTERNAL_FORM_RUNTIME: GOOGLE_FORMS_COMPLETE
 CONTACT_PROVIDER_VALIDATOR: COMPLETE
 CONTACT_EXTERNAL_LINK_PROVIDER: COMPLETE
-CONTACT_GOOGLE_FORMS_PROVIDER: NOT_STARTED
+CONTACT_GOOGLE_FORMS_PROVIDER: COMPLETE
 CONTACT_HUBSPOT_GENERALIZATION: NOT_STARTED
 CONTACT_ADMIN_CONFIG_UI: NOT_STARTED
-NEXT_RECOMMENDED: cms-core-v2-external-form-provider-google-forms
+NEXT_RECOMMENDED: cms-core-v2-external-form-provider-hubspot-generalization-planning
 PACKAGE_GENERATE_EXECUTED: false
 FTP_EXECUTED: false
 DB_WRITE_EXECUTED: false
@@ -436,7 +436,7 @@ READY_FOR_ANY_FUTURE_FTP_APPLY: false
 - **API:** `getExternalFormProviderResult` (= validate / normalize aliases)
 - **Shape:** flat fields (`url`/`label`, `formUrl`/`title`, `portalId`/`formId`/`region`) — nested planning JSON maps later at adapter boundary
 - **Verifier:** `verify:cms-core-v2-external-form-provider-contract-validator` (Safety Suite step)
-- **Policies locked:** HTTPS-only · exact host · fragment allowed only for `external-link` · Google path `/forms/d/e/…/viewform` · `forms.gle` rejected · HubSpot `scriptSrc` input forbidden · loader metadata derived · unknown fields fail-closed · no input mutation · no HTML generation
+- **Policies locked:** HTTPS-only · exact host · fragment allowed only for `external-link` · Google path `/forms/d/e/…/viewform` · `forms.gle` rejected · HubSpot `scriptSrc` input forbidden · loader metadata derived · unknown fields fail-closed · no input mutation · google-forms normalize always sets `embedded=true`
 
 ---
 
@@ -447,5 +447,16 @@ READY_FOR_ANY_FUTURE_FTP_APPLY: false
 - **Mio helper:** `scripts/lib/mio-contact-form-page.mjs` — inject `formConfigBundle`; replaces `#mio-contact-form` + iframe placeholder; synthetic URL `https://forms.example.invalid/mio-kisaragi-jazz-booking`
 - **Core forward:** `formConfigBundle` / `siteFormConfigBundle` via `site-generator-options` + `astro-generator` (no Mio selectors in Core)
 - **Verifier:** `verify:cms-core-v2-external-form-provider-external-link` (Safety Suite)
-- **Not done:** Google Forms iframe · HubSpot generalization · Admin · Save · registry real URLs · package/FTP
-- **Next:** `cms-core-v2-external-form-provider-google-forms`
+
+---
+
+## 16. Google Forms provider implementation (2026-07-31)
+
+- **Phase:** `cms-core-v2-external-form-provider-google-forms` — **COMPLETE** (offline pilot)
+- **Renderer:** `renderGoogleFormsConfigHtml` — Kit-fixed iframe only from validator ok config
+- **iframe attrs (locked):** `title` · `loading="lazy"` · `referrerpolicy="strict-origin-when-cross-origin"` · `sandbox="allow-scripts allow-forms allow-same-origin allow-popups"` · `width="100%"` · `height="720"` · no `style` / `srcdoc` / free `allow`
+- **Sandbox policy:** minimal set for Forms scripts+submit; **no** `allow-top-navigation`. Live Forms may still fail under sandbox — offline accepts error chrome; product fallback remains **external-link**
+- **Mio pilot:** `MIO_CONTACT_GOOGLE_FORMS_FIXTURE_CONFIG` synthetic `docs.google.com/forms/d/e/1FAIpQLSdMioOfflinePilotFakeFormOnly/viewform` — not a live form · no network in verify
+- **Verifier:** `verify:cms-core-v2-external-form-provider-google-forms` (Safety Suite)
+- **Not done:** HubSpot generalization · Admin · real Forms · Save · package/FTP
+- **Next:** `cms-core-v2-external-form-provider-hubspot-generalization-planning`

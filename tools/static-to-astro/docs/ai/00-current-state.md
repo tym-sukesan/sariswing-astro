@@ -3,13 +3,15 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**CMS Core v2 external form provider external-link (2026-07-31):** **COMPLETE** — Phase `cms-core-v2-external-form-provider-external-link` · Renderer `external-form-provider-renderer.mjs` · Mio `mio-contact-form-page.mjs` + `formConfigBundle` inject · synthetic `forms.example.invalid` · verifier + Safety Suite · **no** Google Forms / HubSpot / Admin / Save / package · **Next Kit:** `cms-core-v2-external-form-provider-google-forms` · Ops: Gosaki client staging share.
+**CMS Core v2 external form provider google-forms (2026-07-31):** **COMPLETE** (offline pilot) — Phase `cms-core-v2-external-form-provider-google-forms` · Kit-fixed iframe (`sandbox` · lazy · referrerpolicy · height 720) · Mio `MIO_CONTACT_GOOGLE_FORMS_FIXTURE_CONFIG` synthetic docs.google.com URL · verifier + Safety Suite · **no** live Form / HubSpot / Admin / Save / package · **Next Kit:** `cms-core-v2-external-form-provider-hubspot-generalization-planning` · Ops: Gosaki client staging share.
 
-**CMS Core v2 external form provider contract validator (2026-07-31):** **COMPLETE** — SoT `external-form-provider-contract.mjs` · external-link render done above.
+**CMS Core v2 external form provider external-link (2026-07-31):** **COMPLETE** — retained; google-forms done above.
 
-**CMS Core v2 external form provider contract planning (2026-07-31):** **COMPLETE (docs-only)** — Doc: `cms-core-v2-external-form-provider-contract-planning.md` · §15 external-link.
+**CMS Core v2 external form provider contract validator (2026-07-31):** **COMPLETE** — normalize always sets google-forms `embedded=true`.
 
-**CMS Core v2 Mio read-only proof completion (2026-07-31):** **COMPLETE / PASS** — Contact scorecard updated for external-link; Google Forms / HubSpot still open.
+**CMS Core v2 external form provider contract planning (2026-07-31):** **COMPLETE** — Doc §16 google-forms.
+
+**CMS Core v2 Mio read-only proof completion (2026-07-31):** **COMPLETE / PASS** — Contact: external-link + google-forms pilots; HubSpot still open.
 
 **CMS Core v2 Mio read-render browser-baseline (2026-07-31):** **PASS / COMPLETE** — dual-nav · main.wrap · About `withBase('/images/…')` · Schedule fixture CSS · NON_BLOCKING evening-set hero · folded into read-only proof above.
 

@@ -444,9 +444,8 @@ function normalizeGoogleForms(raw, siteSlug, environment) {
   const normalized = new URL(parsed.url.toString());
   normalized.hash = "";
   normalized.search = "";
-  if (keys.includes("embedded")) {
-    normalized.searchParams.set("embedded", "true");
-  }
+  // Always emit embed-ready query (iframe contract).
+  normalized.searchParams.set("embedded", "true");
 
   return ok("google-forms", {
     provider: "google-forms",

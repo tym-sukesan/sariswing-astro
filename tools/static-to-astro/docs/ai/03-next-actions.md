@@ -4,10 +4,33 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 ## 0. Current next actions（直近）
 
 1. **Primary (Gosaki ops):** クライアントへ **staging 共有**（`CLIENT_SHARE_READY: true` · package `dc1c5b6…`）。本番 cutover はしない。
-2. **並行可 (Kit Core):** **Next Kit** `cms-core-v2-external-form-provider-google-forms`（別承認）· then HubSpot generalization · Admin config UI · Supabase live-read / generic read-only Admin · Admin runtime Save arm mutex（**別承認**）· evening-set hero（**NON_BLOCKING**）。
+2. **並行可 (Kit Core):** **Next Kit** `cms-core-v2-external-form-provider-hubspot-generalization-planning`（別承認）· then Admin config UI · Supabase live-read / generic read-only Admin · Admin runtime Save arm mutex（**別承認**）· evening-set hero（**NON_BLOCKING**）。
 3. **並行可:** production hosting **read-only planning**（`HOSTING_READY: false`）。
 4. **並行可 / 別承認:** YouTube 複数件 **永続 Save**（NON_BLOCKING）。
 5. Save arm **false** · `readyForAnyFutureFtpApply: false` · production STOP · `service_role` 禁止 · **deployed package 固定**.
+
+## 0. CMS Core v2 external form provider google-forms (2026-07-31)
+
+| Item | Value |
+| --- | --- |
+| Gate | `CMS_CORE_V2_EXTERNAL_FORM_PROVIDER_GOOGLE_FORMS_COMPLETE: true` |
+| Phase | `cms-core-v2-external-form-provider-google-forms` |
+| Renderer | `renderGoogleFormsConfigHtml` (Kit-fixed iframe) |
+| Mio fixture | `MIO_CONTACT_GOOGLE_FORMS_FIXTURE_CONFIG` (synthetic) |
+| Verifier | `verify:cms-core-v2-external-form-provider-google-forms` |
+| Next Kit | `cms-core-v2-external-form-provider-hubspot-generalization-planning` |
+
+```txt
+CMS_CORE_V2_EXTERNAL_FORM_PROVIDER_GOOGLE_FORMS_COMPLETE: true
+CONTACT_GOOGLE_FORMS_PROVIDER: COMPLETE
+CONTACT_HUBSPOT_GENERALIZATION: NOT_STARTED
+NEXT_RECOMMENDED: cms-core-v2-external-form-provider-hubspot-generalization-planning
+PACKAGE_GENERATE_EXECUTED: false
+FTP_EXECUTED: false
+DB_WRITE_EXECUTED: false
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+PRODUCTION_UNCHANGED: true
+```
 
 ## 0. CMS Core v2 external form provider external-link (2026-07-31)
 
@@ -19,14 +42,15 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Mio helper | `scripts/lib/mio-contact-form-page.mjs` |
 | Inject | `formConfigBundle` (synthetic `forms.example.invalid`) |
 | Verifier | `verify:cms-core-v2-external-form-provider-external-link` |
-| Next Kit | `cms-core-v2-external-form-provider-google-forms` |
+| Google Forms | **COMPLETE** (above) |
+| Next Kit | `cms-core-v2-external-form-provider-hubspot-generalization-planning` |
 
 ```txt
 CMS_CORE_V2_EXTERNAL_FORM_PROVIDER_EXTERNAL_LINK_COMPLETE: true
 CONTACT_EXTERNAL_LINK_PROVIDER: COMPLETE
-CONTACT_GOOGLE_FORMS_PROVIDER: NOT_STARTED
+CONTACT_GOOGLE_FORMS_PROVIDER: COMPLETE
 CONTACT_HUBSPOT_GENERALIZATION: NOT_STARTED
-NEXT_RECOMMENDED: cms-core-v2-external-form-provider-google-forms
+NEXT_RECOMMENDED: cms-core-v2-external-form-provider-hubspot-generalization-planning
 PACKAGE_GENERATE_EXECUTED: false
 FTP_EXECUTED: false
 DB_WRITE_EXECUTED: false

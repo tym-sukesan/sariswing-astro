@@ -9,7 +9,8 @@
 - **Phase (discography read-render):** `cms-core-v2-mio-discography-read-render` — **COMPLETE** (2026-07-31)
 - **Phase (about read-render):** `cms-core-v2-mio-about-read-render` — **COMPLETE** (2026-07-31)
 - **Phase (browser baseline):** `cms-core-v2-mio-read-render-browser-baseline` — **PASS / COMPLETE** (2026-07-31)
-- **Status:** Fixture + data + Videos/footer + Schedule + Discography + About · browser baseline operator PASS · Contact/Admin/Save **not** started · package **not** started
+- **Phase (read-only proof completion):** `cms-core-v2-mio-read-only-proof-completion` — **COMPLETE / PASS** (2026-07-31)
+- **Status:** Second-site **read-only** proof CLOSED · Contact external form / live Supabase / Admin / Save / package **not** started
 - **Package generate / FTP / DB:** **not executed**
 
 ---
@@ -17,7 +18,7 @@
 ## Gates
 
 ```txt
-phase: cms-core-v2-mio-read-render-browser-baseline
+phase: cms-core-v2-mio-read-only-proof-completion
 CMS_CORE_V2_SECOND_MUSICIAN_SITE_FIXTURE_PLANNING_COMPLETE: true
 CMS_CORE_V2_MIO_STATIC_FIXTURE_SCAFFOLD_COMPLETE: true
 CMS_CORE_V2_MIO_REGISTRY_NOOP_PILOT_COMPLETE: true
@@ -28,6 +29,8 @@ CMS_CORE_V2_MIO_DISCOGRAPHY_READ_RENDER_COMPLETE: true
 CMS_CORE_V2_MIO_ABOUT_READ_RENDER_COMPLETE: true
 CMS_CORE_V2_MIO_READ_RENDER_BROWSER_BASELINE_PASS: true
 CMS_CORE_V2_MIO_READ_RENDER_BROWSER_BASELINE_FIX_COMPLETE: true
+CMS_CORE_V2_MIO_READ_ONLY_PROOF_COMPLETE: true
+CMS_CORE_V2_MIO_READ_ONLY_PROOF_PASS: true
 ADAPTER_CREATED: true
 ADAPTER_SCOPE: videos+footer_sns+schedule_read+discography_read+about_read
 PACKAGE_GENERATE_EXECUTED: false
@@ -38,7 +41,16 @@ GOSAKI_CLIENT_SHARE_READY_MAINTAINED: true
 deployedPackageSourceCommitUnchanged: dc1c5b62a58d0462ad6629db4847256d316d4a38
 READY_FOR_ANY_FUTURE_FTP_APPLY: false
 PRODUCTION_UNCHANGED: true
+NEXT_RECOMMENDED: cms-core-v2-external-form-provider-contract-planning
 ```
+
+### Read-only proof completion (closure)
+
+Doc: `cms-core-v2-mio-read-only-proof-completion.md`
+
+- Verdict: **COMPLETE / PASS**
+- Contact: **PARTIAL** (non-submitting fixture; external form not started)
+- Recommended next Kit: `cms-core-v2-external-form-provider-contract-planning`
 
 ### Browser baseline result (step 8) — PASS
 
@@ -50,7 +62,7 @@ PRODUCTION_UNCHANGED: true
 | Temp out | `output/_cms-core-v2-mio-read-render-browser-baseline/` (gitignored) |
 | Package / FTP / DB | **not executed** |
 
-**Next:** Contact / Admin / Save are out of scope; Gosaki client staging share remains primary ops.
+**Next:** read-only proof COMPLETE — next Kit `cms-core-v2-external-form-provider-contract-planning`; ops: Gosaki client staging share.
 
 ### About read-render result (step 7)
 

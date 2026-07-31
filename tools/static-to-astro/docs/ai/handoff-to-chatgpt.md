@@ -5,30 +5,40 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: CMS Core v2 Mio read-render browser-baseline PASS / COMPLETE
-Phase: cms-core-v2-mio-read-render-browser-baseline
-Operator visual: PASS (PC / SP)
-Fixes: preserve-dual-nav · main.wrap · withBase('/images/…') · Schedule event-list/event-card ↔ fixture CSS
-NON_BLOCKING: Home evening-set hero placeholder polish (deferred)
-Temp: tools/static-to-astro/output/_cms-core-v2-mio-read-render-browser-baseline/ (gitignored)
+Current phase: CMS Core v2 Mio read-only proof COMPLETE / PASS
+Phase: cms-core-v2-mio-read-only-proof-completion
+Doc: tools/static-to-astro/docs/cms-core-v2-mio-read-only-proof-completion.md
+Site: mio-kisaragi-jazz
+Proven: fixture → registry → lazy adapter → Schedule/Disco/Videos/About/footer + browser baseline
+Contact: PARTIAL (non-submitting; external form NOT_STARTED)
+Supabase live / Admin / Save / package: NOT_STARTED
 ADAPTER_CREATED: true
 PACKAGE_GENERATE_EXECUTED: false
 Gosaki CLIENT_SHARE_READY: true (maintained)
 deployed package: dc1c5b62a58d0462ad6629db4847256d316d4a38 (unchanged; no regen)
 Next Primary (ops): share staging with client
-Next Kit: Contact / Admin / Save later (separate approval) · Admin runtime mutex (explicit approval)
+Next Kit: cms-core-v2-external-form-provider-contract-planning (separate approval)
 seedAppliedStaging: true
 readyForOperatorAboutSeedApply: false
 readyForAnyFutureFtpApply: false
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
 ```
 
+## CMS Core v2 Mio read-only proof completion (2026-07-31)
+
+- Verdict COMPLETE / PASS for second-site **read-only** convert proof
+- Scorecard: 1–12 PASS · Contact PARTIAL · 14–18 NOT_STARTED
+- Recommended next: external form provider contract planning (allowlist only)
+- Then: Supabase live-read pilot · generic read-only Admin
+- Write/package/FTP/production remain separate high-risk gates
+- Progress: read-only multi-site proof ~95% · Kit MVP ~50–55% · production product ~25–30%
+
 ## CMS Core v2 Mio read-render browser-baseline (2026-07-31)
 
-- Operator PASS: dual-nav, main width, About images, Schedule cards (Home / About / Schedule reviewed)
-- Root causes fixed: (1) dual-nav DOM preserve (2) main class wrap (3) base-aware local asset URL (4) Schedule markup ↔ fixture CSS contract
-- NON_BLOCKING: evening-set hero placeholder visual polish deferred
-- Safety Suite + Gosaki HTML baseline 80 PASS; no package / FTP / DB; source fixtures unchanged
+- Operator PASS: dual-nav, main width, About images, Schedule cards
+- Root fixes: dual-nav preserve · main.wrap · withBase assets · Schedule↔fixture CSS
+- NON_BLOCKING: evening-set hero placeholder polish deferred
+- Folded into read-only proof completion above
 
 ## CMS Core v2 Mio about read-render (2026-07-31)
 

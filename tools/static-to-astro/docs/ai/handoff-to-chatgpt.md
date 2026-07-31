@@ -5,15 +5,15 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: CMS Core v2 external form provider contract planning COMPLETE (docs-only)
-Phase: cms-core-v2-external-form-provider-contract-planning
-Doc: tools/static-to-astro/docs/cms-core-v2-external-form-provider-contract-planning.md
-Providers: disabled · external-link · google-forms · hubspot
-No arbitrary HTML/JS · fail-closed URL/ID · static config/sites JSON first
-Gosaki HubSpot = compatibility reference; Mio pilot = external-link or google-forms later
-Runtime Contact / validator: NOT_STARTED
-Next Kit: cms-core-v2-external-form-provider-contract-validator
-Prior: Mio read-only proof COMPLETE / PASS
+Current phase: CMS Core v2 external form provider contract validator COMPLETE
+Phase: cms-core-v2-external-form-provider-contract-validator
+SoT: tools/static-to-astro/scripts/lib/external-form-provider-contract.mjs
+Verifier: verify:cms-core-v2-external-form-provider-contract-validator (+ Safety Suite)
+API: getExternalFormProviderResult / validate / normalize (aliases)
+Providers validated: disabled · external-link · google-forms · hubspot
+No Contact HTML · no registry wire · no network
+Next Kit: cms-core-v2-external-form-provider-external-link
+Prior planning: cms-core-v2-external-form-provider-contract-planning COMPLETE
 Gosaki CLIENT_SHARE_READY: true (maintained)
 deployed package: dc1c5b62a58d0462ad6629db4847256d316d4a38 (unchanged; no regen)
 Next Primary (ops): share staging with client
@@ -23,19 +23,25 @@ readyForAnyFutureFtpApply: false
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
 ```
 
+## CMS Core v2 external form provider contract validator (2026-07-31)
+
+- Site-neutral pure validator; fail-closed reasonCodes; flat field contract
+- HubSpot loader scriptSrc derived only (input forbidden)
+- Synthetic fixture IDs / example.invalid only — no customer form URLs in tests
+- Contact render / Mio·Gosaki adapter wiring deferred to external-link phase
+
 ## CMS Core v2 external form provider contract planning (2026-07-31)
 
 - Docs-only contract for Contact end-state: allowlisted providers only
-- First implement: pure validator → external-link → google-forms → HubSpot generalization → Admin UI
+- Validator COMPLETE (above); next: external-link provider render
 - Storage: `config/sites/{site}-contact-form.json` near-term; Supabase later; never free embed HTML
-- No runtime / registry / fixture / network / DB in this phase
 
 ## CMS Core v2 Mio read-only proof completion (2026-07-31)
 
 - Verdict COMPLETE / PASS for second-site **read-only** convert proof
 - Scorecard: 1–12 PASS · Contact PARTIAL · 14–18 NOT_STARTED
-- External form planning complete (above); runtime still open
-- Then after validator/link: Supabase live-read pilot · generic read-only Admin
+- External form planning + validator complete; render still open
+- Then after external-link: google-forms · HubSpot generalization · Admin UI
 - Write/package/FTP/production remain separate high-risk gates
 - Progress: read-only multi-site proof ~95% · Kit MVP ~50–55% · production product ~25–30%
 

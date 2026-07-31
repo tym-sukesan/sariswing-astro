@@ -379,7 +379,7 @@ Pure module (future): e.g. `scripts/lib/external-form-provider-contract.mjs` + `
 | Mio pilot fixtures | Synthetic external-link + google-forms **test doubles** |
 | Network | **Not required** for contract verifier |
 
-Add step to `verify:cms-core-v2-safety-suite` when implementation lands (not this phase).
+Add step to `verify:cms-core-v2-safety-suite` when implementation lands — **done** in validator phase (`external-form-provider-contract-validator`).
 
 ---
 
@@ -387,13 +387,13 @@ Add step to `verify:cms-core-v2-safety-suite` when implementation lands (not thi
 
 | # | Phase (candidate id) | Deliverable | Risk |
 | --- | --- | --- | --- |
-| **1** | `cms-core-v2-external-form-provider-contract-validator` | Pure schema + URL/ID validators + offline verifier | Low |
-| **2** | `cms-core-v2-external-form-external-link-provider` | Contact inject for external-link (Mio-friendly) | Low |
+| **1** | `cms-core-v2-external-form-provider-contract-validator` | Pure schema + URL/ID validators + offline verifier | Low — **COMPLETE** |
+| **2** | `cms-core-v2-external-form-provider-external-link` | Contact inject for external-link (Mio-friendly) | Low |
 | **3** | `cms-core-v2-external-form-google-forms-provider` | iframe renderer + sandbox attrs | Medium (third-party frame) |
 | **4** | `cms-core-v2-external-form-hubspot-generalization` | Shared HubSpot renderer; Gosaki adapter delegates | Medium (preserve Gosaki E2E) |
 | **5** | `cms-core-v2-external-form-admin-config-ui` | Staging Admin: provider select + fields; **no** code paste; Save gated separately | Higher (Admin + optional DB) |
 
-**First to implement after this planning:** **Phase 1 (pure validator)** then **Phase 2 (`external-link`)** — smallest public surface, no third-party script/iframe, ideal Mio Contact PARTIAL → practical path without touching Gosaki HubSpot immediately.
+**Next after validator:** Phase 2 (`cms-core-v2-external-form-provider-external-link`).
 
 ---
 
@@ -414,15 +414,27 @@ phase: cms-core-v2-external-form-provider-contract-planning
 CMS_CORE_V2_EXTERNAL_FORM_PROVIDER_CONTRACT_PLANNING_COMPLETE: true
 CONTACT_EXTERNAL_FORM: PLANNING_COMPLETE
 CONTACT_EXTERNAL_FORM_RUNTIME: NOT_STARTED
-CONTACT_PROVIDER_VALIDATOR: NOT_STARTED
+CONTACT_PROVIDER_VALIDATOR: COMPLETE
 CONTACT_EXTERNAL_LINK_PROVIDER: NOT_STARTED
 CONTACT_GOOGLE_FORMS_PROVIDER: NOT_STARTED
 CONTACT_HUBSPOT_GENERALIZATION: NOT_STARTED
 CONTACT_ADMIN_CONFIG_UI: NOT_STARTED
-NEXT_RECOMMENDED: cms-core-v2-external-form-provider-contract-validator
+NEXT_RECOMMENDED: cms-core-v2-external-form-provider-external-link
 PACKAGE_GENERATE_EXECUTED: false
 FTP_EXECUTED: false
 DB_WRITE_EXECUTED: false
 PRODUCTION_UNCHANGED: true
 READY_FOR_ANY_FUTURE_FTP_APPLY: false
 ```
+
+---
+
+## 14. Validator implementation (2026-07-31)
+
+- **Phase:** `cms-core-v2-external-form-provider-contract-validator` — **COMPLETE**
+- **Module:** `scripts/lib/external-form-provider-contract.mjs`
+- **API:** `getExternalFormProviderResult` (= validate / normalize aliases)
+- **Shape:** flat fields (`url`/`label`, `formUrl`/`title`, `portalId`/`formId`/`region`) — nested planning JSON maps later at adapter boundary
+- **Verifier:** `verify:cms-core-v2-external-form-provider-contract-validator` (Safety Suite step)
+- **Policies locked:** HTTPS-only · exact host · fragment allowed only for `external-link` · Google path `/forms/d/e/…/viewform` · `forms.gle` rejected · HubSpot `scriptSrc` input forbidden · loader metadata derived · unknown fields fail-closed · no input mutation · no HTML generation
+- **Next:** `cms-core-v2-external-form-provider-external-link`

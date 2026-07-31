@@ -4,10 +4,33 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 ## 0. Current next actions（直近）
 
 1. **Primary (Gosaki ops):** クライアントへ **staging 共有**（`CLIENT_SHARE_READY: true` · package `dc1c5b6…`）。本番 cutover はしない。
-2. **並行可 (Kit Core):** **Next Kit** `cms-core-v2-external-form-provider-contract-validator`（別承認）· then `external-link` provider · google-forms · HubSpot generalization · Admin config UI · Supabase live-read / generic read-only Admin · Admin runtime Save arm mutex（**別承認**）· evening-set hero（**NON_BLOCKING**）。
+2. **並行可 (Kit Core):** **Next Kit** `cms-core-v2-external-form-provider-external-link`（別承認）· then google-forms · HubSpot generalization · Admin config UI · Supabase live-read / generic read-only Admin · Admin runtime Save arm mutex（**別承認**）· evening-set hero（**NON_BLOCKING**）。
 3. **並行可:** production hosting **read-only planning**（`HOSTING_READY: false`）。
 4. **並行可 / 別承認:** YouTube 複数件 **永続 Save**（NON_BLOCKING）。
 5. Save arm **false** · `readyForAnyFutureFtpApply: false` · production STOP · `service_role` 禁止 · **deployed package 固定**.
+
+## 0. CMS Core v2 external form provider contract validator (2026-07-31)
+
+| Item | Value |
+| --- | --- |
+| Gate | `CMS_CORE_V2_EXTERNAL_FORM_PROVIDER_CONTRACT_VALIDATOR_COMPLETE: true` |
+| Phase | `cms-core-v2-external-form-provider-contract-validator` |
+| SoT | `scripts/lib/external-form-provider-contract.mjs` |
+| Verifier | `verify:cms-core-v2-external-form-provider-contract-validator` |
+| Contact HTML / registry | **not wired** |
+| Next Kit | `cms-core-v2-external-form-provider-external-link` |
+
+```txt
+CMS_CORE_V2_EXTERNAL_FORM_PROVIDER_CONTRACT_VALIDATOR_COMPLETE: true
+CONTACT_PROVIDER_VALIDATOR: COMPLETE
+CONTACT_EXTERNAL_FORM_RUNTIME: NOT_STARTED
+NEXT_RECOMMENDED: cms-core-v2-external-form-provider-external-link
+PACKAGE_GENERATE_EXECUTED: false
+FTP_EXECUTED: false
+DB_WRITE_EXECUTED: false
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+PRODUCTION_UNCHANGED: true
+```
 
 ## 0. CMS Core v2 external form provider contract planning (2026-07-31)
 
@@ -18,14 +41,15 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Verdict | **COMPLETE (docs-only)** |
 | Doc | `cms-core-v2-external-form-provider-contract-planning.md` |
 | Providers | `disabled` · `external-link` · `google-forms` · `hubspot` |
-| Runtime | **NOT_STARTED** |
-| Next Kit | `cms-core-v2-external-form-provider-contract-validator` |
+| Validator | **COMPLETE** (above) |
+| Next Kit | `cms-core-v2-external-form-provider-external-link` |
 
 ```txt
 CMS_CORE_V2_EXTERNAL_FORM_PROVIDER_CONTRACT_PLANNING_COMPLETE: true
 CONTACT_EXTERNAL_FORM: PLANNING_COMPLETE
+CONTACT_PROVIDER_VALIDATOR: COMPLETE
 CONTACT_EXTERNAL_FORM_RUNTIME: NOT_STARTED
-NEXT_RECOMMENDED: cms-core-v2-external-form-provider-contract-validator
+NEXT_RECOMMENDED: cms-core-v2-external-form-provider-external-link
 PACKAGE_GENERATE_EXECUTED: false
 FTP_EXECUTED: false
 DB_WRITE_EXECUTED: false

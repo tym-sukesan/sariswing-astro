@@ -91,6 +91,11 @@ const STEPS = [
     script: "verify-cms-core-v2-mio-schedule-read-render.mjs",
   },
   {
+    id: "mio-discography-read-render",
+    kind: "node",
+    script: "verify-cms-core-v2-mio-discography-read-render.mjs",
+  },
+  {
     id: "youtube-offline-vertical",
     kind: "node",
     script: "verify-cms-core-v2-youtube-supabase-vertical-slice.mjs",
@@ -156,6 +161,7 @@ const IMPORT_CYCLE_MODULES = [
   "gosaki-site-generator-hooks-adapter.mjs",
   "mio-site-generator-hooks-adapter.mjs",
   "mio-schedule-data-pages.mjs",
+  "mio-discography-data-page.mjs",
   "site-cms-features.mjs",
 ];
 

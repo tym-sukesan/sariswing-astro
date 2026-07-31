@@ -1,13 +1,15 @@
 /**
- * Mio Kisaragi Jazz site adapter — generator hooks (Videos + footer SNS + Schedule read-render).
+ * Mio Kisaragi Jazz site adapter — generator hooks
+ * (Videos + footer SNS + Schedule read-render + Discography read-render).
  *
- * Does not implement Discography / About / Contact / Admin / Save.
+ * Does not implement About / Contact / Admin / Save.
  * Loaded lazily via registry `generatorHooksAdapter` (ensureSiteGeneratorHookAdapter).
- * Videos / Schedule data must be injected via embedsBundle / scheduleBundle (no implicit fixture path).
+ * Bundles must be injected (no implicit fixture path).
  */
 
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { patchMioDiscographyMainHtml } from "./mio-discography-data-page.mjs";
 import { generateMioFooterAstro } from "./mio-footer-social.mjs";
 import {
   applyMioScheduleDataPages,
@@ -30,7 +32,7 @@ export function ensureMioSiteGeneratorHooksRegistered() {
 }
 
 /**
- * Mio hook methods — Videos + footer SNS + Schedule read-render.
+ * Mio hook methods — Videos + footer + Schedule + Discography read-render.
  * @returns {Omit<import('./site-generator-hooks.mjs').SiteGeneratorHooks, 'siteKey' | 'active'>}
  */
 export function createMioKisaragiJazzHookMethods() {
@@ -55,8 +57,10 @@ export function createMioKisaragiJazzHookMethods() {
     shouldSkipScheduleMonthPage(page, ctx) {
       return Boolean(ctx?.useScheduleData && ctx?.monthRoutes?.has(page.route));
     },
-    patchDiscographyPageMainHtml() {
-      return null;
+    patchDiscographyPageMainHtml(mainHtml, page, ctx) {
+      const bundle = ctx?.discographyBundle ?? ctx?.gosakiDiscographyBundle ?? null;
+      if (!bundle) return null;
+      return patchMioDiscographyMainHtml(mainHtml, bundle, page);
     },
     applyScheduleDataPages(ctx) {
       const bundle = ctx?.scheduleBundle ?? ctx?.gosakiScheduleBundle ?? null;

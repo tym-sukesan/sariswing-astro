@@ -5,8 +5,9 @@
 - **Phase (registry noop):** `cms-core-v2-mio-registry-noop-pilot` — **COMPLETE**
 - **Phase (data fixtures):** `cms-core-v2-mio-data-fixtures` — **COMPLETE**
 - **Phase (thin adapter):** `cms-core-v2-mio-hooks-adapter-thin` — **COMPLETE**
-- **Phase (schedule read-render):** `cms-core-v2-mio-schedule-read-render` — **COMPLETE** (2026-07-31)
-- **Status:** Fixture + data + Videos/footer + Schedule read-render · Disco/About/Contact/Admin **not** started · package **not** started
+- **Phase (schedule read-render):** `cms-core-v2-mio-schedule-read-render` — **COMPLETE**
+- **Phase (discography read-render):** `cms-core-v2-mio-discography-read-render` — **COMPLETE** (2026-07-31)
+- **Status:** Fixture + data + Videos/footer + Schedule + Discography · About/Contact/Admin **not** started · package **not** started
 - **Package generate / FTP / DB:** **not executed**
 
 ---
@@ -14,15 +15,16 @@
 ## Gates
 
 ```txt
-phase: cms-core-v2-mio-schedule-read-render
+phase: cms-core-v2-mio-discography-read-render
 CMS_CORE_V2_SECOND_MUSICIAN_SITE_FIXTURE_PLANNING_COMPLETE: true
 CMS_CORE_V2_MIO_STATIC_FIXTURE_SCAFFOLD_COMPLETE: true
 CMS_CORE_V2_MIO_REGISTRY_NOOP_PILOT_COMPLETE: true
 CMS_CORE_V2_MIO_DATA_FIXTURES_COMPLETE: true
 CMS_CORE_V2_MIO_HOOKS_ADAPTER_THIN_COMPLETE: true
 CMS_CORE_V2_MIO_SCHEDULE_READ_RENDER_COMPLETE: true
+CMS_CORE_V2_MIO_DISCOGRAPHY_READ_RENDER_COMPLETE: true
 ADAPTER_CREATED: true
-ADAPTER_SCOPE: videos+footer_sns+schedule_read
+ADAPTER_SCOPE: videos+footer_sns+schedule_read+discography_read
 PACKAGE_GENERATE_EXECUTED: false
 FTP_EXECUTED: false
 DB_WRITE_EXECUTED: false
@@ -32,6 +34,20 @@ deployedPackageSourceCommitUnchanged: dc1c5b62a58d0462ad6629db4847256d316d4a38
 READY_FOR_ANY_FUTURE_FTP_APPLY: false
 PRODUCTION_UNCHANGED: true
 ```
+
+### Discography read-render result (step 6)
+
+| Item | Value |
+| --- | --- |
+| Helper | `scripts/lib/mio-discography-data-page.mjs` |
+| Hook | `patchDiscographyPageMainHtml` |
+| Inject | `discographyBundle` via convert (`buildMioInjectDiscographyBundle`) |
+| Public | 4 releases · unpublished live excluded |
+| Tracks | album-01×10 / album-02×2 / single-01×1 / album-03×0 |
+| Markup | `mio-discography-*` · `/gosaki/i` 0 |
+| Verifier | `verify:cms-core-v2-mio-discography-read-render` (+ safety-suite) |
+
+**Next:** `cms-core-v2-mio-about-read-render`
 
 ### Schedule read-render result (step 5)
 
@@ -44,9 +60,6 @@ PRODUCTION_UNCHANGED: true
 | Jul decision | No `schedule-2026-07` fixture page → hub archive section (no new month page) |
 | Markup | `mio-schedule-*` only · `/gosaki/i` 0 |
 | Verifier | `verify:cms-core-v2-mio-schedule-read-render` (+ safety-suite) |
-
-**Next:** `cms-core-v2-mio-discography-read-render`
-
 ### Thin hooks adapter result (step 4)
 
 | Item | Value |
@@ -354,7 +367,8 @@ Phase 1 can mirror **pilot**: register `mio-kisaragi-jazz`, point `fixtureDir`, 
 | **3** | `…-mio-data-fixtures` | Add `fixtures/mio-kisaragi-jazz-data/` for schedule/disco/videos/about matrices (read-only) | **DONE** |
 | **4** | `…-mio-hooks-adapter-thin` | Optional adapter: Videos + footer only; register `generatorHooksAdapter` | **DONE** |
 | **5** | `…-mio-schedule-read-render` | Schedule read overlay from data fixtures | **DONE** |
-| **6** | `…-mio-discography-read-render` | Discography read overlay (next) | pending |
+| **6** | `…-mio-discography-read-render` | Discography read overlay from data fixtures | **DONE** |
+| **7** | `…-mio-about-read-render` | About read overlay (next) | pending |
 
 **First implementation phase should touch the smallest set:** fixture HTML under `fixtures/mio-kisaragi-jazz/` only (step 1). Registry can wait for step 2 so Core stays untouched.
 

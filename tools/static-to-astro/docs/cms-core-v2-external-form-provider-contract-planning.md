@@ -390,10 +390,11 @@ Add step to `verify:cms-core-v2-safety-suite` when implementation lands — **do
 | **1** | `cms-core-v2-external-form-provider-contract-validator` | Pure schema + URL/ID validators + offline verifier | Low — **COMPLETE** |
 | **2** | `cms-core-v2-external-form-provider-external-link` | Contact inject for external-link (Mio-friendly) | Low — **COMPLETE** |
 | **3** | `cms-core-v2-external-form-provider-google-forms` | iframe renderer + sandbox attrs | Medium — **COMPLETE** (offline) |
-| **4** | `cms-core-v2-external-form-provider-hubspot-generalization-planning` | Shared HubSpot renderer planning; Gosaki adapter delegates | Medium |
+| **4** | `cms-core-v2-external-form-provider-hubspot-generalization-planning` | Shared HubSpot renderer planning; Gosaki adapter delegates | Medium — **COMPLETE** |
+| **4b** | `cms-core-v2-external-form-provider-hubspot-renderer` | Pure HubSpot inner HTML + offline verifier | Low |
 | **5** | `cms-core-v2-external-form-admin-config-ui` | Staging Admin: provider select + fields; **no** code paste; Save gated separately | Higher (Admin + optional DB) |
 
-**Next after google-forms:** HubSpot generalization **planning**.
+**Next after HubSpot planning:** Phase 4b (`cms-core-v2-external-form-provider-hubspot-renderer`).
 
 ---
 
@@ -417,9 +418,9 @@ CONTACT_EXTERNAL_FORM_RUNTIME: GOOGLE_FORMS_COMPLETE
 CONTACT_PROVIDER_VALIDATOR: COMPLETE
 CONTACT_EXTERNAL_LINK_PROVIDER: COMPLETE
 CONTACT_GOOGLE_FORMS_PROVIDER: COMPLETE
-CONTACT_HUBSPOT_GENERALIZATION: NOT_STARTED
+CONTACT_HUBSPOT_GENERALIZATION: PLANNING_COMPLETE
 CONTACT_ADMIN_CONFIG_UI: NOT_STARTED
-NEXT_RECOMMENDED: cms-core-v2-external-form-provider-hubspot-generalization-planning
+NEXT_RECOMMENDED: cms-core-v2-external-form-provider-hubspot-renderer
 PACKAGE_GENERATE_EXECUTED: false
 FTP_EXECUTED: false
 DB_WRITE_EXECUTED: false
@@ -458,5 +459,16 @@ READY_FOR_ANY_FUTURE_FTP_APPLY: false
 - **Sandbox policy:** minimal set for Forms scripts+submit; **no** `allow-top-navigation`. Live Forms may still fail under sandbox — offline accepts error chrome; product fallback remains **external-link**
 - **Mio pilot:** `MIO_CONTACT_GOOGLE_FORMS_FIXTURE_CONFIG` synthetic `docs.google.com/forms/d/e/1FAIpQLSdMioOfflinePilotFakeFormOnly/viewform` — not a live form · no network in verify
 - **Verifier:** `verify:cms-core-v2-external-form-provider-google-forms` (Safety Suite)
-- **Not done:** HubSpot generalization · Admin · real Forms · Save · package/FTP
-- **Next:** `cms-core-v2-external-form-provider-hubspot-generalization-planning`
+- **Not done:** HubSpot renderer/adapter switch · Admin · real Forms · Save · package/FTP
+- **Next:** HubSpot generalization planning → **COMPLETE** (see §17)
+
+---
+
+## 17. HubSpot generalization planning (2026-07-31)
+
+- **Phase:** `cms-core-v2-external-form-provider-hubspot-generalization-planning` — **COMPLETE** (docs-only)
+- **Doc:** `cms-core-v2-external-form-provider-hubspot-generalization-planning.md`
+- **Finding:** Gosaki uses exact-ID allowlist + implicit JSON load + `#comp-jqbwo704` inject; Core validator already derives `scriptSrc` but renderer still notice-only for hubspot
+- **Plan:** Core `renderHubspotConfigHtml` (inner script+frame) → Gosaki helper keeps selector/wrapper → shadow deep-eq → adapter switch → legacy audit
+- **Next:** `cms-core-v2-external-form-provider-hubspot-renderer`
+- **HubSpot config / IDs:** unchanged in planning

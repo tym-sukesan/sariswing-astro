@@ -5,15 +5,15 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: CMS Core v2 external form provider google-forms COMPLETE (offline pilot)
-Phase: cms-core-v2-external-form-provider-google-forms
-Renderer: renderGoogleFormsConfigHtml in external-form-provider-renderer.mjs
-Mio: MIO_CONTACT_GOOGLE_FORMS_FIXTURE_CONFIG (synthetic docs.google.com URL)
-Verifier: verify:cms-core-v2-external-form-provider-google-forms (+ Safety Suite)
-iframe: sandbox allow-scripts allow-forms allow-same-origin allow-popups · lazy · strict-origin-when-cross-origin · height 720
-No live Form · no HubSpot change · no Admin / Save / package / FTP · no npm install in-phase
-Next Kit: cms-core-v2-external-form-provider-hubspot-generalization-planning
-Prior: external-link + validator + planning COMPLETE
+Current phase: CMS Core v2 external form HubSpot generalization planning COMPLETE (docs-only)
+Phase: cms-core-v2-external-form-provider-hubspot-generalization-planning
+Doc: tools/static-to-astro/docs/cms-core-v2-external-form-provider-hubspot-generalization-planning.md
+Gosaki path: exact allowlist JSON + #comp-jqbwo704 → script+hs-form-frame
+Plan: Core renderHubspotConfigHtml → Gosaki wrapper/insert → shadow deep-eq → adapter switch
+HubSpot config/IDs: UNCHANGED
+Runtime: NOT_STARTED
+Next Kit: cms-core-v2-external-form-provider-hubspot-renderer
+Prior: google-forms + external-link + validator COMPLETE
 Gosaki CLIENT_SHARE_READY: true (maintained)
 deployed package: dc1c5b62a58d0462ad6629db4847256d316d4a38 (unchanged; no regen)
 Next Primary (ops): share staging with client
@@ -23,11 +23,18 @@ readyForAnyFutureFtpApply: false
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
 ```
 
+## CMS Core v2 external form HubSpot generalization planning (2026-07-31)
+
+- Docs-only: map Gosaki HubSpot to Core contract; keep selectors site-specific
+- First implement: pure HubSpot renderer + offline verifier (synthetic IDs)
+- Do not weaken Gosaki exact-ID gate until explicit later decision
+- No runtime / network / package / FTP in this phase
+
 ## CMS Core v2 external form provider google-forms (2026-07-31)
 
 - Kit-fixed iframe from validator-normalized formUrl only
 - Offline Mio pilot; browser may show iframe load error (expected — fake form id)
-- external-link regression retained; HubSpot still notice-only in renderer
+- external-link regression retained; HubSpot still notice-only in renderer until hubspot-renderer
 - Browser preview: `output/_cms-core-v2-mio-contact-google-forms-browser/` (gitignored)
 
 ## CMS Core v2 external form provider external-link (2026-07-31)

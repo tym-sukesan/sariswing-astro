@@ -392,10 +392,11 @@ Add step to `verify:cms-core-v2-safety-suite` when implementation lands — **do
 | **3** | `cms-core-v2-external-form-provider-google-forms` | iframe renderer + sandbox attrs | Medium — **COMPLETE** (offline) |
 | **4** | `cms-core-v2-external-form-provider-hubspot-generalization-planning` | Shared HubSpot renderer planning; Gosaki adapter delegates | Medium — **COMPLETE** |
 | **4b** | `cms-core-v2-external-form-provider-hubspot-renderer` | Pure HubSpot inner HTML + offline verifier | Low — **COMPLETE** |
-| **4c** | `cms-core-v2-external-form-provider-hubspot-shadow-compare` | Map Gosaki JSON→Core; deep-eq old vs new inner HTML | Medium |
+| **4c** | `cms-core-v2-external-form-provider-hubspot-shadow-compare` | Map Gosaki JSON→Core; deep-eq old vs new inner HTML | Medium — **COMPLETE** |
+| **4d** | `cms-core-v2-external-form-provider-hubspot-adapter-switch` | Adapter calls Core renderer + keep Gosaki insert helper | Medium |
 | **5** | `cms-core-v2-external-form-admin-config-ui` | Staging Admin: provider select + fields; **no** code paste; Save gated separately | Higher (Admin + optional DB) |
 
-**Next after HubSpot renderer:** Phase 4c (`cms-core-v2-external-form-provider-hubspot-shadow-compare`).
+**Next after HubSpot shadow-compare:** Phase 4d (`cms-core-v2-external-form-provider-hubspot-adapter-switch`).
 
 ---
 
@@ -421,8 +422,9 @@ CONTACT_EXTERNAL_LINK_PROVIDER: COMPLETE
 CONTACT_GOOGLE_FORMS_PROVIDER: COMPLETE
 CONTACT_HUBSPOT_GENERALIZATION: PLANNING_COMPLETE
 CONTACT_HUBSPOT_RENDERER: COMPLETE
+CONTACT_HUBSPOT_GOSAKI_SHADOW_COMPARE: COMPLETE
 CONTACT_ADMIN_CONFIG_UI: NOT_STARTED
-NEXT_RECOMMENDED: cms-core-v2-external-form-provider-hubspot-shadow-compare
+NEXT_RECOMMENDED: cms-core-v2-external-form-provider-hubspot-adapter-switch
 PACKAGE_GENERATE_EXECUTED: false
 FTP_EXECUTED: false
 DB_WRITE_EXECUTED: false
@@ -486,4 +488,17 @@ READY_FOR_ANY_FUTURE_FTP_APPLY: false
 - **Fail-closed:** invalid / disabled / other providers → notice only (no script/frame)
 - **Not done:** Gosaki adapter switch · Contact HTML · config ID changes · network · shadow deep-eq
 - **Verifier:** `verify:cms-core-v2-external-form-provider-hubspot-renderer` (Safety Suite)
-- **Next:** `cms-core-v2-external-form-provider-hubspot-shadow-compare`
+- **Next:** `cms-core-v2-external-form-provider-hubspot-shadow-compare` → **COMPLETE** (see §19)
+
+---
+
+## 19. HubSpot shadow compare (2026-07-31)
+
+- **Phase:** `cms-core-v2-external-form-provider-hubspot-shadow-compare` — **COMPLETE**
+- **Legacy:** Gosaki exact ID gate → `buildGosakiContactHubspotEmbedHtml`
+- **Shadow:** map (no `scriptSrc` / enabled / page / version) + `environment: staging` → Core validator → `renderHubspotConfigHtml`
+- **Result:** byte-for-byte equality with legacy and `contact-hubspot-embed.html`
+- **Gate:** portal/form/region/scriptSrc mutations fail Gosaki gate; Core html not produced
+- **Not done:** adapter switch · Contact HTML · config ID changes · network
+- **Verifier:** `verify:cms-core-v2-external-form-provider-hubspot-shadow-compare` (Safety Suite)
+- **Next:** `cms-core-v2-external-form-provider-hubspot-adapter-switch`

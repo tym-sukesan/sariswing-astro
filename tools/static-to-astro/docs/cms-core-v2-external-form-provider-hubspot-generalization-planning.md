@@ -245,8 +245,8 @@ Deep equality / locked checks (Gosaki):
 | # | Phase id (candidate) | Deliverable | Risk | STOP if |
 | --- | --- | --- | --- | --- |
 | **1** | `cms-core-v2-external-form-provider-hubspot-renderer` | `renderHubspotConfigHtml` + offline verifier (synthetic IDs) | Low — **COMPLETE** | Markup drifts from legacy inner baseline pattern; Core gains site selectors |
-| **2** | `cms-core-v2-external-form-provider-hubspot-shadow-compare` | Map Gosaki JSON→Core; deep-eq old vs new inner HTML | Medium | Any inequality vs `contact-hubspot-embed.html`; temptation to change live IDs |
-| **3** | `cms-core-v2-external-form-hubspot-gosaki-adapter-switch` | Adapter calls Core renderer + keep Gosaki insert helper | Medium | HTML baseline fail; double loader; missing wrapper |
+| **2** | `cms-core-v2-external-form-provider-hubspot-shadow-compare` | Map Gosaki JSON→Core; deep-eq old vs new inner HTML | Medium — **COMPLETE** | Any inequality vs `contact-hubspot-embed.html`; temptation to change live IDs |
+| **3** | `cms-core-v2-external-form-provider-hubspot-adapter-switch` | Adapter calls Core renderer + keep Gosaki insert helper | Medium | HTML baseline fail; double loader; missing wrapper |
 | **4** | `cms-core-v2-external-form-hubspot-browser-baseline` | Operator PC/SP Contact check on staging package or local preview | Medium | Visual/layout regression; package/FTP without approval |
 | **5** | `cms-core-v2-external-form-hubspot-legacy-deletion-audit` | Decide keep/thin/delete `validateGosakiContactHubspotConfig` vs thin wrapper | Low–Med | Deleting before shadow+switch PASS |
 | **6** | `cms-core-v2-external-form-provider-hubspot-completion-audit` | Docs/gates; provider completion scorecard | Low | Claiming COMPLETE while Gosaki still on dual path |
@@ -302,9 +302,9 @@ phase: cms-core-v2-external-form-provider-hubspot-generalization-planning
 CMS_CORE_V2_EXTERNAL_FORM_HUBSPOT_GENERALIZATION_PLANNING_COMPLETE: true
 CONTACT_HUBSPOT_GENERALIZATION: PLANNING_COMPLETE
 CONTACT_HUBSPOT_RENDERER: COMPLETE
-CONTACT_HUBSPOT_GOSAKI_SHADOW_COMPARE: NOT_STARTED
+CONTACT_HUBSPOT_GOSAKI_SHADOW_COMPARE: COMPLETE
 CONTACT_HUBSPOT_GOSAKI_ADAPTER_SWITCH: NOT_STARTED
-NEXT_RECOMMENDED: cms-core-v2-external-form-provider-hubspot-shadow-compare
+NEXT_RECOMMENDED: cms-core-v2-external-form-provider-hubspot-adapter-switch
 PACKAGE_GENERATE_EXECUTED: false
 FTP_EXECUTED: false
 DB_WRITE_EXECUTED: false
@@ -326,12 +326,44 @@ READY_FOR_ANY_FUTURE_FTP_APPLY: false
 | Loader | `config.loader.scriptSrc` only (must equal `deriveHubspotLoaderScriptSrc(portalId)`) |
 | Verifier | `verify:cms-core-v2-external-form-provider-hubspot-renderer` (+ Safety Suite) |
 | Gosaki adapter / config / Contact HTML | **unchanged** |
-| Next | `cms-core-v2-external-form-provider-hubspot-shadow-compare` |
+| Next | `cms-core-v2-external-form-provider-hubspot-shadow-compare` → **COMPLETE** (see §12) |
 
 ```txt
 CMS_CORE_V2_EXTERNAL_FORM_PROVIDER_HUBSPOT_RENDERER_COMPLETE: true
 CONTACT_HUBSPOT_RENDERER: COMPLETE
-NEXT_RECOMMENDED: cms-core-v2-external-form-provider-hubspot-shadow-compare
+NEXT_RECOMMENDED: cms-core-v2-external-form-provider-hubspot-adapter-switch
+HUBSPOT_CONFIG_UNCHANGED: true
+GOSAKI_ADAPTER_UNCHANGED: true
+PACKAGE_GENERATE_EXECUTED: false
+FTP_EXECUTED: false
+DB_WRITE_EXECUTED: false
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+PRODUCTION_UNCHANGED: true
+```
+
+---
+
+## 12. Phase result — HubSpot shadow compare (2026-07-31)
+
+**Phase:** `cms-core-v2-external-form-provider-hubspot-shadow-compare` — **COMPLETE**
+
+| Item | Value |
+| --- | --- |
+| Verifier | `verify:cms-core-v2-external-form-provider-hubspot-shadow-compare` (+ Safety Suite) |
+| Legacy path | `loadGosakiContactHubspotConfig` → exact ID gate → `buildGosakiContactHubspotEmbedHtml` |
+| Shadow path | same config → map (strip `scriptSrc`/extra) + `environment: staging` → Core validator → `renderHubspotConfigHtml` |
+| Equality | **byte-for-byte** legacy === Core === `contact-hubspot-embed.html` |
+| Exact ID gate | portalId / formId / region / scriptSrc mutations → gate fail · Core html **null** |
+| Adapter / config / Contact | **unchanged** |
+| Next | `cms-core-v2-external-form-provider-hubspot-adapter-switch` |
+
+```txt
+CMS_CORE_V2_EXTERNAL_FORM_PROVIDER_HUBSPOT_SHADOW_COMPARE_COMPLETE: true
+CONTACT_HUBSPOT_GOSAKI_SHADOW_COMPARE: COMPLETE
+CONTACT_HUBSPOT_GOSAKI_ADAPTER_SWITCH: NOT_STARTED
+BYTE_FOR_BYTE_EQUALITY: true
+EXACT_ID_GATE_PRESERVED: true
+NEXT_RECOMMENDED: cms-core-v2-external-form-provider-hubspot-adapter-switch
 HUBSPOT_CONFIG_UNCHANGED: true
 GOSAKI_ADAPTER_UNCHANGED: true
 PACKAGE_GENERATE_EXECUTED: false

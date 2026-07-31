@@ -1,8 +1,8 @@
 # CMS Core v2 — HubSpot legacy cleanup audit
 
-**Phase:** `cms-core-v2-external-form-provider-hubspot-legacy-cleanup-audit`  
-**Date:** 2026-08-01  
-**Scope:** read-only inventory · classification · verifier · docs  
+**Phase:** `cms-core-v2-external-form-provider-hubspot-legacy-cleanup-audit`<br>
+**Date:** 2026-08-01<br>
+**Scope:** read-only inventory · classification · verifier · docs<br>
 **Not in scope:** legacy deletion · runtime edits · HubSpot ID/config changes · package/FTP · commit/push
 
 ---

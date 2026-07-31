@@ -3,9 +3,11 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**CMS Core v2 external form HubSpot legacy cleanup audit (2026-08-01):** **COMPLETE** (read-only) — Phase `cms-core-v2-external-form-provider-hubspot-legacy-cleanup-audit` · Doc: `cms-core-v2-external-form-provider-hubspot-legacy-cleanup-audit.md` · runtime apply = Core only · legacy builder **KEEP_AS_TEST_ORACLE** · DELETE_NOW false · npm `verify:cms-core-v2-external-form-provider-hubspot-legacy-cleanup-audit` (+ Safety Suite) · **Next Kit:** `cms-core-v2-external-form-provider-hubspot-completion-audit` · Ops: Gosaki client staging share.
+**CMS Core v2 external form HubSpot completion audit (2026-08-01):** **COMPLETE** (read-only) — Phase `cms-core-v2-external-form-provider-hubspot-completion-audit` · Doc: `cms-core-v2-external-form-provider-hubspot-completion-audit.md` · HubSpot **COMPLETE WITH NON-BLOCKING** · PC/375 browser **PASS** · non-blocking ops = submit E2E recheck only · genuine blockers none · npm `verify:cms-core-v2-external-form-provider-hubspot-completion-audit` (+ Safety Suite) · **Next Primary:** `cms-core-v2-mio-supabase-live-select-only-pilot` · Ops: Gosaki client staging share.
 
-**CMS Core v2 external form HubSpot adapter switch (2026-08-01):** **COMPLETE** — retained; legacy audit done above.
+**CMS Core v2 external form HubSpot legacy cleanup audit (2026-08-01):** **COMPLETE** — KEEP_AS_TEST_ORACLE; completion audit above.
+
+**CMS Core v2 external form HubSpot adapter switch (2026-08-01):** **COMPLETE** — retained.
 
 **CMS Core v2 external form HubSpot shadow compare (2026-07-31):** **COMPLETE** — retained.
 
@@ -19,9 +21,9 @@ Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト�
 
 **CMS Core v2 external form provider contract validator (2026-07-31):** **COMPLETE** — hubspot normalize + renderer wired.
 
-**CMS Core v2 external form provider contract planning (2026-07-31):** **COMPLETE** — Doc §21 HubSpot legacy cleanup audit.
+**CMS Core v2 external form provider contract planning (2026-07-31):** **COMPLETE** — Doc §22 HubSpot completion audit.
 
-**CMS Core v2 Mio read-only proof completion (2026-07-31):** **COMPLETE / PASS** — Contact: link + Forms pilots; Gosaki HubSpot on Core renderer (legacy oracle kept).
+**CMS Core v2 Mio read-only proof completion (2026-07-31):** **COMPLETE / PASS** — Contact Kit providers advanced; Mio live HubSpot/Admin still open; next Primary = Mio Supabase live SELECT.
 
 **CMS Core v2 Mio read-render browser-baseline (2026-07-31):** **PASS / COMPLETE** — dual-nav · main.wrap · About `withBase('/images/…')` · Schedule fixture CSS · NON_BLOCKING evening-set hero · folded into read-only proof above.
 

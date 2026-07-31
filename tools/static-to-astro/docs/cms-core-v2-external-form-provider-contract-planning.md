@@ -395,10 +395,10 @@ Add step to `verify:cms-core-v2-safety-suite` when implementation lands — **do
 | **4c** | `cms-core-v2-external-form-provider-hubspot-shadow-compare` | Map Gosaki JSON→Core; deep-eq old vs new inner HTML | Medium — **COMPLETE** |
 | **4d** | `cms-core-v2-external-form-provider-hubspot-adapter-switch` | Adapter calls Core renderer + keep Gosaki insert helper | Medium — **COMPLETE** |
 | **4e** | `cms-core-v2-external-form-provider-hubspot-legacy-cleanup-audit` | Decide keep/thin/delete legacy builder vs thin wrapper | Low–Med — **COMPLETE** (KEEP_AS_TEST_ORACLE) |
-| **4f** | `cms-core-v2-external-form-provider-hubspot-completion-audit` | Provider completion scorecard | Low |
+| **4f** | `cms-core-v2-external-form-provider-hubspot-completion-audit` | Provider completion scorecard | Low — **COMPLETE** |
 | **5** | `cms-core-v2-external-form-admin-config-ui` | Staging Admin: provider select + fields; **no** code paste; Save gated separately | Higher (Admin + optional DB) |
 
-**Next after HubSpot legacy cleanup audit:** Phase 4f (`cms-core-v2-external-form-provider-hubspot-completion-audit`).
+**Next after HubSpot completion audit (Kit Primary):** `cms-core-v2-mio-supabase-live-select-only-pilot`.
 
 ---
 
@@ -427,8 +427,9 @@ CONTACT_HUBSPOT_RENDERER: COMPLETE
 CONTACT_HUBSPOT_GOSAKI_SHADOW_COMPARE: COMPLETE
 CONTACT_HUBSPOT_GOSAKI_ADAPTER_SWITCH: COMPLETE
 CONTACT_HUBSPOT_LEGACY_CLEANUP_AUDIT: COMPLETE
+CONTACT_HUBSPOT_COMPLETION_AUDIT: COMPLETE
 CONTACT_ADMIN_CONFIG_UI: NOT_STARTED
-NEXT_RECOMMENDED: cms-core-v2-external-form-provider-hubspot-completion-audit
+NEXT_RECOMMENDED: cms-core-v2-mio-supabase-live-select-only-pilot
 PACKAGE_GENERATE_EXECUTED: false
 FTP_EXECUTED: false
 DB_WRITE_EXECUTED: false
@@ -533,4 +534,19 @@ READY_FOR_ANY_FUTURE_FTP_APPLY: false
 - **Oracle policy:** fixture + legacy + Core triple equality retained
 - **Verifier:** `verify:cms-core-v2-external-form-provider-hubspot-legacy-cleanup-audit` (Safety Suite)
 - **Runtime / HubSpot JSON:** unchanged
-- **Next:** `cms-core-v2-external-form-provider-hubspot-completion-audit`
+- **Next:** `cms-core-v2-external-form-provider-hubspot-completion-audit` → **COMPLETE** (see §22)
+
+---
+
+## 22. HubSpot completion audit (2026-08-01)
+
+- **Phase:** `cms-core-v2-external-form-provider-hubspot-completion-audit` — **COMPLETE** (read-only)
+- **Doc:** `cms-core-v2-external-form-provider-hubspot-completion-audit.md`
+- **HubSpot verdict:** **COMPLETE WITH NON-BLOCKING ITEMS** · genuine blockers **none**
+- **PC/375 browser baseline:** **PASS** (display; wrapper/frame/loader 1; no submit)
+- **Non-blocking ops:** Core切替後 HubSpot submit E2E 再実施 only
+- **Contact matrix:** disabled / external-link COMPLETE · google-forms offline COMPLETE (live PARTIAL) · hubspot Core COMPLETE_WITH_NON_BLOCKING
+- **Kit policy:** HubSpot CRM candidate · Forms lightweight · external-link fallback · disabled default — site config selects
+- **Next Primary:** `cms-core-v2-mio-supabase-live-select-only-pilot`
+- **Verifier:** `verify:cms-core-v2-external-form-provider-hubspot-completion-audit` (Safety Suite)
+- **Runtime / form submit / HubSpot JSON:** unchanged

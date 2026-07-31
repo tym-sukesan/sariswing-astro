@@ -14,7 +14,12 @@
 
 The Kit can convert a second, hand-authored static site (not Gosaki / not Wix crawl copy) through the shared convert path, resolve it from the site registry, lazy-load a Mio adapter, and render Schedule / Discography / Videos / About / footer from **explicitly injected** read-only bundles — with fail-closed unpublished / invalid handling, PC/SP visual baseline PASS, zero Gosaki leakage in Mio output, and stable offline Safety Suite — **without** DB write, Save, package, FTP, or production.
 
-Contact remains PARTIAL overall (HubSpot / Admin / live submit not done), but **external-link** and **google-forms** (offline pilot) are implemented for Mio via injected `formConfigBundle`. See `cms-core-v2-external-form-provider-contract-planning.md` §15–§16.
+Contact remains **PARTIAL for Mio live CRM**, but Kit Contact providers are in place:
+
+- **external-link** · **google-forms** (offline pilot) for Mio via `formConfigBundle`
+- **hubspot** Core path for Gosaki (**COMPLETE WITH NON-BLOCKING**; see `cms-core-v2-external-form-provider-hubspot-completion-audit.md`)
+
+Admin / live Forms submit / Mio HubSpot onboarding remain open.
 
 ---
 
@@ -34,7 +39,7 @@ Contact remains PARTIAL overall (HubSpot / Admin / live submit not done), but **
 | 10 | PC / SP browser baseline | **PASS** | operator visual PASS after fix (dual-nav · wrap · assets · event-card CSS) |
 | 11 | Isolation vs Gosaki / generic / pilot | **PASS** | `/gosaki/i` 0 in Mio output · pilot zero mio markers |
 | 12 | Offline verifiers + Safety Suite | **PASS** | dedicated Mio verifiers in suite · baseline 80 · ALL PASS |
-| 13 | Contact | **PARTIAL→link+Forms** | external-link + google-forms offline pilots; HubSpot / live submit / Admin still open |
+| 13 | Contact | **PARTIAL (Mio)** · Kit providers advanced | Mio: link + Forms offline; Gosaki HubSpot Core **COMPLETE_WITH_NON_BLOCKING**; Admin / live Forms / Mio HubSpot open |
 | 14 | Supabase live read | **NOT_STARTED** | fixture inject only for Mio |
 | 15 | Admin UI | **NOT_STARTED** | staging shell / Mio admin not wired |
 | 16 | Save / DB write | **NOT_STARTED** | out of read-only proof |
@@ -60,8 +65,8 @@ Contact remains PARTIAL overall (HubSpot / Admin / live submit not done), but **
 
 | Area | Note |
 | --- | --- |
-| External Contact form | Provider allowlist / Google Forms / HubSpot — **remaining** |
-| Mio Supabase live SELECT | Needs `site_slug` isolation + published filter + fallback |
+| External Contact form | Kit: external-link / google-forms / hubspot Core done; Mio HubSpot onboarding · Forms live · Admin still open |
+| Mio Supabase live SELECT | **Recommended next Primary** — `cms-core-v2-mio-supabase-live-select-only-pilot` |
 | Generic read-only Admin for Mio | Feature registry; Save stays disabled |
 | Any Save / Edge / RLS / Secrets | Separate high-risk gates |
 | Mio package + staging FTP | Separate approval; FTP `--apply` still suspended |

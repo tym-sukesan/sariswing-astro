@@ -252,7 +252,7 @@ Deep equality / locked checks (Gosaki):
 | **3** | `cms-core-v2-external-form-provider-hubspot-adapter-switch` | Adapter calls Core renderer + keep Gosaki insert helper | Medium — **COMPLETE** | HTML baseline fail; double loader; missing wrapper |
 | **4** | `cms-core-v2-external-form-provider-hubspot-browser-baseline` | Operator PC/SP Contact check on staging package or local preview | Medium | Visual/layout regression; package/FTP without approval |
 | **5** | `cms-core-v2-external-form-provider-hubspot-legacy-cleanup-audit` | Decide keep/thin/delete legacy builder vs thin wrapper | Low–Med — **COMPLETE** (KEEP_AS_TEST_ORACLE; no delete) |
-| **6** | `cms-core-v2-external-form-provider-hubspot-completion-audit` | Provider completion scorecard | Low |
+| **6** | `cms-core-v2-external-form-provider-hubspot-completion-audit` | Provider completion scorecard | Low — **COMPLETE** |
 | **7** | `cms-core-v2-external-form-provider-hubspot-legacy-oracle-retirement` | Optional: fixture-only oracle then delete legacy builder | Low–Med |
 
 **First implementation phase after this planning:** **Phase 1 (pure HubSpot renderer + offline verifier)** — no adapter switch, no config ID edits.
@@ -425,7 +425,7 @@ PRODUCTION_UNCHANGED: true
 | Delete now | **false** |
 | Exact ID / wrapper / selector | **KEEP** |
 | Verifier | `verify:cms-core-v2-external-form-provider-hubspot-legacy-cleanup-audit` (+ Safety Suite) |
-| Next | **B** `cms-core-v2-external-form-provider-hubspot-completion-audit` |
+| Next | **COMPLETE** → see §15 completion audit; Kit Primary = Mio live SELECT |
 | Later (optional) | `cms-core-v2-external-form-provider-hubspot-legacy-oracle-retirement` |
 
 ```txt
@@ -434,9 +434,42 @@ CONTACT_HUBSPOT_LEGACY_CLEANUP_AUDIT: COMPLETE
 LEGACY_BUILDER_RUNTIME_USED: false
 LEGACY_BUILDER_CLASSIFICATION: KEEP_AS_TEST_ORACLE
 LEGACY_BUILDER_DELETE_NOW: false
-NEXT_RECOMMENDED: cms-core-v2-external-form-provider-hubspot-completion-audit
+NEXT_RECOMMENDED: cms-core-v2-mio-supabase-live-select-only-pilot
 RUNTIME_CHANGED: false
 HUBSPOT_CONFIG_UNCHANGED: true
+PACKAGE_GENERATE_EXECUTED: false
+FTP_EXECUTED: false
+DB_WRITE_EXECUTED: false
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+PRODUCTION_UNCHANGED: true
+```
+
+---
+
+## 15. Phase result — HubSpot completion audit (2026-08-01)
+
+**Phase:** `cms-core-v2-external-form-provider-hubspot-completion-audit` — **COMPLETE** (read-only)
+
+| Item | Value |
+| --- | --- |
+| Doc | `cms-core-v2-external-form-provider-hubspot-completion-audit.md` |
+| HubSpot verdict | **COMPLETE WITH NON-BLOCKING ITEMS** |
+| Genuine blockers | **none** |
+| PC/375 browser baseline | **COMPLETE / PASS** |
+| Non-blocking ops | submit E2E recheck after Core switch only |
+| Verifier | `verify:cms-core-v2-external-form-provider-hubspot-completion-audit` (+ Safety Suite) |
+| Next Primary | **A** `cms-core-v2-mio-supabase-live-select-only-pilot` |
+
+```txt
+CMS_CORE_V2_EXTERNAL_FORM_HUBSPOT_COMPLETION_AUDIT_COMPLETE: true
+CONTACT_HUBSPOT_PROVIDER_CORE: COMPLETE_WITH_NON_BLOCKING
+CONTACT_HUBSPOT_GENUINE_BLOCKER: none
+CONTACT_HUBSPOT_PC375_BROWSER_BASELINE: PASS
+CONTACT_HUBSPOT_NON_BLOCKING_OPS: submit-e2e-recheck-after-core-switch
+NEXT_PRIMARY_RECOMMENDED: cms-core-v2-mio-supabase-live-select-only-pilot
+RUNTIME_CHANGED: false
+HUBSPOT_CONFIG_UNCHANGED: true
+FORM_SUBMIT_EXECUTED: false
 PACKAGE_GENERATE_EXECUTED: false
 FTP_EXECUTED: false
 DB_WRITE_EXECUTED: false

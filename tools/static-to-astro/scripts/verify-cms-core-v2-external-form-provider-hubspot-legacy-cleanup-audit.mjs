@@ -145,6 +145,7 @@ const allowedOracleRefs = new Set([
   "scripts/verify-cms-core-v2-external-form-provider-hubspot-adapter-switch.mjs",
   "scripts/verify-cms-core-v2-gosaki-site-generator-hooks-html-baseline.mjs",
   "scripts/verify-cms-core-v2-external-form-provider-hubspot-legacy-cleanup-audit.mjs",
+  "scripts/verify-cms-core-v2-external-form-provider-hubspot-completion-audit.mjs",
 ]);
 
 const unexpected = codeRefs.filter((r) => !allowedOracleRefs.has(r));

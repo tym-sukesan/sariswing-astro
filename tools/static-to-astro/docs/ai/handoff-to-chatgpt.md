@@ -5,16 +5,18 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: CMS Core v2 external form HubSpot legacy cleanup audit COMPLETE
-Phase: cms-core-v2-external-form-provider-hubspot-legacy-cleanup-audit
-Doc: tools/static-to-astro/docs/cms-core-v2-external-form-provider-hubspot-legacy-cleanup-audit.md
-Legacy builder: KEEP_AS_TEST_ORACLE (unused at runtime; apply = Core ViaCore)
-DELETE_NOW: false
-Exact ID gate / wrapper / selector: KEEP
-Verifier: verify:cms-core-v2-external-form-provider-hubspot-legacy-cleanup-audit (+ Safety Suite)
-Next Kit: cms-core-v2-external-form-provider-hubspot-completion-audit
-Later optional: hubspot-legacy-oracle-retirement (fixture-only then delete)
-Prior: adapter-switch + shadow-compare + renderer COMPLETE
+Current phase: CMS Core v2 external form HubSpot completion audit COMPLETE
+Phase: cms-core-v2-external-form-provider-hubspot-completion-audit
+Doc: tools/static-to-astro/docs/cms-core-v2-external-form-provider-hubspot-completion-audit.md
+HubSpot verdict: COMPLETE WITH NON-BLOCKING ITEMS
+Genuine blockers: none
+PC/375 browser baseline: PASS (form display; wrapper/frame/loader 1; no submit)
+Non-blocking ops: Core-switch HubSpot submit E2E recheck only
+Contact: disabled/external-link COMPLETE · google-forms offline COMPLETE · hubspot Core COMPLETE_WITH_NON_BLOCKING
+Kit policy: hubspot CRM candidate · google-forms lightweight · external-link fallback · disabled default
+Next Primary: cms-core-v2-mio-supabase-live-select-only-pilot
+Verifier: verify:cms-core-v2-external-form-provider-hubspot-completion-audit (+ Safety Suite)
+Prior: legacy-cleanup KEEP_AS_TEST_ORACLE · adapter-switch · shadow · renderer COMPLETE
 Gosaki CLIENT_SHARE_READY: true (maintained)
 deployed package: dc1c5b62a58d0462ad6629db4847256d316d4a38 (unchanged; no regen)
 Next Primary (ops): share staging with client
@@ -24,38 +26,47 @@ readyForAnyFutureFtpApply: false
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
 ```
 
+## CMS Core v2 external form HubSpot completion audit (2026-08-01)
+
+- Read-only scorecard: HubSpot provider core COMPLETE WITH NON-BLOCKING
+- PC/375 browser baseline **PASS** (display; no input/submit)
+- Non-blocking ops retained: Core切替後 HubSpot submit E2E 再実施 only
+- Package/FTP = staging deployment/release task (not in this verdict)
+- No genuine blockers; onboarding / production cutover / Admin / oracle retirement remain classified separately
+- Recommended Kit Primary next: Mio Supabase live SELECT-only pilot (second-site CMS proof)
+- No runtime change · no form submit · no HubSpot ID edits
+
 ## CMS Core v2 external form HubSpot legacy cleanup audit (2026-08-01)
 
-- Read-only: legacy builder not on runtime path; keep as independent allowlist oracle
-- Triple equality policy: fixture + legacy + Core
-- No deletion · no runtime change · no HubSpot ID edits
-- Next: provider completion audit (B). Retention decision locked here (A not needed)
+- Legacy builder KEEP_AS_TEST_ORACLE; unused at runtime
+- Triple equality: fixture + legacy + Core
+- Completion audit: **COMPLETE** (above)
 
 ## CMS Core v2 external form HubSpot adapter switch (2026-08-01)
 
-- Gosaki Contact apply uses Core `renderHubspotConfigHtml` via `buildGosakiContactHubspotEmbedHtmlViaCore`
-- Exact ID gate + `#comp-jqbwo704` / `#gosaki-contact-hubspot-embed` / CSS retained
-- Legacy `buildGosakiContactHubspotEmbedHtml` kept as test oracle (audit above)
+- Gosaki Contact apply uses Core ViaCore path; wrapper/selector/CSS retained
 
 ## CMS Core v2 external form HubSpot shadow compare (2026-07-31)
 
-- Offline: Gosaki exact gate → legacy inner HTML vs Core mapped validator → renderHubspotConfigHtml
-- Byte-for-byte PASS; adapter switch + legacy audit: **COMPLETE**
+- Byte-for-byte PASS; retained as regression evidence
 
 ## CMS Core v2 external form HubSpot pure renderer (2026-07-31)
 
-- Core `renderHubspotConfigHtml` + dispatcher wiring; used by Gosaki apply path
+- Core `renderHubspotConfigHtml`; used by Gosaki apply
 
 ## CMS Core v2 external form HubSpot generalization planning (2026-07-31)
 
-- Docs-only map + phased implementation; renderer/shadow/adapter/legacy-audit: **COMPLETE**
-- Do not weaken Gosaki exact-ID gate until explicit later decision
+- Planning + implementation arc through completion audit: **COMPLETE**
+
+## CMS Core v2 external form HubSpot generalization planning (2026-07-31)
+
+- Planning + implementation arc through completion audit: **COMPLETE**
 
 ## CMS Core v2 external form provider google-forms (2026-07-31)
 
 - Kit-fixed iframe from validator-normalized formUrl only
 - Offline Mio pilot; browser may show iframe load error (expected — fake form id)
-- external-link / google-forms retained; HubSpot Core/shadow PASS (Gosaki still legacy helper until adapter switch)
+- Live Forms load/submit / sandbox product decision: **unverified**
 - Browser preview: `output/_cms-core-v2-mio-contact-google-forms-browser/` (gitignored)
 
 ## CMS Core v2 external form provider external-link (2026-07-31)

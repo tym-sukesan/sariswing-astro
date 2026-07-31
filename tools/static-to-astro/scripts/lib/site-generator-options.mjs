@@ -1,7 +1,7 @@
 /**
  * G-20u19 — Normalize site data bundle options for astro-generator / convert.
- * Primary names: scheduleBundle / discographyBundle.
- * Legacy aliases: gosakiScheduleBundle / gosakiDiscographyBundle.
+ * Primary names: scheduleBundle / discographyBundle / embedsBundle / pageFieldsBundle / aboutBundle.
+ * Legacy aliases: gosakiScheduleBundle / gosakiDiscographyBundle / …
  */
 
 /**
@@ -9,6 +9,8 @@
  * @property {unknown} scheduleBundle
  * @property {unknown} discographyBundle
  * @property {unknown} embedsBundle
+ * @property {unknown} pageFieldsBundle
+ * @property {unknown} aboutBundle
  */
 
 /**
@@ -27,7 +29,14 @@ export function normalizeSiteDataBundles(options = {}) {
     options.sitePageFieldsBundle ??
     options.gosakiPageFieldsBundle ??
     null;
-  return { scheduleBundle, discographyBundle, embedsBundle, pageFieldsBundle };
+  const aboutBundle = options.aboutBundle ?? options.siteAboutBundle ?? null;
+  return {
+    scheduleBundle,
+    discographyBundle,
+    embedsBundle,
+    pageFieldsBundle,
+    aboutBundle,
+  };
 }
 
 /**
@@ -37,7 +46,7 @@ export function normalizeSiteDataBundles(options = {}) {
  * @returns {Record<string, unknown>}
  */
 export function withNormalizedSiteDataBundles(options = {}) {
-  const { scheduleBundle, discographyBundle, embedsBundle, pageFieldsBundle } =
+  const { scheduleBundle, discographyBundle, embedsBundle, pageFieldsBundle, aboutBundle } =
     normalizeSiteDataBundles(options);
   return {
     ...options,
@@ -47,6 +56,8 @@ export function withNormalizedSiteDataBundles(options = {}) {
     siteEmbedsBundle: embedsBundle,
     pageFieldsBundle,
     sitePageFieldsBundle: pageFieldsBundle,
+    aboutBundle,
+    siteAboutBundle: aboutBundle,
     gosakiScheduleBundle: scheduleBundle,
     gosakiDiscographyBundle: discographyBundle,
     gosakiEmbedsBundle: embedsBundle,

@@ -5,11 +5,11 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: CMS Core v2 Mio discography read-render COMPLETE
-Phase: cms-core-v2-mio-discography-read-render
-Helper: tools/static-to-astro/scripts/lib/mio-discography-data-page.mjs
+Current phase: CMS Core v2 Mio about read-render COMPLETE
+Phase: cms-core-v2-mio-about-read-render
+Helper: tools/static-to-astro/scripts/lib/mio-about-data-page.mjs
 Adapter: tools/static-to-astro/scripts/lib/mio-site-generator-hooks-adapter.mjs
-Scope: Videos + footer SNS + Schedule + Discography read-render
+Scope: Videos + footer SNS + Schedule + Discography + About read-render
 Data: tools/static-to-astro/fixtures/mio-kisaragi-jazz-data/
 HTML fixture: tools/static-to-astro/fixtures/mio-kisaragi-jazz/
 ADAPTER_CREATED: true
@@ -17,12 +17,23 @@ PACKAGE_GENERATE_EXECUTED: false
 Gosaki CLIENT_SHARE_READY: true (maintained)
 deployed package: dc1c5b62a58d0462ad6629db4847256d316d4a38 (unchanged; no regen)
 Next Primary (ops): share staging with client
-Next Kit: cms-core-v2-mio-about-read-render (separate approval) · Admin runtime mutex (explicit approval)
+Next Kit: cms-core-v2-mio-read-render-browser-baseline (separate approval) · Admin runtime mutex (explicit approval)
 seedAppliedStaging: true
 readyForOperatorAboutSeedApply: false
 readyForAnyFutureFtpApply: false
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
 ```
+
+## CMS Core v2 Mio about read-render (2026-07-31)
+
+- `mio-about-data-page.mjs` + adapter `applyMioAboutPage` in `applyPostGenerate`
+- Inject `aboutBundle` / `siteAboutBundle` via convert (`buildMioInjectAboutBundle`); Core forwards site-neutral keys only; no fixture-path implicit read
+- JA short / JA long / EN; main photo + no-photo block; collaborators ×3 (photo / no-photo); alt required; HTML escape
+- Local `images|assets` only; external URL / `..` / `data:` rejected
+- Mio markup (`mio-about-*`); no BandProfiles / Gosaki About copy; `/gosaki/i` 0
+- Schedule 14 + Discography 4 + Videos ×3 + footer SNS retained; Gosaki HTML baseline 80 PASS
+- Verifier `verify-cms-core-v2-mio-about-read-render` (88 PASS + safety-suite)
+- No Contact/Admin/Save/package/FTP/DB; Core has no Mio hardcode
 
 ## CMS Core v2 Mio discography read-render (2026-07-31)
 
@@ -30,9 +41,9 @@ STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
 - Inject `discographyBundle` via convert (`buildMioInjectDiscographyBundle`); no fixture-path implicit read
 - Public 4 releases; unpublished live excluded; tracks 10/2/1/0; 発売日不明 / artwork / streaming / longCredit
 - Mio markup (`mio-discography-*`); HTML escape; UNRELEASED scaffold comments stripped
-- Schedule 14 + Videos ×3 + footer SNS retained; Gosaki HTML baseline 80 PASS
+- Schedule 14 + Videos ×3 + footer SNS retained; About read-render done above; Gosaki HTML baseline 80 PASS
 - Verifier `verify-cms-core-v2-mio-discography-read-render` (+ safety-suite)
-- No About/Contact/Admin/Save/package/FTP/DB; Core has no Mio hardcode
+- No Contact/Admin/Save/package/FTP/DB; Core has no Mio hardcode
 
 ## CMS Core v2 Mio schedule read-render (2026-07-31)
 

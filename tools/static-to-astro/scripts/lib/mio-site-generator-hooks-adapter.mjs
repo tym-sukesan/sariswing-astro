@@ -1,14 +1,15 @@
 /**
  * Mio Kisaragi Jazz site adapter — generator hooks
- * (Videos + footer SNS + Schedule read-render + Discography read-render).
+ * (Videos + footer SNS + Schedule + Discography + About read-render).
  *
- * Does not implement About / Contact / Admin / Save.
+ * Does not implement Contact / Admin / Save.
  * Loaded lazily via registry `generatorHooksAdapter` (ensureSiteGeneratorHookAdapter).
  * Bundles must be injected (no implicit fixture path).
  */
 
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { applyMioAboutPage } from "./mio-about-data-page.mjs";
 import { patchMioDiscographyMainHtml } from "./mio-discography-data-page.mjs";
 import { generateMioFooterAstro } from "./mio-footer-social.mjs";
 import {
@@ -32,7 +33,7 @@ export function ensureMioSiteGeneratorHooksRegistered() {
 }
 
 /**
- * Mio hook methods — Videos + footer + Schedule + Discography read-render.
+ * Mio hook methods — Videos + footer + Schedule + Discography + About.
  * @returns {Omit<import('./site-generator-hooks.mjs').SiteGeneratorHooks, 'siteKey' | 'active'>}
  */
 export function createMioKisaragiJazzHookMethods() {
@@ -78,7 +79,12 @@ export function createMioKisaragiJazzHookMethods() {
 
       const embedsBundle = ctx?.siteEmbedsBundle ?? ctx?.embedsBundle ?? null;
       const mioVideosEmbedSummary = applyMioVideosPageEmbeds(outDir, embedsBundle);
-      const writtenPaths = [...(mioVideosEmbedSummary.paths ?? [])];
+      const aboutBundle = ctx?.aboutBundle ?? ctx?.siteAboutBundle ?? null;
+      const mioAboutSummary = applyMioAboutPage(outDir, aboutBundle);
+      const writtenPaths = [
+        ...(mioVideosEmbedSummary.paths ?? []),
+        ...(mioAboutSummary.paths ?? []),
+      ];
 
       return {
         gosakiBandProfilesSummary: { applied: false, reason: "mio_adapter_skip" },
@@ -87,6 +93,7 @@ export function createMioKisaragiJazzHookMethods() {
         gosakiContactHubspotSummary: { applied: false, reason: "mio_adapter_skip" },
         gosakiReadOnlyAdminSummary: { applied: false, reason: "mio_adapter_skip" },
         mioVideosEmbedSummary,
+        mioAboutSummary,
         writtenPaths,
       };
     },

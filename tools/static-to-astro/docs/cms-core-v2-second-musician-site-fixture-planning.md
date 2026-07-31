@@ -7,7 +7,8 @@
 - **Phase (thin adapter):** `cms-core-v2-mio-hooks-adapter-thin` — **COMPLETE**
 - **Phase (schedule read-render):** `cms-core-v2-mio-schedule-read-render` — **COMPLETE**
 - **Phase (discography read-render):** `cms-core-v2-mio-discography-read-render` — **COMPLETE** (2026-07-31)
-- **Status:** Fixture + data + Videos/footer + Schedule + Discography · About/Contact/Admin **not** started · package **not** started
+- **Phase (about read-render):** `cms-core-v2-mio-about-read-render` — **COMPLETE** (2026-07-31)
+- **Status:** Fixture + data + Videos/footer + Schedule + Discography + About · Contact/Admin/Save **not** started · package **not** started
 - **Package generate / FTP / DB:** **not executed**
 
 ---
@@ -15,7 +16,7 @@
 ## Gates
 
 ```txt
-phase: cms-core-v2-mio-discography-read-render
+phase: cms-core-v2-mio-about-read-render
 CMS_CORE_V2_SECOND_MUSICIAN_SITE_FIXTURE_PLANNING_COMPLETE: true
 CMS_CORE_V2_MIO_STATIC_FIXTURE_SCAFFOLD_COMPLETE: true
 CMS_CORE_V2_MIO_REGISTRY_NOOP_PILOT_COMPLETE: true
@@ -23,8 +24,9 @@ CMS_CORE_V2_MIO_DATA_FIXTURES_COMPLETE: true
 CMS_CORE_V2_MIO_HOOKS_ADAPTER_THIN_COMPLETE: true
 CMS_CORE_V2_MIO_SCHEDULE_READ_RENDER_COMPLETE: true
 CMS_CORE_V2_MIO_DISCOGRAPHY_READ_RENDER_COMPLETE: true
+CMS_CORE_V2_MIO_ABOUT_READ_RENDER_COMPLETE: true
 ADAPTER_CREATED: true
-ADAPTER_SCOPE: videos+footer_sns+schedule_read+discography_read
+ADAPTER_SCOPE: videos+footer_sns+schedule_read+discography_read+about_read
 PACKAGE_GENERATE_EXECUTED: false
 FTP_EXECUTED: false
 DB_WRITE_EXECUTED: false
@@ -34,6 +36,20 @@ deployedPackageSourceCommitUnchanged: dc1c5b62a58d0462ad6629db4847256d316d4a38
 READY_FOR_ANY_FUTURE_FTP_APPLY: false
 PRODUCTION_UNCHANGED: true
 ```
+
+### About read-render result (step 7)
+
+| Item | Value |
+| --- | --- |
+| Helper | `scripts/lib/mio-about-data-page.mjs` |
+| Hook | `applyPostGenerate` → `applyMioAboutPage` |
+| Inject | `aboutBundle` / `siteAboutBundle` via convert (`buildMioInjectAboutBundle`); Core forwards site-neutral keys only |
+| Content | JA short / JA long / EN · main photo · no-photo block · collaborators ×3 |
+| Photos | local `images|assets` only · external URL rejected · alt required |
+| Markup | `mio-about-*` · `/gosaki/i` 0 · no BandProfiles |
+| Verifier | `verify:cms-core-v2-mio-about-read-render` (+ safety-suite) · 88 PASS |
+
+**Next:** `cms-core-v2-mio-read-render-browser-baseline`
 
 ### Discography read-render result (step 6)
 
@@ -47,7 +63,7 @@ PRODUCTION_UNCHANGED: true
 | Markup | `mio-discography-*` · `/gosaki/i` 0 |
 | Verifier | `verify:cms-core-v2-mio-discography-read-render` (+ safety-suite) |
 
-**Next:** `cms-core-v2-mio-about-read-render`
+**Next:** superseded by About read-render (step 7)
 
 ### Schedule read-render result (step 5)
 
@@ -368,7 +384,8 @@ Phase 1 can mirror **pilot**: register `mio-kisaragi-jazz`, point `fixtureDir`, 
 | **4** | `…-mio-hooks-adapter-thin` | Optional adapter: Videos + footer only; register `generatorHooksAdapter` | **DONE** |
 | **5** | `…-mio-schedule-read-render` | Schedule read overlay from data fixtures | **DONE** |
 | **6** | `…-mio-discography-read-render` | Discography read overlay from data fixtures | **DONE** |
-| **7** | `…-mio-about-read-render` | About read overlay (next) | pending |
+| **7** | `…-mio-about-read-render` | About read overlay from data fixtures | **DONE** |
+| **8** | `…-mio-read-render-browser-baseline` | Browser / visual baseline across Mio read surfaces (next) | pending |
 
 **First implementation phase should touch the smallest set:** fixture HTML under `fixtures/mio-kisaragi-jazz/` only (step 1). Registry can wait for step 2 so Core stays untouched.
 

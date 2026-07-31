@@ -4,10 +4,39 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 ## 0. Current next actions（直近）
 
 1. **Primary (Gosaki ops):** クライアントへ **staging 共有**（`CLIENT_SHARE_READY: true` · package `dc1c5b6…`）。本番 cutover はしない。
-2. **並行可 (Kit Core):** **Next Kit** `cms-core-v2-external-form-provider-hubspot-legacy-cleanup-audit`（別承認）· then Admin config UI · Supabase live-read / generic read-only Admin · Admin runtime Save arm mutex（**別承認**）· evening-set hero（**NON_BLOCKING**）。
+2. **並行可 (Kit Core):** **Next Kit** `cms-core-v2-external-form-provider-hubspot-completion-audit`（別承認）· then Admin config UI · Supabase live-read / generic read-only Admin · Admin runtime Save arm mutex（**別承認**）· evening-set hero（**NON_BLOCKING**）。
 3. **並行可:** production hosting **read-only planning**（`HOSTING_READY: false`）。
 4. **並行可 / 別承認:** YouTube 複数件 **永続 Save**（NON_BLOCKING）。
 5. Save arm **false** · `readyForAnyFutureFtpApply: false` · production STOP · `service_role` 禁止 · **deployed package 固定**.
+
+## 0. CMS Core v2 external form HubSpot legacy cleanup audit (2026-08-01)
+
+| Item | Value |
+| --- | --- |
+| Gate | `CMS_CORE_V2_EXTERNAL_FORM_HUBSPOT_LEGACY_CLEANUP_AUDIT_COMPLETE: true` |
+| Phase | `cms-core-v2-external-form-provider-hubspot-legacy-cleanup-audit` |
+| Verdict | **COMPLETE** (read-only; no delete) |
+| Legacy classification | **KEEP_AS_TEST_ORACLE** |
+| Runtime uses legacy | **false** |
+| Doc | `cms-core-v2-external-form-provider-hubspot-legacy-cleanup-audit.md` |
+| Verifier | `verify:cms-core-v2-external-form-provider-hubspot-legacy-cleanup-audit` |
+| Next Kit | `cms-core-v2-external-form-provider-hubspot-completion-audit` |
+
+```txt
+CMS_CORE_V2_EXTERNAL_FORM_HUBSPOT_LEGACY_CLEANUP_AUDIT_COMPLETE: true
+CONTACT_HUBSPOT_LEGACY_CLEANUP_AUDIT: COMPLETE
+LEGACY_BUILDER_RUNTIME_USED: false
+LEGACY_BUILDER_CLASSIFICATION: KEEP_AS_TEST_ORACLE
+LEGACY_BUILDER_DELETE_NOW: false
+NEXT_RECOMMENDED: cms-core-v2-external-form-provider-hubspot-completion-audit
+RUNTIME_CHANGED: false
+HUBSPOT_CONFIG_UNCHANGED: true
+PACKAGE_GENERATE_EXECUTED: false
+FTP_EXECUTED: false
+DB_WRITE_EXECUTED: false
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+PRODUCTION_UNCHANGED: true
+```
 
 ## 0. CMS Core v2 external form HubSpot adapter switch (2026-08-01)
 
@@ -17,11 +46,11 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Phase | `cms-core-v2-external-form-provider-hubspot-adapter-switch` |
 | Verdict | **COMPLETE** |
 | Embed source | `core-renderHubspotConfigHtml` via `buildGosakiContactHubspotEmbedHtmlViaCore` |
-| Legacy builder | **retained** (not used by apply) |
+| Legacy builder | **KEEP_AS_TEST_ORACLE** (audit above) |
 | Verifier | `verify:cms-core-v2-external-form-provider-hubspot-adapter-switch` |
 | Browser preview | `output/_cms-core-v2-hubspot-adapter-switch-browser/` |
 | HubSpot JSON / IDs | **unchanged** |
-| Next Kit | `cms-core-v2-external-form-provider-hubspot-legacy-cleanup-audit` |
+| Next Kit | `cms-core-v2-external-form-provider-hubspot-completion-audit` |
 
 ```txt
 CMS_CORE_V2_EXTERNAL_FORM_PROVIDER_HUBSPOT_ADAPTER_SWITCH_COMPLETE: true
@@ -30,7 +59,7 @@ EMBED_SOURCE: core-renderHubspotConfigHtml
 LEGACY_BUILDER_RETAINED: true
 BYTE_FOR_BYTE_EQUALITY: true
 EXACT_ID_GATE_PRESERVED: true
-NEXT_RECOMMENDED: cms-core-v2-external-form-provider-hubspot-legacy-cleanup-audit
+NEXT_RECOMMENDED: cms-core-v2-external-form-provider-hubspot-completion-audit
 HUBSPOT_CONFIG_UNCHANGED: true
 PACKAGE_GENERATE_EXECUTED: false
 FTP_EXECUTED: false

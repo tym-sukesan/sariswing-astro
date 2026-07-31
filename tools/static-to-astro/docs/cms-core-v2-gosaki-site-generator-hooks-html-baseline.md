@@ -42,7 +42,7 @@ Lock deterministic hook / inject outputs **before** moving `createGosakiPianoHoo
 | Schedule index / month | `applyScheduleDataPages` | exact `.astro` fixtures |
 | Home YouTube | `injectYouTubeEmbedIntoHomePage` (postGenerate path) | exact Astro |
 | About | `applyAboutContentToPage` (postGenerate path) | exact Astro + flags |
-| Contact HubSpot | `buildGosakiContactHubspotEmbedHtml` + `injectHubspotEmbedIntoContactPage` | exact HTML/Astro |
+| Contact HubSpot | `buildGosakiContactHubspotEmbedHtmlViaCore` + inject (legacy builder kept as test oracle) | exact HTML/Astro |
 | Discography | `patchDiscographyPageMainHtml` | exact HTML + summary |
 | Legacy month stub | `applyLegacyMonthStubs` | orchestration + injected stub HTML |
 | Admin / postGenerate | `applyPostGenerate` | return keys, applied flags, portal stub, dashboard safety |

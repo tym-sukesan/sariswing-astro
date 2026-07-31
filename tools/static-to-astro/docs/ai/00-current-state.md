@@ -3,9 +3,11 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**CMS Core v2 external form HubSpot adapter switch (2026-08-01):** **COMPLETE** — Phase `cms-core-v2-external-form-provider-hubspot-adapter-switch` · apply uses `buildGosakiContactHubspotEmbedHtmlViaCore` → Core `renderHubspotConfigHtml` · exact ID gate + `#comp-jqbwo704` / `#gosaki-contact-hubspot-embed` retained · legacy builder kept · npm `verify:cms-core-v2-external-form-provider-hubspot-adapter-switch` (+ Safety Suite) · browser preview `output/_cms-core-v2-hubspot-adapter-switch-browser/` · HubSpot JSON/IDs **unchanged** · **no package/FTP** · **Next Kit:** `cms-core-v2-external-form-provider-hubspot-legacy-cleanup-audit` · Ops: Gosaki client staging share.
+**CMS Core v2 external form HubSpot legacy cleanup audit (2026-08-01):** **COMPLETE** (read-only) — Phase `cms-core-v2-external-form-provider-hubspot-legacy-cleanup-audit` · Doc: `cms-core-v2-external-form-provider-hubspot-legacy-cleanup-audit.md` · runtime apply = Core only · legacy builder **KEEP_AS_TEST_ORACLE** · DELETE_NOW false · npm `verify:cms-core-v2-external-form-provider-hubspot-legacy-cleanup-audit` (+ Safety Suite) · **Next Kit:** `cms-core-v2-external-form-provider-hubspot-completion-audit` · Ops: Gosaki client staging share.
 
-**CMS Core v2 external form HubSpot shadow compare (2026-07-31):** **COMPLETE** — retained; adapter switch done above.
+**CMS Core v2 external form HubSpot adapter switch (2026-08-01):** **COMPLETE** — retained; legacy audit done above.
+
+**CMS Core v2 external form HubSpot shadow compare (2026-07-31):** **COMPLETE** — retained.
 
 **CMS Core v2 external form HubSpot pure renderer (2026-07-31):** **COMPLETE** — retained.
 
@@ -17,9 +19,9 @@ Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト�
 
 **CMS Core v2 external form provider contract validator (2026-07-31):** **COMPLETE** — hubspot normalize + renderer wired.
 
-**CMS Core v2 external form provider contract planning (2026-07-31):** **COMPLETE** — Doc §20 HubSpot adapter switch.
+**CMS Core v2 external form provider contract planning (2026-07-31):** **COMPLETE** — Doc §21 HubSpot legacy cleanup audit.
 
-**CMS Core v2 Mio read-only proof completion (2026-07-31):** **COMPLETE / PASS** — Contact: link + Forms pilots; Gosaki HubSpot on Core renderer.
+**CMS Core v2 Mio read-only proof completion (2026-07-31):** **COMPLETE / PASS** — Contact: link + Forms pilots; Gosaki HubSpot on Core renderer (legacy oracle kept).
 
 **CMS Core v2 Mio read-render browser-baseline (2026-07-31):** **PASS / COMPLETE** — dual-nav · main.wrap · About `withBase('/images/…')` · Schedule fixture CSS · NON_BLOCKING evening-set hero · folded into read-only proof above.
 

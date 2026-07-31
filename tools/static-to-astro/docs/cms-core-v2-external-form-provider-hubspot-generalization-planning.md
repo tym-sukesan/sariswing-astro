@@ -251,8 +251,9 @@ Deep equality / locked checks (Gosaki):
 | **2** | `cms-core-v2-external-form-provider-hubspot-shadow-compare` | Map Gosaki JSON→Core; deep-eq old vs new inner HTML | Medium — **COMPLETE** | Any inequality vs `contact-hubspot-embed.html`; temptation to change live IDs |
 | **3** | `cms-core-v2-external-form-provider-hubspot-adapter-switch` | Adapter calls Core renderer + keep Gosaki insert helper | Medium — **COMPLETE** | HTML baseline fail; double loader; missing wrapper |
 | **4** | `cms-core-v2-external-form-provider-hubspot-browser-baseline` | Operator PC/SP Contact check on staging package or local preview | Medium | Visual/layout regression; package/FTP without approval |
-| **5** | `cms-core-v2-external-form-provider-hubspot-legacy-cleanup-audit` | Decide keep/thin/delete `validateGosakiContactHubspotConfig` vs thin wrapper | Low–Med | Deleting before shadow+switch PASS |
-| **6** | `cms-core-v2-external-form-provider-hubspot-completion-audit` | Docs/gates; provider completion scorecard | Low | Claiming COMPLETE while Gosaki still on dual path |
+| **5** | `cms-core-v2-external-form-provider-hubspot-legacy-cleanup-audit` | Decide keep/thin/delete legacy builder vs thin wrapper | Low–Med — **COMPLETE** (KEEP_AS_TEST_ORACLE; no delete) |
+| **6** | `cms-core-v2-external-form-provider-hubspot-completion-audit` | Provider completion scorecard | Low |
+| **7** | `cms-core-v2-external-form-provider-hubspot-legacy-oracle-retirement` | Optional: fixture-only oracle then delete legacy builder | Low–Med |
 
 **First implementation phase after this planning:** **Phase 1 (pure HubSpot renderer + offline verifier)** — no adapter switch, no config ID edits.
 
@@ -266,7 +267,7 @@ Deep equality / locked checks (Gosaki):
 
 ### 7.2 Rollback
 
-- Keep old `buildGosakiContactHubspotEmbedHtml` until Phase 5 audit
+- Keep old `buildGosakiContactHubspotEmbedHtml` as **test oracle** (Phase 5 audit: KEEP_AS_TEST_ORACLE; delete only in optional oracle-retirement)
 - Feature switch: adapter flag or call-site revert to old builder (one commit)
 - Never change live portal/form IDs as “fix”
 - If outcome unclear after switch: stop, no retry cleanup, ask human (project destructive-op culture)
@@ -307,7 +308,7 @@ CONTACT_HUBSPOT_GENERALIZATION: PLANNING_COMPLETE
 CONTACT_HUBSPOT_RENDERER: COMPLETE
 CONTACT_HUBSPOT_GOSAKI_SHADOW_COMPARE: COMPLETE
 CONTACT_HUBSPOT_GOSAKI_ADAPTER_SWITCH: COMPLETE
-NEXT_RECOMMENDED: cms-core-v2-external-form-provider-hubspot-legacy-cleanup-audit
+NEXT_RECOMMENDED: cms-core-v2-external-form-provider-hubspot-completion-audit
 PACKAGE_GENERATE_EXECUTED: false
 FTP_EXECUTED: false
 DB_WRITE_EXECUTED: false
@@ -334,7 +335,7 @@ READY_FOR_ANY_FUTURE_FTP_APPLY: false
 ```txt
 CMS_CORE_V2_EXTERNAL_FORM_PROVIDER_HUBSPOT_RENDERER_COMPLETE: true
 CONTACT_HUBSPOT_RENDERER: COMPLETE
-NEXT_RECOMMENDED: cms-core-v2-external-form-provider-hubspot-legacy-cleanup-audit
+NEXT_RECOMMENDED: cms-core-v2-external-form-provider-hubspot-completion-audit
 HUBSPOT_CONFIG_UNCHANGED: true
 GOSAKI_ADAPTER_SWITCHED_TO_CORE_RENDERER: true
 PACKAGE_GENERATE_EXECUTED: false
@@ -366,7 +367,7 @@ CONTACT_HUBSPOT_GOSAKI_SHADOW_COMPARE: COMPLETE
 CONTACT_HUBSPOT_GOSAKI_ADAPTER_SWITCH: COMPLETE
 BYTE_FOR_BYTE_EQUALITY: true
 EXACT_ID_GATE_PRESERVED: true
-NEXT_RECOMMENDED: cms-core-v2-external-form-provider-hubspot-legacy-cleanup-audit
+NEXT_RECOMMENDED: cms-core-v2-external-form-provider-hubspot-completion-audit
 HUBSPOT_CONFIG_UNCHANGED: true
 GOSAKI_ADAPTER_SWITCHED_TO_CORE_RENDERER: true
 LEGACY_BUILDER_RETAINED: true
@@ -392,7 +393,7 @@ PRODUCTION_UNCHANGED: true
 | Verifier | `verify:cms-core-v2-external-form-provider-hubspot-adapter-switch` (+ Safety Suite) |
 | Browser preview | `output/_cms-core-v2-hubspot-adapter-switch-browser/` (gitignored; repo `node_modules` symlink) |
 | HubSpot JSON / IDs / CSS | **unchanged** |
-| Next | `cms-core-v2-external-form-provider-hubspot-legacy-cleanup-audit` |
+| Next | `cms-core-v2-external-form-provider-hubspot-completion-audit` |
 
 ```txt
 CMS_CORE_V2_EXTERNAL_FORM_PROVIDER_HUBSPOT_ADAPTER_SWITCH_COMPLETE: true
@@ -401,7 +402,40 @@ EMBED_SOURCE: core-renderHubspotConfigHtml
 LEGACY_BUILDER_RETAINED: true
 BYTE_FOR_BYTE_EQUALITY: true
 EXACT_ID_GATE_PRESERVED: true
-NEXT_RECOMMENDED: cms-core-v2-external-form-provider-hubspot-legacy-cleanup-audit
+NEXT_RECOMMENDED: cms-core-v2-external-form-provider-hubspot-completion-audit
+HUBSPOT_CONFIG_UNCHANGED: true
+PACKAGE_GENERATE_EXECUTED: false
+FTP_EXECUTED: false
+DB_WRITE_EXECUTED: false
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+PRODUCTION_UNCHANGED: true
+```
+
+---
+
+## 14. Phase result — HubSpot legacy cleanup audit (2026-08-01)
+
+**Phase:** `cms-core-v2-external-form-provider-hubspot-legacy-cleanup-audit` — **COMPLETE** (docs + verifier; **no runtime delete**)
+
+| Item | Value |
+| --- | --- |
+| Doc | `cms-core-v2-external-form-provider-hubspot-legacy-cleanup-audit.md` |
+| Runtime | apply = Core ViaCore only; legacy **unused** |
+| Legacy classification | **KEEP_AS_TEST_ORACLE** |
+| Delete now | **false** |
+| Exact ID / wrapper / selector | **KEEP** |
+| Verifier | `verify:cms-core-v2-external-form-provider-hubspot-legacy-cleanup-audit` (+ Safety Suite) |
+| Next | **B** `cms-core-v2-external-form-provider-hubspot-completion-audit` |
+| Later (optional) | `cms-core-v2-external-form-provider-hubspot-legacy-oracle-retirement` |
+
+```txt
+CMS_CORE_V2_EXTERNAL_FORM_HUBSPOT_LEGACY_CLEANUP_AUDIT_COMPLETE: true
+CONTACT_HUBSPOT_LEGACY_CLEANUP_AUDIT: COMPLETE
+LEGACY_BUILDER_RUNTIME_USED: false
+LEGACY_BUILDER_CLASSIFICATION: KEEP_AS_TEST_ORACLE
+LEGACY_BUILDER_DELETE_NOW: false
+NEXT_RECOMMENDED: cms-core-v2-external-form-provider-hubspot-completion-audit
+RUNTIME_CHANGED: false
 HUBSPOT_CONFIG_UNCHANGED: true
 PACKAGE_GENERATE_EXECUTED: false
 FTP_EXECUTED: false

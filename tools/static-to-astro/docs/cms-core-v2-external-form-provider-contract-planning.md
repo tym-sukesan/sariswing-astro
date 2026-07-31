@@ -394,10 +394,11 @@ Add step to `verify:cms-core-v2-safety-suite` when implementation lands — **do
 | **4b** | `cms-core-v2-external-form-provider-hubspot-renderer` | Pure HubSpot inner HTML + offline verifier | Low — **COMPLETE** |
 | **4c** | `cms-core-v2-external-form-provider-hubspot-shadow-compare` | Map Gosaki JSON→Core; deep-eq old vs new inner HTML | Medium — **COMPLETE** |
 | **4d** | `cms-core-v2-external-form-provider-hubspot-adapter-switch` | Adapter calls Core renderer + keep Gosaki insert helper | Medium — **COMPLETE** |
-| **4e** | `cms-core-v2-external-form-provider-hubspot-legacy-cleanup-audit` | Decide keep/thin/delete legacy builder vs thin wrapper | Low–Med |
+| **4e** | `cms-core-v2-external-form-provider-hubspot-legacy-cleanup-audit` | Decide keep/thin/delete legacy builder vs thin wrapper | Low–Med — **COMPLETE** (KEEP_AS_TEST_ORACLE) |
+| **4f** | `cms-core-v2-external-form-provider-hubspot-completion-audit` | Provider completion scorecard | Low |
 | **5** | `cms-core-v2-external-form-admin-config-ui` | Staging Admin: provider select + fields; **no** code paste; Save gated separately | Higher (Admin + optional DB) |
 
-**Next after HubSpot adapter switch:** Phase 4e (`cms-core-v2-external-form-provider-hubspot-legacy-cleanup-audit`).
+**Next after HubSpot legacy cleanup audit:** Phase 4f (`cms-core-v2-external-form-provider-hubspot-completion-audit`).
 
 ---
 
@@ -425,8 +426,9 @@ CONTACT_HUBSPOT_GENERALIZATION: PLANNING_COMPLETE
 CONTACT_HUBSPOT_RENDERER: COMPLETE
 CONTACT_HUBSPOT_GOSAKI_SHADOW_COMPARE: COMPLETE
 CONTACT_HUBSPOT_GOSAKI_ADAPTER_SWITCH: COMPLETE
+CONTACT_HUBSPOT_LEGACY_CLEANUP_AUDIT: COMPLETE
 CONTACT_ADMIN_CONFIG_UI: NOT_STARTED
-NEXT_RECOMMENDED: cms-core-v2-external-form-provider-hubspot-legacy-cleanup-audit
+NEXT_RECOMMENDED: cms-core-v2-external-form-provider-hubspot-completion-audit
 PACKAGE_GENERATE_EXECUTED: false
 FTP_EXECUTED: false
 DB_WRITE_EXECUTED: false
@@ -518,4 +520,17 @@ READY_FOR_ANY_FUTURE_FTP_APPLY: false
 - **Not done:** legacy deletion · package · FTP · HubSpot ID changes
 - **Verifier:** `verify:cms-core-v2-external-form-provider-hubspot-adapter-switch` (Safety Suite)
 - **Browser preview:** `output/_cms-core-v2-hubspot-adapter-switch-browser/` → `astro dev` → `/contact/`
-- **Next:** `cms-core-v2-external-form-provider-hubspot-legacy-cleanup-audit`
+- **Next:** `cms-core-v2-external-form-provider-hubspot-legacy-cleanup-audit` → **COMPLETE** (see §21)
+
+---
+
+## 21. HubSpot legacy cleanup audit (2026-08-01)
+
+- **Phase:** `cms-core-v2-external-form-provider-hubspot-legacy-cleanup-audit` — **COMPLETE** (read-only)
+- **Doc:** `cms-core-v2-external-form-provider-hubspot-legacy-cleanup-audit.md`
+- **Finding:** apply uses Core only; `buildGosakiContactHubspotEmbedHtml` unused at runtime
+- **Classification:** legacy builder **KEEP_AS_TEST_ORACLE**; exact ID / wrapper / selector **KEEP**; **DELETE_NOW false**
+- **Oracle policy:** fixture + legacy + Core triple equality retained
+- **Verifier:** `verify:cms-core-v2-external-form-provider-hubspot-legacy-cleanup-audit` (Safety Suite)
+- **Runtime / HubSpot JSON:** unchanged
+- **Next:** `cms-core-v2-external-form-provider-hubspot-completion-audit`

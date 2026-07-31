@@ -168,6 +168,7 @@ const IMPORT_CYCLE_MODULES = [
   "mio-schedule-data-pages.mjs",
   "mio-discography-data-page.mjs",
   "mio-about-data-page.mjs",
+  "mio-local-asset-url.mjs",
   "site-cms-features.mjs",
 ];
 

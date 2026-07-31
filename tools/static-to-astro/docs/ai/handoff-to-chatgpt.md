@@ -5,24 +5,30 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: CMS Core v2 Mio about read-render COMPLETE
-Phase: cms-core-v2-mio-about-read-render
-Helper: tools/static-to-astro/scripts/lib/mio-about-data-page.mjs
-Adapter: tools/static-to-astro/scripts/lib/mio-site-generator-hooks-adapter.mjs
-Scope: Videos + footer SNS + Schedule + Discography + About read-render
-Data: tools/static-to-astro/fixtures/mio-kisaragi-jazz-data/
-HTML fixture: tools/static-to-astro/fixtures/mio-kisaragi-jazz/
+Current phase: CMS Core v2 Mio read-render browser-baseline PASS / COMPLETE
+Phase: cms-core-v2-mio-read-render-browser-baseline
+Operator visual: PASS (PC / SP)
+Fixes: preserve-dual-nav · main.wrap · withBase('/images/…') · Schedule event-list/event-card ↔ fixture CSS
+NON_BLOCKING: Home evening-set hero placeholder polish (deferred)
+Temp: tools/static-to-astro/output/_cms-core-v2-mio-read-render-browser-baseline/ (gitignored)
 ADAPTER_CREATED: true
 PACKAGE_GENERATE_EXECUTED: false
 Gosaki CLIENT_SHARE_READY: true (maintained)
 deployed package: dc1c5b62a58d0462ad6629db4847256d316d4a38 (unchanged; no regen)
 Next Primary (ops): share staging with client
-Next Kit: cms-core-v2-mio-read-render-browser-baseline (separate approval) · Admin runtime mutex (explicit approval)
+Next Kit: Contact / Admin / Save later (separate approval) · Admin runtime mutex (explicit approval)
 seedAppliedStaging: true
 readyForOperatorAboutSeedApply: false
 readyForAnyFutureFtpApply: false
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
 ```
+
+## CMS Core v2 Mio read-render browser-baseline (2026-07-31)
+
+- Operator PASS: dual-nav, main width, About images, Schedule cards (Home / About / Schedule reviewed)
+- Root causes fixed: (1) dual-nav DOM preserve (2) main class wrap (3) base-aware local asset URL (4) Schedule markup ↔ fixture CSS contract
+- NON_BLOCKING: evening-set hero placeholder visual polish deferred
+- Safety Suite + Gosaki HTML baseline 80 PASS; no package / FTP / DB; source fixtures unchanged
 
 ## CMS Core v2 Mio about read-render (2026-07-31)
 

@@ -8,7 +8,8 @@
 - **Phase (schedule read-render):** `cms-core-v2-mio-schedule-read-render` — **COMPLETE**
 - **Phase (discography read-render):** `cms-core-v2-mio-discography-read-render` — **COMPLETE** (2026-07-31)
 - **Phase (about read-render):** `cms-core-v2-mio-about-read-render` — **COMPLETE** (2026-07-31)
-- **Status:** Fixture + data + Videos/footer + Schedule + Discography + About · Contact/Admin/Save **not** started · package **not** started
+- **Phase (browser baseline):** `cms-core-v2-mio-read-render-browser-baseline` — **PASS / COMPLETE** (2026-07-31)
+- **Status:** Fixture + data + Videos/footer + Schedule + Discography + About · browser baseline operator PASS · Contact/Admin/Save **not** started · package **not** started
 - **Package generate / FTP / DB:** **not executed**
 
 ---
@@ -16,7 +17,7 @@
 ## Gates
 
 ```txt
-phase: cms-core-v2-mio-about-read-render
+phase: cms-core-v2-mio-read-render-browser-baseline
 CMS_CORE_V2_SECOND_MUSICIAN_SITE_FIXTURE_PLANNING_COMPLETE: true
 CMS_CORE_V2_MIO_STATIC_FIXTURE_SCAFFOLD_COMPLETE: true
 CMS_CORE_V2_MIO_REGISTRY_NOOP_PILOT_COMPLETE: true
@@ -25,6 +26,8 @@ CMS_CORE_V2_MIO_HOOKS_ADAPTER_THIN_COMPLETE: true
 CMS_CORE_V2_MIO_SCHEDULE_READ_RENDER_COMPLETE: true
 CMS_CORE_V2_MIO_DISCOGRAPHY_READ_RENDER_COMPLETE: true
 CMS_CORE_V2_MIO_ABOUT_READ_RENDER_COMPLETE: true
+CMS_CORE_V2_MIO_READ_RENDER_BROWSER_BASELINE_PASS: true
+CMS_CORE_V2_MIO_READ_RENDER_BROWSER_BASELINE_FIX_COMPLETE: true
 ADAPTER_CREATED: true
 ADAPTER_SCOPE: videos+footer_sns+schedule_read+discography_read+about_read
 PACKAGE_GENERATE_EXECUTED: false
@@ -36,6 +39,18 @@ deployedPackageSourceCommitUnchanged: dc1c5b62a58d0462ad6629db4847256d316d4a38
 READY_FOR_ANY_FUTURE_FTP_APPLY: false
 PRODUCTION_UNCHANGED: true
 ```
+
+### Browser baseline result (step 8) — PASS
+
+| Item | Value |
+| --- | --- |
+| Operator visual | PC / SP major layout OK · dual-nav · main width · About images · Schedule cards |
+| Root fixes | (1) preserve dual-nav DOM (2) `main` class (`wrap`) (3) base-aware local asset URL via `withBase` (4) Schedule markup ↔ fixture CSS (`.event-list` / `.event-card`) |
+| NON_BLOCKING | Home `evening set` hero placeholder visual polish — deferred |
+| Temp out | `output/_cms-core-v2-mio-read-render-browser-baseline/` (gitignored) |
+| Package / FTP / DB | **not executed** |
+
+**Next:** Contact / Admin / Save are out of scope; Gosaki client staging share remains primary ops.
 
 ### About read-render result (step 7)
 
@@ -49,7 +64,7 @@ PRODUCTION_UNCHANGED: true
 | Markup | `mio-about-*` · `/gosaki/i` 0 · no BandProfiles |
 | Verifier | `verify:cms-core-v2-mio-about-read-render` (+ safety-suite) · 88 PASS |
 
-**Next:** `cms-core-v2-mio-read-render-browser-baseline`
+**Next:** browser baseline PASS (step 8). Initial FAIL was nav rewrite / asset path / schedule CSS — fixed.
 
 ### Discography read-render result (step 6)
 
@@ -385,7 +400,7 @@ Phase 1 can mirror **pilot**: register `mio-kisaragi-jazz`, point `fixtureDir`, 
 | **5** | `…-mio-schedule-read-render` | Schedule read overlay from data fixtures | **DONE** |
 | **6** | `…-mio-discography-read-render` | Discography read overlay from data fixtures | **DONE** |
 | **7** | `…-mio-about-read-render` | About read overlay from data fixtures | **DONE** |
-| **8** | `…-mio-read-render-browser-baseline` | Browser / visual baseline across Mio read surfaces (next) | pending |
+| **8** | `…-mio-read-render-browser-baseline` | Browser / visual baseline across Mio read surfaces | **PASS / DONE** |
 
 **First implementation phase should touch the smallest set:** fixture HTML under `fixtures/mio-kisaragi-jazz/` only (step 1). Registry can wait for step 2 so Core stays untouched.
 

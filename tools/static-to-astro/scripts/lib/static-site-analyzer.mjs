@@ -509,6 +509,15 @@ export function analyzeStaticSite(siteDir) {
   const missingAssets = checkMissingAssets(siteDir, rawPages);
   const linkGraph = buildLinkGraph(rawPages);
 
+  let sharedMainClass = null;
+  for (const page of rawPages) {
+    const cls = page.$("main").first().attr("class")?.trim();
+    if (cls) {
+      sharedMainClass = cls;
+      break;
+    }
+  }
+
   return {
     generatedAt: new Date().toISOString(),
     inputDir: siteDir,
@@ -532,6 +541,7 @@ export function analyzeStaticSite(siteDir) {
         pageCount: pages.length,
         html: footerHtml,
       },
+      mainClass: sharedMainClass,
     },
     assets: collectSiteAssets(rawPages, missingAssets),
     risks: buildRisks(rawPages, missingAssets),

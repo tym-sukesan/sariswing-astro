@@ -269,7 +269,12 @@ for (const id of EXPECTED_COLLAB_IDS) {
   assert(`collaborator ${id}`, aboutHtml.includes(`data-mio-collaborator-id="${id}"`));
 }
 assert("profile photo alt", /alt="如月澪のポートレート（プレースホルダー）"/.test(aboutHtml));
-assert("local photo only", /src="images\/portrait-placeholder\.svg"/.test(aboutHtml));
+assert(
+  "local photo withBase root",
+  /src=\{withBase\('\/images\/portrait-placeholder\.svg'\)\}/.test(aboutHtml),
+);
+assert("withBase import present", /import \{ withBase \}/.test(aboutHtml));
+assert("no relative images/ src", !/src="images\//.test(aboutHtml));
 assert("no external img https", !/src="https?:\/\//i.test(aboutHtml));
 assert("ja short text", aboutHtml.includes(escapeMioAboutHtml(aboutBundle.profile.jaShort)));
 assert("en text snippet", /Musician CMS Kit verification/.test(aboutHtml));

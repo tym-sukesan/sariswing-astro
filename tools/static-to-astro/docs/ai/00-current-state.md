@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**CMS Core v2 Mio about read-render (2026-07-31):** **COMPLETE** — Phase `cms-core-v2-mio-about-read-render` · `mio-about-data-page.mjs` · adapter `applyMioAboutPage` · inject `aboutBundle`/`siteAboutBundle` (Core site-neutral forward only; no fixture-path implicit read) · JA short/long + EN · main photo + no-photo · collaborators ×3 · HTML escape · local images only · Mio markup · Schedule 14 / Discography 4 / Videos 3 / footer retained · npm `verify:cms-core-v2-mio-about-read-render` (88 PASS + safety-suite) · Gosaki HTML baseline 80 PASS · **no Contact/Admin/Save/package/FTP/DB** · **Next:** `cms-core-v2-mio-read-render-browser-baseline` · Gosaki client staging share.
+**CMS Core v2 Mio read-render browser-baseline (2026-07-31):** **PASS / COMPLETE** — Phase `cms-core-v2-mio-read-render-browser-baseline` (+ fix) · Operator PC/SP visual PASS · dual-nav · main.wrap · About `withBase('/images/…')` · Schedule fixture `.event-list`/`.event-card` · NON_BLOCKING: Home evening-set hero placeholder polish deferred · temp `output/_cms-core-v2-mio-read-render-browser-baseline/` · **no package/FTP/DB** · **Next:** Gosaki client staging share · Contact/Admin/Save later.
+
+**CMS Core v2 Mio about read-render (2026-07-31):** **COMPLETE** — Phase `cms-core-v2-mio-about-read-render` · `mio-about-data-page.mjs` · inject `aboutBundle` · browser baseline PASS above.
 
 **CMS Core v2 Mio discography read-render (2026-07-31):** **COMPLETE** — Phase `cms-core-v2-mio-discography-read-render` · `mio-discography-data-page.mjs` · `patchDiscographyPageMainHtml` · inject `discographyBundle` · public 4 · unpublished excluded · tracks 10/2/1/0 · Mio markup · Schedule/Videos/footer retained · npm `verify:cms-core-v2-mio-discography-read-render` (+ safety-suite) · Gosaki baseline 80 PASS · about read-render done above · **no Contact/Admin/Save/package/FTP/DB**.
 

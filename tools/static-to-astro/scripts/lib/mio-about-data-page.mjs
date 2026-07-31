@@ -7,6 +7,13 @@
 
 import fs from "node:fs";
 import path from "node:path";
+import {
+  mioAstroWithBaseSrcAttr,
+  resolveMioSafeLocalImageSrc,
+  toMioRootPublicAssetPath,
+} from "./mio-local-asset-url.mjs";
+
+export { resolveMioSafeLocalImageSrc, toMioRootPublicAssetPath };
 
 /**
  * @param {string} text
@@ -17,27 +24,6 @@ export function escapeMioAboutHtml(text) {
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;");
-}
-
-/**
- * Allow only relative local asset paths (no external URL, no .. traversal).
- * @param {unknown} src
- * @returns {string | null}
- */
-export function resolveMioSafeLocalImageSrc(src) {
-  const raw = String(src ?? "").trim();
-  if (!raw) return null;
-  if (/^https?:\/\//i.test(raw) || raw.startsWith("//") || raw.startsWith("data:")) {
-    return null;
-  }
-  if (raw.includes("..") || raw.includes("\\")) return null;
-  if (raw.startsWith("/")) {
-    // Absolute site paths under /images/ only.
-    if (!raw.startsWith("/images/")) return null;
-    return raw.replace(/^\//, "");
-  }
-  if (!/^(images|assets)\//i.test(raw)) return null;
-  return raw;
 }
 
 /**
@@ -106,15 +92,15 @@ export function readMioAboutLede(bundle) {
  * @param {{ width?: number, height?: number, className?: string }} [opts]
  */
 function renderSafeImg(src, alt, opts = {}) {
-  const safe = resolveMioSafeLocalImageSrc(src);
+  const srcAttr = mioAstroWithBaseSrcAttr(src);
   const altText = String(alt ?? "").trim() || "Portrait";
-  if (!safe) {
+  if (!srcAttr) {
     return `<div class="mio-about-photo mio-about-photo--missing" data-mio-photo="missing" role="img" aria-label="${escapeMioAboutHtml(altText)}"></div>`;
   }
   const width = opts.width ?? 320;
   const height = opts.height ?? 400;
   const className = opts.className ?? "mio-about-photo__img";
-  return `<img class="${className}" src="${escapeMioAboutHtml(safe)}" width="${width}" height="${height}" alt="${escapeMioAboutHtml(altText)}" data-mio-photo="local" />`;
+  return `<img class="${className}" ${srcAttr} width="${width}" height="${height}" alt="${escapeMioAboutHtml(altText)}" data-mio-photo="local" />`;
 }
 
 /**
@@ -228,6 +214,24 @@ export function resolveMioAboutPagePath(outDir) {
 }
 
 /**
+ * Ensure About page frontmatter imports withBase (for public asset URLs).
+ * @param {string} frontmatter
+ * @param {string} pagePath
+ * @param {string} outDir
+ */
+function ensureWithBaseFrontmatter(frontmatter, pagePath, outDir) {
+  if (/withBase/.test(frontmatter)) return frontmatter;
+  const withBaseAbs = path.join(outDir, "src/lib/with-base.ts");
+  let rel = path.relative(path.dirname(pagePath), withBaseAbs).replace(/\\/g, "/");
+  if (!rel.startsWith(".")) rel = `./${rel}`;
+  const importLine = `import { withBase } from "${rel}";\n`;
+  if (/^---\n/.test(frontmatter)) {
+    return frontmatter.replace(/^---\n/, `---\n${importLine}`);
+  }
+  return `---\n${importLine}---\n`;
+}
+
+/**
  * Replace About page body with Mio about markup from injected bundle.
  * No-op (applied:false) when bundle missing — preserves scaffold HTML.
  *
@@ -257,7 +261,7 @@ export function applyMioAboutPage(outDir, aboutBundle) {
 
   const original = fs.readFileSync(pagePath, "utf8");
   const fmMatch = original.match(/^---\n[\s\S]*?\n---\n?/);
-  const frontmatter = fmMatch ? fmMatch[0] : "";
+  const frontmatter = ensureWithBaseFrontmatter(fmMatch ? fmMatch[0] : "", pagePath, outDir);
   const body = fmMatch ? original.slice(fmMatch[0].length) : original;
 
   const layoutOpenMatch = body.match(/^(\s*<BaseLayout[\s\S]*?>)/);

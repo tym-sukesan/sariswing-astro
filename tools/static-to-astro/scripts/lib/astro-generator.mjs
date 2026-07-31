@@ -296,7 +296,12 @@ dist/
 `;
 }
 
-function generateBaseLayout({ layoutScripts, externalCss, wixStaticExport = false }) {
+function generateBaseLayout({
+  layoutScripts,
+  externalCss,
+  wixStaticExport = false,
+  mainClass = null,
+}) {
   const externalLinks = externalCss
     .filter((c) => !c.isPreconnect)
     .map((c) => `    <link rel="stylesheet" href="${c.href}" />`)
@@ -320,6 +325,12 @@ function generateBaseLayout({ layoutScripts, externalCss, wixStaticExport = fals
   const externalComment = externalBlock
     ? `    <!-- External CSS/fonts preserved from source HTML -->\n${externalBlock}`
     : "";
+
+  const safeMainClass =
+    typeof mainClass === "string" && /^[A-Za-z0-9 _-]+$/.test(mainClass.trim())
+      ? mainClass.trim()
+      : "";
+  const mainOpen = safeMainClass ? `<main class="${safeMainClass}">` : "<main>";
 
   return `---
 import Header from "../components/Header.astro";
@@ -398,7 +409,7 @@ ${externalComment}
   </head>
   <body${wixStaticExport ? ' class="wix-static-export device-desktop responsive"' : ""}>
     <Header />
-    <main>
+    ${mainOpen}
       <slot />
     </main>
     <Footer />
@@ -929,7 +940,12 @@ export async function generateAstroProject(inputDir, outputDir, options = {}) {
   writeFile(path.join(outDir, "src/components/Footer.astro"), footerContent);
   writeFile(
     path.join(outDir, "src/layouts/BaseLayout.astro"),
-    generateBaseLayout({ layoutScripts, externalCss, wixStaticExport }),
+    generateBaseLayout({
+      layoutScripts,
+      externalCss,
+      wixStaticExport,
+      mainClass: analysis.common?.mainClass ?? null,
+    }),
   );
   copyPublicStagingLibs(outDir);
 

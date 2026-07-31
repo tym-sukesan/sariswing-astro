@@ -9,6 +9,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { applyBaseUrlToSeo } from "./base-url.mjs";
+import { mioAstroWithBaseSrcAttr } from "./mio-local-asset-url.mjs";
 import { escapeAstroPropString } from "./path-transform.mjs";
 import { seoToLayoutProps } from "./seo-extract.mjs";
 import { layoutImportFromPagePath } from "./static-site-analyzer.mjs";
@@ -181,30 +182,37 @@ export function renderMioScheduleEventCardHtml(event) {
           : null;
 
   const badge = priceKindLabel(priceKind);
-  const img = hasImage && event.image_url
-    ? `\n      <img class="mio-schedule-event__image" src="${escapeMioHtml(String(event.image_url))}" width="112" height="112" alt="" />`
+  const imgSrcAttr =
+    hasImage && event.image_url ? mioAstroWithBaseSrcAttr(String(event.image_url)) : null;
+  const img = imgSrcAttr
+    ? `\n      <img ${imgSrcAttr} width="112" height="112" alt="" />`
     : "";
 
   const performerHtml = performers.length
-    ? `\n      <p class="mio-schedule-event__performers">出演: ${escapeMioHtml(performers.join(" / "))}</p>`
+    ? `\n        <p class="meta">出演: ${escapeMioHtml(performers.join(" / "))}</p>`
     : "";
   const addressHtml = address
-    ? `\n      <p class="mio-schedule-event__address">${escapeMioHtml(address)}</p>`
+    ? `\n        <p class="meta">${escapeMioHtml(address)}</p>`
     : "";
   const bookingHtml = bookingUrl
-    ? `\n      <p class="mio-schedule-event__booking">予約: <a href="${escapeMioHtml(bookingUrl)}" rel="noopener noreferrer">${escapeMioHtml(bookingUrl)}</a></p>`
+    ? `\n        <p class="meta" data-mio-booking="true">予約: <a href="${escapeMioHtml(bookingUrl)}" rel="noopener noreferrer">${escapeMioHtml(bookingUrl)}</a></p>`
     : "";
   const priceHtml = event.price
-    ? `\n      <p class="mio-schedule-event__price">${badge ? `<span class="mio-schedule-badge" data-mio-price-kind="${escapeMioHtml(priceKind)}">${escapeMioHtml(badge)}</span> ` : ""}${escapeMioHtml(String(event.price))}</p>`
+    ? `\n        <p class="meta">${badge ? `<span class="badge" data-mio-price-kind="${escapeMioHtml(priceKind)}">${escapeMioHtml(badge)}</span>` : ""}${escapeMioHtml(String(event.price))}</p>`
     : badge
-      ? `\n      <p class="mio-schedule-event__price"><span class="mio-schedule-badge" data-mio-price-kind="${escapeMioHtml(priceKind)}">${escapeMioHtml(badge)}</span></p>`
+      ? `\n        <p class="meta"><span class="badge" data-mio-price-kind="${escapeMioHtml(priceKind)}">${escapeMioHtml(badge)}</span></p>`
       : "";
 
-  return `<article class="mio-schedule-event${hasImage ? " mio-schedule-event--has-image" : ""}${longTitle ? " mio-schedule-event--long-title" : ""}" data-mio-schedule-id="${escapeMioHtml(String(event.legacy_id ?? event.id ?? ""))}" data-mio-month="${escapeMioHtml(String(event.month ?? ""))}" data-mio-date-status="${dateStatus}" data-mio-price-kind="${escapeMioHtml(priceKind)}" data-mio-has-image="${hasImage ? "true" : "false"}"${dualShow ? ` data-mio-dual-show="${escapeMioHtml(dualShow)}"` : ""}>
-      <p class="mio-schedule-event__date">${escapeMioHtml(dateDisplay)}</p>
-      <h3 class="mio-schedule-event__title">${escapeMioHtml(String(event.title ?? ""))}</h3>
-      ${event.venue ? `<p class="mio-schedule-event__venue">${escapeMioHtml(String(event.venue))}</p>` : ""}${addressHtml}${timeLine ? `\n      <p class="mio-schedule-event__time">${escapeMioHtml(timeLine)}</p>` : ""}${priceHtml}${performerHtml}${bookingHtml}${img}
-    </article>`;
+  // Fixture CSS contract: `.event-list` > `.event-card` (+ `.has-media`) with `.event-date` / `.meta` / `.badge`.
+  // Keep data-mio-* for offline verifiers; do not invent parallel mio-schedule visual classes.
+  return `<li class="event-card${hasImage && imgSrcAttr ? " has-media" : ""}${longTitle ? " event-card--long-title" : ""}" data-mio-schedule-id="${escapeMioHtml(String(event.legacy_id ?? event.id ?? ""))}" data-mio-month="${escapeMioHtml(String(event.month ?? ""))}" data-mio-date-status="${dateStatus}" data-mio-price-kind="${escapeMioHtml(priceKind)}" data-mio-has-image="${hasImage && imgSrcAttr ? "true" : "false"}"${longTitle ? ` data-mio-long-title="true"` : ""}${dualShow ? ` data-mio-dual-show="${escapeMioHtml(dualShow)}"` : ""}>
+      ${img}
+      <div>
+        <p class="event-date">${escapeMioHtml(dateDisplay)}</p>
+        <h3>${escapeMioHtml(String(event.title ?? ""))}</h3>
+        ${event.venue ? `<p class="meta">${escapeMioHtml(String(event.venue))}</p>` : ""}${addressHtml}${timeLine ? `\n        <p class="meta">${escapeMioHtml(timeLine)}</p>` : ""}${priceHtml}${performerHtml}${bookingHtml}
+      </div>
+    </li>`;
 }
 
 /**
@@ -212,7 +220,7 @@ export function renderMioScheduleEventCardHtml(event) {
  */
 export function renderMioScheduleEventListHtml(events) {
   const cards = events.map((ev) => renderMioScheduleEventCardHtml(ev)).join("\n    ");
-  return `<div class="mio-schedule-list" data-mio-schedule-list="public">\n    ${cards}\n  </div>`;
+  return `<ul class="event-list" data-mio-schedule-list="public">\n    ${cards}\n  </ul>`;
 }
 
 /**
@@ -266,15 +274,17 @@ function generateMioScheduleHubPage(bundle, baseUrl, deployBase, scheduleDataSou
   const monthLinks = pageMonths
     .map(
       (m) =>
-        `        <a href={withBase('${escapeMioHtml(mioFixtureMonthRoute(m.month))}')} class="mio-schedule-month-link" data-mio-month-link="${escapeMioHtml(m.month)}">${escapeMioHtml(m.label)}（${Number(m.count)}）</a>`,
+        `        <a href={withBase('${escapeMioHtml(mioFixtureMonthRoute(m.month))}')} data-mio-month-link="${escapeMioHtml(m.month)}">${escapeMioHtml(m.label)}（${Number(m.count)}）</a>`,
     )
     .join("\n");
 
   const julySection = julyEvents.length
     ? `
-  <section class="mio-schedule-archive" id="mio-archive-2026-07" data-mio-archive-month="2026-07">
-    <h2 class="mio-schedule-archive__title">2026.07（過去公演・hub掲載）</h2>
-    <p class="mio-schedule-archive__note">専用月ページは fixture に無いため、hub のみに掲載します。</p>
+  <section class="section" id="mio-archive-2026-07" data-mio-archive-month="2026-07">
+    <div class="section-head">
+      <h2>2026.07（過去公演・hub掲載）</h2>
+    </div>
+    <p class="meta">専用月ページは fixture に無いため、hub のみに掲載します。</p>
     ${renderMioScheduleEventListHtml(julyEvents)}
   </section>`
     : "";
@@ -285,11 +295,15 @@ import { withBase } from "../../lib/with-base.ts";
 ---
 
 ${layoutOpen}
-  <section class="mio-schedule-hub">
-    <p class="eyebrow">Schedule</p>
-    <h1 class="mio-schedule-hub__title">Live schedule</h1>
-    <p class="lede">公開公演のみ表示。draft / pending は非表示です。</p>
-    <div class="mio-schedule-months">
+  <p class="eyebrow">Schedule</p>
+  <h1 class="page-title">Live schedule</h1>
+  <p class="lede">公開公演のみ表示。draft / pending は非表示です。</p>
+
+  <section class="section" data-mio-schedule-hub="true">
+    <div class="section-head">
+      <h2>Months</h2>
+    </div>
+    <div class="month-links">
       <!-- CMS_TARGET: MIO_SCHEDULE_INDEX scheduleDataSource=${escapeMioHtml(scheduleDataSource)} -->
 ${monthLinks}
     </div>
@@ -339,11 +353,11 @@ import { withBase } from "../../lib/with-base.ts";
 ---
 
 ${layoutOpen}
-  <section class="mio-schedule-month" data-mio-schedule-month="${escapeMioHtml(monthMeta.month)}">
-    <p class="eyebrow"><a href={withBase('/schedule/')}>Schedule</a> / ${escapeMioHtml(monthMeta.label)}</p>
-    <h1 class="mio-schedule-month__title">${escapeMioHtml(heading)}</h1>
-    <p class="lede">公開 ${Number(monthMeta.count ?? events.length)} 件</p>
-    <!-- CMS_TARGET: MIO_SCHEDULE_MONTH scheduleDataSource=${escapeMioHtml(scheduleDataSource)} month=${escapeMioHtml(monthMeta.month)} -->
+  <p class="eyebrow"><a href={withBase('/schedule/')}>Schedule</a> / ${escapeMioHtml(monthMeta.label)}</p>
+  <h1 class="page-title">${escapeMioHtml(heading)}</h1>
+  <p class="lede">公開 ${Number(monthMeta.count ?? events.length)} 件</p>
+  <!-- CMS_TARGET: MIO_SCHEDULE_MONTH scheduleDataSource=${escapeMioHtml(scheduleDataSource)} month=${escapeMioHtml(monthMeta.month)} -->
+  <section class="section" data-mio-schedule-month="${escapeMioHtml(monthMeta.month)}">
     ${listHtml}
   </section>
 </BaseLayout>

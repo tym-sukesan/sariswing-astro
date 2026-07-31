@@ -4,10 +4,36 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 ## 0. Current next actions（直近）
 
 1. **Primary (Gosaki ops):** クライアントへ **staging 共有**（`CLIENT_SHARE_READY: true` · package `dc1c5b6…`）。本番 cutover はしない。
-2. **並行可 (Kit Core):** **Next Kit** `cms-core-v2-mio-read-render-browser-baseline`（別承認）· Admin runtime Save arm mutex（**別承認** · `ADMIN_RUNTIME_MUTEX_WIRED: false`）· optional Edge shared Save-arm helper · Contents YouTube 退役は **別 phase**。
+2. **並行可 (Kit Core):** Mio Contact / Admin / Save は別 phase · Admin runtime Save arm mutex（**別承認** · `ADMIN_RUNTIME_MUTEX_WIRED: false`）· optional Evening-set hero polish（**NON_BLOCKING**）。
 3. **並行可:** production hosting **read-only planning**（`HOSTING_READY: false`）。
 4. **並行可 / 別承認:** YouTube 複数件 **永続 Save**（NON_BLOCKING）。
 5. Save arm **false** · `readyForAnyFutureFtpApply: false` · production STOP · `service_role` 禁止 · **deployed package 固定**.
+
+## 0. CMS Core v2 Mio read-render browser-baseline (2026-07-31)
+
+| Item | Value |
+| --- | --- |
+| Gate | `CMS_CORE_V2_MIO_READ_RENDER_BROWSER_BASELINE_PASS: true` |
+| Phase | `cms-core-v2-mio-read-render-browser-baseline` (+ fix) |
+| Operator visual | **PASS** (PC / SP) |
+| Fixes | dual-nav preserve · main.wrap · base-aware assets · Schedule↔fixture CSS |
+| NON_BLOCKING | evening-set hero placeholder polish |
+| Package / FTP / DB | **false** |
+| Next | Gosaki client staging share |
+
+```txt
+CMS_CORE_V2_MIO_READ_RENDER_BROWSER_BASELINE_PASS: true
+CMS_CORE_V2_MIO_READ_RENDER_BROWSER_BASELINE_FIX_COMPLETE: true
+ABOUT_IMAGE_BASE_AWARE: true
+SCHEDULE_FIXTURE_CSS_CONTRACT: true
+PACKAGE_GENERATE_EXECUTED: false
+FTP_EXECUTED: false
+DB_WRITE_EXECUTED: false
+SOURCE_FIXTURE_UNCHANGED: true
+GOSAKI_HTML_BASELINE_PASS: true
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+PRODUCTION_UNCHANGED: true
+```
 
 ## 0. CMS Core v2 Mio about read-render (2026-07-31)
 

@@ -548,6 +548,57 @@ assert(
   gosakiNavHeader.content.includes('aria-expanded="false"'),
 );
 assert(
+  "gosaki header uses nav-toggle rewrite mode",
+  gosakiNavHeader.navMode === "nav-toggle-rewrite",
+);
+
+const dualNavHeaderHtml = `<header class="site-top">
+  <div class="wrap brand-row">
+    <a class="brand" href="index.html">Brand</a>
+    <nav class="site-nav" aria-label="Main">
+      <ul class="nav-desktop">
+        <li><a href="index.html" aria-current="page">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="schedule.html">Schedule</a></li>
+        <li><a href="discography.html">Discography</a></li>
+        <li><a href="videos.html">Videos</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+      <details class="nav-mobile">
+        <summary><span class="nav-mobile-label">Menu</span></summary>
+        <ul class="nav-mobile-list">
+          <li><a href="index.html" aria-current="page">Home</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="schedule.html">Schedule</a></li>
+          <li><a href="discography.html">Discography</a></li>
+          <li><a href="videos.html">Videos</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </details>
+    </nav>
+  </div>
+</header>`;
+const dualNavHeader = generateHeaderAstro(dualNavHeaderHtml, "Header", { scheduleHub: true });
+assert("dual-nav preserve mode", dualNavHeader.navMode === "preserve-dual-nav");
+assert("dual-nav keeps nav-desktop", dualNavHeader.content.includes('class="nav-desktop"'));
+assert("dual-nav keeps details.nav-mobile", /<details class="nav-mobile">/.test(dualNavHeader.content));
+assert("dual-nav keeps summary Menu", dualNavHeader.content.includes("nav-mobile-label"));
+assert("dual-nav no nav-toggle", !dualNavHeader.content.includes("nav-toggle"));
+assert("dual-nav no global-nav", !dualNavHeader.content.includes("global-nav"));
+assert("dual-nav no SITE_HEADER script", !dualNavHeader.content.includes('getElementById("SITE_HEADER")'));
+assert(
+  "dual-nav desktop Home once",
+  (dualNavHeader.content.match(/class="nav-desktop"[\s\S]*?<\/ul>/)[0].match(/>Home</g) || [])
+    .length === 1,
+);
+assert(
+  "dual-nav mobile Home once",
+  (dualNavHeader.content.match(/class="nav-mobile-list"[\s\S]*?<\/ul>/)[0].match(/>Home</g) || [])
+    .length === 1,
+);
+assert("dual-nav details closed by default", !/<details[^>]*\sopen[\s>]/.test(dualNavHeader.content));
+
+assert(
   "live crawl month fixture filename detected",
   parseScheduleMonthSourcePath("2026-07.html")?.year === "2026" &&
     parseScheduleMonthSourcePath("2026-07.html")?.month === "07",

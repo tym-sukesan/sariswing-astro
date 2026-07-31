@@ -3,17 +3,19 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**CMS Core v2 external form HubSpot generalization planning (2026-07-31):** **COMPLETE (docs-only)** — Phase `cms-core-v2-external-form-provider-hubspot-generalization-planning` · Doc: `cms-core-v2-external-form-provider-hubspot-generalization-planning.md` · Gosaki exact-allowlist + `#comp-jqbwo704` path mapped to Core validator/renderer · shadow-compare then adapter switch · **Next Kit:** `cms-core-v2-external-form-provider-hubspot-renderer` · HubSpot JSON/IDs **unchanged** · Ops: Gosaki client staging share.
+**CMS Core v2 external form HubSpot pure renderer (2026-07-31):** **COMPLETE** — Phase `cms-core-v2-external-form-provider-hubspot-renderer` · `renderHubspotConfigHtml(validatedResult)` · Kit-fixed script+`.hs-form-frame` · loader from validator only · npm `verify:cms-core-v2-external-form-provider-hubspot-renderer` (+ Safety Suite) · Gosaki adapter/config/Contact **unchanged** · **Next Kit:** `cms-core-v2-external-form-provider-hubspot-shadow-compare` · Ops: Gosaki client staging share.
 
-**CMS Core v2 external form provider google-forms (2026-07-31):** **COMPLETE** (offline pilot) — retained; HubSpot planning done above.
+**CMS Core v2 external form HubSpot generalization planning (2026-07-31):** **COMPLETE (docs-only)** — retained; renderer done above.
+
+**CMS Core v2 external form provider google-forms (2026-07-31):** **COMPLETE** (offline pilot) — retained.
 
 **CMS Core v2 external form provider external-link (2026-07-31):** **COMPLETE** — retained.
 
-**CMS Core v2 external form provider contract validator (2026-07-31):** **COMPLETE** — hubspot normalize exists; renderer still notice-only until hubspot-renderer phase.
+**CMS Core v2 external form provider contract validator (2026-07-31):** **COMPLETE** — hubspot normalize + renderer wired.
 
-**CMS Core v2 external form provider contract planning (2026-07-31):** **COMPLETE** — Doc §17 HubSpot planning.
+**CMS Core v2 external form provider contract planning (2026-07-31):** **COMPLETE** — Doc §18 HubSpot renderer.
 
-**CMS Core v2 Mio read-only proof completion (2026-07-31):** **COMPLETE / PASS** — Contact: link + Forms pilots; HubSpot generalization planning complete / runtime switch pending.
+**CMS Core v2 Mio read-only proof completion (2026-07-31):** **COMPLETE / PASS** — Contact: link + Forms pilots; HubSpot Core renderer ready / Gosaki switch pending.
 
 **CMS Core v2 Mio read-render browser-baseline (2026-07-31):** **PASS / COMPLETE** — dual-nav · main.wrap · About `withBase('/images/…')` · Schedule fixture CSS · NON_BLOCKING evening-set hero · folded into read-only proof above.
 

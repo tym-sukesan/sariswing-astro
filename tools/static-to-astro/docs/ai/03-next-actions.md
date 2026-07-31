@@ -4,10 +4,36 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 ## 0. Current next actions（直近）
 
 1. **Primary (Gosaki ops):** クライアントへ **staging 共有**（`CLIENT_SHARE_READY: true` · package `dc1c5b6…`）。本番 cutover はしない。
-2. **並行可 (Kit Core):** **Next Kit** `cms-core-v2-external-form-provider-hubspot-renderer`（別承認）· then Gosaki shadow-compare / adapter switch · Admin config UI · Supabase live-read / generic read-only Admin · Admin runtime Save arm mutex（**別承認**）· evening-set hero（**NON_BLOCKING**）。
+2. **並行可 (Kit Core):** **Next Kit** `cms-core-v2-external-form-provider-hubspot-shadow-compare`（別承認）· then Gosaki adapter switch · Admin config UI · Supabase live-read / generic read-only Admin · Admin runtime Save arm mutex（**別承認**）· evening-set hero（**NON_BLOCKING**）。
 3. **並行可:** production hosting **read-only planning**（`HOSTING_READY: false`）。
 4. **並行可 / 別承認:** YouTube 複数件 **永続 Save**（NON_BLOCKING）。
 5. Save arm **false** · `readyForAnyFutureFtpApply: false` · production STOP · `service_role` 禁止 · **deployed package 固定**.
+
+## 0. CMS Core v2 external form HubSpot pure renderer (2026-07-31)
+
+| Item | Value |
+| --- | --- |
+| Gate | `CMS_CORE_V2_EXTERNAL_FORM_PROVIDER_HUBSPOT_RENDERER_COMPLETE: true` |
+| Phase | `cms-core-v2-external-form-provider-hubspot-renderer` |
+| Verdict | **COMPLETE** |
+| API | `renderHubspotConfigHtml(validatedResult)` |
+| Verifier | `verify:cms-core-v2-external-form-provider-hubspot-renderer` |
+| Gosaki adapter / HubSpot JSON | **unchanged** |
+| Next Kit | `cms-core-v2-external-form-provider-hubspot-shadow-compare` |
+
+```txt
+CMS_CORE_V2_EXTERNAL_FORM_PROVIDER_HUBSPOT_RENDERER_COMPLETE: true
+CONTACT_HUBSPOT_RENDERER: COMPLETE
+CONTACT_HUBSPOT_GOSAKI_SHADOW_COMPARE: NOT_STARTED
+NEXT_RECOMMENDED: cms-core-v2-external-form-provider-hubspot-shadow-compare
+HUBSPOT_CONFIG_UNCHANGED: true
+GOSAKI_ADAPTER_UNCHANGED: true
+PACKAGE_GENERATE_EXECUTED: false
+FTP_EXECUTED: false
+DB_WRITE_EXECUTED: false
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+PRODUCTION_UNCHANGED: true
+```
 
 ## 0. CMS Core v2 external form HubSpot generalization planning (2026-07-31)
 
@@ -18,14 +44,14 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Verdict | **COMPLETE (docs-only)** |
 | Doc | `cms-core-v2-external-form-provider-hubspot-generalization-planning.md` |
 | Runtime / HubSpot JSON | **unchanged** |
-| Next Kit | `cms-core-v2-external-form-provider-hubspot-renderer` |
+| Next Kit | `cms-core-v2-external-form-provider-hubspot-shadow-compare` |
 
 ```txt
 CMS_CORE_V2_EXTERNAL_FORM_HUBSPOT_GENERALIZATION_PLANNING_COMPLETE: true
 CONTACT_HUBSPOT_GENERALIZATION: PLANNING_COMPLETE
-CONTACT_HUBSPOT_RENDERER: NOT_STARTED
+CONTACT_HUBSPOT_RENDERER: COMPLETE
 HUBSPOT_CONFIG_UNCHANGED: true
-NEXT_RECOMMENDED: cms-core-v2-external-form-provider-hubspot-renderer
+NEXT_RECOMMENDED: cms-core-v2-external-form-provider-hubspot-shadow-compare
 PACKAGE_GENERATE_EXECUTED: false
 FTP_EXECUTED: false
 DB_WRITE_EXECUTED: false
@@ -39,17 +65,18 @@ PRODUCTION_UNCHANGED: true
 | --- | --- |
 | Gate | `CMS_CORE_V2_EXTERNAL_FORM_PROVIDER_GOOGLE_FORMS_COMPLETE: true` |
 | Phase | `cms-core-v2-external-form-provider-google-forms` |
+| Verdict | **COMPLETE** |
 | Renderer | `renderGoogleFormsConfigHtml` (Kit-fixed iframe) |
 | Mio fixture | `MIO_CONTACT_GOOGLE_FORMS_FIXTURE_CONFIG` (synthetic) |
 | Verifier | `verify:cms-core-v2-external-form-provider-google-forms` |
-| HubSpot planning | **COMPLETE** (above) |
-| Next Kit | `cms-core-v2-external-form-provider-hubspot-renderer` |
+| HubSpot renderer | **COMPLETE** (above) |
+| Next Kit | `cms-core-v2-external-form-provider-hubspot-shadow-compare` |
 
 ```txt
 CMS_CORE_V2_EXTERNAL_FORM_PROVIDER_GOOGLE_FORMS_COMPLETE: true
 CONTACT_GOOGLE_FORMS_PROVIDER: COMPLETE
-CONTACT_HUBSPOT_GENERALIZATION: PLANNING_COMPLETE
-NEXT_RECOMMENDED: cms-core-v2-external-form-provider-hubspot-renderer
+CONTACT_HUBSPOT_RENDERER: COMPLETE
+NEXT_RECOMMENDED: cms-core-v2-external-form-provider-hubspot-shadow-compare
 PACKAGE_GENERATE_EXECUTED: false
 FTP_EXECUTED: false
 DB_WRITE_EXECUTED: false

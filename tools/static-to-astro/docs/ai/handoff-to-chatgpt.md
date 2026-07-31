@@ -5,15 +5,14 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: CMS Core v2 external form HubSpot generalization planning COMPLETE (docs-only)
-Phase: cms-core-v2-external-form-provider-hubspot-generalization-planning
-Doc: tools/static-to-astro/docs/cms-core-v2-external-form-provider-hubspot-generalization-planning.md
-Gosaki path: exact allowlist JSON + #comp-jqbwo704 → script+hs-form-frame
-Plan: Core renderHubspotConfigHtml → Gosaki wrapper/insert → shadow deep-eq → adapter switch
-HubSpot config/IDs: UNCHANGED
-Runtime: NOT_STARTED
-Next Kit: cms-core-v2-external-form-provider-hubspot-renderer
-Prior: google-forms + external-link + validator COMPLETE
+Current phase: CMS Core v2 external form HubSpot pure renderer COMPLETE
+Phase: cms-core-v2-external-form-provider-hubspot-renderer
+API: renderHubspotConfigHtml(validatedResult) — Kit-fixed script + .hs-form-frame
+Loader: validator-derived js.hsforms.net only (user scriptSrc forbidden)
+Verifier: verify:cms-core-v2-external-form-provider-hubspot-renderer (+ Safety Suite)
+Gosaki adapter / Contact HTML / HubSpot JSON: UNCHANGED
+Next Kit: cms-core-v2-external-form-provider-hubspot-shadow-compare
+Prior: HubSpot generalization planning + google-forms + external-link + validator COMPLETE
 Gosaki CLIENT_SHARE_READY: true (maintained)
 deployed package: dc1c5b62a58d0462ad6629db4847256d316d4a38 (unchanged; no regen)
 Next Primary (ops): share staging with client
@@ -23,18 +22,24 @@ readyForAnyFutureFtpApply: false
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
 ```
 
+## CMS Core v2 external form HubSpot pure renderer (2026-07-31)
+
+- Core `renderHubspotConfigHtml` + dispatcher wiring; synthetic IDs only in verifier
+- Fail-closed: invalid/disabled/other providers emit no script/frame
+- No Gosaki adapter switch · no config/ID edits · no network
+- Next: shadow-compare Core vs `buildGosakiContactHubspotEmbedHtml` + baseline fixture
+
 ## CMS Core v2 external form HubSpot generalization planning (2026-07-31)
 
 - Docs-only: map Gosaki HubSpot to Core contract; keep selectors site-specific
-- First implement: pure HubSpot renderer + offline verifier (synthetic IDs)
+- Pure HubSpot renderer: **COMPLETE** (above)
 - Do not weaken Gosaki exact-ID gate until explicit later decision
-- No runtime / network / package / FTP in this phase
 
 ## CMS Core v2 external form provider google-forms (2026-07-31)
 
 - Kit-fixed iframe from validator-normalized formUrl only
 - Offline Mio pilot; browser may show iframe load error (expected — fake form id)
-- external-link regression retained; HubSpot still notice-only in renderer until hubspot-renderer
+- external-link / google-forms retained; HubSpot Core renderer ready (Gosaki still legacy helper)
 - Browser preview: `output/_cms-core-v2-mio-contact-google-forms-browser/` (gitignored)
 
 ## CMS Core v2 external form provider external-link (2026-07-31)

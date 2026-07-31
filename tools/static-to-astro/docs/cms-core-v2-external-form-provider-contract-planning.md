@@ -391,10 +391,11 @@ Add step to `verify:cms-core-v2-safety-suite` when implementation lands — **do
 | **2** | `cms-core-v2-external-form-provider-external-link` | Contact inject for external-link (Mio-friendly) | Low — **COMPLETE** |
 | **3** | `cms-core-v2-external-form-provider-google-forms` | iframe renderer + sandbox attrs | Medium — **COMPLETE** (offline) |
 | **4** | `cms-core-v2-external-form-provider-hubspot-generalization-planning` | Shared HubSpot renderer planning; Gosaki adapter delegates | Medium — **COMPLETE** |
-| **4b** | `cms-core-v2-external-form-provider-hubspot-renderer` | Pure HubSpot inner HTML + offline verifier | Low |
+| **4b** | `cms-core-v2-external-form-provider-hubspot-renderer` | Pure HubSpot inner HTML + offline verifier | Low — **COMPLETE** |
+| **4c** | `cms-core-v2-external-form-provider-hubspot-shadow-compare` | Map Gosaki JSON→Core; deep-eq old vs new inner HTML | Medium |
 | **5** | `cms-core-v2-external-form-admin-config-ui` | Staging Admin: provider select + fields; **no** code paste; Save gated separately | Higher (Admin + optional DB) |
 
-**Next after HubSpot planning:** Phase 4b (`cms-core-v2-external-form-provider-hubspot-renderer`).
+**Next after HubSpot renderer:** Phase 4c (`cms-core-v2-external-form-provider-hubspot-shadow-compare`).
 
 ---
 
@@ -419,8 +420,9 @@ CONTACT_PROVIDER_VALIDATOR: COMPLETE
 CONTACT_EXTERNAL_LINK_PROVIDER: COMPLETE
 CONTACT_GOOGLE_FORMS_PROVIDER: COMPLETE
 CONTACT_HUBSPOT_GENERALIZATION: PLANNING_COMPLETE
+CONTACT_HUBSPOT_RENDERER: COMPLETE
 CONTACT_ADMIN_CONFIG_UI: NOT_STARTED
-NEXT_RECOMMENDED: cms-core-v2-external-form-provider-hubspot-renderer
+NEXT_RECOMMENDED: cms-core-v2-external-form-provider-hubspot-shadow-compare
 PACKAGE_GENERATE_EXECUTED: false
 FTP_EXECUTED: false
 DB_WRITE_EXECUTED: false
@@ -468,7 +470,20 @@ READY_FOR_ANY_FUTURE_FTP_APPLY: false
 
 - **Phase:** `cms-core-v2-external-form-provider-hubspot-generalization-planning` — **COMPLETE** (docs-only)
 - **Doc:** `cms-core-v2-external-form-provider-hubspot-generalization-planning.md`
-- **Finding:** Gosaki uses exact-ID allowlist + implicit JSON load + `#comp-jqbwo704` inject; Core validator already derives `scriptSrc` but renderer still notice-only for hubspot
+- **Finding:** Gosaki uses exact-ID allowlist + implicit JSON load + `#comp-jqbwo704` inject; Core validator derives `scriptSrc`
 - **Plan:** Core `renderHubspotConfigHtml` (inner script+frame) → Gosaki helper keeps selector/wrapper → shadow deep-eq → adapter switch → legacy audit
-- **Next:** `cms-core-v2-external-form-provider-hubspot-renderer`
 - **HubSpot config / IDs:** unchanged in planning
+- **Follow-up:** Phase 4b renderer → **COMPLETE** (see §18)
+
+---
+
+## 18. HubSpot pure renderer (2026-07-31)
+
+- **Phase:** `cms-core-v2-external-form-provider-hubspot-renderer` — **COMPLETE**
+- **API:** `renderHubspotConfigHtml(validatedResult)` — validator success + `provider === "hubspot"` only
+- **Markup:** Kit-fixed 1× script (`is:inline` + derived `js.hsforms.net` src + `defer`) + 1× `.hs-form-frame` (`data-region`, `data-form-id`, `data-portal-id`)
+- **Loader:** `loader.scriptSrc` from validator; re-derive must match; user `scriptSrc` forbidden
+- **Fail-closed:** invalid / disabled / other providers → notice only (no script/frame)
+- **Not done:** Gosaki adapter switch · Contact HTML · config ID changes · network · shadow deep-eq
+- **Verifier:** `verify:cms-core-v2-external-form-provider-hubspot-renderer` (Safety Suite)
+- **Next:** `cms-core-v2-external-form-provider-hubspot-shadow-compare`

@@ -336,8 +336,9 @@ const hs = getExternalFormProviderResult(
   { expectedSiteSlug: "mio-kisaragi-jazz", expectedEnvironment: "staging" },
 );
 const hsHtml = renderExternalFormProviderHtml(hs);
-assert("hubspot still notice not iframe", hs.ok && hsHtml.rendered === "notice");
+assert("hubspot renders hubspot mode", hs.ok && hsHtml.rendered === "hubspot");
 assert("hubspot no iframe", !/<iframe\b/i.test(hsHtml.html));
+assert("hubspot has hs-form-frame", /hs-form-frame/.test(hsHtml.html));
 
 // --- convert ---
 await ensureSiteGeneratorHookAdapter(MIO_KISARAGI_JAZZ_SITE_KEY, { toolRoot: TOOL_ROOT });

@@ -4,14 +4,17 @@
  * Renders markup from a successful validator result for:
  * - `external-link` (anchor)
  * - `google-forms` (Kit-fixed iframe)
+ * - `hubspot` (Kit-fixed script + `.hs-form-frame`; inner HTML only)
  *
- * No arbitrary HTML input · no operator iframe attributes · no I/O · no site selectors.
+ * No arbitrary HTML input · no operator scriptSrc · no I/O · no site selectors.
  *
- * Phase: cms-core-v2-external-form-provider-google-forms
+ * Phase: cms-core-v2-external-form-provider-hubspot-renderer
  */
 
 import {
+  deriveHubspotLoaderScriptSrc,
   getExternalFormProviderResult,
+  HUBSPOT_LOADER_HOST,
 } from "./external-form-provider-contract.mjs";
 
 /** Kit-fixed iframe height (px). No operator style / free height field. */
@@ -227,10 +230,159 @@ export function renderGoogleFormsConfigHtml(config) {
 }
 
 /**
+ * Render HubSpot inner HTML from a **successful** validator result only.
+ *
+ * Fixed shape (byte-stable attribute order for future site deep-eq):
+ * ```html
+ * <script is:inline src="https://js.hsforms.net/forms/embed/{portalId}.js" defer></script>
+ * <div class="hs-form-frame" data-region="{region}" data-form-id="{formId}" data-portal-id="{portalId}"></div>
+ * ```
+ *
+ * - Uses normalized portalId / formId / region only
+ * - scriptSrc from validator-derived `loader.scriptSrc` (re-derive must match)
+ * - No wrapper / selector / site CSS · no user scriptSrc · no arbitrary HTML
+ *
+ * @param {import('./external-form-provider-contract.mjs').ExternalFormProviderResult} validatedResult
+ * @returns {{ ok: true, html: string } | { ok: false, reasonCode: string, html: string }}
+ */
+export function renderHubspotConfigHtml(validatedResult) {
+  if (!validatedResult || typeof validatedResult !== "object" || Array.isArray(validatedResult)) {
+    return {
+      ok: false,
+      reasonCode: "CONFIG_NOT_OBJECT",
+      html: renderExternalFormFailClosedNoticeHtml({ reasonCode: "CONFIG_NOT_OBJECT" }),
+    };
+  }
+
+  if (!validatedResult.ok) {
+    const reasonCode = validatedResult.reasonCode ?? "VALIDATION_FAILED";
+    return {
+      ok: false,
+      reasonCode,
+      html: renderExternalFormFailClosedNoticeHtml({ reasonCode }),
+    };
+  }
+
+  if (validatedResult.provider !== "hubspot") {
+    return {
+      ok: false,
+      reasonCode: "PROVIDER_NOT_HUBSPOT",
+      html: renderExternalFormFailClosedNoticeHtml({
+        reasonCode: "PROVIDER_NOT_HUBSPOT",
+      }),
+    };
+  }
+
+  const config = validatedResult.config;
+  if (!config || typeof config !== "object" || Array.isArray(config)) {
+    return {
+      ok: false,
+      reasonCode: "HUBSPOT_CONFIG_MISSING",
+      html: renderExternalFormFailClosedNoticeHtml({
+        reasonCode: "HUBSPOT_CONFIG_MISSING",
+      }),
+    };
+  }
+
+  const portalId = typeof config.portalId === "string" ? config.portalId : "";
+  const formId = typeof config.formId === "string" ? config.formId : "";
+  const region = typeof config.region === "string" ? config.region : "";
+  if (!portalId || !formId || !region) {
+    return {
+      ok: false,
+      reasonCode: "HUBSPOT_FIELDS_MISSING",
+      html: renderExternalFormFailClosedNoticeHtml({
+        reasonCode: "HUBSPOT_FIELDS_MISSING",
+      }),
+    };
+  }
+
+  const loader =
+    config.loader && typeof config.loader === "object" && !Array.isArray(config.loader)
+      ? /** @type {Record<string, unknown>} */ (config.loader)
+      : null;
+  const loaderScriptSrc =
+    loader && typeof loader.scriptSrc === "string" ? loader.scriptSrc : "";
+  const derived = deriveHubspotLoaderScriptSrc(portalId);
+  if (!loaderScriptSrc || loaderScriptSrc !== derived) {
+    return {
+      ok: false,
+      reasonCode: "HUBSPOT_LOADER_MISMATCH",
+      html: renderExternalFormFailClosedNoticeHtml({
+        reasonCode: "HUBSPOT_LOADER_MISMATCH",
+      }),
+    };
+  }
+  if (loader.host !== HUBSPOT_LOADER_HOST) {
+    return {
+      ok: false,
+      reasonCode: "HUBSPOT_LOADER_HOST_INVALID",
+      html: renderExternalFormFailClosedNoticeHtml({
+        reasonCode: "HUBSPOT_LOADER_HOST_INVALID",
+      }),
+    };
+  }
+
+  // Defense: never accept a free-standing scriptSrc on config (validator already forbids).
+  if ("scriptSrc" in config) {
+    return {
+      ok: false,
+      reasonCode: "SCRIPT_SRC_FORBIDDEN",
+      html: renderExternalFormFailClosedNoticeHtml({
+        reasonCode: "SCRIPT_SRC_FORBIDDEN",
+      }),
+    };
+  }
+
+  const recheck = getExternalFormProviderResult(
+    {
+      provider: "hubspot",
+      siteSlug: config.siteSlug,
+      environment: config.environment,
+      portalId,
+      formId,
+      region,
+    },
+    {
+      expectedSiteSlug: typeof config.siteSlug === "string" ? config.siteSlug : undefined,
+      expectedEnvironment:
+        config.environment === "staging" || config.environment === "production"
+          ? config.environment
+          : undefined,
+    },
+  );
+  if (!recheck.ok || recheck.provider !== "hubspot" || !recheck.config) {
+    const reasonCode = recheck.reasonCode ?? "REVALIDATE_FAILED";
+    return {
+      ok: false,
+      reasonCode,
+      html: renderExternalFormFailClosedNoticeHtml({ reasonCode }),
+    };
+  }
+
+  const safePortal = escapeExternalFormHtml(String(recheck.config.portalId));
+  const safeForm = escapeExternalFormHtml(String(recheck.config.formId));
+  const safeRegion = escapeExternalFormHtml(String(recheck.config.region));
+  const recheckLoader = /** @type {{ scriptSrc?: string }} */ (recheck.config.loader);
+  const safeSrc = escapeExternalFormHtml(
+    String(recheckLoader?.scriptSrc ?? deriveHubspotLoaderScriptSrc(String(recheck.config.portalId))),
+  );
+
+  // Attribute order / newline match legacy Contact HubSpot inner HTML baseline.
+  const html = [
+    `<script is:inline src="${safeSrc}" defer></script>`,
+    `<div class="hs-form-frame" data-region="${safeRegion}" data-form-id="${safeForm}" data-portal-id="${safePortal}"></div>`,
+  ].join("\n");
+
+  return { ok: true, html };
+}
+
+/**
  * Render from a full validator result.
  * - external-link → anchor
  * - google-forms → Kit iframe
- * - disabled / failures / other providers → notice (never free HTML)
+ * - hubspot → Kit script + hs-form-frame
+ * - disabled / failures → notice (never free HTML)
  *
  * @param {import('./external-form-provider-contract.mjs').ExternalFormProviderResult} result
  */
@@ -312,6 +464,26 @@ export function renderExternalFormProviderHtml(result) {
       provider: "google-forms",
       reasonCode: null,
       html: frame.html,
+    };
+  }
+
+  if (result.provider === "hubspot") {
+    const hs = renderHubspotConfigHtml(result);
+    if (!hs.ok) {
+      return {
+        ok: false,
+        rendered: "notice",
+        provider: "disabled",
+        reasonCode: hs.reasonCode,
+        html: hs.html,
+      };
+    }
+    return {
+      ok: true,
+      rendered: "hubspot",
+      provider: "hubspot",
+      reasonCode: null,
+      html: hs.html,
     };
   }
 

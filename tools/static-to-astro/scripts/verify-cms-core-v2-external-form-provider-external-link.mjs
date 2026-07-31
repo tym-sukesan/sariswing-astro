@@ -341,8 +341,9 @@ const hsResult = getExternalFormProviderResult(
   { expectedSiteSlug: "mio-kisaragi-jazz", expectedEnvironment: "staging" },
 );
 const hsHtml = renderExternalFormProviderHtml(hsResult);
-assert("hubspot not rendered as link", hsResult.ok && hsHtml.rendered === "notice");
-assert("hubspot no script from renderer", !/<script\b/i.test(hsHtml.html));
+assert("hubspot not rendered as link", hsResult.ok && hsHtml.rendered === "hubspot");
+assert("hubspot has script from renderer", /<script\b/i.test(hsHtml.html));
+assert("hubspot no external-link marker", !/data-external-form-link=/.test(hsHtml.html));
 
 // --- convert integration ---
 await ensureSiteGeneratorHookAdapter(MIO_KISARAGI_JAZZ_SITE_KEY, { toolRoot: TOOL_ROOT });

@@ -137,7 +137,9 @@ assert("SQL template DO NOT EXECUTE", /DO NOT EXECUTE/i.test(sql));
 assert("SQL template staging ref", sql.includes(STAGING_PROJECT_REF));
 assert("SQL template production STOP", sql.includes(PRODUCTION_REF_STOP));
 assert("SQL template mio site_slug", /mio-kisaragi-jazz/.test(sql));
-assert("SQL body commented (not live apply script)", /^--\s*begin;/m.test(sql) || !/^\s*begin;/im.test(sql));
+assert("SQL READY_FOR_MIO_SEED_APPLY false", /READY_FOR_MIO_SEED_APPLY:\s*false/i.test(sql));
+assert("SQL no ON CONFLICT upsert", !/on\s+conflict/i.test(sql));
+assert("SQL collision guard present", /STOP collision/i.test(sql));
 
 const mioEntry =
   registry?.sites?.["mio-kisaragi-jazz"] ||

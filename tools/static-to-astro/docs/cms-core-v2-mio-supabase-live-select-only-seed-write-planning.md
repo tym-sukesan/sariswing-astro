@@ -4,10 +4,11 @@
 - **Date:** 2026-08-01
 - **Prior:** `cms-core-v2-mio-supabase-live-select-only-preflight` (Branch B · Mio counts 0)
 - **Status:** **planning only** — **SQL NOT EXECUTED** · **DB write NOT APPROVED**
+- **Follow-up gate:** `cms-core-v2-mio-supabase-live-select-only-seed-write-gate` → **NOT READY TO APPLY** (TBD `date=null` vs `schedules.date` NOT NULL)
 - **Target project:** staging `kmjqppxjdnwwrtaeqjta` only
 - **STOP production:** `vsbvndwuajjhnzpohghh`
 
-This document prepares a **separate DB write gate**. It does **not** authorize INSERT/DELETE.
+This document prepared the write gate. Full A–E SQL + collision/transaction guards are in the gate phase artifact. It does **not** authorize INSERT/DELETE.
 
 ---
 
@@ -34,7 +35,7 @@ Partial section seed → live pilot must be recorded as **PARTIAL**, not COMPLET
 
 | Step | Action | Mapping rules |
 | --- | --- | --- |
-| 0 | Ensure `public.sites` row | `site_slug='mio-kisaragi-jazz'`, display_name e.g. `Mio Kisaragi Jazz`, `status='active'` · ON CONFLICT update display/status only |
+| 0 | Ensure `public.sites` row | `site_slug='mio-kisaragi-jazz'`, display_name e.g. `Mio Kisaragi Jazz`, `status='active'` · **plain INSERT only** (gate: no upsert overwrite; collision if sites already exists) |
 | 1 | `schedules` | Core columns only · **omit** fixture fake `id` (use DB default UUID) · keep `legacy_id` · `site_slug` fixed · drop `extensions` · preserve `published` / `sort_order` / `source_route` `/schedule/YYYY-MM/` |
 | 2 | `discography` | Core release columns + **`site_slug`** · omit non-DB extension fields |
 | 3 | `discography_tracks` | `discography_legacy_id`, `track_number`, `title`, `sort_order`, **`site_slug='mio-kisaragi-jazz'`** (fixture tracks lack site_slug) · omit fake string `id` if not UUID |
@@ -48,7 +49,7 @@ Partial section seed → live pilot must be recorded as **PARTIAL**, not COMPLET
 | `sites` | 1 | active |
 | `schedules` | 16 | 14 |
 | `discography` | 5 | 4 |
-| `discography_tracks` | 14 | (all rows; filter via parent published) |
+| `discography_tracks` | 14 | all rows seeded; **13** belong to published releases · **1** on unpublished `mio-disco-live-01` |
 | `site_embeds` | 6 | 5 published flag (≤3 renderable public) |
 | `site_page_fields` | 1 | 1 |
 
@@ -70,42 +71,17 @@ Template file (also marked DO NOT EXECUTE):
 
 Sketch (illustrative — operator must regenerate from fixture before apply):
 
-```sql
--- STAGING ONLY kmjqppxjdnwwrtaeqjta
--- DO NOT EXECUTE without explicit write approval ID
--- STOP if URL/host contains vsbvndwuajjhnzpohghh
+See gate artifact blocks A–E (regenerated from fixtures):
 
-begin;
-
--- 0) sites
-insert into public.sites (site_slug, display_name, status)
-values ('mio-kisaragi-jazz', 'Mio Kisaragi Jazz', 'active')
-on conflict (site_slug) do update
-  set display_name = excluded.display_name,
-      status = 'active',
-      updated_at = now();
-
--- 1) schedules: INSERT … SELECT from reviewed VALUES
---    columns: legacy_id, site_slug, date, year, month, title, venue,
---    open_time, start_time, price, description, image_url, source_file,
---    source_route, show_on_home, home_order, published, sort_order
---    WHERE site_slug = 'mio-kisaragi-jazz' only
-
--- 2) discography + 3) discography_tracks (site_slug required)
-
--- 4) site_embeds (join sites for site_id; provider='youtube')
-
--- 5) site_page_fields about/profile.lede (refuse if row already exists)
-
-commit;
-```
+`scripts/supabase/cms-core-v2-mio-kisaragi-jazz-live-select-seed.template.sql`
 
 **Hard rules for apply phase:**
 
-- No `service_role` in app code; operator SQL Editor / approved role only
+- Operator SQL Editor / approved role only · no privileged keys in repo
 - No production project
 - No Gosaki `site_slug` mutation
-- Prefer fail-closed INSERT (no blind upsert overwrite) except `sites` upsert as above
+- Plain INSERT only · collision guard · no upsert overwrite
+- Resolve TBD `mio-sched-2026-09-01` date=null vs `schedules.date` NOT NULL before apply
 - Exact approval form required (G-7f1 destructive bar applies to DB write)
 
 ---
@@ -217,6 +193,7 @@ CMS_CORE_V2_MIO_SUPABASE_LIVE_SELECT_ONLY_SEED_WRITE_PLANNING_COMPLETE: true
 MIO_SEED_SQL_EXECUTED: false
 DB_WRITE_EXECUTED: false
 READY_FOR_MIO_SEED_APPLY: false
+SEED_WRITE_GATE: cms-core-v2-mio-supabase-live-select-only-seed-write-gate
 NEXT_AFTER_SEED: cms-core-v2-mio-supabase-live-select-only-pilot (Branch A)
 READY_FOR_ANY_FUTURE_FTP_APPLY: false
 PRODUCTION_UNCHANGED: true

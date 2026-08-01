@@ -4,10 +4,35 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 ## 0. Current next actions（直近）
 
 1. **Primary (Gosaki ops):** クライアントへ **staging 共有**（`CLIENT_SHARE_READY: true` · package `dc1c5b6…`）。本番 cutover はしない。
-2. **並行可 (Kit Core):** **Next Primary** `cms-core-v2-mio-supabase-live-select-only-seed-write-gate`（DB write · 明示承認）→ その後 Branch A `cms-core-v2-mio-supabase-live-select-only-pilot` · then generic read-only Admin · form onboarding · Admin runtime Save arm mutex（**別承認**）· evening-set hero（**NON_BLOCKING**）。
+2. **並行可 (Kit Core):** **Next** TBD date blocker 解消 → `cms-core-v2-mio-supabase-live-select-only-seed-apply`（明示承認）→ Branch A `cms-core-v2-mio-supabase-live-select-only-pilot` · then generic read-only Admin · form onboarding · Admin runtime Save arm mutex（**別承認**）· evening-set hero（**NON_BLOCKING**）。
 3. **並行可:** production hosting **read-only planning**（`HOSTING_READY: false`）。
 4. **並行可 / 別承認:** YouTube 複数件 **永続 Save**（NON_BLOCKING）。
 5. Save arm **false** · `readyForAnyFutureFtpApply: false` · production STOP · `service_role` 禁止 · **deployed package 固定**.
+
+## 0. CMS Core v2 Mio Supabase live SELECT-only seed write gate (2026-08-01)
+
+| Item | Value |
+| --- | --- |
+| Gate | `CMS_CORE_V2_MIO_SUPABASE_LIVE_SELECT_ONLY_SEED_WRITE_GATE_COMPLETE: true` |
+| Ready to apply | **false** |
+| Blocker | `schedules.date` NOT NULL vs TBD `mio-sched-2026-09-01` date=null |
+| SQL artifact | `cms-core-v2-mio-kisaragi-jazz-live-select-seed.template.sql` (A–E) |
+| Tracks | 14 total · 13 on published releases |
+| Verifier | `verify:cms-core-v2-mio-supabase-live-select-only-seed-write-gate` |
+| Next | resolve TBD → seed apply (human) → Branch A pilot |
+
+```txt
+CMS_CORE_V2_MIO_SUPABASE_LIVE_SELECT_ONLY_SEED_WRITE_GATE_COMPLETE: true
+READY_FOR_MIO_SEED_APPLY: false
+MIO_SEED_SQL_EXECUTED: false
+DB_WRITE_EXECUTED: false
+GATE_BLOCKER: schedules.date_NOT_NULL_vs_fixture_TBD_null
+RUNTIME_CHANGED: false
+REGISTRY_CHANGED: false
+NEXT_PRIMARY_RECOMMENDED: resolve-mio-schedule-tbd-date-then-seed-apply
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+PRODUCTION_UNCHANGED: true
+```
 
 ## 0. CMS Core v2 Mio Supabase live SELECT-only preflight (2026-08-01)
 
@@ -21,7 +46,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Mio counts | schedules/disco/tracks/embeds/page_fields = **0** |
 | Docs | `cms-core-v2-mio-supabase-live-select-only-preflight.md` · seed planning |
 | Verifier | `verify:cms-core-v2-mio-supabase-live-select-only-preflight` |
-| Next | seed write gate (human) → Branch A pilot |
+| Next | superseded by seed write gate (NOT READY TO APPLY) |
 
 ```txt
 CMS_CORE_V2_MIO_SUPABASE_LIVE_SELECT_ONLY_PREFLIGHT_COMPLETE: true
@@ -35,7 +60,7 @@ RUNTIME_CHANGED: false
 GOSAKI_UNCHANGED: true
 CONTACT_PROVIDER_UNCHANGED: true
 READY_FOR_MIO_SEED_APPLY: false
-NEXT_PRIMARY_RECOMMENDED: cms-core-v2-mio-supabase-live-select-only-seed-write-gate
+NEXT_PRIMARY_RECOMMENDED: resolve-mio-schedule-tbd-date-then-seed-apply
 READY_FOR_ANY_FUTURE_FTP_APPLY: false
 PRODUCTION_UNCHANGED: true
 ```

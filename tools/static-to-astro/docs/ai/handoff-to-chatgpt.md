@@ -5,17 +5,19 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: CMS Core v2 Mio Supabase live SELECT-only preflight COMPLETE (Branch B STOP)
-Phase: cms-core-v2-mio-supabase-live-select-only-preflight
-Attempted pilot: cms-core-v2-mio-supabase-live-select-only-pilot → NOT COMPLETE (no Mio staging rows)
-Docs: mio-supabase-live-select-only-preflight.md · seed-write-planning.md
-Mio site_slug counts: schedules/disco/tracks/embeds/page_fields = 0
-Gosaki anon sanity: schedules published 74 (staging OK)
-DB_WRITE_EXECUTED: false · SQL template DO NOT EXECUTE
-Next Primary: cms-core-v2-mio-supabase-live-select-only-seed-write-gate (human approval)
-Then: Branch A live SELECT pilot
-Verifier: verify:cms-core-v2-mio-supabase-live-select-only-preflight (+ Safety Suite offline)
-HubSpot: COMPLETE WITH NON-BLOCKING (prior) · PC/375 PASS · submit E2E recheck only
+Current phase: CMS Core v2 Mio seed write gate COMPLETE / NOT READY TO APPLY
+Phase: cms-core-v2-mio-supabase-live-select-only-seed-write-gate
+Doc: cms-core-v2-mio-supabase-live-select-only-seed-write-gate.md
+SQL A–E: cms-core-v2-mio-kisaragi-jazz-live-select-seed.template.sql
+READY_FOR_MIO_SEED_APPLY: false
+BLOCKER: schedules.date NOT NULL vs fixture TBD mio-sched-2026-09-01 date=null
+Fixture: schedules 16/14 · disco 5/4 · tracks 14 (13 on pub releases) · embeds 6/5 · lede 1
+Collision guard + single txn + Option A assert + scoped rollback
+SQL/DB write NOT executed
+Next: resolve TBD date → human seed apply → Branch A live SELECT pilot
+Verifier: verify:cms-core-v2-mio-supabase-live-select-only-seed-write-gate (+ Safety Suite)
+Prior preflight: Branch B · Mio staging counts 0
+HubSpot: COMPLETE WITH NON-BLOCKING · PC/375 PASS · submit E2E recheck only
 Gosaki CLIENT_SHARE_READY: true (maintained)
 deployed package: dc1c5b62a58d0462ad6629db4847256d316d4a38 (unchanged; no regen)
 Next Primary (ops): share staging with client
@@ -25,12 +27,18 @@ readyForAnyFutureFtpApply: false
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
 ```
 
+## CMS Core v2 Mio Supabase live SELECT-only seed write gate (2026-08-01)
+
+- Gate audit COMPLETE · **not ready to apply** (TBD date blocker)
+- Full A–E SQL prepared with fail-closed Option A assert (ROLLBACK if TBD unresolved)
+- No ON CONFLICT overwrite · collision if any Mio rows exist
+- Runtime / registry / Contact / Gosaki unchanged · SQL not executed
+
 ## CMS Core v2 Mio Supabase live SELECT-only preflight (2026-08-01)
 
-- Branch **B**: Mio staging data absent → seed planning only · live pilot **NOT COMPLETE**
+- Branch **B**: Mio staging data absent · live pilot **NOT COMPLETE**
 - Empty anon SELECT success ≠ multi-site live-read COMPLETE
-- Seed write requires explicit approval; SQL not executed
-- Runtime / Contact / Gosaki / package / FTP unchanged
+- Superseded next step: seed write gate (above)
 
 ## CMS Core v2 external form HubSpot completion audit (2026-08-01)
 

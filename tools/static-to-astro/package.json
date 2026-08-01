@@ -31,6 +31,8 @@
     "verify:cms-core-v2-mio-discography-read-render": "node scripts/verify-cms-core-v2-mio-discography-read-render.mjs",
     "verify:cms-core-v2-mio-about-read-render": "node scripts/verify-cms-core-v2-mio-about-read-render.mjs",
     "verify:cms-core-v2-mio-supabase-live-select-only-preflight": "node scripts/verify-cms-core-v2-mio-supabase-live-select-only-preflight.mjs",
+    "verify:cms-core-v2-mio-supabase-live-select-only-seed-write-gate": "node scripts/verify-cms-core-v2-mio-supabase-live-select-only-seed-write-gate.mjs",
+    "generate:mio-live-select-seed-sql": "node scripts/generate-mio-kisaragi-jazz-live-select-seed-sql.mjs",
     "verify:cms-core-v2-external-form-provider-contract-validator": "node scripts/verify-cms-core-v2-external-form-provider-contract-validator.mjs",
     "verify:cms-core-v2-external-form-provider-external-link": "node scripts/verify-cms-core-v2-external-form-provider-external-link.mjs",
     "verify:cms-core-v2-external-form-provider-google-forms": "node scripts/verify-cms-core-v2-external-form-provider-google-forms.mjs",

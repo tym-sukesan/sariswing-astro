@@ -267,8 +267,7 @@ Do **not** show TBD operations until:
 
 | # | Phase | Goal | Depends on |
 | --- | --- | --- | --- |
-| A | `cms-core-v2-schedule-tbd-date-admin-ui-state-validator` | Pure UI state + validator offline (confirmed/tbd modes) · no Save wire | this planning |
-| B | `cms-core-v2-schedule-tbd-date-save-payload-helper` | Offline payload build/validate · fail-closed · no network | A |
+| A+B | `cms-core-v2-schedule-tbd-admin-state-save-payload-helpers` | **COMPLETE** — `schedule-admin-date-state.mjs` + `schedule-tbd-save-payload.mjs` (offline) · see §12 | this planning |
 | C | `cms-core-v2-schedule-tbd-staging-migration-gate` | SQL templates + approval packet only | contract planning |
 | D | `cms-core-v2-schedule-tbd-staging-migration-apply` | Human-approved staging migration **once** | C + explicit approval |
 | E | `cms-core-v2-schedule-tbd-date-read-select-date-status` | Add `date_status` to SELECT · map status · keep Gosaki HTML gate | D |
@@ -317,6 +316,7 @@ Optional rename alignment: admin-save implementation phases above supersede the 
 
 ```txt
 CMS_CORE_V2_SCHEDULE_TBD_DATE_ADMIN_SAVE_PLANNING_COMPLETE: true
+CMS_CORE_V2_SCHEDULE_TBD_ADMIN_STATE_SAVE_PAYLOAD_HELPERS_COMPLETE: true
 RECOMMENDED_UI: dateStatus radio + conditional date/month
 RECOMMENDED_PAYLOAD: date_status + date + month + existing fields
 FAIL_CLOSED_PRE_MIGRATION: reject date_status and date null saves
@@ -328,7 +328,26 @@ MIGRATION_EXECUTED: false
 EDGE_DEPLOYED: false
 READY_FOR_MIO_SEED_APPLY: false
 NEXT_PRIMARY_RECOMMENDED: cms-core-v2-schedule-tbd-staging-migration-gate
-NEXT_PARALLEL_OFFLINE: cms-core-v2-schedule-tbd-date-admin-ui-state-validator
 READY_FOR_ANY_FUTURE_FTP_APPLY: false
 PRODUCTION_UNCHANGED: true
 ```
+
+---
+
+## 12. Offline helpers result (`cms-core-v2-schedule-tbd-admin-state-save-payload-helpers`)
+
+**Status:** COMPLETE (offline only · 2026-08-01)
+
+| Item | Value |
+| --- | --- |
+| Admin state | `scripts/lib/schedule-admin-date-state.mjs` · `resolveScheduleAdminDateState` |
+| Save payload | `scripts/lib/schedule-tbd-save-payload.mjs` · `buildScheduleTbdSavePayload` |
+| Modes | `legacy-confirmed-only` · `tbd-v1` |
+| TBD write gate | `schemaSupportsTbd === true` **and** `tbdWriteEnabled === true` |
+| Edit date | still forbidden (not relaxed) |
+| Runtime wire | **none** (Admin / Edge / Save / SELECT unchanged) |
+| Verifier | `verify:cms-core-v2-schedule-tbd-admin-state-save-payload-helpers` |
+
+### Next
+
+`cms-core-v2-schedule-tbd-staging-migration-gate`

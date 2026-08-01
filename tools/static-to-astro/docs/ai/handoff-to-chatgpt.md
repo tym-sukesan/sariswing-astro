@@ -5,16 +5,16 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: CMS Core v2 Schedule TBD date Admin/Save planning COMPLETE
-Phase: cms-core-v2-schedule-tbd-date-admin-save-planning
-Doc: cms-core-v2-schedule-tbd-date-admin-save-planning.md
-Recommended UI: dateStatus radio + conditional date/month
-TBD Save: only after staging migration apply · pre-migration reject date_status / date null
-Admin/Save/schema/migration/Edge/Mio seed code: unchanged this phase
+Current phase: CMS Core v2 Schedule TBD Admin state + Save payload helpers COMPLETE
+Phase: cms-core-v2-schedule-tbd-admin-state-save-payload-helpers
+Modules: schedule-admin-date-state.mjs · schedule-tbd-save-payload.mjs
+Modes: legacy-confirmed-only · tbd-v1
+TBD write: schemaSupportsTbd && tbdWriteEnabled (exact true both)
+Edit date: still forbidden · runtime Admin/Edge/Save unwired
+Verifier: verify:cms-core-v2-schedule-tbd-admin-state-save-payload-helpers (+ Safety Suite)
 READY_FOR_MIO_SEED_APPLY: false
 Next Primary: cms-core-v2-schedule-tbd-staging-migration-gate
-Parallel offline: cms-core-v2-schedule-tbd-date-admin-ui-state-validator
-Prior: Gosaki read compat COMPLETE · helpers COMPLETE · Mio seed gate NOT READY
+Prior: Admin/Save planning COMPLETE · Gosaki read compat · date-contract helpers
 HubSpot: COMPLETE WITH NON-BLOCKING · PC/375 PASS · submit E2E recheck only
 Gosaki CLIENT_SHARE_READY: true (maintained)
 deployed package: dc1c5b62a58d0462ad6629db4847256d316d4a38 (unchanged; no regen)
@@ -25,10 +25,15 @@ readyForAnyFutureFtpApply: false
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
 ```
 
+## CMS Core v2 Schedule TBD Admin state + Save payload helpers (2026-08-01)
+
+- Offline pure helpers · legacy confirmed deep-eq · tbd-v1 offline contract
+- No Admin UI / Edge / Save / schema wire
+
 ## CMS Core v2 Schedule TBD date Admin/Save planning (2026-08-01)
 
 - Docs-only · create requires date · edit forbids date · null-date list drop
-- Phase split A–J · migration before TBD Save
+- Phase split · migration before TBD Save · A+B helpers COMPLETE above
 
 ## CMS Core v2 Schedule TBD date Gosaki read compat (2026-08-01)
 

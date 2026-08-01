@@ -185,6 +185,7 @@ CONTACT_PROVIDER_UNCHANGED: true
 READY_FOR_ANY_FUTURE_FTP_APPLY: false
 PRODUCTION_UNCHANGED: true
 TBD_ADMIN_SAVE_PLANNING: cms-core-v2-schedule-tbd-date-admin-save-planning (COMPLETE · docs)
+TBD_ADMIN_STATE_SAVE_PAYLOAD_HELPERS: cms-core-v2-schedule-tbd-admin-state-save-payload-helpers (COMPLETE · offline)
 NEXT_AFTER_BLOCKER_RESOLVED: cms-core-v2-schedule-tbd-staging-migration-gate → apply → seed regen/apply
 ```
 

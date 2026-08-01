@@ -9,6 +9,7 @@
 - **Helpers:** `cms-core-v2-schedule-tbd-date-contract-helpers` **COMPLETE**
 - **Gosaki read compat:** `cms-core-v2-schedule-tbd-date-gosaki-read-compat` **COMPLETE** (confirmed normalize wire · legacy Gosaki sort kept · no `date_status` SELECT · schema/seed SQL still blocked)
 - **Admin/Save planning:** `cms-core-v2-schedule-tbd-date-admin-save-planning` **COMPLETE** (docs) · TBD Save after migration only
+- **Admin state + Save payload helpers:** `cms-core-v2-schedule-tbd-admin-state-save-payload-helpers` **COMPLETE** (offline · no runtime wire)
 - **Helper sort (locked):** month ASC → confirmed before tbd → confirmed `date→sortOrder→legacyId` → tbd `sortOrder→legacyId` → month-unknown tbd last · Mio TBD after confirmed Sept peers (not early via sort_order=5)
 - **Target project:** staging `kmjqppxjdnwwrtaeqjta` only
 - **STOP production:** `vsbvndwuajjhnzpohghh`
@@ -202,6 +203,7 @@ SEED_WRITE_GATE: cms-core-v2-mio-supabase-live-select-only-seed-write-gate
 TBD_CONTRACT_HELPERS_COMPLETE: true
 TBD_GOSAKI_READ_COMPAT_COMPLETE: true
 TBD_ADMIN_SAVE_PLANNING_COMPLETE: true
+TBD_ADMIN_STATE_SAVE_PAYLOAD_HELPERS_COMPLETE: true
 NEXT_AFTER_BLOCKER: cms-core-v2-schedule-tbd-staging-migration-gate → apply → seed regen/apply
 NEXT_AFTER_SEED: cms-core-v2-mio-supabase-live-select-only-pilot (Branch A)
 READY_FOR_ANY_FUTURE_FTP_APPLY: false

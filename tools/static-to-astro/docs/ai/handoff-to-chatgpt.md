@@ -5,18 +5,17 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: CMS Core v2 Mio seed write gate COMPLETE / NOT READY TO APPLY
-Phase: cms-core-v2-mio-supabase-live-select-only-seed-write-gate
-Doc: cms-core-v2-mio-supabase-live-select-only-seed-write-gate.md
-SQL A–E: cms-core-v2-mio-kisaragi-jazz-live-select-seed.template.sql
-READY_FOR_MIO_SEED_APPLY: false
-BLOCKER: schedules.date NOT NULL vs fixture TBD mio-sched-2026-09-01 date=null
-Fixture: schedules 16/14 · disco 5/4 · tracks 14 (13 on pub releases) · embeds 6/5 · lede 1
-Collision guard + single txn + Option A assert + scoped rollback
-SQL/DB write NOT executed
-Next: resolve TBD date → human seed apply → Branch A live SELECT pilot
-Verifier: verify:cms-core-v2-mio-supabase-live-select-only-seed-write-gate (+ Safety Suite)
-Prior preflight: Branch B · Mio staging counts 0
+Current phase: CMS Core v2 Schedule TBD date contract planning COMPLETE
+Phase: cms-core-v2-schedule-tbd-date-contract-planning
+Doc: cms-core-v2-schedule-tbd-date-contract-planning.md
+Recommended: nullable date + date_status (confirmed|tbd) + CHECKs
+Sentinel date: REJECTED
+Mio TBD: mio-sched-2026-09-01 · month-known 2026-09 · date NULL · sort_order 5
+Gosaki: backfill confirmed · no date rewrite
+READY_FOR_MIO_SEED_APPLY: false (until migration + seed regen/apply)
+SCHEMA/RUNTIME/DB/SQL-template: unchanged this phase
+Next Primary: cms-core-v2-schedule-tbd-date-contract-helpers
+Prior: Mio seed write gate NOT READY (TBD blocker) · preflight Branch B
 HubSpot: COMPLETE WITH NON-BLOCKING · PC/375 PASS · submit E2E recheck only
 Gosaki CLIENT_SHARE_READY: true (maintained)
 deployed package: dc1c5b62a58d0462ad6629db4847256d316d4a38 (unchanged; no regen)
@@ -27,10 +26,17 @@ readyForAnyFutureFtpApply: false
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
 ```
 
+## CMS Core v2 Schedule TBD date contract planning (2026-08-01)
+
+- Docs-only · recommended nullable `date` + `date_status`
+- Month-known TBD vs month-unknown TBD rules locked
+- Staging migration planned · not executed · production separate gate
+- Sentinel path closed for Mio seed
+
 ## CMS Core v2 Mio Supabase live SELECT-only seed write gate (2026-08-01)
 
-- Gate audit COMPLETE · **not ready to apply** (TBD date blocker)
-- Full A–E SQL prepared with fail-closed Option A assert (ROLLBACK if TBD unresolved)
+- Gate audit COMPLETE · **not ready to apply** (awaits TBD migration path above)
+- Full A–E SQL prepared with fail-closed Option A assert
 - No ON CONFLICT overwrite · collision if any Mio rows exist
 - Runtime / registry / Contact / Gosaki unchanged · SQL not executed
 

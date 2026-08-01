@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**CMS Core v2 Mio Supabase live SELECT-only seed write gate (2026-08-01):** **COMPLETE / NOT READY TO APPLY** — Phase `cms-core-v2-mio-supabase-live-select-only-seed-write-gate` · Doc: `cms-core-v2-mio-supabase-live-select-only-seed-write-gate.md` · SQL A–E: `cms-core-v2-mio-kisaragi-jazz-live-select-seed.template.sql` · collision guard · single txn · Option A assert · rollback scoped · **BLOCKER:** `schedules.date` NOT NULL vs fixture TBD `mio-sched-2026-09-01` date=null · tracks **14** total / **13** on published releases · `READY_FOR_MIO_SEED_APPLY: false` · npm `verify:cms-core-v2-mio-supabase-live-select-only-seed-write-gate` · **SQL/DB write not executed** · runtime/registry unchanged · **Next:** resolve TBD date strategy → human seed apply approval → Branch A pilot.
+**CMS Core v2 Schedule TBD date contract planning (2026-08-01):** **COMPLETE (docs-only)** — Phase `cms-core-v2-schedule-tbd-date-contract-planning` · Doc: `cms-core-v2-schedule-tbd-date-contract-planning.md` · Recommended: **nullable `date` + `date_status` (`confirmed`/`tbd`)** + CHECK consistency · month via existing `month`/`source_route` · TBD sort via `sort_order` · **sentinel date REJECTED** · Mio `mio-sched-2026-09-01` = TBD month-known `2026-09` · Gosaki backfill confirmed · staging migration planned not executed · **Next Primary:** `cms-core-v2-schedule-tbd-date-contract-helpers` · no schema/runtime/DB/SQL template change.
+
+**CMS Core v2 Mio Supabase live SELECT-only seed write gate (2026-08-01):** **COMPLETE / NOT READY TO APPLY** — blocker unchanged until TBD migration + seed regen · `READY_FOR_MIO_SEED_APPLY: false` · sentinel path closed by contract planning above.
 
 **CMS Core v2 Mio Supabase live SELECT-only preflight (2026-08-01):** **COMPLETE (Branch B / STOP)** — Mio staging counts **0** · seed write gate above · live pilot NOT COMPLETE.
 

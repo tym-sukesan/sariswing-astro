@@ -5,6 +5,7 @@
 - **Prior:** `cms-core-v2-mio-supabase-live-select-only-preflight` (Branch B · Mio counts 0)
 - **Status:** **planning only** — **SQL NOT EXECUTED** · **DB write NOT APPROVED**
 - **Follow-up gate:** `cms-core-v2-mio-supabase-live-select-only-seed-write-gate` → **NOT READY TO APPLY** (TBD `date=null` vs `schedules.date` NOT NULL)
+- **Contract resolution:** `cms-core-v2-schedule-tbd-date-contract-planning` — nullable `date` + `date_status` · **sentinel rejected**
 - **Target project:** staging `kmjqppxjdnwwrtaeqjta` only
 - **STOP production:** `vsbvndwuajjhnzpohghh`
 

@@ -66,7 +66,7 @@ Admin / live Forms submit / Mio HubSpot onboarding remain open.
 | Area | Note |
 | --- | --- |
 | External Contact form | Kit: external-link / google-forms / hubspot Core done; Mio HubSpot onboarding · Forms live · Admin still open |
-| Mio Supabase live SELECT | Preflight **Branch B** (no rows) · next = seed write gate → then Branch A pilot |
+| Mio Supabase live SELECT | Preflight **Branch B** (no rows) · seed gate blocked on TBD date · contract planning: nullable `date` + `date_status` · then helpers → migration → seed → Branch A pilot |
 | Generic read-only Admin for Mio | Feature registry; Save stays disabled |
 | Any Save / Edge / RLS / Secrets | Separate high-risk gates |
 | Mio package + staging FTP | Separate approval; FTP `--apply` still suspended |

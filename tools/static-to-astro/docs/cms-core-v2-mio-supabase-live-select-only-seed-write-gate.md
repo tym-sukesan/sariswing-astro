@@ -81,11 +81,16 @@ Fixture row `mio-sched-2026-09-01` is **published** with **`date=null`** (日付
 Therefore Option A counts (**16 / 14**) cannot be inserted as-is.
 Current block B inserts **15** dated schedules then **B8 RAISE** → intentional ROLLBACK so a mistaken apply cannot leave a partial Mio seed.
 
-**Resolve before apply (pick one, separate approval):**
+**Resolution path (locked by planning — sentinel rejected):**
 
-1. Approved sentinel `date` for TBD row (document deviation), regenerate SQL, or
-2. Fixture change + success-count revision (drop TBD from Option A), or
-3. Schema change to allow null `date` (**migration — out of this gate**).
+See `cms-core-v2-schedule-tbd-date-contract-planning.md`:
+
+1. Contract helpers → Gosaki read compat → Admin/Save fail-closed
+2. Staging migration: nullable `date` + `date_status` (`confirmed`/`tbd`) + CHECKs
+3. Regenerate Mio seed SQL (include TBD row · no fictional day)
+4. Human seed apply → Branch A live SELECT pilot
+
+**Do not** use a sentinel calendar day for `mio-sched-2026-09-01`.
 
 Also noted (handled in SQL without schema change):
 
@@ -163,13 +168,15 @@ READY_FOR_MIO_SEED_APPLY: false
 MIO_SEED_SQL_EXECUTED: false
 DB_WRITE_EXECUTED: false
 GATE_BLOCKER: schedules.date_NOT_NULL_vs_fixture_TBD_null
+TBD_CONTRACT_PLANNING: cms-core-v2-schedule-tbd-date-contract-planning
+SENTINEL_DATE_REJECTED: true
 RUNTIME_CHANGED: false
 REGISTRY_CHANGED: false
 GOSAKI_UNCHANGED: true
 CONTACT_PROVIDER_UNCHANGED: true
 READY_FOR_ANY_FUTURE_FTP_APPLY: false
 PRODUCTION_UNCHANGED: true
-NEXT_AFTER_BLOCKER_RESOLVED: cms-core-v2-mio-supabase-live-select-only-seed-apply (human approval)
+NEXT_AFTER_BLOCKER_RESOLVED: cms-core-v2-schedule-tbd-date-contract-helpers → … → seed apply
 ```
 
 Required approval form (future apply only):

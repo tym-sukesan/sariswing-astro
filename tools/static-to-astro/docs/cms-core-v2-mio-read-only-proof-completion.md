@@ -158,10 +158,12 @@ PACKAGE_GENERATE_EXECUTED: false
 FTP_EXECUTED: false
 PRODUCTION_UNCHANGED: true
 READY_FOR_ANY_FUTURE_FTP_APPLY: false
-NEXT_RECOMMENDED: cms-core-v2-external-form-provider-hubspot-generalization-planning
+TBD_CONTRACT_HELPERS_COMPLETE: true
+TBD_HELPER_SORT_LOCKED: month ASC → confirmed before tbd → confirmed date→sortOrder→legacyId → tbd sortOrder→legacyId → month-unknown last
+NEXT_RECOMMENDED: cms-core-v2-schedule-tbd-date-gosaki-read-compat
 ```
 
-Follow-up: external-link + **google-forms** offline pilots (synthetic docs.google.com URL). HubSpot generalization / Admin still open.
+Follow-up (current Kit Primary): Schedule TBD helpers COMPLETE → Gosaki read compat → migration → Mio seed. Contact HubSpot COMPLETE WITH NON-BLOCKING (submit E2E recheck).
 
 ---
 

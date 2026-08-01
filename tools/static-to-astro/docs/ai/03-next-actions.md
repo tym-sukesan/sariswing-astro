@@ -4,10 +4,37 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 ## 0. Current next actions（直近）
 
 1. **Primary (Gosaki ops):** クライアントへ **staging 共有**（`CLIENT_SHARE_READY: true` · package `dc1c5b6…`）。本番 cutover はしない。
-2. **並行可 (Kit Core):** **Next Primary** `cms-core-v2-schedule-tbd-date-contract-helpers` → Gosaki read compat → Admin/Save → staging migration gate/apply → Mio seed regen/apply → Branch A live SELECT pilot · then generic read-only Admin · form onboarding · Admin runtime Save arm mutex（**別承認**）· evening-set hero（**NON_BLOCKING**）。
+2. **並行可 (Kit Core):** **Next Primary** `cms-core-v2-schedule-tbd-date-gosaki-read-compat` → Admin/Save → staging migration gate/apply → Mio seed regen/apply → Branch A live SELECT pilot · then generic read-only Admin · form onboarding · Admin runtime Save arm mutex（**別承認**）· evening-set hero（**NON_BLOCKING**）。
 3. **並行可:** production hosting **read-only planning**（`HOSTING_READY: false`）。
 4. **並行可 / 別承認:** YouTube 複数件 **永続 Save**（NON_BLOCKING）。
 5. Save arm **false** · `readyForAnyFutureFtpApply: false` · production STOP · `service_role` 禁止 · **deployed package 固定**.
+
+## 0. CMS Core v2 Schedule TBD date contract helpers (2026-08-01)
+
+| Item | Value |
+| --- | --- |
+| Gate | `CMS_CORE_V2_SCHEDULE_TBD_DATE_CONTRACT_HELPERS_COMPLETE: true` |
+| Module | `scripts/lib/schedule-date-contract.mjs` |
+| Verifier | `verify:cms-core-v2-schedule-tbd-date-contract-helpers` |
+| Runtime / schema / seed | **unchanged** (helpers only) |
+| Mio proof | `mio-sched-2026-09-01` → tbd · null date · 2026-09 · 日付未定 · sortOrder 5 · after confirmed Sept peers |
+| Sort | month ASC → confirmed before tbd → confirmed `date→sortOrder→legacyId` → tbd `sortOrder→legacyId` → month-unknown last |
+| Next | `cms-core-v2-schedule-tbd-date-gosaki-read-compat` |
+
+```txt
+CMS_CORE_V2_SCHEDULE_TBD_DATE_CONTRACT_HELPERS_COMPLETE: true
+CMS_CORE_V2_SCHEDULE_TBD_DATE_CONTRACT_PLANNING_COMPLETE: true
+RECOMMENDED_CONTRACT: nullable_date_plus_date_status
+SENTINEL_DATE_REJECTED: true
+READY_FOR_MIO_SEED_APPLY: false
+SCHEMA_CHANGED: false
+RUNTIME_CHANGED: false
+DB_WRITE_EXECUTED: false
+MIGRATION_EXECUTED: false
+NEXT_PRIMARY_RECOMMENDED: cms-core-v2-schedule-tbd-date-gosaki-read-compat
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+PRODUCTION_UNCHANGED: true
+```
 
 ## 0. CMS Core v2 Schedule TBD date contract planning (2026-08-01)
 
@@ -18,7 +45,8 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Sentinel | **REJECTED** |
 | Doc | `cms-core-v2-schedule-tbd-date-contract-planning.md` |
 | Mio TBD | `mio-sched-2026-09-01` · month-known `2026-09` · `date` NULL |
-| Next | `cms-core-v2-schedule-tbd-date-contract-helpers` |
+| Helpers | COMPLETE (above) |
+| Next | `cms-core-v2-schedule-tbd-date-gosaki-read-compat` |
 
 ```txt
 CMS_CORE_V2_SCHEDULE_TBD_DATE_CONTRACT_PLANNING_COMPLETE: true
@@ -29,7 +57,7 @@ SCHEMA_CHANGED: false
 RUNTIME_CHANGED: false
 DB_WRITE_EXECUTED: false
 MIGRATION_EXECUTED: false
-NEXT_PRIMARY_RECOMMENDED: cms-core-v2-schedule-tbd-date-contract-helpers
+NEXT_PRIMARY_RECOMMENDED: cms-core-v2-schedule-tbd-date-gosaki-read-compat
 READY_FOR_ANY_FUTURE_FTP_APPLY: false
 PRODUCTION_UNCHANGED: true
 ```
@@ -44,7 +72,7 @@ PRODUCTION_UNCHANGED: true
 | SQL artifact | `cms-core-v2-mio-kisaragi-jazz-live-select-seed.template.sql` (A–E) |
 | Tracks | 14 total · 13 on published releases |
 | Verifier | `verify:cms-core-v2-mio-supabase-live-select-only-seed-write-gate` |
-| Next | TBD contract helpers → migration → seed regen/apply → Branch A |
+| Next | Gosaki read compat → migration → seed regen/apply → Branch A |
 
 ```txt
 CMS_CORE_V2_MIO_SUPABASE_LIVE_SELECT_ONLY_SEED_WRITE_GATE_COMPLETE: true
@@ -55,7 +83,7 @@ GATE_BLOCKER: schedules.date_NOT_NULL_vs_fixture_TBD_null
 SENTINEL_DATE_REJECTED: true
 RUNTIME_CHANGED: false
 REGISTRY_CHANGED: false
-NEXT_PRIMARY_RECOMMENDED: cms-core-v2-schedule-tbd-date-contract-helpers
+NEXT_PRIMARY_RECOMMENDED: cms-core-v2-schedule-tbd-date-gosaki-read-compat
 READY_FOR_ANY_FUTURE_FTP_APPLY: false
 PRODUCTION_UNCHANGED: true
 ```
@@ -86,7 +114,7 @@ RUNTIME_CHANGED: false
 GOSAKI_UNCHANGED: true
 CONTACT_PROVIDER_UNCHANGED: true
 READY_FOR_MIO_SEED_APPLY: false
-NEXT_PRIMARY_RECOMMENDED: cms-core-v2-schedule-tbd-date-contract-helpers
+NEXT_PRIMARY_RECOMMENDED: cms-core-v2-schedule-tbd-date-gosaki-read-compat
 READY_FOR_ANY_FUTURE_FTP_APPLY: false
 PRODUCTION_UNCHANGED: true
 ```
@@ -111,7 +139,7 @@ CONTACT_HUBSPOT_PROVIDER_CORE: COMPLETE_WITH_NON_BLOCKING
 CONTACT_HUBSPOT_GENUINE_BLOCKER: none
 CONTACT_HUBSPOT_PC375_BROWSER_BASELINE: PASS
 CONTACT_HUBSPOT_NON_BLOCKING_OPS: submit-e2e-recheck-after-core-switch
-NEXT_PRIMARY_RECOMMENDED: cms-core-v2-schedule-tbd-date-contract-helpers
+NEXT_PRIMARY_RECOMMENDED: cms-core-v2-schedule-tbd-date-gosaki-read-compat
 RUNTIME_CHANGED: false
 HUBSPOT_CONFIG_UNCHANGED: true
 FORM_SUBMIT_EXECUTED: false

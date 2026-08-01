@@ -85,12 +85,14 @@ Current block B inserts **15** dated schedules then **B8 RAISE** → intentional
 
 See `cms-core-v2-schedule-tbd-date-contract-planning.md`:
 
-1. Contract helpers → Gosaki read compat → Admin/Save fail-closed
+1. Contract helpers (**COMPLETE** · `schedule-date-contract.mjs` · offline only) → Gosaki read compat → Admin/Save fail-closed
 2. Staging migration: nullable `date` + `date_status` (`confirmed`/`tbd`) + CHECKs
 3. Regenerate Mio seed SQL (include TBD row · no fictional day)
 4. Human seed apply → Branch A live SELECT pilot
 
 **Do not** use a sentinel calendar day for `mio-sched-2026-09-01`.
+
+**Helper sort (locked):** month ASC → same-month confirmed before tbd → confirmed `date→sortOrder→legacyId` → tbd `sortOrder→legacyId` → month-unknown tbd last. Mio TBD (`sort_order=5`) sits **after** confirmed 2026-09 peers; TBD-to-TBD uses `sortOrder=5` deterministically. Not `month → sort_order → date NULLS LAST`.
 
 Also noted (handled in SQL without schema change):
 
@@ -169,6 +171,7 @@ MIO_SEED_SQL_EXECUTED: false
 DB_WRITE_EXECUTED: false
 GATE_BLOCKER: schedules.date_NOT_NULL_vs_fixture_TBD_null
 TBD_CONTRACT_PLANNING: cms-core-v2-schedule-tbd-date-contract-planning
+TBD_CONTRACT_HELPERS: cms-core-v2-schedule-tbd-date-contract-helpers (COMPLETE · offline only)
 SENTINEL_DATE_REJECTED: true
 RUNTIME_CHANGED: false
 REGISTRY_CHANGED: false
@@ -176,7 +179,7 @@ GOSAKI_UNCHANGED: true
 CONTACT_PROVIDER_UNCHANGED: true
 READY_FOR_ANY_FUTURE_FTP_APPLY: false
 PRODUCTION_UNCHANGED: true
-NEXT_AFTER_BLOCKER_RESOLVED: cms-core-v2-schedule-tbd-date-contract-helpers → … → seed apply
+NEXT_AFTER_BLOCKER_RESOLVED: cms-core-v2-schedule-tbd-date-gosaki-read-compat → Admin/Save → staging migration → seed regen/apply
 ```
 
 Required approval form (future apply only):

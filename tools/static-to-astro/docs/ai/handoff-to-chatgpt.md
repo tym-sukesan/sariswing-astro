@@ -5,17 +5,17 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: CMS Core v2 Schedule TBD date contract planning COMPLETE
-Phase: cms-core-v2-schedule-tbd-date-contract-planning
-Doc: cms-core-v2-schedule-tbd-date-contract-planning.md
-Recommended: nullable date + date_status (confirmed|tbd) + CHECKs
+Current phase: CMS Core v2 Schedule TBD date contract helpers COMPLETE
+Phase: cms-core-v2-schedule-tbd-date-contract-helpers
+Module: scripts/lib/schedule-date-contract.mjs
+Verifier: verify:cms-core-v2-schedule-tbd-date-contract-helpers (+ Safety Suite)
+Mio proof: mio-sched-2026-09-01 → tbd · date null · month 2026-09 · 日付未定 · sortOrder 5 · after confirmed Sept peers
+Sort locked: month ASC → confirmed before tbd → confirmed date→sortOrder→legacyId → tbd sortOrder→legacyId → month-unknown last
+Runtime/Admin/Save/schema/migration/seed SQL: unchanged (helpers only)
 Sentinel date: REJECTED
-Mio TBD: mio-sched-2026-09-01 · month-known 2026-09 · date NULL · sort_order 5
-Gosaki: backfill confirmed · no date rewrite
 READY_FOR_MIO_SEED_APPLY: false (until migration + seed regen/apply)
-SCHEMA/RUNTIME/DB/SQL-template: unchanged this phase
-Next Primary: cms-core-v2-schedule-tbd-date-contract-helpers
-Prior: Mio seed write gate NOT READY (TBD blocker) · preflight Branch B
+Next Primary: cms-core-v2-schedule-tbd-date-gosaki-read-compat
+Prior: TBD contract planning COMPLETE · Mio seed write gate NOT READY · preflight Branch B
 HubSpot: COMPLETE WITH NON-BLOCKING · PC/375 PASS · submit E2E recheck only
 Gosaki CLIENT_SHARE_READY: true (maintained)
 deployed package: dc1c5b62a58d0462ad6629db4847256d316d4a38 (unchanged; no regen)
@@ -26,12 +26,18 @@ readyForAnyFutureFtpApply: false
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
 ```
 
+## CMS Core v2 Schedule TBD date contract helpers (2026-08-01)
+
+- Pure site-neutral helpers + offline verifier
+- confirmed / tbd month-known / tbd month-unknown · fail-closed · no Gosaki runtime wire
+- Next: Gosaki read compat (no Admin/Save/migration in that phase either until scoped)
+
 ## CMS Core v2 Schedule TBD date contract planning (2026-08-01)
 
 - Docs-only · recommended nullable `date` + `date_status`
 - Month-known TBD vs month-unknown TBD rules locked
 - Staging migration planned · not executed · production separate gate
-- Sentinel path closed for Mio seed
+- Sentinel path closed for Mio seed · helpers phase COMPLETE above
 
 ## CMS Core v2 Mio Supabase live SELECT-only seed write gate (2026-08-01)
 

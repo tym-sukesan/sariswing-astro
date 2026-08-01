@@ -55,7 +55,7 @@ Source: `fixtures/mio-kisaragi-jazz-data/schedules.json` · `legacy_id = mio-sch
 | Area | Path (examples) | Null-date behavior today |
 | --- | --- | --- |
 | Normalize / display | `supabase-schedule-read.mjs` `normalizeScheduleRecord` / `formatScheduleDateDisplay` | null → `date_display ""` · no throw |
-| Sort | `compareScheduleRecords` · Gosaki month sort | `date \|\| ""` → TBD sorts **before** dated rows |
+| Sort (legacy runtime today) | `compareScheduleRecords` · Gosaki month sort | `date \|\| ""` → TBD sorts **before** dated rows · **not** Kit helper contract (§4.4) |
 | Month discovery | `deriveScheduleMonthsFromSchedules` · `resolveScheduleMonthsForBuild` | uses **`month`**, not day |
 | Mio public cards | `mio-schedule-data-pages.mjs` | already shows **日付未定** when `date==null` or `dateStatus==tbd` |
 | Gosaki public cards | `gosaki-schedule-data-pages.mjs` | blank date string · **no** TBD label |
@@ -135,37 +135,24 @@ App + Edge must enforce the same fail-closed rules before DB.
 
 **Mio fixture** is **TBD · month known** (`2026-09`).
 
-### 4.4 Sort rules (public + admin lists)
+### 4.4 Sort rules (locked — helper `compareScheduleDateContract`)
 
-Within a site:
-
-1. Group by `month` (unknown-month TBD last or in dedicated hub bucket)
-2. Within month:
-   - Order by `date ASC NULLS LAST` (confirmed days chronological; TBD after or before — **Kit default: NULLS FIRST among same month only when `sort_order` compared next** — see below)
-   - Then `sort_order ASC`
-   - Then `legacy_id ASC`
-
-**Kit default for TBD · month known:** treat as `date IS NULL` and sort with **`sort_order` as the decisive key among TBD and relative to confirmed via shared `sort_order` scale** (Mio uses `sort_order=5` to appear before Sept 3 events with `10`/`11`).
-
-Concrete comparator (implementation phase):
+**Locked Kit contract** (helpers phase; Gosaki runtime still uses legacy `date || ""` until read-compat):
 
 ```txt
-compare(a,b):
-  monthKey(a) vs monthKey(b)   -- null month sorts after all YYYY-MM
-  sort_order ASC
-  date ASC NULLS LAST          -- only when sort_order ties
-  legacy_id ASC
+1. month既知を month 昇順
+2. 同月では confirmed を先、tbd を後
+3. confirmed: date → sortOrder → legacyId
+4. tbd: sortOrder → legacyId
+5. month不明 tbd は最後
 ```
 
-Using **`sort_order` before `date`** preserves Mio’s intentional TBD position without sentinel dates. Confirmed Gosaki rows already have distinct `date` + `sort_order`; changing comparator order is a **compatibility test gate** (see §7).
+Notes:
 
-If Gosaki deep-eq / visual sort regresses, fall back to:
-
-```txt
-date ASC NULLS FIRST, sort_order ASC, legacy_id
-```
-
-and set Mio TBD `sort_order` accordingly in seed regenerate (fixture meaning kept: early in September).
+- Confirmed existing data keeps **calendar date order** within a month (`date` before `sortOrder`).
+- Mio TBD `mio-sched-2026-09-01` (`sort_order=5`) sorts **after all confirmed 2026-09 peers**, not ahead of them. Among TBD peers, `sortOrder=5` is decisive (then `legacyId`).
+- Do **not** use `date ASC NULLS LAST/FIRST` or `month → sort_order → date` as the Kit helper contract.
+- Sentinel dates remain forbidden; null `date` is never coerced to `""` for leading placement in this helper.
 
 ### 4.5 Past / future / home
 
@@ -217,7 +204,7 @@ Optimistic lock remains on `updated_at` only.
 | Month page | **`/schedule/2026-09/`** because `month` + `source_route` already say so (not because of a fake day) |
 | Recommended stored row | `date_status='tbd'` · `date=NULL` · `month='2026-09'` · `year=2026` · `sort_order=5` · `published=true` · `source_route='/schedule/2026-09/'` |
 | Display | `日付未定` (title may keep 【日付未定】 prefix) |
-| Sort position | Early in 2026-09 via `sort_order=5` (before peers 10+) under recommended comparator |
+| Sort position | After all confirmed 2026-09 peers (rule 2); among TBD peers, `sort_order=5` is decisive |
 | Seed SQL change (later regenerate only) | INSERT TBD row with null `date` + `date_status`; Option A assert **16/14** can pass **after** staging migration; until then keep apply disarmed |
 
 Fixture **meaning** unchanged: published September TBD rehearsal notice.
@@ -312,8 +299,8 @@ Constraint add order: column+default → backfill → status CHECK → consisten
 
 | # | Phase | Goal | Risk | STOP if |
 | --- | --- | --- | --- | --- |
-| 1 | `cms-core-v2-schedule-tbd-date-contract-helpers` | Offline helpers: status parse, CHECKs as pure fn, comparator, month membership | Low | Behavior differs from this doc |
-| 2 | `cms-core-v2-schedule-tbd-gosaki-read-compat` | Gosaki read/build/sort deep-eq or documented sort waiver | Medium | Gosaki public order/visual regress without approval |
+| 1 | `cms-core-v2-schedule-tbd-date-contract-helpers` | **COMPLETE** — Offline helpers + verifier (see §12) | Low | Behavior differs from this doc |
+| 2 | `cms-core-v2-schedule-tbd-date-gosaki-read-compat` | Gosaki read/build/sort deep-eq or documented sort waiver | Medium | Gosaki public order/visual regress without approval |
 | 3 | `cms-core-v2-schedule-tbd-admin-save` | Admin + dry-run/Save fail-closed TBD/confirmed | High | Write path can store sentinel or confirmed+null |
 | 4 | `cms-core-v2-schedule-tbd-staging-migration-gate` | SQL templates + approval packet only | High | Production ref / unclear rollback |
 | 5 | `cms-core-v2-schedule-tbd-staging-migration-apply` | Human-approved staging migration once | High | Pre counts fail · STOP no retry |
@@ -353,6 +340,7 @@ Constraint add order: column+default → backfill → status CHECK → consisten
 
 ```txt
 CMS_CORE_V2_SCHEDULE_TBD_DATE_CONTRACT_PLANNING_COMPLETE: true
+CMS_CORE_V2_SCHEDULE_TBD_DATE_CONTRACT_HELPERS_COMPLETE: true
 RECOMMENDED_CONTRACT: nullable_date_plus_date_status
 SENTINEL_DATE_REJECTED: true
 READY_FOR_MIO_SEED_APPLY: false
@@ -360,7 +348,45 @@ SCHEMA_CHANGED: false
 RUNTIME_CHANGED: false
 DB_WRITE_EXECUTED: false
 MIGRATION_EXECUTED: false
-NEXT_PRIMARY_RECOMMENDED: cms-core-v2-schedule-tbd-date-contract-helpers
+NEXT_PRIMARY_RECOMMENDED: cms-core-v2-schedule-tbd-date-gosaki-read-compat
 READY_FOR_ANY_FUTURE_FTP_APPLY: false
 PRODUCTION_UNCHANGED: true
 ```
+
+---
+
+## 12. Helpers phase result (`cms-core-v2-schedule-tbd-date-contract-helpers`)
+
+**Status:** COMPLETE (helper + offline verifier only · 2026-08-01)
+
+| Item | Value |
+| --- | --- |
+| Module | `scripts/lib/schedule-date-contract.mjs` |
+| Verifier | `verify:cms-core-v2-schedule-tbd-date-contract-helpers` (+ Safety Suite) |
+| Runtime wire | **none** (Gosaki / Mio schedule pages / Admin / Save untouched) |
+| Schema / migration / seed SQL | **unchanged** |
+| Mio fixture proof | `mio-sched-2026-09-01` → `tbd` · `date=null` · `month=2026-09` · display `日付未定` · `sortOrder=5` · September month-page |
+| Sentinel | rejected (`tbd` + date → fail) |
+| Unknown fields | rejected |
+| Input mutation | forbidden / verified |
+
+### API
+
+- `normalizeScheduleDateContract(input)` / `validateScheduleDateContract(input)` → `{ok,value}` / `{ok:false,errors,codes}`
+- `getScheduleDateDisplay(contract, options?)`
+- `getScheduleMonthMembership(contract)`
+- `compareScheduleDateContract(a, b)` (deterministic; not wired into Gosaki sort this phase)
+- `scheduleRowToDateContractInput(row)` (reads `extensions.dateStatus`; no mutation)
+- `formatConfirmedScheduleDateDisplay(iso)` (Kit `YYYY.MM.DD (Dow)` shape)
+
+### Sort (helper-only; Gosaki not connected)
+
+1. month既知を month 昇順
+2. 同月では confirmed を先、tbd を後
+3. confirmed: date → sortOrder → legacyId
+4. tbd: sortOrder → legacyId
+5. month不明 tbd は最後
+
+### Next
+
+`cms-core-v2-schedule-tbd-date-gosaki-read-compat` — wire/read-compat only after explicit phase; no Admin/Save/migration.

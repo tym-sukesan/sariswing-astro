@@ -111,6 +111,11 @@ const STEPS = [
     script: "verify-cms-core-v2-mio-supabase-live-select-only-seed-write-gate.mjs",
   },
   {
+    id: "schedule-tbd-date-contract-helpers",
+    kind: "node",
+    script: "verify-cms-core-v2-schedule-tbd-date-contract-helpers.mjs",
+  },
+  {
     id: "external-form-provider-contract-validator",
     kind: "node",
     script: "verify-cms-core-v2-external-form-provider-contract-validator.mjs",

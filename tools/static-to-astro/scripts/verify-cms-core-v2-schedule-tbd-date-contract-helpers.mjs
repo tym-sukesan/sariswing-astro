@@ -455,8 +455,10 @@ const gosakiReadSrc = fs.readFileSync(GOSAKI_READ, "utf8");
 const gosakiPagesSrc = fs.readFileSync(GOSAKI_PAGES, "utf8");
 const mioPagesSrc = fs.readFileSync(MIO_PAGES, "utf8");
 assert(
-  "supabase-schedule-read does not import date-contract",
-  !/schedule-date-contract/.test(gosakiReadSrc),
+  "supabase-schedule-read imports date-contract for confirmed normalize",
+  /schedule-date-contract/.test(gosakiReadSrc) &&
+    /normalizeScheduleDateContract/.test(gosakiReadSrc) &&
+    !/compareScheduleDateContract/.test(gosakiReadSrc),
 );
 assert(
   "gosaki-schedule-data-pages does not import date-contract",

@@ -9,6 +9,7 @@ import {
   cmsKitScheduleMonthRoute,
   scheduleMonthDisplayLabel,
 } from "./schedule-pages.mjs";
+import { normalizeScheduleDateContract } from "./schedule-date-contract.mjs";
 import { GOSAKI_SITE_KEY } from "./site-registry.mjs";
 import { resolveScheduleMonthsForBuild } from "./schedule-month-discovery.mjs";
 import { resolveSupabaseAnonReadEnv } from "./supabase-anon-read-env-utils.mjs";
@@ -52,17 +53,71 @@ export function formatScheduleDateDisplay(iso) {
 }
 
 /**
+ * Legacy confirmed mapping for rows that already have a calendar date.
+ * Schema has no `date_status` yet — inject `confirmed` explicitly.
+ * Null/empty date is skipped (TBD runtime not wired this phase; no auto-TBD).
+ * Does not mutate `row`. Does not use TBD comparator / sort.
+ *
+ * @param {Record<string, unknown>} row
+ * @returns {{ ok: true, skipped: true, reason: string } | import("./schedule-date-contract.mjs").ScheduleDateContractResult}
+ */
+export function validateLegacyConfirmedScheduleDateContract(row) {
+  if (!row || typeof row !== "object" || Array.isArray(row)) {
+    return {
+      ok: false,
+      errors: ["row must be a plain object"],
+      codes: ["input_type"],
+    };
+  }
+  const date = row.date;
+  if (date == null || date === "") {
+    return { ok: true, skipped: true, reason: "no_date_legacy_path" };
+  }
+  const monthRaw = row.month;
+  const yearRaw = row.year;
+  const sortRaw = row.sort_order ?? row.sortOrder;
+  return normalizeScheduleDateContract({
+    dateStatus: "confirmed",
+    date,
+    month: monthRaw == null || monthRaw === "" ? null : monthRaw,
+    year: yearRaw == null || yearRaw === "" ? null : yearRaw,
+    sortOrder: typeof sortRaw === "number" && Number.isFinite(sortRaw) ? sortRaw : 0,
+    legacyId: row.legacy_id ?? row.legacyId ?? null,
+    sourceRoute: row.source_route ?? row.sourceRoute ?? null,
+  });
+}
+
+/**
  * @param {Record<string, unknown>} row
  */
 export function normalizeScheduleRecord(row) {
   const month = String(row.month ?? "");
   const [yearStr, monthNum] = month.split("-");
+
+  /** @type {string | null | undefined} */
+  let dateDisplay = row.date_display;
+  if (row.date != null && row.date !== "") {
+    const contract = validateLegacyConfirmedScheduleDateContract(row);
+    if (!contract.ok) {
+      const detail = (contract.errors || []).join("; ") || "unknown";
+      throw new Error(
+        `Schedule date contract failed (legacy confirmed): ${detail}`,
+      );
+    }
+    if (!contract.skipped && dateDisplay == null) {
+      dateDisplay = contract.value.display;
+    }
+  }
+  if (dateDisplay == null) {
+    dateDisplay = formatScheduleDateDisplay(row.date);
+  }
+
   return {
     id: row.id ?? null,
     legacy_id: row.legacy_id ?? null,
     site_slug: row.site_slug ?? null,
     date: row.date ?? null,
-    date_display: row.date_display ?? formatScheduleDateDisplay(row.date),
+    date_display: dateDisplay,
     year: row.year ?? (yearStr ? Number(yearStr) : null),
     month,
     title: row.title ?? null,

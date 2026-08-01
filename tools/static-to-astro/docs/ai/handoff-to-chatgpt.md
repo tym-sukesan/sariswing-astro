@@ -5,17 +5,16 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: CMS Core v2 Schedule TBD date contract helpers COMPLETE
-Phase: cms-core-v2-schedule-tbd-date-contract-helpers
-Module: scripts/lib/schedule-date-contract.mjs
-Verifier: verify:cms-core-v2-schedule-tbd-date-contract-helpers (+ Safety Suite)
-Mio proof: mio-sched-2026-09-01 → tbd · date null · month 2026-09 · 日付未定 · sortOrder 5 · after confirmed Sept peers
-Sort locked: month ASC → confirmed before tbd → confirmed date→sortOrder→legacyId → tbd sortOrder→legacyId → month-unknown last
-Runtime/Admin/Save/schema/migration/seed SQL: unchanged (helpers only)
-Sentinel date: REJECTED
-READY_FOR_MIO_SEED_APPLY: false (until migration + seed regen/apply)
-Next Primary: cms-core-v2-schedule-tbd-date-gosaki-read-compat
-Prior: TBD contract planning COMPLETE · Mio seed write gate NOT READY · preflight Branch B
+Current phase: CMS Core v2 Schedule TBD date Gosaki read compat COMPLETE
+Phase: cms-core-v2-schedule-tbd-date-gosaki-read-compat
+Wire: normalizeScheduleRecord → confirmed date-contract (explicit dateStatus)
+SELECT: no date_status · legacy compareScheduleRecords sort kept
+HTML: hub/month Astro byte-for-byte vs baseline
+Verifier: verify:cms-core-v2-schedule-tbd-date-gosaki-read-compat (+ Safety Suite)
+Admin/Save/schema/migration/Mio seed/TBD runtime: unchanged
+READY_FOR_MIO_SEED_APPLY: false
+Next Primary: cms-core-v2-schedule-tbd-date-admin-save-planning
+Prior: helpers COMPLETE · TBD planning COMPLETE · Mio seed gate NOT READY
 HubSpot: COMPLETE WITH NON-BLOCKING · PC/375 PASS · submit E2E recheck only
 Gosaki CLIENT_SHARE_READY: true (maintained)
 deployed package: dc1c5b62a58d0462ad6629db4847256d316d4a38 (unchanged; no regen)
@@ -26,11 +25,16 @@ readyForAnyFutureFtpApply: false
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
 ```
 
+## CMS Core v2 Schedule TBD date Gosaki read compat (2026-08-01)
+
+- Confirmed-only normalize wire · no TBD comparator on Gosaki public lists
+- August seed candidates all contract PASS · HTML baseline maintained
+
 ## CMS Core v2 Schedule TBD date contract helpers (2026-08-01)
 
 - Pure site-neutral helpers + offline verifier
-- confirmed / tbd month-known / tbd month-unknown · fail-closed · no Gosaki runtime wire
-- Next: Gosaki read compat (no Admin/Save/migration in that phase either until scoped)
+- confirmed / tbd month-known / tbd month-unknown · fail-closed
+- Gosaki read compat (above) wires confirmed normalize only
 
 ## CMS Core v2 Schedule TBD date contract planning (2026-08-01)
 

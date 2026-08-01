@@ -116,6 +116,11 @@ const STEPS = [
     script: "verify-cms-core-v2-schedule-tbd-date-contract-helpers.mjs",
   },
   {
+    id: "schedule-tbd-date-gosaki-read-compat",
+    kind: "node",
+    script: "verify-cms-core-v2-schedule-tbd-date-gosaki-read-compat.mjs",
+  },
+  {
     id: "external-form-provider-contract-validator",
     kind: "node",
     script: "verify-cms-core-v2-external-form-provider-contract-validator.mjs",

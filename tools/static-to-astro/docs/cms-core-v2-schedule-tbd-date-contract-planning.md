@@ -300,8 +300,8 @@ Constraint add order: column+default → backfill → status CHECK → consisten
 | # | Phase | Goal | Risk | STOP if |
 | --- | --- | --- | --- | --- |
 | 1 | `cms-core-v2-schedule-tbd-date-contract-helpers` | **COMPLETE** — Offline helpers + verifier (see §12) | Low | Behavior differs from this doc |
-| 2 | `cms-core-v2-schedule-tbd-date-gosaki-read-compat` | Gosaki read/build/sort deep-eq or documented sort waiver | Medium | Gosaki public order/visual regress without approval |
-| 3 | `cms-core-v2-schedule-tbd-admin-save` | Admin + dry-run/Save fail-closed TBD/confirmed | High | Write path can store sentinel or confirmed+null |
+| 2 | `cms-core-v2-schedule-tbd-date-gosaki-read-compat` | **COMPLETE** — confirmed-only normalize wire · legacy sort kept · HTML byte-eq (see §13) | Medium | Gosaki public order/visual regress without approval |
+| 3 | `cms-core-v2-schedule-tbd-date-admin-save-planning` | Admin + dry-run/Save fail-closed TBD/confirmed (planning first) | High | Write path can store sentinel or confirmed+null |
 | 4 | `cms-core-v2-schedule-tbd-staging-migration-gate` | SQL templates + approval packet only | High | Production ref / unclear rollback |
 | 5 | `cms-core-v2-schedule-tbd-staging-migration-apply` | Human-approved staging migration once | High | Pre counts fail · STOP no retry |
 | 6 | `cms-core-v2-mio-seed-sql-regenerate-after-tbd` | Regen A–E SQL · Option A includes TBD row · still no apply until approval | Medium | Fixture meaning drift |
@@ -341,14 +341,15 @@ Constraint add order: column+default → backfill → status CHECK → consisten
 ```txt
 CMS_CORE_V2_SCHEDULE_TBD_DATE_CONTRACT_PLANNING_COMPLETE: true
 CMS_CORE_V2_SCHEDULE_TBD_DATE_CONTRACT_HELPERS_COMPLETE: true
+CMS_CORE_V2_SCHEDULE_TBD_DATE_GOSAKI_READ_COMPAT_COMPLETE: true
 RECOMMENDED_CONTRACT: nullable_date_plus_date_status
 SENTINEL_DATE_REJECTED: true
 READY_FOR_MIO_SEED_APPLY: false
 SCHEMA_CHANGED: false
-RUNTIME_CHANGED: false
+DATE_STATUS_IN_DB_QUERY: false
 DB_WRITE_EXECUTED: false
 MIGRATION_EXECUTED: false
-NEXT_PRIMARY_RECOMMENDED: cms-core-v2-schedule-tbd-date-gosaki-read-compat
+NEXT_PRIMARY_RECOMMENDED: cms-core-v2-schedule-tbd-date-admin-save-planning
 READY_FOR_ANY_FUTURE_FTP_APPLY: false
 PRODUCTION_UNCHANGED: true
 ```
@@ -363,7 +364,7 @@ PRODUCTION_UNCHANGED: true
 | --- | --- |
 | Module | `scripts/lib/schedule-date-contract.mjs` |
 | Verifier | `verify:cms-core-v2-schedule-tbd-date-contract-helpers` (+ Safety Suite) |
-| Runtime wire | **none** (Gosaki / Mio schedule pages / Admin / Save untouched) |
+| Runtime wire (helpers phase) | **none** initially · confirmed normalize wire landed in §13 |
 | Schema / migration / seed SQL | **unchanged** |
 | Mio fixture proof | `mio-sched-2026-09-01` → `tbd` · `date=null` · `month=2026-09` · display `日付未定` · `sortOrder=5` · September month-page |
 | Sentinel | rejected (`tbd` + date → fail) |
@@ -389,4 +390,25 @@ PRODUCTION_UNCHANGED: true
 
 ### Next
 
-`cms-core-v2-schedule-tbd-date-gosaki-read-compat` — wire/read-compat only after explicit phase; no Admin/Save/migration.
+Superseded by §13 (`cms-core-v2-schedule-tbd-date-gosaki-read-compat`).
+
+---
+
+## 13. Gosaki read compat result (`cms-core-v2-schedule-tbd-date-gosaki-read-compat`)
+
+**Status:** COMPLETE (2026-08-01)
+
+| Item | Value |
+| --- | --- |
+| Connection | `normalizeScheduleRecord` → `validateLegacyConfirmedScheduleDateContract` → `normalizeScheduleDateContract` (`dateStatus: "confirmed"` injected) |
+| SELECT | `SCHEDULE_SELECT` **unchanged** · **no** `date_status` column |
+| Sort | **unchanged** — `compareScheduleRecords` / month-page `date \|\| ""` sort · **not** `compareScheduleDateContract` |
+| TBD rows | null/empty `date` skips contract (no auto-TBD) |
+| Fail-closed | invalid date / month mismatch → throw in normalize |
+| HTML | hub/month Astro **byte-for-byte** vs HTML baseline fixtures |
+| Admin / Save / schema / Mio seed | **unchanged** |
+| Verifier | `verify:cms-core-v2-schedule-tbd-date-gosaki-read-compat` (+ Safety Suite) |
+
+### Next
+
+`cms-core-v2-schedule-tbd-date-admin-save-planning` (or staging migration planning if Admin deferred).

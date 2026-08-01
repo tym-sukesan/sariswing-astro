@@ -186,7 +186,10 @@ READY_FOR_ANY_FUTURE_FTP_APPLY: false
 PRODUCTION_UNCHANGED: true
 TBD_ADMIN_SAVE_PLANNING: cms-core-v2-schedule-tbd-date-admin-save-planning (COMPLETE · docs)
 TBD_ADMIN_STATE_SAVE_PAYLOAD_HELPERS: cms-core-v2-schedule-tbd-admin-state-save-payload-helpers (COMPLETE · offline)
-NEXT_AFTER_BLOCKER_RESOLVED: cms-core-v2-schedule-tbd-staging-migration-gate → apply → seed regen/apply
+TBD_STAGING_MIGRATION_GATE: cms-core-v2-schedule-tbd-staging-migration-gate (COMPLETE)
+TBD_STAGING_MIGRATION_FINAL_REVIEW: cms-core-v2-schedule-tbd-staging-migration-final-review (COMPLETE)
+READY_FOR_SCHEDULE_TBD_STAGING_MIGRATION_APPLY: true
+NEXT_AFTER_BLOCKER_RESOLVED: cms-core-v2-schedule-tbd-staging-migration-apply → seed regen/apply
 ```
 
 Required approval form (future apply only):

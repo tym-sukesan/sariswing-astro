@@ -327,7 +327,10 @@ DB_WRITE_EXECUTED: false
 MIGRATION_EXECUTED: false
 EDGE_DEPLOYED: false
 READY_FOR_MIO_SEED_APPLY: false
-NEXT_PRIMARY_RECOMMENDED: cms-core-v2-schedule-tbd-staging-migration-gate
+CMS_CORE_V2_SCHEDULE_TBD_STAGING_MIGRATION_GATE_COMPLETE: true
+CMS_CORE_V2_SCHEDULE_TBD_STAGING_MIGRATION_FINAL_REVIEW_COMPLETE: true
+READY_FOR_SCHEDULE_TBD_STAGING_MIGRATION_APPLY: true
+NEXT_PRIMARY_RECOMMENDED: cms-core-v2-schedule-tbd-staging-migration-apply
 READY_FOR_ANY_FUTURE_FTP_APPLY: false
 PRODUCTION_UNCHANGED: true
 ```
@@ -350,4 +353,16 @@ PRODUCTION_UNCHANGED: true
 
 ### Next
 
-`cms-core-v2-schedule-tbd-staging-migration-gate`
+Superseded by migration gate (§13).
+
+---
+
+## 13. Staging migration gate / final review
+
+**Status:** Gate COMPLETE · final review COMPLETE · `READY_FOR_SCHEDULE_TBD_STAGING_MIGRATION_APPLY: true` · SQL not executed · schema still NOT NULL · no `date_status` in DB
+
+Docs: `cms-core-v2-schedule-tbd-staging-migration-gate.md` · `cms-core-v2-schedule-tbd-staging-migration-final-review.md`
+
+### Next
+
+`cms-core-v2-schedule-tbd-staging-migration-apply` (one-shot approval) · then Admin UI connect / Save dry-run

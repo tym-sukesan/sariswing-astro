@@ -3,9 +3,13 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**CMS Core v2 Schedule TBD Admin state + Save payload helpers (2026-08-01):** **COMPLETE** — Phase `cms-core-v2-schedule-tbd-admin-state-save-payload-helpers` · `schedule-admin-date-state.mjs` + `schedule-tbd-save-payload.mjs` · modes `legacy-confirmed-only` / `tbd-v1` · TBD write requires both flags exact true · edit date still forbidden · npm `verify:cms-core-v2-schedule-tbd-admin-state-save-payload-helpers` · **no** Admin/Edge/Save runtime wire · **Next Primary:** `cms-core-v2-schedule-tbd-staging-migration-gate`.
+**CMS Core v2 Schedule TBD staging migration final review (2026-08-01):** **COMPLETE** — Phase `cms-core-v2-schedule-tbd-staging-migration-final-review` · ACCESS EXCLUSIVE NOWAIT + timeouts · `PASTE_FROM_A` · fail-closed baseline temp (no IF NOT EXISTS / no DELETE) · data fp uses `extract(epoch from updated_at)` · catalog **definition** fingerprints · rollback schema/validated CHECK guards (no DROP IF EXISTS) · `READY_FOR_SCHEDULE_TBD_STAGING_MIGRATION_APPLY: true` · SQL **not** executed · Doc: `cms-core-v2-schedule-tbd-staging-migration-final-review.md` · **Next Primary:** `cms-core-v2-schedule-tbd-staging-migration-apply` (one-shot approval).
 
-**CMS Core v2 Schedule TBD date Admin/Save planning (2026-08-01):** **COMPLETE (docs-only)** — Phase `cms-core-v2-schedule-tbd-date-admin-save-planning` · offline helpers above complete A+B · TBD Save still after migration only.
+**CMS Core v2 Schedule TBD staging migration gate (2026-08-01):** **COMPLETE** — Phase `cms-core-v2-schedule-tbd-staging-migration-gate` · DO NOT EXECUTE SQL A–E · final-review hardened above · live anon spot-check published 74 · mio 0 · `date_status` absent · npm `verify:cms-core-v2-schedule-tbd-staging-migration-gate`.
+
+**CMS Core v2 Schedule TBD Admin state + Save payload helpers (2026-08-01):** **COMPLETE** — Phase `cms-core-v2-schedule-tbd-admin-state-save-payload-helpers` · offline helpers · **no** runtime wire · superseded next → migration gate above.
+
+**CMS Core v2 Schedule TBD date Admin/Save planning (2026-08-01):** **COMPLETE (docs-only)** — Phase `cms-core-v2-schedule-tbd-date-admin-save-planning` · TBD Save still after migration apply only.
 
 **CMS Core v2 Schedule TBD date Gosaki read compat (2026-08-01):** **COMPLETE** — Phase `cms-core-v2-schedule-tbd-date-gosaki-read-compat` · confirmed normalize wire · legacy sort · HTML byte-eq · Admin/Save planning above.
 

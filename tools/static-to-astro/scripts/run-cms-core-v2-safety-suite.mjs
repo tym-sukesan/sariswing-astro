@@ -126,6 +126,11 @@ const STEPS = [
     script: "verify-cms-core-v2-schedule-tbd-admin-state-save-payload-helpers.mjs",
   },
   {
+    id: "schedule-tbd-staging-migration-gate",
+    kind: "node",
+    script: "verify-cms-core-v2-schedule-tbd-staging-migration-gate.mjs",
+  },
+  {
     id: "external-form-provider-contract-validator",
     kind: "node",
     script: "verify-cms-core-v2-external-form-provider-contract-validator.mjs",

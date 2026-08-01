@@ -4,10 +4,57 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 ## 0. Current next actions（直近）
 
 1. **Primary (Gosaki ops):** クライアントへ **staging 共有**（`CLIENT_SHARE_READY: true` · package `dc1c5b6…`）。本番 cutover はしない。
-2. **並行可 (Kit Core):** **Next Primary** `cms-core-v2-schedule-tbd-staging-migration-gate` → apply → Admin UI connect / Save dry-run → Mio seed regen/apply → Branch A live SELECT pilot · then generic read-only Admin · form onboarding · Admin runtime Save arm mutex（**別承認**）· evening-set hero（**NON_BLOCKING**）。
+2. **並行可 (Kit Core):** **Next Primary** `cms-core-v2-schedule-tbd-staging-migration-apply`（`READY…APPLY: true` · 明示 one-shot 承認のみ・SQL未実行）→ Admin UI connect / Save dry-run → Mio seed regen/apply → Branch A live SELECT pilot · then generic read-only Admin · form onboarding · Admin runtime Save arm mutex（**別承認**）· evening-set hero（**NON_BLOCKING**）。
 3. **並行可:** production hosting **read-only planning**（`HOSTING_READY: false`）。
 4. **並行可 / 別承認:** YouTube 複数件 **永続 Save**（NON_BLOCKING）。
 5. Save arm **false** · `readyForAnyFutureFtpApply: false` · production STOP · `service_role` 禁止 · **deployed package 固定**.
+
+## 0. CMS Core v2 Schedule TBD staging migration final review (2026-08-01)
+
+| Item | Value |
+| --- | --- |
+| Gate | `CMS_CORE_V2_SCHEDULE_TBD_STAGING_MIGRATION_FINAL_REVIEW_COMPLETE: true` |
+| Lock | ACCESS EXCLUSIVE NOWAIT + timeouts on B/D |
+| Baselines | `PASTE_FROM_A` full-table (anon ≠ SoT) |
+| Fingerprint | md5 string_agg row + catalog |
+| Apply | `READY_FOR_SCHEDULE_TBD_STAGING_MIGRATION_APPLY: true` · SQL_EXECUTED false |
+| Next | `cms-core-v2-schedule-tbd-staging-migration-apply` |
+
+```txt
+CMS_CORE_V2_SCHEDULE_TBD_STAGING_MIGRATION_FINAL_REVIEW_COMPLETE: true
+CMS_CORE_V2_SCHEDULE_TBD_STAGING_MIGRATION_GATE_COMPLETE: true
+READY_FOR_SCHEDULE_TBD_STAGING_MIGRATION_APPLY: true
+SQL_EXECUTED: false
+DB_WRITE_EXECUTED: false
+SCHEMA_CHANGED: false
+READY_FOR_MIO_SEED_APPLY: false
+NEXT_PRIMARY_RECOMMENDED: cms-core-v2-schedule-tbd-staging-migration-apply
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+PRODUCTION_UNCHANGED: true
+```
+
+## 0. CMS Core v2 Schedule TBD staging migration gate (2026-08-01)
+
+| Item | Value |
+| --- | --- |
+| Gate | `CMS_CORE_V2_SCHEDULE_TBD_STAGING_MIGRATION_GATE_COMPLETE: true` |
+| SQL | `cms-core-v2-schedule-tbd-date-staging-migration.template.sql` (DO NOT EXECUTE) |
+| Apply | `READY_FOR_SCHEDULE_TBD_STAGING_MIGRATION_APPLY: true` (final-review) |
+| Live anon | published 74 · mio 0 · `date_status` absent |
+| Verifier | `verify:cms-core-v2-schedule-tbd-staging-migration-gate` |
+| Next | apply phase |
+
+```txt
+CMS_CORE_V2_SCHEDULE_TBD_STAGING_MIGRATION_GATE_COMPLETE: true
+READY_FOR_SCHEDULE_TBD_STAGING_MIGRATION_APPLY: true
+SQL_EXECUTED: false
+DB_WRITE_EXECUTED: false
+SCHEMA_CHANGED: false
+READY_FOR_MIO_SEED_APPLY: false
+NEXT_PRIMARY_RECOMMENDED: cms-core-v2-schedule-tbd-staging-migration-apply
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+PRODUCTION_UNCHANGED: true
+```
 
 ## 0. CMS Core v2 Schedule TBD Admin state + Save payload helpers (2026-08-01)
 
@@ -19,7 +66,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | TBD write | both `schemaSupportsTbd` + `tbdWriteEnabled` exact true |
 | Runtime wire | **none** |
 | Verifier | `verify:cms-core-v2-schedule-tbd-admin-state-save-payload-helpers` |
-| Next | `cms-core-v2-schedule-tbd-staging-migration-gate` |
+| Next | superseded → migration gate / apply |
 
 ```txt
 CMS_CORE_V2_SCHEDULE_TBD_ADMIN_STATE_SAVE_PAYLOAD_HELPERS_COMPLETE: true
@@ -27,7 +74,7 @@ ADMIN_SAVE_CHANGED: false
 SCHEMA_CHANGED: false
 DATE_STATUS_IN_DB_QUERY: false
 READY_FOR_MIO_SEED_APPLY: false
-NEXT_PRIMARY_RECOMMENDED: cms-core-v2-schedule-tbd-staging-migration-gate
+NEXT_PRIMARY_RECOMMENDED: cms-core-v2-schedule-tbd-staging-migration-apply
 READY_FOR_ANY_FUTURE_FTP_APPLY: false
 PRODUCTION_UNCHANGED: true
 ```
@@ -41,7 +88,7 @@ PRODUCTION_UNCHANGED: true
 | UI | dateStatus radio + conditional date/month |
 | Pre-migration | TBD UI hidden · reject null date / date_status saves |
 | Offline helpers | COMPLETE (above) |
-| Next | `cms-core-v2-schedule-tbd-staging-migration-gate` |
+| Next | superseded → migration apply |
 
 ```txt
 CMS_CORE_V2_SCHEDULE_TBD_DATE_ADMIN_SAVE_PLANNING_COMPLETE: true
@@ -49,7 +96,7 @@ ADMIN_SAVE_CHANGED: false
 SCHEMA_CHANGED: false
 DATE_STATUS_IN_DB_QUERY: false
 READY_FOR_MIO_SEED_APPLY: false
-NEXT_PRIMARY_RECOMMENDED: cms-core-v2-schedule-tbd-staging-migration-gate
+NEXT_PRIMARY_RECOMMENDED: cms-core-v2-schedule-tbd-staging-migration-apply
 READY_FOR_ANY_FUTURE_FTP_APPLY: false
 PRODUCTION_UNCHANGED: true
 ```
@@ -64,7 +111,7 @@ PRODUCTION_UNCHANGED: true
 | Sort | legacy `compareScheduleRecords` (unchanged) |
 | HTML | hub/month Astro byte-for-byte vs baseline |
 | Verifier | `verify:cms-core-v2-schedule-tbd-date-gosaki-read-compat` |
-| Next | superseded → migration gate |
+| Next | superseded → migration apply |
 
 ```txt
 CMS_CORE_V2_SCHEDULE_TBD_DATE_GOSAKI_READ_COMPAT_COMPLETE: true
@@ -73,7 +120,7 @@ DATE_STATUS_IN_DB_QUERY: false
 READY_FOR_MIO_SEED_APPLY: false
 SCHEMA_CHANGED: false
 ADMIN_SAVE_CHANGED: false
-NEXT_PRIMARY_RECOMMENDED: cms-core-v2-schedule-tbd-staging-migration-gate
+NEXT_PRIMARY_RECOMMENDED: cms-core-v2-schedule-tbd-staging-migration-apply
 READY_FOR_ANY_FUTURE_FTP_APPLY: false
 PRODUCTION_UNCHANGED: true
 ```

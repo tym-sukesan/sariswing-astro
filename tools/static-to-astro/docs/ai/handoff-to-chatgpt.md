@@ -5,16 +5,22 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: CMS Core v2 Schedule TBD Admin state + Save payload helpers COMPLETE
-Phase: cms-core-v2-schedule-tbd-admin-state-save-payload-helpers
-Modules: schedule-admin-date-state.mjs · schedule-tbd-save-payload.mjs
-Modes: legacy-confirmed-only · tbd-v1
-TBD write: schemaSupportsTbd && tbdWriteEnabled (exact true both)
-Edit date: still forbidden · runtime Admin/Edge/Save unwired
-Verifier: verify:cms-core-v2-schedule-tbd-admin-state-save-payload-helpers (+ Safety Suite)
+Current phase: CMS Core v2 Schedule TBD staging migration final review COMPLETE
+Phase: cms-core-v2-schedule-tbd-staging-migration-final-review
+SQL: scripts/supabase/cms-core-v2-schedule-tbd-date-staging-migration.template.sql (DO NOT EXECUTE)
+Docs: final-review.md + staging-migration-gate.md
+Lock: BEGIN → SET LOCAL lock/statement_timeout → LOCK ACCESS EXCLUSIVE NOWAIT (B+D)
+Baselines: PASTE_FROM_A from SQL Editor A (anon published 74 ≠ full-table SoT)
+Fingerprint: md5(string_agg …|extract(epoch from updated_at)) + catalog defs (indexdef/triggerdef/RLS)
+Baseline temp: CREATE TEMPORARY TABLE … ON COMMIT DROP (no IF NOT EXISTS / no DELETE)
+Forward: ADD date_status NOT NULL DEFAULT confirmed · CHECKs · date DROP NOT NULL
+Rollback: schema/validated CHECK guards · DROP CONSTRAINT without IF EXISTS · refuse tbd/null
+Verifier: verify:cms-core-v2-schedule-tbd-staging-migration-gate (+ Safety Suite)
+READY_FOR_SCHEDULE_TBD_STAGING_MIGRATION_APPLY: true
+SQL_EXECUTED: false · SCHEMA_CHANGED: false · RUNTIME_CHANGED: false
 READY_FOR_MIO_SEED_APPLY: false
-Next Primary: cms-core-v2-schedule-tbd-staging-migration-gate
-Prior: Admin/Save planning COMPLETE · Gosaki read compat · date-contract helpers
+Next Primary: cms-core-v2-schedule-tbd-staging-migration-apply (one-shot approval)
+Prior: migration gate · Admin state/payload helpers · Admin/Save planning · Gosaki read compat
 HubSpot: COMPLETE WITH NON-BLOCKING · PC/375 PASS · submit E2E recheck only
 Gosaki CLIENT_SHARE_READY: true (maintained)
 deployed package: dc1c5b62a58d0462ad6629db4847256d316d4a38 (unchanged; no regen)
@@ -24,6 +30,17 @@ readyForOperatorAboutSeedApply: false
 readyForAnyFutureFtpApply: false
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
 ```
+
+## CMS Core v2 Schedule TBD staging migration final review (2026-08-01)
+
+- Hardened locks + PASTE_FROM_A + fingerprints · READY true · still DO NOT EXECUTE
+- Human must confirm SQL Editor project is staging before any block
+
+## CMS Core v2 Schedule TBD staging migration gate (2026-08-01)
+
+- DO NOT EXECUTE A–E SQL template + offline verifier
+- Final-review supersedes earlier READY false / concurrent-Save residual risk
+- No SQL Editor run · no migration directory placement · no runtime wire
 
 ## CMS Core v2 Schedule TBD Admin state + Save payload helpers (2026-08-01)
 
@@ -50,12 +67,12 @@ STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
 
 - Docs-only · recommended nullable `date` + `date_status`
 - Month-known TBD vs month-unknown TBD rules locked
-- Staging migration planned · not executed · production separate gate
+- Staging migration gate COMPLETE · apply not executed · production separate gate
 - Sentinel path closed for Mio seed · helpers phase COMPLETE above
 
 ## CMS Core v2 Mio Supabase live SELECT-only seed write gate (2026-08-01)
 
-- Gate audit COMPLETE · **not ready to apply** (awaits TBD migration path above)
+- Gate audit COMPLETE · **not ready to apply** (awaits TBD migration apply + seed regen)
 - Full A–E SQL prepared with fail-closed Option A assert
 - No ON CONFLICT overwrite · collision if any Mio rows exist
 - Runtime / registry / Contact / Gosaki unchanged · SQL not executed

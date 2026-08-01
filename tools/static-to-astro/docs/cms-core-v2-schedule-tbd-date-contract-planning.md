@@ -354,7 +354,10 @@ DATE_STATUS_IN_DB_QUERY: false
 ADMIN_SAVE_CHANGED: false
 DB_WRITE_EXECUTED: false
 MIGRATION_EXECUTED: false
-NEXT_PRIMARY_RECOMMENDED: cms-core-v2-schedule-tbd-staging-migration-gate
+CMS_CORE_V2_SCHEDULE_TBD_STAGING_MIGRATION_GATE_COMPLETE: true
+CMS_CORE_V2_SCHEDULE_TBD_STAGING_MIGRATION_FINAL_REVIEW_COMPLETE: true
+READY_FOR_SCHEDULE_TBD_STAGING_MIGRATION_APPLY: true
+NEXT_PRIMARY_RECOMMENDED: cms-core-v2-schedule-tbd-staging-migration-apply
 READY_FOR_ANY_FUTURE_FTP_APPLY: false
 PRODUCTION_UNCHANGED: true
 ```
@@ -432,4 +435,46 @@ Doc: `cms-core-v2-schedule-tbd-date-admin-save-planning.md`
 | Null-date Admin drop | `r.id && r.date` filters |
 | Recommended UI | dateStatus radio + conditional date/month |
 | Pre-migration | TBD UI hidden · reject `date_status` / `date:null` saves |
-| Next | migration gate (C) · parallel offline UI validator (A) |
+| Next | superseded by §15 migration gate |
+
+---
+
+## 15. Staging migration gate result (`cms-core-v2-schedule-tbd-staging-migration-gate`)
+
+**Status:** COMPLETE (2026-08-01) · hardened by §16 final review
+
+Doc: `cms-core-v2-schedule-tbd-staging-migration-gate.md`
+SQL: `scripts/supabase/cms-core-v2-schedule-tbd-date-staging-migration.template.sql` (DO NOT EXECUTE)
+
+| Item | Value |
+| --- | --- |
+| Forward | ADD `date_status NOT NULL DEFAULT 'confirmed'` · CHECKs · `date` DROP NOT NULL |
+| Backfill | via ADD COLUMN DEFAULT only — **no** UPDATE (preserves `updated_at`) |
+| Rollback | refused if any `tbd` or null `date` |
+| Live anon preflight | published 74 · gosaki 74 · mio 0 · `date_status` absent · null date 0 |
+| Apply packet | READY true after final review · SQL not executed |
+| Verifier | `verify:cms-core-v2-schedule-tbd-staging-migration-gate` |
+
+### Next
+
+Superseded by §16.
+
+---
+
+## 16. Staging migration final review (`cms-core-v2-schedule-tbd-staging-migration-final-review`)
+
+**Status:** COMPLETE (2026-08-01)
+
+Doc: `cms-core-v2-schedule-tbd-staging-migration-final-review.md`
+
+| Item | Value |
+| --- | --- |
+| Lock | ACCESS EXCLUSIVE NOWAIT + timeouts (B+D) |
+| Baselines | `PASTE_FROM_A` from SQL Editor A (anon ≠ SoT) |
+| Fingerprint | md5 string_agg row + catalog pre/post |
+| READY | `READY_FOR_SCHEDULE_TBD_STAGING_MIGRATION_APPLY: true` |
+| SQL executed | **false** |
+
+### Next
+
+`cms-core-v2-schedule-tbd-staging-migration-apply`

@@ -301,11 +301,12 @@ Constraint add order: column+default → backfill → status CHECK → consisten
 | --- | --- | --- | --- | --- |
 | 1 | `cms-core-v2-schedule-tbd-date-contract-helpers` | **COMPLETE** — Offline helpers + verifier (see §12) | Low | Behavior differs from this doc |
 | 2 | `cms-core-v2-schedule-tbd-date-gosaki-read-compat` | **COMPLETE** — confirmed-only normalize wire · legacy sort kept · HTML byte-eq (see §13) | Medium | Gosaki public order/visual regress without approval |
-| 3 | `cms-core-v2-schedule-tbd-date-admin-save-planning` | Admin + dry-run/Save fail-closed TBD/confirmed (planning first) | High | Write path can store sentinel or confirmed+null |
+| 3 | `cms-core-v2-schedule-tbd-date-admin-save-planning` | **COMPLETE (docs)** — see `cms-core-v2-schedule-tbd-date-admin-save-planning.md` | High | Write path can store sentinel or confirmed+null |
 | 4 | `cms-core-v2-schedule-tbd-staging-migration-gate` | SQL templates + approval packet only | High | Production ref / unclear rollback |
 | 5 | `cms-core-v2-schedule-tbd-staging-migration-apply` | Human-approved staging migration once | High | Pre counts fail · STOP no retry |
-| 6 | `cms-core-v2-mio-seed-sql-regenerate-after-tbd` | Regen A–E SQL · Option A includes TBD row · still no apply until approval | Medium | Fixture meaning drift |
-| 7 | `cms-core-v2-mio-supabase-live-select-only-pilot` | Branch A live SELECT after seed apply | Medium | Seed incomplete · RLS · Gosaki leakage |
+| 6+ | Admin UI validator / Save payload helper / UI connect / dry-run / staging Save | See admin-save planning §8 A–H | High | TBD Save before migration |
+| 7 | `cms-core-v2-mio-seed-sql-regenerate-after-tbd` | Regen A–E SQL · Option A includes TBD row · still no apply until approval | Medium | Fixture meaning drift |
+| 8 | `cms-core-v2-mio-supabase-live-select-only-pilot` | Branch A live SELECT after seed apply | Medium | Seed incomplete · RLS · Gosaki leakage |
 
 **Ops parallel:** Gosaki client staging share unchanged.
 
@@ -342,14 +343,17 @@ Constraint add order: column+default → backfill → status CHECK → consisten
 CMS_CORE_V2_SCHEDULE_TBD_DATE_CONTRACT_PLANNING_COMPLETE: true
 CMS_CORE_V2_SCHEDULE_TBD_DATE_CONTRACT_HELPERS_COMPLETE: true
 CMS_CORE_V2_SCHEDULE_TBD_DATE_GOSAKI_READ_COMPAT_COMPLETE: true
+CMS_CORE_V2_SCHEDULE_TBD_DATE_ADMIN_SAVE_PLANNING_COMPLETE: true
 RECOMMENDED_CONTRACT: nullable_date_plus_date_status
 SENTINEL_DATE_REJECTED: true
 READY_FOR_MIO_SEED_APPLY: false
 SCHEMA_CHANGED: false
 DATE_STATUS_IN_DB_QUERY: false
+ADMIN_SAVE_CHANGED: false
 DB_WRITE_EXECUTED: false
 MIGRATION_EXECUTED: false
-NEXT_PRIMARY_RECOMMENDED: cms-core-v2-schedule-tbd-date-admin-save-planning
+NEXT_PRIMARY_RECOMMENDED: cms-core-v2-schedule-tbd-staging-migration-gate
+NEXT_PARALLEL_OFFLINE: cms-core-v2-schedule-tbd-date-admin-ui-state-validator
 READY_FOR_ANY_FUTURE_FTP_APPLY: false
 PRODUCTION_UNCHANGED: true
 ```
@@ -411,4 +415,20 @@ Superseded by §13 (`cms-core-v2-schedule-tbd-date-gosaki-read-compat`).
 
 ### Next
 
-`cms-core-v2-schedule-tbd-date-admin-save-planning` (or staging migration planning if Admin deferred).
+Superseded by admin-save planning COMPLETE → Next Primary `cms-core-v2-schedule-tbd-staging-migration-gate` (parallel offline: admin UI state validator).
+
+---
+
+## 14. Admin / Save planning result (`cms-core-v2-schedule-tbd-date-admin-save-planning`)
+
+**Status:** COMPLETE (docs-only · 2026-08-01)
+
+Doc: `cms-core-v2-schedule-tbd-date-admin-save-planning.md`
+
+| Item | Value |
+| --- | --- |
+| Date required today | create/dry-run/Edge · edit forbids date |
+| Null-date Admin drop | `r.id && r.date` filters |
+| Recommended UI | dateStatus radio + conditional date/month |
+| Pre-migration | TBD UI hidden · reject `date_status` / `date:null` saves |
+| Next | migration gate (C) · parallel offline UI validator (A) |

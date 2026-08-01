@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**CMS Core v2 Schedule TBD date Gosaki read compat (2026-08-01):** **COMPLETE** — Phase `cms-core-v2-schedule-tbd-date-gosaki-read-compat` · `normalizeScheduleRecord` validates dated rows as **confirmed** via `schedule-date-contract` · **no** `date_status` in SELECT · legacy `compareScheduleRecords` sort kept · hub/month Astro byte-eq · August candidates all PASS · npm `verify:cms-core-v2-schedule-tbd-date-gosaki-read-compat` · **no** Admin/Save/schema/migration/Mio seed/TBD runtime · **Next Primary:** `cms-core-v2-schedule-tbd-date-admin-save-planning`.
+**CMS Core v2 Schedule TBD date Admin/Save planning (2026-08-01):** **COMPLETE (docs-only)** — Phase `cms-core-v2-schedule-tbd-date-admin-save-planning` · Doc: `cms-core-v2-schedule-tbd-date-admin-save-planning.md` · date required on create · edit forbids date · null-date list drop · recommended UI: dateStatus radio + conditional date/month · TBD Save **after** staging migration only · **Next Primary:** `cms-core-v2-schedule-tbd-staging-migration-gate` · parallel offline: admin UI state validator · **no** Admin/Save/schema/DB/Edge/Mio seed code this phase.
+
+**CMS Core v2 Schedule TBD date Gosaki read compat (2026-08-01):** **COMPLETE** — Phase `cms-core-v2-schedule-tbd-date-gosaki-read-compat` · confirmed normalize wire · legacy sort · HTML byte-eq · Admin/Save planning above.
 
 **CMS Core v2 Schedule TBD date contract helpers (2026-08-01):** **COMPLETE** — Phase `cms-core-v2-schedule-tbd-date-contract-helpers` · Module: `scripts/lib/schedule-date-contract.mjs` · confirmed / TBD helpers + sort contract locked · Gosaki read compat above wires confirmed normalize only.
 

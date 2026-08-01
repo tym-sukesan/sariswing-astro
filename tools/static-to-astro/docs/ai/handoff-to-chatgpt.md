@@ -5,16 +5,16 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: CMS Core v2 Schedule TBD date Gosaki read compat COMPLETE
-Phase: cms-core-v2-schedule-tbd-date-gosaki-read-compat
-Wire: normalizeScheduleRecord → confirmed date-contract (explicit dateStatus)
-SELECT: no date_status · legacy compareScheduleRecords sort kept
-HTML: hub/month Astro byte-for-byte vs baseline
-Verifier: verify:cms-core-v2-schedule-tbd-date-gosaki-read-compat (+ Safety Suite)
-Admin/Save/schema/migration/Mio seed/TBD runtime: unchanged
+Current phase: CMS Core v2 Schedule TBD date Admin/Save planning COMPLETE
+Phase: cms-core-v2-schedule-tbd-date-admin-save-planning
+Doc: cms-core-v2-schedule-tbd-date-admin-save-planning.md
+Recommended UI: dateStatus radio + conditional date/month
+TBD Save: only after staging migration apply · pre-migration reject date_status / date null
+Admin/Save/schema/migration/Edge/Mio seed code: unchanged this phase
 READY_FOR_MIO_SEED_APPLY: false
-Next Primary: cms-core-v2-schedule-tbd-date-admin-save-planning
-Prior: helpers COMPLETE · TBD planning COMPLETE · Mio seed gate NOT READY
+Next Primary: cms-core-v2-schedule-tbd-staging-migration-gate
+Parallel offline: cms-core-v2-schedule-tbd-date-admin-ui-state-validator
+Prior: Gosaki read compat COMPLETE · helpers COMPLETE · Mio seed gate NOT READY
 HubSpot: COMPLETE WITH NON-BLOCKING · PC/375 PASS · submit E2E recheck only
 Gosaki CLIENT_SHARE_READY: true (maintained)
 deployed package: dc1c5b62a58d0462ad6629db4847256d316d4a38 (unchanged; no regen)
@@ -24,6 +24,11 @@ readyForOperatorAboutSeedApply: false
 readyForAnyFutureFtpApply: false
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
 ```
+
+## CMS Core v2 Schedule TBD date Admin/Save planning (2026-08-01)
+
+- Docs-only · create requires date · edit forbids date · null-date list drop
+- Phase split A–J · migration before TBD Save
 
 ## CMS Core v2 Schedule TBD date Gosaki read compat (2026-08-01)
 

@@ -160,8 +160,9 @@ PRODUCTION_UNCHANGED: true
 READY_FOR_ANY_FUTURE_FTP_APPLY: false
 TBD_CONTRACT_HELPERS_COMPLETE: true
 TBD_GOSAKI_READ_COMPAT_COMPLETE: true
+TBD_ADMIN_SAVE_PLANNING_COMPLETE: true
 TBD_HELPER_SORT_LOCKED: month ASC → confirmed before tbd → confirmed date→sortOrder→legacyId → tbd sortOrder→legacyId → month-unknown last
-NEXT_RECOMMENDED: cms-core-v2-schedule-tbd-date-admin-save-planning
+NEXT_RECOMMENDED: cms-core-v2-schedule-tbd-staging-migration-gate
 ```
 
 Follow-up (current Kit Primary): Schedule TBD helpers COMPLETE → Gosaki read compat → migration → Mio seed. Contact HubSpot COMPLETE WITH NON-BLOCKING (submit E2E recheck).

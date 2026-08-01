@@ -85,10 +85,12 @@ Current block B inserts **15** dated schedules then **B8 RAISE** → intentional
 
 See `cms-core-v2-schedule-tbd-date-contract-planning.md`:
 
-1. Contract helpers (**COMPLETE**) → Gosaki read compat (**COMPLETE** · confirmed normalize only · legacy sort kept) → Admin/Save planning
-2. Staging migration: nullable `date` + `date_status` (`confirmed`/`tbd`) + CHECKs
+1. Contract helpers (**COMPLETE**) → Gosaki read compat (**COMPLETE**) → Admin/Save planning (**COMPLETE** · docs)
+2. Staging migration gate/apply: nullable `date` + `date_status` (`confirmed`/`tbd`) + CHECKs
 3. Regenerate Mio seed SQL (include TBD row · no fictional day)
 4. Human seed apply → Branch A live SELECT pilot
+
+**Admin/Save planning:** TBD Save must not enable before migration · UI = dateStatus radio + conditional inputs · null-date list filters must change with UI connect.
 
 **Do not** use a sentinel calendar day for `mio-sched-2026-09-01`.
 
@@ -182,7 +184,8 @@ REGISTRY_CHANGED: false
 CONTACT_PROVIDER_UNCHANGED: true
 READY_FOR_ANY_FUTURE_FTP_APPLY: false
 PRODUCTION_UNCHANGED: true
-NEXT_AFTER_BLOCKER_RESOLVED: cms-core-v2-schedule-tbd-date-admin-save-planning → staging migration → seed regen/apply
+TBD_ADMIN_SAVE_PLANNING: cms-core-v2-schedule-tbd-date-admin-save-planning (COMPLETE · docs)
+NEXT_AFTER_BLOCKER_RESOLVED: cms-core-v2-schedule-tbd-staging-migration-gate → apply → seed regen/apply
 ```
 
 Required approval form (future apply only):

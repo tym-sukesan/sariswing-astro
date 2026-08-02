@@ -33,6 +33,7 @@ import {
   SCHEDULE_NON_DRY_RUN_POC_EXPECTED_SUPABASE_HOST,
 } from "./schedule-non-dry-run-poc-config";
 import { G22E_SCHEDULE_NEW_EVENT_INSERT_NON_DRY_RUN_APPROVAL_ID } from "./schedule-write-types";
+import { collectTbdCreateOneshotArmOffFailures } from "./gosaki-schedule-tbd-create-oneshot-config";
 
 export const G22E3_PHASE = "G-22e3-gosaki-schedule-new-event-insert-implementation";
 
@@ -202,6 +203,7 @@ export function getG22eNewEventInsertConfig(
   if (isEnvArmTrue(mergedEnv, "PUBLIC_ADMIN_GOSAKI_SCHEDULE_G22H_REPUBLISH_UPDATE_NON_DRY_RUN_ARMED")) {
     armFailures.push("PUBLIC_ADMIN_GOSAKI_SCHEDULE_G22H_REPUBLISH_UPDATE_NON_DRY_RUN_ARMED must be off");
   }
+  armFailures.push(...collectTbdCreateOneshotArmOffFailures(mergedEnv));
   if (!supabaseConfigured) armFailures.push("Supabase URL/anon key");
 
   const armed = armFailures.length === 0;

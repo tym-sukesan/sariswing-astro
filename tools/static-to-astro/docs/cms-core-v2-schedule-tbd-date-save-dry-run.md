@@ -104,18 +104,18 @@ Payload SoT accepts `tbdDryRunEnabled: true` to generate tbd-v1 candidates **wit
 ```txt
 CMS_CORE_V2_SCHEDULE_TBD_DATE_SAVE_DRY_RUN_COMPLETE: true
 TBD_DRY_RUN_WIRED: true
-TBD_SAVE_WIRED: false
+TBD_SAVE_WIRED: true
 TBD_WRITE_ENABLED: false
 EDGE_CHANGED: false
 DB_WRITE_EXECUTED: false
 READY_FOR_MIO_SEED_APPLY: false
 PRODUCTION_UNCHANGED: true
 READY_FOR_ANY_FUTURE_FTP_APPLY: false
-NEXT_PRIMARY_RECOMMENDED: cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-implementation
+NEXT_PRIMARY_RECOMMENDED: cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-final-preflight
 ```
 
 ---
 
 ## 7. Next Primary
 
-`cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-implementation` — implement CREATE-only oneshot after planning (`cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-planning.md`).
+`cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-final-preflight` — after implementation (`cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-implementation.md` · `IMPLEMENTATION_READY: true` · `ACTUAL_WRITE_READY: false`).

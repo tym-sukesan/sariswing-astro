@@ -38,6 +38,7 @@
     "verify:cms-core-v2-schedule-tbd-admin-ui-connect": "node scripts/verify-cms-core-v2-schedule-tbd-admin-ui-connect.mjs",
     "verify:cms-core-v2-schedule-tbd-date-save-dry-run": "node scripts/verify-cms-core-v2-schedule-tbd-date-save-dry-run.mjs",
     "verify:cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-planning": "node scripts/verify-cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-planning.mjs",
+    "verify:cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-implementation": "node scripts/verify-cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-implementation.mjs",
     "verify:cms-core-v2-schedule-tbd-admin-state-save-payload-helpers": "node scripts/verify-cms-core-v2-schedule-tbd-admin-state-save-payload-helpers.mjs",
     "verify:cms-core-v2-schedule-tbd-staging-migration-gate": "node scripts/verify-cms-core-v2-schedule-tbd-staging-migration-gate.mjs",
     "generate:mio-live-select-seed-sql": "node scripts/generate-mio-kisaragi-jazz-live-select-seed-sql.mjs",

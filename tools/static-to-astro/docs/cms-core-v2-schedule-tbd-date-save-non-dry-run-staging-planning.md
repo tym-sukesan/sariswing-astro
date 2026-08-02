@@ -21,9 +21,9 @@ Prior:
 CMS_CORE_V2_SCHEDULE_TBD_DATE_SAVE_NON_DRY_RUN_STAGING_PLANNING_COMPLETE: true
 READY_FOR_TBD_NON_DRY_RUN_IMPLEMENTATION: true
 READY_FOR_TBD_NON_DRY_RUN_EXECUTION: false
-TBD_SAVE_WIRED: false
+TBD_SAVE_WIRED: true
 TBD_WRITE_ENABLED: false
-RUNTIME_CHANGED: false
+RUNTIME_CHANGED: true
 EDGE_CHANGED: false
 ENV_CHANGED: false
 DB_WRITE_EXECUTED: false
@@ -31,8 +31,11 @@ SAVE_EXECUTED: false
 MIO_SEED_UNCHANGED: true
 PRODUCTION_UNCHANGED: true
 READY_FOR_ANY_FUTURE_FTP_APPLY: false
-NEXT_PRIMARY_RECOMMENDED: cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-implementation
+NEXT_PRIMARY_RECOMMENDED: cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-final-preflight
+IMPLEMENTATION_PHASE: cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-implementation
 ```
+
+**Implementation supersedes planning “RUNTIME_CHANGED: false” inventory** — see `cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-implementation.md` (`IMPLEMENTATION_READY: true` · `ACTUAL_WRITE_READY: false`).
 
 **Staging only:** `kmjqppxjdnwwrtaeqjta`
 
@@ -406,9 +409,11 @@ select count(*) from public.schedules where site_slug = 'mio-kisaragi-jazz';
 
 ## 9. Next Primary
 
-`cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-implementation`
+`cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-final-preflight`
 
-Then: final-preflight → operator Save once → execution-result → arms OFF.
+(Implementation COMPLETE — `cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-implementation.md`)
+
+Then: operator Save once → execution-result → arms OFF.
 
 ---
 

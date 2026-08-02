@@ -168,6 +168,14 @@ export const G22E_SCHEDULE_NEW_EVENT_INSERT_NON_DRY_RUN_APPROVAL_ID:
   ScheduleG22eNewEventInsertNonDryRunSliceApprovalId =
   "G-22e-gosaki-schedule-new-event-insert-non-dry-run-slice";
 
+/** CMS Core v2 — Schedule TBD CREATE oneshot (staging Path B; month-known). */
+export type ScheduleTbdCreateNonDryRunOneshotApprovalId =
+  "cms-core-v2-schedule-tbd-create-non-dry-run-oneshot";
+
+export const CMS_CORE_V2_SCHEDULE_TBD_CREATE_NON_DRY_RUN_ONESHOT_APPROVAL_ID:
+  ScheduleTbdCreateNonDryRunOneshotApprovalId =
+  "cms-core-v2-schedule-tbd-create-non-dry-run-oneshot";
+
 /** G-22f Gosaki unpublish UPDATE non-dry-run single slice — staging shell operator UI. */
 export type ScheduleG22fUnpublishUpdateNonDryRunSliceApprovalId =
   "G-22f-gosaki-schedule-unpublish-update-non-dry-run-slice";
@@ -205,6 +213,7 @@ export type ScheduleWriteApprovalIdUnion =
   | ScheduleG13c2EventBPocAuditCleanupNonDryRunApprovalId
   | ScheduleG22dDuplicateInsertNonDryRunSliceApprovalId
   | ScheduleG22eNewEventInsertNonDryRunSliceApprovalId
+  | ScheduleTbdCreateNonDryRunOneshotApprovalId
   | ScheduleG22fUnpublishUpdateNonDryRunSliceApprovalId
   | ScheduleG22hRepublishUpdateNonDryRunSliceApprovalId;
 
@@ -229,9 +238,35 @@ export const SCHEDULE_WRITE_APPROVAL_IDS: readonly ScheduleWriteApprovalIdUnion[
   G13C2_SCHEDULE_EVENT_B_POC_AUDIT_CLEANUP_NON_DRY_RUN_APPROVAL_ID,
   G22D_SCHEDULE_DUPLICATE_INSERT_NON_DRY_RUN_APPROVAL_ID,
   G22E_SCHEDULE_NEW_EVENT_INSERT_NON_DRY_RUN_APPROVAL_ID,
+  CMS_CORE_V2_SCHEDULE_TBD_CREATE_NON_DRY_RUN_ONESHOT_APPROVAL_ID,
   G22F_SCHEDULE_UNPUBLISH_UPDATE_NON_DRY_RUN_APPROVAL_ID,
   G22H_SCHEDULE_REPUBLISH_UPDATE_NON_DRY_RUN_APPROVAL_ID,
 ];
+
+/**
+ * TBD CREATE oneshot INSERT payload (Path B). Separate from confirmed
+ * ScheduleInsertWritePayload (`date: string` required).
+ */
+export type ScheduleTbdCreateOneshotInsertPayload = {
+  legacy_id: string;
+  site_slug: string;
+  date_status: "tbd";
+  date: null;
+  month: string;
+  year: number;
+  source_route: string;
+  source_file: string;
+  title: string;
+  venue: string | null;
+  open_time: string | null;
+  start_time: string | null;
+  price: string | null;
+  description: string | null;
+  published: false;
+  show_on_home: false;
+  home_order: null;
+  sort_order: number;
+};
 
 export type ScheduleUpdateWritePayload = {
   date?: string;

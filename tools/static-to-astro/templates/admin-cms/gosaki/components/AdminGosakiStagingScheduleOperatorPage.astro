@@ -21,6 +21,10 @@ import {
   SCHEDULE_TBD_ADMIN_UI_CONFIG_ELEMENT_ID,
   resolveScheduleTbdAdminUiServerConfig,
 } from "../../../../../../src/lib/admin/staging-data/schedule-tbd-admin-ui";
+import {
+  TBD_CREATE_ONESHOT_PAGE_CONFIG_ELEMENT_ID,
+  resolveTbdCreateOneshotPageServerConfig,
+} from "../../../../../../src/lib/admin/staging-write/gosaki-schedule-tbd-create-oneshot-config";
 import AdminGosakiStagingNav from "./AdminGosakiStagingNav.astro";
 import AdminGosakiStagingSafetyChips from "./AdminGosakiStagingSafetyChips.astro";
 import {
@@ -38,6 +42,7 @@ const g9kSaveButtonPageConfig = resolveG9kSaveButtonPageServerConfig(import.meta
 const g13c1PageConfig = resolveG13c1EventAPocCleanupPageServerConfig(import.meta.env);
 const g13c2PageConfig = resolveG13c2EventBPocCleanupPageServerConfig(import.meta.env);
 const tbdAdminUiConfig = resolveScheduleTbdAdminUiServerConfig(import.meta.env);
+const tbdCreateOneshotPageConfig = resolveTbdCreateOneshotPageServerConfig(import.meta.env);
 const tbdAdminUiConfigJson = JSON.stringify({
   schemaSupportsTbd: tbdAdminUiConfig.schemaSupportsTbd,
   tbdAdminUiEnabled: tbdAdminUiConfig.tbdAdminUiEnabled,
@@ -45,6 +50,7 @@ const tbdAdminUiConfigJson = JSON.stringify({
   tbdWriteEnabled: tbdAdminUiConfig.tbdWriteEnabled,
   supabaseUrl: tbdAdminUiConfig.supabaseUrl,
 });
+const tbdCreateOneshotUiVisible = tbdCreateOneshotPageConfig.saveEnabled === true;
 
 const savePrepNote = g9kSaveButtonPageConfig.saveButtonSaveEnabled
   ? "「変更を確認」で内容を確認してから「更新する」を押してください。"
@@ -91,6 +97,16 @@ function displayValue(value: string | null | undefined): string {
     id={SCHEDULE_TBD_ADMIN_UI_CONFIG_ELEMENT_ID}
     type="application/json"
     set:html={tbdAdminUiConfigJson}
+  />
+  <div
+    id={TBD_CREATE_ONESHOT_PAGE_CONFIG_ELEMENT_ID}
+    data-client-arm-ok={tbdCreateOneshotPageConfig.clientArmOk ? "true" : "false"}
+    data-server-arm-ok={tbdCreateOneshotPageConfig.serverArmOk ? "true" : "false"}
+    data-tbd-write-enabled={tbdCreateOneshotPageConfig.tbdWriteEnabled ? "true" : "false"}
+    data-write-dry-run-false={tbdCreateOneshotPageConfig.writeDryRunExactFalse ? "true" : "false"}
+    data-save-enabled={tbdCreateOneshotPageConfig.saveEnabled ? "true" : "false"}
+    data-approval-id={tbdCreateOneshotPageConfig.approvalId}
+    hidden
   />
   <header class="admin-gosaki-page-header admin-gosaki-page-header--with-actions">
     <div>
@@ -288,6 +304,31 @@ function displayValue(value: string | null | undefined): string {
         <div
           id="gosaki-add-tbd-dry-run-result"
           class="gosaki-schedule-tbd-dry-run__result"
+          hidden
+          aria-live="polite"
+        ></div>
+      </div>
+
+      <div
+        id="gosaki-add-tbd-create-oneshot-wrap"
+        class="gosaki-schedule-tbd-create-oneshot"
+        hidden={!tbdCreateOneshotUiVisible}
+      >
+        <p class="gosaki-schedule-tbd-create-oneshot__notice" role="note">
+          Staging限定 · unpublished 1行を作成 · 既存Scheduleは変更しません · 自動cleanupなし ·
+          結果が曖昧なら再クリック禁止
+        </p>
+        <button
+          type="button"
+          class="admin-button"
+          id="gosaki-add-tbd-create-oneshot-btn"
+          disabled
+        >
+          Staging one-shot CREATE
+        </button>
+        <div
+          id="gosaki-add-tbd-create-oneshot-result"
+          class="gosaki-schedule-tbd-create-oneshot__result"
           hidden
           aria-live="polite"
         ></div>

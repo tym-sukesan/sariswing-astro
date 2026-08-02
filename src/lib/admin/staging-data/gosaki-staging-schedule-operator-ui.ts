@@ -52,6 +52,29 @@ import {
   type ScheduleTbdDryRunCapability,
 } from "./schedule-tbd-save-dry-run";
 import {
+  evaluateTbdCreateOneshotUiGate,
+  readTbdCreateOneshotPageConfigFromDom,
+} from "../staging-write/gosaki-schedule-tbd-create-oneshot-config";
+import {
+  buildTbdCreateOneshotFixedInsertPayload,
+  fingerprintTbdCreateOneshotPayload,
+  TBD_CREATE_ONESHOT_DESCRIPTION,
+  TBD_CREATE_ONESHOT_LEGACY_ID,
+  TBD_CREATE_ONESHOT_MONTH,
+  TBD_CREATE_ONESHOT_TITLE,
+  TBD_CREATE_ONESHOT_VENUE,
+} from "../staging-write/gosaki-schedule-tbd-create-oneshot-guards";
+import {
+  executeTbdCreateOneshotSave,
+  getTbdCreateOneshotTerminalState,
+  markTbdCreateOneshotAmbiguousFromUi,
+  type TbdCreateOneshotSaveOutcome,
+} from "../staging-write/gosaki-schedule-tbd-create-oneshot-save";
+import { TBD_CREATE_ONESHOT_PHASE } from "../staging-write/gosaki-schedule-tbd-create-oneshot-guards";
+import {
+  CMS_CORE_V2_SCHEDULE_TBD_CREATE_NON_DRY_RUN_ONESHOT_APPROVAL_ID,
+} from "../staging-write/schedule-write-types";
+import {
   buildGosakiScheduleDuplicateDraft,
   executeG22bScheduleDuplicateDryRun,
   GOSAKI_SCHEDULE_DUPLICATE_DRAFT_LEGACY_LABEL,
@@ -1069,6 +1092,8 @@ function runAddTbdDryRun(): void {
     content: readFormContentForTbdDryRun("add"),
   });
   renderTbdDryRunResult("add", result);
+  lockTbdCreateOneshotPreviewFromDryRun(result);
+  updateTbdCreateOneshotButtonState();
 }
 
 function runEditTbdDryRun(): void {
@@ -1093,6 +1118,166 @@ function runEditTbdDryRun(): void {
   renderTbdDryRunResult("edit", result);
 }
 
+let lastTbdCreateOneshotPreviewOk = false;
+let lastTbdCreateOneshotPreviewFingerprint: string | null = null;
+
+function formMatchesTbdCreateOneshotFixedRow(): boolean {
+  const content = readFormContentForTbdDryRun("add");
+  const capability = getTbdAdminUiCapability();
+  const dateInput = readScheduleAdminDateFormInput("add", capability, {
+    operation: SCHEDULE_ADMIN_DATE_OPERATION_CREATE,
+  });
+  return (
+    dateInput.dateStatus === SCHEDULE_DATE_STATUS_TBD &&
+    dateInput.tbdMonthMode === SCHEDULE_TBD_MONTH_MODE_KNOWN &&
+    String(dateInput.month ?? "") === TBD_CREATE_ONESHOT_MONTH &&
+    content.title.trim() === TBD_CREATE_ONESHOT_TITLE &&
+    content.venue.trim() === TBD_CREATE_ONESHOT_VENUE &&
+    content.description.trim() === TBD_CREATE_ONESHOT_DESCRIPTION &&
+    content.published === false
+  );
+}
+
+function lockTbdCreateOneshotPreviewFromDryRun(
+  result: ReturnType<typeof runScheduleTbdSavePayloadDryRun>,
+): void {
+  lastTbdCreateOneshotPreviewOk = false;
+  lastTbdCreateOneshotPreviewFingerprint = null;
+  if (!result.ok || result.operation !== "create" || !result.payload) return;
+  if (!formMatchesTbdCreateOneshotFixedRow()) return;
+  const payload = result.payload;
+  if (payload.date_status !== "tbd" || payload.date != null) return;
+  if (payload.month !== TBD_CREATE_ONESHOT_MONTH) return;
+  if (payload.title !== TBD_CREATE_ONESHOT_TITLE) return;
+  if (payload.published !== false) return;
+  const fixed = buildTbdCreateOneshotFixedInsertPayload();
+  lastTbdCreateOneshotPreviewFingerprint = fingerprintTbdCreateOneshotPayload(
+    fixed as unknown as Record<string, unknown>,
+  );
+  lastTbdCreateOneshotPreviewOk = true;
+}
+
+function currentTbdCreateOneshotFingerprint(): string | null {
+  if (!formMatchesTbdCreateOneshotFixedRow()) return null;
+  try {
+    return fingerprintTbdCreateOneshotPayload(
+      buildTbdCreateOneshotFixedInsertPayload() as unknown as Record<string, unknown>,
+    );
+  } catch {
+    return null;
+  }
+}
+
+function updateTbdCreateOneshotButtonState(): void {
+  const wrap = document.getElementById("gosaki-add-tbd-create-oneshot-wrap");
+  const button = document.getElementById(
+    "gosaki-add-tbd-create-oneshot-btn",
+  ) as HTMLButtonElement | null;
+  if (!(wrap instanceof HTMLElement) || !button) return;
+
+  const page = readTbdCreateOneshotPageConfigFromDom();
+  const capability = getTbdAdminUiCapability();
+  const terminal = getTbdCreateOneshotTerminalState();
+  const show = page.saveEnabled === true;
+  wrap.hidden = !show;
+  if (!show) {
+    button.disabled = true;
+    return;
+  }
+
+  const gate = evaluateTbdCreateOneshotUiGate({
+    signedIn: stagingAuthSignedIn === true,
+    dryRunPreviewOk: lastTbdCreateOneshotPreviewOk,
+    previewFingerprint: lastTbdCreateOneshotPreviewFingerprint,
+    currentFingerprint: currentTbdCreateOneshotFingerprint(),
+    oneshotTerminal: terminal,
+    schemaSupportsTbd: capability.schemaSupportsTbd,
+    tbdAdminUiEnabled: capability.tbdAdminUiEnabled,
+    serverArmOkFromSsr: page.serverArmOk,
+  });
+  button.disabled = !gate.enabled || saveInFlight;
+  button.title = gate.reason;
+}
+
+function renderTbdCreateOneshotResult(outcome: TbdCreateOneshotSaveOutcome): void {
+  const el = document.getElementById("gosaki-add-tbd-create-oneshot-result");
+  if (!(el instanceof HTMLElement)) return;
+  el.hidden = false;
+  if (outcome.ambiguous) {
+    el.innerHTML = `<p role="alert"><strong>結果不明</strong> — 再クリック禁止。exact SELECT で ${TBD_CREATE_ONESHOT_LEGACY_ID} を確認してください。</p><p>${escapeHtml(outcome.errorMessage ?? "")}</p>`;
+    return;
+  }
+  if (!outcome.ok) {
+    el.innerHTML = `<p role="alert"><strong>失敗</strong></p><p>${escapeHtml(outcome.errorMessage ?? outcome.guardReasons.join("; "))}</p>`;
+    return;
+  }
+  el.innerHTML = `<p role="status"><strong>成功</strong> — insertedId <code>${escapeHtml(String(outcome.insertedId ?? ""))}</code> · legacy_id <code>${escapeHtml(String(outcome.legacy_id ?? ""))}</code> · 再実行不可</p>`;
+}
+
+async function runTbdCreateOneshotSave(): Promise<void> {
+  const button = document.getElementById(
+    "gosaki-add-tbd-create-oneshot-btn",
+  ) as HTMLButtonElement | null;
+  if (button) button.disabled = true;
+
+  const page = readTbdCreateOneshotPageConfigFromDom();
+  const capability = getTbdAdminUiCapability();
+  const gate = evaluateTbdCreateOneshotUiGate({
+    signedIn: stagingAuthSignedIn === true,
+    dryRunPreviewOk: lastTbdCreateOneshotPreviewOk,
+    previewFingerprint: lastTbdCreateOneshotPreviewFingerprint,
+    currentFingerprint: currentTbdCreateOneshotFingerprint(),
+    oneshotTerminal: getTbdCreateOneshotTerminalState(),
+    schemaSupportsTbd: capability.schemaSupportsTbd,
+    tbdAdminUiEnabled: capability.tbdAdminUiEnabled,
+    serverArmOkFromSsr: page.serverArmOk,
+  });
+  if (!gate.enabled) {
+    window.alert(gate.reason);
+    updateTbdCreateOneshotButtonState();
+    return;
+  }
+
+  saveInFlight = true;
+  updateTbdCreateOneshotButtonState();
+
+  const url = String(import.meta.env.PUBLIC_SUPABASE_URL ?? "").trim();
+  const anonKey = String(import.meta.env.PUBLIC_SUPABASE_ANON_KEY ?? "").trim();
+
+  let outcome: TbdCreateOneshotSaveOutcome;
+  try {
+    outcome = await executeTbdCreateOneshotSave({
+      url,
+      anonKey,
+      dryRunPreviewOk: lastTbdCreateOneshotPreviewOk,
+      previewFingerprint: lastTbdCreateOneshotPreviewFingerprint,
+      currentFingerprint: currentTbdCreateOneshotFingerprint(),
+      configOptions: { serverArmOkFromSsr: page.serverArmOk },
+    });
+  } catch (err) {
+    markTbdCreateOneshotAmbiguousFromUi();
+    outcome = {
+      phase: TBD_CREATE_ONESHOT_PHASE,
+      ok: false,
+      operation: "tbd-create-oneshot",
+      actualWrite: false,
+      approvalId: CMS_CORE_V2_SCHEDULE_TBD_CREATE_NON_DRY_RUN_ONESHOT_APPROVAL_ID,
+      terminalState: "ambiguous",
+      guardReasons: [err instanceof Error ? err.message : String(err)],
+      warnings: [],
+      ambiguous: true,
+      errorCode: "ui_ambiguous",
+      errorMessage:
+        "結果が不明です。再クリック禁止 — exact SELECT で確認してください。",
+      networkCalls: 0,
+    };
+  }
+
+  renderTbdCreateOneshotResult(outcome);
+  saveInFlight = false;
+  updateTbdCreateOneshotButtonState();
+}
+
 function wireTbdDryRunButtons(): void {
   document.getElementById("gosaki-add-tbd-dry-run-btn")?.addEventListener("click", (event) => {
     event.preventDefault();
@@ -1102,6 +1287,12 @@ function wireTbdDryRunButtons(): void {
     event.preventDefault();
     runEditTbdDryRun();
   });
+  document
+    .getElementById("gosaki-add-tbd-create-oneshot-btn")
+    ?.addEventListener("click", (event) => {
+      event.preventDefault();
+      void runTbdCreateOneshotSave();
+    });
 }
 
 function setNamedRadio(name: string, value: string): void {
@@ -1135,6 +1326,7 @@ function syncAddDateAdminState(): void {
     }
     if (result.value.month) setPreviewLink("gosaki-add-preview-link", result.value.month);
   }
+  updateTbdCreateOneshotButtonState();
 }
 
 function syncEditDateAdminState(): void {
@@ -4142,6 +4334,7 @@ export async function initGosakiStagingScheduleOperatorUi(): Promise<void> {
   updateUnpublishButtonState();
   updateRepublishButtonState();
   updateSaveTargetPanel();
+  updateTbdCreateOneshotButtonState();
 }
 
 if (typeof document !== "undefined") {

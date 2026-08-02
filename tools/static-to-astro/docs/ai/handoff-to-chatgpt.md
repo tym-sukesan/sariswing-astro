@@ -5,18 +5,20 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: CMS Core v2 Schedule TBD non-dry-run staging planning COMPLETE (docs)
-Phase: cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-planning
-Decision: CREATE-only oneshot · Path B shell INSERT · dual arm
+Current phase: CMS Core v2 Schedule TBD non-dry-run staging boundary hardening COMPLETE
+Phase: cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-boundary-hardening
+Decision: CREATE-only oneshot · public executeTbdCreateOneshotSave only · INSERT private · INSERT直前再guard · schema probe · preflight skip不可
 Test row: schedule-2026-11-001 · published=false · date_status=tbd · date=null · month=2026-11
 Approval ID: cms-core-v2-schedule-tbd-create-non-dry-run-oneshot
-READY_FOR_TBD_NON_DRY_RUN_IMPLEMENTATION: true
-READY_FOR_TBD_NON_DRY_RUN_EXECUTION: false
-Runtime / Edge / env / DB: unchanged
-Doc: docs/cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-planning.md
-Verifier: verify:cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-planning (+ Safety Suite)
-Next Primary: cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-implementation
-Prior: Save dry-run · Admin UI connect · date_status read-wiring · migration apply
+COMMIT_READY: true
+IMPLEMENTATION_READY: true
+ACTUAL_WRITE_READY: false
+ARMS_OFF: true · ENV_CHANGED: false · DB_WRITE_EXECUTED: false · EDGE_CHANGED: false
+CLEANUP_IMPLEMENTED: false
+Doc: docs/cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-implementation.md
+Verifier: verify:cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-implementation (108 PASS) · Safety Suite ALL PASS · arms-OFF PC1280/SP375 writeRequests=[]
+Next Primary: cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-final-preflight
+Prior: implementation · non-dry-run planning · Save dry-run · Admin UI connect · date_status read-wiring · migration apply
 HubSpot: COMPLETE WITH NON-BLOCKING · PC/375 PASS · submit E2E recheck only
 Gosaki CLIENT_SHARE_READY: true (maintained)
 deployed package: dc1c5b62a58d0462ad6629db4847256d316d4a38 (unchanged; no regen)
@@ -27,13 +29,21 @@ readyForAnyFutureFtpApply: false
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
 ```
 
+## CMS Core v2 Schedule TBD non-dry-run staging boundary hardening (2026-08-03)
+
+- Low-level INSERT unexported · INSERT-boundary re-guards · schema probe · no offline preflight skip · COMMIT_READY true · ACTUAL_WRITE_READY false
+
+## CMS Core v2 Schedule TBD non-dry-run staging implementation (2026-08-03)
+
+- Path B CREATE-only oneshot wired · arms OFF · no actual Save/DB write · hardened above
+
 ## CMS Core v2 Schedule TBD non-dry-run staging planning (2026-08-03)
 
-- CREATE-only oneshot planning · dual arm · exact DELETE cleanup · no runtime yet
+- CREATE-only oneshot planning · dual arm · exact DELETE cleanup · implementation above
 
 ## CMS Core v2 Schedule TBD date Save dry-run (2026-08-03)
 
-- Local TBD payload dry-run · Save still blocked · production dry-run off
+- Local TBD payload dry-run · Save still blocked by default · production dry-run off
 
 ## CMS Core v2 Schedule TBD Admin UI connect (2026-08-02)
 

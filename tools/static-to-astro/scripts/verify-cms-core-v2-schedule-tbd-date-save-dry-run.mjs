@@ -77,8 +77,15 @@ assert("operator wires dry-run module", /schedule-tbd-save-dry-run/.test(operato
 assert("operator has Dry-run確認 handler", /runAddTbdDryRun|tbd-dry-run-btn/.test(operatorSrc));
 assert("astro has dry-run button", /gosaki-add-tbd-dry-run-btn/.test(astroSrc));
 assert("astro injects tbdDryRunEnabled", /tbdDryRunEnabled/.test(astroSrc));
-assert("astro keeps tbdWriteEnabled false", /tbdWriteEnabled:\s*tbdAdminUiConfig\.tbdWriteEnabled/.test(astroSrc));
+assert(
+  "astro injects tbdWriteEnabled from SSR config",
+  /tbdWriteEnabled:\s*tbdAdminUiConfig\.tbdWriteEnabled/.test(astroSrc),
+);
 assert("ui has tbdDryRunEnabled", /tbdDryRunEnabled/.test(uiSrc));
+assert(
+  "dry-run module still forces tbdWriteEnabled false on preview path",
+  /tbdWriteEnabled:\s*false/.test(dryRunSrc),
+);
 
 assert(
   "operator does not call fetch for TBD dry-run path",

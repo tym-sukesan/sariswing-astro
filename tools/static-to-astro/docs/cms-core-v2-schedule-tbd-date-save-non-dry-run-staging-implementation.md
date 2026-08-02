@@ -1,0 +1,139 @@
+# CMS Core v2 — Schedule TBD date Save non-dry-run staging implementation
+
+- **Phase:** `cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-implementation`
+- **Follow-up:** `cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-boundary-hardening`
+- **Date:** 2026-08-03
+- **Status:** **COMPLETE (implementation + boundary hardening + offline verifier)**
+- **This phase:** Path B CREATE-only oneshot wire · **low-level INSERT non-exported** · INSERT直前再guard · schema probe · arms OFF · no Save · no DB write · no Edge deploy · no env change · no commit/push
+
+Prior: `cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-planning.md`
+
+---
+
+## 0. Gates
+
+```txt
+CMS_CORE_V2_SCHEDULE_TBD_DATE_SAVE_NON_DRY_RUN_STAGING_IMPLEMENTATION_COMPLETE: true
+CMS_CORE_V2_SCHEDULE_TBD_DATE_SAVE_NON_DRY_RUN_STAGING_BOUNDARY_HARDENING_COMPLETE: true
+IMPLEMENTATION_READY: true
+COMMIT_READY: true
+ACTUAL_WRITE_READY: false
+READY_FOR_TBD_NON_DRY_RUN_EXECUTION: false
+TBD_SAVE_WIRED: true
+TBD_WRITE_ENABLED: false
+ARMS_OFF: true
+ENV_CHANGED: false
+RUNTIME_CHANGED: true
+EDGE_CHANGED: false
+DB_WRITE_EXECUTED: false
+SAVE_EXECUTED: false
+CLEANUP_IMPLEMENTED: false
+MIO_SEED_UNCHANGED: true
+PRODUCTION_UNCHANGED: true
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+NEXT_PRIMARY_RECOMMENDED: cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-final-preflight
+```
+
+**Staging only:** `kmjqppxjdnwwrtaeqjta`
+
+**Production STOP:** `vsbvndwuajjhnzpohghh`
+
+---
+
+## 1. What was implemented
+
+### 1.1 Create-only write API
+
+| Module | Role |
+| --- | --- |
+| `gosaki-schedule-tbd-create-oneshot-guards.ts` | Fixed row + allowlist + fingerprint + preflight baselines |
+| `gosaki-schedule-tbd-create-oneshot-config.ts` | Dual arm + staging/host + mutex + UI gate |
+| `gosaki-schedule-tbd-create-oneshot-save.ts` | **public** `executeTbdCreateOneshotSave` only · **private** INSERT |
+| `schedule-insert-write-adapter.ts` | confirmed `insertNewEventScheduleWrite` only (TBD INSERT **not exported**) |
+
+**Boundary hardening:** low-level INSERT is `insertTbdCreateOneshotScheduleWriteInternal` (module-private). INSERT直前に staging ref / production 拒否 / dual arm / fixed payload を再確認。独立 `probeDateStatusColumn` schema probe。`deps.offline` preflight skip **削除**（runtime skip 不可）。
+
+- Uses `buildScheduleTbdSavePayload` · `mode=tbd-v1` · `operation=create` · `dryRun` write path via `tbdWriteEnabled`
+- No `buildScheduleLockedWriteRequest` / UPDATE
+- No fake `expectedBeforeUpdatedAt`
+- Returned row exact-field check; zero / mismatch → fail or ambiguous (no retry)
+
+### 1.2 Dual arm / capability
+
+| Arm | Env | Parse |
+| --- | --- | --- |
+| Client | `PUBLIC_ADMIN_SCHEDULE_TBD_CREATE_NON_DRY_RUN_ARMED` | `isSaveArmExactTrue` (`=== "true"`) |
+| Server | `ADMIN_SCHEDULE_TBD_CREATE_NON_DRY_RUN_SERVER_ARMED` | same · **not** baked as raw string |
+
+SSR (`resolveTbdCreateOneshotPageServerConfig`) passes **booleans only** (`data-server-arm-ok`, `data-tbd-write-enabled`, …).
+
+`tbdWriteEnabled` SSR true only when dual arms + staging ref + `PUBLIC_ADMIN_WRITE_DRY_RUN==="false"` + write stack.
+
+### 1.3 Fixed oneshot allowlist
+
+- `site_slug=gosaki-piano` · `legacy_id=schedule-2026-11-001`
+- `date_status=tbd` · `date=null` · `month=2026-11` · `source_route=/schedule/2026-11/`
+- `title=【CMS Kit staging】TBD create oneshot PoC` · venue/description markers
+- `published=false` · `show_on_home=false` · `home_order=null` · `sort_order=0`
+- Approval: `cms-core-v2-schedule-tbd-create-non-dry-run-oneshot`
+
+### 1.4 Preflight (designed; not executed this phase)
+
+Baselines: total **79** · mio **0** · tbd **0** · target legacy_id **0**. Drift → STOP.
+
+### 1.5 Preview fingerprint
+
+Dry-run (add/create) must match fixed oneshot fields → fingerprint lock → Save requires fingerprint match + unchanged form.
+
+### 1.6 Mutex / double-click / ambiguity
+
+- Peer Schedule / Edge arms must be OFF
+- Module terminal: `idle` → `in_flight` → `succeeded` | `failed` | `ambiguous`
+- Ambiguous / success → no re-click; UI prompts exact SELECT
+
+### 1.7 Confirmed compatibility
+
+- Confirmed TBD Save banner still blocks normal Save when TBD selected
+- G-22e INSERT path unchanged; mutex adds TBD client arm OFF
+- Edge handler unchanged
+
+---
+
+## 2. UI
+
+- Button: **Staging one-shot CREATE** (`#gosaki-add-tbd-create-oneshot-btn`)
+- Hidden when SSR `saveEnabled` false (default arms OFF)
+- Notices: staging限定 · unpublished 1行 · 既存変更なし · 自動cleanupなし · 曖昧時再クリック禁止
+- No ritual approval text input (approval is internal contract)
+
+---
+
+## 3. Verification (this phase)
+
+| Check | Result |
+| --- | --- |
+| Offline implementation verifier | **PASS** (boundary hardening behavioral suite) |
+| Safety Suite | **ALL PASS** |
+| `git diff --check` | clean |
+| Browser arms-OFF PC1280 / SP375 | **PASS** — TBD Save disabled · Dry-run OK · oneshot wrap hidden · `tbdWriteEnabled:false` · writeRequests: [] |
+| Actual INSERT / Save click | **not executed** |
+| Env / arms | **unchanged / OFF** (`PUBLIC_ADMIN_WRITE_DRY_RUN=true`) |
+
+---
+
+## 4. Explicit non-goals
+
+- Cleanup DELETE UI
+- TBD UPDATE
+- Edge TBD CREATE
+- Mio seed
+- Package / FTP
+- Production
+
+---
+
+## 5. Next
+
+`cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-final-preflight`
+
+→ operator-approved Save once (separate phase) · then execution-result · arms OFF.

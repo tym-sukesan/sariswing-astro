@@ -23,6 +23,7 @@ import {
   SARISWING_PRODUCTION_PROJECT_REF,
   STATIC_TO_ASTRO_CMS_STAGING_PROJECT_REF,
 } from "./staging-schedule-site-slug-host-gate";
+import { resolveTbdCreateOneshotPageServerConfig } from "../staging-write/gosaki-schedule-tbd-create-oneshot-config";
 
 export const SCHEDULE_TBD_ADMIN_UI_CONFIG_ELEMENT_ID = "gosaki-schedule-tbd-admin-ui-config";
 
@@ -43,6 +44,7 @@ export type ScheduleTbdAdminUiCapabilityInput = {
   schemaSupportsTbd?: unknown;
   tbdAdminUiEnabled?: unknown;
   tbdDryRunEnabled?: unknown;
+  tbdWriteEnabled?: unknown;
   supabaseUrl?: string | null;
 };
 
@@ -50,8 +52,10 @@ export type ScheduleTbdAdminUiCapability = {
   schemaSupportsTbd: boolean;
   tbdAdminUiEnabled: boolean;
   tbdAdminUiVisible: boolean;
-  /** Exact-true dry-run flag (Save write remains off). */
+  /** Exact-true dry-run flag (Save write remains gated separately). */
   tbdDryRunEnabled: boolean;
+  /** Exact-true write flag (SSR dual-arm only; default false). */
+  tbdWriteEnabled: boolean;
   productionBlocked: boolean;
 };
 
@@ -69,32 +73,37 @@ export function resolveScheduleTbdAdminUiCapability(
       tbdAdminUiEnabled: false,
       tbdAdminUiVisible: false,
       tbdDryRunEnabled: false,
+      tbdWriteEnabled: false,
       productionBlocked: true,
     };
   }
   const schemaSupportsTbd = isExactTrue(input.schemaSupportsTbd);
   const tbdAdminUiEnabled = isExactTrue(input.tbdAdminUiEnabled);
   const tbdDryRunEnabled = isExactTrue(input.tbdDryRunEnabled);
+  const tbdWriteEnabled = isExactTrue(input.tbdWriteEnabled);
   return {
     schemaSupportsTbd,
     tbdAdminUiEnabled,
     tbdAdminUiVisible: schemaSupportsTbd && tbdAdminUiEnabled,
     tbdDryRunEnabled,
+    tbdWriteEnabled,
     productionBlocked: false,
   };
 }
 
 /**
- * SSR/build helper: staging Kit ref → exact-true booleans; else both false.
+ * SSR/build helper: staging Kit ref → admin/dry-run booleans.
+ * tbdWriteEnabled true only when dual TBD create arms + dry-run false (SSR).
  */
 export function resolveScheduleTbdAdminUiServerConfig(env: {
   PUBLIC_SUPABASE_URL?: string;
+  [key: string]: unknown;
 }): {
   schemaSupportsTbd: boolean;
   tbdAdminUiEnabled: boolean;
   tbdAdminUiVisible: boolean;
   tbdDryRunEnabled: boolean;
-  tbdWriteEnabled: false;
+  tbdWriteEnabled: boolean;
   productionBlocked: boolean;
   supabaseUrl: string;
 } {
@@ -104,12 +113,15 @@ export function resolveScheduleTbdAdminUiServerConfig(env: {
   const schemaSupportsTbd = !productionBlocked && stagingKit;
   const tbdAdminUiEnabled = !productionBlocked && stagingKit;
   const tbdDryRunEnabled = !productionBlocked && stagingKit;
+  const oneshot = resolveTbdCreateOneshotPageServerConfig(env as ImportMetaEnv);
+  const tbdWriteEnabled =
+    !productionBlocked && stagingKit && oneshot.tbdWriteEnabled === true;
   return {
     schemaSupportsTbd,
     tbdAdminUiEnabled,
     tbdAdminUiVisible: schemaSupportsTbd && tbdAdminUiEnabled,
     tbdDryRunEnabled,
-    tbdWriteEnabled: false,
+    tbdWriteEnabled,
     productionBlocked,
     supabaseUrl,
   };
@@ -128,6 +140,7 @@ export function readScheduleTbdAdminUiConfigFromDom(
         schemaSupportsTbd: parsed.schemaSupportsTbd,
         tbdAdminUiEnabled: parsed.tbdAdminUiEnabled,
         tbdDryRunEnabled: parsed.tbdDryRunEnabled,
+        tbdWriteEnabled: parsed.tbdWriteEnabled,
         supabaseUrl: String(parsed.supabaseUrl ?? ""),
       });
     } catch {

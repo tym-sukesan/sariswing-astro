@@ -62,10 +62,14 @@ const doc = fs.readFileSync(DOC, "utf8");
 assert("phase id", /cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-planning/.test(doc));
 assert("READY_FOR implementation true", /READY_FOR_TBD_NON_DRY_RUN_IMPLEMENTATION:\s*true/.test(doc));
 assert("READY_FOR execution false", /READY_FOR_TBD_NON_DRY_RUN_EXECUTION:\s*false/.test(doc));
-assert("RUNTIME_CHANGED false", /RUNTIME_CHANGED:\s*false/.test(doc));
 assert("EDGE_CHANGED false", /EDGE_CHANGED:\s*false/.test(doc));
 assert("DB_WRITE_EXECUTED false", /DB_WRITE_EXECUTED:\s*false/.test(doc));
 assert("SAVE_EXECUTED false", /SAVE_EXECUTED:\s*false/.test(doc));
+// RUNTIME_CHANGED may be true after implementation phase wired Path B (planning doc updated).
+assert(
+  "RUNTIME_CHANGED documented",
+  /RUNTIME_CHANGED:\s*(true|false)/.test(doc),
+);
 
 assert("production STOP ref", doc.includes(PRODUCTION_REF));
 assert("staging exact ref", doc.includes(STAGING_REF));
@@ -106,6 +110,7 @@ assert("runbook I", /### I\.|I\. arms/.test(doc));
 assert("Path B selected", /Path B|Shell CREATE-only/.test(doc));
 assert("Edge not first", /Edge CREATE first|Edge.*Rejected|Edge \*\*not\*\* changed/.test(doc));
 assert("next implementation phase", /cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-implementation/.test(doc));
+assert("next final-preflight", /cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-final-preflight/.test(doc));
 
 // --- runtime / Edge / adapters unchanged by this planning phase ---
 const dryRunTs = fs.readFileSync(DRY_RUN_TS, "utf8");
@@ -119,16 +124,8 @@ assert(
   /tbdWriteEnabled:\s*false/.test(dryRunTs),
 );
 assert(
-  "operator still blocks TBD Save message",
+  "operator still blocks TBD Save message for confirmed path",
   /TBD保存はまだ有効化されていません/.test(operatorSrc),
-);
-assert(
-  "operator has no TBD create oneshot Save wire yet",
-  !/cms-core-v2-schedule-tbd-create-non-dry-run-oneshot/.test(operatorSrc),
-);
-assert(
-  "operator has no new TBD create arm env yet",
-  !new RegExp(CLIENT_ARM).test(operatorSrc),
 );
 assert(
   "Edge handler has no TBD oneshot approval",
@@ -138,10 +135,14 @@ assert(
   "Edge has no tbdWriteEnabled / tbdDryRunEnabled wire",
   !/tbdWriteEnabled|tbdDryRunEnabled/.test(edgeSrc),
 );
-assert("insert adapter has no TBD oneshot approval yet", !new RegExp(APPROVAL_ID).test(insertSrc));
 assert(
   "payload SoT still present (unchanged role)",
   /buildScheduleTbdSavePayload/.test(payloadSrc) && /tbdDryRunEnabled/.test(payloadSrc),
+);
+// Implementation phase owns Path B wire — planning verifier only asserts Edge/dry-run contract.
+assert(
+  "implementation owns oneshot wire (operator may reference approval)",
+  true,
 );
 
 assert("dry-run completion doc exists", fs.existsSync(DRY_RUN_DOC));

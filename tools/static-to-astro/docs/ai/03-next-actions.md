@@ -1,13 +1,58 @@
-Last updated: 2026-07-31
+Last updated: 2026-08-03
 Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
 1. **Primary (Gosaki ops):** クライアントへ **staging 共有**（`CLIENT_SHARE_READY: true` · package `dc1c5b6…`）。本番 cutover はしない。
-2. **並行可 (Kit Core):** **Next Primary** `cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-implementation`（non-dry-run planning COMPLETE · CREATE-only oneshot · まだ未実装）→ final-preflight → operator Save once → Mio seed regen/apply → Branch A live SELECT pilot · then generic read-only Admin · form onboarding · Admin runtime Save arm mutex（**別承認**）· evening-set hero（**NON_BLOCKING**）。
+2. **並行可 (Kit Core):** **Next Primary** `cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-final-preflight`（implementation + boundary hardening COMPLETE · `COMMIT_READY: true` · `ACTUAL_WRITE_READY: false` · arms OFF）→ operator Save once → Mio seed regen/apply → Branch A live SELECT pilot · then generic read-only Admin · form onboarding · Admin runtime Save arm mutex（**別承認**）· evening-set hero（**NON_BLOCKING**）。
 3. **並行可:** production hosting **read-only planning**（`HOSTING_READY: false`）。
 4. **並行可 / 別承認:** YouTube 複数件 **永続 Save**（NON_BLOCKING）。
 5. Save arm **false** · `readyForAnyFutureFtpApply: false` · production STOP · `service_role` 禁止 · **deployed package 固定**.
+
+## 0. CMS Core v2 Schedule TBD non-dry-run staging boundary hardening (2026-08-03)
+
+| Item | Value |
+| --- | --- |
+| Gate | `CMS_CORE_V2_SCHEDULE_TBD_DATE_SAVE_NON_DRY_RUN_STAGING_BOUNDARY_HARDENING_COMPLETE: true` |
+| Public API | `executeTbdCreateOneshotSave` only · INSERT module-private |
+| Preflight | total/mio/tbd/legacy + schema probe · skip不可 |
+| Write | arms OFF · `COMMIT_READY: true` · `ACTUAL_WRITE_READY: false` |
+| Next | `cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-final-preflight` |
+
+```txt
+CMS_CORE_V2_SCHEDULE_TBD_DATE_SAVE_NON_DRY_RUN_STAGING_BOUNDARY_HARDENING_COMPLETE: true
+CMS_CORE_V2_SCHEDULE_TBD_DATE_SAVE_NON_DRY_RUN_STAGING_IMPLEMENTATION_COMPLETE: true
+COMMIT_READY: true
+IMPLEMENTATION_READY: true
+ACTUAL_WRITE_READY: false
+TBD_SAVE_WIRED: true
+TBD_WRITE_ENABLED: false
+ARMS_OFF: true
+ENV_CHANGED: false
+DB_WRITE_EXECUTED: false
+EDGE_CHANGED: false
+CLEANUP_IMPLEMENTED: false
+NEXT_PRIMARY_RECOMMENDED: cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-final-preflight
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+PRODUCTION_UNCHANGED: true
+```
+
+## 0. CMS Core v2 Schedule TBD non-dry-run staging implementation (2026-08-03)
+
+| Item | Value |
+| --- | --- |
+| Gate | `CMS_CORE_V2_SCHEDULE_TBD_DATE_SAVE_NON_DRY_RUN_STAGING_IMPLEMENTATION_COMPLETE: true` |
+| Oneshot | CREATE-only · Path B · `schedule-2026-11-001` · published false |
+| Dual arm | client + server exact `"true"` · SSR boolean only |
+| Write | wired but arms OFF · superseded by boundary hardening above |
+| Next | final-preflight |
+
+```txt
+CMS_CORE_V2_SCHEDULE_TBD_DATE_SAVE_NON_DRY_RUN_STAGING_IMPLEMENTATION_COMPLETE: true
+IMPLEMENTATION_READY: true
+ACTUAL_WRITE_READY: false
+ARMS_OFF: true
+```
 
 ## 0. CMS Core v2 Schedule TBD non-dry-run staging planning (2026-08-03)
 
@@ -17,15 +62,15 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Oneshot | CREATE-only · `schedule-2026-11-001` · published false |
 | Dual arm | client + server env · staging ref · dry-run false |
 | Execution | **not ready** (`READY_FOR_TBD_NON_DRY_RUN_EXECUTION: false`) |
-| Next | `cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-implementation` |
+| Next | superseded → implementation above |
 
 ```txt
 CMS_CORE_V2_SCHEDULE_TBD_DATE_SAVE_NON_DRY_RUN_STAGING_PLANNING_COMPLETE: true
 READY_FOR_TBD_NON_DRY_RUN_IMPLEMENTATION: true
 READY_FOR_TBD_NON_DRY_RUN_EXECUTION: false
-TBD_SAVE_WIRED: false
-RUNTIME_CHANGED: false
-NEXT_PRIMARY_RECOMMENDED: cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-implementation
+TBD_SAVE_WIRED: true
+RUNTIME_CHANGED: true
+NEXT_PRIMARY_RECOMMENDED: cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-final-preflight
 READY_FOR_ANY_FUTURE_FTP_APPLY: false
 PRODUCTION_UNCHANGED: true
 ```
@@ -36,15 +81,15 @@ PRODUCTION_UNCHANGED: true
 | --- | --- |
 | Gate | `CMS_CORE_V2_SCHEDULE_TBD_DATE_SAVE_DRY_RUN_COMPLETE: true` |
 | SoT | `buildScheduleTbdSavePayload` + `tbdDryRunEnabled` |
-| Write | still blocked (`tbdWriteEnabled` false) |
-| Next | superseded → non-dry-run planning above |
+| Write | dry-run path still forces `tbdWriteEnabled` false |
+| Next | superseded → non-dry-run implementation above |
 
 ```txt
 CMS_CORE_V2_SCHEDULE_TBD_DATE_SAVE_DRY_RUN_COMPLETE: true
 TBD_DRY_RUN_WIRED: true
-TBD_SAVE_WIRED: false
+TBD_SAVE_WIRED: true
 TBD_WRITE_ENABLED: false
-NEXT_PRIMARY_RECOMMENDED: cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-implementation
+NEXT_PRIMARY_RECOMMENDED: cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-final-preflight
 READY_FOR_ANY_FUTURE_FTP_APPLY: false
 PRODUCTION_UNCHANGED: true
 ```

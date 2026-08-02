@@ -6,6 +6,7 @@
  */
 
 import {
+  SCHEDULE_DATE_DISPLAY_TBD_MONTH_KNOWN,
   SCHEDULE_DATE_STATUS_CONFIRMED,
   SCHEDULE_DATE_STATUS_TBD,
   normalizeScheduleDateContract,
@@ -26,6 +27,7 @@ const ALLOWED_INPUT_KEYS = new Set([
   "tbd_month_mode",
   "schemaSupportsTbd",
   "tbdWriteEnabled",
+  "tbdAdminUiEnabled",
   "operation",
   "existingDate",
   "existing_date",
@@ -90,7 +92,9 @@ function pushError(errors, codes, error, code) {
  *     operation: "create" | "update",
  *     schemaSupportsTbd: boolean,
  *     tbdWriteEnabled: boolean,
- *     contract: import("./schedule-date-contract.mjs").ScheduleDateContract,
+ *     tbdAdminUiEnabled: boolean,
+ *     tbdAdminUiVisible: boolean,
+ *     contract: import("./schedule-date-contract.mjs").ScheduleDateContract | null,
  *   },
  *   errors: string[],
  *   codes: string[],
@@ -132,6 +136,8 @@ export function resolveScheduleAdminDateState(input) {
 
   const schemaSupportsTbd = isExactTrue(obj.schemaSupportsTbd);
   const tbdWriteEnabled = isExactTrue(obj.tbdWriteEnabled);
+  const tbdAdminUiEnabled = isExactTrue(obj.tbdAdminUiEnabled);
+  const tbdAdminUiVisible = schemaSupportsTbd && tbdAdminUiEnabled;
   const tbdReady = schemaSupportsTbd && tbdWriteEnabled;
 
   let dateStatus = obj.dateStatus ?? obj.date_status;
@@ -241,6 +247,43 @@ export function resolveScheduleAdminDateState(input) {
     }
   }
 
+  // Admin UI draft: confirmed create with empty date — keep date input enabled/required
+  // without requiring a complete save contract yet.
+  if (
+    dateStatus === SCHEDULE_DATE_STATUS_CONFIRMED &&
+    date == null &&
+    operation === SCHEDULE_ADMIN_DATE_OPERATION_CREATE
+  ) {
+    return {
+      ok: true,
+      value: {
+        dateStatus: SCHEDULE_DATE_STATUS_CONFIRMED,
+        date: null,
+        month: null,
+        year: null,
+        display: "",
+        monthMembership: { kind: "hub-only" },
+        tbdMonthMode: null,
+        dateInputEnabled: true,
+        dateInputRequired: true,
+        monthInputEnabled: false,
+        monthInputRequired: false,
+        writeAllowed: false,
+        blockedReason: "confirmed requires date YYYY-MM-DD",
+        operation,
+        schemaSupportsTbd,
+        tbdWriteEnabled,
+        tbdAdminUiEnabled,
+        tbdAdminUiVisible,
+        contract: null,
+        existingDate: existingDate == null || existingDate === "" ? null : String(existingDate),
+        existingMonth: existingMonth == null || existingMonth === "" ? null : String(existingMonth),
+      },
+      errors: [],
+      codes: [],
+    };
+  }
+
   const contractInput = {
     dateStatus,
     date,
@@ -271,6 +314,19 @@ export function resolveScheduleAdminDateState(input) {
     }
   }
 
+  // month-known TBD draft (month not chosen yet): contract sees null month as
+  // month-unknown display — override label/membership for Admin UI mode selection.
+  let display = c.display;
+  let monthMembership = c.monthMembership;
+  if (isTbd && tbdMonthMode === SCHEDULE_TBD_MONTH_MODE_KNOWN) {
+    display = SCHEDULE_DATE_DISPLAY_TBD_MONTH_KNOWN;
+    if (c.month == null) {
+      writeAllowed = false;
+      if (!blockedReason) blockedReason = "month-known TBD requires month YYYY-MM";
+      monthMembership = { kind: "hub-only" };
+    }
+  }
+
   const dateInputEnabled =
     isConfirmed && operation === SCHEDULE_ADMIN_DATE_OPERATION_CREATE;
   const dateInputRequired = isConfirmed;
@@ -284,8 +340,8 @@ export function resolveScheduleAdminDateState(input) {
       date: c.date,
       month: c.month,
       year: c.year,
-      display: c.display,
-      monthMembership: c.monthMembership,
+      display,
+      monthMembership,
       tbdMonthMode: isTbd ? tbdMonthMode : null,
       dateInputEnabled,
       dateInputRequired,
@@ -296,6 +352,8 @@ export function resolveScheduleAdminDateState(input) {
       operation,
       schemaSupportsTbd,
       tbdWriteEnabled,
+      tbdAdminUiEnabled,
+      tbdAdminUiVisible,
       contract: c,
       // preserve existing month hint for update UI (not used in contract when confirmed)
       existingDate: existingDate == null || existingDate === "" ? null : String(existingDate),

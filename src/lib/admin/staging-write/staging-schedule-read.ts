@@ -7,7 +7,7 @@ import { SCHEDULE_DRY_RUN_MOCK_RECORDS } from "./schedule-dry-run-mock-fixtures"
 import type { ScheduleRecord } from "./schedule-dry-run-types";
 
 const SCHEDULE_DRY_RUN_SELECT =
-  "id,legacy_id,site_slug,date,year,month,title,venue,open_time,start_time,price,description,show_on_home,home_order,published,sort_order,source_file,source_route,created_at,updated_at" as const;
+  "id,legacy_id,site_slug,date,date_status,year,month,title,venue,open_time,start_time,price,description,show_on_home,home_order,published,sort_order,source_file,source_route,created_at,updated_at" as const;
 
 const READ_LIMIT = 100;
 
@@ -16,7 +16,8 @@ function mapRow(row: Record<string, unknown>): ScheduleRecord {
     id: String(row.id ?? ""),
     legacy_id: row.legacy_id != null ? String(row.legacy_id) : null,
     site_slug: row.site_slug != null ? String(row.site_slug) : null,
-    date: String(row.date ?? ""),
+    date: row.date == null || row.date === "" ? "" : String(row.date),
+    date_status: row.date_status != null ? String(row.date_status) : null,
     year: typeof row.year === "number" ? row.year : null,
     month: row.month != null ? String(row.month) : null,
     title: row.title != null ? String(row.title) : null,

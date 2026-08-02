@@ -4,10 +4,28 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 ## 0. Current next actions（直近）
 
 1. **Primary (Gosaki ops):** クライアントへ **staging 共有**（`CLIENT_SHARE_READY: true` · package `dc1c5b6…`）。本番 cutover はしない。
-2. **並行可 (Kit Core):** **Next Primary** Admin UI connect / Save dry-run（`date_status` read-wiring COMPLETE）→ Mio seed regen/apply → Branch A live SELECT pilot · then generic read-only Admin · form onboarding · Admin runtime Save arm mutex（**別承認**）· evening-set hero（**NON_BLOCKING**）。
+2. **並行可 (Kit Core):** **Next Primary** `cms-core-v2-schedule-tbd-date-save-dry-run`（Admin UI connect COMPLETE · TBD Save はまだ無効）→ non-dry-run staging → Mio seed regen/apply → Branch A live SELECT pilot · then generic read-only Admin · form onboarding · Admin runtime Save arm mutex（**別承認**）· evening-set hero（**NON_BLOCKING**）。
 3. **並行可:** production hosting **read-only planning**（`HOSTING_READY: false`）。
 4. **並行可 / 別承認:** YouTube 複数件 **永続 Save**（NON_BLOCKING）。
 5. Save arm **false** · `readyForAnyFutureFtpApply: false` · production STOP · `service_role` 禁止 · **deployed package 固定**.
+
+## 0. CMS Core v2 Schedule TBD Admin UI connect (2026-08-02)
+
+| Item | Value |
+| --- | --- |
+| Gate | `CMS_CORE_V2_SCHEDULE_TBD_ADMIN_UI_CONNECT_COMPLETE: true` |
+| UI | operator Schedule · date-state SoT |
+| TBD Save | blocked |
+| Next | `cms-core-v2-schedule-tbd-date-save-dry-run` |
+
+```txt
+CMS_CORE_V2_SCHEDULE_TBD_ADMIN_UI_CONNECT_COMPLETE: true
+TBD_ADMIN_UI_WIRED: true
+TBD_SAVE_WIRED: false
+NEXT_PRIMARY_RECOMMENDED: cms-core-v2-schedule-tbd-date-save-dry-run
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+PRODUCTION_UNCHANGED: true
+```
 
 ## 0. CMS Core v2 Schedule TBD date_status read-wiring (2026-08-02)
 
@@ -17,7 +35,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | SELECT | legacy default · TBD v1 when `schemaSupportsTbdRead===true` on staging Kit |
 | Sort | `compareScheduleDateContract` via `compareScheduleRecords` |
 | Staging anon | tbd-v1 · published 74 · confirmed 74 · tbd 0 |
-| Next | Admin UI / Save dry-run · Mio seed still blocked |
+| Next | superseded → Admin UI connect above |
 
 ```txt
 CMS_CORE_V2_SCHEDULE_TBD_DATE_STATUS_READ_WIRING_COMPLETE: true
@@ -25,7 +43,7 @@ DATE_STATUS_IN_DB_QUERY: true
 RUNTIME_CHANGED: true
 ADMIN_SAVE_CHANGED: false
 READY_FOR_MIO_SEED_APPLY: false
-NEXT_PRIMARY_RECOMMENDED: cms-core-v2-schedule-tbd-admin-ui-connect
+NEXT_PRIMARY_RECOMMENDED: cms-core-v2-schedule-tbd-date-save-dry-run
 READY_FOR_ANY_FUTURE_FTP_APPLY: false
 PRODUCTION_UNCHANGED: true
 ```

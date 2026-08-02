@@ -17,6 +17,10 @@ import {
   G13C2_EVENT_B_POC_CLEANUP_PAGE_CONFIG_ELEMENT_ID,
   resolveG13c2EventBPocCleanupPageServerConfig,
 } from "../../../../../../src/lib/admin/staging-write/gosaki-schedule-event-b-poc-cleanup-page-config";
+import {
+  SCHEDULE_TBD_ADMIN_UI_CONFIG_ELEMENT_ID,
+  resolveScheduleTbdAdminUiServerConfig,
+} from "../../../../../../src/lib/admin/staging-data/schedule-tbd-admin-ui";
 import AdminGosakiStagingNav from "./AdminGosakiStagingNav.astro";
 import AdminGosakiStagingSafetyChips from "./AdminGosakiStagingSafetyChips.astro";
 import {
@@ -33,6 +37,12 @@ const { binding } = Astro.props;
 const g9kSaveButtonPageConfig = resolveG9kSaveButtonPageServerConfig(import.meta.env);
 const g13c1PageConfig = resolveG13c1EventAPocCleanupPageServerConfig(import.meta.env);
 const g13c2PageConfig = resolveG13c2EventBPocCleanupPageServerConfig(import.meta.env);
+const tbdAdminUiConfig = resolveScheduleTbdAdminUiServerConfig(import.meta.env);
+const tbdAdminUiConfigJson = JSON.stringify({
+  schemaSupportsTbd: tbdAdminUiConfig.schemaSupportsTbd,
+  tbdAdminUiEnabled: tbdAdminUiConfig.tbdAdminUiEnabled,
+  supabaseUrl: tbdAdminUiConfig.supabaseUrl,
+});
 
 const savePrepNote = g9kSaveButtonPageConfig.saveButtonSaveEnabled
   ? "「変更を確認」で内容を確認してから「更新する」を押してください。"
@@ -74,6 +84,11 @@ function displayValue(value: string | null | undefined): string {
     data-g9k-write-module={g9kSaveButtonPageConfig.writeModule}
     data-g9k-write-approval-id={g9kSaveButtonPageConfig.writeApprovalId}
     hidden
+  />
+  <script
+    id={SCHEDULE_TBD_ADMIN_UI_CONFIG_ELEMENT_ID}
+    type="application/json"
+    set:html={tbdAdminUiConfigJson}
   />
   <header class="admin-gosaki-page-header admin-gosaki-page-header--with-actions">
     <div>
@@ -203,13 +218,58 @@ function displayValue(value: string | null | undefined): string {
     <p class="admin-gosaki-card__lead">まずここで公演の内容を入力します。</p>
 
     <form id="gosaki-schedule-add-form" class="admin-form admin-form--grid gosaki-schedule-admin-form" novalidate>
+      <fieldset
+        id="gosaki-add-date-status-panel"
+        class="admin-form__field admin-form__field--full gosaki-schedule-date-status-panel"
+        hidden={!tbdAdminUiConfig.tbdAdminUiVisible}
+      >
+        <legend class="admin-form__label">日付の状態</legend>
+        <label class="admin-form__field--radio">
+          <input type="radio" name="gosaki-add-date-status" value="confirmed" checked />
+          <span>日付確定</span>
+        </label>
+        <label class="admin-form__field--radio">
+          <input type="radio" name="gosaki-add-date-status" value="tbd" />
+          <span>日付未定（TBD）</span>
+        </label>
+      </fieldset>
+
+      <div
+        id="gosaki-add-tbd-month-mode-field"
+        class="admin-form__field admin-form__field--full"
+        hidden
+      >
+        <span class="admin-form__label">未定の種類</span>
+        <label class="admin-form__field--radio">
+          <input type="radio" name="gosaki-add-tbd-month-mode" value="month-known" checked />
+          <span>月は決まっている（日付未定）</span>
+        </label>
+        <label class="admin-form__field--radio">
+          <input type="radio" name="gosaki-add-tbd-month-mode" value="month-unknown" />
+          <span>月も未定（日程未定）※明示選択</span>
+        </label>
+      </div>
+
       <label class="admin-form__field admin-form__field--full">
         <span class="admin-form__label">日付</span>
         <input id="gosaki-add-date" type="date" />
         <p id="gosaki-add-month-hint" class="gosaki-schedule-admin-month-hint" role="note">
           日付を選ぶと、表示先の月が自動で決まります。
         </p>
+        <p id="gosaki-add-date-display" class="gosaki-schedule-admin-date-display" hidden></p>
+        <p id="gosaki-add-date-state-invalid" class="gosaki-schedule-admin-date-invalid" role="alert" hidden></p>
       </label>
+
+      <label
+        id="gosaki-add-tbd-month-field"
+        class="admin-form__field admin-form__field--full"
+        hidden
+      >
+        <span class="admin-form__label">表示月（YYYY-MM）</span>
+        <input id="gosaki-add-tbd-month" type="month" />
+      </label>
+
+      <p id="gosaki-add-tbd-save-blocked" class="gosaki-schedule-tbd-save-blocked" role="status" hidden></p>
 
       <label class="admin-form__field admin-form__field--full">
         <span class="admin-form__label">タイトル</span>
@@ -498,13 +558,58 @@ function displayValue(value: string | null | undefined): string {
           </p>
         </div>
 
+        <fieldset
+          id="gosaki-edit-date-status-panel"
+          class="admin-form__field admin-form__field--full gosaki-schedule-date-status-panel"
+          hidden={!tbdAdminUiConfig.tbdAdminUiVisible}
+        >
+          <legend class="admin-form__label">日付の状態</legend>
+          <label class="admin-form__field--radio">
+            <input type="radio" name="gosaki-edit-date-status" value="confirmed" checked />
+            <span>日付確定</span>
+          </label>
+          <label class="admin-form__field--radio">
+            <input type="radio" name="gosaki-edit-date-status" value="tbd" />
+            <span>日付未定（TBD）</span>
+          </label>
+        </fieldset>
+
+        <div
+          id="gosaki-edit-tbd-month-mode-field"
+          class="admin-form__field admin-form__field--full"
+          hidden
+        >
+          <span class="admin-form__label">未定の種類</span>
+          <label class="admin-form__field--radio">
+            <input type="radio" name="gosaki-edit-tbd-month-mode" value="month-known" checked />
+            <span>月は決まっている（日付未定）</span>
+          </label>
+          <label class="admin-form__field--radio">
+            <input type="radio" name="gosaki-edit-tbd-month-mode" value="month-unknown" />
+            <span>月も未定（日程未定）※明示選択</span>
+          </label>
+        </div>
+
         <label class="admin-form__field admin-form__field--full">
           <span class="admin-form__label">日付</span>
           <input id="gosaki-edit-date" type="date" />
           <p id="gosaki-edit-month-hint" class="gosaki-schedule-admin-month-hint" role="note">
             日付を選ぶと、表示先の月が自動で決まります。
           </p>
+          <p id="gosaki-edit-date-display" class="gosaki-schedule-admin-date-display" hidden></p>
+          <p id="gosaki-edit-date-state-invalid" class="gosaki-schedule-admin-date-invalid" role="alert" hidden></p>
         </label>
+
+        <label
+          id="gosaki-edit-tbd-month-field"
+          class="admin-form__field admin-form__field--full"
+          hidden
+        >
+          <span class="admin-form__label">表示月（YYYY-MM）</span>
+          <input id="gosaki-edit-tbd-month" type="month" />
+        </label>
+
+        <p id="gosaki-edit-tbd-save-blocked" class="gosaki-schedule-tbd-save-blocked" role="status" hidden></p>
 
         <label class="admin-form__field admin-form__field--full">
           <span class="admin-form__label">タイトル</span>

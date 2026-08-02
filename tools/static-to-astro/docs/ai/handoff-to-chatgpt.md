@@ -5,18 +5,16 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: CMS Core v2 Schedule TBD date_status read-wiring COMPLETE / PASS
-Phase: cms-core-v2-schedule-tbd-date-status-read-wiring
-SELECT: SCHEDULE_SELECT legacy default · SCHEDULE_SELECT_TBD_V1 when schemaSupportsTbdRead===true on staging Kit
-Production: TBD v1 forbidden (STOP) · vsbvndwuajjhnzpohghh UNCHANGED
-Normalize: dateStatus/dateDisplay/monthMembership/dateContract via schedule-date-contract
-Sort: compareScheduleRecords → compareScheduleDateContract
-Staging anon: tbd-v1 · published 74 · confirmed 74 · tbd 0 · null date 0
-Admin/Save/Edge/Mio seed: unchanged / not ready
-Doc: docs/cms-core-v2-schedule-tbd-date-status-read-wiring.md
-Verifier: verify:cms-core-v2-schedule-tbd-date-status-read-wiring (+ Safety Suite offline)
-Next Primary: cms-core-v2-schedule-tbd-admin-ui-connect (Save dry-run still gated)
-Prior: staging migration apply completion
+Current phase: CMS Core v2 Schedule TBD Admin UI connect COMPLETE / PASS
+Phase: cms-core-v2-schedule-tbd-admin-ui-connect
+UI: AdminGosakiStagingScheduleOperatorPage + gosaki-staging-schedule-operator-ui
+SoT: schedule-admin-date-state.mjs · capability exact-true schemaSupportsTbd + tbdAdminUiEnabled
+TBD Save: blocked (tbdWriteEnabled false · no payload helper wire)
+Edge / DB write / Mio seed: unchanged / not ready
+Doc: docs/cms-core-v2-schedule-tbd-admin-ui-connect.md
+Verifier: verify:cms-core-v2-schedule-tbd-admin-ui-connect (+ Safety Suite)
+Next Primary: cms-core-v2-schedule-tbd-date-save-dry-run
+Prior: date_status read-wiring · staging migration apply
 HubSpot: COMPLETE WITH NON-BLOCKING · PC/375 PASS · submit E2E recheck only
 Gosaki CLIENT_SHARE_READY: true (maintained)
 deployed package: dc1c5b62a58d0462ad6629db4847256d316d4a38 (unchanged; no regen)
@@ -26,6 +24,11 @@ readyForOperatorAboutSeedApply: false
 readyForAnyFutureFtpApply: false
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
 ```
+
+## CMS Core v2 Schedule TBD Admin UI connect (2026-08-02)
+
+- Operator Schedule date-status radios + month-known/unknown TBD · Save blocked for TBD
+- Production never shows TBD UI
 
 ## CMS Core v2 Schedule TBD date_status read-wiring (2026-08-02)
 

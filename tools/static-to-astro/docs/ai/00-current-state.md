@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**CMS Core v2 Schedule TBD date_status read-wiring (2026-08-02):** **COMPLETE / PASS** — Phase `cms-core-v2-schedule-tbd-date-status-read-wiring` · SELECT capability split (legacy vs TBD v1 · exact-true · production STOP) · normalize/membership/display/sort wired via `schedule-date-contract` · staging anon tbd-v1 74/74 confirmed · Gosaki HTML ≥81 · Doc: `cms-core-v2-schedule-tbd-date-status-read-wiring.md` · **Next Primary:** Admin UI connect / Save dry-run (still gated) · Mio seed still not ready.
+**CMS Core v2 Schedule TBD Admin UI connect (2026-08-02):** **COMPLETE / PASS** — Phase `cms-core-v2-schedule-tbd-admin-ui-connect` · operator Schedule UI wires `schedule-admin-date-state` · TBD UI gated by exact-true `schemaSupportsTbd`+`tbdAdminUiEnabled` · TBD Save blocked · PC/375 browser PASS · Doc: `cms-core-v2-schedule-tbd-admin-ui-connect.md` · **Next Primary:** `cms-core-v2-schedule-tbd-date-save-dry-run`.
+
+**CMS Core v2 Schedule TBD date_status read-wiring (2026-08-02):** **COMPLETE / PASS** — SELECT/normalize/sort wired · Admin UI connect above.
 
 **CMS Core v2 Schedule TBD staging migration apply completion (2026-08-02):** **COMPLETE / PASS** — staging schema applied · superseded next → date_status read-wiring above.
 

@@ -333,7 +333,7 @@ CMS_CORE_V2_SCHEDULE_TBD_STAGING_MIGRATION_APPLY_COMPLETION: true
 CMS_CORE_V2_SCHEDULE_TBD_DATE_STATUS_READ_WIRING_COMPLETE: true
 STAGING_SCHEMA_TBD_CONTRACT_APPLIED: true
 READY_FOR_SCHEDULE_TBD_STAGING_MIGRATION_APPLY: true
-NEXT_PRIMARY_RECOMMENDED: cms-core-v2-schedule-tbd-admin-ui-connect
+NEXT_PRIMARY_RECOMMENDED: cms-core-v2-schedule-tbd-date-save-dry-run
 READY_FOR_ANY_FUTURE_FTP_APPLY: false
 PRODUCTION_UNCHANGED: true
 ```
@@ -368,4 +368,6 @@ Docs: gate · final-review · `cms-core-v2-schedule-tbd-staging-migration-apply-
 
 ### Next
 
-`cms-core-v2-schedule-tbd-admin-ui-connect` · then Save dry-run · Mio seed regen
+`cms-core-v2-schedule-tbd-date-save-dry-run` · then non-dry-run · Mio seed regen
+
+Admin UI connect: `cms-core-v2-schedule-tbd-admin-ui-connect.md` **COMPLETE**

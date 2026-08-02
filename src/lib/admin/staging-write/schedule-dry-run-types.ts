@@ -17,6 +17,8 @@ export type ScheduleDryRunSource = {
   legacy_id?: string | null;
   site_slug?: string | null;
   date: string;
+  /** Present when admin SELECT includes date_status (staging TBD schema). */
+  date_status?: string | null;
   year?: number | null;
   month?: string | null;
   title?: string | null;

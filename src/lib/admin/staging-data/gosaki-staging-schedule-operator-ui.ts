@@ -33,6 +33,21 @@ import { dispatchRowSelected } from "./staging-schedule-site-slug-row-picker-eve
 import { confirmDiscardDirtyCandidateIfNeeded } from "./staging-schedule-site-slug-edit-picker-binding";
 import { isPocAuditScheduleRow } from "./staging-schedule-site-slug-row-picker-utils";
 import {
+  SCHEDULE_ADMIN_DATE_OPERATION_CREATE,
+  SCHEDULE_ADMIN_DATE_OPERATION_UPDATE,
+  SCHEDULE_DATE_STATUS_CONFIRMED,
+  SCHEDULE_DATE_STATUS_TBD,
+  SCHEDULE_TBD_MONTH_MODE_KNOWN,
+  SCHEDULE_TBD_MONTH_MODE_UNKNOWN,
+  applyScheduleAdminDateStateToDom,
+  formatScheduleAdminListDateLabel,
+  isScheduleTbdSaveBlockedFromDom,
+  readScheduleAdminDateFormInput,
+  readScheduleTbdAdminUiConfigFromDom,
+  resolveScheduleAdminDateState,
+  type ScheduleTbdAdminUiCapability,
+} from "./schedule-tbd-admin-ui";
+import {
   buildGosakiScheduleDuplicateDraft,
   executeG22bScheduleDuplicateDryRun,
   GOSAKI_SCHEDULE_DUPLICATE_DRAFT_LEGACY_LABEL,
@@ -155,6 +170,7 @@ let lastUnpublishDryRunResult: G22fScheduleUnpublishDryRunResult | null = null;
 let republishDraftState: GosakiScheduleRepublishDraftState | null = null;
 let republishTargetSnapshot: ScheduleRecord | null = null;
 let lastRepublishDryRunResult: G22hScheduleRepublishDryRunResult | null = null;
+let tbdAdminUiCapability: ScheduleTbdAdminUiCapability | null = null;
 
 const G22F_EDIT_FORM_FIELD_IDS = [
   "gosaki-edit-date",
@@ -953,6 +969,103 @@ function parseRowsDataset(): ScheduleRecord[] {
   }
 }
 
+function getTbdAdminUiCapability(): ScheduleTbdAdminUiCapability {
+  if (!tbdAdminUiCapability) {
+    tbdAdminUiCapability = readScheduleTbdAdminUiConfigFromDom();
+  }
+  return tbdAdminUiCapability;
+}
+
+function setNamedRadio(name: string, value: string): void {
+  const nodes = document.querySelectorAll(`input[name="${name}"]`);
+  for (const node of nodes) {
+    if (!(node instanceof HTMLInputElement)) continue;
+    node.checked = node.value === value;
+  }
+}
+
+function syncAddDateAdminState(): void {
+  const capability = getTbdAdminUiCapability();
+  const input = readScheduleAdminDateFormInput("add", capability, {
+    operation: SCHEDULE_ADMIN_DATE_OPERATION_CREATE,
+  });
+  const result = resolveScheduleAdminDateState(input);
+  applyScheduleAdminDateStateToDom("add", capability, result);
+  if (result.ok && result.value.dateStatus === SCHEDULE_DATE_STATUS_CONFIRMED && result.value.date) {
+    setMonthHint("gosaki-add-month-hint", result.value.date);
+    setPreviewLink(
+      "gosaki-add-preview-link",
+      result.value.month ?? monthFromDate(result.value.date),
+    );
+  } else if (result.ok && result.value.dateStatus === SCHEDULE_DATE_STATUS_TBD) {
+    const monthHint = document.getElementById("gosaki-add-month-hint");
+    if (monthHint) {
+      monthHint.textContent =
+        result.value.tbdMonthMode === SCHEDULE_TBD_MONTH_MODE_UNKNOWN
+          ? "月未定の公演はスケジュール一覧（hub）のみに表示されます。"
+          : "表示月を選ぶと、その月のページに「日付未定」として掲載されます。";
+    }
+    if (result.value.month) setPreviewLink("gosaki-add-preview-link", result.value.month);
+  }
+}
+
+function syncEditDateAdminState(): void {
+  const capability = getTbdAdminUiCapability();
+  const existingDate = selectedRowSnapshot?.date ?? null;
+  const existingMonth = selectedRowSnapshot?.month ?? null;
+  const input = readScheduleAdminDateFormInput("edit", capability, {
+    operation:
+      isNewEventDraftMode() || isDuplicateDraftMode()
+        ? SCHEDULE_ADMIN_DATE_OPERATION_CREATE
+        : SCHEDULE_ADMIN_DATE_OPERATION_UPDATE,
+    existingDate: existingDate || null,
+    existingMonth: existingMonth || null,
+  });
+  const result = resolveScheduleAdminDateState(input);
+  applyScheduleAdminDateStateToDom("edit", capability, result);
+  if (result.ok && result.value.dateStatus === SCHEDULE_DATE_STATUS_CONFIRMED) {
+    const date = result.value.date || existingDate || "";
+    setMonthHint("gosaki-edit-month-hint", date);
+    setPreviewLink(
+      "gosaki-edit-preview-link",
+      result.value.month ?? monthFromDate(date),
+    );
+  } else if (result.ok && result.value.dateStatus === SCHEDULE_DATE_STATUS_TBD) {
+    const monthHint = document.getElementById("gosaki-edit-month-hint");
+    if (monthHint) {
+      monthHint.textContent =
+        result.value.tbdMonthMode === SCHEDULE_TBD_MONTH_MODE_UNKNOWN
+          ? "月未定の公演はスケジュール一覧（hub）のみに表示されます。"
+          : "表示月を選ぶと、その月のページに「日付未定」として掲載されます。";
+    }
+    if (result.value.month) setPreviewLink("gosaki-edit-preview-link", result.value.month);
+  }
+}
+
+function applyRowDateStatusToEditForm(row: ScheduleRecord): void {
+  const capability = getTbdAdminUiCapability();
+  if (!capability.tbdAdminUiVisible) {
+    setNamedRadio("gosaki-edit-date-status", SCHEDULE_DATE_STATUS_CONFIRMED);
+    return;
+  }
+  const status =
+    row.date_status === SCHEDULE_DATE_STATUS_TBD
+      ? SCHEDULE_DATE_STATUS_TBD
+      : SCHEDULE_DATE_STATUS_CONFIRMED;
+  setNamedRadio("gosaki-edit-date-status", status);
+  if (status === SCHEDULE_DATE_STATUS_TBD) {
+    const mode =
+      row.month == null || row.month === ""
+        ? SCHEDULE_TBD_MONTH_MODE_UNKNOWN
+        : SCHEDULE_TBD_MONTH_MODE_KNOWN;
+    setNamedRadio("gosaki-edit-tbd-month-mode", mode);
+    const monthInput = document.getElementById("gosaki-edit-tbd-month") as HTMLInputElement | null;
+    if (monthInput && mode === SCHEDULE_TBD_MONTH_MODE_KNOWN) {
+      monthInput.value = String(row.month ?? "");
+    }
+  }
+}
+
 function normalizeDateInput(date: string): string {
   const trimmed = date.trim();
   if (/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) return trimmed;
@@ -1713,6 +1826,8 @@ function renderEditForm(
   const month = monthFromDate(date);
 
   setFieldValue("gosaki-edit-date", date);
+  applyRowDateStatusToEditForm(row);
+  syncEditDateAdminState();
   setMonthHint("gosaki-edit-month-hint", date);
   setFieldValue("gosaki-edit-title", String(row.title ?? ""));
   setFieldValue("gosaki-edit-venue", String(row.venue ?? ""));
@@ -1932,6 +2047,22 @@ function updateSaveButtonState(result: G9kExistingEventSaveButtonDryRunResult | 
     "gosaki-schedule-update-btn",
   ) as HTMLButtonElement | null;
   if (!button) return;
+
+  const capability = getTbdAdminUiCapability();
+  if (
+    isScheduleTbdSaveBlockedFromDom("edit", capability) &&
+    !isRepublishDraftMode() &&
+    !isUnpublishDraftMode()
+  ) {
+    button.disabled = true;
+    button.setAttribute("data-gosaki-schedule-action-disabled", "");
+    button.setAttribute("data-gosaki-save-allowed", "false");
+    button.textContent = "更新する（TBDは保存不可）";
+    button.title = "TBD保存はまだ有効化されていません";
+    setSaveButtonNote("TBD保存はまだ有効化されていません。日付確定（confirmed）のみ保存できます。");
+    updateSaveTargetPanel();
+    return;
+  }
 
   if (isRepublishDraftMode()) {
     const gate = evaluateG22hRepublishUpdateUiGate({
@@ -3200,6 +3331,15 @@ async function runEditDryRunPreview(): Promise<void> {
 }
 
 async function runEditSave(): Promise<void> {
+  if (
+    isScheduleTbdSaveBlockedFromDom("edit", getTbdAdminUiCapability()) &&
+    !isRepublishDraftMode() &&
+    !isUnpublishDraftMode()
+  ) {
+    window.alert("TBD保存はまだ有効化されていません。日付確定（confirmed）のみ保存できます。");
+    return;
+  }
+
   if (isRepublishDraftMode()) {
     const gate = evaluateG22hRepublishUpdateUiGate({
       signedIn: stagingAuthSignedIn === true,
@@ -3493,7 +3633,7 @@ function renderScheduleList(): void {
       .map((row) => {
         const selected = selectedRowId === row.id;
         return `<tr class="admin-gosaki-schedule-table__row${selected ? " is-selected" : ""}" data-row-id="${escapeHtml(row.id)}">
-        <td>${escapeHtml(row.date)}</td>
+        <td>${escapeHtml(formatScheduleAdminListDateLabel(row))}</td>
         <td class="admin-gosaki-schedule-table__legacy-col">${renderLegacyIdCode(row.legacy_id)}</td>
         <td class="admin-gosaki-schedule-table__title-col">${escapeHtml(displayValue(row.title))}</td>
         <td>${escapeHtml(displayValue(row.venue))}</td>
@@ -3513,7 +3653,7 @@ function renderScheduleList(): void {
         const published = row.published === true;
         return `<li class="gosaki-schedule-admin-card${selected ? " is-selected" : ""}" data-row-id="${escapeHtml(row.id)}">
         <div class="gosaki-schedule-admin-card__head">
-          <time class="gosaki-schedule-admin-card__date" datetime="${escapeHtml(row.date)}">${escapeHtml(row.date)}</time>
+          <time class="gosaki-schedule-admin-card__date" datetime="${escapeHtml(row.date || "")}">${escapeHtml(formatScheduleAdminListDateLabel(row))}</time>
           <span class="gosaki-schedule-admin-card__status gosaki-schedule-admin-card__status--${published ? "published" : "draft"}">${published ? "公開" : "非公開"}</span>
         </div>
         <p class="gosaki-schedule-admin-card__legacy">${renderLegacyIdCode(row.legacy_id)}</p>
@@ -3650,14 +3790,18 @@ function wireAddForm(): void {
   ) as HTMLSelectElement | null;
 
   const syncAddDateDerived = () => {
-    const date = dateInput?.value ?? "";
-    const month = monthFromDate(date);
-    setMonthHint("gosaki-add-month-hint", date);
-    setPreviewLink("gosaki-add-preview-link", month);
+    syncAddDateAdminState();
   };
 
   dateInput?.addEventListener("change", syncAddDateDerived);
   dateInput?.addEventListener("input", syncAddDateDerived);
+  for (const name of ["gosaki-add-date-status", "gosaki-add-tbd-month-mode"]) {
+    document.querySelectorAll(`input[name="${name}"]`).forEach((el) => {
+      el.addEventListener("change", syncAddDateDerived);
+    });
+  }
+  document.getElementById("gosaki-add-tbd-month")?.addEventListener("change", syncAddDateDerived);
+  document.getElementById("gosaki-add-tbd-month")?.addEventListener("input", syncAddDateDerived);
 
   duplicateSelect?.addEventListener("change", () => {
     const rowId = duplicateSelect.value;
@@ -3716,15 +3860,20 @@ function clearEditToList(): void {
 function wireEditForm(): void {
   const dateInput = document.getElementById("gosaki-edit-date") as HTMLInputElement | null;
   const syncEditDateDerived = () => {
-    const date = dateInput?.value ?? "";
-    const month = monthFromDate(date);
-    setMonthHint("gosaki-edit-month-hint", date);
-    setPreviewLink("gosaki-edit-preview-link", month);
+    syncEditDateAdminState();
     markDryRunStale();
     updateOperatorUnsavedBanner(true);
+    updateSaveButtonState(lastDryRunResult);
   };
   dateInput?.addEventListener("change", syncEditDateDerived);
   dateInput?.addEventListener("input", syncEditDateDerived);
+  for (const name of ["gosaki-edit-date-status", "gosaki-edit-tbd-month-mode"]) {
+    document.querySelectorAll(`input[name="${name}"]`).forEach((el) => {
+      el.addEventListener("change", syncEditDateDerived);
+    });
+  }
+  document.getElementById("gosaki-edit-tbd-month")?.addEventListener("change", syncEditDateDerived);
+  document.getElementById("gosaki-edit-tbd-month")?.addEventListener("input", syncEditDateDerived);
 
   document
     .getElementById("gosaki-schedule-edit-dry-run-btn")

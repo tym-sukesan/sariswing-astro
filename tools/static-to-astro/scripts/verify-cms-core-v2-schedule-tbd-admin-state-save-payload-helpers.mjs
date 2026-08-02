@@ -142,6 +142,21 @@ if (confirmed.ok) {
   assert("confirmed month membership", confirmed.value.monthMembership.kind === "month-page");
 }
 
+const confirmedEmptyDraft = resolveScheduleAdminDateState({
+  operation: SCHEDULE_ADMIN_DATE_OPERATION_CREATE,
+  dateStatus: "confirmed",
+  date: "",
+  schemaSupportsTbd: true,
+  tbdAdminUiEnabled: true,
+  tbdWriteEnabled: false,
+});
+assert("confirmed empty draft ok", confirmedEmptyDraft.ok === true);
+if (confirmedEmptyDraft.ok) {
+  assert("confirmed empty draft date enabled", confirmedEmptyDraft.value.dateInputEnabled === true);
+  assert("confirmed empty draft date required", confirmedEmptyDraft.value.dateInputRequired === true);
+  assert("confirmed empty draft write blocked", confirmedEmptyDraft.value.writeAllowed === false);
+}
+
 const monthMismatch = resolveScheduleAdminDateState({
   operation: "create",
   dateStatus: "confirmed",
@@ -164,6 +179,21 @@ if (tbdKnownBlocked.ok) {
   assert("tbd known display 日付未定", tbdKnownBlocked.value.display === "日付未定");
   assert("tbd known date null", tbdKnownBlocked.value.date === null);
   assert("tbd known write blocked flags false", tbdKnownBlocked.value.writeAllowed === false);
+}
+
+const tbdKnownEmptyMonth = resolveScheduleAdminDateState({
+  operation: "create",
+  dateStatus: "tbd",
+  tbdMonthMode: SCHEDULE_TBD_MONTH_MODE_KNOWN,
+  month: "",
+  schemaSupportsTbd: true,
+  tbdWriteEnabled: false,
+  tbdAdminUiEnabled: true,
+});
+assert("tbd known empty month ok", tbdKnownEmptyMonth.ok === true);
+if (tbdKnownEmptyMonth.ok) {
+  assert("tbd known empty month display 日付未定", tbdKnownEmptyMonth.value.display === "日付未定");
+  assert("tbd known empty month input required", tbdKnownEmptyMonth.value.monthInputRequired === true);
 }
 
 const tbdKnownOneFlag = resolveScheduleAdminDateState({

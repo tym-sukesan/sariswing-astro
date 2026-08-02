@@ -5,18 +5,18 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: CMS Core v2 Schedule TBD staging migration apply completion COMPLETE / PASS
-Phase: cms-core-v2-schedule-tbd-staging-migration-apply-completion
-Staging: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh UNCHANGED
-Block B: Success · Block C: postcheck_pass=true · rollback not run
-Schema: date nullable · date_status text NOT NULL DEFAULT confirmed · CHECKs validated
-Counts: total 79 · published 74 · gosaki 74 · mio 0 · confirmed 79 · tbd 0
-Fingerprints: unchanged vs Block A
-Anon: SCHEDULE_SELECT (no date_status) · Gosaki published 74 · normalize 74 OK
-Runtime / Admin / Save / Mio seed: still unwired / not ready
-Doc: docs/cms-core-v2-schedule-tbd-staging-migration-apply-completion.md
-Next Primary: cms-core-v2-schedule-tbd-date-status-read-wiring
-Prior: final-review · migration gate · Admin state/payload helpers
+Current phase: CMS Core v2 Schedule TBD date_status read-wiring COMPLETE / PASS
+Phase: cms-core-v2-schedule-tbd-date-status-read-wiring
+SELECT: SCHEDULE_SELECT legacy default · SCHEDULE_SELECT_TBD_V1 when schemaSupportsTbdRead===true on staging Kit
+Production: TBD v1 forbidden (STOP) · vsbvndwuajjhnzpohghh UNCHANGED
+Normalize: dateStatus/dateDisplay/monthMembership/dateContract via schedule-date-contract
+Sort: compareScheduleRecords → compareScheduleDateContract
+Staging anon: tbd-v1 · published 74 · confirmed 74 · tbd 0 · null date 0
+Admin/Save/Edge/Mio seed: unchanged / not ready
+Doc: docs/cms-core-v2-schedule-tbd-date-status-read-wiring.md
+Verifier: verify:cms-core-v2-schedule-tbd-date-status-read-wiring (+ Safety Suite offline)
+Next Primary: cms-core-v2-schedule-tbd-admin-ui-connect (Save dry-run still gated)
+Prior: staging migration apply completion
 HubSpot: COMPLETE WITH NON-BLOCKING · PC/375 PASS · submit E2E recheck only
 Gosaki CLIENT_SHARE_READY: true (maintained)
 deployed package: dc1c5b62a58d0462ad6629db4847256d316d4a38 (unchanged; no regen)
@@ -27,10 +27,15 @@ readyForAnyFutureFtpApply: false
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
 ```
 
+## CMS Core v2 Schedule TBD date_status read-wiring (2026-08-02)
+
+- Capability-gated SELECT · normalize/membership/sort wired · confirmed Gosaki HTML stable
+- Staging anon smoke PASS · live not in Safety Suite
+
 ## CMS Core v2 Schedule TBD staging migration apply completion (2026-08-02)
 
-- Staging schema applied · anon read-compat PASS · no runtime date_status wire yet
-- Next: date_status read-wiring · then Admin/Save · Mio seed regen
+- Staging schema applied · recorded · runtime now wired above
+- Rollback not run / not needed
 
 ## CMS Core v2 Schedule TBD staging migration final review (2026-08-01)
 
@@ -40,8 +45,8 @@ STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
 ## CMS Core v2 Schedule TBD staging migration gate (2026-08-01)
 
 - DO NOT EXECUTE A–E SQL template + offline verifier (historical packet)
-- Final-review + apply completion supersede earlier READY false / concurrent-Save residual risk
-- No migration directory placement · no Admin/Save wire in gate phase
+- Final-review + apply completion + read-wiring supersede earlier READY false / concurrent-Save residual risk
+- No migration directory placement · Admin/Save still unwired for write
 
 ## CMS Core v2 Schedule TBD Admin state + Save payload helpers (2026-08-01)
 

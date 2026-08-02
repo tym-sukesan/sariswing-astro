@@ -5,12 +5,23 @@ import schedules from "../../../data/gosaki-schedules.json";
 
 const MONTH = "2026-08";
 const events = schedules
-  .filter((s) => s.month === MONTH)
+  .filter((s) => {
+    if (s?.monthMembership?.kind === "hub-only") return false;
+    if (s?.monthMembership?.kind === "month-page") return s.monthMembership.month === MONTH;
+    return s.month === MONTH;
+  })
   .sort((a, b) => {
-    const da = a.date || "";
-    const db = b.date || "";
-    if (da !== db) return da.localeCompare(db);
-    return (a.sort_order ?? 0) - (b.sort_order ?? 0);
+    const rank = (s) => (s?.dateStatus === "tbd" || s?.date_status === "tbd" ? 1 : 0);
+    const rd = rank(a) - rank(b);
+    if (rd !== 0) return rd;
+    if (rank(a) === 0) {
+      const da = a.date || "";
+      const db = b.date || "";
+      if (da !== db) return da.localeCompare(db);
+    }
+    const so = (a.sort_order ?? 0) - (b.sort_order ?? 0);
+    if (so !== 0) return so;
+    return String(a.legacy_id ?? "").localeCompare(String(b.legacy_id ?? ""));
   });
 ---
 

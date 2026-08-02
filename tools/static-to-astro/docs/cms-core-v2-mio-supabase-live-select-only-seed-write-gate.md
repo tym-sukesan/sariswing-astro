@@ -179,7 +179,7 @@ TBD_CONTRACT_HELPERS: cms-core-v2-schedule-tbd-date-contract-helpers (COMPLETE)
 TBD_GOSAKI_READ_COMPAT: cms-core-v2-schedule-tbd-date-gosaki-read-compat (COMPLETE · later phase)
 SENTINEL_DATE_REJECTED: true
 DATE_STATUS_IN_DB: true
-DATE_STATUS_IN_DB_QUERY: false
+DATE_STATUS_IN_DB_QUERY: true
 RUNTIME_CHANGED: false
 REGISTRY_CHANGED: false
 CONTACT_PROVIDER_UNCHANGED: true
@@ -190,8 +190,9 @@ TBD_ADMIN_STATE_SAVE_PAYLOAD_HELPERS: cms-core-v2-schedule-tbd-admin-state-save-
 TBD_STAGING_MIGRATION_GATE: cms-core-v2-schedule-tbd-staging-migration-gate (COMPLETE)
 TBD_STAGING_MIGRATION_FINAL_REVIEW: cms-core-v2-schedule-tbd-staging-migration-final-review (COMPLETE)
 TBD_STAGING_MIGRATION_APPLY_COMPLETION: cms-core-v2-schedule-tbd-staging-migration-apply-completion (COMPLETE / PASS)
+TBD_DATE_STATUS_READ_WIRING: cms-core-v2-schedule-tbd-date-status-read-wiring (COMPLETE / PASS · Kit read runtime; seed gate still RUNTIME_CHANGED false)
 READY_FOR_SCHEDULE_TBD_STAGING_MIGRATION_APPLY: true
-NEXT_AFTER_BLOCKER_RESOLVED: cms-core-v2-schedule-tbd-date-status-read-wiring → seed regen/apply
+NEXT_AFTER_BLOCKER_RESOLVED: seed regen for TBD null + date_status → apply
 ```
 
 Required approval form (future apply only):

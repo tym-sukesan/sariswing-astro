@@ -350,16 +350,17 @@ RECOMMENDED_CONTRACT: nullable_date_plus_date_status
 SENTINEL_DATE_REJECTED: true
 READY_FOR_MIO_SEED_APPLY: false
 SCHEMA_CHANGED: false
-DATE_STATUS_IN_DB_QUERY: false
+DATE_STATUS_IN_DB_QUERY: true
 ADMIN_SAVE_CHANGED: false
 DB_WRITE_EXECUTED: false
-MIGRATION_EXECUTED: false
+MIGRATION_EXECUTED: true
 CMS_CORE_V2_SCHEDULE_TBD_STAGING_MIGRATION_GATE_COMPLETE: true
 CMS_CORE_V2_SCHEDULE_TBD_STAGING_MIGRATION_FINAL_REVIEW_COMPLETE: true
 CMS_CORE_V2_SCHEDULE_TBD_STAGING_MIGRATION_APPLY_COMPLETION: true
+CMS_CORE_V2_SCHEDULE_TBD_DATE_STATUS_READ_WIRING_COMPLETE: true
 STAGING_SCHEMA_TBD_CONTRACT_APPLIED: true
 READY_FOR_SCHEDULE_TBD_STAGING_MIGRATION_APPLY: true
-NEXT_PRIMARY_RECOMMENDED: cms-core-v2-schedule-tbd-date-status-read-wiring
+NEXT_PRIMARY_RECOMMENDED: cms-core-v2-schedule-tbd-admin-ui-connect
 READY_FOR_ANY_FUTURE_FTP_APPLY: false
 PRODUCTION_UNCHANGED: true
 ```
@@ -494,5 +495,20 @@ Doc: `cms-core-v2-schedule-tbd-staging-migration-apply-completion.md`
 | Staging schema | `date` nullable · `date_status` confirmed default · CHECKs validated |
 | Counts | total 79 · published 74 · mio 0 · tbd 0 · fingerprints unchanged |
 | Anon read | Gosaki published 74 · SCHEDULE_SELECT OK · normalize OK |
-| Runtime wire | **none** yet |
-| Next | `cms-core-v2-schedule-tbd-date-status-read-wiring` |
+| Runtime wire | **COMPLETE** — `cms-core-v2-schedule-tbd-date-status-read-wiring` |
+| Next | Admin UI connect / Save dry-run · Mio seed regen |
+
+---
+
+## 18. date_status read-wiring (`cms-core-v2-schedule-tbd-date-status-read-wiring`)
+
+**Status:** COMPLETE / PASS (2026-08-02)
+
+Doc: `cms-core-v2-schedule-tbd-date-status-read-wiring.md`
+
+| Item | Value |
+| --- | --- |
+| SELECT | legacy default · TBD v1 gated by exact-true + staging Kit |
+| Normalize / sort | contract helpers wired |
+| Staging anon | 74 published confirmed |
+| Admin / Save | still unwired |

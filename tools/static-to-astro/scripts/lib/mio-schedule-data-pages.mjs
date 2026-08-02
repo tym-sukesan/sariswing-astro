@@ -16,6 +16,7 @@ import { layoutImportFromPagePath } from "./static-site-analyzer.mjs";
 import {
   deriveScheduleMonthsFromSchedules,
   normalizeScheduleRecord,
+  scheduleBelongsToMonthPage,
   sortScheduleRecords,
 } from "./supabase-schedule-read.mjs";
 
@@ -156,7 +157,13 @@ export function renderMioScheduleEventCardHtml(event) {
     event.extensions && typeof event.extensions === "object"
       ? /** @type {Record<string, unknown>} */ (event.extensions)
       : {};
-  const dateStatus = ext.dateStatus === "tbd" || event.date == null ? "tbd" : "dated";
+  const resolvedStatus =
+    event.dateStatus === "tbd" ||
+    event.date_status === "tbd" ||
+    ext.dateStatus === "tbd" ||
+    event.date == null
+      ? "tbd"
+      : "dated";
   const priceKind = String(ext.priceKind ?? "paid");
   const hasImage = Boolean(ext.hasImage) || Boolean(event.image_url);
   const performers = Array.isArray(ext.performers)
@@ -167,10 +174,12 @@ export function renderMioScheduleEventCardHtml(event) {
   const dualShow = ext.dualShowPair ? String(ext.dualShowPair) : null;
   const longTitle = Boolean(ext.longTitle);
 
+  // Prefer normalized contract display (日付未定 / 日程未定); never Date-format null.
   const dateDisplay =
-    dateStatus === "tbd"
-      ? "日付未定"
-      : String(event.date_display || event.date || "");
+    resolvedStatus === "tbd"
+      ? String(event.date_display || event.dateDisplay || "日付未定")
+      : String(event.date_display || event.dateDisplay || event.date || "");
+  const dateStatus = resolvedStatus;
 
   const timeLine =
     event.open_time && event.start_time
@@ -229,10 +238,8 @@ export function renderMioScheduleEventListHtml(events) {
  */
 export function selectMioPublicEventsForMonth(bundle, monthKey) {
   return sortScheduleRecords(
-    readMioScheduleRowsFromBundle(bundle).filter(
-      (row) =>
-        /** @type {any} */ (row).published !== false &&
-        String(/** @type {any} */ (row).month) === monthKey,
+    readMioScheduleRowsFromBundle(bundle).filter((row) =>
+      scheduleBelongsToMonthPage(/** @type {Record<string, unknown>} */ (row), monthKey),
     ),
   );
 }

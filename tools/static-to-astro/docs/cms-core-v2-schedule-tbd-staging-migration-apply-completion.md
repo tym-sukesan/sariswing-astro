@@ -19,7 +19,7 @@
 | Rollback (D/E) | **not executed · not needed** |
 | Fingerprints vs Block A | **unchanged** |
 | Production | **unchanged** |
-| Application runtime / Admin / Save | **still unwired** (`SCHEDULE_SELECT` omits `date_status`) |
+| Application runtime / Admin / Save | **read-wiring COMPLETE** (`cms-core-v2-schedule-tbd-date-status-read-wiring`) · Admin/Save still unwired |
 
 **Migration completion: PASS** on staging only.
 
@@ -126,22 +126,22 @@ SQL_EXECUTED: true
 DB_WRITE_EXECUTED: true
 ROLLBACK_EXECUTED: false
 DATE_STATUS_IN_DB: true
-DATE_STATUS_IN_DB_QUERY: false
-RUNTIME_CHANGED: false
+DATE_STATUS_IN_DB_QUERY: true
+RUNTIME_CHANGED: true
 ADMIN_SAVE_CHANGED: false
 READY_FOR_MIO_SEED_APPLY: false
 PRODUCTION_UNCHANGED: true
 READY_FOR_ANY_FUTURE_FTP_APPLY: false
-NEXT_PRIMARY_RECOMMENDED: cms-core-v2-schedule-tbd-date-status-read-wiring
+NEXT_PRIMARY_RECOMMENDED: cms-core-v2-schedule-tbd-admin-ui-connect
 ```
 
 ---
 
 ## 9. Next Primary
 
-`cms-core-v2-schedule-tbd-date-status-read-wiring`
+`cms-core-v2-schedule-tbd-admin-ui-connect` (Save dry-run still gated). Mio seed remains later.
 
-Wire `date_status` into SELECT / normalize / sorting **incrementally**. Admin UI / Save / Mio seed remain later phases.
+Read-wiring recorded in `cms-core-v2-schedule-tbd-date-status-read-wiring.md`.
 
 ---
 

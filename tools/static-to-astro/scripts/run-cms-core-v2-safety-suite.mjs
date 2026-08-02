@@ -121,6 +121,11 @@ const STEPS = [
     script: "verify-cms-core-v2-schedule-tbd-date-gosaki-read-compat.mjs",
   },
   {
+    id: "schedule-tbd-date-status-read-wiring",
+    kind: "node",
+    script: "verify-cms-core-v2-schedule-tbd-date-status-read-wiring.mjs",
+  },
+  {
     id: "schedule-tbd-admin-state-save-payload-helpers",
     kind: "node",
     script: "verify-cms-core-v2-schedule-tbd-admin-state-save-payload-helpers.mjs",

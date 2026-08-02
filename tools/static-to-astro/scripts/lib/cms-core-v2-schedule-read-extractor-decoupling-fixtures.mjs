@@ -37,6 +37,9 @@ export const SEED_ROW_NORMALIZED = Object.freeze({
   site_slug: "gosaki-piano",
   date: "2026-08-15",
   date_display: "2026.08.15 (Sat)",
+  dateDisplay: "2026.08.15 (Sat)",
+  dateStatus: "confirmed",
+  date_status: "confirmed",
   year: 2026,
   month: "2026-08",
   title: "[CMS Kit] schedule-read decoupling fixture",
@@ -54,6 +57,24 @@ export const SEED_ROW_NORMALIZED = Object.freeze({
   sort_order: 1,
   updated_at: null,
   label: "2026.08",
+  monthMembership: Object.freeze({
+    kind: "month-page",
+    month: "2026-08",
+  }),
+  dateContract: Object.freeze({
+    dateStatus: "confirmed",
+    date: "2026-08-15",
+    month: "2026-08",
+    year: 2026,
+    sortOrder: 1,
+    legacyId: "schedule-2026-08-fixture-001",
+    sourceRoute: "/schedule/2026-08/",
+    display: "2026.08.15 (Sat)",
+    monthMembership: Object.freeze({
+      kind: "month-page",
+      month: "2026-08",
+    }),
+  }),
 });
 
 /** Expected empty-env static-fallback envelope keys (values asserted in verifier). */

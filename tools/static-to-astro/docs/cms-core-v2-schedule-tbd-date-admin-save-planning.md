@@ -322,17 +322,18 @@ RECOMMENDED_PAYLOAD: date_status + date + month + existing fields
 FAIL_CLOSED_PRE_MIGRATION: reject date_status and date null saves
 SCHEMA_CHANGED: false
 ADMIN_SAVE_CHANGED: false
-DATE_STATUS_IN_DB_QUERY: false
+DATE_STATUS_IN_DB_QUERY: true
 DB_WRITE_EXECUTED: false
-MIGRATION_EXECUTED: false
+MIGRATION_EXECUTED: true
 EDGE_DEPLOYED: false
 READY_FOR_MIO_SEED_APPLY: false
 CMS_CORE_V2_SCHEDULE_TBD_STAGING_MIGRATION_GATE_COMPLETE: true
 CMS_CORE_V2_SCHEDULE_TBD_STAGING_MIGRATION_FINAL_REVIEW_COMPLETE: true
 CMS_CORE_V2_SCHEDULE_TBD_STAGING_MIGRATION_APPLY_COMPLETION: true
+CMS_CORE_V2_SCHEDULE_TBD_DATE_STATUS_READ_WIRING_COMPLETE: true
 STAGING_SCHEMA_TBD_CONTRACT_APPLIED: true
 READY_FOR_SCHEDULE_TBD_STAGING_MIGRATION_APPLY: true
-NEXT_PRIMARY_RECOMMENDED: cms-core-v2-schedule-tbd-date-status-read-wiring
+NEXT_PRIMARY_RECOMMENDED: cms-core-v2-schedule-tbd-admin-ui-connect
 READY_FOR_ANY_FUTURE_FTP_APPLY: false
 PRODUCTION_UNCHANGED: true
 ```
@@ -367,4 +368,4 @@ Docs: gate · final-review · `cms-core-v2-schedule-tbd-staging-migration-apply-
 
 ### Next
 
-`cms-core-v2-schedule-tbd-date-status-read-wiring` · then Admin UI connect / Save dry-run · Mio seed regen
+`cms-core-v2-schedule-tbd-admin-ui-connect` · then Save dry-run · Mio seed regen

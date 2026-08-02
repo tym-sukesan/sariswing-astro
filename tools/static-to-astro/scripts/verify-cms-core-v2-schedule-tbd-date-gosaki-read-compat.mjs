@@ -26,6 +26,7 @@ import {
 import { applyGosakiScheduleDataPages } from "./lib/gosaki-schedule-data-pages.mjs";
 import {
   SCHEDULE_SELECT,
+  SCHEDULE_SELECT_TBD_V1,
   compareScheduleRecords,
   deriveScheduleMonthsFromSchedules,
   formatScheduleDateDisplay,
@@ -103,16 +104,20 @@ const mioPagesSrc = fs.readFileSync(MIO_PAGES, "utf8");
 
 assert("SCHEDULE_SELECT has no date_status", !/\bdate_status\b/.test(SCHEDULE_SELECT));
 assert(
-  "load path select string has no date_status",
-  !/\.select\([^)]*date_status/.test(coreSrc) && !/date_status/.test(SCHEDULE_SELECT),
+  "SCHEDULE_SELECT_TBD_V1 includes date_status",
+  /\bdate_status\b/.test(SCHEDULE_SELECT_TBD_V1),
+);
+assert(
+  "load path does not hardcode .select(...date_status)",
+  !/\.select\([^)]*date_status/.test(coreSrc),
 );
 assert(
   "core uses normalizeScheduleDateContract",
   /normalizeScheduleDateContract/.test(coreSrc),
 );
 assert(
-  "core does not use compareScheduleDateContract (sort unchanged)",
-  !/compareScheduleDateContract/.test(coreSrc),
+  "core wires compareScheduleDateContract for sort",
+  /compareScheduleDateContract/.test(coreSrc),
 );
 assert(
   "core keeps compareScheduleRecords",
@@ -276,7 +281,7 @@ assert(
 const shuffled = [...normalizedCandidates].reverse();
 const sorted = sortScheduleRecords(shuffled);
 assert(
-  "sort uses date→sort_order→legacy_id (legacy)",
+  "sort uses Kit date-contract comparator (confirmed-stable)",
   sorted.every((row, i, arr) => {
     if (i === 0) return true;
     return compareScheduleRecords(arr[i - 1], row) <= 0;
@@ -318,6 +323,9 @@ const expectedBaselineNormalized = {
   site_slug: "gosaki-piano",
   date: "2026-08-01",
   date_display: "2026.08.01 (Sat)",
+  dateDisplay: "2026.08.01 (Sat)",
+  dateStatus: "confirmed",
+  date_status: "confirmed",
   year: 2026,
   month: "2026-08",
   title: null,
@@ -335,6 +343,24 @@ const expectedBaselineNormalized = {
   sort_order: 1,
   updated_at: null,
   label: "2026.08",
+  monthMembership: {
+    kind: "month-page",
+    month: "2026-08",
+  },
+  dateContract: {
+    dateStatus: "confirmed",
+    date: "2026-08-01",
+    month: "2026-08",
+    year: 2026,
+    sortOrder: 1,
+    legacyId: "baseline-2026-08-01",
+    sourceRoute: "/schedule/2026-08/",
+    display: "2026.08.01 (Sat)",
+    monthMembership: {
+      kind: "month-page",
+      month: "2026-08",
+    },
+  },
 };
 deepEqual(
   "baseline-shaped row normalize deep-equal",

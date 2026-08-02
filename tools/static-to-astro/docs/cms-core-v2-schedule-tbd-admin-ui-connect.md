@@ -88,11 +88,11 @@ DB_WRITE_EXECUTED: false
 READY_FOR_MIO_SEED_APPLY: false
 PRODUCTION_UNCHANGED: true
 READY_FOR_ANY_FUTURE_FTP_APPLY: false
-NEXT_PRIMARY_RECOMMENDED: cms-core-v2-schedule-tbd-date-save-dry-run
+NEXT_PRIMARY_RECOMMENDED: cms-core-v2-schedule-tbd-date-save-non-dry-run-staging
 ```
 
 ---
 
 ## 7. Next Primary
 
-`cms-core-v2-schedule-tbd-date-save-dry-run` — dry-run TBD Save contract (still no write) after dual arms.
+`cms-core-v2-schedule-tbd-date-save-non-dry-run-staging` — staging TBD Save（別承認） after dry-run.

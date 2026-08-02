@@ -41,6 +41,8 @@ const tbdAdminUiConfig = resolveScheduleTbdAdminUiServerConfig(import.meta.env);
 const tbdAdminUiConfigJson = JSON.stringify({
   schemaSupportsTbd: tbdAdminUiConfig.schemaSupportsTbd,
   tbdAdminUiEnabled: tbdAdminUiConfig.tbdAdminUiEnabled,
+  tbdDryRunEnabled: tbdAdminUiConfig.tbdDryRunEnabled,
+  tbdWriteEnabled: tbdAdminUiConfig.tbdWriteEnabled,
   supabaseUrl: tbdAdminUiConfig.supabaseUrl,
 });
 
@@ -270,6 +272,26 @@ function displayValue(value: string | null | undefined): string {
       </label>
 
       <p id="gosaki-add-tbd-save-blocked" class="gosaki-schedule-tbd-save-blocked" role="status" hidden></p>
+
+      <div id="gosaki-add-tbd-dry-run-wrap" class="gosaki-schedule-tbd-dry-run" hidden>
+        <button
+          type="button"
+          class="admin-button admin-button-secondary"
+          id="gosaki-add-tbd-dry-run-btn"
+          disabled
+        >
+          Dry-run確認
+        </button>
+        <p class="gosaki-schedule-tbd-dry-run__hint" role="note">
+          TBDの保存候補payloadをローカル生成します。これは保存されません（DB / Edge へ送信しません）。
+        </p>
+        <div
+          id="gosaki-add-tbd-dry-run-result"
+          class="gosaki-schedule-tbd-dry-run__result"
+          hidden
+          aria-live="polite"
+        ></div>
+      </div>
 
       <label class="admin-form__field admin-form__field--full">
         <span class="admin-form__label">タイトル</span>
@@ -610,6 +632,26 @@ function displayValue(value: string | null | undefined): string {
         </label>
 
         <p id="gosaki-edit-tbd-save-blocked" class="gosaki-schedule-tbd-save-blocked" role="status" hidden></p>
+
+        <div id="gosaki-edit-tbd-dry-run-wrap" class="gosaki-schedule-tbd-dry-run" hidden>
+          <button
+            type="button"
+            class="admin-button admin-button-secondary"
+            id="gosaki-edit-tbd-dry-run-btn"
+            disabled
+          >
+            Dry-run確認
+          </button>
+          <p class="gosaki-schedule-tbd-dry-run__hint" role="note">
+            TBDの保存候補payloadをローカル生成します。これは保存されません（DB / Edge へ送信しません）。
+          </p>
+          <div
+            id="gosaki-edit-tbd-dry-run-result"
+            class="gosaki-schedule-tbd-dry-run__result"
+            hidden
+            aria-live="polite"
+          ></div>
+        </div>
 
         <label class="admin-form__field admin-form__field--full">
           <span class="admin-form__label">タイトル</span>

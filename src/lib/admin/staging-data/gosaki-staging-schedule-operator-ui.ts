@@ -48,6 +48,10 @@ import {
   type ScheduleTbdAdminUiCapability,
 } from "./schedule-tbd-admin-ui";
 import {
+  runScheduleTbdSavePayloadDryRun,
+  type ScheduleTbdDryRunCapability,
+} from "./schedule-tbd-save-dry-run";
+import {
   buildGosakiScheduleDuplicateDraft,
   executeG22bScheduleDuplicateDryRun,
   GOSAKI_SCHEDULE_DUPLICATE_DRAFT_LEGACY_LABEL,
@@ -974,6 +978,130 @@ function getTbdAdminUiCapability(): ScheduleTbdAdminUiCapability {
     tbdAdminUiCapability = readScheduleTbdAdminUiConfigFromDom();
   }
   return tbdAdminUiCapability;
+}
+
+function getTbdDryRunCapability(): ScheduleTbdDryRunCapability {
+  const base = getTbdAdminUiCapability();
+  return {
+    ...base,
+    tbdDryRunVisible:
+      base.schemaSupportsTbd && base.tbdAdminUiEnabled && base.tbdDryRunEnabled,
+    tbdWriteEnabled: false,
+  };
+}
+
+function readFormContentForTbdDryRun(prefix: "add" | "edit"): {
+  title: string;
+  venue: string;
+  open_time: string;
+  start_time: string;
+  price: string;
+  description: string;
+  published: boolean;
+} {
+  const publishedEl = document.getElementById(
+    `gosaki-${prefix}-published`,
+  ) as HTMLInputElement | null;
+  return {
+    title: String(
+      (document.getElementById(`gosaki-${prefix}-title`) as HTMLInputElement | null)?.value ?? "",
+    ),
+    venue: String(
+      (document.getElementById(`gosaki-${prefix}-venue`) as HTMLInputElement | null)?.value ?? "",
+    ),
+    open_time: String(
+      (document.getElementById(`gosaki-${prefix}-open-time`) as HTMLInputElement | null)?.value ??
+        "",
+    ),
+    start_time: String(
+      (document.getElementById(`gosaki-${prefix}-start-time`) as HTMLInputElement | null)?.value ??
+        "",
+    ),
+    price: String(
+      (document.getElementById(`gosaki-${prefix}-price`) as HTMLInputElement | null)?.value ?? "",
+    ),
+    description: String(
+      (document.getElementById(`gosaki-${prefix}-description`) as HTMLTextAreaElement | null)
+        ?.value ?? "",
+    ),
+    published: publishedEl?.checked === true,
+  };
+}
+
+function renderTbdDryRunResult(
+  prefix: "add" | "edit",
+  result: ReturnType<typeof runScheduleTbdSavePayloadDryRun>,
+): void {
+  const el = document.getElementById(`gosaki-${prefix}-tbd-dry-run-result`);
+  if (!(el instanceof HTMLElement)) return;
+  el.hidden = false;
+  if (!result.ok) {
+    el.className = "gosaki-schedule-tbd-dry-run__result gosaki-schedule-tbd-dry-run__result--error";
+    el.innerHTML = `
+      <p class="gosaki-schedule-tbd-dry-run__notice"><strong>${escapeHtml(result.notice)}</strong></p>
+      <p class="gosaki-schedule-tbd-dry-run__message">Dry-run できませんでした。</p>
+      <ul class="gosaki-schedule-tbd-dry-run__errors">${result.errors
+        .map((e) => `<li>${escapeHtml(e)}</li>`)
+        .join("")}</ul>
+      <p class="gosaki-schedule-tbd-dry-run__codes"><code>${escapeHtml(result.codes.join(", "))}</code></p>
+    `;
+    return;
+  }
+  el.className = "gosaki-schedule-tbd-dry-run__result gosaki-schedule-tbd-dry-run__result--ok";
+  el.innerHTML = `
+    <p class="gosaki-schedule-tbd-dry-run__notice"><strong>${escapeHtml(result.notice)}</strong></p>
+    <p class="gosaki-schedule-tbd-dry-run__message">保存候補 payload（ローカル生成）</p>
+    <dl class="gosaki-schedule-tbd-dry-run__meta">
+      <div><dt>mode</dt><dd><code>${escapeHtml(String(result.mode))}</code></dd></div>
+      <div><dt>operation</dt><dd><code>${escapeHtml(String(result.operation))}</code></dd></div>
+    </dl>
+    <pre class="gosaki-schedule-tbd-dry-run__json">${escapeHtml(
+      JSON.stringify(result.payload, null, 2),
+    )}</pre>
+  `;
+}
+
+function runAddTbdDryRun(): void {
+  const result = runScheduleTbdSavePayloadDryRun({
+    capability: getTbdDryRunCapability(),
+    prefix: "add",
+    operation: SCHEDULE_ADMIN_DATE_OPERATION_CREATE,
+    content: readFormContentForTbdDryRun("add"),
+  });
+  renderTbdDryRunResult("add", result);
+}
+
+function runEditTbdDryRun(): void {
+  const lock = selectedRowSnapshot?.updated_at
+    ? String(selectedRowSnapshot.updated_at)
+    : null;
+  const result = runScheduleTbdSavePayloadDryRun({
+    capability: getTbdDryRunCapability(),
+    prefix: "edit",
+    operation:
+      isNewEventDraftMode() || isDuplicateDraftMode()
+        ? SCHEDULE_ADMIN_DATE_OPERATION_CREATE
+        : SCHEDULE_ADMIN_DATE_OPERATION_UPDATE,
+    content: {
+      ...readFormContentForTbdDryRun("edit"),
+      expectedBeforeUpdatedAt: lock,
+      id: selectedRowSnapshot?.id ?? null,
+    },
+    existingDate: selectedRowSnapshot?.date ?? null,
+    existingMonth: selectedRowSnapshot?.month ?? null,
+  });
+  renderTbdDryRunResult("edit", result);
+}
+
+function wireTbdDryRunButtons(): void {
+  document.getElementById("gosaki-add-tbd-dry-run-btn")?.addEventListener("click", (event) => {
+    event.preventDefault();
+    runAddTbdDryRun();
+  });
+  document.getElementById("gosaki-edit-tbd-dry-run-btn")?.addEventListener("click", (event) => {
+    event.preventDefault();
+    runEditTbdDryRun();
+  });
 }
 
 function setNamedRadio(name: string, value: string): void {
@@ -3996,6 +4124,7 @@ export async function initGosakiStagingScheduleOperatorUi(): Promise<void> {
   wireTableActions();
   wireAddForm();
   wireEditForm();
+  wireTbdDryRunButtons();
   wireSaveButton();
   wireDuplicateButton();
   wireAddButton();

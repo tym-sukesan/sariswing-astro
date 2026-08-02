@@ -5,16 +5,15 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: CMS Core v2 Schedule TBD Admin UI connect COMPLETE / PASS
-Phase: cms-core-v2-schedule-tbd-admin-ui-connect
-UI: AdminGosakiStagingScheduleOperatorPage + gosaki-staging-schedule-operator-ui
-SoT: schedule-admin-date-state.mjs · capability exact-true schemaSupportsTbd + tbdAdminUiEnabled
-TBD Save: blocked (tbdWriteEnabled false · no payload helper wire)
-Edge / DB write / Mio seed: unchanged / not ready
-Doc: docs/cms-core-v2-schedule-tbd-admin-ui-connect.md
-Verifier: verify:cms-core-v2-schedule-tbd-admin-ui-connect (+ Safety Suite)
-Next Primary: cms-core-v2-schedule-tbd-date-save-dry-run
-Prior: date_status read-wiring · staging migration apply
+Current phase: CMS Core v2 Schedule TBD date Save dry-run COMPLETE / PASS
+Phase: cms-core-v2-schedule-tbd-date-save-dry-run
+UI: Dry-run確認 on TBD · buildScheduleTbdSavePayload local preview
+Capability: schemaSupportsTbd + tbdAdminUiEnabled + tbdDryRunEnabled (exact true)
+tbdWriteEnabled: false · no Edge / DB write
+Doc: docs/cms-core-v2-schedule-tbd-date-save-dry-run.md
+Verifier: verify:cms-core-v2-schedule-tbd-date-save-dry-run (+ Safety Suite)
+Next Primary: cms-core-v2-schedule-tbd-date-save-non-dry-run-staging
+Prior: Admin UI connect · date_status read-wiring · staging migration apply
 HubSpot: COMPLETE WITH NON-BLOCKING · PC/375 PASS · submit E2E recheck only
 Gosaki CLIENT_SHARE_READY: true (maintained)
 deployed package: dc1c5b62a58d0462ad6629db4847256d316d4a38 (unchanged; no regen)
@@ -24,6 +23,10 @@ readyForOperatorAboutSeedApply: false
 readyForAnyFutureFtpApply: false
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
 ```
+
+## CMS Core v2 Schedule TBD date Save dry-run (2026-08-03)
+
+- Local TBD payload dry-run · Save still blocked · production dry-run off
 
 ## CMS Core v2 Schedule TBD Admin UI connect (2026-08-02)
 

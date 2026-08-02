@@ -131,10 +131,16 @@ const STEPS = [
     script: "verify-cms-core-v2-schedule-tbd-admin-ui-connect.mjs",
   },
   {
+    id: "schedule-tbd-date-save-dry-run",
+    kind: "node",
+    script: "verify-cms-core-v2-schedule-tbd-date-save-dry-run.mjs",
+  },
+  {
     id: "schedule-tbd-admin-state-save-payload-helpers",
     kind: "node",
     script: "verify-cms-core-v2-schedule-tbd-admin-state-save-payload-helpers.mjs",
-  },  {
+  },
+  {
     id: "schedule-tbd-staging-migration-gate",
     kind: "node",
     script: "verify-cms-core-v2-schedule-tbd-staging-migration-gate.mjs",

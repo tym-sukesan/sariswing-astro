@@ -42,6 +42,7 @@ export {
 export type ScheduleTbdAdminUiCapabilityInput = {
   schemaSupportsTbd?: unknown;
   tbdAdminUiEnabled?: unknown;
+  tbdDryRunEnabled?: unknown;
   supabaseUrl?: string | null;
 };
 
@@ -49,6 +50,8 @@ export type ScheduleTbdAdminUiCapability = {
   schemaSupportsTbd: boolean;
   tbdAdminUiEnabled: boolean;
   tbdAdminUiVisible: boolean;
+  /** Exact-true dry-run flag (Save write remains off). */
+  tbdDryRunEnabled: boolean;
   productionBlocked: boolean;
 };
 
@@ -65,15 +68,18 @@ export function resolveScheduleTbdAdminUiCapability(
       schemaSupportsTbd: false,
       tbdAdminUiEnabled: false,
       tbdAdminUiVisible: false,
+      tbdDryRunEnabled: false,
       productionBlocked: true,
     };
   }
   const schemaSupportsTbd = isExactTrue(input.schemaSupportsTbd);
   const tbdAdminUiEnabled = isExactTrue(input.tbdAdminUiEnabled);
+  const tbdDryRunEnabled = isExactTrue(input.tbdDryRunEnabled);
   return {
     schemaSupportsTbd,
     tbdAdminUiEnabled,
     tbdAdminUiVisible: schemaSupportsTbd && tbdAdminUiEnabled,
+    tbdDryRunEnabled,
     productionBlocked: false,
   };
 }
@@ -87,6 +93,8 @@ export function resolveScheduleTbdAdminUiServerConfig(env: {
   schemaSupportsTbd: boolean;
   tbdAdminUiEnabled: boolean;
   tbdAdminUiVisible: boolean;
+  tbdDryRunEnabled: boolean;
+  tbdWriteEnabled: false;
   productionBlocked: boolean;
   supabaseUrl: string;
 } {
@@ -95,10 +103,13 @@ export function resolveScheduleTbdAdminUiServerConfig(env: {
   const stagingKit = supabaseUrl.includes(STATIC_TO_ASTRO_CMS_STAGING_PROJECT_REF);
   const schemaSupportsTbd = !productionBlocked && stagingKit;
   const tbdAdminUiEnabled = !productionBlocked && stagingKit;
+  const tbdDryRunEnabled = !productionBlocked && stagingKit;
   return {
     schemaSupportsTbd,
     tbdAdminUiEnabled,
     tbdAdminUiVisible: schemaSupportsTbd && tbdAdminUiEnabled,
+    tbdDryRunEnabled,
+    tbdWriteEnabled: false,
     productionBlocked,
     supabaseUrl,
   };
@@ -116,6 +127,7 @@ export function readScheduleTbdAdminUiConfigFromDom(
       return resolveScheduleTbdAdminUiCapability({
         schemaSupportsTbd: parsed.schemaSupportsTbd,
         tbdAdminUiEnabled: parsed.tbdAdminUiEnabled,
+        tbdDryRunEnabled: parsed.tbdDryRunEnabled,
         supabaseUrl: String(parsed.supabaseUrl ?? ""),
       });
     } catch {
@@ -216,6 +228,8 @@ export function applyScheduleAdminDateStateToDom(
     if (monthField instanceof HTMLElement) monthField.hidden = true;
     if (modeField instanceof HTMLElement) modeField.hidden = true;
     if (blockedEl instanceof HTMLElement) blockedEl.hidden = true;
+    const dryRunWrapInvalid = document.getElementById(`gosaki-${prefix}-tbd-dry-run-wrap`);
+    if (dryRunWrapInvalid instanceof HTMLElement) dryRunWrapInvalid.hidden = true;
     return;
   }
 
@@ -267,6 +281,27 @@ export function applyScheduleAdminDateStateToDom(
       blockedEl.textContent =
         "TBD保存はまだ有効化されていません。日付確定（confirmed）のみ保存できます。";
     }
+  }
+
+  const dryRunWrap = document.getElementById(`gosaki-${prefix}-tbd-dry-run-wrap`);
+  const dryRunBtn = document.getElementById(
+    `gosaki-${prefix}-tbd-dry-run-btn`,
+  ) as HTMLButtonElement | null;
+  const dryRunVisible =
+    capability.tbdAdminUiVisible &&
+    isExactTrue(capability.tbdDryRunEnabled) &&
+    value.dateStatus === SCHEDULE_DATE_STATUS_TBD;
+  if (dryRunWrap instanceof HTMLElement) {
+    dryRunWrap.hidden = !dryRunVisible;
+  }
+  if (dryRunBtn) {
+    const monthOk =
+      value.tbdMonthMode !== SCHEDULE_TBD_MONTH_MODE_KNOWN || Boolean(value.month);
+    const complete = dryRunVisible && monthOk && value.tbdMonthMode != null;
+    dryRunBtn.disabled = !complete;
+    dryRunBtn.title = complete
+      ? "ローカル dry-run（保存しません）"
+      : "TBD入力が完了すると Dry-run 確認できます";
   }
 }
 

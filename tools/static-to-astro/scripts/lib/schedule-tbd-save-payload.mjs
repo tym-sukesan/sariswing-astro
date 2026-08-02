@@ -76,6 +76,7 @@ const ALLOWED_BUILD_KEYS = new Set([
   "tbd_month_mode",
   "schemaSupportsTbd",
   "tbdWriteEnabled",
+  "tbdDryRunEnabled",
   "existingDate",
   "existing_date",
   "existingMonth",
@@ -505,19 +506,48 @@ export function buildScheduleTbdSavePayload(input) {
   }
 
   // --- tbd-v1 ---
-  if (!dateState.writeAllowed) {
-    return {
-      ok: false,
-      errors: [dateState.blockedReason || "TBD write not allowed"],
-      codes: ["tbd_write_blocked"],
-    };
-  }
-  if (!isExactTrue(obj.schemaSupportsTbd) || !isExactTrue(obj.tbdWriteEnabled)) {
-    return {
-      ok: false,
-      errors: ["tbd-v1 requires schemaSupportsTbd and tbdWriteEnabled exact true"],
-      codes: ["tbd_flags_required"],
-    };
+  // Dry-run preview: exact-true tbdDryRunEnabled + schemaSupportsTbd allows local
+  // payload generation without enabling real writes (tbdWriteEnabled stays false).
+  const dryRunPreview =
+    isExactTrue(obj.tbdDryRunEnabled) && isExactTrue(obj.schemaSupportsTbd);
+
+  if (dryRunPreview) {
+    if (
+      dateState.dateStatus === SCHEDULE_DATE_STATUS_CONFIRMED &&
+      (dateState.date == null || dateState.date === "")
+    ) {
+      return {
+        ok: false,
+        errors: ["dry-run confirmed requires date YYYY-MM-DD"],
+        codes: ["dry_run_incomplete_confirmed"],
+      };
+    }
+    if (
+      dateState.dateStatus === SCHEDULE_DATE_STATUS_TBD &&
+      dateState.tbdMonthMode === SCHEDULE_TBD_MONTH_MODE_KNOWN &&
+      (dateState.month == null || dateState.month === "")
+    ) {
+      return {
+        ok: false,
+        errors: ["dry-run month-known TBD requires month YYYY-MM"],
+        codes: ["dry_run_incomplete_month"],
+      };
+    }
+  } else {
+    if (!dateState.writeAllowed) {
+      return {
+        ok: false,
+        errors: [dateState.blockedReason || "TBD write not allowed"],
+        codes: ["tbd_write_blocked"],
+      };
+    }
+    if (!isExactTrue(obj.schemaSupportsTbd) || !isExactTrue(obj.tbdWriteEnabled)) {
+      return {
+        ok: false,
+        errors: ["tbd-v1 requires schemaSupportsTbd and tbdWriteEnabled exact true"],
+        codes: ["tbd_flags_required"],
+      };
+    }
   }
 
   const monthFields =

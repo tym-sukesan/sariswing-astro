@@ -187,6 +187,8 @@ READY_FOR_ANY_FUTURE_FTP_APPLY: false
 PRODUCTION_UNCHANGED: true
 TBD_ADMIN_SAVE_PLANNING: cms-core-v2-schedule-tbd-date-admin-save-planning (COMPLETE · docs)
 TBD_ADMIN_STATE_SAVE_PAYLOAD_HELPERS: cms-core-v2-schedule-tbd-admin-state-save-payload-helpers (COMPLETE · offline)
+TBD_DATE_SAVE_DRY_RUN: cms-core-v2-schedule-tbd-date-save-dry-run (COMPLETE / PASS)
+TBD_DATE_SAVE_NON_DRY_RUN_STAGING_PLANNING: cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-planning (COMPLETE · docs)
 TBD_STAGING_MIGRATION_GATE: cms-core-v2-schedule-tbd-staging-migration-gate (COMPLETE)
 TBD_STAGING_MIGRATION_FINAL_REVIEW: cms-core-v2-schedule-tbd-staging-migration-final-review (COMPLETE)
 TBD_STAGING_MIGRATION_APPLY_COMPLETION: cms-core-v2-schedule-tbd-staging-migration-apply-completion (COMPLETE / PASS)

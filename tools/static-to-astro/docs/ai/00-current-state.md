@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**CMS Core v2 Schedule TBD date Save dry-run (2026-08-03):** **COMPLETE / PASS** — Phase `cms-core-v2-schedule-tbd-date-save-dry-run` · local payload preview via `buildScheduleTbdSavePayload` · `tbdDryRunEnabled` exact-true · `tbdWriteEnabled` false · no Edge/DB · Doc: `cms-core-v2-schedule-tbd-date-save-dry-run.md` · **Next Primary:** `cms-core-v2-schedule-tbd-date-save-non-dry-run-staging`.
+**CMS Core v2 Schedule TBD non-dry-run staging planning (2026-08-03):** **COMPLETE (docs)** — Phase `cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-planning` · CREATE-only oneshot · dual arm · exact cleanup · Doc: `cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-planning.md` · **READY_FOR_TBD_NON_DRY_RUN_IMPLEMENTATION: true** · **Next Primary:** `cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-implementation`.
+
+**CMS Core v2 Schedule TBD date Save dry-run (2026-08-03):** **COMPLETE / PASS** — Phase `cms-core-v2-schedule-tbd-date-save-dry-run` · local payload preview via `buildScheduleTbdSavePayload` · `tbdDryRunEnabled` exact-true · `tbdWriteEnabled` false · no Edge/DB · Doc: `cms-core-v2-schedule-tbd-date-save-dry-run.md` · superseded next → non-dry-run planning above.
 
 **CMS Core v2 Schedule TBD Admin UI connect (2026-08-02):** **COMPLETE / PASS** — Phase `cms-core-v2-schedule-tbd-admin-ui-connect` · operator Schedule UI wires `schedule-admin-date-state` · TBD UI gated by exact-true `schemaSupportsTbd`+`tbdAdminUiEnabled` · TBD Save blocked · PC/375 browser PASS · Doc: `cms-core-v2-schedule-tbd-admin-ui-connect.md` · superseded next → Save dry-run above.
 

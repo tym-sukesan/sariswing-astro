@@ -136,6 +136,11 @@ const STEPS = [
     script: "verify-cms-core-v2-schedule-tbd-date-save-dry-run.mjs",
   },
   {
+    id: "schedule-tbd-date-save-non-dry-run-staging-planning",
+    kind: "node",
+    script: "verify-cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-planning.mjs",
+  },
+  {
     id: "schedule-tbd-admin-state-save-payload-helpers",
     kind: "node",
     script: "verify-cms-core-v2-schedule-tbd-admin-state-save-payload-helpers.mjs",

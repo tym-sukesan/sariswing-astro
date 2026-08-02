@@ -132,7 +132,7 @@ ADMIN_SAVE_CHANGED: false
 READY_FOR_MIO_SEED_APPLY: false
 PRODUCTION_UNCHANGED: true
 READY_FOR_ANY_FUTURE_FTP_APPLY: false
-NEXT_PRIMARY_RECOMMENDED: cms-core-v2-schedule-tbd-admin-ui-connect
+NEXT_PRIMARY_RECOMMENDED: cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-implementation
 ```
 
 ---

@@ -31,7 +31,7 @@ SAVE_EXECUTED: false
 MIO_SEED_UNCHANGED: true
 PRODUCTION_UNCHANGED: true
 READY_FOR_ANY_FUTURE_FTP_APPLY: false
-NEXT_PRIMARY_RECOMMENDED: cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-final-preflight
+NEXT_PRIMARY_RECOMMENDED: cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-execution
 IMPLEMENTATION_PHASE: cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-implementation
 ```
 
@@ -409,11 +409,9 @@ select count(*) from public.schedules where site_slug = 'mio-kisaragi-jazz';
 
 ## 9. Next Primary
 
-`cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-final-preflight`
+Final-preflight **COMPLETE** — `cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-final-preflight.md` · `EXECUTION_PACKET_READY: true` · `ACTUAL_WRITE_READY: false`.
 
-(Implementation COMPLETE — `cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-implementation.md`)
-
-Then: operator Save once → execution-result → arms OFF.
+**Next:** `cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-execution` (operator SQL Editor 79 → arm ON → Save once → arms OFF).
 
 ---
 

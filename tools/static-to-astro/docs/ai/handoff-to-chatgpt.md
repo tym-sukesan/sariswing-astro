@@ -5,20 +5,23 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: CMS Core v2 Schedule TBD non-dry-run staging boundary hardening COMPLETE
-Phase: cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-boundary-hardening
-Decision: CREATE-only oneshot · public executeTbdCreateOneshotSave only · INSERT private · INSERT直前再guard · schema probe · preflight skip不可
+Current phase: CMS Core v2 Schedule TBD non-dry-run staging final-preflight COMPLETE
+Phase: cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-final-preflight
+HEAD: 35d8d431ebb60b8c4012c8e06ab2f59963554b94
+Decision: CREATE-only oneshot · execution packet ready · SQL Editor full-table 79 pending · no Save this phase
 Test row: schedule-2026-11-001 · published=false · date_status=tbd · date=null · month=2026-11
 Approval ID: cms-core-v2-schedule-tbd-create-non-dry-run-oneshot
-COMMIT_READY: true
 IMPLEMENTATION_READY: true
+PREFLIGHT_PASS: false
+PREFLIGHT_ANON_SUBSET_PASS: true
+EXECUTION_PACKET_READY: true
 ACTUAL_WRITE_READY: false
 ARMS_OFF: true · ENV_CHANGED: false · DB_WRITE_EXECUTED: false · EDGE_CHANGED: false
-CLEANUP_IMPLEMENTED: false
-Doc: docs/cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-implementation.md
-Verifier: verify:cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-implementation (108 PASS) · Safety Suite ALL PASS · arms-OFF PC1280/SP375 writeRequests=[]
-Next Primary: cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-final-preflight
-Prior: implementation · non-dry-run planning · Save dry-run · Admin UI connect · date_status read-wiring · migration apply
+CLEANUP_EXECUTED: false
+Doc: docs/cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-final-preflight.md
+Verifier: verify:cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-final-preflight (+ Safety Suite)
+Next Primary: cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-execution
+Prior: boundary hardening · implementation · planning · Save dry-run · Admin UI connect
 HubSpot: COMPLETE WITH NON-BLOCKING · PC/375 PASS · submit E2E recheck only
 Gosaki CLIENT_SHARE_READY: true (maintained)
 deployed package: dc1c5b62a58d0462ad6629db4847256d316d4a38 (unchanged; no regen)
@@ -28,6 +31,10 @@ readyForOperatorAboutSeedApply: false
 readyForAnyFutureFtpApply: false
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
 ```
+
+## CMS Core v2 Schedule TBD non-dry-run staging final-preflight (2026-08-03)
+
+- Anon subset PASS · full-table 79 SQL Editor pending · A–J runbook · post-check · exact cleanup · ACTUAL_WRITE_READY false
 
 ## CMS Core v2 Schedule TBD non-dry-run staging boundary hardening (2026-08-03)
 

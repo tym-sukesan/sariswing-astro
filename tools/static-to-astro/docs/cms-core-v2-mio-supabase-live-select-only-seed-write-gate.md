@@ -190,6 +190,7 @@ TBD_ADMIN_STATE_SAVE_PAYLOAD_HELPERS: cms-core-v2-schedule-tbd-admin-state-save-
 TBD_DATE_SAVE_DRY_RUN: cms-core-v2-schedule-tbd-date-save-dry-run (COMPLETE / PASS)
 TBD_DATE_SAVE_NON_DRY_RUN_STAGING_PLANNING: cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-planning (COMPLETE · docs)
 TBD_DATE_SAVE_NON_DRY_RUN_STAGING_IMPLEMENTATION: cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-implementation (COMPLETE · arms OFF · ACTUAL_WRITE_READY false)
+TBD_DATE_SAVE_NON_DRY_RUN_STAGING_FINAL_PREFLIGHT: cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-final-preflight (COMPLETE · EXECUTION_PACKET_READY true · ACTUAL_WRITE_READY false · SQL Editor 79 pending)
 TBD_STAGING_MIGRATION_GATE: cms-core-v2-schedule-tbd-staging-migration-gate (COMPLETE)
 TBD_STAGING_MIGRATION_FINAL_REVIEW: cms-core-v2-schedule-tbd-staging-migration-final-review (COMPLETE)
 TBD_STAGING_MIGRATION_APPLY_COMPLETION: cms-core-v2-schedule-tbd-staging-migration-apply-completion (COMPLETE / PASS)

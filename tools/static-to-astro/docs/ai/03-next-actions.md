@@ -4,10 +4,38 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 ## 0. Current next actions（直近）
 
 1. **Primary (Gosaki ops):** クライアントへ **staging 共有**（`CLIENT_SHARE_READY: true` · package `dc1c5b6…`）。本番 cutover はしない。
-2. **並行可 (Kit Core):** **Next Primary** `cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-final-preflight`（implementation + boundary hardening COMPLETE · `COMMIT_READY: true` · `ACTUAL_WRITE_READY: false` · arms OFF）→ operator Save once → Mio seed regen/apply → Branch A live SELECT pilot · then generic read-only Admin · form onboarding · Admin runtime Save arm mutex（**別承認**）· evening-set hero（**NON_BLOCKING**）。
+2. **並行可 (Kit Core):** **Next Primary** `cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-execution`（final-preflight COMPLETE · `EXECUTION_PACKET_READY: true` · `PREFLIGHT_PASS: false` until SQL Editor 79 · `ACTUAL_WRITE_READY: false`）→ operator SQL Editor → arm ON → Save once → arms OFF → Mio seed regen/apply → Branch A live SELECT pilot · then generic read-only Admin · form onboarding · Admin runtime Save arm mutex（**別承認**）· evening-set hero（**NON_BLOCKING**）。
 3. **並行可:** production hosting **read-only planning**（`HOSTING_READY: false`）。
 4. **並行可 / 別承認:** YouTube 複数件 **永続 Save**（NON_BLOCKING）。
 5. Save arm **false** · `readyForAnyFutureFtpApply: false` · production STOP · `service_role` 禁止 · **deployed package 固定**.
+
+## 0. CMS Core v2 Schedule TBD non-dry-run staging final-preflight (2026-08-03)
+
+| Item | Value |
+| --- | --- |
+| Gate | `CMS_CORE_V2_SCHEDULE_TBD_DATE_SAVE_NON_DRY_RUN_STAGING_FINAL_PREFLIGHT_COMPLETE: true` |
+| Anon subset | published 74 · mio/tbd/target 0 · date_status SELECT OK |
+| Full table 79 | **pending operator SQL Editor** |
+| Packet | runbook A–J · post-check · exact cleanup |
+| Write | `ACTUAL_WRITE_READY: false` |
+| Next | `cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-execution` |
+
+```txt
+CMS_CORE_V2_SCHEDULE_TBD_DATE_SAVE_NON_DRY_RUN_STAGING_FINAL_PREFLIGHT_COMPLETE: true
+IMPLEMENTATION_READY: true
+PREFLIGHT_PASS: false
+PREFLIGHT_ANON_SUBSET_PASS: true
+EXECUTION_PACKET_READY: true
+ACTUAL_WRITE_READY: false
+ARMS_OFF: true
+ENV_CHANGED: false
+DB_WRITE_EXECUTED: false
+SAVE_EXECUTED: false
+CLEANUP_EXECUTED: false
+NEXT_PRIMARY_RECOMMENDED: cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-execution
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+PRODUCTION_UNCHANGED: true
+```
 
 ## 0. CMS Core v2 Schedule TBD non-dry-run staging boundary hardening (2026-08-03)
 
@@ -17,7 +45,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Public API | `executeTbdCreateOneshotSave` only · INSERT module-private |
 | Preflight | total/mio/tbd/legacy + schema probe · skip不可 |
 | Write | arms OFF · `COMMIT_READY: true` · `ACTUAL_WRITE_READY: false` |
-| Next | `cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-final-preflight` |
+| Next | final-preflight COMPLETE → execution |
 
 ```txt
 CMS_CORE_V2_SCHEDULE_TBD_DATE_SAVE_NON_DRY_RUN_STAGING_BOUNDARY_HARDENING_COMPLETE: true
@@ -32,7 +60,7 @@ ENV_CHANGED: false
 DB_WRITE_EXECUTED: false
 EDGE_CHANGED: false
 CLEANUP_IMPLEMENTED: false
-NEXT_PRIMARY_RECOMMENDED: cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-final-preflight
+NEXT_PRIMARY_RECOMMENDED: cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-execution
 READY_FOR_ANY_FUTURE_FTP_APPLY: false
 PRODUCTION_UNCHANGED: true
 ```

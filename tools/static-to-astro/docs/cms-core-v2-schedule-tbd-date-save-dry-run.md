@@ -111,11 +111,11 @@ DB_WRITE_EXECUTED: false
 READY_FOR_MIO_SEED_APPLY: false
 PRODUCTION_UNCHANGED: true
 READY_FOR_ANY_FUTURE_FTP_APPLY: false
-NEXT_PRIMARY_RECOMMENDED: cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-final-preflight
+NEXT_PRIMARY_RECOMMENDED: cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-execution
 ```
 
 ---
 
 ## 7. Next Primary
 
-`cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-final-preflight` — after implementation (`cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-implementation.md` · `IMPLEMENTATION_READY: true` · `ACTUAL_WRITE_READY: false`).
+`cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-execution` — after final-preflight (`cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-final-preflight.md` · `EXECUTION_PACKET_READY: true` · `ACTUAL_WRITE_READY: false`).

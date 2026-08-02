@@ -31,7 +31,8 @@ CLEANUP_IMPLEMENTED: false
 MIO_SEED_UNCHANGED: true
 PRODUCTION_UNCHANGED: true
 READY_FOR_ANY_FUTURE_FTP_APPLY: false
-NEXT_PRIMARY_RECOMMENDED: cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-final-preflight
+NEXT_PRIMARY_RECOMMENDED: cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-execution
+FINAL_PREFLIGHT: cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-final-preflight (COMPLETE · ACTUAL_WRITE_READY false until SQL Editor 79)
 ```
 
 **Staging only:** `kmjqppxjdnwwrtaeqjta`
@@ -134,6 +135,6 @@ Dry-run (add/create) must match fixed oneshot fields → fingerprint lock → Sa
 
 ## 5. Next
 
-`cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-final-preflight`
+Final-preflight **COMPLETE** — Doc: `cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-final-preflight.md` · `EXECUTION_PACKET_READY: true` · `ACTUAL_WRITE_READY: false` (SQL Editor full-table 79 pending operator).
 
-→ operator-approved Save once (separate phase) · then execution-result · arms OFF.
+**Next Primary:** `cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-execution` (operator-approved Save once · arms OFF after).

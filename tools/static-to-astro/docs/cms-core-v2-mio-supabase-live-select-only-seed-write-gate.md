@@ -173,11 +173,12 @@ CMS_CORE_V2_MIO_SUPABASE_LIVE_SELECT_ONLY_SEED_WRITE_GATE_COMPLETE: true
 READY_FOR_MIO_SEED_APPLY: false
 MIO_SEED_SQL_EXECUTED: false
 DB_WRITE_EXECUTED: false
-GATE_BLOCKER: schedules.date_NOT_NULL_vs_fixture_TBD_null
+GATE_BLOCKER: mio_seed_SQL_needs_regen_for_TBD_null_plus_date_status
 TBD_CONTRACT_PLANNING: cms-core-v2-schedule-tbd-date-contract-planning
 TBD_CONTRACT_HELPERS: cms-core-v2-schedule-tbd-date-contract-helpers (COMPLETE)
 TBD_GOSAKI_READ_COMPAT: cms-core-v2-schedule-tbd-date-gosaki-read-compat (COMPLETE · later phase)
 SENTINEL_DATE_REJECTED: true
+DATE_STATUS_IN_DB: true
 DATE_STATUS_IN_DB_QUERY: false
 RUNTIME_CHANGED: false
 REGISTRY_CHANGED: false
@@ -188,8 +189,9 @@ TBD_ADMIN_SAVE_PLANNING: cms-core-v2-schedule-tbd-date-admin-save-planning (COMP
 TBD_ADMIN_STATE_SAVE_PAYLOAD_HELPERS: cms-core-v2-schedule-tbd-admin-state-save-payload-helpers (COMPLETE · offline)
 TBD_STAGING_MIGRATION_GATE: cms-core-v2-schedule-tbd-staging-migration-gate (COMPLETE)
 TBD_STAGING_MIGRATION_FINAL_REVIEW: cms-core-v2-schedule-tbd-staging-migration-final-review (COMPLETE)
+TBD_STAGING_MIGRATION_APPLY_COMPLETION: cms-core-v2-schedule-tbd-staging-migration-apply-completion (COMPLETE / PASS)
 READY_FOR_SCHEDULE_TBD_STAGING_MIGRATION_APPLY: true
-NEXT_AFTER_BLOCKER_RESOLVED: cms-core-v2-schedule-tbd-staging-migration-apply → seed regen/apply
+NEXT_AFTER_BLOCKER_RESOLVED: cms-core-v2-schedule-tbd-date-status-read-wiring → seed regen/apply
 ```
 
 Required approval form (future apply only):

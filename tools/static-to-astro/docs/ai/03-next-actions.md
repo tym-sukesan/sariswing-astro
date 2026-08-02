@@ -4,10 +4,32 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 ## 0. Current next actions（直近）
 
 1. **Primary (Gosaki ops):** クライアントへ **staging 共有**（`CLIENT_SHARE_READY: true` · package `dc1c5b6…`）。本番 cutover はしない。
-2. **並行可 (Kit Core):** **Next Primary** `cms-core-v2-schedule-tbd-staging-migration-apply`（`READY…APPLY: true` · 明示 one-shot 承認のみ・SQL未実行）→ Admin UI connect / Save dry-run → Mio seed regen/apply → Branch A live SELECT pilot · then generic read-only Admin · form onboarding · Admin runtime Save arm mutex（**別承認**）· evening-set hero（**NON_BLOCKING**）。
+2. **並行可 (Kit Core):** **Next Primary** `cms-core-v2-schedule-tbd-date-status-read-wiring`（staging schema applied 2026-08-02 · SELECT/normalize/sort へ段階接続）→ Admin UI / Save dry-run → Mio seed regen/apply → Branch A live SELECT pilot · then generic read-only Admin · form onboarding · Admin runtime Save arm mutex（**別承認**）· evening-set hero（**NON_BLOCKING**）。
 3. **並行可:** production hosting **read-only planning**（`HOSTING_READY: false`）。
 4. **並行可 / 別承認:** YouTube 複数件 **永続 Save**（NON_BLOCKING）。
 5. Save arm **false** · `readyForAnyFutureFtpApply: false` · production STOP · `service_role` 禁止 · **deployed package 固定**.
+
+## 0. CMS Core v2 Schedule TBD staging migration apply completion (2026-08-02)
+
+| Item | Value |
+| --- | --- |
+| Gate | `CMS_CORE_V2_SCHEDULE_TBD_STAGING_MIGRATION_APPLY_COMPLETION: true` |
+| Staging schema | `date` nullable · `date_status` confirmed |
+| Counts | total 79 · published 74 · mio 0 · tbd 0 |
+| Anon | Gosaki 74 · normalize PASS · no `date_status` in SCHEDULE_SELECT |
+| Next | `cms-core-v2-schedule-tbd-date-status-read-wiring` |
+
+```txt
+CMS_CORE_V2_SCHEDULE_TBD_STAGING_MIGRATION_APPLY_COMPLETION: true
+STAGING_SCHEMA_TBD_CONTRACT_APPLIED: true
+DATE_STATUS_IN_DB: true
+DATE_STATUS_IN_DB_QUERY: false
+RUNTIME_CHANGED: false
+READY_FOR_MIO_SEED_APPLY: false
+NEXT_PRIMARY_RECOMMENDED: cms-core-v2-schedule-tbd-date-status-read-wiring
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+PRODUCTION_UNCHANGED: true
+```
 
 ## 0. CMS Core v2 Schedule TBD staging migration final review (2026-08-01)
 
@@ -17,8 +39,8 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Lock | ACCESS EXCLUSIVE NOWAIT + timeouts on B/D |
 | Baselines | `PASTE_FROM_A` full-table (anon ≠ SoT) |
 | Fingerprint | md5 string_agg row + catalog |
-| Apply | `READY_FOR_SCHEDULE_TBD_STAGING_MIGRATION_APPLY: true` · SQL_EXECUTED false |
-| Next | `cms-core-v2-schedule-tbd-staging-migration-apply` |
+| Apply | completed 2026-08-02 (see above) |
+| Next | superseded → date-status read-wiring |
 
 ```txt
 CMS_CORE_V2_SCHEDULE_TBD_STAGING_MIGRATION_FINAL_REVIEW_COMPLETE: true
@@ -28,7 +50,7 @@ SQL_EXECUTED: false
 DB_WRITE_EXECUTED: false
 SCHEMA_CHANGED: false
 READY_FOR_MIO_SEED_APPLY: false
-NEXT_PRIMARY_RECOMMENDED: cms-core-v2-schedule-tbd-staging-migration-apply
+NEXT_PRIMARY_RECOMMENDED: cms-core-v2-schedule-tbd-date-status-read-wiring
 READY_FOR_ANY_FUTURE_FTP_APPLY: false
 PRODUCTION_UNCHANGED: true
 ```

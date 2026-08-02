@@ -10,7 +10,8 @@
 - **Gosaki read compat:** `cms-core-v2-schedule-tbd-date-gosaki-read-compat` **COMPLETE** (confirmed normalize wire · legacy Gosaki sort kept · no `date_status` SELECT · schema/seed SQL still blocked)
 - **Admin/Save planning:** `cms-core-v2-schedule-tbd-date-admin-save-planning` **COMPLETE** (docs) · TBD Save after migration only
 - **Admin state + Save payload helpers:** `cms-core-v2-schedule-tbd-admin-state-save-payload-helpers` **COMPLETE** (offline · no runtime wire)
-- **Staging migration gate:** `cms-core-v2-schedule-tbd-staging-migration-gate` **COMPLETE** · **final review COMPLETE** · `READY_FOR_SCHEDULE_TBD_STAGING_MIGRATION_APPLY: true` · SQL still not executed
+- **Staging migration gate:** `cms-core-v2-schedule-tbd-staging-migration-gate` **COMPLETE** · **final review COMPLETE** · **apply completion PASS (2026-08-02)** · staging `date` nullable + `date_status` · runtime SELECT still omits `date_status`
+- **Seed still blocked:** regenerate SQL for TBD null + `date_status` before apply · `READY_FOR_MIO_SEED_APPLY: false`
 - **Helper sort (locked):** month ASC → confirmed before tbd → confirmed `date→sortOrder→legacyId` → tbd `sortOrder→legacyId` → month-unknown tbd last · Mio TBD after confirmed Sept peers (not early via sort_order=5)
 - **Target project:** staging `kmjqppxjdnwwrtaeqjta` only
 - **STOP production:** `vsbvndwuajjhnzpohghh`

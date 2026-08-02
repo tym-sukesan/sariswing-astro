@@ -164,12 +164,15 @@ TBD_ADMIN_SAVE_PLANNING_COMPLETE: true
 TBD_ADMIN_STATE_SAVE_PAYLOAD_HELPERS_COMPLETE: true
 TBD_STAGING_MIGRATION_GATE_COMPLETE: true
 TBD_STAGING_MIGRATION_FINAL_REVIEW_COMPLETE: true
+TBD_STAGING_MIGRATION_APPLY_COMPLETION: true
+STAGING_SCHEMA_TBD_CONTRACT_APPLIED: true
 READY_FOR_SCHEDULE_TBD_STAGING_MIGRATION_APPLY: true
+DATE_STATUS_IN_DB_QUERY: false
 TBD_HELPER_SORT_LOCKED: month ASC → confirmed before tbd → confirmed date→sortOrder→legacyId → tbd sortOrder→legacyId → month-unknown last
-NEXT_RECOMMENDED: cms-core-v2-schedule-tbd-staging-migration-apply
+NEXT_RECOMMENDED: cms-core-v2-schedule-tbd-date-status-read-wiring
 ```
 
-Follow-up (current Kit Primary): Schedule TBD migration final review COMPLETE → apply (one-shot approval) → Mio seed. Contact HubSpot COMPLETE WITH NON-BLOCKING (submit E2E recheck).
+Follow-up (current Kit Primary): Schedule TBD staging migration applied · next date_status read-wiring · then Mio seed regen. Contact HubSpot COMPLETE WITH NON-BLOCKING (submit E2E recheck).
 
 ---
 

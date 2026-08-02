@@ -329,8 +329,10 @@ EDGE_DEPLOYED: false
 READY_FOR_MIO_SEED_APPLY: false
 CMS_CORE_V2_SCHEDULE_TBD_STAGING_MIGRATION_GATE_COMPLETE: true
 CMS_CORE_V2_SCHEDULE_TBD_STAGING_MIGRATION_FINAL_REVIEW_COMPLETE: true
+CMS_CORE_V2_SCHEDULE_TBD_STAGING_MIGRATION_APPLY_COMPLETION: true
+STAGING_SCHEMA_TBD_CONTRACT_APPLIED: true
 READY_FOR_SCHEDULE_TBD_STAGING_MIGRATION_APPLY: true
-NEXT_PRIMARY_RECOMMENDED: cms-core-v2-schedule-tbd-staging-migration-apply
+NEXT_PRIMARY_RECOMMENDED: cms-core-v2-schedule-tbd-date-status-read-wiring
 READY_FOR_ANY_FUTURE_FTP_APPLY: false
 PRODUCTION_UNCHANGED: true
 ```
@@ -357,12 +359,12 @@ Superseded by migration gate (§13).
 
 ---
 
-## 13. Staging migration gate / final review
+## 13. Staging migration gate / final review / apply completion
 
-**Status:** Gate COMPLETE · final review COMPLETE · `READY_FOR_SCHEDULE_TBD_STAGING_MIGRATION_APPLY: true` · SQL not executed · schema still NOT NULL · no `date_status` in DB
+**Status:** Gate + final review COMPLETE · staging apply COMPLETE (2026-08-02) · `date` nullable · `date_status` in DB · runtime SELECT still omits `date_status`
 
-Docs: `cms-core-v2-schedule-tbd-staging-migration-gate.md` · `cms-core-v2-schedule-tbd-staging-migration-final-review.md`
+Docs: gate · final-review · `cms-core-v2-schedule-tbd-staging-migration-apply-completion.md`
 
 ### Next
 
-`cms-core-v2-schedule-tbd-staging-migration-apply` (one-shot approval) · then Admin UI connect / Save dry-run
+`cms-core-v2-schedule-tbd-date-status-read-wiring` · then Admin UI connect / Save dry-run · Mio seed regen

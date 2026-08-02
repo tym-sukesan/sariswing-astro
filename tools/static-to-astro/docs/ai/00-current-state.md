@@ -3,7 +3,9 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**CMS Core v2 Schedule TBD staging migration final review (2026-08-01):** **COMPLETE** — Phase `cms-core-v2-schedule-tbd-staging-migration-final-review` · ACCESS EXCLUSIVE NOWAIT + timeouts · `PASTE_FROM_A` · fail-closed baseline temp (no IF NOT EXISTS / no DELETE) · data fp uses `extract(epoch from updated_at)` · catalog **definition** fingerprints · rollback schema/validated CHECK guards (no DROP IF EXISTS) · `READY_FOR_SCHEDULE_TBD_STAGING_MIGRATION_APPLY: true` · SQL **not** executed · Doc: `cms-core-v2-schedule-tbd-staging-migration-final-review.md` · **Next Primary:** `cms-core-v2-schedule-tbd-staging-migration-apply` (one-shot approval).
+**CMS Core v2 Schedule TBD staging migration apply completion (2026-08-02):** **COMPLETE / PASS** — Phase `cms-core-v2-schedule-tbd-staging-migration-apply-completion` · staging `kmjqppxjdnwwrtaeqjta` · Block B Success · C `postcheck_pass=true` · `date` nullable · `date_status` NOT NULL DEFAULT confirmed · CHECKs validated · total 79 / published 74 / mio 0 / tbd 0 · fingerprints unchanged · anon Gosaki 74 + normalize PASS · `SCHEDULE_SELECT` still omits `date_status` · Doc: `cms-core-v2-schedule-tbd-staging-migration-apply-completion.md` · **Next Primary:** `cms-core-v2-schedule-tbd-date-status-read-wiring`.
+
+**CMS Core v2 Schedule TBD staging migration final review (2026-08-01):** **COMPLETE** — packet READY then applied (above) · historical flags preserved in gate docs.
 
 **CMS Core v2 Schedule TBD staging migration gate (2026-08-01):** **COMPLETE** — Phase `cms-core-v2-schedule-tbd-staging-migration-gate` · DO NOT EXECUTE SQL A–E · final-review hardened above · live anon spot-check published 74 · mio 0 · `date_status` absent · npm `verify:cms-core-v2-schedule-tbd-staging-migration-gate`.
 

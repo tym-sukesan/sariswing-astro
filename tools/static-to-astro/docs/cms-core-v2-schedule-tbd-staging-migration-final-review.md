@@ -146,12 +146,14 @@ DATE_STATUS_IN_DB: false
 ADMIN_SAVE_CHANGED: false
 RUNTIME_CHANGED: false
 READY_FOR_MIO_SEED_APPLY: false
-NEXT_PRIMARY_RECOMMENDED: cms-core-v2-schedule-tbd-staging-migration-apply
+NEXT_PRIMARY_RECOMMENDED: cms-core-v2-schedule-tbd-date-status-read-wiring
 READY_FOR_ANY_FUTURE_FTP_APPLY: false
 PRODUCTION_UNCHANGED: true
 ```
 
-Apply still requires explicit one-shot operator approval of full SQL text. This phase does **not** execute SQL.
+Historical packet flags above (`SQL_EXECUTED: false` / `SCHEMA_CHANGED: false` / `DATE_STATUS_IN_DB: false`) describe the **final-review design snapshot**, not live staging after apply.
+
+**Update (2026-08-02):** staging apply completed — `cms-core-v2-schedule-tbd-staging-migration-apply-completion.md`. Next: `cms-core-v2-schedule-tbd-date-status-read-wiring`.
 
 ---
 

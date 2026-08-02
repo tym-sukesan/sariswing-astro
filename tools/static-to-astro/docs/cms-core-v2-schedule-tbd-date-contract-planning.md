@@ -356,8 +356,10 @@ DB_WRITE_EXECUTED: false
 MIGRATION_EXECUTED: false
 CMS_CORE_V2_SCHEDULE_TBD_STAGING_MIGRATION_GATE_COMPLETE: true
 CMS_CORE_V2_SCHEDULE_TBD_STAGING_MIGRATION_FINAL_REVIEW_COMPLETE: true
+CMS_CORE_V2_SCHEDULE_TBD_STAGING_MIGRATION_APPLY_COMPLETION: true
+STAGING_SCHEMA_TBD_CONTRACT_APPLIED: true
 READY_FOR_SCHEDULE_TBD_STAGING_MIGRATION_APPLY: true
-NEXT_PRIMARY_RECOMMENDED: cms-core-v2-schedule-tbd-staging-migration-apply
+NEXT_PRIMARY_RECOMMENDED: cms-core-v2-schedule-tbd-date-status-read-wiring
 READY_FOR_ANY_FUTURE_FTP_APPLY: false
 PRODUCTION_UNCHANGED: true
 ```
@@ -475,6 +477,22 @@ Doc: `cms-core-v2-schedule-tbd-staging-migration-final-review.md`
 | READY | `READY_FOR_SCHEDULE_TBD_STAGING_MIGRATION_APPLY: true` |
 | SQL executed | **false** |
 
-### Next
+### Next (superseded)
 
-`cms-core-v2-schedule-tbd-staging-migration-apply`
+Apply completed 2026-08-02 → see §17 · next Primary `cms-core-v2-schedule-tbd-date-status-read-wiring`.
+
+---
+
+## 17. Staging migration apply completion (`cms-core-v2-schedule-tbd-staging-migration-apply-completion`)
+
+**Status:** COMPLETE / PASS (2026-08-02)
+
+Doc: `cms-core-v2-schedule-tbd-staging-migration-apply-completion.md`
+
+| Item | Value |
+| --- | --- |
+| Staging schema | `date` nullable · `date_status` confirmed default · CHECKs validated |
+| Counts | total 79 · published 74 · mio 0 · tbd 0 · fingerprints unchanged |
+| Anon read | Gosaki published 74 · SCHEDULE_SELECT OK · normalize OK |
+| Runtime wire | **none** yet |
+| Next | `cms-core-v2-schedule-tbd-date-status-read-wiring` |

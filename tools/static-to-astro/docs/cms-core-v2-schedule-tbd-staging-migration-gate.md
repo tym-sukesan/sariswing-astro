@@ -9,9 +9,24 @@
 - **Final-review doc:** `cms-core-v2-schedule-tbd-staging-migration-final-review.md`
 - **Verifier:** `npm run verify:cms-core-v2-schedule-tbd-staging-migration-gate` (offline)
 - **Staging:** `kmjqppxjdnwwrtaeqjta` · **STOP production:** `vsbvndwuajjhnzpohghh`
-- **Next Primary:** `cms-core-v2-schedule-tbd-staging-migration-apply` (explicit one-shot approval)
+- **Next Primary:** `cms-core-v2-schedule-tbd-date-status-read-wiring` (after apply completion)
 
 ---
+
+## Apply outcome (2026-08-02)
+
+Staging apply **succeeded** — see `cms-core-v2-schedule-tbd-staging-migration-apply-completion.md`.
+
+| Item | Value |
+| --- | --- |
+| Block B | Success |
+| Block C | `postcheck_pass=true` |
+| Rollback | not executed |
+| Staging schema | `date` nullable · `date_status` present |
+| Runtime / SELECT wire | still **not** connected |
+| Gate flags below | historical (packet design phase — do not rewrite) |
+
+This gate document’s `SQL_EXECUTED: false` / `SCHEMA_CHANGED: false` flags describe the **gate/design phase**, not the later apply-completion recording.
 
 ## 1. Purpose
 
@@ -165,6 +180,8 @@ CURSOR_JUDGMENT: READY FOR APPLY-PHASE APPROVAL — DO NOT EXECUTE WITHOUT ONE-S
 
 Packet is concurrency-hardened and fingerprint-guarded. Apply still requires explicit operator approval of full SQL text in `cms-core-v2-schedule-tbd-staging-migration-apply`.
 
+**Update (2026-08-02):** staging apply completed successfully — see `cms-core-v2-schedule-tbd-staging-migration-apply-completion.md`. Next: `cms-core-v2-schedule-tbd-date-status-read-wiring`.
+
 ---
 
 ## 11. Runtime / Mio / Admin
@@ -192,7 +209,7 @@ DATE_STATUS_IN_DB: false
 ADMIN_SAVE_CHANGED: false
 RUNTIME_CHANGED: false
 READY_FOR_MIO_SEED_APPLY: false
-NEXT_PRIMARY_RECOMMENDED: cms-core-v2-schedule-tbd-staging-migration-apply
+NEXT_PRIMARY_RECOMMENDED: cms-core-v2-schedule-tbd-date-status-read-wiring
 READY_FOR_ANY_FUTURE_FTP_APPLY: false
 PRODUCTION_UNCHANGED: true
 ```
@@ -201,7 +218,7 @@ PRODUCTION_UNCHANGED: true
 
 ## 13. Limited git add (when operator requests commit)
 
-See `cms-core-v2-schedule-tbd-staging-migration-final-review.md` §9.
+See `cms-core-v2-schedule-tbd-staging-migration-apply-completion.md` §10.
 
 ---
 

@@ -5,22 +5,18 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: CMS Core v2 Schedule TBD staging migration final review COMPLETE
-Phase: cms-core-v2-schedule-tbd-staging-migration-final-review
-SQL: scripts/supabase/cms-core-v2-schedule-tbd-date-staging-migration.template.sql (DO NOT EXECUTE)
-Docs: final-review.md + staging-migration-gate.md
-Lock: BEGIN → SET LOCAL lock/statement_timeout → LOCK ACCESS EXCLUSIVE NOWAIT (B+D)
-Baselines: PASTE_FROM_A from SQL Editor A (anon published 74 ≠ full-table SoT)
-Fingerprint: md5(string_agg …|extract(epoch from updated_at)) + catalog defs (indexdef/triggerdef/RLS)
-Baseline temp: CREATE TEMPORARY TABLE … ON COMMIT DROP (no IF NOT EXISTS / no DELETE)
-Forward: ADD date_status NOT NULL DEFAULT confirmed · CHECKs · date DROP NOT NULL
-Rollback: schema/validated CHECK guards · DROP CONSTRAINT without IF EXISTS · refuse tbd/null
-Verifier: verify:cms-core-v2-schedule-tbd-staging-migration-gate (+ Safety Suite)
-READY_FOR_SCHEDULE_TBD_STAGING_MIGRATION_APPLY: true
-SQL_EXECUTED: false · SCHEMA_CHANGED: false · RUNTIME_CHANGED: false
-READY_FOR_MIO_SEED_APPLY: false
-Next Primary: cms-core-v2-schedule-tbd-staging-migration-apply (one-shot approval)
-Prior: migration gate · Admin state/payload helpers · Admin/Save planning · Gosaki read compat
+Current phase: CMS Core v2 Schedule TBD staging migration apply completion COMPLETE / PASS
+Phase: cms-core-v2-schedule-tbd-staging-migration-apply-completion
+Staging: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh UNCHANGED
+Block B: Success · Block C: postcheck_pass=true · rollback not run
+Schema: date nullable · date_status text NOT NULL DEFAULT confirmed · CHECKs validated
+Counts: total 79 · published 74 · gosaki 74 · mio 0 · confirmed 79 · tbd 0
+Fingerprints: unchanged vs Block A
+Anon: SCHEDULE_SELECT (no date_status) · Gosaki published 74 · normalize 74 OK
+Runtime / Admin / Save / Mio seed: still unwired / not ready
+Doc: docs/cms-core-v2-schedule-tbd-staging-migration-apply-completion.md
+Next Primary: cms-core-v2-schedule-tbd-date-status-read-wiring
+Prior: final-review · migration gate · Admin state/payload helpers
 HubSpot: COMPLETE WITH NON-BLOCKING · PC/375 PASS · submit E2E recheck only
 Gosaki CLIENT_SHARE_READY: true (maintained)
 deployed package: dc1c5b62a58d0462ad6629db4847256d316d4a38 (unchanged; no regen)
@@ -31,16 +27,21 @@ readyForAnyFutureFtpApply: false
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
 ```
 
+## CMS Core v2 Schedule TBD staging migration apply completion (2026-08-02)
+
+- Staging schema applied · anon read-compat PASS · no runtime date_status wire yet
+- Next: date_status read-wiring · then Admin/Save · Mio seed regen
+
 ## CMS Core v2 Schedule TBD staging migration final review (2026-08-01)
 
-- Hardened locks + PASTE_FROM_A + fingerprints · READY true · still DO NOT EXECUTE
+- Hardened locks + PASTE_FROM_A + fingerprints · READY true · applied above
 - Human must confirm SQL Editor project is staging before any block
 
 ## CMS Core v2 Schedule TBD staging migration gate (2026-08-01)
 
-- DO NOT EXECUTE A–E SQL template + offline verifier
-- Final-review supersedes earlier READY false / concurrent-Save residual risk
-- No SQL Editor run · no migration directory placement · no runtime wire
+- DO NOT EXECUTE A–E SQL template + offline verifier (historical packet)
+- Final-review + apply completion supersede earlier READY false / concurrent-Save residual risk
+- No migration directory placement · no Admin/Save wire in gate phase
 
 ## CMS Core v2 Schedule TBD Admin state + Save payload helpers (2026-08-01)
 

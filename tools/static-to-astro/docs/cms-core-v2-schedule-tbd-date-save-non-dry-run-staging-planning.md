@@ -34,7 +34,8 @@ READY_FOR_ANY_FUTURE_FTP_APPLY: false
 NEXT_PRIMARY_RECOMMENDED: cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-implementation
 ```
 
-**Staging only:** `kmjqppxjdnwwrtaeqjta`  
+**Staging only:** `kmjqppxjdnwwrtaeqjta`
+
 **Production STOP:** `vsbvndwuajjhnzpohghh`
 
 ---
@@ -161,7 +162,8 @@ where site_slug = 'gosaki-piano'
 
 **Public / package:** do not regen package / FTP; `published=false` so anon public lists exclude the row.
 
-**Existing 79:** INSERT adds +1 unpublished · do not UPDATE/DELETE other rows.  
+**Existing 79:** INSERT adds +1 unpublished · do not UPDATE/DELETE other rows.
+
 **Mio 0:** never insert `mio-kisaragi-jazz`.
 
 ---
@@ -215,13 +217,16 @@ select id from public.schedules
  where site_slug = 'gosaki-piano' and legacy_id = 'schedule-2026-11-001';
 ```
 
-**Success:** total ≥79 · mio=0 · tbd=0 · legacy target **0 rows**.  
+**Success:** total ≥79 · mio=0 · tbd=0 · legacy target **0 rows**.
+
 **STOP:** mio≠0 unexpected · legacy already exists · production URL.
 
 ### B. arms OFF 確認
 
-**Do:** confirm all Schedule non-dry-run / Edge Save / TBD create arms unset or not `"true"`; `PUBLIC_ADMIN_WRITE_DRY_RUN` default true (or unset).  
-**Success:** operator Save for TBD create disabled; confirmed routine dry-run OK.  
+**Do:** confirm all Schedule non-dry-run / Edge Save / TBD create arms unset or not `"true"`; `PUBLIC_ADMIN_WRITE_DRY_RUN` default true (or unset).
+
+**Success:** operator Save for TBD create disabled; confirmed routine dry-run OK.
+
 **STOP:** any unexpected arm true.
 
 ### C. arms ON 手順
@@ -236,13 +241,15 @@ select id from public.schedules
 6. Confirm SSR inject: staging ref · `tbdWriteEnabled:true` · productionBlocked false
 7. Confirm other arms still OFF
 
-**Success:** TBD create oneshot UI armed; confirmed Save arms unchanged/off as designed.  
+**Success:** TBD create oneshot UI armed; confirmed Save arms unchanged/off as designed.
+
 **STOP:** production URL · arm parse not exact · mutex conflict.
 
 ### D. one-shot create payload
 
-**Do:** local Dry-run確認 first (existing dry-run UI) with month-known `2026-11` + title marker.  
-Then build write payload via `buildScheduleTbdSavePayload` mode `tbd-v1` with `tbdWriteEnabled:true` (implementation).  
+**Do:** local Dry-run確認 first (existing dry-run UI) with month-known `2026-11` + title marker.
+
+Then build write payload via `buildScheduleTbdSavePayload` mode `tbd-v1` with `tbdWriteEnabled:true` (implementation).
 
 **Expected shape:**
 
@@ -263,7 +270,8 @@ Then build write payload via `buildScheduleTbdSavePayload` mode `tbd-v1` with `t
 }
 ```
 
-**Success:** dry-run preview matches · no `date` sentinel.  
+**Success:** dry-run preview matches · no `date` sentinel.
+
 **STOP:** incomplete draft · date non-null · published true · wrong site_slug.
 
 ### E. Save 実行手順
@@ -275,7 +283,8 @@ Then build write payload via `buildScheduleTbdSavePayload` mode `tbd-v1` with `t
 3. Cursor must **not** click Save / run SQL
 4. Record: `insertedId`, `actualWrite`, `approvalId`, timestamps
 
-**Success:** `actualWrite:true` · one INSERT · returned id.  
+**Success:** `actualWrite:true` · one INSERT · returned id.
+
 **STOP / ambiguity:** timeout · non-JSON · unclear outcome → **stop · do not retry · do not cleanup · record · ask human** (destructive op policy).
 
 ### F. 実行後 SELECT-only 確認
@@ -299,7 +308,8 @@ select count(*) as other_tbd from public.schedules
 -- expect: 0
 ```
 
-**Success:** exact 1 test row · mio 0 · no other TBD.  
+**Success:** exact 1 test row · mio 0 · no other TBD.
+
 **STOP:** mismatch → do not broad-fix; ask human.
 
 ### G. exact rollback / cleanup
@@ -345,7 +355,8 @@ select count(*) from public.schedules where site_slug = 'mio-kisaragi-jazz';
 3. Restart routine dev
 4. Confirm TBD Save UI disabled · `tbdWriteEnabled` false in SSR JSON
 
-**Success:** cannot re-click oneshot.  
+**Success:** cannot re-click oneshot.
+
 **Priority:** on any anomaly, **arms OFF first**, then ask human.
 
 ---
@@ -403,5 +414,5 @@ Then: final-preflight → operator Save once → execution-result → arms OFF.
 
 ## 10. Verifier
 
-npm: `verify:cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-planning`  
+npm: `verify:cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-planning`
 Safety Suite offline step registered.

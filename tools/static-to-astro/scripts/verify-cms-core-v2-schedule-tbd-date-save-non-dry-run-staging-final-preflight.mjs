@@ -59,22 +59,34 @@ assert(
   "phase id",
   /cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-final-preflight/.test(doc),
 );
-assert("HEAD recorded", /35d8d431ebb60b8c4012c8e06ab2f59963554b94/.test(doc));
+assert("HEAD recorded", /dcc8de812b6b683e7417b5094be29cc8958c6aac|35d8d431ebb60b8c4012c8e06ab2f59963554b94/.test(doc));
 assert("staging ref", /kmjqppxjdnwwrtaeqjta/.test(doc));
 assert("production STOP", /vsbvndwuajjhnzpohghh/.test(doc));
 assert("IMPLEMENTATION_READY true", /IMPLEMENTATION_READY:\s*true/.test(doc));
-assert("PREFLIGHT_PASS false", /PREFLIGHT_PASS:\s*false/.test(doc));
+assert("PREFLIGHT_PASS true", /PREFLIGHT_PASS:\s*true/.test(doc));
 assert(
   "PREFLIGHT_ANON_SUBSET_PASS true",
   /PREFLIGHT_ANON_SUBSET_PASS:\s*true/.test(doc),
 );
+assert("SQL Editor PASS recorded", /PREFLIGHT_SQL_EDITOR_FULL_TABLE:\s*pass/.test(doc));
+assert(
+  "observed_at recorded",
+  /2026-08-03 15:51:19\.118619\+00/.test(doc),
+);
 assert("EXECUTION_PACKET_READY true", /EXECUTION_PACKET_READY:\s*true/.test(doc));
-assert("ACTUAL_WRITE_READY false", /ACTUAL_WRITE_READY:\s*false/.test(doc));
+assert("ACTUAL_WRITE_READY true", /ACTUAL_WRITE_READY:\s*true/.test(doc));
+assert("ACTUAL_WRITE_EXECUTED false", /ACTUAL_WRITE_EXECUTED:\s*false/.test(doc));
 assert("ARMS_OFF true", /ARMS_OFF:\s*true/.test(doc));
 assert("DB_WRITE_EXECUTED false", /DB_WRITE_EXECUTED:\s*false/.test(doc));
 assert("SAVE_EXECUTED false", /SAVE_EXECUTED:\s*false/.test(doc));
 assert("CLEANUP_EXECUTED false", /CLEANUP_EXECUTED:\s*false/.test(doc));
-assert("no arm ON this phase", /no\*\* arm ON|no arm ON|arm ON ·/.test(doc));
+assert(
+  "execution-preparation phase",
+  /cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-execution-preparation/.test(doc),
+);
+assert("human steps 1-13", /### Step 1/.test(doc) && /### Step 13/.test(doc));
+assert("temporary 3 arms only", /exactly these 3/.test(doc));
+assert("no arm ON this phase", /no\*\* arm ON|no arm ON|arm ON ·|\*\*no\*\* arm ON/.test(doc));
 assert("legacy_id fixed", /schedule-2026-11-001/.test(doc));
 assert("approval id", /cms-core-v2-schedule-tbd-create-non-dry-run-oneshot/.test(doc));
 assert("executeTbdCreateOneshotSave named", /executeTbdCreateOneshotSave/.test(doc));
@@ -83,16 +95,19 @@ assert(
   /insertTbdCreateOneshotScheduleWriteInternal/.test(doc),
 );
 assert("probeDateStatusColumn named", /probeDateStatusColumn/.test(doc));
-assert("runbook A", /### A\./.test(doc));
-assert("runbook B", /### B\./.test(doc));
-assert("runbook C", /### C\./.test(doc));
-assert("runbook D", /### D\./.test(doc));
-assert("runbook E", /### E\./.test(doc));
-assert("runbook F", /### F\./.test(doc));
-assert("runbook G", /### G\./.test(doc));
-assert("runbook H", /### H\./.test(doc));
-assert("runbook I", /### I\./.test(doc));
-assert("runbook J", /### J\./.test(doc));
+assert("runbook Step 1", /### Step 1/.test(doc));
+assert("runbook Step 2", /### Step 2/.test(doc));
+assert("runbook Step 3", /### Step 3/.test(doc));
+assert("runbook Step 4", /### Step 4/.test(doc));
+assert("runbook Step 5", /### Step 5/.test(doc));
+assert("runbook Step 6", /### Step 6/.test(doc));
+assert("runbook Step 7", /### Step 7/.test(doc));
+assert("runbook Step 8", /### Step 8/.test(doc));
+assert("runbook Step 9", /### Step 9/.test(doc));
+assert("runbook Step 10", /### Step 10/.test(doc));
+assert("runbook Step 11", /### Step 11/.test(doc));
+assert("runbook Step 12", /### Step 12/.test(doc));
+assert("runbook Step 13", /### Step 13/.test(doc));
 assert("post-check total 80", /c\.total = 80|total = 80/.test(doc));
 assert("post-check published 74", /published = 74/.test(doc));
 assert("cleanup transaction", /\bbegin;/.test(doc) && /\bcommit;/.test(doc));

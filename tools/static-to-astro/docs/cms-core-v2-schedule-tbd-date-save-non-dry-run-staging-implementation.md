@@ -17,8 +17,9 @@ CMS_CORE_V2_SCHEDULE_TBD_DATE_SAVE_NON_DRY_RUN_STAGING_IMPLEMENTATION_COMPLETE: 
 CMS_CORE_V2_SCHEDULE_TBD_DATE_SAVE_NON_DRY_RUN_STAGING_BOUNDARY_HARDENING_COMPLETE: true
 IMPLEMENTATION_READY: true
 COMMIT_READY: true
-ACTUAL_WRITE_READY: false
-READY_FOR_TBD_NON_DRY_RUN_EXECUTION: false
+ACTUAL_WRITE_READY: true
+ACTUAL_WRITE_EXECUTED: false
+READY_FOR_TBD_NON_DRY_RUN_EXECUTION: true
 TBD_SAVE_WIRED: true
 TBD_WRITE_ENABLED: false
 ARMS_OFF: true
@@ -32,7 +33,8 @@ MIO_SEED_UNCHANGED: true
 PRODUCTION_UNCHANGED: true
 READY_FOR_ANY_FUTURE_FTP_APPLY: false
 NEXT_PRIMARY_RECOMMENDED: cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-execution
-FINAL_PREFLIGHT: cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-final-preflight (COMPLETE · ACTUAL_WRITE_READY false until SQL Editor 79)
+FINAL_PREFLIGHT: cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-final-preflight (COMPLETE · SQL Editor PASS 2026-08-03 15:51:19+00 · ACTUAL_WRITE_READY true · ACTUAL_WRITE_EXECUTED false)
+EXECUTION_PREPARATION: cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-execution-preparation (COMPLETE · human runbook §7 · Cursor does not execute)
 ```
 
 **Staging only:** `kmjqppxjdnwwrtaeqjta`
@@ -135,6 +137,8 @@ Dry-run (add/create) must match fixed oneshot fields → fingerprint lock → Sa
 
 ## 5. Next
 
-Final-preflight **COMPLETE** — Doc: `cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-final-preflight.md` · `EXECUTION_PACKET_READY: true` · `ACTUAL_WRITE_READY: false` (SQL Editor full-table 79 pending operator).
+Final-preflight **COMPLETE** · SQL Editor PASS recorded (`2026-08-03 15:51:19+00`) · execution-preparation **COMPLETE**.
 
-**Next Primary:** `cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-execution` (operator-approved Save once · arms OFF after).
+Doc: `cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-final-preflight.md` · `PREFLIGHT_PASS: true` · `ACTUAL_WRITE_READY: true` · `ACTUAL_WRITE_EXECUTED: false`.
+
+**Next Primary:** `cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-execution` (human §7 · explicit approval · Cursor does not arm/click/SQL).

@@ -1,9 +1,11 @@
 # CMS Core v2 — Schedule TBD date Save non-dry-run staging final-preflight
 
 - **Phase:** `cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-final-preflight`
-- **Date:** 2026-08-03
-- **HEAD at phase start:** `35d8d431ebb60b8c4012c8e06ab2f59963554b94` (= `origin/main` · clean)
-- **Status:** **COMPLETE (docs / SELECT-only / runbook)** — **no** arm ON · **no** Save · **no** DB write · **no** cleanup · **no** env change · **no** commit/push
+- **Follow-up recorded:** `cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-execution-preparation` (2026-08-04)
+- **Date:** 2026-08-03 · prep update 2026-08-04
+- **HEAD at final-preflight commit:** `dcc8de812b6b683e7417b5094be29cc8958c6aac` (= `origin/main` · clean at execution-preparation start)
+- **Status:** **COMPLETE (docs / SELECT-only / runbook)** · SQL Editor full-table **PASS recorded** · **ACTUAL_WRITE_READY: true** · **ACTUAL_WRITE_EXECUTED: false**
+- **This preparation phase:** record preflight · finalize human execution steps · **no** arm ON · **no** env change by Cursor · **no** Save · **no** DB write · **no** cleanup · **no** commit/push
 - **Staging:** `kmjqppxjdnwwrtaeqjta`
 - **Production STOP:** `vsbvndwuajjhnzpohghh`
 
@@ -15,12 +17,14 @@ Prior: implementation + boundary hardening (`cms-core-v2-schedule-tbd-date-save-
 
 ```txt
 CMS_CORE_V2_SCHEDULE_TBD_DATE_SAVE_NON_DRY_RUN_STAGING_FINAL_PREFLIGHT_COMPLETE: true
+CMS_CORE_V2_SCHEDULE_TBD_DATE_SAVE_NON_DRY_RUN_STAGING_EXECUTION_PREPARATION_COMPLETE: true
 IMPLEMENTATION_READY: true
-PREFLIGHT_PASS: false
+PREFLIGHT_PASS: true
 PREFLIGHT_ANON_SUBSET_PASS: true
-PREFLIGHT_SQL_EDITOR_FULL_TABLE: pending_operator
+PREFLIGHT_SQL_EDITOR_FULL_TABLE: pass
 EXECUTION_PACKET_READY: true
-ACTUAL_WRITE_READY: false
+ACTUAL_WRITE_READY: true
+ACTUAL_WRITE_EXECUTED: false
 ARMS_OFF: true
 ENV_CHANGED: false
 DB_WRITE_EXECUTED: false
@@ -33,9 +37,11 @@ READY_FOR_ANY_FUTURE_FTP_APPLY: false
 NEXT_PRIMARY_RECOMMENDED: cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-execution
 ```
 
-**Why PREFLIGHT_PASS false / ACTUAL_WRITE_READY false:** Cursor anon SELECT sees RLS `schedules_public_select` → **published 74 only**. Full-table baselines (**total 79 · gosaki 79**) require **operator SQL Editor** (Block B below). Until that paste matches, do not arm / Save.
+**SQL Editor PASS (operator, staging only):** `observed_at=2026-08-03 15:51:19.118619+00` · `preflight_pass=true` · `stop_reasons=''` · counts/schema/CHECK/trigger/RLS/fingerprints all match · see §5.3.
 
-**Why EXECUTION_PACKET_READY true:** code order · arm procedure · peer list · payload · post-check · cleanup · A–J runbook are fixed below.
+**ACTUAL_WRITE_READY true** means the human may start the **separate execution** phase with explicit approval. This preparation phase does **not** arm, Save, or write.
+
+**ACTUAL_WRITE_EXECUTED false** · arms remain OFF · production untouched · DB write 0 (Cursor + this phase).
 
 ---
 
@@ -187,7 +193,7 @@ Keep OFF for oneshot window (inventory SoT `gosaki-operational-save-ui-arm-inven
 - `PUBLIC_ADMIN_GOSAKI_ABOUT_SUPABASE_SAVE_UI_ARMED` / `GOSAKI_ABOUT_SUPABASE_SAVE_ARMED`
 - Other legacy Schedule/Discography `NON_DRY_RUN_ARMED` literals in inventory allowlist
 
-Oneshot **own** client/server arms stay OFF until runbook D.
+Oneshot **own** client/server arms stay OFF until Step 3.
 
 ---
 
@@ -211,9 +217,9 @@ Oneshot **own** client/server arms stay OFF until runbook D.
 
 **Anon subset PASS.** Full-table **79** is invisible to anon (known: `schedules_public_select`).
 
-### 5.2 Operator SQL Editor Block B (required before ACTUAL_WRITE_READY)
+### 5.2 Operator SQL Editor Block B (historical short form)
 
-Run **only** on staging SQL Editor. Cursor does **not** execute this block in final-preflight.
+Superseded for hard-gate by the reinforced one-row preflight (schema · CHECK · 5 fingerprints). Short form retained for continuity:
 
 ```sql
 -- TBD CREATE oneshot final-preflight · SELECT-only · staging kmjqppxjdnwwrtaeqjta ONLY
@@ -236,15 +242,39 @@ select
      where date_status = 'confirmed' and date is null) as confirmed_date_null_violations;
 ```
 
-**Expected one row:**
+### 5.3 SQL Editor reinforced preflight — **PASS recorded** (execution-preparation)
 
-| total | published | gosaki | mio | tbd | target_legacy | title_collision | violations |
-| ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| **79** | **74** | **79** | **0** | **0** | **0** | **0** | **0** |
+- **Phase recording:** `cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-execution-preparation`
+- **Project (visual):** `kmjqppxjdnwwrtaeqjta` · production `vsbvndwuajjhnzpohghh` **not used**
+- **observed_at:** `2026-08-03 15:51:19.118619+00`
+- **Operator:** human SQL Editor · Cursor did **not** execute
 
-Any mismatch → **STOP** · keep `ACTUAL_WRITE_READY=false`.
+| Field | Value |
+| --- | --- |
+| preflight_pass | **true** |
+| stop_reasons | *(empty)* |
+| schedules_total | **79** |
+| schedules_published | **74** |
+| gosaki_total | **79** |
+| gosaki_published | **74** |
+| mio_rows | **0** |
+| tbd_rows | **0** |
+| confirmed_rows | **79** |
+| target_legacy_id_rows | **0** |
+| exact_title_collision_rows | **0** |
+| month_title_collision_rows | **0** |
+| contract_violation_rows | **0** |
+| date_status_null_or_unknown_rows | **0** |
+| updated_at_nonnull_rows | **79** |
+| updated_at_null_rows | **0** |
+| schema / CHECK / trigger / RLS | **PASS** |
+| site / data / index / trigger / RLS fingerprints | **all baseline match** |
 
-Signed-in admin runtime preflight uses the same browser client JWT (`schedules_admin_all`) and must also see **79** before INSERT.
+Secrets / tokens / emails / actor IDs: **not recorded**.
+
+**Gate effect:** `PREFLIGHT_PASS: true` · `ACTUAL_WRITE_READY: true` · `ACTUAL_WRITE_EXECUTED: false`.
+
+Signed-in admin runtime preflight (JWT · `schedules_admin_all`) must still see **79** before INSERT during execution.
 
 ---
 
@@ -291,89 +321,132 @@ UI path: Dry-run on add form with fixed TBD month-known fields → `lockTbdCreat
 
 ---
 
-## 7. Execution runbook A–J (operator · **not executed this phase**)
+## 7. Human execution steps (preparation · **Cursor does not run**)
 
-### A. git / process / staging
+Phase: `cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-execution-preparation`
+**Do not start until** operator says the explicit approval form for the **execution** phase.
 
-- `git rev-parse HEAD` matches intended commit · tree clean or knowingly reviewed
-- Confirm Supabase dashboard project = staging `kmjqppxjdnwwrtaeqjta` only
-- Production `vsbvndwuajjhnzpohghh` **closed**
-- No FTP / package / Edge deploy in flight
+Fixed target:
 
-### B. SQL Editor SELECT-only preflight
+| Field | Value |
+| --- | --- |
+| site_slug | `gosaki-piano` |
+| legacy_id | `schedule-2026-11-001` |
+| title | `【CMS Kit staging】TBD create oneshot PoC` |
+| date_status | `tbd` |
+| date | `null` |
+| month | `2026-11` |
+| source_route | `/schedule/2026-11/` |
+| published | `false` |
+| approval | `cms-core-v2-schedule-tbd-create-non-dry-run-oneshot` |
 
-- Paste §5.2 SQL · expect 79/74/79/0/0/0/0/0
-- STOP on drift
+### Step 1 — root `.env.local` before-state
 
-### C. All peer arms OFF
+- Open repo root `.env.local` (do not commit).
+- Confirm **before** change:
+  - oneshot client/server arms **unset** or not `"true"`
+  - `PUBLIC_ADMIN_WRITE_DRY_RUN` is `true` or unset (not `"false"`)
+  - `PUBLIC_SUPABASE_URL` contains `kmjqppxjdnwwrtaeqjta` only · **no** `vsbvndwuajjhnzpohghh`
+- **Already present (verify only · not part of the temporary 3-key edit):**
+  - `ENABLE_ADMIN_STAGING_SHELL=true`
+  - `ENABLE_ADMIN_STAGING_WRITE=true`
+  - `PUBLIC_ADMIN_WRITE_PROVIDER=supabase`
+  - `PUBLIC_ADMIN_WRITE_MODULE=schedule`
+  - `PUBLIC_ADMIN_WRITE_APPROVAL_ID=cms-core-v2-schedule-tbd-create-non-dry-run-oneshot`
+- If write-stack / approval / staging URL are wrong → **STOP** (do not arm).
 
-- Confirm §4 lists unset / not `"true"`
-- Confirm oneshot client+server arms still OFF
-- `PUBLIC_ADMIN_WRITE_DRY_RUN` not `"false"` yet (still routine true)
+### Step 2 — peer arms all OFF
 
-### D. Arm ON (execution window only)
+Confirm every env in §4 is unset or not armed (`isSaveArmExactTrue` / trim-true both count as ON).
+Any peer ON → **STOP**.
 
-In root `.env.local` (example — do not apply in final-preflight):
+### Step 3 — temporary set **exactly these 3**
 
 ```txt
 PUBLIC_ADMIN_SCHEDULE_TBD_CREATE_NON_DRY_RUN_ARMED=true
 ADMIN_SCHEDULE_TBD_CREATE_NON_DRY_RUN_SERVER_ARMED=true
 PUBLIC_ADMIN_WRITE_DRY_RUN=false
-ENABLE_ADMIN_STAGING_SHELL=true
-ENABLE_ADMIN_STAGING_WRITE=true
-PUBLIC_ADMIN_WRITE_PROVIDER=supabase
-PUBLIC_ADMIN_WRITE_MODULE=schedule
-PUBLIC_ADMIN_WRITE_APPROVAL_ID=cms-core-v2-schedule-tbd-create-non-dry-run-oneshot
 ```
 
-Keep peer arms unset. Explicit approval text before Save:
+Do not set other Save arms. Do not touch production env.
+
+### Step 4 — restart Astro dev
+
+- Stop prior `npm run dev` · start again (same host/port as staging shell).
+- Env is baked at process start — restart is mandatory.
+
+### Step 5 — staging admin · owner login
+
+- URL: `/__admin-staging-shell/musician-basic/admin/schedule/`
+- Sign in as staging owner (`is_admin`)
+- Confirm host / `PUBLIC_SUPABASE_URL` is staging only
+
+### Step 6 — Dry-run + fingerprint
+
+- Add form: TBD · month-known · month `2026-11` · fixed title / venue / description · published unchecked
+- Run TBD Dry-run · payload must match §6
+- Fingerprint must lock · any edit after Dry-run → **STOP** · re-Dry-run
+
+### Step 7 — fixed approval + UI gates
+
+On page, confirm:
+
+- `#gosaki-schedule-tbd-create-oneshot-config`:
+  - `data-client-arm-ok="true"` · `data-server-arm-ok="true"`
+  - `data-tbd-write-enabled="true"` · `data-save-enabled="true"`
+  - `data-approval-id=cms-core-v2-schedule-tbd-create-non-dry-run-oneshot`
+  - raw `ADMIN_SCHEDULE_TBD_CREATE_NON_DRY_RUN_SERVER_ARMED` **absent** from HTML
+- Exactly **one** `#gosaki-add-tbd-create-oneshot-btn` · wrap visible
+- Confirmed / routine Save paths stay disabled as designed (no unexpected armed Save buttons)
+- Operator approval text ready:
 
 ```txt
 承認します。この操作を1回だけ実行してください。
 ```
 
-### E. Restart + owner login
+If button missing / multiple / `data-save-enabled` false / peer Save visible armed → **STOP**.
 
-- Restart Astro `npm run dev` (host/port as used for shell)
-- Open `/__admin-staging-shell/musician-basic/admin/schedule/`
-- Sign in as staging owner (`is_admin`)
-- Confirm `#gosaki-schedule-tbd-create-oneshot-config`:
-  - `data-server-arm-ok="true"` · `data-client-arm-ok="true"` · `data-tbd-write-enabled="true"` · `data-save-enabled="true"`
-  - raw server arm string **absent** from HTML
-- Confirm PUBLIC URL host is staging only
+### Step 8 — click **Staging one-shot CREATE** once
 
-### F. Dry-run
+- Single click only · no double-click · no refresh-retry
 
-- Add form: date_status TBD · month-known · month `2026-11` · fixed title/venue/description · published unchecked
-- Run TBD Dry-run · confirm payload matches §6
-- Oneshot wrap visible · button enables after fingerprint lock
-- Do **not** change fields after preview
+### Step 9 — branch on outcome
 
-### G. One-shot CREATE once
-
-- Click **Staging one-shot CREATE** **once**
-- Do not double-click · do not refresh-and-retry
-
-### H. Success / fail / ambiguous
-
-| Terminal | Action |
+| Outcome | Action |
 | --- | --- |
-| `succeeded` | Record `insertedId` from UI · **no second click** · go to I then J |
-| `failed` (guard / preflight / auth · `actualWrite` false) | arms OFF (J) · investigate · **no retry** without new phase |
-| `ambiguous` / timeout / network | **no re-click** · arms OFF (J) · exact SELECT §8 · ask human |
+| Success | Record UI `insertedId` (runtime only · do not invent) · **no 2nd click** → Step 10 → 12 |
+| Fail (`actualWrite` false) | **no retry** → Step 10 → investigate · new phase if needed |
+| Ambiguous / timeout / unknown | **no re-click** → Step 10 → exact SELECT (§8) · ask human |
 
-### I. SQL Editor post-check
+### Step 10 — arms OFF immediately
 
-- Paste §8 SQL · fill `inserted_id` from UI (do **not** invent UUID)
+Restore root `.env.local`:
 
-### J. Arms OFF + restart
+```txt
+# remove or unset:
+# PUBLIC_ADMIN_SCHEDULE_TBD_CREATE_NON_DRY_RUN_ARMED
+# ADMIN_SCHEDULE_TBD_CREATE_NON_DRY_RUN_SERVER_ARMED
+PUBLIC_ADMIN_WRITE_DRY_RUN=true
+```
 
-- Immediately apply §3 Arm OFF restore
-- Restart
-- Confirm wrap hidden · arms-OFF browser smoke
-- Cleanup (§9) only after arms OFF + separate explicit approval
+Peer arms remain unset. Arm anomaly → OFF first (before cleanup / retry).
 
-**Arm anomaly → OFF first (before cleanup / retry).**
+### Step 11 — restart again
+
+- Restart Astro · confirm oneshot wrap **hidden** · `data-save-enabled="false"` · routine dry-run OK
+
+### Step 12 — SQL Editor post-check
+
+- Staging project only · paste §8 · substitute UI `inserted_id`
+- Expect `postcheck_pass=true` (total 80 · published 74 · TBD 1 · target 1 · …)
+
+### Step 13 — cleanup vs keep
+
+- Cleanup (§9) **only after** arms OFF + separate destructive approval
+- Or keep unpublished row for later QA · document choice
+- Broad DELETE forbidden
+
+**Cursor never:** edits `.env.local` · restarts write-armed server · clicks Save · runs SQL.
 
 ---
 
@@ -463,7 +536,7 @@ left join target t on true;
 
 **Preconditions:**
 
-1. Arms OFF + restart (§3 / runbook J) **before** cleanup
+1. Arms OFF + restart (Steps 10–11) **before** cleanup
 2. `:inserted_id` known from successful Save / post-check (else **STOP**)
 3. Explicit operator approval for DELETE (same bar as destructive ops)
 4. Staging project only
@@ -569,17 +642,20 @@ commit;
 | Gate | Value |
 | --- | --- |
 | IMPLEMENTATION_READY | **true** |
-| PREFLIGHT_PASS | **false** (SQL Editor full-table pending) |
+| PREFLIGHT_PASS | **true** (§5.3 SQL Editor PASS) |
 | PREFLIGHT_ANON_SUBSET_PASS | **true** |
 | EXECUTION_PACKET_READY | **true** |
-| ACTUAL_WRITE_READY | **false** |
+| ACTUAL_WRITE_READY | **true** |
+| ACTUAL_WRITE_EXECUTED | **false** |
+| ARMS_OFF / ENV_CHANGED / DB_WRITE | **true / false / false** (this phase) |
+| PRODUCTION_UNCHANGED | **true** |
 
-**Next:** operator completes Block B SQL → if PASS, separate phase `cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-execution` with explicit approval (arm ON + Save once).
+**Next Primary:** `cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-execution` — human follows §7 with explicit approval · Cursor does not arm/click/SQL.
 
 ---
 
-## 13. Explicit non-goals (this phase)
+## 13. Explicit non-goals (final-preflight + execution-preparation)
 
-- env / Secret change · arm ON · write-enabled dev start
-- INSERT / UPDATE / DELETE · Save click · cleanup
-- Edge · schema · Mio seed · package / FTP · production · commit/push
+- Cursor env / Secret change · arm ON · write-enabled Save
+- INSERT / UPDATE / DELETE · Save click · cleanup execution
+- Edge · schema · Mio seed · package / FTP · production · commit/push (unless operator separately requests docs commit)

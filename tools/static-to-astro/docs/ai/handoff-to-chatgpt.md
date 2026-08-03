@@ -5,23 +5,24 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: CMS Core v2 Schedule TBD non-dry-run staging final-preflight COMPLETE
-Phase: cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-final-preflight
-HEAD: 35d8d431ebb60b8c4012c8e06ab2f59963554b94
-Decision: CREATE-only oneshot · execution packet ready · SQL Editor full-table 79 pending · no Save this phase
+Current phase: CMS Core v2 Schedule TBD non-dry-run staging execution-preparation COMPLETE
+Phase: cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-execution-preparation
+HEAD: dcc8de812b6b683e7417b5094be29cc8958c6aac
+Decision: SQL Editor PASS recorded · human execution packet ready · Cursor does not arm/Save/SQL
 Test row: schedule-2026-11-001 · published=false · date_status=tbd · date=null · month=2026-11
 Approval ID: cms-core-v2-schedule-tbd-create-non-dry-run-oneshot
+SQL Editor observed_at: 2026-08-03 15:51:19.118619+00 · preflight_pass=true
 IMPLEMENTATION_READY: true
-PREFLIGHT_PASS: false
-PREFLIGHT_ANON_SUBSET_PASS: true
+PREFLIGHT_PASS: true
 EXECUTION_PACKET_READY: true
-ACTUAL_WRITE_READY: false
+ACTUAL_WRITE_READY: true
+ACTUAL_WRITE_EXECUTED: false
 ARMS_OFF: true · ENV_CHANGED: false · DB_WRITE_EXECUTED: false · EDGE_CHANGED: false
 CLEANUP_EXECUTED: false
-Doc: docs/cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-final-preflight.md
+Doc: docs/cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-final-preflight.md (§5.3 · §7)
 Verifier: verify:cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-final-preflight (+ Safety Suite)
-Next Primary: cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-execution
-Prior: boundary hardening · implementation · planning · Save dry-run · Admin UI connect
+Next Primary: cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-execution (human · temporary 3 arms · Save once)
+Prior: final-preflight · boundary hardening · implementation · planning
 HubSpot: COMPLETE WITH NON-BLOCKING · PC/375 PASS · submit E2E recheck only
 Gosaki CLIENT_SHARE_READY: true (maintained)
 deployed package: dc1c5b62a58d0462ad6629db4847256d316d4a38 (unchanged; no regen)
@@ -32,13 +33,17 @@ readyForAnyFutureFtpApply: false
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
 ```
 
+## CMS Core v2 Schedule TBD non-dry-run staging execution-preparation (2026-08-04)
+
+- SQL Editor PASS recorded · ACTUAL_WRITE_READY true · ACTUAL_WRITE_EXECUTED false · human §7 only
+
 ## CMS Core v2 Schedule TBD non-dry-run staging final-preflight (2026-08-03)
 
-- Anon subset PASS · full-table 79 SQL Editor pending · A–J runbook · post-check · exact cleanup · ACTUAL_WRITE_READY false
+- Packet + anon subset · full-table PASS later recorded in execution-preparation
 
 ## CMS Core v2 Schedule TBD non-dry-run staging boundary hardening (2026-08-03)
 
-- Low-level INSERT unexported · INSERT-boundary re-guards · schema probe · no offline preflight skip · COMMIT_READY true · ACTUAL_WRITE_READY false
+- Low-level INSERT unexported · INSERT-boundary re-guards · schema probe · no offline preflight skip · COMMIT_READY true
 
 ## CMS Core v2 Schedule TBD non-dry-run staging implementation (2026-08-03)
 

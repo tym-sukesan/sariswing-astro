@@ -74,7 +74,7 @@ assert(
   /2026-08-03 15:51:19\.118619\+00/.test(doc),
 );
 assert("EXECUTION_PACKET_READY true", /EXECUTION_PACKET_READY:\s*true/.test(doc));
-assert("ACTUAL_WRITE_READY true", /ACTUAL_WRITE_READY:\s*true/.test(doc));
+assert("ACTUAL_WRITE_READY false", /ACTUAL_WRITE_READY:\s*false/.test(doc));
 assert("ACTUAL_WRITE_EXECUTED false", /ACTUAL_WRITE_EXECUTED:\s*false/.test(doc));
 assert("ARMS_OFF true", /ARMS_OFF:\s*true/.test(doc));
 assert("DB_WRITE_EXECUTED false", /DB_WRITE_EXECUTED:\s*false/.test(doc));
@@ -84,8 +84,12 @@ assert(
   "execution-preparation phase",
   /cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-execution-preparation/.test(doc),
 );
+assert(
+  "write-stack correction phase",
+  /cms-core-v2-schedule-tbd-create-oneshot-write-stack-gate-correction/.test(doc),
+);
 assert("human steps 1-13", /### Step 1/.test(doc) && /### Step 13/.test(doc));
-assert("temporary 3 arms only", /exactly these 3/.test(doc));
+assert("temporary 7-key packet", /exactly these 7/.test(doc));
 assert("no arm ON this phase", /no\*\* arm ON|no arm ON|arm ON ·|\*\*no\*\* arm ON/.test(doc));
 assert("legacy_id fixed", /schedule-2026-11-001/.test(doc));
 assert("approval id", /cms-core-v2-schedule-tbd-create-non-dry-run-oneshot/.test(doc));

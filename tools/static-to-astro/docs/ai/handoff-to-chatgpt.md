@@ -5,24 +5,26 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: CMS Core v2 Schedule TBD non-dry-run staging execution-preparation COMPLETE
-Phase: cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-execution-preparation
-HEAD: dcc8de812b6b683e7417b5094be29cc8958c6aac
-Decision: SQL Editor PASS recorded · human execution packet ready · Cursor does not arm/Save/SQL
+Current phase: CMS Core v2 Schedule TBD CREATE oneshot write-stack gate correction COMPLETE
+Phase: cms-core-v2-schedule-tbd-create-oneshot-write-stack-gate-correction
+HEAD: 8a1294deaebc8bd966c790e33f67fcdb9bea1912
+Decision: shared write-stack fan-out audited · temporary packet = 7 keys · oneshot-only proven · Cursor does not arm/Save/SQL
 Test row: schedule-2026-11-001 · published=false · date_status=tbd · date=null · month=2026-11
 Approval ID: cms-core-v2-schedule-tbd-create-non-dry-run-oneshot
 SQL Editor observed_at: 2026-08-03 15:51:19.118619+00 · preflight_pass=true
 IMPLEMENTATION_READY: true
 PREFLIGHT_PASS: true
 EXECUTION_PACKET_READY: true
-ACTUAL_WRITE_READY: true
+ACTUAL_WRITE_READY: false
 ACTUAL_WRITE_EXECUTED: false
+PACKET_ONESHOT_ONLY_PROVEN: true
 ARMS_OFF: true · ENV_CHANGED: false · DB_WRITE_EXECUTED: false · EDGE_CHANGED: false
 CLEANUP_EXECUTED: false
-Doc: docs/cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-final-preflight.md (§5.3 · §7)
-Verifier: verify:cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-final-preflight (+ Safety Suite)
-Next Primary: cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-execution (human · temporary 3 arms · Save once)
-Prior: final-preflight · boundary hardening · implementation · planning
+Doc: docs/cms-core-v2-schedule-tbd-create-oneshot-write-stack-gate-correction.md
+Final-preflight: docs/cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-final-preflight.md (§7 · 7-key)
+Verifier: verify:cms-core-v2-schedule-tbd-create-oneshot-write-stack-gate-correction (+ Safety Suite)
+Next Primary: cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-execution-arm-gate (human · 7 keys)
+Prior: arm-gate STOP (write-stack不足) · execution-preparation · final-preflight · boundary hardening
 HubSpot: COMPLETE WITH NON-BLOCKING · PC/375 PASS · submit E2E recheck only
 Gosaki CLIENT_SHARE_READY: true (maintained)
 deployed package: dc1c5b62a58d0462ad6629db4847256d316d4a38 (unchanged; no regen)
@@ -33,9 +35,13 @@ readyForAnyFutureFtpApply: false
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
 ```
 
+## CMS Core v2 Schedule TBD CREATE oneshot write-stack gate correction (2026-08-04)
+
+- 7-key ON packet · restore to ENABLE_ADMIN_STAGING_WRITE=false + empty provider/module/approval · ACTUAL_WRITE_READY false
+
 ## CMS Core v2 Schedule TBD non-dry-run staging execution-preparation (2026-08-04)
 
-- SQL Editor PASS recorded · ACTUAL_WRITE_READY true · ACTUAL_WRITE_EXECUTED false · human §7 only
+- SQL Editor PASS recorded · packet size corrected by write-stack phase above
 
 ## CMS Core v2 Schedule TBD non-dry-run staging final-preflight (2026-08-03)
 

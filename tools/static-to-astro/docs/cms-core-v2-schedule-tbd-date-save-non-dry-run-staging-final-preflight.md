@@ -4,8 +4,9 @@
 - **Follow-up recorded:** `cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-execution-preparation` (2026-08-04)
 - **Date:** 2026-08-03 · prep update 2026-08-04
 - **HEAD at final-preflight commit:** `dcc8de812b6b683e7417b5094be29cc8958c6aac` (= `origin/main` · clean at execution-preparation start)
-- **Status:** **COMPLETE (docs / SELECT-only / runbook)** · SQL Editor full-table **PASS recorded** · **ACTUAL_WRITE_READY: true** · **ACTUAL_WRITE_EXECUTED: false**
+- **Status:** **COMPLETE (docs / SELECT-only / runbook)** · SQL Editor full-table **PASS recorded** · write-stack gate correction → **7-key packet** · **ACTUAL_WRITE_READY: false** · **ACTUAL_WRITE_EXECUTED: false**
 - **This preparation phase:** record preflight · finalize human execution steps · **no** arm ON · **no** env change by Cursor · **no** Save · **no** DB write · **no** cleanup · **no** commit/push
+- **Write-stack correction:** `cms-core-v2-schedule-tbd-create-oneshot-write-stack-gate-correction` (temporary mutation = **7 keys**, not 3)
 - **Staging:** `kmjqppxjdnwwrtaeqjta`
 - **Production STOP:** `vsbvndwuajjhnzpohghh`
 
@@ -18,12 +19,13 @@ Prior: implementation + boundary hardening (`cms-core-v2-schedule-tbd-date-save-
 ```txt
 CMS_CORE_V2_SCHEDULE_TBD_DATE_SAVE_NON_DRY_RUN_STAGING_FINAL_PREFLIGHT_COMPLETE: true
 CMS_CORE_V2_SCHEDULE_TBD_DATE_SAVE_NON_DRY_RUN_STAGING_EXECUTION_PREPARATION_COMPLETE: true
+CMS_CORE_V2_SCHEDULE_TBD_CREATE_ONESHOT_WRITE_STACK_GATE_CORRECTION_COMPLETE: true
 IMPLEMENTATION_READY: true
 PREFLIGHT_PASS: true
 PREFLIGHT_ANON_SUBSET_PASS: true
 PREFLIGHT_SQL_EDITOR_FULL_TABLE: pass
 EXECUTION_PACKET_READY: true
-ACTUAL_WRITE_READY: true
+ACTUAL_WRITE_READY: false
 ACTUAL_WRITE_EXECUTED: false
 ARMS_OFF: true
 ENV_CHANGED: false
@@ -34,12 +36,12 @@ EDGE_CHANGED: false
 PACKAGE_REGENERATED: false
 PRODUCTION_UNCHANGED: true
 READY_FOR_ANY_FUTURE_FTP_APPLY: false
-NEXT_PRIMARY_RECOMMENDED: cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-execution
+NEXT_PRIMARY_RECOMMENDED: cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-execution-arm-gate
 ```
 
 **SQL Editor PASS (operator, staging only):** `observed_at=2026-08-03 15:51:19.118619+00` · `preflight_pass=true` · `stop_reasons=''` · counts/schema/CHECK/trigger/RLS/fingerprints all match · see §5.3.
 
-**ACTUAL_WRITE_READY true** means the human may start the **separate execution** phase with explicit approval. This preparation phase does **not** arm, Save, or write.
+**ACTUAL_WRITE_READY false** until human re-confirms arm-gate with the **7-key** packet (write-stack was insufficient at 2026-08-04 arm-gate). Packet definition is ready (`EXECUTION_PACKET_READY: true` · oneshot-only proven offline).
 
 **ACTUAL_WRITE_EXECUTED false** · arms remain OFF · production untouched · DB write 0 (Cursor + this phase).
 
@@ -125,16 +127,14 @@ SSR bake (page load):
 | `build` / package / FTP | **NO** for local shell oneshot |
 | After arm **OFF** / delete keys | **YES** restart again |
 
-### Write stack also required when arming (execution phase only)
+### Temporary ON packet = **7 keys** (not 3)
 
-Exact values (same as mutex-armed Save slices):
+Shared write-stack is part of the temporary mutation (baseline before execution was write OFF / empty provider·module·approval). See `cms-core-v2-schedule-tbd-create-oneshot-write-stack-gate-correction.md`.
+
+Also verify (usually already set · not counted in the 7 if unchanged):
 
 - `ENABLE_ADMIN_STAGING_SHELL=true`
-- `ENABLE_ADMIN_STAGING_WRITE=true`
-- `PUBLIC_ADMIN_WRITE_PROVIDER=supabase`
-- `PUBLIC_ADMIN_WRITE_MODULE=schedule`
-- `PUBLIC_ADMIN_WRITE_APPROVAL_ID=cms-core-v2-schedule-tbd-create-non-dry-run-oneshot`
-- `PUBLIC_SUPABASE_URL` → staging host containing `kmjqppxjdnwwrtaeqjta` only
+- `PUBLIC_SUPABASE_URL` → staging host containing `kmjqppxjdnwwrtaeqjta` only (no production ref)
 
 ### Arm OFF restore (exact)
 
@@ -142,7 +142,11 @@ Exact values (same as mutex-armed Save slices):
    - `PUBLIC_ADMIN_SCHEDULE_TBD_CREATE_NON_DRY_RUN_ARMED`
    - `ADMIN_SCHEDULE_TBD_CREATE_NON_DRY_RUN_SERVER_ARMED`
 2. `PUBLIC_ADMIN_WRITE_DRY_RUN=true` (routine default)
-3. Restore prior `PUBLIC_ADMIN_WRITE_APPROVAL_ID` / provider / module if changed
+3. Restore shared write-stack to **pre-execution baseline**:
+   - `ENABLE_ADMIN_STAGING_WRITE=false`
+   - `PUBLIC_ADMIN_WRITE_PROVIDER=` (empty)
+   - `PUBLIC_ADMIN_WRITE_MODULE=` (empty)
+   - `PUBLIC_ADMIN_WRITE_APPROVAL_ID=` (empty)
 4. **Restart** Astro dev
 5. Confirm wrap hidden · `data-save-enabled="false"`
 
@@ -272,7 +276,7 @@ select
 
 Secrets / tokens / emails / actor IDs: **not recorded**.
 
-**Gate effect:** `PREFLIGHT_PASS: true` · `ACTUAL_WRITE_READY: true` · `ACTUAL_WRITE_EXECUTED: false`.
+**Gate effect:** `PREFLIGHT_PASS: true` · SQL Editor PASS recorded · write-stack correction later set `ACTUAL_WRITE_READY: false` until 7-key arm-gate re-pass · `ACTUAL_WRITE_EXECUTED: false`.
 
 Signed-in admin runtime preflight (JWT · `schedules_admin_all`) must still see **79** before INSERT during execution.
 
@@ -343,32 +347,35 @@ Fixed target:
 ### Step 1 — root `.env.local` before-state
 
 - Open repo root `.env.local` (do not commit).
-- Confirm **before** change:
+- Confirm **before** change (expected baseline after write-stack correction SoT):
   - oneshot client/server arms **unset** or not `"true"`
-  - `PUBLIC_ADMIN_WRITE_DRY_RUN` is `true` or unset (not `"false"`)
-  - `PUBLIC_SUPABASE_URL` contains `kmjqppxjdnwwrtaeqjta` only · **no** `vsbvndwuajjhnzpohghh`
-- **Already present (verify only · not part of the temporary 3-key edit):**
-  - `ENABLE_ADMIN_STAGING_SHELL=true`
-  - `ENABLE_ADMIN_STAGING_WRITE=true`
-  - `PUBLIC_ADMIN_WRITE_PROVIDER=supabase`
-  - `PUBLIC_ADMIN_WRITE_MODULE=schedule`
-  - `PUBLIC_ADMIN_WRITE_APPROVAL_ID=cms-core-v2-schedule-tbd-create-non-dry-run-oneshot`
-- If write-stack / approval / staging URL are wrong → **STOP** (do not arm).
+  - `PUBLIC_ADMIN_WRITE_DRY_RUN=true`
+  - shared write-stack: `ENABLE_ADMIN_STAGING_WRITE=false` · provider/module/approval **empty**
+  - `ENABLE_ADMIN_STAGING_SHELL=true` (keep)
+  - effective `PUBLIC_SUPABASE_URL` contains `kmjqppxjdnwwrtaeqjta` only · **no** `vsbvndwuajjhnzpohghh` (`.env.local` overrides `.env`)
+- If staging URL / shell flag wrong → **STOP** (do not arm).
 
 ### Step 2 — peer arms all OFF
 
 Confirm every env in §4 is unset or not armed (`isSaveArmExactTrue` / trim-true both count as ON).
 Any peer ON → **STOP**.
 
-### Step 3 — temporary set **exactly these 3**
+### Step 3 — temporary set **exactly these 7**
 
 ```txt
+# Shared write-stack (temporary)
+ENABLE_ADMIN_STAGING_WRITE=true
+PUBLIC_ADMIN_WRITE_PROVIDER=supabase
+PUBLIC_ADMIN_WRITE_MODULE=schedule
+PUBLIC_ADMIN_WRITE_APPROVAL_ID=cms-core-v2-schedule-tbd-create-non-dry-run-oneshot
+
+# Oneshot temporary
 PUBLIC_ADMIN_SCHEDULE_TBD_CREATE_NON_DRY_RUN_ARMED=true
 ADMIN_SCHEDULE_TBD_CREATE_NON_DRY_RUN_SERVER_ARMED=true
 PUBLIC_ADMIN_WRITE_DRY_RUN=false
 ```
 
-Do not set other Save arms. Do not touch production env.
+Do not set other Save arms. Do not touch production env / secrets / URL.
 
 ### Step 4 — restart Astro dev
 
@@ -418,15 +425,19 @@ If button missing / multiple / `data-save-enabled` false / peer Save visible arm
 | Fail (`actualWrite` false) | **no retry** → Step 10 → investigate · new phase if needed |
 | Ambiguous / timeout / unknown | **no re-click** → Step 10 → exact SELECT (§8) · ask human |
 
-### Step 10 — arms OFF immediately
+### Step 10 — arms OFF + restore write-stack immediately
 
-Restore root `.env.local`:
+Restore root `.env.local` to **pre-execution baseline**:
 
 ```txt
 # remove or unset:
 # PUBLIC_ADMIN_SCHEDULE_TBD_CREATE_NON_DRY_RUN_ARMED
 # ADMIN_SCHEDULE_TBD_CREATE_NON_DRY_RUN_SERVER_ARMED
 PUBLIC_ADMIN_WRITE_DRY_RUN=true
+ENABLE_ADMIN_STAGING_WRITE=false
+PUBLIC_ADMIN_WRITE_PROVIDER=
+PUBLIC_ADMIN_WRITE_MODULE=
+PUBLIC_ADMIN_WRITE_APPROVAL_ID=
 ```
 
 Peer arms remain unset. Arm anomaly → OFF first (before cleanup / retry).
@@ -644,13 +655,13 @@ commit;
 | IMPLEMENTATION_READY | **true** |
 | PREFLIGHT_PASS | **true** (§5.3 SQL Editor PASS) |
 | PREFLIGHT_ANON_SUBSET_PASS | **true** |
-| EXECUTION_PACKET_READY | **true** |
-| ACTUAL_WRITE_READY | **true** |
+| EXECUTION_PACKET_READY | **true** (7-key packet · oneshot-only proven) |
+| ACTUAL_WRITE_READY | **false** (re-arm-gate required after write-stack correction) |
 | ACTUAL_WRITE_EXECUTED | **false** |
 | ARMS_OFF / ENV_CHANGED / DB_WRITE | **true / false / false** (this phase) |
 | PRODUCTION_UNCHANGED | **true** |
 
-**Next Primary:** `cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-execution` — human follows §7 with explicit approval · Cursor does not arm/click/SQL.
+**Next Primary:** `cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-execution-arm-gate` — human confirms 7-key baseline · then execution with explicit approval · Cursor does not arm/click/SQL.
 
 ---
 

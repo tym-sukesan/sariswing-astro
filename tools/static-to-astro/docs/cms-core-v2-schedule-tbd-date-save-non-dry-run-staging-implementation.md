@@ -17,9 +17,9 @@ CMS_CORE_V2_SCHEDULE_TBD_DATE_SAVE_NON_DRY_RUN_STAGING_IMPLEMENTATION_COMPLETE: 
 CMS_CORE_V2_SCHEDULE_TBD_DATE_SAVE_NON_DRY_RUN_STAGING_BOUNDARY_HARDENING_COMPLETE: true
 IMPLEMENTATION_READY: true
 COMMIT_READY: true
-ACTUAL_WRITE_READY: true
+ACTUAL_WRITE_READY: false
 ACTUAL_WRITE_EXECUTED: false
-READY_FOR_TBD_NON_DRY_RUN_EXECUTION: true
+READY_FOR_TBD_NON_DRY_RUN_EXECUTION: false
 TBD_SAVE_WIRED: true
 TBD_WRITE_ENABLED: false
 ARMS_OFF: true
@@ -32,9 +32,10 @@ CLEANUP_IMPLEMENTED: false
 MIO_SEED_UNCHANGED: true
 PRODUCTION_UNCHANGED: true
 READY_FOR_ANY_FUTURE_FTP_APPLY: false
-NEXT_PRIMARY_RECOMMENDED: cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-execution
-FINAL_PREFLIGHT: cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-final-preflight (COMPLETE · SQL Editor PASS 2026-08-03 15:51:19+00 · ACTUAL_WRITE_READY true · ACTUAL_WRITE_EXECUTED false)
-EXECUTION_PREPARATION: cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-execution-preparation (COMPLETE · human runbook §7 · Cursor does not execute)
+NEXT_PRIMARY_RECOMMENDED: cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-execution-arm-gate
+FINAL_PREFLIGHT: cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-final-preflight (COMPLETE · SQL Editor PASS · 7-key packet after write-stack correction · ACTUAL_WRITE_READY false · ACTUAL_WRITE_EXECUTED false)
+EXECUTION_PREPARATION: cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-execution-preparation (COMPLETE · human runbook §7)
+WRITE_STACK_GATE_CORRECTION: cms-core-v2-schedule-tbd-create-oneshot-write-stack-gate-correction (COMPLETE · temporary mutation = 7 keys · oneshot-only proven)
 ```
 
 **Staging only:** `kmjqppxjdnwwrtaeqjta`
@@ -137,8 +138,8 @@ Dry-run (add/create) must match fixed oneshot fields → fingerprint lock → Sa
 
 ## 5. Next
 
-Final-preflight **COMPLETE** · SQL Editor PASS recorded (`2026-08-03 15:51:19+00`) · execution-preparation **COMPLETE**.
+Final-preflight **COMPLETE** · SQL Editor PASS · execution-preparation **COMPLETE** · **write-stack gate correction COMPLETE** (7-key packet · oneshot-only proven).
 
-Doc: `cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-final-preflight.md` · `PREFLIGHT_PASS: true` · `ACTUAL_WRITE_READY: true` · `ACTUAL_WRITE_EXECUTED: false`.
+Doc: `cms-core-v2-schedule-tbd-create-oneshot-write-stack-gate-correction.md` · `cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-final-preflight.md` · `PREFLIGHT_PASS: true` · `EXECUTION_PACKET_READY: true` · `ACTUAL_WRITE_READY: false` · `ACTUAL_WRITE_EXECUTED: false`.
 
-**Next Primary:** `cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-execution` (human §7 · explicit approval · Cursor does not arm/click/SQL).
+**Next Primary:** `cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-execution-arm-gate` → then execution with temporary **7 keys** · Cursor does not arm/click/SQL.

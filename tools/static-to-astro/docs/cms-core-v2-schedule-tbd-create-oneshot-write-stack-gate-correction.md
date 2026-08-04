@@ -3,8 +3,9 @@
 - **Phase:** `cms-core-v2-schedule-tbd-create-oneshot-write-stack-gate-correction`
 - **Date:** 2026-08-04
 - **HEAD at start:** `8a1294deaebc8bd966c790e33f67fcdb9bea1912` (= `origin/main` · clean)
-- **Status:** **COMPLETE (docs + offline matrix · no env mutation)**
-- **This phase:** audit shared write-stack fan-out · fix SoT from “3 keys” → **7 keys** · prove oneshot-only when exact · **no** arm ON · **no** Save · **no** DB write
+- **Status:** **COMPLETE (docs + offline matrix · no env mutation)** · superseded delivery: **process-scoped** `env … npm run dev` (see process-scoped packet correction)
+- **This phase:** audit shared write-stack fan-out · prove oneshot-only when exact 7 keys · **no** arm ON · **no** Save · **no** DB write
+- **Follow-up:** `cms-core-v2-schedule-tbd-create-oneshot-process-scoped-env-packet-correction` — **forbid** writing 7 keys into shared root `.env.local`
 - **Staging:** `kmjqppxjdnwwrtaeqjta` · **Production STOP:** `vsbvndwuajjhnzpohghh`
 
 Prior: `cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-execution-arm-gate` found write-stack insufficient for Save.
@@ -25,13 +26,15 @@ ENV_CHANGED: false
 DB_WRITE_EXECUTED: false
 SAVE_EXECUTED: false
 PACKET_ONESHOT_ONLY_PROVEN: true
+PROCESS_SCOPED_ENV_REQUIRED: true
+ENV_FILE_UNCHANGED: true
 PRODUCTION_UNCHANGED: true
 READY_FOR_ANY_FUTURE_FTP_APPLY: false
 NEXT_PRIMARY_RECOMMENDED: cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-execution-arm-gate
 ```
 
-`ACTUAL_WRITE_READY: false` until human re-runs arm-gate with 7-key packet and explicit execution approval.
-`EXECUTION_PACKET_READY: true` — packet definition corrected to 7 keys; offline matrix proves oneshot-only.
+`ACTUAL_WRITE_READY: false` until human re-runs arm-gate with **process-scoped** 7-key `env … npm run dev` (never edit `.env.local` for these keys).
+`EXECUTION_PACKET_READY: true` — process-scoped packet + offline matrix proves oneshot-only.
 
 ---
 
@@ -91,20 +94,20 @@ Many peer Schedule configs **do** `.trim()` provider/module/approval. Oneshot do
 
 ### 2.2 Precedence (Astro / Vite)
 
-1. Process env
-2. `.env.[mode].local`
-3. `.env.local` (**overrides** `.env`)
-4. `.env.[mode]`
-5. `.env`
+Vite `loadEnv` (Astro uses prefix `""`): **process env overrides** `.env` / `.env.local` for the same keys.
 
-**Effective staging shell:** repo root `.env.local` overrides root `.env`.
-Confirm without printing secrets:
+For oneshot execution, inject the 7 keys via **process-scoped** `env … npm run dev` only.
+Root `.env.local` stays at **safe baseline** (shared with Sariswing本体 — **do not** write the 7 keys into it).
 
-- Effective URL host contains staging ref `kmjqppxjdnwwrtaeqjta`
+Effective staging URL still comes from baseline `.env.local` (overrides `.env`):
+
+- Host contains staging ref `kmjqppxjdnwwrtaeqjta`
 - Does **not** contain production `vsbvndwuajjhnzpohghh`
-- Or: SSR `#gosaki-schedule-tbd-create-oneshot-config` / host gate fails if production baked
+- Do **not** inject production URL/ref on the armed command
 
-`mergeStagingShellEnv` may overlay `ENABLE_ADMIN_STAGING_*` from SSR DOM gates onto client `import.meta.env` — restart after any write-flag change.
+**Client:** PUBLIC_* (write provider/module/approval/dry-run/client arm) via `import.meta.env`.
+**SSR:** private `ADMIN_*` server arm + `ENABLE_ADMIN_STAGING_WRITE` via `import.meta.env` → booleans / gates JSON.
+**Client ENABLE_*:** SSR gates → `mergeStagingShellEnv`.
 
 ### 2.3 Production STOP
 
@@ -130,65 +133,55 @@ Verifier: `verify:cms-core-v2-schedule-tbd-create-oneshot-write-stack-gate-corre
 
 ---
 
-## 4. Exact 7-key ON packet (human execution only)
+## 4. Exact process-scoped 7-key ON command (human execution only)
 
-```txt
-# Shared write-stack (temporary · restore after)
-ENABLE_ADMIN_STAGING_WRITE=true
-PUBLIC_ADMIN_WRITE_PROVIDER=supabase
-PUBLIC_ADMIN_WRITE_MODULE=schedule
-PUBLIC_ADMIN_WRITE_APPROVAL_ID=cms-core-v2-schedule-tbd-create-non-dry-run-oneshot
+**Forbidden:** writing these 7 keys into root `.env.local` (shared with Sariswing本体).
 
-# Oneshot temporary
-PUBLIC_ADMIN_SCHEDULE_TBD_CREATE_NON_DRY_RUN_ARMED=true
-ADMIN_SCHEDULE_TBD_CREATE_NON_DRY_RUN_SERVER_ARMED=true
-PUBLIC_ADMIN_WRITE_DRY_RUN=false
+```zsh
+cd ~/sariswing-astro
+
+env \
+  ENABLE_ADMIN_STAGING_WRITE=true \
+  PUBLIC_ADMIN_WRITE_PROVIDER=supabase \
+  PUBLIC_ADMIN_WRITE_MODULE=schedule \
+  PUBLIC_ADMIN_WRITE_APPROVAL_ID=cms-core-v2-schedule-tbd-create-non-dry-run-oneshot \
+  PUBLIC_ADMIN_SCHEDULE_TBD_CREATE_NON_DRY_RUN_ARMED=true \
+  ADMIN_SCHEDULE_TBD_CREATE_NON_DRY_RUN_SERVER_ARMED=true \
+  PUBLIC_ADMIN_WRITE_DRY_RUN=false \
+  npm run dev
 ```
 
-Also required (verify present · usually already true · not part of mutation if already set):
-
-- `ENABLE_ADMIN_STAGING_SHELL=true`
-- staging `PUBLIC_SUPABASE_URL` / anon (secrets not documented)
-
-**Do not** arm peer Save envs. **PACKET_ONESHOT_ONLY_PROVEN: true** (matrix E/I).
+- Does **not** `export` into the parent shell
+- 7 values apply **only** to that npm/Astro process
+- Baseline files still provide `ENABLE_ADMIN_STAGING_SHELL=true` + staging URL/anon (secrets not documented)
+- **Do not** arm peer Save envs · **Do not** armed `build`/package/FTP
+- **PACKET_ONESHOT_ONLY_PROVEN: true** (matrix E/I)
 
 ---
 
-## 5. Exact OFF / restore packet
+## 5. Exact OFF = stop armed process (no `.env.local` restore)
 
-Restore to **pre-execution observed baseline** (arm-gate 2026-08-04):
+1. **Ctrl+C** the armed terminal
+2. Confirm port 4321 has no LISTEN
+3. `.env.local` was never changed — file baseline remains write OFF / empty provider·module·approval / dry-run true / oneshot arms unset
+4. Optional plain restart: `cd ~/sariswing-astro && npm run dev` → oneshot wrap hidden · `data-save-enabled="false"`
 
-```txt
-# unset oneshot arms (prefer remove keys):
-# PUBLIC_ADMIN_SCHEDULE_TBD_CREATE_NON_DRY_RUN_ARMED
-# ADMIN_SCHEDULE_TBD_CREATE_NON_DRY_RUN_SERVER_ARMED
+Timeout / ambiguous: **Ctrl+C first**, then exact SELECT — do **not** re-arm by restarting with `env …` until human decides.
 
-PUBLIC_ADMIN_WRITE_DRY_RUN=true
-
-# restore shared write-stack to pre-state:
-ENABLE_ADMIN_STAGING_WRITE=false
-PUBLIC_ADMIN_WRITE_PROVIDER=
-PUBLIC_ADMIN_WRITE_MODULE=
-PUBLIC_ADMIN_WRITE_APPROVAL_ID=
-```
-
-Then **restart** Astro (`cd ~/sariswing-astro && npm run dev`).
-Confirm oneshot wrap hidden · `data-save-enabled="false"` · peers still OFF.
-
-Shared 4 **must** be restored: leaving `ENABLE_ADMIN_STAGING_WRITE=true` + wrong approval widens accidental arm surface for a later mistaken arm ON.
+Cleanup: armed process must be ended **before** any DELETE.
 
 ---
 
 ## 6. SoT correction
 
-Supersedes “temporary **3** keys only” in final-preflight / arm-gate narration.
+Supersedes “temporary **3** keys” and “write 7 keys into `.env.local`”.
 
-Correct temporary mutation = **7 keys** (4 write-stack + 3 oneshot/dry-run).
+Correct temporary arming = **process-scoped** `env … npm run dev` with exactly the 7 keys above.
 
 ---
 
 ## 7. Explicit non-goals (this phase)
 
-- No `.env.local` edit by Cursor
-- No arm ON · no process restart · no Save · no SQL · no DB write
+- No `.env.local` edit (Cursor or operator) for the oneshot 7 keys
+- No arm ON · no process start · no Save · no SQL · no DB write
 - No commit/push unless operator asks

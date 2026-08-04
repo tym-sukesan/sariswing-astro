@@ -4,9 +4,10 @@
 - **Follow-up recorded:** `cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-execution-preparation` (2026-08-04)
 - **Date:** 2026-08-03 · prep update 2026-08-04
 - **HEAD at final-preflight commit:** `dcc8de812b6b683e7417b5094be29cc8958c6aac` (= `origin/main` · clean at execution-preparation start)
-- **Status:** **COMPLETE (docs / SELECT-only / runbook)** · SQL Editor full-table **PASS recorded** · write-stack gate correction → **7-key packet** · **ACTUAL_WRITE_READY: false** · **ACTUAL_WRITE_EXECUTED: false**
+- **Status:** **COMPLETE (docs / SELECT-only / runbook)** · SQL Editor full-table **PASS recorded** · **process-scoped 7-key env** (no `.env.local` edit) · **ACTUAL_WRITE_READY: false** · **ACTUAL_WRITE_EXECUTED: false**
 - **This preparation phase:** record preflight · finalize human execution steps · **no** arm ON · **no** env change by Cursor · **no** Save · **no** DB write · **no** cleanup · **no** commit/push
-- **Write-stack correction:** `cms-core-v2-schedule-tbd-create-oneshot-write-stack-gate-correction` (temporary mutation = **7 keys**, not 3)
+- **Write-stack correction:** `cms-core-v2-schedule-tbd-create-oneshot-write-stack-gate-correction`
+- **Process-scoped packet:** `cms-core-v2-schedule-tbd-create-oneshot-process-scoped-env-packet-correction` — **forbid** writing the 7 keys into shared root `.env.local`
 - **Staging:** `kmjqppxjdnwwrtaeqjta`
 - **Production STOP:** `vsbvndwuajjhnzpohghh`
 
@@ -20,6 +21,7 @@ Prior: implementation + boundary hardening (`cms-core-v2-schedule-tbd-date-save-
 CMS_CORE_V2_SCHEDULE_TBD_DATE_SAVE_NON_DRY_RUN_STAGING_FINAL_PREFLIGHT_COMPLETE: true
 CMS_CORE_V2_SCHEDULE_TBD_DATE_SAVE_NON_DRY_RUN_STAGING_EXECUTION_PREPARATION_COMPLETE: true
 CMS_CORE_V2_SCHEDULE_TBD_CREATE_ONESHOT_WRITE_STACK_GATE_CORRECTION_COMPLETE: true
+CMS_CORE_V2_SCHEDULE_TBD_CREATE_ONESHOT_PROCESS_SCOPED_ENV_PACKET_CORRECTION_COMPLETE: true
 IMPLEMENTATION_READY: true
 PREFLIGHT_PASS: true
 PREFLIGHT_ANON_SUBSET_PASS: true
@@ -28,6 +30,7 @@ EXECUTION_PACKET_READY: true
 ACTUAL_WRITE_READY: false
 ACTUAL_WRITE_EXECUTED: false
 ARMS_OFF: true
+ENV_FILE_UNCHANGED: true
 ENV_CHANGED: false
 DB_WRITE_EXECUTED: false
 SAVE_EXECUTED: false
@@ -41,9 +44,9 @@ NEXT_PRIMARY_RECOMMENDED: cms-core-v2-schedule-tbd-date-save-non-dry-run-staging
 
 **SQL Editor PASS (operator, staging only):** `observed_at=2026-08-03 15:51:19.118619+00` · `preflight_pass=true` · `stop_reasons=''` · counts/schema/CHECK/trigger/RLS/fingerprints all match · see §5.3.
 
-**ACTUAL_WRITE_READY false** until human re-confirms arm-gate with the **7-key** packet (write-stack was insufficient at 2026-08-04 arm-gate). Packet definition is ready (`EXECUTION_PACKET_READY: true` · oneshot-only proven offline).
+**ACTUAL_WRITE_READY false** until human arm-gate re-pass with **process-scoped** `env … npm run dev` (never edit shared root `.env.local` for the 7 keys). Packet definition ready (`EXECUTION_PACKET_READY: true` · oneshot-only proven offline).
 
-**ACTUAL_WRITE_EXECUTED false** · arms remain OFF · production untouched · DB write 0 (Cursor + this phase).
+**ACTUAL_WRITE_EXECUTED false** · arms remain OFF · `.env.local` unchanged · production untouched · DB write 0 (Cursor + this phase).
 
 ---
 
@@ -106,51 +109,47 @@ SSR bake (page load):
 | `ADMIN_SCHEDULE_TBD_CREATE_NON_DRY_RUN_SERVER_ARMED` | `isTbdCreateServerArmExactTrue` on **SSR only** | `resolveTbdCreateOneshotPageServerConfig` | exact `"true"` |
 | `PUBLIC_ADMIN_WRITE_DRY_RUN` | `getTbdCreateOneshotConfig` | SSR + client | write path needs exact `"false"` |
 
-### Env files (do not edit this phase)
+### Env files (baseline only · **do not edit for oneshot arming**)
 
-- Primary for local Astro staging shell: **repo root** `.env.local` (overrides `.env`)
-- Optional mirror: `tools/static-to-astro/.env.local` (tooling; shell uses repo root)
-- Do **not** commit `.env` / `.env.local`
-- Server arm `ADMIN_*` is **non-PUBLIC** — put in root `.env.local` so SSR sees it; never bake raw string into HTML
+- Root `.env.local` is **shared with Sariswing本体** — **forbidden** to write the oneshot 7 keys into it.
+- Baseline (routine) stays: write-stack OFF / empty provider·module·approval · dry-run `true` · oneshot arms unset.
+- `.env.local` still supplies staging `PUBLIC_SUPABASE_URL` / shell flags / secrets (read-only during execution).
+- Do **not** commit `.env` / `.env.local`.
+- Server arm `ADMIN_*` is **non-PUBLIC** — inject via **process-scoped** `env … npm run dev` so SSR sees it; never bake raw string into HTML; never persist in `.env.local`.
 
 ### Browser exposure
 
 - Exposed as attributes only: `data-client-arm-ok` · `data-server-arm-ok` · `data-tbd-write-enabled` · `data-write-dry-run-false` · `data-save-enabled` · `data-approval-id`
 - **Not** exposed: raw `ADMIN_SCHEDULE_TBD_CREATE_NON_DRY_RUN_SERVER_ARMED=…`
-- Client arm name may appear in client bundle as env key (PUBLIC_); value must stay unset/false until execution
+- Client arm name may appear in client bundle as env key (PUBLIC_); value must stay unset/false until the armed process starts
 
-### Restart / package
+### Process-scoped arming / package
 
 | Action | Required? |
 | --- | --- |
-| Astro **dev server restart** after any arm / dry-run / approval-id change | **YES** (`import.meta.env` baked at process start) |
-| `build` / package / FTP | **NO** for local shell oneshot |
-| After arm **OFF** / delete keys | **YES** restart again |
+| Start **one** armed process via `env … npm run dev` (7 keys) | **YES** for execution |
+| Edit root `.env.local` for the 7 keys | **FORBIDDEN** |
+| `export` the 7 keys into the parent shell | **FORBIDDEN** |
+| Armed `build` / package / FTP | **FORBIDDEN** |
+| After Ctrl+C · plain `npm run dev` | returns **file baseline** (no file restore) |
 
-### Temporary ON packet = **7 keys** (not 3)
+### Temporary ON = process-scoped **exactly these 7** (not file edit)
 
-Shared write-stack is part of the temporary mutation (baseline before execution was write OFF / empty provider·module·approval). See `cms-core-v2-schedule-tbd-create-oneshot-write-stack-gate-correction.md`.
+Vite/Astro `loadEnv` — **process env overrides** `.env` / `.env.local`. Client: PUBLIC_* via `import.meta.env`; SSR: private `ADMIN_*` + `ENABLE_*`; client `ENABLE_*` via SSR gates → `mergeStagingShellEnv`.
 
-Also verify (usually already set · not counted in the 7 if unchanged):
+Also verify present in baseline files (not injected):
 
 - `ENABLE_ADMIN_STAGING_SHELL=true`
-- `PUBLIC_SUPABASE_URL` → staging host containing `kmjqppxjdnwwrtaeqjta` only (no production ref)
+- staging `PUBLIC_SUPABASE_URL` (no production ref) — do **not** inject production URL/ref
 
-### Arm OFF restore (exact)
+### Arm OFF = stop the armed process (no `.env.local` restore)
 
-1. Remove or set **not** `"true"`:
-   - `PUBLIC_ADMIN_SCHEDULE_TBD_CREATE_NON_DRY_RUN_ARMED`
-   - `ADMIN_SCHEDULE_TBD_CREATE_NON_DRY_RUN_SERVER_ARMED`
-2. `PUBLIC_ADMIN_WRITE_DRY_RUN=true` (routine default)
-3. Restore shared write-stack to **pre-execution baseline**:
-   - `ENABLE_ADMIN_STAGING_WRITE=false`
-   - `PUBLIC_ADMIN_WRITE_PROVIDER=` (empty)
-   - `PUBLIC_ADMIN_WRITE_MODULE=` (empty)
-   - `PUBLIC_ADMIN_WRITE_APPROVAL_ID=` (empty)
-4. **Restart** Astro dev
-5. Confirm wrap hidden · `data-save-enabled="false"`
+1. **Ctrl+C** the armed `env … npm run dev` terminal
+2. Confirm port **4321** has no LISTEN
+3. Optional: plain `cd ~/sariswing-astro && npm run dev` (baseline from files)
+4. Confirm wrap hidden · `data-save-enabled="false"`
 
-Unset is OFF. `"false"` is OFF. Only raw `"true"` is ON (`isSaveArmExactTrue`).
+Unset / `"false"` is OFF. Only raw `"true"` is ON (`isSaveArmExactTrue`).
 
 ---
 
@@ -197,7 +196,7 @@ Keep OFF for oneshot window (inventory SoT `gosaki-operational-save-ui-arm-inven
 - `PUBLIC_ADMIN_GOSAKI_ABOUT_SUPABASE_SAVE_UI_ARMED` / `GOSAKI_ABOUT_SUPABASE_SAVE_ARMED`
 - Other legacy Schedule/Discography `NON_DRY_RUN_ARMED` literals in inventory allowlist
 
-Oneshot **own** client/server arms stay OFF until Step 3.
+Oneshot **own** client/server arms stay OFF in `.env.local` · armed only inside the process-scoped Step 3 command.
 
 ---
 
@@ -276,7 +275,7 @@ select
 
 Secrets / tokens / emails / actor IDs: **not recorded**.
 
-**Gate effect:** `PREFLIGHT_PASS: true` · SQL Editor PASS recorded · write-stack correction later set `ACTUAL_WRITE_READY: false` until 7-key arm-gate re-pass · `ACTUAL_WRITE_EXECUTED: false`.
+**Gate effect:** `PREFLIGHT_PASS: true` · SQL Editor PASS recorded · process-scoped packet correction keeps `ACTUAL_WRITE_READY: false` until arm-gate re-pass · `ACTUAL_WRITE_EXECUTED: false`.
 
 Signed-in admin runtime preflight (JWT · `schedules_admin_all`) must still see **79** before INSERT during execution.
 
@@ -344,43 +343,53 @@ Fixed target:
 | published | `false` |
 | approval | `cms-core-v2-schedule-tbd-create-non-dry-run-oneshot` |
 
-### Step 1 — root `.env.local` before-state
+### Step 1 — confirm `.env.local` baseline (**read-only · do not edit**)
 
-- Open repo root `.env.local` (do not commit).
-- Confirm **before** change (expected baseline after write-stack correction SoT):
-  - oneshot client/server arms **unset** or not `"true"`
+- Root `.env.local` is shared with Sariswing本体 — **never** write the oneshot 7 keys into it.
+- Confirm baseline remains:
+  - oneshot client/server arms **unset**
   - `PUBLIC_ADMIN_WRITE_DRY_RUN=true`
-  - shared write-stack: `ENABLE_ADMIN_STAGING_WRITE=false` · provider/module/approval **empty**
-  - `ENABLE_ADMIN_STAGING_SHELL=true` (keep)
-  - effective `PUBLIC_SUPABASE_URL` contains `kmjqppxjdnwwrtaeqjta` only · **no** `vsbvndwuajjhnzpohghh` (`.env.local` overrides `.env`)
-- If staging URL / shell flag wrong → **STOP** (do not arm).
+  - `ENABLE_ADMIN_STAGING_WRITE=false` · provider/module/approval **empty**
+  - `ENABLE_ADMIN_STAGING_SHELL=true`
+  - effective `PUBLIC_SUPABASE_URL` contains `kmjqppxjdnwwrtaeqjta` only · **no** `vsbvndwuajjhnzpohghh`
+- If staging URL / shell flag wrong → **STOP**.
 
 ### Step 2 — peer arms all OFF
 
-Confirm every env in §4 is unset or not armed (`isSaveArmExactTrue` / trim-true both count as ON).
-Any peer ON → **STOP**.
+Confirm every env in §4 is unset or not armed in `.env.local` (`isSaveArmExactTrue` / trim-true both count as ON).
+Any peer ON → **STOP**. Do not start an armed process.
 
-### Step 3 — temporary set **exactly these 7**
+### Step 3 — start **one** process-scoped armed dev server (**exactly these 7**)
 
-```txt
-# Shared write-stack (temporary)
-ENABLE_ADMIN_STAGING_WRITE=true
-PUBLIC_ADMIN_WRITE_PROVIDER=supabase
-PUBLIC_ADMIN_WRITE_MODULE=schedule
-PUBLIC_ADMIN_WRITE_APPROVAL_ID=cms-core-v2-schedule-tbd-create-non-dry-run-oneshot
+Stop any existing plain `npm run dev` on 4321 first (PID-only kill if needed). Then:
 
-# Oneshot temporary
-PUBLIC_ADMIN_SCHEDULE_TBD_CREATE_NON_DRY_RUN_ARMED=true
-ADMIN_SCHEDULE_TBD_CREATE_NON_DRY_RUN_SERVER_ARMED=true
-PUBLIC_ADMIN_WRITE_DRY_RUN=false
+```zsh
+cd ~/sariswing-astro
+
+env \
+  ENABLE_ADMIN_STAGING_WRITE=true \
+  PUBLIC_ADMIN_WRITE_PROVIDER=supabase \
+  PUBLIC_ADMIN_WRITE_MODULE=schedule \
+  PUBLIC_ADMIN_WRITE_APPROVAL_ID=cms-core-v2-schedule-tbd-create-non-dry-run-oneshot \
+  PUBLIC_ADMIN_SCHEDULE_TBD_CREATE_NON_DRY_RUN_ARMED=true \
+  ADMIN_SCHEDULE_TBD_CREATE_NON_DRY_RUN_SERVER_ARMED=true \
+  PUBLIC_ADMIN_WRITE_DRY_RUN=false \
+  npm run dev
 ```
 
-Do not set other Save arms. Do not touch production env / secrets / URL.
+Rules:
 
-### Step 4 — restart Astro dev
+- **Do not** `export` these keys in the parent shell
+- **Do not** edit `.env.local`
+- 7 values apply **only** to this npm/Astro process (Vite process env overrides file baseline)
+- **Do not** inject production URL/ref
+- **Do not** run `build` / package / FTP with these envs
+- Other Save paths stay disarmed (dedicated arm/approval mismatch)
 
-- Stop prior `npm run dev` · start again (same host/port as staging shell).
-- Env is baked at process start — restart is mandatory.
+### Step 4 — confirm armed process up
+
+- Staging shell reachable · no production ref in UI/config
+- Env baked at process start — this single process is the only armed instance
 
 ### Step 5 — staging admin · owner login
 
@@ -411,7 +420,7 @@ On page, confirm:
 承認します。この操作を1回だけ実行してください。
 ```
 
-If button missing / multiple / `data-save-enabled` false / peer Save visible armed → **STOP**.
+If button missing / multiple / `data-save-enabled` false / peer Save visible armed → **STOP** · Ctrl+C armed process.
 
 ### Step 8 — click **Staging one-shot CREATE** once
 
@@ -423,28 +432,23 @@ If button missing / multiple / `data-save-enabled` false / peer Save visible arm
 | --- | --- |
 | Success | Record UI `insertedId` (runtime only · do not invent) · **no 2nd click** → Step 10 → 12 |
 | Fail (`actualWrite` false) | **no retry** → Step 10 → investigate · new phase if needed |
-| Ambiguous / timeout / unknown | **no re-click** → Step 10 → exact SELECT (§8) · ask human |
+| Ambiguous / timeout / unknown | **no re-click** · **no re-arm restart** → Step 10 → exact SELECT (§8) · ask human |
 
-### Step 10 — arms OFF + restore write-stack immediately
+### Step 10 — emergency / normal stop armed process (**no `.env.local` restore**)
 
-Restore root `.env.local` to **pre-execution baseline**:
+1. **Ctrl+C** the armed `env … npm run dev` terminal (highest priority before cleanup / retry)
+2. Confirm `lsof -nP -iTCP:4321 -sTCP:LISTEN` is empty
+3. `.env.local` was never changed — no file restore
 
-```txt
-# remove or unset:
-# PUBLIC_ADMIN_SCHEDULE_TBD_CREATE_NON_DRY_RUN_ARMED
-# ADMIN_SCHEDULE_TBD_CREATE_NON_DRY_RUN_SERVER_ARMED
-PUBLIC_ADMIN_WRITE_DRY_RUN=true
-ENABLE_ADMIN_STAGING_WRITE=false
-PUBLIC_ADMIN_WRITE_PROVIDER=
-PUBLIC_ADMIN_WRITE_MODULE=
-PUBLIC_ADMIN_WRITE_APPROVAL_ID=
+### Step 11 — optional plain baseline restart
+
+```zsh
+cd ~/sariswing-astro
+npm run dev
 ```
 
-Peer arms remain unset. Arm anomaly → OFF first (before cleanup / retry).
-
-### Step 11 — restart again
-
-- Restart Astro · confirm oneshot wrap **hidden** · `data-save-enabled="false"` · routine dry-run OK
+- Confirm oneshot wrap **hidden** · `data-save-enabled="false"` · routine dry-run OK
+- File baseline supplies dry-run true / write-stack OFF
 
 ### Step 12 — SQL Editor post-check
 
@@ -453,11 +457,11 @@ Peer arms remain unset. Arm anomaly → OFF first (before cleanup / retry).
 
 ### Step 13 — cleanup vs keep
 
-- Cleanup (§9) **only after** arms OFF + separate destructive approval
+- Cleanup (§9) **only after** armed process ended (Step 10) + separate destructive approval
 - Or keep unpublished row for later QA · document choice
 - Broad DELETE forbidden
 
-**Cursor never:** edits `.env.local` · restarts write-armed server · clicks Save · runs SQL.
+**Cursor never:** edits `.env.local` · starts armed process · clicks Save · runs SQL.
 
 ---
 
@@ -547,7 +551,7 @@ left join target t on true;
 
 **Preconditions:**
 
-1. Arms OFF + restart (Steps 10–11) **before** cleanup
+1. Armed process **ended** (Steps 10–11 · Ctrl+C · port 4321 empty) **before** cleanup
 2. `:inserted_id` known from successful Save / post-check (else **STOP**)
 3. Explicit operator approval for DELETE (same bar as destructive ops)
 4. Staging project only
@@ -655,13 +659,13 @@ commit;
 | IMPLEMENTATION_READY | **true** |
 | PREFLIGHT_PASS | **true** (§5.3 SQL Editor PASS) |
 | PREFLIGHT_ANON_SUBSET_PASS | **true** |
-| EXECUTION_PACKET_READY | **true** (7-key packet · oneshot-only proven) |
-| ACTUAL_WRITE_READY | **false** (re-arm-gate required after write-stack correction) |
+| EXECUTION_PACKET_READY | **true** (process-scoped 7-key · oneshot-only proven) |
+| ACTUAL_WRITE_READY | **false** (re-arm-gate with process-scoped command) |
 | ACTUAL_WRITE_EXECUTED | **false** |
-| ARMS_OFF / ENV_CHANGED / DB_WRITE | **true / false / false** (this phase) |
+| ARMS_OFF / ENV_FILE_UNCHANGED / DB_WRITE | **true / true / false** (this phase) |
 | PRODUCTION_UNCHANGED | **true** |
 
-**Next Primary:** `cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-execution-arm-gate` — human confirms 7-key baseline · then execution with explicit approval · Cursor does not arm/click/SQL.
+**Next Primary:** `cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-execution-arm-gate` — confirm baseline · then execution via `env … npm run dev` · Cursor does not arm/click/SQL.
 
 ---
 

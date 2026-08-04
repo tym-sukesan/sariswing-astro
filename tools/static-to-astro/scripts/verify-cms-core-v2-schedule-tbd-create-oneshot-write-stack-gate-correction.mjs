@@ -118,18 +118,38 @@ assert("EXECUTION_PACKET_READY true", /EXECUTION_PACKET_READY:\s*true/.test(doc)
 assert("ACTUAL_WRITE_READY false", /ACTUAL_WRITE_READY:\s*false/.test(doc));
 assert("ACTUAL_WRITE_EXECUTED false", /ACTUAL_WRITE_EXECUTED:\s*false/.test(doc));
 assert("PACKET_ONESHOT_ONLY_PROVEN true", /PACKET_ONESHOT_ONLY_PROVEN:\s*true/.test(doc));
-assert("7-key ON packet", /Exact 7-key ON packet/.test(doc));
-assert("OFF restore to baseline", /ENABLE_ADMIN_STAGING_WRITE=false/.test(doc));
+assert("PROCESS_SCOPED_ENV_REQUIRED true", /PROCESS_SCOPED_ENV_REQUIRED:\s*true/.test(doc));
+assert(
+  "process-scoped 7-key ON command",
+  /Exact process-scoped 7-key ON command/.test(doc) &&
+    /env \\\s*\n\s*ENABLE_ADMIN_STAGING_WRITE=true/.test(doc) &&
+    /npm run dev/.test(doc),
+);
+assert(
+  "forbid .env.local write for 7 keys",
+  /Forbidden:.*\.env\.local|forbidden.*\.env\.local/i.test(doc),
+);
+assert(
+  "OFF is Ctrl+C not file restore",
+  /Ctrl\+C/.test(doc) && /no `\.env\.local` restore/.test(doc),
+);
 assert("fan-out table", /Runtime consumers \(fan-out\)/.test(doc));
 assert("matrix A–I section", /Offline config matrix/.test(doc) && /\|\s*\*\*A\*\*/.test(doc));
 assert("no trim oneshot provider", /no trim/.test(doc));
-assert("env precedence .env.local overrides", /\.env\.local.*overrides|\.env\.local.*\*\*overrides\*\*/.test(doc));
+assert(
+  "process env overrides .env files",
+  /process env overrides/.test(doc),
+);
+assert(
+  "client PUBLIC + SSR private documented",
+  /PUBLIC_\*/.test(doc) && /ADMIN_\*/.test(doc) && /mergeStagingShellEnv/.test(doc),
+);
 assert("npm script registered", /verify:cms-core-v2-schedule-tbd-create-oneshot-write-stack-gate-correction/.test(pkg));
 assert("safety suite lists verifier", /verify-cms-core-v2-schedule-tbd-create-oneshot-write-stack-gate-correction\.mjs/.test(suite));
 
 assert(
-  "final-preflight 7-key packet",
-  /exactly these 7|7-key|temporary 7/.test(finalDoc),
+  "final-preflight process-scoped command",
+  /env \\\s*\n\s*ENABLE_ADMIN_STAGING_WRITE=true/.test(finalDoc) && /npm run dev/.test(finalDoc),
 );
 assert(
   "final-preflight ACTUAL_WRITE_READY false",
@@ -139,8 +159,18 @@ assert(
   "final-preflight no 3-keys-only claim",
   !/exactly these 3/.test(finalDoc),
 );
-assert("impl mentions 7-key / write-stack correction", /write-stack|7-key|7 keys/.test(impl));
-assert("planning mentions write-stack correction", /write-stack|7-key|7 keys/.test(plan));
+assert(
+  "final-preflight no Restore root .env.local",
+  !/Restore root `\.env\.local`/.test(finalDoc),
+);
+assert(
+  "impl mentions process-scoped / write-stack",
+  /process-scoped|write-stack|7-key|7 keys/.test(impl),
+);
+assert(
+  "planning mentions process-scoped",
+  /process-scoped|write-stack|env … npm run dev|env \.\.\. npm run dev/.test(plan),
+);
 
 assert(
   "oneshot ENABLE exact true no trim",
@@ -341,16 +371,13 @@ function assertAllOthersOff(label, samples) {
   );
 }
 
-// Restore packet shape in doc
 assert(
-  "restore packet restores empty provider/module/approval",
-  /PUBLIC_ADMIN_WRITE_PROVIDER=\s*\nPUBLIC_ADMIN_WRITE_MODULE=\s*\nPUBLIC_ADMIN_WRITE_APPROVAL_ID=/.test(
+  "no file restore packet for provider/module/approval",
+  !/PUBLIC_ADMIN_WRITE_PROVIDER=\s*\nPUBLIC_ADMIN_WRITE_MODULE=\s*\nPUBLIC_ADMIN_WRITE_APPROVAL_ID=/.test(
     doc,
-  ) ||
-    /PUBLIC_ADMIN_WRITE_PROVIDER=\nPUBLIC_ADMIN_WRITE_MODULE=\nPUBLIC_ADMIN_WRITE_APPROVAL_ID=/.test(
-      doc,
-    ),
+  ),
 );
+assert("armed build forbidden in write-stack doc", /Do not.*armed `build`|armed `build`\/package/i.test(doc));
 
 console.log(`RESULT ${failed === 0 ? "PASS" : "FAIL"} passed=${passed} failed=${failed}`);
 process.exit(failed === 0 ? 0 : 1);

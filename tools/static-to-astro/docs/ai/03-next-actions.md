@@ -4,20 +4,47 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 ## 0. Current next actions（直近）
 
 1. **Primary (Gosaki ops):** クライアントへ **staging 共有**（`CLIENT_SHARE_READY: true` · package `dc1c5b6…`）。本番 cutover はしない。
-2. **並行可 (Kit Core):** **Next Primary** `cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-execution-arm-gate`（write-stack correction COMPLETE · **7-key** packet · `PREFLIGHT_PASS: true` · `EXECUTION_PACKET_READY: true` · `ACTUAL_WRITE_READY: false` · `ACTUAL_WRITE_EXECUTED: false` · arms OFF）→ arm-gate PASS後 `…-execution` · **human only** temporary 7 keys → Dry-run → Save once → restore baseline → post-check → optional cleanup · then Mio seed regen/apply → Branch A live SELECT pilot · then generic read-only Admin · form onboarding · Admin runtime Save arm mutex（**別承認**）· evening-set hero（**NON_BLOCKING**）。
+2. **並行可 (Kit Core):** **Next Primary** `cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-execution-arm-gate`（process-scoped env packet COMPLETE · **7 keys via `env … npm run dev`** · **forbid** `.env.local` edit · `PREFLIGHT_PASS: true` · `EXECUTION_PACKET_READY: true` · `ACTUAL_WRITE_READY: false` · `ACTUAL_WRITE_EXECUTED: false`）→ arm-gate PASS後 `…-execution` · **human only** process-scoped armed process → Dry-run → Save once → **Ctrl+C** → post-check → optional cleanup · then Mio seed regen/apply → Branch A live SELECT pilot · then generic read-only Admin · form onboarding · Admin runtime Save arm mutex（**別承認**）· evening-set hero（**NON_BLOCKING**）。
 3. **並行可:** production hosting **read-only planning**（`HOSTING_READY: false`）。
 4. **並行可 / 別承認:** YouTube 複数件 **永続 Save**（NON_BLOCKING）。
 5. Save arm **false** · `readyForAnyFutureFtpApply: false` · production STOP · `service_role` 禁止 · **deployed package 固定**.
+
+## 0. CMS Core v2 Schedule TBD CREATE oneshot process-scoped env packet correction (2026-08-04)
+
+| Item | Value |
+| --- | --- |
+| Gate | `CMS_CORE_V2_SCHEDULE_TBD_CREATE_ONESHOT_PROCESS_SCOPED_ENV_PACKET_CORRECTION_COMPLETE: true` |
+| Packet | `env … npm run dev` with exactly 7 keys |
+| `.env.local` | **never** write the 7 keys (shared with Sariswing本体) |
+| Write | `ACTUAL_WRITE_READY: false` · `ACTUAL_WRITE_EXECUTED: false` |
+| Next | `cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-execution-arm-gate` |
+
+```txt
+CMS_CORE_V2_SCHEDULE_TBD_CREATE_ONESHOT_PROCESS_SCOPED_ENV_PACKET_CORRECTION_COMPLETE: true
+IMPLEMENTATION_READY: true
+PREFLIGHT_PASS: true
+EXECUTION_PACKET_READY: true
+ACTUAL_WRITE_READY: false
+ACTUAL_WRITE_EXECUTED: false
+ENV_FILE_UNCHANGED: true
+PROCESS_NOT_STARTED: true
+PACKET_ONESHOT_ONLY_PROVEN: true
+ARMS_OFF: true
+DB_WRITE_EXECUTED: false
+NEXT_PRIMARY_RECOMMENDED: cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-execution-arm-gate
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+PRODUCTION_UNCHANGED: true
+```
 
 ## 0. CMS Core v2 Schedule TBD CREATE oneshot write-stack gate correction (2026-08-04)
 
 | Item | Value |
 | --- | --- |
 | Gate | `CMS_CORE_V2_SCHEDULE_TBD_CREATE_ONESHOT_WRITE_STACK_GATE_CORRECTION_COMPLETE: true` |
-| Packet | temporary **7 keys** (4 write-stack + 3 oneshot/dry-run) |
+| Packet | superseded delivery → **process-scoped** (above) |
 | Matrix | A–I offline · oneshot-only when exact |
 | Write | `ACTUAL_WRITE_READY: false` · `ACTUAL_WRITE_EXECUTED: false` |
-| Next | `cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-execution-arm-gate` |
+| Next | arm-gate |
 
 ```txt
 CMS_CORE_V2_SCHEDULE_TBD_CREATE_ONESHOT_WRITE_STACK_GATE_CORRECTION_COMPLETE: true
@@ -27,6 +54,7 @@ EXECUTION_PACKET_READY: true
 ACTUAL_WRITE_READY: false
 ACTUAL_WRITE_EXECUTED: false
 PACKET_ONESHOT_ONLY_PROVEN: true
+PROCESS_SCOPED_ENV_REQUIRED: true
 ARMS_OFF: true
 ENV_CHANGED: false
 DB_WRITE_EXECUTED: false
@@ -41,7 +69,7 @@ PRODUCTION_UNCHANGED: true
 | --- | --- |
 | Gate | `CMS_CORE_V2_SCHEDULE_TBD_DATE_SAVE_NON_DRY_RUN_STAGING_EXECUTION_PREPARATION_COMPLETE: true` |
 | SQL Editor | PASS `2026-08-03 15:51:19.118619+00` · total 79 · fingerprints match |
-| Packet | superseded → **7 keys** (write-stack correction) |
+| Packet | superseded → **process-scoped** `env … npm run dev` |
 | Write | `ACTUAL_WRITE_READY: false` · `ACTUAL_WRITE_EXECUTED: false` |
 | Next | arm-gate → execution |
 
@@ -71,7 +99,7 @@ PRODUCTION_UNCHANGED: true
 | Gate | `CMS_CORE_V2_SCHEDULE_TBD_DATE_SAVE_NON_DRY_RUN_STAGING_FINAL_PREFLIGHT_COMPLETE: true` |
 | Anon subset | published 74 · mio/tbd/target 0 · date_status SELECT OK |
 | Full table 79 | **PASS** (SQL Editor · see execution-preparation) |
-| Packet | runbook · post-check · exact cleanup · **7-key** after write-stack correction |
+| Packet | runbook · post-check · exact cleanup · **process-scoped** 7-key |
 | Write | `ACTUAL_WRITE_READY: false` · `ACTUAL_WRITE_EXECUTED: false` |
 | Next | arm-gate → execution |
 

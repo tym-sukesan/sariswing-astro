@@ -106,7 +106,7 @@ const doc = read(DOC);
 assert("phase id", /cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-implementation/.test(doc));
 assert("IMPLEMENTATION_READY true", /IMPLEMENTATION_READY:\s*true/.test(doc));
 assert("ACTUAL_WRITE_READY false", /ACTUAL_WRITE_READY:\s*false/.test(doc));
-assert("write-stack / 7-key correction noted", /write-stack|7-key|7 keys/.test(doc));
+assert("write-stack / process-scoped correction noted", /write-stack|process-scoped|7-key|7 keys/.test(doc));
 assert("ACTUAL_WRITE_EXECUTED false", /ACTUAL_WRITE_EXECUTED:\s*false/.test(doc));
 assert("arms OFF", /arms?\s*OFF|ARMS_OFF:\s*true/i.test(doc));
 assert("env unchanged", /ENV_CHANGED:\s*false|env unchanged/i.test(doc));

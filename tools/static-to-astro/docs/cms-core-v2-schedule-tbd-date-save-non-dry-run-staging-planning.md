@@ -409,11 +409,11 @@ select count(*) from public.schedules where site_slug = 'mio-kisaragi-jazz';
 
 ## 9. Next Primary
 
-Final-preflight **COMPLETE** · SQL Editor PASS · execution-preparation **COMPLETE** · write-stack gate correction **COMPLETE** (7-key packet).
+Final-preflight **COMPLETE** · SQL Editor PASS · execution-preparation **COMPLETE** · write-stack gate correction **COMPLETE** · process-scoped env packet **COMPLETE**.
 
 Doc: `cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-final-preflight.md` · `PREFLIGHT_PASS: true` · `ACTUAL_WRITE_READY: false` · `ACTUAL_WRITE_EXECUTED: false`.
 
-**Next:** `cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-execution-arm-gate` (operator: temporary **7 keys** → Save once → restore baseline).
+**Next:** `cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-execution-arm-gate` (operator: process-scoped `env … npm run dev` → Save once → Ctrl+C).
 
 ---
 

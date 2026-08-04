@@ -85,11 +85,40 @@ assert(
   /cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-execution-preparation/.test(doc),
 );
 assert(
+  "process-scoped packet phase",
+  /cms-core-v2-schedule-tbd-create-oneshot-process-scoped-env-packet-correction/.test(doc),
+);
+assert(
   "write-stack correction phase",
   /cms-core-v2-schedule-tbd-create-oneshot-write-stack-gate-correction/.test(doc),
 );
 assert("human steps 1-13", /### Step 1/.test(doc) && /### Step 13/.test(doc));
-assert("temporary 7-key packet", /exactly these 7/.test(doc));
+assert(
+  "process-scoped env command",
+  /env \\\s*\n\s*ENABLE_ADMIN_STAGING_WRITE=true/.test(doc) &&
+    /npm run dev/.test(doc),
+);
+assert(
+  "process-scoped exact 7 keys in command",
+  /ENABLE_ADMIN_STAGING_WRITE=true/.test(doc) &&
+    /PUBLIC_ADMIN_WRITE_PROVIDER=supabase/.test(doc) &&
+    /PUBLIC_ADMIN_WRITE_MODULE=schedule/.test(doc) &&
+    /PUBLIC_ADMIN_WRITE_APPROVAL_ID=cms-core-v2-schedule-tbd-create-non-dry-run-oneshot/.test(doc) &&
+    /PUBLIC_ADMIN_SCHEDULE_TBD_CREATE_NON_DRY_RUN_ARMED=true/.test(doc) &&
+    /ADMIN_SCHEDULE_TBD_CREATE_NON_DRY_RUN_SERVER_ARMED=true/.test(doc) &&
+    /PUBLIC_ADMIN_WRITE_DRY_RUN=false/.test(doc),
+);
+assert(
+  "forbid .env.local write for 7 keys",
+  /forbidden.*\.env\.local|never.*write the oneshot 7 keys|\.env\.local.*FORBIDDEN/i.test(doc),
+);
+assert(
+  "no .env.local restore instruction",
+  !/Restore root `\.env\.local`/.test(doc) && !/Restore root \.env\.local/.test(doc),
+);
+assert("Ctrl+C armed process stop", /Ctrl\+C/.test(doc));
+assert("process env overrides files", /process env overrides/.test(doc));
+assert("armed build/package forbidden", /Armed `build`|armed `build`|FORBIDDEN/.test(doc));
 assert("no arm ON this phase", /no\*\* arm ON|no arm ON|arm ON ·|\*\*no\*\* arm ON/.test(doc));
 assert("legacy_id fixed", /schedule-2026-11-001/.test(doc));
 assert("approval id", /cms-core-v2-schedule-tbd-create-non-dry-run-oneshot/.test(doc));
@@ -119,7 +148,10 @@ assert("cleanup lock_timeout", /lock_timeout/.test(doc));
 assert("cleanup statement_timeout", /statement_timeout/.test(doc));
 assert("cleanup count=1 assert", /exact cleanup target count/.test(doc));
 assert("cleanup RETURNING", /returning id/i.test(doc));
-assert("cleanup arms OFF precondition", /Arms OFF/.test(doc));
+assert(
+  "cleanup armed process ended precondition",
+  /Armed process \*\*ended\*\*|armed process ended|Ctrl\+C/.test(doc),
+);
 assert("no broad DELETE", !/delete from public\.schedules;/i.test(doc));
 assert("fingerprint section", /Fingerprint/.test(doc));
 assert("venue marker", /TBD create PoC venue/.test(doc));
@@ -131,7 +163,10 @@ assert("peer Edge GOSAKI_SCHEDULE_SAVE_ARMED", /GOSAKI_SCHEDULE_SAVE_ARMED/.test
 assert("client arm env", /PUBLIC_ADMIN_SCHEDULE_TBD_CREATE_NON_DRY_RUN_ARMED/.test(doc));
 assert("server arm env", /ADMIN_SCHEDULE_TBD_CREATE_NON_DRY_RUN_SERVER_ARMED/.test(doc));
 assert("dry-run env", /PUBLIC_ADMIN_WRITE_DRY_RUN/.test(doc));
-assert("restart required", /dev server restart/.test(doc));
+assert(
+  "plain baseline restart documented",
+  /plain `npm run dev`|File baseline|optional plain baseline/.test(doc),
+);
 assert("server arm not baked raw", /Not\*\* exposed: raw|raw server arm string/.test(doc));
 assert("ambiguous no retry", /ambiguous[\s\S]*never|no re-click/i.test(doc));
 assert("UUID not fixed in docs", !/aa440e29-5be8-402e-9190-0d81c48434c0/.test(doc));

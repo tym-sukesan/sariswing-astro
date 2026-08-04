@@ -4,20 +4,50 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 ## 0. Current next actions（直近）
 
 1. **Primary (Gosaki ops):** クライアントへ **staging 共有**（`CLIENT_SHARE_READY: true` · package `dc1c5b6…`）。本番 cutover はしない。
-2. **並行可 (Kit Core):** **Next Primary** `cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-execution-arm-gate`（process-scoped env packet COMPLETE · **7 keys via `env … npm run dev`** · **forbid** `.env.local` edit · `PREFLIGHT_PASS: true` · `EXECUTION_PACKET_READY: true` · `ACTUAL_WRITE_READY: false` · `ACTUAL_WRITE_EXECUTED: false`）→ arm-gate PASS後 `…-execution` · **human only** process-scoped armed process → Dry-run → Save once → **Ctrl+C** → post-check → optional cleanup · then Mio seed regen/apply → Branch A live SELECT pilot · then generic read-only Admin · form onboarding · Admin runtime Save arm mutex（**別承認**）· evening-set hero（**NON_BLOCKING**）。
+2. **並行可 (Kit Core):** **Next Primary** `cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-execution-arm-gate`（process-scoped Auth packet COMPLETE · **exactly 9 keys via `env … npm run dev`** · Auth 2 + write 7 · **forbid** `.env.local` edit · `PREFLIGHT_PASS: true` · `EXECUTION_PACKET_READY: true` · `ACTUAL_WRITE_READY: false` · `ACTUAL_WRITE_EXECUTED: false`）→ arm-gate PASS後 `…-execution` · **human only** process-scoped armed process → owner login → Dry-run → Save once → **Ctrl+C** → post-check → optional cleanup · then Mio seed regen/apply → Branch A live SELECT pilot · then generic read-only Admin · form onboarding · Admin runtime Save arm mutex（**別承認**）· evening-set hero（**NON_BLOCKING**）。
 3. **並行可:** production hosting **read-only planning**（`HOSTING_READY: false`）。
 4. **並行可 / 別承認:** YouTube 複数件 **永続 Save**（NON_BLOCKING）。
 5. Save arm **false** · `readyForAnyFutureFtpApply: false` · production STOP · `service_role` 禁止 · **deployed package 固定**.
+
+## 0. CMS Core v2 Schedule TBD CREATE oneshot process-scoped Auth packet correction (2026-08-04)
+
+| Item | Value |
+| --- | --- |
+| Gate | `CMS_CORE_V2_SCHEDULE_TBD_CREATE_ONESHOT_PROCESS_SCOPED_AUTH_PACKET_CORRECTION_COMPLETE: true` |
+| Packet | `env … npm run dev` with **exactly 9 keys** (Auth 2 + write 7) |
+| Auth | `ENABLE_ADMIN_STAGING_AUTH=true` · `PUBLIC_ADMIN_AUTH_PROVIDER=supabase` |
+| Write 7 alone | Auth mock → login **不可** · 実行不能 |
+| `.env.local` | **never** write the 9 keys (shared with Sariswing本体) |
+| Write | `ACTUAL_WRITE_READY: false` · `ACTUAL_WRITE_EXECUTED: false` |
+| Next | `cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-execution-arm-gate` |
+
+```txt
+CMS_CORE_V2_SCHEDULE_TBD_CREATE_ONESHOT_PROCESS_SCOPED_AUTH_PACKET_CORRECTION_COMPLETE: true
+CMS_CORE_V2_SCHEDULE_TBD_CREATE_ONESHOT_PROCESS_SCOPED_ENV_PACKET_CORRECTION_COMPLETE: true
+IMPLEMENTATION_READY: true
+PREFLIGHT_PASS: true
+EXECUTION_PACKET_READY: true
+ACTUAL_WRITE_READY: false
+ACTUAL_WRITE_EXECUTED: false
+ENV_FILE_UNCHANGED: true
+PROCESS_NOT_STARTED: true
+PACKET_ONESHOT_ONLY_PROVEN: true
+ARMS_OFF: true
+DB_WRITE_EXECUTED: false
+NEXT_PRIMARY_RECOMMENDED: cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-execution-arm-gate
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+PRODUCTION_UNCHANGED: true
+```
 
 ## 0. CMS Core v2 Schedule TBD CREATE oneshot process-scoped env packet correction (2026-08-04)
 
 | Item | Value |
 | --- | --- |
 | Gate | `CMS_CORE_V2_SCHEDULE_TBD_CREATE_ONESHOT_PROCESS_SCOPED_ENV_PACKET_CORRECTION_COMPLETE: true` |
-| Packet | `env … npm run dev` with exactly 7 keys |
-| `.env.local` | **never** write the 7 keys (shared with Sariswing本体) |
+| Packet | superseded → **exactly 9 keys** (Auth packet above) |
+| `.env.local` | **never** write process-scoped keys (shared with Sariswing本体) |
 | Write | `ACTUAL_WRITE_READY: false` · `ACTUAL_WRITE_EXECUTED: false` |
-| Next | `cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-execution-arm-gate` |
+| Next | arm-gate |
 
 ```txt
 CMS_CORE_V2_SCHEDULE_TBD_CREATE_ONESHOT_PROCESS_SCOPED_ENV_PACKET_CORRECTION_COMPLETE: true
@@ -35,6 +65,7 @@ NEXT_PRIMARY_RECOMMENDED: cms-core-v2-schedule-tbd-date-save-non-dry-run-staging
 READY_FOR_ANY_FUTURE_FTP_APPLY: false
 PRODUCTION_UNCHANGED: true
 ```
+
 
 ## 0. CMS Core v2 Schedule TBD CREATE oneshot write-stack gate correction (2026-08-04)
 
@@ -99,7 +130,7 @@ PRODUCTION_UNCHANGED: true
 | Gate | `CMS_CORE_V2_SCHEDULE_TBD_DATE_SAVE_NON_DRY_RUN_STAGING_FINAL_PREFLIGHT_COMPLETE: true` |
 | Anon subset | published 74 · mio/tbd/target 0 · date_status SELECT OK |
 | Full table 79 | **PASS** (SQL Editor · see execution-preparation) |
-| Packet | runbook · post-check · exact cleanup · **process-scoped** 7-key |
+| Packet | runbook · post-check · exact cleanup · **process-scoped** **exactly 9 keys** |
 | Write | `ACTUAL_WRITE_READY: false` · `ACTUAL_WRITE_EXECUTED: false` |
 | Next | arm-gate → execution |
 

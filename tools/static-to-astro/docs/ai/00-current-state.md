@@ -3,9 +3,11 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**CMS Core v2 Schedule TBD CREATE oneshot process-scoped env packet correction (2026-08-04):** **COMPLETE (docs)** — Phase `cms-core-v2-schedule-tbd-create-oneshot-process-scoped-env-packet-correction` · HEAD `74790ff` · execution uses `env … npm run dev` with exactly 7 keys · **forbid** writing 7 keys into shared root `.env.local` · **IMPLEMENTATION_READY: true** · **PREFLIGHT_PASS: true** · **EXECUTION_PACKET_READY: true** · **ACTUAL_WRITE_READY: false** · **ACTUAL_WRITE_EXECUTED: false** · env file unchanged · process not started · DB write 0 · **Next Primary:** `cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-execution-arm-gate`.
+**CMS Core v2 Schedule TBD CREATE oneshot process-scoped Auth packet correction (2026-08-04):** **COMPLETE (docs)** — Phase `cms-core-v2-schedule-tbd-create-oneshot-process-scoped-auth-packet-correction` · execution uses `env … npm run dev` with **exactly 9 keys** (Auth 2 + write 7) · write 7 alone → Auth mock → login **不可** · **forbid** writing 9 keys into shared root `.env.local` · **IMPLEMENTATION_READY: true** · **PREFLIGHT_PASS: true** · **EXECUTION_PACKET_READY: true** · **ACTUAL_WRITE_READY: false** · **ACTUAL_WRITE_EXECUTED: false** · env file unchanged · process not started · DB write 0 · **Next Primary:** `cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-execution-arm-gate`.
 
-**CMS Core v2 Schedule TBD CREATE oneshot write-stack gate correction (2026-08-04):** **COMPLETE (docs + offline matrix)** — shared write-stack fan-out audited · oneshot-only proven · delivery method superseded by process-scoped packet above.
+**CMS Core v2 Schedule TBD CREATE oneshot process-scoped env packet correction (2026-08-04):** **COMPLETE (docs)** — Phase `cms-core-v2-schedule-tbd-create-oneshot-process-scoped-env-packet-correction` · superseded delivery count → Auth packet above (**exactly 9 keys**).
+
+**CMS Core v2 Schedule TBD CREATE oneshot write-stack gate correction (2026-08-04):** **COMPLETE (docs + offline matrix)** — shared write-stack fan-out audited · oneshot-only proven · delivery method superseded by process-scoped **9-key** packet above.
 
 **CMS Core v2 Schedule TBD non-dry-run staging execution-preparation (2026-08-04):** **COMPLETE (docs)** — SQL Editor PASS recorded · human §7 · packet delivery corrected to process-scoped (not `.env.local` edit).
 

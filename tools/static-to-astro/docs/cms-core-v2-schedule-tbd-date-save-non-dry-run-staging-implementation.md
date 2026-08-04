@@ -33,7 +33,7 @@ MIO_SEED_UNCHANGED: true
 PRODUCTION_UNCHANGED: true
 READY_FOR_ANY_FUTURE_FTP_APPLY: false
 NEXT_PRIMARY_RECOMMENDED: cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-execution-arm-gate
-FINAL_PREFLIGHT: cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-final-preflight (COMPLETE · SQL Editor PASS · process-scoped 7-key · ACTUAL_WRITE_READY false · ACTUAL_WRITE_EXECUTED false)
+FINAL_PREFLIGHT: cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-final-preflight (COMPLETE · SQL Editor PASS · process-scoped exactly 9 keys · ACTUAL_WRITE_READY false · ACTUAL_WRITE_EXECUTED false)
 EXECUTION_PREPARATION: cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-execution-preparation (COMPLETE · human runbook §7)
 WRITE_STACK_GATE_CORRECTION: cms-core-v2-schedule-tbd-create-oneshot-write-stack-gate-correction (COMPLETE · oneshot-only proven)
 PROCESS_SCOPED_ENV_PACKET: cms-core-v2-schedule-tbd-create-oneshot-process-scoped-env-packet-correction (COMPLETE · `env … npm run dev` · no `.env.local` edit)
@@ -139,8 +139,8 @@ Dry-run (add/create) must match fixed oneshot fields → fingerprint lock → Sa
 
 ## 5. Next
 
-Final-preflight **COMPLETE** · SQL Editor PASS · execution-preparation **COMPLETE** · write-stack gate correction **COMPLETE** · **process-scoped env packet COMPLETE**.
+Final-preflight **COMPLETE** · SQL Editor PASS · execution-preparation **COMPLETE** · write-stack gate correction **COMPLETE** · **process-scoped env packet COMPLETE** · **Auth packet COMPLETE (exactly 9 keys)**.
 
 Doc: `cms-core-v2-schedule-tbd-create-oneshot-write-stack-gate-correction.md` · `cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-final-preflight.md` · `PREFLIGHT_PASS: true` · `EXECUTION_PACKET_READY: true` · `ACTUAL_WRITE_READY: false` · `ACTUAL_WRITE_EXECUTED: false`.
 
-**Next Primary:** `cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-execution-arm-gate` → execution via process-scoped `env … npm run dev` (never edit shared `.env.local` for the 7 keys) · Cursor does not arm/click/SQL.
+**Next Primary:** `cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-execution-arm-gate` → execution via process-scoped `env … npm run dev` with **exactly 9 keys** (Auth 2 + write 7 · never edit shared `.env.local`) · Cursor does not arm/click/SQL.

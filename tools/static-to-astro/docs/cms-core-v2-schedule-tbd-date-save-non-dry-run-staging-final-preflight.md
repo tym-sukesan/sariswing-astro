@@ -4,10 +4,11 @@
 - **Follow-up recorded:** `cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-execution-preparation` (2026-08-04)
 - **Date:** 2026-08-03 · prep update 2026-08-04
 - **HEAD at final-preflight commit:** `dcc8de812b6b683e7417b5094be29cc8958c6aac` (= `origin/main` · clean at execution-preparation start)
-- **Status:** **COMPLETE (docs / SELECT-only / runbook)** · SQL Editor full-table **PASS recorded** · **process-scoped 7-key env** (no `.env.local` edit) · **ACTUAL_WRITE_READY: false** · **ACTUAL_WRITE_EXECUTED: false**
+- **Status:** **COMPLETE (docs / SELECT-only / runbook)** · SQL Editor full-table **PASS recorded** · **process-scoped 9-key env** (Auth 2 + write 7 · no `.env.local` edit) · **ACTUAL_WRITE_READY: false** · **ACTUAL_WRITE_EXECUTED: false**
 - **This preparation phase:** record preflight · finalize human execution steps · **no** arm ON · **no** env change by Cursor · **no** Save · **no** DB write · **no** cleanup · **no** commit/push
 - **Write-stack correction:** `cms-core-v2-schedule-tbd-create-oneshot-write-stack-gate-correction`
-- **Process-scoped packet:** `cms-core-v2-schedule-tbd-create-oneshot-process-scoped-env-packet-correction` — **forbid** writing the 7 keys into shared root `.env.local`
+- **Process-scoped packet:** `cms-core-v2-schedule-tbd-create-oneshot-process-scoped-env-packet-correction` · **Auth packet:** `cms-core-v2-schedule-tbd-create-oneshot-process-scoped-auth-packet-correction` — **forbid** writing the 9 keys into shared root `.env.local`
+- **Auth note:** write **7 keys alone** arm write config but leave Auth **mock** → real login **impossible** · execution needs **exactly 9 keys**
 - **Staging:** `kmjqppxjdnwwrtaeqjta`
 - **Production STOP:** `vsbvndwuajjhnzpohghh`
 
@@ -22,6 +23,7 @@ CMS_CORE_V2_SCHEDULE_TBD_DATE_SAVE_NON_DRY_RUN_STAGING_FINAL_PREFLIGHT_COMPLETE:
 CMS_CORE_V2_SCHEDULE_TBD_DATE_SAVE_NON_DRY_RUN_STAGING_EXECUTION_PREPARATION_COMPLETE: true
 CMS_CORE_V2_SCHEDULE_TBD_CREATE_ONESHOT_WRITE_STACK_GATE_CORRECTION_COMPLETE: true
 CMS_CORE_V2_SCHEDULE_TBD_CREATE_ONESHOT_PROCESS_SCOPED_ENV_PACKET_CORRECTION_COMPLETE: true
+CMS_CORE_V2_SCHEDULE_TBD_CREATE_ONESHOT_PROCESS_SCOPED_AUTH_PACKET_CORRECTION_COMPLETE: true
 IMPLEMENTATION_READY: true
 PREFLIGHT_PASS: true
 PREFLIGHT_ANON_SUBSET_PASS: true
@@ -44,7 +46,7 @@ NEXT_PRIMARY_RECOMMENDED: cms-core-v2-schedule-tbd-date-save-non-dry-run-staging
 
 **SQL Editor PASS (operator, staging only):** `observed_at=2026-08-03 15:51:19.118619+00` · `preflight_pass=true` · `stop_reasons=''` · counts/schema/CHECK/trigger/RLS/fingerprints all match · see §5.3.
 
-**ACTUAL_WRITE_READY false** until human arm-gate re-pass with **process-scoped** `env … npm run dev` (never edit shared root `.env.local` for the 7 keys). Packet definition ready (`EXECUTION_PACKET_READY: true` · oneshot-only proven offline).
+**ACTUAL_WRITE_READY false** until human arm-gate re-pass with **process-scoped** `env … npm run dev` (never edit shared root `.env.local` for the **9 keys**). Packet definition ready (`EXECUTION_PACKET_READY: true` · Auth + oneshot-only proven offline).
 
 **ACTUAL_WRITE_EXECUTED false** · arms remain OFF · `.env.local` unchanged · production untouched · DB write 0 (Cursor + this phase).
 
@@ -111,11 +113,11 @@ SSR bake (page load):
 
 ### Env files (baseline only · **do not edit for oneshot arming**)
 
-- Root `.env.local` is **shared with Sariswing本体** — **forbidden** to write the oneshot 7 keys into it.
-- Baseline (routine) stays: write-stack OFF / empty provider·module·approval · dry-run `true` · oneshot arms unset.
-- `.env.local` still supplies staging `PUBLIC_SUPABASE_URL` / shell flags / secrets (read-only during execution).
+- Root `.env.local` is **shared with Sariswing本体** — **forbidden** to write the oneshot **9 keys** into it.
+- Baseline (routine) stays: Auth mock (`ENABLE_ADMIN_STAGING_AUTH` unset · `PUBLIC_ADMIN_AUTH_PROVIDER` unset) · write-stack OFF / empty provider·module·approval · dry-run `true` · oneshot arms unset.
+- `.env.local` still supplies staging `PUBLIC_SUPABASE_URL` + anon key / shell flags (read-only during execution) — **no** `service_role` · **never** inject production URL/ref.
 - Do **not** commit `.env` / `.env.local`.
-- Server arm `ADMIN_*` is **non-PUBLIC** — inject via **process-scoped** `env … npm run dev` so SSR sees it; never bake raw string into HTML; never persist in `.env.local`.
+- Server arm `ADMIN_*` and `ENABLE_ADMIN_STAGING_AUTH` are **non-PUBLIC** — inject via **process-scoped** `env … npm run dev` so SSR sees them; never bake raw strings into HTML; never persist in `.env.local`.
 
 ### Browser exposure
 
@@ -127,26 +129,51 @@ SSR bake (page load):
 
 | Action | Required? |
 | --- | --- |
-| Start **one** armed process via `env … npm run dev` (7 keys) | **YES** for execution |
-| Edit root `.env.local` for the 7 keys | **FORBIDDEN** |
-| `export` the 7 keys into the parent shell | **FORBIDDEN** |
+| Start **one** armed process via `env … npm run dev` (**exactly 9 keys**) | **YES** for execution |
+| Edit root `.env.local` for the 9 keys | **FORBIDDEN** |
+| `export` the 9 keys into the parent shell | **FORBIDDEN** |
 | Armed `build` / package / FTP | **FORBIDDEN** |
-| After Ctrl+C · plain `npm run dev` | returns **file baseline** (no file restore) |
+| After Ctrl+C · plain `npm run dev` | returns **file baseline** (Auth mock · write OFF · no file restore) |
 
-### Temporary ON = process-scoped **exactly these 7** (not file edit)
+### Temporary ON = process-scoped **exactly these 9** (Auth 2 + write 7 · not file edit)
 
 Vite/Astro `loadEnv` — **process env overrides** `.env` / `.env.local`. Client: PUBLIC_* via `import.meta.env`; SSR: private `ADMIN_*` + `ENABLE_*`; client `ENABLE_*` via SSR gates → `mergeStagingShellEnv`.
+
+**Auth 2 (required for owner login):**
+
+| Env | Parse |
+| --- | --- |
+| `ENABLE_ADMIN_STAGING_AUTH` | exact `=== "true"` |
+| `PUBLIC_ADMIN_AUTH_PROVIDER` | trim · must `"supabase"` (default `"mock"`) |
+
+**Write 7 (required for oneshot Save UI):** write-stack 4 + dual oneshot arms + `PUBLIC_ADMIN_WRITE_DRY_RUN=false`.
+
+**Write 7 alone:** write config can arm, but Auth stays **mock** → real login **impossible** → execution **cannot** proceed.
 
 Also verify present in baseline files (not injected):
 
 - `ENABLE_ADMIN_STAGING_SHELL=true`
-- staging `PUBLIC_SUPABASE_URL` (no production ref) — do **not** inject production URL/ref
+- staging `PUBLIC_SUPABASE_URL` + anon (no production ref) — do **not** inject production URL/ref
+- **no** `service_role`
+
+### Auth / write matrix (execution readiness)
+
+| Case | Setup | Login | Oneshot write |
+| --- | --- | --- | --- |
+| **A** | write **7 keys** only | **不可** (Auth mock) | config may arm · **実行不能** |
+| **B** | Auth **2 keys** only | staging login **可** | write **不可** |
+| **C** | **exactly 9 keys** · peers OFF · staging URL | owner login **可** | oneshot **のみ** |
+| **D** | C + production URL/ref | **STOP** | **STOP** |
+| **E** | C · unauthenticated / non-owner | — | **INSERT 0** (signed-in + RLS) |
+| **F** | C · login only · no Save click | ok | **write 0** · `writeRequests=[]` |
+
+Peer / other Save paths: dedicated arm / approval mismatch → **disabled** under exact 9-key packet.
 
 ### Arm OFF = stop the armed process (no `.env.local` restore)
 
-1. **Ctrl+C** the armed `env … npm run dev` terminal
+1. **Ctrl+C** the armed `env … npm run dev` terminal — Auth **2** + write **7** all vanish with the process
 2. Confirm port **4321** has no LISTEN
-3. Optional: plain `cd ~/sariswing-astro && npm run dev` (baseline from files)
+3. Optional: plain `cd ~/sariswing-astro && npm run dev` (baseline from files → Auth **mock** · write **OFF**)
 4. Confirm wrap hidden · `data-save-enabled="false"`
 
 Unset / `"false"` is OFF. Only raw `"true"` is ON (`isSaveArmExactTrue`).
@@ -345,13 +372,15 @@ Fixed target:
 
 ### Step 1 — confirm `.env.local` baseline (**read-only · do not edit**)
 
-- Root `.env.local` is shared with Sariswing本体 — **never** write the oneshot 7 keys into it.
+- Root `.env.local` is shared with Sariswing本体 — **never** write the oneshot **9 keys** into it.
 - Confirm baseline remains:
+  - `ENABLE_ADMIN_STAGING_AUTH` **unset** · `PUBLIC_ADMIN_AUTH_PROVIDER` **unset** (Auth mock)
   - oneshot client/server arms **unset**
   - `PUBLIC_ADMIN_WRITE_DRY_RUN=true`
   - `ENABLE_ADMIN_STAGING_WRITE=false` · provider/module/approval **empty**
   - `ENABLE_ADMIN_STAGING_SHELL=true`
   - effective `PUBLIC_SUPABASE_URL` contains `kmjqppxjdnwwrtaeqjta` only · **no** `vsbvndwuajjhnzpohghh`
+  - staging anon present · **no** `service_role`
 - If staging URL / shell flag wrong → **STOP**.
 
 ### Step 2 — peer arms all OFF
@@ -359,7 +388,7 @@ Fixed target:
 Confirm every env in §4 is unset or not armed in `.env.local` (`isSaveArmExactTrue` / trim-true both count as ON).
 Any peer ON → **STOP**. Do not start an armed process.
 
-### Step 3 — start **one** process-scoped armed dev server (**exactly these 7**)
+### Step 3 — start **one** process-scoped armed dev server (**exactly these 9**)
 
 Stop any existing plain `npm run dev` on 4321 first (PID-only kill if needed). Then:
 
@@ -367,6 +396,8 @@ Stop any existing plain `npm run dev` on 4321 first (PID-only kill if needed). T
 cd ~/sariswing-astro
 
 env \
+  ENABLE_ADMIN_STAGING_AUTH=true \
+  PUBLIC_ADMIN_AUTH_PROVIDER=supabase \
   ENABLE_ADMIN_STAGING_WRITE=true \
   PUBLIC_ADMIN_WRITE_PROVIDER=supabase \
   PUBLIC_ADMIN_WRITE_MODULE=schedule \
@@ -381,22 +412,28 @@ Rules:
 
 - **Do not** `export` these keys in the parent shell
 - **Do not** edit `.env.local`
-- 7 values apply **only** to this npm/Astro process (Vite process env overrides file baseline)
-- **Do not** inject production URL/ref
+- **exactly 9** values apply **only** to this npm/Astro process (Vite process env overrides file baseline)
+- Auth **2** + write **7** — write 7 alone leaves Auth mock → login **不可**
+- **Do not** inject production URL/ref (use baseline staging URL / anon)
+- **Do not** use `service_role`
 - **Do not** run `build` / package / FTP with these envs
 - Other Save paths stay disarmed (dedicated arm/approval mismatch)
+- Login alone → **write 0** · `writeRequests=[]` until Save click
+- Unauthenticated / non-owner → **INSERT 0**
 
 ### Step 4 — confirm armed process up
 
 - Staging shell reachable · no production ref in UI/config
+- Auth mode `supabase-staging` (not mock) · login form enabled
 - Env baked at process start — this single process is the only armed instance
 
 ### Step 5 — staging admin · owner login
 
+- **Requires** process-scoped Auth 2 keys above (`ENABLE_ADMIN_STAGING_AUTH=true` · `PUBLIC_ADMIN_AUTH_PROVIDER=supabase`) plus baseline shell + staging URL/anon
 - URL: `/__admin-staging-shell/musician-basic/admin/schedule/`
-- Sign in as staging owner (`is_admin`)
+- Sign in as staging owner (`is_admin` / `admin_users` RLS)
 - Confirm host / `PUBLIC_SUPABASE_URL` is staging only
-
+- Login alone does **not** INSERT — Save click still required
 ### Step 6 — Dry-run + fingerprint
 
 - Add form: TBD · month-known · month `2026-11` · fixed title / venue / description · published unchecked
@@ -436,7 +473,7 @@ If button missing / multiple / `data-save-enabled` false / peer Save visible arm
 
 ### Step 10 — emergency / normal stop armed process (**no `.env.local` restore**)
 
-1. **Ctrl+C** the armed `env … npm run dev` terminal (highest priority before cleanup / retry)
+1. **Ctrl+C** the armed `env … npm run dev` terminal (highest priority before cleanup / retry) — Auth **2** + write **7** all vanish
 2. Confirm `lsof -nP -iTCP:4321 -sTCP:LISTEN` is empty
 3. `.env.local` was never changed — no file restore
 
@@ -447,8 +484,8 @@ cd ~/sariswing-astro
 npm run dev
 ```
 
-- Confirm oneshot wrap **hidden** · `data-save-enabled="false"` · routine dry-run OK
-- File baseline supplies dry-run true / write-stack OFF
+- Confirm oneshot wrap **hidden** · `data-save-enabled="false"` · Auth **mock** · routine dry-run OK
+- File baseline supplies Auth mock / dry-run true / write-stack OFF
 
 ### Step 12 — SQL Editor post-check
 
@@ -659,8 +696,8 @@ commit;
 | IMPLEMENTATION_READY | **true** |
 | PREFLIGHT_PASS | **true** (§5.3 SQL Editor PASS) |
 | PREFLIGHT_ANON_SUBSET_PASS | **true** |
-| EXECUTION_PACKET_READY | **true** (process-scoped 7-key · oneshot-only proven) |
-| ACTUAL_WRITE_READY | **false** (re-arm-gate with process-scoped command) |
+| EXECUTION_PACKET_READY | **true** (process-scoped **exactly 9 keys** · Auth + oneshot-only proven) |
+| ACTUAL_WRITE_READY | **false** (re-arm-gate with process-scoped 9-key command) |
 | ACTUAL_WRITE_EXECUTED | **false** |
 | ARMS_OFF / ENV_FILE_UNCHANGED / DB_WRITE | **true / true / false** (this phase) |
 | PRODUCTION_UNCHANGED | **true** |

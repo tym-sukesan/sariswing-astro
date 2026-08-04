@@ -120,18 +120,50 @@ assert("ACTUAL_WRITE_EXECUTED false", /ACTUAL_WRITE_EXECUTED:\s*false/.test(doc)
 assert("PACKET_ONESHOT_ONLY_PROVEN true", /PACKET_ONESHOT_ONLY_PROVEN:\s*true/.test(doc));
 assert("PROCESS_SCOPED_ENV_REQUIRED true", /PROCESS_SCOPED_ENV_REQUIRED:\s*true/.test(doc));
 assert(
-  "process-scoped 7-key ON command",
-  /Exact process-scoped 7-key ON command/.test(doc) &&
-    /env \\\s*\n\s*ENABLE_ADMIN_STAGING_WRITE=true/.test(doc) &&
-    /npm run dev/.test(doc),
+  "process-scoped 9-key ON command",
+  /Exact process-scoped 9-key ON command/.test(doc) &&
+    /env \\\s*\n\s*ENABLE_ADMIN_STAGING_AUTH=true/.test(doc) &&
+    /PUBLIC_ADMIN_AUTH_PROVIDER=supabase/.test(doc) &&
+    /ENABLE_ADMIN_STAGING_WRITE=true/.test(doc) &&
+    /npm run dev/.test(doc) &&
+    /exactly 9 keys|exactly the 9 keys/i.test(doc),
 );
 assert(
-  "forbid .env.local write for 7 keys",
-  /Forbidden:.*\.env\.local|forbidden.*\.env\.local/i.test(doc),
+  "Auth 2 keys in process command",
+  /ENABLE_ADMIN_STAGING_AUTH=true/.test(doc) &&
+    /PUBLIC_ADMIN_AUTH_PROVIDER=supabase/.test(doc),
+);
+assert(
+  "write 7 alone Auth mock documented",
+  /Write 7 alone/i.test(doc) && /Auth.*mock|mock/i.test(doc) && /login.*不可|impossible/i.test(doc),
+);
+assert(
+  "Auth / write execution matrix section",
+  /Auth \+ write execution matrix|Auth \/ write execution matrix/i.test(doc) &&
+    /\|\s*\*\*A′\*\*|\|\s*\*\*A'\*\*/.test(doc) &&
+    /\|\s*\*\*C′\*\*|\|\s*\*\*C'\*\*/.test(doc),
+);
+assert(
+  "forbid .env.local write for 9 keys",
+  /Forbidden:.*\.env\.local|forbidden.*\.env\.local|do not\*\* write the 9 keys|do not write the 9 keys/i.test(
+    doc,
+  ),
 );
 assert(
   "OFF is Ctrl+C not file restore",
   /Ctrl\+C/.test(doc) && /no `\.env\.local` restore/.test(doc),
+);
+assert(
+  "Ctrl+C Auth 2 + write 7 vanish",
+  /Auth \*\*2\*\*.*write \*\*7\*\*|Auth 2.*write 7/i.test(doc),
+);
+assert(
+  "login alone write 0 documented",
+  /Login alone|login alone/i.test(doc) && /write \*\*0\*\*|write 0/i.test(doc),
+);
+assert(
+  "unauthenticated INSERT 0 documented",
+  /unauthenticated|non-owner/i.test(doc) && /INSERT 0/.test(doc),
 );
 assert("fan-out table", /Runtime consumers \(fan-out\)/.test(doc));
 assert("matrix A–I section", /Offline config matrix/.test(doc) && /\|\s*\*\*A\*\*/.test(doc));
@@ -148,8 +180,12 @@ assert("npm script registered", /verify:cms-core-v2-schedule-tbd-create-oneshot-
 assert("safety suite lists verifier", /verify-cms-core-v2-schedule-tbd-create-oneshot-write-stack-gate-correction\.mjs/.test(suite));
 
 assert(
-  "final-preflight process-scoped command",
-  /env \\\s*\n\s*ENABLE_ADMIN_STAGING_WRITE=true/.test(finalDoc) && /npm run dev/.test(finalDoc),
+  "final-preflight process-scoped 9-key command",
+  /env \\\s*\n\s*ENABLE_ADMIN_STAGING_AUTH=true/.test(finalDoc) &&
+    /PUBLIC_ADMIN_AUTH_PROVIDER=supabase/.test(finalDoc) &&
+    /ENABLE_ADMIN_STAGING_WRITE=true/.test(finalDoc) &&
+    /npm run dev/.test(finalDoc) &&
+    /exactly these 9|exactly 9 keys/i.test(finalDoc),
 );
 assert(
   "final-preflight ACTUAL_WRITE_READY false",
@@ -164,12 +200,12 @@ assert(
   !/Restore root `\.env\.local`/.test(finalDoc),
 );
 assert(
-  "impl mentions process-scoped / write-stack",
-  /process-scoped|write-stack|7-key|7 keys/.test(impl),
+  "impl mentions process-scoped / write-stack / 9-key",
+  /process-scoped|write-stack|9-key|9 keys|exactly 9/.test(impl),
 );
 assert(
   "planning mentions process-scoped",
-  /process-scoped|write-stack|env … npm run dev|env \.\.\. npm run dev/.test(plan),
+  /process-scoped|write-stack|env … npm run dev|env \.\.\. npm run dev|exactly 9 keys/.test(plan),
 );
 
 assert(
@@ -370,6 +406,61 @@ function assertAllOthersOff(label, samples) {
     s.g6d.canWrite === false && /profile|MODULE|approval/i.test(String(s.g6d.disabledReason ?? "")),
   );
 }
+
+// Auth matrix A′–D′ (offline · no live login)
+const AUTH_CONFIG = path.join(
+  REPO_ROOT,
+  "src/lib/admin/staging-auth/staging-auth-config.ts",
+);
+const authPath = bundleEntry("auth-config", AUTH_CONFIG);
+const authMod = await import(`${pathToFileURL(authPath).href}?t=${Date.now()}`);
+const { getStagingAuthConfig } = authMod;
+
+const auth2 = {
+  ENABLE_ADMIN_STAGING_AUTH: "true",
+  PUBLIC_ADMIN_AUTH_PROVIDER: "supabase",
+};
+
+{
+  const env = sevenExact();
+  const a = getStagingAuthConfig(env);
+  const o = getTbdCreateOneshotConfig(env, { serverArmOkFromSsr: true });
+  assert("auth matrix A′ Auth mock / disabled", a.stagingAuthEnabled === false || a.authMode === "mock");
+  assert("auth matrix A′ oneshot write may ON", writeEnabled(o));
+}
+{
+  const env = baseStaging({
+    ...auth2,
+    ENABLE_ADMIN_STAGING_WRITE: "false",
+    PUBLIC_ADMIN_WRITE_DRY_RUN: "true",
+  });
+  const a = getStagingAuthConfig(env);
+  const o = getTbdCreateOneshotConfig(env, { serverArmOkFromSsr: false });
+  assert("auth matrix B′ Auth enabled", a.stagingAuthEnabled === true && a.authMode === "supabase-staging");
+  assert("auth matrix B′ oneshot write OFF", !writeEnabled(o));
+}
+{
+  const env = sevenExact({ ...auth2 });
+  const a = getStagingAuthConfig(env);
+  const s = sampleOthers(env);
+  assert("auth matrix C′ Auth enabled", a.stagingAuthEnabled === true && a.authMode === "supabase-staging");
+  assert("auth matrix C′ oneshot write ON", writeEnabled(s.oneshot));
+  assertAllOthersOff("auth matrix C′", s);
+}
+{
+  const env = sevenExact({ ...auth2, PUBLIC_SUPABASE_URL: PRODUCTION_URL });
+  const o = getTbdCreateOneshotConfig(env, { serverArmOkFromSsr: true });
+  assert("auth matrix D′ production oneshot STOP", !writeEnabled(o));
+}
+
+assert(
+  "docs: unauthenticated / non-owner INSERT 0 (Save path)",
+  /INSERT 0/.test(doc) && /isSignedInStagingAuth|signed-in|RLS/i.test(doc + finalDoc),
+);
+assert(
+  "docs: login alone write 0 before Save",
+  /writeRequests=\[\]/.test(doc + finalDoc),
+);
 
 assert(
   "no file restore packet for provider/module/approval",

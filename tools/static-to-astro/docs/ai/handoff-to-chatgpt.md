@@ -5,10 +5,9 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: CMS Core v2 Schedule TBD CREATE oneshot process-scoped env packet correction COMPLETE
-Phase: cms-core-v2-schedule-tbd-create-oneshot-process-scoped-env-packet-correction
-HEAD: 74790ff1ef0d1a3032cf398dc841f8b8aa4a09ac
-Decision: oneshot arming = process-scoped env … npm run dev · forbid writing 7 keys into shared .env.local · Cursor does not arm/Save/SQL
+Current phase: CMS Core v2 Schedule TBD CREATE oneshot process-scoped Auth packet correction COMPLETE
+Phase: cms-core-v2-schedule-tbd-create-oneshot-process-scoped-auth-packet-correction
+Decision: oneshot arming = process-scoped env … npm run dev with exactly 9 keys (Auth 2 + write 7) · write 7 alone = Auth mock / login impossible · forbid writing 9 keys into shared .env.local · Cursor does not arm/Save/SQL
 Test row: schedule-2026-11-001 · published=false · date_status=tbd · date=null · month=2026-11
 Approval ID: cms-core-v2-schedule-tbd-create-non-dry-run-oneshot
 SQL Editor observed_at: 2026-08-03 15:51:19.118619+00 · preflight_pass=true
@@ -21,11 +20,11 @@ ENV_FILE_UNCHANGED: true · PROCESS_NOT_STARTED: true
 PACKET_ONESHOT_ONLY_PROVEN: true
 ARMS_OFF: true · DB_WRITE_EXECUTED: false · EDGE_CHANGED: false
 CLEANUP_EXECUTED: false
-Doc: docs/cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-final-preflight.md (§3 · §7 process-scoped)
+Doc: docs/cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-final-preflight.md (§3 · §7 process-scoped 9-key)
 Write-stack: docs/cms-core-v2-schedule-tbd-create-oneshot-write-stack-gate-correction.md
 Verifier: verify:cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-final-preflight + write-stack-gate-correction (+ Safety Suite)
-Next Primary: cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-execution-arm-gate (human · env … npm run dev)
-Prior: process-scoped audit STOP · write-stack correction · arm-gate · execution-preparation
+Next Primary: cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-execution-arm-gate (human · env … npm run dev · 9 keys)
+Prior: Auth gate audit STOP · process-scoped env packet · write-stack correction · arm-gate · execution-preparation
 HubSpot: COMPLETE WITH NON-BLOCKING · PC/375 PASS · submit E2E recheck only
 Gosaki CLIENT_SHARE_READY: true (maintained)
 deployed package: dc1c5b62a58d0462ad6629db4847256d316d4a38 (unchanged; no regen)
@@ -36,13 +35,17 @@ readyForAnyFutureFtpApply: false
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
 ```
 
+## CMS Core v2 Schedule TBD CREATE oneshot process-scoped Auth packet correction (2026-08-04)
+
+- `env … npm run dev` with **exactly 9 keys** (Auth 2 + write 7) · owner login requires Auth 2 · write 7 alone → Auth mock · Ctrl+C ends armed process · plain npm run dev returns Auth mock / write OFF · no `.env.local` edit/restore
+
 ## CMS Core v2 Schedule TBD CREATE oneshot process-scoped env packet correction (2026-08-04)
 
-- `env … npm run dev` with 7 keys · Ctrl+C ends armed process · plain npm run dev returns file baseline · no `.env.local` edit/restore
+- Superseded key count → Auth packet above (**exactly 9 keys**)
 
 ## CMS Core v2 Schedule TBD CREATE oneshot write-stack gate correction (2026-08-04)
 
-- Fan-out audited · oneshot-only proven · delivery method = process-scoped (above)
+- Fan-out audited · oneshot-only proven · delivery method = process-scoped **9-key** (above)
 
 ## CMS Core v2 Schedule TBD non-dry-run staging final-preflight (2026-08-03)
 

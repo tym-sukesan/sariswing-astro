@@ -85,6 +85,10 @@ assert(
   /cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-execution-preparation/.test(doc),
 );
 assert(
+  "process-scoped auth packet phase",
+  /cms-core-v2-schedule-tbd-create-oneshot-process-scoped-auth-packet-correction/.test(doc),
+);
+assert(
   "process-scoped packet phase",
   /cms-core-v2-schedule-tbd-create-oneshot-process-scoped-env-packet-correction/.test(doc),
 );
@@ -95,31 +99,80 @@ assert(
 assert("human steps 1-13", /### Step 1/.test(doc) && /### Step 13/.test(doc));
 assert(
   "process-scoped env command",
-  /env \\\s*\n\s*ENABLE_ADMIN_STAGING_WRITE=true/.test(doc) &&
+  /env \\\s*\n\s*ENABLE_ADMIN_STAGING_AUTH=true/.test(doc) &&
     /npm run dev/.test(doc),
 );
 assert(
-  "process-scoped exact 7 keys in command",
-  /ENABLE_ADMIN_STAGING_WRITE=true/.test(doc) &&
+  "process-scoped exact 9 keys in command",
+  /ENABLE_ADMIN_STAGING_AUTH=true/.test(doc) &&
+    /PUBLIC_ADMIN_AUTH_PROVIDER=supabase/.test(doc) &&
+    /ENABLE_ADMIN_STAGING_WRITE=true/.test(doc) &&
     /PUBLIC_ADMIN_WRITE_PROVIDER=supabase/.test(doc) &&
     /PUBLIC_ADMIN_WRITE_MODULE=schedule/.test(doc) &&
     /PUBLIC_ADMIN_WRITE_APPROVAL_ID=cms-core-v2-schedule-tbd-create-non-dry-run-oneshot/.test(doc) &&
     /PUBLIC_ADMIN_SCHEDULE_TBD_CREATE_NON_DRY_RUN_ARMED=true/.test(doc) &&
     /ADMIN_SCHEDULE_TBD_CREATE_NON_DRY_RUN_SERVER_ARMED=true/.test(doc) &&
-    /PUBLIC_ADMIN_WRITE_DRY_RUN=false/.test(doc),
+    /PUBLIC_ADMIN_WRITE_DRY_RUN=false/.test(doc) &&
+    /exactly these 9|exactly 9 keys/i.test(doc),
 );
 assert(
-  "forbid .env.local write for 7 keys",
-  /forbidden.*\.env\.local|never.*write the oneshot 7 keys|\.env\.local.*FORBIDDEN/i.test(doc),
+  "Auth 2 keys required for owner login",
+  /ENABLE_ADMIN_STAGING_AUTH=true/.test(doc) &&
+    /PUBLIC_ADMIN_AUTH_PROVIDER=supabase/.test(doc) &&
+    /owner login|Auth 2/i.test(doc),
+);
+assert(
+  "write 7 alone Auth mock / login impossible",
+  /write 7 alone|7 keys alone/i.test(doc) &&
+    /Auth.*mock|mock.*Auth/i.test(doc) &&
+    /login.*不可|impossible/i.test(doc),
+);
+assert(
+  "Auth 2 alone write impossible",
+  /Auth \*\*2 keys\*\* only|Auth 2 keys only/i.test(doc) &&
+    /write \*\*不可\*\*|write 不可/i.test(doc),
+);
+assert(
+  "9-key owner login + oneshot only",
+  /exactly 9 keys/i.test(doc) &&
+    /oneshot \*\*のみ\*\*|oneshot only/i.test(doc),
+);
+assert(
+  "login alone write 0 / writeRequests",
+  /login alone|Login alone/i.test(doc) &&
+    /write 0|write \*\*0\*\*/i.test(doc) &&
+    /writeRequests=\[\]/.test(doc),
+);
+assert(
+  "unauthenticated / non-owner INSERT 0",
+  /unauthenticated|non-owner/i.test(doc) && /INSERT 0/.test(doc),
+);
+assert(
+  "forbid .env.local write for 9 keys",
+  /forbidden.*\.env\.local|never.*write the oneshot \*\*9 keys\*\*|never.*write the oneshot 9 keys|\.env\.local.*FORBIDDEN/i.test(
+    doc,
+  ),
 );
 assert(
   "no .env.local restore instruction",
   !/Restore root `\.env\.local`/.test(doc) && !/Restore root \.env\.local/.test(doc),
 );
 assert("Ctrl+C armed process stop", /Ctrl\+C/.test(doc));
+assert(
+  "Ctrl+C Auth 2 + write 7 vanish",
+  /Auth \*\*2\*\*.*write \*\*7\*\*|Auth 2.*write 7/i.test(doc),
+);
+assert(
+  "plain baseline Auth mock / write OFF",
+  /Auth \*\*mock\*\*|Auth mock/i.test(doc) && /write \*\*OFF\*\*|write OFF|write-stack OFF/i.test(doc),
+);
 assert("process env overrides files", /process env overrides/.test(doc));
 assert("armed build/package forbidden", /Armed `build`|armed `build`|FORBIDDEN/.test(doc));
+assert("service_role forbidden", /no\*\* `service_role`|no `service_role`|service_role/i.test(doc));
+assert("production URL inject forbidden", /Do not\*\* inject production|do \*\*not\*\* inject production|Do not inject production/i.test(doc));
+assert("other Save paths disarmed", /dedicated arm\/approval mismatch|Other Save paths stay disarmed/i.test(doc));
 assert("no arm ON this phase", /no\*\* arm ON|no arm ON|arm ON ·|\*\*no\*\* arm ON/.test(doc));
+assert("no Step 3 seven-keys-only command", !/exactly these 7\)/.test(doc) && !/exactly these 7\*/.test(doc));
 assert("legacy_id fixed", /schedule-2026-11-001/.test(doc));
 assert("approval id", /cms-core-v2-schedule-tbd-create-non-dry-run-oneshot/.test(doc));
 assert("executeTbdCreateOneshotSave named", /executeTbdCreateOneshotSave/.test(doc));

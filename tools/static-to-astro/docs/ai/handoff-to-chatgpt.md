@@ -5,20 +5,26 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: CMS Core v2 Schedule TBD Admin UI safety hardening COMPLETE
-Phase: cms-core-v2-schedule-tbd-admin-ui-safety-hardening
-Decision: UI/CSS only · radio/checkbox scoped width · Dry-run disabled JP reason · false SSR alert fixed · write/payload/gate unchanged · Cursor does not arm/Save/SQL
+Current phase: CMS Core v2 Schedule TBD CREATE oneshot preflight query-builder fix COMPLETE
+Phase: cms-core-v2-schedule-tbd-create-oneshot-preflight-query-builder-fix
+Decision: countTargetLegacyId chain-before-await · INSERT前 failed/preflight_client_failed · INSERT後のみ ambiguous · offline only · no arm/Save/SQL
+READY_FOR_RETRY: false
 ACTUAL_WRITE_READY: false
 ACTUAL_WRITE_EXECUTED: false
 ARMS_OFF: true · DB_WRITE_EXECUTED: false
-Next Primary: cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-execution-arm-gate (human · exactly 9 keys)
-Prior: Auth packet · process-scoped env · write-stack · Dry-run operator packet
+Next Primary: cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-execution-arm-gate (human · exactly 9 keys · after commit + re-approval)
+Prior: oneshot click failure NOT_INSERTED · Admin UI safety hardening · Auth packet
 Gosaki CLIENT_SHARE_READY: true (maintained)
 seedAppliedStaging: true
 readyForOperatorAboutSeedApply: false
 readyForAnyFutureFtpApply: false
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
 ```
+
+## CMS Core v2 Schedule TBD CREATE oneshot preflight query-builder fix (2026-08-05)
+
+- Human oneshot CREATE ×1 → preflight TypeError (intermediate `.eq()` await) · UI ambiguous · exact SELECT `NOT_INSERTED` · total 79 · target 0 · INSERT 未到達 · cleanup 不要
+- Fix: `.eq().eq()` then await once · `preflight_client_failed` +「INSERTは実行されていません」· `READY_FOR_RETRY: false`
 
 ## CMS Core v2 Schedule TBD Admin UI safety hardening (2026-08-05)
 

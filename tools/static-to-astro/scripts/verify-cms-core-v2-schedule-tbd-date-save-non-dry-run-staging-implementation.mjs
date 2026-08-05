@@ -107,6 +107,12 @@ assert("phase id", /cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-imple
 assert("IMPLEMENTATION_READY true", /IMPLEMENTATION_READY:\s*true/.test(doc));
 assert("ACTUAL_WRITE_READY false", /ACTUAL_WRITE_READY:\s*false/.test(doc));
 assert("write-stack / process-scoped correction noted", /write-stack|process-scoped|9-key|9 keys|exactly 9/.test(doc));
+assert(
+  "preflight query-builder fix noted",
+  /preflight-query-builder-fix|countTargetLegacyId|INSERTは実行されていません|READY_FOR_RETRY:\s*false/.test(
+    doc,
+  ),
+);
 assert("ACTUAL_WRITE_EXECUTED false", /ACTUAL_WRITE_EXECUTED:\s*false/.test(doc));
 assert("arms OFF", /arms?\s*OFF|ARMS_OFF:\s*true/i.test(doc));
 assert("env unchanged", /ENV_CHANGED:\s*false|env unchanged/i.test(doc));
@@ -207,6 +213,34 @@ assert(
   /serverArmOkFromSsr must be true at INSERT boundary/.test(save),
 );
 assert("network call counter", /oneshotNetworkCalls/.test(save));
+assert("insertAttempted gate", /insertAttempted/.test(save));
+assert("preflight_client_failed code", /preflight_client_failed/.test(save));
+assert(
+  "preflight no longer maps client errors to ambiguous",
+  !/errorCode:\s*"preflight_ambiguous"/.test(save),
+);
+assert(
+  "INSERT未実行 message",
+  /INSERTは実行されていません/.test(save),
+);
+
+{
+  const targetMatch = save.match(
+    /countTargetLegacyId:\s*async\s*\(\)\s*=>\s*\{([\s\S]*?)\n\s*\},/,
+  );
+  const targetBody = targetMatch?.[1] ?? "";
+  assert("countTargetLegacyId body extracted", Boolean(targetBody));
+  assert(
+    "countTargetLegacyId chains both filters before await",
+    /\.eq\(\s*"site_slug"[\s\S]*?\.eq\(\s*"legacy_id"/.test(targetBody),
+  );
+  assert(
+    "countTargetLegacyId has no intermediate await before second eq",
+    !/step1/.test(targetBody) &&
+      !/await\s*\([\s\S]*?\)\s*\.eq\(/.test(targetBody) &&
+      !/await\s+[A-Za-z_][\w]*\s*\.eq\(/.test(targetBody),
+  );
+}
 
 assert("operator wires oneshot save", /executeTbdCreateOneshotSave/.test(operator));
 assert(
@@ -572,8 +606,139 @@ async function runCase(label, setup) {
   });
   assert(
     "legacy target exists → INSERT 0",
-    outcome.ok === false && tracker.calls === 0 && /legacy/i.test(outcome.errorMessage || ""),
+    outcome.ok === false &&
+      tracker.calls === 0 &&
+      outcome.ambiguous !== true &&
+      getTbdCreateOneshotTerminalState() === "failed" &&
+      /legacy/i.test(outcome.errorMessage || ""),
     outcome.errorMessage,
+  );
+}
+
+{
+  // Realistic thenable PostgREST builder (head:true → data=null is normal).
+  function createThenableBuilder(state) {
+    const self = {
+      _filters: [...(state.filters || [])],
+      select() {
+        return self;
+      },
+      eq(col, val) {
+        return createThenableBuilder({
+          filters: [...self._filters, [col, val]],
+          counts: state.counts,
+        });
+      },
+      then(resolve, reject) {
+        try {
+          const key =
+            self._filters.map(([c, v]) => `${c}=${v}`).join("&") || "ALL";
+          const count = state.counts[key] ?? state.counts["*"] ?? 0;
+          resolve({
+            data: null,
+            error: null,
+            count,
+            status: 200,
+            statusText: "OK",
+          });
+        } catch (e) {
+          reject(e);
+        }
+      },
+    };
+    return self;
+  }
+  const thenableClient = {
+    from() {
+      return {
+        select() {
+          return createThenableBuilder({
+            filters: [],
+            counts: {
+              "site_slug=gosaki-piano&legacy_id=schedule-2026-11-001": 0,
+            },
+          });
+        },
+      };
+    },
+  };
+  const { count, error } = await thenableClient
+    .from("schedules")
+    .select("id", { count: "exact", head: true })
+    .eq("site_slug", "gosaki-piano")
+    .eq("legacy_id", LEGACY_ID);
+  assert(
+    "thenable .eq().eq() await-once returns target count 0",
+    error == null && count === 0,
+    JSON.stringify({ count, error }),
+  );
+}
+
+{
+  const { outcome, tracker } = await runCase("target query error", {
+    preflight: {
+      ...makePreflight(),
+      countTargetLegacyId: async () => {
+        throw new Error("simulated target count query error");
+      },
+    },
+  });
+  assert(
+    "target query error → failed · INSERT 0 · not ambiguous",
+    outcome.ok === false &&
+      tracker.calls === 0 &&
+      outcome.ambiguous !== true &&
+      outcome.errorCode === "preflight_client_failed" &&
+      getTbdCreateOneshotTerminalState() === "failed" &&
+      /INSERTは実行されていません/.test(outcome.errorMessage || ""),
+    JSON.stringify({
+      code: outcome.errorCode,
+      msg: outcome.errorMessage,
+      terminal: getTbdCreateOneshotTerminalState(),
+    }),
+  );
+  const retry = await executeTbdCreateOneshotSave({
+    url: STAGING_URL,
+    anonKey: "anon",
+    dryRunPreviewOk: true,
+    previewFingerprint: previewFp,
+    currentFingerprint: previewFp,
+    env: armedEnv(),
+    configOptions: { serverArmOkFromSsr: true },
+    deps: {
+      preflightClient: makePreflight(),
+      insertClient: makeInsertClient({ calls: 0, mode: "ok", lastPayload: null }),
+      getAuth: makeAuth(true),
+    },
+  });
+  assert(
+    "failed preflight blocks retry",
+    retry.errorCode === "oneshot_already_consumed" &&
+      getTbdCreateOneshotTerminalState() === "failed",
+    retry.errorCode,
+  );
+}
+
+{
+  const { outcome, tracker } = await runCase("preflight TypeError", {
+    preflight: {
+      ...makePreflight(),
+      countTargetLegacyId: async () => {
+        const step1 = { count: 79, error: null, data: null };
+        // Reproduce the old intermediate-await bug shape.
+        return step1.eq("legacy_id", LEGACY_ID);
+      },
+    },
+  });
+  assert(
+    "preflight TypeError → failed · not preflight_ambiguous · INSERT 0",
+    outcome.ok === false &&
+      tracker.calls === 0 &&
+      outcome.ambiguous !== true &&
+      outcome.errorCode === "preflight_client_failed" &&
+      outcome.errorCode !== "preflight_ambiguous" &&
+      getTbdCreateOneshotTerminalState() === "failed",
+    JSON.stringify({ code: outcome.errorCode, msg: outcome.errorMessage }),
   );
 }
 

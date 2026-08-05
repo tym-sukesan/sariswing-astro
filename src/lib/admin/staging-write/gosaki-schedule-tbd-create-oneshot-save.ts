@@ -287,6 +287,17 @@ async function insertTbdCreateOneshotScheduleWriteInternal(input: {
   };
 }
 
+type PreflightCountResult = {
+  count: number | null;
+  error: { message: string } | null;
+  data?: unknown;
+};
+
+/** PostgREST filter builder: chain `.eq()` then await once (never await an intermediate step). */
+type PreflightFilterBuilder = {
+  eq: (column: string, value: string) => PreflightFilterBuilder;
+} & PromiseLike<PreflightCountResult>;
+
 async function defaultPreflightClient(options: {
   url: string;
   anonKey: string;
@@ -296,20 +307,7 @@ async function defaultPreflightClient(options: {
       select: (
         columns: string,
         opts?: { count?: "exact"; head?: boolean },
-      ) => {
-        eq?: (
-          column: string,
-          value: string,
-        ) => Promise<{
-          count: number | null;
-          error: { message: string } | null;
-          data?: unknown;
-        }>;
-      } & Promise<{
-        count: number | null;
-        error: { message: string } | null;
-        data?: unknown;
-      }>;
+      ) => PreflightFilterBuilder;
     };
   };
 
@@ -322,15 +320,10 @@ async function defaultPreflightClient(options: {
   }
 
   async function countEq(column: string, value: string): Promise<number> {
-    const builder = client.from("schedules").select("id", { count: "exact", head: true });
-    const { count, error } = await (
-      builder as {
-        eq: (
-          c: string,
-          v: string,
-        ) => Promise<{ count: number | null; error: { message: string } | null }>;
-      }
-    ).eq(column, value);
+    const { count, error } = await client
+      .from("schedules")
+      .select("id", { count: "exact", head: true })
+      .eq(column, value);
     if (error) throw new Error(error.message);
     return count ?? 0;
   }
@@ -340,21 +333,13 @@ async function defaultPreflightClient(options: {
     countMio: () => countEq("site_slug", "mio-kisaragi-jazz"),
     countTbd: () => countEq("date_status", "tbd"),
     countTargetLegacyId: async () => {
-      const builder = client.from("schedules").select("id", { count: "exact", head: true });
-      const step1 = await (
-        builder as {
-          eq: (
-            c: string,
-            v: string,
-          ) => {
-            eq: (
-              c: string,
-              v: string,
-            ) => Promise<{ count: number | null; error: { message: string } | null }>;
-          };
-        }
-      ).eq("site_slug", STAGING_SHELL_GOSAKI_SCHEDULE_SITE_SLUG);
-      const { count, error } = await step1.eq("legacy_id", TBD_CREATE_ONESHOT_LEGACY_ID);
+      // Await only after the full filter chain — intermediate await materializes
+      // { data, error, count } and breaks further .eq() (TypeError → false ambiguous).
+      const { count, error } = await client
+        .from("schedules")
+        .select("id", { count: "exact", head: true })
+        .eq("site_slug", STAGING_SHELL_GOSAKI_SCHEDULE_SITE_SLUG)
+        .eq("legacy_id", TBD_CREATE_ONESHOT_LEGACY_ID);
       if (error) throw new Error(error.message);
       return count ?? 0;
     },
@@ -370,6 +355,10 @@ async function defaultPreflightClient(options: {
     },
   };
 }
+
+/** Preflight client failure (INSERT never started). */
+export const TBD_CREATE_ONESHOT_PREFLIGHT_INSERT_NOT_STARTED_MESSAGE =
+  "INSERTは実行されていません";
 
 export async function executeTbdCreateOneshotSave(options: {
   url: string;
@@ -450,6 +439,8 @@ export async function executeTbdCreateOneshotSave(options: {
   }
 
   oneshotTerminalState = "in_flight";
+  /** True only after the INSERT request path is entered (post-preflight / post-auth). */
+  let insertAttempted = false;
 
   let payload: ScheduleTbdCreateOneshotInsertPayload;
   try {
@@ -474,6 +465,7 @@ export async function executeTbdCreateOneshotSave(options: {
     return {
       ...base,
       terminalState: oneshotTerminalState,
+      ambiguous: false,
       guardReasons: [err instanceof Error ? err.message : String(err)],
       errorCode: "preflight_failed",
       errorMessage: err instanceof Error ? err.message : String(err),
@@ -492,6 +484,7 @@ export async function executeTbdCreateOneshotSave(options: {
       return {
         ...base,
         terminalState: oneshotTerminalState,
+        ambiguous: false,
         guardReasons: [
           schemaProbe.errorMessage ?? "date_status column schema probe failed",
         ],
@@ -514,6 +507,7 @@ export async function executeTbdCreateOneshotSave(options: {
       return {
         ...base,
         terminalState: oneshotTerminalState,
+        ambiguous: false,
         guardReasons: evaluated.failures,
         errorCode: "preflight_drift",
         errorMessage: evaluated.failures.join("; "),
@@ -521,15 +515,16 @@ export async function executeTbdCreateOneshotSave(options: {
       };
     }
   } catch (err) {
-    oneshotTerminalState = "ambiguous";
+    // INSERT not started — known client/query failure is failed (not ambiguous).
+    oneshotTerminalState = "failed";
+    const detail = err instanceof Error ? err.message : String(err);
     return {
       ...base,
       terminalState: oneshotTerminalState,
-      ambiguous: true,
-      guardReasons: [err instanceof Error ? err.message : String(err)],
-      errorCode: "preflight_ambiguous",
-      errorMessage:
-        "Preflight SELECT 結果が不明です。再実行禁止 — exact SELECT で確認してください。",
+      ambiguous: false,
+      guardReasons: [detail],
+      errorCode: "preflight_client_failed",
+      errorMessage: `Preflight SELECT に失敗しました。${TBD_CREATE_ONESHOT_PREFLIGHT_INSERT_NOT_STARTED_MESSAGE}。再実行禁止。詳細: ${detail}`,
       networkCalls: oneshotNetworkCalls,
     };
   }
@@ -545,6 +540,7 @@ export async function executeTbdCreateOneshotSave(options: {
     return {
       ...base,
       terminalState: oneshotTerminalState,
+      ambiguous: false,
       warnings: authWarnings,
       errorCode: "auth_session_missing",
       errorMessage: "Sign in as staging admin before Save.",
@@ -564,6 +560,7 @@ export async function executeTbdCreateOneshotSave(options: {
 
   // Exactly one INSERT attempt after successful preflight.
   oneshotNetworkCalls += 1;
+  insertAttempted = true;
   let result: InternalInsertResult;
   try {
     result = await insertTbdCreateOneshotScheduleWriteInternal({
@@ -575,20 +572,22 @@ export async function executeTbdCreateOneshotSave(options: {
       serverArmOkFromSsr,
     });
   } catch (err) {
-    oneshotTerminalState = "ambiguous";
+    // INSERT request path entered — outcome unclear → ambiguous only.
+    oneshotTerminalState = insertAttempted ? "ambiguous" : "failed";
     return {
       ...base,
       terminalState: oneshotTerminalState,
-      ambiguous: true,
+      ambiguous: insertAttempted,
       networkCalls: oneshotNetworkCalls,
       warnings: authWarnings,
       authEmail: auth.rawEmail,
       authStatus,
       mockRole,
       legacy_id: payload.legacy_id,
-      errorCode: "insert_ambiguous",
-      errorMessage:
-        "INSERT 結果が不明です。再実行禁止 — exact SELECT で確認してください。",
+      errorCode: insertAttempted ? "insert_ambiguous" : "preflight_client_failed",
+      errorMessage: insertAttempted
+        ? "INSERT 結果が不明です。再実行禁止 — exact SELECT で確認してください。"
+        : `INSERT直前で失敗しました。${TBD_CREATE_ONESHOT_PREFLIGHT_INSERT_NOT_STARTED_MESSAGE}。再実行禁止。`,
       guardReasons: [err instanceof Error ? err.message : String(err)],
     };
   }

@@ -89,6 +89,18 @@ assert(
   /cms-core-v2-schedule-tbd-create-oneshot-process-scoped-auth-packet-correction/.test(doc),
 );
 assert(
+  "preflight query-builder fix recorded",
+  /cms-core-v2-schedule-tbd-create-oneshot-preflight-query-builder-fix/.test(doc) &&
+    /READY_FOR_RETRY:\s*false/.test(doc) &&
+    /NOT_INSERTED/.test(doc),
+);
+assert(
+  "save chains target legacy filters before await",
+  /\.eq\(\s*"site_slug"[\s\S]*?\.eq\(\s*"legacy_id"/.test(save) &&
+    !/const step1 = await/.test(save) &&
+    /preflight_client_failed/.test(save),
+);
+assert(
   "process-scoped packet phase",
   /cms-core-v2-schedule-tbd-create-oneshot-process-scoped-env-packet-correction/.test(doc),
 );

@@ -4,10 +4,32 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 ## 0. Current next actions（直近）
 
 1. **Primary (Gosaki ops):** クライアントへ **staging 共有**（`CLIENT_SHARE_READY: true` · package `dc1c5b6…`）。本番 cutover はしない。
-2. **並行可 (Kit Core):** **Next Primary** `cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-execution-arm-gate`（process-scoped Auth packet COMPLETE · **exactly 9 keys** · TBD Admin UI safety hardening COMPLETE · **forbid** `.env.local` edit · `PREFLIGHT_PASS: true` · `EXECUTION_PACKET_READY: true` · `ACTUAL_WRITE_READY: false` · `ACTUAL_WRITE_EXECUTED: false`）→ arm-gate PASS後 human Dry-run → Save once → **Ctrl+C** …
+2. **並行可 (Kit Core):** **Next Primary** `cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-execution-arm-gate`（preflight query-builder fix COMPLETE · **READY_FOR_RETRY: false** until commit + 再承認 · process-scoped **exactly 9 keys** · `ACTUAL_WRITE_READY: false` · `ACTUAL_WRITE_EXECUTED: false`）→ arm-gate PASS後 human Dry-run → Save once → **Ctrl+C** …
 3. **並行可:** production hosting **read-only planning**（`HOSTING_READY: false`）。
 4. **並行可 / 別承認:** YouTube 複数件 **永続 Save**（NON_BLOCKING）。
 5. Save arm **false** · `readyForAnyFutureFtpApply: false` · production STOP · `service_role` 禁止 · **deployed package 固定**.
+
+## 0. CMS Core v2 Schedule TBD CREATE oneshot preflight query-builder fix (2026-08-05)
+
+| Item | Value |
+| --- | --- |
+| Gate | `CMS_CORE_V2_SCHEDULE_TBD_CREATE_ONESHOT_PREFLIGHT_QUERY_BUILDER_FIX_COMPLETE: true` |
+| Root cause | `countTargetLegacyId` intermediate `.eq()` await → TypeError → false `preflight_ambiguous` |
+| Exact SELECT | `NOT_INSERTED` · total 79 · target 0 · cleanup 不要 |
+| Fix | chain `.eq().eq()` then await once · INSERT前 → `failed` / `preflight_client_failed` |
+| Retry | `READY_FOR_RETRY: false` |
+| Write | `ACTUAL_WRITE_READY: false` · `ACTUAL_WRITE_EXECUTED: false` · DB write 0 |
+
+```txt
+CMS_CORE_V2_SCHEDULE_TBD_CREATE_ONESHOT_PREFLIGHT_QUERY_BUILDER_FIX_COMPLETE: true
+READY_FOR_RETRY: false
+ACTUAL_WRITE_READY: false
+ACTUAL_WRITE_EXECUTED: false
+DB_WRITE_EXECUTED: false
+ARMS_OFF: true
+PRODUCTION_UNCHANGED: true
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+```
 
 ## 0. CMS Core v2 Schedule TBD Admin UI safety hardening (2026-08-05)
 

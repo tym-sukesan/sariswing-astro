@@ -224,7 +224,7 @@ function displayValue(value: string | null | undefined): string {
   </section>
 
   {
-    binding.message ? (
+    binding.source === "unavailable" ? (
       <p class="admin-gosaki-schedule-operator__unavailable" role="alert">
         スケジュールを読み込めませんでした。しばらくしてから再度お試しください。
       </p>
@@ -242,14 +242,22 @@ function displayValue(value: string | null | undefined): string {
         hidden={!tbdAdminUiConfig.tbdAdminUiVisible}
       >
         <legend class="admin-form__label">日付の状態</legend>
-        <label class="admin-form__field--radio">
-          <input type="radio" name="gosaki-add-date-status" value="confirmed" checked />
-          <span>日付確定</span>
-        </label>
-        <label class="admin-form__field--radio">
-          <input type="radio" name="gosaki-add-date-status" value="tbd" />
-          <span>日付未定（TBD）</span>
-        </label>
+        <div class="gosaki-schedule-choice-list" role="presentation">
+          <label class="gosaki-schedule-choice admin-form__field--radio" for="gosaki-add-date-status-confirmed">
+            <input
+              id="gosaki-add-date-status-confirmed"
+              type="radio"
+              name="gosaki-add-date-status"
+              value="confirmed"
+              checked
+            />
+            <span class="gosaki-schedule-choice__text">日付確定</span>
+          </label>
+          <label class="gosaki-schedule-choice admin-form__field--radio" for="gosaki-add-date-status-tbd">
+            <input id="gosaki-add-date-status-tbd" type="radio" name="gosaki-add-date-status" value="tbd" />
+            <span class="gosaki-schedule-choice__text">日付未定（TBD）</span>
+          </label>
+        </div>
       </fieldset>
 
       <div
@@ -257,35 +265,52 @@ function displayValue(value: string | null | undefined): string {
         class="admin-form__field admin-form__field--full"
         hidden
       >
-        <span class="admin-form__label">未定の種類</span>
-        <label class="admin-form__field--radio">
-          <input type="radio" name="gosaki-add-tbd-month-mode" value="month-known" checked />
-          <span>月は決まっている（日付未定）</span>
-        </label>
-        <label class="admin-form__field--radio">
-          <input type="radio" name="gosaki-add-tbd-month-mode" value="month-unknown" />
-          <span>月も未定（日程未定）※明示選択</span>
-        </label>
+        <span class="admin-form__label" id="gosaki-add-tbd-month-mode-label">未定の種類</span>
+        <div class="gosaki-schedule-choice-list" role="radiogroup" aria-labelledby="gosaki-add-tbd-month-mode-label">
+          <label class="gosaki-schedule-choice admin-form__field--radio" for="gosaki-add-tbd-month-mode-known">
+            <input
+              id="gosaki-add-tbd-month-mode-known"
+              type="radio"
+              name="gosaki-add-tbd-month-mode"
+              value="month-known"
+              checked
+            />
+            <span class="gosaki-schedule-choice__text">月は決まっている（日付未定）</span>
+          </label>
+          <label class="gosaki-schedule-choice admin-form__field--radio" for="gosaki-add-tbd-month-mode-unknown">
+            <input
+              id="gosaki-add-tbd-month-mode-unknown"
+              type="radio"
+              name="gosaki-add-tbd-month-mode"
+              value="month-unknown"
+            />
+            <span class="gosaki-schedule-choice__text">月も未定（日程未定）※明示選択</span>
+          </label>
+        </div>
       </div>
 
-      <label class="admin-form__field admin-form__field--full">
-        <span class="admin-form__label">日付</span>
+      <div id="gosaki-add-date-field" class="admin-form__field admin-form__field--full">
+        <label class="gosaki-schedule-admin-control-label" for="gosaki-add-date">
+          <span class="admin-form__label">日付</span>
+        </label>
         <input id="gosaki-add-date" type="date" />
         <p id="gosaki-add-month-hint" class="gosaki-schedule-admin-month-hint" role="note">
           日付を選ぶと、表示先の月が自動で決まります。
         </p>
         <p id="gosaki-add-date-display" class="gosaki-schedule-admin-date-display" hidden></p>
         <p id="gosaki-add-date-state-invalid" class="gosaki-schedule-admin-date-invalid" role="alert" hidden></p>
-      </label>
+      </div>
 
-      <label
+      <div
         id="gosaki-add-tbd-month-field"
         class="admin-form__field admin-form__field--full"
         hidden
       >
-        <span class="admin-form__label">表示月（YYYY-MM）</span>
+        <label class="gosaki-schedule-admin-control-label" for="gosaki-add-tbd-month">
+          <span class="admin-form__label">表示月（YYYY-MM）</span>
+        </label>
         <input id="gosaki-add-tbd-month" type="month" />
-      </label>
+      </div>
 
       <p id="gosaki-add-tbd-save-blocked" class="gosaki-schedule-tbd-save-blocked" role="status" hidden></p>
 
@@ -298,6 +323,12 @@ function displayValue(value: string | null | undefined): string {
         >
           Dry-run確認
         </button>
+        <p
+          id="gosaki-add-tbd-dry-run-reason"
+          class="gosaki-schedule-tbd-dry-run__reason"
+          role="status"
+          hidden
+        ></p>
         <p class="gosaki-schedule-tbd-dry-run__hint" role="note">
           TBDの保存候補payloadをローカル生成します。これは保存されません（DB / Edge へ送信しません）。
         </p>
@@ -326,6 +357,12 @@ function displayValue(value: string | null | undefined): string {
         >
           Staging one-shot CREATE
         </button>
+        <p
+          id="gosaki-add-tbd-create-oneshot-reason"
+          class="gosaki-schedule-tbd-create-oneshot__reason"
+          role="status"
+          hidden
+        ></p>
         <div
           id="gosaki-add-tbd-create-oneshot-result"
           class="gosaki-schedule-tbd-create-oneshot__result"
@@ -365,9 +402,9 @@ function displayValue(value: string | null | undefined): string {
         <textarea id="gosaki-add-description" rows="4" placeholder="出演メンバー・備考など"></textarea>
       </label>
 
-      <label class="admin-form__field admin-form__field--checkbox">
+      <label class="admin-form__field admin-form__field--checkbox gosaki-schedule-choice" for="gosaki-add-published">
         <input id="gosaki-add-published" type="checkbox" />
-        <span>公開する</span>
+        <span class="gosaki-schedule-choice__text">公開する</span>
       </label>
 
       <div class="gosaki-schedule-admin-form__row gosaki-schedule-admin-form__row--duplicate">
@@ -627,14 +664,22 @@ function displayValue(value: string | null | undefined): string {
           hidden={!tbdAdminUiConfig.tbdAdminUiVisible}
         >
           <legend class="admin-form__label">日付の状態</legend>
-          <label class="admin-form__field--radio">
-            <input type="radio" name="gosaki-edit-date-status" value="confirmed" checked />
-            <span>日付確定</span>
-          </label>
-          <label class="admin-form__field--radio">
-            <input type="radio" name="gosaki-edit-date-status" value="tbd" />
-            <span>日付未定（TBD）</span>
-          </label>
+          <div class="gosaki-schedule-choice-list" role="presentation">
+            <label class="gosaki-schedule-choice admin-form__field--radio" for="gosaki-edit-date-status-confirmed">
+              <input
+                id="gosaki-edit-date-status-confirmed"
+                type="radio"
+                name="gosaki-edit-date-status"
+                value="confirmed"
+                checked
+              />
+              <span class="gosaki-schedule-choice__text">日付確定</span>
+            </label>
+            <label class="gosaki-schedule-choice admin-form__field--radio" for="gosaki-edit-date-status-tbd">
+              <input id="gosaki-edit-date-status-tbd" type="radio" name="gosaki-edit-date-status" value="tbd" />
+              <span class="gosaki-schedule-choice__text">日付未定（TBD）</span>
+            </label>
+          </div>
         </fieldset>
 
         <div
@@ -642,35 +687,52 @@ function displayValue(value: string | null | undefined): string {
           class="admin-form__field admin-form__field--full"
           hidden
         >
-          <span class="admin-form__label">未定の種類</span>
-          <label class="admin-form__field--radio">
-            <input type="radio" name="gosaki-edit-tbd-month-mode" value="month-known" checked />
-            <span>月は決まっている（日付未定）</span>
-          </label>
-          <label class="admin-form__field--radio">
-            <input type="radio" name="gosaki-edit-tbd-month-mode" value="month-unknown" />
-            <span>月も未定（日程未定）※明示選択</span>
-          </label>
+          <span class="admin-form__label" id="gosaki-edit-tbd-month-mode-label">未定の種類</span>
+          <div class="gosaki-schedule-choice-list" role="radiogroup" aria-labelledby="gosaki-edit-tbd-month-mode-label">
+            <label class="gosaki-schedule-choice admin-form__field--radio" for="gosaki-edit-tbd-month-mode-known">
+              <input
+                id="gosaki-edit-tbd-month-mode-known"
+                type="radio"
+                name="gosaki-edit-tbd-month-mode"
+                value="month-known"
+                checked
+              />
+              <span class="gosaki-schedule-choice__text">月は決まっている（日付未定）</span>
+            </label>
+            <label class="gosaki-schedule-choice admin-form__field--radio" for="gosaki-edit-tbd-month-mode-unknown">
+              <input
+                id="gosaki-edit-tbd-month-mode-unknown"
+                type="radio"
+                name="gosaki-edit-tbd-month-mode"
+                value="month-unknown"
+              />
+              <span class="gosaki-schedule-choice__text">月も未定（日程未定）※明示選択</span>
+            </label>
+          </div>
         </div>
 
-        <label class="admin-form__field admin-form__field--full">
-          <span class="admin-form__label">日付</span>
+        <div id="gosaki-edit-date-field" class="admin-form__field admin-form__field--full">
+          <label class="gosaki-schedule-admin-control-label" for="gosaki-edit-date">
+            <span class="admin-form__label">日付</span>
+          </label>
           <input id="gosaki-edit-date" type="date" />
           <p id="gosaki-edit-month-hint" class="gosaki-schedule-admin-month-hint" role="note">
             日付を選ぶと、表示先の月が自動で決まります。
           </p>
           <p id="gosaki-edit-date-display" class="gosaki-schedule-admin-date-display" hidden></p>
           <p id="gosaki-edit-date-state-invalid" class="gosaki-schedule-admin-date-invalid" role="alert" hidden></p>
-        </label>
+        </div>
 
-        <label
+        <div
           id="gosaki-edit-tbd-month-field"
           class="admin-form__field admin-form__field--full"
           hidden
         >
-          <span class="admin-form__label">表示月（YYYY-MM）</span>
+          <label class="gosaki-schedule-admin-control-label" for="gosaki-edit-tbd-month">
+            <span class="admin-form__label">表示月（YYYY-MM）</span>
+          </label>
           <input id="gosaki-edit-tbd-month" type="month" />
-        </label>
+        </div>
 
         <p id="gosaki-edit-tbd-save-blocked" class="gosaki-schedule-tbd-save-blocked" role="status" hidden></p>
 
@@ -683,6 +745,12 @@ function displayValue(value: string | null | undefined): string {
           >
             Dry-run確認
           </button>
+          <p
+            id="gosaki-edit-tbd-dry-run-reason"
+            class="gosaki-schedule-tbd-dry-run__reason"
+            role="status"
+            hidden
+          ></p>
           <p class="gosaki-schedule-tbd-dry-run__hint" role="note">
             TBDの保存候補payloadをローカル生成します。これは保存されません（DB / Edge へ送信しません）。
           </p>
@@ -740,9 +808,9 @@ function displayValue(value: string | null | undefined): string {
           <code id="gosaki-edit-row-id-value">—</code>
         </p>
 
-        <label class="admin-form__field admin-form__field--checkbox">
+        <label class="admin-form__field admin-form__field--checkbox gosaki-schedule-choice" for="gosaki-edit-published">
           <input id="gosaki-edit-published" type="checkbox" />
-          <span>公開する</span>
+          <span class="gosaki-schedule-choice__text">公開する</span>
         </label>
 
         <p class="gosaki-schedule-admin-preview-link-wrap">
@@ -1015,13 +1083,83 @@ function displayValue(value: string | null | undefined): string {
     box-sizing: border-box;
   }
 
-  .gosaki-schedule-admin-form input,
+  /* Text/date/month/time/etc keep full width; do NOT stretch radio/checkbox. */
+  .gosaki-schedule-admin-form input:not([type="radio"]):not([type="checkbox"]),
   .gosaki-schedule-admin-form textarea,
   .gosaki-schedule-admin-form select {
     width: 100%;
     max-width: 100%;
     min-width: 0;
     box-sizing: border-box;
+  }
+
+  .gosaki-schedule-admin-form input[type="radio"],
+  .gosaki-schedule-admin-form input[type="checkbox"] {
+    width: auto;
+    max-width: none;
+    min-width: 1rem;
+    height: 1rem;
+    margin: 0;
+    flex-shrink: 0;
+    align-self: center;
+  }
+
+  .gosaki-schedule-choice-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    margin-top: 0.35rem;
+    min-width: 0;
+  }
+
+  .gosaki-schedule-choice,
+  .gosaki-schedule-admin-form .admin-form__field--radio,
+  .gosaki-schedule-admin-form .admin-form__field--checkbox {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 0.55rem;
+    margin: 0;
+    padding: 0.55rem 0.65rem;
+    border: 1px solid #d6d3d1;
+    border-radius: 8px;
+    background: #fafaf9;
+    cursor: pointer;
+    min-width: 0;
+    box-sizing: border-box;
+  }
+
+  .gosaki-schedule-choice:has(input:checked),
+  .gosaki-schedule-admin-form .admin-form__field--radio:has(input:checked),
+  .gosaki-schedule-admin-form .admin-form__field--checkbox:has(input:checked) {
+    border-color: #78716c;
+    background: #f5f5f4;
+    box-shadow: inset 0 0 0 1px #a8a29e;
+  }
+
+  .gosaki-schedule-choice__text {
+    display: block;
+    line-height: 1.35;
+    font-size: 0.95rem;
+    color: #1c1917;
+    min-width: 0;
+  }
+
+  .gosaki-schedule-admin-control-label {
+    display: block;
+    margin: 0 0 0.35rem;
+  }
+
+  .gosaki-schedule-tbd-dry-run__reason,
+  .gosaki-schedule-tbd-create-oneshot__reason {
+    margin: 0.45rem 0 0;
+    padding: 0.45rem 0.6rem;
+    border-radius: 6px;
+    border: 1px solid #fcd34d;
+    background: #fffbeb;
+    color: #92400e;
+    font-size: 0.88rem;
+    line-height: 1.4;
   }
 
   .gosaki-schedule-admin-edit-actions {
@@ -1034,6 +1172,12 @@ function displayValue(value: string | null | undefined): string {
   @media (max-width: 375px) {
     .gosaki-schedule-admin-edit-actions .admin-button {
       flex: 1 1 auto;
+    }
+
+    .gosaki-schedule-choice,
+    .gosaki-schedule-admin-form .admin-form__field--radio,
+    .gosaki-schedule-admin-form .admin-form__field--checkbox {
+      padding: 0.65rem 0.7rem;
     }
   }
 </style>

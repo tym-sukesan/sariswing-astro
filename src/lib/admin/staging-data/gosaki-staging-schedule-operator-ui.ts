@@ -1122,20 +1122,63 @@ let lastTbdCreateOneshotPreviewOk = false;
 let lastTbdCreateOneshotPreviewFingerprint: string | null = null;
 
 function formMatchesTbdCreateOneshotFixedRow(): boolean {
+  return describeTbdCreateOneshotFormGaps().length === 0;
+}
+
+/** UI-only form gap messages for oneshot fixed row (mirrors formMatches checks). */
+function describeTbdCreateOneshotFormGaps(): string[] {
   const content = readFormContentForTbdDryRun("add");
   const capability = getTbdAdminUiCapability();
   const dateInput = readScheduleAdminDateFormInput("add", capability, {
     operation: SCHEDULE_ADMIN_DATE_OPERATION_CREATE,
   });
-  return (
-    dateInput.dateStatus === SCHEDULE_DATE_STATUS_TBD &&
-    dateInput.tbdMonthMode === SCHEDULE_TBD_MONTH_MODE_KNOWN &&
-    String(dateInput.month ?? "") === TBD_CREATE_ONESHOT_MONTH &&
-    content.title.trim() === TBD_CREATE_ONESHOT_TITLE &&
-    content.venue.trim() === TBD_CREATE_ONESHOT_VENUE &&
-    content.description.trim() === TBD_CREATE_ONESHOT_DESCRIPTION &&
-    content.published === false
-  );
+  const gaps: string[] = [];
+  if (dateInput.dateStatus !== SCHEDULE_DATE_STATUS_TBD) {
+    gaps.push("日付未定（TBD）を選択してください。");
+  }
+  if (dateInput.tbdMonthMode !== SCHEDULE_TBD_MONTH_MODE_KNOWN) {
+    gaps.push("「月は決まっている」を選択してください。");
+  }
+  if (String(dateInput.month ?? "") !== TBD_CREATE_ONESHOT_MONTH) {
+    gaps.push("表示月を 2026-11 にしてください。");
+  }
+  if (content.title.trim() !== TBD_CREATE_ONESHOT_TITLE) {
+    gaps.push("タイトルが固定値と一致しません。");
+  }
+  if (content.venue.trim() !== TBD_CREATE_ONESHOT_VENUE) {
+    gaps.push("会場が固定値と一致しません。");
+  }
+  if (content.description.trim() !== TBD_CREATE_ONESHOT_DESCRIPTION) {
+    gaps.push("備考／説明が固定値と一致しません。");
+  }
+  if (content.published === true) {
+    gaps.push("公開設定をOFFにしてください。");
+  }
+  return gaps;
+}
+
+function localizeTbdCreateOneshotGateReason(reason: string): string {
+  if (reason.includes("Staging admin session required")) {
+    return "ownerログインが必要です。";
+  }
+  if (
+    reason.includes("Save disabled") ||
+    reason.includes("tbdWriteEnabled") ||
+    reason.includes("arms") ||
+    reason.includes("dry-run gates")
+  ) {
+    return "staging write gateが有効ではありません。";
+  }
+  if (reason.includes("Dry-run preview must succeed")) {
+    return "先に Dry-run確認を成功させてください。";
+  }
+  if (reason.includes("Preview fingerprint required")) {
+    return "先に Dry-run確認で fingerprint を確定してください。";
+  }
+  if (reason.includes("schemaSupportsTbd") || reason.includes("tbdAdminUiEnabled")) {
+    return "TBD Admin UI が有効ではありません。";
+  }
+  return reason;
 }
 
 function lockTbdCreateOneshotPreviewFromDryRun(
@@ -1173,6 +1216,7 @@ function updateTbdCreateOneshotButtonState(): void {
   const button = document.getElementById(
     "gosaki-add-tbd-create-oneshot-btn",
   ) as HTMLButtonElement | null;
+  const reasonEl = document.getElementById("gosaki-add-tbd-create-oneshot-reason");
   if (!(wrap instanceof HTMLElement) || !button) return;
 
   const page = readTbdCreateOneshotPageConfigFromDom();
@@ -1182,6 +1226,11 @@ function updateTbdCreateOneshotButtonState(): void {
   wrap.hidden = !show;
   if (!show) {
     button.disabled = true;
+    button.title = "staging write gateが有効ではありません。";
+    if (reasonEl instanceof HTMLElement) {
+      reasonEl.hidden = true;
+      reasonEl.textContent = "";
+    }
     return;
   }
 
@@ -1195,8 +1244,23 @@ function updateTbdCreateOneshotButtonState(): void {
     tbdAdminUiEnabled: capability.tbdAdminUiEnabled,
     serverArmOkFromSsr: page.serverArmOk,
   });
+  const formGaps = describeTbdCreateOneshotFormGaps();
+  const displayReason = !gate.enabled
+    ? formGaps[0] ?? localizeTbdCreateOneshotGateReason(gate.reason)
+    : null;
   button.disabled = !gate.enabled || saveInFlight;
-  button.title = gate.reason;
+  button.title = gate.enabled
+    ? "Staging one-shot CREATE（1回のみ）"
+    : displayReason ?? localizeTbdCreateOneshotGateReason(gate.reason);
+  if (reasonEl instanceof HTMLElement) {
+    if (displayReason) {
+      reasonEl.hidden = false;
+      reasonEl.textContent = displayReason;
+    } else {
+      reasonEl.hidden = true;
+      reasonEl.textContent = "";
+    }
+  }
 }
 
 function renderTbdCreateOneshotResult(outcome: TbdCreateOneshotSaveOutcome): void {

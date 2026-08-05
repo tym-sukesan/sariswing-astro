@@ -5,35 +5,24 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: CMS Core v2 Schedule TBD CREATE oneshot process-scoped Auth packet correction COMPLETE
-Phase: cms-core-v2-schedule-tbd-create-oneshot-process-scoped-auth-packet-correction
-Decision: oneshot arming = process-scoped env … npm run dev with exactly 9 keys (Auth 2 + write 7) · write 7 alone = Auth mock / login impossible · forbid writing 9 keys into shared .env.local · Cursor does not arm/Save/SQL
-Test row: schedule-2026-11-001 · published=false · date_status=tbd · date=null · month=2026-11
-Approval ID: cms-core-v2-schedule-tbd-create-non-dry-run-oneshot
-SQL Editor observed_at: 2026-08-03 15:51:19.118619+00 · preflight_pass=true
-IMPLEMENTATION_READY: true
-PREFLIGHT_PASS: true
-EXECUTION_PACKET_READY: true
+Current phase: CMS Core v2 Schedule TBD Admin UI safety hardening COMPLETE
+Phase: cms-core-v2-schedule-tbd-admin-ui-safety-hardening
+Decision: UI/CSS only · radio/checkbox scoped width · Dry-run disabled JP reason · false SSR alert fixed · write/payload/gate unchanged · Cursor does not arm/Save/SQL
 ACTUAL_WRITE_READY: false
 ACTUAL_WRITE_EXECUTED: false
-ENV_FILE_UNCHANGED: true · PROCESS_NOT_STARTED: true
-PACKET_ONESHOT_ONLY_PROVEN: true
-ARMS_OFF: true · DB_WRITE_EXECUTED: false · EDGE_CHANGED: false
-CLEANUP_EXECUTED: false
-Doc: docs/cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-final-preflight.md (§3 · §7 process-scoped 9-key)
-Write-stack: docs/cms-core-v2-schedule-tbd-create-oneshot-write-stack-gate-correction.md
-Verifier: verify:cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-final-preflight + write-stack-gate-correction (+ Safety Suite)
-Next Primary: cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-execution-arm-gate (human · env … npm run dev · 9 keys)
-Prior: Auth gate audit STOP · process-scoped env packet · write-stack correction · arm-gate · execution-preparation
-HubSpot: COMPLETE WITH NON-BLOCKING · PC/375 PASS · submit E2E recheck only
+ARMS_OFF: true · DB_WRITE_EXECUTED: false
+Next Primary: cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-execution-arm-gate (human · exactly 9 keys)
+Prior: Auth packet · process-scoped env · write-stack · Dry-run operator packet
 Gosaki CLIENT_SHARE_READY: true (maintained)
-deployed package: dc1c5b62a58d0462ad6629db4847256d316d4a38 (unchanged; no regen)
-Next Primary (ops): share staging with client
 seedAppliedStaging: true
 readyForOperatorAboutSeedApply: false
 readyForAnyFutureFtpApply: false
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
 ```
+
+## CMS Core v2 Schedule TBD Admin UI safety hardening (2026-08-05)
+
+- Scoped `.gosaki-schedule-admin-form` radio/checkbox `width:auto` · choice rows · Dry-run reason 「表示月を選択してください」 · SSR alert only when `binding.source === "unavailable"`
 
 ## CMS Core v2 Schedule TBD CREATE oneshot process-scoped Auth packet correction (2026-08-04)
 

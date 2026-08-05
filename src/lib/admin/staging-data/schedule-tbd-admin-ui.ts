@@ -252,6 +252,7 @@ export function applyScheduleAdminDateStateToDom(
   }
 
   const value = stateResult.value;
+  const dateField = document.getElementById(`gosaki-${prefix}-date-field`);
   if (dateInput) {
     dateInput.disabled = !value.dateInputEnabled;
     dateInput.required = value.dateInputRequired;
@@ -261,6 +262,9 @@ export function applyScheduleAdminDateStateToDom(
       // keep user/create value when confirmed; for update existingDate may lock
       if (!dateInput.value && value.date) dateInput.value = value.date;
     }
+  }
+  if (dateField instanceof HTMLElement) {
+    dateField.hidden = value.dateStatus === SCHEDULE_DATE_STATUS_TBD;
   }
 
   const showTbdExtras =
@@ -300,6 +304,7 @@ export function applyScheduleAdminDateStateToDom(
   const dryRunBtn = document.getElementById(
     `gosaki-${prefix}-tbd-dry-run-btn`,
   ) as HTMLButtonElement | null;
+  const dryRunReasonEl = document.getElementById(`gosaki-${prefix}-tbd-dry-run-reason`);
   const dryRunVisible =
     capability.tbdAdminUiVisible &&
     isExactTrue(capability.tbdDryRunEnabled) &&
@@ -311,11 +316,56 @@ export function applyScheduleAdminDateStateToDom(
     const monthOk =
       value.tbdMonthMode !== SCHEDULE_TBD_MONTH_MODE_KNOWN || Boolean(value.month);
     const complete = dryRunVisible && monthOk && value.tbdMonthMode != null;
+    const disableReason = describeTbdDryRunDisableReason({
+      dryRunVisible,
+      tbdDryRunEnabled: isExactTrue(capability.tbdDryRunEnabled),
+      dateStatus: value.dateStatus,
+      tbdMonthMode: value.tbdMonthMode,
+      month: value.month,
+    });
     dryRunBtn.disabled = !complete;
     dryRunBtn.title = complete
       ? "ローカル dry-run（保存しません）"
-      : "TBD入力が完了すると Dry-run 確認できます";
+      : disableReason ?? "TBD入力が完了すると Dry-run 確認できます";
+    if (dryRunReasonEl instanceof HTMLElement) {
+      if (!complete && disableReason) {
+        dryRunReasonEl.hidden = false;
+        dryRunReasonEl.textContent = disableReason;
+      } else {
+        dryRunReasonEl.hidden = true;
+        dryRunReasonEl.textContent = "";
+      }
+    }
   }
+}
+
+/** Japanese reason when TBD Dry-run button is disabled (UI display only). */
+export function describeTbdDryRunDisableReason(input: {
+  dryRunVisible: boolean;
+  tbdDryRunEnabled: boolean;
+  dateStatus: string;
+  tbdMonthMode: string | null;
+  month: string | null;
+}): string | null {
+  if (!input.tbdDryRunEnabled) {
+    return "TBD Dry-run は現在無効です。";
+  }
+  if (input.dateStatus !== SCHEDULE_DATE_STATUS_TBD) {
+    return "日付未定（TBD）を選択してください。";
+  }
+  if (!input.dryRunVisible) {
+    return "TBD Dry-run を表示できません。";
+  }
+  if (input.tbdMonthMode == null) {
+    return "未定の種類を選択してください。";
+  }
+  if (
+    input.tbdMonthMode === SCHEDULE_TBD_MONTH_MODE_KNOWN &&
+    !String(input.month ?? "").trim()
+  ) {
+    return "表示月を選択してください。";
+  }
+  return null;
 }
 
 export function isScheduleTbdSaveBlockedFromDom(

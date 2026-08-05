@@ -3,6 +3,8 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
+**CMS Core v2 Schedule TBD Admin UI safety hardening (2026-08-05):** **COMPLETE (UI/CSS)** — Phase `cms-core-v2-schedule-tbd-admin-ui-safety-hardening` · scoped radio/checkbox width fix · TBD choice rows · Dry-run disabled reason JP · false SSR alert only when `source=unavailable` · **write/payload/gate unchanged** · arms OFF · `ACTUAL_WRITE_READY: false` · `ACTUAL_WRITE_EXECUTED: false` · **Next Primary:** oneshot Dry-run operator / arm-gate (unchanged).
+
 **CMS Core v2 Schedule TBD CREATE oneshot process-scoped Auth packet correction (2026-08-04):** **COMPLETE (docs)** — Phase `cms-core-v2-schedule-tbd-create-oneshot-process-scoped-auth-packet-correction` · execution uses `env … npm run dev` with **exactly 9 keys** (Auth 2 + write 7) · write 7 alone → Auth mock → login **不可** · **forbid** writing 9 keys into shared root `.env.local` · **IMPLEMENTATION_READY: true** · **PREFLIGHT_PASS: true** · **EXECUTION_PACKET_READY: true** · **ACTUAL_WRITE_READY: false** · **ACTUAL_WRITE_EXECUTED: false** · env file unchanged · process not started · DB write 0 · **Next Primary:** `cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-execution-arm-gate`.
 
 **CMS Core v2 Schedule TBD CREATE oneshot process-scoped env packet correction (2026-08-04):** **COMPLETE (docs)** — Phase `cms-core-v2-schedule-tbd-create-oneshot-process-scoped-env-packet-correction` · superseded delivery count → Auth packet above (**exactly 9 keys**).

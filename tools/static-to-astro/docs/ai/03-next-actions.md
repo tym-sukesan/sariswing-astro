@@ -4,10 +4,29 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 ## 0. Current next actions（直近）
 
 1. **Primary (Gosaki ops):** クライアントへ **staging 共有**（`CLIENT_SHARE_READY: true` · package `dc1c5b6…`）。本番 cutover はしない。
-2. **並行可 (Kit Core):** **Next Primary** `cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-execution-arm-gate`（process-scoped Auth packet COMPLETE · **exactly 9 keys via `env … npm run dev`** · Auth 2 + write 7 · **forbid** `.env.local` edit · `PREFLIGHT_PASS: true` · `EXECUTION_PACKET_READY: true` · `ACTUAL_WRITE_READY: false` · `ACTUAL_WRITE_EXECUTED: false`）→ arm-gate PASS後 `…-execution` · **human only** process-scoped armed process → owner login → Dry-run → Save once → **Ctrl+C** → post-check → optional cleanup · then Mio seed regen/apply → Branch A live SELECT pilot · then generic read-only Admin · form onboarding · Admin runtime Save arm mutex（**別承認**）· evening-set hero（**NON_BLOCKING**）。
+2. **並行可 (Kit Core):** **Next Primary** `cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-execution-arm-gate`（process-scoped Auth packet COMPLETE · **exactly 9 keys** · TBD Admin UI safety hardening COMPLETE · **forbid** `.env.local` edit · `PREFLIGHT_PASS: true` · `EXECUTION_PACKET_READY: true` · `ACTUAL_WRITE_READY: false` · `ACTUAL_WRITE_EXECUTED: false`）→ arm-gate PASS後 human Dry-run → Save once → **Ctrl+C** …
 3. **並行可:** production hosting **read-only planning**（`HOSTING_READY: false`）。
 4. **並行可 / 別承認:** YouTube 複数件 **永続 Save**（NON_BLOCKING）。
 5. Save arm **false** · `readyForAnyFutureFtpApply: false` · production STOP · `service_role` 禁止 · **deployed package 固定**.
+
+## 0. CMS Core v2 Schedule TBD Admin UI safety hardening (2026-08-05)
+
+| Item | Value |
+| --- | --- |
+| Gate | `CMS_CORE_V2_SCHEDULE_TBD_ADMIN_UI_SAFETY_HARDENING_COMPLETE: true` |
+| Scope | radio/checkbox CSS · TBD choice rows · Dry-run disabled JP reason · false alert fix |
+| Write | payload / gate / INSERT **unchanged** · `ACTUAL_WRITE_READY: false` |
+| Next | oneshot Dry-run operator / arm-gate |
+
+```txt
+CMS_CORE_V2_SCHEDULE_TBD_ADMIN_UI_SAFETY_HARDENING_COMPLETE: true
+ACTUAL_WRITE_READY: false
+ACTUAL_WRITE_EXECUTED: false
+DB_WRITE_EXECUTED: false
+ARMS_OFF: true
+PRODUCTION_UNCHANGED: true
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+```
 
 ## 0. CMS Core v2 Schedule TBD CREATE oneshot process-scoped Auth packet correction (2026-08-04)
 

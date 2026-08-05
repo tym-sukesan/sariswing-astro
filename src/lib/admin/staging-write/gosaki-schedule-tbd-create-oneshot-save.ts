@@ -128,22 +128,79 @@ export type TbdCreateOneshotSaveDeps = {
   preflightClient?: TbdCreateOneshotPreflightClient;
   getAuth?: typeof getStagingAuthSessionDetails;
   /**
-   * Test-only override for `rpc('is_admin')`.
-   * Default probes the same staging singleton client (no service_role).
+   * Test-only override for `sites` resolution (`site_slug` → id).
+   * Default queries the same staging singleton client (no service_role).
    */
-  probeIsAdmin?: (client: unknown) => Promise<boolean>;
+  resolveSiteId?: (client: unknown) => Promise<string>;
+  /**
+   * Test-only override for `rpc('can_write_site', { p_site_id })`.
+   * Default probes the same staging singleton client (no service_role).
+   * Platform admin and site owner/editor are both covered by this helper.
+   */
+  probeCanWriteSite?: (client: unknown, siteId: string) => Promise<boolean>;
 };
 
-type StagingRpcClient = {
+type StagingSitesClient = {
+  from: (table: "sites") => {
+    select: (columns: string) => {
+      eq: (
+        column: string,
+        value: string,
+      ) => PromiseLike<{
+        data: Array<{ id?: string | null }> | null;
+        error: { message: string } | null;
+      }>;
+    };
+  };
+};
+
+type StagingCanWriteSiteRpcClient = {
   rpc: (
-    fn: "is_admin",
+    fn: "can_write_site",
+    args: { p_site_id: string },
   ) => Promise<{ data: unknown; error: { message: string } | null }>;
 };
 
-async function probeIsAdminViaRpc(client: unknown): Promise<boolean> {
-  const { data, error } = await (client as StagingRpcClient).rpc("is_admin");
+/**
+ * Resolve exactly one `sites.id` for the fixed oneshot site_slug.
+ * 0 rows / multiple rows / query error → throw (fail-closed).
+ */
+async function resolveGosakiSiteIdViaSitesTable(client: unknown): Promise<string> {
+  const { data, error } = await (client as StagingSitesClient)
+    .from("sites")
+    .select("id")
+    .eq("site_slug", STAGING_SHELL_GOSAKI_SCHEDULE_SITE_SLUG);
   if (error) {
-    throw new Error(error.message || "is_admin RPC failed");
+    throw new Error(error.message || "sites resolution query failed");
+  }
+  const rows = Array.isArray(data) ? data : [];
+  if (rows.length === 0) {
+    throw new Error(
+      `sites resolution: 0 rows for site_slug=${STAGING_SHELL_GOSAKI_SCHEDULE_SITE_SLUG}`,
+    );
+  }
+  if (rows.length > 1) {
+    throw new Error(
+      `sites resolution: multiple rows (${rows.length}) for site_slug=${STAGING_SHELL_GOSAKI_SCHEDULE_SITE_SLUG}`,
+    );
+  }
+  const siteId = String(rows[0]?.id ?? "").trim();
+  if (!siteId) {
+    throw new Error("sites resolution: missing id");
+  }
+  return siteId;
+}
+
+async function probeCanWriteSiteViaRpc(
+  client: unknown,
+  siteId: string,
+): Promise<boolean> {
+  const { data, error } = await (client as StagingCanWriteSiteRpcClient).rpc(
+    "can_write_site",
+    { p_site_id: siteId },
+  );
+  if (error) {
+    throw new Error(error.message || "can_write_site RPC failed");
   }
   return data === true;
 }
@@ -490,7 +547,8 @@ export async function executeTbdCreateOneshotSave(options: {
     };
   }
 
-  // Auth/session + owner/admin BEFORE any preflight count (avoids anon/public 74 visibility).
+  // Auth/session + site-scoped can_write_site BEFORE any preflight count
+  // (avoids anon/public 74 visibility). Do NOT use legacy is_admin as owner gate.
   const getAuth = options.deps?.getAuth ?? getStagingAuthSessionDetails;
   const auth = await getAuth(options.url, options.anonKey);
   const mockRole = formatMockRoleDisplay(auth);
@@ -505,7 +563,7 @@ export async function executeTbdCreateOneshotSave(options: {
       ambiguous: false,
       warnings: authWarnings,
       errorCode: "auth_session_missing",
-      errorMessage: `Sign in as staging admin before Save. ${TBD_CREATE_ONESHOT_PREFLIGHT_INSERT_NOT_STARTED_MESSAGE}。`,
+      errorMessage: `Sign in as staging site owner before Save. ${TBD_CREATE_ONESHOT_PREFLIGHT_INSERT_NOT_STARTED_MESSAGE}。`,
       authStatus,
       mockRole,
       guardReasons: ["signed-in required"],
@@ -513,12 +571,16 @@ export async function executeTbdCreateOneshotSave(options: {
     };
   }
 
-  // Same singleton for auth probe · preflight · INSERT (no service_role).
+  // Same singleton for site resolve · can_write_site · preflight · INSERT (no service_role).
   const sharedClient = getStagingSupabaseClient(options.url, options.anonKey);
-  const probeIsAdmin = options.deps?.probeIsAdmin ?? probeIsAdminViaRpc;
-  let isAdmin = false;
+  const resolveSiteId =
+    options.deps?.resolveSiteId ?? resolveGosakiSiteIdViaSitesTable;
+  const probeCanWriteSite =
+    options.deps?.probeCanWriteSite ?? probeCanWriteSiteViaRpc;
+
+  let siteId: string;
   try {
-    isAdmin = await probeIsAdmin(sharedClient);
+    siteId = await resolveSiteId(sharedClient);
   } catch (err) {
     oneshotTerminalState = "failed";
     const detail = err instanceof Error ? err.message : String(err);
@@ -527,8 +589,8 @@ export async function executeTbdCreateOneshotSave(options: {
       terminalState: oneshotTerminalState,
       ambiguous: false,
       warnings: authWarnings,
-      errorCode: "auth_admin_probe_failed",
-      errorMessage: `owner/admin 確認に失敗しました。${TBD_CREATE_ONESHOT_PREFLIGHT_INSERT_NOT_STARTED_MESSAGE}。詳細: ${detail}`,
+      errorCode: "auth_site_resolve_failed",
+      errorMessage: `site 解決に失敗しました。${TBD_CREATE_ONESHOT_PREFLIGHT_INSERT_NOT_STARTED_MESSAGE}。詳細: ${detail}`,
       authStatus,
       mockRole,
       authEmail: auth.rawEmail,
@@ -536,19 +598,40 @@ export async function executeTbdCreateOneshotSave(options: {
       networkCalls: oneshotNetworkCalls,
     };
   }
-  if (!isAdmin) {
+
+  let canWrite = false;
+  try {
+    canWrite = await probeCanWriteSite(sharedClient, siteId);
+  } catch (err) {
+    oneshotTerminalState = "failed";
+    const detail = err instanceof Error ? err.message : String(err);
+    return {
+      ...base,
+      terminalState: oneshotTerminalState,
+      ambiguous: false,
+      warnings: authWarnings,
+      errorCode: "auth_site_write_probe_failed",
+      errorMessage: `site write 権限確認に失敗しました。${TBD_CREATE_ONESHOT_PREFLIGHT_INSERT_NOT_STARTED_MESSAGE}。詳細: ${detail}`,
+      authStatus,
+      mockRole,
+      authEmail: auth.rawEmail,
+      guardReasons: [detail],
+      networkCalls: oneshotNetworkCalls,
+    };
+  }
+  if (!canWrite) {
     oneshotTerminalState = "failed";
     return {
       ...base,
       terminalState: oneshotTerminalState,
       ambiguous: false,
       warnings: authWarnings,
-      errorCode: "auth_admin_required",
-      errorMessage: `owner/admin（is_admin）権限が必要です。${TBD_CREATE_ONESHOT_PREFLIGHT_INSERT_NOT_STARTED_MESSAGE}。`,
+      errorCode: "auth_site_write_required",
+      errorMessage: `site write 権限（can_write_site）が必要です。${TBD_CREATE_ONESHOT_PREFLIGHT_INSERT_NOT_STARTED_MESSAGE}。`,
       authStatus,
       mockRole,
       authEmail: auth.rawEmail,
-      guardReasons: ["is_admin required"],
+      guardReasons: ["can_write_site required"],
       networkCalls: oneshotNetworkCalls,
     };
   }

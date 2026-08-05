@@ -115,7 +115,11 @@ assert(
 );
 assert(
   "auth-before-preflight fix noted",
-  /auth-before-preflight|is_admin|got 74|READY_FOR_RETRY:\s*false/.test(doc),
+  /auth-before-preflight|got 74|READY_FOR_RETRY:\s*false/.test(doc),
+);
+assert(
+  "site-scoped can_write_site gate noted",
+  /can_write_site|site-scoped|site owner|SITE_OWNER_AUTHZ/i.test(doc),
 );
 assert("ACTUAL_WRITE_EXECUTED false", /ACTUAL_WRITE_EXECUTED:\s*false/.test(doc));
 assert("arms OFF", /arms?\s*OFF|ARMS_OFF:\s*true/i.test(doc));
@@ -227,8 +231,19 @@ assert(
   "INSERT未実行 message",
   /INSERTは実行されていません/.test(save),
 );
-assert("is_admin RPC probe", /rpc\("is_admin"\)|rpc\('is_admin'\)/.test(save));
-assert("auth_admin_required", /auth_admin_required/.test(save));
+assert(
+  "can_write_site RPC probe",
+  /rpc\(\s*"can_write_site"\s*,\s*\{\s*p_site_id/.test(save) ||
+    /rpc\(\s*'can_write_site'\s*,\s*\{\s*p_site_id/.test(save),
+);
+assert("auth_site_write_required", /auth_site_write_required/.test(save));
+assert("auth_site_resolve_failed", /auth_site_resolve_failed/.test(save));
+assert(
+  "no is_admin RPC as owner gate",
+  !/rpc\(\s*["']is_admin["']\s*\)/.test(save) &&
+    !/probeIsAdmin/.test(save) &&
+    !/auth_admin_required/.test(save),
+);
 assert(
   "auth before preflight counts",
   (() => {
@@ -236,19 +251,27 @@ assert(
       /export async function executeTbdCreateOneshotSave[\s\S]*$/,
     )?.[0] ?? "";
     const getAuthAt = exec.search(/const getAuth\s*=/);
-    const probeAt = exec.search(/probeIsAdmin|probeIsAdminViaRpc/);
+    const resolveAt = exec.search(/resolveSiteId|resolveGosakiSiteIdViaSitesTable/);
+    const probeAt = exec.search(/probeCanWriteSite|probeCanWriteSiteViaRpc/);
     const countAt = exec.search(/countTotal:\s*await preflightClient\.countTotal|await preflightClient\.countTotal/);
     const buildPfAt = exec.search(/buildPreflightClientFromShared|deps\?\.preflightClient/);
     return (
       getAuthAt >= 0 &&
+      resolveAt >= 0 &&
       probeAt >= 0 &&
       countAt >= 0 &&
       buildPfAt >= 0 &&
-      getAuthAt < probeAt &&
+      getAuthAt < resolveAt &&
+      resolveAt < probeAt &&
       probeAt < countAt &&
       getAuthAt < buildPfAt
     );
   })(),
+);
+assert(
+  "sites resolve uses site_slug eq",
+  /from\(\s*"sites"\s*\)/.test(save) &&
+    /\.eq\(\s*"site_slug"\s*,\s*STAGING_SHELL_GOSAKI_SCHEDULE_SITE_SLUG\s*\)/.test(save),
 );
 assert(
   "same sharedClient for preflight and INSERT",
@@ -527,6 +550,12 @@ async function runCase(label, setup) {
   resetTbdCreateOneshotTerminalStateForTests();
   const tracker = { calls: 0, mode: "ok", lastPayload: null };
   const preflight = setup.preflight ?? makePreflight();
+  const canWrite =
+    setup.canWriteSite === false
+      ? false
+      : setup.canWriteSite === null
+        ? null
+        : true;
   const outcome = await executeTbdCreateOneshotSave({
     url: setup.url ?? STAGING_URL,
     anonKey: "anon-test",
@@ -539,9 +568,29 @@ async function runCase(label, setup) {
       preflightClient: preflight,
       insertClient: setup.insertClient ?? makeInsertClient(tracker),
       getAuth: setup.getAuth ?? makeAuth(setup.signedIn !== false),
-      probeIsAdmin:
-        setup.probeIsAdmin ??
-        (async () => (setup.isAdmin === false ? false : true)),
+      resolveSiteId:
+        setup.resolveSiteId ??
+        (async () => {
+          if (setup.siteResolveMode === "zero") {
+            throw new Error("sites resolution: 0 rows for site_slug=gosaki-piano");
+          }
+          if (setup.siteResolveMode === "multi") {
+            throw new Error("sites resolution: multiple rows (2) for site_slug=gosaki-piano");
+          }
+          if (setup.siteResolveMode === "error") {
+            throw new Error("sites resolution query failed");
+          }
+          return setup.siteId ?? "site-gosaki-test";
+        }),
+      probeCanWriteSite:
+        setup.probeCanWriteSite ??
+        (async () => {
+          if (setup.canWriteSiteError) {
+            throw new Error(setup.canWriteSiteError);
+          }
+          if (canWrite === null) return /** @type {any} */ (null);
+          return canWrite === true;
+        }),
     },
   });
   return {
@@ -760,7 +809,8 @@ async function runCase(label, setup) {
       preflightClient: makePreflight(),
       insertClient: makeInsertClient({ calls: 0, mode: "ok", lastPayload: null }),
       getAuth: makeAuth(true),
-      probeIsAdmin: async () => true,
+      resolveSiteId: async () => "site-gosaki-test",
+      probeCanWriteSite: async () => true,
     },
   });
   assert(
@@ -796,16 +846,16 @@ async function runCase(label, setup) {
 
 {
   const pf = makePreflight({ total: 74 });
-  const { outcome, tracker } = await runCase("public visibility without admin", {
+  const { outcome, tracker } = await runCase("public visibility without site write", {
     preflight: pf,
-    isAdmin: false,
+    canWriteSite: false,
   });
   assert(
-    "public visibility 74 blocked before counts when non-admin",
+    "public visibility 74 blocked before counts when can_write_site false",
     outcome.ok === false &&
       tracker.calls === 0 &&
       (pf.tracker?.queries ?? 0) === 0 &&
-      outcome.errorCode === "auth_admin_required" &&
+      outcome.errorCode === "auth_site_write_required" &&
       /INSERTは実行されていません/.test(outcome.errorMessage || "") &&
       !/totalSchedules:\s*74/.test(guards),
     JSON.stringify({
@@ -841,19 +891,102 @@ async function runCase(label, setup) {
 
 {
   const pf = makePreflight();
-  const { outcome, tracker } = await runCase("signed-in non-admin", {
+  const { outcome, tracker } = await runCase("signed-in non-member", {
     signedIn: true,
-    isAdmin: false,
+    canWriteSite: false,
     preflight: pf,
   });
   assert(
-    "signed-in non-admin → preflight 0 · INSERT 0",
+    "signed-in non-member → preflight 0 · INSERT 0",
     outcome.ok === false &&
       tracker.calls === 0 &&
       (pf.tracker?.queries ?? 0) === 0 &&
-      outcome.errorCode === "auth_admin_required" &&
+      outcome.errorCode === "auth_site_write_required" &&
       getTbdCreateOneshotTerminalState() === "failed",
     JSON.stringify({ code: outcome.errorCode, queries: pf.tracker?.queries }),
+  );
+}
+
+{
+  const pf = makePreflight();
+  const { outcome, tracker } = await runCase("other site owner", {
+    signedIn: true,
+    canWriteSite: false,
+    preflight: pf,
+  });
+  assert(
+    "other-site owner → can_write_site false · INSERT 0",
+    outcome.ok === false &&
+      tracker.calls === 0 &&
+      (pf.tracker?.queries ?? 0) === 0 &&
+      outcome.errorCode === "auth_site_write_required",
+    outcome.errorCode,
+  );
+}
+
+{
+  const pf = makePreflight();
+  const { outcome, tracker } = await runCase("site resolve zero", {
+    siteResolveMode: "zero",
+    preflight: pf,
+  });
+  assert(
+    "site resolution 0 rows → failed · INSERT 0",
+    outcome.ok === false &&
+      tracker.calls === 0 &&
+      (pf.tracker?.queries ?? 0) === 0 &&
+      outcome.errorCode === "auth_site_resolve_failed" &&
+      getTbdCreateOneshotTerminalState() === "failed",
+    JSON.stringify({ code: outcome.errorCode, msg: outcome.errorMessage }),
+  );
+}
+
+{
+  const pf = makePreflight();
+  const { outcome, tracker } = await runCase("site resolve multi", {
+    siteResolveMode: "multi",
+    preflight: pf,
+  });
+  assert(
+    "site resolution multiple rows → failed · INSERT 0",
+    outcome.ok === false &&
+      tracker.calls === 0 &&
+      (pf.tracker?.queries ?? 0) === 0 &&
+      outcome.errorCode === "auth_site_resolve_failed",
+    outcome.errorCode,
+  );
+}
+
+{
+  const pf = makePreflight();
+  const { outcome, tracker } = await runCase("can_write null", {
+    canWriteSite: null,
+    preflight: pf,
+  });
+  assert(
+    "can_write_site null → INSERT 0",
+    outcome.ok === false &&
+      tracker.calls === 0 &&
+      (pf.tracker?.queries ?? 0) === 0 &&
+      outcome.errorCode === "auth_site_write_required",
+    outcome.errorCode,
+  );
+}
+
+{
+  const pf = makePreflight();
+  const { outcome, tracker } = await runCase("can_write error", {
+    canWriteSiteError: "can_write_site RPC failed",
+    preflight: pf,
+  });
+  assert(
+    "can_write_site error → INSERT 0",
+    outcome.ok === false &&
+      tracker.calls === 0 &&
+      (pf.tracker?.queries ?? 0) === 0 &&
+      outcome.errorCode === "auth_site_write_probe_failed" &&
+      /INSERTは実行されていません/.test(outcome.errorMessage || ""),
+    JSON.stringify({ code: outcome.errorCode, msg: outcome.errorMessage }),
   );
 }
 
@@ -861,10 +994,10 @@ async function runCase(label, setup) {
   const pf = makePreflight({ total: 79, legacy: 0 });
   const { outcome, tracker } = await runCase("owner session happy", {
     preflight: pf,
-    isAdmin: true,
+    canWriteSite: true,
   });
   assert(
-    "owner session → authenticated visibility 79 · INSERT max 1",
+    "owner + gosaki site → can_write_site true · visibility 79 · INSERT max 1",
     outcome.ok === true &&
       tracker.calls === 1 &&
       (pf.tracker?.queries ?? 0) >= 1 &&
@@ -874,6 +1007,32 @@ async function runCase(label, setup) {
       calls: tracker.calls,
       queries: pf.tracker?.queries,
     }),
+  );
+}
+
+{
+  const pf = makePreflight({ total: 79, legacy: 0 });
+  const { outcome, tracker } = await runCase("editor session happy", {
+    preflight: pf,
+    canWriteSite: true,
+  });
+  assert(
+    "editor + gosaki site → can_write_site true · INSERT max 1",
+    outcome.ok === true && tracker.calls === 1 && outcome.networkCalls === 1,
+    JSON.stringify({ ok: outcome.ok, calls: tracker.calls }),
+  );
+}
+
+{
+  const pf = makePreflight({ total: 79, legacy: 0 });
+  const { outcome, tracker } = await runCase("platform admin happy", {
+    preflight: pf,
+    canWriteSite: true,
+  });
+  assert(
+    "platform admin via can_write_site → INSERT max 1",
+    outcome.ok === true && tracker.calls === 1 && outcome.networkCalls === 1,
+    JSON.stringify({ ok: outcome.ok, calls: tracker.calls }),
   );
 }
 
@@ -902,7 +1061,8 @@ async function runCase(label, setup) {
       preflightClient: makePreflight(),
       insertClient: makeInsertClient(tracker),
       getAuth: makeAuth(true),
-      probeIsAdmin: async () => true,
+      resolveSiteId: async () => "site-gosaki-test",
+      probeCanWriteSite: async () => true,
     },
   });
   assert(
@@ -924,7 +1084,8 @@ async function runCase(label, setup) {
       preflightClient: makePreflight(),
       insertClient: makeInsertClient(tracker),
       getAuth: makeAuth(true),
-      probeIsAdmin: async () => true,
+      resolveSiteId: async () => "site-gosaki-test",
+      probeCanWriteSite: async () => true,
     },
   });
   assert(
@@ -946,6 +1107,68 @@ assert(
 assert(
   "arms-OFF browser writeRequests=[] documented",
   /writeRequests:\s*\[\]|writeRequests `\[\]`/.test(doc),
+);
+
+const RLS_FWD = path.join(
+  TOOL_ROOT,
+  "scripts/supabase/cms-core-v2-schedules-site-writer-rls.template.sql",
+);
+const RLS_RB = path.join(
+  TOOL_ROOT,
+  "scripts/supabase/cms-core-v2-schedules-site-writer-rls-rollback.template.sql",
+);
+assert("site-writer RLS forward template exists", fs.existsSync(RLS_FWD));
+assert("site-writer RLS rollback template exists", fs.existsSync(RLS_RB));
+function stripSqlComments(sql) {
+  return sql
+    .replace(/--[^\n]*/g, "")
+    .replace(/\/\*[\s\S]*?\*\//g, "");
+}
+
+const rlsFwd = read(RLS_FWD);
+const rlsRb = read(RLS_RB);
+const rlsFwdBody = stripSqlComments(rlsFwd);
+assert(
+  "forward CREATE schedules_site_writer_select",
+  /create policy schedules_site_writer_select/i.test(rlsFwd),
+);
+assert(
+  "forward CREATE schedules_site_writer_insert",
+  /create policy schedules_site_writer_insert/i.test(rlsFwd),
+);
+assert(
+  "forward has no DROP POLICY",
+  !/drop\s+policy/i.test(rlsFwdBody),
+);
+assert(
+  "forward does not alter public_select / admin_all",
+  !/drop\s+policy\s+.*schedules_public_select/i.test(rlsFwdBody) &&
+    !/drop\s+policy\s+.*schedules_admin_all/i.test(rlsFwdBody) &&
+    !/alter\s+policy\s+.*schedules_public_select/i.test(rlsFwdBody) &&
+    !/alter\s+policy\s+.*schedules_admin_all/i.test(rlsFwdBody),
+);
+assert(
+  "forward no UPDATE/DELETE policy",
+  !/for\s+update/i.test(rlsFwdBody) && !/for\s+delete/i.test(rlsFwdBody),
+);
+assert(
+  "forward no gosaki-piano hardcode in policy body",
+  !/site_slug\s*=\s*'gosaki-piano'/i.test(rlsFwdBody),
+);
+assert(
+  "forward uses can_write_site(site_row.id)",
+  /can_write_site\(\s*site_row\.id\s*\)/.test(rlsFwd),
+);
+assert(
+  "forward no service_role grant",
+  !/grant[\s\S]{0,80}service_role/i.test(rlsFwdBody),
+);
+assert(
+  "rollback drops only writer policies",
+  /drop policy if exists schedules_site_writer_select/i.test(rlsRb) &&
+    /drop policy if exists schedules_site_writer_insert/i.test(rlsRb) &&
+    !/drop policy if exists schedules_public_select/i.test(rlsRb) &&
+    !/drop policy if exists schedules_admin_all/i.test(rlsRb),
 );
 
 const check = spawnSync("git", ["diff", "--check"], { cwd: REPO_ROOT, encoding: "utf8" });

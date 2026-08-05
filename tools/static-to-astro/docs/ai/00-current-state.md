@@ -1,9 +1,11 @@
-Last updated: 2026-08-03
+Last updated: 2026-08-06
 Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**CMS Core v2 Schedule TBD CREATE oneshot auth-before-preflight fix (2026-08-05):** **COMPLETE (offline)** — Phase `cms-core-v2-schedule-tbd-create-oneshot-auth-before-preflight-fix` · second click `expected 79, got 74` (= published / public RLS) · fix: getAuth + `rpc('is_admin')` before preflight · same shared client · expected total **79** · **READY_FOR_RETRY: false** · **ACTUAL_WRITE_READY: false** · Doc: `cms-core-v2-schedule-tbd-create-oneshot-auth-before-preflight-fix.md`.
+**CMS Core v2 Schedule site-owner authz + site-writer RLS template (2026-08-06):** **COMPLETE (offline)** — Phase `cms-core-v2-schedule-site-owner-authz-implementation-and-migration-template` · oneshot gate = `sites` resolve + `rpc('can_write_site', { p_site_id })` (**not** legacy `is_admin`) · RLS templates `schedules_site_writer_select` / `_insert` **created · not applied** · mapping PASS 79/74/0 · owner ≠ admin · **READY_FOR_RETRY: false** · **READY_FOR_MIGRATION_EXECUTION: false** · **ACTUAL_WRITE_READY: false** · DB write 0 · Doc: `cms-core-v2-schedule-site-owner-authz-rls-implementation.md`.
+
+**CMS Core v2 Schedule TBD CREATE oneshot auth-before-preflight fix (2026-08-05):** **COMPLETE (offline)** — Phase `cms-core-v2-schedule-tbd-create-oneshot-auth-before-preflight-fix` · second click `expected 79, got 74` (= published / public RLS) · fix: getAuth before preflight · same shared client · expected total **79** · superseded owner gate → `can_write_site` above · **READY_FOR_RETRY: false** · Doc: `cms-core-v2-schedule-tbd-create-oneshot-auth-before-preflight-fix.md`.
 
 **CMS Core v2 Schedule TBD CREATE oneshot preflight query-builder fix (2026-08-05):** **COMPLETE (offline)** — Phase `cms-core-v2-schedule-tbd-create-oneshot-preflight-query-builder-fix` · human oneshot click → preflight `TypeError` (intermediate `.eq()` await) · exact SELECT `NOT_INSERTED` · total 79 · target 0 · INSERT 未到達 · cleanup 不要 · chain-before-await + `preflight_client_failed` / `INSERTは実行されていません` · INSERT後のみ ambiguous · **READY_FOR_RETRY: false** · **ACTUAL_WRITE_READY: false** · **ACTUAL_WRITE_EXECUTED: false** · arms OFF · no process/env/Save/SQL · Doc: `cms-core-v2-schedule-tbd-create-oneshot-preflight-query-builder-fix.md` · **Next Primary:** execution-arm-gate after commit + explicit re-approval.
 

@@ -151,6 +151,11 @@ const STEPS = [
     script: "verify-cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-final-preflight.mjs",
   },
   {
+    id: "schedule-site-owner-authz-rls-implementation",
+    kind: "node",
+    script: "verify-cms-core-v2-schedule-site-owner-authz-rls-implementation.mjs",
+  },
+  {
     id: "schedule-tbd-create-oneshot-write-stack-gate-correction",
     kind: "node",
     script: "verify-cms-core-v2-schedule-tbd-create-oneshot-write-stack-gate-correction.mjs",

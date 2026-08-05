@@ -10,7 +10,8 @@
 - **Process-scoped packet:** `cms-core-v2-schedule-tbd-create-oneshot-process-scoped-env-packet-correction` · **Auth packet:** `cms-core-v2-schedule-tbd-create-oneshot-process-scoped-auth-packet-correction` — **forbid** writing the 9 keys into shared root `.env.local`
 - **Auth note:** write **7 keys alone** arm write config but leave Auth **mock** → real login **impossible** · execution needs **exactly 9 keys**
 - **Preflight query-builder fix (2026-08-05):** `cms-core-v2-schedule-tbd-create-oneshot-preflight-query-builder-fix` — human oneshot click stopped at preflight (`NOT_INSERTED` · total 79 · target 0) · root cause intermediate `.eq()` await · **INSERT 未到達** · cleanup 不要 · **READY_FOR_RETRY: false** until fix committed + new arm-gate
-- **Auth-before-preflight fix (2026-08-05):** `cms-core-v2-schedule-tbd-create-oneshot-auth-before-preflight-fix` — second click `expected 79, got 74` (= published / public RLS) · auth+`is_admin` before counts · **READY_FOR_RETRY: false**
+- **Auth-before-preflight fix (2026-08-05):** `cms-core-v2-schedule-tbd-create-oneshot-auth-before-preflight-fix` — second click `expected 79, got 74` (= published / public RLS) · auth before counts · **READY_FOR_RETRY: false**
+- **Site-scoped owner authz (2026-08-06):** `cms-core-v2-schedule-site-owner-authz-implementation-and-migration-template` — gate = `can_write_site` (not legacy `is_admin`) · site-writer RLS template **created · not applied** · mapping PASS · **READY_FOR_RETRY: false** · **READY_FOR_MIGRATION_EXECUTION: false**
 - **Staging:** `kmjqppxjdnwwrtaeqjta`
 - **Production STOP:** `vsbvndwuajjhnzpohghh`
 
@@ -28,6 +29,10 @@ CMS_CORE_V2_SCHEDULE_TBD_CREATE_ONESHOT_PROCESS_SCOPED_ENV_PACKET_CORRECTION_COM
 CMS_CORE_V2_SCHEDULE_TBD_CREATE_ONESHOT_PROCESS_SCOPED_AUTH_PACKET_CORRECTION_COMPLETE: true
 CMS_CORE_V2_SCHEDULE_TBD_CREATE_ONESHOT_PREFLIGHT_QUERY_BUILDER_FIX_COMPLETE: true
 CMS_CORE_V2_SCHEDULE_TBD_CREATE_ONESHOT_AUTH_BEFORE_PREFLIGHT_FIX_COMPLETE: true
+CMS_CORE_V2_SCHEDULE_SITE_OWNER_AUTHZ_IMPLEMENTATION_COMPLETE: true
+SCHEDULE_SITE_MAPPING_SAFE: true
+SITE_WRITER_RLS_APPLIED: false
+READY_FOR_MIGRATION_EXECUTION: false
 IMPLEMENTATION_READY: true
 PREFLIGHT_PASS: true
 PREFLIGHT_ANON_SUBSET_PASS: true
@@ -441,7 +446,9 @@ Rules:
 
 - **Requires** process-scoped Auth 2 keys above (`ENABLE_ADMIN_STAGING_AUTH=true` · `PUBLIC_ADMIN_AUTH_PROVIDER=supabase`) plus baseline shell + staging URL/anon
 - URL: `/__admin-staging-shell/musician-basic/admin/schedule/`
-- Sign in as staging owner (`is_admin` / `admin_users` RLS)
+- Sign in as **gosaki-piano site owner** (`site_members.role='owner'`) — owner ≠ legacy `admin_users` / `is_admin()`
+- Runtime gate: `sites` resolve + `rpc('can_write_site', { p_site_id })` must be true
+- Site-writer RLS must be **applied** before CREATE retry (separate approval) — until then do not retry
 - Confirm host / `PUBLIC_SUPABASE_URL` is staging only
 - Login alone does **not** INSERT — Save click still required
 ### Step 6 — Dry-run + fingerprint

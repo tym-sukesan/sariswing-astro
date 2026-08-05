@@ -97,8 +97,19 @@ assert(
 assert(
   "auth-before-preflight fix recorded",
   /cms-core-v2-schedule-tbd-create-oneshot-auth-before-preflight-fix/.test(doc) &&
-    /got 74/.test(doc) &&
-    /is_admin/.test(save),
+    /got 74/.test(doc),
+);
+assert(
+  "site-scoped can_write_site gate in save",
+  /can_write_site/.test(save) &&
+    /auth_site_write_required/.test(save) &&
+    !/rpc\(\s*["']is_admin["']\s*\)/.test(save) &&
+    !/auth_admin_required/.test(save),
+);
+assert(
+  "site owner authz / RLS phase recorded",
+  /cms-core-v2-schedule-site-owner-authz|can_write_site|site-scoped/i.test(doc) &&
+    /READY_FOR_RETRY:\s*false/.test(doc),
 );
 assert(
   "save chains target legacy filters before await",

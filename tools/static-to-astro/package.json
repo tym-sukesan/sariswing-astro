@@ -40,6 +40,7 @@
     "verify:cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-planning": "node scripts/verify-cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-planning.mjs",
     "verify:cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-implementation": "node scripts/verify-cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-implementation.mjs",
     "verify:cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-final-preflight": "node scripts/verify-cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-final-preflight.mjs",
+    "verify:cms-core-v2-schedule-site-owner-authz-rls-implementation": "node scripts/verify-cms-core-v2-schedule-site-owner-authz-rls-implementation.mjs",
     "verify:cms-core-v2-schedule-tbd-create-oneshot-write-stack-gate-correction": "node scripts/verify-cms-core-v2-schedule-tbd-create-oneshot-write-stack-gate-correction.mjs",
     "verify:cms-core-v2-schedule-tbd-admin-state-save-payload-helpers": "node scripts/verify-cms-core-v2-schedule-tbd-admin-state-save-payload-helpers.mjs",
     "verify:cms-core-v2-schedule-tbd-staging-migration-gate": "node scripts/verify-cms-core-v2-schedule-tbd-staging-migration-gate.mjs",

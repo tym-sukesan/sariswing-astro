@@ -5,15 +5,16 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: CMS Core v2 Schedule TBD CREATE oneshot auth-before-preflight fix COMPLETE
-Phase: cms-core-v2-schedule-tbd-create-oneshot-auth-before-preflight-fix
-Decision: getAuth + rpc('is_admin') before preflight · same shared client · expected total 79 · offline only · no arm/Save/SQL
+Current phase: CMS Core v2 Schedule site-owner authz + site-writer RLS template COMPLETE (offline)
+Phase: cms-core-v2-schedule-site-owner-authz-implementation-and-migration-template
+Decision: oneshot gate = sites resolve + can_write_site(p_site_id) · not legacy is_admin · RLS templates created unapplied · expected total 79
 READY_FOR_RETRY: false
+READY_FOR_MIGRATION_EXECUTION: false
 ACTUAL_WRITE_READY: false
 ACTUAL_WRITE_EXECUTED: false
 ARMS_OFF: true · DB_WRITE_EXECUTED: false
-Next Primary: cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-execution-arm-gate (human · exactly 9 keys · after commit + re-approval)
-Prior: second click got 74 · query-builder fix · Admin UI safety hardening
+Next Primary: cms-core-v2-schedules-site-writer-rls-migration-execution (separate approval)
+Prior: owner authz model audit · is_admin gate incompatible with site owner · mapping PASS 79/74
 Gosaki CLIENT_SHARE_READY: true (maintained)
 seedAppliedStaging: true
 readyForOperatorAboutSeedApply: false
@@ -21,10 +22,16 @@ readyForAnyFutureFtpApply: false
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
 ```
 
+## CMS Core v2 Schedule site-owner authz + site-writer RLS template (2026-08-06)
+
+- Owner ≠ legacy admin · gate = `rpc('can_write_site', { p_site_id })` after `sites` resolve for `gosaki-piano`
+- Templates: `cms-core-v2-schedules-site-writer-rls.template.sql` (+ rollback) · **not applied**
+- `READY_FOR_RETRY: false` · `READY_FOR_MIGRATION_EXECUTION: false` · Doc: `cms-core-v2-schedule-site-owner-authz-rls-implementation.md`
+
 ## CMS Core v2 Schedule TBD CREATE oneshot auth-before-preflight fix (2026-08-05)
 
 - Second CREATE click → `expected 79, got 74` (published / public RLS) · INSERT 未実行 · NOT_INSERTED
-- Fix: session + `is_admin` before preflight counts · shared `getStagingSupabaseClient` · `READY_FOR_RETRY: false`
+- Fix: session before preflight counts · shared `getStagingSupabaseClient` · owner gate later superseded by `can_write_site` · `READY_FOR_RETRY: false`
 
 ## CMS Core v2 Schedule TBD CREATE oneshot preflight query-builder fix (2026-08-05)
 

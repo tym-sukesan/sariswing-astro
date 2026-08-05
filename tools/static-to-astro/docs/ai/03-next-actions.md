@@ -1,13 +1,39 @@
-Last updated: 2026-08-04
+Last updated: 2026-08-06
 Project: Static-to-Astro CMS / Musician CMS Kit
 
 ## 0. Current next actions（直近）
 
 1. **Primary (Gosaki ops):** クライアントへ **staging 共有**（`CLIENT_SHARE_READY: true` · package `dc1c5b6…`）。本番 cutover はしない。
-2. **並行可 (Kit Core):** **Next Primary** `cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-execution-arm-gate`（auth-before-preflight fix COMPLETE · **READY_FOR_RETRY: false** until commit + 再承認 · process-scoped **exactly 9 keys** · `ACTUAL_WRITE_READY: false`）→ arm-gate PASS後 human Dry-run → Save once → **Ctrl+C** …
+2. **並行可 (Kit Core):** **Next Primary** `cms-core-v2-schedules-site-writer-rls-migration-execution`（site-owner authz COMPLETE · RLS template **unapplied** · **READY_FOR_MIGRATION_EXECUTION: false** until separate approval · then arm-gate / oneshot retry）· `ACTUAL_WRITE_READY: false` · `READY_FOR_RETRY: false`
 3. **並行可:** production hosting **read-only planning**（`HOSTING_READY: false`）。
 4. **並行可 / 別承認:** YouTube 複数件 **永続 Save**（NON_BLOCKING）。
 5. Save arm **false** · `readyForAnyFutureFtpApply: false` · production STOP · `service_role` 禁止 · **deployed package 固定**.
+
+## 0. CMS Core v2 Schedule site-owner authz + site-writer RLS template (2026-08-06)
+
+| Item | Value |
+| --- | --- |
+| Gate | `CMS_CORE_V2_SCHEDULE_SITE_OWNER_AUTHZ_IMPLEMENTATION_COMPLETE: true` |
+| Client | signed-in → `sites` resolve → `rpc('can_write_site', { p_site_id })` → preflight → INSERT |
+| Not used | legacy `is_admin` / `admin_users` as owner gate |
+| RLS | templates created · **not applied** |
+| Mapping | PASS · 79 / 74 / target 0 |
+| Retry | `READY_FOR_RETRY: false` |
+| Migration | `READY_FOR_MIGRATION_EXECUTION: false` |
+
+```txt
+CMS_CORE_V2_SCHEDULE_SITE_OWNER_AUTHZ_IMPLEMENTATION_COMPLETE: true
+SCHEDULE_SITE_MAPPING_SAFE: true
+SITE_WRITER_RLS_APPLIED: false
+READY_FOR_MIGRATION_EXECUTION: false
+READY_FOR_RETRY: false
+ACTUAL_WRITE_READY: false
+ACTUAL_WRITE_EXECUTED: false
+DB_WRITE_EXECUTED: false
+ARMS_OFF: true
+PRODUCTION_UNCHANGED: true
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+```
 
 ## 0. CMS Core v2 Schedule TBD CREATE oneshot auth-before-preflight fix (2026-08-05)
 
@@ -15,7 +41,7 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | --- | --- |
 | Gate | `CMS_CORE_V2_SCHEDULE_TBD_CREATE_ONESHOT_AUTH_BEFORE_PREFLIGHT_FIX_COMPLETE: true` |
 | Second click | `expected 79, got 74` (= published / public RLS) |
-| Fix | getAuth + `rpc('is_admin')` before preflight · same shared client |
+| Fix | getAuth before preflight · same shared client · (owner gate superseded by `can_write_site`) |
 | Retry | `READY_FOR_RETRY: false` |
 | Write | `ACTUAL_WRITE_READY: false` · DB write 0 |
 

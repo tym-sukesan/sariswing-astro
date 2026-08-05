@@ -3,8 +3,9 @@
 - **Phase:** `cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-implementation`
 - **Follow-up:** `cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-boundary-hardening`
 - **Follow-up (2026-08-05):** `cms-core-v2-schedule-tbd-create-oneshot-preflight-query-builder-fix` — `countTargetLegacyId` chain-before-await · preflight client errors → `failed` (not ambiguous) · INSERT未到達明示
-- **Date:** 2026-08-03 · preflight query-builder fix 2026-08-05
-- **Status:** **COMPLETE (implementation + boundary hardening + preflight query-builder fix + offline verifier)**
+- **Follow-up (2026-08-05):** `cms-core-v2-schedule-tbd-create-oneshot-auth-before-preflight-fix` — getAuth + `rpc('is_admin')` **before** preflight counts · same shared client for preflight+INSERT · second click `got 74` = public RLS · expected total **79** unchanged
+- **Date:** 2026-08-03 · preflight query-builder fix 2026-08-05 · auth-before-preflight 2026-08-05
+- **Status:** **COMPLETE (implementation + boundary hardening + preflight query-builder fix + auth-before-preflight + offline verifier)**
 - **This phase:** Path B CREATE-only oneshot wire · **low-level INSERT non-exported** · INSERT直前再guard · schema probe · arms OFF · no Save · no DB write · no Edge deploy · no env change · no commit/push
 
 Prior: `cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-planning.md`
@@ -17,6 +18,7 @@ Prior: `cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-planning.md`
 CMS_CORE_V2_SCHEDULE_TBD_DATE_SAVE_NON_DRY_RUN_STAGING_IMPLEMENTATION_COMPLETE: true
 CMS_CORE_V2_SCHEDULE_TBD_DATE_SAVE_NON_DRY_RUN_STAGING_BOUNDARY_HARDENING_COMPLETE: true
 CMS_CORE_V2_SCHEDULE_TBD_CREATE_ONESHOT_PREFLIGHT_QUERY_BUILDER_FIX_COMPLETE: true
+CMS_CORE_V2_SCHEDULE_TBD_CREATE_ONESHOT_AUTH_BEFORE_PREFLIGHT_FIX_COMPLETE: true
 IMPLEMENTATION_READY: true
 COMMIT_READY: true
 ACTUAL_WRITE_READY: false
@@ -41,6 +43,7 @@ EXECUTION_PREPARATION: cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-ex
 WRITE_STACK_GATE_CORRECTION: cms-core-v2-schedule-tbd-create-oneshot-write-stack-gate-correction (COMPLETE · oneshot-only proven)
 PROCESS_SCOPED_ENV_PACKET: cms-core-v2-schedule-tbd-create-oneshot-process-scoped-env-packet-correction (COMPLETE · `env … npm run dev` · no `.env.local` edit)
 PREFLIGHT_QUERY_BUILDER_FIX: cms-core-v2-schedule-tbd-create-oneshot-preflight-query-builder-fix (COMPLETE · offline · READY_FOR_RETRY false)
+AUTH_BEFORE_PREFLIGHT_FIX: cms-core-v2-schedule-tbd-create-oneshot-auth-before-preflight-fix (COMPLETE · offline · READY_FOR_RETRY false)
 ```
 
 **Staging only:** `kmjqppxjdnwwrtaeqjta`
@@ -63,6 +66,8 @@ PREFLIGHT_QUERY_BUILDER_FIX: cms-core-v2-schedule-tbd-create-oneshot-preflight-q
 **Boundary hardening:** low-level INSERT is `insertTbdCreateOneshotScheduleWriteInternal` (module-private). INSERT直前に staging ref / production 拒否 / dual arm / fixed payload を再確認。独立 `probeDateStatusColumn` schema probe。`deps.offline` preflight skip **削除**（runtime skip 不可）。
 
 **Preflight query-builder fix (2026-08-05):** `countTargetLegacyId` は `.eq().eq()` chain 後に **1回だけ** await。INSERT 前の preflight client 例外は `terminal=failed` / `preflight_client_failed`（「INSERTは実行されていません」）· INSERT 発行後のみ `ambiguous`。人間ワンショット失敗記録: exact SELECT `NOT_INSERTED` · total 79 · target 0 · cleanup 不要 · `READY_FOR_RETRY=false`。Doc: `cms-core-v2-schedule-tbd-create-oneshot-preflight-query-builder-fix.md`。
+
+**Auth-before-preflight fix (2026-08-05):** second single-click failed with `expected 79, got 74` (= published / `schedules_public_select`). Fix: `getAuth` + `rpc('is_admin')` **before** preflight counts · same `getStagingSupabaseClient` singleton for probe/preflight/INSERT · expected total stays **79**. Doc: `cms-core-v2-schedule-tbd-create-oneshot-auth-before-preflight-fix.md`.
 
 - Uses `buildScheduleTbdSavePayload` · `mode=tbd-v1` · `operation=create` · `dryRun` write path via `tbdWriteEnabled`
 - No `buildScheduleLockedWriteRequest` / UPDATE

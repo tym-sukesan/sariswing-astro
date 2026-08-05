@@ -95,6 +95,12 @@ assert(
     /NOT_INSERTED/.test(doc),
 );
 assert(
+  "auth-before-preflight fix recorded",
+  /cms-core-v2-schedule-tbd-create-oneshot-auth-before-preflight-fix/.test(doc) &&
+    /got 74/.test(doc) &&
+    /is_admin/.test(save),
+);
+assert(
   "save chains target legacy filters before await",
   /\.eq\(\s*"site_slug"[\s\S]*?\.eq\(\s*"legacy_id"/.test(save) &&
     !/const step1 = await/.test(save) &&

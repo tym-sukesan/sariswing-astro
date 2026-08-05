@@ -10,6 +10,7 @@
 - **Process-scoped packet:** `cms-core-v2-schedule-tbd-create-oneshot-process-scoped-env-packet-correction` · **Auth packet:** `cms-core-v2-schedule-tbd-create-oneshot-process-scoped-auth-packet-correction` — **forbid** writing the 9 keys into shared root `.env.local`
 - **Auth note:** write **7 keys alone** arm write config but leave Auth **mock** → real login **impossible** · execution needs **exactly 9 keys**
 - **Preflight query-builder fix (2026-08-05):** `cms-core-v2-schedule-tbd-create-oneshot-preflight-query-builder-fix` — human oneshot click stopped at preflight (`NOT_INSERTED` · total 79 · target 0) · root cause intermediate `.eq()` await · **INSERT 未到達** · cleanup 不要 · **READY_FOR_RETRY: false** until fix committed + new arm-gate
+- **Auth-before-preflight fix (2026-08-05):** `cms-core-v2-schedule-tbd-create-oneshot-auth-before-preflight-fix` — second click `expected 79, got 74` (= published / public RLS) · auth+`is_admin` before counts · **READY_FOR_RETRY: false**
 - **Staging:** `kmjqppxjdnwwrtaeqjta`
 - **Production STOP:** `vsbvndwuajjhnzpohghh`
 
@@ -26,6 +27,7 @@ CMS_CORE_V2_SCHEDULE_TBD_CREATE_ONESHOT_WRITE_STACK_GATE_CORRECTION_COMPLETE: tr
 CMS_CORE_V2_SCHEDULE_TBD_CREATE_ONESHOT_PROCESS_SCOPED_ENV_PACKET_CORRECTION_COMPLETE: true
 CMS_CORE_V2_SCHEDULE_TBD_CREATE_ONESHOT_PROCESS_SCOPED_AUTH_PACKET_CORRECTION_COMPLETE: true
 CMS_CORE_V2_SCHEDULE_TBD_CREATE_ONESHOT_PREFLIGHT_QUERY_BUILDER_FIX_COMPLETE: true
+CMS_CORE_V2_SCHEDULE_TBD_CREATE_ONESHOT_AUTH_BEFORE_PREFLIGHT_FIX_COMPLETE: true
 IMPLEMENTATION_READY: true
 PREFLIGHT_PASS: true
 PREFLIGHT_ANON_SUBSET_PASS: true
@@ -51,6 +53,8 @@ NEXT_PRIMARY_RECOMMENDED: cms-core-v2-schedule-tbd-date-save-non-dry-run-staging
 **SQL Editor PASS (operator, staging only):** `observed_at=2026-08-03 15:51:19.118619+00` · `preflight_pass=true` · `stop_reasons=''` · counts/schema/CHECK/trigger/RLS/fingerprints all match · see §5.3.
 
 **Human oneshot click failure (2026-08-05):** runtime preflight unknown → diagnosed as `countTargetLegacyId` intermediate await · exact SELECT `NOT_INSERTED` · total=79 · published=74 · gosaki=79 · mio=0 · tbd=0 · target=0 · contract violations=0 · **INSERT 未到達** · cleanup 不要 · fixed legacy_id / approval / payload **unchanged** · **READY_FOR_RETRY: false**. See `cms-core-v2-schedule-tbd-create-oneshot-preflight-query-builder-fix.md`.
+
+**Second single-click (2026-08-05):** runtime preflight **failed** · `total schedules drift (expected 79, got 74)` · 74 = published / `schedules_public_select` · cause = auth before preflight missing · exact SELECT `NOT_INSERTED` · baseline 79/74/0/0 · cleanup 不要 · **READY_FOR_RETRY: false**. See `cms-core-v2-schedule-tbd-create-oneshot-auth-before-preflight-fix.md`.
 
 **ACTUAL_WRITE_READY false** until human arm-gate re-pass with **process-scoped** `env … npm run dev` (never edit shared root `.env.local` for the **9 keys**). Packet definition ready (`EXECUTION_PACKET_READY: true` · Auth + oneshot-only proven offline).
 

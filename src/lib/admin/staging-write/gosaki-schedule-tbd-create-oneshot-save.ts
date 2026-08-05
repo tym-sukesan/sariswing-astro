@@ -127,7 +127,26 @@ export type TbdCreateOneshotSaveDeps = {
   insertClient?: InternalInsertClient;
   preflightClient?: TbdCreateOneshotPreflightClient;
   getAuth?: typeof getStagingAuthSessionDetails;
+  /**
+   * Test-only override for `rpc('is_admin')`.
+   * Default probes the same staging singleton client (no service_role).
+   */
+  probeIsAdmin?: (client: unknown) => Promise<boolean>;
 };
+
+type StagingRpcClient = {
+  rpc: (
+    fn: "is_admin",
+  ) => Promise<{ data: unknown; error: { message: string } | null }>;
+};
+
+async function probeIsAdminViaRpc(client: unknown): Promise<boolean> {
+  const { data, error } = await (client as StagingRpcClient).rpc("is_admin");
+  if (error) {
+    throw new Error(error.message || "is_admin RPC failed");
+  }
+  return data === true;
+}
 
 const NO_ROLLBACK_HINT = "No rollback required because actualWrite is false.";
 const INSERT_SUCCESS_ROLLBACK_HINT =
@@ -298,19 +317,18 @@ type PreflightFilterBuilder = {
   eq: (column: string, value: string) => PreflightFilterBuilder;
 } & PromiseLike<PreflightCountResult>;
 
-async function defaultPreflightClient(options: {
-  url: string;
-  anonKey: string;
-}): Promise<TbdCreateOneshotPreflightClient> {
-  const client = getStagingSupabaseClient(options.url, options.anonKey) as unknown as {
-    from: (table: "schedules") => {
-      select: (
-        columns: string,
-        opts?: { count?: "exact"; head?: boolean },
-      ) => PreflightFilterBuilder;
-    };
+type PreflightSupabaseClient = {
+  from: (table: "schedules") => {
+    select: (
+      columns: string,
+      opts?: { count?: "exact"; head?: boolean },
+    ) => PreflightFilterBuilder;
   };
+};
 
+async function buildPreflightClientFromShared(
+  client: PreflightSupabaseClient,
+): Promise<TbdCreateOneshotPreflightClient> {
   async function countAll(): Promise<number> {
     const { count, error } = await client
       .from("schedules")
@@ -472,10 +490,75 @@ export async function executeTbdCreateOneshotSave(options: {
     };
   }
 
+  // Auth/session + owner/admin BEFORE any preflight count (avoids anon/public 74 visibility).
+  const getAuth = options.deps?.getAuth ?? getStagingAuthSessionDetails;
+  const auth = await getAuth(options.url, options.anonKey);
+  const mockRole = formatMockRoleDisplay(auth);
+  const authStatus = auth.session.status;
+  const authWarnings = collectScheduleNonDryRunPocAuthWarnings(auth);
+
+  if (!isSignedInStagingAuth(auth)) {
+    oneshotTerminalState = "failed";
+    return {
+      ...base,
+      terminalState: oneshotTerminalState,
+      ambiguous: false,
+      warnings: authWarnings,
+      errorCode: "auth_session_missing",
+      errorMessage: `Sign in as staging admin before Save. ${TBD_CREATE_ONESHOT_PREFLIGHT_INSERT_NOT_STARTED_MESSAGE}。`,
+      authStatus,
+      mockRole,
+      guardReasons: ["signed-in required"],
+      networkCalls: oneshotNetworkCalls,
+    };
+  }
+
+  // Same singleton for auth probe · preflight · INSERT (no service_role).
+  const sharedClient = getStagingSupabaseClient(options.url, options.anonKey);
+  const probeIsAdmin = options.deps?.probeIsAdmin ?? probeIsAdminViaRpc;
+  let isAdmin = false;
+  try {
+    isAdmin = await probeIsAdmin(sharedClient);
+  } catch (err) {
+    oneshotTerminalState = "failed";
+    const detail = err instanceof Error ? err.message : String(err);
+    return {
+      ...base,
+      terminalState: oneshotTerminalState,
+      ambiguous: false,
+      warnings: authWarnings,
+      errorCode: "auth_admin_probe_failed",
+      errorMessage: `owner/admin 確認に失敗しました。${TBD_CREATE_ONESHOT_PREFLIGHT_INSERT_NOT_STARTED_MESSAGE}。詳細: ${detail}`,
+      authStatus,
+      mockRole,
+      authEmail: auth.rawEmail,
+      guardReasons: [detail],
+      networkCalls: oneshotNetworkCalls,
+    };
+  }
+  if (!isAdmin) {
+    oneshotTerminalState = "failed";
+    return {
+      ...base,
+      terminalState: oneshotTerminalState,
+      ambiguous: false,
+      warnings: authWarnings,
+      errorCode: "auth_admin_required",
+      errorMessage: `owner/admin（is_admin）権限が必要です。${TBD_CREATE_ONESHOT_PREFLIGHT_INSERT_NOT_STARTED_MESSAGE}。`,
+      authStatus,
+      mockRole,
+      authEmail: auth.rawEmail,
+      guardReasons: ["is_admin required"],
+      networkCalls: oneshotNetworkCalls,
+    };
+  }
+
   // Preflight is mandatory — never skipped (no offline bypass flag).
   const preflightClient =
     options.deps?.preflightClient ??
-    (await defaultPreflightClient({ url: options.url, anonKey: options.anonKey }));
+    (await buildPreflightClientFromShared(
+      sharedClient as unknown as PreflightSupabaseClient,
+    ));
 
   try {
     const schemaProbe = await preflightClient.probeDateStatusColumn();
@@ -485,6 +568,10 @@ export async function executeTbdCreateOneshotSave(options: {
         ...base,
         terminalState: oneshotTerminalState,
         ambiguous: false,
+        warnings: authWarnings,
+        authEmail: auth.rawEmail,
+        authStatus,
+        mockRole,
         guardReasons: [
           schemaProbe.errorMessage ?? "date_status column schema probe failed",
         ],
@@ -508,6 +595,10 @@ export async function executeTbdCreateOneshotSave(options: {
         ...base,
         terminalState: oneshotTerminalState,
         ambiguous: false,
+        warnings: authWarnings,
+        authEmail: auth.rawEmail,
+        authStatus,
+        mockRole,
         guardReasons: evaluated.failures,
         errorCode: "preflight_drift",
         errorMessage: evaluated.failures.join("; "),
@@ -522,6 +613,10 @@ export async function executeTbdCreateOneshotSave(options: {
       ...base,
       terminalState: oneshotTerminalState,
       ambiguous: false,
+      warnings: authWarnings,
+      authEmail: auth.rawEmail,
+      authStatus,
+      mockRole,
       guardReasons: [detail],
       errorCode: "preflight_client_failed",
       errorMessage: `Preflight SELECT に失敗しました。${TBD_CREATE_ONESHOT_PREFLIGHT_INSERT_NOT_STARTED_MESSAGE}。再実行禁止。詳細: ${detail}`,
@@ -529,34 +624,9 @@ export async function executeTbdCreateOneshotSave(options: {
     };
   }
 
-  const getAuth = options.deps?.getAuth ?? getStagingAuthSessionDetails;
-  const auth = await getAuth(options.url, options.anonKey);
-  const mockRole = formatMockRoleDisplay(auth);
-  const authStatus = auth.session.status;
-  const authWarnings = collectScheduleNonDryRunPocAuthWarnings(auth);
-
-  if (!isSignedInStagingAuth(auth)) {
-    oneshotTerminalState = "failed";
-    return {
-      ...base,
-      terminalState: oneshotTerminalState,
-      ambiguous: false,
-      warnings: authWarnings,
-      errorCode: "auth_session_missing",
-      errorMessage: "Sign in as staging admin before Save.",
-      authStatus,
-      mockRole,
-      guardReasons: ["signed-in required"],
-      networkCalls: oneshotNetworkCalls,
-    };
-  }
-
   const insertClient =
     options.deps?.insertClient ??
-    (getStagingSupabaseClient(
-      options.url,
-      options.anonKey,
-    ) as unknown as InternalInsertClient);
+    (sharedClient as unknown as InternalInsertClient);
 
   // Exactly one INSERT attempt after successful preflight.
   oneshotNetworkCalls += 1;

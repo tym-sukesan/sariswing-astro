@@ -5,21 +5,26 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: CMS Core v2 Schedule TBD CREATE oneshot preflight query-builder fix COMPLETE
-Phase: cms-core-v2-schedule-tbd-create-oneshot-preflight-query-builder-fix
-Decision: countTargetLegacyId chain-before-await · INSERT前 failed/preflight_client_failed · INSERT後のみ ambiguous · offline only · no arm/Save/SQL
+Current phase: CMS Core v2 Schedule TBD CREATE oneshot auth-before-preflight fix COMPLETE
+Phase: cms-core-v2-schedule-tbd-create-oneshot-auth-before-preflight-fix
+Decision: getAuth + rpc('is_admin') before preflight · same shared client · expected total 79 · offline only · no arm/Save/SQL
 READY_FOR_RETRY: false
 ACTUAL_WRITE_READY: false
 ACTUAL_WRITE_EXECUTED: false
 ARMS_OFF: true · DB_WRITE_EXECUTED: false
 Next Primary: cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-execution-arm-gate (human · exactly 9 keys · after commit + re-approval)
-Prior: oneshot click failure NOT_INSERTED · Admin UI safety hardening · Auth packet
+Prior: second click got 74 · query-builder fix · Admin UI safety hardening
 Gosaki CLIENT_SHARE_READY: true (maintained)
 seedAppliedStaging: true
 readyForOperatorAboutSeedApply: false
 readyForAnyFutureFtpApply: false
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
 ```
+
+## CMS Core v2 Schedule TBD CREATE oneshot auth-before-preflight fix (2026-08-05)
+
+- Second CREATE click → `expected 79, got 74` (published / public RLS) · INSERT 未実行 · NOT_INSERTED
+- Fix: session + `is_admin` before preflight counts · shared `getStagingSupabaseClient` · `READY_FOR_RETRY: false`
 
 ## CMS Core v2 Schedule TBD CREATE oneshot preflight query-builder fix (2026-08-05)
 

@@ -113,6 +113,10 @@ assert(
     doc,
   ),
 );
+assert(
+  "auth-before-preflight fix noted",
+  /auth-before-preflight|is_admin|got 74|READY_FOR_RETRY:\s*false/.test(doc),
+);
 assert("ACTUAL_WRITE_EXECUTED false", /ACTUAL_WRITE_EXECUTED:\s*false/.test(doc));
 assert("arms OFF", /arms?\s*OFF|ARMS_OFF:\s*true/i.test(doc));
 assert("env unchanged", /ENV_CHANGED:\s*false|env unchanged/i.test(doc));
@@ -223,6 +227,37 @@ assert(
   "INSERT未実行 message",
   /INSERTは実行されていません/.test(save),
 );
+assert("is_admin RPC probe", /rpc\("is_admin"\)|rpc\('is_admin'\)/.test(save));
+assert("auth_admin_required", /auth_admin_required/.test(save));
+assert(
+  "auth before preflight counts",
+  (() => {
+    const exec = save.match(
+      /export async function executeTbdCreateOneshotSave[\s\S]*$/,
+    )?.[0] ?? "";
+    const getAuthAt = exec.search(/const getAuth\s*=/);
+    const probeAt = exec.search(/probeIsAdmin|probeIsAdminViaRpc/);
+    const countAt = exec.search(/countTotal:\s*await preflightClient\.countTotal|await preflightClient\.countTotal/);
+    const buildPfAt = exec.search(/buildPreflightClientFromShared|deps\?\.preflightClient/);
+    return (
+      getAuthAt >= 0 &&
+      probeAt >= 0 &&
+      countAt >= 0 &&
+      buildPfAt >= 0 &&
+      getAuthAt < probeAt &&
+      probeAt < countAt &&
+      getAuthAt < buildPfAt
+    );
+  })(),
+);
+assert(
+  "same sharedClient for preflight and INSERT",
+  /const sharedClient = getStagingSupabaseClient/.test(save) &&
+    /buildPreflightClientFromShared\(\s*sharedClient/.test(save) &&
+    /insertClient \?\?[\s\S]{0,80}sharedClient/.test(save),
+);
+assert("expected total remains 79", /totalSchedules:\s*79/.test(guards));
+assert("expected total not lowered to 74", !/totalSchedules:\s*74/.test(guards));
 
 {
   const targetMatch = save.match(
@@ -438,15 +473,22 @@ function makeAuth(signedIn) {
 }
 
 function makePreflight(opts = {}) {
+  const tracker = opts.tracker ?? { queries: 0 };
+  const wrap = (fn) => async (...args) => {
+    tracker.queries += 1;
+    return fn(...args);
+  };
   return {
-    countTotal: async () => opts.total ?? 79,
-    countMio: async () => opts.mio ?? 0,
-    countTbd: async () => opts.tbd ?? 0,
-    countTargetLegacyId: async () => opts.legacy ?? 0,
-    probeDateStatusColumn: async () =>
+    tracker,
+    countTotal: wrap(async () => opts.total ?? 79),
+    countMio: wrap(async () => opts.mio ?? 0),
+    countTbd: wrap(async () => opts.tbd ?? 0),
+    countTargetLegacyId: wrap(async () => opts.legacy ?? 0),
+    probeDateStatusColumn: wrap(async () =>
       opts.schemaOk === false
         ? { ok: false, errorMessage: "date_status missing" }
         : { ok: true },
+    ),
   };
 }
 
@@ -484,6 +526,7 @@ function makeInsertClient(tracker) {
 async function runCase(label, setup) {
   resetTbdCreateOneshotTerminalStateForTests();
   const tracker = { calls: 0, mode: "ok", lastPayload: null };
+  const preflight = setup.preflight ?? makePreflight();
   const outcome = await executeTbdCreateOneshotSave({
     url: setup.url ?? STAGING_URL,
     anonKey: "anon-test",
@@ -493,12 +536,20 @@ async function runCase(label, setup) {
     env: setup.env ?? armedEnv(),
     configOptions: { serverArmOkFromSsr: setup.serverArmOkFromSsr !== false },
     deps: {
-      preflightClient: setup.preflight ?? makePreflight(),
+      preflightClient: preflight,
       insertClient: setup.insertClient ?? makeInsertClient(tracker),
       getAuth: setup.getAuth ?? makeAuth(setup.signedIn !== false),
+      probeIsAdmin:
+        setup.probeIsAdmin ??
+        (async () => (setup.isAdmin === false ? false : true)),
     },
   });
-  return { outcome, tracker, calls: getTbdCreateOneshotNetworkCallCountForTests() };
+  return {
+    outcome,
+    tracker,
+    preflight,
+    calls: getTbdCreateOneshotNetworkCallCountForTests(),
+  };
 }
 
 {
@@ -709,6 +760,7 @@ async function runCase(label, setup) {
       preflightClient: makePreflight(),
       insertClient: makeInsertClient({ calls: 0, mode: "ok", lastPayload: null }),
       getAuth: makeAuth(true),
+      probeIsAdmin: async () => true,
     },
   });
   assert(
@@ -743,13 +795,85 @@ async function runCase(label, setup) {
 }
 
 {
-  const { outcome, tracker } = await runCase("unsigned", { signedIn: false });
+  const pf = makePreflight({ total: 74 });
+  const { outcome, tracker } = await runCase("public visibility without admin", {
+    preflight: pf,
+    isAdmin: false,
+  });
   assert(
-    "unsigned actor → INSERT 0",
+    "public visibility 74 blocked before counts when non-admin",
     outcome.ok === false &&
       tracker.calls === 0 &&
-      outcome.errorCode === "auth_session_missing",
-    outcome.errorMessage,
+      (pf.tracker?.queries ?? 0) === 0 &&
+      outcome.errorCode === "auth_admin_required" &&
+      /INSERTは実行されていません/.test(outcome.errorMessage || "") &&
+      !/totalSchedules:\s*74/.test(guards),
+    JSON.stringify({
+      code: outcome.errorCode,
+      queries: pf.tracker?.queries,
+      msg: outcome.errorMessage,
+    }),
+  );
+}
+
+{
+  const pf = makePreflight();
+  const { outcome, tracker } = await runCase("unsigned", {
+    signedIn: false,
+    preflight: pf,
+  });
+  assert(
+    "unsigned actor → preflight 0 · INSERT 0",
+    outcome.ok === false &&
+      tracker.calls === 0 &&
+      (pf.tracker?.queries ?? 0) === 0 &&
+      outcome.errorCode === "auth_session_missing" &&
+      outcome.ambiguous !== true &&
+      getTbdCreateOneshotTerminalState() === "failed" &&
+      /INSERTは実行されていません/.test(outcome.errorMessage || ""),
+    JSON.stringify({
+      code: outcome.errorCode,
+      queries: pf.tracker?.queries,
+      msg: outcome.errorMessage,
+    }),
+  );
+}
+
+{
+  const pf = makePreflight();
+  const { outcome, tracker } = await runCase("signed-in non-admin", {
+    signedIn: true,
+    isAdmin: false,
+    preflight: pf,
+  });
+  assert(
+    "signed-in non-admin → preflight 0 · INSERT 0",
+    outcome.ok === false &&
+      tracker.calls === 0 &&
+      (pf.tracker?.queries ?? 0) === 0 &&
+      outcome.errorCode === "auth_admin_required" &&
+      getTbdCreateOneshotTerminalState() === "failed",
+    JSON.stringify({ code: outcome.errorCode, queries: pf.tracker?.queries }),
+  );
+}
+
+{
+  const pf = makePreflight({ total: 79, legacy: 0 });
+  const { outcome, tracker } = await runCase("owner session happy", {
+    preflight: pf,
+    isAdmin: true,
+  });
+  assert(
+    "owner session → authenticated visibility 79 · INSERT max 1",
+    outcome.ok === true &&
+      tracker.calls === 1 &&
+      (pf.tracker?.queries ?? 0) >= 1 &&
+      outcome.networkCalls === 1,
+    JSON.stringify({
+      ok: outcome.ok,
+      calls: tracker.calls,
+      queries: pf.tracker?.queries,
+    }),
   );
 }
 
@@ -778,6 +902,7 @@ async function runCase(label, setup) {
       preflightClient: makePreflight(),
       insertClient: makeInsertClient(tracker),
       getAuth: makeAuth(true),
+      probeIsAdmin: async () => true,
     },
   });
   assert(
@@ -799,6 +924,7 @@ async function runCase(label, setup) {
       preflightClient: makePreflight(),
       insertClient: makeInsertClient(tracker),
       getAuth: makeAuth(true),
+      probeIsAdmin: async () => true,
     },
   });
   assert(

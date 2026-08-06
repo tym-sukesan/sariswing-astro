@@ -77,12 +77,25 @@ assert(
 assert("OWNER_ADMIN_DISTINCT true", /OWNER_ADMIN_DISTINCT:\s*true/.test(doc));
 assert("SCHEDULE_SITE_MAPPING_SAFE true", /SCHEDULE_SITE_MAPPING_SAFE:\s*true/.test(doc));
 assert("SITE_WRITER_RLS_TEMPLATE_CREATED true", /SITE_WRITER_RLS_TEMPLATE_CREATED:\s*true/.test(doc));
-assert("SITE_WRITER_RLS_APPLIED false", /SITE_WRITER_RLS_APPLIED:\s*false/.test(doc));
-assert("READY_FOR_MIGRATION_EXECUTION false", /READY_FOR_MIGRATION_EXECUTION:\s*false/.test(doc));
+assert("SITE_WRITER_RLS_APPLIED true", /SITE_WRITER_RLS_APPLIED:\s*true/.test(doc));
+assert(
+  "current RLS fingerprint",
+  /CURRENT_STAGING_SCHEDULES_RLS_FINGERPRINT:\s*3f6c87dda8edf44159d939ec69fbcc2b/.test(doc),
+);
+assert(
+  "historical pre-apply RLS fingerprint retained",
+  /PRE_SITE_WRITER_RLS_FINGERPRINT_HISTORICAL:\s*e7344ff0de1d5e2862965ffc0e4e72cf/.test(doc),
+);
+assert("POLICY_COUNT 4", /POLICY_COUNT:\s*4/.test(doc));
+assert("OWNER_VISIBILITY_PASS true", /OWNER_VISIBILITY_PASS:\s*true/.test(doc));
+assert("ANON_VISIBILITY_PASS true", /ANON_VISIBILITY_PASS:\s*true/.test(doc));
+assert("CAN_WRITE_SITE_PASS true", /CAN_WRITE_SITE_PASS:\s*true/.test(doc));
 assert("READY_FOR_RETRY false", /READY_FOR_RETRY:\s*false/.test(doc));
+assert("SCHEDULE_ROW_WRITE_EXECUTED false", /SCHEDULE_ROW_WRITE_EXECUTED:\s*false/.test(doc));
 assert("DB_WRITE_EXECUTED false", /DB_WRITE_EXECUTED:\s*false/.test(doc));
 assert("baseline 79/74", /total\s*\*\*79\*\*/.test(doc) && /published\s*\*\*74\*\*/.test(doc));
 assert("owner ≠ legacy admin", /owner ≠ legacy|Owner ≠ legacy|do not conflate|OWNER_ADMIN_DISTINCT/i.test(doc));
+assert("apply result doc referenced", /cms-core-v2-schedules-site-writer-rls-apply-result/.test(doc));
 
 assert(
   "save can_write_site RPC",
@@ -135,9 +148,11 @@ assert(
   /SITE_OWNER_AUTHZ|can_write_site|site-scoped/i.test(implDoc),
 );
 assert(
-  "final-preflight records site owner authz",
+  "final-preflight records site owner authz + applied RLS",
   /can_write_site|site owner|SITE_OWNER/i.test(finalDoc) &&
-    /READY_FOR_MIGRATION_EXECUTION:\s*false/.test(finalDoc),
+    /SITE_WRITER_RLS_APPLIED:\s*true/.test(finalDoc) &&
+    /3f6c87dda8edf44159d939ec69fbcc2b/.test(finalDoc) &&
+    /READY_FOR_RETRY:\s*false/.test(finalDoc),
 );
 
 assert(

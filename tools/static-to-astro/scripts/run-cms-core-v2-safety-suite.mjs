@@ -156,6 +156,11 @@ const STEPS = [
     script: "verify-cms-core-v2-schedule-site-owner-authz-rls-implementation.mjs",
   },
   {
+    id: "schedules-site-writer-rls-apply-result",
+    kind: "node",
+    script: "verify-cms-core-v2-schedules-site-writer-rls-apply-result.mjs",
+  },
+  {
     id: "schedule-tbd-create-oneshot-write-stack-gate-correction",
     kind: "node",
     script: "verify-cms-core-v2-schedule-tbd-create-oneshot-write-stack-gate-correction.mjs",

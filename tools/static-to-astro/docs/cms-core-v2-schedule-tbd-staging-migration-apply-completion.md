@@ -60,6 +60,8 @@
 | trigger | `2e9899f09421456307b3c96402574106` |
 | RLS | `e7344ff0de1d5e2862965ffc0e4e72cf` |
 
+> **Historical note (2026-08-06):** This RLS fingerprint is the **pre site-writer** baseline (policies: `schedules_public_select` + `schedules_admin_all` only). After staging apply of `schedules_site_writer_select` / `_insert`, the **current** staging RLS fingerprint is `3f6c87dda8edf44159d939ec69fbcc2b` — see `cms-core-v2-schedules-site-writer-rls-apply-result.md`. Keep this historical value for TBD-migration history and rollback-to-2-policy expectations; do not rewrite.
+
 ---
 
 ## 4. Block A / B / C summary

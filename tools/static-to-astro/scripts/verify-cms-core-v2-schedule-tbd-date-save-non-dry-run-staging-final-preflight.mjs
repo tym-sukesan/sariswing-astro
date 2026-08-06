@@ -112,6 +112,14 @@ assert(
     /READY_FOR_RETRY:\s*false/.test(doc),
 );
 assert(
+  "site-writer RLS apply recorded",
+  /cms-core-v2-schedules-site-writer-rls-apply-result/.test(doc) &&
+    /SITE_WRITER_RLS_APPLIED:\s*true/.test(doc) &&
+    /3f6c87dda8edf44159d939ec69fbcc2b/.test(doc) &&
+    /e7344ff0de1d5e2862965ffc0e4e72cf/.test(doc) &&
+    /POLICY_COUNT:\s*4/.test(doc),
+);
+assert(
   "save chains target legacy filters before await",
   /\.eq\(\s*"site_slug"[\s\S]*?\.eq\(\s*"legacy_id"/.test(save) &&
     !/const step1 = await/.test(save) &&

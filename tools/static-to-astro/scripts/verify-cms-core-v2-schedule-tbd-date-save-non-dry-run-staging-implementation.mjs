@@ -121,6 +121,12 @@ assert(
   "site-scoped can_write_site gate noted",
   /can_write_site|site-scoped|site owner|SITE_OWNER_AUTHZ/i.test(doc),
 );
+assert(
+  "site-writer RLS applied recorded",
+  /SITE_WRITER_RLS_APPLIED:\s*true/.test(doc) &&
+    /3f6c87dda8edf44159d939ec69fbcc2b/.test(doc) &&
+    /e7344ff0de1d5e2862965ffc0e4e72cf/.test(doc),
+);
 assert("ACTUAL_WRITE_EXECUTED false", /ACTUAL_WRITE_EXECUTED:\s*false/.test(doc));
 assert("arms OFF", /arms?\s*OFF|ARMS_OFF:\s*true/i.test(doc));
 assert("env unchanged", /ENV_CHANGED:\s*false|env unchanged/i.test(doc));

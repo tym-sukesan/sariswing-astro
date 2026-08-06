@@ -5,16 +5,16 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: CMS Core v2 Schedule site-owner authz + site-writer RLS template COMPLETE (offline)
-Phase: cms-core-v2-schedule-site-owner-authz-implementation-and-migration-template
-Decision: oneshot gate = sites resolve + can_write_site(p_site_id) · not legacy is_admin · RLS templates created unapplied · expected total 79
+Current phase: CMS Core v2 schedules site-writer RLS staging apply result RECORDED
+Phase: cms-core-v2-schedules-site-writer-rls-apply-result-recording
+Decision: staging RLS +2 writer policies applied · owner 79 / anon 74 / can_write_site true · current RLS fp 3f6c87dda8edf44159d939ec69fbcc2b · historical pre-apply e7344ff0de1d5e2862965ffc0e4e72cf · Schedule row write 0
 READY_FOR_RETRY: false
-READY_FOR_MIGRATION_EXECUTION: false
+SITE_WRITER_RLS_APPLIED: true
 ACTUAL_WRITE_READY: false
 ACTUAL_WRITE_EXECUTED: false
 ARMS_OFF: true · DB_WRITE_EXECUTED: false
-Next Primary: cms-core-v2-schedules-site-writer-rls-migration-execution (separate approval)
-Prior: owner authz model audit · is_admin gate incompatible with site owner · mapping PASS 79/74
+Next Primary: cms-core-v2-schedule-tbd-create-oneshot-retry-readiness-gate (after docs commit)
+Prior: site-owner authz template · apply readiness · human apply SUCCESS 2026-08-06 01:28:23.744153+00
 Gosaki CLIENT_SHARE_READY: true (maintained)
 seedAppliedStaging: true
 readyForOperatorAboutSeedApply: false
@@ -22,11 +22,18 @@ readyForAnyFutureFtpApply: false
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
 ```
 
+## CMS Core v2 schedules site-writer RLS staging apply result (2026-08-06)
+
+- Applied: `schedules_site_writer_select` + `schedules_site_writer_insert` · policy count **4** · data 79/74 unchanged
+- Live JWT: owner **79** · anon **74** · `can_write_site=true` · `post_live_probe_pass=true`
+- Current RLS fp: `3f6c87dda8edf44159d939ec69fbcc2b` · historical: `e7344ff0de1d5e2862965ffc0e4e72cf`
+- `READY_FOR_RETRY: false` · Doc: `cms-core-v2-schedules-site-writer-rls-apply-result.md`
+
 ## CMS Core v2 Schedule site-owner authz + site-writer RLS template (2026-08-06)
 
 - Owner ≠ legacy admin · gate = `rpc('can_write_site', { p_site_id })` after `sites` resolve for `gosaki-piano`
-- Templates: `cms-core-v2-schedules-site-writer-rls.template.sql` (+ rollback) · **not applied**
-- `READY_FOR_RETRY: false` · `READY_FOR_MIGRATION_EXECUTION: false` · Doc: `cms-core-v2-schedule-site-owner-authz-rls-implementation.md`
+- Templates applied on staging (see apply-result above)
+- `READY_FOR_RETRY: false` · Doc: `cms-core-v2-schedule-site-owner-authz-rls-implementation.md`
 
 ## CMS Core v2 Schedule TBD CREATE oneshot auth-before-preflight fix (2026-08-05)
 

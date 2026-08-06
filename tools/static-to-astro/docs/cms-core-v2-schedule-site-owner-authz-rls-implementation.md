@@ -1,10 +1,11 @@
 # CMS Core v2 — Schedule site-owner authz + site-writer RLS template
 
 - **Phase:** `cms-core-v2-schedule-site-owner-authz-implementation-and-migration-template`
+- **Follow-up:** `cms-core-v2-schedules-site-writer-rls-apply-result-recording` (staging apply recorded 2026-08-06)
 - **Date:** 2026-08-06
-- **Status:** **COMPLETE (offline · repo only)**
-- **HEAD baseline:** `b75cc41f0950e0ec33729935b41e16e71079131e`
-- **This phase:** client gate → `can_write_site` · staging RLS migration **templates created · not applied** · offline verifiers · **no** SQL/apply/Save/arm/DB write/process/commit
+- **Status:** **COMPLETE (offline template + client gate)** · staging RLS **applied** (see apply-result doc)
+- **HEAD baseline (template commit):** `b75cc41…` · **apply HEAD:** `3e5bc88f63f498bf9e673cea4e9985424947c747`
+- **This phase (historical):** client gate → `can_write_site` · staging RLS migration templates · offline verifiers
 
 ---
 
@@ -12,11 +13,22 @@
 
 ```txt
 CMS_CORE_V2_SCHEDULE_SITE_OWNER_AUTHZ_IMPLEMENTATION_COMPLETE: true
+CMS_CORE_V2_SCHEDULES_SITE_WRITER_RLS_APPLY_RESULT_RECORDED: true
 OWNER_ADMIN_DISTINCT: true
 SCHEDULE_SITE_MAPPING_SAFE: true
 SITE_WRITER_RLS_TEMPLATE_CREATED: true
-SITE_WRITER_RLS_APPLIED: false
+SITE_WRITER_RLS_APPLIED: true
+RLS_MIGRATION_EXECUTED: true
+RLS_POSTCHECK_PASS: true
+OWNER_VISIBILITY_PASS: true
+ANON_VISIBILITY_PASS: true
+CAN_WRITE_SITE_PASS: true
+CURRENT_STAGING_SCHEDULES_RLS_FINGERPRINT: 3f6c87dda8edf44159d939ec69fbcc2b
+PRE_SITE_WRITER_RLS_FINGERPRINT_HISTORICAL: e7344ff0de1d5e2862965ffc0e4e72cf
+POLICY_COUNT: 4
 READY_FOR_MIGRATION_EXECUTION: false
+SCHEDULE_ROW_WRITE_EXECUTED: false
+TARGET_ROW_EXISTS: false
 READY_FOR_RETRY: false
 ACTUAL_WRITE_READY: false
 ACTUAL_WRITE_EXECUTED: false
@@ -26,10 +38,12 @@ ENV_CHANGED: false
 PRODUCTION_UNCHANGED: true
 COMMIT_READY: true
 READY_FOR_ANY_FUTURE_FTP_APPLY: false
-NEXT: cms-core-v2-schedules-site-writer-rls-migration-execution (separate explicit approval)
+NEXT: cms-core-v2-schedule-tbd-create-oneshot-retry-readiness-gate (after apply-result docs commit)
 ```
 
-**Baseline (operator SELECT-only · recorded):** total **79** · published **74** · gosaki **79** · null/orphan/mio/tbd/target **0** · policies present: `schedules_public_select`, `schedules_admin_all` · writer policies **absent** before apply.
+**Pre-apply baseline (historical):** total **79** · published **74** · gosaki **79** · null/orphan/mio/tbd/target **0** · policies: `schedules_public_select`, `schedules_admin_all` · writer policies absent · RLS fp `e7344ff0de1d5e2862965ffc0e4e72cf`.
+
+**Post-apply current (2026-08-06 01:28:23.744153+00):** policy count **4** · same data baseline · owner visibility **79** · anon **74** · `can_write_site=true` · RLS fp `3f6c87dda8edf44159d939ec69fbcc2b` · Doc: `cms-core-v2-schedules-site-writer-rls-apply-result.md`.
 
 ---
 
@@ -63,12 +77,13 @@ NEXT: cms-core-v2-schedules-site-writer-rls-migration-execution (separate explic
 
 ---
 
-## 3. RLS templates (unapplied)
+## 3. RLS templates (applied on staging 2026-08-06)
 
 | File | Role |
 | --- | --- |
-| `scripts/supabase/cms-core-v2-schedules-site-writer-rls.template.sql` | forward · **no DROP POLICY** · CREATE two policies |
-| `scripts/supabase/cms-core-v2-schedules-site-writer-rls-rollback.template.sql` | DROP only the two writer policies |
+| `scripts/supabase/cms-core-v2-schedules-site-writer-rls.template.sql` | forward · **no DROP POLICY** · CREATE two policies · **applied** |
+| `scripts/supabase/cms-core-v2-schedules-site-writer-rls-rollback.template.sql` | DROP only the two writer policies · **not executed** |
+| `docs/cms-core-v2-schedules-site-writer-rls-apply-result.md` | apply + live JWT probe record |
 
 ### Forward policy bodies
 
@@ -125,6 +140,8 @@ drop policy if exists schedules_site_writer_insert on public.schedules;
 | INSERT max 1 · no UPDATE/DELETE | **unchanged** |
 
 Until RLS apply: owner JWT may still see published-only (**74**) under current policies — **do not retry CREATE** (`READY_FOR_RETRY=false`).
+
+**Update (apply recorded):** RLS applied · owner **79** / anon **74** / `can_write_site=true` · Schedule row write still **0** · oneshot retry still gated (`READY_FOR_RETRY=false` until retry-readiness gate).
 
 ---
 

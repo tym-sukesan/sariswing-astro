@@ -4,10 +4,43 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 ## 0. Current next actions（直近）
 
 1. **Primary (Gosaki ops):** クライアントへ **staging 共有**（`CLIENT_SHARE_READY: true` · package `dc1c5b6…`）。本番 cutover はしない。
-2. **並行可 (Kit Core):** **Next Primary** `cms-core-v2-schedules-site-writer-rls-migration-execution`（site-owner authz COMPLETE · RLS template **unapplied** · **READY_FOR_MIGRATION_EXECUTION: false** until separate approval · then arm-gate / oneshot retry）· `ACTUAL_WRITE_READY: false` · `READY_FOR_RETRY: false`
+2. **並行可 (Kit Core):** **Next Primary** `cms-core-v2-schedule-tbd-create-oneshot-retry-readiness-gate`（site-writer RLS **applied** · live probe PASS · Schedule row write **0** · **READY_FOR_RETRY: false** until gate + docs commit · then arm-gate）· `ACTUAL_WRITE_READY: false`
 3. **並行可:** production hosting **read-only planning**（`HOSTING_READY: false`）。
 4. **並行可 / 別承認:** YouTube 複数件 **永続 Save**（NON_BLOCKING）。
 5. Save arm **false** · `readyForAnyFutureFtpApply: false` · production STOP · `service_role` 禁止 · **deployed package 固定**.
+
+## 0. CMS Core v2 schedules site-writer RLS staging apply result (2026-08-06)
+
+| Item | Value |
+| --- | --- |
+| Gate | `CMS_CORE_V2_SCHEDULES_SITE_WRITER_RLS_APPLY_RESULT_RECORDED: true` |
+| Applied at | `2026-08-06 01:28:23.744153+00` |
+| Policies | +`schedules_site_writer_select` / `_insert` · count **4** |
+| Live JWT | owner **79** · anon **74** · `can_write_site=true` |
+| Current RLS fp | `3f6c87dda8edf44159d939ec69fbcc2b` |
+| Historical pre-apply fp | `e7344ff0de1d5e2862965ffc0e4e72cf` |
+| Row write | `SCHEDULE_ROW_WRITE_EXECUTED: false` · target **0** |
+| Retry | `READY_FOR_RETRY: false` |
+
+```txt
+CMS_CORE_V2_SCHEDULES_SITE_WRITER_RLS_APPLY_RESULT_RECORDED: true
+RLS_MIGRATION_EXECUTED: true
+RLS_POSTCHECK_PASS: true
+OWNER_VISIBILITY_PASS: true
+ANON_VISIBILITY_PASS: true
+CAN_WRITE_SITE_PASS: true
+SITE_WRITER_RLS_APPLIED: true
+CURRENT_STAGING_SCHEDULES_RLS_FINGERPRINT: 3f6c87dda8edf44159d939ec69fbcc2b
+SCHEDULE_ROW_WRITE_EXECUTED: false
+TARGET_ROW_EXISTS: false
+READY_FOR_RETRY: false
+ACTUAL_WRITE_READY: false
+ACTUAL_WRITE_EXECUTED: false
+DB_WRITE_EXECUTED: false
+ARMS_OFF: true
+PRODUCTION_UNCHANGED: true
+READY_FOR_ANY_FUTURE_FTP_APPLY: false
+```
 
 ## 0. CMS Core v2 Schedule site-owner authz + site-writer RLS template (2026-08-06)
 
@@ -16,16 +49,14 @@ Project: Static-to-Astro CMS / Musician CMS Kit
 | Gate | `CMS_CORE_V2_SCHEDULE_SITE_OWNER_AUTHZ_IMPLEMENTATION_COMPLETE: true` |
 | Client | signed-in → `sites` resolve → `rpc('can_write_site', { p_site_id })` → preflight → INSERT |
 | Not used | legacy `is_admin` / `admin_users` as owner gate |
-| RLS | templates created · **not applied** |
+| RLS | templates created · **applied on staging** (apply-result above) |
 | Mapping | PASS · 79 / 74 / target 0 |
 | Retry | `READY_FOR_RETRY: false` |
-| Migration | `READY_FOR_MIGRATION_EXECUTION: false` |
 
 ```txt
 CMS_CORE_V2_SCHEDULE_SITE_OWNER_AUTHZ_IMPLEMENTATION_COMPLETE: true
 SCHEDULE_SITE_MAPPING_SAFE: true
-SITE_WRITER_RLS_APPLIED: false
-READY_FOR_MIGRATION_EXECUTION: false
+SITE_WRITER_RLS_APPLIED: true
 READY_FOR_RETRY: false
 ACTUAL_WRITE_READY: false
 ACTUAL_WRITE_EXECUTED: false

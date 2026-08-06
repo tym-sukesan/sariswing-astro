@@ -11,7 +11,8 @@
 - **Auth note:** write **7 keys alone** arm write config but leave Auth **mock** → real login **impossible** · execution needs **exactly 9 keys**
 - **Preflight query-builder fix (2026-08-05):** `cms-core-v2-schedule-tbd-create-oneshot-preflight-query-builder-fix` — human oneshot click stopped at preflight (`NOT_INSERTED` · total 79 · target 0) · root cause intermediate `.eq()` await · **INSERT 未到達** · cleanup 不要 · **READY_FOR_RETRY: false** until fix committed + new arm-gate
 - **Auth-before-preflight fix (2026-08-05):** `cms-core-v2-schedule-tbd-create-oneshot-auth-before-preflight-fix` — second click `expected 79, got 74` (= published / public RLS) · auth before counts · **READY_FOR_RETRY: false**
-- **Site-scoped owner authz (2026-08-06):** `cms-core-v2-schedule-site-owner-authz-implementation-and-migration-template` — gate = `can_write_site` (not legacy `is_admin`) · site-writer RLS template **created · not applied** · mapping PASS · **READY_FOR_RETRY: false** · **READY_FOR_MIGRATION_EXECUTION: false**
+- **Site-scoped owner authz (2026-08-06):** `cms-core-v2-schedule-site-owner-authz-implementation-and-migration-template` — gate = `can_write_site` (not legacy `is_admin`) · mapping PASS · **READY_FOR_RETRY: false**
+- **Site-writer RLS apply recorded (2026-08-06):** `cms-core-v2-schedules-site-writer-rls-apply-result-recording` — applied SUCCESS · policy count **4** · owner **79** / anon **74** / `can_write_site=true` · current RLS fp `3f6c87dda8edf44159d939ec69fbcc2b` · historical pre-apply `e7344ff0de1d5e2862965ffc0e4e72cf` · Schedule row write **0** · **READY_FOR_RETRY: false**
 - **Staging:** `kmjqppxjdnwwrtaeqjta`
 - **Production STOP:** `vsbvndwuajjhnzpohghh`
 
@@ -30,8 +31,19 @@ CMS_CORE_V2_SCHEDULE_TBD_CREATE_ONESHOT_PROCESS_SCOPED_AUTH_PACKET_CORRECTION_CO
 CMS_CORE_V2_SCHEDULE_TBD_CREATE_ONESHOT_PREFLIGHT_QUERY_BUILDER_FIX_COMPLETE: true
 CMS_CORE_V2_SCHEDULE_TBD_CREATE_ONESHOT_AUTH_BEFORE_PREFLIGHT_FIX_COMPLETE: true
 CMS_CORE_V2_SCHEDULE_SITE_OWNER_AUTHZ_IMPLEMENTATION_COMPLETE: true
+CMS_CORE_V2_SCHEDULES_SITE_WRITER_RLS_APPLY_RESULT_RECORDED: true
 SCHEDULE_SITE_MAPPING_SAFE: true
-SITE_WRITER_RLS_APPLIED: false
+SITE_WRITER_RLS_APPLIED: true
+RLS_MIGRATION_EXECUTED: true
+RLS_POSTCHECK_PASS: true
+OWNER_VISIBILITY_PASS: true
+ANON_VISIBILITY_PASS: true
+CAN_WRITE_SITE_PASS: true
+CURRENT_STAGING_SCHEDULES_RLS_FINGERPRINT: 3f6c87dda8edf44159d939ec69fbcc2b
+PRE_SITE_WRITER_RLS_FINGERPRINT_HISTORICAL: e7344ff0de1d5e2862965ffc0e4e72cf
+POLICY_COUNT: 4
+SCHEDULE_ROW_WRITE_EXECUTED: false
+TARGET_ROW_EXISTS: false
 READY_FOR_MIGRATION_EXECUTION: false
 IMPLEMENTATION_READY: true
 PREFLIGHT_PASS: true
@@ -448,9 +460,10 @@ Rules:
 - URL: `/__admin-staging-shell/musician-basic/admin/schedule/`
 - Sign in as **gosaki-piano site owner** (`site_members.role='owner'`) — owner ≠ legacy `admin_users` / `is_admin()`
 - Runtime gate: `sites` resolve + `rpc('can_write_site', { p_site_id })` must be true
-- Site-writer RLS must be **applied** before CREATE retry (separate approval) — until then do not retry
+- Site-writer RLS **applied** on staging (fp `3f6c87dda8edf44159d939ec69fbcc2b`) — owner visibility **79** / anon **74** confirmed via live probe
 - Confirm host / `PUBLIC_SUPABASE_URL` is staging only
 - Login alone does **not** INSERT — Save click still required
+- **Do not** CREATE until dedicated retry-readiness gate sets `READY_FOR_RETRY` (currently **false**)
 ### Step 6 — Dry-run + fingerprint
 
 - Add form: TBD · month-known · month `2026-11` · fixed title / venue / description · published unchecked

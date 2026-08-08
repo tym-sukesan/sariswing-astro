@@ -5,16 +5,17 @@ Paste this file at the start of a new ChatGPT thread.
 ## Current phase
 
 ```txt
-Current phase: CMS Core v2 schedules site-writer RLS staging apply result RECORDED
-Phase: cms-core-v2-schedules-site-writer-rls-apply-result-recording
-Decision: staging RLS +2 writer policies applied · owner 79 / anon 74 / can_write_site true · current RLS fp 3f6c87dda8edf44159d939ec69fbcc2b · historical pre-apply e7344ff0de1d5e2862965ffc0e4e72cf · Schedule row write 0
+Current phase: CMS Core v2 Schedule TBD CREATE oneshot SUCCESS RECORDED
+Phase: cms-core-v2-schedule-tbd-create-oneshot-success-recording
+Decision: INSERTED_EXACT · schedule-2026-11-001 · counts 80/74/gosaki80/tbd1/target1 · site-owner can_write_site + site-writer RLS · cleanup not done · re-run forbidden
+ACTUAL_WRITE_EXECUTED: true
+TARGET_ROW_EXACT: true
 READY_FOR_RETRY: false
-SITE_WRITER_RLS_APPLIED: true
-ACTUAL_WRITE_READY: false
-ACTUAL_WRITE_EXECUTED: false
-ARMS_OFF: true · DB_WRITE_EXECUTED: false
-Next Primary: cms-core-v2-schedule-tbd-create-oneshot-retry-readiness-gate (after docs commit)
-Prior: site-owner authz template · apply readiness · human apply SUCCESS 2026-08-06 01:28:23.744153+00
+READY_FOR_CLEANUP: false
+CLEANUP_EXECUTED: false
+ARMS_OFF: true
+Next Primary: cms-core-v2-schedule-tbd-create-oneshot-post-success-select-only-fingerprint (SELECT-only id + data fps)
+Prior: final retry readiness READY_FOR_RETRY true · operator CREATE once · site-writer RLS apply
 Gosaki CLIENT_SHARE_READY: true (maintained)
 seedAppliedStaging: true
 readyForOperatorAboutSeedApply: false
@@ -22,12 +23,19 @@ readyForAnyFutureFtpApply: false
 STG: kmjqppxjdnwwrtaeqjta · production vsbvndwuajjhnzpohghh STOP
 ```
 
+## CMS Core v2 Schedule TBD CREATE oneshot SUCCESS (2026-08-08)
+
+- Outcome **INSERTED_EXACT** · `legacy_id=schedule-2026-11-001` · unpublished TBD · total **80** / published **74** / TBD **1** / target **1**
+- Authz: sites → `can_write_site` → preflight → INSERT · site-writer RLS
+- Failures closed: query-builder · auth-before-preflight · owner≠`is_admin`
+- Inserted UUID / post-success data fingerprints: **pending SELECT-only**
+- Doc: `cms-core-v2-schedule-tbd-create-oneshot-success-result.md`
+
 ## CMS Core v2 schedules site-writer RLS staging apply result (2026-08-06)
 
-- Applied: `schedules_site_writer_select` + `schedules_site_writer_insert` · policy count **4** · data 79/74 unchanged
-- Live JWT: owner **79** · anon **74** · `can_write_site=true` · `post_live_probe_pass=true`
+- Applied: `schedules_site_writer_select` + `schedules_site_writer_insert` · policy count **4**
 - Current RLS fp: `3f6c87dda8edf44159d939ec69fbcc2b` · historical: `e7344ff0de1d5e2862965ffc0e4e72cf`
-- `READY_FOR_RETRY: false` · Doc: `cms-core-v2-schedules-site-writer-rls-apply-result.md`
+- Doc: `cms-core-v2-schedules-site-writer-rls-apply-result.md`
 
 ## CMS Core v2 Schedule site-owner authz + site-writer RLS template (2026-08-06)
 

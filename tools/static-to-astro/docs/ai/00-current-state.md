@@ -1,9 +1,11 @@
-Last updated: 2026-08-06
+Last updated: 2026-08-08
 Project: Static-to-Astro CMS / Musician CMS Kit
 Repository focus: sariswing-astro / tools/static-to-astro
 Primary product goal: Wix / Studio / Jimdo などから、軽量・低コスト・本人更新可能な Astro + Supabase CMS へ移行するための汎用CMSキットを作る。
 
-**CMS Core v2 schedules site-writer RLS staging apply result (2026-08-06):** **COMPLETE (docs)** — Phase `cms-core-v2-schedules-site-writer-rls-apply-result-recording` · human staging apply **SUCCESS** at `2026-08-06 01:28:23.744153+00` · policies +2 (`schedules_site_writer_select`/`_insert`) · count **4** · data 79/74/gosaki79/tbd0/target0 unchanged · live JWT: owner **79** · anon **74** · `can_write_site=true` · current RLS fp `3f6c87dda8edf44159d939ec69fbcc2b` · historical pre-apply `e7344ff0de1d5e2862965ffc0e4e72cf` · Schedule row write **0** · **READY_FOR_RETRY: false** · Doc: `cms-core-v2-schedules-site-writer-rls-apply-result.md`.
+**CMS Core v2 Schedule TBD CREATE oneshot SUCCESS (2026-08-08):** **COMPLETE (docs)** — Phase `cms-core-v2-schedule-tbd-create-oneshot-success-recording` · outcome **INSERTED_EXACT** · `legacy_id=schedule-2026-11-001` · counts **80/74/gosaki80/tbd1/target1** · published false · site-owner `can_write_site` + site-writer RLS · terminal **succeeded** · re-run **forbidden** · cleanup **not** done · inserted UUID / data fps **pending SELECT-only** · Doc: `cms-core-v2-schedule-tbd-create-oneshot-success-result.md`.
+
+**CMS Core v2 schedules site-writer RLS staging apply result (2026-08-06):** **COMPLETE (docs)** — Phase `cms-core-v2-schedules-site-writer-rls-apply-result-recording` · human staging apply **SUCCESS** at `2026-08-06 01:28:23.744153+00` · policies +2 · count **4** · pre-oneshot data was 79/74 · RLS fp `3f6c87dda8edf44159d939ec69fbcc2b` · superseded for row existence by oneshot SUCCESS above · Doc: `cms-core-v2-schedules-site-writer-rls-apply-result.md`.
 
 **CMS Core v2 Schedule site-owner authz + site-writer RLS template (2026-08-06):** **COMPLETE (offline)** — Phase `cms-core-v2-schedule-site-owner-authz-implementation-and-migration-template` · oneshot gate = `sites` resolve + `rpc('can_write_site', { p_site_id })` (**not** legacy `is_admin`) · RLS templates created then **applied on staging** (see apply-result above) · mapping PASS 79/74/0 · owner ≠ admin · **READY_FOR_RETRY: false** · Doc: `cms-core-v2-schedule-site-owner-authz-rls-implementation.md`.
 

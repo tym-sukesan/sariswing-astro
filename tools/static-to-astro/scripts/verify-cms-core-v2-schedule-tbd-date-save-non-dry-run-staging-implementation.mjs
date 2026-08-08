@@ -127,10 +127,16 @@ assert(
     /3f6c87dda8edf44159d939ec69fbcc2b/.test(doc) &&
     /e7344ff0de1d5e2862965ffc0e4e72cf/.test(doc),
 );
-assert("ACTUAL_WRITE_EXECUTED false", /ACTUAL_WRITE_EXECUTED:\s*false/.test(doc));
+assert("ACTUAL_WRITE_EXECUTED true", /ACTUAL_WRITE_EXECUTED:\s*true/.test(doc));
+assert(
+  "oneshot success recorded",
+  /CMS_CORE_V2_SCHEDULE_TBD_CREATE_ONESHOT_SUCCESS_RECORDED:\s*true/.test(doc) &&
+    /INSERTED_EXACT/.test(doc) &&
+    /CURRENT_TOTAL:\s*80/.test(doc),
+);
 assert("arms OFF", /arms?\s*OFF|ARMS_OFF:\s*true/i.test(doc));
 assert("env unchanged", /ENV_CHANGED:\s*false|env unchanged/i.test(doc));
-assert("DB write 0", /DB_WRITE_EXECUTED:\s*false|DB write 0/i.test(doc));
+assert("DB write executed true", /DB_WRITE_EXECUTED:\s*true/.test(doc));
 assert("Edge unchanged", /EDGE_CHANGED:\s*false|Edge unchanged/i.test(doc));
 assert("cleanup未実装", /cleanup.*未実装|CLEANUP_IMPLEMENTED:\s*false/i.test(doc));
 assert("boundary hardening noted", /boundary-hardening|INSERT境界|low-level/i.test(doc));

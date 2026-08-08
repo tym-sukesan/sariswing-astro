@@ -1,12 +1,12 @@
 # CMS Core v2 — schedules site-writer RLS staging apply result
 
 - **Phase:** `cms-core-v2-schedules-site-writer-rls-apply-result-recording`
-- **Date recorded:** 2026-08-06
-- **Status:** **COMPLETE (docs / offline recording)**
+- **Date recorded:** 2026-08-06 · **post-oneshot note:** 2026-08-08
+- **Status:** **COMPLETE (docs / offline recording)** · oneshot CREATE later **SUCCESS** (row write proved under these policies)
 - **HEAD at apply:** `3e5bc88f63f498bf9e673cea4e9985424947c747`
 - **Staging:** `kmjqppxjdnwwrtaeqjta`
 - **Production:** `vsbvndwuajjhnzpohghh` — **untouched**
-- **This phase:** record human-applied staging RLS + live JWT probe · **no** Cursor SQL · **no** Schedule row write · **no** arm/Save/process · **no** commit/push by Cursor until operator asks
+- **This phase (historical):** record human-applied staging RLS + live JWT probe · **no** Cursor SQL at apply · Schedule row write came later via oneshot SUCCESS
 
 Prior: `cms-core-v2-schedule-site-owner-authz-rls-implementation.md` · apply readiness packet (read-only)
 
@@ -16,6 +16,7 @@ Prior: `cms-core-v2-schedule-site-owner-authz-rls-implementation.md` · apply re
 
 ```txt
 CMS_CORE_V2_SCHEDULES_SITE_WRITER_RLS_APPLY_RESULT_RECORDED: true
+CMS_CORE_V2_SCHEDULE_TBD_CREATE_ONESHOT_SUCCESS_RECORDED: true
 RLS_MIGRATION_EXECUTED: true
 RLS_POSTCHECK_PASS: true
 post_apply_pass: true
@@ -25,20 +26,32 @@ ANON_VISIBILITY_PASS: true
 CAN_WRITE_SITE_PASS: true
 SITE_WRITER_RLS_APPLIED: true
 SCHEDULE_SITE_MAPPING_SAFE: true
+OWNER_WRITE_SUCCESS: true
+LEGACY_PUBLIC_ADMIN_POLICIES_RETAINED: true
 CURRENT_STAGING_SCHEDULES_RLS_FINGERPRINT: 3f6c87dda8edf44159d939ec69fbcc2b
 PRE_SITE_WRITER_RLS_FINGERPRINT_HISTORICAL: e7344ff0de1d5e2862965ffc0e4e72cf
 POLICY_COUNT: 4
-SCHEDULE_ROW_WRITE_EXECUTED: false
-TARGET_ROW_EXISTS: false
+SCHEDULE_ROW_WRITE_AT_APPLY: false
+SCHEDULE_ROW_WRITE_EXECUTED: true
+TARGET_ROW_EXISTS: true
+TARGET_ROW_EXACT: true
+OUTCOME: INSERTED_EXACT
+CURRENT_TOTAL: 80
+CURRENT_PUBLISHED: 74
+CURRENT_GOSAKI: 80
+CURRENT_TBD: 1
+CURRENT_TARGET: 1
 ROLLBACK_EXECUTED: false
 ACTUAL_WRITE_READY: false
-ACTUAL_WRITE_EXECUTED: false
+ACTUAL_WRITE_EXECUTED: true
 READY_FOR_RETRY: false
-DB_WRITE_EXECUTED: false
+READY_FOR_CLEANUP: false
+CLEANUP_EXECUTED: false
+DB_WRITE_EXECUTED: true
 ARMS_OFF: true
 PRODUCTION_UNCHANGED: true
 COMMIT_READY: true
-NEXT_PRIMARY: cms-core-v2-schedule-tbd-create-oneshot-retry-readiness-gate (after this docs commit)
+NEXT_PRIMARY: cms-core-v2-schedule-tbd-create-oneshot-post-success-select-only-fingerprint
 ```
 
 ---
@@ -54,12 +67,12 @@ NEXT_PRIMARY: cms-core-v2-schedule-tbd-create-oneshot-retry-readiness-gate (afte
 | Policies retained | `schedules_public_select` · `schedules_admin_all` |
 | Policy count | **4** |
 | Rollback | **not executed** |
-| Schedule INSERT/UPDATE/DELETE | **0** |
+| Schedule INSERT at apply time | **0** (`SCHEDULE_ROW_WRITE_AT_APPLY: false`) |
 | Production | **unchanged** |
 
 ---
 
-## 2. Data baseline (unchanged by RLS apply)
+## 2. Data baseline at RLS apply (historical · unchanged by RLS)
 
 | Metric | Value |
 | --- | ---: |
@@ -71,7 +84,20 @@ NEXT_PRIMARY: cms-core-v2-schedule-tbd-create-oneshot-retry-readiness-gate (afte
 
 ---
 
-## 3. Live JWT probe (arms OFF · no INSERT)
+## 2b. Current post-oneshot baseline (2026-08-08)
+
+| Metric | Value |
+| --- | ---: |
+| schedules total | **80** |
+| published | **74** |
+| gosaki | **80** |
+| TBD | **1** |
+| target `schedule-2026-11-001` | **1** |
+
+Owner write SUCCESS under site-writer RLS · Doc: `cms-core-v2-schedule-tbd-create-oneshot-success-result.md`. No UPDATE/DELETE writer policies.
+---
+
+## 3. Live JWT probe at apply (arms OFF · no INSERT · historical)
 
 | Probe | Result |
 | --- | --- |
@@ -80,7 +106,7 @@ NEXT_PRIMARY: cms-core-v2-schedule-tbd-create-oneshot-retry-readiness-gate (afte
 | anon schedules total | **74** |
 | `post_live_probe_pass` | **true** |
 
-Dev server stopped after probe. Write arms remained OFF. Oneshot CREATE **not** retried.
+Dev server stopped after probe. Write arms remained OFF at apply. Later (2026-08-08) oneshot CREATE **succeeded once** under these policies — see success-result doc. Re-run **forbidden**.
 
 ---
 

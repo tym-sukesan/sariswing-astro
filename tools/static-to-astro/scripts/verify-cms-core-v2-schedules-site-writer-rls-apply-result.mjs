@@ -81,10 +81,28 @@ assert(
 );
 assert("owner 79", /owner schedules total[\s\S]*\*\*79\*\*/.test(doc) || /owner\s*\*\*79\*\*/.test(doc));
 assert("anon 74", /anon schedules total[\s\S]*\*\*74\*\*/.test(doc) || /anon\s*\*\*74\*\*/.test(doc));
-assert("data 79/74", /schedules total[\s\S]*\*\*79\*\*/.test(doc) && /published[\s\S]*\*\*74\*\*/.test(doc));
-assert("TBD 0 / target 0", /TBD[\s\S]*\*\*0\*\*/.test(doc) && /target[\s\S]*\*\*0\*\*/.test(doc));
-assert("SCHEDULE_ROW_WRITE_EXECUTED false", /SCHEDULE_ROW_WRITE_EXECUTED:\s*false/.test(doc));
-assert("TARGET_ROW_EXISTS false", /TARGET_ROW_EXISTS:\s*false/.test(doc));
+assert(
+  "historical apply data 79/74",
+  /Data baseline at RLS apply[\s\S]*schedules total[\s\S]*\*\*79\*\*/.test(doc) &&
+    /Data baseline at RLS apply[\s\S]*published[\s\S]*\*\*74\*\*/.test(doc),
+);
+assert(
+  "historical TBD 0 / target 0 at apply",
+  /Data baseline at RLS apply[\s\S]*TBD[\s\S]*\*\*0\*\*/.test(doc) &&
+    /Data baseline at RLS apply[\s\S]*target[\s\S]*\*\*0\*\*/.test(doc),
+);
+assert(
+  "post-oneshot current 80/1",
+  /CURRENT_TOTAL:\s*80/.test(doc) &&
+    /CURRENT_TBD:\s*1/.test(doc) &&
+    /CURRENT_TARGET:\s*1/.test(doc) &&
+    /post-oneshot baseline[\s\S]*\*\*80\*\*/.test(doc),
+);
+assert("SCHEDULE_ROW_WRITE_AT_APPLY false", /SCHEDULE_ROW_WRITE_AT_APPLY:\s*false/.test(doc));
+assert("SCHEDULE_ROW_WRITE_EXECUTED true", /SCHEDULE_ROW_WRITE_EXECUTED:\s*true/.test(doc));
+assert("TARGET_ROW_EXISTS true", /TARGET_ROW_EXISTS:\s*true/.test(doc));
+assert("ACTUAL_WRITE_EXECUTED true", /ACTUAL_WRITE_EXECUTED:\s*true/.test(doc));
+assert("oneshot success recorded", /CMS_CORE_V2_SCHEDULE_TBD_CREATE_ONESHOT_SUCCESS_RECORDED:\s*true/.test(doc));
 assert("READY_FOR_RETRY false", /READY_FOR_RETRY:\s*false/.test(doc));
 assert("ROLLBACK_EXECUTED false", /ROLLBACK_EXECUTED:\s*false/.test(doc));
 assert("PRODUCTION_UNCHANGED true", /PRODUCTION_UNCHANGED:\s*true/.test(doc));

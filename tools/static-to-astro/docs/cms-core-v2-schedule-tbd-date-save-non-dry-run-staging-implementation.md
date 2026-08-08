@@ -5,10 +5,11 @@
 - **Follow-up (2026-08-05):** `cms-core-v2-schedule-tbd-create-oneshot-preflight-query-builder-fix` — `countTargetLegacyId` chain-before-await · preflight client errors → `failed` (not ambiguous) · INSERT未到達明示
 - **Follow-up (2026-08-05):** `cms-core-v2-schedule-tbd-create-oneshot-auth-before-preflight-fix` — getAuth **before** preflight counts · same shared client for preflight+INSERT · second click `got 74` = public RLS · expected total **79** unchanged
 - **Follow-up (2026-08-06):** `cms-core-v2-schedule-site-owner-authz-implementation-and-migration-template` — owner gate = `sites` resolve + `rpc('can_write_site', { p_site_id })` (**not** legacy `is_admin`) · staging RLS template SELECT+INSERT · expected total **79** · `READY_FOR_RETRY: false`
-- **Follow-up (2026-08-06):** `cms-core-v2-schedules-site-writer-rls-apply-result-recording` — staging apply SUCCESS · policy count **4** · owner **79** / anon **74** / `can_write_site=true` · current RLS fp `3f6c87dda8edf44159d939ec69fbcc2b` · Schedule row write **0** · `READY_FOR_RETRY: false`
-- **Date:** 2026-08-03 · authz/RLS template + apply record 2026-08-06
-- **Status:** **COMPLETE (implementation + boundary hardening + preflight query-builder fix + auth-before-preflight + site-scoped owner authz + RLS apply recorded + offline verifier)**
-- **This phase:** Path B CREATE-only oneshot wire · **low-level INSERT non-exported** · INSERT直前再guard · schema probe · arms OFF · no Save · no Edge deploy · no env change · no commit/push by Cursor in apply-recording
+- **Follow-up (2026-08-06):** `cms-core-v2-schedules-site-writer-rls-apply-result-recording` — staging apply SUCCESS · policy count **4** · owner **79** / anon **74** / `can_write_site=true` · current RLS fp `3f6c87dda8edf44159d939ec69fbcc2b` · Schedule row write **0** at apply · `READY_FOR_RETRY: false`
+- **Follow-up (2026-08-08):** `cms-core-v2-schedule-tbd-create-oneshot-success-recording` — human oneshot **INSERTED_EXACT** · `schedule-2026-11-001` · counts **80/74/gosaki80/tbd1/target1** · terminal succeeded · re-run **forbidden** · cleanup **not** done · Doc: `cms-core-v2-schedule-tbd-create-oneshot-success-result.md`
+- **Date:** 2026-08-03 · authz/RLS template + apply record 2026-08-06 · oneshot SUCCESS 2026-08-08
+- **Status:** **COMPLETE (implementation + boundary hardening + preflight/authz fixes + RLS apply + oneshot SUCCESS recorded + offline verifier)**
+- **This phase (historical):** Path B CREATE-only oneshot wire · **low-level INSERT non-exported** · INSERT直前再guard · schema probe · arms OFF · no Save in implementation phase
 
 Prior: `cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-planning.md`
 
@@ -23,6 +24,7 @@ CMS_CORE_V2_SCHEDULE_TBD_CREATE_ONESHOT_PREFLIGHT_QUERY_BUILDER_FIX_COMPLETE: tr
 CMS_CORE_V2_SCHEDULE_TBD_CREATE_ONESHOT_AUTH_BEFORE_PREFLIGHT_FIX_COMPLETE: true
 CMS_CORE_V2_SCHEDULE_SITE_OWNER_AUTHZ_IMPLEMENTATION_COMPLETE: true
 CMS_CORE_V2_SCHEDULES_SITE_WRITER_RLS_APPLY_RESULT_RECORDED: true
+CMS_CORE_V2_SCHEDULE_TBD_CREATE_ONESHOT_SUCCESS_RECORDED: true
 SCHEDULE_SITE_MAPPING_SAFE: true
 SITE_WRITER_RLS_TEMPLATE_CREATED: true
 SITE_WRITER_RLS_APPLIED: true
@@ -34,14 +36,25 @@ CAN_WRITE_SITE_PASS: true
 CURRENT_STAGING_SCHEDULES_RLS_FINGERPRINT: 3f6c87dda8edf44159d939ec69fbcc2b
 PRE_SITE_WRITER_RLS_FINGERPRINT_HISTORICAL: e7344ff0de1d5e2862965ffc0e4e72cf
 POLICY_COUNT: 4
-SCHEDULE_ROW_WRITE_EXECUTED: false
-TARGET_ROW_EXISTS: false
+SCHEDULE_ROW_WRITE_EXECUTED: true
+TARGET_ROW_EXISTS: true
+TARGET_ROW_EXACT: true
+OUTCOME: INSERTED_EXACT
+CURRENT_TOTAL: 80
+CURRENT_PUBLISHED: 74
+CURRENT_GOSAKI: 80
+CURRENT_TBD: 1
+CURRENT_TARGET: 1
+ONESHOT_TERMINAL: succeeded
+ONESHOT_RERUN_FORBIDDEN: true
 READY_FOR_MIGRATION_EXECUTION: false
 IMPLEMENTATION_READY: true
 COMMIT_READY: true
 ACTUAL_WRITE_READY: false
-ACTUAL_WRITE_EXECUTED: false
+ACTUAL_WRITE_EXECUTED: true
 READY_FOR_RETRY: false
+READY_FOR_CLEANUP: false
+CLEANUP_EXECUTED: false
 READY_FOR_TBD_NON_DRY_RUN_EXECUTION: false
 TBD_SAVE_WIRED: true
 TBD_WRITE_ENABLED: false
@@ -49,21 +62,22 @@ ARMS_OFF: true
 ENV_CHANGED: false
 RUNTIME_CHANGED: true
 EDGE_CHANGED: false
-DB_WRITE_EXECUTED: false
-SAVE_EXECUTED: false
+DB_WRITE_EXECUTED: true
+SAVE_EXECUTED: true
 CLEANUP_IMPLEMENTED: false
 MIO_SEED_UNCHANGED: true
 PRODUCTION_UNCHANGED: true
 READY_FOR_ANY_FUTURE_FTP_APPLY: false
-NEXT_PRIMARY_RECOMMENDED: cms-core-v2-schedule-tbd-create-oneshot-retry-readiness-gate
-FINAL_PREFLIGHT: cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-final-preflight (COMPLETE · SQL Editor PASS · process-scoped exactly 9 keys · ACTUAL_WRITE_READY false · ACTUAL_WRITE_EXECUTED false)
+NEXT_PRIMARY_RECOMMENDED: cms-core-v2-schedule-tbd-create-oneshot-post-success-select-only-fingerprint
+FINAL_PREFLIGHT: cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-final-preflight (COMPLETE · SQL Editor PASS · process-scoped exactly 9 keys · superseded by oneshot SUCCESS)
 EXECUTION_PREPARATION: cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-execution-preparation (COMPLETE · human runbook §7)
 WRITE_STACK_GATE_CORRECTION: cms-core-v2-schedule-tbd-create-oneshot-write-stack-gate-correction (COMPLETE · oneshot-only proven)
 PROCESS_SCOPED_ENV_PACKET: cms-core-v2-schedule-tbd-create-oneshot-process-scoped-env-packet-correction (COMPLETE · `env … npm run dev` · no `.env.local` edit)
-PREFLIGHT_QUERY_BUILDER_FIX: cms-core-v2-schedule-tbd-create-oneshot-preflight-query-builder-fix (COMPLETE · offline · READY_FOR_RETRY false)
-AUTH_BEFORE_PREFLIGHT_FIX: cms-core-v2-schedule-tbd-create-oneshot-auth-before-preflight-fix (COMPLETE · offline · READY_FOR_RETRY false)
+PREFLIGHT_QUERY_BUILDER_FIX: cms-core-v2-schedule-tbd-create-oneshot-preflight-query-builder-fix (COMPLETE · offline · resolved on SUCCESS path)
+AUTH_BEFORE_PREFLIGHT_FIX: cms-core-v2-schedule-tbd-create-oneshot-auth-before-preflight-fix (COMPLETE · offline · resolved on SUCCESS path)
 SITE_OWNER_AUTHZ: cms-core-v2-schedule-site-owner-authz-implementation-and-migration-template (COMPLETE · offline)
-SITE_WRITER_RLS_APPLY: cms-core-v2-schedules-site-writer-rls-apply-result-recording (COMPLETE · docs · READY_FOR_RETRY false)
+SITE_WRITER_RLS_APPLY: cms-core-v2-schedules-site-writer-rls-apply-result-recording (COMPLETE · docs)
+ONESHOT_SUCCESS: cms-core-v2-schedule-tbd-create-oneshot-success-recording (COMPLETE · INSERTED_EXACT · re-run forbidden)
 ```
 
 **Staging only:** `kmjqppxjdnwwrtaeqjta`
@@ -90,6 +104,8 @@ SITE_WRITER_RLS_APPLY: cms-core-v2-schedules-site-writer-rls-apply-result-record
 **Auth-before-preflight fix (2026-08-05):** second single-click failed with `expected 79, got 74` (= published / `schedules_public_select`). Fix: `getAuth` **before** preflight counts · same `getStagingSupabaseClient` singleton for probe/preflight/INSERT · expected total stays **79**. Doc: `cms-core-v2-schedule-tbd-create-oneshot-auth-before-preflight-fix.md`.
 
 **Site-scoped owner authz (2026-08-06):** oneshot gate is **not** legacy `is_admin` / `admin_users`. Call order: signed-in → resolve `sites.id` for `site_slug=gosaki-piano` (0/multi fail-closed) → `rpc('can_write_site', { p_site_id })` must be `true` → preflight (expected total **79**) → INSERT max 1. Owner (`site_members.role=owner`) · editor · platform_admin are all via `can_write_site`. Staging RLS: `schedules_site_writer_select` + `schedules_site_writer_insert` **applied** (2026-08-06) · keeps `schedules_public_select` + `schedules_admin_all`. Current RLS fp `3f6c87dda8edf44159d939ec69fbcc2b`. Docs: `cms-core-v2-schedule-site-owner-authz-rls-implementation.md` · `cms-core-v2-schedules-site-writer-rls-apply-result.md`.
+
+**Oneshot SUCCESS (2026-08-08):** operator CREATE once → **INSERTED_EXACT** · `legacy_id=schedule-2026-11-001` · published/show_on_home **false** · counts **80/74/80/0/1/1** · authz path sites → `can_write_site` → preflight → INSERT under site-writer RLS · prior failures (query-builder / auth-before-preflight / owner≠`is_admin`) closed · terminal **succeeded** · re-run **forbidden** · cleanup separate approval only · Doc: `cms-core-v2-schedule-tbd-create-oneshot-success-result.md`. Runtime preflight baseline in guards remains **79** (historical oneshot gate — do not rewrite to 80).
 
 - Uses `buildScheduleTbdSavePayload` · `mode=tbd-v1` · `operation=create` · `dryRun` write path via `tbdWriteEnabled`
 - No `buildScheduleLockedWriteRequest` / UPDATE
@@ -174,6 +190,6 @@ Dry-run (add/create) must match fixed oneshot fields → fingerprint lock → Sa
 
 Final-preflight **COMPLETE** · SQL Editor PASS · execution-preparation **COMPLETE** · write-stack gate correction **COMPLETE** · **process-scoped env packet COMPLETE** · **Auth packet COMPLETE (exactly 9 keys)**.
 
-Doc: `cms-core-v2-schedule-tbd-create-oneshot-write-stack-gate-correction.md` · `cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-final-preflight.md` · `PREFLIGHT_PASS: true` · `EXECUTION_PACKET_READY: true` · `ACTUAL_WRITE_READY: false` · `ACTUAL_WRITE_EXECUTED: false`.
+Doc: `cms-core-v2-schedule-tbd-create-oneshot-write-stack-gate-correction.md` · `cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-final-preflight.md` · `PREFLIGHT_PASS: true` · `EXECUTION_PACKET_READY: true` · `ACTUAL_WRITE_READY: false` · post-SUCCESS `ACTUAL_WRITE_EXECUTED: true` (see success-result).
 
 **Next Primary:** `cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-execution-arm-gate` → execution via process-scoped `env … npm run dev` with **exactly 9 keys** (Auth 2 + write 7 · never edit shared `.env.local`) · Cursor does not arm/click/SQL.

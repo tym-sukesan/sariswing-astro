@@ -91,11 +91,16 @@ assert("OWNER_VISIBILITY_PASS true", /OWNER_VISIBILITY_PASS:\s*true/.test(doc));
 assert("ANON_VISIBILITY_PASS true", /ANON_VISIBILITY_PASS:\s*true/.test(doc));
 assert("CAN_WRITE_SITE_PASS true", /CAN_WRITE_SITE_PASS:\s*true/.test(doc));
 assert("READY_FOR_RETRY false", /READY_FOR_RETRY:\s*false/.test(doc));
-assert("SCHEDULE_ROW_WRITE_EXECUTED false", /SCHEDULE_ROW_WRITE_EXECUTED:\s*false/.test(doc));
-assert("DB_WRITE_EXECUTED false", /DB_WRITE_EXECUTED:\s*false/.test(doc));
-assert("baseline 79/74", /total\s*\*\*79\*\*/.test(doc) && /published\s*\*\*74\*\*/.test(doc));
+assert("SCHEDULE_ROW_WRITE_EXECUTED true", /SCHEDULE_ROW_WRITE_EXECUTED:\s*true/.test(doc));
+assert("DB_WRITE_EXECUTED true", /DB_WRITE_EXECUTED:\s*true/.test(doc));
+assert("ACTUAL_WRITE_EXECUTED true", /ACTUAL_WRITE_EXECUTED:\s*true/.test(doc));
+assert("TARGET_ROW_EXISTS true", /TARGET_ROW_EXISTS:\s*true/.test(doc));
+assert("CURRENT_TOTAL 80", /CURRENT_TOTAL:\s*80/.test(doc));
+assert("oneshot success recorded", /CMS_CORE_V2_SCHEDULE_TBD_CREATE_ONESHOT_SUCCESS_RECORDED:\s*true/.test(doc));
+assert("baseline 79/74 historical", /Pre-apply baseline[\s\S]*total\s*\*\*79\*\*/.test(doc) && /published\s*\*\*74\*\*/.test(doc));
 assert("owner ≠ legacy admin", /owner ≠ legacy|Owner ≠ legacy|do not conflate|OWNER_ADMIN_DISTINCT/i.test(doc));
 assert("apply result doc referenced", /cms-core-v2-schedules-site-writer-rls-apply-result/.test(doc));
+assert("success result doc referenced", /cms-core-v2-schedule-tbd-create-oneshot-success-result/.test(doc));
 
 assert(
   "save can_write_site RPC",

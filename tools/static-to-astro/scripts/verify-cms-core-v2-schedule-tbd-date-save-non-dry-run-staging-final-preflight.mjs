@@ -75,11 +75,19 @@ assert(
 );
 assert("EXECUTION_PACKET_READY true", /EXECUTION_PACKET_READY:\s*true/.test(doc));
 assert("ACTUAL_WRITE_READY false", /ACTUAL_WRITE_READY:\s*false/.test(doc));
-assert("ACTUAL_WRITE_EXECUTED false", /ACTUAL_WRITE_EXECUTED:\s*false/.test(doc));
+assert("ACTUAL_WRITE_EXECUTED true", /ACTUAL_WRITE_EXECUTED:\s*true/.test(doc));
+assert(
+  "oneshot success recorded",
+  /CMS_CORE_V2_SCHEDULE_TBD_CREATE_ONESHOT_SUCCESS_RECORDED:\s*true/.test(doc) &&
+    /INSERTED_EXACT/.test(doc) &&
+    /CURRENT_TOTAL:\s*80/.test(doc),
+);
 assert("ARMS_OFF true", /ARMS_OFF:\s*true/.test(doc));
-assert("DB_WRITE_EXECUTED false", /DB_WRITE_EXECUTED:\s*false/.test(doc));
-assert("SAVE_EXECUTED false", /SAVE_EXECUTED:\s*false/.test(doc));
+assert("DB_WRITE_EXECUTED true", /DB_WRITE_EXECUTED:\s*true/.test(doc));
+assert("SAVE_EXECUTED true", /SAVE_EXECUTED:\s*true/.test(doc));
 assert("CLEANUP_EXECUTED false", /CLEANUP_EXECUTED:\s*false/.test(doc));
+assert("READY_FOR_CLEANUP false", /READY_FOR_CLEANUP:\s*false/.test(doc));
+assert("ONESHOT_RERUN_FORBIDDEN true", /ONESHOT_RERUN_FORBIDDEN:\s*true/.test(doc));
 assert(
   "execution-preparation phase",
   /cms-core-v2-schedule-tbd-date-save-non-dry-run-staging-execution-preparation/.test(doc),
